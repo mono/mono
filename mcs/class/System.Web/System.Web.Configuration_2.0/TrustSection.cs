@@ -29,6 +29,7 @@
 //
 
 using System;
+using System.ComponentModel;
 using System.Configuration;
 
 #if NET_2_0
@@ -44,7 +45,10 @@ namespace System.Web.Configuration {
 
 		static TrustSection ()
 		{
-			levelProp = new ConfigurationProperty ("level", typeof (string), "Full", ConfigurationPropertyOptions.IsRequired);
+			levelProp = new ConfigurationProperty ("level", typeof (string), "Full",
+							       TypeDescriptor.GetConverter (typeof (string)),
+							       PropertyHelper.NonEmptyStringValidator,
+							       ConfigurationPropertyOptions.IsRequired);
 			originUrlProp = new ConfigurationProperty ("originUrl", typeof (string), "");
 			processRequestInApplicationTrustProp = new ConfigurationProperty ("processRequestInApplicationTrust", typeof (bool), true);
 			properties = new ConfigurationPropertyCollection ();

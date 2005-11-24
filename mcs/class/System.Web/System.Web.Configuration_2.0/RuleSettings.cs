@@ -52,10 +52,19 @@ namespace System.Web.Configuration {
 		{
 			customProp = new ConfigurationProperty ("custom", typeof (string), "");
 			eventNameProp = new ConfigurationProperty ("eventName", typeof (string), "", ConfigurationPropertyOptions.IsRequired);
-			maxLimitProp = new ConfigurationProperty ("maxLimit", typeof (int), Int32.MaxValue);
-			minInstancesProp = new ConfigurationProperty ("minInstances", typeof (int), 1);
+			maxLimitProp = new ConfigurationProperty ("maxLimit", typeof (int), Int32.MaxValue,
+								  PropertyHelper.InfiniteIntConverter,
+								  PropertyHelper.IntFromZeroToMaxValidator,
+								  ConfigurationPropertyOptions.None);
+			minInstancesProp = new ConfigurationProperty ("minInstances", typeof (int), 1,
+								      TypeDescriptor.GetConverter (typeof (int)),
+								      new IntegerValidator (1, Int32.MaxValue),
+								      ConfigurationPropertyOptions.None);
 			minIntervalProp = new ConfigurationProperty ("minInterval", typeof (TimeSpan), TimeSpan.FromSeconds (0));
-			nameProp = new ConfigurationProperty ("name", typeof (string), "", ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey);
+			nameProp = new ConfigurationProperty ("name", typeof (string), "",
+							      TypeDescriptor.GetConverter (typeof (string)),
+							      PropertyHelper.NonEmptyStringValidator,
+							      ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey);
 			profileProp = new ConfigurationProperty ("profile", typeof (string), "");
 			providerProp = new ConfigurationProperty ("provider", typeof (string), "");
 			properties = new ConfigurationPropertyCollection ();

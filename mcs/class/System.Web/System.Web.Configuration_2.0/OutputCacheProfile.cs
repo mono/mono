@@ -55,8 +55,14 @@ namespace System.Web.Configuration {
 		{
 			durationProp = new ConfigurationProperty ("duration", typeof (int), -1);
 			enabledProp = new ConfigurationProperty ("enabled", typeof (bool), true);
-			locationProp = new ConfigurationProperty ("location", typeof (OutputCacheLocation));
-			nameProp = new ConfigurationProperty ("name", typeof (string), "", ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey);
+			locationProp = new ConfigurationProperty ("location", typeof (OutputCacheLocation), null,
+								  new GenericEnumConverter (typeof (OutputCacheLocation)),
+								  PropertyHelper.DefaultValidator,
+								  ConfigurationPropertyOptions.None);
+			nameProp = new ConfigurationProperty ("name", typeof (string), "",
+							      PropertyHelper.WhiteSpaceTrimStringConverter,
+							      PropertyHelper.NonEmptyStringValidator,
+							      ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey);
 			noStoreProp = new ConfigurationProperty ("noStore", typeof (bool), false);
 			sqlDependencyProp = new ConfigurationProperty ("sqlDependency", typeof (string));
 			varyByControlProp = new ConfigurationProperty ("varyByControl", typeof (string));

@@ -49,9 +49,18 @@ namespace System.Web.Configuration {
 
 		static AuthorizationRule ()
 		{
-			rolesProp = new ConfigurationProperty ("roles", typeof (StringCollection));
-			usersProp = new ConfigurationProperty ("users", typeof (StringCollection));
-			verbsProp = new ConfigurationProperty ("verbs", typeof (StringCollection));
+			rolesProp = new ConfigurationProperty ("roles", typeof (StringCollection), null,
+							       PropertyHelper.CommaDelimitedStringCollectionConverter,
+							       PropertyHelper.DefaultValidator,
+							       ConfigurationPropertyOptions.None);
+			usersProp = new ConfigurationProperty ("users", typeof (StringCollection), null,
+							       PropertyHelper.CommaDelimitedStringCollectionConverter,
+							       PropertyHelper.DefaultValidator,
+							       ConfigurationPropertyOptions.None);
+			verbsProp = new ConfigurationProperty ("verbs", typeof (StringCollection), null,
+							       PropertyHelper.CommaDelimitedStringCollectionConverter,
+							       PropertyHelper.DefaultValidator,
+							       ConfigurationPropertyOptions.None);
 			properties = new ConfigurationPropertyCollection ();
 
 			properties.Add (rolesProp);
@@ -169,25 +178,19 @@ namespace System.Web.Configuration {
 			set { action = value; }
 		}
 
-#if notyet
 		[TypeConverter (typeof (CommaDelimitedStringCollectionConverter))]
-#endif
 		[ConfigurationProperty ("roles")]
 		public StringCollection Roles {
 			get { return (StringCollection) base [rolesProp];}
 		}
 
-#if notyet
 		[TypeConverter (typeof (CommaDelimitedStringCollectionConverter))]
-#endif
 		[ConfigurationProperty ("users")]
 		public StringCollection Users {
 			get { return (StringCollection) base [usersProp];}
 		}
 
-#if notyet
 		[TypeConverter (typeof (CommaDelimitedStringCollectionConverter))]
-#endif
 		[ConfigurationProperty ("verbs")]
 		public StringCollection Verbs {
 			get { return (StringCollection) base [verbsProp];}

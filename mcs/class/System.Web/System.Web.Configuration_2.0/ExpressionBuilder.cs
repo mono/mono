@@ -30,6 +30,7 @@
 //
 
 using System;
+using System.ComponentModel;
 using System.Configuration;
 
 #if NET_2_0
@@ -44,8 +45,14 @@ namespace System.Web.Configuration {
 
 		static ExpressionBuilder ()
 		{
-			expressionPrefixProp = new ConfigurationProperty ("expressionPrefix", typeof (string), "", ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey);
-			typeProp = new ConfigurationProperty ("type", typeof (string), "", ConfigurationPropertyOptions.IsRequired);
+			expressionPrefixProp = new ConfigurationProperty ("expressionPrefix", typeof (string), "",
+									  TypeDescriptor.GetConverter (typeof (string)),
+									  PropertyHelper.NonEmptyStringValidator,
+									  ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey);
+			typeProp = new ConfigurationProperty ("type", typeof (string), "",
+							      TypeDescriptor.GetConverter (typeof (string)),
+							      PropertyHelper.NonEmptyStringValidator,
+							      ConfigurationPropertyOptions.IsRequired);
 			properties = new ConfigurationPropertyCollection ();
 
 			properties.Add (expressionPrefixProp);

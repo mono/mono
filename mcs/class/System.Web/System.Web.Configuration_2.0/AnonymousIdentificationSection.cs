@@ -48,24 +48,28 @@ namespace System.Web.Configuration
 		static ConfigurationProperty cookieRequireSSLProp;
 		static ConfigurationProperty cookieSlidingExpirationProp;
 		static ConfigurationProperty cookieProtectionProp;
-		static ConfigurationProperty cookilessProp;
 		static ConfigurationProperty domainProp;
 
 		static AnonymousIdentificationSection ()
 		{
 			enabledProp = new ConfigurationProperty ("enabled", typeof(bool), false);
-			cookielessProp = new ConfigurationProperty ("cookieless", typeof (HttpCookieMode), HttpCookieMode.UseCookies);
+			cookielessProp = new ConfigurationProperty ("cookieless", typeof (HttpCookieMode), HttpCookieMode.UseCookies,
+								    new GenericEnumConverter (typeof (HttpCookieMode)),
+								    PropertyHelper.DefaultValidator,
+								    ConfigurationPropertyOptions.None);
 			cookieNameProp = new ConfigurationProperty ("cookieName", typeof (string), ".ASPXANONYMOUS", TypeDescriptor.GetConverter (typeof (string)),
-								    new StringValidator (1), ConfigurationPropertyOptions.None);
+								    PropertyHelper.NonEmptyStringValidator, ConfigurationPropertyOptions.None);
 			cookieTimeoutProp = new ConfigurationProperty ("cookieTimeout", typeof (TimeSpan), new TimeSpan (69,10,40,0), new TimeSpanMinutesOrInfiniteConverter(),
-								       new TimeSpanValidator (TimeSpan.Zero, TimeSpan.MaxValue),
+								       PropertyHelper.PositiveTimeSpanValidator,
 								       ConfigurationPropertyOptions.None);
 			cookiePathProp = new ConfigurationProperty ("cookiePath", typeof (string), "/", TypeDescriptor.GetConverter (typeof (string)),
-								    new StringValidator (1), ConfigurationPropertyOptions.None);
+								    PropertyHelper.NonEmptyStringValidator, ConfigurationPropertyOptions.None);
 			cookieRequireSSLProp = new ConfigurationProperty ("cookieRequireSSL", typeof(bool), false);
 			cookieSlidingExpirationProp = new ConfigurationProperty ("cookieSlidingExpiration", typeof(bool), true);
-			cookieProtectionProp = new ConfigurationProperty ("cookieProtection", typeof(CookieProtection), CookieProtection.Validation);
-			cookilessProp = new ConfigurationProperty ("cookiless", typeof(HttpCookieMode), HttpCookieMode.UseDeviceProfile);
+			cookieProtectionProp = new ConfigurationProperty ("cookieProtection", typeof(CookieProtection), CookieProtection.Validation,
+									  new GenericEnumConverter (typeof (CookieProtection)),
+									  null, ConfigurationPropertyOptions.None);
+
 			domainProp = new ConfigurationProperty ("domain", typeof(string), null);
 			
 			properties = new ConfigurationPropertyCollection ();
@@ -77,7 +81,6 @@ namespace System.Web.Configuration
 			properties.Add (cookieRequireSSLProp);
 			properties.Add (cookieSlidingExpirationProp);
 			properties.Add (cookieProtectionProp);
-			properties.Add (cookilessProp);
 			properties.Add (domainProp);
 		}
 		

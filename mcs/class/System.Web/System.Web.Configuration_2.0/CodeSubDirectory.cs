@@ -36,17 +36,20 @@ namespace System.Web.Configuration
 {
 	public sealed class CodeSubDirectory : ConfigurationElement
 	{
-		static ConfigurationPropertyCollection props;
+		static ConfigurationProperty directoryNameProp;
+		static ConfigurationPropertyCollection properties;
 		string directoryName;
 
 		static CodeSubDirectory ()
 		{
-			props = new ConfigurationPropertyCollection ();
-/*			ConfigurationPropertyFlags flags = ConfigurationPropertyFlags.IsKey | ConfigurationPropertyFlags.Required;
-			NonEmptyStringFlags strFlags = NonEmptyStringFlags.TrimWhitespace;
-			ConfigurationProperty prop = new NonEmptyStringConfigurationProperty ("directoryName", "", flags, strFlags);
-			props.Add (prop);
-*/		}
+			directoryNameProp = new ConfigurationProperty ("directoryName", typeof (string), "",
+								       PropertyHelper.WhiteSpaceTrimStringConverter,
+								       PropertyHelper.NonEmptyStringValidator,
+								       ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey);
+
+			properties = new ConfigurationPropertyCollection ();
+			properties.Add (directoryNameProp);
+		}
 
 		public CodeSubDirectory (string directoryName)
 		{
@@ -55,13 +58,14 @@ namespace System.Web.Configuration
 
 		[TypeConverter (typeof (WhiteSpaceTrimStringConverter))]
 		[ConfigurationProperty ("directoryName", DefaultValue = "", Options = ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey)]
+		// LAMESPEC: MS lists no validator here but provides one in Properties.
 		public string DirectoryName {
 			get { return directoryName; }
 			set { directoryName = value; }
 		}
 
 		protected override ConfigurationPropertyCollection Properties {
-			get { return props; }
+			get { return properties; }
 		}
 	}
 }

@@ -45,9 +45,14 @@ namespace System.Web.Configuration {
 
 		static CustomErrorsSection ()
 		{
-			defaultRedirectProp = new ConfigurationProperty ("defaultRedirect", typeof (string));
-			errorsProp = new ConfigurationProperty ("", typeof (CustomErrorCollection), null, ConfigurationPropertyOptions.IsDefaultCollection);
-			modeProp = new ConfigurationProperty ("mode", typeof (CustomErrorsMode), CustomErrorsMode.RemoteOnly);
+			defaultRedirectProp = new ConfigurationProperty ("defaultRedirect", typeof (string), null);
+			errorsProp = new ConfigurationProperty ("", typeof (CustomErrorCollection), null,
+								null, PropertyHelper.DefaultValidator,
+								ConfigurationPropertyOptions.IsDefaultCollection);
+			modeProp = new ConfigurationProperty ("mode", typeof (CustomErrorsMode), CustomErrorsMode.RemoteOnly,
+							      new GenericEnumConverter (typeof (CustomErrorsMode)),
+							      PropertyHelper.DefaultValidator,
+							      ConfigurationPropertyOptions.None);
 			properties = new ConfigurationPropertyCollection ();
 
 			properties.Add (defaultRedirectProp);

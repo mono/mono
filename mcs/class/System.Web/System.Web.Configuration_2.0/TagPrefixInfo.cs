@@ -49,7 +49,10 @@ namespace System.Web.Configuration
 
 		static TagPrefixInfo ()
 		{
-			tagPrefixProp = new ConfigurationProperty ("tagPrefix", typeof (string), "/", ConfigurationPropertyOptions.IsRequired);
+			tagPrefixProp = new ConfigurationProperty ("tagPrefix", typeof (string), "/",
+								   TypeDescriptor.GetConverter (typeof (string)),
+								   PropertyHelper.NonEmptyStringValidator,
+								   ConfigurationPropertyOptions.IsRequired);
 			namespaceProp = new ConfigurationProperty ("namespace", typeof (string));
 			assemblyProp = new ConfigurationProperty ("assembly", typeof (string));
 			tagNameProp = new ConfigurationProperty ("tagName", typeof (string));

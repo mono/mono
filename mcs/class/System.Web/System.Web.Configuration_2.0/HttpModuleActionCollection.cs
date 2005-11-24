@@ -38,6 +38,13 @@ namespace System.Web.Configuration
 	[ConfigurationCollection (typeof (HttpModuleAction), CollectionType = ConfigurationElementCollectionType.AddRemoveClearMap)]
 	public sealed class HttpModuleActionCollection : ConfigurationElementCollection
 	{
+		static ConfigurationPropertyCollection properties;
+
+		static HttpModuleActionCollection ()
+		{
+			properties = new ConfigurationPropertyCollection ();
+		}
+
 		public HttpModuleActionCollection ()
 		{
 		}
@@ -90,11 +97,8 @@ namespace System.Web.Configuration
 			return base.IsElementRemovable (element);
 		}
 
-		[MonoTODO]
 		protected override ConfigurationPropertyCollection Properties {
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return properties; }
 		}
 
 		public HttpModuleAction this[int index] {

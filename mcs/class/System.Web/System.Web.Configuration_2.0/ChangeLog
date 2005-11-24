@@ -1,5 +1,84 @@
 2005-11-23  Chris Toshok  <toshok@ximian.com>
 
+	* ProfilePropertyNameValidator.cs: new implementation.
+	
+	* ProfilePropertySettings.cs, ProfileGroupSettings.cs,
+	ClientTargetSection.cs, ClientTargetSection.cs,
+	BufferModeSettings.cs, HttpModulesSection.cs,
+	WebPartsPersonalization.cs, TransformerInfo.cs, TrustLevel.cs,
+	NamespaceInfo.cs, SqlCacheDependencyDatabase.cs,
+	AuthenticationSection.cs, RuleSettings.cs,
+	FormsAuthenticationUser.cs, WebPartsSection.cs, BuildProvider.cs,
+	WebPartsPersonalizationAuthorization.cs, Compiler.cs,
+	ExpressionBuilder.cs, OutputCacheProfile.cs,
+	FormsAuthenticationCredentials.cs, XhtmlConformanceSection.cs,
+	OutputCacheSettingsSection.cs, CustomError.cs, TraceSection.cs,
+	ExpressionBuilderCollection.cs, ProfileSettings.cs,
+	SessionStateSection.cs, HealthMonitoringSection.cs,
+	FormsAuthenticationConfiguration.cs, HttpRuntimeSection.cs,
+	SessionPageStateSection.cs, TrustSection.cs,
+	AnonymousIdentificationSection.cs, WebControlsSection.cs,
+	ClientTarget.cs, TagMapInfo.cs, AuthorizationSection.cs,
+	ProcessModelSection.cs, RoleManagerSection.cs,
+	MembershipSection.cs, CustomErrorsSection.cs (..cctor): fix
+	validator/converters.
+	
+	* MachineKeySection.cs (..cctor): fix validators/converters.
+	(Validation): enable the Converter.
+	
+	* CodeSubDirectory.cs (..cctor): fix validator/converters.
+	(DirectoryName): add note about missing validator decoration.
+	
+	* HttpModuleAction.cs (..cctor): init properties.
+	(Properties): return properties.
+	
+	* CompilationSection.cs (..cctor): fix validator/converters.
+	(GetInstance): add in this pre-2.0 interface for the time being,
+	hopefully it'll make it easier to migrate later on.
+	
+	* HttpHandlerActionCollection.cs (..cctor): init properties.
+	(Properties): return properties.
+
+	* PagesSection.cs (..cctor): fix validator/converters.
+	(GetInstance): add in this pre-2.0 interface for the time being,
+	hopefully it'll make it easier to migrate later on.
+	
+	* HttpHandlersSection.cs (..cctor): init properties.
+	(Properties): return properties.
+	
+	* EventMappingSettings.cs (..cctor): fix validator/converters.
+	(Name): add note about missing validator decoration.
+	
+	* HttpHandlerAction.cs (..cctor): fix validator/converters.
+	(PAth, Type, Verb): add note about missing validator decoration.
+
+	* NamespaceCollection.cs (..cctor): fix properties.
+
+	* ProfilePropertySettingsCollection.cs (..cctor): init properties.
+	(..ctor): don't throw NIE.
+	(Properties): return properties.
+
+	* HttpModuleActionCollection.cs (..cctor): init properties.
+	(Properties): return properties.
+
+	* CacheSection.cs (..cctor): fix validators/converters.
+	(PrivateBytesPollTime): add note about missing validator
+	decoration.
+
+	* AuthorizationRule.cs (..cctor): fix validators/converters.
+	(Roles, Users, Verbs): enable the TypeConverter decorations.
+	
+	* UrlMapping.cs (ValidateUrl): static method for use as a
+	validation callback.  unimplemented as yet.
+	(..cctor): fix validators/converters.
+	(MappedUrl): add note about missing validator decoration.
+	
+	* PropertyHelper.cs: static utility class which contains
+	references to validators and converters for use in static
+	constructors (building the Properties arrays).
+
+2005-11-23  Chris Toshok  <toshok@ximian.com>
+
 	* MachineKeyValidationConverter.cs: new converter (and a pretty
 	silly one, considering all it seems to do is convert "TripleDES"
 	to "3DES").

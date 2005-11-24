@@ -42,12 +42,13 @@ namespace System.Web.Configuration
 	public sealed class NamespaceCollection : ConfigurationElementCollection
 	{
 		static ConfigurationPropertyCollection properties;
-		static ConfigurationProperty autoImportProp;
+		static ConfigurationProperty autoImportVBNamespaceProp;
 
 		static NamespaceCollection ()
 		{
+			autoImportVBNamespaceProp = new ConfigurationProperty ("autoImportVBNamespace", typeof (bool), true);
 			properties = new ConfigurationPropertyCollection ();
-			properties.Add (autoImportProp);
+			properties.Add (autoImportVBNamespaceProp);
 		}
 
 		public NamespaceCollection ()
@@ -86,8 +87,8 @@ namespace System.Web.Configuration
 
 		[ConfigurationProperty ("autoImportVBNamespace", DefaultValue = true)]
 		public bool AutoImportVBNamespace {
-			get { return (bool) base[autoImportProp]; }
-			set { base[autoImportProp] = value; }
+			get { return (bool) base[autoImportVBNamespaceProp]; }
+			set { base[autoImportVBNamespaceProp] = value; }
 		}
 
 		protected override ConfigurationPropertyCollection Properties {

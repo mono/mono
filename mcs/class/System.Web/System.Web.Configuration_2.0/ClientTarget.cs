@@ -29,6 +29,7 @@
 //
 
 using System;
+using System.ComponentModel;
 using System.Configuration;
 
 #if NET_2_0
@@ -43,8 +44,14 @@ namespace System.Web.Configuration {
 
 		static ClientTarget ()
 		{
-			aliasProp = new ConfigurationProperty ("alias", typeof (string), null, ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey);
-			userAgentProp = new ConfigurationProperty ("userAgent", typeof (string), null, ConfigurationPropertyOptions.IsRequired);
+			aliasProp = new ConfigurationProperty ("alias", typeof (string), null,
+							       TypeDescriptor.GetConverter (typeof (string)),
+							       PropertyHelper.NonEmptyStringValidator,
+							       ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey);
+			userAgentProp = new ConfigurationProperty ("userAgent", typeof (string), null,
+								   TypeDescriptor.GetConverter (typeof (string)),
+								   PropertyHelper.NonEmptyStringValidator,
+								   ConfigurationPropertyOptions.IsRequired);
 			properties = new ConfigurationPropertyCollection ();
 
 			properties.Add (aliasProp);

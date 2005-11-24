@@ -31,6 +31,7 @@
 #if NET_2_0
 
 using System;
+using System.ComponentModel;
 using System.Configuration;
 
 namespace System.Web.Configuration
@@ -53,10 +54,16 @@ namespace System.Web.Configuration
 			allowAnonymousProp = new ConfigurationProperty ("allowAnonymous", typeof (bool), false);
 			customProviderDataProp = new ConfigurationProperty ("customProviderData", typeof (string), "");
 			defaultValueProp = new ConfigurationProperty ("defaultValue", typeof (string), "");
-			nameProp = new ConfigurationProperty ("name", typeof (string), null, ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey);
+			nameProp = new ConfigurationProperty ("name", typeof (string), null,
+							      TypeDescriptor.GetConverter (typeof (string)),
+							      new ProfilePropertyNameValidator (),
+							      ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey);
 			providerProp = new ConfigurationProperty ("provider", typeof (string), "");
 			readOnlyProp = new ConfigurationProperty ("readOnly", typeof (bool), false);
-			serializeAsProp = new ConfigurationProperty ("serializeAs", typeof (SerializationMode), SerializationMode.ProviderSpecific);
+			serializeAsProp = new ConfigurationProperty ("serializeAs", typeof (SerializationMode), SerializationMode.ProviderSpecific,
+								     new GenericEnumConverter (typeof (SerializationMode)),
+								     PropertyHelper.DefaultValidator,
+								     ConfigurationPropertyOptions.None);
 			typeProp = new ConfigurationProperty ("type", typeof (string), "string");
 
 			properties = new ConfigurationPropertyCollection ();

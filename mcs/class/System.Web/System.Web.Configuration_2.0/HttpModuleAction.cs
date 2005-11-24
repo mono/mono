@@ -31,6 +31,7 @@
 #if NET_2_0
 
 using System;
+using System.ComponentModel;
 using System.Configuration;
 
 namespace System.Web.Configuration
@@ -43,7 +44,10 @@ namespace System.Web.Configuration
 
 		static HttpModuleAction ()
 		{
-			nameProp = new ConfigurationProperty ("name", typeof (string), "", ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey);
+			nameProp = new ConfigurationProperty ("name", typeof (string), "",
+							      TypeDescriptor.GetConverter (typeof (string)),
+							      PropertyHelper.NonEmptyStringValidator,
+							      ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey);
 			typeProp = new ConfigurationProperty ("type", typeof (string), "", ConfigurationPropertyOptions.IsRequired);
 			properties = new ConfigurationPropertyCollection ();
 			properties.Add (nameProp);
@@ -65,8 +69,8 @@ namespace System.Web.Configuration
 		}
 #endif
 
-		[ConfigurationProperty ("name", DefaultValue = "", Options = ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey)]
 		[StringValidator (MinLength = 1)]
+		[ConfigurationProperty ("name", DefaultValue = "", Options = ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey)]
 		public new string Name {
 			get { return (string)base[nameProp]; }
 			set { base[nameProp] = value; }
@@ -79,9 +83,7 @@ namespace System.Web.Configuration
 		}
 
 		protected override ConfigurationPropertyCollection Properties {
-			get {
-				return properties;
-			}
+			get { return properties; }
 		}
 	}
 }

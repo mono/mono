@@ -42,7 +42,9 @@ namespace System.Web.Configuration {
 
 		static ClientTargetSection ()
 		{
-			clientTargetsProp = new ConfigurationProperty ("", typeof (ClientTargetCollection), null, ConfigurationPropertyOptions.IsDefaultCollection | ConfigurationPropertyOptions.IsRequired);
+			clientTargetsProp = new ConfigurationProperty ("", typeof (ClientTargetCollection), null,
+								       null, PropertyHelper.DefaultValidator,
+								       ConfigurationPropertyOptions.IsDefaultCollection | ConfigurationPropertyOptions.IsRequired);
 			properties = new ConfigurationPropertyCollection ();
 
 			properties.Add (clientTargetsProp);

@@ -38,6 +38,13 @@ namespace System.Web.Configuration
 	[ConfigurationCollection (typeof (HttpHandlerAction), CollectionType = ConfigurationElementCollectionType.AddRemoveClearMapAlternate)]
 	public sealed class HttpHandlerActionCollection : ConfigurationElementCollection
 	{
+		static ConfigurationPropertyCollection properties;
+
+		static HttpHandlerActionCollection ()
+		{
+			properties = new ConfigurationPropertyCollection ();
+		}
+
 		public HttpHandlerActionCollection ()
 		{
 		}
@@ -90,11 +97,8 @@ namespace System.Web.Configuration
 			}
 		}
 
-		[MonoTODO]
 		protected override ConfigurationPropertyCollection Properties {
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return properties; }
 		}
 
 		public HttpHandlerAction this[int index] {

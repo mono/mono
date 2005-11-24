@@ -31,6 +31,7 @@
 #if NET_2_0
 
 using System;
+using System.ComponentModel;
 using System.Configuration;
 
 namespace System.Web.Configuration
@@ -43,8 +44,14 @@ namespace System.Web.Configuration
 
 		static ProfileGroupSettings ()
 		{
-			nameProp = new ConfigurationProperty ("name", typeof (string), null, ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey);
-			propertySettingsProp = new ConfigurationProperty ("", typeof (ProfilePropertySettingsCollection), null, ConfigurationPropertyOptions.IsDefaultCollection);
+			nameProp = new ConfigurationProperty ("name", typeof (string), null,
+							      TypeDescriptor.GetConverter (typeof (string)),
+							      new ProfilePropertyNameValidator (),
+							      ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey);
+			propertySettingsProp = new ConfigurationProperty ("", typeof (ProfilePropertySettingsCollection), null,
+									  null,
+									  PropertyHelper.DefaultValidator,
+									  ConfigurationPropertyOptions.IsDefaultCollection);
 
 			properties = new ConfigurationPropertyCollection ();
 			properties.Add (nameProp);

@@ -29,6 +29,7 @@
 //
 
 using System;
+using System.ComponentModel;
 using System.Configuration;
 
 #if NET_2_0
@@ -41,10 +42,22 @@ namespace System.Web.Configuration {
 		static ConfigurationProperty urlProp;
 		static ConfigurationPropertyCollection properties;
 
+		[MonoTODO]
+		static void ValidateUrl (object value)
+		{
+			/* XXX validate the url */
+		}
+
 		static UrlMapping ()
 		{
-			mappedUrlProp = new ConfigurationProperty ("mappedUrl", typeof (string), null, ConfigurationPropertyOptions.IsRequired);
-			urlProp = new ConfigurationProperty ("url", typeof (string), null, ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey);
+			mappedUrlProp = new ConfigurationProperty ("mappedUrl", typeof (string), null,
+								   PropertyHelper.WhiteSpaceTrimStringConverter,
+								   PropertyHelper.NonEmptyStringValidator,
+								   ConfigurationPropertyOptions.IsRequired);
+			urlProp = new ConfigurationProperty ("url", typeof (string), null,
+							     PropertyHelper.WhiteSpaceTrimStringConverter,
+							     new CallbackValidator (typeof (string), ValidateUrl),
+							     ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey);
 			properties = new ConfigurationPropertyCollection ();
 
 			properties.Add (mappedUrlProp);
@@ -58,6 +71,7 @@ namespace System.Web.Configuration {
 		}
 
 		[ConfigurationProperty ("mappedUrl", Options = ConfigurationPropertyOptions.IsRequired)]
+		// LAMESPEC: MS lists no validator here but provides one in Properties.
 		public string MappedUrl {
 			get { return (string) base [mappedUrlProp];}
 			internal set { base [mappedUrlProp] = value;}

@@ -29,6 +29,7 @@
 //
 
 using System;
+using System.ComponentModel;
 using System.Configuration;
 
 #if NET_2_0
@@ -44,8 +45,14 @@ namespace System.Web.Configuration {
 
 		static SqlCacheDependencyDatabase ()
 		{
-			connectionStringNameProp = new ConfigurationProperty ("connectionStringName", typeof (string), null, ConfigurationPropertyOptions.IsRequired);
-			nameProp = new ConfigurationProperty ("name", typeof (string), null, ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey);
+			connectionStringNameProp = new ConfigurationProperty ("connectionStringName", typeof (string), null,
+									      TypeDescriptor.GetConverter (typeof (string)),
+									      PropertyHelper.NonEmptyStringValidator,
+									      ConfigurationPropertyOptions.IsRequired);
+			nameProp = new ConfigurationProperty ("name", typeof (string), null,
+							      TypeDescriptor.GetConverter (typeof (string)),
+							      PropertyHelper.NonEmptyStringValidator,
+							      ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey);
 			pollTimeProp = new ConfigurationProperty ("pollTime", typeof (int), 60000);
 			properties = new ConfigurationPropertyCollection ();
 

@@ -51,13 +51,18 @@ namespace System.Web.Configuration {
 			disableMemoryCollectionProp = new ConfigurationProperty("disableMemoryCollection", typeof (bool), false);
 			percentagePhysicalMemoryUsedLimitProp = new ConfigurationProperty("percentagePhysicalMemoryUsedLimit", typeof (int), 89,
 											  TypeDescriptor.GetConverter (typeof (int)),
-											  new IntegerValidator (0, Int32.MaxValue),
+											  PropertyHelper.IntFromZeroToMaxValidator,
 											  ConfigurationPropertyOptions.None);
 			privateBytesLimitProp = new ConfigurationProperty("privateBytesLimit", typeof (long), 0,
 									  TypeDescriptor.GetConverter (typeof (long)),
 									  new LongValidator (0, Int64.MaxValue),
 									  ConfigurationPropertyOptions.None);
-			privateBytesPollTimeProp = new ConfigurationProperty("privateBytesPollTime", typeof (TimeSpan), TimeSpan.FromMinutes (2));
+			privateBytesPollTimeProp = new ConfigurationProperty("privateBytesPollTime",
+									     typeof (TimeSpan),
+									     TimeSpan.FromMinutes (2),
+									     PropertyHelper.InfiniteTimeSpanConverter,
+									     PropertyHelper.PositiveTimeSpanValidator,
+									     ConfigurationPropertyOptions.None);
 			properties = new ConfigurationPropertyCollection();
 
 			properties.Add (disableExpirationProp);
@@ -95,6 +100,7 @@ namespace System.Web.Configuration {
 
 		[TypeConverter (typeof (InfiniteTimeSpanConverter))]
 		[ConfigurationProperty ("privateBytesPollTime", DefaultValue = "00:02:00")]
+		// LAMESPEC: MS lists no validator here but provides one in Properties.
 		public TimeSpan PrivateBytesPollTime {
 			get { return (TimeSpan) base [privateBytesPollTimeProp];}
 			set { base[privateBytesPollTimeProp] = value; }

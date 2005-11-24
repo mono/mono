@@ -39,10 +39,15 @@ namespace System.Web.Configuration
 	[ConfigurationCollection (typeof (ProfilePropertySettings), CollectionType = ConfigurationElementCollectionType.AddRemoveClearMap)]
 	public class ProfilePropertySettingsCollection : ConfigurationElementCollection
 	{
-		[MonoTODO]
+		static ConfigurationPropertyCollection properties;
+
+		static ProfilePropertySettingsCollection ()
+		{
+			properties = new ConfigurationPropertyCollection ();
+		}
+
 		public ProfilePropertySettingsCollection ()
 		{
-			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
@@ -131,11 +136,8 @@ namespace System.Web.Configuration
 			}
 		}
 
-		[MonoTODO]
 		protected override ConfigurationPropertyCollection Properties {
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return properties; }
 		}
 
 		public ProfilePropertySettings this[int index] {

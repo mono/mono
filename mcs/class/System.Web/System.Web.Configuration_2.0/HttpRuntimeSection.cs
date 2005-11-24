@@ -61,23 +61,53 @@ namespace System.Web.Configuration
 		static HttpRuntimeSection ()
 		{
 			apartmentThreadingProp = new ConfigurationProperty ("apartmentThreading", typeof (bool), false);
-			appRequestQueueLimitProp = new ConfigurationProperty ("appRequestQueueLimit", typeof (int), 5000);
-			delayNotificationTimeoutProp = new ConfigurationProperty ("delayNotificationTimeout", typeof (TimeSpan), TimeSpan.FromSeconds (5));
+			appRequestQueueLimitProp = new ConfigurationProperty ("appRequestQueueLimit", typeof (int), 5000,
+									      TypeDescriptor.GetConverter (typeof (int)),
+									      new IntegerValidator (1, Int32.MaxValue),
+									      ConfigurationPropertyOptions.None);
+			delayNotificationTimeoutProp = new ConfigurationProperty ("delayNotificationTimeout", typeof (TimeSpan), TimeSpan.FromSeconds (5),
+										  PropertyHelper.TimeSpanSecondsConverter,
+										  PropertyHelper.DefaultValidator,
+										  ConfigurationPropertyOptions.None);
 			enableProp = new ConfigurationProperty ("enable", typeof (bool), true);
 			enableHeaderCheckingProp = new ConfigurationProperty ("enableHeaderChecking", typeof (bool), true);
 			enableKernelOutputCacheProp = new ConfigurationProperty ("enableKernelOutputCache", typeof (bool), true);
 			enableVersionHeaderProp = new ConfigurationProperty ("enableVersionHeader", typeof (bool), true);
-			executionTimeoutProp = new ConfigurationProperty ("executionTimeout", typeof (TimeSpan), TimeSpan.FromSeconds (110));
-			maxRequestLengthProp = new ConfigurationProperty ("maxRequestLength", typeof (int), 4096);
-			maxWaitChangeNotificationProp = new ConfigurationProperty ("maxWaitChangeNotification", typeof (int), 0);
-			minFreeThreadsProp = new ConfigurationProperty ("minFreeThreads", typeof (int), 8);
-			minLocalRequestFreeThreadsProp = new ConfigurationProperty ("minLocalRequestFreeThreads", typeof (int), 4);
-			requestLengthDiskThresholdProp = new ConfigurationProperty ("requestLengthDiskThreshold", typeof (int), 80);
+			executionTimeoutProp = new ConfigurationProperty ("executionTimeout", typeof (TimeSpan), TimeSpan.FromSeconds (110),
+									  PropertyHelper.TimeSpanSecondsConverter,
+									  PropertyHelper.PositiveTimeSpanValidator,
+									  ConfigurationPropertyOptions.None);
+			maxRequestLengthProp = new ConfigurationProperty ("maxRequestLength", typeof (int), 4096,
+									  TypeDescriptor.GetConverter (typeof (int)),
+									  PropertyHelper.IntFromZeroToMaxValidator,
+									  ConfigurationPropertyOptions.None);
+			maxWaitChangeNotificationProp = new ConfigurationProperty ("maxWaitChangeNotification", typeof (int), 0,
+										   TypeDescriptor.GetConverter (typeof (int)),
+										   PropertyHelper.IntFromZeroToMaxValidator,
+										   ConfigurationPropertyOptions.None);
+			minFreeThreadsProp = new ConfigurationProperty ("minFreeThreads", typeof (int), 8,
+									TypeDescriptor.GetConverter (typeof (int)),
+									PropertyHelper.IntFromZeroToMaxValidator,
+									ConfigurationPropertyOptions.None);
+			minLocalRequestFreeThreadsProp = new ConfigurationProperty ("minLocalRequestFreeThreads", typeof (int), 4,
+										    TypeDescriptor.GetConverter (typeof (int)),
+										    PropertyHelper.IntFromZeroToMaxValidator,
+										    ConfigurationPropertyOptions.None);
+			requestLengthDiskThresholdProp = new ConfigurationProperty ("requestLengthDiskThreshold", typeof (int), 80,
+										    TypeDescriptor.GetConverter (typeof (int)),
+										    new IntegerValidator (1, Int32.MaxValue),
+										    ConfigurationPropertyOptions.None);
 			requireRootedSaveAsPathProp = new ConfigurationProperty ("requireRootedSaveAsPath", typeof (bool), true);
 			sendCacheControlHeaderProp = new ConfigurationProperty ("sendCacheControlHeader", typeof (bool), true);
-			shutdownTimeoutProp = new ConfigurationProperty ("shutdownTimeout", typeof (TimeSpan), TimeSpan.FromSeconds (90));
+			shutdownTimeoutProp = new ConfigurationProperty ("shutdownTimeout", typeof (TimeSpan), TimeSpan.FromSeconds (90),
+									 PropertyHelper.TimeSpanSecondsConverter,
+									 PropertyHelper.DefaultValidator,
+									 ConfigurationPropertyOptions.None);
 			useFullyQualifiedRedirectUrlProp = new ConfigurationProperty ("useFullyQualifiedRedirectUrl", typeof (bool), false);
-			waitChangeNotificationProp = new ConfigurationProperty ("waitChangeNotification", typeof (int), 0);
+			waitChangeNotificationProp = new ConfigurationProperty ("waitChangeNotification", typeof (int), 0,
+										TypeDescriptor.GetConverter (typeof (int)),
+										PropertyHelper.IntFromZeroToMaxValidator,
+										ConfigurationPropertyOptions.None);
 
 			properties = new ConfigurationPropertyCollection();
 			properties.Add (apartmentThreadingProp);

@@ -45,8 +45,12 @@ namespace System.Web.Configuration {
 		static WebPartsSection ()
 		{
 			enableExportProp = new ConfigurationProperty ("enableExport", typeof (bool), false);
-			personalizationProp = new ConfigurationProperty ("personalization", typeof (WebPartsPersonalization));
-			transformersProp = new ConfigurationProperty ("transformers", typeof (TransformerInfoCollection));
+			personalizationProp = new ConfigurationProperty ("personalization", typeof (WebPartsPersonalization), null,
+									 null, PropertyHelper.DefaultValidator,
+									 ConfigurationPropertyOptions.None);
+			transformersProp = new ConfigurationProperty ("transformers", typeof (TransformerInfoCollection), null,
+								      null, PropertyHelper.DefaultValidator,
+								      ConfigurationPropertyOptions.None);
 			properties = new ConfigurationPropertyCollection ();
 
 			properties.Add (enableExportProp);

@@ -31,6 +31,7 @@
 #if NET_2_0
 
 using System;
+using System.ComponentModel;
 using System.Configuration;
 using System.Xml;
 
@@ -45,8 +46,14 @@ namespace System.Web.Configuration
 
 		static TagMapInfo ()
 		{
-			mappedTagTypeProp = new ConfigurationProperty ("mappedTagType", typeof (string));
-			tagTypeProp = new ConfigurationProperty ("tagType", typeof (string), "", ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey);
+			mappedTagTypeProp = new ConfigurationProperty ("mappedTagType", typeof (string), null,
+								       TypeDescriptor.GetConverter (typeof (string)),
+								       PropertyHelper.NonEmptyStringValidator,
+								       ConfigurationPropertyOptions.None);
+			tagTypeProp = new ConfigurationProperty ("tagType", typeof (string), "",
+								 TypeDescriptor.GetConverter (typeof (string)),
+								 PropertyHelper.NonEmptyStringValidator,
+								 ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey);
 
 			properties = new ConfigurationPropertyCollection ();
 			properties.Add (mappedTagTypeProp);

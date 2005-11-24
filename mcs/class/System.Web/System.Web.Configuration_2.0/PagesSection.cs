@@ -66,7 +66,10 @@ namespace System.Web.Configuration
 
 		static PagesSection ()
 		{
-			asyncTimeoutProp = new ConfigurationProperty ("asyncTimeout", typeof(TimeSpan), null);
+			asyncTimeoutProp = new ConfigurationProperty ("asyncTimeout", typeof (TimeSpan), null,
+								      PropertyHelper.TimeSpanSecondsConverter,
+								      PropertyHelper.PositiveTimeSpanValidator,
+								      ConfigurationPropertyOptions.None);
 			autoEventWireupProp = new ConfigurationProperty ("autoEventWireup", typeof(bool), true);
 			bufferProp = new ConfigurationProperty ("buffer", typeof(bool), false);
 			controlsProp = new ConfigurationProperty ("controls", typeof(TagPrefixCollection), null);
@@ -77,17 +80,21 @@ namespace System.Web.Configuration
 			maintainScrollPositionOnPostBackProp = new ConfigurationProperty ("maintainScrollPositionOnPostBack", typeof (bool), false);
 			masterPageFileProp = new ConfigurationProperty ("masterPageFile", typeof (string), "");
 			maxPageStateFieldLengthProp = new ConfigurationProperty ("maxPageStateFieldLength", typeof (int), -1);
-			modeProp = new ConfigurationProperty ("compilationMode", typeof (CompilationMode), CompilationMode.Always);
+			modeProp = new ConfigurationProperty ("compilationMode", typeof (CompilationMode), CompilationMode.Always,
+							      new GenericEnumConverter (typeof (CompilationMode)), PropertyHelper.DefaultValidator,
+							      ConfigurationPropertyOptions.None);
 			namespacesProp = new ConfigurationProperty ("namespacesProp", typeof (NamespaceCollection), null);
 			pageBaseTypeProp = new ConfigurationProperty ("pageBaseType", typeof (string), "System.Web.UI.Page");
-			pageParserFilterTypeProp = new ConfigurationProperty ("pageParserFilterTypeProp", typeof (string), "");
+			pageParserFilterTypeProp = new ConfigurationProperty ("pageParserFilterType", typeof (string), "");
 			smartNavigationProp = new ConfigurationProperty ("smartNavigation", typeof (bool), false);
 			styleSheetThemeProp = new ConfigurationProperty ("styleSheetTheme", typeof (string), "");
 			tagMappingProp = new ConfigurationProperty ("tagMapping", typeof (TagMapCollection), null);
 			themeProp = new ConfigurationProperty ("theme", typeof (string), "");
-			userControlBaseTypeProp = new ConfigurationProperty ("userControlBaseTypeProp", typeof (string), "System.Web.UI.UserControl");
+			userControlBaseTypeProp = new ConfigurationProperty ("userControlBaseType", typeof (string), "System.Web.UI.UserControl");
 			validateRequestProp = new ConfigurationProperty ("validateRequest", typeof (bool), true);
-			viewStateEncryptionModeProp = new ConfigurationProperty ("viewStateEncryptionMode", typeof (ViewStateEncryptionMode), ViewStateEncryptionMode.Auto);
+			viewStateEncryptionModeProp = new ConfigurationProperty ("viewStateEncryptionMode", typeof (ViewStateEncryptionMode), ViewStateEncryptionMode.Auto,
+										 new GenericEnumConverter (typeof (ViewStateEncryptionMode)), PropertyHelper.DefaultValidator,
+										 ConfigurationPropertyOptions.None);
 
 			properties = new ConfigurationPropertyCollection ();
 			properties.Add (asyncTimeoutProp);
@@ -258,6 +265,25 @@ namespace System.Web.Configuration
 
 			/* XXX more here?.. */
 		}
+
+#region CompatabilityCode
+		[MonoTODO ("we really shouldn't need this..")]
+		internal static PagesSection GetInstance ()
+		{
+			PagesSection config;
+
+			if (HttpContext.Current != null) {
+				config = WebConfigurationManager.GetSection ("system.web/pages") as PagesSection;
+				if (config == null)
+					throw new Exception ("Configuration error.");
+			} else {
+				// empty config (as used in unit tests)
+				config = new PagesSection ();
+			}
+
+			return config;
+		}
+#endregion
 	}
 }
 

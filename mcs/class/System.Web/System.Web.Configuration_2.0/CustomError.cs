@@ -29,6 +29,7 @@
 //
 
 using System;
+using System.ComponentModel;
 using System.Configuration;
 
 #if NET_2_0
@@ -43,8 +44,14 @@ namespace System.Web.Configuration {
 
 		static CustomError ()
 		{
-			redirectProp = new ConfigurationProperty ("redirect", typeof (string), null, ConfigurationPropertyOptions.IsRequired);
-			statusCodeProp = new ConfigurationProperty ("statusCode", typeof (int), null, ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey);
+			redirectProp = new ConfigurationProperty ("redirect", typeof (string), null,
+								  TypeDescriptor.GetConverter (typeof (string)),
+								  new StringValidator (1),
+								  ConfigurationPropertyOptions.IsRequired);
+			statusCodeProp = new ConfigurationProperty ("statusCode", typeof (int), null,
+								    TypeDescriptor.GetConverter (typeof (int)),
+								    new IntegerValidator (100, 999),
+								    ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey);
 			properties = new ConfigurationPropertyCollection ();
 
 			properties.Add (redirectProp);

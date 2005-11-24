@@ -1,12 +1,8 @@
 //
-// System.Web.Configuration.OutputCacheSettingsSection
+// System.Web.Configuration.ProfilePropertyNameValidator.cs
 //
 // Authors:
-//	Chris Toshok (toshok@ximian.com)
-//
-// (C) 2005 Novell, Inc (http://www.novell.com)
-//
-
+// 	Chris Toshok (toshok@ximian.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,41 +23,29 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
-using System;
-using System.Configuration;
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+//
 
 #if NET_2_0
 
-namespace System.Web.Configuration {
+using System.Configuration;
 
-	public sealed class OutputCacheSettingsSection : ConfigurationSection
+namespace System.Web.Configuration
+{
+	public class ProfilePropertyNameValidator : StringValidator
 	{
-		static ConfigurationProperty outputCacheProfilesProp;
-		static ConfigurationPropertyCollection properties;
-
-		static OutputCacheSettingsSection ()
+		public ProfilePropertyNameValidator () : base (1)
 		{
-			outputCacheProfilesProp = new ConfigurationProperty ("outputCacheProfiles", typeof (OutputCacheProfileCollection), null,
-									     null, PropertyHelper.DefaultValidator,
-									     ConfigurationPropertyOptions.None);
-			properties = new ConfigurationPropertyCollection ();
-
-			properties.Add (outputCacheProfilesProp);
 		}
 
-		[ConfigurationProperty ("outputCacheProfiles")]
-		public OutputCacheProfileCollection OutputCacheProfiles {
-			get { return (OutputCacheProfileCollection) base [outputCacheProfilesProp];}
-		}
+		[MonoTODO]
+		public override void Validate (object value)
+		{
+			base.Validate (value);
 
-		protected override ConfigurationPropertyCollection Properties {
-			get { return properties; }
+			/* XXX do additional checking too */
 		}
-
 	}
-
 }
 
 #endif
-

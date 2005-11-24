@@ -29,6 +29,7 @@
 //
 
 using System;
+using System.ComponentModel;
 using System.Configuration;
 
 #if NET_2_0
@@ -42,7 +43,10 @@ namespace System.Web.Configuration {
 
 		static WebControlsSection ()
 		{
-			clientScriptsLocationProp = new ConfigurationProperty ("clientScriptsLocation", typeof (string), "/aspnet_client/{0}/{1}/", ConfigurationPropertyOptions.IsRequired);
+			clientScriptsLocationProp = new ConfigurationProperty ("clientScriptsLocation", typeof (string), "/aspnet_client/{0}/{1}/",
+									       TypeDescriptor.GetConverter (typeof (string)),
+									       PropertyHelper.NonEmptyStringValidator,
+									       ConfigurationPropertyOptions.IsRequired);
 			properties = new ConfigurationPropertyCollection ();
 
 			properties.Add (clientScriptsLocationProp);

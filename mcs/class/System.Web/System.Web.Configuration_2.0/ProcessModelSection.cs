@@ -70,30 +70,87 @@ namespace System.Web.Configuration {
 		static ProcessModelSection ()
 		{
 			autoConfigProp = new ConfigurationProperty ("autoConfig", typeof (bool), false);
-			clientConnectedCheckProp = new ConfigurationProperty ("clientConnectedCheck", typeof (TimeSpan), TimeSpan.FromSeconds (5));
-			comAuthenticationLevelProp = new ConfigurationProperty ("comAuthenticationLevel", typeof (ProcessModelComAuthenticationLevel), ProcessModelComAuthenticationLevel.Connect);
-			comImpersonationLevelProp = new ConfigurationProperty ("comImpersonationLevel", typeof (ProcessModelComImpersonationLevel), ProcessModelComImpersonationLevel.Impersonate);
+			clientConnectedCheckProp = new ConfigurationProperty ("clientConnectedCheck", typeof (TimeSpan), TimeSpan.FromSeconds (5),
+									      PropertyHelper.InfiniteTimeSpanConverter,
+									      PropertyHelper.DefaultValidator,
+									      ConfigurationPropertyOptions.None);
+			comAuthenticationLevelProp = new ConfigurationProperty ("comAuthenticationLevel", typeof (ProcessModelComAuthenticationLevel), ProcessModelComAuthenticationLevel.Connect,
+										new GenericEnumConverter (typeof (ProcessModelComAuthenticationLevel)),
+										PropertyHelper.DefaultValidator,
+										ConfigurationPropertyOptions.None);
+			comImpersonationLevelProp = new ConfigurationProperty ("comImpersonationLevel", typeof (ProcessModelComImpersonationLevel), ProcessModelComImpersonationLevel.Impersonate,
+									       new GenericEnumConverter (typeof (ProcessModelComImpersonationLevel)),
+									       PropertyHelper.DefaultValidator,
+									       ConfigurationPropertyOptions.None);
 			cpuMaskProp = new ConfigurationProperty ("cpuMask", typeof (int), 0xffffffff);
 			enableProp = new ConfigurationProperty ("enable", typeof (bool), true);
-			idleTimeoutProp = new ConfigurationProperty ("idleTimeout", typeof (TimeSpan), TimeSpan.MaxValue);
-			logLevelProp = new ConfigurationProperty ("logLevel", typeof (ProcessModelLogLevel), ProcessModelLogLevel.Errors);
-			maxAppDomainsProp = new ConfigurationProperty ("maxAppDomains", typeof (int), 2000);
-			maxIoThreadsProp = new ConfigurationProperty ("maxIoThreads", typeof (int), 20);
-			maxWorkerThreadsProp = new ConfigurationProperty ("maxWorkerThreads", typeof (int), 20);
+			idleTimeoutProp = new ConfigurationProperty ("idleTimeout", typeof (TimeSpan), TimeSpan.MaxValue,
+								     PropertyHelper.InfiniteTimeSpanConverter,
+								     PropertyHelper.DefaultValidator,
+								     ConfigurationPropertyOptions.None);
+			logLevelProp = new ConfigurationProperty ("logLevel", typeof (ProcessModelLogLevel), ProcessModelLogLevel.Errors,
+								  new GenericEnumConverter (typeof (ProcessModelLogLevel)),
+								  PropertyHelper.DefaultValidator,
+								  ConfigurationPropertyOptions.None);
+			maxAppDomainsProp = new ConfigurationProperty ("maxAppDomains", typeof (int), 2000,
+								       TypeDescriptor.GetConverter (typeof (int)),
+								       PropertyHelper.IntFromOneToMax_1Validator,
+								       ConfigurationPropertyOptions.None);
+			maxIoThreadsProp = new ConfigurationProperty ("maxIoThreads", typeof (int), 20,
+								       TypeDescriptor.GetConverter (typeof (int)),
+								       PropertyHelper.IntFromOneToMax_1Validator,
+								       ConfigurationPropertyOptions.None);
+			maxWorkerThreadsProp = new ConfigurationProperty ("maxWorkerThreads", typeof (int), 20,
+									  TypeDescriptor.GetConverter (typeof (int)),
+									  PropertyHelper.IntFromOneToMax_1Validator,
+									  ConfigurationPropertyOptions.None);
 			memoryLimitProp = new ConfigurationProperty ("memoryLimit", typeof (int), 60);
-			minIoThreadsProp = new ConfigurationProperty ("minIoThreads", typeof (int), 1);
-			minWorkerThreadsProp = new ConfigurationProperty ("minWorkerThreads", typeof (int), 1);
+			minIoThreadsProp = new ConfigurationProperty ("minIoThreads", typeof (int), 1,
+								      TypeDescriptor.GetConverter (typeof (int)),
+								      PropertyHelper.IntFromOneToMax_1Validator,
+								      ConfigurationPropertyOptions.None);
+			minWorkerThreadsProp = new ConfigurationProperty ("minWorkerThreads", typeof (int), 1,
+									  TypeDescriptor.GetConverter (typeof (int)),
+									  PropertyHelper.IntFromOneToMax_1Validator,
+									  ConfigurationPropertyOptions.None);
 			passwordProp = new ConfigurationProperty ("password", typeof (string), "AutoGenerate");
-			pingFrequencyProp = new ConfigurationProperty ("pingFrequency", typeof (TimeSpan), TimeSpan.MaxValue);
-			pingTimeoutProp = new ConfigurationProperty ("pingTimeout", typeof (TimeSpan), TimeSpan.MaxValue);
-			requestLimitProp = new ConfigurationProperty ("requestLimit", typeof (int), Int32.MaxValue);
-			requestQueueLimitProp = new ConfigurationProperty ("requestQueueLimit", typeof (int), 5000);
-			responseDeadlockIntervalProp = new ConfigurationProperty ("responseDeadlockInterval", typeof (TimeSpan), TimeSpan.FromMinutes (3));
-			responseRestartDeadlockIntervalProp = new ConfigurationProperty ("responseRestartDeadlockInterval", typeof (TimeSpan), TimeSpan.FromMinutes (3));
-			restartQueueLimitProp = new ConfigurationProperty ("restartQueueLimit", typeof (int), 10);
+			pingFrequencyProp = new ConfigurationProperty ("pingFrequency", typeof (TimeSpan), TimeSpan.MaxValue,
+								       PropertyHelper.InfiniteTimeSpanConverter,
+								       PropertyHelper.DefaultValidator,
+								       ConfigurationPropertyOptions.None);
+			pingTimeoutProp = new ConfigurationProperty ("pingTimeout", typeof (TimeSpan), TimeSpan.MaxValue,
+								     PropertyHelper.InfiniteTimeSpanConverter,
+								     PropertyHelper.DefaultValidator,
+								     ConfigurationPropertyOptions.None);
+			requestLimitProp = new ConfigurationProperty ("requestLimit", typeof (int), Int32.MaxValue,
+								      PropertyHelper.InfiniteIntConverter,
+								      PropertyHelper.IntFromZeroToMaxValidator,
+								      ConfigurationPropertyOptions.None);
+			requestQueueLimitProp = new ConfigurationProperty ("requestQueueLimit", typeof (int), 5000,
+								      PropertyHelper.InfiniteIntConverter,
+								      PropertyHelper.IntFromZeroToMaxValidator,
+								      ConfigurationPropertyOptions.None);
+			responseDeadlockIntervalProp = new ConfigurationProperty ("responseDeadlockInterval", typeof (TimeSpan), TimeSpan.FromMinutes (3),
+										  PropertyHelper.InfiniteTimeSpanConverter,
+										  PropertyHelper.PositiveTimeSpanValidator,
+										  ConfigurationPropertyOptions.None);
+			responseRestartDeadlockIntervalProp = new ConfigurationProperty ("responseRestartDeadlockInterval", typeof (TimeSpan), TimeSpan.FromMinutes (3),
+											 PropertyHelper.InfiniteTimeSpanConverter,
+											 PropertyHelper.DefaultValidator,
+											 ConfigurationPropertyOptions.None);
+			restartQueueLimitProp = new ConfigurationProperty ("restartQueueLimit", typeof (int), 10,
+									   PropertyHelper.InfiniteIntConverter,
+									   PropertyHelper.IntFromZeroToMaxValidator,
+									   ConfigurationPropertyOptions.None);
 			serverErrorMessageFileProp = new ConfigurationProperty ("serverErrorMessageFile", typeof (string), "");
-			shutdownTimeoutProp = new ConfigurationProperty ("shutdownTimeout", typeof (TimeSpan), TimeSpan.FromSeconds (5));
-			timeoutProp = new ConfigurationProperty ("timeout", typeof (TimeSpan), TimeSpan.MaxValue);
+			shutdownTimeoutProp = new ConfigurationProperty ("shutdownTimeout", typeof (TimeSpan), TimeSpan.FromSeconds (5),
+									 PropertyHelper.InfiniteTimeSpanConverter,
+									 PropertyHelper.PositiveTimeSpanValidator,
+									 ConfigurationPropertyOptions.None);
+			timeoutProp = new ConfigurationProperty ("timeout", typeof (TimeSpan), TimeSpan.MaxValue,
+								 PropertyHelper.InfiniteTimeSpanConverter,
+								 PropertyHelper.DefaultValidator,
+								 ConfigurationPropertyOptions.None);
 			userNameProp = new ConfigurationProperty ("userName", typeof (string), "machine");
 			webGardenProp = new ConfigurationProperty ("webGarden", typeof (bool), false);
 			properties = new ConfigurationPropertyCollection ();

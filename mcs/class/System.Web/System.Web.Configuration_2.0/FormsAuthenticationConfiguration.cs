@@ -55,18 +55,40 @@ namespace System.Web.Configuration
 
 		static FormsAuthenticationConfiguration ()
 		{
-			cookielessProp = new ConfigurationProperty ("cookieless", typeof (HttpCookieMode), HttpCookieMode.UseDeviceProfile);
-			credentialsProp = new ConfigurationProperty ("credentials", typeof (FormsAuthenticationCredentials), null);
-			defaultUrlProp = new ConfigurationProperty ("defaultUrl", typeof (string), "default.aspx");
+			cookielessProp = new ConfigurationProperty ("cookieless", typeof (HttpCookieMode), HttpCookieMode.UseDeviceProfile,
+								    new GenericEnumConverter (typeof (HttpCookieMode)), PropertyHelper.DefaultValidator,
+								    ConfigurationPropertyOptions.None);
+			credentialsProp = new ConfigurationProperty ("credentials", typeof (FormsAuthenticationCredentials), null,
+								     null, PropertyHelper.DefaultValidator,
+								     ConfigurationPropertyOptions.None);
+			defaultUrlProp = new ConfigurationProperty ("defaultUrl", typeof (string), "default.aspx",
+								    TypeDescriptor.GetConverter (typeof (string)),
+								    PropertyHelper.NonEmptyStringValidator,
+								    ConfigurationPropertyOptions.None);
 			domainProp = new ConfigurationProperty ("domain", typeof (string), "");
 			enableCrossAppRedirectsProp = new ConfigurationProperty ("enableCrossAppRedirects", typeof (bool), false);
-			loginUrlProp = new ConfigurationProperty ("loginUrl", typeof (string), "login.aspx");
-			nameProp = new ConfigurationProperty ("name", typeof (string), ".ASPXAUTH");
-			pathProp = new ConfigurationProperty ("path", typeof (string), "/");
-			protectionProp = new ConfigurationProperty ("protection", typeof (FormsProtectionEnum), FormsProtectionEnum.All);
+			loginUrlProp = new ConfigurationProperty ("loginUrl", typeof (string), "login.aspx",
+								    TypeDescriptor.GetConverter (typeof (string)),
+								    PropertyHelper.NonEmptyStringValidator,
+								    ConfigurationPropertyOptions.None);
+			nameProp = new ConfigurationProperty ("name", typeof (string), ".ASPXAUTH",
+							      TypeDescriptor.GetConverter (typeof (string)),
+							      PropertyHelper.NonEmptyStringValidator,
+							      ConfigurationPropertyOptions.None);
+			pathProp = new ConfigurationProperty ("path", typeof (string), "/",
+							      TypeDescriptor.GetConverter (typeof (string)),
+							      PropertyHelper.NonEmptyStringValidator,
+							      ConfigurationPropertyOptions.None);
+			protectionProp = new ConfigurationProperty ("protection", typeof (FormsProtectionEnum), FormsProtectionEnum.All,
+								    new GenericEnumConverter (typeof (FormsProtectionEnum)),
+								    PropertyHelper.DefaultValidator,
+								    ConfigurationPropertyOptions.None);
 			requireSSLProp = new ConfigurationProperty ("requireSSL", typeof (bool), false);
 			slidingExpirationProp = new ConfigurationProperty ("slidingExpiration", typeof (bool), true);
-			timeoutProp = new ConfigurationProperty ("timeout", typeof (TimeSpan), TimeSpan.FromMinutes (30));
+			timeoutProp = new ConfigurationProperty ("timeout", typeof (TimeSpan), TimeSpan.FromMinutes (30),
+								 PropertyHelper.TimeSpanMinutesConverter,
+								 new TimeSpanValidator (new TimeSpan (0,0,0,0), TimeSpan.MaxValue),
+								 ConfigurationPropertyOptions.None);
 
 			properties = new ConfigurationPropertyCollection ();
 			properties.Add (cookielessProp);

@@ -42,7 +42,9 @@ namespace System.Web.Configuration {
 
 		static AuthorizationSection ()
 		{
-			rulesProp = new ConfigurationProperty ("", typeof (AuthorizationRuleCollection), null, ConfigurationPropertyOptions.IsDefaultCollection);
+			rulesProp = new ConfigurationProperty ("", typeof (AuthorizationRuleCollection), null,
+							       null, PropertyHelper.DefaultValidator,
+							       ConfigurationPropertyOptions.IsDefaultCollection);
 			properties = new ConfigurationPropertyCollection ();
 
 			properties.Add (rulesProp);

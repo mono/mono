@@ -32,6 +32,7 @@
 
 using System;
 using System.CodeDom.Compiler;
+using System.ComponentModel;
 using System.Configuration;
 
 namespace System.Web.Configuration
@@ -52,7 +53,10 @@ namespace System.Web.Configuration
 			extensionProp = new ConfigurationProperty("extension", typeof (string), "");
 			languageProp = new ConfigurationProperty("language", typeof (string), "", ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey);
 			typeProp = new ConfigurationProperty("type", typeof (string), "", ConfigurationPropertyOptions.IsRequired);
-			warningLevelProp = new ConfigurationProperty("warningLevel", typeof (int), 0);
+			warningLevelProp = new ConfigurationProperty("warningLevel", typeof (int), 0,
+								     TypeDescriptor.GetConverter (typeof (int)),
+								     new IntegerValidator (0, 4),
+								     ConfigurationPropertyOptions.None);
 
 			properties = new ConfigurationPropertyCollection ();
 			properties.Add (compilerOptionsProp);

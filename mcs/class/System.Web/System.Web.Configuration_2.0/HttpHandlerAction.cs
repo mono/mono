@@ -31,6 +31,7 @@
 #if NET_2_0
 
 using System;
+using System.ComponentModel;
 using System.Configuration;
 
 namespace System.Web.Configuration
@@ -46,11 +47,18 @@ namespace System.Web.Configuration
 		static HttpHandlerAction ()
 		{
 			pathProp = new ConfigurationProperty ("path", typeof (string), null,
+							      TypeDescriptor.GetConverter (typeof (string)),
+							      PropertyHelper.NonEmptyStringValidator,
 							      ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey);
 			typeProp = new ConfigurationProperty ("type", typeof (string), null,
+							      TypeDescriptor.GetConverter (typeof (string)),
+							      PropertyHelper.NonEmptyStringValidator,
 							      ConfigurationPropertyOptions.IsRequired);
 			validateProp = new ConfigurationProperty ("validate", typeof (bool), true);
-			verbProp = new ConfigurationProperty ("verb", typeof (string), null, ConfigurationPropertyOptions.IsRequired);
+			verbProp = new ConfigurationProperty ("verb", typeof (string), null,
+							      TypeDescriptor.GetConverter (typeof (string)),
+							      PropertyHelper.NonEmptyStringValidator,
+							      ConfigurationPropertyOptions.IsRequired);
 
 			_properties = new ConfigurationPropertyCollection ();
 			_properties.Add (pathProp);
@@ -72,12 +80,14 @@ namespace System.Web.Configuration
 		}
 
 		[ConfigurationProperty ("path", Options = ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey)]
+		// LAMESPEC: MS lists no validator here but provides one in Properties.
 		public string Path {
 			get { return (string) base[pathProp]; }
 			set { base[pathProp] = value; }
 		}
 
 		[ConfigurationProperty ("type", Options = ConfigurationPropertyOptions.IsRequired)]
+		// LAMESPEC: MS lists no validator here but provides one in Properties.
 		public string Type {
 			get { return (string) base[typeProp]; }
 			set { base[typeProp] = value; }
@@ -90,6 +100,7 @@ namespace System.Web.Configuration
 		}
 
 		[ConfigurationProperty ("verb", Options = ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey)]
+		// LAMESPEC: MS lists no validator here but provides one in Properties.
 		public string Verb {
 			get { return (string) base[verbProp]; }
 			set { base[verbProp] = value; }

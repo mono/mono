@@ -57,14 +57,31 @@ namespace System.Web.Configuration {
 		static RoleManagerSection ()
 		{
 			cacheRolesInCookieProp = new ConfigurationProperty ("cacheRolesInCookie", typeof (bool), false);
-			cookieNameProp = new ConfigurationProperty ("cookieName", typeof (string), ".ASPXROLES");
-			cookiePathProp = new ConfigurationProperty ("cookiePath", typeof (string), "/");
-			cookieProtectionProp = new ConfigurationProperty ("cookieProtection", typeof (CookieProtection), CookieProtection.All);
+			cookieNameProp = new ConfigurationProperty ("cookieName", typeof (string), ".ASPXROLES",
+								    PropertyHelper.WhiteSpaceTrimStringConverter,
+								    PropertyHelper.NonEmptyStringValidator,
+								    ConfigurationPropertyOptions.None);
+			cookiePathProp = new ConfigurationProperty ("cookiePath", typeof (string), "/",
+								    PropertyHelper.WhiteSpaceTrimStringConverter,
+								    PropertyHelper.NonEmptyStringValidator,
+								    ConfigurationPropertyOptions.None);
+			cookieProtectionProp = new ConfigurationProperty ("cookieProtection", typeof (CookieProtection), CookieProtection.All,
+									  new GenericEnumConverter (typeof (CookieProtection)),
+									  PropertyHelper.DefaultValidator,
+									  ConfigurationPropertyOptions.None);
 			cookieRequireSSLProp = new ConfigurationProperty ("cookieRequireSSL", typeof (bool), false);
 			cookieSlidingExpirationProp = new ConfigurationProperty ("cookieSlidingExpiration", typeof (bool), true);
-			cookieTimeoutProp = new ConfigurationProperty ("cookieTimeout", typeof (TimeSpan), TimeSpan.FromMinutes (30));
+			cookieTimeoutProp = new ConfigurationProperty ("cookieTimeout", typeof (TimeSpan), TimeSpan.FromMinutes (30),
+								       PropertyHelper.TimeSpanMinutesOrInfiniteConverter,
+								       PropertyHelper.PositiveTimeSpanValidator,
+								       ConfigurationPropertyOptions.None);
 			createPersistentCookieProp = new ConfigurationProperty ("createPersistentCookie", typeof (bool), false);
-			defaultProviderProp = new ConfigurationProperty ("defaultProvider", typeof (string), "AspNetSqlRoleProvider");
+			defaultProviderProp = new ConfigurationProperty ("defaultProvider", typeof (string), "AspNetSqlRoleProvider",
+									 /* XXX lame. MS decorates with WhiteSpaceTrimStringConverter but
+									    provides the normal string converter here */
+									 TypeDescriptor.GetConverter (typeof (string)),
+									 PropertyHelper.NonEmptyStringValidator,
+									 ConfigurationPropertyOptions.None);
 			domainProp = new ConfigurationProperty ("domain", typeof (string));
 			enabledProp = new ConfigurationProperty ("enabled", typeof (bool), false);
 			maxCachedResultsProp = new ConfigurationProperty ("maxCachedResults", typeof (int), 25);

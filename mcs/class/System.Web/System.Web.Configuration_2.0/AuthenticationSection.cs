@@ -44,9 +44,18 @@ namespace System.Web.Configuration
 		
 		static AuthenticationSection ()
 		{
-			formsProp = new ConfigurationProperty ("forms", typeof(FormsAuthenticationConfiguration), null);
-			passportProp = new ConfigurationProperty ("passport", typeof(PassportAuthentication), null);
-			modeProp = new ConfigurationProperty ("mode", typeof(AuthenticationMode), AuthenticationMode.Windows);
+			formsProp = new ConfigurationProperty ("forms", typeof(FormsAuthenticationConfiguration), null,
+							       null,
+							       PropertyHelper.DefaultValidator,
+							       ConfigurationPropertyOptions.None);
+			passportProp = new ConfigurationProperty ("passport", typeof(PassportAuthentication), null,
+								  null,
+								  PropertyHelper.DefaultValidator,
+								  ConfigurationPropertyOptions.None);
+			modeProp = new ConfigurationProperty ("mode", typeof(AuthenticationMode), AuthenticationMode.Windows,
+							      new GenericEnumConverter (typeof (AuthenticationMode)),
+							      PropertyHelper.DefaultValidator,
+							      ConfigurationPropertyOptions.None);
 
 			properties = new ConfigurationPropertyCollection ();
 			properties.Add (formsProp);

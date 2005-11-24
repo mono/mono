@@ -47,10 +47,18 @@ namespace System.Web.Configuration {
 
 		static MembershipSection ()
 		{
-			defaultProviderProp = new ConfigurationProperty ("defaultProvider", typeof (string), "AspNetSqlMembershipProvider");
+			defaultProviderProp = new ConfigurationProperty ("defaultProvider", typeof (string), "AspNetSqlMembershipProvider",
+									 TypeDescriptor.GetConverter (typeof (string)),
+									 PropertyHelper.NonEmptyStringValidator,
+									 ConfigurationPropertyOptions.None);
 			hashAlgorithmTypeProp = new ConfigurationProperty ("hashAlgorithmType", typeof (string), "");
-			providersProp = new ConfigurationProperty ("providers", typeof (ProviderSettingsCollection));
-			userIsOnlineTimeWindowProp = new ConfigurationProperty ("userIsOnlineTimeWindow", typeof (TimeSpan), TimeSpan.FromMinutes (15));
+			providersProp = new ConfigurationProperty ("providers", typeof (ProviderSettingsCollection), null,
+								   null, PropertyHelper.DefaultValidator,
+								   ConfigurationPropertyOptions.None);
+			userIsOnlineTimeWindowProp = new ConfigurationProperty ("userIsOnlineTimeWindow", typeof (TimeSpan), TimeSpan.FromMinutes (15),
+										PropertyHelper.TimeSpanMinutesConverter,
+										new TimeSpanValidator (new TimeSpan (0,1,0), TimeSpan.MaxValue),
+										ConfigurationPropertyOptions.None);
 			properties = new ConfigurationPropertyCollection ();
 
 			properties.Add (defaultProviderProp);

@@ -31,6 +31,7 @@
 
 #if NET_2_0
 using System;
+using System.ComponentModel;
 using System.Configuration;
 
 namespace System.Web.Configuration
@@ -43,9 +44,12 @@ namespace System.Web.Configuration
 
 		static BuildProvider ()
 		{
-			StringValidator sv = new StringValidator (1);
-			extensionProp = new ConfigurationProperty ("extension", typeof (string), "", null, sv, ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey);
-			typeProp = new ConfigurationProperty ("type", typeof (string), "", null, sv, ConfigurationPropertyOptions.IsRequired);
+			extensionProp = new ConfigurationProperty ("extension", typeof (string), "",
+								   TypeDescriptor.GetConverter (typeof (string)), PropertyHelper.NonEmptyStringValidator,
+								   ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey);
+			typeProp = new ConfigurationProperty ("type", typeof (string), "",
+							      TypeDescriptor.GetConverter (typeof (string)), PropertyHelper.NonEmptyStringValidator,
+							      ConfigurationPropertyOptions.IsRequired);
 			properties = new ConfigurationPropertyCollection();
 
 			properties.Add (extensionProp);

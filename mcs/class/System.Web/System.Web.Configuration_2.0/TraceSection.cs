@@ -30,6 +30,7 @@
 
 
 using System;
+using System.ComponentModel;
 using System.Configuration;
 
 #if NET_2_0
@@ -53,7 +54,10 @@ namespace System.Web.Configuration {
 			localOnlyProp = new ConfigurationProperty ("localOnly", typeof (bool), true);
 			mostRecentProp = new ConfigurationProperty ("mostRecent", typeof (bool), false);
 			pageOutputProp = new ConfigurationProperty ("pageOutput", typeof (bool), false);
-			requestLimitProp = new ConfigurationProperty ("requestLimit", typeof (int), 10);
+			requestLimitProp = new ConfigurationProperty ("requestLimit", typeof (int), 10,
+								      TypeDescriptor.GetConverter (typeof (int)),
+								      PropertyHelper.IntFromZeroToMaxValidator,
+								      ConfigurationPropertyOptions.None);
 			traceModeProp = new ConfigurationProperty ("traceMode", typeof (TraceDisplayMode), TraceDisplayMode.SortByTime);
 			writeToDiagnosticsTraceProp = new ConfigurationProperty ("writeToDiagnosticsTrace", typeof (bool), false);
 			properties = new ConfigurationPropertyCollection ();

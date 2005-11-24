@@ -49,29 +49,36 @@ namespace System.Web.Configuration {
 
 		static BufferModeSettings ()
 		{
-			InfiniteIntConverter infIntCvt = new InfiniteIntConverter ();
 			IntegerValidator iv = new IntegerValidator (1, Int32.MaxValue);
-			InfiniteTimeSpanConverter infTSCvt = new InfiniteTimeSpanConverter ();
 			
-			maxBufferSizeProp = new ConfigurationProperty ("maxBufferSize", typeof (int), Int32.MaxValue, infIntCvt, iv, ConfigurationPropertyOptions.IsRequired);
-			maxBufferThreadsProp = new ConfigurationProperty ("maxBufferThreads", typeof (int), 1, infIntCvt, iv, ConfigurationPropertyOptions.None);
-			maxFlushSizeProp = new ConfigurationProperty ("maxFlushSize", typeof (int), Int32.MaxValue, infIntCvt, iv, ConfigurationPropertyOptions.IsRequired);
-			nameProp = new ConfigurationProperty ("name", typeof (string), "", null, new StringValidator (1), ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey);
+			maxBufferSizeProp = new ConfigurationProperty ("maxBufferSize", typeof (int), Int32.MaxValue,
+								       PropertyHelper.InfiniteIntConverter, iv,
+								       ConfigurationPropertyOptions.IsRequired);
+			maxBufferThreadsProp = new ConfigurationProperty ("maxBufferThreads", typeof (int), 1,
+									  PropertyHelper.InfiniteIntConverter, iv,
+									  ConfigurationPropertyOptions.None);
+			maxFlushSizeProp = new ConfigurationProperty ("maxFlushSize", typeof (int), Int32.MaxValue,
+								      PropertyHelper.InfiniteIntConverter, iv,
+								      ConfigurationPropertyOptions.IsRequired);
+			nameProp = new ConfigurationProperty ("name", typeof (string), "",
+							      TypeDescriptor.GetConverter (typeof (string)), PropertyHelper.NonEmptyStringValidator,
+							      ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey);
 			regularFlushIntervalProp = new ConfigurationProperty ("regularFlushInterval", typeof (TimeSpan), TimeSpan.FromSeconds (1),
-									      infTSCvt, new TimeSpanValidator (TimeSpan.Zero, TimeSpan.MaxValue),
+									      PropertyHelper.InfiniteTimeSpanConverter,
+									      PropertyHelper.PositiveTimeSpanValidator,
 									      ConfigurationPropertyOptions.IsRequired);
 			urgentFlushIntervalProp = new ConfigurationProperty ("urgentFlushInterval", typeof (TimeSpan), TimeSpan.FromSeconds (0),
-									     infTSCvt, null,
+									     PropertyHelper.InfiniteTimeSpanConverter, null,
 									     ConfigurationPropertyOptions.IsRequired);
 			urgentFlushThresholdProp = new ConfigurationProperty ("urgentFlushThreshold", typeof (int), Int32.MaxValue,
-									      infIntCvt, iv,
+									      PropertyHelper.InfiniteIntConverter, iv,
 									      ConfigurationPropertyOptions.IsRequired);
 			properties = new ConfigurationPropertyCollection ();
 
+			properties.Add (nameProp);
 			properties.Add (maxBufferSizeProp);
 			properties.Add (maxBufferThreadsProp);
 			properties.Add (maxFlushSizeProp);
-			properties.Add (nameProp);
 			properties.Add (regularFlushIntervalProp);
 			properties.Add (urgentFlushIntervalProp);
 			properties.Add (urgentFlushThresholdProp);

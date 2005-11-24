@@ -70,8 +70,14 @@ namespace System.Web.Configuration {
 			sqlCommandTimeoutProp = new ConfigurationProperty ("sqlCommandTimeout", typeof (TimeSpan), TimeSpan.FromSeconds (30));
 			sqlConnectionStringProp = new ConfigurationProperty ("sqlConnectionString", typeof (string), "data source=localhost;Integrated Security=SSPI");
 			stateConnectionStringProp = new ConfigurationProperty ("stateConnectionString", typeof (string), "tcpip=loopback:42424");
-			stateNetworkTimeoutProp = new ConfigurationProperty ("stateNetworkTimeout", typeof (TimeSpan), TimeSpan.FromSeconds (10));
-			timeoutProp = new ConfigurationProperty ("timeout", typeof (TimeSpan), TimeSpan.FromMinutes (20));
+			stateNetworkTimeoutProp = new ConfigurationProperty ("stateNetworkTimeout", typeof (TimeSpan), TimeSpan.FromSeconds (10),
+									     PropertyHelper.TimeSpanSecondsOrInfiniteConverter,
+									     PropertyHelper.PositiveTimeSpanValidator,
+									     ConfigurationPropertyOptions.None);
+			timeoutProp = new ConfigurationProperty ("timeout", typeof (TimeSpan), TimeSpan.FromMinutes (20),
+								 PropertyHelper.TimeSpanMinutesOrInfiniteConverter,
+								 new TimeSpanValidator (new TimeSpan (0,1,0), TimeSpan.MaxValue),
+								 ConfigurationPropertyOptions.None);
 			useHostingIdentityProp = new ConfigurationProperty ("useHostingIdentity", typeof (bool), true);
 			properties = new ConfigurationPropertyCollection ();
 
@@ -172,6 +178,7 @@ namespace System.Web.Configuration {
 
 		[TypeConverter (typeof (TimeSpanSecondsOrInfiniteConverter))]
 		[ConfigurationProperty ("stateNetworkTimeout", DefaultValue = "00:00:10")]
+		// LAMESPEC: MS lists no validator here but provides one in Properties.
 		public TimeSpan StateNetworkTimeout {
 			get { return (TimeSpan) base [stateNetworkTimeoutProp];}
 			set { base[stateNetworkTimeoutProp] = value; }

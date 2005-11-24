@@ -49,13 +49,26 @@ namespace System.Web.Configuration {
 
 		static HealthMonitoringSection ()
 		{
-			bufferModesProp = new ConfigurationProperty ("bufferModes", typeof (BufferModesCollection));
+			bufferModesProp = new ConfigurationProperty ("bufferModes", typeof (BufferModesCollection), null,
+								     null, PropertyHelper.DefaultValidator,
+								     ConfigurationPropertyOptions.None);
 			enabledProp = new ConfigurationProperty ("enabled", typeof (bool), true);
-			eventMappingsProp = new ConfigurationProperty ("eventMappings", typeof (EventMappingSettingsCollection));
-			heartbeatIntervalProp = new ConfigurationProperty ("heartbeatInterval", typeof (TimeSpan), TimeSpan.FromSeconds (0));
-			profilesProp = new ConfigurationProperty ("profiles", typeof (ProfileSettingsCollection));
-			providersProp = new ConfigurationProperty ("providers", typeof (ProviderSettingsCollection));
-			rulesProp = new ConfigurationProperty ("rules", typeof (RuleSettingsCollection));
+			eventMappingsProp = new ConfigurationProperty ("eventMappings", typeof (EventMappingSettingsCollection), null,
+								       null, PropertyHelper.DefaultValidator,
+								       ConfigurationPropertyOptions.None);
+			heartbeatIntervalProp = new ConfigurationProperty ("heartbeatInterval", typeof (TimeSpan), TimeSpan.FromSeconds (0),
+									   PropertyHelper.TimeSpanSecondsConverter,
+									   new TimeSpanValidator (TimeSpan.Zero, new TimeSpan (24,30,31,23)),
+									   ConfigurationPropertyOptions.None);
+			profilesProp = new ConfigurationProperty ("profiles", typeof (ProfileSettingsCollection), null,
+								  null, PropertyHelper.DefaultValidator,
+								  ConfigurationPropertyOptions.None);
+			providersProp = new ConfigurationProperty ("providers", typeof (ProviderSettingsCollection), null,
+								   null, PropertyHelper.DefaultValidator,
+								   ConfigurationPropertyOptions.None);
+			rulesProp = new ConfigurationProperty ("rules", typeof (RuleSettingsCollection), null,
+							       null, PropertyHelper.DefaultValidator,
+							       ConfigurationPropertyOptions.None);
 			properties = new ConfigurationPropertyCollection ();
 
 			properties.Add (bufferModesProp);

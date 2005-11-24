@@ -29,6 +29,7 @@
 //
 
 using System;
+using System.ComponentModel;
 using System.Configuration;
 
 #if NET_2_0
@@ -44,7 +45,10 @@ namespace System.Web.Configuration {
 
 		static SessionPageStateSection ()
 		{
-			historySizeProp = new ConfigurationProperty ("historySize", typeof (int), DefaultHistorySize);
+			historySizeProp = new ConfigurationProperty ("historySize", typeof (int), DefaultHistorySize,
+								     TypeDescriptor.GetConverter (typeof (int)),
+								     new IntegerValidator (1, Int32.MaxValue),
+								     ConfigurationPropertyOptions.None);
 			properties = new ConfigurationPropertyCollection ();
 
 			properties.Add (historySizeProp);

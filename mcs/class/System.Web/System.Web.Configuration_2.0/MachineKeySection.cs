@@ -46,10 +46,23 @@ namespace System.Web.Configuration {
 
 		static MachineKeySection ()
 		{
-			decryptionProp = new ConfigurationProperty ("decryption", typeof (string), "Auto");
-			decryptionKeyProp = new ConfigurationProperty ("decryptionKey", typeof (string), "AutoGenerate,IsolateApps");
-			validationProp = new ConfigurationProperty ("validation", typeof (MachineKeyValidation), MachineKeyValidation.SHA1);
-			validationKeyProp = new ConfigurationProperty ("validationKey", typeof (string), "AutoGenerate,IsolateApps");
+			decryptionProp = new ConfigurationProperty ("decryption", typeof (string), "Auto",
+								    PropertyHelper.WhiteSpaceTrimStringConverter,
+								    PropertyHelper.NonEmptyStringValidator,
+								    ConfigurationPropertyOptions.None);
+			decryptionKeyProp = new ConfigurationProperty ("decryptionKey", typeof (string), "AutoGenerate,IsolateApps",
+								       PropertyHelper.WhiteSpaceTrimStringConverter,
+								       PropertyHelper.NonEmptyStringValidator,
+								       ConfigurationPropertyOptions.None);
+			validationProp = new ConfigurationProperty ("validation", typeof (MachineKeyValidation), MachineKeyValidation.SHA1,
+								    new MachineKeyValidationConverter (),
+								    PropertyHelper.DefaultValidator,
+								    ConfigurationPropertyOptions.None);
+			validationKeyProp = new ConfigurationProperty ("validationKey", typeof (string), "AutoGenerate,IsolateApps",
+								       PropertyHelper.WhiteSpaceTrimStringConverter,
+								       PropertyHelper.NonEmptyStringValidator,
+								       ConfigurationPropertyOptions.None);
+
 			properties = new ConfigurationPropertyCollection ();
 
 			properties.Add (decryptionProp);
@@ -81,9 +94,7 @@ namespace System.Web.Configuration {
 			set { base[decryptionKeyProp] = value; }
 		}
 
-#if notyet
 		[TypeConverter (typeof (MachineKeyValidationConverter))]
-#endif
 		[ConfigurationProperty ("validation", DefaultValue = "SHA1")]
 		public MachineKeyValidation Validation {
 			get { return (MachineKeyValidation) base [validationProp];}

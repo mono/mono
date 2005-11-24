@@ -29,6 +29,7 @@
 //
 
 using System;
+using System.ComponentModel;
 using System.Configuration;
 
 #if NET_2_0
@@ -43,7 +44,10 @@ namespace System.Web.Configuration {
 
 		static TrustLevel ()
 		{
-			nameProp = new ConfigurationProperty ("name", typeof (string), "Full", ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey);
+			nameProp = new ConfigurationProperty ("name", typeof (string), "Full",
+							      TypeDescriptor.GetConverter (typeof (string)),
+							      PropertyHelper.NonEmptyStringValidator,
+							      ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey);
 			policyFileProp = new ConfigurationProperty ("policyFile", typeof (string), "internal", ConfigurationPropertyOptions.IsRequired);
 			properties = new ConfigurationPropertyCollection ();
 

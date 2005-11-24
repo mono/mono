@@ -43,7 +43,9 @@ namespace System.Web.Configuration
 		public HttpModulesSection ()
 		{
 			properties = new ConfigurationPropertyCollection ();
-			modulesProp = new ConfigurationProperty ("", typeof (HttpModuleActionCollection), null, ConfigurationPropertyOptions.IsDefaultCollection);
+			modulesProp = new ConfigurationProperty ("", typeof (HttpModuleActionCollection), null,
+								 null, PropertyHelper.DefaultValidator,
+								 ConfigurationPropertyOptions.IsDefaultCollection);
 			properties.Add (modulesProp);
 		}
 

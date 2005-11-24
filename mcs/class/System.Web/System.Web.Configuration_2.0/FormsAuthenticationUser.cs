@@ -43,7 +43,10 @@ namespace System.Web.Configuration
 
 		static FormsAuthenticationUser ()
 		{
-			nameProp = new ConfigurationProperty ("name", typeof (string), "", ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey);
+			nameProp = new ConfigurationProperty ("name", typeof (string), "",
+							      new LowerCaseStringConverter (),
+							      PropertyHelper.DefaultValidator,
+							      ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey);
 			passwordProp = new ConfigurationProperty ("password", typeof (string), "", ConfigurationPropertyOptions.IsRequired);
 
 			properties = new ConfigurationPropertyCollection ();

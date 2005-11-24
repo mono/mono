@@ -29,6 +29,7 @@
 //
 
 using System;
+using System.ComponentModel;
 using System.Configuration;
 
 #if NET_2_0
@@ -44,9 +45,16 @@ namespace System.Web.Configuration {
 
 		static WebPartsPersonalization ()
 		{
-			authorizationProp = new ConfigurationProperty ("authorization", typeof (WebPartsPersonalizationAuthorization));
-			defaultProviderProp = new ConfigurationProperty ("defaultProvider", typeof (string), "AspNetSqlPersonalizationProvider");
-			providersProp = new ConfigurationProperty ("providers", typeof (ProviderSettingsCollection));
+			authorizationProp = new ConfigurationProperty ("authorization", typeof (WebPartsPersonalizationAuthorization), null,
+								       null, PropertyHelper.DefaultValidator,
+								       ConfigurationPropertyOptions.None);
+			defaultProviderProp = new ConfigurationProperty ("defaultProvider", typeof (string), "AspNetSqlPersonalizationProvider",
+									 TypeDescriptor.GetConverter (typeof (string)),
+									 PropertyHelper.NonEmptyStringValidator,
+									 ConfigurationPropertyOptions.None);
+			providersProp = new ConfigurationProperty ("providers", typeof (ProviderSettingsCollection), null,
+								   null, PropertyHelper.DefaultValidator,
+								   ConfigurationPropertyOptions.None);
 			properties = new ConfigurationPropertyCollection ();
 
 			properties.Add (authorizationProp);

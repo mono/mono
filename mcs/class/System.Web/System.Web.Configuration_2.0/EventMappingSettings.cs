@@ -29,6 +29,7 @@
 //
 
 using System;
+using System.ComponentModel;
 using System.Configuration;
 
 #if NET_2_0
@@ -45,9 +46,18 @@ namespace System.Web.Configuration {
 
 		static EventMappingSettings ()
 		{
-			endEventCodeProp = new ConfigurationProperty ("endEventCode", typeof (int), Int32.MaxValue);
-			nameProp = new ConfigurationProperty ("name", typeof (string), "", ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey);
-			startEventCodeProp = new ConfigurationProperty ("startEventCode", typeof (int), 0);
+			endEventCodeProp = new ConfigurationProperty ("endEventCode", typeof (int), Int32.MaxValue,
+								      TypeDescriptor.GetConverter (typeof (int)),
+								      PropertyHelper.IntFromZeroToMaxValidator,
+								      ConfigurationPropertyOptions.None);
+			nameProp = new ConfigurationProperty ("name", typeof (string), "",
+							      TypeDescriptor.GetConverter (typeof (string)),
+							      PropertyHelper.NonEmptyStringValidator,
+							      ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey);
+			startEventCodeProp = new ConfigurationProperty ("startEventCode", typeof (int), 0,
+									TypeDescriptor.GetConverter (typeof (int)),
+									PropertyHelper.IntFromZeroToMaxValidator,
+									ConfigurationPropertyOptions.None);
 			typeProp = new ConfigurationProperty ("type", typeof (string), "", ConfigurationPropertyOptions.IsRequired);
 			properties = new ConfigurationPropertyCollection ();
 
@@ -79,6 +89,7 @@ namespace System.Web.Configuration {
 		}
 
 		[ConfigurationProperty ("name", DefaultValue = "", Options = ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey)]
+		// LAMESPEC: MS lists no validator here but provides one in Properties.
 		public string Name {
 			get { return (string) base [nameProp];}
 			set { base[nameProp] = value; }

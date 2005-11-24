@@ -48,10 +48,22 @@ namespace System.Web.Configuration {
 		static ProfileSettings ()
 		{
 			customProp = new ConfigurationProperty ("custom", typeof (string), "");
-			maxLimitProp = new ConfigurationProperty ("maxLimit", typeof (int), Int32.MaxValue);
-			minInstancesProp = new ConfigurationProperty ("minInstances", typeof (int), 1);
-			minIntervalProp = new ConfigurationProperty ("minInterval", typeof (TimeSpan), TimeSpan.FromSeconds (0));
-			nameProp = new ConfigurationProperty ("name", typeof (string), "", ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey);
+			maxLimitProp = new ConfigurationProperty ("maxLimit", typeof (int), Int32.MaxValue,
+								  PropertyHelper.InfiniteIntConverter,
+								  PropertyHelper.IntFromZeroToMaxValidator,
+								  ConfigurationPropertyOptions.None);
+			minInstancesProp = new ConfigurationProperty ("minInstances", typeof (int), 1,
+								      TypeDescriptor.GetConverter (typeof (int)),
+								      new IntegerValidator (1, Int32.MaxValue),
+								      ConfigurationPropertyOptions.None);
+			minIntervalProp = new ConfigurationProperty ("minInterval", typeof (TimeSpan), TimeSpan.FromSeconds (0),
+								     PropertyHelper.InfiniteTimeSpanConverter,
+								     PropertyHelper.DefaultValidator,
+								     ConfigurationPropertyOptions.None);
+			nameProp = new ConfigurationProperty ("name", typeof (string), "",
+							      TypeDescriptor.GetConverter (typeof (string)),
+							      PropertyHelper.NonEmptyStringValidator,
+							      ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey);
 			properties = new ConfigurationPropertyCollection ();
 
 			properties.Add (customProp);
