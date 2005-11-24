@@ -18,6 +18,10 @@ using System.Xml;
 namespace MonoTests.System.Xml.TestClasses
 {
 	public enum SimpleEnumeration { FIRST, SECOND };
+
+	[Flags]
+	public enum EnumDefaultValue { e1 = 1, e2 = 2, e3 = 3 }
+	public enum EnumDefaultValueNF { e1 = 1, e2 = 2, e3 = 3 }
 	
 	public class SimpleClass
 	{

@@ -1,3 +1,8 @@
+2005-11-24  Vladimir Krasnov  <vladimirk@mainsoft.com>
+	
+	* XmlTypeMapping.cs: fixed GetXmlName method, added difference
+	of value serialization of flags and non-flags enums
+
 2005-11-23  Konstantin Triger <kostat@mainsoft.com>
 
 	* XmlSchemaExporter.cs: do not import empty namespaces.

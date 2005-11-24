@@ -1,3 +1,10 @@
+2005-11-24  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* XmlSerializerTestClasses.cs: added two enum types, without 
+	0-value
+	* XmlSerializerTests.cs: added tests for serialization enum's 
+	default value
+
 2005-09-26  Lluis Sanchez Gual  <lluis@novell.com> 
 
 	* XmlSerializerTests.cs, DeserializeTests.cs, 

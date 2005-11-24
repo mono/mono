@@ -210,6 +210,18 @@ namespace MonoTests.System.XmlSerialization
 		}
 		
 		[Test]
+		public void TestSerializeEnumDefaultValue() {
+			Serialize(new EnumDefaultValue());
+			AssertEquals(Infoset("<EnumDefaultValue />"), WriterText);
+			
+			Serialize(new EnumDefaultValueNF());
+			AssertEquals(Infoset("<EnumDefaultValueNF>0</EnumDefaultValueNF>"), WriterText);
+
+			Serialize(new SimpleEnumeration());
+			AssertEquals(Infoset("<SimpleEnumeration>FIRST</SimpleEnumeration>"), WriterText);
+		}
+
+		[Test]
 		public void TestSerializeQualifiedName()
 		{
 			Serialize(new XmlQualifiedName("me", "home.urn"));
