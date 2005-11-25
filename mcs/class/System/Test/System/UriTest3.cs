@@ -169,6 +169,112 @@ namespace MonoTests.System {
 			Uri uri = null;
 			Uri.TryCreate (new Uri (absolute), (Uri) null, out uri);
 		}
+
+		[Test]
+		public void IsWellFormedUriString_Null ()
+		{
+			Assert.IsFalse (Uri.IsWellFormedUriString (null, UriKind.Absolute), "null");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void IsWellFormedUriString_Http ()
+		{
+			Assert.IsFalse (Uri.IsWellFormedUriString ("http://www.go-mono.com/Main Page", UriKind.Absolute), "http/space");
+			Assert.IsTrue (Uri.IsWellFormedUriString ("http://www.go-mono.com/Main%20Page", UriKind.Absolute), "http/%20");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void IsWellFormedUriString_BadUriKind ()
+		{
+			Uri.IsWellFormedUriString ("http://www.go-mono.com/Main Page", (UriKind)Int32.MinValue);
+		}
+
+		[Test]
+		public void Compare ()
+		{
+			Uri u1 = null;
+			Uri u2 = null;
+			Assert.AreEqual (0, Uri.Compare (u1, u2, UriComponents.AbsoluteUri, UriFormat.UriEscaped, StringComparison.CurrentCulture), "null-null");
+
+			u1 = new Uri ("http://www.go-mono.com/Main Page");
+			u2 = new Uri ("http://www.go-mono.com/Main%20Page");
+			Assert.AreEqual (0, Uri.Compare (u1, u2, UriComponents.AbsoluteUri, UriFormat.Unescaped, StringComparison.CurrentCulture), "http/space-http/%20-unescaped");
+			Assert.AreEqual (0, Uri.Compare (u1, u2, UriComponents.AbsoluteUri, UriFormat.UriEscaped, StringComparison.CurrentCulture), "http/space-http/%20-escaped");
+			Assert.AreEqual (0, Uri.Compare (u1, u2, UriComponents.AbsoluteUri, UriFormat.SafeUnescaped, StringComparison.CurrentCulture), "http/space-http/%20-safe");
+		}
+
+		[Test]
+		public void IsBaseOf ()
+		{
+			Uri http = new Uri ("http://www.mono-project.com/Main_Page#FAQ?Edit");
+			Assert.IsTrue (http.IsBaseOf (http), "http-http");
+
+			Uri u = new Uri ("http://www.mono-project.com/Main_Page#FAQ");
+			Assert.IsTrue (u.IsBaseOf (http), "http-1a");
+			Assert.IsTrue (http.IsBaseOf (u), "http-1b");
+
+			u = new Uri ("http://www.mono-project.com/Main_Page");
+			Assert.IsTrue (u.IsBaseOf (http), "http-2a");
+			Assert.IsTrue (http.IsBaseOf (u), "http-2b");
+
+			u = new Uri ("http://www.mono-project.com/");
+			Assert.IsTrue (u.IsBaseOf (http), "http-3a");
+			Assert.IsTrue (http.IsBaseOf (u), "http-3b");
+
+			u = new Uri ("http://www.mono-project.com/Main_Page/");
+			Assert.IsFalse (u.IsBaseOf (http), "http-4a");
+			Assert.IsTrue (http.IsBaseOf (u), "http-4b");
+
+			// docs says the UserInfo isn't evaluated, but...
+			u = new Uri ("http://username:password@www.mono-project.com/Main_Page");
+			Assert.IsFalse (u.IsBaseOf (http), "http-5a");
+			Assert.IsFalse (http.IsBaseOf (u), "http-5b");
+
+			// scheme case sensitive ? no
+			u = new Uri ("HTTP://www.mono-project.com/Main_Page");
+			Assert.IsTrue (u.IsBaseOf (http), "http-6a");
+			Assert.IsTrue (http.IsBaseOf (u), "http-6b");
+
+			// host case sensitive ? no
+			u = new Uri ("http://www.Mono-Project.com/Main_Page");
+			Assert.IsTrue (u.IsBaseOf (http), "http-7a");
+			Assert.IsTrue (http.IsBaseOf (u), "http-7b");
+
+			// path case sensitive ? no
+			u = new Uri ("http://www.Mono-Project.com/MAIN_Page");
+			Assert.IsTrue (u.IsBaseOf (http), "http-8a");
+			Assert.IsTrue (http.IsBaseOf (u), "http-8b");
+
+			// different scheme
+			u = new Uri ("ftp://www.mono-project.com/Main_Page");
+			Assert.IsFalse (u.IsBaseOf (http), "http-9a");
+			Assert.IsFalse (http.IsBaseOf (u), "http-9b");
+
+			// different host
+			u = new Uri ("http://www.go-mono.com/Main_Page");
+			Assert.IsFalse (u.IsBaseOf (http), "http-10a");
+			Assert.IsFalse (http.IsBaseOf (u), "http-10b");
+
+			// different port
+			u = new Uri ("http://www.mono-project.com:8080/");
+			Assert.IsFalse (u.IsBaseOf (http), "http-11a");
+			Assert.IsFalse (http.IsBaseOf (u), "http-11b");
+
+			// specify default port
+			u = new Uri ("http://www.mono-project.com:80/");
+			Assert.IsTrue (u.IsBaseOf (http), "http-12a");
+			Assert.IsTrue (http.IsBaseOf (u), "http-12b");
+		}
+
+		[Test]
+		[ExpectedException (typeof (NullReferenceException))]
+		public void IsBaseOf_Null ()
+		{
+			Uri http = new Uri ("http://www.mono-project.com/Main_Page#FAQ?Edit");
+			http.IsBaseOf (null);
+		}
 	}
 }
 

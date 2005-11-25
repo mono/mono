@@ -61,12 +61,14 @@ namespace MonoTests.System
 			AssertEquals ("#1", String.Empty, b.UserName);
 			AssertEquals ("#2", String.Empty, b.Password);
 #else
+			// NotWorking here for 1.x (bad behaviour in 1.x - may not be worth fixing)
 			AssertEquals ("#1", "myname", b.UserName);
 			AssertEquals ("#2", "mypwd", b.Password);
 #endif			
 			b = new UriBuilder ("mailto", "contoso.com");
 			b.UserName = "myname";
 			b.Password = "mypwd";
+			// NotWorking here for 2.0 - worth fixing
 			AssertEquals ("#3", "myname:mypwd", b.Uri.UserInfo);
 		}
 
