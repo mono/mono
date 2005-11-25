@@ -280,7 +280,7 @@ struct MonoCallInst {
 	gboolean virtual;
 	regmask_t used_iregs;
 	regmask_t used_fregs;
-#if defined(MONO_ARCH_HAS_XP_LOCAL_REGALLOC) || defined(__x86_64__)
+#if defined(MONO_ARCH_HAS_XP_LOCAL_REGALLOC)
 	GSList *out_ireg_args;
 	GSList *out_freg_args;
 #endif
@@ -562,7 +562,7 @@ typedef struct {
 	MonoDomain      *domain;
 
 	/* The current virtual register numbers */
-	guint32 next_ivreg, next_lvreg, next_fvreg;
+	guint32 next_vireg, next_vlreg, next_vfreg;
 
 	unsigned char   *native_code;
 	guint            code_size;
@@ -794,6 +794,8 @@ MonoType* mono_type_from_stack_type         (MonoInst *ins);
 void      mono_blockset_print               (MonoCompile *cfg, MonoBitSet *set, const char *name, guint idom);
 void      mono_print_tree                   (MonoInst *tree);
 void      mono_print_tree_nl                (MonoInst *tree);
+void      mono_print_ins_index              (int i, MonoInst *ins);
+void      mono_print_ins                    (MonoInst *ins);
 void      mono_print_code                   (MonoCompile *cfg);
 void      mono_print_method_from_ip         (void *ip);
 char     *mono_pmip                         (void *ip);
@@ -803,6 +805,8 @@ void      mono_inst_foreach                 (MonoInst *tree, MonoInstFunc func, 
 void      mono_disassemble_code             (MonoCompile *cfg, guint8 *code, int size, char *id);
 guint     mono_type_to_ldind                (MonoType *t);
 guint     mono_type_to_stind                (MonoType *t);
+guint     mono_type_to_load_membase         (MonoType *type);
+guint     mono_type_to_store_membase        (MonoType *type);
 void      mono_add_patch_info               (MonoCompile *cfg, int ip, MonoJumpInfoType type, gconstpointer target);
 void      mono_remove_patch_info            (MonoCompile *cfg, int ip);
 gpointer  mono_resolve_patch_target         (MonoMethod *method, MonoDomain *domain, guint8 *code, MonoJumpInfo *patch_info, gboolean run_cctors);

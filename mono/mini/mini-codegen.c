@@ -217,11 +217,14 @@ typedef struct {
 	regmask_t preferred_mask; /* the hreg where the register should be allocated, or 0 */
 } RegTrack;
 
-static void
-print_ins (int i, MonoInst *ins)
+void
+mono_print_ins_index (int i, MonoInst *ins)
 {
 	const char *spec = ins_spec [ins->opcode];
-	g_print ("\t%-2d %s", i, mono_inst_name (ins->opcode));
+	if (i != -1)
+		g_print ("\t%-2d %s", i, mono_inst_name (ins->opcode));
+	else
+		g_print (" %s", mono_inst_name (ins->opcode));
 	if (!spec)
 		g_error ("Unknown opcode: %s\n", mono_inst_name (ins->opcode));
 
@@ -262,7 +265,80 @@ print_ins (int i, MonoInst *ins)
 	}
 	if (spec [MONO_INST_CLOB])
 		g_print (" clobbers: %c", spec [MONO_INST_CLOB]);
+
+	switch (ins->opcode) {
+	case OP_ICONST:
+	case OP_ICOMPARE_IMM:
+		g_print (" [%d]", (int)ins->inst_c0);
+		break;
+	case OP_I8CONST:
+		g_print (" [%lld]", (long long)ins->inst_l);
+		break;
+	case OP_R8CONST:
+		g_print (" [%f]", *(double*)ins->inst_p0);
+		break;
+	case OP_R4CONST:
+		g_print (" [%f]", *(float*)ins->inst_p0);
+		break;
+	case CEE_CALL:
+	case CEE_CALLVIRT:
+	case OP_FCALL:
+	case OP_FCALLVIRT:
+	case OP_LCALL:
+	case OP_LCALLVIRT:
+	case OP_VCALL:
+	case OP_VCALLVIRT:
+	case OP_VOIDCALL:
+	case OP_VOIDCALLVIRT: {
+		MonoCallInst *call = (MonoCallInst*)ins;
+		if (call->method)
+			g_print (" [%s]", call->method->name);
+		else if (call->fptr) {
+			MonoJitICallInfo *info = mono_find_jit_icall_by_addr (call->fptr);
+			if (info)
+				g_print (" [%s]", info->name);
+		}
+		break;
+	}
+	case OP_PHI: {
+		int i;
+		g_print (" [%d (", (int)ins->inst_c0);
+		for (i = 0; i < ins->inst_phi_args [0]; i++) {
+			if (i)
+				g_print (", ");
+			g_print ("%d", ins->inst_phi_args [i + 1]);
+		}
+		g_print (")]");
+		break;
+	}
+	case CEE_BR:
+	case OP_CALL_HANDLER:
+		g_print (" [B%d]", ins->inst_target_bb->block_num);
+		break;
+	case CEE_BNE_UN:
+	case CEE_BEQ:
+	case CEE_BLT:
+	case CEE_BLT_UN:
+	case CEE_BGT:
+	case CEE_BGT_UN:
+	case CEE_BGE:
+	case CEE_BGE_UN:
+	case CEE_BLE:
+	case CEE_BLE_UN:
+		if (!(ins->flags & MONO_INST_BRLABEL))
+			g_print (" [B%dB%d]", ins->inst_true_bb->block_num, ins->inst_false_bb->block_num);
+		break;
+	default:
+		break;
+	}
+
 	g_print ("\n");
+}
+
+void
+mono_print_ins (MonoInst *ins)
+{
+	mono_print_ins_index (-1, ins);
 }
 
 static void
@@ -671,7 +747,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 			g_error ("Opcode '%s' missing from machine description file.", mono_inst_name (ins->opcode));
 		}
 		
-		DEBUG (print_ins (i, ins));
+		DEBUG (mono_print_ins_index (i, ins));
 
 		/*
 		 * TRACK FP STACK
@@ -853,7 +929,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 		sreg2_mask = sreg2_is_fp (ins) ? MONO_ARCH_CALLEE_FREGS : MONO_ARCH_CALLEE_REGS;
 
 		DEBUG (g_print ("processing:"));
-		DEBUG (print_ins (i, ins));
+		DEBUG (mono_print_ins_index (i, ins));
 
 		ip = ins->cil_code;
 
@@ -1487,7 +1563,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 			mono_regstate_free_int (rs, ins->sreg2);
 		}*/
 	
-		DEBUG (print_ins (i, ins));
+		DEBUG (mono_print_ins_index (i, ins));
 		/* this may result from a insert_before call */
 		if (!tmp->next)
 			bb->code = tmp->data;

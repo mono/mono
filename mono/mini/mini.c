@@ -90,6 +90,8 @@ int mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *st
 		   int locals_offset, MonoInst *return_var, GList *dont_inline, MonoInst **inline_args, 
 		   guint inline_offset, gboolean is_virtual_call);
 
+void mono_spill_global_vars (MonoCompile *cfg);
+
 static int mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_bblock, MonoBasicBlock *end_bblock, 
 		   int locals_offset, MonoInst *return_var, GList *dont_inline, MonoInst **inline_args, 
 		   guint inline_offset, gboolean is_virtual_call);
@@ -1101,6 +1103,119 @@ handle_enum:
 	return -1;
 }
 
+guint
+mono_type_to_store_membase (MonoType *type)
+{
+	if (type->byref)
+		return OP_STORE_MEMBASE_REG;
+
+handle_enum:
+	switch (type->type) {
+	case MONO_TYPE_I1:
+	case MONO_TYPE_U1:
+	case MONO_TYPE_BOOLEAN:
+		return OP_STOREI1_MEMBASE_REG;
+	case MONO_TYPE_I2:
+	case MONO_TYPE_U2:
+	case MONO_TYPE_CHAR:
+		return OP_STOREI2_MEMBASE_REG;
+	case MONO_TYPE_I4:
+	case MONO_TYPE_U4:
+		return OP_STOREI4_MEMBASE_REG;
+	case MONO_TYPE_I:
+	case MONO_TYPE_U:
+	case MONO_TYPE_PTR:
+	case MONO_TYPE_FNPTR:
+		return OP_STORE_MEMBASE_REG;
+	case MONO_TYPE_CLASS:
+	case MONO_TYPE_STRING:
+	case MONO_TYPE_OBJECT:
+	case MONO_TYPE_SZARRAY:
+	case MONO_TYPE_ARRAY:    
+		return OP_STORE_MEMBASE_REG;
+	case MONO_TYPE_I8:
+	case MONO_TYPE_U8:
+		return OP_STOREI8_MEMBASE_REG;
+	case MONO_TYPE_R4:
+		return OP_STORER4_MEMBASE_REG;
+	case MONO_TYPE_R8:
+		return OP_STORER8_MEMBASE_REG;
+	case MONO_TYPE_VALUETYPE:
+		if (type->data.klass->enumtype) {
+			type = type->data.klass->enum_basetype;
+			goto handle_enum;
+		}
+		return CEE_STOBJ;
+	case MONO_TYPE_TYPEDBYREF:
+		return CEE_STOBJ;
+	case MONO_TYPE_GENERICINST:
+		type = &type->data.generic_class->container_class->byval_arg;
+		goto handle_enum;
+	default:
+		g_error ("unknown type 0x%02x in type_to_store_membase", type->type);
+	}
+	return -1;
+}
+
+guint
+mono_type_to_load_membase (MonoType *type)
+{
+	if (type->byref)
+		return OP_LOAD_MEMBASE;
+
+handle_enum:
+	switch (type->type) {
+	case MONO_TYPE_I1:
+		return OP_LOADI1_MEMBASE;
+	case MONO_TYPE_U1:
+	case MONO_TYPE_BOOLEAN:
+		return OP_LOADU1_MEMBASE;
+	case MONO_TYPE_I2:
+		return OP_LOADI2_MEMBASE;
+	case MONO_TYPE_U2:
+	case MONO_TYPE_CHAR:
+		return OP_LOADU2_MEMBASE;
+	case MONO_TYPE_I4:
+		return OP_LOADI4_MEMBASE;
+	case MONO_TYPE_U4:
+		return OP_LOADU4_MEMBASE;
+	case MONO_TYPE_I:
+	case MONO_TYPE_U:
+	case MONO_TYPE_PTR:
+	case MONO_TYPE_FNPTR:
+		return OP_LOAD_MEMBASE;
+	case MONO_TYPE_CLASS:
+	case MONO_TYPE_STRING:
+	case MONO_TYPE_OBJECT:
+	case MONO_TYPE_SZARRAY:
+	case MONO_TYPE_ARRAY:    
+		return OP_LOAD_MEMBASE;
+	case MONO_TYPE_I8:
+	case MONO_TYPE_U8:
+		return OP_LOADI8_MEMBASE;
+	case MONO_TYPE_R4:
+		return OP_LOADR4_MEMBASE;
+	case MONO_TYPE_R8:
+		return OP_LOADR8_MEMBASE;
+	case MONO_TYPE_VALUETYPE:
+		if (type->data.klass->enumtype) {
+			type = type->data.klass->enum_basetype;
+			goto handle_enum;
+		}
+		g_assert_not_reached ();
+		return CEE_LDOBJ;
+	case MONO_TYPE_TYPEDBYREF:
+		g_assert_not_reached ();
+		return CEE_STOBJ;
+	case MONO_TYPE_GENERICINST:
+		type = &type->data.generic_class->container_class->byval_arg;
+		goto handle_enum;
+	default:
+		g_error ("unknown type 0x%02x in type_to_load_membase", type->type);
+	}
+	return -1;
+}
+
 /*
  * Returns the type used in the eval stack when @type is loaded.
  * FIXME: return a MonoType/MonoClass for the byref and VALUETYPE cases.
@@ -1587,6 +1702,7 @@ mono_compile_create_var (MonoCompile *cfg, MonoType *type, int opcode)
 	inst->inst_c0 = num;
 	inst->inst_vtype = type;
 	inst->klass = mono_class_from_mono_type (type);
+	type_to_eval_stack_type (type, inst);
 	/* if set to 1 the variable is native */
 	inst->unused = 0;
 
@@ -1610,7 +1726,7 @@ mono_compile_create_var (MonoCompile *cfg, MonoType *type, int opcode)
 		case MONO_TYPE_SZARRAY:
 		case MONO_TYPE_ARRAY:    
 			/* FIXME: call alloc_dreg */
-			inst->dreg = cfg->next_ivreg ++;
+			inst->dreg = cfg->next_vireg ++;
 			break;
 		default:
 			NOT_IMPLEMENTED;
@@ -9233,8 +9349,8 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 
 	if (cfg->new_ir) {
 		cfg->rs = mono_regstate_new ();
-		cfg->next_ivreg = cfg->rs->next_vireg;
-		cfg->next_fvreg = cfg->rs->next_vfreg;
+		cfg->next_vireg = cfg->rs->next_vireg;
+		cfg->next_vfreg = cfg->rs->next_vfreg;
 	}
 
 	/*
@@ -9445,6 +9561,19 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 	if (cfg->new_ir) {
 		MonoBasicBlock *bb;
 
+		mono_spill_global_vars (cfg);
+
+		if (cfg->verbose_level >= 4) {
+			for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
+				MonoInst *tree = bb->code;	
+				g_print ("DUMP BLOCK %d:\n", bb->block_num);
+				if (!tree)
+					continue;
+				for (; tree; tree = tree->next) {
+					mono_print_ins_index (-1, tree);
+				}
+			}
+		}
 		/* FIXME: branch inverting */	
 
 		/* FIXME: */

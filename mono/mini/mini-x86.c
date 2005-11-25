@@ -1245,6 +1245,7 @@ peephole_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 			}
 			break;
 		case OP_COMPARE_IMM:
+		case OP_ICOMPARE_IMM:
 			/* OP_COMPARE_IMM (reg, 0) 
 			 * --> 
 			 * OP_X86_TEST_NULL (reg) 
@@ -1793,6 +1794,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			x86_alu_reg_reg (code, X86_CMP, ins->sreg1, ins->sreg2);
 			break;
 		case OP_COMPARE_IMM:
+		case OP_ICOMPARE_IMM:
 			x86_alu_reg_imm (code, X86_CMP, ins->sreg1, ins->inst_imm);
 			break;
 		case OP_X86_COMPARE_MEMBASE_REG:

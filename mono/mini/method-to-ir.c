@@ -118,13 +118,13 @@ static MonoDebugOptions debug_options;
 static inline guint32
 alloc_ireg (MonoCompile *cfg)
 {
-	return cfg->next_ivreg ++;
+	return cfg->next_vireg ++;
 }
 
 static inline guint32
 alloc_freg (MonoCompile *cfg)
 {
-	return cfg->next_fvreg ++;
+	return cfg->next_vfreg ++;
 }
 
 static inline guint32
@@ -284,7 +284,6 @@ handle_enum:
 		(dest)->inst_c0 = (val);	\
 		(dest)->type = STACK_I4;	\
 		(dest)->dreg = alloc_dreg ((cfg), STACK_I4);	\
-		mono_bblock_add_inst ((cfg)->cbb, (dest)); \
 	} while (0)
 
 #define NEW_PCONST(cfg,dest,val) do {	\
@@ -293,9 +292,21 @@ handle_enum:
 		(dest)->inst_p0 = (val);	\
 		(dest)->type = STACK_PTR;	\
 		(dest)->dreg = alloc_dreg ((cfg), STACK_PTR);	\
-		mono_bblock_add_inst ((cfg)->cbb, (dest)); \
 	} while (0)
 
+#define NEW_STORE_MEMBASE(cfg,dest,op,base,offset,sr) do { \
+        MONO_INST_NEW ((cfg), (dest), (op)); \
+        (dest)->sreg1 = sr; \
+        (dest)->inst_destbasereg = base; \
+        (dest)->inst_offset = offset; \
+	} while (0)
+
+#define NEW_LOAD_MEMBASE(cfg,dest,op,dr,base,offset) do { \
+        MONO_INST_NEW ((cfg), (dest), (op)); \
+        (dest)->dreg = (dr); \
+        (dest)->inst_basereg = (base); \
+        (dest)->inst_offset = (offset); \
+	} while (0)
 
 #ifdef MONO_ARCH_NEED_GOT_VAR
 
@@ -322,7 +333,6 @@ handle_enum:
 		}							\
 		(dest)->type = STACK_PTR;				\
 		(dest)->dreg = alloc_dreg ((cfg), STACK_PTR);	\
-		mono_bblock_add_inst ((cfg)->cbb, (dest)); \
 	} while (0)
 
 #define NEW_AOTCONST_TOKEN(cfg,dest,patch_type,image,token,stack_type) do { \
@@ -337,7 +347,6 @@ handle_enum:
 		(dest)->inst_p1 = group;				\
 		(dest)->type = (stack_type);				\
 		(dest)->dreg = alloc_dreg ((cfg), (stack_type));	\
-		mono_bblock_add_inst ((cfg)->cbb, (dest)); \
 	} while (0)
 
 #else
@@ -349,7 +358,6 @@ handle_enum:
 		(dest)->inst_i1 = (gpointer)(patch_type); \
 		(dest)->type = STACK_PTR;	\
 		(dest)->dreg = alloc_dreg ((cfg), STACK_PTR);	\
-		mono_bblock_add_inst ((cfg)->cbb, (dest)); \
     } while (0)
 
 #define NEW_AOTCONST_TOKEN(cfg,dest,patch_type,image,token,stack_type) do {    \
@@ -359,7 +367,6 @@ handle_enum:
 		(dest)->inst_p1 = (gpointer)(patch_type); \
 		(dest)->type = (stack_type);	\
 		(dest)->dreg = alloc_dreg ((cfg), (stack_type));	\
-		mono_bblock_add_inst ((cfg)->cbb, (dest)); \
     } while (0)
 
 #endif
@@ -422,7 +429,6 @@ handle_enum:
 		(dest)->klass = (cfg)->varinfo [locals_offset + (num)]->klass;	\
 		(dest)->sreg1 = (cfg)->varinfo [locals_offset + (num)]->dreg;   \
         (dest)->dreg = alloc_dreg ((cfg), (dest)->type); \
-		mono_bblock_add_inst ((cfg)->cbb, (dest)); \
 	} while (0)
 
 #define NEW_LOCLOADA(cfg,dest,num) do {	\
@@ -471,7 +477,6 @@ handle_enum:
 		(dest)->klass = (cfg)->varinfo [(num)]->klass;	\
 		(dest)->sreg1 = (cfg)->varinfo [(num)]->dreg;   \
         (dest)->dreg = alloc_dreg ((cfg), (dest)->type); \
-		mono_bblock_add_inst ((cfg)->cbb, (dest)); \
 	} while (0)
 
 #define NEW_TEMPLOADA(cfg,dest,num) do {	\
@@ -513,7 +518,6 @@ handle_enum:
 		(dest)->klass = (cfg)->varinfo [(num)]->klass;	\
         (dest)->sreg1 = (inst)->dreg; \
 		(dest)->dreg = (cfg)->varinfo [(num)]->dreg;   \
-		mono_bblock_add_inst ((cfg)->cbb, (dest)); \
 	} while (0)
 
 #define NEW_LOCSTORE(cfg,dest,num,inst) do {	\
@@ -523,7 +527,6 @@ handle_enum:
 		(dest)->klass = (cfg)->varinfo [locals_offset + (num)]->klass;	\
         (dest)->sreg1 = (inst)->dreg; \
 		(dest)->dreg = (cfg)->varinfo [locals_offset + (num)]->dreg;   \
-		mono_bblock_add_inst ((cfg)->cbb, (dest)); \
 	} while (0)
 
 #define NEW_ARGSTORE(cfg,dest,num,inst) do {	\
@@ -3520,6 +3523,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			NEW_LOCLOAD (cfg, ins, n);
 			ins->cil_code = ip++;
 			*sp++ = ins;
+			MONO_ADD_INS (bblock, ins);
 			break;
 		case CEE_STLOC_0:
 		case CEE_STLOC_1:
@@ -3531,6 +3535,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			--sp;
 			handle_loaded_temps (cfg, bblock, stack_start, sp);
 			NEW_LOCSTORE (cfg, ins, n, *sp);
+			MONO_ADD_INS (bblock, ins);
 			ins->cil_code = ip;
 			if (ins->opcode == CEE_STOBJ) {
 				NOT_IMPLEMENTED;
@@ -3612,6 +3617,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 		case CEE_LDNULL:
 			CHECK_STACK_OVF (1);
 			NEW_PCONST (cfg, ins, NULL);
+			MONO_ADD_INS (bblock, ins);
 			ins->cil_code = ip;
 			ins->type = STACK_OBJ;
 			++ip;
@@ -3620,6 +3626,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 		case CEE_LDC_I4_M1:
 			CHECK_STACK_OVF (1);
 			NEW_ICONST (cfg, ins, -1);
+			MONO_ADD_INS (bblock, ins);
 			ins->cil_code = ip;
 			++ip;
 			*sp++ = ins;
@@ -3635,6 +3642,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 		case CEE_LDC_I4_8:
 			CHECK_STACK_OVF (1);
 			NEW_ICONST (cfg, ins, (*ip) - CEE_LDC_I4_0);
+			MONO_ADD_INS (bblock, ins);
 			ins->cil_code = ip;
 			++ip;
 			*sp++ = ins;
@@ -3644,6 +3652,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			CHECK_STACK_OVF (1);
 			++ip;
 			NEW_ICONST (cfg, ins, *((signed char*)ip));
+			MONO_ADD_INS (bblock, ins);
 			ins->cil_code = ip;
 			++ip;
 			*sp++ = ins;
@@ -3652,6 +3661,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			CHECK_OPSIZE (5);
 			CHECK_STACK_OVF (1);
 			NEW_ICONST (cfg, ins, (gint32)read32 (ip + 1));
+			MONO_ADD_INS (bblock, ins);
 			ins->cil_code = ip;
 			ip += 5;
 			*sp++ = ins;
@@ -6572,30 +6582,36 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				t = ptype->data.klass->enum_basetype->type;
 			if (ptype->byref) {
 				NEW_PCONST (cfg, ins, NULL);
+				MONO_ADD_INS (init_localsbb, ins);
 				NEW_LOCSTORE (cfg, store, i, ins);
 				MONO_ADD_INS (init_localsbb, store);
 			} else if (t >= MONO_TYPE_BOOLEAN && t <= MONO_TYPE_U4) {
 				NEW_ICONST (cfg, ins, 0);
+				MONO_ADD_INS (init_localsbb, ins);
 				NEW_LOCSTORE (cfg, store, i, ins);
 				MONO_ADD_INS (init_localsbb, store);
 			} else if (t == MONO_TYPE_I8 || t == MONO_TYPE_U8) {
 				MONO_INST_NEW (cfg, ins, OP_I8CONST);
 				ins->type = STACK_I8;
 				ins->inst_l = 0;
+				MONO_ADD_INS (init_localsbb, ins);
 				NEW_LOCSTORE (cfg, store, i, ins);
 				MONO_ADD_INS (init_localsbb, store);
 			} else if (t == MONO_TYPE_R4 || t == MONO_TYPE_R8) {
 				MONO_INST_NEW (cfg, ins, OP_R8CONST);
 				ins->type = STACK_R8;
 				ins->inst_p0 = (void*)&r8_0;
+				MONO_ADD_INS (init_localsbb, ins);
 				NEW_LOCSTORE (cfg, store, i, ins);
 				MONO_ADD_INS (init_localsbb, store);
 			} else if ((t == MONO_TYPE_VALUETYPE) || (t == MONO_TYPE_TYPEDBYREF) ||
 				   ((t == MONO_TYPE_GENERICINST) && mono_metadata_generic_class_is_valuetype (ptype->data.generic_class))) {
+				NOT_IMPLEMENTED;
 				NEW_LOCLOADA (cfg, ins, i);
 				handle_initobj (cfg, init_localsbb, ins, NULL, mono_class_from_mono_type (ptype), NULL, NULL);
 			} else {
 				NEW_PCONST (cfg, ins, NULL);
+				MONO_ADD_INS (init_localsbb, ins);
 				NEW_LOCSTORE (cfg, store, i, ins);
 				MONO_ADD_INS (init_localsbb, store);
 			}
@@ -6659,132 +6675,117 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 	return -1;
 }
 
+/**
+ * mono_spill_global_vars:
+ *
+ *   Generate spill code for variables which are not allocated to registers.
+ */
 void
-mono_print_tree2 (MonoInst *tree) {
-	int arity;
+mono_spill_global_vars (MonoCompile *cfg)
+{
+	int i, num_vireg;
+	MonoInst **vireg_to_inst;
+	MonoBasicBlock *bb;
 
-	if (!tree)
-		return;
+	/* FIXME: Move this to mini.c */
 
-	arity = mono_burg_arity [tree->opcode];
+	/* Collect the vregs which belong to a variable */
+	num_vireg = cfg->next_vireg;
+	vireg_to_inst = g_new0 (MonoInst*, num_vireg);
+	for (i = 0; i < cfg->num_varinfo; i++) {
+		MonoInst *ins = cfg->varinfo [i];
 
-	printf (" %s%s", arity?"(":"",  mono_inst_name (tree->opcode));
+		if (ins->opcode != OP_REGVAR) {
+			g_assert (ins->dreg != -1);
 
-	switch (tree->opcode) {
-	case OP_ICONST:
-		printf ("[%d]", (int)tree->inst_c0);
-		break;
-	case OP_I8CONST:
-		printf ("[%lld]", (long long)tree->inst_l);
-		break;
-	case OP_R8CONST:
-		printf ("[%f]", *(double*)tree->inst_p0);
-		break;
-	case OP_R4CONST:
-		printf ("[%f]", *(float*)tree->inst_p0);
-		break;
-	case OP_ARG:
-	case OP_LOCAL:
-		printf ("[%d]", (int)tree->inst_c0);
-		break;
-	case OP_REGOFFSET:
-		if (tree->inst_offset < 0)
-			printf ("[-0x%x(%s)]", (int)(-tree->inst_offset), mono_arch_regname (tree->inst_basereg));
-		else
-			printf ("[0x%x(%s)]", (int)(tree->inst_offset), mono_arch_regname (tree->inst_basereg));
-		break;
-	case OP_REGVAR:
-		printf ("[%s]", mono_arch_regname (tree->dreg));
-		break;
-	case CEE_NEWARR:
-		printf ("[%s]",  tree->inst_newa_class->name);
-		mono_print_tree (tree->inst_newa_len);
-		break;
-	case CEE_CALL:
-	case CEE_CALLVIRT:
-	case OP_FCALL:
-	case OP_FCALLVIRT:
-	case OP_LCALL:
-	case OP_LCALLVIRT:
-	case OP_VCALL:
-	case OP_VCALLVIRT:
-	case OP_VOIDCALL:
-	case OP_VOIDCALLVIRT: {
-		MonoCallInst *call = (MonoCallInst*)tree;
-		if (call->method)
-			printf ("[%s]", call->method->name);
-		else if (call->fptr) {
-			MonoJitICallInfo *info = mono_find_jit_icall_by_addr (call->fptr);
-			if (info)
-				printf ("[%s]", info->name);
-		}
-		break;
-	}
-	case OP_PHI: {
-		int i;
-		printf ("[%d (", (int)tree->inst_c0);
-		for (i = 0; i < tree->inst_phi_args [0]; i++) {
-			if (i)
-				printf (", ");
-			printf ("%d", tree->inst_phi_args [i + 1]);
-		}
-		printf (")]");
-		break;
-	}
-	case OP_RENAME:
-	case OP_RETARG:
-	case CEE_NOP:
-	case CEE_JMP:
-	case CEE_BREAK:
-		break;
-	case OP_LOAD_MEMBASE:
-	case OP_LOADI4_MEMBASE:
-	case OP_LOADU4_MEMBASE:
-	case OP_LOADU1_MEMBASE:
-	case OP_LOADI1_MEMBASE:
-	case OP_LOADU2_MEMBASE:
-	case OP_LOADI2_MEMBASE:
-		printf ("[%s] <- [%s + 0x%x]", mono_arch_regname (tree->dreg), mono_arch_regname (tree->inst_basereg), (int)tree->inst_offset);
-		break;
-	case CEE_BR:
-	case OP_CALL_HANDLER:
-		printf ("[B%d]", tree->inst_target_bb->block_num);
-		break;
-	case CEE_SWITCH:
-	case CEE_ISINST:
-	case CEE_CASTCLASS:
-	case OP_OUTARG:
-	case OP_CALL_REG:
-	case OP_FCALL_REG:
-	case OP_LCALL_REG:
-	case OP_VCALL_REG:
-	case OP_VOIDCALL_REG:
-		mono_print_tree (tree->inst_left);
-		break;
-	case CEE_BNE_UN:
-	case CEE_BEQ:
-	case CEE_BLT:
-	case CEE_BLT_UN:
-	case CEE_BGT:
-	case CEE_BGT_UN:
-	case CEE_BGE:
-	case CEE_BGE_UN:
-	case CEE_BLE:
-	case CEE_BLE_UN:
-		printf ("[B%dB%d]", tree->inst_true_bb->block_num, tree->inst_false_bb->block_num);
-		mono_print_tree (tree->inst_left);
-		break;
-	default:
-		if (!mono_arch_print_tree(tree, arity)) {
-			if (arity) {
-				mono_print_tree (tree->inst_left);
-				if (arity > 1)
-					mono_print_tree (tree->inst_right);
+			switch (ins->type) {
+			case STACK_I4:
+			case STACK_I8:
+			case STACK_PTR:
+			case STACK_MP:
+			case STACK_OBJ:
+				vireg_to_inst [ins->dreg] = ins;
+				break;
+			default:
+				NOT_IMPLEMENTED;
 			}
 		}
-		break;
 	}
 
-	if (arity)
-		printf (")");
+	/* FIXME: Use instructions metadata to determine src and dest reg types */
+	/* FIXME: widening and truncation */
+
+	/* Add spill loads/stores */
+	for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
+		MonoInst *tree = bb->code;	
+		MonoInst *prev = NULL;
+
+		cfg->cbb = bb;
+		for (; tree; tree = tree->next) {
+			/* DREG */
+			if ((tree->dreg != -1) && (tree->dreg < num_vireg) && (vireg_to_inst [tree->dreg])) {
+				MonoInst *ins = vireg_to_inst [tree->dreg];
+				MonoInst *store_ins;
+
+				g_assert (ins->opcode == OP_REGOFFSET);
+
+				tree->dreg = alloc_dreg (cfg, STACK_PTR);
+
+				/* Create a store instruction */					
+				NEW_STORE_MEMBASE (cfg, store_ins, mono_type_to_store_membase (ins->inst_vtype), ins->inst_basereg, ins->inst_offset, tree->dreg);
+				
+				/* Insert it after the instruction */
+				store_ins->next = tree->next;
+				tree->next = store_ins;
+				if (bb->last_ins == tree)
+					bb->last_ins = store_ins;
+			}
+
+			/* SREG1 */
+			if ((tree->sreg1 != -1) && (tree->sreg1 < num_vireg) && (vireg_to_inst [tree->sreg1])) {
+				MonoInst *ins = vireg_to_inst [tree->sreg1];
+				MonoInst *load_ins;
+
+				g_assert (ins->opcode == OP_REGOFFSET);
+
+				tree->sreg1 = alloc_dreg (cfg, STACK_PTR);
+
+				/* Create a load instruction */					
+				NEW_LOAD_MEMBASE (cfg, load_ins, mono_type_to_load_membase (ins->inst_vtype), tree->sreg1, ins->inst_basereg, ins->inst_offset);
+				
+				/* Insert it before the instruction */
+				if (prev)
+					prev->next = load_ins;
+				else
+					bb->code = load_ins;
+
+				load_ins->next = tree;
+			}
+
+			/* SREG2 */
+			if ((tree->sreg2 != -1) && (tree->sreg2 < num_vireg) && (vireg_to_inst [tree->sreg2])) {
+				MonoInst *ins = vireg_to_inst [tree->sreg2];
+				MonoInst *load_ins;
+
+				g_assert (ins->opcode == OP_REGOFFSET);
+
+				tree->sreg2 = alloc_dreg (cfg, STACK_PTR);
+
+				/* Create a load instruction */					
+				NEW_LOAD_MEMBASE (cfg, load_ins, mono_type_to_load_membase (ins->inst_vtype), tree->sreg2, ins->inst_basereg, ins->inst_offset);
+				
+				/* Insert it before the instruction */
+				if (prev)
+					prev->next = load_ins;
+				else
+					bb->code = load_ins;
+
+				load_ins->next = tree;
+			}
+
+			prev = tree;
+		}
+	}
+
+	/* FIXME: Use NEW/EMIT macros correctly */
 }
