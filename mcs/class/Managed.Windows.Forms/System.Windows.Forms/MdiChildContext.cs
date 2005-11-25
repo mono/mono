@@ -109,6 +109,10 @@ namespace System.Windows.Forms {
 			CreateButtons ();
 		}
 
+		public bool Maximized {
+			get { return maximized; }
+		}
+
 		public bool HandleMessage (ref Message m)
 		{
 			switch ((Msg)m.Msg) {
