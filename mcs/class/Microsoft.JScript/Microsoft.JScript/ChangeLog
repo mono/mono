@@ -1,3 +1,10 @@
+2005-11-25  Cesar Lopez Nataren  <cnataren@novell.com>
+
+	* expression.cs (Call.Emit): implement the case when the invoked
+	method at call is a property.
+
+	* Latebinding.cs: return null in case we don't mach anything.	
+
 2005-11-22  Cesar Lopez Nataren  <cnataren@novell.com>
 
 	* Statement.cs (Return.Resolve): Added field exp_returns_void

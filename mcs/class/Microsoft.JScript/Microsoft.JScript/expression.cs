@@ -865,6 +865,43 @@ namespace Microsoft.JScript {
 					Type return_type = method.ReturnType;
 					if (return_type != typeof (void) && return_type != typeof (string))
 						ig.Emit (OpCodes.Box, return_type);
+				} else if (member_type == MemberTypes.Property) {
+					if (member_exp is Binary) {
+						Binary bin = (Binary) member_exp;
+
+						bin.left.Emit (ec);
+
+						bool in_func = InFunction;
+						CodeGenerator.load_engine (in_func, ig);
+						ig.Emit (OpCodes.Call, typeof (Convert).GetMethod ("ToObject2"));
+
+						if (bin.left is Identifier) {
+							Type coerce_to = null;
+							if (((Identifier) bin.left).name.Value == "Function")
+								coerce_to = typeof (FunctionConstructor);
+
+							LocalBuilder ctr = null;
+
+							if (coerce_to != null) {
+								ig.Emit (OpCodes.Castclass, coerce_to);
+								ctr = ig.DeclareLocal (coerce_to);
+							}
+
+							ig.Emit (OpCodes.Dup);
+							ig.Emit (OpCodes.Stloc, ctr);
+							bin.Emit (ec);
+
+							ig.Emit (OpCodes.Ldc_I4, args.Size);
+							ig.Emit (OpCodes.Newarr, typeof (object));
+
+							ig.Emit (OpCodes.Ldc_I4_0);
+							ig.Emit (OpCodes.Ldc_I4_0);
+
+							CodeGenerator.load_engine (in_func, ig);
+
+							ig.Emit (OpCodes.Call, typeof (LateBinding).GetMethod ("CallValue"));
+						}
+					}
 				} else {
 					Console.WriteLine ("member_type = {0}", member_type);
 					Console.WriteLine ("member_exp = {0}", member_exp);

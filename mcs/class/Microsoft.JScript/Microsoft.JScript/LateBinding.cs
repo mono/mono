@@ -263,7 +263,8 @@ namespace Microsoft.JScript {
 				else if (val is RegExpObject) {
 					object first_arg = arguments.Length > 0 ? arguments [0] : null;
 					return RegExpPrototype.exec (val, first_arg);
-				}
+				} else
+					return null;
 			}
 
 			Console.WriteLine ("CallValue: construct = {0}, brackets = {1}, this = {2}, val = {3} ({4}), arg[0] = {5}",
