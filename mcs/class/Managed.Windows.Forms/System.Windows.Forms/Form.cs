@@ -506,6 +506,10 @@ namespace System.Windows.Forms {
 			get { return mdi_container; }
 		}
 
+		internal MdiChildContext MdiChildContext {
+			get { return mdi_child_context; }
+		}
+
 		[DefaultValue(null)]
 		public MainMenu Menu {
 			get {

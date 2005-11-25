@@ -2,7 +2,8 @@
 
 	* MdiClient.cs: Size the scrollbars when resizing the window.
 	- Resize the maximized windows when the client is resized
-
+	* Form.cs: Make the child context available
+	
 2005-11-23  Jackson Harper  <jackson@ximian.com>
 
 	* MdiChildContext.cs: Don't size windows if they are maximized.
