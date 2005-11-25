@@ -732,7 +732,7 @@ System.Timers/TimersDescriptionAttribute.cs
 System.Web/AspNetHostingPermission.cs
 System.Web/AspNetHostingPermissionAttribute.cs
 System.Web/AspNetHostingPermissionLevel.cs
-System/SRDescriptionAttribute.cs
+System/DefaultUriParser.cs
 System/FileStyleUriParser.cs
 System/FtpStyleUriParser.cs
 System/GenericUriParser.cs
@@ -743,6 +743,7 @@ System/LdapStyleUriParser.cs
 System/NetPipeStyleUriParser.cs
 System/NetTcpStyleUriParser.cs
 System/NewsStyleUriParser.cs
+System/SRDescriptionAttribute.cs
 System/UriBuilder.cs
 System/Uri.cs
 System/UriComponents.cs
