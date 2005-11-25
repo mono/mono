@@ -1150,13 +1150,10 @@ namespace System {
 
 		public bool IsVisible {
 			get {
-				if (IsNotPublic)
-					return false;
+				if (IsNestedPublic)
+					return DeclaringType.IsVisible;
 
-				if (!IsNested)
-					return true;
-
-				return DeclaringType.IsVisible;
+				return IsPublic;
 			}
 		}
 
