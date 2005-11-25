@@ -474,7 +474,49 @@ namespace System
 
 			return culture.CompareInfo.Compare (strA, indexA, len1, strB, indexB, len2, compopts);
 		}
+#if NET_2_0
+		public static int Compare (string strA, string strB, StringComparison comparisonType)
+		{
+			switch (comparisonType) {
+			case StringComparison.CurrentCulture:
+				return Compare (strA, strB, false, CultureInfo.CurrentCulture);
+			case StringComparison.CurrentCultureIgnoreCase:
+				return Compare (strA, strB, true, CultureInfo.CurrentCulture);
+			case StringComparison.InvariantCulture:
+				return Compare (strA, strB, false, CultureInfo.InvariantCulture);
+			case StringComparison.InvariantCultureIgnoreCase:
+				return Compare (strA, strB, true, CultureInfo.InvariantCulture);
+			case StringComparison.Ordinal:
+				return CompareOrdinal (strA, strB, CompareOptions.Ordinal);
+			case StringComparison.OrdinalIgnoreCase:
+				return CompareOrdinal (strA, strB, CompareOptions.Ordinal | CompareOptions.IgnoreCase);
+			default:
+				string msg = Locale.GetText ("Invalid value '{0}' for StringComparison", comparisonType);
+				throw new ArgumentException ("comparisonType", msg);
+			}
+		}
 
+		public static int Compare (string strA, int indexA, string strB, int indexB, int length, StringComparison comparisonType)
+		{
+			switch (comparisonType) {
+			case StringComparison.CurrentCulture:
+				return Compare (strA, indexA, strB, indexB, length, false, CultureInfo.CurrentCulture);
+			case StringComparison.CurrentCultureIgnoreCase:
+				return Compare (strA, indexA, strB, indexB, length, true, CultureInfo.CurrentCulture);
+			case StringComparison.InvariantCulture:
+				return Compare (strA, indexA, strB, indexB, length, false, CultureInfo.InvariantCulture);
+			case StringComparison.InvariantCultureIgnoreCase:
+				return Compare (strA, indexA, strB, indexB, length, true, CultureInfo.InvariantCulture);
+			case StringComparison.Ordinal:
+				return CompareOrdinal (strA, indexA, strB, indexB, length, CompareOptions.Ordinal);
+			case StringComparison.OrdinalIgnoreCase:
+				return CompareOrdinal (strA, indexA, strB, indexB, length, CompareOptions.Ordinal | CompareOptions.IgnoreCase);
+			default:
+				string msg = Locale.GetText ("Invalid value '{0}' for StringComparison", comparisonType);
+				throw new ArgumentException ("comparisonType", msg);
+			}
+		}
+#endif
 		public int CompareTo (Object value)
 		{
 			if (value == null)
@@ -496,6 +538,11 @@ namespace System
 
 		public static int CompareOrdinal (String strA, String strB)
 		{
+			return CompareOrdinal (strA, strB, CompareOptions.Ordinal);
+		}
+
+		internal static int CompareOrdinal (String strA, String strB, CompareOptions options)
+		{
 			if (strA == null) {
 				if (strB == null)
 					return 0;
@@ -510,10 +557,15 @@ namespace System
 			 * instantiate (and chances are it already has
 			 * been.)
 			 */
-			return CultureInfo.InvariantCulture.CompareInfo.Compare (strA, strB, CompareOptions.Ordinal);
+			return CultureInfo.InvariantCulture.CompareInfo.Compare (strA, strB, options);
 		}
 
 		public static int CompareOrdinal (String strA, int indexA, String strB, int indexB, int length)
+		{
+			return CompareOrdinal (strA, indexA, strB, indexB, length, CompareOptions.Ordinal);
+		}
+
+		internal static int CompareOrdinal (String strA, int indexA, String strB, int indexB, int length, CompareOptions options)
 		{
 			if ((indexA > strA.Length) || (indexB > strB.Length) || (indexA < 0) || (indexB < 0) || (length < 0))
 				throw new ArgumentOutOfRangeException ();
@@ -544,7 +596,7 @@ namespace System
 				len2 = strB.Length - indexB;
 			}
 
-			return CultureInfo.InvariantCulture.CompareInfo.Compare (strA, indexA, len1, strB, indexB, len2, CompareOptions.Ordinal);
+			return CultureInfo.InvariantCulture.CompareInfo.Compare (strA, indexA, len1, strB, indexB, len2, options);
 		}
 
 		public bool EndsWith (String value)

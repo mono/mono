@@ -1,3 +1,7 @@
+2005-11-25  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* String.cs: Added support for Compare(... StringComparison) in 2.0.
+
 2005-11-25  Alp Toker  <alp@atoker.com>
 
 	* Type.cs (IsVisible): New 2.0 property, implemented recursively.
