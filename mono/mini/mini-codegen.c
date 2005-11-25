@@ -796,6 +796,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 				reginfo1 = reginfof;
 			else
 				reginfo1 = reginfo;
+			g_assert (ins->sreg1 != -1);
 			reginfo1 [ins->sreg1].prev_use = reginfo1 [ins->sreg1].last_use;
 			reginfo1 [ins->sreg1].last_use = i;
 			if (MONO_ARCH_INST_IS_REGPAIR (spec [MONO_INST_SRC2])) {
@@ -813,6 +814,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 				reginfo2 = reginfof;
 			else
 				reginfo2 = reginfo;
+			g_assert (ins->sreg2 != -1);
 			reginfo2 [ins->sreg2].prev_use = reginfo2 [ins->sreg2].last_use;
 			reginfo2 [ins->sreg2].last_use = i;
 			if (MONO_ARCH_INST_IS_REGPAIR (spec [MONO_INST_SRC2])) {
@@ -834,6 +836,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 				reginfod = reginfo;
 			if (spec [MONO_INST_DEST] != 'b') /* it's not just a base register */
 				reginfod [ins->dreg].killed_in = i;
+			g_assert (ins->dreg != -1);
 			reginfod [ins->dreg].prev_use = reginfod [ins->dreg].last_use;
 			reginfod [ins->dreg].last_use = i;
 			if (reginfod [ins->dreg].born_in == 0 || reginfod [ins->dreg].born_in > i)

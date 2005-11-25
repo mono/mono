@@ -308,6 +308,42 @@ handle_enum:
         (dest)->inst_offset = (offset); \
 	} while (0)
 
+#define MONO_EMIT_NEW_UNALU(cfg,op,dr,sr1) do { \
+                MonoInst *inst; \
+		inst = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoInst));	\
+                inst->opcode = op; \
+                inst->dreg = dr; \
+                inst->sreg1 = sr1; \
+	        mono_bblock_add_inst (cfg->cbb, inst); \
+	} while (0)
+
+#define MONO_EMIT_NEW_BIALU_IMM(cfg,op,dr,sr,imm) do { \
+                MonoInst *inst; \
+		inst = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoInst));	\
+                inst->opcode = op; \
+                inst->dreg = dr; \
+                inst->sreg1 = sr; \
+                inst->inst_p1 = (gpointer)(gssize)(imm); \
+	        mono_bblock_add_inst (cfg->cbb, inst); \
+	} while (0)
+
+#define	MONO_EMIT_NEW_ICOMPARE_IMM(cfg,sr1,imm) do { \
+                MonoInst *inst; \
+		inst = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoInst));	\
+		inst->opcode = sizeof (void*) == 8 ? OP_ICOMPARE_IMM : OP_COMPARE_IMM;	\
+                inst->sreg1 = sr1; \
+                inst->inst_p1 = (gpointer)imm; \
+	        mono_bblock_add_inst ((cfg)->cbb, inst); \
+	} while (0)
+
+#define	MONO_EMIT_NEW_COND_EXC(cfg,cond,name) do { \
+                MonoInst *inst; \
+		inst = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoInst));	\
+		inst->opcode = OP_COND_EXC_##cond;  \
+                inst->inst_p1 = (char*)name; \
+	        mono_bblock_add_inst ((cfg)->cbb, inst); \
+	} while (0)
+
 #ifdef MONO_ARCH_NEED_GOT_VAR
 
 #define NEW_PATCH_INFO(cfg,dest,el1,el2) do {	\
@@ -556,39 +592,40 @@ handle_enum:
 	} while (0)
 
 #define ADD_BINOP(op) do {	\
-        NOT_IMPLEMENTED; \
 		MONO_INST_NEW (cfg, ins, (op));	\
 		ins->cil_code = ip;	\
 		sp -= 2;	\
-		ins->inst_i0 = sp [0];	\
-		ins->inst_i1 = sp [1];	\
-		*sp++ = ins;	\
-		type_from_op (ins);	\
+		ins->sreg1 = sp [0]->dreg;	\
+		ins->sreg2 = sp [1]->dreg;	\
+		type_from_op (ins, sp [0], sp [1]);	\
 		CHECK_TYPE (ins);	\
+        ins->dreg = alloc_dreg ((cfg), (ins)->type); \
+        MONO_ADD_INS ((cfg)->cbb, (ins)); \
+		*sp++ = ins;	\
 	} while (0)
 
 #define ADD_UNOP(op) do {	\
-        NOT_IMPLEMENTED; \
 		MONO_INST_NEW (cfg, ins, (op));	\
 		ins->cil_code = ip;	\
 		sp--;	\
-		ins->inst_i0 = sp [0];	\
-		*sp++ = ins;	\
-		type_from_op (ins);	\
+		ins->sreg1 = sp [0]->dreg;	\
+		type_from_op (ins, sp [0], NULL);	\
 		CHECK_TYPE (ins);	\
+        (ins)->dreg = alloc_dreg ((cfg), (ins)->type); \
+        MONO_ADD_INS ((cfg)->cbb, (ins)); \
+		*sp++ = ins;	\
 	} while (0)
 
 #define ADD_BINCOND(next_block) do {	\
 		MonoInst *cmp;	\
 		sp -= 2;		\
-        NOT_IMPLEMENTED; \
 		MONO_INST_NEW(cfg, cmp, OP_COMPARE);	\
-		cmp->inst_i0 = sp [0];	\
-		cmp->inst_i1 = sp [1];	\
+		cmp->sreg1 = sp [0]->dreg;	\
+		cmp->sreg2 = sp [1]->dreg;	\
 		cmp->cil_code = ins->cil_code;	\
-		type_from_op (cmp);	\
+		type_from_op (cmp, sp [0], sp [1]);	\
 		CHECK_TYPE (cmp);	\
-		ins->inst_i0 = cmp;	\
+        MONO_ADD_INS (bblock, cmp); \
 		MONO_ADD_INS (bblock, ins);	\
 		ins->inst_many_bb = mono_mempool_alloc (cfg->mempool, sizeof(gpointer)*2);	\
 		GET_BBLOCK (cfg, bbhash, tblock, target);		\
@@ -605,42 +642,6 @@ handle_enum:
 			ins->inst_false_bb = tblock;	\
 			start_new_bblock = 2;	\
 		}	\
-	} while (0)
-
-/* FIXME: handle float, long ... */
-#define ADD_UNCOND(istrue) do {	\
-		MonoInst *cmp;	\
-		sp--;		\
-		MONO_INST_NEW(cfg, cmp, OP_ICOMPARE_IMM);	\
-		cmp->inst_i0 = sp [0];	\
-                switch (cmp->inst_i0->type) { \
-		case STACK_I8: \
-            cmp->opcode = OP_LCOMPARE_IMM; break; \
-		case STACK_R8: \
-            NOT_IMPLEMENTED; \
-		case STACK_PTR: \
-		case STACK_MP: \
-			cmp->opcode = OP_COMPARE_IMM; break;	\
-		case STACK_OBJ: \
-            NOT_IMPLEMENTED; \
-		default: \
-		    break; \
-		}  \
-		cmp->cil_code = ins->cil_code;	\
-		type_from_op (cmp);	\
-		CHECK_TYPE (cmp);	\
-		MONO_ADD_INS (bblock, cmp);	\
-		ins->opcode = (istrue)? CEE_BNE_UN: CEE_BEQ;	\
-		MONO_ADD_INS (bblock, ins);	\
-		ins->inst_many_bb = mono_mempool_alloc (cfg->mempool, sizeof(gpointer)*2);	\
-		GET_BBLOCK (cfg, bbhash, tblock, target);		\
-		link_bblock (cfg, bblock, tblock);	\
-		ins->inst_true_bb = tblock;	\
-		CHECK_BBLOCK (target, ip, tblock);	\
-		GET_BBLOCK (cfg, bbhash, tblock, ip);		\
-		link_bblock (cfg, bblock, tblock);	\
-		ins->inst_false_bb = tblock;	\
-		start_new_bblock = 2;	\
 	} while (0)
 
 #define NEW_LDELEMA(cfg,dest,sp,k) do {	\
@@ -1113,37 +1114,37 @@ shift_table [STACK_MAX] [STACK_MAX] = {
 /* handles from CEE_ADD to CEE_SHR_UN (CEE_REM_UN for floats) */
 static const guint16
 binops_op_map [STACK_MAX] = {
-	0, 0, OP_LADD-CEE_ADD, OP_PADD-CEE_ADD, OP_FADD-CEE_ADD, OP_PADD-CEE_ADD
+	0, OP_IADD-CEE_ADD, OP_LADD-CEE_ADD, OP_PADD-CEE_ADD, OP_FADD-CEE_ADD, OP_PADD-CEE_ADD
 };
 
 /* handles from CEE_NEG to CEE_CONV_U8 */
 static const guint16
 unops_op_map [STACK_MAX] = {
-	0, 0, OP_LNEG-CEE_NEG, OP_PNEG-CEE_NEG, OP_FNEG-CEE_NEG, OP_PNEG-CEE_NEG
+	0, OP_INEG-CEE_NEG, OP_LNEG-CEE_NEG, OP_PNEG-CEE_NEG, OP_FNEG-CEE_NEG, OP_PNEG-CEE_NEG
 };
 
 /* handles from CEE_CONV_U2 to CEE_SUB_OVF_UN */
 static const guint16
 ovfops_op_map [STACK_MAX] = {
-	0, 0, OP_LCONV_TO_U2-CEE_CONV_U2, OP_PCONV_TO_U2-CEE_CONV_U2, OP_FCONV_TO_U2-CEE_CONV_U2, OP_PCONV_TO_U2-CEE_CONV_U2, OP_PCONV_TO_U2-CEE_CONV_U2
+	0, OP_ICONV_TO_U2-CEE_CONV_U2, OP_LCONV_TO_U2-CEE_CONV_U2, OP_PCONV_TO_U2-CEE_CONV_U2, OP_FCONV_TO_U2-CEE_CONV_U2, OP_PCONV_TO_U2-CEE_CONV_U2, OP_PCONV_TO_U2-CEE_CONV_U2
 };
 
 /* handles from CEE_CONV_OVF_I1_UN to CEE_CONV_OVF_U_UN */
 static const guint16
 ovf2ops_op_map [STACK_MAX] = {
-	0, 0, OP_LCONV_TO_OVF_I1_UN-CEE_CONV_OVF_I1_UN, OP_PCONV_TO_OVF_I1_UN-CEE_CONV_OVF_I1_UN, OP_FCONV_TO_OVF_I1_UN-CEE_CONV_OVF_I1_UN, OP_PCONV_TO_OVF_I1_UN-CEE_CONV_OVF_I1_UN
+	0, OP_ICONV_TO_OVF_I1_UN-CEE_CONV_OVF_I1_UN, OP_LCONV_TO_OVF_I1_UN-CEE_CONV_OVF_I1_UN, OP_PCONV_TO_OVF_I1_UN-CEE_CONV_OVF_I1_UN, OP_FCONV_TO_OVF_I1_UN-CEE_CONV_OVF_I1_UN, OP_PCONV_TO_OVF_I1_UN-CEE_CONV_OVF_I1_UN
 };
 
 /* handles from CEE_CONV_OVF_I1 to CEE_CONV_OVF_U8 */
 static const guint16
 ovf3ops_op_map [STACK_MAX] = {
-	0, 0, OP_LCONV_TO_OVF_I1-CEE_CONV_OVF_I1, OP_PCONV_TO_OVF_I1-CEE_CONV_OVF_I1, OP_FCONV_TO_OVF_I1-CEE_CONV_OVF_I1, OP_PCONV_TO_OVF_I1-CEE_CONV_OVF_I1
+	0, OP_ICONV_TO_OVF_I1-CEE_CONV_OVF_I1, OP_LCONV_TO_OVF_I1-CEE_CONV_OVF_I1, OP_PCONV_TO_OVF_I1-CEE_CONV_OVF_I1, OP_FCONV_TO_OVF_I1-CEE_CONV_OVF_I1, OP_PCONV_TO_OVF_I1-CEE_CONV_OVF_I1
 };
 
 /* handles from CEE_CEQ to CEE_CLT_UN */
 static const guint16
 ceqops_op_map [STACK_MAX] = {
-	0, 0, OP_LCEQ-CEE_CEQ, OP_PCEQ-CEE_CEQ, OP_FCEQ-CEE_CEQ, OP_LCEQ-CEE_CEQ
+	0, OP_ICEQ-CEE_CEQ, OP_LCEQ-CEE_CEQ, OP_PCEQ-CEE_CEQ, OP_FCEQ-CEE_CEQ, OP_LCEQ-CEE_CEQ
 };
 
 /*
@@ -1155,7 +1156,8 @@ ceqops_op_map [STACK_MAX] = {
  * it should set it to invalid for some types (a conv.x on an object)
  */
 static void
-type_from_op (MonoInst *ins) {
+type_from_op (MonoInst *ins, MonoInst *src1, MonoInst *src2) {
+
 	switch (ins->opcode) {
 	/* binops */
 	case CEE_ADD:
@@ -1164,7 +1166,7 @@ type_from_op (MonoInst *ins) {
 	case CEE_DIV:
 	case CEE_REM:
 		/* FIXME: check unverifiable args for STACK_MP */
-		ins->type = bin_num_table [ins->inst_i0->type] [ins->inst_i1->type];
+		ins->type = bin_num_table [src1->type] [src2->type];
 		ins->opcode += binops_op_map [ins->type];
 		return;
 	case CEE_DIV_UN:
@@ -1172,38 +1174,43 @@ type_from_op (MonoInst *ins) {
 	case CEE_AND:
 	case CEE_OR:
 	case CEE_XOR:
-		ins->type = bin_int_table [ins->inst_i0->type] [ins->inst_i1->type];
+		ins->type = bin_int_table [src1->type] [src2->type];
 		ins->opcode += binops_op_map [ins->type];
 		return;
 	case CEE_SHL:
 	case CEE_SHR:
 	case CEE_SHR_UN:
-		ins->type = shift_table [ins->inst_i0->type] [ins->inst_i1->type];
+		ins->type = shift_table [src1->type] [src2->type];
 		ins->opcode += binops_op_map [ins->type];
 		return;
 	case OP_COMPARE:
 	case OP_LCOMPARE:
 		/* FIXME: handle some specifics with ins->next->type */
-		ins->type = bin_comp_table [ins->inst_i0->type] [ins->inst_i1->type] ? STACK_I4: STACK_INV;
-		if ((ins->inst_i0->type == STACK_I8) || ((sizeof (gpointer) == 8) && ((ins->inst_i0->type == STACK_PTR) || (ins->inst_i0->type == STACK_OBJ) || (ins->inst_i0->type == STACK_MP))))
+		ins->type = bin_comp_table [src1->type] [src2->type] ? STACK_I4: STACK_INV;
+		if ((src1->type == STACK_I8) || ((sizeof (gpointer) == 8) && ((src1->type == STACK_PTR) || (src1->type == STACK_OBJ) || (src1->type == STACK_MP))))
 			ins->opcode = OP_LCOMPARE;
+		return;
+	case OP_ICOMPARE_IMM:
+		ins->type = bin_comp_table [src1->type] [src1->type] ? STACK_I4 : STACK_INV;
+		if ((src1->type == STACK_I8) || ((sizeof (gpointer) == 8) && ((src1->type == STACK_PTR) || (src1->type == STACK_OBJ) || (src1->type == STACK_MP))))
+			ins->opcode = OP_LCOMPARE;		
 		return;
 	case OP_CEQ:
 	case OP_CGT:
 	case OP_CGT_UN:
 	case OP_CLT:
 	case OP_CLT_UN:
-		ins->type = bin_comp_table [ins->inst_i0->type] [ins->inst_i1->type] ? STACK_I4: STACK_INV;
-		ins->opcode += ceqops_op_map [ins->inst_i0->type];
+		ins->type = bin_comp_table [src1->type] [src2->type] ? STACK_I4: STACK_INV;
+		ins->opcode += ceqops_op_map [src1->type];
 		return;
 	/* unops */
 	case CEE_NEG:
-		ins->type = neg_table [ins->inst_i0->type];
+		ins->type = neg_table [src1->type];
 		ins->opcode += unops_op_map [ins->type];
 		return;
 	case CEE_NOT:
-		if (ins->inst_i0->type >= STACK_I4 && ins->inst_i0->type <= STACK_PTR)
-			ins->type = ins->inst_i0->type;
+		if (src1->type >= STACK_I4 && src1->type <= STACK_PTR)
+			ins->type = src1->type;
 		else
 			ins->type = STACK_INV;
 		ins->opcode += unops_op_map [ins->type];
@@ -1213,11 +1220,11 @@ type_from_op (MonoInst *ins) {
 	case CEE_CONV_I4:
 	case CEE_CONV_U4:
 		ins->type = STACK_I4;
-		ins->opcode += unops_op_map [ins->inst_i0->type];
+		ins->opcode += unops_op_map [src1->type];
 		return;
 	case CEE_CONV_R_UN:
 		ins->type = STACK_R8;
-		switch (ins->inst_i0->type) {
+		switch (src1->type) {
 		case STACK_I4:
 		case STACK_PTR:
 			break;
@@ -1233,12 +1240,12 @@ type_from_op (MonoInst *ins) {
 	case CEE_CONV_OVF_I4:
 	case CEE_CONV_OVF_U4:
 		ins->type = STACK_I4;
-		ins->opcode += ovf3ops_op_map [ins->inst_i0->type];
+		ins->opcode += ovf3ops_op_map [src1->type];
 		return;
 	case CEE_CONV_OVF_I_UN:
 	case CEE_CONV_OVF_U_UN:
 		ins->type = STACK_PTR;
-		ins->opcode += ovf2ops_op_map [ins->inst_i0->type];
+		ins->opcode += ovf2ops_op_map [src1->type];
 		return;
 	case CEE_CONV_OVF_I1_UN:
 	case CEE_CONV_OVF_I2_UN:
@@ -1247,11 +1254,11 @@ type_from_op (MonoInst *ins) {
 	case CEE_CONV_OVF_U2_UN:
 	case CEE_CONV_OVF_U4_UN:
 		ins->type = STACK_I4;
-		ins->opcode += ovf2ops_op_map [ins->inst_i0->type];
+		ins->opcode += ovf2ops_op_map [src1->type];
 		return;
 	case CEE_CONV_U:
 		ins->type = STACK_PTR;
-		switch (ins->inst_i0->type) {
+		switch (src1->type) {
 		case STACK_I4:
 		case STACK_PTR:
 		case STACK_MP:
@@ -1267,22 +1274,22 @@ type_from_op (MonoInst *ins) {
 	case CEE_CONV_I8:
 	case CEE_CONV_U8:
 		ins->type = STACK_I8;
-		ins->opcode += unops_op_map [ins->inst_i0->type];
+		ins->opcode += unops_op_map [src1->type];
 		return;
 	case CEE_CONV_OVF_I8:
 	case CEE_CONV_OVF_U8:
 		ins->type = STACK_I8;
-		ins->opcode += ovf3ops_op_map [ins->inst_i0->type];
+		ins->opcode += ovf3ops_op_map [src1->type];
 		return;
 	case CEE_CONV_OVF_U8_UN:
 	case CEE_CONV_OVF_I8_UN:
 		ins->type = STACK_I8;
-		ins->opcode += ovf2ops_op_map [ins->inst_i0->type];
+		ins->opcode += ovf2ops_op_map [src1->type];
 		return;
 	case CEE_CONV_R4:
 	case CEE_CONV_R8:
 		ins->type = STACK_R8;
-		ins->opcode += unops_op_map [ins->inst_i0->type];
+		ins->opcode += unops_op_map [src1->type];
 		return;
 	case CEE_CKFINITE:
 		ins->type = STACK_R8;		
@@ -1290,13 +1297,13 @@ type_from_op (MonoInst *ins) {
 	case CEE_CONV_U2:
 	case CEE_CONV_U1:
 		ins->type = STACK_I4;
-		ins->opcode += ovfops_op_map [ins->inst_i0->type];
+		ins->opcode += ovfops_op_map [src1->type];
 		break;
 	case CEE_CONV_I:
 	case CEE_CONV_OVF_I:
 	case CEE_CONV_OVF_U:
 		ins->type = STACK_PTR;
-		ins->opcode += ovfops_op_map [ins->inst_i0->type];
+		ins->opcode += ovfops_op_map [src1->type];
 		return;
 	case CEE_ADD_OVF:
 	case CEE_ADD_OVF_UN:
@@ -1304,8 +1311,8 @@ type_from_op (MonoInst *ins) {
 	case CEE_MUL_OVF_UN:
 	case CEE_SUB_OVF:
 	case CEE_SUB_OVF_UN:
-		ins->type = bin_num_table [ins->inst_i0->type] [ins->inst_i1->type];
-		ins->opcode += ovfops_op_map [ins->inst_i0->type];
+		ins->type = bin_num_table [src1->type] [src2->type];
+		ins->opcode += ovfops_op_map [src1->type];
 		return;
 	default:
 		g_error ("opcode 0x%04x not handled in type from op", ins->opcode);
@@ -3118,6 +3125,91 @@ void check_linkdemand (MonoCompile *cfg, MonoMethod *caller, MonoMethod *callee,
 	}
 }
 
+static void
+decompose_opcode (MonoCompile *cfg, MonoInst *ins)
+{
+	guint32 dreg;
+	gboolean no_decompose = FALSE;
+
+	switch (ins->opcode) {
+	case OP_IADD_OVF:
+		ins->opcode = OP_IADDCC;
+		MONO_EMIT_NEW_COND_EXC (cfg, IOV, "OverflowException");
+		break;
+	case OP_IADD_OVF_UN:
+		ins->opcode = OP_IADDCC;
+		MONO_EMIT_NEW_COND_EXC (cfg, IC, "OverflowException");
+		break;
+	case OP_ISUB_OVF:
+		ins->opcode = OP_ISUBCC;
+		MONO_EMIT_NEW_COND_EXC (cfg, IOV, "OverflowException");
+		break;
+	case OP_ISUB_OVF_UN:
+		ins->opcode = OP_ISUBCC;
+		MONO_EMIT_NEW_COND_EXC (cfg, IC, "OverflowException");
+		break;
+	case OP_ICONV_TO_OVF_I1:
+		MONO_EMIT_NEW_ICOMPARE_IMM (cfg, ins->sreg1, 127);
+		MONO_EMIT_NEW_COND_EXC (cfg, IGT, "OverflowException");
+		MONO_EMIT_NEW_ICOMPARE_IMM (cfg, ins->sreg1, -128);
+		MONO_EMIT_NEW_COND_EXC (cfg, ILT, "OverflowException");
+		MONO_EMIT_NEW_UNALU (cfg, OP_ICONV_TO_I1, ins->dreg, ins->sreg1);
+		ins->opcode = CEE_NOP;
+		break;
+	case OP_ICONV_TO_OVF_I1_UN:
+		/* probe values between 0 to 127 */
+		MONO_EMIT_NEW_ICOMPARE_IMM (cfg, ins->sreg1, 127);
+		MONO_EMIT_NEW_COND_EXC (cfg, IGT_UN, "OverflowException");
+		MONO_EMIT_NEW_UNALU (cfg, OP_ICONV_TO_I1, ins->dreg, ins->sreg1);
+		ins->opcode = CEE_NOP;
+		break;
+	case OP_ICONV_TO_OVF_U1:
+	case OP_ICONV_TO_OVF_U1_UN:
+		/* probe value to be within 0 to 255 */
+		MONO_EMIT_NEW_COMPARE_IMM (cfg, ins->sreg1, 255);
+		MONO_EMIT_NEW_COND_EXC (cfg, IGT_UN, "OverflowException");
+		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_IAND_IMM, ins->dreg, ins->sreg1, 0xff);
+		ins->opcode = CEE_NOP;
+		break;
+	case OP_ICONV_TO_OVF_I2:
+		/* Probe value to be within -32768 and 32767 */
+		MONO_EMIT_NEW_ICOMPARE_IMM (cfg, ins->sreg1, 32767);
+		MONO_EMIT_NEW_COND_EXC (cfg, IGT, "OverflowException");
+		MONO_EMIT_NEW_ICOMPARE_IMM (cfg, ins->sreg1, -32768);
+		MONO_EMIT_NEW_COND_EXC (cfg, ILT, "OverflowException");
+		MONO_EMIT_NEW_UNALU (cfg, OP_ICONV_TO_I2, ins->dreg, ins->sreg1);
+		ins->opcode = CEE_NOP;
+		break;
+	case OP_ICONV_TO_OVF_I2_UN:
+		/* Convert uint value into short, value within 0 and 32767 */
+		MONO_EMIT_NEW_ICOMPARE_IMM (cfg, ins->sreg1, 32767);
+		MONO_EMIT_NEW_COND_EXC (cfg, IGT_UN, "OverflowException");
+		MONO_EMIT_NEW_UNALU (cfg, OP_ICONV_TO_I2, ins->dreg, ins->sreg1);
+		ins->opcode = CEE_NOP;
+		break;
+	case OP_ICONV_TO_OVF_U2:
+	case OP_ICONV_TO_OVF_U2_UN:
+		/* Probe value to be within 0 and 65535 */
+		MONO_EMIT_NEW_ICOMPARE_IMM (cfg, ins->sreg1, 0xffff);
+		MONO_EMIT_NEW_COND_EXC (cfg, IGT_UN, "OverflowException");
+		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_IAND_IMM, ins->dreg, ins->sreg1, 0xffff);
+		ins->opcode = CEE_NOP;
+		break;
+	case OP_ICONV_TO_OVF_U4:
+	case OP_ICONV_TO_OVF_I4_UN:
+		MONO_EMIT_NEW_ICOMPARE_IMM (cfg, ins->sreg1, 0);
+		MONO_EMIT_NEW_COND_EXC (cfg, ILT, "OverflowException");
+		MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, ins->dreg, ins->sreg1);
+		ins->opcode = CEE_NOP;
+		break;
+	case OP_IMUL_OVF:
+	case OP_IMUL_OVF_UN:
+		no_decompose = TRUE;
+		break;
+	default:
+		g_assert_not_reached ();
+	}
+}
 
 /*
  * mono_method_to_ir: translates IL into basic blocks containing trees
@@ -4198,7 +4290,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			link_bblock (cfg, bblock, end_bblock);
 			start_new_bblock = 1;
 			break;
-#if 0
 		case CEE_BR_S:
 			CHECK_OPSIZE (2);
 			MONO_INST_NEW (cfg, ins, CEE_BR);
@@ -4240,7 +4331,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			}
 			inline_costs += 10;
 			break;
-#endif
 		case CEE_BR:
 			CHECK_OPSIZE (5);
 			MONO_INST_NEW (cfg, ins, CEE_BR);
@@ -4279,21 +4369,8 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 
 			MONO_INST_NEW(cfg, cmp, OP_ICOMPARE_IMM);
 			cmp->sreg1 = sp [0]->dreg;
-			switch (sp [0]->type) {
-			case STACK_I8:
-				cmp->opcode = OP_LCOMPARE_IMM; break;
-			case STACK_R8:
-				NOT_IMPLEMENTED;
-			case STACK_PTR:
-			case STACK_MP:
-				cmp->opcode = OP_COMPARE_IMM; break;
-			case STACK_OBJ:
-				NOT_IMPLEMENTED;
-			default:
-				break;
-			}
 			cmp->cil_code = orig_ip;
-			cmp->type = bin_comp_table [sp [0]->type] [sp [0]->type] ? STACK_I4: STACK_INV;
+			type_from_op (cmp, sp [0], NULL);
 			CHECK_TYPE (cmp);
 			MONO_ADD_INS (bblock, cmp);
 
@@ -4317,7 +4394,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			inline_costs += 10;
 			break;
 		}
-#if 0
 		case CEE_BEQ:
 		case CEE_BGE:
 		case CEE_BGT:
@@ -4341,6 +4417,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			}
 			inline_costs += 10;
 			break;
+#if 0
 		case CEE_SWITCH:
 			CHECK_OPSIZE (5);
 			CHECK_STACK (1);
@@ -4416,11 +4493,13 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			ins_flag = 0;
 			inline_costs += 1;
 			break;
+#endif
 		case CEE_MUL:
 			CHECK_STACK (2);
 			ADD_BINOP (*ip);
 
 #ifdef MONO_ARCH_NO_EMULATE_MUL_IMM
+			NOT_IMPLEMENTED;
 			/* FIXME: This breaks with ssapre (mono -O=ssapre loader.exe) */
 			if ((ins->inst_right->opcode == OP_ICONST) && !(cfg->opt & MONO_OPT_SSAPRE)) {
 				switch (ins->opcode) {
@@ -4463,6 +4542,8 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			 * later apply the speedup to the left shift as well
 			 * See BUG# 57957.
 			 */
+			/* FIXME: Do something with this */
+#if 0
 			if ((ins->opcode == OP_LSHR_UN) && (ins->type == STACK_I8) 
 					&& (ins->inst_right->opcode == OP_ICONST) && (ins->inst_right->inst_c0 == 32)) {
 				ins->opcode = OP_LONG_SHRUN_32;
@@ -4470,7 +4551,9 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				ip++;
 				break;
 			}
+#endif
 			if (mono_find_jit_opcode_emulation (ins->opcode)) {
+				NOT_IMPLEMENTED;
 				--sp;
 				*sp++ = emit_tree (cfg, bblock, ins, ip + 1);
 				mono_get_got_var (cfg);
@@ -4493,6 +4576,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			CHECK_STACK (1);
 			ADD_UNOP (*ip);
 			if (mono_find_jit_opcode_emulation (ins->opcode)) {
+				NOT_IMPLEMENTED;
 				--sp;
 				*sp++ = emit_tree (cfg, bblock, ins, ip + 1);
 				mono_get_got_var (cfg);
@@ -4512,7 +4596,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			} else {
 				ADD_UNOP (*ip);
 			}
-
+			decompose_opcode (cfg, (ins));
 			ip++;
 			break;
 		case CEE_CONV_OVF_U1:
@@ -4526,7 +4610,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			} else {
 				ADD_UNOP (*ip);
 			}
-
+			decompose_opcode (cfg, (ins));
 			ip++;
 			break;
 		case CEE_CONV_OVF_I1_UN:
@@ -4541,8 +4625,35 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 		case CEE_CONV_OVF_U_UN:
 			CHECK_STACK (1);
 			ADD_UNOP (*ip);
+			decompose_opcode (cfg, ins);
 			ip++;
 			break;
+		case CEE_CONV_U2:
+		case CEE_CONV_U1:
+		case CEE_CONV_I:
+			CHECK_STACK (1);
+			ADD_UNOP (*ip);
+			ip++;
+			break;
+		case CEE_ADD_OVF:
+		case CEE_ADD_OVF_UN:
+		case CEE_MUL_OVF:
+		case CEE_MUL_OVF_UN:
+		case CEE_SUB_OVF:
+		case CEE_SUB_OVF_UN:
+			CHECK_STACK (2);
+			ADD_BINOP (*ip);
+			if (mono_find_jit_opcode_emulation (ins->opcode)) {
+				NOT_IMPLEMENTED;
+				--sp;
+				*sp++ = emit_tree (cfg, bblock, ins, ip + 1);
+				mono_get_got_var (cfg);
+			}
+			else
+				decompose_opcode (cfg, ins);
+			ip++;
+			break;
+#if 0
 		case CEE_CPOBJ:
 			CHECK_OPSIZE (5);
 			CHECK_STACK (2);
@@ -5834,28 +5945,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			ip += 5;
 			break;
 		}
-		case CEE_CONV_U2:
-		case CEE_CONV_U1:
-		case CEE_CONV_I:
-			CHECK_STACK (1);
-			ADD_UNOP (*ip);
-			ip++;
-			break;
-		case CEE_ADD_OVF:
-		case CEE_ADD_OVF_UN:
-		case CEE_MUL_OVF:
-		case CEE_MUL_OVF_UN:
-		case CEE_SUB_OVF:
-		case CEE_SUB_OVF_UN:
-			CHECK_STACK (2);
-			ADD_BINOP (*ip);
-			if (mono_find_jit_opcode_emulation (ins->opcode)) {
-				--sp;
-				*sp++ = emit_tree (cfg, bblock, ins, ip + 1);
-				mono_get_got_var (cfg);
-			}
-			ip++;
-			break;
 		case CEE_ENDFINALLY:
 			MONO_INST_NEW (cfg, ins, *ip);
 			MONO_ADD_INS (bblock, ins);
@@ -6129,10 +6218,13 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			}
 			break;
 		}
+#endif
 		case CEE_PREFIX1: {
 			CHECK_OPSIZE (2);
 			switch (ip [1]) {
+#if 0
 			case CEE_ARGLIST: {
+				NOT_IMPLEMENTED;
 				/* somewhat similar to LDTOKEN */
 				MonoInst *addr, *vtvar;
 				CHECK_STACK_OVF (1);
@@ -6150,6 +6242,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				ip += 2;
 				break;
 			}
+#endif
 			case CEE_CEQ:
 			case CEE_CGT:
 			case CEE_CGT_UN:
@@ -6169,29 +6262,25 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				
 				MONO_INST_NEW (cfg, ins, cmp->opcode);
 				sp -= 2;
-				cmp->inst_i0 = sp [0];
-				cmp->inst_i1 = sp [1];
+				cmp->sreg1 = sp [0]->dreg;
+				cmp->sreg2 = sp [1]->dreg;
 				cmp->cil_code = ip;
-				type_from_op (cmp);
+				type_from_op (cmp, sp [0], sp [1]);
 				CHECK_TYPE (cmp);
 				if ((sp [0]->type == STACK_I8) || ((sizeof (gpointer) == 8) && ((sp [0]->type == STACK_PTR) || (sp [0]->type == STACK_OBJ) || (sp [0]->type == STACK_MP))))
 					cmp->opcode = OP_LCOMPARE;
 				else
 					cmp->opcode = OP_COMPARE;
+				MONO_ADD_INS (bblock, cmp);
 				ins->cil_code = ip;
 				ins->type = STACK_I4;
-				ins->inst_i0 = cmp;
+				ins->dreg = alloc_dreg (cfg, ins->type);
+				MONO_ADD_INS (bblock, ins);
 				*sp++ = ins;
-				/* spill it to reduce the expression complexity
-				 * and workaround bug 54209 
-				 */
-				if (cmp->inst_left->type == STACK_I8) {
-					--sp;
-					*sp++ = emit_tree (cfg, bblock, ins, ip + 2);
-				}
 				ip += 2;
 				break;
 			}
+#if 0
 			case CEE_LDFTN: {
 				MonoInst *argconst;
 				int temp;
@@ -6536,12 +6625,12 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			case CEE_READONLY_:
 				ip += 2;
 				break;
+#endif
 			default:
 				g_error ("opcode 0xfe 0x%02x not handled", ip [1]);
 			}
 			break;
 		}
-#endif
 		default:
 			g_error ("opcode 0x%02x not handled", *ip);
 		}
@@ -6786,6 +6875,11 @@ mono_spill_global_vars (MonoCompile *cfg)
 			prev = tree;
 		}
 	}
-
-	/* FIXME: Use NEW/EMIT macros correctly */
 }
+
+/**
+ * FIXME:
+ * - use NEW/EMIT macros correctly
+ * - use 'iadd' instead of 'int_add'
+ * - handling ovf opcodes: decompose in method_to_ir.
+ */

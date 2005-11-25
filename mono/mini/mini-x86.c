@@ -1233,6 +1233,7 @@ peephole_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 			}
 			break;
 		case OP_MUL_IMM: 
+		case OP_IMUL_IMM: 
 			/* remove unnecessary multiplication with 1 */
 			if (ins->inst_imm == 1) {
 				if (ins->dreg != ins->sreg1) {
@@ -1381,6 +1382,7 @@ peephole_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 		case CEE_CONV_I4:
 		case CEE_CONV_U4:
+		case OP_ICONV_TO_I4:
 		case OP_MOVE:
 			/*
 			 * Removes:
@@ -1779,15 +1781,19 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			x86_widen_membase (code, ins->dreg, ins->inst_basereg, ins->inst_offset, TRUE, TRUE);
 			break;
 		case CEE_CONV_I1:
+		case OP_ICONV_TO_I1:
 			x86_widen_reg (code, ins->dreg, ins->sreg1, TRUE, FALSE);
 			break;
 		case CEE_CONV_I2:
+		case OP_ICONV_TO_I2:
 			x86_widen_reg (code, ins->dreg, ins->sreg1, TRUE, TRUE);
 			break;
 		case CEE_CONV_U1:
+		case OP_ICONV_TO_U1:
 			x86_widen_reg (code, ins->dreg, ins->sreg1, FALSE, FALSE);
 			break;
 		case CEE_CONV_U2:
+		case OP_ICONV_TO_U2:
 			x86_widen_reg (code, ins->dreg, ins->sreg1, FALSE, TRUE);
 			break;
 		case OP_COMPARE:
@@ -1848,7 +1854,9 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case CEE_NOP:
 			break;
 		case OP_ADDCC:
+		case OP_IADDCC:
 		case CEE_ADD:
+		case OP_IADD:
 			x86_alu_reg_reg (code, X86_ADD, ins->sreg1, ins->sreg2);
 			break;
 		case OP_ADC:
@@ -1856,13 +1864,16 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 		case OP_ADDCC_IMM:
 		case OP_ADD_IMM:
+		case OP_IADD_IMM:
 			x86_alu_reg_imm (code, X86_ADD, ins->dreg, ins->inst_imm);
 			break;
 		case OP_ADC_IMM:
 			x86_alu_reg_imm (code, X86_ADC, ins->dreg, ins->inst_imm);
 			break;
 		case OP_SUBCC:
+		case OP_ISUBCC:
 		case CEE_SUB:
+		case OP_ISUB:
 			x86_alu_reg_reg (code, X86_SUB, ins->sreg1, ins->sreg2);
 			break;
 		case OP_SBB:
@@ -1870,74 +1881,93 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 		case OP_SUBCC_IMM:
 		case OP_SUB_IMM:
+		case OP_ISUB_IMM:
 			x86_alu_reg_imm (code, X86_SUB, ins->dreg, ins->inst_imm);
 			break;
 		case OP_SBB_IMM:
 			x86_alu_reg_imm (code, X86_SBB, ins->dreg, ins->inst_imm);
 			break;
 		case CEE_AND:
+		case OP_IAND:
 			x86_alu_reg_reg (code, X86_AND, ins->sreg1, ins->sreg2);
 			break;
 		case OP_AND_IMM:
+		case OP_IAND_IMM:
 			x86_alu_reg_imm (code, X86_AND, ins->sreg1, ins->inst_imm);
 			break;
 		case CEE_DIV:
+		case OP_IDIV:
 			x86_cdq (code);
 			x86_div_reg (code, ins->sreg2, TRUE);
 			break;
 		case CEE_DIV_UN:
+		case OP_IDIV_UN:
 			x86_alu_reg_reg (code, X86_XOR, X86_EDX, X86_EDX);
 			x86_div_reg (code, ins->sreg2, FALSE);
 			break;
 		case OP_DIV_IMM:
+		case OP_IDIV_IMM:
 			x86_mov_reg_imm (code, ins->sreg2, ins->inst_imm);
 			x86_cdq (code);
 			x86_div_reg (code, ins->sreg2, TRUE);
 			break;
 		case CEE_REM:
+		case OP_IREM:
 			x86_cdq (code);
 			x86_div_reg (code, ins->sreg2, TRUE);
 			break;
 		case CEE_REM_UN:
+		case OP_IREM_UN:
 			x86_alu_reg_reg (code, X86_XOR, X86_EDX, X86_EDX);
 			x86_div_reg (code, ins->sreg2, FALSE);
 			break;
 		case OP_REM_IMM:
+		case OP_IREM_IMM:
 			x86_mov_reg_imm (code, ins->sreg2, ins->inst_imm);
 			x86_cdq (code);
 			x86_div_reg (code, ins->sreg2, TRUE);
 			break;
 		case CEE_OR:
+		case OP_IOR:
 			x86_alu_reg_reg (code, X86_OR, ins->sreg1, ins->sreg2);
 			break;
 		case OP_OR_IMM:
+		case OP_IOR_IMM:
 			x86_alu_reg_imm (code, X86_OR, ins->sreg1, ins->inst_imm);
 			break;
 		case CEE_XOR:
+		case OP_IXOR:
 			x86_alu_reg_reg (code, X86_XOR, ins->sreg1, ins->sreg2);
 			break;
 		case OP_XOR_IMM:
+		case OP_IXOR_IMM:
 			x86_alu_reg_imm (code, X86_XOR, ins->sreg1, ins->inst_imm);
 			break;
 		case CEE_SHL:
+		case OP_ISHL:
 			g_assert (ins->sreg2 == X86_ECX);
 			x86_shift_reg (code, X86_SHL, ins->dreg);
 			break;
 		case CEE_SHR:
+		case OP_ISHR:
 			g_assert (ins->sreg2 == X86_ECX);
 			x86_shift_reg (code, X86_SAR, ins->dreg);
 			break;
 		case OP_SHR_IMM:
+		case OP_ISHR_IMM:
 			x86_shift_reg_imm (code, X86_SAR, ins->dreg, ins->inst_imm);
 			break;
 		case OP_SHR_UN_IMM:
+		case OP_ISHR_UN_IMM:
 			x86_shift_reg_imm (code, X86_SHR, ins->dreg, ins->inst_imm);
 			break;
 		case CEE_SHR_UN:
+		case OP_ISHR_UN:
 			g_assert (ins->sreg2 == X86_ECX);
 			x86_shift_reg (code, X86_SHR, ins->dreg);
 			break;
 		case OP_SHL_IMM:
+		case OP_ISHL_IMM:
 			x86_shift_reg_imm (code, X86_SHL, ins->dreg, ins->inst_imm);
 			break;
 		case OP_LSHL: {
@@ -2022,9 +2052,11 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			}
 			break;
 		case CEE_NOT:
+		case OP_INOT:
 			x86_not_reg (code, ins->sreg1);
 			break;
 		case CEE_NEG:
+		case OP_INEG:
 			x86_neg_reg (code, ins->sreg1);
 			break;
 		case OP_SEXT_I1:
@@ -2034,9 +2066,11 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			x86_widen_reg (code, ins->dreg, ins->sreg1, TRUE, TRUE);
 			break;
 		case CEE_MUL:
+		case OP_IMUL:
 			x86_imul_reg_reg (code, ins->sreg1, ins->sreg2);
 			break;
 		case OP_MUL_IMM:
+		case OP_IMUL_IMM:
 			switch (ins->inst_imm) {
 			case 2:
 				/* MOV r1, r2 */
@@ -2095,10 +2129,12 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			}
 			break;
 		case CEE_MUL_OVF:
+		case OP_IMUL_OVF:
 			x86_imul_reg_reg (code, ins->sreg1, ins->sreg2);
 			EMIT_COND_SYSTEM_EXCEPTION (X86_CC_O, FALSE, "OverflowException");
 			break;
-		case CEE_MUL_OVF_UN: {
+		case CEE_MUL_OVF_UN:
+		case OP_IMUL_OVF_UN: {
 			/* the mul operation and the exception check should most likely be split */
 			int non_eax_reg, saved_eax = FALSE, saved_edx = FALSE;
 			/*g_assert (ins->sreg2 == X86_EAX);
@@ -2163,6 +2199,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			x86_push_membase (code, ins->inst_basereg, 0xf0f0f0f0);
 			break;
 		case CEE_CONV_I4:
+		case OP_ICONV_TO_I4:
 		case OP_MOVE:
 			x86_mov_reg_reg (code, ins->dreg, ins->sreg1, 4);
 			break;
@@ -2422,6 +2459,22 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_COND_EXC_NC:
 			EMIT_COND_SYSTEM_EXCEPTION (branch_cc_table [ins->opcode - OP_COND_EXC_EQ], (ins->opcode < OP_COND_EXC_NE_UN), ins->inst_p1);
 			break;
+		case OP_COND_EXC_IEQ:
+		case OP_COND_EXC_INE_UN:
+		case OP_COND_EXC_ILT:
+		case OP_COND_EXC_ILT_UN:
+		case OP_COND_EXC_IGT:
+		case OP_COND_EXC_IGT_UN:
+		case OP_COND_EXC_IGE:
+		case OP_COND_EXC_IGE_UN:
+		case OP_COND_EXC_ILE:
+		case OP_COND_EXC_ILE_UN:
+		case OP_COND_EXC_IOV:
+		case OP_COND_EXC_INO:
+		case OP_COND_EXC_IC:
+		case OP_COND_EXC_INC:
+			EMIT_COND_SYSTEM_EXCEPTION (branch_cc_table [ins->opcode - OP_COND_EXC_IEQ], (ins->opcode < OP_COND_EXC_INE_UN), ins->inst_p1);
+			break;
 		case CEE_BEQ:
 		case CEE_BNE_UN:
 		case CEE_BLT:
@@ -2497,6 +2550,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 		case CEE_CONV_R4: /* FIXME: change precision */
 		case CEE_CONV_R8:
+		case OP_ICONV_TO_R4:
+		case OP_ICONV_TO_R8:
 			x86_push_reg (code, ins->sreg1);
 			x86_fild_membase (code, X86_ESP, 0, FALSE);
 			x86_alu_reg_imm (code, X86_ADD, X86_ESP, 4);

@@ -87,6 +87,7 @@ stind.i2: src1:b src2:i
 stind.i4: src1:b src2:i
 stind.r4: dest:f src1:b
 stind.r8: dest:f src1:b
+
 add: dest:i src1:i src2:i len:2 clob:1
 sub: dest:i src1:i src2:i len:2 clob:1
 mul: dest:i src1:i src2:i len:3 clob:1
@@ -100,6 +101,7 @@ xor: dest:i src1:i src2:i len:2 clob:1
 shl: dest:i src1:i src2:s clob:1 len:2
 shr: dest:i src1:i src2:s clob:1 len:2
 shr.un: dest:i src1:i src2:s clob:1 len:2
+
 neg: dest:i src1:i len:2 clob:1
 not: dest:i src1:i len:2 clob:1
 conv.i1: dest:i src1:y len:3
@@ -111,12 +113,43 @@ conv.u4: dest:i src1:i
 conv.u2: dest:i src1:i len:3
 conv.u1: dest:i src1:y len:3
 conv.i: dest:i src1:i len:3
+
+int_add: dest:i src1:i src2:i len:2 clob:1
+int_sub: dest:i src1:i src2:i len:2 clob:1
+int_mul: dest:i src1:i src2:i len:3 clob:1
+int_div: dest:a src1:a src2:i len:15 clob:d
+int_div_un: dest:a src1:a src2:i len:15 clob:d
+int_rem: dest:d src1:a src2:i len:15 clob:a
+int_rem_un: dest:d src1:a src2:i len:15 clob:a
+int_and: dest:i src1:i src2:i len:2 clob:1
+int_or: dest:i src1:i src2:i len:2 clob:1
+int_xor: dest:i src1:i src2:i len:2 clob:1
+int_shl: dest:i src1:i src2:s clob:1 len:2
+int_shr: dest:i src1:i src2:s clob:1 len:2
+int_shr_un: dest:i src1:i src2:s clob:1 len:2
+
+int_neg: dest:i src1:i len:2 clob:1
+int_not: dest:i src1:i len:2 clob:1
+int_conv_to_i1: dest:i src1:y len:3
+int_conv_to_i2: dest:i src1:i len:3
+int_conv_to_i4: dest:i src1:i len:2
+int_conv_to_r4: dest:f src1:i len:7
+int_conv_to_r8: dest:f src1:i len:7
+int_conv_to_u4: dest:i src1:i
+int_conv_to_u2: dest:i src1:i len:3
+int_conv_to_u1: dest:i src1:y len:3
+int_conv_to_i: dest:i src1:i len:3
+
 throw: src1:i len:13
 op_rethrow: src1:i len:13
 ckfinite: dest:f src1:f len:22
+
 mul.ovf: dest:i src1:i src2:i clob:1 len:9
-# this opcode is handled specially in the code generator
 mul.ovf.un: dest:i src1:i src2:i len:16
+
+int_mul_ovf: dest:i src1:i src2:i clob:1 len:9
+int_mul_ovf_un: dest:i src1:i src2:i len:16
+
 conv.u: dest:i src1:i len:3
 ceq: dest:y len:6
 cgt: dest:y len:6
@@ -177,6 +210,7 @@ loadr8_membase: dest:f src1:b len:6
 loadr8_spill_membase: src1:b len:8
 loadu4_mem: dest:i len:9
 move: dest:i src1:i len:2
+
 addcc_imm: dest:i src1:i len:6 clob:1
 add_imm: dest:i src1:i len:6 clob:1
 subcc_imm: dest:i src1:i len:6 clob:1
@@ -195,6 +229,26 @@ xor_imm: dest:i src1:i len:6 clob:1
 shl_imm: dest:i src1:i len:6 clob:1
 shr_imm: dest:i src1:i len:6 clob:1
 shr_un_imm: dest:i src1:i len:6 clob:1
+
+#int_addcc_imm: dest:i src1:i len:6 clob:1
+int_add_imm: dest:i src1:i len:6 clob:1
+#int_subcc_imm: dest:i src1:i len:6 clob:1
+int_sub_imm: dest:i src1:i len:6 clob:1
+int_mul_imm: dest:i src1:i len:9
+# there is no actual support for division or reminder by immediate
+# we simulate them, though (but we need to change the burg rules 
+# to allocate a symbolic reg for src2)
+int_div_imm: dest:a src1:a src2:i len:15 clob:d
+int_div_un_imm: dest:a src1:a src2:i len:15 clob:d
+int_rem_imm: dest:d src1:a src2:i len:15 clob:a
+int_rem_un_imm: dest:d src1:a src2:i len:15 clob:a
+int_and_imm: dest:i src1:i len:6 clob:1
+int_or_imm: dest:i src1:i len:6 clob:1
+int_xor_imm: dest:i src1:i len:6 clob:1
+int_shl_imm: dest:i src1:i len:6 clob:1
+int_shr_imm: dest:i src1:i len:6 clob:1
+int_shr_un_imm: dest:i src1:i len:6 clob:1
+
 cond_exc_eq: len:6
 cond_exc_ne_un: len:6
 cond_exc_lt: len:6
@@ -209,6 +263,22 @@ cond_exc_ov: len:6
 cond_exc_no: len:6
 cond_exc_c: len:6
 cond_exc_nc: len:6
+
+cond_exc_ieq: len:6
+cond_exc_ine_un: len:6
+cond_exc_ilt: len:6
+cond_exc_ilt_un: len:6
+cond_exc_igt: len:6
+cond_exc_igt_un: len:6
+cond_exc_ige: len:6
+cond_exc_ige_un: len:6
+cond_exc_ile: len:6
+cond_exc_ile_un: len:6
+cond_exc_iov: len:6
+cond_exc_ino: len:6
+cond_exc_ic: len:6
+cond_exc_inc: len:6
+
 long_shl: dest:L src1:L src2:s clob:1 len:21
 long_shr: dest:L src1:L src2:s clob:1 len:22
 long_shr_un: dest:L src1:L src2:s clob:1 len:22
@@ -287,12 +357,21 @@ x86_setne_membase: src1:b len:7
 x86_add_membase: dest:i src1:i src2:b clob:1 len:11
 x86_sub_membase: dest:i src1:i src2:b clob:1 len:11
 x86_mul_membase: dest:i src1:i src2:b clob:1 len:13
+
 adc: dest:i src1:i src2:i len:2 clob:1
 addcc: dest:i src1:i src2:i len:2 clob:1
 subcc: dest:i src1:i src2:i len:2 clob:1
 adc_imm: dest:i src1:i len:6 clob:1
 sbb: dest:i src1:i src2:i len:2 clob:1
 sbb_imm: dest:i src1:i len:6 clob:1
+
+int_adc: dest:i src1:i src2:i len:2 clob:1
+int_addcc: dest:i src1:i src2:i len:2 clob:1
+int_subcc: dest:i src1:i src2:i len:2 clob:1
+int_adc_imm: dest:i src1:i len:6 clob:1
+int_sbb: dest:i src1:i src2:i len:2 clob:1
+int_sbb_imm: dest:i src1:i len:6 clob:1
+
 br_reg: src1:i len:2
 sin: dest:f src1:f len:6
 cos: dest:f src1:f len:6
