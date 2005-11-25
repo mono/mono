@@ -177,6 +177,10 @@ namespace MonoTests.System.Web {
 					return "mapa=10";
 				case 32: // GET
 					return "mapa.x=pi&mapa.y=20";
+				case 50:
+					return "PlainString";
+				case 51:
+					return "Plain&Arg=1";
 				default:
 					return "GetQueryString";
 				}
@@ -565,7 +569,18 @@ namespace MonoTests.System.Web {
 			//
 			NameValueCollection nvc = c.Request.QueryString;
 		}
-			
+
+		[Test]
+		public void Test_QueryString_ToString ()
+		{
+			HttpContext c = Cook (50);
+
+			Assert.AreEqual (c.Request.QueryString.ToString (), "PlainString", "QTS#1");
+
+			c = Cook (51);
+			Assert.AreEqual (c.Request.QueryString.ToString (), "Plain&Arg=1", "QTS#2");
+		}
+		
 		[Test]
 		public void Leading_qm_in_QueryString ()
 		{

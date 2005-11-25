@@ -64,8 +64,10 @@ namespace System.Web
 				if (result.Length > 0)
 					result.Append ('&');
 
-				result.Append (key);
-				result.Append ('=');
+				if (key != null && key.Length > 0){
+					result.Append (key);
+					result.Append ('=');
+				}
 				result.Append (Get (key));
 			}
 
