@@ -1,3 +1,12 @@
+2005-11-25  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* DefaultUriParser.cs: Added an internal default parser because (a)
+	UriParser is abstract and (b) MS doesn't always use the new parser
+	classes :(
+	* Uri.cs: Implemented Compare method. Added some FIXME.
+	* UriParser.cs: Implemented GetComponents and IsBaseOf methods. 
+	Changed parsers to point to the new DefaultUriParser.
+
 2005-11-15  Sebastien Pouliot  <sebastien@ximian.com> 
  
 	* Uri.cs: Temporary fix for monodoc (which current Uri system won't

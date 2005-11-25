@@ -131,12 +131,16 @@ namespace System {
 				if (IsAbsoluteUri)
 					throw new InvalidOperationException (Locale.GetText ("This isn't an relative URI."));
 				break;
+			default:
+				string msg = Locale.GetText ("Invalid UriKind value '{0}'.", uriKind);
+				throw new ArgumentException ("uriKind", msg);
 			}
 		}
 
 		public Uri (Uri baseUri, Uri relativeUri)
 			: this (baseUri, relativeUri.OriginalString, false)
 		{
+			// FIXME: this should call UriParser.Resolve
 		}
 
 		// note: doc says that dontEscape is always false but tests show otherwise
@@ -158,7 +162,8 @@ namespace System {
 
 		public Uri (Uri baseUri, string relativeUri) 
 			: this (baseUri, relativeUri, false) 
-		{			
+		{
+			// FIXME: this should call UriParser.Resolve
 		}
 
 #if NET_2_0
@@ -996,7 +1001,7 @@ namespace System {
 			return Unescape (str, false);
 		}
 		
-		private string Unescape (string str, bool excludeSpecial) 
+		internal static string Unescape (string str, bool excludeSpecial) 
 		{
 			if (str == null)
 				return String.Empty;
@@ -1574,7 +1579,11 @@ namespace System {
 		private UriParser parser;
 
 		private UriParser Parser {
-			get { return parser; }
+			get {
+				if (parser == null)
+					parser = UriParser.GetParser (Scheme);
+				return parser;
+			}
 			set { parser = value; }
 		}
 
@@ -1606,7 +1615,6 @@ namespace System {
 
 		private const int MaxUriLength = 32766;
 
-		[MonoTODO]
 		public static int Compare (Uri uri1, Uri uri2, UriComponents partsToCompare, UriFormat compareFormat, StringComparison comparisonType)
 		{
 			if ((comparisonType < StringComparison.CurrentCulture) || (comparisonType > StringComparison.OrdinalIgnoreCase)) {
@@ -1617,7 +1625,9 @@ namespace System {
 			if ((uri1 == null) && (uri2 == null))
 				return 0;
 
-			throw new NotImplementedException ();
+			string s1 = uri1.GetComponents (partsToCompare, compareFormat);
+			string s2 = uri2.GetComponents (partsToCompare, compareFormat);
+			return String.Compare (s1, s2, comparisonType);
 		}
 
 		[MonoTODO]
@@ -1648,15 +1658,13 @@ namespace System {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public static bool IsWellFormedUriString (string uriString, UriKind uriKind)
 		{
 			if (uriString == null)
-				throw new ArgumentNullException ("uriString");
-
-			throw new NotImplementedException ();
+				return false;
+			Uri uri = new Uri (uriString, uriKind);
+			return uri.IsWellFormedOriginalString ();
 		}
-
 
 		[MonoTODO ("rework code to avoid exception catching")]
 		public static bool TryCreate (string uriString, UriKind uriKind, out Uri result)
@@ -1675,6 +1683,7 @@ namespace System {
 		public static bool TryCreate (Uri baseUri, string relativeUri, out Uri result)
 		{
 			try {
+				// FIXME: this should call UriParser.Resolve
 				result = new Uri (baseUri, relativeUri);
 				return true;
 			}
@@ -1688,6 +1697,7 @@ namespace System {
 		public static bool TryCreate (Uri baseUri, Uri relativeUri, out Uri result)
 		{
 			try {
+				// FIXME: this should call UriParser.Resolve
 				result = new Uri (baseUri, relativeUri);
 				return true;
 			}

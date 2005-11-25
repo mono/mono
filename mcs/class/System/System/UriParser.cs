@@ -31,6 +31,7 @@
 using System.Collections;
 using System.Globalization;
 using System.Security.Permissions;
+using System.Text;
 
 namespace System {
 
@@ -49,13 +50,72 @@ namespace System {
 
 		// protected methods
 
-		[MonoTODO]
 		protected internal virtual string GetComponents (Uri uri, UriComponents components, UriFormat format)
 		{
 			if ((format < UriFormat.UriEscaped) || (format > UriFormat.SafeUnescaped))
 				throw new ArgumentOutOfRangeException ("format");
 
-			throw new NotImplementedException ();
+			// it's easier to answer some case directly (as the output isn't identical 
+			// when mixed with others components, e.g. leading slash, # ...)
+			switch (components) {
+			case UriComponents.Scheme:
+				return uri.Scheme;
+			case UriComponents.UserInfo:
+				return uri.UserInfo;
+			case UriComponents.Port:
+				if (uri.IsDefaultPort)
+					return String.Empty;
+				return uri.Port.ToString ();
+			case UriComponents.Path:
+				return Format (IgnoreFirstCharIf (uri.LocalPath, '/'), format);
+			case UriComponents.Fragment:
+				return Format (IgnoreFirstCharIf (uri.Fragment, '#'), format);
+			case UriComponents.StrongPort:
+				return uri.Port.ToString ();
+			case UriComponents.SerializationInfoString:
+				components = UriComponents.AbsoluteUri;
+				break;
+			}
+
+			// now we deal with multiple flags...
+
+			StringBuilder sb = new StringBuilder ();
+			if ((components & UriComponents.Scheme) != 0) {
+				sb.Append (uri.Scheme);
+				sb.Append (Uri.GetSchemeDelimiter (uri.Scheme));
+			}
+
+			if ((components & UriComponents.UserInfo) != 0) {
+				string s = uri.UserInfo;
+				if (s.Length > 0) {
+					sb.Append (s);
+					sb.Append ("@");
+				}
+			}
+
+			if ((components & UriComponents.Host) != 0)
+				sb.Append (uri.Host);
+
+			// for StrongPort always show port - even if -1
+			// otherwise only display if ut's not the default port
+			if (((components & UriComponents.StrongPort) != 0) ||
+				((components & UriComponents.Port) != 0) && !uri.IsDefaultPort) {
+				sb.Append (":");
+				sb.Append (uri.Port);
+			}
+
+			if ((components & UriComponents.Path) != 0) {
+				sb.Append (uri.LocalPath);
+			}
+
+			if ((components & UriComponents.Query) != 0)
+				sb.Append (uri.Query);
+
+			if ((components & UriComponents.Fragment) != 0) {
+				sb.Append (uri.Fragment);
+			}
+
+			return Format (sb.ToString (), format);
 		}
 
 		[MonoTODO]
@@ -64,10 +124,15 @@ namespace System {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		protected internal virtual bool IsBaseOf (Uri baseUri, Uri relativeUri)
 		{
-			throw new NotImplementedException ();
+			// compare, not case sensitive, the scheme, host and port (+ user informations)
+			if (Uri.Compare (baseUri, relativeUri, UriComponents.SchemeAndServer | UriComponents.UserInfo, UriFormat.Unescaped, StringComparison.InvariantCultureIgnoreCase) != 0)
+				return false;
+
+			string base_string = baseUri.LocalPath;
+			int last_slash = base_string.LastIndexOf ('/') + 1; // keep the slash
+			return (String.Compare (base_string, 0, relativeUri.LocalPath, 0, last_slash, StringComparison.InvariantCultureIgnoreCase) == 0);
 		}
 
 		[MonoTODO]
@@ -93,6 +158,7 @@ namespace System {
 		[MonoTODO]
 		protected internal virtual string Resolve (Uri baseUri, Uri relativeUri, out UriFormatException parsingError)
 		{
+			// used by Uri.ctor and Uri.TryCreate
 			throw new NotImplementedException ();
 		}
 
@@ -108,6 +174,36 @@ namespace System {
 			set { default_port = value; }
 		}
 
+		// private stuff
+
+		private string IgnoreFirstCharIf (string s, char c)
+		{
+			if (s.Length == 0)
+				return String.Empty;
+			if (s[0] == c)
+				return s.Substring (1);
+			return s;
+		}
+
+		private string Format (string s, UriFormat format)
+		{
+			if (s.Length == 0)
+				return String.Empty;
+
+			switch (format) {
+			case UriFormat.UriEscaped:
+				return Uri.EscapeString (s, false, true, true);
+			case UriFormat.SafeUnescaped:
+				// TODO subset of escape rules
+				s = Uri.Unescape (s, false);
+				return s; //Uri.EscapeString (s, false, true, true);
+			case UriFormat.Unescaped:
+				return Uri.Unescape (s, false);
+			default:
+				throw new ArgumentOutOfRangeException ("format");
+			}
+		}
+
 		// static methods
 
 		private static void CreateDefaults ()
@@ -116,20 +212,18 @@ namespace System {
 				if (table == null) {
 					table = new Hashtable ();
 
-					InternalRegister (new FileStyleUriParser (), Uri.UriSchemeFile, -1);
-					InternalRegister (new FtpStyleUriParser (), Uri.UriSchemeFtp, 21);
-					InternalRegister (new GopherStyleUriParser (), Uri.UriSchemeGopher, 70);
-					InternalRegister (new HttpStyleUriParser (), Uri.UriSchemeHttp, 80);
-					InternalRegister (new HttpStyleUriParser (), Uri.UriSchemeHttps, 443);
-					// FIXME ??? no MailToUriParser
-					InternalRegister (new GenericUriParser (GenericUriParserOptions.Default),
-						Uri.UriSchemeMailto, 25);
-					InternalRegister (new NetPipeStyleUriParser (), Uri.UriSchemeNetPipe, -1);
-					InternalRegister (new NetTcpStyleUriParser (), Uri.UriSchemeNetTcp, -1);
-					InternalRegister (new NewsStyleUriParser (), Uri.UriSchemeNews, 119);
-					InternalRegister (new NewsStyleUriParser (), Uri.UriSchemeNntp, 119);
+					InternalRegister (new DefaultUriParser (), Uri.UriSchemeFile, -1);
+					InternalRegister (new DefaultUriParser (), Uri.UriSchemeFtp, 21);
+					InternalRegister (new DefaultUriParser (), Uri.UriSchemeGopher, 70);
+					InternalRegister (new DefaultUriParser (), Uri.UriSchemeHttp, 80);
+					InternalRegister (new DefaultUriParser (), Uri.UriSchemeHttps, 443);
+					InternalRegister (new DefaultUriParser (), Uri.UriSchemeMailto, 25);
+					InternalRegister (new DefaultUriParser (), Uri.UriSchemeNetPipe, -1);
+					InternalRegister (new DefaultUriParser (), Uri.UriSchemeNetTcp, -1);
+					InternalRegister (new DefaultUriParser (), Uri.UriSchemeNews, 119);
+					InternalRegister (new DefaultUriParser (), Uri.UriSchemeNntp, 119);
 					// not defined in Uri.UriScheme* but a parser class exists
-					InternalRegister (new LdapStyleUriParser (), "ldap", 389);
+					InternalRegister (new DefaultUriParser (), "ldap", 389);
 				}
 			}
 		}
@@ -151,7 +245,17 @@ namespace System {
 		{
 			uriParser.SchemeName = schemeName;
 			uriParser.DefaultPort = defaultPort;
-			table.Add (schemeName, uriParser);
+
+			// FIXME: MS doesn't seems to call most inherited parsers
+			if (uriParser is GenericUriParser) {
+				table.Add (schemeName, uriParser);
+			} else {
+				DefaultUriParser parser = new DefaultUriParser ();
+				parser.SchemeName = schemeName;
+				parser.DefaultPort = defaultPort;
+				table.Add (schemeName, parser);
+			}
+
 			// note: we cannot set schemeName and defaultPort inside OnRegister
 			uriParser.OnRegister (schemeName, defaultPort);
 		}
