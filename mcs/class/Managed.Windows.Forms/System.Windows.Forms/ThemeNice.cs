@@ -34,64 +34,43 @@ using System.Drawing.Text;
 
 namespace System.Windows.Forms
 {
-	
 	internal class ThemeNice : ThemeWin32Classic
 	{
 		public override Version Version
 		{
 			get {
-				return new Version( 0, 0, 0, 1 );
+				return new Version( 0, 0, 0, 2 );
 			}
 		}
-		
-		/* Default colors for nice theme */
-		uint [] theme_colors = {							/* AARRGGBB */
-			(uint) XplatUIWin32.GetSysColorIndex.COLOR_SCROLLBAR,			0xffc0c0c0,
-			(uint) XplatUIWin32.GetSysColorIndex.COLOR_BACKGROUND,			0xffefebe7,
-			(uint) XplatUIWin32.GetSysColorIndex.COLOR_ACTIVECAPTION,		0xff000080,
-			(uint) XplatUIWin32.GetSysColorIndex.COLOR_INACTIVECAPTION,		0xff808080,
-			(uint) XplatUIWin32.GetSysColorIndex.COLOR_MENU,			0xffefebe7,
-			(uint) XplatUIWin32.GetSysColorIndex.COLOR_WINDOW,			0xffffffff,
-			(uint) XplatUIWin32.GetSysColorIndex.COLOR_WINDOWFRAME,			0xff000000,
-			(uint) XplatUIWin32.GetSysColorIndex.COLOR_MENUTEXT,			0xff000000,
-			(uint) XplatUIWin32.GetSysColorIndex.COLOR_WINDOWTEXT,			0xff000000,
-			(uint) XplatUIWin32.GetSysColorIndex.COLOR_CAPTIONTEXT,			0xffffffff,
-			(uint) XplatUIWin32.GetSysColorIndex.COLOR_ACTIVEBORDER,		0xffc0c0c0,
-			(uint) XplatUIWin32.GetSysColorIndex.COLOR_INACTIVEBORDER,		0xffc0c0c0,
-			(uint) XplatUIWin32.GetSysColorIndex.COLOR_APPWORKSPACE,		0xff808080,
-			(uint) XplatUIWin32.GetSysColorIndex.COLOR_HIGHLIGHT,			0xff000080,
-			(uint) XplatUIWin32.GetSysColorIndex.COLOR_HIGHLIGHTTEXT,		0xffffffff,
-			(uint) XplatUIWin32.GetSysColorIndex.COLOR_BTNFACE,			0xffefebe7,
-			(uint) XplatUIWin32.GetSysColorIndex.COLOR_BTNSHADOW,			0xff808080,
-			(uint) XplatUIWin32.GetSysColorIndex.COLOR_GRAYTEXT,			0xff808080,
-			(uint) XplatUIWin32.GetSysColorIndex.COLOR_BTNTEXT,			0xff000000,
-			(uint) XplatUIWin32.GetSysColorIndex.COLOR_INACTIVECAPTIONTEXT,		0xffc0c0c0,
-			(uint) XplatUIWin32.GetSysColorIndex.COLOR_BTNHIGHLIGHT,		0xffffffff,
-			(uint) XplatUIWin32.GetSysColorIndex.COLOR_3DDKSHADOW,			0xff000000,
-			(uint) XplatUIWin32.GetSysColorIndex.COLOR_3DLIGHT,			0xffe0e0e0,
-			(uint) XplatUIWin32.GetSysColorIndex.COLOR_INFOTEXT,			0xff000000,
-			(uint) XplatUIWin32.GetSysColorIndex.COLOR_INFOBK,			0xffffffff,
-		
-		};
 		
 		static readonly Color NormalColor = Color.LightGray;
 		static readonly Color MouseOverColor = Color.DarkGray;
 		static readonly Color PressedColor = Color.Gray;
 		static readonly Color FocusColor = Color.FromArgb( System.Convert.ToInt32( "0xff00c0ff", 16 ) );
-//		static uint uifc = 0xff00c0ff;
-//		static readonly Color xFocusColor = Color.FromArgb( (int)uifc );
 		static readonly Color LightColor = Color.LightGray;
 		static readonly Color BorderColor = MouseOverColor;
 		static readonly Color NiceBackColor  = Color.FromArgb( System.Convert.ToInt32( "0xffefebe7", 16 ) );
 		
+		Bitmap one_pixel_BorderColor;
+		Bitmap one_pixel_FocusColor;
+		static Bitmap size_grip_bmp = CreateSizegripDot();
+		
 		#region	Principal Theme Methods
 		public ThemeNice( )
 		{
-			/* Init Default colour array*/
-			syscolors =  Array.CreateInstance( typeof (Color), (uint) XplatUIWin32.GetSysColorIndex.COLOR_MAXVALUE + 1 );
+			ColorControl = NiceBackColor;
+			CreateOnePixelBitmaps( );
+		}
+		
+		// we are faking here a little bit
+		// gdi+ doesn't have a function to draw one pixel so we create a one pixel bitmap
+		private void CreateOnePixelBitmaps( )
+		{
+			one_pixel_BorderColor = new Bitmap( 1, 1 );
+			one_pixel_BorderColor.SetPixel( 0, 0, BorderColor );
 			
-			for ( int i = 0; i < theme_colors.Length; i += 2 )
-				syscolors.SetValue( Color.FromArgb( (int)theme_colors[ i + 1 ] ), (int) theme_colors[ i ] );
+			one_pixel_FocusColor = new Bitmap( 1, 1 );
+			one_pixel_FocusColor.SetPixel( 0, 0, FocusColor );
 		}
 		
 		public override Color DefaultControlBackColor
@@ -103,17 +82,29 @@ namespace System.Windows.Forms
 		{
 			get { return NiceBackColor; }			
 		}
+		
+		public override Color ColorControl {
+			get { return NiceBackColor;}
+		}
+		
+		static Bitmap CreateSizegripDot()
+		{
+			Bitmap bmp = new Bitmap( 4, 4 );
+			using ( Graphics gr = Graphics.FromImage( bmp ) )
+				using ( LinearGradientBrush lgbr = new LinearGradientBrush( new Point( 0, 0 ), new Point( 4, 4 ), PressedColor, Color.White ) )
+					gr.FillEllipse( lgbr, new Rectangle( 0, 0, 4, 4 ) );
+			
+			return bmp;
+		}
 		#endregion	// Internal Methods
 		
 		#region ButtonBase
 		protected override void ButtonBase_DrawButton( ButtonBase button, Graphics dc )
 		{
-			int		width;
-			int		height;
 			Rectangle buttonRectangle;
 			
-			width = button.ClientSize.Width;
-			height = button.ClientSize.Height;
+			int width = button.ClientSize.Width;
+			int height = button.ClientSize.Height;
 			
 			dc.FillRectangle( ResPool.GetSolidBrush( button.BackColor ), button.ClientRectangle );
 			
@@ -122,8 +113,8 @@ namespace System.Windows.Forms
 			
 			Color use_color;
 			
-			if ( ( ( button.GetType( ) == typeof( CheckBox ) ) && ( ( (CheckBox)button ).check_state == CheckState.Checked ) ) ||
-			    ( ( button.GetType( ) == typeof( RadioButton ) ) && ( ( (RadioButton)button ).check_state == CheckState.Checked ) ) )
+			if ( ( ( button is CheckBox ) && ( ( (CheckBox)button ).check_state == CheckState.Checked ) ) ||
+			    ( ( button is RadioButton ) && ( ( (RadioButton)button ).check_state == CheckState.Checked ) ) )
 			{
 				use_color = PressedColor;
 			}
@@ -147,7 +138,7 @@ namespace System.Windows.Forms
 			}
 			
 			// Fill button with a nice linear gradient brush
-			Rectangle lgbRectangle = Rectangle.Inflate( buttonRectangle, -2, -1 );
+			Rectangle lgbRectangle = Rectangle.Inflate( buttonRectangle, -1, -1 );
 			
 			if ( button.flat_style != FlatStyle.Popup || ( ( button.flat_style == FlatStyle.Popup ) && button.is_entered ) )
 			{
@@ -160,15 +151,15 @@ namespace System.Windows.Forms
 				lgbr.Dispose( );
 				
 				Pen pen = ResPool.GetPen( BorderColor );
-				dc.DrawLine( pen, 3, 0, width - 4, 0 );
-				dc.DrawLine( pen, width - 1, 3, width - 1, height - 4 );
-				dc.DrawLine( pen, 3, height - 1, width - 4, height - 1 );
-				dc.DrawLine( pen, 0, 3, 0, height - 4 );
+				dc.DrawLine( pen, 2, 0, width - 3, 0 );
+				dc.DrawLine( pen, width - 1, 2, width - 1, height - 3 );
+				dc.DrawLine( pen, 2, height - 1, width - 3, height - 1 );
+				dc.DrawLine( pen, 0, 2, 0, height - 3 );
 				
-				dc.DrawCurve( pen, new Point[] { new Point( 0, 4 ), new Point( 4, 0 ) } );
-				dc.DrawCurve( pen, new Point[] { new Point( 0, height - 4 ), new Point( 4, height ) } );
-				dc.DrawCurve( pen, new Point[] { new Point( width - 4, 0 ), new Point( width, 4 ) } );
-				dc.DrawCurve( pen, new Point[] { new Point( width, height - 4 ), new Point( width - 4, height ) } );
+				dc.DrawImage( one_pixel_BorderColor, 1, 1 );
+				dc.DrawImage( one_pixel_BorderColor, width - 2, 1 );
+				dc.DrawImage( one_pixel_BorderColor, width - 2, height - 2 );
+				dc.DrawImage( one_pixel_BorderColor, 1, height - 2 );
 			}
 		}
 		
@@ -178,20 +169,20 @@ namespace System.Windows.Forms
 			int height = button.ClientSize.Height;
 			
 			Pen pen = ResPool.GetPen( FocusColor );
-			dc.DrawLine( pen, 4, 1, width - 5, 1 );
-			dc.DrawLine( pen, width - 2, 4, width - 2, height - 5 );
-			dc.DrawLine( pen, 4, height - 2, width - 5, height - 2 );
-			dc.DrawLine( pen, 1, 4, 1, height - 5 );
+			dc.DrawLine( pen, 3, 1, width - 4, 1 );
+			dc.DrawLine( pen, width - 2, 3, width - 2, height - 4 );
+			dc.DrawLine( pen, 3, height - 2, width - 4, height - 2 );
+			dc.DrawLine( pen, 1, 3, 1, height - 4 );
 			
-			dc.DrawCurve( pen, new Point[] { new Point( 1, 5 ), new Point( 5, 1 ) } );
-			dc.DrawCurve( pen, new Point[] { new Point( 1, height - 5 ), new Point( 5, height - 1 ) } );
-			dc.DrawCurve( pen, new Point[] { new Point( width - 5, 1 ), new Point( width - 1, 5 ) } );
-			dc.DrawCurve( pen, new Point[] { new Point( width - 1, height - 5 ), new Point( width - 5, height - 1 ) } );
+			dc.DrawImage( one_pixel_FocusColor, 2, 2 );
+			dc.DrawImage( one_pixel_FocusColor, width - 3, 2 );
+			dc.DrawImage( one_pixel_FocusColor, width - 3, height - 3 );
+			dc.DrawImage( one_pixel_FocusColor, 2, height - 3 );
 		}
 		
 		protected override void ButtonBase_DrawText( ButtonBase button, Graphics dc )
 		{
-			if ( button.GetType( ) != typeof( CheckBox ) && button.GetType( ) != typeof( RadioButton ) )
+			if ( !( button is CheckBox ) && !(button is RadioButton ) )
 			{
 				base.ButtonBase_DrawText( button, dc );
 			}
@@ -348,25 +339,26 @@ namespace System.Windows.Forms
 				
 				int cx = ThemeEngine.Current.MenuCheckSize.Width;
 				int cy = ThemeEngine.Current.MenuCheckSize.Height;
-				Bitmap	bmp = new Bitmap( cx, cy );
-				Graphics gr = Graphics.FromImage( bmp );
-				Rectangle rect_arrow = new Rectangle( 0, 0, cx, cy );
-				ControlPaint.DrawMenuGlyph( gr, rect_arrow, MenuGlyph.Arrow );
-				bmp.MakeTransparent( );
-				
-				if ( item.Enabled )
+				using ( Bitmap	bmp = new Bitmap( cx, cy ) )
 				{
-					e.Graphics.DrawImage( bmp, e.Bounds.X + e.Bounds.Width - cx,
-							     e.Bounds.Y + ( ( e.Bounds.Height - cy ) / 2 ) );
+					using ( Graphics gr = Graphics.FromImage( bmp ) )
+					{
+						Rectangle rect_arrow = new Rectangle( 0, 0, cx, cy );
+						ControlPaint.DrawMenuGlyph( gr, rect_arrow, MenuGlyph.Arrow );
+						bmp.MakeTransparent( );
+						
+						if ( item.Enabled )
+						{
+							e.Graphics.DrawImage( bmp, e.Bounds.X + e.Bounds.Width - cx,
+									     e.Bounds.Y + ( ( e.Bounds.Height - cy ) / 2 ) );
+						}
+						else
+						{
+							ControlPaint.DrawImageDisabled( e.Graphics, bmp, e.Bounds.X + e.Bounds.Width - cx,
+										       e.Bounds.Y + ( ( e.Bounds.Height - cy ) / 2 ),  color_back );
+						}
+					}
 				}
-				else
-				{
-					ControlPaint.DrawImageDisabled( e.Graphics, bmp, e.Bounds.X + e.Bounds.Width - cx,
-								       e.Bounds.Y + ( ( e.Bounds.Height - cy ) / 2 ),  color_back );
-				}
-				
-				gr.Dispose( );
-				bmp.Dispose( );
 			}
 			
 			/* Draw checked or radio */
@@ -376,21 +368,56 @@ namespace System.Windows.Forms
 				Rectangle area = e.Bounds;
 				int cx = ThemeEngine.Current.MenuCheckSize.Width;
 				int cy = ThemeEngine.Current.MenuCheckSize.Height;
-				Bitmap	bmp = new Bitmap( cx, cy );
-				Graphics gr = Graphics.FromImage( bmp );
-				Rectangle rect_arrow = new Rectangle( 0, 0, cx, cy );
-				
-				if ( item.RadioCheck )
-					ControlPaint.DrawMenuGlyph( gr, rect_arrow, MenuGlyph.Bullet );
-				else
-					ControlPaint.DrawMenuGlyph( gr, rect_arrow, MenuGlyph.Checkmark );
-				
-				bmp.MakeTransparent( );
-				e.Graphics.DrawImage( bmp, area.X, e.Bounds.Y + ( ( e.Bounds.Height - cy ) / 2 ) );
-				
-				gr.Dispose( );
-				bmp.Dispose( );
+				using ( Bitmap bmp = new Bitmap( cx, cy ) )
+				{
+					using ( Graphics gr = Graphics.FromImage( bmp ) )
+					{
+						Rectangle rect_arrow = new Rectangle( 0, 0, cx, cy );
+						
+						if ( item.RadioCheck )
+							ControlPaint.DrawMenuGlyph( gr, rect_arrow, MenuGlyph.Bullet );
+						else
+							ControlPaint.DrawMenuGlyph( gr, rect_arrow, MenuGlyph.Checkmark );
+						
+						bmp.MakeTransparent( );
+						e.Graphics.DrawImage( bmp, area.X, e.Bounds.Y + ( ( e.Bounds.Height - cy ) / 2 ) );
+					}
+				}
 			}
+		}
+		
+		public override void DrawPopupMenu (Graphics dc, Menu menu, Rectangle cliparea, Rectangle rect)
+		{
+			
+			dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush
+					  (NiceBackColor), cliparea);
+			
+			/* Draw menu borders */
+			dc.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorHighlightText),
+				     rect.X, rect.Y, rect.X + rect.Width, rect.Y);
+			
+			dc.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorHighlightText),
+				     rect.X, rect.Y, rect.X, rect.Y + rect.Height);
+			
+			dc.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorControlDark),
+				     rect.X + rect.Width - 1 , rect.Y , rect.X + rect.Width - 1, rect.Y + rect.Height);
+			
+			dc.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorControlDarkDark),
+				     rect.X + rect.Width, rect.Y , rect.X + rect.Width, rect.Y + rect.Height);
+			
+			dc.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorControlDark),
+				     rect.X , rect.Y + rect.Height - 1 , rect.X + rect.Width - 1, rect.Y + rect.Height -1);
+			
+			dc.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorControlDarkDark),
+				     rect.X , rect.Y + rect.Height, rect.X + rect.Width - 1, rect.Y + rect.Height);
+			
+			for (int i = 0; i < menu.MenuItems.Count; i++)
+				if (cliparea.IntersectsWith (menu.MenuItems [i].bounds)) {
+					MenuItem item = menu.MenuItems [i];
+					item.MenuHeight = menu.Height;
+					item.PerformDrawItem (new DrawItemEventArgs (dc, ThemeEngine.Current.MenuFont,
+										     item.bounds, i, item.Status));
+				}
 		}
 		#endregion // Menus
 		
@@ -657,7 +684,7 @@ namespace System.Windows.Forms
 		public override void DrawTabControl( Graphics dc, Rectangle area, TabControl tab )
 		{
 			// Do we need to fill the back color? It can't be changed...
-			dc.FillRectangle( GetControlBackBrush( tab.BackColor ), area );
+			dc.FillRectangle( ResPool.GetSolidBrush( NiceBackColor ), area );
 			Rectangle panel_rect = GetTabPanelRectExt( tab );
 			
 			if ( tab.Appearance == TabAppearance.Normal )
@@ -727,7 +754,7 @@ namespace System.Windows.Forms
 			
 			if ( tab.Appearance == TabAppearance.Buttons || tab.Appearance == TabAppearance.FlatButtons )
 			{
-				dc.FillRectangle( GetControlBackBrush( tab.BackColor ), bounds );
+				dc.FillRectangle( ResPool.GetSolidBrush( NiceBackColor ), bounds );
 				
 				// Separators
 				if ( tab.Appearance == TabAppearance.FlatButtons )
@@ -764,11 +791,11 @@ namespace System.Windows.Forms
 			{
 				Pen border_pen = ResPool.GetPen( BorderColor );
 				
+				dc.FillRectangle( ResPool.GetSolidBrush( NiceBackColor ), bounds );
+				
 				switch ( tab.Alignment )
 				{
 					case TabAlignment.Top:
-						
-						dc.FillRectangle( GetControlBackBrush( tab.BackColor ), bounds );
 						
 						if ( !is_selected )
 						{
@@ -810,8 +837,6 @@ namespace System.Windows.Forms
 						
 					case TabAlignment.Bottom:
 						
-						dc.FillRectangle( GetControlBackBrush( tab.BackColor ), bounds );
-						
 						if ( !is_selected )
 						{
 							interior = new Rectangle( bounds.Left + 3, bounds.Top, bounds.Width - 3, bounds.Height );
@@ -851,8 +876,6 @@ namespace System.Windows.Forms
 						break;
 						
 					case TabAlignment.Left:
-						
-						dc.FillRectangle( GetControlBackBrush( tab.BackColor ), bounds );
 						
 						if ( !is_selected )
 						{
@@ -899,8 +922,6 @@ namespace System.Windows.Forms
 						
 					default:
 						// TabAlignment.Right
-						
-						dc.FillRectangle( GetControlBackBrush( tab.BackColor ), bounds );
 						
 						if ( !is_selected )
 						{
@@ -1129,21 +1150,12 @@ namespace System.Windows.Forms
 		{
 			Point pt = new Point( bounds.Right - 4, bounds.Bottom - 4 );
 			
-			using ( Bitmap bmp = new Bitmap( 4, 4 ) )
-			{
-				using ( Graphics gr = Graphics.FromImage( bmp ) )
-				{
-					using ( LinearGradientBrush lgbr = new LinearGradientBrush( new Point( 0, 0 ), new Point( 4, 4 ), PressedColor, Color.White ) )
-						gr.FillEllipse( lgbr, new Rectangle( 0, 0, 4, 4 ) );
-				}
-				
-				dc.DrawImage( bmp, pt );
-				dc.DrawImage( bmp, pt.X, pt.Y - 5 );
-				dc.DrawImage( bmp, pt.X, pt.Y - 10 );
-				dc.DrawImage( bmp, pt.X - 5, pt.Y );
-				dc.DrawImage( bmp, pt.X - 10, pt.Y );
-				dc.DrawImage( bmp, pt.X - 5, pt.Y - 5 );
-			}
+			dc.DrawImage( size_grip_bmp, pt );
+			dc.DrawImage( size_grip_bmp, pt.X, pt.Y - 5 );
+			dc.DrawImage( size_grip_bmp, pt.X, pt.Y - 10 );
+			dc.DrawImage( size_grip_bmp, pt.X - 5, pt.Y );
+			dc.DrawImage( size_grip_bmp, pt.X - 10, pt.Y );
+			dc.DrawImage( size_grip_bmp, pt.X - 5, pt.Y - 5 );
 		}
 		
 		private void DrawScrollBarThumb( Graphics dc, Rectangle area, ScrollBar bar )
