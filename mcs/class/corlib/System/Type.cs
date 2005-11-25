@@ -1148,6 +1148,18 @@ namespace System {
 			}
 		}
 
+		public bool IsVisible {
+			get {
+				if (IsNotPublic)
+					return false;
+
+				if (!IsNested)
+					return true;
+
+				return DeclaringType.IsVisible;
+			}
+		}
+
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		extern int GetGenericParameterPosition ();
 		
