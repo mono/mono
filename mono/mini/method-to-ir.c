@@ -3671,15 +3671,18 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				MONO_ADD_INS (bblock, ins);
 			ip += 2;
 			break;
+#endif
 		case CEE_LDLOC_S:
 			CHECK_OPSIZE (2);
 			CHECK_STACK_OVF (1);
 			CHECK_LOCAL (ip [1]);
 			NEW_LOCLOAD (cfg, ins, ip [1]);
 			ins->cil_code = ip;
+			MONO_ADD_INS (bblock, ins);
 			*sp++ = ins;
 			ip += 2;
 			break;
+#if 0
 		case CEE_LDLOCA_S:
 			CHECK_OPSIZE (2);
 			CHECK_STACK_OVF (1);
@@ -3689,6 +3692,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			*sp++ = ins;
 			ip += 2;
 			break;
+#endif
 		case CEE_STLOC_S:
 			CHECK_OPSIZE (2);
 			CHECK_STACK (1);
@@ -3698,6 +3702,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			NEW_LOCSTORE (cfg, ins, ip [1], *sp);
 			ins->cil_code = ip;
 			if (ins->opcode == CEE_STOBJ) {
+				NOT_IMPLEMENTED;
 				NEW_LOCLOADA (cfg, ins, ip [1]);
 				handle_stobj (cfg, bblock, ins, *sp, ip, ins->klass, FALSE, FALSE);
 			} else
@@ -3705,7 +3710,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			ip += 2;
 			inline_costs += 1;
 			break;
-#endif
 		case CEE_LDNULL:
 			CHECK_STACK_OVF (1);
 			NEW_PCONST (cfg, ins, NULL);
