@@ -84,6 +84,8 @@ static void handle_stobj (MonoCompile *cfg, MonoBasicBlock *bblock, MonoInst *de
 
 static void dec_foreach (MonoInst *tree, MonoCompile *cfg);
 
+#define NOT_IMPLEMENTED g_assert_not_reached ()
+
 int mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_bblock, MonoBasicBlock *end_bblock, 
 		   int locals_offset, MonoInst *return_var, GList *dont_inline, MonoInst **inline_args, 
 		   guint inline_offset, gboolean is_virtual_call);
@@ -1587,6 +1589,33 @@ mono_compile_create_var (MonoCompile *cfg, MonoType *type, int opcode)
 	inst->klass = mono_class_from_mono_type (type);
 	/* if set to 1 the variable is native */
 	inst->unused = 0;
+
+	if (cfg->new_ir) {
+		switch (mono_type_get_underlying_type (type)->type) {
+		case MONO_TYPE_I1:
+		case MONO_TYPE_U1:
+		case MONO_TYPE_BOOLEAN:
+		case MONO_TYPE_I2:
+		case MONO_TYPE_U2:
+		case MONO_TYPE_CHAR:
+		case MONO_TYPE_I4:
+		case MONO_TYPE_U4:
+		case MONO_TYPE_I:
+		case MONO_TYPE_U:
+		case MONO_TYPE_PTR:
+		case MONO_TYPE_FNPTR:
+		case MONO_TYPE_CLASS:
+		case MONO_TYPE_STRING:
+		case MONO_TYPE_OBJECT:
+		case MONO_TYPE_SZARRAY:
+		case MONO_TYPE_ARRAY:    
+			/* FIXME: call alloc_dreg */
+			inst->dreg = cfg->next_ivreg ++;
+			break;
+		default:
+			NOT_IMPLEMENTED;
+		}
+	}
 
 	cfg->varinfo [num] = inst;
 
@@ -9172,7 +9201,6 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 	MonoJitInfo *jinfo;
 	int dfn = 0, i, code_size_ratio;
 	gboolean deadce_has_run = FALSE;
-	gboolean new_ir = FALSE;
 
 	if (!header)
 		return NULL;
@@ -9201,17 +9229,20 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 		g_print ("converting method %s\n", mono_method_full_name (method, TRUE));
 
 	if (strstr (method->name, "test_") == method->name)
-		new_ir = TRUE;
+		cfg->new_ir = TRUE;
+
+	if (cfg->new_ir) {
+		cfg->rs = mono_regstate_new ();
+		cfg->next_ivreg = cfg->rs->next_vireg;
+		cfg->next_fvreg = cfg->rs->next_vfreg;
+	}
 
 	/*
 	 * create MonoInst* which represents arguments and local variables
 	 */
 	mono_compile_create_vars (cfg);
 
-	if (new_ir) {
-		cfg->rs = mono_regstate_new ();
-		cfg->next_ivreg = cfg->rs->next_vireg;
-		cfg->next_fvreg = cfg->rs->next_vfreg;
+	if (cfg->new_ir) {
 		cfg->opt &= MONO_OPT_PEEPHOLE | MONO_OPT_BRANCH | MONO_OPT_INTRINS | MONO_OPT_LOOP | MONO_OPT_EXCEPTION | MONO_OPT_AOT;
 
 		i = mono_method_to_ir2 (cfg, method, NULL, NULL, cfg->locals_start, NULL, NULL, NULL, 0, FALSE);
@@ -9346,7 +9377,8 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 	if (parts == 3)
 		return cfg;
 
-	decompose_pass (cfg);
+	if (!cfg->new_ir)
+		decompose_pass (cfg);
 
 	if (cfg->got_var) {
 		GList *regs;
@@ -9369,7 +9401,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 		g_list_free (regs);
 	}
 
-	if (!new_ir && (cfg->opt & MONO_OPT_LINEARS)) {
+	if (!cfg->new_ir && (cfg->opt & MONO_OPT_LINEARS)) {
 		GList *vars, *regs;
 		
 		/* For now, compute aliasing info only if needed for deadce... */
@@ -9410,7 +9442,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 	if (cfg->opt & MONO_OPT_CFOLD)
 		mono_constant_fold (cfg);
 
-	if (new_ir) {
+	if (cfg->new_ir) {
 		MonoBasicBlock *bb;
 
 		/* FIXME: branch inverting */	

@@ -2352,6 +2352,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case CEE_BREAK:
 			amd64_breakpoint (code);
 			break;
+		case CEE_NOP:
+			break;
 		case OP_ADDCC:
 		case CEE_ADD:
 			amd64_alu_reg_reg (code, X86_ADD, ins->sreg1, ins->sreg2);

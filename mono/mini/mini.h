@@ -77,6 +77,7 @@ enum {
 #define MONO_INST_NEW(cfg,dest,op) do {	\
 		(dest) = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoInst));	\
 		(dest)->opcode = (op);	\
+        (dest)->dreg = (dest)->sreg1 = (dest)->sreg2 = -1;  \
 	} while (0)
 
 #define MONO_INST_NEW_CALL(cfg,dest,op) do {	\
@@ -585,6 +586,7 @@ typedef struct {
 	gboolean         compile_aot;
 	gboolean         got_var_allocated;
 	gboolean         ret_var_is_local;
+	gboolean         new_ir;
 	gpointer         debug_info;
 	guint32          lmf_offset;
 	guint16          *intvars;
