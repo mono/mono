@@ -63,16 +63,17 @@ namespace System.Web.Configuration {
 			return new SqlCacheDependencyDatabase ();
 		}
 
-		[MonoTODO]
 		protected override object GetElementKey (ConfigurationElement element)
 		{
-			throw new NotImplementedException ();
+			return ((SqlCacheDependencyDatabase)element).Name;
 		}
 
-		[MonoTODO]
 		public string GetKey (int index)
 		{
-			throw new NotImplementedException ();
+			SqlCacheDependencyDatabase db = Get (index);
+			if (db == null)
+				return null;
+			return db.Name;
 		}
 
 		public void Remove (string name)

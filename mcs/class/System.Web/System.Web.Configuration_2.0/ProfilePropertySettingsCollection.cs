@@ -50,46 +50,43 @@ namespace System.Web.Configuration
 		{
 		}
 
-		[MonoTODO]
 		public void Add (ProfilePropertySettings propertySettings)
 		{
-			throw new NotImplementedException ();
+			BaseAdd (propertySettings);
 		}
 
-		[MonoTODO]
 		public void Clear ()
 		{
-			throw new NotImplementedException ();
+			BaseClear ();
 		}
 
-		[MonoTODO]
 		protected override ConfigurationElement CreateNewElement ()
 		{
-			throw new NotImplementedException ();
+			return new ProfilePropertySettings ();
 		}
 
-		[MonoTODO]
 		public ProfilePropertySettings Get (int index)
 		{
-			throw new NotImplementedException ();
+			return (ProfilePropertySettings) BaseGet (index);
 		}
 
-		[MonoTODO]
 		public ProfilePropertySettings Get (string name)
 		{
-			throw new NotImplementedException ();
+			return (ProfilePropertySettings) BaseGet (name);
 		}
 
-		[MonoTODO]
 		protected override object GetElementKey (ConfigurationElement element)
 		{
-			throw new NotImplementedException ();
+			return ((ProfilePropertySettings)element).Name;
 		}
 
-		[MonoTODO]
 		public string GetKey (int index)
 		{
-			throw new NotImplementedException ();
+			ProfilePropertySettings s = Get (index);
+			if (s == null)
+				return null;
+
+			return s.Name;
 		}
 
 		[MonoTODO]
@@ -104,16 +101,14 @@ namespace System.Web.Configuration
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public void Remove (string name)
 		{
-			throw new NotImplementedException ();
+			BaseRemove (name);
 		}
 
-		[MonoTODO]
 		public void RemoveAt (int index)
 		{
-			throw new NotImplementedException ();
+			BaseRemoveAt (index);
 		}
 
 		[MonoTODO]
@@ -141,22 +136,16 @@ namespace System.Web.Configuration
 		}
 
 		public ProfilePropertySettings this[int index] {
-			get { return (ProfilePropertySettings) BaseGet (index); }
-			set { if (BaseGet (index) != null) BaseRemoveAt (index); BaseAdd (index, value); }
+			get { return Get (index); }
+			set { if (Get (index) != null) BaseRemoveAt (index); BaseAdd (index, value); }
 		}
 
-		[MonoTODO]
 		public new ProfilePropertySettings this[string name] {
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return Get (name); }				
 		}
 
-		[MonoTODO]
 		protected override bool ThrowOnDuplicate {
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return false; }
 		}
 
 	}

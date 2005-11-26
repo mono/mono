@@ -60,7 +60,6 @@ namespace System.Web.Configuration
 			this.Password = password;
 		}
 
-		[MonoTODO ("enable type converter")]
 		[StringValidator]
 		[TypeConverter (typeof (LowerCaseStringConverter))]
 		[ConfigurationProperty ("name", DefaultValue = "", Options = ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey)]

@@ -1,3 +1,29 @@
+2005-11-25  Chris Toshok  <toshok@ximian.com>
+
+	* AuthorizationRuleCollection.cs (CreateNewElement): remove
+	MonoTODO.
+
+	* CompilationSection.cs (GetRuntimeObject): add comment to TODO.
+
+	* ProfileGroupSettings.cs: reformat some things.
+
+	* FormsAuthenticationUser.cs (Name): remove MonoTODO.
+
+	* WebPartsSection.cs (GetRuntimeObject): change TODO comment.
+
+	* ProfilePropertySettings.cs: add internal argument-less ctor.
+
+	* IdentitySection.cs (GetRuntimeObject): return this.
+
+	* ProfilePropertySettingsCollection.cs: implement much of the
+	TODO's.
+	
+	* WebControlsSection.cs (GetRuntimeObject): implement.
+
+	* SqlCacheDependencyDatabaseCollection.cs (GetElementKey):
+	implement.
+	(GetKey): implement.
+
 2005-11-24  Chris Toshok  <toshok@ximian.com>
 
 	* AssemblyInfo.cs: move this here from System.Web.Configuration,

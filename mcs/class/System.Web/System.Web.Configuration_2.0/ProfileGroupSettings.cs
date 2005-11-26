@@ -78,25 +78,17 @@ namespace System.Web.Configuration
 
 		[ConfigurationProperty ("name", Options = ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey)]
 		public string Name {
-			get {
-				return (string)base [nameProp];
-			}
-			internal set{
-				base [nameProp] = value;
-			}
+			get { return (string)base [nameProp]; }
+			internal set{ base [nameProp] = value; }
 		}
 
 		[ConfigurationProperty ("", Options = ConfigurationPropertyOptions.IsDefaultCollection)]
 		public ProfilePropertySettingsCollection PropertySettings {
-			get {
-				return (ProfilePropertySettingsCollection) base [propertySettingsProp];
-			}
+			get { return (ProfilePropertySettingsCollection) base [propertySettingsProp]; }
 		}
 
 		protected override ConfigurationPropertyCollection Properties {
-			get {
-				return properties;
-			}
+			get { return properties; }
 		}
 	}
 }

@@ -60,7 +60,6 @@ namespace System.Web.Configuration {
 			return new AuthorizationRule (elementName == "allow" ? AuthorizationRuleAction.Allow : AuthorizationRuleAction.Deny);
 		}
 
-		[MonoTODO]
 		protected override ConfigurationElement CreateNewElement ()
 		{
 			return new AuthorizationRule (AuthorizationRuleAction.Allow);

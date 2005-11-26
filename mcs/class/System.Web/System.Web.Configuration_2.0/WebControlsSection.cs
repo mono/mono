@@ -29,6 +29,7 @@
 //
 
 using System;
+using System.Collections;
 using System.ComponentModel;
 using System.Configuration;
 
@@ -52,10 +53,13 @@ namespace System.Web.Configuration {
 			properties.Add (clientScriptsLocationProp);
 		}
 
-		[MonoTODO]
 		protected override object GetRuntimeObject ()
 		{
-			return this;
+			Hashtable ht = new Hashtable ();
+
+			ht.Add ("clientScriptsLocation", ClientScriptsLocation);
+
+			return ht;
 		}
 
 		[StringValidator (MinLength = 1)]

@@ -77,6 +77,10 @@ namespace System.Web.Configuration
 			properties.Add (typeProp);
 		}
 
+		internal ProfilePropertySettings ()
+		{
+		}
+
 		public ProfilePropertySettings (string name)
 		{
 			this.Name = name;

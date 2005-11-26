@@ -54,10 +54,10 @@ namespace System.Web.Configuration {
 			properties.Add (userNameProp);
 		}
 
-		[MonoTODO]
+		[MonoTODO ("why override this?")]
 		protected override object GetRuntimeObject ()
 		{
-			throw new NotImplementedException ();
+			return this;
 		}
 
 		[MonoTODO]
