@@ -302,7 +302,8 @@ namespace Mono.WebServices
 		private CodeDomProvider GetProvider()
 		{
 			CodeDomProvider provider;
-				    
+			Type type;
+			
 			switch (language.ToUpper ()) {
 			case "CS":
 				provider = new CSharpCodeProvider ();
@@ -310,8 +311,15 @@ namespace Mono.WebServices
 			case "VB":
 				provider = new Microsoft.VisualBasic.VBCodeProvider ();
 				break;
+			case "BOO":
+				type = Type.GetType("Boo.Lang.CodeDom.BooCodeProvider, Boo.Lang.CodeDom, Version=1.0.0.0, Culture=neutral, PublicKeyToken=32c39770e9a21a67");
+				if (type != null){
+					return (CodeDomProvider) Activator.CreateInstance (type);
+				}
+				throw new Exception ("Boo.Lang.CodeDom.BooCodeProvider not available");
+				
 			default:
-				Type type = Type.GetType(language);
+				type = Type.GetType(language);
 				if (type != null) {
 					return (CodeDomProvider) Activator.CreateInstance (type);
 				}	
