@@ -70,10 +70,12 @@ namespace System.Web.Configuration {
 			return (AuthorizationRule) BaseGet (index);
 		}
 
-		[MonoTODO]
+		[MonoTODO ("this should work, right?")]
 		protected override object GetElementKey (ConfigurationElement element)
 		{
-			throw new NotImplementedException ();
+			AuthorizationRule rule = (AuthorizationRule)element;
+
+			return String.Format ("{0}-{1}-{2}-{3}", rule.Action, rule.Roles, rule.Users, rule.Verbs);
 		}
 
 		public int IndexOf (AuthorizationRule rule)

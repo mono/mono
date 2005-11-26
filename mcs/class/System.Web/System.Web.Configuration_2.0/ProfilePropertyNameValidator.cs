@@ -32,7 +32,7 @@ using System.Configuration;
 
 namespace System.Web.Configuration
 {
-	public class ProfilePropertyNameValidator : StringValidator
+	internal class ProfilePropertyNameValidator : StringValidator
 	{
 		public ProfilePropertyNameValidator () : base (1)
 		{
@@ -43,7 +43,9 @@ namespace System.Web.Configuration
 		{
 			base.Validate (value);
 
-			/* XXX do additional checking too */
+			/* XXX this should really do additional
+			 * checking.  MS doesn't, but it makes almost
+			 * no sense */
 		}
 	}
 }

@@ -1,3 +1,10 @@
+2005-11-26  Chris Toshok  <toshok@ximian.com>
+
+	* AuthorizationRuleCollection.cs (GetElementKey): implement this.
+
+	* ProfilePropertyNameValidator.cs: make this internal, and add a
+	blurb about how MS doesn't do the testing you'd expect them to.
+
 2005-11-25  Chris Toshok  <toshok@ximian.com>
 
 	* AuthorizationRuleCollection.cs (CreateNewElement): remove
