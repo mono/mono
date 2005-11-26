@@ -109,6 +109,57 @@ namespace MonoTests.Microsoft.VisualBasic
 			}
 		}
 
+		[Test]
+		public void ParameterDeclarationExpressionTest ()
+		{
+			CodeParameterDeclarationExpression cpde = null;
+			
+			StringBuilder sb = new StringBuilder();
+
+			using (StringWriter sw = new StringWriter (sb)) {
+				cpde = new CodeParameterDeclarationExpression ();
+#if NET_2_0
+				Assert.AreEqual ("ByVal __exception As System.Void", Generate (cpde, sw), "#1");
+#else
+				Assert.AreEqual ("ByVal  As System.Void", Generate (cpde, sw), "#1");
+#endif
+				sb.Length = 0;
+
+				cpde = new CodeParameterDeclarationExpression ((string) null,
+					(string) null);
+#if NET_2_0
+				Assert.AreEqual ("ByVal __exception As System.Void", Generate (cpde, sw), "#2");
+#else
+				Assert.AreEqual ("ByVal  As System.Void", Generate (cpde, sw), "#2");
+#endif
+				sb.Length = 0;
+
+				cpde = new CodeParameterDeclarationExpression ("A", (string) null);
+#if NET_2_0
+				Assert.AreEqual ("ByVal __exception As A", Generate (cpde, sw), "#3");
+#else
+				Assert.AreEqual ("ByVal  As A", Generate (cpde, sw), "#3");
+#endif
+				sb.Length = 0;
+
+				cpde = new CodeParameterDeclarationExpression ((string) null, "B");
+				Assert.AreEqual ("ByVal B As System.Void", Generate (cpde, sw), "#4");
+				sb.Length = 0;
+
+				cpde = new CodeParameterDeclarationExpression ("A", "B");
+				Assert.AreEqual ("ByVal B As A", Generate (cpde, sw), "#5");
+				sb.Length = 0;
+
+				cpde.Direction = FieldDirection.Out;
+				Assert.AreEqual ("ByRef B As A", Generate (cpde, sw), "#6");
+				sb.Length = 0;
+
+				cpde.Direction = FieldDirection.Ref;
+				Assert.AreEqual ("ByRef B As A", Generate (cpde, sw), "#7");
+				sb.Length = 0;
+			}
+		}
+
 		private string Generate (CodeExpression expression, StringWriter sw)
 		{
 			generator.GenerateCodeFromExpression (expression, sw, options);

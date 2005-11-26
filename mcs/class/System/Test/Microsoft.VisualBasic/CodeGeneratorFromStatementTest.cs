@@ -1,10 +1,10 @@
 //
-// Microsoft.CSharp.* Test Cases
+// Microsoft.VisualBasic.* Test Cases
 //
 // Authors:
-// 	Erik LeBel (eriklebel@yahoo.ca)
+// 	Gert Driesen (drieseng@users.sourceforge.net)
 //
-// (c) 2003 Erik LeBel
+// (c) 2005 Gert Driesen
 //
 using System;
 using System.CodeDom;
@@ -15,7 +15,7 @@ using System.Text;
 
 using NUnit.Framework;
 
-namespace MonoTests.Microsoft.CSharp
+namespace MonoTests.Microsoft.VisualBasic
 {
 	/// <summary>
 	/// Test ICodeGenerator's GenerateCodeFromStatement, along with a 
@@ -67,20 +67,19 @@ namespace MonoTests.Microsoft.CSharp
 			statement = commentStatement;
 
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-				"// \n", NewLine), Generate (), "#1");
+				"'{0}", NewLine), Generate (), "#1");
 
 			comment.Text = "a\nb";
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-				"// a\n//b\n", NewLine), Generate (), "#2");
+				"'a\n'b{0}", NewLine), Generate (), "#2");
 
 			comment.Text = "a\r\nb";
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-				"// a\r\n//b{0}", NewLine), Generate (), "#3");
+				"'a\r\n'b{0}", NewLine), Generate (), "#3");
 
 			comment.Text = "a\rb";
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-				"// a\r//b{0}", NewLine), Generate (), "#4");
-
+				"'a\r'b{0}", NewLine), Generate (), "#4");
 		}
 
 		[Test]
@@ -88,13 +87,12 @@ namespace MonoTests.Microsoft.CSharp
 		{
 			CodeThrowExceptionStatement ctet = new CodeThrowExceptionStatement ();
 			statement = ctet;
-
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-				"throw;{0}", NewLine), Generate (), "#1");
+				"Throw{0}", NewLine), Generate (), "#1");
 
 			ctet.ToThrow = new CodeSnippetExpression ("whatever");
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-				"throw whatever;{0}", NewLine), Generate (), "#2");
+				"Throw whatever{0}", NewLine), Generate (), "#2");
 		}
 
 		[Test]
@@ -102,7 +100,7 @@ namespace MonoTests.Microsoft.CSharp
 		{
 			statement = new CodeGotoStatement ("something");
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-				"goto something;{0}", NewLine), Generate ());
+				"goto something{0}", NewLine), Generate ());
 		}
 
 		[Test]
@@ -118,14 +116,15 @@ namespace MonoTests.Microsoft.CSharp
 				new CodeCatchClause[] { ccc1, ccc2 }, new CodeStatement[] { fin1, fin2 });
 
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-				"try {{{0}" +
-				"    goto exit;{0}" +
-				"}}{0}" +
-				"catch (System.ArgumentException ex1) {{{0}" + 
-				"}}{0}" +
-				"catch (System.ApplicationException ) {{{0}" +
-				"}}{0}" +
-				"finally {{{0}" +
+				"Try {0}" +
+				"    goto exit{0}" +
+				"Catch ex1 As System.ArgumentException{0}" + 
+#if NET_2_0
+				"Catch __exception As System.ApplicationException{0}" +
+#else
+				"Catch  As System.ApplicationException{0}" +
+#endif
+				"Finally{0}" +
 #if NET_2_0
 				"A{0}" +
 				"B{0}" +
@@ -133,16 +132,19 @@ namespace MonoTests.Microsoft.CSharp
 				"    A{0}" +
 				"    B{0}" +
 #endif
-				"}}{0}", NewLine), Generate (), "#1");
+				"End Try{0}", NewLine), Generate (), "#1");
 
 			options.ElseOnClosing = true;
-
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-				"try {{{0}" +
-				"    goto exit;{0}" +
-				"}} catch (System.ArgumentException ex1) {{{0}" +
-				"}} catch (System.ApplicationException ) {{{0}" +
-				"}} finally {{{0}" +
+				"Try {0}" +
+				"    goto exit{0}" +
+				"Catch ex1 As System.ArgumentException{0}" +
+#if NET_2_0
+				"Catch __exception As System.ApplicationException{0}" +
+#else
+				"Catch  As System.ApplicationException{0}" +
+#endif
+				"Finally{0}" +
 #if NET_2_0
 				"A{0}" +
 				"B{0}" +
@@ -150,49 +152,66 @@ namespace MonoTests.Microsoft.CSharp
 				"    A{0}" +
 				"    B{0}" +
 #endif
-				"}}{0}", NewLine), Generate (), "#2");
+				"End Try{0}", NewLine), Generate (), "#2");
 
 			statement = new CodeTryCatchFinallyStatement ();
 
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-				"try {{{0}" +
-				"}}{0}", NewLine), Generate (), "#3");
+				"Try {0}" +
+				"End Try{0}", NewLine), Generate (), "#3");
 
 			options.ElseOnClosing = false;
 
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-				"try {{{0}" +
-				"}}{0}", NewLine), Generate (), "#4");
-
+				"Try {0}" +
+				"End Try{0}", NewLine), Generate (), "#4");
 		}
-		
-		/*
-		System.Object
-		   System.CodeDom.CodeObject
-		      System.CodeDom.CodeStatement
-			 System.CodeDom.CodeAssignStatement
-			 System.CodeDom.CodeAttachEventStatement
-			 System.CodeDom.CodeConditionStatement
-			 System.CodeDom.CodeExpressionStatement
-			 System.CodeDom.CodeIterationStatement
-			 System.CodeDom.CodeLabeledStatement
-			 System.CodeDom.CodeMethodReturnStatement
-			 System.CodeDom.CodeRemoveEventStatement
-			 System.CodeDom.CodeSnippetStatement
-			 System.CodeDom.CodeVariableDeclarationStatement
 
-		*/
-
-		
-		/*
 		[Test]
-		public void ReferencedTest ()
+		public void VariableDeclarationStatementTest ()
 		{
-			codeUnit.ReferencedAssemblies.Add ("System.dll");
-			Generate ();
-			Assertion.AssertEquals ("", Code);
+			statement = new CodeVariableDeclarationStatement ();
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+#if NET_2_0
+				"Dim __exception As System.Void{0}",
+#else
+				"Dim  As System.Void{0}",
+#endif
+				NewLine), Generate (), "#1");
+
+			statement = new CodeVariableDeclarationStatement ((string) null,
+				(string) null);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+#if NET_2_0
+				"Dim __exception As System.Void{0}",
+#else
+				"Dim  As System.Void{0}",
+#endif
+				NewLine), Generate (), "#1");
+
+
+			statement = new CodeVariableDeclarationStatement ("A", (string) null);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+#if NET_2_0
+				"Dim __exception As A{0}",
+#else
+				"Dim  As A{0}",
+#endif
+				NewLine), Generate (), "#1");
+
+			statement = new CodeVariableDeclarationStatement ((string) null, "B");
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Dim B As System.Void{0}", NewLine), Generate (), "#4");
+
+			statement = new CodeVariableDeclarationStatement ("A", "B");
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Dim B As A{0}", NewLine), Generate (), "#5");
+
+			CodeVariableDeclarationStatement cvds = new CodeVariableDeclarationStatement ("A", "B");
+			cvds.InitExpression = new CodeSnippetExpression ("C");
+			statement = cvds;
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Dim B As A = C{0}", NewLine), Generate (), "#6");
 		}
-		*/
 	}
 }
-

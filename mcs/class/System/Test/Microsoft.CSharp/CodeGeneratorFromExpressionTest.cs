@@ -121,6 +121,45 @@ namespace MonoTests.Microsoft.CSharp
 			}
 		}
 
+		[Test]
+		public void ParameterDeclarationExpressionTest ()
+		{
+			CodeParameterDeclarationExpression cpde = null;
+
+			StringBuilder sb = new StringBuilder ();
+
+			using (StringWriter sw = new StringWriter (sb)) {
+				cpde = new CodeParameterDeclarationExpression ();
+				Assert.AreEqual ("void ", Generate (cpde, sw), "#1");
+				sb.Length = 0;
+
+				cpde = new CodeParameterDeclarationExpression ((string) null,
+					(string) null);
+				Assert.AreEqual ("void ", Generate (cpde, sw), "#2");
+				sb.Length = 0;
+
+				cpde = new CodeParameterDeclarationExpression ("A", (string) null);
+				Assert.AreEqual ("A ", Generate (cpde, sw), "#4");
+				sb.Length = 0;
+
+				cpde = new CodeParameterDeclarationExpression ((string) null, "B");
+				Assert.AreEqual ("void B", Generate (cpde, sw), "#4");
+				sb.Length = 0;
+
+				cpde = new CodeParameterDeclarationExpression ("A", "B");
+				Assert.AreEqual ("A B", Generate (cpde, sw), "#5");
+				sb.Length = 0;
+
+				cpde.Direction = FieldDirection.Out;
+				Assert.AreEqual ("out A B", Generate (cpde, sw), "#6");
+				sb.Length = 0;
+
+				cpde.Direction = FieldDirection.Ref;
+				Assert.AreEqual ("ref A B", Generate (cpde, sw), "#7");
+				sb.Length = 0;
+			}
+		}
+
 		private string Generate (CodeExpression expression, StringWriter sw)
 		{
 			generator.GenerateCodeFromExpression (expression, sw, options);

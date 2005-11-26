@@ -602,7 +602,17 @@ namespace System.CodeDom.Compiler {
 			}
 			CodeSnippetStatement snippet = s as CodeSnippetStatement;
 			if (snippet != null) {
+#if NET_2_0
+				int indent = Indent;
+				try {
+					Indent = 0;
+					GenerateSnippetStatement (snippet);
+				} finally {
+					Indent = indent;
+				}
+#else
 				GenerateSnippetStatement (snippet);
+#endif
 				handled = true;
 			}
 			CodeThrowExceptionStatement exception = s as CodeThrowExceptionStatement;

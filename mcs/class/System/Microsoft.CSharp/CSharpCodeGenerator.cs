@@ -344,19 +344,32 @@ namespace Mono.CSharp
 		protected override void GenerateComment (CodeComment comment)
 		{
 			TextWriter output = Output;
-			string[] lines = comment.Text.Split ('\n');
-			bool first = true;
-			foreach (string line in lines){
-				if (comment.DocComment)
-					output.Write ("///");
-				else
-					output.Write ("//");
-				if (first) {
-					output.Write (' ');
-					first = false;
-				}
-				output.WriteLine (line);
+
+			string commentChars = null;
+
+			if (comment.DocComment) {
+				commentChars = "///";
+			} else {
+				commentChars = "//";
 			}
+
+			output.Write (commentChars);
+			output.Write (' ');
+			string text = comment.Text;
+
+			for (int i = 0; i < text.Length; i++) {
+				output.Write (text[i]);
+				if (text[i] == '\r') {
+					if (i < (text.Length - 1) && text[i + 1] == '\n') {
+						continue;
+					}
+					output.Write (commentChars);
+				} else if (text[i] == '\n') {
+					output.Write (commentChars);
+				}
+			}
+
+			output.WriteLine ();
 		}
 
 		protected override void GenerateMethodReturnStatement (CodeMethodReturnStatement statement)
@@ -405,43 +418,42 @@ namespace Mono.CSharp
 			TextWriter output = Output;
 			CodeGeneratorOptions options = Options;
 
-			output.WriteLine ("try");
+			output.Write ("try");
 			OutputStartBrace ();
 			++Indent;
 			GenerateStatements (statement.TryStatements);
 			--Indent;
-			output.Write ('}');
 			
 			foreach (CodeCatchClause clause in statement.CatchClauses) {
+				output.Write ('}');
 				if (options.ElseOnClosing)
 					output.Write (' ');
 				else
 					output.WriteLine ();
 				output.Write ("catch (");
 				OutputTypeNamePair (clause.CatchExceptionType, GetSafeName(clause.LocalName));
-				output.WriteLine (")");
+				output.Write (")");
 				OutputStartBrace ();
 				++Indent;
 				GenerateStatements (clause.Statements);
 				--Indent;
-				output.Write ('}');
 			}
 
 			CodeStatementCollection finallies = statement.FinallyStatements;
 			if (finallies.Count > 0) {
+				output.Write ('}');
 				if (options.ElseOnClosing)
 					output.Write (' ');
 				else
 					output.WriteLine ();
-				output.WriteLine ("finally");
+				output.Write ("finally");
 				OutputStartBrace ();
 				++Indent;
 				GenerateStatements (finallies);
 				--Indent;
-				output.WriteLine ('}');
 			}
 
-			output.WriteLine();
+			output.WriteLine('}');
 		}
 
 		protected override void GenerateAssignStatement (CodeAssignStatement statement)
@@ -480,7 +492,7 @@ namespace Mono.CSharp
 
 			output.Write ("goto ");
 			output.Write (GetSafeName (statement.Label));
-			output.Write (";");
+			output.WriteLine (";");
 		}
 		
 		protected override void GenerateLabeledStatement (CodeLabeledStatement statement)

@@ -598,7 +598,7 @@ namespace MonoTests.System.CodeDom.Compiler
 			param.CustomAttributes.Add (attrDec);
 
 			// second parameter
-			param = new CodeParameterDeclarationExpression (typeof (int), "index");
+			param = new CodeParameterDeclarationExpression (typeof (int), null);
 			param.Direction = FieldDirection.Out;
 			method.Parameters.Add (param);
 

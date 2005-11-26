@@ -36,22 +36,24 @@ namespace MonoTests.Microsoft.VisualBasic
 		CodeDomProvider provider = null;
 		protected ICodeGenerator generator = null;
 		protected CodeGeneratorOptions options = null;
-		protected StringWriter writer = null;
 	
 		public void InitBase()
 		{
 			provider = new VBCodeProvider ();
 			generator = provider.CreateGenerator ();
 			options = new CodeGeneratorOptions ();
-			writer = new StringWriter ();
-
-			writer.NewLine = "\n";
 		}
 
-		protected virtual string Code {
-			get { return writer.ToString (); }
+		protected string Generate ()
+		{
+			return Generate (options);
 		}
 
-		protected abstract void Generate ();
+		protected virtual string NewLine
+		{
+			get { return "\n"; }
+		}
+
+		protected abstract string Generate (CodeGeneratorOptions options);
 	}
 }

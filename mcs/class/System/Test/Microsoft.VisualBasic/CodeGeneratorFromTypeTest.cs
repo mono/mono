@@ -106,7 +106,11 @@ namespace MonoTests.Microsoft.VisualBasic
 				"    {0}" +
 				"    <A(),  _{0}" +
 				"     B()>  _{0}" +
+#if NET_2_0
+				"    Private Event __exception As System.Void{0}" +
+#else
 				"    Private Event  As System.Void{0}" +
+#endif
 				"End Class{0}", NewLine), code);
 		}
 
@@ -183,7 +187,11 @@ namespace MonoTests.Microsoft.VisualBasic
 				"    {0}" +
 				"    <A(),  _{0}" +
 				"     B()>  _{0}" +
+#if NET_2_0
+				"    Private __exception As System.Void{0}" +
+#else
 				"    Private  As System.Void{0}" +
+#endif
 				"End Class{0}", NewLine), code);
 		}
 
@@ -602,7 +610,11 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Class Test1{0}" +
 				"    {0}" +
-				"    Public Overridable Function Something(<A(), B()> ByVal value As Object, <C(A1:=false, A2:=true), D()> ByRef index As Integer) As Integer{0}" +
+#if NET_2_0
+				"    Public Overridable Function Something(<A(), B()> ByVal value As Object, <C(A1:=false, A2:=true), D()> ByRef __exception As Integer) As Integer{0}" +
+#else
+				"    Public Overridable Function Something(<A(), B()> ByVal value As Object, <C(A1:=false, A2:=true), D()> ByRef  As Integer) As Integer{0}" +
+#endif
 				"    End Function{0}" +
 				"End Class{0}", NewLine), code);
 		}
@@ -1429,7 +1441,11 @@ namespace MonoTests.Microsoft.VisualBasic
 				"    {0}" +
 				"    <A(),  _{0}" +
 				"     B()>  _{0}" +
+#if NET_2_0
+				"    Private Event __exception As System.Void{0}" +
+#else
 				"    Private Event  As System.Void{0}" +
+#endif
 				"End Interface{0}", NewLine), code);
 		}
 
@@ -1829,7 +1845,11 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Interface Test1{0}" +
 				"    {0}" +
-				"    Function Something(<A(), B()> ByVal value As Object, <C(A1:=false, A2:=true), D()> ByRef index As Integer) As Integer{0}" +
+#if NET_2_0
+				"    Function Something(<A(), B()> ByVal value As Object, <C(A1:=false, A2:=true), D()> ByRef __exception As Integer) As Integer{0}" +
+#else
+				"    Function Something(<A(), B()> ByVal value As Object, <C(A1:=false, A2:=true), D()> ByRef  As Integer) As Integer{0}" +
+#endif
 				"End Interface{0}", NewLine), code);
 		}
 
@@ -2110,7 +2130,11 @@ namespace MonoTests.Microsoft.VisualBasic
 				"    {0}" +
 				"    <A(),  _{0}" +
 				"     B()>  _{0}" +
+#if NET_2_0
+				"    Private Event __exception As System.Void{0}" +
+#else
 				"    Private Event  As System.Void{0}" +
+#endif
 				"End Structure{0}", NewLine), code);
 		}
 
@@ -2179,7 +2203,11 @@ namespace MonoTests.Microsoft.VisualBasic
 				"    {0}" +
 				"    <A(),  _{0}" +
 				"     B()>  _{0}" +
+#if NET_2_0
+				"    Private __exception As System.Void{0}" +
+#else
 				"    Private  As System.Void{0}" +
+#endif
 				"End Structure{0}", NewLine), code);
 		}
 
@@ -2559,7 +2587,11 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Structure Test1{0}" +
 				"    {0}" +
-				"    Public Overridable Function Something(<A(), B()> ByVal value As Object, <C(A1:=false, A2:=true), D()> ByRef index As Integer) As Integer{0}" +
+#if NET_2_0
+				"    Public Overridable Function Something(<A(), B()> ByVal value As Object, <C(A1:=false, A2:=true), D()> ByRef __exception As Integer) As Integer{0}" +
+#else
+				"    Public Overridable Function Something(<A(), B()> ByVal value As Object, <C(A1:=false, A2:=true), D()> ByRef  As Integer) As Integer{0}" +
+#endif
 				"    End Function{0}" +
 				"End Structure{0}", NewLine), code);
 		}

@@ -1,3 +1,13 @@
+2005-11-26  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* CodeGeneratorFromExpressionTest.cs: Added test for 
+	CodeParameterDeclarationExpression.
+	* CodeGeneratorFromTypeTest.cs: Modified tests to check result
+	for zero-length event, field and parameter name.
+	* CodeGeneratorFromStatementTest.cs: Added CodeCommentStatement,
+	CodeThrowExceptionStatement, CodeGotoStatement and
+	CodeTryCatchFinallyStatement tests.
+
 2005-10-28  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* CodeGeneratorFromTypeTest.cs: Added tests for CodeEntryPointMethod

@@ -9,6 +9,7 @@
 
 using System;
 using System.Globalization;
+using System.IO;
 using System.Text;
 using System.CodeDom;
 using System.CodeDom.Compiler;
@@ -26,8 +27,7 @@ namespace MonoTests.Microsoft.VisualBasic
 		public CodeGeneratorFromCompileUnitTest ()
 		{
 			Init();
-			Generate();
-			codeUnitHeader = Code;
+			codeUnitHeader = Generate ();
 		}
 		
 		[SetUp]
@@ -36,22 +36,21 @@ namespace MonoTests.Microsoft.VisualBasic
 			InitBase ();
 			codeUnit = new CodeCompileUnit ();
 		}
-		
-		protected override string Code {
-			get { return base.Code.Substring (codeUnitHeader.Length); }
-		}
-		
-		protected override void Generate ()
+
+		protected override string Generate (CodeGeneratorOptions options)
 		{
+			StringWriter writer = new StringWriter ();
+			writer.NewLine = NewLine;
+
 			generator.GenerateCodeFromCompileUnit (codeUnit, writer, options);
 			writer.Close ();
+			return writer.ToString ().Substring (codeUnitHeader.Length);
 		}
-		
+
 		[Test]
 		public void DefaultCodeUnitTest ()
 		{
-			Generate ();
-			Assert.AreEqual ("", Code);
+			Assert.AreEqual ("", Generate ());
 		}
 
 		[Test]
@@ -66,8 +65,7 @@ namespace MonoTests.Microsoft.VisualBasic
 		public void ReferencedTest ()
 		{
 			codeUnit.ReferencedAssemblies.Add ("System.dll");
-			Generate();
-			Assert.AreEqual ("", Code);
+			Assert.AreEqual ("", Generate ());
 		}
 
 		[Test]
@@ -75,9 +73,8 @@ namespace MonoTests.Microsoft.VisualBasic
 		{
 			CodeNamespace ns = new CodeNamespace ("A");
 			codeUnit.Namespaces.Add (ns);
-			Generate ();
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-				"{0}Namespace A{0}End Namespace{0}", writer.NewLine), Code);
+				"{0}Namespace A{0}End Namespace{0}", NewLine), Generate ());
 		}
 
 		[Test]
@@ -86,9 +83,8 @@ namespace MonoTests.Microsoft.VisualBasic
 			CodeNamespace ns = new CodeNamespace ("A");
 			codeUnit.Namespaces.Add (ns);
 			codeUnit.ReferencedAssemblies.Add ("using System;");
-			Generate ();
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-				"{0}Namespace A{0}End Namespace{0}", writer.NewLine), Code);
+				"{0}Namespace A{0}End Namespace{0}", NewLine), Generate ());
 		}
 
 		[Test]
@@ -98,9 +94,8 @@ namespace MonoTests.Microsoft.VisualBasic
 			attrDec.Name = "A";
 
 			codeUnit.AssemblyCustomAttributes.Add (attrDec);
-			Generate ();
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-				"<Assembly: A()> {0}", writer.NewLine), Code);
+				"<Assembly: A()> {0}", NewLine), Generate ());
 		}
 
 		[Test]
@@ -121,9 +116,8 @@ namespace MonoTests.Microsoft.VisualBasic
 				new CodePrimitiveExpression (false)));
 
 			codeUnit.AssemblyCustomAttributes.Add (attrDec);
-			Generate ();
-			Assert.AreEqual ("<Assembly: A(A1:=false, A2:=true, true, false)> " + 
-				writer.NewLine, Code);
+			Assert.AreEqual ("<Assembly: A(A1:=false, A2:=true, true, false)> " +
+				NewLine, Generate ());
 		}
 
 		[Test]
@@ -136,10 +130,9 @@ namespace MonoTests.Microsoft.VisualBasic
 			attrDec = new CodeAttributeDeclaration ();
 			attrDec.Name = "B";
 			codeUnit.AssemblyCustomAttributes.Add (attrDec);
-			Generate ();
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture, 
-				"<Assembly: A(),  _{0} Assembly: B()> {0}", writer.NewLine),
-				Code);
+				"<Assembly: A(),  _{0} Assembly: B()> {0}", NewLine),
+				Generate ());
 		}
 
 		[Test]
@@ -156,11 +149,9 @@ namespace MonoTests.Microsoft.VisualBasic
 			attrDec.Name = "B";
 			codeUnit.AssemblyCustomAttributes.Add (attrDec);
 
-			Generate ();
-
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<Assembly: A(),  _{0} Assembly: B()> {0}{0}Namespace A{0}End "
-				+ "Namespace{0}",writer.NewLine), Code);
+				+ "Namespace{0}", NewLine), Generate ());
 		}
 
 		[Test]
@@ -171,11 +162,13 @@ namespace MonoTests.Microsoft.VisualBasic
 			sb.Append (Environment.NewLine);
 			sb.Append ("End Class");
 
+			StringWriter writer = new StringWriter ();
+			writer.NewLine = NewLine;
+
 			codeUnit = new CodeSnippetCompileUnit (sb.ToString ());
 			generator.GenerateCodeFromCompileUnit (codeUnit, writer, options);
 			writer.Close ();
-			Assert.AreEqual (sb.ToString () + writer.NewLine, 
-						writer.ToString());
+			Assert.AreEqual (sb.ToString () + NewLine, writer.ToString());
 		}
 	}
 }

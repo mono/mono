@@ -623,7 +623,7 @@ namespace MonoTests.Microsoft.CSharp
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public class Test1 {{{0}" +
 				"    {0}" +
-				"    public virtual int Something([A()] [B()] object value, [C(A1=false, A2=true)] [D()] out int index) {{{0}" +
+				"    public virtual int Something([A()] [B()] object value, [C(A1=false, A2=true)] [D()] out int ) {{{0}" +
 				"    }}{0}" +
 				"}}{0}", NewLine), code);
 		}
@@ -1931,7 +1931,7 @@ namespace MonoTests.Microsoft.CSharp
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public interface Test1 {{{0}" +
 				"    {0}" +
-				"    int Something([A()] [B()] object value, [C(A1=false, A2=true)] [D()] out int index);{0}" +
+				"    int Something([A()] [B()] object value, [C(A1=false, A2=true)] [D()] out int );{0}" +
 				"}}{0}", NewLine), code);
 		}
 
@@ -2712,7 +2712,7 @@ namespace MonoTests.Microsoft.CSharp
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public struct Test1 {{{0}" +
 				"    {0}" +
-				"    public virtual int Something([A()] [B()] object value, [C(A1=false, A2=true)] [D()] out int index) {{{0}" +
+				"    public virtual int Something([A()] [B()] object value, [C(A1=false, A2=true)] [D()] out int ) {{{0}" +
 				"    }}{0}" +
 				"}}{0}", NewLine), code);
 		}

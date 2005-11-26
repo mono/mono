@@ -383,20 +383,41 @@ namespace Microsoft.VisualBasic
 
 		protected override void GenerateThrowExceptionStatement (CodeThrowExceptionStatement statement)
 		{
-			Output.Write ("Throw ");
-			GenerateExpression (statement.ToThrow);
+			Output.Write ("Throw");
+			if (statement.ToThrow != null) {
+				Output.Write (' ');
+				GenerateExpression (statement.ToThrow);
+			}
+			Output.WriteLine ();
 		}
 
 		protected override void GenerateComment (CodeComment comment)
 		{
 			TextWriter output = Output;
+			string commentChars = null;
 
-			if (comment.DocComment)
-				output.Write ("''' ");
-			else
-				output.Write ("' ");
+			if (comment.DocComment) {
+				commentChars = "'''";
+			} else {
+				commentChars = "'";
+			}
+	
+			output.Write (commentChars);
+			string text = comment.Text;
 
-			output.WriteLine (comment.Text);
+			for (int i = 0; i < text.Length; i++) {
+				output.Write (text[i]);
+				if (text[i] == '\r') {
+					if (i < (text.Length - 1) && text[i + 1] == '\n') {
+						continue;
+					}
+					output.Write (commentChars);
+				} else if (text[i] == '\n') {
+					output.Write (commentChars);
+				}
+			}
+
+			output.WriteLine ();
 		}
 
 		protected override void GenerateMethodReturnStatement (CodeMethodReturnStatement statement)
@@ -438,11 +459,10 @@ namespace Microsoft.VisualBasic
 		{
 			TextWriter output = Output;
 
-			output.WriteLine ("Try");
+			output.WriteLine ("Try ");
 			++Indent;
 			GenerateStatements (statement.TryStatements);
 			--Indent;
-			output.WriteLine ();
 			
 			foreach (CodeCatchClause clause in statement.CatchClauses) {
 				output.Write ("Catch ");
@@ -451,7 +471,6 @@ namespace Microsoft.VisualBasic
 				++Indent;
 				GenerateStatements (clause.Statements);
 				--Indent;
-				output.WriteLine ();
 			}
 
 			CodeStatementCollection finallies = statement.FinallyStatements;
@@ -461,14 +480,6 @@ namespace Microsoft.VisualBasic
 				++Indent;
 				GenerateStatements (finallies);
 				--Indent;
-				output.WriteLine ();
-			}
-
-			if (Options.ElseOnClosing) {
-				if (statement.CatchClauses.Count == 0)
-					output.WriteLine ("Catch");
-				if (statement.FinallyStatements.Count == 0)
-					output.WriteLine ("Finally");
 			}
 
 			output.WriteLine("End Try");
@@ -509,7 +520,7 @@ namespace Microsoft.VisualBasic
 		{
 			TextWriter output = Output;
 
-			output.Write ("Goto ");
+			output.Write ("goto ");
 			output.Write (statement.Label);
 			output.WriteLine ();
 		}
@@ -1306,6 +1317,11 @@ namespace Microsoft.VisualBasic
 
 		protected override void OutputTypeNamePair (CodeTypeReference typeRef, String name)
 		{
+#if NET_2_0
+			if (name.Length == 0) {
+				name = "__exception";
+			}
+#endif
 			Output.Write (name + " As " + GetTypeOutput (typeRef));
 		}
 

@@ -11,6 +11,7 @@ Microsoft.VisualBasic/CodeGeneratorTestBase.cs
 Microsoft.VisualBasic/VBCodeProviderTest.cs
 Microsoft.VisualBasic/CodeGeneratorFromCompileUnitTest.cs
 Microsoft.VisualBasic/CodeGeneratorFromExpressionTest.cs
+Microsoft.VisualBasic/CodeGeneratorFromStatementTest.cs
 Microsoft.VisualBasic/CodeGeneratorFromTypeTest.cs
 Microsoft.Win32/IntranetZoneCredentialPolicyTest.cs
 System/FileStyleUriParserTest.cs

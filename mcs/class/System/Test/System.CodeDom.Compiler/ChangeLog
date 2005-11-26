@@ -1,3 +1,8 @@
+2005-11-26  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* CodeGeneratorFromTypeTestBase.cs: Modified GetMethodMembersType3 to 
+	add parameter with no name.
+
 2005-11-02  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CodeCompilerCas.cs: New. CAS unit tests.
