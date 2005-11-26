@@ -65,8 +65,8 @@ public class CairoGraphic : DrawingArea
 		gr.Scale (width, height);
 		gr.LineWidth = 0.04;
 		
-		gr.FontFace ("Sans", FontSlant.Normal, FontWeight.Bold);
-		gr.FontSize = 0.35;
+		gr.SelectFontFace ("Sans", FontSlant.Normal, FontWeight.Bold);
+		gr.SetFontSize (0.35);
 		
 		gr.MoveTo ( new PointD(0.04, 0.53) );
 		gr.ShowText ("Hello");
