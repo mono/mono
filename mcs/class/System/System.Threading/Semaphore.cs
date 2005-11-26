@@ -31,20 +31,27 @@
 using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
 using System.Security.AccessControl;
+using System.Runtime.CompilerServices;
 
 namespace System.Threading {
 
 	[ComVisible (false)]
-	[MonoTODO ("not supported by the runtime")]
 	public sealed class Semaphore : WaitHandle {
 
-		[MonoTODO]
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private static extern IntPtr CreateSemaphore_internal (
+			int initialCount, int maximumCount, string name,
+			out bool createdNew);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private static extern int ReleaseSemaphore_internal (
+			IntPtr handle, int releaseCount, out bool fail);
+
 		public Semaphore (int initialCount, int maximumCount)
 			: this (initialCount, maximumCount, null)
 		{
 		}
 
-		[MonoTODO]
 		public Semaphore (int initialCount, int maximumCount, string name)
 		{
 			if (initialCount < 0)
@@ -54,16 +61,19 @@ namespace System.Threading {
 			if (initialCount > maximumCount)
 				throw new ArgumentException ("initialCount > maximumCount");
 
-			throw new NotImplementedException ();
+			bool created;
+			
+			Handle = CreateSemaphore_internal (initialCount,
+							   maximumCount, name,
+							   out created);
 		}
 
-		[MonoTODO]
 		public Semaphore (int initialCount, int maximumCount, string name, out bool createdNew)
 			: this (initialCount, maximumCount, name, out createdNew, null)
 		{
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Implement access control")]
 		public Semaphore (int initialCount, int maximumCount, string name, out bool createdNew, 
 			SemaphoreSecurity semaphoreSecurity)
 		{
@@ -74,8 +84,9 @@ namespace System.Threading {
 			if (initialCount > maximumCount)
 				throw new ArgumentException ("initialCount > maximumCount");
 
-			createdNew = false;
-			throw new NotImplementedException ();
+			Handle = CreateSemaphore_internal (initialCount,
+							   maximumCount, name,
+							   out createdNew);
 		}
 
 		[MonoTODO]
@@ -84,22 +95,30 @@ namespace System.Threading {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		[PrePrepareMethod]
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		public int Release ()
 		{
-			throw new NotImplementedException ();
+			return (Release (1));
 		}
 
-		[MonoTODO]
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		public int Release (int releaseCount)
 		{
 			if (releaseCount < 1)
 				throw new ArgumentOutOfRangeException ("releaseCount");
 
-			throw new NotImplementedException ();
+			int ret;
+			bool fail;
+			
+			ret = ReleaseSemaphore_internal (Handle, releaseCount,
+							 out fail);
+
+			if (fail) {
+				throw new SemaphoreFullException ();
+			}
+
+			return (ret);
 		}
 
 		[MonoTODO]
