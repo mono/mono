@@ -1,3 +1,13 @@
+2005-11-25  John Luke  <john.luke@gmail.com>
+
+	* Mono.Cairo/Cairo.cs: add font_options* api
+	add cairo_get_font_matrix
+	* Mono.Cairo/FontOptions.cs: add
+	* Mono.Cairo/Graphics.cs: add FontOptions property,
+	remove FontSize setter and FontSetSize(),
+	remove FontFace() method as SelectFontFace already exists
+	remove non-existant TransformFont() and Font property
+	
 2005-11-16  John Luke  <john.luke@gmail.com>
 
 	* snippets/*.cs: add snippets port

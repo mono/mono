@@ -222,6 +222,15 @@ namespace Cairo {
 							     double size);
 		
 		[DllImport (CairoImp)]
+                public static extern IntPtr cairo_get_font_face (IntPtr cr);
+
+		[DllImport (CairoImp)]
+                public static extern void cairo_set_font_face (IntPtr cr, IntPtr fontFace);
+
+		[DllImport (CairoImp)]
+                public static extern Matrix cairo_get_font_matrix (IntPtr cr);
+
+		[DllImport (CairoImp)]
                 public static extern void cairo_set_font_matrix (IntPtr cr, Matrix matrix);
 		
                 [DllImport (CairoImp)]
@@ -238,6 +247,58 @@ namespace Cairo {
 
 		[DllImport (CairoImp)]
                 public static extern void cairo_text_extents  (IntPtr cr, string utf8, ref TextExtents extents);
+
+				// FontOptions
+				[DllImport (CairoImp)]
+				internal static extern IntPtr cairo_font_options_create ();
+
+				[DllImport (CairoImp)]
+				internal static extern IntPtr cairo_font_options_copy (IntPtr handle);
+
+				[DllImport (CairoImp)]
+				internal static extern void cairo_font_options_destroy (IntPtr handle);
+
+				[DllImport (CairoImp)]
+				internal static extern bool cairo_font_options_equal (IntPtr h1, IntPtr h2);
+
+				[DllImport (CairoImp)]
+				internal static extern long cairo_font_options_hash (IntPtr handle);
+
+				[DllImport (CairoImp)]
+				internal static extern void cairo_font_options_merge (IntPtr handle, IntPtr other);
+
+				[DllImport (CairoImp)]
+				internal static extern Antialias cairo_font_options_get_antialias (IntPtr handle);
+
+				[DllImport (CairoImp)]
+				internal static extern void cairo_font_options_set_antialias (IntPtr handle, Antialias aa);
+
+				[DllImport (CairoImp)]
+				internal static extern HintMetrics cairo_font_options_get_hint_metrics (IntPtr handle);
+
+				[DllImport (CairoImp)]
+				internal static extern void cairo_font_options_set_hint_metrics (IntPtr handle, HintMetrics metrics);
+
+				[DllImport (CairoImp)]
+				internal static extern HintStyle cairo_font_options_get_hint_style (IntPtr handle);
+
+				[DllImport (CairoImp)]
+				internal static extern void cairo_font_options_set_hint_style (IntPtr handle, HintStyle style);
+
+				[DllImport (CairoImp)]
+				internal static extern SubpixelOrder cairo_font_options_get_subpixel_order (IntPtr handle);
+
+				[DllImport (CairoImp)]
+				internal static extern void cairo_font_options_set_subpixel_order (IntPtr handle, SubpixelOrder order);
+
+				[DllImport (CairoImp)]
+				internal static extern Status cairo_font_options_status (IntPtr handle);
+
+				[DllImport (CairoImp)]
+				internal static extern void cairo_get_font_options (IntPtr cr, IntPtr options);
+
+				[DllImport (CairoImp)]
+				internal static extern void cairo_set_font_options (IntPtr cr, IntPtr options);
 
                 [DllImport (CairoImp)]
                 public static extern void cairo_glyph_path (IntPtr ct, IntPtr glyphs, int num_glyphs);
@@ -586,6 +647,28 @@ namespace Cairo {
                 Repeat,
                 Reflect,
         }
+
+		public enum HintMetrics {
+			Default,
+			Off,
+			On,
+		}
+
+		public enum HintStyle {
+			Default,
+			None,
+			Slight,
+			Medium,
+			Full,
+		}
+
+		public enum SubpixelOrder {
+			Default,
+			Rgb,
+			Bgr,
+			Vrgb,
+			Vbgr,
+		}
 
         [StructLayout(LayoutKind.Sequential)]
         public struct FontExtents

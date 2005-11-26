@@ -527,43 +527,26 @@ namespace Cairo {
                                 return m;
                         }
                 }
-		/*
-                public Font Font {
-                        set {
-                                CairoAPI.cairo_set_font (state, value.Pointer);
 
-                        }
-
-                        get {
-                                IntPtr fnt = IntPtr.Zero;
-
-                                fnt = CairoAPI.cairo_current_font (state);
-
-                                return new Font (fnt);
-                        }
-                }
-		 */ 
-
-		// FIXME should be made into a property
-                public void FontSetSize (double size)
-                {
-                        CairoAPI.cairo_set_font_size (state, size);
-                }
-		
-		// FIXME should be made into a property
-		public void FontSetMatrix (Matrix m)
+		public void SetFontSize (double scale)
 		{
-			CairoAPI.cairo_set_font_matrix (state, m);
+			CairoAPI.cairo_set_font_size (state, scale);
 		}
-                
-		/*
-                public void TransformFont (Matrix matrix)
-                {
-                        CairoAPI.cairo_transform_font (state, matrix.Pointer);
-                }
-		 */ 
+		
+		public Matrix FontMatrix {
+			get { return CairoAPI.cairo_get_font_matrix (state); }
+			set { CairoAPI.cairo_set_font_matrix (state, value); }
+		}
 
-                
+		public FontOptions FontOptions {
+			get {
+				FontOptions options = new FontOptions ();
+				CairoAPI.cairo_get_font_options (state, options.Handle);
+				return options;
+			}
+			set { CairoAPI.cairo_set_font_options (state, value.Handle); }
+		}
+
 		static internal IntPtr FromGlyphToUnManagedMemory(Glyph [] glyphs)
 		{
 			int size =  Marshal.SizeOf (glyphs[0]);
@@ -612,15 +595,6 @@ namespace Cairo {
                         }
                 }
 		
-		public void FontFace (string family, FontSlant s, FontWeight w)
-		{
-			CairoAPI.cairo_select_font_face (state, family, s, w);
-		}
-		
-		public double FontSize {
-			set { CairoAPI.cairo_set_font_size (state, value); }
-		}
-
 		public void CopyPage ()
 		{
 			CairoAPI.cairo_copy_page (state);
@@ -629,11 +603,6 @@ namespace Cairo {
 		public void SelectFontFace (string family, FontSlant slant, FontWeight weight)
 		{
 			CairoAPI.cairo_select_font_face (state, family, slant, weight);
-		}
-
-		public void SetFontSize (double scale)
-		{
-			CairoAPI.cairo_set_font_size (state, scale);
 		}
 
 		public void ShowPage ()
