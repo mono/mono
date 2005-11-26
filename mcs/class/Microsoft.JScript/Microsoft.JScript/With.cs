@@ -47,7 +47,7 @@ namespace Microsoft.JScript {
 
 		public static Object JScriptWith (object withObj, VsaEngine engine)
 		{
-			engine.PushScriptObject ((ScriptObject) withObj);
+			engine.PushScriptObject ((ScriptObject) Convert.ToObject (withObj, engine));
 			return withObj;
 		}
 

@@ -1,5 +1,9 @@
 2005-11-25  Cesar Lopez Nataren  <cnataren@novell.com>
 
+	* With.cs (JScriptWith): Use Convert.Object before we cast to
+	ScriptObject as literals fail to be put in the scope chain's
+	front.
+
 	* expression.cs (Call.Emit): implement the case when the invoked
 	method at call is a property.
 
