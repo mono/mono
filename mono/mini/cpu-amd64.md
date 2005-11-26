@@ -95,17 +95,18 @@ xor: dest:i src1:i src2:i len:3 clob:1
 shl: dest:i src1:i src2:s clob:1 len:3
 shr: dest:i src1:i src2:s clob:1 len:3
 shr.un: dest:i src1:i src2:s clob:1 len:3
-neg: dest:i src1:i len:3 clob:1
-not: dest:i src1:i len:3 clob:1
-conv.i1: dest:i src1:i len:4
-conv.i2: dest:i src1:i len:4
-conv.i4: dest:i src1:i len:3
-conv.i8: dest:i src1:i len:3
-conv.r4: dest:f src1:i len:9
-conv.r8: dest:f src1:i len:9
-conv.u4: dest:i src1:i len:3
-conv.u8: dest:i src1:i len:3
-conv.r.un: dest:f src1:i len:8
+
+int_neg: dest:i src1:i len:3 clob:1
+int_not: dest:i src1:i len:3 clob:1
+int_conv_to_i1: dest:i src1:i len:4
+int_conv_to_i2: dest:i src1:i len:4
+int_conv_to_i4: dest:i src1:i len:3
+int_conv_to_i8: dest:i src1:i len:3
+int_conv_to_r4: dest:f src1:i len:9
+int_conv_to_r8: dest:f src1:i len:9
+int_conv_to_u4: dest:i src1:i len:3
+int_conv_to_u8: dest:i src1:i len:3
+
 throw: src1:i len:18
 op_rethrow: src1:i len:18
 conv.ovf.i4.un: dest:i src1:i len:16
@@ -199,6 +200,7 @@ xor_imm: dest:i src1:i len:8 clob:1
 shl_imm: dest:i src1:i len:8 clob:1
 shr_imm: dest:i src1:i len:8 clob:1
 shr_un_imm: dest:i src1:i len:8 clob:1
+
 cond_exc_eq: len:8
 cond_exc_ne_un: len:8
 cond_exc_lt: len:8
@@ -213,8 +215,22 @@ cond_exc_ov: len:8
 cond_exc_no: len:8
 cond_exc_c: len:8
 cond_exc_nc: len:8
+
+cond_exc_ieq: len:8
+cond_exc_ine_un: len:8
+cond_exc_ilt: len:8
+cond_exc_ilt_un: len:8
+cond_exc_igt: len:8
+cond_exc_igt_un: len:8
+cond_exc_ige: len:8
+cond_exc_ige_un: len:8
+cond_exc_ile: len:8
+cond_exc_ile_un: len:8
 cond_exc_iov: len:8
+cond_exc_ino: len:8
 cond_exc_ic: len:8
+cond_exc_inc: len:8
+
 long_mul: dest:i src1:i src2:i clob:1 len:4
 long_mul_imm: dest:i src1:i clob:1 len:12
 long_div: dest:a src1:a src2:i len:16 clob:d
@@ -371,8 +387,7 @@ int_xor_imm: dest:i src1:i clob:1 len:64
 int_shl_imm: dest:i src1:i clob:1 len:64
 int_shr_imm: dest:i src1:i clob:1 len:64
 int_shr_un_imm: dest:i src1:i clob:1 len:64
-int_neg: dest:i src1:i clob:1 len:64
-int_not: dest:i src1:i clob:1 len:64
+
 int_ceq: dest:c len:64
 int_cgt: dest:c len:64
 int_cgt_un: dest:c len:64

@@ -1841,10 +1841,6 @@ opcode_to_x86_cond (int opcode)
 		return X86_CC_LE;
 	case OP_IBLE_UN:
 		return X86_CC_LE;
-	case OP_COND_EXC_IOV:
-		return X86_CC_O;
-	case OP_COND_EXC_IC:
-		return X86_CC_C;
 	default:
 		g_assert_not_reached ();
 	}
@@ -2274,15 +2270,19 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			amd64_mov_reg_memindex_size (code, ins->dreg, ins->inst_basereg, 0, ins->inst_indexreg, 0, 8);
 			break;
 		case CEE_CONV_I1:
+		case OP_ICONV_TO_I1:
 			amd64_widen_reg (code, ins->dreg, ins->sreg1, TRUE, FALSE);
 			break;
 		case CEE_CONV_I2:
+		case OP_ICONV_TO_I2:
 			amd64_widen_reg (code, ins->dreg, ins->sreg1, TRUE, TRUE);
 			break;
 		case CEE_CONV_U1:
+		case OP_ICONV_TO_U1:
 			amd64_widen_reg (code, ins->dreg, ins->sreg1, FALSE, FALSE);
 			break;
 		case CEE_CONV_U2:
+		case OP_ICONV_TO_U2:
 			amd64_widen_reg (code, ins->dreg, ins->sreg1, FALSE, TRUE);
 			break;
 		case CEE_CONV_U8:
@@ -2693,14 +2693,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_IBLE_UN:
 			EMIT_COND_BRANCH (ins, opcode_to_x86_cond (ins->opcode), FALSE);
 			break;
-		case OP_COND_EXC_IOV:
-			EMIT_COND_SYSTEM_EXCEPTION (opcode_to_x86_cond (ins->opcode),
-										TRUE, ins->inst_p1);
-			break;
-		case OP_COND_EXC_IC:
-			EMIT_COND_SYSTEM_EXCEPTION (opcode_to_x86_cond (ins->opcode),
-										FALSE, ins->inst_p1);
-			break;
 		case CEE_NOT:
 			amd64_not_reg (code, ins->sreg1);
 			break;
@@ -2729,6 +2721,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 		case CEE_CONV_I4:
 		case CEE_CONV_U4:
+		case OP_ICONV_TO_I4:
 		case OP_MOVE:
 			amd64_mov_reg_reg (code, ins->dreg, ins->sreg1, sizeof (gpointer));
 			break;
@@ -3043,6 +3036,24 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			EMIT_COND_SYSTEM_EXCEPTION (branch_cc_table [ins->opcode - OP_COND_EXC_EQ], 
 						    (ins->opcode < OP_COND_EXC_NE_UN), ins->inst_p1);
 			break;
+		case OP_COND_EXC_IEQ:
+		case OP_COND_EXC_INE_UN:
+		case OP_COND_EXC_ILT:
+		case OP_COND_EXC_ILT_UN:
+		case OP_COND_EXC_IGT:
+		case OP_COND_EXC_IGT_UN:
+		case OP_COND_EXC_IGE:
+		case OP_COND_EXC_IGE_UN:
+		case OP_COND_EXC_ILE:
+		case OP_COND_EXC_ILE_UN:
+		case OP_COND_EXC_IOV:
+		case OP_COND_EXC_INO:
+		case OP_COND_EXC_IC:
+		case OP_COND_EXC_INC:
+			EMIT_COND_SYSTEM_EXCEPTION (branch_cc_table [ins->opcode - OP_COND_EXC_IEQ], 
+						    (ins->opcode < OP_COND_EXC_INE_UN), ins->inst_p1);
+			break;
+
 		case CEE_BEQ:
 		case CEE_BNE_UN:
 		case CEE_BLT:

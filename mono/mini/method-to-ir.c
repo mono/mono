@@ -1185,10 +1185,13 @@ type_from_op (MonoInst *ins, MonoInst *src1, MonoInst *src2) {
 		return;
 	case OP_COMPARE:
 	case OP_LCOMPARE:
+	case OP_ICOMPARE:
 		/* FIXME: handle some specifics with ins->next->type */
 		ins->type = bin_comp_table [src1->type] [src2->type] ? STACK_I4: STACK_INV;
 		if ((src1->type == STACK_I8) || ((sizeof (gpointer) == 8) && ((src1->type == STACK_PTR) || (src1->type == STACK_OBJ) || (src1->type == STACK_MP))))
 			ins->opcode = OP_LCOMPARE;
+		else
+			ins->opcode = OP_ICOMPARE;
 		return;
 	case OP_ICOMPARE_IMM:
 		ins->type = bin_comp_table [src1->type] [src1->type] ? STACK_I4 : STACK_INV;
