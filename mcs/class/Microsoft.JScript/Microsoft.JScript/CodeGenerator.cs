@@ -459,8 +459,7 @@ namespace Microsoft.JScript {
  				else if (last_exp is Equality) 
 					ff_emit_equality_cond (ec, last_exp, lbl);
 				else {
-					Console.WriteLine ("fall_false, last_exp.GetType () == {0}", last_exp);
- 					throw new Exception ("unknown type: " + last_exp.GetType ().ToString ());
+					Console.WriteLine ("WARNING: fall_false, last_exp.GetType () == {0}, {1}", last_exp, ast.Location.LineNumber);
 				}
 			} else if (type == typeof (Binary))
 				ff_binary_recursion (ec, ast, lbl);
