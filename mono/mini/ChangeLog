@@ -1,5 +1,8 @@
 2005-11-27  Zoltan Varga  <vargaz@gmail.com>
 
+	* basic-long.cs basic-calls.cs objects.cs: Move some tests to the
+	correct files.
+
 	* basic.cs: Remove test_0_byte_compares test which was moved to
 	objects.cs a long time ago.
 
