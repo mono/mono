@@ -113,9 +113,15 @@ conv.ovf.i4.un: dest:i src1:i len:16
 conv.ovf.u4.un: 
 conv.ovf.u4: dest:i src1:i len:15
 ckfinite: dest:f src1:f len:43
+
 conv.u2: dest:i src1:i len:4
 conv.u1: dest:i src1:i len:4
 conv.i: dest:i src1:i len:4
+
+int_conv_to_u2: dest:i src1:i len:4
+int_conv_to_u1: dest:i src1:i len:4
+int_conv_to_i: dest:i src1:i len:4
+
 mul.ovf: dest:i src1:i src2:i clob:1 len:10
 # this opcode is handled specially in the code generator
 mul.ovf.un: dest:i src1:i src2:i len:18

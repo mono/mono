@@ -57,7 +57,6 @@
 #include "mini.h"
 #include <string.h>
 #include <ctype.h>
-#include "inssel.h"
 #include "trace.h"
 
 #include "jit-icalls.c"
@@ -327,6 +326,15 @@ handle_enum:
 	        mono_bblock_add_inst (cfg->cbb, inst); \
 	} while (0)
 
+#define	MONO_EMIT_NEW_COMPARE_IMM(cfg,sr1,imm) do { \
+                MonoInst *inst; \
+		inst = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoInst));	\
+		inst->opcode = OP_COMPARE_IMM;	\
+                inst->sreg1 = sr1; \
+                inst->inst_p1 = (gpointer)imm; \
+	        mono_bblock_add_inst ((cfg)->cbb, inst); \
+	} while (0)
+
 #define	MONO_EMIT_NEW_ICOMPARE_IMM(cfg,sr1,imm) do { \
                 MonoInst *inst; \
 		inst = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoInst));	\
@@ -336,11 +344,42 @@ handle_enum:
 	        mono_bblock_add_inst ((cfg)->cbb, inst); \
 	} while (0)
 
+#define MONO_EMIT_NEW_LOAD_MEMBASE(cfg,dr,base,offset) do { \
+                MonoInst *inst; \
+		inst = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoInst));	\
+                inst->opcode = OP_LOAD_MEMBASE; \
+                inst->dreg = dr; \
+                inst->inst_basereg = base; \
+                inst->inst_offset = offset; \
+	        mono_bblock_add_inst (cfg->cbb, inst); \
+	} while (0)
+
 #define	MONO_EMIT_NEW_COND_EXC(cfg,cond,name) do { \
                 MonoInst *inst; \
 		inst = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoInst));	\
 		inst->opcode = OP_COND_EXC_##cond;  \
                 inst->inst_p1 = (char*)name; \
+	        mono_bblock_add_inst ((cfg)->cbb, inst); \
+	} while (0)
+
+#define MONO_NEW_LABEL(cfg,inst) do { \
+		(inst) = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoInst));	\
+		(inst)->opcode = OP_LABEL;	\
+	} while (0)
+
+#define	MONO_EMIT_NEW_BRANCH_BLOCK(cfg,op,targetbb) do { \
+                MonoInst *inst; \
+        	MonoInst *target_label; \
+		target_label = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoInst));	\
+		target_label->opcode = OP_LABEL;	\
+	        target_label->next = (targetbb)->code; \
+		target_label->inst_c0 = (targetbb)->native_offset; \
+        if (!(targetbb)->last_ins) (targetbb)->last_ins = target_label; \
+	        (targetbb)->code = target_label; \
+		inst = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoInst));	\
+		inst->opcode = op;	\
+		inst->inst_i0 = target_label;	\
+		inst->flags = MONO_INST_BRLABEL;	\
 	        mono_bblock_add_inst ((cfg)->cbb, inst); \
 	} while (0)
 
@@ -4424,41 +4463,69 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			}
 			inline_costs += 10;
 			break;
-#if 0
-		case CEE_SWITCH:
+		case CEE_SWITCH: {
+			MonoInst *label, *src1;
+			MonoBasicBlock **targets;
+			MonoBasicBlock *default_bblock;
+			int offset_reg = alloc_dreg (cfg, STACK_PTR);
+			int target_reg = alloc_dreg (cfg, STACK_PTR);
+
 			CHECK_OPSIZE (5);
 			CHECK_STACK (1);
 			n = read32 (ip + 1);
-			MONO_INST_NEW (cfg, ins, *ip);
 			--sp;
-			ins->inst_left = *sp;
-			if ((ins->inst_left->type != STACK_I4) && (ins->inst_left->type != STACK_PTR)) 
+			src1 = sp [0];
+			if ((src1->type != STACK_I4) && (src1->type != STACK_PTR)) 
 				goto unverified;
-			ins->cil_code = ip;
+
 			ip += 5;
 			CHECK_OPSIZE (n * sizeof (guint32));
 			target = ip + n * sizeof (guint32);
-			MONO_ADD_INS (bblock, ins);
-			GET_BBLOCK (cfg, bbhash, tblock, target);
-			link_bblock (cfg, bblock, tblock);
-			ins->klass = GUINT_TO_POINTER (n);
-			ins->inst_many_bb = mono_mempool_alloc (cfg->mempool, sizeof (MonoBasicBlock*) * (n + 1));
-			ins->inst_many_bb [n] = tblock;
 
+			GET_BBLOCK (cfg, bbhash, default_bblock, target);
+			link_bblock (cfg, bblock, default_bblock);
+
+			targets = mono_mempool_alloc (cfg->mempool, sizeof (MonoBasicBlock*) * n);
 			for (i = 0; i < n; ++i) {
 				GET_BBLOCK (cfg, bbhash, tblock, target + (gint32)read32(ip));
 				link_bblock (cfg, bblock, tblock);
-				ins->inst_many_bb [i] = tblock;
+				targets [i] = tblock;
 				ip += 4;
 			}
+
 			if (sp != stack_start) {
 				handle_stack_args (cfg, bblock, stack_start, sp - stack_start);
 				sp = stack_start;
 			}
-			/* Needed by the code generated in inssel.brg */
-			mono_get_got_var (cfg);
+
+			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, src1->dreg, n);
+			MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BGE_UN, default_bblock);
+
+			if (sizeof (gpointer) == 8)
+				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_SHL_IMM, offset_reg, src1->dreg, 3);
+			else
+				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_SHL_IMM, offset_reg, src1->dreg, 2);
+
+			if (cfg->compile_aot) {
+				NOT_IMPLEMENTED;
+			} else {
+				MONO_NEW_LABEL (cfg, label);
+
+				mono_create_jump_table (cfg, label, targets, n);
+
+				/* the backend must patch the address. we use 0xf0f0f0f0 to avoid the usage 
+				 * of special (short) opcodes on x86 */
+				mono_bblock_add_inst (bblock, label);
+				if (sizeof (gpointer) == 8)
+					MONO_EMIT_NEW_LOAD_MEMBASE (cfg, target_reg, offset_reg, (long)0xf0f0f0f0f0f0f0f1LL);
+				else
+					MONO_EMIT_NEW_LOAD_MEMBASE (cfg, target_reg, offset_reg, 0xf0f0f0f0);
+			}
+			MONO_EMIT_NEW_UNALU (cfg, OP_BR_REG, -1, target_reg);
 			inline_costs += 20;
 			break;
+		}
+#if 0
 		case CEE_LDIND_I1:
 		case CEE_LDIND_U1:
 		case CEE_LDIND_I2:
