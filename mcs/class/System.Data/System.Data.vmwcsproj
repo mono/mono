@@ -39,6 +39,7 @@
 				<File RelPath="System.Data\ColumnTypeConverter.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data\CommandBehavior.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data\CommandType.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Data\ConflictOption.cs" BuildAction="Compile"/>
 				<File RelPath="System.Data\ConflictOptions.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data\ConnectionState.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data\Constraint.cs" SubType="Code" BuildAction="Compile"/>
