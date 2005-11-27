@@ -82,6 +82,7 @@ stind.i2: src1:b src2:i
 stind.i4: src1:b src2:i
 stind.r4: dest:f src1:b
 stind.r8: dest:f src1:b
+
 add: dest:i src1:i src2:i len:3 clob:1
 sub: dest:i src1:i src2:i len:3 clob:1
 mul: dest:i src1:i src2:i len:4 clob:1
@@ -96,6 +97,31 @@ shl: dest:i src1:i src2:s clob:1 len:3
 shr: dest:i src1:i src2:s clob:1 len:3
 shr.un: dest:i src1:i src2:s clob:1 len:3
 
+long_add: dest:i src1:i src2:i len:3 clob:1
+long_sub: dest:i src1:i src2:i len:3 clob:1
+long_mul: dest:i src1:i src2:i len:4 clob:1
+long_div: dest:a src1:a src2:i len:16 clob:d
+long_div_un: dest:a src1:a src2:i len:16 clob:d
+long_rem: dest:d src1:a src2:i len:16 clob:a
+long_rem_un: dest:d src1:a src2:i len:16 clob:a
+long_and: dest:i src1:i src2:i len:3 clob:1
+long_or: dest:i src1:i src2:i len:3 clob:1
+long_xor: dest:i src1:i src2:i len:3 clob:1
+long_shl: dest:i src1:i src2:s clob:1 len:3
+long_shr: dest:i src1:i src2:s clob:1 len:3
+long_shr_un: dest:i src1:i src2:s clob:1 len:3
+
+neg: dest:i src1:i len:3 clob:1
+not: dest:i src1:i len:3 clob:1
+conv.i1: dest:i src1:i len:4
+conv.i2: dest:i src1:i len:4
+conv.i4: dest:i src1:i len:3
+conv.i8: dest:i src1:i len:3
+conv.r4: dest:f src1:i len:9
+conv.r8: dest:f src1:i len:9
+conv.u4: dest:i src1:i len:3
+conv.u8: dest:i src1:i len:3
+
 int_neg: dest:i src1:i len:3 clob:1
 int_not: dest:i src1:i len:3 clob:1
 int_conv_to_i1: dest:i src1:i len:4
@@ -106,6 +132,19 @@ int_conv_to_r4: dest:f src1:i len:9
 int_conv_to_r8: dest:f src1:i len:9
 int_conv_to_u4: dest:i src1:i len:3
 int_conv_to_u8: dest:i src1:i len:3
+
+long_neg: dest:i src1:i len:3 clob:1
+long_not: dest:i src1:i len:3 clob:1
+long_conv_to_i1: dest:i src1:i len:4
+long_conv_to_u1: dest:i src1:i len:4
+long_conv_to_i2: dest:i src1:i len:4
+long_conv_to_u2: dest:i src1:i len:4
+long_conv_to_i4: dest:i src1:i len:3
+long_conv_to_i8: dest:i src1:i len:3
+long_conv_to_r4: dest:f src1:i len:9
+long_conv_to_r8: dest:f src1:i len:9
+long_conv_to_u4: dest:i src1:i len:3
+long_conv_to_u8: dest:i src1:i len:3
 
 throw: src1:i len:18
 op_rethrow: src1:i len:18
@@ -136,6 +175,7 @@ compare: src1:i src2:i len:3
 lcompare: src1:i src2:i len:3
 icompare: src1:i src2:i len:3
 compare_imm: src1:i len:13
+lcompare_imm: src1:i len:13
 icompare_imm: src1:i len:8
 fcompare: src1:f src2:f clob:a len:13
 oparglist: src1:b len:11
@@ -237,21 +277,11 @@ cond_exc_ino: len:8
 cond_exc_ic: len:8
 cond_exc_inc: len:8
 
-long_mul: dest:i src1:i src2:i clob:1 len:4
-long_mul_imm: dest:i src1:i clob:1 len:12
-long_div: dest:a src1:a src2:i len:16 clob:d
-long_div_un: dest:a src1:a src2:i len:16 clob:d
-long_rem: dest:d src1:a src2:i len:16 clob:a
-long_rem_un: dest:d src1:a src2:i len:16 clob:a
-long_shl: dest:i src1:i src2:s clob:1 len:31
-long_shr: dest:i src1:i src2:s clob:1 len:32
-long_shr_un: dest:i src1:i src2:s clob:1 len:32
-long_conv_to_r4: dest:f src1:i len:8
-long_conv_to_r8: dest:f src1:i len:8
 long_conv_to_ovf_i: dest:i src1:i src2:i len:40
 long_mul_ovf: dest:i src1:i src2:i clob:1 len:16
 long_mul_ovf_un: dest:i src1:i src2:i len:22
 long_conv_to_r_un: dest:f src1:i src2:i len:48 
+long_mul_imm: dest:i src1:i clob:1 len:12
 long_shr_imm: dest:i src1:i clob:1 len:11
 long_shr_un_imm: dest:i src1:i clob:1 len:11
 long_shl_imm: dest:i src1:i clob:1 len:11
@@ -260,7 +290,7 @@ float_bne_un: len:18
 float_blt: len:13
 float_blt_un: len:30
 float_bgt: len:13
-float_btg_un: len:30
+float_bgt_un: len:30
 float_bge: len:32
 float_bge_un: len:13
 float_ble: len:32
@@ -274,6 +304,7 @@ float_rem: dest:f src1:f src2:f len:19
 float_rem_un: dest:f src1:f src2:f len:19
 float_neg: dest:f src1:f len:23
 float_not: dest:f src1:f len:3
+
 float_conv_to_i1: dest:i src1:f len:49
 float_conv_to_i2: dest:i src1:f len:49
 float_conv_to_i4: dest:i src1:f len:49
@@ -284,7 +315,9 @@ float_conv_to_u2: dest:i src1:f len:49
 float_conv_to_u1: dest:i src1:f len:49
 float_conv_to_i: dest:i src1:f len:49
 float_conv_to_ovf_i: dest:a src1:f len:40
-float_conv_to_ovd_u: dest:a src1:f len:40
+float_conv_to_r4: dest:f src1:f
+float_conv_to_r8: dest:f src1:f
+
 float_mul_ovf: 
 float_ceq: dest:i src1:f src2:f len:35
 float_cgt: dest:i src1:f src2:f len:35
@@ -410,3 +443,18 @@ int_bge_un: len:64
 int_ble: len:64
 int_ble_un: len:64
 
+long_ceq: dest:c len:64
+long_cgt: dest:c len:64
+long_cgt_un: dest:c len:64
+long_clt: dest:c len:64
+long_clt_un: dest:c len:64
+long_beq: len:64
+long_bne_un: len:64
+long_blt: len:64
+long_blt_un: len:64
+long_bgt: len:64
+long_bgt_un: len:64
+long_bge: len:64
+long_bge_un: len:64
+long_ble: len:64
+long_ble_un: len:64

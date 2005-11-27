@@ -341,6 +341,15 @@ handle_enum:
 	    mono_bblock_add_inst (cfg->cbb, inst); \
 	} while (0)
 
+#define MONO_EMIT_NEW_BIALU(cfg,op,dr,sr1,sr2) do { \
+        MonoInst *inst; \
+        MONO_INST_NEW ((cfg), (inst), (op)); \
+        inst->dreg = dr; \
+        inst->sreg1 = sr1; \
+        inst->sreg2 = sr2; \
+	    mono_bblock_add_inst (cfg->cbb, inst); \
+	} while (0)
+
 #define MONO_EMIT_NEW_BIALU_IMM(cfg,op,dr,sr,imm) do { \
         MonoInst *inst; \
         MONO_INST_NEW ((cfg), (inst), (op)); \
@@ -675,7 +684,9 @@ handle_enum:
 		type_from_op (cmp, sp [0], sp [1]);	\
 		CHECK_TYPE (cmp);	\
         MONO_ADD_INS (bblock, cmp); \
+        printf ("D: %s\n", mono_inst_name ((ins->opcode))); \
 		type_from_op (ins, sp [0], sp [1]);	\
+        printf ("D: %s\n", mono_inst_name ((ins)->opcode)); \
 		MONO_ADD_INS (bblock, ins);	\
 		ins->inst_many_bb = mono_mempool_alloc (cfg->mempool, sizeof(gpointer)*2);	\
 		GET_BBLOCK (cfg, bbhash, tblock, target);		\
@@ -1252,7 +1263,7 @@ type_from_op (MonoInst *ins, MonoInst *src1, MonoInst *src2) {
 	case OP_ICOMPARE_IMM:
 		ins->type = bin_comp_table [src1->type] [src1->type] ? STACK_I4 : STACK_INV;
 		if ((src1->type == STACK_I8) || ((sizeof (gpointer) == 8) && ((src1->type == STACK_PTR) || (src1->type == STACK_OBJ) || (src1->type == STACK_MP))))
-			ins->opcode = OP_LCOMPARE;		
+			ins->opcode = OP_LCOMPARE_IMM;		
 		return;
 	case CEE_BEQ:
 	case CEE_BGE:
@@ -2753,17 +2764,6 @@ mini_get_ldelema_ins (MonoCompile *cfg, MonoBasicBlock *bblock, MonoMethod *cmet
 	return addr;
 }
 
-static MonoJitICallInfo **emul_opcode_map = NULL;
-
-static inline MonoJitICallInfo *
-mono_find_jit_opcode_emulation (int opcode)
-{
-	if  (emul_opcode_map)
-		return emul_opcode_map [opcode];
-	else
-		return NULL;
-}
-
 static MonoException*
 mini_loader_error_to_exception (MonoLoaderError *error)
 {
@@ -3200,6 +3200,8 @@ void check_linkdemand (MonoCompile *cfg, MonoMethod *caller, MonoMethod *callee,
 static void
 decompose_opcode (MonoCompile *cfg, MonoInst *ins)
 {
+	/* FIXME: Instead of = NOP, don't emit the original ins at all */
+
 	switch (ins->opcode) {
 	case OP_IADD_OVF:
 		ins->opcode = OP_IADDCC;
@@ -3271,11 +3273,154 @@ decompose_opcode (MonoCompile *cfg, MonoInst *ins)
 		MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, ins->dreg, ins->sreg1);
 		ins->opcode = CEE_NOP;
 		break;
-	case OP_IMUL_OVF:
-	case OP_IMUL_OVF_UN:
+	case OP_ICONV_TO_I4:
+		ins->opcode = OP_MOVE;
 		break;
+
+		/* Long opcodes on 64 bit machines */
+#if SIZEOF_VOID_P == 8
+	case OP_LCONV_TO_I4:
+		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_LSHR_IMM, ins->dreg, ins->sreg1, 0);
+		ins->opcode = CEE_NOP;
+		break;
+	case OP_LCONV_TO_I8:
+	case OP_ICONV_TO_U8:
+		ins->opcode = OP_MOVE;
+		break;
+	case OP_ICONV_TO_I8:
+		/* FIXME: Widen ? */
+		ins->opcode = OP_MOVE;
+		break;
+	case OP_LCONV_TO_U4:
+		/* Clean out the upper word */
+		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_ISHR_UN_IMM, ins->dreg, ins->sreg1, 0);
+		ins->opcode = CEE_NOP;
+		break;
+	case OP_LADD_OVF:
+		MONO_EMIT_NEW_BIALU (cfg, OP_ADDCC, ins->dreg, ins->sreg1, ins->sreg2);
+		MONO_EMIT_NEW_COND_EXC (cfg, OV, "OverflowException");
+		ins->opcode = CEE_NOP;
+		break;
+	case OP_LADD_OVF_UN:
+		MONO_EMIT_NEW_BIALU (cfg, OP_ADDCC, ins->dreg, ins->sreg1, ins->sreg2);
+		MONO_EMIT_NEW_COND_EXC (cfg, C, "OverflowException");
+		ins->opcode = CEE_NOP;
+		break;
+	case OP_LSUB_OVF:
+		MONO_EMIT_NEW_BIALU (cfg, OP_SUBCC, ins->dreg, ins->sreg1, ins->sreg2);
+		MONO_EMIT_NEW_COND_EXC (cfg, OV, "OverflowException");
+		ins->opcode = CEE_NOP;
+		break;
+	case OP_LSUB_OVF_UN:
+		MONO_EMIT_NEW_BIALU (cfg, OP_SUBCC, ins->dreg, ins->sreg1, ins->sreg2);
+		MONO_EMIT_NEW_COND_EXC (cfg, C, "OverflowException");
+		ins->opcode = CEE_NOP;
+		break;
+
+	case OP_LCONV_TO_OVF_I1:
+		MONO_EMIT_NEW_COMPARE_IMM (cfg, ins->sreg1, 127);
+		MONO_EMIT_NEW_COND_EXC (cfg, GT, "OverflowException");
+		MONO_EMIT_NEW_COMPARE_IMM (cfg, ins->sreg1, -128);
+		MONO_EMIT_NEW_COND_EXC (cfg, LT, "OverflowException");
+		MONO_EMIT_NEW_UNALU (cfg, OP_LCONV_TO_I1, ins->dreg, ins->sreg1);
+		ins->opcode = CEE_NOP;
+		break;
+	case OP_LCONV_TO_OVF_I1_UN:
+		MONO_EMIT_NEW_COMPARE_IMM (cfg, ins->sreg1, 127);
+		MONO_EMIT_NEW_COND_EXC (cfg, GT_UN, "OverflowException");
+		MONO_EMIT_NEW_UNALU (cfg, OP_LCONV_TO_I1, ins->dreg, ins->sreg1);
+		ins->opcode = CEE_NOP;
+		break;
+	case OP_LCONV_TO_OVF_U1:
+		/* probe value to be within 0 to 255 */
+		MONO_EMIT_NEW_COMPARE_IMM (cfg, ins->sreg1, 255);
+		MONO_EMIT_NEW_COND_EXC (cfg, GT_UN, "OverflowException");
+		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_AND_IMM, ins->dreg, ins->sreg1, 0xff);
+		ins->opcode = CEE_NOP;
+		break;
+	case OP_LCONV_TO_OVF_U1_UN:
+		/* probe value to be within 0 to 255 */
+		MONO_EMIT_NEW_COMPARE_IMM (cfg, ins->sreg1, 255);
+		MONO_EMIT_NEW_COND_EXC (cfg, GT_UN, "OverflowException");
+		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_AND_IMM, ins->dreg, ins->sreg1, 0xff);
+		ins->opcode = CEE_NOP;
+		break;
+	case OP_LCONV_TO_OVF_I2:
+		/* Probe value to be within -32768 and 32767 */
+		MONO_EMIT_NEW_COMPARE_IMM (cfg, ins->sreg1, 32767);
+		MONO_EMIT_NEW_COND_EXC (cfg, GT, "OverflowException");
+		MONO_EMIT_NEW_COMPARE_IMM (cfg, ins->sreg1, -32768);
+		MONO_EMIT_NEW_COND_EXC (cfg, LT, "OverflowException");
+		MONO_EMIT_NEW_UNALU (cfg, OP_LCONV_TO_I2, ins->dreg, ins->sreg1);
+		ins->opcode = CEE_NOP;
+		break;
+	case OP_LCONV_TO_OVF_I2_UN:
+		/* Probe value to be within 0 and 32767 */
+		MONO_EMIT_NEW_COMPARE_IMM (cfg, ins->sreg1, 32767);
+		MONO_EMIT_NEW_COND_EXC (cfg, GT_UN, "OverflowException");
+		MONO_EMIT_NEW_UNALU (cfg, OP_LCONV_TO_I2, ins->dreg, ins->sreg1);
+		ins->opcode = CEE_NOP;
+		break;
+	case OP_LCONV_TO_OVF_U2:
+		/* Probe value to be within 0 and 65535 */
+		MONO_EMIT_NEW_COMPARE_IMM (cfg, ins->sreg1, 0xffff);
+		MONO_EMIT_NEW_COND_EXC (cfg, GT_UN, "OverflowException");
+		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_AND_IMM, ins->dreg, ins->sreg1, 0xffff);
+		ins->opcode = CEE_NOP;
+		break;
+	case OP_LCONV_TO_OVF_U2_UN:
+		/* Probe value to be within 0 and 65535 */
+		MONO_EMIT_NEW_COMPARE_IMM (cfg, ins->sreg1, 0xffff);
+		MONO_EMIT_NEW_COND_EXC (cfg, GT_UN, "OverflowException");
+		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_AND_IMM, ins->dreg, ins->sreg1, 0xffff);
+		ins->opcode = CEE_NOP;
+		break;
+	case OP_LCONV_TO_OVF_I4:
+		MONO_EMIT_NEW_COMPARE_IMM (cfg, ins->sreg1, 0x7fffffff);
+		MONO_EMIT_NEW_COND_EXC (cfg, GT, "OverflowException");
+		MONO_EMIT_NEW_COMPARE_IMM (cfg, ins->sreg1, -2147483648);
+		MONO_EMIT_NEW_COND_EXC (cfg, LT, "OverflowException");
+		MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, ins->dreg, ins->sreg1);
+		ins->opcode = CEE_NOP;
+		break;
+	case OP_LCONV_TO_OVF_I4_UN:
+		MONO_EMIT_NEW_COMPARE_IMM (cfg, ins->sreg1, 0x7fffffff);
+		MONO_EMIT_NEW_COND_EXC (cfg, GT, "OverflowException");
+		MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, ins->dreg, ins->sreg1);
+		ins->opcode = CEE_NOP;
+		break;
+	case OP_LCONV_TO_OVF_U4:
+		MONO_EMIT_NEW_COMPARE_IMM (cfg, ins->sreg1, 0xffffffffUL);
+		MONO_EMIT_NEW_COND_EXC (cfg, GT, "OverflowException");
+		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, ins->sreg1, 0);
+		MONO_EMIT_NEW_COND_EXC (cfg, LT, "OverflowException");
+		MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, ins->dreg, ins->sreg1);
+		ins->opcode = CEE_NOP;
+		break;
+	case OP_LCONV_TO_OVF_U4_UN:
+		MONO_EMIT_NEW_COMPARE_IMM (cfg, ins->sreg1, 0xffffffff);
+		MONO_EMIT_NEW_COND_EXC (cfg, GT_UN, "OverflowException");
+		MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, ins->dreg, ins->sreg1);
+		ins->opcode = CEE_NOP;
+		break;
+	case OP_LCONV_TO_OVF_I_UN:
+	case OP_LCONV_TO_OVF_I8_UN:
+		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, ins->sreg1, 0);
+		MONO_EMIT_NEW_COND_EXC (cfg, LT, "OverflowException");
+		MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, ins->dreg, ins->sreg1);
+		ins->opcode = CEE_NOP;
+		break;
+	case OP_LCONV_TO_OVF_U8:
+		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, ins->sreg1, 0);
+		MONO_EMIT_NEW_COND_EXC (cfg, LT, "OverflowException");
+
+		MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, ins->dreg, ins->sreg1);
+		ins->opcode = CEE_NOP;
+		break;
+#endif
+
 	default:
-		g_assert_not_reached ();
+		break;
 	}
 }
 
@@ -3830,19 +3975,19 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			ip += 5;
 			*sp++ = ins;
 			break;
-#if 0
 		case CEE_LDC_I8:
 			CHECK_OPSIZE (9);
 			CHECK_STACK_OVF (1);
 			MONO_INST_NEW (cfg, ins, OP_I8CONST);
 			ins->cil_code = ip;
 			ins->type = STACK_I8;
+			ins->dreg = alloc_dreg (cfg, STACK_I8);
 			++ip;
 			ins->inst_l = (gint64)read64 (ip);
+			MONO_ADD_INS (bblock, ins);
 			ip += 8;
 			*sp++ = ins;
 			break;
-#endif
 		case CEE_LDC_R4: {
 			float *f;
 			/* FIXME: we should really allocate this only late in the compilation process */
@@ -4688,6 +4833,8 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				*sp++ = emit_tree (cfg, bblock, ins, ip + 1);
 				mono_get_got_var (cfg);
 			}
+			else
+				decompose_opcode (cfg, ins);
 			ip++;			
 			break;
 		case CEE_CONV_OVF_I4:
@@ -6791,6 +6938,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				MONO_INST_NEW (cfg, ins, OP_I8CONST);
 				ins->type = STACK_I8;
 				ins->inst_l = 0;
+				ins->dreg = alloc_dreg (cfg, STACK_I8);
 				MONO_ADD_INS (init_localsbb, ins);
 				NEW_LOCSTORE (cfg, store, i, ins);
 				MONO_ADD_INS (init_localsbb, store);
@@ -6880,6 +7028,11 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 #define NONE " "
 #define IREG "i"
 #define FREG "f"
+#if SIZEOF_VOID_P == 8
+#define LREG IREG
+#else
+#error Not implemented
+#endif
 /* keep in sync with the enum in mini.h */
 static const char* const
 opcode_info[] = {
@@ -6924,7 +7077,6 @@ mono_spill_global_vars (MonoCompile *cfg)
 
 			switch (ins->type) {
 			case STACK_I4:
-			case STACK_I8:
 			case STACK_PTR:
 			case STACK_MP:
 			case STACK_OBJ:
@@ -6932,6 +7084,13 @@ mono_spill_global_vars (MonoCompile *cfg)
 				break;
 			case STACK_R8:
 				vreg_to_inst ['f'][ins->dreg] = ins;
+				break;
+			case STACK_I8:
+#if SIZEOF_VOID_P == 8
+				vreg_to_inst ['i'][ins->dreg] = ins;
+#else
+				NOT_IMPLEMENTED;
+#endif
 				break;
 			default:
 				NOT_IMPLEMENTED;
@@ -7045,4 +7204,5 @@ mono_spill_global_vars (MonoCompile *cfg)
  * - handling ovf opcodes: decompose in method_to_ir.
  * - unify to_regstore/to_regload as to_regmove
  * - unify iregs/fregs
+ * - use sext/zext opcodes instead of shifts
  */

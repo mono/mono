@@ -2980,7 +2980,7 @@ mini_get_ldelema_ins (MonoCompile *cfg, MonoBasicBlock *bblock, MonoMethod *cmet
 
 static MonoJitICallInfo **emul_opcode_map = NULL;
 
-static inline MonoJitICallInfo *
+MonoJitICallInfo *
 mono_find_jit_opcode_emulation (int opcode)
 {
 	if  (emul_opcode_map)

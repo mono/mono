@@ -1513,6 +1513,7 @@ peephole_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 			}
 			break;
 		case OP_COMPARE_IMM:
+		case OP_LCOMPARE_IMM:
 			/* OP_COMPARE_IMM (reg, 0) 
 			 * --> 
 			 * OP_AMD64_TEST_NULL (reg) 
@@ -1770,6 +1771,7 @@ mono_arch_lowering_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 			ins->sreg2 = temp->dreg;
 			break;
 		case OP_COMPARE_IMM:
+		case OP_LCOMPARE_IMM:
 			if (!amd64_is_imm32 (ins->inst_imm)) {
 				NEW_INS (cfg, temp, OP_I8CONST);
 				temp->inst_c0 = ins->inst_imm;
@@ -1822,24 +1824,34 @@ opcode_to_x86_cond (int opcode)
 {
 	switch (opcode) {
 	case OP_IBEQ:
+	case OP_LBEQ:
 		return X86_CC_EQ;
 	case OP_IBNE_UN:
+	case OP_LBNE_UN:
 		return X86_CC_NE;
 	case OP_IBLT:
+	case OP_LBLT:
 		return X86_CC_LT;
 	case OP_IBLT_UN:
+	case OP_LBLT_UN:
 		return X86_CC_LT;
 	case OP_IBGT:
+	case OP_LBGT:
 		return X86_CC_GT;
 	case OP_IBGT_UN:
+	case OP_LBGT_UN:
 		return X86_CC_GT;
 	case OP_IBGE:
+	case OP_LBGE:
 		return X86_CC_GE;
 	case OP_IBGE_UN:
+	case OP_LBGE_UN:
 		return X86_CC_GE;
 	case OP_IBLE:
+	case OP_LBLE:
 		return X86_CC_LE;
 	case OP_IBLE_UN:
+	case OP_LBLE_UN:
 		return X86_CC_LE;
 	default:
 		g_assert_not_reached ();
@@ -2270,18 +2282,22 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			amd64_mov_reg_memindex_size (code, ins->dreg, ins->inst_basereg, 0, ins->inst_indexreg, 0, 8);
 			break;
 		case CEE_CONV_I1:
+		case OP_LCONV_TO_I1:
 		case OP_ICONV_TO_I1:
 			amd64_widen_reg (code, ins->dreg, ins->sreg1, TRUE, FALSE);
 			break;
 		case CEE_CONV_I2:
+		case OP_LCONV_TO_I2:
 		case OP_ICONV_TO_I2:
 			amd64_widen_reg (code, ins->dreg, ins->sreg1, TRUE, TRUE);
 			break;
 		case CEE_CONV_U1:
+		case OP_LCONV_TO_U1:
 		case OP_ICONV_TO_U1:
 			amd64_widen_reg (code, ins->dreg, ins->sreg1, FALSE, FALSE);
 			break;
 		case CEE_CONV_U2:
+		case OP_LCONV_TO_U2:
 		case OP_ICONV_TO_U2:
 			amd64_widen_reg (code, ins->dreg, ins->sreg1, FALSE, TRUE);
 			break;
@@ -2299,6 +2315,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			amd64_alu_reg_reg (code, X86_CMP, ins->sreg1, ins->sreg2);
 			break;
 		case OP_COMPARE_IMM:
+		case OP_LCOMPARE_IMM:
 			g_assert (amd64_is_imm32 (ins->inst_imm));
 			amd64_alu_reg_imm (code, X86_CMP, ins->sreg1, ins->inst_imm);
 			break;
@@ -2356,6 +2373,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 		case OP_ADDCC:
 		case CEE_ADD:
+		case OP_LADD:
 			amd64_alu_reg_reg (code, X86_ADD, ins->sreg1, ins->sreg2);
 			break;
 		case OP_ADC:
@@ -2371,6 +2389,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 		case OP_SUBCC:
 		case CEE_SUB:
+		case OP_LSUB:
 			amd64_alu_reg_reg (code, X86_SUB, ins->sreg1, ins->sreg2);
 			break;
 		case OP_SBB:
@@ -2384,13 +2403,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			g_assert (amd64_is_imm32 (ins->inst_imm));
 			amd64_alu_reg_imm (code, X86_SBB, ins->dreg, ins->inst_imm);
 			break;
-		case CEE_AND:
-			amd64_alu_reg_reg (code, X86_AND, ins->sreg1, ins->sreg2);
-			break;
-		case OP_AND_IMM:
-			g_assert (amd64_is_imm32 (ins->inst_imm));
-			amd64_alu_reg_imm (code, X86_AND, ins->sreg1, ins->inst_imm);
-			break;
+
 		case CEE_MUL:
 		case OP_LMUL:
 			amd64_imul_reg_reg (code, ins->sreg1, ins->sreg2);
@@ -2482,7 +2495,17 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			amd64_imul_reg_reg (code, ins->sreg1, ins->sreg2);
 			EMIT_COND_SYSTEM_EXCEPTION (X86_CC_O, FALSE, "OverflowException");
 			break;
+
+		case CEE_AND:
+		case OP_LAND:
+			amd64_alu_reg_reg (code, X86_AND, ins->sreg1, ins->sreg2);
+			break;
+		case OP_AND_IMM:
+			g_assert (amd64_is_imm32 (ins->inst_imm));
+			amd64_alu_reg_imm (code, X86_AND, ins->sreg1, ins->inst_imm);
+			break;
 		case CEE_OR:
+		case OP_LOR:
 			amd64_alu_reg_reg (code, X86_OR, ins->sreg1, ins->sreg2);
 			break;
 		case OP_OR_IMM
@@ -2490,12 +2513,14 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			amd64_alu_reg_imm (code, X86_OR, ins->sreg1, ins->inst_imm);
 			break;
 		case CEE_XOR:
+		case OP_LXOR:
 			amd64_alu_reg_reg (code, X86_XOR, ins->sreg1, ins->sreg2);
 			break;
 		case OP_XOR_IMM:
 			g_assert (amd64_is_imm32 (ins->inst_imm));
 			amd64_alu_reg_imm (code, X86_XOR, ins->sreg1, ins->inst_imm);
 			break;
+
 		case CEE_SHL:
 		case OP_LSHL:
 			g_assert (ins->sreg2 == AMD64_RCX);
@@ -2684,6 +2709,11 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_IBGT:
 		case OP_IBGE:
 		case OP_IBLE:
+		case OP_LBEQ:
+		case OP_LBLT:
+		case OP_LBGT:
+		case OP_LBGE:
+		case OP_LBLE:
 			EMIT_COND_BRANCH (ins, opcode_to_x86_cond (ins->opcode), TRUE);
 			break;
 		case OP_IBNE_UN:
@@ -2691,12 +2721,19 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_IBGT_UN:
 		case OP_IBGE_UN:
 		case OP_IBLE_UN:
+		case OP_LBNE_UN:
+		case OP_LBLT_UN:
+		case OP_LBGT_UN:
+		case OP_LBGE_UN:
+		case OP_LBLE_UN:
 			EMIT_COND_BRANCH (ins, opcode_to_x86_cond (ins->opcode), FALSE);
 			break;
 		case CEE_NOT:
+		case OP_LNOT:
 			amd64_not_reg (code, ins->sreg1);
 			break;
 		case CEE_NEG:
+		case OP_LNEG:
 			amd64_neg_reg (code, ins->sreg1);
 			break;
 		case OP_SEXT_I1:
@@ -2995,26 +3032,31 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			amd64_jump_reg (code, ins->sreg1);
 			break;
 		case OP_CEQ:
+		case OP_LCEQ:
 		case OP_ICEQ:
 			amd64_set_reg (code, X86_CC_EQ, ins->dreg, TRUE);
 			amd64_widen_reg (code, ins->dreg, ins->dreg, FALSE, FALSE);
 			break;
 		case OP_CLT:
+		case OP_LCLT:
 		case OP_ICLT:
 			amd64_set_reg (code, X86_CC_LT, ins->dreg, TRUE);
 			amd64_widen_reg (code, ins->dreg, ins->dreg, FALSE, FALSE);
 			break;
 		case OP_CLT_UN:
+		case OP_LCLT_UN:
 		case OP_ICLT_UN:
 			amd64_set_reg (code, X86_CC_LT, ins->dreg, FALSE);
 			amd64_widen_reg (code, ins->dreg, ins->dreg, FALSE, FALSE);
 			break;
 		case OP_CGT:
+		case OP_LCGT:
 		case OP_ICGT:
 			amd64_set_reg (code, X86_CC_GT, ins->dreg, TRUE);
 			amd64_widen_reg (code, ins->dreg, ins->dreg, FALSE, FALSE);
 			break;
 		case OP_CGT_UN:
+		case OP_LCGT_UN:
 		case OP_ICGT_UN:
 			amd64_set_reg (code, X86_CC_GT, ins->dreg, FALSE);
 			amd64_widen_reg (code, ins->dreg, ins->dreg, FALSE, FALSE);
@@ -3149,6 +3191,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				amd64_fld_membase (code, ins->inst_basereg, ins->inst_offset, FALSE);
 			break;
 		case CEE_CONV_R4: /* FIXME: change precision */
+		case OP_ICONV_TO_R4:
+		case OP_ICONV_TO_R8:
 		case CEE_CONV_R8:
 			if (use_sse2)
 				amd64_sse_cvtsi2sd_reg_reg_size (code, ins->dreg, ins->sreg1, 4);
@@ -3182,6 +3226,12 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				g_assert_not_reached ();
 			amd64_fild_membase (code, ins->inst_basereg, ins->inst_offset, FALSE);
 			break;
+		case OP_FCONV_TO_R8:
+			/* Nothing to do */
+			break;
+		case OP_FCONV_TO_R4:
+			/* FIXME: nothing to do ?? */
+			break;
 		case OP_FCONV_TO_I1:
 			code = emit_float_to_int (cfg, code, ins->dreg, ins->sreg1, 1, TRUE);
 			break;
@@ -3193,6 +3243,9 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 		case OP_FCONV_TO_U2:
 			code = emit_float_to_int (cfg, code, ins->dreg, ins->sreg1, 2, FALSE);
+			break;
+		case OP_FCONV_TO_U4:
+			code = emit_float_to_int (cfg, code, ins->dreg, ins->sreg1, 4, FALSE);			
 			break;
 		case OP_FCONV_TO_I4:
 		case OP_FCONV_TO_I:
