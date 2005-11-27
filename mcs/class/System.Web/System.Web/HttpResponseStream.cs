@@ -193,6 +193,9 @@ namespace System.Web {
 
 			public void Write (byte [] buffer, int offset, int count)
 			{
+				if (count == 0)
+					return;
+				
 				EnsureCapacity (position + count);
 				Marshal.Copy (buffer, offset, (IntPtr) (data + position), count);
 				position += count;
