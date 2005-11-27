@@ -69,7 +69,7 @@
  * because they have weird semantics with NaNs.
  */
 #define MONO_IS_COND_BRANCH_OP(ins) (((ins)->opcode >= CEE_BEQ && (ins)->opcode <= CEE_BLT_UN) || ((ins)->opcode >= OP_LBEQ && (ins)->opcode <= OP_LBLT_UN) || ((ins)->opcode >= OP_FBEQ && (ins)->opcode <= OP_FBLT_UN) || ((ins)->opcode >= OP_IBEQ && (ins)->opcode <= OP_IBLT_UN))
-#define MONO_IS_COND_BRANCH_NOFP(ins) (MONO_IS_COND_BRANCH_OP(ins) && (ins)->inst_left->inst_left->type != STACK_R8)
+#define MONO_IS_COND_BRANCH_NOFP(ins) (MONO_IS_COND_BRANCH_OP(ins) && !(((ins)->opcode >= OP_FBEQ) && ((ins)->opcode <= OP_FBLT_UN)))
 
 #define MONO_CHECK_THIS(ins) (mono_method_signature (cfg->method)->hasthis && (ins)->ssa_op == MONO_SSA_LOAD && (ins)->inst_left->inst_c0 == 0)
 
@@ -1727,6 +1727,20 @@ mono_compile_create_var (MonoCompile *cfg, MonoType *type, int opcode)
 		case MONO_TYPE_ARRAY:    
 			/* FIXME: call alloc_dreg */
 			inst->dreg = cfg->next_vireg ++;
+			break;
+		case MONO_TYPE_R4:
+		case MONO_TYPE_R8:
+			inst->dreg = cfg->next_vfreg ++;
+			break;
+		case MONO_TYPE_I8:
+		case MONO_TYPE_U8:
+#if SIZEOF_VOID_P == 8
+			inst->dreg = cfg->next_vireg ++;
+#else
+			/* Use a pair of vregs */
+			inst->dreg = cfg->next_vireg ++;
+			cfg->next_vireg ++;
+#endif
 			break;
 		default:
 			NOT_IMPLEMENTED;
@@ -9359,7 +9373,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 	mono_compile_create_vars (cfg);
 
 	if (cfg->new_ir) {
-		cfg->opt &= MONO_OPT_PEEPHOLE | MONO_OPT_BRANCH | MONO_OPT_INTRINS | MONO_OPT_LOOP | MONO_OPT_EXCEPTION | MONO_OPT_AOT;
+		cfg->opt &= MONO_OPT_PEEPHOLE | MONO_OPT_INTRINS | MONO_OPT_LOOP | MONO_OPT_EXCEPTION | MONO_OPT_AOT;
 
 		i = mono_method_to_ir2 (cfg, method, NULL, NULL, cfg->locals_start, NULL, NULL, NULL, 0, FALSE);
 	}

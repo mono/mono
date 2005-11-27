@@ -1797,6 +1797,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			x86_widen_reg (code, ins->dreg, ins->sreg1, FALSE, TRUE);
 			break;
 		case OP_COMPARE:
+		case OP_ICOMPARE:
 			x86_alu_reg_reg (code, X86_CMP, ins->sreg1, ins->sreg2);
 			break;
 		case OP_COMPARE_IMM:
@@ -2420,22 +2421,27 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			x86_jump_reg (code, ins->sreg1);
 			break;
 		case OP_CEQ:
+		case OP_ICEQ:
 			x86_set_reg (code, X86_CC_EQ, ins->dreg, TRUE);
 			x86_widen_reg (code, ins->dreg, ins->dreg, FALSE, FALSE);
 			break;
 		case OP_CLT:
+		case OP_ICLT:
 			x86_set_reg (code, X86_CC_LT, ins->dreg, TRUE);
 			x86_widen_reg (code, ins->dreg, ins->dreg, FALSE, FALSE);
 			break;
 		case OP_CLT_UN:
+		case OP_ICLT_UN:
 			x86_set_reg (code, X86_CC_LT, ins->dreg, FALSE);
 			x86_widen_reg (code, ins->dreg, ins->dreg, FALSE, FALSE);
 			break;
 		case OP_CGT:
+		case OP_ICGT:
 			x86_set_reg (code, X86_CC_GT, ins->dreg, TRUE);
 			x86_widen_reg (code, ins->dreg, ins->dreg, FALSE, FALSE);
 			break;
 		case OP_CGT_UN:
+		case OP_ICGT_UN:
 			x86_set_reg (code, X86_CC_GT, ins->dreg, FALSE);
 			x86_widen_reg (code, ins->dreg, ins->dreg, FALSE, FALSE);
 			break;
@@ -2487,7 +2493,18 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case CEE_BLE_UN:
 			EMIT_COND_BRANCH (ins, branch_cc_table [ins->opcode - CEE_BEQ], (ins->opcode < CEE_BNE_UN));
 			break;
-
+		case OP_IBEQ:
+		case OP_IBNE_UN:
+		case OP_IBLT:
+		case OP_IBLT_UN:
+		case OP_IBGT:
+		case OP_IBGT_UN:
+		case OP_IBGE:
+		case OP_IBGE_UN:
+		case OP_IBLE:
+		case OP_IBLE_UN:
+			EMIT_COND_BRANCH (ins, branch_cc_table [ins->opcode - OP_IBEQ], (ins->opcode < OP_IBNE_UN));
+			break;
 		/* floating point opcodes */
 		case OP_R8CONST: {
 			double d = *(double *)ins->inst_p0;
@@ -2561,6 +2578,12 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 		case OP_X86_FP_LOAD_I4:
 			x86_fild_membase (code, ins->inst_basereg, ins->inst_offset, FALSE);
+			break;
+		case OP_FCONV_TO_R8:
+			/* Nothing to do */
+			break;
+		case OP_FCONV_TO_R4:
+			/* FIXME: nothing to do ?? */
 			break;
 		case OP_FCONV_TO_I1:
 			code = emit_float_to_int (cfg, code, ins->dreg, 1, TRUE);
@@ -2664,6 +2687,9 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				x86_mov_reg_reg (code, ins->dreg, ins->sreg1, 4);
 			break;
 		}
+		case OP_FMOVE:
+			/* Not needed on the fp stack */
+			break;
 		case OP_FADD:
 			x86_fp_op_reg (code, X86_FADD, 1, TRUE);
 			break;

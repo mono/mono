@@ -10,7 +10,7 @@
 #ifdef MINI_OP
 #undef MINI_OP
 #endif
-#define MINI_OP(a,b) b,
+#define MINI_OP(a,b,dest,src1,src2) b,
 /* keep in sync with the enum in mini.h */
 static const char* const
 opnames[] = {

@@ -72,6 +72,18 @@ bge.un: len:6
 bgt.un: len:6
 ble.un: len:6
 blt.un: len:6
+
+int_beq: len:6
+int_bge: len:6
+int_bgt: len:6
+int_ble: len:6
+int_blt: len:6
+int_bne_un: len:6
+int_bge_un: len:6
+int_bgt_un: len:6
+int_ble_un: len:6
+int_blt_un: len:6
+
 label:
 ldind.i1: dest:i len:6
 ldind.u1: dest:i len:6
@@ -151,15 +163,23 @@ int_mul_ovf: dest:i src1:i src2:i clob:1 len:9
 int_mul_ovf_un: dest:i src1:i src2:i len:16
 
 conv.u: dest:i src1:i len:3
+
 ceq: dest:y len:6
 cgt: dest:y len:6
 cgt.un: dest:y len:6
 clt: dest:y len:6
 clt.un: dest:y len:6
-cne: dest:y len:6
+
+int_ceq: dest:y len:6
+int_cgt: dest:y len:6
+int_cgt_un: dest:y len:6
+int_clt: dest:y len:6
+int_clt_un: dest:y len:6
+
 localloc: dest:i src1:i len:120
 compare: src1:i src2:i len:2
 compare_imm: src1:i len:6
+icompare: src1:i src2:i len:2
 icompare_imm: src1:i len:6
 fcompare: src1:f src2:f clob:a len:9
 oparglist: src1:b len:10
@@ -210,6 +230,7 @@ loadr8_membase: dest:f src1:b len:6
 loadr8_spill_membase: src1:b len:8
 loadu4_mem: dest:i len:9
 move: dest:i src1:i len:2
+fmove: dest:f src1:f
 
 addcc_imm: dest:i src1:i len:6 clob:1
 add_imm: dest:i src1:i len:6 clob:1
@@ -307,6 +328,8 @@ float_rem: dest:f src1:f src2:f len:17
 float_rem_un: dest:f src1:f src2:f len:17
 float_neg: dest:f src1:f len:2
 float_not: dest:f src1:f len:2
+float_conv_to_r8: dest:f src1:f
+float_conv_to_r4: dest:f src1:f
 float_conv_to_i1: dest:y src1:f len:39
 float_conv_to_i2: dest:y src1:f len:39
 float_conv_to_i4: dest:i src1:f len:39
