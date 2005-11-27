@@ -532,6 +532,17 @@ namespace Cairo {
 		{
 			CairoAPI.cairo_set_font_size (state, scale);
 		}
+
+		[Obsolete ("Use SetFontSize() instead.")]
+		public void FontSetSize (double scale)
+		{
+			SetFontSize (scale);
+		}
+
+		[Obsolete ("Use SetFontSize() instead.")]
+		public double FontSize {
+			set { SetFontSize (value); }
+		}
 		
 		public Matrix FontMatrix {
 			get { return CairoAPI.cairo_get_font_matrix (state); }
@@ -600,6 +611,12 @@ namespace Cairo {
 			CairoAPI.cairo_copy_page (state);
 		}
 
+		[Obsolete ("Use SelectFontFace() instead.")]
+		public void FontFace (string family, FontSlant slant, FontWeight weight)
+		{
+			SelectFontFace (family, slant, weight);
+		}
+		
 		public void SelectFontFace (string family, FontSlant slant, FontWeight weight)
 		{
 			CairoAPI.cairo_select_font_face (state, family, slant, weight);

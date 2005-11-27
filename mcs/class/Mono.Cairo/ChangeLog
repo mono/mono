@@ -1,3 +1,8 @@
+2005-11-27  John Luke  <john.luke@gmail.com>
+
+	* Mono.Cairo/Graphics.cs: add back FontSetSize,
+	FontSize setter, and FontFace as obsolete API
+
 2005-11-25  John Luke  <john.luke@gmail.com>
 
 	* Mono.Cairo/Cairo.cs: add font_options* api
