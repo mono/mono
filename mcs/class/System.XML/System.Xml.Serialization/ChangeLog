@@ -1,3 +1,8 @@
+2005-11-27   Konstantin Triger <kostat@mainsoft.com>
+
+        * TypeData.cs, XmlSchemaExporter.cs, TypeTranslator.cs: correctly
+		export non-xsd primitive types.
+
 2005-11-24  Vladimir Krasnov  <vladimirk@mainsoft.com>
 	
 	* XmlTypeMapping.cs: fixed GetXmlName method, added difference

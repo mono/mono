@@ -517,6 +517,8 @@ namespace System.Xml.Serialization {
 
 					case SchemaTypes.Primitive:
 						selem.SchemaTypeName = new XmlQualifiedName (einfo.TypeData.XmlType, einfo.DataTypeNamespace);;
+						if (!einfo.TypeData.IsXsdType)
+							ExportDerivedSchema (einfo.MappedType);
 						break;
 				}
 			}
@@ -618,6 +620,23 @@ namespace System.Xml.Serialization {
 				}
 				return schoice;
 			}
+		}
+
+		void ExportDerivedSchema(XmlTypeMapping map) {
+			if (IsMapExported (map)) return;
+			SetMapExported (map);
+
+			XmlSchema schema = GetSchema (map.XmlTypeNamespace);
+			XmlSchemaSimpleType stype = new XmlSchemaSimpleType ();
+			stype.Name = map.ElementName;
+			schema.Items.Add (stype);
+
+			XmlSchemaSimpleTypeRestriction rest = new XmlSchemaSimpleTypeRestriction ();
+			rest.BaseTypeName = new XmlQualifiedName (map.TypeData.MappedType.XmlType, XmlSchema.Namespace);
+			XmlSchemaPatternFacet facet = map.TypeData.XmlSchemaPatternFacet;
+			if (facet != null)
+				rest.Facets.Add(facet);
+			stype.Content = rest;
 		}
 
 		void ExportEnumSchema (XmlTypeMapping map)

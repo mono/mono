@@ -32,6 +32,7 @@
 using System;
 using System.Collections;
 using System.Reflection;
+using System.Xml.Schema;
 
 namespace System.Xml.Serialization
 {
@@ -45,10 +46,17 @@ namespace System.Xml.Serialization
 		string fullTypeName;
 		TypeData listItemTypeData;
 		TypeData listTypeData;
+		TypeData mappedType;
+		XmlSchemaPatternFacet facet;
 		bool hasPublicConstructor = true;
 
-		public TypeData (Type type, string elementName, bool isPrimitive)
+		public TypeData (Type type, string elementName, bool isPrimitive) :
+			this(type, elementName, isPrimitive, null, null) {}
+
+		public TypeData (Type type, string elementName, bool isPrimitive, TypeData mappedType, XmlSchemaPatternFacet facet)
 		{
+			this.mappedType = mappedType;
+			this.facet = facet;
 			this.type = type;
 			this.typeName = type.Name;
 			this.fullTypeName = type.FullName.Replace ('+', '.');
@@ -137,7 +145,8 @@ namespace System.Xml.Serialization
 					      SchemaType == SchemaTypes.Array ||
 					      SchemaType == SchemaTypes.Enum ||
 					      SchemaType == SchemaTypes.XmlNode ||
-						  SchemaType == SchemaTypes.XmlSerializable ); 
+						  SchemaType == SchemaTypes.XmlSerializable ||
+						  !IsXsdType); 
 			}
 		}
 
@@ -210,6 +219,22 @@ namespace System.Xml.Serialization
 					SchemaTypes.Array, this);
 
 				return listTypeData;
+			}
+		}
+
+		public bool IsXsdType {
+			get { return mappedType == null; }
+		}
+
+		public TypeData MappedType {
+			get {
+				return mappedType != null ? mappedType : this;
+			}
+		}
+
+		public XmlSchemaPatternFacet XmlSchemaPatternFacet {
+			get {
+				return facet;
 			}
 		}
 		
