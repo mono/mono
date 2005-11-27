@@ -1,3 +1,7 @@
+2005-11-26  Miguel de Icaza  <miguel@novell.com>
+
+	* HttpResponseStream.cs: Do not try to write zero bytes.
+
 2005-11-24  Miguel de Icaza  <miguel@novell.com>
 
 	* WebROCollection.cs: Do not add an empty "=" to the query string
