@@ -1,3 +1,8 @@
+2005-11-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* basic.cs: Remove test_0_byte_compares test which was moved to
+	objects.cs a long time ago.
+
 2005-11-22  Massimiliano Mantione  <massi@ximian.com>
 
         * aliasing.c: Fixed aliasing issue on 64 bit archs.
