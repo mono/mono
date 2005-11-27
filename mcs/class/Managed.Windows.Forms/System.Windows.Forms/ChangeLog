@@ -1,3 +1,17 @@
+2005-11-27  Alexander Olk  <alex.olk@googlemail.com>
+
+	* ThemeNice.cs: - Removed 1 pixel bitmaps
+	  - Use SmoothingMode.AntiAlias where it makes sense
+	    (ScrollButton arrow for example)
+	  - Enhanced Button focus drawing
+	  - Fixed ComboBox drawing (no artefacts anymore, focus
+	    rectangle is back again, reduced size of ComboButton, etc.)
+	  - Fixed RadioButton focus drawing for Appearence.Button
+	  - Slight ScrollButton redesign
+	  - Some LinearGradientBrush size fixes
+	  - GroupBoxes have now rounded edges
+	  - Fixed StatusBar drawing
+
 2005-11-25  Alexander Olk  <alex.olk@googlemail.com>
 
 	* ThemeNice.cs: - Remove dead code

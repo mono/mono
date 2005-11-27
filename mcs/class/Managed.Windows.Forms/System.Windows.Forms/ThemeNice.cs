@@ -51,26 +51,12 @@ namespace System.Windows.Forms
 		static readonly Color BorderColor = MouseOverColor;
 		static readonly Color NiceBackColor  = Color.FromArgb( System.Convert.ToInt32( "0xffefebe7", 16 ) );
 		
-		Bitmap one_pixel_BorderColor;
-		Bitmap one_pixel_FocusColor;
 		static Bitmap size_grip_bmp = CreateSizegripDot();
 		
 		#region	Principal Theme Methods
 		public ThemeNice( )
 		{
 			ColorControl = NiceBackColor;
-			CreateOnePixelBitmaps( );
-		}
-		
-		// we are faking here a little bit
-		// gdi+ doesn't have a function to draw one pixel so we create a one pixel bitmap
-		private void CreateOnePixelBitmaps( )
-		{
-			one_pixel_BorderColor = new Bitmap( 1, 1 );
-			one_pixel_BorderColor.SetPixel( 0, 0, BorderColor );
-			
-			one_pixel_FocusColor = new Bitmap( 1, 1 );
-			one_pixel_FocusColor.SetPixel( 0, 0, FocusColor );
 		}
 		
 		public override Color DefaultControlBackColor
@@ -90,9 +76,16 @@ namespace System.Windows.Forms
 		static Bitmap CreateSizegripDot()
 		{
 			Bitmap bmp = new Bitmap( 4, 4 );
-			using ( Graphics gr = Graphics.FromImage( bmp ) )
+			using ( Graphics dc = Graphics.FromImage( bmp ) )
+			{
+				SmoothingMode old_smoothing_mode = dc.SmoothingMode;
+				dc.SmoothingMode = SmoothingMode.AntiAlias;
+				
 				using ( LinearGradientBrush lgbr = new LinearGradientBrush( new Point( 0, 0 ), new Point( 4, 4 ), PressedColor, Color.White ) )
-					gr.FillEllipse( lgbr, new Rectangle( 0, 0, 4, 4 ) );
+						dc.FillEllipse( lgbr, new Rectangle( 0, 0, 4, 4 ) );
+				
+				dc.SmoothingMode = old_smoothing_mode;
+			}
 			
 			return bmp;
 		}
@@ -112,6 +105,7 @@ namespace System.Windows.Forms
 			buttonRectangle = button.ClientRectangle;
 			
 			Color use_color;
+			Color first_color = button.has_focus ? Color.LightYellow : Color.White;
 			
 			if ( ( ( button is CheckBox ) && ( ( (CheckBox)button ).check_state == CheckState.Checked ) ) ||
 			    ( ( button is RadioButton ) && ( ( (RadioButton)button ).check_state == CheckState.Checked ) ) )
@@ -144,22 +138,29 @@ namespace System.Windows.Forms
 			{
 				LinearGradientBrush lgbr;
 				if ( button.flat_style == FlatStyle.Flat )
-					lgbr = new LinearGradientBrush( new Point( 0, 0 ), new Point( 0, height - 1 ), use_color, Color.White );
+					lgbr = new LinearGradientBrush( new Point( 0, 0 ), new Point( 0, height - 1 ), use_color, first_color );
 				else
-					lgbr = new LinearGradientBrush( new Point( 0, 0 ), new Point( 0, height - 1 ), Color.White, use_color );
+					lgbr = new LinearGradientBrush( new Point( 0, 0 ), new Point( 0, height - 1 ), first_color, use_color );
 				dc.FillRectangle( lgbr, lgbRectangle );
 				lgbr.Dispose( );
 				
-				Pen pen = ResPool.GetPen( BorderColor );
-				dc.DrawLine( pen, 2, 0, width - 3, 0 );
-				dc.DrawLine( pen, width - 1, 2, width - 1, height - 3 );
-				dc.DrawLine( pen, 2, height - 1, width - 3, height - 1 );
-				dc.DrawLine( pen, 0, 2, 0, height - 3 );
+				if ( button.has_focus )
+					return; 
 				
-				dc.DrawImage( one_pixel_BorderColor, 1, 1 );
-				dc.DrawImage( one_pixel_BorderColor, width - 2, 1 );
-				dc.DrawImage( one_pixel_BorderColor, width - 2, height - 2 );
-				dc.DrawImage( one_pixel_BorderColor, 1, height - 2 );
+				Point[] points = new Point[] {
+					new Point( 2, 0 ),
+					new Point( width - 3, 0 ),
+					new Point( width - 1, 2 ),
+					new Point( width - 1, height - 3 ),
+					new Point( width - 3, height - 1 ),
+					new Point( 2, height - 1 ),
+					new Point( 0, height - 3 ),
+					new Point( 0, 2 ),
+					new Point( 2, 0 )
+				};
+			
+				Pen pen = ResPool.GetPen( BorderColor );
+				dc.DrawLines( pen, points );
 			}
 		}
 		
@@ -168,16 +169,20 @@ namespace System.Windows.Forms
 			int width = button.ClientSize.Width;
 			int height = button.ClientSize.Height;
 			
-			Pen pen = ResPool.GetPen( FocusColor );
-			dc.DrawLine( pen, 3, 1, width - 4, 1 );
-			dc.DrawLine( pen, width - 2, 3, width - 2, height - 4 );
-			dc.DrawLine( pen, 3, height - 2, width - 4, height - 2 );
-			dc.DrawLine( pen, 1, 3, 1, height - 4 );
+			Point[] points = new Point[] {
+				new Point( 2, 0 ),
+				new Point( width - 3, 0 ),
+				new Point( width - 1, 2 ),
+				new Point( width - 1, height - 3 ),
+				new Point( width - 3, height - 1 ),
+				new Point( 2, height - 1 ),
+				new Point( 0, height - 3 ),
+				new Point( 0, 2 ),
+				new Point( 2, 0 )
+			};
 			
-			dc.DrawImage( one_pixel_FocusColor, 2, 2 );
-			dc.DrawImage( one_pixel_FocusColor, width - 3, 2 );
-			dc.DrawImage( one_pixel_FocusColor, width - 3, height - 3 );
-			dc.DrawImage( one_pixel_FocusColor, 2, height - 3 );
+			Pen pen = ResPool.GetPen( FocusColor );
+			dc.DrawLines( pen, points );
 		}
 		
 		protected override void ButtonBase_DrawText( ButtonBase button, Graphics dc )
@@ -219,7 +224,28 @@ namespace System.Windows.Forms
 		
 		public override void DrawComboBoxEditDecorations( Graphics dc, ComboBox ctrl, Rectangle cl )
 		{
-			dc.DrawRectangle( ResPool.GetPen( BorderColor ) , cl.X + 1, cl.Y + 1, cl.Width - 3, cl.Height - 3 );
+			if ( !ctrl.Focused )
+			{
+				dc.DrawLine (ResPool.GetPen (BorderColor), cl.X, cl.Y, cl.X + cl.Width, cl.Y); //top 
+				dc.DrawLine (ResPool.GetPen (ColorControl), cl.X + 1, cl.Y + 1, cl.X + cl.Width - 2, cl.Y + 1);
+				dc.DrawLine (ResPool.GetPen (BorderColor), cl.X, cl.Y, cl.X, cl.Y + cl.Height); //left
+				dc.DrawLine (ResPool.GetPen (ColorControl), cl.X + 1, cl.Y + 1, cl.X + 1, cl.Y + cl.Height - 2); 
+				dc.DrawLine (ResPool.GetPen (BorderColor), cl.X + cl.Width - 1, cl.Y, cl.X + cl.Width - 1, cl.Y + cl.Height); //right
+				dc.DrawLine (ResPool.GetPen (ColorControl), cl.X + cl.Width - 2, cl.Y + 1 , cl.X + cl.Width - 2, cl.Y + cl.Height - 1);
+				dc.DrawLine (ResPool.GetPen (BorderColor), cl.X, cl.Y + cl.Height - 2, cl.X + cl.Width, cl.Y + cl.Height - 2); //down
+				dc.DrawLine (ResPool.GetPen (ColorControl), cl.X, cl.Y + cl.Height - 1, cl.X + cl.Width, cl.Y + cl.Height - 1);
+			}
+			else
+			{
+				dc.DrawLine (ResPool.GetPen (FocusColor), cl.X, cl.Y, cl.X + cl.Width, cl.Y); //top 
+				dc.DrawLine (ResPool.GetPen (ColorControl), cl.X + 1, cl.Y + 1, cl.X + cl.Width - 2, cl.Y + 1);
+				dc.DrawLine (ResPool.GetPen (FocusColor), cl.X, cl.Y, cl.X, cl.Y + cl.Height); //left
+				dc.DrawLine (ResPool.GetPen (ColorControl), cl.X + 1, cl.Y + 1, cl.X + 1, cl.Y + cl.Height - 2); 
+				dc.DrawLine (ResPool.GetPen (FocusColor), cl.X + cl.Width - 1, cl.Y, cl.X + cl.Width - 1, cl.Y + cl.Height); //right
+				dc.DrawLine (ResPool.GetPen (ColorControl), cl.X + cl.Width - 2, cl.Y + 1 , cl.X + cl.Width - 2, cl.Y + cl.Height - 1);
+				dc.DrawLine (ResPool.GetPen (FocusColor), cl.X, cl.Y + cl.Height - 2, cl.X + cl.Width, cl.Y + cl.Height - 2); //down
+				dc.DrawLine (ResPool.GetPen (FocusColor), cl.X, cl.Y + cl.Height - 1, cl.X + cl.Width, cl.Y + cl.Height - 1);
+			}
 		}
 		
 		public override void DrawComboListBoxDecorations( Graphics dc, ComboBox ctrl, Rectangle cl )
@@ -253,13 +279,13 @@ namespace System.Windows.Forms
 				string_format = string_format_menu_text;
 			}
 			
-			if ( item.Separator == true )
+			if ( item.Separator )
 			{
-				e.Graphics.DrawLine( ThemeEngine.Current.ResPool.GetPen( LightColor ),
+				e.Graphics.DrawLine( ThemeEngine.Current.ResPool.GetPen( BorderColor ),
 						    e.Bounds.X, e.Bounds.Y, e.Bounds.X + e.Bounds.Width, e.Bounds.Y );
 				
-				e.Graphics.DrawLine( ThemeEngine.Current.ResPool.GetPen( ThemeEngine.Current.ColorControlLight ),
-						    e.Bounds.X, e.Bounds.Y + 1, e.Bounds.X + e.Bounds.Width, e.Bounds.Y + 1 );
+				e.Graphics.DrawLine( ThemeEngine.Current.ResPool.GetPen( Color.White ),
+						    e.Bounds.X + 1, e.Bounds.Y + 1, e.Bounds.X + e.Bounds.Width, e.Bounds.Y + 1 );
 				
 				return;
 			}
@@ -336,15 +362,17 @@ namespace System.Windows.Forms
 			/* Draw arrow */
 			if ( item.MenuBar == false && item.IsPopup )
 			{
-				
 				int cx = ThemeEngine.Current.MenuCheckSize.Width;
 				int cy = ThemeEngine.Current.MenuCheckSize.Height;
 				using ( Bitmap	bmp = new Bitmap( cx, cy ) )
 				{
-					using ( Graphics gr = Graphics.FromImage( bmp ) )
+					using ( Graphics dc = Graphics.FromImage( bmp ) )
 					{
+						SmoothingMode old_smoothing_mode = dc.SmoothingMode;
+						dc.SmoothingMode = SmoothingMode.AntiAlias;
+						
 						Rectangle rect_arrow = new Rectangle( 0, 0, cx, cy );
-						ControlPaint.DrawMenuGlyph( gr, rect_arrow, MenuGlyph.Arrow );
+						ControlPaint.DrawMenuGlyph( dc, rect_arrow, MenuGlyph.Arrow );
 						bmp.MakeTransparent( );
 						
 						if ( item.Enabled )
@@ -357,6 +385,8 @@ namespace System.Windows.Forms
 							ControlPaint.DrawImageDisabled( e.Graphics, bmp, e.Bounds.X + e.Bounds.Width - cx,
 										       e.Bounds.Y + ( ( e.Bounds.Height - cy ) / 2 ),  color_back );
 						}
+						
+						dc.SmoothingMode = old_smoothing_mode;
 					}
 				}
 			}
@@ -452,7 +482,6 @@ namespace System.Windows.Forms
 		#endregion	// ProgressBar
 		
 		#region RadioButton
-		// TODO: fix RadioButton focus
 		protected override void RadioButton_DrawButton( RadioButton radio_button, Graphics dc, ButtonState state, Rectangle radiobutton_rectangle )
 		{
 			SolidBrush sb = new SolidBrush( radio_button.BackColor );
@@ -474,6 +503,17 @@ namespace System.Windows.Forms
 				{
 					ControlPaint.DrawRadioButton( dc, radiobutton_rectangle, state );
 				}
+			}
+		}
+		
+		protected override void RadioButton_DrawFocus(RadioButton radio_button, Graphics dc, Rectangle text_rectangle)
+		{
+			if (radio_button.Focused && radio_button.appearance != Appearance.Button) 
+			{
+				if (radio_button.FlatStyle != FlatStyle.Flat && radio_button.FlatStyle != FlatStyle.Popup) 
+				{
+					DrawInnerFocusRectangle (dc, text_rectangle, radio_button.BackColor);
+				} 
 			}
 		}
 		#endregion	// RadioButton
@@ -667,13 +707,13 @@ namespace System.Windows.Forms
 			
 			Point[] points = new Point[] {
 				new Point( area.Left + 2, area.Top ),
-				new Point( area.Right - 3, area.Top ),
-				new Point( area.Right, area.Top + 3 ),
+				new Point( area.Right - 2, area.Top ),
+				new Point( area.Right, area.Top + 2 ),
 				new Point( area.Right, area.Bottom - 2 ),
-				new Point( area.Right - 3, area.Bottom ),
+				new Point( area.Right - 2, area.Bottom ),
 				new Point( area.Left + 2, area.Bottom ),
 				new Point( area.Left, area.Bottom - 2 ),
-				new Point( area.Left, area.Top + 3 ),
+				new Point( area.Left, area.Top + 2 ),
 				new Point( area.Left + 2, area.Top )
 			};
 			
@@ -982,14 +1022,14 @@ namespace System.Windows.Forms
 			Color first_color = Color.White;
 			Color second_color = NormalColor;
 			
-			rectangle.X += 1;
-			rectangle.Height += 1;
-			rectangle.Width += 1;
+//			rectangle.Width += 1;
 			
 			if ( ( state & ButtonState.Checked ) != 0 )
 			{
 				dc.FillRectangle( ResPool.GetHatchBrush( HatchStyle.Percent50, ColorControlLightLight, ColorControlLight ), rectangle );
 			}
+			else
+				dc.FillRectangle( ResPool.GetSolidBrush( Color.White ), rectangle );
 			
 			if ( ( state & ButtonState.Flat ) != 0 )
 			{
@@ -1003,27 +1043,27 @@ namespace System.Windows.Forms
 					first_color = Color.White;
 					second_color = PressedColor;
 				}
-				else
-				{
+//				else
+//				{
 //					CPDrawBorder3D( graphics, rectangle, Border3DStyle.Raised, Border3DSide.Left | Border3DSide.Top | Border3DSide.Right | Border3DSide.Bottom, ColorControl );
-				}
+//				}
 			}
 			
-			using ( LinearGradientBrush lgbr = new LinearGradientBrush( new Point( rectangle.X, rectangle.Y ), new Point( rectangle.X, rectangle.Bottom - 1 ), first_color, second_color ) )
+			using ( LinearGradientBrush lgbr = new LinearGradientBrush( new Point( rectangle.X + 1, rectangle.Y + 1 ), new Point( rectangle.X + 1, rectangle.Bottom - 2 ), first_color, second_color ) )
 			{
-				dc.FillRectangle( lgbr, rectangle.X + 1, rectangle.Y + 1, rectangle.Width - 2, rectangle.Height - 3 );
+				dc.FillRectangle( lgbr, rectangle.X + 2, rectangle.Y + 1, rectangle.Width - 4, rectangle.Height - 3 );
 			}
 			
 			Point[] points = new Point[] {
-				new Point( rectangle.X + 2, rectangle.Y ),
-				new Point( rectangle.Right - 3, rectangle.Y ),
-				new Point( rectangle.Right - 1, rectangle.Y + 2 ),
-				new Point( rectangle.Right - 1, rectangle.Bottom - 3 ),
-				new Point( rectangle.Right - 3, rectangle.Bottom - 1 ),
-				new Point( rectangle.X + 2, rectangle.Bottom - 1 ),
-				new Point( rectangle.X, rectangle.Bottom - 3 ),
-				new Point( rectangle.X, rectangle.Y + 2 ),
-				new Point( rectangle.X + 2, rectangle.Y )
+				new Point( rectangle.X + 3, rectangle.Y + 1 ),
+				new Point( rectangle.Right - 4, rectangle.Y + 1 ),
+				new Point( rectangle.Right - 2, rectangle.Y + 3 ),
+				new Point( rectangle.Right - 2, rectangle.Bottom - 4 ),
+				new Point( rectangle.Right - 4, rectangle.Bottom - 2 ),
+				new Point( rectangle.X + 3, rectangle.Bottom - 2 ),
+				new Point( rectangle.X + 1, rectangle.Bottom - 4 ),
+				new Point( rectangle.X + 1, rectangle.Y + 3 ),
+				new Point( rectangle.X + 3, rectangle.Y + 1 )
 			};
 			
 			dc.DrawPolygon( ResPool.GetPen( BorderColor ), points );
@@ -1050,6 +1090,9 @@ namespace System.Windows.Forms
 			arrow[ 0 ] = P1;
 			arrow[ 1 ] = P2;
 			arrow[ 2 ] = P3;
+			
+			SmoothingMode old_smoothing_mode = dc.SmoothingMode;
+			dc.SmoothingMode = SmoothingMode.AntiAlias;
 			
 			/* Draw the arrow */
 			if ( ( state & ButtonState.Inactive ) != 0 )
@@ -1080,6 +1123,8 @@ namespace System.Windows.Forms
 					dc.DrawLines( pen, arrow );
 				}
 			}
+			
+			dc.SmoothingMode = old_smoothing_mode;
 		}
 		
 		/* Scroll button: regular button + direction arrow */
@@ -1140,8 +1185,13 @@ namespace System.Windows.Forms
 				default:
 					break;
 			}
+
+			SmoothingMode old_smoothing_mode = dc.SmoothingMode;
+			dc.SmoothingMode = SmoothingMode.AntiAlias;
 			
 			dc.DrawLines( pen, arrow );
+			
+			dc.SmoothingMode = old_smoothing_mode;
 			
 			pen.Dispose( );
 		}
@@ -1163,9 +1213,9 @@ namespace System.Windows.Forms
 			LinearGradientBrush lgbr = null;
 			
 			if ( bar.vert )
-				lgbr = new LinearGradientBrush( new Point( area.X, area.Y ), new Point( area.Right  - 1, area.Y ), Color.White, NormalColor );
+				lgbr = new LinearGradientBrush( new Point( area.X, area.Y ), new Point( area.Right, area.Y ), Color.White, NormalColor );
 			else
-				lgbr = new LinearGradientBrush( new Point( area.X, area.Y ), new Point( area.X, area.Bottom - 1 ), Color.White, NormalColor );
+				lgbr = new LinearGradientBrush( new Point( area.X, area.Y ), new Point( area.X, area.Bottom ), Color.White, NormalColor );
 			
 			Pen pen = ResPool.GetPen( BorderColor );
 			
@@ -1183,7 +1233,7 @@ namespace System.Windows.Forms
 			
 			if ( bar.vert )
 			{
-				dc.FillRectangle( lgbr, area.X + 1, area.Y + 1, area.Width - 2, area.Height - 3 );
+				dc.FillRectangle( lgbr, area.X + 1, area.Y + 1, area.Width - 2, area.Height - 2 );
 				dc.DrawPolygon( pen, points );
 				
 				// draw grip lines only if stere is enough space
@@ -1207,7 +1257,7 @@ namespace System.Windows.Forms
 			}
 			else
 			{
-				dc.FillRectangle( lgbr, area.X + 1, area.Y + 1, area.Width - 3, area.Height - 2 );
+				dc.FillRectangle( lgbr, area.X + 1, area.Y + 1, area.Width - 2, area.Height - 2 );
 				dc.DrawPolygon( pen, points );
 				
 				// draw grip lines only if stere is enough space
@@ -1238,6 +1288,8 @@ namespace System.Windows.Forms
 		{
 			Pen pen = ResPool.GetPen( BorderColor );
 			
+			dc.FillRectangle( ResPool.GetSolidBrush( NiceBackColor ), area );
+			
 			Color use_color;
 			
 			if ( ( state & ButtonState.Pushed ) == ButtonState.Pushed )
@@ -1245,17 +1297,7 @@ namespace System.Windows.Forms
 			else
 				use_color = NormalColor;
 			
-			Point[] points = new Point[] {
-				new Point( area.X + 2, area.Y ),
-				new Point( area.Right - 3, area.Y ),
-				new Point( area.Right - 1, area.Y + 2 ),
-				new Point( area.Right - 1, area.Bottom - 3 ),
-				new Point( area.Right - 3, area.Bottom - 1 ),
-				new Point( area.X + 2, area.Bottom - 1 ),
-				new Point( area.X, area.Bottom - 3 ),
-				new Point( area.X, area.Y + 2 ),
-				new Point( area.X + 2, area.Y )
-			};
+			Point[] points = null;
 			
 			LinearGradientBrush lgbr = null;
 			
@@ -1264,27 +1306,119 @@ namespace System.Windows.Forms
 				case ScrollButton.Left:
 					lgbr = new LinearGradientBrush( new Point( area.X, area.Y ), new Point( area.Right - 2, area.Y ), use_color, Color.White );
 					dc.FillRectangle( lgbr, area.X + 1, area.Y + 1, area.Width - 4, area.Height - 2 );
+					
+					points = new Point[] {
+						new Point( area.X + 2, area.Y ),
+						new Point( area.Right - 1, area.Y ),
+						new Point( area.Right - 1, area.Bottom - 1 ),
+						new Point( area.X + 2, area.Bottom - 1 ),
+						new Point( area.X, area.Bottom - 3 ),
+						new Point( area.X, area.Y + 2 ),
+						new Point( area.X + 2, area.Y )
+					};
 					dc.DrawPolygon( pen, points );
 					break;
 				case ScrollButton.Right:
-					lgbr = new LinearGradientBrush( new Point( area.X, area.Y ), new Point( area.Right - 2, area.Y ), Color.White, use_color );
-					dc.FillRectangle( lgbr, area.X, area.Y + 1, area.Width - 2, area.Height - 2 );
+					lgbr = new LinearGradientBrush( new Point( area.X, area.Y ), new Point( area.Right - 1, area.Y ), Color.White, use_color );
+					dc.FillRectangle( lgbr, area.X, area.Y + 1, area.Width - 1, area.Height - 2 );
+					
+					points = new Point[] {
+						new Point( area.X, area.Y ),
+						new Point( area.Right - 3, area.Y ),
+						new Point( area.Right - 1, area.Y + 2 ),
+						new Point( area.Right - 1, area.Bottom - 3 ),
+						new Point( area.Right - 3, area.Bottom - 1 ),
+						new Point( area.X, area.Bottom - 1 ),
+						new Point( area.X, area.Y ),
+					};
 					dc.DrawPolygon( pen, points );
 					break;
 				case ScrollButton.Up:
 					lgbr = new LinearGradientBrush( new Point( area.X, area.Y ), new Point( area.X, area.Bottom - 1 ), use_color, Color.White );
 					dc.FillRectangle( lgbr, area.X + 1, area.Y + 1, area.Width - 2, area.Height - 2 );
+					
+					points = new Point[] {
+						new Point( area.X + 2, area.Y ),
+						new Point( area.Right - 3, area.Y ),
+						new Point( area.Right - 1, area.Y + 2 ),
+						new Point( area.Right - 1, area.Bottom - 1 ),
+						new Point( area.X, area.Bottom - 1 ),
+						new Point( area.X, area.Y + 2 ),
+						new Point( area.X + 2, area.Y )
+					};
 					dc.DrawPolygon( pen, points );
 					break;
 				case ScrollButton.Down:
 					lgbr = new LinearGradientBrush( new Point( area.X, area.Y ), new Point( area.X, area.Bottom - 1 ), Color.White, use_color );
-					dc.FillRectangle( lgbr, area.X + 1, area.Y + 1, area.Width - 2, area.Height - 3 );
+					dc.FillRectangle( lgbr, area.X + 1, area.Y + 1, area.Width - 2, area.Height - 2 );
+					
+					points = new Point[] {
+						new Point( area.X, area.Y ),
+						new Point( area.Right - 1, area.Y ),
+						new Point( area.Right - 1, area.Bottom - 3 ),
+						new Point( area.Right - 3, area.Bottom - 1 ),
+						new Point( area.X + 2, area.Bottom - 1 ),
+						new Point( area.X, area.Bottom - 3 ),
+						new Point( area.X, area.Y )
+					};
 					dc.DrawPolygon( pen, points );
 					break;
 			}
 			
 			lgbr.Dispose( );
 		}
+		
+		#region GroupBox
+		public override void DrawGroupBox (Graphics dc,  Rectangle area, GroupBox box) 
+		{
+			StringFormat	text_format;
+			SizeF		size;
+			int		width;
+			int		y;
+			Rectangle	rect;
+			
+			rect = box.ClientRectangle;
+			
+			dc.FillRectangle (ResPool.GetSolidBrush (box.BackColor), rect);
+			
+			text_format = new StringFormat();
+			text_format.HotkeyPrefix = HotkeyPrefix.Show;
+			
+			size = dc.MeasureString (box.Text, box.Font);
+			width = (int) size.Width;
+			
+			if (width > box.Width - 16)
+				width = box.Width - 16;
+			
+			y = box.Font.Height / 2;
+			
+			Pen pen = ResPool.GetPen( BorderColor );
+			
+			/* Draw group box*/
+			Point[] points = new Point[] {
+				new Point( 8 + width, y ),
+				new Point( box.Width - 3, y ),
+				new Point( box.Width - 1, y + 2 ),
+				new Point( box.Width - 1, box.Height - 3 ),
+				new Point( box.Width - 3, box.Height - 1 ),
+				new Point( 2, box.Height - 1 ),
+				new Point( 0, box.Height - 3 ),
+				new Point( 0, y + 2 ),
+				new Point( 2, y ),
+				new Point( 8, y )
+			};
+			dc.DrawLines( pen, points );
+			
+			/* Text */
+			if (box.Enabled) {
+				dc.DrawString (box.Text, box.Font, ResPool.GetSolidBrush (box.ForeColor), 10, 0, text_format);
+			} else {
+				CPDrawStringDisabled (dc, box.Text, box.Font, box.ForeColor, 
+						      new RectangleF (10, 0, width,  box.Font.Height), text_format);
+			}
+			text_format.Dispose ();	
+		}
+		#endregion
 	} //class
 }
 
