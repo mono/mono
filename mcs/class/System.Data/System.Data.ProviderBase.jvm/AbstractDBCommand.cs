@@ -441,10 +441,15 @@ namespace System.Data.ProviderBase
 			if (trimedProcedureName.Length > 0 && trimedProcedureName[trimedProcedureName.Length-1] == ')')
 				addParas = false;
 			
-				AbstractDbParameter derivedParam = (derivedParams.Count > 0) ? (AbstractDbParameter)derivedParams[curDerivedPos++] : null;
+				AbstractDbParameter derivedParam = (derivedParams.Count > 0) ? (AbstractDbParameter)derivedParams[curDerivedPos] : null;
+				if (derivedParam != null) {
+					if (derivedParam.Direction == ParameterDirection.ReturnValue)
+						curDerivedPos++;
+					else
+						derivedParam = null; //play as if there is no retval parameter
+				}
 				AbstractDbParameter returnValueParameter = GetReturnParameter (userParams);
 				if (returnValueParameter != null) {
-
 					curUserPos++;
 					InternalParameters.Add(returnValueParameter);
 					sb.Append("{? = call ");

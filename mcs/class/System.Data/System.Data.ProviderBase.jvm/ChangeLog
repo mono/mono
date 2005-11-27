@@ -1,3 +1,7 @@
+2005-27-11 Boris Kirzner <borisk@mainsoft.com>
+	AbstractDBCommand.cs: TARGET_JVM fix. Proper handle of return value 
+	parameter and corresponding user parameter.
+
 2006-22-11 Konstantin Triger <kostat@mainsoft.com>
 
 	* AbstractTransaction.cs: set inner exception.
