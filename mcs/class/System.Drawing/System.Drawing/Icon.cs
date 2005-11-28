@@ -100,7 +100,7 @@ namespace System.Drawing
 		private Icon ()
 		{
 		}
-
+#if INTPTR_SUPPORTED
 		[MonoTODO ("Implement fully")]
 		private Icon (IntPtr handle)
 		{
@@ -118,7 +118,7 @@ namespace System.Drawing
 
 			this.destroyIcon = false;
 		}
-		
+#endif
 		public Icon (Icon original, int width, int height) : this (original, new Size(width, height))
 		{			
 		}
@@ -211,10 +211,12 @@ namespace System.Drawing
 
 		public void Dispose ()
 		{
+#if !TARGET_JVM
 			DisposeIcon ();
 			GC.SuppressFinalize(this);
+#endif
 		}
-
+#if !TARGET_JVM
 		void DisposeIcon ()
 		{
 			if (winHandle ==IntPtr.Zero)
@@ -225,12 +227,13 @@ namespace System.Drawing
 				winHandle = IntPtr.Zero;
 			}
 		}
+#endif
 
 		public object Clone ()
 		{
 			return new Icon (this, this.Width, this.Height);
 		}
-
+#if INTPTR_SUPPORTED
 		public static Icon FromHandle (IntPtr handle)
 		{
 			if (handle == IntPtr.Zero)
@@ -238,7 +241,7 @@ namespace System.Drawing
 
 			return new Icon (handle);
 		}
-
+#endif
 		public void Save (Stream outputStream)
 		{
 			if (iconDir.idEntries!=null){
@@ -351,6 +354,8 @@ namespace System.Drawing
 
 					writer.Flush ();
 
+					stream.Position = 0;
+
 					// create bitmap from stream and return
 					if (colCount > 0) {
 						Bitmap new_bmp;
@@ -419,10 +424,12 @@ namespace System.Drawing
 			}
 		}
 
+#if !TARGET_JVM
 		~Icon ()
 		{
 			DisposeIcon ();
 		}
+#endif
 			
 		private void InitFromStreamWithSize (Stream stream, int width, int height)
 		{

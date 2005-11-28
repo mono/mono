@@ -1,3 +1,7 @@
+2005-11-28  Konstantin Triger <kostat@mainsoft.com>
+
+	* Added system icons.
+
 2005-08-03  Andrew Skiba <andrews@mainsoft.com>
 
 	* AssemblyInfo.cs: add TARGET_JVM mode

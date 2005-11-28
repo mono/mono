@@ -1,8 +1,9 @@
 //
-// System.Drawing.SystemIcons.cs
+// System.Drawing.systemIcons.cs
 //
 // Authors:
 //  Vladimir Krasnov (vladimirk@mainsoft.com)
+//  Konstantin Triger (kostat@mainsoft.com)
 //
 // Copyright (C) 2005 Mainsoft Corporation (http://www.mainsoft.com)
 //
@@ -33,74 +34,40 @@ using System.IO;
 using System.Configuration;
 using System.Collections;
 using System.Collections.Specialized;
+using System.Reflection;
 
-namespace System.Drawing
-{
-	public sealed class SystemIcons
-	{
-		private static readonly string SYSTEM_ICONS = "IconsResource";
+namespace System.Drawing {
+	public sealed class SystemIcons {
+		static readonly ArrayList systemIcons;
 
-		private SystemIcons()
-		{
+		enum IconName {
+			Application, Asterisk, Error, 
+			Exclamation, Hand, Information, 
+			Question, Warning, WinLogo
 		}
 
-		public static Icon Application { get { return LoadIcon("Application");} }
-		public static Icon Asterisk { get { return LoadIcon("Asterisk");} }
-		public static Icon Error { get { return LoadIcon("Error");} }
-		public static Icon Exclamation { get { return LoadIcon("Exclamation");} }
-		public static Icon Hand { get { return LoadIcon("Hand");} }
-		public static Icon Information { get { return LoadIcon("Information");} }
-		public static Icon Question { get { return LoadIcon("Question");} }
-		public static Icon Warning { get { return LoadIcon("Warning");} }
-		public static Icon WinLogo { get { return LoadIcon("WinLogo");} }
-
-		private static Icon LoadIcon (string iconName)
-		{
-			Hashtable systemIcons = (Hashtable)AppDomain.CurrentDomain.GetData("SYSTEM_ICONS");
-
-			if (systemIcons == null)
-			{
-				systemIcons = LoadSystemIconsFromResource();
-				AppDomain.CurrentDomain.SetData(SYSTEM_ICONS, systemIcons);
-			}
-		
-			return (Icon)systemIcons[iconName];
-		}
-
-		private static Hashtable LoadSystemIconsFromResource()
-		{
-			string [] iconNames = {
-									"Application", "Asterisk", "Error", 
-									"Exclamation", "Hand", "Information", 
-									"Question", "Warning", "WinLogo"
-								  };
-
-			NameValueCollection config = (NameValueCollection) ConfigurationSettings.GetConfig ("system.drawing/icons");
-			Hashtable icons = new Hashtable(9);
-
+		static SystemIcons() {
+			
+			Type nameType = typeof(IconName);
+			string [] iconNames = Enum.GetNames(nameType);
+			systemIcons = new ArrayList(iconNames.Length);
+			Assembly assembly = Assembly.GetExecutingAssembly();
 			for (int i = 0; i < iconNames.Length; i++)
-				icons.Add(iconNames[i], LoadIconFromResource( config[ iconNames[i] ] ));
-
-			return icons;
+				systemIcons.Insert((int)(IconName)Enum.Parse(nameType, iconNames[i]), 
+					new Icon(assembly.GetManifestResourceStream(String.Format("System.Drawing.Assembly.{0}.ico", iconNames[i]))));
 		}
 
-		private static Icon LoadIconFromResource(string iconName)
-		{
-			Stream s;
-			try
-			{
-				java.lang.ClassLoader cl = (java.lang.ClassLoader)
-					AppDomain.CurrentDomain.GetData("GH_ContextClassLoader");
-				if (cl == null)
-					return null;
-				java.io.InputStream inputStream = cl.getResourceAsStream(iconName);
-				s = (Stream)vmw.common.IOUtils.getStream(inputStream);
-			}
-			catch (Exception e)
-			{
-				return null;
-			}
-			return new Icon(new Bitmap(s));
+		private SystemIcons() {
 		}
+
+		public static Icon Application { get { return (Icon)systemIcons[(int)IconName.Application];} }
+		public static Icon Asterisk { get { return (Icon)systemIcons[(int)IconName.Asterisk];} }
+		public static Icon Error { get { return (Icon)systemIcons[(int)IconName.Error];} }
+		public static Icon Exclamation { get { return (Icon)systemIcons[(int)IconName.Exclamation];} }
+		public static Icon Hand { get { return (Icon)systemIcons[(int)IconName.Hand];} }
+		public static Icon Information { get { return (Icon)systemIcons[(int)IconName.Information];} }
+		public static Icon Question { get { return (Icon)systemIcons[(int)IconName.Question];} }
+		public static Icon Warning { get { return (Icon)systemIcons[(int)IconName.Warning];} }
+		public static Icon WinLogo { get { return (Icon)systemIcons[(int)IconName.WinLogo];} }
 	}
 }

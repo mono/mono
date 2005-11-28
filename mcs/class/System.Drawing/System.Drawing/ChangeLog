@@ -1,3 +1,7 @@
+2005-11-28 Konstantin Triger <kostat@mainsoft.com>
+
+	* Icon.cs: TARGET_JVM changes.
+
 2005-11-17 Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* Image.jvm.cs: fixed Save, flush output stream
