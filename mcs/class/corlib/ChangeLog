@@ -1,5 +1,9 @@
 2005-11-28  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* corlib.dll.sources: added EncodingInfo.cs.
+
+2005-11-28  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* corlib.dll.sources: added UTF32Encoding.cs.
 
 2005-11-17  Zoltan Varga  <vargaz@gmail.com>
