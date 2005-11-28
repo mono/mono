@@ -139,13 +139,18 @@ namespace System.Web.Compilation
 				if (results != null)
 					return results;
  
+#if CONFIGURATION_2_0
+				CompilationSection config = (CompilationSection) WebConfigurationManager.GetSection ("system.web/compilation");
+				Compiler c = config.Compilers[language];
+				CodeDomProvider provider = c.Provider;
+#else
 				CompilationConfiguration config;
 				config = CompilationConfiguration.GetInstance (HttpContext.Current);
 				CodeDomProvider provider = config.GetProvider (language);
+#endif
 				if (provider == null)
 					throw new HttpException ("Configuration error. Language not supported: " +
 								  language, 500);
-
 				ICodeCompiler compiler = provider.CreateCompiler ();
 				CompilerParameters options = GetOptions (assemblies);
 				TempFileCollection tempcoll = new TempFileCollection (config.TempDirectory, true);
