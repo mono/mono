@@ -1,3 +1,10 @@
+2005-11-28  Raja R Harinath  <rharinath@novell.com>
+
+	* metadata.c (do_mono_metadata_parse_generic_class): Avoid
+	side-effects in g_assert.
+	* loader.c (mono_get_method_from_token): Resolve klass earlier so
+	that we don't potentially lose information.
+
 2005-11-26  Dick Porter  <dick@ximian.com>
 
 	* icall.c:
