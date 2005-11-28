@@ -1,5 +1,16 @@
 2005-11-28  Chris Toshok  <toshok@ximian.com>
 
+	* GlobalizationSection.cs (GetEncoding): if the encoding name is
+	null, default to utf-8 before we hit the try block, so we don't
+	throw and generate a spurious warning.
+
+	* SessionStateSection.cs: The Cookieless handling needs a custom
+	parser, it appears, as the converter is a StringConverter, not a
+	GenericEnumConverter.
+	(ParseCookieMode): the parser.
+
+2005-11-28  Chris Toshok  <toshok@ximian.com>
+
 	* PagesSection.cs (GetInstance): nuke.
 
 	* CompilationSection.cs (GetInstance): nuke.

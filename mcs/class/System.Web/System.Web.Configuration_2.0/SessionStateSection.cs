@@ -61,7 +61,7 @@ namespace System.Web.Configuration {
 		static SessionStateSection ()
 		{
 			allowCustomSqlDatabaseProp = new ConfigurationProperty ("allowCustomSqlDatabase", typeof (bool), false);
-			cookielessProp = new ConfigurationProperty ("cookieless", typeof (HttpCookieMode));
+			cookielessProp = new ConfigurationProperty ("cookieless", typeof (string), null);
 			cookieNameProp = new ConfigurationProperty ("cookieName", typeof (string), "ASP.NET_SessionId");
 			customProviderProp = new ConfigurationProperty ("customProvider", typeof (string), "");
 			modeProp = new ConfigurationProperty ("mode", typeof (SessionStateMode), SessionStateMode.InProc);
@@ -116,8 +116,8 @@ namespace System.Web.Configuration {
 
 		[ConfigurationProperty ("cookieless")]
 		public HttpCookieMode Cookieless {
-			get { return (HttpCookieMode) base [cookielessProp];}
-			set { base[cookielessProp] = value; }
+			get { return ParseCookieMode ((string) base [cookielessProp]); }
+			set { base[cookielessProp] = value.ToString(); }
 		}
 
 		[ConfigurationProperty ("cookieName", DefaultValue = "ASP.NET_SessionId")]
@@ -215,6 +215,28 @@ namespace System.Web.Configuration {
 		protected override ConfigurationPropertyCollection Properties {
 			get { return properties; }
 		}
+
+		HttpCookieMode ParseCookieMode (string s)
+		{
+			if (s == "true") return HttpCookieMode.UseUri;
+			else if (s == "false") return HttpCookieMode.UseCookies;
+			else {
+				try {
+					return (HttpCookieMode)Enum.Parse (typeof(HttpCookieMode), s);
+				}
+				catch {
+					return HttpCookieMode.UseCookies;
+				}
+			}
+		}
+
+#region CompatabilityCode
+		internal bool CookieLess {
+			get { return Cookieless == HttpCookieMode.UseCookies; }
+			set { Cookieless = value ? HttpCookieMode.UseCookies : HttpCookieMode.UseUri; }
+		}
+#endregion
+
 	}
 }
 

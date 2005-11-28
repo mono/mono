@@ -197,6 +197,9 @@ namespace System.Web.Configuration {
 
 		Encoding GetEncoding (ConfigurationProperty prop, ref string cached_encoding_name)
 		{
+			if (cached_encoding_name == null)
+				cached_encoding_name = "utf-8";
+
 			Encoding encoding = (Encoding)encodingHash [prop];
 			if (encoding == null || encoding.EncodingName != cached_encoding_name) {
 				try {
