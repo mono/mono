@@ -1,3 +1,8 @@
+2005-11-28  Chris Toshok  <toshok@ximian.com>
+
+	* WebEncoding.cs (FileEncoding, ResponseEncoding,
+	RequestEncoding): CONFIGURATION_2_0 work.
+
 2005-09-22 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* UrlUtils.cs: fix GetFile to work with '/blah'.

@@ -38,9 +38,13 @@ namespace System.Web.Util
 	{
 		static public Encoding FileEncoding {
 			get {
+#if CONFIGURATION_2_0
+				GlobalizationSection gc = (GlobalizationSection) WebConfigurationManager.GetWebApplicationSection ("system.web/globalization");
+#else
 				GlobalizationConfiguration gc = GlobalizationConfiguration.GetInstance (null);
 				if (gc == null)
 					return Encoding.Default;
+#endif
 
 				return gc.FileEncoding;
 			}
@@ -48,9 +52,13 @@ namespace System.Web.Util
 
 		static public Encoding ResponseEncoding {
 			get {
+#if CONFIGURATION_2_0
+				GlobalizationSection gc = (GlobalizationSection) WebConfigurationManager.GetWebApplicationSection ("system.web/globalization");
+#else
 				GlobalizationConfiguration gc = GlobalizationConfiguration.GetInstance (null);
 				if (gc == null)
 					return Encoding.Default;
+#endif
 
 				return gc.ResponseEncoding;
 			}
@@ -58,10 +66,13 @@ namespace System.Web.Util
 
 		static public Encoding RequestEncoding {
 			get {
+#if CONFIGURATION_2_0
+				GlobalizationSection gc = (GlobalizationSection) WebConfigurationManager.GetWebApplicationSection ("system.web/globalization");
+#else
 				GlobalizationConfiguration gc = GlobalizationConfiguration.GetInstance (null);
 				if (gc == null)
 					return Encoding.Default;
-
+#endif
 				return gc.RequestEncoding;
 			}
 		}
