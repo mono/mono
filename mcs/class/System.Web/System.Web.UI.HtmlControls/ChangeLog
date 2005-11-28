@@ -1,5 +1,9 @@
 2005-11-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* HtmlForm.cs: more class-status fixes.
+
+2005-11-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* HtmlTextArea.cs: 'Name' is the UniqueID. Fixes bug #76802.
 
 2005-11-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>

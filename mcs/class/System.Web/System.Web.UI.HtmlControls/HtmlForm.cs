@@ -117,12 +117,7 @@ namespace System.Web.UI.HtmlControls
 
 		[DefaultValue ("")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-#if NET_2_0
-		public virtual
-#else		
-		public
-#endif		
-		string Name 
+		public virtual string Name 
 		{
 			get {
 				return UniqueID;
@@ -168,14 +163,7 @@ namespace System.Web.UI.HtmlControls
 			}
 		}
 
-#if NET_2_0
-		public override
-#else		
-		// New in NET1.1 sp1
-		public new
-#endif		
-		string UniqueID
-		{
+		public override string UniqueID {
 			get {
 				return base.UniqueID;
 			}
