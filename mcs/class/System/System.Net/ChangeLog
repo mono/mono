@@ -1,3 +1,9 @@
+2005-11-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* EndPointListener.cs:
+	* HttpListenerRequest.cs: don't require the Host header for 1.0. Just
+	map that to the '*' or '+' host.
+
 2005-11-22 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* IPAddress.cs: the byte[] ctor supports length 4 in .NET 2.0.

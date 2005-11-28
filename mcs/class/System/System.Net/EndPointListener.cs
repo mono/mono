@@ -99,29 +99,32 @@ namespace System.Net {
 				return null;
 
 			//TODO: We should use a ReaderWriterLock between this and the add/remove operations.
-			int colon = host.IndexOf (':');
-			if (colon >= 0)
-				host = host.Substring (0, colon);
+			if (host != null) {
+				int colon = host.IndexOf (':');
+				if (colon >= 0)
+					host = host.Substring (0, colon);
+			}
 
 			string path = HttpUtility.UrlDecode (raw_url);
 			HttpListener best_match = null;
 			int best_length = -1;
 
 			lock (prefixes) {
-				foreach (ListenerPrefix p in prefixes.Keys) {
-					string ppath = p.Path;
-					if (ppath.Length < best_length)
-						continue;
+				if (host != null && host != "") {
+					foreach (ListenerPrefix p in prefixes.Keys) {
+						string ppath = p.Path;
+						if (ppath.Length < best_length)
+							continue;
 
-					if (p.Host == host && path.StartsWith (ppath)) {
-						best_length = ppath.Length;
-						best_match = prefixes [p];
-						prefix = p;
+						if (p.Host == host && path.StartsWith (ppath)) {
+							best_length = ppath.Length;
+							best_match = prefixes [p];
+							prefix = p;
+						}
 					}
+					if (best_length != -1)
+						return best_match;
 				}
-
-				if (best_length != -1)
-					return best_match;
 
 				best_match = MatchFromList (host, path, unhandled, out prefix);
 				if (best_match != null)

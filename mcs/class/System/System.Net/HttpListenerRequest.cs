@@ -121,10 +121,13 @@ namespace System.Net {
 		internal void FinishInitialization ()
 		{
 			string host = UserHostName;
-			if (host == null || host == "") {
+			if (version > HttpVersion.Version10 && (host == null || host == "")) {
 				context.ErrorMessage = "Invalid host name";
 				return;
 			}
+
+			if (host == null || host == "")
+				host = UserHostAddress;
 
 			int colon = host.IndexOf (':');
 			if (colon >= 0)
