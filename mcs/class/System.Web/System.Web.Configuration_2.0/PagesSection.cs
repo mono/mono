@@ -265,25 +265,6 @@ namespace System.Web.Configuration
 
 			/* XXX more here?.. */
 		}
-
-#region CompatabilityCode
-		[MonoTODO ("we really shouldn't need this..")]
-		internal static PagesSection GetInstance ()
-		{
-			PagesSection config;
-
-			if (HttpContext.Current != null) {
-				config = WebConfigurationManager.GetSection ("system.web/pages") as PagesSection;
-				if (config == null)
-					throw new Exception ("Configuration error.");
-			} else {
-				// empty config (as used in unit tests)
-				config = new PagesSection ();
-			}
-
-			return config;
-		}
-#endregion
 	}
 }
 

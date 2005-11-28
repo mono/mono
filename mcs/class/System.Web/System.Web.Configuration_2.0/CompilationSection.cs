@@ -227,26 +227,6 @@ namespace System.Web.Configuration
 		protected override ConfigurationPropertyCollection Properties {
 			get { return properties; }
 		}
-
-#region CompatabilityCode
-		[MonoTODO ("we really shouldn't need this..")]
-		internal static CompilationSection GetInstance ()
-		{
-			CompilationSection config;
-
-			if (HttpContext.Current != null) {
-				config = WebConfigurationManager.GetSection ("system.web/compilation") as CompilationSection;
-				if (config == null)
-					throw new Exception ("Configuration error.");
-			} else {
-				// empty config (as used in unit tests)
-				config = new CompilationSection ();
-			}
-
-			return config;
-		}
-#endregion
-
 	}
 }
 #endif // NET_2_0

@@ -1,5 +1,11 @@
 2005-11-28  Chris Toshok  <toshok@ximian.com>
 
+	* PagesSection.cs (GetInstance): nuke.
+
+	* CompilationSection.cs (GetInstance): nuke.
+
+2005-11-28  Chris Toshok  <toshok@ximian.com>
+
 	* HttpHandlerAction.cs: add some c&p code from the 1.1 config
 	stuff to look for matching handlers.
 	(..ctor): add parameterless ctor.
