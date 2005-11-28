@@ -1,5 +1,15 @@
 2005-11-28  Raja R Harinath  <rharinath@novell.com>
 
+	* class-internals.h (MonoGenericContainer.is_signature): Remove.	
+	* metadata.c (mono_metadata_parse_method_signature_full): Don't
+	create a temporary signature container.
+	(mono_metadata_parse_generic_param): Update to changes.
+	(mono_type_create_from_typespec_full): Update to changes.
+	* loader.c (method_from_memberref): Don't use a
+	MonoGenericContainer while parsing a memberref signature.
+	(method_from_methodspec): Remove dead-store of the 'container'
+	variable.  It's overwritten before use.
+
 	* metadata.c (mono_type_create_from_typespec_full): Make debugging
 	checks tighter.
 	(mono_metadata_parse_generic_param): Likewise.
