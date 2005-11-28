@@ -1,3 +1,7 @@
+2005-11-28  Ankit Jain  <jankit@novell.com>
+
+	* StringHelper.cs (idChars): Add ` to the list.
+
 2005-08-29  Ankit Jain  <jankit@novell.com>
 
 	* ILTables.cs (keywords): Comment out lcid keyword. Its not recognised as a

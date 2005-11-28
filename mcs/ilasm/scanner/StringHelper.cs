@@ -10,7 +10,7 @@ namespace Mono.ILASM {
 	/// </summary>
 	internal class StringHelper : StringHelperBase {
 
-		private static readonly string idChars = "_$@?";
+		private static readonly string idChars = "_$@?`";
 
 		/// <summary>
 		/// </summary>
