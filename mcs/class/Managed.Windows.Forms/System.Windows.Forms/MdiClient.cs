@@ -224,41 +224,50 @@ namespace System.Windows.Forms {
 			int prev_right_edge;
 			int prev_bottom_edge;
 
-			do {
+			bool need_hbar = false;
+			bool need_vbar = false;
 
+			do {
 				prev_right_edge = right_edge;
 				prev_bottom_edge = bottom_edge;
 
 				if (right > right_edge) {
-					if (hbar == null) {
-						hbar = new HScrollBar ();
-						Controls.AddImplicit (hbar);
-					}
-					hbar.Visible = true;
-					bottom_edge = Bottom - hbar.Height;
+					need_hbar = true;
+					bottom_edge = Bottom - SystemInformation.HorizontalScrollBarHeight;
 				} else {
-					hbar.Visible = false;
+					need_hbar = false;
 					bottom_edge = Bottom;
 				}
 
 				if (bottom > bottom_edge) {
-					if (vbar == null) {
-						vbar = new VScrollBar ();
-						Controls.AddImplicit (vbar);
-					}
-					vbar.Visible = true;
-					right_edge = Right - vbar.Width;
+					need_vbar = true;
+					right_edge = Right - SystemInformation.VerticalScrollBarWidth;
 				} else {
-					vbar.Visible = false;
+					need_vbar = false;
 					right_edge = Right;
 				}
 
 			} while (right_edge != prev_right_edge || bottom_edge != prev_bottom_edge);
 
-			if (hbar != null && hbar.Visible)
+			if (need_hbar) {
+				if (hbar == null) {
+					hbar = new HScrollBar ();
+					Controls.AddImplicit (hbar);
+				}
+				hbar.Visible = true;
 				CalcHBar (right, vbar != null && vbar.Visible);
-			if (vbar != null && vbar.Visible)
+			} else if (hbar != null)
+				hbar.Visible = false;
+
+			if (need_vbar) {
+				if (vbar == null) {
+					vbar = new VScrollBar ();
+					Controls.AddImplicit (vbar);
+				}
+				vbar.Visible = true;
 				CalcVBar (bottom, hbar != null && hbar.Visible);
+			} else if (vbar != null)
+				vbar.Visible = false;
 		}
 
 		private void CalcHBar (int right, bool vert_vis)
