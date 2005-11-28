@@ -1,5 +1,10 @@
 2005-11-28  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* UTF32Encoding.cs : surrogate pairs vanished in GetBytes() when the 
+	  endianness is big.
+
+2005-11-28  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* UTF32Encoding.cs : new file.
 
 2005-11-22  Atsushi Enomoto  <atsushi@ximian.com>

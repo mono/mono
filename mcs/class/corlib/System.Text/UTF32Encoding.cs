@@ -144,6 +144,7 @@ public class UTF32Encoding : Encoding
 							bytes [posn + 3 - i] = (byte) (value % 0x100);
 							value >>= 8;
 						}
+						posn += 4;
 					} else {
 						for (int i = 0; i < 4; i++) {
 							bytes [posn++] = (byte) (value % 0x100);
