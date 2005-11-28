@@ -240,7 +240,7 @@ namespace System.Web.Hosting {
 				throw new ArgumentNullException ("path is not rooted in the virtual directory");
 
 			string rest = path.Substring (app_virtual_dir.Length);
-			if (rest [0] == '/')
+			if (rest.Length > 0 && rest [0] == '/')
 				rest = rest.Substring (1);
 			return Path.Combine (app_physical_dir, rest);
 		}
@@ -259,6 +259,7 @@ namespace System.Web.Hosting {
 
 		public override void SendResponseFromMemory (byte [] data, int length)
 		{
+			output.Write (System.Text.Encoding.Default.GetChars (data, 0, length));
 		}
 
 

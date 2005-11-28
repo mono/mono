@@ -1,3 +1,9 @@
+2005-11-28  Robert Jordan  <robertj@gmx.net>
+
+	* SimpleWorkerRequest.cs: fixed MapPath () for the case
+	app_virtual_dir.Length == 1 && path.Length == 1.
+	* SimpleWorkerRequest.cs: implemented SendResponseFromMemory ().
+
 2005-11-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ApplicationHost.cs: make this work with paths that that
