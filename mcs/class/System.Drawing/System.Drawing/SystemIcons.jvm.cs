@@ -38,7 +38,7 @@ using System.Reflection;
 
 namespace System.Drawing {
 	public sealed class SystemIcons {
-		static readonly ArrayList systemIcons;
+		static readonly Icon[] systemIcons;
 
 		enum IconName {
 			Application, Asterisk, Error, 
@@ -50,24 +50,24 @@ namespace System.Drawing {
 			
 			Type nameType = typeof(IconName);
 			string [] iconNames = Enum.GetNames(nameType);
-			systemIcons = new ArrayList(iconNames.Length);
+			systemIcons = new Icon[iconNames.Length];
 			Assembly assembly = Assembly.GetExecutingAssembly();
 			for (int i = 0; i < iconNames.Length; i++)
-				systemIcons.Insert((int)(IconName)Enum.Parse(nameType, iconNames[i]), 
-					new Icon(assembly.GetManifestResourceStream(String.Format("System.Drawing.Assembly.{0}.ico", iconNames[i]))));
+				systemIcons[(int)(IconName)Enum.Parse(nameType, iconNames[i])] = 
+					new Icon(assembly.GetManifestResourceStream(String.Format("System.Drawing.Assembly.{0}.ico", iconNames[i])));
 		}
 
 		private SystemIcons() {
 		}
 
-		public static Icon Application { get { return (Icon)systemIcons[(int)IconName.Application];} }
-		public static Icon Asterisk { get { return (Icon)systemIcons[(int)IconName.Asterisk];} }
-		public static Icon Error { get { return (Icon)systemIcons[(int)IconName.Error];} }
-		public static Icon Exclamation { get { return (Icon)systemIcons[(int)IconName.Exclamation];} }
-		public static Icon Hand { get { return (Icon)systemIcons[(int)IconName.Hand];} }
-		public static Icon Information { get { return (Icon)systemIcons[(int)IconName.Information];} }
-		public static Icon Question { get { return (Icon)systemIcons[(int)IconName.Question];} }
-		public static Icon Warning { get { return (Icon)systemIcons[(int)IconName.Warning];} }
-		public static Icon WinLogo { get { return (Icon)systemIcons[(int)IconName.WinLogo];} }
+		public static Icon Application { get { return systemIcons[(int)IconName.Application];} }
+		public static Icon Asterisk { get { return systemIcons[(int)IconName.Asterisk];} }
+		public static Icon Error { get { return systemIcons[(int)IconName.Error];} }
+		public static Icon Exclamation { get { return systemIcons[(int)IconName.Exclamation];} }
+		public static Icon Hand { get { return systemIcons[(int)IconName.Hand];} }
+		public static Icon Information { get { return systemIcons[(int)IconName.Information];} }
+		public static Icon Question { get { return systemIcons[(int)IconName.Question];} }
+		public static Icon Warning { get { return systemIcons[(int)IconName.Warning];} }
+		public static Icon WinLogo { get { return systemIcons[(int)IconName.WinLogo];} }
 	}
 }
