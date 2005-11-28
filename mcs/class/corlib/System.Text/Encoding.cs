@@ -99,6 +99,10 @@ public abstract class Encoding
 		get { return is_readonly; }
 	}
 
+	public virtual bool IsSingleByte {
+		get { return false; }
+	}
+
 	[MonoTODO ("not used yet")]
 	[ComVisible (false)]
 	public DecoderFallback DecoderFallback {

@@ -1,5 +1,10 @@
 2005-11-28  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Encoding.cs, ASCIIEncoding.cs, Latin1Encoding.cs :
+	  Added IsSingleByte.
+
+2005-11-28  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Encoder.cs : added new GetByteCount()/GetBytes() overloads.
 	  Added FallbackBuffer.
 	* Decoder.cs : added new GetCharCount()/GetChars() overloads.

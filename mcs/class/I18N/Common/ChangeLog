@@ -1,3 +1,7 @@
+2005-11-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ByteEncoding.cs : added IsSingleByte.
+
 2005-11-01  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Handler.cs : added 51949 (true euc-kr).

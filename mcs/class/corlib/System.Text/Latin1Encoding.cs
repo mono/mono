@@ -40,6 +40,12 @@ internal class Latin1Encoding : Encoding
 		// Nothing to do here.
 	}
 
+#if NET_2_0
+	public override bool IsSingleByte {
+		get { return true; }
+	}
+#endif
+
 	// Get the number of bytes needed to encode a character buffer.
 	public override int GetByteCount (char[] chars, int index, int count)
 	{
