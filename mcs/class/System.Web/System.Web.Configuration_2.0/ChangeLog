@@ -1,3 +1,12 @@
+2005-11-28  Chris Toshok  <toshok@ximian.com>
+
+	* GlobalizationSection.cs (..cctor): the encoding
+	ConfigurationProperties are of type "string", even though the
+	properties themselves are of type Encoding.  we do conversions
+	manually in the setter/getters.  gross.  Add code (mostly c&p +
+	massaged from GlobalizationConfigurationHandler) for this and also
+	to handle the culture gettes.
+
 2005-11-26  Chris Toshok  <toshok@ximian.com>
 
 	* AuthorizationRuleCollection.cs (GetElementKey): implement this.

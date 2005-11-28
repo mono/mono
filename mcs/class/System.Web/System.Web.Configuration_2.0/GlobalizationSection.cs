@@ -29,7 +29,9 @@
 //
 
 using System;
+using System.Collections;
 using System.Configuration;
+using System.Globalization;
 using System.Text;
 using System.Xml;
 
@@ -55,11 +57,11 @@ namespace System.Web.Configuration {
 			cultureProp = new ConfigurationProperty ("culture", typeof (string), "");
 			enableBestFitResponseEncodingProp = new ConfigurationProperty ("enableBestFitResponseEncoding", typeof (bool), false);
 			enableClientBasedCultureProp = new ConfigurationProperty ("enableClientBasedCulture", typeof (bool), false);
-			fileEncodingProp = new ConfigurationProperty ("fileEncoding", typeof (Encoding));
-			requestEncodingProp = new ConfigurationProperty ("requestEncoding", typeof (Encoding), Encoding.UTF8);
+			fileEncodingProp = new ConfigurationProperty ("fileEncoding", typeof (string));
+			requestEncodingProp = new ConfigurationProperty ("requestEncoding", typeof (string), "utf-8");
 			resourceProviderFactoryTypeProp = new ConfigurationProperty ("resourceProviderFactoryType", typeof (string), "");
-			responseEncodingProp = new ConfigurationProperty ("responseEncoding", typeof (Encoding), Encoding.UTF8);
-			responseHeaderEncodingProp = new ConfigurationProperty ("responseHeaderEncoding", typeof (Encoding), Encoding.UTF8);
+			responseEncodingProp = new ConfigurationProperty ("responseEncoding", typeof (string), "utf-8");
+			responseHeaderEncodingProp = new ConfigurationProperty ("responseHeaderEncoding", typeof (string), "utf-8");
 			uiCultureProp = new ConfigurationProperty ("uiCulture", typeof (string), "");
 			properties = new ConfigurationPropertyCollection ();
 
@@ -72,6 +74,11 @@ namespace System.Web.Configuration {
 			properties.Add (responseEncodingProp);
 			properties.Add (responseHeaderEncodingProp);
 			properties.Add (uiCultureProp);
+		}
+
+		public GlobalizationSection ()
+		{
+			encodingHash = new Hashtable ();
 		}
 
 		[MonoTODO]
@@ -106,14 +113,14 @@ namespace System.Web.Configuration {
 
 		[ConfigurationProperty ("fileEncoding")]
 		public Encoding FileEncoding {
-			get { return (Encoding) base [fileEncodingProp];}
-			set { base[fileEncodingProp] = value; }
+			get { return GetEncoding (fileEncodingProp, ref cached_fileencoding); }
+			set { base[fileEncodingProp] = value.EncodingName; }
 		}
 
 		[ConfigurationProperty ("requestEncoding", DefaultValue = "utf-8")]
 		public Encoding RequestEncoding {
-			get { return (Encoding) base [requestEncodingProp];}
-			set { base[requestEncodingProp] = value; }
+			get { return GetEncoding (requestEncodingProp, ref cached_requestencoding); }
+			set { base[requestEncodingProp] = value.EncodingName; }
 		}
 
 		[ConfigurationProperty ("resourceProviderFactoryType", DefaultValue = "")]
@@ -124,14 +131,14 @@ namespace System.Web.Configuration {
 
 		[ConfigurationProperty ("responseEncoding", DefaultValue = "utf-8")]
 		public Encoding ResponseEncoding {
-			get { return (Encoding) base [responseEncodingProp];}
-			set { base[responseEncodingProp] = value; }
+			get { return GetEncoding (responseEncodingProp, ref cached_responseencoding); }
+			set { base[responseEncodingProp] = value.EncodingName; }
 		}
 
 		[ConfigurationProperty ("responseHeaderEncoding", DefaultValue = "utf-8")]
 		public Encoding ResponseHeaderEncoding {
-			get { return (Encoding) base [responseHeaderEncodingProp];}
-			set { base[responseHeaderEncodingProp] = value; }
+			get { return GetEncoding (responseHeaderEncodingProp, ref cached_responseheaderencoding); }
+			set { base[responseHeaderEncodingProp] = value.EncodingName; }
 		}
 
 		[ConfigurationProperty ("uiCulture", DefaultValue = "")]
@@ -144,6 +151,111 @@ namespace System.Web.Configuration {
 			get { return properties; }
 		}
 
+#region CompatabilityCode
+		string cached_fileencoding;
+		string cached_requestencoding;
+		string cached_responseencoding;
+		string cached_responseheaderencoding;
+		Hashtable encodingHash;
+
+		string cached_culture;
+		CultureInfo cached_cultureinfo;
+
+		string cached_uiculture;
+		CultureInfo cached_uicultureinfo;
+
+		static bool encoding_warning;
+		static bool culture_warning;
+
+		internal CultureInfo GetUICulture ()
+		{
+			if (cached_uiculture != UICulture) {
+				try {
+					cached_uicultureinfo = new CultureInfo (UICulture);
+				} catch {
+					CultureFailed ("UICulture", UICulture);
+					cached_uicultureinfo = new CultureInfo (0x007f); // Invariant
+				}
+			}
+
+			return cached_uicultureinfo;
+		}
+
+		internal CultureInfo GetCulture ()
+		{
+			if (cached_culture != Culture) {
+				try {
+					cached_cultureinfo = new CultureInfo (Culture);
+				} catch {
+					CultureFailed ("Culture", Culture);
+					cached_cultureinfo = new CultureInfo (0x007f); // Invariant
+				}
+			}
+
+			return cached_cultureinfo;
+		}
+
+		Encoding GetEncoding (ConfigurationProperty prop, ref string cached_encoding_name)
+		{
+			Encoding encoding = (Encoding)encodingHash [prop];
+			if (encoding == null || encoding.EncodingName != cached_encoding_name) {
+				try {
+					switch (cached_encoding_name.ToLower ()) {
+					case "utf-16le":
+					case "utf-16":
+					case "ucs-2":
+					case "unicode":
+					case "iso-10646-ucs-2":
+						encoding = new UnicodeEncoding (false, true);
+						break;
+					case "utf-16be":
+					case "unicodefffe":
+						encoding = new UnicodeEncoding (true, true);
+						break;
+					case "utf-8":
+					case "unicode-1-1-utf-8":
+					case "unicode-2-0-utf-8":
+					case "x-unicode-1-1-utf-8":
+					case "x-unicode-2-0-utf-8":
+						encoding = new UTF8Encoding (false, false);
+						break;
+					default:
+						encoding = Encoding.GetEncoding (cached_encoding_name);
+						break;
+					}
+				} catch {
+					EncodingFailed (prop.Name, cached_encoding_name);
+					encoding = new UTF8Encoding (false, false);
+				}
+			}
+
+			encodingHash[prop] = encoding;
+			cached_encoding_name = encoding.EncodingName;
+
+			return encoding;
+		}
+
+		static void EncodingFailed (string att, string enc)
+		{
+			if (encoding_warning)
+				return;
+
+			encoding_warning = true;
+			Console.WriteLine ("Encoding {1} cannot be loaded.\n" +
+					   "{0}=\"{1}\"\n", att, enc);
+		}
+
+		static void CultureFailed (string att, string cul)
+		{
+			if (culture_warning)
+				return;
+
+			culture_warning = true;
+			Console.WriteLine ("Culture {1} cannot be loaded. Perhaps your runtime \n" +
+					   "don't have ICU support?\n{0}=\"{1}\"\n", att, cul);
+		}
+
+#endregion
 	}
 
 }
