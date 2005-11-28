@@ -143,15 +143,24 @@ namespace System.Web {
 				if (modcoll != null)
 					return;
 
+#if CONFIGURATION_2_0
+				HttpModulesSection modules;
+				GlobalizationSection cfg;
+				modules = (HttpModulesSection) WebConfigurationManager.GetWebApplicationSection ("system.web/httpModules");
+				cfg = (GlobalizationSection) WebConfigurationManager.GetWebApplicationSection ("system.web/globalization");
+#else
+				GlobalizationConfiguration cfg;
 				ModulesConfiguration modules;
+
 				modules = (ModulesConfiguration) HttpContext.GetAppConfig ("system.web/httpModules");
+				cfg = GlobalizationConfiguration.GetInstance (null);
+#endif
 
 				modcoll = modules.LoadModules (this);
 
 				if (full_init)
 					HttpApplicationFactory.AttachEvents (this);
 
-				GlobalizationConfiguration cfg = GlobalizationConfiguration.GetInstance (null);
 				if (cfg != null) {
 					app_culture = cfg.Culture;
 					appui_culture = cfg.UICulture;
@@ -998,16 +1007,14 @@ namespace System.Web {
 			string url = request.FilePath;
 			
 			IHttpHandler handler = null;
-#if false
-			System.Configuration.Configuration config = WebConfiguration.OpenWebConfiguration (request.PhysicalApplicationPath);
-			HttpHandlersSection section;
-			/* XXX once SystemWebSectionGroup is working, use the following:
-			   section = ((SystemWebSectionGroup)config.GetSection ("system.web")).HttpHandlers;
-			 */
-			section = (HttpHandlersSection)config.GetSection ("system.web/httpHandlers");
+#if CONFIGURATION_2_0
+			HttpHandlersSection section = (HttpHandlersSection) WebConfigurationManager.GetWebApplicationSection ("system.web/httpHandlers");
+			object o = section.LocateHandler (verb, url);
 #else
 			HandlerFactoryConfiguration factory_config = (HandlerFactoryConfiguration) HttpContext.GetAppConfig ("system.web/httpHandlers");
 			object o = factory_config.LocateHandler (verb, url);
+#endif
+
 			factory = o as IHttpHandlerFactory;
 			
 			if (factory == null) {
@@ -1015,7 +1022,6 @@ namespace System.Web {
 			} else {
 				handler = factory.GetHandler (context, verb, url, request.PhysicalPath);
 			}
-#endif
 			context.Handler = handler;
 
 			return handler;

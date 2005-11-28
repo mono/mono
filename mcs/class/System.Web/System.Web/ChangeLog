@@ -1,3 +1,8 @@
+2005-11-27  Chris Toshok  <toshok@ximian.com>
+
+	* HttpApplication.cs (InitOnce): add Configuration_2.0 code.
+	(GetHandler): same.
+
 2005-11-26  Miguel de Icaza  <miguel@novell.com>
 
 	* HttpResponseStream.cs: Do not try to write zero bytes.
