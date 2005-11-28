@@ -145,15 +145,11 @@ namespace System.Web {
 
 #if CONFIGURATION_2_0
 				HttpModulesSection modules;
-				GlobalizationSection cfg;
 				modules = (HttpModulesSection) WebConfigurationManager.GetWebApplicationSection ("system.web/httpModules");
-				cfg = (GlobalizationSection) WebConfigurationManager.GetWebApplicationSection ("system.web/globalization");
 #else
-				GlobalizationConfiguration cfg;
 				ModulesConfiguration modules;
 
 				modules = (ModulesConfiguration) HttpContext.GetAppConfig ("system.web/httpModules");
-				cfg = GlobalizationConfiguration.GetInstance (null);
 #endif
 
 				modcoll = modules.LoadModules (this);
@@ -161,10 +157,19 @@ namespace System.Web {
 				if (full_init)
 					HttpApplicationFactory.AttachEvents (this);
 
+#if CONFIGURATION_2_0
+				GlobalizationSection cfg;
+				cfg = (GlobalizationSection) WebConfigurationManager.GetWebApplicationSection ("system.web/globalization");
+				app_culture = cfg.GetCulture();
+				appui_culture = cfg.GetUICulture();
+#else
+				GlobalizationConfiguration cfg;
+				cfg = GlobalizationConfiguration.GetInstance (null);
 				if (cfg != null) {
 					app_culture = cfg.Culture;
 					appui_culture = cfg.UICulture;
 				}
+#endif
 			}
 		}
 

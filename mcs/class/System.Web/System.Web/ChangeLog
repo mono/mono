@@ -1,3 +1,9 @@
+2005-11-28  Chris Toshok  <toshok@ximian.com>
+
+	* HttpApplication.cs (InitOnce): change around the
+	CONFIGURATION_2_0 stuff since we need additional Culture foo for
+	it.
+
 2005-11-27  Chris Toshok  <toshok@ximian.com>
 
 	* HttpApplication.cs (InitOnce): add Configuration_2.0 code.
