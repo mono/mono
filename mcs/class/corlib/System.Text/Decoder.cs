@@ -26,6 +26,7 @@ namespace System.Text
 {
 
 using System;
+using System.Runtime.InteropServices;
 
 [Serializable]
 public abstract class Decoder
@@ -63,6 +64,49 @@ public abstract class Decoder
 	// Get the characters that result from decoding a buffer.
 	public abstract int GetChars (byte[] bytes, int byteIndex, int byteCount,
 								 char[] chars, int charIndex);
+
+#if NET_2_0
+	public virtual int GetCharCount (byte [] bytes, int index, int count, bool flush)
+	{
+		if (flush)
+			Reset ();
+		return GetCharCount (bytes, index, count);
+	}
+
+	[CLSCompliant (false)]
+	public unsafe virtual int GetCharCount (byte* bytes, int count, bool flush)
+	{
+		byte [] barr = new byte [count];
+		Marshal.Copy ((IntPtr) bytes, barr, 0, count);
+		return GetCharCount (barr, 0, count, flush);
+	}
+
+	public virtual int GetChars (
+		byte[] bytes, int byteIndex, int byteCount,
+		char[] chars, int charIndex, bool flush)
+	{
+		if (flush)
+			Reset ();
+		return GetChars (bytes, byteIndex, byteCount, chars, charIndex);
+	}
+
+	[CLSCompliant (false)]
+	public unsafe virtual int GetChars (byte* bytes, int byteCount,
+		char* chars, int charCount, bool flush)
+	{
+		char [] carr = new char [charCount];
+		Marshal.Copy ((IntPtr) chars, carr, 0, charCount);
+		byte [] barr = new byte [byteCount];
+		Marshal.Copy ((IntPtr) bytes, barr, 0, byteCount);
+		return GetChars (barr, 0, byteCount, carr, 0, flush);
+	}
+
+	public virtual void Reset ()
+	{
+		if (fallback_buffer != null)
+			fallback_buffer.Reset ();
+	}
+#endif
 
 }; // class Decoder
 

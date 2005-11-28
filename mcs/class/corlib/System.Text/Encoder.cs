@@ -26,6 +26,7 @@ namespace System.Text
 {
 
 using System;
+using System.Runtime.InteropServices;
 
 [Serializable]
 public abstract class Encoder
@@ -36,6 +37,7 @@ public abstract class Encoder
 
 #if NET_2_0
 	EncoderFallback fallback;
+	EncoderFallbackBuffer fallback_buffer;
 
 	public EncoderFallback Fallback {
 		get { return fallback; }
@@ -43,6 +45,15 @@ public abstract class Encoder
 			if (value == null)
 				throw new ArgumentNullException ();
 			fallback = value;
+			fallback_buffer = null;
+		}
+	}
+
+	public EncoderFallbackBuffer FallbackBuffer {
+		get {
+			if (fallback_buffer == null)
+				fallback_buffer = fallback.CreateFallbackBuffer ();
+			return fallback_buffer;
 		}
 	}
 #endif
@@ -54,6 +65,33 @@ public abstract class Encoder
 	// Get the bytes that result from decoding a buffer.
 	public abstract int GetBytes(char[] chars, int charIndex, int charCount,
 								 byte[] bytes, int byteIndex, bool flush);
+
+#if NET_2_0
+	[CLSCompliant (false)]
+	public unsafe virtual int GetByteCount (char* chars, int charCount, bool flush)
+	{
+		char [] carr = new char [charCount];
+		Marshal.Copy ((IntPtr) chars, carr, 0, charCount);
+		return GetByteCount (carr, 0, charCount, flush);
+	}
+
+	[CLSCompliant (false)]
+	public unsafe virtual int GetBytes (char* chars, int charCount,
+		byte* bytes, int byteCount, bool flush)
+	{
+		char [] carr = new char [charCount];
+		Marshal.Copy ((IntPtr) chars, carr, 0, charCount);
+		byte [] barr = new byte [byteCount];
+		Marshal.Copy ((IntPtr) bytes, barr, 0, byteCount);
+		return GetBytes (carr, 0, charCount, barr, 0, flush);
+	}
+
+	public virtual void Reset ()
+	{
+		if (fallback_buffer != null)
+			fallback_buffer.Reset ();
+	}
+#endif
 
 }; // class Encoder
 

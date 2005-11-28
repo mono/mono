@@ -1,5 +1,11 @@
 2005-11-28  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Encoder.cs : added new GetByteCount()/GetBytes() overloads.
+	  Added FallbackBuffer.
+	* Decoder.cs : added new GetCharCount()/GetChars() overloads.
+
+2005-11-28  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* EncodingInfo.cs : new file.
 
 2005-11-28  Atsushi Enomoto  <atsushi@ximian.com>
