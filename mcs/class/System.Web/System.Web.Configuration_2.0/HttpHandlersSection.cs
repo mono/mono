@@ -38,27 +38,60 @@ namespace System.Web.Configuration
 	public sealed class HttpHandlersSection: ConfigurationSection
 	{
 		static ConfigurationPropertyCollection properties;
+		static ConfigurationProperty handlersProp;
 
 		static HttpHandlersSection ()
 		{
+			handlersProp = new ConfigurationProperty ("", typeof (HttpHandlerActionCollection), null,
+								  null, PropertyHelper.DefaultValidator,
+								  ConfigurationPropertyOptions.IsDefaultCollection);
+
+
 			properties = new ConfigurationPropertyCollection ();
+
+			properties.Add (handlersProp);
 		}
 
 		public HttpHandlersSection ()
 		{
 		}
 
-		[MonoTODO]
 		[ConfigurationProperty ("", Options = ConfigurationPropertyOptions.IsDefaultCollection)]
 		public HttpHandlerActionCollection Handlers {
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return (HttpHandlerActionCollection) base[handlersProp]; }
 		}
 
 		protected override ConfigurationPropertyCollection Properties {
 			get { return properties; }
 		}
+
+#region CompatabilityCode
+		internal object LocateHandler (string verb, string filepath)
+		{
+			int top = Handlers.Count;
+
+			for (int i = 0; i < top; i++){
+				HttpHandlerAction handler = (HttpHandlerAction) Handlers [i];
+
+				string[] verbs = handler.Verbs;
+				if (verbs == null){
+					if (handler.PathMatches (filepath))
+						return handler.GetHandlerInstance ();
+					continue;
+				}
+
+				for (int j = verbs.Length; j > 0; ){
+					j--;
+					if (verbs [j] != verb)
+						continue;
+					if (handler.PathMatches (filepath))
+						return handler.GetHandlerInstance ();
+				}
+			}
+
+			return null;
+		}
+#endregion
 	}
 }
 

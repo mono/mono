@@ -1,5 +1,24 @@
 2005-11-28  Chris Toshok  <toshok@ximian.com>
 
+	* HttpHandlerAction.cs: add some c&p code from the 1.1 config
+	stuff to look for matching handlers.
+	(..ctor): add parameterless ctor.
+	
+	* HttpHandlerActionCollection.cs: clean up formatting.
+	(CreateNewElement): call the parameter-less ctor for
+	HttpHandlerAction.
+
+	* HttpHandlersSection.cs (..ctor): add a ConfigurationProperty for
+	the default collection.
+	(get_Handlers): implement.
+	(LocateHandler): copy over (and massage) some 1.1 config code.
+
+	* MachineKeySection.cs: move some code over from the 1.1 config
+	code to deal with autogeneration of keys, as well as converting
+	from the string rep to the byte[] rep.
+
+2005-11-28  Chris Toshok  <toshok@ximian.com>
+
 	* HttpModuleActionCollection.cs (CreateNewElement): use the new
 	HttpModuleAction ctor.
 

@@ -61,7 +61,7 @@ namespace System.Web.Configuration
 
 		protected override ConfigurationElement CreateNewElement ()
 		{
-			return new HttpHandlerAction ("", "", "");
+			return new HttpHandlerAction ();
 		}
 
 		protected override object GetElementKey (ConfigurationElement element)
@@ -92,9 +92,7 @@ namespace System.Web.Configuration
 		}
 
 		protected override ConfigurationElementCollectionType CollectionType {
-			get {
-				return ConfigurationElementCollectionType.AddRemoveClearMapAlternate;
-			}
+			get { return ConfigurationElementCollectionType.AddRemoveClearMapAlternate; }
 		}
 
 		protected override ConfigurationPropertyCollection Properties {
@@ -107,9 +105,7 @@ namespace System.Web.Configuration
 		}
 
 		protected override bool ThrowOnDuplicate {
-			get {
-				return false;
-			}
+			get { return false; }
 		}
 	}
 }
