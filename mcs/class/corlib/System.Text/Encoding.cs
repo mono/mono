@@ -405,6 +405,11 @@ public abstract class Encoding
 			case UTF8Encoding.UTF8_CODE_PAGE:
 				return UTF8;
 
+#if NET_2_0
+			case UTF32Encoding.UTF32_CODE_PAGE:
+				return UTF32;
+#endif
+
 			case UnicodeEncoding.UNICODE_CODE_PAGE:
 				return Unicode;
 
@@ -513,6 +518,14 @@ public abstract class Encoding
 
 			UnicodeEncoding.BIG_UNICODE_CODE_PAGE,
 			"unicodefffe", "utf_16be",
+
+#if NET_2_0
+			UTF32Encoding.UTF32_CODE_PAGE,
+			"utf_32", "UTF_32LE", "ucs_4",
+
+			UTF32Encoding.BIG_UTF32_CODE_PAGE,
+			"UTF_32BE",
+#endif
 
 			Latin1Encoding.ISOLATIN_CODE_PAGE,
 			"iso_8859_1", "latin1"
@@ -707,7 +720,10 @@ public abstract class Encoding
 	static volatile Encoding unicodeEncoding;
 	static volatile Encoding isoLatin1Encoding;
 	static volatile Encoding unixConsoleEncoding;
-	
+#if NET_2_0
+	static volatile Encoding utf32Encoding;
+#endif
+
 	static readonly object lockobj = new object ();
 
 	// Get the standard ASCII encoding object.
@@ -877,6 +893,25 @@ public abstract class Encoding
 			return unicodeEncoding;
 		}
 	}
+
+#if NET_2_0
+	// Get the standard little-endian UTF-32 encoding object.
+	public static Encoding UTF32
+	{
+		get {
+			if (utf32Encoding == null) {
+				lock (lockobj) {
+					if (utf32Encoding == null) {
+						utf32Encoding = new UTF32Encoding (false, true);
+						utf32Encoding.is_readonly = true;
+					}
+				}
+			}
+
+			return utf32Encoding;
+		}
+	}
+#endif
 
 	// Forwarding decoder implementation.
 	private sealed class ForwardingDecoder : Decoder
