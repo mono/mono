@@ -1181,6 +1181,8 @@ namespace System.Windows.Forms
 				// double click is only raised if you double click an item
 				if (me.Clicks > 1 && this.clicked_item != null)
 					OnDoubleClick (EventArgs.Empty);
+				else if (me.Clicks == 1 && clicked_item != null)
+					OnClick (EventArgs.Empty);
 
 				this.Redraw (false);
 			} else if (selected_indices.Count > 0) {

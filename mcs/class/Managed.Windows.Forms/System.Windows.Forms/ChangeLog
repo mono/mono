@@ -1,5 +1,9 @@
 2005-11-28  Jackson Harper  <jackson@ximian.com>
 
+	* ListView.cs: Raise the click event when items are clicked.
+
+2005-11-28  Jackson Harper  <jackson@ximian.com>
+
 	* MdiClient.cs: Make this algorithm even more beautiful.  And fix
 	a nullref.
 
