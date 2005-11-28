@@ -1,5 +1,9 @@
 2005-11-28  Raja R Harinath  <rharinath@novell.com>
 
+	* metadata.c (mono_type_create_from_typespec_full): Ensure that
+	owner-less generic-parameters are never evicted from the typespec
+	cache.
+
 	* loader.c (method_from_memberref): Don't use the current context
 	when parsing signatures.
 	(method_from_methodspec, mono_get_method_from_token): Update to changes.
