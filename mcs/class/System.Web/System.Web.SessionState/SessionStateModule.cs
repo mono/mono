@@ -29,6 +29,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+
+using System.Web.Configuration;
 using System.Web.Caching;
 using System.Web.Util;
 using System.Security.Cryptography;
@@ -62,7 +64,11 @@ namespace System.Web.SessionState
 			}
 		}
 #else
+#if CONFIGURATION_2_0
+		static SessionStateSection config;
+#else
 		static SessionConfig config;
+#endif
 		static Type handlerType;
 #endif		
 		ISessionHandler handler;
@@ -85,15 +91,23 @@ namespace System.Web.SessionState
 			handler.Dispose();
 		}
 
+#if CONFIGURATION_2_0
+		SessionStateSection GetConfig ()
+#else
 		SessionConfig GetConfig ()
+#endif
 		{
 			lock (locker) {
 				if (config != null)
 					return config;
 
+#if CONFIGURATION_2_0
+				config = (SessionStateSection) WebConfigurationManager.GetSection ("system.web/sessionState");
+#else
 				config = (SessionConfig) HttpContext.GetAppConfig ("system.web/sessionState");
 				if (config ==  null)
 					config = new SessionConfig (null);
+#endif
 
 #if TARGET_J2EE
 				if (config.Mode == SessionStateMode.SQLServer || config.Mode == SessionStateMode.StateServer)
@@ -116,7 +130,11 @@ namespace System.Web.SessionState
 		public void Init (HttpApplication app)
 		{
 			sessionForStaticFiles = (Environment.GetEnvironmentVariable ("MONO_XSP_STATIC_SESSION") != null);
+#if CONFIGURATION_2_0
+			SessionStateSection cfg = GetConfig ();
+#else
 			SessionConfig cfg = GetConfig ();
+#endif
 			if (handlerType == null)
 				return;
 
@@ -221,8 +239,14 @@ namespace System.Web.SessionState
 
 		internal void OnSessionRemoved (string key, object value, CacheItemRemovedReason reason)
 		{
+#if CONFIGURATION_2_0
+			SessionStateSection cfg = GetConfig ();
+#else
+			SessionConfig cfg = GetConfig ();
+#endif
+
 			// Only invoked for InProc (see msdn2 docs on SessionStateModule.End)
-			if (GetConfig ().Mode == SessionStateMode.InProc)
+			if (cfg.Mode == SessionStateMode.InProc)
 				HttpApplicationFactory.InvokeSessionEnd (value);
 		}
 		

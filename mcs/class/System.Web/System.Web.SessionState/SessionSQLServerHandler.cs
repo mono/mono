@@ -34,6 +34,7 @@ using System.Data;
 using System.Reflection;
 using System.Configuration;
 using System.Collections.Specialized;
+using System.Web.Configuration;
 
 namespace System.Web.SessionState {
 
@@ -41,7 +42,11 @@ namespace System.Web.SessionState {
 	{
 		private static Type cncType = null;
 		private IDbConnection cnc = null;
+#if CONFIGURATION_2_0
+		private SessionStateSection config;
+#else
 		private SessionConfig config;
+#endif
 
 		public void Dispose ()
 		{
@@ -51,7 +56,13 @@ namespace System.Web.SessionState {
 			}
 		}
 
-		public void Init (SessionStateModule module, HttpApplication context, SessionConfig config)
+		public void Init (SessionStateModule module, HttpApplication context,
+#if CONFIGURATION_2_0
+				  SessionStateSection config
+#else
+				  SessionConfig config
+#endif
+				  )
 		{
 			string connectionTypeName;
 			string providerAssemblyName;
@@ -111,10 +122,21 @@ namespace System.Web.SessionState {
 
 			id = SessionId.Create (module.Rng);
 			session = new HttpSessionState (id, new SessionDictionary (),
-					HttpApplicationFactory.ApplicationState.SessionObjects, config.Timeout,
+					HttpApplicationFactory.ApplicationState.SessionObjects,
+#if CONFIGURATION_2_0
+					(int)config.Timeout.TotalMinutes,
+#else
+					config.Timeout,
+#endif
 					true, config.CookieLess, SessionStateMode.SQLServer, read_only);
 
-			InsertSession (session, config.Timeout);
+			InsertSession (session,
+#if CONFIGURATION_2_0
+				       (int)config.Timeout.TotalMinutes
+#else
+				       config.Timeout
+#endif
+				       );
 			isNew = true;
 			return session;
 		}

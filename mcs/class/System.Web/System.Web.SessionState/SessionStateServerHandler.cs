@@ -33,6 +33,7 @@ using System;
 using System.IO;
 using System.Reflection;
 using System.Configuration;
+using System.Web.Configuration;
 using System.Runtime.Remoting;
 
 namespace System.Web.SessionState {
@@ -42,13 +43,23 @@ namespace System.Web.SessionState {
 		const string CookieName = "ASPSESSION";
 
 		private RemoteStateServer state_server;
+#if CONFIGURATION_2_0
+		private SessionStateSection config;
+#else
 		private SessionConfig config;
+#endif
 		
 		public void Dispose ()
 		{
 		}
 
-		public void Init (SessionStateModule module, HttpApplication context, SessionConfig config)
+		public void Init (SessionStateModule module, HttpApplication context,
+#if CONFIGURATION_2_0
+				  SessionStateSection config
+#else
+				  SessionConfig config
+#endif
+				  )
 		{
 			this.config = config;
 			RemotingConfiguration.Configure (null);
@@ -93,7 +104,12 @@ namespace System.Web.SessionState {
 					sobjs = HttpStaticObjectsCollection.FromByteArray (item.StaticObjectsData);
 					session = new HttpSessionState (id, dict,
 							HttpApplicationFactory.ApplicationState.SessionObjects,
-							config.Timeout, false, config.CookieLess,
+#if CONFIGURATION_2_0
+							(int)config.Timeout.TotalMinutes, // XXX is this right?  we lose some precision here, but since the timeout is in minutes *anyway*...
+#else
+							config.Timeout,
+#endif
+							false, config.CookieLess,
 							SessionStateMode.StateServer, read_only);
 
 					return session;
@@ -103,11 +119,23 @@ namespace System.Web.SessionState {
 			id = SessionId.Create (module.Rng);
 			dict = new SessionDictionary ();
 			sobjs = HttpApplicationFactory.ApplicationState.SessionObjects;
-			item = new StateServerItem (dict.ToByteArray (), sobjs.ToByteArray (), config.Timeout);
+			item = new StateServerItem (dict.ToByteArray (), sobjs.ToByteArray (),
+#if CONFIGURATION_2_0
+						    (int)config.Timeout.TotalMinutes
+#else
+						    config.Timeout
+#endif
+						    );
 			
 			state_server.Insert (id, item);
 
-			session = new HttpSessionState (id, dict, sobjs, config.Timeout, true,
+			session = new HttpSessionState (id, dict, sobjs,
+#if CONFIGURATION_2_0
+							(int)config.Timeout.TotalMinutes,
+#else
+							config.Timeout,
+#endif
+							true,
 							config.CookieLess, SessionStateMode.StateServer,
 							read_only);
 			

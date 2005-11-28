@@ -1,3 +1,16 @@
+2005-11-28  Chris Toshok  <toshok@ximian.com>
+
+	* SessionStateModule.cs: CONFIGURATION_2_0 work.
+
+	* SessionSQLServerHandler.cs: CONFIGURATION_2_0 work.
+
+	* SessionInProcHandler.cs: CONFIGURATION_2_0 work.
+
+	* SessionStateServerHandler.cs: CONFIGURATION_2_0 work.
+	
+	* ISessionHandler.cs (Init): @config is a SessionStateSection if
+	CONFIGURATION_2_0.
+
 2005-09-22 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* SessionStateModule.cs: use the new funciton in HttpRequest.

@@ -29,12 +29,21 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
+using System.Web.Configuration;
+
 namespace System.Web.SessionState
 {
 	internal interface ISessionHandler
 	{
 		void Dispose ();
-		void Init (SessionStateModule module, HttpApplication context, SessionConfig config);
+		void Init (SessionStateModule module, HttpApplication context,
+#if CONFIGURATION_2_0
+			   SessionStateSection config
+#else
+			   SessionConfig config
+#endif
+			   );
 		HttpSessionState UpdateContext (HttpContext context, SessionStateModule module, bool required,
 						bool read_only, ref bool isNew);
 
