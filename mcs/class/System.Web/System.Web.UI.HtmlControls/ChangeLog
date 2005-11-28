@@ -1,5 +1,10 @@
 2005-11-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* HtmlTable.cs: use the base class RenderChildren, as '_rows'
+	might not be the actual collection being used. Fixes bug #76815.
+
+2005-11-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* HtmlInputFile.cs: if no one else set the encoding type for the
 	containing form and there's a HtmlInputFile, set Enctype to
 	'multipart/form-data'. Fixes bug #76837.
