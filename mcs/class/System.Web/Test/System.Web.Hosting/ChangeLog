@@ -1,3 +1,7 @@
+2005-11-23  Robert Jordan  <robertj@gmx.net>
+
+	* SimpleWorkerRequestTest.cs: added a test case for #76794.
+
 2005-09-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ApplicationHostTest.cs: disabled a test.

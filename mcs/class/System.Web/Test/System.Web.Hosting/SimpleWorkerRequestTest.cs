@@ -247,11 +247,24 @@ namespace MonoTests.System.Web.Hosting {
 
 				swr.MapPath ("appVirtualDir/file.aspx");
 			}
+
+			public void MapPathOnEmptyVirtualDir ()
+			{
+				StringWriter sw = new StringWriter ();
+				SimpleWorkerRequest swr = new SimpleWorkerRequest("file.aspx", "querystring", sw);
+
+				swr.MapPath ("/");
+			}
+		}
+
+		Host MakeHost (string virtualDir)
+		{
+			return (Host) ApplicationHost.CreateApplicationHost (typeof (Host), virtualDir, cwd);
 		}
 
 		Host MakeHost ()
 		{
-			return (Host) ApplicationHost.CreateApplicationHost (typeof (Host), "/appVirtualDir", cwd);
+			return MakeHost ("/appVirtualDir");
 		}
 		
 		[Test] public void AppDomainTests ()
@@ -286,6 +299,14 @@ namespace MonoTests.System.Web.Hosting {
 			Host h = MakeHost ();
 			
 			h.Exception3 ();
+		}
+
+		[Test]
+		public void AppDomain_MapPath4 ()
+		{
+			Host h = MakeHost ("/");
+			
+			h.MapPathOnEmptyVirtualDir ();
 		}
 		
 		//
