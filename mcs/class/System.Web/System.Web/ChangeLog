@@ -1,5 +1,12 @@
 2005-11-28  Chris Toshok  <toshok@ximian.com>
 
+	* TraceManager.cs (..ctor): CONFIGURATION_2_0 work.
+
+	* QueueManager.cs (..ctor): CONFIGURATION_2_0 work.
+
+	* HttpRequest.cs (AnonymousID): add 2.0 property.
+	(MakeInputStream): CONFIGURATION_2_0 work.
+
 	* HttpApplication.cs (InitOnce): change around the
 	CONFIGURATION_2_0 stuff since we need additional Culture foo for
 	it.

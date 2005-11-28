@@ -143,6 +143,18 @@ namespace System.Web {
 			}
 		}
 
+#if NET_2_0
+		string anonymous_id;
+		public string AnonymousID {
+			get {
+				return anonymous_id;
+			}
+			internal set {
+				anonymous_id = value;
+			}
+		}
+#endif
+
 		public string ApplicationPath {
 			get {
 				if (worker_request == null)
@@ -615,7 +627,11 @@ namespace System.Web {
 			//
 			int content_length = ContentLength;
 
+#if CONFIGURATION_2_0
+			HttpRuntimeSection config = (HttpRuntimeSection) WebConfigurationManager.GetWebApplicationSection ("system.web/httpRuntime");
+#else
 			HttpRuntimeConfig config = (HttpRuntimeConfig) HttpContext.GetAppConfig ("system.web/httpRuntime");
+#endif
 			if ((content_length / 1024) > config.MaxRequestLength)
 				throw new HttpException (400, "Upload size exceeds httpRuntime limit.");
 

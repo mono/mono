@@ -45,8 +45,15 @@ namespace System.Web
 
 		public QueueManager ()
 		{
+#if CONFIGURATION_2_0
+			HttpRuntimeSection config;
+
+			config = (HttpRuntimeSection) WebConfigurationManager.GetSection ("system.web/httpRuntime");
+#else
 			HttpRuntimeConfig config;
+
 			config = (HttpRuntimeConfig) HttpContext.GetAppConfig ("system.web/httpRuntime");
+#endif
 			minFree = config.MinFreeThreads;
 			minLocalFree = config.MinLocalRequestFreeThreads;
 			queueLimit = config.AppRequestQueueLimit;
