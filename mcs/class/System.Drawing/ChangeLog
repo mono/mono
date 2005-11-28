@@ -1,3 +1,7 @@
+2005-11-28 Konstantin Triger <kostat@mainsoft.com>
+
+	* System.Drawing.vmwcsproj: Added System icons; changed to mono icon implementation.
+
 2005-11-14  Andrew Skiba  <andrews@mainsoft.com>
 
 	* net_1_1_java_System.Drawing.dll.sources,

@@ -18,6 +18,15 @@
 				<File RelPath="MonoTODOAttribute.cs" Link="..\..\build\common\MonoTODOAttribute.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="Assembly\AssemblyInfo.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="Assembly\Consts.cs.in" Link="..\..\build\common\Consts.cs.in" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="Assembly\Application.ico" BuildAction="EmbeddedResource"/>
+                                <File RelPath="Assembly\Asterisk.ico" BuildAction="EmbeddedResource"/>
+                                <File RelPath="Assembly\Error.ico" BuildAction="EmbeddedResource"/>
+                                <File RelPath="Assembly\Exclamation.ico" BuildAction="EmbeddedResource"/>
+                                <File RelPath="Assembly\Hand.ico" BuildAction="EmbeddedResource"/>
+                                <File RelPath="Assembly\Information.ico" BuildAction="EmbeddedResource"/>
+                                <File RelPath="Assembly\Question.ico" BuildAction="EmbeddedResource"/>
+                                <File RelPath="Assembly\Warning.ico" BuildAction="EmbeddedResource"/>
+                                <File RelPath="Assembly\WinLogo.ico" BuildAction="EmbeddedResource"/>
 				<File RelPath="Mainsoft.Drawing.Configuration.jvm\ResolutionConfiguration.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="Mainsoft.Drawing.Configuration.jvm\ResolutionConfigurationCollection.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="Mainsoft.Drawing.Configuration.jvm\ResolutionConfigurationHandler.cs" SubType="Code" BuildAction="Compile"/>
@@ -37,7 +46,7 @@
 				<File RelPath="System.Drawing\FontStyle.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Drawing\Graphics.jvm.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Drawing\GraphicsUnit.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Drawing\Icon.jvm.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Drawing\Icon.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Drawing\IconConverter.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Drawing\Image.jvm.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Drawing\ImageAnimator.cs" SubType="Code" BuildAction="Compile"/>
