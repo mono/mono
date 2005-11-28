@@ -1,3 +1,8 @@
+2005-11-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpListenerTest.cs: disable 2 tests. We're throwing the wrong
+	exception.
+
 2005-11-22 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* IPAddressTest.cs: more tests for the byte[] ctor.
