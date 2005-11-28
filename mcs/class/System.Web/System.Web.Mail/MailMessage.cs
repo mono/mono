@@ -35,6 +35,9 @@ using System.Text;
 
 namespace System.Web.Mail
 {
+#if NET_2_0
+#pragma warning disable 618
+#endif
 	// CAS
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
@@ -142,4 +145,7 @@ namespace System.Web.Mail
 		}
 #endif
 	}
+#if NET_2_0
+#pragma warning restore 618
+#endif
 }

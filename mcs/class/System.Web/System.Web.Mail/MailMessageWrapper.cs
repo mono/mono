@@ -33,6 +33,10 @@ using System.Text;
 
 namespace System.Web.Mail {
 
+#if NET_2_0
+#pragma warning disable 618
+#endif
+
     // wraps a MailMessage to make an easier
     // interface to work with collections of
     // addresses instead of a single string
@@ -248,4 +252,8 @@ namespace System.Web.Mail {
 		}
 #endif
     }	 
+
+#if NET_2_0
+#pragma warning restore 618
+#endif
 }

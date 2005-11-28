@@ -1,3 +1,14 @@
+2005-11-28  Chris Toshok  <toshok@ximian.com>
+
+	* SmtpClient.cs: ignore warning 618 (obsolete) when compiling an
+	already obsolete api (in the 2.0 case).
+
+	* MailAttachment.cs: same.
+
+	* MailMessageWrapper.cs: same.
+
+	* MailMessage.cs: same.
+
 2005-09-15  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* MailPriority.cs: Marked obsolete in 2.0 profile. Fixed line endings.

@@ -36,6 +36,9 @@ using System.Net.Sockets;
 using System.Security.Permissions;
 
 namespace System.Web.Mail {
+#if NET_2_0
+#pragma warning disable 618
+#endif
 
     /// represents a conntection to a smtp server
     internal class SmtpClient {
@@ -242,5 +245,7 @@ namespace System.Web.Mail {
 	
 		
     }
-
+#if NET_2_0
+#pragma warning restore 618
+#endif
 }
