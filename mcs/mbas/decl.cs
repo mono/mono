@@ -1230,7 +1230,8 @@ bf |= BindingFlags.IgnoreCase;
 				// iteration of this loop if there are no members with the name we're
 				// looking for in the current class).
 				if (entry.Container != current) {
-					if (declared_only || DoneSearching (list))
+					//if (declared_only || DoneSearching (list))
+					if (declared_only)
 						break;
 
 					current = entry.Container;

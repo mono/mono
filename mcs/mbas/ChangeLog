@@ -1,3 +1,7 @@
+2005-11-28 Maverson Eduardo Schulze Rosa <maverson@gmail.com>
+ 	* decl.cs: Avoid to stop searching for class members after encountering
+  	the first member, in order to find the inherited or overloaded members.
+ 
 2005-11-28 Jelmer Vernooij <jelmer@samba.org>
 	* Fix to Bugzilla Bug #76476: bash-specific code in 
 	mbas/Test/misc/Makefile
