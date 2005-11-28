@@ -1,3 +1,7 @@
+2005-11-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ListBox.cs: Rows and SelectionMode are virtual in 1.1
+
 2005-11-21 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CheckBox.cs: use the NameAttribute property for setting 'name'.

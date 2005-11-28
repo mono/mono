@@ -88,12 +88,7 @@ namespace System.Web.UI.WebControls {
 		[DefaultValue(4)]
 		[WebSysDescription ("")]
 		[WebCategory ("Appearance")]
-#if NET_2_0
-		public virtual
-#else		
-		public
-#endif
-		int Rows {
+		public virtual int Rows {
 			get {
 				return ViewState.GetInt ("Rows", 4);
 			}
@@ -107,12 +102,7 @@ namespace System.Web.UI.WebControls {
 		[DefaultValue(ListSelectionMode.Single)]
 		[WebSysDescription ("")]
 		[WebCategory ("Behavior")]
-#if NET_2_0
-		public virtual
-#else		
-		public
-#endif		
-		ListSelectionMode SelectionMode {
+		public virtual ListSelectionMode SelectionMode {
 			get {
 				return (ListSelectionMode) ViewState.GetInt ("SelectionMode",
 						(int) ListSelectionMode.Single);
