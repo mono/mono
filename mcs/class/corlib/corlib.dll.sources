@@ -1264,6 +1264,7 @@ System.Text/StringBuilder.cs
 System.Text/UnicodeEncoding.cs
 System.Text/UTF7Encoding.cs
 System.Text/UTF8Encoding.cs
+System.Text/UTF32Encoding.cs
 System.Threading/ApartmentState.cs
 System.Threading/AsyncFlowControl.cs
 System.Threading/AutoResetEvent.cs
