@@ -69,7 +69,8 @@ namespace System.Web.UI {
 		OutputCacheLocation oc_location;
 		Assembly srcAssembly;
 		int appAssemblyIndex = -1;
-                
+
+		[MonoTODO ("deal with AddAssembliesInBin in the 2.0 case")]
 		internal TemplateParser ()
 		{
 			imports = new ArrayList ();
@@ -88,10 +89,15 @@ namespace System.Web.UI {
 			imports.Add ("System.Web.UI.HtmlControls");
 
 			assemblies = new ArrayList ();
+#if CONFIGURATION_2_0
+			foreach (AssemblyInfo info in CompilationConfig.Assemblies)
+				AddAssemblyByName (info.Assembly);
+#else
 			foreach (string a in CompilationConfig.Assemblies)
 				AddAssemblyByName (a);
 			if (CompilationConfig.AssembliesInBin)
 				AddAssembliesInBin ();
+#endif
 
 			language = CompilationConfig.DefaultLanguage;
 		}
@@ -635,9 +641,17 @@ namespace System.Web.UI {
 			get { return oc_param; }
 		}
 
+#if CONFIGURATION_2_0
+		internal PagesSection PagesConfig {
+			get {
+				return WebConfigurationManager.GetSection ("system.web/pages") as PagesSection;
+			}
+		}
+#else
 		internal PagesConfiguration PagesConfig {
 			get { return PagesConfiguration.GetInstance (Context); }
 		}
+#endif
 	}
 }
 

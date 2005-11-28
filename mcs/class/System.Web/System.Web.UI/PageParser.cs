@@ -88,7 +88,13 @@ namespace System.Web.UI
 
 		internal override void ProcessMainAttributes (Hashtable atts)
 		{
-			string enabless = GetString (atts, "EnableSessionState", PagesConfig.EnableSessionState);
+			string enabless = GetString (atts, "EnableSessionState",
+#if CONFIGURATION_2_0
+						     PagesConfig.EnableSessionState.ToString()
+#else
+						     PagesConfig.EnableSessionState
+#endif
+						     );
 			if (enabless != null) {
 				readonlySessionState = (String.Compare (enabless, "readonly", true) == 0);
 				if (readonlySessionState == true || String.Compare (enabless, "true", true) == 0) {

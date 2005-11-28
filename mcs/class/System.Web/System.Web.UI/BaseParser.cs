@@ -46,7 +46,11 @@ namespace System.Web.UI
 		string baseDir;
 		string baseVDir;
 		ILocation location;
+#if CONFIGURATION_2_0
+		CompilationSection compilationConfig;
+#else
 		CompilationConfiguration compilationConfig;
+#endif
 
 		internal string MapPath (string path)
 		{
@@ -136,6 +140,14 @@ namespace System.Web.UI
 			set { baseVDir = value; }
 		}
 
+#if CONFIGURATION_2_0
+		internal CompilationSection CompilationConfig {
+			get {
+				return WebConfigurationManager.GetSection ("system.web/compilation") as CompilationSection;
+			}
+		}
+
+#else
 		internal CompilationConfiguration CompilationConfig {
 			get {
 				if (compilationConfig == null)
@@ -144,6 +156,7 @@ namespace System.Web.UI
 				return compilationConfig;
 			}
 		}
+#endif
 	}
 }
 

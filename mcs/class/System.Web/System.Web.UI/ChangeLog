@@ -1,3 +1,16 @@
+2005-11-28  Chris Toshok  <toshok@ximian.com>
+
+	* Page.cs (GetFormatter): CONFIGURATION_2_0 work.
+
+	* TemplateParser.cs (..ctor): CONFIGURATION_2_0 work.
+	(PagesConfig): add a CONFIGURATION_2_0 version that returns a
+	PagesSection.
+
+	* PageParser.cs (ProcessMainAttributes): CONFIGURATION_2_0 work.
+
+	* BaseParser.cs (CompilationConfig): add a CONFIGURATION_2_0
+	version that returns a CompilationSection.
+
 2005-11-22 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* SimpleWebHandlerParser.cs: removed 'codebehind' related stuff.

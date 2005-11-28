@@ -778,12 +778,20 @@ public class Page : TemplateControl, IHttpHandler
 
 	LosFormatter GetFormatter ()
 	{
+#if CONFIGURATION_2_0
+		PagesSection config = (PagesSection) WebConfigurationManager.GetWebApplicationSection ("system.web/pages");
+#else
 		PagesConfiguration config = PagesConfiguration.GetInstance (_context);
+#endif
 		byte [] vkey = null;
 		if (config.EnableViewStateMac) {
-			MachineKeyConfig mconfig;
-			mconfig = HttpContext.GetAppConfig ("system.web/machineKey") as MachineKeyConfig;
+#if CONFIGURATION_2_0
+			MachineKeySection mconfig = (MachineKeySection) WebConfigurationManager.GetWebApplicationSection ("system.web/machineKey");
+			vkey = mconfig.ValidationKeyBytes;
+#else
+			MachineKeyConfig mconfig = HttpContext.GetAppConfig ("system.web/machineKey") as MachineKeyConfig;
 			vkey = mconfig.ValidationKey;
+#endif
 		}
 
 		return new LosFormatter (config.EnableViewStateMac, vkey);
