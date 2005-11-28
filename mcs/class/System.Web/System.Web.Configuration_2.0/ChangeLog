@@ -1,5 +1,10 @@
 2005-11-28  Chris Toshok  <toshok@ximian.com>
 
+	* SessionStateSection.cs (CookieLess): correct the compat function
+	implementation.
+
+2005-11-28  Chris Toshok  <toshok@ximian.com>
+
 	* GlobalizationSection.cs (GetEncoding): if the encoding name is
 	null, default to utf-8 before we hit the try block, so we don't
 	throw and generate a spurious warning.
