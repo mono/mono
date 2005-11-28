@@ -58,6 +58,10 @@ namespace System.Web.Configuration
 			elementProperty = new ConfigurationElementProperty (new CallbackValidator (typeof (HttpModuleAction), ValidateElement));
 		}
 
+		internal HttpModuleAction ()
+		{
+		}
+
 		[MonoTODO]
 		public HttpModuleAction (string name, string type)
 		{

@@ -63,7 +63,7 @@ namespace System.Web.Configuration
 		[MonoTODO]
 		protected override ConfigurationElement CreateNewElement ()
 		{
-			return new HttpModuleAction("", "");
+			return new HttpModuleAction ();
 		}
 
 		protected override object GetElementKey (ConfigurationElement element)

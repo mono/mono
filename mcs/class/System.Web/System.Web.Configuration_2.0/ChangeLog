@@ -1,5 +1,13 @@
 2005-11-28  Chris Toshok  <toshok@ximian.com>
 
+	* HttpModuleActionCollection.cs (CreateNewElement): use the new
+	HttpModuleAction ctor.
+
+	* HttpModuleAction.cs: add internal ctor with no parameters, for
+	use in HttpModuleActionCollection.
+
+2005-11-28  Chris Toshok  <toshok@ximian.com>
+
 	* GlobalizationSection.cs (..cctor): the encoding
 	ConfigurationProperties are of type "string", even though the
 	properties themselves are of type Encoding.  we do conversions
