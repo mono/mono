@@ -362,8 +362,10 @@ namespace System.Web {
 				app_file = Path.Combine (physical_app_path, "Global.asax");
 				if (!File.Exists (app_file))
 					app_file = Path.Combine (physical_app_path, "global.asax");
-				
+			
+#if !CONFIGURATION_2_0
 				WebConfigurationSettings.Init (context);
+#endif
 				
 				if (File.Exists (app_file)) {
 #if TARGET_J2EE

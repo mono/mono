@@ -273,12 +273,10 @@ namespace System.Web {
 			get { throw new NotImplementedException (); }
 		}
 
-	#if false
 		[MonoTODO]
 		public ProfileBase Profile {
 			get { throw new NotImplementedException (); }
 		}
-	#endif
 #endif
 
 		public void AddError (Exception errorInfo)
@@ -309,7 +307,7 @@ namespace System.Web {
 		}
 
 #if NET_2_0
-		[Obsolete ("see WebConfigurationManager")]
+		[Obsolete ("use WebConfigurationManager.GetWebApplicationSection")]
 #endif
 		public static object GetAppConfig (string name)
 		{
@@ -323,7 +321,11 @@ namespace System.Web {
 #endif
 		public object GetConfig (string name)
 		{
+#if CONFIGURATION_2_0
+			return GetSection (name);
+#else
 			return WebConfigurationSettings.GetConfig (name, this);
+#endif
 		}
 
 #if NET_2_0
@@ -354,7 +356,11 @@ namespace System.Web {
 		[MonoTODO]
 		public object GetSection (string name)
 		{
+#if CONFIGURATION_2_0
+			return WebConfigurationManager.GetSection (name);
+#else
 			throw new NotImplementedException ();
+#endif
 		}
 #endif
 		object IServiceProvider.GetService (Type service)

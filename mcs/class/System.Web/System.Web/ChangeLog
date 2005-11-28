@@ -1,5 +1,12 @@
 2005-11-28  Chris Toshok  <toshok@ximian.com>
 
+	* HttpContext.cs (Profile): remove the #if false from around this,
+	as we now have the ProfileBase type.
+	(GetConfig): add CONFIGURATION_2_0 version.
+	(GetSection): add CONFIGURATION_2_0 version.
+
+2005-11-28  Chris Toshok  <toshok@ximian.com>
+
 	* TraceManager.cs (..ctor): CONFIGURATION_2_0 work.
 
 	* QueueManager.cs (..ctor): CONFIGURATION_2_0 work.
