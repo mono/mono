@@ -192,10 +192,22 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			// value is out
 			Assert.AreEqual (" name cols=\"4\" rows=\"2\"", ta.RenderAttributes ());
 
-			// docs talks about UniqueID but it's not assignable
-			// and anyway it's not what's being done in HtmlInputControl
 			ta.ID = "go";
 			Assert.AreEqual (" name=\"go\" id=\"go\" cols=\"4\" rows=\"2\"", ta.RenderAttributes ());
+		}
+
+		[Test]
+		public void RenderName1 ()
+		{
+			UserControl ctrl = new UserControl ();
+			ctrl.ID = "UC";
+			Page page = new Page ();
+			TestHtmlTextArea ta = new TestHtmlTextArea ();
+			page.Controls.Add (ctrl);
+			ctrl.Controls.Add (ta);
+			ta.Name = "mono";
+			ta.ID = "go";
+			Assert.AreEqual (" name=\"UC:go\" id=\"UC_go\"", ta.RenderAttributes ());
 		}
 
 		[Test]
@@ -209,8 +221,6 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			// value is out
 			Assert.AreEqual ("<textarea name cols=\"4\" rows=\"2\">value</textarea>", ta.Render ());
 
-			// docs talks about UniqueID but it's not assignable
-			// and anyway it's not what's being done in HtmlInputControl
 			ta.ID = "go";
 			Assert.AreEqual ("<textarea name=\"go\" id=\"go\" cols=\"4\" rows=\"2\">value</textarea>", ta.Render ());
 		}

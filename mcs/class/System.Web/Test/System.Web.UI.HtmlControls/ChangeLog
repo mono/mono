@@ -1,5 +1,9 @@
 2005-11-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* HtmlTextAreaTest.cs: add new test for 'Name'.
+
+2005-11-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* HtmlTableTest.cs: remove white-space characters when comparing
 	the output.
 
