@@ -40,7 +40,7 @@ namespace Mono.Unix {
 		{
 		}
 
-		internal UnixFileInfo (string path, Stat stat)
+		internal UnixFileInfo (string path, Native.Stat stat)
 			: base (path, stat)
 		{
 		}

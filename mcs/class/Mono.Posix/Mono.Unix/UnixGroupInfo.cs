@@ -35,33 +35,22 @@ namespace Mono.Unix {
 
 	public sealed class UnixGroupInfo
 	{
-		private Group group;
+		private Native.Group group;
 
 		public UnixGroupInfo (string group)
 		{
-			this.group = new Group ();
-			Group gr;
-			int r = Syscall.getgrnam_r (group, this.group, out gr);
+			this.group = new Native.Group ();
+			Native.Group gr;
+			int r = Native.Syscall.getgrnam_r (group, this.group, out gr);
 			if (r != 0 || gr == null)
 				throw new ArgumentException (Locale.GetText ("invalid group name"), "group");
 		}
 
-		[CLSCompliant (false)]
-		[Obsolete ("Use UnixGroupInfo(long)")]
-		public UnixGroupInfo (uint group)
-		{
-			this.group = new Group ();
-			Group gr;
-			int r = Syscall.getgrgid_r (group, this.group, out gr);
-			if (r != 0 || gr == null)
-				throw new ArgumentException (Locale.GetText ("invalid group id"), "group");
-		}
-
 		public UnixGroupInfo (long group)
 		{
-			this.group = new Group ();
-			Group gr;
-			int r = Syscall.getgrgid_r (Convert.ToUInt32 (group), this.group, out gr);
+			this.group = new Native.Group ();
+			Native.Group gr;
+			int r = Native.Syscall.getgrgid_r (Convert.ToUInt32 (group), this.group, out gr);
 			if (r != 0 || gr == null)
 				throw new ArgumentException (Locale.GetText ("invalid group id"), "group");
 		}
@@ -69,16 +58,16 @@ namespace Mono.Unix {
 		[Obsolete ("Use UnixGroupInfo(Mono.Unix.Native.Group)")]
 		public UnixGroupInfo (Group group)
 		{
-			this.group = group;
-		}
-
-		public UnixGroupInfo (Native.Group group)
-		{
-			this.group = new Group ();
+			this.group = new Native.Group ();
 			this.group.gr_name    = group.gr_name;
 			this.group.gr_passwd  = group.gr_passwd;
 			this.group.gr_gid     = group.gr_gid;
 			this.group.gr_mem     = group.gr_mem;
+		}
+
+		public UnixGroupInfo (Native.Group group)
+		{
+			this.group = group;
 		}
 
 		public string GroupName {
@@ -89,9 +78,7 @@ namespace Mono.Unix {
 			get {return group.gr_passwd;}
 		}
 
-		[CLSCompliant (false)]
-		[Obsolete ("The type of this property will change to Int64 in the next release")]
-		public uint GroupId {
+		public long GroupId {
 			get {return group.gr_gid;}
 		}
 
@@ -100,10 +87,12 @@ namespace Mono.Unix {
 			get {return group.gr_mem;}
 		}
 
-		[Obsolete ("The return type will change to UnixUserInfo[] in the next release")]
-		public string[] GetMembers ()
+		public UnixUserInfo[] GetMembers ()
 		{
-			return group.gr_mem;
+			UnixUserInfo[] members = new UnixUserInfo [group.gr_mem.Length];
+			for (int i = 0; i < members.Length; ++i)
+				members [i] = new UnixUserInfo (group.gr_mem [i]);
+			return members;
 		}
 
 		public string[] GetMemberNames ()
@@ -128,8 +117,7 @@ namespace Mono.Unix {
 			return group.ToString();
 		}
 
-		[Obsolete ("The return type of this method will change to Mono.Unix.Native.Group in the next release")]
-		public Group ToGroup ()
+		public Native.Group ToGroup ()
 		{
 			return group;
 		}

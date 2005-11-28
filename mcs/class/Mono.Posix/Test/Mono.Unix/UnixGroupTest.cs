@@ -16,6 +16,9 @@ using System.Xml;
 
 using Mono.Unix;
 
+using Group = Mono.Unix.Native.Group;
+using Syscall = Mono.Unix.Native.Syscall;
+
 namespace MonoTests.Mono.Unix {
 
 	[TestFixture, Category ("NotDotNet")]
@@ -26,7 +29,7 @@ namespace MonoTests.Mono.Unix {
 		{
 			try {
 				Console.WriteLine ("Listing all groups");
-				foreach (UnixGroupInfo group in UnixGroup.GetLocalGroups ()) {
+				foreach (UnixGroupInfo group in UnixGroupInfo.GetLocalGroups ()) {
 					Console.WriteLine ("\t{0}", group);
 				}
 			}
@@ -44,7 +47,7 @@ namespace MonoTests.Mono.Unix {
 		[Category ("NotWorking")]
 		public void ReentrantConstructors ()
 		{
-			foreach (UnixGroupInfo group in UnixGroup.GetLocalGroups ()) {
+			foreach (UnixGroupInfo group in UnixGroupInfo.GetLocalGroups ()) {
 				try {
 					UnixGroupInfo byName = new UnixGroupInfo (group.GroupName);
 					UnixGroupInfo byId   = new UnixGroupInfo (group.GroupId);
@@ -64,10 +67,10 @@ namespace MonoTests.Mono.Unix {
 		[Test]
 		public void NonReentrantSyscalls ()
 		{
-			foreach (UnixGroupInfo group in UnixGroup.GetLocalGroups ()) {
+			foreach (UnixGroupInfo group in UnixGroupInfo.GetLocalGroups ()) {
 				try {
 					Group byName = Syscall.getgrnam (group.GroupName);
-					Group byId   = Syscall.getgrgid (group.GroupId);
+					Group byId   = Syscall.getgrgid ((uint) group.GroupId);
 
 					Assert.IsNotNull (byName, "#TNRS: access by name");
 					Assert.IsNotNull (byId,   "#TNRS: access by gid");

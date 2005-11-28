@@ -1,3 +1,10 @@
+2005-11-28  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* UnixGroupTest.cs: The type of UnixGroupInfo.GroupId changed.  UnixGroup is
+	  deprecated; use UnixGroupInfo instead.
+	* UnixUserTest.cs: The type of UnixUserInfo.UserId changed.  UnixUser if
+	  deprecated; use UnixUserInfo instead.
+
 2005-10-26  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* UnixMarshalTest.cs: s/StringToAlloc/StringToHeap/g (UnixMarshal change).

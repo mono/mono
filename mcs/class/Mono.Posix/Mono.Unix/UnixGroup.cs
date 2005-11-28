@@ -41,26 +41,26 @@ namespace Mono.Unix {
 		[Obsolete ("Use new UnixGroupInfo(group).GroupId")]
 		public static uint GetGroupId (string group)
 		{
-			return new UnixGroupInfo (group).GroupId;
+			return Convert.ToUInt32 (new UnixGroupInfo (group).GroupId);
 		}
 
 		[Obsolete ("Use new UnixGroupInfo(group).GetMemberNames")]
 		public static string[] GetMembers (string group)
 		{
-			return new UnixGroupInfo (group).Members;
+			return new UnixGroupInfo (group).GetMemberNames();
 		}
 
 		[CLSCompliant (false)]
 		[Obsolete ("Use new UnixGroupInfo(group).GetMemberNames")]
 		public static string[] GetMembers (uint group)
 		{
-			return new UnixGroupInfo (group).Members;
+			return new UnixGroupInfo (group).GetMemberNames ();
 		}
 
 		[Obsolete ("Use new UnixGroupInfo(group).GetMemberNames")]
 		public static string[] GetMembers (long group)
 		{
-			return new UnixGroupInfo (group).GetMembers ();
+			return new UnixGroupInfo (group).GetMemberNames ();
 		}
 
 		[CLSCompliant (false)]

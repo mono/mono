@@ -4,7 +4,7 @@
 // Authors:
 //   Jonathan Pryor (jonpryor@vt.edu)
 //
-// (C) 2004 Jonathan Pryor
+// (C) 2004-2005 Jonathan Pryor
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -42,7 +42,7 @@ namespace Mono.Unix {
 		{
 		}
 
-		internal UnixDirectoryInfo (string path, Stat stat)
+		internal UnixDirectoryInfo (string path, Native.Stat stat)
 			: base (path, stat)
 		{
 		}
@@ -119,8 +119,7 @@ namespace Mono.Unix {
 			base.Refresh ();
 		}
 
-		[Obsolete ("The return type will change to Mono.Unix.Native.Dirent[] in the next release")]
-		public Dirent[] GetEntries ()
+		public Native.Dirent[] GetEntries ()
 		{
 			IntPtr dirp = Syscall.opendir (FullPath);
 			if (dirp == IntPtr.Zero)
@@ -128,7 +127,7 @@ namespace Mono.Unix {
 
 			bool complete = false;
 			try {
-				Dirent[] entries = GetEntries (dirp);
+				Native.Dirent[] entries = GetEntries (dirp);
 				complete = true;
 				return entries;
 			}
@@ -140,15 +139,15 @@ namespace Mono.Unix {
 			}
 		}
 
-		private static Dirent[] GetEntries (IntPtr dirp)
+		private static Native.Dirent[] GetEntries (IntPtr dirp)
 		{
 			ArrayList entries = new ArrayList ();
 
 			int r;
 			IntPtr result;
 			do {
-				Dirent d = new Dirent ();
-				r = Syscall.readdir_r (dirp, d, out result);
+				Native.Dirent d = new Native.Dirent ();
+				r = Native.Syscall.readdir_r (dirp, d, out result);
 				if (r == 0 && result != IntPtr.Zero)
 					// don't include current & parent dirs
 					if (d.d_name != "." && d.d_name != "..")
@@ -157,13 +156,12 @@ namespace Mono.Unix {
 			if (r != 0)
 				UnixMarshal.ThrowExceptionForLastErrorIf (r);
 
-			return (Dirent[]) entries.ToArray (typeof(Dirent));
+			return (Native.Dirent[]) entries.ToArray (typeof(Native.Dirent));
 		}
 
-		[Obsolete ("The return type will change to Mono.Unix.Native.Dirent[] in the next release")]
-		public Dirent[] GetEntries (Regex regex)
+		public Native.Dirent[] GetEntries (Regex regex)
 		{
-			IntPtr dirp = Syscall.opendir (FullPath);
+			IntPtr dirp = Native.Syscall.opendir (FullPath);
 			if (dirp == IntPtr.Zero)
 				UnixMarshal.ThrowExceptionForLastError ();
 
@@ -171,20 +169,20 @@ namespace Mono.Unix {
 				return GetEntries (dirp, regex);
 			}
 			finally {
-				int r = Syscall.closedir (dirp);
+				int r = Native.Syscall.closedir (dirp);
 				UnixMarshal.ThrowExceptionForLastErrorIf (r);
 			}
 		}
 
-		private static Dirent[] GetEntries (IntPtr dirp, Regex regex)
+		private static Native.Dirent[] GetEntries (IntPtr dirp, Regex regex)
 		{
 			ArrayList entries = new ArrayList ();
 
 			int r;
 			IntPtr result;
 			do {
-				Dirent d = new Dirent ();
-				r = Syscall.readdir_r (dirp, d, out result);
+				Native.Dirent d = new Native.Dirent ();
+				r = Native.Syscall.readdir_r (dirp, d, out result);
 				if (r == 0 && result != IntPtr.Zero && regex.Match (d.d_name).Success) {
 					// don't include current & parent dirs
 					if (d.d_name != "." && d.d_name != "..")
@@ -194,11 +192,10 @@ namespace Mono.Unix {
 			if (r != 0)
 				UnixMarshal.ThrowExceptionForLastError ();
 
-			return (Dirent[]) entries.ToArray (typeof(Dirent));
+			return (Native.Dirent[]) entries.ToArray (typeof(Native.Dirent));
 		}
 
-		[Obsolete ("The return type will change to Mono.Unix.Native.Dirent[] in the next release")]
-		public Dirent[] GetEntries (string regex)
+		public Native.Dirent[] GetEntries (string regex)
 		{
 			Regex re = new Regex (regex);
 			return GetEntries (re);
@@ -206,11 +203,11 @@ namespace Mono.Unix {
 
 		public UnixFileSystemInfo[] GetFileSystemEntries ()
 		{
-			Dirent[] dentries = GetEntries ();
+			Native.Dirent[] dentries = GetEntries ();
 			return GetFileSystemEntries (dentries);
 		}
 
-		private UnixFileSystemInfo[] GetFileSystemEntries (Dirent[] dentries)
+		private UnixFileSystemInfo[] GetFileSystemEntries (Native.Dirent[] dentries)
 		{
 			UnixFileSystemInfo[] entries = new UnixFileSystemInfo[dentries.Length];
 			for (int i = 0; i != entries.Length; ++i)
@@ -220,7 +217,7 @@ namespace Mono.Unix {
 
 		public UnixFileSystemInfo[] GetFileSystemEntries (Regex regex)
 		{
-			Dirent[] dentries = GetEntries (regex);
+			Native.Dirent[] dentries = GetEntries (regex);
 			return GetFileSystemEntries (dentries);
 		}
 
@@ -245,7 +242,7 @@ namespace Mono.Unix {
 
 		public static void SetCurrentDirectory (string path)
 		{
-			int r = Syscall.chdir (path);
+			int r = Native.Syscall.chdir (path);
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 		}
 	}

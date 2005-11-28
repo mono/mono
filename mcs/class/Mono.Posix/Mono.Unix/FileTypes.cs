@@ -34,14 +34,18 @@ namespace Mono.Unix {
 	[Flags]
 	public enum FileTypes {
 		Directory         = (int) Native.FilePermissions.S_IFDIR,
+		[Obsolete ("Use CharacterDevice")]
 		CharacterSpecial  = (int) Native.FilePermissions.S_IFCHR,
+		CharacterDevice   = (int) Native.FilePermissions.S_IFCHR,
+		[Obsolete ("Use BlockDevice")]
 		BlockSpecial      = (int) Native.FilePermissions.S_IFBLK,
+		BlockDevice       = (int) Native.FilePermissions.S_IFBLK,
 		RegularFile       = (int) Native.FilePermissions.S_IFREG,
 		Fifo              = (int) Native.FilePermissions.S_IFIFO,
 		SymbolicLink      = (int) Native.FilePermissions.S_IFLNK,
 		Socket            = (int) Native.FilePermissions.S_IFSOCK,
 		AllTypes          = 
-			Directory | CharacterSpecial | BlockSpecial | RegularFile | Fifo | 
+			Directory | CharacterDevice | BlockDevice | RegularFile | Fifo | 
 			SymbolicLink | Socket,
 	}
 }

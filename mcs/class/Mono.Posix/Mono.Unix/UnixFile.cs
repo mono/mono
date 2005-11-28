@@ -97,10 +97,10 @@ namespace Mono.Unix {
 		}
 
 		[Obsolete ("Use new UnixFileInfo(path).ToStat()")]
-		public static Stat GetFileStatus (string path)
+		public static Native.Stat GetFileStatus (string path)
 		{
-			Stat stat;
-			int r = Syscall.stat (path, out stat);
+			Native.Stat stat;
+			int r = Native.Syscall.stat (path, out stat);
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 			return stat;
 		}

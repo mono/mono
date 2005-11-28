@@ -17,6 +17,9 @@ using System.Collections;
 
 using Mono.Unix;
 
+using Passwd = Mono.Unix.Native.Passwd;
+using Syscall = Mono.Unix.Native.Syscall;
+
 namespace MonoTests.Mono.Unix {
 
 	[TestFixture, Category ("NotDotNet")]
@@ -27,7 +30,7 @@ namespace MonoTests.Mono.Unix {
 		{
 			try {
 				Console.WriteLine ("Listing all users");
-				foreach (UnixUserInfo user in UnixUser.GetLocalUsers ()) {
+				foreach (UnixUserInfo user in UnixUserInfo.GetLocalUsers ()) {
 					Console.WriteLine ("\t{0}", user);
 				}
 			}
@@ -80,7 +83,7 @@ namespace MonoTests.Mono.Unix {
 		public void NonReentrantSyscalls ()
 		{
 			ArrayList user_ids = new ArrayList (4);
-			IList users = UnixUser.GetLocalUsers ();
+			IList users = UnixUserInfo.GetLocalUsers ();
 
 			foreach (UnixUserInfo user in users) {
 				try {
@@ -99,9 +102,9 @@ namespace MonoTests.Mono.Unix {
 				}
 			}
 
-			foreach (uint uid in user_ids) {
+			foreach (long uid in user_ids) {
 				try {
-					Passwd byId   = Syscall.getpwuid (uid);
+					Passwd byId   = Syscall.getpwuid (Convert.ToUInt32 (uid));
 					Assert.IsNotNull (byId,   "#TNRS: access by uid");
 
 					UnixUserInfo u = new UnixUserInfo (byId);

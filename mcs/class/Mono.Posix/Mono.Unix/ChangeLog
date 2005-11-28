@@ -1,3 +1,19 @@
+2005-11-18  Jonathan Pryor <jonpryor@vt.edu>
+
+	* Catalog.cs, UnixDirectory.cs, UnixDirectoryInfo.cs, UnixDriveInfo.cs,
+	  UnixEnvironment.cs, UnixFile.cs, UnixFileInfo.cs, UnixFileSystemInfo.cs,
+	  UnixGroup.cs, UnixGroupInfo.cs, UnixProcess.cs, UnixSymbolicLinkInfo.cs,
+	  UnixUser.cs, UnixUserInfo.cs: Change types of [Obsolete] members for
+	  consistency and CLS compliance; Mono.Unix.Native type migration.
+	* FileTypes.cs: s/Special/Device/g (CharacterSpecial ==> CharacterDevice).
+	  The *Special was a BSD convention, while UnixFileSystemInfo uses *Device
+	  in property names, and these should be consistent.  Changing the enum is
+	  simpler than changing the UnixFileSystemInfo properties.
+	* UnixIOException.cs: s/error/errno/g (FxCop suggestion); change type of
+	  ErrorCode property.
+	* UnixMarshal.cs: s/error/errno/g (FxCop suggestion); Mono.Unix.Native
+	  type migration.
+
 2005-11-08  Jonathan Pryor <jonpryor@vt.edu>
 
 	* Catalog.cs: Exception safety improvements (don't let memory leak!); check

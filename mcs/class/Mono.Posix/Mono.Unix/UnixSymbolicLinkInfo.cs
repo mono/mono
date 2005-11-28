@@ -4,7 +4,7 @@
 // Authors:
 //   Jonathan Pryor (jonpryor@vt.edu)
 //
-// (C) 2004 Jonathan Pryor
+// (C) 2004-2005 Jonathan Pryor
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -40,7 +40,7 @@ namespace Mono.Unix {
 		{
 		}
 
-		internal UnixSymbolicLinkInfo (string path, Stat stat)
+		internal UnixSymbolicLinkInfo (string path, Native.Stat stat)
 			: base (path, stat)
 		{
 		}
@@ -103,9 +103,9 @@ namespace Mono.Unix {
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 		}
 
-		protected override int GetFileStatus (string path, out Stat stat)
+		protected override int GetFileStatus (string path, out Native.Stat stat)
 		{
-			return Syscall.lstat (path, out stat);
+			return Native.Syscall.lstat (path, out stat);
 		}
 
 		private string ReadLink ()

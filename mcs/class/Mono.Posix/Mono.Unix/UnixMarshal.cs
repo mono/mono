@@ -4,7 +4,7 @@
 // Authors:
 //   Jonathan Pryor (jonpryor@vt.edu)
 //
-// (C) 2004 Jonathan Pryor
+// (C) 2004-2005 Jonathan Pryor
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -55,7 +55,7 @@ namespace Mono.Unix {
 	//            be thread-safe between managed & unmanaged code.
 	internal class ErrorMarshal
 	{
-		internal delegate string ErrorTranslator (Error errno);
+		internal delegate string ErrorTranslator (Native.Errno errno);
 
 		internal static readonly ErrorTranslator Translate;
 
@@ -63,26 +63,26 @@ namespace Mono.Unix {
 		{
 			try {
 				Translate = new ErrorTranslator (strerror_r);
-				Translate (Error.ERANGE);
+				Translate (Native.Errno.ERANGE);
 			}
-			catch (EntryPointNotFoundException e) {
+			catch (EntryPointNotFoundException) {
 				Translate = new ErrorTranslator (strerror);
 			}
 		}
 
-		private static string strerror (Error errno)
+		private static string strerror (Native.Errno errno)
 		{
-			return Stdlib.strerror (errno);
+			return Native.Stdlib.strerror (errno);
 		}
 
-		private static string strerror_r (Error errno)
+		private static string strerror_r (Native.Errno errno)
 		{
 			StringBuilder buf = new StringBuilder (16);
 			int r = 0;
 			do {
 				buf.Capacity *= 2;
-				r = Syscall.strerror_r (errno, buf);
-			} while (r == -1 && Stdlib.GetLastError() == Error.ERANGE);
+				r = Native.Syscall.strerror_r (errno, buf);
+			} while (r == -1 && Native.Stdlib.GetLastError() == Native.Errno.ERANGE);
 
 			if (r == -1)
 				return "** Unknown error code: " + ((int) errno) + "**";
@@ -97,13 +97,13 @@ namespace Mono.Unix {
 		[Obsolete ("Use GetErrorDescription (Mono.Unix.Native.Errno)")]
 		public static string GetErrorDescription (Error errno)
 		{
-			return ErrorMarshal.Translate (errno);
+			return ErrorMarshal.Translate ((Native.Errno) (int) errno);
 		}
 
 		[CLSCompliant (false)]
 		public static string GetErrorDescription (Native.Errno errno)
 		{
-			return ErrorMarshal.Translate ((Error) (int) errno);
+			return ErrorMarshal.Translate (errno);
 		}
 
 		[Obsolete ("Use AllocHeap(long)")]
@@ -177,7 +177,7 @@ namespace Mono.Unix {
 
 			int len = -1;
 
-			// Encodings that will always end with a null byte
+			// Encodings that will always end with a single null byte
 			if (typeof(UTF8Encoding).IsAssignableFrom (encodingType) ||
 					typeof(UTF7Encoding).IsAssignableFrom (encodingType) ||
 					typeof(UnixEncoding).IsAssignableFrom (encodingType) ||
@@ -365,19 +365,19 @@ namespace Mono.Unix {
 		}
 
 		[Obsolete ("Use ShouldRetrySyscall (int, out Mono.Unix.Native.Errno")]
-		public static bool ShouldRetrySyscall (int r, out Error error)
+		public static bool ShouldRetrySyscall (int r, out Error errno)
 		{
-			error = (Error) 0;
-			if (r == -1 && (error = Stdlib.GetLastError ()) == Error.EINTR)
+			errno = (Error) 0;
+			if (r == -1 && (errno = Stdlib.GetLastError ()) == Error.EINTR)
 				return true;
 			return false;
 		}
 
 		[CLSCompliant (false)]
-		public static bool ShouldRetrySyscall (int r, out Native.Errno error)
+		public static bool ShouldRetrySyscall (int r, out Native.Errno errno)
 		{
-			error = (Native.Errno) 0;
-			if (r == -1 && (error = Native.Stdlib.GetLastError ()) == Native.Errno.EINTR)
+			errno = (Native.Errno) 0;
+			if (r == -1 && (errno = Native.Stdlib.GetLastError ()) == Native.Errno.EINTR)
 				return true;
 			return false;
 		}

@@ -189,17 +189,16 @@ namespace Mono.Unix {
 			return Syscall.getpgrp ();
 		}
 
-		[CLSCompliant (false)]
-		[Obsolete ("Use GetSupplementaryGroupIds.  " +
-				"The return type will change to UnixGroupInfo[] in the next release.")]
-		public static uint[] GetSupplementaryGroups ()
+		public static UnixGroupInfo[] GetSupplementaryGroups ()
 		{
-			return GetSupplementaryGroupIds ();
+			uint[] ids = _GetSupplementaryGroupIds ();
+			UnixGroupInfo[] groups = new UnixGroupInfo [ids.Length];
+			for (int i = 0; i < groups.Length; ++i)
+				groups [i] = new UnixGroupInfo (ids [i]);
+			return groups;
 		}
 
-		[CLSCompliant (false)]
-		[Obsolete ("The return type will change to Int64[] in the next release")]
-		public static uint[] GetSupplementaryGroupIds ()
+		private static uint[] _GetSupplementaryGroupIds ()
 		{
 			int ngroups = Syscall.getgroups (0, new uint[]{});
 			if (ngroups == -1)
@@ -207,6 +206,25 @@ namespace Mono.Unix {
 			uint[] groups = new uint[ngroups];
 			int r = Syscall.getgroups (groups);
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
+			return groups;
+		}
+
+		public static void SetSupplementaryGroups (UnixGroupInfo[] groups)
+		{
+			uint[] list = new uint [groups.Length];
+			for (int i = 0; i < list.Length; ++i) {
+				list [i] = Convert.ToUInt32 (groups [i].GroupId);
+			}
+			int r = Syscall.setgroups (list);
+			UnixMarshal.ThrowExceptionForLastErrorIf (r);
+		}
+
+		public static long[] GetSupplementaryGroupIds ()
+		{
+			uint[] _groups = _GetSupplementaryGroupIds ();
+			long[] groups = new long [_groups.Length];
+			for (int i = 0; i < groups.Length; ++i)
+				groups [i] = _groups [i];
 			return groups;
 		}
 

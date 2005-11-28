@@ -78,19 +78,19 @@ namespace Mono.Unix {
 		}
 
 		[Obsolete ("Use new UnixDirectoryInfo(path).GetEntries()")]
-		public static Dirent[] GetEntries (string path)
+		public static Native.Dirent[] GetEntries (string path)
 		{
 			return new UnixDirectoryInfo(path).GetEntries ();
 		}
 
 		[Obsolete ("Use new UnixDirectoryInfo(path).GetEntries(regex)")]
-		public static Dirent[] GetEntries (string path, Regex regex)
+		public static Native.Dirent[] GetEntries (string path, Regex regex)
 		{
 			return new UnixDirectoryInfo(path).GetEntries (regex);
 		}
 
 		[Obsolete ("Use new UnixDirectoryInfo(path).GetEntries(regex)")]
-		public static Dirent[] GetEntries (string path, string regex)
+		public static Native.Dirent[] GetEntries (string path, string regex)
 		{
 			return new UnixDirectoryInfo(path).GetEntries (regex);
 		}
@@ -114,7 +114,7 @@ namespace Mono.Unix {
 		}
 
 		[Obsolete ("Use new UnixDirectoryInfo(path).ToStat()")]
-		public static Stat GetDirectoryStatus (string path)
+		public static Native.Stat GetDirectoryStatus (string path)
 		{
 			return UnixFile.GetFileStatus (path);
 		}

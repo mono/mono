@@ -115,10 +115,8 @@ namespace Mono.Unix {
 			// set {}
 		}
 
-		[CLSCompliant(false)]
-		[Obsolete ("The return type will change to Int64 in the next release")]
-		public ulong MaximumFilenameLength {
-			get {Refresh (); return stat.f_namemax;}
+		public long MaximumFilenameLength {
+			get {Refresh (); return Convert.ToInt64 (stat.f_namemax);}
 		}
 
 		public static UnixDriveInfo[] GetDrives ()

@@ -4,7 +4,7 @@
 // Authors:
 //   Jonathan Pryor (jonpryor@vt.edu)
 //
-// (C) 2004 Jonathan Pryor
+// (C) 2004-2005 Jonathan Pryor
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -77,15 +77,13 @@ namespace Mono.Unix {
 			}
 		}
 
-		[CLSCompliant (false)]
-		[Obsolete ("The type of this property will change to Mono.Unix.Native.Signum in the next release.")]
-		public Signum TerminationSignal {
+		public Native.Signum TerminationSignal {
 			get {
 				if (!HasSignaled)
 					throw new InvalidOperationException (
 							Locale.GetText ("Process wasn't terminated by a signal"));
 				int status = GetProcessStatus ();
-				return Syscall.WTERMSIG (status);
+				return Native.Syscall.WTERMSIG (status);
 			}
 		}
 
@@ -96,15 +94,13 @@ namespace Mono.Unix {
 			}
 		}
 
-		[CLSCompliant (false)]
-		[Obsolete ("The type of this property will change to Mono.Unix.Native.Signum in the next release.")]
-		public Signum StopSignal {
+		public Native.Signum StopSignal {
 			get {
 				if (!HasStopped)
 					throw new InvalidOperationException (
 							Locale.GetText ("Process isn't stopped"));
 				int status = GetProcessStatus ();
-				return Syscall.WSTOPSIG (status);
+				return Native.Syscall.WSTOPSIG (status);
 			}
 		}
 

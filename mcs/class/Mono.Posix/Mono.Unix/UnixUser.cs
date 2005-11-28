@@ -42,7 +42,7 @@ namespace Mono.Unix {
 		[Obsolete ("Use new UnixUserInfo(user).UserId")]
 		public static uint GetUserId (string user)
 		{
-			return new UnixUserInfo (user).UserId;
+			return Convert.ToUInt32 (new UnixUserInfo (user).UserId);
 		}
 
 		[CLSCompliant (false)]
@@ -83,14 +83,14 @@ namespace Mono.Unix {
 		[Obsolete ("Use new UnixUserInfo(user).GroupId")]
 		public static uint GetGroupId (string user)
 		{
-			return new UnixUserInfo (user).GroupId;
+			return Convert.ToUInt32 (new UnixUserInfo (user).GroupId);
 		}
 
 		[CLSCompliant (false)]
 		[Obsolete ("Use new UnixUserInfo(user).GroupId")]
 		public static uint GetGroupId (uint user)
 		{
-			return new UnixUserInfo (user).GroupId;
+			return Convert.ToUInt32 (new UnixUserInfo (user).GroupId);
 		}
 
 		[Obsolete ("Use new UnixUserInfo(user).RealName")]

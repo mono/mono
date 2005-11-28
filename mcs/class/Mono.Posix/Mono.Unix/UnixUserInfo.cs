@@ -35,13 +35,13 @@ namespace Mono.Unix {
 
 	public sealed class UnixUserInfo
 	{
-		private Passwd passwd;
+		private Native.Passwd passwd;
 
 		public UnixUserInfo (string user)
 		{
-			passwd = new Passwd ();
-			Passwd pw;
-			int r = Syscall.getpwnam_r (user, passwd, out pw);
+			passwd = new Native.Passwd ();
+			Native.Passwd pw;
+			int r = Native.Syscall.getpwnam_r (user, passwd, out pw);
 			if (r != 0 || pw == null)
 				throw new ArgumentException (Locale.GetText ("invalid username"), "user");
 		}
@@ -49,18 +49,18 @@ namespace Mono.Unix {
 		[CLSCompliant (false)]
 		public UnixUserInfo (uint user)
 		{
-			passwd = new Passwd ();
-			Passwd pw;
-			int r = Syscall.getpwuid_r (user, passwd, out pw);
+			passwd = new Native.Passwd ();
+			Native.Passwd pw;
+			int r = Native.Syscall.getpwuid_r (user, passwd, out pw);
 			if (r != 0 || pw == null)
 				throw new ArgumentException (Locale.GetText ("invalid user id"), "user");
 		}
 
 		public UnixUserInfo (long user)
 		{
-			passwd = new Passwd ();
-			Passwd pw;
-			int r = Syscall.getpwuid_r (Convert.ToUInt32 (user), passwd, out pw);
+			passwd = new Native.Passwd ();
+			Native.Passwd pw;
+			int r = Native.Syscall.getpwuid_r (Convert.ToUInt32 (user), passwd, out pw);
 			if (r != 0 || pw == null)
 				throw new ArgumentException (Locale.GetText ("invalid user id"), "user");
 		}
@@ -68,12 +68,7 @@ namespace Mono.Unix {
 		[Obsolete ("Use UnixUserInfo (Mono.Unix.Native.Passwd)")]
 		public UnixUserInfo (Passwd passwd)
 		{
-			this.passwd = passwd;
-		}
-
-		public UnixUserInfo (Native.Passwd passwd)
-		{
-			this.passwd = new Passwd ();
+			this.passwd = new Native.Passwd ();
 			this.passwd.pw_name   = passwd.pw_name;
 			this.passwd.pw_passwd = passwd.pw_passwd;
 			this.passwd.pw_uid    = passwd.pw_uid;
@@ -81,6 +76,11 @@ namespace Mono.Unix {
 			this.passwd.pw_gecos  = passwd.pw_gecos;
 			this.passwd.pw_dir    = passwd.pw_dir;
 			this.passwd.pw_shell  = passwd.pw_shell;
+		}
+
+		public UnixUserInfo (Native.Passwd passwd)
+		{
+			this.passwd = passwd;
 		}
 
 		public string UserName {
@@ -91,9 +91,7 @@ namespace Mono.Unix {
 			get {return passwd.pw_passwd;}
 		}
 
-		[CLSCompliant (false)]
-		[Obsolete ("The type of this property will change to Int64 in the next release")]
-		public uint UserId {
+		public long UserId {
 			get {return passwd.pw_uid;}
 		}
 
@@ -101,9 +99,7 @@ namespace Mono.Unix {
 			get {return new UnixGroupInfo (passwd.pw_gid);}
 		}
 
-		[CLSCompliant (false)]
-		[Obsolete ("The type of this property will change to Int64 in the next release")]
-		public uint GroupId {
+		public long GroupId {
 			get {return passwd.pw_gid;}
 		}
 
@@ -164,8 +160,7 @@ namespace Mono.Unix {
 			return buf.ToString ();
 		}
 
-		[Obsolete ("The return type of this method will change to Mono.Unix.Native.Passwd in the next release")]
-		public Passwd ToPasswd ()
+		public Native.Passwd ToPasswd ()
 		{
 			return passwd;
 		}

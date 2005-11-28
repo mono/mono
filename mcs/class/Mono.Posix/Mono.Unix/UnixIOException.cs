@@ -4,7 +4,7 @@
 // Authors:
 //   Jonathan Pryor (jonpryor@vt.edu)
 //
-// (C) 2004 Jonathan Pryor
+// (C) 2004-2005 Jonathan Pryor
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -37,63 +37,60 @@ namespace Mono.Unix {
 	[Serializable]
 	public class UnixIOException : IOException
 	{
-		private int error;
+		private int errno;
 
 		public UnixIOException ()
 			: this (Marshal.GetLastWin32Error())
 		{}
 		
-		public UnixIOException (int error)
-			: base (UnixMarshal.GetErrorDescription (Native.NativeConvert.ToErrno (error)))
+		public UnixIOException (int errno)
+			: base (UnixMarshal.GetErrorDescription (Native.NativeConvert.ToErrno (errno)))
 		{
-			this.error = error;
+			this.errno = errno;
 		}
 		
-		public UnixIOException (int error, Exception inner)
-			: base (UnixMarshal.GetErrorDescription (Native.NativeConvert.ToErrno (error)), inner)
+		public UnixIOException (int errno, Exception inner)
+			: base (UnixMarshal.GetErrorDescription (Native.NativeConvert.ToErrno (errno)), inner)
 		{
-			this.error = error;
+			this.errno = errno;
 		}
 
 		[Obsolete ("Use UnixIOException (Mono.Unix.Native.Errno) constructor")]
-		public UnixIOException (Error error)
-			: base (UnixMarshal.GetErrorDescription (error))
+		public UnixIOException (Error errno)
+			: base (UnixMarshal.GetErrorDescription (errno))
 		{
-			this.error = UnixConvert.FromError (error);
+			this.errno = UnixConvert.FromError (errno);
 		}
 
 		[Obsolete ("Use UnixIOException (Mono.Unix.Native.Errno, System.Exception) constructor")]
-		public UnixIOException (Error error, Exception inner)
-			: base (UnixMarshal.GetErrorDescription (error), inner)
+		public UnixIOException (Error errno, Exception inner)
+			: base (UnixMarshal.GetErrorDescription (errno), inner)
 		{
-			this.error = UnixConvert.FromError (error);
+			this.errno = UnixConvert.FromError (errno);
 		}
 
-		[CLSCompliant (false)]
-		public UnixIOException (Native.Errno error)
-			: base (UnixMarshal.GetErrorDescription (error))
+		public UnixIOException (Native.Errno errno)
+			: base (UnixMarshal.GetErrorDescription (errno))
 		{
-			this.error = Native.NativeConvert.FromErrno (error);
+			this.errno = Native.NativeConvert.FromErrno (errno);
 		}
 
-		[Obsolete ("Use UnixIOException (Mono.Unix.Native.Errno, System.Exception) constructor")]
-		[CLSCompliant (false)]
-		public UnixIOException (Native.Errno error, Exception inner)
-			: base (UnixMarshal.GetErrorDescription (error), inner)
+		public UnixIOException (Native.Errno errno, Exception inner)
+			: base (UnixMarshal.GetErrorDescription (errno), inner)
 		{
-			this.error = Native.NativeConvert.FromErrno (error);
+			this.errno = Native.NativeConvert.FromErrno (errno);
 		}
 
 		public UnixIOException (string message)
 			: base (message)
 		{
-			this.error = 0;
+			this.errno = 0;
 		}
 
 		public UnixIOException (string message, Exception inner)
 			: base (message, inner)
 		{
-			this.error = 0;
+			this.errno = 0;
 		}
 
 		protected UnixIOException (SerializationInfo info, StreamingContext context)
@@ -102,12 +99,12 @@ namespace Mono.Unix {
 		}
 		
 		public int NativeErrorCode {
-			get {return error;}
+			get {return errno;}
 		}
 		
 		[Obsolete ("The type of this property will change in the next release")]
-		public Error ErrorCode {
-			get {return UnixConvert.ToError (error);}
+		public Native.Errno ErrorCode {
+			get {return Native.NativeConvert.ToErrno (errno);}
 		}
 	}
 }

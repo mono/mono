@@ -35,7 +35,7 @@ namespace Mono.Unix {
 
 	public abstract class UnixFileSystemInfo
 	{
-		private Stat stat;
+		private Native.Stat stat;
 		private string fullPath;
 		private string originalPath;
 		private bool valid = false;
@@ -48,20 +48,11 @@ namespace Mono.Unix {
 			Refresh (true);
 		}
 
-		[Obsolete ("Use UnixFileSystemInfo (string, Mono.Unix.Native.Stat)")]
-		internal UnixFileSystemInfo (String path, Stat stat)
-		{
-			this.originalPath = path;
-			this.fullPath = UnixPath.GetFullPath (path);
-			this.stat = stat;
-			this.valid = true;
-		}
-
 		internal UnixFileSystemInfo (String path, Native.Stat stat)
 		{
 			this.originalPath = path;
 			this.fullPath = UnixPath.GetFullPath (path);
-			// this.stat = stat;
+			this.stat = stat;
 			this.valid = true;
 		}
 
@@ -95,34 +86,24 @@ namespace Mono.Unix {
 			}
 		}
 
-		[CLSCompliant (false)]
-		[Obsolete ("The type of this property will change to Int64 in the next release.")]
-		public ulong Device {
-			get {AssertValid (); return stat.st_dev;}
+		public long Device {
+			get {AssertValid (); return Convert.ToInt64 (stat.st_dev);}
 		}
 
-		[CLSCompliant (false)]
-		[Obsolete ("The type of this property will change to Int64 in the next release.")]
-		public ulong Inode {
-			get {AssertValid (); return stat.st_ino;}
+		public long Inode {
+			get {AssertValid (); return Convert.ToInt64 (stat.st_ino);}
 		}
 
 		[CLSCompliant (false)]
 		[Obsolete ("Use Protection.")]
 		public FilePermissions Mode {
-			get {AssertValid (); return stat.st_mode;}
+			get {AssertValid (); return (FilePermissions) stat.st_mode;}
 		}
 
 		[CLSCompliant (false)]
 		[Obsolete ("Use FileAccessPermissions.")]
 		public FilePermissions Permissions {
-			get {AssertValid (); return stat.st_mode & ~FilePermissions.S_IFMT;}
-		}
-
-		[CLSCompliant (false)]
-		[Obsolete ("The type of this property will change to FileTypes in the next release.")]
-		public FilePermissions FileType {
-			get {AssertValid (); return stat.st_mode & FilePermissions.S_IFMT;}
+			get {AssertValid (); return (FilePermissions) stat.st_mode & ~FilePermissions.S_IFMT;}
 		}
 
 		[CLSCompliant (false)]
@@ -134,7 +115,6 @@ namespace Mono.Unix {
 			}
 		}
 
-#if false
 		public FileTypes FileType {
 			get {
 				AssertValid ();
@@ -143,7 +123,6 @@ namespace Mono.Unix {
 			}
 			// no set as chmod(2) won't accept changing the file type.
 		}
-#endif
 
 		public FileAccessPermissions FileAccessPermissions {
 			get {
@@ -175,38 +154,28 @@ namespace Mono.Unix {
 			}
 		}
 
-		[CLSCompliant (false)]
-		[Obsolete ("The type of this property will change to Int64 in the next release.")]
-		public ulong LinkCount {
-			get {AssertValid (); return (ulong) stat.st_nlink;}
+		public long LinkCount {
+			get {AssertValid (); return Convert.ToInt64 (stat.st_nlink);}
 		}
 
-		[CLSCompliant (false)]
-		[Obsolete ("Use OwnerUserId.  " +
-				"The type of this property will change to UnixUserInfo in the next release.")]
-		public uint OwnerUser {
-			get {AssertValid (); return stat.st_uid;}
+		public UnixUserInfo OwnerUser {
+			get {AssertValid (); return new UnixUserInfo (stat.st_uid);}
 		}
 
 		public long OwnerUserId {
 			get {AssertValid (); return stat.st_uid;}
 		}
 
-		[CLSCompliant (false)]
-		[Obsolete ("Use OwnerGroupId.  " +
-				"The type of this property will change to UnixGroupInfo in the next release.")]
-		public uint OwnerGroup {
-			get {AssertValid (); return stat.st_gid;}
+		public UnixGroupInfo OwnerGroup {
+			get {AssertValid (); return new UnixGroupInfo (stat.st_gid);}
 		}
 
 		public long OwnerGroupId {
 			get {AssertValid (); return stat.st_gid;}
 		}
 
-		[CLSCompliant (false)]
-		[Obsolete ("The type of this property will change to Int64 in the next release.")]
-		public ulong DeviceType {
-			get {AssertValid (); return stat.st_rdev;}
+		public long DeviceType {
+			get {AssertValid (); return Convert.ToInt64 (stat.st_rdev);}
 		}
 
 		public long Length {
@@ -246,49 +215,54 @@ namespace Mono.Unix {
 		}
 
 		public bool IsDirectory {
-			get {AssertValid (); return IsType (stat.st_mode, FilePermissions.S_IFDIR);}
+			get {AssertValid (); return IsType (stat.st_mode, Native.FilePermissions.S_IFDIR);}
 		}
 
 		public bool IsCharacterDevice {
-			get {AssertValid (); return IsType (stat.st_mode, FilePermissions.S_IFCHR);}
+			get {AssertValid (); return IsType (stat.st_mode, Native.FilePermissions.S_IFCHR);}
 		}
 
 		public bool IsBlockDevice {
-			get {AssertValid (); return IsType (stat.st_mode, FilePermissions.S_IFBLK);}
+			get {AssertValid (); return IsType (stat.st_mode, Native.FilePermissions.S_IFBLK);}
 		}
 
+		[Obsolete ("Use IsRegularFile")]
 		public bool IsFile {
-			get {AssertValid (); return IsType (stat.st_mode, FilePermissions.S_IFREG);}
+			get {AssertValid (); return IsType (stat.st_mode, Native.FilePermissions.S_IFREG);}
+		}
+
+		public bool IsRegularFile {
+			get {AssertValid (); return IsType (stat.st_mode, Native.FilePermissions.S_IFREG);}
 		}
 
 		[Obsolete ("Use IsFifo")]
 		[CLSCompliant (false)]
 		public bool IsFIFO {
-			get {AssertValid (); return IsType (stat.st_mode, FilePermissions.S_IFIFO);}
+			get {AssertValid (); return IsType (stat.st_mode, Native.FilePermissions.S_IFIFO);}
 		}
 
 		public bool IsFifo {
-			get {AssertValid (); return IsType (stat.st_mode, FilePermissions.S_IFIFO);}
+			get {AssertValid (); return IsType (stat.st_mode, Native.FilePermissions.S_IFIFO);}
 		}
 
 		public bool IsSymbolicLink {
-			get {AssertValid (); return IsType (stat.st_mode, FilePermissions.S_IFLNK);}
+			get {AssertValid (); return IsType (stat.st_mode, Native.FilePermissions.S_IFLNK);}
 		}
 
 		public bool IsSocket {
-			get {AssertValid (); return IsType (stat.st_mode, FilePermissions.S_IFSOCK);}
+			get {AssertValid (); return IsType (stat.st_mode, Native.FilePermissions.S_IFSOCK);}
 		}
 
 		public bool IsSetUser {
-			get {AssertValid (); return IsType (stat.st_mode, FilePermissions.S_ISUID);}
+			get {AssertValid (); return IsType (stat.st_mode, Native.FilePermissions.S_ISUID);}
 		}
 
 		public bool IsSetGroup {
-			get {AssertValid (); return IsType (stat.st_mode, FilePermissions.S_ISGID);}
+			get {AssertValid (); return IsType (stat.st_mode, Native.FilePermissions.S_ISGID);}
 		}
 
 		public bool IsSticky {
-			get {AssertValid (); return IsType (stat.st_mode, FilePermissions.S_ISVTX);}
+			get {AssertValid (); return IsType (stat.st_mode, Native.FilePermissions.S_ISVTX);}
 		}
 
 		internal static bool IsType (FilePermissions mode, FilePermissions type)
@@ -364,12 +338,6 @@ namespace Mono.Unix {
 			valid = r == 0;
 		}
 
-		[Obsolete ("Use GetFileStatus (string, Mono.Unix.Native.Stat)")]
-		protected virtual int GetFileStatus (string path, out Stat stat)
-		{
-			return Syscall.stat (path, out stat);
-		}
-
 		protected virtual int GetFileStatus (string path, out Native.Stat stat)
 		{
 			return Native.Syscall.stat (path, out stat);
@@ -433,32 +401,18 @@ namespace Mono.Unix {
 
 		public Native.Stat ToStat ()
 		{
-			Native.Stat stat = new Native.Stat ();
-			stat.st_dev     = this.stat.st_dev;
-			stat.st_ino     = this.stat.st_ino;
-			stat.st_mode    = (Native.FilePermissions) this.stat.st_mode;
-			stat.st_nlink   = this.stat.st_nlink;
-			stat.st_uid     = this.stat.st_uid;
-			stat.st_gid     = this.stat.st_gid;
-			stat.st_rdev    = this.stat.st_rdev;
-			stat.st_size    = this.stat.st_size;
-			stat.st_blksize = this.stat.st_blksize;
-			stat.st_blocks  = this.stat.st_blocks;
-			stat.st_atime   = this.stat.st_atime;
-			stat.st_mtime   = this.stat.st_mtime;
-			stat.st_ctime   = this.stat.st_ctime;
 			return stat;
 		}
 
 		internal static UnixFileSystemInfo Create (string path)
 		{
-			Stat stat;
-			int r = Syscall.lstat (path, out stat);
+			Native.Stat stat;
+			int r = Native.Syscall.lstat (path, out stat);
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 
-			if (IsType (stat.st_mode, FilePermissions.S_IFDIR))
+			if (IsType (stat.st_mode, Native.FilePermissions.S_IFDIR))
 				return new UnixDirectoryInfo (path, stat);
-			else if (IsType (stat.st_mode, FilePermissions.S_IFLNK))
+			else if (IsType (stat.st_mode, Native.FilePermissions.S_IFLNK))
 				return new UnixSymbolicLinkInfo (path, stat);
 			return new UnixFileInfo (path, stat);
 		}
