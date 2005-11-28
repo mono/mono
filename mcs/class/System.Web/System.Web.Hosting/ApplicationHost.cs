@@ -70,7 +70,7 @@ namespace System.Web.Hosting {
 
 			// This might throw
 			Uri u = new Uri (physicalDir);
-			physicalDir = u.AbsolutePath;
+			physicalDir = HttpUtility.UrlDecode (u.AbsolutePath);
 
 			if (hostType == null)
 				throw new NullReferenceException ();

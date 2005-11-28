@@ -1,3 +1,8 @@
+2005-11-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ApplicationHost.cs: make this work with paths that that
+	contain non-ASCII characters. Fixes bug #76807.
+
 2005-11-02  Chris Toshok  <toshok@ximian.com>
 
 	* HostingEnvironment.cs: completely NIE'ed implementation of
