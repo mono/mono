@@ -1,3 +1,7 @@
+2005-11-28  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile.am (ILASM): Use profile-dependent location of ilasm.
+
 2005-11-27  Zoltan Varga  <vargaz@gmail.com>
 
 	* basic-long.cs basic-calls.cs objects.cs: Move some tests to the
