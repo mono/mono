@@ -1,3 +1,9 @@
+2005-11-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HtmlInputFile.cs: if no one else set the encoding type for the
+	containing form and there's a HtmlInputFile, set Enctype to
+	'multipart/form-data'. Fixes bug #76837.
+
 2005-11-21 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HtmlInputButton.cs: render the onclick attribute only when the

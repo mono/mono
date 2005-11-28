@@ -159,6 +159,23 @@ namespace System.Web.UI.HtmlControls
 			if (Page != null) {
 				Page.RegisterRequiresPostBack (this);
 			}
+
+			HtmlForm form = (HtmlForm) SearchParentByType (typeof (HtmlForm));
+			if (form != null && form.Enctype == "")
+				form.Enctype = "multipart/form-data";
+		}
+
+		Control SearchParentByType (Type type)
+		{
+			Control ctrl = Parent;
+			while (ctrl != null) {
+				if (type.IsAssignableFrom (ctrl.GetType ())) {
+					return ctrl;
+				}
+				ctrl = ctrl.Parent;
+			}
+
+			return null;
 		}
 
 		bool LoadPostDataInternal (string postDataKey, NameValueCollection postCollection)
