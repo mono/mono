@@ -15,7 +15,7 @@ using System.Security;
 namespace Mono.ILASM {
 
         public interface IScope {
-                ExternTypeRef GetTypeRef (string full_name, bool is_valuetype, ExternTable table);
+                ExternTypeRef GetTypeRef (string full_name, bool is_valuetype);
                 PEAPI.ClassRef GetType (string full_name, bool is_valuetype);
         }
 	
@@ -49,7 +49,7 @@ namespace Mono.ILASM {
                         customattr_list.Add (customattr);
                 }
 
-                public ExternTypeRef GetTypeRef (string full_name, bool is_valuetype, ExternTable table)
+                public ExternTypeRef GetTypeRef (string full_name, bool is_valuetype)
                 {
                         string first= full_name;
                         string rest = "";
@@ -65,11 +65,11 @@ namespace Mono.ILASM {
                                 if (is_valuetype && rest == "")
                                         type_ref.MakeValueClass ();
                         } else {
-                                type_ref = new ExternTypeRef (this, first, is_valuetype, table);
+                                type_ref = new ExternTypeRef (this, first, is_valuetype);
                                 typeref_table [first] = type_ref;
                         }
 
-                        return (rest == "" ? type_ref : type_ref.GetTypeRef (rest, is_valuetype, table));
+                        return (rest == "" ? type_ref : type_ref.GetTypeRef (rest, is_valuetype));
                 }
 
                 public PEAPI.ClassRef GetType (string full_name, bool is_valuetype)
@@ -305,7 +305,7 @@ namespace Mono.ILASM {
                         if (ext_asmb == null)
                                 throw new Exception (String.Format ("Assembly {0} not defined.", asmb_name));
 
-                        return ext_asmb.GetTypeRef (full_name, is_valuetype, this);
+                        return ext_asmb.GetTypeRef (full_name, is_valuetype);
                 }
 
                 public ExternTypeRef GetModuleTypeRef (string mod_name, string full_name, bool is_valuetype)
@@ -316,7 +316,7 @@ namespace Mono.ILASM {
                         if (mod == null)
                                 throw new Exception (String.Format ("Module {0} not defined.", mod_name));
 
-                        return mod.GetTypeRef (full_name, is_valuetype, this);
+                        return mod.GetTypeRef (full_name, is_valuetype);
                 }
 
                 public static void GetNameAndNamespace (string full_name,

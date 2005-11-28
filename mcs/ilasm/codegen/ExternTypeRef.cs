@@ -23,7 +23,6 @@ namespace Mono.ILASM {
                 private string full_name;
                 private string sig_mod;
                 private bool is_valuetype;
-                private ExternTable extern_table;
 
                 private bool is_resolved;
 
@@ -33,12 +32,11 @@ namespace Mono.ILASM {
                 private Hashtable field_table;
                 
                 public ExternTypeRef (IScope extern_ref, string full_name,
-                                bool is_valuetype, ExternTable extern_table)
+                                bool is_valuetype)
                 {
                         this.extern_ref = extern_ref;
                         this.full_name = full_name;
                         this.is_valuetype = is_valuetype;
-                        this.extern_table = extern_table;
                         sig_mod = String.Empty;
 
                         nestedclass_table = new Hashtable ();
@@ -50,9 +48,8 @@ namespace Mono.ILASM {
                 }
 
                 private ExternTypeRef (IScope extern_ref, string full_name,
-                                bool is_valuetype, ExternTable extern_table,
-                                ArrayList conv_list) : this (extern_ref, full_name,
-                                                is_valuetype, extern_table)
+                                bool is_valuetype, ArrayList conv_list) : this (
+					extern_ref, full_name, is_valuetype)
                 {
                         ConversionList = conv_list;
                 }
@@ -60,7 +57,7 @@ namespace Mono.ILASM {
                 public ExternTypeRef Clone ()
                 {
                         return new ExternTypeRef (extern_ref, full_name, is_valuetype,
-                                        extern_table, (ArrayList) ConversionList.Clone ());
+                                        (ArrayList) ConversionList.Clone ());
                 }
                 
                 public PEAPI.Type PeapiType {
@@ -132,7 +129,7 @@ namespace Mono.ILASM {
                         return fr;
                 }
 
-                public ExternTypeRef GetTypeRef (string _name, bool is_valuetype, ExternTable table)
+                public ExternTypeRef GetTypeRef (string _name, bool is_valuetype)
                 {
                         string first= _name;
                         string rest = "";
@@ -149,11 +146,11 @@ namespace Mono.ILASM {
                                 if (is_valuetype && rest == "")
                                         ext_typeref.MakeValueClass ();
                         } else {
-                                ext_typeref = new ExternTypeRef (this, first, is_valuetype, table);
+                                ext_typeref = new ExternTypeRef (this, first, is_valuetype);
                                 nestedtypes_table [first] = ext_typeref;
                         }        
                         
-                        return (rest == "" ? ext_typeref : ext_typeref.GetTypeRef (rest, is_valuetype, table));
+                        return (rest == "" ? ext_typeref : ext_typeref.GetTypeRef (rest, is_valuetype));
                 }
 
                 public PEAPI.IExternRef GetExternTypeRef ()

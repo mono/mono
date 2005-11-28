@@ -1,3 +1,11 @@
+2005-11-28  Ankit Jain  <jankit@novell.com>
+
+	* ExternTypeRef.cs (extern_table): Remove unused field.
+	(.ctor): Remove parameter for extern_table. Update usage accordingly.
+	* ExternTable.cs (IScope): Remove unused 'table' parameter.
+	(ExternRef): Change IScope interface implementation accordingly. Update
+	call to ExternTypeRef.ctor for the previous change.
+
 2005-09-15  Ankit Jain  <jankit@novell.com>
 
 	* DeclSecurity.cs (IDeclSecurityTarget.AddDeclSecurity): Remove.
