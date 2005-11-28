@@ -1,3 +1,7 @@
+2005-11-28 Jelmer Vernooij <jelmer@samba.org>
+	* Fix to Bugzilla Bug #76476: bash-specific code in 
+	mbas/Test/misc/Makefile
+ 	
 2005-11-20 Jelmer Vernooij <jelmer@samba.org>
 	* genericparser.cs,decl.cs,class.cs: allow members with the same name 
  	as their enclosing type, just like vbc does
