@@ -1,5 +1,14 @@
 2005-11-28  Raja R Harinath  <rharinath@novell.com>
 
+	* metadata.c (mono_type_create_from_typespec_full): Make debugging
+	checks tighter.
+	(mono_metadata_parse_generic_param): Likewise.
+	* loader.c (find_method_in_class): Does not need a
+	MonoGenericContainer.  Use 'mono_method_signature' rather than
+	'mono_method_signature_full'.
+	(find_method, mono_get_method_constrained, method_from_memberref):
+	Update to changes.
+
 	* metadata.c (mono_type_create_from_typespec_full): Ensure that
 	owner-less generic-parameters are never evicted from the typespec
 	cache.
