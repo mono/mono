@@ -1,3 +1,8 @@
+2005-11-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpResponseStream.cs: flush the filter stream before closing.
+	Patch by Geir Bergum that fixes bug #76753.
+
 2005-11-28  Chris Toshok  <toshok@ximian.com>
 
 	* HttpContext.cs (Profile): remove the #if false from around this,

@@ -467,6 +467,7 @@ namespace System.Web {
 				b.Dispose ();
 
 			if (close) {
+				filter.Flush ();
 				filter.Close ();
 				filter = null;
 			} else {
