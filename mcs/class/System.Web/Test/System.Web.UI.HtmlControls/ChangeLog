@@ -1,3 +1,8 @@
+2005-11-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HtmlTableTest.cs: remove white-space characters when comparing
+	the output.
+
 2005-11-21 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HtmlInputButtonTest.cs: more tests for 'onclick'.

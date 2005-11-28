@@ -202,16 +202,18 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			t.InnerText = String.Empty;
 		}
 
-		private string AdjustLineEndings (string s)
+		private string RemoveWS (string s)
 		{
-			return s.Replace ("\r\n", Environment.NewLine);
+			s = s.Replace ("\t", "");
+			s = s.Replace ("\r", "");
+			return s.Replace ("\n", "");
 		}
 
 		[Test]
 		public void Render_Table_Simple ()
 		{
 			TestHtmlTable t = new TestHtmlTable ();
-			Assert.AreEqual (AdjustLineEndings ("<table>\r\n</table>\r\n"), t.Render ());
+			Assert.AreEqual (RemoveWS ("<table>\r\n</table>\r\n"), RemoveWS (t.Render ()));
 		}
 
 		[Test]
@@ -226,7 +228,7 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			t.CellSpacing = 6;
 			t.Height = "*7*";
 			t.Width = "*8*";
-			Assert.AreEqual (AdjustLineEndings ("<table align=\"*1*\" bgcolor=\"*2*\" border=\"3\" bordercolor=\"*4*\" cellpadding=\"5\" cellspacing=\"6\" height=\"*7*\" width=\"*8*\">\r\n</table>\r\n"), t.Render ());
+			Assert.AreEqual (RemoveWS ("<table align=\"*1*\" bgcolor=\"*2*\" border=\"3\" bordercolor=\"*4*\" cellpadding=\"5\" cellspacing=\"6\" height=\"*7*\" width=\"*8*\">\r\n</table>\r\n"), RemoveWS (t.Render ()));
 		}
 
 		[Test]
@@ -234,7 +236,7 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 		{
 			TestHtmlTable t = new TestHtmlTable ();
 			t.Rows.Add (new HtmlTableRow ());
-			Assert.AreEqual (AdjustLineEndings ("<table>\r\n\t<tr>\r\n\t</tr>\r\n</table>\r\n"), t.Render ());
+			Assert.AreEqual (RemoveWS ("<table>\r\n\t<tr>\r\n\t</tr>\r\n</table>\r\n"), RemoveWS (t.Render ()));
 		}
 
 		[Test]
@@ -248,7 +250,7 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			HtmlTableRow r2 = new HtmlTableRow ();
 			r2.Align = "left";
 			t.Rows.Add (r2);
-			Assert.AreEqual (AdjustLineEndings ("<table border=\"0\">\r\n\t<tr align=\"right\">\r\n\t</tr>\r\n\t<tr align=\"left\">\r\n\t</tr>\r\n</table>\r\n"), t.Render ());
+			Assert.AreEqual (RemoveWS ("<table border=\"0\">\r\n\t<tr align=\"right\">\r\n\t</tr>\r\n\t<tr align=\"left\">\r\n\t</tr>\r\n</table>\r\n"), RemoveWS (t.Render ()));
 		}
 
 		[Test]
@@ -258,7 +260,8 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			HtmlTableRow r = new HtmlTableRow ();
 			r.Cells.Add (new HtmlTableCell ());
 			t.Rows.Add (r);
-			Assert.AreEqual (AdjustLineEndings ("<table>\r\n\t<tr>\r\n\t\t<td></td>\r\n\t</tr>\r\n</table>\r\n"), t.Render ());
+			Assert.AreEqual (RemoveWS ("<table>\r\n\t<tr>\r\n\t\t<td></td>\r\n\t</tr>\r\n</table>\r\n"),
+					RemoveWS (t.Render ()));
 		}
 
 		[Test]
@@ -277,7 +280,7 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			c2.Align = "left";
 			c2.InnerHtml = "<a href=\"http://www.go-mono.com\">Mono</a>";
 			r.Cells.Add (c2);
-			Assert.AreEqual (AdjustLineEndings ("<table align=\"center\">\r\n\t<tr valign=\"top\">\r\n\t\t<td align=\"right\">Go</td>\r\n\t\t<td align=\"left\"><a href=\"http://www.go-mono.com\">Mono</a></td>\r\n\t</tr>\r\n</table>\r\n"), t.Render ());
+			Assert.AreEqual (RemoveWS ("<table align=\"center\">\r\n\t<tr valign=\"top\">\r\n\t\t<td align=\"right\">Go</td>\r\n\t\t<td align=\"left\"><a href=\"http://www.go-mono.com\">Mono</a></td>\r\n\t</tr>\r\n</table>\r\n"), RemoveWS (t.Render ()));
 		}
 
 		[Test]
