@@ -1,5 +1,11 @@
 2005-11-28  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* UTF32Encoding.cs : Sealed. Added the overload which has
+	  throwOnInvalid parameter.
+	* NormalizationForm.cs : removed [Serializable].
+
+2005-11-28  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Encoding.cs : added UTF32.
 
 2005-11-28  Atsushi Enomoto  <atsushi@ximian.com>

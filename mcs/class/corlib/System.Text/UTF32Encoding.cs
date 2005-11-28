@@ -6,7 +6,7 @@
  *
  * Copyright (C) 2005 Novell, Inc.  http://www.novell.com
  *
- * It is almost copied from UnicodeEncoding.cs.
+ * The basic part (now almost nothing) is copied from UnicodeEncoding.cs.
  * Original copyrights goes here:
  *
  * Copyright (c) 2001, 2002  Southern Storm Software, Pty Ltd
@@ -39,7 +39,7 @@ namespace System.Text
 using System;
 
 [Serializable]
-public class UTF32Encoding : Encoding
+public sealed class UTF32Encoding : Encoding
 {
 	// Magic numbers used by Windows for UTF32.
 	internal const int UTF32_CODE_PAGE     = 12000;
@@ -50,15 +50,27 @@ public class UTF32Encoding : Encoding
 	private bool byteOrderMark;
 
 	// Constructors.
-	public UTF32Encoding () : this (false, true)
+	public UTF32Encoding () : this (false, true, false)
 	{
 	}
 
 	public UTF32Encoding (bool bigEndian, bool byteOrderMark)
+		: this (bigEndian, byteOrderMark, false)
+	{
+	}
+
+	public UTF32Encoding (bool bigEndian, bool byteOrderMark, bool throwOnInvalid)
 		: base ((bigEndian ? BIG_UTF32_CODE_PAGE : UTF32_CODE_PAGE))
 	{
 		this.bigEndian = bigEndian;
 		this.byteOrderMark = byteOrderMark;
+
+		if (throwOnInvalid)
+			SetFallbackInternal (EncoderFallback.ExceptionFallback,
+				DecoderFallback.ExceptionFallback);
+		else
+			SetFallbackInternal (EncoderFallback.ReplacementFallback,
+				DecoderFallback.ReplacementFallback);
 
 		if (bigEndian){
 			body_name = "utf-32BE";
@@ -318,7 +330,8 @@ public class UTF32Encoding : Encoding
 		if (enc != null) {
 			return (codePage == enc.codePage &&
 					bigEndian == enc.bigEndian &&
-					byteOrderMark == enc.byteOrderMark);
+					byteOrderMark == enc.byteOrderMark &&
+					base.Equals (value));
 		} else {
 			return false;
 		}

@@ -30,7 +30,6 @@
 #if NET_2_0
 namespace System.Text
 {
-	[Serializable]
 	public enum NormalizationForm {
 		FormC = 1,
 		FormD = 2,
