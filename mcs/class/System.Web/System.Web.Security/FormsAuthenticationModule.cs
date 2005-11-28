@@ -58,17 +58,37 @@ namespace System.Web.Security
 		{
 			HttpApplication app = (HttpApplication) sender;
 			HttpContext context = app.Context;
+
+			string cookieName;
+			string cookiePath;
+			string loginPage;
+			bool slidingExpiration;
+
+#if CONFIGURATION_2_0
+			AuthenticationSection config = (AuthenticationSection) WebConfigurationManager.GetWebApplicationSection ("system.web/authentication");
+#else
 			AuthConfig config = (AuthConfig) context.GetConfig ("system.web/authentication");
+#endif
+
 			if (config == null || config.Mode != AuthenticationMode.Forms) {
 				return;
 			}
 
-			string cookieName = config.CookieName;
-			string cookiePath = config.CookiePath;
-			string loginPage = config.LoginUrl;
+#if CONFIGURATION_2_0
+			cookieName = config.Forms.Name;
+			cookiePath = config.Forms.Path;
+			loginPage = config.Forms.LoginUrl;
+			slidingExpiration = config.Forms.SlidingExpiration;
+#else
+			cookieName = config.CookieName;
+			cookiePath = config.CookiePath;
+			loginPage = config.LoginUrl;
+			slidingExpiration = config.SlidingExpiration;
+#endif
 
 			string reqPath = context.Request.PhysicalPath;
 			string loginPath = context.Request.MapPath (loginPage);
+
 			context.SkipAuthorization = (reqPath == loginPath);
 			
 			FormsAuthenticationEventArgs formArgs = new FormsAuthenticationEventArgs (context);
@@ -90,7 +110,7 @@ namespace System.Web.Security
 			if (ticket == null || (ticket.IsPersistent && ticket.Expired))
 				return;
 
-			if (config.SlidingExpiration)
+			if (slidingExpiration)
 				ticket = FormsAuthentication.RenewTicketIfOld (ticket);
 
 			context.User = new GenericPrincipal (new FormsIdentity (ticket), new string [0]);
@@ -110,12 +130,19 @@ namespace System.Web.Security
 			if (context.Response.StatusCode != 401 || context.Request.QueryString ["ReturnUrl"] != null)
 				return;
 
+			string loginPage;
+#if CONFIGURATION_2_0
+			AuthenticationSection config = (AuthenticationSection) WebConfigurationManager.GetWebApplicationSection ("system.web/authentication");
+			loginPage = config.Forms.LoginUrl;
+#else
 			AuthConfig config = (AuthConfig) context.GetConfig ("system.web/authentication");
-			if (config.Mode != AuthenticationMode.Forms)
+			loginPage = config.LoginUrl;
+#endif
+			if (config == null || config.Mode != AuthenticationMode.Forms)
 				return;
 
 			StringBuilder login = new StringBuilder ();
-			login.Append (UrlUtils.Combine (context.Request.ApplicationPath, config.LoginUrl));
+			login.Append (UrlUtils.Combine (context.Request.ApplicationPath, loginPage));
 			login.AppendFormat ("?ReturnUrl={0}", HttpUtility.UrlEncode (context.Request.RawUrl));
 			context.Response.Redirect (login.ToString ());
 		}

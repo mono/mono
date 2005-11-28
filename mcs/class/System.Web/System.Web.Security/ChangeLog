@@ -1,3 +1,9 @@
+2005-11-28  Chris Toshok  <toshok@ximian.com>
+
+	* FormsAuthenticationModule.cs (OnAuthenticateRequest):
+	CONFIGURATION_2_0 work.
+	(OnEndRequest): same.
+
 2005-09-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DefaultAuthenticationEventArgs.cs: Added LinkDemand for Minimal.
