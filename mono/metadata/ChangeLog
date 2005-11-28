@@ -1,5 +1,9 @@
 2005-11-28  Raja R Harinath  <rharinath@novell.com>
 
+	* loader.c (method_from_memberref): Don't use the current context
+	when parsing signatures.
+	(method_from_methodspec, mono_get_method_from_token): Update to changes.
+
 	* metadata.c (do_mono_metadata_parse_generic_class): Avoid
 	side-effects in g_assert.
 	* loader.c (mono_get_method_from_token): Resolve klass earlier so
