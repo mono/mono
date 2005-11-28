@@ -1,5 +1,9 @@
 2005-11-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* HtmlTextArea.cs: 'Name' is the UniqueID. Fixes bug #76802.
+
+2005-11-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* HtmlTable.cs: use the base class RenderChildren, as '_rows'
 	might not be the actual collection being used. Fixes bug #76815.
 

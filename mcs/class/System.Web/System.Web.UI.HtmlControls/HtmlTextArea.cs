@@ -75,7 +75,7 @@ namespace System.Web.UI.HtmlControls {
 		[WebSysDescription("")]
 		[WebCategory("Behavior")]
 		public virtual string Name {
-			get { return ID; }
+			get { return UniqueID; }
 			set { ; }
 		}
 
