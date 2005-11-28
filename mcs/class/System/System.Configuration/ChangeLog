@@ -1,3 +1,8 @@
+2005-11-28  Chris Toshok  <toshok@ximian.com>
+
+	* SettingValueElement.cs: wrap a few more things in
+	CONFIGURATION_DEP.
+
 2005-11-09  Chris Toshok  <toshok@ximian.com>
 
 	* ConfigurationSettings.cs (AppSettings): remove the #if NET_2_0

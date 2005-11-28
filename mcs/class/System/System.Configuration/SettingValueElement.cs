@@ -64,10 +64,12 @@ namespace System.Configuration
 			}
 		}
 
+#if (CONFIGURATION_DEP)
 		protected override void DeserializeElement (XmlReader reader, bool serializeCollectionKey)
 		{
 			throw new NotImplementedException ();
 		}
+#endif
 #endif
 
 		public override bool Equals (object settingValue)
@@ -97,7 +99,7 @@ namespace System.Configuration
 		}
 #endif
 
-#if (XML_DEP)
+#if (XML_DEP) && (CONFIGURATION_DEP)
 		protected override bool SerializeToXmlElement (XmlWriter writer, string elementName)
 		{
 			throw new NotImplementedException ();
