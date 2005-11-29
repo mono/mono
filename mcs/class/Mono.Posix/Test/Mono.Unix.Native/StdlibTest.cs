@@ -1,6 +1,6 @@
 //
 // StdlibTest.cs:
-// 	NUnit Test Cases for Mono.Unix.Stdlib
+// 	NUnit Test Cases for Mono.Unix.Native.Stdlib
 //
 // Authors:
 //   Jonathan Pryor (jonpryor@vt.edu)
@@ -13,9 +13,9 @@ using System.Text;
 
 using NUnit.Framework;
 
-using Mono.Unix;
+using Mono.Unix.Native;
 
-namespace MonoTests.Mono.Unix {
+namespace MonoTests.Mono.Unix.Native {
 
 	[TestFixture]
 	public class StdlibTest
@@ -41,29 +41,27 @@ namespace MonoTests.Mono.Unix {
 		public void Signal ()
 		{
 			SignalTest st = new SignalTest ();
-			// Make sure handler is JITed so we don't JIT from signal context
-			st.Handler (9);
 
 			// Insert handler
 			SignalHandler oh = Stdlib.signal (Signum.SIGURG, 
 					new SignalHandler (st.Handler));
 
-			st.signalReceived = ~UnixConvert.FromSignum (Signum.SIGURG);
+			st.signalReceived = ~NativeConvert.FromSignum (Signum.SIGURG);
 
 			// Send signal
 			Stdlib.raise (Signum.SIGURG);
 
 			Assert.IsTrue (
-				UnixConvert.ToSignum (st.signalReceived) == Signum.SIGURG,
+				NativeConvert.ToSignum (st.signalReceived) == Signum.SIGURG,
 					"#IH: Signal handler not invoked for SIGURG");
 
 			// Reset old signal
 			Stdlib.signal (Signum.SIGURG, oh);
 
-			st.signalReceived = UnixConvert.FromSignum (Signum.SIGUSR1);
+			st.signalReceived = NativeConvert.FromSignum (Signum.SIGUSR1);
 			Stdlib.raise (Signum.SIGURG);
 
-			Assert.IsFalse (UnixConvert.ToSignum (st.signalReceived) == Signum.SIGURG,
+			Assert.IsFalse (NativeConvert.ToSignum (st.signalReceived) == Signum.SIGURG,
 					"#IH: Signal Handler invoked when it should have been removed!");
 		}
 
