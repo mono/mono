@@ -1,7 +1,8 @@
 2005-11-29  Zoltan Varga  <vargaz@gmail.com>
 
+	* inssel-long32.brg (CEE_CONV_I8): Remove unused labels.
+	
 	* inssel-long32.brg (CEE_CONV_I8): Convert this to a branchless version.
-
 Tue Nov 29 05:41:34 EST 2005 Paolo Molaro <lupus@ximian.com>
 
 	* mini-ppc.c, cpu-g4.md: ensure a fp register is converted to
