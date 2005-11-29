@@ -1,3 +1,9 @@
+2005-11-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HandlerFactoryConfiguration.cs: copy the parents' mappings
+	into the new one to allow for removing without affecting the
+	parent configuration mappings. Fixes bug #76842.
+
 2005-11-24  Chris Toshok  <toshok@ximian.com>
 
 	* AssemblyInfo.cs: nuke this, it's in System.Web.Configuration_2.0
