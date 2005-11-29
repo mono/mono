@@ -1119,9 +1119,42 @@ add_outarg_reg (MonoCompile *cfg, MonoCallInst *call, MonoInst *arg, ArgStorage 
 	}
 }
 
-/* Fixme: we need an alignment solution for enter_method and mono_arch_call_opcode,
- * currently alignment in mono_arch_call_opcode is computed without arch_get_argument_info 
- */
+static void
+add_outarg_reg2 (MonoCompile *cfg, MonoCallInst *call, MonoInst *arg, ArgStorage storage, int reg, MonoInst *tree)
+{
+	arg->sreg1 = tree->dreg;
+
+	switch (storage) {
+	case ArgInIReg:
+		arg->opcode = OP_MOVE;
+		/* FIXME: */
+		arg->dreg = cfg->next_vireg ++;
+		call->used_iregs |= 1 << reg;
+
+		mono_call_inst_add_outarg_reg (call, arg->dreg, reg, FALSE);
+		break;
+	case ArgInFloatSSEReg:
+		arg->opcode = OP_AMD64_SET_XMMREG_R4;
+		/* FIXME: */
+		arg->dreg = cfg->next_vfreg ++;
+		call->used_fregs |= 1 << reg;
+
+		mono_call_inst_add_outarg_reg (call, arg->dreg, reg, TRUE);
+		break;
+	case ArgInDoubleSSEReg:
+		arg->opcode = OP_AMD64_SET_XMMREG_R8;
+		/* FIXME: */
+		arg->dreg = cfg->next_vfreg ++;
+		call->used_fregs |= 1 << reg;
+
+		mono_call_inst_add_outarg_reg (call, arg->dreg, reg, TRUE);
+		break;
+	default:
+		g_assert_not_reached ();
+	}
+
+	MONO_ADD_INS (cfg->cbb, arg);
+}
 
 static int
 arg_storage_to_ldind (ArgStorage storage)
@@ -1145,7 +1178,6 @@ arg_storage_to_ldind (ArgStorage storage)
  * instructions to properly call the function in call.
  * This includes pushing, moving arguments to the right register
  * etc.
- * Issue: who does the spilling if needed, and when?
  */
 MonoCallInst*
 mono_arch_call_opcode (MonoCompile *cfg, MonoBasicBlock* bb, MonoCallInst *call, int is_virtual) {
@@ -1322,6 +1354,216 @@ mono_arch_call_opcode (MonoCompile *cfg, MonoBasicBlock* bb, MonoCallInst *call,
 							if (sig->params [i - sig->hasthis]->type == MONO_TYPE_R8)
 								arg->opcode = OP_OUTARG_R8;
 					}
+					break;
+				default:
+					g_assert_not_reached ();
+				}
+			}
+		}
+	}
+
+	if (cinfo->need_stack_align) {
+		MONO_INST_NEW (cfg, arg, OP_AMD64_OUTARG_ALIGN_STACK);
+		/* prepend, so they get reversed */
+		arg->next = call->out_args;
+		call->out_args = arg;
+	}
+
+	call->stack_usage = cinfo->stack_usage;
+	cfg->param_area = MAX (cfg->param_area, call->stack_usage);
+	cfg->flags |= MONO_CFG_HAS_CALLS;
+
+	g_free (cinfo);
+
+	return call;
+}
+
+MonoCallInst*
+mono_arch_call_opcode2 (MonoCompile *cfg, MonoBasicBlock* bb, MonoCallInst *call, int is_virtual) {
+	MonoInst *arg, *in;
+	MonoMethodSignature *sig;
+	int i, n, stack_size;
+	CallInfo *cinfo;
+	ArgInfo *ainfo;
+
+	stack_size = 0;
+
+	sig = call->signature;
+	n = sig->param_count + sig->hasthis;
+
+	cinfo = get_call_info (sig, sig->pinvoke);
+
+	for (i = n - 1; i >= 0; --i) {
+		ainfo = cinfo->args + i;
+
+		if (!sig->pinvoke && (sig->call_convention == MONO_CALL_VARARG) && (i == sig->sentinelpos)) {
+			MonoMethodSignature *tmp_sig;
+
+			/* Emit the signature cookie just before the implicit arguments */
+			MonoInst *sig_arg;
+			/* FIXME: Add support for signature tokens to AOT */
+			cfg->disable_aot = TRUE;
+
+			NOT_IMPLEMENTED;
+
+			g_assert (cinfo->sig_cookie.storage == ArgOnStack);
+
+			/*
+			 * mono_ArgIterator_Setup assumes the signature cookie is 
+			 * passed first and all the arguments which were before it are
+			 * passed on the stack after the signature. So compensate by 
+			 * passing a different signature.
+			 */
+			tmp_sig = mono_metadata_signature_dup (call->signature);
+			tmp_sig->param_count -= call->signature->sentinelpos;
+			tmp_sig->sentinelpos = 0;
+			memcpy (tmp_sig->params, call->signature->params + call->signature->sentinelpos, tmp_sig->param_count * sizeof (MonoType*));
+
+			MONO_INST_NEW (cfg, sig_arg, OP_ICONST);
+			sig_arg->inst_p0 = tmp_sig;
+
+			MONO_INST_NEW (cfg, arg, OP_OUTARG);
+			arg->inst_left = sig_arg;
+			arg->type = STACK_PTR;
+
+			/* prepend, so they get reversed */
+			arg->next = call->out_args;
+			call->out_args = arg;
+		}
+
+		if (is_virtual && i == 0) {
+			/* the argument will be attached to the call instruction */
+			in = call->args [i];
+		} else {
+			MONO_INST_NEW (cfg, arg, OP_OUTARG);
+			in = call->args [i];
+			arg->cil_code = in->cil_code;
+			arg->sreg1 = in->dreg;
+			arg->type = in->type;
+			/* prepend, so they get reversed */
+			arg->next = call->out_args;
+			call->out_args = arg;
+
+			if ((i >= sig->hasthis) && (MONO_TYPE_ISSTRUCT(sig->params [i - sig->hasthis]))) {
+				gint align;
+				guint32 size;
+
+				NOT_IMPLEMENTED;
+
+				if (sig->params [i - sig->hasthis]->type == MONO_TYPE_TYPEDBYREF) {
+					size = sizeof (MonoTypedRef);
+					align = sizeof (gpointer);
+				}
+				else
+				if (sig->pinvoke)
+					size = mono_type_native_stack_size (&in->klass->byval_arg, &align);
+				else {
+					/* 
+					 * Other backends use mono_type_stack_size (), but that
+					 * aligns the size to 8, which is larger than the size of
+					 * the source, leading to reads of invalid memory if the
+					 * source is at the end of address space.
+					 */
+					size = mono_class_value_size (in->klass, &align);
+				}
+				if (ainfo->storage == ArgValuetypeInReg) {
+					if (ainfo->pair_storage [1] == ArgNone) {
+						MonoInst *load;
+
+						/* Simpler case */
+
+						MONO_INST_NEW (cfg, load, arg_storage_to_ldind (ainfo->pair_storage [0]));
+						load->inst_left = in;
+
+						add_outarg_reg2 (cfg, call, arg, ainfo->pair_storage [0], ainfo->pair_regs [0], load);
+					}
+					else {
+						/* Trees can't be shared so make a copy */
+						MonoInst *vtaddr = mono_compile_create_var (cfg, &mono_defaults.int_class->byval_arg, OP_LOCAL);
+						MonoInst *load, *load2, *offset_ins;
+
+						/* Reg1 */
+						MONO_INST_NEW (cfg, load, CEE_LDIND_I);
+						load->ssa_op = MONO_SSA_LOAD;
+						load->inst_i0 = (cfg)->varinfo [vtaddr->inst_c0];
+
+						NEW_ICONST (cfg, offset_ins, 0);
+						MONO_INST_NEW (cfg, load2, CEE_ADD);
+						load2->inst_left = load;
+						load2->inst_right = offset_ins;
+
+						MONO_INST_NEW (cfg, load, arg_storage_to_ldind (ainfo->pair_storage [0]));
+						load->inst_left = load2;
+
+						add_outarg_reg2 (cfg, call, arg, ainfo->pair_storage [0], ainfo->pair_regs [0], load);
+
+						/* Reg2 */
+						MONO_INST_NEW (cfg, load, CEE_LDIND_I);
+						load->ssa_op = MONO_SSA_LOAD;
+						load->inst_i0 = (cfg)->varinfo [vtaddr->inst_c0];
+
+						NEW_ICONST (cfg, offset_ins, 8);
+						MONO_INST_NEW (cfg, load2, CEE_ADD);
+						load2->inst_left = load;
+						load2->inst_right = offset_ins;
+
+						MONO_INST_NEW (cfg, load, arg_storage_to_ldind (ainfo->pair_storage [1]));
+						load->inst_left = load2;
+
+						MONO_INST_NEW (cfg, arg, OP_OUTARG);
+						arg->cil_code = in->cil_code;
+						arg->type = in->type;
+						/* prepend, so they get reversed */
+						arg->next = call->out_args;
+						call->out_args = arg;
+
+						add_outarg_reg2 (cfg, call, arg, ainfo->pair_storage [1], ainfo->pair_regs [1], load);
+
+						/* Prepend a copy inst */
+						MONO_INST_NEW (cfg, arg, CEE_STIND_I);
+						arg->cil_code = in->cil_code;
+						arg->ssa_op = MONO_SSA_STORE;
+						arg->inst_left = vtaddr;
+						arg->inst_right = in;
+						arg->type = in->type;
+
+						/* prepend, so they get reversed */
+						arg->next = call->out_args;
+						call->out_args = arg;
+					}
+				}
+				else {
+					arg->opcode = OP_OUTARG_VT;
+					arg->klass = in->klass;
+					arg->unused = sig->pinvoke;
+					arg->inst_imm = size;
+				}
+			}
+			else {
+				switch (ainfo->storage) {
+				case ArgInIReg:
+					add_outarg_reg2 (cfg, call, arg, ainfo->storage, ainfo->reg, in);
+					break;
+				case ArgInFloatSSEReg:
+				case ArgInDoubleSSEReg:
+					add_outarg_reg2 (cfg, call, arg, ainfo->storage, ainfo->reg, in);
+					break;
+				case ArgOnStack:
+					arg->opcode = OP_X86_PUSH;
+					if (!sig->params [i - sig->hasthis]->byref) {
+						if (sig->params [i - sig->hasthis]->type == MONO_TYPE_R4) {
+							MONO_EMIT_NEW_BIALU_IMM (cfg, OP_SUB_IMM, X86_ESP, X86_ESP, 8);
+							arg->opcode = OP_STORER4_MEMBASE_REG;
+							arg->inst_destbasereg = X86_ESP;
+							arg->inst_offset = 0;
+						} else if (sig->params [i - sig->hasthis]->type == MONO_TYPE_R8) {
+							MONO_EMIT_NEW_BIALU_IMM (cfg, OP_SUB_IMM, X86_ESP, X86_ESP, 8);
+							arg->opcode = OP_STORER4_MEMBASE_REG;
+							arg->inst_destbasereg = X86_ESP;
+							arg->inst_offset = 0;
+						}
+					}
+					MONO_ADD_INS (cfg->cbb, arg);
 					break;
 				default:
 					g_assert_not_reached ();
@@ -2004,6 +2246,7 @@ emit_move_return_value (MonoCompile *cfg, MonoInst *ins, guint8 *code)
 	/* FIXME: do this in the local reg allocator */
 	switch (ins->opcode) {
 	case CEE_CALL:
+	case OP_CALL:
 	case OP_CALL_REG:
 	case OP_CALL_MEMBASE:
 	case OP_LCALL:
@@ -2845,6 +3088,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			amd64_mov_membase_reg (code, ins->sreg1, 0, AMD64_R11, 8);
 			break;
 		}
+		case OP_CALL:
 		case OP_FCALL:
 		case OP_LCALL:
 		case OP_VCALL:
