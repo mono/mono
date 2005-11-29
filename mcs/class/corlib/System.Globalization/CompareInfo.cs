@@ -766,12 +766,12 @@ namespace System.Globalization
 		}
 
 #if NET_2_0
-		public bool IsSortable (char c)
+		public static bool IsSortable (char c)
 		{
 			return MSCompatUnicodeTable.IsSortable (c);
 		}
 
-		public bool IsSortable (string s)
+		public static bool IsSortable (string s)
 		{
 			return MSCompatUnicodeTable.IsSortable (s);
 		}

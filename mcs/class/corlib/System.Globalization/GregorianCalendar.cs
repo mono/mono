@@ -67,6 +67,7 @@ public class GregorianCalendar : Calendar {
 			return twoDigitYearMax;
 		}
 		set {
+			CheckReadOnly ();
 			M_ArgumentInRange ("value", value, 100, M_MaxYear);
 
 			twoDigitYearMax = value;
@@ -86,6 +87,7 @@ public class GregorianCalendar : Calendar {
 	public virtual GregorianCalendarTypes CalendarType {
 		get { return M_CalendarType; }
 		set { 
+			CheckReadOnly ();
 			// mscorlib 1:0:3300:0 doesn't check anything here
 			M_CalendarType = value;
 		}

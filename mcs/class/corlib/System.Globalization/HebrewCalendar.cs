@@ -101,6 +101,7 @@ public class HebrewCalendar : Calendar {
 			return twoDigitYearMax;
 		}
 		set {
+			CheckReadOnly ();
 			M_ArgumentInRange ("value", value, M_MinYear, M_MaxYear);
 
 			twoDigitYearMax = value;

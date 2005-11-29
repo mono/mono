@@ -35,7 +35,11 @@ using System.IO;
 /// The class serves as a base class for calendar classes.
 /// </remarks>
 [Serializable]
-public abstract class Calendar {
+public abstract class Calendar
+#if NET_2_0
+	: ICloneable
+#endif
+{
 	/// <value>An protected integer property that gives the number of
 	/// days in a week. It might be overridden.</value>
 	internal virtual int M_DaysInWeek
@@ -122,6 +126,8 @@ public abstract class Calendar {
 	/// </value>
 	public abstract int[] Eras { get; }
 
+	bool is_readonly;
+
 #if NET_2_0
 	[System.Runtime.InteropServices.ComVisible(false)]
 	public virtual CalendarAlgorithmType AlgorithmType {
@@ -143,7 +149,46 @@ public abstract class Calendar {
 			return DateTime.MinValue;
 		}
 	}
+
+	// LAMESPEC: huh, why not Calendar but Object?
+	public virtual object Clone ()
+	{
+		Calendar c = (Calendar) MemberwiseClone ();
+		c.is_readonly = false;
+		return c;
+	}
 #endif
+
+#if NET_2_0
+	public bool IsReadOnly {
+		get { return is_readonly; }
+	}
+
+	public static Calendar ReadOnly (Calendar source)
+	{
+		if (source.is_readonly)
+			return source;
+		Calendar c = (Calendar) source.Clone ();
+		c.is_readonly = true;
+		return c;
+	}
+#else
+	internal bool IsReadOnly {
+		get { return false; }
+	}
+
+	internal static Calendar ReadOnly (Calendar source)
+	{
+		return source;
+	}
+#endif
+
+	internal void CheckReadOnly ()
+	{
+		if (is_readonly)
+			throw new InvalidOperationException ("This Calendar is read-only.");
+	}
+
 	/// <summary>
 	/// The protected member stores the value for the
 	/// <see cref="P:TwoDigitYearMax"/>
@@ -191,6 +236,7 @@ public abstract class Calendar {
 	public virtual int TwoDigitYearMax {
 		get { return M_TwoDigitYearMax; }
 		set {
+			CheckReadOnly ();
 			M_ArgumentInRange("year", value, 100, M_MaxYear);
 			int era = CurrentEra;
 			M_CheckYE(value, ref era);
@@ -922,6 +968,7 @@ public abstract class Calendar {
 			return (string[])M_AbbrEraNames.Clone();
 		}
 		set {
+			CheckReadOnly ();
 			if (value.Length != Eras.Length) {
 				StringWriter sw = new StringWriter();
 				sw.Write("Array length must be equal Eras " +
@@ -947,6 +994,7 @@ public abstract class Calendar {
 			return (string[])M_EraNames.Clone();
 		}
 		set {
+			CheckReadOnly ();
 			if (value.Length != Eras.Length) {
 				StringWriter sw = new StringWriter();
 				sw.Write("Array length must be equal Eras " +

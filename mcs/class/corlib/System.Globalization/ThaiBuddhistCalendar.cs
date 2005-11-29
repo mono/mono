@@ -90,6 +90,7 @@ public class ThaiBuddhistCalendar : Calendar {
 			return twoDigitYearMax;
 		}
 		set {
+			CheckReadOnly ();
 			M_ArgumentInRange ("value", value, 100, M_MaxYear);
 
 			twoDigitYearMax = value;

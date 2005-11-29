@@ -1,3 +1,13 @@
+2005-11-29  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CompareInfo.cs : IsSortable() are static.
+	* CharUnicodeInfo.cs : became non-static in RTM.
+	* Calendar.cs : added support for Clone() and IsReadOnly.
+	* HijriCalendar.cs ThaiBuddhistCalendar.cs HebrewCalendar.cs
+	  GregorianCalendar.cs KoreanCalendar.cs JulianCalendar.cs
+	  TaiwanCalendar.cs JapaneseCalendar.cs PersianCalendar.cs :
+	  check IsReadOnly on every setter.
+
 2005-11-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CompareInfo.cs : added support for OrdinalIgnoreCase.

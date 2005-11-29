@@ -111,6 +111,7 @@ public class HijriCalendar : Calendar {
 			return twoDigitYearMax;
 		}
 		set {
+			CheckReadOnly ();
 			M_ArgumentInRange ("value", value, 100, M_MaxYear);
 
 			twoDigitYearMax = value;
@@ -132,6 +133,7 @@ public class HijriCalendar : Calendar {
 			return M_AddHijriDate;
 		}
 		set {
+			CheckReadOnly ();
 			if (value < -3 && value > 3)
 				throw new ArgumentOutOfRangeException(
 					"AddHijriDate",
