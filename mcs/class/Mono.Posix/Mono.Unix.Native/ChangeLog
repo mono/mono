@@ -1,3 +1,8 @@
+2005-11-28  Jonathan Pryor <jonpryor@vt.edu>
+
+	* Stdlib.cs: Prelink all SignalHandlers passed to Stdlib.signal().  This is
+	  so that mono doesn't have to JIT the handler within signal context.
+
 2005-11-08  Jonathan Pryor <jonpryor@vt.edu>
 
 	* Stdlib.cs: Implement IEquatable<FilePosition> for FilePosition.

@@ -458,6 +458,11 @@ namespace Mono.Unix.Native {
 		{
 			int _sig = NativeConvert.FromSignum (signum);
 
+			Delegate[] handlers = handler.GetInvocationList ();
+			for (int i = 0; i < handlers.Length; ++i) {
+				Marshal.Prelink (handlers [i].Method);
+			}
+
 			lock (registered_signals) {
 				registered_signals [(int) signum] = handler;
 			}
