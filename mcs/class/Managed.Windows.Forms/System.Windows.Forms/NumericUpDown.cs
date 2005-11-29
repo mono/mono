@@ -255,6 +255,7 @@ namespace System.Windows.Forms {
 			}
 
 			set {
+				Console.WriteLine ("Getting a: " + value);
 				if (suppress_validation <= 0) {
 					if ((value < minimum) || (value > maximum)) {
 						throw new ArgumentException("NumericUpDown.Value must be within the specified Minimum and Maximum values", "value");
@@ -283,6 +284,8 @@ namespace System.Windows.Forms {
 
 		public void EndInit() {
 			suppress_validation--;
+			if (suppress_validation == 0)
+				UpdateEditText ();
 		}
 
 		public override string ToString() {
