@@ -3,7 +3,8 @@
 //
 // Authors:
 //	Duncan Mak (duncan@ximian.com)
-//  Lluis Sanchez Gual (lluis@novell.com)
+//      Lluis Sanchez Gual (lluis@novell.com)
+//      Chris Toshok (toshok@ximian.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -24,7 +25,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004,2005 Novell, Inc (http://www.novell.com)
 //
 
 #if NET_2_0
@@ -38,7 +39,21 @@ namespace System.Configuration
 	public sealed class ProviderSettings: ConfigurationElement
 	{
 		ConfigNameValueCollection parameters;
-		
+
+		static ConfigurationProperty nameProp;
+		static ConfigurationProperty typeProp;
+		static ConfigurationPropertyCollection properties;
+
+		static ProviderSettings ()
+		{
+			nameProp = new ConfigurationProperty ("name", typeof (string), null, ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey);
+			typeProp = new ConfigurationProperty ("type", typeof (string), null, ConfigurationPropertyOptions.IsRequired);
+			properties = new ConfigurationPropertyCollection ();
+
+			properties.Add (nameProp);
+			properties.Add (typeProp);
+		}
+
 		public ProviderSettings ()
 		{
 		}
@@ -84,21 +99,18 @@ namespace System.Configuration
 		
 		[ConfigurationProperty ("name", Options = ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey)]
 		public string Name {
-			get { return (string) this ["name"]; }
-			set { this ["name"] = value; }
+			get { return (string) this [nameProp]; }
+			set { this [nameProp] = value; }
 		}
 		
 		[ConfigurationProperty ("type", Options = ConfigurationPropertyOptions.IsRequired)]
 		public string Type {
-			get { return (string) this ["type"]; }
-			set { this ["type"] = value; }
+			get { return (string) this [typeProp]; }
+			set { this [typeProp] = value; }
 		}
 
-		[MonoTODO]
 		protected internal override ConfigurationPropertyCollection Properties {
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return properties; }
 		}
 		
 		public NameValueCollection Parameters {
