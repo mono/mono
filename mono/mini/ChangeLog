@@ -1,3 +1,9 @@
+
+Tue Nov 29 05:41:34 EST 2005 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c, cpu-g4.md: ensure a fp register is converted to
+	single precision before storing to a single precision location.
+
 2005-11-28  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile.am (ILASM): Use profile-dependent location of ilasm.
