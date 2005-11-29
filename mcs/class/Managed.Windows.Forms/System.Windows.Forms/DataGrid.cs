@@ -512,7 +512,7 @@ namespace System.Windows.Forms
 					SetDataSource (datasource);
 					if (styles_collection.Contains (value) == true) {
 						CurrentTableStyle = styles_collection[value];
-						current_style.CreateColumnsForTable (true);
+						current_style.CreateColumnsForTable (false);
 					} else {
 						CurrentTableStyle = default_style;
 						current_style.GridColumnStyles.Clear ();
@@ -1681,13 +1681,9 @@ namespace System.Windows.Forms
 
 		public void SetDataBinding (object dataSource, string dataMember)
 		{
-			bool source = SetDataSource (dataSource);
-			bool member = SetDataMember (dataMember);
-			
-			if (source == false  && member == false) {
-				return;
-			}
-
+			dataMember = null;
+			SetDataSource (dataSource);
+			SetDataMember (dataMember);		
 			SetNewDataSource ();
 		}
 
@@ -1921,7 +1917,9 @@ namespace System.Windows.Forms
 
 		private void SetNewDataSource ()
 		{				
-			current_style.GridColumnStyles.Clear ();
+			if (ListManager != null && TableStyles[datamember] == null) {
+				current_style.GridColumnStyles.Clear ();
+			}
 			current_style.CreateColumnsForTable (false);
 			CalcAreasAndInvalidate ();			
 		}
@@ -1950,12 +1948,43 @@ namespace System.Windows.Forms
 		}
 		
 		private void OnTableStylesCollectionChanged (object sender, CollectionChangeEventArgs e)
-		{	
-			if (ListManager != null && String.Compare (ListManager.ListName, ((DataGridTableStyle)e.Element).MappingName, true) == 0) {			
-				CurrentTableStyle = (DataGridTableStyle)e.Element;
-				((DataGridTableStyle) e.Element).CreateColumnsForTable (false);				
-			}
-						
+		{				
+			if (ListManager == null)
+				return;
+			
+			switch (e.Action){
+				case CollectionChangeAction.Add: {
+					if (e.Element != null && String.Compare (ListManager.ListName, ((DataGridTableStyle)e.Element).MappingName, true) == 0) {
+						CurrentTableStyle = (DataGridTableStyle)e.Element;
+						((DataGridTableStyle) e.Element).CreateColumnsForTable (false);
+					}
+					break;
+				}
+
+				case CollectionChangeAction.Remove: {
+					if (e.Element != null && String.Compare (ListManager.ListName, ((DataGridTableStyle)e.Element).MappingName, true) == 0) {
+						CurrentTableStyle = default_style;						
+						current_style.GridColumnStyles.Clear ();
+						current_style.CreateColumnsForTable (false);
+					}
+					break;
+				}	
+
+				
+				case CollectionChangeAction.Refresh: {
+					if (e.Element != null && String.Compare (ListManager.ListName, ((DataGridTableStyle)e.Element).MappingName, true) == 0) {
+						CurrentTableStyle = (DataGridTableStyle)e.Element;
+						((DataGridTableStyle) e.Element).CreateColumnsForTable (false);
+					} else {
+						CurrentTableStyle = default_style;
+						current_style.GridColumnStyles.Clear ();
+						current_style.CreateColumnsForTable (false);
+
+					}
+					break;
+
+				}
+			}						
 			CalcAreasAndInvalidate ();
 		}
 

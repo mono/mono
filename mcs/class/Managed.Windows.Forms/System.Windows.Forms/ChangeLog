@@ -1,3 +1,16 @@
+2005-11-29  Jordi Mas i Hernandez <jordimash@gmail.com>
+
+	* DataGridTableStyle.cs:
+	  - Create always the styles for the missing columns even if they are
+	    provided by the user (not default table style)
+	* DataGrid.cs:
+	  - Fixes bug 76770
+	  - Fixes SetDataBinding (always re-attach source)
+	  - Fixes SetNewDataSource (only clear styles if they are not for 
+	    this source)
+	 -  Expands OnTableStylesCollectionChanged to handle style refresh 
+	    and remove properly
+
 2005-11-29  Jackson Harper  <jackson@ximian.com>
 
 	* FileDialog.cs: Implement missing bits, remove some dead code.

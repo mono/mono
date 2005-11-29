@@ -881,8 +881,7 @@ namespace System.Windows.Forms
 			for (int i = 0; i < propcol.Count; i++)
 			{
 				// The column style is already provided by the user
-				if (column_styles[propcol[i].Name] != null &&
-					column_styles[propcol[i].Name].IsDefault == false) {
+				if (column_styles[propcol[i].Name] != null) {
 					column_styles[propcol[i].Name].table_style = this;
 					column_styles[propcol[i].Name].SetDataGridInternal (datagrid);
 					continue;
