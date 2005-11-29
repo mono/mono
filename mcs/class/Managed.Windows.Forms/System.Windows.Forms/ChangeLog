@@ -1,3 +1,8 @@
+2005-11-29  Alexander Olk  <alex.olk@googlemail.com>
+
+	* ThemeWin32Classic.cs: Make DrawFlatStyleRadioButton protected
+	* ThemeNice.cs: Fix drawing of flatstyle radiobuttons
+
 2005-11-29  Jordi Mas i Hernandez <jordimash@gmail.com>
 
 	* DataGridTableStyle.cs:

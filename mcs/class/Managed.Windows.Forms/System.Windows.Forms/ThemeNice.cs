@@ -461,7 +461,7 @@ namespace System.Windows.Forms
 			barpos_pixels = ( ( ctrl.Value - ctrl.Minimum ) * client_area.Width ) / ( ctrl.Maximum - ctrl.Minimum );
 			
 			bar.Width = barpos_pixels;
-			bar.Height += 1;
+//			bar.Height += 1;
 			
 			// Draw bar background
 			using ( LinearGradientBrush lgbr = new LinearGradientBrush( new Point( client_area.Left, client_area.Top ), new Point( client_area.Left, client_area.Bottom ), LightColor, Color.White ) )
@@ -488,19 +488,17 @@ namespace System.Windows.Forms
 			dc.FillRectangle( sb, radio_button.ClientRectangle );
 			sb.Dispose( );
 			
-			if ( radio_button.appearance == Appearance.Button )
-			{
-				DrawButtonBase( dc, radio_button.ClientRectangle, radio_button );
-			}
-			else
-			{
-				// establish if we are rendering a flat style of some sort
-				if ( radio_button.FlatStyle == FlatStyle.Flat || radio_button.FlatStyle == FlatStyle.Popup )
-				{
+			if (radio_button.appearance==Appearance.Button) {
+				if (radio_button.FlatStyle == FlatStyle.Flat || radio_button.FlatStyle == FlatStyle.Popup) {
+					DrawFlatStyleButton(dc, radio_button.ClientRectangle, radio_button);
+				} else {
 					DrawButtonBase( dc, radio_button.ClientRectangle, radio_button );
 				}
-				else
-				{
+			} else {
+				// establish if we are rendering a flat style of some sort
+				if ( radio_button.FlatStyle == FlatStyle.Flat || radio_button.FlatStyle == FlatStyle.Popup ) {
+					DrawFlatStyleRadioButton (dc, radiobutton_rectangle, radio_button);
+				} else {
 					ControlPaint.DrawRadioButton( dc, radiobutton_rectangle, state );
 				}
 			}
@@ -1237,7 +1235,7 @@ namespace System.Windows.Forms
 				dc.DrawPolygon( pen, points );
 				
 				// draw grip lines only if stere is enough space
-				if ( area.Height > 12 )
+				if ( area.Height > 20 )
 				{
 					int mid_y = area.Y + ( area.Height / 2 );
 					int mid_x = area.X + ( area.Width / 2 );
@@ -1261,7 +1259,7 @@ namespace System.Windows.Forms
 				dc.DrawPolygon( pen, points );
 				
 				// draw grip lines only if stere is enough space
-				if ( area.Width > 12 )
+				if ( area.Width > 20 )
 				{
 					int mid_x = area.X +  ( area.Width / 2 );
 					int mid_y = area.Y +  ( area.Height / 2 );

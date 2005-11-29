@@ -2860,7 +2860,7 @@ namespace System.Windows.Forms
 		}
 
 		// renders a radio button with the Flat and Popup FlatStyle
-		private void DrawFlatStyleRadioButton (Graphics graphics, Rectangle rectangle, RadioButton radio_button)
+		protected void DrawFlatStyleRadioButton (Graphics graphics, Rectangle rectangle, RadioButton radio_button)
 		{
 			int	lineWidth;
 			
