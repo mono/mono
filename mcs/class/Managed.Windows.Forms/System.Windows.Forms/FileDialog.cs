@@ -43,30 +43,8 @@ namespace System.Windows.Forms
 	[DefaultEvent( "FileOk" )]
 	public abstract class FileDialog : CommonDialog
 	{
-		internal class FileDialogForm : DialogForm
-		{
-			internal FileDialogForm( CommonDialog owner )
-			: base( owner )
-			{}
-			
-			protected override CreateParams CreateParams
-			{
-				get {
-					CreateParams	cp;
-					
-					ControlBox = true;
-					MinimizeBox = false;
-					MaximizeBox = false;
-					
-					cp = base.CreateParams;
-					cp.Style = (int)( WindowStyles.WS_POPUP | WindowStyles.WS_CAPTION | WindowStyles.WS_SYSMENU | WindowStyles.WS_CLIPCHILDREN | WindowStyles.WS_CLIPSIBLINGS );
-					cp.Style |= (int)WindowStyles.WS_OVERLAPPEDWINDOW;
-					
-					return cp;
-				}
-			}
-		}
-		
+		protected static readonly Object EventFileOk = new object ();
+
 		internal enum FileDialogType
 		{
 			OpenFileDialog,
@@ -440,9 +418,27 @@ namespace System.Windows.Forms
 		{
 			return base.ToString( );
 		}
-		
-		public event CancelEventHandler FileOk;
-		
+
+		public event CancelEventHandler FileOk {
+			add { Events.AddHandler (EventFileOk, value); }
+			remove { Events.RemoveHandler (EventFileOk, value); }
+		}
+
+		protected virtual IntPtr Instance {
+			get {
+				if (fileDialogPanel == null)
+					return IntPtr.Zero;
+				return fileDialogPanel.Handle;
+			}
+		}
+
+		// This is just for internal use with MSs version, so it doesn't need to be implemented
+		// as it can't really be accessed anyways
+		protected int Options {
+			get { return -1; }
+		}
+
+		[MonoTODO]
 		protected  override IntPtr HookProc( IntPtr hWnd, int msg, IntPtr wparam, IntPtr lparam )
 		{
 			throw new NotImplementedException( );
@@ -450,7 +446,9 @@ namespace System.Windows.Forms
 		
 		protected void OnFileOk( CancelEventArgs e )
 		{
-			if ( FileOk != null ) FileOk( this, e );
+			EventHandler fo = (EventHandler) Events [EventFileOk];
+			if (fo != null)
+				fo (this, e);
 		}
 		
 		[MonoTODO]

@@ -1,5 +1,9 @@
 2005-11-29  Jackson Harper  <jackson@ximian.com>
 
+	* FileDialog.cs: Implement missing bits, remove some dead code.
+
+2005-11-29  Jackson Harper  <jackson@ximian.com>
+
 	* MdiClient.cs: Pass some signature methods through to base.
 
 2005-11-28  Jackson Harper  <jackson@ximian.com>
