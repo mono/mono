@@ -1,5 +1,8 @@
 2005-11-29  Zoltan Varga  <vargaz@gmail.com>
 
+	* objects.cs basic-calls.cs: Move a test depending on valuetypes to
+	objects.cs.
+
 	* inssel-long32.brg (CEE_CONV_I8): Remove unused labels.
 	
 	* inssel-long32.brg (CEE_CONV_I8): Convert this to a branchless version.
