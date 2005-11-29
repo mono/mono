@@ -59,6 +59,11 @@
 					<input type="text" id="NewFilterTarget" length="60" />
 					<input type="button" onclick="addAndFilter()" value="Add to attribute filter" />
 				</p>
+				<p>Target Reference:
+					<input type="radio" id="TargetMonodoc" name="TargetDoc" value="0" />monodoc
+					<input type="radio" id="TargetMsdn1" name="TargetDoc" value="1" />msdn
+					<input type="radio" id="TargetMsdn2" name="TargetDoc" value="2" checked="checked" />msdn2
+				</p>
 
 				<div ID="ROOT">
 					<xsl:apply-templates/>

@@ -1,3 +1,8 @@
+2005-11-29  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* mono-api.xsl : added toggle switch for referenced documentation
+	  (monodoc/msdn/msdn2).
+
 2005-11-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* mono-api.xsl : filtered attributes are customizable now (but pretty
