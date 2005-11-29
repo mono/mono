@@ -40,6 +40,8 @@ namespace System.Windows.Forms
 	[DefaultEvent("Apply")]
 	public class FontDialog : CommonDialog
 	{
+		protected static readonly object EventApply = new object ();
+
 		private FontDialogPanel fontDialogPanel;
 		
 		private Font font;
@@ -67,8 +69,6 @@ namespace System.Windows.Forms
 			form.Size = new Size( 430, 318 );
 			
 			form.Text = "Font";
-			
-			fontDialogPanel = new FontDialogPanel( this );
 		}
 		#endregion	// Public Constructors
 		
@@ -274,17 +274,42 @@ namespace System.Windows.Forms
 			showEffects = true;
 			showHelp = false;
 		}
+
+		public override string ToString ()
+		{
+			if (font == null)
+				return base.ToString ();
+			return String.Concat (base.ToString (), ", Font: ", font.ToString ());
+		}
 		#endregion	// Public Instance Methods
 		
 		#region Protected Instance Methods
 		[MonoTODO]
 		protected override bool RunDialog( IntPtr hwndOwner )
 		{
+			fontDialogPanel = new FontDialogPanel (this);
 			form.Controls.Add( fontDialogPanel );
 			
 			return true;
 		}
+
+		internal void OnApplyButton (object sender, EventArgs e)
+		{
+			OnApply (e);
+		}
+
+		protected virtual void OnApply (EventArgs e)
+		{
+			EventHandler apply = (EventHandler) Events [EventApply];
+			if (apply != null)
+				apply (this, e);
+		}
 		#endregion	// Protected Instance Methods
+
+		public event EventHandler Apply {
+			add { Events.AddHandler (EventApply, value); }
+			remove { Events.RemoveHandler (EventApply, value); }
+		}
 	}
 	
 	internal class FontDialogPanel : Panel
@@ -580,6 +605,7 @@ namespace System.Windows.Forms
 			
 			cancelButton.Click += new EventHandler( OnClickCancelButton );
 			okButton.Click += new EventHandler( OnClickOkButton );
+			applyButton.Click += new EventHandler (fontDialog.OnApplyButton);
 			examplePanel.Paint += new PaintEventHandler( OnPaintExamplePanel );
 			fontListBox.SelectedIndexChanged += new EventHandler( OnSelectedIndexChangedFontListBox );
 			sizeListBox.SelectedIndexChanged += new EventHandler( OnSelectedIndexChangedSizeListBox );
@@ -655,7 +681,7 @@ namespace System.Windows.Forms
 			fontDialog.Color = currentColor;
 			fontDialog.form.DialogResult = DialogResult.OK;
 		}
-		
+
 		void OnPaintExamplePanel( object sender, PaintEventArgs e )
 		{
 			SolidBrush brush = ThemeEngine.Current.ResPool.GetSolidBrush( currentColor );

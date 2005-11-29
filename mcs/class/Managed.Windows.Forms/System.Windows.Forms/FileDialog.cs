@@ -43,7 +43,7 @@ namespace System.Windows.Forms
 	[DefaultEvent( "FileOk" )]
 	public abstract class FileDialog : CommonDialog
 	{
-		protected static readonly Object EventFileOk = new object ();
+		protected static readonly object EventFileOk = new object ();
 
 		internal enum FileDialogType
 		{
