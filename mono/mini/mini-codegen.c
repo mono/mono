@@ -225,8 +225,18 @@ mono_print_ins_index (int i, MonoInst *ins)
 		g_print ("\t%-2d %s", i, mono_inst_name (ins->opcode));
 	else
 		g_print (" %s", mono_inst_name (ins->opcode));
-	if (!spec)
-		g_error ("Unknown opcode: %s\n", mono_inst_name (ins->opcode));
+	if (!spec) {
+		/* This is a lowered opcode */
+		if (ins->dreg != -1)
+			g_print (" R%d <-", ins->dreg);
+		if (ins->sreg1 != -1)
+			g_print (" R%d", ins->sreg1);
+		if (ins->sreg2 != -1)
+			g_print (" R%d", ins->sreg2);
+		g_print ("\n");
+		//g_error ("Unknown opcode: %s\n", mono_inst_name (ins->opcode));
+		return;
+	}
 
 	if (spec [MONO_INST_DEST]) {
 		gboolean fp = dreg_is_fp (ins);

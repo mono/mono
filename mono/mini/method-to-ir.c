@@ -332,6 +332,14 @@ handle_enum:
         (dest)->inst_offset = (offset); \
 	} while (0)
 
+#define	MONO_EMIT_NEW_ICONST(cfg,dr,imm) do { \
+        MonoInst *inst; \
+        MONO_INST_NEW ((cfg), (inst), (OP_ICONST)); \
+        inst->dreg = dr; \
+        inst->inst_c0 = imm; \
+	    mono_bblock_add_inst ((cfg)->cbb, inst); \
+	} while (0)
+
 #define MONO_EMIT_NEW_UNALU(cfg,op,dr,sr1) do { \
         MonoInst *inst; \
         MONO_INST_NEW ((cfg), (inst), (op)); \
@@ -3424,6 +3432,99 @@ decompose_opcode (MonoCompile *cfg, MonoInst *ins)
 	}
 }
 
+/**
+ * lower_long_opts:
+ *
+ *  Decompose 64bit opcodes into 32bit opcodes on 32 bit platforms.
+ */
+static void
+lower_long_opts (MonoCompile *cfg)
+{
+#if SIZEOF_VOID_P == 4
+	MonoBasicBlock *bb;
+
+	/**
+	 * Create a dummy bblock and emit code into it so we can use the normal 
+	 * code generation macros.
+	 */
+	cfg->cbb = NEW_BBLOCK (cfg);
+
+	for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
+		MonoInst *tree = bb->code;	
+		MonoInst *prev = NULL;
+
+		tree = bb->code;	
+		g_print ("BEFORE LOWER_LONG_OPTS: %d:\n", bb->block_num);
+		if (!tree)
+			continue;
+		for (; tree; tree = tree->next) {
+			mono_print_ins (tree);
+		}
+
+		tree = bb->code;
+		cfg->cbb->code = cfg->cbb->last_ins = NULL;
+
+		for (; tree; tree = tree->next) {
+			switch (tree->opcode) {
+			case OP_I8CONST:
+				MONO_EMIT_NEW_ICONST (cfg, tree->dreg, tree->inst_ls_word);
+				MONO_EMIT_NEW_ICONST (cfg, tree->dreg + 1, tree->inst_ms_word);
+				break;
+			case OP_LMOVE:
+				MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, tree->dreg, tree->sreg1);
+				MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, tree->dreg + 1, tree->sreg1 + 1);
+			case OP_ICONV_TO_I8: {
+				guint32 tmpreg = alloc_dreg (cfg, STACK_I4);
+
+				/* branchless code:
+				 * low = reg;
+				 * tmp = low > -1 ? 1: 0;
+				 * high = tmp - 1; if low is zero or pos high becomes 0, else -1
+				 */
+				MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, tree->dreg, tree->sreg1);
+				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_ICOMPARE_IMM, -1, tree->dreg, -1);
+				MONO_EMIT_NEW_BIALU (cfg, OP_ICGT, tmpreg, -1, -1);
+				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_ISUB_IMM, tree->dreg + 1, tmpreg, 1);
+				break;
+			}
+			case OP_LCONV_TO_I4:
+				MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, tree->dreg, tree->sreg1);
+				break;
+			case OP_LMUL:
+				/* FIXME: Add OP_BIGMUL optimization */
+				break;
+			default:
+				break;
+			}
+
+			if (cfg->cbb->code) {
+				/* Replace the original instruction with the new code sequence */
+				if (prev)
+					prev->next = cfg->cbb->code;
+				else
+					bb->code = cfg->cbb->code;
+				cfg->cbb->last_ins->next = tree->next;
+				if (tree->next == NULL)
+					bb->last_ins = cfg->cbb->last_ins;
+				prev = cfg->cbb->last_ins;
+
+				cfg->cbb->code = cfg->cbb->last_ins = NULL;
+			}
+			else
+				prev = tree;
+		}
+
+		tree = bb->code;	
+		g_print ("AFTER LOWER_LONG_OPTS: %d:\n", bb->block_num);
+		if (!tree)
+			continue;
+		for (; tree; tree = tree->next) {
+			mono_print_ins (tree);
+		}
+	}
+#endif
+}
+
 /*
  * mono_method_to_ir: translates IL into basic blocks containing trees
  */
@@ -3432,7 +3533,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 		   int locals_offset, MonoInst *return_var, GList *dont_inline, MonoInst **inline_args, 
 		   guint inline_offset, gboolean is_virtual_call)
 {
-	MonoInst *zero_int32, *zero_int64, *zero_ptr, *zero_obj, *zero_r8;
 	MonoInst *ins, **sp, **stack_start;
 	MonoBasicBlock *bblock, *tblock = NULL, *init_localsbb = NULL;
 	GHashTable *bbhash;
@@ -3697,20 +3797,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 	for (n = 0; n < sig->param_count; ++n)
 		param_types [n + sig->hasthis] = sig->params [n];
 	class_inits = NULL;
-
-#if 0
-	/* do this somewhere outside - not here */
-	NEW_ICONST (cfg, zero_int32, 0);
-	NEW_ICONST (cfg, zero_int64, 0);
-	zero_int64->type = STACK_I8;
-	NEW_PCONST (cfg, zero_ptr, 0);
-	NEW_PCONST (cfg, zero_obj, 0);
-	zero_obj->type = STACK_OBJ;
-
-	MONO_INST_NEW (cfg, zero_r8, OP_R8CONST);
-	zero_r8->type = STACK_R8;
-	zero_r8->inst_p0 = &r8_0;
-#endif
 
 	/* add a check for this != NULL to inlined methods */
 	if (is_virtual_call) {
@@ -7031,11 +7117,11 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 #if SIZEOF_VOID_P == 8
 #define LREG IREG
 #else
-#error Not implemented
+#define LREG "l"
 #endif
 /* keep in sync with the enum in mini.h */
 static const char* const
-opcode_info[] = {
+ins_spec[] = {
 #include "mini-ops.h"
 };
 #undef MINI_OP
@@ -7053,6 +7139,9 @@ mono_spill_global_vars (MonoCompile *cfg)
 	guint32 *num_vreg;
 	guint32 *stacktypes;
 	MonoBasicBlock *bb;
+
+	/* FIXME: Move this call elsewhere */
+	lower_long_opts (cfg);
 
 	/* FIXME: Move this to mini.c */
 
@@ -7089,7 +7178,7 @@ mono_spill_global_vars (MonoCompile *cfg)
 #if SIZEOF_VOID_P == 8
 				vreg_to_inst ['i'][ins->dreg] = ins;
 #else
-				NOT_IMPLEMENTED;
+				/* Nothing to do */
 #endif
 				break;
 			default:
@@ -7107,7 +7196,7 @@ mono_spill_global_vars (MonoCompile *cfg)
 
 		cfg->cbb = bb;
 		for (; ins; ins = ins->next) {
-			char *spec = opcode_info [ins->opcode - OP_START - 1];
+			char *spec = ins_spec [ins->opcode - OP_START - 1];
 			int regtype;
 
 			mono_print_ins (ins);
@@ -7205,4 +7294,5 @@ mono_spill_global_vars (MonoCompile *cfg)
  * - unify to_regstore/to_regload as to_regmove
  * - unify iregs/fregs
  * - use sext/zext opcodes instead of shifts
+ * - make mono_print_ins use the arch-independent opcode metadata
  */
