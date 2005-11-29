@@ -2711,8 +2711,6 @@ namespace System {
 
 		private static string ConvertToBase8 (byte[] value)
 		{
-			if (!BitConverter.IsLittleEndian)
-				EndianSwap (ref value);
 			ulong l = 0;
 			switch (value.Length) {
 			case 1:

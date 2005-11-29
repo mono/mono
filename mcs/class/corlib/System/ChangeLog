@@ -1,3 +1,9 @@
+
+Tue Nov 29 05:38:37 EST 2005 Paolo Molaro <lupus@ximian.com>
+
+	* Convert.cs: fix endianess issue when converting to base-8
+	format. All the base code would need a rewrite for efficience.
+
 2005-11-25  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* String.cs: Added support for Compare(... StringComparison) in 2.0.
