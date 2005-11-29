@@ -301,9 +301,11 @@ mono_print_ins_index (int i, MonoInst *ins)
 	case OP_VOIDCALL:
 	case OP_VOIDCALLVIRT: {
 		MonoCallInst *call = (MonoCallInst*)ins;
-		if (call->method)
-			g_print (" [%s]", call->method->name);
-		else if (call->fptr) {
+		if (call->method) {
+			char *full_name = mono_method_full_name (call->method, TRUE);
+			g_print (" [%s]", full_name);
+			g_free (full_name);
+		} else if (call->fptr) {
 			MonoJitICallInfo *info = mono_find_jit_icall_by_addr (call->fptr);
 			if (info)
 				g_print (" [%s]", info->name);

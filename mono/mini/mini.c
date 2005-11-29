@@ -1743,6 +1743,7 @@ mono_compile_create_var (MonoCompile *cfg, MonoType *type, int opcode)
 #endif
 			break;
 		default:
+			printf ("A: %s\n", mono_type_full_name (type));
 			NOT_IMPLEMENTED;
 		}
 	}
@@ -2077,7 +2078,7 @@ static int
 ret_type_to_call_opcode (MonoType *type, int calli, int virt)
 {
 	if (type->byref)
-		return calli? OP_CALL_REG: virt? CEE_CALLVIRT: CEE_CALL;
+		return calli? OP_CALL_REG: virt? CEE_CALLVIRT: OP_CALL;
 
 handle_enum:
 	switch (type->type) {
@@ -2091,18 +2092,18 @@ handle_enum:
 	case MONO_TYPE_CHAR:
 	case MONO_TYPE_I4:
 	case MONO_TYPE_U4:
-		return calli? OP_CALL_REG: virt? CEE_CALLVIRT: CEE_CALL;
+		return calli? OP_CALL_REG: virt? CEE_CALLVIRT: OP_CALL;
 	case MONO_TYPE_I:
 	case MONO_TYPE_U:
 	case MONO_TYPE_PTR:
 	case MONO_TYPE_FNPTR:
-		return calli? OP_CALL_REG: virt? CEE_CALLVIRT: CEE_CALL;
+		return calli? OP_CALL_REG: virt? CEE_CALLVIRT: OP_CALL;
 	case MONO_TYPE_CLASS:
 	case MONO_TYPE_STRING:
 	case MONO_TYPE_OBJECT:
 	case MONO_TYPE_SZARRAY:
 	case MONO_TYPE_ARRAY:    
-		return calli? OP_CALL_REG: virt? CEE_CALLVIRT: CEE_CALL;
+		return calli? OP_CALL_REG: virt? CEE_CALLVIRT: OP_CALL;
 	case MONO_TYPE_I8:
 	case MONO_TYPE_U8:
 		return calli? OP_LCALL_REG: virt? OP_LCALLVIRT: OP_LCALL;
@@ -2279,7 +2280,7 @@ mono_spill_call (MonoCompile *cfg, MonoBasicBlock *bblock, MonoCallInst *call, M
 	if (!MONO_TYPE_IS_VOID (ret) || ret_object) {
 		if (ret_object) {
 			call->inst.type = STACK_OBJ;
-			call->inst.opcode = CEE_CALL;
+			call->inst.opcode = OP_CALL;
 			temp = mono_compile_create_var (cfg, &mono_defaults.string_class->byval_arg, OP_LOCAL);
 		} else {
 			type_to_eval_stack_type (ret, ins);
@@ -6807,7 +6808,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 		if (! (get_domain = mono_arch_get_domain_intrinsic (cfg))) {
 			MonoCallInst *call;
 			
-			MONO_INST_NEW_CALL (cfg, call, CEE_CALL);
+			MONO_INST_NEW_CALL (cfg, call, OP_CALL);
 			call->signature = helper_sig_domain_get;
 			call->inst.type = STACK_PTR;
 			call->fptr = mono_domain_get;
@@ -6959,6 +6960,7 @@ mono_print_tree (MonoInst *tree) {
 		mono_print_tree (tree->inst_newa_len);
 		break;
 	case CEE_CALL:
+	case OP_CALL:
 	case CEE_CALLVIRT:
 	case OP_FCALL:
 	case OP_FCALLVIRT:
@@ -9071,6 +9073,7 @@ mono_cprop_invalidate_values (MonoInst *tree, MonoInst **acp, int acp_size)
 
 		break;
 	case CEE_CALL:
+	case OP_CALL:
 	case OP_CALL_REG:
 	case CEE_CALLVIRT:
 	case OP_LCALL_REG:

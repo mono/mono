@@ -39,6 +39,7 @@
                 inst->opcode = op; \
                 inst->dreg = dr; \
                 inst->sreg1 = sr1; \
+				inst->sreg2 = -1; \
 	        mono_bblock_add_inst (cfg->cbb, inst); \
 	} while (0)
 
@@ -74,6 +75,7 @@
                 inst->opcode = op; \
                 inst->dreg = dr; \
                 inst->sreg1 = sr; \
+				inst->sreg2 = -1; \
                 inst->inst_p1 = (gpointer)(gssize)(imm); \
 	        mono_bblock_add_inst (cfg->cbb, inst); \
 	} while (0)
@@ -800,13 +802,13 @@ stmt: OP_ARGLIST (reg) {
 	mono_bblock_add_inst (s->cbb, tree);
 }
 
-reg: CEE_CALL {
+reg: OP_CALL {
 	tree->dreg = state->reg1;
 	mono_bblock_add_inst (s->cbb, tree);
 }
 
 reg: CEE_CALLVIRT (reg) {
-	mini_emit_virtual_call (s, state, tree, CEE_CALL, OP_CALL_MEMBASE);
+	mini_emit_virtual_call (s, state, tree, OP_CALL, OP_CALL_MEMBASE);
 }
 
 stmt: OP_VOIDCALLVIRT (reg) {
@@ -870,7 +872,7 @@ stmt: OP_RESTORE_LMF {
 
 reg: OP_CALL_REG (OP_ICONST),
 reg: OP_CALL_REG (OP_I8CONST) {
-	tree->opcode = CEE_CALL;
+	tree->opcode = OP_CALL;
 	((MonoCallInst*)tree)->fptr = state->left->tree->inst_p0;
 	tree->dreg = state->reg1;
 	mono_bblock_add_inst (s->cbb, tree);

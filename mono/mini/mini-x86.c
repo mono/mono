@@ -852,10 +852,6 @@ mono_arch_create_vars (MonoCompile *cfg)
 	g_free (cinfo);
 }
 
-/* Fixme: we need an alignment solution for enter_method and mono_arch_call_opcode,
- * currently alignment in mono_arch_call_opcode is computed without arch_get_argument_info 
- */
-
 /* 
  * take the arguments and generate the arch-specific
  * instructions to properly call the function in call.
@@ -970,6 +966,159 @@ mono_arch_call_opcode (MonoCompile *cfg, MonoBasicBlock* bb, MonoCallInst *call,
 	}
 
 	if (sig->ret && MONO_TYPE_ISSTRUCT (sig->ret)) {
+		if (cinfo->ret.storage == ArgValuetypeInReg) {
+			MonoInst *zero_inst;
+			/*
+			 * After the call, the struct is in registers, but needs to be saved to the memory pointed
+			 * to by vt_arg in this_vret_args. This means that vt_arg needs to be saved somewhere
+			 * before calling the function. So we add a dummy instruction to represent pushing the 
+			 * struct return address to the stack. The return address will be saved to this stack slot 
+			 * by the code emitted in this_vret_args.
+			 */
+			MONO_INST_NEW (cfg, arg, OP_OUTARG);
+			MONO_INST_NEW (cfg, zero_inst, OP_ICONST);
+			zero_inst->inst_p0 = 0;
+			arg->inst_left = zero_inst;
+			arg->type = STACK_PTR;
+			/* prepend, so they get reversed */
+			arg->next = call->out_args;
+			call->out_args = arg;
+		}
+		else
+			/* if the function returns a struct, the called method already does a ret $0x4 */
+			if (sig->ret && MONO_TYPE_ISSTRUCT (sig->ret))
+				cinfo->stack_usage -= 4;
+	}
+
+	call->stack_usage = cinfo->stack_usage;
+	g_free (cinfo);
+
+	return call;
+}
+
+MonoCallInst*
+mono_arch_call_opcode2 (MonoCompile *cfg, MonoBasicBlock* bb, MonoCallInst *call, int is_virtual) {
+	MonoInst *arg, *in;
+	MonoMethodSignature *sig;
+	int i, n;
+	CallInfo *cinfo;
+	int sentinelpos;
+
+	sig = call->signature;
+	n = sig->param_count + sig->hasthis;
+
+	cinfo = get_call_info (sig, FALSE);
+
+	if (!sig->pinvoke && (sig->call_convention == MONO_CALL_VARARG))
+		sentinelpos = sig->sentinelpos + (is_virtual ? 1 : 0);
+
+	/* Arguments are pushed in the reverse order */
+	for (i = n - 1; i >= 0; i --) {
+		ArgInfo *ainfo = cinfo->args + i;
+
+		/* Emit the signature cookie just before the implicit arguments */
+		if (!sig->pinvoke && (sig->call_convention == MONO_CALL_VARARG) && (i == sentinelpos)) {
+			MonoMethodSignature *tmp_sig;
+			MonoInst *sig_arg;
+
+			NOT_IMPLEMENTED;
+
+			/* FIXME: Add support for signature tokens to AOT */
+			cfg->disable_aot = TRUE;
+			MONO_INST_NEW (cfg, arg, OP_OUTARG);
+
+			/*
+			 * mono_ArgIterator_Setup assumes the signature cookie is 
+			 * passed first and all the arguments which were before it are
+			 * passed on the stack after the signature. So compensate by 
+			 * passing a different signature.
+			 */
+			tmp_sig = mono_metadata_signature_dup (call->signature);
+			tmp_sig->param_count -= call->signature->sentinelpos;
+			tmp_sig->sentinelpos = 0;
+			memcpy (tmp_sig->params, call->signature->params + call->signature->sentinelpos, tmp_sig->param_count * sizeof (MonoType*));
+
+			MONO_INST_NEW (cfg, sig_arg, OP_ICONST);
+			sig_arg->inst_p0 = tmp_sig;
+
+			arg->inst_left = sig_arg;
+			arg->type = STACK_PTR;
+			/* prepend, so they get reversed */
+			arg->next = call->out_args;
+			call->out_args = arg;
+		}
+
+		if (is_virtual && i == 0) {
+			NOT_IMPLEMENTED;
+			/* the argument will be attached to the call instrucion */
+			in = call->args [i];
+		} else {
+			MonoType *t;
+
+			if (i >= sig->hasthis)
+				t = sig->params [i - sig->hasthis];
+			else
+				t = &mono_defaults.int_class->byval_arg;
+			t = mono_type_get_underlying_type (t);
+
+			MONO_INST_NEW (cfg, arg, OP_OUTARG);
+
+			in = call->args [i];
+			arg->cil_code = in->cil_code;
+			arg->sreg1 = in->dreg;
+			arg->type = in->type;
+
+			if ((i >= sig->hasthis) && (MONO_TYPE_ISSTRUCT(t))) {
+				gint align;
+				guint32 size;
+
+				NOT_IMPLEMENTED;
+
+				if (t->type == MONO_TYPE_TYPEDBYREF) {
+					size = sizeof (MonoTypedRef);
+					align = sizeof (gpointer);
+				}
+				else
+					if (sig->pinvoke)
+						size = mono_type_native_stack_size (&in->klass->byval_arg, &align);
+					else
+						size = mono_type_stack_size (&in->klass->byval_arg, &align);
+				arg->opcode = OP_OUTARG_VT;
+				arg->klass = in->klass;
+				arg->unused = sig->pinvoke;
+				arg->inst_imm = size; 
+			}
+			else {
+				switch (ainfo->storage) {
+				case ArgOnStack:
+					arg->opcode = OP_X86_PUSH;
+					if (!t->byref) {
+						if (t->type == MONO_TYPE_R4) {
+							MONO_EMIT_NEW_BIALU_IMM (cfg, OP_SUB_IMM, X86_ESP, X86_ESP, 4);
+							arg->opcode = OP_STORER4_MEMBASE_REG;
+							arg->inst_destbasereg = X86_ESP;
+							arg->inst_offset = 0;
+						} else if (t->type == MONO_TYPE_R8) {
+							MONO_EMIT_NEW_BIALU_IMM (cfg, OP_SUB_IMM, X86_ESP, X86_ESP, 8);
+							arg->opcode = OP_STORER8_MEMBASE_REG;
+							arg->inst_destbasereg = X86_ESP;
+							arg->inst_offset = 0;
+						} else if (t->type == MONO_TYPE_I8 || t->type == MONO_TYPE_U8) {
+							MONO_EMIT_NEW_UNALU (cfg, OP_X86_PUSH, -1, in->dreg + 1);
+						}
+					}
+					break;
+				default:
+					g_assert_not_reached ();
+				}
+
+				MONO_ADD_INS (cfg->cbb, arg);
+			}
+		}
+	}
+
+	if (sig->ret && MONO_TYPE_ISSTRUCT (sig->ret)) {
+		NOT_IMPLEMENTED;
 		if (cinfo->ret.storage == ArgValuetypeInReg) {
 			MonoInst *zero_inst;
 			/*
@@ -1590,6 +1739,7 @@ emit_move_return_value (MonoCompile *cfg, MonoInst *ins, guint8 *code)
 	/* Move return value to the target register */
 	switch (ins->opcode) {
 	case CEE_CALL:
+	case OP_CALL:
 	case OP_CALL_REG:
 	case OP_CALL_MEMBASE:
 		if (ins->dreg != X86_EAX)
@@ -2264,6 +2414,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_VCALL:
 		case OP_VOIDCALL:
 		case CEE_CALL:
+		case OP_CALL:
 			call = (MonoCallInst*)ins;
 			if (ins->flags & MONO_INST_HAS_METHOD)
 				code = emit_call (cfg, code, MONO_PATCH_INFO_METHOD, call->method);
@@ -2614,6 +2765,12 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			x86_pop_reg (code, ins->unused);
 			x86_fldcw_membase (code, X86_ESP, 0);
 			x86_alu_reg_imm (code, X86_ADD, X86_ESP, 4);
+			break;
+		case OP_LCONV_TO_R8_2:
+			x86_push_reg (code, ins->sreg2);
+			x86_push_reg (code, ins->sreg1);
+			x86_fild_membase (code, X86_ESP, 0, TRUE);
+			x86_alu_reg_imm (code, X86_ADD, X86_ESP, 8);
 			break;
 		case OP_LCONV_TO_R_UN: { 
 			static guint8 mn[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x80, 0x3f, 0x40 };
