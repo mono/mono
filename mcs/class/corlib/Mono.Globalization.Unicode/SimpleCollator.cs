@@ -1395,8 +1395,58 @@ Console.WriteLine ("==== {0} {1} {2} {3} {4} {5} {6} {7} {8}", s, si, send, leng
 			return IndexOf (s, target, 0, s.Length, opt);
 		}
 
+		int QuickIndexOf (string s, string target, int start, int length, out bool testWasUnable)
+		{
+			int testedSourcePos = -1, testedTargetPos = -1;
+
+			testWasUnable = true;
+			if (target.Length == 0)
+				return 0;
+			else if (target.Length > length)
+				return -1;
+			testWasUnable = false;
+
+			int end = start + length - target.Length + 1;
+			for (int i = start; i < end; i++) {
+				bool no = false;
+				for (int j = 0; j < target.Length; j++) {
+					if (testedTargetPos < j) {
+						if (target [j] >= 0x80) {
+							testWasUnable = true;
+							return -1;
+						}
+						else
+							testedTargetPos = j;
+					}
+					if (testedSourcePos < i + j) {
+						if (s [i + j] >= 0x80) {
+							testWasUnable = true;
+							return -1;
+						}
+						else
+							testedSourcePos = i + j;
+					}
+					if (s [i + j] != target [j]) {
+						no = true;
+						break;
+					}
+				}
+				if (no)
+					continue;
+				return i;
+			}
+			return -1;
+		}
+
 		public unsafe int IndexOf (string s, string target, int start, int length, CompareOptions opt)
 		{
+			if (opt == CompareOptions.None) {
+				bool testWasUnable;
+				int ret = QuickIndexOf (s, target, start, length, out testWasUnable);
+				if (!testWasUnable)
+					return ret;
+			}
+
 			byte* alwaysMatchFlags = stackalloc byte [16];
 			byte* neverMatchFlags = stackalloc byte [16];
 			byte* targetSortKey = stackalloc byte [4];
@@ -1407,8 +1457,7 @@ Console.WriteLine ("==== {0} {1} {2} {3} {4} {5} {6} {7} {8}", s, si, send, leng
 			ClearBuffer (targetSortKey, 4);
 			ClearBuffer (sk1, 4);
 			ClearBuffer (sk2, 4);
-			Context ctx = new Context (opt, alwaysMatchFlags, neverMatchFlags, sk1, sk2, null,
-				QuickCheckPossible (s, start, start + length, target, 0, target.Length));
+			Context ctx = new Context (opt, alwaysMatchFlags, neverMatchFlags, sk1, sk2, null, false);
 
 			return IndexOf (s, target, start, length,
 				targetSortKey, ref ctx);

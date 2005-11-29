@@ -1,5 +1,9 @@
 2005-11-29  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SimpleCollator.cs : direct fast-path optimization for IndexOf().
+
+2005-11-29  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SimpleCollator.cs :
 	  - CompareQuick(): added immediateBreakup to avoid extraneous sortkey
 	    computation.
