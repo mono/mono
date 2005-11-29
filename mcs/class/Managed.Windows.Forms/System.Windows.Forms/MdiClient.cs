@@ -101,6 +101,16 @@ namespace System.Windows.Forms {
 			SizeMaximized ();
 		}
 
+		protected override void ScaleCore (float dx, float dy)
+		{
+			base.ScaleCore (dx, dy);
+		}
+
+		protected override void SetBoundsCore (int x, int y, int width, int height, BoundsSpecified specified)
+		{
+			base.SetBoundsCore (x, y, width, height, specified);
+		}
+
 		#region Public Instance Properties
 		[Localizable(true)]
 		public override System.Drawing.Image BackgroundImage {

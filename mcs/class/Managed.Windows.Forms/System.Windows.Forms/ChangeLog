@@ -1,3 +1,7 @@
+2005-11-29  Jackson Harper  <jackson@ximian.com>
+
+	* MdiClient.cs: Pass some signature methods through to base.
+
 2005-11-28  Jackson Harper  <jackson@ximian.com>
 
 	* ListView.cs: Raise the click event when items are clicked.
