@@ -707,7 +707,7 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 		// not based on codepoints.
 		private int CompareQuick (string s1, int idx1, int len1,
 			string s2, int idx2, int len2, out bool sourceConsumed,
-			out bool targetConsumed)
+			out bool targetConsumed, bool immediateBreakup)
 		{
 			sourceConsumed = false;
 			targetConsumed = false;
@@ -719,6 +719,8 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 			for (int i1 = idx1, i2 = idx2;
 				i1 < end1 && i2 < end2; i1++, i2++)
 				if (s1 [i1] != s2 [i2]) {
+					if (immediateBreakup)
+						return -1;
 					int ret = Category (s1 [i1]) - Category (s2 [i2]);
 					if (ret == 0)
 						ret = Level1 (s1 [i1]) - Level1 (s2 [i2]);
@@ -809,7 +811,7 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 //			if (s1.Length > 100 || s2.Length > 100)
 //				return false;
 			for (int i = idx1; i < end1; i++)
-				if (s1 [i] < 0x20 && (s2 [i] < '\x9' || s2 [i] > '\xD') || s1 [i] >= 0x80 || s1 [i] == '-' || s1 [i] == '\'')
+				if (s1 [i] < 0x20 && (s1 [i] < '\x9' || s1 [i] > '\xD') || s1 [i] >= 0x80 || s1 [i] == '-' || s1 [i] == '\'')
 					return false;
 			for (int i = idx2; i < end2; i++)
 				if (s2 [i] < 0x20 && (s2 [i] < '\x9' || s2 [i] > '\xD') || s2 [i] >= 0x80 || s2 [i] == '-' || s2 [i] == '\'')
@@ -833,7 +835,7 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 			PreviousInfo prev2 = new PreviousInfo (false);
 
 			if (opt == CompareOptions.None && ctx.QuickCheckPossible)
-				return CompareQuick (s1, idx1, len1, s2, idx2, len2, out sourceConsumed, out targetConsumed);
+				return CompareQuick (s1, idx1, len1, s2, idx2, len2, out sourceConsumed, out targetConsumed, immediateBreakup);
 
 			// It holds final result that comes from the comparison
 			// at level 2 or lower. Even if Compare() found the
