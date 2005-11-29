@@ -1,3 +1,9 @@
+2005-11-29  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SimpleCollator.cs : added another quick check for CompareInternal()
+	  that does almost ordinal comparison for quick-checkable strings.
+	  (It affects on Compare(), IndexOf(), IsSuffix() etc. as well.)
+
 2005-11-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* MSCompatUnicodeTable.cs : (IsIgnorable) \0 is not ignorable.
