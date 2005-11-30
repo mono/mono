@@ -474,7 +474,7 @@ namespace System.Web.Compilation
 				string alt_id = id;
 				if (hyphen != -1)
 					alt_id = id.Substring (0, hyphen);
-					
+
 				MemberInfo fop = GetFieldOrProperty (type, alt_id);
 				if (fop != null) {
 					is_processed = ProcessPropertiesAndFields (builder, fop, id, attvalue, null);
@@ -489,14 +489,56 @@ namespace System.Web.Compilation
 					throw new ParseException (builder.location, "Unrecognized attribute: " + id);
 
 
-				CodeCastExpression cast = new CodeCastExpression (typeof (IAttributeAccessor), ctrlVar);
-				CodeMethodReferenceExpression methodExpr;
-				methodExpr = new CodeMethodReferenceExpression (cast, "SetAttribute");
-				CodeMethodInvokeExpression expr = new CodeMethodInvokeExpression (methodExpr);
-				expr.Parameters.Add (new CodePrimitiveExpression (id));
-				expr.Parameters.Add (new CodePrimitiveExpression ((string) atts [id]));
-				builder.method.Statements.Add (expr);
+				CodeMemberMethod method = builder.method;
+				string val = (string) atts [id];
+				bool databound = IsDataBound (val);
+				if (databound) {
+					val = val.Substring (3);
+					val = val.Substring (0, val.Length - 2);
+					CreateDBAttributeMethod (builder, id, val);
+				} else {
+					CodeCastExpression cast;
+					CodeMethodReferenceExpression methodExpr;
+					CodeMethodInvokeExpression expr;
+
+					cast = new CodeCastExpression (typeof (IAttributeAccessor), ctrlVar);
+					methodExpr = new CodeMethodReferenceExpression (cast, "SetAttribute");
+					expr = new CodeMethodInvokeExpression (methodExpr);
+					expr.Parameters.Add (new CodePrimitiveExpression (id));
+					expr.Parameters.Add (new CodePrimitiveExpression ((string) atts [id]));
+					method.Statements.Add (expr);
+				}
 			}
+		}
+
+		void CreateDBAttributeMethod (ControlBuilder builder, string attr, string code)
+		{
+			if (code == null || code.Trim () == "")
+				return;
+
+			string id = builder.GetNextID (null);
+			string dbMethodName = "__DataBind_" + id;
+			CodeMemberMethod method = builder.method;
+			AddEventAssign (method, "DataBinding", typeof (EventHandler), dbMethodName);
+
+			method = CreateDBMethod (dbMethodName, GetContainerType (builder), builder.ControlType);
+			CodeCastExpression cast;
+			CodeMethodReferenceExpression methodExpr;
+			CodeMethodInvokeExpression expr;
+
+			CodeVariableReferenceExpression targetExpr = new CodeVariableReferenceExpression ("target");
+			cast = new CodeCastExpression (typeof (IAttributeAccessor), targetExpr);
+			methodExpr = new CodeMethodReferenceExpression (cast, "SetAttribute");
+			expr = new CodeMethodInvokeExpression (methodExpr);
+			expr.Parameters.Add (new CodePrimitiveExpression (attr));
+			CodeMethodInvokeExpression tostring = new CodeMethodInvokeExpression ();
+			tostring.Method = new CodeMethodReferenceExpression (
+							new CodeTypeReferenceExpression (typeof (Convert)),
+							"ToString");
+			tostring.Parameters.Add (new CodeSnippetExpression (code));
+			expr.Parameters.Add (tostring);
+			method.Statements.Add (expr);
+			mainClass.Members.Add (method);
 		}
 
 		void AddRenderControl (ControlBuilder builder)

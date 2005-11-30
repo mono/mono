@@ -1,3 +1,8 @@
+2005-11-30 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TemplateControlCompiler.cs: handle data bound attributes for html
+	controls. Fixes bug #76785.
+
 2005-11-28  Chris Toshok  <toshok@ximian.com>
 
 	* CachingCompiler.cs (Compile): CONFIGURATION_2_0 work.
