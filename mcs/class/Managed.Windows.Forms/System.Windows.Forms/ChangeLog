@@ -1,3 +1,8 @@
+2005-11-30  Jackson Harper  <jackson@ximian.com>
+
+	* Form.cs: Property is 2.0 only
+	* PrintDialog.cs: Signature fix.
+
 2005-11-30  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* TextControl.cs: 

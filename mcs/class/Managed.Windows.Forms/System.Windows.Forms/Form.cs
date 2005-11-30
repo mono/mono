@@ -545,7 +545,7 @@ namespace System.Windows.Forms {
 
 		// This is the menu in display and being used because of merging this can
 		// be different then the menu that is actually assosciated with the form
-		public MainMenu ActiveMenu {
+		internal MainMenu ActiveMenu {
 			get {
 				if (IsMdiChild)
 					return null;
@@ -1508,7 +1508,7 @@ namespace System.Windows.Forms {
 				case Msg.WM_NCCALCSIZE: {
 					XplatUIWin32.NCCALCSIZE_PARAMS	ncp;
 
-					if ((menu != null) && (m.WParam == (IntPtr)1)) {
+					if ((ActiveMenu != null) && (m.WParam == (IntPtr)1)) {
 						ncp = (XplatUIWin32.NCCALCSIZE_PARAMS)Marshal.PtrToStructure(m.LParam, typeof(XplatUIWin32.NCCALCSIZE_PARAMS));
 
 						// Adjust for menu

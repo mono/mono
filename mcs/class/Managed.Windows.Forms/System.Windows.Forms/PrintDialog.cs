@@ -51,6 +51,7 @@ namespace System.Windows.Forms
 		{
 		}
 
+#if NET_2_0
 		public bool AllowCurrentPage {
 			get {
 				return allow_current_page;
@@ -60,7 +61,8 @@ namespace System.Windows.Forms
 				allow_current_page = value;
 			}
 		}
-		
+#endif
+
 		public bool AllowPrintToFile {
 			get {
 				return allow_print_to_file;
