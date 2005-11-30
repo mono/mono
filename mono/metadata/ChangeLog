@@ -7,7 +7,7 @@
 
 2005-11-29 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
-	* threadpool.c: fix typo when setting filde descriptor states.
+	* threadpool.c: fix typo when setting file descriptor states.
 
 2005-11-28  Raja R Harinath  <rharinath@novell.com>
 
