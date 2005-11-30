@@ -2011,6 +2011,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			x86_alu_reg_reg (code, X86_ADD, ins->sreg1, ins->sreg2);
 			break;
 		case OP_ADC:
+		case OP_IADC:
 			x86_alu_reg_reg (code, X86_ADC, ins->sreg1, ins->sreg2);
 			break;
 		case OP_ADDCC_IMM:
@@ -2019,6 +2020,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			x86_alu_reg_imm (code, X86_ADD, ins->dreg, ins->inst_imm);
 			break;
 		case OP_ADC_IMM:
+		case OP_IADC_IMM:
 			x86_alu_reg_imm (code, X86_ADC, ins->dreg, ins->inst_imm);
 			break;
 		case OP_SUBCC:
@@ -2028,6 +2030,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			x86_alu_reg_reg (code, X86_SUB, ins->sreg1, ins->sreg2);
 			break;
 		case OP_SBB:
+		case OP_ISBB:
 			x86_alu_reg_reg (code, X86_SBB, ins->sreg1, ins->sreg2);
 			break;
 		case OP_SUBCC_IMM:
@@ -2036,6 +2039,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			x86_alu_reg_imm (code, X86_SUB, ins->dreg, ins->inst_imm);
 			break;
 		case OP_SBB_IMM:
+		case OP_ISBB_IMM:
 			x86_alu_reg_imm (code, X86_SBB, ins->dreg, ins->inst_imm);
 			break;
 		case CEE_AND:
@@ -2801,7 +2805,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 
 			break;
 		}
-		case OP_LCONV_TO_OVF_I: {
+		case OP_LCONV_TO_OVF_I:
+		case OP_LCONV_TO_OVF_I4_2: {
 			guint8 *br [3], *label [1];
 			MonoInst *tins;
 

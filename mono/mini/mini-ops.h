@@ -249,8 +249,11 @@ MINI_OP(OP_LBGT_UN, "long_bgt_un", NONE, NONE, NONE)
 MINI_OP(OP_LBLE_UN, "long_ble_un", NONE, NONE, NONE)
 MINI_OP(OP_LBLT_UN, "long_blt_un", NONE, NONE, NONE)
 
-MINI_OP(OP_LCONV_TO_R8_2,"long_conv_to_r8_2", FREG, IREG, IREG)
 MINI_OP(OP_LONG_SHRUN_32, "long_shr_un_32", NONE, NONE, NONE)
+
+/* Variants of the original opcodes which take the two parts of the long as two arguments */
+MINI_OP(OP_LCONV_TO_R8_2,"long_conv_to_r8_2", FREG, IREG, IREG)
+MINI_OP(OP_LCONV_TO_OVF_I4_2,"long_conv_to_ovf_i4_2", IREG, IREG, IREG)
 
 /* 32 bit opcodes: must be in the same order as the matching CEE_ opcodes: binops_op_map */
 MINI_OP(OP_IADD,    "int_add", IREG, IREG, IREG)
