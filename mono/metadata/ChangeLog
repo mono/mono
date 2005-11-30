@@ -1,3 +1,8 @@
+
+Wed Nov 30 15:48:22 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* icall.c: fixed Enum.ToObject() to correctly convert the values.
+
 2005-11-29 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* threadpool.c: workaround for a bug that shows up on the Mac:
