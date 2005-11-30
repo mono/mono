@@ -1,3 +1,7 @@
+2005-11-30  Konstantin Triger  <kostat@mainsoft.com>
+
+	* IXmlNamespaceResolver.cs: TARGET_JVM namespace change.
+
 2005-11-17  Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* XmlInputStream.cs: fixed Initialize method to be able 

@@ -10,7 +10,7 @@
 			<References>
 				<Reference Name="System" AssemblyName="System" HintPath="..\lib\System.dll"/>
 				<Reference Name="rt" AssemblyName="rt" HintPath="C:\Program Files\Mainsoft\Visual MainWin for J2EE\jgac\j2sdk1.4.2_05\rt.dll" Private="False"/>
-				<Reference Name="vmwutils" AssemblyName="vmwutils" HintPath="..\..\Program Files\Mainsoft\Visual MainWin for J2EE\jgac\vmw4j2ee_110\vmwutils.dll" Private="False"/>
+				<Reference Name="J2SE.Helpers" AssemblyName="J2SE.Helpers" HintPath="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE\jgac\vmw4j2ee_110\J2SE.Helpers.dll" Private="False"/>
 			</References>
 		</Build>
 		<Files>
@@ -401,6 +401,6 @@
 				<File RelPath="System.Xml.Xsl\XslTransform.cs" SubType="Code" BuildAction="Compile"/>
 			</Include>
 		</Files>
-		<UserProperties REFS.JarPath.rt="..\lib\rt.jar" project.JDKType="1.4.2_05" REFS.JarPath.system="..\lib\System.jar" REFS.JarPath.vmwutils="..\..\Program Files\Mainsoft\Visual MainWin for J2EE\jgac\vmw4j2ee_110\vmwutils.jar" />
+		<UserProperties REFS.JarPath.j2se.helpers="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE\jgac\vmw4j2ee_110\J2SE.Helpers.jar" REFS.JarPath.rt="..\lib\rt.jar" project.JDKType="1.5.0_05" REFS.JarPath.system="..\lib\System.jar" />
 	</CSHARP>
 	<VisualMainWin><Project Prop2023="1.4.2_05" Prop2024="" Prop2026="" Prop2015="" Version="1.6.0" ProjectType="1" /><References /><Configs><Config Prop2000="0" Prop2001="0" Prop2002="0" Prop2003="0" Prop2004="0" Prop2005="0" Prop2006="" Prop2007="" Prop2008="" Prop2009="" Prop2010="" Prop2011="0" Prop2012="0" Prop2013="" Prop2014="0" Prop2016="" Prop2027="" Prop2019="0" Prop2020="285212672" Prop2021="4096" Prop2022="0" Prop2017="0" Prop2018="0" Name="Release_Java" /><Config Prop2000="1" Prop2001="0" Prop2002="0" Prop2003="0" Prop2004="0" Prop2005="0" Prop2006="" Prop2007="" Prop2008="" Prop2009="" Prop2010="" Prop2011="0" Prop2012="0" Prop2013="" Prop2014="0" Prop2016="" Prop2027="" Prop2019="0" Prop2020="285212672" Prop2021="4096" Prop2022="0" Prop2017="0" Prop2018="0" Name="Release" /><Config Prop2000="0" Prop2001="0" Prop2002="0" Prop2003="0" Prop2004="0" Prop2005="0" Prop2006="" Prop2007="" Prop2008="" Prop2009="" Prop2010="" Prop2011="0" Prop2012="0" Prop2013="" Prop2014="0" Prop2016="" Prop2027="" Prop2019="-1" Prop2020="285212672" Prop2021="4096" Prop2022="0" Prop2017="0" Prop2018="0" Name="Debug_Java" /><Config Prop2000="1" Prop2001="0" Prop2002="0" Prop2003="0" Prop2004="0" Prop2005="0" Prop2006="" Prop2007="" Prop2008="" Prop2009="" Prop2010="" Prop2011="-1" Prop2012="0" Prop2013="" Prop2014="0" Prop2016="" Prop2027="" Prop2019="-1" Prop2020="285212672" Prop2021="4096" Prop2022="0" Prop2017="0" Prop2018="0" Name="Debug" /></Configs></VisualMainWin></VisualStudioProject>

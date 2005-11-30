@@ -1,3 +1,8 @@
+2005-11-30  Konstantin Triger <kostat@mainsoft.com>
+
+	* System.XML.vmwcsproj: reference to vmwutils replaced with reference to J2SE.Helpers.
+	* jay.bat: quoting passes
+
 2005-11-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.Xml.dll.sources : added dummy XslCompiledTransform.cs.

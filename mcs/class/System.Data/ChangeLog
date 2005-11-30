@@ -1,3 +1,7 @@
+2005-11-30  Konstantin Triger <kostat@mainsoft.com>
+
+        * jay.bat: quoting passes
+
 2005-11-27  Konstantin Triger <kostat@mainsoft.com>
 
 	* System.Data.vmwcsproj: added ConflictOption.cs
