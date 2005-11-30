@@ -178,13 +178,9 @@ namespace System.Web.UI.HtmlControls {
 #endif		
 		override void RenderChildren (HtmlTextWriter writer)
 		{
-			int n = Count;
-			if (n > 0) {
+			if (HasControls ()) {
 				writer.Indent++;
-				for (int i=0; i < n; i++) {
-					writer.WriteLine ();
-					_cells [i].RenderControl (writer);
-				}
+				base.RenderChildren (writer);
 				writer.Indent--;
 				writer.WriteLine ();
 			}

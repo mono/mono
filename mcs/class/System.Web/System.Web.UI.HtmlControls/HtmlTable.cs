@@ -221,11 +221,11 @@ namespace System.Web.UI.HtmlControls {
 #endif		
 		override void RenderChildren (HtmlTextWriter writer)
 		{
-			writer.WriteLine ();
 			if (HasControls ()) {
 				writer.Indent++;
 				base.RenderChildren (writer);
 				writer.Indent--;
+				writer.WriteLine ();
 			}
 		}
 
