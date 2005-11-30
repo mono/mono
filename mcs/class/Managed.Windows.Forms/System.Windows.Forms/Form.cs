@@ -535,6 +535,14 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		public MainMenu MergedMenu {
+			get {
+				if (!IsMdiChild || mdi_child_context == null)
+					return null;
+				return mdi_child_context.MergedMenu;
+			}
+		}
+
 		[DefaultValue(true)]
 		public bool MinimizeBox {
 			get {

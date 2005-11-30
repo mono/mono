@@ -1,4 +1,3 @@
-
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -10,6 +9,8 @@ namespace System.Windows.Forms {
 		private static readonly int MdiBorderStyle = 0xFFFF;
 		private static Color titlebar_color;
 
+		
+		private MainMenu merged_menu;
 		private int BorderWidth = 3;
 //		private int TitleBarHeight = 26;
 //		private int ToolTitleBarHeight = 19;
@@ -111,6 +112,28 @@ namespace System.Windows.Forms {
 
 		public bool Maximized {
 			get { return maximized; }
+		}
+
+		public MainMenu MergedMenu {
+			get {
+				if (merged_menu == null)
+					merged_menu = CreateMergedMenu ();
+				return merged_menu;
+			}
+		}
+
+		private MainMenu CreateMergedMenu ()
+		{
+			Form parent = (Form) mdi_container.Parent;
+			Menu clone = parent.Menu.CloneMenu ();
+			clone.MergeMenu (form.Menu);
+			clone.MenuChanged += new EventHandler (MenuChangedHandler);
+			return (MainMenu) clone;
+		}
+
+		private void MenuChangedHandler (object sender, EventArgs e)
+		{
+			CreateMergedMenu ();
 		}
 
 		public bool HandleMessage (ref Message m)

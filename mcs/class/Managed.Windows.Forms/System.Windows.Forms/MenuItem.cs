@@ -306,7 +306,7 @@ namespace System.Windows.Forms
 				}
 
 				if (parent_menu != null)
-					parent_menu.MenuChanged ();
+					parent_menu.OnMenuChanged (EventArgs.Empty);
 			}
 		}
 

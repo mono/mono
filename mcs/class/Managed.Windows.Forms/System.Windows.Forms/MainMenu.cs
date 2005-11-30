@@ -115,9 +115,9 @@ namespace System.Windows.Forms
 				tracker = new MenuTracker (this); 
 		}
 		
-		internal override void MenuChanged ()
+		internal override void OnMenuChanged (EventArgs e)
 		{
-			base.MenuChanged ();
+			base.OnMenuChanged (EventArgs.Empty);
 			if (form == null)
 				return;
 

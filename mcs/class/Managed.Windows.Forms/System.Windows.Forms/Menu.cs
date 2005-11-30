@@ -67,8 +67,10 @@ namespace System.Windows.Forms
 			get { return menu_handle; }
 		}
 
-		internal virtual void MenuChanged ()
+		internal virtual void OnMenuChanged (EventArgs e)
 		{
+			if (MenuChanged != null)
+				MenuChanged (this, e);
 		}
 
 		[BrowsableAttribute(false)]
@@ -250,6 +252,7 @@ namespace System.Windows.Forms
 
 		#endregion Public Methods
 
+		public event EventHandler MenuChanged;
 
 		[ListBindable(false)]
 		public class MenuItemCollection : IList, ICollection, IEnumerable
@@ -310,9 +313,9 @@ namespace System.Windows.Forms
 				items.Add (mi);
 				mi.Index = items.Count - 1;
 
-				owner.MenuChanged ();
+				owner.OnMenuChanged (EventArgs.Empty);
 				if (owner.parent_menu != null)
-					owner.parent_menu.MenuChanged ();
+					owner.parent_menu.OnMenuChanged (EventArgs.Empty);
 				return items.Count - 1;
 			}
 
@@ -340,7 +343,7 @@ namespace System.Windows.Forms
 
 				items = new_items;
 				UpdateItemsIndices ();
-				owner.MenuChanged ();
+				owner.OnMenuChanged (EventArgs.Empty);
 
 				return index;
 			}
@@ -350,7 +353,7 @@ namespace System.Windows.Forms
 				if (index < 0 || index > Count)
 					throw new ArgumentOutOfRangeException ("Index of out range");
 				UpdateItemsIndices ();
-				owner.MenuChanged ();
+				owner.OnMenuChanged (EventArgs.Empty);
 			}
 
 			public virtual MenuItem Add (string s, EventHandler e)
@@ -381,7 +384,7 @@ namespace System.Windows.Forms
 			public virtual void Clear ()
 			{
 				items.Clear ();
-				owner.MenuChanged ();
+				owner.OnMenuChanged (EventArgs.Empty);
 			}
 
 			public bool Contains (MenuItem value)
@@ -442,7 +445,7 @@ namespace System.Windows.Forms
 				items.RemoveAt (index);
 
 				UpdateItemsIndices ();
-				owner.MenuChanged ();
+				owner.OnMenuChanged (EventArgs.Empty);
 			}
 
 			#endregion Public Methods

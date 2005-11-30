@@ -1,5 +1,15 @@
 2005-11-30  Jackson Harper  <jackson@ximian.com>
 
+	* Menu.cs: Switch the MenuChanged method to OnMenuChanged and add
+	a MenuChanged event. Just to make the API a little more
+	consistent.
+	* MainMenu.cs:
+	* MenuItem.cs: Use the new OnMenuChanged
+	* MdiChildContext.cs: Handle menu merging.
+	* Form.cs: Implement MergedMenu.
+	
+2005-11-30  Jackson Harper  <jackson@ximian.com>
+
 	* Menu.cs: We were misusing Add. Add goes behind the specified
 	index according to the docs, and does not replace the specified
 	index. So I added an Insert method.
