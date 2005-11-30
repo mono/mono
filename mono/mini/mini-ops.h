@@ -417,11 +417,12 @@ MINI_OP(OP_FCONV_TO_OVF_U4,"float_conv_to_ovf_u4", IREG, FREG, NONE)
 MINI_OP(OP_FCONV_TO_OVF_I8,"float_conv_to_ovf_i8", IREG, FREG, NONE)
 MINI_OP(OP_FCONV_TO_OVF_U8,"float_conv_to_ovf_u8", IREG, FREG, NONE)
 
-MINI_OP(OP_FCEQ,   "float_ceq", NONE, NONE, NONE)
-MINI_OP(OP_FCGT,   "float_cgt", NONE, NONE, NONE)
-MINI_OP(OP_FCGT_UN,"float_cgt_un", NONE, NONE, NONE)
-MINI_OP(OP_FCLT,   "float_clt", NONE, NONE, NONE)
-MINI_OP(OP_FCLT_UN,"float_clt_un", NONE, NONE, NONE)
+/* These do the comparison too */
+MINI_OP(OP_FCEQ,   "float_ceq", IREG, FREG, FREG)
+MINI_OP(OP_FCGT,   "float_cgt", IREG, FREG, FREG)
+MINI_OP(OP_FCGT_UN,"float_cgt_un", IREG, FREG, FREG)
+MINI_OP(OP_FCLT,   "float_clt", IREG, FREG, FREG)
+MINI_OP(OP_FCLT_UN,"float_clt_un", IREG, FREG, FREG)
 
 MINI_OP(OP_FCEQ_MEMBASE,   "float_ceq_membase", NONE, NONE, NONE)
 MINI_OP(OP_FCGT_MEMBASE,   "float_cgt_membase", NONE, NONE, NONE)

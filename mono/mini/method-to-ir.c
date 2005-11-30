@@ -401,10 +401,11 @@ handle_enum:
         MONO_INST_NEW ((cfg), (inst), OP_LABEL); \
 	} while (0)
 
+/* FIXME: Why is this label thing needed ? */
 #define	MONO_EMIT_NEW_BRANCH_BLOCK(cfg,op,targetbb) do { \
         MonoInst *inst; \
         MonoInst *target_label; \
-        MONO_INST_NEW ((cfg), target_label, OP_LABEL); \
+        MONO_INST_NEW ((cfg), (target_label), OP_LABEL); \
 	        target_label->next = (targetbb)->code; \
 		target_label->inst_c0 = (targetbb)->native_offset; \
         if (!(targetbb)->last_ins) (targetbb)->last_ins = target_label; \
@@ -412,7 +413,7 @@ handle_enum:
         MONO_INST_NEW ((cfg), inst, (op)); \
 		inst->inst_i0 = target_label;	\
 		inst->flags = MONO_INST_BRLABEL;	\
-	        mono_bblock_add_inst ((cfg)->cbb, inst); \
+        MONO_ADD_INS ((cfg)->cbb, inst); \
 	} while (0)
 
 #ifdef MONO_ARCH_NEED_GOT_VAR
@@ -1254,7 +1255,6 @@ type_from_op (MonoInst *ins, MonoInst *src1, MonoInst *src2) {
 	case OP_COMPARE:
 	case OP_LCOMPARE:
 	case OP_ICOMPARE:
-		/* FIXME: handle some specifics with ins->next->type */
 		ins->type = bin_comp_table [src1->type] [src2->type] ? STACK_I4: STACK_INV;
 		if ((src1->type == STACK_I8) || ((sizeof (gpointer) == 8) && ((src1->type == STACK_PTR) || (src1->type == STACK_OBJ) || (src1->type == STACK_MP))))
 			ins->opcode = OP_LCOMPARE;
@@ -3167,11 +3167,22 @@ void check_linkdemand (MonoCompile *cfg, MonoMethod *caller, MonoMethod *callee,
 	}
 }
 
+/*
+ * decompose_opcode:
+ *
+ *   Decompose complex opcodes into ones closer to opcodes supported by
+ * the given architecture.
+ */
 static void
 decompose_opcode (MonoCompile *cfg, MonoInst *ins)
 {
 	/* FIXME: Instead of = NOP, don't emit the original ins at all */
 
+	/*
+	 * The code below assumes that we are called immediately after emitting 
+	 * ins. This means we can emit code using the normal code generation
+	 * macros.
+	 */
 	switch (ins->opcode) {
 	case OP_IADD_OVF:
 		ins->opcode = OP_IADDCC;
@@ -3389,18 +3400,48 @@ decompose_opcode (MonoCompile *cfg, MonoInst *ins)
 		break;
 #endif
 
-	default:
+	default: {
+		MonoJitICallInfo *info;
+
+		info = mono_find_jit_opcode_emulation (ins->opcode);
+		if (info) {
+			MonoInst **args;
+			MonoCallInst *call;
+
+			/* Create dummy MonoInst's for the arguments */
+			g_assert (!info->sig->hasthis);
+			g_assert (info->sig->param_count <= 2);
+
+			args = mono_mempool_alloc0 (cfg->mempool, sizeof (MonoInst*) * info->sig->param_count);
+			if (info->sig->param_count > 0) {
+				MONO_INST_NEW (cfg, args [0], OP_ARG);
+				args [0]->dreg = ins->sreg1;
+			}
+			if (info->sig->param_count > 1) {
+				MONO_INST_NEW (cfg, args [1], OP_ARG);
+				args [1]->dreg = ins->sreg2;
+			}
+
+			call = mono_emit_call_args (cfg, cfg->cbb, info->sig, args, FALSE, FALSE, ins->cil_code, FALSE);
+			call->inst.dreg = ins->dreg;
+			call->fptr = mono_icall_get_wrapper (info);
+
+			MONO_ADD_INS (cfg->cbb, call);
+
+			ins->opcode = CEE_NOP;
+		}
 		break;
+	}
 	}
 }
 
 /**
- * lower_long_opts:
+ * decompose_long_opts:
  *
  *  Decompose 64bit opcodes into 32bit opcodes on 32 bit platforms.
  */
 static void
-lower_long_opts (MonoCompile *cfg)
+decompose_long_opts (MonoCompile *cfg)
 {
 #if SIZEOF_VOID_P == 4
 	MonoBasicBlock *bb;
@@ -3435,6 +3476,7 @@ lower_long_opts (MonoCompile *cfg)
 			case OP_LMOVE:
 				MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, tree->dreg, tree->sreg1);
 				MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, tree->dreg + 1, tree->sreg1 + 1);
+				break;
 			case OP_ICONV_TO_I8: {
 				guint32 tmpreg = alloc_dreg (cfg, STACK_I4);
 
@@ -3458,6 +3500,32 @@ lower_long_opts (MonoCompile *cfg)
 			case OP_LCONV_TO_R8:
 				MONO_EMIT_NEW_BIALU (cfg, OP_LCONV_TO_R8_2, tree->dreg, tree->sreg1, tree->sreg1 + 1);
 				break;
+			case OP_LCOMPARE: {
+				MonoInst *next = tree->next;
+
+				g_assert (next);
+
+				switch (next->opcode) {
+				case OP_LBEQ:
+					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1, tree->sreg2);
+					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBNE_UN, next->inst_false_bb);
+					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 1, tree->sreg2 + 1);
+					next->opcode = OP_IBEQ;
+					break;
+				case OP_LBLT:
+				case OP_LBGT:
+				case OP_LBGE:
+				case OP_LBLE:
+				case OP_LBNE_UN:
+				case OP_LBLT_UN:
+				case OP_LBGT_UN:
+				case OP_LBGE_UN:
+				case OP_LBLE_UN:
+					NOT_IMPLEMENTED;
+				default:
+					NOT_IMPLEMENTED;
+				}
+			}
 			default:
 				break;
 			}
@@ -4900,14 +4968,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 		case CEE_CONV_R_UN:
 			CHECK_STACK (1);
 			ADD_UNOP (*ip);
-			if (mono_find_jit_opcode_emulation (ins->opcode)) {
-				NOT_IMPLEMENTED;
-				--sp;
-				*sp++ = emit_tree (cfg, bblock, ins, ip + 1);
-				mono_get_got_var (cfg);
-			}
-			else
-				decompose_opcode (cfg, ins);
+			decompose_opcode (cfg, ins);
 			ip++;			
 			break;
 		case CEE_CONV_OVF_I4:
@@ -6596,6 +6657,8 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				CHECK_TYPE (cmp);
 				if ((sp [0]->type == STACK_I8) || ((sizeof (gpointer) == 8) && ((sp [0]->type == STACK_PTR) || (sp [0]->type == STACK_OBJ) || (sp [0]->type == STACK_MP))))
 					cmp->opcode = OP_LCOMPARE;
+				else if (sp [0]->type == STACK_R8)
+					cmp->opcode = OP_FCOMPARE;
 				else
 					cmp->opcode = OP_COMPARE;
 				MONO_ADD_INS (bblock, cmp);
@@ -6603,6 +6666,16 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				ins->type = STACK_I4;
 				ins->dreg = alloc_dreg (cfg, ins->type);
 				type_from_op (ins, sp [0], sp [1]);
+
+				if (cmp->opcode == OP_FCOMPARE) {
+					/*
+					 * The backends expect the fceq opcodes to do the
+					 * comparison too.
+					 */
+					cmp->opcode = CEE_NOP;
+					ins->sreg1 = cmp->sreg1;
+					ins->sreg2 = cmp->sreg2;
+				}
 				MONO_ADD_INS (bblock, ins);
 				*sp++ = ins;
 				ip += 2;
@@ -7128,7 +7201,7 @@ mono_spill_global_vars (MonoCompile *cfg)
 	MonoBasicBlock *bb;
 
 	/* FIXME: Move this call elsewhere */
-	lower_long_opts (cfg);
+	decompose_long_opts (cfg);
 
 	/* FIXME: Move this to mini.c */
 
@@ -7300,4 +7373,9 @@ mono_spill_global_vars (MonoCompile *cfg)
  * - make mono_print_ins use the arch-independent opcode metadata
  * - simplify the emitting of calls
  * - add OP_ICALL
+ * - get rid of branches inside bblocks
+ * - COMPARE/BEQ as separate instructions or unify them ?
+ *   - keeping them separate allows specialized compare instructions like
+ *     compare_imm, compare_membase
+ *   - most back ends unify fp compare+branch, fp compare+ceq
  */
