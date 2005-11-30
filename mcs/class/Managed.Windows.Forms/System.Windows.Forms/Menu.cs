@@ -252,7 +252,7 @@ namespace System.Windows.Forms
 
 		#endregion Public Methods
 
-		public event EventHandler MenuChanged;
+		internal event EventHandler MenuChanged;
 
 		[ListBindable(false)]
 		public class MenuItemCollection : IList, ICollection, IEnumerable

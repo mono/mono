@@ -1,3 +1,7 @@
+2005-11-23  Mike Kestner  <mkestner@novell.com>
+
+	* Menu.cs: mark MenuChanged internal, since it's not exposed by MS.
+
 2005-11-30  Jackson Harper  <jackson@ximian.com>
 
 	* MdiChildContext.cs: Set the cloned menus forms, as these don't
