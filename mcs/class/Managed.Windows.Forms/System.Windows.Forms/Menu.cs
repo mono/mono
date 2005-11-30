@@ -227,7 +227,7 @@ namespace System.Windows.Forms
 					case MenuMerge.MergeItems:
 					{
 						int pos = FindMergePosition (menuSrc.MenuItems[i].MergeOrder - 1);						
-						MenuItems.Add (pos, menuSrc.MenuItems[i].CloneMenu ());
+						MenuItems.Insert (pos, menuSrc.MenuItems[i].CloneMenu ());
 						
 						break;
 					}
@@ -345,6 +345,14 @@ namespace System.Windows.Forms
 				return index;
 			}
 
+			internal void Insert (int index, MenuItem mi)
+			{
+				if (index < 0 || index > Count)
+					throw new ArgumentOutOfRangeException ("Index of out range");
+				UpdateItemsIndices ();
+				owner.MenuChanged ();
+			}
+
 			public virtual MenuItem Add (string s, EventHandler e)
 			{
 				MenuItem item = new MenuItem (s, e);
@@ -408,7 +416,7 @@ namespace System.Windows.Forms
 
 			void IList.Insert (int index, object value)
 			{
-				Add (index, (MenuItem) value);
+				Insert (index, (MenuItem) value);
 			}
 
 			void IList.Remove (object value)

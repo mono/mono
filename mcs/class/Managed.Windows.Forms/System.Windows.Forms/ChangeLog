@@ -1,3 +1,9 @@
+2005-11-30  Jackson Harper  <jackson@ximian.com>
+
+	* Menu.cs: We were misusing Add. Add goes behind the specified
+	index according to the docs, and does not replace the specified
+	index. So I added an Insert method.
+
 2005-11-30  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* TextBoxBase.cs:  Implemented Ctrl-Ins (Copy), Shift-Ins (Paste) and
