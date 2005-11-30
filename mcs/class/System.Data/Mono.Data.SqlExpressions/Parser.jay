@@ -257,7 +257,7 @@ CalcFunction
 	{
 		long arg1 = (long) $5;
 		long arg2 = (long) $7;
-		$$ = new SubstringFunction ((IExpression)$3, (int) arg1, (int) arg2);
+		$$ = new SubstringFunction ((IExpression)$3, Convert.ToInt32(arg1), Convert.ToInt32(arg2));
 	}
 	| ISNULL PAROPEN ColumnValue COMMA Expr PARCLOSE
 	{
