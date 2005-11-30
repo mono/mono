@@ -7,6 +7,7 @@
 	* Form.cs: Create an ActiveMenu property, so that when MDI is used
 	we can change the menu being displayed/handled by the form without
 	changing the menu assosciated with the form.
+	- Don't let Mdi children draw/handle menus.
 	
 2005-11-30  Jackson Harper  <jackson@ximian.com>
 

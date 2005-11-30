@@ -520,7 +520,7 @@ namespace System.Windows.Forms {
 				if (menu != value) {
 					menu = value;
 
-					if (menu != null) {
+					if (menu != null && !IsMdiChild) {
 						menu.SetForm (this);
 
 						if (IsHandleCreated) {
@@ -547,6 +547,9 @@ namespace System.Windows.Forms {
 		// be different then the menu that is actually assosciated with the form
 		public MainMenu ActiveMenu {
 			get {
+				if (IsMdiChild)
+					return null;
+
 				Form amc = ActiveMdiChild;
 				if (amc == null)
 					return menu;
@@ -1415,7 +1418,7 @@ namespace System.Windows.Forms {
 			Rectangle WindowRect;
 			CreateParams cp = this.CreateParams;
 
-			if (XplatUI.CalculateWindowRect(Handle, ref ClientRect, cp.Style, cp.ExStyle, menu, out WindowRect) )
+			if (XplatUI.CalculateWindowRect(Handle, ref ClientRect, cp.Style, cp.ExStyle, ActiveMenu, out WindowRect) )
 				SetBoundsCore(bounds.X, bounds.Y, WindowRect.Width, WindowRect.Height, BoundsSpecified.Size);
 		}
 
@@ -1476,7 +1479,7 @@ namespace System.Windows.Forms {
 
 				// Menu drawing
 				case Msg.WM_NCLBUTTONDOWN: {
-					if (this.menu != null) {
+					if (ActiveMenu != null) {
 						ActiveMenu.OnMouseDown(this, new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 0));
 					}
 					base.WndProc(ref m);
