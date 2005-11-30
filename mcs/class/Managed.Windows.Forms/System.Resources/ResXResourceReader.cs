@@ -204,7 +204,7 @@ namespace System.Resources
 							v = c.ConvertFrom (Convert.FromBase64String (val));
 						} else if (tt != null) {
 							TypeConverter c = TypeDescriptor.GetConverter (tt);
-							v = c.ConvertFromString (val);
+							v = c.ConvertFromInvariantString (val);
 						} else if (mt != null) {
 							byte [] data = Convert.FromBase64String (val);
 							BinaryFormatter f = new BinaryFormatter ();

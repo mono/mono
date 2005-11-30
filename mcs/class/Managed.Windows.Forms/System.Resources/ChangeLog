@@ -1,3 +1,10 @@
+2005-11-30  Robert Jordan  <robertj@gmx.net>
+
+	* ResXResourceReader.cs, ResXResourceWriter.cs: Made string conversions
+	culture-invariant.
+	* ResXResourceWriter.cs: Fixed AddResource (string, object) to emit
+	the type attribute when the object has a type converter.
+
 2005-10-04  Peter Bartok  <pbartok@novell.com>
 
 	* ResXResourceReader.cs, ResXResourceWriter.cs: Added call

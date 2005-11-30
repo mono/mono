@@ -166,8 +166,15 @@ namespace System.Resources
 
 		void WriteString (string name, string value)
 		{
+                        WriteString (name, value, null);
+		}
+
+		void WriteString (string name, string value, string typename)
+		{
 			writer.WriteStartElement ("data");
 			writer.WriteAttributeString ("name", name);
+                        if (typename != null)
+                                writer.WriteAttributeString ("type", typename);
 			writer.WriteStartElement ("value");
 			writer.WriteString (value);
 			writer.WriteEndElement ();
@@ -206,10 +213,15 @@ namespace System.Resources
 			if (writer == null)
 				InitWriter ();
 
+                        if (value is string) {
+                                WriteString (name, (string) value);
+                                return;
+                        }
+
 			TypeConverter converter = TypeDescriptor.GetConverter (value);
 			if (converter != null && converter.CanConvertTo (typeof (string)) && converter.CanConvertFrom (typeof (string))) {
-				string str = (string) converter.ConvertTo (value, typeof (string));
-				WriteString (name, str);
+				string str = (string) converter.ConvertToInvariantString (value);
+				WriteString (name, str, value.GetType ().AssemblyQualifiedName);
 				return;
 			}
 			
