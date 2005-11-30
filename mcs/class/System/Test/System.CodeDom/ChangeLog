@@ -1,3 +1,7 @@
+2005-11-30  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* CodeRemoveEventStatementTest.cs: Added tests for ctors.
+
 2005-11-20  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* CodeTypeParameterCollectionTest.cs: Improve coverage of AddRange 

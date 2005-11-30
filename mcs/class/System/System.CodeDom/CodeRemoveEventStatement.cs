@@ -45,7 +45,6 @@ namespace System.CodeDom
 		//
 		public CodeRemoveEventStatement ()
 		{
-			eventRef = new CodeEventReferenceExpression (null, String.Empty);
 		}
 
 		public CodeRemoveEventStatement (CodeEventReferenceExpression eventRef,
@@ -69,6 +68,9 @@ namespace System.CodeDom
 		//
 		public CodeEventReferenceExpression Event {
 			get {
+				if (eventRef == null) {
+					eventRef = new CodeEventReferenceExpression ();
+				}
 				return eventRef;
 			}
 			set {

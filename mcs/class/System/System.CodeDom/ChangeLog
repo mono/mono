@@ -1,3 +1,8 @@
+2005-11-30  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* CodeRemoveEventStatement.cs: Event returns new CodeEventReference
+	if underlying value is null.
+
 2005-11-20  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* CodeParameterDeclarationExpressionCollection.cs: Use CollectionBase

@@ -1,3 +1,8 @@
+2005-11-30  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* System_test.dll.sources: Added CodeRemoveEventStatementTest.cs from
+	System.CodeDom.
+
 2005-11-26  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* System_test.dll.sources: Added CodeGeneratorFromStatementTest.cs

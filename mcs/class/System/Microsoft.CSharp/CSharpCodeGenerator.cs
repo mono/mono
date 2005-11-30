@@ -261,8 +261,10 @@ namespace Mono.CSharp
 
 		protected override void GenerateEventReferenceExpression (CodeEventReferenceExpression expression)
 		{
-			GenerateExpression (expression.TargetObject);
-			Output.Write ('.');
+			if (expression.TargetObject != null) {
+				GenerateExpression (expression.TargetObject);
+				Output.Write ('.');
+			}
 			Output.Write (GetSafeName (expression.EventName));
 		}
 
@@ -322,7 +324,7 @@ namespace Mono.CSharp
 			GenerateExpression (statement.TestExpression);
 			output.Write ("; ");
 			GenerateStatement (statement.IncrementStatement);
-			output.Write (") ");
+			output.Write (")");
 			dont_write_semicolon = false;
 			OutputStartBrace ();
 			++Indent;
@@ -404,7 +406,7 @@ namespace Mono.CSharp
 					output.Write (' ');
 				else
 					output.WriteLine ();
-				output.WriteLine ("else");
+				output.Write ("else");
 				OutputStartBrace ();
 				++Indent;
 				GenerateStatements (falses);
@@ -481,7 +483,7 @@ namespace Mono.CSharp
 		{
 			TextWriter output = Output;
 			GenerateEventReferenceExpression (statement.Event);
-			Output.Write (" -= ");
+			output.Write (" -= ");
 			GenerateExpression (statement.Listener);
 			output.WriteLine (';');
 		}
@@ -497,10 +499,14 @@ namespace Mono.CSharp
 		
 		protected override void GenerateLabeledStatement (CodeLabeledStatement statement)
 		{
-			Output.Write (String.Concat (GetSafeName (statement.Label), ": "));
+			Indent--;
+			Output.Write (statement.Label);
+			Output.WriteLine (":");
+			Indent++;
 
-			if (statement.Statement != null)
+			if (statement.Statement != null) {
 				GenerateStatement (statement.Statement);
+			}
 		}
 
 		protected override void GenerateVariableDeclarationStatement (CodeVariableDeclarationStatement statement)
@@ -515,7 +521,9 @@ namespace Mono.CSharp
 				GenerateExpression (initExpression);
 			}
 
-			output.WriteLine (';');
+			if (!dont_write_semicolon) {
+				output.WriteLine (';');
+			}
 		}
 
 		protected override void GenerateLinePragmaStart (CodeLinePragma linePragma)

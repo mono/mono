@@ -288,9 +288,11 @@ namespace Microsoft.VisualBasic
 
 		protected override void GenerateEventReferenceExpression (CodeEventReferenceExpression expression)
 		{
-			GenerateExpression (expression.TargetObject);
-			Output.Write ('.');
-			Output.Write (expression.EventName);
+			if (expression.TargetObject != null) {
+				GenerateExpression (expression.TargetObject);
+				Output.Write ('.');
+			}
+			Output.Write (CreateEscapedIdentifier(expression.EventName));
 		}
 
 		protected override void GenerateDelegateInvokeExpression (CodeDelegateInvokeExpression expression)
@@ -376,8 +378,10 @@ namespace Microsoft.VisualBasic
 			output.Write ("Do While ");
 			GenerateExpression (statement.TestExpression);
 			output.WriteLine ();
+			Indent++;
 			GenerateStatements (statement.Statements);
 			GenerateStatement (statement.IncrementStatement);
+			Indent--;
 			output.WriteLine ("Loop");
 		}
 
@@ -424,19 +428,23 @@ namespace Microsoft.VisualBasic
 		{
 			TextWriter output = Output;
 
-			output.Write ("Return ");
-			GenerateExpression (statement.Expression);
-			output.WriteLine ();
+			if (statement.Expression != null) {
+				output.Write ("Return ");
+				GenerateExpression (statement.Expression);
+				output.WriteLine ();
+			} else {
+				output.WriteLine ("Return");
+			}
 		}
 
 		protected override void GenerateConditionStatement (CodeConditionStatement statement)
 		{
 			TextWriter output = Output;
-			output.Write ("If (");
+			output.Write ("If ");
 
 			GenerateExpression (statement.Condition);
 
-			output.WriteLine (") Then");
+			output.WriteLine (" Then");
 			++Indent;
 			GenerateStatements (statement.TrueStatements);
 			--Indent;
@@ -529,8 +537,12 @@ namespace Microsoft.VisualBasic
 		{
 			TextWriter output = Output;
 
-			output.Write (statement.Label + ":");
-			GenerateStatement (statement.Statement);
+			Indent--;
+			output.WriteLine (statement.Label + ":");
+			Indent++;
+			if (statement.Statement != null) {
+				GenerateStatement (statement.Statement);
+			}
 		}
 
 		protected override void GenerateTypeOfExpression (CodeTypeOfExpression e)
@@ -1322,7 +1334,7 @@ namespace Microsoft.VisualBasic
 				name = "__exception";
 			}
 #endif
-			Output.Write (name + " As " + GetTypeOutput (typeRef));
+			Output.Write (CreateEscapedIdentifier(name) + " As " + GetTypeOutput (typeRef));
 		}
 
 		protected override void OutputType (CodeTypeReference type)

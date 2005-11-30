@@ -80,6 +80,9 @@ namespace System.CodeDom.Compiler {
 				return indent;
 			}
 			set {
+				if (value < 0) {
+					value = 0;
+				}
 				indent = value;
 			}
 		}

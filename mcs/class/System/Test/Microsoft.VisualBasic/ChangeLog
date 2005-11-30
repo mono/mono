@@ -1,3 +1,11 @@
+2005-11-30  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* CodeGeneratorFromStatementTest.cs: Added tests for
+	CodeAssignStatement, CodeAttachEventStatement, CodeConditionStatement,
+	CodeExpressionStatement, CodeIterationStatement,
+	CodeLabeledStatement, CodeMethodReturnStatement, 
+	CodeRemoveEventStatement and CodeSnippetStatement.
+
 2005-11-26  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* CodeGeneratorTestBase.cs: Removed Code property, added Generate 

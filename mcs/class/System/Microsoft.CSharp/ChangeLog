@@ -1,3 +1,11 @@
+2005-11-30  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* CSharpCodeGenerator.cs: No longer output semicolon and newline for
+	CodeVariableDeclarationStatement in for statement, fixes #75292. 
+	Fixed NRE in GenerateEventReferenceExpression. Cosmetic changes to 
+	code generated for iteration to match MS.NET. Temporary reduce 
+	indentation for label and no longer escape label if its a keyword.
+
 2005-11-26  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* CSharpCodeGenerator.cs: Fixed GenerateComment to also write

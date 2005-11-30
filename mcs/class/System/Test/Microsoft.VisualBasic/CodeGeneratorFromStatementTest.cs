@@ -59,6 +59,81 @@ namespace MonoTests.Microsoft.VisualBasic
 		}
 
 		[Test]
+		public void CodeAssignStatementTest ()
+		{
+			CodeSnippetExpression cse1 = new CodeSnippetExpression ("A");
+			CodeSnippetExpression cse2 = new CodeSnippetExpression ("B");
+
+			CodeAssignStatement assignStatement = new CodeAssignStatement (cse1, cse2);
+			statement = assignStatement;
+
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"A = B{0}", NewLine), Generate (), "#1");
+
+			assignStatement.Left = null;
+			try {
+				Generate ();
+				Assert.Fail ("#2");
+			} catch (ArgumentNullException) {
+			}
+
+			assignStatement.Left = cse1;
+			Generate ();
+
+			assignStatement.Right = null;
+			try {
+				Generate ();
+				Assert.Fail ("#3");
+			} catch (ArgumentNullException) {
+			}
+
+			assignStatement.Right = cse2;
+			Generate ();
+		}
+
+		[Test]
+		public void CodeAttachEventStatementTest ()
+		{
+			CodeEventReferenceExpression cere = new CodeEventReferenceExpression (
+				new CodeSnippetExpression ("A"), "class");
+			CodeSnippetExpression handler = new CodeSnippetExpression ("EventHandler");
+
+			CodeAttachEventStatement attachEventStatement = new CodeAttachEventStatement ();
+			statement = attachEventStatement;
+
+			try {
+				Generate ();
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException) {
+			}
+
+			attachEventStatement.Event = cere;
+			try {
+				Generate ();
+				Assert.Fail ("#2");
+			} catch (ArgumentNullException) {
+			}
+
+			attachEventStatement.Event = null;
+			attachEventStatement.Listener = handler;
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"AddHandler , EventHandler{0}", NewLine), Generate (), "#3");
+
+			attachEventStatement.Event = cere;
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"AddHandler A.[class], EventHandler{0}", NewLine), Generate (), "#4");
+
+			attachEventStatement.Event = new CodeEventReferenceExpression (
+				new CodeSnippetExpression ((string) null), "");
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"AddHandler ., EventHandler{0}", NewLine), Generate (), "#5");
+
+			attachEventStatement.Listener = new CodeSnippetExpression ("");
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"AddHandler ., {0}", NewLine), Generate (), "#6");
+		}
+
+		[Test]
 		public void CodeCommentStatementTest ()
 		{
 			CodeCommentStatement commentStatement = new CodeCommentStatement ();
@@ -83,7 +158,355 @@ namespace MonoTests.Microsoft.VisualBasic
 		}
 
 		[Test]
-		public void ThrowExceptionStatementTest ()
+		public void CodeConditionStatementTest ()
+		{
+			CodeStatement[] trueStatements = new CodeStatement[] {
+				new CodeExpressionStatement (new CodeSnippetExpression ("DoA()")),
+				new CodeExpressionStatement (new CodeSnippetExpression (";")),
+				new CodeExpressionStatement (new CodeSnippetExpression ("DoB()")),
+				new CodeExpressionStatement (new CodeSnippetExpression ("")),
+				new CodeSnippetStatement ("A"),
+				new CodeExpressionStatement (new CodeSnippetExpression ("DoC()")) };
+
+			CodeStatement[] falseStatements = new CodeStatement[] {
+				new CodeExpressionStatement (new CodeSnippetExpression ("DoD()")),
+				new CodeSnippetStatement ("B"),
+				new CodeExpressionStatement (new CodeSnippetExpression (";")),
+				new CodeExpressionStatement (new CodeSnippetExpression ("DoE()")),
+				new CodeExpressionStatement (new CodeSnippetExpression ("")),
+				new CodeExpressionStatement (new CodeSnippetExpression ("DoF()")) };
+
+			CodeConditionStatement conditionStatement = new CodeConditionStatement ();
+			statement = conditionStatement;
+
+			try {
+				Generate ();
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException) {
+			}
+
+			conditionStatement.Condition = new CodeSnippetExpression ("");
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"If  Then{0}" +
+				"End If{0}", NewLine), Generate (), "#2");
+
+			conditionStatement.Condition = new CodeSnippetExpression ("true == false");
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"If true == false Then{0}" +
+				"End If{0}", NewLine), Generate (), "#3");
+
+			conditionStatement.TrueStatements.AddRange (trueStatements);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"If true == false Then{0}" +
+				"    DoA(){0}" +
+				"    ;{0}" +
+				"    DoB(){0}" +
+				"    {0}" +
+#if NET_2_0
+				"A{0}" +
+#else
+				"    A{0}" +
+#endif
+				"    DoC(){0}" +
+				"End If{0}", NewLine), Generate (), "#3");
+
+			conditionStatement.FalseStatements.AddRange (falseStatements);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"If true == false Then{0}" +
+				"    DoA(){0}" +
+				"    ;{0}" +
+				"    DoB(){0}" +
+				"    {0}" +
+#if NET_2_0
+				"A{0}" +
+#else
+				"    A{0}" +
+#endif
+				"    DoC(){0}" +
+				"Else{0}" +
+				"    DoD(){0}" +
+#if NET_2_0
+				"B{0}" +
+#else
+				"    B{0}" +
+#endif
+				"    ;{0}" +
+				"    DoE(){0}" +
+				"    {0}" +
+				"    DoF(){0}" +
+				"End If{0}", NewLine), Generate (), "#4");
+
+			options.ElseOnClosing = true;
+
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"If true == false Then{0}" +
+				"    DoA(){0}" +
+				"    ;{0}" +
+				"    DoB(){0}" +
+				"    {0}" +
+#if NET_2_0
+				"A{0}" +
+#else
+				"    A{0}" +
+#endif
+				"    DoC(){0}" +
+				"Else{0}" +
+				"    DoD(){0}" +
+#if NET_2_0
+				"B{0}" +
+#else
+				"    B{0}" +
+#endif
+				"    ;{0}" +
+				"    DoE(){0}" +
+				"    {0}" +
+				"    DoF(){0}" +
+				"End If{0}", NewLine), Generate (), "#5");
+
+			options.ElseOnClosing = false;
+
+			conditionStatement.TrueStatements.Clear ();
+
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"If true == false Then{0}" +
+				"Else{0}" +
+				"    DoD(){0}" +
+#if NET_2_0
+				"B{0}" +
+#else
+				"    B{0}" +
+#endif
+				"    ;{0}" +
+				"    DoE(){0}" +
+				"    {0}" +
+				"    DoF(){0}" +
+				"End If{0}", NewLine), Generate (), "#6");
+
+			conditionStatement.TrueStatements.AddRange (trueStatements);
+			conditionStatement.FalseStatements.Clear ();
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"If true == false Then{0}" +
+				"    DoA(){0}" +
+				"    ;{0}" +
+				"    DoB(){0}" +
+				"    {0}" +
+#if NET_2_0
+				"A{0}" +
+#else
+				"    A{0}" +
+#endif
+				"    DoC(){0}" +
+				"End If{0}", NewLine), Generate (), "#7");
+		}
+
+		[Test]
+		public void CodeExpressionStatementTest ()
+		{
+			CodeExpressionStatement ces = new CodeExpressionStatement ();
+			statement = ces;
+
+			try {
+				Generate ();
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException) {
+			}
+
+			ces.Expression = new CodeSnippetExpression ("something");
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"something{0}", NewLine), Generate (), "#2");
+		}
+
+		[Test]
+		public void CodeGotoStatementTest ()
+		{
+			statement = new CodeGotoStatement ("something");
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"goto something{0}", NewLine), Generate ());
+		}
+
+		[Test]
+		public void CodeIterationStatementTest ()
+		{
+			CodeIterationStatement cis = new CodeIterationStatement ();
+			statement = cis;
+
+			try {
+				Generate ();
+				Assert.Fail ("#1: null InitStatement should cause NRE");
+			} catch (NullReferenceException) {
+			}
+
+			cis.InitStatement = new CodeVariableDeclarationStatement (typeof (int),
+				"testInt", new CodePrimitiveExpression (1));
+			try {
+				Generate ();
+				Assert.Fail ("#2: null TestExpression should cause ArgumentNullException");
+			} catch (ArgumentNullException) {
+			}
+
+			cis.TestExpression = new CodeBinaryOperatorExpression (
+				new CodeVariableReferenceExpression ("testInt"),
+				CodeBinaryOperatorType.LessThan,
+				new CodePrimitiveExpression (10));
+			try {
+				Generate ();
+				Assert.Fail ("#3: null IncrementStatement should cause NRE");
+			} catch (NullReferenceException) {
+			}
+
+			cis.IncrementStatement = new CodeAssignStatement (
+				new CodeVariableReferenceExpression ("testInt"),
+				new CodeBinaryOperatorExpression (
+					new CodeVariableReferenceExpression ("testInt"),
+					CodeBinaryOperatorType.Add,
+					new CodePrimitiveExpression (1)));
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Dim testInt As Integer = 1{0}" +
+				"Do While (testInt < 10){0}" +
+				"    testInt = (testInt + 1){0}" +
+				"Loop{0}", NewLine), Generate (), "#4");
+
+			cis.Statements.AddRange (new CodeStatement[] {
+				new CodeExpressionStatement (new CodeSnippetExpression ("DoA()")),
+				new CodeExpressionStatement (new CodeSnippetExpression (";")),
+				new CodeExpressionStatement (new CodeSnippetExpression ("DoB()")),
+				new CodeLabeledStatement ("test", new CodeSnippetStatement ("C")),
+				new CodeExpressionStatement (new CodeSnippetExpression ("")),
+				new CodeSnippetStatement ("A"),
+				new CodeExpressionStatement (new CodeSnippetExpression ("DoC()")) });
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Dim testInt As Integer = 1{0}" +
+				"Do While (testInt < 10){0}" +
+				"    DoA(){0}" +
+				"    ;{0}" +
+				"    DoB(){0}" +
+				"test:{0}" +
+#if NET_2_0
+				"C{0}" +
+#else
+				"    C{0}" +
+#endif
+				"    {0}" +
+#if NET_2_0
+				"A{0}" +
+#else
+				"    A{0}" +
+#endif
+				"    DoC(){0}" +
+				"    testInt = (testInt + 1){0}" +
+				"Loop{0}", NewLine), Generate (), "#5");
+		}
+
+		[Test]
+		public void CodeLabeledStatementTest ()
+		{
+			CodeLabeledStatement cls = new CodeLabeledStatement ();
+			statement = cls;
+
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				":{0}", NewLine), Generate (), "#1");
+
+			cls.Label = "class";
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"class:{0}", NewLine), Generate (), "#2");
+
+			cls.Statement = new CodeSnippetStatement ("A");
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"class:{0}" +
+#if NET_2_0
+				"A{0}",
+#else
+				"    A{0}",
+#endif
+				NewLine), Generate (), "#3");
+		}
+
+		[Test]
+		public void CodeMethodReturnStatementTest ()
+		{
+			CodeMethodReturnStatement cmrs = new CodeMethodReturnStatement ();
+			statement = cmrs;
+
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Return{0}", NewLine), Generate (), "#1");
+
+			cmrs.Expression = new CodePrimitiveExpression (1);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Return 1{0}", NewLine), Generate (), "#2");
+		}
+
+		[Test]
+		public void CodeRemoveEventStatementTest ()
+		{
+			CodeEventReferenceExpression cere = new CodeEventReferenceExpression (
+				new CodeSnippetExpression ("A"), "class");
+			CodeSnippetExpression handler = new CodeSnippetExpression ("EventHandler");
+
+			CodeRemoveEventStatement cres = new CodeRemoveEventStatement ();
+			statement = cres;
+
+			try {
+				Generate ();
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException) {
+			}
+
+			cres.Event = cere;
+			try {
+				Generate ();
+				Assert.Fail ("#2");
+			} catch (ArgumentNullException) {
+			}
+
+			cres.Event = null;
+			cres.Listener = handler;
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"RemoveHandler , EventHandler{0}", NewLine), Generate (), "#3");
+
+			cres.Event = cere;
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"RemoveHandler A.[class], EventHandler{0}", NewLine), Generate (), "#4");
+
+			cres.Event = new CodeEventReferenceExpression (
+				new CodeSnippetExpression ((string) null), "");
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"RemoveHandler ., EventHandler{0}", NewLine), Generate (), "#5");
+
+			cres.Listener = new CodeSnippetExpression ("");
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"RemoveHandler ., {0}", NewLine), Generate (), "#6");
+		}
+
+		[Test]
+		public void CodeSnippetStatementTest ()
+		{
+			CodeSnippetStatement css = new CodeSnippetStatement ();
+			statement = css;
+
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"{0}", NewLine), Generate (), "#1");
+
+			css.Value = "class";
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"class{0}", NewLine), Generate (), "#2");
+
+			css.Value = null;
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"{0}", NewLine), Generate (), "#3");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void CodeStatement ()
+		{
+			CodeStatement cs = new CodeStatement ();
+			statement = cs;
+
+			Generate ();
+		}
+
+		[Test]
+		public void CodeThrowExceptionStatementTest ()
 		{
 			CodeThrowExceptionStatement ctet = new CodeThrowExceptionStatement ();
 			statement = ctet;
@@ -96,15 +519,7 @@ namespace MonoTests.Microsoft.VisualBasic
 		}
 
 		[Test]
-		public void GotoStatementTest ()
-		{
-			statement = new CodeGotoStatement ("something");
-			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-				"goto something{0}", NewLine), Generate ());
-		}
-
-		[Test]
-		public void TryCatchFinallyStatementTest ()
+		public void CodeTryCatchFinallyStatementTest ()
 		{
 			CodeStatement cs = new CodeGotoStatement ("exit");
 			CodeCatchClause ccc1 = new CodeCatchClause ("ex1", new CodeTypeReference ("System.ArgumentException"));
@@ -168,50 +583,43 @@ namespace MonoTests.Microsoft.VisualBasic
 		}
 
 		[Test]
-		public void VariableDeclarationStatementTest ()
+		public void CodeVariableDeclarationStatementTest ()
 		{
-			statement = new CodeVariableDeclarationStatement ();
-			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-#if NET_2_0
-				"Dim __exception As System.Void{0}",
-#else
-				"Dim  As System.Void{0}",
-#endif
-				NewLine), Generate (), "#1");
-
-			statement = new CodeVariableDeclarationStatement ((string) null,
-				(string) null);
-			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-#if NET_2_0
-				"Dim __exception As System.Void{0}",
-#else
-				"Dim  As System.Void{0}",
-#endif
-				NewLine), Generate (), "#1");
-
-
-			statement = new CodeVariableDeclarationStatement ("A", (string) null);
-			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-#if NET_2_0
-				"Dim __exception As A{0}",
-#else
-				"Dim  As A{0}",
-#endif
-				NewLine), Generate (), "#1");
-
-			statement = new CodeVariableDeclarationStatement ((string) null, "B");
-			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-				"Dim B As System.Void{0}", NewLine), Generate (), "#4");
-
-			statement = new CodeVariableDeclarationStatement ("A", "B");
-			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-				"Dim B As A{0}", NewLine), Generate (), "#5");
-
-			CodeVariableDeclarationStatement cvds = new CodeVariableDeclarationStatement ("A", "B");
-			cvds.InitExpression = new CodeSnippetExpression ("C");
+			CodeVariableDeclarationStatement cvds = new CodeVariableDeclarationStatement ();
 			statement = cvds;
+
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-				"Dim B As A = C{0}", NewLine), Generate (), "#6");
+#if NET_2_0
+				"Dim __exception As System.Void{0}", 
+#else
+				"Dim  As System.Void{0}", 
+#endif
+				NewLine), Generate (), "#1");
+
+			cvds.Name = "class";
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Dim [class] As System.Void{0}", NewLine), Generate (), "#2");
+
+			cvds.Name = "A";
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Dim A As System.Void{0}", NewLine), Generate (), "#3");
+
+			cvds.Type = new CodeTypeReference (typeof (int));
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Dim A As Integer{0}", NewLine), Generate (), "#4");
+
+			cvds.InitExpression = new CodePrimitiveExpression (25);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Dim A As Integer = 25{0}", NewLine), Generate (), "#5");
+
+			cvds.Name = null;
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+#if NET_2_0
+				"Dim __exception As Integer = 25{0}", 
+#else
+				"Dim  As Integer = 25{0}", 
+#endif
+				NewLine), Generate (), "#6");
 		}
 	}
 }

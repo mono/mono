@@ -1,3 +1,7 @@
+2005-11-30  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* IndentedTextWriterTest.cs: Added tests for Indent property.
+
 2005-11-30  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CodeCompilerCas.cs: MS doesn't demand EnvironmentPermission under 

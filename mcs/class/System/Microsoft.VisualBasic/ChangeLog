@@ -1,3 +1,12 @@
+2005-11-30  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* VBCodeGenerator.cs: Fixed NRE in GenerateEventReferenceExpression,
+	and escape event name. Indent statements for iteration. Avoid
+	ArgumentNullException if expression is not set for CodeReturnStatement.
+	Temporary reduce indentation for label, and fixed ArgumentNullException
+	if no statement is set. Cosmetic changes to code generated for 
+	condition to match MS.NET. In OutputTypeNamePair, escape name.
+
 2005-11-26  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* VBCodeGenerator.cs: Fixed NullReferenceException if no ToThrow

@@ -64,6 +64,7 @@ System.CodeDom/CodeParameterDeclarationExpressionTest.cs
 System.CodeDom/CodeParameterDeclarationExpressionCollectionTest.cs
 System.CodeDom/CodePropertyReferenceExpressionTest.cs
 System.CodeDom/CodeRegionDirectiveTest.cs
+System.CodeDom/CodeRemoveEventStatementTest.cs
 System.CodeDom/CodeSnippetCompileUnitTest.cs
 System.CodeDom/CodeSnippetExpressionTest.cs
 System.CodeDom/CodeSnippetStatementTest.cs
