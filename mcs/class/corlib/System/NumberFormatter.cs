@@ -596,7 +596,6 @@ namespace System
 			if (ns.IsFloatingSource || ns.IsDecimalSource)
 				throw new FormatException ();
 
-			int intSize = ns.DefaultByteSize;
 			ulong value = 0;
 			for (int i = 0; i < ns.IntegerDigits; i++) {
 				value *= 10;
@@ -604,7 +603,13 @@ namespace System
 			}
 
 			if (!ns.Positive) {
-				value = (ulong)(Math.Pow (2, intSize * 8)) - value;
+				int intSize = ns.DefaultByteSize;
+				/* for large values the cast to ulong is going to return 0 anyway (at least on x86, possibly a MS/Mono runtime bug) */
+				if (intSize < 8) {
+					value = (ulong)(Math.Pow (2, intSize * 8)) - value;
+				} else {
+					value = 0 - value;
+				}
 			}
 
 			char[] digits = (upper ? digitUpperTable : digitLowerTable);

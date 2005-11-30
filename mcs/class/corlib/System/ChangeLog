@@ -1,4 +1,9 @@
 
+Wed Nov 30 12:14:20 EST 2005 Paolo Molaro <lupus@ximian.com>
+
+	* NumberFormatter.cs: work around arch-specific ulong cast behaviour
+	with large numbers.
+
 Tue Nov 29 05:38:37 EST 2005 Paolo Molaro <lupus@ximian.com>
 
 	* Convert.cs: fix endianess issue when converting to base-8
