@@ -2310,6 +2310,9 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
+			if (left == null)
+				return null;
+
 			if ((oper == Operator.Subtraction) && (left is ParenthesizedExpression)) {
 				left = ((ParenthesizedExpression) left).Expr;
 				left = left.Resolve (ec, ResolveFlags.VariableOrValue | ResolveFlags.Type);

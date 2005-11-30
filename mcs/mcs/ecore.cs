@@ -402,24 +402,24 @@ namespace Mono.CSharp {
 		public Constant ResolveAsConstant (EmitContext ec, MemberCore mc)
 		{
 			Expression e = Resolve (ec);
-			if (e != null) {
-				Constant c = e as Constant;
-				if (c != null)
+			if (e == null)
+				return null;
+
+			Constant c = e as Constant;
+			if (c != null)
+				return c;
+
+			EmptyCast empty = e as EmptyCast;
+			if (empty != null) {
+				c = empty.Child as Constant;
+				if (c != null) {
+					// TODO: not sure about this maybe there is easier way how to use EmptyCast
+					if (e.Type.IsEnum)
+						c.Type = e.Type;
+
 					return c;
-
-				EmptyCast empty = e as EmptyCast;
-				if (empty != null) {
-					c = empty.Child as Constant;
-					if (c != null) {
-						// TODO: not sure about this maybe there is easier way how to use EmptyCast
-						if (e.Type.IsEnum)
-							c.Type = e.Type;
-
-						return c;
-					}
 				}
 			}
-
 			Const.Error_ExpressionMustBeConstant (loc, mc.GetSignatureForError ());
 			return null;
 		}
@@ -1995,7 +1995,7 @@ namespace Mono.CSharp {
 						if (!me.IsStatic &&
 						    (!intermediate || !IdenticalNameAndTypeName (ec, me, loc))) {
 							Error_ObjectRefRequired (ec, loc, me.GetSignatureForError ());
-							return null;
+							return EmptyExpression.Null;
 						}
 
 						//

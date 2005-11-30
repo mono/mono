@@ -1,3 +1,11 @@
+2005-11-30  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix #76859.
+	* ecore.cs (Expression.ResolveAsConstant): Report constant error only when
+	no error was reported.
+
+	*expression.cs (Binary.DoResolve): left can be null.
+
 2005-11-22  Marek Safar  <marek.safar@seznam.cz>
 
 	Fix #76783.
