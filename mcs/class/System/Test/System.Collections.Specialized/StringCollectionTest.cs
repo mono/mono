@@ -3,12 +3,15 @@
 // Authors:
 //   John Barnette (jbarn@httcb.net)
 //   Martin Willemoes Hansen (mwh@sysrq.dk)
+//   Sebastien Pouliot  <sebastien@ximian.com>
 //
 //  (C) Copyright 2001 John Barnette
 //  (C) Copyright 2003 Martin Willemoes Hansen
+//  Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 
 using NUnit.Framework;
+using System.Collections;
 using System.Collections.Specialized;
 
 namespace MonoTests.System.Collections.Specialized {
@@ -69,6 +72,9 @@ namespace MonoTests.System.Collections.Specialized {
 		}
 		
 		[Test]
+#if NET_2_0
+		[Category ("NotDotNet")] // SyncRoot != this on 2.0
+#endif
 		public void SimpleSyncRoot() 
 		{
 			Assertion.Assert(sc.Equals(sc.SyncRoot));
@@ -80,7 +86,6 @@ namespace MonoTests.System.Collections.Specialized {
 			int index = sc.Add("chuck");
 			Assertion.Assert(index == strings.Length);
 			Assertion.Assert(sc[strings.Length].Equals("chuck"));
-			
 		}
 		
 		[Test]
@@ -180,6 +185,53 @@ namespace MonoTests.System.Collections.Specialized {
 			sc.RemoveAt(index);
 			Assertion.Assert(oldCount == sc.Count + 1);
 			Assertion.Assert(sc[index].Equals(after));
+		}
+
+		[Test]
+		public void IList ()
+		{
+			IList list = (IList) new StringCollection ();
+			Assert.AreEqual (0, list.Count, "Count-0");
+			Assert.IsFalse (list.IsFixedSize, "IsFixedSize");
+			Assert.IsFalse (list.IsFixedSize, "IsReadOnly");
+
+			list.Add ("a");
+			Assert.AreEqual (1, list.Count, "Count-1");
+			Assert.IsTrue (list.Contains ("a"), "Contains(b)");
+			Assert.IsFalse (list.Contains ("b"), "Contains(b)");
+
+			Assert.AreEqual (0, list.IndexOf ("a"), "IndexOf(a)");
+			Assert.AreEqual (-1, list.IndexOf ("b"), "IndexOf(b)");
+
+			list.Insert (0, "b");
+			Assert.AreEqual (2, list.Count, "Count-2");
+			list.Remove ("b");
+			Assert.AreEqual (1, list.Count, "Count-3");
+
+			list.Add ("b");
+			list.RemoveAt (0);
+			Assert.AreEqual (1, list.Count, "Count-4");
+
+			list.Clear ();
+			Assert.AreEqual (0, list.Count, "Count-5");
+		}
+
+		[Test]
+		public void ICollection ()
+		{
+			ICollection coll = (ICollection) new StringCollection ();
+			Assert.AreEqual (0, coll.Count, "Count");
+			Assert.IsNotNull (coll.GetEnumerator (), "GetEnumerator");
+			coll.CopyTo (new string[0], 0);
+			Assert.IsFalse (coll.IsSynchronized, "IsSynchronized");
+			Assert.IsNotNull (coll.SyncRoot, "SyncRoot");
+		}
+
+		[Test]
+		public void IEnumerable ()
+		{
+			IEnumerable e = (IEnumerable) new StringCollection ();
+			Assert.IsNotNull (e.GetEnumerator (), "GetEnumerator");
 		}
 	}
 }

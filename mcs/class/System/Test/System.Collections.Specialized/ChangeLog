@@ -1,3 +1,23 @@
+2005-11-30  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* BitVector32Cas.cs: New. CAS unit tests.
+	* BitVector32Test.cs: More test cases to increase coverage.
+	* CollectionsUtilCas.cs: New. CAS unit tests.
+	* HybridDictionaryCas.cs: New. CAS unit tests.
+	* HybridDictionaryTest.cs: More test cases to increase coverage.
+	* ListDictionaryCas.cs: New. CAS unit tests.
+	* ListDictionaryTest.cs: More test cases to increase coverage.
+	* NameObjectCollectionBaseCas.cs: New. CAS unit tests.
+	* NameObjectCollectionBaseTest.cs: New. Unit tests.
+	* NameValueCollectionCas.cs: New. CAS unit tests.
+	* NameValueCollectionTest.cs: More test cases to increase coverage.
+	* OrderedDictionaryCas.cs: New. CAS unit tests.
+	* OrderedDictionaryTest.cs: New. Unit tests.
+	* StringCollectionCas.cs: New. CAS unit tests.
+	* StringCollectionTest.cs: More test cases to increase coverage.
+	* StringDictionaryCas.cs: New. CAS unit tests.
+	* StringDictionaryTest.cs: New. Unit tests.
+
 2004-06-14  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* HybridDictionaryTest.cs: Added cases with an non-empty dictionary.

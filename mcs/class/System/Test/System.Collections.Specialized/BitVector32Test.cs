@@ -4,8 +4,10 @@
 // Authors:
 //   Lawrence Pit (loz@cable.a2000.nl)
 //   Martin Willemoes Hansen (mwh@sysrq.dk)
+//   Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Martin Willemoes Hansen
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 
 using NUnit.Framework;
@@ -22,6 +24,35 @@ namespace MonoTests.System.Collections.Specialized
 		public void Constructors ()
 		{
 			BitVector32 b = new BitVector32 (31);
+			Assert.AreEqual (31, b.Data, "Data");
+			Assert.IsTrue (b.Equals (b), "Equals(self)");
+			Assert.IsTrue (b[31], "31");
+			Assert.IsFalse (b[32], "32");
+			Assert.AreEqual (b.ToString (), "BitVector32{00000000000000000000000000011111}", b.ToString ());
+
+			BitVector32 b2 = new BitVector32 (b);
+			Assert.IsTrue (b.Equals (b2), "Equals(b2)");
+			Assert.AreEqual (b.GetHashCode (), b2.GetHashCode (), "GetHashCode==");
+
+			b2[32] = true;
+			Assert.IsFalse (b.Equals (b2), "Equals(b32)");
+			Assert.IsFalse (b.GetHashCode () == b2.GetHashCode (), "GetHashCode!=");
+		}
+
+		[Test]
+		public void Constructors_MaxValue ()
+		{
+			BitVector32 b = new BitVector32 (Int32.MaxValue);
+			Assert.AreEqual (Int32.MaxValue, b.Data, "Data");
+			Assert.AreEqual ("BitVector32{01111111111111111111111111111111}", BitVector32.ToString (b), "ToString(BitVector)");
+		}
+
+		[Test]
+		public void Constructors_MinValue ()
+		{
+			BitVector32 b = new BitVector32 (Int32.MinValue);
+			Assert.AreEqual (Int32.MinValue, b.Data, "Data");
+			Assert.AreEqual ("BitVector32{10000000000000000000000000000000}", BitVector32.ToString (b), "ToString(BitVector)");
 		}
 		
 		[Test]
@@ -61,16 +92,20 @@ namespace MonoTests.System.Collections.Specialized
 		[Test]
 		public void CreateMask ()
 		{
-			Assertion.AssertEquals ("#1", 1, BitVector32.CreateMask ());
-			Assertion.AssertEquals ("#2", 1, BitVector32.CreateMask (0));
-			Assertion.AssertEquals ("#3", 2, BitVector32.CreateMask (1));
-			Assertion.AssertEquals ("#4", 32, BitVector32.CreateMask (16));
-			Assertion.AssertEquals ("#6", -2, BitVector32.CreateMask (Int32.MaxValue));
-			Assertion.AssertEquals ("#5", -4, BitVector32.CreateMask (-2));
-			try {
-				BitVector32.CreateMask (Int32.MinValue);
-				Assertion.Fail ("#7");
-			} catch (InvalidOperationException) {}			
+			Assert.AreEqual (1, BitVector32.CreateMask (), "#1");
+			Assert.AreEqual (1, BitVector32.CreateMask (0), "#2");
+			Assert.AreEqual (2, BitVector32.CreateMask (1), "#3");
+			Assert.AreEqual (32, BitVector32.CreateMask (16), "#4");
+			Assert.AreEqual (-2, BitVector32.CreateMask (Int32.MaxValue), "#5");
+			Assert.AreEqual (-4, BitVector32.CreateMask (-2), "#6");
+			Assert.AreEqual (2, BitVector32.CreateMask (Int32.MinValue + 1), "#7");
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void CreateMask_MinValue ()
+		{
+			BitVector32.CreateMask (Int32.MinValue);
 		}
 		
 		[Test]
@@ -123,11 +158,30 @@ namespace MonoTests.System.Collections.Specialized
 			Assertion.AssertEquals ("#10f", (short) 0x0c, s.Offset);			
 		}
 
+		[Test]
+		public void Section ()
+		{
+			BitVector32.Section s1 = BitVector32.CreateSection (20);
+			Assert.AreEqual (31, s1.Mask, "1.Mask");
+			Assert.AreEqual (0, s1.Offset, "1.Offset");
+			Assert.AreEqual ("Section{0x1f, 0x0}", BitVector32.Section.ToString (s1), "ToString(Section)");
+
+			BitVector32.Section s2 = BitVector32.CreateSection (20);
+			Assert.IsTrue (s1.Equals (s2), "s1==s2");
+			Assert.IsTrue (s2.Equals ((object)s1), "s2==s1");
+			Assert.AreEqual (s1.GetHashCode (), s2.GetHashCode (), "GetHashCode");
+			Assert.AreEqual ("Section{0x1f, 0x0}", s2.ToString (), "ToString()");
+		}
+
                 [Test]
-                public void TestNegativeIndexer ()
+                public void NegativeIndexer ()
                 {
                         BitVector32 bv = new BitVector32 (-1);
-                        Assertion.AssertEquals ("#11a", false, bv [Int32.MinValue]);
+#if NET_2_0
+			Assert.IsTrue (bv [Int32.MinValue], "Int32.MinValue");
+#else
+			Assert.IsFalse (bv [Int32.MinValue], "Int32.MinValue");
+#endif
                 }
 
                 [Test]
@@ -138,6 +192,7 @@ namespace MonoTests.System.Collections.Specialized
                         sect = BitVector32.CreateSection (Int16.MaxValue, sect);
                         sect = BitVector32.CreateSection (Int16.MaxValue, sect);
                         sect = BitVector32.CreateSection (1, sect);
+			Assert.AreEqual (1, bv[sect], "bv[sect]");
                         bv [sect] = 0; 
 
                         Assertion.AssertEquals ("#12a", Int32.MaxValue, bv.Data);

@@ -5,7 +5,7 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Martin Willemoes Hansen
-// Copyright (C) 2004 Novell (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 
 using System;
@@ -25,9 +25,77 @@ namespace MonoTests.System.Collections.Specialized {
 		{
 			NameValueCollection col = new NameValueCollection ();
 			col.Add ("foo1", "bar1");
-			Assertion.AssertEquals ("#1", null, col.GetValues (null));
-			Assertion.AssertEquals ("#2", null, col.GetValues (""));
-			Assertion.AssertEquals ("#3", null, col.GetValues ("NotExistent"));
+			AssertEquals ("#1", null, col.GetValues (null));
+			AssertEquals ("#2", null, col.GetValues (""));
+			AssertEquals ("#3", null, col.GetValues ("NotExistent"));
+			AssertEquals ("#4", 1, col.GetValues (0).Length);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void GetValues_OutOfRange ()
+		{
+			NameValueCollection c = new NameValueCollection ();
+			c.Add ("foo1", "bar1");
+			AssertEquals ("#5", null, c.GetValues (1));
+		}
+
+		[Test]
+		public void Get ()
+		{
+			NameValueCollection col = new NameValueCollection (5);
+			col.Add ("foo1", "bar1");
+			AssertEquals ("#1", null, col.Get (null));
+			AssertEquals ("#2", null, col.Get (""));
+			AssertEquals ("#3", null, col.Get ("NotExistent"));
+			AssertEquals ("#4", "bar1", col.Get ("foo1"));
+			AssertEquals ("#5", "bar1", col.Get (0));
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void Get_OutOfRange ()
+		{
+			NameValueCollection c = new NameValueCollection ();
+			c.Add ("foo1", "bar1");
+			AssertEquals ("#6", null, c.Get (1));
+		}
+
+		[Test]
+		public void GetKey ()
+		{
+			NameValueCollection c = new NameValueCollection (CaseInsensitiveHashCodeProvider.DefaultInvariant, CaseInsensitiveComparer.DefaultInvariant);
+			c.Add ("foo1", "bar1");
+			AssertEquals ("#1", "foo1", c.GetKey (0));
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void GetKey_OutOfRange ()
+		{
+			NameValueCollection c = new NameValueCollection ();
+			c.Add ("foo1", "bar1");
+			AssertEquals ("#2", null, c.GetKey (1));
+		}
+
+		[Test]
+		public void HasKeys ()
+		{
+			NameValueCollection c = new NameValueCollection (5, CaseInsensitiveHashCodeProvider.DefaultInvariant, CaseInsensitiveComparer.DefaultInvariant);
+			Assert ("#1", !c.HasKeys ());
+			c.Add ("foo1", "bar1");
+			Assert ("#2", c.HasKeys ());
+		}
+
+		[Test]
+		public void Clear ()
+		{
+			NameValueCollection c = new NameValueCollection ();
+			AssertEquals ("#1", 0, c.Count);
+			c.Add ("foo1", "bar1");
+			AssertEquals ("#2", 1, c.Count);
+			c.Clear ();
+			AssertEquals ("#3", 0, c.Count);
 		}
 
 		[Test]
@@ -69,7 +137,7 @@ namespace MonoTests.System.Collections.Specialized {
 		public void Add_NVC ()
 		{
 			NameValueCollection c1 = new NameValueCollection ();
-			NameValueCollection c2 = new NameValueCollection ();
+			NameValueCollection c2 = new NameValueCollection (c1);
 
 			c2.Add (c1);
 			AssertEquals ("c1.Count", 0, c1.Count);
@@ -87,8 +155,11 @@ namespace MonoTests.System.Collections.Specialized {
 		}
 
 		[Test]
-//		[ExpectedException (typeof (ArgumentNullException))]
+#if NET_2_0
+		[ExpectedException (typeof (ArgumentNullException))]
+#else
 		[ExpectedException (typeof (NullReferenceException))]
+#endif
 		public void Add_NVC_Null ()
 		{
 			new NameValueCollection ().Add (null);
@@ -252,5 +323,29 @@ namespace MonoTests.System.Collections.Specialized {
 				AssertEquals ("Remove-3-Count", 0, c.Count);
 			}
 		}
+#if NET_2_0
+		[Test]
+		public void Constructor_IEqualityComparer ()
+		{
+			NameValueCollection coll = new NameValueCollection (new EqualityComparer ());
+			coll.Add ("a", "1");
+			AssertEquals ("#1", 1, coll.Count);
+		}
+
+		[Test]
+		public void Constructor_Int_IEqualityComparer ()
+		{
+			NameValueCollection coll = new NameValueCollection (5, new EqualityComparer ());
+			coll.Add ("a", "1");
+			AssertEquals ("#1", 1, coll.Count);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void Constructor_IntNegative_IEqualityComparer ()
+		{
+			new NameValueCollection (-1, new EqualityComparer ());
+		}
+#endif
 	}
 }
