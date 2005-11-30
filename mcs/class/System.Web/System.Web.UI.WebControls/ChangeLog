@@ -1,3 +1,8 @@
+2005-11-30 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* DataGrid.cs: clear the control collection on every call to
+	CreateControlHierarchy. Fixes bug #76732.
+
 2005-11-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ListBox.cs: Rows and SelectionMode are virtual in 1.1

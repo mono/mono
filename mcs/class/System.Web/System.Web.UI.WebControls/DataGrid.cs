@@ -890,6 +890,7 @@ namespace System.Web.UI.WebControls {
 
 		protected override void CreateControlHierarchy (bool useDataSource)
 		{
+			Controls.Clear ();
 			RenderTable.Controls.Clear ();
 
 			IEnumerable data_source;
