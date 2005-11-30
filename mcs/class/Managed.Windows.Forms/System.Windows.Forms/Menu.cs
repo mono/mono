@@ -309,10 +309,11 @@ namespace System.Windows.Forms
 			{
 				if (mi.Parent != null)
 					mi.Parent.MenuItems.Remove (mi);
-				mi.parent_menu = owner;
+				
 				items.Add (mi);
 				mi.Index = items.Count - 1;
-
+				UpdateItem (mi);
+				
 				owner.OnMenuChanged (EventArgs.Empty);
 				if (owner.parent_menu != null)
 					owner.parent_menu.OnMenuChanged (EventArgs.Empty);
@@ -342,10 +343,18 @@ namespace System.Windows.Forms
 					new_items.Add (items[i]);
 
 				items = new_items;
-				UpdateItemsIndices ();
-				owner.OnMenuChanged (EventArgs.Empty);
+				UpdateItemsIndices ();				
+				UpdateItem (mi);
 
 				return index;
+			}
+
+			private void UpdateItem (MenuItem mi)
+			{
+				mi.parent_menu = owner;
+				owner.OnMenuChanged (EventArgs.Empty);
+				if (owner.parent_menu != null)
+					owner.parent_menu.OnMenuChanged (EventArgs.Empty);
 			}
 
 			internal void Insert (int index, MenuItem mi)
@@ -353,7 +362,7 @@ namespace System.Windows.Forms
 				if (index < 0 || index > Count)
 					throw new ArgumentOutOfRangeException ("Index of out range");
 				UpdateItemsIndices ();
-				owner.OnMenuChanged (EventArgs.Empty);
+				UpdateItem (mi);
 			}
 
 			public virtual MenuItem Add (string s, EventHandler e)

@@ -543,6 +543,17 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		// This is the menu in display and being used because of merging this can
+		// be different then the menu that is actually assosciated with the form
+		public MainMenu ActiveMenu {
+			get {
+				Form amc = ActiveMdiChild;
+				if (amc == null)
+					return menu;
+				return amc.MergedMenu;
+			}
+		}
+
 		[DefaultValue(true)]
 		public bool MinimizeBox {
 			get {
@@ -1322,8 +1333,8 @@ namespace System.Windows.Forms {
 			}
 
 			// Give our menu a shot
-			if (menu != null) {
-				return menu.ProcessCmdKey(ref msg, keyData);
+			if (ActiveMenu != null) {
+				return ActiveMenu.ProcessCmdKey(ref msg, keyData);
 			}
 
 			return false;
@@ -1466,24 +1477,25 @@ namespace System.Windows.Forms {
 				// Menu drawing
 				case Msg.WM_NCLBUTTONDOWN: {
 					if (this.menu != null) {
-						menu.OnMouseDown(this, new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 0));
+						ActiveMenu.OnMouseDown(this, new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 0));
 					}
 					base.WndProc(ref m);
 					return;
 				}
 
 				case Msg.WM_NCMOUSEMOVE: {
-					if (this.menu != null) {
-						menu.OnMouseMove(this, new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 0));
+					if (ActiveMenu != null) {
+						ActiveMenu.OnMouseMove(this, new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 0));
 					}
 					base.WndProc(ref m);
 					return;
 				}
 
 				case Msg.WM_NCPAINT: {
-					if (this.menu != null) {
+					if (ActiveMenu != null) {
 						Point pnt = XplatUI.GetMenuOrigin(window.Handle);
-						menu.Draw (new Rectangle (pnt.X, pnt.Y, ClientSize.Width, 0));
+
+						ActiveMenu.Draw (new Rectangle (pnt.X, pnt.Y, ClientSize.Width, 0));
 					}
 
 					base.WndProc(ref m);

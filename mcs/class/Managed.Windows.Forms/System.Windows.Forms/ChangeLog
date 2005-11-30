@@ -2,7 +2,12 @@
 
 	* MdiChildContext.cs: Set the cloned menus forms, as these don't
 	get cloned as part of CloneMenu ().
-
+	* Menu.cs: Make sure the parent of the items get set correctly
+	when they are added.  And the owners are notified of the changes.
+	* Form.cs: Create an ActiveMenu property, so that when MDI is used
+	we can change the menu being displayed/handled by the form without
+	changing the menu assosciated with the form.
+	
 2005-11-30  Jackson Harper  <jackson@ximian.com>
 
 	* Menu.cs: Switch the MenuChanged method to OnMenuChanged and add
