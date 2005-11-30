@@ -75,7 +75,7 @@ namespace System.Collections.Specialized
 			serializationInfo = info;
 		}
 
-		void IDeserializationCallback.OnDeserialization (object sender)
+		protected virtual void OnDeserialization (object sender)
 		{
 			if (serializationInfo == null)
 				return;
