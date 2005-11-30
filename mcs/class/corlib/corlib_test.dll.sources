@@ -163,6 +163,8 @@ System.Security.Cryptography/RC2CryptoServiceProviderTest.cs
 System.Security.Cryptography/RC2Test.cs
 System.Security.Cryptography/RijndaelManagedTest.cs
 System.Security.Cryptography/RijndaelTest.cs
+System.Security.Cryptography/RIPEMD160ManagedTest.cs
+System.Security.Cryptography/RIPEMD160Test.cs
 System.Security.Cryptography/RNGCryptoServiceProviderTest.cs
 System.Security.Cryptography/RSACryptoServiceProviderTest.cs
 System.Security.Cryptography/RSAOAEPKeyExchangeDeformatterTest.cs
