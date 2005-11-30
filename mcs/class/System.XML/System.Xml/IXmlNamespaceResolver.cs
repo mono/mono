@@ -39,7 +39,7 @@ namespace System.Xml
 	public interface IXmlNamespaceResolver
 #else
 #if TARGET_JVM
-	[vmw.ChangeInterfaceMethodNames]
+	[vmw.common.ChangeInterfaceMethodNames]
 #endif
 	internal interface IXmlNamespaceResolver
 #endif
