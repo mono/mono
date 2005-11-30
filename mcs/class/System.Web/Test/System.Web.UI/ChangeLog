@@ -1,3 +1,7 @@
+2005-11-29 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ControlCollectionTest.cs: new tests.
+
 2005-09-29 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ControlTest.cs: a few more tests for UniqueID, as the datagrid and

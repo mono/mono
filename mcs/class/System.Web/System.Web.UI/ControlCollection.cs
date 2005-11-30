@@ -95,7 +95,7 @@ namespace System.Web.UI {
 		public virtual void Add (Control child)
 		{
 			if (child == null)
-				throw new ArgumentNullException ();
+				throw new ArgumentNullException ("child");
 
 			if (readOnly)
 				throw new HttpException (Locale.GetText ("Collection is read-only."));
@@ -185,7 +185,7 @@ namespace System.Web.UI {
 
 		public virtual int IndexOf (Control c)
 		{
-			if (controls == null)
+			if (controls == null || c == null)
 				return -1;
 
 			return Array.IndexOf (controls, c);

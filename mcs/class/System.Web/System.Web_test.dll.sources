@@ -22,6 +22,7 @@ System.Web.Security/RolesTest.cs
 System.Web.UI/AttributeCollectionTest.cs
 System.Web.UI/CleanHtmlTextWriter.cs
 System.Web.UI/ControlTest.cs
+System.Web.UI/ControlCollectionTest.cs
 System.Web.UI/DataBindingCollectionTest.cs
 System.Web.UI/DataBindingHandlerAttributeTest.cs
 System.Web.UI.HtmlControls/HtmlAnchorTest.cs
