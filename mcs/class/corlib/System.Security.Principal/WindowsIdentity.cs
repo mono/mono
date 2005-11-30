@@ -53,8 +53,6 @@ namespace System.Security.Principal {
 		private SerializationInfo _info;
 
 		static private IntPtr invalidWindows = IntPtr.Zero;
-		// that seems to be the value used for (at least) AIX and MacOSX
-		static private IntPtr invalidPosix = (IntPtr) unchecked (-2);
 
 		[SecurityPermission (SecurityAction.Demand, ControlPrincipal=true)]
 		public WindowsIdentity (IntPtr userToken) 
@@ -289,14 +287,12 @@ namespace System.Security.Principal {
 		}
 #endif
 		private static bool IsPosix {
-			get { return ((int) Environment.Platform == 128); }
+			get { return ((int) Environment.Platform == 128) || ((int)Environment.Platform == 4); }
 		}
 
 		private void SetToken (IntPtr token) 
 		{
 			if (IsPosix) {
-				if (token == invalidPosix)
-					throw new ArgumentException ("Invalid token");
 
 				_token = token;
 				// apply defaults

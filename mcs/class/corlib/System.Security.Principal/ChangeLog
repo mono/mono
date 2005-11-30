@@ -1,3 +1,9 @@
+
+Wed Nov 30 19:09:50 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* WindowsIdentity.cs: remove check for an invalid user token on Posix
+	systems and check for PlatformID.Unix, too.
+
 2005-10-28  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* IdentityReferenceCollection.cs: Removed virtual from Count and 
