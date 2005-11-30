@@ -4,9 +4,7 @@
 // Authors:
 //	Lluis Sanchez Gual (lluis@novell.com)
 //
-// (C) 2005 Novell, Inc (http://www.novell.com)
-//
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,18 +28,19 @@
 
 #if NET_2_0
 
-using System;
 using System.Runtime.Serialization;
 
 namespace System.Collections.Specialized
 {
 	[Serializable]
-	public class OrderedDictionary : IOrderedDictionary, IDictionary, ICollection, IEnumerable, ISerializable
+	public class OrderedDictionary : IOrderedDictionary, IDictionary, ICollection, IEnumerable, ISerializable, IDeserializationCallback
 	{
 		ArrayList list;
 		Hashtable hash;
 		bool readOnly;
 		int initialCapacity;
+		SerializationInfo serializationInfo;
+		IEqualityComparer comparer;
 		
 		public OrderedDictionary ()
 		{
@@ -51,27 +50,67 @@ namespace System.Collections.Specialized
 		
 		public OrderedDictionary (int capacity)
 		{
-			initialCapacity = capacity;
-			list = new ArrayList (capacity);
-			hash = new Hashtable (capacity);
+			initialCapacity = (capacity < 0) ? 0 : capacity;
+			list = new ArrayList (initialCapacity);
+			hash = new Hashtable (initialCapacity);
 		}
 		
-		public OrderedDictionary (SerializationInfo info, StreamingContext context)
+		public OrderedDictionary (IEqualityComparer equalityComparer)
 		{
-			readOnly = info.GetBoolean ("ReadOnly");
-			initialCapacity = info.GetInt32 ("InitialCapacity");
-			hash = (Hashtable) info.GetValue ("HashTable", typeof(Hashtable));
-			list = (ArrayList) info.GetValue ("ArrayList", typeof(ArrayList));
+			list = new ArrayList ();
+			hash = new Hashtable (equalityComparer);
+			comparer = equalityComparer;
+		}
+
+		public OrderedDictionary (int capacity, IEqualityComparer equalityComparer)
+		{
+			initialCapacity = (capacity < 0) ? 0 : capacity;
+			list = new ArrayList (initialCapacity);
+			hash = new Hashtable (initialCapacity, equalityComparer);
+			comparer = equalityComparer;
+		}
+
+		protected OrderedDictionary (SerializationInfo info, StreamingContext context)
+		{
+			serializationInfo = info;
+		}
+
+		void IDeserializationCallback.OnDeserialization (object sender)
+		{
+			if (serializationInfo == null)
+				return;
+
+			comparer = (IEqualityComparer) serializationInfo.GetValue ("KeyComparer", typeof (IEqualityComparer));
+			readOnly = serializationInfo.GetBoolean ("ReadOnly");
+			initialCapacity = serializationInfo.GetInt32 ("InitialCapacity");
+
+			if (list == null)
+				list = new ArrayList ();
+			else
+				list.Clear ();
+
+			hash = new Hashtable (comparer);
+			object[] array = (object[]) serializationInfo.GetValue ("ArrayList", typeof(object[]));
+			foreach (DictionaryEntry de in array) {
+				hash.Add (de.Key, de.Value);
+				list.Add (de);
+			}
 		}
 		
 		public virtual void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
+			if (info == null)
+				throw new ArgumentNullException ("info");
+
+			info.AddValue ("KeyComparer", comparer, typeof (IEqualityComparer));
 			info.AddValue ("ReadOnly", readOnly);
 			info.AddValue ("InitialCapacity", initialCapacity);
-			info.AddValue ("HashTable", hash);
-			info.AddValue ("ArrayList", list);
+
+			object[] array = new object [hash.Count];
+			hash.CopyTo (array, 0);
+			info.AddValue ("ArrayList", array);
 		}
-		
+
 		IEnumerator IEnumerable.GetEnumerator()
 		{
 			return list.GetEnumerator ();
@@ -82,14 +121,14 @@ namespace System.Collections.Specialized
 				return list.Count;
 			}
 		}
-		
-		public bool IsSynchronized {
+
+		bool ICollection.IsSynchronized {
 			get {
 				return list.IsSynchronized;
 			}
 		}
-		
-		public object SyncRoot {
+
+		object ICollection.SyncRoot {
 			get {
 				return list.SyncRoot;
 			}
@@ -99,9 +138,8 @@ namespace System.Collections.Specialized
 		{
 			list.CopyTo (array, index);
 		}
-		
-		public bool IsFixedSize
-		{
+
+		bool IDictionary.IsFixedSize {
 			get {
 				return false;
 			}
@@ -136,6 +174,9 @@ namespace System.Collections.Specialized
 				WriteCheck ();
 				DictionaryEntry de = (DictionaryEntry) list [index];
 				de.Value = value;
+				// update (even on the list) isn't automatic
+				list [index] = de;
+				hash [de.Key] = value;
 			}
 		}
 		
@@ -201,7 +242,7 @@ namespace System.Collections.Specialized
 		void WriteCheck ()
 		{
 			if (readOnly)
-				throw new InvalidOperationException ("Collection is read only");
+				throw new NotSupportedException ("Collection is read only");
 		}
 		
 		public OrderedDictionary AsReadOnly ()
@@ -209,6 +250,7 @@ namespace System.Collections.Specialized
 			OrderedDictionary od = new OrderedDictionary ();
 			od.list = list;
 			od.hash = hash;
+			od.comparer = comparer;
 			od.readOnly = true;
 			return od;
 		}

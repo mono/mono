@@ -29,11 +29,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-using System.Collections;
-
-namespace System.Collections.Specialized 
-{
+namespace System.Collections.Specialized {
 
 	[Serializable]
 	public class HybridDictionary : IDictionary, ICollection, IEnumerable {
@@ -71,8 +67,7 @@ namespace System.Collections.Specialized
 
 		// Properties
 
-		public int Count 
-		{
+		public int Count {
 			get { return inner.Count; }
 		}
 
@@ -128,8 +123,12 @@ namespace System.Collections.Specialized
 
 		public bool Contains (object key)
 		{
+#if NET_2_0
+			return inner.Contains (key);
+#else
 			// if the dictionary is empty, 'Contains (null)' doesn't throw an ArgumentNullException
 			return Count != 0 && inner.Contains (key);
+#endif
 		}
 
 		public void CopyTo (Array array, int index)

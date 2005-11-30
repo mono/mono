@@ -1,3 +1,15 @@
+2005-11-30  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* BitVector32.cs: Fixed 2.0 API changes and this[int] setter under 2.0
+	* HybridDictionary.cs: Fixed Contains different behaviour under 2.0.
+	* IOrderedDictionary.cs: Added missing GetEnumarator to the interface.
+	* NameObjectCollectionBase.cs: Fixed 2.0 API changes and 
+	serialization.
+	* NameValueCollection.cs: Fixed 2.0 API changes.
+	* OrderedDictionary.cs: Fixed API changes, serialization and this[int]
+	setter.
+	* StringDictionary.cs: Added missing null checks.
+
 2005-10-26  Raja R Harinath  <rharinath@novell.com>
 
 	* HybridDictionary.cs (is_list): Remove.

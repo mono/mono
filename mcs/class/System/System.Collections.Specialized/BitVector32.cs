@@ -8,8 +8,7 @@
 //   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
-//
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -31,7 +30,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Text;
 
 namespace System.Collections.Specialized {
@@ -55,17 +53,23 @@ namespace System.Collections.Specialized {
 			public short Offset {
 				get { return offset; }
 			}
-			
+#if NET_2_0
+			public bool Equals (Section obj)
+			{
+				return this.mask == obj.mask &&
+				       this.offset == obj.offset;
+			}
+#endif
 			public override bool Equals (object o) 
 			{
 				if (! (o is Section))
 					return false;
-					
+
 				Section section = (Section) o;
 				return this.mask == section.mask &&
 				       this.offset == section.offset;
 			}			
-			
+
 			public override int GetHashCode ()
 			{
 				return (((Int16) mask).GetHashCode () << 16) + 
@@ -126,8 +130,12 @@ namespace System.Collections.Specialized {
 		
 		public bool this [int mask] {
 			get {
+#if NET_2_0
+				return (bits & mask) == mask;
+#else
 				long tmp = (uint)bits;
 				return (tmp & (long)mask) == (long)mask;
+#endif
 			}
 			
 			set { 
@@ -229,6 +237,5 @@ namespace System.Collections.Specialized {
 
 			return -1;
 		}
-
 	}
 }

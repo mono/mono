@@ -6,8 +6,7 @@
 //   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
-//
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -49,7 +48,14 @@ namespace System.Collections.Specialized
 		private int m_defCapacity;
 		private bool m_readonly;
 		SerializationInfo infoCopy;
+		private KeysCollection keyscoll;
+#if NET_2_0
+		private IEqualityComparer equality_comparer;
 
+		internal IEqualityComparer EqualityComparer {
+			get { return equality_comparer; }
+		}
+#endif
 		internal IComparer Comparer {
 			get {return m_comparer;}
 		}
@@ -76,7 +82,8 @@ namespace System.Collections.Specialized
 		{
 			private NameObjectCollectionBase m_collection;
 			private int m_position;
-			/*private*/internal _KeysEnumerator(NameObjectCollectionBase collection)
+
+			internal _KeysEnumerator(NameObjectCollectionBase collection)
 			{
 				m_collection = collection;
 				Reset();
@@ -110,14 +117,14 @@ namespace System.Collections.Specialized
 		{
 			private NameObjectCollectionBase m_collection;
 
-			internal/*protected?*/ KeysCollection(NameObjectCollectionBase collection)
+			internal KeysCollection (NameObjectCollectionBase collection)
 			{
 				this.m_collection = collection;
 			}
+
 			public virtual string Get( int index )
 			{
 				return m_collection.BaseGetKey(index);
-				//throw new Exception("Not implemented yet");
 			}
 			
 			// ICollection methods -----------------------------------
@@ -153,7 +160,6 @@ namespace System.Collections.Specialized
 			{
 				get{
 					return m_collection.Count;
-					//throw new Exception("Not implemented yet");
 				}
 			}
 
@@ -169,22 +175,17 @@ namespace System.Collections.Specialized
 			public IEnumerator GetEnumerator()
 			{
 				return new _KeysEnumerator(m_collection);
-//				throw new Exception("Not implemented yet");
 			}
 		}
-
-
 
 		//--------------- Protected Instance Constructors --------------
 		
 		/// <summary>
 		/// SDK: Initializes a new instance of the NameObjectCollectionBase class that is empty.
 		/// </summary>
-		[MonoTODO]
-		protected NameObjectCollectionBase():base()
+		protected NameObjectCollectionBase ()
 		{
 			m_readonly = false;
-
 #if NET_1_0
 			m_hashprovider = CaseInsensitiveHashCodeProvider.Default;
 			m_comparer = CaseInsensitiveComparer.Default;
@@ -194,16 +195,11 @@ namespace System.Collections.Specialized
 #endif
 			m_defCapacity = 0;
 			Init();
-			/*m_ItemsContainer = new Hashtable(m_hashprovider,m_comparer);
-			m_ItemsArray = new ArrayList();
-			m_NullKeyItem = null;*/
-			//TODO: consider common Reset() method
 		}
 		
 		protected NameObjectCollectionBase( int capacity )
 		{
 			m_readonly = false;
-			
 #if NET_1_0
 			m_hashprovider = CaseInsensitiveHashCodeProvider.Default;
 			m_comparer = CaseInsensitiveComparer.Default;
@@ -213,11 +209,19 @@ namespace System.Collections.Specialized
 #endif
 			m_defCapacity = capacity;
 			Init();
-			/*m_ItemsContainer = new Hashtable(m_defCapacity, m_hashprovider,m_comparer);
-			m_ItemsArray = new ArrayList();
-			m_NullKeyItem = null;			*/
-			//throw new Exception("Not implemented yet");
 		}
+
+#if NET_2_0
+		protected NameObjectCollectionBase (IEqualityComparer equalityComparer)
+		{
+			m_readonly = false;
+			equality_comparer = equalityComparer;
+			m_defCapacity = 0;
+			Init();
+		}
+
+		[Obsolete ("Use NameObjectCollectionBase(IEqualityComparer)")]
+#endif
 		protected NameObjectCollectionBase( IHashCodeProvider hashProvider, IComparer comparer )
 		{
 			m_readonly = false;
@@ -226,10 +230,6 @@ namespace System.Collections.Specialized
 			m_comparer = comparer;
 			m_defCapacity = 0;
 			Init();
-			/*m_ItemsContainer = new Hashtable(m_hashprovider,m_comparer);
-			m_ItemsArray = new ArrayList();
-			m_NullKeyItem = null;			*/
-			//throw new Exception("Not implemented yet");
 		}
 
 		protected NameObjectCollectionBase (SerializationInfo info, StreamingContext context)
@@ -237,6 +237,17 @@ namespace System.Collections.Specialized
 			infoCopy = info;
 		}
 
+#if NET_2_0
+		protected NameObjectCollectionBase (int capacity, IEqualityComparer equalityComparer)
+		{
+			m_readonly = false;
+			equality_comparer = equalityComparer;
+			m_defCapacity = capacity;
+			Init();
+		}
+
+		[Obsolete ("Use NameObjectCollectionBase(int,IEqualityComparer)")]
+#endif
 		protected NameObjectCollectionBase( int capacity, IHashCodeProvider hashProvider, IComparer comparer )
 		{
 			m_readonly = false;
@@ -245,25 +256,29 @@ namespace System.Collections.Specialized
 			m_comparer = comparer;
 			m_defCapacity = capacity;
 			Init();
-			/*m_ItemsContainer = new Hashtable(m_defCapacity,m_hashprovider,m_comparer);
-			m_ItemsArray = new ArrayList();
-			m_NullKeyItem = null;	*/
-
-			//throw new Exception("Not implemented yet");
 		}
 		
-		private void Init(){
-			m_ItemsContainer = new Hashtable(m_defCapacity,m_hashprovider,m_comparer);
+		private void Init ()
+		{
+#if NET_2_0
+			if (equality_comparer != null)
+				m_ItemsContainer = new Hashtable (m_defCapacity, equality_comparer);
+			else
+				m_ItemsContainer = new Hashtable (m_defCapacity, m_hashprovider, m_comparer);
+#else
+			m_ItemsContainer = new Hashtable (m_defCapacity, m_hashprovider, m_comparer);
+#endif
 			m_ItemsArray = new ArrayList();
 			m_NullKeyItem = null;	
 		}
+
 		//--------------- Public Instance Properties -------------------
-		public virtual NameObjectCollectionBase.KeysCollection Keys 
-		{
-			get
-			{
-				return new KeysCollection(this);
-				//throw new Exception("Not implemented yet");
+
+		public virtual NameObjectCollectionBase.KeysCollection Keys {
+			get {
+				if (keyscoll == null)
+					keyscoll = new KeysCollection (this);
+				return keyscoll;
 			}
 		}
 				
@@ -283,7 +298,6 @@ namespace System.Collections.Specialized
 		{
 			return new _KeysEnumerator(this);
 		}
-		// GetHashCode
 
 		// ISerializable
 		public virtual void GetObjectData (SerializationInfo info, StreamingContext context)
@@ -301,8 +315,19 @@ namespace System.Collections.Specialized
 				i++;
 			}
 
-			info.AddValue("HashProvider", m_hashprovider, typeof(IHashCodeProvider));
-			info.AddValue("Comparer", m_comparer, typeof(IComparer));
+#if NET_2_0
+			if (equality_comparer != null) {
+				info.AddValue ("KeyComparer", equality_comparer, typeof (IEqualityComparer));
+				info.AddValue ("Version", 4, typeof (int));
+			} else {
+				info.AddValue ("HashProvider", m_hashprovider, typeof (IHashCodeProvider));
+				info.AddValue ("Comparer", m_comparer, typeof (IComparer));
+				info.AddValue ("Version", 2, typeof (int));
+			}
+#else
+			info.AddValue ("HashProvider", m_hashprovider, typeof (IHashCodeProvider));
+			info.AddValue ("Comparer", m_comparer, typeof (IComparer));
+#endif
 			info.AddValue("ReadOnly", m_readonly);
 			info.AddValue("Count", count);
 			info.AddValue("Keys", keys, typeof(string[]));
@@ -314,13 +339,14 @@ namespace System.Collections.Specialized
 		{
 			get{
 				return m_ItemsArray.Count;
-				//throw new Exception("Not implemented yet");
 			}
 		}
+
 		bool ICollection.IsSynchronized
 		{
 			get { return false; }
 		}
+
 		object ICollection.SyncRoot
 		{
 			get { return this; }
@@ -328,9 +354,8 @@ namespace System.Collections.Specialized
 
 		void ICollection.CopyTo (Array array, int index)
 		{
-			throw new NotImplementedException ();
+			(Keys as ICollection).CopyTo (array, index);
 		}
-
 
 		// IDeserializationCallback
 		public virtual void OnDeserialization (object sender)
@@ -346,14 +371,22 @@ namespace System.Collections.Specialized
 			infoCopy = null;
 			m_hashprovider = (IHashCodeProvider) info.GetValue ("HashProvider",
 									    typeof (IHashCodeProvider));
-
+#if NET_2_0
+			if (m_hashprovider == null) {
+				equality_comparer = (IEqualityComparer) info.GetValue ("KeyComparer", typeof (IEqualityComparer));
+			} else {
+				m_comparer = (IComparer) info.GetValue ("Comparer", typeof (IComparer));
+				if (m_comparer == null)
+					throw new SerializationException ("The comparer is null");
+			}
+#else
 			if (m_hashprovider == null)
 				throw new SerializationException ("The hash provider is null");
 
 			m_comparer = (IComparer) info.GetValue ("Comparer", typeof (IComparer));
 			if (m_comparer == null)
 				throw new SerializationException ("The comparer is null");
-
+#endif
 			m_readonly = info.GetBoolean ("ReadOnly");
 			string [] keys = (string []) info.GetValue ("Keys", typeof (string []));
 			if (keys == null)
@@ -368,6 +401,7 @@ namespace System.Collections.Specialized
 			for (int i = 0; i < count; i++)
 				BaseAdd (keys [i], values [i]);
 		}
+
 		//--------------- Protected Instance Properties ----------------
 		/// <summary>
 		/// SDK: Gets or sets a value indicating whether the NameObjectCollectionBase instance is read-only.
@@ -412,8 +446,8 @@ namespace System.Collections.Specialized
 			if (this.IsReadOnly)
 				throw new NotSupportedException("Collection is read-only");
 			Init();
-			//throw new Exception("Not implemented yet");
 		}
+
 		/// <summary>
 		/// SDK: Gets the value of the entry at the specified index of the NameObjectCollectionBase instance.
 		/// </summary>
@@ -422,8 +456,8 @@ namespace System.Collections.Specialized
 		protected object BaseGet( int index )
 		{
 			return ((_Item)m_ItemsArray[index]).value;
-			//throw new Exception("Not implemented yet");
 		}
+
 		/// <summary>
 		/// SDK: Gets the value of the first entry with the specified key from the NameObjectCollectionBase instance.
 		/// </summary>
@@ -483,8 +517,8 @@ namespace System.Collections.Specialized
 		protected string BaseGetKey( int index )
 		{
 			return ((_Item)m_ItemsArray[index]).key;
-			//throw new Exception("Not implemented yet");
 		}
+
 		/// <summary>
 		/// Gets a value indicating whether the NameObjectCollectionBase instance contains entries whose keys are not a null reference 
 		/// </summary>
@@ -492,7 +526,6 @@ namespace System.Collections.Specialized
 		protected bool BaseHasKeys()
 		{
 			return (m_ItemsContainer.Count>0);
-//			throw new Exception("Not implemented yet");
 		}
 
 		protected void BaseRemove( string name )
@@ -512,13 +545,12 @@ namespace System.Collections.Specialized
 			cnt = m_ItemsArray.Count;
 			for (int i=0 ; i< cnt; ){
 				key=BaseGetKey(i);
-				if (m_comparer.Compare (key, name) == 0) {
+				if (Equals (key, name)) {
 					m_ItemsArray.RemoveAt(i);
 					cnt--;
 				}
 				else 
 					i++;
-				
 			}
 		}
 
@@ -549,8 +581,8 @@ namespace System.Collections.Specialized
 			else
 				m_NullKeyItem = null;
 			m_ItemsArray.RemoveAt(index);
-//			throw new Exception("Not implemented yet");
 		}
+
 		/// <summary>
 		/// SDK: Sets the value of the entry at the specified index of the NameObjectCollectionBase instance.
 		/// </summary>
@@ -562,8 +594,8 @@ namespace System.Collections.Specialized
 				throw new NotSupportedException("Collection is read-only");
 			_Item item = (_Item)m_ItemsArray[index];
 			item.value = value;
-			//throw new Exception("Not implemented yet");
 		}
+
 		/// <summary>
 		/// Sets the value of the first entry with the specified key in the NameObjectCollectionBase instance, if found; otherwise, adds an entry with the specified key and value into the NameObjectCollectionBase instance.
 		/// </summary>
@@ -578,9 +610,8 @@ namespace System.Collections.Specialized
 				item.value=value;
 			else 
 				BaseAdd(name, value);
-
-			//throw new Exception("Not implemented yet");
 		}
+
 		[MonoTODO]
 		private _Item FindFirstMatchedItem(string name)
 		{
@@ -589,11 +620,19 @@ namespace System.Collections.Specialized
 			else {
 				//TODO: consider null key case
 				return m_NullKeyItem;
-				//throw new Exception("Not implemented yet");
 			}
-
 		}
-		//~Object();
-		
+
+		internal bool Equals (string s1, string s2)
+		{
+#if NET_2_0
+			if (m_comparer != null)
+				return (m_comparer.Compare (s1, s2) == 0);
+			else
+				return equality_comparer.Equals (s1, s2);
+#else
+			return (m_comparer.Compare (s1, s2) == 0);
+#endif
+		}
 	}
 }

@@ -5,8 +5,7 @@
 //   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
-//
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,9 +29,11 @@
 
 using System.ComponentModel.Design.Serialization;
 
-namespace System.Collections.Specialized
-{
+namespace System.Collections.Specialized {
 
+#if NET_2_0
+	[Serializable]
+#endif
 	[DesignerSerializer ("System.Diagnostics.Design.StringDictionaryCodeDomSerializer, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.Serialization.CodeDomSerializer, " + Consts.AssemblySystem_Design)]
 	public class StringDictionary : IEnumerable
 	{
@@ -62,10 +63,18 @@ namespace System.Collections.Specialized
 		public virtual string this[string key]
 		{
 			get {
+#if NET_2_0
+			if (key == null)
+				throw new ArgumentNullException ("key");
+#endif
 				return (string) table[key.ToLower()];
 			}
 			
 			set {
+#if NET_2_0
+			if (key == null)
+				throw new ArgumentNullException ("key");
+#endif
 				table[key.ToLower()] = value;
 			}
 		}
@@ -95,6 +104,10 @@ namespace System.Collections.Specialized
 		
 		public virtual void Add(string key, string value)
 		{
+#if NET_2_0
+			if (key == null)
+				throw new ArgumentNullException ("key");
+#endif
 			table.Add(key.ToLower(), value);
 		}
 		
@@ -105,6 +118,10 @@ namespace System.Collections.Specialized
 		
 		public virtual bool ContainsKey(string key)
 		{
+#if NET_2_0
+			if (key == null)
+				throw new ArgumentNullException ("key");
+#endif
 			return table.ContainsKey(key.ToLower());
 		}
 		
@@ -125,6 +142,10 @@ namespace System.Collections.Specialized
 		
 		public virtual void Remove(string key)
 		{
+#if NET_2_0
+			if (key == null)
+				throw new ArgumentNullException ("key");
+#endif
 			table.Remove(key.ToLower());
 		}
 	}

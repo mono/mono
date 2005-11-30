@@ -5,7 +5,7 @@
 //   Gleb Novodran
 //
 // (C) Ximian, Inc.  http://www.ximian.com
-// Copyright (C) 2004 Novell (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell (http://www.novell.com)
 //
 
 //
@@ -29,13 +29,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-using System.Collections;
-using System.Collections.Specialized;
 using System.Runtime.Serialization;
 using System.Text;
 
 namespace System.Collections.Specialized{
+
 	[Serializable]
 	public class NameValueCollection : NameObjectCollectionBase
 	{
@@ -49,7 +47,6 @@ namespace System.Collections.Specialized{
 		/// </summary>
 		public NameValueCollection() : base()
 		{
-			
 		}
 		
 		/// <summary> SDK: Initializes a new instance of the NameValueCollection class that is empty, 
@@ -57,7 +54,6 @@ namespace System.Collections.Specialized{
 		///</summary>
 		public NameValueCollection( int capacity ) : base(capacity)
 		{
-			
 		}
 
 		/// <summary> SDK: Copies the entries from the specified NameValueCollection to a new 
@@ -78,6 +74,9 @@ namespace System.Collections.Specialized{
 		///<summary>SDK: Initializes a new instance of the NameValueCollection class that is empty, 
 		///has the default initial capacity and uses the specified hash code provider and 
 		///the specified comparer.</summary>
+#if NET_2_0
+		[Obsolete ("Use NameValueCollection(IEqualityComparer)")]
+#endif
 		public NameValueCollection( IHashCodeProvider hashProvider, IComparer comparer )
 			: base(hashProvider, comparer)
 		{
@@ -115,11 +114,26 @@ namespace System.Collections.Specialized{
 		/// has the specified initial capacity and uses the specified hash code provider and 
 		/// the specified comparer.
 		/// </summary>
+#if NET_2_0
+		[Obsolete ("Use NameValueCollection(IEqualityComparer)")]
+#endif
 		public NameValueCollection( int capacity, IHashCodeProvider hashProvider, IComparer comparer )
 			:base(capacity, hashProvider, comparer)
 		{
 			
 		}
+
+#if NET_2_0
+		public NameValueCollection (IEqualityComparer equalityComparer)
+			: base (equalityComparer)
+		{
+		}
+
+		public NameValueCollection (int capacity, IEqualityComparer equalityComparer)
+			: base (capacity, equalityComparer)
+		{
+		}
+#endif
 
         //----------------------- Public Instance Properties -------------------------------
 
@@ -166,8 +180,10 @@ namespace System.Collections.Specialized{
 		{
 			if (this.IsReadOnly)
 				throw new NotSupportedException ("Collection is read-only");
+#if NET_2_0
 			if (c == null)
-				throw new NullReferenceException ("c");
+				throw new ArgumentNullException ("c");
+#endif
 // make sense - but it's not the exception thrown
 //				throw new ArgumentNullException ();
 			
@@ -221,8 +237,12 @@ namespace System.Collections.Specialized{
 
 		/// <summary> SDK: Invalidates the cached arrays and removes all entries from 
 		/// the NameValueCollection.</summary>
-		 
-		public void Clear(){
+#if NET_2_0
+		public virtual void Clear ()
+#else
+		public void Clear ()
+#endif
+		{
 			if (this.IsReadOnly)
 				throw new NotSupportedException("Collection is read-only");
 			InvalidateCachedArrays();

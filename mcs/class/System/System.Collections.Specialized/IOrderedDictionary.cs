@@ -4,7 +4,7 @@
 // Author: Todd Berman <tberman@gentoo.org>
 //
 // (C) 2003 Todd Berman
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -32,6 +32,7 @@ namespace System.Collections.Specialized
 {
 	public interface IOrderedDictionary : IDictionary
 	{
+		IDictionaryEnumerator GetEnumerator ();
 		void Insert (int idx, object key, object value);
 		void RemoveAt (int idx);
 		
