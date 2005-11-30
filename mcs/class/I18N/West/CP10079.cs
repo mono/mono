@@ -28,6 +28,7 @@ namespace I18N.West
 {
 
 using System;
+using System.Text;
 using I18N.Common;
 
 public class CP10079 : ByteEncoding
@@ -84,10 +85,15 @@ public class CP10079 : ByteEncoding
 		'\u00B8', '\u02DD', '\u02DB', '\u02C7', 
 	};
 
-	protected override void ToBytes(char[] chars, int charIndex, int charCount,
-	                                byte[] bytes, int byteIndex)
+	protected unsafe override void ToBytes(char* chars, int charCount,
+	                                byte* bytes, int byteCount)
 	{
 		int ch;
+		int charIndex = 0;
+		int byteIndex = 0;
+#if NET_2_0
+		EncoderFallbackBuffer buffer = null;
+#endif
 		while(charCount > 0)
 		{
 			ch = (int)(chars[charIndex++]);
@@ -220,13 +226,21 @@ public class CP10079 : ByteEncoding
 				case 0x2265: ch = 0xB3; break;
 				case 0x25C6: ch = 0xD7; break;
 				case 0xE01E: ch = 0xF0; break;
-				default: ch = 0x3F; break;
+				default:
+#if NET_2_0
+					HandleFallback (ref buffer, chars, ref charIndex, ref charCount, bytes, ref byteIndex, ref byteCount);
+#else
+					ch = 0x3F;
+#endif
+					break;
 			}
 			bytes[byteIndex++] = (byte)ch;
 			--charCount;
+			--byteCount;
 		}
 	}
 
+	/*
 	protected override void ToBytes(String s, int charIndex, int charCount,
 	                                byte[] bytes, int byteIndex)
 	{
@@ -369,6 +383,7 @@ public class CP10079 : ByteEncoding
 			--charCount;
 		}
 	}
+	*/
 
 }; // class CP10079
 
