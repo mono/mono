@@ -230,7 +230,9 @@ end namespace
 		{
 			if (li == null)
 				return source;
-			return String.Format (CultureInfo.InvariantCulture, "# ExternalSource ({1}, line {0})\n{2}\n#end ExternalSource", li.LineNumber, file, source);
+			return String.Format (CultureInfo.InvariantCulture,
+				"#ExternalSource (\"{1}\", {0})\n{2}\n#end ExternalSource",
+				li.LineNumber, file.Replace ("\\", "\\\\").Replace ("\"", "\\\""), source);
 		}
 	}
 
