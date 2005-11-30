@@ -962,7 +962,27 @@ namespace System.Windows.Forms {
 					return true;
 				}
 
+				case Keys.Insert: {
+					if (shift) {
+						Paste();
+						return true;
+					}
+
+					if (control) {
+						Copy();
+						return true;
+					}
+
+					// FIXME - need overwrite/insert toggle?
+					return false;
+				}
+
 				case Keys.Delete: {
+					if (shift) {
+						Cut();
+						return true;
+					}
+
 					if (read_only) {
 						break;
 					}

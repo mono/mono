@@ -1,3 +1,10 @@
+2005-11-30  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* TextBoxBase.cs:  Implemented Ctrl-Ins (Copy), Shift-Ins (Paste) and
+	  Shift-Del (Cut), apparently Emacs uses these old Win 2.x keys. This
+	  is for Jackson
+	* RichTextBox.cs: Added calls to base for DnD events
+
 2005-11-28  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* TextControl.cs:

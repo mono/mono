@@ -960,19 +960,53 @@ Console.WriteLine("FIXME - SelectionColor should not alter font");
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public event DragEventHandler			DragDrop;
+		public event DragEventHandler DragDrop {
+			add {
+				base.DragDrop += value;
+			}
+
+			remove {
+				base.DragDrop -= value;
+			}
+		}
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public event DragEventHandler			DragEnter;
+		public event DragEventHandler DragEnter {
+			add {
+				base.DragEnter += value;
+			}
+
+			remove {
+				base.DragEnter -= value;
+			}
+		}
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public event EventHandler			DragLeave;
+		public event EventHandler DragLeave {
+			add {
+				base.DragLeave += value;
+			}
+
+			remove {
+				base.DragLeave -= value;
+			}
+		}
+
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public event DragEventHandler			DragOver;
+		public event DragEventHandler DragOver {
+			add {
+				base.DragOver += value;
+			}
+
+			remove {
+				base.DragOver -= value;
+			}
+		}
+
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
