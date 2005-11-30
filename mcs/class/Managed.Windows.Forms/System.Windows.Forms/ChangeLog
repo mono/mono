@@ -1,5 +1,10 @@
 2005-11-30  Jackson Harper  <jackson@ximian.com>
 
+	* MdiChildContext.cs: Set the cloned menus forms, as these don't
+	get cloned as part of CloneMenu ().
+
+2005-11-30  Jackson Harper  <jackson@ximian.com>
+
 	* Menu.cs: Switch the MenuChanged method to OnMenuChanged and add
 	a MenuChanged event. Just to make the API a little more
 	consistent.

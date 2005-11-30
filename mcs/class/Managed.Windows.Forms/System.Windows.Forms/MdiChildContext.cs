@@ -125,10 +125,11 @@ namespace System.Windows.Forms {
 		private MainMenu CreateMergedMenu ()
 		{
 			Form parent = (Form) mdi_container.Parent;
-			Menu clone = parent.Menu.CloneMenu ();
+			MainMenu clone = (MainMenu) parent.Menu.CloneMenu ();
 			clone.MergeMenu (form.Menu);
 			clone.MenuChanged += new EventHandler (MenuChangedHandler);
-			return (MainMenu) clone;
+			clone.SetForm (parent);
+			return clone;
 		}
 
 		private void MenuChangedHandler (object sender, EventArgs e)
