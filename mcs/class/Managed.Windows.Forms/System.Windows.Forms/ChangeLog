@@ -18,8 +18,13 @@
 
 2005-11-29  Jackson Harper  <jackson@ximian.com>
 
-	* FileDialog.cs: Implement missing bits, remove some dead code.
-
+	* FileDialog.cs: Implement missing bits, remove some dead
+	code.
+	* FontDialog.cs: Implement missing Apply stuff, and ToString. Move
+	creation of the panel so that the options set on the dialog are
+	seen when the panel is created.
+	* TreeView.cs: raise a click when items are clicked.
+	
 2005-11-29  Jackson Harper  <jackson@ximian.com>
 
 	* MdiClient.cs: Pass some signature methods through to base.
