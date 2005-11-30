@@ -1,0 +1,3 @@
+2005-11-30  Robert Jordan  <robertj@gmx.net>
+
+	* CultureTest.cs: Unit tests for the culture-invariance.
