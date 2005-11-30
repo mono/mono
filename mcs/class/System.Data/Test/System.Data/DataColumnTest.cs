@@ -304,6 +304,16 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
+		[ExpectedException (typeof (OverflowException))]
+		public void ExpressionSubstringlimits() {
+			DataTable t = new DataTable();
+			t.Columns.Add("aaa");
+			t.Rows.Add(new object[]{"xxx"});
+			DataColumn c = t.Columns.Add("bbb");
+			c.Expression= "SUBSTRING(aaa, 6000000000000000, 2)";
+		}
+
+		[Test]
 		[Category ("NotWorking")]
                 public void ExpressionFunctions ()
                 {

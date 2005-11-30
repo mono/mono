@@ -1,3 +1,7 @@
+2005-11-30 Konstantin Triger <kostat@mainsoft.com>
+
+	* Parser.jay: use Convert.ToInt32() instead of cast to throw OverflowException.
+
 2005-10-26 Konstantin Triger <kostat@mainsoft.com>
 
 	* In.cs: Fix the enumerator initialization problem.

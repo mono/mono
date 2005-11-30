@@ -1,3 +1,7 @@
+2005-11-30 Konstantin Triger <kostat@mainsoft.com>
+
+	* DataColumnTest.cs: Added ExpressionSubstringlimits.
+
 2005-11-11 Senganal T <tsenganal@novell.com>
 
 	* DataSetTest2.cs : Added a testcase for bug#76517 
