@@ -26,6 +26,7 @@ namespace I18N.Common
 {
 
 using System;
+using System.Runtime.InteropServices;
 using System.Text;
 
 // This class provides an abstract base for encodings that use a single
@@ -104,15 +105,77 @@ public abstract class ByteEncoding : Encoding
 				return s.Length;
 			}
 
+#if NET_2_0
+	protected unsafe void HandleFallback (ref EncoderFallbackBuffer buffer,
+		char* chars, ref int charIndex, ref int charCount,
+		byte* bytes, ref int byteIndex, ref int byteCount)
+	{
+		if (buffer == null)
+			buffer = EncoderFallback.CreateFallbackBuffer ();
+		if (Char.IsSurrogate (chars [charIndex]) && charCount > 0 &&
+			Char.IsSurrogate (chars [charIndex + 1])) {
+			buffer.Fallback (chars [charIndex], chars [charIndex + 1], charIndex);
+			charIndex++;
+			charCount--;
+		}
+		else
+			buffer.Fallback (chars [charIndex], charIndex);
+		char [] tmp = new char [buffer.Remaining];
+		int idx = 0;
+		while (buffer.Remaining > 0)
+			tmp [idx++] = buffer.GetNextChar ();
+		fixed (char* tmparr = tmp) {
+			byteIndex += GetBytes (tmparr, tmp.Length, bytes + byteIndex, byteCount);
+		}
+	}
+#endif
+
 	// Convert an array of characters into a byte buffer,
 	// once the parameters have been validated.
-	protected abstract void ToBytes(char[] chars, int charIndex, int charCount,
-									byte[] bytes, int byteIndex);
+	protected unsafe virtual void ToBytes (
+		char* chars, int charCount, byte* bytes, int byteCount)
+	{
+		// When it is not overriden, use ToBytes() with arrays.
+		char [] carr = new char [charCount];
+		Marshal.Copy ((IntPtr) chars, carr, 0, charCount);
+		byte [] barr = new byte [byteCount];
+		Marshal.Copy ((IntPtr) bytes, barr, 0, byteCount);
+		ToBytes (carr, 0, charCount, barr, 0);
+	}
+
+	// Convert an array of characters into a byte buffer,
+	// once the parameters have been validated.
+	protected unsafe virtual void ToBytes(char[] chars, int charIndex, int charCount,
+									byte[] bytes, int byteIndex)
+	{
+		// When it is not overriden, use ToBytes() with pointers
+		// (this is the ideal solution)
+		if (charCount == 0 || bytes.Length == byteIndex)
+			return;
+		fixed (char* cptr = chars) {
+			fixed (byte* bptr = bytes) {
+				ToBytes (cptr + charIndex, charCount,
+					bptr + byteIndex, bytes.Length - byteIndex);
+			}
+		}
+	}
 
 	// Convert a string into a byte buffer, once the parameters
 	// have been validated.
-	protected abstract void ToBytes(String s, int charIndex, int charCount,
-									byte[] bytes, int byteIndex);
+	protected unsafe virtual void ToBytes(String s, int charIndex, int charCount,
+									byte[] bytes, int byteIndex)
+	{
+		// When it is not overriden, use ToBytes() with pointers
+		// (Ideal solution)
+		if (s.Length == 0 || bytes.Length == byteIndex)
+			return;
+		fixed (char* cptr = s) {
+			fixed (byte* bptr = bytes) {
+				ToBytes (cptr + charIndex, charCount,
+					bptr + byteIndex, bytes.Length - byteIndex);
+			}
+		}
+	}
 
 	// Get the bytes that result from encoding a character buffer.
 	public override int GetBytes(char[] chars, int charIndex, int charCount,

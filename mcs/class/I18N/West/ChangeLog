@@ -1,0 +1,8 @@
+2005-11-30  Atsushi Enomoto  <atsushi@ximian.com>
+
+	(initial changelog entry here.)
+
+	* Makefile : now it uses unsafe pointers.
+	* CP10000.cs : Added 2.0 fallback support and modified ToBytes() from
+	  array to pointers, and commented ToBytes(string) out (uses virtual
+	  implementation in ByteEncoding).

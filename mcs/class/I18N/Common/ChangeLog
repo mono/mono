@@ -1,3 +1,12 @@
+2005-11-30  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile : now it uses unsafe pointers.
+	* ByteEncoding.cs : Now there is three versions of ToBytes(): the only
+	  one with pointers will be in use in the future. ToBytes(string) and
+	  ToBytes() with arrays will be implemented to dispatch pointer-based
+	  one and will be only one conversion implementation while they keep
+	  avoiding extra array creation.
+
 2005-11-28  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ByteEncoding.cs : added IsSingleByte.

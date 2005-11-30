@@ -4,7 +4,7 @@ include ../../../build/rules.make
 
 LIBRARY = I18N.dll
 LIBRARY_USE_INTERMEDIATE_FILE = yes
-LOCAL_MCS_FLAGS = /r:$(corlib)
+LOCAL_MCS_FLAGS = /r:$(corlib) /unsafe
 NO_TEST = yes
 
 include ../../../build/library.make
