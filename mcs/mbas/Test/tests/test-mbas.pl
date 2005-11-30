@@ -25,11 +25,45 @@ my @ActualResults = ();
 my $VerboseMode=1;
 my $FilePattern = "*.vb"; 
 my $PrintHelp;
+my $mbasPath = "";
+
+sub ParseTestFile
+{
+    my $testAnnotation;
+    my $compilerOptions = "";
+    my $cmdLine;
+
+    open(VB_FILE, $VBFile);
+    while(<VB_FILE>) 
+    {
+	next unless length;
+
+	if(/^\s*REM(.*)/) {       
+	    $testAnnotation = $1;
+	} 
+	else {
+	    last;
+	}
+
+	if($testAnnotation =~ /\s*CompilerOptions\s*:\s*(.*)/) {
+	    $compilerOptions = $1;
+	
+            $Compiler =~ /--debug\s*(.*)\/mbas\.exe/;
+	    $mbasPath = $1;
+	}
+    }
+    close(VB_FILE);
+
+    $cmdLine = $Compiler . " " . $CompilerFlags . " " . $compilerOptions . " " . $VBFile;
+    return $cmdLine;
+}
+
 
 sub Command
 {
     my $retVal;
     my $cmdLine = shift(@_);
+    $cmdLine =~ s/MONO_PATH="/MONO_PATH="$mbasPath\/Test\/dlls\/:/;
 
     open SAVEOUT, ">&STDOUT";
     open SAVEERR, ">&STDERR";
@@ -116,7 +150,8 @@ while(defined ($vbFile = glob($FilePattern))) {
     $VBFile = $vbFile;
     $VBLogFile = $VBFile . ".log";
 
-    $CompileCmd = $Compiler . " " . $CompilerFlags . " " . $VBFile;
+#   $CompileCmd = $Compiler . " " . $CompilerFlags . " " . $VBFile;
+    $CompileCmd = ParseTestFile();
     $RetVal = Command($CompileCmd);
 
     if($ExpectedResult eq "SUCCESS") {
