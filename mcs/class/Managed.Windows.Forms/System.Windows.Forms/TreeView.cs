@@ -1390,9 +1390,11 @@ namespace System.Windows.Forms {
 			drag_begin_x = -1;
 			drag_begin_y = -1;
 
+			OnClick (EventArgs.Empty);
+
 			if (!select_mmove)
 				return;
-				
+
 			select_mmove = false;
 
 			TreeViewCancelEventArgs ce = new TreeViewCancelEventArgs (selected_node, false, TreeViewAction.ByMouse);
