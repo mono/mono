@@ -1,3 +1,9 @@
+2005-11-30  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* KeyedList.cs: Fixed for IOrderedDictionary change in 2.0 final.
+	Now internal.
+	* KeyedListEnumerator.cs: Now internal.
+
 2005-11-29 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ControlCollection.cs: allow 'null' in Remove.

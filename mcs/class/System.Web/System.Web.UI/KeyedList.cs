@@ -34,7 +34,7 @@ using System.Collections.Specialized;
 namespace System.Web.UI
 {
 
-	public class KeyedList : IOrderedDictionary, IStateManager
+	internal class KeyedList : IOrderedDictionary, IStateManager
 	{
 
 		private Hashtable objectTable = new Hashtable ();
@@ -89,6 +89,11 @@ namespace System.Web.UI
 		}
 
 		IDictionaryEnumerator IDictionary.GetEnumerator ()
+		{
+			return new KeyedListEnumerator (objectList);
+		}
+
+		IDictionaryEnumerator IOrderedDictionary.GetEnumerator ()
 		{
 			return new KeyedListEnumerator (objectList);
 		}

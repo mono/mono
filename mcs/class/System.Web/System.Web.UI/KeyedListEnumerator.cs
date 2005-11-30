@@ -32,7 +32,7 @@ using System.Collections;
 
 namespace System.Web.UI
 {
-	public class KeyedListEnumerator : IDictionaryEnumerator
+	internal class KeyedListEnumerator : IDictionaryEnumerator
 	{
 		private int index = -1;
 		private ArrayList objs;
