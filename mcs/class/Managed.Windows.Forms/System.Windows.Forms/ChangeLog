@@ -1,3 +1,10 @@
+2005-11-30  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* TextControl.cs: 
+	  - No longer artificially moves text 2 pixels down (now that we have
+	    borders this is no longer needed)
+	  - Added calcs for left, hanging and right indent
+
 2005-11-23  Mike Kestner  <mkestner@novell.com>
 
 	* Menu.cs: mark MenuChanged internal, since it's not exposed by MS.

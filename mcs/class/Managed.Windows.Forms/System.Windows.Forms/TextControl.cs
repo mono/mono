@@ -95,6 +95,9 @@ namespace System.Windows.Forms {
 		internal HorizontalAlignment	alignment;		// Alignment of the line
 		internal int			align_shift;		// Pixel shift caused by the alignment
 		internal bool			soft_break;		// Tag is 'broken soft' and continuation from previous line
+		internal int			indent;			// Left indent for the first line
+		internal int			hanging_indent;		// Hanging indent (left indent for all but the first line)
+		internal int			right_indent;		// Right indent for all lines
 
 
 		// Stuff that's important for the tree
@@ -163,6 +166,40 @@ namespace System.Windows.Forms {
 		#endregion	// Constructors
 
 		#region Internal Properties
+		internal int Indent {
+			get {
+				return indent;
+			}
+
+			set {
+				indent = value;
+				recalc = true;
+			}
+		}
+
+		internal int HangingIndent {
+			get {
+				return hanging_indent;
+			}
+
+			set {
+				hanging_indent = value;
+				recalc = true;
+			}
+		}
+
+		internal int RightIndent {
+			get {
+				return right_indent;
+			}
+
+			set {
+				right_indent = value;
+				recalc = true;
+			}
+		}
+			
+
 		internal int Height {
 			get {
 				return height;
@@ -332,7 +369,13 @@ namespace System.Windows.Forms {
 			this.ascent = 0;		// Reset the ascent for the line
 			tag.shift = 0;
 			tag.width = 0;
-			widths[0] = 0;
+
+			if (this.soft_break) {
+				widths[0] = hanging_indent;
+			} else {
+				widths[0] = indent;
+			}
+
 			this.recalc = false;
 			retval = false;
 			wrapped = false;
@@ -349,7 +392,7 @@ namespace System.Windows.Forms {
 					if (tag.previous != null) {
 						tag.X = tag.previous.X;
 					} else {
-						tag.X = 0;
+						tag.X = (int)widths[pos];
 					}
 					tag = tag.next;
 					tag.width = 0;
@@ -364,7 +407,7 @@ namespace System.Windows.Forms {
 				}
 
 				if (doc.wrap) {
-					if ((widths[pos] + w) + 27 > doc.viewport_width) {
+					if ((widths[pos] + w) + 27 > (doc.viewport_width - this.right_indent)) {
 						pos = wrap_pos;
 						tag.width = wrap_width;
 						doc.Split(this, tag, pos, true);
@@ -427,7 +470,7 @@ namespace System.Windows.Forms {
 
 					// Update our horizontal starting pixel position
 					if (tag.previous == null) {
-						tag.X = 0;
+						tag.X = (int)widths[0];
 					} else {
 						tag.X = tag.previous.X + (int)tag.previous.width;
 					}
@@ -664,7 +707,7 @@ namespace System.Windows.Forms {
 			selection_end.tag = selection_end.line.tags;
 
 			viewport_x = 0;
-			viewport_y = -2;
+			viewport_y = 0;
 
 			crlf_size = 2;
 
@@ -3821,6 +3864,7 @@ namespace System.Windows.Forms {
 			DeleteChar,
 			DeleteChars,
 			CursorMove,
+			Mark,
 		}
 
 		internal class Action {
