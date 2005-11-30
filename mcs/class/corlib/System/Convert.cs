@@ -2499,7 +2499,6 @@ namespace System {
 			int i=0; 
 			int len = value.Length;
 			bool negative = false;
-			bool hexPrefix = false;
 
 			// special processing for some bases
 			switch (fromBase) {
@@ -2523,7 +2522,6 @@ namespace System {
 					if (len >= i + 2) {
 						// 0x00 or 0X00
 						if ((value[i] == '0') && ((value [i+1] == 'x') || (value [i+1] == 'X'))) {
-							hexPrefix = true;
 							i+=2;
 						}
 					}

@@ -74,6 +74,7 @@ namespace System {
 		bool noGetPosition;
 		Hashtable keymap;
 		ByteMatcher rootmap;
+		bool home_1_1; // if true, we have to add 1 to x and y when using cursorAddress
 
 		static string SearchTerminfo (string term)
 		{
@@ -200,6 +201,7 @@ namespace System {
 			cursorAddress = reader.Get (TermInfoStrings.CursorAddress);
 			if (cursorAddress != null) {
 				string result = cursorAddress.Replace ("%i", "");
+				home_1_1 = (cursorAddress != result);
 				cursorAddress = MangleParameters (result);
 			}
 		}
@@ -654,7 +656,8 @@ namespace System {
 			if (cursorAddress == null)
 				throw new NotSupportedException ("This terminal does not suport setting the cursor position.");
 
-			WriteConsole (String.Format (cursorAddress, top, left));
+			int one = (home_1_1 ? 1 : 0);
+			WriteConsole (String.Format (cursorAddress, top + one, left + one));
 			cursorLeft = left;
 			cursorTop = top;
 		}

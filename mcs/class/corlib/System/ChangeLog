@@ -1,3 +1,10 @@
+2005-11-30 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TermInfoDriver.cs: if the cursor_address capability contains a %i, we
+	have to add 1 to x and y when setting the cursor position.
+	Fixes bug #76856.
+
+	* Convert.cs: remove unused variables.
 
 Wed Nov 30 12:14:20 EST 2005 Paolo Molaro <lupus@ximian.com>
 
