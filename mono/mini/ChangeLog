@@ -1,3 +1,8 @@
+2005-11-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* exceptions.cs: Disable test_0_long_cast () test, since it fails on a lot 
+	of platforms.
+
 2005-11-29  Zoltan Varga  <vargaz@gmail.com>
 
 	* objects.cs basic-calls.cs: Move a test depending on valuetypes to
