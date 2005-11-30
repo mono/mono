@@ -1,3 +1,8 @@
+2005-11-30  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CodeCompilerCas.cs: MS doesn't demand EnvironmentPermission under 
+	1.x.
+
 2005-11-26  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* CodeGeneratorFromTypeTestBase.cs: Modified GetMethodMembersType3 to 

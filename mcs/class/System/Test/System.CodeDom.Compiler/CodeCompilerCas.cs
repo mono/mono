@@ -387,6 +387,9 @@ namespace MonoCasTests.System.CodeDom.Compiler {
 		[Test]
 		[EnvironmentPermission (SecurityAction.Deny, Unrestricted = true)]
 		[ExpectedException (typeof (SecurityException))]
+#if ONLY_1_1
+		[Category ("NotDotNet")] // MS doesn't check for Environment under 1.x
+#endif
 		public void FromDom_Deny_Environment ()
 		{
 			CodeCompilerTest cc = new CodeCompilerTest ();
@@ -425,6 +428,9 @@ namespace MonoCasTests.System.CodeDom.Compiler {
 		[Test]
 		[EnvironmentPermission (SecurityAction.Deny, Unrestricted = true)]
 		[ExpectedException (typeof (SecurityException))]
+#if ONLY_1_1
+		[Category ("NotDotNet")] // MS doesn't check for Environment under 1.x
+#endif
 		public void FromDomBatch_Deny_Environment ()
 		{
 			CodeCompilerTest cc = new CodeCompilerTest ();
@@ -463,6 +469,9 @@ namespace MonoCasTests.System.CodeDom.Compiler {
 		[Test]
 		[EnvironmentPermission (SecurityAction.Deny, Unrestricted = true)]
 		[ExpectedException (typeof (SecurityException))]
+#if ONLY_1_1
+		[Category ("NotDotNet")] // MS doesn't check for Environment under 1.x
+#endif
 		public void FromFile_Deny_Environment ()
 		{
 			CodeCompilerTest cc = new CodeCompilerTest ();
@@ -501,6 +510,9 @@ namespace MonoCasTests.System.CodeDom.Compiler {
 		[Test]
 		[EnvironmentPermission (SecurityAction.Deny, Unrestricted = true)]
 		[ExpectedException (typeof (SecurityException))]
+#if ONLY_1_1
+		[Category ("NotDotNet")] // MS doesn't check for Environment under 1.x
+#endif
 		public void FromFileBatch_Deny_Environment ()
 		{
 			CodeCompilerTest cc = new CodeCompilerTest ();
@@ -539,6 +551,9 @@ namespace MonoCasTests.System.CodeDom.Compiler {
 		[Test]
 		[EnvironmentPermission (SecurityAction.Deny, Unrestricted = true)]
 		[ExpectedException (typeof (SecurityException))]
+#if ONLY_1_1
+		[Category ("NotDotNet")] // MS doesn't check for Environment under 1.x
+#endif
 		public void FromSource_Deny_Environment ()
 		{
 			CodeCompilerTest cc = new CodeCompilerTest ();
@@ -577,6 +592,9 @@ namespace MonoCasTests.System.CodeDom.Compiler {
 		[Test]
 		[EnvironmentPermission (SecurityAction.Deny, Unrestricted = true)]
 		[ExpectedException (typeof (SecurityException))]
+#if ONLY_1_1
+		[Category ("NotDotNet")] // MS doesn't check for Environment under 1.x
+#endif
 		public void FromSourceBatch_Deny_Environment ()
 		{
 			CodeCompilerTest cc = new CodeCompilerTest ();
@@ -600,6 +618,9 @@ namespace MonoCasTests.System.CodeDom.Compiler {
 		[Test]
 		[EnvironmentPermission (SecurityAction.Deny, Unrestricted = true)]
 		[ExpectedException (typeof (SecurityException))]
+#if ONLY_1_1
+		[Category ("NotDotNet")] // MS doesn't check for Environment under 1.x
+#endif
 		public void GetResponseFileCmdArgs_Deny_Environment ()
 		{
 			CodeCompilerTest cc = new CodeCompilerTest ();
