@@ -97,8 +97,11 @@ System.Collections.Specialized/BasicOperationsTest.cs
 System.Collections.Specialized/BitVector32Test.cs
 System.Collections.Specialized/HybridDictionaryTest.cs
 System.Collections.Specialized/ListDictionaryTest.cs
+System.Collections.Specialized/NameObjectCollectionBaseTest.cs
 System.Collections.Specialized/NameValueCollectionTest.cs
+System.Collections.Specialized/OrderedDictionaryTest.cs
 System.Collections.Specialized/StringCollectionTest.cs
+System.Collections.Specialized/StringDictionaryTest.cs
 System.ComponentModel/ByteConverterTests.cs
 System.ComponentModel/DateTimeConverterTests.cs
 System.ComponentModel/DecimalConverterTests.cs
@@ -315,6 +318,15 @@ System.CodeDom.Compiler/ExecutorCas.cs
 System.CodeDom.Compiler/GeneratedCodeAttributeCas.cs
 System.CodeDom.Compiler/IndentedTextWriterCas.cs
 System.CodeDom.Compiler/TempFileCollectionCas.cs
+System.Collections.Specialized/BitVector32Cas.cs
+System.Collections.Specialized/CollectionsUtilCas.cs
+System.Collections.Specialized/HybridDictionaryCas.cs
+System.Collections.Specialized/ListDictionaryCas.cs
+System.Collections.Specialized/NameObjectCollectionBaseCas.cs
+System.Collections.Specialized/NameValueCollectionCas.cs
+System.Collections.Specialized/OrderedDictionaryCas.cs
+System.Collections.Specialized/StringCollectionCas.cs
+System.Collections.Specialized/StringDictionaryCas.cs
 System.Security.Cryptography.X509Certificates/PublicKeyCas.cs
 System.Security.Cryptography.X509Certificates/X500DistinguishedNameCas.cs
 System.Security.Cryptography.X509Certificates/X509BasicConstraintsExtensionCas.cs
