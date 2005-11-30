@@ -32,8 +32,6 @@
 // - Align text after RecalculateLine
 // - Implement tag types for hotlinks, images, etc.
 // - Implement CaretPgUp/PgDown
-// - Implement C&P
-
 
 // NOTE:
 // selection_start.pos and selection_end.pos are 0-based
@@ -345,6 +343,19 @@ namespace System.Windows.Forms {
 			while (pos < len) {
 				size = g.MeasureString(this.text.ToString(pos, 1), tag.font, 10000, string_format);
 
+				while (tag.length == 0) {	// We should always have tags after a tag.length==0 unless len==0
+					tag.width = 0;
+					tag.ascent = 0;
+					if (tag.previous != null) {
+						tag.X = tag.previous.X;
+					} else {
+						tag.X = 0;
+					}
+					tag = tag.next;
+					tag.width = 0;
+					tag.shift = 0;
+				}
+
 				w = size.Width;
 
 				if (Char.IsWhiteSpace(text[pos])) {
@@ -597,6 +608,8 @@ namespace System.Windows.Forms {
 		internal bool		multiline;
 		internal bool		wrap;
 
+		internal UndoClass	undo;
+
 		internal Marker		caret;
 		internal Marker		selection_start;
 		internal Marker		selection_end;
@@ -640,11 +653,15 @@ namespace System.Windows.Forms {
 			Add(1, "", owner.Font, ThemeEngine.Current.ResPool.GetSolidBrush(owner.ForeColor));
 			lines=1;
 
+			undo = new UndoClass(this);
+
 			selection_visible = false;
 			selection_start.line = this.document;
 			selection_start.pos = 0;
+			selection_start.tag = selection_start.line.tags;
 			selection_end.line = this.document;
 			selection_end.pos = 0;
+			selection_end.tag = selection_end.line.tags;
 
 			viewport_x = 0;
 			viewport_y = -2;
@@ -1115,8 +1132,10 @@ namespace System.Windows.Forms {
 			selection_visible = false;
 			selection_start.line = this.document;
 			selection_start.pos = 0;
+			selection_start.tag = selection_start.line.tags;
 			selection_end.line = this.document;
 			selection_end.pos = 0;
+			selection_end.tag = selection_end.line.tags;
 
 			viewport_x = 0;
 			viewport_y = 0;
@@ -1126,6 +1145,8 @@ namespace System.Windows.Forms {
 		}
 
 		internal void PositionCaret(Line line, int pos) {
+			undo.RecordCursor();
+
 			caret.tag = line.FindTag(pos);
 			caret.line = line;
 			caret.pos = pos;
@@ -1139,6 +1160,8 @@ namespace System.Windows.Forms {
 		}
 
 		internal void PositionCaret(int x, int y) {
+			undo.RecordCursor();
+
 			caret.tag = FindCursor(x, y, out caret.pos);
 			caret.line = caret.tag.line;
 			caret.height = caret.tag.height;
@@ -1167,6 +1190,8 @@ namespace System.Windows.Forms {
 				return;
 			}
 
+			undo.RecordCursor();
+
 			caret.tag = LineTag.FindTag(caret.line, caret.pos);
 			caret.height = caret.tag.height;
 
@@ -1178,6 +1203,8 @@ namespace System.Windows.Forms {
 		}
 
 		internal void UpdateCaret() {
+			undo.RecordCursor();
+
 			if (caret.tag.height != caret.height) {
 				caret.height = caret.tag.height;
 				XplatUI.CreateCaret(owner.Handle, 2, caret.height);
@@ -1261,7 +1288,7 @@ namespace System.Windows.Forms {
 						caret.tag = LineTag.FindTag(caret.line, caret.pos);
 					} else {
 						if (caret.line.line_no < this.lines) {
-							caret.line = GetLine(caret.line.line_no+1);
+							caret.line = GetLine(caret.line.line_no + 1);
 							caret.pos = 0;
 							caret.tag = caret.line.tags;
 						}
@@ -1420,6 +1447,11 @@ namespace System.Windows.Forms {
 				tag = line.tags;
 				//s = line.text.ToString();
 				while (tag != null) {
+					if (tag.length == 0) {
+						tag = tag.next;
+						continue;
+					}
+
 					if (((tag.X + tag.width) > (clip.Left - viewport_x)) || (tag.X < (clip.Right - viewport_x))) {
 						// Check for selection
 						if ((!selection_visible) || (!owner.has_focus) || (line_no < selection_start.line.line_no) || (line_no > selection_end.line.line_no)) {
@@ -1783,7 +1815,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		// Inserts n characters at the given position; it will not delete past line limits
+		// Deletes n characters at the given position; it will not delete past line limits
 		// pos is 0-based
 		internal void DeleteChars(LineTag tag, int pos, int count) {
 			Line	line;
@@ -2059,6 +2091,7 @@ namespace System.Windows.Forms {
 			// Now transfer our tags from this line to the next
 			new_line = GetLine(line.line_no + 1);
 			line.recalc = true;
+			new_line.recalc = true;
 
 			if ((tag.start - 1) == pos) {
 				int	shift;
@@ -2388,8 +2421,8 @@ namespace System.Windows.Forms {
 							selection_end_anchor = true;
 						} else {
 							selection_start.line = selection_anchor.line;
-							selection_start.tag = selection_anchor.tag;
 							selection_start.pos = selection_anchor.height;
+							selection_start.tag = selection_anchor.line.FindTag(selection_anchor.height);
 
 							selection_end.line = caret.line;
 							selection_end.tag = caret.line.tags;
@@ -2418,7 +2451,6 @@ namespace System.Windows.Forms {
 						} else {
 							Invalidate(selection_prev.line, selection_prev.pos, caret.line, start_pos);
 						}
-
 						if (caret < selection_anchor) {
 							selection_start.line = caret.line;
 							selection_start.tag = caret.line.FindTag(start_pos);
@@ -2435,8 +2467,8 @@ namespace System.Windows.Forms {
 							selection_end_anchor = true;
 						} else {
 							selection_start.line = selection_anchor.line;
-							selection_start.tag = selection_anchor.tag;
 							selection_start.pos = selection_anchor.height;
+							selection_start.tag = selection_anchor.line.FindTag(selection_anchor.height);
 
 							selection_end.line = caret.line;
 							selection_end.tag = caret.line.FindTag(end_pos);
@@ -2744,6 +2776,8 @@ namespace System.Windows.Forms {
 			// First, delete any selected text
 			if ((selection_start.pos != selection_end.pos) || (selection_start.line != selection_end.line)) {
 				if (!multiline || (selection_start.line == selection_end.line)) {
+					undo.RecordDeleteChars(selection_start.line, selection_start.pos + 1, selection_end.pos - selection_start.pos);
+
 					DeleteChars(selection_start.tag, selection_start.pos, selection_end.pos - selection_start.pos);
 
 					// The tag might have been removed, we need to recalc it
@@ -2754,6 +2788,8 @@ namespace System.Windows.Forms {
 
 					start = selection_start.line.line_no;
 					end = selection_end.line.line_no;
+
+					undo.RecordDelete(selection_start.line, selection_start.pos + 1, selection_end.line, selection_end.pos);
 
 					// Delete first line
 					DeleteChars(selection_start.tag, selection_start.pos, selection_start.line.text.Length - selection_start.pos);
@@ -3212,10 +3248,6 @@ namespace System.Windows.Forms {
 			}
 
 			return changed;
-		}
-
-		internal bool SetCursor(int x, int y) {
-			return true;
 		}
 
 		internal int Size() {
@@ -3780,5 +3812,383 @@ namespace System.Windows.Forms {
 		}
 
 		#endregion	// Internal Methods
+	}
+
+	internal class UndoClass {
+		internal enum ActionType {
+			InsertChar,
+			InsertString,
+			DeleteChar,
+			DeleteChars,
+			CursorMove,
+		}
+
+		internal class Action {
+			internal ActionType	type;
+			internal int		line_no;
+			internal int		pos;
+			internal object		data;
+		}
+
+		#region Local Variables
+		private Document	document;
+		private Stack		undo_actions;
+		private Stack		redo_actions;
+		private int		caret_line;
+		private int		caret_pos;
+		#endregion	// Local Variables
+
+		#region Constructors
+		internal UndoClass(Document doc) {
+			document = doc;
+			undo_actions = new Stack(50);
+			redo_actions = new Stack(50);
+		}
+		#endregion	// Constructors
+
+		#region Properties
+		[MonoTODO("Change this to be configurable")]
+		internal int UndoLevels {
+			get {
+				return undo_actions.Count;
+			}
+		}
+
+		[MonoTODO("Change this to be configurable")]
+		internal int RedoLevels {
+			get {
+				return redo_actions.Count;
+			}
+		}
+
+		[MonoTODO("Come up with good naming and localization")]
+		internal string UndoName {
+			get {
+				Action action;
+
+				action = (Action)undo_actions.Peek();
+				switch(action.type) {
+					case ActionType.InsertChar: {
+						Locale.GetText("Insert character");
+						break;
+					}
+
+					case ActionType.DeleteChar: {
+						Locale.GetText("Delete character");
+						break;
+					}
+
+					case ActionType.InsertString: {
+						Locale.GetText("Insert string");
+						break;
+					}
+
+					case ActionType.DeleteChars: {
+						Locale.GetText("Delete string");
+						break;
+					}
+
+					case ActionType.CursorMove: {
+						Locale.GetText("Cursor move");
+						break;
+					}
+				}
+				return null;
+			}
+		}
+
+		internal string RedoName() {
+			return null;
+		}
+		#endregion	// Properties
+
+		#region Internal Methods
+		internal void Clear() {
+			undo_actions.Clear();
+			redo_actions.Clear();
+		}
+
+		internal void Undo() {
+			Action action;
+
+			if (undo_actions.Count == 0) {
+				return;
+			}
+
+			action = (Action)undo_actions.Pop();
+
+			// Put onto redo stack
+			redo_actions.Push(action);
+
+			// Do the thing
+			switch(action.type) {
+				case ActionType.InsertChar: {
+					break;
+				}
+
+				case ActionType.DeleteChars: {
+					this.Insert(document.GetLine(action.line_no), action.pos, (Line)action.data);
+					break;
+				}
+
+				case ActionType.CursorMove: {
+					document.caret.line = document.GetLine(action.line_no);
+					document.caret.tag = document.caret.line.FindTag(action.pos);
+					document.caret.pos = action.pos;
+					document.caret.height = document.caret.tag.height;
+
+					XplatUI.DestroyCaret(document.owner.Handle);
+					XplatUI.CreateCaret(document.owner.Handle, 2, document.caret.height);
+					XplatUI.SetCaretPos(document.owner.Handle, (int)document.caret.tag.line.widths[document.caret.pos] + document.caret.line.align_shift - document.viewport_x, document.caret.line.Y + document.caret.tag.shift - document.viewport_y);
+					XplatUI.CaretVisible(document.owner.Handle, true);
+
+					// FIXME - enable call
+					//if (document.CaretMoved != null) document.CaretMoved(this, EventArgs.Empty);
+					break;
+				}
+			}
+		}
+
+		internal void Redo() {
+			if (redo_actions.Count == 0) {
+				return;
+			}
+		}
+		#endregion	// Internal Methods
+
+		#region Private Methods
+		// pos = 1-based
+		public void RecordDeleteChars(Line line, int pos, int length) {
+			RecordDelete(line, pos, line, pos + length - 1);
+		}
+
+		// start_pos, end_pos = 1 based
+		public void RecordDelete(Line start_line, int start_pos, Line end_line, int end_pos) {
+			Line	l;
+			Action	a;
+
+			l = Duplicate(start_line, start_pos, end_line, end_pos);
+
+			a = new Action();
+			a.type = ActionType.DeleteChars;
+			a.data = l;
+			a.line_no = start_line.line_no;
+			a.pos = start_pos - 1;
+
+			undo_actions.Push(a);
+		}
+
+		public void RecordCursor() {
+			if (document.caret.line == null) {
+				return;
+			}
+
+			RecordCursor(document.caret.line, document.caret.pos);
+		}
+
+		public void RecordCursor(Line line, int pos) {
+			Action a;
+
+			if ((line.line_no == caret_line) && (pos == caret_pos)) {
+				return;
+			}
+
+			caret_line = line.line_no;
+			caret_pos = pos;
+
+			a = new Action();
+			a.type = ActionType.CursorMove;
+			a.line_no = line.line_no;
+			a.pos = pos;
+
+			undo_actions.Push(a);
+		}
+
+		// start_pos = 1-based
+		// end_pos = 1-based
+		public Line Duplicate(Line start_line, int start_pos, Line end_line, int end_pos) {
+			Line	ret;
+			Line	line;
+			Line	current;
+			LineTag	tag;
+			LineTag	current_tag;
+			int	start;
+			int	end;
+			int	tag_start;
+			int	tag_length;
+
+			line = new Line();
+			ret = line;
+
+			for (int i = start_line.line_no; i <= end_line.line_no; i++) {
+				current = document.GetLine(i);
+
+				if (start_line.line_no == i) {
+					start = start_pos;
+				} else {
+					start = 1;
+				}
+
+				if (end_line.line_no == i) {
+					end = end_pos;
+				} else {
+					end = current.text.Length;
+				}
+
+				// Text for the tag
+				line.text = new StringBuilder(current.text.ToString(start - 1, end - start + 1));
+
+				// Copy tags from start to start+length onto new line
+				current_tag = current.FindTag(start - 1);
+				while ((current_tag != null) && (current_tag.start < end)) {
+					if ((current_tag.start <= start) && (start < (current_tag.start + current_tag.length))) {
+						// start tag is within this tag
+						tag_start = start;
+					} else {
+						tag_start = current_tag.start;
+					}
+
+					if (end < (current_tag.start + current_tag.length)) {
+						tag_length = end - tag_start + 1;
+					} else {
+						tag_length = current_tag.start + current_tag.length - tag_start;
+					}
+					tag = new LineTag(line, tag_start - start + 1, tag_length);
+					tag.color = current_tag.color;
+					tag.font = current_tag.font;
+
+					current_tag = current_tag.next;
+
+					// Add the new tag to the line
+					if (line.tags == null) {
+						line.tags = tag;
+					} else {
+						LineTag tail;
+						tail = line.tags;
+
+						while (tail.next != null) {
+							tail = tail.next;
+						}
+						tail.next = tag;
+						tag.previous = tail;
+					}
+				}
+
+				if ((i + 1) <= end_line.line_no) {
+					line.soft_break = current.soft_break;
+
+					// Chain them (we use right/left as next/previous)
+					line.right = new Line();
+					line.right.left = line;
+					line = line.right;
+				}
+			}
+
+			return ret;
+		}
+
+		// Insert multi-line text at the given position; use formatting at insertion point for inserted text
+		internal void Insert(Line line, int pos, Line insert) {
+			Line	current;
+			LineTag	tag;
+			int	offset;
+			int	lines;
+			Line	first;
+
+			// Handle special case first
+			if (insert.right == null) {
+
+				// Single line insert
+				document.Split(line, pos);
+
+				if (insert.tags == null) {
+					return;	// Blank line
+				}
+
+				//Insert our tags at the end
+				tag = line.tags;
+
+				while (tag.next != null) {
+					tag = tag.next;
+				}
+
+				offset = tag.start + tag.length - 1;
+
+				tag.next = insert.tags;
+				line.text.Insert(offset, insert.text.ToString());
+			
+				// Adjust start locations
+				tag = tag.next;
+				while (tag != null) {
+					tag.start += offset;
+					tag.line = line;
+					tag = tag.next;
+				}
+				// Put it back together
+				document.Combine(line.line_no, line.line_no + 1);
+				document.UpdateView(line, pos);
+				return;
+			}
+
+			first = line;
+			lines = 1;
+			current = insert;
+			while (current != null) {
+				if (current == insert) {
+					// Inserting the first line we split the line (and make space)
+					document.Split(line, pos);
+					//Insert our tags at the end of the line
+					tag = line.tags;
+
+					if (tag != null) {
+						while (tag.next != null) {
+							tag = tag.next;
+						}
+						offset = tag.start + tag.length - 1;
+						tag.next = current.tags;
+						tag.next.previous = tag;
+
+						tag = tag.next;
+
+					} else {
+						offset = 0;
+						line.tags = current.tags;
+						line.tags.previous = null;
+						tag = line.tags;
+					}
+				} else {
+					document.Split(line.line_no, 0);
+					offset = 0;
+					line.tags = current.tags;
+					line.tags.previous = null;
+					tag = line.tags;
+				}
+				// Adjust start locations and line pointers
+				while (tag != null) {
+					tag.start += offset;
+					tag.line = line;
+					tag = tag.next;
+				}
+
+				line.text.Insert(offset, current.text.ToString());
+				line.Grow(line.text.Length);
+
+				line.recalc = true;
+				line = document.GetLine(line.line_no + 1);
+
+				// FIXME? Test undo of line-boundaries
+				if ((current.right == null) && (current.tags.length != 0)) {
+					document.Combine(line.line_no - 1, line.line_no);
+				}
+				current = current.right;
+				lines++;
+
+			}
+
+			// Recalculate our document
+			document.UpdateView(first, lines, pos);
+			return;
+		}		
+		#endregion	// Private Methods
 	}
 }

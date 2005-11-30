@@ -577,23 +577,32 @@ namespace System.Windows.Forms {
 		}
 
 		public void ClearUndo() {
-			// FIXME
-			throw new NotImplementedException();
+			document.undo.Clear();
 		}
 
 		public void Copy() {
-			// FIXME
-			throw new NotImplementedException();
+			DataObject	o;
+
+			o = new DataObject(DataFormats.Text, SelectedText);
+			if (this is RichTextBox) {
+				o.SetData(DataFormats.Rtf, ((RichTextBox)this).SelectedRtf);
+			}
+			Clipboard.SetDataObject(o);
 		}
 
 		public void Cut() {
-			// FIXME
-			throw new NotImplementedException();
+			DataObject	o;
+
+			o = new DataObject(DataFormats.Text, SelectedText);
+			if (this is RichTextBox) {
+				o.SetData(DataFormats.Rtf, ((RichTextBox)this).SelectedRtf);
+			}
+			Clipboard.SetDataObject(o);
+			document.ReplaceSelection("");
 		}
 
 		public void Paste() {
-			// FIXME
-			throw new NotImplementedException();
+			Paste(null);
 		}
 
 		public void ScrollToCaret() {
@@ -619,7 +628,7 @@ namespace System.Windows.Forms {
 		}
 
 		public void Undo() {
-			return;
+			document.undo.Undo();
 		}
 		#endregion	// Public Instance Methods
 
@@ -721,14 +730,7 @@ namespace System.Windows.Forms {
 			switch (keyData & Keys.KeyCode) {
 				case Keys.X: {	// Cut (Ctrl-X)
 					if (control) {
-						DataObject	o;
-
-						o = new DataObject(DataFormats.Text, SelectedText);
-						if (this is RichTextBox) {
-							o.SetData(DataFormats.Rtf, ((RichTextBox)this).SelectedRtf);
-						}
-						Clipboard.SetDataObject(o);
-						document.ReplaceSelection("");
+						Cut();
 						return true;
 					}
 					return false;
@@ -736,13 +738,7 @@ namespace System.Windows.Forms {
 
 				case Keys.C: {	// Copy (Ctrl-C)
 					if (control) {
-						DataObject	o;
-
-						o = new DataObject(DataFormats.Text, SelectedText);
-						if (this is RichTextBox) {
-							o.SetData(DataFormats.Rtf, ((RichTextBox)this).SelectedRtf);
-						}
-						Clipboard.SetDataObject(o);
+						Copy();
 						return true;
 					}
 					return false;
@@ -750,17 +746,14 @@ namespace System.Windows.Forms {
 
 				case Keys.V: {	// Paste (Ctrl-V)
 					if (control) {
-						IDataObject	clip;
+						return Paste(null);
+					}
+					return false;
+				}
 
-						clip = Clipboard.GetDataObject();
-
-						if ((this is RichTextBox) && clip.GetDataPresent(DataFormats.Rtf)) {
-							((RichTextBox)this).SelectedRtf = (string)clip.GetData(DataFormats.Rtf);
-						} else if (clip.GetDataPresent(DataFormats.UnicodeText)) {
-							this.SelectedText = (string)clip.GetData(DataFormats.UnicodeText);
-						} else if (clip.GetDataPresent(DataFormats.Text)) {
-							this.SelectedText = (string)clip.GetData(DataFormats.Text);
-						}
+				case Keys.Z: {	// Undo (Ctrl-Z)
+					if (control) {
+						Undo();
 						return true;
 					}
 					return false;
@@ -943,7 +936,7 @@ namespace System.Windows.Forms {
 							document.Combine(line, document.CaretLine);
 							document.UpdateView(line, 1, 0);
 							document.PositionCaret(line, new_caret_pos);
-							document.MoveCaret(CaretDirection.CharForward);
+							//document.MoveCaret(CaretDirection.CharForward);
 							document.UpdateCaret();
 							OnTextChanged(EventArgs.Empty);
 						}
@@ -1528,6 +1521,42 @@ static int current;
 			if ((pos.Y + height) > (document.ViewPortY + canvas_height)) {
 				vscroll.Value = pos.Y - canvas_height + height;
 			}
+		}
+
+		internal bool Paste(DataFormats.Format format) {
+			IDataObject	clip;
+
+			clip = Clipboard.GetDataObject();
+
+			if (format == null) {
+				if ((this is RichTextBox) && clip.GetDataPresent(DataFormats.Rtf)) {
+					format = DataFormats.GetFormat(DataFormats.Rtf);
+				} else if (clip.GetDataPresent(DataFormats.UnicodeText)) {
+					format = DataFormats.GetFormat(DataFormats.UnicodeText);
+				} else if (clip.GetDataPresent(DataFormats.Text)) {
+					format = DataFormats.GetFormat(DataFormats.Text);
+				} else {
+					return false;
+				}
+			} else {
+				if ((format.Name == DataFormats.Rtf) && !(this is RichTextBox)) {
+					return false;
+				}
+
+				if (!clip.GetDataPresent(format.Name)) {
+					return false;
+				}
+			}
+
+			if (format.Name == DataFormats.Rtf) {
+				((RichTextBox)this).SelectedRtf = (string)clip.GetData(DataFormats.Rtf);
+			} else if (format.Name == DataFormats.UnicodeText) {
+				this.SelectedText = (string)clip.GetData(DataFormats.UnicodeText);
+			} else if (format.Name == DataFormats.Text) {
+				this.SelectedText = (string)clip.GetData(DataFormats.Text);
+			}
+
+			return true;
 		}
 		#endregion	// Private Methods
 	}

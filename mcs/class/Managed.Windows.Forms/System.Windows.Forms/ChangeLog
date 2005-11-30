@@ -1,3 +1,36 @@
+2005-11-28  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* TextControl.cs:
+	  - Fixed drag-selection related crash; style fixes
+	  - Implemented undo class
+	    o Implemented method to capture document state for specified
+	      range in document tree
+	    o Implemented method to restore captured document state
+	    o Implemented cursor tracking
+	    o Implemented basic undo stack
+	  - Added undo cursor tracking to methods altering cursor location
+	  - Added undo tracking to selection deletion (still missing
+	    other text-altering hookups)
+	* RichTextBox.cs:
+	  - Added SelectionLength property
+	  - Implemented CanPaste()
+	  - Implemented Paste()
+	  - Added missing protected methods
+	  - Fixed RTF->Document conversion; now uses font index 0 and color 
+	    index 0 as the default font for the parsed text
+	  - Fixed RTF<->Document font size translation
+	  - Fixed RTF generation, now properly handles cross-tag boundaries
+	    for single line selection
+	  - No longer always appends blank line to generated RTF
+	  - Removed TODOs
+	  - Added missing attributes
+	  - Hooked up undo-related methods
+	* TextBoxBase.cs:
+	  - Implemented Copy()
+	  - Implemented Paste()
+	  - Implemented Cut()
+	  - Fixed caret mis-behaviour on backspace across line-boundaries
+
 2005-11-29  Jackson Harper  <jackson@ximian.com>
 
 	* MdiClient.cs: Add a method for activating mdi children. Very

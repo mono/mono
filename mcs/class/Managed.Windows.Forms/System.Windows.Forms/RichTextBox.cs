@@ -50,7 +50,6 @@ namespace System.Windows.Forms {
 		private int		rtf_skip_width;
 		private int		rtf_skip_count;
 		private StringBuilder	rtf_line;
-		private Font		rtf_font;
 		private SolidBrush	rtf_color;
 		private RTF.Font	rtf_rtffont;
 		private int		rtf_rtffont_size;
@@ -258,7 +257,6 @@ namespace System.Windows.Forms {
 		[Browsable(false)]
 		[DefaultValue("")]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		[MonoTODO("Implement setter")]
 		public string Rtf {
 			get {
 				Line		start_line;
@@ -298,7 +296,6 @@ namespace System.Windows.Forms {
 		[Browsable(false)]
 		[DefaultValue("")]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		[MonoTODO("Implement setter")]
 		public string SelectedRtf {
 			get {
 				return GenerateRTF(document.selection_start.line, document.selection_start.pos, document.selection_end.line, document.selection_end.pos).ToString();
@@ -321,6 +318,7 @@ namespace System.Windows.Forms {
 				line = document.GetLine(y);
 				document.SetSelection(document.GetLine(y), x);
 				document.PositionCaret(line, x);
+				document.DisplayCaret();
 
 				OnTextChanged(EventArgs.Empty);
 			}
@@ -393,6 +391,8 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		[MonoTODO]
 		public Color SelectionColor {
 			get {
@@ -469,6 +469,18 @@ Console.WriteLine("FIXME - SelectionColor should not alter font");
 
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public override int SelectionLength {
+			get {
+				return base.SelectionLength;
+			}
+
+			set {
+				base.SelectionLength = value;
+			}
+		}
+
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public RichTextBoxSelectionTypes SelectionType {
 			get {
 				if (document.selection_start == document.selection_end) {
@@ -506,7 +518,7 @@ Console.WriteLine("FIXME - SelectionColor should not alter font");
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public string UndoActionName {
 			get {
-				return undo_action_name;
+				return document.undo.UndoName;
 			}
 		}
 
@@ -538,6 +550,15 @@ Console.WriteLine("FIXME - SelectionColor should not alter font");
 		#endregion	// Protected Instance Properties
 
 		#region Public Instance Methods
+		public bool CanPaste(DataFormats.Format clipFormat) {
+			if ((clipFormat.Name == DataFormats.Rtf) ||
+				(clipFormat.Name == DataFormats.Text) ||
+				(clipFormat.Name == DataFormats.UnicodeText)) {
+					return true;
+			}
+			return false;
+		}
+
 		public int Find(char[] characterSet) {
 			return Find(characterSet, -1, -1);
 		}
@@ -719,7 +740,7 @@ Console.WriteLine("FIXME - SelectionColor should not alter font");
 			InsertRTFFromStream(data, 0, 1);
 		}
 
-		[MonoTODO("Make smarter RTF detection")]
+		[MonoTODO("Make smarter RTF detection?")]
 		public void LoadFile(string path) {
 			if (path.EndsWith(".rtf")) {
 				LoadFile(path, RichTextBoxStreamType.RichText);
@@ -747,6 +768,14 @@ Console.WriteLine("FIXME - SelectionColor should not alter font");
 					data.Close();
 				}
 			}
+		}
+
+		public void Paste(DataFormats.Format clipFormat) {
+			base.Paste(clipFormat);
+		}
+
+		[MonoTODO()]
+		public void Redo() {
 		}
 
 		public void SaveFile(Stream data, RichTextBoxStreamType fileType) {
@@ -838,8 +867,18 @@ Console.WriteLine("FIXME - SelectionColor should not alter font");
 		#endregion	// Public Instance Methods
 
 		#region Protected Instance Methods
+		protected virtual object CreateRichEditOleCallback() {
+			throw new NotImplementedException();
+		}
+
 		protected override void OnBackColorChanged(EventArgs e) {
 			base.OnBackColorChanged (e);
+		}
+
+		protected virtual void OnContentsResized(ContentsResizedEventArgs e) {
+			if (ContentsResized != null) {
+				ContentsResized(this, e);
+			}
 		}
 
 		protected override void OnContextMenuChanged(EventArgs e) {
@@ -860,8 +899,33 @@ Console.WriteLine("FIXME - SelectionColor should not alter font");
 			}
 		}
 
+		[MonoTODO("Determine when to call this")]
+		protected virtual void OnImeChange(EventArgs e) {
+			if (ImeChange != null) {
+				ImeChange(this, e);
+			}
+		}
+
+		protected virtual void OnLinkClicked(LinkClickedEventArgs e) {
+			if (LinkClicked != null) {
+				LinkClicked(this, e);
+			}
+		}
+
+		protected virtual void OnProtected(EventArgs e) {
+			if (Protected != null) {
+				Protected(this, e);
+			}
+		}
+
 		protected override void OnRightToLeftChanged(EventArgs e) {
 			base.OnRightToLeftChanged (e);
+		}
+
+		protected virtual void OnSelectionChanged(EventArgs e) {
+			if (SelectionChanged != null) {
+				SelectionChanged(this, e);
+			}
 		}
 
 		protected override void OnSystemColorsChanged(EventArgs e) {
@@ -958,7 +1022,7 @@ Console.WriteLine("FIXME - SelectionColor should not alter font");
 
 							color = System.Windows.Forms.RTF.Color.GetColor(rtf, rtf.Param);
 							if (color != null) {
-								FlushText(false);
+								FlushText(rtf, false);
 								if (color.Red == -1 && color.Green == -1 && color.Blue == -1) {
 									this.rtf_color = new SolidBrush(ForeColor);
 								} else {
@@ -969,6 +1033,7 @@ Console.WriteLine("FIXME - SelectionColor should not alter font");
 						}
 
 						case Minor.FontSize: {
+							FlushText(rtf, false);
 							this.rtf_rtffont_size = rtf.Param / 2;
 							break;
 						}
@@ -978,20 +1043,20 @@ Console.WriteLine("FIXME - SelectionColor should not alter font");
 
 							font = System.Windows.Forms.RTF.Font.GetFont(rtf, rtf.Param);
 							if (font != null) {
-								FlushText(false);
+								FlushText(rtf, false);
 								this.rtf_rtffont = font;
 							}
 							break;
 						}
 
 						case Minor.Plain: {
-							FlushText(false);
+							FlushText(rtf, false);
 							rtf_rtfstyle = FontStyle.Regular;
 							break;
 						}
 
 						case Minor.Bold: {
-							FlushText(false);
+							FlushText(rtf, false);
 							if (rtf.Param == RTF.RTF.NoParam) {
 								rtf_rtfstyle |= FontStyle.Bold;
 							} else {
@@ -1001,7 +1066,7 @@ Console.WriteLine("FIXME - SelectionColor should not alter font");
 						}
 
 						case Minor.Italic: {
-							FlushText(false);
+							FlushText(rtf, false);
 							if (rtf.Param == RTF.RTF.NoParam) {
 								rtf_rtfstyle |= FontStyle.Italic;
 							} else {
@@ -1011,7 +1076,7 @@ Console.WriteLine("FIXME - SelectionColor should not alter font");
 						}
 
 						case Minor.StrikeThru: {
-							FlushText(false);
+							FlushText(rtf, false);
 							if (rtf.Param == RTF.RTF.NoParam) {
 								rtf_rtfstyle |= FontStyle.Strikeout;
 							} else {
@@ -1021,7 +1086,7 @@ Console.WriteLine("FIXME - SelectionColor should not alter font");
 						}
 
 						case Minor.Underline: {
-							FlushText(false);
+							FlushText(rtf, false);
 							if (rtf.Param == RTF.RTF.NoParam) {
 								rtf_rtfstyle |= FontStyle.Underline;
 							} else {
@@ -1031,7 +1096,7 @@ Console.WriteLine("FIXME - SelectionColor should not alter font");
 						}
 
 						case Minor.NoUnderline: {
-							FlushText(false);
+							FlushText(rtf, false);
 							rtf_rtfstyle &= ~FontStyle.Underline;
 							break;
 						}
@@ -1054,7 +1119,7 @@ Console.WriteLine("FIXME - SelectionColor should not alter font");
 				case Minor.Row:
 				case Minor.Line:
 				case Minor.Par: {
-					FlushText(true);
+					FlushText(rtf, true);
 					break;
 				}
 
@@ -1138,7 +1203,7 @@ Console.WriteLine("FIXME - SelectionColor should not alter font");
 			}
 		}
 
-		private void FlushText(bool newline) {
+		private void FlushText(RTF.RTF rtf, bool newline) {
 			int		length;
 			Font		font;
 
@@ -1147,10 +1212,24 @@ Console.WriteLine("FIXME - SelectionColor should not alter font");
 				return;
 			}
 
-			if (rtf_rtffont != null) {
-				font = new Font(rtf_rtffont.Name, rtf_rtffont_size, rtf_rtfstyle);
-			} else {
-				font = this.Font;
+			if (rtf_rtffont == null) {
+				// First font in table is default
+				rtf_rtffont = System.Windows.Forms.RTF.Font.GetFont(rtf, 0);
+			}
+
+			font = new Font(rtf_rtffont.Name, rtf_rtffont_size, rtf_rtfstyle);
+
+			if (rtf_color == null) {
+				System.Windows.Forms.RTF.Color color;
+
+				// First color in table is default
+				color = System.Windows.Forms.RTF.Color.GetColor(rtf, 0);
+
+				if ((color == null) || (color.Red == -1 && color.Green == -1 && color.Blue == -1)) {
+					rtf_color = new SolidBrush(ForeColor);
+				} else {
+					rtf_color = new SolidBrush(Color.FromArgb(color.Red, color.Green, color.Blue));
+				}
 			}
 
 			if (rtf_cursor_x == 0) {
@@ -1178,6 +1257,7 @@ Console.WriteLine("FIXME - SelectionColor should not alter font");
 
 			InsertRTFFromStream(data, cursor_x, cursor_y, out x, out y);
 		}
+
 		private void InsertRTFFromStream(Stream data, int cursor_x, int cursor_y, out int to_x, out int to_y) {
 			RTF.RTF		rtf;
 
@@ -1190,10 +1270,10 @@ Console.WriteLine("FIXME - SelectionColor should not alter font");
 			rtf_skip_width = 0;
 			rtf_skip_count = 0;
 			rtf_line = new StringBuilder();
-			rtf_font = Font;
-			rtf_color = new SolidBrush(ForeColor);
-			rtf_rtffont_size = this.Font.Height;
+			rtf_color = null;
+			rtf_rtffont_size = (int)this.Font.Size;
 			rtf_rtfalign = HorizontalAlignment.Left;
+			rtf_rtfstyle = FontStyle.Regular;
 			rtf_rtffont = null;
 			rtf_cursor_x = cursor_x;
 			rtf_cursor_y = cursor_y;
@@ -1203,7 +1283,7 @@ Console.WriteLine("FIXME - SelectionColor should not alter font");
 
 			try {
 				rtf.Read();	// That's it
-				FlushText(false);
+				FlushText(rtf, false);
 			}
 
 			catch (RTF.RTFException) {
@@ -1251,8 +1331,8 @@ Console.WriteLine("FIXME - SelectionColor should not alter font");
 				rtf.Append(String.Format("\\f{0}", font_index));	// Font table entry
 			}
 
-			if ((prev_font == null) || (prev_font.Height != font.Height)) {
-				rtf.Append(String.Format("\\fs{0}", font.Height * 2));		// Font size
+			if ((prev_font == null) || (prev_font.Size != font.Size)) {
+				rtf.Append(String.Format("\\fs{0}", (int)(font.Size * 2)));		// Font size
 			}
 
 			if ((prev_font == null) || (font.Bold != prev_font.Bold)) {
@@ -1301,6 +1381,7 @@ Console.WriteLine("FIXME - SelectionColor should not alter font");
 			rtf.Append(text);
 		}
 
+		// start_pos and end_pos are 0-based
 		private StringBuilder GenerateRTF(Line start_line, int start_pos, Line end_line, int end_pos) {
 			StringBuilder	sb;
 			ArrayList	fonts;
@@ -1359,7 +1440,7 @@ Console.WriteLine("FIXME - SelectionColor should not alter font");
 						}
 					}
 
-					pos += tag.length;
+					pos = tag.start + tag.length - 1;
 					tag = tag.next;
 				}
 				pos = 0;
@@ -1388,7 +1469,7 @@ Console.WriteLine("FIXME - SelectionColor should not alter font");
 			sb.Append("}\n");
 
 			// Emit the color table (if needed)
-			if (colors.Count > 1) {
+			if ((colors.Count > 1) || ((((Color)colors[0]).R != this.ForeColor.R) || (((Color)colors[0]).G != this.ForeColor.G) || (((Color)colors[0]).B != this.ForeColor.B))) {
 				sb.Append("{\\colortbl ");			// Header and NO! default color
 				for (i = 0; i < colors.Count; i++) {
 					sb.Append(String.Format("\\red{0}", ((Color)colors[i]).R));
@@ -1450,11 +1531,13 @@ Console.WriteLine("FIXME - SelectionColor should not alter font");
 						}
 					}
 
-					pos += tag.length;
+					pos = tag.start + tag.length - 1;
 					tag = tag.next;
 				}
-				if (!line.soft_break) {
-					sb.Append("\\par\n");
+				if (pos >= line.text.Length) {
+					if (!line.soft_break) {
+						sb.Append("\\par\n");
+					}
 				}
 				pos = 0;
 				line_no++;
