@@ -1,3 +1,7 @@
+2005-11-29 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* threadpool.c: fix typo when setting filde descriptor states.
+
 2005-11-28  Raja R Harinath  <rharinath@novell.com>
 
 	* class-internals.h (MonoGenericContainer.is_signature): Remove.	
