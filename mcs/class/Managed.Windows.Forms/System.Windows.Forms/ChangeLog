@@ -1,3 +1,15 @@
+2005-11-29  Jackson Harper  <jackson@ximian.com>
+
+	* MdiClient.cs: Add a method for activating mdi children. Very
+	basic right now. I imagine someday it might need more girth.
+	* MenuItem.cs: Implement MDI lists. When mdilist is true the mdi
+	children windows names are added to the menu item.
+	* ThemeWin32Classic.cs: Draw the arrow if the item is an
+	mdilist. This happens regardless of whether or not there are any
+	mdi windows to see in the list, and according to my tests happens
+	before the items are even added. Also happens if there isn't even
+	an mdi client to get windows from.
+
 2005-11-29  Alexander Olk  <alex.olk@googlemail.com>
 
 	* ThemeWin32Classic.cs: Make DrawFlatStyleRadioButton protected

@@ -311,6 +311,12 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		internal void ActivateChild (Form form)
+		{
+			form.BringToFront ();
+			active = form;
+		}
+
 		internal int ChildrenCreated {
 			get { return mdi_created; }
 			set { mdi_created = value; }

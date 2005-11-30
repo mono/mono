@@ -39,7 +39,7 @@ namespace System.Windows.Forms
 	[DesignTimeVisible(false)]
 	[ToolboxItem(false)]
 	public class MenuItem : Menu
-	{		
+	{
 		internal bool separator;
 		internal bool break_;
 		internal bool bar_break;
@@ -52,6 +52,8 @@ namespace System.Windows.Forms
 		private bool showshortcut;
 		private int index;
 		private bool mdilist;
+		private Hashtable mdilist_items;
+		private MdiClient mdicontainer;
 		private bool defaut_item;
 		private bool visible;
 		private bool ownerdraw;
@@ -195,7 +197,20 @@ namespace System.Windows.Forms
 		[DefaultValue(false)]
 		public bool MdiList {
 			get { return mdilist; }
-			set { mdilist = value; }
+			set {
+				if (mdilist == value)
+					return;
+				mdilist = value;
+
+				if (mdilist || mdilist_items == null)
+					return;
+
+				foreach (MenuItem item in mdilist_items.Keys)
+					MenuItems.Remove (item);
+				mdilist_items.Clear ();
+				mdilist_items = null;
+				
+			}
 		}
 
 		protected int MenuID {
@@ -481,6 +496,30 @@ namespace System.Windows.Forms
 
 		internal void PerformDrawItem (DrawItemEventArgs e)
 		{
+			if (mdilist && mdilist_items == null) {
+				do {
+					// Add the mdilist for the first time
+					mdilist_items = new Hashtable ();
+
+					MainMenu main = GetMainMenu ();
+					if (main == null || main.GetForm () == null)
+						break;
+
+					Form form = main.GetForm ();
+					mdicontainer = form.MdiContainer;
+					if (mdicontainer == null)
+						break;
+
+					foreach (Form mdichild in mdicontainer.Controls) {
+						MenuItem item = new MenuItem (mdichild.Text);
+						item.Click += new EventHandler (MdiWindowClickHandler);
+						MenuItems.Add (item);
+						mdilist_items.Add (item, form);
+					}
+
+				} while (false);
+			}
+
 			OnDrawItem (e);
 		}
 		
@@ -612,6 +651,18 @@ namespace System.Windows.Forms
 				}
 				
 			return "";
+		}
+
+		private void MdiWindowClickHandler (object sender, EventArgs e)
+		{
+			Form mdichild = (Form) mdilist_items [SelectedItem];
+
+			// people could add weird items to the Window menu
+			// so we can't assume its just us
+			if (mdichild == null)
+				return;
+
+			mdicontainer.ActivateChild (mdichild);
 		}
 
 		#endregion Private Methods

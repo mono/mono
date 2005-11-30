@@ -1972,7 +1972,7 @@ namespace System.Windows.Forms
 			}
 
 			/* Draw arrow */
-			if (item.MenuBar == false && item.IsPopup) {
+			if (item.MenuBar == false && item.IsPopup || item.MdiList) {
 
 				int cx = ThemeEngine.Current.MenuCheckSize.Width;
 				int cy = ThemeEngine.Current.MenuCheckSize.Height;
