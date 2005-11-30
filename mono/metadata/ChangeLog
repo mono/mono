@@ -1,5 +1,12 @@
 2005-11-29 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* threadpool.c: workaround for a bug that shows up on the Mac:
+	select()+connect() on a blocking socket is not like it should
+	be, so we proceed to connect() in that case, wasting the I/O
+	threadpool thread until connect succeedes. Fixes bug #75436.
+
+2005-11-29 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* threadpool.c: fix typo when setting filde descriptor states.
 
 2005-11-28  Raja R Harinath  <rharinath@novell.com>
