@@ -1,5 +1,14 @@
 2005-11-30 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* RadioButton.cs: if the 'value' attribute is set explicitly (as
+	RadioButtonList does now), use that as the 'name' attribute.
+	* RadioButtonList.cs: set the AutoPostBack and Enabled properties of
+	the radiobuttons.
+
+	Fixes bug #76706.
+
+2005-11-30 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* CheckBox.cs: add possible 'internal' attributes to the input tag. Fix
 	the 'name' attribute when not aligninng to the right.
 	* RadioButton.cs: use NameAttribute instead of GroupName when indexing

@@ -253,6 +253,8 @@ namespace System.Web.UI.WebControls {
 			radio.Page = Page;
 			radio.Checked = Items [repeatIndex].Selected;
 			radio.Attributes["Value"] = Items [repeatIndex].Value;
+			radio.AutoPostBack = AutoPostBack;
+			radio.Enabled = Enabled;
 			radio.RenderControl (writer);
 		}
 #if NET_2_0

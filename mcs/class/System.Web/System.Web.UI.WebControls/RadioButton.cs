@@ -81,7 +81,10 @@ namespace System.Web.UI.WebControls {
 		internal override void InternalAddAttributesToRender (HtmlTextWriter w)
 		{
 			base.InternalAddAttributesToRender (w);
-			w.AddAttribute (HtmlTextWriterAttribute.Value, this.UniqueID);
+			string val = Attributes ["Value"];
+			if (val == null || val == "")
+				val = UniqueID;
+			w.AddAttribute (HtmlTextWriterAttribute.Value, val);
 		}
 
 #if NET_2_0
