@@ -1,3 +1,8 @@
+2005-12-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TemplateControlCompiler.cs: treat LightGrey as a synonym of LightGray.
+	Fixes bug #76677.
+
 2005-11-30 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TemplateControlCompiler.cs: handle data bound attributes for html

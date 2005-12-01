@@ -1130,8 +1130,15 @@ namespace System.Web.Compilation
 						c = Color.FromArgb (argb [0], argb [1], argb [2], argb [3]);
 					}
 				} catch (Exception e){
-					throw new ParseException (currentLocation,
+					// Hack: "LightGrey" is accepted, but only for ASP.NET, as the
+					// TypeConverter for Color fails to ConvertFromString.
+					// Hence this hack...
+					if (InvariantCompareNoCase ("LightGrey", str)) {
+						c = Color.LightGray;
+					} else {
+						throw new ParseException (currentLocation,
 							"Color " + str + " is not a valid color.", e);
+					}
 				}
 
 				if (c.IsKnownColor){
