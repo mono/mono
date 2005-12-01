@@ -516,6 +516,16 @@ namespace System
 				throw new ArgumentException ("comparisonType", msg);
 			}
 		}
+
+		public static bool Equals (string a, string b, StringComparison comparisonType)
+		{
+			return String.Compare (a, b, comparisonType) == 0;
+		}
+
+		public bool Equals (string value, StringComparison comparisonType)
+		{
+			return String.Equals (this, value, comparisonType);
+		}
 #endif
 		public int CompareTo (Object value)
 		{

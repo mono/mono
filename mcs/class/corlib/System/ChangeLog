@@ -1,3 +1,8 @@
+2005-12-01  Alp Toker  <alp@atoker.com>
+
+	* String.cs: Add static and non-static Equals(... StringComparison) for
+	2.0.
+
 2005-12-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TermInfoDriver.cs: special case for the escape key. Fixes bug #76781.
