@@ -25,8 +25,11 @@
 // NOT COMPLETE
 
 using System;
+using System.ComponentModel;
 using System.Windows.Forms;
+
 namespace System.Windows.Forms.Design {
+	[ToolboxItem(false)]
 	public class ComponentEditorForm : Form {
 
 		[MonoTODO]

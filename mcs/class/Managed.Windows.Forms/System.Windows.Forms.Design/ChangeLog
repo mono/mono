@@ -1,3 +1,7 @@
+2005-12-01  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* ComponentEditorForm.cs: Added missing attribute
+
 2005-10-13  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* EventsTab.cs: Made .ctor() private to fix signature
