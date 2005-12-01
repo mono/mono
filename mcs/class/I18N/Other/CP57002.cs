@@ -1,6 +1,10 @@
 /*
  * CP57002.cs - ISCII code pages 57002-57011.
  *
+ * Atsushi Enomoto <atsushi@ximian.com> (C) 2005 Novell, Inc.
+ *
+ * original copyright:
+ *
  * Copyright (c) 2002  Southern Storm Software, Pty Ltd
  *
  * Permission is hereby granted, free of charge, to any person obtaining
@@ -35,7 +39,7 @@ using I18N.Common;
 // are a shifted version of the Unicode character set, starting
 // at a fixed offset.
 
-public abstract class ISCIIEncoding : Encoding
+public abstract class ISCIIEncoding : MonoEncoding
 {
 	// Internal state.
 	protected int shift;
@@ -82,10 +86,14 @@ public abstract class ISCIIEncoding : Encoding
 				return s.Length;
 			}
 
-	// Get the bytes that result from encoding a character buffer.
-	public override int GetBytes(char[] chars, int charIndex, int charCount,
-								 byte[] bytes, int byteIndex)
+	public unsafe override int GetBytesImpl (char* chars, int charCount, byte* bytes, int byteCount)
 			{
+#if NET_2_0
+				EncoderFallbackBuffer buffer = null;
+#endif
+				int charIndex = 0;
+				int byteIndex = 0;
+
 				if(chars == null)
 				{
 					throw new ArgumentNullException("chars");
@@ -93,26 +101,6 @@ public abstract class ISCIIEncoding : Encoding
 				if(bytes == null)
 				{
 					throw new ArgumentNullException("bytes");
-				}
-				if(charIndex < 0 || charIndex > chars.Length)
-				{
-					throw new ArgumentOutOfRangeException
-						("charIndex", Strings.GetString("ArgRange_Array"));
-				}
-				if(charCount < 0 || charCount > (chars.Length - charIndex))
-				{
-					throw new ArgumentOutOfRangeException
-						("charCount", Strings.GetString("ArgRange_Array"));
-				}
-				if(byteIndex < 0 || byteIndex > bytes.Length)
-				{
-					throw new ArgumentOutOfRangeException
-						("byteIndex", Strings.GetString("ArgRange_Array"));
-				}
-				if((bytes.Length - byteIndex) < charCount)
-				{
-					throw new ArgumentException
-						(Strings.GetString("Arg_InsufficientSpace"), "bytes");
 				}
 
 				// Convert the characters into bytes.
@@ -140,14 +128,21 @@ public abstract class ISCIIEncoding : Encoding
 					}
 					else
 					{
+#if NET_2_0
+						HandleFallback (ref buffer, chars, ref charIndex, ref charCount, bytes, ref posn, ref byteCount);
+						continue;
+#else
 						bytes[posn++] = (byte)'?';
+#endif
 					}
+					byteCount--;
 				}
 
 				// Return the final length of the output.
 				return posn - byteIndex;
 			}
 
+	/*
 	// Convenience wrappers for "GetBytes".
 	public override int GetBytes(String s, int charIndex, int charCount,
 								 byte[] bytes, int byteIndex)
@@ -217,6 +212,7 @@ public abstract class ISCIIEncoding : Encoding
 				// Return the final length of the output.
 				return posn - byteIndex;
 			}
+	*/
 
 	// Get the number of characters needed to decode a byte buffer.
 	public override int GetCharCount(byte[] bytes, int index, int count)

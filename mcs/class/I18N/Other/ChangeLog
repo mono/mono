@@ -1,5 +1,11 @@
 2005-12-01  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* CP57002.cs : Now its base class is MonoEncoding, and implemented 
+	  fallback support and pointer-based code for GetBytes(Impl).
+	  Commented string version of GetBytes() out.
+
+2005-12-01  Atsushi Enomoto  <atsushi@ximian.com>
+
 	(this is the first ChangeLog entry.)
 
 	* CP1251.cs CP28594.cs CP28595.cs CP1257.cs CP1258.cs CP874.cs
