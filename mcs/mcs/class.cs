@@ -4797,6 +4797,8 @@ namespace Mono.CSharp {
 			}
 
 			EmitContext ec = method.CreateEmitContext (container, null);
+			if (method.GetObsoleteAttribute () != null || container.GetObsoleteAttribute () != null)
+				ec.TestObsoleteMethodUsage = false;
 
 			DefineMethodBuilder (ec, container, method_name, method.ParameterInfo.Types);
 

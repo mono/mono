@@ -2722,8 +2722,10 @@ namespace Mono.CSharp {
 					return null;
 				}
 
-				if (ic.ResolveValue ())
-					ic.CheckObsoleteness (loc);
+				if (ic.ResolveValue ()) {
+					if (ec.TestObsoleteMethodUsage)
+						ic.CheckObsoleteness (loc);
+				}
 
 				return ic.Value;
 			}
@@ -2780,7 +2782,8 @@ namespace Mono.CSharp {
 				ObsoleteAttribute oa;
 				FieldBase f = TypeManager.GetField (FieldInfo);
 				if (f != null) {
-					f.CheckObsoleteness (loc);
+					if (ec.TestObsoleteMethodUsage)
+						f.CheckObsoleteness (loc);
                                 
 					// To be sure that type is external because we do not register generated fields
 				} else if (!(FieldInfo.DeclaringType is TypeBuilder)) {                                

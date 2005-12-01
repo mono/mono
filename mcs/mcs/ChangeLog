@@ -1,6 +1,15 @@
 2005-12-01  Marek Safar  <marek.safar@seznam.cz>
 
 	Fix #76849.
+	* class.cs (MethodData.Define): Set proper Obsolete context.
+
+	* ecore.cs (FieldExpr.ResolveMemberAccess): Don't check [Obsolete] in
+	obsolete context.
+	(FieldExpr.DoResolve): Ditto.
+
+2005-12-01  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix #76849.
 	* class.cs (MethodCore.DoDefineParameters): Test [Obsolete] only when
 	parent is not obsolete.
 
