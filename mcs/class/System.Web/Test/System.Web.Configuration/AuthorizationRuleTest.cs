@@ -126,7 +126,7 @@ namespace MonoTests.System.Web.Configuration {
 			/* 3-4 */
 			sw = new StringWriter ();
 			writer = new XmlTextWriter (sw);
-			rule = new AuthorizationRule (AuthorizationRuleAction.Allow);
+			rule = new AuthorizationRule (AuthorizationRuleAction.Deny);
 			rule.Users.Add ("toshok");
 			rule.Users.Add ("chris");
 			rule.Roles.Add ("admin");
@@ -137,7 +137,7 @@ namespace MonoTests.System.Web.Configuration {
 			parms[1] = true;
 			bool b = (bool)mi.Invoke (rule, parms);
 
-			Assert.AreEqual ("<allow roles=\"admin,wheel\" users=\"toshok,chris\" verbs=\"GET,PUT\" />", sw.ToString(), "A3");
+			Assert.AreEqual ("<deny roles=\"admin,wheel\" users=\"toshok,chris\" verbs=\"GET,PUT\" />", sw.ToString(), "A3");
 			Assert.IsTrue (b, "A4");
 		}
 	}
