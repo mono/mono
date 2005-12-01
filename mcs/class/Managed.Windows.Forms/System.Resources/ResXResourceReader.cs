@@ -205,7 +205,7 @@ namespace System.Resources
 							v = c.ConvertFrom (Convert.FromBase64String (val));
 						} else if (tt != null) {
 							// MS seems to handle Byte[] without any mimetype :-(
-							if (t.StartsWith("fSystem.Byte[], mscorlib")) {
+							if (t.StartsWith("System.Byte[], mscorlib")) {
 								v = Convert.FromBase64String(val);
 							} else {
 								TypeConverter c = TypeDescriptor.GetConverter (tt);
