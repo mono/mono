@@ -1,3 +1,8 @@
+2005-12-01  Daniel Drake  <dsd@gentoo.org>
+
+	* Makefile.am: Link against libcrypt, needed for setkey(3) as referenced
+	in stdlib.c. Problem caught by Michael Hill.
+
 2005-11-07  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* map-icalls.h: Oddly, this file didn't get the new functions added in
