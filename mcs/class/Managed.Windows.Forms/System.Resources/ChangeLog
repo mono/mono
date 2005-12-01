@@ -1,3 +1,8 @@
+2005-11-30  Peter Bartok  <pbartok@novell.com>
+
+	* ResXResourceReader.cs: Handle System.Byte[] encodings without
+	  needing a typeconverter (This fixes bug #76414)
+
 2005-11-30  Robert Jordan  <robertj@gmx.net>
 
 	* ResXResourceReader.cs, ResXResourceWriter.cs: Made string conversions

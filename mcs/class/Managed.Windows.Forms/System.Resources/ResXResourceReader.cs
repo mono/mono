@@ -199,12 +199,18 @@ namespace System.Resources
 					if (n != null) {
 						object v = null;
 						string val = get_value (reader, "value");
+
 						if (mt != null && tt != null) {
 							TypeConverter c = TypeDescriptor.GetConverter (tt);
 							v = c.ConvertFrom (Convert.FromBase64String (val));
 						} else if (tt != null) {
-							TypeConverter c = TypeDescriptor.GetConverter (tt);
-							v = c.ConvertFromInvariantString (val);
+							// MS seems to handle Byte[] without any mimetype :-(
+							if (t.StartsWith("fSystem.Byte[], mscorlib")) {
+								v = Convert.FromBase64String(val);
+							} else {
+								TypeConverter c = TypeDescriptor.GetConverter (tt);
+								v = c.ConvertFromInvariantString (val);
+							}
 						} else if (mt != null) {
 							byte [] data = Convert.FromBase64String (val);
 							BinaryFormatter f = new BinaryFormatter ();
