@@ -42,10 +42,12 @@ namespace System.Xml.Serialization
 	{
 		static Hashtable nameCache;
 		static Hashtable primitiveTypes;
+		static Hashtable primitiveArrayTypes;
 
 		static TypeTranslator ()
 		{
 			nameCache = new Hashtable ();
+			primitiveArrayTypes = new Hashtable ();
 
 			// XSD Types with direct map to CLR types
 
@@ -119,22 +121,44 @@ namespace System.Xml.Serialization
 
 		public static TypeData GetTypeData (Type type, string xmlDataType)
 		{
-			if ((xmlDataType != null) && (xmlDataType.Length != 0)) return GetPrimitiveTypeData (xmlDataType);
-
-			TypeData typeData = nameCache[type] as TypeData;
-			if (typeData != null) return typeData;
-			
-			string name;
-			if (type.IsArray) {
-				string sufix = GetTypeData (type.GetElementType ()).XmlType;
-				name = GetArrayName (sufix);
+			if ((xmlDataType != null) && (xmlDataType.Length != 0)) {
+				// If the type is an array, xmlDataType specifies the type for the array elements,
+				// not for the whole array. The exception is base64Binary, since it is a byte[],
+				// that's why the following check is needed.
+				TypeData at = GetPrimitiveTypeData (xmlDataType);
+				if (type.IsArray && type != at.Type) {
+					lock (primitiveArrayTypes) {
+						TypeData tt = (TypeData) primitiveArrayTypes [xmlDataType];
+						if (tt != null)
+							return tt;
+						if (at.Type == type.GetElementType ()) {
+							tt = new TypeData (type, GetArrayName (at.XmlType), false);
+							primitiveArrayTypes [xmlDataType] = tt;
+							return tt;
+						}
+						else
+							throw new InvalidOperationException ("Cannot convert values of type '" + type.GetElementType () + "' to '" + xmlDataType + "'");
+					}
+				}
+				return at;
 			}
-			else 
-				name = XmlConvert.EncodeLocalName (type.Name);
 
-			typeData = new TypeData (type, name, false);
-			nameCache[type] = typeData;
-			return typeData;
+			lock (nameCache) {
+				TypeData typeData = nameCache[type] as TypeData;
+				if (typeData != null) return typeData;
+				
+				string name;
+				if (type.IsArray) {
+					string sufix = GetTypeData (type.GetElementType ()).XmlType;
+					name = GetArrayName (sufix);
+				}
+				else 
+					name = XmlConvert.EncodeLocalName (type.Name);
+
+				typeData = new TypeData (type, name, false);
+				nameCache[type] = typeData;
+				return typeData;
+			}
 		}
 
 		public static bool IsPrimitive (Type type)
