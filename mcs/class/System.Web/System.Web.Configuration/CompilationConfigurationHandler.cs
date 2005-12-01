@@ -99,7 +99,7 @@ namespace System.Web.Configuration
 				compiler.Type = AttValue ("type", child);
 				compiler.CompilerOptions = AttValue ("compilerOptions", child, true, true);
 				compiler.WarningLevel = AttUIntValue ("warningLevel", child, 0);
-#if NET_2_0
+#if CONFIGURATION_2_0
 				config.Compilers.Add (compiler);
 #else
 				config.Compilers [compiler.Language] = compiler;

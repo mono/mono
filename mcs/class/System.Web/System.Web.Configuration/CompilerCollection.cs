@@ -28,7 +28,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if !NET_2_0
+#if !CONFIGURATION_2_0
 
 using System;
 using System.Collections;
@@ -36,6 +36,9 @@ using System.Configuration;
 
 namespace System.Web.Configuration
 {
+#if NET_2_0
+	public
+#endif
 	sealed class CompilerCollection
 	{
 		Hashtable compilers;

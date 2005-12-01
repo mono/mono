@@ -805,13 +805,29 @@ namespace System.Web.Configuration
 			if (!reader.MoveToNextAttribute ())
 				ThrowException ("sectionGroup must have a 'name' attribute.", reader);
 
+			string value = null;
+#if CONFIGURATION_2_0
+			do {
+				if (reader.Name == "name") {
+					if (value != null)
+						ThrowException ("Duplicate 'name' attribute.", reader);
+					value = reader.Value;
+				}
+				else if (reader.Name != "type")
+					ThrowException ("Unrecognized attribute.", reader);
+			} while (reader.MoveToNextAttribute ());
+#else
 			if (reader.Name != "name")
 				ThrowException ("Unrecognized attribute.", reader);
 
 			if (reader.MoveToNextAttribute ())
 				ThrowException ("Unrecognized attribute.", reader);
 
-			string value = reader.Value;
+			value = reader.Value;
+#endif
+			if (value == null)
+				ThrowException ("No 'name' attribute.", reader);
+
 			if (value == "location")
 				ThrowException ("location is a reserved section name", reader);
 			
