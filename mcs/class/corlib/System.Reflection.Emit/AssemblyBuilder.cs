@@ -87,7 +87,7 @@ namespace System.Reflection.Emit {
 #endif
 	[ClassInterface (ClassInterfaceType.None)]
 	public sealed class AssemblyBuilder : Assembly, _AssemblyBuilder {
-		#region Sync with reflection.h
+		#region Sync with object-internals.h
 		private IntPtr dynamic_assembly;
 		private MethodInfo entry_point;
 		private ModuleBuilder[] modules;
