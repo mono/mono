@@ -1,0 +1,9 @@
+2005-12-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	(this is the first ChangeLog entry.)
+
+	* CP1254.cs CP1255.cs CP1256.cs CP28596.cs CP28598.cs CP28599.cs
+	  CP38598.cs : (all *.cs)
+	  The same changes on fallback support and shift to pointer-based 
+	  implementation as we had in I18N.West.dll.
+	* Makefile : added /unsafe.

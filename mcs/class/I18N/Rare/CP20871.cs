@@ -28,6 +28,7 @@ namespace I18N.Rare
 {
 
 using System;
+using System.Text;
 using I18N.Common;
 
 public class CP20871 : ByteEncoding
@@ -84,10 +85,15 @@ public class CP20871 : ByteEncoding
 		'\u00DC', '\u00D9', '\u00DA', '\u009F', 
 	};
 
-	protected override void ToBytes(char[] chars, int charIndex, int charCount,
-	                                byte[] bytes, int byteIndex)
+	protected unsafe override void ToBytes(char* chars, int charCount,
+	                                byte* bytes, int byteCount)
 	{
 		int ch;
+		int charIndex = 0;
+		int byteIndex = 0;
+#if NET_2_0
+		EncoderFallbackBuffer buffer = null;
+#endif
 		while(charCount > 0)
 		{
 			ch = (int)(chars[charIndex++]);
@@ -478,13 +484,21 @@ public class CP20871 : ByteEncoding
 				case 0xFF5C: ch = 0xBB; break;
 				case 0xFF5D: ch = 0x9C; break;
 				case 0xFF5E: ch = 0xCC; break;
-				default: ch = 0x3F; break;
+				default:
+#if NET_2_0
+					HandleFallback (ref buffer, chars, ref charIndex, ref charCount, bytes, ref byteIndex, ref byteCount);
+#else
+						ch = 0x3F;
+#endif
+					break;
 			}
 			bytes[byteIndex++] = (byte)ch;
 			--charCount;
+			--byteCount;
 		}
 	}
 
+	/*
 	protected override void ToBytes(String s, int charIndex, int charCount,
 	                                byte[] bytes, int byteIndex)
 	{
@@ -885,6 +899,7 @@ public class CP20871 : ByteEncoding
 			--charCount;
 		}
 	}
+	*/
 
 }; // class CP20871
 

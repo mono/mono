@@ -28,6 +28,7 @@ namespace I18N.Other
 {
 
 using System;
+using System.Text;
 using I18N.Common;
 
 public class CP874 : ByteEncoding
@@ -84,10 +85,15 @@ public class CP874 : ByteEncoding
 		'\u00A2', '\u00AC', '\u00A6', '\u00A0', 
 	};
 
-	protected override void ToBytes(char[] chars, int charIndex, int charCount,
-	                                byte[] bytes, int byteIndex)
+	protected unsafe override void ToBytes(char* chars, int charCount,
+	                                byte* bytes, int byteCount)
 	{
 		int ch;
+		int charIndex = 0;
+		int byteIndex = 0;
+#if NET_2_0
+		EncoderFallbackBuffer buffer = null;
+#endif
 		while(charCount > 0)
 		{
 			ch = (int)(chars[charIndex++]);
@@ -296,15 +302,21 @@ public class CP874 : ByteEncoding
 					if(ch >= 0xFF01 && ch <= 0xFF5E)
 						ch -= 0xFEE0;
 					else
+#if NET_2_0
+					HandleFallback (ref buffer, chars, ref charIndex, ref charCount, bytes, ref byteIndex, ref byteCount);
+#else
 						ch = 0x3F;
+#endif
 				}
 				break;
 			}
 			bytes[byteIndex++] = (byte)ch;
 			--charCount;
+			--byteCount;
 		}
 	}
 
+	/*
 	protected override void ToBytes(String s, int charIndex, int charCount,
 	                                byte[] bytes, int byteIndex)
 	{
@@ -525,6 +537,7 @@ public class CP874 : ByteEncoding
 			--charCount;
 		}
 	}
+	*/
 
 }; // class CP874
 
