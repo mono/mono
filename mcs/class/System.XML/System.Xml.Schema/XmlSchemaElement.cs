@@ -918,8 +918,7 @@ namespace System.Xml.Schema
 							break;
 						}
 					} else {
-						if (any.TargetNamespace.Length == 0 ||
-							any.TargetNamespace != this.QualifiedName.Namespace)
+						if (any.TargetNamespace != this.QualifiedName.Namespace)
 							error (h, "Ambiguous element label which is contained by -any- particle with ##other value was detected: " + this.QualifiedName);
 					}
 				}

@@ -1,3 +1,9 @@
+2005-12-01  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlSchemaElement.cs : Fixed ambiguity detection logic so that
+	  chameleon ##other (xs:any) does not block other "absent"
+	  (empty targetNamespace) element. Fixed bug #76865.
+
 2005-11-07  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlSchemaValidator.cs : added missing ValidateWhitespace and

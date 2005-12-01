@@ -304,5 +304,12 @@ namespace MonoTests.System.Xml
 			XmlSchema xs = XmlSchema.Read (xtr, null);
 			AssertEquals (XmlNodeType.EndElement, xtr.NodeType);
 		}
+
+		[Test]
+		public void AmbiguityDetectionOnChameleonAnyOther ()
+		{
+			string xsd = @"<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'> <xs:complexType name='TestType'> <xs:sequence> <xs:any namespace='##other' minOccurs='0' /> <xs:element name='Item' /> </xs:sequence> </xs:complexType></xs:schema>";
+			XmlSchema.Read (new XmlTextReader (xsd, XmlNodeType.Document, null), null);
+		}
 	}
 }
