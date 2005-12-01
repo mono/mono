@@ -1,3 +1,9 @@
+2005-11-30 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HandlerFactoryConfiguration.cs: my previous patch broke the
+	* order in which handlers are searched. This one fixes that,
+	* while not breaking bug 76842 again.
+
 2005-11-30  Chris Toshok  <toshok@ximian.com>
 
 	* WebConfigurationSettings.cs (ReadSectionGroup): some

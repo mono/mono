@@ -168,10 +168,6 @@ namespace System.Web.Configuration {
 			this.parent = parent;
 
 			handlers = new ArrayList ();
-			if (parent != null && parent.handlers != null) {
-				foreach (object o in parent.handlers)
-					handlers.Add (o);
-			}
 		}
 
 		public void Clear ()
@@ -205,6 +201,10 @@ namespace System.Web.Configuration {
 					return handler;
 				}
 			}
+
+			if (parent != null)
+				return parent.Remove (verb, path);
+
 			return null;
 		}
 
