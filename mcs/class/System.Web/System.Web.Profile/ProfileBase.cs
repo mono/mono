@@ -123,7 +123,7 @@ namespace System.Web.Profile
 		}
 
 		[MonoTODO]
-		public static SettingsPropertyCollection Properties {
+		public override SettingsPropertyCollection Properties {
 			get {
 				throw new NotImplementedException ();
 			}

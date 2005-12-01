@@ -1,3 +1,10 @@
+2005-11-30  Chris Toshok  <toshok@ximian.com>
+
+	* ProfileBase.cs (Properties): mark as override, not static.
+
+	* ProfileProviderCollection.cs (ProfileProvider): mark as "new" to
+	fix warning.
+
 2005-11-18  Chris Toshok  <toshok@ximian.com>
 
 	* ProfileModule.cs: hook up saving of the request's profile.

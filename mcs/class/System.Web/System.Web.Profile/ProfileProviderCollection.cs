@@ -46,7 +46,7 @@ namespace System.Web.Profile
 		}
 
 		[MonoTODO]
-		public ProfileProvider this[string name] {
+		public new ProfileProvider this[string name] {
 			get {
 				throw new NotImplementedException ();
 			}
