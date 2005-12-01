@@ -1,3 +1,10 @@
+2005-12-01  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* Makefile.am: Use $(CRYPT_LIB), not -lcrypt, as not all platforms 
+	  support -lcrypt.
+	* stdlib.c: Wrap Mono_Posix_Syscall_setkey() within HAVE_SETKEY, not
+	  PLATFORM_WIN32
+
 2005-12-01  Daniel Drake  <dsd@gentoo.org>
 
 	* Makefile.am: Link against libcrypt, needed for setkey(3) as referenced

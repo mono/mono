@@ -54,8 +54,7 @@ MPH_SOURCE = $(MPH_C_SOURCE)
 MPH_LIBS   =
 else
 MPH_SOURCE = $(MPH_C_SOURCE) $(MPH_UNIX_SOURCE)
-# -lcrypt needed for setkey(3)
-MPH_LIBS   = $(GLIB_LIBS)
+MPH_LIBS   = $(GLIB_LIBS) $(CRYPT_LIBS)
 endif
 
 if HAVE_ZLIB
