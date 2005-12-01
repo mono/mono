@@ -79,7 +79,7 @@ namespace Mono.Globalization.Unicode
 	{
 		// this environment variable is for debugging quick check.
 		static bool QuickCheckDisabled =
-			Environment.GetEnvironmentVariable (
+			Environment.internalGetEnvironmentVariable (
 			"MONO_COLLATION_QUICK_CHECK_DISABLED") == "yes";
 
 		unsafe internal struct Context
