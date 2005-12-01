@@ -1,3 +1,8 @@
+2005-12-01  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* BinaryFormatter.cs: Added a demand for SerializationFormatter on 
+	Serialize method (to make some CAS test work correctly).
+
 2005-05-26  Ben Maurer  <bmaurer@ximian.com>
 
 	* CodeGenerator.cs: Move module creation to cctor to kill double
