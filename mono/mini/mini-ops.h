@@ -186,7 +186,7 @@ MINI_OP(OP_LCONV_TO_I2,"long_conv_to_i2", LREG, LREG, NONE)
 MINI_OP(OP_LCONV_TO_I4,"long_conv_to_i4", LREG, LREG, NONE)
 MINI_OP(OP_LCONV_TO_I8,"long_conv_to_i8", LREG, LREG, NONE)
 MINI_OP(OP_LCONV_TO_R4,"long_conv_to_r4", LREG, LREG, NONE)
-MINI_OP(OP_LCONV_TO_R8,"long_conv_to_r8", LREG, LREG, NONE)
+MINI_OP(OP_LCONV_TO_R8,"long_conv_to_r8", FREG, LREG, NONE)
 MINI_OP(OP_LCONV_TO_U4,"long_conv_to_u4", LREG, LREG, NONE)
 MINI_OP(OP_LCONV_TO_U8,"long_conv_to_u8", LREG, LREG, NONE)
 
