@@ -1,3 +1,9 @@
+2005-12-01  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix #76849.
+	* class.cs (MethodCore.DoDefineParameters): Test [Obsolete] only when
+	parent is not obsolete.
+
 2005-12-01  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* doc.cs : (FindDocumentedMember) find parameterless members first
