@@ -1,3 +1,7 @@
+2005-12-01  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* RIPEMD160Managed.cs: Endianess fix.
+
 2005-11-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DSAManaged.cs: Don't output J in the XML if it's not exported (i.e.

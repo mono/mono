@@ -124,8 +124,19 @@ namespace System.Security.Cryptography {
 		/// </summary>
 		/// <param name="buffer">The buffer with the data.</param>
 		/// <param name="offset">The offset in the buffer.</param>
-		private void ProcessBlock(byte[] buffer, int offset) {
-			System.Buffer.BlockCopy(buffer, offset, _X, 0, 64);
+		private void ProcessBlock (byte[] buffer, int offset)
+		{
+			if (BitConverter.IsLittleEndian) {
+				for (int i=0; i < _X.Length; i++) {
+					_X [i] = (uint)(buffer [offset])
+						| (((uint)(buffer [offset+1])) <<  8)
+						| (((uint)(buffer [offset+2])) << 16)
+						| (((uint)(buffer [offset+3])) << 24);
+					offset += 4;
+				}
+			} else {
+				Buffer.BlockCopy (buffer, offset, _X, 0, 64);
+			}
 			Compress();
 		}
 
