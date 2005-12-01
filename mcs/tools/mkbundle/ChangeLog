@@ -1,3 +1,9 @@
+
+Thu Dec 1 13:01:54 EST 2005 Paolo Molaro <lupus@ximian.com>
+
+	* mkbundle.cs: add warning for --static. Handle --static for non-linux
+	systems.
+
 2005-10-20  Miguel de Icaza  <miguel@novell.com>
 
 	* mkbundle.cs: Deal with the fact that these were Linux-specific

@@ -83,6 +83,8 @@ class MakeBundle {
 				break;
 			case "--static":
 				static_link = true;
+				Console.WriteLine ("Note that statically linking the LGPL Mono runtime has more licensing restrictions than dynamically linking.");
+				Console.WriteLine ("See http://www.mono-project.com/Licensing for details on licensing.");
 				break;
 			case "--config":
 				if (i+1 == top) {
@@ -325,21 +327,21 @@ class MakeBundle {
 				return;
 
 			string zlib = (compress ? "-lz" : "");
-			if (static_link){
-				string static_flags = "";
-				
-				if (style == "linux")
-					static_flags = "-Wl,-Bstatic -lmono -Wl,-Bdynamic";
-				
+			string debugging = "-g";
+
+			if (style == "linux")
+				debugging = "-ggdb";
+			if (static_link) {
+				string smonolib;
+				if (style == "osx")
+					smonolib = "`pkg-config --variable=libdir mono`/libmono.a ";
+				else
+					smonolib = "-Wl,-Bstatic -lmono -Wl,-Bdynamic ";
 				cmd = String.Format ("cc -o {2} -Wall `pkg-config --cflags mono` {0} {3}" +
-						     "`pkg-config --libs-only-L mono` " + static_flags + " " + 
+						     "`pkg-config --libs-only-L mono` " + smonolib +
 						     "`pkg-config --libs-only-l mono | sed -e \"s/\\-lmono //\"` {1}",
 						     temp_c, temp_o, output, zlib);
 			} else {
-				string debugging = "-g";
-				
-				if (style == "linux")
-					debugging = "-ggdb";
 				
 				cmd = String.Format ("cc " + debugging + " -o {2} -Wall {0} `pkg-config --cflags --libs mono` {3} {1}",
 						     temp_c, temp_o, output, zlib);
