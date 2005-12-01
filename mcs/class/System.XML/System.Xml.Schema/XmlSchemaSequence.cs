@@ -227,19 +227,47 @@ namespace System.Xml.Schema
 		internal override void ValidateUniqueParticleAttribution (XmlSchemaObjectTable qnames, ArrayList nsNames,
 			ValidationEventHandler h, XmlSchema schema)
 		{
+			ValidateUPAOnHeadingOptionalComponents (qnames, nsNames, h, schema);
+			ValidateUPAOnItems (qnames, nsNames, h, schema);
+		}
+
+		void ValidateUPAOnHeadingOptionalComponents (XmlSchemaObjectTable qnames, ArrayList nsNames,
+			ValidationEventHandler h, XmlSchema schema)
+		{
+			// heading optional components
 			foreach (XmlSchemaParticle p in this.Items) {
 				p.ValidateUniqueParticleAttribution (qnames, nsNames, h, schema);
-				if (p.ValidatedMinOccurs == p.ValidatedMaxOccurs)
+				if (p.ValidatedMinOccurs != 0)
 					break;
 			}
-			XmlSchemaObjectTable tmpTable = new XmlSchemaObjectTable ();
-			ArrayList al = new ArrayList ();
+		}
+
+		void ValidateUPAOnItems (XmlSchemaObjectTable qnames, ArrayList nsNames,
+			ValidationEventHandler h, XmlSchema schema)
+		{
+			// non-optional components
+			XmlSchemaObjectTable elems = new XmlSchemaObjectTable ();
+			ArrayList wildcards = new ArrayList ();
+			XmlSchemaObjectTable tmpElems = new XmlSchemaObjectTable ();
+			ArrayList tmpWildcards = new ArrayList ();
 			for (int i=0; i<Items.Count; i++) {
 				XmlSchemaParticle p1 = Items [i] as XmlSchemaParticle;
-				p1.ValidateUniqueParticleAttribution (tmpTable, al, h, schema);
+				p1.ValidateUniqueParticleAttribution (elems, wildcards, h, schema);
 				if (p1.ValidatedMinOccurs == p1.ValidatedMaxOccurs) {
-					tmpTable.Clear ();
-					al.Clear ();
+					elems.Clear ();
+					wildcards.Clear ();
+				}
+				else {
+					if (p1.ValidatedMinOccurs != 0) {
+						foreach (XmlQualifiedName n in tmpElems.Names)
+							elems.Set (n, null); // remove
+						foreach (object o in tmpWildcards)
+							wildcards.Remove (o);
+					}
+					foreach (XmlQualifiedName n in elems.Names)
+						tmpElems.Set (n, elems [n]);
+					tmpWildcards.Clear ();
+					tmpWildcards.AddRange (wildcards);
 				}
 			}
 		}

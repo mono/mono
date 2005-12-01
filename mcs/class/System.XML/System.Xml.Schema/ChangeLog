@@ -1,5 +1,11 @@
 2005-12-01  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlSchemaSequence.cs : when a subcomponent is not optional
+	  (minOccurs!=0) then it should clean previous components up.
+	  Really fixed bug #76865.
+
+2005-12-01  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlSchemaElement.cs : Fixed ambiguity detection logic so that
 	  chameleon ##other (xs:any) does not block other "absent"
 	  (empty targetNamespace) element. Fixed bug #76865.

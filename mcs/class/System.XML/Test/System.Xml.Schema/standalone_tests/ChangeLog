@@ -1,3 +1,7 @@
+2005-12-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile : Use MONO_PATH. Remove extraneous make variables.
+
 2005-11-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* xsdtest.cs : updated to match 2.0 RTM API.
