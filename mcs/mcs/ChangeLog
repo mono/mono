@@ -1,3 +1,8 @@
+2005-12-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* doc.cs : (FindDocumentedMember) find parameterless members first
+	  and get CS0419 in the early stage. Fixed first case of bug #76727.
+
 2005-11-30  Marek Safar  <marek.safar@seznam.cz>
 
 	Fix #76859.

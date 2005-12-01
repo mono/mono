@@ -1,3 +1,8 @@
+2005-12-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* cs0419-4.cs : test for the first case of bug #76727.
+	* known-issues-gmcs : added it.
+
 2005-11-16  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* cs1574-7.cs : fixed code format ("Line") to make it working.

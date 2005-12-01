@@ -440,16 +440,7 @@ namespace Mono.CSharp {
 			bool warn419, string nameForError)
 		{
 			warningType = 0;
-			MethodSignature msig = new MethodSignature (memberName, null, paramList);
-			MemberInfo [] mis = FindMethodBase (type, 
-				BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance,
-				msig);
-
-			if (warn419 && mis.Length > 0) {
-				if (IsAmbiguous (mis))
-					Report419 (mc, nameForError, mis);
-				return mis [0];
-			}
+			MemberInfo [] mis;
 
 			if (paramList.Length == 0) {
 				// search for fields/events etc.
@@ -461,6 +452,17 @@ namespace Mono.CSharp {
 				if (mis == null || mis.Length == 0)
 					return null;
 				if (warn419 && IsAmbiguous (mis))
+					Report419 (mc, nameForError, mis);
+				return mis [0];
+			}
+
+			MethodSignature msig = new MethodSignature (memberName, null, paramList);
+			mis = FindMethodBase (type, 
+				BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance,
+				msig);
+
+			if (warn419 && mis.Length > 0) {
+				if (IsAmbiguous (mis))
 					Report419 (mc, nameForError, mis);
 				return mis [0];
 			}
