@@ -1,3 +1,8 @@
+
+Thu Dec 1 12:59:40 EST 2005 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c, inssel-ppc.brg: fix ABI issue (pinvoke3.cs).
+
 2005-11-30  Zoltan Varga  <vargaz@gmail.com>
 
 	* exceptions.cs: Disable test_0_long_cast () test, since it fails on a lot 
