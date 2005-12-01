@@ -1,3 +1,7 @@
+2055-12-01  Konstantin Triger <kostat@mainsoft.com>
+
+	* Makefile: java profile reference change.
+
 2005-11-30  Konstantin Triger <kostat@mainsoft.com>
 
 	* System.XML.vmwcsproj: reference to vmwutils replaced with reference to J2SE.Helpers.

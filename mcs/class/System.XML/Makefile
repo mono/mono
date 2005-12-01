@@ -27,7 +27,7 @@ ifeq (net_1_1_java, $(PROFILE))
 LIB_MCS_FLAGS += \
 	-r:System.Xml.dll		\
 	-r:rt.dll			\
-	-r:vmwutils.dll			\
+	-r:J2SE.Helpers.dll		\
 	-r:unresolved.dll		\
 	/lib:../../class/lib/$(PROFILE)
 endif
