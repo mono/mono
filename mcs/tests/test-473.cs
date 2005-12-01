@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.InteropServices;
 
 [Obsolete ("Use Errno", true)]
 public enum Error {
@@ -18,6 +19,13 @@ public sealed class UnixMarshal2 {
 	public static string GetDescription (Error e) {
 		return null;
 	}
+}
+
+[Obsolete ("Use Native.Stdlib", true)]
+public class Stdlib {
+	internal const string LIBC = "msvcrt.dll";
+	[DllImport (LIBC)]
+	public static extern IntPtr signal (int signum, IntPtr handler);
 }
 
 class Test {
