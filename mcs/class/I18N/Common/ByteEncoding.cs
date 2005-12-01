@@ -34,7 +34,7 @@ using System.Text;
 // subclasses providing implementations of the "ToBytes" methods to perform
 // the char->byte conversion.
 
-public abstract class ByteEncoding : Encoding
+public abstract class ByteEncoding : MonoEncoding
 {
 	// Internal state.
 	protected char[] toChars;
@@ -105,33 +105,11 @@ public abstract class ByteEncoding : Encoding
 				return s.Length;
 			}
 
-#if NET_2_0
-	protected unsafe void HandleFallback (ref EncoderFallbackBuffer buffer,
-		char* chars, ref int charIndex, ref int charCount,
-		byte* bytes, ref int byteIndex, ref int byteCount)
-	{
-		if (buffer == null)
-			buffer = EncoderFallback.CreateFallbackBuffer ();
-		if (Char.IsSurrogate (chars [charIndex]) && charCount > 0 &&
-			Char.IsSurrogate (chars [charIndex + 1])) {
-			buffer.Fallback (chars [charIndex], chars [charIndex + 1], charIndex);
-			charIndex++;
-			charCount--;
-		}
-		else
-			buffer.Fallback (chars [charIndex], charIndex);
-		char [] tmp = new char [buffer.Remaining];
-		int idx = 0;
-		while (buffer.Remaining > 0)
-			tmp [idx++] = buffer.GetNextChar ();
-		fixed (char* tmparr = tmp) {
-			byteIndex += GetBytes (tmparr, tmp.Length, bytes + byteIndex, byteCount);
-		}
-	}
-#endif
-
 	// Convert an array of characters into a byte buffer,
 	// once the parameters have been validated.
+	protected unsafe abstract void ToBytes (
+		char* chars, int charCount, byte* bytes, int byteCount);
+	/*
 	protected unsafe virtual void ToBytes (
 		char* chars, int charCount, byte* bytes, int byteCount)
 	{
@@ -142,6 +120,7 @@ public abstract class ByteEncoding : Encoding
 		Marshal.Copy ((IntPtr) bytes, barr, 0, byteCount);
 		ToBytes (carr, 0, charCount, barr, 0);
 	}
+	*/
 
 	// Convert an array of characters into a byte buffer,
 	// once the parameters have been validated.
@@ -160,6 +139,7 @@ public abstract class ByteEncoding : Encoding
 		}
 	}
 
+/*
 	// Convert a string into a byte buffer, once the parameters
 	// have been validated.
 	protected unsafe virtual void ToBytes(String s, int charIndex, int charCount,
@@ -176,7 +156,15 @@ public abstract class ByteEncoding : Encoding
 			}
 		}
 	}
+*/
 
+	[CLSCompliant (false)]
+	public unsafe override int GetBytesImpl (char* chars, int charCount, byte* bytes, int byteCount)
+	{
+		ToBytes (chars, charCount, bytes, byteCount);
+		return charCount;
+	}
+/*
 	// Get the bytes that result from encoding a character buffer.
 	public override int GetBytes(char[] chars, int charIndex, int charCount,
 								 byte[] bytes, int byteIndex)
@@ -250,6 +238,7 @@ public abstract class ByteEncoding : Encoding
 				ToBytes(s, charIndex, charCount, bytes, byteIndex);
 				return charCount;
 			}
+*/
 
 	// Get the number of characters needed to decode a byte buffer.
 	public override int GetCharCount(byte[] bytes, int index, int count)

@@ -3,4 +3,5 @@
 ByteEncoding.cs
 Handlers.cs
 Manager.cs
+MonoEncoding.cs
 Strings.cs

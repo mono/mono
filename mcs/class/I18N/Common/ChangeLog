@@ -1,3 +1,15 @@
+2005-12-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MonoEncoding.cs : new file, which is going to be used as the
+	  abstract class for all Encoding classes in I18N.*.dll. Only
+	  GetBytesImpl() is required in derived classes.
+	* I18N.dll.sources : added above.
+	* ByteEncoding : HandleFallback() is moved to MonoEncoding.
+	  Now that only ToBytes() with pointers is required, commented out
+	  other ToBytes() overloads.
+	  GetBytesImpl() is implemented to call ToBytes() and thus all of
+	  the derived classes work as they used to be.
+
 2005-11-30  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Makefile : now it uses unsafe pointers.
