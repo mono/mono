@@ -1,3 +1,7 @@
+2005-11-30  Wade Berrier <wberrier@novell.com>
+	* Makefile: Add EXTRA_DISTFILES to include all missing files from 'make dist'
+	* Cleanup: Remove CVS dirs
+
 2005-16-11  Eyal Alaluf <eyala@mainsoft.com>
 	* Makefile: Ignore ClsCompliant warnings for java profile
 	
