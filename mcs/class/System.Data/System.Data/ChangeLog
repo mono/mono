@@ -1,3 +1,7 @@
+2005-12-01  Miguel de Icaza  <miguel@novell.com>
+
+	* DataSet.cs: Apply patch from Robert Jordan, to fix #76817
+
 2005-11-26  Konstantin Triger <kostat@mainsoft.com>
 
 	* ConflictOption.cs: TARGET_JVM include.

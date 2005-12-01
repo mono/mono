@@ -320,12 +320,12 @@ namespace System.Data {
 		public override ISite Site {
 			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				return base.Site;
 			} 
 			
 			[MonoTODO]
 			set {
-				throw new NotImplementedException ();
+				base.Site = value;
 			}
 		}
 
