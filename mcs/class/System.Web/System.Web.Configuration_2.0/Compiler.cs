@@ -29,7 +29,7 @@
 //
 
 #if NET_2_0
-
+#if CONFIGURATION_2_0
 using System;
 using System.CodeDom.Compiler;
 using System.ComponentModel;
@@ -132,5 +132,5 @@ namespace System.Web.Configuration
 #endregion
 	}
 }
-
+#endif
 #endif

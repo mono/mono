@@ -1,3 +1,11 @@
+2005-11-30  Chris Toshok  <toshok@ximian.com>
+
+	* CompilerCollection.cs: ugly hack to fix the
+	2.0-without-config-2.0 case.  wrap this file in #if
+	CONFIGURATION_2_0 as well as #if NET_2_0.
+	
+	* Compiler.cs: same.
+
 2005-11-28  Chris Toshok  <toshok@ximian.com>
 
 	* SessionStateSection.cs (CookieLess): correct the compat function
