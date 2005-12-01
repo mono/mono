@@ -266,5 +266,23 @@ namespace MonoTests.System.Xml.TestClasses
 	public enum ItemsChoiceType {
 	   In, Es
 	}
+	
+	public class ArrayAttributeWithType
+	{
+		[XmlAttribute (DataType="anyURI")]
+		public string[] at = new string [] { "a","b" };
+
+		[XmlAttribute (DataType="base64Binary")]
+		public byte[][] bin1 = new byte[][] { new byte[]{1,2},  new byte[]{1,2}};
+		
+		[XmlAttribute (DataType="base64Binary")]
+		public byte[] bin2 = new byte[] { 1,2 };
+	}
+	
+	public class ArrayAttributeWithWrongType
+	{
+		[XmlAttribute (DataType="int")]
+		public string[] at = new string [] { "a","b" };
+	}
 }
 

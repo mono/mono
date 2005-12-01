@@ -1,3 +1,8 @@
+2005-12-01  Lluis Sanchez Gual  <lluis@novell.com> 
+
+	* XmlSerializerTestClasses.cs:
+	* XmlSerializerTests.cs: Added tests for bug #76860.
+
 2005-11-24  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* XmlSerializerTestClasses.cs: added two enum types, without 
