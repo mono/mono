@@ -35,6 +35,14 @@ for i in "${monolist[@]}"; do
                 /^Version:/ { VERSION=$2 }
                 /^Name:/    { LIBNAME=$2 }
                 END {
+			if (LIBNAME ~ /^policy/) {
+				cnt = split(LIBNAME, toks, ".")
+				VERSION=toks[2] "." toks[3] ".0.0"
+				LIBNAME=""
+				for (i=4; i<= cnt; i++)
+					LIBNAME = (LIBNAME toks[i] ".")
+				LIBNAME=substr(LIBNAME, 1, length(LIBNAME)-1)
+			}
                         if (VERSION && LIBNAME)
                                 print "mono(" LIBNAME ") = " VERSION
                 }
