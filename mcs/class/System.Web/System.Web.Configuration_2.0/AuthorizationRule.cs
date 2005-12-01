@@ -71,6 +71,9 @@ namespace System.Web.Configuration {
 		public AuthorizationRule (AuthorizationRuleAction action)
 		{
 			this.action = action;
+			base[rolesProp] = new CommaDelimitedStringCollection ();
+			base[usersProp] = new CommaDelimitedStringCollection ();
+			base[verbsProp] = new CommaDelimitedStringCollection ();
 		}
 
 		public override bool Equals (object obj)
@@ -133,10 +136,12 @@ namespace System.Web.Configuration {
 			base.PostDeserialize();
 		}
 
-		[MonoTODO]
 		protected override void PreSerialize (XmlWriter writer)
 		{
 			base.PreSerialize (writer);
+
+			if (Roles.Count == 0 && Users.Count == 0)
+				throw new ConfigurationErrorsException ("You must supply either a list of users or roles when creating an AuthorizationRule");
 		}
 
 		[MonoTODO]
@@ -151,14 +156,21 @@ namespace System.Web.Configuration {
 			base.ResetModified ();
 		}
 
-		[MonoTODO]
 		protected override bool SerializeElement (XmlWriter writer, bool serializeCollectionKey)
 		{
-			bool ret = base.SerializeElement (writer, serializeCollectionKey);
+			PreSerialize (writer);
 
-			/* XXX more here? .. */
+			writer.WriteStartElement (action == AuthorizationRuleAction.Allow ? "allow" : "deny");
+			if (Roles.Count > 0)
+				writer.WriteAttributeString ("roles", Roles.ToString());
+			if (Users.Count > 0)
+				writer.WriteAttributeString ("users", Users.ToString());
+			if (Verbs.Count > 0)
+				writer.WriteAttributeString ("verbs", Verbs.ToString());
 
-			return ret;
+			writer.WriteEndElement ();
+
+			return true;
 		}
 
 		[MonoTODO]

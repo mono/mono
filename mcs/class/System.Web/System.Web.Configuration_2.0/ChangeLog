@@ -1,3 +1,14 @@
+2005-12-01  Chris Toshok  <toshok@ximian.com>
+
+	* AuthorizationRule.cs (..ctor): provide default values for
+	roles/users/verbs here.  Not sure if we should do this in the ctor
+	or if the System.Configuration infrastructure should.. time will
+	tell.
+	(PreSerialize): throw if Roles.Count and Users.Count == 0.
+	(SerializeElement): write out the element here.  don't chain up to
+	the base class since that has differing behavior than what we
+	want.
+
 2005-11-30  Chris Toshok  <toshok@ximian.com>
 
 	* CompilerCollection.cs: ugly hack to fix the
