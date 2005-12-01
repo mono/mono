@@ -348,6 +348,7 @@ namespace System.Web.UI.WebControls {
 				w.AddAttribute (HtmlTextWriterAttribute.Id, ClientID);
 				w.AddAttribute (HtmlTextWriterAttribute.Type, render_type);
 				w.AddAttribute (HtmlTextWriterAttribute.Name, NameAttribute);
+				InternalAddAttributesToRender (w);
 				if (Checked)
 					w.AddAttribute (HtmlTextWriterAttribute.Checked, "checked");
 
@@ -395,7 +396,8 @@ namespace System.Web.UI.WebControls {
 
 				w.AddAttribute (HtmlTextWriterAttribute.Id, ClientID);
 				w.AddAttribute (HtmlTextWriterAttribute.Type, render_type);
-				w.AddAttribute (HtmlTextWriterAttribute.Name, UniqueID);
+				w.AddAttribute (HtmlTextWriterAttribute.Name, NameAttribute);
+				InternalAddAttributesToRender (w);
 				if (Checked)
 					w.AddAttribute (HtmlTextWriterAttribute.Checked, "checked");
 
@@ -468,7 +470,6 @@ namespace System.Web.UI.WebControls {
 
 		internal virtual void InternalAddAttributesToRender (HtmlTextWriter w)
 		{
-			AddAttributesToRender (w);
 		}
 	}
 }

@@ -101,7 +101,7 @@ namespace System.Web.UI.WebControls {
 		{
 			bool old_checked = Checked;
 			
-			if (postCollection[GroupName] == postDataKey) {
+			if (postCollection[NameAttribute] == postDataKey) {
 				Checked = true;
 			} else {
 				Checked = false;
@@ -119,6 +119,7 @@ namespace System.Web.UI.WebControls {
 #endif
 		void RaisePostDataChangedEvent ()
 		{
+			OnCheckedChanged (EventArgs.Empty);
 		}
 
 		bool IPostBackDataHandler.LoadPostData (string postDataKey, NameValueCollection postCollection)

@@ -1,5 +1,12 @@
 2005-11-30 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* CheckBox.cs: add possible 'internal' attributes to the input tag. Fix
+	the 'name' attribute when not aligninng to the right.
+	* RadioButton.cs: use NameAttribute instead of GroupName when indexing
+	the collection. Raise the OnCheckedChanged event. Fixes bug #76710.
+
+2005-11-30 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* DataGrid.cs: clear the control collection on every call to
 	CreateControlHierarchy. Fixes bug #76732.
 
