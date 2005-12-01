@@ -104,12 +104,7 @@ namespace System.Web.UI.HtmlControls {
 
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-#if NET_2_0
-		public virtual
-#else		
-		public
-#endif		
-		HtmlTableCellCollection Cells {
+		public virtual HtmlTableCellCollection Cells {
 			get {
 				if (_cells == null)
 					_cells = new HtmlTableCellCollection (this);
