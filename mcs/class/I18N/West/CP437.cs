@@ -388,6 +388,7 @@ public class CP437 : ByteEncoding
 		}
 	}
 
+	/*
 	protected override void ToBytes(String s, int charIndex, int charCount,
 	                                byte[] bytes, int byteIndex)
 	{
@@ -680,6 +681,7 @@ public class CP437 : ByteEncoding
 			--charCount;
 		}
 	}
+	*/
 
 }; // class CP437
 

@@ -1,3 +1,7 @@
+2005-12-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CP437.cs : forgot to comment out GetBytes(string).
+
 2005-11-30  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CP1252.cs CP28592.cs CP437.cs CP861.cs CP10079.cs CP863.cs CP865.cs
