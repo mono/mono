@@ -1,3 +1,7 @@
+2005-12-01  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (EXTRA_DISTFILES): Add Test/resources/a.cur.
+
 2005-11-30  Robert Jordan  <robertj@gmx.net>
 
 	* System.Windows.Forms_test.dll.sources: Added System.Resources/CultureTest.cs
