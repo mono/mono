@@ -1,3 +1,9 @@
+2005-12-01  Robert Jordan  <robertj@gmx.net>
+
+	* IpcCalls.cs: Made the IPC channel names unique to match the
+	Tcp/HttpChannel(0) semantics, because the test suite
+	relies on that.
+
 2005-10-16  Robert Jordan  <robertj@gmx.net>
 
 	* IpcCalls.cs: Added.

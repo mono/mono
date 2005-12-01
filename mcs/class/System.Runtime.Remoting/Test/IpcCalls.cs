@@ -78,12 +78,14 @@ namespace MonoTests.Remoting
 	{
 		public override IChannelSender CreateClientChannel ()
 		{
-			return new IpcChannel (null);
+			return new IpcChannel ();
 		}
 
 		public override IChannelReceiver CreateServerChannel ()
 		{
-			return new IpcChannel ("MonoIpcTestSocket");
+			// simulate the Tcp/HttpChannel(0) semantics with a GUID.
+			string portName = "ipc" + Guid.NewGuid ().ToString ("N");
+			return new IpcChannel (portName);
 		}
 	}
 }
