@@ -547,6 +547,8 @@ namespace System {
 			if (n >= 1 && n <= 26 && !(n == 8 || n == 9 || n == 12 || n == 13 || n == 19)) {
 				ctrl = true;
 				key = ConsoleKey.A + n - 1;
+			} else if (n == 27) {
+				key = ConsoleKey.Escape;
 			} else if (n >= 'a' && n <= 'z') {
 				key = ConsoleKey.A - 'a' + n;
 			} else if (n >= 'A' && n <= 'Z') {

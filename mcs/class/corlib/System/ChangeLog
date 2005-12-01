@@ -1,3 +1,7 @@
+2005-12-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TermInfoDriver.cs: special case for the escape key. Fixes bug #76781.
+
 2005-11-30 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TermInfoDriver.cs: if the cursor_address capability contains a %i, we
