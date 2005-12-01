@@ -199,7 +199,7 @@ namespace System.Windows.Forms {
 
 		public string FullPath {
 			get {
-				if (tree_view == null)
+				if (TreeView == null)
 					throw new Exception ("No TreeView associated");
 
 				StringBuilder builder = new StringBuilder ();
@@ -499,7 +499,7 @@ namespace System.Windows.Forms {
 		public int Index {
 			get {
 				if (parent == null)
-					return -1;
+					return 0;
 				return parent.Nodes.IndexOf (this);
 			}
 		}

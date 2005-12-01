@@ -1,3 +1,8 @@
+2005-12-01  Jackson Harper  <jackson@ximian.com>
+
+	* TreeNode.cs : Fixed bugs that caused FullPathTest + Traverse to
+	fail. Dieter Bremes
+
 2005-11-30  Jackson Harper  <jackson@ximian.com>
 
 	* Form.cs: Property is 2.0 only
