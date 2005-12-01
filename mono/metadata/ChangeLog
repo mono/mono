@@ -1,3 +1,9 @@
+2005-12-01  Raja R Harinath  <rharinath@novell.com>
+
+	* icall.c (ves_icall_MonoType_get_DeclaringType): Implement
+	DeclaringType for VARs and MVARs.
+	* class.c (set_generic_param_owner): Fix initialization of owner
+	fields.
 
 Wed Nov 30 15:48:22 CET 2005 Paolo Molaro <lupus@ximian.com>
 
