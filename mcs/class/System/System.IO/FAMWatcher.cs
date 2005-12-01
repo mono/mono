@@ -77,13 +77,14 @@ namespace System.IO {
 		static FAMConnection conn;
 		static Thread thread;
 		static bool stop;
+		static bool use_gamin;
 		
 		private FAMWatcher ()
 		{
 		}
 		
 		// Locked by caller
-		public static bool GetInstance (out IFileWatcher watcher)
+		public static bool GetInstance (out IFileWatcher watcher, bool gamin)
 		{
 			if (failed == true) {
 				watcher = null;
@@ -95,6 +96,7 @@ namespace System.IO {
 				return true;
 			}
 
+			use_gamin = gamin;
 			watches = Hashtable.Synchronized (new Hashtable ());
 			requests = Hashtable.Synchronized (new Hashtable ());
 			if (FAMOpen (out conn) == -1) {
@@ -335,25 +337,79 @@ namespace System.IO {
 			FAMClose (ref conn);
 		}
 
-		[DllImport ("libfam.so.0")]
-		extern static int FAMOpen (out FAMConnection fc);
+		static int FAMOpen (out FAMConnection fc)
+		{
+			if (use_gamin)
+				return gamin_Open (out fc);
+			return fam_Open (out fc);
+		}
 
-		[DllImport ("libfam.so.0")]
-		extern static int FAMClose (ref FAMConnection fc);
+		static int FAMClose (ref FAMConnection fc)
+		{
+			if (use_gamin)
+				return gamin_Close (ref fc);
+			return fam_Close (ref fc);
+		}
 
-		[DllImport ("libfam.so.0")]
-		extern static int FAMMonitorDirectory (ref FAMConnection fc, string filename,
+		static int FAMMonitorDirectory (ref FAMConnection fc, string filename, out FAMRequest fr, IntPtr user_data)
+		{
+			if (use_gamin)
+				return gamin_MonitorDirectory (ref fc, filename, out fr, user_data);
+			return fam_MonitorDirectory (ref fc, filename, out fr, user_data);
+		}
+
+		static int FAMCancelMonitor (ref FAMConnection fc, ref FAMRequest fr)
+		{
+			if (use_gamin)
+				return gamin_CancelMonitor (ref fc, ref fr);
+			return fam_CancelMonitor (ref fc, ref fr);
+		}
+
+		static int FAMPending (ref FAMConnection fc)
+		{
+			if (use_gamin)
+				return gamin_Pending (ref fc);
+			return fam_Pending (ref fc);
+		}
+
+
+		
+		[DllImport ("libfam.so.0", EntryPoint="FAMOpen")]
+		extern static int fam_Open (out FAMConnection fc);
+
+		[DllImport ("libfam.so.0", EntryPoint="FAMClose")]
+		extern static int fam_Close (ref FAMConnection fc);
+
+		[DllImport ("libfam.so.0", EntryPoint="FAMMonitorDirectory")]
+		extern static int fam_MonitorDirectory (ref FAMConnection fc, string filename,
 							out FAMRequest fr, IntPtr user_data);
 
-		[DllImport ("libfam.so.0")]
-		extern static int FAMCancelMonitor (ref FAMConnection fc, ref FAMRequest fr);
+		[DllImport ("libfam.so.0", EntryPoint="FAMCancelMonitor")]
+		extern static int fam_CancelMonitor (ref FAMConnection fc, ref FAMRequest fr);
+
+		[DllImport ("libfam.so.0", EntryPoint="FAMPending")]
+		extern static int fam_Pending (ref FAMConnection fc);
+
+		[DllImport ("libgamin-1.so.0", EntryPoint="FAMOpen")]
+		extern static int gamin_Open (out FAMConnection fc);
+
+		[DllImport ("libgamin-1.so.0", EntryPoint="FAMClose")]
+		extern static int gamin_Close (ref FAMConnection fc);
+
+		[DllImport ("libgamin-1.so.0", EntryPoint="FAMMonitorDirectory")]
+		extern static int gamin_MonitorDirectory (ref FAMConnection fc, string filename,
+							out FAMRequest fr, IntPtr user_data);
+
+		[DllImport ("libgamin-1.so.0", EntryPoint="FAMCancelMonitor")]
+		extern static int gamin_CancelMonitor (ref FAMConnection fc, ref FAMRequest fr);
+
+		[DllImport ("libgamin-1.so.0", EntryPoint="FAMPending")]
+		extern static int gamin_Pending (ref FAMConnection fc);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		extern static int InternalFAMNextEvent (ref FAMConnection fc, out string filename,
 							out int code, out int reqnum);
 
-		[DllImport ("libfam.so.0")]
-		extern static int FAMPending (ref FAMConnection fc);
 	}
 }
 

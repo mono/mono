@@ -115,13 +115,21 @@ namespace System.IO {
 					mode = InternalSupportsFSW ();
 
 				bool ok = false;
-				if (mode == 3)
-					ok = KeventWatcher.GetInstance (out watcher);
-				else if (mode == 2)
-					ok = FAMWatcher.GetInstance (out watcher);
-				else if (mode == 1)
+				switch (mode) {
+				case 1: // windows
 					ok = DefaultWatcher.GetInstance (out watcher);
 					//ok = WindowsWatcher.GetInstance (out watcher);
+					break;
+				case 2: // libfam
+					ok = FAMWatcher.GetInstance (out watcher, false);
+					break;
+				case 3: // kevent
+					ok = KeventWatcher.GetInstance (out watcher);
+					break;
+				case 4: // libgamin
+					ok = FAMWatcher.GetInstance (out watcher, true);
+					break;
+				}
 
 				if (mode == 0 || !ok)
 					DefaultWatcher.GetInstance (out watcher);
