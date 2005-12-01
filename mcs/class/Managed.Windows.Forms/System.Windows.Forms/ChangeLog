@@ -1,7 +1,12 @@
 2005-12-01  Jackson Harper  <jackson@ximian.com>
 
+	* ThemeWin32Classic.cs: Reimplement the scroll arrow drawing so
+	that arrows can be scaled.
+
+2005-12-01  Jackson Harper  <jackson@ximian.com>
+
 	* TreeNode.cs : Fixed bugs that caused FullPathTest + Traverse to
-	fail. Dieter Bremes
+	fail. Patch by Dieter Bremes
 
 2005-11-30  Jackson Harper  <jackson@ximian.com>
 

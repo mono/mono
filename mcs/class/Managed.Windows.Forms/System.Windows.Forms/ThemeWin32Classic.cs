@@ -4971,80 +4971,77 @@ namespace System.Windows.Forms
 			bool enabled = (state == ButtonState.Inactive) ? false: true;			
 					
 			DrawScrollButtonPrimitive (dc, area, state);
-						
-			if (area.Width < 12 || area.Height < 12) /* Cannot see a thing at smaller sizes */
-				return;
 
-			/* Paint arrows */
-			switch (type) {
-			case ScrollButton.Up: {
-				int x = area.X +  (area.Width / 2) - 4;
-				int y = area.Y + 9;
-
-				for (int i = 0; i < 3; i++)
-					if (enabled)
-						dc.DrawLine (ResPool.GetPen (arrow_color), x + i, y - i, x + i + 6 - 2*i, y - i);
-					else
-						dc.DrawLine (ResPool.GetPen (ColorGrayText), x + i, y - i, x + i + 6 - 2*i, y - i);
-
-				
-				dc.FillRectangle (enabled ? ResPool.GetSolidBrush (arrow_color) :  ResPool.GetSolidBrush (ColorGrayText),
-					x + 3, area.Y + 6, 1, 1);
-					
-				break;
-			}
-			case ScrollButton.Down: {
-				int x = area.X +  (area.Width / 2) - 5;
-				int y = area.Y + 5;
-
-				for (int i = 4; i != 0; i--)
-					if (enabled)
-						dc.DrawLine (ResPool.GetPen (arrow_color), x + i, y + i, x + i + 8 - 2*i, y + i);
-					else
-						dc.DrawLine (ResPool.GetPen (ColorGrayText), x + i, y + i, x + i + 8 - 2*i, y + i);
-
-				
-				dc.FillRectangle (enabled ? ResPool.GetSolidBrush (arrow_color) :  ResPool.GetSolidBrush (ColorGrayText),
-					x + 4, y + 4, 1, 1);
-				break;
+			// A lot of the following is adapted from the rewind project
+			Rectangle rect = new Rectangle (area.X - 3, area.Y - 3,
+					area.Width + 6, area.Height + 6);
+			int small_diam = rect.Width > rect.Height ? rect.Height : rect.Width;
+			if (rect.Width < rect.Height) {
+				rect.Y += (rect.Height - rect.Width) / 2;
+				rect.Height = small_diam;
+			} else if (rect.Width > rect.Height) {
+				rect.X += (rect.Width - rect.Height) / 2;
+				rect.Width = small_diam;
 			}
 
-			case ScrollButton.Left: {
-				int y = area.Y +  (area.Height / 2) - 4;
-				int x = area.X + 9;
+			small_diam -= 2;
 
-				for (int i = 0; i < 3; i++)
-					if (enabled)
-						dc.DrawLine (ResPool.GetPen (arrow_color), x - i, y + i, x - i, y + i + 6 - 2*i);
-					else
-						dc.DrawLine (ResPool.GetPen (ColorGrayText), x - i, y + i, x - i, y + i + 6 - 2*i);
+			int tri = 290 * small_diam / 1000 - 1;
+			if (tri == 0)
+				tri = 1;
 
-				dc.FillRectangle (enabled ? ResPool.GetSolidBrush (arrow_color) :  ResPool.GetSolidBrush (ColorGrayText),
-					x - 3, y + 3, 1, 1);
-				break;
-			}
+			Point [] arrow = new Point [3];
+			for (int i = 0; i < 3; i++)
+				arrow [i] = new Point ();
 
-			case ScrollButton.Right: {
-				int y = area.Y +  (area.Height / 2) - 5;
-				int x = area.X + 5;
-
-				for (int i = 4; i != 0; i--)
-					if (enabled)
-						dc.DrawLine (ResPool.GetPen (arrow_color), x + i, y + i, x + i, y + i + 8 - 2*i);
-					else
-						dc.DrawLine (ResPool.GetPen (ColorGrayText), x + i, y + i, x + i, y + i + 8 - 2*i);
-
-				dc.FillRectangle (enabled ? ResPool.GetSolidBrush (arrow_color) :  ResPool.GetSolidBrush (ColorGrayText),
-					x + 4, y + 4, 1, 1);
-				break;
-			}
-
+			switch(type) {
 			default:
+			case ScrollButton.Down:
+				arrow [2].X = rect.Left + 470 * small_diam / 1000 + 2;
+				arrow [2].Y = rect.Top + 687 * small_diam / 1000 + 1;
+				arrow [0].X = arrow [2].X - tri;
+				arrow [1].X = arrow [2].X + tri;
+				arrow [0].Y = arrow [1].Y = arrow [2].Y - tri;
 				break;
 
+			case ScrollButton.Up:
+				arrow [2].X = rect.Left + 470 * small_diam / 1000 + 2;
+				arrow [2].Y = rect.Bottom - (687 * small_diam / 1000 + 1);
+				arrow [0].X = arrow [2].X - tri;
+				arrow [1].X = arrow [2].X + tri;
+				arrow [0].Y = arrow [1].Y = arrow [2].Y + tri;
+				break;
+
+			case ScrollButton.Left:
+				arrow [2].X = rect.Right - (687 * small_diam / 1000 + 1);
+				arrow [2].Y = rect.Top + 470 * small_diam / 1000 + 2;
+				arrow [0].Y = arrow [2].Y - tri;
+				arrow [1].Y = arrow [2].Y + tri;
+				arrow [0].X = arrow [1].X = arrow [2].X + tri;
+				break;
+			case ScrollButton.Right:
+				arrow [2].X = rect.Left + 687 * small_diam / 1000 + 1;
+				arrow [2].Y = rect.Top + 470 * small_diam / 1000 + 2;
+				arrow [0].Y = arrow [2].Y - tri;
+				arrow [1].Y = arrow [2].Y + tri;
+				arrow [0].X = arrow [1].X = arrow [2].X - tri;
+				break;
+			}
+
+			/* Draw the arrow */
+			if ((state & ButtonState.Inactive)!=0) {
+				dc.FillPolygon (SystemBrushes.ControlLightLight, arrow, FillMode.Winding);
+
+				for (int i = 0; i < 3; i++) {
+					arrow [i].X--;
+					arrow [i].Y--;
+				}
+				
+				dc.FillPolygon (SystemBrushes.ControlDark, arrow, FillMode.Winding);
+			} else {
+				dc.FillPolygon (SystemBrushes.ControlText, arrow, FillMode.Winding);
 			}
 		}
-
 
 		public  override void CPDrawSelectionFrame (Graphics graphics, bool active, Rectangle outsideRect, Rectangle insideRect,
 			Color backColor) {
