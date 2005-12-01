@@ -145,7 +145,6 @@ namespace System.Resources
 
 			if (typename != null) {
 				writer.WriteAttributeString ("type", typename);
-				writer.WriteAttributeString ("mimetype", "application/x-microsoft.net.object.bytearray.base64");
 				writer.WriteStartElement ("value");
 				WriteNiceBase64(value, offset, length);
 			} else {
@@ -201,6 +200,16 @@ namespace System.Resources
 
 		public void AddResource (string name, object value)
 		{
+			if (value is string) {
+				AddResource (name, (string) value);
+				return;
+			}
+
+			if (value is byte[]) {
+				AddResource (name, (byte[]) value);
+				return;
+			}
+
 			if (name == null)
 				throw new ArgumentNullException ("name");
 
@@ -212,11 +221,6 @@ namespace System.Resources
 
 			if (writer == null)
 				InitWriter ();
-
-                        if (value is string) {
-                                WriteString (name, (string) value);
-                                return;
-                        }
 
 			TypeConverter converter = TypeDescriptor.GetConverter (value);
 			if (converter != null && converter.CanConvertTo (typeof (string)) && converter.CanConvertFrom (typeof (string))) {

@@ -1,3 +1,11 @@
+2005-12-01  Robert Jordan  <robertj@gmx.net>
+
+	* ResXResourceReader.cs: Handle mimetype="application/x-microsoft.net.object.bytearray.base64" correctly. Fixes the decoding of System.Byte[].
+	* ResXResourceWriter.cs: Fixed AddResource (string, object) to pass
+	control to AddResource (string, byte[]) if the value parameter is
+	a byte[]. Removed the emitting of the mimetype attribute for
+	System.Byte[].
+
 2005-11-30  Peter Bartok  <pbartok@novell.com>
 
 	* ResXResourceReader.cs: Handle System.Byte[] encodings without
