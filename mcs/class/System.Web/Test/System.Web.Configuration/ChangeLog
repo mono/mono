@@ -1,3 +1,8 @@
+2005-12-01  Chris Toshok  <toshok@ximian.com>
+
+	* AuthorizationRuleTest.cs: Add a test for
+	Preserialize/SerializeElement.
+
 2005-11-23  Chris Toshok  <toshok@ximian.com>
 
 	* MachineKeyValidationConverterTest.cs: new test.

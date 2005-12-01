@@ -36,6 +36,9 @@ using System.Configuration;
 using System.Web.Configuration;
 using System.Web;
 using System.Web.Security;
+using System.IO;
+using System.Xml;
+using System.Reflection;
 
 namespace MonoTests.System.Web.Configuration {
 
@@ -69,6 +72,73 @@ namespace MonoTests.System.Web.Configuration {
 
 			Assert.AreEqual (a, b, "A1");
 			Assert.AreEqual (a.GetHashCode (), b.GetHashCode (), "A2");
+		}
+
+		[Test]
+		public void SerializeElement ()
+		{
+			StringWriter sw;
+			XmlWriter writer;
+			AuthorizationRule rule;
+			MethodInfo mi = typeof (AuthorizationRule).GetMethod ("SerializeElement", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+			object[] parms = new object[2];
+			bool failed;
+
+			/* 1 */
+			failed = true;
+			try {
+				sw = new StringWriter ();
+				writer = new XmlTextWriter (sw);
+
+				rule = new AuthorizationRule (AuthorizationRuleAction.Allow);
+				parms[0] = writer;
+				parms[1] = false;
+				mi.Invoke (rule, parms);
+			}
+			catch (TargetInvocationException e) {
+				Assert.AreEqual (typeof (ConfigurationErrorsException), e.InnerException.GetType (), "A1");
+				failed = false;
+			}
+			Assert.IsFalse (failed, "A1");
+
+			/* 2 */
+			sw = new StringWriter ();
+			writer = new XmlTextWriter (sw);
+			rule = new AuthorizationRule (AuthorizationRuleAction.Allow);
+			rule.Users.Add ("toshok");
+			parms[0] = writer;
+			parms[1] = false;
+			mi.Invoke (rule, parms);
+
+			Assert.AreEqual ("<allow users=\"toshok\" />", sw.ToString(), "A2");
+
+			/* 2 */
+			sw = new StringWriter ();
+			writer = new XmlTextWriter (sw);
+			rule = new AuthorizationRule (AuthorizationRuleAction.Allow);
+			rule.Users.Add ("toshok");
+			parms[0] = writer;
+			parms[1] = true;
+			mi.Invoke (rule, parms);
+
+			Assert.AreEqual ("<allow users=\"toshok\" />", sw.ToString(), "A2");
+
+			/* 3-4 */
+			sw = new StringWriter ();
+			writer = new XmlTextWriter (sw);
+			rule = new AuthorizationRule (AuthorizationRuleAction.Allow);
+			rule.Users.Add ("toshok");
+			rule.Users.Add ("chris");
+			rule.Roles.Add ("admin");
+			rule.Roles.Add ("wheel");
+			rule.Verbs.Add ("GET");
+			rule.Verbs.Add ("PUT");
+			parms[0] = writer;
+			parms[1] = true;
+			bool b = (bool)mi.Invoke (rule, parms);
+
+			Assert.AreEqual ("<allow roles=\"admin,wheel\" users=\"toshok,chris\" verbs=\"GET,PUT\" />", sw.ToString(), "A3");
+			Assert.IsTrue (b, "A4");
 		}
 	}
 
