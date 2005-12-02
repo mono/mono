@@ -195,7 +195,7 @@ namespace System.Windows.Forms {
 					// Font changes always set the whole doc to that font
 					start = document.GetLine(1);
 					end = document.GetLine(document.Lines);
-					document.FormatText(start, 1, end, end.text.Length, base.Font, new SolidBrush(this.ForeColor));
+					document.FormatText(start, 1, end, end.text.Length + 1, base.Font, new SolidBrush(this.ForeColor));
 				}
 			}
 		}

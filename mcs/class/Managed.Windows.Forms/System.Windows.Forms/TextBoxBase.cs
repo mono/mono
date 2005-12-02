@@ -55,8 +55,8 @@ namespace System.Windows.Forms {
 		internal Document		document;
 		internal LineTag		caret_tag;		// tag our cursor is in
 		internal int			caret_pos;		// position on the line our cursor is in (can be 0 = beginning of line)
-		internal HScrollBar		hscroll;
-		internal VScrollBar		vscroll;
+		internal ImplicitHScrollBar	hscroll;
+		internal ImplicitVScrollBar	vscroll;
 		internal RichTextBoxScrollBars	scrollbars;
 		internal bool			richtext;
 		internal int			requested_height;
@@ -107,13 +107,13 @@ namespace System.Windows.Forms {
 			
 			scrollbars = RichTextBoxScrollBars.None;
 
-			hscroll = new HScrollBar();
+			hscroll = new ImplicitHScrollBar();
 			hscroll.ValueChanged += new EventHandler(hscroll_ValueChanged);
 			hscroll.control_style &= ~ControlStyles.Selectable;
 			hscroll.Enabled = false;
 			hscroll.Visible = false;
 
-			vscroll = new VScrollBar();
+			vscroll = new ImplicitVScrollBar();
 			vscroll.ValueChanged += new EventHandler(vscroll_ValueChanged);
 			vscroll.control_style &= ~ControlStyles.Selectable;
 			vscroll.Enabled = false;
@@ -1191,6 +1191,7 @@ static int current;
 			pevent.Graphics.TextRenderingHint=TextRenderingHint.AntiAlias;
 //blah Console.WriteLine("Redrawing {0}", pevent.ClipRectangle);
 			// Draw the viewable document
+
 			document.Draw(pevent.Graphics, pevent.ClipRectangle);
 
 			Rectangle	rect = ClientRectangle;
