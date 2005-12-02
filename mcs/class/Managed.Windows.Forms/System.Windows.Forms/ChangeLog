@@ -1,5 +1,12 @@
 2005-12-02  Jackson Harper  <jackson@ximian.com>
 
+	* ImplicitHScrollBar.cs:
+	* ImplicitVScrollBar.cs: New scrollbars that don't take focus from
+	their container controls.
+	* TreeView.cs: Use the new implicit scrollbars.
+
+2005-12-02  Jackson Harper  <jackson@ximian.com>
+
 	* TreeView.cs: Make top_node internal so the TreeNodeCollections
 	can play with it.
 	* TreeNodeCollection.cs: If we remove the topnode we need to

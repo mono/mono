@@ -707,8 +707,8 @@ namespace System.Windows.Forms {
 		protected override void OnHandleCreated (EventArgs e) {
 			base.OnHandleCreated (e);
 
-			vbar = new VScrollBar ();
-			hbar = new HScrollBar ();
+			vbar = new ImplicitVScrollBar ();
+			hbar = new ImplicitHScrollBar ();
 
 			vbar.Visible = false;
 			hbar.Visible = false;
