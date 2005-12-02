@@ -32,6 +32,7 @@ using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 
 namespace System.Collections.Generic {
+	[ComVisible(true)]
 	[Serializable]
 	public class KeyNotFoundException : SystemException, ISerializable {
 		public KeyNotFoundException ()
