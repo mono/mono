@@ -822,7 +822,7 @@ namespace System {
 		private Assembly DoAssemblyResolve (string name, bool refonly)
 		{
 #if NET_2_0
-			if (refonly && ReflectionOnlyPreBindAssemblyResolve == null)
+			if (refonly && ReflectionOnlyAssemblyResolve == null)
 				return null;
 #endif
 			if (AssemblyResolve == null)
@@ -847,7 +847,7 @@ namespace System {
 			try {
 				
 #if NET_2_0
-				Delegate [] invocation_list = refonly ? ReflectionOnlyPreBindAssemblyResolve.GetInvocationList () : 
+				Delegate [] invocation_list = refonly ? ReflectionOnlyAssemblyResolve.GetInvocationList () : 
 					AssemblyResolve.GetInvocationList ();
 #else
 				Delegate [] invocation_list = AssemblyResolve.GetInvocationList ();
@@ -987,7 +987,7 @@ namespace System {
 
 #if NET_2_0
 
-		public event ResolveEventHandler ReflectionOnlyPreBindAssemblyResolve;
+		public event ResolveEventHandler ReflectionOnlyAssemblyResolve;
 		
 		private ActivationContext _activation;
 		private ApplicationIdentity _applicationIdentity;
