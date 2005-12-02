@@ -115,18 +115,19 @@ namespace System.Windows.Forms {
 			// Remove it from any old parents
 			node.Remove ();
 
-			if (owner != null && owner.TreeView != null && owner.TreeView.Sorted)
+			TreeView tree_view = owner.TreeView;
+			if (owner != null && tree_view != null && tree_view.Sorted)
 				return AddSorted (node);
 			node.parent = owner;
 			if (count >= nodes.Length)
 				Grow ();
 			nodes [count++] = node;
 
-			if (owner.TreeView != null && (owner.IsExpanded || owner.IsRoot)) {
+			if (tree_view != null && (owner.IsExpanded || owner.IsRoot)) {
 				// XXX: Need to ensure the boxes for the nodes have been created
-				owner.TreeView.UpdateNode (owner);
-			} else if (owner.TreeView != null) {
-				owner.TreeView.UpdateNodePlusMinus (owner);
+				tree_view.UpdateNode (owner);
+			} else if (tree_view != null) {
+				tree_view.UpdateNodePlusMinus (owner);
 			}
 
 			return count;
@@ -148,8 +149,9 @@ namespace System.Windows.Forms {
 			Array.Clear (nodes, 0, count);
 			count = 0;
 
-			if (owner.TreeView != null)
-				owner.TreeView.UpdateBelow (owner);
+			TreeView tree_view = owner.TreeView;
+			if (tree_view != null)
+				tree_view.UpdateBelow (owner);
 		}
 
 		public bool Contains (TreeNode node)
@@ -201,8 +203,10 @@ namespace System.Windows.Forms {
 			count--;
 			if (nodes.Length > OrigSize && nodes.Length > (count * 2))
 				Shrink ();
-			if (owner.TreeView != null)
-				owner.TreeView.UpdateBelow (parent);
+
+			TreeView tree_view = owner.TreeView;
+			if (tree_view != null)
+				tree_view.UpdateBelow (parent);
 		}
 
 		int IList.Add (object node)

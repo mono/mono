@@ -42,8 +42,8 @@ namespace System.Windows.Forms {
 		private bool sorted;
 		private TreeNode top_node;
 		internal TreeNode root_node;
+		internal bool nodes_added;
 		private TreeNodeCollection nodes;
-		private int total_node_count;
 
 		private TreeNode selected_node = null;
 		private TreeNode focused_node = null;
@@ -946,6 +946,10 @@ namespace System.Windows.Forms {
 		{
 			if (top_node == null && Nodes.Count > 0)
 				top_node = nodes [0];
+
+			if (selected_node == null && Nodes.Count > 0)
+				SelectedNode = nodes [0];
+
 			// Decide if we need a scrollbar
 			int old_open_node_count = open_node_count;
 

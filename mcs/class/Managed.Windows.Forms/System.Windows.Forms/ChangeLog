@@ -2,6 +2,9 @@
 
 	* TreeView.cs: When imagelists are used the image area is
 	selectable as well as the text.
+	- If there are no selected nodes select the first one.
+	* TreeNodeCollection.cs: Getting the TreeView is mildly expensive,
+	so don't do it more then we need to.
 
 2005-12-01  Jackson Harper  <jackson@ximian.com>
 
