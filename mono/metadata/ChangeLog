@@ -1,3 +1,7 @@
+2005-12-02  Robert Jordan  <robertj@gmx.net>
+
+	* icall.c: Fixed EventInfo.ReflectedType (#76829).
+
 2005-12-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* filewatcher.c: try loading libgamin-1.so.0 before libfam, since at
