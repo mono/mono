@@ -606,7 +606,8 @@
 	longer can safely create temporary variables during the
 	resolution phase: they must do so from the emission phase,
 	since the variable might have been "captured", hence access to
-	it can not be done with the local-variable operations from the runtime.
+	it can not be done with the local-variable operations from the
+	runtime.
 
 	The code emission is in:
 
