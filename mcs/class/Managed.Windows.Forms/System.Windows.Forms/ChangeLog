@@ -1,5 +1,10 @@
 2005-12-01  Jackson Harper  <jackson@ximian.com>
 
+	* TreeView.cs: When imagelists are used the image area is
+	selectable as well as the text.
+
+2005-12-01  Jackson Harper  <jackson@ximian.com>
+
 	* ThemeWin32Classic.cs: Reimplement the scroll arrow drawing so
 	that arrows can be scaled.
 

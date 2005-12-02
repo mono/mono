@@ -794,7 +794,6 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		[MonoTODO ("Need to know if we are editing, not if editing is enabled")]
 		private TreeNode GetNodeAt (int y)
 		{
 			if (nodes.Count <= 0)
@@ -813,8 +812,20 @@ namespace System.Windows.Forms {
 			return o.CurrentNode;
 		}
 
-		private bool IsTextArea (TreeNode node, int x) {
+		private bool IsTextArea (TreeNode node, int x)
+		{
 			return node != null && node.Bounds.Left <= x && node.Bounds.Right >= x;
+		}
+
+		private bool IsSelectableArea (TreeNode node, int x)
+		{
+			if (node == null)
+				return false;
+			int l = node.Bounds.Left;
+			if (ImageList != null)
+				l -= ImageList.ImageSize.Width;
+			return l <= x && node.Bounds.Right >= x;
+				
 		}
 
 		private bool IsPlusMinusArea (TreeNode node, int x)
@@ -1357,7 +1368,7 @@ namespace System.Windows.Forms {
 				node.Checked = !node.Checked;
 				UpdateNode(node);
 				return;
-			} else if (IsTextArea (node, e.X) || full_row_select) {
+			} else if (IsSelectableArea (node, e.X) || full_row_select) {
 				TreeNode old_selected = selected_node;
 				selected_node = node;
 				if (label_edit && e.Clicks == 1 && selected_node == old_selected) {
