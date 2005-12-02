@@ -1,5 +1,10 @@
 2005-12-01  Chris Toshok  <toshok@ximian.com>
 
+	* GlobalizationSection.cs (PreSerialize): add checks for Culture
+	and UICulture properties.
+
+2005-12-01  Chris Toshok  <toshok@ximian.com>
+
 	* AuthorizationRule.cs (..ctor): provide default values for
 	roles/users/verbs here.  Not sure if we should do this in the ctor
 	or if the System.Configuration infrastructure should.. time will

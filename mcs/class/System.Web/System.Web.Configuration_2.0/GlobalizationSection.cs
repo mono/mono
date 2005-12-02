@@ -87,10 +87,26 @@ namespace System.Web.Configuration {
 			base.PostDeserialize();
 		}
 
-		[MonoTODO]
 		protected override void PreSerialize (XmlWriter writer)
 		{
-			base.PostDeserialize();
+			base.PreSerialize(writer);
+
+			/* verify our data */
+			CultureInfo culture;
+
+			try {
+				culture = new CultureInfo.GetCultureInfo (Culture);
+			}
+			catch {
+				throw new ConfigurationErrorsException ("the <globalization> tag contains an invalid value for the 'culture' attribute");
+			}
+
+			try {
+				culture = new CultureInfo.GetCultureInfo (UICulture);
+			}
+			catch {
+				throw new ConfigurationErrorsException ("the <globalization> tag contains an invalid value for the 'uiCulture' attribute");
+			}
 		}
 
 		[ConfigurationProperty ("culture", DefaultValue = "")]
