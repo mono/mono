@@ -43,7 +43,6 @@ EXTRA_DISTFILES = \
 	Novell.Directory.Ldap.Security.jvm/WrapPrivilegedAction.cs \
 	Novell.Directory.Ldap.Utilclass/ExceptionMessages.resx \
 	Novell.Directory.Ldap.Utilclass/ExceptionMessages.txt \
-	Novell.Directory.Ldap.Utilclass/ResultCodeMessages.resources \
 	Novell.Directory.Ldap.Utilclass/ResultCodeMessages.resx \
 	Novell.Directory.Ldap.Utilclass/ResultCodeMessages.txt 
 
