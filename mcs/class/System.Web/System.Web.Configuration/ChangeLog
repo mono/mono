@@ -1,5 +1,10 @@
 2005-12-02 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* WebConfigurationSettings.cs: don't fail if <location> has more
+	than one element. Fixes bug #76633.
+
+2005-12-02 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* HttpHandlersSectionHandler.cs:
 	* HandlerFactoryConfiguration.cs: we need to use a copy of the parent
 	mappings, otherwise we may remove mappings from the parent. Fix a typo

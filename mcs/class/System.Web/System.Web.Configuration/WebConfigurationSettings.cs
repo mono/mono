@@ -924,7 +924,7 @@ namespace System.Web.Configuration
 				ThrowException ("Duplicated location path: " + loc.Path, reader);
 
 			reader.MoveToElement ();
-			loc.LoadFromString (reader.ReadInnerXml ());
+			loc.LoadFromString (reader.ReadOuterXml ());
 			locations [loc.Path] = loc;
 			if (!loc.AllowOverride) {
 				XmlTextReader inner = loc.GetReader ();
@@ -1024,7 +1024,7 @@ namespace System.Web.Configuration
 			if (xmlstr == "")
 				return;
 
-			XmlTextReader reader = new XmlTextReader (new StringReader (str));
+			XmlTextReader reader = GetReader ();
 			thisOne = new ConfigurationData (parent, parent.FileName);
 			thisOne.LoadFromReader (reader, parent.FileName, true);
 		}
@@ -1035,6 +1035,7 @@ namespace System.Web.Configuration
 				return null;
 
 			XmlTextReader reader = new XmlTextReader (new StringReader (xmlstr));
+			reader.ReadStartElement ("location");
 			return reader;
 		}
 
