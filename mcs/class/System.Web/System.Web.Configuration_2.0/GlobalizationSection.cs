@@ -95,14 +95,14 @@ namespace System.Web.Configuration {
 			CultureInfo culture;
 
 			try {
-				culture = new CultureInfo.GetCultureInfo (Culture);
+				culture = new CultureInfo (Culture);
 			}
 			catch {
 				throw new ConfigurationErrorsException ("the <globalization> tag contains an invalid value for the 'culture' attribute");
 			}
 
 			try {
-				culture = new CultureInfo.GetCultureInfo (UICulture);
+				culture = new CultureInfo (UICulture);
 			}
 			catch {
 				throw new ConfigurationErrorsException ("the <globalization> tag contains an invalid value for the 'uiCulture' attribute");
