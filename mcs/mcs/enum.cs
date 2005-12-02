@@ -246,9 +246,6 @@ namespace Mono.CSharp {
 			ec = new EmitContext (this, this, Location, null, null, ModFlags, false);
 			ec.InEnumContext = true;
 
-			if (GetObsoleteAttribute () != null)
-				ec.TestObsoleteMethodUsage = false;
-
 			if (!(BaseType is TypeLookupExpression)) {
 				Report.Error (1008, Location,
 					"Type byte, sbyte, short, ushort, int, uint, long or ulong expected");
