@@ -29,6 +29,7 @@
 //
 
 using System;
+using System.Diagnostics;
 using System.Reflection;
 using System.Resources;
 using System.Security;
@@ -56,3 +57,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyDelaySign (true)]
 [assembly: AssemblyKeyFile("../msfinal.pub")]
 
+#if NET_2_0
+[assembly: Debuggable (DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
+#endif
+[assembly: AllowPartiallyTrustedCallers]
