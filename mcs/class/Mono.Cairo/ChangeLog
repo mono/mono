@@ -1,3 +1,10 @@
+2005-12-02  Ben Maurer  <bmaurer@ximian.com>
+
+	* Mono.Cairo/Graphics.cs: Api fixups
+		- Make Point, et al. structs like all other apis
+		- Use properties rather than public fields
+		- Obsolete the plurality of ways to set the color.
+
 2005-11-27  John Luke  <john.luke@gmail.com>
 
 	* Mono.Cairo/Graphics.cs: add back FontSetSize,
@@ -33,15 +40,15 @@
 
 2005-09-12  Hisham Mardam Bey  <hisham.mardambey@gmail.com>
 
-        * Samples/: Fix all samples to work with new API changes.
+	* Samples/: Fix all samples to work with new API changes.
 
 2005-09-12  John Luke  <john.luke@gmail.com>
 
 	* Mono.Cairo/Surface.cs: add two ImageSurface ctors
 	Obsolete Surface CreateForImage methods in favor of
 	the new ImageSurface ctors
- 	* Mono.Cairo/Cairo.cs: add cairo_text_extents
- 	* Mono.Cairo/Graphics.cs: add TextExtents ()
+	* Mono.Cairo/Cairo.cs: add cairo_text_extents
+	* Mono.Cairo/Graphics.cs: add TextExtents ()
 	
 	
 2005-09-07  John Luke  <john.luke@gmail.com>
@@ -97,18 +104,18 @@
 	* Mono.Cairo/Samples/win32/compile.sh: add this
 	
 2005-09-04  John Luke  <john.luke@gmail.com>
- 
- 	* Mono.Cairo/Cairo.cs: remove symbols not in cairo 1.0:
- 	  cairo_copy, cairo_current_path, cairo_arc_to, cairo_transform_font,
- 	  cairo_font_set_transform, cairo_font_current_transform,
- 	  cairo_font_reference, cairo_font_destroy, cairo_status_string,
- 	  cairo_surface_create_similar_solid
- 	  rename cairo_current_line_cap to cairo_get_line_cap,
- 	  remove now unused delegates
- 	* Mono.Cairo/Graphics.cs:
- 	* Mono.Cairo/Surface.cs: update for above all found 
+
+	* Mono.Cairo/Cairo.cs: remove symbols not in cairo 1.0:
+	  cairo_copy, cairo_current_path, cairo_arc_to, cairo_transform_font,
+	  cairo_font_set_transform, cairo_font_current_transform,
+	  cairo_font_reference, cairo_font_destroy, cairo_status_string,
+	  cairo_surface_create_similar_solid
+	  rename cairo_current_line_cap to cairo_get_line_cap,
+	  remove now unused delegates
+	* Mono.Cairo/Graphics.cs:
+	* Mono.Cairo/Surface.cs: update for above all found 
 	  with help of mono-shlib-cop
- 
+
 
 2005-09-04  John Luke  <john.luke@gmail.com>
 
@@ -144,18 +151,18 @@
 
 2005-09-01 Hisham Mardam Bey <hisham.mardambey@gmail.com>
 
-        * Samples: Added png and x11 samples and cleaned up gtk
+	 * Samples: Added png and x11 samples and cleaned up gtk
 
 2005-08-30  John Luke  <john.luke@gmail.com>
- 
- 	* Mono.Cairo/Cairo.cs: mark CairoAPI internal, and move
- 	  some callback delegates outside the CairoAPI class
- 	* Mono.Cairo.Matrix.cs: mark Matrix_T internal
- 	* Mono.Cairo/*.cs: remove using System.Drawing;
- 	* Mono.Cairo.Graphics.cs: fix IDisposable implementation
-  	  add overloads to MoveTo () and similar functions
- 	  for passing the parameters individually
- 	* Makefile: remove -r:System.Drawing
+
+	* Mono.Cairo/Cairo.cs: mark CairoAPI internal, and move
+	  some callback delegates outside the CairoAPI class
+	* Mono.Cairo.Matrix.cs: mark Matrix_T internal
+	* Mono.Cairo/*.cs: remove using System.Drawing;
+	* Mono.Cairo.Graphics.cs: fix IDisposable implementation
+	  add overloads to MoveTo () and similar functions
+	  for passing the parameters individually
+	* Makefile: remove -r:System.Drawing
 
 2005-08-30  John Luke  <john.luke@gmail.com>
 
@@ -164,17 +171,17 @@
 	* Mono.Cairo/Surface.cs: add WriteToPng method
 
 2005-08-12 Hisham Mardam Bey <hisham.mardambey@gmail.com>
-        * Added xlib surface size / font size functions
-        * Added font matrix setting
+	* Added xlib surface size / font size functions
+	* Added font matrix setting
 	
 2005-08-5 Hisham Mardam Bey <hisham.mardambey@gmail.com>
-        * Cleanup all old methods, remove deprecated classes
+	* Cleanup all old methods, remove deprecated classes
 	
 2005-07-12 Hisham Mardam Bey <hisham.mardambey@gmail.com>
 	* General fixups, this is becoming ready for SVN
 
 2005-07-09 Hisham Mardam Bey <hisham.mardambey@gmail.com>
-        * Cairo.cs / Graphics.cs: Binded font functions for Cairo 0.5.x
+	* Cairo.cs / Graphics.cs: Binded font functions for Cairo 0.5.x
 	* More cleanups to fonts and Graphics.cs
 
 2005-07-08 Hisham Mardam Bey <hisham.mardambey@gmail.com>
@@ -204,14 +211,14 @@
 	* Started move to Cairo 0.5.x
 
 2005-07-04 Hisham Mardam Bey <hisham.mardambey@gmail.com>
-        * Graphics.cs: Added helper types (PointD, Point, Distance)
+	* Graphics.cs: Added helper types (PointD, Point, Distance)
 	* Incorporated Reference() into some constructors
 	* Pattern.cs: Split patter into 3 object types
 	* Use double precision for sub-pixel rendering all over
 	* Use IntPtr.Zero instead of (IntPtr) 0
 	* Graphics.cs: Remove SetRGBColor and use Color type
 	* Matrix.cs: add Affine type as a subclass.
-   
+
 2005-04-24  Jordi Mas i Hernandez <jordi@ximian.com>
 	* Graphics.cs: Adds InStroke/InFill (patch from Pedro Kiefer)
 	* Cairo.cs  Adds InStroke/InFill (patch from Pedro Kiefer)

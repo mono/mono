@@ -39,61 +39,103 @@ using Cairo;
 
 namespace Cairo {
 
-        public class Point
-        {
-		public int X;
-		public int Y;
-		
+        public struct Point
+        {		
 		public Point (int x, int y)
 		{
-			X = x;
-			Y = y;
-		}		
+			this.x = x;
+			this.y = y;
+		}
+
+		int x, y;
+		public int X {
+			get { return x; }
+			set { x = value; }
+		}
+
+		public int Y {
+			get { return y; }
+			set { y = value; }
+		}
 	}
 	   
-        public class PointD
+        public struct PointD
         {
-		public double X;
-		public double Y;
-		
 		public PointD (double x, double y)
 		{
-			X = x;
-			Y = y;
+			this.x = x;
+			this.y = y;
+		}
+
+		double x, y;
+		public double X {
+			get { return x; }
+			set { x = value; }
+		}
+
+		public double Y {
+			get { return y; }
+			set { y = value; }
 		}
 	}
    
 
-        public class Distance
+        public struct Distance
         {
-		public double Dx;
-		public double Dy;
-		
-		public Distance (double x, double y)
+		public Distance (double dx, double dy)
 		{
-			Dx = x;
-			Dy = y;
-		}		
+			this.dx = dx;
+			this.dy = dy;
+		}
+
+		double dx, dy;
+		public double Dx {
+			get { return dx; }
+			set { dx = value; }
+		}
+
+		public double Dy {
+			get { return dy; }
+			set { dy = value; }
+		}
 	}
 	      
-        public class Color
-        {
-		public double R;
-		public double G;
-		public double B;
-		public double A;
-		
+        public struct Color
+        {		
 		public Color(double r, double g, double b) : this (r, g, b, 1.0)
 		{
 		}
 
 		public Color(double r, double g, double b, double a)
 		{
-			R = r;
-			G = g;
-			B = b;
-			A = a;
+			this.r = r;
+			this.g = g;
+			this.b = b;
+			this.a = a;
 		}
+
+		double r, g, b, a;
+		
+		public double R {
+			get { return r; }
+			set { r = value; }
+		}
+
+		public double G {
+			get { return g; }
+			set { g = value; }
+		}
+		
+		public double B {
+			get { return b; }
+			set { b = value; }
+		}
+
+		public double A {
+			get { return a; }
+			set { a = value; }
+		}
+		
 	}
    
         public class Graphics : IDisposable 
@@ -180,11 +222,11 @@ namespace Cairo {
 							  value.A);
 			}			
                 }
-		
+
+		[Obsolete ("Use Color property")]
                 public Cairo.Color ColorRgb {
 			set { 
-				CairoAPI.cairo_set_source_rgb (state, value.R, 
-							   value.G, value.B);
+				Color = new Color (value.R, value.G, value.B);
 			}
                 }		
 
@@ -289,15 +331,17 @@ namespace Cairo {
                         }
                 }
 
-				public void SetSourceRGB (double r, double g, double b)
-				{
-					CairoAPI.cairo_set_source_rgb (state, r, g, b);
-				}
+		[Obsolete ("Use Color property")]
+		public void SetSourceRGB (double r, double g, double b)
+		{
+			Color = new Color (r, g, b);
+		}
 
-				public void SetSourceRGBA (double r, double g, double b, double a)
-				{
-					CairoAPI.cairo_set_source_rgba (state, r, g, b, a);
-				}
+		[Obsolete ("Use Color property")]
+		public void SetSourceRGBA (double r, double g, double b, double a)
+		{
+			Color = new Color (r, g, b, a);
+		}
 
 				public void SetSourceSurface (Surface source, int x, int y)
 				{
