@@ -1,3 +1,15 @@
+2005-09-30  Miguel de Icaza  <miguel@novell.com>
+
+	* Recompile the
+	FirebirdSql.Data.Common/Resources/isc_error_msg.resources with the
+	resgen so it produces 1.x resources not 2.x resources which are
+	unreadable in 1.x profile.
+
+	* FirebirdSql.Data.Firebird.dll.resources: Add the full name that
+	will be used, otherwise no resources work.
+
+	* FirebirdSql.Data.Common/Resources/isc_error_msg.txt: Fix newline.
+
 2005-11-21  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (net_2_0_bootstrap_SUBDIRS): Add PEAPI.
