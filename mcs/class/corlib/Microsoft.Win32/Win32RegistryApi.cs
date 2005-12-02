@@ -296,7 +296,7 @@ namespace Microsoft.Win32
 		{
 			int access = OpenRegKeyRead;
 			if (writtable) access |= OpenRegKeyWrite;
-			IntPtr handle = (IntPtr)rkey.Data;
+			IntPtr handle = new IntPtr ((int) rkey.Data);
 			
 			IntPtr subKeyHandle;
 			int result = RegOpenKeyEx (handle, keyName, IntPtr.Zero, access, out subKeyHandle);
