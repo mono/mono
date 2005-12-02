@@ -31,22 +31,16 @@
 
 #if NET_2_0
 
-#region Using directives
 using System;
 using System.Xml;
-#endregion
 
 namespace System.Configuration
 {
         public sealed class ConnectionStringsSection : ConfigurationSection
         {
-
-                #region Fields
                 private static readonly ConfigurationProperty _propConnectionStrings;
                 private static ConfigurationPropertyCollection _properties;
-                #endregion // Fields
 
-                #region Constructors
                 static ConnectionStringsSection ()
                 {
                         _propConnectionStrings = new ConfigurationProperty (null, typeof (ConnectionStringSettingsCollection), 
@@ -54,40 +48,22 @@ namespace System.Configuration
                         _properties = new ConfigurationPropertyCollection ();
                         _properties.Add (_propConnectionStrings);
                 }
-                public ConnectionStringsSection () : base ()
+
+                public ConnectionStringsSection ()
                 {
                 }
-                #endregion // Constructors
 
-                #region Properties
-		ConnectionStringSettingsCollection strings;
+
 		[ConfigurationProperty ("", Options = ConfigurationPropertyOptions.IsDefaultCollection)]
                 public ConnectionStringSettingsCollection ConnectionStrings
                 {
-                        get {
-				if (strings == null)
-					strings = new ConnectionStringSettingsCollection ();
-				return strings;
-#if false
-                                return (ConnectionStringSettingsCollection) base [_propConnectionStrings];
-#endif
-                        }
+			get { return (ConnectionStringSettingsCollection) base [_propConnectionStrings]; }
                 }
-
-		[MonoTODO ("this shouldn't be here, but it's necessary until the ConfigurationPropertyOptions.IsDefaultCollection stuff is hooked up properly.")]
-		protected internal override void DeserializeElement (XmlReader reader, bool serializeCollectionKey)
-		{
-			ConnectionStrings.DeserializeElement (reader, serializeCollectionKey);
-		}
 
                 protected internal override ConfigurationPropertyCollection Properties
                 {
-                        get
-                        {
-                                return _properties;
-                        }
+                        get { return _properties; }
                 }
-                #endregion // Properties
 
             
                 protected internal override object GetRuntimeObject ()

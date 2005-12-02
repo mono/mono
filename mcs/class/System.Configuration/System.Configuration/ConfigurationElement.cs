@@ -443,9 +443,11 @@ namespace System.Configuration
 		protected internal virtual bool SerializeToXmlElement (
 				XmlWriter writer, string elementName)
 		{
-			writer.WriteStartElement (elementName);
+			if (elementName != null && elementName != "")
+				writer.WriteStartElement (elementName);
 			bool res = SerializeElement (writer, false);
-			writer.WriteEndElement ();
+			if (elementName != null && elementName != "")
+				writer.WriteEndElement ();
 			return res;
 		}
 

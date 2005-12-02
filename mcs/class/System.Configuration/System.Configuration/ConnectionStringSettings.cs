@@ -30,26 +30,18 @@
 
 #if NET_2_0
 
-#region Using directives
-
 using System;
-
-#endregion
 
 namespace System.Configuration
 {
         public sealed class ConnectionStringSettings : ConfigurationElement
         {
-
-                #region Fields
                 private static ConfigurationPropertyCollection _properties;
         
                 private static readonly ConfigurationProperty _propConnectionString;
                 private static readonly ConfigurationProperty _propName;
                 private static readonly ConfigurationProperty _propProviderName;
-                #endregion // Fields
 
-                #region Constructors
                 static ConnectionStringSettings ()
                 {
                         _properties     = new ConfigurationPropertyCollection ();
@@ -93,16 +85,10 @@ namespace System.Configuration
                         ConnectionString = connectionString;
                         ProviderName = providerName;
                 }
-                #endregion // Constructors
-
-                #region Properties
 
                 protected internal override ConfigurationPropertyCollection Properties
                 {
-                        get
-                        {
-                                return _properties;
-                        }
+                        get { return _properties; }
                 }
 
 		[ConfigurationProperty ("name", DefaultValue = "", Options = ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey)]
@@ -125,8 +111,6 @@ namespace System.Configuration
                         get { return (string) base [_propConnectionString]; }
                         set { base [_propConnectionString] = value; }
                 }
-       
-                #endregion // Properties
                 
                 public override string ToString ()
                 {

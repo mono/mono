@@ -29,9 +29,7 @@
 
 #if NET_2_0
 
-#region Using directives
 using System;
-#endregion
 
 namespace System.Configuration
 {
@@ -40,17 +38,13 @@ namespace System.Configuration
         public sealed class ConnectionStringSettingsCollection : ConfigurationElementCollection
         {
 
-                #region Constructors
                 public ConnectionStringSettingsCollection () : base ()
                 {
                 }
-                #endregion // Constructors
 
-                #region Properties
                 public new ConnectionStringSettings this [string Name]
                 {
-                        get
-                        {
+                        get {
                                 foreach (ConfigurationElement c in this) {
                                         if (!(c is ConnectionStringSettings))
                                                 continue;
@@ -64,12 +58,8 @@ namespace System.Configuration
 
                 public new ConnectionStringSettings this [int index]
                 {
-                        get
-                        {
-                                return (ConnectionStringSettings) BaseGet (index);
-                        }
-                        set
-                        {
+                        get { return (ConnectionStringSettings) BaseGet (index); }
+                        set {
                                 if (BaseGet (index) != null)
                                         BaseRemoveAt (index);
                                 BaseAdd (index, value);
@@ -78,18 +68,15 @@ namespace System.Configuration
 
 		[MonoTODO]
 		protected internal override ConfigurationPropertyCollection Properties {
-			get {
-				return base.Properties;
-			}
+			get { return base.Properties; }
 		}
 
-                #endregion // Properties
 
-                #region Methods
                 protected override ConfigurationElement CreateNewElement ()
                 {
                         return new ConnectionStringSettings ("", "", "");
                 }
+
                 protected override object GetElementKey (ConfigurationElement element)
                 {
                         return ((ConnectionStringSettings) element).Name;
@@ -99,22 +86,27 @@ namespace System.Configuration
                 {
                         BaseAdd ((ConfigurationElement) settings);
                 }
+
                 public void Clear ()
                 {
                         BaseClear ();
                 }
+
                 public int IndexOf (ConnectionStringSettings settings)
                 {
                         return BaseIndexOf (settings);
                 }
+
                 public void Remove (ConnectionStringSettings settings)
                 {
                         BaseRemove (settings.Name);
                 }
+
                 public void Remove (string name)
                 {
                         BaseRemove (name);
                 }
+
                 public void RemoveAt (int index)
                 {
                         BaseRemoveAt (index);
@@ -129,9 +121,6 @@ namespace System.Configuration
                                                                                  ((ConnectionStringSettings) element).Name));
                         this [index] = (ConnectionStringSettings) element;
                 }
-                
-                #endregion // Methods
-        
         }
 
 }

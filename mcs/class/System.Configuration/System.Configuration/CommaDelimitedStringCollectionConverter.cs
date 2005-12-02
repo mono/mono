@@ -28,6 +28,7 @@
 
 #if NET_2_0
 
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Globalization;
 
@@ -54,7 +55,7 @@ namespace System.Configuration
 		{
 			if (value == null) return null;
 
-			if (value.GetType() != typeof (CommaDelimitedStringCollection))
+			if (!typeof (StringCollection).IsAssignableFrom (value.GetType()))
 				throw new ArgumentException ();
 
 			return value.ToString ();

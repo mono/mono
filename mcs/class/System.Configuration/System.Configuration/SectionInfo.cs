@@ -171,7 +171,7 @@ namespace System.Configuration
 				xml = section.SerializeSection (parentSection, Name, mode);
 			}
 			else {
-				xml = config.GetSectionXml (this)  + " <!-- dd -->";
+				xml = config.GetSectionXml (this);
 			}
 			
 			if (xml != null) {

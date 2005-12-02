@@ -115,14 +115,6 @@ namespace System.Configuration
 						val = elem;
 						origin = PropertyValueOrigin.Inherited;
 					}
-					else if (property.IsDefaultCollection) {
-						ConfigurationElementCollection col = (ConfigurationElementCollection) Activator.CreateInstance (Type);
-						col.InitFromProperty (this);
-						if (owner != null && owner.IsReadOnly ())
-							col.SetReadOnly ();
-						val = col;
-						origin = PropertyValueOrigin.Inherited;
-					}
 					else {
 						return DefaultValue;
 					}

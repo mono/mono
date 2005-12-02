@@ -1,3 +1,32 @@
+2005-12-02  Chris Toshok  <toshok@ximian.com>
+
+	* CommaDelimitedStringCollectionConverter.cs (ConvertTo): change
+	the type check away from an exact check for
+	CommaDelimitedStringCollection to an assignable test from
+	StringCollection.  This is due to the fact that AuthorizationRule
+	doesn't create CommaDelimitedStringCollections, for some odd
+	reason.  It uses StringCollections.
+
+	* PropertyInformation.cs (Value): remove the case for
+	IsDefaultCollection - it's not necessary, as the property is an
+	Element.
+
+	* ConnectionStringSettings.cs: fix formatting and remove some
+	#regions.
+
+	* ConnectionStringSettingsCollection.cs: same.
+
+	* ConnectionStringsSection.cs: same.
+
+	* ConfigurationElement.cs (SerializeToXmlElement): don't write the
+	enclosing start/end elements if the elementName is null or "".
+	this fixes the case for the DefaultCollections (at least in the
+	case of connectionStrings).
+
+	* IgnoreSection.cs (Properties): remove the MonoTODO.
+
+	* SectionInfo.cs (WriteData): remove the "<!-- dd -->" output.
+
 2005-11-28  Chris Toshok  <toshok@ximian.com>
 
 	* ProviderSettings.cs: use ConfigurationProperty's to implement

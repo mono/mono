@@ -71,7 +71,6 @@ namespace System.Configuration {
 		}
 
 		ConfigurationPropertyCollection properties;
-		[MonoTODO]
 		protected internal override ConfigurationPropertyCollection Properties {
 			get {
 				if (properties == null)
