@@ -58,7 +58,7 @@ namespace Cairo.Snippets
 			cr.Stroke();
 
 			// draw helping lines
-			cr.SetSourceRGBA(1,0.2,0.2, 0.6);
+			cr.Color = new Color (1, 0.2, 0.2, 0.6);
 			cr.Arc(c.X, c.Y, 0.05, 0, 2*M_PI);
 			cr.Fill();
 			cr.LineWidth = 0.03;
@@ -82,7 +82,7 @@ namespace Cairo.Snippets
 			cr.Stroke();
 
 			// draw helping lines
-			cr.SetSourceRGBA(1,0.2,0.2, 0.6);
+			cr.Color = new Color (1, 0.2, 0.2, 0.6);
 			cr.Arc(c.X, c.Y, 0.05, 0, 2*M_PI);
 			cr.Fill();
 			cr.LineWidth = 0.03;
@@ -103,7 +103,7 @@ namespace Cairo.Snippets
 			cr.NewPath();  // current path is not consumed by cairo_clip()
 			cr.Rectangle(0, 0, 1, 1);
 			cr.Fill();
-			cr.SetSourceRGB(0, 1, 0);
+			cr.Color = new Color (0, 1, 0);
 			cr.MoveTo(0, 0);
 			cr.LineTo(1, 1);
 			cr.MoveTo(1, 0);
@@ -142,7 +142,7 @@ namespace Cairo.Snippets
 
 			cr.Stroke();
 
-			cr.SetSourceRGBA(1, 0.2, 0.2, 0.6);
+			cr.Color = new Color (1, 0.2, 0.2, 0.6);
 			cr.LineWidth = 0.03;
 			cr.MoveTo(x,y);
 			cr.LineTo(x1,y1);
@@ -205,9 +205,9 @@ namespace Cairo.Snippets
 			cr.ClosePath();
 
 			// and fill/stroke it
-	    	cr.SetSourceRGB(0.5, 0.5, 1);
+	    	cr.Color = new Color (0.5, 0.5, 1);
 	    	cr.FillPreserve();
-			cr.SetSourceRGBA(0.5, 0, 0, 0.5);
+			cr.Color = new Color (0.5, 0, 0, 0.5);
 			cr.Stroke();
 		}
 
@@ -221,9 +221,9 @@ namespace Cairo.Snippets
 			cr.CurveTo(0.2, 0.9, 0.2, 0.5, 0.5, 0.5);
 			cr.ClosePath();
 
-			cr.SetSourceRGB(0, 0, 1);
+			cr.Color = new Color (0, 0, 1);
 			cr.FillPreserve();
-			cr.SetSourceRGB(0, 0, 0);
+			cr.Color = new Color (0, 0, 0);
 
 			cr.Stroke();
 		}
@@ -244,9 +244,9 @@ namespace Cairo.Snippets
 			cr.RelLineTo(-0.2, -0.2);
 			cr.ClosePath();
 
-		    cr.SetSourceRGB(0, 0, 1);
+		    cr.Color = new Color (0, 0, 1);
 		    cr.FillPreserve();
-			cr.SetSourceRGB(0, 0, 0);
+			cr.Color = new Color (0, 0, 0);
 
 			cr.Stroke();
 		}
@@ -345,7 +345,7 @@ namespace Cairo.Snippets
 			cr.Stroke();
 
 			// draw helping lines
-			cr.SetSourceRGB(1,0.2,0.2);
+			cr.Color = new Color (1,0.2,0.2);
 			cr.LineWidth = 0.01;
 			cr.MoveTo(0.25, 0.2); 
 			cr.LineTo(0.25, 0.8);
@@ -391,14 +391,14 @@ namespace Cairo.Snippets
 			cr.MoveTo(0.27, 0.65);
 			cr.TextPath("void");
 			cr.Save();
-			cr.SetSourceRGB(0.5,0.5,1);
+			cr.Color = new Color (0.5,0.5,1);
 			cr.Fill();
 			cr.Restore();
 			cr.LineWidth = 0.01;
 			cr.Stroke();
 
 			// draw helping lines
-			cr.SetSourceRGBA(1, 0.2, 0.2, 0.6);
+			cr.Color = new Color (1.0, 0.2, 0.2, 0.6);
 			cr.Arc(0.04, 0.53, 0.02, 0, 2*M_PI);
 			cr.Arc(0.27, 0.65, 0.02, 0, 2*M_PI);
 			cr.Fill();
@@ -418,7 +418,7 @@ namespace Cairo.Snippets
 			cr.ShowText("cairo");
 
 			// draw helping lines
-			cr.SetSourceRGBA(1, 0.2, 0.2, 0.6);
+			cr.Color = new Color (1, 0.2, 0.2, 0.6);
 			cr.Arc(x, y, 0.05, 0, 2*M_PI);
 			cr.Fill();
 			cr.MoveTo(0.5, 0);
@@ -444,7 +444,7 @@ namespace Cairo.Snippets
 			cr.ShowText(utf8);
 
 			// draw helping lines
-			cr.SetSourceRGBA(1, 0.2, 0.2, 0.6);
+			cr.Color = new Color (1, 0.2, 0.2, 0.6);
 			cr.Arc(x, y, 0.05, 0, 2*M_PI);
 			cr.Fill();
 			cr.MoveTo(x,y);
@@ -500,22 +500,22 @@ namespace Cairo.Snippets
 
 			cr.MoveTo(0.1, -50);
 			cr.LineTo(0.1,  50);
-			cr.SetSourceRGB(1, 0 ,0);
+			cr.Color = new Color (1, 0 ,0);
 			cr.Stroke();
 
 			cr.MoveTo(0.2, -60);
 			cr.LineTo(0.2,  60);
-			cr.SetSourceRGB(1, 1 ,0);
+			cr.Color = new Color (1, 1 ,0);
 			cr.Stroke();
 
 			cr.MoveTo(0.3, -70);
 			cr.LineTo(0.3,  70);
-			cr.SetSourceRGB(0, 1 ,0);
+			cr.Color = new Color (0, 1 ,0);
 			cr.Stroke();
 
 			cr.MoveTo(0.4, -80);
 			cr.LineTo(0.4,  80);
-			cr.SetSourceRGB(0, 0 ,1);
+			cr.Color = new Color (0, 0 ,1);
 			cr.Stroke();
 		}
 
