@@ -1,3 +1,7 @@
+2005-12-02  Robert Jordan  <robertj@gmx.net>
+
+        * corlib_test.dll.sources: Added System.Reflection/ReflectedTypeTest.cs.
+
 2005-11-28  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* corlib.dll.sources: added EncodingInfo.cs.
