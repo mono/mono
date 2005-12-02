@@ -146,6 +146,9 @@ namespace System.Windows.Forms {
 
 		public virtual void Clear ()
 		{
+			for (int i = 0; i < count; i++)
+				RemoveAt (i, false);
+			
 			Array.Clear (nodes, 0, count);
 			count = 0;
 
@@ -195,16 +198,30 @@ namespace System.Windows.Forms {
 
 		public virtual void RemoveAt (int index)
 		{
-			TreeNode removed = nodes [index];
-			TreeNode parent = removed.parent;
-			removed.parent = null;
+			RemoveAt (index, true);
+		}
 
+		private void RemoveAt (int index, bool update)
+		{
+			TreeNode removed = nodes [index];
+			
 			Array.Copy (nodes, index + 1, nodes, index, count - index);
 			count--;
 			if (nodes.Length > OrigSize && nodes.Length > (count * 2))
 				Shrink ();
 
 			TreeView tree_view = owner.TreeView;
+			if (removed == tree_view.top_node) {
+				OpenTreeNodeEnumerator oe = new OpenTreeNodeEnumerator (removed);
+				if (oe.MoveNext () && oe.MoveNext ())
+					tree_view.top_node = oe.CurrentNode;
+				else
+					tree_view.top_node = null;
+			}
+
+			TreeNode parent = removed.parent;
+			removed.parent = null;
+
 			if (tree_view != null)
 				tree_view.UpdateBelow (parent);
 		}

@@ -40,7 +40,7 @@ namespace System.Windows.Forms {
 		private string path_separator = "\\";
 		private int item_height = -1;
 		private bool sorted;
-		private TreeNode top_node;
+		internal TreeNode top_node;
 		internal TreeNode root_node;
 		internal bool nodes_added;
 		private TreeNodeCollection nodes;
