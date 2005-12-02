@@ -1,5 +1,10 @@
 2005-12-02  Peter Dennis Bartok  <pbartok@novell.com>
 
+	* ThemeWin32Classic.cs: Hatchbrush on Win32 seems to always use white
+	  as the second color for the background hatch
+
+2005-12-02  Peter Dennis Bartok  <pbartok@novell.com>
+
 	* TextBoxBase.cs: Now uses Jackson's new and improved ImplicitScrollbar
 	* RichTextBox.cs: FormatText position arguments are 1-based, now making
 	  sure that what we pass to FormatText is always 1-based. Fixes #76885
