@@ -3,9 +3,10 @@
 //  
 //
 // Authors:
-//	Miguel de Icaza (miguel@novell.com
+//	Miguel de Icaza (miguel@novell.com)
+//	Gonzalo Paniagua Javier (gonzalo@novell.com)
 //
-// (C) 2002 Ximian, Inc (http://www.ximian.com)
+// (C) 2005 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -163,11 +164,18 @@ namespace System.Web.Configuration {
 	class HandlerFactoryConfiguration {
 		ArrayList handlers;
 		HandlerFactoryConfiguration parent;
+		int parent_items;
+
 		public HandlerFactoryConfiguration (HandlerFactoryConfiguration parent)
 		{
 			this.parent = parent;
 
-			handlers = new ArrayList ();
+			if (parent != null) {
+				handlers = new ArrayList (parent.handlers);
+				parent_items = handlers.Count;
+			} else {
+				handlers = new ArrayList ();
+			}
 		}
 
 		public void Clear ()
@@ -189,52 +197,51 @@ namespace System.Web.Configuration {
 			handlers.Add (new HttpHandler (verb, path, type_name, type));
 		}
 
-		public HttpHandler Remove (string verb, string path)
+		public bool Remove (string verb, string path)
 		{
-			int top = handlers.Count;
-
-			for (int i = 0; i < top; i++){
+			for (int i = handlers.Count - 1; i >= 0; i--) {
 				HttpHandler handler = (HttpHandler) handlers [i];
 
 				if (verb == handler.OriginalVerb && path == handler.OriginalPath){
-					handlers.Remove (i);
-					return handler;
+					handlers.RemoveAt (i);
+					return true;
 				}
 			}
 
-			if (parent != null)
-				return parent.Remove (verb, path);
-
-			return null;
+			return false;
 		}
 
 		public object LocateHandler (string verb, string filepath)
 		{
-			int top = handlers.Count;
+			int start, end;
+			int count = handlers.Count;
+			for (int k = 0; k < 2; k++) {
+				// First iteration searches for the mapping in the items added to this
+				// instance. The second one searches through the parent items if any.
+				start = (k == 0) ? parent_items : 0;
+				end = (k == 0) ? count : parent_items;
+				for (int i = start; i < end; i++) {
+					HttpHandler handler = (HttpHandler) handlers [i];
 
-			for (int i = 0; i < top; i++){
-				HttpHandler handler = (HttpHandler) handlers [i];
-
-				if (handler.Verbs == null){
-					if (handler.PathMatches (filepath))
-						return handler.GetHandlerInstance ();
-					continue;
-				}
-
-				string [] verbs = handler.Verbs;
-				for (int j = verbs.Length; j > 0; ){
-					j--;
-					if (verbs [j] != verb)
+					if (handler.Verbs == null){
+						if (handler.PathMatches (filepath))
+							return handler.GetHandlerInstance ();
 						continue;
-					if (handler.PathMatches (filepath))
-						return handler.GetHandlerInstance ();
+					}
+
+					string [] verbs = handler.Verbs;
+					for (int j = verbs.Length; j > 0; ){
+						j--;
+						if (verbs [j] != verb)
+							continue;
+						if (handler.PathMatches (filepath))
+							return handler.GetHandlerInstance ();
+					}
 				}
 			}
 
-			if (parent != null)
-				return parent.LocateHandler (verb, filepath);
-			else
-				return null;
+			return null;
 		}
 	}
 }
+

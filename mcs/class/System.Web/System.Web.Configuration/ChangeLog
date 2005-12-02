@@ -1,3 +1,12 @@
+2005-12-02 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpHandlersSectionHandler.cs:
+	* HandlerFactoryConfiguration.cs: we need to use a copy of the parent
+	mappings, otherwise we may remove mappings from the parent. Fix a typo
+	when removing the item from the collection. Now LocateHandler searches
+	first for this configuration mappings and then for the parent ones.
+	Fixes (truly) bug #76842.
+
 2005-11-30 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HandlerFactoryConfiguration.cs: my previous patch broke the

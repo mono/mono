@@ -92,7 +92,7 @@ namespace System.Web.Configuration
 					if (child.Attributes != null && child.Attributes.Count != 0)
 						HandlersUtil.ThrowException ("Unrecognized attribute", child);
 
-					if (validate && mapper.Remove (verb, path) == null)
+					if (validate && false == mapper.Remove (verb, path))
 						HandlersUtil.ThrowException ("There's no mapping to remove", child);
 					
 					continue;
