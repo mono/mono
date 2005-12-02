@@ -1500,7 +1500,7 @@ namespace System.Reflection.Emit {
 			}
 		}
 
-		public override MethodInfo DeclaringMethod {
+		public override MethodBase DeclaringMethod {
 			get {
 				throw new NotImplementedException ();
 			}

@@ -1192,7 +1192,7 @@ namespace System {
 			return GetGenericParameterConstraints_impl ();
 		}
 
-		public virtual MethodInfo DeclaringMethod {
+		public virtual MethodBase DeclaringMethod {
 			get {
 				return null;
 			}

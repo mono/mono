@@ -352,7 +352,7 @@ namespace System.Reflection.Emit
 			return ret;
 		}
 
-		public override MethodInfo DeclaringMethod {
+		public override MethodBase DeclaringMethod {
 			get { 
 				return mbuilder;
 			}

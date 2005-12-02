@@ -1,5 +1,10 @@
 2005-12-02  Alp Toker  <alp@atoker.com>
 
+	* MonoType.cs:
+	* Type.cs: DeclaringMethod should return MethodBase, not MethodInfo
+
+2005-12-02  Alp Toker  <alp@atoker.com>
+
 	* AppDomain.cs: ReflectionOnlyPreBindAssemblyResolve renamed to
 	ReflectionOnlyAssemblyResolve in 2.0 final
 

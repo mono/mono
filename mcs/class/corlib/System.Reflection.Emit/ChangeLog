@@ -1,3 +1,8 @@
+2005-12-02  Alp Toker  <alp@atoker.com>
+
+	* GenericTypeParameterBuilder.cs:
+	* TypeBuilder.cs: DeclaringMethod should return MethodBase, not MethodInfo
+
 2005-11-19  Zoltan Varga  <vargaz@gmail.com>
 
 	* AssemblyBuilder.cs: Add support for setting FileVersion unmanaged 
