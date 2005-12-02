@@ -476,6 +476,13 @@ namespace MonoTests.System.Collections.Generic {
 			Assert.AreEqual (count - 2, _list1.Count);
 		}
 
+		[Test]
+	        public void RemoveRangeFromEmptyListTest ()
+		{
+			List<int> l = new List<int> ();
+			l.RemoveRange (0, 0);
+		}
+
 		[Test, ExpectedException (typeof (ArgumentException))]
 		public void RemoveRangeOutOfRangeTest ()
 		{
