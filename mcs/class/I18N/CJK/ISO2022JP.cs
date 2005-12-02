@@ -1,5 +1,6 @@
 using System;
 using System.Text;
+using I18N.Common;
 
 namespace I18N.CJK
 {
@@ -9,12 +10,8 @@ namespace I18N.CJK
 	public class CP50220 : ISO2022JPEncoding
 	{
 		public CP50220 ()
-			: base (true, true)
+			: base (50220, false, false)
 		{
-		}
-
-		public override int CodePage {
-			get { return 50220; }
 		}
 
 		public override string EncodingName {
@@ -25,12 +22,8 @@ namespace I18N.CJK
 	public class CP50221 : ISO2022JPEncoding
 	{
 		public CP50221 ()
-			: base (false, true)
+			: base (50221, true, false)
 		{
-		}
-
-		public override int CodePage {
-			get { return 50221; }
 		}
 
 		public override string EncodingName {
@@ -41,12 +34,8 @@ namespace I18N.CJK
 	public class CP50222 : ISO2022JPEncoding
 	{
 		public CP50222 ()
-			: base (true, true)
+			: base (50222, true, true)
 		{
-		}
-
-		public override int CodePage {
-			get { return 50222; }
 		}
 
 		public override string EncodingName {
@@ -54,11 +43,12 @@ namespace I18N.CJK
 		}
 	}
 
-	public class ISO2022JPEncoding : Encoding
+	public class ISO2022JPEncoding : MonoEncoding
 	{
 		static JISConvert convert = JISConvert.Convert;
 
-		public ISO2022JPEncoding (bool allow1ByteKana, bool allowShiftIO)
+		public ISO2022JPEncoding (int codePage, bool allow1ByteKana, bool allowShiftIO)
+			: base (codePage)
 		{
 			this.allow_1byte_kana = allow1ByteKana;
 			this.allow_shift_io = allowShiftIO;
@@ -92,12 +82,12 @@ namespace I18N.CJK
 
 		public override int GetByteCount (char [] chars, int charIndex, int charCount)
 		{
-			return new ISO2022JPEncoder (allow_1byte_kana, allow_shift_io).GetByteCount (chars, charIndex, charCount, true);
+			return new ISO2022JPEncoder (this, allow_1byte_kana, allow_shift_io).GetByteCount (chars, charIndex, charCount, true);
 		}
 
-		public override int GetBytes (char [] chars, int charIndex, int charCount, byte [] bytes, int byteIndex)
+		public unsafe override int GetBytesImpl (char* chars, int charCount, byte* bytes, int byteCount)
 		{
-			return new ISO2022JPEncoder (allow_1byte_kana, allow_shift_io).GetBytes (chars, charIndex, charCount, bytes, byteIndex, true);
+			return new ISO2022JPEncoder (this, allow_1byte_kana, allow_shift_io).GetBytesImpl (chars, charCount, bytes, byteCount, true);
 		}
 
 		public override int GetCharCount (byte [] bytes, int index, int count)
@@ -117,15 +107,17 @@ namespace I18N.CJK
 		JISX0201
 	}
 
-	internal class ISO2022JPEncoder : Encoder
+	internal class ISO2022JPEncoder : MonoEncoding.MonoEncoder
 	{
 		static JISConvert convert = JISConvert.Convert;
 
 		readonly bool allow_1byte_kana, allow_shift_io;
 
 		ISO2022JPMode m = ISO2022JPMode.ASCII;
+		bool shifted_in;
 
-		public ISO2022JPEncoder (bool allow1ByteKana, bool allowShiftIO)
+		public ISO2022JPEncoder (MonoEncoding owner, bool allow1ByteKana, bool allowShiftIO)
+			: base (owner)
 		{
 			this.allow_1byte_kana = allow1ByteKana;
 			this.allow_shift_io = allowShiftIO;
@@ -139,8 +131,19 @@ namespace I18N.CJK
 
 			for (int i = charIndex; i < end; i++) {
 				char ch = chars [i];
+				// When half-kana is not allowed and it is
+				// actually in the input, convert to full width
+				// kana.
+				if (!allow_1byte_kana &&
+					ch >= 0xFF60 && ch <= 0xFFA0)
+					ch = full_width_map [ch - 0xFF60];
+
 				if (ch >= 0x2010 && ch <= 0x9FA5)
 				{
+					if (shifted_in) {
+						shifted_in = false;
+						byteCount++; // shift_out
+					}
 					if (m != ISO2022JPMode.JISX0208)
 						byteCount += 3;
 					m = ISO2022JPMode.JISX0208;
@@ -149,6 +152,10 @@ namespace I18N.CJK
 					value = ((int)(convert.cjkToJis[value])) |
 							(((int)(convert.cjkToJis[value + 1])) << 8);
 				} else if (ch >= 0xFF01 && ch <= 0xFF60) {
+					if (shifted_in) {
+						shifted_in = false;
+						byteCount++;
+					}
 					if (m != ISO2022JPMode.JISX0208)
 						byteCount += 3;
 					m = ISO2022JPMode.JISX0208;
@@ -158,11 +165,22 @@ namespace I18N.CJK
 					value = ((int)(convert.extraToJis[value])) |
 							(((int)(convert.extraToJis[value + 1])) << 8);
 				} else if(ch >= 0xFF60 && ch <= 0xFFA0) {
-					if (m != ISO2022JPMode.JISX0201)
+					if (allow_shift_io) {
+						if (!shifted_in) {
+							byteCount++;
+							shifted_in = true;
+						}
+					}
+					else if (m != ISO2022JPMode.JISX0201) {
 						byteCount += 3;
-					m = ISO2022JPMode.JISX0201;
+						m = ISO2022JPMode.JISX0201;
+					}
 					value = ch - 0xFF60 + 0xA0;
 				} else if (ch < 128) {
+					if (shifted_in) {
+						shifted_in = false;
+						byteCount++;
+					}
 					if (m != ISO2022JPMode.ASCII)
 						byteCount += 3;
 					m = ISO2022JPMode.ASCII;
@@ -177,97 +195,190 @@ namespace I18N.CJK
 					byteCount++;
 			}
 			// must end in ASCII mode
-			if (flush && m != ISO2022JPMode.ASCII) {
-				byteCount += 3;
+			if (flush) {
+				if (shifted_in) {
+					shifted_in = false;
+					byteCount++;
+				}
+				if (m != ISO2022JPMode.ASCII)
+					byteCount += 3;
 				m = ISO2022JPMode.ASCII;
 			}
 			return byteCount;
 		}
 
 		// returns false if it failed to add required ESC.
-		private bool SwitchMode (byte [] bytes, ref int byteIndex,
-			ISO2022JPMode cur, ISO2022JPMode next)
+		private unsafe void SwitchMode (byte* bytes, ref int byteIndex,
+			ref int byteCount, ref ISO2022JPMode cur, ISO2022JPMode next)
 		{
 			if (cur == next)
-				return true;
-			if (bytes.Length <= byteIndex + 3)
-				return false;
+				return;
+
+			if (byteCount <= 3)
+				throw new ArgumentOutOfRangeException ("Insufficient byte buffer.");
 			bytes [byteIndex++] = 0x1B;
 			bytes [byteIndex++] = (byte) (next == ISO2022JPMode.JISX0208 ? 0x24 : 0x28);
 			bytes [byteIndex++] = (byte) (next == ISO2022JPMode.JISX0201 ? 0x49 : 0x42);
-			return true;
+			cur = next;
 		}
 
-		public override int GetBytes (char [] chars, int charIndex, int charCount, byte [] bytes, int byteIndex, bool flush)
-		{
-			bool wide = false;
-			int start = byteIndex;
+		static readonly char [] full_width_map = new char [] {
+			'\0', '\u3002', '\u300C', '\u300D', '\u3001', '\u30FB', // to nakaguro
+			'\u30F2', '\u30A1', '\u30A3', '\u30A5', '\u30A7', '\u30A9', '\u30E3', '\u30E5', '\u30E7', '\u30C3', // to small tsu
+			'\u30FC', '\u30A2', '\u30A4', '\u30A6', '\u30A8', '\u30AA', // A-O
+			'\u30AB', '\u30AD', '\u30AF', '\u30B1', '\u30B3',
+			'\u30B5', '\u30B7', '\u30B9', '\u30BB', '\u30BD',
+			'\u30BF', '\u30C1', '\u30C4', '\u30C6', '\u30C8',
+			'\u30C9', '\u30CA', '\u30CB', '\u30CC', '\u30CD',
+			'\u30CF', '\u30D2', '\u30D5', '\u30D8', '\u30DB',
+			'\u30DE', '\u30DF', '\u30E0', '\u30E1', '\u30E2',
+			'\u30E4', '\u30E6', '\u30E8', // Ya-Yo
+			'\u30E9', '\u30EA', '\u30EB', '\u30EC', '\u30ED',
+			'\u30EF', '\u30F1', '\u30F3', '\u309B', '\u309C'};
 
+		public unsafe override int GetBytesImpl (
+			char* chars, int charCount,
+			byte* bytes, int byteCount, bool flush)
+		{
+			int charIndex = 0;
+			int byteIndex = 0;
+#if NET_2_0
+			EncoderFallbackBuffer buffer = null;
+#endif
+
+			int start = byteIndex;
 			int end = charIndex + charCount;
 			int value;
 
-			for (int i = charIndex; i < end &&
-				byteIndex < bytes.Length + (wide ? 1 : 0); i++) {
+			for (int i = charIndex; i < end; i++, charCount--) {
 				char ch = chars [i];
+
+				// When half-kana is not allowed and it is
+				// actually in the input, convert to full width
+				// kana.
+				if (!allow_1byte_kana &&
+					ch >= 0xFF60 && ch <= 0xFFA0)
+					ch = full_width_map [ch - 0xFF60];
+
 				if (ch >= 0x2010 && ch <= 0x9FA5)
 				{
-					if (!SwitchMode (bytes, ref byteIndex, m, ISO2022JPMode.JISX0208))
+					if (shifted_in) {
+						bytes [byteIndex++] = 0x0F;
+						shifted_in = false;
+						byteCount--;
+					}
+					switch (m) {
+					case ISO2022JPMode.JISX0208:
 						break;
-					m = ISO2022JPMode.JISX0208;
+					default:
+						SwitchMode (bytes, ref byteIndex, ref byteCount, ref m, ISO2022JPMode.JISX0208);
+						break;
+					}
 					// This range contains the bulk of the CJK set.
 					value = (ch - 0x2010) * 2;
 					value = ((int)(convert.cjkToJis[value])) |
 							(((int)(convert.cjkToJis[value + 1])) << 8);
 				} else if (ch >= 0xFF01 && ch <= 0xFF60) {
-					if (!SwitchMode (bytes, ref byteIndex, m, ISO2022JPMode.JISX0208))
+					if (shifted_in) {
+						bytes [byteIndex++] = 0x0F;
+						shifted_in = false;
+						byteCount--;
+					}
+					switch (m) {
+					case ISO2022JPMode.JISX0208:
 						break;
-					m = ISO2022JPMode.JISX0208;
+					default:
+						SwitchMode (bytes, ref byteIndex, ref byteCount, ref m, ISO2022JPMode.JISX0208);
+						break;
+					}
 
 					// This range contains extra characters,
 					value = (ch - 0xFF01) * 2;
 					value = ((int)(convert.extraToJis[value])) |
 							(((int)(convert.extraToJis[value + 1])) << 8);
-				} else if(ch >= 0xFF60 && ch <= 0xFFA0) {
-					if (!SwitchMode (bytes, ref byteIndex, m, ISO2022JPMode.JISX0201))
-						break;
-					m = ISO2022JPMode.JISX0201;
-					value = ch - 0xFF60 + 0xA0;
+				} else if (ch >= 0xFF60 && ch <= 0xFFA0) {
+					// disallowed half-width kana is
+					// already converted to full-width kana
+					// so here we don't have to consider it.
+
+					if (allow_shift_io) {
+						if (!shifted_in) {
+							bytes [byteIndex++] = 0x0E;
+							shifted_in = true;
+							byteCount--;
+						}
+					} else {
+						switch (m) {
+						case ISO2022JPMode.JISX0201:
+							break;
+						default:
+							SwitchMode (bytes, ref byteIndex, ref byteCount, ref m, ISO2022JPMode.JISX0201);
+							break;
+						}
+					}
+					value = ch - 0xFF40;
 				} else if (ch < 128) {
-					if (!SwitchMode (bytes, ref byteIndex, m, ISO2022JPMode.ASCII))
-						break;
-					m = ISO2022JPMode.ASCII;
+					if (shifted_in) {
+						bytes [byteIndex++] = 0x0F;
+						shifted_in = false;
+						byteCount--;
+					}
+					SwitchMode (bytes, ref byteIndex, ref byteCount, ref m, ISO2022JPMode.ASCII);
 					value = (int) ch;
-				} else
+				} else {
+#if NET_2_0
+					HandleFallback (
+						chars, ref i, ref charCount,
+						bytes, ref byteIndex, ref byteCount);
+#endif
 					// skip non-convertible character
 					continue;
+				}
 
 //Console.WriteLine ("{0:X04} : {1:x02} {2:x02}", v, (int) v / 94 + 33, v % 94 + 33);
 				if (value > 0x100) {
 					value -= 0x0100;
 					bytes [byteIndex++] = (byte) (value / 94 + 33);
 					bytes [byteIndex++] = (byte) (value % 94 + 33);
+					byteCount -= 2;
 				}
-				else
+				else {
 					bytes [byteIndex++] = (byte) value;
+					byteCount--;
+				}
 			}
 			if (flush) {
 				// must end in ASCII mode
-				SwitchMode (bytes, ref byteIndex, m, ISO2022JPMode.ASCII);
-				m = ISO2022JPMode.ASCII;
+				if (shifted_in) {
+					bytes [byteIndex++] = 0x0F;
+					shifted_in = false;
+					byteCount--;
+				}
+				if (m != ISO2022JPMode.ASCII)
+					SwitchMode (bytes, ref byteIndex, ref byteCount, ref m, ISO2022JPMode.ASCII);
 			}
 			return byteIndex - start;
 		}
+
+#if NET_2_0
+		public override void Reset ()
+		{
+			m = ISO2022JPMode.ASCII;
+			shifted_in = false;
+		}
+#endif
 	}
 
 	internal class ISO2022JPDecoder : Decoder
 	{
 		static JISConvert convert = JISConvert.Convert;
 
-		readonly bool allow_1byte_kana, allow_shift_io;
+		readonly bool allow_shift_io;
+		ISO2022JPMode m = ISO2022JPMode.ASCII;
+		bool shifted_in;
 
 		public ISO2022JPDecoder (bool allow1ByteKana, bool allowShiftIO)
 		{
-			this.allow_1byte_kana = allow1ByteKana;
 			this.allow_shift_io = allowShiftIO;
 		}
 
@@ -278,55 +389,100 @@ namespace I18N.CJK
 
 			int end = index + count;
 			for (int i = index; i < end; i++) {
+				if (allow_shift_io) {
+					switch (bytes [i]) {
+					case 0x0F:
+						shifted_in = false;
+						continue;
+					case 0x0E:
+						shifted_in = true;
+						continue;
+					}
+				}
 				if (bytes [i] != 0x1B) {
-					ret++;
-					continue;
+					if (!shifted_in && m == ISO2022JPMode.JISX0208) {
+						if (i + 1 == end)
+							break; // incomplete head of wide char
+						else
+							ret++;
+						i++; // 2 byte char
+					}
+					else
+						ret++; // half-kana or ASCII
 				} else {
 					if (i + 2 >= end)
 						break; // incomplete escape sequence
 					i++;
-					if (bytes [i] != 0x24 &&
-						bytes [i] != 0x28)
+					bool wide = false;
+					if (bytes [i] == 0x24)
+						wide = true;
+					else if (bytes [i] == 0x28)
+						wide = false;
+					else
 						throw new ArgumentException ("Unexpected ISO-2022-JP escape sequence.");
 					i++;
-					if (bytes [i] != 0x42)
-						throw new ArgumentException ("Unexpected ISO-2022-JP escape sequence.");
+					if (bytes [i] == 0x42)
+						m = wide ? ISO2022JPMode.JISX0208 : ISO2022JPMode.ASCII;
+					else if (bytes [i] == 0x49)
+						m = ISO2022JPMode.JISX0201;
+					else
+						throw new ArgumentException (String.Format ("Unexpected ISO-2022-JP escape sequence. Ended with 0x{0:X04}", bytes [i]));
 				}
 			}
-
 			return ret;
 		}
 
-		private char ToChar (int value)
+		private int ToChar (int value)
 		{
 			value <<= 1;
-			return value >= convert.jisx0208ToUnicode.Length ? '?' :
-				(char) (((int) (convert.jisx0208ToUnicode [value])) |
-					(((int) (convert.jisx0208ToUnicode [value + 1])) << 8));
+			return value + 1 >= convert.jisx0208ToUnicode.Length ?
+				-1 :
+				((int) (convert.jisx0208ToUnicode [value])) |
+					(((int) (convert.jisx0208ToUnicode [value + 1])) << 8);
 		}
 
 		public override int GetChars (byte [] bytes, int byteIndex, int byteCount, char [] chars, int charIndex)
 		{
-			ISO2022JPMode m = ISO2022JPMode.ASCII;
 			int start = charIndex;
 			int end = byteIndex + byteCount;
 			for (int i = byteIndex; i < end && charIndex < chars.Length; i++) {
+				if (allow_shift_io) {
+					switch (bytes [i]) {
+					case 0x0F:
+						shifted_in = false;
+						continue;
+					case 0x0E:
+						shifted_in = true;
+						continue;
+					}
+				}
+
 				if (bytes [i] != 0x1B) {
-					if (m == ISO2022JPMode.JISX0208) {
+					if (shifted_in || m == ISO2022JPMode.JISX0201) {
+						// half-kana
+						if (bytes [i] < 0x60)
+							chars [charIndex++] = (char) (bytes [i] + 0xFF40);
+						else
+							// invalid
+							chars [charIndex++] = '?';
+					}
+					else if (m == ISO2022JPMode.JISX0208) {
 						if (i + 1 == end)
 							break; // incomplete head of wide char
 
-						// am so lazy, so reusing jis2sjis and 
+						// am so lazy, so reusing jis2sjis
 						int s1 = ((bytes [i] - 1) >> 1) + ((bytes [i] <= 0x5e) ? 0x71 : 0xb1);
 						int s2 = bytes [i + 1] + (((bytes [i] & 1) != 0) ? 0x20 : 0x7e);
 						int v = (s1 - 0x81) * 0xBC;
 						v += s2 - 0x41;
 
-						chars [charIndex++] = ToChar (v);
+						int ch = ToChar (v);
+						if (ch < 0)
+							chars [charIndex++] = '?';
+						else
+							chars [charIndex++] = (char) ch;
 						i++;
 					}
-					else if (m == ISO2022JPMode.JISX0201)
-						chars [charIndex++] = (char) (bytes [i] + 0xFF40);
 					// LAMESPEC: actually this should not
 					// be allowed when 1byte-kana is not
 					// allowed, but MS.NET seems to allow
@@ -359,6 +515,14 @@ namespace I18N.CJK
 
 			return charIndex - start;
 		}
+
+#if NET_2_0
+		public override void Reset ()
+		{
+			m = ISO2022JPMode.ASCII;
+			shifted_in = false;
+		}
+#endif
 	}
 
 	public class ENCiso_2022_jp : CP50220

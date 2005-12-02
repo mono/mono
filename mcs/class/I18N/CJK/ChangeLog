@@ -1,3 +1,10 @@
+2005-12-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ISO2022JP.cs :
+	  Base type is now MonoEncoding (fallbacks are not handled yet).
+	  Largely rewritten to handle SI/SO flag (CP50222)
+	  and mode transition (all) correctly.
+
 2005-11-21  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CP949.cs : UHC level 2 base number is wrong.
