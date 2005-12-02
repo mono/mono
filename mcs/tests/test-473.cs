@@ -4,7 +4,8 @@ using System.Runtime.InteropServices;
 [Obsolete ("Use Errno", true)]
 public enum Error {
 	EROFS,
-	ERANGE
+	ERANGE = TestConst.C,
+	EANOTHER = ERANGE,
 }
 
 [Obsolete ("Use Errno", true)]
@@ -26,6 +27,11 @@ public class Stdlib {
 	internal const string LIBC = "msvcrt.dll";
 	[DllImport (LIBC)]
 	public static extern IntPtr signal (int signum, IntPtr handler);
+}
+
+class TestConst {
+	[Obsolete ("B", true)]
+	public const int C = 3;
 }
 
 class Test {
