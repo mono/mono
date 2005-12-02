@@ -1,3 +1,8 @@
+2005-11-29  Miguel de Icaza  <miguel@novell.com>
+
+	* NumericUpDown.cs (EndInit): When we are done initializing,
+	reflect any updates on the UI.
+
 2005-12-02  Jackson Harper  <jackson@ximian.com>
 
 	* ImplicitHScrollBar.cs:
