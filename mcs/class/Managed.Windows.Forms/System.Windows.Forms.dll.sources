@@ -284,6 +284,8 @@ System.Windows.Forms/ImageListConverter.cs
 System.Windows.Forms/ImageListStreamer.cs
 System.Windows.Forms/ImeMode.cs
 System.Windows.Forms/IMessageFilter.cs
+System.Windows.Forms/ImplicitHScrollBar.cs
+System.Windows.Forms/ImplicitVScrollBar.cs
 System.Windows.Forms/InputLanguageChangedEventArgs.cs
 System.Windows.Forms/InputLanguageChangedEventHandler.cs
 System.Windows.Forms/InputLanguageChangingEventArgs.cs
