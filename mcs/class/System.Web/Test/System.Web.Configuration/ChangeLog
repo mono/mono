@@ -1,5 +1,7 @@
 2005-12-01  Chris Toshok  <toshok@ximian.com>
 
+	* GlobalizationSectionTest.cs: Add a test for PreSerialize.
+
 	* AuthorizationRuleTest.cs: Add a test for
 	Preserialize/SerializeElement.
 

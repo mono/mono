@@ -33,7 +33,10 @@ using NUnit.Framework;
 
 using System;
 using System.Configuration;
+using System.Reflection;
 using System.Text;
+using System.IO;
+using System.Xml;
 using System.Web.Configuration;
 using System.Web;
 using System.Web.Security;
@@ -58,6 +61,55 @@ namespace MonoTests.System.Web.Configuration {
 			Assert.AreEqual ("", g.ResourceProviderFactoryType, "A6");
 			Assert.AreEqual (Encoding.UTF8, g.ResponseHeaderEncoding, "A7");
 			Assert.AreEqual ("", g.UICulture, "A8");
+		}
+
+		[Test]
+		public void PreSerialize ()
+		{
+			StringWriter sw;
+			XmlWriter writer;
+			MethodInfo mi = typeof (GlobalizationSection).GetMethod ("PreSerialize", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+			GlobalizationSection s;
+			object[] parms = new object[1];
+			bool failed;
+
+			sw = new StringWriter ();
+			writer = new XmlTextWriter (sw);
+
+			s = new GlobalizationSection();
+			parms[0] = writer;
+
+			/* 1 */
+			mi.Invoke (s, parms);
+
+			/* 2 */
+			failed = true;
+			try {
+				s.Culture = "illegal-culture";
+				mi.Invoke (s, parms);
+			}
+			catch (TargetInvocationException e) {
+				Assert.AreEqual (typeof (ConfigurationErrorsException), e.InnerException.GetType (), "A2");
+				failed = false;
+			}
+			Assert.IsFalse (failed, "A2");
+
+			failed = true;
+			try {
+				s.Culture = "";
+				s.UICulture = "illegal-culture";
+				mi.Invoke (s, parms);
+			}
+			catch (TargetInvocationException e) {
+				Assert.AreEqual (typeof (ConfigurationErrorsException), e.InnerException.GetType (), "A3");
+				failed = false;
+			}
+			Assert.IsFalse (failed, "A3");
+
+			s.Culture = "";
+			s.UICulture = "";
+			s.ResourceProviderFactoryType = "invalid-type";
+			mi.Invoke (s, parms);
 		}
 	}
 }
