@@ -996,6 +996,9 @@ mono_arch_call_opcode (MonoCompile *cfg, MonoBasicBlock* bb, MonoCallInst *call,
 	return call;
 }
 
+
+
+
 MonoCallInst*
 mono_arch_call_opcode2 (MonoCompile *cfg, MonoBasicBlock* bb, MonoCallInst *call, int is_virtual) {
 	MonoInst *arg, *in;
@@ -1048,7 +1051,7 @@ mono_arch_call_opcode2 (MonoCompile *cfg, MonoBasicBlock* bb, MonoCallInst *call
 			call->out_args = arg;
 		}
 
-		if (is_virtual && i == 0) {
+		if (0 && is_virtual && i == 0) {
 			NOT_IMPLEMENTED;
 			/* the argument will be attached to the call instrucion */
 			in = call->args [i];

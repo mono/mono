@@ -1742,6 +1742,8 @@ mono_compile_create_var (MonoCompile *cfg, MonoType *type, int opcode)
 			cfg->next_vireg ++;
 #endif
 			break;
+		case MONO_TYPE_VALUETYPE:
+			break;
 		default:
 			printf ("A: %s\n", mono_type_full_name (type));
 			NOT_IMPLEMENTED;
@@ -8552,7 +8554,7 @@ optimize_branches (MonoCompile *cfg)
 				}
 			} else if (bb->out_count == 2) {
 				if (bb->last_ins && MONO_IS_COND_BRANCH_NOFP (bb->last_ins)) {
-					int branch_result = mono_eval_cond_branch (bb->last_ins);
+					int branch_result = cfg->new_ir ? BRANCH_UNDEF : mono_eval_cond_branch (bb->last_ins);
 					MonoBasicBlock *taken_branch_target = NULL, *untaken_branch_target = NULL;
 					if (branch_result == BRANCH_TAKEN) {
 						taken_branch_target = bb->last_ins->inst_true_bb;
@@ -9376,7 +9378,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 	mono_compile_create_vars (cfg);
 
 	if (cfg->new_ir) {
-		cfg->opt &= MONO_OPT_PEEPHOLE | MONO_OPT_INTRINS | MONO_OPT_LOOP | MONO_OPT_EXCEPTION | MONO_OPT_AOT;
+		cfg->opt &= MONO_OPT_PEEPHOLE | MONO_OPT_INTRINS | MONO_OPT_LOOP | MONO_OPT_EXCEPTION | MONO_OPT_AOT | MONO_OPT_BRANCH;
 
 		i = mono_method_to_ir2 (cfg, method, NULL, NULL, cfg->locals_start, NULL, NULL, NULL, 0, FALSE);
 	}
