@@ -38,9 +38,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Security.Permissions;
+using System.Runtime.InteropServices;
 
 namespace System.Collections.Generic {
 
+	[ComVisible(true)]
 	[Serializable]
 	public class Dictionary<TKey, TValue> : IDictionary<TKey, TValue>,
 		IDictionary,
