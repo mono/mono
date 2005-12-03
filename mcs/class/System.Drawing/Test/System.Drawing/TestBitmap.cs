@@ -450,6 +450,102 @@ namespace MonoTests.System.Drawing{
 			Assert.AreEqual ("8C2C04B361E1D5875EE8ACF5073F4E", hashchg);				
 						
 		}
-		
+
+		/*
+			Tests the LockBitmap and UnlockBitmap functions, specifically the copying
+			of bitmap data in the directions indicated by the ImageLockMode.
+		*/
+		[Test]
+		public void LockUnlockBitmap()
+		{
+			BitmapData data;
+			int pixel_value;
+			Color pixel_colour;
+
+			Color red  = Color.FromArgb (Color.Red.A,  Color.Red.R,  Color.Red.G,  Color.Red.B);
+			Color blue = Color.FromArgb (Color.Blue.A, Color.Blue.R, Color.Blue.G, Color.Blue.B);
+
+			using (Bitmap bmp = new Bitmap (1, 1, PixelFormat.Format24bppRgb))
+			{
+				bmp.SetPixel (0, 0, red);
+
+				data = bmp.LockBits (new Rectangle (0, 0, 1, 1), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+				pixel_value = Marshal.ReadInt32 (data.Scan0);
+				pixel_colour = Color.FromArgb (pixel_value);
+
+				// Disregard alpha information in the test
+				pixel_colour = Color.FromArgb(red.A, pixel_colour.R, pixel_colour.G, pixel_colour.B);
+
+				Assert.AreEqual (red, pixel_colour);
+
+				Marshal.WriteInt32 (data.Scan0, blue.ToArgb ());
+
+				bmp.UnlockBits (data);
+
+				pixel_colour = bmp.GetPixel (0, 0);
+
+				// Disregard alpha information in the test
+				pixel_colour = Color.FromArgb(red.A, pixel_colour.R, pixel_colour.G, pixel_colour.B);
+
+				Assert.AreEqual (red, pixel_colour);
+
+				data = bmp.LockBits (new Rectangle (0, 0, 1, 1), ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
+
+				Marshal.WriteInt32 (data.Scan0, blue.ToArgb ());
+
+				bmp.UnlockBits (data);
+
+				pixel_colour = bmp.GetPixel (0, 0);
+
+				// Disregard alpha information in the test
+				pixel_colour = Color.FromArgb(blue.A, pixel_colour.R, pixel_colour.G, pixel_colour.B);
+
+				Assert.AreEqual (blue, pixel_colour);
+			}
+
+			using (Bitmap bmp = new Bitmap(1, 1, PixelFormat.Format32bppArgb))
+			{
+				bmp.SetPixel (0, 0, red);
+
+				data = bmp.LockBits (new Rectangle (0, 0, 1, 1), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
+
+				int r, g, b;
+
+				b = Marshal.ReadByte (data.Scan0, 0);
+				g = Marshal.ReadByte (data.Scan0, 1);
+				r = Marshal.ReadByte (data.Scan0, 2);
+				pixel_colour = Color.FromArgb (red.A, r, g, b);
+
+				Assert.AreEqual (red, pixel_colour);
+
+				Marshal.WriteByte (data.Scan0, 0, blue.B);
+				Marshal.WriteByte (data.Scan0, 1, blue.G);
+				Marshal.WriteByte (data.Scan0, 2, blue.R);
+
+				bmp.UnlockBits (data);
+
+				pixel_colour = bmp.GetPixel (0, 0);
+
+				// Disregard alpha information in the test
+				pixel_colour = Color.FromArgb(red.A, pixel_colour.R, pixel_colour.G, pixel_colour.B);
+
+				Assert.AreEqual (red, bmp.GetPixel (0, 0));
+
+				data = bmp.LockBits (new Rectangle (0, 0, 1, 1), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+
+				Marshal.WriteByte (data.Scan0, 0, blue.B);
+				Marshal.WriteByte (data.Scan0, 1, blue.G);
+				Marshal.WriteByte (data.Scan0, 2, blue.R);
+
+				bmp.UnlockBits(data);
+
+				pixel_colour = bmp.GetPixel (0, 0);
+
+				// Disregard alpha information in the test
+				pixel_colour = Color.FromArgb(blue.A, pixel_colour.R, pixel_colour.G, pixel_colour.B);
+
+				Assert.AreEqual (blue, bmp.GetPixel (0, 0));
+			}
+		}
 	}
 }

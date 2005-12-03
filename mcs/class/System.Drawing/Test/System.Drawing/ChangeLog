@@ -1,3 +1,9 @@
+2005-12-02  Jonathan Gilbert  <logic@deltaq.org>
+
+	* TestBitmap.cs (LockUnlockBitmap): Added test for the copying back
+	  of bitmap data in Bitmap.UnlockBits for non-readonly ImageLockMode
+	  values.
+
 2005-11-17  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* ColorConverter.cs: added testcases for ConvertFrom and 
