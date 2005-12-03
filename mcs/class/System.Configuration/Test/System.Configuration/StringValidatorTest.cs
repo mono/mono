@@ -48,6 +48,15 @@ namespace MonoTests.System.Configuration {
 		}
 
 		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Null ()
+		{
+			StringValidator v = new StringValidator (1);
+
+			v.Validate (null);
+		}
+
+		[Test]
 		public void MinLenth ()
 		{
 			StringValidator v = new StringValidator (5);

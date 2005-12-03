@@ -1,3 +1,13 @@
+2005-12-02  Chris Toshok  <toshok@ximian.com>
+
+	* System.Configuration/ConnectionStringSettingsTest.cs: new tests.
+	we fail a couple, due to the fact that it seems StringValidator on
+	MS (at least in this case) doesn't actually check the MinLength
+	requirement when the value is null.  I'm a bit confused by this.
+
+	* System.Configuration/StringValidatorTest.cs: add a null
+	validation check.
+
 2005-11-14  Chris Toshok  <toshok@ximian.com>
 
 	* System.Configuration/CommaDelimitedStringCollectionConverterTest.cs:
