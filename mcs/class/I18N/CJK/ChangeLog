@@ -1,5 +1,11 @@
 2005-12-03  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* CP51932.cs :
+	  GetCharCount() was returning excessive size. Now it is also based
+	  on MonoEncoding, with fallback support.
+
+2005-12-03  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* CP932.cs : oops, wrong range.
 
 2005-12-03  Atsushi Enomoto  <atsushi@ximian.com>

@@ -58,7 +58,7 @@ using System;
 using System.Text;
 using I18N.Common;
 
-public class CP51932 : Encoding
+public class CP51932 : MonoEncoding
 {
 	// Magic number used by Windows for the EUC-JP code page.
 	private const int EUC_JP_CODE_PAGE = 51932;
@@ -122,15 +122,16 @@ public class CP51932 : Encoding
 				value = (ch - 0x2010) * 2;
 				value = ((int) (cjkToJis[value])) | (((int)(cjkToJis[value + 1])) << 8);
 				if(value >= 0x0100)
-				{
 					++length;
-				}
-			} else if(ch >= 0xFF01 && ch <= 0xFFEF) {
-				// This range contains extra characters,
-				// including half-width katakana.
+			} else if(ch >= 0xFF01 && ch < 0xFF60) {
+				// This range contains extra characters.
 				value = (ch - 0xFF01) * 2;
 				value = ((int)(extraToJis[value])) |
 						(((int)(extraToJis[value + 1])) << 8);
+				if(value >= 0x0100)
+					++length;
+			} else if(ch >= 0xFF60 && ch <= 0xFFA0) {
+				++length; // half-width kana
 			}
 		}
 
@@ -139,46 +140,26 @@ public class CP51932 : Encoding
 	}
 
 	// Get the bytes that result from encoding a character buffer.
-	public override int GetBytes (char[] chars, int charIndex, int charCount,
-						 byte[] bytes, int byteIndex)
+	public unsafe override int GetBytesImpl (
+		char* chars, int charCount, byte* bytes, int byteCount)
 	{
-		// Validate the parameters.
-		if(chars == null)
-		{
-			throw new ArgumentNullException("chars");
-		}
-		if(bytes == null)
-		{
-			throw new ArgumentNullException("bytes");
-		}
-		if(charIndex < 0 || charIndex > chars.Length)
-		{
-			throw new ArgumentOutOfRangeException
-				("charIndex", Strings.GetString("ArgRange_Array"));
-		}
-		if(charCount < 0 || charCount > (chars.Length - charIndex))
-		{
-			throw new ArgumentOutOfRangeException
-				("charCount", Strings.GetString("ArgRange_Array"));
-		}
-		if(byteIndex < 0 || byteIndex > bytes.Length)
-		{
-			throw new ArgumentOutOfRangeException
-				("byteIndex", Strings.GetString("ArgRange_Array"));
-		}
+		int charIndex = 0;
+		int byteIndex = 0;
+#if NET_2_0
+		EncoderFallbackBuffer buffer = null;
+#endif
 
 		// Convert the characters into their byte form.
 		int posn = byteIndex;
-		int byteLength = bytes.Length;
+		int byteLength = byteCount;
 		int ch, value;
 
 		byte[] cjkToJis = convert.cjkToJis;
 		byte[] greekToJis = convert.greekToJis;
 		byte[] extraToJis = convert.extraToJis;
 
-		while (charCount > 0) {
-			ch = chars [charIndex++];
-			--charCount;
+		for (; charCount > 0; charIndex++, --charCount) {
+			ch = chars [charIndex];
 			if (posn >= byteLength) {
 				throw new ArgumentException (Strings.GetString ("Arg_InsufficientSpace"), "bytes");
 			}
@@ -197,19 +178,28 @@ public class CP51932 : Encoding
 				value = (ch - 0x2010) * 2;
 				value = ((int) (cjkToJis[value])) |
 						(((int)(cjkToJis[value + 1])) << 8);
-			} else if (ch >= 0xFF01 && ch <= 0xFFEF) {
+			} else if (ch >= 0xFF01 && ch <= 0xFF60) {
 				// This range contains extra characters,
 				// including half-width katakana.
 				value = (ch - 0xFF01) * 2;
 				value = ((int) (extraToJis [value])) |
 						(((int) (extraToJis [value + 1])) << 8);
+			} else if (ch >= 0xFF60 && ch <= 0xFFA0) {
+				value = ch - 0xFF60 + 0x8EA0;
 			} else {
 				// Invalid character.
 				value = 0;
 			}
 
 			if (value == 0) {
+#if NET_2_0
+				HandleFallback (ref buffer,
+					chars, ref charIndex, ref charCount,
+					bytes, ref posn, ref byteCount);
+#else
+throw new ArgumentException (String.Format ("ch = {0:X04}", (int) ch));
 				bytes [posn++] = (byte) '?';
+#endif
 			} else if (value < 0x0100) {
 				bytes [posn++] = (byte) value;
 			} else if ((posn + 1) >= byteLength) {
@@ -224,9 +214,9 @@ public class CP51932 : Encoding
 			}
 			else
 			{
-				// FIXME: JIS X 0212 support is not implemented.
-				bytes[posn++] = (byte)'?';
-				bytes[posn++] = (byte)'?';
+				// half-width kana
+				bytes [posn++] = 0x8E;
+				bytes [posn++] = (byte) (value - 0x8E00);
 			}
 		}
 
@@ -284,11 +274,11 @@ public class CP51932 : Encoding
 			} else if (last == 0x8F) {
 				// 3-byte character
 				// FIXME: currently not supported yet
-				lastByte = 0;
+				last = 0;
 				++length;
 			} else {
 				// Second byte in a double-byte sequence.
-				lastByte = 0;
+				last = 0;
 				++length;
 			}
 		}
