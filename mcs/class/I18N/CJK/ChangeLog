@@ -1,5 +1,9 @@
 2005-12-03  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* CP932.cs : oops, wrong range.
+
+2005-12-03  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* CP932.cs :
 	  in GetBytes() \uFF01-\uFF60 are incorrectly mapped to ASCII
 	  characters (they should be mapped to full-width characters).

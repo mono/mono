@@ -283,7 +283,7 @@ public unsafe class CP932 : MonoEncoding
 						if (value % 0x100 >= 0x7F)
 							value++;
 					}
-					else if(ch >= 0xFF01 && ch <= 0xFFA0)
+					else if(ch >= 0xFF01 && ch <= 0xFF60)
 					{
 						value = (ch - 0xFF01) * 2;
 						value = ((int)(extraToJis[value])) |
