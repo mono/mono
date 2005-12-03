@@ -1,3 +1,8 @@
+2005-12-03  Kornél Pál  <kornelpal@hotmail.com>
+
+	* config-default.make: Corrected default CODEPAGE comment to ISO-8859-1
+	  (Latin 1).
+
 2005-11-22  Vladislav Spivak <spivak@mainsoft.com>
 	* Missed dependency. 
 	<profile>.sources file is supporting #include directive
