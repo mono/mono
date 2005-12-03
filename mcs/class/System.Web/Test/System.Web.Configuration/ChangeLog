@@ -1,3 +1,11 @@
+2005-12-02  Chris Toshok  <toshok@ximian.com>
+
+	* ProfilePropertySettingsTest.cs: new tests.
+
+	* GlobalizationSectionTest.cs: add PostDeserialize test.
+
+	* AuthorizationRuleTest.cs: add PostDeserialize test.
+
 2005-12-01  Chris Toshok  <toshok@ximian.com>
 
 	* GlobalizationSectionTest.cs: Add a test for PreSerialize.

@@ -140,6 +140,50 @@ namespace MonoTests.System.Web.Configuration {
 			Assert.AreEqual ("<deny roles=\"admin,wheel\" users=\"toshok,chris\" verbs=\"GET,PUT\" />", sw.ToString(), "A3");
 			Assert.IsTrue (b, "A4");
 		}
+
+		[Test]
+		public void PostDeserialize ()
+		{
+			AuthorizationRule rule;
+			MethodInfo mi = typeof (AuthorizationRule).GetMethod ("PostDeserialize", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+			object[] parms = new object[0];
+			bool failed;
+
+			/* 1 */
+			failed = true;
+			try {
+				rule = new AuthorizationRule (AuthorizationRuleAction.Allow);
+				mi.Invoke (rule, parms);
+			}
+			catch (TargetInvocationException e) {
+				Assert.AreEqual (typeof (ConfigurationErrorsException), e.InnerException.GetType (), "A1");
+				failed = false;
+			}
+			Assert.IsFalse (failed, "A1");
+
+			/* 2 */
+			rule = new AuthorizationRule (AuthorizationRuleAction.Allow);
+			rule.Users.Add ("toshok");
+			mi.Invoke (rule, parms);
+
+			/* 2 */
+			rule = new AuthorizationRule (AuthorizationRuleAction.Allow);
+			rule.Users.Add ("toshok");
+			mi.Invoke (rule, parms);
+
+			/* 3-4 */
+			rule = new AuthorizationRule (AuthorizationRuleAction.Deny);
+			rule.Users.Add ("toshok");
+			rule.Users.Add ("chris");
+			rule.Roles.Add ("admin");
+			rule.Roles.Add ("wheel");
+			rule.Verbs.Add ("GET");
+			rule.Verbs.Add ("PUT");
+			bool b = (bool)mi.Invoke (rule, parms);
+
+			Assert.IsTrue (b, "A4");
+		}
+
 	}
 
 }

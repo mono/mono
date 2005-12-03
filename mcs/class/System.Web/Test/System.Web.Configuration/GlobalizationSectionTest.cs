@@ -94,6 +94,55 @@ namespace MonoTests.System.Web.Configuration {
 			}
 			Assert.IsFalse (failed, "A2");
 
+			/* 3 */
+			failed = true;
+			try {
+				s.Culture = "";
+				s.UICulture = "illegal-culture";
+				mi.Invoke (s, parms);
+			}
+			catch (TargetInvocationException e) {
+				Assert.AreEqual (typeof (ConfigurationErrorsException), e.InnerException.GetType (), "A3");
+				failed = false;
+			}
+			Assert.IsFalse (failed, "A3");
+
+			/* 4 */
+			s.Culture = "";
+			s.UICulture = "";
+			s.ResourceProviderFactoryType = "invalid-type";
+			mi.Invoke (s, parms);
+
+			/* 5  (null writer) */
+			parms[0] =null;
+			mi.Invoke (s, parms);
+		}
+
+		[Test]
+		public void PostDeserialize ()
+		{
+			MethodInfo mi = typeof (GlobalizationSection).GetMethod ("PostDeserialize", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+			GlobalizationSection s;
+			object[] parms = new object[0];
+			bool failed;
+
+			s = new GlobalizationSection();
+
+			/* 1 */
+			mi.Invoke (s, parms);
+
+			/* 2 */
+			failed = true;
+			try {
+				s.Culture = "illegal-culture";
+				mi.Invoke (s, parms);
+			}
+			catch (TargetInvocationException e) {
+				Assert.AreEqual (typeof (ConfigurationErrorsException), e.InnerException.GetType (), "A2");
+				failed = false;
+			}
+			Assert.IsFalse (failed, "A2");
+
 			failed = true;
 			try {
 				s.Culture = "";
@@ -111,6 +160,7 @@ namespace MonoTests.System.Web.Configuration {
 			s.ResourceProviderFactoryType = "invalid-type";
 			mi.Invoke (s, parms);
 		}
+
 	}
 }
 
