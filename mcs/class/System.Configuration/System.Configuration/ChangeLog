@@ -1,5 +1,10 @@
 2005-12-02  Chris Toshok  <toshok@ximian.com>
 
+	* ConnectionStringSettings.cs: tabify, fix default values, and add
+	a string validator for "name".
+
+2005-12-02  Chris Toshok  <toshok@ximian.com>
+
 	* CommaDelimitedStringCollectionConverter.cs (ConvertTo): change
 	the type check away from an exact check for
 	CommaDelimitedStringCollection to an assignable test from
