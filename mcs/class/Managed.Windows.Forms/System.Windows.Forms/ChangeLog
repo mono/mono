@@ -1,3 +1,8 @@
+2005-12-02  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* ListBox.cs: Check if any items exist before trying to resolve 
+	  coordinates into items
+
 2005-12-02  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* ThemeWin32Classic.cs: Hatchbrush on Win32 seems to always use white
