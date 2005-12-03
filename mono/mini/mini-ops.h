@@ -236,6 +236,7 @@ MINI_OP(OP_LCONV_TO_U,   "long_conv_to_u", IREG, LREG, NONE)
 
 MINI_OP(OP_LADD_IMM,    "long_add_imm", LREG, LREG, NONE)
 MINI_OP(OP_LSUB_IMM,    "long_sub_imm", LREG, LREG, NONE)
+MINI_OP(OP_LMUL_IMM,    "long_mul_imm", LREG, LREG, NONE)
 MINI_OP(OP_LAND_IMM,    "long_and_imm", LREG, LREG, NONE)
 MINI_OP(OP_LOR_IMM,     "long_or_imm", LREG, LREG, NONE)
 MINI_OP(OP_LXOR_IMM,    "long_xor_imm", LREG, LREG, NONE)
