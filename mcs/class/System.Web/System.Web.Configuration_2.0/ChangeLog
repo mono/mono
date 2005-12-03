@@ -1,3 +1,10 @@
+2005-12-02  Chris Toshok  <toshok@ximian.com>
+
+	* GlobalizationSection.cs (VerifyData): split out the stuff that
+	used to live in PreSerialize here.
+	(PreSerialize): call VerifyData here.
+	(PostDeserialize): and here.
+	
 2005-12-01  Chris Toshok  <toshok@ximian.com>
 
 	* GlobalizationSection.cs (PreSerialize): add checks for Culture

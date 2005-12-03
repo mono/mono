@@ -81,17 +81,8 @@ namespace System.Web.Configuration {
 			encodingHash = new Hashtable ();
 		}
 
-		[MonoTODO]
-		protected override void PostDeserialize ()
+		void VerifyData ()
 		{
-			base.PostDeserialize();
-		}
-
-		protected override void PreSerialize (XmlWriter writer)
-		{
-			base.PreSerialize(writer);
-
-			/* verify our data */
 			CultureInfo culture;
 
 			try {
@@ -107,6 +98,20 @@ namespace System.Web.Configuration {
 			catch {
 				throw new ConfigurationErrorsException ("the <globalization> tag contains an invalid value for the 'uiCulture' attribute");
 			}
+		}
+
+		protected override void PostDeserialize ()
+		{
+			base.PostDeserialize();
+
+			VerifyData ();
+		}
+
+		protected override void PreSerialize (XmlWriter writer)
+		{
+			base.PreSerialize(writer);
+
+			VerifyData ();
 		}
 
 		[ConfigurationProperty ("culture", DefaultValue = "")]
