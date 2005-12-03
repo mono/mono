@@ -29,7 +29,7 @@ using System;
 using System.Text;
 using I18N.Common;
 
-public unsafe class CP932 : Encoding
+public unsafe class CP932 : MonoEncoding
 {
 	// Magic number used by Windows for the Shift-JIS code page.
 	private const int SHIFTJIS_CODE_PAGE = 932;
@@ -130,37 +130,18 @@ public unsafe class CP932 : Encoding
 			}
 
 	// Get the bytes that result from encoding a character buffer.
-	public override int GetBytes(char[] chars, int charIndex, int charCount,
-								 byte[] bytes, int byteIndex)
+	public unsafe override int GetBytesImpl (
+		char* chars, int charCount, byte* bytes, int byteCount)
 			{
-				// Validate the parameters.
-				if(chars == null)
-				{
-					throw new ArgumentNullException("chars");
-				}
-				if(bytes == null)
-				{
-					throw new ArgumentNullException("bytes");
-				}
-				if(charIndex < 0 || charIndex > chars.Length)
-				{
-					throw new ArgumentOutOfRangeException
-						("charIndex", Strings.GetString("ArgRange_Array"));
-				}
-				if(charCount < 0 || charCount > (chars.Length - charIndex))
-				{
-					throw new ArgumentOutOfRangeException
-						("charCount", Strings.GetString("ArgRange_Array"));
-				}
-				if(byteIndex < 0 || byteIndex > bytes.Length)
-				{
-					throw new ArgumentOutOfRangeException
-						("byteIndex", Strings.GetString("ArgRange_Array"));
-				}
+				int charIndex = 0;
+				int byteIndex = 0;
+#if NET_2_0
+				EncoderFallbackBuffer buffer = null;
+#endif
 
 				// Convert the characters into their byte form.
 				int posn = byteIndex;
-				int byteLength = bytes.Length;
+				int byteLength = byteCount;
 				int ch, value;
 #if __PNET__
 				byte *cjkToJis = convert.cjkToJis;
@@ -267,8 +248,14 @@ public unsafe class CP932 : Encoding
 						}
 						else
 						{
+#if NET_2_0
+							HandleFallback (ref buffer,
+								chars, ref charIndex, ref charCount,
+								bytes, ref posn, ref byteCount);
+#else
 							// Invalid character.
 							bytes[posn++] = (byte)'?';
+#endif
 						}
 						continue;
 					}
@@ -296,9 +283,11 @@ public unsafe class CP932 : Encoding
 						if (value % 0x100 >= 0x7F)
 							value++;
 					}
-					else if(ch >= 0xFF01 && ch <= 0xFF60)
+					else if(ch >= 0xFF01 && ch <= 0xFFA0)
 					{
-						value = ch - 0xFF00 + 0x20;
+						value = (ch - 0xFF01) * 2;
+						value = ((int)(extraToJis[value])) |
+								(((int)(extraToJis[value + 1])) << 8);
 					}
 					else if(ch >= 0xFF60 && ch <= 0xFFA0)
 					{
@@ -311,7 +300,13 @@ public unsafe class CP932 : Encoding
 					}
 					if(value == 0)
 					{
+#if NET_2_0
+						HandleFallback (ref buffer,
+							chars, ref charIndex, ref charCount,
+							bytes, ref posn, ref byteCount);
+#else
 						bytes[posn++] = (byte)'?';
+#endif
 					}
 					else if(value < 0x0100)
 					{

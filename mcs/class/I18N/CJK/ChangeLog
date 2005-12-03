@@ -1,3 +1,10 @@
+2005-12-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CP932.cs :
+	  in GetBytes() \uFF01-\uFF60 are incorrectly mapped to ASCII
+	  characters (they should be mapped to full-width characters).
+	  Base type is now MonoEncoding, without adding fallback support.
+
 2005-12-02  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ISO2022JP.cs :
