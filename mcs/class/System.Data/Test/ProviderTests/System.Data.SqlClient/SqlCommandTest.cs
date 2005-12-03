@@ -661,6 +661,22 @@ namespace MonoTests.System.Data.SqlClient
 			}
 		}
 
+		// Test for bug #76880
+		[Test]
+		public void DateTimeParameterTest ()
+		{
+			SqlConnection conn = new SqlConnection (connectionString); 
+			using (conn) {
+				conn.Open ();
+				SqlCommand cmd = conn.CreateCommand ();
+				cmd.CommandText = "select * from datetime_family where type_datetime=@p1";
+				cmd.Parameters.Add ("@p1", SqlDbType.DateTime).Value= "10-10-2005";
+				// shudnt cause and exception
+				SqlDataReader rdr = cmd.ExecuteReader ();
+				rdr.Close ();
+			}
+		}
+
 		/**
 		 * Verifies whether an enum value is converted to a numeric value when
 		 * used as value for a numeric parameter (bug #66630)

@@ -440,7 +440,7 @@ namespace Mono.Data.Tds.Protocol {
 			switch (parameter.TypeName) {
                         case "smalldatetime":
 			case "datetime":
-				DateTime d = (DateTime)parameter.Value;
+				DateTime d = Convert.ToDateTime (parameter.Value);
 				value = String.Format(System.Globalization.CultureInfo.InvariantCulture, 
                                                       "'{0:MMM dd yyyy hh:mm:ss tt}'", d );
                                 break;

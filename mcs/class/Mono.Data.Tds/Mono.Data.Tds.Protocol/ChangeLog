@@ -1,3 +1,9 @@
+2005-12-03  Senganal T  <tsenganal@novell.com>
+
+	* Tds70.cs : 
+		- FormatParameter () : For DateTime Parameters, convert the value if
+		specified as a string. Fixes bug#76880
+
 2005-11-24  Senganal T  <tsenganal@novell.com>
 
 	* Tds.cs 

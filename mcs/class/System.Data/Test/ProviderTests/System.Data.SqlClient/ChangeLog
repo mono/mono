@@ -1,3 +1,7 @@
+2005-12-03  Senganal T  <tsenganal@novell.com>
+
+	* SqlCommandTest.cs : Added testcase for bug #76880
+
 2005-11-23  Senganal T  <tsenganal@novell.com>
 
 	* SqlCommandTest.cs : Added testcases for bug #76778
