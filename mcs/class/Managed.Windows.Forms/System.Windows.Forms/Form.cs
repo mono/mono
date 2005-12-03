@@ -551,7 +551,7 @@ namespace System.Windows.Forms {
 					return null;
 
 				Form amc = ActiveMdiChild;
-				if (amc == null)
+				if (amc == null || amc.Menu == null)
 					return menu;
 				return amc.MergedMenu;
 			}

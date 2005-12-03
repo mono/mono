@@ -1,3 +1,8 @@
+2005-12-02  Jackson Harper  <jackson@ximian.com>
+
+	* Form.cs: If the child form has no menu the default main menu is
+	used as the active menu.
+
 2005-12-02  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* ListBox.cs: Check if any items exist before trying to resolve 
