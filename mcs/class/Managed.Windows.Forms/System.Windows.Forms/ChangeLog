@@ -1,3 +1,8 @@
+2005-12-03  Mike Kestner  <mkestner@novell.com>
+
+	* MenuAPI.cs: deactivate menus prior to calling item.PerformClick.
+	[Fixes #76897]
+
 2005-12-02  Jackson Harper  <jackson@ximian.com>
 
 	* Form.cs: If the child form has no menu the default main menu is

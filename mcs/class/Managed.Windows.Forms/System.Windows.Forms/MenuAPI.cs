@@ -133,7 +133,6 @@ namespace System.Windows.Forms {
 			}
 
 			SelectItem (item.Parent, item, true);
-			item.PerformClick ();			
 			if (item.IsPopup) {
 				active = true;
 				grab_control.Capture = true;
@@ -141,6 +140,7 @@ namespace System.Windows.Forms {
 				active = false;
 			else
 				Deactivate ();
+			item.PerformClick ();			
 		}
 
 		public void OnMotion (MouseEventArgs args)
