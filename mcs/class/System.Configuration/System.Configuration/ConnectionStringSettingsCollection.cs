@@ -1,11 +1,12 @@
 //
 // System.Configuration.ConnectionStringSettingsCollection.cs
 //
-// Author:
+// Authors:
 //   Sureshkumar T <tsureshkumar@novell.com>
+//   Chris Toshok <toshok@ximian.com>
 //
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004,2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -74,7 +75,7 @@ namespace System.Configuration
 
                 protected override ConfigurationElement CreateNewElement ()
                 {
-                        return new ConnectionStringSettings ("", "", "");
+                        return new ConnectionStringSettings ();
                 }
 
                 protected override object GetElementKey (ConfigurationElement element)

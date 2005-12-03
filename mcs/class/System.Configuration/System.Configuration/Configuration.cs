@@ -366,6 +366,7 @@ namespace System.Configuration {
 			XmlTextWriter tw = new XmlTextWriter (new StreamWriter (stream));
 			tw.Formatting = Formatting.Indented;
 			try {
+				tw.WriteStartDocument ();
 				tw.WriteStartElement ("configuration");
 				if (rootGroup.HasConfigContent (this)) {
 					rootGroup.WriteConfig (this, tw, mode);
