@@ -1,3 +1,7 @@
+2005-12-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (emit_load_volatile_arguments): Add loading of arguments
+	allocated to registers. Fixes #76800.
 
 Thu Dec 1 12:59:40 EST 2005 Paolo Molaro <lupus@ximian.com>
 
