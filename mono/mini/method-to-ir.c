@@ -2344,6 +2344,9 @@ mono_emit_method_call_full (MonoCompile *cfg, MonoMethod *method, MonoMethodSign
 				MONO_EMIT_NEW_UNALU (cfg, OP_CHECK_THIS, -1, this_reg);
 
 			call->inst.opcode = callvirt_to_call (call->inst.opcode);
+
+			MONO_ADD_INS (cfg->cbb, (MonoInst*)call);
+
 			return call;
 		}
 
