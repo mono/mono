@@ -28,6 +28,7 @@ System.Drawing/Region.cs
 System.Drawing/SolidBrush.cs
 System.Drawing/StringFormat.cs
 System.Drawing/SystemColors.cs
+System.Drawing/SystemIcons.cs
 System.Drawing/TextureBrush.cs
 
 ##completely different files
