@@ -402,5 +402,47 @@ namespace MonoTests.System.Xml.Xsl
 
 			Assert.AreEqual (0, sw.ToString ().Length);
 		}
+
+		// http://support.microsoft.com/default.aspx?scid=kb;en-us;834667
+		[Test]
+#if ONLY_1_1
+		// bug is not yet fixed in .NET 1.1 SP1
+		[Category ("NotDotNet")]
+#endif
+		public void LocalParameter ()
+		{
+			string xsltFragment = @"<?xml version=""1.0"" encoding=""UTF-8"" ?>
+				<xsl:stylesheet xmlns:xsl=""http://www.w3.org/1999/XSL/Transform"" version=""1.0"">
+					<xsl:param name=""param1"" select=""'global-param1-default'"" />
+					<xsl:param name=""param2"" select=""'global-param2-default'"" />
+					<xsl:output method=""text"" encoding=""ascii"" />
+					<xsl:template match=""/"">
+						<xsl:call-template name=""Test"">
+							<xsl:with-param name=""param1"" select=""'local-param1-arg'"" />
+							<xsl:with-param name=""param2"" select=""'local-param2-arg'"" />
+						</xsl:call-template>
+					</xsl:template>
+					<xsl:template name=""Test"">
+						<xsl:param name=""param1"" select=""'local-param1-default'"" />
+						<xsl:param name=""param2"" select=""'local-param2-default'"" />
+						<xsl:value-of select=""$param1"" /><xsl:text>/</xsl:text><xsl:value-of select=""$param2"" />
+					</xsl:template>
+				</xsl:stylesheet>";
+
+			XmlDocument xmlDoc = new XmlDocument ();
+			xmlDoc.LoadXml ("<dummy />");
+
+			XslTransform xsltProcessor = new XslTransform ();
+			xsltProcessor.Load (new XmlTextReader (new StringReader (xsltFragment)),
+				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+
+			StringWriter sw = new StringWriter ();
+
+			XsltArgumentList xsltArgs = new XsltArgumentList ();
+			xsltArgs.AddParam ("param1", string.Empty, "global-param1-arg");
+			xsltProcessor.Transform (xmlDoc, xsltArgs, sw, new XmlUrlResolver ());
+
+			Assert.AreEqual ("local-param1-arg/local-param2-arg", sw.ToString ());
+		}
 	}
 }

@@ -1,5 +1,9 @@
 2005-12-04  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* XslTransformTest.cs: Added test for MS bug, described in KB834667.
+
+2005-12-04  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* XslTransformTest.cs: Added test for sorting an empty node set, which
 	is also a test for omitting XML declaration if no XML is output.
 	No longer derive from deprecated Assertion class, formatting updates.
