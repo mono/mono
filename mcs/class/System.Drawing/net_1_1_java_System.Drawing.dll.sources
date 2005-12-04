@@ -30,6 +30,7 @@ System.Drawing/Region.jvm.cs
 System.Drawing/SolidBrush.jvm.cs
 System.Drawing/StringFormat.jvm.cs
 System.Drawing/SystemColors.jvm.cs
+System.Drawing/SystemIcons.jvm.cs
 System.Drawing/TextureBrush.jvm.cs
 
 ##completely different files
