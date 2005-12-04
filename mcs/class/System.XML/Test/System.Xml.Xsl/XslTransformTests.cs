@@ -362,7 +362,6 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 
 		// http://support.microsoft.com/default.aspx?scid=kb;en-us;829014
 		[Test]
-		[Category ("NotWorking")]
 		public void EmptyNodeSetSort ()
 		{
 			string xmlFragment = @"<?xml version=""1.0"" encoding=""utf-8""?>
@@ -383,6 +382,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 
 			string xsltFragment = @"<?xml version=""1.0""?>
 				<xsl:stylesheet version=""1.0"" xmlns:xsl=""http://www.w3.org/1999/XSL/Transform"">
+					<xsl:output omit-xml-declaration=""yes"" />
 					<xsl:preserve-space elements=""*"" />
 					<xsl:template match=""/EMPLOYEES"">
 						<xsl:for-each select=""EMPLOYEE[DEPT='Finance']"">

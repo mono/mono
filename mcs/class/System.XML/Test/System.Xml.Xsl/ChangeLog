@@ -1,5 +1,10 @@
 2005-12-04  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* XslTransformTests.cs: Explictly omit xml declaration, allowing
+	test to pass on both Mono and MS.NET.
+
+2005-12-04  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* XslTransformTests.cs: Undo formatting changes.
 
 2005-12-04  Gert Driesen  <drieseng@users.sourceforge.net>
