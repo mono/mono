@@ -3789,11 +3789,8 @@ namespace Mono.CSharp {
 			ILGenerator ig = ec.ig;
 			int arg_idx = idx;
 
-			if (ec.HaveCaptureInfo && ec.IsParameterCaptured (name)){
-				if (leave_copy)
-					throw new InternalErrorException ();
-				
-				ec.EmitParameter (name);
+			if (ec.HaveCaptureInfo && ec.IsParameterCaptured (name)){				
+				ec.EmitParameter (name, leave_copy, prepared, ref temp);
 				return;
 			}
 
@@ -3825,15 +3822,16 @@ namespace Mono.CSharp {
 		
 		public void EmitAssign (EmitContext ec, Expression source, bool leave_copy, bool prepare_for_load)
 		{
+			prepared = prepare_for_load;
 			if (ec.HaveCaptureInfo && ec.IsParameterCaptured (name)){
-				ec.EmitAssignParameter (name, source, leave_copy, prepare_for_load);
+				ec.EmitAssignParameter (name, source, leave_copy, prepare_for_load, ref temp);
 				return;
 			}
 
 			ILGenerator ig = ec.ig;
 			int arg_idx = idx;
 			
-			prepared = prepare_for_load;
+			
 			
 			if (!ec.MethodIsStatic)
 				arg_idx++;

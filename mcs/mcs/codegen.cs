@@ -915,14 +915,14 @@ namespace Mono.CSharp {
 			capture_context.EmitCapturedVariableInstance (this, li, CurrentAnonymousMethod);
 		}
 
-		public void EmitParameter (string name)
+		public void EmitParameter (string name, bool leave_copy, bool prepared, ref LocalTemporary temp)
 		{
-			capture_context.EmitParameter (this, name);
+			capture_context.EmitParameter (this, name, leave_copy, prepared, ref temp);
 		}
 
-		public void EmitAssignParameter (string name, Expression source, bool leave_copy, bool prepare_for_load)
+		public void EmitAssignParameter (string name, Expression source, bool leave_copy, bool prepare_for_load, ref LocalTemporary  temp)
 		{
-			capture_context.EmitAssignParameter (this, name, source, leave_copy, prepare_for_load);
+			capture_context.EmitAssignParameter (this, name, source, leave_copy, prepare_for_load, ref temp);
 		}
 
 		public void EmitAddressOfParameter (string name)

@@ -1182,14 +1182,15 @@ namespace Mono.CSharp {
 		// Emits the code necessary to load the parameter named `name' within
 		// an anonymous method.
 		//
-		public void EmitParameter (EmitContext ec, string name)
+		public void EmitParameter (EmitContext ec, string name, bool leave_copy, bool prepared, ref LocalTemporary temp)
 		{
 			CaptureContext cc = ContextForParameter (ec.CurrentBlock.Toplevel, name);
 			if (cc != this){
-				cc.EmitParameter (ec, name);
+				cc.EmitParameter (ec, name, leave_copy, prepared, ref temp);
 				return;
 			}
-			EmitParameterInstance (ec, name);
+			if (!prepared)
+				EmitParameterInstance (ec, name);
 			CapturedParameter par_info = (CapturedParameter) captured_parameters [name];
 			if (par_info != null){
 				// 
@@ -1197,30 +1198,40 @@ namespace Mono.CSharp {
 				//
 			}
 			ec.ig.Emit (OpCodes.Ldfld, par_info.FieldBuilder);
+
+			if (leave_copy){
+				ec.ig.Emit (OpCodes.Dup);
+				temp = new LocalTemporary (ec, par_info.FieldBuilder.FieldType);
+				temp.Store (ec);
+			}
 		}
 
 		//
 		// Implements the assignment of `source' to the paramenter named `name' within
 		// an anonymous method.
 		//
-		public void EmitAssignParameter (EmitContext ec, string name, Expression source, bool leave_copy, bool prepare_for_load)
+		public void EmitAssignParameter (EmitContext ec, string name, Expression source, bool leave_copy, bool prepare_for_load, ref LocalTemporary temp)
 		{
 			CaptureContext cc = ContextForParameter (ec.CurrentBlock.Toplevel, name);
 			if (cc != this){
-				cc.EmitAssignParameter (ec, name, source, leave_copy, prepare_for_load);
+				cc.EmitAssignParameter (ec, name, source, leave_copy, prepare_for_load, ref temp);
 				return;
 			}
 			ILGenerator ig = ec.ig;
 			CapturedParameter par_info = (CapturedParameter) captured_parameters [name];
 
 			EmitParameterInstance (ec, name);
-			if (leave_copy)
+			if (prepare_for_load)
 				ig.Emit (OpCodes.Dup);
 			source.Emit (ec);
-			ig.Emit (OpCodes.Stfld, par_info.FieldBuilder);
 			if (leave_copy){
-				ig.Emit (OpCodes.Ldfld, par_info.FieldBuilder);
+				ig.Emit (OpCodes.Dup);
+				temp = new LocalTemporary (ec, par_info.FieldBuilder.FieldType);
+				temp.Store (ec);
 			}
+			ig.Emit (OpCodes.Stfld, par_info.FieldBuilder);
+			if (temp != null)
+				temp.Emit (ec);
 		}
 
 		//
