@@ -58,6 +58,10 @@ namespace System.Web.Configuration {
 			properties.Add (statusCodeProp);
 		}
 
+		internal CustomError ()
+		{
+		}
+
 		public CustomError (int statusCode, string redirect)
 		{
 			this.StatusCode = statusCode;

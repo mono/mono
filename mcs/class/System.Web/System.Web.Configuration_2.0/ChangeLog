@@ -1,3 +1,10 @@
+2005-12-04  Chris Toshok  <toshok@ximian.com>
+
+	* CustomError.cs: add an internal argument-less ctor for use by
+	the collection.
+
+	* CustomErrorCollection.cs: implement all the MonoTODO's.
+
 2005-12-02  Chris Toshok  <toshok@ximian.com>
 
 	* GlobalizationSection.cs (VerifyData): split out the stuff that

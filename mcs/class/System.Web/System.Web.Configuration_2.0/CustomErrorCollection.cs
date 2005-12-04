@@ -30,6 +30,7 @@
 
 using System;
 using System.Configuration;
+using System.Collections;
 
 #if NET_2_0
 
@@ -57,22 +58,19 @@ namespace System.Web.Configuration {
 
 		protected override ConfigurationElement CreateNewElement ()
 		{
-			return new CustomError (0, "");
+			return new CustomError ();
 		}
 
-		[MonoTODO]
 		protected override object GetElementKey (ConfigurationElement element)
 		{
 			return ((CustomError)element).StatusCode.ToString();
 		}
 
-		[MonoTODO]
 		public string GetKey (int index)
 		{
-			throw new NotImplementedException ();
+			return (string)BaseGetKey (index);
 		}
 
-		[MonoTODO]
 		public CustomError Get (string statusCode)
 		{
 			return (CustomError)BaseGet (statusCode);
@@ -93,34 +91,44 @@ namespace System.Web.Configuration {
 			BaseRemoveAt (index);
 		}
 
-		[MonoTODO]
 		public void Set (CustomError customError)
 		{
-			throw new NotImplementedException ();
+			CustomError existing = Get (customError.StatusCode.ToString());
+
+			if (existing == null) {
+				Add (customError);
+			}
+			else {
+				int index = BaseIndexOf (existing);
+				RemoveAt (index);
+				BaseAdd (index, customError);
+			}
 		}
 
-		[MonoTODO]
-		public String[] AllKeys {
-			get { throw new NotImplementedException (); }
+		public string[] AllKeys {
+			get {
+				string[] keys = new string[Count];
+				for (int i = 0; i < Count; i ++)
+					keys[i] = this[i].StatusCode.ToString();
+				return keys;
+			}
 		}
 
 		protected override ConfigurationElementCollectionType CollectionType {
 			get { return ConfigurationElementCollectionType.BasicMap; }
 		}
 
-		[MonoTODO]
 		protected override string ElementName {
-			get { throw new NotImplementedException (); }
+			get { return "error"; }
 		}
 
 		public CustomError this [int index] {
 			get { return (CustomError)BaseGet (index); }
-			set { if (BaseGet (index) != null) BaseRemoveAt (index); BaseAdd (index, value); }
+			set { if (BaseGet (index) != null) RemoveAt (index); BaseAdd (index, value); }
 		}
 
-		[MonoTODO]
 		public new CustomError this [string statusCode] {
-			get { throw new NotImplementedException (); }
+			get { return (CustomError)BaseGet (statusCode); }
 		}
 
 		protected override ConfigurationPropertyCollection Properties {
