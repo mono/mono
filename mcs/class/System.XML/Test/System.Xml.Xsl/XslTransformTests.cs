@@ -19,7 +19,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Xml.Xsl
 {
 	[TestFixture]
-	public class XslTransformTests : Assertion
+	public class XslTransformTests
 	{
 		XmlDocument doc;
 		XslTransform xslt;
@@ -40,7 +40,7 @@ namespace MonoTests.System.Xml.Xsl
 			xslt.Load ("Test/XmlFiles/xsl/empty.xsl");
 			xslt.Transform ("Test/XmlFiles/xsl/empty.xsl", "Test/XmlFiles/xsl/result.xml");
 			result.Load ("Test/XmlFiles/xsl/result.xml");
-			AssertEquals ("count", 2, result.ChildNodes.Count);
+			Assert.AreEqual (2, result.ChildNodes.Count, "count");
 		}
 
 		[Test]
@@ -66,23 +66,22 @@ namespace MonoTests.System.Xml.Xsl
 		[ExpectedException (typeof (XsltCompileException))]
 		public void InvalidStylesheet2 ()
 		{
-			string xml = @"<root>text</root>";
 			string xsl = @"<xsl:stylesheet xmlns:xsl='http://www.w3.org/1999/XSL/Transform' version='1.0'>
-	<xsl:template match='/root'>
-		<xsl:call-template name='foo'>
-			<xsl:with-param name='name' value='text()' />
-		</xsl:call-template>
-	</xsl:template>
-	<xsl:template name='foo'>
-		<xsl:param name='name' />
-		<result>
-			<xsl:if test='1'>
-				<xsl:variable name='last' value='text()' />
-				<xsl:value-of select='$last' />
-			</xsl:if>
-		</result>
-	</xsl:template>
-</xsl:stylesheet>
+				<xsl:template match='/root'>
+					<xsl:call-template name='foo'>
+						<xsl:with-param name='name' value='text()' />
+					</xsl:call-template>
+				</xsl:template>
+				<xsl:template name='foo'>
+					<xsl:param name='name' />
+					<result>
+						<xsl:if test='1'>
+							<xsl:variable name='last' value='text()' />
+							<xsl:value-of select='$last' />
+						</xsl:if>
+					</result>
+				</xsl:template>
+			</xsl:stylesheet>
 ";
 			XslTransform xslt = new XslTransform ();
 			xslt.Load (new XPathDocument (new XmlTextReader (xsl, XmlNodeType.Document, null)));
@@ -94,58 +93,57 @@ namespace MonoTests.System.Xml.Xsl
 			string _styleSheet = @"
 			<xslt:stylesheet xmlns:xslt=""http://www.w3.org/1999/XSL/Transform"" version=""1.0"" xmlns:msxsl=""urn:schemas-microsoft-com:xslt"" xmlns:stringutils=""urn:schemas-sourceforge.net-blah"">
 				<xslt:output method=""text"" />
-    				<msxsl:script language=""C#"" implements-prefix=""stringutils"">
-    					<![CDATA[
-					        string PadRight( string str, int padding) {
-					            return str.PadRight(padding);
-					        }
-				        ]]>
+				<msxsl:script language=""C#"" implements-prefix=""stringutils"">
+					<![CDATA[
+						string PadRight( string str, int padding) {
+							return str.PadRight(padding);
+						}
+					]]>
 				</msxsl:script>
-    				<xslt:template match=""test"">
-        				<xslt:value-of select=""stringutils:PadRight(@name, 20)"" />
-    				</xslt:template>
+				<xslt:template match=""test"">
+					<xslt:value-of select=""stringutils:PadRight(@name, 20)"" />
+				</xslt:template>
 			</xslt:stylesheet>";
 
 			StringReader stringReader = new StringReader(_styleSheet);
 			
-            		XslTransform transform = new XslTransform();
-            		XmlTextReader reader = new XmlTextReader(stringReader);
-            		transform.Load(reader, new XmlUrlResolver(), AppDomain.CurrentDomain.Evidence);
+			XslTransform transform = new XslTransform();
+			XmlTextReader reader = new XmlTextReader(stringReader);
+			transform.Load(reader, new XmlUrlResolver(), AppDomain.CurrentDomain.Evidence);
 
-            		StringBuilder sb = new StringBuilder();
-            		StringWriter writer = new StringWriter(sb, CultureInfo.InvariantCulture);
-            		XsltArgumentList arguments = new XsltArgumentList();
+			StringBuilder sb = new StringBuilder();
+			StringWriter writer = new StringWriter(sb, CultureInfo.InvariantCulture);
+			XsltArgumentList arguments = new XsltArgumentList();
 
 			XmlDocument xmlDoc = new XmlDocument();
 			xmlDoc.LoadXml("<test name=\"test\" />");
 
-            		// Do transformation
-            		transform.Transform(xmlDoc, new XsltArgumentList(), writer, new XmlUrlResolver());
+			// Do transformation
+			transform.Transform(xmlDoc, new XsltArgumentList(), writer, new XmlUrlResolver());
 
-
-			AssertEquals("test".PadRight(20), sb.ToString());
+			Assert.AreEqual ("test".PadRight(20), sb.ToString());
 		}
 
 		[Test]
 		public void MSXslNodeSet ()
 		{
 			string xsl = @"<xsl:stylesheet version='1.0' xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-microsoft-com:xslt'>
-<xsl:template match='/'>
-<root>
-	<xsl:variable name='var'>
-		<xsl:copy-of select='root/foo' />
-	</xsl:variable>
-	<xsl:for-each select='msxsl:node-set($var)/foo'>
-		<xsl:value-of select='name(.)' />: <xsl:value-of select='@attr' />
-	</xsl:for-each>
-</root>
-</xsl:template>
-</xsl:stylesheet>";
+				<xsl:template match='/'>
+					<root>
+						<xsl:variable name='var'>
+							<xsl:copy-of select='root/foo' />
+						</xsl:variable>
+						<xsl:for-each select='msxsl:node-set($var)/foo'>
+							<xsl:value-of select='name(.)' />: <xsl:value-of select='@attr' />
+						</xsl:for-each>
+					</root>
+				</xsl:template>
+			</xsl:stylesheet>";
 			StringWriter sw = new StringWriter ();
 			XslTransform t = new XslTransform ();
 			t.Load (new XPathDocument (new StringReader (xsl)));
 			t.Transform (new XPathDocument (new XmlTextReader (new StringReader ("<root><foo attr='A'/><foo attr='B'/><foo attr='C'/></root>"))), null, sw);
-			AssertEquals (@"<?xml version=""1.0"" encoding=""utf-16""?><root xmlns:msxsl=""urn:schemas-microsoft-com:xslt"">foo: Afoo: Bfoo: C</root>", sw.ToString ());
+			Assert.AreEqual (@"<?xml version=""1.0"" encoding=""utf-16""?><root xmlns:msxsl=""urn:schemas-microsoft-com:xslt"">foo: Afoo: Bfoo: C</root>", sw.ToString ());
 		}
 
 		[Test]
@@ -158,15 +156,15 @@ namespace MonoTests.System.Xml.Xsl
 		public void MSXslNodeSetRejectsNodeSet ()
 		{
 			string xsl = @"<xsl:stylesheet version='1.0' xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-microsoft-com:xslt'>
-<xsl:template match='/'>
-<root>
-	<!-- msxsl:node-set() does not accept a node set -->
-	<xsl:for-each select='msxsl:node-set(root/foo)'>
-		<xsl:value-of select='name(.)' />: <xsl:value-of select='@attr' />
-	</xsl:for-each>
-</root>
-</xsl:template>
-</xsl:stylesheet>";
+				<xsl:template match='/'>
+					<root>
+						<!-- msxsl:node-set() does not accept a node set -->
+						<xsl:for-each select='msxsl:node-set(root/foo)'>
+							<xsl:value-of select='name(.)' />: <xsl:value-of select='@attr' />
+						</xsl:for-each>
+					</root>
+				</xsl:template>
+			</xsl:stylesheet>";
 			StringWriter sw = new StringWriter ();
 			XslTransform t = new XslTransform ();
 			t.Load (new XPathDocument (new StringReader (xsl)));
@@ -177,11 +175,11 @@ namespace MonoTests.System.Xml.Xsl
 		public void EvaluateEmptyVariableAsBoolean ()
 		{
 			string xsl = @"<xsl:stylesheet xmlns:xsl='http://www.w3.org/1999/XSL/Transform' version='1.0'>
-<xsl:template match='/'>
-<xsl:variable name='var'><empty /></xsl:variable>
-  <root><xsl:if test='$var'>true</xsl:if></root>
-</xsl:template>
-</xsl:stylesheet>";
+				<xsl:template match='/'>
+					<xsl:variable name='var'><empty /></xsl:variable>
+					<root><xsl:if test='$var'>true</xsl:if></root>
+				</xsl:template>
+			</xsl:stylesheet>";
 			XslTransform t = new XslTransform ();
 			t.Load (new XPathDocument (new StringReader (xsl)));
 			StringWriter sw = new StringWriter ();
@@ -189,7 +187,7 @@ namespace MonoTests.System.Xml.Xsl
 				new XPathDocument (new StringReader ("<root/>")),
 				null,
 				sw);
-			Assert (sw.ToString ().IndexOf ("true") > 0);
+			Assert.IsTrue (sw.ToString ().IndexOf ("true") > 0);
 		}
 
 		[Test]
@@ -197,10 +195,10 @@ namespace MonoTests.System.Xml.Xsl
 		public void NotAllowedPatternAxis ()
 		{
 			string xsl = @"<xsl:stylesheet xmlns:xsl='http://www.w3.org/1999/XSL/Transform' version='1.0'>
-<xsl:template match='/descendant-or-self::node()/elem'>
-<ERROR/>
-</xsl:template>
-</xsl:stylesheet>";
+				<xsl:template match='/descendant-or-self::node()/elem'>
+					<ERROR/>
+				</xsl:template>
+			</xsl:stylesheet>";
 			new XslTransform ().Load (new XPathDocument (
 				new StringReader (xsl)));
 		}
@@ -210,9 +208,9 @@ namespace MonoTests.System.Xml.Xsl
 		public void ImportIncorrectlyLocated ()
 		{
 			string xsl = @"<xsl:transform xmlns:xsl='http://www.w3.org/1999/XSL/Transform' version='1.0'>
-<xsl:template match='/'></xsl:template>
-<xsl:import href='dummy.xsl' />
-</xsl:transform>";
+				<xsl:template match='/'></xsl:template>
+				<xsl:import href='dummy.xsl' />
+			</xsl:transform>";
 			new XslTransform ().Load (new XPathDocument (
 				new StringReader (xsl)));
 		}
@@ -295,12 +293,11 @@ namespace MonoTests.System.Xml.Xsl
 		// including any default namespace declaration."
 		public void LREDefaultNamespace ()
 		{
-			string xsl = @"<xsl:stylesheet version='1.0'
-  xmlns='urn:foo' xmlns:xsl='http://www.w3.org/1999/XSL/Transform'>
-<xsl:template match='/*'>
-  <xsl:element name='{local-name()}' />
-</xsl:template>
-</xsl:stylesheet>";
+			string xsl = @"<xsl:stylesheet version='1.0' xmlns='urn:foo' xmlns:xsl='http://www.w3.org/1999/XSL/Transform'>
+				<xsl:template match='/*'>
+					<xsl:element name='{local-name()}' />
+				</xsl:template>
+			</xsl:stylesheet>";
 			string xml = "<root/>";
 			XslTransform t = new XslTransform ();
 			t.Load (new XPathDocument (new StringReader (xsl)));
@@ -309,17 +306,16 @@ namespace MonoTests.System.Xml.Xsl
 			t.Transform (
 				new XPathDocument (new StringReader (xml)),
 				null, xw);
-			AssertEquals ("<root xmlns=\"urn:foo\" />",
+			Assert.AreEqual ("<root xmlns=\"urn:foo\" />",
 				sw.ToString ());
 
-			string xsl2 = @"<xsl:stylesheet version='1.0'
-  xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns='urn:foo'>
-  <xsl:template match='/*'>
-      <root>
-    <xsl:element name='{local-name()}' />
-      </root>
-  </xsl:template>
-</xsl:stylesheet>";
+			string xsl2 = @"<xsl:stylesheet version='1.0' xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns='urn:foo'>
+				<xsl:template match='/*'>
+					<root>
+						<xsl:element name='{local-name()}' />
+					</root>
+				</xsl:template>
+			</xsl:stylesheet>";
 			string xml2 = "<page/>";
 			t.Load (new XPathDocument (new StringReader (xsl2)));
 			sw = new StringWriter ();
@@ -327,7 +323,7 @@ namespace MonoTests.System.Xml.Xsl
 			t.Transform (
 				new XPathDocument (new StringReader (xml2)),
 				null, xw);
-			AssertEquals ("<root xmlns=\"urn:foo\"><page /></root>",
+			Assert.AreEqual ("<root xmlns=\"urn:foo\"><page /></root>",
 				sw.ToString ());
 		}
 
@@ -358,7 +354,53 @@ namespace MonoTests.System.Xml.Xsl
 			StringWriter sw_raw = new StringWriter ();
 			t.Transform (d, null, sw_raw);
 
-			AssertEquals (ref_out, sw_raw.ToString ().Replace ("\r\n", "\n"));
+			Assert.AreEqual (ref_out, sw_raw.ToString ().Replace ("\r\n", "\n"));
+		}
+
+		// http://support.microsoft.com/default.aspx?scid=kb;en-us;829014
+		[Test]
+		[Category ("NotWorking")]
+		public void EmptyNodeSetSort ()
+		{
+			string xmlFragment = @"<?xml version=""1.0"" encoding=""utf-8""?>
+				<EMPLOYEES>
+					<EMPLOYEE>
+						<NAME>Steve</NAME>
+						<DEPT>IT</DEPT>
+						<SKILL>C++</SKILL>
+						<SKILL>C#</SKILL>
+					</EMPLOYEE>
+					<EMPLOYEE>
+						<NAME>John</NAME>
+						<DEPT>IT</DEPT>
+						<SKILL>VB.NET</SKILL>
+						<SKILL>SQl Server</SKILL>
+					</EMPLOYEE>
+				</EMPLOYEES>";
+
+			string xsltFragment = @"<?xml version=""1.0""?>
+				<xsl:stylesheet version=""1.0"" xmlns:xsl=""http://www.w3.org/1999/XSL/Transform"">
+					<xsl:preserve-space elements=""*"" />
+					<xsl:template match=""/EMPLOYEES"">
+						<xsl:for-each select=""EMPLOYEE[DEPT='Finance']"">
+							<xsl:sort select=""NAME""/>
+							<xsl:value-of select=""NAME""/>
+						</xsl:for-each>
+					</xsl:template>
+				</xsl:stylesheet>";
+
+			XmlTextReader xmlRdr = new XmlTextReader (new StringReader (xmlFragment));
+			XmlTextReader xsltRdr = new XmlTextReader (new StringReader (xsltFragment));
+
+			XslTransform stylesheet = new XslTransform ();
+			stylesheet.Load (xsltRdr, new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+
+			StringWriter sw = new StringWriter ();
+
+			stylesheet.Transform (new XPathDocument (xmlRdr), new XsltArgumentList (),
+				sw, new XmlUrlResolver ());
+
+			Assert.AreEqual (0, sw.ToString ().Length);
 		}
 	}
 }
