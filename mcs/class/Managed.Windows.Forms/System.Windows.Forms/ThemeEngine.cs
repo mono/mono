@@ -50,6 +50,9 @@ namespace System.Windows.Forms
 			if ( theme_var == "nice" )
 				theme = new ThemeNice ();
 			else
+			if ( theme_var == "clearlooks" )
+				theme = new ThemeClearlooks ();
+			else
 				theme = new ThemeWin32Classic ();
 		}
 		
