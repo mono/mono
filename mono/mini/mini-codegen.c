@@ -273,13 +273,14 @@ mono_print_ins_index (int i, MonoInst *ins)
 		else
 			g_print (" %s", mono_regname_full (ins->sreg2, fp));
 	}
-	if (spec [MONO_INST_CLOB])
-		g_print (" clobbers: %c", spec [MONO_INST_CLOB]);
 
 	switch (ins->opcode) {
 	case OP_ICONST:
 	case OP_ICOMPARE_IMM:
 		g_print (" [%d]", (int)ins->inst_c0);
+		break;
+	case OP_ADD_IMM:
+		g_print (" [%d]", (int)(gssize)ins->inst_p1);
 		break;
 	case OP_I8CONST:
 		g_print (" [%lld]", (long long)ins->inst_l);
@@ -343,6 +344,9 @@ mono_print_ins_index (int i, MonoInst *ins)
 	default:
 		break;
 	}
+
+	if (spec [MONO_INST_CLOB])
+		g_print (" clobbers: %c", spec [MONO_INST_CLOB]);
 
 	g_print ("\n");
 }
@@ -750,7 +754,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 
 	i = 1;
 	fpcount = 0;
-	DEBUG (g_print ("LOCAL regalloc: basic block: %d\n", bb->block_num));
+	DEBUG (g_print ("\nLOCAL regalloc: basic block: %d\n", bb->block_num));
 	/* forward pass on the instructions to collect register liveness info */
 	while (ins) {
 		spec = ins_spec [ins->opcode];

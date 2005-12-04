@@ -131,6 +131,7 @@
                 inst->dreg = dr; \
                 inst->inst_basereg = base; \
                 inst->inst_offset = offset; \
+				(inst)->sreg2 = -1; \
 	        mono_bblock_add_inst (cfg->cbb, inst); \
 	} while (0)
 
@@ -139,6 +140,7 @@
                 (inst)->sreg1 = sr; \
                 (inst)->inst_destbasereg = base; \
                 (inst)->inst_offset = offset; \
+				(inst)->sreg2 = -1; \
 	        mono_bblock_add_inst (cfg->cbb, inst); \
 	} while (0)
 
@@ -149,6 +151,7 @@
                 inst->sreg1 = sr; \
                 inst->inst_destbasereg = base; \
                 inst->inst_offset = offset; \
+				(inst)->sreg2 = -1; \
 	        mono_bblock_add_inst (cfg->cbb, inst); \
 	} while (0)
 

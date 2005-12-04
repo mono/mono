@@ -1000,7 +1000,7 @@ mono_arch_call_opcode (MonoCompile *cfg, MonoBasicBlock* bb, MonoCallInst *call,
 
 
 MonoCallInst*
-mono_arch_call_opcode2 (MonoCompile *cfg, MonoBasicBlock* bb, MonoCallInst *call, int is_virtual) {
+mono_arch_call_opcode2 (MonoCompile *cfg, MonoCallInst *call, int is_virtual) {
 	MonoInst *arg, *in;
 	MonoMethodSignature *sig;
 	int i, n;
@@ -1018,6 +1018,7 @@ mono_arch_call_opcode2 (MonoCompile *cfg, MonoBasicBlock* bb, MonoCallInst *call
 	/* Arguments are pushed in the reverse order */
 	for (i = n - 1; i >= 0; i --) {
 		ArgInfo *ainfo = cinfo->args + i;
+		MonoType *t;
 
 		/* Emit the signature cookie just before the implicit arguments */
 		if (!sig->pinvoke && (sig->call_convention == MONO_CALL_VARARG) && (i == sentinelpos)) {
@@ -1051,79 +1052,89 @@ mono_arch_call_opcode2 (MonoCompile *cfg, MonoBasicBlock* bb, MonoCallInst *call
 			call->out_args = arg;
 		}
 
-		if (0 && is_virtual && i == 0) {
-			NOT_IMPLEMENTED;
-			/* the argument will be attached to the call instrucion */
-			in = call->args [i];
-		} else {
-			MonoType *t;
+		if (i >= sig->hasthis)
+			t = sig->params [i - sig->hasthis];
+		else
+			t = &mono_defaults.int_class->byval_arg;
+		t = mono_type_get_underlying_type (t);
 
-			if (i >= sig->hasthis)
-				t = sig->params [i - sig->hasthis];
-			else
-				t = &mono_defaults.int_class->byval_arg;
-			t = mono_type_get_underlying_type (t);
+		MONO_INST_NEW (cfg, arg, OP_OUTARG);
 
-			MONO_INST_NEW (cfg, arg, OP_OUTARG);
+		in = call->args [i];
+		arg->cil_code = in->cil_code;
+		arg->sreg1 = in->dreg;
+		arg->type = in->type;
 
-			in = call->args [i];
-			arg->cil_code = in->cil_code;
-			arg->sreg1 = in->dreg;
-			arg->type = in->type;
+		if ((i >= sig->hasthis) && (MONO_TYPE_ISSTRUCT(t))) {
+			gint align;
+			guint32 size;
 
-			if ((i >= sig->hasthis) && (MONO_TYPE_ISSTRUCT(t))) {
-				gint align;
-				guint32 size;
-
-				NOT_IMPLEMENTED;
-
-				if (t->type == MONO_TYPE_TYPEDBYREF) {
-					size = sizeof (MonoTypedRef);
-					align = sizeof (gpointer);
-				}
-				else
-					if (sig->pinvoke)
-						size = mono_type_native_stack_size (&in->klass->byval_arg, &align);
-					else
-						size = mono_type_stack_size (&in->klass->byval_arg, &align);
-				arg->opcode = OP_OUTARG_VT;
-				arg->klass = in->klass;
-				arg->unused = sig->pinvoke;
-				arg->inst_imm = size; 
+			if (t->type == MONO_TYPE_TYPEDBYREF) {
+				size = sizeof (MonoTypedRef);
+				align = sizeof (gpointer);
 			}
-			else {
-				switch (ainfo->storage) {
-				case ArgOnStack:
-					arg->opcode = OP_X86_PUSH;
-					if (!t->byref) {
-						if (t->type == MONO_TYPE_R4) {
-							MONO_EMIT_NEW_BIALU_IMM (cfg, OP_SUB_IMM, X86_ESP, X86_ESP, 4);
-							arg->opcode = OP_STORER4_MEMBASE_REG;
-							arg->inst_destbasereg = X86_ESP;
-							arg->inst_offset = 0;
-						} else if (t->type == MONO_TYPE_R8) {
-							MONO_EMIT_NEW_BIALU_IMM (cfg, OP_SUB_IMM, X86_ESP, X86_ESP, 8);
-							arg->opcode = OP_STORER8_MEMBASE_REG;
-							arg->inst_destbasereg = X86_ESP;
-							arg->inst_offset = 0;
-						} else if (t->type == MONO_TYPE_I8 || t->type == MONO_TYPE_U8) {
-							MONO_EMIT_NEW_UNALU (cfg, OP_X86_PUSH, -1, in->dreg + 1);
-						}
-					}
-					break;
-				default:
-					g_assert_not_reached ();
-				}
+			else
+				if (sig->pinvoke)
+					size = mono_type_native_stack_size (&in->klass->byval_arg, &align);
+				else
+					size = mono_type_stack_size (&in->klass->byval_arg, &align);
+
+			if (size == 0) {
+			} else if (size <= 4) {
+				arg->opcode = OP_X86_PUSH_MEMBASE;
+				arg->sreg1 = in->dreg;
 
 				MONO_ADD_INS (cfg->cbb, arg);
+			} else if (size <= 20) {
+				size = ALIGN_TO (size, 4);
+				
+				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_SUB_IMM, X86_ESP, X86_ESP, size);
+				mini_emit_memcpy (cfg, X86_ESP, 0, in->dreg, 0, size, 0);
+			} else {
+				arg->opcode = OP_X86_PUSH_OBJ;
+				arg->inst_basereg = in->dreg;
+				arg->inst_offset = 0;
+					
+				MONO_ADD_INS (cfg->cbb, arg);
 			}
+		}
+		else {
+			switch (ainfo->storage) {
+			case ArgOnStack:
+				arg->opcode = OP_X86_PUSH;
+				if (!t->byref) {
+					if (t->type == MONO_TYPE_R4) {
+						MONO_EMIT_NEW_BIALU_IMM (cfg, OP_SUB_IMM, X86_ESP, X86_ESP, 4);
+						arg->opcode = OP_STORER4_MEMBASE_REG;
+						arg->inst_destbasereg = X86_ESP;
+						arg->inst_offset = 0;
+					} else if (t->type == MONO_TYPE_R8) {
+						MONO_EMIT_NEW_BIALU_IMM (cfg, OP_SUB_IMM, X86_ESP, X86_ESP, 8);
+						arg->opcode = OP_STORER8_MEMBASE_REG;
+						arg->inst_destbasereg = X86_ESP;
+						arg->inst_offset = 0;
+					} else if (t->type == MONO_TYPE_I8 || t->type == MONO_TYPE_U8) {
+						MONO_EMIT_NEW_UNALU (cfg, OP_X86_PUSH, -1, in->dreg + 1);
+					}
+				}
+				break;
+			default:
+				g_assert_not_reached ();
+			}
+			
+			MONO_ADD_INS (cfg->cbb, arg);
 		}
 	}
 
 	if (sig->ret && MONO_TYPE_ISSTRUCT (sig->ret)) {
-		NOT_IMPLEMENTED;
+		g_assert (call->inst.dreg != -1);
+
 		if (cinfo->ret.storage == ArgValuetypeInReg) {
+
 			MonoInst *zero_inst;
+
+			NOT_IMPLEMENTED;
+
 			/*
 			 * After the call, the struct is in registers, but needs to be saved to the memory pointed
 			 * to by vt_arg in this_vret_args. This means that vt_arg needs to be saved somewhere
@@ -1140,10 +1151,42 @@ mono_arch_call_opcode2 (MonoCompile *cfg, MonoBasicBlock* bb, MonoCallInst *call
 			arg->next = call->out_args;
 			call->out_args = arg;
 		}
-		else
+		else {
+			MonoInst *vtarg;
+
+			if (cinfo->ret.storage == ArgValuetypeInReg) {
+				/*
+				 * The valuetype is in EAX:EDX after the call, needs to be copied to
+				 * the stack. Save the address here, so the call instruction can
+				 * access it.
+				 */
+				NOT_IMPLEMENTED;
+				MONO_INST_NEW (cfg, vtarg, OP_STORE_MEMBASE_REG);
+				vtarg->inst_destbasereg = X86_ESP;
+				vtarg->inst_offset = call->stack_usage;
+				vtarg->sreg1 = call->inst.dreg;
+				mono_bblock_add_inst (cfg->cbb, vtarg);
+			}
+			else if (cinfo->ret.storage == ArgInIReg) {
+				NOT_IMPLEMENTED;
+				/* The return address is passed in a register */
+				MONO_INST_NEW (cfg, vtarg, OP_MOVE);
+				vtarg->sreg1 = call->inst.dreg;
+				vtarg->dreg = mono_regstate_next_int (cfg->rs);
+				mono_bblock_add_inst (cfg->cbb, vtarg);
+				
+				mono_call_inst_add_outarg_reg (call, vtarg->dreg, cinfo->ret.reg, FALSE);
+			} else {
+				MonoInst *vtarg;
+				MONO_INST_NEW (cfg, vtarg, OP_X86_PUSH);
+				vtarg->type = STACK_MP;
+				vtarg->sreg1 = call->inst.dreg;
+				mono_bblock_add_inst (cfg->cbb, vtarg);
+			}
+
 			/* if the function returns a struct, the called method already does a ret $0x4 */
-			if (sig->ret && MONO_TYPE_ISSTRUCT (sig->ret))
-				cinfo->stack_usage -= 4;
+			cinfo->stack_usage -= 4;
+		}
 	}
 
 	call->stack_usage = cinfo->stack_usage;
@@ -2006,6 +2049,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			x86_breakpoint (code);
 			break;
 		case CEE_NOP:
+		case OP_DUMMY_USE:
+		case OP_DUMMY_STORE:
 			break;
 		case OP_ADDCC:
 		case OP_IADDCC:
