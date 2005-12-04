@@ -1,0 +1,3 @@
+2005-12-04  Boris Kirzner <borisk@mainsoft.com>
+	* System.DirectoryServices.sln, System.DirectoryServices.Test.vmwcsproj:
+	added solution and project files for building TARGET_JVM tests.
