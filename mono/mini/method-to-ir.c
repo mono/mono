@@ -195,9 +195,9 @@ handle_enum:
 			type = type->data.klass->enum_basetype;
 			goto handle_enum;
 		}
-		NOT_IMPLEMENTED;
+		return CEE_STOBJ;
 	case MONO_TYPE_TYPEDBYREF:
-		NOT_IMPLEMENTED;
+		return CEE_STOBJ;
 	case MONO_TYPE_GENERICINST:
 		type = &type->data.generic_class->container_class->byval_arg;
 		goto handle_enum;
@@ -295,6 +295,13 @@ handle_enum:
 		}	\
 	} while (0)
 
+/*
+ * IR Emission Macros
+ */
+
+/*
+ * Variants which take a dest argument and do not do an emit
+ */
 #define NEW_ICONST(cfg,dest,val) do {	\
         MONO_INST_NEW ((cfg), (dest), OP_ICONST); \
 		(dest)->inst_c0 = (val);	\
@@ -328,150 +335,6 @@ handle_enum:
         (dest)->dreg = dr; \
         (dest)->sreg1 = sr; \
         (dest)->inst_p1 = (gpointer)(gssize)(imm); \
-	} while (0)
-
-#define	MONO_EMIT_NEW_ICONST(cfg,dr,imm) do { \
-        MonoInst *inst; \
-        MONO_INST_NEW ((cfg), (inst), OP_ICONST); \
-        inst->dreg = dr; \
-        inst->inst_c0 = imm; \
-	    MONO_ADD_INS ((cfg)->cbb, inst); \
-	} while (0)
-
-#define MONO_EMIT_NEW_PCONST(cfg,dr,val) do {	\
-        MonoInst *inst; \
-        MONO_INST_NEW ((cfg), (inst), OP_PCONST); \
-        inst->dreg = dr; \
-		(inst)->inst_p0 = (val);	\
-		(inst)->type = STACK_PTR;	\
-	    MONO_ADD_INS ((cfg)->cbb, inst); \
-	} while (0)
-
-#define	MONO_EMIT_NEW_I8CONST(cfg,dr,imm) do { \
-        MonoInst *inst; \
-        MONO_INST_NEW ((cfg), (inst), OP_I8CONST); \
-        inst->dreg = dr; \
-        inst->inst_l = imm; \
-	    MONO_ADD_INS ((cfg)->cbb, inst); \
-	} while (0)
-
-#ifdef MONO_ARCH_NEED_GOT_VAR
-
-#define MONO_EMIT_NEW_AOTCONST(cfg,dr,cons,patch_type) do { \
-		mini_emit_aotconst ((cfg), (dr), (patch_type), (cons)); \
-    } while (0)
-
-#else
-
-#define	MONO_EMIT_NEW_AOTCONST(cfg,dr,imm,type) do { \
-        MonoInst *inst; \
-        MONO_INST_NEW ((cfg), (inst), OP_AOTCONST); \
-        inst->dreg = dr; \
-        inst->inst_p0 = imm; \
-        inst->inst_c1 = type; \
-		MONO_ADD_INS ((cfg)->cbb, inst); \
-	} while (0)
-
-#endif
-
-#define	MONO_EMIT_NEW_CLASSCONST(cfg,dr,imm) MONO_EMIT_NEW_AOTCONST(cfg,dr,imm,MONO_PATCH_INFO_CLASS)
-#define MONO_EMIT_NEW_VTABLECONST(cfg,dest,vtable) MONO_EMIT_NEW_AOTCONST ((cfg), (dest), (cfg)->compile_aot ? (gpointer)((vtable)->klass) : (vtable), MONO_PATCH_INFO_VTABLE)
-
-#define MONO_EMIT_NEW_UNALU(cfg,op,dr,sr1) do { \
-        MonoInst *inst; \
-        MONO_INST_NEW ((cfg), (inst), (op)); \
-        inst->opcode = op; \
-        inst->dreg = dr; \
-        inst->sreg1 = sr1; \
-	    MONO_ADD_INS (cfg->cbb, inst); \
-	} while (0)
-
-#define MONO_EMIT_NEW_BIALU(cfg,op,dr,sr1,sr2) do { \
-        MonoInst *inst; \
-        MONO_INST_NEW ((cfg), (inst), (op)); \
-        inst->dreg = dr; \
-        inst->sreg1 = sr1; \
-        inst->sreg2 = sr2; \
-	    MONO_ADD_INS (cfg->cbb, inst); \
-	} while (0)
-
-#define MONO_EMIT_NEW_BIALU_IMM(cfg,op,dr,sr,imm) do { \
-        MonoInst *inst; \
-        MONO_INST_NEW ((cfg), (inst), (op)); \
-        inst->dreg = dr; \
-        inst->sreg1 = sr; \
-        inst->inst_p1 = (gpointer)(gssize)(imm); \
-	    MONO_ADD_INS (cfg->cbb, inst); \
-	} while (0)
-
-#define	MONO_EMIT_NEW_COMPARE_IMM(cfg,sr1,imm) do { \
-        MonoInst *inst; \
-        MONO_INST_NEW ((cfg), (inst), (OP_COMPARE_IMM)); \
-        inst->sreg1 = sr1; \
-        inst->inst_p1 = (gpointer)imm; \
-	    MONO_ADD_INS ((cfg)->cbb, inst); \
-	} while (0)
-
-#define	MONO_EMIT_NEW_ICOMPARE_IMM(cfg,sr1,imm) do { \
-        MonoInst *inst; \
-        MONO_INST_NEW ((cfg), (inst), sizeof (void*) == 8 ? OP_ICOMPARE_IMM : OP_COMPARE_IMM); \
-        inst->sreg1 = sr1; \
-        inst->inst_p1 = (gpointer)imm; \
-	    MONO_ADD_INS ((cfg)->cbb, inst); \
-	} while (0)
-
-#define MONO_EMIT_NEW_LOAD_MEMBASE_OP(cfg,op,dr,base,offset) do { \
-        MonoInst *inst; \
-        MONO_INST_NEW ((cfg), (inst), (op)); \
-        inst->dreg = dr; \
-        inst->inst_basereg = base; \
-        inst->inst_offset = offset; \
-	    MONO_ADD_INS (cfg->cbb, inst); \
-    } while (0)
-
-#define MONO_EMIT_NEW_LOAD_MEMBASE(cfg,dr,base,offset) MONO_EMIT_NEW_LOAD_MEMBASE_OP ((cfg), (OP_LOAD_MEMBASE), (dr), (base), (offset))
-
-#define MONO_EMIT_NEW_STORE_MEMBASE(cfg,op,base,offset,sr) do { \
-        MonoInst *inst; \
-        MONO_INST_NEW ((cfg), (inst), (op)); \
-        (inst)->sreg1 = sr; \
-        (inst)->inst_destbasereg = base; \
-        (inst)->inst_offset = offset; \
-	    MONO_ADD_INS (cfg->cbb, inst); \
-	} while (0)
-
-#define	MONO_EMIT_NEW_COND_EXC(cfg,cond,name) do { \
-        MonoInst *inst; \
-        MONO_INST_NEW ((cfg), (inst), (OP_COND_EXC_##cond)); \
-        inst->inst_p1 = (char*)name; \
-	    MONO_ADD_INS ((cfg)->cbb, inst); \
-	} while (0)
-
-#define MONO_NEW_LABEL(cfg,inst) do { \
-        MONO_INST_NEW ((cfg), (inst), OP_LABEL); \
-	} while (0)
-
-/* FIXME: Why is this label thing needed ? */
-#define	MONO_EMIT_NEW_BRANCH_BLOCK(cfg,op,targetbb) do { \
-        MonoInst *inst; \
-        MonoInst *target_label; \
-        MONO_INST_NEW ((cfg), (target_label), OP_LABEL); \
-	        target_label->next = (targetbb)->code; \
-		target_label->inst_c0 = (targetbb)->native_offset; \
-        if (!(targetbb)->last_ins) (targetbb)->last_ins = target_label; \
-	        (targetbb)->code = target_label; \
-        MONO_INST_NEW ((cfg), inst, (op)); \
-		inst->inst_i0 = target_label;	\
-		inst->flags = MONO_INST_BRLABEL;	\
-        MONO_ADD_INS ((cfg)->cbb, inst); \
-	} while (0)
-
-#define	MONO_EMIT_NEW_BRANCH_LABEL(cfg,op,label) do { \
-        MonoInst *inst; \
-        MONO_INST_NEW ((cfg), (inst), (op)); \
-		inst->inst_i0 = label;	\
-		inst->flags = MONO_INST_BRLABEL;	\
-        MONO_ADD_INS ((cfg)->cbb, inst); \
 	} while (0)
 
 #ifdef MONO_ARCH_NEED_GOT_VAR
@@ -639,13 +502,13 @@ handle_enum:
 	} while (0)
 
 #define NEW_TEMPLOADA(cfg,dest,num) do {	\
-        NOT_IMPLEMENTED; \
         MONO_INST_NEW ((cfg), (dest), OP_LDADDR); \
 		(dest)->ssa_op = MONO_SSA_ADDRESS_TAKEN;	\
-		(dest)->inst_i0 = (cfg)->varinfo [(num)];	\
-		(dest)->inst_i0->flags |= MONO_INST_INDIRECT;	\
+		(dest)->inst_c0 = (num); \
+		(cfg)->varinfo [(num)]->flags |= MONO_INST_INDIRECT;	\
 		(dest)->type = STACK_MP;	\
-		(dest)->klass = (dest)->inst_i0->klass;	\
+		(dest)->klass = (cfg)->varinfo [(num)]->klass;	\
+        (dest)->dreg = alloc_dreg ((cfg), STACK_MP); \
         if (!MONO_TYPE_ISSTRUCT (cfg->varinfo [(num)]->inst_vtype)) \
            (cfg)->disable_ssa = TRUE; \
 	} while (0)
@@ -706,11 +569,165 @@ handle_enum:
     } while (0)
 
 #define NEW_DUMMY_STORE(cfg,dest,num) do { \
-        NOT_IMPLEMENTED; \
         MONO_INST_NEW ((cfg), (dest), OP_DUMMY_STORE); \
 		(dest)->inst_i0 = (cfg)->varinfo [(num)];	\
 		(dest)->opcode = OP_DUMMY_STORE; \
 		(dest)->klass = (dest)->inst_i0->klass;	\
+	} while (0)
+
+/*
+ * Variants which do an emit as well.
+ */
+#define EMIT_NEW_ICONST(cfg,dest,val) do { \
+        NEW_ICONST ((cfg), (dest), (val)); \
+        MONO_ADD_INS ((cfg)->cbb, (dest)); \
+    } while (0)
+
+/*
+ * Variants which do not take an dest argument, but take a dreg argument.
+ */
+#define	MONO_EMIT_NEW_ICONST(cfg,dr,imm) do { \
+        MonoInst *inst; \
+        MONO_INST_NEW ((cfg), (inst), OP_ICONST); \
+        inst->dreg = dr; \
+        inst->inst_c0 = imm; \
+	    MONO_ADD_INS ((cfg)->cbb, inst); \
+	} while (0)
+
+#define MONO_EMIT_NEW_PCONST(cfg,dr,val) do {	\
+        MonoInst *inst; \
+        MONO_INST_NEW ((cfg), (inst), OP_PCONST); \
+        inst->dreg = dr; \
+		(inst)->inst_p0 = (val);	\
+		(inst)->type = STACK_PTR;	\
+	    MONO_ADD_INS ((cfg)->cbb, inst); \
+	} while (0)
+
+#define	MONO_EMIT_NEW_I8CONST(cfg,dr,imm) do { \
+        MonoInst *inst; \
+        MONO_INST_NEW ((cfg), (inst), OP_I8CONST); \
+        inst->dreg = dr; \
+        inst->inst_l = imm; \
+	    MONO_ADD_INS ((cfg)->cbb, inst); \
+	} while (0)
+
+#ifdef MONO_ARCH_NEED_GOT_VAR
+
+#define MONO_EMIT_NEW_AOTCONST(cfg,dr,cons,patch_type) do { \
+		mini_emit_aotconst ((cfg), (dr), (patch_type), (cons)); \
+    } while (0)
+
+#else
+
+#define	MONO_EMIT_NEW_AOTCONST(cfg,dr,imm,type) do { \
+        MonoInst *inst; \
+        MONO_INST_NEW ((cfg), (inst), OP_AOTCONST); \
+        inst->dreg = dr; \
+        inst->inst_p0 = imm; \
+        inst->inst_c1 = type; \
+		MONO_ADD_INS ((cfg)->cbb, inst); \
+	} while (0)
+
+#endif
+
+#define	MONO_EMIT_NEW_CLASSCONST(cfg,dr,imm) MONO_EMIT_NEW_AOTCONST(cfg,dr,imm,MONO_PATCH_INFO_CLASS)
+#define MONO_EMIT_NEW_VTABLECONST(cfg,dest,vtable) MONO_EMIT_NEW_AOTCONST ((cfg), (dest), (cfg)->compile_aot ? (gpointer)((vtable)->klass) : (vtable), MONO_PATCH_INFO_VTABLE)
+
+#define MONO_EMIT_NEW_UNALU(cfg,op,dr,sr1) do { \
+        MonoInst *inst; \
+        MONO_INST_NEW ((cfg), (inst), (op)); \
+        inst->opcode = op; \
+        inst->dreg = dr; \
+        inst->sreg1 = sr1; \
+	    MONO_ADD_INS (cfg->cbb, inst); \
+	} while (0)
+
+#define MONO_EMIT_NEW_BIALU(cfg,op,dr,sr1,sr2) do { \
+        MonoInst *inst; \
+        MONO_INST_NEW ((cfg), (inst), (op)); \
+        inst->dreg = dr; \
+        inst->sreg1 = sr1; \
+        inst->sreg2 = sr2; \
+	    MONO_ADD_INS (cfg->cbb, inst); \
+	} while (0)
+
+#define MONO_EMIT_NEW_BIALU_IMM(cfg,op,dr,sr,imm) do { \
+        MonoInst *inst; \
+        MONO_INST_NEW ((cfg), (inst), (op)); \
+        inst->dreg = dr; \
+        inst->sreg1 = sr; \
+        inst->inst_p1 = (gpointer)(gssize)(imm); \
+	    MONO_ADD_INS (cfg->cbb, inst); \
+	} while (0)
+
+#define	MONO_EMIT_NEW_COMPARE_IMM(cfg,sr1,imm) do { \
+        MonoInst *inst; \
+        MONO_INST_NEW ((cfg), (inst), (OP_COMPARE_IMM)); \
+        inst->sreg1 = sr1; \
+        inst->inst_p1 = (gpointer)imm; \
+	    MONO_ADD_INS ((cfg)->cbb, inst); \
+	} while (0)
+
+#define	MONO_EMIT_NEW_ICOMPARE_IMM(cfg,sr1,imm) do { \
+        MonoInst *inst; \
+        MONO_INST_NEW ((cfg), (inst), sizeof (void*) == 8 ? OP_ICOMPARE_IMM : OP_COMPARE_IMM); \
+        inst->sreg1 = sr1; \
+        inst->inst_p1 = (gpointer)imm; \
+	    MONO_ADD_INS ((cfg)->cbb, inst); \
+	} while (0)
+
+#define MONO_EMIT_NEW_LOAD_MEMBASE_OP(cfg,op,dr,base,offset) do { \
+        MonoInst *inst; \
+        MONO_INST_NEW ((cfg), (inst), (op)); \
+        inst->dreg = dr; \
+        inst->inst_basereg = base; \
+        inst->inst_offset = offset; \
+	    MONO_ADD_INS (cfg->cbb, inst); \
+    } while (0)
+
+#define MONO_EMIT_NEW_LOAD_MEMBASE(cfg,dr,base,offset) MONO_EMIT_NEW_LOAD_MEMBASE_OP ((cfg), (OP_LOAD_MEMBASE), (dr), (base), (offset))
+
+#define MONO_EMIT_NEW_STORE_MEMBASE(cfg,op,base,offset,sr) do { \
+        MonoInst *inst; \
+        MONO_INST_NEW ((cfg), (inst), (op)); \
+        (inst)->sreg1 = sr; \
+        (inst)->inst_destbasereg = base; \
+        (inst)->inst_offset = offset; \
+	    MONO_ADD_INS (cfg->cbb, inst); \
+	} while (0)
+
+#define	MONO_EMIT_NEW_COND_EXC(cfg,cond,name) do { \
+        MonoInst *inst; \
+        MONO_INST_NEW ((cfg), (inst), (OP_COND_EXC_##cond)); \
+        inst->inst_p1 = (char*)name; \
+	    MONO_ADD_INS ((cfg)->cbb, inst); \
+	} while (0)
+
+#define MONO_NEW_LABEL(cfg,inst) do { \
+        MONO_INST_NEW ((cfg), (inst), OP_LABEL); \
+	} while (0)
+
+/* FIXME: Why is this label thing needed ? */
+#define	MONO_EMIT_NEW_BRANCH_BLOCK(cfg,op,targetbb) do { \
+        MonoInst *inst; \
+        MonoInst *target_label; \
+        MONO_INST_NEW ((cfg), (target_label), OP_LABEL); \
+	        target_label->next = (targetbb)->code; \
+		target_label->inst_c0 = (targetbb)->native_offset; \
+        if (!(targetbb)->last_ins) (targetbb)->last_ins = target_label; \
+	        (targetbb)->code = target_label; \
+        MONO_INST_NEW ((cfg), inst, (op)); \
+		inst->inst_i0 = target_label;	\
+		inst->flags = MONO_INST_BRLABEL;	\
+        MONO_ADD_INS ((cfg)->cbb, inst); \
+	} while (0)
+
+#define	MONO_EMIT_NEW_BRANCH_LABEL(cfg,op,label) do { \
+        MonoInst *inst; \
+        MONO_INST_NEW ((cfg), (inst), (op)); \
+		inst->inst_i0 = label;	\
+		inst->flags = MONO_INST_BRLABEL;	\
+        MONO_ADD_INS ((cfg)->cbb, inst); \
 	} while (0)
 
 #define ADD_BINOP(op) do {	\
@@ -1978,6 +1995,51 @@ mini_emit_memset (MonoCompile *cfg, int destreg, int offset, int size, int val, 
 	}
 }
 
+static void 
+mini_emit_memcpy (MonoCompile *cfg, int destreg, int doffset, int srcreg, int soffset, int size, int align)
+{
+	int cur_reg;
+
+	/* FIXME: consider alignment for archs that need it. */
+#if !NO_UNALIGNED_ACCESS
+	if (sizeof (gpointer) == 8) {
+		while (size >= 8) {
+			cur_reg = alloc_dreg (cfg, STACK_PTR);
+			MONO_EMIT_NEW_LOAD_MEMBASE_OP (cfg, OP_LOADI8_MEMBASE, cur_reg, srcreg, soffset);
+			MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STOREI8_MEMBASE_REG, destreg, doffset, cur_reg);
+			doffset += 8;
+			soffset += 8;
+			size -= 8;
+		}
+	}	
+#endif
+
+	while (size >= 4) {
+		cur_reg = alloc_dreg (cfg, STACK_PTR);
+		MONO_EMIT_NEW_LOAD_MEMBASE_OP (cfg, OP_LOADI4_MEMBASE, cur_reg, srcreg, soffset);
+		MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STOREI4_MEMBASE_REG, destreg, doffset, cur_reg);
+		doffset += 4;
+		soffset += 4;
+		size -= 4;
+	}
+	while (size >= 2) {
+		cur_reg = alloc_dreg (cfg, STACK_PTR);
+		MONO_EMIT_NEW_LOAD_MEMBASE_OP (cfg, OP_LOADI2_MEMBASE, cur_reg, srcreg, soffset);
+		MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STOREI2_MEMBASE_REG, destreg, doffset, cur_reg);
+		doffset += 2;
+		soffset += 2;
+		size -= 2;
+	}
+	while (size >= 1) {
+		cur_reg = alloc_dreg (cfg, STACK_PTR);
+		MONO_EMIT_NEW_LOAD_MEMBASE_OP (cfg, OP_LOADI1_MEMBASE, cur_reg, srcreg, soffset);
+		MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STOREI1_MEMBASE_REG, destreg, doffset, cur_reg);
+		doffset += 1;
+		soffset += 1;
+		size -= 1;
+	}
+}
+
 static int
 ret_type_to_call_opcode (MonoType *type, int calli, int virt)
 {
@@ -2282,7 +2344,29 @@ mono_emit_call_args (MonoCompile *cfg, MonoMethodSignature *sig,
 	call->signature = sig;
 	call = mono_arch_call_opcode2 (cfg, call, virtual);
 	type_to_eval_stack_type (sig->ret, &call->inst);
-	if (call->inst.opcode != OP_VOIDCALL)
+
+	if (MONO_TYPE_ISSTRUCT (sig->ret)) {
+		MonoInst *temp = mono_compile_create_var (cfg, sig->ret, OP_LOCAL);
+		MonoInst *loada, *dummy_store;
+
+		temp->flags |= MONO_INST_IS_TEMP;
+
+		/* 
+		 * Emit a dummy store to the local holding the result so the
+		 * liveness info remains correct.
+		 */
+		NEW_DUMMY_STORE (cfg, dummy_store, temp->inst_c0);
+		MONO_ADD_INS (cfg->cbb, dummy_store);
+
+		/* FIXME: What is this ? */
+		/* we use this to allocate native sized structs */
+		temp->unused = sig->pinvoke;
+
+		NEW_TEMPLOADA (cfg, loada, temp->inst_c0);
+		MONO_ADD_INS (cfg->cbb, loada);
+
+		call->inst.dreg = loada->dreg;
+	} else if (call->inst.opcode != OP_VOIDCALL)
 		call->inst.dreg = alloc_dreg (cfg, call->inst.type);
 	
 	if (to_end)
@@ -2407,7 +2491,7 @@ mono_emit_method_call_spilled_full (MonoCompile *cfg, MonoMethod *method,
 	return mono_spill_call (cfg, call, signature, ret_object, ip, to_end);
 }
 
-inline static int
+inline static MonoInst*
 mono_emit_native_call (MonoCompile *cfg, gconstpointer func, MonoMethodSignature *sig,
 		       MonoInst **args, const guint8 *ip, gboolean ret_object, gboolean to_end)
 {
@@ -2422,10 +2506,10 @@ mono_emit_native_call (MonoCompile *cfg, gconstpointer func, MonoMethodSignature
 
 	mono_get_got_var (cfg);
 
-	return mono_spill_call (cfg, call, sig, ret_object, ip, to_end);
+	return call;
 }
 
-inline static int
+inline static MonoInst*
 mono_emit_jit_icall (MonoCompile *cfg, gconstpointer func, MonoInst **args, const guint8 *ip)
 {
 	MonoJitICallInfo *info = mono_find_jit_icall_by_addr (func);
@@ -2523,6 +2607,10 @@ get_memcpy_method (void)
 	return memcpy_method;
 }
 
+/*
+ * Emit code to copy a valuetype of type @klass whose address is stored in
+ * @src->dreg to memory whose address is stored at @dest->dreg.
+ */
 static void
 handle_stobj (MonoCompile *cfg, MonoInst *dest, MonoInst *src, const unsigned char *ip, MonoClass *klass, gboolean to_end, gboolean native) {
 	MonoInst *iargs [3];
@@ -2536,32 +2624,24 @@ handle_stobj (MonoCompile *cfg, MonoInst *dest, MonoInst *src, const unsigned ch
 	 * g_assert (klass && klass == src->klass && klass == dest->klass);
 	 */
 
+	g_assert (!to_end);
+
 	if (native)
 		n = mono_class_native_size (klass, &align);
 	else
 		n = mono_class_value_size (klass, &align);
 
 	if ((cfg->opt & MONO_OPT_INTRINS) && !to_end && n <= sizeof (gpointer) * 5) {
-		MonoInst *inst;
-		if (dest->opcode == OP_LDADDR) {
-			/* Keep liveness info correct */
-			NEW_DUMMY_STORE (cfg, inst, dest->inst_i0->inst_c0);
-			MONO_ADD_INS (cfg->cbb, inst);
-		}
-		MONO_INST_NEW (cfg, inst, OP_MEMCPY);
-		inst->inst_left = dest;
-		inst->inst_right = src;
-		inst->cil_code = ip;
-		inst->unused = n;
-		MONO_ADD_INS (cfg->cbb, inst);
-		return;
+		/* FIXME: Optimize the case when src/dest is OP_LDADDR */
+		mini_emit_memcpy (cfg, dest->dreg, 0, src->dreg, 0, n, 0);
+	} else {
+		iargs [0] = dest;
+		iargs [1] = src;
+		EMIT_NEW_ICONST (cfg, iargs [2], n);
+		
+		memcpy_method = get_memcpy_method ();
+		mono_emit_method_call_spilled_full (cfg, memcpy_method, memcpy_method->signature, iargs, ip, NULL, FALSE, to_end);
 	}
-	iargs [0] = dest;
-	iargs [1] = src;
-	NEW_ICONST (cfg, iargs [2], n);
-
-	memcpy_method = get_memcpy_method ();
-	mono_emit_method_call_spilled_full (cfg, memcpy_method, memcpy_method->signature, iargs, ip, NULL, FALSE, to_end);
 }
 
 static MonoMethod*
@@ -2611,7 +2691,7 @@ handle_initobj (MonoCompile *cfg, MonoInst *dest, const guchar *ip, MonoClass *k
 	}
 }
 
-static int
+static MonoInst*
 handle_alloc (MonoCompile *cfg, MonoClass *klass, gboolean for_box, const guchar *ip)
 {
 	MonoInst *iargs [2];
@@ -2632,8 +2712,7 @@ handle_alloc (MonoCompile *cfg, MonoClass *klass, gboolean for_box, const guchar
 		if (pass_lw) {
 			guint32 lw = vtable->klass->instance_size;
 			lw = ((lw + (sizeof (gpointer) - 1)) & ~(sizeof (gpointer) - 1)) / sizeof (gpointer);
-			NEW_ICONST (cfg, iargs [0], lw);
-			MONO_ADD_INS (cfg->cbb, iargs [0]);
+			EMIT_NEW_ICONST (cfg, iargs [0], lw);
 			NEW_VTABLECONST (cfg, iargs [1], vtable);
 			MONO_ADD_INS (cfg->cbb, iargs [1]);
 		}
@@ -2646,30 +2725,24 @@ handle_alloc (MonoCompile *cfg, MonoClass *klass, gboolean for_box, const guchar
 	return mono_emit_jit_icall (cfg, alloc_ftn, iargs, ip);
 }
 	
-static MonoInst *
+static MonoInst*
 handle_box (MonoCompile *cfg, MonoInst *val, const guchar *ip, MonoClass *klass)
 {
-	MonoInst *dest, *vstore;
-	int temp;
+	MonoInst *alloc, *dest, *vstore;
 
-	temp = handle_alloc (cfg, klass, TRUE, ip);
-	NEW_TEMPLOAD (cfg, dest, temp);
-	MONO_ADD_INS (cfg->cbb, dest);
+	alloc = handle_alloc (cfg, klass, TRUE, ip);
 
-	NEW_STORE_MEMBASE (cfg, vstore, mono_type_to_store_membase (&klass->byval_arg), dest->dreg, sizeof (MonoObject), val->dreg);
+	NEW_STORE_MEMBASE (cfg, vstore, mono_type_to_store_membase (&klass->byval_arg), alloc->dreg, sizeof (MonoObject), val->dreg);
 
 	if (vstore->opcode == CEE_STOBJ)
 		NOT_IMPLEMENTED;
 	else
 		MONO_ADD_INS (cfg->cbb, vstore);
 
-	NEW_TEMPLOAD (cfg, dest, temp);
-	MONO_ADD_INS (cfg->cbb, dest);
-
-	return dest;
+	return alloc;
 }
 
-static int
+static MonoInst*
 handle_array_new (MonoCompile *cfg, int rank, MonoInst **sp, unsigned char *ip)
 {
 	MonoMethodSignature *esig;
@@ -4469,13 +4542,13 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			} else {
 				NEW_LOCSTORE (cfg, ins, n, *sp);
 				ins->cil_code = ip;
-				MONO_ADD_INS (bblock, ins);
 
 				if (ins->opcode == CEE_STOBJ) {
-					NOT_IMPLEMENTED;
 					NEW_LOCLOADA (cfg, ins, n);
+					MONO_ADD_INS (cfg->cbb, ins);
 					handle_stobj (cfg, ins, *sp, ip, ins->klass, FALSE, FALSE);
-				}
+				} else
+					MONO_ADD_INS (bblock, ins);
 			}
 			++ip;
 			inline_costs += 1;
@@ -5821,6 +5894,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 		case CEE_NEWOBJ: {
 			MonoInst *iargs [2];
 			MonoMethodSignature *fsig;
+			MonoInst *alloc;
 			int temp;
 			
 			CHECK_OPSIZE (5);
@@ -5880,9 +5954,8 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 					 */
 					mono_get_got_var (cfg);
 				} else {
-					temp = handle_alloc (cfg, cmethod->klass, FALSE, ip);
-					NEW_TEMPLOAD (cfg, *sp, temp);
-					MONO_ADD_INS (bblock, *sp);
+					alloc = handle_alloc (cfg, cmethod->klass, FALSE, ip);
+					*sp = alloc;
 				}
 
 				/* Avoid virtual calls to ctors if possible */
@@ -5924,8 +5997,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				}
 			}
 
-			NEW_TEMPLOAD (cfg, *sp, temp);
-			MONO_ADD_INS (bblock, *sp);
+			*sp = alloc;
 			sp++;
 			
 			ip += 5;
@@ -8086,8 +8158,9 @@ mono_spill_global_vars (MonoCompile *cfg)
  * - clean up/automatize setting of ins->cil_code
  * - clean up usage of OP_P/OP_ opcodes
  * - allocate dregs automatically in MONO_EMIT_NEW macros
- * - cleanup calls
+ * - cleanup calls. especially the spill stuff
  * - handle the emit ins + need it/its dreg pattern
+ * - cleanup usage of DUMMY_USE
  * - COMPARE/BEQ as separate instructions or unify them ?
  *   - keeping them separate allows specialized compare instructions like
  *     compare_imm, compare_membase

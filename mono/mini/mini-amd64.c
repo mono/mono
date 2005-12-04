@@ -1431,7 +1431,7 @@ mono_arch_call_opcode2 (MonoCompile *cfg, MonoCallInst *call, int is_virtual) {
 			call->out_args = arg;
 		}
 
-		if (is_virtual && i == 0) {
+		if (0 && is_virtual && i == 0) {
 			/* the argument will be attached to the call instruction */
 			in = call->args [i];
 		} else {
@@ -2613,6 +2613,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			amd64_breakpoint (code);
 			break;
 		case CEE_NOP:
+		case OP_DUMMY_STORE:
 			break;
 		case OP_ADDCC:
 		case CEE_ADD:

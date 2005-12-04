@@ -45,10 +45,13 @@ MINI_OP(OP_LCALL,	"lcall", LREG, NONE, NONE)
 MINI_OP(OP_LCALLVIRT,	"lcallvirt", LREG, NONE, NONE)
 MINI_OP(OP_LCALL_REG,	"lcall_reg", LREG, IREG, NONE)
 MINI_OP(OP_LCALL_MEMBASE,	"lcall_membase", LREG, IREG, NONE)
-MINI_OP(OP_VCALL, 	"vcall", NONE, NONE, NONE)
-MINI_OP(OP_VCALLVIRT, 	"vcallvirt", NONE, NONE, NONE)
-MINI_OP(OP_VCALL_REG,	"vcall_reg", NONE, IREG, NONE)
-MINI_OP(OP_VCALL_MEMBASE,	"vcall_membase", NONE, IREG, NONE)
+
+/* ins->dreg is the vreg holding the address where the return value is stored */
+MINI_OP(OP_VCALL, 	"vcall", IREG, NONE, NONE)
+MINI_OP(OP_VCALLVIRT, 	"vcallvirt", IREG, NONE, NONE)
+MINI_OP(OP_VCALL_REG,	"vcall_reg", IREG, IREG, NONE)
+MINI_OP(OP_VCALL_MEMBASE,	"vcall_membase", IREG, IREG, NONE)
+
 MINI_OP(OP_CALL,        "call", IREG, NONE, NONE)
 MINI_OP(OP_CALL_REG,	"call_reg", IREG, IREG, NONE)
 MINI_OP(OP_CALL_MEMBASE,	"call_membase", IREG, IREG, NONE)
