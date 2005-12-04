@@ -67,21 +67,21 @@ namespace MonoTests.System.Xml.Xsl
 		public void InvalidStylesheet2 ()
 		{
 			string xsl = @"<xsl:stylesheet xmlns:xsl='http://www.w3.org/1999/XSL/Transform' version='1.0'>
-				<xsl:template match='/root'>
-					<xsl:call-template name='foo'>
-						<xsl:with-param name='name' value='text()' />
-					</xsl:call-template>
-				</xsl:template>
-				<xsl:template name='foo'>
-					<xsl:param name='name' />
-					<result>
-						<xsl:if test='1'>
-							<xsl:variable name='last' value='text()' />
-							<xsl:value-of select='$last' />
-						</xsl:if>
-					</result>
-				</xsl:template>
-			</xsl:stylesheet>
+<xsl:template match='/root'>
+	<xsl:call-template name='foo'>
+		<xsl:with-param name='name' value='text()' />
+	</xsl:call-template>
+</xsl:template>
+<xsl:template name='foo'>
+	<xsl:param name='name' />
+	<result>
+		<xsl:if test='1'>
+			<xsl:variable name='last' value='text()' />
+			<xsl:value-of select='$last' />
+		</xsl:if>
+	</result>
+</xsl:template>
+</xsl:stylesheet>
 ";
 			XslTransform xslt = new XslTransform ();
 			xslt.Load (new XPathDocument (new XmlTextReader (xsl, XmlNodeType.Document, null)));
@@ -91,19 +91,20 @@ namespace MonoTests.System.Xml.Xsl
 		[Category ("NotWorking")] // it depends on "mcs" existence
 		public void MsxslTest() {
 			string _styleSheet = @"
-			<xslt:stylesheet xmlns:xslt=""http://www.w3.org/1999/XSL/Transform"" version=""1.0"" xmlns:msxsl=""urn:schemas-microsoft-com:xslt"" xmlns:stringutils=""urn:schemas-sourceforge.net-blah"">
-				<xslt:output method=""text"" />
-				<msxsl:script language=""C#"" implements-prefix=""stringutils"">
-					<![CDATA[
-						string PadRight( string str, int padding) {
-							return str.PadRight(padding);
-						}
-					]]>
-				</msxsl:script>
-				<xslt:template match=""test"">
-					<xslt:value-of select=""stringutils:PadRight(@name, 20)"" />
-				</xslt:template>
-			</xslt:stylesheet>";
+			<xslt:stylesheet xmlns:xslt=""http://www.w3.org/1999/XSL/Transform"" version=""1.0"" 
+xmlns:msxsl=""urn:schemas-microsoft-com:xslt"" xmlns:stringutils=""urn:schemas-sourceforge.net-blah"">
+<xslt:output method=""text"" />
+<msxsl:script language=""C#"" implements-prefix=""stringutils"">
+	<![CDATA[
+		string PadRight( string str, int padding) {
+			return str.PadRight(padding);
+		}
+	]]>
+</msxsl:script>
+<xslt:template match=""test"">
+	<xslt:value-of select=""stringutils:PadRight(@name, 20)"" />
+</xslt:template>
+</xslt:stylesheet>";
 
 			StringReader stringReader = new StringReader(_styleSheet);
 			
@@ -127,18 +128,19 @@ namespace MonoTests.System.Xml.Xsl
 		[Test]
 		public void MSXslNodeSet ()
 		{
-			string xsl = @"<xsl:stylesheet version='1.0' xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-microsoft-com:xslt'>
-				<xsl:template match='/'>
-					<root>
-						<xsl:variable name='var'>
-							<xsl:copy-of select='root/foo' />
-						</xsl:variable>
-						<xsl:for-each select='msxsl:node-set($var)/foo'>
-							<xsl:value-of select='name(.)' />: <xsl:value-of select='@attr' />
-						</xsl:for-each>
-					</root>
-				</xsl:template>
-			</xsl:stylesheet>";
+			string xsl = @"<xsl:stylesheet version='1.0' 
+xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-microsoft-com:xslt'>
+<xsl:template match='/'>
+	<root>
+		<xsl:variable name='var'>
+			<xsl:copy-of select='root/foo' />
+		</xsl:variable>
+		<xsl:for-each select='msxsl:node-set($var)/foo'>
+			<xsl:value-of select='name(.)' />: <xsl:value-of select='@attr' />
+		</xsl:for-each>
+	</root>
+</xsl:template>
+</xsl:stylesheet>";
 			StringWriter sw = new StringWriter ();
 			XslTransform t = new XslTransform ();
 			t.Load (new XPathDocument (new StringReader (xsl)));
@@ -155,16 +157,17 @@ namespace MonoTests.System.Xml.Xsl
 		[ExpectedException (typeof (XPathException))]
 		public void MSXslNodeSetRejectsNodeSet ()
 		{
-			string xsl = @"<xsl:stylesheet version='1.0' xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-microsoft-com:xslt'>
-				<xsl:template match='/'>
-					<root>
-						<!-- msxsl:node-set() does not accept a node set -->
-						<xsl:for-each select='msxsl:node-set(root/foo)'>
-							<xsl:value-of select='name(.)' />: <xsl:value-of select='@attr' />
-						</xsl:for-each>
-					</root>
-				</xsl:template>
-			</xsl:stylesheet>";
+			string xsl = @"<xsl:stylesheet version='1.0' 
+xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-microsoft-com:xslt'>
+<xsl:template match='/'>
+	<root>
+		<!-- msxsl:node-set() does not accept a node set -->
+		<xsl:for-each select='msxsl:node-set(root/foo)'>
+			<xsl:value-of select='name(.)' />: <xsl:value-of select='@attr' />
+		</xsl:for-each>
+	</root>
+</xsl:template>
+</xsl:stylesheet>";
 			StringWriter sw = new StringWriter ();
 			XslTransform t = new XslTransform ();
 			t.Load (new XPathDocument (new StringReader (xsl)));
@@ -175,11 +178,11 @@ namespace MonoTests.System.Xml.Xsl
 		public void EvaluateEmptyVariableAsBoolean ()
 		{
 			string xsl = @"<xsl:stylesheet xmlns:xsl='http://www.w3.org/1999/XSL/Transform' version='1.0'>
-				<xsl:template match='/'>
-					<xsl:variable name='var'><empty /></xsl:variable>
-					<root><xsl:if test='$var'>true</xsl:if></root>
-				</xsl:template>
-			</xsl:stylesheet>";
+<xsl:template match='/'>
+	<xsl:variable name='var'><empty /></xsl:variable>
+	<root><xsl:if test='$var'>true</xsl:if></root>
+</xsl:template>
+</xsl:stylesheet>";
 			XslTransform t = new XslTransform ();
 			t.Load (new XPathDocument (new StringReader (xsl)));
 			StringWriter sw = new StringWriter ();
@@ -195,10 +198,10 @@ namespace MonoTests.System.Xml.Xsl
 		public void NotAllowedPatternAxis ()
 		{
 			string xsl = @"<xsl:stylesheet xmlns:xsl='http://www.w3.org/1999/XSL/Transform' version='1.0'>
-				<xsl:template match='/descendant-or-self::node()/elem'>
-					<ERROR/>
-				</xsl:template>
-			</xsl:stylesheet>";
+<xsl:template match='/descendant-or-self::node()/elem'>
+	<ERROR/>
+</xsl:template>
+</xsl:stylesheet>";
 			new XslTransform ().Load (new XPathDocument (
 				new StringReader (xsl)));
 		}
@@ -208,9 +211,9 @@ namespace MonoTests.System.Xml.Xsl
 		public void ImportIncorrectlyLocated ()
 		{
 			string xsl = @"<xsl:transform xmlns:xsl='http://www.w3.org/1999/XSL/Transform' version='1.0'>
-				<xsl:template match='/'></xsl:template>
-				<xsl:import href='dummy.xsl' />
-			</xsl:transform>";
+<xsl:template match='/'></xsl:template>
+	<xsl:import href='dummy.xsl' />
+</xsl:transform>";
 			new XslTransform ().Load (new XPathDocument (
 				new StringReader (xsl)));
 		}
@@ -405,10 +408,6 @@ namespace MonoTests.System.Xml.Xsl
 
 		// http://support.microsoft.com/default.aspx?scid=kb;en-us;834667
 		[Test]
-#if ONLY_1_1
-		// bug is not yet fixed in .NET 1.1 SP1
-		[Category ("NotDotNet")]
-#endif
 		public void LocalParameter ()
 		{
 			string xsltFragment = @"<?xml version=""1.0"" encoding=""UTF-8"" ?>
