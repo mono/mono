@@ -1,3 +1,7 @@
+2005-12-04  Alexander Olk  <alex.olk@googlemail.com>
+
+	* System.Windows.Forms.dll.sources: Added ThemeClearlooks.cs
+
 2005-12-02  Jackson Harper  <jackson@ximian.com>
 
 	* System.Windows.Forms.dll.sources: New implicit scrollbars.

@@ -454,6 +454,7 @@ System.Windows.Forms/TextBoxBase.cs
 System.Windows.Forms/TextControl.cs
 System.Windows.Forms/TextFormatFlags.cs
 System.Windows.Forms/Theme.cs
+System.Windows.Forms/ThemeClearlooks.cs
 System.Windows.Forms/ThemeEngine.cs
 System.Windows.Forms/ThemeGtk.cs
 System.Windows.Forms/ThemeNice.cs
