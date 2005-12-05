@@ -1,3 +1,9 @@
+2005-12-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CompareInfoTest.cs : split the last case in NullCharacter() out
+	  and marked it as NotDotNet (.NET is inconsistent between Compare
+	  and IndexOf).
+
 2005-11-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CompareInfoTest.cs : added NullCharacter() for bug #76702.

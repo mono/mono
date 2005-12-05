@@ -1036,6 +1036,13 @@ public class CompareInfoTest : Assertion
 		AssertEquals ("#1", -1, "MONO".IndexOf ("\0\0\0"));
 		AssertEquals ("#2", -1, "MONO".LastIndexOf ("\0\0\0"));
 		AssertEquals ("#3", 1, "MONO".CompareTo ("\0\0\0"));
+	}
+
+	[Test]
+	[Category ("NotDotNet")]
+	// MS.NET treats it as equivalent, while in IndexOf() it does not match.
+	public void NullCharacterWeird ()
+	{
 		AssertEquals ("#4", -1, "MONO".CompareTo ("MONO\0\0\0"));
 	}
 
