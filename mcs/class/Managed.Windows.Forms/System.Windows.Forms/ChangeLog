@@ -1,3 +1,8 @@
+2005-12-05  Mike Kestner  <mkestner@novell.com>
+
+	* Control.cs (PreProcessMessage): add Keys.Alt based on LParam value.
+	* X11Keyboard.cs (SendKeyboardInput): formal lParam for alt mod.
+
 2005-12-04  Alexander Olk  <alex.olk@googlemail.com>
 
 	* ThemeClearlooks.cs: Initial check-in, activate with

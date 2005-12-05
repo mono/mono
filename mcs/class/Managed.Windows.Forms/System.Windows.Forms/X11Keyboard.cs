@@ -281,7 +281,10 @@ namespace System.Windows.Forms {
 			MSG msg = new MSG ();
 			msg.message = message;
 			msg.wParam = (IntPtr) vkey;
-			msg.lParam = IntPtr.Zero;
+			if ((key_state_table [(int) VirtualKeys.VK_MENU] & 0x80) != 0)
+				msg.lParam = new IntPtr (0x20000000);
+			else
+				msg.lParam = IntPtr.Zero;
 
 			return msg;
 		}

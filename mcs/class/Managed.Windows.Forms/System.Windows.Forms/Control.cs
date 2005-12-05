@@ -2672,6 +2672,8 @@ namespace System.Windows.Forms
 
 			if ((msg.Msg == (int)Msg.WM_KEYDOWN) || (msg.Msg == (int)Msg.WM_SYSKEYDOWN)) {
 				key_data = (Keys)msg.WParam.ToInt32();
+				if (((int)msg.LParam & 0x20000000) > 0)
+					key_data |= Keys.Alt;
 				if (!ProcessCmdKey(ref msg, key_data)) {
 					if (IsInputKey(key_data)) {
 						return true;
