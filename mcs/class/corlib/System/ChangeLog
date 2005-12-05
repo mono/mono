@@ -1,3 +1,6 @@
+2005-12-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AppDomain.cs: CreateComInstanceFrom isn't static in any profile.
 
 Mon Dec 5 15:14:59 CET 2005 Paolo Molaro <lupus@ximian.com>
 

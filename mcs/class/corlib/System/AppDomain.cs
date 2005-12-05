@@ -256,8 +256,8 @@ namespace System {
 		}
 
 #if NET_1_1
-		public static ObjectHandle CreateComInstanceFrom (string assemblyName, string typeName,
-		                                                  byte [] hashValue, AssemblyHashAlgorithm hashAlgorithm)
+		public ObjectHandle CreateComInstanceFrom (string assemblyName, string typeName,
+			byte [] hashValue, AssemblyHashAlgorithm hashAlgorithm)
 		{
 			return Activator.CreateComInstanceFrom (assemblyName, typeName, hashValue ,hashAlgorithm);
 		}
