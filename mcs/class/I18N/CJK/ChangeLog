@@ -1,3 +1,8 @@
+2005-12-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* I18N.CJK_test.dll.sources : new file for NUnit test.
+	* Makefile : removed NO_TEST.
+
 2005-12-03  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CP51932.cs :

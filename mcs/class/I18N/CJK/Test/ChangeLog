@@ -1,0 +1,3 @@
+2005-12-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* I18N.CJK.Test.cs : initial NUnit test checkin.
