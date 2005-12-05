@@ -1,3 +1,8 @@
+
+Mon Dec 5 15:13:26 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* ILGenerator.cs: fixed emitting doubles on ARM.
+
 2005-12-02  Alp Toker  <alp@atoker.com>
 
 	* GenericTypeParameterBuilder.cs:
