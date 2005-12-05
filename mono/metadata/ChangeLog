@@ -1,3 +1,19 @@
+2005-12-05  Raja R Harinath  <rharinath@novell.com>
+
+	* metadata.c (select_container): New.  Refactor code to select the
+	appropriate GenericContainer given the type of generic parameter
+	we are looking for.
+	(mono_metadata_parse_generic_param): Take a MonoGenericContainer,
+	not a MonoGenericContext.  Use select_container.  Update parameters.
+	(do_mono_metadata_parse_type): Combine the code for MONO_TYPE_VAR
+	and MONO_TYPE_MVAR.
+	(unwrap_arrays): Remove duplicate tests.
+	(find_generic_param): Rename from 'has_same_context'.  Now walks a
+	generic instantiated class to find any arguments that are generic
+	parameters.
+	(mono_type_create_from_typespec_full): Use find_generic_param to
+	avoid evicting some generic instantiations from the typespec
+	cache.
 
 Mon Dec 5 15:07:42 GMT 2005 Paolo Molaro <lupus@ximian.com>
 
