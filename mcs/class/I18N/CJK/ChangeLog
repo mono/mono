@@ -1,5 +1,10 @@
 2005-12-05  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* CP949.cs : migration from GetBytes (of Encoding) to GetBytesImpl
+	  (of MonoEncoding). Added fallback support.
+
+2005-12-05  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* I18N.CJK_test.dll.sources : new file for NUnit test.
 	* Makefile : removed NO_TEST.
 

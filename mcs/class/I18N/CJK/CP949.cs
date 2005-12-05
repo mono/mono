@@ -109,11 +109,16 @@ namespace I18N.CJK
         bool useUHC;
 
         // Get the bytes that result from encoding a character buffer.
-        public override int GetBytes(char[] chars, int charIndex, int charCount,
-                         byte[] bytes, int byteIndex)
+        public unsafe override int GetBytesImpl (char* chars, int charCount,
+                         byte* bytes, int byteCount)
         {
+            int charIndex = 0;
+            int byteIndex = 0;
+#if NET_2_0
+            EncoderFallbackBuffer buffer = null;
+#endif
+
             // 00 00 - FF FF
-            base.GetBytes(chars, charIndex, charCount, bytes, byteIndex);
             int origIndex = byteIndex;
             while (charCount-- > 0) {
                 char c = chars[charIndex++];
@@ -124,7 +129,12 @@ namespace I18N.CJK
                 byte b1 = convert.u2n[((int)c) * 2];
                 byte b2 = convert.u2n[((int)c) * 2 + 1];
                 if (b1 == 0 && b2 == 0) {
+#if NET_2_0
+                    HandleFallback (ref buffer, chars, ref charIndex, ref charCount,
+                        bytes, ref byteIndex, ref byteCount);
+#else
                     bytes[byteIndex++] = (byte)'?';
+#endif
                 } else {
                     bytes[byteIndex++] = b1;
                     bytes[byteIndex++] = b2;
