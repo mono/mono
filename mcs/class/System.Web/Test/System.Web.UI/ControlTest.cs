@@ -118,6 +118,34 @@ namespace MonoTests.System.Web.UI
 			Assert.IsNull (nc.ID, "null-2");
 			Assert.IsTrue (-1 != control.UniqueID.IndexOfAny (new char [] {':', '$' }), "separator");
 		}
+
+		class DerivedControl : Control {
+			ControlCollection coll;
+
+			public DerivedControl ()
+			{
+				coll = new ControlCollection (this);
+			}
+
+			public override ControlCollection Controls {
+				get { return coll; }
+			}
+		}
+
+		// From bug #76919: Control uses _controls instead of
+		// Controls when RenderChildren is called.
+		[Test]
+		public void Controls1 ()
+		{
+			DerivedControl derived = new DerivedControl ();
+			derived.Controls.Add (new LiteralControl ("hola"));
+			StringWriter sw = new StringWriter ();
+			HtmlTextWriter htw = new HtmlTextWriter (sw);
+			derived.RenderControl (htw);
+			string result = sw.ToString ();
+
+			Assert.AreEqual ("", result, "#01");
+		}
 	}
 }
 

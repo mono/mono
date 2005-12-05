@@ -1,3 +1,8 @@
+2005-12-05 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ControlTest.cs: new tests to prove that Control uses its own
+	ControlCollection field instead of the Controls property when rendering.
+
 2005-11-29 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ControlCollectionTest.cs: new tests.
