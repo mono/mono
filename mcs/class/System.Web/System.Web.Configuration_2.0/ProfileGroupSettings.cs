@@ -58,7 +58,10 @@ namespace System.Web.Configuration
 			properties.Add (propertySettingsProp);
 		}
 
-		[MonoTODO]
+		internal ProfileGroupSettings ()
+		{
+		}
+
 		public ProfileGroupSettings (string name)
 		{
 			this.Name = name;

@@ -55,6 +55,10 @@ namespace System.Web.Configuration {
 			properties.Add (policyFileProp);
 		}
 
+		internal TrustLevel ()
+		{
+		}
+
 		public TrustLevel (string name, string policyFile)
 		{
 			this.Name = name;

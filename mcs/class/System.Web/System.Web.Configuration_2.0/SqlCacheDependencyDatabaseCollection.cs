@@ -86,15 +86,27 @@ namespace System.Web.Configuration {
 			BaseRemoveAt (index);
 		}
 
-		[MonoTODO]
 		public void Set (SqlCacheDependencyDatabase user)
 		{
-			throw new NotImplementedException ();
+			SqlCacheDependencyDatabase existing = Get (user.Name);
+
+			if (existing == null) {
+				Add (user);
+			}
+			else {
+				int index = BaseIndexOf (existing);
+				RemoveAt (index);
+				BaseAdd (index, user);
+			}
 		}
 
-		[MonoTODO]
-		public String[] AllKeys {
-			get { throw new NotImplementedException (); }
+		public string[] AllKeys {
+			get {
+				string[] keys = new string[Count];
+				for (int i = 0; i < Count; i ++)
+					keys[i] = this[i].Name;
+				return keys;
+			}
 		}
 
 		public SqlCacheDependencyDatabase this [int index] {

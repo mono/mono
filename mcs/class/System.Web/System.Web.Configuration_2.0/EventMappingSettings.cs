@@ -67,6 +67,10 @@ namespace System.Web.Configuration {
 			properties.Add (typeProp);
 		}
 
+		internal EventMappingSettings ()
+		{
+		}
+
 		public EventMappingSettings (string name, string type)
 		{
 			this.Name = name;

@@ -61,7 +61,7 @@ namespace System.Web.Configuration
 
 		protected override ConfigurationElement CreateNewElement ()
 		{
-			return new ProfileGroupSettings ("");
+			return new ProfileGroupSettings ();
 		}
 
 		public ProfileGroupSettings Get (int index)
@@ -79,10 +79,9 @@ namespace System.Web.Configuration
 			return ((ProfileGroupSettings)element).Name;
 		}
 
-		[MonoTODO]
 		public string GetKey (int index)
 		{
-			throw new NotImplementedException ();
+			return (string)BaseGetKey (index);
 		}
 
 		public int IndexOf (ProfileGroupSettings group)
@@ -109,18 +108,30 @@ namespace System.Web.Configuration
 		[MonoTODO]
 		protected override void ResetModified ()
 		{
-			throw new NotImplementedException ();
+			base.ResetModified ();
 		}
 
-		[MonoTODO]
 		public void Set (ProfileGroupSettings group)
 		{
-			throw new NotImplementedException ();
+			ProfileGroupSettings existing = Get (group.Name);
+
+			if (existing == null) {
+				Add (group);
+			}
+			else {
+				int index = BaseIndexOf (existing);
+				RemoveAt (index);
+				BaseAdd (index, group);
+			}
 		}
 
-		[MonoTODO]
 		public string[ ] AllKeys {
-			get { throw new NotImplementedException (); }
+			get {
+				string[] keys = new string[Count];
+				for (int i = 0; i < Count; i ++)
+					keys[i] = this[i].Name;
+				return keys;
+			}
 		}
 
 		protected override ConfigurationPropertyCollection Properties {

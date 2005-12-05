@@ -70,6 +70,10 @@ namespace System.Web.Configuration
 			elementProperty = new ConfigurationElementProperty (new CallbackValidator (typeof (TagPrefixInfo), ValidateElement));
 		}
 
+		internal TagPrefixInfo ()
+		{
+		}
+
 		public TagPrefixInfo (string tagPrefix, string nameSpace, string assembly, string tagName, string source)
 		{
 			this.TagPrefix = tagPrefix;

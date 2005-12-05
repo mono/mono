@@ -49,7 +49,6 @@ namespace System.Web.Configuration
 		{
 		}
 			
-		[MonoTODO]
 		public void Add (HttpModuleAction httpModuleAction)
 		{
 			BaseAdd (httpModuleAction);
@@ -60,7 +59,6 @@ namespace System.Web.Configuration
 			BaseClear ();
 		}
 
-		[MonoTODO]
 		protected override ConfigurationElement CreateNewElement ()
 		{
 			return new HttpModuleAction ();

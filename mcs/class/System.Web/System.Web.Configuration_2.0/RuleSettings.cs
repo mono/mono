@@ -79,6 +79,10 @@ namespace System.Web.Configuration {
 			properties.Add (providerProp);
 		}
 
+		internal RuleSettings ()
+		{
+		}
+
 		public RuleSettings (string name, string eventName, string provider, string profile, int minInstances, int maxLimit, TimeSpan minInterval, string custom)
 		{
 			this.Name = name;

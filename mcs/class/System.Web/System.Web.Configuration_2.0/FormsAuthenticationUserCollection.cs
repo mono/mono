@@ -95,16 +95,26 @@ namespace System.Web.Configuration
 			BaseRemoveAt (index);
 		}
 
-		[MonoTODO]
 		public void Set (FormsAuthenticationUser user)
 		{
-			throw new NotImplementedException ();
+			FormsAuthenticationUser existing = Get (user.Name);
+
+			if (existing == null) {
+				Add (user);
+			}
+			else {
+				int index = BaseIndexOf (existing);
+				RemoveAt (index);
+				BaseAdd (index, user);
+			}
 		}
 
-		[MonoTODO]
 		public string[ ] AllKeys {
 			get {
-				throw new NotImplementedException ();
+				string[] keys = new string[Count];
+				for (int i = 0; i < Count; i ++)
+					keys[i] = this[i].Name;
+				return keys;
 			}
 		}
 

@@ -83,6 +83,10 @@ namespace System.Web.Configuration {
 			properties.Add (varyByParamProp);
 		}
 
+		internal OutputCacheProfile ()
+		{
+		}
+
 		public OutputCacheProfile (string name)
 		{
 			this.Name = name;

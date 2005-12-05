@@ -55,15 +55,14 @@ namespace System.Web.Configuration {
 			BaseClear ();
 		}
 
-		[MonoTODO]
 		public bool Contains (string name)
 		{
-			throw new NotImplementedException ();
+			return BaseGet (name) != null;
 		}
 
 		protected override ConfigurationElement CreateNewElement ()
 		{
-			return new EventMappingSettings ("", "");
+			return new EventMappingSettings ();
 		}
 
 		protected override object GetElementKey (ConfigurationElement element)
@@ -74,13 +73,17 @@ namespace System.Web.Configuration {
 		[MonoTODO]
 		public int IndexOf (string name)
 		{
-			throw new NotImplementedException ();
+			EventMappingSettings settings = (EventMappingSettings)BaseGet (name);
+			if (settings == null)
+				return -1; /* XXX */
+			else
+				return BaseIndexOf (settings);
 		}
 
-		[MonoTODO]
+		[MonoTODO ("why did they use 'Insert' and not 'Add' as other collections do?")]
 		public void Insert (int index, EventMappingSettings eventMappingSettings)
 		{
-			throw new NotImplementedException ();
+			BaseAdd (index, eventMappingSettings);
 		}
 
 		public void Remove (string name)

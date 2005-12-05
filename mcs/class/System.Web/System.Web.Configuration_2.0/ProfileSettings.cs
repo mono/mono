@@ -74,6 +74,10 @@ namespace System.Web.Configuration {
 
 		}
 
+		internal ProfileSettings ()
+		{
+		}
+
 		public ProfileSettings (string name)
 		{
 			this.Name = name;

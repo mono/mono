@@ -1,5 +1,99 @@
 2005-12-04  Chris Toshok  <toshok@ximian.com>
 
+	* UrlMapping.cs: add an internal argument-less ctor.
+
+	* UrlMappingCollection.cs (CreateNewElement): use argument-less
+	ctor.
+	(GetKey): implement.
+	(AllKeys): implement.
+
+	* TrustLevel.cs: add an internal argument-less ctor.
+	
+	* TrustLevelCollection.cs (Set): implement.
+	(CreateNewElement): use argument-less ctor.
+	(IsElementName): implement.
+	(ElementName): implement.
+	(set_Item (int index)): use Set.
+	(ThrowOnDuplicate): implement.
+	
+	* TagPrefixInfo.cs: add internal argument-less ctor.
+
+	* TagPrefixCollection.cs (CreateNewElement): call argument-less
+	ctor.
+	(CollectionType): add text to TODO.
+	(ElementName): implement.
+	
+	* SqlCacheDependencyDatabaseCollection.cs (Set): implement.
+	(AllKeys): implement.
+
+	* RuleSettings.cs: add internal argument-less ctor.
+
+	* RuleSettingsCollection.cs (Contains): implement.
+	(CreateNewElement): use argument-less ctor.
+	(IndexOf): implement.
+	(Insert): implement.
+
+	* RootProfilePropertySettingsCollection.cs (IsModified): chain up
+	to base.IsModified for now.
+	(Reset): chain up to base.Reset for now.
+	(ResetModified): chain up to base.ResetModified for now.
+
+	* ProfileSettings.cs: add internal argument-less ctor.
+
+	* ProfileSettingsCollection.cs (Contains): implement.
+	(CreateNewElement): use argument-less ctor.
+	(IndexOf): implement.
+	(Insert): implement.
+	
+	* ProfilePropertySettingsCollection.cs (IndexOf): implement.
+	(Set): implement.
+	(AllKeys): implement.
+	
+	* ProfileGroupSettings.cs: add internal argument-less ctor.
+
+	* ProfileGroupSettingsCollection.cs (CreateNewElement): use
+	parameter-less ctor.
+	(GetKey): implement.
+	(ResetModified): for now call base.ResetModified.
+	(Set): implement.
+	(AllKeys): implement.
+	
+	* OutputCacheProfile.cs: add internal argument-less ctor.
+
+	* OutputCacheProfileCollection.cs (CreateNewElement): use
+	parameter-less ctor.
+	(Set): implement.
+	(AllKeys): implement.
+
+	* HttpModuleActionCollection.cs (Add): remove MonoTODO.
+	(CreateNewElement): same.
+	
+	* HttpHandlerActionCollection.cs (GetElementKey): build up the key
+	from both the path and the verb.
+	(Remove): same.
+
+	* FormsAuthenticationUserCollection.cs (Set): implement.
+	(AllKeys): implement.
+
+	* EventMappingSettings.cs: add an internal argument-less ctor.
+
+	* EventMappingSettingsCollection.cs (Contains): implement.
+	(CreateNewElement): use argument-less ctor.
+	(IndexOf): implement.
+	(Insert): implement.
+
+	* CompilerCollection.cs (GetKey): implement.
+	(AllKeys): implement.
+
+	* ClientTargetCollection.cs (GetKey): implement.
+	(AllKeys): implement.
+
+	* AuthorizationRuleCollection.cs (Set): implement.
+	(ElementName): add some text to the MonoTODO.
+	(set_Item (int index)): use Set.
+
+2005-12-04  Chris Toshok  <toshok@ximian.com>
+
 	* CustomError.cs: add an internal argument-less ctor for use by
 	the collection.
 

@@ -64,6 +64,10 @@ namespace System.Web.Configuration {
 			properties.Add (urlProp);
 		}
 
+		internal UrlMapping ()
+		{
+		}
+
 		public UrlMapping (string url, string mappedUrl)
 		{
 			this.Url = url;

@@ -70,15 +70,18 @@ namespace System.Web.Configuration
 			return ((Compiler)element).Language;
 		}
 
-		[MonoTODO]
 		public string GetKey (int index)
 		{
-			throw new NotImplementedException ();
+			return (string)BaseGetKey (index);
 		}
 
-		[MonoTODO]
 		public string[ ] AllKeys {
-			get { throw new NotImplementedException (); }
+			get {
+				string[] keys = new string[Count];
+				for (int i = 0; i < Count; i ++)
+					keys[i] = this[i].Language;
+				return keys;
+			}
 		}
 
 		protected override ConfigurationElementCollectionType CollectionType {
@@ -107,6 +110,7 @@ namespace System.Web.Configuration
 			}
 		}
 
+#region CompatabilityCode
 		[MonoTODO ("we shouldn't need this..")]
 		internal bool CompareLanguages (string lang1, string lang2)
 		{
@@ -117,6 +121,7 @@ namespace System.Web.Configuration
 		{
 			BaseAdd (compiler);
 		}
+#endregion
 	}
 }
 #endif

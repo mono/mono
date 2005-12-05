@@ -57,7 +57,7 @@ namespace System.Web.Configuration {
 
 		protected override ConfigurationElement CreateNewElement ()
 		{
-			return new UrlMapping ("", "");
+			return new UrlMapping ();
 		}
 
 		protected override object GetElementKey (ConfigurationElement element)
@@ -65,10 +65,9 @@ namespace System.Web.Configuration {
 			return ((UrlMapping)element).Url;
 		}
 
-		[MonoTODO]
 		public string GetKey (int index)
 		{
-			throw new NotImplementedException ();
+			return (string)BaseGetKey (index);
 		}
 
 		public void Remove (string name)
@@ -86,9 +85,13 @@ namespace System.Web.Configuration {
 			BaseRemoveAt (index);
 		}
 
-		[MonoTODO]
-		public String[] AllKeys {
-			get { throw new NotImplementedException (); }
+		public string[] AllKeys {
+			get {
+				string[] keys = new string[Count];
+				for (int i = 0; i < Count; i ++)
+					keys[i] = this[i].Url;
+				return keys;
+			}
 		}
 
 		public UrlMapping this [int index] {

@@ -69,7 +69,7 @@ namespace System.Web.Configuration
 		[MonoTODO]
 		protected override bool IsModified ()
 		{
-			throw new NotImplementedException ();
+			return base.IsModified ();
 		}
 
 		[MonoTODO]
@@ -81,13 +81,13 @@ namespace System.Web.Configuration
 		[MonoTODO]
 		protected override void Reset (ConfigurationElement parentElement)
 		{
-			throw new NotImplementedException ();
+			base.Reset (parentElement);
 		}
 
 		[MonoTODO]
 		protected override void ResetModified ()
 		{
-			throw new NotImplementedException ();
+			base.ResetModified ();
 		}
 
 		[MonoTODO]

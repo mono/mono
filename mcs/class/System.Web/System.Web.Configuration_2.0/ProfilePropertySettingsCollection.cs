@@ -89,10 +89,9 @@ namespace System.Web.Configuration
 			return s.Name;
 		}
 
-		[MonoTODO]
 		public int IndexOf (ProfilePropertySettings propertySettings)
 		{
-			throw new NotImplementedException ();
+			return BaseIndexOf (propertySettings);
 		}
 
 		[MonoTODO]
@@ -111,16 +110,26 @@ namespace System.Web.Configuration
 			BaseRemoveAt (index);
 		}
 
-		[MonoTODO]
 		public void Set (ProfilePropertySettings propertySettings)
 		{
-			throw new NotImplementedException ();
+			ProfilePropertySettings existing = Get (propertySettings.Name);
+
+			if (existing == null) {
+				Add (propertySettings);
+			}
+			else {
+				int index = BaseIndexOf (existing);
+				RemoveAt (index);
+				BaseAdd (index, propertySettings);
+			}
 		}
 
-		[MonoTODO]
 		public string[ ] AllKeys {
 			get {
-				throw new NotImplementedException ();
+				string[] keys = new string[Count];
+				for (int i = 0; i < Count; i ++)
+					keys[i] = this[i].Name;
+				return keys;
 			}
 		}
 

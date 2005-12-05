@@ -66,7 +66,7 @@ namespace System.Web.Configuration
 
 		protected override object GetElementKey (ConfigurationElement element)
 		{
-			return ((HttpHandlerAction)element).Path;
+			return ((HttpHandlerAction)element).Path + "-" + ((HttpHandlerAction)element).Verb;
 		}
 
 		public int IndexOf (HttpHandlerAction action)
@@ -74,16 +74,14 @@ namespace System.Web.Configuration
 			return BaseIndexOf (action);
 		}
 
-		[MonoTODO]
 		public void Remove (string verb, string path)
 		{
-			throw new NotImplementedException ();
+			BaseRemove (path + "-" + verb);
 		}
 
-		[MonoTODO]
 		public void Remove (HttpHandlerAction action)
 		{
-			throw new NotImplementedException ();
+			BaseRemove (action.Path + "-" + action.Verb);
 		}
 
 		public void RemoveAt (int index)

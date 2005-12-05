@@ -70,15 +70,16 @@ namespace System.Web.Configuration {
 			BaseRemoveAt (index);
 		}
 
-		[MonoTODO]
 		public void Set (int index, TrustLevel trustLevel)
 		{
-			throw new NotImplementedException ();
+			if (BaseGet (index) != null)
+				BaseRemoveAt (index);
+			BaseAdd (index, trustLevel);
 		}
 
 		protected override ConfigurationElement CreateNewElement ()
 		{
-			return new TrustLevel ("", "");
+			return new TrustLevel ();
 		}
 
 		protected override object GetElementKey (ConfigurationElement element)
@@ -86,19 +87,17 @@ namespace System.Web.Configuration {
 			return ((TrustLevel)element).Name;
 		}
 
-		[MonoTODO]
 		protected override bool IsElementName (string elementname)
 		{
-			throw new NotImplementedException ();
+			return elementname == "trustlevel";
 		}
 
 		protected override ConfigurationElementCollectionType CollectionType {
 			get { return ConfigurationElementCollectionType.BasicMap; }
 		}
 
-		[MonoTODO]
 		protected override string ElementName {
-			get { throw new NotImplementedException (); }
+			get { return "trustLevel"; }
 		}
 
 		public new TrustLevel this [string name] {
@@ -107,12 +106,11 @@ namespace System.Web.Configuration {
 
 		public TrustLevel this [int index] {
 			get { return (TrustLevel) BaseGet (index); }
-			set { if (BaseGet (index) != null) BaseRemoveAt (index); BaseAdd (index, value); }
+			set { Set (index, value); }
 		}
 
-		[MonoTODO]
 		protected override bool ThrowOnDuplicate {
-			get { throw new NotImplementedException (); }
+			get { return false; }
 		}
 
 		protected override ConfigurationPropertyCollection Properties {

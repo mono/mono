@@ -65,10 +65,9 @@ namespace System.Web.Configuration {
 			return ((ClientTarget)element).Alias;
 		}
 
-		[MonoTODO]
 		public string GetKey (int index)
 		{
-			throw new NotImplementedException ();
+			return (string)BaseGetKey (index);
 		}
 
 		public void Remove (string name)
@@ -86,9 +85,13 @@ namespace System.Web.Configuration {
 			BaseRemoveAt (index);
 		}
 
-		[MonoTODO]
-		public String[] AllKeys {
-			get { throw new NotImplementedException (); }
+		public string[] AllKeys {
+			get {
+				string[] keys = new string[Count];
+				for (int i = 0; i < Count; i ++)
+					keys[i] = this[i].Alias;
+				return keys;
+			}
 		}
 
 		public ClientTarget this [int index] {

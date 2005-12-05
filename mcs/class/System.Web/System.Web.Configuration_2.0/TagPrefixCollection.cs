@@ -62,7 +62,7 @@ namespace System.Web.Configuration
 
 		protected override ConfigurationElement CreateNewElement ()
 		{
-			return new TagPrefixInfo ("", "", "", "", "");
+			return new TagPrefixInfo ();
 		}
 
 		[MonoTODO]
@@ -76,18 +76,14 @@ namespace System.Web.Configuration
 			BaseRemove (tagPrefixInformation.TagPrefix);
 		}
 
-		[MonoTODO]
+		[MonoTODO ("why override this?")]
 		protected override ConfigurationElementCollectionType CollectionType {
-			get {
-				return ConfigurationElementCollectionType.BasicMap;
-			}
+			get { return ConfigurationElementCollectionType.BasicMap; }
 		}
 
-		[MonoTODO]
+		[MonoTODO ("why override this?")]
 		protected override string ElementName {
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return "add"; }
 		}
 
 		protected override ConfigurationPropertyCollection Properties {

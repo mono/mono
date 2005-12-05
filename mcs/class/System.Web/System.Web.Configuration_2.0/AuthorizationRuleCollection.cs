@@ -98,24 +98,25 @@ namespace System.Web.Configuration {
 			BaseRemoveAt (index);
 		}
 
-		[MonoTODO]
 		public void Set (int index, AuthorizationRule rule)
 		{
-			throw new NotImplementedException ();
+			if (BaseGet(index) != null)
+				BaseRemoveAt(index);
+			BaseAdd(index, rule);
 		}
 
 		protected override ConfigurationElementCollectionType CollectionType {
 			get { return ConfigurationElementCollectionType.BasicMapAlternate; }
 		}
 
-		[MonoTODO]
+		[MonoTODO ("is it okay to return a comma delimited string here?")]
 		protected override string ElementName {
 			get { return "allow,deny"; }
 		}
 
 		public AuthorizationRule this [int index] {
 			get { return Get (index); }
-			set {  if (BaseGet(index) != null)  BaseRemoveAt(index);  BaseAdd(index, value); }
+			set { Set (index, value); }
 		}
 
 		protected override ConfigurationPropertyCollection Properties {
