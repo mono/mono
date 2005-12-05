@@ -118,6 +118,36 @@ namespace System.Runtime.Remoting.Channels {
 							IMessage requestMsg, ITransportHeaders requestHeaders, Stream requestStream,
 							out IMessage responseMsg, out ITransportHeaders responseHeaders, out Stream responseStream)
 		{
+			// Check whether the request was already processed by another
+			// formatter sink and pass the request to the next sink if so.
+			if (requestMsg != null)
+				return next_sink.ProcessMessage (sinkStack,
+								 requestMsg,
+								 requestHeaders,
+								 requestStream,
+								 out responseMsg,
+								 out responseHeaders,
+								 out responseStream);
+
+			// Check whether the request is suitable for this formatter
+			// and pass the request to the next sink if not.
+			// Note that a null content-type is handled as suitable,
+			// otherwise no other sink will be able to handle the request.
+			string contentType = requestHeaders["Content-Type"] as string;
+			if (contentType != null && contentType != "application/octet-stream") {
+				try {
+					return next_sink.ProcessMessage (sinkStack,
+						requestMsg,
+						requestHeaders,
+						requestStream,
+						out responseMsg,
+						out responseHeaders,
+						out responseStream);
+				} catch {
+					// Let this formatter handle the exception.
+				}
+			}
+
 			sinkStack.Push (this, null);
 			ServerProcessing res;
 

@@ -1,3 +1,10 @@
+2005-12-05  Robert Jordan  <robertj@gmx.net>
+
+	* BinaryServerFormatterSink.cs, SoapServerFormatterSink.cs:
+	  Implemented formatter chaining. Fixes bug #74878.
+	* BinaryClientFormatterSink.cs: AsyncProcessMessage: Set the transport
+	  headers.
+
 2005-11-05  Robert Jordan  <robertj@gmx.net>
 
 	* IAuthorizeRemotingConnection.cs: Added.
