@@ -1,3 +1,15 @@
+2005-12-05  Chris Toshok  <toshok@ximian.com>
+
+	* ClientTargetTest.cs: new tests.
+
+	* AssemblyCollectionTest.cs: new tests.
+
+	* CustomErrorCollectionTest.cs: new tests.
+
+	* AuthorizationRuleCollectionTest.cs: new tests.
+
+	* CodeSubDirectoryTest.cs: new tests.
+	
 2005-12-02  Chris Toshok  <toshok@ximian.com>
 
 	* ProfilePropertySettingsTest.cs: new tests.
