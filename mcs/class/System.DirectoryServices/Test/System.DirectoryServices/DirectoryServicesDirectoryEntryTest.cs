@@ -36,6 +36,8 @@ namespace MonoTests.System.DirectoryServices
 		[TestFixtureTearDown]
 		public void TestFixtureTearDown()
 		{
+			if (de != null)
+				de.Dispose ();
 			de = null;
 		}
 
@@ -214,16 +216,20 @@ namespace MonoTests.System.DirectoryServices
 		[TearDown]
 		public void TearDown()
 		{
+			if (de != null)
+				de.Dispose ();
+
 			de = null;
 
-			DirectoryEntry root = new DirectoryEntry(	configuration.ConnectionString,
+			using (DirectoryEntry root = new DirectoryEntry(	configuration.ConnectionString,
 														configuration.Username,
 														configuration.Password,
-														configuration.AuthenticationType);
+														configuration.AuthenticationType)) {
 			
 			foreach(DirectoryEntry child in root.Children) {
 				DeleteTree_DFS(child);
-			}	
+			}
+			}
 		}
 
 		private void DeleteTree_DFS(DirectoryEntry de)
@@ -255,7 +261,7 @@ namespace MonoTests.System.DirectoryServices
 		[Test]
 		public void DirectoryEntry_DirectoryEntry_Str()
 		{
-			DirectoryEntry de = new DirectoryEntry(configuration.ConnectionString);
+			using (DirectoryEntry de = new DirectoryEntry(configuration.ConnectionString)) {
 			
 			Assert.AreEqual(de.AuthenticationType,AuthenticationTypes.None);
 			Assert.AreEqual(de.Name,GetName (configuration.BaseDn));
@@ -264,6 +270,7 @@ namespace MonoTests.System.DirectoryServices
 			Assert.AreEqual(de.SchemaClassName,"organization");
 			Assert.AreEqual(de.UsePropertyCache,true);
 			Assert.AreEqual(de.Username,null);
+			}
 		}
 
 
@@ -273,10 +280,10 @@ namespace MonoTests.System.DirectoryServices
 
 			#region AuthenticationTypes.Anonymous
 
-			DirectoryEntry de = new DirectoryEntry(	configuration.ConnectionString,
+			using (DirectoryEntry de = new DirectoryEntry(	configuration.ConnectionString,
 													configuration.Username,
 													configuration.Password,
-													AuthenticationTypes.Anonymous);
+													AuthenticationTypes.Anonymous)){
 			
 			Assert.AreEqual(de.AuthenticationType,AuthenticationTypes.Anonymous);
 			//Assert.AreEqual(de.Guid,new Guid("0b045012-1d97-4f94-9d47-87cbf6dada46"));
@@ -287,15 +294,16 @@ namespace MonoTests.System.DirectoryServices
 			Assert.AreEqual(de.SchemaClassName,"organization");
 			Assert.AreEqual(de.UsePropertyCache,true);
 			Assert.AreEqual(de.Username,configuration.Username);
+			}
 
 			#endregion //AuthenticationTypes.Anonymous
 
 			#region AuthenticationTypes.Delegation
 
-			de = new DirectoryEntry(configuration.ConnectionString,
+			using (DirectoryEntry de = new DirectoryEntry(configuration.ConnectionString,
 									configuration.Username,
 									configuration.Password,
-									AuthenticationTypes.Delegation);
+									AuthenticationTypes.Delegation)){
 			
 			Assert.AreEqual(de.AuthenticationType,AuthenticationTypes.Delegation);
 			//Assert.AreEqual(de.Guid,new Guid("0b045012-1d97-4f94-9d47-87cbf6dada46"));
@@ -306,6 +314,7 @@ namespace MonoTests.System.DirectoryServices
 			Assert.AreEqual(de.SchemaClassName,"organization");
 			Assert.AreEqual(de.UsePropertyCache,true);
 			Assert.AreEqual(de.Username,configuration.Username);
+			}
 
 			#endregion //AuthenticationTypes.Delegation
 
@@ -330,10 +339,10 @@ namespace MonoTests.System.DirectoryServices
 
 			#region AuthenticationTypes.FastBind
 
-			de = new DirectoryEntry(configuration.ConnectionString,
+			using (DirectoryEntry de = new DirectoryEntry(configuration.ConnectionString,
 									configuration.Username,
 									configuration.Password,
-									AuthenticationTypes.FastBind);
+									AuthenticationTypes.FastBind)){
 			
 			Assert.AreEqual(de.AuthenticationType,AuthenticationTypes.FastBind);
 			//Assert.AreEqual(de.Guid,new Guid("0b045012-1d97-4f94-9d47-87cbf6dada46"));
@@ -344,15 +353,16 @@ namespace MonoTests.System.DirectoryServices
 			Assert.AreEqual(de.SchemaClassName,"organization");
 			Assert.AreEqual(de.UsePropertyCache,true);
 			Assert.AreEqual(de.Username,configuration.Username);
+			}
 
 			#endregion //AuthenticationTypes.FastBind
 
 			#region AuthenticationTypes.None
 
-			de = new DirectoryEntry(configuration.ConnectionString,
+			using (DirectoryEntry de = new DirectoryEntry(configuration.ConnectionString,
 									configuration.Username,
 									configuration.Password,
-									AuthenticationTypes.None);
+									AuthenticationTypes.None)){
 			
 			Assert.AreEqual(de.AuthenticationType,AuthenticationTypes.None);
 			//Assert.AreEqual(de.Guid,new Guid("0b045012-1d97-4f94-9d47-87cbf6dada46"));
@@ -363,15 +373,16 @@ namespace MonoTests.System.DirectoryServices
 			Assert.AreEqual(de.SchemaClassName,"organization");
 			Assert.AreEqual(de.UsePropertyCache,true);
 			Assert.AreEqual(de.Username,configuration.Username);
+			}
 
 			#endregion //AuthenticationTypes.None
 
 			#region AuthenticationTypes.ReadonlyServer
 
-			de = new DirectoryEntry(configuration.ConnectionString,
+			using (DirectoryEntry de = new DirectoryEntry(configuration.ConnectionString,
 									configuration.Username,
 									configuration.Password,
-									AuthenticationTypes.ReadonlyServer);
+									AuthenticationTypes.ReadonlyServer)){
 			
 			Assert.AreEqual(de.AuthenticationType,AuthenticationTypes.ReadonlyServer);
 			//Assert.AreEqual(de.Guid,new Guid("0b045012-1d97-4f94-9d47-87cbf6dada46"));
@@ -382,15 +393,16 @@ namespace MonoTests.System.DirectoryServices
 			Assert.AreEqual(de.SchemaClassName,"organization");
 			Assert.AreEqual(de.UsePropertyCache,true);
 			Assert.AreEqual(de.Username,configuration.Username);
+			}
 
 			#endregion //AuthenticationTypes.ReadonlyServer
 
 			#region AuthenticationTypes.Sealing
 
-			de = new DirectoryEntry(configuration.ConnectionString,
+			using (DirectoryEntry de = new DirectoryEntry(configuration.ConnectionString,
 									configuration.Username,
 									configuration.Password,
-									AuthenticationTypes.Sealing);
+									AuthenticationTypes.Sealing)){
 			
 			Assert.AreEqual(de.AuthenticationType,AuthenticationTypes.Sealing);
 			//Assert.AreEqual(de.Guid,new Guid("0b045012-1d97-4f94-9d47-87cbf6dada46"));
@@ -401,6 +413,7 @@ namespace MonoTests.System.DirectoryServices
 			Assert.AreEqual(de.SchemaClassName,"organization");
 			Assert.AreEqual(de.UsePropertyCache,true);
 			Assert.AreEqual(de.Username,configuration.Username);
+			}
 
 			#endregion //AuthenticationTypes.Sealing
 
@@ -444,10 +457,10 @@ namespace MonoTests.System.DirectoryServices
 
 			#region AuthenticationTypes.ServerBind
 
-			de = new DirectoryEntry(configuration.ConnectionString,
+			using (DirectoryEntry de = new DirectoryEntry(configuration.ConnectionString,
 									configuration.Username,
 									configuration.Password,
-									AuthenticationTypes.ServerBind);
+									AuthenticationTypes.ServerBind)){
 			
 			Assert.AreEqual(de.AuthenticationType,AuthenticationTypes.ServerBind);
 			//Assert.AreEqual(de.Guid,new Guid("0b045012-1d97-4f94-9d47-87cbf6dada46"));
@@ -458,15 +471,16 @@ namespace MonoTests.System.DirectoryServices
 			Assert.AreEqual(de.SchemaClassName,"organization");
 			Assert.AreEqual(de.UsePropertyCache,true);
 			Assert.AreEqual(de.Username,configuration.Username);
+			}
 
 			#endregion //AuthenticationTypes.ServerBind
 
 			#region AuthenticationTypes.Signing
 
-			de = new DirectoryEntry(configuration.ConnectionString,
+			using (DirectoryEntry de = new DirectoryEntry(configuration.ConnectionString,
 									configuration.Username,
 									configuration.Password,
-									AuthenticationTypes.Signing);
+									AuthenticationTypes.Signing)){
 			
 			Assert.AreEqual(de.AuthenticationType,AuthenticationTypes.Signing);
 			//Assert.AreEqual(de.Guid,new Guid("0b045012-1d97-4f94-9d47-87cbf6dada46"));
@@ -477,18 +491,18 @@ namespace MonoTests.System.DirectoryServices
 			Assert.AreEqual(de.SchemaClassName,"organization");
 			Assert.AreEqual(de.UsePropertyCache,true);
 			Assert.AreEqual(de.Username,configuration.Username);
+			}
 
 			#endregion //AuthenticationTypes.Signing
-
 		}
 
 		[Test]
 		public void DirectoryEntry_Dispose()
 		{
-			DirectoryEntry root = new DirectoryEntry(	configuration.ConnectionString,
+			using (DirectoryEntry root = new DirectoryEntry(	configuration.ConnectionString,
 														configuration.Username,
 														configuration.Password,
-														configuration.AuthenticationType);
+														configuration.AuthenticationType)){
 
 			DirectoryEntry ouPeople = root.Children.Add("ou=printers","Class");
 			ouPeople.Properties["objectClass"].Value = "organizationalUnit";
@@ -496,12 +510,11 @@ namespace MonoTests.System.DirectoryServices
 			ouPeople.Properties["ou"].Value = "printers";
 			ouPeople.CommitChanges();
 
-			//root.Dispose();
-
 			ouPeople.Rename("ou=anotherPrinters");
 			ouPeople.CommitChanges();
 
 			Assert.IsTrue(DirectoryEntry.Exists(configuration.ServerRoot + "ou=anotherPrinters" + ((configuration.BaseDn.Length == 0) ? String.Empty : ("," + configuration.BaseDn))));
+			}
 		}
 
 
@@ -542,7 +555,6 @@ namespace MonoTests.System.DirectoryServices
 
 			de.AuthenticationType = AuthenticationTypes.Signing;
 			Assert.AreEqual(de.AuthenticationType,AuthenticationTypes.Signing);
-
 
 			de = new DirectoryEntry(configuration.ConnectionString);
 
@@ -639,22 +651,24 @@ namespace MonoTests.System.DirectoryServices
 			string newTelephoneNumber = "+972-3-6572345";
 
 			de.Properties["telephoneNumber"].Value = newTelephoneNumber;
-			DirectoryEntry barakTsabariDE = new DirectoryEntry(	barakTsabariDN,
+			using (DirectoryEntry barakTsabariDE = new DirectoryEntry(	barakTsabariDN,
 																configuration.Username,
 																configuration.Password,
-																configuration.AuthenticationType);
+																configuration.AuthenticationType)){
 
 			Assert.AreEqual(barakTsabariDE.Properties["telephoneNumber"].Value,oldTelephoneNumber);
 			de.CommitChanges();
-			barakTsabariDE = new DirectoryEntry(barakTsabariDN,
+			}
+			using (DirectoryEntry barakTsabariDE = new DirectoryEntry(barakTsabariDN,
 												configuration.Username,
 												configuration.Password,
-												configuration.AuthenticationType);
+												configuration.AuthenticationType)){
 			Assert.AreEqual(barakTsabariDE.Properties["telephoneNumber"].Value,newTelephoneNumber);
 
 			// restore object state
 			de.Properties["telephoneNumber"].Value = oldTelephoneNumber;
 			de.CommitChanges();
+			}
 
 			#endregion // Check Properties
 
@@ -663,13 +677,14 @@ namespace MonoTests.System.DirectoryServices
 			// DeleteTree is not cached
 			de.DeleteTree();
 			try {
-				barakTsabariDE = new DirectoryEntry(barakTsabariDN,
+				using (DirectoryEntry barakTsabariDE = new DirectoryEntry(barakTsabariDN,
 													configuration.Username,
 													configuration.Password,
-													configuration.AuthenticationType);
+													configuration.AuthenticationType)){
 				barakTsabariDE.Properties["telephoneNumber"].Value = newTelephoneNumber;
 				barakTsabariDE.CommitChanges();
 				Assert.Fail("Object " + barakTsabariDN + " was not deleted from server.");
+				}
 			}
 			catch(AssertionException ae) {
 				throw ae;
@@ -679,11 +694,11 @@ namespace MonoTests.System.DirectoryServices
 			}
 
 			// restore object state
-			DirectoryEntry ouHumanResources = new DirectoryEntry(	configuration.ServerRoot + "ou=Human Resources,ou=people" + ((configuration.BaseDn.Length == 0) ? String.Empty : ("," + configuration.BaseDn)),
+			using (DirectoryEntry ouHumanResources = new DirectoryEntry(	configuration.ServerRoot + "ou=Human Resources,ou=people" + ((configuration.BaseDn.Length == 0) ? String.Empty : ("," + configuration.BaseDn)),
 																	configuration.Username,
 																	configuration.Password,
-																	configuration.AuthenticationType);
-			DirectoryEntry cnBarakTsabari = ouHumanResources.Children.Add("cn=Barak Tsabari","Class");
+																	configuration.AuthenticationType)){
+			using (DirectoryEntry cnBarakTsabari = ouHumanResources.Children.Add("cn=Barak Tsabari","Class")){
 			((PropertyValueCollection)cnBarakTsabari.Properties["objectClass"]).Add("person");
 			((PropertyValueCollection)cnBarakTsabari.Properties["objectClass"]).Add("organizationalPerson");
 			cnBarakTsabari.Properties["cn"].Value = "Barak Tsabari";
@@ -693,6 +708,8 @@ namespace MonoTests.System.DirectoryServices
 			cnBarakTsabari.Properties["sn"].Value = "Tsabari";
 			cnBarakTsabari.Properties["telephoneNumber"].Value = "+1 906 777 8854";
 			cnBarakTsabari.CommitChanges();
+			}
+			}
 
 			#endregion // Check DeleteTree
 
@@ -704,19 +721,20 @@ namespace MonoTests.System.DirectoryServices
 									configuration.Password,
 									configuration.AuthenticationType);
 
-			DirectoryEntry ouRnD = new DirectoryEntry(	configuration.ServerRoot + "ou=R&D,ou=people" + ((configuration.BaseDn.Length == 0) ? String.Empty : ("," + configuration.BaseDn)),
+			using (DirectoryEntry ouRnD = new DirectoryEntry(	configuration.ServerRoot + "ou=R&D,ou=people" + ((configuration.BaseDn.Length == 0) ? String.Empty : ("," + configuration.BaseDn)),
 														configuration.Username,
 														configuration.Password,
-														configuration.AuthenticationType);
+														configuration.AuthenticationType)){
 			de.MoveTo(ouRnD);
 			try {
-				barakTsabariDE = new DirectoryEntry(barakTsabariDN,
+				using (DirectoryEntry barakTsabariDE = new DirectoryEntry(barakTsabariDN,
 													configuration.Username,
 													configuration.Password,
-													configuration.AuthenticationType);
+													configuration.AuthenticationType)){
 				barakTsabariDE.Properties["telephoneNumber"].Value = newTelephoneNumber;
 				barakTsabariDE.CommitChanges();
 				Assert.Fail("Object " + barakTsabariDN + " was not moved from old location on the server.");
+				}
 			}
 			catch(AssertionException ae) {
 				throw ae;
@@ -724,26 +742,29 @@ namespace MonoTests.System.DirectoryServices
 			catch (Exception e) {
 				// do nothing
 			}
+			}
 
-
-			barakTsabariDE = new DirectoryEntry(configuration.ServerRoot + "cn=Barak Tsabari,ou=R&D,ou=people" + ((configuration.BaseDn.Length == 0) ? String.Empty : ("," + configuration.BaseDn)),
+			using (DirectoryEntry barakTsabariDE = new DirectoryEntry(configuration.ServerRoot + "cn=Barak Tsabari,ou=R&D,ou=people" + ((configuration.BaseDn.Length == 0) ? String.Empty : ("," + configuration.BaseDn)),
 												configuration.Username,
 												configuration.Password,
-												configuration.AuthenticationType);
+												configuration.AuthenticationType)){
 			Assert.AreEqual(barakTsabariDE.Properties["telephoneNumber"].Value,oldTelephoneNumber);
+			}
 			
 
 			// restore object state
-			ouHumanResources = new DirectoryEntry(	configuration.ServerRoot + "ou=Human Resources,ou=people" + ((configuration.BaseDn.Length == 0) ? String.Empty : ("," + configuration.BaseDn)),
+			using (DirectoryEntry ouHumanResources = new DirectoryEntry(	configuration.ServerRoot + "ou=Human Resources,ou=people" + ((configuration.BaseDn.Length == 0) ? String.Empty : ("," + configuration.BaseDn)),
 																	configuration.Username,
 																	configuration.Password,
-																	configuration.AuthenticationType);
-			barakTsabariDE = new DirectoryEntry(configuration.ServerRoot + "cn=Barak Tsabari,ou=R&D,ou=people" + ((configuration.BaseDn.Length == 0) ? String.Empty : ("," + configuration.BaseDn)),
+																	configuration.AuthenticationType)){
+			using (DirectoryEntry barakTsabariDE = new DirectoryEntry(configuration.ServerRoot + "cn=Barak Tsabari,ou=R&D,ou=people" + ((configuration.BaseDn.Length == 0) ? String.Empty : ("," + configuration.BaseDn)),
 												configuration.Username,
 												configuration.Password,
-												configuration.AuthenticationType);
+												configuration.AuthenticationType)){
 			barakTsabariDE.MoveTo(ouHumanResources);
 			barakTsabariDE.CommitChanges();
+			}
+			}
 
 			#endregion // Check MoveTo
 
@@ -758,13 +779,14 @@ namespace MonoTests.System.DirectoryServices
 			de.Rename("cn=MyUser");
 
 			try {
-				barakTsabariDE = new DirectoryEntry(barakTsabariDN,
+				using (DirectoryEntry barakTsabariDE = new DirectoryEntry(barakTsabariDN,
 													configuration.Username,
 													configuration.Password,
-													configuration.AuthenticationType);
+													configuration.AuthenticationType)){
 				barakTsabariDE.Properties["telephoneNumber"].Value = newTelephoneNumber;
 				barakTsabariDE.CommitChanges();
 				Assert.Fail("Object " + barakTsabariDN + " was not renamed on the server.");
+				}
 			}
 			catch(AssertionException ae) {
 				throw ae;
@@ -773,19 +795,21 @@ namespace MonoTests.System.DirectoryServices
 				// do nothing
 			}
 
-			barakTsabariDE = new DirectoryEntry(configuration.ServerRoot + "cn=MyUser,ou=Human Resources,ou=people" + ((configuration.BaseDn.Length == 0) ? String.Empty : ("," + configuration.BaseDn)),
+			using (DirectoryEntry barakTsabariDE = new DirectoryEntry(configuration.ServerRoot + "cn=MyUser,ou=Human Resources,ou=people" + ((configuration.BaseDn.Length == 0) ? String.Empty : ("," + configuration.BaseDn)),
 												configuration.Username,
 												configuration.Password,
-												configuration.AuthenticationType);
+												configuration.AuthenticationType)){
 			Assert.AreEqual(barakTsabariDE.Properties["telephoneNumber"].Value,oldTelephoneNumber);
+			}
 
 			// restore object state
-			barakTsabariDE = new DirectoryEntry(configuration.ServerRoot + "cn=MyUser,ou=Human Resources,ou=people" + ((configuration.BaseDn.Length == 0) ? String.Empty : ("," + configuration.BaseDn)),
+			using (DirectoryEntry barakTsabariDE = new DirectoryEntry(configuration.ServerRoot + "cn=MyUser,ou=Human Resources,ou=people" + ((configuration.BaseDn.Length == 0) ? String.Empty : ("," + configuration.BaseDn)),
 												configuration.Username,
 												configuration.Password,
-												configuration.AuthenticationType);
+												configuration.AuthenticationType)){
 			barakTsabariDE.Rename("cn=Barak Tsabari");
 			barakTsabariDE.CommitChanges();
+			}
 
 			#endregion // Check Rename
 
@@ -801,10 +825,11 @@ namespace MonoTests.System.DirectoryServices
 
 			// Properties changes not cached
 			de.Properties["telephoneNumber"].Value = newTelephoneNumber;
-			barakTsabariDE = new DirectoryEntry(barakTsabariDN,
+			using (DirectoryEntry barakTsabariDE = new DirectoryEntry(barakTsabariDN,
 												configuration.Username,
 												configuration.Password,
-												configuration.AuthenticationType);
+												configuration.AuthenticationType)){
+			}
 
 			//Assert.AreEqual(barakTsabariDE.Properties["telephoneNumber"].Value,newTelephoneNumber);
 
@@ -815,13 +840,14 @@ namespace MonoTests.System.DirectoryServices
 			// DeleteTree is not cached
 			de.DeleteTree();
 			try {
-				barakTsabariDE = new DirectoryEntry(barakTsabariDN,
+				using (DirectoryEntry barakTsabariDE = new DirectoryEntry(barakTsabariDN,
 													configuration.Username,
 													configuration.Password,
-													configuration.AuthenticationType);
+													configuration.AuthenticationType)){
 				barakTsabariDE.Properties["telephoneNumber"].Value = newTelephoneNumber;
 				barakTsabariDE.CommitChanges();
 				Assert.Fail("Object " + barakTsabariDN + " was not deleted from server.");
+				}
 			}
 			catch(AssertionException ae) {
 				throw ae;
@@ -831,11 +857,11 @@ namespace MonoTests.System.DirectoryServices
 			}
 
 			// restore object state
-			ouHumanResources = new DirectoryEntry(	configuration.ServerRoot + "ou=Human Resources,ou=people" + ((configuration.BaseDn.Length == 0) ? String.Empty : ("," + configuration.BaseDn)),
+			using (DirectoryEntry ouHumanResources = new DirectoryEntry(	configuration.ServerRoot + "ou=Human Resources,ou=people" + ((configuration.BaseDn.Length == 0) ? String.Empty : ("," + configuration.BaseDn)),
 																	configuration.Username,
 																	configuration.Password,
-																	configuration.AuthenticationType);
-			cnBarakTsabari = ouHumanResources.Children.Add("cn=Barak Tsabari","Class");
+																	configuration.AuthenticationType)){
+			using (DirectoryEntry cnBarakTsabari = ouHumanResources.Children.Add("cn=Barak Tsabari","Class")){
 			((PropertyValueCollection)cnBarakTsabari.Properties["objectClass"]).Add("person");
 			((PropertyValueCollection)cnBarakTsabari.Properties["objectClass"]).Add("organizationalPerson");
 			cnBarakTsabari.Properties["cn"].Value = "Barak Tsabari";
@@ -845,6 +871,8 @@ namespace MonoTests.System.DirectoryServices
 			cnBarakTsabari.Properties["sn"].Value = "Tsabari";
 			cnBarakTsabari.Properties["telephoneNumber"].Value = "+1 906 777 8854";
 			cnBarakTsabari.CommitChanges();
+			}
+			}
 
 			#endregion // Check DeleteTree
 
@@ -856,19 +884,21 @@ namespace MonoTests.System.DirectoryServices
 									configuration.Password,
 									configuration.AuthenticationType);
 
-			ouRnD = new DirectoryEntry(	configuration.ServerRoot + "ou=R&D,ou=people" + ((configuration.BaseDn.Length == 0) ? String.Empty : ("," + configuration.BaseDn)),
+			using (DirectoryEntry ouRnD = new DirectoryEntry(	configuration.ServerRoot + "ou=R&D,ou=people" + ((configuration.BaseDn.Length == 0) ? String.Empty : ("," + configuration.BaseDn)),
 										configuration.Username,
 										configuration.Password,
-										configuration.AuthenticationType);
+										configuration.AuthenticationType)){
 			de.MoveTo(ouRnD);
+			}
 			try {
-				barakTsabariDE = new DirectoryEntry(barakTsabariDN,
+				using (DirectoryEntry barakTsabariDE = new DirectoryEntry(barakTsabariDN,
 													configuration.Username,
 													configuration.Password,
-													configuration.AuthenticationType);
+													configuration.AuthenticationType)){
 				barakTsabariDE.Properties["telephoneNumber"].Value = newTelephoneNumber;
 				barakTsabariDE.CommitChanges();
 				Assert.Fail("Object " + barakTsabariDN + " was not moved from old location on the server.");
+				}
 			}
 			catch(AssertionException ae) {
 				throw ae;
@@ -878,24 +908,27 @@ namespace MonoTests.System.DirectoryServices
 			}
 
 
-			barakTsabariDE = new DirectoryEntry(configuration.ServerRoot + "cn=Barak Tsabari,ou=R&D,ou=people" + ((configuration.BaseDn.Length == 0) ? String.Empty : ("," + configuration.BaseDn)),
+			using (DirectoryEntry barakTsabariDE = new DirectoryEntry(configuration.ServerRoot + "cn=Barak Tsabari,ou=R&D,ou=people" + ((configuration.BaseDn.Length == 0) ? String.Empty : ("," + configuration.BaseDn)),
 												configuration.Username,
 												configuration.Password,
-												configuration.AuthenticationType);
+												configuration.AuthenticationType)){
 			Assert.AreEqual(barakTsabariDE.Properties["telephoneNumber"].Value,oldTelephoneNumber);
+			}
 			
 
 			// restore object state
-			ouHumanResources = new DirectoryEntry(	configuration.ServerRoot + "ou=Human Resources,ou=people" + ((configuration.BaseDn.Length == 0) ? String.Empty : ("," + configuration.BaseDn)),
+			using (DirectoryEntry ouHumanResources = new DirectoryEntry(	configuration.ServerRoot + "ou=Human Resources,ou=people" + ((configuration.BaseDn.Length == 0) ? String.Empty : ("," + configuration.BaseDn)),
 																	configuration.Username,
 																	configuration.Password,
-																	configuration.AuthenticationType);
-			barakTsabariDE = new DirectoryEntry(configuration.ServerRoot + "cn=Barak Tsabari,ou=R&D,ou=people" + ((configuration.BaseDn.Length == 0) ? String.Empty : ("," + configuration.BaseDn)),
+																	configuration.AuthenticationType)){
+			using (DirectoryEntry barakTsabariDE = new DirectoryEntry(configuration.ServerRoot + "cn=Barak Tsabari,ou=R&D,ou=people" + ((configuration.BaseDn.Length == 0) ? String.Empty : ("," + configuration.BaseDn)),
 												configuration.Username,
 												configuration.Password,
-												configuration.AuthenticationType);
+												configuration.AuthenticationType)){
 			barakTsabariDE.MoveTo(ouHumanResources);
 			barakTsabariDE.CommitChanges();
+			}
+			}
 
 			#endregion // Check MoveTo
 
@@ -910,13 +943,14 @@ namespace MonoTests.System.DirectoryServices
 			de.Rename("cn=MyUser");
 
 			try {
-				barakTsabariDE = new DirectoryEntry(barakTsabariDN,
+				using (DirectoryEntry barakTsabariDE = new DirectoryEntry(barakTsabariDN,
 													configuration.Username,
 													configuration.Password,
-													configuration.AuthenticationType);
+													configuration.AuthenticationType)){
 				barakTsabariDE.Properties["telephoneNumber"].Value = newTelephoneNumber;
 				barakTsabariDE.CommitChanges();
 				Assert.Fail("Object " + barakTsabariDN + " was not renamed on the server.");
+				}
 			}
 			catch(AssertionException ae) {
 				throw ae;
@@ -925,19 +959,21 @@ namespace MonoTests.System.DirectoryServices
 				// do nothing
 			}
 
-			barakTsabariDE = new DirectoryEntry(configuration.ServerRoot + "cn=MyUser,ou=Human Resources,ou=people" + ((configuration.BaseDn.Length == 0) ? String.Empty : ("," + configuration.BaseDn)),
+			using (DirectoryEntry barakTsabariDE = new DirectoryEntry(configuration.ServerRoot + "cn=MyUser,ou=Human Resources,ou=people" + ((configuration.BaseDn.Length == 0) ? String.Empty : ("," + configuration.BaseDn)),
 												configuration.Username,
 												configuration.Password,
-												configuration.AuthenticationType);
+												configuration.AuthenticationType)){
 			Assert.AreEqual(barakTsabariDE.Properties["telephoneNumber"].Value,oldTelephoneNumber);
+			}
 
 			// restore object state
-			barakTsabariDE = new DirectoryEntry(configuration.ServerRoot + "cn=MyUser,ou=Human Resources,ou=people" + ((configuration.BaseDn.Length == 0) ? String.Empty : ("," + configuration.BaseDn)),
+			using (DirectoryEntry barakTsabariDE = new DirectoryEntry(configuration.ServerRoot + "cn=MyUser,ou=Human Resources,ou=people" + ((configuration.BaseDn.Length == 0) ? String.Empty : ("," + configuration.BaseDn)),
 												configuration.Username,
 												configuration.Password,
-												configuration.AuthenticationType);
+												configuration.AuthenticationType)){
 			barakTsabariDE.Rename("cn=Barak Tsabari");
 			barakTsabariDE.CommitChanges();
+			}
 
 			#endregion // Check Rename
 		}
@@ -1218,11 +1254,11 @@ namespace MonoTests.System.DirectoryServices
 			((PropertyValueCollection)de.Properties["sn"]).Value = "Barbari";
 
 			// create the entry back again
-			DirectoryEntry ouHumanResources = new DirectoryEntry(	configuration.ServerRoot + "ou=Human Resources,ou=people" + ((configuration.BaseDn.Length == 0) ? String.Empty : ("," + configuration.BaseDn)),
+			using (DirectoryEntry ouHumanResources = new DirectoryEntry(	configuration.ServerRoot + "ou=Human Resources,ou=people" + ((configuration.BaseDn.Length == 0) ? String.Empty : ("," + configuration.BaseDn)),
 																	configuration.Username,
 																	configuration.Password,
-																	configuration.AuthenticationType);
-			DirectoryEntry cnBarakTsabari = ouHumanResources.Children.Add("cn=Barak Tsabari","Class");
+																	configuration.AuthenticationType)){
+			using (DirectoryEntry cnBarakTsabari = ouHumanResources.Children.Add("cn=Barak Tsabari","Class")){
 			((PropertyValueCollection)cnBarakTsabari.Properties["objectClass"]).Add("person");
 			((PropertyValueCollection)cnBarakTsabari.Properties["objectClass"]).Add("organizationalPerson");
 			cnBarakTsabari.Properties["cn"].Value = "Barak Tsabari";
@@ -1232,6 +1268,8 @@ namespace MonoTests.System.DirectoryServices
 			cnBarakTsabari.Properties["sn"].Value = "Tsabari";
 			cnBarakTsabari.Properties["telephoneNumber"].Value = "+1 906 777 8854";
 			cnBarakTsabari.CommitChanges();
+			}
+			}
 			
 			// the local property chache is still accessible
 			Assert.AreEqual(((PropertyValueCollection)de.Properties["sn"]).Value,"Barbari");
@@ -1378,10 +1416,10 @@ namespace MonoTests.System.DirectoryServices
 		public void DirectoryEntry_CommitChanges1()
 		{
 			string humanResourcesDN = configuration.ServerRoot + "ou=Human Resources,ou=people" + ((configuration.BaseDn.Length == 0) ? String.Empty : ("," + configuration.BaseDn));
-			DirectoryEntry ouHumanResources = new DirectoryEntry(	humanResourcesDN,
+			using (DirectoryEntry ouHumanResources = new DirectoryEntry(	humanResourcesDN,
 																	configuration.Username,
 																	configuration.Password,
-																	configuration.AuthenticationType);
+																	configuration.AuthenticationType)){
 
 			// new entry
 			string newEmployeeDN = configuration.ServerRoot + "cn=New Employee,ou=Human Resources,ou=people" + ((configuration.BaseDn.Length == 0) ? String.Empty : ("," + configuration.BaseDn));
@@ -1394,6 +1432,7 @@ namespace MonoTests.System.DirectoryServices
 			
 			de.CommitChanges();
 			Assert.IsTrue(DirectoryEntry.Exists(newEmployeeDN));
+			}
 
 			// existing entry
 			string barakTsabariDN = configuration.ServerRoot + "cn=Barak Tsabari,ou=Human Resources,ou=people" + ((configuration.BaseDn.Length == 0) ? String.Empty : ("," + configuration.BaseDn));
@@ -1410,23 +1449,25 @@ namespace MonoTests.System.DirectoryServices
 			((PropertyValueCollection)de.Properties["telephoneNumber"]).Value = newTelephone;
 			Assert.AreEqual(((PropertyValueCollection)de.Properties["telephoneNumber"]).Value,newTelephone);
 
-			DirectoryEntry cnBarakTsabari = new DirectoryEntry(	barakTsabariDN,
+			using (DirectoryEntry cnBarakTsabari = new DirectoryEntry(	barakTsabariDN,
 																configuration.Username,
 																configuration.Password,
-																configuration.AuthenticationType);
+																configuration.AuthenticationType)){
 
 			//check that on server there is still an old value
 			Assert.AreEqual(((PropertyValueCollection)cnBarakTsabari.Properties["telephoneNumber"]).Value,oldTelephone);
 
 			de.CommitChanges();
+			}
 
-			cnBarakTsabari = new DirectoryEntry(barakTsabariDN,
+			using (DirectoryEntry cnBarakTsabari = new DirectoryEntry(barakTsabariDN,
 												configuration.Username,
 												configuration.Password,
-												configuration.AuthenticationType);
+												configuration.AuthenticationType)){
 
 			// check that new value is updated on the server
 			Assert.AreEqual(((PropertyValueCollection)cnBarakTsabari.Properties["telephoneNumber"]).Value,newTelephone);
+			}
 
 			// UsePropertyCache - false
 			de = new DirectoryEntry(barakTsabariDN,
@@ -1438,13 +1479,14 @@ namespace MonoTests.System.DirectoryServices
 			((PropertyValueCollection)de.Properties["telephoneNumber"]).Value = oldTelephone;
 			Assert.AreEqual(((PropertyValueCollection)de.Properties["telephoneNumber"]).Value,oldTelephone);
 
-			cnBarakTsabari = new DirectoryEntry(barakTsabariDN,
+			using (DirectoryEntry cnBarakTsabari = new DirectoryEntry(barakTsabariDN,
 												configuration.Username,
 												configuration.Password,
-												configuration.AuthenticationType);
+												configuration.AuthenticationType)){
 
 			// check that new value is updated on the server
 			//Assert.AreEqual(((PropertyValueCollection)cnBarakTsabari.Properties["telephoneNumber"]).Value,oldTelephone);
+			}
 
 			de.CommitChanges(); // this should do nothing
 		}
@@ -1453,16 +1495,16 @@ namespace MonoTests.System.DirectoryServices
 		public void DirectoryEntry_CommitChanges2()
 		{
 			string barakTsabariDN = configuration.ServerRoot + "cn=Barak Tsabari,ou=Human Resources,ou=people" + ((configuration.BaseDn.Length == 0) ? String.Empty : ("," + configuration.BaseDn));
-			DirectoryEntry barakTsabariDE1 = new DirectoryEntry(barakTsabariDN,
+			using (DirectoryEntry barakTsabariDE1 = new DirectoryEntry(barakTsabariDN,
 																configuration.Username,
 																configuration.Password,
-																configuration.AuthenticationType);
+																configuration.AuthenticationType)){
 			barakTsabariDE1.UsePropertyCache = true;
 
-			DirectoryEntry barakTsabariDE2 = new DirectoryEntry(barakTsabariDN,
+			using (DirectoryEntry barakTsabariDE2 = new DirectoryEntry(barakTsabariDN,
 																configuration.Username,
 																configuration.Password,
-																configuration.AuthenticationType);
+																configuration.AuthenticationType)){
 			barakTsabariDE2.UsePropertyCache = true;
 
 			string oldTelephone = (string)((PropertyValueCollection)barakTsabariDE1.Properties["telephoneNumber"]).Value;
@@ -1493,6 +1535,8 @@ namespace MonoTests.System.DirectoryServices
 									configuration.AuthenticationType);
 			Assert.AreEqual(de.Properties["telephoneNumber"].Value,newTelephone);
 			Assert.AreEqual(de.Properties["facsimileTelephoneNumber"].Value,newFacsimilieTelephoneNumber2);
+			}
+			}
 		}
 
 
@@ -1506,12 +1550,13 @@ namespace MonoTests.System.DirectoryServices
 									configuration.Password,
 									configuration.AuthenticationType);
 
-			DirectoryEntry cnBarakTsabari = new DirectoryEntry(	barakTsabariDN,
+			using (DirectoryEntry cnBarakTsabari = new DirectoryEntry(	barakTsabariDN,
 																configuration.Username,
 																configuration.Password,
-																configuration.AuthenticationType);
+																configuration.AuthenticationType)){
 
 			cnBarakTsabari.CopyTo(de);
+			}
 		}
 
 
@@ -1568,10 +1613,10 @@ namespace MonoTests.System.DirectoryServices
 									configuration.Password,
 									configuration.AuthenticationType);
 
-			DirectoryEntry johnSmithDE = new DirectoryEntry(johnSmithDN,
+			using (DirectoryEntry johnSmithDE = new DirectoryEntry(johnSmithDN,
 															configuration.Username,
 															configuration.Password,
-															configuration.AuthenticationType);
+															configuration.AuthenticationType)){
 
 			johnSmithDE.Properties["telephoneNumber"].Value = "+972 3 9999999";
 
@@ -1588,6 +1633,7 @@ namespace MonoTests.System.DirectoryServices
 			}
 			catch(Exception e) {
 				// do nothing
+			}
 			}
 		}
 
@@ -1613,17 +1659,17 @@ namespace MonoTests.System.DirectoryServices
 			string barakTsabariHumanResourcesDN = configuration.ServerRoot + "cn=Barak Tsabari,ou=Human Resources,ou=people" + ((configuration.BaseDn.Length == 0) ? String.Empty : ("," + configuration.BaseDn));
 			string barakTsabariDevQaDN = configuration.ServerRoot + "cn=Barak Tsabari,ou=DevQA,ou=people" + ((configuration.BaseDn.Length == 0) ? String.Empty : ("," + configuration.BaseDn));
 
-			DirectoryEntry barakTsabariDE = new DirectoryEntry(	barakTsabariHumanResourcesDN,
+			using (DirectoryEntry barakTsabariDE = new DirectoryEntry(	barakTsabariHumanResourcesDN,
 																configuration.Username,
 																configuration.Password,
-																configuration.AuthenticationType);
+																configuration.AuthenticationType)){
 
 			string devQaOU = configuration.ServerRoot + "ou=DevQA,ou=people" + ((configuration.BaseDn.Length == 0) ? String.Empty : ("," + configuration.BaseDn));
 
-			DirectoryEntry devQaDE = new DirectoryEntry(devQaOU,
+			using (DirectoryEntry devQaDE = new DirectoryEntry(devQaOU,
 														configuration.Username,
 														configuration.Password,
-														configuration.AuthenticationType);
+														configuration.AuthenticationType)){
 
 			barakTsabariDE.MoveTo(devQaDE);
 			barakTsabariDE.CommitChanges();
@@ -1632,15 +1678,18 @@ namespace MonoTests.System.DirectoryServices
 
 			string humanRwsourcesOU = configuration.ServerRoot + "ou=Human Resources,ou=people" + ((configuration.BaseDn.Length == 0) ? String.Empty : ("," + configuration.BaseDn));
 
-			DirectoryEntry humanResourcesDE = new DirectoryEntry(	humanRwsourcesOU,
+			using (DirectoryEntry humanResourcesDE = new DirectoryEntry(	humanRwsourcesOU,
 																	configuration.Username,
 																	configuration.Password,
-																	configuration.AuthenticationType);
+																	configuration.AuthenticationType)){
 
 			barakTsabariDE.MoveTo(humanResourcesDE);
 			barakTsabariDE.CommitChanges();
 
 			Assert.IsTrue(DirectoryEntry.Exists(barakTsabariHumanResourcesDN));
+			}
+			}
+			}
 		}
 
 
@@ -1650,17 +1699,17 @@ namespace MonoTests.System.DirectoryServices
 			string barakTsabariHumanResourcesDN = configuration.ServerRoot + "cn=Barak Tsabari,ou=Human Resources,ou=people" + ((configuration.BaseDn.Length == 0) ? String.Empty : ("," + configuration.BaseDn));
 			string barakTsabariDevQaDN = configuration.ServerRoot + "cn=My Name,ou=DevQA,ou=people" + ((configuration.BaseDn.Length == 0) ? String.Empty : ("," + configuration.BaseDn));
 
-			DirectoryEntry barakTsabariDE = new DirectoryEntry(	barakTsabariHumanResourcesDN,
+			using (DirectoryEntry barakTsabariDE = new DirectoryEntry(	barakTsabariHumanResourcesDN,
 																configuration.Username,
 																configuration.Password,
-																configuration.AuthenticationType);
+																configuration.AuthenticationType)){
 
 			string devQaOU = configuration.ServerRoot + "ou=DevQA,ou=people" + ((configuration.BaseDn.Length == 0) ? String.Empty : ("," + configuration.BaseDn));
 
-			DirectoryEntry devQaDE = new DirectoryEntry(devQaOU,
+			using (DirectoryEntry devQaDE = new DirectoryEntry(devQaOU,
 														configuration.Username,
 														configuration.Password,
-														configuration.AuthenticationType);
+														configuration.AuthenticationType)){
 
 			barakTsabariDE.MoveTo(devQaDE,"cn=My Name");
 			barakTsabariDE.CommitChanges();
@@ -1669,15 +1718,18 @@ namespace MonoTests.System.DirectoryServices
 
 			string humanRwsourcesOU = configuration.ServerRoot + "ou=Human Resources,ou=people" + ((configuration.BaseDn.Length == 0) ? String.Empty : ("," + configuration.BaseDn));
 
-			DirectoryEntry humanResourcesDE = new DirectoryEntry(	humanRwsourcesOU,
+			using (DirectoryEntry humanResourcesDE = new DirectoryEntry(	humanRwsourcesOU,
 																	configuration.Username,
 																	configuration.Password,
-																	configuration.AuthenticationType);
+																	configuration.AuthenticationType)){
 
 			barakTsabariDE.MoveTo(humanResourcesDE,"cn=Barak Tsabari");
 			barakTsabariDE.CommitChanges();
 
 			Assert.IsTrue(DirectoryEntry.Exists(barakTsabariHumanResourcesDN));
+			}
+			}
+			}
 		}
 
 		[Test]
@@ -1700,12 +1752,12 @@ namespace MonoTests.System.DirectoryServices
 			string newEmployeeDN = configuration.ServerRoot + "cn=New Employee,ou=Human Resources,ou=people" + ((configuration.BaseDn.Length == 0) ? String.Empty : ("," + configuration.BaseDn));
 			string humanResourcesDN = configuration.ServerRoot + "ou=Human Resources,ou=people" + ((configuration.BaseDn.Length == 0) ? String.Empty : ("," + configuration.BaseDn));
 
-			DirectoryEntry humanResourcesDE = new DirectoryEntry(	humanResourcesDN,
+			using (DirectoryEntry humanResourcesDE = new DirectoryEntry(	humanResourcesDN,
 																	configuration.Username,
 																	configuration.Password,
-																	configuration.AuthenticationType);
+																	configuration.AuthenticationType)){
 
-			DirectoryEntry newEmployeeDE = humanResourcesDE.Children.Add("cn=New Employee","Class");
+			using (DirectoryEntry newEmployeeDE = humanResourcesDE.Children.Add("cn=New Employee","Class")){
 			Assert.AreEqual(newEmployeeDE.Properties["cn"].Value,null);
 
 			((PropertyValueCollection)newEmployeeDE.Properties["objectClass"]).Add("person");
@@ -1735,6 +1787,8 @@ namespace MonoTests.System.DirectoryServices
 			newEmployeeDE.RefreshCache();
 
 			Assert.AreEqual(newEmployeeDE.Properties["cn"].Value,"New Employee");
+			}
+			}
 		}
 
 		[Test]
@@ -1771,10 +1825,10 @@ namespace MonoTests.System.DirectoryServices
 			string barakTsabariOldDN = configuration.ServerRoot + "cn=Barak Tsabari,ou=Human Resources,ou=people" + ((configuration.BaseDn.Length == 0) ? String.Empty : ("," + configuration.BaseDn));
 			string barakTsabariNewDN = configuration.ServerRoot + "cn=My Name,ou=Human Resources,ou=people" + ((configuration.BaseDn.Length == 0) ? String.Empty : ("," + configuration.BaseDn));
 
-			DirectoryEntry barakTsabariDE = new DirectoryEntry(	barakTsabariOldDN,
+			using (DirectoryEntry barakTsabariDE = new DirectoryEntry(	barakTsabariOldDN,
 																configuration.Username,
 																configuration.Password,
-																configuration.AuthenticationType);
+																configuration.AuthenticationType)){
 
 			barakTsabariDE.Rename("cn=My Name");
 			barakTsabariDE.CommitChanges();
@@ -1785,6 +1839,7 @@ namespace MonoTests.System.DirectoryServices
 			barakTsabariDE.CommitChanges();
 
 			Assert.IsTrue(DirectoryEntry.Exists(barakTsabariOldDN));
+			}
 		}
 
 		#endregion Tests

@@ -37,6 +37,9 @@ namespace MonoTests.System.DirectoryServices
 		[TestFixtureTearDown]
 		public void TestFixtureTearDown()
 		{
+			if (de != null)
+				de.Dispose ();
+
 			de = null;
 		}
 
@@ -216,17 +219,25 @@ namespace MonoTests.System.DirectoryServices
 		[TearDown]
 		public void TearDown()
 		{
+			if (ds != null)
+				ds.Dispose ();
+			
 			ds = null;
+			
+			if (de != null)
+				de.Dispose ();
+
 			de = null;
 
-			DirectoryEntry root = new DirectoryEntry(	configuration.ConnectionString,
+			using (DirectoryEntry root = new DirectoryEntry(	configuration.ConnectionString,
 														configuration.Username,
 														configuration.Password,
-														configuration.AuthenticationType);
+														configuration.AuthenticationType)){
 			
 			foreach(DirectoryEntry child in root.Children) {
 				DeleteTree_DFS(child);
-			}		
+			}	
+			}
 		}
 
 		private void DeleteTree_DFS(DirectoryEntry de)

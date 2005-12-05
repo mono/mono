@@ -1,3 +1,8 @@
+2005-12-05 Boris Kirzner <borisk@mainsoft.coim>
+	* DirectoryServicesDirectoryEntryTest.cs, 
+	DirectoryServicesDirectorySearcherTest.cs,
+	DirectoryServicesSearchResultTest.cs : added objects disposing to the tests
+
 2005-11-06 Boris Kirzner <borisk@mainsoft.coim>
 	* TestConfiguration.cs: added. 
 	Class to read tests configuration from app config.

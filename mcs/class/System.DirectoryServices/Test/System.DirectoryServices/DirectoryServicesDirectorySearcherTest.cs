@@ -39,7 +39,14 @@ namespace MonoTests.System.DirectoryServices
 		[TestFixtureTearDown]
 		public void TestFixtureTearDown()
 		{
+			if (ds != null)
+				ds.Dispose ();
+			
 			ds = null;
+			
+			if (de != null)
+				de.Dispose ();
+
 			de = null;
 		}
 
@@ -219,17 +226,25 @@ namespace MonoTests.System.DirectoryServices
 		[TearDown]
 		public void TearDown()
 		{
+			if (ds != null)
+				ds.Dispose ();
+			
 			ds = null;
+			
+			if (de != null)
+				de.Dispose ();
+
 			de = null;
 
-			DirectoryEntry root = new DirectoryEntry(	configuration.ConnectionString,
+			using (DirectoryEntry root = new DirectoryEntry(	configuration.ConnectionString,
 													configuration.Username,
 													configuration.Password,
-													configuration.AuthenticationType);
+													configuration.AuthenticationType)){
 			
 			foreach(DirectoryEntry child in root.Children) {
 				DeleteTree_DFS(child);
-			}		
+			}
+			}
 		}
 
 
@@ -393,41 +408,48 @@ namespace MonoTests.System.DirectoryServices
 			ds = new DirectorySearcher(de,"(cn=Barak Tsabari)");
 			ds.CacheResults = true;
 
-			SearchResult result = ds.FindOne();
-			DirectoryEntry resultDE = result.GetDirectoryEntry();
-
-			string oldValue = (string)((PropertyValueCollection)resultDE.Properties["description"]).Value;
+			string oldValue;
 			string newValue = "New Description";
 
+			SearchResult result = ds.FindOne();
+			SearchResult secondResult;
+			using (DirectoryEntry resultDE = result.GetDirectoryEntry()){
+
+			oldValue = (string)((PropertyValueCollection)resultDE.Properties["description"]).Value;
 			((PropertyValueCollection)resultDE.Properties["description"]).Value = newValue;
 			Assert.AreEqual(((PropertyValueCollection)resultDE.Properties["description"]).Value,newValue);
 
-			DirectorySearcher secondDs = new DirectorySearcher(de,"(cn=Barak Tsabari)");
-			SearchResult secondResult = secondDs.FindOne();
-			DirectoryEntry secondResultDE = secondResult.GetDirectoryEntry();
+			using (DirectorySearcher secondDs = new DirectorySearcher(de,"(cn=Barak Tsabari)")){
+			secondResult = secondDs.FindOne();
+			using (DirectoryEntry secondResultDE = secondResult.GetDirectoryEntry()){
 
 			Assert.AreEqual(((PropertyValueCollection)secondResultDE.Properties["description"]).Value,oldValue);
 
 			((PropertyValueCollection)resultDE.Properties["description"]).Value = oldValue;
-			
+			}
+			}
+			}
 			
 			ds = new DirectorySearcher(de,"(cn=Barak Tsabari)");
 			ds.CacheResults = false;
 			result = ds.FindOne();
-			resultDE = result.GetDirectoryEntry();
+			using (DirectoryEntry resultDE = result.GetDirectoryEntry()){
 
 			((PropertyValueCollection)resultDE.Properties["description"]).Value = newValue;
 			Assert.AreEqual(((PropertyValueCollection)resultDE.Properties["description"]).Value,newValue);
 
-			secondDs = new DirectorySearcher(de,"(cn=Barak Tsabari)");
+			using (DirectorySearcher secondDs = new DirectorySearcher(de,"(cn=Barak Tsabari)")){
 			secondResult = secondDs.FindOne();
-			secondResultDE = secondResult.GetDirectoryEntry();
+			using (DirectoryEntry secondResultDE = secondResult.GetDirectoryEntry()){
 
 			// LAMESPEC : according to documentation, the value retrieved should be the new one,
 			// but actually it is an old one
 			Assert.AreEqual(((PropertyValueCollection)secondResultDE.Properties["description"]).Value,oldValue);
 
-			((PropertyValueCollection)resultDE.Properties["description"]).Value = oldValue;			
+			((PropertyValueCollection)resultDE.Properties["description"]).Value = oldValue;	
+			}
+			}
+			}
 		}
 
 	
