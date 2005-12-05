@@ -1,3 +1,10 @@
+2005-12-05  Chris Toshok  <toshok@ximian.com>
+
+	* AuthorizationRuleCollection.cs (GetKey): split out the logic for
+	creating a key from a rule here.
+	(GetElementKey): use it here.
+	(Remove): and here.
+
 2005-12-04  Chris Toshok  <toshok@ximian.com>
 
 	* UrlMapping.cs: add an internal argument-less ctor.
