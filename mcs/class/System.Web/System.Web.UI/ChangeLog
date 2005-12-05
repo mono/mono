@@ -1,3 +1,8 @@
+2005-12-05 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Control.cs: use the _controls field instead of the Controls property.
+	Fixes bug #76919.
+
 2005-11-30  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* KeyedList.cs: Fixed for IOrderedDictionary change in 2.0 final.
