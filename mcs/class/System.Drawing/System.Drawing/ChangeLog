@@ -1,3 +1,10 @@
+2005-12-05 Gert Driesen <drieseng@users.sourceforge.net>
+
+	* BufferedGraphics.cs: Removed duplicate class. Set eol-style to
+	native.
+	* BufferedGraphicsManager.cs: Removed duplicate class. Set eol-style
+	to native.
+
 2005-12-05 Jordi Mas i Hernandez <jordimash@gmail.com>
 
 	* gdipFunctions.cs: DllExports need it to implement 
