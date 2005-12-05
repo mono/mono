@@ -1,3 +1,8 @@
+2004-12-05  Peter Dennis Bartok <pbartok@novell.com>
+
+	* Enum.cs: Properly handle "No bits set" case even if the sorted numbers
+	  list does not have enum value 0 as the first item. Fixes #76921
+
 2005-12-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AppDomain.cs: CreateComInstanceFrom isn't static in any profile.

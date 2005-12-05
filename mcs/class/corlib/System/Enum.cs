@@ -523,7 +523,7 @@ namespace System
 				sbyte enumValue;
 				for (int i = info.values.Length - 1; i >= 0; i--) {
 					enumValue = (sbyte) info.values.GetValue (i);
-					if (i == 0 && enumValue == 0)
+					if (enumValue == 0)
 						continue;
 
 					if ((flags & enumValue) == enumValue) {
@@ -539,7 +539,7 @@ namespace System
 				byte enumValue;
 				for (int i = info.values.Length - 1; i >= 0; i--) {
 					enumValue = (byte) info.values.GetValue (i);
-					if (i == 0 && enumValue == 0)
+					if (enumValue == 0)
 						continue;
 
 					if ((flags & enumValue) == enumValue) {
@@ -555,7 +555,7 @@ namespace System
 				short enumValue;
 				for (int i = info.values.Length - 1; i >= 0; i--) {
 					enumValue = (short) info.values.GetValue (i);
-					if (i == 0 && enumValue == 0)
+					if (enumValue == 0)
 						continue;
 
 					if ((flags & enumValue) == enumValue) {
@@ -571,7 +571,7 @@ namespace System
 				int enumValue;
 				for (int i = info.values.Length - 1; i >= 0; i--) {
 					enumValue = (int) info.values.GetValue (i);
-					if (i == 0 && enumValue == 0)
+					if (enumValue == 0)
 						continue;
 
 					if ((flags & enumValue) == enumValue) {
@@ -587,7 +587,7 @@ namespace System
 				ushort enumValue;
 				for (int i = info.values.Length - 1; i >= 0; i--) {
 					enumValue = (ushort) info.values.GetValue (i);
-					if (i == 0 && enumValue == 0)
+					if (enumValue == 0)
 						continue;
 
 					if ((flags & enumValue) == enumValue) {
@@ -603,7 +603,7 @@ namespace System
 				uint enumValue;
 				for (int i = info.values.Length - 1; i >= 0; i--) {
 					enumValue = (uint) info.values.GetValue (i);
-					if (i == 0 && enumValue == 0)
+					if (enumValue == 0)
 						continue;
 
 					if ((flags & enumValue) == enumValue) {
@@ -619,7 +619,7 @@ namespace System
 				long enumValue;
 				for (int i = info.values.Length - 1; i >= 0; i--) {
 					enumValue = (long) info.values.GetValue (i);
-					if (i == 0 && enumValue == 0)
+					if (enumValue == 0)
 						continue;
 
 					if ((flags & enumValue) == enumValue) {
@@ -635,7 +635,7 @@ namespace System
 				ulong enumValue;
 				for (int i = info.values.Length - 1; i >= 0; i--) {
 					enumValue = (ulong) info.values.GetValue (i);
-					if (i == 0 && enumValue == 0)
+					if (enumValue == 0)
 						continue;
 
 					if ((flags & enumValue) == enumValue) {

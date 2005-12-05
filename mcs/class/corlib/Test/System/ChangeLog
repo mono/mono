@@ -1,3 +1,7 @@
+2005-12-05  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* EnumTest.cs: Added test for "no bits set" on flags enum (bug #76921)
+
 2005-12-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AppDomainSetupTest.cs: Fixed test cases to execute properly under

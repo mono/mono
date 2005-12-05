@@ -841,5 +841,23 @@ public class EnumTest : TestCase
 			Assertion.Assert (nval + " is not contained in format return.", Array.IndexOf (fmtSpl, nval) >= 0);
 	}
 	// TODO - ToString with IFormatProviders
+
+        [Flags]
+        enum FlagsNegativeTestEnum {
+                None = 0,
+                One = 1,
+                Two = 2,
+                Negative = unchecked((int)0xFFFF0000)
+        }
+
+	[Test]
+	public void FlagTest3 () {
+                FlagsNegativeTestEnum t;
+
+                t = FlagsNegativeTestEnum.None;
+		Assertion.AssertEquals("#01", "None", t.ToString());
+                t = FlagsNegativeTestEnum.One;
+		Assertion.AssertEquals("#02", "One", t.ToString());
+	}
 }
 }
