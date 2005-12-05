@@ -1278,7 +1278,7 @@ namespace System.Xml.Serialization
 					WriteLine ("throw CreateUnknownNodeException();");
 					Unindent ();
 
-					WriteLine ("return " + GetReadObjectCall (typeMap, "true", "true") + ";");
+					WriteLine ("return " + GetReadObjectCall (typeMap, GetLiteral(typeMap.IsNullable), "true") + ";");
 				}
 				else
 				{
@@ -1739,8 +1739,27 @@ namespace System.Xml.Serialization
 						else
 						{
 							if (!GenerateReadMemberHook (xmlMapType, info.Member)) {
-								if (IsReadOnly (typeMap, info.Member, info.TypeData, isValueList)) GenerateReadListElement (info.MappedType, GenerateGetMemberValue (info.Member, ob, isValueList), GetLiteral(info.IsNullable), false);
-								else GenerateSetMemberValue (info.Member, ob, GenerateReadListElement (info.MappedType, null, GetLiteral(info.IsNullable), true), isValueList);
+								if (IsReadOnly (typeMap, info.Member, info.TypeData, isValueList)) {
+									GenerateReadListElement (info.MappedType, GenerateGetMemberValue (info.Member, ob, isValueList), GetLiteral(info.IsNullable), false);
+								} else if (info.MappedType.TypeData.Type.IsArray) {
+									if (info.IsNullable)
+										GenerateSetMemberValue (info.Member, ob, GenerateReadListElement (info.MappedType, null, GetLiteral(info.IsNullable), true), isValueList);
+									else {
+										string list = GetObTempVar ();
+										WriteLine (info.MappedType.TypeFullName + " " + list + " = " + GenerateReadListElement (info.MappedType, null, GetLiteral(info.IsNullable), true) + ";");
+										WriteLineInd ("if (((object)" + list + ") != null) {");
+										GenerateSetMemberValue (info.Member, ob, list, isValueList);
+										WriteLineUni ("}");
+									}
+								} else {
+									string list = GetObTempVar ();
+									WriteLine (info.MappedType.TypeFullName + " " + list + " = " + GenerateGetMemberValue (info.Member, ob, isValueList) + ";");
+									WriteLineInd ("if (((object)" + list + ") == null) {");
+									WriteLine (list + " = " + GenerateCreateList (info.MappedType.TypeData.Type) + ";");
+									GenerateSetMemberValue (info.Member, ob, list, isValueList);
+									WriteLineUni ("}");
+									GenerateReadListElement (info.MappedType, list, GetLiteral(info.IsNullable), true);
+								}
 								GenerateEndHook ();
 							}
 						}
@@ -2024,13 +2043,20 @@ namespace System.Xml.Serialization
 		{
 			Type listType = typeMap.TypeData.Type;
 			ListMap listMap = (ListMap)typeMap.ObjectMap;
+			bool doNullCheck = typeMap.TypeData.Type.IsArray;
 
 			if (canCreateInstance && typeMap.TypeData.HasPublicConstructor) 
 			{
-				list = GetObTempVar ();
-				WriteLine (typeMap.TypeFullName + " " + list + " = null;");
-				WriteLineInd ("if (!ReadNull()) {");
-				WriteLine (list + " = " + GenerateCreateList (listType) + ";");
+				if (list == null) {
+					list = GetObTempVar ();
+					WriteLine (typeMap.TypeFullName + " " + list + " = null;");
+					if (doNullCheck)
+						WriteLineInd ("if (!ReadNull()) {");
+					WriteLine (list + " = " + GenerateCreateList (listType) + ";");
+				} else {
+					if (doNullCheck)
+						WriteLineInd ("if (!ReadNull()) {");
+				}
 			}
 			else
 			{
@@ -2038,14 +2064,10 @@ namespace System.Xml.Serialization
 					WriteLineInd ("if (((object)" + list + ") == null)");
 					WriteLine ("throw CreateReadOnlyCollectionException (" + GetLiteral (typeMap.TypeFullName) + ");");
 					Unindent ();
-					WriteLineInd ("if (!ReadNull()) {");
+					doNullCheck = false;
 				}
 				else {
-					list = GetObTempVar ();
-					WriteLine (typeMap.TypeFullName + " " + list + " = null;");
-					WriteLineInd ("if (((object)" + list + ") == null)");
 					WriteLine ("throw CreateReadOnlyCollectionException (" + GetLiteral (typeMap.TypeFullName) + ");");
-					Unindent ();
 					return list;
 				}
 			}
@@ -2053,7 +2075,7 @@ namespace System.Xml.Serialization
 			WriteLineInd ("if (Reader.IsEmptyElement) {");
 			WriteLine ("Reader.Skip();");
 			if (listType.IsArray)
-				WriteLine (list + " = (" + typeMap.TypeFullName + ") ShrinkArray (" + list + ", 0, " + GetTypeOf(listType.GetElementType()) + ", " + isNullable + ");");
+				WriteLine (list + " = (" + typeMap.TypeFullName + ") ShrinkArray (" + list + ", 0, " + GetTypeOf(listType.GetElementType()) + ", false);");
 
 			Unindent ();
 			WriteLineInd ("} else {");
@@ -2090,10 +2112,11 @@ namespace System.Xml.Serialization
 			WriteLine ("ReadEndElement();");
 
 			if (listType.IsArray)
-				WriteLine (list + " = (" + typeMap.TypeFullName + ") ShrinkArray (" + list + ", " + index + ", " + GetTypeOf(listType.GetElementType()) + ", " + isNullable + ");");
+				WriteLine (list + " = (" + typeMap.TypeFullName + ") ShrinkArray (" + list + ", " + index + ", " + GetTypeOf(listType.GetElementType()) + ", false);");
 
 			WriteLineUni ("}");
-			WriteLineUni ("}");
+			if (doNullCheck)
+				WriteLineUni ("}");
 
 			return list;
 		}

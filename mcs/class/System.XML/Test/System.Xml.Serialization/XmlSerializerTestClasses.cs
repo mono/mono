@@ -284,5 +284,152 @@ namespace MonoTests.System.Xml.TestClasses
 		[XmlAttribute (DataType="int")]
 		public string[] at = new string [] { "a","b" };
 	}
+	
+	[XmlType ("Container")]
+	public class EntityContainer
+	{
+		EntityCollection collection1;
+		EntityCollection collection2;
+		EntityCollection collection3 = new EntityCollection ("root");
+		EntityCollection collection4 = new EntityCollection ("root");
+		
+		[XmlArray (IsNullable=true)]
+		public EntityCollection Collection1 {
+			get { return collection1; }
+			set { collection1 = value; collection1.Container = "assigned"; }
+		}
+		
+		[XmlArray (IsNullable=false)]
+		public EntityCollection Collection2 {
+			get { return collection2; }
+			set { collection2 = value; collection2.Container = "assigned"; }
+		}
+		
+		[XmlArray (IsNullable=true)]
+		public EntityCollection Collection3 {
+			get { return collection3; }
+			set { collection3 = value; collection3.Container = "assigned"; }
+		}
+		
+		[XmlArray (IsNullable=false)]
+		public EntityCollection Collection4 {
+			get { return collection4; }
+			set { collection4 = value; collection4.Container = "assigned"; }
+		}
+	}
+	
+	[XmlType ("Container")]
+	public class ArrayEntityContainer
+	{
+		Entity[] collection1;
+		Entity[] collection2;
+		Entity[] collection3 = new Entity [0];
+		Entity[] collection4 = new Entity [0];
+		
+		[XmlArray (IsNullable=true)]
+		public Entity[] Collection1 {
+			get { return collection1; }
+			set { collection1 = value; }
+		}
+		
+		[XmlArray (IsNullable=false)]
+		public Entity[] Collection2 {
+			get { return collection2; }
+			set { collection2 = value; }
+		}
+		
+		[XmlArray (IsNullable=true)]
+		public Entity[] Collection3 {
+			get { return collection3; }
+			set { collection3 = value; }
+		}
+		
+		[XmlArray (IsNullable=false)]
+		public Entity[] Collection4 {
+			get { return collection4; }
+			set { collection4 = value; }
+		}
+	}
+	
+	public class Entity
+	{
+		private string _name = string.Empty;
+		private string _parent = null;
+
+		[XmlAttribute]
+		public string Name {
+			get { return _name; }
+			set { _name = value; }
+		}
+
+		[XmlIgnore] 
+		public string Parent {
+			get { return _parent; }
+			set { _parent = value; }
+		}
+	}
+
+	public class EntityCollection : ArrayList
+	{
+		public string _container;
+
+		public EntityCollection ()
+		{
+		}
+
+		public EntityCollection (string c)
+		{
+			_container = c;
+		}
+
+		public string Container {
+			get { return _container; }
+			set { _container = value; }
+		}
+
+		public int Add (Entity value)
+		{
+			if(_container != null)
+				value.Parent = _container;
+
+			return base.Add(value);
+		}
+
+		public new Entity this[int index]
+		{
+			get { return (Entity) base[index]; }
+			set { base[index] = value; }
+		}
+	}
+	
+	[XmlType ("Container")]
+	public class ObjectWithReadonlyCollection
+	{
+		EntityCollection collection1 = new EntityCollection ("root");
+		
+		public EntityCollection Collection1 {
+			get { return collection1; }
+		}
+	}
+	
+	[XmlType ("Container")]
+	public class ObjectWithReadonlyNulCollection
+	{
+		EntityCollection collection1;
+		
+		public EntityCollection Collection1 {
+			get { return collection1; }
+		}
+	}
+	
+	[XmlType ("Container")]
+	public class ObjectWithReadonlyArray
+	{
+		Entity[] collection1 = new Entity [0];
+		
+		public Entity[] Collection1 {
+			get { return collection1; }
+		}
+	}
 }
 

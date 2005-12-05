@@ -1,3 +1,14 @@
+2005-12-05  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* XmlSerializationReaderInterpreter.cs:
+	* SerializationCodeGenerator.cs: When deserializing a collection,
+	don't create a new collection if the property already has a 
+	collection instance. This does not apply to arrays. Changed how nullabe
+	array properties are set. Setting IsNullable=false to the property means
+	that it won't be set if the read array is null (so, if the property
+	already has a value, it will be kept).
+	Another change is that can't never be null (only arrays can).
+
 2005-12-01  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* TypeTranslator.cs: In GetTypeData, if an xmlType is specified for

@@ -237,5 +237,341 @@ namespace MonoTests.System.XmlSerialization
 			Assertion.AssertEquals ("v.ItemsElementName[0]", ItemsChoiceType.In, v.ItemsElementName[0]);
 			Assertion.AssertEquals ("v.ItemsElementName[1]", ItemsChoiceType.Es, v.ItemsElementName[1]);
 		}
+		
+		[Test]
+		public void TestDeserializeCollection ()
+		{
+			string s0 = "";
+			s0+="	<ArrayOfEntity xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>";
+			s0+="		<Entity Name='node1'/>";
+			s0+="		<Entity Name='node2'/>";
+			s0+="	</ArrayOfEntity>";
+			
+			EntityCollection col = (EntityCollection) Deserialize (typeof(EntityCollection), s0);
+	        Assertion.AssertNotNull ("col", col);
+			Assertion.AssertEquals ("col.Count", 2, col.Count);
+	        Assertion.AssertNull ("col[0]", col[0].Parent);
+	        Assertion.AssertNull ("col[1]", col[1].Parent);
+		}
+		
+		[Test]
+		public void TestDeserializeEmptyCollection ()
+		{
+			string s1 = "";
+			s1+="	<ArrayOfEntity xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' />";
+			
+			EntityCollection col = (EntityCollection) Deserialize (typeof(EntityCollection), s1);
+	        Assertion.AssertNotNull ("col", col);
+			Assertion.AssertEquals ("col.Count", 0, col.Count);
+			
+			string s1_1 = "";
+			s1_1+="	<ArrayOfEntity xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>";
+			s1_1+="	</ArrayOfEntity>";
+			
+			col = (EntityCollection) Deserialize (typeof(EntityCollection), s1_1);
+	        Assertion.AssertNotNull ("col", col);
+			Assertion.AssertEquals ("col.Count", 0, col.Count);
+		}
+		
+		[Test]
+		public void TestDeserializeNilCollectionIsNotNull ()
+		{
+			string s2 = "";
+			s2+="	<ArrayOfEntity xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:nil='true'/>";
+			
+			EntityCollection col = (EntityCollection) Deserialize (typeof(EntityCollection), s2);
+	        Assertion.AssertNotNull ("col", col);
+			Assertion.AssertEquals ("col.Count", 0, col.Count);
+		}
+		
+		[Test]
+		public void TestDeserializeObjectCollections ()
+		{
+			string s3 = "";
+			s3+="<Container xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>";
+			s3+="	<Collection1 xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>";
+			s3+="		<Entity Name='node1'/>";
+			s3+="		<Entity Name='node2'/>";
+			s3+="	</Collection1>";
+			s3+="	<Collection2 xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>";
+			s3+="		<Entity Name='node1'/>";
+			s3+="		<Entity Name='node2'/>";
+			s3+="	</Collection2>";
+			s3+="	<Collection3 xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>";
+			s3+="		<Entity Name='node1'/>";
+			s3+="		<Entity Name='node2'/>";
+			s3+="	</Collection3>";
+			s3+="	<Collection4 xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>";
+			s3+="		<Entity Name='node1'/>";
+			s3+="		<Entity Name='node2'/>";
+			s3+="	</Collection4>";
+			s3+="</Container>";
+			
+			EntityContainer cont = (EntityContainer) Deserialize (typeof(EntityContainer), s3);
+	        Assertion.AssertNotNull ("cont", cont);
+	        
+	        Assertion.AssertNotNull ("cont.Collection1", cont.Collection1);
+			Assertion.AssertEquals ("cont.Collection1", 2, cont.Collection1.Count);
+			Assertion.AssertEquals ("cont.Collection1.Container", "assigned", cont.Collection1.Container);
+			Assertion.AssertEquals ("cont.Collection1[0].Parent", "assigned", cont.Collection1[0].Parent);
+			Assertion.AssertEquals ("cont.Collection1[1].Parent", "assigned", cont.Collection1[1].Parent);
+			
+	        Assertion.AssertNotNull ("cont.Collection2", cont.Collection2);
+			Assertion.AssertEquals ("cont.Collection2", 2, cont.Collection2.Count);
+			Assertion.AssertEquals ("cont.Collection2.Container", "assigned", cont.Collection2.Container);
+			Assertion.AssertEquals ("cont.Collection2[0].Parent", "assigned", cont.Collection2[0].Parent);
+			Assertion.AssertEquals ("cont.Collection2[1].Parent", "assigned", cont.Collection2[1].Parent);
+			
+	        Assertion.AssertNotNull ("cont.Collection3", cont.Collection3);
+			Assertion.AssertEquals ("cont.Collection3", 2, cont.Collection3.Count);
+			Assertion.AssertEquals ("cont.Collection3.Container", "root", cont.Collection3.Container);
+			Assertion.AssertEquals ("cont.Collection3[0].Parent", "root", cont.Collection3[0].Parent);
+			Assertion.AssertEquals ("cont.Collection3[1].Parent", "root", cont.Collection3[1].Parent);
+			
+	        Assertion.AssertNotNull ("cont.Collection4", cont.Collection4);
+			Assertion.AssertEquals ("cont.Collection4", 2, cont.Collection4.Count);
+			Assertion.AssertEquals ("cont.Collection4.Container", "root", cont.Collection4.Container);
+			Assertion.AssertEquals ("cont.Collection4[0].Parent", "root", cont.Collection4[0].Parent);
+			Assertion.AssertEquals ("cont.Collection4[1].Parent", "root", cont.Collection4[1].Parent);
+		}
+		
+		[Test]
+		public void TestDeserializeEmptyObjectCollections ()
+		{
+			string s4 = "";
+			s4+="<Container xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>";
+			s4+="</Container>";
+			
+			EntityContainer cont = (EntityContainer) Deserialize (typeof(EntityContainer), s4);
+	        Assertion.AssertNotNull ("cont", cont);
+	        
+	        Assertion.AssertNotNull ("cont.Collection1", cont.Collection1);
+			Assertion.AssertEquals ("cont.Collection1", 0, cont.Collection1.Count);
+			Assertion.AssertEquals ("cont.Collection1.Container", "assigned", cont.Collection1.Container);
+			
+	        Assertion.AssertNotNull ("cont.Collection2", cont.Collection2);
+			Assertion.AssertEquals ("cont.Collection2", 0, cont.Collection2.Count);
+			Assertion.AssertEquals ("cont.Collection2.Container", "assigned", cont.Collection2.Container);
+			
+	        Assertion.AssertNotNull ("cont.Collection3", cont.Collection3);
+			Assertion.AssertEquals ("cont.Collection3", 0, cont.Collection3.Count);
+			Assertion.AssertEquals ("cont.Collection3.Container", "root", cont.Collection3.Container);
+			
+	        Assertion.AssertNotNull ("cont.Collection4", cont.Collection4);
+			Assertion.AssertEquals ("cont.Collection4", 0, cont.Collection4.Count);
+			Assertion.AssertEquals ("cont.Collection4.Container", "root", cont.Collection4.Container);
+		}
+		
+		[Test]
+		public void TestDeserializeObjectNilCollectionsAreNotNull ()
+		{
+			string s5 = "";
+			s5+="<Container xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>";
+			s5+="	<Collection1 xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:nil='true' />";
+			s5+="	<Collection2 xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:nil='true' />";
+			s5+="	<Collection3 xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:nil='true' />";
+			s5+="	<Collection4 xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:nil='true' />";
+			s5+="</Container>";
+			
+			EntityContainer cont = (EntityContainer) Deserialize (typeof(EntityContainer), s5);
+	        Assertion.AssertNotNull ("cont", cont);
+	        
+	        Assertion.AssertNotNull ("cont.Collection1", cont.Collection1);
+			Assertion.AssertEquals ("cont.Collection1", 0, cont.Collection1.Count);
+			Assertion.AssertEquals ("cont.Collection1.Container", "assigned", cont.Collection1.Container);
+			
+	        Assertion.AssertNotNull ("cont.Collection2", cont.Collection2);
+			Assertion.AssertEquals ("cont.Collection2", 0, cont.Collection2.Count);
+			Assertion.AssertEquals ("cont.Collection2.Container", "assigned", cont.Collection2.Container);
+			
+	        Assertion.AssertNotNull ("cont.Collection3", cont.Collection3);
+			Assertion.AssertEquals ("cont.Collection3", 0, cont.Collection3.Count);
+			Assertion.AssertEquals ("cont.Collection3.Container", "root", cont.Collection3.Container);
+			
+	        Assertion.AssertNotNull ("cont.Collection4", cont.Collection4);
+			Assertion.AssertEquals ("cont.Collection4", 0, cont.Collection4.Count);
+			Assertion.AssertEquals ("cont.Collection4.Container", "root", cont.Collection4.Container);
+		}
+		
+		[Test]
+		public void TestDeserializeObjectEmptyCollections ()
+		{
+			string s6 = "";
+			s6+="<Container xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>";
+			s6+="	<Collection1 xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' />";
+			s6+="	<Collection2 xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' />";
+			s6+="	<Collection3 xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' />";
+			s6+="	<Collection4 xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' />";
+			s6+="</Container>";
+			
+			EntityContainer cont = (EntityContainer) Deserialize (typeof(EntityContainer), s6);
+	        Assertion.AssertNotNull ("cont", cont);
+	        
+	        Assertion.AssertNotNull ("cont.Collection1", cont.Collection1);
+			Assertion.AssertEquals ("cont.Collection1", 0, cont.Collection1.Count);
+			Assertion.AssertEquals ("cont.Collection1.Container", "assigned", cont.Collection1.Container);
+			
+	        Assertion.AssertNotNull ("cont.Collection2", cont.Collection2);
+			Assertion.AssertEquals ("cont.Collection2", 0, cont.Collection2.Count);
+			Assertion.AssertEquals ("cont.Collection2.Container", "assigned", cont.Collection2.Container);
+			
+	        Assertion.AssertNotNull ("cont.Collection3", cont.Collection3);
+			Assertion.AssertEquals ("cont.Collection3", 0, cont.Collection3.Count);
+			Assertion.AssertEquals ("cont.Collection3.Container", "root", cont.Collection3.Container);
+			
+	        Assertion.AssertNotNull ("cont.Collection4", cont.Collection4);
+			Assertion.AssertEquals ("cont.Collection4", 0, cont.Collection4.Count);
+			Assertion.AssertEquals ("cont.Collection4.Container", "root", cont.Collection4.Container);
+		}
+		
+		[Test]
+		public void TestDeserializeObjectEmptyArrays ()
+		{
+			string s6 = "";
+			s6+="<Container xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>";
+			s6+="	<Collection1 xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' />";
+			s6+="	<Collection2 xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' />";
+			s6+="	<Collection3 xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' />";
+			s6+="	<Collection4 xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' />";
+			s6+="</Container>";
+			
+			ArrayEntityContainer cont = (ArrayEntityContainer) Deserialize (typeof(ArrayEntityContainer), s6);
+	        Assertion.AssertNotNull ("cont", cont);
+	        
+	        Assertion.AssertNotNull ("cont.Collection1", cont.Collection1);
+			Assertion.AssertEquals ("cont.Collection1.Length", 0, cont.Collection1.Length);
+			
+	        Assertion.AssertNotNull ("cont.Collection2", cont.Collection2);
+			Assertion.AssertEquals ("cont.Collection2.Length", 0, cont.Collection2.Length);
+			
+	        Assertion.AssertNotNull ("cont.Collection3", cont.Collection3);
+			Assertion.AssertEquals ("cont.Collection3.Length", 0, cont.Collection3.Length);
+			
+	        Assertion.AssertNotNull ("cont.Collection4", cont.Collection4);
+			Assertion.AssertEquals ("cont.Collection4.Length", 0, cont.Collection4.Length);
+		}
+		
+		[Test]
+		public void TestDeserializeEmptyObjectArrays ()
+		{
+			string s4 = "";
+			s4+="<Container xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>";
+			s4+="</Container>";
+			
+			ArrayEntityContainer cont = (ArrayEntityContainer) Deserialize (typeof(ArrayEntityContainer), s4);
+	        Assertion.AssertNotNull ("cont", cont);
+	        
+	        Assertion.AssertNull ("cont.Collection1", cont.Collection1);
+	        Assertion.AssertNull ("cont.Collection2", cont.Collection2);
+			
+	        Assertion.AssertNotNull ("cont.Collection3", cont.Collection3);
+			Assertion.AssertEquals ("cont.Collection3.Length", 0, cont.Collection3.Length);
+			
+	        Assertion.AssertNotNull ("cont.Collection4", cont.Collection4);
+			Assertion.AssertEquals ("cont.Collection4.Length", 0, cont.Collection4.Length);
+		}
+		
+		[Test]
+		public void TestDeserializeObjectNilArrays ()
+		{
+			string s5 = "";
+			s5+="<Container xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>";
+			s5+="	<Collection1 xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:nil='true' />";
+			s5+="	<Collection2 xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:nil='true' />";
+			s5+="	<Collection3 xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:nil='true' />";
+			s5+="	<Collection4 xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:nil='true' />";
+			s5+="</Container>";
+			
+			ArrayEntityContainer cont = (ArrayEntityContainer) Deserialize (typeof(ArrayEntityContainer), s5);
+	        Assertion.AssertNotNull ("cont", cont);
+	        
+	        Assertion.AssertNull ("cont.Collection1", cont.Collection1);
+	        Assertion.AssertNull ("cont.Collection2", cont.Collection2);
+	        Assertion.AssertNull ("cont.Collection3", cont.Collection3);
+			
+	        Assertion.AssertNotNull ("cont.Collection4", cont.Collection4);
+			Assertion.AssertEquals ("cont.Collection4.Length", 0, cont.Collection4.Length);
+		}
+		
+		[Test]
+		public void TestDeserializeEmptyArray ()
+		{
+			string s1 = "";
+			s1+="<ArrayOfEntity xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' />";
+			
+			Entity[] col = (Entity[]) Deserialize (typeof(Entity[]), s1);
+	        Assertion.AssertNotNull ("col", col);
+			Assertion.AssertEquals ("col.Length", 0, col.Length);
+			
+			string s1_1 = "";
+			s1_1+="	<ArrayOfEntity xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>";
+			s1_1+="	</ArrayOfEntity>";
+			
+			col = (Entity[]) Deserialize (typeof(Entity[]), s1_1);
+	        Assertion.AssertNotNull ("col", col);
+			Assertion.AssertEquals ("col.Length", 0, col.Length);
+		}
+		
+		[Test]
+		public void TestDeserializeNilArray ()
+		{
+			string s2 = "";
+			s2 += "<ArrayOfEntity xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:nil='true'/>";
+			
+			Entity[] col = (Entity[]) Deserialize (typeof(Entity[]), s2);
+	        Assertion.AssertNull ("col", col);
+		}
+		
+		[Test]
+		public void TestDeserializeObjectWithReadonlyCollection ()
+		{
+			string s3 = "";
+			s3+="<Container xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>";
+			s3+="	<Collection1>";
+			s3+="		<Entity Name='node1'/>";
+			s3+="		<Entity Name='node2'/>";
+			s3+="	</Collection1>";
+			s3+="</Container>";
+			
+			ObjectWithReadonlyCollection cont = (ObjectWithReadonlyCollection) Deserialize (typeof(ObjectWithReadonlyCollection), s3);
+	        Assertion.AssertNotNull ("cont", cont);
+	        Assertion.AssertNotNull ("cont.Collection1", cont.Collection1);
+			Assertion.AssertEquals ("cont.Collection1.Count", 2, cont.Collection1.Count);
+			Assertion.AssertEquals ("cont.Collection1.Container", "root", cont.Collection1.Container);
+			Assertion.AssertEquals ("cont.Collection1[0].Parent", "root", cont.Collection1[0].Parent);
+			Assertion.AssertEquals ("cont.Collection1[1].Parent", "root", cont.Collection1[1].Parent);
+		}
+		
+		[Test]
+		[ExpectedException (typeof(InvalidOperationException))]
+		public void TestDeserializeObjectWithReadonlyNulCollection ()
+		{
+			string s3 = "";
+			s3+="<Container xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>";
+			s3+="	<Collection1>";
+			s3+="		<Entity Name='node1'/>";
+			s3+="		<Entity Name='node2'/>";
+			s3+="	</Collection1>";
+			s3+="</Container>";
+			
+			Deserialize (typeof(ObjectWithReadonlyNulCollection), s3);
+		}
+		
+		[Test]
+		public void TestDeserializeObjectWithReadonlyArray ()
+		{
+			string s3 = "";
+			s3+="<Container xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>";
+			s3+="	<Collection1>";
+			s3+="		<Entity Name='node1'/>";
+			s3+="		<Entity Name='node2'/>";
+			s3+="	</Collection1>";
+			s3+="</Container>";
+			
+			ObjectWithReadonlyArray cont = (ObjectWithReadonlyArray) Deserialize (typeof(ObjectWithReadonlyArray), s3);
+	        Assertion.AssertNotNull ("cont", cont);
+	        Assertion.AssertNotNull ("cont.Collection1", cont.Collection1);
+			Assertion.AssertEquals ("cont.Collection1.Length", 0, cont.Collection1.Length);
+		}
 	}
 }

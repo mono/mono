@@ -163,7 +163,7 @@ namespace System.Xml.Serialization
 				if (Reader.LocalName != rootMap.ElementName || Reader.NamespaceURI != rootMap.Namespace)
 					throw CreateUnknownNodeException();
 				
-				return ReadObject (rootMap, true, true);
+				return ReadObject (rootMap, rootMap.IsNullable, true);
 			}
 		}		
 
@@ -381,8 +381,21 @@ namespace System.Xml.Serialization
 							}
 							else
 							{
-								if (IsReadOnly (info.Member, info.TypeData, ob, isValueList)) ReadListElement (info.MappedType, info.IsNullable, GetMemberValue (info.Member, ob, isValueList), false);
-								else SetMemberValue (info.Member, ob, ReadListElement (info.MappedType, info.IsNullable, null, true), isValueList);
+								if (IsReadOnly (info.Member, info.TypeData, ob, isValueList)) {
+									ReadListElement (info.MappedType, info.IsNullable, GetMemberValue (info.Member, ob, isValueList), false);
+								} else if (info.MappedType.TypeData.Type.IsArray) {
+									object list = ReadListElement (info.MappedType, info.IsNullable, null, true);
+									if (list != null || info.IsNullable)
+										SetMemberValue (info.Member, ob, list, isValueList);
+								} else {
+									// If the member already has a list, reuse that list. No need to create a new one. 
+									object list = GetMemberValue (info.Member, ob, isValueList);
+									if (list == null) {
+										list = CreateList (info.MappedType.TypeData.Type);
+										SetMemberValue (info.Member, ob, list, isValueList);
+									}
+									ReadListElement (info.MappedType, info.IsNullable, list, true);
+								}
 							}
 							readFlag[info.Member.Index] = true;
 						}
@@ -615,7 +628,7 @@ namespace System.Xml.Serialization
 			Type listType = typeMap.TypeData.Type;
 			ListMap listMap = (ListMap)typeMap.ObjectMap;
 
-			if (ReadNull()) return null;
+			if (listType.IsArray && ReadNull()) return null;
 
 			if (list == null) {
 				if (canCreateInstance && typeMap.TypeData.HasPublicConstructor) list = CreateList (listType);
@@ -625,7 +638,7 @@ namespace System.Xml.Serialization
 			if (Reader.IsEmptyElement) {
 				Reader.Skip();
 				if (listType.IsArray)
-					list = ShrinkArray ((Array)list, 0, listType.GetElementType(), isNullable);
+					list = ShrinkArray ((Array)list, 0, listType.GetElementType(), false);
 				return list;
 			}
 
@@ -651,7 +664,7 @@ namespace System.Xml.Serialization
 			ReadEndElement();
 
 			if (listType.IsArray)
-				list = ShrinkArray ((Array)list, index, listType.GetElementType(), isNullable);
+				list = ShrinkArray ((Array)list, index, listType.GetElementType(), false);
 
 			return list;
 		}
