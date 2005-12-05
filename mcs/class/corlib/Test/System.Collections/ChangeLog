@@ -1,3 +1,9 @@
+2005-12-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ComparerTest.cs: Removed "NotWorking" from "Invariant" test case 
+	(it's now working). Added new test cases for ISerializable (added in
+	SP1 and present in 2.0) and completed coverage with tests for ctor.
+
 2005-09-01  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* HashtableTest.cs : testcase for #75790.
