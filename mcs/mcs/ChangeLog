@@ -1,3 +1,10 @@
+2005-12-05  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix #76849.
+	* class.cs (Constructor.Emit): Set obsolete checking for whole context.
+
+	* enum.cs (Enum.Define): Set obsolete context here.
+
 2005-12-05  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* doc.cs :

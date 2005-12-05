@@ -4460,6 +4460,8 @@ namespace Mono.CSharp {
 		public override void Emit ()
 		{
 			EmitContext ec = CreateEmitContext (null, null);
+			if (GetObsoleteAttribute () != null || Parent.GetObsoleteAttribute () != null)
+				ec.TestObsoleteMethodUsage = false;
 
 			// If this is a non-static `struct' constructor and doesn't have any
 			// initializer, it must initialize all of the struct's fields.
@@ -4508,9 +4510,6 @@ namespace Mono.CSharp {
 				}
 			}
 			if (Initializer != null) {
-				if (GetObsoleteAttribute () != null || Parent.GetObsoleteAttribute () != null)
-					ec.TestObsoleteMethodUsage = false;
-
 				Initializer.Emit (ec);
 			}
 			

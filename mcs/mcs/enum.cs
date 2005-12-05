@@ -303,6 +303,9 @@ namespace Mono.CSharp {
 		
 		public override bool Define ()
 		{
+			if (GetObsoleteAttribute () != null || Parent.GetObsoleteAttribute () != null)
+				ec.TestObsoleteMethodUsage = false;
+
 			return true;
 		}
 
