@@ -45,11 +45,11 @@ namespace System {
 		}
 #endif
 
-		static readonly bool SwappedWordsInDouble;
-		public static readonly bool IsLittleEndian = AmILittleEndian (ref SwappedWordsInDouble);
+		static readonly bool SwappedWordsInDouble = DoubleWordsAreSwapped ();
+		public static readonly bool IsLittleEndian = AmILittleEndian ();
 
 
-		static unsafe bool AmILittleEndian (ref bool swappedword)
+		static unsafe bool AmILittleEndian ()
 		{
 			// binary representations of 1.0:
 			// big endian: 3f f0 00 00 00 00 00 00
@@ -57,8 +57,18 @@ namespace System {
 			// arm fpa little endian: 00 00 f0 3f 00 00 00 00
 			double d = 1.0;
 			byte *b = (byte*)&d;
-			swappedword = b [2] == 0xf0;
 			return (b [0] == 0);
+		}
+
+		static unsafe bool DoubleWordsAreSwapped ()
+		{
+			// binary representations of 1.0:
+			// big endian: 3f f0 00 00 00 00 00 00
+			// little endian: 00 00 00 00 00 00 f0 3f
+			// arm fpa little endian: 00 00 f0 3f 00 00 00 00
+			double d = 1.0;
+			byte *b = (byte*)&d;
+			return b [2] == 0xf0;
 		}
 
 		public static long DoubleToInt64Bits (double value)
