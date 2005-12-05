@@ -1,3 +1,8 @@
+2005-12-05  Marek Safar <marek.safar@seznam.cz>
+
+	* test-475.cs: Event initializer.
+	* test-465.cs: One more resource test.
+
 2005-12-05  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* test-xml-049-ref.xml test-xml-049.cs : test for bug #76782
