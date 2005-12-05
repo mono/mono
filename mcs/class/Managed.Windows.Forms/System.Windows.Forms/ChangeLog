@@ -1,3 +1,7 @@
+2005-12-05  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* RichTextBox.cs: Implemented get_SelectionColor
+
 2005-12-05  Alexander Olk  <alex.olk@googlemail.com>
 
 	* ThemeClearlooks.cs:

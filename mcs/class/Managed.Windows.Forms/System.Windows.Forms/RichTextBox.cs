@@ -396,7 +396,33 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public Color SelectionColor {
 			get {
-				throw new NotImplementedException();
+				Color	color;
+				LineTag	start;
+				LineTag	end;
+				LineTag	tag;
+
+				start = document.selection_start.tag;
+				end = document.selection_end.tag;
+				color = ((SolidBrush)document.selection_start.tag.color).Color;
+
+				tag = start;
+				while (true) {
+					if (!color.Equals(((SolidBrush)tag.color).Color)) {
+						return Color.Empty;
+					}
+
+					if (tag == end) {
+						break;
+					}
+
+					tag = document.NextTag(tag);
+
+					if (tag == null) {
+						break;
+					}
+				}
+
+				return color;
 			}
 
 			set {
