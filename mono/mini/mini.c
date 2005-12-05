@@ -121,7 +121,8 @@ static GHashTable *class_init_hash_addr = NULL;
 
 static MonoCodeManager *global_codeman = NULL;
 
-static GHashTable *jit_icall_name_hash = NULL;
+/* FIXME: Make this static again */
+GHashTable *jit_icall_name_hash = NULL;
 
 static MonoDebugOptions debug_options;
 
