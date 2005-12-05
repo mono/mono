@@ -39,8 +39,8 @@ namespace Mono.Unix {
 
 		public static void AdviseFileAccessPattern (int fd, FileAccessPattern pattern, long offset, long len)
 		{
-			int r = Syscall.posix_fadvise (fd, offset, len,
-				(PosixFadviseAdvice) pattern);
+			int r = Native.Syscall.posix_fadvise (fd, offset, len,
+				(Native.PosixFadviseAdvice) pattern);
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 		}
 
@@ -51,8 +51,8 @@ namespace Mono.Unix {
 
 		public static void AdviseFileAccessPattern (FileStream file, FileAccessPattern pattern, long offset, long len)
 		{
-			int r = Syscall.posix_fadvise (file.Handle.ToInt32(), offset, len,
-				(PosixFadviseAdvice) pattern);
+			int r = Native.Syscall.posix_fadvise (file.Handle.ToInt32(), offset, len,
+				(Native.PosixFadviseAdvice) pattern);
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 		}
 
@@ -63,8 +63,8 @@ namespace Mono.Unix {
 
 		public static void AdviseFileAccessPattern (UnixStream stream, FileAccessPattern pattern, long offset, long len)
 		{
-			int r = Syscall.posix_fadvise (stream.Handle, offset, len,
-				(PosixFadviseAdvice) pattern);
+			int r = Native.Syscall.posix_fadvise (stream.Handle, offset, len,
+				(Native.PosixFadviseAdvice) pattern);
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 		}
 

@@ -33,7 +33,7 @@ using Mono.Unix;
 
 namespace Mono.Unix {
 
-	[Obsolete ("Use UnixFileInfo or FileHandleOperations")]
+	[Obsolete ("Use UnixFileInfo or FileHandleOperations", true)]
 	public sealed /* static */ class UnixFile
 	{
 		private UnixFile () {}

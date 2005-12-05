@@ -1,3 +1,10 @@
+2005-12-05  Jonathan Pryor <jonpryor@vt.edu>
+
+	* make-map.cs: Always include 2nd parameter of [Obsolete] attributes; mark
+	  the [DllImport]ed method with [Obsolete] if the underlying type is
+	  [Obsolete].
+	* NativeConvert.generated.cs: Flush.
+
 2005-11-28  Jonathan Pryor <jonpryor@vt.edu>
 
 	* Stdlib.cs: Prelink all SignalHandlers passed to Stdlib.signal().  This is

@@ -72,25 +72,25 @@ namespace Mono.Unix {
 
 		public void CreateSymbolicLinkTo (string path)
 		{
-			int r = Syscall.symlink (path, OriginalPath);
+			int r = Native.Syscall.symlink (path, OriginalPath);
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 		}
 
 		public void CreateSymbolicLinkTo (UnixFileSystemInfo path)
 		{
-			int r = Syscall.symlink (path.FullName, OriginalPath);
+			int r = Native.Syscall.symlink (path.FullName, OriginalPath);
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 		}
 
 		public override void Delete ()
 		{
-			int r = Syscall.unlink (FullPath);
+			int r = Native.Syscall.unlink (FullPath);
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 			base.Refresh ();
 		}
 
 		[CLSCompliant (false)]
-		[Obsolete ("Use SetOwner (long, long)")]
+		[Obsolete ("Use SetOwner (long, long)", true)]
 		public override void SetOwner (uint owner, uint group)
 		{
 			int r = Syscall.lchown (FullPath, owner, group);
@@ -99,7 +99,7 @@ namespace Mono.Unix {
 
 		public override void SetOwner (long owner, long group)
 		{
-			int r = Syscall.lchown (FullPath, Convert.ToUInt32 (owner), Convert.ToUInt32 (group));
+			int r = Native.Syscall.lchown (FullPath, Convert.ToUInt32 (owner), Convert.ToUInt32 (group));
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 		}
 
@@ -119,7 +119,7 @@ namespace Mono.Unix {
 		private string TryReadLink ()
 		{
 			StringBuilder sb = new StringBuilder ((int) base.Length+1);
-			int r = Syscall.readlink (FullPath, sb);
+			int r = Native.Syscall.readlink (FullPath, sb);
 			if (r == -1)
 				return null;
 			return sb.ToString (0, r);

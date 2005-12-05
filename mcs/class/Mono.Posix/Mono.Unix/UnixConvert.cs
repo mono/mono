@@ -12,7 +12,7 @@ using Mono.Unix;
 namespace Mono.Unix {
 
 	[CLSCompliant (false)]
-	[Obsolete ("Use Mono.Unix.Native.NativeConvert")]
+	[Obsolete ("Use Mono.Unix.Native.NativeConvert", true)]
 	public sealed /* static */ class UnixConvert
 	{
 		private UnixConvert () {}

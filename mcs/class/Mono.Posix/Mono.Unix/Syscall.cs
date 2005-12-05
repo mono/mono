@@ -78,7 +78,7 @@ namespace Mono.Unix {
 
 	[Flags]
 	[CLSCompliant (false)]
-	[Obsolete ("Use Mono.Unix.Native.SyslogOptions")]
+	[Obsolete ("Use Mono.Unix.Native.SyslogOptions", true)]
 	public enum SyslogOptions {
 		LOG_PID    = 0x01,  // log the pid with each message
 		LOG_CONS   = 0x02,  // log on the console if errors in sending
@@ -89,11 +89,11 @@ namespace Mono.Unix {
 	}
 
 	[CLSCompliant (false)]
-	[Obsolete ("Use Mono.Unix.Native.SyslogFacility")]
+	[Obsolete ("Use Mono.Unix.Native.SyslogFacility", true)]
 	public enum SyslogFacility {
 		LOG_KERN      = 0 << 3,
 		LOG_USER      = 1 << 3,
-		[Obsolete ("use SyslogFacility.LOG_USER")]
+		[Obsolete ("use SyslogFacility.LOG_USER", true)]
 		LOG_USRE      = 1 << 3,
 		LOG_MAIL      = 2 << 3,
 		LOG_DAEMON    = 3 << 3,
@@ -116,7 +116,7 @@ namespace Mono.Unix {
 	}
 
 	[CLSCompliant (false)]
-	[Obsolete ("Use Mono.Unix.Native.SyslogLevel")]
+	[Obsolete ("Use Mono.Unix.Native.SyslogLevel", true)]
 	public enum SyslogLevel {
 		LOG_EMERG   = 0,  // system is unusable
 		LOG_ALERT   = 1,  // action must be taken immediately
@@ -130,7 +130,7 @@ namespace Mono.Unix {
 
 	[Flags]
 	[CLSCompliant (false)]
-	[Obsolete ("Use Mono.Unix.Native.OpenFlags")]
+	[Obsolete ("Use Mono.Unix.Native.OpenFlags", true)]
 	public enum OpenFlags : int {
 		//
 		// One of these
@@ -170,7 +170,7 @@ namespace Mono.Unix {
 	// mode_t
 	[Flags]
 	[CLSCompliant (false)]
-	[Obsolete ("Use Mono.Unix.Native.FilePermissions")]
+	[Obsolete ("Use Mono.Unix.Native.FilePermissions", true)]
 	public enum FilePermissions : uint {
 		S_ISUID     = 0x0800, // Set user ID on execution
 		S_ISGID     = 0x0400, // Set gorup ID on execution
@@ -205,7 +205,7 @@ namespace Mono.Unix {
 	}
 
 	[CLSCompliant (false)]
-	[Obsolete ("Use Mono.Unix.Native.FcntlCommand")]
+	[Obsolete ("Use Mono.Unix.Native.FcntlCommand", true)]
 	public enum FcntlCommand : int {
 		// Form /usr/include/bits/fcntl.h
 		F_DUPFD    =    0, // Duplicate file descriptor.
@@ -226,7 +226,7 @@ namespace Mono.Unix {
 	}
 
 	[CLSCompliant (false)]
-	[Obsolete ("Use Mono.Unix.Native.LockType")]
+	[Obsolete ("Use Mono.Unix.Native.LockType", true)]
 	public enum LockType : short {
 		F_RDLCK = 0, // Read lock.
 		F_WRLCK = 1, // Write lock.
@@ -234,7 +234,7 @@ namespace Mono.Unix {
 	}
 
 	[CLSCompliant (false)]
-	[Obsolete ("Use Mono.Unix.Native.SeekFlags")]
+	[Obsolete ("Use Mono.Unix.Native.SeekFlags", true)]
 	public enum SeekFlags : short {
 		// values liberally copied from /usr/include/unistd.h
 		SEEK_SET = 0, // Seek from beginning of file.
@@ -248,7 +248,7 @@ namespace Mono.Unix {
 	
 	[Flags]
 	[CLSCompliant (false)]
-	[Obsolete ("Use Mono.Unix.Native.DirectoryNotifyFlags")]
+	[Obsolete ("Use Mono.Unix.Native.DirectoryNotifyFlags", true)]
 	public enum DirectoryNotifyFlags : int {
 		// from /usr/include/bits/fcntl.h
 		DN_ACCESS    = 0x00000001, // File accessed.
@@ -261,7 +261,7 @@ namespace Mono.Unix {
 	}
 
 	[CLSCompliant (false)]
-	[Obsolete ("Use Mono.Unix.Native.PosixFadviseAdvice")]
+	[Obsolete ("Use Mono.Unix.Native.PosixFadviseAdvice", true)]
 	public enum PosixFadviseAdvice : int {
 		POSIX_FADV_NORMAL     = 0,  // No further special treatment.
 		POSIX_FADV_RANDOM     = 1,  // Expect random page references.
@@ -272,7 +272,7 @@ namespace Mono.Unix {
 	}
 
 	[CLSCompliant (false)]
-	[Obsolete ("Use Mono.Unix.Native.PosixMadviseAdvice")]
+	[Obsolete ("Use Mono.Unix.Native.PosixMadviseAdvice", true)]
 	public enum PosixMadviseAdvice : int {
 		POSIX_MADV_NORMAL     = 0,  // No further special treatment.
 		POSIX_MADV_RANDOM     = 1,  // Expect random page references.
@@ -282,7 +282,7 @@ namespace Mono.Unix {
 	}
 
 	[CLSCompliant (false)]
-	[Obsolete ("Use Mono.Unix.Native.Signum")]
+	[Obsolete ("Use Mono.Unix.Native.Signum", true)]
 	public enum Signum : int {
 		SIGHUP    =  1, // Hangup (POSIX).
 		SIGINT    =  2, // Interrupt (ANSI).
@@ -323,7 +323,7 @@ namespace Mono.Unix {
 
 	[Flags]
 	[CLSCompliant (false)]
-	[Obsolete ("Use Mono.Unix.Native.WaitOptions")]
+	[Obsolete ("Use Mono.Unix.Native.WaitOptions", true)]
 	public enum WaitOptions : int {
 		WNOHANG   = 1,  // Don't block waiting
 		WUNTRACED = 2,  // Report status of stopped children
@@ -331,7 +331,7 @@ namespace Mono.Unix {
 
 	[Map][Flags]
 	[CLSCompliant (false)]
-	[Obsolete ("Use Mono.Unix.Native.AccessModes")]
+	[Obsolete ("Use Mono.Unix.Native.AccessModes", true)]
 	public enum AccessMode : int {
 		R_OK = 1,
 		W_OK = 2,
@@ -341,7 +341,7 @@ namespace Mono.Unix {
 
 	[Map]
 	[CLSCompliant (false)]
-	[Obsolete ("Use Mono.Unix.Native.PathconfName")]
+	[Obsolete ("Use Mono.Unix.Native.PathconfName", true)]
 	public enum PathConf : int {
 		_PC_LINK_MAX,
 		_PC_MAX_CANON,
@@ -368,7 +368,7 @@ namespace Mono.Unix {
 
 	[Map]
 	[CLSCompliant (false)]
-	[Obsolete ("Use Mono.Unix.Native.SysconfName")]
+	[Obsolete ("Use Mono.Unix.Native.SysconfName", true)]
 	public enum SysConf : int {
 		_SC_ARG_MAX,
 		_SC_CHILD_MAX,
@@ -578,7 +578,7 @@ namespace Mono.Unix {
 
 	[Map]
 	[CLSCompliant (false)]
-	[Obsolete ("Use Mono.Unix.Native.ConfstrName")]
+	[Obsolete ("Use Mono.Unix.Native.ConfstrName", true)]
 	public enum ConfStr : int {
 		_CS_PATH,			/* The default search path.  */
 		_CS_V6_WIDTH_RESTRICTED_ENVS,
@@ -627,7 +627,7 @@ namespace Mono.Unix {
 	}
 
 	[CLSCompliant (false)]
-	[Obsolete ("Use Mono.Unix.Native.LockfCommand")]
+	[Obsolete ("Use Mono.Unix.Native.LockfCommand", true)]
 	public enum LockfCommand : int {
 		F_ULOCK = 0, // Unlock a previously locked region.
 		F_LOCK  = 1, // Lock a region for exclusive use.
@@ -637,7 +637,7 @@ namespace Mono.Unix {
 
 	[Flags]
 	[CLSCompliant (false)]
-	[Obsolete ("Use Mono.Unix.Native.PollEvents")]
+	[Obsolete ("Use Mono.Unix.Native.PollEvents", true)]
 	public enum PollEvents : short {
 		POLLIN      = 0x0001, // There is data to read
 		POLLPRI     = 0x0002, // There is urgent data to read
@@ -654,7 +654,7 @@ namespace Mono.Unix {
 
 	[Flags]
 	[CLSCompliant (false)]
-	[Obsolete ("Use Mono.Unix.Native.XattrFlags")]
+	[Obsolete ("Use Mono.Unix.Native.XattrFlags", true)]
 	public enum XattrFlags : int {
 		XATTR_AUTO = 0,
 		XATTR_CREATE = 1,
@@ -663,7 +663,7 @@ namespace Mono.Unix {
 
 	[Flags]
 	[CLSCompliant (false)]
-	[Obsolete ("Use Mono.Unix.Native.MountFlags")]
+	[Obsolete ("Use Mono.Unix.Native.MountFlags", true)]
 	public enum MountFlags : ulong {
 		ST_RDONLY      =    1,  // Mount read-only
 		ST_NOSUID      =    2,  // Ignore suid and sgid bits
@@ -679,7 +679,7 @@ namespace Mono.Unix {
 
 	[Flags]
 	[CLSCompliant (false)]
-	[Obsolete ("Use Mono.Unix.Native.MmapFlags")]
+	[Obsolete ("Use Mono.Unix.Native.MmapFlags", true)]
 	public enum MmapFlags : int {
 		MAP_SHARED      = 0x01,     // Share changes.
 		MAP_PRIVATE     = 0x02,     // Changes are private.
@@ -701,7 +701,7 @@ namespace Mono.Unix {
 
 	[Map][Flags]
 	[CLSCompliant (false)]
-	[Obsolete ("Use Mono.Unix.Native.MmapProts")]
+	[Obsolete ("Use Mono.Unix.Native.MmapProts", true)]
 	public enum MmapProt : int {
 		PROT_READ       = 0x1,  // Page can be read.
 		PROT_WRITE      = 0x2,  // Page can be written.
@@ -715,7 +715,7 @@ namespace Mono.Unix {
 
 	[Flags]
 	[CLSCompliant (false)]
-	[Obsolete ("Use Mono.Unix.Native.MsyncFlags")]
+	[Obsolete ("Use Mono.Unix.Native.MsyncFlags", true)]
 	public enum MsyncFlags : int {
 		MS_ASYNC      = 0x1,  // Sync memory asynchronously.
 		MS_SYNC       = 0x4,  // Synchronous memory sync.
@@ -724,7 +724,7 @@ namespace Mono.Unix {
 
 	[Flags]
 	[CLSCompliant (false)]
-	[Obsolete ("Use Mono.Unix.Native.MlockallFlags")]
+	[Obsolete ("Use Mono.Unix.Native.MlockallFlags", true)]
 	public enum MlockallFlags : int {
 		MCL_CURRENT	= 0x1,	// Lock all currently mapped pages.
 		MCL_FUTURE  = 0x2,	// Lock all additions to address
@@ -732,7 +732,7 @@ namespace Mono.Unix {
 
 	[Flags]
 	[CLSCompliant (false)]
-	[Obsolete ("Use Mono.Unix.Native.MremapFlags")]
+	[Obsolete ("Use Mono.Unix.Native.MremapFlags", true)]
 	public enum MremapFlags : ulong {
 		MREMAP_MAYMOVE = 0x1,
 	}
@@ -742,7 +742,7 @@ namespace Mono.Unix {
 	#region Structures
 
 	[CLSCompliant (false)]
-	[Obsolete ("Use Mono.Unix.Native.Flock")]
+	[Obsolete ("Use Mono.Unix.Native.Flock", true)]
 	public struct Flock {
 		public LockType         l_type;    // Type of lock: F_RDLCK, F_WRLCK, F_UNLCK
 		public SeekFlags        l_whence;  // How to interpret l_start
@@ -752,7 +752,7 @@ namespace Mono.Unix {
 	}
 
 	[CLSCompliant (false)]
-	[Obsolete ("Use Mono.Unix.Native.Pollfd")]
+	[Obsolete ("Use Mono.Unix.Native.Pollfd", true)]
 	[StructLayout(LayoutKind.Sequential)]
 	public struct Pollfd {
 		public int fd;
@@ -760,7 +760,7 @@ namespace Mono.Unix {
 		public PollEvents revents;
 	}
 
-	[Obsolete ("Use Mono.Unix.Native.Stat")]
+	[Obsolete ("Use Mono.Unix.Native.Stat", true)]
 	public struct Stat {
 		[CLSCompliant (false)]
 		public  /* dev_t */     ulong   st_dev;     // device
@@ -786,7 +786,7 @@ namespace Mono.Unix {
 	}
 
 	[CLSCompliant (false)]
-	[Obsolete ("Use Mono.Unix.Native.Statvfs")]
+	[Obsolete ("Use Mono.Unix.Native.Statvfs", true)]
 	public struct Statvfs {
 		public                  ulong f_bsize;	  // file system block size
 		public                  ulong f_frsize;   // fragment size
@@ -801,19 +801,19 @@ namespace Mono.Unix {
 		public                  ulong f_namemax;  // maximum filename length
 	}
 
-	[Obsolete ("Use Mono.Unix.Native.Timeval")]
+	[Obsolete ("Use Mono.Unix.Native.Timeval", true)]
 	public struct Timeval {
 		public  /* time_t */      long    tv_sec;   // seconds
 		public  /* suseconds_t */ long    tv_usec;  // microseconds
 	}
 
-	[Obsolete ("Use Mono.Unix.Native.Timezone")]
+	[Obsolete ("Use Mono.Unix.Native.Timezone", true)]
 	public struct Timezone {
 		public  int tz_minuteswest; // minutes W of Greenwich
 		private int tz_dsttime;     // type of dst correction (OBSOLETE)
 	}
 
-	[Obsolete ("Use Mono.Unix.Native.Utimbuf")]
+	[Obsolete ("Use Mono.Unix.Native.Utimbuf", true)]
 	public struct Utimbuf {
 		public  /* time_t */      long    actime;   // access time
 		public  /* time_t */      long    modtime;  // modification time
@@ -823,7 +823,7 @@ namespace Mono.Unix {
 
 	#region Classes
 
-	[Obsolete ("Use Mono.Unix.Native.Dirent")]
+	[Obsolete ("Use Mono.Unix.Native.Dirent", true)]
 	public sealed class Dirent
 	{
 		[CLSCompliant (false)]
@@ -867,7 +867,7 @@ namespace Mono.Unix {
 		}
 	}
 
-	[Obsolete ("Use Mono.Unix.Native.Fstab")]
+	[Obsolete ("Use Mono.Unix.Native.Fstab", true)]
 	public sealed class Fstab
 	{
 		public string fs_spec;
@@ -912,7 +912,7 @@ namespace Mono.Unix {
 		}
 	}
 
-	[Obsolete ("Use Mono.Unix.Native.Group")]
+	[Obsolete ("Use Mono.Unix.Native.Group", true)]
 	public sealed class Group
 	{
 		public string           gr_name;
@@ -984,7 +984,7 @@ namespace Mono.Unix {
 		}
 	}
 
-	[Obsolete ("Use Mono.Unix.Native.Passwd")]
+	[Obsolete ("Use Mono.Unix.Native.Passwd", true)]
 	public sealed class Passwd
 	{
 		public string           pw_name;
@@ -1129,7 +1129,7 @@ namespace Mono.Unix {
 	//      P/Invoke into libc.so.
 	//
 	[CLSCompliant (false)]
-	[Obsolete ("Use Mono.Unix.Native.Syscall")]
+	[Obsolete ("Use Mono.Unix.Native.Syscall", true)]
 	public sealed class Syscall : Stdlib
 	{
 		new internal const string LIBC  = "libc";
@@ -2070,7 +2070,7 @@ namespace Mono.Unix {
 
 		[Obsolete ("\"Nobody knows precisely what cuserid() does... " + 
 				"DO NOT USE cuserid().\n" +
-				"`string' must hold L_cuserid characters.  Use getlogin_r instead.")]
+				"`string' must hold L_cuserid characters.  Use getlogin_r instead.", true)]
 		public static string cuserid (StringBuilder @string)
 		{
 			if (@string.Capacity < L_cuserid) {
@@ -2550,7 +2550,7 @@ namespace Mono.Unix {
 		}
 
 		[Obsolete ("Not necessarily portable due to cdecl restrictions.\n" +
-				"Use syslog(SyslogFacility, SyslogLevel, string) instead.")]
+				"Use syslog(SyslogFacility, SyslogLevel, string) instead.", true)]
 		public static void syslog (SyslogFacility facility, SyslogLevel level, 
 				string format, params object[] parameters)
 		{
@@ -2565,7 +2565,7 @@ namespace Mono.Unix {
 		}
 
 		[Obsolete ("Not necessarily portable due to cdecl restrictions.\n" +
-				"Use syslog(SyslogLevel, string) instead.")]
+				"Use syslog(SyslogLevel, string) instead.", true)]
 		public static void syslog (SyslogLevel level, string format, 
 				params object[] parameters)
 		{
@@ -2942,14 +2942,14 @@ namespace Mono.Unix {
 		//    pid_t fork(void);
 		[DllImport (LIBC, SetLastError=true)]
 		[Obsolete ("DO NOT directly call fork(2); it bypasses essential " + 
-				"shutdown code.\nUse System.Diagnostics.Process instead")]
+				"shutdown code.\nUse System.Diagnostics.Process instead", true)]
 		private static extern int fork ();
 
 		// vfork(2)
 		//    pid_t vfork(void);
 		[DllImport (LIBC, SetLastError=true)]
 		[Obsolete ("DO NOT directly call vfork(2); it bypasses essential " + 
-				"shutdown code.\nUse System.Diagnostics.Process instead")]
+				"shutdown code.\nUse System.Diagnostics.Process instead", true)]
 		private static extern int vfork ();
 
 		private static object tty_lock = new object ();
@@ -3184,7 +3184,7 @@ namespace Mono.Unix {
 
 		[DllImport (LIBC, SetLastError=true)]
 		[Obsolete ("Dropped in POSIX 1003.1-2001.  " +
-				"Use Unistd.sysconf (SysConf._SC_PAGESIZE).")]
+				"Use Unistd.sysconf (SysConf._SC_PAGESIZE).", true)]
 		public static extern int getpagesize ();
 
 		// truncate(2)
