@@ -74,7 +74,7 @@ namespace MonoTests.Mono.Unix {
 					Assert.AreEqual (s, _s, "#TSTA (" + e.GetType() + ")");
 			}
 			finally {
-				UnixMarshal.Free (p);
+				UnixMarshal.FreeHeap (p);
 			}
 		}
 	}
