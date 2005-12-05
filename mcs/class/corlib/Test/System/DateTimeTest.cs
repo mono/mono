@@ -740,42 +740,109 @@ public class DateTimeTest : Assertion
 	}
 
 	[Test]
-	public void TestParse5 ()
+	public void Parse_Bug71289a ()
 	{
 		// bug #71289
-		DateTime.Parse ("Sat,,,,,, 01 Oct 1994 03:00:00",
-			CultureInfo.InvariantCulture);
+		DateTime.Parse ("Sat,,,,,, 01 Oct 1994 03:00:00", CultureInfo.InvariantCulture);
+	}
+
+	[Test]
+	public void Parse_Bug71289b ()
+	{
 		// more example...
-//		DateTime.Parse ("Sat,,, 01,,, Oct,,, ,,,1994 03:00:00",
-//			CultureInfo.InvariantCulture);
+		DateTime.Parse ("Sat,,, 01,,, Oct,,, ,,,1994 03:00:00", CultureInfo.InvariantCulture);
+	}
+
 #if NET_2_0
-		try {
-			// ',' after 03 is not allowed.
-			DateTime.Parse ("Sat,,, 01,,, Oct,,, ,,,1994 03,:00:00",
-			CultureInfo.InvariantCulture);
-			Fail ("Should fail here.");
-		} catch (FormatException) {
-		}
+	[Test]
+	[ExpectedException (typeof (FormatException))]
+	public void Parse_CommaAfterHours ()
+	{
+		// ',' after 03 is not allowed.
+		DateTime.Parse ("Sat,,, 01,,, Oct,,, ,,,1994 03,:00:00", CultureInfo.InvariantCulture);
+	}
 #endif
 
+	[Test]
+	public void Parse_Bug72788 ()
+	{
 		// bug #72788
 		DateTime dt = DateTime.Parse ("21/02/05", new CultureInfo ("fr-FR"));
 		AssertEquals (2005, dt.Year);
 		AssertEquals (02, dt.Month);
 		AssertEquals (21, dt.Day);
+	}
 
+	[Test]
+	[Category ("NotWorking")] // Mono accept this format for ALL cultures
+	public void Parse_Bug53023a ()
+	{
 		foreach (CultureInfo ci in CultureInfo.GetCultures (CultureTypes.SpecificCultures)) {
-			DateTime.Parse ("8/16/2005", ci); // see also bug #53023
+			FormatException e = null;
+			try {
+				// this fails for MOST culture under MS 1.1 SP1
+				DateTime.Parse ("8/16/2005", ci);
+			}
+			catch (FormatException fe) {
+				e = fe;
+			}
+			string c = ci.ToString ();
+			switch (c) {
+			case "af-ZA":
+			case "en-CB":
+			case "en-PH":
+			case "en-US":
+			case "en-ZA":
+			case "en-ZW":
+			case "es-PA":
+			case "eu-ES":
+			case "fa-IR":
+			case "fr-CA":
+			case "hu-HU":
+			case "ja-JP":
+			case "ko-KR":
+			case "lv-LV":
+			case "lt-LT":
+			case "mn-MN":
+			case "pl-PL":
+			case "sq-AL":
+			case "sv-SE":
+			case "sw-KE":
+			case "zh-CN":
+			case "zh-TW":
+#if NET_2_0
+			case "ns-ZA":
+			case "se-SE":
+			case "sma-SE":
+			case "smj-SE":
+			case "tn-ZA":
+			case "xh-ZA":
+			case "zu-ZA":
+#endif
+				Assert (c, (e == null));
+				break;
+			default:
+				Assert (c, (e != null));
+				break;
+			}
+		}
+	}
+
+	[Test]
+	public void Parse_Bug53023b ()
+	{
+		foreach (CultureInfo ci in CultureInfo.GetCultures (CultureTypes.SpecificCultures)) {
 			DateTime.Parse ("01-Sep-05", ci);
 			DateTime.Parse ("4:35:35 AM", ci);
 		}
+	}
 
+	[Test]
+	[ExpectedException (typeof (FormatException))]
+	public void Parse_DontAccept2DigitsYears ()
+	{
 		// don't allow 2 digit years where we require 4.
-		try {
-			DateTime.ParseExact ("05", "yyyy", CultureInfo.InvariantCulture);
-			Fail ("Reject 2 digit years for yyyy");
-		} catch (FormatException) {
-		}
+		DateTime.ParseExact ("05", "yyyy", CultureInfo.InvariantCulture);
 	}
 
 	[Test]
@@ -1120,19 +1187,24 @@ public class DateTimeTest : Assertion
 					case 1078: // MS does not pass this culture. Dunno why.
 						break;
 					default:
+#if ONLY_1_1
 						// bug #58938
 						stage = "12";
 						dt = DateTime.Parse ("2002#02#25 19:20:00");
+						// this stage fails under MS 2.0
 						stage = "13";
 						AssertEquals (String.Format ("bug #58938 on culture {0} {1}", ci.LCID, ci), 19, dt.Hour);
+#endif
 						break;
 					}
 					stage = "14";
 					dt = DateTime.Parse ("2002-02-25 12:01:03");
+#if ONLY_1_1
 					stage = "15";
 					dt = DateTime.Parse ("2002#02#25 12:01:03");
 					stage = "16";
 					dt = DateTime.Parse ("2002%02%25 12:01:03");
+#endif
 					stage = "17";
 					if (ci.DateTimeFormat.TimeSeparator != ".")
 						dt = DateTime.Parse ("2002.02.25 12:01:03");
@@ -1208,7 +1280,11 @@ public class DateTimeTest : Assertion
 	}
 
 	[Test]
-	[Category ("NotWorking")]
+#if NET_2_0
+	[ExpectedException (typeof (FormatException))]
+#else
+	[Ignore ("Works only under MS 1.x (i.e. Mono and MS 2.0 fails).")]
+#endif
 	public void ParseNotExact ()
 	{
 		// The error reported is:

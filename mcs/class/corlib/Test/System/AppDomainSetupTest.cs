@@ -4,6 +4,7 @@
 // 	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // (C) 2003 Ximian, Inc.  http://www.ximian.com
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 // 
 
 using NUnit.Framework;
@@ -19,13 +20,19 @@ namespace MonoTests.System
 		static readonly string curDir = Directory.GetCurrentDirectory ();
 
 		[Test]
+#if NET_2_0
+		// Invalid path format
+		[ExpectedException (typeof (NotSupportedException))]
+#endif
+		[Category ("NotWorking")]
 		public void ApplicationBase1 ()
 		{
 			string expected_path = tmpPath.Replace(@"\", @"/");
 			AppDomainSetup setup = new AppDomainSetup ();
 			string fileUri = "file://" + expected_path;
 			setup.ApplicationBase = fileUri;
-			AssertEquals ("AB1 #01", expected_path, setup.ApplicationBase);
+			// with MS 1.1 SP1 the expected_path starts with "//"
+			AssertEquals ("AB1 #01", "//" + expected_path, setup.ApplicationBase);
 		}
 
 		[Test]
@@ -39,7 +46,6 @@ namespace MonoTests.System
 		[Test]
 		public void ApplicationBase3 ()
 		{
-			Console.WriteLine (Environment.Version);
 			AppDomainSetup setup = new AppDomainSetup ();
 			string expected = Path.Combine (Environment.CurrentDirectory, "lalala");
 			setup.ApplicationBase = "lalala";
@@ -47,6 +53,11 @@ namespace MonoTests.System
 		}
 
 		[Test]
+#if NET_2_0
+		// Invalid path format
+		[ExpectedException (typeof (NotSupportedException))]
+		[Category ("NotWorking")]
+#endif
 		public void ApplicationBase4 ()
 		{
 			AppDomainSetup setup = new AppDomainSetup ();
@@ -55,7 +66,11 @@ namespace MonoTests.System
 		}
 
 		[Test]
-		[Category("NotWorking")]
+#if NET_2_0
+		// Invalid path format
+		[ExpectedException (typeof (NotSupportedException))]
+#endif
+		[Category ("NotWorking")]
 		public void ApplicationBase5 ()
 		{
 			// This is failing because of (probably) a windows-ism, so don't worry
@@ -65,4 +80,3 @@ namespace MonoTests.System
 		}
 	}
 }
-

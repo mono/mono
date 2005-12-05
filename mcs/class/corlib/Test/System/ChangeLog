@@ -1,3 +1,10 @@
+2005-12-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AppDomainSetupTest.cs: Fixed test cases to execute properly under
+	MS 1.1 SP1 and 2.0 final.
+	* DateTimeTest.cs: Split TestParse5 into several test cases to find 
+	the one failing under MS 1.1 SP1. Also fixed tests for MS 2.0 final.
+
 2005-11-19  Zoltan Varga  <vargaz@gmail.com>
 
 	* ArrayTest.cs: Reenable some previously not-working 2.0 tests.
