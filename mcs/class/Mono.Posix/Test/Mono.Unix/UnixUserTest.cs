@@ -49,7 +49,7 @@ namespace MonoTests.Mono.Unix {
 		public void ReentrantConstructors ()
 		{
 			ArrayList user_ids = new ArrayList (4);
-			IList users = UnixUser.GetLocalUsers ();
+			IList users = UnixUserInfo.GetLocalUsers ();
 			foreach (UnixUserInfo user in users) {
 				try {
 					UnixUserInfo byName = new UnixUserInfo (user.UserName);

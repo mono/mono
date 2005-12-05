@@ -1,5 +1,9 @@
 2005-12-05  Jonathan Pryor  <jonpryor@vt.edu>
 
+	* UnixUserTest.cs: s/UnixUser/UnixUserInfo/g (UnixUser is obsolete).
+
+2005-12-05  Jonathan Pryor  <jonpryor@vt.edu>
+
 	* UnixMarshalTest.cs: s/Free/FreeHeap/g (UnixMarshal.Free will be removed).
 
 2005-11-28  Jonathan Pryor  <jonpryor@vt.edu>
