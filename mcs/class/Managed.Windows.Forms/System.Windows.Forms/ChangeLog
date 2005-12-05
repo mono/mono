@@ -1,3 +1,14 @@
+2005-12-05  Alexander Olk  <alex.olk@googlemail.com>
+
+	* ThemeClearlooks.cs:
+	  - Removed dead code
+	  - Draw black button border only if button is Form.AcceptButton
+	  - Draw correct button color for pressed RadioButton if the mouse 
+	    has entered the button
+	  - Updated ProgressBar drawing!
+	  - Updated CPDrawSizeGrip drawing
+	  - Updated StatusBarPanel drawing
+
 2005-12-05  Mike Kestner  <mkestner@novell.com>
 
 	* Control.cs (PreProcessMessage): add Keys.Alt based on LParam value.

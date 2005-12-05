@@ -30,14 +30,10 @@
 //
 // TODO:	
 //	- ComboBox drawing sometimes leaves artefacts, etc.
-//	- ProgressBar
 //	- CheckBox
 //	- RadioButton
-//	- Button: if the mouse enters a pressed button (for example a RadioButton) the button color should change
 //	- GroupBox
 //	- TabControl: TabAlignment.Left and TabAlignment.Bottom
-//	- StatusBarPanel
-//	- CPDrawSizeGrip
 
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -52,11 +48,9 @@ namespace System.Windows.Forms {
 			}
 		}
 		
-		// the following 5 colors will be removed when the theme is finished
+		// the following 3 colors will be removed when the theme is finished
 		static readonly Color NormalColor = Color.LightGray;
 		static readonly Color MouseOverColor = Color.DarkGray;
-		static readonly Color PressedColor = Color.Gray;
-		static readonly Color LightColor = Color.LightGray;
 		static readonly Color BorderColor = MouseOverColor;
 		
 		static readonly Color theme_back_color = Color.FromArgb( 239, 235, 231 );
@@ -110,11 +104,14 @@ namespace System.Windows.Forms {
 		static readonly Color combobox_focus_inner_border_color = Color.FromArgb( 167, 198, 225 );
 		static readonly Color combobox_button_second_gradient_color = Color.FromArgb( 226, 220, 213 );
 		
+		static readonly Color progressbar_edge_dot_color = Color.FromArgb( 219, 212, 205 );
+		static readonly Color progressbar_inner_border_color = Color.FromArgb( 139, 176, 209 );
+		static readonly Color progressbar_first_gradient_color = Color.FromArgb( 104, 146, 184 );
+		static readonly Color progressbar_second_gradient_color = Color.FromArgb( 91, 133, 172 );
+		
 		const int SEPARATOR_HEIGHT = 7;
     		const int MENU_TAB_SPACE = 8;		// Pixels added to the width of an item because of a tab
     		const int MENU_BAR_ITEMS_SPACE = 8;	// Space between menu bar items
-		
-		static Bitmap size_grip_bmp = CreateSizegripDot();
 		
 		#region	Principal Theme Methods
 		public ThemeClearlooks( ) {
@@ -131,21 +128,6 @@ namespace System.Windows.Forms {
 		
 		public override Color ColorControl {
 			get { return theme_back_color;}
-		}
-		
-		static Bitmap CreateSizegripDot( ) {
-			Bitmap bmp = new Bitmap( 4, 4 );
-			using ( Graphics dc = Graphics.FromImage( bmp ) ) {
-				SmoothingMode old_smoothing_mode = dc.SmoothingMode;
-				dc.SmoothingMode = SmoothingMode.AntiAlias;
-				
-				using ( LinearGradientBrush lgbr = new LinearGradientBrush( new Point( 0, 0 ), new Point( 4, 4 ), PressedColor, Color.White ) )
-					dc.FillEllipse( lgbr, new Rectangle( 0, 0, 4, 4 ) );
-				
-				dc.SmoothingMode = old_smoothing_mode;
-			}
-			
-			return bmp;
 		}
 		#endregion	// Internal Methods
 		
@@ -167,8 +149,8 @@ namespace System.Windows.Forms {
 			
 			if ( ( ( button is CheckBox ) && ( ( (CheckBox)button ).check_state == CheckState.Checked ) ) ||
 			    ( ( button is RadioButton ) && ( ( (RadioButton)button ).check_state == CheckState.Checked ) ) ) {
-				first_gradient_color = pressed_gradient_first_color;
-				second_gradient_color = pressed_gradient_second_color;
+				first_gradient_color = button.is_entered ? gradient_second_color : pressed_gradient_first_color;
+				second_gradient_color = button.is_entered  ? gradient_second_color : pressed_gradient_second_color;
 			} else
 			if ( !button.is_enabled ) {
 				first_gradient_color = gradient_first_color;
@@ -228,15 +210,23 @@ namespace System.Windows.Forms {
 				};
 				
 				Pen pen = null; 
-				bool is_standard_or_system = false;
-				
-				if ( button.flat_style == FlatStyle.Standard || button.flat_style == FlatStyle.System )
-					is_standard_or_system = true;
 				
 				// normal border
-				if ( button.is_enabled ) {
-					Color top_color = button.is_pressed ? ( is_standard_or_system ? Color.Black : border_pressed_dark_color ) : border_normal_dark_color;
-					Color bottom_color = button.is_pressed ? ( is_standard_or_system ? Color.Black :  border_pressed_light_color ) : border_normal_light_color;
+				if ( button.is_enabled ) { 
+					bool paint_acceptbutton_black_border = false;
+					Form form = button.TopLevelControl as Form;
+					
+					if ( form != null && ( form.AcceptButton == button as IButtonControl ) )
+						paint_acceptbutton_black_border = true;
+					
+					Color top_color = Color.Black;
+					Color bottom_color = Color.Black;
+					
+					if ( !paint_acceptbutton_black_border ) {
+						top_color = button.is_pressed ? border_pressed_dark_color : border_normal_dark_color;
+						bottom_color = button.is_pressed ? border_pressed_light_color : border_normal_light_color;
+					}
+					
 					pen = ResPool.GetPen( top_color );
 					dc.DrawLines( pen, points_top );
 					pen = ResPool.GetPen( bottom_color );
@@ -651,22 +641,59 @@ namespace System.Windows.Forms {
 			
 			barpos_pixels = ( ( ctrl.Value - ctrl.Minimum ) * client_area.Width ) / ( ctrl.Maximum - ctrl.Minimum );
 			
-			bar.Width = barpos_pixels;
-//			bar.Height += 1;
+			bar.Width = barpos_pixels + 1;
 			
 			// Draw bar background
-			using ( LinearGradientBrush lgbr = new LinearGradientBrush( new Point( client_area.Left, client_area.Top ), new Point( client_area.Left, client_area.Bottom ), LightColor, Color.White ) ) {
-				dc.FillRectangle( lgbr, client_area );
-			}
-			
-			// Draw bar
-			using ( LinearGradientBrush lgbr = new LinearGradientBrush( bar.Location, new Point( bar.X, bar.Bottom ), Color.White, tab_focus_color ) ) {
-				dc.FillRectangle( lgbr, bar );
-			}
+			dc.FillRectangle( ResPool.GetSolidBrush( menu_separator_color ), ctrl.ClientRectangle.X + 1, ctrl.ClientRectangle.Y + 1, ctrl.ClientRectangle.Width - 2, ctrl.ClientRectangle.Height - 2 );
 			
 			/* Draw border */
-			dc.DrawRectangle( ResPool.GetPen( BorderColor ), ctrl.ClientRectangle.X, ctrl.ClientRectangle.Y, ctrl.ClientRectangle.Width - 1, ctrl.ClientRectangle.Height - 1 );
-			dc.DrawRectangle( ResPool.GetPen( LightColor ), ctrl.ClientRectangle.X + 1, ctrl.ClientRectangle.Y + 1, ctrl.ClientRectangle.Width - 2, ctrl.ClientRectangle.Height - 2 );
+			Pen tmp_pen = ResPool.GetPen( progressbar_edge_dot_color );
+			dc.DrawLine( tmp_pen, ctrl.ClientRectangle.X, ctrl.ClientRectangle.Y, ctrl.ClientRectangle.X, ctrl.ClientRectangle.Y + 1 );
+			dc.DrawLine( tmp_pen, ctrl.ClientRectangle.X, ctrl.ClientRectangle.Bottom - 1, ctrl.ClientRectangle.X, ctrl.ClientRectangle.Bottom - 2 );
+			dc.DrawLine( tmp_pen, ctrl.ClientRectangle.Right - 1, ctrl.ClientRectangle.Y, ctrl.ClientRectangle.Right - 1, ctrl.ClientRectangle.Y + 1 );
+			dc.DrawLine( tmp_pen, ctrl.ClientRectangle.Right - 1, ctrl.ClientRectangle.Bottom - 1, ctrl.ClientRectangle.Right - 1, ctrl.ClientRectangle.Bottom - 2 );
+			
+			tmp_pen = ResPool.GetPen( scrollbar_border_color );
+			dc.DrawLine( tmp_pen, ctrl.ClientRectangle.X + 1, ctrl.ClientRectangle.Y, ctrl.ClientRectangle.Right - 2, ctrl.ClientRectangle.Y );
+			dc.DrawLine( tmp_pen, ctrl.ClientRectangle.Right - 1, ctrl.ClientRectangle.Y + 1, ctrl.ClientRectangle.Right - 1, ctrl.ClientRectangle.Bottom - 2 );
+			dc.DrawLine( tmp_pen, ctrl.ClientRectangle.X + 1, ctrl.ClientRectangle.Bottom - 1, ctrl.ClientRectangle.Right - 2, ctrl.ClientRectangle.Bottom - 1 );
+			dc.DrawLine( tmp_pen, ctrl.ClientRectangle.X, ctrl.ClientRectangle.Y + 1, ctrl.ClientRectangle.X, ctrl.ClientRectangle.Bottom - 2 );
+			
+			if ( barpos_pixels == 0 )
+				return;
+			
+			// Draw bar
+			dc.DrawRectangle( ResPool.GetPen( combobox_focus_border_color ), bar.X - 1, bar.Y - 1, bar.Width, bar.Height + 1 );
+			tmp_pen = ResPool.GetPen( progressbar_inner_border_color );
+			dc.DrawLine( tmp_pen, bar.X, bar.Y, bar.Right - 2, bar.Y );
+			dc.DrawLine( tmp_pen, bar.X, bar.Y, bar.X, bar.Bottom - 1 );
+			
+			using ( Bitmap bmp = new Bitmap( bar.Width - 2, bar.Height - 1 ) ) {
+				using ( Graphics gr = Graphics.FromImage( bmp ) ) {
+					gr.FillRectangle( ResPool.GetSolidBrush( tab_focus_color ), 0, 0, bmp.Width, bmp.Height );
+					
+					LinearGradientBrush lgbr = new LinearGradientBrush( new Rectangle( 0, 0, bmp.Height, bmp.Height ), progressbar_first_gradient_color, progressbar_second_gradient_color, 0.0f, true );
+					
+					lgbr.RotateTransform( 45.0f, MatrixOrder.Append );
+					
+					Pen pen = new Pen( lgbr, 12 );
+					
+					int x_top = 0;
+					int x_bottom = - bmp.Height;
+					
+					while ( x_bottom < bmp.Width ) {
+						gr.DrawLine( pen, x_top, 0, x_bottom, bmp.Height );
+						x_top += 36;
+						x_bottom += 36;
+					}
+					
+					pen.Dispose( );
+					lgbr.Dispose( );
+					
+				}
+				
+				dc.DrawImage( bmp, bar.X + 1, bar.Y + 1 );
+			}
 		}
 		#endregion	// ProgressBar
 		
@@ -845,7 +872,7 @@ namespace System.Windows.Forms {
 			
 			area.Height -= border_size;
 			if ( panel.BorderStyle != StatusBarPanelBorderStyle.None ) {
-				DrawNiceRoundedBorder( dc, area, BorderColor );
+				dc.DrawRectangle( ResPool.GetPen( pressed_inner_border_dark_color ), area );
 			}
 			
 			if ( panel.Style == StatusBarPanelStyle.OwnerDraw ) {
@@ -888,25 +915,8 @@ namespace System.Windows.Forms {
 			
 			dc.DrawString( text, panel.Parent.Font, br_forecolor, r, string_format );
 		}
-		
-		private void DrawNiceRoundedBorder( Graphics dc, Rectangle area, Color color ) {
-			Pen pen = ResPool.GetPen( color ); 
-			
-			Point[] points = new Point[] {
-				new Point( area.Left + 2, area.Top ),
-				new Point( area.Right - 2, area.Top ),
-				new Point( area.Right, area.Top + 2 ),
-				new Point( area.Right, area.Bottom - 2 ),
-				new Point( area.Right - 2, area.Bottom ),
-				new Point( area.Left + 2, area.Bottom ),
-				new Point( area.Left, area.Bottom - 2 ),
-				new Point( area.Left, area.Top + 2 ),
-				new Point( area.Left + 2, area.Top )
-			};
-			
-			dc.DrawLines( pen, points );
-		}
 		#endregion	// StatusBar
+		
 		// FIXME: regions near the borders don't get filles with the correct backcolor
 		// TODO: TabAlignment.Left and TabAlignment.Bottom
 		public override void DrawTabControl( Graphics dc, Rectangle area, TabControl tab ) {
@@ -1083,7 +1093,7 @@ namespace System.Windows.Forms {
 						
 						if ( page.Focused ) {
 							tmp_pen = ResPool.GetPen( tab_focus_color );
-							dc.DrawLine( tmp_pen, bounds.Left + 1, bounds.Top + 2, bounds.Right - 1, bounds.Top + 2 );
+							dc.DrawLine( tmp_pen, bounds.Left + 1, bounds.Top  + 2, bounds.Right - 1, bounds.Top + 2 );
 							dc.DrawLine( tmp_pen, bounds.Left + 2, bounds.Top + 1, bounds.Right - 2, bounds.Top + 1 );
 							
 							tmp_pen = ResPool.GetPen( tab_top_border_focus_color );
@@ -1423,14 +1433,22 @@ namespace System.Windows.Forms {
 		}
 		
 		public override void CPDrawSizeGrip( Graphics dc, Color backColor, Rectangle bounds ) {
-			Point pt = new Point( bounds.Right - 4, bounds.Bottom - 4 );
+			Point pt1 = new Point( bounds.Right - 3, bounds.Bottom );
+			Point pt2 = new Point( bounds.Right, bounds.Bottom - 3 );
 			
-			dc.DrawImage( size_grip_bmp, pt );
-			dc.DrawImage( size_grip_bmp, pt.X, pt.Y - 5 );
-			dc.DrawImage( size_grip_bmp, pt.X, pt.Y - 10 );
-			dc.DrawImage( size_grip_bmp, pt.X - 5, pt.Y );
-			dc.DrawImage( size_grip_bmp, pt.X - 10, pt.Y );
-			dc.DrawImage( size_grip_bmp, pt.X - 5, pt.Y - 5 );
+			// diagonals
+			Pen tmp_pen = ResPool.GetPen( Color.White );
+			for ( int i = 0; i < 4; i++ ) {
+				dc.DrawLine( tmp_pen, pt1.X - i * 4, pt1.Y, pt2.X, pt2.Y - i * 4 );
+			}
+			
+			pt1.X += 1;
+			pt2.Y += 1;
+			
+			tmp_pen = ResPool.GetPen( pressed_inner_border_dark_color );
+			for ( int i = 0; i < 4; i++ ) {
+				dc.DrawLine( tmp_pen, pt1.X - i * 4, pt1.Y, pt2.X, pt2.Y - i * 4 );
+			}
 		}
 		
 		private void DrawScrollBarThumb( Graphics dc, Rectangle area, ScrollBar bar ) {
