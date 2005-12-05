@@ -10,6 +10,11 @@ public enum Error {
 
 [Obsolete ("Use Errno", true)]
 public sealed class UnixMarshal {
+	static UnixMarshal ()
+	{
+		Stdlib s = new Stdlib ();
+	}
+
 	public static string GetDescription (Error e) {
 		return null;
 	}
@@ -24,6 +29,11 @@ public sealed class UnixMarshal2 {
 
 [Obsolete ("Use Native.Stdlib", true)]
 public class Stdlib {
+	
+	enum E {
+		val1 = TestConst.C
+	}
+	
 	internal const string LIBC = "msvcrt.dll";
 	[DllImport (LIBC)]
 	public static extern IntPtr signal (int signum, IntPtr handler);
