@@ -11,7 +11,7 @@ using I18N.Common;
 
 namespace I18N.CJK
 {
-	internal class DbcsEncoding : Encoding
+	internal abstract class DbcsEncoding : MonoEncoding
 	{
 		internal DbcsConvert convert;
 		
@@ -30,6 +30,7 @@ namespace I18N.CJK
 			return GetBytes(chars, index, count, buffer, 0);
 		}
 		
+/*
 		// Get the bytes that result from encoding a character buffer.
 		public override int GetBytes(char[] chars, int charIndex, int charCount,
 					     byte[] bytes, int byteIndex)
@@ -46,6 +47,7 @@ namespace I18N.CJK
 				throw new ArgumentOutOfRangeException("byteIndex", Strings.GetString("ArgRange_Array"));
 			return 0; // For subclasses to implement
 		}
+*/
 		
 		// Get the number of characters needed to decode a byte buffer.
 		public override int GetCharCount(byte[] bytes, int index, int count)

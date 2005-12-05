@@ -93,14 +93,12 @@ namespace MonoTests.I18N.CJK
 		// BIG5
 
 		[Test]
-		[Category ("NotWorking")]
 		public void CP950_Encode ()
 		{
 			AssertEncode ("Test/texts/chinese2-utf8.txt", "Test/texts/chinese2-950.txt", 950);
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void CP950_Decode ()
 		{
 			AssertDecode ("Test/texts/chinese2-utf8.txt", "Test/texts/chinese2-950.txt", 950);

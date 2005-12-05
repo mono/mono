@@ -1,5 +1,13 @@
 2005-12-05  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* big5-table-generator.cs : new file to generate "big5.table".
+	* CP950.cs : added fallback support. switched to GetBytesImpl().
+	* DbcsEncoding.cs : switched to MonoEncoding (should have been
+	  committed when CP949.cs was committed).
+	* big5.table : updated to match MS CP950.
+
+2005-12-05  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* CP949.cs : migration from GetBytes (of Encoding) to GetBytesImpl
 	  (of MonoEncoding). Added fallback support.
 
