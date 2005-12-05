@@ -47,15 +47,15 @@ namespace Mono.Unix {
 		public bool HasExited {
 			get {
 				int status = GetProcessStatus ();
-				return Native.Syscall.WIFEXITED (status);
+				return Syscall.WIFEXITED (status);
 			}
 		}
 
 		private int GetProcessStatus ()
 		{
 			int status;
-			int r = Native.Syscall.waitpid (pid, out status, 
-					Native.WaitOptions.WNOHANG | Native.WaitOptions.WUNTRACED);
+			int r = Syscall.waitpid (pid, out status, 
+					WaitOptions.WNOHANG | WaitOptions.WUNTRACED);
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 			return r;
 		}
@@ -66,14 +66,14 @@ namespace Mono.Unix {
 					throw new InvalidOperationException (
 							Locale.GetText ("Process hasn't exited"));
 				int status = GetProcessStatus ();
-				return Native.Syscall.WEXITSTATUS (status);
+				return Syscall.WEXITSTATUS (status);
 			}
 		}
 
 		public bool HasSignaled {
 			get {
 				int status = GetProcessStatus ();
-				return Native.Syscall.WIFSIGNALED (status);
+				return Syscall.WIFSIGNALED (status);
 			}
 		}
 
@@ -90,7 +90,7 @@ namespace Mono.Unix {
 		public bool HasStopped {
 			get {
 				int status = GetProcessStatus ();
-				return Native.Syscall.WIFSTOPPED (status);
+				return Syscall.WIFSTOPPED (status);
 			}
 		}
 
@@ -105,16 +105,16 @@ namespace Mono.Unix {
 		}
 
 		public int ProcessGroupId {
-			get {return Native.Syscall.getpgid (pid);}
+			get {return Syscall.getpgid (pid);}
 			set {
-				int r = Native.Syscall.setpgid (pid, value);
+				int r = Syscall.setpgid (pid, value);
 				UnixMarshal.ThrowExceptionForLastErrorIf (r);
 			}
 		}
 
 		public int SessionId {
 			get {
-				int r = Native.Syscall.getsid (pid);
+				int r = Syscall.getsid (pid);
 				UnixMarshal.ThrowExceptionForLastErrorIf (r);
 				return r;
 			}
@@ -127,16 +127,16 @@ namespace Mono.Unix {
 
 		public static int GetCurrentProcessId ()
 		{
-			return Native.Syscall.getpid ();
+			return Syscall.getpid ();
 		}
 
 		public void Kill ()
 		{
-			Signal (Native.Signum.SIGKILL);
+			Signal (Signum.SIGKILL);
 		}
 
 		[CLSCompliant (false)]
-		[Obsolete ("Use Signal (Mono.Unix.Native.Signum)", true)]
+		[Obsolete ("Use Signal (Mono.Unix.Native.Signum)")]
 		public void Signal (Signum signal)
 		{
 			int r = Syscall.kill (pid, signal);
@@ -155,7 +155,7 @@ namespace Mono.Unix {
 			int status;
 			int r;
 			do {
-				r = Native.Syscall.waitpid (pid, out status, (Native.WaitOptions) 0);
+				r = Syscall.waitpid (pid, out status, (WaitOptions) 0);
 			} while (UnixMarshal.ShouldRetrySyscall (r));
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 		}

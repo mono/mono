@@ -65,7 +65,7 @@ namespace Mono.Unix {
 				throw new ArgumentException (Locale.GetText ("invalid user id"), "user");
 		}
 
-		[Obsolete ("Use UnixUserInfo (Mono.Unix.Native.Passwd)", true)]
+		[Obsolete ("Use UnixUserInfo (Mono.Unix.Native.Passwd)")]
 		public UnixUserInfo (Passwd passwd)
 		{
 			this.passwd = new Native.Passwd ();
@@ -104,7 +104,7 @@ namespace Mono.Unix {
 		}
 
 		public string GroupName {
-			get {return Group.GroupName;}
+			get {return UnixGroup.GetName (passwd.pw_gid);}
 		}
 
 		public string RealName {
@@ -143,7 +143,7 @@ namespace Mono.Unix {
 
 		public static long GetRealUserId ()
 		{
-			return Native.Syscall.getuid ();
+			return Syscall.getuid ();
 		}
 
 		// I would hope that this is the same as GetCurrentUserName, but it is a
@@ -154,8 +154,8 @@ namespace Mono.Unix {
 			int r;
 			do {
 				buf.Capacity *= 2;
-				r = Native.Syscall.getlogin_r (buf, (ulong) buf.Capacity);
-			} while (r == (-1) && Native.Stdlib.GetLastError() == Native.Errno.ERANGE);
+				r = Syscall.getlogin_r (buf, (ulong) buf.Capacity);
+			} while (r == (-1) && Syscall.GetLastError() == Error.ERANGE);
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 			return buf.ToString ();
 		}
@@ -168,19 +168,19 @@ namespace Mono.Unix {
 		public static UnixUserInfo[] GetLocalUsers ()
 		{
 			ArrayList entries = new ArrayList ();
-			lock (Native.Syscall.pwd_lock) {
+			lock (Syscall.pwd_lock) {
 				if (Native.Syscall.setpwent () != 0) {
 					UnixMarshal.ThrowExceptionForLastError ();
 				}
 				try {
-					Native.Passwd p;
-					while ((p = Native.Syscall.getpwent()) != null)
+					Passwd p;
+					while ((p = Syscall.getpwent()) != null)
 						entries.Add (new UnixUserInfo (p));
-					if (Native.Syscall.GetLastError () != (Native.Errno) 0)
+					if (Syscall.GetLastError () != (Error) 0)
 						UnixMarshal.ThrowExceptionForLastError ();
 				}
 				finally {
-					Native.Syscall.endpwent ();
+					Syscall.endpwent ();
 				}
 			}
 			return (UnixUserInfo[]) entries.ToArray (typeof(UnixUserInfo));

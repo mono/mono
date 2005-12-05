@@ -59,21 +59,21 @@ namespace Mono.Unix {
 
 		public override void Delete ()
 		{
-			int r = Native.Syscall.unlink (FullPath);
+			int r = Syscall.unlink (FullPath);
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 			base.Refresh ();
 		}
 
 		public UnixStream Create ()
 		{
-			Native.FilePermissions mode = // 0644
-				Native.FilePermissions.S_IRUSR | Native.FilePermissions.S_IWUSR |
-				Native.FilePermissions.S_IRGRP | Native.FilePermissions.S_IROTH; 
+			FilePermissions mode = // 0644
+				FilePermissions.S_IRUSR | FilePermissions.S_IWUSR |
+				FilePermissions.S_IRGRP | FilePermissions.S_IROTH; 
 			return Create (mode);
 		}
 
 		[CLSCompliant (false)]
-		[Obsolete ("Use Create(Mono.Unix.Native.FilePermissions)", true)]
+		[Obsolete ("Use Create(Mono.Unix.Native.FilePermissions)")]
 		public UnixStream Create (FilePermissions mode)
 		{
 			int fd = Syscall.creat (FullPath, mode);
@@ -94,7 +94,7 @@ namespace Mono.Unix {
 		}
 
 		[CLSCompliant (false)]
-		[Obsolete ("Use Open(Mono.Unix.Native.OpenFlags)", true)]
+		[Obsolete ("Use Open(Mono.Unix.Native.OpenFlags)")]
 		public UnixStream Open (OpenFlags flags)
 		{
 			int fd = Syscall.open (FullPath, flags);
@@ -113,7 +113,7 @@ namespace Mono.Unix {
 		}
 
 		[CLSCompliant (false)]
-		[Obsolete ("Use Open(Mono.Unix.Native.OpenFlags,Mono.Unix.Native.FilePermissions)", true)]
+		[Obsolete ("Use Open(Mono.Unix.Native.OpenFlags,Mono.Unix.Native.FilePermissions)")]
 		public UnixStream Open (OpenFlags flags, FilePermissions mode)
 		{
 			int fd = Syscall.open (FullPath, flags, mode);
@@ -133,8 +133,8 @@ namespace Mono.Unix {
 
 		public UnixStream Open (FileMode mode)
 		{
-			Native.OpenFlags flags = Native.NativeConvert.ToOpenFlags (mode, FileAccess.ReadWrite);
-			int fd = Native.Syscall.open (FullPath, flags);
+			OpenFlags flags = UnixConvert.ToOpenFlags (mode, FileAccess.ReadWrite);
+			int fd = Syscall.open (FullPath, flags);
 			if (fd < 0)
 				UnixMarshal.ThrowExceptionForLastError ();
 			return new UnixStream (fd);
@@ -142,15 +142,15 @@ namespace Mono.Unix {
 
 		public UnixStream Open (FileMode mode, FileAccess access)
 		{
-			Native.OpenFlags flags = Native.NativeConvert.ToOpenFlags (mode, access);
-			int fd = Native.Syscall.open (FullPath, flags);
+			OpenFlags flags = UnixConvert.ToOpenFlags (mode, access);
+			int fd = Syscall.open (FullPath, flags);
 			if (fd < 0)
 				UnixMarshal.ThrowExceptionForLastError ();
 			return new UnixStream (fd);
 		}
 
 		[CLSCompliant (false)]
-		[Obsolete ("Use Open (System.IO.FileMode,System.IO.FileAccess,Mono.Unix.Native.FilePermissions)", true)]
+		[Obsolete ("Use Open (System.IO.FileMode,System.IO.FileAccess,Mono.Unix.Native.FilePermissions)")]
 		public UnixStream Open (FileMode mode, FileAccess access, FilePermissions perms)
 		{
 			OpenFlags flags = UnixConvert.ToOpenFlags (mode, access);

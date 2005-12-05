@@ -55,14 +55,14 @@ namespace Mono.Unix {
 			this.errno = errno;
 		}
 
-		[Obsolete ("Use UnixIOException (Mono.Unix.Native.Errno) constructor", true)]
+		[Obsolete ("Use UnixIOException (Mono.Unix.Native.Errno) constructor")]
 		public UnixIOException (Error errno)
 			: base (UnixMarshal.GetErrorDescription (errno))
 		{
 			this.errno = UnixConvert.FromError (errno);
 		}
 
-		[Obsolete ("Use UnixIOException (Mono.Unix.Native.Errno, System.Exception) constructor", true)]
+		[Obsolete ("Use UnixIOException (Mono.Unix.Native.Errno, System.Exception) constructor")]
 		public UnixIOException (Error errno, Exception inner)
 			: base (UnixMarshal.GetErrorDescription (errno), inner)
 		{
@@ -102,6 +102,7 @@ namespace Mono.Unix {
 			get {return errno;}
 		}
 		
+		[Obsolete ("The type of this property will change in the next release")]
 		public Native.Errno ErrorCode {
 			get {return Native.NativeConvert.ToErrno (errno);}
 		}

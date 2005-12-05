@@ -32,7 +32,7 @@ using Mono.Unix;
 
 namespace Mono.Unix {
 
-	[Obsolete ("Use UnixGroupInfo", true)]
+	[Obsolete ("Use UnixGroupInfo")]
 	public sealed class UnixGroup
 	{
 		private UnixGroup () {}

@@ -39,10 +39,10 @@ namespace Mono.Unix {
 
 		public static string CurrentDirectory {
 			get {
-				return UnixDirectoryInfo.GetCurrentDirectory ();
+				return UnixDirectory.GetCurrentDirectory ();
 			}
 			set {
-				UnixDirectoryInfo.SetCurrentDirectory (value);
+				UnixDirectory.SetCurrentDirectory (value);
 			}
 		}
 
@@ -50,35 +50,35 @@ namespace Mono.Unix {
 			get {
 				StringBuilder buf = new StringBuilder (8);
 				int r = 0;
-				Native.Errno e = (Native.Errno) 0;
+				Error e = (Error) 0;
 				do {
 					buf.Capacity *= 2;
-					r = Native.Syscall.gethostname (buf);
-				} while (r == (-1) && ((e = Native.Stdlib.GetLastError()) == Native.Errno.EINVAL) || 
-						(e == Native.Errno.ENAMETOOLONG));
+					r = Syscall.gethostname (buf);
+				} while (r == (-1) && ((e = Syscall.GetLastError()) == Error.EINVAL) || 
+						(e == Error.ENAMETOOLONG));
 				if (r == (-1))
 					UnixMarshal.ThrowExceptionForLastError ();
 				return buf.ToString ();
 			}
 			set {
-				Native.Syscall.sethostname (value);
+				Syscall.sethostname (value);
 			}
 		}
 
 		[CLSCompliant (false)]
-		[Obsolete ("Use RealUserId", true)]
+		[Obsolete ("Use RealUserId")]
 		public static uint User {
 			get {return UnixUser.GetCurrentUserId ();}
 		}
 
 		[CLSCompliant (false)]
-		[Obsolete ("Use RealUserId", true)]
+		[Obsolete ("Use RealUserId")]
 		public static uint UserId {
 			get {return UnixUser.GetCurrentUserId ();}
 		}
 
 		public static string UserName {
-			get {return UnixUserInfo.GetRealUser ().UserName;}
+			get {return UnixUser.GetCurrentUserName();}
 		}
 
 		public static UnixGroupInfo RealGroup {
@@ -122,11 +122,11 @@ namespace Mono.Unix {
 		}
 
 		public static string Login {
-			get {return UnixUserInfo.GetRealUser ().UserName;}
+			get {return UnixUser.GetLogin ();}
 		}
 
 		[CLSCompliant (false)]
-		[Obsolete ("Use GetConfigurationValue (Mono.Unix.Native.SysconfName)", true)]
+		[Obsolete ("Use GetConfigurationValue (Mono.Unix.Native.SysconfName)")]
 		public static long GetConfigurationValue (SysConf name)
 		{
 			long r = Syscall.sysconf (name);
@@ -145,7 +145,7 @@ namespace Mono.Unix {
 		}
 
 		[CLSCompliant (false)]
-		[Obsolete ("Use GetConfigurationString (Mono.Unix.Native.ConfstrName)", true)]
+		[Obsolete ("Use GetConfigurationString (Mono.Unix.Native.ConfstrName)")]
 		public static string GetConfigurationString (ConfStr name)
 		{
 			ulong len = Syscall.confstr (name, null, 0);
@@ -169,24 +169,24 @@ namespace Mono.Unix {
 
 		public static void SetNiceValue (int inc)
 		{
-			int r = Native.Syscall.nice (inc);
+			int r = Syscall.nice (inc);
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 		}
 
 		public static int CreateSession ()
 		{
-			return Native.Syscall.setsid ();
+			return Syscall.setsid ();
 		}
 
 		public static void SetProcessGroup ()
 		{
-			int r = Native.Syscall.setpgrp ();
+			int r = Syscall.setpgrp ();
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 		}
 
 		public static int GetProcessGroup ()
 		{
-			return Native.Syscall.getpgrp ();
+			return Syscall.getpgrp ();
 		}
 
 		public static UnixGroupInfo[] GetSupplementaryGroups ()
@@ -200,11 +200,11 @@ namespace Mono.Unix {
 
 		private static uint[] _GetSupplementaryGroupIds ()
 		{
-			int ngroups = Native.Syscall.getgroups (0, new uint[]{});
+			int ngroups = Syscall.getgroups (0, new uint[]{});
 			if (ngroups == -1)
 				UnixMarshal.ThrowExceptionForLastError ();
 			uint[] groups = new uint[ngroups];
-			int r = Native.Syscall.getgroups (groups);
+			int r = Syscall.getgroups (groups);
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 			return groups;
 		}
@@ -215,7 +215,7 @@ namespace Mono.Unix {
 			for (int i = 0; i < list.Length; ++i) {
 				list [i] = Convert.ToUInt32 (groups [i].GroupId);
 			}
-			int r = Native.Syscall.setgroups (list);
+			int r = Syscall.setgroups (list);
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 		}
 
@@ -229,14 +229,14 @@ namespace Mono.Unix {
 		}
 
 		[CLSCompliant (false)]
-		[Obsolete ("Use SetSupplementaryGroupIds(long[])", true)]
+		[Obsolete ("Use SetSupplementaryGroupIds(long[])")]
 		public static void SetSupplementaryGroups (uint[] list)
 		{
 			SetSupplementaryGroupIds (list);
 		}
 
 		[CLSCompliant (false)]
-		[Obsolete ("Use SetSupplementaryGroupIds(long[])", true)]
+		[Obsolete ("Use SetSupplementaryGroupIds(long[])")]
 		public static void SetSupplementaryGroupIds (uint[] list)
 		{
 			int r = Syscall.setgroups (list);
@@ -248,13 +248,13 @@ namespace Mono.Unix {
 			uint[] _list = new uint [list.Length];
 			for (int i = 0; i < _list.Length; ++i)
 				_list [i] = Convert.ToUInt32 (list [i]);
-			int r = Native.Syscall.setgroups (_list);
+			int r = Syscall.setgroups (_list);
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 		}
 
 		public static int GetParentProcessId ()
 		{
-			return Native.Syscall.getppid ();
+			return Syscall.getppid ();
 		}
 		
 		public static UnixProcess GetParentProcess ()
@@ -266,7 +266,7 @@ namespace Mono.Unix {
 		{
 			ArrayList shells = new ArrayList ();
 
-			lock (Native.Syscall.usershell_lock) {
+			lock (Syscall.usershell_lock) {
 				try {
 					if (Native.Syscall.setusershell () != 0)
 						UnixMarshal.ThrowExceptionForLastError ();

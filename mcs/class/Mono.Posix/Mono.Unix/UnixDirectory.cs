@@ -35,7 +35,7 @@ using Mono.Unix;
 
 namespace Mono.Unix {
 
-	[Obsolete ("Use UnixDirectoryInfo", true)]
+	[Obsolete ("Use UnixDirectoryInfo")]
 	public sealed class UnixDirectory
 	{
 		private UnixDirectory () {}

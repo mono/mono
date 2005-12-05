@@ -94,7 +94,7 @@ namespace Mono.Unix {
 	{
 		private UnixMarshal () {}
 
-		[Obsolete ("Use GetErrorDescription (Mono.Unix.Native.Errno)", true)]
+		[Obsolete ("Use GetErrorDescription (Mono.Unix.Native.Errno)")]
 		public static string GetErrorDescription (Error errno)
 		{
 			return ErrorMarshal.Translate ((Native.Errno) (int) errno);
@@ -106,7 +106,7 @@ namespace Mono.Unix {
 			return ErrorMarshal.Translate (errno);
 		}
 
-		[Obsolete ("Use AllocHeap(long)", true)]
+		[Obsolete ("Use AllocHeap(long)")]
 		public static IntPtr Alloc (long size)
 		{
 			return AllocHeap (size);
@@ -116,10 +116,10 @@ namespace Mono.Unix {
 		{
 			if (size < 0)
 				throw new ArgumentOutOfRangeException ("size", "< 0");
-			return Native.Stdlib.malloc ((ulong) size);
+			return Stdlib.malloc ((ulong) size);
 		}
 
-		[Obsolete ("Use ReAllocHeap(long)", true)]
+		[Obsolete ("Use ReAllocHeap(long)")]
 		public static IntPtr ReAlloc (IntPtr ptr, long size)
 		{
 			return ReAllocHeap (ptr, size);
@@ -129,10 +129,10 @@ namespace Mono.Unix {
 		{
 			if (size < 0)
 				throw new ArgumentOutOfRangeException ("size", "< 0");
-			return Native.Stdlib.realloc (ptr, (ulong) size);
+			return Stdlib.realloc (ptr, (ulong) size);
 		}
 
-		[Obsolete ("Use FreeHeap(IntPtr)", true)]
+		[Obsolete ("Use FreeHeap(IntPtr)")]
 		public static void Free (IntPtr ptr)
 		{
 			FreeHeap (ptr);
@@ -140,7 +140,7 @@ namespace Mono.Unix {
 
 		public static void FreeHeap (IntPtr ptr)
 		{
-			Native.Stdlib.free (ptr);
+			Stdlib.free (ptr);
 		}
 
 		public static string PtrToString (IntPtr p)
@@ -308,7 +308,7 @@ namespace Mono.Unix {
 			return members;
 		}
 
-		[Obsolete ("Use StringToHeap(string)", true)]
+		[Obsolete ("Use StringToHeap(string)")]
 		public static IntPtr StringToAlloc (string s)
 		{
 			return StringToHeap (s, UnixEncoding.Instance);
@@ -340,7 +340,7 @@ namespace Mono.Unix {
 			if (bytes_copied != (marshal.Length-min_byte_count))
 				throw new NotSupportedException ("encoding.GetBytes() doesn't equal encoding.GetByteCount()!");
 
-			IntPtr mem = AllocHeap (marshal.Length);
+			IntPtr mem = Alloc (marshal.Length);
 			if (mem == IntPtr.Zero)
 				throw new OutOfMemoryException ();
 
@@ -351,7 +351,7 @@ namespace Mono.Unix {
 			}
 			finally {
 				if (!copied)
-					FreeHeap (mem);
+					Free (mem);
 			}
 
 			return mem;
@@ -359,12 +359,12 @@ namespace Mono.Unix {
 
 		public static bool ShouldRetrySyscall (int r)
 		{
-			if (r == -1 && Native.Stdlib.GetLastError () == Native.Errno.EINTR)
+			if (r == -1 && Stdlib.GetLastError () == Error.EINTR)
 				return true;
 			return false;
 		}
 
-		[Obsolete ("Use ShouldRetrySyscall (int, out Mono.Unix.Native.Errno", true)]
+		[Obsolete ("Use ShouldRetrySyscall (int, out Mono.Unix.Native.Errno")]
 		public static bool ShouldRetrySyscall (int r, out Error errno)
 		{
 			errno = (Error) 0;
@@ -419,7 +419,7 @@ namespace Mono.Unix {
 			return false;
 		}
 
-		[Obsolete ("Use CreateExceptionForError (Mono.Unix.Native.Errno)", true)]
+		[Obsolete ("Use CreateExceptionForError (Mono.Unix.Native.Errno)")]
 		internal static Exception CreateExceptionForError (Error errno)
 		{
 			string message = GetErrorDescription (errno);
@@ -466,10 +466,10 @@ namespace Mono.Unix {
 
 		internal static Exception CreateExceptionForLastError ()
 		{
-			return CreateExceptionForError (Native.Stdlib.GetLastError());
+			return CreateExceptionForError (Stdlib.GetLastError());
 		}
 
-		[Obsolete ("Use ThrowExceptionForError (Mono.Unix.Native.Errno)", true)]
+		[Obsolete ("Use ThrowExceptionForError (Mono.Unix.Native.Errno)")]
 		public static void ThrowExceptionForError (Error errno)
 		{
 			throw CreateExceptionForError (errno);
@@ -486,7 +486,7 @@ namespace Mono.Unix {
 			throw CreateExceptionForLastError ();
 		}
 
-		[Obsolete ("Use ThrowExceptionForErrorIf (int, Mono.Unix.Native.Errno)", true)]
+		[Obsolete ("Use ThrowExceptionForErrorIf (int, Mono.Unix.Native.Errno)")]
 		public static void ThrowExceptionForErrorIf (int retval, Error errno)
 		{
 			if (retval == -1)

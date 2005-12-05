@@ -111,7 +111,7 @@ namespace Mono.Unix {
 			if (path == null)
 				throw new ArgumentNullException ("path");
 			if (!IsPathRooted (path))
-				path = UnixDirectoryInfo.GetCurrentDirectory() + DirectorySeparatorChar + path;
+				path = UnixDirectory.GetCurrentDirectory() + DirectorySeparatorChar + path;
 
 			return path;
 		}
@@ -198,11 +198,11 @@ namespace Mono.Unix {
 		{
 			StringBuilder buf = new StringBuilder (256);
 			do {
-				int r = Native.Syscall.readlink (path, buf);
+				int r = Syscall.readlink (path, buf);
 				if (r < 0) {
-					Native.Errno e;
-					switch (e = Native.Stdlib.GetLastError()) {
-					case Native.Errno.EINVAL:
+					Error e;
+					switch (e = Syscall.GetLastError()) {
+					case Error.EINVAL:
 						// path isn't a symbolic link
 						return null;
 					default:

@@ -482,13 +482,12 @@ class ConvertFileGenerator : FileGenerator {
 					typeof(ObsoleteAttribute), false);
 		string obsolete = "";
 		if (oa != null) {
-			obsolete = string.Format ("[Obsolete (\"{0}\", {1})]\n\t\t",
-					oa.Message, oa.IsError ? "true" : "false");
+			obsolete = "[Obsolete (\"" + oa.Message + "\")]\n\t\t";
 		}
-		scs.WriteLine ("\t\t{3}[DllImport (LIB, " + 
+		scs.WriteLine ("\t\t[DllImport (LIB, " + 
 			"EntryPoint=\"{0}_From{1}\")]\n" +
 			"\t\tprivate static extern int From{1} ({1} value, out {2} rval);\n",
-			ns, t.Name, mtype, obsolete);
+			ns, t.Name, mtype);
 		scs.WriteLine ("\t\t{3}public static bool TryFrom{1} ({1} value, out {2} rval)\n" +
 			"\t\t{{\n" +
 			"\t\t\treturn From{1} (value, out rval) == 0;\n" +
@@ -500,10 +499,10 @@ class ConvertFileGenerator : FileGenerator {
 				"\t\t\t\tThrowArgumentException (value);", t.Name);
 		scs.WriteLine ("\t\t\treturn rval;");
 		scs.WriteLine ("\t\t}\n");
-		scs.WriteLine ("\t\t{3}[DllImport (LIB, " + 
+		scs.WriteLine ("\t\t[DllImport (LIB, " + 
 			"EntryPoint=\"{0}_To{1}\")]\n" +
 			"\t\tprivate static extern int To{1} ({2} value, out {1} rval);\n",
-			ns, t.Name, mtype, obsolete);
+			ns, t.Name, mtype);
 		scs.WriteLine ("\t\t{2}public static bool TryTo{1} ({0} value, out {1} rval)\n" +
 			"\t\t{{\n" +
 			"\t\t\treturn To{1} (value, out rval) == 0;\n" +

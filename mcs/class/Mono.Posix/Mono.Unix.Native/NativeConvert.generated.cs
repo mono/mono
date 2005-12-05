@@ -23,17 +23,16 @@ namespace Mono.Unix.Native {
 				Locale.GetText ("Current platform doesn't support this value."));
 		}
 
-		[Obsolete ("Use Mono.Unix.Native.AccessModes", true)]
 		[DllImport (LIB, EntryPoint="Mono_Posix_FromAccessMode")]
 		private static extern int FromAccessMode (AccessMode value, out Int32 rval);
 
-		[Obsolete ("Use Mono.Unix.Native.AccessModes", true)]
+		[Obsolete ("Use Mono.Unix.Native.AccessModes")]
 		public static bool TryFromAccessMode (AccessMode value, out Int32 rval)
 		{
 			return FromAccessMode (value, out rval) == 0;
 		}
 
-		[Obsolete ("Use Mono.Unix.Native.AccessModes", true)]
+		[Obsolete ("Use Mono.Unix.Native.AccessModes")]
 		public static Int32 FromAccessMode (AccessMode value)
 		{
 			Int32 rval;
@@ -42,17 +41,16 @@ namespace Mono.Unix.Native {
 			return rval;
 		}
 
-		[Obsolete ("Use Mono.Unix.Native.AccessModes", true)]
 		[DllImport (LIB, EntryPoint="Mono_Posix_ToAccessMode")]
 		private static extern int ToAccessMode (Int32 value, out AccessMode rval);
 
-		[Obsolete ("Use Mono.Unix.Native.AccessModes", true)]
+		[Obsolete ("Use Mono.Unix.Native.AccessModes")]
 		public static bool TryToAccessMode (Int32 value, out AccessMode rval)
 		{
 			return ToAccessMode (value, out rval) == 0;
 		}
 
-		[Obsolete ("Use Mono.Unix.Native.AccessModes", true)]
+		[Obsolete ("Use Mono.Unix.Native.AccessModes")]
 		public static AccessMode ToAccessMode (Int32 value)
 		{
 			AccessMode rval;
@@ -61,17 +59,16 @@ namespace Mono.Unix.Native {
 			return rval;
 		}
 
-		[Obsolete ("Use Mono.Unix.Native.ConfstrName", true)]
 		[DllImport (LIB, EntryPoint="Mono_Posix_FromConfStr")]
 		private static extern int FromConfStr (ConfStr value, out Int32 rval);
 
-		[Obsolete ("Use Mono.Unix.Native.ConfstrName", true)]
+		[Obsolete ("Use Mono.Unix.Native.ConfstrName")]
 		public static bool TryFromConfStr (ConfStr value, out Int32 rval)
 		{
 			return FromConfStr (value, out rval) == 0;
 		}
 
-		[Obsolete ("Use Mono.Unix.Native.ConfstrName", true)]
+		[Obsolete ("Use Mono.Unix.Native.ConfstrName")]
 		public static Int32 FromConfStr (ConfStr value)
 		{
 			Int32 rval;
@@ -80,17 +77,16 @@ namespace Mono.Unix.Native {
 			return rval;
 		}
 
-		[Obsolete ("Use Mono.Unix.Native.ConfstrName", true)]
 		[DllImport (LIB, EntryPoint="Mono_Posix_ToConfStr")]
 		private static extern int ToConfStr (Int32 value, out ConfStr rval);
 
-		[Obsolete ("Use Mono.Unix.Native.ConfstrName", true)]
+		[Obsolete ("Use Mono.Unix.Native.ConfstrName")]
 		public static bool TryToConfStr (Int32 value, out ConfStr rval)
 		{
 			return ToConfStr (value, out rval) == 0;
 		}
 
-		[Obsolete ("Use Mono.Unix.Native.ConfstrName", true)]
+		[Obsolete ("Use Mono.Unix.Native.ConfstrName")]
 		public static ConfStr ToConfStr (Int32 value)
 		{
 			ConfStr rval;
@@ -99,17 +95,16 @@ namespace Mono.Unix.Native {
 			return rval;
 		}
 
-		[Obsolete ("Use Mono.Unix.Native.Errno", true)]
 		[DllImport (LIB, EntryPoint="Mono_Posix_FromError")]
 		private static extern int FromError (Error value, out Int32 rval);
 
-		[Obsolete ("Use Mono.Unix.Native.Errno", true)]
+		[Obsolete ("Use Mono.Unix.Native.Errno")]
 		public static bool TryFromError (Error value, out Int32 rval)
 		{
 			return FromError (value, out rval) == 0;
 		}
 
-		[Obsolete ("Use Mono.Unix.Native.Errno", true)]
+		[Obsolete ("Use Mono.Unix.Native.Errno")]
 		public static Int32 FromError (Error value)
 		{
 			Int32 rval;
@@ -118,17 +113,16 @@ namespace Mono.Unix.Native {
 			return rval;
 		}
 
-		[Obsolete ("Use Mono.Unix.Native.Errno", true)]
 		[DllImport (LIB, EntryPoint="Mono_Posix_ToError")]
 		private static extern int ToError (Int32 value, out Error rval);
 
-		[Obsolete ("Use Mono.Unix.Native.Errno", true)]
+		[Obsolete ("Use Mono.Unix.Native.Errno")]
 		public static bool TryToError (Int32 value, out Error rval)
 		{
 			return ToError (value, out rval) == 0;
 		}
 
-		[Obsolete ("Use Mono.Unix.Native.Errno", true)]
+		[Obsolete ("Use Mono.Unix.Native.Errno")]
 		public static Error ToError (Int32 value)
 		{
 			Error rval;
@@ -137,17 +131,16 @@ namespace Mono.Unix.Native {
 			return rval;
 		}
 
-		[Obsolete ("Use Mono.Unix.Native.MmapProts", true)]
 		[DllImport (LIB, EntryPoint="Mono_Posix_FromMmapProt")]
 		private static extern int FromMmapProt (MmapProt value, out Int32 rval);
 
-		[Obsolete ("Use Mono.Unix.Native.MmapProts", true)]
+		[Obsolete ("Use Mono.Unix.Native.MmapProts")]
 		public static bool TryFromMmapProt (MmapProt value, out Int32 rval)
 		{
 			return FromMmapProt (value, out rval) == 0;
 		}
 
-		[Obsolete ("Use Mono.Unix.Native.MmapProts", true)]
+		[Obsolete ("Use Mono.Unix.Native.MmapProts")]
 		public static Int32 FromMmapProt (MmapProt value)
 		{
 			Int32 rval;
@@ -156,17 +149,16 @@ namespace Mono.Unix.Native {
 			return rval;
 		}
 
-		[Obsolete ("Use Mono.Unix.Native.MmapProts", true)]
 		[DllImport (LIB, EntryPoint="Mono_Posix_ToMmapProt")]
 		private static extern int ToMmapProt (Int32 value, out MmapProt rval);
 
-		[Obsolete ("Use Mono.Unix.Native.MmapProts", true)]
+		[Obsolete ("Use Mono.Unix.Native.MmapProts")]
 		public static bool TryToMmapProt (Int32 value, out MmapProt rval)
 		{
 			return ToMmapProt (value, out rval) == 0;
 		}
 
-		[Obsolete ("Use Mono.Unix.Native.MmapProts", true)]
+		[Obsolete ("Use Mono.Unix.Native.MmapProts")]
 		public static MmapProt ToMmapProt (Int32 value)
 		{
 			MmapProt rval;
@@ -1039,17 +1031,16 @@ namespace Mono.Unix.Native {
 			return rval;
 		}
 
-		[Obsolete ("Use Mono.Unix.Native.PathconfName", true)]
 		[DllImport (LIB, EntryPoint="Mono_Posix_FromPathConf")]
 		private static extern int FromPathConf (PathConf value, out Int32 rval);
 
-		[Obsolete ("Use Mono.Unix.Native.PathconfName", true)]
+		[Obsolete ("Use Mono.Unix.Native.PathconfName")]
 		public static bool TryFromPathConf (PathConf value, out Int32 rval)
 		{
 			return FromPathConf (value, out rval) == 0;
 		}
 
-		[Obsolete ("Use Mono.Unix.Native.PathconfName", true)]
+		[Obsolete ("Use Mono.Unix.Native.PathconfName")]
 		public static Int32 FromPathConf (PathConf value)
 		{
 			Int32 rval;
@@ -1058,17 +1049,16 @@ namespace Mono.Unix.Native {
 			return rval;
 		}
 
-		[Obsolete ("Use Mono.Unix.Native.PathconfName", true)]
 		[DllImport (LIB, EntryPoint="Mono_Posix_ToPathConf")]
 		private static extern int ToPathConf (Int32 value, out PathConf rval);
 
-		[Obsolete ("Use Mono.Unix.Native.PathconfName", true)]
+		[Obsolete ("Use Mono.Unix.Native.PathconfName")]
 		public static bool TryToPathConf (Int32 value, out PathConf rval)
 		{
 			return ToPathConf (value, out rval) == 0;
 		}
 
-		[Obsolete ("Use Mono.Unix.Native.PathconfName", true)]
+		[Obsolete ("Use Mono.Unix.Native.PathconfName")]
 		public static PathConf ToPathConf (Int32 value)
 		{
 			PathConf rval;
@@ -1077,17 +1067,16 @@ namespace Mono.Unix.Native {
 			return rval;
 		}
 
-		[Obsolete ("Use Mono.Unix.Native.SysconfName", true)]
 		[DllImport (LIB, EntryPoint="Mono_Posix_FromSysConf")]
 		private static extern int FromSysConf (SysConf value, out Int32 rval);
 
-		[Obsolete ("Use Mono.Unix.Native.SysconfName", true)]
+		[Obsolete ("Use Mono.Unix.Native.SysconfName")]
 		public static bool TryFromSysConf (SysConf value, out Int32 rval)
 		{
 			return FromSysConf (value, out rval) == 0;
 		}
 
-		[Obsolete ("Use Mono.Unix.Native.SysconfName", true)]
+		[Obsolete ("Use Mono.Unix.Native.SysconfName")]
 		public static Int32 FromSysConf (SysConf value)
 		{
 			Int32 rval;
@@ -1096,17 +1085,16 @@ namespace Mono.Unix.Native {
 			return rval;
 		}
 
-		[Obsolete ("Use Mono.Unix.Native.SysconfName", true)]
 		[DllImport (LIB, EntryPoint="Mono_Posix_ToSysConf")]
 		private static extern int ToSysConf (Int32 value, out SysConf rval);
 
-		[Obsolete ("Use Mono.Unix.Native.SysconfName", true)]
+		[Obsolete ("Use Mono.Unix.Native.SysconfName")]
 		public static bool TryToSysConf (Int32 value, out SysConf rval)
 		{
 			return ToSysConf (value, out rval) == 0;
 		}
 
-		[Obsolete ("Use Mono.Unix.Native.SysconfName", true)]
+		[Obsolete ("Use Mono.Unix.Native.SysconfName")]
 		public static SysConf ToSysConf (Int32 value)
 		{
 			SysConf rval;

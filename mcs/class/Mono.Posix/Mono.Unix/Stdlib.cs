@@ -53,7 +53,7 @@ namespace Mono.Unix {
 
 	#region Enumerations
 
-	[Obsolete ("Use Mono.Unix.Native.Errno", true)]
+	[Obsolete ("Use Mono.Unix.Native.Errno")]
 	[Map]
 	public enum Error : int {
 		// errors & their values liberally copied from
@@ -192,7 +192,7 @@ namespace Mono.Unix {
 
 	#region Classes
 
-	[Obsolete ("Use Mono.Unix.Native.FilePosition", true)]
+	[Obsolete ("Use Mono.Unix.Native.FilePosition")]
 	public sealed class FilePosition : IDisposable {
 
 		private static readonly int FilePositionDumpSize = 
@@ -280,11 +280,10 @@ namespace Mono.Unix {
 #if NET_2_0 && UNMANAGED_FN_PTR_SUPPORT_FIXED
 	[UnmanagedFunctionPointer (CallingConvention.Cdecl)]
 #endif
-	[Obsolete ("Use Mono.Unix.Native.SignalHandler", true)]
+	[Obsolete ("Use Mono.Unix.Native.SignalHandler")]
 	public delegate void SignalHandler (int signal);
 
 #if !NET_2_0
-	[Obsolete ("Use Mono.Unix.Native.SignalWrapper", true)]
 	internal sealed class SignalWrapper {
 		private IntPtr handler;
 
@@ -300,7 +299,6 @@ namespace Mono.Unix {
 	}
 #endif
 
-	[Obsolete ("Use Mono.Unix.Native.XPrintfFunctions", true)]
 	internal class XPrintfFunctions
 	{
 		internal delegate object XPrintf (object[] parameters);
@@ -341,7 +339,7 @@ namespace Mono.Unix {
 	// Stdlib is intended to be portable.
 	//
 	[CLSCompliant (false)]
-	[Obsolete ("Use Mono.Unix.Native.Stdlib", true)]
+	[Obsolete ("Use Mono.Unix.Native.Stdlib")]
 	public class Stdlib
 	{
 		internal const string LIBC = "msvcrt";
@@ -572,7 +570,7 @@ namespace Mono.Unix {
 				SetLastError=true, EntryPoint="tmpnam")]
 		private static extern IntPtr sys_tmpnam (StringBuilder s);
 
-		[Obsolete ("Syscall.mkstemp() should be preferred.", true)]
+		[Obsolete ("Syscall.mkstemp() should be preferred.")]
 		public static string tmpnam (StringBuilder s)
 		{
 			if (s != null && s.Capacity < L_tmpnam)
@@ -583,7 +581,7 @@ namespace Mono.Unix {
 			}
 		}
 
-		[Obsolete ("Syscall.mkstemp() should be preferred.", true)]
+		[Obsolete ("Syscall.mkstemp() should be preferred.")]
 		public static string tmpnam ()
 		{
 			lock (tmpnam_lock) {
@@ -635,7 +633,7 @@ namespace Mono.Unix {
 		}
 
 		[Obsolete ("Not necessarily portable due to cdecl restrictions.\n" +
-				"Use fprintf (IntPtr, string) instead.", true)]
+				"Use fprintf (IntPtr, string) instead.")]
 		public static int fprintf (IntPtr stream, string format, params object[] parameters)
 		{
 			object[] _parameters = new object[checked(parameters.Length+2)];
@@ -657,7 +655,7 @@ namespace Mono.Unix {
 		}
 
 		[Obsolete ("Not necessarily portable due to cdecl restrictions.\n" +
-				"Use printf (string) instead.", true)]
+				"Use printf (string) instead.")]
 		public static int printf (string format, params object[] parameters)
 		{
 			object[] _parameters = new object[checked(parameters.Length+1)];
@@ -686,7 +684,7 @@ namespace Mono.Unix {
 		}
 
 		[Obsolete ("Not necessarily portable due to cdecl restrictions.\n" +
-				"Use snprintf (StringBuilder, string) instead.", true)]
+				"Use snprintf (StringBuilder, string) instead.")]
 		public static int snprintf (StringBuilder s, ulong n, 
 				string format, params object[] parameters)
 		{
@@ -702,7 +700,7 @@ namespace Mono.Unix {
 		}
 
 		[Obsolete ("Not necessarily portable due to cdecl restrictions.\n" +
-				"Use snprintf (StringBuilder, string) instead.", true)]
+				"Use snprintf (StringBuilder, string) instead.")]
 		public static int snprintf (StringBuilder s,
 				string format, params object[] parameters)
 		{

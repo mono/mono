@@ -37,9 +37,9 @@ namespace Mono.Unix {
 	public class StdioFileStream : Stream
 	{
 		public static readonly IntPtr InvalidFileStream  = IntPtr.Zero;
-		public static readonly IntPtr StandardInput  = Native.Stdlib.stdin;
-		public static readonly IntPtr StandardOutput = Native.Stdlib.stdout;
-		public static readonly IntPtr StandardError  = Native.Stdlib.stderr;
+		public static readonly IntPtr StandardInput  = Stdlib.stdin;
+		public static readonly IntPtr StandardOutput = Stdlib.stdout;
+		public static readonly IntPtr StandardError  = Stdlib.stderr;
 
 		public StdioFileStream (IntPtr fileStream)
 			: this (fileStream, true) {}
@@ -93,7 +93,7 @@ namespace Mono.Unix {
 				throw new ArgumentException ("path");
 			if (mode == null)
 				throw new ArgumentNullException ("path");
-			IntPtr f = Native.Stdlib.fopen (path, mode);
+			IntPtr f = Stdlib.fopen (path, mode);
 			if (f == IntPtr.Zero)
 				throw new DirectoryNotFoundException ("path", 
 						UnixMarshal.CreateExceptionForLastError ());
@@ -109,16 +109,16 @@ namespace Mono.Unix {
 			this.owner = ownsHandle;
 			
 			try {
-				long offset = Native.Stdlib.fseek (file, 0, Native.SeekFlags.SEEK_CUR);
+				long offset = Stdlib.fseek (file, 0, SeekFlags.SEEK_CUR);
 				if (offset != -1)
 					canSeek = true;
-				Native.Stdlib.fread (IntPtr.Zero, 0, 0, file);
-				if (Native.Stdlib.ferror (file) == 0)
+				Stdlib.fread (IntPtr.Zero, 0, 0, file);
+				if (Stdlib.ferror (file) == 0)
 					canRead = true;
-				Native.Stdlib.fwrite (IntPtr.Zero, 0, 0, file);
-				if (Native.Stdlib.ferror (file) == 0)
+				Stdlib.fwrite (IntPtr.Zero, 0, 0, file);
+				if (Stdlib.ferror (file) == 0)
 					canWrite = true;  
-				Native.Stdlib.clearerr (file);
+				Stdlib.clearerr (file);
 			}
 			catch (Exception e) {
 				throw new ArgumentException (Locale.GetText ("Invalid file stream"), "fileStream");
@@ -136,19 +136,19 @@ namespace Mono.Unix {
 
 		private static string ToFopenMode (string file, FileMode mode)
 		{
-			string cmode = Native.NativeConvert.ToFopenMode (mode);
+			string cmode = UnixConvert.ToFopenMode (mode);
 			AssertFileMode (file, mode);
 			return cmode;
 		}
 
 		private static string ToFopenMode (string file, FileAccess access)
 		{
-			return Native.NativeConvert.ToFopenMode (access);
+			return UnixConvert.ToFopenMode (access);
 		}
 
 		private static string ToFopenMode (string file, FileMode mode, FileAccess access)
 		{
-			string cmode = Native.NativeConvert.ToFopenMode (mode, access);
+			string cmode = UnixConvert.ToFopenMode (mode, access);
 			bool exists = AssertFileMode (file, mode);
 			// HACK: for open-or-create & read, mode is "rb", which doesn't create
 			// files.  If the file doesn't exist, we need to use "w+b" to ensure
@@ -171,10 +171,10 @@ namespace Mono.Unix {
 		private static bool FileExists (string file)
 		{
 			bool found = false;
-			IntPtr f = Native.Stdlib.fopen (file, "r");
+			IntPtr f = Stdlib.fopen (file, "r");
 			found = f != IntPtr.Zero;
 			if (f != IntPtr.Zero)
-				Native.Stdlib.fclose (f);
+				Stdlib.fclose (f);
 			return found;
 		}
 
@@ -209,17 +209,17 @@ namespace Mono.Unix {
 				AssertNotDisposed ();
 				if (!CanSeek)
 					throw new NotSupportedException ("File Stream doesn't support seeking");
-				long curPos = Native.Stdlib.ftell (file);
+				long curPos = Stdlib.ftell (file);
 				if (curPos == -1)
 					throw new NotSupportedException ("Unable to obtain current file position");
-				int r = Native.Stdlib.fseek (file, 0, Native.SeekFlags.SEEK_END);
+				int r = Stdlib.fseek (file, 0, SeekFlags.SEEK_END);
 				UnixMarshal.ThrowExceptionForLastErrorIf (r);
 
-				long endPos = Native.Stdlib.ftell (file);
+				long endPos = Stdlib.ftell (file);
 				if (endPos == -1)
 					UnixMarshal.ThrowExceptionForLastError ();
 
-				r = Native.Stdlib.fseek (file, curPos, Native.SeekFlags.SEEK_SET);
+				r = Stdlib.fseek (file, curPos, SeekFlags.SEEK_SET);
 				UnixMarshal.ThrowExceptionForLastErrorIf (r);
 
 				GC.KeepAlive (this);
@@ -232,7 +232,7 @@ namespace Mono.Unix {
 				AssertNotDisposed ();
 				if (!CanSeek)
 					throw new NotSupportedException ("The stream does not support seeking");
-				long pos = Native.Stdlib.ftell (file);
+				long pos = Stdlib.ftell (file);
 				if (pos == -1)
 					UnixMarshal.ThrowExceptionForLastError ();
 				GC.KeepAlive (this);
@@ -244,7 +244,6 @@ namespace Mono.Unix {
 			}
 		}
 
-		[Obsolete ("Use SaveFilePosition (Mono.Unix.Native.FilePosition)", true)]
 		public void SaveFilePosition (FilePosition pos)
 		{
 			AssertNotDisposed ();
@@ -253,15 +252,6 @@ namespace Mono.Unix {
 			GC.KeepAlive (this);
 		}
 
-		public void SaveFilePosition (Native.FilePosition pos)
-		{
-			AssertNotDisposed ();
-			int r = Native.Stdlib.fgetpos (file, pos);
-			UnixMarshal.ThrowExceptionForLastErrorIf (r);
-			GC.KeepAlive (this);
-		}
-
-		[Obsolete ("Use RestoreFilePosition (Mono.Unix.Native.FilePosition)", true)]
 		public void RestoreFilePosition (FilePosition pos)
 		{
 			AssertNotDisposed ();
@@ -272,20 +262,10 @@ namespace Mono.Unix {
 			GC.KeepAlive (this);
 		}
 
-		public void RestoreFilePosition (Native.FilePosition pos)
-		{
-			AssertNotDisposed ();
-			if (pos == null)
-				throw new ArgumentNullException ("value");
-			int r = Native.Stdlib.fsetpos (file, pos);
-			UnixMarshal.ThrowExceptionForLastErrorIf (r);
-			GC.KeepAlive (this);
-		}
-
 		public override void Flush ()
 		{
 			AssertNotDisposed ();
-			int r = Native.Stdlib.fflush (file);
+			int r = Stdlib.fflush (file);
 			if (r != 0)
 				UnixMarshal.ThrowExceptionForLastError ();
 			GC.KeepAlive (this);
@@ -300,10 +280,10 @@ namespace Mono.Unix {
 				 
 			ulong r = 0;
 			fixed (byte* buf = &buffer[offset]) {
-				r = Native.Stdlib.fread (buf, 1, (ulong) count, file);
+				r = Stdlib.fread (buf, 1, (ulong) count, file);
 			}
 			if (r != (ulong) count) {
-				if (Native.Stdlib.ferror (file) != 0)
+				if (Stdlib.ferror (file) != 0)
 					throw new IOException ();
 			}
 			GC.KeepAlive (this);
@@ -327,7 +307,7 @@ namespace Mono.Unix {
 		public void Rewind ()
 		{
 			AssertNotDisposed ();
-			Native.Stdlib.rewind (file);
+			Stdlib.rewind (file);
 			GC.KeepAlive (this);
 		}
 
@@ -337,20 +317,20 @@ namespace Mono.Unix {
 			if (!CanSeek)
 				throw new NotSupportedException ("The File Stream does not support seeking");
 
-			Native.SeekFlags sf = Native.SeekFlags.SEEK_CUR;
+			SeekFlags sf = SeekFlags.SEEK_CUR;
 			switch (origin) {
-				case SeekOrigin.Begin:   sf = Native.SeekFlags.SEEK_SET; break;
-				case SeekOrigin.Current: sf = Native.SeekFlags.SEEK_CUR; break;
-				case SeekOrigin.End:     sf = Native.SeekFlags.SEEK_END; break;
+				case SeekOrigin.Begin:   sf = SeekFlags.SEEK_SET; break;
+				case SeekOrigin.Current: sf = SeekFlags.SEEK_CUR; break;
+				case SeekOrigin.End:     sf = SeekFlags.SEEK_END; break;
 				default: throw new ArgumentException ("origin");
 			}
 
-			int r = Native.Stdlib.fseek (file, offset, sf);
+			int r = Stdlib.fseek (file, offset, sf);
 			if (r != 0)
 				throw new IOException ("Unable to seek",
 						UnixMarshal.CreateExceptionForLastError ());
 
-			long pos = Native.Stdlib.ftell (file);
+			long pos = Stdlib.ftell (file);
 			if (pos == -1)
 				throw new IOException ("Unable to get current file position",
 						UnixMarshal.CreateExceptionForLastError ());
@@ -373,7 +353,7 @@ namespace Mono.Unix {
 
 			ulong r = 0;
 			fixed (byte* buf = &buffer[offset]) {
-				r = Native.Stdlib.fwrite (buf, (ulong) 1, (ulong) count, file);
+				r = Stdlib.fwrite (buf, (ulong) 1, (ulong) count, file);
 			}
 			if (r != (ulong) count)
 				UnixMarshal.ThrowExceptionForLastError ();
@@ -391,7 +371,7 @@ namespace Mono.Unix {
 				return;
 
 			if (owner) {
-				int r = Native.Stdlib.fclose (file);
+				int r = Stdlib.fclose (file);
 				if (r != 0)
 					UnixMarshal.ThrowExceptionForLastError ();
 			} else

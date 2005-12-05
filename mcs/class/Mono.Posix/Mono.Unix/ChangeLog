@@ -1,16 +1,3 @@
-2005-12-05  Jonathan Pryor <jonpryor@vt.edu>
-
-	* FileHandleOperations.cs, FileTypes.cs, Stdlib.cs, Syscall.cs, 
-	  UnixConvert.cs, UnixDirectory.cs, UnixDirectoryInfo.cs, UnixDriveInfo.cs, 
-	  UnixEnvironment.cs, UnixFile.cs, UnixFileInfo.cs, UnixFileSystemInfo.cs,
-	  UnixGroup.cs, UnixGroupInfo.cs, UnixIOException.cs, UnixMarshal.cs, 
-	  UnixPath.cs, UnixPipes.cs, UnixProcess.cs, UnixStream.cs, 
-	  UnixSymbolicLinkInfo.cs, UnixUser.cs, UnixUserInfo.cs: Mark to-be-removed
-	  API with [Obsolete(IsError=true)] (permits compiler assistance for finding
-	  obsolete code); Migrate to the Mono.Unix.Native API.
-	* StdioFileStream.cs: Add non-Obsolete overloads for SaveFilePosition &
-	  RestoreFilePosition (oops).  Migrate to Mono.Unix.Native API.
-
 2005-11-18  Jonathan Pryor <jonpryor@vt.edu>
 
 	* Catalog.cs, UnixDirectory.cs, UnixDirectoryInfo.cs, UnixDriveInfo.cs,
