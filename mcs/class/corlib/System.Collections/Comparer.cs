@@ -1,12 +1,11 @@
 //
 // System.Collections.Comparer.cs
 //
-// Author:
-//   Sergey Chaban (serge@wildwestsoftware.com)
+// Authors:
+//	Sergey Chaban (serge@wildwestsoftware.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,6 +29,8 @@
 
 using System.Globalization;
 using System.Runtime.InteropServices;
+using System.Runtime.Serialization;
+using System.Security.Permissions;
 
 namespace System.Collections
 {
@@ -37,8 +38,8 @@ namespace System.Collections
 	[ComVisible(true)]
 #endif
 	[Serializable]
-	public sealed class Comparer : IComparer
-	{
+	public sealed class Comparer : IComparer, ISerializable {
+
 		public static readonly Comparer Default = new Comparer ();
 #if NET_1_1
 		public
@@ -90,7 +91,17 @@ namespace System.Collections
 			else if (b is IComparable)
 				return -(b as IComparable).CompareTo (a);
 
-			throw new ArgumentException (Locale.GetText ("Neither a nor b Comparable."));
+			throw new ArgumentException (Locale.GetText ("Neither 'a' nor 'b' implements IComparable."));
+		}
+
+		// ISerializable
+		[SecurityPermission (SecurityAction.LinkDemand, SerializationFormatter = true)]
+		public void GetObjectData (SerializationInfo info, StreamingContext context)
+		{
+			if (info == null)
+				throw new ArgumentNullException ("info");
+
+			info.AddValue ("CompareInfo", _culture.CompareInfo, typeof (CompareInfo));
 		}
 	}
 }

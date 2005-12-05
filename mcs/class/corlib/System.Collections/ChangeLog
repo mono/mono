@@ -1,3 +1,7 @@
+2005-12-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Comparer.cs: Added GetObjectData method to implement ISerializable.
+
 2005-09-29  Miguel de Icaza  <miguel@novell.com>
 
 	* Add ComVisible(true) to all the classes that needed it.
