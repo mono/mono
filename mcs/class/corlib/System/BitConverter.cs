@@ -45,13 +45,20 @@ namespace System {
 		}
 #endif
 
-		public static readonly bool IsLittleEndian = AmILittleEndian ();
+		static readonly bool SwappedWordsInDouble;
+		public static readonly bool IsLittleEndian = AmILittleEndian (ref SwappedWordsInDouble);
 
 
-		static bool AmILittleEndian ()
+		static unsafe bool AmILittleEndian (ref bool swappedword)
 		{
-			byte[] one = GetBytes ((int) 1);
-			return (one [0] == 1);
+			// binary representations of 1.0:
+			// big endian: 3f f0 00 00 00 00 00 00
+			// little endian: 00 00 00 00 00 00 f0 3f
+			// arm fpa little endian: 00 00 f0 3f 00 00 00 00
+			double d = 1.0;
+			byte *b = (byte*)&d;
+			swappedword = b [2] == 0xf0;
+			return (b [0] == 0);
 		}
 
 		public static long DoubleToInt64Bits (double value)
@@ -125,7 +132,21 @@ namespace System {
 
 		unsafe public static byte[] GetBytes (double value)
 		{
-			return GetBytes ((byte *) &value, 8);
+			if (SwappedWordsInDouble) {
+				byte[] data = new byte [8];
+				byte *p = (byte*)&value;
+				data [0] = p [4];
+				data [1] = p [5];
+				data [2] = p [6];
+				data [3] = p [7];
+				data [4] = p [0];
+				data [5] = p [1];
+				data [6] = p [2];
+				data [7] = p [3];
+				return data;
+			} else {
+				return GetBytes ((byte *) &value, 8);
+			}
 		}
 
 		unsafe static void PutBytes (byte *dst, byte[] src, int start_index, int count)
@@ -245,6 +266,31 @@ namespace System {
 		unsafe public static double ToDouble (byte[] value, int startIndex)
 		{
 			double ret;
+
+			if (SwappedWordsInDouble) {
+				byte* p = (byte*)&ret;
+				if (value == null)
+					throw new ArgumentNullException ("value");
+
+				if (startIndex < 0)
+					throw new ArgumentOutOfRangeException ("startIndex < 0");
+
+				// avoid integer overflow (with large pos/neg start_index values)
+				if (value.Length - 8 < startIndex) {
+					throw new ArgumentOutOfRangeException (Locale.GetText (
+						"Value is too big to return the requested type."), "startIndex");
+				}
+				p [0] = value [startIndex + 4];
+				p [1] = value [startIndex + 5];
+				p [2] = value [startIndex + 6];
+				p [3] = value [startIndex + 7];
+				p [4] = value [startIndex + 0];
+				p [5] = value [startIndex + 1];
+				p [6] = value [startIndex + 2];
+				p [7] = value [startIndex + 3];
+
+				return ret;
+			}
 
 			PutBytes ((byte *) &ret, value, startIndex, 8);
 

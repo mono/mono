@@ -56,9 +56,6 @@ namespace System {
 		
 		internal double m_value;
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern internal static void AssertEndianity (out double value);
-
 		public int CompareTo (object v)
 		{
 			if (v == null)
