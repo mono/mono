@@ -1299,11 +1299,11 @@ namespace Mono.CSharp {
 	{
 		public readonly NamespaceEntry ns;
 
-		public GlobalAttribute (TypeContainer container, string target, 
+		public GlobalAttribute (NamespaceEntry ns, string target, 
 					Expression left_expr, string identifier, ArrayList args, Location loc, bool nameEscaped):
 			base (target, left_expr, identifier, args, loc, nameEscaped)
 		{
-			ns = container.NamespaceEntry;
+			this.ns = ns;
 		}
 
 		void Enter ()

@@ -414,7 +414,7 @@ namespace Mono.CSharp {
 		Hashtable aliases;
 		ArrayList using_clauses;
 		public bool DeclarationFound = false;
-		public bool UsingFound = false;
+		bool UsingFound;
 
 		static ArrayList entries = new ArrayList ();
 
@@ -543,7 +543,6 @@ namespace Mono.CSharp {
 		{
 			this.parent = parent;
 			this.file = file;
-			this.IsImplicit = false;
 			entries.Add (this);
 			this.ID = entries.Count;
 
@@ -618,6 +617,8 @@ namespace Mono.CSharp {
 				return;
 			}
 
+			UsingFound = true;
+
 			if (name.Equals (ns.MemberName))
 				return;
 			
@@ -641,6 +642,8 @@ namespace Mono.CSharp {
 				Report.Error (1529, loc, "A using clause must precede all other namespace elements except extern alias declarations");
 				return;
 			}
+
+			UsingFound = true;
 
 			if (aliases == null)
 				aliases = new Hashtable ();

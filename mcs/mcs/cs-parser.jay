@@ -58,6 +58,11 @@ namespace Mono.CSharp
 		Parameters indexer_parameters;
 
 		/// <summary>
+		///   Hack to help create non-typed array initializer
+		/// </summary>
+		public static Expression current_array_type;
+
+		/// <summary>
 		///   Used to determine if we are parsing the get/set pair
 		///   of an indexer or a property
 		/// </summmary>
@@ -358,7 +363,6 @@ using_alias_directive
 	  {
 		LocatedToken lt = (LocatedToken) $2;
 		current_namespace.UsingAlias (lt.Value, (MemberName) $4, (Location) $1);
-		current_namespace.UsingFound = true;
 	  }
 	| USING error {
 		CheckIdentifierToken (yyToken, GetLocation ($2));
@@ -369,7 +373,6 @@ using_namespace_directive
 	: USING namespace_name SEMICOLON 
 	  {
 		current_namespace.Using ((MemberName) $2, (Location) $1);
-		current_namespace.UsingFound = true;
           }
 	;
 
@@ -625,7 +628,7 @@ attribute
 
 		if (current_attr_target == "assembly" || current_attr_target == "module")
 			// FIXME: supply "nameEscaped" parameter here.
-			$$ = new GlobalAttribute (current_class, current_attr_target,
+			$$ = new GlobalAttribute (current_namespace, current_attr_target,
 						  left_expr, identifier, arguments, mname.Location, lexer.IsEscapedIdentifier (mname.Location));
 		else
 			$$ = new Attribute (current_attr_target, left_expr, identifier, arguments, mname.Location, lexer.IsEscapedIdentifier (mname.Location));
@@ -914,8 +917,9 @@ field_declaration
 
 		foreach (VariableDeclaration var in (ArrayList) $4){
 			Field field = new Field (current_class, type, mod, var.identifier, 
-						 var.expression_or_array_initializer, 
 						 (Attributes) $1, var.Location);
+
+			field.Initializer = var.expression_or_array_initializer;
 
 			if (RootContext.Documentation != null) {
 				field.DocComment = Lexer.consume_doc_comment ();
@@ -1719,7 +1723,7 @@ interface_event_declaration
 	  {
 		LocatedToken lt = (LocatedToken) $5;
 		$$ = new EventField (current_class, (Expression) $4, (int) $2, true,
-				     new MemberName (lt.Value, lt.Location), null,
+				     new MemberName (lt.Value, lt.Location),
 				     (Attributes) $1);
 		if (RootContext.Documentation != null)
 			((EventField) $$).DocComment = Lexer.consume_doc_comment ();
@@ -2137,9 +2141,11 @@ event_declaration
 			MemberName name = new MemberName (var.identifier,
 				var.Location);
 
-			Event e = new EventField (
+			EventField e = new EventField (
 				current_class, (Expression) $4, (int) $2, false, name,
-				var.expression_or_array_initializer, (Attributes) $1);
+				(Attributes) $1);
+
+			e.Initializer = var.expression_or_array_initializer;
 
 			current_container.AddEvent (e);
 
@@ -2176,7 +2182,7 @@ event_declaration
 				$$ = null;
 			else {
 				Event e = new EventProperty (
-					current_class, (Expression) $4, (int) $2, false, name, null,
+					current_class, (Expression) $4, (int) $2, false, name,
 					(Attributes) $1, (Accessor) pair.First, (Accessor) pair.Second);
 				if (RootContext.Documentation != null) {
 					e.DocComment = Lexer.consume_doc_comment ();
@@ -2650,7 +2656,7 @@ integral_type
 array_type
 	: type rank_specifiers
 	  {
-		$$ = new ComposedCast ((Expression) $1, (string) $2);
+		$$ = current_array_type = new ComposedCast ((Expression) $1, (string) $2);
 	  }
 	;
 
@@ -2893,6 +2899,7 @@ element_access
 			// 
 			$$ = new ComposedCast (expr, (string) $2);
 		}
+		current_array_type = (Expression)$$;
 	  }
 	;
 
@@ -3782,7 +3789,7 @@ local_variable_type
 		if ((string) $2 == "")
 			$$ = $1;
 		else
-			$$ = new ComposedCast ((Expression) $1, (string) $2, lexer.Location);
+			$$ = current_array_type = new ComposedCast ((Expression) $1, (string) $2, lexer.Location);
 	  }
         ;
 
@@ -4044,15 +4051,7 @@ for_statement
 					continue;
 
 				Location l = lexer.Location;
-				Expression expr;
-				if (decl.expression_or_array_initializer is Expression){
-					expr = (Expression) decl.expression_or_array_initializer;
-				} else if (decl.expression_or_array_initializer == null) {
-					expr = null;
-				} else {
-					ArrayList init = (ArrayList) decl.expression_or_array_initializer;
-					expr = new ArrayCreation (type, "", init, decl.Location);
-				}
+				Expression expr = decl.expression_or_array_initializer;
 					
 				LocalVariableReference var;
 				var = new LocalVariableReference (assign_block, decl.identifier, l);
@@ -4536,16 +4535,9 @@ using_statement
 					continue;
 				vi.SetReadOnlyContext (LocalInfo.ReadOnlyContext.Using);
 
-				Expression expr;
-				if (decl.expression_or_array_initializer is Expression){
-					expr = (Expression) decl.expression_or_array_initializer;
-				} else {
-					ArrayList init = (ArrayList) decl.expression_or_array_initializer;
-					if (init == null) {
-						Report.Error (210, l, "You must provide an initializer in a fixed or using statement declaration");
-					}
-					
-					expr = new ArrayCreation (type, "", init, decl.Location);
+				Expression expr = decl.expression_or_array_initializer;
+				if (expr == null) {
+					Report.Error (210, l, "You must provide an initializer in a fixed or using statement declaration");
 				}
 
 				LocalVariableReference var;
@@ -4592,7 +4584,7 @@ resource_acquisition
 // </summary>
 public class VariableDeclaration {
 	public string identifier;
-	public object expression_or_array_initializer;
+	public Expression expression_or_array_initializer;
 	public Location Location;
 	public Attributes OptAttributes;
 	public string DocComment;
@@ -4600,7 +4592,15 @@ public class VariableDeclaration {
 	public VariableDeclaration (LocatedToken lt, object eoai, Attributes opt_attrs)
 	{
 		this.identifier = lt.Value;
-		this.expression_or_array_initializer = eoai;
+		if (eoai is ArrayList) {
+			if (CSharpParser.current_array_type == null)
+				Report.Error (622, lt.Location,
+					"Can only use array initializer expressions to assign to array types. Try using a new expression instead.");
+			this.expression_or_array_initializer = new ArrayCreation (CSharpParser.current_array_type, "", (ArrayList)eoai, lt.Location);
+		} else {
+			this.expression_or_array_initializer = (Expression)eoai;
+		}
+		CSharpParser.current_array_type = null;
 		this.Location = lt.Location;
 		this.OptAttributes = opt_attrs;
 	}
@@ -4758,17 +4758,8 @@ Block declare_local_variables (Expression type, ArrayList variable_declarators, 
 
 	foreach (VariableDeclaration decl in inits){
 		Assign assign;
-		Expression expr;
+		Expression expr = decl.expression_or_array_initializer;
 		
-		if (decl.expression_or_array_initializer is Expression){
-			expr = (Expression) decl.expression_or_array_initializer;
-
-		} else {
-			ArrayList init = (ArrayList) decl.expression_or_array_initializer;
-			
-			expr = new ArrayCreation (type, "", init, decl.Location);
-		}
-
 		LocalVariableReference var;
 		var = new LocalVariableReference (implicit_block, decl.identifier, loc);
 

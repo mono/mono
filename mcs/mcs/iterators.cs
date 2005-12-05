@@ -519,12 +519,12 @@ namespace Mono.CSharp {
 		{
 			pc_field = new Field (
 				this, TypeManager.system_int32_expr, Modifiers.PRIVATE, "$PC",
-				null, null, Location);
+				null, Location);
 			AddField (pc_field);
 
 			current_field = new Field (
 				this, iterator_type_expr, Modifiers.PRIVATE, "$current",
-				null, null, Location);
+				null, Location);
 			AddField (current_field);
 		}
 
