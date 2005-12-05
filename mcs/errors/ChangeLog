@@ -1,3 +1,7 @@
+2005-12-05  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (DISTFILES): Add *.snk.
+
 2005-12-05  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* cs1574-8.cs, cs1574-9.cs : new tests for bug #76873.

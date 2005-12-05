@@ -1,7 +1,6 @@
 #
-# use `run-test-local'
+# use `run-test'
 #
-# *** make sure you add multi-file tests to TEST_ORDERING if necessary
 
 thisdir = tests
 SUBDIRS =

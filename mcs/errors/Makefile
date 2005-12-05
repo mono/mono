@@ -27,6 +27,7 @@ DISTFILES = \
 	$(wildcard *.il)	\
 	$(wildcard *.inc)	\
 	$(wildcard *.pub)	\
+	$(wildcard *.snk)	\
 	$(wildcard *.response)	\
 	$(wildcard known-issues-*)
 
