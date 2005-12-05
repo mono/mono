@@ -1,3 +1,8 @@
+
+Mon Dec 5 15:07:42 GMT 2005 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c: fixed writing of doubles on ARM FPA.
+
 2005-12-02  Robert Jordan  <robertj@gmx.net>
 
 	* icall.c: Fixed EventInfo.ReflectedType (#76829).
