@@ -815,8 +815,8 @@ namespace System.DirectoryServices
 		/// </remarks>
 		public void Close()
 		{
-			if (conn.Connected) {
-				conn.Disconnect();
+			if (_conn != null && _conn.Connected) {
+				_conn.Disconnect();
 			}
 		}
 
