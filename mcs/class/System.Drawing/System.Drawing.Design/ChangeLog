@@ -1,3 +1,10 @@
+2005-12-05 Jordi Mas i Hernandez <jordimash@gmail.com>
+
+	* ToolboxItem.cs: Add new methods and properties for .Net and 
+	  also moved to an internal properties hashtable implementation
+
+	* IToolboxItemProvider.cs: New .Net 2.0 interface
+
 2005-09-16  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CategoryNameCollection.cs: Added LinkDemand for Unrestricted 

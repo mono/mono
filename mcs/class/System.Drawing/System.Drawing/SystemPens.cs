@@ -4,12 +4,13 @@
 // Authors:
 //   Miguel de Icaza (miguel@ximian.com)
 //   Ravindra (rkumar@novell.com)
+//   Jordi Mas i Hernandez <jordimash@gmail.com>
 //
-// Copyright (C) 2003-2004 Novell, Inc. http://www.novell.com
+// Copyright (C) 2003-2005 Novell, Inc. http://www.novell.com
 //
 
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -52,6 +53,24 @@ namespace System.Drawing
 		static private Pen menu_text;
 		static private Pen window_frame;
 		static private Pen window_text;
+		static private Pen active_border;
+		static private Pen active_caption;
+		static private Pen app_workspace;
+		static private Pen button_face;
+		static private Pen button_highlight;
+		static private Pen button_shadow;
+		static private Pen desktop;
+		static private Pen gradient_activecaption;
+		static private Pen gradient_inactivecaption;
+		static private Pen hot_track;
+		static private Pen inactive_border;
+		static private Pen inactive_caption;
+		static private Pen info;
+		static private Pen menu;
+		static private Pen menu_bar;
+		static private Pen menu_highlight;
+		static private Pen scroll_bar;
+		static private Pen window;
 		
 		private SystemPens () {	}
 		
@@ -231,6 +250,207 @@ namespace System.Drawing
 			String message = String.Format ("The color {0} is not a system color.", c);
 			throw new ArgumentException (message);
 		}
+
+#if NET_2_0
+		public static Pen ActiveBorder {
+			get {
+				if (active_border == null) {
+					active_border = new Pen (SystemColors.ActiveBorder);
+					active_border.isModifiable = false;
+				}
+				
+				return active_border;
+			}
+		}
+
+		public static Pen ActiveCaption {
+			get {
+				if (active_caption == null) {
+					active_caption = new Pen (SystemColors.ActiveCaption);
+					active_caption.isModifiable = false;
+				}
+				
+				return active_caption;
+			}
+		}
+
+		public static Pen AppWorkspace {
+			get {
+				if (app_workspace == null) {
+					app_workspace = new Pen (SystemColors.AppWorkspace);
+					app_workspace.isModifiable = false;
+				}
+				
+				return app_workspace;
+			}
+		}
+
+		public static Pen ButtonFace {
+			get {
+				if (button_face == null) {
+					button_face = new Pen (SystemColors.ButtonFace);
+					button_face.isModifiable = false;
+				}
+				
+				return button_face;
+			}
+		}
+
+		public static Pen ButtonHighlight {
+			get {
+				if (button_highlight == null) {
+					button_highlight = new Pen (SystemColors.ButtonHighlight);
+					button_highlight.isModifiable = false;
+				}
+				
+				return button_highlight;
+			}
+		}
+
+		public static Pen ButtonShadow {
+			get {
+				if (button_shadow == null) {
+					button_shadow = new Pen (SystemColors.ButtonShadow);
+					button_shadow.isModifiable = false;
+				}	
+			
+				return button_shadow;
+			}
+		}
+
+		public static Pen Desktop {
+			get {
+				if (desktop == null) {
+					desktop = new Pen (SystemColors.Desktop);
+					desktop.isModifiable = false;
+				}
+				
+				return desktop;
+			}
+		}
+
+		public static Pen GradientActiveCaption {
+			get {
+				if (gradient_activecaption == null) {
+					gradient_activecaption = new Pen (SystemColors.GradientActiveCaption);
+					gradient_activecaption.isModifiable = false;
+				}
+				
+				return gradient_activecaption;
+			}
+		}
+
+		public static Pen GradientInactiveCaption {
+			get {
+				if (gradient_inactivecaption == null) {
+					gradient_inactivecaption = new Pen (SystemColors.GradientInactiveCaption);
+					gradient_inactivecaption.isModifiable = false;
+				}
+				
+				return gradient_inactivecaption;
+			}
+		}
+
+		public static Pen HotTrack {
+			get {
+				if (hot_track == null) {
+					hot_track = new Pen (SystemColors.HotTrack);
+					hot_track.isModifiable = false;
+				}
+				
+				return hot_track;
+			}
+		}
+
+		public static Pen InactiveBorder {
+			get {
+				if (inactive_border == null) {
+					inactive_border = new Pen (SystemColors.InactiveBorder);
+					inactive_border.isModifiable = false;
+				}
+				
+				return inactive_border;
+			}
+		}
+
+		public static Pen InactiveCaption {
+			get {
+				if (inactive_caption == null) {
+					inactive_caption = new Pen (SystemColors.InactiveCaption);
+					inactive_caption.isModifiable = false;
+				}
+				
+				return inactive_caption;
+			}
+		}
+
+		public static Pen Info {
+			get {
+				if (info == null) {
+					info = new Pen (SystemColors.Info);
+					info.isModifiable = false;
+				}
+				
+				return info;
+			}
+		}
+
+		public static Pen Menu {
+			get {
+				if (menu == null) {
+					menu = new Pen (SystemColors.Menu);
+					menu.isModifiable = false;
+				}
+				
+				return menu;
+			}
+		}
+
+		public static Pen MenuBar {
+			get {
+				if (menu_bar == null) {
+					menu_bar = new Pen (SystemColors.MenuBar);
+					menu_bar.isModifiable = false;
+				}
+				
+				return menu_bar;
+			}
+		}
+
+		public static Pen MenuHighlight {
+			get {
+				if (menu_highlight == null) {
+					menu_highlight = new Pen (SystemColors.MenuHighlight);
+					menu_highlight.isModifiable = false;
+				}
+				
+				return menu_highlight;
+			}
+		}
+
+		public static Pen ScrollBar {
+			get {
+				if (scroll_bar == null) {
+					scroll_bar = new Pen (SystemColors.ScrollBar);
+					scroll_bar.isModifiable = false;
+				}
+				
+				return scroll_bar;
+			}
+		}
+
+		public static Pen Window {
+			get {
+				if (window == null) {
+					window = new Pen (SystemColors.Window);
+					window.isModifiable = false;
+				}
+				
+				return window;
+			}
+		}
+#endif
 		
 	}
-}
+}               
+                

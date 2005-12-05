@@ -101,6 +101,16 @@ namespace System.Drawing {
 		static private Color window_frame = Color.FromArgbSystem (255, 0, 0, 0, "WindowFrame", KnownColor.WindowFrame);
 		static private Color window_text = Color.FromArgbSystem (255, 0, 0, 0, "WindowText", KnownColor.WindowText);
 
+#if NET_2_0
+		static private Color button_face = Color.FromArgbSystem (255, 192, 192, 192, "ButtonFace", KnownColor.ButtonFace);
+		static private Color button_highlight = Color.FromArgbSystem (255, 255, 255, 255, "ButtonHighlight", KnownColor.ButtonHighlight);
+		static private Color button_shadow = Color.FromArgbSystem (255, 128, 128, 128, "ButtonShadow", KnownColor.ButtonShadow);
+		static private Color gradient_activecaption = Color.FromArgbSystem (255, 16, 132, 208, "GradientActiveCaption", KnownColor.GradientActiveCaption);
+		static private Color gradient_inactivecaption = Color.FromArgbSystem (255, 181, 181, 181, "GradientInactiveCaption", KnownColor.GradientInactiveCaption);
+		static private Color menubar = Color.FromArgbSystem (255, 192, 192, 192, "MenuBar", KnownColor.MenuBar);
+		static private Color menu_highlight = Color.FromArgbSystem (255, 0, 0, 0, "MenuHighlight", KnownColor.MenuHighlight);
+#endif
+
 #if old
 		static private Color active_border = Color.FromArgbSystem (255, 131, 153, 177, "ActiveBorder", KnownColor.ActiveBorder);
 		static private Color active_caption = Color.FromArgbSystem (255, 79, 101, 125, "ActiveCaption", KnownColor.ActiveCaption);
@@ -431,6 +441,58 @@ namespace System.Drawing {
 				return window_text;
 			}
 		}
+#if NET_2_0
+
+		static public Color ButtonFace
+		{	
+			get {
+				return button_face;
+			}
+		}
+
+		static public Color ButtonHighlight
+		{	
+			get {
+				return button_highlight;
+			}
+		}
+
+		static public Color ButtonShadow
+		{	
+			get {
+				return button_shadow;
+			}
+		}
+
+		static public Color GradientActiveCaption
+		{	
+			get {
+				return gradient_activecaption;
+			}
+		}
+
+		static public Color GradientInactiveCaption
+		{	
+			get {
+				return gradient_inactivecaption;
+			}
+		}
+
+		static public Color MenuBar
+		{	
+			get {
+				return menubar;
+			}
+		}
+
+		static public Color MenuHighlight
+		{	
+			get {
+				return menu_highlight;
+			}
+		}
+#endif
+
 	}
 }
 

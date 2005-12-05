@@ -264,18 +264,23 @@ namespace System.Drawing
 			if (nativeObject == (IntPtr) 0)
 				throw new Exception ("nativeObject is null");			
 			
-			IntPtr lfBuffer = Marshal.AllocHGlobal(Marshal.SizeOf(result));
-     			Marshal.StructureToPtr(result, lfBuffer, false);						
-     		
-			Status status = GDIPlus.GdipBitmapLockBits (nativeObject, ref rect, flags, format,  lfBuffer);
+			Status status = GDIPlus.GdipBitmapLockBits (nativeObject, ref rect, flags, format,  result);
 			
-			result = (BitmapData) Marshal.PtrToStructure(lfBuffer,  typeof(BitmapData));											
-			Marshal.FreeHGlobal (lfBuffer);			
 			//NOTE: scan0 points to piece of memory allocated in the unmanaged space
 			GDIPlus.CheckStatus (status);
 
 			return  result;
 		}
+
+#if NET_2_0
+		public BitmapData LockBits (Rectangle rect, ImageLockMode flags, PixelFormat format, BitmapData bitmapData)
+		{
+			Status status = GDIPlus.GdipBitmapLockBits (nativeObject, ref rect, flags, format,  bitmapData);
+			GDIPlus.CheckStatus (status);
+
+			return bitmapData;
+		}
+#endif
 
 		public void MakeTransparent ()
 		{

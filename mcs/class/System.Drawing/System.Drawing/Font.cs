@@ -46,6 +46,7 @@ namespace System.Drawing
 	public sealed class Font : MarshalByRefObject, ISerializable, ICloneable, IDisposable
 	{
 		private IntPtr	fontObject = IntPtr.Zero;
+		private string systemFontName;
 
 		private void CreateFont(string familyName, float emSize, FontStyle style, GraphicsUnit unit, byte charSet, bool isVertical) {
                         Status		status;                  
@@ -369,7 +370,13 @@ namespace System.Drawing
 					fontObject = value;
 			}
 		}
-
+#if NET_2_0
+		internal string SysFontName {
+			set {
+				systemFontName = value;
+			}
+		}
+#endif
 		private bool _bold;
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
@@ -412,6 +419,18 @@ namespace System.Drawing
 				return (int) Math.Ceiling (GetHeight ());
 			}
 		}
+
+#if NET_2_0
+		[Browsable(false)]
+		public bool IsSystemFont {
+			get {
+				if (systemFontName == null)
+					return false;
+
+				return StringComparer.InvariantCulture.Compare (systemFontName, string.Empty) != 0;				
+			}
+		}
+#endif
 
 		private bool _italic;
 
@@ -467,6 +486,14 @@ namespace System.Drawing
 			}
 		}
 
+#if NET_2_0
+		[Browsable(false)]
+		public string SystemFontName {
+			get {
+				return systemFontName;
+			}
+		}
+#endif
 		private bool _underline;
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]

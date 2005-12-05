@@ -177,6 +177,25 @@ namespace MonoTests.System.Drawing
 			return string.Format ("{{X={0}, Y={1}}}", point.X.ToString (culture),
 				point.Y.ToString (culture));
 		}
+
+#if NET_2_0
+
+		[Test]
+		public void AddTest ()
+		{
+			Assert.AreEqual (new PointF (3, 4), PointF.Add (new PointF (1, 1), new Size (2, 3)), "ADDTEST#1");
+			Assert.AreEqual (new PointF (4, 5), PointF.Add (new PointF (2, 2), new SizeF (2, 3)), "ADDTEST#2");			
+		}
+
+		[Test]
+		public void SubtractTest ()
+		{
+			Assert.AreEqual (new PointF (2, 1), PointF.Subtract (new PointF (4, 4), new Size (2, 3)), "SUBTEST#1");
+			Assert.AreEqual (new PointF (3, 3), PointF.Subtract (new PointF (5, 6), new SizeF (2, 3)), "SUBTEST#2");						
+		}
+#endif
+
+
 	}
 }
 

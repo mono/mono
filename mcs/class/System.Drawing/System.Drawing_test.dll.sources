@@ -15,6 +15,7 @@ System.Drawing/TestRectangleConverter.cs
 System.Drawing/TestRectangleF.cs
 System.Drawing/TestSize.cs
 System.Drawing/TestSizeConverter.cs
+System.Drawing/TestSizeFConverter.cs
 System.Drawing/TestSizeF.cs
 System.Drawing/TestStringFormat.cs
 System.Drawing/TestSystemBrushes.cs
@@ -41,6 +42,7 @@ System.Drawing/GraphicsCas.cs
 System.Drawing.Design/CategoryNameCollectionCas.cs
 System.Drawing.Design/PaintValueEventArgsCas.cs
 System.Drawing.Design/PropertyValueUIItemCas.cs
+System.Drawing.Design/TestToolboxItem.cs
 System.Drawing.Design/ToolboxComponentsCreatedEventArgsCas.cs
 System.Drawing.Design/ToolboxComponentsCreatingEventArgsCas.cs
 System.Drawing.Design/ToolboxItemCas.cs

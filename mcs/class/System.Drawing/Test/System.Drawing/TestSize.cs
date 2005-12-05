@@ -196,6 +196,23 @@ namespace MonoTests.System.Drawing
 		{
 			AssertEquals (new Size (1, 0).GetHashCode (), sz1_0.GetHashCode ());
 		}
+
+#if NET_2_0
+		[Test]
+		public void AddTest ()
+		{
+			AssertEquals ("ADD#1", sz1_1, Size.Add (sz1_0, sz0_1));
+			AssertEquals ("ADD#2", sz1_1, Size.Add (sz1_1, new Size (0, 0)));
+		}
+
+		[Test]
+		public void SubtractTest ()
+		{
+			AssertEquals ("SUB#1", sz1_0, Size.Subtract (sz1_1, sz0_1));
+			AssertEquals ("SUB#2", sz0_1, Size.Subtract (sz1_1, sz1_0));	
+		}
+#endif
+
 	}
 }
 

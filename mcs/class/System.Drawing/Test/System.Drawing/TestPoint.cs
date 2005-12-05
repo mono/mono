@@ -196,6 +196,35 @@ namespace MonoTests.System.Drawing{
 			AssertEquals ("{X=1,Y=0}", pt1_0.ToString ());
 			AssertEquals ("{X=0,Y=1}", pt0_1.ToString ());
 		}
+#if NET_2_0
+
+		[Test]
+		public void AddTest ()
+		{
+			AssertEquals (pt1_1, Point.Add (pt1_0, new Size (0, 1)));
+			AssertEquals (pt1_1, Point.Add (pt0_1, new Size (1, 0)));			
+		}
+
+		[Test]
+		public void OffsetTestPoint ()
+		{
+			Point pt = new Point (0, 0);
+			pt.Offset (new Point (0, 1));
+			AssertEquals (pt, pt0_1);
+			pt.Offset (new Point (1, 0));
+			AssertEquals (pt, pt1_1);
+			pt.Offset (new Point (0, -1));
+			AssertEquals (pt, pt1_0);
+		}
+
+		[Test]
+		public void SubtractTest ()
+		{
+			AssertEquals (pt1_0, Point.Subtract (pt1_1, new Size (0, 1)));
+			AssertEquals (pt0_1, Point.Subtract (pt1_1, new Size (1, 0)));
+		}
+#endif
+
 	}
 }
 

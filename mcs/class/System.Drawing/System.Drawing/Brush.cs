@@ -44,9 +44,6 @@ namespace System.Drawing
 		internal IntPtr nativeObject;
 		abstract public object Clone ();
 
-                internal Brush ()
-                { }
-
 		internal Brush (IntPtr ptr)
 		{
                         nativeObject = ptr;
@@ -60,6 +57,23 @@ namespace System.Drawing
 				nativeObject = value;
 			}
 		}
+
+#if NET_2_0
+		protected Brush ()
+		{
+
+		}		
+
+		protected internal void SetNativeBrush (IntPtr brush)
+		{
+			nativeObject = brush;
+		}
+#else
+                internal Brush ()
+                { 
+
+		}
+#endif
 		
                 internal Brush CreateBrush (IntPtr brush, System.Drawing.BrushType type)
                 {

@@ -4,6 +4,9 @@ Assembly/AssemblyInfo.cs
 System.Drawing/Bitmap.cs
 System.Drawing/Brush.cs
 System.Drawing/Brushes.cs
+System.Drawing/BufferedGraphics.cs
+System.Drawing/BufferedGraphicsManager.cs
+System.Drawing/BufferedGraphicsContext.cs
 System.Drawing/CharacterRange.cs
 System.Drawing/carbonFunctions.cs
 System.Drawing/ColorConverter.cs
@@ -12,6 +15,7 @@ System.Drawing/ColorTranslator.cs
 System.Drawing/ComIStreamMarshaler.cs
 System.Drawing/ComIStreamWrapper.cs
 System.Drawing/ContentAlignment.cs
+System.Drawing/CopyPixelOperation.cs
 System.Drawing/Font.cs
 System.Drawing/FontConverter.cs
 System.Drawing/FontFamily.cs
@@ -24,6 +28,7 @@ System.Drawing/gdipStructs.cs
 System.Drawing/KnownColor.cs
 System.Drawing/IconConverter.cs
 System.Drawing/Icon.cs
+System.Drawing/IDeviceContext.cs
 System.Drawing/ImageAnimator.cs
 System.Drawing/ImageConverter.cs
 System.Drawing/Image.cs
@@ -41,6 +46,7 @@ System.Drawing/RotateFlipType.cs
 System.Drawing/SizeConverter.cs
 System.Drawing/Size.cs
 System.Drawing/SizeF.cs
+System.Drawing/SizeFConverter.cs
 System.Drawing/SolidBrush.cs
 System.Drawing/SRDescriptionAttribute.cs
 System.Drawing/StringAligment.cs
@@ -51,12 +57,14 @@ System.Drawing/StringTrimming.cs
 System.Drawing/StringUnit.cs
 System.Drawing/SystemBrushes.cs
 System.Drawing/SystemColors.cs
+System.Drawing/SystemFonts.cs
 System.Drawing/SystemIcons.cs
 System.Drawing/SystemPens.cs
 System.Drawing/TextureBrush.cs
 System.Drawing/ToolboxBitmapAttribute.cs
 System.Drawing.Design/UITypeEditorEditStyle.cs
 System.Drawing.Design/IPropertyValueUIService.cs
+System.Drawing.Design/IToolboxItemProvider.cs
 System.Drawing.Design/PropertyValueItem.cs
 System.Drawing.Design/PropertyValueUIHandler.cs
 System.Drawing.Design/PropertyValueUIItemInvokeHandler.cs

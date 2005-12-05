@@ -34,7 +34,9 @@ using System.Runtime.InteropServices;
 
 namespace System.Drawing
 {
+#if !NET_2_0
 	[ComVisible (false)]
+#endif
 	public sealed class Region : MarshalByRefObject, IDisposable
 	{
                 private IntPtr nativeRegion = IntPtr.Zero;
@@ -561,7 +563,14 @@ namespace System.Drawing
 				nativeRegion = value;
 			}
 		}
+#if NET_2_0
+		public void ReleaseHrgn (IntPtr regionHandle)		
+		{
+			if (regionHandle == IntPtr.Zero) 
+				throw new ArgumentNullException ("regionHandle is a null reference ");
 
+		}
+#endif
         
 	}
 }

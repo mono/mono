@@ -33,9 +33,11 @@
 //
 
 using System;
+using System.Runtime.InteropServices;
 
 namespace System.Drawing.Imaging {
 
+	[StructLayout(LayoutKind.Sequential)]
 	public sealed class MetaHeader {
 
 		private short headerSize;

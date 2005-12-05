@@ -171,7 +171,11 @@ namespace System.Drawing
 			if (knownColors == null)
 				FillColorNames ();
 			
+#if NET_2_0
+			if (c < KnownColor.ActiveBorder || c > KnownColor.MenuHighlight) {
+#else
 			if (c < KnownColor.ActiveBorder || c > KnownColor.YellowGreen) {
+#endif			
 				// This is what it returns!
 				Color d = FromArgb (0, 0, 0, 0);
 				d.myname = c.ToString ();
@@ -215,8 +219,11 @@ namespace System.Drawing
 				if (systemColors != null)
 					return;
 				
-				knownColors = new Color [(int)KnownColor.YellowGreen + 1];
-				
+#if NET_2_0
+				knownColors = new Color [(int)KnownColor.MenuHighlight + 1];			
+#else
+				knownColors = new Color [(int)KnownColor.YellowGreen + 1];			
+#endif				
 				Hashtable colorHash = GetColorHashtableFromType (typeof (Color));
 				namedColors = colorHash;
 

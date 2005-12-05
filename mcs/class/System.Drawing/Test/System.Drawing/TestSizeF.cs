@@ -207,6 +207,23 @@ namespace MonoTests.System.Drawing
 			return string.Format ("{{Width={0}, Height={1}}}", size.Width.ToString (culture),
 				size.Height.ToString (culture));
 		}
+
+#if NET_2_0
+		[Test]
+		public void AddTest ()
+		{
+			Assert.AreEqual (sz11_99, SizeF.Add (sz11_0, new SizeF (0.0F, 9.9F)), "ADD#1");
+			Assert.AreEqual (sz11_99, SizeF.Add (new SizeF (0.0F, 0.0F), new SizeF (1.1F, 9.9F)), "ADD#2");
+		}
+
+		[Test]
+		public void SubtractTest ()
+		{
+			Assert.AreEqual (sz11_0, SizeF.Subtract (sz11_99, new SizeF (0.0F, 9.9F)), "SUB#1");
+			Assert.AreEqual (sz0_11, SizeF.Subtract (new SizeF (1.1F, 1.1F), new SizeF (1.1F, 0.0F)), "SUB#2");
+		}
+#endif
+
 	}
 }
 

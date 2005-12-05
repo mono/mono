@@ -177,5 +177,30 @@ namespace System.Drawing
 			}
 		}
 	}
+
+	[StructLayout(LayoutKind.Sequential)]
+	internal struct XColor
+	{
+		public int		pixel;
+		public ushort		red, green, blue;
+		public sbyte		flags;
+		public sbyte		pad;	
+	}
+
+	[StructLayout(LayoutKind.Sequential)]
+	internal struct XVisualInfo
+	{
+		internal IntPtr visual;
+		internal int visualid;
+		internal int screen;
+		internal uint depth;
+		internal int klass;
+		internal uint red_mask;
+		internal uint green_mask;
+		internal uint blue_mask;
+		internal int colormap_size;
+		internal int bits_per_rgb;		
+	}
+	
 }
 

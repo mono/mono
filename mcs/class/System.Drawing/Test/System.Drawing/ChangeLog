@@ -1,3 +1,11 @@
+2005-12-05 Jordi Mas i Hernandez <jordimash@gmail.com>
+
+	* TestPoint.cs: Test new methods for .Net 2.0
+	* TestPointF.cs Test new methods for .Net 2.0
+	* ColorConverter.cs: Fixes for .Net 2.0
+	* TestSizeF.cs: Test new methods for .Net 2.0
+	* TestSize.cs: Test new methods for .Net 2.0
+
 2005-12-02  Jonathan Gilbert  <logic@deltaq.org>
 
 	* TestBitmap.cs (LockUnlockBitmap): Added test for the copying back

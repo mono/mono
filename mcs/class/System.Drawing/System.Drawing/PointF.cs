@@ -230,5 +230,28 @@ namespace System.Drawing
 			return String.Format ("{{X={0}, Y={1}}}", x.ToString (CultureInfo.CurrentCulture),
 				y.ToString (CultureInfo.CurrentCulture));
 		}
+
+#if NET_2_0
+		public static PointF Add (PointF pt, Size sz)
+		{
+			return new PointF (pt.X + sz.Width, pt.Y + sz.Height);
+		}
+		
+		public static PointF Add (PointF pt, SizeF sz)
+		{
+			return new PointF (pt.X + sz.Width, pt.Y + sz.Height);
+		}
+
+		public static PointF Subtract (PointF pt, Size sz)
+		{
+			return new PointF (pt.X - sz.Width, pt.Y - sz.Height);
+		}
+
+		public static PointF Subtract (PointF pt, SizeF sz)
+		{
+			return new PointF (pt.X - sz.Width, pt.Y - sz.Height);
+		}
+#endif
+
 	}
 }

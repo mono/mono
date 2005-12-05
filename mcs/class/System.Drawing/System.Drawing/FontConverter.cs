@@ -47,6 +47,11 @@ namespace System.Drawing
 		{
 		}
 
+		~FontConverter ()
+		{
+				
+		}	
+
 		public override bool CanConvertFrom (ITypeDescriptorContext context, Type sourceType)
 		{
 			if (sourceType == typeof (string))
@@ -242,11 +247,19 @@ namespace System.Drawing
 		}
 
 		public sealed class FontNameConverter : TypeConverter
+#if NET_2_0
+		, IDisposable		
+#endif
 		{
 			public FontNameConverter ()
 			{
-			}
+			}	
+#if NET_2_0			
+			void IDisposable.Dispose ()
+			{
 
+			}
+#endif
 			public override bool CanConvertFrom (ITypeDescriptorContext context, Type sourceType)
 			{
 				if (sourceType == typeof (string))

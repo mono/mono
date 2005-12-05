@@ -40,8 +40,13 @@ using System.Text;
 
 namespace System.Drawing
 {
-	[ComVisible(false)]
+#if !NET_2_0
+	[ComVisible(false)]  
+#endif
 	public sealed class Graphics : MarshalByRefObject, IDisposable
+#if NET_2_0
+	, IDeviceContext
+#endif
 	{
 		internal IntPtr nativeObject = IntPtr.Zero;
 		private bool disposed = false;
@@ -99,7 +104,7 @@ namespace System.Drawing
 				nativeObject = value;
 			}
 		}
-
+		
 		[MonoTODO]
 		public void AddMetafileComment (byte [] data)
 		{
@@ -145,6 +150,93 @@ namespace System.Drawing
  			status = GDIPlus.GdipGraphicsClear (nativeObject, color.ToArgb ());
  			GDIPlus.CheckStatus (status);
 		}
+#if NET_2_0		
+		public void CopyFromScreen (Point upperLeftSource, Point upperLeftDestination, Size blockRegionSize)
+		{
+			CopyFromScreen (upperLeftSource.X, upperLeftSource.Y, upperLeftDestination.X, upperLeftDestination.Y,
+				blockRegionSize, CopyPixelOperation.SourceCopy);				
+		}
+
+		public void CopyFromScreen (Point upperLeftSource, Point upperLeftDestination, Size blockRegionSize, CopyPixelOperation copyPixelOperation)
+		{
+			CopyFromScreen (upperLeftSource.X, upperLeftSource.Y, upperLeftDestination.X, upperLeftDestination.Y,
+				blockRegionSize, copyPixelOperation);
+		}
+		
+		public void CopyFromScreen (int sourceX, int sourceY, int destinationX, int destinationY, Size blockRegionSize)
+		{
+			CopyFromScreen (sourceX, sourceY, destinationX, destinationY, blockRegionSize,
+				CopyPixelOperation.SourceCopy);
+		}
+
+		public void CopyFromScreen (int sourceX, int sourceY, int destinationX, int destinationY, Size blockRegionSize, CopyPixelOperation copyPixelOperation)
+		{
+			IntPtr window;			
+
+			if (!Enum.IsDefined (typeof (CopyPixelOperation), copyPixelOperation))
+				throw new InvalidEnumArgumentException (string.Format("Enum argument value '{0}' is not valid for CopyPixelOperation", copyPixelOperation));
+
+			if (GDIPlus.UseCocoaDrawable || GDIPlus.UseQuartzDrawable) {
+				throw new NotImplementedException ();
+			}
+			
+			if (GDIPlus.UseX11Drawable) { // X11 implementation
+				IntPtr image, defvisual, vPtr;
+				int AllPlanes = ~0, nitems = 0, pixel;
+
+				if (copyPixelOperation != CopyPixelOperation.SourceCopy)
+					throw new NotImplementedException ("Operation not implemented under X11");
+		
+				if (GDIPlus.Display == IntPtr.Zero) {
+					GDIPlus.Display = GDIPlus.XOpenDisplay (IntPtr.Zero);					
+				}
+
+				window = GDIPlus.XRootWindow (GDIPlus.Display, 0);
+				defvisual = GDIPlus.XDefaultVisual (GDIPlus.Display, 0);				
+				XVisualInfo visual = new XVisualInfo ();
+
+				/* Get XVisualInfo for this visual */
+				visual.visualid = GDIPlus.XVisualIDFromVisual(defvisual);
+				vPtr = GDIPlus.XGetVisualInfo (GDIPlus.Display, 0x1 /* VisualIDMask */, ref visual, ref nitems);
+				visual = (XVisualInfo) Marshal.PtrToStructure(vPtr, typeof (XVisualInfo));
+
+				/* Sorry I do not have access to a computer with > deepth. Fell free to add more pixel formats */	
+				if (visual.depth != 16) 
+					throw new NotImplementedException ("Only 16bpp pixel is supported right now");
+			
+				image = GDIPlus.XGetImage (GDIPlus.Display, window, sourceX, sourceY, blockRegionSize.Width,
+					blockRegionSize.Height, AllPlanes, 2 /* ZPixmap*/);
+				
+				Bitmap bmp = new Bitmap (blockRegionSize.Width, blockRegionSize.Height);
+				for (int y = sourceY; y <  sourceY + blockRegionSize.Height; y++) {
+					for (int x = sourceX; x <  sourceX + blockRegionSize.Width; x++) {
+						pixel = GDIPlus.XGetPixel (image, x, y);			
+						/* 16bbp pixel transformation */
+						int red = (int) ((pixel & visual.red_mask ) >> 8) & 0xff;
+						int green = (int) (((pixel & visual.green_mask ) >> 3 )) & 0xff;
+						int blue = (int) ((pixel & visual.blue_mask ) << 3 ) & 0xff;
+
+						bmp.SetPixel (x, y, Color.FromArgb (255, red, green, blue));							 
+					}
+				}
+
+				DrawImage (bmp, 0, 0);
+				bmp.Dispose ();
+				GDIPlus.XDestroyImage (image);
+				return;
+			}			
+
+			// Win32 implementation
+			window = GDIPlus.GetDesktopWindow ();
+			IntPtr srcDC = GDIPlus.GetDC (window);
+			IntPtr dstDC = GetHdc ();
+			GDIPlus.BitBlt (dstDC, destinationX, destinationY, blockRegionSize.Width,
+				blockRegionSize.Height, srcDC, sourceX, sourceY, (int) copyPixelOperation);
+
+			GDIPlus.ReleaseDC (srcDC);
+			ReleaseHdc (dstDC);			
+		}
+#endif
 
 		public void Dispose ()
 		{
@@ -845,6 +937,17 @@ namespace System.Drawing
 			tmpImg.Dispose ();
 			g.Dispose ();
 		}
+
+#if NET_2_0
+		public void DrawImageUnscaledAndClipped (Image image, Rectangle rect)
+		{
+			int height, width;			
+			width = (image.Width > rect.Width) ? rect.Width : image.Width;
+			height = (image.Height > rect.Height) ? rect.Height : image.Height;
+
+			DrawImageUnscaled (image, rect.X, rect.Y, width, height);			
+		}
+#endif
 
 		public void DrawLine (Pen pen, PointF pt1, PointF pt2)
 		{
@@ -1633,7 +1736,9 @@ namespace System.Drawing
 			throw new NotImplementedException ();
 		}
 
+#if !NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
+#endif
 		public IntPtr GetHdc ()
 		{
 			IntPtr hdc;
@@ -1902,9 +2007,18 @@ namespace System.Drawing
 			Status status = GDIPlus.GdipReleaseDC (nativeObject, hdc);
 			GDIPlus.CheckStatus (status);
 		}
-
+#if NET_2_0
+		public void ReleaseHdc()
+		{
+		      
+		}
+#endif
 		[MonoTODO]
+#if NET_2_0
+		[EditorBrowsable (EditorBrowsableState.Never)]
+#else
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
+#endif
 		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
 		public void ReleaseHdcInternal (IntPtr hdc)
 		{

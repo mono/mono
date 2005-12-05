@@ -383,8 +383,13 @@ namespace MonoTests.System.Drawing {
 
 		[Test]
 		public void GetStandardValues () {
-			Assert.AreEqual (167, colconv.GetStandardValues ().Count);
-			Assert.AreEqual (167, colconv.GetStandardValues (null).Count);
+#if NET_2_0
+			Assert.AreEqual ((int)KnownColor.MenuHighlight, colconv.GetStandardValues ().Count);
+			Assert.AreEqual ((int)KnownColor.MenuHighlight, colconv.GetStandardValues (null).Count);			
+#else
+			Assert.AreEqual ((int)KnownColor.YellowGreen, colconv.GetStandardValues ().Count);
+			Assert.AreEqual ((int)KnownColor.YellowGreen, colconv.GetStandardValues (null).Count);	
+#endif
 		}
 
 		[Test]

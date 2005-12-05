@@ -201,6 +201,15 @@ namespace System.Drawing
 		White = 164,
 		WhiteSmoke = 165,
 		Yellow = 166,
-		YellowGreen = 167
+		YellowGreen = 167,
+#if NET_2_0
+		ButtonFace = 168,
+		ButtonHighlight = 169,
+		ButtonShadow = 170,
+		GradientActiveCaption = 171,
+		GradientInactiveCaption = 172,
+		MenuBar = 173,
+		MenuHighlight = 174
+#endif
 	}
 }

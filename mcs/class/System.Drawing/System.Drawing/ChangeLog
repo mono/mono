@@ -1,3 +1,34 @@
+2005-12-05 Jordi Mas i Hernandez <jordimash@gmail.com>
+
+	* gdipFunctions.cs: DllExports need it to implement 
+	  new Graphics.CopyFromScreen .Net 2.0 methods
+	* IDeviceContext.cs: New .Net 2.0 interface
+	* Color.cs: Fixes for new .Net 2.0 KnowColors
+	* PointF.cs: New .Net 2.0 Add/Subtract methods
+	* gdipStructs.cs: Structs need it for Graphics.CopyFromScreen
+	* SystemBrushes.cs: New standard SystemBrushes for .Net 2.0
+	* SizeF.cs: New .Net 2.0 Add/Subtract methods
+	* FontConverter.cs: New .Net 2.0 fixes
+	* SystemColors.cs: New standard SystemColors for .Net 2.0
+	* SizeFConverter.cs: New .Net 2.0 class (based on SizeConverter)
+	* CharacterRange.cs: : New .Net 2.0 methods
+	* Size.cs: New .Net 2.0 Add/Subtract methods
+	* SystemPens.cs: New standard SystemPens for .Net 2.0
+	* Bitmap.cs: New .Net 2.0 methods
+	* Region.cs: New .Net 2.0 methods
+	* Brush.cs: New .Net 2.0 constructor
+	* Icon.cs: New .Net 2.0 Constructors and methods
+	* Point.cs: New .Net 2.0 Add/Subtract methods
+	* BufferedGraphicsManager.cs: New .Net 2.0 class
+	* Graphics.cs: New methods for .Net 2.0 and fixes
+	* BufferedGraphics.cs: New .Net 2.0 class
+	* Font.cs:  New .Net 2.0 properties
+	* Image.cs: New .Net 2.0 tag property
+	* KnownColor.cs: New .Net 2.0 know colors
+	* CopyPixelOperation.cs: New .Net 2.0 enum
+	* SystemFonts.cs: New .Net 2.0 class
+	* BufferedGraphicsContext.cs: New .Net 2.0 class
+
 2005-11-28 Konstantin Triger <kostat@mainsoft.com>
 
         * SystemIcons.jvm.cs: refactoring.

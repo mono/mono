@@ -1,12 +1,5 @@
 //
-// System.Windows.Drawing.CharacterRange.cs
-//
-// Author:
-//	Dennis Hayes (dennish@raytek.com)
-//
-// Copyright (C) 2002 Ximian, Inc http://www.ximian.com
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -15,10 +8,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -27,65 +20,70 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+// Authors:
+//
+//   Jordi Mas i Hernandez <jordimash@gmail.com>
+//
+//
+
+#if NET_2_0
 
 using System;
+using System.Runtime.Serialization;
+using System.Runtime.InteropServices;
+using System.ComponentModel;
 
 namespace System.Drawing
 {
-	public struct CharacterRange
+	public sealed class BufferedGraphicsContext : IDisposable
 	{
-		private int first;
-		private int length;
+		private Size max_buffer;
 
-		public CharacterRange (int first, int length)
+		public BufferedGraphicsContext ()
 		{
-			this.first = first;
-			this.length = length;
+			max_buffer = Size.Empty;
 		}
 
-		public int First {
-			get {
-				return first;
-			}
+		~BufferedGraphicsContext ()
+		{
+			
+		}
+
+		public BufferedGraphics Allocate (Graphics targetGraphics, Rectangle targetRectangle)
+		{
+			BufferedGraphics graphics = new BufferedGraphics (targetGraphics, targetRectangle);
+			return graphics;			
+		}
+
+		[MonoTODO]
+		public BufferedGraphics Allocate (IntPtr targetDC, Rectangle targetRectangle)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public void Dispose ()
+		{			
+			System.GC.SuppressFinalize (this);
+		}
+
+		public void Invalidate ()
+		{
+			
+		}
+
+		public Size MaximumBuffer {
+			get {return max_buffer; }
 			set {
-				first = value;
+				if (value.Width <= 0 || value.Height <= 0) {
+					throw new ArgumentException ("The height or width of the size is less than or equal to zero.");
+				}
+
+				max_buffer = value;
 			}
 		}
-
-		public int Length {
-			get {
-				return length;
-			}
-			set {
-				length = value;
-			}
-		}
-#if NET_2_0
-		public override bool Equals (Object o)
-		{
-			if (o is CharacterRange) {
-				if ( ((CharacterRange)o).First == first && ((CharacterRange)o).Length == length)
-					return true;
-			}
-
-			return false;
-		}
-
-		public override int GetHashCode ()
-		{
-			return (first * length);
-		}
-		
-		public static bool operator == (CharacterRange cr1, CharacterRange cr2)
-		{
-			return cr1.Equals (cr2);
-		}
-
-		public static bool operator != (CharacterRange cr1, CharacterRange cr2)
-		{
-			return !cr1.Equals (cr2);
-		}
-#endif
 
 	}
 }
+
+#endif
+

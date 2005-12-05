@@ -4,6 +4,7 @@
 // Authors:
 //   Alejandro Sánchez Acosta
 //   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//   Jordi Mas i Hernandez, jordimash@gmail.com
 //
 // (C) Alejandro Sánchez Acosta
 // (C) 2003 Andreas Nahr
@@ -45,14 +46,10 @@ namespace System.Drawing.Design
 	[PermissionSet (SecurityAction.LinkDemand, Unrestricted = true)]
 	[PermissionSet (SecurityAction.InheritanceDemand, Unrestricted = true)]
 	public class ToolboxItem : ISerializable
-	{
-
-		private AssemblyName assembly;
-		private Bitmap bitmap = null;
-		private ICollection filter = new ToolboxItemFilterAttribute[0];
-		private string displayname = string.Empty;
+	{		
 		private bool locked = false;
-		private string name = string.Empty;
+		private ICollection filter = new ToolboxItemFilterAttribute[0];
+		private Hashtable properties = new Hashtable ();
 		
 		public ToolboxItem() {
 		}
@@ -63,34 +60,34 @@ namespace System.Drawing.Design
 
 		public AssemblyName AssemblyName {
 			get {
-				return assembly;
+				return (AssemblyName) properties["AssemblyName"];
 			}
 
 			set {
 				CheckUnlocked ();
-				assembly = value;
+				properties["AssemblyName"] = value;
 			}
 		}
 
 		public Bitmap Bitmap {
 			get {
-				return bitmap;
+				return (Bitmap) properties["Bitmap"];
 			}
 			
 			set {
 				CheckUnlocked ();
-				bitmap = value;
+				properties["Bitmap"] = value;
 			}
 		}
 
 		public string DisplayName {
 			get {
-				return displayname;
+				return (string) properties["DisplayName"];
 			}
 			
 			set {
 				CheckUnlocked ();
-				displayname = value;
+				properties["DisplayName"] = value;
 			}
 		}
 
@@ -104,8 +101,11 @@ namespace System.Drawing.Design
 				filter = value;
 			}
 		}
-		
+#if NET_2_0
+		public virtual bool Locked {
+#else		
 		protected bool Locked {
+#endif		
 			get {
 				return locked;
 			}
@@ -113,15 +113,48 @@ namespace System.Drawing.Design
 
 		public string TypeName {
 			get {
-				return name;
+				return (string) properties["TypeName"];
 			}
 
 			set {
 				CheckUnlocked ();
-				name = value;
+				properties["TypeName"] = value;
 			}
 		}
-		
+#if NET_2_0
+		public string Company {
+			get { return (string) properties["Company"]; }
+			set { properties["Company"] = value; }
+		}
+
+		public virtual string ComponentType {
+			get { return "DotNET_ComponentType"; }
+		}
+
+		public AssemblyName[] DependentAssemblies {
+			get { return (AssemblyName[]) properties["DependentAssemblies"]; }
+			set { properties["DependentAssemblies"] = value; }
+		}
+
+		public string Description {
+			get { return (string) properties["Description"]; }
+			set { properties["Description"] = value; }
+		}
+
+		public bool IsTransient {			
+			get { return (bool) properties["IsTransient"]; }
+			set { properties["IsTransient"] = value; }
+		}
+
+		public IDictionary Properties {
+			 get { return properties; }
+		}
+
+		public virtual string Version { 
+			get { return string.Empty; }
+		}				
+
+#endif		
 		protected void CheckUnlocked ()
 		{
 			if (locked)
@@ -150,7 +183,7 @@ namespace System.Drawing.Design
 			OnComponentsCreating(new ToolboxComponentsCreatingEventArgs(host));
 			
 			IComponent[] components;
-			Type type = GetType(host, assembly, name, true);
+			Type type = GetType(host, AssemblyName, TypeName, true);
 			if (type == null)
 				components = new IComponent[] { };
 			else
@@ -160,14 +193,34 @@ namespace System.Drawing.Design
 			return components;
 		}
 
-		protected virtual void Deserialize (SerializationInfo info, StreamingContext context)
+#if NET_2_0
+		[MonoTODO] 
+		public IComponent[] CreateComponents (IDesignerHost host, IDictionary defaultValues)
 		{
-			assembly = (AssemblyName)info.GetValue ("AssemblyName", typeof (AssemblyName));
-			bitmap = (Bitmap)info.GetValue ("Bitmap", typeof (Bitmap));
+			throw new NotImplementedException ();
+		} 
+
+		[MonoTODO] 
+		public Type GetType (IDesignerHost host)
+		{
+      			throw new NotImplementedException ();
+		}
+
+		[MonoTODO] 
+		protected virtual object FilterPropertyValue(string propertyName, object value)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
+
+		protected virtual void Deserialize (SerializationInfo info, StreamingContext context)
+		{			
+			AssemblyName = (AssemblyName)info.GetValue ("AssemblyName", typeof (AssemblyName));
+			Bitmap = (Bitmap)info.GetValue ("Bitmap", typeof (Bitmap));
 			filter = (ICollection)info.GetValue ("Filter", typeof (ICollection));
-			displayname = info.GetString ("DisplayName");
+			DisplayName = info.GetString ("DisplayName");
 			locked = info.GetBoolean ("Locked");
-			name = info.GetString ("TypeName");
+			TypeName = info.GetString ("TypeName");
 		}
 
 		public override bool Equals (object obj)
@@ -177,17 +230,17 @@ namespace System.Drawing.Design
 				return false;
 			if (obj == this)
 				return true;
-			return ((ToolboxItem) obj).AssemblyName.Equals (assembly) &&
+			return ((ToolboxItem) obj).AssemblyName.Equals (AssemblyName) &&
 				((ToolboxItem) obj).Locked.Equals (locked) &&
-				((ToolboxItem) obj).TypeName.Equals (name) &&
-				((ToolboxItem) obj).DisplayName.Equals (displayname) &&
-				((ToolboxItem) obj).Bitmap.Equals (bitmap);
+				((ToolboxItem) obj).TypeName.Equals (TypeName) &&
+				((ToolboxItem) obj).DisplayName.Equals (DisplayName) &&
+				((ToolboxItem) obj).Bitmap.Equals (Bitmap);
 		}
 		
 		public override int GetHashCode ()
 		{
 			// FIXME: other algorithm?
-			return string.Concat (name, displayname).GetHashCode ();
+			return string.Concat (TypeName, DisplayName).GetHashCode ();
 		}
 
 		[MonoTODO]
@@ -211,9 +264,9 @@ namespace System.Drawing.Design
 		[MonoTODO ("Should we be returning empty bitmap, or null?")]
 		public virtual void Initialize (Type type) 
 		{
-			assembly = type.Assembly.GetName();
-			displayname = type.Name;
-			name = type.FullName;
+			AssemblyName = type.Assembly.GetName();
+			DisplayName = type.Name;
+			TypeName = type.FullName;
 			
 			// seems to be a right place to create the bitmap
 			System.Drawing.Image image = null;
@@ -230,9 +283,9 @@ namespace System.Drawing.Design
 			
 			if (image != null) {
 				if (image is Bitmap)
-					bitmap = (Bitmap) image;
+					Bitmap = (Bitmap) image;
 				else
-					bitmap = new Bitmap (image);
+					Bitmap = new Bitmap (image);
 			}
 
 			filter = type.GetCustomAttributes (typeof (ToolboxItemFilterAttribute), true);
@@ -243,7 +296,11 @@ namespace System.Drawing.Design
 			Serialize (info, context);
 		}
 
+#if NET_2_0
+		public virtual void Lock () 
+#else		
 		public void Lock ()
+#endif				
 		{
 			locked = true;
 		}
@@ -262,18 +319,30 @@ namespace System.Drawing.Design
 
 		protected virtual void Serialize (SerializationInfo info, StreamingContext context)
 		{
-			info.AddValue ("AssemblyName", assembly);
-			info.AddValue ("Bitmap", bitmap);
+			info.AddValue ("AssemblyName", AssemblyName);
+			info.AddValue ("Bitmap", Bitmap);
 			info.AddValue ("Filter", filter);
-			info.AddValue ("DisplayName", displayname);
+			info.AddValue ("DisplayName", DisplayName);
 			info.AddValue ("Locked", locked);
-			info.AddValue ("TypeName", name);
+			info.AddValue ("TypeName", TypeName);
 		}
 
 		public override string ToString()
 		{
-			return displayname;
+			return DisplayName;
 		}
+
+#if NET_2_0
+		protected void ValidatePropertyType (string propertyName, object value, Type expectedType, bool allowNull)
+		{
+			throw new NotImplementedException ();
+		}
+
+		protected virtual object ValidatePropertyValue (string propertyName, object value)
+		{
+			throw new NotImplementedException ();
+		} 
+#endif
 
 		public event ToolboxComponentsCreatedEventHandler ComponentsCreated;
 

@@ -898,16 +898,11 @@ namespace System.Drawing
 		internal static extern Status GdipCreateBitmapFromGraphics (int width, int height, IntPtr target, out IntPtr bitmap);
 
 		[DllImport("gdiplus.dll")]
-		internal static extern Status GdipBitmapLockBits (IntPtr bmp, ref Rectangle rc, ImageLockMode flags, PixelFormat format, [In, Out] IntPtr bmpData);
+		internal static extern Status GdipBitmapLockBits (IntPtr bmp, ref Rectangle rc, ImageLockMode flags, PixelFormat format, [In, Out] BitmapData bmpData);
 		
 		[DllImport("gdiplus.dll")]
 		internal static extern Status GdipBitmapSetResolution(IntPtr bmp, float xdpi, float ydpi);
-
-		
-		// This an internal GDIPlus Cairo function, not part GDIPlus interface
-		//[DllImport("gdiplus.dll")]
-		//(internal static extern Status ____BitmapLockBits (IntPtr bmp, ref GpRect  rc, ImageLockMode flags, PixelFormat format, ref int width, ref int height, ref int stride, ref int format2, ref int reserved, ref IntPtr scan0);
-		
+				
 		[DllImport("gdiplus.dll")]
 		internal static extern Status GdipBitmapUnlockBits (IntPtr bmp, [In,Out] BitmapData bmpData);
 		
@@ -1396,6 +1391,13 @@ namespace System.Drawing
 		[DllImport("user32.dll", SetLastError=true)]
 		internal static extern bool GetIconInfo (IntPtr hIcon, out IconInfo iconinfo);
  
+		[DllImport("user32.dll")]
+		internal static extern IntPtr GetDesktopWindow ();
+
+		[DllImport("gdi32.dll", SetLastError=true)]
+		public static extern int BitBlt(IntPtr hdcDest, int nXDest, int nYDest, 
+			int nWidth, int nHeight, IntPtr hdcSrc, int nXSrc, int nYSrc, int dwRop);
+
 
 		// Some special X11 stuff
 		[DllImport("libX11", EntryPoint="XOpenDisplay")]
@@ -1404,6 +1406,31 @@ namespace System.Drawing
 		[DllImport("libX11", EntryPoint="XCloseDisplay")]
 		internal extern static int XCloseDisplay(IntPtr display);	
 
+		[DllImport ("libX11", EntryPoint="XRootWindow")]
+		internal extern static IntPtr XRootWindow(IntPtr display, int screen);
+			
+		[DllImport ("libX11", EntryPoint="XDefaultDepth")]
+		internal extern static uint XDefaultDepth(IntPtr display, int screen);
+
+		[DllImport ("libX11", EntryPoint="XGetImage")]
+		internal extern static IntPtr XGetImage(IntPtr display, IntPtr drawable, int src_x, int src_y, int width, int height, int pane, int format);
+
+		[DllImport ("libX11", EntryPoint="XGetPixel")]
+		internal extern static int XGetPixel(IntPtr image, int x, int y);
+
+		[DllImport ("libX11", EntryPoint="XDestroyImage")]
+		internal extern static int XDestroyImage(IntPtr image);
+
+		[DllImport ("libX11", EntryPoint="XDefaultVisual")]
+		internal extern static IntPtr XDefaultVisual(IntPtr display, int screen);
+
+		[DllImport ("libX11", EntryPoint="XGetVisualInfo")]
+		internal extern static IntPtr XGetVisualInfo (IntPtr display, int vinfo_mask, ref XVisualInfo vinfo_template, ref int nitems);
+
+		[DllImport ("libX11", EntryPoint="XVisualIDFromVisual")]
+		internal extern static int XVisualIDFromVisual(IntPtr visual);
+	
+		
 		// FontCollection
 		[DllImport ("gdiplus.dll")]
 		internal static extern Status GdipGetFontCollectionFamilyCount (IntPtr collection, out int found);

@@ -41,8 +41,10 @@ using System.ComponentModel;
 
 namespace System.Drawing
 {
-	[Serializable]
-	[ComVisible (false)]
+#if !NET_2_0
+	[ComVisible (false)] 
+#endif 
+	[Serializable]	
 	[Editor ("System.Drawing.Design.IconEditor, " + Consts.AssemblySystem_Drawing_Design, typeof (System.Drawing.Design.UITypeEditor))]
 	[TypeConverter(typeof(IconConverter))]
 	public sealed class Icon : MarshalByRefObject, ISerializable, ICloneable, IDisposable
@@ -209,6 +211,23 @@ namespace System.Drawing
 			info.AddValue ("IconData", ms.ToArray ());
 		}
 
+#if NET_2_0
+		public Icon (Stream stream, Size size) : this (stream, size.Width, size.Height) {}
+		
+		public Icon (string fileName, int width, int height): 
+			this (new FileStream (fileName, FileMode.Open), width, height) {}
+	
+		public Icon (string fileName, Size size) : 
+			this (new FileStream (fileName, FileMode.Open), size) {}
+
+		[MonoTODO]
+		public static Icon ExtractAssociatedIcon (string filePath)
+		{
+			throw new NotImplementedException ();
+		}	
+	
+#endif
+
 		public void Dispose ()
 		{
 #if !TARGET_JVM
@@ -240,6 +259,11 @@ namespace System.Drawing
 				throw new ArgumentException ("handle");
 
 			return new Icon (handle);
+		}
+#else
+		public static Icon FromHandle (IntPtr handle)
+		{
+			throw new NotImplementedException ();
 		}
 #endif
 		public void Save (Stream outputStream)

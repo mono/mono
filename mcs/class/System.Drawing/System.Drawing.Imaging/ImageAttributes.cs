@@ -42,6 +42,7 @@ namespace System.Drawing.Imaging
 	/// <summary>
 	/// Summary description for ImageAttributes.
 	/// </summary>
+	[StructLayout(LayoutKind.Sequential)]
 	public sealed class ImageAttributes : ICloneable, IDisposable {
 		
 		private IntPtr nativeImageAttr = IntPtr.Zero;

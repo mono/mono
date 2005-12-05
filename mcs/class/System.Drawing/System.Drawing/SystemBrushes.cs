@@ -4,13 +4,14 @@
 // Authors:
 //   Dennis Hayes (dennish@Raytek.com)
 //   Ravindra (rkumar@novell.com)
+//   Jordi Mas i Hernandez <jordimash@gmail.com>
 //
 // Copyright (C) 2002 Ximian, Inc. http://www.ximian.com
 // Copyright (C) 2004 Novell, Inc. http://www.novell.com
 //
 
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -62,7 +63,19 @@ namespace System.Drawing
 		static SolidBrush scroll_bar;
 		static SolidBrush window;
 		static SolidBrush window_text;
-
+		static SolidBrush button_face;
+		static SolidBrush button_highlight;
+		static SolidBrush button_shadow;
+		static SolidBrush gradient_activecaption;
+		static SolidBrush gradient_inactivecaption;
+		static SolidBrush graytext;
+		static SolidBrush inactive_captiontext;
+		static SolidBrush infotext;
+		static SolidBrush menubar;
+		static SolidBrush menu_highlight;
+		static SolidBrush menu_text;		
+		static SolidBrush window_fame;
+ 
 		private SystemBrushes() { }
 
 		public static Brush ActiveBorder
@@ -310,5 +323,140 @@ namespace System.Drawing
 			String message = String.Format ("The color {0} is not a system color.", c);
 			throw new ArgumentException (message);
 		}
+
+#if NET_2_0
+		public static Brush ButtonFace {
+			get {
+				if (button_face == null) {
+					button_face = new SolidBrush (SystemColors.ButtonFace);
+					button_face.isModifiable = false;
+				}
+
+				return button_face;
+			}
+		}
+
+		public static Brush ButtonHighlight {
+			get {
+				if (button_highlight == null) {
+					button_highlight = new SolidBrush (SystemColors.ButtonHighlight);
+					button_highlight.isModifiable = false;
+				}
+
+				return button_highlight;
+			}
+		}
+
+		public static Brush ButtonShadow {
+			get {
+				if (button_shadow == null) {
+					button_shadow = new SolidBrush (SystemColors.ButtonShadow);
+					button_shadow.isModifiable = false;
+				}
+
+				return button_shadow;
+			}
+		}
+
+		public static Brush GradientActiveCaption {
+			get {
+				if (gradient_activecaption == null) {
+					gradient_activecaption = new SolidBrush (SystemColors.GradientActiveCaption);
+					gradient_activecaption.isModifiable = false;
+				}
+
+				return gradient_activecaption;
+			}
+		}
+
+		public static Brush GradientInactiveCaption {
+			get {
+				if (gradient_inactivecaption == null) {
+					gradient_inactivecaption = new SolidBrush (SystemColors.GradientInactiveCaption);
+					gradient_inactivecaption.isModifiable = false;
+				}
+
+				return gradient_inactivecaption;
+			}
+		}
+
+		public static Brush GrayText {
+			get {
+				if (graytext == null) {
+					graytext = new SolidBrush (SystemColors.GrayText);
+					graytext.isModifiable = false;
+				}
+
+				return graytext;
+			}
+		}
+
+		public static Brush InactiveCaptionText {
+			get {
+				if (inactive_captiontext == null) {
+					inactive_captiontext = new SolidBrush (SystemColors.InactiveCaptionText);
+					inactive_captiontext.isModifiable = false;
+				}
+
+				return inactive_captiontext;
+			}
+		}
+
+		public static Brush InfoText {
+			get {
+				if (infotext == null) {
+					infotext = new SolidBrush (SystemColors.InfoText);
+					infotext.isModifiable = false;
+				}
+
+				return infotext;
+			}
+		}
+
+		public static Brush MenuBar {
+			get {
+				if (menubar == null) {
+					menubar = new SolidBrush (SystemColors.MenuBar);
+					menubar.isModifiable = false;
+				}
+
+				return menubar;
+			}
+		}
+
+		public static Brush MenuHighlight {
+			get {
+				if (menu_highlight == null) {
+					menu_highlight = new SolidBrush (SystemColors.MenuHighlight);
+					menu_highlight.isModifiable = false;
+				}
+
+				return menu_highlight;
+			}
+		}
+
+		public static Brush MenuText {
+			get {
+				if (menu_text == null) {
+					menu_text = new SolidBrush (SystemColors.MenuText);
+					menu_text.isModifiable = false;
+				}
+
+				return menu_text;
+			}
+		}
+
+		public static Brush WindowFrame {
+			get {
+				if (window_fame == null) {
+					window_fame = new SolidBrush (SystemColors.WindowFrame);
+					window_fame.isModifiable = false;
+				}
+
+				return window_fame;
+			}
+		}
+#endif
+
 	}
 }
