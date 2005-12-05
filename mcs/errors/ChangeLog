@@ -1,3 +1,8 @@
+2005-12-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* cs1574-8.cs, cs1574-9.cs : new tests for bug #76873.
+	* known-issues-gmcs : updated.
+
 2005-12-01  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* cs0419-4.cs : test for the first case of bug #76727.

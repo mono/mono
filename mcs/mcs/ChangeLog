@@ -1,5 +1,16 @@
 2005-12-05  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* doc.cs :
+	  - FindDocumentedMember() now expects 1) paramList as null
+	    when "we don't have to check the number of parameters" and
+	    2) Type.EmptyTypes when "there is no arguments".
+	  - Introduced FoundMember struct to hold the exact type which was
+	    used to find the documented member (the above change broke
+	    test-xml-044; it might be better just to use DeclaringType than
+	    what MS does, like this change does, but it depends on usage.)
+
+2005-12-05  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* doc.cs : documented member might be from DeclaringType for nested
 	  types. Fixed bug #76782.
 

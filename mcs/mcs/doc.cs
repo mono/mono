@@ -333,8 +333,7 @@ namespace Mono.CSharp {
 			// no need to detect warning 419 here
 			return FindDocumentedMember (mc, parent,
 				identifier.Substring (index + 1),
-				Type.EmptyTypes,
-				ds, out warn, cref, false, null) as Type;
+				null, ds, out warn, cref, false, null).Member as Type;
 		}
 
 		private static MemberInfo [] empty_member_infos =
@@ -430,11 +429,34 @@ namespace Mono.CSharp {
 			return al.ToArray (typeof (MemberInfo)) as MemberInfo [];
 		}
 
+		struct FoundMember
+		{
+			public static FoundMember Empty = new FoundMember (true);
+
+			public bool IsEmpty;
+			public readonly MemberInfo Member;
+			public readonly Type Type;
+
+			public FoundMember (bool regardlessOfThisValueItsEmpty)
+			{
+				IsEmpty = true;
+				Member = null;
+				Type = null;
+			}
+
+			public FoundMember (Type foundType, MemberInfo member)
+			{
+				IsEmpty = false;
+				Type = foundType;
+				Member = member;
+			}
+		}
+
 		//
 		// Returns a MemberInfo that is referenced in XML documentation
 		// (by "see" or "seealso" elements).
 		//
-		private static MemberInfo FindDocumentedMember (MemberCore mc,
+		private static FoundMember FindDocumentedMember (MemberCore mc,
 			Type type, string memberName, Type [] paramList, 
 			DeclSpace ds, out int warningType, string cref,
 			bool warn419, string nameForError)
@@ -445,10 +467,10 @@ namespace Mono.CSharp {
 					out warningType, cref, warn419,
 					nameForError);
 				if (mi != null)
-					return mi;
+					return new FoundMember (type, mi);
 			}
 			warningType = 0;
-			return null;
+			return FoundMember.Empty;
 		}
 
 		private static MemberInfo FindDocumentedMemberNoNest (
@@ -459,7 +481,7 @@ namespace Mono.CSharp {
 			warningType = 0;
 			MemberInfo [] mis;
 
-			if (paramList.Length == 0) {
+			if (paramList == null) {
 				// search for fields/events etc.
 				mis = TypeManager.MemberLookup (type, null,
 					type, MemberTypes.All,
@@ -639,7 +661,7 @@ namespace Mono.CSharp {
 			}
 			else {
 				name = signature;
-				parameters = String.Empty;
+				parameters = null;
 			}
 			Normalize (mc, ref name);
 
@@ -663,8 +685,12 @@ namespace Mono.CSharp {
 			}
 
 			// check if parameters are valid
-			Type [] parameterTypes = Type.EmptyTypes;
-			if (parameters.Length > 0) {
+			Type [] parameterTypes;
+			if (parameters == null)
+				parameterTypes = null;
+			else if (parameters.Length == 0)
+				parameterTypes = Type.EmptyTypes;
+			else {
 				string [] paramList = parameters.Split (',');
 				ArrayList plist = new ArrayList ();
 				for (int i = 0; i < paramList.Length; i++) {
@@ -685,7 +711,7 @@ namespace Mono.CSharp {
 			if (type != null
 				// delegate must not be referenced with args
 				&& (!type.IsSubclassOf (typeof (System.Delegate))
-				|| parameterTypes.Length == 0)) {
+				|| parameterTypes == null)) {
 				string result = type.FullName.Replace ("+", ".")
 					+ (bracePos < 0 ? String.Empty : signature.Substring (bracePos));
 				xref.SetAttribute ("cref", "T:" + result);
@@ -706,30 +732,32 @@ namespace Mono.CSharp {
 				type = FindDocumentedType (mc, typeName, ds, cref);
 				int warnResult;
 				if (type != null) {
-					MemberInfo mi = FindDocumentedMember (mc, type, memberName, parameterTypes, ds, out warnResult, cref, true, name);
+					FoundMember fm = FindDocumentedMember (mc, type, memberName, parameterTypes, ds, out warnResult, cref, true, name);
 					if (warnResult > 0)
 						return;
-					if (mi != null) {
+					if (!fm.IsEmpty) {
+						MemberInfo mi = fm.Member;
 						// we cannot use 'type' directly
 						// to get its name, since mi
 						// could be from DeclaringType
 						// for nested types.
-						xref.SetAttribute ("cref", GetMemberDocHead (mi.MemberType) + mi.DeclaringType.FullName.Replace ("+", ".") + "." + memberName + GetParametersFormatted (mi));
+						xref.SetAttribute ("cref", GetMemberDocHead (mi.MemberType) + fm.Type.FullName.Replace ("+", ".") + "." + memberName + GetParametersFormatted (mi));
 						return; // a member of a type
 					}
 				}
 			}
 			else {
 				int warnResult;
-				MemberInfo mi = FindDocumentedMember (mc, ds.TypeBuilder, name, parameterTypes, ds, out warnResult, cref, true, name);
+				FoundMember fm = FindDocumentedMember (mc, ds.TypeBuilder, name, parameterTypes, ds, out warnResult, cref, true, name);
 				if (warnResult > 0)
 					return;
-				if (mi != null) {
+				if (!fm.IsEmpty) {
+					MemberInfo mi = fm.Member;
 					// we cannot use 'type' directly
 					// to get its name, since mi
 					// could be from DeclaringType
 					// for nested types.
-					xref.SetAttribute ("cref", GetMemberDocHead (mi.MemberType) + mi.DeclaringType.FullName.Replace ("+", ".") + "." + name + GetParametersFormatted (mi));
+					xref.SetAttribute ("cref", GetMemberDocHead (mi.MemberType) + fm.Type.FullName.Replace ("+", ".") + "." + name + GetParametersFormatted (mi));
 					return; // local member name
 				}
 			}
