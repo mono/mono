@@ -1,3 +1,22 @@
+2005-12-05  Ankit Jain  <jankit@novell.com>
+
+	* Metadata.cs (GenParamType): New enum.
+	(CallConv): Add [Flags] attribute.
+	(GenParam): New. Replaces .. 
+	(MVar): .. this ..  
+	(GenericTypeSpec): .. and this.
+	(GenericTypeInst.ctor): Use PrimitiveType.GenericInst.GetTypeIndex () instead
+	of hard-coded 0x15.
+	(GenericTypeInst.TypeSig): First byte should the 0x0A (GENERIC_INST).
+	(Method.gen_param_count): New. Num of generic parameters.
+	(MethodDef.ctor): Use overload.
+	(MethodDef.TypeSig): Write gen_param_count if callConv is Generic.
+	(MethodRef.GenParamCount): New.
+	(MethodRef.TypeSig): Write gen_param_count if callConv is Generic.
+	(PrimitiveType.Var): New.
+	(PrimitiveType.MVar): New.
+	(PrimitiveType.GenericInst): New.
+
 2005-11-21  Ankit Jain  <jankit@novell.com>
 
 	* Metadata.cs (MetaData.WriteCodedIndex): Fix indentation.

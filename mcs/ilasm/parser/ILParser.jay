@@ -935,13 +935,13 @@ type			: K_CLASS class_ref
                           }
                         | BANG int32
                           {
-                                GenericTypeSpec spec = new GenericTypeSpec ((int) $2);
-                                $$ = new GenericTypeRef (spec, $2.ToString ());
+                                GenParam gpar = new GenParam ((int) $2, "", GenParamType.Var);
+                                $$ = new GenericTypeRef (gpar, $2.ToString ());
                           }
                         | BANG BANG int32
                           {
-                                MVar mvar = new MVar ((int) $3);
-                                $$ = new GenericTypeRef (mvar, $3.ToString ());
+                                GenParam gpar = new GenParam ((int) $3, "", GenParamType.MVar);
+                                $$ = new GenericTypeRef (gpar, $3.ToString ());
                           }
                         | K_CLASS slashed_name OPEN_ANGLE_BRACKET BANG int32 CLOSE_ANGLE_BRACKET
                           {
@@ -1669,8 +1669,12 @@ method_all		: method_head OPEN_BRACE method_decls CLOSE_BRACE
 method_head		: D_METHOD meth_attr call_conv param_attr type method_name
                           formal_typars_clause OPEN_PARENS sig_args CLOSE_PARENS impl_attr
                           {
+                                CallConv cc = (CallConv) $3;
+                                if ($7 != null)
+                                        cc |= CallConv.Generic;
+
                                 MethodDef methdef = new MethodDef (
-					codegen, (MethAttr) $2, (CallConv) $3,
+                                        codegen, (MethAttr) $2, cc,
                                         (ImplAttr) $11, (string) $6, (ITypeRef) $5,
                                         (ArrayList) $9, tokenizer.Reader.Location);
 
@@ -2355,6 +2359,7 @@ method_ref		: call_conv type type_spec DOUBLE_COLON method_name
                                         ArrayList tp = (ArrayList) $6;
                                         ITypeRef[] ta = (ITypeRef[]) tp.ToArray (typeof (ITypeRef));
                                         
+                                        methref.CallConv |= CallConv.Generic;
                                         methref = new GenericMethodRef (methref, new GenericMethodSig (ta));
                                 }
                                 

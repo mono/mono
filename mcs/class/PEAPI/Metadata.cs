@@ -34,6 +34,7 @@ namespace PEAPI {
 	/// <summary>
 	/// Method call conventions
 	/// </summary>
+	[Flags]
 	public enum CallConv { Default, Cdecl, Stdcall, Thiscall, 
 		Fastcall, Vararg, Instance = 0x20, Generic = 0x10, InstanceExplicit = 0x60 }
 
@@ -182,6 +183,10 @@ namespace PEAPI {
 	internal enum MapType { eventMap, propertyMap, nestedClass }
 
 	public enum ValueClass { ValueType, Enum }
+
+	public enum GenParamType : byte { 
+		Var = 0x13, MVar = 0x1E 
+	}
 
 	/* Taken from Mono.Cecil */
 	public enum SecurityAction : short {
@@ -1912,35 +1917,35 @@ namespace PEAPI {
 
 	}
 
-	public class MVar : Type {
+	public class GenParam : Type {
 
 		private int index;
+		private string name;
 
-		public MVar (int index) : base (0x1E) 
+		public GenParam (int index, string name, GenParamType ptype) : base ((byte) ptype) 
 		{
 			this.index = index;
+			this.name = name;
 			tabIx = MDTable.TypeSpec;
 		}
 
-		internal sealed override void TypeSig(MemoryStream str) 
-		{
-			str.WriteByte(typeIndex);
-			MetaData.CompressNum ((uint) index, str);
-		}
-	}
-
-	public class GenericTypeSpec : Type {
-
-		private int index;
-
-		public GenericTypeSpec (int index) : base (0x13) 
-		{
-			this.index = index;
-			tabIx = MDTable.TypeSpec;
+		public int Index {
+			get { return index; }
+			set { index = value; }
 		}
 
+		public string Name {
+			get { return name; }
+			set { name = value; }
+		}
+
+		public GenParamType Type {
+			get { return (GenParamType) GetTypeIndex (); }
+		}
 		internal sealed override void TypeSig(MemoryStream str) 
 		{
+			if (index < 0)
+				throw new Exception (String.Format ("Unresolved {0} - {1}", (GenParamType) GetTypeIndex (), name));
 			str.WriteByte(typeIndex);
 			MetaData.CompressNum ((uint) index, str);
 		}
@@ -1951,9 +1956,9 @@ namespace PEAPI {
 		private Type gen_type;
 		private Type[] gen_param;
 
-		public GenericTypeInst (Type gen_type, Type[] gen_param) : base (0x15)
+		public GenericTypeInst (Type gen_type, Type[] gen_param) 
+			: base ((byte) PrimitiveType.GenericInst.GetTypeIndex ())
 		{
-			typeIndex = 0x15;
 			this.gen_type = gen_type;
 			this.gen_param = gen_param;
 			tabIx = MDTable.TypeSpec;
@@ -1980,7 +1985,7 @@ namespace PEAPI {
 
 		internal void TypeSig (MemoryStream str)
 		{
-			MetaData.CompressNum ((uint) gen_param.Length, str); // THIS IS NOT RIGHT, but works
+			str.WriteByte (0x0A); /* GENERIC_INST */
 			MetaData.CompressNum ((uint) gen_param.Length, str);
 			foreach (Type param in gen_param)
 				param.TypeSig (str);
@@ -3406,10 +3411,12 @@ namespace PEAPI {
 
 		protected CallConv callConv = CallConv.Default;
 		protected Type retType;
+		protected int gen_param_count;
 
 		internal Method(string methName, Type rType) : base(methName)
 		{
 			retType = rType;
+			gen_param_count = 0;
 		}
 
 		/// <summary>
@@ -3473,15 +3480,11 @@ namespace PEAPI {
 			tabIx = MDTable.Method;
 		}
 
-		internal MethodDef(MetaData md, MethAttr mAttrSet, ImplAttr iAttrSet, string name, Type retType, Param[] pars) : base(name,retType) 
+		internal MethodDef (MetaData md, MethAttr mAttrSet, ImplAttr iAttrSet, string name, 
+				Type retType, Param [] pars) : this (md, name, retType, pars)
 		{
-			metaData = md;
-			parList = pars;
-			if (parList != null) numPars = parList.Length;
-			// Console.WriteLine("Creating method " + name + " with " + numPars + " parameters");
 			methFlags = (ushort)mAttrSet;
 			implFlags = (ushort)iAttrSet;
-			tabIx = MDTable.Method;
 		}
 
 		internal Param[] GetPars() 
@@ -3520,6 +3523,7 @@ namespace PEAPI {
 		{
 			GenericParameter gp = new GenericParameter (this, metaData, index, name);
 			metaData.AddToTable (MDTable.GenericParam, gp);
+			gen_param_count ++;
 			return gp;
 		}
 
@@ -3593,6 +3597,8 @@ namespace PEAPI {
 		{
 			sig.WriteByte((byte)callConv);
 			MetaData.CompressNum((uint)numPars,sig);
+			if ((callConv & CallConv.Generic) == CallConv.Generic)
+				MetaData.CompressNum ((uint) gen_param_count, sig);
 			if (ret_param != null)
 				ret_param.seqNo = 0;
 			retType.TypeSig(sig);
@@ -3705,9 +3711,16 @@ namespace PEAPI {
 			}
 		}
 
+		internal int GenParamCount {
+			get { return gen_param_count; }
+			set { gen_param_count = value; }
+		}
+
 		internal sealed override void TypeSig(MemoryStream sig) 
 		{
 			sig.WriteByte((byte)callConv);
+			if ((callConv & CallConv.Generic) == CallConv.Generic)
+				MetaData.CompressNum ((uint) gen_param_count, sig);
 			MetaData.CompressNum(numPars+numOptPars,sig);
 			retType.TypeSig(sig);
 			for (int i=0; i < numPars; i++) {
@@ -4015,12 +4028,15 @@ namespace PEAPI {
 		public static readonly PrimitiveType Float64 = new PrimitiveType(0x0D,"Double",12);
 		public static readonly PrimitiveType String = new PrimitiveType(0x0E,"String",13);
 		internal static readonly PrimitiveType Class = new PrimitiveType(0x12);
+		internal static readonly PrimitiveType Var = new PrimitiveType(0x13);
+		internal static readonly PrimitiveType GenericInst = new PrimitiveType(0x15);
 		public static readonly PrimitiveType TypedRef = new PrimitiveType(0x16,"TypedReference",14);
 		public static readonly PrimitiveType IntPtr = new PrimitiveType(0x18,"IntPtr",15);
 		public static readonly PrimitiveType UIntPtr = new PrimitiveType(0x19,"UIntPtr",16);
 		public static readonly PrimitiveType Object = new PrimitiveType(0x1C,"Object",17);
 		internal static readonly PrimitiveType ClassType = new PrimitiveType(0x50);
 		internal static readonly PrimitiveType SZArray = new PrimitiveType(0x1D);
+		internal static readonly PrimitiveType MVar = new PrimitiveType(0x1E);
 		internal static readonly PrimitiveType ValueType = new PrimitiveType(0x11, "ValueType", 18);
 		public static readonly PrimitiveType NativeInt = IntPtr;
 		public static readonly PrimitiveType NativeUInt = UIntPtr;

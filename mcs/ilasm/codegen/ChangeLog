@@ -1,3 +1,12 @@
+2005-12-05  Ankit Jain  <jankit@novell.com>
+
+	* TypeDef.cs (TypeDef.GenericInfo.num): New.
+	(TypeDef.AddGenericParam): Set num for GenericInfo.
+	* MethodDef.cs (MethodDef.GenericInfo.num): New.
+	(MethodDef.AddGenericParam): Set num for GenericInfo.
+	* GenericTypeRef.cs (GenericTypeRef.ctor): Update to use PEAPI.GenParam
+	instead of PEAPI.MVar and PEAPI.GenericTypeSpec.
+
 2005-11-28  Ankit Jain  <jankit@novell.com>
 
 	* ExternTypeRef.cs (extern_table): Remove unused field.

@@ -1,3 +1,11 @@
+2005-12-05  Ankit Jain  <jankit@novell.com>
+
+	* ILParser.jay (type | BANG int32 .. ): Update to use GenParam instead of
+	PEAPI.MVar and PEAPI.GenericTypeSpec.
+	(method_head | D_METHOD ..): Set callConv to Generic if the method has type
+	parameters.
+	(method_ref | call_conv ...): Likewise.
+
 2005-09-15  Ankit Jain  <jankit@novell.com>
 
 	* ILParser.jay (ILParser.NameValuePair): New.

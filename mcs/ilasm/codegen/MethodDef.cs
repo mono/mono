@@ -20,6 +20,7 @@ namespace Mono.ILASM {
 
                 protected class GenericInfo {
                         public string Id;
+                        public int num;
                         public ArrayList ConstraintList;
                 }
 
@@ -158,6 +159,7 @@ namespace Mono.ILASM {
 
                         GenericInfo gi = new GenericInfo ();
                         gi.Id = id;
+                        gi.num = typar_list.Count;
 
                         typar_list.Add (gi);
                 }
