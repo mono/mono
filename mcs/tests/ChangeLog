@@ -1,3 +1,8 @@
+2005-12-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* test-xml-049-ref.xml test-xml-049.cs : test for bug #76782
+	* known-issues-gmcs : updated.
+
 2005-12-03  Ben Maurer  <bmaurer@ximian.com>
 
 	* test-474.cs: new test.

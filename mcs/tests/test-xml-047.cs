@@ -1,4 +1,4 @@
-// Compiler options: -doc:dummy.xml -warnaserror -warn:4
+// Compiler options: -doc:xml-047.xml -warnaserror -warn:4
 
 using System;
 

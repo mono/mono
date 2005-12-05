@@ -439,6 +439,23 @@ namespace Mono.CSharp {
 			DeclSpace ds, out int warningType, string cref,
 			bool warn419, string nameForError)
 		{
+			for (; type != null; type = type.DeclaringType) {
+				MemberInfo mi = FindDocumentedMemberNoNest (
+					mc, type, memberName, paramList, ds,
+					out warningType, cref, warn419,
+					nameForError);
+				if (mi != null)
+					return mi;
+			}
+			warningType = 0;
+			return null;
+		}
+
+		private static MemberInfo FindDocumentedMemberNoNest (
+			MemberCore mc, Type type, string memberName,
+			Type [] paramList, DeclSpace ds, out int warningType, 
+			string cref, bool warn419, string nameForError)
+		{
 			warningType = 0;
 			MemberInfo [] mis;
 
@@ -693,7 +710,11 @@ namespace Mono.CSharp {
 					if (warnResult > 0)
 						return;
 					if (mi != null) {
-						xref.SetAttribute ("cref", GetMemberDocHead (mi.MemberType) + type.FullName.Replace ("+", ".") + "." + memberName + GetParametersFormatted (mi));
+						// we cannot use 'type' directly
+						// to get its name, since mi
+						// could be from DeclaringType
+						// for nested types.
+						xref.SetAttribute ("cref", GetMemberDocHead (mi.MemberType) + mi.DeclaringType.FullName.Replace ("+", ".") + "." + memberName + GetParametersFormatted (mi));
 						return; // a member of a type
 					}
 				}
@@ -704,7 +725,11 @@ namespace Mono.CSharp {
 				if (warnResult > 0)
 					return;
 				if (mi != null) {
-					xref.SetAttribute ("cref", GetMemberDocHead (mi.MemberType) + ds.TypeBuilder.FullName.Replace ("+", ".") + "." + name + GetParametersFormatted (mi));
+					// we cannot use 'type' directly
+					// to get its name, since mi
+					// could be from DeclaringType
+					// for nested types.
+					xref.SetAttribute ("cref", GetMemberDocHead (mi.MemberType) + mi.DeclaringType.FullName.Replace ("+", ".") + "." + name + GetParametersFormatted (mi));
 					return; // local member name
 				}
 			}

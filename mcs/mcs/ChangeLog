@@ -1,3 +1,8 @@
+2005-12-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* doc.cs : documented member might be from DeclaringType for nested
+	  types. Fixed bug #76782.
+
 2005-12-03  Ben Maurer  <bmaurer@ximian.com>
 
 	* anonymous.cs: Have the param code handle leaving copies on the
