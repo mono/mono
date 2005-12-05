@@ -1,3 +1,9 @@
+2005-12-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* StringBuilderTest.cs: Test case MaxCapacity_Overflow3 doesn't work
+	under MS 1.1 SP1 (it should throw an ArgumentOutOfRangeException) but
+	it does work under Mono and MS 2.0 (final). Tagged as "NotWorking".
+
 2005-11-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* EncoderReplacementFallbackTest.cs :

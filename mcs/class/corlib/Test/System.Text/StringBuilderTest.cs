@@ -444,6 +444,10 @@ namespace MonoTests.System.Text {
 	}
 	
 	[Test]
+#if ONLY_1_1
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	[Category ("NotWorking")] // Mono follows 2.0 behaviour in this case
+#endif
 	public void MaxCapacity_Overflow3 ()
 	{
 		//
@@ -453,7 +457,9 @@ namespace MonoTests.System.Text {
 		//
 		new StringBuilder(4, 7).Append ("foo").Append ("bar");
 		new StringBuilder(4, 6).Append ("foo").Append ("bar");
+		// this throws ArgumentOutOfRangeException on MS 1.1 SP1
 	}
+
 	[Test]
 	public void CapacityFromString ()
 	{
