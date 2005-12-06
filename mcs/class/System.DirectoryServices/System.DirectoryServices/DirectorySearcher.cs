@@ -707,7 +707,7 @@ namespace System.DirectoryServices
 		protected override void Dispose(bool disposing)
 		{
 			if (disposing) {
-				if(_conn.Connected) {
+				if(_conn != null && _conn.Connected) {
 					_conn.Disconnect();
 				}
 			}

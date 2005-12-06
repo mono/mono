@@ -1,3 +1,6 @@
+2005-05-12  Boris Kirzner <borisk@mainsoft.com>
+	* DirectoryEntry.cs, DirectorySearcher.cs: fix object disposing.
+
 2005-06-11  Boris Kirzner <borisk@mainsoft.com>
 	* DirectoryEntry.cs: fixes for RefreshCache()
 		-Property names should be sent to server if only particular properties
