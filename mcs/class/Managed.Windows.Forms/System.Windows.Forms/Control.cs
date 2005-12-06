@@ -2676,7 +2676,7 @@ namespace System.Windows.Forms
 					key_data |= Keys.Alt;
 				if (!ProcessCmdKey(ref msg, key_data)) {
 					if (IsInputKey(key_data)) {
-						return true;
+						return false;
 					}
 
 					return ProcessDialogKey(key_data);
@@ -3674,6 +3674,10 @@ namespace System.Windows.Forms
 				case Msg.WM_SYSCHAR:
 				case Msg.WM_CHAR: {
 //Console.WriteLine("Got {0}", (Msg)m.Msg);
+					if (ProcessKeyMessage(ref m)) {
+						return;
+					}
+
 					if (ProcessKeyEventArgs(ref m)) {
 						return;
 					}
@@ -3682,9 +3686,6 @@ namespace System.Windows.Forms
 						return;
 					}
 
-					if (ProcessKeyMessage(ref m)) {
-						return;
-					}
 					DefWndProc (ref m);
 					return;
 				}
