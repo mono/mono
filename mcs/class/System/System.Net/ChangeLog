@@ -1,3 +1,8 @@
+2005-12-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpWebResponse.cs: don't fail if the cookie ends with a 'name'
+	without a value. Fixes bug #76922.
+
 2005-11-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* EndPointListener.cs:

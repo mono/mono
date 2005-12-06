@@ -452,7 +452,7 @@ namespace System.Net
 				return false;
 
 			name = GetCookieName ();
-			if (header [pos] == '=') {
+			if (pos < header.Length && header [pos] == '=') {
 				pos++;
 				val = GetCookieValue ();
 				if (pos < length && header [pos] == ';')
