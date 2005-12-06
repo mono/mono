@@ -2033,7 +2033,7 @@ namespace Mono.CSharp
 
 		VariableInfo[] map;
 
-		public VariableMap (InternalParameters ip)
+		public VariableMap (Parameters ip)
 		{
 			Count = ip != null ? ip.Count : 0;
 			
@@ -2046,7 +2046,7 @@ namespace Mono.CSharp
 			for (int i = 0; i < Count; i++) {
 				Parameter.Modifier mod = ip.ParameterModifier (i);
 
-				if ((mod & Parameter.Modifier.OUT) == 0)
+				if ((mod & Parameter.Modifier.OUT) != Parameter.Modifier.OUT)
 					continue;
 
 				// Dont allocate till we find an out var.

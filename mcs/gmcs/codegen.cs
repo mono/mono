@@ -596,7 +596,7 @@ namespace Mono.CSharp {
 			return false;
 		}
 		
-		public void EmitMeta (ToplevelBlock b, InternalParameters ip)
+		public void EmitMeta (ToplevelBlock b)
 		{
 			if (capture_context != null)
 				capture_context.EmitAnonymousHelperClasses (this);
@@ -611,15 +611,15 @@ namespace Mono.CSharp {
 		// currently can not cope with ig == null during resolve (which must
 		// be fixed for switch statements to work on anonymous methods).
 		//
-		public void EmitTopBlock (IMethodData md, ToplevelBlock block, InternalParameters ip)
+		public void EmitTopBlock (IMethodData md, ToplevelBlock block)
 		{
 			if (block == null)
 				return;
 			
 			bool unreachable;
 			
-			if (ResolveTopBlock (null, block, ip, md, out unreachable)){
-				EmitMeta (block, ip);
+			if (ResolveTopBlock (null, block, md.ParameterInfo, md, out unreachable)){
+				EmitMeta (block);
 
 				current_phase = Phase.Emitting;
 				EmitResolvedTopBlock (block, unreachable);
@@ -629,7 +629,7 @@ namespace Mono.CSharp {
 		bool resolved;
 
 		public bool ResolveTopBlock (EmitContext anonymous_method_host, ToplevelBlock block,
-					     InternalParameters ip, IMethodData md, out bool unreachable)
+					     Parameters ip, IMethodData md, out bool unreachable)
 		{
 			current_phase = Phase.Resolving;
 			

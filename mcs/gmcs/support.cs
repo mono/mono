@@ -20,7 +20,7 @@ namespace Mono.CSharp {
 
 	public interface ParameterData {
 		Type ParameterType (int pos);
-		GenericConstraints GenericConstraints (int pos);
+		Type [] Types { get; }
 		int  Count { get; }
 		bool HasParams { get; }
 		string ParameterName (int pos);
@@ -31,7 +31,7 @@ namespace Mono.CSharp {
 
 	public class ReflectionParameters : ParameterData {
 		ParameterInfo [] pi;
-		Type[] type_params;
+		Type [] types;
 		bool last_arg_is_params = false;
 		bool is_varargs = false;
 		ParameterData gpd;
@@ -46,6 +46,14 @@ namespace Mono.CSharp {
 			this.pi = pi;
 			int count = pi.Length-1;
 
+			if (pi.Length == 0) {
+				types = TypeManager.NoTypes;
+			} else {
+				types = new Type [pi.Length];
+				for (int i = 0; i < pi.Length; i++)
+					types [i] = pi [i].ParameterType;
+			}
+
 			if (count < 0)
 				return;
 
@@ -56,9 +64,6 @@ namespace Mono.CSharp {
 				last_arg_is_params = gpd.HasParams;
 				return;
 			}
-
-			if (mb.IsGenericMethodDefinition)
-				type_params = mb.GetGenericArguments ();
 
 			attrs = pi [count].GetCustomAttributes (TypeManager.param_array_type, true);
 			if (attrs == null)
@@ -98,17 +103,6 @@ namespace Mono.CSharp {
 
 				return t;
 			}
-		}
-
-		public GenericConstraints GenericConstraints (int pos)
-		{
-			if (gpd != null)
-				return gpd.GenericConstraints (pos);
-
-			if (type_params == null)
-				return null;
-
-			return new ReflectionConstraints (type_params [pos]);
 		}
 
 		public string ParameterName (int pos)
@@ -165,9 +159,9 @@ namespace Mono.CSharp {
 			Type t = pi [pos].ParameterType;
 			if (t.IsByRef){
 				if ((pi [pos].Attributes & (ParameterAttributes.Out|ParameterAttributes.In)) == ParameterAttributes.Out)
-					return Parameter.Modifier.ISBYREF | Parameter.Modifier.OUT;
+					return Parameter.Modifier.OUT;
 				else
-					return Parameter.Modifier.ISBYREF | Parameter.Modifier.REF;
+					return Parameter.Modifier.REF;
 			}
 			
 			return Parameter.Modifier.NONE;
@@ -184,143 +178,12 @@ namespace Mono.CSharp {
 				return this.last_arg_is_params;
 			}
 		}
-	}
 
-	public class InternalParameters : ParameterData {
-		Type [] param_types;
-		bool has_varargs;
-		int count;
-
-		public readonly Parameters Parameters;
-		public readonly TypeParameter[] TypeParameters;
-		
-		public InternalParameters (Type [] param_types, Parameters parameters)
-		{
-			this.param_types = param_types;
-			this.Parameters = parameters;
-
-			has_varargs = parameters.HasArglist;
-
-			if (param_types == null)
-				count = 0;
-			else
-				count = param_types.Length;
-		}
-
-		public InternalParameters (Type [] param_types, Parameters parameters,
-					   TypeParameter [] type_params)
-			: this (param_types, parameters)
-		{
-			this.TypeParameters = type_params;
-		}
-
-		public int Count {
+		public Type[] Types {
 			get {
-				return has_varargs ? count + 1 : count;
+				return types;
 			}
-		}
-
-		public bool HasParams {
-			get {
-				return Parameters.ArrayParameter != null;
-			}
-		}
-
-		Parameter GetParameter (int pos)
-		{
-			Parameter [] fixed_pars = Parameters.FixedParameters;
-			if (fixed_pars != null){
-				int len = fixed_pars.Length;
-				if (pos < len)
-					return Parameters.FixedParameters [pos];
-			}
-
-			return Parameters.ArrayParameter;
-		}
-
-		public string GetSignatureForError ()
-		{
-			StringBuilder sb = new StringBuilder ("(");
-			for (int i = 0; i < count; ++i) {
-				if (i != 0)
-					sb.Append (", ");
-				sb.Append (ParameterDesc (i));
-			}
-			if (has_varargs) {
-				if (count > 0)
-					sb.Append (", ");
-				sb.Append ("__arglist");
-			}
-			sb.Append (')');
-			return sb.ToString ();
-		}
-
-		public Type ParameterType (int pos)
-		{
-			if (has_varargs && pos >= count)
-				return TypeManager.runtime_argument_handle_type;
-
-			if (param_types == null)
-				return null;
-
-			return GetParameter (pos).ExternalType ();
-		}
-
-		public GenericConstraints GenericConstraints (int pos)
-		{
-			if (TypeParameters == null)
-				return null;
-
-			return TypeParameters [pos].Constraints;
-		}
-
-		public string ParameterName (int pos)
-		{
-			if (has_varargs && pos >= count)
-				return "__arglist";
-
-			return GetParameter (pos).Name;
-		}
-
-		public string ParameterDesc (int pos)
-		{
-			if (has_varargs && pos >= count)
-				return "__arglist";
-
-			Type t = ParameterType (pos);
-			return (ModifierDesc (pos) + " " + TypeManager.CSharpName (t).Replace ("&", "")).TrimStart ();
-		}
-
-		public string ModifierDesc (int pos)
-		{
-			Parameter p = GetParameter (pos);
-
-			//
-			// We need to and for REF/OUT, because if either is set the
-			// extra flag ISBYREF will be set as well
-			//
-			if ((p.ModFlags & Parameter.Modifier.REF) != 0)
-				return "ref";
-			if ((p.ModFlags & Parameter.Modifier.OUT) != 0)
-				return "out";
-			if (p.ModFlags == Parameter.Modifier.PARAMS)
-				return "params";
-			return "";
-		}
-
-		public Parameter.Modifier ParameterModifier (int pos)
-		{
-			if (has_varargs && pos >= count)
-				return Parameter.Modifier.ARGLIST;
-
-			Parameter.Modifier mod = GetParameter (pos).ModFlags;
-
-			if ((mod & (Parameter.Modifier.REF | Parameter.Modifier.OUT)) != 0)
-				mod |= Parameter.Modifier.ISBYREF;
-
-			return mod;
-		}
-		
+		}		
 	}
 
 	public class ReflectionConstraints : GenericConstraints
@@ -331,17 +194,26 @@ namespace Mono.CSharp {
 		Type[] iface_constraints;
 		string name;
 
-		public ReflectionConstraints (Type t)
+		public static GenericConstraints GetConstraints (Type t)
 		{
-			name = t.Name;
-			Type[] constraints = t.GetGenericParameterConstraints ();
+			Type [] constraints = t.GetGenericParameterConstraints ();
+			GenericParameterAttributes attrs = t.GenericParameterAttributes;
+			if (constraints.Length == 0 && attrs == GenericParameterAttributes.None)
+				return null;
+			return new ReflectionConstraints (t.Name, constraints, attrs);
+		}
+
+		private ReflectionConstraints (string name, Type [] constraints, GenericParameterAttributes attrs)
+		{
+			this.name = name;
+			this.attrs = attrs;
+
 			if ((constraints.Length > 0) && !constraints [0].IsInterface) {
 				class_constraint = constraints [0];
 				iface_constraints = new Type [constraints.Length - 1];
 				Array.Copy (constraints, 1, iface_constraints, 0, constraints.Length - 1);
 			} else
 				iface_constraints = constraints;
-			attrs = t.GenericParameterAttributes;
 
 			if (HasValueTypeConstraint)
 				base_type = TypeManager.value_type;

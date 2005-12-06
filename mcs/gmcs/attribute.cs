@@ -1568,24 +1568,6 @@ namespace Mono.CSharp {
 		}
 
 		/// <summary>
-		/// Goes through all parameters and test if they are CLS-Compliant.
-		/// </summary>
-		public static bool AreParametersCompliant (Parameter[] fixedParameters, Location loc)
-		{
-			if (fixedParameters == null)
-				return true;
-
-			foreach (Parameter arg in fixedParameters) {
-				if (!AttributeTester.IsClsCompliant (arg.ParameterType)) {
-					Report.Error (3001, loc, "Argument type `{0}' is not CLS-compliant", arg.GetSignatureForError ());
-					return false;
-				}
-			}
-			return true;
-		}
-
-
-		/// <summary>
 		/// This method tests the CLS compliance of external types. It doesn't test type visibility.
 		/// </summary>
 		public static bool IsClsCompliant (Type type) 

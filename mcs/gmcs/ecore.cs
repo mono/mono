@@ -3570,7 +3570,7 @@ namespace Mono.CSharp {
 				return this;
 
 			if (getter != null){
-				if (TypeManager.GetArgumentTypes (getter).Length != 0){
+				if (TypeManager.GetParameterData (getter).Count != 0){
 					Error_PropertyNotFound (getter, true);
 					return null;
 				}
@@ -3645,7 +3645,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			if (TypeManager.GetArgumentTypes (setter).Length != 1){
+			if (TypeManager.GetParameterData (setter).Count != 1){
 				Error_PropertyNotFound (setter, false);
 				return null;
 			}

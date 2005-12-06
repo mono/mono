@@ -31,7 +31,6 @@ namespace Mono.CSharp {
 		public MethodBuilder      BeginInvokeBuilder;
 		public MethodBuilder      EndInvokeBuilder;
 		
-		Type [] param_types;
 		Type ret_type;
 
 		static string[] attribute_targets = new string [] { "type", "return" };
@@ -178,16 +177,14 @@ namespace Mono.CSharp {
 			// HACK because System.Reflection.Emit is lame
 			//
 			Parameter [] fixed_pars = new Parameter [2];
-			fixed_pars [0] = new Parameter (TypeManager.system_object_expr, "object",
+			fixed_pars [0] = new Parameter (TypeManager.object_type, "object",
 							Parameter.Modifier.NONE, null, Location);
-			fixed_pars [1] = new Parameter (TypeManager.system_intptr_expr, "method", 
+			fixed_pars [1] = new Parameter (TypeManager.intptr_type, "method", 
 							Parameter.Modifier.NONE, null, Location);
-			Parameters const_parameters = new Parameters (fixed_pars, null);
+			Parameters const_parameters = new Parameters (fixed_pars);
+			const_parameters.Resolve (null);
 			
-			TypeManager.RegisterMethod (
-				ConstructorBuilder,
-				new InternalParameters (const_arg_types, const_parameters),
-				const_arg_types);
+			TypeManager.RegisterMethod (ConstructorBuilder, const_parameters);
 				
 			
 			ConstructorBuilder.SetImplementationFlags (MethodImplAttributes.Runtime);
@@ -198,8 +195,7 @@ namespace Mono.CSharp {
 			// First, call the `out of band' special method for
 			// defining recursively any types we need:
 			
- 			param_types = Parameters.GetParameterInfo (ec);
-			if (param_types == null)
+			if (!Parameters.Resolve (ec))
 				return false;
 
 			//
@@ -207,7 +203,7 @@ namespace Mono.CSharp {
 			//
 
 			// Check accessibility
-			foreach (Type partype in param_types){
+			foreach (Type partype in Parameters.Types){
 				if (!Parent.AsAccessible (partype, ModFlags)) {
 					Report.Error (59, Location,
 						      "Inconsistent accessibility: parameter type `" +
@@ -250,7 +246,7 @@ namespace Mono.CSharp {
 			// guaranteed to be accessible - they are standard types.
 			//
 			
-  			CallingConventions cc = Parameters.GetCallingConvention ();
+  			CallingConventions cc = Parameters.CallingConvention;
 
  			mattr = MethodAttributes.Public | MethodAttributes.HideBySig | MethodAttributes.Virtual;
 
@@ -258,58 +254,28 @@ namespace Mono.CSharp {
  								  mattr,		     
  								  cc,
  								  ret_type,		     
- 								  param_types);
+ 								  Parameters.Types);
 
 			//
 			// Define parameters, and count out/ref parameters
 			//
 			int out_params = 0;
-			i = 0;
-			if (Parameters.FixedParameters != null){
-				int top = Parameters.FixedParameters.Length;
-				Parameter p;
-				
-				for (; i < top; i++) {
-					p = Parameters.FixedParameters [i];
-					p.DefineParameter (ec, InvokeBuilder, null, i + 1);
-
-					if ((p.ModFlags & Parameter.Modifier.ISBYREF) != 0)
-						out_params++;
-				}
-			}
-			if (Parameters.ArrayParameter != null){
-				if (TypeManager.param_array_type == null && !RootContext.StdLib) {
-					Namespace system = RootNamespace.Global.GetNamespace ("System", true);
-					TypeExpr expr = system.Lookup (this, "ParamArrayAttribute", Location) as TypeExpr;
-					TypeManager.param_array_type = expr.ResolveType (ec);
-				}
-
-				if (TypeManager.cons_param_array_attribute == null) {
-					Type [] void_arg = { };
-					TypeManager.cons_param_array_attribute = TypeManager.GetConstructor (
-						TypeManager.param_array_type, void_arg);
-				}
-
-				ParameterBuilder pb = InvokeBuilder.DefineParameter (
-					i + 1, Parameters.ArrayParameter.Attributes,Parameters.ArrayParameter.Name);
-				
-				pb.SetCustomAttribute (
-					new CustomAttributeBuilder (TypeManager.cons_param_array_attribute, new object [0]));
+			foreach (Parameter p in Parameters.FixedParameters) {
+				if ((p.ModFlags & Parameter.Modifier.ISBYREF) != 0)
+					out_params++;
 			}
 			
 			InvokeBuilder.SetImplementationFlags (MethodImplAttributes.Runtime);
 
-			TypeManager.RegisterMethod (InvokeBuilder,
-						    new InternalParameters (param_types, Parameters),
-						    param_types);
+			TypeManager.RegisterMethod (InvokeBuilder, Parameters);
 
 			//
 			// BeginInvoke
 			//
-			int params_num = param_types.Length;
+			int params_num = Parameters.Count;
 			Type [] async_param_types = new Type [params_num + 2];
 
-			param_types.CopyTo (async_param_types, 0);
+			Parameters.Types.CopyTo (async_param_types, 0);
 
 			async_param_types [params_num] = TypeManager.asynccallback_type;
 			async_param_types [params_num + 1] = TypeManager.object_type;
@@ -323,50 +289,28 @@ namespace Mono.CSharp {
 								       TypeManager.iasyncresult_type,
 								       async_param_types);
 
-			i = 0;
-			if (Parameters.FixedParameters != null){
-				int top = Parameters.FixedParameters.Length;
-				Parameter p;
-				
-				for (i = 0 ; i < top; i++) {
-					p = Parameters.FixedParameters [i];
-
-					p.DefineParameter (ec, BeginInvokeBuilder, null, i + 1);
-				}
-			}
-			if (Parameters.ArrayParameter != null){
-				Parameter p = Parameters.ArrayParameter;
-				p.DefineParameter (ec, BeginInvokeBuilder, null, i + 1);
-
-				i++;
-			}
-
+			i = Parameters.Count;
+			Parameters.ApplyAttributes (ec, BeginInvokeBuilder);
 			BeginInvokeBuilder.DefineParameter (i + 1, ParameterAttributes.None, "callback");
 			BeginInvokeBuilder.DefineParameter (i + 2, ParameterAttributes.None, "object");
 			
 			BeginInvokeBuilder.SetImplementationFlags (MethodImplAttributes.Runtime);
 
 			Parameter [] async_params = new Parameter [params_num + 2];
-			int n = 0;
-			if (Parameters.FixedParameters != null){
-				Parameters.FixedParameters.CopyTo (async_params, 0);
-				n = Parameters.FixedParameters.Length;
-			}
-			if (Parameters.ArrayParameter != null)
-				async_params [n] = Parameters.ArrayParameter;
+			Parameters.FixedParameters.CopyTo (async_params, 0);
 			
 			async_params [params_num] = new Parameter (
-				TypeManager.system_asynccallback_expr, "callback",
+				TypeManager.asynccallback_type, "callback",
 								   Parameter.Modifier.NONE, null, Location);
 			async_params [params_num + 1] = new Parameter (
-				TypeManager.system_object_expr, "object",
+				TypeManager.object_type, "object",
 								   Parameter.Modifier.NONE, null, Location);
 
-			Parameters async_parameters = new Parameters (async_params, null);
+			Parameters async_parameters = new Parameters (async_params);
+			async_parameters.Resolve (ec);
+			async_parameters.ApplyAttributes (ec, BeginInvokeBuilder);
 			
-			TypeManager.RegisterMethod (BeginInvokeBuilder,
-						    new InternalParameters (async_parameters.GetParameterInfo (ec), async_parameters),
-						    async_param_types);
+			TypeManager.RegisterMethod (BeginInvokeBuilder, async_parameters);
 
 			//
 			// EndInvoke is a bit more interesting, all the parameters labeled as
@@ -383,7 +327,7 @@ namespace Mono.CSharp {
 					if ((p.ModFlags & Parameter.Modifier.ISBYREF) == 0)
 						continue;
 
-					end_param_types [param] = param_types [i];
+					end_param_types [param] = Parameters.Types [i];
 					end_params [param] = p;
 					param++;
 				}
@@ -405,20 +349,19 @@ namespace Mono.CSharp {
 				EndInvokeBuilder.DefineParameter (i + 1, end_params [i].Attributes, end_params [i].Name);
 			}
 
-			Parameters end_parameters = new Parameters (end_params, null);
+			Parameters end_parameters = new Parameters (end_params);
+			end_parameters.Resolve (ec);
 
-			TypeManager.RegisterMethod (
-				EndInvokeBuilder,
-				new InternalParameters (end_parameters.GetParameterInfo (ec), end_parameters),
-				end_param_types);
+			TypeManager.RegisterMethod (EndInvokeBuilder, end_parameters);
 
 			return true;
 		}
 
 		public override void Emit ()
 		{
+			Parameters.ApplyAttributes (ec, InvokeBuilder);
+
 			if (OptAttributes != null) {
-				Parameters.LabelParameters (ec, InvokeBuilder);
 				OptAttributes.Emit (ec, this);
 			}
 
@@ -446,7 +389,7 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			AttributeTester.AreParametersCompliant (Parameters.FixedParameters, Location);
+			Parameters.VerifyClsCompliance ();
 
 			if (!AttributeTester.IsClsCompliant (ReturnType.Type)) {
 				Report.Error (3002, Location, "Return type of `{0}' is not CLS-compliant", GetSignatureForError ());
@@ -567,9 +510,7 @@ namespace Mono.CSharp {
 
 			int pd_count = pd.Count;
 
-			bool params_method = (pd_count != 0) &&
-				(pd.ParameterModifier (pd_count - 1) == Parameter.Modifier.PARAMS);
-
+			bool params_method = pd.HasParams;
 			bool is_params_applicable = false;
 			bool is_applicable = Invocation.IsApplicable (ec, me, args, arg_count, ref mb);
 
@@ -698,12 +639,6 @@ namespace Mono.CSharp {
 		public Type TargetReturnType {
 			get {
 				return ret_type;
-			}
-		}
-
-		public Type [] ParameterTypes {
-			get {
-				return param_types;
 			}
 		}
 

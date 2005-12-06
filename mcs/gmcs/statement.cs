@@ -1670,7 +1670,7 @@ namespace Mono.CSharp {
 		///   tc: is our typecontainer (to resolve type references)
 		///   ig: is the code generator:
 		/// </remarks>
-		public void ResolveMeta (ToplevelBlock toplevel, EmitContext ec, InternalParameters ip)
+		public void ResolveMeta (ToplevelBlock toplevel, EmitContext ec, Parameters ip)
 		{
 			bool old_unsafe = ec.InUnsafe;
 
@@ -2205,7 +2205,7 @@ namespace Mono.CSharp {
 				Parameters pars = t.Parameters;
 				par = pars.GetParameterByName (name, out idx);
 				if (par != null)
-					return new ParameterReference (pars, this, idx, name, loc);
+					return new ParameterReference (par, this, idx, loc);
 			}
 			return null;
 		}
@@ -2267,7 +2267,7 @@ namespace Mono.CSharp {
 			return this_variable == null || this_variable.IsThisAssigned (ec, loc);
 		}
 
-		public bool ResolveMeta (EmitContext ec, InternalParameters ip)
+		public bool ResolveMeta (EmitContext ec, Parameters ip)
 		{
 			int errors = Report.Errors;
 
@@ -2275,7 +2275,7 @@ namespace Mono.CSharp {
 				return true;
 
 			if (ip != null)
-				parameters = ip.Parameters;
+				parameters = ip;
 
 			ResolveMeta (this, ec, ip);
 
@@ -3950,7 +3950,7 @@ namespace Mono.CSharp {
 						MethodInfo mi = null;
 
 						foreach (MethodInfo mk in ((MethodGroupExpr) ml).Methods) {
-							if (TypeManager.GetArgumentTypes (mk).Length == 0) {
+							if (TypeManager.GetParameterData (mk).Count == 0) {
 								mi = mk;
 								break;
 							}
@@ -4020,7 +4020,7 @@ namespace Mono.CSharp {
 					MethodInfo mi = null;
 
 					foreach (MethodInfo mk in ((MethodGroupExpr) ml).Methods) {
-						if (TypeManager.GetArgumentTypes (mk).Length == 0) {
+						if (TypeManager.GetParameterData (mk).Count == 0) {
 							mi = mk;
 							break;
 						}
@@ -4443,10 +4443,8 @@ namespace Mono.CSharp {
 				bool found = false;
 				foreach (MemberInfo m in move_next_list){
 					MethodInfo mi = (MethodInfo) m;
-					Type [] args;
 				
-					args = TypeManager.GetArgumentTypes (mi);
-					if ((args != null) && (args.Length == 0) &&
+					if ((TypeManager.GetParameterData (mi).Count == 0) &&
 					    TypeManager.TypeToCoreType (mi.ReturnType) == TypeManager.bool_type) {
 						move_next = mi;
 						if (mi.IsPublic)
@@ -4489,10 +4487,8 @@ namespace Mono.CSharp {
 
 				foreach (MemberInfo m in dispose_list){
 					MethodInfo mi = (MethodInfo) m;
-					Type [] args;
 
-					args = TypeManager.GetArgumentTypes (mi);
-					if (args != null && args.Length == 0){
+					if (TypeManager.GetParameterData (mi).Count == 0){
 						if (mi.ReturnType == TypeManager.void_type)
 							return mi;
 					}
@@ -4524,8 +4520,7 @@ namespace Mono.CSharp {
 				PropertyExpr tmp_get_cur = null;
 				Type tmp_enumerator_type = enumerator_type;
 				foreach (MethodInfo mi in mg.Methods) {
-					Type [] args = TypeManager.GetArgumentTypes (mi);
-					if (args != null && args.Length != 0)
+					if (TypeManager.GetParameterData (mi).Count != 0)
 						continue;
 			
 					// Check whether GetEnumerator is public

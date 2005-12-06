@@ -700,9 +700,8 @@ namespace Mono.CSharp {
 					mb = mb.GetGenericMethodDefinition ();
 
 				int pos = type.GenericParameterPosition;
-				ParameterData pd = TypeManager.GetParameterData (mb);
-				GenericConstraints temp_gc = pd.GenericConstraints (pos);
 				Type mparam = mb.GetGenericArguments () [pos];
+				GenericConstraints temp_gc = ReflectionConstraints.GetConstraints (mparam);
 
 				if (temp_gc != null)
 					gc = new InflatedConstraints (temp_gc, implementing.DeclaringType);
@@ -1423,8 +1422,7 @@ namespace Mono.CSharp {
 					if ((c.Parameters.FixedParameters != null) &&
 					    (c.Parameters.FixedParameters.Length != 0))
 						continue;
-					if (c.Parameters.HasArglist ||
-					    (c.Parameters.ArrayParameter != null))
+					if (c.Parameters.HasArglist || c.Parameters.HasParams)
 						continue;
 
 					return true;
@@ -1658,14 +1656,8 @@ namespace Mono.CSharp {
 					return false;
 
 			bool ok = true;
-			if (parameters.FixedParameters != null) {
-				foreach (Parameter p in parameters.FixedParameters){
-					if (!p.Resolve (ec))
-						ok = false;
-				}
-			}
-			if (parameters.ArrayParameter != null) {
-				if (!parameters.ArrayParameter.Resolve (ec))
+			foreach (Parameter p in parameters.FixedParameters){
+				if (!p.Resolve (ec))
 					ok = false;
 			}
 			if ((return_type != null) && (return_type.ResolveAsTypeTerminal (ec) == null))
@@ -1859,7 +1851,7 @@ namespace Mono.CSharp {
 			if (tparam != null)
 				return tparam.GenericConstraints;
 
-			return new ReflectionConstraints (t);
+			return ReflectionConstraints.GetConstraints (t);
 		}
 
 		public static bool IsGeneric (Type t)

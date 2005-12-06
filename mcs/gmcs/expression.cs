@@ -3669,12 +3669,11 @@ namespace Mono.CSharp {
 	///   representation.
 	/// </summary>
 	public class ParameterReference : Expression, IAssignMethod, IMemoryLocation, IVariable {
-		Parameters pars;
-		String name;
+		Parameter par;
+		string name;
 		int idx;
 		Block block;
 		VariableInfo vi;
-		public Parameter.Modifier mod;
 		public bool is_ref, is_out, prepared;
 
 		public bool IsOut {
@@ -3691,19 +3690,15 @@ namespace Mono.CSharp {
 
 		LocalTemporary temp;
 		
-		public ParameterReference (Parameters pars, Block block, int idx, string name, Location loc)
+		public ParameterReference (Parameter par, Block block, int idx, Location loc)
 		{
-			this.pars = pars;
+			this.par = par;
+			this.name = par.Name;
 			this.block = block;
 			this.idx  = idx;
-			this.name = name;
 			this.loc = loc;
 			eclass = ExprClass.Variable;
 		}
-
-		public ParameterReference (InternalParameters pars, Block block, int idx, Location loc)
-			: this (pars.Parameters, block, idx, pars.ParameterName (idx), loc)
-		{ }
 
 		public VariableInfo VariableInfo {
 			get { return vi; }
@@ -3712,7 +3707,7 @@ namespace Mono.CSharp {
 		public bool VerifyFixed ()
 		{
 			// A parameter is fixed if it's a value parameter (i.e., no modifier like out, ref, param).
-			return mod == Parameter.Modifier.NONE;
+			return par.ModFlags == Parameter.Modifier.NONE;
 		}
 
 		public bool IsAssigned (EmitContext ec, Location loc)
@@ -3721,7 +3716,7 @@ namespace Mono.CSharp {
 				return true;
 
 			Report.Error (269, loc,
-				      "Use of unassigned out parameter `{0}'", name);
+				      "Use of unassigned out parameter `{0}'", par.Name);
 			return false;
 		}
 
@@ -3749,9 +3744,14 @@ namespace Mono.CSharp {
 
 		protected void DoResolveBase (EmitContext ec)
 		{
-			type = pars.GetParameterInfo (ec, idx, out mod);
+			if (!par.Resolve (ec)) {
+				//TODO:
+			}
+
+			type = par.ParameterType;
+			Parameter.Modifier mod = par.ModFlags;
 			is_ref = (mod & Parameter.Modifier.ISBYREF) != 0;
-			is_out = (mod & Parameter.Modifier.OUT) != 0;
+			is_out = (mod & Parameter.Modifier.OUT) == Parameter.Modifier.OUT;
 			eclass = ExprClass.Variable;
 
 			if (is_out)
@@ -3760,7 +3760,7 @@ namespace Mono.CSharp {
 			if (ec.CurrentAnonymousMethod != null){
 				if (is_ref){
 					Report.Error (1628, Location, "Cannot use ref or out parameter `{0}' inside an anonymous method block",
-						name);
+						par.Name);
 					return;
 				}
 
@@ -4011,10 +4011,10 @@ namespace Mono.CSharp {
 			get {
 				switch (ArgType) {
 					case AType.Out:
-						return Parameter.Modifier.OUT | Parameter.Modifier.ISBYREF;
+						return Parameter.Modifier.OUT;
 
 					case AType.Ref:
-						return Parameter.Modifier.REF | Parameter.Modifier.ISBYREF;
+						return Parameter.Modifier.REF;
 
 					default:
 						return Parameter.Modifier.NONE;
@@ -4507,7 +4507,7 @@ namespace Mono.CSharp {
 				if (pd_count != arg_count)
 					return false;
 			} else {
-				if (pd.ParameterModifier (count) != Parameter.Modifier.PARAMS)
+				if (!pd.HasParams)
 				return false;
 			}
 			
@@ -4527,9 +4527,9 @@ namespace Mono.CSharp {
 				Argument a = (Argument) arguments [i];
 
 				Parameter.Modifier a_mod = a.Modifier & 
-					(unchecked (~(Parameter.Modifier.OUT | Parameter.Modifier.REF)));
+					(unchecked (~(Parameter.Modifier.OUTMASK | Parameter.Modifier.REFMASK)));
 				Parameter.Modifier p_mod = pd.ParameterModifier (i) &
-					(unchecked (~(Parameter.Modifier.OUT | Parameter.Modifier.REF)));
+					(unchecked (~(Parameter.Modifier.OUTMASK | Parameter.Modifier.REFMASK)));
 
 				if (a_mod == p_mod) {
 
@@ -4537,8 +4537,8 @@ namespace Mono.CSharp {
 						if (!Convert.ImplicitConversionExists (ec,
                                                                                        a.Expr,
                                                                                        pd.ParameterType (i)))
-							return false;
-										
+				return false;
+
 					if ((a_mod & Parameter.Modifier.ISBYREF) != 0) {
 						Type pt = pd.ParameterType (i);
 
@@ -4588,8 +4588,8 @@ namespace Mono.CSharp {
 		///   Determines if the candidate method is applicable (section 14.4.2.1)
 		///   to the given set of arguments
 		/// </summary>
-		static bool IsApplicable (EmitContext ec, ArrayList arguments, int arg_count,
-					  MethodBase candidate)
+		public static bool IsApplicable (EmitContext ec, ArrayList arguments, int arg_count,
+			MethodBase candidate)
 		{
 			ParameterData pd = TypeManager.GetParameterData (candidate);
 
@@ -4602,28 +4602,23 @@ namespace Mono.CSharp {
 				Argument a = (Argument) arguments [i];
 
 				Parameter.Modifier a_mod = a.Modifier &
-					unchecked (~(Parameter.Modifier.OUT | Parameter.Modifier.REF));
+					~(Parameter.Modifier.OUTMASK | Parameter.Modifier.REFMASK);
+
 				Parameter.Modifier p_mod = pd.ParameterModifier (i) &
-					unchecked (~(Parameter.Modifier.OUT | Parameter.Modifier.REF));
+					~(Parameter.Modifier.OUTMASK | Parameter.Modifier.REFMASK | Parameter.Modifier.PARAMS);
 
-				if (a_mod == p_mod ||
-				    (a_mod == Parameter.Modifier.NONE && p_mod == Parameter.Modifier.PARAMS)) {
+				if (a_mod == p_mod) {
+					Type pt = pd.ParameterType (i);
+
 					if (a_mod == Parameter.Modifier.NONE) {
-                                                if (!TypeManager.IsEqual (a.Type, pd.ParameterType (i)) && !Convert.ImplicitConversionExists (ec,
-                                                                                       a.Expr,
-                                                                                       pd.ParameterType (i)))
+                                                if (!TypeManager.IsEqual (a.Type, pt) &&
+						    !Convert.ImplicitConversionExists (ec, a.Expr, pt))
 							return false;
-                                        }
-					
-					if ((a_mod & Parameter.Modifier.ISBYREF) != 0) {
-						Type pt = pd.ParameterType (i);
-
-						if (!pt.IsByRef)
-							pt = TypeManager.GetReferenceType (pt);
-                                                
-						if (pt != a.Type)
-							return false;
+						continue;
 					}
+					
+					if (pt != a.Type)
+						return false;
 				} else
 					return false;
 			}

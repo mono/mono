@@ -1,3 +1,61 @@
+2005-12-06  Raja R Harinath  <rharinath@novell.com>
+
+	* class.cs (MethodCore.CheckGenericOverride): Delete unused
+	abstract method and all overrides.
+	* support.cs (ParameterData.GenericConstraints): Delete.
+	(ReflectionParameters.type_params): Delete.
+	(ReflectionParameters.ReflectionParameters): Make private.
+	(ReflectionParameters.GetConstaints): New factory method.
+	* generic.cs (TypeParameterDefineType): Use it.
+	(TypeManager.GetTypeParameterConstraints): Likewise.
+
+2005-11-22  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix #76783.
+	* class.cs (MethodData.Emit): Parameters should be labeled first.
+
+2005-11-21  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix #76761.
+	* parameter.cs (Parameter.ApplyAttributeBuilder): Fixed `ref' detection.
+
+2005-11-18  Marek Safar  <marek.safar@seznam.cz>
+
+	* attribute.cs (AreParametersCompliant): Moved to Parameter.
+
+	* class.cs (MethodCore): Parameter clean up.
+	(IMethodData): Added ParameterInfo.
+	(MethodData): Parameter clean up.
+	(Indexer.Define): Parameter clean up.
+
+	* anonymous.cs,
+	* codegen.cs,
+	* cs-parser.jay,
+	* decl.cs,
+	* doc.cs,
+	* ecore.cs,
+	* flowanalysis.cs,
+	* iterators.cs,
+	* pending.cs,
+	* statement.cs,
+	* typemanager.cs: Parameter clean up.
+
+	* delegate.cs (Define): Get rid of duplicated code.
+
+	* expression.cs (ParameterReference): Removed useless parameters
+	and simplified.
+	(Invocation): Ditto.
+
+	* parameter.cs (ParamsParameter): New class, params specialization.
+	(ArglistParameter): Attemp to separate arglist.
+	(Parameter): Refactored to be reusable and faster.
+	(Parameter.Modifier): Made understandable.
+	(Parameters): Changed to be used as a class for `this' assembly
+	parameters. Refactored to use new specialized classes.
+
+	* support.cs (ParameterData): Added Types property.
+	(InternalParameters): Deleted.
+
 2005-11-16  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* doc.cs : the previous patch does not actually fix the bug.

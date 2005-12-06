@@ -143,8 +143,8 @@ namespace Mono.CSharp {
 		TypeContainer container;
 		TypeExpr current_type;
 		Type this_type;
-		InternalParameters parameters;
-		InternalParameters original_parameters;
+		Parameters parameters;
+		Parameters original_parameters;
 		IMethodData orig_method;
 
 		MethodInfo dispose_method;
@@ -192,7 +192,7 @@ namespace Mono.CSharp {
 			resume_points.Add (entry_point);
 			entry_point.Define (ig);
 
-			ec.EmitTopBlock (orig_method, original_block, parameters);
+			ec.EmitTopBlock (orig_method, original_block);
 
 			EmitYieldBreak (ig);
 
@@ -357,7 +357,7 @@ namespace Mono.CSharp {
 		// Our constructor
 		//
 		public Iterator (IMethodData m_container, TypeContainer container, GenericMethod generic,
-				 InternalParameters parameters, int modifiers)
+				 int modifiers)
 			: base (container.NamespaceEntry, container,
 				MakeProxyName (m_container.MethodName.Name, generic, m_container.Location),
 				(modifiers & Modifiers.UNSAFE) | Modifiers.PRIVATE, null)
@@ -366,9 +366,9 @@ namespace Mono.CSharp {
 
 			this.generic_method = generic;
 			this.container = container;
-			this.original_parameters = parameters;
+			this.original_parameters = m_container.ParameterInfo;
 			this.original_block = orig_method.Block;
-			this.block = new ToplevelBlock (orig_method.Block, parameters.Parameters, orig_method.Location);
+			this.block = new ToplevelBlock (orig_method.Block, parameters, orig_method.Location);
 
 			if (generic != null) {
 				ArrayList constraints = new ArrayList ();
@@ -530,24 +530,16 @@ namespace Mono.CSharp {
 				te, param.Name, param.ModFlags, param.OptAttributes, param.Location);
 		}
 
-		InternalParameters InflateParameters (Parameters parameters, EmitContext ec)
+		Parameters InflateParameters (Parameters parameters, EmitContext ec)
 		{
-			Parameter[] fixed_params = null;
-			if (parameters.FixedParameters != null) {
-				fixed_params = new Parameter [parameters.FixedParameters.Length];
-				for (int i = 0; i < fixed_params.Length; i++)
-					fixed_params [i] = InflateParameter (parameters.FixedParameters [i]);
-			}
+			int count = parameters.FixedParameters.Length;
+			if (count == 0)
+				return Parameters.EmptyReadOnlyParameters;
+			Parameter[] fixed_params = new Parameter [count];
+			for (int i = 0; i < count; i++)
+				fixed_params [i] = InflateParameter (parameters.FixedParameters [i]);
 
-			Parameters new_params;
-			if (parameters.ArrayParameter != null) {
-				Parameter array_param = InflateParameter (parameters.ArrayParameter);
-				new_params = new Parameters (fixed_params, array_param);
-			} else
-				new_params = new Parameters (fixed_params, parameters.HasArglist);
-
-			Type [] types = new_params.GetParameterInfo (ec);
-			return new InternalParameters (types, new_params);
+			return new Parameters (fixed_params, parameters.HasArglist);
 		}
 
 		protected override TypeExpr [] GetClassBases (out TypeExpr base_class)
@@ -595,7 +587,10 @@ namespace Mono.CSharp {
 			else
 				current_type = new TypeExpression (TypeBuilder, Location);
 
-			parameters = InflateParameters (original_parameters.Parameters, ec);
+			parameters = InflateParameters (original_parameters, ec);
+			if (!parameters.Resolve (ec)) {
+				// TODO:
+			}
 
 			Define_Fields ();
 			Define_Current (false);
@@ -693,17 +688,16 @@ namespace Mono.CSharp {
 					"this", Parameter.Modifier.NONE,
 					null, Location));
 			list.Add (new Parameter (
-				TypeManager.system_boolean_expr, "initialized",
+				TypeManager.bool_type, "initialized",
 				Parameter.Modifier.NONE, null, Location));
 
-			Parameter[] old_fixed = parameters.Parameters.FixedParameters;
-			if (old_fixed != null)
-				list.AddRange (old_fixed);
+			Parameter[] old_fixed = parameters.FixedParameters;
+			list.AddRange (old_fixed);
 
 			Parameter[] fixed_params = new Parameter [list.Count];
 			list.CopyTo (fixed_params);
 
-			ctor_params = new Parameters (fixed_params, parameters.Parameters.ArrayParameter);
+			ctor_params = new Parameters (fixed_params);
 
 			ctor = new Constructor (
 				this, MemberName.Name, Modifiers.PUBLIC, ctor_params,
@@ -711,7 +705,7 @@ namespace Mono.CSharp {
 				Location);
 			AddConstructor (ctor);
 
-			ctor.Block = new ToplevelBlock (block, parameters.Parameters, Location);
+			ctor.Block = new ToplevelBlock (block, parameters, Location);
 
 			int first = IsStatic ? 2 : 3;
 
@@ -760,7 +754,7 @@ namespace Mono.CSharp {
 			MemberName name = new MemberName (left, "Current", null, Location);
 
 			ToplevelBlock get_block = new ToplevelBlock (
-				block, parameters.Parameters, Location);
+				block, parameters, Location);
 
 			get_block.AddStatement (new If (
 				new Binary (
@@ -812,7 +806,7 @@ namespace Mono.CSharp {
 			AddMethod (get_enumerator);
 
 			get_enumerator.Block = new ToplevelBlock (
-				block, parameters.Parameters, Location);
+				block, parameters, Location);
 
 			get_enumerator.Block.SetHaveAnonymousMethods (Location, move_next_method);
 
@@ -993,7 +987,7 @@ namespace Mono.CSharp {
 			Iterator iterator;
 
 			public MoveNextMethod (Iterator iterator, Location loc)
-				: base (iterator.parameters.Parameters, iterator.original_block, loc)
+				: base (iterator.parameters, iterator.original_block, loc)
 			{
 				this.iterator = iterator;
 			}
@@ -1167,7 +1161,7 @@ namespace Mono.CSharp {
 			AddMethod (reset);
 
 			reset.Block = new ToplevelBlock (Location);
-			reset.Block = new ToplevelBlock (block, parameters.Parameters, Location);
+			reset.Block = new ToplevelBlock (block, parameters, Location);
 			reset.Block.SetHaveAnonymousMethods (Location, move_next_method);
 
 			reset.Block.AddStatement (Create_ThrowNotSupported ());
@@ -1181,7 +1175,7 @@ namespace Mono.CSharp {
 				Parameters.EmptyReadOnlyParameters, null);
 			AddMethod (dispose);
 
-			dispose.Block = new ToplevelBlock (block, parameters.Parameters, Location);
+			dispose.Block = new ToplevelBlock (block, parameters, Location);
 			dispose.Block.SetHaveAnonymousMethods (Location, move_next_method);
 
 			dispose.Block.AddStatement (new DisposeMethod (this, Location));
