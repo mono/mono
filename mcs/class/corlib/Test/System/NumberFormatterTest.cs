@@ -2999,20 +2999,40 @@ namespace MonoTests.System {
 		}
 
 		[Test]
-		[Category("NotWorking")]
-		// see bugzilla #60227 ???
-		public void Test13024_NotWorking () {
-			AssertEquals ("#02", "1.2", 1.15.ToString ("G2", _nfi));
-			AssertEquals ("#07", "1.7", 1.65.ToString ("G2", _nfi));
+		public void Test13024_CarryPropagation () 
+		{
+			Double d = 1.15;
+			AssertEquals ("#01", "1", d.ToString ("G1", _nfi));
+			// NumberStore converts 1.15 into 1.14999...91 (1 in index 17)
+			// so the call to NumberToString doesn't result in 1.2 but in 1.1
+			// which seems "somewhat" normal considering the #17 results,
+			AssertEquals ("#02", "1.2", d.ToString ("G2", _nfi));
+			AssertEquals ("#03", "1.15", d.ToString ("G3", _nfi));
+			AssertEquals ("#04", "1.15", d.ToString ("G4", _nfi));
+			AssertEquals ("#05", "1.15", d.ToString ("G5", _nfi));
+			AssertEquals ("#06", "1.15", d.ToString ("G6", _nfi));
+			AssertEquals ("#07", "1.15", d.ToString ("G7", _nfi));
+			AssertEquals ("#08", "1.15", d.ToString ("G8", _nfi));
+			AssertEquals ("#09", "1.15", d.ToString ("G9", _nfi));
+			AssertEquals ("#10", "1.15", d.ToString ("G10", _nfi));
+			AssertEquals ("#11", "1.15", d.ToString ("G11", _nfi));
+			AssertEquals ("#12", "1.15", d.ToString ("G12", _nfi));
+			AssertEquals ("#13", "1.15", d.ToString ("G13", _nfi));
+			AssertEquals ("#14", "1.15", d.ToString ("G14", _nfi));
+			AssertEquals ("#15", "1.15", d.ToString ("G15", _nfi));
+			AssertEquals ("#16", "1.15", d.ToString ("G16", _nfi));
+			AssertEquals ("#17", "1.1499999999999999", d.ToString ("G17", _nfi));
 		}
 
 		[Test]
 		public void Test13024 () {
 			AssertEquals ("#01", "1.1", 1.05.ToString ("G2", _nfi));
+			AssertEquals ("#02", "1.2", 1.15.ToString ("G2", _nfi));
 			AssertEquals ("#03", "1.3", 1.25.ToString ("G2", _nfi));
 			AssertEquals ("#04", "1.4", 1.35.ToString ("G2", _nfi));
 			AssertEquals ("#05", "1.5", 1.45.ToString ("G2", _nfi));
 			AssertEquals ("#06", "1.6", 1.55.ToString ("G2", _nfi));
+			AssertEquals ("#07", "1.7", 1.65.ToString ("G2", _nfi));
 			AssertEquals ("#08", "1.8", 1.75.ToString ("G2", _nfi));
 			AssertEquals ("#09", "1.9", 1.85.ToString ("G2", _nfi));
 			AssertEquals ("#10", "2", 1.95.ToString ("G2", _nfi));

@@ -1,3 +1,8 @@
+2005-12-06  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* NumberFormatterTest.cs: Moved back "NotWorking" tests into their 
+	normal test case (Test13024). Added more tests for carry propagation.
+
 2005-12-05  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* EnumTest.cs: Added test for "no bits set" on flags enum (bug #76921)
