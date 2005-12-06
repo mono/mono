@@ -1,3 +1,36 @@
+2005-11-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* doc.cs : the previous patch does not actually fix the bug.
+	  PropertyInfo override check is now implemented and really fixed it.
+	* expression.cs : Invocation.IsAncestralType() is used from doc.cs.
+
+2005-11-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* doc.cs : apply "override filter" also to properties.
+	  Fixed bug #76730.
+
+2005-11-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* doc.cs : renamed FindMembers() to FindMethodBase(). For interfaces,
+	  no need to check overrides. For classes, omit those results from 
+	  interfaces since they must exist in the class. Fixed bug #76726.
+
+2005-11-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* typemanager.cs : (GetFullNameSignature) differentiate indexers
+	  with different parameters. Fixed the second problem in #76685.
+
+2005-11-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* doc.cs : (FindDocumentedMember) pass invocation_type as well (to
+	  get expected 'protected' access in CheckValidFamilyAccess()).
+	  Fixed bug #76692.
+
+2005-11-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* doc.cs : (GenerateTypeDocComment) Fields could be FixedField.
+	  Fixed bug #76705.  CS1569 was incorrectly commented out.
+
 2005-11-23  Martin Baulig  <martin@ximian.com>
 
 	* generic.cs (Constraints.Define): Removed.

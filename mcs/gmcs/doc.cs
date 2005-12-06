@@ -71,7 +71,7 @@ namespace Mono.CSharp {
 					c.GenerateDocComment (t);
 
 			if (t.Fields != null)
-				foreach (Field f in t.Fields)
+				foreach (FieldBase f in t.Fields)
 					f.GenerateDocComment (t);
 
 			if (t.Events != null)
@@ -335,7 +335,10 @@ namespace Mono.CSharp {
 				ds, out warn, cref, false, null) as Type;
 		}
 
-		private static MemberInfo [] FindMembers (Type type,
+		private static MemberInfo [] empty_member_infos =
+			new MemberInfo [0];
+
+		private static MemberInfo [] FindMethodBase (Type type,
 			BindingFlags bindingFlags, MethodSignature signature)
 		{
 			MemberList ml = TypeManager.FindMembers (
@@ -344,17 +347,75 @@ namespace Mono.CSharp {
 				bindingFlags,
 				MethodSignature.method_signature_filter,
 				signature);
-			ArrayList al = new ArrayList (ml.Count);
-			for (int i = 0; i < ml.Count; i++) {
-				MethodBase x = ml [i] as MethodBase;
-				if (x != null) {
+			if (ml == null)
+				return empty_member_infos;
+
+			return FilterOverridenMembersOut (type, (MemberInfo []) ml);
+		}
+
+		static bool IsOverride (PropertyInfo deriv_prop, PropertyInfo base_prop)
+		{
+			if (!Invocation.IsAncestralType (base_prop.DeclaringType, deriv_prop.DeclaringType))
+				return false;
+
+			Type [] deriv_pd = TypeManager.GetArgumentTypes (deriv_prop);
+			Type [] base_pd = TypeManager.GetArgumentTypes (base_prop);
+		
+			if (deriv_pd.Length != base_pd.Length)
+				return false;
+
+			for (int j = 0; j < deriv_pd.Length; ++j) {
+				if (deriv_pd [j] != base_pd [j])
+					return false;
+				Type ct = TypeManager.TypeToCoreType (deriv_pd [j]);
+				Type bt = TypeManager.TypeToCoreType (base_pd [j]);
+
+				if (ct != bt)
+					return false;
+			}
+
+			return true;
+		}
+
+		private static MemberInfo [] FilterOverridenMembersOut (
+			Type type, MemberInfo [] ml)
+		{
+			if (ml == null)
+				return empty_member_infos;
+			if (type.IsInterface)
+				return ml;
+
+			ArrayList al = new ArrayList (ml.Length);
+			for (int i = 0; i < ml.Length; i++) {
+				// Interface methods which are returned
+				// from the filter must exist in the 
+				// target type (if there is only a 
+				// private implementation, then the 
+				// filter should not return it.)
+				// This filtering is required to 
+				// deambiguate results.
+				//
+				// It is common to properties, so check it here.
+				if (ml [i].DeclaringType.IsInterface)
+					continue;
+				MethodBase mx = ml [i] as MethodBase;
+				PropertyInfo px = ml [i] as PropertyInfo;
+				if (mx != null || px != null) {
 					bool overriden = false;
-					for (int j = 0; j < ml.Count; j++) {
+					for (int j = 0; j < ml.Length; j++) {
 						if (j == i)
 							continue;
-						MethodBase y = ml [j] as MethodBase;
-						if (y != null &&
-							Invocation.IsOverride (y, x)) {
+						MethodBase my = ml [j] as MethodBase;
+						if (mx != null && my != null &&
+							Invocation.IsOverride (my, mx)) {
+							overriden = true;
+							break;
+						}
+						else if (mx != null)
+							continue;
+						PropertyInfo py = ml [j] as PropertyInfo;
+						if (px != null && py != null &&
+							IsOverride (py, px)) {
 							overriden = true;
 							break;
 						}
@@ -378,7 +439,7 @@ namespace Mono.CSharp {
 		{
 			warningType = 0;
 			MethodSignature msig = new MethodSignature (memberName, null, paramList);
-			MemberInfo [] mis = FindMembers (type, 
+			MemberInfo [] mis = FindMethodBase (type, 
 				BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance,
 				msig);
 
@@ -390,10 +451,11 @@ namespace Mono.CSharp {
 
 			if (paramList.Length == 0) {
 				// search for fields/events etc.
-				mis = TypeManager.MemberLookup (null, null,
+				mis = TypeManager.MemberLookup (type, null,
 					type, MemberTypes.All,
 					BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance,
 					memberName, null);
+				mis = FilterOverridenMembersOut (type, mis);
 				if (mis == null || mis.Length == 0)
 					return null;
 				if (warn419 && IsAmbiguous (mis))
@@ -482,7 +544,7 @@ namespace Mono.CSharp {
 			// detect CS1581 or CS1002+CS1584).
 			msig = new MethodSignature (oper, null, paramList);
 
-			mis = FindMembers (type, 
+			mis = FindMethodBase (type, 
 				BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance,
 				msig);
 			if (mis.Length == 0)
@@ -900,9 +962,9 @@ namespace Mono.CSharp {
 				w.WriteWhitespace (Environment.NewLine);
 				w.WriteEndDocument ();
 				return true;
-//			} catch (Exception ex) {
-//				Report.Error (1569, "Error generating XML documentation file `{0}' (`{1}')", docfilename, ex.Message);
-//				return false;
+			} catch (Exception ex) {
+				Report.Error (1569, "Error generating XML documentation file `{0}' (`{1}')", docfilename, ex.Message);
+				return false;
 			} finally {
 				if (w != null)
 					w.Close ();
