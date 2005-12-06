@@ -1018,8 +1018,13 @@ namespace System.Data
 			CodeMemberMethod m = new CodeMemberMethod ();
 			m.Name = "InitializeFields";
 			m.Attributes = MemberAttributes.Assembly;
-			foreach (DataColumn col in dt.Columns)
+			foreach (DataColumn col in dt.Columns) {
 				m.Statements.Add (Let (FieldRef ("__column" + opts.TableColName (col.ColumnName, gen)), IndexerRef (PropRef ("Columns"), Const (col.ColumnName))));
+				if (!col.AllowDBNull)
+					m.Statements.Add (Let (FieldRef (PropRef ("__column" + opts.TableColName (col.ColumnName, gen)), "AllowDBNull"), Const (col.AllowDBNull)));
+				if (col.DefaultValue != null && col.DefaultValue.GetType() != typeof(System.DBNull))
+					m.Statements.Add (Let (FieldRef (PropRef ("__column" + opts.TableColName (col.ColumnName, gen)), "DefaultValue"), Const (col.DefaultValue)));
+			}
 			return m;
 		}
 

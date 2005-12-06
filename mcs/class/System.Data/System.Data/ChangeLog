@@ -1,3 +1,8 @@
+2005-12-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CustomDataClassGenerator.cs : (InitializeFields) handle AllowDBNull
+	  and DefaultValue as well. Patch by Marek Habersack (bug #76709).
+
 2005-12-01  Miguel de Icaza  <miguel@novell.com>
 
 	* DataSet.cs: Apply patch from Robert Jordan, to fix #76817
