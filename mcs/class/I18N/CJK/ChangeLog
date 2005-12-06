@@ -1,5 +1,9 @@
 2005-12-06  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* renamed from big5-table-generator.cs to dbcs-table-generator.cs.
+
+2005-12-06  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* big5-table-generator.cs : made it to work for GB2312 table
 	  generation purpose (different format than gb2312.table.)
 
