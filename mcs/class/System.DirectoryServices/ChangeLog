@@ -1,3 +1,7 @@
+2005-12-06 Konstantin Triger <kostat@mainsoft.com>
+
+	* System.DirectoryServices.vmwcsproj: fixing conditional compilation constants.
+
 2005-11-15 Vlad Spivak <spivak@mainsoft.com>
 	* Added TARGET_JVM related source includes and excludes
 

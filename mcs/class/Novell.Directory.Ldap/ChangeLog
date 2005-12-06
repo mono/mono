@@ -1,3 +1,7 @@
+2005-12-06 Konstantin Triger <kostat@mainsoft.com>
+
+        * Novell.Directory.Ldap.vmwcsproj: fixing conditional compilation constants.
+
 2005-16-11  Eyal Alaluf <eyala@mainsoft.com>
 	* Makefile: Ignore ClsCompliant warnings for java profile
 	
