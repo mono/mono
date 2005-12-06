@@ -1,3 +1,20 @@
+2005-12-05  Ben Maurer  <bmaurer@ximian.com>
+
+	Beginning of support for nullable types in the runtime. Parts of
+	this patch are from Martin.
+
+	* appdomain.c (MONO_CORLIB_VERSION): Bump
+
+	* domain.c (mono_init_internal): get the nullable type
+
+	* class.c (mono_class_is_nullable): New method
+	(mono_class_get_nullable_param): New mehod
+	(mono_class_create_generic): In types T? set cast_class to T
+
+	* class-internals.h (MonoDefaults): new nullable default class
+	(mono_class_get_nullable_param, mono_class_get_nullable_param):
+	new methods.
+
 2005-12-05  Raja R Harinath  <rharinath@novell.com>
 
 	* metadata.c (select_container): New.  Refactor code to select the

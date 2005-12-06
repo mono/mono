@@ -1,3 +1,19 @@
+2005-12-05  Ben Maurer  <bmaurer@ximian.com>
+
+	Support for boxing and unboxing nullable types as well as the
+	isinst operation on nullables, per the CLI ammendment.
+
+	* inssel.brg (CEE_ISINST): Special case for nullable
+
+	* mini.c (handle_unbox_nullable): new method
+	(handle_box): Special case for nullable types
+	(mono_method_to_ir): Call handle_unbox_nullable in correct
+	places.
+
+	* generics.2.cs: New test suite
+
+	* Makefile.am: Support for regression tests with generics.
+
 2005-12-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-amd64.c (emit_load_volatile_arguments): Add loading of arguments
