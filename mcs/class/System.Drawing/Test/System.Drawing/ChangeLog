@@ -1,3 +1,7 @@
+2005-12-05  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* TestFont.cs: Added test for LogFont conversion
+
 2005-12-05 Jordi Mas i Hernandez <jordimash@gmail.com>
 
 	* TestPoint.cs: Test new methods for .Net 2.0

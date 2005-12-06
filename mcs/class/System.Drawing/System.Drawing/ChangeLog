@@ -1,3 +1,14 @@
+2005-12-05  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* Font.cs: 
+	  - Implemented FromLogFont
+	  - Implemented ToLogFont
+	  - Whitespace fixes
+	* gdipFunctions.cs:
+	  - Added GdipGetLogFontW method
+	  - Specified charset for GdipGetLogFontA method
+	* gdipStructs.cs: Added LOGFONTW structure
+
 2005-12-05 Gert Driesen <drieseng@users.sourceforge.net>
 
 	* BufferedGraphics.cs: Removed duplicate class. Set eol-style to

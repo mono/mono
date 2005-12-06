@@ -1365,8 +1365,11 @@ namespace System.Drawing
 		internal static extern Status GdipCreateFont (IntPtr fontFamily, float emSize, FontStyle style, GraphicsUnit  unit,  out IntPtr font);
 		[DllImport("gdiplus.dll")]                   
 		internal static extern Status GdipDeleteFont (IntPtr font);		
-		[DllImport("gdiplus.dll")]                   
-		internal static extern Status GdipGetLogFontA(IntPtr font, IntPtr graphics, ref LOGFONTA logfontA);
+		[DllImport("gdiplus.dll", CharSet=CharSet.Ansi)]
+		internal static extern Status GdipGetLogFontA(IntPtr font, IntPtr graphics, IntPtr logfontA);
+		[DllImport("gdiplus.dll", CharSet=CharSet.Unicode)]
+		internal static extern Status GdipGetLogFontW(IntPtr font, IntPtr graphics, IntPtr logfontW);
+
 		[DllImport("gdiplus.dll")]                   
 		internal static extern Status GdipCreateFontFromDC(IntPtr hdc, out IntPtr font);
 		[DllImport("gdiplus.dll", SetLastError=true)]

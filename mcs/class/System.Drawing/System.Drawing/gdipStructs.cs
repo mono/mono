@@ -106,6 +106,26 @@ namespace System.Drawing
 	}  
 	
 	[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Unicode)]
+	internal  struct LOGFONTW
+	{
+		internal int    lfHeight;
+		internal uint   lfWidth;
+		internal uint   lfEscapement;
+		internal uint   lfOrientation;
+		internal uint   lfWeight;
+		internal byte   lfItalic;
+		internal byte   lfUnderline;
+		internal byte   lfStrikeOut;
+		internal byte   lfCharSet;
+		internal byte   lfOutPrecision;
+		internal byte   lfClipPrecision;
+		internal byte   lfQuality;
+		internal byte   lfPitchAndFamily;
+		[MarshalAs(UnmanagedType.ByValTStr, SizeConst=32)]
+		internal string lfFaceName;
+	}  
+	
+	[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Unicode)]
 	internal struct GdipImageCodecInfo	/*Size 76 bytes*/
 	{
     		internal Guid Clsid;    		

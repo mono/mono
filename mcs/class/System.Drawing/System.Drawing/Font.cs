@@ -46,7 +46,7 @@ namespace System.Drawing
 	public sealed class Font : MarshalByRefObject, ISerializable, ICloneable, IDisposable
 	{
 		private IntPtr	fontObject = IntPtr.Zero;
-		private string systemFontName;
+		private string  systemFontName;
 
 		private void CreateFont(string familyName, float emSize, FontStyle style, GraphicsUnit unit, byte charSet, bool isVertical) {
                         Status		status;                  
@@ -202,12 +202,10 @@ namespace System.Drawing
 			}
 
 			if ((int) osInfo.Platform == 128 || (int) osInfo.Platform == 4) {
-			// If we're on Unix we use our private gdiplus API to avoid Wine 
-			// dependencies in S.D
-
+				// If we're on Unix we use our private gdiplus API to avoid Wine 
+				// dependencies in S.D
 				Status s = GDIPlus.GdipCreateFontFromHfont (Hfont, out newObject, ref lf);
 				GDIPlus.CheckStatus (s);
-				
 			} else {
 
 				// This needs testing
@@ -221,7 +219,7 @@ namespace System.Drawing
 				GDIPlus.ReleaseDC (hdc);
 				return f;				
 			}
-
+			
 			if (lf.lfItalic != 0) {
 				newStyle |= FontStyle.Italic;
 			}
@@ -370,6 +368,7 @@ namespace System.Drawing
 					fontObject = value;
 			}
 		}
+
 #if NET_2_0
 		internal string SysFontName {
 			set {
@@ -377,6 +376,7 @@ namespace System.Drawing
 			}
 		}
 #endif
+
 		private bool _bold;
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
@@ -427,7 +427,7 @@ namespace System.Drawing
 				if (systemFontName == null)
 					return false;
 
-				return StringComparer.InvariantCulture.Compare (systemFontName, string.Empty) != 0;				
+				return StringComparer.InvariantCulture.Compare (systemFontName, string.Empty) != 0;
 			}
 		}
 #endif
@@ -553,28 +553,96 @@ namespace System.Drawing
 			return GetHeight (Graphics.systemDpiY);
 		}
 
-		[MonoTODO]
 		public static Font FromLogFont (object lf)
 		{
-			throw new NotImplementedException ();
+			if ((int) Environment.OSVersion.Platform == 128 || (int) Environment.OSVersion.Platform == 4) {
+				return FromLogFont(lf, IntPtr.Zero);
+			} else {
+				IntPtr	hDC;
+
+				hDC = IntPtr.Zero;
+
+				try {
+					hDC = GDIPlus.GetDC(IntPtr.Zero);
+					return FromLogFont (lf, hDC);
+				}
+
+				finally {
+					GDIPlus.ReleaseDC(hDC);
+				}
+			}
+
 		}
 
 		public void ToLogFont (object logFont)
 		{
-			using (Graphics g = Graphics.FromHdc (GDIPlus.GetDC (IntPtr.Zero))) {
-				ToLogFont (logFont, g);
+			Graphics g;
+
+			g = null;
+
+			if ((int) Environment.OSVersion.Platform == 128 || (int) Environment.OSVersion.Platform == 4) {
+				// Unix
+				Bitmap	img;
+
+				img = null;
+
+				try {
+					// We don't have a window we could associate the DC with
+					// so we use an image instead
+					img = new Bitmap(1, 1, Imaging.PixelFormat.Format32bppArgb);
+					g = Graphics.FromImage(img);
+					ToLogFont(logFont, g);
+				}
+
+				finally {
+					if (g != null) {
+						g.Dispose();
+					}
+
+					if (img != null) {
+						img.Dispose();
+					}
+				}
+			} else {
+				// Windows
+				IntPtr	hDC;
+
+				hDC = IntPtr.Zero;
+
+				try {
+
+					hDC = GDIPlus.GetDC(IntPtr.Zero);
+					g = Graphics.FromHdc(hDC);
+
+					ToLogFont (logFont, g);
+				}
+
+				finally {
+					if (g != null) {
+						g.Dispose();
+					}
+
+					GDIPlus.ReleaseDC(hDC);
+				}
 			}
 		}
 
 		public void ToLogFont (object logFont, Graphics graphics)
 		{
+			IntPtr lf;
+
 			if (graphics == null) {
 				throw new ArgumentNullException ("graphics");
 			}
 
-			// TODO: Does it make a sense to deal with LOGFONTW ?
-			LOGFONTA o = (LOGFONTA)logFont;
-			GDIPlus.CheckStatus (GDIPlus.GdipGetLogFontA(NativeObject, graphics.NativeObject, ref o));
+			lf = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(LOGFONTW)));
+			if (lf == IntPtr.Zero) {
+				throw new OutOfMemoryException("Could not allocate logfont structure memory");
+			}
+			GDIPlus.CheckStatus (GDIPlus.GdipGetLogFontW(NativeObject, graphics.NativeObject, lf));
+
+			Marshal.PtrToStructure(lf, logFont);
+			Marshal.FreeHGlobal(lf);
 		}
 
 		public float GetHeight (Graphics graphics)
