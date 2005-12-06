@@ -1,5 +1,6 @@
-2005-12-06  Sebastien Pouliot  <sebastien@ximian.com>
-
+2005-12-06  Sebastien Pouliot  <sebastien@ximian.com> 
+ 
+	* ConvertTest.cs: Added test case for bug #76876 (new lines in b64).
 	* NumberFormatterTest.cs: Moved back "NotWorking" tests into their 
 	normal test case (Test13024). Added more tests for carry propagation.
 

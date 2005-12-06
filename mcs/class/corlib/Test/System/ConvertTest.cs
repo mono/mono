@@ -2824,7 +2824,15 @@ namespace MonoTests.System {
 				AssertEquals("#T08", typeof(ArgumentOutOfRangeException), e.GetType());
 			}		
 		}
-
+#if NET_2_0
+		[Test]
+		public void ToBase64String_Bug76876 ()
+		{
+			byte[] bs = Convert.FromBase64String ("ZuBZ7PESb3VRXgrl/KSRJd/hTGBvaEvEplqH3izPomDv5nBjS9MzcD1h8tOWzS7/wYGnaip8\nbhBfCrpWxivi8G7R08oBcADIiclpZeqRxai9kG4WoBUzJ6MCbxuvb1k757q+D9nqoL0p9Rer\n+5+vNodYkHYwqnKKyMBSQ11sspw=\n");
+			string s = Convert.ToBase64String (bs, Base64FormattingOptions.None);
+			Assert ("no new line", !s.Contains ("\n"));
+		}
+#endif
 		/* Have experienced some problems with FromBase64CharArray using mono. Something 
 		 * about error in a unicode file.
 		 *
