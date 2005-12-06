@@ -598,6 +598,23 @@ namespace System.Windows.Forms {
 			HS_CROSS            		= 4,
 			HS_DIAGCROSS        		= 5
 		}
+
+		[Flags]
+		internal enum SndFlags : int {
+			SND_SYNC			= 0x0000,
+			SND_ASYNC			= 0x0001,
+			SND_NODEFAULT			= 0x0002,
+			SND_MEMORY			= 0x0004,
+			SND_LOOP			= 0x0008,
+			SND_NOSTOP			= 0x0010,
+			SND_NOWAIT     			= 0x00002000,
+			SND_ALIAS			= 0x00010000,
+			SND_ALIAS_ID			= 0x00110000,
+			SND_FILENAME			= 0x00020000,
+			SND_RESOURCE			= 0x00040004,
+			SND_PURGE			= 0x0040,
+			SND_APPLICATION			= 0x0080,
+		}
 		#endregion
 
 		#region Constructor & Destructor
@@ -979,6 +996,10 @@ namespace System.Windows.Forms {
 
 		internal override void Exit() {
 			Win32PostQuitMessage(0);
+		}
+
+		internal override void AudibleAlert() {
+			Win32PlaySound("Default", IntPtr.Zero, SndFlags.SND_ALIAS | SndFlags.SND_ASYNC | SndFlags.SND_NOSTOP | SndFlags.SND_NOWAIT);
 		}
 
 		internal override void GetDisplaySize(out Size size) {
@@ -2399,6 +2420,9 @@ namespace System.Windows.Forms {
 
 		[DllImport ("gdi32.dll", EntryPoint="CreateHatchBrush", CallingConvention=CallingConvention.StdCall)]
 		internal extern static IntPtr Win32CreateHatchBrush(HatchStyle fnStyle, ref COLORREF color);
+
+		[DllImport ("winmm.dll", EntryPoint="PlaySoundW", CallingConvention=CallingConvention.StdCall, CharSet=CharSet.Unicode)]
+		internal extern static IntPtr Win32PlaySound(string pszSound, IntPtr hmod, SndFlags fdwSound);
 		#endregion
 	}
 }

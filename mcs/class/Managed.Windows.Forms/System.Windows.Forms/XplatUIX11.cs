@@ -1577,6 +1577,12 @@ namespace System.Windows.Forms {
 			return;
 		}
 
+		internal override void AudibleAlert() {
+			// FIXME - figure out how to play a sound
+			return;
+		}
+
+
 		internal override void CaretVisible(IntPtr handle, bool visible) {
 			// Visible is cumulative; two hides require two shows before the caret is visible again
 			if (Caret.Hwnd == handle) {

@@ -1,3 +1,10 @@
+2005-12-06  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* XplatUI.cs, XplatUIDriver.cs, XplatUIX11.cs, XplatUIWin32.cs,
+	  XplatUIOSX.cs: Added AudibleAlert() method to have a means to
+	  alert users via sound. We could add an enum arg with different
+	  types of alerts in the future
+
 2005-12-06  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* Control.cs: Fix behaviour problems pointed out by Mike

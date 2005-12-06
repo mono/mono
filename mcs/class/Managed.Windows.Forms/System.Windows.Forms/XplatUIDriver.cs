@@ -105,6 +105,7 @@ namespace System.Windows.Forms {
                 internal abstract event EventHandler Idle;
 
 		#region XplatUI Driver Methods
+		internal abstract void AudibleAlert();
 		internal abstract void Exit();
 
 		internal abstract void EnableThemes();

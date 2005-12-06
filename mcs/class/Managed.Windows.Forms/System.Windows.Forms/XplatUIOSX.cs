@@ -765,7 +765,11 @@ namespace System.Windows.Forms {
 		internal override void Activate(IntPtr handle) {
 			ActivateWindow (GetControlOwner (handle), true);
 		}
-		
+
+		internal override void AudibleAlert() {
+			throw new NotImplementedException();
+		}
+
 		internal override void CaretVisible (IntPtr hwnd, bool visible) {
 			if (Caret.Hwnd == hwnd) {
 				if (visible) {

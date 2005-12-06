@@ -67,7 +67,7 @@ namespace System.Windows.Forms {
 
 		#region Constructor & Destructor
 		static XplatUI() {
-			Console.WriteLine("Mono System.Windows.Forms Assembly [Revision: 52467; built: 2005/11/3 12:50:32]");
+			Console.WriteLine("Mono System.Windows.Forms Assembly [Revision: 54007; built: 2005/12/6 14:35:24]");
 
 			// Don't forget to throw the mac in here somewhere, too
 			default_class_name="SWFClass";
@@ -235,6 +235,13 @@ namespace System.Windows.Forms {
 				Console.WriteLine("Activate({0:X}): Called", handle.ToInt32());
 			#endif
 			driver.Activate(handle);
+		}
+
+		internal static void AudibleAlert() {
+			#if DriverDebug
+				Console.WriteLine("AudibleAlert(): Called");
+			#endif
+			driver.AudibleAlert();
 		}
 
 		internal static bool CalculateWindowRect(IntPtr handle, ref Rectangle ClientRect, int Style, int ExStyle, Menu menu, out Rectangle WindowRect) {
