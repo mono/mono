@@ -200,7 +200,7 @@ namespace System.Resources
 						object v = null;
 						string val = get_value (reader, "value");
 
-						if (mt != null && tt != null && mt != ResXResourceWriter.ByteArraySerializedObjectMimeType) {
+						if (mt != null && tt != null) {
 							TypeConverter c = TypeDescriptor.GetConverter (tt);
 							v = c.ConvertFrom (Convert.FromBase64String (val));
 						} else if (tt != null) {

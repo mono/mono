@@ -1,3 +1,9 @@
+2005-12-05  Peter Bartok  <pbartok@novell.com>
+
+	* ResXResourceReader.cs: Removed previous patch. More than just Byte[]
+	  has that mime type and the patch was causing things to fail.
+	  Since our writer no longer emits the mimetype this should be fine.
+
 2005-12-01  Robert Jordan  <robertj@gmx.net>
 
 	* ResXResourceReader.cs: Handle mimetype="application/x-microsoft.net.object.bytearray.base64" correctly. Fixes the decoding of System.Byte[].
