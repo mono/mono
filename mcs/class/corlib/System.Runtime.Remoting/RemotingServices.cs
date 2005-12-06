@@ -525,10 +525,37 @@ namespace System.Runtime.Remoting
 	
 		internal static Identity GetIdentityForUri (string uri)
 		{
+			string normUri = GetNormalizedUri (uri);
 			lock (uri_hash)
 			{
-				return (Identity)uri_hash [GetNormalizedUri(uri)];
+				Identity i = (Identity) uri_hash [normUri];
+
+				if (i == null) {
+					normUri = RemoveAppNameFromUri (uri);
+					if (normUri != null)
+						i = (Identity) uri_hash [normUri];
+				}
+
+				return i;
 			}
+		}
+
+		//
+		// If the specified uri starts with the application name,
+		// RemoveAppNameFromUri returns the uri w/out the leading
+		// application name, otherwise it returns null.
+		//
+		// Assumes that the uri is not normalized.
+		//
+		static string RemoveAppNameFromUri (string uri)
+		{
+			string name = RemotingConfiguration.ApplicationName;
+			if (name == null) return null;
+			name = "/" + name + "/";
+			if (uri.StartsWith (name))
+				return uri.Substring (name.Length);
+			else
+				return null;
 		}
 
 		internal static Identity GetObjectIdentity (MarshalByRefObject obj)
