@@ -318,8 +318,8 @@ namespace System.Web.Compilation
 				FlushText ();
 
 			if (0 == String.Compare (tagid, "script", true)) {
-				if (tagtype != TagType.Close && attributes != null) {
-					if (attributes.IsRunAtServer () && ProcessScript (tagtype, attributes))
+				if (inScript || (tagtype != TagType.Close && attributes != null)) {
+					if ((inScript || attributes.IsRunAtServer ()) && ProcessScript (tagtype, attributes))
 						return;
 				}
 			}

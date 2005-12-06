@@ -1,5 +1,9 @@
 2005-12-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* AspGenerator.cs: fix yesterday's fix.
+
+2005-12-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* AspGenerator.cs: only do special processing for <script> if it has
 	the runat="server" attribute. Fixes bug #76918.
 
