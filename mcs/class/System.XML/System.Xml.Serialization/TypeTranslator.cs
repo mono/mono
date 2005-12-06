@@ -42,6 +42,27 @@ namespace System.Xml.Serialization
 		static Hashtable nameCache;
 		static Hashtable primitiveTypes;
 
+#if TARGET_JVM
+		const string AppDomainCacheName = "System.Xml.Serialization.TypeTranslator.AppDomainCache";
+		static Hashtable AppDomainCache {
+			get {
+				Hashtable res = (Hashtable)AppDomain.CurrentDomain.GetData(AppDomainCacheName);
+
+				if(res == null) {
+					lock(AppDomainCacheName) {
+						res = (Hashtable)AppDomain.CurrentDomain.GetData(AppDomainCacheName);
+						if (res == null) {
+							res = new Hashtable();
+							AppDomain.CurrentDomain.SetData(AppDomainCacheName, res);
+						}
+					}
+				}
+
+				return res;
+			}
+		}
+#endif
+
 		static TypeTranslator ()
 		{
 			nameCache = new Hashtable ();
@@ -120,6 +141,12 @@ namespace System.Xml.Serialization
 
 			TypeData typeData = nameCache[type] as TypeData;
 			if (typeData != null) return typeData;
+
+#if TARGET_JVM
+			Hashtable dynamicCache = AppDomainCache;
+			typeData = dynamicCache[type] as TypeData;
+			if (typeData != null) return typeData;
+#endif
 			
 			string name;
 			if (type.IsArray) {
@@ -130,7 +157,11 @@ namespace System.Xml.Serialization
 				name = XmlConvert.EncodeLocalName (type.Name);
 
 			typeData = new TypeData (type, name, false);
+#if TARGET_JVM
+			dynamicCache[type] = typeData;
+#else
 			nameCache[type] = typeData;
+#endif
 			return typeData;
 		}
 
