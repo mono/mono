@@ -1,3 +1,8 @@
+2005-12-06  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile.am (test_sources2): Add generics.2.cs.
+	(EXTRA_DIST): Add test_sources2.
+
 2005-12-05  Ben Maurer  <bmaurer@ximian.com>
 
 	Support for boxing and unboxing nullable types as well as the
