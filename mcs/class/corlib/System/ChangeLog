@@ -1,3 +1,9 @@
+2005-12-05  Ben Maurer  <bmaurer@ximian.com>
+
+	* Environment.cs: Bump version
+
+	* Nullable.cs: New Box and Unbox methods for the jit
+
 2004-12-05  Peter Dennis Bartok <pbartok@novell.com>
 
 	* Enum.cs: Properly handle "No bits set" case even if the sorted numbers

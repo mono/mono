@@ -222,6 +222,24 @@ namespace System {
 		{
 			return !left.Equals (right);
 		}
+
+
+		// These are called by the JIT
+		// Ironicly, the C#  code is the same for these two,
+		// however, on the inside they do somewhat different things
+		static object Box (T? o)
+		{
+			if (o == null)
+				return null;
+			return (T) o;
+		}
+		
+		static T? Unbox (object o)
+		{
+			if (o == null)
+				return null;
+			return (T) o;
+		}
 	}
 }
 #endif
