@@ -1,3 +1,7 @@
+2005-12-02  Robert Jordan  <robertj@gmx.net>
+
+	* RemotingServicesTest.cs: Added test for bug #76809.
+
 2005-12-01  Robert Jordan  <robertj@gmx.net>
 
 	* IpcCalls.cs: Made the IPC channel names unique to match the

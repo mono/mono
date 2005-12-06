@@ -551,6 +551,41 @@ namespace MonoTests.Remoting
 				ChannelServices.UnregisterChannel(chn);
 			}
 		}
+
+		[Test]
+		public void ApplicationNameTest ()
+		{
+			RemotingConfiguration.ApplicationName = "app";
+			TcpChannel chn = null;
+			try
+			{
+				chn = new TcpChannel(1246);
+				ChannelServices.RegisterChannel(chn);
+				
+				RemotingConfiguration.RegisterWellKnownServiceType(typeof(MarshalObject), "obj3.rem", WellKnownObjectMode.Singleton);
+				
+				MarshalObject objRem = (MarshalObject) Activator.GetObject(typeof(MarshalObject), "tcp://localhost:1246/app/obj3.rem");
+				MarshalObject objRem2 = (MarshalObject) Activator.GetObject(typeof(MarshalObject), "tcp://localhost:1246/obj3.rem");
+				
+				Assert ("#AN1", RemotingServices.IsTransparentProxy(objRem));
+				Assert ("#AN2", RemotingServices.IsTransparentProxy(objRem2));
+
+				AssertNotNull ("#AN3", RemotingServices.GetServerTypeForUri ("obj3.rem"));
+				AssertNotNull ("#AN4", RemotingServices.GetServerTypeForUri ("/app/obj3.rem"));
+				AssertNull ("#AN5", RemotingServices.GetServerTypeForUri ("//app/obj3.rem"));
+				AssertNull ("#AN6", RemotingServices.GetServerTypeForUri ("app/obj3.rem"));
+				AssertNull ("#AN7", RemotingServices.GetServerTypeForUri ("/whatever/obj3.rem"));
+				AssertNotNull ("#AN8", RemotingServices.GetServerTypeForUri ("/obj3.rem"));
+				AssertNull ("#AN9", RemotingServices.GetServerTypeForUri ("//obj3.rem"));
+			}
+			finally
+			{
+				try {
+					ChannelServices.UnregisterChannel(chn);
+				} catch {
+				}
+			}
+		}
 		
 		[Test]
 		public void ConnectProxyCast ()
@@ -582,6 +617,10 @@ namespace MonoTests.Remoting
 			Assert ("#c3", o is B);
 			Assert ("#c4", o is CC);
 		}
+
+		// Don't add any tests that must create channels
+		// after ConnectProxyCast (), because this test calls
+		// RemotingConfiguration.Configure ().
 		
 	} // end class RemotingServicesTest
 } // end of namespace MonoTests.Remoting
