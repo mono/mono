@@ -1,5 +1,9 @@
 2005-12-06  Atsushi Enomoto  <atsushi@ximian.com>
 
+	Now I can rename new CP936_2.cs file to CP936.cs without svn diff mess.
+
+2005-12-06  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DbcsConvert.cs : added static Gb2312 field for common use.
 	* dbcs-table-generator.cs :
 	  Added shortcut options for BIG5 and GB2312. Compressed data a bit.

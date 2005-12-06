@@ -4,7 +4,7 @@ Big5Convert.cs
 CP932.cs
 ISO2022JP.cs
 CP51932.cs
-CP936_2.cs
+CP936.cs
 CP949.cs
 CP950.cs
 CodeTable.cs
