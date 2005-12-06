@@ -82,6 +82,26 @@ namespace MonoTests.System.Web.Configuration {
 			Assert.AreEqual (AuthorizationRuleAction.Deny, col[0].Action, "A3");
 			Assert.AreEqual (AuthorizationRuleAction.Allow, col[1].Action, "A4");
 		}
+
+		[Test]
+		public void GetElementKey ()
+		{
+			MethodInfo minfo = typeof (AuthorizationRuleCollection).GetMethod ("GetElementKey", BindingFlags.Instance | BindingFlags.NonPublic);
+			AuthorizationRuleCollection col = new AuthorizationRuleCollection ();
+
+			AuthorizationRule rule = new AuthorizationRule (AuthorizationRuleAction.Deny);
+
+			rule.Users.Add ("toshok");
+			rule.Verbs.Add ("GET");
+
+			col.Add (rule);
+
+			object[] args = new object[1];
+			args[0] = rule;
+			string key = (string)minfo.Invoke (col, args);
+
+			Assert.AreEqual ("Deny", key, "A1");
+		}
 	}
 
 }

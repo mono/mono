@@ -179,9 +179,8 @@ namespace MonoTests.System.Web.Configuration {
 			rule.Roles.Add ("wheel");
 			rule.Verbs.Add ("GET");
 			rule.Verbs.Add ("PUT");
-			bool b = (bool)mi.Invoke (rule, parms);
 
-			Assert.IsTrue (b, "A4");
+			mi.Invoke (rule, parms);
 		}
 
 	}

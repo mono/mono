@@ -1,3 +1,10 @@
+2005-12-06  Chris Toshok  <toshok@ximian.com>
+
+	* AuthorizationRuleCollectionTest.cs (GetElementKey): new test.
+
+	* AuthorizationRuleTest.cs (PostDeserialize): PostDeserialize
+	doesn't return a value.
+
 2005-12-05  Chris Toshok  <toshok@ximian.com>
 
 	* ClientTargetTest.cs: new tests.
