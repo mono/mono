@@ -1,3 +1,10 @@
+2005-12-05  Mike Kestner  <mkestner@novell.com>
+
+	* StatusBarPanel.cs: add Invalidate method and hook it into all the
+	prop setters.  Calls parent.Refresh for now, but could be maybe be
+	optimized with an internal method on StatusBar at some point.
+	[Fixes #76513]
+
 2005-12-05  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* RichTextBox.cs: Implemented get_SelectionColor

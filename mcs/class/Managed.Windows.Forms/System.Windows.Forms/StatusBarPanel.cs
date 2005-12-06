@@ -61,27 +61,39 @@ namespace System.Windows.Forms {
 		[Localizable(true)]
 		public HorizontalAlignment Alignment {
 			get { return alignment; }
-			set { alignment = value; }
+			set { 
+				alignment = value; 
+				Invalidate ();
+			}
 		}
 
 		[DefaultValue(StatusBarPanelAutoSize.None)]
 		public StatusBarPanelAutoSize AutoSize {
 			get { return auto_size; }
-			set { auto_size = value; }
+			set { 
+				auto_size = value; 
+				Invalidate ();
+			}
 		}
 
 		[DefaultValue(StatusBarPanelBorderStyle.Sunken)]
 		[DispId(-504)]
 		public StatusBarPanelBorderStyle BorderStyle {
 			get { return border_style; }
-			set { border_style = value; }
+			set { 
+				border_style = value; 
+				Invalidate ();
+			}
 		}
 
 		[DefaultValue(null)]
 		[Localizable(true)]
 		public Icon Icon {
 			get { return icon; }
-			set { icon = value; }
+			set { 
+				icon = value; 
+				Invalidate ();
+			}
 		}
 
 		[DefaultValue(10)]
@@ -97,6 +109,7 @@ namespace System.Windows.Forms {
 				if (value < 0)
 					throw new ArgumentException ("value");
 				min_width = value;
+				Invalidate ();
 			}
 		}
 		
@@ -112,20 +125,28 @@ namespace System.Windows.Forms {
 					twidth = value;
 				else
 					width = value;
+			
+				Invalidate ();
 			}
 		}
 		
 		[DefaultValue(StatusBarPanelStyle.Text)]
 		public StatusBarPanelStyle Style {
 			get { return style; }
-			set { style = value; }
+			set { 
+				style = value; 
+				Invalidate ();
+			}
 		}
 
 		[DefaultValue("")]
 		[Localizable(true)]
 		public string Text {
 			get { return text; }
-			set { text = value; }
+			set { 
+				text = value; 
+				Invalidate ();
+			}
 		}
 
 		[DefaultValue("")]
@@ -138,6 +159,14 @@ namespace System.Windows.Forms {
 		[Browsable(false)]
 		public StatusBar Parent {
 			get { return parent; }
+		}
+
+		void Invalidate ()
+		{
+			if (parent == null)
+				return;
+
+			parent.Refresh ();
 		}
 
 		internal void SetParent (StatusBar parent)
