@@ -61,7 +61,6 @@ namespace MonoTests.System.Threading {
 		}
 
 		[Test]
-		[Category ("NotWorking")] // not implemented in Mono
 		public void Constructor_IntInt ()
 		{
 			new Semaphore (1, 2);
@@ -89,7 +88,6 @@ namespace MonoTests.System.Threading {
 		}
 
 		[Test]
-		[Category ("NotWorking")] // not implemented in Mono
 		public void Constructor_IntIntString_NullName ()
 		{
 			new Semaphore (0, 1, null);
@@ -132,7 +130,6 @@ namespace MonoTests.System.Threading {
 		}
 
 		[Test]
-		[Category ("NotWorking")] // not implemented in Mono
 		public void Constructor_IntIntStringBool_NullName ()
 		{
 			bool created = false;
@@ -177,7 +174,6 @@ namespace MonoTests.System.Threading {
 		}
 
 		[Test]
-		[Category ("NotWorking")] // not implemented in Mono
 		public void Constructor_IntIntStringBoolSecurity_NullName ()
 		{
 			bool created = false;
@@ -186,7 +182,6 @@ namespace MonoTests.System.Threading {
 		}
 
 		[Test]
-		[Category ("NotWorking")] // not implemented in Mono
 		public void Constructor_IntIntStringBoolSecurity ()
 		{
 			bool created = false;
@@ -256,7 +251,6 @@ namespace MonoTests.System.Threading {
 		}
 
 		[Test]
-		[Category ("NotWorking")] // not implemented in Mono
 		public void Release ()
 		{
 			Semaphore s = new Semaphore (0, 1, null);
@@ -265,7 +259,6 @@ namespace MonoTests.System.Threading {
 
 		[Test]
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
-		[Category ("NotWorking")] // not implemented in Mono
 		public void Release_Zero ()
 		{
 			Semaphore s = new Semaphore (0, 1, null);

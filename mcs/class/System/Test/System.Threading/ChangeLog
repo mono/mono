@@ -1,3 +1,7 @@
+2005-12-06  Dick Porter  <dick@ximian.com>
+
+	* SemaphoreTest.cs: Enable the tests
+
 2005-11-17  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SemaphoreCas.cs: New. CAS tests for Semaphore (2.0).
