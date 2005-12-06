@@ -48,7 +48,7 @@ namespace System.Web.Configuration
 
 		public void Add (AssemblyInfo info)
 		{
-			BaseAdd (info);
+			BaseAdd (info, false);
 		}
 		
 		public void Clear ()

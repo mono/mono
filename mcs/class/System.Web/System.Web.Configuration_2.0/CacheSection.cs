@@ -53,7 +53,7 @@ namespace System.Web.Configuration {
 											  TypeDescriptor.GetConverter (typeof (int)),
 											  PropertyHelper.IntFromZeroToMaxValidator,
 											  ConfigurationPropertyOptions.None);
-			privateBytesLimitProp = new ConfigurationProperty("privateBytesLimit", typeof (long), 0,
+			privateBytesLimitProp = new ConfigurationProperty("privateBytesLimit", typeof (long), 0L,
 									  TypeDescriptor.GetConverter (typeof (long)),
 									  new LongValidator (0, Int64.MaxValue),
 									  ConfigurationPropertyOptions.None);

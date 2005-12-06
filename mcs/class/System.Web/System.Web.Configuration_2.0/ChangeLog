@@ -1,3 +1,31 @@
+2005-12-06  Chris Toshok  <toshok@ximian.com>
+
+	* CodeSubDirectory.cs (DirectoryName): don't use an private field,
+	but base[directoyNameProp].
+
+	* AuthorizationRuleCollection.cs (Add): use BaseAdd (rule, false),
+	so we can insert duplicates.
+	(GetKey): nuke.
+	(GetElementKey): MS for some reason just uses the action for the
+	key, ToString()'ed.
+	(Remove): pass the correct key.
+
+	* ProfileGroupSettings.cs (GetHashCode): implement.
+
+	* GlobalizationSection.cs (GetEncoding): for the utf-8 case, just
+	use Encoding.UTF8.
+
+	* AssemblyCollection.cs (Add): use BaseAdd (info, false) so we can
+	insert duplicates.
+
+	* CacheSection.cs (.cctor): make privateByteLimit's default 0L so
+	we don't get a invalid cast exception later on.
+
+	* AuthorizationRule.cs (VerifyData): split out the verification
+	foo from PreSerialize.
+	(PostDeserialize): so we can call it from here.
+	(PreSerialize): and here.
+
 2005-12-05  Chris Toshok  <toshok@ximian.com>
 
 	* AuthorizationRuleCollection.cs (GetKey): split out the logic for

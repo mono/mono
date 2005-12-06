@@ -73,10 +73,9 @@ namespace System.Web.Configuration
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public override int GetHashCode ()
 		{
-			throw new NotImplementedException ();
+			return Name.GetHashCode ();
 		}
 
 		[ConfigurationProperty ("name", Options = ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey)]

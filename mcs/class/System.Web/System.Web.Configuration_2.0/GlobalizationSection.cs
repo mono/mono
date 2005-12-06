@@ -241,7 +241,7 @@ namespace System.Web.Configuration {
 					case "unicode-2-0-utf-8":
 					case "x-unicode-1-1-utf-8":
 					case "x-unicode-2-0-utf-8":
-						encoding = new UTF8Encoding (false, false);
+						encoding = Encoding.UTF8;
 						break;
 					default:
 						encoding = Encoding.GetEncoding (cached_encoding_name);

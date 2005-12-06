@@ -38,7 +38,6 @@ namespace System.Web.Configuration
 	{
 		static ConfigurationProperty directoryNameProp;
 		static ConfigurationPropertyCollection properties;
-		string directoryName;
 
 		static CodeSubDirectory ()
 		{
@@ -53,15 +52,15 @@ namespace System.Web.Configuration
 
 		public CodeSubDirectory (string directoryName)
 		{
-			this.directoryName = directoryName;
+			this.DirectoryName = directoryName;
 		}
 
 		[TypeConverter (typeof (WhiteSpaceTrimStringConverter))]
 		[ConfigurationProperty ("directoryName", DefaultValue = "", Options = ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey)]
 		// LAMESPEC: MS lists no validator here but provides one in Properties.
 		public string DirectoryName {
-			get { return directoryName; }
-			set { directoryName = value; }
+			get { return (string) base[directoryNameProp]; }
+			set { base[directoryNameProp] = value; }
 		}
 
 		protected override ConfigurationPropertyCollection Properties {

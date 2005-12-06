@@ -130,18 +130,24 @@ namespace System.Web.Configuration {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		void VerifyData ()
+		{
+			if (Roles.Count == 0 && Users.Count == 0)
+				throw new ConfigurationErrorsException ("You must supply either a list of users or roles when creating an AuthorizationRule");
+		}
+
 		protected override void PostDeserialize ()
 		{
 			base.PostDeserialize();
+
+			VerifyData ();
 		}
 
 		protected override void PreSerialize (XmlWriter writer)
 		{
 			base.PreSerialize (writer);
 
-			if (Roles.Count == 0 && Users.Count == 0)
-				throw new ConfigurationErrorsException ("You must supply either a list of users or roles when creating an AuthorizationRule");
+			VerifyData ();
 		}
 
 		[MonoTODO]

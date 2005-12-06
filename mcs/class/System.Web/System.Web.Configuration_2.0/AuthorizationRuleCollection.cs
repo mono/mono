@@ -47,7 +47,7 @@ namespace System.Web.Configuration {
 
 		public void Add (AuthorizationRule rule)
 		{
-			BaseAdd (rule);
+			BaseAdd (rule, false);
 		}
 
 		public void Clear ()
@@ -70,17 +70,11 @@ namespace System.Web.Configuration {
 			return (AuthorizationRule) BaseGet (index);
 		}
 
-		string GetKey (AuthorizationRule rule)
-		{
-			return String.Format ("{0}-{1}-{2}-{3}", rule.Action, rule.Roles, rule.Users, rule.Verbs);
-		}
-
-		[MonoTODO ("this should work, right?")]
 		protected override object GetElementKey (ConfigurationElement element)
 		{
 			AuthorizationRule rule = (AuthorizationRule)element;
 
-			return GetKey (rule);
+			return rule.Action.ToString();
 		}
 
 		public int IndexOf (AuthorizationRule rule)
@@ -95,7 +89,7 @@ namespace System.Web.Configuration {
 
 		public void Remove (AuthorizationRule rule)
 		{
-			BaseRemove (GetKey (rule));
+			BaseRemove (rule.Action.ToString());
 		}
 
 		public void RemoveAt (int index)
