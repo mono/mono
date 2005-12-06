@@ -1,3 +1,13 @@
+2005-12-06  Chris Toshok  <toshok@ximian.com>
+
+	* System.Configuration/ConnectionStringSettingsTest.cs (NameNull):
+	use IsNull, not AreEqual.
+
+2005-12-04  Chris Toshok  <toshok@ximian.com>
+
+	* System.Configuration/ConnectionStringSettingsTest.cs (NameNull):
+	fix test.
+
 2005-12-02  Chris Toshok  <toshok@ximian.com>
 
 	* System.Configuration/ConnectionStringSettingsTest.cs: new tests.

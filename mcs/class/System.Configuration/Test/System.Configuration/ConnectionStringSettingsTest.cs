@@ -67,7 +67,7 @@ namespace MonoTests.System.Configuration {
 			s = new ConnectionStringSettings ("name", "connectionString", "provider");
 			Assert.AreEqual ("name", s.Name, "A1");
 			s.Name = null;
-			Assert.AreEqual (null, s.Name, "A2");
+			Assert.IsNull (s.Name, "A2");
 		}
 
 		[Test]
