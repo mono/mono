@@ -220,6 +220,16 @@ namespace MonoTests.System.Web {
 			Assert.AreEqual ("val&ue", cookie["name"], "name getter");
 			Assert.AreEqual ("name=val&ue", cookie.Value, "Value getter");
 		}
+
+		[Test]
+		public void SetSecure ()
+		{
+			HttpCookie cookie = new HttpCookie ("cookie", "hola");
+			cookie.Secure = true;
+			Assert.IsTrue (cookie.Secure, "#01");
+			cookie.Secure = false;
+			Assert.IsFalse (cookie.Secure, "#02");
+		}
 	}
 }
 
