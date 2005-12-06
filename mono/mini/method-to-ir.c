@@ -75,8 +75,8 @@
 
 #define NOT_IMPLEMENTED g_assert_not_reached ()
 
-int ldind_to_load_membase (int opcode);
-int stind_to_store_membase (int opcode);
+static int ldind_to_load_membase (int opcode);
+static int stind_to_store_membase (int opcode);
 static int alu_to_alu_imm (int opcode);
 
 gboolean  mono_arch_print_tree(MonoInst *tree, int arity);
@@ -3517,6 +3517,7 @@ decompose_opcode (MonoCompile *cfg, MonoInst *ins)
 		break;
 	case OP_LCONV_TO_I8:
 	case OP_ICONV_TO_U8:
+	case OP_LCONV_TO_I:
 		ins->opcode = OP_MOVE;
 		break;
 	case OP_ICONV_TO_I8:
