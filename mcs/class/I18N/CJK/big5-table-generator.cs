@@ -1,17 +1,15 @@
 //
-// big5-table-generator.cs : generates big5.table
+// dbcs-table-generator.cs : generates big5.table or gb2312-new.table
 //
 // Author:
 //	Atsushi Enomoto  <atsushi@ximian.com>
 //
 // Copyright (C) 2005 Novell, Inc. http://www.novell.com
 //
-// Usage : mono big5-table-generator.exe CP950.TXT big5.table
-//
-// where CP950.TXT is found at:
+// where CP936.TXT and CP950.TXT is found at:
 // http://ftp.unicode.org/Public/MAPPINGS/VENDORS/MICSFT/WINDOWS/CP950.TXT
 //
-// (don't use BIG5.TXT - it is obsoleted.)
+// (don't use BIG5.TXT - it is obsoleted. GB2312.TXT does not exist anymore.)
 //
 using System;
 using System.Globalization;
@@ -21,14 +19,22 @@ public class DbcsTableGenerator
 {
 	public static void Main (string [] args)
 	{
-		if (args.Length < 2)
+		if (args.Length < 3) {
+			Console.Error.WriteLine (@"
+usage: dbcs-table-generator.exe CPxxx.TXT xxx.table upper_range
+
+upper-range: BIG5 (CP950) = A1, GB2312 (CP936) = 81");
 			return;
+		}
+		byte upper = byte.Parse (args [2], NumberStyles.HexNumber);
+
 		int [] n2u = new int [0x10000];
 		int [] u2n = new int [0x10000];
 
 		StreamReader reader = new StreamReader (args [0]);
 		int native_max = -1;
-		int native_min = int.MaxValue;
+		int native_min = upper << 8 + 0x40;
+
 		int map_count = 0;
 		for (int line = 1; reader.Peek () > 0; line++) {
 			string s = reader.ReadLine ();
@@ -43,9 +49,9 @@ public class DbcsTableGenerator
 			if (s.Length < 2 || s [0] != '0' || s [1] != 'x')
 				throw new ArgumentException ("Unexpected line at " + line + " : " + s);
 			int native = int.Parse (s.Substring (2, idx - 2).Trim (), NumberStyles.HexNumber);
-			if (native < 0xA100)
+			if (native < native_min)
 				continue;
-			int ordinal = ((int) (native / 0x100 - 0xA1)) * 191 +
+			int ordinal = ((int) (native / 0x100 - upper)) * 191 +
 				(native % 0x100 - 0x40);
 
 			s = s.Substring (idx + 1).Trim ();
@@ -62,7 +68,6 @@ public class DbcsTableGenerator
 		native_max = 0x10000;
 
 		native_max = 0x10000;
-		native_min = 0xA140;
 		int native_count = native_max - native_min;
 		WriteInt32 (output, 1);
 		WriteInt32 (output, native_count * 2);
