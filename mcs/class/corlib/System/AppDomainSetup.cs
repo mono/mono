@@ -40,6 +40,9 @@ namespace System
 	[Serializable]
 	[ClassInterface (ClassInterfaceType.None)]
 	[MonoTODO ("Fix serialization compatibility with MS.NET")]
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public sealed class AppDomainSetup : IAppDomainSetup
 	{
 		string application_base;
@@ -90,16 +93,9 @@ namespace System
 			_activationArguments = activationArguments;
 		}
 
-		[MonoTODO ("LAMESPEC")]
 		public AppDomainSetup (ActivationContext activationContext)
 		{
-			if (activationContext == null)
-				throw new ArgumentNullException ("activationContext");
-
-			// _activationArguments = activationContext.ActivationArguments;
-
-			// LAMESPEC: beta2 docs says that the context supplies a 
-			// ActivationArguments object which isn't the case!
+			_activationArguments = new ActivationArguments (activationContext);
 		}
 #endif
 

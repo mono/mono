@@ -1970,20 +1970,23 @@ namespace System
 				if (digits + 1 < _digits.Length && _digits [digits + 1] == 5 && _digits [digits] % 2 == (carryEven ? 0 : 1))
 					carryFive = false;
 
-				for (int i = digits; i >= 0; i--) {
-					RoundHelper (i, carryFive, ref carry);
-					if (!carry)
-						break;
+				/// are we cutting from the maximum precision ?
+				if (_digits.Length == _defMaxPrecision) {
+					// special case if we *aren't* cutting inside the extra precision (e.g. 16 on 17)
+					if (digits != _defMaxPrecision - 1) {
+						// ok, here we look at the *two* extra numbers we're keeping
+						// (we keep 17 digits while the true precision is 15 digits).
+						int extra = _digits[_defMaxPrecision - 2] * 10 + _digits[_defMaxPrecision - 1];
+						carry = (extra >= 50);
+						if (carry) {
+							_digits[_defMaxPrecision - 2] = 0;
+							_digits[_defMaxPrecision - 1] = 0;
+							int d = _digits.Length - 3;
+							CarryPropagation (ref d, carryFive, ref carry);
+						}
+					}
 				}
-
-				if (carry) {
-					byte[] temp = new byte [_digits.Length + 1];
-					_digits.CopyTo (temp, 1);
-					temp [0] = 1;
-					_digits = temp;
-					_decPointPos ++;
-					digits ++;
-				}
+				CarryPropagation (ref digits, carryFive, ref carry);
 
 				for (int i = digits; i < _digits.Length; i++)
 					_digits [i] = 0;
@@ -1991,6 +1994,25 @@ namespace System
 
 				return carry;
 			}
+
+			private void CarryPropagation (ref int digits, bool carryFive, ref bool carry)
+			{
+				for (int i = digits; i >= 0; i--) {
+					RoundHelper (i, carryFive, ref carry);
+					if (!carry)
+						break;
+				}
+
+				if (carry) {
+					byte[] temp = new byte[_digits.Length + 1];
+					_digits.CopyTo (temp, 1);
+					temp[0] = 1;
+					_digits = temp;
+					_decPointPos++;
+					digits++;
+				}
+			}
+
 			#endregion
 
 			#region Trim

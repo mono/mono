@@ -1,3 +1,12 @@
+2005-12-06  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AppDomainSetup.cs: Added missing ComVisible and removed LAMESPEC 
+	(the docs were fixed).
+	* NumberFormatter.cs: Fixed the "NotWorking" case where 1.15 was 
+	misrounded compared to MS implementation. Extra care is required when
+	dealing with the extra 2 digits information (e.g. double precision is
+	15 digits but 17 are kept - for a reason ;-)
+
 2005-12-05  Ben Maurer  <bmaurer@ximian.com>
 
 	* Environment.cs: Bump version
