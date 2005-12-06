@@ -1578,7 +1578,7 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void AudibleAlert() {
-			// FIXME - figure out how to play a sound
+			XBell(DisplayHandle, 0);
 			return;
 		}
 
@@ -4040,6 +4040,9 @@ namespace System.Windows.Forms {
 
 		[DllImport ("libX11", EntryPoint="XSetBackground")]
 		internal extern static int XSetBackground(IntPtr display, IntPtr gc, uint background);
+
+		[DllImport ("libX11", EntryPoint="XBell")]
+		internal extern static int XBell(IntPtr display, int percent);
 		#endregion
 	}
 }

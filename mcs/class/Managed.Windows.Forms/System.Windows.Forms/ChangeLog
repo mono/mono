@@ -1,3 +1,7 @@
+2005-12-06  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* XplatUIX11.cs: Added call to XBell for AudibleAlert
+
 2005-12-06  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* XplatUI.cs, XplatUIDriver.cs, XplatUIX11.cs, XplatUIWin32.cs,
