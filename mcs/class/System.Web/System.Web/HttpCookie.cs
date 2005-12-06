@@ -165,7 +165,10 @@ namespace System.Web {
 				return (flags & CookieFlags.Secure) == CookieFlags.Secure;
 			}
 			set {
-				flags |= CookieFlags.Secure;
+				if (value)
+					flags |= CookieFlags.Secure;
+				else
+					flags &= ~CookieFlags.Secure;
 			}
 		}
 

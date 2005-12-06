@@ -1,3 +1,7 @@
+2005-12-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpCookie.cs: fixed the set_Secure. Closes bug #76906.
+
 2005-11-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpResponseStream.cs: flush the filter stream before closing.
