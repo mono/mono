@@ -3674,15 +3674,15 @@ namespace System.Windows.Forms
 				case Msg.WM_SYSCHAR:
 				case Msg.WM_CHAR: {
 //Console.WriteLine("Got {0}", (Msg)m.Msg);
+					if (PreProcessMessage(ref m)) {
+						return;
+					}
+
 					if (ProcessKeyMessage(ref m)) {
 						return;
 					}
 
 					if (ProcessKeyEventArgs(ref m)) {
-						return;
-					}
-
-					if (PreProcessMessage(ref m)) {
 						return;
 					}
 
