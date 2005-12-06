@@ -68,7 +68,7 @@ namespace I18N.CJK
 
 	class GB18030Decoder : Decoder
 	{
-		Gb2312Convert gb2312 = Gb2312Convert.Convert;
+		static DbcsConvert gb2312 = DbcsConvert.Gb2312;
 		// for now incomplete block is not supported - should we?
 		// int incomplete1 = -1, incomplete2 = -1, incomplete3 = -1;
 
@@ -225,12 +225,14 @@ namespace I18N.CJK
 						byteIndex += 4;
 					}
 				} else {
-					// GB2312 mapping, or invalid.
-					// ('second' is always valid here).
-					int head = bytes [byteIndex];
-					char c = gb2312.BytePairToChar (ref head, second);
+					byte first = bytes [byteIndex];
+					int ord = ((first - 0x81) * 191 + second - 0x40) * 2;
+					char c1 = (char) (gb2312.n2u [ord] + gb2312.n2u [ord + 1] * 256);
+					if (c1 == 0)
+						chars [charIndex++] = '?';
+					else
+						chars [charIndex++] = c1;
 					byteIndex += 2;
-					chars [charIndex++] = c == char.MinValue ? '?' : c;
 				}
 			}
 
@@ -240,12 +242,13 @@ namespace I18N.CJK
 
 	class GB18030Encoder : MonoEncoding.MonoEncoder
 	{
+		static DbcsConvert gb2312 = DbcsConvert.Gb2312;
+
 		public GB18030Encoder (MonoEncoding owner)
 			: base (owner)
 		{
 		}
 
-		Gb2312Convert gb2312 = Gb2312Convert.Convert;
 		char incomplete;
 
 		public override int GetByteCount (char [] chars, int start, int len, bool refresh)
@@ -284,8 +287,10 @@ namespace I18N.CJK
 					start++;
 					continue;
 				}
-				long value = gb2312.UcsToGbk (ch);
-				if (value != 0) {
+
+				byte b1 = gb2312.u2n [((int) ch) * 2 + 1];
+				byte b2 = gb2312.u2n [((int) ch) * 2];
+				if (b1 != 0 && b2 != 0) {
 					// GB2312
 					ret += 2;
 					start++;
@@ -352,14 +357,15 @@ namespace I18N.CJK
 					continue;
 				}
 
-				long value = gb2312.UcsToGbk (ch);
-				if (value != 0) {
-					bytes [byteIndex++] = (byte) (value / 0x100);
-					bytes [byteIndex++] = (byte) (value % 0x100);
+				byte b1 = gb2312.u2n [((int) ch) * 2 + 1];
+				byte b2 = gb2312.u2n [((int) ch) * 2];
+				if (b1 != 0 && b2 != 0) {
+					bytes [byteIndex++] = b1;
+					bytes [byteIndex++] = b2;
 					continue;
 				}
 
-				value = GB18030Source.FromUCS (ch);
+				long value = GB18030Source.FromUCS (ch);
 				// non-GB2312
 				GB18030Source.Unlinear (bytes + byteIndex, value);
 				byteIndex += 4;

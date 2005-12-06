@@ -19,11 +19,29 @@ public class DbcsTableGenerator
 {
 	public static void Main (string [] args)
 	{
+		if (args.Length == 1) {
+			switch (args [0]) {
+			case "BIG5":
+				Main (new string [] {
+					"CP950.TXT", "big5.table", "A1", "43"});
+				return;
+			case "GB2312":
+				Main (new string [] {
+					"CP936.TXT", "gb2312-new.table", "81", "5E"});
+				return;
+			}
+		}
+
 		if (args.Length < 3) {
 			Console.Error.WriteLine (@"
-usage: dbcs-table-generator.exe CPxxx.TXT xxx.table upper_range
+usage1: dbcs-table-generator.exe BIG5
 
-upper-range: BIG5 (CP950) = A1, GB2312 (CP936) = 81");
+usage2: dbcs-table-generator.exe GB2312
+
+usage3: dbcs-table-generator.exe CPxxx.TXT xxx.table from [len]
+
+from: BIG5 (CP950) = A1, GB2312 (CP936) = 81
+len: optional. length of array. BIG5: 43");
 			return;
 		}
 		byte upper = byte.Parse (args [2], NumberStyles.HexNumber);
@@ -32,8 +50,15 @@ upper-range: BIG5 (CP950) = A1, GB2312 (CP936) = 81");
 		int [] u2n = new int [0x10000];
 
 		StreamReader reader = new StreamReader (args [0]);
-		int native_max = -1;
 		int native_min = upper << 8 + 0x40;
+		int native_max = 0x10000;
+		int native_count = native_max - native_min;
+
+		if (args.Length > 3) {
+			native_count = int.Parse (args [3], NumberStyles.HexNumber) << 8;
+			native_max = native_min + native_count;
+			Console.Error.WriteLine ("adjusted as count = {0:X04} max = {1:X04}", native_count, native_max);
+		}
 
 		int map_count = 0;
 		for (int line = 1; reader.Peek () > 0; line++) {
@@ -65,10 +90,7 @@ upper-range: BIG5 (CP950) = A1, GB2312 (CP936) = 81");
 
 		FileStream output = File.OpenWrite (args [1]);
 		output.Seek (0, SeekOrigin.Begin);
-		native_max = 0x10000;
 
-		native_max = 0x10000;
-		int native_count = native_max - native_min;
 		WriteInt32 (output, 1);
 		WriteInt32 (output, native_count * 2);
 		for (int i = 0; i < native_count; i++) {

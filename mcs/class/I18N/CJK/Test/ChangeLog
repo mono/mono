@@ -1,3 +1,8 @@
+2005-12-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* I18N.CJK.Test.cs : w00t, Now all test are working, including
+	  codepage 936 (GB2312) and GB18030.
+
 2005-12-05  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* I18N.CJK.Test.cs : BIG5 tests are now working.

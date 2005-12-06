@@ -1,5 +1,23 @@
 2005-12-06  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DbcsConvert.cs : added static Gb2312 field for common use.
+	* dbcs-table-generator.cs :
+	  Added shortcut options for BIG5 and GB2312. Compressed data a bit.
+	* CP936.cs, CP936_2.cs : GB2312.TXT does not exist anymore on
+	  unicode.org and it does not work like MS Codepage 936, so added
+	  fresh implementation which is almost the same as CP950.cs.
+	  CP936.cs is therefore removed.
+	* GB18030Encoding.cs :
+	  switched implementation from Gb2312Convert to (base) DbcsConvert
+	  as well as CP936.
+	* gb2312-build.sh : added note that we don't use it anymore.
+	* gb2312.table :
+	  with it CP936 can handles CP936-only codepoints as well.
+	* big5.table : compressed a bit.
+	* I18N.CJK.dll.sources : in the meantime, use CP936_2.cs
+
+2005-12-06  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* renamed from big5-table-generator.cs to dbcs-table-generator.cs.
 
 2005-12-06  Atsushi Enomoto  <atsushi@ximian.com>

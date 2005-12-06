@@ -26,5 +26,7 @@ namespace I18N.CJK
 				u2n = table.GetSection(2);
 			}
 		}
+
+		internal static DbcsConvert Gb2312 = new DbcsConvert ("gb2312.table");
 	}
 }

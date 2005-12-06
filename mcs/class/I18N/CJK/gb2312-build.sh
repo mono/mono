@@ -1,5 +1,9 @@
 #!/bin/sh
 
+#
+# NOTE: Mono doesn't use it anymore: GB2312.TXT vanished from unicode.org.
+#
+
 # Usage: gb2312-build.sh GB2312.TXT > gb2312.table
 #
 # Get the input file from ftp://ftp.unicode.org/Public/MAPPINGS/OBSOLETE/EASTASIA/GB/GB2312.TXT

@@ -77,14 +77,12 @@ namespace MonoTests.I18N.CJK
 		// GB2312
 
 		[Test]
-		[Category ("NotWorking")]
 		public void CP936_Encode ()
 		{
 			AssertEncode ("Test/texts/chinese-utf8.txt", "Test/texts/chinese-936.txt", 936);
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void CP936_Decode ()
 		{
 			AssertDecode ("Test/texts/chinese-utf8.txt", "Test/texts/chinese-936.txt", 936);
@@ -107,14 +105,12 @@ namespace MonoTests.I18N.CJK
 		// GB18030
 
 		[Test]
-		[Category ("NotWorking")]
 		public void CP54936_Encode ()
 		{
 			AssertEncode ("Test/texts/chinese-utf8.txt", "Test/texts/chinese-54936.txt", 54936);
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void CP54936_Decode ()
 		{
 			AssertDecode ("Test/texts/chinese-utf8.txt", "Test/texts/chinese-54936.txt", 54936);
