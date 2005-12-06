@@ -7,6 +7,7 @@
 using System;
 using System.Reflection;
 using System.Text;
+using I18N.Common;
 
 namespace I18N.CJK
 {
@@ -17,7 +18,7 @@ namespace I18N.CJK
 
 	public class CP54936 : GB18030Encoding { }
 
-	public class GB18030Encoding : Encoding
+	public class GB18030Encoding : MonoEncoding
 	{
 		// Constructor.
 		public GB18030Encoding ()
@@ -46,12 +47,12 @@ namespace I18N.CJK
 
 		public override int GetByteCount (char [] chars, int index, int length)
 		{
-			return new GB18030Encoder ().GetByteCount (chars, index, length, true);
+			return new GB18030Encoder (this).GetByteCount (chars, index, length, true);
 		}
 
-		public override int GetBytes (char [] chars, int charIdx, int srclen, byte [] bytes, int byteIdx)
+		public unsafe override int GetBytesImpl (char* chars, int charCount, byte* bytes, int byteCount)
 		{
-			return new GB18030Encoder ().GetBytes (chars, charIdx, srclen, bytes, byteIdx, true);
+			return new GB18030Encoder (this).GetBytesImpl (chars, charCount, bytes, byteCount, true);
 		}
 
 		public override int GetCharCount (byte [] bytes, int start, int len)
@@ -237,8 +238,13 @@ namespace I18N.CJK
 		}
 	}
 
-	class GB18030Encoder : Encoder
+	class GB18030Encoder : MonoEncoding.MonoEncoder
 	{
+		public GB18030Encoder (MonoEncoding owner)
+			: base (owner)
+		{
+		}
+
 		Gb2312Convert gb2312 = Gb2312Convert.Convert;
 		char incomplete;
 
@@ -293,18 +299,13 @@ namespace I18N.CJK
 			return ret;
 		}
 
-		public override int GetBytes (char [] chars, int charIndex, int charCount, byte [] bytes, int byteIndex, bool refresh)
+		public unsafe override int GetBytesImpl (char* chars, int charCount, byte* bytes, int byteCount, bool flush)
 		{
-			if (chars == null)
-				throw new ArgumentNullException ("chars");
-			if (bytes == null)
-				throw new ArgumentNullException ("bytes");
-			if (charIndex < 0 || charIndex > chars.Length)
-				throw new ArgumentOutOfRangeException ("charIndex");
-			if (charCount < 0 || charIndex + charCount > chars.Length)
-				throw new ArgumentOutOfRangeException ("charCount");
-			if (byteIndex < 0 || byteIndex > bytes.Length)
-				throw new ArgumentOutOfRangeException ("byteIndex");
+			int charIndex = 0;
+			int byteIndex = 0;
+#if NET_2_0
+			EncoderFallbackBuffer buffer = null;
+#endif
 
 			int charEnd = charIndex + charCount;
 			int byteStart = byteIndex;
@@ -329,11 +330,17 @@ namespace I18N.CJK
 					char ch2 = chars [charIndex++];
 					if (!Char.IsSurrogate (ch2)) {
 						// invalid surrogate
+#if NET_2_0
+						HandleFallback (
+							chars, ref charIndex, ref charCount,
+							bytes, ref byteIndex, ref byteCount);
+#else
 						bytes [byteIndex++] = (byte) '?';
+#endif
 						continue;
 					}
 					int cp = (ch - 0xD800) * 0x400 + ch2 - 0xDC00;
-					GB18030Source.Unlinear (bytes, byteIndex, GB18030Source.FromUCSSurrogate (cp));
+					GB18030Source.Unlinear (bytes + byteIndex, GB18030Source.FromUCSSurrogate (cp));
 					byteIndex += 4;
 					continue;
 				}
@@ -354,7 +361,7 @@ namespace I18N.CJK
 
 				value = GB18030Source.FromUCS (ch);
 				// non-GB2312
-				GB18030Source.Unlinear (bytes, byteIndex, value);
+				GB18030Source.Unlinear (bytes + byteIndex, value);
 				byteIndex += 4;
 			}
 			return byteIndex - byteStart;

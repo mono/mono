@@ -16,7 +16,7 @@ using I18N.Common;
 
 namespace I18N.CJK
 {
-	internal class CP936 : Encoding
+	internal class CP936 : MonoEncoding
 	{
 		// Magic number used by Windows for the GB2312 code page.
 		private const int GB2312_CODE_PAGE = 936;
@@ -47,28 +47,17 @@ namespace I18N.CJK
 		}
 		
 		// Get the bytes that result from encoding a character buffer.
-		public override int GetBytes(char[] chars, int charIndex,
-					     int charCount, byte[] bytes,
-					     int byteIndex)
+		public unsafe override int GetBytesImpl (
+			char* chars, int charCount, byte* bytes, int byteCount)
 		{
-			if (chars == null) {
-				throw new ArgumentNullException("chars");
-			}
-			if (bytes == null) {
-				throw new ArgumentNullException("bytes");
-			}
-			if (charIndex < 0 || charIndex > chars.Length) {
-				throw new ArgumentOutOfRangeException("charIndex", Strings.GetString("ArgRange_Array"));
-			}
-			if (charCount < 0 || charIndex + charCount > chars.Length) {
-				throw new ArgumentOutOfRangeException("charCount", Strings.GetString("ArgRange_Array"));
-			}
-			if (byteIndex < 0 || byteIndex > bytes.Length) {
-				throw new ArgumentOutOfRangeException("byteIndex", Strings.GetString("ArgRange_Array"));
-			}
+			int charIndex = 0;
+			int byteIndex = 0;
+#if NET_2_0
+			EncoderFallbackBuffer buffer = null;
+#endif
 
 			int posn = byteIndex;
-			int byteLength = bytes.Length;
+			int byteLength = byteCount;
 			int ch;
 			
 			while(charCount-- > 0) {
@@ -277,7 +266,13 @@ namespace I18N.CJK
 					throw new ArgumentException ("bytes", (Strings.GetString ("Arg_InsufficientSpace")));
 				int val = convert.UcsToGbk (ch);
 				if (val < 0)
+#if NET_2_0
+					HandleFallback (ref buffer,
+						chars, ref charIndex, ref charCount,
+						bytes, ref posn, ref byteCount);
+#else
 					bytes [posn++] = (byte) '?';
+#endif
 				else {
 					bytes [posn++] = (byte) (val / 0x100);
 					bytes [posn++] = (byte) (val % 0x100);

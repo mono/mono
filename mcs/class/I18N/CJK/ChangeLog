@@ -1,3 +1,10 @@
+2005-12-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CP936.cs,
+	  GB18030Encoding.cs,
+	  GB18030Source.cs : conversion from Encoding to MonoEncoding and
+	  added fallback support in GEtBytes(Impl), as well as others.
+
 2005-12-05  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* big5-table-generator.cs : new file to generate "big5.table".

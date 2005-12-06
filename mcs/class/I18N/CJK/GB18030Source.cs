@@ -108,13 +108,20 @@ namespace I18N.CJK
 
 		public static void Unlinear (byte [] bytes, int start, long gbx)
 		{
-			bytes [start + 3] = (byte) (gbx % 10 + 0x30);
+			fixed (byte* bptr = bytes) {
+				Unlinear (bptr + start, gbx);
+			}
+		}
+
+		public static unsafe void Unlinear (byte* bytes, long gbx)
+		{
+			bytes [3] = (byte) (gbx % 10 + 0x30);
 			gbx /= 10;
-			bytes [start + 2] = (byte) (gbx % 126 + 0x81);
+			bytes [2] = (byte) (gbx % 126 + 0x81);
 			gbx /= 126;
-			bytes [start + 1] = (byte) (gbx % 10 + 0x30);
+			bytes [1] = (byte) (gbx % 10 + 0x30);
 			gbx /= 10;
-			bytes [start] = (byte) (gbx + 0x81);
+			bytes [0] = (byte) (gbx + 0x81);
 		}
 
 		// negative (invalid) or positive (valid)
