@@ -1,3 +1,8 @@
+2005-12-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AspGenerator.cs: only do special processing for <script> if it has
+	the runat="server" attribute. Fixes bug #76918.
+
 2005-12-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TemplateControlCompiler.cs: treat LightGrey as a synonym of LightGray.
