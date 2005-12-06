@@ -2,8 +2,8 @@
 	<CSHARP ProjectType="Local" ProductVersion="7.10.3077" SchemaVersion="2.0" ProjectGuid="{2A86AAED-1EF5-4BDC-8B53-9DBF6DAFD736}" >
 		<Build>
 			<Settings ApplicationIcon="" AssemblyKeyContainerName="" AssemblyName="System.DirectoryServices" AssemblyOriginatorKeyFile="" DefaultClientScript="JScript" DefaultHTMLPageLayout="Grid" DefaultTargetSchema="IE50" DelaySign="false" OutputType="Library" PreBuildEvent="" PostBuildEvent="" RootNamespace="System.DirectoryServices" RunPostBuildEvent="OnBuildSuccess" StartupObject="">
-				<Config Name="Debug_Java" AllowUnsafeBlocks="false" BaseAddress="285212672" CheckForOverflowUnderflow="false" ConfigurationOverrideFile="" DefineConstants="TARGET_JVM" DocumentationFile="" DebugSymbols="true" FileAlignment="4096" IncrementalBuild="false" NoStdLib="false" NoWarn="1595" Optimize="false" OutputPath="bin\Debug_Java\" RegisterForComInterop="false" RemoveIntegerChecks="false" TreatWarningsAsErrors="false" WarningLevel="4"/>
-				<Config Name="Release_Java" AllowUnsafeBlocks="false" BaseAddress="285212672" CheckForOverflowUnderflow="false" ConfigurationOverrideFile="" DefineConstants="J2EE" DocumentationFile="" DebugSymbols="false" FileAlignment="4096" IncrementalBuild="false" NoStdLib="false" NoWarn="1595" Optimize="true" OutputPath="bin\Release_Java\" RegisterForComInterop="false" RemoveIntegerChecks="false" TreatWarningsAsErrors="false" WarningLevel="4"/>
+				<Config Name="Debug_Java" AllowUnsafeBlocks="false" BaseAddress="285212672" CheckForOverflowUnderflow="false" ConfigurationOverrideFile="" DefineConstants="TARGET_JVM;NET_1_1" DocumentationFile="" DebugSymbols="true" FileAlignment="4096" IncrementalBuild="false" NoStdLib="false" NoWarn="1595" Optimize="false" OutputPath="bin\Debug_Java\" RegisterForComInterop="false" RemoveIntegerChecks="false" TreatWarningsAsErrors="false" WarningLevel="4"/>
+				<Config Name="Release_Java" AllowUnsafeBlocks="false" BaseAddress="285212672" CheckForOverflowUnderflow="false" ConfigurationOverrideFile="" DefineConstants="TARGET_JVM;NET_1_1" DocumentationFile="" DebugSymbols="false" FileAlignment="4096" IncrementalBuild="false" NoStdLib="false" NoWarn="1595" Optimize="true" OutputPath="bin\Release_Java\" RegisterForComInterop="false" RemoveIntegerChecks="false" TreatWarningsAsErrors="false" WarningLevel="4"/>
 				<Config Name="Debug" AllowUnsafeBlocks="false" BaseAddress="285212672" CheckForOverflowUnderflow="false" ConfigurationOverrideFile="" DefineConstants="J2EE;TARGET_JVM" DocumentationFile="" DebugSymbols="true" FileAlignment="4096" IncrementalBuild="false" NoStdLib="false" NoWarn="" Optimize="false" OutputPath="bin\Debug\" RegisterForComInterop="false" RemoveIntegerChecks="false" TreatWarningsAsErrors="false" WarningLevel="1"/>
 			</Settings>
 			<References>
@@ -23,11 +23,11 @@
 				<File RelPath="System.DirectoryServices\DirectoryEntries.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.DirectoryServices\DirectoryEntry.cs" SubType="Component" BuildAction="Compile"/>
 				<File RelPath="System.DirectoryServices\DirectorySearcher.cs" SubType="Component" BuildAction="Compile"/>
-				<File RelPath="System.DirectoryServices\DirectoryServicesPermission.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.DirectoryServices\DirectoryServicesPermission.cs" SubType="Code" BuildAction="None"/>
 				<File RelPath="System.DirectoryServices\DirectoryServicesPermissionAccess.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.DirectoryServices\DirectoryServicesPermissionAttribute.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.DirectoryServices\DirectoryServicesPermissionEntry.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.DirectoryServices\DirectoryServicesPermissionEntryCollection.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.DirectoryServices\DirectoryServicesPermissionAttribute.cs" SubType="Code" BuildAction="None"/>
+				<File RelPath="System.DirectoryServices\DirectoryServicesPermissionEntry.cs" SubType="Code" BuildAction="None"/>
+				<File RelPath="System.DirectoryServices\DirectoryServicesPermissionEntryCollection.cs" SubType="Code" BuildAction="None"/>
 				<File RelPath="System.DirectoryServices\DSDescriptionAttribute.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.DirectoryServices\PropertyCollection.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.DirectoryServices\PropertyValueCollection.cs" SubType="Code" BuildAction="Compile"/>

@@ -1,3 +1,7 @@
+2005-12-06 Konstantin Triger <kostat@mainsoft.com>
+
+        * Novell.Directory.Ldap.vmwcsproj: fixing conditional compilation constants.
+
 2005-11-30  Wade Berrier <wberrier@novell.com>
 	* Makefile: Add EXTRA_DISTFILES to include all missing files from 'make dist'
 	* Cleanup: Remove CVS dirs
