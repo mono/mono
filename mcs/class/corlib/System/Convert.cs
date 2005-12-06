@@ -238,18 +238,21 @@ namespace System {
 				throw new ArgumentOutOfRangeException ("offset + length > array.Length");
 
 			Encoding encoding = new ASCIIEncoding ();
-			StringBuilder sb = new StringBuilder ();
 			BinaryReader reader = new BinaryReader (new MemoryStream (inArray, offset, length));
 			byte[] b = null;
 
-			do {
-				// 54 bytes of input makes for 72 bytes of output.
-				b = reader.ReadBytes (54);
-				if (b.Length > 0)
-					sb.AppendLine (encoding.GetString (toBase64Transform.InternalTransformFinalBlock (b, 0, b.Length)));
-			} while (b.Length > 0);
-
-			return sb.ToString ();
+			if (options == Base64FormattingOptions.InsertLineBreaks) {
+				StringBuilder sb = new StringBuilder ();
+				do {
+					// 54 bytes of input makes for 72 bytes of output.
+					b = reader.ReadBytes (54);
+					if (b.Length > 0)
+						sb.AppendLine (encoding.GetString (toBase64Transform.InternalTransformFinalBlock (b, 0, b.Length)));
+				} while (b.Length > 0);
+				return sb.ToString ();
+			} else {
+				return encoding.GetString (toBase64Transform.InternalTransformFinalBlock (inArray, offset, length));
+			}
 		}
 
 		public static string ToBase64String (byte[] inArray, int offset, int length, bool insertLineBreaks)

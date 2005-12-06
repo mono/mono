@@ -1,3 +1,8 @@
+2005-12-06  Sebastien Pouliot  <sebastien@ximian.com> 
+ 
+	* Convert.cs: ToBase64String method didn't use the option parameter so
+	we always included new lines. Fix bug #76876.
+
 2005-12-06  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AppDomainSetup.cs: Added missing ComVisible and removed LAMESPEC 
