@@ -8,11 +8,21 @@ public enum Error {
 	EANOTHER = ERANGE,
 }
 
+[Obsolete ("Use Native.SignalHandler", true)]
+public delegate void SignalHandler (int signal);
+
 [Obsolete ("Use Errno", true)]
 public sealed class UnixMarshal {
+
+	public static readonly SignalHandler SIG_DFL = new SignalHandler(Default);
+
 	static UnixMarshal ()
 	{
 		Stdlib s = new Stdlib ();
+	}
+	
+	private static void Default (int signal)
+	{
 	}
 
 	public static string GetDescription (Error e) {
