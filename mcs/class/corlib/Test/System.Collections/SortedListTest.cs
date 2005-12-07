@@ -8,6 +8,7 @@
 // because this file is based on his ArrayListTest.cs
 //
 // (C) Ximian, Inc.  http://www.ximian.com
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 // 
 // main TODO: additional tests for functions affected by
 //            fixedsize and read-only properties 
@@ -18,8 +19,15 @@ using System.Collections;
 
 using NUnit.Framework;
 
-
 namespace MonoTests.System.Collections {
+
+public class SortedListComparer: IComparer {
+
+	public int Compare (object x, object y)
+	{
+		return x.GetHashCode () - y.GetHashCode ();
+	}
+}
 
 [TestFixture]
 public class SortedListTest : Assertion {
@@ -808,6 +816,124 @@ public class SortedListTest : Assertion {
 		sl ["foo"] = "bar";
 		foreach (string s in sl.Keys)
 			sl ["foo"] = "bar";
+	}
+
+	[Test]
+	public void Ctor_IComparer ()
+	{
+		SortedList sl = new SortedList (new SortedListComparer ());
+		sl.Add (new object (), new object ());
+	}
+
+	[Test]
+	public void Ctor_IComparer_Null ()
+	{
+		SortedList sl = new SortedList ((IComparer)null);
+		sl.Add (new object (), new object ());
+	}
+
+	[Test]
+	public void Ctor_IDictionary_IComparer_Before ()
+	{
+		Hashtable ht = new Hashtable ();
+		ht.Add (2, "a");
+		ht.Add (1, "b");
+		// adding a non-IComparable in Hashtable
+		ht.Add (new object (), "c");
+		SortedList sl = new SortedList (ht, new SortedListComparer ());
+		AssertEquals ("1", 3, sl.Count);
+	}
+
+	[Test]
+	[ExpectedException (typeof (InvalidOperationException))]
+	public void Ctor_IDictionary_DefaultInvariant_Before ()
+	{
+		Hashtable ht = new Hashtable ();
+		ht.Add (2, "a");
+		ht.Add (1, "b");
+		// adding a non-IComparable in Hashtable
+		ht.Add (new object (), "c");
+		SortedList sl = new SortedList (ht, Comparer.DefaultInvariant);
+		AssertEquals ("1", 3, sl.Count);
+	}
+
+	[Test]
+	public void Ctor_IDictionary_IComparer_Null_Before_1item ()
+	{
+		Hashtable ht = new Hashtable ();
+		// adding a non-IComparable in Hashtable
+		ht.Add (new object (), "c");
+		SortedList sl = new SortedList (ht, null);
+		AssertEquals ("1", 1, sl.Count);
+	}
+
+	[Test]
+	[ExpectedException (typeof (InvalidOperationException))]
+	public void Ctor_IDictionary_IComparer_Null_Before_2items ()
+	{
+		Hashtable ht = new Hashtable ();
+		ht.Add (2, "a");
+		// adding a non-IComparable in Hashtable
+		ht.Add (new object (), "c");
+		SortedList sl = new SortedList (ht, null);
+		AssertEquals ("1", 2, sl.Count);
+	}
+
+	[Test]
+	public void Ctor_IDictionary_IComparer_After ()
+	{
+		Hashtable ht = new Hashtable ();
+		ht.Add (2, "a");
+		ht.Add (1, "b");
+		SortedList sl = new SortedList (ht, new SortedListComparer ());
+		AssertEquals ("1", 2, sl.Count);
+		// adding a non-IComparable in SortedList
+		sl.Add (new object (), "c");
+	}
+
+	[Test]
+	[ExpectedException (typeof (InvalidOperationException))]
+	public void Ctor_IDictionary_DefaultInvariant_After ()
+	{
+		Hashtable ht = new Hashtable ();
+		ht.Add (2, "a");
+		ht.Add (1, "b");
+		SortedList sl = new SortedList (ht, Comparer.DefaultInvariant);
+		AssertEquals ("1", 2, sl.Count);
+		// adding a non-IComparable in SortedList
+		sl.Add (new object (), "c");
+	}
+
+	[Test]
+	public void Ctor_IDictionary_IComparer_Null_After_1item ()
+	{
+		SortedList sl = new SortedList (new Hashtable (), null);
+		sl.Add (new object (), "b");
+	}
+
+	[Test]
+	[ExpectedException (typeof (InvalidOperationException))]
+	public void Ctor_IDictionary_IComparer_Null_After_2items ()
+	{
+		SortedList sl = new SortedList (new Hashtable (), null);
+		sl.Add (2, "a");
+		sl.Add (new object (), "b");
+	}
+
+	[Test]
+	public void IComparer_Clone ()
+	{
+		SortedList sl = new SortedList (new SortedListComparer ());
+		sl.Add (new object (), new object ());
+		SortedList clone = (SortedList) sl.Clone ();
+	}
+
+	[Test]
+	public void IComparer_Null_Clone ()
+	{
+		SortedList sl = new SortedList ((IComparer)null);
+		sl.Add (new object (), new object ());
+		SortedList clone = (SortedList) sl.Clone ();
 	}
 }
 

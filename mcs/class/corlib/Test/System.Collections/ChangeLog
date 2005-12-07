@@ -1,3 +1,8 @@
+2005-12-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SortedTestList.cs: Added more test for the constructor accepting an
+	IComparer and to avoid regression of bug #76750.
+
 2005-12-06  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CaseInsensitiveHashCodeProviderTest: Added test cases for the 
