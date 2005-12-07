@@ -1444,8 +1444,6 @@ mono_arch_call_opcode2 (MonoCompile *cfg, MonoCallInst *call, int is_virtual) {
 			gint align;
 			guint32 size;
 
-			NOT_IMPLEMENTED;
-
 			if (sig->params [i - sig->hasthis]->type == MONO_TYPE_TYPEDBYREF) {
 				size = sizeof (MonoTypedRef);
 				align = sizeof (gpointer);
@@ -1463,6 +1461,7 @@ mono_arch_call_opcode2 (MonoCompile *cfg, MonoCallInst *call, int is_virtual) {
 					size = mono_class_value_size (in->klass, &align);
 				}
 			if (ainfo->storage == ArgValuetypeInReg) {
+				NOT_IMPLEMENTED;
 				if (ainfo->pair_storage [1] == ArgNone) {
 					MonoInst *load;
 
@@ -1529,10 +1528,22 @@ mono_arch_call_opcode2 (MonoCompile *cfg, MonoCallInst *call, int is_virtual) {
 				}
 			}
 			else {
-				arg->opcode = OP_OUTARG_VT;
-				arg->klass = in->klass;
-				arg->unused = sig->pinvoke;
-				arg->inst_imm = size;
+				if (size == 0) {
+				} else if (size == 8) {
+					/* Can't use this for < 8 since it does an 8 byte memory load */
+					arg->opcode = OP_X86_PUSH_MEMBASE;
+					arg->inst_basereg = in->dreg;
+					arg->inst_offset = 0;
+					MONO_ADD_INS (cfg->cbb, arg);
+				} else if (size <= 40) {
+					MONO_EMIT_NEW_BIALU_IMM (cfg, OP_SUB_IMM, X86_ESP, X86_ESP, ALIGN_TO (size, 8));
+					mini_emit_memcpy (cfg, X86_ESP, 0, in->dreg, 0, size, 0);
+				} else {
+					arg->opcode = OP_X86_PUSH_OBJ;
+					arg->inst_basereg = in->dreg;
+					arg->inst_offset = 0;
+					MONO_ADD_INS (cfg->cbb, arg);
+				}
 			}
 		}
 		else {
@@ -1564,6 +1575,30 @@ mono_arch_call_opcode2 (MonoCompile *cfg, MonoCallInst *call, int is_virtual) {
 			default:
 				g_assert_not_reached ();
 			}
+		}
+	}
+
+	if (sig->ret && MONO_TYPE_ISSTRUCT (sig->ret)) {
+		MonoInst *vtarg;
+
+		g_assert (call->inst.dreg != -1);
+
+		if (cinfo->ret.storage == ArgValuetypeInReg) {
+			/*
+			 * The valuetype is in RAX:RDX after the call, need to be copied to
+			 * the stack. Push the address here, so the call instruction can
+			 * access it.
+			 */
+			NOT_IMPLEMENTED;
+		}
+		else {
+			MONO_INST_NEW (cfg, vtarg, OP_MOVE);
+			vtarg->sreg1 = call->inst.dreg;
+			/* FIXME: */
+			vtarg->dreg = cfg->next_vireg ++;
+			mono_bblock_add_inst (cfg->cbb, vtarg);
+
+			mono_call_inst_add_outarg_reg (call, vtarg->dreg, cinfo->ret.reg, FALSE);
 		}
 	}
 
