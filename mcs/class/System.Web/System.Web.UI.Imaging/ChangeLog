@@ -1,5 +1,0 @@
-2004-08-03  Sanjay Gupta <gsanjay@novell.com>
-
-	* ImageScaleMode.cs:
-	* ImageType.cs:
-	* StorageType.cs: Added enumerations.
