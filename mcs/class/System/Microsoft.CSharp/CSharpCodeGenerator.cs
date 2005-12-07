@@ -798,7 +798,7 @@ namespace Mono.CSharp
 			Indent--;
 			Output.WriteLine ('}');
 		}
-		
+
 		protected override void GenerateTypeConstructor (CodeTypeConstructor constructor)
 		{
 			if (IsCurrentDelegate || IsCurrentEnum || IsCurrentInterface) {
@@ -1112,6 +1112,93 @@ namespace Mono.CSharp
 			output = output.Replace ("\n", "\\n");
 
 			return "\"" + output + "\"";
+		}
+
+		protected override void GeneratePrimitiveExpression(CodePrimitiveExpression e)
+		{
+			if (e.Value is char) {
+				this.GenerateCharValue ((char) e.Value);
+#if NET_2_0
+			} else if (e.Value is ushort) {
+				ushort uc = (ushort) e.Value;
+				Output.Write (uc.ToString(CultureInfo.InvariantCulture));
+			} else if (e.Value is uint) {
+				uint ui = (uint) e.Value;
+				Output.Write (ui.ToString(CultureInfo.InvariantCulture));
+				Output.Write ("u");
+			} else if (e.Value is ulong) {
+				ulong ul = (ulong) e.Value;
+				Output.Write (ul.ToString(CultureInfo.InvariantCulture));
+				Output.Write ("ul");
+			} else if (e.Value is sbyte) {
+				sbyte sb = (sbyte) e.Value;
+				Output.Write (sb.ToString(CultureInfo.InvariantCulture));
+#endif
+			} else {
+				base.GeneratePrimitiveExpression (e);
+			}
+		}
+
+		private void GenerateCharValue (char c)
+		{
+			Output.Write ('\'');
+
+			switch (c) {
+				case '\0':
+					Output.Write ("\\0");
+					break;
+				case '\t':
+					Output.Write ("\\t");
+					break;
+				case '\n':
+					Output.Write ("\\n");
+					break;
+				case '\r':
+					Output.Write ("\\r");
+					break;
+				case '"':
+					Output.Write ("\\\"");
+					break;
+				case '\'':
+					Output.Write ("\\'");
+					break;
+				case '\\':
+					Output.Write ("\\\\");
+					break;
+				case '\u2028':
+					Output.Write ("\\u");
+#if NET_2_0
+					Output.Write (((int) c).ToString ("X4", CultureInfo.InvariantCulture));
+#else
+					Output.Write (((int) c).ToString (CultureInfo.InvariantCulture));
+#endif
+					break;
+				case '\u2029':
+					Output.Write ("\\u");
+#if NET_2_0
+					Output.Write (((int) c).ToString ("X4", CultureInfo.InvariantCulture));
+#else
+					Output.Write (((int) c).ToString (CultureInfo.InvariantCulture));
+#endif
+					break;
+				default:
+					Output.Write (c);
+					break;
+			}
+
+			Output.Write ('\'');
+		}
+
+		protected override void GenerateSingleFloatValue (float f)
+		{
+			base.GenerateSingleFloatValue (f);
+			base.Output.Write ('F');
+		}
+
+		protected override void GenerateDecimalValue (decimal d)
+		{
+			base.GenerateDecimalValue (d);
+			base.Output.Write ('m');
 		}
 
 		protected override void GenerateParameterDeclarationExpression (CodeParameterDeclarationExpression e)

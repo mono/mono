@@ -322,31 +322,40 @@ namespace Microsoft.VisualBasic
 
 		protected override void GeneratePrimitiveExpression (CodePrimitiveExpression e)
 		{
-			TextWriter output = Output;
-
-			if (e.Value == null) {
-				output.Write (NullToken);
-				return;
+			if (e.Value is char) {
+				char c = (char) e.Value;
+				int ch = (int) c;
+#if NET_2_0
+				Output.Write("Global.Microsoft.VisualBasic.ChrW(" + ch.ToString(CultureInfo.InvariantCulture) + ")");
+			} else if (e.Value is ushort) {
+				ushort uc = (ushort) e.Value;
+				Output.Write (uc.ToString(CultureInfo.InvariantCulture));
+				Output.Write ("US");
+			} else if (e.Value is uint) {
+				uint ui = (uint) e.Value;
+				Output.Write (ui.ToString(CultureInfo.InvariantCulture));
+				Output.Write ("UI");
+			} else if (e.Value is ulong) {
+				ulong ul = (ulong) e.Value;
+				Output.Write (ul.ToString(CultureInfo.InvariantCulture));
+				Output.Write ("UL");
+			} else if (e.Value is sbyte) {
+				sbyte sb = (sbyte) e.Value;
+				Output.Write ("CSByte(");
+				Output.Write (sb.ToString(CultureInfo.InvariantCulture));
+				Output.Write (')');
+#else
+				Output.Write("Microsoft.VisualBasic.ChrW(" + ch.ToString(CultureInfo.InvariantCulture) + ")");
+#endif
+			} else {
+				base.GeneratePrimitiveExpression(e);
 			}
+		}
 
-			Type type = e.Value.GetType ();
-			if (type == typeof (bool)) {
-				output.Write (e.Value.ToString ().ToLower (CultureInfo.InvariantCulture));
-			} 
-			else if (type == typeof (char)) {
-				output.Write ("\"" + e.Value.ToString () + "\"c");
-			} 
-			else if (type == typeof (string)) {
-				output.Write (QuoteSnippetString ((string) e.Value));
-			} 
-			else if (type == typeof (byte) || type == typeof (sbyte) || type == typeof (short) ||
-				type == typeof (int) || type == typeof (long) || type == typeof (float) ||
-				type == typeof (double) || type == typeof (decimal)) {
-				output.Write (e.Value.ToString ());
-			} 
-			else {
-				throw new ArgumentException ("Value type (" + type + ") is not a primitive type");
-			}
+		protected override void GenerateSingleFloatValue (float s)
+		{
+			base.GenerateSingleFloatValue (s);
+			base.Output.Write ('!');
 		}
 
 		protected override void GeneratePropertyReferenceExpression (CodePropertyReferenceExpression expression)

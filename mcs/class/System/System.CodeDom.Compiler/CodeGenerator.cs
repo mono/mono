@@ -493,20 +493,26 @@ namespace System.CodeDom.Compiler {
 				output.Write ("'" + e.Value.ToString () + "'");
 			} else if (type == typeof (string)) {
 				output.Write (QuoteSnippetString ((string) e.Value));
-			} else if (type == typeof (byte) || type == typeof (sbyte) || type == typeof (short) ||
-				   type == typeof (int) || type == typeof (long) || type == typeof (float) ||
-				   type == typeof (double) || type == typeof (decimal)) {
+			} else if (type == typeof (float)) {
+				GenerateSingleFloatValue((float) e.Value);
+			} else if (type == typeof (double)) {
+				GenerateDoubleValue((double) e.Value);
+			} else if (type == typeof (decimal)) {
+				this.GenerateDecimalValue((decimal) e.Value);
+			} else if (type == typeof (byte) || type == typeof (short) || 
+				type == typeof (int) || type == typeof (long)) {
 				// All of these should be IFormatable, I am just being safe/slow 
 				IFormattable formattable = e.Value as IFormattable;
-				if (formattable != null)
+				if (formattable != null) {
 					output.Write (formattable.ToString (null, CultureInfo.InvariantCulture));
-				else
+				} else {
 					output.Write (e.Value.ToString ());
-					
-				if (type == typeof (float))
-					output.Write ("f");
+				}
 			} else {
-				throw new ArgumentException ("Value type (" + type + ") is not a primitive type");
+				throw new ArgumentException (string.Format(CultureInfo.InvariantCulture,
+					"Invalid Primitive Type: {0}. Only CLS compliant primitive " +
+					"types can be used. Consider using CodeObjectCreateExpression.",
+					type.FullName));
 			}
 		}
 

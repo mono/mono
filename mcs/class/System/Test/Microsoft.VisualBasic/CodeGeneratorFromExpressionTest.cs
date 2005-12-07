@@ -110,6 +110,193 @@ namespace MonoTests.Microsoft.VisualBasic
 		}
 
 		[Test]
+		public void PrimitiveExpressionTest ()
+		{
+			StringBuilder sb = new StringBuilder ();
+
+			using (StringWriter sw = new StringWriter (sb)) {
+				Assert.AreEqual ("Nothing", Generate (new CodePrimitiveExpression (null), sw), "#1");
+				sb.Length = 0;
+				Assert.AreEqual ("\"AB\"\"C\"", Generate (new CodePrimitiveExpression ("AB\"C"), sw), "#2");
+				sb.Length = 0;
+				Assert.AreEqual ("5", Generate (new CodePrimitiveExpression ((byte) 5), sw), "#4");
+				sb.Length = 0;
+				Assert.AreEqual ("20", Generate (new CodePrimitiveExpression ((short) 20), sw), "#5");
+				sb.Length = 0;
+				Assert.AreEqual ("243", Generate (new CodePrimitiveExpression (243), sw), "#6");
+				sb.Length = 0;
+				Assert.AreEqual ("434343", Generate (new CodePrimitiveExpression ((long) 434343), sw), "#7");
+				sb.Length = 0;
+				Assert.AreEqual ("6.445!", Generate (new CodePrimitiveExpression ((float) 6.445), sw), "#8");
+				sb.Length = 0;
+				Assert.AreEqual ("5.76", Generate (new CodePrimitiveExpression ((double) 5.76), sw), "#9");
+				sb.Length = 0;
+				Assert.AreEqual ("7.667", Generate (new CodePrimitiveExpression ((decimal) 7.667), sw), "#10");
+				sb.Length = 0;
+				Assert.AreEqual ("true", Generate (new CodePrimitiveExpression (true), sw), "#11");
+				sb.Length = 0;
+				Assert.AreEqual ("false", Generate (new CodePrimitiveExpression (false), sw), "#12");
+				sw.Close ();
+			}
+		}
+
+		[Test]
+		public void PrimitiveExpressionTest_Char ()
+		{
+#if NET_2_0
+			string vbNs = "Global.Microsoft.VisualBasic";
+#else
+			string vbNs = "Microsoft.VisualBasic";
+#endif
+			StringBuilder sb = new StringBuilder ();
+
+			using (StringWriter sw = new StringWriter (sb)) {
+				Assert.AreEqual (vbNs + ".ChrW(0)", Generate (new CodePrimitiveExpression ('\0'), sw), "#0");
+				sb.Length = 0;
+				Assert.AreEqual (vbNs + ".ChrW(1)", Generate (new CodePrimitiveExpression ('\x01'), sw), "#1");
+				sb.Length = 0;
+				Assert.AreEqual (vbNs + ".ChrW(2)", Generate (new CodePrimitiveExpression ('\x02'), sw), "#2");
+				sb.Length = 0;
+				Assert.AreEqual (vbNs + ".ChrW(3)", Generate (new CodePrimitiveExpression ('\x03'), sw), "#3");
+				sb.Length = 0;
+				Assert.AreEqual (vbNs + ".ChrW(4)", Generate (new CodePrimitiveExpression ('\x04'), sw), "#4");
+				sb.Length = 0;
+				Assert.AreEqual (vbNs + ".ChrW(5)", Generate (new CodePrimitiveExpression ('\x05'), sw), "#5");
+				sb.Length = 0;
+				Assert.AreEqual (vbNs + ".ChrW(6)", Generate (new CodePrimitiveExpression ('\x06'), sw), "#6");
+				sb.Length = 0;
+				Assert.AreEqual (vbNs + ".ChrW(7)", Generate (new CodePrimitiveExpression ('\a'), sw), "#7");
+				sb.Length = 0;
+				Assert.AreEqual (vbNs + ".ChrW(8)", Generate (new CodePrimitiveExpression ('\b'), sw), "#8");
+				sb.Length = 0;
+				Assert.AreEqual (vbNs + ".ChrW(9)", Generate (new CodePrimitiveExpression ('\t'), sw), "#9");
+				sb.Length = 0;
+				Assert.AreEqual (vbNs + ".ChrW(10)", Generate (new CodePrimitiveExpression ('\n'), sw), "#10");
+				sb.Length = 0;
+				Assert.AreEqual (vbNs + ".ChrW(11)", Generate (new CodePrimitiveExpression ('\v'), sw), "#11");
+				sb.Length = 0;
+				Assert.AreEqual (vbNs + ".ChrW(12)", Generate (new CodePrimitiveExpression ('\f'), sw), "#12");
+				sb.Length = 0;
+				Assert.AreEqual (vbNs + ".ChrW(13)", Generate (new CodePrimitiveExpression ('\r'), sw), "#13");
+				sb.Length = 0;
+				Assert.AreEqual (vbNs + ".ChrW(14)", Generate (new CodePrimitiveExpression ('\x0E'), sw), "#14");
+				sb.Length = 0;
+				Assert.AreEqual (vbNs + ".ChrW(15)", Generate (new CodePrimitiveExpression ('\x0F'), sw), "#15");
+				sb.Length = 0;
+				Assert.AreEqual (vbNs + ".ChrW(16)", Generate (new CodePrimitiveExpression ('\x10'), sw), "#16");
+				sb.Length = 0;
+				Assert.AreEqual (vbNs + ".ChrW(17)", Generate (new CodePrimitiveExpression ('\x11'), sw), "#17");
+				sb.Length = 0;
+				Assert.AreEqual (vbNs + ".ChrW(18)", Generate (new CodePrimitiveExpression ('\x12'), sw), "#18");
+				sb.Length = 0;
+				Assert.AreEqual (vbNs + ".ChrW(19)", Generate (new CodePrimitiveExpression ('\x13'), sw), "#19");
+				sb.Length = 0;
+				Assert.AreEqual (vbNs + ".ChrW(20)", Generate (new CodePrimitiveExpression ('\x14'), sw), "#20");
+				sb.Length = 0;
+				Assert.AreEqual (vbNs + ".ChrW(21)", Generate (new CodePrimitiveExpression ('\x15'), sw), "#21");
+				sb.Length = 0;
+				Assert.AreEqual (vbNs + ".ChrW(22)", Generate (new CodePrimitiveExpression ('\x16'), sw), "#22");
+				sb.Length = 0;
+				Assert.AreEqual (vbNs + ".ChrW(23)", Generate (new CodePrimitiveExpression ('\x17'), sw), "#23");
+				sb.Length = 0;
+				Assert.AreEqual (vbNs + ".ChrW(24)", Generate (new CodePrimitiveExpression ('\x18'), sw), "#24");
+				sb.Length = 0;
+				Assert.AreEqual (vbNs + ".ChrW(25)", Generate (new CodePrimitiveExpression ('\x19'), sw), "#25");
+				sb.Length = 0;
+				Assert.AreEqual (vbNs + ".ChrW(26)", Generate (new CodePrimitiveExpression ('\x1A'), sw), "#26");
+				sb.Length = 0;
+				Assert.AreEqual (vbNs + ".ChrW(27)", Generate (new CodePrimitiveExpression ('\x1B'), sw), "#27");
+				sb.Length = 0;
+				Assert.AreEqual (vbNs + ".ChrW(28)", Generate (new CodePrimitiveExpression ('\x1C'), sw), "#28");
+				sb.Length = 0;
+				Assert.AreEqual (vbNs + ".ChrW(29)", Generate (new CodePrimitiveExpression ('\x1D'), sw), "#29");
+				sb.Length = 0;
+				Assert.AreEqual (vbNs + ".ChrW(30)", Generate (new CodePrimitiveExpression ('\x1E'), sw), "#30");
+				sb.Length = 0;
+				Assert.AreEqual (vbNs + ".ChrW(31)", Generate (new CodePrimitiveExpression ('\x1F'), sw), "#31");
+				sb.Length = 0;
+				Assert.AreEqual (vbNs + ".ChrW(32)", Generate (new CodePrimitiveExpression ('\x20'), sw), "#32");
+				sb.Length = 0;
+				Assert.AreEqual (vbNs + ".ChrW(33)", Generate (new CodePrimitiveExpression ('\x21'), sw), "#33");
+				sb.Length = 0;
+				Assert.AreEqual (vbNs + ".ChrW(34)", Generate (new CodePrimitiveExpression ('"'), sw), "#34");
+				sb.Length = 0;
+				Assert.AreEqual (vbNs + ".ChrW(35)", Generate (new CodePrimitiveExpression ('\x23'), sw), "#35");
+				sb.Length = 0;
+				Assert.AreEqual (vbNs + ".ChrW(36)", Generate (new CodePrimitiveExpression ('\x24'), sw), "#36");
+				sb.Length = 0;
+				Assert.AreEqual (vbNs + ".ChrW(37)", Generate (new CodePrimitiveExpression ('\x25'), sw), "#37");
+				sb.Length = 0;
+				Assert.AreEqual (vbNs + ".ChrW(38)", Generate (new CodePrimitiveExpression ('\x26'), sw), "#38");
+				sb.Length = 0;
+				Assert.AreEqual (vbNs + ".ChrW(39)", Generate (new CodePrimitiveExpression ('\''), sw), "#39");
+				sb.Length = 0;
+				Assert.AreEqual (vbNs + ".ChrW(8232)", Generate (new CodePrimitiveExpression ('\u2028'), sw), "#40");
+				sb.Length = 0;
+				Assert.AreEqual (vbNs + ".ChrW(8233)", Generate (new CodePrimitiveExpression ('\u2029'), sw), "#41");
+				sb.Length = 0;
+				Assert.AreEqual (vbNs + ".ChrW(8240)", Generate (new CodePrimitiveExpression ('\u2030'), sw), "#42");
+				sw.Close ();
+			}
+		}
+
+		[Test]
+#if ONLY_1_1
+		[ExpectedException (typeof (ArgumentException))]
+#endif
+		public void PrimitiveExpressionTest_SByte ()
+		{
+			StringBuilder sb = new StringBuilder ();
+
+			using (StringWriter sw = new StringWriter (sb)) {
+				Assert.AreEqual ("CSByte(5)", Generate (new CodePrimitiveExpression ((sbyte) 5), sw));
+				sw.Close ();
+			}
+		}
+
+		[Test]
+#if ONLY_1_1
+		[ExpectedException (typeof (ArgumentException))]
+#endif
+		public void PrimitiveExpressionTest_UInt16 ()
+		{
+			StringBuilder sb = new StringBuilder ();
+
+			using (StringWriter sw = new StringWriter (sb)) {
+				Assert.AreEqual ("5US", Generate (new CodePrimitiveExpression ((ushort) 5), sw));
+				sw.Close ();
+			}
+		}
+
+		[Test]
+#if ONLY_1_1
+		[ExpectedException (typeof (ArgumentException))]
+#endif
+		public void PrimitiveExpressionTest_UInt32 ()
+		{
+			StringBuilder sb = new StringBuilder ();
+
+			using (StringWriter sw = new StringWriter (sb)) {
+				Assert.AreEqual ("5UI", Generate (new CodePrimitiveExpression ((uint) 5), sw));
+				sw.Close ();
+			}
+		}
+
+		[Test]
+#if ONLY_1_1
+		[ExpectedException (typeof (ArgumentException))]
+#endif
+		public void PrimitiveExpressionTest_UInt64 ()
+		{
+			StringBuilder sb = new StringBuilder ();
+
+			using (StringWriter sw = new StringWriter (sb)) {
+				Assert.AreEqual ("5UL", Generate (new CodePrimitiveExpression ((ulong) 5), sw));
+				sw.Close ();
+			}
+		}
+
+		[Test]
 		public void ParameterDeclarationExpressionTest ()
 		{
 			CodeParameterDeclarationExpression cpde = null;

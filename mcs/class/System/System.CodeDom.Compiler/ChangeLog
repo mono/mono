@@ -1,3 +1,28 @@
+2005-12-07  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* CodeGenerator.cs: Modified GeneratePrimitiveExpression to throw 
+	ArgumentException for sbyte value, use GenerateSingleFloatValue for 
+	float, GenerateDecimalValue for decimal and GenerateDoubleValue for
+	double. Modified exception message for non-primitive types to match
+	MS.NET.
+	* ICodeCompiler.cs: Set eol-style to native.
+	* CodeCompiler.cs: Set eol-style to native.
+	* CodeDomConfigurationHandler.cs: Set eol-style to native.
+	* CodeDomProvider.cs: Set eol-style to native.
+	* CodeGeneratorOptions.cs: Set eol-style to native.
+	* CodeParser.cs: Set eol-style to native.
+	* CompilerError.cs: Set eol-style to native.
+	* CompilerErrorCollection.cs: Set eol-style to native.
+	* CompilerInfo.cs: Set eol-style to native.
+	* CompilerParameters.cs: Set eol-style to native.
+	* CompilerResults.cs: Set eol-style to native.
+	* Executor.cs: Set eol-style to native.
+	* GeneratorSupport.cs: Set eol-style to native.
+	* ICodeGenerator.cs: Set eol-style to native.
+	* ICodeParser.cs: Set eol-style to native.
+	* LanguageOptions.cs: Set eol-style to native.
+	* TempFileCollection.cs: Set eol-style to native.
+
 2005-11-30  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* CodeGenerator.cs: Corrected line endings. Set eol-style to native.

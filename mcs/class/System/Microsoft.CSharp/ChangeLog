@@ -1,3 +1,9 @@
+2005-12-07  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* CSharpCodeGenerator.cs: Override GeneratePrimitiveExpression to
+	match .NET 1.x and 2.0 for float, decimal, char, ushort, uint, ulong
+	and sbyte.
+
 2005-11-30  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* CSharpCodeGenerator.cs: No longer output semicolon and newline for
