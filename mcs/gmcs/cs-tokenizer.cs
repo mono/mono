@@ -482,6 +482,12 @@ namespace Mono.CSharp
 		{
 		start:
 			int the_token = token ();
+			if (the_token == Token.OPEN_BRACKET) {
+				do {
+					the_token = token ();
+				} while (the_token != Token.CLOSE_BRACKET);
+				the_token = token ();
+			}
 			switch (the_token) {
 			case Token.IDENTIFIER:
 			case Token.OBJECT:

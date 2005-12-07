@@ -2245,6 +2245,12 @@ namespace Mono.CSharp {
 			if (OptAttributes != null)
 				OptAttributes.Emit (ec, this);
 
+			if (IsGeneric && !(this is ClassPart)) {
+				int offset = CountTypeParameters - CurrentTypeParameters.Length;
+				for (int i = offset; i < gen_params.Length; i++)
+					CurrentTypeParameters [i - offset].EmitAttributes (ec);
+			}
+
 			//
 			// Structs with no fields need to have at least one byte.
 			// The right thing would be to set the PackingSize in a DefineType
@@ -2694,11 +2700,11 @@ namespace Mono.CSharp {
 						return null;
 					}
 
-					string[] pc_names = pc.MemberName.TypeArguments.GetDeclarations ();
-					string[] names = member_name.TypeArguments.GetDeclarations ();
+					TypeParameterName[] pc_names = pc.MemberName.TypeArguments.GetDeclarations ();
+					TypeParameterName[] names = member_name.TypeArguments.GetDeclarations ();
 
 					for (int i = 0; i < pc.CountTypeParameters; i++) {
-						if (pc_names [i] == names [i])
+						if (pc_names [i].Name == names [i].Name)
 							continue;
 
 						Report.Error (
@@ -5208,6 +5214,9 @@ namespace Mono.CSharp {
 
 			if (OptAttributes != null)
 				OptAttributes.Emit (ec, kind);
+
+			if (GenericMethod != null)
+				GenericMethod.EmitAttributes (ec);
 
 			ToplevelBlock block = method.Block;
 			

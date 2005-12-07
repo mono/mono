@@ -1288,21 +1288,21 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			string[] names = MemberName.TypeArguments.GetDeclarations ();
+			TypeParameterName[] names = MemberName.TypeArguments.GetDeclarations ();
 			type_params = new TypeParameter [names.Length];
 
 			//
 			// Register all the names
 			//
 			for (int i = 0; i < type_params.Length; i++) {
-				string name = names [i];
+				TypeParameterName name = names [i];
 
 				Constraints constraints = null;
 				if (constraints_list != null) {
 					foreach (Constraints constraint in constraints_list) {
 						if (constraint == null)
 							continue;
-						if (constraint.TypeParameter == name) {
+						if (constraint.TypeParameter == name.Name) {
 							constraints = constraint;
 							break;
 						}
@@ -1310,9 +1310,10 @@ namespace Mono.CSharp {
 				}
 
 				type_params [i] = new TypeParameter (
-					Parent, this, name, constraints, Location);
+					Parent, this, name.Name, constraints, name.OptAttributes,
+					Location);
 
-				AddToContainer (type_params [i], name);
+				AddToContainer (type_params [i], name.Name);
 			}
 		}
 

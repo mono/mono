@@ -554,8 +554,8 @@ namespace Mono.CSharp {
 		GenericTypeParameterBuilder type;
 
 		public TypeParameter (TypeContainer parent, DeclSpace decl, string name,
-				      Constraints constraints, Location loc)
-			: base (parent, new MemberName (name, loc), null)
+				      Constraints constraints, Attributes attrs, Location loc)
+			: base (parent, new MemberName (name, loc), attrs)
 		{
 			this.name = name;
 			this.decl = decl;
@@ -801,6 +801,12 @@ namespace Mono.CSharp {
 			return constraints.CheckInterfaceMethod (ec, new_constraints);
 		}
 
+		public void EmitAttributes (EmitContext ec)
+		{
+			if (OptAttributes != null)
+				OptAttributes.Emit (ec, this);
+		}
+
 		public override string DocCommentHeader {
 			get {
 				throw new InvalidOperationException (
@@ -819,17 +825,19 @@ namespace Mono.CSharp {
 
 		public override void ApplyAttributeBuilder (Attribute a,
 							    CustomAttributeBuilder cb)
-		{ }
+		{
+			type.SetCustomAttribute (cb);
+		}
 
 		public override AttributeTargets AttributeTargets {
 			get {
-				return (AttributeTargets) 0;
+				return (AttributeTargets) AttributeTargets.GenericParameter;
 			}
 		}
 
 		public override string[] ValidAttributeTargets {
 			get {
-				return new string [0];
+				return new string [] { "type parameter" };
 			}
 		}
 
@@ -1097,13 +1105,18 @@ namespace Mono.CSharp {
 		///   parser creates a `MemberName' with `TypeArguments' for both cases and
 		///   in case of a generic type definition, we call GetDeclarations().
 		/// </summary>
-		public string[] GetDeclarations ()
+		public TypeParameterName[] GetDeclarations ()
 		{
-			string[] ret = new string [args.Count];
+			TypeParameterName[] ret = new TypeParameterName [args.Count];
 			for (int i = 0; i < args.Count; i++) {
+				TypeParameterName name = args [i] as TypeParameterName;
+				if (name != null) {
+					ret [i] = name;
+					continue;
+				}
 				SimpleName sn = args [i] as SimpleName;
 				if (sn != null) {
-					ret [i] = sn.Name;
+					ret [i] = new TypeParameterName (sn.Name, null, sn.Location);
 					continue;
 				}
 
@@ -1190,6 +1203,23 @@ namespace Mono.CSharp {
 				atypes [i] = te.Type;
 			}
 			return ok;
+		}
+	}
+
+	public class TypeParameterName : SimpleName
+	{
+		Attributes attributes;
+
+		public TypeParameterName (string name, Attributes attrs, Location loc)
+			: base (name, loc)
+		{
+			attributes = attrs;
+		}
+
+		public Attributes OptAttributes {
+			get {
+				return attributes;
+			}
 		}
 	}
 
@@ -1718,8 +1748,11 @@ namespace Mono.CSharp {
 		public bool Define (MethodBuilder mb)
 		{
 			GenericTypeParameterBuilder[] gen_params;
-			string[] names = MemberName.TypeArguments.GetDeclarations ();
-			gen_params = mb.DefineGenericParameters (names);
+			TypeParameterName[] names = MemberName.TypeArguments.GetDeclarations ();
+			string[] snames = new string [names.Length];
+			for (int i = 0; i < names.Length; i++)
+				snames [i] = names [i].Name;
+			gen_params = mb.DefineGenericParameters (snames);
 			for (int i = 0; i < TypeParameters.Length; i++)
 				TypeParameters [i].Define (gen_params [i]);
 
@@ -1756,6 +1789,15 @@ namespace Mono.CSharp {
 			return ok;
 		}
 
+		public void EmitAttributes (EmitContext ec)
+		{
+			for (int i = 0; i < TypeParameters.Length; i++)
+				TypeParameters [i].EmitAttributes (ec);
+
+			if (OptAttributes != null)
+				OptAttributes.Emit (ec, this);
+		}
+
 		public override bool DefineMembers (TypeContainer parent)
 		{
 			return true;
@@ -1775,7 +1817,7 @@ namespace Mono.CSharp {
 
 		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
 		{
-			// FIXME
+			base.ApplyAttributeBuilder (a, cb);
 		}
 
 		public override AttributeTargets AttributeTargets {

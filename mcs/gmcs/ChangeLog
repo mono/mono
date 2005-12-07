@@ -1,5 +1,27 @@
 2005-12-07  Martin Baulig  <martin@ximian.com>
 
+	Add support for custom attributes on type parameters.
+
+	* cs-parser.jay (type_arguments): Added `opt_attributes'.
+
+	* generic.cs (TypeParameterName): New public class; we use this
+	instead of a `string' to store the name of a type parameter, so we
+	can also have `Attributes'.
+	(TypeArguments.GetDeclarations): Return a `TypeParameterName[]'
+	array instead of a `string[]' array.
+	(TypeParameter.ctor): We now also take an `Attributes' argument.
+	(TypeParameter.EmitAttributes): New public method; emit our
+	`OptAttributes' here.
+	(GenericMethod.EmitAttributes): New public method; emit the custom
+	attributes on all our type parameters.
+
+	* class.cs (TypeContainer.EmitType): Call EmitAttributes() on all
+	our type parameters.
+	(MethodData.Define): If we're a generic method, call
+	EmitAttributes() on it.
+
+2005-12-07  Martin Baulig  <martin@ximian.com>
+
 	* generic.cs
 	(ConstraintChecker): New public abstract class; move the
 	constraint checking here from `ConstructedType' and also do

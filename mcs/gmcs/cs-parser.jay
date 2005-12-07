@@ -2731,17 +2731,32 @@ opt_type_argument_list
 	;
 
 type_arguments
-	: type {
+	: opt_attributes type {
 		TypeArguments type_args = new TypeArguments (lexer.Location);
-		type_args.Add ((Expression) $1);
+		if ($1 != null) {
+			SimpleName sn = $2 as SimpleName;
+			if (sn == null)
+				Report.Error (1031, lexer.Location, "Type expected");
+			else
+				$2 = new TypeParameterName (sn.Name, (Attributes) $1, lexer.Location);
+		}
+		type_args.Add ((Expression) $2);
 		$$ = type_args;
   	  }
-	| type_arguments COMMA type {
+	| type_arguments COMMA opt_attributes type {
 		TypeArguments type_args = (TypeArguments) $1;
-		type_args.Add ((Expression) $3);
+		if ($3 != null) {
+			SimpleName sn = $4 as SimpleName;
+			if (sn == null)
+				Report.Error (1031, lexer.Location, "Type expected");
+			else
+				$4 = new TypeParameterName (sn.Name, (Attributes) $3, lexer.Location);
+		}
+		type_args.Add ((Expression) $4);
 		$$ = type_args;
 	  }
 	;
+
 	
 /* 
  * Before you think of adding a return_type, notice that we have been
