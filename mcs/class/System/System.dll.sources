@@ -607,6 +607,7 @@ System.Net.Sockets/ProtocolFamily.cs
 System.Net.Sockets/ProtocolType.cs
 System.Net.Sockets/SelectMode.cs
 System.Net.Sockets/Socket.cs
+System.Net.Sockets/SocketError.cs
 System.Net.Sockets/SocketException.cs
 System.Net.Sockets/SocketFlags.cs
 System.Net.Sockets/SocketOptionLevel.cs

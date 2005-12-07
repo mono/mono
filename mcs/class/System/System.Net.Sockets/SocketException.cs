@@ -58,5 +58,14 @@ namespace System.Net.Sockets
 				return NativeErrorCode;
 			}
 		}
+
+#if NET_2_0
+		public SocketError SocketErrorCode {
+			get {
+				return (SocketError) NativeErrorCode;
+			}
+		}
+#endif
+
 	}
 }
