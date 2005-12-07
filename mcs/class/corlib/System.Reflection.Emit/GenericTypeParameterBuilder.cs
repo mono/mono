@@ -50,6 +50,7 @@ namespace System.Reflection.Emit
 		private int index;
 		private Type base_type;
 		private Type[] iface_constraints;
+		private CustomAttributeBuilder[] cattrs;
 		private GenericParameterAttributes attrs;
 	#endregion
 
@@ -355,6 +356,22 @@ namespace System.Reflection.Emit
 		public override MethodBase DeclaringMethod {
 			get { 
 				return mbuilder;
+			}
+		}
+
+		public void SetCustomAttribute (CustomAttributeBuilder customBuilder)
+		{
+			if (customBuilder == null)
+				throw new ArgumentNullException ("customBuilder");
+
+			if (cattrs != null) {
+				CustomAttributeBuilder[] new_array = new CustomAttributeBuilder [cattrs.Length + 1];
+				cattrs.CopyTo (new_array, 0);
+				new_array [cattrs.Length] = customBuilder;
+				cattrs = new_array;
+			} else {
+				cattrs = new CustomAttributeBuilder [1];
+				cattrs [0] = customBuilder;
 			}
 		}
 

@@ -1,3 +1,8 @@
+2005-12-07  Martin Baulig  <martin@ximian.com>
+
+	* GenericTypeParameterBuilder.cs: Add support for custom attributes.
+	(GenericTypeParameterBuilder.cattrs): New field.
+	(GenericTypeParameterBuilder.SetCustomAttribute): Implement this.
 
 Mon Dec 5 15:13:26 CET 2005 Paolo Molaro <lupus@ximian.com>
 
