@@ -8,7 +8,7 @@
 // 
 
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,9 +30,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-
-using System;
-using System.Collections;
 using System.Globalization;
 using System.Runtime.InteropServices;
 
@@ -105,6 +102,8 @@ namespace System.Collections {
 		{
 		}
 
+		// LAMESPEC: MSDN docs talk about an InvalidCastException but 
+		// I wasn't able to duplicate such a case in the unit tests.
 		public SortedList (IDictionary d, IComparer comparer)
 		{
 			if (d  ==  null)
@@ -115,11 +114,7 @@ namespace System.Collections {
 
 			IDictionaryEnumerator it = d.GetEnumerator ();
 			while (it.MoveNext ()) {
-				if (it.Key is IComparable) {
-					Add (it.Key, it.Value);
-				} else {
-					throw new InvalidCastException("!IComparable");
-				}
+				Add (it.Key, it.Value);
 			}
 		}
 
@@ -521,8 +516,10 @@ namespace System.Collections {
 			}
 
 			if (freeIndx >= 0) {
-				if (!overwrite)
-					throw new ArgumentException("element already exists");
+				if (!overwrite) {
+					string msg = Locale.GetText ("Key '{0}' already exists in list.", key);
+					throw new ArgumentException (msg);
+				}
 
 				table [freeIndx].value = value;
 				++modificationCount;
@@ -555,11 +552,6 @@ namespace System.Collections {
 				return table [i].value;
 			else
 				return null;
-		}
-
-		private void InitTable (int capacity)
-		{
-			InitTable (capacity, false);
 		}
 
 		private void InitTable (int capacity, bool forceSize) 
