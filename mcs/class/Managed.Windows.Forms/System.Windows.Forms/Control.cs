@@ -2671,9 +2671,8 @@ namespace System.Windows.Forms
 			Keys key_data;
 
 			if ((msg.Msg == (int)Msg.WM_KEYDOWN) || (msg.Msg == (int)Msg.WM_SYSKEYDOWN)) {
-				key_data = (Keys)msg.WParam.ToInt32();
-				if (((int)msg.LParam & 0x20000000) > 0)
-					key_data |= Keys.Alt;
+				key_data = (Keys)msg.WParam.ToInt32() | XplatUI.State.ModifierKeys;
+
 				if (!ProcessCmdKey(ref msg, key_data)) {
 					if (IsInputKey(key_data)) {
 						return false;
@@ -3012,17 +3011,21 @@ namespace System.Windows.Forms
 			KeyEventArgs		key_event;
 
 			switch (msg.Msg) {
+				case (int)Msg.WM_SYSKEYDOWN:
 				case (int)Msg.WM_KEYDOWN: {
 					key_event = new KeyEventArgs ((Keys)msg.WParam.ToInt32 ());
 					OnKeyDown (key_event);
 					return key_event.Handled;
 				}
+
+				case (int)Msg.WM_SYSKEYUP:
 				case (int)Msg.WM_KEYUP: {
 					key_event = new KeyEventArgs ((Keys)msg.WParam.ToInt32 ());
 					OnKeyUp (key_event);
 					return key_event.Handled;
 				}
 
+				case (int)Msg.WM_SYSCHAR:
 				case (int)Msg.WM_CHAR: {
 					KeyPressEventArgs	key_press_event;
 
@@ -3520,6 +3523,8 @@ namespace System.Windows.Forms
 					}
 
 					OnPaintBackground(paint_event);
+					// Leave out for now, our controls can do Paint += ... as well
+					//OnPaintInternal(paint_event);
 					OnPaint(paint_event);
 
 					if ((control_style & ControlStyles.DoubleBuffer) != 0) {
@@ -3673,7 +3678,6 @@ namespace System.Windows.Forms
 				case Msg.WM_KEYUP:
 				case Msg.WM_SYSCHAR:
 				case Msg.WM_CHAR: {
-//Console.WriteLine("Got {0}", (Msg)m.Msg);
 					if (PreProcessMessage(ref m)) {
 						return;
 					}
@@ -3998,6 +4002,10 @@ namespace System.Windows.Forms
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnPaint(PaintEventArgs e) {
 			if (Paint!=null) Paint(this, e);
+		}
+
+		internal virtual void OnPaintInternal(PaintEventArgs e) {
+			// Override me
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
