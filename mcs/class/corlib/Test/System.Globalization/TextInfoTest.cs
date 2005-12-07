@@ -3,30 +3,31 @@
 //
 // Miguel de Icaza <miguel@ximian.com>
 //
-// (C) 2004 Novell, Inc.  http://www.novell.com
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 
 using NUnit.Framework;
 using System;
 using System.Globalization;
+using System.IO;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace MonoTests.System.Globalization
 {
 
 [TestFixture]
-public class TextInfoTest : Assertion
-{
-	public TextInfoTest () {}
+public class TextInfoTest {
 
 	[Test]
 	public void TitleCase ()
 	{
 		TextInfo ti = new CultureInfo ("en-US", false).TextInfo;
 
-		AssertEquals (" The Dog", ti.ToTitleCase (" the dog"));
-		AssertEquals (" The Dude", ti.ToTitleCase (" The Dude"));
-		AssertEquals ("La Guerra Yla Paz", ti.ToTitleCase ("la Guerra yLa pAz"));
-		AssertEquals ("\tTab\tAnd\tPeace", ti.ToTitleCase ("\ttab\taNd\tpeaCE"));
+		Assert.AreEqual (" The Dog", ti.ToTitleCase (" the dog"));
+		Assert.AreEqual (" The Dude", ti.ToTitleCase (" The Dude"));
+		Assert.AreEqual ("La Guerra Yla Paz", ti.ToTitleCase ("la Guerra yLa pAz"));
+		Assert.AreEqual ("\tTab\tAnd\tPeace", ti.ToTitleCase ("\ttab\taNd\tpeaCE"));
 	}
 
 	[Test]
@@ -35,13 +36,13 @@ public class TextInfoTest : Assertion
 		TextInfo ti;
 
 		ti = new CultureInfo ("en-US", false).TextInfo;
-		AssertEquals ("#1", ",", ti.ListSeparator);
+		Assert.AreEqual (",", ti.ListSeparator, "#1");
 
 		ti = CultureInfo.InvariantCulture.TextInfo;
-		AssertEquals ("#2", ",", ti.ListSeparator);
+		Assert.AreEqual (",", ti.ListSeparator, "#2");
 
 		ti = new CultureInfo ("nl-BE", false).TextInfo;
-		AssertEquals ("#3", ";", ti.ListSeparator);
+		Assert.AreEqual (";", ti.ListSeparator, "#3");
 	}
 
 	[Test]
@@ -75,9 +76,117 @@ public class TextInfoTest : Assertion
 
 	private void Check (CultureInfo ci, string src, string expected)
 	{
-		AssertEquals (src + " at culture " + ci.LCID,
-			expected,
-			ci.TextInfo.ToTitleCase (src));
+		Assert.AreEqual (expected, ci.TextInfo.ToTitleCase (src), src + " at culture " + ci.LCID);
+	}
+
+	private void CompareProperties (TextInfo t1, TextInfo t2, bool compareReadOnly)
+	{
+		Assert.AreEqual (t1.ANSICodePage, t2.ANSICodePage, "ANSICodePage");
+		Assert.AreEqual (t1.EBCDICCodePage, t2.EBCDICCodePage, "EBCDICCodePage");
+		Assert.AreEqual (t1.ListSeparator, t2.ListSeparator, "ListSeparator");
+		Assert.AreEqual (t1.MacCodePage, t2.MacCodePage, "MacCodePage");
+		Assert.AreEqual (t1.OEMCodePage, t2.OEMCodePage, "OEMCodePage");
+#if NET_2_0
+		Assert.AreEqual (t1.CultureName, t2.CultureName, "CultureName");
+		if (compareReadOnly)
+			Assert.AreEqual (t1.IsReadOnly, t2.IsReadOnly, "IsReadOnly");
+//FIXME		Assert.AreEqual (t1.IsRightToLeft, t2.IsRightToLeft, "IsRightToLeft");
+		Assert.AreEqual (t1.LCID, t2.LCID, "LCID");
+#endif
+	}
+
+	[Test]
+	[Category ("NotWorking")] // OnDeserialization isn't completed
+	public void SerializationRoundtrip ()
+	{
+		TextInfo enus = new CultureInfo ("en-US").TextInfo;
+		BinaryFormatter bf = new BinaryFormatter ();
+		MemoryStream ms = new MemoryStream ();
+		bf.Serialize (ms, enus);
+
+		ms.Position = 0;
+		TextInfo clone = (TextInfo) bf.Deserialize (ms);
+		CompareProperties (enus, clone, true);
+	}
+
+#if NET_2_0
+	[Test]
+	public void Clone ()
+	{
+		TextInfo enus = new CultureInfo ("en-US").TextInfo;
+		TextInfo clone = (TextInfo) enus.Clone ();
+		CompareProperties (enus, clone, true);
+	}
+
+	[Test]
+	public void Clone_ReadOnly ()
+	{
+		TextInfo enus = TextInfo.ReadOnly (new CultureInfo ("en-US").TextInfo);
+		Assert.IsTrue (enus.IsReadOnly, "IsReadOnly-1");
+		TextInfo clone = (TextInfo) enus.Clone ();
+		Assert.IsFalse (clone.IsReadOnly, "IsReadOnly-2");
+		CompareProperties (enus, clone, false);
+		// cloned item is *NOT* read-only
+	}
+
+	[Test]
+	public void ReadOnly ()
+	{
+		TextInfo enus = new CultureInfo ("en-US").TextInfo;
+		Assert.IsFalse (enus.IsReadOnly, "IsReadOnly-1");
+		TextInfo ro = TextInfo.ReadOnly (enus);
+		Assert.IsTrue (ro.IsReadOnly, "IsReadOnly-2");
+		CompareProperties (enus, ro, false);
+	}
+
+	[Test]
+	public void IsRightToLeft ()
+	{
+		foreach (CultureInfo ci in CultureInfo.GetCultures (CultureTypes.AllCultures)) {
+			switch (ci.LCID) {
+			case 1:		// ar
+			case 13:	// he
+			case 32:	// ur
+			case 41:	// fa
+			case 90:	// syr
+			case 101:	// div
+			case 1025:	// ar-SA
+			case 1037:	// he-IL
+			case 1056:	// ur-PK
+			case 1065:	// ra-IR
+			case 1114:	// syr-SY
+			case 1125:	// div-MV
+			case 2049:	// ar-IQ
+			case 3073:	// ar-EG
+			case 4097:	// ar-LY
+			case 5121:	// ar-DZ
+			case 6145:	// ar-MA
+			case 7169:	// ar-TN
+			case 8193:	// ar-OM
+			case 9217:	// ar-YE
+			case 10241:	// ar-SY
+			case 11265:	// ar-JO
+			case 12289:	// ar-LB
+			case 13313:	// ar-KW
+			case 14337:	// ar-AE
+			case 15361:	// ar-BH
+			case 16385:	// ar-QA
+				Assert.IsTrue (ci.TextInfo.IsRightToLeft, ci.Name);
+				break;
+			default:
+				Assert.IsFalse (ci.TextInfo.IsRightToLeft, ci.Name);
+				break;
+			}
+		}
+	}
+#endif
+
+	[Test]
+	public void Deserialization ()
+	{
+		TextInfo ti = CultureInfo.CurrentCulture.TextInfo;
+		IDeserializationCallback dc = (ti as IDeserializationCallback);
+		dc.OnDeserialization (null);
 	}
 }
 
