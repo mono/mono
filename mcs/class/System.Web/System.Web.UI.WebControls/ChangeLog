@@ -1,3 +1,9 @@
+2005-12-07  Chris Toshok  <toshok@ximian.com>
+
+	* BaseValidator.cs: in the uplevel rendering case, don't render
+	the text if the validator's Display attribute is "None".  Should
+	fix bug #76924.
+
 2005-11-30 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* RadioButton.cs: if the 'value' attribute is set explicitly (as

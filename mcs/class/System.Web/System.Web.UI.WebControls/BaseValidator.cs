@@ -480,7 +480,8 @@ namespace System.Web.UI.WebControls {
 			}
 			else if (render_uplevel) {
 				render_tags = true;
-				render_text = (!v || Display == ValidatorDisplay.Dynamic);
+				if (Display != ValidatorDisplay.None)
+					render_text = !v || Display == ValidatorDisplay.Dynamic;
 			}
 			else {
 				if (Display == ValidatorDisplay.Static) {
