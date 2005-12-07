@@ -309,7 +309,11 @@ namespace System.Web.Services.Description {
 				{
 					operationBinding = oper;
 					operation = FindPortOperation ();
-					if (operation == null) throw new Exception ("Operation " + operationBinding.Name + " not found in portType " + PortType.Name);
+					if (operation == null)
+						throw new Exception ("Operation " + operationBinding.Name + " not found in portType " + PortType.Name);
+
+					inputMessage = null;
+					outputMessage = null;
 
 					foreach (OperationMessage omsg in operation.Messages)
 					{

@@ -210,10 +210,12 @@ namespace System.Web.Services.Description {
 				SoapBodyBinding isbb = null;
 				XmlMembersMapping inputMembers = null;
 				
+				bool isWrapped = CheckIsWrapped ();
+				
 				isbb = OperationBinding.Input.Extensions.Find (typeof(SoapBodyBinding)) as SoapBodyBinding;
 				if (isbb == null) throw new InvalidOperationException ("Soap body binding not found");
 			
-				inputMembers = ImportMembersMapping (InputMessage, isbb, style, false);
+				inputMembers = ImportMembersMapping (InputMessage, isbb, style, false, isWrapped);
 				if (inputMembers == null) throw new InvalidOperationException ("Input message not declared");
 				
 				// If OperationBinding.Output is null, it is an OneWay operation
@@ -225,7 +227,7 @@ namespace System.Web.Services.Description {
 					osbb = OperationBinding.Output.Extensions.Find (typeof(SoapBodyBinding)) as SoapBodyBinding;
 					if (osbb == null) throw new InvalidOperationException ("Soap body binding not found");
 
-					outputMembers = ImportMembersMapping (OutputMessage, osbb, style, true);
+					outputMembers = ImportMembersMapping (OutputMessage, osbb, style, true, isWrapped);
 					if (outputMembers == null) throw new InvalidOperationException ("Output message not declared");
 				}
 				
@@ -258,12 +260,18 @@ namespace System.Web.Services.Description {
 			}
 		}
 		
-		XmlMembersMapping ImportMembersMapping (Message msg, SoapBodyBinding sbb, SoapBindingStyle style, bool output)
+		bool CheckIsWrapped ()
+		{
+			return (OutputMessage == null || (OutputMessage.Parts.Count == 1 && OutputMessage.Parts[0].Name == "parameters")) &&
+				   (InputMessage == null || (InputMessage.Parts.Count == 1 && InputMessage.Parts[0].Name == "parameters"));
+		}
+		
+		XmlMembersMapping ImportMembersMapping (Message msg, SoapBodyBinding sbb, SoapBindingStyle style, bool output, bool wrapped)
 		{
 			string elemName = Operation.Name;
 			if (output) elemName += "Response";
 
-			if (msg.Parts.Count == 1 && msg.Parts[0].Name == "parameters")
+			if (wrapped)
 			{
 				// Wrapped parameter style
 				
