@@ -554,16 +554,16 @@ namespace Cairo {
 		}
 
 		public enum Content {
-			Color,
-			Alpha,
-			ColorAlpha,
+			Color = 0x1000,
+			Alpha= 0x2000,
+			ColorAlpha  = 0x3000,
 		}
 		
         public enum Format {
-                ARGB32 = 0,
-                RGB24 = 1,
-                A8 = 2,
-                A1 = 4
+                ARGB32,
+                RGB24,
+                A8,
+                A1,
         }
 
         public enum Operator {
