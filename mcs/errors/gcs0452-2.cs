@@ -1,4 +1,4 @@
-// CS0452: The type 'int' must be a reference type in order to use it as parameter 'T' in the generic type or method 'Foo.Test<T>(ref T)'
+// CS0452: The type 'int' must be a reference type in order to use it as type parameter 'T' in the generic type or method 'Foo.Test<T>(ref T)'
 // Line: 14
 public class Foo
 {
