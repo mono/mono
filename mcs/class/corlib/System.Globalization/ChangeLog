@@ -1,3 +1,10 @@
+2005-12-06  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* DateTimeStyles.cs: ComVisible is only needed in 2.0.
+	* TextInfo.cs: Added some 2.0 features that were needed (e.g. LCID)
+	to implement serialization for another class. Added TODO on class for 
+	deserialization (so it shows up in the status page).
+
 2005-11-29  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CompareInfo.cs : IsSortable() are static.

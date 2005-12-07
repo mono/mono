@@ -1,10 +1,11 @@
 //
 // System.Globalization.TextInfo.cs
 //
-// Author:
+// Authors:
 //	Dick Porter (dick@ximian.com)
 // 	Duncan Mak (duncan@ximian.com)
 //	Atsushi Enomoto (atsushi@ximian.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002 Ximian, Inc.
 // (C) 2005 Novell, Inc.
@@ -34,8 +35,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-using System;
-using System.Globalization;
+
 using System.Runtime.Serialization;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -43,6 +43,7 @@ using System.Text;
 namespace System.Globalization {
 
 	[Serializable]
+	[MonoTODO ("IDeserializationCallback isn't implemented.")]
 	public class TextInfo: IDeserializationCallback
 	{
 		[StructLayout (LayoutKind.Sequential)]
@@ -54,9 +55,14 @@ namespace System.Globalization {
 			public byte list_sep;
 		}
 
-		int m_win32LangID;
+#if NET_2_0
+		string m_listSeparator;
+		bool m_isReadOnly;
+		string customCultureName;
+#endif
 		int m_nDataItem;
 		bool m_useUserOverride;
+		int m_win32LangID;
 
 		[NonSerialized]
 		readonly CultureInfo ci;
@@ -96,6 +102,21 @@ namespace System.Globalization {
 			}
 		}
 
+#if NET_2_0
+		private TextInfo (TextInfo textInfo)
+		{
+			m_win32LangID = textInfo.m_win32LangID;
+			m_nDataItem = textInfo.m_nDataItem;
+			m_useUserOverride = textInfo.m_useUserOverride;
+			m_listSeparator = textInfo.ListSeparator;
+			customCultureName = textInfo.CultureName;
+			ci = textInfo.ci;
+			parentCulture = textInfo.parentCulture;
+			handleDotI = textInfo.handleDotI;
+			data = textInfo.data;
+		}
+#endif
+
 		public virtual int ANSICodePage
 		{
 			get {
@@ -110,12 +131,30 @@ namespace System.Globalization {
 			}
 		}
 
-		public virtual string ListSeparator 
-		{
+#if NET_2_0
+		[ComVisible (false)]
+		public
+#else
+		// we need it to fully implement System.Collection.CaseInsensitiveHashCodeProvider
+		internal
+#endif
+		int LCID {
+			get { return m_win32LangID; }
+		}
+
+		public virtual string ListSeparator {
+#if NET_2_0
 			get {
-				
+				if (m_listSeparator == null)
+					m_listSeparator = ((char) data.list_sep).ToString ();
+				return m_listSeparator;
+			}
+			set { m_listSeparator = value; }
+#else
+			get {
 				return ((char) data.list_sep).ToString ();
 			}
+#endif
 		}
 
 		public virtual int MacCodePage
@@ -132,6 +171,60 @@ namespace System.Globalization {
 			}
 		}
 
+#if NET_2_0
+		[ComVisible (false)]
+		public string CultureName {
+			get {
+				if (customCultureName == null)
+					customCultureName = ci.Name;
+				return customCultureName;
+			}
+		}
+
+		[ComVisible (false)]
+		public bool IsReadOnly {
+			get { return m_isReadOnly; }
+		}
+
+		[ComVisible (false)]
+		public bool IsRightToLeft {
+			get {
+				// hardcoded
+				switch (m_win32LangID) {
+				case 1:		// ar
+				case 13:	// he
+				case 32:	// ur
+				case 41:	// fa
+				case 90:	// syr
+				case 101:	// div
+				case 1025:	// ar-SA
+				case 1037:	// he-IL
+				case 1056:	// ur-PK
+				case 1065:	// ra-IR
+				case 1114:	// syr-SY
+				case 1125:	// div-MV
+				case 2049:	// ar-IQ
+				case 3073:	// ar-EG
+				case 4097:	// ar-LY
+				case 5121:	// ar-DZ
+				case 6145:	// ar-MA
+				case 7169:	// ar-TN
+				case 8193:	// ar-OM
+				case 9217:	// ar-YE
+				case 10241:	// ar-SY
+				case 11265:	// ar-JO
+				case 12289:	// ar-LB
+				case 13313:	// ar-KW
+				case 14337:	// ar-AE
+				case 15361:	// ar-BH
+				case 16385:	// ar-QA
+					return true;
+				default:
+					return false;
+				}
+			}
+		}
+#endif
 		public override bool Equals (object obj)
 		{
 			if (obj == null)
@@ -399,10 +492,30 @@ namespace System.Globalization {
 			return sb == null ? s : sb.ToString ();
 		}
 
+#if NET_2_0
+		static public TextInfo ReadOnly (TextInfo textInfo)
+		{
+			if (textInfo == null)
+				throw new ArgumentNullException ("textInfo");
+
+			TextInfo ti = new TextInfo (textInfo);
+			ti.m_isReadOnly = true;
+			return ti;
+		}
+#endif
 		/* IDeserialization interface */
 		[MonoTODO]
 		void IDeserializationCallback.OnDeserialization(object sender)
 		{
+			// FIXME: we need to re-create "data" in order to get most properties working
 		}
+
+#if NET_2_0
+		/* IClonable */
+		public object Clone ()
+		{
+			return new TextInfo (this);
+		}
+#endif
 	}
 }
