@@ -166,6 +166,10 @@ namespace System.Windows.Forms {
 			case Msg.WM_NCLBUTTONDOWN:
 				return HandleNCLButtonDown (ref m);
 
+			case Msg.WM_MOUSE_LEAVE:
+				FormMouseLeave (ref m);
+				break;
+
 			case Msg.WM_NCPAINT:
 //				form.UpdateStyles ();
 				PaintWindowDecorations ();
@@ -243,7 +247,6 @@ namespace System.Windows.Forms {
 				return true;
 			}
 
-			/*
 			if (IsSizable) {
 				SetCursorForPos (pos);
 			
@@ -255,7 +258,6 @@ namespace System.Windows.Forms {
 				form.Capture = true;
 				return true;
 			}
-			*/
 
 			return false;
 		}
@@ -309,7 +311,7 @@ namespace System.Windows.Forms {
 				int x = Control.LowOrder ((int) m.LParam.ToInt32 ());
 				int y = Control.HighOrder ((int) m.LParam.ToInt32 ());
 				FormPos pos = FormPosForCoords (x, y);
-				Console.WriteLine ("position:   " + pos);
+
 				SetCursorForPos (pos);
 
 				ClearVirtualPosition ();
@@ -317,6 +319,11 @@ namespace System.Windows.Forms {
 			}
 
 			return false;
+		}
+
+		private void FormMouseLeave (ref Message m)
+		{
+			form.Cursor = Cursors.Default;
 		}
 
 		private void SetCursorForPos (FormPos pos)
