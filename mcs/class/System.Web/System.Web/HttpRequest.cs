@@ -653,6 +653,7 @@ namespace System.Web {
 				total = buffer.Length;
 
 			if (content_length > 0) {
+				total = Math.Min (content_length, total);
 				IntPtr content = Marshal.AllocHGlobal (content_length);
 				if (content == (IntPtr) 0)
 					throw new HttpException (String.Format ("Not enough memory to allocate {0} bytes.",
@@ -661,15 +662,19 @@ namespace System.Web {
 				if (total > 0)
 					Marshal.Copy (buffer, 0, content, total);
 
-				buffer = new byte [Math.Min (Math.Max (content_length - total, 0), INPUT_BUFFER_SIZE)];
-				while (total < content_length){
-					int n;
-					n = worker_request.ReadEntityBody (buffer, Math.Min (content_length-total, INPUT_BUFFER_SIZE));
-					if (n <= 0)
-						break;
-					Marshal.Copy (buffer, 0, (IntPtr) ((long)content + total), n);
-					total += n;
+				if (total < content_length) {
+					buffer = new byte [Math.Min (content_length, INPUT_BUFFER_SIZE)];
+					do {
+						int n;
+						int min = Math.Min (content_length - total, INPUT_BUFFER_SIZE);
+						n = worker_request.ReadEntityBody (buffer, min);
+						if (n <= 0)
+							break;
+						Marshal.Copy (buffer, 0, (IntPtr) ((long)content + total), n);
+						total += n;
+					} while (total < content_length);
 				}
+
 				input_stream = new IntPtrStream (content, total);
 				DoFilter (buffer);
 			} else {
