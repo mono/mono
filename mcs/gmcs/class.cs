@@ -3702,12 +3702,18 @@ namespace Mono.CSharp {
 			bool old_unsafe = ec.InUnsafe;
 			ec.InUnsafe = InUnsafe;
 			ec.ResolvingGenericMethod = GenericMethod != null;
+
+			bool old_obsolete = ec.TestObsoleteMethodUsage;
+			if (GetObsoleteAttribute () != null || Parent.GetObsoleteAttribute () != null)
+				ec.TestObsoleteMethodUsage = false;
+
 			// Check if arguments were correct
 			if (!Parameters.Resolve (ec))
 				return false;
 
 			ec.ResolvingGenericMethod = false;
 			ec.InUnsafe = old_unsafe;
+			ec.TestObsoleteMethodUsage = old_obsolete;
 
 			return CheckParameters (ParameterTypes);
 		}
@@ -5127,6 +5133,8 @@ namespace Mono.CSharp {
 			}
 
 			EmitContext ec = method.CreateEmitContext (container, null);
+			if (method.GetObsoleteAttribute () != null || container.GetObsoleteAttribute () != null)
+				ec.TestObsoleteMethodUsage = false;
 
 			DefineMethodBuilder (ec, container, method_name, method.ParameterInfo.Types);
 
