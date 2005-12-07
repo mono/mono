@@ -1,3 +1,8 @@
+2005-12-07  Martin Baulig  <martin@ximian.com>
+
+	* reflection.c (encode_new_constraint): Removed; we don't use the
+	`NewConstraintAttribute' anymore.
+
 2005-12-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* icall.c (ves_icall_System_Reflection_Assembly_InternalGetType): Do
