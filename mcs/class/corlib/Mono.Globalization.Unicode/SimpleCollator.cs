@@ -1750,7 +1750,6 @@ Console.WriteLine ("==== {0} {1} {2} {3} {4} {5} {6} {7} {8}", s, si, send, leng
 
 		unsafe bool MatchesForward (string s, ref int idx, int end, int ti, byte* sortkey, bool noLv4, ref Context ctx)
 		{
-			COpt opt = ctx.Option;
 			int si = s [idx];
 			if (ctx.AlwaysMatchFlags != null && si < 128 && (ctx.AlwaysMatchFlags [si / 8] & (1 << (si % 8))) != 0)
 				return true;
