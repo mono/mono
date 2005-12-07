@@ -1,3 +1,7 @@
+2005-12-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* Directory.cs: Fix a warning.
+
 2005-11-10  Dick Porter  <dick@ximian.com>
 
 	* DirectoryInfo.cs: Fix endless recursion problem with root

@@ -395,8 +395,6 @@ namespace System.IO
 
 		private static string [] GetFileSystemEntries (string path, string pattern, FileAttributes mask, FileAttributes attrs)
 		{
-			MonoIOStat stat;
-
 			if (path == null || pattern == null)
 				throw new ArgumentNullException ();
 
