@@ -29,11 +29,11 @@
 // This theme tries to match clearlooks theme
 //
 // TODO:	
-//	- ComboBox drawing sometimes leaves artefacts, etc.
-//	- CheckBox
-//	- RadioButton
-//	- GroupBox
+//	- RadioButton !?!
 //	- TabControl: TabAlignment.Left and TabAlignment.Bottom
+//	- if an other control draws over a ScrollBar button you can see artefacts on the rounded edges 
+//	  (maybe use theme backcolor, but that looks ugly on a white background, need to find a way to get the backcolor of the parent control)
+//	- correct drawing of disabled controls (for example ComboBox... )
 
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -47,11 +47,6 @@ namespace System.Windows.Forms {
 				return new Version( 0, 0, 0, 1 );
 			}
 		}
-		
-		// the following 3 colors will be removed when the theme is finished
-		static readonly Color NormalColor = Color.LightGray;
-		static readonly Color MouseOverColor = Color.DarkGray;
-		static readonly Color BorderColor = MouseOverColor;
 		
 		static readonly Color theme_back_color = Color.FromArgb( 239, 235, 231 );
 		
@@ -73,6 +68,7 @@ namespace System.Windows.Forms {
 		static readonly Color button_edge_top_outer_color = Color.FromArgb( 237, 233, 228 );
 		static readonly Color button_edge_bottom_outer_color = Color.FromArgb( 243, 239, 236 );
 		static readonly Color button_focus_color = Color.FromArgb( 101, 94, 86 );
+		static readonly Color button_mouse_entered_second_gradient_color = Color.FromArgb( 230, 226, 219 );
 		
 		static readonly Color scrollbar_background_color = Color.FromArgb( 209, 200, 191 );
 		static readonly Color scrollbar_border_color = Color.FromArgb( 170, 156, 143 );
@@ -109,6 +105,10 @@ namespace System.Windows.Forms {
 		static readonly Color progressbar_first_gradient_color = Color.FromArgb( 104, 146, 184 );
 		static readonly Color progressbar_second_gradient_color = Color.FromArgb( 91, 133, 172 );
 		
+		static readonly Color checkbox_inner_boder_color = Color.FromArgb( 237, 234, 231 );
+		static readonly Color checkbox_pressed_inner_boder_color = Color.FromArgb( 203, 196, 189 );
+		static readonly Color checkbox_pressed_backcolor = Color.FromArgb( 212, 207, 202 );
+		
 		const int SEPARATOR_HEIGHT = 7;
     		const int MENU_TAB_SPACE = 8;		// Pixels added to the width of an item because of a tab
     		const int MENU_BAR_ITEMS_SPACE = 8;	// Space between menu bar items
@@ -128,6 +128,16 @@ namespace System.Windows.Forms {
 		
 		public override Color ColorControl {
 			get { return theme_back_color;}
+		}
+		
+		public override Color ColorHighlight {
+			get { return menuitem_gradient_first_color; }
+		}
+		
+		public override Size Border3DSize {
+			get {
+				return new Size( 3, 3 );
+			}
 		}
 		#endregion	// Internal Methods
 		
@@ -163,7 +173,7 @@ namespace System.Windows.Forms {
 			} else {
 				if ( !button.is_pressed ) {
 					first_gradient_color = Color.White;
-					second_gradient_color = gradient_second_color;
+					second_gradient_color = button_mouse_entered_second_gradient_color;
 				} else {
 					first_gradient_color = pressed_gradient_first_color;
 					second_gradient_color = pressed_gradient_second_color;
@@ -338,6 +348,7 @@ namespace System.Windows.Forms {
 		// Drawing
 		// FIXME: sometimes there are some artefacts left...
 		public override void DrawComboBoxEditDecorations( Graphics dc, ComboBox ctrl, Rectangle cl ) {
+			
 			if ( !ctrl.Focused ) {
 				Pen tmp_pen = ResPool.GetPen( theme_back_color );
 				dc.DrawLine( tmp_pen, cl.X + 1, cl.Y + 1, cl.X + 1, cl.Bottom - 3 );
@@ -350,6 +361,8 @@ namespace System.Windows.Forms {
 				dc.DrawLine( tmp_pen, cl.Right - 1, cl.Bottom - 2, cl.Right - 1, cl.Bottom - 3 );
 				
 				dc.DrawLine( tmp_pen, cl.X, cl.Bottom, cl.Right, cl.Bottom );
+				
+				dc.DrawLine( tmp_pen, cl.X, cl.Y + cl.Height - 1, cl.X + cl.Width, cl.Y + cl.Height - 1 );
 				
 				Point[] points = {
 					new Point( cl.X + 2, cl.Y ),
@@ -370,7 +383,6 @@ namespace System.Windows.Forms {
 				dc.DrawLine( tmp_pen, cl.X, cl.Bottom - 3, cl.X + 1, cl.Bottom - 2 );
 				dc.DrawLine( tmp_pen, cl.Right - 2, cl.Y, cl.Right - 1, cl.Y + 1 );
 				dc.DrawLine( tmp_pen, cl.Right - 2, cl.Bottom - 2, cl.Right - 1, cl.Bottom - 3 );
-				
 			} else { 
 				Pen tmp_pen = ResPool.GetPen( combobox_focus_inner_border_color );
 				
@@ -386,6 +398,8 @@ namespace System.Windows.Forms {
 				dc.DrawLine( tmp_pen, cl.Right - 1, cl.Bottom - 2, cl.Right - 1, cl.Bottom - 3 );
 				
 				dc.DrawLine( tmp_pen, cl.X, cl.Bottom, cl.Right, cl.Bottom );
+				
+				dc.DrawLine( tmp_pen, cl.X, cl.Y + cl.Height - 1, cl.X + cl.Width, cl.Y + cl.Height - 1 );
 				
 				Point[] points = {
 					new Point( cl.X + 2, cl.Y ),
@@ -416,6 +430,11 @@ namespace System.Windows.Forms {
 			
 			if ( ctrl.combobox_info.show_button )
 				CPDrawComboButton( dc, ctrl.combobox_info.button_rect, ctrl.combobox_info.button_status );
+			else {
+				// quick and ugly fix for combobox artefacts on the inner border of the right side if no button gets drawn
+				Pen tmp_pen = ResPool.GetPen( Color.White );
+				dc.DrawLine( tmp_pen, cl.Right - 2, cl.Y + 2, cl.Right - 2, cl.Bottom - 4 );
+			}
 		}
 		
 		public override void DrawComboListBoxDecorations( Graphics dc, ComboBox ctrl, Rectangle cl ) {
@@ -739,7 +758,8 @@ namespace System.Windows.Forms {
 						    scrollbutton_height, bar.ClientRectangle.Width, bar.ClientRectangle.Height - ( scrollbutton_height * 2 ) );
 			Rectangle intersect = Rectangle.Intersect( clip, r );
 			
-			if ( intersect != Rectangle.Empty  ) {
+			if ( intersect != Rectangle.Empty ) {
+				intersect.Y += 1; // small bugfix, otherwise we have a one pixel artefact on both upper corners of the scroll button
 				dc.FillRectangle( ResPool.GetSolidBrush( scrollbar_background_color ), intersect );
 				Pen pen = ResPool.GetPen( scrollbar_border_color );
 				dc.DrawLine( pen, intersect.X, intersect.Y, intersect.X, intersect.Bottom - 1 );
@@ -1065,7 +1085,7 @@ namespace System.Windows.Forms {
 						
 						interior = new Rectangle( bounds.Left + 2, bounds.Top + 2, bounds.Width - 2, bounds.Height - 3 );
 						
-						using ( LinearGradientBrush lgbr = new LinearGradientBrush( new Point( bounds.Left + 2, bounds.Top + 2  ), new Point( bounds.Left + 2, bounds.Bottom ), tab_first_color, tab_second_color ) ) {
+						using ( LinearGradientBrush lgbr = new LinearGradientBrush( new Point( bounds.Left + 2, bounds.Top + 2 ), new Point( bounds.Left + 2, bounds.Bottom ), tab_first_color, tab_second_color ) ) {
 							dc.FillRectangle( lgbr, interior );
 						}
 						
@@ -1120,7 +1140,7 @@ namespace System.Windows.Forms {
 						
 						interior = new Rectangle( bounds.Left + 3, bounds.Top, bounds.Width - 3, bounds.Height );
 						
-						using ( LinearGradientBrush lgbr = new LinearGradientBrush( new Point( bounds.Left + 3, bounds.Top  ), new Point( bounds.Left + 3, bounds.Bottom  ), tab_first_color, tab_second_color ) ) {
+						using ( LinearGradientBrush lgbr = new LinearGradientBrush( new Point( bounds.Left + 3, bounds.Top ), new Point( bounds.Left + 3, bounds.Bottom ), tab_first_color, tab_second_color ) ) {
 							dc.FillRectangle( lgbr, interior );
 						}
 						
@@ -1154,7 +1174,7 @@ namespace System.Windows.Forms {
 						
 						interior = new Rectangle( bounds.Left + 2, bounds.Top + 2, bounds.Width - 2, bounds.Height - 2 );
 						
-						using ( LinearGradientBrush lgbr = new LinearGradientBrush( new Point( bounds.Left + 2, bounds.Top + 2  ), new Point( bounds.Right, bounds.Top + 2 ), tab_first_color, tab_second_color ) ) {
+						using ( LinearGradientBrush lgbr = new LinearGradientBrush( new Point( bounds.Left + 2, bounds.Top + 2 ), new Point( bounds.Right, bounds.Top + 2 ), tab_first_color, tab_second_color ) ) {
 							dc.FillRectangle( lgbr, interior );
 						}
 						
@@ -1194,7 +1214,7 @@ namespace System.Windows.Forms {
 						
 						interior = new Rectangle( bounds.Left, bounds.Top + 2, bounds.Width - 2, bounds.Height - 2 );
 						
-						using ( LinearGradientBrush lgbr = new LinearGradientBrush( new Point( bounds.Left, bounds.Top + 2  ), new Point( bounds.Right, bounds.Top + 2 ), tab_second_color, tab_first_color ) ) {
+						using ( LinearGradientBrush lgbr = new LinearGradientBrush( new Point( bounds.Left, bounds.Top + 2 ), new Point( bounds.Right, bounds.Top + 2 ), tab_second_color, tab_first_color ) ) {
 							dc.FillRectangle( lgbr, interior );
 						}
 						
@@ -1268,7 +1288,7 @@ namespace System.Windows.Forms {
 			bool pushed = false;
 			
 			Color first_color = Color.White;
-			Color second_color = NormalColor;
+			Color second_color = combobox_button_second_gradient_color;
 			
 			if ( ( state & ButtonState.Checked ) != 0 ) {
 				dc.FillRectangle( ResPool.GetHatchBrush( HatchStyle.Percent50, ColorControlLightLight, ColorControlLight ), rectangle );
@@ -1513,7 +1533,7 @@ namespace System.Windows.Forms {
 		public void DrawScrollButtonPrimitive( Graphics dc, Rectangle area, ButtonState state, ScrollButton scroll_button_type ) {
 			Pen pen = ResPool.GetPen( border_normal_dark_color );
 			
-			Color first_gradient_color = gradient_first_color;
+			Color first_gradient_color = gradient_first_color; 
 			Color second_gradient_color = gradient_second_color_nr2;
 			
 			bool pushed = false;
@@ -1530,7 +1550,7 @@ namespace System.Windows.Forms {
 			
 			switch ( scroll_button_type ) {
 				case ScrollButton.Left:
-					lgbr = new LinearGradientBrush( new Point( area.X + 2, area.Y + 2 ), new Point( area.X + 2, area.Bottom - 2  ), first_gradient_color, second_gradient_color );
+					lgbr = new LinearGradientBrush( new Point( area.X + 2, area.Y + 2 ), new Point( area.X + 2, area.Bottom - 2 ), first_gradient_color, second_gradient_color );
 					dc.FillRectangle( lgbr, area.X + 2, area.Y + 2, area.Width - 4, area.Height - 2 );
 					
 					Pen tmp_pen = ResPool.GetPen( pushed ? pressed_inner_border_dark_color : Color.White );
@@ -1665,10 +1685,10 @@ namespace System.Windows.Forms {
 			
 			y = box.Font.Height / 2;
 			
-			Pen pen = ResPool.GetPen( BorderColor );
+			Pen pen = ResPool.GetPen( pressed_inner_border_dark_color );
 			
 			/* Draw group box*/
-			Point[] points = new Point[] {
+			Point[] points = {
 				new Point( 8 + width, y ),
 				new Point( box.Width - 3, y ),
 				new Point( box.Width - 1, y + 2 ),
@@ -1692,6 +1712,92 @@ namespace System.Windows.Forms {
 			text_format.Dispose( );	
 		}
 		#endregion
+		
+		public override void CPDrawBorder3D( Graphics graphics, Rectangle rectangle, Border3DStyle style, Border3DSide sides ) {
+			CPDrawBorder3D( graphics, rectangle, style, sides, ColorControl );
+		}
+		
+		private void CPDrawBorder3D( Graphics dc, Rectangle rectangle, Border3DStyle style, Border3DSide sides, Color control_color ) {
+			// currently we don't take care of Border3DStyle or Border3DSide
+			// instead of a 3 pixel size currently only a 2 pixel wide border is used...
+			
+			Pen tmp_pen = ResPool.GetPen( edge_bottom_inner_color );
+			dc.DrawLine( tmp_pen, rectangle.X, rectangle.Y + 1, rectangle.X + 1, rectangle.Y );
+			dc.DrawLine( tmp_pen, rectangle.Right - 2, rectangle.Y, rectangle.Right - 1, rectangle.Y + 1 );
+			dc.DrawLine( tmp_pen, rectangle.Right - 2, rectangle.Bottom - 1, rectangle.Right - 1, rectangle.Bottom - 2 );
+			dc.DrawLine( tmp_pen, rectangle.X, rectangle.Bottom - 2, rectangle.X + 1, rectangle.Bottom - 1 );
+			
+			tmp_pen = ResPool.GetPen( theme_back_color );
+			dc.DrawLine( tmp_pen, rectangle.X + 1, rectangle.Y + 1, rectangle.Right - 2, rectangle.Y + 1 );
+			dc.DrawLine( tmp_pen, rectangle.X + 1, rectangle.Y + 2, rectangle.X + 1, rectangle.Bottom - 2 );
+			
+			tmp_pen = ResPool.GetPen( Color.White );
+			dc.DrawLine( tmp_pen, rectangle.X + 2, rectangle.Bottom - 2, rectangle.Right - 2, rectangle.Bottom - 2 );
+			dc.DrawLine( tmp_pen, rectangle.Right - 2, rectangle.Y + 2, rectangle.Right - 2, rectangle.Bottom - 2 );
+			
+			Point[] points = {
+				new Point( rectangle.X + 2, rectangle.Y ),
+				new Point( rectangle.Right - 3, rectangle.Y ),
+				new Point( rectangle.Right - 1, rectangle.Y + 2 ),
+				new Point( rectangle.Right - 1, rectangle.Bottom - 3 ),
+				new Point( rectangle.Right - 3, rectangle.Bottom - 1 ),
+				new Point( rectangle.X + 2, rectangle.Bottom - 1 ),
+				new Point( rectangle.X, rectangle.Bottom - 3 ),
+				new Point( rectangle.X, rectangle.Y + 2 ),
+				new Point( rectangle.X + 2, rectangle.Y )
+			};
+			
+			dc.DrawLines( ResPool.GetPen( combobox_border_color ), points );
+		}
+		
+		public override void CPDrawBorder( Graphics dc, Rectangle bounds, Color leftColor, int leftWidth,
+						  ButtonBorderStyle leftStyle, Color topColor, int topWidth, ButtonBorderStyle topStyle,
+						  Color rightColor, int rightWidth, ButtonBorderStyle rightStyle, Color bottomColor,
+						  int bottomWidth, ButtonBorderStyle bottomStyle ) {
+			dc.DrawRectangle( ResPool.GetPen( combobox_border_color ), bounds.X, bounds.Y, bounds.Width - 1, bounds.Height - 1 );
+		}
+		
+		// TODO: inactive...
+		public override void CPDrawCheckBox( Graphics dc, Rectangle rectangle, ButtonState state ) {
+			
+			bool pushed = ( state & ButtonState.Pushed ) != 0;
+			
+			int lineWidth;
+			Rectangle rect;
+			int scale;
+			
+			// background
+			dc.FillRectangle( ResPool.GetSolidBrush( pushed ? checkbox_pressed_backcolor : Color.White ), rectangle );
+			
+			// border
+			dc.DrawRectangle( ResPool.GetPen( scrollbar_border_color ), rectangle );
+			
+			Color inner_border_color = pushed ? checkbox_pressed_inner_boder_color : checkbox_inner_boder_color;
+			
+			Pen tmp_pen = ResPool.GetPen( inner_border_color );
+			dc.DrawLine( tmp_pen, rectangle.X + 1, rectangle.Y + 1, rectangle.Right - 1, rectangle.Y + 1 );
+			dc.DrawLine( tmp_pen, rectangle.X + 1, rectangle.Y + 2, rectangle.X + 1, rectangle.Bottom - 1 );
+			
+			/* Make sure we've got at least a line width of 1 */
+			lineWidth = Math.Max( 3, rectangle.Width / 6 );
+			scale = Math.Max( 1, rectangle.Width / 12 );
+			
+			// define a rectangle inside the border area
+			rect = new Rectangle( rectangle.X + 2, rectangle.Y + 2, rectangle.Width - 4, rectangle.Height - 4 );
+			if ( ( state & ButtonState.Inactive ) != 0 ) {
+				tmp_pen = SystemPens.ControlDark;
+			} else {
+				tmp_pen = SystemPens.ControlText;
+			}
+			
+			if ( ( state & ButtonState.Checked ) != 0 ) { 
+				/* Need to draw a check-mark */
+				for ( int i=0; i < lineWidth; i++ ) {
+					dc.DrawLine( tmp_pen, rect.Left + lineWidth / 2, rect.Top + lineWidth + i, rect.Left + lineWidth / 2 + 2 * scale, rect.Top + lineWidth + 2 * scale + i );
+					dc.DrawLine( tmp_pen, rect.Left + lineWidth / 2 + 2 * scale, rect.Top + lineWidth + 2 * scale + i, rect.Left + lineWidth / 2 + 6 * scale, rect.Top + lineWidth - 2 * scale + i );
+				}
+			}
+		}
 	} //class
 }
 

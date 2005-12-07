@@ -1,3 +1,12 @@
+2005-12-07  Alexander Olk  <alex.olk@googlemail.com>
+
+	* ThemeClearlooks.cs:
+	  - Adjusted mouse over button color
+	  - Added first parts of CheckBox drawing
+	  - Added correct color for selected text background
+	  - Fixed ComboBox drawing
+	  - Added CPDrawBorder3D and CPDrawBorder
+
 2005-12-06  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* XplatUIX11.cs: Added call to XBell for AudibleAlert
