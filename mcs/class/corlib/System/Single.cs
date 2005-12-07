@@ -155,7 +155,9 @@ namespace System
 #endif
 		public static bool IsNaN (float f)
 		{
+#pragma warning disable 1718
 			return (f != f);
+#pragma warning restore
 		}
 
 		public static bool IsNegativeInfinity (float f)

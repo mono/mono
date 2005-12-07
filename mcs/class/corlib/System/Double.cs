@@ -159,7 +159,9 @@ namespace System {
 #endif
 		public static bool IsNaN (double d)
 		{
+#pragma warning disable 1718
 			return (d != d);
+#pragma warning restore
 		}
 
 		public static bool IsNegativeInfinity (double d)
