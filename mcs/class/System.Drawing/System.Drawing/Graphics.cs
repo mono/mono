@@ -201,21 +201,31 @@ namespace System.Drawing
 				visual = (XVisualInfo) Marshal.PtrToStructure(vPtr, typeof (XVisualInfo));
 
 				/* Sorry I do not have access to a computer with > deepth. Fell free to add more pixel formats */	
-				if (visual.depth != 16) 
-					throw new NotImplementedException ("Only 16bpp pixel is supported right now");
-			
 				image = GDIPlus.XGetImage (GDIPlus.Display, window, sourceX, sourceY, blockRegionSize.Width,
 					blockRegionSize.Height, AllPlanes, 2 /* ZPixmap*/);
 				
 				Bitmap bmp = new Bitmap (blockRegionSize.Width, blockRegionSize.Height);
+				int red, blue, green;
 				for (int y = sourceY; y <  sourceY + blockRegionSize.Height; y++) {
 					for (int x = sourceX; x <  sourceX + blockRegionSize.Width; x++) {
 						pixel = GDIPlus.XGetPixel (image, x, y);			
-						/* 16bbp pixel transformation */
-						int red = (int) ((pixel & visual.red_mask ) >> 8) & 0xff;
-						int green = (int) (((pixel & visual.green_mask ) >> 3 )) & 0xff;
-						int blue = (int) ((pixel & visual.blue_mask ) << 3 ) & 0xff;
 
+						switch (visual.depth) {
+							case 16: /* 16bbp pixel transformation */
+								red = (int) ((pixel & visual.red_mask ) >> 8) & 0xff;
+								green = (int) (((pixel & visual.green_mask ) >> 3 )) & 0xff;
+								blue = (int) ((pixel & visual.blue_mask ) << 3 ) & 0xff;
+								break;
+							case 24:
+							case 32:
+								red = (int) ((pixel & visual.red_mask ) >> 16) & 0xff;
+								green = (int) (((pixel & visual.green_mask ) >> 8 )) & 0xff;
+								blue = (int) ((pixel & visual.blue_mask )) & 0xff;
+								break;
+							default:
+								throw new NotImplementedException ("Deepth not supported right now");
+						}
+						
 						bmp.SetPixel (x, y, Color.FromArgb (255, red, green, blue));							 
 					}
 				}
