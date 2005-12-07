@@ -36,13 +36,15 @@ profile-check:
 PROFILE_MCS_FLAGS = -d:NET_1_1 -d:ONLY_1_1 -d:TARGET_JVM -d:JAVA
 PROFILE_MBAS_FLAGS = -d:NET_1_1 -d:ONLY_1_1 -d:TARGET_JVM -d:JAVA
 FRAMEWORK_VERSION = 1.0
-
-
-
+CONVERTER_DEBUG_LEVEL = 3
+ifeq ($(CONFIG),Release)
+PLATFORM_DEBUG_FLAGS = /debug:pdbonly
+CONVERTER_DEBUG_LEVEL = 2
+endif
 library_CLEAN_FILES += $(build_lib:.dll=.jar) $(build_lib:.dll=.pdb)
 
 all-local:
 	$(MAKE) $(build_lib:.dll=.jar)
 
 %.jar:%.dll
-	converter.exe /debug:3 $< /out:$@ $(KEY) /lib:$(dir $@)
+	converter.exe /debug:$(CONVERTER_DEBUG_LEVEL) $< /out:$@ $(KEY) /lib:$(dir $@)
