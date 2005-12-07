@@ -1270,182 +1270,6 @@ namespace Mono.CSharp {
 			return TypeManager.CSharpName (gt);
 		}
 
-		protected bool CheckConstraint (EmitContext ec, Type ptype, Expression expr,
-						Type ctype)
-		{
-			if (TypeManager.HasGenericArguments (ctype)) {
-				Type[] types = TypeManager.GetTypeArguments (ctype);
-
-				TypeArguments new_args = new TypeArguments (loc);
-
-				for (int i = 0; i < types.Length; i++) {
-					Type t = types [i];
-
-					if (t.IsGenericParameter) {
-						int pos = t.GenericParameterPosition;
-						t = args.Arguments [pos];
-					}
-					new_args.Add (new TypeExpression (t, loc));
-				}
-
-				TypeExpr ct = new ConstructedType (ctype, new_args, loc);
-				if (ct.ResolveAsTypeStep (ec) == null)
-					return false;
-				ctype = ct.Type;
-			}
-
-			return Convert.ImplicitStandardConversionExists (ec, expr, ctype);
-		}
-
-		protected bool CheckConstraints (EmitContext ec, int index)
-		{
-			Type atype = atypes [index];
-			Type ptype = gen_params [index];
-
-			if (atype == ptype)
-				return true;
-
-			Expression aexpr = new EmptyExpression (atype);
-
-			GenericConstraints gc = TypeManager.GetTypeParameterConstraints (ptype);
-			if (gc == null)
-				return true;
-
-			bool is_class, is_struct;
-			if (atype.IsGenericParameter) {
-				GenericConstraints agc = TypeManager.GetTypeParameterConstraints (atype);
-				if (agc != null) {
-					is_class = agc.HasReferenceTypeConstraint;
-					is_struct = agc.HasValueTypeConstraint;
-				} else {
-					is_class = is_struct = false;
-				}
-			} else {
-				is_class = atype.IsClass;
-				is_struct = atype.IsValueType;
-			}
-
-			//
-			// First, check the `class' and `struct' constraints.
-			//
-			if (gc.HasReferenceTypeConstraint && !is_class) {
-				Report.Error (452, loc, "The type `{0}' must be " +
-					      "a reference type in order to use it " +
-					      "as type parameter `{1}' in the " +
-					      "generic type or method `{2}'.",
-					      TypeManager.CSharpName (atype),
-					      TypeManager.CSharpName (ptype),
-					      GetSignatureForError ());
-				return false;
-			} else if (gc.HasValueTypeConstraint && !is_struct) {
-				Report.Error (453, loc, "The type `{0}' must be " +
-					      "a value type in order to use it " +
-					      "as type parameter `{1}' in the " +
-					      "generic type or method `{2}'.",
-					      TypeManager.CSharpName (atype),
-					      TypeManager.CSharpName (ptype),
-					      GetSignatureForError ());
-				return false;
-			}
-
-			//
-			// The class constraint comes next.
-			//
-			if (gc.HasClassConstraint) {
-				if (!CheckConstraint (ec, ptype, aexpr, gc.ClassConstraint)) {
-					Error_TypeMustBeConvertible (atype, gc.ClassConstraint, ptype);
-					return false;
-				}
-			}
-
-			//
-			// Now, check the interface constraints.
-			//
-			foreach (Type it in gc.InterfaceConstraints) {
-				Type itype;
-				if (it.IsGenericParameter)
-					itype = atypes [it.GenericParameterPosition];
-				else
-					itype = it;
-
-				if (!CheckConstraint (ec, ptype, aexpr, itype)) {
-					Error_TypeMustBeConvertible (atype, itype, ptype);
-					return false;
-				}
-			}
-
-			//
-			// Finally, check the constructor constraint.
-			//
-
-			if (!gc.HasConstructorConstraint)
-				return true;
-
-			if (TypeManager.IsBuiltinType (atype) || atype.IsValueType)
-				return true;
-
-			if (HasDefaultConstructor (ec, atype))
-				return true;
-
-			Report.SymbolRelatedToPreviousError (gt);
-			Report.SymbolRelatedToPreviousError (atype);
-			Report.Error (310, loc, "The type `{0}' must have a public " +
-				      "parameterless constructor in order to use it " +
-				      "as parameter `{1}' in the generic type or " +
-				      "method `{2}'",
-				      TypeManager.CSharpName (atype),
-				      TypeManager.CSharpName (ptype),
-				      GetSignatureForError ());
-			return false;
-		}
-
-		void Error_TypeMustBeConvertible (Type atype, Type gc, Type ptype)
-		{
-			Report.SymbolRelatedToPreviousError (gt);
-			Report.SymbolRelatedToPreviousError (atype);
-			Report.Error (309, loc, "The type `{0}' must be convertible to `{1}' in order to " +
-					  "use it as parameter `{2}' in the generic type or method `{3}'",
-					  TypeManager.CSharpName (atype), TypeManager.CSharpName (gc),
-					  TypeManager.CSharpName (ptype), GetSignatureForError ());
-		}
-
-		bool HasDefaultConstructor (EmitContext ec, Type atype)
-		{
-			if (atype is TypeBuilder) {
-				if (atype.IsAbstract)
-					return false;
-
-				TypeContainer tc = TypeManager.LookupTypeContainer (atype);
-				foreach (Constructor c in tc.InstanceConstructors) {
-					if ((c.ModFlags & Modifiers.PUBLIC) == 0)
-						continue;
-					if ((c.Parameters.FixedParameters != null) &&
-					    (c.Parameters.FixedParameters.Length != 0))
-						continue;
-					if (c.Parameters.HasArglist || c.Parameters.HasParams)
-						continue;
-
-					return true;
-				}
-			}
-
-			MethodGroupExpr mg = Expression.MemberLookup (
-				ec, atype, ".ctor", MemberTypes.Constructor,
-				BindingFlags.Public | BindingFlags.Instance |
-				BindingFlags.DeclaredOnly, loc)
-				as MethodGroupExpr;
-
-			if (!atype.IsAbstract && (mg != null) && mg.IsInstance) {
-				foreach (MethodBase mb in mg.Methods) {
-					ParameterData pd = TypeManager.GetParameterData (mb);
-					if (pd.Count == 0)
-						return true;
-				}
-			}
-
-			return false;
-		}
-
 		protected override TypeExpr DoResolveAsTypeStep (EmitContext ec)
 		{
 			if (!ResolveConstructedType (ec))
@@ -1460,12 +1284,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		public bool CheckConstraints (EmitContext ec)
 		{
-			for (int i = 0; i < gen_params.Length; i++) {
-				if (!CheckConstraints (ec, i))
-					return false;
-			}
-
-			return true;
+			return ConstraintChecker.CheckConstraints (ec, gt, gen_params, atypes, loc);
 		}
 
 		/// <summary>
@@ -1585,6 +1404,277 @@ namespace Mono.CSharp {
 		public override string FullName {
 			get {
 				return full_name;
+			}
+		}
+	}
+
+	public abstract class ConstraintChecker
+	{
+		protected readonly Type[] gen_params;
+		protected readonly Type[] atypes;
+		protected readonly Location loc;
+
+		protected ConstraintChecker (Type[] gen_params, Type[] atypes, Location loc)
+		{
+			this.gen_params = gen_params;
+			this.atypes = atypes;
+			this.loc = loc;
+		}
+
+		/// <summary>
+		///   Check the constraints; we're called from ResolveAsTypeTerminal()
+		///   after fully resolving the constructed type.
+		/// </summary>
+		public bool CheckConstraints (EmitContext ec)
+		{
+			for (int i = 0; i < gen_params.Length; i++) {
+				if (!CheckConstraints (ec, i))
+					return false;
+			}
+
+			return true;
+		}
+
+		protected bool CheckConstraints (EmitContext ec, int index)
+		{
+			Type atype = atypes [index];
+			Type ptype = gen_params [index];
+
+			if (atype == ptype)
+				return true;
+
+			Expression aexpr = new EmptyExpression (atype);
+
+			GenericConstraints gc = TypeManager.GetTypeParameterConstraints (ptype);
+			if (gc == null)
+				return true;
+
+			bool is_class, is_struct;
+			if (atype.IsGenericParameter) {
+				GenericConstraints agc = TypeManager.GetTypeParameterConstraints (atype);
+				if (agc != null) {
+					is_class = agc.HasReferenceTypeConstraint;
+					is_struct = agc.HasValueTypeConstraint;
+				} else {
+					is_class = is_struct = false;
+				}
+			} else {
+				is_class = atype.IsClass;
+				is_struct = atype.IsValueType;
+			}
+
+			//
+			// First, check the `class' and `struct' constraints.
+			//
+			if (gc.HasReferenceTypeConstraint && !is_class) {
+				Report.Error (452, loc, "The type `{0}' must be " +
+					      "a reference type in order to use it " +
+					      "as type parameter `{1}' in the " +
+					      "generic type or method `{2}'.",
+					      TypeManager.CSharpName (atype),
+					      TypeManager.CSharpName (ptype),
+					      GetSignatureForError ());
+				return false;
+			} else if (gc.HasValueTypeConstraint && !is_struct) {
+				Report.Error (453, loc, "The type `{0}' must be " +
+					      "a value type in order to use it " +
+					      "as type parameter `{1}' in the " +
+					      "generic type or method `{2}'.",
+					      TypeManager.CSharpName (atype),
+					      TypeManager.CSharpName (ptype),
+					      GetSignatureForError ());
+				return false;
+			}
+
+			//
+			// The class constraint comes next.
+			//
+			if (gc.HasClassConstraint) {
+				if (!CheckConstraint (ec, ptype, aexpr, gc.ClassConstraint)) {
+					Error_TypeMustBeConvertible (atype, gc.ClassConstraint, ptype);
+					return false;
+				}
+			}
+
+			//
+			// Now, check the interface constraints.
+			//
+			foreach (Type it in gc.InterfaceConstraints) {
+				Type itype;
+				if (it.IsGenericParameter)
+					itype = atypes [it.GenericParameterPosition];
+				else
+					itype = it;
+
+				if (!CheckConstraint (ec, ptype, aexpr, itype)) {
+					Error_TypeMustBeConvertible (atype, itype, ptype);
+					return false;
+				}
+			}
+
+			//
+			// Finally, check the constructor constraint.
+			//
+
+			if (!gc.HasConstructorConstraint)
+				return true;
+
+			if (TypeManager.IsBuiltinType (atype) || atype.IsValueType)
+				return true;
+
+			if (HasDefaultConstructor (ec, atype))
+				return true;
+
+			Report_SymbolRelatedToPreviousError ();
+			Report.SymbolRelatedToPreviousError (atype);
+			Report.Error (310, loc, "The type `{0}' must have a public " +
+				      "parameterless constructor in order to use it " +
+				      "as parameter `{1}' in the generic type or " +
+				      "method `{2}'",
+				      TypeManager.CSharpName (atype),
+				      TypeManager.CSharpName (ptype),
+				      GetSignatureForError ());
+			return false;
+		}
+
+		protected bool CheckConstraint (EmitContext ec, Type ptype, Expression expr,
+						Type ctype)
+		{
+			if (TypeManager.HasGenericArguments (ctype)) {
+				Type[] types = TypeManager.GetTypeArguments (ctype);
+
+				TypeArguments new_args = new TypeArguments (loc);
+
+				for (int i = 0; i < types.Length; i++) {
+					Type t = types [i];
+
+					if (t.IsGenericParameter) {
+						int pos = t.GenericParameterPosition;
+						t = atypes [pos];
+					}
+					new_args.Add (new TypeExpression (t, loc));
+				}
+
+				TypeExpr ct = new ConstructedType (ctype, new_args, loc);
+				if (ct.ResolveAsTypeStep (ec) == null)
+					return false;
+				ctype = ct.Type;
+			}
+
+			return Convert.ImplicitStandardConversionExists (ec, expr, ctype);
+		}
+
+		bool HasDefaultConstructor (EmitContext ec, Type atype)
+		{
+			if (atype is TypeBuilder) {
+				if (atype.IsAbstract)
+					return false;
+
+				TypeContainer tc = TypeManager.LookupTypeContainer (atype);
+				foreach (Constructor c in tc.InstanceConstructors) {
+					if ((c.ModFlags & Modifiers.PUBLIC) == 0)
+						continue;
+					if ((c.Parameters.FixedParameters != null) &&
+					    (c.Parameters.FixedParameters.Length != 0))
+						continue;
+					if (c.Parameters.HasArglist || c.Parameters.HasParams)
+						continue;
+
+					return true;
+				}
+			}
+
+			MethodGroupExpr mg = Expression.MemberLookup (
+				ec, atype, ".ctor", MemberTypes.Constructor,
+				BindingFlags.Public | BindingFlags.Instance |
+				BindingFlags.DeclaredOnly, loc)
+				as MethodGroupExpr;
+
+			if (!atype.IsAbstract && (mg != null) && mg.IsInstance) {
+				foreach (MethodBase mb in mg.Methods) {
+					ParameterData pd = TypeManager.GetParameterData (mb);
+					if (pd.Count == 0)
+						return true;
+				}
+			}
+
+			return false;
+		}
+
+		protected abstract string GetSignatureForError ();
+		protected abstract void Report_SymbolRelatedToPreviousError ();
+
+		void Error_TypeMustBeConvertible (Type atype, Type gc, Type ptype)
+		{
+			Report_SymbolRelatedToPreviousError ();
+			Report.SymbolRelatedToPreviousError (atype);
+			Report.Error (309, loc, 
+				      "The type `{0}' must be convertible to `{1}' in order to " +
+				      "use it as parameter `{2}' in the generic type or method `{3}'",
+				      TypeManager.CSharpName (atype), TypeManager.CSharpName (gc),
+				      TypeManager.CSharpName (ptype), GetSignatureForError ());
+		}
+
+		public static bool CheckConstraints (EmitContext ec, MethodBase definition,
+						     MethodBase instantiated, Location loc)
+		{
+			MethodConstraintChecker checker = new MethodConstraintChecker (
+				definition, definition.GetGenericArguments (),
+				instantiated.GetGenericArguments (), loc);
+
+			return checker.CheckConstraints (ec);
+		}
+
+		public static bool CheckConstraints (EmitContext ec, Type gt, Type[] gen_params,
+						     Type[] atypes, Location loc)
+		{
+			TypeConstraintChecker checker = new TypeConstraintChecker (
+				gt, gen_params, atypes, loc);
+
+			return checker.CheckConstraints (ec);
+		}
+
+		protected class MethodConstraintChecker : ConstraintChecker
+		{
+			MethodBase definition;
+
+			public MethodConstraintChecker (MethodBase definition, Type[] gen_params,
+							Type[] atypes, Location loc)
+				: base (gen_params, atypes, loc)
+			{
+				this.definition = definition;
+			}
+
+			protected override string GetSignatureForError ()
+			{
+				return TypeManager.CSharpSignature (definition);
+			}
+
+			protected override void Report_SymbolRelatedToPreviousError ()
+			{
+				Report.SymbolRelatedToPreviousError (definition);
+			}
+		}
+
+		protected class TypeConstraintChecker : ConstraintChecker
+		{
+			Type gt;
+
+			public TypeConstraintChecker (Type gt, Type[] gen_params, Type[] atypes,
+						      Location loc)
+				: base (gen_params, atypes, loc)
+			{
+				this.gt = gt;
+			}
+
+			protected override string GetSignatureForError ()
+			{
+				return TypeManager.CSharpName (gt);
+			}
+
+			protected override void Report_SymbolRelatedToPreviousError ()
+			{
+				Report.SymbolRelatedToPreviousError (gt);
 			}
 		}
 	}

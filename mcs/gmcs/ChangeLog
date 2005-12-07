@@ -1,3 +1,14 @@
+2005-12-07  Martin Baulig  <martin@ximian.com>
+
+	* generic.cs
+	(ConstraintChecker): New public abstract class; move the
+	constraint checking here from `ConstructedType' and also do
+	constraint checking for generic methods here.
+
+	* expression.cs (Invocation.OverloadResolve): Use
+	ConstraintChecker.CheckConstraints() if we resolved to a generic
+	method.	 Fix #76806.
+
 2005-12-05  Marek Safar  <marek.safar@seznam.cz>
 
 	* attribute.cs (GlobalAttribute.ctor): Pass NamespaceEntry only.

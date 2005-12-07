@@ -4925,14 +4925,22 @@ namespace Mono.CSharp {
                                                     method_params, null, may_fail, loc))
 				return null;
 
-			if (method != null) {
-				MethodBase the_method = method;
-				if (the_method.Mono_IsInflatedMethod)
-					the_method = the_method.GetGenericMethodDefinition ();
-				IMethodData data = TypeManager.GetMethod (the_method);
-				if (data != null)
-					data.SetMemberIsUsed ();
+			if (method == null)
+				return null;
+
+			MethodBase the_method = method;
+			if (the_method.Mono_IsInflatedMethod) {
+				the_method = the_method.GetGenericMethodDefinition ();
+
+				if ((method is MethodInfo) &&
+				    !ConstraintChecker.CheckConstraints (ec, the_method, method, loc))
+					return null;
 			}
+
+			IMethodData data = TypeManager.GetMethod (the_method);
+			if (data != null)
+				data.SetMemberIsUsed ();
+
 			return method;
 		}
 
