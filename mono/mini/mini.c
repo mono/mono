@@ -60,7 +60,7 @@
 #include "inssel.h"
 #include "trace.h"
 
-#include "jit-icalls.c"
+#include "jit-icalls.h"
 
 #include "aliasing.h"
 
@@ -1164,8 +1164,7 @@ mono_type_to_load_membase (MonoType *type)
 	if (type->byref)
 		return OP_LOAD_MEMBASE;
 
-handle_enum:
-	switch (type->type) {
+	switch (mono_type_get_underlying_type (type)->type) {
 	case MONO_TYPE_I1:
 		return OP_LOADI1_MEMBASE;
 	case MONO_TYPE_U1:
@@ -1199,18 +1198,8 @@ handle_enum:
 	case MONO_TYPE_R8:
 		return OP_LOADR8_MEMBASE;
 	case MONO_TYPE_VALUETYPE:
-		if (type->data.klass->enumtype) {
-			type = type->data.klass->enum_basetype;
-			goto handle_enum;
-		}
-		g_assert_not_reached ();
-		return CEE_LDOBJ;
 	case MONO_TYPE_TYPEDBYREF:
-		g_assert_not_reached ();
-		return CEE_STOBJ;
-	case MONO_TYPE_GENERICINST:
-		type = &type->data.generic_class->container_class->byval_arg;
-		goto handle_enum;
+		return CEE_LDOBJ;
 	default:
 		g_error ("unknown type 0x%02x in type_to_load_membase", type->type);
 	}

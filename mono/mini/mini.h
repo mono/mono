@@ -676,7 +676,7 @@ enum {
 #if SIZEOF_VOID_P == 8
 #define OP_PCONST OP_I8CONST
 #define OP_PADD OP_LADD
-#define OP_PADD2 OP_LADD
+#define OP_PADD_IMM OP_LADD_IMM
 #define OP_PNEG OP_LNEG
 #define OP_PCONV_TO_U2 OP_LCONV_TO_U2
 #define OP_PCONV_TO_OVF_I1_UN OP_LCONV_TO_OVF_I1_UN
@@ -689,6 +689,7 @@ enum {
 /* Can't redefine these since that would break the burg rules */
 #define OP_PCONST OP_ICONST
 #define OP_PADD OP_IADD
+#define OP_PADD_IMM OP_IADD_IMM
 #define OP_PNEG OP_INEG
 #define OP_PCONV_TO_U2 OP_ICONV_TO_U2
 #define OP_PCONV_TO_OVF_I1_UN OP_ICONV_TO_OVF_I1_UN

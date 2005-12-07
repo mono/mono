@@ -60,7 +60,7 @@
 #include <ctype.h>
 #include "trace.h"
 
-#include "jit-icalls.c"
+#include "jit-icalls.h"
 
 #include "aliasing.h"
 
@@ -1650,7 +1650,7 @@ type_from_stack_type (MonoInst *ins) {
 static int
 type_to_stack_type (MonoType *t)
 {
-	switch (t->type) {
+	switch (mono_type_get_underlying_type (t)->type) {
 	case MONO_TYPE_I1:
 	case MONO_TYPE_U1:
 	case MONO_TYPE_BOOLEAN:
@@ -1677,6 +1677,9 @@ type_to_stack_type (MonoType *t)
 	case MONO_TYPE_R4:
 	case MONO_TYPE_R8:
 		return STACK_R8;
+	case MONO_TYPE_VALUETYPE:
+	case MONO_TYPE_TYPEDBYREF:
+		return STACK_VTYPE;
 	default:
 		g_assert_not_reached ();
 	}
@@ -1948,6 +1951,11 @@ handle_stack_args (MonoCompile *cfg, MonoInst **sp, int count) {
 	return 0;
 }
 
+static void
+mini_emit_aotconst (MonoCompile *cfg, int dreg, MonoJumpInfoType patch_type, gpointer cons)
+{
+	NOT_IMPLEMENTED;
+}
 
 static void
 mini_emit_load_intf_reg (MonoCompile *cfg, int intf_reg, int ioffset_reg, MonoClass *klass)
@@ -2539,7 +2547,7 @@ mono_emit_native_call (MonoCompile *cfg, gconstpointer func, MonoMethodSignature
 
 	mono_get_got_var (cfg);
 
-	return call;
+	return (MonoInst*)call;
 }
 
 inline static MonoInst*
@@ -2977,6 +2985,8 @@ mini_get_ldelema_ins (MonoCompile *cfg, MonoMethod *cmethod, MonoInst **sp, unsi
 
 	rank = mono_method_signature (cmethod)->param_count - (is_set? 1: 0);
 
+	/* FIXME: Add this back */
+#if 0
 	if (rank == 2 && (cfg->opt & MONO_OPT_INTRINS)) {
 #ifdef MONO_ARCH_EMULATE_MUL_DIV
 		/* OP_LDELEMA2D depends on OP_LMUL */
@@ -2992,6 +3002,7 @@ mini_get_ldelema_ins (MonoCompile *cfg, MonoMethod *cmethod, MonoInst **sp, unsi
 		return addr;
 #endif
 	}
+#endif
 
 	/* Need to register the icall so it gets an icall wrapper */
 	sprintf (icall_name, "ves_array_element_address_%d", rank);
@@ -3007,10 +3018,9 @@ mini_get_ldelema_ins (MonoCompile *cfg, MonoMethod *cmethod, MonoInst **sp, unsi
 		mono_jit_unlock ();
 	}
 
-	temp = mono_emit_native_call (cfg, mono_icall_get_wrapper (info), info->sig, sp, ip, FALSE, FALSE);
 	cfg->flags |= MONO_CFG_HAS_VARARGS;
+	addr = mono_emit_native_call (cfg, mono_icall_get_wrapper (info), info->sig, sp, ip, FALSE, FALSE);
 
-	NEW_TEMPLOAD (cfg, addr, temp);
 	return addr;
 }
 
@@ -4666,6 +4676,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			ins->cil_code = ip;
 			if (ins->opcode == CEE_STOBJ) {
 				NEW_ARGLOADA (cfg, ins, ip [1]);
+				MONO_ADD_INS (cfg, ins);
 				handle_stobj (cfg, ins, *sp, ip, ins->klass, FALSE, FALSE);
 			} else
 				MONO_ADD_INS (bblock, ins);
@@ -4675,11 +4686,30 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 		case CEE_LDLOC_S:
 			CHECK_OPSIZE (2);
 			CHECK_STACK_OVF (1);
-			CHECK_LOCAL (ip [1]);
-			NEW_LOCLOAD (cfg, ins, ip [1]);
+			n = ip [1];
+			CHECK_LOCAL (n);
+			NEW_LOCLOAD (cfg, ins, n);
 			ins->cil_code = ip;
-			MONO_ADD_INS (bblock, ins);
-			*sp++ = ins;
+
+			if (ins->opcode == CEE_LDOBJ) {
+				MonoInst *dest, *src, *temp;
+
+				temp = mono_compile_create_var (cfg, &ins->klass->byval_arg, OP_LOCAL);
+				NEW_LOCLOADA (cfg, src, n);
+				MONO_ADD_INS (cfg->cbb, src);
+				NEW_TEMPLOADA (cfg, dest, temp->inst_c0);
+				MONO_ADD_INS (cfg->cbb, dest);
+				handle_stobj (cfg, dest, src, ip, ins->klass, FALSE, FALSE);
+
+				NEW_TEMPLOADA (cfg, dest, temp->inst_c0);
+				dest->type = STACK_VTYPE;
+				dest->klass = ins->klass;
+				MONO_ADD_INS (cfg->cbb, dest);
+				*sp++ = dest;
+			} else {
+				MONO_ADD_INS (bblock, ins);
+				*sp++ = ins;
+			}
 			ip += 2;
 			break;
 		case CEE_LDLOCA_S:
@@ -4701,8 +4731,8 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			NEW_LOCSTORE (cfg, ins, ip [1], *sp);
 			ins->cil_code = ip;
 			if (ins->opcode == CEE_STOBJ) {
-				NOT_IMPLEMENTED;
 				NEW_LOCLOADA (cfg, ins, ip [1]);
+				MONO_ADD_INS (cfg->cbb, ins);
 				handle_stobj (cfg, ins, *sp, ip, ins->klass, FALSE, FALSE);
 			} else
 				MONO_ADD_INS (bblock, ins);
@@ -5187,6 +5217,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 	      				
 			if (array_rank) {
 				MonoInst *addr;
+				int stack_type;
 
 				if (strcmp (cmethod->name, "Set") == 0) { /* array Set */ 
 					if (sp [fsig->param_count]->type == STACK_OBJ) {
@@ -5201,11 +5232,8 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 						mono_emit_jit_icall (cfg, helper_stelem_ref_check, iargs, ip);
 					}
 					
-					NOT_IMPLEMENTED;
-
 					addr = mini_get_ldelema_ins (cfg, cmethod, sp, ip, TRUE);
-					NEW_INDSTORE (cfg, ins, addr, sp [fsig->param_count], fsig->params [fsig->param_count - 1]);
-					ins->cil_code = ip;
+					NEW_STORE_MEMBASE (cfg, ins, mono_type_to_store_membase (fsig->params [fsig->param_count - 1]), addr->dreg, 0, sp [fsig->param_count]->dreg);
 					if (ins->opcode == CEE_STOBJ) {
 						handle_stobj (cfg, addr, sp [fsig->param_count], ip, mono_class_from_mono_type (fsig->params [fsig->param_count-1]), FALSE, FALSE);
 					} else {
@@ -5213,19 +5241,42 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 					}
 
 				} else if (strcmp (cmethod->name, "Get") == 0) { /* array Get */
-					NOT_IMPLEMENTED;
 					addr = mini_get_ldelema_ins (cfg, cmethod, sp, ip, FALSE);
-					NEW_INDLOAD (cfg, ins, addr, fsig->ret);
-					ins->cil_code = ip;
+
+					stack_type = type_to_stack_type (fsig->ret);
+					dreg = alloc_dreg (cfg, stack_type);
+					NEW_LOAD_MEMBASE (cfg, ins, mono_type_to_load_membase (fsig->ret), dreg, addr->dreg, 0);
+					ins->type = stack_type;
+					ins->klass = mono_class_from_mono_type (fsig->ret);
+
+					if (ins->opcode == CEE_LDOBJ) {
+						/* FIXME: Create a handle_ldobj function */
+						MonoInst *dest, *src, *temp;
+
+						temp = mono_compile_create_var (cfg, &ins->klass->byval_arg, OP_LOCAL);
+						NEW_TEMPLOADA (cfg, dest, temp->inst_c0);
+						MONO_ADD_INS (cfg->cbb, dest);
+						handle_stobj (cfg, dest, addr, ip, ins->klass, FALSE, FALSE);
+
+						NEW_TEMPLOADA (cfg, dest, temp->inst_c0);
+						dest->type = STACK_VTYPE;
+						dest->klass = ins->klass;
+						MONO_ADD_INS (cfg->cbb, dest);
+
+						ins = dest;
+					} else {
+						MONO_ADD_INS (cfg->cbb, ins);
+					}
 
 					*sp++ = ins;
 				} else if (strcmp (cmethod->name, "Address") == 0) { /* array Address */
-					NOT_IMPLEMENTED;
 					addr = mini_get_ldelema_ins (cfg, cmethod, sp, ip, FALSE);
 					*sp++ = addr;
 				} else {
 					g_assert_not_reached ();
 				}
+
+				ip += 5;
 				break;
 			}
 
@@ -5980,6 +6031,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 
 			if (mini_class_is_system_array (cmethod->klass)) {
 				NEW_METHODCONST (cfg, *sp, cmethod);
+				MONO_ADD_INS (cfg->cbb, *sp);
 				alloc = handle_array_new (cfg, fsig->param_count, sp, ip);
 			} else if (cmethod->string_ctor) {
 				NOT_IMPLEMENTED;
@@ -6731,8 +6783,10 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			*sp++ = ins;
 			break;
 		}
-#if 0
-		case CEE_LDELEMA:
+		case CEE_LDELEMA: {
+			guint32 size, stack_type;
+			int mult_reg, add_reg, array_reg, index_reg, dreg;
+
 			CHECK_STACK (2);
 			sp -= 2;
 			CHECK_OPSIZE (5);
@@ -6745,21 +6799,57 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			 * so we need to ignore them here
 			 */
 			if (!klass->valuetype && method->wrapper_type == MONO_WRAPPER_NONE) {
-				MonoInst* check;
-				MONO_INST_NEW (cfg, check, OP_CHECK_ARRAY_TYPE);
-				check->cil_code = ip;
-				check->klass = klass;
-				check->inst_left = sp [0];
-				check->type = STACK_OBJ;
-				sp [0] = check;
+				MonoClass* array_class = mono_array_class_get (klass, 1);
+				int vtable_reg = alloc_dreg (cfg, STACK_PTR);
+
+				MONO_EMIT_NEW_LOAD_MEMBASE_OP (cfg, OP_LOAD_MEMBASE, vtable_reg, 
+											   sp [0]->dreg, G_STRUCT_OFFSET (MonoObject, vtable));
+				       
+				if (cfg->opt & MONO_OPT_SHARED) {
+					int class_reg = alloc_dreg (cfg, STACK_PTR);
+					MONO_EMIT_NEW_LOAD_MEMBASE_OP (cfg, OP_LOAD_MEMBASE, class_reg, 
+												   vtable_reg, G_STRUCT_OFFSET (MonoVTable, klass));
+					if (cfg->compile_aot) {
+						int klass_reg = alloc_dreg (cfg, STACK_PTR);
+						MONO_EMIT_NEW_CLASSCONST (cfg, klass_reg, array_class);
+						MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, class_reg, klass_reg);
+					} else {
+						MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, class_reg, array_class);
+					}
+				} else {
+					if (cfg->compile_aot) {
+						int vt_reg = alloc_dreg (cfg, STACK_PTR);
+						MONO_EMIT_NEW_VTABLECONST (cfg, vt_reg, mono_class_vtable (cfg->domain, array_class));
+						MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, vtable_reg, vt_reg);
+					} else {
+						MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, vtable_reg, mono_class_vtable (cfg->domain, array_class));
+					}
+				}
+	
+				MONO_EMIT_NEW_COND_EXC (cfg, NE_UN, "ArrayTypeMismatchException");
 			}
-			
+
+			/* FIXME: Move the ldelema code to a common function */
 			mono_class_init (klass);
-			NEW_LDELEMA (cfg, ins, sp, klass);
-			ins->cil_code = ip;
+			size = mono_class_array_element_size (klass);
+
+			mult_reg = alloc_dreg (cfg, STACK_PTR);
+			add_reg = alloc_dreg (cfg, STACK_PTR);
+			array_reg = sp [0]->dreg;
+			index_reg = sp [1]->dreg;
+
+			MONO_EMIT_BOUNDS_CHECK (cfg, array_reg, MonoArray, max_length, index_reg);
+			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_MUL_IMM, mult_reg, index_reg, size);
+			MONO_EMIT_NEW_BIALU (cfg, OP_PADD, add_reg, array_reg, mult_reg);
+			NEW_BIALU_IMM (cfg, ins, OP_PADD_IMM, add_reg, add_reg, G_STRUCT_OFFSET (MonoArray, vector));
+			ins->type = STACK_PTR;
+			MONO_ADD_INS (cfg->cbb, ins);
+
 			*sp++ = ins;
 			ip += 5;
 			break;
+		}
+#if 0
 		case CEE_LDELEM_ANY: {
 			MonoInst *load;
 			CHECK_STACK (2);
@@ -8026,6 +8116,18 @@ stind_to_store_membase (int opcode)
 	}
 
 	return -1;
+}
+
+G_GNUC_UNUSED
+static void
+mono_print_bb_code_new (MonoBasicBlock *bb) {
+	if (bb->code) {
+		MonoInst *c = bb->code;
+		while (c) {
+			mono_print_ins (c);
+			c = c->next;
+		}
+	}
 }
 
 #ifdef MINI_OP

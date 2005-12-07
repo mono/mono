@@ -1065,6 +1065,8 @@ mono_arch_call_opcode2 (MonoCompile *cfg, MonoCallInst *call, int is_virtual) {
 		arg->sreg1 = in->dreg;
 		arg->type = in->type;
 
+		g_assert (in->dreg != -1);
+
 		if ((i >= sig->hasthis) && (MONO_TYPE_ISSTRUCT(t))) {
 			gint align;
 			guint32 size;
