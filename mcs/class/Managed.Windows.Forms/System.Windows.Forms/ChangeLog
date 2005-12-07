@@ -1,3 +1,8 @@
+2005-12-07  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* Hwnd.cs: Now using the theme 3d bordersize to calculate
+	  widths of Fixed3D borders
+
 2005-12-07  Jackson Harper  <jackson@ximian.com>
 
 	* MdiClient.cs: Fix warnings. Earn Mike's love.

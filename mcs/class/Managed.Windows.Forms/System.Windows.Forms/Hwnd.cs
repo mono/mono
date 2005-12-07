@@ -145,10 +145,12 @@ namespace System.Windows.Forms {
 			}
 
 			if (border_style == FormBorderStyle.Fixed3D) {
-				rect.X -= 2;
-				rect.Y -= 2;
-				rect.Width += 4;
-				rect.Height += 4;
+				Size border_3D_size = ThemeEngine.Current.Border3DSize;
+
+				rect.X -= border_3D_size.Width;
+				rect.Y -= border_3D_size.Height;
+				rect.Width += border_3D_size.Width * 2;
+				rect.Height += border_3D_size.Height * 2;
 			} else if (border_style == FormBorderStyle.FixedSingle) {
 				rect.X -= 1;
 				rect.Y -= 1;
@@ -184,10 +186,12 @@ namespace System.Windows.Forms {
 			}
 			
 			if (border_style == FormBorderStyle.Fixed3D) {
-				rect.X += 2;
-				rect.Y += 2;
-				rect.Width -= 4;
-				rect.Height -= 4;
+				Size border_3D_size = ThemeEngine.Current.Border3DSize;
+
+				rect.X += border_3D_size.Width;
+				rect.Y += border_3D_size.Height;
+				rect.Width -= border_3D_size.Width * 2;
+				rect.Height -= border_3D_size.Height * 2;
 			} else if (border_style == FormBorderStyle.FixedSingle) {
 				rect.X += 1;
 				rect.Y += 1;
@@ -312,12 +316,13 @@ namespace System.Windows.Forms {
 		public Point MenuOrigin {
 			get {
 				Point	pt;
+				Size	border_3D_size = ThemeEngine.Current.Border3DSize;
 
 				pt = new Point(0, 0);
 
 				if (border_style == FormBorderStyle.Fixed3D) {
-					pt.X += 2;
-					pt.Y += 2;
+					pt.X += border_3D_size.Width;
+					pt.Y += border_3D_size.Height;
 				} else if (border_style == FormBorderStyle.FixedSingle) {
 					pt.X += 1;
 					pt.Y += 1;
