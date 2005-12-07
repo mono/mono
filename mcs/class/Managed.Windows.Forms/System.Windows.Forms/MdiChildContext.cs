@@ -323,7 +323,7 @@ namespace System.Windows.Forms {
 
 		private void FormMouseLeave (ref Message m)
 		{
-			form.Cursor = Cursors.Default;
+			form.ResetCursor ();
 		}
 
 		private void SetCursorForPos (FormPos pos)
@@ -346,7 +346,7 @@ namespace System.Windows.Forms {
 				form.Cursor = Cursors.SizeWE;
 				break;
 			default:
-				form.Cursor = Cursors.Default;
+				form.ResetCursor ();
 				break;
 			}
 		}

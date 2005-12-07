@@ -1,3 +1,9 @@
+2005-12-07  Jackson Harper  <jackson@ximian.com>
+
+	* MdiChildContext.cs: Use Control.ResetCursor.
+	* Control.cs: ResetCursor needs to set the property so that the
+	correct XplatUI call gets made.
+
 2005-12-07  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* Control.cs: More fixes to make our key events match MS. We

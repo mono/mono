@@ -1538,6 +1538,7 @@ namespace System.Windows.Forms
 					cursor = value;
 					
 					pt = Cursor.Position;
+					Console.WriteLine ("{0}  {1}  {2}", bounds, pt, bounds.Contains (pt));
 					if (bounds.Contains(pt)) {
 						if (GetChildAtPoint(pt) == null) {
 							if (cursor != null) {
@@ -2730,7 +2731,7 @@ namespace System.Windows.Forms
 
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public virtual void ResetCursor() {
-			cursor = null;
+			Cursor = null;
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Never)]
