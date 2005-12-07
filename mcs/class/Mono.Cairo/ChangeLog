@@ -2,6 +2,9 @@
 
 	* Mono.Cairo/Cairo.cs: fix Content and  Format values,
 	fixes the knockout/circles sample
+	* Samples/png/circles.cs:
+	* Samples/png/knockout.cs: replace circles with knockout,
+	which uses the newer style api and works
 
 2005-12-02  Ben Maurer  <bmaurer@ximian.com>
 
