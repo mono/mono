@@ -36,7 +36,6 @@ namespace System.Windows.Forms
 	{
 		private RightToLeft right_to_left = RightToLeft.Inherit;
 		private Form form = null;
-		internal MenuTracker tracker = null;
 
     		public MainMenu () : base (null)
     		{

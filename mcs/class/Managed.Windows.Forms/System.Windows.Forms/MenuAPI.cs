@@ -26,6 +26,7 @@
 
 // NOT COMPLETE
 
+using System.Collections;
 using System.Drawing;
 
 namespace System.Windows.Forms {
@@ -64,6 +65,8 @@ namespace System.Windows.Forms {
 	    	public MenuTracker (Menu top_menu)
 		{
 			TopMenu = CurrentMenu = top_menu;
+			foreach (MenuItem item in TopMenu.MenuItems)
+				AddShortcuts (item);
 			grab_control = new GrabControl (this);
 			if (top_menu is ContextMenu) {
 				(top_menu as ContextMenu).SourceControl.FindForm ().Controls.AddImplicit (grab_control);
@@ -71,6 +74,19 @@ namespace System.Windows.Forms {
 				grab_control.Capture = true;
 			} else
 				top_menu.Wnd.FindForm ().Controls.AddImplicit (grab_control);
+		}
+
+		enum KeyNavState {
+			Idle,
+			Startup,
+			NoPopups,
+			Navigating
+		}
+
+		KeyNavState keynav_state = KeyNavState.Idle;
+
+		public bool Navigating {
+			get { return keynav_state != KeyNavState.Idle; }
 		}
 
 		public void Dispose ()
@@ -90,6 +106,7 @@ namespace System.Windows.Forms {
 		{
 			active = false;
 			grab_control.Capture = false;
+			keynav_state = KeyNavState.Idle;
 			if (TopMenu is ContextMenu) {
 				PopUpWindow puw = TopMenu.Wnd as PopUpWindow;
 				puw.HideWindow ();
@@ -97,6 +114,7 @@ namespace System.Windows.Forms {
 				DeselectItem (TopMenu.SelectedItem);
 				(TopMenu as MainMenu).Draw ();
 			}
+			CurrentMenu = TopMenu;
 		}
 
 		MenuItem FindItemByCoords (Menu menu, Point pt)
@@ -132,7 +150,7 @@ namespace System.Windows.Forms {
 				return;
 			}
 
-			SelectItem (item.Parent, item, true);
+			SelectItem (item.Parent, item, item.IsPopup);
 			if (item.IsPopup) {
 				active = true;
 				grab_control.Capture = true;
@@ -152,7 +170,7 @@ namespace System.Windows.Forms {
 
 			grab_control.Capture = active || item != null;
 
-            Rectangle top_bounds = new Rectangle(0, 0, TopMenu.Rect.Width, TopMenu.Rect.Height);
+			Rectangle top_bounds = new Rectangle(0, 0, TopMenu.Rect.Width, TopMenu.Rect.Height);
 			if (item == null && (!active || top_bounds.Contains (ScreenToMenu (TopMenu, new Point (args.X, args.Y)))))
 				DeselectItem (TopMenu.SelectedItem);
 			else
@@ -172,7 +190,7 @@ namespace System.Windows.Forms {
 				if (item.Parent != CurrentMenu.SelectedItem)
 					DeselectItem (CurrentMenu.SelectedItem);
 				CurrentMenu = item.Parent;
-				SelectItem (CurrentMenu, item, active);
+				SelectItem (CurrentMenu, item, active && item.IsPopup);
 			}
 		}
 
@@ -258,7 +276,8 @@ namespace System.Windows.Forms {
 			if (item.IsPopup) {				
 				ShowSubPopup (menu, item);
 			} else {
-				// Execute function
+				Deactivate ();
+				item.PerformClick ();
 			}
 		}
 
@@ -433,63 +452,222 @@ namespace System.Windows.Forms {
 			return menu.MenuItems [pos];
 		}
 
-		public bool ProcessKeys (Menu menu, ref Message msg, Keys keyData)
+		void ProcessMenuKey (Msg msg_type)
+		{
+			if (TopMenu.MenuItems.Count == 0)
+				return;
+
+			MainMenu main_menu = TopMenu as MainMenu;
+
+			switch (msg_type) {
+			case Msg.WM_SYSKEYDOWN:
+				switch (keynav_state) {
+				case KeyNavState.Idle:
+					keynav_state = KeyNavState.Startup;
+					CurrentMenu = TopMenu;
+					main_menu.Draw ();
+					break;
+				case KeyNavState.Startup:
+					break;
+				default:
+					keynav_state = KeyNavState.Idle;
+					Deactivate ();
+					main_menu.Draw ();
+					break;
+				}
+				break;
+
+			case Msg.WM_SYSKEYUP:
+				switch (keynav_state) {
+				case KeyNavState.Idle:
+				case KeyNavState.Navigating:
+					break;
+				case KeyNavState.Startup:
+					keynav_state = KeyNavState.NoPopups;
+					SelectItem (TopMenu, TopMenu.MenuItems [0], false);
+					break;
+				default:
+					keynav_state = KeyNavState.Idle;
+					Deactivate ();
+					main_menu.Draw ();
+					break;
+				}
+				break;
+
+			default:
+				throw new ArgumentException ("Invalid msg_type " + msg_type);
+			}
+		}
+
+		bool ProcessMnemonic (Message msg, Keys key_data)
+		{
+			keynav_state = KeyNavState.Navigating;
+			MenuItem item = FindItemByKey (CurrentMenu, msg.WParam);
+			if (item == null)
+				return false;
+
+			SelectItem (CurrentMenu, item, true);
+			if (item.IsPopup) {
+				SelectItem (item, item.MenuItems [0], false);
+				CurrentMenu = item;
+			}
+			return true;
+		}
+
+		void ProcessArrowKey (Keys keyData)
 		{
 			MenuItem item;
-
 			switch (keyData) {
 			case Keys.Up:
-				item = GetNextItem (menu, ItemNavigation.Previous);
+				if (CurrentMenu is MainMenu)
+					return;
+				else if (CurrentMenu.MenuItems.Count == 1 && CurrentMenu.parent_menu == TopMenu) {
+					DeselectItem (CurrentMenu.SelectedItem);
+					CurrentMenu = TopMenu;
+					return;
+				}
+				item = GetNextItem (CurrentMenu, ItemNavigation.Previous);
 				if (item != null)
-					SelectItem (menu, item, false);
+					SelectItem (CurrentMenu, item, false);
 				break;
 
 			case Keys.Down:
-				item = GetNextItem (menu, ItemNavigation.Next);
+				if (CurrentMenu is MainMenu) {
+					if (CurrentMenu.SelectedItem != null && CurrentMenu.SelectedItem.IsPopup) {
+						keynav_state = KeyNavState.Navigating;
+						item = CurrentMenu.SelectedItem;
+						ShowSubPopup (CurrentMenu, item);
+						SelectItem (item, item.MenuItems [0], false);
+						CurrentMenu = item;
+					}
+					return;
+				}
+				item = GetNextItem (CurrentMenu, ItemNavigation.Next);
 				if (item != null)
-					SelectItem (menu, item, false);
+					SelectItem (CurrentMenu, item, false);
 				break;
 
-			/* Menubar selects and opens next. Popups next or open*/
 			case Keys.Right:
-
-				// Try to Expand popup first
-				if (menu.SelectedItem.IsPopup)
-					ShowSubPopup (menu, menu.SelectedItem);
-				else if (menu.parent_menu is MainMenu) {
-					MenuItem select_item = GetNextItem (menu.parent_menu, ItemNavigation.Next);
-					SelectItem (menu.parent_menu, select_item, true);
+				if (CurrentMenu is MainMenu) {
+					item = GetNextItem (CurrentMenu, ItemNavigation.Next);
+					bool popup = item.IsPopup && keynav_state != KeyNavState.NoPopups;
+					SelectItem (CurrentMenu, item, popup);
+					if (popup) {
+						SelectItem (item, item.MenuItems [0], false);
+						CurrentMenu = item;
+					}
+				} else if (CurrentMenu.SelectedItem.IsPopup) {
+					item = CurrentMenu.SelectedItem;
+					ShowSubPopup (CurrentMenu, item);
+					SelectItem (item, item.MenuItems [0], false);
+					CurrentMenu = item;
+				} else if (CurrentMenu.parent_menu is MainMenu) {
+					item = GetNextItem (CurrentMenu.parent_menu, ItemNavigation.Next);
+					SelectItem (CurrentMenu.parent_menu, item, item.IsPopup);
+					if (item.IsPopup) {
+						SelectItem (item, item.MenuItems [0], false);
+						CurrentMenu = item;
+					}
 				}
 				break;
 
 			case Keys.Left:
-
-				// Try to Collapse popup first
-				if (menu.SelectedItem.IsPopup) {
-
-				} else if (menu.parent_menu is MainMenu) {
-					MenuItem select_item = GetNextItem (menu.parent_menu, ItemNavigation.Previous);
-					SelectItem (menu.parent_menu, select_item, true);
+				if (CurrentMenu is MainMenu) {
+					item = GetNextItem (CurrentMenu, ItemNavigation.Previous);
+					bool popup = item.IsPopup && keynav_state != KeyNavState.NoPopups;
+					SelectItem (CurrentMenu, item, popup);
+					if (popup) {
+						SelectItem (item, item.MenuItems [0], false);
+						CurrentMenu = item;
+					}
+				} else if (CurrentMenu.parent_menu is MainMenu) {
+					item = GetNextItem (CurrentMenu.parent_menu, ItemNavigation.Previous);
+					SelectItem (CurrentMenu.parent_menu, item, item.IsPopup);
+					if (item.IsPopup) {
+						SelectItem (item, item.MenuItems [0], false);
+						CurrentMenu = item;
+					}
+				} else {
+					HideSubPopups (CurrentMenu);
+					CurrentMenu = CurrentMenu.parent_menu;
 				}
 				break;
+			default:
+				throw new ArgumentException ("Invalid keyData: " + keyData);
+			}
+		}
+
+		Hashtable shortcuts = new Hashtable ();
+		
+		public void AddShortcuts (MenuItem item)
+		{
+			foreach (MenuItem child in item.MenuItems) {
+				AddShortcuts (child);
+				if (child.Shortcut != Shortcut.None)
+					shortcuts [(int)child.Shortcut] = child;
+			}
+
+			if (item.Shortcut != Shortcut.None)
+				shortcuts [(int)item.Shortcut] = item;
+		}
+
+		public void RemoveShortcuts (MenuItem item)
+		{
+			foreach (MenuItem child in item.MenuItems) {
+				RemoveShortcuts (child);
+				if (child.Shortcut != Shortcut.None)
+					shortcuts.Remove ((int)child.Shortcut);
+			}
+
+			if (item.Shortcut != Shortcut.None)
+				shortcuts.Remove ((int)item.Shortcut);
+		}
+
+		bool ProcessShortcut (Keys keyData)
+		{
+			MenuItem item = shortcuts [(int)keyData] as MenuItem;
+			if (item == null)
+				return false;
+
+			Deactivate ();
+			item.PerformClick ();
+			return true;
+		}
+
+		public bool ProcessKeys (ref Message msg, Keys keyData)
+		{
+			if ((Msg)msg.Msg != Msg.WM_SYSKEYUP && ProcessShortcut (keyData))
+				return true;
+			else if ((keyData & Keys.KeyCode) == Keys.Menu && TopMenu is MainMenu) {
+				ProcessMenuKey ((Msg) msg.Msg);
+				return true;
+			} else if ((keyData & Keys.Alt) == Keys.Alt)
+				return ProcessMnemonic (msg, keyData);
+			else if ((Msg)msg.Msg == Msg.WM_SYSKEYUP || keynav_state == KeyNavState.Idle)
+				return false;
+
+			switch (keyData) {
+			case Keys.Up:
+			case Keys.Down:
+			case Keys.Right:
+			case Keys.Left:
+				ProcessArrowKey (keyData);
+				break;
 				
+			case Keys.Escape:
+				Deactivate ();
+				break;
+
 			case Keys.Return:
-				ExecFocusedItem (menu, menu.SelectedItem);
+				ExecFocusedItem (CurrentMenu, CurrentMenu.SelectedItem);
 				break;
 
 			default:
+				ProcessMnemonic (msg, keyData);
 				break;
 			}
 
-			/* Try if it is a menu hot key */
-			item = FindItemByKey (menu, msg.WParam);
-
-			if (item != null) {
-				SelectItem (menu, item, false);
-				return true;
-			}
-
-			return false;
+			return true;
 		}
 	}
 

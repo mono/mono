@@ -2683,6 +2683,14 @@ namespace System.Windows.Forms
 				}
 
 				return true;
+			} else if (msg.Msg == (int)Msg.WM_SYSKEYUP) {
+				key_data = (Keys) msg.WParam.ToInt32 ();
+				if ((key_data & Keys.Menu) == 0)
+					return false;
+				Form form = FindForm ();
+				if (form == null || form.ActiveMenu == null)
+					return false;
+				return form.ActiveMenu.tracker.ProcessKeys (ref msg, key_data);
 			} else if (msg.Msg == (int)Msg.WM_CHAR) {
 				if (IsInputChar((char)msg.WParam)) {
 					return true;

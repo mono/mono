@@ -116,6 +116,7 @@ namespace System.Windows.Forms {
 		#region	Principal Theme Methods
 		public ThemeClearlooks( ) {
 			ColorControl = theme_back_color;
+			always_draw_hotkeys = true;
 		}
 		
 		public override Color DefaultControlBackColor {

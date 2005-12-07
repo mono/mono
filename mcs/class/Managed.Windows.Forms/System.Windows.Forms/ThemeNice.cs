@@ -57,6 +57,7 @@ namespace System.Windows.Forms
 		public ThemeNice( )
 		{
 			ColorControl = NiceBackColor;
+			always_draw_hotkeys = true;
 		}
 		
 		public override Color DefaultControlBackColor

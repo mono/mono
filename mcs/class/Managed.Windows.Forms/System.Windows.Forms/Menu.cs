@@ -46,6 +46,7 @@ namespace System.Windows.Forms
 		internal Menu parent_menu = null;
 		System.Drawing.Rectangle rect;
 		internal Control Wnd;
+		internal MenuTracker tracker;
 
 		public const int FindHandle = 0;
 		public const int FindShortcut = 1;
@@ -139,6 +140,15 @@ namespace System.Windows.Forms
 			set { rect.Y = value; }
 		}
 
+		internal MenuTracker Tracker {
+			get {
+				Menu top = this;
+				while (top.parent_menu != null)
+					top = top.parent_menu;
+
+				return top.tracker;
+			}
+		}
 		#endregion Private Properties
 
 		#region Public Methods
@@ -240,9 +250,11 @@ namespace System.Windows.Forms
 			}		
 		}
 
-		protected internal virtual bool ProcessCmdKey (ref Message msg, Keys keyData)
+		internal bool ProcessCmdKey (ref Message msg, Keys keyData)
 		{
-			return false;
+			if (tracker == null)
+				return false;
+			return tracker.ProcessKeys (ref msg, keyData);
 		}
 
 		public override string ToString ()
@@ -355,6 +367,8 @@ namespace System.Windows.Forms
 				owner.OnMenuChanged (EventArgs.Empty);
 				if (owner.parent_menu != null)
 					owner.parent_menu.OnMenuChanged (EventArgs.Empty);
+				if (owner.Tracker != null)
+					owner.Tracker.AddShortcuts (mi);
 			}
 
 			internal void Insert (int index, MenuItem mi)
@@ -392,6 +406,12 @@ namespace System.Windows.Forms
 
 			public virtual void Clear ()
 			{
+				MenuTracker tracker = owner.Tracker;
+				foreach (MenuItem item in items) {
+					if (tracker != null)
+						tracker.RemoveShortcuts (item);
+					item.parent_menu = null;
+				}
 				items.Clear ();
 				owner.OnMenuChanged (EventArgs.Empty);
 			}
@@ -450,6 +470,12 @@ namespace System.Windows.Forms
 			{
 				if (index < 0 || index >= Count)
 					throw new ArgumentOutOfRangeException ("Index of out range");
+
+				MenuItem item = (MenuItem) items [index];
+				MenuTracker tracker = owner.Tracker;
+				if (tracker != null)
+					tracker.RemoveShortcuts (item);
+				item.parent_menu = null;
 
 				items.RemoveAt (index);
 

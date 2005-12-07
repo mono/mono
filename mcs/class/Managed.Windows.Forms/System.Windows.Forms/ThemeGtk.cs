@@ -230,6 +230,7 @@ namespace System.Windows.Forms
 
 			br_buttonface = new SolidBrush (defaultWindowBackColor);		
 			br_buttontext = new SolidBrush (defaultWindowForeColor);			
+			always_draw_hotkeys = true;
 		}	
 
 		public override bool DoubleBufferingSupported {

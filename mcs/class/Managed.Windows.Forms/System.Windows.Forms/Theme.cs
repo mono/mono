@@ -90,6 +90,7 @@ namespace System.Windows.Forms
 		protected Font default_font;
 		protected Color defaultWindowBackColor;
 		protected Color defaultWindowForeColor;		
+		protected bool always_draw_hotkeys = true;
 		internal SystemResPool ResPool = new SystemResPool ();
 		private Type system_colors = Type.GetType("System.Drawing.SystemColors, System.Drawing");
 

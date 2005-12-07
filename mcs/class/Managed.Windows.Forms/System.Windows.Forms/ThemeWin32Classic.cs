@@ -79,6 +79,7 @@ namespace System.Windows.Forms
 			string_format_menu_menubar_text.LineAlignment = StringAlignment.Center;
 			string_format_menu_menubar_text.Alignment = StringAlignment.Center;
 			string_format_menu_menubar_text.HotkeyPrefix = HotkeyPrefix.Show;
+			always_draw_hotkeys = false;
 		}	
 
 		public override void ResetDefaults() {
@@ -1883,6 +1884,11 @@ namespace System.Windows.Forms
 			if (menu.Height == 0)
 				ThemeEngine.Current.CalcMenuBarSize (dc, menu, rect.Width);
 				
+			bool keynav = (menu as MainMenu).tracker.Navigating;
+			HotkeyPrefix hp = always_draw_hotkeys || keynav ? HotkeyPrefix.Show : HotkeyPrefix.Hide;
+			string_format_menu_menubar_text.HotkeyPrefix = hp;
+			string_format_menu_text.HotkeyPrefix = hp;
+
 			rect.Height = menu.Height;
 			dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (menu.Wnd.BackColor), rect);
 						
