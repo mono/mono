@@ -130,6 +130,7 @@ System.Runtime.Serialization/FormatterServicesTests.cs
 System.Runtime.Serialization/ObjectIDGeneratorTests.cs
 System.Runtime.Serialization/SerializationTest.cs
 System.Runtime.Serialization/ArraySerializationTest.cs
+System.Runtime.Serialization.Formatters.Binary/BinaryFormatterTest.cs
 System.Runtime.Versioning/ResourceConsumptionAttributeTest.cs
 System.Runtime.Versioning/ResourceExposureAttributeTest.cs
 System.Runtime.Versioning/VersioningHelperTest.cs
@@ -331,6 +332,7 @@ System.Reflection.Emit/MethodRentalCas.cs
 System.Resources/ResourceReaderCas.cs
 System.Resources/ResourceSetCas.cs
 System.Runtime.InteropServices/RuntimeEnvironmentCas.cs
+System.Runtime.Serialization.Formatters.Binary/BinaryFormatterCas.cs
 System.Runtime.Versioning/ResourceConsumptionAttributeCas.cs
 System.Runtime.Versioning/ResourceExposureAttributeCas.cs
 System.Runtime.Versioning/VersioningHelperCas.cs
