@@ -924,7 +924,9 @@ namespace Mono.CSharp {
 			{
 				ec.CurrentAnonymousMethod = iterator.move_next_method;
 
-				iterator.cc.EmitParameter (ec, name);
+				LocalTemporary dummy = null;
+				
+				iterator.cc.EmitParameter (ec, name, false, false, ref dummy);
 			}
 		}
 

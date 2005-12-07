@@ -1,3 +1,16 @@
+2005-12-03  Ben Maurer  <bmaurer@ximian.com>
+
+	* anonymous.cs: Have the param code handle leaving copies on the
+	stack etc. Allows anonymous params to take part in the assignment
+	code (++, +=, etc). Fixes bug #76550
+
+	* expression.cs: Handle the prepare_for_load/leave_copy by passing
+	it down to the anon code.
+
+	* iterators.cs: Use dummy var here
+
+	* codegen.cs: Handle new vars
+
 2005-12-01  Marek Safar  <marek.safar@seznam.cz>
 
 	Fix #76849.
