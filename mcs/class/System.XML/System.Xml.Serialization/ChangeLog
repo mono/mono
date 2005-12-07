@@ -2,6 +2,12 @@
 
 	* TypeTranslator.cs: TARGET_JVM: save additional types per AppDomain.
 
+2005-12-01  Lluis Sanchez Gual  <lluis@novell.com>
+
+        * TypeTranslator.cs: In GetTypeData, if an xmlType is specified for
+        a cli array type, consider it refering to the type of array elements.
+        This fixes bug #76860. Also added some locking.
+
 2005-11-24  Vladimir Krasnov  <vladimirk@mainsoft.com>
 	
 	* XmlTypeMapping.cs: fixed GetXmlName method, added difference
