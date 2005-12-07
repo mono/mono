@@ -1,3 +1,7 @@
+2005-12-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* NewConstraintAttribute.cs: Removed.
+
 2005-11-15  Zoltan Varga  <vargaz@gmail.com>
 
 	* RuntimeHelpers.cs: Really fix build.
