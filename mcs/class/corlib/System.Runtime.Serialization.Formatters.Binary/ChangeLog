@@ -1,3 +1,8 @@
+2005-12-07  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* ObjectReader.cs: Added null check in GetDeserializationType.
+	Patch by Ben Maurer. Fixes bug #69666.
+
 2005-12-01  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* BinaryFormatter.cs: Added a demand for SerializationFormatter on 

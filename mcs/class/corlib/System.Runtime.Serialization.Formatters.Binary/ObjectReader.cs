@@ -785,15 +785,20 @@ namespace System.Runtime.Serialization.Formatters.Binary
 
 		private Type GetDeserializationType (long assemblyId, string className)
 		{
+			Type t;
 			string assemblyName = (string)_registeredAssemblies[assemblyId];
 
 			if (_binder != null) {
-				Type t = _binder.BindToType (assemblyName, className);
-				if (t != null) return t;
+				t = _binder.BindToType (assemblyName, className);
+				if (t != null)
+					return t;
 			}
 				
 			Assembly assembly = Assembly.Load (assemblyName);
-			return assembly.GetType (className, true);
+			t = assembly.GetType (className, true);
+			if (t != null)
+				return t;
+			throw new SerializationException ("Couldn't find type '" + className + "'.");
 		}
 
 		public Type ReadType (BinaryReader reader, TypeTag code)
