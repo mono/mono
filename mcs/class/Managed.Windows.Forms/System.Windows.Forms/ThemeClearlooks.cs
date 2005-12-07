@@ -1719,35 +1719,67 @@ namespace System.Windows.Forms {
 		
 		private void CPDrawBorder3D( Graphics dc, Rectangle rectangle, Border3DStyle style, Border3DSide sides, Color control_color ) {
 			// currently we don't take care of Border3DStyle or Border3DSide
-			// instead of a 3 pixel size currently only a 2 pixel wide border is used...
 			
 			Pen tmp_pen = ResPool.GetPen( edge_bottom_inner_color );
-			dc.DrawLine( tmp_pen, rectangle.X, rectangle.Y + 1, rectangle.X + 1, rectangle.Y );
-			dc.DrawLine( tmp_pen, rectangle.Right - 2, rectangle.Y, rectangle.Right - 1, rectangle.Y + 1 );
-			dc.DrawLine( tmp_pen, rectangle.Right - 2, rectangle.Bottom - 1, rectangle.Right - 1, rectangle.Bottom - 2 );
-			dc.DrawLine( tmp_pen, rectangle.X, rectangle.Bottom - 2, rectangle.X + 1, rectangle.Bottom - 1 );
+			dc.DrawLine( tmp_pen, rectangle.X + 1, rectangle.Y + 2, rectangle.X + 2, rectangle.Y + 1 );
+			dc.DrawLine( tmp_pen, rectangle.Right - 3, rectangle.Y + 1, rectangle.Right - 2, rectangle.Y + 2 );
+			dc.DrawLine( tmp_pen, rectangle.Right - 3, rectangle.Bottom - 2, rectangle.Right - 2, rectangle.Bottom - 3 );
+			dc.DrawLine( tmp_pen, rectangle.X + 1, rectangle.Bottom - 3, rectangle.X + 2, rectangle.Bottom - 2 );
 			
 			tmp_pen = ResPool.GetPen( theme_back_color );
-			dc.DrawLine( tmp_pen, rectangle.X + 1, rectangle.Y + 1, rectangle.Right - 2, rectangle.Y + 1 );
-			dc.DrawLine( tmp_pen, rectangle.X + 1, rectangle.Y + 2, rectangle.X + 1, rectangle.Bottom - 2 );
+			dc.DrawLine( tmp_pen, rectangle.X + 2, rectangle.Y + 2, rectangle.Right - 3, rectangle.Y + 2 );
+			dc.DrawLine( tmp_pen, rectangle.X + 2, rectangle.Y + 3, rectangle.X + 2, rectangle.Bottom - 3 );
 			
 			tmp_pen = ResPool.GetPen( Color.White );
-			dc.DrawLine( tmp_pen, rectangle.X + 2, rectangle.Bottom - 2, rectangle.Right - 2, rectangle.Bottom - 2 );
-			dc.DrawLine( tmp_pen, rectangle.Right - 2, rectangle.Y + 2, rectangle.Right - 2, rectangle.Bottom - 2 );
+			dc.DrawLine( tmp_pen, rectangle.X + 3, rectangle.Bottom - 3, rectangle.Right - 3, rectangle.Bottom - 3 );
+			dc.DrawLine( tmp_pen, rectangle.Right - 3, rectangle.Y + 3, rectangle.Right - 3, rectangle.Bottom - 3 );
 			
 			Point[] points = {
-				new Point( rectangle.X + 2, rectangle.Y ),
-				new Point( rectangle.Right - 3, rectangle.Y ),
-				new Point( rectangle.Right - 1, rectangle.Y + 2 ),
-				new Point( rectangle.Right - 1, rectangle.Bottom - 3 ),
-				new Point( rectangle.Right - 3, rectangle.Bottom - 1 ),
-				new Point( rectangle.X + 2, rectangle.Bottom - 1 ),
-				new Point( rectangle.X, rectangle.Bottom - 3 ),
-				new Point( rectangle.X, rectangle.Y + 2 ),
-				new Point( rectangle.X + 2, rectangle.Y )
+				new Point( rectangle.X + 3, rectangle.Y + 1 ),
+				new Point( rectangle.Right - 4, rectangle.Y + 1 ),
+				new Point( rectangle.Right - 2, rectangle.Y + 3 ),
+				new Point( rectangle.Right - 2, rectangle.Bottom - 4 ),
+				new Point( rectangle.Right - 4, rectangle.Bottom - 2 ),
+				new Point( rectangle.X + 3, rectangle.Bottom - 2 ),
+				new Point( rectangle.X + 1, rectangle.Bottom - 4 ),
+				new Point( rectangle.X + 1, rectangle.Y + 3 ),
+				new Point( rectangle.X + 3, rectangle.Y + 1 )
 			};
 			
 			dc.DrawLines( ResPool.GetPen( combobox_border_color ), points );
+			
+			Point[] points_top_outer = {
+				new Point( rectangle.X + 1, rectangle.Y + 1 ),
+				new Point( rectangle.X + 2, rectangle.Y ),
+				new Point( rectangle.Right - 3, rectangle.Y ),
+				new Point( rectangle.Right - 2 , rectangle.Y + 1 )
+			};
+			
+			Point[] points_bottom_outer = {
+				new Point( rectangle.X + 1, rectangle.Bottom - 2 ),
+				new Point( rectangle.X + 2, rectangle.Bottom - 1 ),
+				new Point( rectangle.Right - 3, rectangle.Bottom - 1 ),
+				new Point( rectangle.Right - 2, rectangle.Bottom - 2 )
+			};
+			
+			// outer border
+			tmp_pen = ResPool.GetPen( button_outer_border_dark_color );
+			dc.DrawLines( tmp_pen, points_top_outer );
+			tmp_pen = ResPool.GetPen( button_outer_border_light_color );
+			dc.DrawLines( tmp_pen, points_bottom_outer );
+			
+			using ( LinearGradientBrush lgbr = new LinearGradientBrush( new Point( 0, 2 ), new Point( 0, rectangle.Height - 1 ), button_outer_border_dark_color, button_outer_border_light_color ) ) {
+				dc.FillRectangle( lgbr, rectangle.X, rectangle.Y + 2, 1, rectangle.Height - 4 );
+				dc.FillRectangle( lgbr, rectangle.Right - 1, rectangle.Y + 2, 1, rectangle.Height - 4 );
+			}
+			
+			tmp_pen = ResPool.GetPen( button_edge_top_outer_color );
+			dc.DrawLine( tmp_pen, rectangle.X, rectangle.Y + 1, rectangle.X + 1, rectangle.Y );
+			dc.DrawLine( tmp_pen, rectangle.Right - 2, rectangle.Y, rectangle.Right - 1, rectangle.Y + 1 );
+			
+			tmp_pen = ResPool.GetPen( button_edge_bottom_outer_color );
+			dc.DrawLine( tmp_pen, rectangle.X, rectangle.Bottom - 2, rectangle.X + 1, rectangle.Bottom - 1 );
+			dc.DrawLine( tmp_pen, rectangle.Right - 1, rectangle.Bottom - 2, rectangle.Right - 2, rectangle.Bottom - 1 );
 		}
 		
 		public override void CPDrawBorder( Graphics dc, Rectangle bounds, Color leftColor, int leftWidth,

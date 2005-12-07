@@ -1,3 +1,7 @@
+2005-12-07  Alexander Olk  <alex.olk@googlemail.com>
+
+	* ThemeClearlooks.cs: Reflect latest Hwnd changes
+
 2005-12-07  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* Hwnd.cs: Now using the theme 3d bordersize to calculate
