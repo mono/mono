@@ -1,5 +1,7 @@
 2005-12-07  Zoltan Varga  <vargaz@gmail.com>
 
+	* basic-long.cs: Remove a test moved to objects.cs.
+
 	* arrays.cs: Add more array tests.
 
 2005-12-06  Zoltan Varga  <vargaz@gmail.com>
