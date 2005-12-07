@@ -1,3 +1,9 @@
+2005-12-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* BinaryFormatter.cs: Implemented UnsafeDeserialize and 
+	UnsafeDeserializeMethodResponse methods. Fixes last TODO in this
+	namespace (for both 1.1 and 2.0 profiles).
+
 2005-12-07  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* ObjectReader.cs: Added null check in GetDeserializationType.

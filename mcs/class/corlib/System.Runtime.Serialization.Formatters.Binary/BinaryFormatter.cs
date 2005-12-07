@@ -27,9 +27,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Reflection;
 using System.Collections;
 using System.IO;
+using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Runtime.Remoting.Messaging;
 using System.Security.Permissions;
 
@@ -37,14 +38,18 @@ namespace System.Runtime.Serialization.Formatters.Binary {
 
 	public sealed class BinaryFormatter : IRemotingFormatter, IFormatter 
 	{
+#if NET_2_0
+		private FormatterAssemblyStyle assembly_format = FormatterAssemblyStyle.Simple;
+#else
 		private FormatterAssemblyStyle assembly_format = FormatterAssemblyStyle.Full;
+#endif
 		private SerializationBinder binder;
 		private StreamingContext context;
 		private ISurrogateSelector surrogate_selector;
 		private FormatterTypeStyle type_format = FormatterTypeStyle.TypesAlways;
 		
 #if NET_1_1
-		private TypeFilterLevel filter_level;
+		private TypeFilterLevel filter_level = TypeFilterLevel.Full;
 #endif
 		
 		public BinaryFormatter()
@@ -118,16 +123,24 @@ namespace System.Runtime.Serialization.Formatters.Binary {
 		}
 #endif
 
-		public object Deserialize(Stream serializationStream)
+		[SecurityPermission (SecurityAction.Demand, SerializationFormatter = true)]
+		public object Deserialize (Stream serializationStream)
 		{
-			return Deserialize (serializationStream, null);
+			return NoCheckDeserialize (serializationStream, null);
 		}
 
-		public object Deserialize(Stream serializationStream, HeaderHandler handler) 
+		[SecurityPermission (SecurityAction.Demand, SerializationFormatter = true)]
+		public object Deserialize (Stream serializationStream, HeaderHandler handler) 
+		{
+			return NoCheckDeserialize (serializationStream, handler);
+		}
+
+		// shared by Deserialize and UnsafeDeserialize which both involve different security checks
+		private object NoCheckDeserialize (Stream serializationStream, HeaderHandler handler)
 		{
 			if(serializationStream==null) 
 			{
-				throw new ArgumentNullException("serializationStream is null");
+				throw new ArgumentNullException("serializationStream");
 			}
 			if(serializationStream.CanSeek &&
 				serializationStream.Length==0) 
@@ -162,10 +175,17 @@ namespace System.Runtime.Serialization.Formatters.Binary {
 			}
 		}
 		
-		public object DeserializeMethodResponse(Stream serializationStream, HeaderHandler handler, IMethodCallMessage methodCallmessage)
+		[SecurityPermission (SecurityAction.Demand, SerializationFormatter = true)]
+		public object DeserializeMethodResponse (Stream serializationStream, HeaderHandler handler, IMethodCallMessage methodCallmessage)
+		{
+			return NoCheckDeserializeMethodResponse (serializationStream, handler, methodCallmessage);
+		}
+
+		// shared by DeserializeMethodResponse and UnsafeDeserializeMethodResponse which both involve different security checks
+		private object NoCheckDeserializeMethodResponse (Stream serializationStream, HeaderHandler handler, IMethodCallMessage methodCallmessage)
 		{
 			if(serializationStream==null) {
-				throw new ArgumentNullException("serializationStream is null");
+				throw new ArgumentNullException("serializationStream");
 			}
 			if(serializationStream.CanSeek &&
 			   serializationStream.Length==0) {
@@ -207,18 +227,22 @@ namespace System.Runtime.Serialization.Formatters.Binary {
 			writer.Flush();
 		}
 
-		[MonoTODO]
-		[System.Runtime.InteropServices.ComVisible (false)]
-		public object UnsafeDeserialize(Stream serializationStream, HeaderHandler handler) 
+		// faster version (under CAS) as this requires a LinkDemand versus full Demand (i.e. a stack-walk)
+		// shouldn't be called unless the code is intended to be executed at full-trust
+		[ComVisible (false)]
+		[SecurityPermission (SecurityAction.LinkDemand, SerializationFormatter = true)]
+		public object UnsafeDeserialize (Stream serializationStream, HeaderHandler handler) 
 		{
-			throw new NotImplementedException ();
+			return NoCheckDeserialize (serializationStream, handler);
 		}
 		
-		[MonoTODO]
-		[System.Runtime.InteropServices.ComVisible (false)]
-		public object UnsafeDeserializeMethodResponse(Stream serializationStream, HeaderHandler handler, IMethodCallMessage methodCallmessage)
+		// faster version (under CAS) as this requires a LinkDemand versus full Demand (i.e. a stack-walk)
+		// shouldn't be called unless the code is intended to be executed at full-trust
+		[ComVisible (false)]
+		[SecurityPermission (SecurityAction.LinkDemand, SerializationFormatter = true)]
+		public object UnsafeDeserializeMethodResponse (Stream serializationStream, HeaderHandler handler, IMethodCallMessage methodCallmessage)
 		{
-			throw new NotImplementedException ();
+			return NoCheckDeserializeMethodResponse (serializationStream, handler, methodCallmessage);
 		}
 		
 		private void WriteBinaryHeader (BinaryWriter writer, bool hasHeaders)
