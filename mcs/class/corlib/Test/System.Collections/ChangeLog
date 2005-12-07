@@ -1,3 +1,9 @@
+2005-12-06  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CaseInsensitiveHashCodeProviderTest: Added test cases for the 
+	default ctor, roudtripping serialization and deserializing data
+	generated on MS 1.1 and 2.0.
+
 2005-12-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ComparerTest.cs: Removed "NotWorking" from "Invariant" test case 
