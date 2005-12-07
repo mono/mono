@@ -1,3 +1,10 @@
+2005-12-07  Senganal T  <tsenganal@novell.com>
+
+	* Mono.Data.SybaseClient/SybaseConnection.cs 
+		- fixed ExecuteNonQuery to return the no of rows
+		affected for Insert/Update/Delete Stmts.
+		Fixes bug #76280
+
 2005-06-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Mono.Data.SybaseClient.dll.sources :

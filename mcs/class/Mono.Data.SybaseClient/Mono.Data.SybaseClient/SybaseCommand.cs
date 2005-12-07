@@ -235,6 +235,7 @@ namespace Mono.Data.SybaseClient {
 
 		private void Execute (CommandBehavior behavior, bool wantResults)
 		{
+			Tds.RecordsAffected = -1; 
 			TdsMetaParameterCollection parms = Parameters.MetaParameters;
 			if (preparedStatement == null) {
 				bool schemaOnly = ((CommandBehavior & CommandBehavior.SchemaOnly) > 0);
@@ -279,6 +280,7 @@ namespace Mono.Data.SybaseClient {
 
 			try {
 				Execute (CommandBehavior.Default, false);
+				result = Tds.RecordsAffected;
 			}
 			catch (TdsTimeoutException e) {
 				throw SybaseException.FromTdsInternalException ((TdsInternalException) e);

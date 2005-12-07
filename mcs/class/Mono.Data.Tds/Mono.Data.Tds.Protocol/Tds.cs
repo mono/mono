@@ -1068,33 +1068,22 @@ namespace Mono.Data.Tds.Protocol {
 			int rowCount = comm.GetTdsInt ();
 
 			bool validRowCount = IsValidRowCount (status,op);
-
-			if (type == TdsPacketSubType.DoneInProc) {
-                                if (validRowCount) {
-					if (recordsAffected == -1)
-						recordsAffected = rowCount; 
-					else 
-						recordsAffected += rowCount;
-				}
-                        }
-                        
-
 			moreResults = ((status & 0x01) != 0);
 			bool cancelled = ((status & 0x20) != 0);
 
 			switch (type) {
-				case TdsPacketSubType.DoneProc:
-					doneProc = true;
-					goto case TdsPacketSubType.Done;
-
-				case TdsPacketSubType.Done:
-					if (validRowCount) {
-						if (recordsAffected == -1) 
-							recordsAffected = rowCount;
-						else
-							recordsAffected += rowCount;
-					}
-					break;
+			case TdsPacketSubType.DoneProc:
+				doneProc = true;
+				goto case TdsPacketSubType.Done;
+			case TdsPacketSubType.Done:
+			case TdsPacketSubType.DoneInProc:
+				if (validRowCount) {
+					if (recordsAffected == -1) 
+						recordsAffected = rowCount;
+					else
+						recordsAffected += rowCount;
+				}
+				break;
 			}
 
 			if (moreResults) 

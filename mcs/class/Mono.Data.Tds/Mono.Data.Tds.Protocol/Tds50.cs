@@ -40,6 +40,7 @@ namespace Mono.Data.Tds.Protocol {
 
 		public static readonly TdsVersion Version = TdsVersion.tds50;
 		int packetSize;
+		bool isSelectQuery = false;
 
 		#endregion // Fields
 
@@ -462,6 +463,7 @@ namespace Mono.Data.Tds.Protocol {
 
 		protected override TdsDataColumnCollection ProcessColumnInfo ()
 		{
+			isSelectQuery = true; 
 			TdsDataColumnCollection result = new TdsDataColumnCollection ();
 			int totalLength = Comm.GetTdsShort ();	
 			int count = Comm.GetTdsShort ();
@@ -597,6 +599,21 @@ namespace Mono.Data.Tds.Protocol {
 			MoreResults = true;
 			Comm.SendPacket ();
 			SkipToEnd ();
+		}
+
+		protected override bool IsValidRowCount (byte status, byte op)
+		{
+			if (isSelectQuery) 
+				return (isSelectQuery = false);
+
+			// TODO : Need to figure out how to calculate rowcount inside stored 
+			// procedures. For now, Ignoring RowCount if they are returned by 
+			// statements executing inside a StoredProcedure
+
+			if (((status & (byte)0x40) != 0) || ((status & (byte)0x10) == 0))
+				return false ;
+
+			return true;
 		}
 
 		#endregion // Methods
