@@ -4,10 +4,9 @@
 // Authors:
 //   Sergey Chaban (serge@wildwestsoftware.com)
 //   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//   Sebastien Pouliot  <sebastien@ximian.com>
 //
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -35,7 +34,6 @@ using System.Runtime.InteropServices;
 namespace System.Collections
 {
 	[Serializable]
-	[MonoTODO ("Fix serialization compatibility with MS.NET")]
 #if NET_2_0
 	[ComVisible(true)]
 	[Obsolete ("Please use StringComparer instead.")]
@@ -45,17 +43,17 @@ namespace System.Collections
 		static readonly CaseInsensitiveHashCodeProvider singleton = new CaseInsensitiveHashCodeProvider ();
 		static readonly CaseInsensitiveHashCodeProvider singletonInvariant = new CaseInsensitiveHashCodeProvider (true);
 
-		CultureInfo culture;
+		TextInfo m_text; // must match MS name for serialization
 
 		// Public instance constructor
 		public CaseInsensitiveHashCodeProvider ()
 		{
-			culture = CultureInfo.CurrentCulture;
+			m_text = CultureInfo.CurrentCulture.TextInfo;
 		}
 
 		private CaseInsensitiveHashCodeProvider (bool invariant)
 		{
-			// leave culture == null
+			// leave m_text == null
 		}
 
 		public CaseInsensitiveHashCodeProvider (CultureInfo culture)
@@ -63,8 +61,8 @@ namespace System.Collections
 			if (culture == null)
  				throw new ArgumentNullException ("culture");
 			if (culture.LCID != CultureInfo.InvariantCulture.LCID)
-				this.culture = culture;
-			// else leave culture == null
+				m_text = culture.TextInfo;
+			// else leave m_text == null
 		}
 
 		//
@@ -105,14 +103,13 @@ namespace System.Collections
 			int h = 0;
 			char c;
 
-			if (culture != null && culture.LCID != CultureInfo.InvariantCulture.LCID) {
-				str = str.ToLower (culture);
+			if ((m_text != null) && (m_text.LCID != CultureInfo.InvariantCulture.LCID)) {
+				str = m_text.ToLower (str);
 				for (int i = 0; i < str.Length; i++) {
 					c = str [i];
 					h = h * 31 + c;
 				}
-			}
-			else {
+			} else {
 				for (int i = 0; i < str.Length; i++) {
 					c = Char.ToLowerInvariant (str [i]);
 					h = h * 31 + c;

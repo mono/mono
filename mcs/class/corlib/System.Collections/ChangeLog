@@ -1,3 +1,8 @@
+2005-12-06  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CaseInsensitiveHashCodeProvider: Serialization is now compatible 
+	with MS. Removes the last TODO for 1.1 in this namespace :-)
+
 2005-12-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Comparer.cs: Added GetObjectData method to implement ISerializable.
