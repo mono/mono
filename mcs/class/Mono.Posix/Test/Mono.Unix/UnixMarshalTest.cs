@@ -9,6 +9,7 @@
 using NUnit.Framework;
 using System;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Text;
 using Mono.Unix;
 
@@ -27,7 +28,7 @@ namespace MonoTests.Mono.Unix {
 	}
 
 	[TestFixture]
-	class UnixMarshalTest {
+	public class UnixMarshalTest {
 #if false
 		public static void Main ()
 		{
@@ -51,21 +52,21 @@ namespace MonoTests.Mono.Unix {
 				bool valid_ascii   = (bool)   data [i+1];
 				bool valid_unicode = (bool)   data [i+2];
 
-				TestStringToHeap (s, valid_ascii, valid_unicode);
+				StringToHeap (s, valid_ascii, valid_unicode);
 			}
 		}
 
-		private static void TestStringToHeap (string s, bool validAscii, bool validUnicode)
+		private static void StringToHeap (string s, bool validAscii, bool validUnicode)
 		{
-			TestStringToHeap (s, Encoding.ASCII, validAscii);
-			TestStringToHeap (s, Encoding.UTF7, validUnicode);
-			TestStringToHeap (s, Encoding.UTF8, validUnicode);
-			TestStringToHeap (s, Encoding.Unicode, validUnicode);
-			TestStringToHeap (s, Encoding.BigEndianUnicode, validUnicode);
-			TestStringToHeap (s, new RandomEncoding (), validUnicode);
+			StringToHeap (s, Encoding.ASCII, validAscii);
+			StringToHeap (s, Encoding.UTF7, validUnicode);
+			StringToHeap (s, Encoding.UTF8, validUnicode);
+			StringToHeap (s, Encoding.Unicode, validUnicode);
+			StringToHeap (s, Encoding.BigEndianUnicode, validUnicode);
+			StringToHeap (s, new RandomEncoding (), validUnicode);
 		}
 
-		private static void TestStringToHeap (string s, Encoding e, bool mustBeEqual)
+		private static void StringToHeap (string s, Encoding e, bool mustBeEqual)
 		{
 			IntPtr p = UnixMarshal.StringToHeap (s, e);
 			try {
@@ -76,6 +77,15 @@ namespace MonoTests.Mono.Unix {
 			finally {
 				UnixMarshal.FreeHeap (p);
 			}
+		}
+		
+		[Test]
+		public void TestPtrToString ()
+		{
+			IntPtr p = UnixMarshal.AllocHeap (1);
+			Marshal.WriteByte (p, 0);
+			string s = UnixMarshal.PtrToString (p);
+			UnixMarshal.FreeHeap (p);
 		}
 	}
 }

@@ -1,3 +1,12 @@
+2005-12-07  Jonathan Pryor <jonpryor@vt.edu>
+
+	* UnixMarshal.cs: Add PtrToStringUnix() -- specialized PtrToString method
+	  which is significantly faster than PtrToString(p, UnixEncoding.Instance). 
+	  Use System.String..ctor(sbyte*, int, int, Encoding) to avoid the byte[]
+	  intermediate copy -- much faster.  Fix PtrToString() so that it will
+	  accept an IntPtr containing 0 characters, and don't duplicate strings
+	  unless necessary.
+
 2005-11-18  Jonathan Pryor <jonpryor@vt.edu>
 
 	* Catalog.cs, UnixDirectory.cs, UnixDirectoryInfo.cs, UnixDriveInfo.cs,

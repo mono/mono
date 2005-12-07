@@ -68,7 +68,7 @@ namespace Mono.Unix.Native {
 
 		public object MarshalNativeToManaged (IntPtr pNativeData)
 		{
-			string s = UnixMarshal.PtrToString (pNativeData, UnixEncoding.Instance);
+			string s = UnixMarshal.PtrToStringUnix (pNativeData);
 			// Console.WriteLine ("# FileNameMarshaler.MarshalNativeToManaged ({0:x})=`{1}'",
 			// 		pNativeData, s);
 			return s;

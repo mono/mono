@@ -1,3 +1,7 @@
+2005-12-07  Jonathan Pryor <jonpryor@vt.edu>
+
+	* FileNameMarshaler.cs: Use UnixMarshal.PtrToStringUnix -- it's faster.
+
 2005-11-28  Jonathan Pryor <jonpryor@vt.edu>
 
 	* Stdlib.cs: Prelink all SignalHandlers passed to Stdlib.signal().  This is

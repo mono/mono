@@ -143,6 +143,15 @@ namespace Mono.Unix {
 			Stdlib.free (ptr);
 		}
 
+		public static unsafe string PtrToStringUnix (IntPtr p)
+		{
+			if (p == IntPtr.Zero)
+				return null;
+
+			int len = checked ((int) Native.Stdlib.strlen (p));
+			return new string ((sbyte*) p, 0, len, UnixEncoding.Instance);
+		}
+
 		public static string PtrToString (IntPtr p)
 		{
 			if (p == IntPtr.Zero)
@@ -150,25 +159,25 @@ namespace Mono.Unix {
 			return PtrToString (p, UnixEncoding.Instance);
 		}
 
-		public static string PtrToString (IntPtr p, Encoding encoding)
+		public static unsafe string PtrToString (IntPtr p, Encoding encoding)
 		{
 			if (p == IntPtr.Zero)
 				return null;
 
 			int len = GetStringByteLength (p, encoding);
-			byte[] string_buf = new byte [len];
-			Marshal.Copy (p, string_buf, 0, string_buf.Length);
 
 			// Due to variable-length encoding schemes, GetStringByteLength() may
 			// have returned multiple "null" characters.  (For example, when
 			// encoding a string into UTF-8 there will be 4 terminating nulls.)
 			// We don't want these null's to be in the returned string, so strip
 			// them off.
-			char[] chars = encoding.GetChars (string_buf);
-			len = chars.Length;
-			while (len >= 0 && chars [--len] == 0)
-				;
-			return new string (chars, 0, len+1);
+			string s = new string ((sbyte*) p, 0, len, encoding);
+			len = s.Length;
+			while (len > 0 && s [len-1] == 0)
+				--len;
+			if (len == s.Length) 
+				return s;
+			return s.Substring (0, len);
 		}
 
 		private static int GetStringByteLength (IntPtr p, Encoding encoding)
