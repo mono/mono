@@ -36,11 +36,15 @@ using System;
 using System.Runtime.InteropServices;
 using System.Collections;
 using System.Drawing.Printing;
+using System.ComponentModel;
+using System.Drawing.Imaging;
 
 namespace System.Drawing.Printing
 {
 	[Serializable]
+#if ! NET_2_0
 	[ComVisible(false)]
+#endif	
 	public class PrinterSettings : ICloneable
 	{
 		public PrinterSettings()
@@ -49,7 +53,7 @@ namespace System.Drawing.Printing
 
 		// Public subclasses
 
-		public class PaperSourceCollection : ICollection
+		public class PaperSourceCollection : ICollection, IEnumerable
 		{
 			ArrayList _PaperSources = new ArrayList();
 			
@@ -59,11 +63,22 @@ namespace System.Drawing.Printing
 			}
 			
 			public int Count { get { return _PaperSources.Count; } }
+			int ICollection.Count { get { return _PaperSources.Count; } }
 			bool ICollection.IsSynchronized { get { return false; } }
-			object ICollection.SyncRoot { get { return this; } }
+			object ICollection.SyncRoot { get { return this; } }			
+#if NET_2_0
+			[EditorBrowsable(EditorBrowsableState.Never)]
+      			public int Add (PaperSource paperSource) {throw new NotImplementedException (); }
+			public void CopyTo (PaperSource[] paperSources, int index)  {throw new NotImplementedException (); }
+#endif
 			
 			public virtual PaperSource this[int index] {
 				get { return _PaperSources[index] as PaperSource; }
+			}
+			
+			IEnumerator IEnumerable.GetEnumerator()
+			{
+				return _PaperSources.GetEnumerator();
 			}
 			
 			public IEnumerator GetEnumerator()
@@ -77,7 +92,7 @@ namespace System.Drawing.Printing
 			}
 		}
 
-		public class PaperSizeCollection : ICollection
+		public class PaperSizeCollection : ICollection, IEnumerable
 		{
 			ArrayList _PaperSizes = new ArrayList();
 			
@@ -87,11 +102,22 @@ namespace System.Drawing.Printing
 			}
 			
 			public int Count { get { return _PaperSizes.Count; } }
+			int ICollection.Count { get { return _PaperSizes.Count; } }
 			bool ICollection.IsSynchronized { get { return false; } }
-			object ICollection.SyncRoot { get { return this; } }
+			object ICollection.SyncRoot { get { return this; } }			
+#if NET_2_0		
+			[EditorBrowsable(EditorBrowsableState.Never)]
+			public int Add (PaperSize paperSize) {throw new NotImplementedException (); }	
+			public void CopyTo (PaperSize[] paperSizes, int index) {throw new NotImplementedException (); }			
+#endif
 			
 			public virtual PaperSize this[int index] {
 				get { return _PaperSizes[index] as PaperSize; }
+			}
+			
+			IEnumerator IEnumerable.GetEnumerator()
+			{
+				return _PaperSizes.GetEnumerator();
 			}
 			
 			public IEnumerator GetEnumerator()
@@ -105,7 +131,7 @@ namespace System.Drawing.Printing
 			}
 		}
 
-		public class PrinterResolutionCollection : ICollection
+		public class PrinterResolutionCollection : ICollection, IEnumerable
 		{
 			ArrayList _PrinterResolutions = new ArrayList();
 			
@@ -115,11 +141,22 @@ namespace System.Drawing.Printing
 			}
 			
 			public int Count { get { return _PrinterResolutions.Count; } }
+			int ICollection.Count { get { return _PrinterResolutions.Count; } }
 			bool ICollection.IsSynchronized { get { return false; } }
 			object ICollection.SyncRoot { get { return this; } }
-			
+#if NET_2_0
+			[EditorBrowsable(EditorBrowsableState.Never)]
+			public int Add (PrinterResolution printerResolution) {throw new NotImplementedException (); }
+			public void CopyTo (PrinterResolution[] printerResolutions, int index) {throw new NotImplementedException (); }
+#endif			
+						
 			public virtual PrinterResolution this[int index] {
 				get { return _PrinterResolutions[index] as PrinterResolution; }
+			}
+			
+			IEnumerator IEnumerable.GetEnumerator()
+			{
+				return _PrinterResolutions.GetEnumerator();
 			}
 			
 			public IEnumerator GetEnumerator()
@@ -133,7 +170,7 @@ namespace System.Drawing.Printing
 			}
 		}
 
-		public class StringCollection : ICollection
+		public class StringCollection : ICollection, IEnumerable
 		{
 			ArrayList _Strings = new ArrayList();
 			
@@ -143,13 +180,24 @@ namespace System.Drawing.Printing
 			}
 			
 			public int Count { get { return _Strings.Count; } }
+			int ICollection.Count { get { return _Strings.Count; } }
 			bool ICollection.IsSynchronized { get { return false; } }
 			object ICollection.SyncRoot { get { return this; } }
-			
+						
 			public virtual string this[int index] {
 				get { return _Strings[index] as string; }
 			}
+#if NET_2_0
+			[EditorBrowsable(EditorBrowsableState.Never)]
+      			public int Add (string value) {throw new NotImplementedException (); }
+      			public void CopyTo (string[] strings, int index) {throw new NotImplementedException (); }
+#endif			
 
+			IEnumerator IEnumerable.GetEnumerator()
+			{
+				return _Strings.GetEnumerator();
+			}
+			
 			public IEnumerator GetEnumerator()
 			{
 				return _Strings.GetEnumerator();
@@ -158,7 +206,7 @@ namespace System.Drawing.Printing
 			void ICollection.CopyTo(Array array, int index)
 			{
 				_Strings.CopyTo(array, index);
-			}
+			}			
 		}
 		
 		//properties
@@ -279,7 +327,14 @@ namespace System.Drawing.Printing
 		{
 			get { throw new NotImplementedException(); }
 		}
-
+#if NET_2_0		
+		[MonoTODO("PrinterSettings.PrintFileName")]
+		public string PrintFileName
+		{
+			get { throw new NotImplementedException(); }
+			set { throw new NotImplementedException(); }
+		}
+#endif
 		[MonoTODO("PrinterSettings.PrinterName")]
 		public string PrinterName
 		{
@@ -333,6 +388,25 @@ namespace System.Drawing.Printing
 		{
 			throw new NotImplementedException();
 		}
+#if NET_2_0
+		[MonoTODO("PrinterSettings.CreateMeasurementGraphics")]
+		public Graphics CreateMeasurementGraphics(bool honorOriginAtMargins)		
+		{
+			throw new NotImplementedException();
+		}
+		
+		[MonoTODO("PrinterSettings.CreateMeasurementGraphics")]
+		public Graphics CreateMeasurementGraphics(PageSettings pageSettings)		
+		{
+			throw new NotImplementedException();
+		}
+		
+		[MonoTODO("PrinterSettings.CreateMeasurementGraphics")]
+		public Graphics CreateMeasurementGraphics (PageSettings pageSettings, bool honorOriginAtMargins)		
+		{
+			throw new NotImplementedException();
+		} 
+#endif		
 
 		[MonoTODO("PrinterSettings.GetHdevmode")]
 		public IntPtr GetHdevmode()
@@ -351,6 +425,21 @@ namespace System.Drawing.Printing
 		{
 			throw new NotImplementedException();
 		}
+		
+#if NET_2_0
+
+		[MonoTODO("IsDirectPrintingSupported")]
+		public bool IsDirectPrintingSupported (Image image)
+		{
+			throw new NotImplementedException();
+		}
+		
+		[MonoTODO("IsDirectPrintingSupported")]
+		public bool IsDirectPrintingSupported (ImageFormat imageFormat)
+		{
+			throw new NotImplementedException();
+		}
+#endif
 
 		[MonoTODO("PrinterSettings.SetHdevmode")]
 		public void SetHdevmode(IntPtr hdevmode)

@@ -38,8 +38,18 @@ namespace System.Drawing.Printing
 	/// </summary>
 	public class PrintEventArgs : System.ComponentModel.CancelEventArgs
 	{
+#if NET_2_0
+		internal PrintAction action;
+#endif		
+		
 		public PrintEventArgs()
 		{
 		}
+#if NET_2_0
+		public PrintAction PrintAction {
+			get { return action; }
+		}
+	
+#endif
 	}
 }

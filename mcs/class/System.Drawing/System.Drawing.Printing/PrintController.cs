@@ -38,8 +38,13 @@ namespace System.Drawing.Printing
 	{
 		public PrintController ()
 		{
+		}		
+#if NET_2_0
+		[MonoTODO]
+		public virtual bool IsPreview { 
+			get { throw new NotImplementedException(); }
 		}
-
+#endif
 		[MonoTODO]
 		public virtual void OnEndPage (PrintDocument document, PrintPageEventArgs e)
 		{

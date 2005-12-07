@@ -22,31 +22,24 @@
 //
 // Authors:
 //
-//   Jordi Mas i Hernadez <jordimash@gmail.com>
+//   Jordi Mas i Hernandez <jordimash@gmail.com>
 //
 //
 
 #if NET_2_0
 
-namespace System.Drawing
+using System;
+
+namespace System.Drawing.Printing
 {
-	public sealed class BufferedGraphicsManager
+	public enum PrintAction
 	{
-		private static BufferedGraphicsContext graphics_context;
-
-		static BufferedGraphicsManager ()
-		{
-			graphics_context = new BufferedGraphicsContext ();
-		}
-		
-		private BufferedGraphicsManager ()
-		{				
-		}
-
-		public static BufferedGraphicsContext Current {
-			get { return graphics_context; }
-		}
+		PrintToFile	= 0,
+		PrintToPreview	= 1,
+		PrintToPrinter	= 2
 	}
+
 }
 
 #endif
+

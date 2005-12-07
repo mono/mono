@@ -37,11 +37,18 @@ using System.Runtime.InteropServices;
 
 namespace System.Drawing.Printing
 {
+#if NET_2_0
+	[Serializable]
+#else
 	[ComVisible (false)]
+#endif
 	public class PageSettings : ICloneable
 	{
 		bool _Color;
 		bool _Landscape;
+		float _HardMarginX;
+		float _HardMarginY;
+		RectangleF _PrintableArea;
 		// create a new default Margins object (is 1 inch for all margins)
 		Margins _Margins = new Margins();
 		PaperSize _PaperSize;
@@ -156,7 +163,27 @@ namespace System.Drawing.Printing
 			set{
 				_PrinterSettings = value;
 			}
+		}		
+#if NET_2_0
+		public float HardMarginX {
+			get {
+				return _HardMarginX;
+			}
 		}
+		
+		public float HardMarginY {
+			get {
+				return _HardMarginY;
+			}
+		}
+		
+		public RectangleF PrintableArea {
+			get {
+				return _PrintableArea;
+			}
+		}
+#endif
+
 
 		public object Clone(){
 			return new PageSettings(this.PrinterSettings);

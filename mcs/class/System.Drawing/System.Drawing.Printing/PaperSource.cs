@@ -37,11 +37,20 @@ namespace System.Drawing.Printing
 	/// <summary>
 	/// Summary description for PaperSource.
 	/// </summary>
+#if NET_2_0
+	[Serializable]
+#endif	
 	public class PaperSource
 	{
 		PaperSourceKind _Kind;
 		string _SourceName;
 		
+#if NET_2_0
+		public PaperSource ()
+		{
+			
+		}
+#endif
 		// NOTE:how to construct this class?
 		// I have added a constructor, but I am not sure of me...
 		internal PaperSource(string sourceName, PaperSourceKind kind)
@@ -49,15 +58,35 @@ namespace System.Drawing.Printing
 			_SourceName = sourceName;
 			_Kind = kind;
 		}
-		
+
 		public PaperSourceKind Kind{
 			get {
-			return _Kind; }
+				return _Kind; 
+			}
 		}
 		public string SourceName{
 			get {
-			return _SourceName; }
+				return _SourceName;
+			}
+#if NET_2_0
+		set {
+				_SourceName = value;
+			}
+#endif
 		}
+
+#if NET_2_0
+		[MonoTODO]
+		public int RawKind {
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}		  
+#endif
+
 		public override string ToString(){
 			string ret = "[PaperSource {0} Kind={1}]";
 			return String.Format(ret, this.SourceName, this.Kind);

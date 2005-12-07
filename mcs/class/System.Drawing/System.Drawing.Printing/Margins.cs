@@ -36,6 +36,9 @@ using System.ComponentModel;
 
 namespace System.Drawing.Printing
 {
+#if NET_2_0
+	[Serializable]
+#endif
 	[TypeConverter (typeof (MarginsConverter))]
 	public class Margins : ICloneable
 	{

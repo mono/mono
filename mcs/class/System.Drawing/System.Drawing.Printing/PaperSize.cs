@@ -37,20 +37,29 @@ namespace System.Drawing.Printing
 	/// <summary>
 	/// Summary description for PaperSize.
 	/// </summary>
+#if NET_2_0
+	[Serializable]
+#endif
 	public class PaperSize
 	{
 		string name;
 		int width;
 		int height;
 		PaperKind kind;
-		
+#if NET_2_0
+		public PaperSize ()
+		{
+
+		}
+#endif		
 		public PaperSize(string name, int width, int height)
 		{
 			this.width = width;
 			this.height = height;
 			this.name = name;
 			this.kind = PaperKind.Custom;
-		}
+		}		
+
 		public int Width{
 			get{
 				return width;
@@ -88,6 +97,14 @@ namespace System.Drawing.Printing
 				return kind;
 			}
 		}
+#if NET_2_0
+		[MonoTODO]
+		public int RawKind {
+			get { throw new NotImplementedException(); }
+			set { throw new NotImplementedException(); }
+		}
+
+#endif
 
 		public override string ToString(){
 			string ret = "[PaperSize {0} Kind={1} Height={2} Width={3}]";

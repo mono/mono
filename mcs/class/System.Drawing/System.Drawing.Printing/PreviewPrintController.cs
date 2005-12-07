@@ -42,6 +42,12 @@ namespace System.Drawing.Printing
 		{
 			useantialias = false;
 		}
+#if NET_2_0
+		[MonoTODO]
+		public virtual bool IsPreview { 
+			get { throw new NotImplementedException(); }
+		}
+#endif		
 
 		[MonoTODO]
 		public override void OnEndPage(PrintDocument document, PrintPageEventArgs e){
@@ -63,7 +69,7 @@ namespace System.Drawing.Printing
 			throw new NotImplementedException ();
 		}
 		
-		public bool UseAntiAlias {
+		public virtual bool UseAntiAlias {
 			get{
 				return useantialias;
 			}

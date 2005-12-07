@@ -173,6 +173,7 @@ System.Drawing.Printing/PrintEventHandler.cs
 System.Drawing.Printing/PrintingPermissionAttribute.cs
 System.Drawing.Printing/PrintingPermission.cs
 System.Drawing.Printing/PrintingPermissionLevel.cs
+System.Drawing.Printing/PrintAction.cs
 System.Drawing.Printing/PrintPageEventArgs.cs
 System.Drawing.Printing/PrintPageEventHandler.cs
 System.Drawing.Printing/PrintRange.cs
