@@ -1477,6 +1477,16 @@ namespace System.Windows.Forms {
 					return;
 				}
 
+				case Msg.WM_SYSKEYUP: {
+					if (ActiveMenu != null) {
+						if (ActiveMenu.ProcessKeys (ref m, (Keys) m.WParam.ToInt32 ())) {
+							return;
+						}
+					}
+					base.WndProc(ref m);
+					return;
+				}
+
 				// Menu drawing
 				case Msg.WM_NCLBUTTONDOWN: {
 					if (ActiveMenu != null) {

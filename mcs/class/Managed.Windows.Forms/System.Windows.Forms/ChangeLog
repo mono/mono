@@ -1,3 +1,8 @@
+2005-12-07  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* Control.cs(PreProcessMessage): Removed special menu handling 
+	* Menu.cs (WndProc): Added handling of WM_SYSKEYUP for menu purposes.
+
 2005-12-07  Mike Kestner  <mkestner@novell.com>
 
 	* Control.cs : special case SYSKEYUP so that we can adjust keynav
