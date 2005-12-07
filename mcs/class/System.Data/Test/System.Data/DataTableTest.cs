@@ -1474,7 +1474,7 @@ namespace MonoTests.System.Data
 			int n = (int) Convert.ChangeType ("5", typeof (int));
 			Assertion.AssertEquals ("n", 5, n);
 		}
-
+#if !TARGET_JVM
 		[Test]
 		public void NFIFromBug55978 ()
 		{
@@ -1484,6 +1484,7 @@ namespace MonoTests.System.Data
 			domain.DoCallBack (new CrossAppDomainDelegate (test.Remote));
 			AppDomain.Unload (domain);
 		}
+#endif
 
 		[Test]
 		public void Bug55978 ()
