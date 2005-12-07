@@ -1,0 +1,622 @@
+2005-12-06  Chris Toshok  <toshok@ximian.com>
+
+	* CodeSubDirectory.cs (DirectoryName): don't use an private field,
+	but base[directoyNameProp].
+
+	* AuthorizationRuleCollection.cs (Add): use BaseAdd (rule, false),
+	so we can insert duplicates.
+	(GetKey): nuke.
+	(GetElementKey): MS for some reason just uses the action for the
+	key, ToString()'ed.
+	(Remove): pass the correct key.
+
+	* ProfileGroupSettings.cs (GetHashCode): implement.
+
+	* GlobalizationSection.cs (GetEncoding): for the utf-8 case, just
+	use Encoding.UTF8.
+
+	* AssemblyCollection.cs (Add): use BaseAdd (info, false) so we can
+	insert duplicates.
+
+	* CacheSection.cs (.cctor): make privateByteLimit's default 0L so
+	we don't get a invalid cast exception later on.
+
+	* AuthorizationRule.cs (VerifyData): split out the verification
+	foo from PreSerialize.
+	(PostDeserialize): so we can call it from here.
+	(PreSerialize): and here.
+
+2005-12-05  Chris Toshok  <toshok@ximian.com>
+
+	* AuthorizationRuleCollection.cs (GetKey): split out the logic for
+	creating a key from a rule here.
+	(GetElementKey): use it here.
+	(Remove): and here.
+
+2005-12-04  Chris Toshok  <toshok@ximian.com>
+
+	* UrlMapping.cs: add an internal argument-less ctor.
+
+	* UrlMappingCollection.cs (CreateNewElement): use argument-less
+	ctor.
+	(GetKey): implement.
+	(AllKeys): implement.
+
+	* TrustLevel.cs: add an internal argument-less ctor.
+	
+	* TrustLevelCollection.cs (Set): implement.
+	(CreateNewElement): use argument-less ctor.
+	(IsElementName): implement.
+	(ElementName): implement.
+	(set_Item (int index)): use Set.
+	(ThrowOnDuplicate): implement.
+	
+	* TagPrefixInfo.cs: add internal argument-less ctor.
+
+	* TagPrefixCollection.cs (CreateNewElement): call argument-less
+	ctor.
+	(CollectionType): add text to TODO.
+	(ElementName): implement.
+	
+	* SqlCacheDependencyDatabaseCollection.cs (Set): implement.
+	(AllKeys): implement.
+
+	* RuleSettings.cs: add internal argument-less ctor.
+
+	* RuleSettingsCollection.cs (Contains): implement.
+	(CreateNewElement): use argument-less ctor.
+	(IndexOf): implement.
+	(Insert): implement.
+
+	* RootProfilePropertySettingsCollection.cs (IsModified): chain up
+	to base.IsModified for now.
+	(Reset): chain up to base.Reset for now.
+	(ResetModified): chain up to base.ResetModified for now.
+
+	* ProfileSettings.cs: add internal argument-less ctor.
+
+	* ProfileSettingsCollection.cs (Contains): implement.
+	(CreateNewElement): use argument-less ctor.
+	(IndexOf): implement.
+	(Insert): implement.
+	
+	* ProfilePropertySettingsCollection.cs (IndexOf): implement.
+	(Set): implement.
+	(AllKeys): implement.
+	
+	* ProfileGroupSettings.cs: add internal argument-less ctor.
+
+	* ProfileGroupSettingsCollection.cs (CreateNewElement): use
+	parameter-less ctor.
+	(GetKey): implement.
+	(ResetModified): for now call base.ResetModified.
+	(Set): implement.
+	(AllKeys): implement.
+	
+	* OutputCacheProfile.cs: add internal argument-less ctor.
+
+	* OutputCacheProfileCollection.cs (CreateNewElement): use
+	parameter-less ctor.
+	(Set): implement.
+	(AllKeys): implement.
+
+	* HttpModuleActionCollection.cs (Add): remove MonoTODO.
+	(CreateNewElement): same.
+	
+	* HttpHandlerActionCollection.cs (GetElementKey): build up the key
+	from both the path and the verb.
+	(Remove): same.
+
+	* FormsAuthenticationUserCollection.cs (Set): implement.
+	(AllKeys): implement.
+
+	* EventMappingSettings.cs: add an internal argument-less ctor.
+
+	* EventMappingSettingsCollection.cs (Contains): implement.
+	(CreateNewElement): use argument-less ctor.
+	(IndexOf): implement.
+	(Insert): implement.
+
+	* CompilerCollection.cs (GetKey): implement.
+	(AllKeys): implement.
+
+	* ClientTargetCollection.cs (GetKey): implement.
+	(AllKeys): implement.
+
+	* AuthorizationRuleCollection.cs (Set): implement.
+	(ElementName): add some text to the MonoTODO.
+	(set_Item (int index)): use Set.
+
+2005-12-04  Chris Toshok  <toshok@ximian.com>
+
+	* CustomError.cs: add an internal argument-less ctor for use by
+	the collection.
+
+	* CustomErrorCollection.cs: implement all the MonoTODO's.
+
+2005-12-02  Chris Toshok  <toshok@ximian.com>
+
+	* GlobalizationSection.cs (VerifyData): split out the stuff that
+	used to live in PreSerialize here.
+	(PreSerialize): call VerifyData here.
+	(PostDeserialize): and here.
+	
+2005-12-01  Chris Toshok  <toshok@ximian.com>
+
+	* GlobalizationSection.cs (PreSerialize): add checks for Culture
+	and UICulture properties.
+
+2005-12-01  Chris Toshok  <toshok@ximian.com>
+
+	* AuthorizationRule.cs (..ctor): provide default values for
+	roles/users/verbs here.  Not sure if we should do this in the ctor
+	or if the System.Configuration infrastructure should.. time will
+	tell.
+	(PreSerialize): throw if Roles.Count and Users.Count == 0.
+	(SerializeElement): write out the element here.  don't chain up to
+	the base class since that has differing behavior than what we
+	want.
+
+2005-11-30  Chris Toshok  <toshok@ximian.com>
+
+	* CompilerCollection.cs: ugly hack to fix the
+	2.0-without-config-2.0 case.  wrap this file in #if
+	CONFIGURATION_2_0 as well as #if NET_2_0.
+	
+	* Compiler.cs: same.
+
+2005-11-28  Chris Toshok  <toshok@ximian.com>
+
+	* SessionStateSection.cs (CookieLess): correct the compat function
+	implementation.
+
+2005-11-28  Chris Toshok  <toshok@ximian.com>
+
+	* GlobalizationSection.cs (GetEncoding): if the encoding name is
+	null, default to utf-8 before we hit the try block, so we don't
+	throw and generate a spurious warning.
+
+	* SessionStateSection.cs: The Cookieless handling needs a custom
+	parser, it appears, as the converter is a StringConverter, not a
+	GenericEnumConverter.
+	(ParseCookieMode): the parser.
+
+2005-11-28  Chris Toshok  <toshok@ximian.com>
+
+	* PagesSection.cs (GetInstance): nuke.
+
+	* CompilationSection.cs (GetInstance): nuke.
+
+2005-11-28  Chris Toshok  <toshok@ximian.com>
+
+	* HttpHandlerAction.cs: add some c&p code from the 1.1 config
+	stuff to look for matching handlers.
+	(..ctor): add parameterless ctor.
+	
+	* HttpHandlerActionCollection.cs: clean up formatting.
+	(CreateNewElement): call the parameter-less ctor for
+	HttpHandlerAction.
+
+	* HttpHandlersSection.cs (..ctor): add a ConfigurationProperty for
+	the default collection.
+	(get_Handlers): implement.
+	(LocateHandler): copy over (and massage) some 1.1 config code.
+
+	* MachineKeySection.cs: move some code over from the 1.1 config
+	code to deal with autogeneration of keys, as well as converting
+	from the string rep to the byte[] rep.
+
+2005-11-28  Chris Toshok  <toshok@ximian.com>
+
+	* HttpModuleActionCollection.cs (CreateNewElement): use the new
+	HttpModuleAction ctor.
+
+	* HttpModuleAction.cs: add internal ctor with no parameters, for
+	use in HttpModuleActionCollection.
+
+2005-11-28  Chris Toshok  <toshok@ximian.com>
+
+	* GlobalizationSection.cs (..cctor): the encoding
+	ConfigurationProperties are of type "string", even though the
+	properties themselves are of type Encoding.  we do conversions
+	manually in the setter/getters.  gross.  Add code (mostly c&p +
+	massaged from GlobalizationConfigurationHandler) for this and also
+	to handle the culture gettes.
+
+2005-11-26  Chris Toshok  <toshok@ximian.com>
+
+	* AuthorizationRuleCollection.cs (GetElementKey): implement this.
+
+	* ProfilePropertyNameValidator.cs: make this internal, and add a
+	blurb about how MS doesn't do the testing you'd expect them to.
+
+2005-11-25  Chris Toshok  <toshok@ximian.com>
+
+	* AuthorizationRuleCollection.cs (CreateNewElement): remove
+	MonoTODO.
+
+	* CompilationSection.cs (GetRuntimeObject): add comment to TODO.
+
+	* ProfileGroupSettings.cs: reformat some things.
+
+	* FormsAuthenticationUser.cs (Name): remove MonoTODO.
+
+	* WebPartsSection.cs (GetRuntimeObject): change TODO comment.
+
+	* ProfilePropertySettings.cs: add internal argument-less ctor.
+
+	* IdentitySection.cs (GetRuntimeObject): return this.
+
+	* ProfilePropertySettingsCollection.cs: implement much of the
+	TODO's.
+	
+	* WebControlsSection.cs (GetRuntimeObject): implement.
+
+	* SqlCacheDependencyDatabaseCollection.cs (GetElementKey):
+	implement.
+	(GetKey): implement.
+
+2005-11-24  Chris Toshok  <toshok@ximian.com>
+
+	* AssemblyInfo.cs: move this here from System.Web.Configuration,
+	and fix up the properties.
+
+	* SystemWebSectionGroup.cs: enable most of the sections (2
+	remaining to be enabled.)
+
+2005-11-24  Chris Toshok  <toshok@ximian.com>
+
+	* ProcessModelSection.cs, SqlCacheDependencySection.cs,
+	SessionStateSection.cs, PassportAuthentication.cs,
+	FormsAuthenticationConfiguration.cs,
+	SqlCacheDependencyDatabase.cs, HttpModuleAction.cs,
+	BufferModeSettings.cs, TagPrefixInfo.cs (..cctor): init
+	elementProperty.
+	(ValidateElement): new static validator callback.
+	(ElementProperty): enable this, return elementProperty.
+	
+2005-11-23  Chris Toshok  <toshok@ximian.com>
+
+	* ProfilePropertyNameValidator.cs: new implementation.
+	
+	* ProfilePropertySettings.cs, ProfileGroupSettings.cs,
+	ClientTargetSection.cs, ClientTargetSection.cs,
+	BufferModeSettings.cs, HttpModulesSection.cs,
+	WebPartsPersonalization.cs, TransformerInfo.cs, TrustLevel.cs,
+	NamespaceInfo.cs, SqlCacheDependencyDatabase.cs,
+	AuthenticationSection.cs, RuleSettings.cs,
+	FormsAuthenticationUser.cs, WebPartsSection.cs, BuildProvider.cs,
+	WebPartsPersonalizationAuthorization.cs, Compiler.cs,
+	ExpressionBuilder.cs, OutputCacheProfile.cs,
+	FormsAuthenticationCredentials.cs, XhtmlConformanceSection.cs,
+	OutputCacheSettingsSection.cs, CustomError.cs, TraceSection.cs,
+	ExpressionBuilderCollection.cs, ProfileSettings.cs,
+	SessionStateSection.cs, HealthMonitoringSection.cs,
+	FormsAuthenticationConfiguration.cs, HttpRuntimeSection.cs,
+	SessionPageStateSection.cs, TrustSection.cs,
+	AnonymousIdentificationSection.cs, WebControlsSection.cs,
+	ClientTarget.cs, TagMapInfo.cs, AuthorizationSection.cs,
+	ProcessModelSection.cs, RoleManagerSection.cs,
+	MembershipSection.cs, CustomErrorsSection.cs (..cctor): fix
+	validator/converters.
+	
+	* MachineKeySection.cs (..cctor): fix validators/converters.
+	(Validation): enable the Converter.
+	
+	* CodeSubDirectory.cs (..cctor): fix validator/converters.
+	(DirectoryName): add note about missing validator decoration.
+	
+	* HttpModuleAction.cs (..cctor): init properties.
+	(Properties): return properties.
+	
+	* CompilationSection.cs (..cctor): fix validator/converters.
+	(GetInstance): add in this pre-2.0 interface for the time being,
+	hopefully it'll make it easier to migrate later on.
+	
+	* HttpHandlerActionCollection.cs (..cctor): init properties.
+	(Properties): return properties.
+
+	* PagesSection.cs (..cctor): fix validator/converters.
+	(GetInstance): add in this pre-2.0 interface for the time being,
+	hopefully it'll make it easier to migrate later on.
+	
+	* HttpHandlersSection.cs (..cctor): init properties.
+	(Properties): return properties.
+	
+	* EventMappingSettings.cs (..cctor): fix validator/converters.
+	(Name): add note about missing validator decoration.
+	
+	* HttpHandlerAction.cs (..cctor): fix validator/converters.
+	(PAth, Type, Verb): add note about missing validator decoration.
+
+	* NamespaceCollection.cs (..cctor): fix properties.
+
+	* ProfilePropertySettingsCollection.cs (..cctor): init properties.
+	(..ctor): don't throw NIE.
+	(Properties): return properties.
+
+	* HttpModuleActionCollection.cs (..cctor): init properties.
+	(Properties): return properties.
+
+	* CacheSection.cs (..cctor): fix validators/converters.
+	(PrivateBytesPollTime): add note about missing validator
+	decoration.
+
+	* AuthorizationRule.cs (..cctor): fix validators/converters.
+	(Roles, Users, Verbs): enable the TypeConverter decorations.
+	
+	* UrlMapping.cs (ValidateUrl): static method for use as a
+	validation callback.  unimplemented as yet.
+	(..cctor): fix validators/converters.
+	(MappedUrl): add note about missing validator decoration.
+	
+	* PropertyHelper.cs: static utility class which contains
+	references to validators and converters for use in static
+	constructors (building the Properties arrays).
+
+2005-11-23  Chris Toshok  <toshok@ximian.com>
+
+	* MachineKeyValidationConverter.cs: new converter (and a pretty
+	silly one, considering all it seems to do is convert "TripleDES"
+	to "3DES").
+
+	* HostingEnvironmentSection.cs (.cctor): use
+	PositiveTimeSpanValidator like MS does.
+
+2005-11-18  Chris Toshok  <toshok@ximian.com>
+
+	* HostingEnvironmentSection.cs (.cctor): add validators.
+
+	* CompilationSection.cs (.cctor): fix defaultvalue of
+	urlLinePragmas.
+
+2005-11-18  Chris Toshok  <toshok@ximian.com>
+
+	* SystemWebSectionGroup.cs: enable a whole slew of properties.
+
+	* RegexWorker.cs: stub this out.
+
+	* HttpCapabilitiesBase.cs: remove GetClrVersions since it's in one
+	of the other partial files.
+
+	* CompilationSection.cs: fix this up.
+
+	* PagesSection.cs: fix some types and add a comment to
+	DeserializeSection.
+
+	* CompilerCollection.cs (Add): new internal method.
+
+	* ProvidersHelper.cs: put the using System.Configuration.Provider
+	inside the NET_2_0 block.
+
+	* CacheSection.cs: add validators.
+
+2005-11-14  Chris Toshok  <toshok@ximian.com>
+
+	* BufferModeSettings.cs: add validators/converters to the
+	programmatic property list.
+	
+	* BuildProvider.cs: add validators/converters to the programmatic
+	property list, and add an internal ctor with no args.
+
+	* Compiler.cs: wrap the code i hacked from the 1.1 stuff with a
+	#region.
+
+	* BuildProviderCollection.cs (CreateNewElement): use the internal
+	BuildProvider ctor to get around validation.
+
+	* AssemblyCollection.cs: same.
+
+2005-11-14  Chris Toshok  <toshok@ximian.com>
+
+	* TagPrefixCollection.cs (Remove): pass the key to BaseRemove.
+	(set_Item (int index)): implement.
+	
+	* TagPrefixInfo.cs (Equals): implement.
+	(GetHashCode): implement.
+
+	* AuthorizationRuleCollection.cs (CreateNewElement(string)):
+	implement propertly.
+	(IndexOf): implement.
+	(IsElementName): implement.
+	(ElementName): implement.
+	(Item (int index)): implement.
+	
+	* FormsAuthenticationUserCollection.cs (set_Item (int index)): implement.
+
+	* UrlMappingCollection.cs (set_Item (int index)): implement.
+
+	* OutputCacheProfileCollection.cs (set_Item (int index)): implement.
+
+	* TransformerInfo.cs (Equals): implement.
+	(GetHashCode): implement.
+
+	* NamespaceInfo.cs (Equals): implement.
+	(GetHashCode): implement.
+	
+	* ProfileSettingsCollection.cs (set_Item (int index)): implement.
+
+	* TransformerInfoCollection.cs (set_Item (int index)): implement.
+
+	* HttpHandlerActionCollection.cs (set_Item (int index)): implement.
+
+	* BufferModesCollection.cs (set_Item (int index)): implement.
+
+	* BuildProvider.cs: use the base[fooProp] pattern instead of
+	instance fields.
+
+	* ProfileGroupSettingsCollection.cs: implement most of this class.
+
+	* RuleSettingsCollection.cs (set_Item (int index)): implement.
+
+	* ClientTargetCollection.cs (set_Item (int index)): implement.
+
+	* AssemblyCollection.cs (set_Item (int index)): implement.
+
+	* BuildProviderCollection.cs (set_Item (int index)): reformat.
+
+	* CustomError.cs (Equals): implement.
+	(GetHashCode): implement.
+
+	* ExpressionBuilderCollection.cs (set_Item (int index)): reformat.
+
+	* PassportAuthentication.cs (RedirectUrl): express consternation
+	in comment form.
+
+	* NamespaceCollection.cs (set_Item (int index)): implement.
+
+	* RootProfilePropertySettingsCollection.cs (SerializeElement): add
+	comment.
+
+	* ProfilePropertySettingsCollection.cs (set_Item (int index)):
+	implement.
+
+	* CustomErrorCollection.cs (set_Item (int index)): implement.
+
+	* HttpModuleActionCollection.cs (set_Item (int index)): implement.
+
+	* CodeSubDirectoriesCollection.cs (set_Item (int index)):
+	implement.
+
+	* CustomErrorsSection.cs (DeserializeSection): include call to
+	base.DeserializeSection, and add MonoTODO.
+
+	* EventMappingSettingsCollection.cs (set_Item (int index)):
+	implement.
+
+	* AuthorizationRule.cs (Equals): implement.
+	(GetHashCode): implement.
+	(SerializeElement): add comment.
+
+	* TagMapCollection.cs (Remove): pass the key to BaseRemove.
+	(set_Item (int index)): implement.
+	
+	* TagMapInfo.cs (Equals): implement.
+	(GetHashCode): implement.
+	(SerializeElement): add call to base.SerializeElement.
+
+	* TrustLevelCollection.cs (Remove): pass the key to BaseRemove.
+	(GetElementKey): implement.
+
+	* SqlCacheDependencyDatabase.cs (set_Item (int index)): implement.
+
+	* WebContext.cs: new implementation.
+
+2005-11-13  Chris Toshok  <toshok@ximian.com>
+
+	* AnonymousIdentificationSection.cs: rework this class a bit to
+	fit in with the rest of S.W.C.  Add validators to the
+	ConfigurationProperty ctor calls, a pattern which will need to be
+	replicated across the entire assembly, it appears (uggggh).
+
+2005-11-13  Chris Toshok  <toshok@ximian.com>
+
+	* AuthorizationRuleCollection.cs: fix ConfigurationCollection
+	attribute.
+
+	* TransformerInfo.cs: fix corcompare.
+
+	* SqlCacheDependencyDatabase.cs: mark ctor internal to fix
+	corcompare.
+
+	* AuthenticationSection.cs: add missing Reset stub.
+
+	* ProfileSettingsCollection.cs: use the more succint ctor.
+
+	* FormsAuthenticationUser.cs: enable the TypeConverter on "name".
+
+	* GlobalizationSection.cs: fix up corcompare.
+
+	* WebPartsSection.cs: fix up corcompare.
+
+	* ProfileGroupSettingsCollection.cs: add missing
+	ConfigurationCollection attribute.
+
+	* ExpressionBuilder.cs: implement.
+
+	* FormsAuthenticationCredentials.cs: fix up corcompare.
+
+	* AssemblyCollection.cs: implement Properties.
+
+	* SiteMapSection.cs: implement Properties.
+
+	* ExpressionBuilderCollection.cs: fix up corcompare.
+
+	* ProfileSettings.cs: add missing ctor.
+
+	* PassportAuthentication.cs: new implementation.
+
+	* SqlCacheDependencySection.cs: fix up corcompare.
+
+	* ProfilePropertySettingsCollection.cs: fix up corcompare.
+
+	* HttpModuleActionCollection.cs: fix up corcompare.
+
+	* EventMappingSettingsCollection.cs: fix up corcompare.
+
+	* AuthorizationRule.cs: fix up corcompare.
+
+	* WebControlsSection.cs: fix up corcompare.
+
+	* AuthorizationSection.cs: fix up corcompare.
+
+	* MembershipSection.cs: clean this up, implement Properties, fix
+	up corcompare, etc.
+
+2005-11-13  Chris Toshok  <toshok@ximian.com>
+
+	* UrlMapping.cs, CustomErrorCollection.cs, CustomError.cs,
+	HostingEnvironmentSection.cs, TrustLevel.cs,
+	HttpCookiesSection.cs, UrlMappingsSection.cs,
+	UrlMappingCollection.cs, LowerCaseStringConverter.cs,
+	RoleManagerSection.cs, ProcessModelSection.cs,
+	TrustLevelCollection.cs, ClientTarget.cs, CustomErrorsSection.cs,
+	MachineKeySection.cs, SessionPageStateSection.cs,
+	SessionStateSection.cs, ProvidersHelper.cs,
+	ClientTargetCollection.cs, SecurityPolicySection.cs,
+	HttpCapabilitiesBase.cs, ClientTargetSection.cs: Another large
+	swath.
+
+
+2005-11-12  Chris Toshok  <toshok@ximian.com>
+
+	* AuthorizationRuleCollection.cs, AuthorizationRule.cs,
+	AuthorizationSection.cs, BufferModesCollection.cs,
+	BufferModeSettings.cs, CacheSection.cs, CompilerCollection.cs,
+	Compiler.cs, DeploymentSection.cs,
+	EventMappingSettingsCollection.cs, EventMappingSettings.cs,
+	GlobalizationSection.cs, HealthMonitoringSection.cs,
+	IdentitySection.cs, OutputCacheProfileCollection.cs,
+	OutputCacheProfile.cs, OutputCacheSection.cs,
+	OutputCacheSettingsSection.cs, ProfileSettingsCollection.cs,
+	ProfileSettings.cs, RuleSettingsCollection.cs, RuleSettings.cs,
+	SqlCacheDependencyDatabaseCollection.cs,
+	SqlCacheDependencyDatabase.cs, SqlCacheDependencySection.cs,
+	SystemWebCachingSectionGroup.cs, TraceSection.cs,
+	TransformerInfoCollection.cs, TransformerInfo.cs, TrustSection.cs,
+	WebControlsSection.cs, WebPartsPersonalizationAuthorization.cs,
+	WebPartsPersonalization.cs, WebPartsSection.cs,
+	XhtmlConformanceSection.cs: a whole slew of new classes.  the
+	fruits of tons of c&p and ibuprofen.
+
+
+2005-11-09  Chris Toshok  <toshok@ximian.com>
+
+	* PagesSection.cs, AuthenticationSection.cs, BuildProvider.cs,
+	BuildProviderCollection.cs, HttpHandlerActionCollection.cs,
+	HttpModulesSection.cs, HttpModuleAction.cs,
+	HttpModuleActionCollection.cs, AnonymousIdentificationSection.cs,
+	CodeSubDirectory.cs, CodeSubDirectoriesCollection.cs,
+	SystemWebSectionGroup.cs, SiteMapSection.cs,
+	WebConfigurationManager.cs: flesh out the implementation.
+
+	* TagMap*.cs, TagPrefix*.cs: new implementation.
+
+	* FormsAuthentication*.cs: new implementation.
+
+	* Profile*.cs: new implementation.
+
+	* Namespace*.cs: new implementation.
+
+	* HttpRuntimeSection.cs: new implementation.
+	

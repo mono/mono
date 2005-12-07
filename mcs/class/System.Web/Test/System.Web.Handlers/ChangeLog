@@ -1,0 +1,3 @@
+2005-09-02  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TraceHandlerCas.cs: New. CAS unit tests for TraceHandler.

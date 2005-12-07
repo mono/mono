@@ -1,0 +1,86 @@
+Index: browscap.ini
+===================================================================
+--- browscap.ini	(revision 49079)
++++ browscap.ini	(working copy)
+@@ -4958,6 +4958,8 @@
+ version=1.3
+ majorver=1
+ minorver=3
++ecmascriptversion=1.3
++w3cdomversion=1.0
+ 
+ [Mozilla/5.0 (Macintosh; U; PPC Mac OS X; *) AppleWebKit/* (*) Safari/412*]
+ parent=Safari
+@@ -12398,6 +12400,8 @@
+ stripper=False
+ wap=False
+ netclr=False
++ecmascriptversion=1.3
++w3cdomversion=1.0
+ 
+ ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Firefox 1.0
+ 
+@@ -12424,6 +12428,8 @@
+ stripper=False
+ wap=False
+ netclr=False
++ecmascriptversion=1.3
++w3cdomversion=1.0
+ 
+ [Mozilla/5.0 (Macintosh; *; PPC Mac OS X Mach-O; *rv:*) Gecko/* Firefox/1.0*]
+ parent=Firefox 1.0
+@@ -12469,6 +12475,9 @@
+ parent=Firefox 1.0
+ platform=Linux
+ 
++[Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.7.10) Gecko/20050725 Firefox/1.0.6 (Ubuntu package 1.0.6)]
++parent=Firefox 1.0
++
+ [Mozilla/5.0 (X11; *; OpenBSD*; *rv:*) Gecko/* Firefox/1.0*]
+ parent=Firefox 1.0
+ platform=OpenBSD
+@@ -12713,6 +12722,8 @@
+ stripper=False
+ wap=False
+ netclr=False
++ecmascriptversion=1.3
++w3cdomversion=1.0
+ 
+ ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; StarOffice 5.0
+ 
+@@ -12999,6 +13010,8 @@
+ stripper=False
+ wap=False
+ netclr=False
++ecmascriptversion=1.3
++w3cdomversion=1.0
+ 
+ ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Mozilla 1.8
+ 
+@@ -13025,6 +13038,8 @@
+ stripper=False
+ wap=False
+ netclr=False
++ecmascriptversion=1.3
++w3cdomversion=1.0
+ 
+ ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; IE 1.5
+ 
+@@ -13278,6 +13293,8 @@
+ netclr=False
+ AK=False
+ SK=False
++ecmascriptversion=1.3
++w3cdomversion=1.0
+ 
+ ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; IE 6.0
+ 
+@@ -13306,6 +13323,8 @@
+ netclr=False
+ AK=False
+ SK=False
++ecmascriptversion=1.3
++w3cdomversion=1.0
+ 
+ [Mozilla/?.0 (compatible; MSIE 6.0*;*Windows NT 5.2*)*]
+ parent=IE 6.0
