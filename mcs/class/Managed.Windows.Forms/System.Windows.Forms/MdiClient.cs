@@ -227,8 +227,6 @@ namespace System.Windows.Forms {
 					bottom = child.Bottom;
 			}
 
-			bool hvis = false;
-			bool vvis = false;
 			int right_edge = Right;
 			int bottom_edge = Bottom;
 			int prev_right_edge;
