@@ -321,8 +321,17 @@ namespace System.Xml.Serialization
 				foreach (XmlTypeMapMemberExpandable mem in map.FlatLists) {
 					if (IsReadOnly (mem, mem.TypeData, ob, isValueList))
 						flatLists [mem.FlatArrayIndex] = mem.GetValue (ob);
-					else
+					else if (mem.TypeData.Type.IsArray) {
 						flatLists [mem.FlatArrayIndex] = InitializeList (mem.TypeData);
+					}
+					else {
+						object list = mem.GetValue (ob);
+						if (list == null) {
+							list = InitializeList (mem.TypeData);
+							SetMemberValue (mem, ob, list, isValueList);
+						}
+						flatLists [mem.FlatArrayIndex] = list;
+					}
 						
 					if (mem.ChoiceMember != null) {
 						if (flatListsChoices == null)
@@ -485,7 +494,7 @@ namespace System.Xml.Serialization
 					Object list = flatLists[mem.FlatArrayIndex];
 					if (mem.TypeData.Type.IsArray)
 						list = ShrinkArray ((Array)list, indexes[mem.FlatArrayIndex], mem.TypeData.Type.GetElementType(), true);
-					if (!IsReadOnly (mem, mem.TypeData, ob, isValueList))
+					if (!IsReadOnly (mem, mem.TypeData, ob, isValueList) && mem.TypeData.Type.IsArray)
 						SetMemberValue (mem, ob, list, isValueList);
 				}
 			}

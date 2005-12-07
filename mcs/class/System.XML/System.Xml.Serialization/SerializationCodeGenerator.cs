@@ -516,6 +516,7 @@ namespace System.Xml.Serialization
 			if (emap.IsFlags)
 			{
 				WriteLineInd ("default:");
+				WriteLine ("if (val.ToString () == \"0\") return string.Empty;");
 				WriteLine ("System.Text.StringBuilder sb = new System.Text.StringBuilder ();");
 				WriteLine ("string[] enumNames = val.ToString().Split (',');");
 				WriteLine ("foreach (string name in enumNames)");
@@ -1642,11 +1643,20 @@ namespace System.Xml.Serialization
 						if (!MemberHasReadReplaceHook (xmlMapType, mem)) {
 							flatLists[n] = GetObTempVar ();
 							string rval;
-							if (IsReadOnly (typeMap, mem, mem.TypeData, isValueList))
-								rval = ob + ".@" + mem.Name;
-							else
+							WriteLine (mem.TypeData.FullTypeName + " " + flatLists[n] + ";");
+							if (IsReadOnly (typeMap, mem, mem.TypeData, isValueList)) {
+								rval = GenerateGetMemberValue (mem, ob, isValueList);
+								WriteLine (flatLists[n] + " = " + rval + ";");
+							} else if (mem.TypeData.Type.IsArray) {
 								rval = GenerateInitializeList (mem.TypeData);
-							WriteLine (mem.TypeData.FullTypeName + " " + flatLists[n] + " = " + rval + ";");
+								WriteLine (flatLists[n] + " = " + rval + ";");
+							} else {
+								WriteLine (flatLists[n] + " = " + GenerateGetMemberValue (mem, ob, isValueList) + ";");
+								WriteLineInd ("if (((object)" + flatLists[n] + ") == null) {");
+								WriteLine (flatLists[n] + " = " + GenerateInitializeList (mem.TypeData) + ";");
+								GenerateSetMemberValue (mem, ob, flatLists[n], isValueList);
+								WriteLineUni ("}");
+							}
 						}
 						
 						if (mem.ChoiceMember != null) {
@@ -1916,7 +1926,7 @@ namespace System.Xml.Serialization
 						string list = flatLists[mem.FlatArrayIndex];
 						if (mem.TypeData.Type.IsArray)
 							WriteLine (list + " = (" + mem.TypeData.FullTypeName + ") ShrinkArray (" + list + ", " + indexes[mem.FlatArrayIndex] + ", " + GetTypeOf(mem.TypeData.Type.GetElementType()) + ", true);");
-						if (!IsReadOnly (typeMap, mem, mem.TypeData, isValueList))
+						if (!IsReadOnly (typeMap, mem, mem.TypeData, isValueList) && mem.TypeData.Type.IsArray)
 							GenerateSetMemberValue (mem, ob, list, isValueList);
 					}
 				}
