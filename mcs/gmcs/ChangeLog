@@ -1,5 +1,28 @@
 2005-12-05  Marek Safar  <marek.safar@seznam.cz>
 
+	* attribute.cs (GlobalAttribute.ctor): Pass NamespaceEntry only.
+
+	* class.cs (EmitFieldInitializers): Simplified and fixed to work with
+	event initializers.
+	(FieldBase.EmitInitializer): Moved from TypeContainer and simplified.
+	(FieldBase.Initializer): Initializer is now optional.
+	(EventField.Define): Only event field can have initializer.
+
+	* codegen.cs (EmitContext): DeclSpace is not readonly (small hack).
+
+	* const.cs (Const): Reuse initializer.
+
+	* cs-parser.jay: Updated after FieldBase changes.
+	Added current_array_type to simplify array initializers.
+
+	* ecore.cs (NullCast.IsDefaultValue): Implemented.
+
+	* expression.cs, iterators.cs: Updated.
+
+	* namespace.cs (NamespaceEntry): Made UsingFound private.
+
+2005-12-05  Marek Safar  <marek.safar@seznam.cz>
+
 	* parameterCollection.cs: Obsolete, removed.
 	* parser.cs: Obsolete, removed.
 

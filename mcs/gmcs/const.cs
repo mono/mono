@@ -24,7 +24,6 @@ namespace Mono.CSharp {
 	}
 
 	public class Const : FieldMember, IConstant {
-		Expression Expr;
 		Constant value;
 		bool in_transit;
 
@@ -38,9 +37,9 @@ namespace Mono.CSharp {
 		public Const (TypeContainer parent, Expression constant_type, string name,
 			      Expression expr, int mod_flags, Attributes attrs, Location loc)
 			: base (parent, constant_type, mod_flags, AllowedModifiers,
-				new MemberName (name, loc), expr, attrs)
+				new MemberName (name, loc), attrs)
 		{
-			Expr = expr;
+			initializer = expr;
 			ModFlags |= Modifiers.STATIC;
 		}
 
@@ -137,7 +136,7 @@ namespace Mono.CSharp {
 
 			in_transit = true;
 			EmitContext ec = new EmitContext (Parent, Location, null, MemberType, ModFlags);
-			value = Expr.ResolveAsConstant (ec, this);
+			value = initializer.ResolveAsConstant (ec, this);
 			in_transit = false;
 
 			if (value == null)

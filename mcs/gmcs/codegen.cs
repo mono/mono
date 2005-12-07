@@ -196,7 +196,7 @@ namespace Mono.CSharp {
 	///   properties bodies, indexer bodies or constructor bodies)
 	/// </summary>
 	public class EmitContext {
-		public readonly DeclSpace DeclSpace;
+		public DeclSpace DeclSpace;
 		public DeclSpace TypeContainer;
 		public ILGenerator   ig;
 

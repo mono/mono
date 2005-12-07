@@ -792,7 +792,7 @@ namespace Mono.CSharp {
 								 BindingFlags.Static | BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly, null, null);
 			if (name == ".ctor" && ml.Count == 0)
 			{
-				Report.Error (143, loc, String.Format ("The type `{0}' has no constructors defined", TypeManager.CSharpName (queried_type)));
+				Report.Error (143, loc, "The type `{0}' has no constructors defined", TypeManager.CSharpName (queried_type));
 				return;
 			}
 
@@ -1325,7 +1325,7 @@ namespace Mono.CSharp {
 
 		public override bool IsDefaultValue {
 			get {
-				throw new NotImplementedException ();
+				return true;
 			}
 		}
 

@@ -612,9 +612,6 @@ namespace Mono.CSharp {
 
 			fields.Add (field);
 			
-			if (field.HasInitializer)
-				RegisterFieldForInitialization (field);
-
 			if ((field.ModFlags & Modifiers.STATIC) != 0)
 				return;
 
@@ -861,29 +858,19 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public virtual void RegisterFieldForInitialization (FieldMember field)
+		public virtual void RegisterFieldForInitialization (FieldBase field)
 		{
 			if ((field.ModFlags & Modifiers.STATIC) != 0){
 				if (initialized_static_fields == null)
-					initialized_static_fields = new ArrayList ();
+					initialized_static_fields = new ArrayList (4);
 
 				initialized_static_fields.Add (field);
 			} else {
 				if (initialized_fields == null)
-					initialized_fields = new ArrayList ();
+					initialized_fields = new ArrayList (4);
 
 				initialized_fields.Add (field);
 			}
-		}
-
-		bool CanElideInitializer (Type field_type, Constant c)
-		{
-			if (field_type == c.Type)
-				return true;
-			if (TypeManager.IsValueType (field_type) || TypeManager.HasElementType (field_type))
-				return false;
-			// Reference type with null initializer.
-			return c.Type == TypeManager.null_type;
 		}
 
 		//
@@ -892,41 +879,19 @@ namespace Mono.CSharp {
 		public virtual bool EmitFieldInitializers (EmitContext ec)
 		{
 			ArrayList fields;
-			Expression instance_expr;
 			
 			if (ec.IsStatic){
 				fields = initialized_static_fields;
-				instance_expr = null;
 			} else {
 				fields = initialized_fields;
-				instance_expr = new This (Location.Null).Resolve (ec);
 			}
 
 			if (fields == null)
 				return true;
 
-			foreach (FieldMember f in fields){
-				Expression e = f.GetInitializerExpression (ec);
-				if (e == null)
-					return false;
-
-				Location l = f.Location;
-				FieldExpr fe = new FieldExpr (f.FieldBuilder, l, true);
-				fe.InstanceExpression = instance_expr;
-
-				ExpressionStatement a = new Assign (fe, e, l);
-
-				a = a.ResolveStatement (ec);
-				if (a == null)
-					return false;
-
-				Constant c = e as Constant;
-				if (c != null && c.IsDefaultValue && CanElideInitializer (f.MemberType, c))
-					continue;
-
-				a.EmitStatement (ec);
+			foreach (FieldBase f in fields) {
+				f.EmitInitializer (ec);
 			}
-
 			return true;
 		}
 		
@@ -2972,7 +2937,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public override void RegisterFieldForInitialization (FieldMember field)
+		public override void RegisterFieldForInitialization (FieldBase field)
 		{
 			PartialContainer.RegisterFieldForInitialization (field);
 		}
@@ -5571,6 +5536,7 @@ namespace Mono.CSharp {
 	abstract public class FieldBase : MemberBase {
 		public FieldBuilder  FieldBuilder;
 		public Status status;
+		protected Expression initializer;
 
 		[Flags]
 		public enum Status : byte {
@@ -5584,16 +5550,11 @@ namespace Mono.CSharp {
 		/// </summary>
 		public MemberInfo conflict_symbol;
 
-		//
-		// The constructor is only exposed to our children
-		//
 		protected FieldBase (TypeContainer parent, Expression type, int mod,
-				     int allowed_mod, MemberName name, object init,
-				     Attributes attrs)
+				     int allowed_mod, MemberName name, Attributes attrs)
 			: base (parent, null, type, mod, allowed_mod, Modifiers.PRIVATE,
 				name, attrs)
 		{
-			this.init = init;
 		}
 
 		public override AttributeTargets AttributeTargets {
@@ -5620,51 +5581,42 @@ namespace Mono.CSharp {
 			FieldBuilder.SetCustomAttribute (cb);
 		}
 
-		//
-		// Whether this field has an initializer.
-		//
-		public bool HasInitializer {
-			get {
-				return init != null;
-			}
+		public void EmitInitializer (EmitContext ec)
+		{
+			// Replace DeclSpace because of partial classes
+			ec.DeclSpace = EmitContext.DeclSpace;
+
+			ec.IsFieldInitializer = true;
+			initializer = initializer.Resolve (ec);
+			ec.IsFieldInitializer = false;
+			if (initializer == null)
+				return;
+			FieldExpr fe = new FieldExpr (FieldBuilder, Location, true);
+			if ((ModFlags & Modifiers.STATIC) == 0)
+				fe.InstanceExpression = new This (Location).Resolve (ec);
+
+			ExpressionStatement a = new Assign (fe, initializer, Location);
+
+			a = a.ResolveStatement (ec);
+			if (a == null)
+				return;
+
+			Constant c = initializer as Constant;
+			if (c != null && CanElideInitializer (c))
+				return;
+
+			a.EmitStatement (ec);
 		}
 
-		protected readonly Object init;
-		// Private.
-		Expression init_expr;
-		bool init_expr_initialized = false;
-
-		//
-		// Resolves and returns the field initializer.
-		//
-		public Expression GetInitializerExpression (EmitContext ec)
+		bool CanElideInitializer (Constant c)
 		{
-			if (init_expr_initialized)
-				return init_expr;
+			if (MemberType == c.Type)
+				return c.IsDefaultValue;
 
-			Expression e;
-			if (init is Expression)
-				e = (Expression) init;
-			else
-				e = new ArrayCreation (Type, "", (ArrayList)init, Location);
+			if (c.Type == TypeManager.null_type)
+				return true;
 
-			// TODO: Any reason why we are using parent EC ?
-			EmitContext parent_ec = Parent.EmitContext;
-
-			bool old_is_static = parent_ec.IsStatic;
-			bool old_is_ctor = parent_ec.IsConstructor;
-			parent_ec.IsStatic = ec.IsStatic;
-			parent_ec.IsConstructor = ec.IsConstructor;
-			parent_ec.IsFieldInitializer = true;
-			e = e.DoResolve (parent_ec);
-			parent_ec.IsFieldInitializer = false;
-			parent_ec.IsStatic = old_is_static;
-			parent_ec.IsConstructor = old_is_ctor;
-
-			init_expr = e;
-			init_expr_initialized = true;
-
-			return init_expr;
+			return false;
 		}
 
  		protected override bool CheckBase ()
@@ -5692,6 +5644,15 @@ namespace Mono.CSharp {
 
 			return true;
  		}
+
+		public Expression Initializer {
+			set {
+				if (value != null) {
+					this.initializer = value;
+					Parent.RegisterFieldForInitialization (this);
+				}
+			}
+		}
 
 		protected virtual bool IsFieldClsCompliant {
 			get {
@@ -5726,11 +5687,11 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public abstract class FieldMember: FieldBase
+	public abstract class FieldMember : FieldBase
 	{
 		protected FieldMember (TypeContainer parent, Expression type, int mod,
-			int allowed_mod, MemberName name, object init, Attributes attrs)
-			: base (parent, type, mod, allowed_mod | Modifiers.ABSTRACT, name, init, attrs)
+			int allowed_mod, MemberName name, Attributes attrs)
+			: base (parent, type, mod, allowed_mod | Modifiers.ABSTRACT, name, attrs)
 		{
 			if ((mod & Modifiers.ABSTRACT) != 0)
 				Report.Error (681, Location, "The modifier 'abstract' is not valid on fields. Try using a property instead");
@@ -5855,7 +5816,7 @@ namespace Mono.CSharp {
 	/// <summary>
 	/// Fixed buffer implementation
 	/// </summary>
-	public class FixedField: FieldMember, IFixedBuffer
+	public class FixedField : FieldMember, IFixedBuffer
 	{
 		public const string FixedElementName = "FixedElementField";
 		static int GlobalCounter = 0;
@@ -5876,7 +5837,7 @@ namespace Mono.CSharp {
 
 		public FixedField (TypeContainer parent, Expression type, int mod, string name,
 			Expression size_expr, Attributes attrs, Location loc):
-			base (parent, type, mod, AllowedModifiers, new MemberName (name, loc), null, attrs)
+			base (parent, type, mod, AllowedModifiers, new MemberName (name, loc), attrs)
 		{
 			if (RootContext.Version == LanguageVersion.ISO_1)
 				Report.FeatureIsNotStandardized (loc, "fixed size buffers");
@@ -6004,9 +5965,9 @@ namespace Mono.CSharp {
 			Modifiers.READONLY;
 
 		public Field (TypeContainer parent, Expression type, int mod, string name,
-			      Object expr_or_array_init, Attributes attrs, Location loc)
+			      Attributes attrs, Location loc)
 			: base (parent, type, mod, AllowedModifiers, new MemberName (name, loc),
-				expr_or_array_init, attrs)
+				attrs)
 		{
 		}
 
@@ -7037,9 +6998,9 @@ namespace Mono.CSharp {
 		static string[] attribute_targets = new string [] { "event" }; // "property" target was disabled for 2.0 version
 
 		public EventProperty (TypeContainer parent, Expression type, int mod_flags,
-				      bool is_iface, MemberName name, Object init,
+				      bool is_iface, MemberName name,
 				      Attributes attrs, Accessor add, Accessor remove)
-			: base (parent, type, mod_flags, is_iface, name, init, attrs)
+			: base (parent, type, mod_flags, is_iface, name, attrs)
 		{
 			Add = new AddDelegateMethod (this, add);
 			Remove = new RemoveDelegateMethod (this, remove);
@@ -7059,15 +7020,15 @@ namespace Mono.CSharp {
 	/// <summary>
 	/// Event is declared like field.
 	/// </summary>
-	public class EventField: Event {
+	public class EventField : Event {
 
 		static string[] attribute_targets = new string [] { "event", "field", "method" };
 		static string[] attribute_targets_interface = new string[] { "event", "method" };
 
 		public EventField (TypeContainer parent, Expression type, int mod_flags,
-				   bool is_iface, MemberName name, Object init,
+				   bool is_iface, MemberName name,
 				   Attributes attrs)
-			: base (parent, type, mod_flags, is_iface, name, init, attrs)
+			: base (parent, type, mod_flags, is_iface, name, attrs)
 		{
 			Add = new AddDelegateMethod (this);
 			Remove = new RemoveDelegateMethod (this);
@@ -7087,6 +7048,22 @@ namespace Mono.CSharp {
 			}
 
 			base.ApplyAttributeBuilder (a, cb);
+		}
+
+		public override bool Define()
+		{
+			if (!base.Define ())
+				return false;
+
+			if (initializer != null) {
+				if (((ModFlags & Modifiers.ABSTRACT) != 0)) {
+					Report.Error (74, Location, "`{0}': abstract event cannot have an initializer",
+						GetSignatureForError ());
+					return false;
+				}
+			}
+
+			return true;
 		}
 
 		public override string[] ValidAttributeTargets {
@@ -7285,11 +7262,11 @@ namespace Mono.CSharp {
 		public MethodBuilder AddBuilder, RemoveBuilder;
 		Parameters parameters;
 
-		public Event (TypeContainer parent, Expression type, int mod_flags,
-			      bool is_iface, MemberName name, Object init, Attributes attrs)
+		protected Event (TypeContainer parent, Expression type, int mod_flags,
+			      bool is_iface, MemberName name, Attributes attrs)
 			: base (parent, type, mod_flags,
 				is_iface ? AllowedInterfaceModifiers : AllowedModifiers,
-				name, init, attrs)
+				name, attrs)
 		{
 			IsInterface = is_iface;
 		}
@@ -7325,12 +7302,6 @@ namespace Mono.CSharp {
 
 			if (!DoDefine ())
 				return false;
-
-			if (init != null && ((ModFlags & Modifiers.ABSTRACT) != 0)){
-				Report.Error (74, Location, "`" + GetSignatureForError () +
-					      "': abstract event cannot have an initializer");
-				return false;
-			}
 
 			if (!TypeManager.IsDelegateType (MemberType)) {
 				Report.Error (66, Location, "`{0}': event must be of a delegate type", GetSignatureForError ());
