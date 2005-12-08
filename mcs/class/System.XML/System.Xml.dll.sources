@@ -202,6 +202,7 @@ System.Xml.Schema/XmlSchemaAttributeGroupRef.cs
 System.Xml.Schema/XmlSchemaChoice.cs
 System.Xml.Schema/XmlSchemaCollection.cs
 System.Xml.Schema/XmlSchemaCollectionEnumerator.cs
+System.Xml.Schema/XmlSchemaCompilationSettings.cs
 System.Xml.Schema/XmlSchemaComplexContent.cs
 System.Xml.Schema/XmlSchemaComplexContentExtension.cs
 System.Xml.Schema/XmlSchemaComplexContentRestriction.cs

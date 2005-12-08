@@ -100,7 +100,8 @@ namespace System.Xml
 			prohibitDtd = true;
 			schemas = new XmlSchemaSet ();
 			validationFlags =
-				XsValidationFlags.ProcessIdentityConstraints;
+				XsValidationFlags.ProcessIdentityConstraints |
+				XsValidationFlags.AllowXmlAttributes;
 			validationType = ValidationType.None;
 			xmlResolver = new XmlUrlResolver ();
 		}

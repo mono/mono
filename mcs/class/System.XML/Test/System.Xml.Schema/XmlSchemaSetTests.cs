@@ -66,6 +66,34 @@ namespace MonoTests.System.Xml
 			ss.Add ("ab", new XmlNodeReader (doc));
 			ss.Add ("ab", new XmlNodeReader (doc));
 		}
+
+		[Test]
+		public void CompilationSettings ()
+		{
+			Assert.IsNotNull (new XmlSchemaSet ().CompilationSettings);
+		}
+
+		[Test]
+		public void DisableUpaCheck ()
+		{
+			string schema = @"<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>
+  <xs:complexType name='Foo'>
+    <xs:sequence>
+      <xs:choice minOccurs='0'>
+        <xs:element name='el'/>
+      </xs:choice>
+      <xs:element name='el' />
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>";
+			XmlSchema xs = XmlSchema.Read (new XmlTextReader (
+				schema, XmlNodeType.Document, null), null);
+			XmlSchemaSet xss = new XmlSchemaSet ();
+			xss.Add (xs);
+			xss.CompilationSettings.EnableUpaCheck = false;
+
+			xss.Compile ();
+		}
 	}
 }
 #endif

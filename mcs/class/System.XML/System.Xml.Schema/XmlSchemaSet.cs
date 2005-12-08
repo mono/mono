@@ -54,7 +54,10 @@ namespace System.Xml.Schema
 		XmlSchemaObjectTable types;
 //		XmlSchemaObjectTable attributeGroups;
 //		XmlSchemaObjectTable groups;
-		
+
+		XmlSchemaCompilationSettings settings =
+			new XmlSchemaCompilationSettings ();
+
 		XmlSchemaCollection col;
 		ValidationEventHandler handler;
 
@@ -114,6 +117,10 @@ namespace System.Xml.Schema
 
 		public XmlNameTable NameTable { 
 			get { return nameTable; }
+		}
+
+		public XmlSchemaCompilationSettings CompilationSettings {
+			get { return settings; }
 		}
 
 		// This is mainly used for event delegating

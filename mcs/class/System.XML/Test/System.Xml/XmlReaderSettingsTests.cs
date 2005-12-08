@@ -31,28 +31,29 @@ namespace MonoTests.System.Xml
 		public void DefaultValue ()
 		{
 			XmlReaderSettings s = new XmlReaderSettings ();
-			AssertEquals (true, s.CheckCharacters);
-			AssertEquals (ConformanceLevel.Document,
+			AssertEquals ("CheckCharacters", true, s.CheckCharacters);
+			AssertEquals ("ConformanceLevel", ConformanceLevel.Document,
 				s.ConformanceLevel);
-			Assert (s.ValidationType != ValidationType.DTD);
-			AssertEquals (false, s.IgnoreComments);
-			Assert (0 == (s.ValidationFlags &
+			AssertEquals ("ValidationType", ValidationType.None, s.ValidationType);
+			AssertEquals ("IgnoreComments", false, s.IgnoreComments);
+			Assert ("ProcessInlineSchema", 0 == (s.ValidationFlags &
 				ValidationFlags.ProcessInlineSchema));
-			AssertEquals (false, s.IgnoreProcessingInstructions);
-			Assert (0 == (s.ValidationFlags &
+			AssertEquals ("IgnorePI", false, s.IgnoreProcessingInstructions);
+			Assert ("ProcessSchemaLocation", 0 == (s.ValidationFlags &
 				ValidationFlags.ProcessSchemaLocation));
-			Assert (0 == (s.ValidationFlags &
+			Assert ("ReportValidationWarnings", 0 == (s.ValidationFlags &
 				ValidationFlags.ReportValidationWarnings));
-			Assert (0 != (s.ValidationFlags &
+			Assert ("ProcessIdentityConstraints", 0 != (s.ValidationFlags &
 				ValidationFlags.ProcessIdentityConstraints));
-			Assert (0 == (s.ValidationFlags &
+			// No one should use this flag BTW if someone wants
+			// code to be conformant to W3C XML Schema standard.
+			Assert ("AllowXmlAttributes", 0 != (s.ValidationFlags &
 				ValidationFlags.AllowXmlAttributes));
-			AssertEquals (false, s.IgnoreWhitespace);
-			AssertEquals (0, s.LineNumberOffset);
-			AssertEquals (0, s.LinePositionOffset);
-			AssertNull (s.NameTable);
-			AssertEquals (0, s.Schemas.Count);
-			Assert (s.ValidationType != ValidationType.Schema);
+			AssertEquals ("IgnoreWhitespace", false, s.IgnoreWhitespace);
+			AssertEquals ("LineNumberOffset", 0, s.LineNumberOffset);
+			AssertEquals ("LinePositionOffset", 0, s.LinePositionOffset);
+			AssertNull ("NameTable", s.NameTable);
+			AssertEquals ("Schemas.Count", 0, s.Schemas.Count);
 		}
 
 		[Test]

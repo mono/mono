@@ -1,5 +1,10 @@
 2005-12-08  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlReaderSettings.cs : thanks to idiotic MS design,
+	  AllowXmlAttributes is turned on by default.
+
+2005-12-08  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlReaderSettings.cs :
 	  set_Schemas() is fixed in 2.0 RTM (it just works).
 	* XmlResolver.cs : throw ArgumentNullException instead of

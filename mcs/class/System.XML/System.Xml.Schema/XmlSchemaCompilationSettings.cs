@@ -1,8 +1,10 @@
 //
-// XmlSchemaValidationFlags.cs
+// XmlSchemaCompilationSettings.cs
 //
 // Author:
 //	Atsushi Enomoto  <atsushi@ximian.com>
+//
+// Copyright (C) 2005 Novell, Inc.  http://www.novell.com
 //
 
 //
@@ -26,20 +28,27 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 #if NET_2_0
+
 using System;
+using System.Collections;
+using System.Xml;
+using System.Xml.Serialization;
 
 namespace System.Xml.Schema
 {
-	[Flags]
-	public enum XmlSchemaValidationFlags
+	public sealed class XmlSchemaCompilationSettings
 	{
-		None = 0,
-		ProcessInlineSchema = 1,
-		ProcessSchemaLocation = 2,
-		ReportValidationWarnings = 4,
-		ProcessIdentityConstraints = 8,
-		[Obsolete ("It is really idiotic idea to include such validation option that breaks W3C XML Schema specification compliance and interoperability.")]
-		AllowXmlAttributes = 16,
+		public XmlSchemaCompilationSettings ()
+		{
+		}
+
+		bool enable_upa_check = true;
+
+		public bool EnableUpaCheck {
+			get { return enable_upa_check; }
+			set { enable_upa_check = value; }
+		}
 	}
 }
+
 #endif

@@ -117,6 +117,9 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
+#if NET_2_0
+		[Category ("NotDotNet")] // enbugged in 2.0
+#endif
 		[ExpectedException (typeof (XmlException))]
 		public void WriteNodeError ()
 		{

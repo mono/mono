@@ -1,5 +1,12 @@
 2005-12-08  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlReaderSettingsTests.cs : (DefaultValue)
+	  Added assertion label everywhere.
+	* XmlWriterTests.cs : WriteNodeError is broken under MS.NET 2.0 (it
+	  should cause an error).
+
+2005-12-08  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlReaderSettingsTests.cs : SetSchemas() should not cause an error.
 	  Added SetSchemasNull() as well.
 	* XmlUrlResolverTests.cs : (ResolveUriWithNullArgs)
