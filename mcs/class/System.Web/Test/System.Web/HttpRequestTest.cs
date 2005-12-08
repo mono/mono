@@ -818,6 +818,7 @@ namespace MonoTests.System.Web {
 		}
 
 		[Test]
+		[Ignore ("This is a bug in MS and is fixed in mono")]
 		public void Form_Item()
 		{
 			// I would have expected the extra two characters to be stripped

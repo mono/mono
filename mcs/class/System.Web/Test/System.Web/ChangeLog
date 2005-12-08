@@ -1,3 +1,7 @@
+2005-12-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpRequestTest.cs: ignore test.
+
 2005-12-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpCookieTest.cs: test for setting the Secure property.
