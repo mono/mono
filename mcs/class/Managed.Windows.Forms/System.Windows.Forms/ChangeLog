@@ -1,5 +1,12 @@
 2005-12-07  Peter Dennis Bartok  <pbartok@novell.com>
 
+	* Control.cs(PreProcessMessage): Moved menu handling back, but
+	  after all other key handling, to match MS (who handles Menu in
+	  DefWndProc)
+	* Menu.cs (WndProc): Removed my brainfart
+
+2005-12-07  Peter Dennis Bartok  <pbartok@novell.com>
+
 	* Control.cs(PreProcessMessage): Removed special menu handling 
 	* Menu.cs (WndProc): Added handling of WM_SYSKEYUP for menu purposes.
 

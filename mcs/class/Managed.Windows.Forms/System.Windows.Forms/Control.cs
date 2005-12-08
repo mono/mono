@@ -3691,6 +3691,15 @@ namespace System.Windows.Forms
 						return;
 					}
 
+					if ((m.Msg == (int)Msg.WM_SYSKEYUP) && (m.WParam == (IntPtr)(Keys.Menu & Keys.KeyCode))) {
+						Form	form;
+
+						form = FindForm();
+						if (form != null) {
+							form.ActiveMenu.ProcessCmdKey(ref m, (Keys)m.WParam.ToInt32());
+						}
+					}
+
 					DefWndProc (ref m);
 					return;
 				}
