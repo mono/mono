@@ -16,6 +16,7 @@
 
 EXTERNAL_MCS = csc.exe
 NO_SIGN_ASSEMBLY = yes
+RESGEN = resgen.exe
 
 #DEXT = pdb
 
