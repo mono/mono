@@ -10,7 +10,6 @@
 			<References>
 				<Reference Name="System" AssemblyName="System" HintPath="..\lib\System.dll"/>
 				<Reference Name="rt" AssemblyName="rt" HintPath="C:\Program Files\Mainsoft\Visual MainWin for J2EE\jgac\j2sdk1.4.2_05\rt.dll" Private="False"/>
-				<Reference Name="J2SE.Helpers" AssemblyName="J2SE.Helpers" HintPath="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE\jgac\vmw4j2ee_110\J2SE.Helpers.dll" Private="False"/>
 			</References>
 		</Build>
 		<Files>
@@ -49,9 +48,6 @@
 				<File RelPath="Mono.Xml.XPath\LocationPathPattern.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="Mono.Xml.XPath\Pattern.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="Mono.Xml.XPath\UnionPattern.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="Mono.Xml.XPath\XPathDocument2.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="Mono.Xml.XPath\XPathDocument2Editable.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="Mono.Xml.XPath\XPathDocument2Navigator.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="Mono.Xml.XPath\XPathEditableDocument.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="Mono.Xml.XPath\XPathNavigatorReader.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="Mono.Xml.Xsl\Attribute.cs" SubType="Code" BuildAction="Compile"/>
@@ -104,7 +100,6 @@
 				<File RelPath="Mono.Xml.Xsl.Operations\XslVariable.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Xml\ChangeLog" BuildAction="None"/>
 				<File RelPath="System.Xml\ConformanceLevel.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Xml\Driver.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Xml\DTDAutomata.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Xml\DTDObjectModel.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Xml\DTDReader.cs" SubType="Code" BuildAction="Compile"/>
@@ -117,7 +112,6 @@
 				<File RelPath="System.Xml\MonoFIXAttribute.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Xml\NameTable.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Xml\NewLineHandling.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Xml\Profile.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Xml\ReadState.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Xml\ValidationType.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Xml\WhitespaceHandling.cs" SubType="Code" BuildAction="Compile"/>
@@ -165,7 +159,6 @@
 				<File RelPath="System.Xml\XmlParserInput.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Xml\XmlProcessingInstruction.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Xml\XmlQualifiedName.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Xml\XmlQualifiedNameTable.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Xml\XmlReader.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Xml\XmlReaderBinarySupport.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Xml\XmlReaderSettings.cs" SubType="Code" BuildAction="Compile"/>
@@ -206,6 +199,7 @@
 				<File RelPath="System.Xml.Schema\XmlSchemaChoice.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Xml.Schema\XmlSchemaCollection.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Xml.Schema\XmlSchemaCollectionEnumerator.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Xml.Schema\XmlSchemaCompilationSettings.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Xml.Schema\XmlSchemaComplexContent.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Xml.Schema\XmlSchemaComplexContentExtension.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Xml.Schema\XmlSchemaComplexContentRestriction.cs" SubType="Code" BuildAction="Compile"/>
