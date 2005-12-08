@@ -603,10 +603,14 @@ public class UTF8Encoding : Encoding
 		uint leftBits = leftOverBits;
 		uint leftSoFar = (leftOverCount & (uint)0x0F);
 		uint leftSize = ((leftOverCount >> 4) & (uint)0x0F);
-		while (byteCount > 0) {
+
+		int byteEnd = byteIndex + byteCount;
+		if (byteEnd < 0 || byteEnd > bytes.Length)
+			throw new SystemException (String.Format ("INTERNAL ERROR: should not happen: {0} {1} {2}", byteIndex, byteCount, byteEnd));
+
+		for(; byteIndex < byteEnd; byteIndex++) {
 			// Fetch the next character from the byte buffer.
-			ch = (uint)(bytes[byteIndex++]);
-			--byteCount;
+			ch = (uint)(bytes[byteIndex]);
 			if (leftSize == 0) {
 				// Process a UTF-8 start character.
 				if (ch < (uint)0x0080) {
@@ -720,7 +724,6 @@ public class UTF8Encoding : Encoding
 #endif
 					leftSize = 0;
 					--byteIndex;
-					++byteCount;
 				}
 			}
 		}

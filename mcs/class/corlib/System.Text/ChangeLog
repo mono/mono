@@ -1,5 +1,9 @@
 2005-12-08  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* UTF8Encoding.cs : (GetChars) let ABCREM work effectively.
+
+2005-12-08  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Encoding.cs : now under 2.0 GetBytes(string,...) dispatches to
 	  byte*-based GetBytes().
 	* UTF8Encoding.cs : avoid extraneous DecoderFallbackBuffer creation
