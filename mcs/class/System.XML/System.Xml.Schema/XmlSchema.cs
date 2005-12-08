@@ -267,11 +267,17 @@ namespace System.Xml.Schema
 		///             4. targetNamespace should be any uri
 		///             5. version should be a normalizedString
 		/// </remarks>
+#if NET_2_0
+		[Obsolete ("Use XmlSchemaSet.Compile() instead.")]
+#endif
 		public void Compile (ValidationEventHandler handler)
 		{
 			Compile (handler, new XmlUrlResolver ());
 		}
 
+#if NET_2_0
+		[Obsolete ("Use XmlSchemaSet.Compile() instead.")]
+#endif
 #if NET_1_1
 		public void Compile (ValidationEventHandler handler, XmlResolver resolver)
 #else

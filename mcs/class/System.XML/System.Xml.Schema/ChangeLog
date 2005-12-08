@@ -1,5 +1,9 @@
 2005-12-08  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlSchema.cs : Compile() are obsoleted in 2.0.
+
+2005-12-08  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlSchemaDatatype.cs : TypeCode is virtual in 2.0 RTM.
 
 2005-12-08  Atsushi Enomoto <atsushi@ximian.com>
