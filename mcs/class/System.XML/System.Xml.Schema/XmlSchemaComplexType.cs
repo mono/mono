@@ -600,7 +600,8 @@ namespace System.Xml.Schema
 			}
 
 #if NET_2_0
-			if (schema.Schemas.CompilationSettings.EnableUpaCheck)
+			if (schema.Schemas.CompilationSettings != null &&
+				schema.Schemas.CompilationSettings.EnableUpaCheck)
 #endif
 			// This check is optional only after 2.0
 			contentTypeParticle.ValidateUniqueParticleAttribution (new XmlSchemaObjectTable (),

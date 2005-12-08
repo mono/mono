@@ -1,5 +1,12 @@
 2005-12-08  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlSchemaSet.cs :
+	  Turned out that it also has set_CompilationSettings.
+	* XmlSchemaComplexType. : thus CompilationSettings is nullable, we
+	  have to check its existence.
+
+2005-12-08  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlSchema.cs : Compile() are obsoleted in 2.0.
 
 2005-12-08  Atsushi Enomoto <atsushi@ximian.com>

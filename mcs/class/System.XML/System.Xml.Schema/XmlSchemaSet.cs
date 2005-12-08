@@ -121,6 +121,7 @@ namespace System.Xml.Schema
 
 		public XmlSchemaCompilationSettings CompilationSettings {
 			get { return settings; }
+			set { settings = value; }
 		}
 
 		// This is mainly used for event delegating

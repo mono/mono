@@ -71,6 +71,7 @@ namespace MonoTests.System.Xml
 		public void CompilationSettings ()
 		{
 			Assert.IsNotNull (new XmlSchemaSet ().CompilationSettings);
+			new XmlSchemaSet ().CompilationSettings = null;
 		}
 
 		[Test]
