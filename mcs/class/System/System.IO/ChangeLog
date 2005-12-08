@@ -1,3 +1,10 @@
+2005-12-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* FAMWatcher.cs: 
+	* FileSystemWatcher.cs: use libgamin-1.so.0 instead of libfam.so.0 when
+	the runtime finds libgamin. On SUSE libgamin and libfam are not the same
+	libraries (on debian, they are just the same and there's no fam-server).
+
 2005-06-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* FAMWatcher.cs: reverting my patch. Seems that something got
