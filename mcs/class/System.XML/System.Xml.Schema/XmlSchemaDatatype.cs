@@ -49,7 +49,11 @@ namespace System.Xml.Schema
 		}
 
 #if NET_2_0
-		public abstract XmlTypeCode TypeCode { get; }
+		public virtual XmlTypeCode TypeCode {
+			// Actually no way to verify default value, since
+			// in .NET 2.0 it cannot be derived externally anymore.
+			get { return XmlTypeCode.None; }
+		}
 
 		public virtual XmlSchemaDatatypeVariety Variety {
 			get {
