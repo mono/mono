@@ -1,5 +1,10 @@
 2005-12-08  Atsushi Enomoto <atsushi@ximian.com>
 
+	* Driver.cs, Profiler.cs, XmlQualifiedNameTable.cs :
+	  removed old code.
+
+2005-12-08  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlReaderSettings.cs : thanks to idiotic MS design,
 	  AllowXmlAttributes is turned on by default.
 
