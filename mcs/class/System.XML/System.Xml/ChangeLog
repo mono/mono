@@ -1,3 +1,8 @@
+2005-12-08  Andrew Skiba  <andrews@mainsoft.com>
+
+	* IXmlNamespaceResolver.cs: delete TARGET_JVM,
+	no need to mangle the name
+
 2005-11-30  Konstantin Triger  <kostat@mainsoft.com>
 
 	* IXmlNamespaceResolver.cs: TARGET_JVM namespace change.

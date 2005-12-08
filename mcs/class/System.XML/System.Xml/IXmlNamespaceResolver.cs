@@ -38,9 +38,6 @@ namespace System.Xml
 #if NET_2_0
 	public interface IXmlNamespaceResolver
 #else
-#if TARGET_JVM
-	[vmw.common.ChangeInterfaceMethodNames]
-#endif
 	internal interface IXmlNamespaceResolver
 #endif
 	{
