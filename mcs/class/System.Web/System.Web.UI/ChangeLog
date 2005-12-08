@@ -1,3 +1,7 @@
+2005-12-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Control.cs: use _controls instead of the property wherever possible.
+
 2005-12-05 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Control.cs: use the _controls field instead of the Controls property.

@@ -437,8 +437,10 @@ namespace System.Web.UI
                 protected bool ChildControlsCreated {
                         get { return ((stateMask & CHILD_CONTROLS_CREATED) != 0); }
                         set {
-				if (value == false && (stateMask & CHILD_CONTROLS_CREATED) != 0)
-					Controls.Clear();
+				if (value == false && (stateMask & CHILD_CONTROLS_CREATED) != 0) {
+					if (_controls != null)
+						_controls.Clear();
+				}
 
 				SetMask (CHILD_CONTROLS_CREATED, value);
                         }
@@ -538,7 +540,7 @@ namespace System.Web.UI
 			if (!HasControls ())
 				return;
 
-			foreach (Control c in Controls)
+			foreach (Control c in _controls)
 				c.NullifyUniqueID ();
 		}
 
@@ -660,7 +662,7 @@ namespace System.Web.UI
 
 		protected bool IsLiteralContent()
 		{
-			if (HasControls () && Controls.Count == 1 && (Controls [0] is LiteralControl))
+			if (HasControls () && _controls.Count == 1 && (_controls [0] is LiteralControl))
 				return true;
 
 			return false;
@@ -678,7 +680,7 @@ namespace System.Web.UI
 				return null;
 
 			Control result = null;
-			foreach (Control c in Controls) {
+			foreach (Control c in _controls) {
 				if (String.Compare (id, c._userId, true) == 0) {
 					if (result != null && result != c) {
 						throw new HttpException ("1 Found more than one control with ID '" + id + "'");
@@ -1046,9 +1048,9 @@ namespace System.Web.UI
 			if (!HasControls ())
 				return;
 			
-			int len = Controls.Count;
+			int len = _controls.Count;
 			for (int i = 0; i < len; i++) {
-				Control c = Controls [i];
+				Control c = _controls [i];
 				c.DataBind ();
 			}
 		}
@@ -1139,10 +1141,10 @@ namespace System.Web.UI
 #endif
 				OnLoad (EventArgs.Empty);
                         if (HasControls ()) {
-				int len = Controls.Count;
+				int len = _controls.Count;
 				for (int i=0;i<len;i++)
 				{
-					Control c = Controls[i];
+					Control c = _controls[i];
 					c.LoadRecursive ();
 				}
 			}
@@ -1165,10 +1167,10 @@ namespace System.Web.UI
 			}
 #endif
 			if (HasControls ()) {
-				int len = Controls.Count;
+				int len = _controls.Count;
 				for (int i=0;i<len;i++)
 				{
-					Control c = Controls[i];					
+					Control c = _controls[i];					
 					c.UnloadRecursive (dispose);
 				}
 			}
@@ -1208,10 +1210,10 @@ namespace System.Web.UI
 				if (!HasControls ())
 					return;
 				
-				int len = Controls.Count;
+				int len = _controls.Count;
 				for (int i=0;i<len;i++)
 				{
-					Control c = Controls[i];
+					Control c = _controls[i];
 					c.PreRenderRecursiveInternal ();
 				}
 #if MONO_TRACE
@@ -1242,10 +1244,10 @@ namespace System.Web.UI
 				    namingContainer.AutoID)
 					namingContainer._userId = namingContainer.GetDefaultName () + "b";
 
-				int len = Controls.Count;
+				int len = _controls.Count;
 				for (int i=0;i<len;i++)
 				{
-					Control c = Controls[i];
+					Control c = _controls[i];
 					c._page = Page;
 					c._namingContainer = namingContainer;
 					if (namingContainer != null && c._userId == null && c.AutoID)
@@ -1290,10 +1292,10 @@ namespace System.Web.UI
 			int idx = -1;
 			if (HasControls ())
 			{
-				int len = Controls.Count;
+				int len = _controls.Count;
 				for (int i=0;i<len;i++)
 				{
-					Control ctrl = Controls[i];
+					Control ctrl = _controls[i];
 					object ctrlState = ctrl.SaveViewStateRecursive ();
 					idx++;
 					if (ctrlState == null)
