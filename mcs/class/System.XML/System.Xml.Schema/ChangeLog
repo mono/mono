@@ -1,3 +1,9 @@
+2005-12-08  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlSchemaValidationException.cs : added SetSourceObject() which
+	  is just for API compat (it does nothing on MS.NET).
+	  Removed #if NET_2_0 inside #if NET_2_0.
+
 2005-12-01  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlSchemaSequence.cs : when a subcomponent is not optional

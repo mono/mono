@@ -48,6 +48,10 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
+#if NET_2_0
+		[Category ("NotDotNet")]
+		// MS.NET throws XmlSchemaException, not -ValidationException.
+#endif
 		[ExpectedException (typeof (ValidationException))]
 		public void ValidateRootElementOnlyInvalid ()
 		{

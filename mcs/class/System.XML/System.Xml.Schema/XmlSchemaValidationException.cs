@@ -83,14 +83,17 @@ namespace System.Xml.Schema
 		{
 		}
 
-#if NET_2_0
 		[SecurityPermission (SecurityAction.LinkDemand,
 			Flags=SecurityPermissionFlag.SerializationFormatter)]
-#endif
 		public override void GetObjectData (
 			SerializationInfo info, StreamingContext context)
 		{
 			base.GetObjectData (info, context);
+		}
+
+		// Never use it. It actually does nothing even on MS.NET 2.0.
+		protected internal void SetSourceObject (object o)
+		{
 		}
 	}
 }
