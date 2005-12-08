@@ -1,7 +1,0 @@
-2005-06-17  Lluis Sanchez Gual  <lluis@novell.com>
-
-	* AssemblyInfo.cs: Removed some unneeded attributes.
-
-2005-06-14  Lluis Sanchez Gual  <lluis@novell.com>
-
-	* AssemblyInfo.cs, Locale.cs: Added

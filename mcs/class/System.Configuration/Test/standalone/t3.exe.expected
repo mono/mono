@@ -1,6 +1,0 @@
-IsMachineLevel: False
-appsettings.Settings.AllKeys.Count = 2
-settings[second] = Welcome World!
-settings[hithere] = Goodbye World!
-AppSettings[second] = Welcome World!
-AppSettings[hithere] = Goodbye World!
