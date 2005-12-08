@@ -97,7 +97,7 @@ namespace System.Xml
 			ignoreWhitespace = false;
 			lineNumberOffset = 0;
 			linePositionOffset = 0;
-			prohibitDtd = false; // ? not documented
+			prohibitDtd = true;
 			schemas = new XmlSchemaSet ();
 			validationFlags =
 				XsValidationFlags.ProcessIdentityConstraints;

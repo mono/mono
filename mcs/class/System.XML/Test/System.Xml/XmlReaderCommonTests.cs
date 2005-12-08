@@ -1447,13 +1447,23 @@ namespace MonoTests.System.Xml
 		[Test]
 		public void CreateSimple ()
 		{
-			XmlReader xr = XmlReader.Create ("Test/XmlFiles/nested-dtd-test.xml");
+			XmlReaderSettings s = new XmlReaderSettings ();
+			s.ProhibitDtd = false;
+			XmlReader xr = XmlReader.Create ("Test/XmlFiles/nested-dtd-test.xml", s);
 			xr.Read ();
 			AssertEquals ("#1", XmlNodeType.DocumentType, xr.NodeType);
 			xr.Read ();
 			AssertEquals ("#2", XmlNodeType.Whitespace, xr.NodeType);
 			xr.Read ();
 			AssertEquals ("#3", XmlNodeType.Element, xr.NodeType);
+		}
+
+		[Test]
+		[ExpectedException (typeof (XmlException))]
+		public void CreateSimpleProhibitDtd ()
+		{
+			XmlReader xr = XmlReader.Create ("Test/XmlFiles/nested-dtd-test.xml");
+			xr.Read ();
 		}
 #endif
 	}

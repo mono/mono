@@ -154,7 +154,7 @@ namespace System.Xml
 		// does it affect only on XmlTextWriter?
 		public XmlOutputMethod OutputMethod {
 			get { return outputMethod; }
-			set { outputMethod = value; }
+			//set { outputMethod = value; }
 		}
 	}
 }
