@@ -1094,6 +1094,7 @@ mono_arch_call_opcode2 (MonoCompile *cfg, MonoCallInst *call, int is_virtual) {
 				arg->opcode = OP_X86_PUSH_OBJ;
 				arg->inst_basereg = in->dreg;
 				arg->inst_offset = 0;
+				arg->inst_imm = size;
 					
 				MONO_ADD_INS (cfg->cbb, arg);
 			}
