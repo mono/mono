@@ -818,12 +818,13 @@ namespace MonoTests.System.Web {
 		}
 
 		[Test]
-		[Ignore ("This is a bug in MS and is fixed in mono")]
+		[Category ("NotDotNet")]
 		public void Form_Item()
 		{
 			// I would have expected the extra two characters to be stripped
 			// but Microsoft's CLR keeps them so Mono should, too.
-			Assert.AreEqual("bar\r\n", context.Request.Form["foo"]);
+			//Assert.AreEqual("bar\r\n", context.Request.Form["foo"]);
+			Assert.AreEqual("bar", context.Request.Form["foo"]);
 		}
 	}
 
