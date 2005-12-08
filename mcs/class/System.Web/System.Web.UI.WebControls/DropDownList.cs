@@ -172,7 +172,8 @@ namespace System.Web.UI.WebControls {
 				writer.WriteAttribute("value", item.Value, true);
 
 				writer.Write(">");
-				writer.Write(item.Text);
+				string text = HttpUtility.HtmlEncode (item.Text);
+				writer.Write (text);
 				writer.WriteEndTag("option");
 				writer.WriteLine();
 			}
