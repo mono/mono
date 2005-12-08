@@ -1,3 +1,10 @@
+2005-12-08  Martin Baulig  <martin@ximian.com>
+
+	* generic.cs (TypeArguments.Resolve): Added CS1547 check.
+
+	* typemanager.cs (TypeManager.CSharpSignature): Include type
+	arguments in the signature of a generic method.
+
 2005-12-07  Martin Baulig  <martin@ximian.com>
 
 	Add support for custom attributes on type parameters.

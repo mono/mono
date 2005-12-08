@@ -746,6 +746,17 @@ public partial class TypeManager {
 			else
 				sig.Append (mb.Name);
 
+			if (mb.Mono_IsInflatedMethod || TypeManager.IsGenericMethod (mb)) {
+				Type[] args = mb.GetGenericArguments ();
+				sig.Append ('<');
+				for (int i = 0; i < args.Length; i++) {
+					if (i > 0)
+						sig.Append (',');
+					sig.Append (args [i].Name);
+				}
+				sig.Append ('>');
+			}
+
 			sig.Append (parameters);
 		}
 
