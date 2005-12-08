@@ -1,3 +1,9 @@
+2005-12-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* filewatcher.c: try loading libgamin-1.so.0 before libfam, since at
+	least on SUSE 10 they are not the same (on debian, they are just the
+	same thing).
+
 2005-11-24  Dick Porter  <dick@ximian.com>
 
 	* process.c
