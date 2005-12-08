@@ -1,5 +1,14 @@
 2005-12-08  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlSchemaValidationException.cs :
+	  oops, there is SourceObject other than SourceSchemaObject.
+	* XmlSchemaCompilationSettings.cs : oops, actually XmlSchemaSet is
+	  also used in 1.x profile (internally)
+	* XmlSchemaSimpleTypeList.cs : added set_BaseItemType bogus (just to
+	  fill API compatibility).
+
+2005-12-08  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlSchemaCompilationSettings.cs : new file.
 	* XmlSchemaSet.cs : added CompilationSettings property.
 	* XmlSchemaComplexType.cs : support for EnableUpaCheck.

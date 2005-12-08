@@ -40,6 +40,8 @@ namespace System.Xml.Schema
 	[Serializable]
 	public class XmlSchemaValidationException : XmlSchemaException
 	{
+		object source_object;
+
 		protected XmlSchemaValidationException ()
 			: base ()
 		{
@@ -94,6 +96,11 @@ namespace System.Xml.Schema
 		// Never use it. It actually does nothing even on MS.NET 2.0.
 		protected internal void SetSourceObject (object o)
 		{
+			source_object = o;
+		}
+
+		public object SourceObject {
+			get { return source_object; }
 		}
 	}
 }

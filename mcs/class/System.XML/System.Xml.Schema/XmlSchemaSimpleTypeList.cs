@@ -72,6 +72,12 @@ namespace System.Xml.Schema
 		[XmlIgnore]
 		public XmlSchemaSimpleType BaseItemType {
 			get { return validatedListItemSchemaType; }
+			// LAMESPEC: Since it is "post compilation information"
+			// this setter should not exist. Here I just ignore
+			// to not break the whole API. If this setter means 
+			// something, then it means that MS implementation is
+			// buggy.
+			set { }
 		}
 #endif
 
