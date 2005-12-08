@@ -1,3 +1,8 @@
+2005-12-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XPathDocument2.cs, XPathDocument2Editable.cs,
+	  XPathDocument2Navigator.cs : garbage cleanup.
+
 2005-08-05  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Pattern.cs, IdPattern.cs, LocationPathPattern.cs, UnionPattern.cs :
