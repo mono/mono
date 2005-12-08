@@ -52,6 +52,7 @@ namespace System.Xml
 		private bool prohibitDtd;
 		private XmlNameTable nameTable;
 		private XmlSchemaSet schemas;
+		private bool schemasNeedsInitialization;
 		private XsValidationFlags validationFlags;
 		private ValidationType validationType;
 		private XmlResolver xmlResolver;
@@ -98,7 +99,8 @@ namespace System.Xml
 			lineNumberOffset = 0;
 			linePositionOffset = 0;
 			prohibitDtd = true;
-			schemas = new XmlSchemaSet ();
+			schemas = null;
+			schemasNeedsInitialization = true;
 			validationFlags =
 				XsValidationFlags.ProcessIdentityConstraints |
 				XsValidationFlags.AllowXmlAttributes;
@@ -160,8 +162,17 @@ namespace System.Xml
 		}
 
 		public XmlSchemaSet Schemas {
-			get { return schemas; }
-			set { schemas = value; }
+			get {
+				if (schemasNeedsInitialization) {
+					schemas = new XmlSchemaSet ();
+					schemasNeedsInitialization = false;
+				}
+				return schemas;
+			}
+			set {
+				schemas = value;
+				schemasNeedsInitialization = false;
+			}
 		}
 
 		internal void SetSchemas (XmlSchemaSet schemas)
