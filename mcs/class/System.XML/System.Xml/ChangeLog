@@ -1,5 +1,10 @@
 2005-12-08  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlTextReader.cs : avoid Char.IsSurrogate() and do it inside
+	  PeekChar(), which improves notable performance.
+
+2005-12-08  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlReaderSettings.cs : Schemas will be created only when it is
 	  required.
 

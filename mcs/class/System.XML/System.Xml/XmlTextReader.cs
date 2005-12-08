@@ -1110,7 +1110,7 @@ namespace System.Xml
 			char c = peekChars [peekCharsIndex];
 			if (c == 0)
 				return -1;
-			if (!char.IsSurrogate (c))
+			if (c < 0xD800 || 0xDFFF < c)
 				return c;
 			if (peekCharsLength == peekCharsIndex + 1) {
 				if (!ReadTextReader (c))
