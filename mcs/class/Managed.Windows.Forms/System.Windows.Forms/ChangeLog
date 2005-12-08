@@ -1,5 +1,10 @@
 2005-12-07  Peter Dennis Bartok  <pbartok@novell.com>
 
+	* Control.cs(WndProc): Apparently I'm suffering from brain cloud.
+	  Thanks to Mike for pointing out the err of my ways.
+
+2005-12-07  Peter Dennis Bartok  <pbartok@novell.com>
+
 	* Control.cs(PreProcessMessage): Moved menu handling back, but
 	  after all other key handling, to match MS (who handles Menu in
 	  DefWndProc)

@@ -3691,7 +3691,7 @@ namespace System.Windows.Forms
 						return;
 					}
 
-					if ((m.Msg == (int)Msg.WM_SYSKEYUP) && (m.WParam == (IntPtr)(Keys.Menu & Keys.KeyCode))) {
+					if ((m.Msg == (int)Msg.WM_SYSKEYUP) && ((m.WParam.ToInt32() & (int)Keys.KeyCode) == (int)Keys.Menu)) {
 						Form	form;
 
 						form = FindForm();
