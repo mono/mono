@@ -1,0 +1,3 @@
+IsMachineLevel: False
+settings[hithere] = Hello World!
+AppSettings[hithere] = Hello World!

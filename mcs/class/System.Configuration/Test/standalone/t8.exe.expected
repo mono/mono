@@ -1,0 +1,3 @@
+ConfigurationManager.AppSettings.Add resulted in exception
+AppSettings[hithere] = Hello World!
+settings[hithere] = Hello World!

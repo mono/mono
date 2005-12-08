@@ -1,0 +1,3 @@
+connectionstring[LocalSqlServer] = `',`data source=127.0.0.1; Integrated Security=SSPI'
+connectionstring[AccessFileName] = `',`~/Data/ASPNetDB.mdb'
+connectionstring[fromtest] = `',`connectionstringhere'
