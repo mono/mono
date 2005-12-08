@@ -1,3 +1,8 @@
+2005-12-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* cs-tokenizer.cs : missing Location (actually, filename) in one of
+	  CS1027 report.
+
 2005-12-05  Marek Safar  <marek.safar@seznam.cz>
 
 	* attribute.cs (GlobalAttribute.ctor): Pass NamespaceEntry only.

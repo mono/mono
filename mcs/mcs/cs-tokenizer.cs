@@ -2315,7 +2315,7 @@ namespace Mono.CSharp
 				if ((state & REGION) != 0)
 					Report.Error (1038, Location, "#endregion directive expected");
 				else 
-					Report.Error (1027, "Expected `#endif' directive");
+					Report.Error (1027, Location, "Expected `#endif' directive");
 			}
 				
 		}
