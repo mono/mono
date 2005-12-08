@@ -40,7 +40,15 @@ can be used to providethe location of the service.
 attribute specified in the WSDL document.
 .TP
 .I "-language:language", "-l"
-Language of the code to generate. It can be CS (default) or VB.
+Language of the code to generate. It can be CS for C# (default), Boo
+for Boo and VB for Visual.Basic.
+.TP
+Alternatively you can specify a full type name for a CodeProvider, for
+example, you could use this to generate code for the imaginary "MyLan"
+language which has the following full type:
+.nf
+	wsdl myservice.wsdl -language:MyLan.MyLanCodeProvider, MyLan.CodeDom, Version=1.0.0.0, Culture=neutral, PublicKeyToken=xxyy'
+.fi
 .TP
 .I "-namespace:name", "-n:name"
 The namespace of the generated classes. If none is specified, the default

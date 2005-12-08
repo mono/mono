@@ -1974,6 +1974,7 @@ get_methodspec (MonoImage *m, int idx, guint32 token, const char *fancy_name, Mo
 	int param_count, cconv, i, gen_count = 0;
 	MonoGenericContainer *container = NULL;
 	MonoGenericContext *parent_context = context;
+	MonoMethod *mh = NULL;
 
 	switch (token & MONO_METHODDEFORREF_MASK) {
 	case MONO_METHODDEFORREF_METHODDEF:
@@ -1995,8 +1996,9 @@ get_methodspec (MonoImage *m, int idx, guint32 token, const char *fancy_name, Mo
 	ptr = mono_metadata_blob_heap (m, sig);
 	mono_metadata_decode_value (ptr, &ptr);
 	
-	container = mono_metadata_load_generic_params (m, method_dor_to_token (token), context);
-	if (container)
+	mh = mono_get_method_full (m, method_dor_to_token (token), NULL, parent_context);
+	g_assert (mh);
+	if ((container = mh->generic_container))
 		context = (MonoGenericContext*) container;
 
 	if (*ptr & 0x20){
@@ -2375,6 +2377,9 @@ dis_get_custom_attrs (MonoImage *m, guint32 token)
 		break;
 	case MONO_TABLE_PARAM:
 		idx |= MONO_CUSTOM_ATTR_PARAMDEF;
+		break;
+	case MONO_TABLE_GENERICPARAM:
+		idx |= MONO_CUSTOM_ATTR_GENERICPAR;
 		break;
 	default:
 		g_print ("Missing custom attr get support for token 0x%08x\n", token);

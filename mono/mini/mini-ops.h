@@ -614,8 +614,8 @@ MINI_OP(OP_SPARC_COND_EXC_LEZ,     "sparc_cond_exc_lez", NONE, NONE, NONE)
 MINI_OP(OP_SPARC_COND_EXC_LTZ,     "sparc_cond_exc_ltz", NONE, NONE, NONE)
 MINI_OP(OP_SPARC_COND_EXC_NEZ,     "sparc_cond_exc_nez", NONE, NONE, NONE)
 
-
 MINI_OP(OP_S390_LOADARG,	   "s390_loadarg", NONE, NONE, NONE)
+MINI_OP(OP_S390_ARGREG, 	   "s390_argreg", NONE, NONE, NONE)
 MINI_OP(OP_S390_ARGPTR, 	   "s390_argptr", NONE, NONE, NONE)
 MINI_OP(OP_S390_STKARG, 	   "s390_stkarg", NONE, NONE, NONE)
 MINI_OP(OP_S390_MOVE,	 	   "s390_move", NONE, NONE, NONE)

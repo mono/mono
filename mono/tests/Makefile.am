@@ -17,7 +17,7 @@ MKBUNDLE = \
 	$(RUNTIME) $(mcs_topdir)/tools/mkbundle/mkbundle.exe
 
 CSC = $(RUNTIME) $(mcs_topdir)/class/lib/default/mcs.exe -unsafe -nowarn:0162 -nowarn:0168 -nowarn:0219
-ILASM = $(RUNTIME) $(mcs_topdir)/ilasm/ilasm.exe
+ILASM = $(RUNTIME) $(mcs_topdir)/class/lib/default/ilasm.exe
 
 BENCHSRC=fib.cs random.cs nested-loops.cs ackermann.cs tight-loop.cs sieve.cs
 
@@ -214,6 +214,11 @@ if X86
 PLATFORM_DISABLED_TESTS=finalizer-abort.exe finalizer-exception.exe finalizer-exit.exe
 endif
 
+if POWERPC
+# bug #71274
+PLATFORM_DISABLED_TESTS=finalizer-abort.exe finalizer-exception.exe finalizer-exit.exe
+endif
+
 DISABLED_TESTS=			\
 	delegate-async-exception.exe	\
 	delegate-delegate-exception.exe	\
@@ -251,7 +256,12 @@ EXTRA_DIST=test-driver $(TEST_CS_SRC) $(TEST_IL_SRC) $(BENCHSRC) $(STRESS_TESTS_
 %.exe: %.cs TestDriver.dll
 	$(CSC) -r:TestDriver.dll -out:$@ $<
 
+# mkbundle works on ppc, but the pkg-config POC doesn't when run with make test
+if POWERPC
+test:	testjit test-type-load
+else
 test:	testjit testbundle test-type-load
+endif
 
 TestDriver.dll:
 	$(CSC) -target:library -out:$@ $(srcdir)/../mini/TestDriver.cs

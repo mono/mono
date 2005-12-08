@@ -912,5 +912,34 @@ ncells ) {
 	{
 		return arg_only_written ("md.in", null);
 	}		
+
+	static long position = 0;
+
+	public static int test_4_static_inc_long () {
+
+		int count = 4;
+
+		position = 0;
+
+		position += count;
+
+		return (int)position;
+	}
+
+	struct FooStruct {
+
+		public FooStruct (long l) {
+		}
+	}
+
+	static int test_0_calls_opcode_emulation () {
+		// Test that emulated opcodes do not clobber arguments already in
+		// out registers
+		checked {
+			long val = 10000;
+			new FooStruct (val * 10000);
+		}
+		return 0;
+	}
 }
 

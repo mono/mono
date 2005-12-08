@@ -1,3 +1,77 @@
+2005-12-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* basic-long.cs: Remove a test moved to objects.cs.
+
+	* arrays.cs: Add more array tests.
+
+2005-12-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* arrays.cs: Add new tests for multi-dimensional arrays.
+
+2005-12-06  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile.am (test_sources2): Add generics.2.cs.
+	(EXTRA_DIST): Add test_sources2.
+
+2005-12-05  Ben Maurer  <bmaurer@ximian.com>
+
+	Support for boxing and unboxing nullable types as well as the
+	isinst operation on nullables, per the CLI ammendment.
+
+	* inssel.brg (CEE_ISINST): Special case for nullable
+
+	* mini.c (handle_unbox_nullable): new method
+	(handle_box): Special case for nullable types
+	(mono_method_to_ir): Call handle_unbox_nullable in correct
+	places.
+
+	* generics.2.cs: New test suite
+
+	* Makefile.am: Support for regression tests with generics.
+
+2005-12-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (emit_load_volatile_arguments): Add loading of arguments
+	allocated to registers. Fixes #76800.
+
+Thu Dec 1 12:59:40 EST 2005 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c, inssel-ppc.brg: fix ABI issue (pinvoke3.cs).
+
+2005-11-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* exceptions.cs: Disable test_0_long_cast () test, since it fails on a lot 
+	of platforms.
+
+2005-11-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* objects.cs basic-calls.cs: Move a test depending on valuetypes to
+	objects.cs.
+
+	* inssel-long32.brg (CEE_CONV_I8): Remove unused labels.
+	
+	* inssel-long32.brg (CEE_CONV_I8): Convert this to a branchless version.
+Tue Nov 29 05:41:34 EST 2005 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c, cpu-g4.md: ensure a fp register is converted to
+	single precision before storing to a single precision location.
+
+2005-11-28  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile.am (ILASM): Use profile-dependent location of ilasm.
+
+2005-11-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* basic-long.cs basic-calls.cs objects.cs: Move some tests to the
+	correct files.
+
+	* basic.cs: Remove test_0_byte_compares test which was moved to
+	objects.cs a long time ago.
+
+2005-11-22  Massimiliano Mantione  <massi@ximian.com>
+
+        * aliasing.c: Fixed aliasing issue on 64 bit archs.
+
 2005-11-20  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-ia64.c exceptions-ia64.c: Simplify the way filters/finally

@@ -1528,8 +1528,8 @@ ves_icall_get_event_info (MonoReflectionEvent *event, MonoEventInfo *info)
 
 	MONO_ARCH_SAVE_REGS;
 
-	info->declaring_type = mono_type_get_object (domain, &event->klass->byval_arg);
-	info->reflected_type = mono_type_get_object (domain, &event->event->parent->byval_arg);
+	info->reflected_type = mono_type_get_object (domain, &event->klass->byval_arg);
+	info->declaring_type = mono_type_get_object (domain, &event->event->parent->byval_arg);
 
 	info->name = mono_string_new (domain, event->event->name);
 	info->attrs = event->event->attrs;
@@ -1725,12 +1725,19 @@ ves_icall_MonoType_get_Assembly (MonoReflectionType *type)
 static MonoReflectionType*
 ves_icall_MonoType_get_DeclaringType (MonoReflectionType *type)
 {
-	MonoDomain *domain = mono_domain_get (); 
-	MonoClass *class = mono_class_from_mono_type (type->type);
+	MonoDomain *domain = mono_domain_get ();
+	MonoClass *class;
 
 	MONO_ARCH_SAVE_REGS;
 
-	return class->nested_in ? mono_type_get_object (domain, &class->nested_in->byval_arg) : NULL;
+	if (type->type->type == MONO_TYPE_VAR)
+		class = type->type->data.generic_param->owner->klass;
+	else if (type->type->type == MONO_TYPE_MVAR)
+		class = type->type->data.generic_param->method->klass;
+	else
+		class = mono_class_from_mono_type (type->type)->nested_in;
+
+	return class ? mono_type_get_object (domain, &class->byval_arg) : NULL;
 }
 
 static MonoReflectionType*
@@ -2297,10 +2304,11 @@ ves_icall_MonoType_get_DeclaringMethod (MonoReflectionType *type)
 
 	MONO_ARCH_SAVE_REGS;
 
-	method = type->type->data.generic_param->method;
-	if (!method)
+	if (type->type->type != MONO_TYPE_MVAR)
 		return NULL;
 
+	method = type->type->data.generic_param->method;
+	g_assert (method);
 	klass = mono_class_from_mono_type (type->type);
 	return mono_method_get_object (mono_object_domain (type), method, klass);
 }
@@ -2436,6 +2444,8 @@ ves_icall_MonoMethod_GetGenericArguments (MonoReflectionMethod *method)
 
 			for (i = 0; i < count; i++) {
 				MonoType *t = gmethod->inst->type_argv [i];
+				/* Ensure that our dummy null-owner types don't leak into userspace.  */
+				g_assert ((t->type != MONO_TYPE_VAR && t->type != MONO_TYPE_MVAR) || t->data.generic_param->owner);
 				mono_array_set (
 					res, gpointer, i, mono_type_get_object (domain, t));
 			}
@@ -2644,13 +2654,73 @@ ves_icall_InternalExecute (MonoReflectionMethod *method, MonoObject *this, MonoA
 	return result;
 }
 
+static guint64
+read_enum_value (char *mem, int type)
+{
+	switch (type) {
+	case MONO_TYPE_U1:
+		return *(guint8*)mem;
+	case MONO_TYPE_I1:
+		return *(gint8*)mem;
+	case MONO_TYPE_U2:
+		return *(guint16*)mem;
+	case MONO_TYPE_I2:
+		return *(gint16*)mem;
+	case MONO_TYPE_U4:
+		return *(guint32*)mem;
+	case MONO_TYPE_I4:
+		return *(gint32*)mem;
+	case MONO_TYPE_U8:
+		return *(guint64*)mem;
+	case MONO_TYPE_I8:
+		return *(gint64*)mem;
+	default:
+		g_assert_not_reached ();
+	}
+	return 0;
+}
+
+static void
+write_enum_value (char *mem, int type, guint64 value)
+{
+	switch (type) {
+	case MONO_TYPE_U1:
+	case MONO_TYPE_I1: {
+		guint8 *p = mem;
+		*p = value;
+		break;
+	}
+	case MONO_TYPE_U2:
+	case MONO_TYPE_I2: {
+		guint16 *p = (void*)mem;
+		*p = value;
+		break;
+	}
+	case MONO_TYPE_U4:
+	case MONO_TYPE_I4: {
+		guint32 *p = (void*)mem;
+		*p = value;
+		break;
+	}
+	case MONO_TYPE_U8:
+	case MONO_TYPE_I8: {
+		guint64 *p = (void*)mem;
+		*p = value;
+		break;
+	}
+	default:
+		g_assert_not_reached ();
+	}
+	return;
+}
+
 static MonoObject *
 ves_icall_System_Enum_ToObject (MonoReflectionType *type, MonoObject *obj)
 {
 	MonoDomain *domain; 
 	MonoClass *enumc, *objc;
-	gint32 s1, s2;
 	MonoObject *res;
+	guint64 val;
 	
 	MONO_ARCH_SAVE_REGS;
 
@@ -2664,19 +2734,11 @@ ves_icall_System_Enum_ToObject (MonoReflectionType *type, MonoObject *obj)
 	MONO_CHECK_ARG (obj, enumc->enumtype == TRUE);
 	MONO_CHECK_ARG (obj, (objc->enumtype) || (objc->byval_arg.type >= MONO_TYPE_I1 &&
 						  objc->byval_arg.type <= MONO_TYPE_U8));
-	
-	s1 = mono_class_value_size (enumc, NULL);
-	s2 = mono_class_value_size (objc, NULL);
 
 	res = mono_object_new (domain, enumc);
+	val = read_enum_value ((char *)obj + sizeof (MonoObject), objc->enumtype? objc->enum_basetype->type: objc->byval_arg.type);
+	write_enum_value ((char *)res + sizeof (MonoObject), enumc->enum_basetype->type, val);
 
-#if G_BYTE_ORDER == G_LITTLE_ENDIAN
-	memcpy ((char *)res + sizeof (MonoObject), (char *)obj + sizeof (MonoObject), MIN (s1, s2));
-#else
-	memcpy ((char *)res + sizeof (MonoObject) + (s1 > s2 ? s1 - s2 : 0),
-		(char *)obj + sizeof (MonoObject) + (s2 > s1 ? s2 - s1 : 0),
-		MIN (s1, s2));
-#endif
 	return res;
 }
 
@@ -3307,7 +3369,7 @@ handle_parent:
 		if (!match)
 			continue;
 		match = 0;
-		l = g_slist_prepend (l, mono_event_get_object (domain, klass, event));
+		l = g_slist_prepend (l, mono_event_get_object (domain, startklass, event));
 	}
 	if (!(bflags & BFLAGS_DeclaredOnly) && (klass = klass->parent))
 		goto handle_parent;
@@ -3414,10 +3476,12 @@ ves_icall_System_Reflection_Assembly_InternalGetType (MonoReflectionAssembly *as
 	gchar *str;
 	MonoType *type = NULL;
 	MonoTypeNameParse info;
-	gboolean type_resolve = FALSE;
+	gboolean type_resolve;
 
 	MONO_ARCH_SAVE_REGS;
 
+	/* On MS.NET, this does not fire a TypeResolve event */
+	type_resolve = TRUE;
 	str = mono_string_to_utf8 (name);
 	/*g_print ("requested type %s in %s\n", str, assembly->assembly->aname.name);*/
 	if (!mono_reflection_parse_type (str, &info)) {
@@ -6816,6 +6880,7 @@ static const IcallEntry interlocked_icalls [] = {
 	{"CompareExchange(single&,single,single)", ves_icall_System_Threading_Interlocked_CompareExchange_Single},
 	{"Decrement(int&)", ves_icall_System_Threading_Interlocked_Decrement_Int},
 	{"Decrement(long&)", ves_icall_System_Threading_Interlocked_Decrement_Long},
+	{"Exchange(T&,T)", ves_icall_System_Threading_Interlocked_Exchange_T},
 	{"Exchange(double&,double)", ves_icall_System_Threading_Interlocked_Exchange_Double},
 	{"Exchange(int&,int)", ves_icall_System_Threading_Interlocked_Exchange_Int},
 	{"Exchange(intptr&,intptr)", ves_icall_System_Threading_Interlocked_Exchange_Object},
@@ -6830,6 +6895,11 @@ static const IcallEntry interlocked_icalls [] = {
 static const IcallEntry mutex_icalls [] = {
 	{"CreateMutex_internal(bool,string,bool&)", ves_icall_System_Threading_Mutex_CreateMutex_internal},
 	{"ReleaseMutex_internal(intptr)", ves_icall_System_Threading_Mutex_ReleaseMutex_internal}
+};
+
+static const IcallEntry semaphore_icalls [] = {
+	{"CreateSemaphore_internal(int,int,string,bool&)", ves_icall_System_Threading_Semaphore_CreateSemaphore_internal},
+	{"ReleaseSemaphore_internal(intptr,int,bool&)", ves_icall_System_Threading_Semaphore_ReleaseSemaphore_internal}
 };
 
 static const IcallEntry nativeevents_icalls [] = {
@@ -7082,6 +7152,7 @@ static const IcallMap icall_entries [] = {
 	{"System.Threading.Monitor", monitor_icalls, G_N_ELEMENTS (monitor_icalls)},
 	{"System.Threading.Mutex", mutex_icalls, G_N_ELEMENTS (mutex_icalls)},
 	{"System.Threading.NativeEventCalls", nativeevents_icalls, G_N_ELEMENTS (nativeevents_icalls)},
+	{"System.Threading.Semaphore", semaphore_icalls, G_N_ELEMENTS (semaphore_icalls)},
 	{"System.Threading.Thread", thread_icalls, G_N_ELEMENTS (thread_icalls)},
 	{"System.Threading.ThreadPool", threadpool_icalls, G_N_ELEMENTS (threadpool_icalls)},
 	{"System.Threading.WaitHandle", waithandle_icalls, G_N_ELEMENTS (waithandle_icalls)},

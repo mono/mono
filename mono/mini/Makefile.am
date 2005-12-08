@@ -29,10 +29,16 @@ static_libs=	\
 	$(libgc_static_libs) \
 	$(ICU_LIBS)
 
-RUNTIME = MONO_PATH=$(mcs_topdir)/class/lib/default $(top_builddir)/runtime/mono-wrapper
+CLASS1=$(mcs_topdir)/class/lib/default
+CLASS2=$(mcs_topdir)/class/lib/net_2_0
 
-MCS = $(RUNTIME) $(mcs_topdir)/class/lib/default/mcs.exe -unsafe -nowarn:0162
-ILASM = $(RUNTIME) $(mcs_topdir)/ilasm/ilasm.exe
+RUNTIME = MONO_PATH=$(CLASS1) $(top_builddir)/runtime/mono-wrapper
+RUNTIME2 = MONO_PATH=$(CLASS2) $(top_builddir)/runtime/mono-wrapper
+
+MCS = $(RUNTIME) $(CLASS1)/mcs.exe -unsafe -nowarn:0162
+GMCS = $(RUNTIME2) $(CLASS2)/gmcs.exe -unsafe -nowarn:0162
+ILASM = $(RUNTIME) $(CLASS1)/ilasm.exe
+
 
 AM_CFLAGS = \
 	-I$(top_srcdir) 	\
@@ -150,6 +156,7 @@ s390_sources = \
 	mini-s390.c		\
 	mini-s390.h		\
 	exceptions-s390.c	\
+	mini-codegen.c		\
 	tramp-s390.c
 
 s390x_sources = \
@@ -214,8 +221,10 @@ test_sources = 		\
 	iltests.il		\
 	test.cs
 
-regtests=basic.exe arrays.exe basic-float.exe basic-math.exe basic-long.exe objects.exe basic-calls.exe iltests.exe exceptions.exe bench.exe
+test_sources2 = generics.2.cs
 
+regtests=basic.exe arrays.exe basic-float.exe basic-math.exe basic-long.exe objects.exe basic-calls.exe iltests.exe exceptions.exe bench.exe
+regtests2=generics.exe
 common_BURGSRC= $(srcdir)/inssel.brg $(srcdir)/inssel-float.brg
 
 if X86
@@ -310,14 +319,17 @@ libmono_la_LIBADD = \
 	$(libs) \
 	$(PLATFORM_LIB)
 
+%.exe: %.2.cs TestDriver.dll
+	$(GMCS) -out:$@ $< -r:TestDriver.dll 
+
 %.exe: %.cs TestDriver.dll
-	$(MCS) /out:$*.exe /unsafe $< /r:TestDriver.dll
+	$(MCS) -out:$@ -unsafe $< -r:TestDriver.dll
 
 %.exe: %.il
-	$(ILASM) /output=$*.exe $<
+	$(ILASM) -output=$@ $<
 
 TestDriver.dll: $(srcdir)/TestDriver.cs
-	$(MCS) /out:TestDriver.dll /target:library $(srcdir)/TestDriver.cs
+	$(MCS) -out:$@ -target:library $<
 
 if CROSS_COMPILING
 
@@ -353,10 +365,10 @@ cpu-sparc.h: cpu-sparc.md genmdesc$(EXEEXT)
 	./genmdesc $(srcdir)/cpu-sparc.md cpu-sparc.h sparc_desc
 
 cpu-s390.h: cpu-s390.md genmdesc$(EXEEXT)
-	./genmdesc $(srcdir)/cpu-s390.md cpu-s390.h s390
+	./genmdesc $(srcdir)/cpu-s390.md cpu-s390.h s390_cpu_desc
 
 cpu-s390x.h: cpu-s390x.md genmdesc$(EXEEXT)
-	./genmdesc $(srcdir)/cpu-s390x.md cpu-s390x.h s390x
+	./genmdesc $(srcdir)/cpu-s390x.md cpu-s390x.h s390x_cpu_desc
 
 cpu-ia64.h: cpu-ia64.md genmdesc$(EXEEXT)
 	./genmdesc $(srcdir)/cpu-ia64.md cpu-ia64.h ia64_desc
@@ -373,12 +385,18 @@ testi: mono test.exe
 checktests: $(regtests)
 	for i in $(regtests); do $(RUNTIME) $$i; done
 
-rcheck: mono $(regtests)
+checktests2: $(regtests2)
+	for i in $(regtests); do $(RUNTIME2) $$i; done
+
+rcheck: mono $(regtests) $(regtests2)
 	$(RUNTIME) --regression $(regtests)
+	$(RUNTIME2) --regression $(regtests2)
 
 aotcheck: mono $(regtests)
 	for i in $(regtests); do $(RUNTIME) --aot $$i; done
+	for i in $(regtests2); do $(RUNTIME2) --aot $$i; done
 	$(RUNTIME) --verbose --regression $(regtests)
+	$(RUNTIME2) --verbose --regression $(regtests2)
 	rm -f *.exe.so
 
 bench: mono test.exe
@@ -414,7 +432,8 @@ BUILT_SOURCES= inssel.c inssel.h $(arch_built)
 endif
 
 CLEANFILES= $(BUILT_SOURCES) *.exe *.dll
-EXTRA_DIST = $(common_BURGSRC) cprop.c TestDriver.cs ldscript ldscript.mono $(test_sources) \
+EXTRA_DIST = $(common_BURGSRC) cprop.c TestDriver.cs ldscript ldscript.mono
+	$(test_sources) $(test_sources2) \
 	inssel-long.brg inssel-long32.brg \
 	$(x86_sources) inssel-x86.brg cpu-pentium.md \
 	$(amd64_sources) inssel-amd64.brg cpu-amd64.md \

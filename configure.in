@@ -202,7 +202,7 @@ case "$host" in
 		;;
 	*-*-darwin*)
 		platform_win32=no
-		CPPFLAGS="$CPPFLAGS -no-cpp-precomp -D_THREAD_SAFE -DGC_MACOSX_THREADS"
+		CPPFLAGS="$CPPFLAGS -no-cpp-precomp -D_THREAD_SAFE -DGC_MACOSX_THREADS -DPLATFORM_MACOSX"
 		libmono_cflags="-D_THREAD_SAFE"
 		LDFLAGS="$LDFLAGS -pthread"
 		libmono_ldflags="-pthread"
@@ -1186,6 +1186,13 @@ if test x$platform_win32 = xno; then
 	dnl **********************************
 	dnl *** Checks for MonoPosixHelper ***
 	dnl **********************************
+	AC_CHECK_FUNC(setkey, ,
+		AC_CHECK_LIB(crypt, setkey, [ 
+			AC_DEFINE(HAVE_SETKEY, 1, [Define if setkey(3) is available]) 
+			CRYPT_LIBS="-lcrypt" 
+		])
+	)
+	AC_SUBST(CRYPT_LIBS)
 	AC_CHECK_HEADERS(checklist.h)
 	AC_CHECK_HEADERS(fstab.h)
 	AC_CHECK_HEADERS(attr/xattr.h)
@@ -1237,6 +1244,10 @@ if test x$platform_win32 = xno; then
 	 #endif
 	])
 	AC_CHECK_HEADERS([termios.h])
+
+	dnl * This is provided in io-layer, but on windows it's only available
+	dnl * on xp+
+	AC_DEFINE(HAVE_GETPROCESSID, 1, [Define if GetProcessId is available])
 else
 	jdk_headers_found=no
 	AC_CHECK_LIB(ws2_32, main, LIBS="$LIBS -lws2_32", AC_ERROR(bad mingw install?))
@@ -1270,6 +1281,7 @@ else
 			AC_MSG_RESULT(no)
 		])
 	])
+	AC_CHECK_FUNCS(GetProcessId)
 fi
 
 dnl socklen_t check

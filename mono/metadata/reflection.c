@@ -879,8 +879,8 @@ method_encode_code (MonoDynamicImage *assembly, ReflectionMethodBuilder *mb)
 	gint maybe_small;
 	guint32 fat_flags;
 	char fat_header [12];
-	guint32 *intp;
-	guint16 *shortp;
+	guint32 int_value;
+	guint16 short_value;
 	guint32 local_sig = 0;
 	guint32 header_size = 12;
 	MonoArray *code;
@@ -946,12 +946,12 @@ fat_header:
 		fat_flags |= METHOD_HEADER_INIT_LOCALS;
 	fat_header [0] = fat_flags;
 	fat_header [1] = (header_size / 4 ) << 4;
-	shortp = (guint16*)(fat_header + 2);
-	*shortp = GUINT16_TO_LE (max_stack);
-	intp = (guint32*)(fat_header + 4);
-	*intp = GUINT32_TO_LE (code_size);
-	intp = (guint32*)(fat_header + 8);
-	*intp = GUINT32_TO_LE (local_sig);
+	short_value = GUINT16_TO_LE (max_stack);
+	memcpy (fat_header + 2, &short_value, 2);
+	int_value = GUINT32_TO_LE (code_size);
+	memcpy (fat_header + 4, &int_value, 4);
+	int_value = GUINT32_TO_LE (local_sig);
+	memcpy (fat_header + 8, &int_value, 4);
 	idx = mono_image_add_stream_data (&assembly->code, fat_header, 12);
 	/* add to the fixup todo list */
 	if (mb->ilgen && mb->ilgen->num_token_fixups)
@@ -1536,6 +1536,12 @@ encode_constant (MonoDynamicImage *assembly, MonoObject *val, guint32 *ret_type)
 	char *p, *box_val;
 	char* buf;
 	guint32 idx = 0, len = 0, dummy = 0;
+#ifdef ARM_FPU_FPA
+#if G_BYTE_ORDER == G_LITTLE_ENDIAN
+	guint32 fpa_double [2];
+	guint32 *fpa_p;
+#endif
+#endif
 	
 	p = buf = g_malloc (64);
 	if (!val) {
@@ -1565,8 +1571,18 @@ handle_enum:
 		break;
 	case MONO_TYPE_U8:
 	case MONO_TYPE_I8:
+		len = 8;
+		break;
 	case MONO_TYPE_R8:
 		len = 8;
+#ifdef ARM_FPU_FPA
+#if G_BYTE_ORDER == G_LITTLE_ENDIAN
+		fpa_p = (guint32*)box_val;
+		fpa_double [0] = fpa_p [1];
+		fpa_double [1] = fpa_p [0];
+		box_val = (char*)fpa_double;
+#endif
+#endif
 		break;
 	case MONO_TYPE_VALUETYPE:
 		if (val->vtable->klass->enumtype) {
@@ -1933,63 +1949,6 @@ mono_image_get_event_info (MonoReflectionEventBuilder *eb, MonoDynamicImage *ass
 }
 
 static void
-encode_new_constraint (MonoDynamicImage *assembly, guint32 owner)
-{
-	static MonoClass *NewConstraintAttr;
-	static MonoMethod *NewConstraintAttr_ctor;
-	MonoDynamicTable *table;
-	guint32 *values;
-	guint32 token, type;
-	char blob_size [4] = { 0x01, 0x00, 0x00, 0x00 };
-	char *buf, *p;
-
-	if (!NewConstraintAttr)
-		NewConstraintAttr = mono_class_from_name ( mono_defaults.corlib, 
-			"System.Runtime.CompilerServices", "NewConstraintAttribute");
-	g_assert (NewConstraintAttr);
-
-	if (!NewConstraintAttr_ctor) {
-		NewConstraintAttr_ctor = mono_class_get_method_from_name (NewConstraintAttr, ".ctor", -1);
-		g_assert (NewConstraintAttr_ctor);
-	}
-
-	table = &assembly->tables [MONO_TABLE_CUSTOMATTRIBUTE];
-	table->rows += 1;
-	alloc_table (table, table->rows);
-
-	values = table->values + table->next_idx * MONO_CUSTOM_ATTR_SIZE;
-	owner <<= MONO_CUSTOM_ATTR_BITS;
-	owner |= MONO_CUSTOM_ATTR_GENERICPAR;
-	values [MONO_CUSTOM_ATTR_PARENT] = owner;
-
-	token = mono_image_get_methodref_token (assembly, NewConstraintAttr_ctor);
-
-	type = mono_metadata_token_index (token);
-	type <<= MONO_CUSTOM_ATTR_TYPE_BITS;
-	switch (mono_metadata_token_table (token)) {
-	case MONO_TABLE_METHOD:
-		type |= MONO_CUSTOM_ATTR_TYPE_METHODDEF;
-		break;
-	case MONO_TABLE_MEMBERREF:
-		type |= MONO_CUSTOM_ATTR_TYPE_MEMBERREF;
-		break;
-	default:
-		g_warning ("got wrong token in custom attr");
-		return;
-	}
-	values [MONO_CUSTOM_ATTR_TYPE] = type;
-
-	buf = p = g_malloc (1);
-	mono_metadata_encode_value (4, p, &p);
-	g_assert (p-buf == 1);
-
-	values [MONO_CUSTOM_ATTR_VALUE] = add_to_blob_cached (assembly, buf, 1, blob_size, 4);
-
-	values += MONO_CUSTOM_ATTR_SIZE;
-	++table->next_idx;
-}
-
-static void
 encode_constraints (MonoReflectionGenericParam *gparam, guint32 owner, MonoDynamicImage *assembly)
 {
 	MonoDynamicTable *table;
@@ -2025,9 +1984,6 @@ encode_constraints (MonoReflectionGenericParam *gparam, guint32 owner, MonoDynam
 		values [MONO_GENPARCONSTRAINT_CONSTRAINT] = mono_image_typedef_or_ref (
 			assembly, constraint->type);
 	}
-
-	if (gparam->attrs &  GENERIC_PARAMETER_ATTRIBUTE_CONSTRUCTOR_CONSTRAINT)
-		encode_new_constraint (assembly, owner);
 }
 
 static void
@@ -2067,6 +2023,8 @@ write_generic_param_entry (MonoDynamicImage *assembly, GenericParamTableEntry *e
 	values [MONO_GENERICPARAM_FLAGS] = entry->gparam->attrs;
 	values [MONO_GENERICPARAM_NUMBER] = param->num;
 	values [MONO_GENERICPARAM_NAME] = string_heap_insert (&assembly->sheap, param->name);
+
+	mono_image_add_cattrs (assembly, table_idx, MONO_CUSTOM_ATTR_GENERICPAR, entry->gparam->cattrs);
 
 	encode_constraints (entry->gparam, table_idx, assembly);
 }
@@ -3792,7 +3750,7 @@ load_public_key (MonoArray *pkey, MonoDynamicImage *assembly) {
 		assembly->strong_name_size = len - MONO_PUBLIC_KEY_HEADER_LENGTH;
 	} else {
 		/* FIXME - verifier */
-		g_warning ("Invalid public key length: %d bits (total: %d)", MONO_PUBLIC_KEY_BIT_SIZE (len), len);
+		g_warning ("Invalid public key length: %d bits (total: %d)", (int)MONO_PUBLIC_KEY_BIT_SIZE (len), (int)len);
 		assembly->strong_name_size = MONO_DEFAULT_PUBLIC_KEY_LENGTH; /* to be safe */
 	}
 	assembly->strong_name = g_malloc0 (assembly->strong_name_size);

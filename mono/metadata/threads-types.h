@@ -50,6 +50,8 @@ extern void ves_icall_System_Threading_Thread_SetCachedCurrentUICulture (MonoThr
 void ves_icall_System_Threading_Thread_SetSerializedCurrentUICulture (MonoThread *this_obj, MonoArray *arr);
 extern HANDLE ves_icall_System_Threading_Mutex_CreateMutex_internal(MonoBoolean owned, MonoString *name, MonoBoolean *created);
 extern void ves_icall_System_Threading_Mutex_ReleaseMutex_internal (HANDLE handle );
+extern HANDLE ves_icall_System_Threading_Semaphore_CreateSemaphore_internal (gint32 initialCount, gint32 maximumCount, MonoString *name, MonoBoolean *created);
+extern gint32 ves_icall_System_Threading_Semaphore_ReleaseSemaphore_internal (HANDLE handle, gint32 releaseCount, MonoBoolean *fail);
 extern HANDLE ves_icall_System_Threading_Events_CreateEvent_internal (MonoBoolean manual, MonoBoolean initial, MonoString *name);
 extern gboolean ves_icall_System_Threading_Events_SetEvent_internal (HANDLE handle);
 extern gboolean ves_icall_System_Threading_Events_ResetEvent_internal (HANDLE handle);
@@ -75,7 +77,8 @@ extern gint64 ves_icall_System_Threading_Interlocked_CompareExchange_Long(gint64
 extern MonoObject *ves_icall_System_Threading_Interlocked_CompareExchange_Object(MonoObject **location, MonoObject *value, MonoObject *comparand);
 extern gfloat ves_icall_System_Threading_Interlocked_CompareExchange_Single(gfloat *location, gfloat value, gfloat comparand);
 extern gdouble ves_icall_System_Threading_Interlocked_CompareExchange_Double(gdouble *location, gdouble value, gdouble comparand);
-extern gpointer ves_icall_System_Threading_Interlocked_CompareExchange_T(gpointer *location, gpointer value, gpointer comparand);
+extern MonoObject* ves_icall_System_Threading_Interlocked_CompareExchange_T(MonoObject **location, MonoObject *value, MonoObject *comparand);
+extern MonoObject* ves_icall_System_Threading_Interlocked_Exchange_T(MonoObject **location, MonoObject *value);
 
 extern gint32 ves_icall_System_Threading_Interlocked_Add_Int(gint32 *location, gint32 value);
 extern gint64 ves_icall_System_Threading_Interlocked_Add_Long(gint64 *location, gint64 value);

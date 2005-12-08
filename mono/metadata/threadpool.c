@@ -354,7 +354,7 @@ mark_bad_fds (mono_pollfd *pfds, int nfds)
 		if (pfd->fd == -1)
 			continue;
 
-		ret = mono_poll (pfds, 1, 0);
+		ret = mono_poll (pfd, 1, 0);
 		if (ret == -1 && errno == EBADF) {
 			pfd->revents |= MONO_POLLNVAL;
 			count++;
@@ -778,6 +778,13 @@ socket_io_add_poll (MonoSocketAsyncResult *state)
 	}
 
 	events = get_events_from_list (list);
+#ifdef PLATFORM_MACOSX
+	/* select() for connect() does not work well on the Mac. Bug #75436. */
+	if (state->operation == AIO_OP_CONNECT && state->blocking == TRUE) {
+		start_io_thread_or_queue (state);
+		return;
+	}
+#endif
 	INIT_POLLFD (data->newpfd, GPOINTER_TO_INT (state->handle), events);
 	g_hash_table_replace (data->sock_to_state, GINT_TO_POINTER (state->handle), list);
 	LeaveCriticalSection (&data->io_lock);

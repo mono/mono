@@ -2776,6 +2776,10 @@ handle_box (MonoCompile *cfg, MonoInst *val, const guchar *ip, MonoClass *klass)
 {
 	MonoInst *alloc, *dest, *vstore;
 
+	if (mono_class_is_nullable (klass)) {
+		NOT_IMPLEMENTED;
+	}
+
 	alloc = handle_alloc (cfg, klass, TRUE, ip);
 
 	NEW_STORE_MEMBASE (cfg, vstore, mono_type_to_store_membase (&klass->byval_arg), alloc->dreg, sizeof (MonoObject), val->dreg);
@@ -6268,6 +6272,10 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				break;
 			}
 
+			if (mono_class_is_nullable (klass)) {
+				NOT_IMPLEMENTED;
+			}
+
 			MONO_INST_NEW (cfg, ins, OP_UNBOXCAST);
 			ins->type = STACK_OBJ;
 			ins->inst_left = *sp;
@@ -6344,6 +6352,10 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			klass = mini_get_class (method, token, generic_context);
 			if (!klass)
 				goto load_error;
+
+			if (mono_class_is_nullable (klass)) {
+				NOT_IMPLEMENTED;
+			}
 
 			/* Needed by the code generated in inssel.brg */
 			mono_get_got_var (cfg);

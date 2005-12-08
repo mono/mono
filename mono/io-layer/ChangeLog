@@ -1,3 +1,14 @@
+2005-12-06  Dick Porter  <dick@ximian.com>
+
+	* wapi-private.h: 
+	* handles.c: 
+	* semaphore-private.h: 
+	* semaphores.c: Implement named semaphores
+
+2005-11-24  Dick Porter  <dick@ximian.com>
+
+	* processes.c (GetProcessId): Implement GetProcessId()
+
 2005-11-17  Dick Porter  <dick@ximian.com>
 
 	* processes.h: 

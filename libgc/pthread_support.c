@@ -1285,7 +1285,9 @@ int GC_thread_register_foreign (void *base_addr)
     struct start_info si = { 0, }; /* stacked for legibility & locking */
     GC_thread me;
 
-    GC_printf1( "GC_thread_register_foreign %p\n", &si );
+#   ifdef DEBUG_THREADS
+        GC_printf1( "GC_thread_register_foreign %p\n", &si );
+#   endif
 
     si.flags = FOREIGN_THREAD;
 
