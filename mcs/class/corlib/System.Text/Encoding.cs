@@ -225,21 +225,60 @@ public abstract class Encoding
 	public virtual int GetBytes (String s, int charIndex, int charCount,
 								byte[] bytes, int byteIndex)
 	{
-		if (s == null) {
+		if (s == null)
 			throw new ArgumentNullException ("s");
+#if NET_2_0
+		if (charIndex < 0 || charIndex > s.Length)
+			throw new ArgumentOutOfRangeException ("charIndex", _("ArgRange_Array"));
+		if (charCount < 0 || charIndex + charCount > s.Length)
+			throw new ArgumentOutOfRangeException ("charCount", _("ArgRange_Array"));
+		if (byteIndex < 0 || byteIndex > bytes.Length)
+			throw new ArgumentOutOfRangeException ("byteIndex", _("ArgRange_Array"));
+
+		if (charCount == 0 || bytes.Length == byteIndex)
+			return 0;
+		unsafe {
+			fixed (char* cptr = s) {
+				fixed (byte* bptr = bytes) {
+					return GetBytes (cptr + charIndex,
+						charCount,
+						bptr + byteIndex,
+						bytes.Length - byteIndex);
+				}
+			}
 		}
+#else
 		return GetBytes (s.ToCharArray(), charIndex, charCount, bytes, byteIndex);
+#endif
 	}
 	public virtual byte[] GetBytes (String s)
 	{
-		if (s == null) {
+		if (s == null)
 			throw new ArgumentNullException ("s");
+
+#if NET_2_0
+		if (s.Length == 0)
+			return new byte [0];
+		int byteCount = GetByteCount (s);
+		if (byteCount == 0)
+			return new byte [0];
+		unsafe {
+			fixed (char* cptr = s) {
+				byte [] bytes = new byte [byteCount];
+				fixed (byte* bptr = bytes) {
+					GetBytes (cptr, s.Length,
+						bptr, byteCount);
+					return bytes;
+				}
+			}
 		}
+#else
 		char[] chars = s.ToCharArray ();
 		int numBytes = GetByteCount (chars, 0, chars.Length);
 		byte[] bytes = new byte [numBytes];
 		GetBytes (chars, 0, chars.Length, bytes, 0);
 		return bytes;
+#endif
 	}
 	public virtual byte[] GetBytes (char[] chars, int index, int count)
 	{

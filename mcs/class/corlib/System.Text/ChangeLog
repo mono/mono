@@ -1,3 +1,10 @@
+2005-12-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Encoding.cs : now under 2.0 GetBytes(string,...) dispatches to
+	  byte*-based GetBytes().
+	* UTF8Encoding.cs : avoid extraneous DecoderFallbackBuffer creation
+	  which came to happen after introducing fallback buffer.
+
 2005-11-28  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Encoding.cs, ASCIIEncoding.cs, Latin1Encoding.cs :
