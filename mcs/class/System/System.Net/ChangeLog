@@ -1,3 +1,8 @@
+2005-12-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpWebResponse.cs: don't loop forever when no name or value between
+	semicolons. Fixes bug #76943.
+
 2005-12-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpWebResponse.cs: don't fail if the cookie ends with a 'name'

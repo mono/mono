@@ -455,9 +455,10 @@ namespace System.Net
 			if (pos < header.Length && header [pos] == '=') {
 				pos++;
 				val = GetCookieValue ();
-				if (pos < length && header [pos] == ';')
-					pos++;
 			}
+
+			if (pos < length && header [pos] == ';')
+				pos++;
 
 			return true;
 		}
