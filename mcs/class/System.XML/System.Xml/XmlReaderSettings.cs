@@ -158,12 +158,9 @@ namespace System.Xml
 			set { nameTable = value; }
 		}
 
-		// LAMESPEC: Apparently, this property should not have a setter.
 		public XmlSchemaSet Schemas {
 			get { return schemas; }
-			set {
-				throw new XmlException ("XmlReaderSettings.Schemas is read-only and cannot be set.");
-			}
+			set { schemas = value; }
 		}
 
 		internal void SetSchemas (XmlSchemaSet schemas)

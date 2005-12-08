@@ -1,5 +1,12 @@
 2005-12-08  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlReaderSettings.cs :
+	  set_Schemas() is fixed in 2.0 RTM (it just works).
+	* XmlResolver.cs : throw ArgumentNullException instead of
+	  ArgumentException when both base and relative urls are null.
+
+2005-12-08  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlReaderSettings.cs : ProhibitDtd is set as default.
 	* XmlWriterSettings.cs : no set_OutputMethod.
 

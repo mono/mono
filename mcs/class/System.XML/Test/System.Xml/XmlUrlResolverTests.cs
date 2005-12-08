@@ -56,7 +56,10 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
+#if !NET_2_0
+		[Category ("NotDotNet")] // It should throw ArgumentNullException.
+#endif
+		[ExpectedException (typeof (ArgumentNullException))]
 		public void ResolveUriWithNullArgs ()
 		{
 			resolver.ResolveUri (null, null);

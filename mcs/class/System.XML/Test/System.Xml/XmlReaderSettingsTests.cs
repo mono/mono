@@ -56,11 +56,17 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-		[ExpectedException (typeof (XmlException))]
 		public void SetSchemas ()
 		{
 			XmlReaderSettings s = new XmlReaderSettings ();
 			s.Schemas = new XmlSchemaSet ();
+		}
+
+		[Test]
+		public void SetSchemasNull ()
+		{
+			XmlReaderSettings s = new XmlReaderSettings ();
+			s.Schemas = null;
 		}
 
 		[Test]
