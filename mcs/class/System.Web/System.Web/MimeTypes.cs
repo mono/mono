@@ -185,6 +185,7 @@ namespace System.Web
                 	mimeTypes.Add ("jfif-tbnl", "image/jpeg");
                 	mimeTypes.Add ("jpe", "image/jpeg");
                 	mimeTypes.Add ("jpeg", "image/jpeg");
+                	mimeTypes.Add ("jpg", "image/jpeg");
                 	mimeTypes.Add ("jps", "image/x-jps");
                 	mimeTypes.Add ("js", "application/x-javascript");
                 	mimeTypes.Add ("jut", "image/jutvision");

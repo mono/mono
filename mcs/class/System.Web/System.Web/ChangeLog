@@ -1,3 +1,7 @@
+2005-12-08 Robert Jordan  <robertj@gmx.net> 
+
+	* MimeTypes.cs: added entry for "jpg".
+
 2005-12-07 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpRequest.cs: only read up to content-length when provided. Patch
