@@ -1465,6 +1465,62 @@ namespace MonoTests.System.Xml
 			XmlReader xr = XmlReader.Create ("Test/XmlFiles/nested-dtd-test.xml");
 			xr.Read ();
 		}
+
+		[Test]
+		public void ReadToDescendant ()
+		{
+			string xml = @"<root><foo/><bar/><foo> test text <bar><bar></bar></bar></foo></root>";
+			RunTest (xml, new TestMethod (ReadToDescendant));
+		}
+
+		public void ReadToDescendant (XmlReader xmlReader)
+		{
+			// move to first <bar/>
+			Assert ("#1", xmlReader.ReadToDescendant ("bar"));
+			// no children in <bar/>. It is empty.
+			Assert ("#2", !xmlReader.ReadToDescendant ("bar"));
+			AssertEquals ("#2-2", "bar", xmlReader.Name);
+
+			// move to the second <foo>
+			xmlReader.Read ();
+			// move to the second <bar>
+			Assert ("#3", xmlReader.ReadToDescendant ("bar"));
+			// move to <bar> inside <bar>...</bar>
+			Assert ("#4", xmlReader.ReadToDescendant ("bar"));
+			// the next is EndElement of </bar>, so no move.
+			Assert ("#5", !xmlReader.ReadToDescendant ("bar"));
+			AssertEquals ("#5-2", XmlNodeType.EndElement, xmlReader.NodeType);
+		}
+
+		[Test]
+		public void ReadToDescepdant2 ()
+		{
+			string xml = "<root/>";
+			RunTest (xml, new TestMethod (ReadToDescendant2));
+		}
+
+		public void ReadToDescendant2 (XmlReader xmlReader)
+		{
+			// make sure that it works when the reader is at Initial state.
+			Assert (xmlReader.ReadToDescendant ("root"));
+		}
+
+		[Test]
+		public void ReadToFollowing ()
+		{
+			string xml = @"<root><foo/><bar/><foo><bar><bar></bar></bar></foo></root>";
+			RunTest (xml, new TestMethod (ReadToFollowing));
+		}
+
+		public void ReadToFollowing (XmlReader xmlReader)
+		{
+			Assert ("#1", xmlReader.ReadToFollowing ("bar"));
+			Assert ("#2", xmlReader.ReadToFollowing ("bar"));
+			AssertEquals ("#2-2", 2, xmlReader.Depth);
+			Assert ("#3", xmlReader.ReadToFollowing ("bar"));
+			AssertEquals ("#3-2", 3, xmlReader.Depth);
+			Assert ("#4", !xmlReader.ReadToFollowing ("bar"));
+		}
 #endif
 	}
 }

@@ -1,5 +1,10 @@
 2005-12-09  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlReaderCommonTests.cs : added tests for ReadToDescendant() and
+	  ReadToFollowing().
+
+2005-12-09  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlReaderSettingsTests.cs : added some ConformanceLevel tests.
 	  Added CreateClonesSettings() to make sure XmlReader.Create() clones
 	  XmlReaderSettings.

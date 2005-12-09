@@ -1,5 +1,10 @@
 2005-12-09  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlReader.cs : ReadToDescendant() should work when its ReadState is
+	  Initial.
+
+2005-12-09  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlChar.cs : removed incorrect comment.
 	* XmlReader.cs : Create() clones XmlReaderSettings (if supplied).
 	  For wrapped XmlReader, check ConformanceLevel to be consistent.

@@ -813,9 +813,13 @@ namespace System.Xml
 			get { return typeof (string); }
 		}
 
-		[MonoTODO]
 		public virtual bool ReadToDescendant (string name)
 		{
+			if (ReadState == ReadState.Initial) {
+				MoveToContent ();
+				if (IsStartElement (name))
+					return true;
+			}
 			if (NodeType != XmlNodeType.Element || IsEmptyElement)
 				return false;
 			int depth = Depth;
@@ -825,9 +829,13 @@ namespace System.Xml
 			return false;
 		}
 
-		[MonoTODO]
 		public virtual bool ReadToDescendant (string localName, string namespaceURI)
 		{
+			if (ReadState == ReadState.Initial) {
+				MoveToContent ();
+				if (IsStartElement (localName, namespaceURI))
+					return true;
+			}
 			if (NodeType != XmlNodeType.Element || IsEmptyElement)
 				return false;
 			int depth = Depth;
@@ -837,7 +845,6 @@ namespace System.Xml
 			return false;
 		}
 
-		[MonoTODO]
 		public virtual bool ReadToFollowing (string name)
 		{
 			while (Read ())
@@ -846,7 +853,6 @@ namespace System.Xml
 			return false;
 		}
 
-		[MonoTODO]
 		public virtual bool ReadToFollowing (string localName, string namespaceURI)
 		{
 			while (Read ())
