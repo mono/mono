@@ -13,7 +13,6 @@ using System.Text;
 using System.Collections;
 using System.Security;
 
-
 namespace Mono.ILASM {
 
         public class MethodDef : ICustomAttrTarget, IDeclSecurityTarget {
@@ -58,7 +57,7 @@ namespace Mono.ILASM {
                 public MethodDef (CodeGen codegen, PEAPI.MethAttr meth_attr,
 				  PEAPI.CallConv call_conv, PEAPI.ImplAttr impl_attr,
 				  string name, ITypeRef ret_type, ArrayList param_list,
-				  Location start)
+				  Location start, ArrayList typars_list)
                 {
                         this.meth_attr = meth_attr;
                         this.call_conv = call_conv;
@@ -82,6 +81,7 @@ namespace Mono.ILASM {
 
                         is_defined = false;
                         is_resolved = false;
+			AddGenericParams (typars_list);
                         CreateSignature ();
 
 			codegen.BeginMethodDef (this);
@@ -152,17 +152,36 @@ namespace Mono.ILASM {
                         pinvoke_info = true;
                 }
 
-                public void AddGenericParam (string id)
+                internal void AddGenericParams (ArrayList typars_list)
                 {
-                        if (typar_list == null)
-                                typar_list = new ArrayList ();
+                        if (typars_list == null)
+                                return;
 
-                        GenericInfo gi = new GenericInfo ();
-                        gi.Id = id;
-                        gi.num = typar_list.Count;
+			typar_list = new ArrayList ();
+			foreach (string id in typars_list) {
+				GenericInfo gi = new GenericInfo ();
+				gi.Id = id;
+				gi.num = typar_list.Count;
 
-                        typar_list.Add (gi);
+				typar_list.Add (gi);
+			}
                 }
+		
+		public int GenParamCount {
+			get { return typar_list.Count; }
+		}
+
+		public int GetGenericParamNum (string id)
+		{
+			if (typar_list == null)
+				//FIXME: Report error
+				throw new Exception (String.Format ("Invalid method type parameter '{0}'", id));
+
+			foreach (GenericInfo gi in typar_list)
+				if (gi.Id == id)
+					return gi.num;
+			return -1;
+		}
 
                 public void AddGenericConstraint (int index, ITypeRef constraint)
                 {
@@ -281,6 +300,39 @@ namespace Mono.ILASM {
                 public void SetMaxStack (int max_stack)
                 {
                         this.max_stack = max_stack;
+                }
+
+		public void ResolveGenParam (PEAPI.GenParam gpar, TypeDef type_def)
+		{
+			if (gpar.Index != -1)
+				return;
+	
+			if (gpar.Type == PEAPI.GenParamType.MVar)
+				gpar.Index = GetGenericParamNum (gpar.Name); 
+			else
+				gpar.Index = type_def.GetGenericParamNum (gpar.Name);
+
+			if (gpar.Index < 0)
+				/* TODO: Report error */
+				throw new Exception (String.Format ("Invalid {0}type parameter '{1}'", 
+							(gpar.Type == PEAPI.GenParamType.MVar ? "method " : ""),
+							 gpar.Name));
+		}
+
+                public void ResolveGenParams (TypeDef type_def)
+                {
+			GenericTypeRef gtr = ret_type as GenericTypeRef;
+			if (gtr != null)
+				ResolveGenParam ((PEAPI.GenParam) gtr.PeapiType, type_def);
+
+			if (param_list == null)
+				return;
+
+			foreach (ParamDef param in param_list) {
+				gtr = param.Type as GenericTypeRef;
+				if (gtr != null)
+					ResolveGenParam ((PEAPI.GenParam) gtr.PeapiType, type_def);
+			}
                 }
 
                 public PEAPI.MethodDef Resolve (CodeGen code_gen)
@@ -591,10 +643,10 @@ namespace Mono.ILASM {
                         if (IsVararg)
                                 signature = CreateVarargSignature (RetType, name, param_list);
                         else
-                                signature = CreateSignature (RetType, name, param_list);
+                                signature = CreateSignature (RetType, name, param_list, (typar_list != null ? typar_list.Count : 0));
                 }
 
-                public static string CreateSignature (ITypeRef RetType, string name, IList param_list)
+                public static string CreateSignature (ITypeRef RetType, string name, IList param_list, int gen_param_count)
                 {
                         StringBuilder builder = new StringBuilder ();
 
@@ -613,6 +665,7 @@ namespace Mono.ILASM {
                                 }
                         }
                         builder.Append (')');
+			builder.AppendFormat ("`{0}", gen_param_count);
 
                         return builder.ToString ();
                 }
@@ -685,7 +738,7 @@ namespace Mono.ILASM {
                         return builder.ToString ();
                 }
 
-                public static string CreateSignature (ITypeRef RetType, string name, ITypeRef[] param_list)
+                public static string CreateSignature (ITypeRef RetType, string name, ITypeRef[] param_list, int gen_param_count)
                 {
                         StringBuilder builder = new StringBuilder ();
 
@@ -706,6 +759,7 @@ namespace Mono.ILASM {
                                 }
                         }
                         builder.Append (')');
+			builder.AppendFormat ("`{0}", gen_param_count);
 
                         return builder.ToString ();
                 }

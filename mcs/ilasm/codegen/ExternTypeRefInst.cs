@@ -19,11 +19,13 @@ namespace Mono.ILASM {
 		private PEAPI.Type type;
 		private bool is_valuetypeinst;
 		private bool is_resolved;
+		private ITypeRef [] type_list;
 		private static Hashtable method_table = new Hashtable ();
 
-		public ExternTypeRefInst (ExternTypeRef type_ref, bool is_valuetypeinst)
+		public ExternTypeRefInst (ExternTypeRef type_ref, ITypeRef [] type_list, bool is_valuetypeinst)
 		{
 			this.type_ref = type_ref;
+			this.type_list = type_list;
 			this.is_valuetypeinst = is_valuetypeinst;
 
 			is_resolved = false;
@@ -62,7 +64,7 @@ namespace Mono.ILASM {
 
                 public ExternTypeRefInst Clone ()
 		{
-                        return new ExternTypeRefInst (type_ref.Clone (), is_valuetypeinst);
+			return new ExternTypeRefInst (type_ref.Clone (), (ITypeRef []) type_list.Clone (), is_valuetypeinst);
 		}
 
 		public void MakeArray ()
@@ -109,18 +111,25 @@ namespace Mono.ILASM {
 				return;
 
 			type_ref.Resolve (code_gen);
-			type = new PEAPI.ClassRefInst (type_ref.PeapiType, is_valuetypeinst);
+
+			PEAPI.Type [] p_type_list = new PEAPI.Type [type_list.Length];
+			for (int i = 0; i < type_list.Length; i ++) {
+				type_list [i].Resolve (code_gen);
+				p_type_list [i] = type_list [i].PeapiType;
+			}
+ 
+			type = new PEAPI.GenericTypeInst (type_ref.PeapiType, p_type_list);
 
 			is_resolved = true;
 		}
 
 		public IMethodRef GetMethodRef (ITypeRef ret_type, PEAPI.CallConv call_conv,
-				string name, ITypeRef[] param)
+				string name, ITypeRef[] param, int gen_param_count)
 		{
-			string key = type_ref.FullName + MethodDef.CreateSignature (ret_type, name, param) + type_ref.SigMod;
+			string key = type_ref.FullName + MethodDef.CreateSignature (ret_type, name, param, gen_param_count) + type_ref.SigMod;
 			TypeSpecMethodRef mr = method_table [key] as TypeSpecMethodRef;
 			if (mr == null) {	 
-				mr = new TypeSpecMethodRef (this, ret_type, call_conv, name, param);
+				mr = new TypeSpecMethodRef (this, ret_type, call_conv, name, param, gen_param_count);
 				method_table [key] = mr;
 			}
 

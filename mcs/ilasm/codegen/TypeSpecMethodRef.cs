@@ -22,18 +22,22 @@ namespace Mono.ILASM {
                 private ITypeRef ret_type;
                 private string name;
                 private ITypeRef[] param;
+                private int gen_param_count;
 
                 private bool is_resolved;
 
                 public TypeSpecMethodRef (ITypeRef owner,
                                 ITypeRef ret_type, PEAPI.CallConv call_conv,
-                                string name, ITypeRef[] param)
+                                string name, ITypeRef[] param, int gen_param_count)
                 {
                         this.owner = owner;
                         this.call_conv = call_conv;
                         this.ret_type = ret_type;
                         this.name = name;
                         this.param = param;
+                        this.gen_param_count = gen_param_count;
+			if (gen_param_count > 0)
+				CallConv |= PEAPI.CallConv.Generic;
                         is_resolved = false;
                 }
 
@@ -75,7 +79,7 @@ namespace Mono.ILASM {
 
                         owner.Resolve (code_gen);
                         peapi_method = code_gen.PEFile.AddMethodToTypeSpec (owner.PeapiType, write_name,
-                                        ret_type.PeapiType, param_list);
+                                        ret_type.PeapiType, param_list, gen_param_count);
 
                         peapi_method.AddCallConv (call_conv);
 

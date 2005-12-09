@@ -834,19 +834,29 @@ namespace PEAPI {
 
 	}
 
-	internal class MethodSpec : MetaDataElement {
+	internal class MethodSpec : Method {
 
 		Method meth;
 		GenericMethodSig g_sig;
 		uint sidx;
 
-		internal MethodSpec (Method meth, GenericMethodSig g_sig) 
+		internal MethodSpec (Method meth, GenericMethodSig g_sig) : base ("")
 		{
 			this.meth = meth;
 			this.g_sig = g_sig;
 			tabIx = MDTable.MethodSpec;
 		}
 
+		internal override uint GetSigIx (MetaData md)
+		{
+			throw new Exception ("Should not be used.");
+		}
+
+		public override void AddCallConv (CallConv cconv)
+		{
+			throw new Exception ("Should not be used.");
+		}
+		
 		internal sealed override void BuildTables (MetaData md) 
 		{
 			if (done) return;
@@ -864,6 +874,11 @@ namespace PEAPI {
 		{
 			output.WriteCodedIndex (CIx.MethodDefOrRef, meth);
 			output.BlobIndex (sidx);
+		}
+
+		internal sealed override void TypeSig (MemoryStream sig)
+		{
+			throw new Exception ("Should not be used.");
 		}
 	}
 
@@ -1747,7 +1762,20 @@ namespace PEAPI {
 		/// <returns>a descriptor for this method</returns>
 		public MethodRef AddMethod(string name, Type retType, Type[] pars) 
 		{
-			MethodRef meth = new MethodRef(this,name,retType,pars,false,null);
+			return AddMethod (name, retType, pars, 0);
+		}
+		
+		/// <summary>
+		/// Add a method to this class
+		/// </summary>
+		/// <param name="name">method name</param>
+		/// <param name="retType">return type</param>
+		/// <param name="pars">parameter types</param>
+		/// <param name="gen_param_count">num of generic parameters</param>
+		/// <returns>a descriptor for this method</returns>
+		public MethodRef AddMethod (string name, Type retType, Type[] pars, int gen_param_count) 
+		{
+			MethodRef meth = new MethodRef (this, name, retType, pars, false, null, gen_param_count);
 			metaData.AddToTable(MDTable.MemberRef,meth);
 			return meth;
 		}
@@ -1762,7 +1790,7 @@ namespace PEAPI {
 		public MethodRef AddVarArgMethod(string name, Type retType, 
 				Type[] pars, Type[] optPars) 
 		{
-			MethodRef meth = new MethodRef(this,name,retType,pars,true,optPars);
+			MethodRef meth = new MethodRef(this,name,retType,pars,true,optPars, 0);
 			metaData.AddToTable(MDTable.MemberRef,meth);
 			return meth;
 		}
@@ -2441,7 +2469,7 @@ namespace PEAPI {
 		/// <returns>a descriptor for this method in anther module</returns>
 		public MethodRef AddMethod(string name, Type retType, Type[] pars) 
 		{
-			MethodRef meth = new MethodRef(this,name,retType,pars,false,null);
+			MethodRef meth = new MethodRef(this,name,retType,pars,false,null, 0);
 			metaData.AddToTable(MDTable.MemberRef,meth);
 			return meth;
 		}
@@ -2456,7 +2484,7 @@ namespace PEAPI {
 		/// <returns>a descriptor for this method</returns>
 		public MethodRef AddVarArgMethod(string name, Type retType, 
 				Type[] pars, Type[] optPars) {
-			MethodRef meth = new MethodRef(this,name,retType,pars,true,optPars);
+			MethodRef meth = new MethodRef(this,name,retType,pars,true,optPars, 0);
 			metaData.AddToTable(MDTable.MemberRef,meth);
 			return meth;
 		}
@@ -3409,39 +3437,12 @@ namespace PEAPI {
 
 	public abstract class Method : Member {
 
-		protected CallConv callConv = CallConv.Default;
-		protected Type retType;
-		protected int gen_param_count;
+		internal Method (string methName) : base (methName)
+		{}
 
-		internal Method(string methName, Type rType) : base(methName)
-		{
-			retType = rType;
-			gen_param_count = 0;
-		}
-
-		/// <summary>
-		/// Add calling conventions to this method descriptor
-		/// </summary>
-		/// <param name="cconv"></param>
-		public void AddCallConv(CallConv cconv) 
-		{
-			callConv |= cconv;
-		}
-
+		public abstract void AddCallConv(CallConv cconv);
 		internal abstract void TypeSig(MemoryStream sig);
-
-		internal uint GetSigIx(MetaData md) 
-		{
-			MemoryStream sig = new MemoryStream();
-			TypeSig(sig);
-			return md.AddToBlobHeap(sig.ToArray());
-		}
-
-		internal Type GetRetType() 
-		{
-			return retType;
-		}
-
+		internal abstract uint GetSigIx(MetaData md);
 	}
 
 	/**************************************************************************/  
@@ -3456,6 +3457,9 @@ namespace PEAPI {
 		//private static readonly uint UnmanagedExport = 0x0008;
 		// private static readonly byte LocalSigByte = 0x7;
 		uint parIx = 0, textOffset = 0;
+		private CallConv callConv = CallConv.Default;
+		private Type retType;
+		private int gen_param_count;
 
 		MetaData metaData;
 		CILInstructions code;
@@ -3472,8 +3476,9 @@ namespace PEAPI {
 		Param ret_param;
 
 
-		internal MethodDef(MetaData md, string name, Type retType, Param[] pars) : base(name,retType) 
+		internal MethodDef(MetaData md, string name, Type retType, Param[] pars) : base (name)
 		{
+			this.retType = retType;
 			metaData = md;
 			parList = pars;
 			if (parList != null) numPars = parList.Length;
@@ -3492,6 +3497,18 @@ namespace PEAPI {
 			return parList;
 		}
 
+		internal override uint GetSigIx(MetaData md)
+		{
+			MemoryStream sig = new MemoryStream();
+			TypeSig(sig);
+			return md.AddToBlobHeap(sig.ToArray());
+		}
+
+		public override void AddCallConv(CallConv cconv)
+		{
+			callConv |= cconv;
+		}
+		
 		/// <summary>
 		/// Add some attributes to this method descriptor
 		/// </summary>
@@ -3585,7 +3602,7 @@ namespace PEAPI {
 			for (int i=0; i < numPars; i++) {
 				pars[i] = parList[i].GetParType();
 			}
-			varArgSig = new MethodRef(this,name,retType,pars,true,optPars);
+			varArgSig = new MethodRef(this,name,retType,pars,true,optPars, 0);
 
 			if (varArgSigList == null)
 				varArgSigList = new ArrayList ();
@@ -3596,9 +3613,9 @@ namespace PEAPI {
 		internal sealed override void TypeSig(MemoryStream sig) 
 		{
 			sig.WriteByte((byte)callConv);
-			MetaData.CompressNum((uint)numPars,sig);
 			if ((callConv & CallConv.Generic) == CallConv.Generic)
 				MetaData.CompressNum ((uint) gen_param_count, sig);
+			MetaData.CompressNum((uint)numPars,sig);
 			if (ret_param != null)
 				ret_param.seqNo = 0;
 			retType.TypeSig(sig);
@@ -3697,25 +3714,37 @@ namespace PEAPI {
 		Type[] parList, optParList;
 		MetaDataElement parent;
 		uint numPars = 0, numOptPars = 0;
+		CallConv callConv = CallConv.Default;
+		Type retType;
+		int gen_param_count;
 
 		internal MethodRef(MetaDataElement paren, string name, Type retType,
-				Type[] pars, bool varArgMeth, Type[] optPars) : base(name,retType) 
+				Type[] pars, bool varArgMeth, Type[] optPars, int gen_param_count) : base(name)
 		{
 			parent = paren;
 			parList = pars;
+			this.retType = retType;
 			if (parList != null) numPars = (uint)parList.Length;
 			if (varArgMeth) {
 				optParList = optPars;
 				if (optParList != null) numOptPars = (uint)optParList.Length;
 				callConv = CallConv.Vararg;
 			}
+			this.gen_param_count = gen_param_count;
 		}
 
-		internal int GenParamCount {
-			get { return gen_param_count; }
-			set { gen_param_count = value; }
+		internal override uint GetSigIx(MetaData md)
+		{
+			MemoryStream sig = new MemoryStream();
+			TypeSig(sig);
+			return md.AddToBlobHeap(sig.ToArray());
 		}
 
+		public override void AddCallConv(CallConv cconv)
+		{
+			callConv |= cconv;
+		}
+		
 		internal sealed override void TypeSig(MemoryStream sig) 
 		{
 			sig.WriteByte((byte)callConv);

@@ -23,15 +23,17 @@ namespace Mono.ILASM {
 
                 private PEAPI.Method peapi_method;
                 private bool is_resolved;
+		private int gen_param_count;
 
                 public MethodRef (TypeRef owner, PEAPI.CallConv call_conv,
-                        ITypeRef ret_type, string name, ITypeRef[] param)
+                        ITypeRef ret_type, string name, ITypeRef[] param, int gen_param_count)
                 {
                         this.owner = owner;
                         this.call_conv = call_conv;
                         this.ret_type = ret_type;
                         this.name = name;
                         this.param = param;
+			this.gen_param_count = gen_param_count;
                         is_resolved = false;
                 }
 
@@ -54,6 +56,9 @@ namespace Mono.ILASM {
                                 return;
 
                         TypeDef owner_def = code_gen.TypeManager[owner.FullName];
+			if (owner_def == null)
+				throw new Exception (String.Format ("Reference to undefined class '{0}'", owner.FullName));
+
                         string write_name;
 
                         if (name == "<init>")
@@ -64,7 +69,7 @@ namespace Mono.ILASM {
                         string sig;
 
                         if ((call_conv & PEAPI.CallConv.Vararg) == 0) {
-                                sig = MethodDef.CreateSignature (ret_type, name, param);
+                                sig = MethodDef.CreateSignature (ret_type, name, param, gen_param_count);
                                 peapi_method = owner_def.ResolveMethod (sig, code_gen);
                         } else {
                                 sig = MethodDef.CreateVarargSignature (ret_type, name, param);

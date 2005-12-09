@@ -611,6 +611,10 @@ class_attr		: /* EMPTY */
 			;
 
 extends_clause		: /* EMPTY */
+			| K_EXTENDS K_CLASS class_ref typars_clause
+                          {
+                                $$ = $2;
+                          }
 			| K_EXTENDS class_ref
                           {
                                 $$ = $2;
@@ -770,11 +774,11 @@ class_decl		: method_all
                                         param_list = new ITypeRef[0];
 
                                 decl = owner.GetMethodRef ((ITypeRef) $7,
-                                        (CallConv) $6, (string) $4, param_list);
+                                        (CallConv) $6, (string) $4, param_list, 0);
 
 				// NOTICE: `owner' here might be wrong
                                 string sig = MethodDef.CreateSignature (owner, (string) $10,
-                                                                        param_list);
+                                                                        param_list, 0);
                                 codegen.CurrentTypeDef.AddOverride (sig, decl);                                        
                           }
 			  OPEN_PARENS sig_args CLOSE_PARENS
@@ -943,9 +947,23 @@ type			: K_CLASS class_ref
                                 GenParam gpar = new GenParam ((int) $3, "", GenParamType.MVar);
                                 $$ = new GenericTypeRef (gpar, $3.ToString ());
                           }
-                        | K_CLASS slashed_name OPEN_ANGLE_BRACKET BANG int32 CLOSE_ANGLE_BRACKET
+			| BANG id
                           {
-                                $$ = new TypeRef ((string) $2, false, null);
+				int num = -1;
+				string name = (string) $2;
+				if (codegen.CurrentTypeDef != null)
+					num = codegen.CurrentTypeDef.GetGenericParamNum (name);
+				GenParam gpar = new GenParam (num, name, GenParamType.Var);
+                                $$ = new GenericTypeRef (gpar, name);
+                          }
+                        | BANG BANG id
+                          {
+				int num = -1;
+				string name = (string) $3;
+				if (codegen.CurrentMethodDef != null)
+					num = codegen.CurrentMethodDef.GetGenericParamNum (name);
+				GenParam gpar = new GenParam (num, name, GenParamType.MVar);
+                                $$ = new GenericTypeRef (gpar, name);
                           }
                         | K_CLASS slashed_name OPEN_ANGLE_BRACKET typars CLOSE_ANGLE_BRACKET
                           {
@@ -1676,19 +1694,15 @@ method_head		: D_METHOD meth_attr call_conv param_attr type method_name
                                 MethodDef methdef = new MethodDef (
                                         codegen, (MethAttr) $2, cc,
                                         (ImplAttr) $11, (string) $6, (ITypeRef) $5,
-                                        (ArrayList) $9, tokenizer.Reader.Location);
+                                        (ArrayList) $9, tokenizer.Reader.Location, (ArrayList) $7);
 
                                 if (pinvoke_info) {
                                         ExternModule mod = codegen.ExternTable.AddModule (pinvoke_mod);
                                         methdef.AddPInvokeInfo (pinvoke_attr, mod, pinvoke_meth);
                                         pinvoke_info = false;
                                 }
-
-                                if ($7 != null) {
-                                        ArrayList typars_list = (ArrayList) $7;
-                                        foreach (string id in typars_list)
-                                                methdef.AddGenericParam (id);
-                                }
+				
+				methdef.ResolveGenParams (codegen.CurrentTypeDef);
                           }
 			| D_METHOD meth_attr call_conv param_attr type 
 			  K_MARSHAL OPEN_PARENS native_type CLOSE_PARENS method_name
@@ -1697,7 +1711,7 @@ method_head		: D_METHOD meth_attr call_conv param_attr type method_name
                                 MethodDef methdef = new MethodDef (
                               		codegen, (MethAttr) $2, (CallConv) $3,
                                         (ImplAttr) $14, (string) $10, (ITypeRef) $5,
-                                        (ArrayList) $12, tokenizer.Reader.Location);
+                                        (ArrayList) $12, tokenizer.Reader.Location, null);
 
                                 if (pinvoke_info) {
                                         ExternModule mod = codegen.ExternTable.AddModule (pinvoke_mod);
@@ -2234,6 +2248,9 @@ instr			: INSTR_NONE
                           {
                                 
                                 ITypeRef owner = (ITypeRef) $3;
+				GenericTypeRef gtr = $2 as GenericTypeRef;
+				if (gtr != null && codegen.CurrentMethodDef != null)
+					codegen.CurrentMethodDef.ResolveGenParam ((PEAPI.GenParam) gtr.PeapiType, codegen.CurrentTypeDef);
                                 IFieldRef fieldref = owner.GetFieldRef (
                                         (ITypeRef) $2, (string) $5);
 
@@ -2316,7 +2333,7 @@ method_ref		: call_conv type type_spec DOUBLE_COLON method_name
                                 }
 
                                 methref = owner.GetMethodRef ((ITypeRef) $2,
-                                        (CallConv) $1, (string) $5, param_list);
+                                        (CallConv) $1, (string) $5, param_list, 0);
 
                                 $$ = methref;
                           }
@@ -2332,13 +2349,36 @@ method_ref		: call_conv type type_spec DOUBLE_COLON method_name
                                         param_list = new ITypeRef[0];
 
                                 $$ = new GlobalMethodRef ((ITypeRef) $2, (CallConv) $1,
-                                        (string) $3, param_list);
+                                        (string) $3, param_list, 0);
+                          }
+			| call_conv type method_name typars_clause
+			  OPEN_PARENS type_list CLOSE_PARENS
+                          {
+                                ArrayList arg_list = (ArrayList) $6;
+                                ArrayList tp = (ArrayList) $4;
+                                ITypeRef[] param_list;
+  
+                                if (arg_list != null)
+                                        param_list = (ITypeRef[]) arg_list.ToArray (typeof (ITypeRef));
+                                else
+                                        param_list = new ITypeRef[0];
+
+				IMethodRef methref = new GlobalMethodRef ((ITypeRef) $2, (CallConv) $1,
+                                        (string) $3, param_list, (tp != null ? tp.Count : 0));
+
+                                if (tp != null) {
+                                        ITypeRef[] ta = (ITypeRef[]) tp.ToArray (typeof (ITypeRef));
+                                        methref = new GenericMethodRef (methref, new GenericMethodSig (ta));
+                                }
+
+                                $$ = methref;
                           }
                         | call_conv type type_spec DOUBLE_COLON method_name
                           typars_clause OPEN_PARENS type_list CLOSE_PARENS 
                           {
                                 ITypeRef owner = (ITypeRef) $3;
                                 ArrayList arg_list = (ArrayList) $8;
+                                ArrayList tp = (ArrayList) $6;
                                 ITypeRef[] param_list;
                                 IMethodRef methref;
 
@@ -2349,17 +2389,14 @@ method_ref		: call_conv type type_spec DOUBLE_COLON method_name
 
                                 if (owner.UseTypeSpec) {
                                         methref = new TypeSpecMethodRef (owner, (ITypeRef) $2,
-                                                (CallConv) $1, (string) $5, param_list);
+                                                (CallConv) $1, (string) $5, param_list, (tp != null ? tp.Count : 0));
                                 } else {
                                         methref = owner.GetMethodRef ((ITypeRef) $2,
-                                                (CallConv) $1, (string) $5, param_list);
+                                                (CallConv) $1, (string) $5, param_list, (tp != null ? tp.Count : 0));
                                 }
 
-                                if ($6 != null) {
-                                        ArrayList tp = (ArrayList) $6;
+                                if (tp != null) {
                                         ITypeRef[] ta = (ITypeRef[]) tp.ToArray (typeof (ITypeRef));
-                                        
-                                        methref.CallConv |= CallConv.Generic;
                                         methref = new GenericMethodRef (methref, new GenericMethodSig (ta));
                                 }
                                 
@@ -2563,7 +2600,7 @@ custom_type		: call_conv type type_spec DOUBLE_COLON D_CTOR OPEN_PARENS type_lis
                                         param_list = new ITypeRef[0];
 
                                 $$ = owner.GetMethodRef ((ITypeRef) $2,
-                                        (CallConv) $1, (string) $5, param_list);
+                                        (CallConv) $1, (string) $5, param_list, 0);
                           }
 			| call_conv type D_CTOR OPEN_PARENS type_list CLOSE_PARENS
                           {
@@ -2576,7 +2613,7 @@ custom_type		: call_conv type type_spec DOUBLE_COLON D_CTOR OPEN_PARENS type_lis
                                         param_list = new ITypeRef[0];
 
                                 $$ = new GlobalMethodRef ((ITypeRef) $2, (CallConv) $1,
-                                        (string) $3, param_list);
+                                        (string) $3, param_list, 0);
                           }
 			;
 

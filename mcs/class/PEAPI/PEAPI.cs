@@ -781,14 +781,19 @@ namespace PEAPI {
 
 		public MethodRef AddMethodToTypeSpec (Type item, string name, Type retType, Type[] pars) 
 		{
-			MethodRef meth = new MethodRef (item.GetTypeSpec (metaData), name, retType, pars, false, null);
+			return AddMethodToTypeSpec (item, name, retType, pars, 0);
+		}
+		
+		public MethodRef AddMethodToTypeSpec (Type item, string name, Type retType, Type[] pars, int gen_param_count) 
+		{
+			MethodRef meth = new MethodRef (item.GetTypeSpec (metaData), name, retType, pars, false, null, gen_param_count);
 			metaData.AddToTable (MDTable.MemberRef,meth);
 			return meth;
 		}
 
 		public MethodRef AddVarArgMethodToTypeSpec (Type item, string name, Type retType,
 				Type[] pars, Type[] optPars) {
-			MethodRef meth = new MethodRef(item.GetTypeSpec (metaData), name,retType,pars,true,optPars);
+			MethodRef meth = new MethodRef(item.GetTypeSpec (metaData), name,retType,pars,true,optPars, 0);
 			metaData.AddToTable(MDTable.MemberRef,meth);
 			return meth;
 		}
@@ -800,10 +805,11 @@ namespace PEAPI {
 			return field;
 		}
 
-		public void AddMethodSpec (Method m, GenericMethodSig g_sig)
+		public Method AddMethodSpec (Method m, GenericMethodSig g_sig)
 		{
 			MethodSpec ms = new MethodSpec (m, g_sig);
 			metaData.AddToTable (MDTable.MethodSpec, ms);
+			return ms;
 		}
 
 		/// <summary>

@@ -65,9 +65,9 @@ namespace Mono.ILASM {
                 }
 
                 public  IMethodRef GetMethodRef (ITypeRef ret_type,
-                        PEAPI.CallConv call_conv, string name, ITypeRef[] param)
+                        PEAPI.CallConv call_conv, string name, ITypeRef[] param, int gen_param_count)
                 {
-                        return new MethodRef (this, call_conv, ret_type, name, param);
+                        return new MethodRef (this, call_conv, ret_type, name, param, gen_param_count);
                 }
 
                 public IFieldRef GetFieldRef (ITypeRef ret_type, string name)

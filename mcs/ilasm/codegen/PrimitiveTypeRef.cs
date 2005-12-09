@@ -80,14 +80,15 @@ namespace Mono.ILASM {
                 }
 
                 public IMethodRef GetMethodRef (ITypeRef ret_type, PEAPI.CallConv call_conv,
-                                string name, ITypeRef[] param)
+                                string name, ITypeRef[] param, int gen_param_count)
                 {
-                        string key = full_name + MethodDef.CreateSignature (ret_type, name, param) + sig_mod;
+                        string key = full_name + MethodDef.CreateSignature (ret_type, name, param, gen_param_count) + sig_mod;
                         TypeSpecMethodRef mr = method_table [key] as TypeSpecMethodRef;
                         if (mr != null)
                                 return mr;
 
-                        mr = new TypeSpecMethodRef (this, ret_type, call_conv, name, param);
+			//FIXME: generic methodref for primitive type?
+                        mr = new TypeSpecMethodRef (this, ret_type, call_conv, name, param, gen_param_count);
                         method_table [key] = mr;
                         return mr;
                 }

@@ -1,3 +1,18 @@
+2005-12-09  Ankit Jain  <jankit@novell.com>
+
+	* ILParser.jay (class_decl | D_OVERRIDE ..): Update usage of ITypeRef.GetMethodRef 
+	and MethodDef.CreateSignature .
+	(method_head | D_METHOD ..): Update usage of MethodDef.ctor .
+	Use MethodDef.ResolveGenParams to resolve VARs/MVARs in parameter list.
+	(type | K_CLASS slashed_name ..): Remove redundant rule.
+	(type | BANG id): New. Generic type parameter.
+	(type | BANG BANG id): New. Generic method type parameter.
+	(instr | INSTR_FIELD type ..): Resolve generic param for 'type'.
+	(method_ref | call_conv ..): Set MethodRef's GenParamCount.
+	(method_ref | call_conv type ..): Update usage of TypeSpecMethodRef.ctor and GetMethodRef.
+	(method_ref | call_conv type ..): New. Rule for global generic method refs.
+	(custom_type | call_conv ..): Update usage of GlobalMethodRef.ctor .
+
 2005-12-05  Ankit Jain  <jankit@novell.com>
 
 	* ILParser.jay (type | BANG int32 .. ): Update to use GenParam instead of

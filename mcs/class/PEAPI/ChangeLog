@@ -1,3 +1,19 @@
+2005-12-09  Ankit Jain  <jankit@novell.com>
+
+	* Metadata.cs (Method.ctor): Remove rType parameter.
+	(Method.GetRetType): Remove.
+	(Method.AddCallConv): Make it abstract.
+	(Method.GetSigIx): Likewise.
+	(MethodDef): Override and implement abstract methods from Method class.
+	(MethodRef): Likewise.
+	(MethodSpec): Change base class from MetaDataElement to Method. Override 
+	abstract methods from Method but throw Exception as they are not meant to be used here.
+	(MethodDef.TypeSig): Write gen_param_count before num of params.
+	(ClassRef.AddMethod): New overload with an extra gen_param_count param.
+	* PEAPI.cs (PEFile.AddMethodToTypeSpec): New overload with an extra gen_param_count
+	param.
+	(PEFile.AddMethodSpec): Change return type from void to Method.
+
 2005-12-05  Ankit Jain  <jankit@novell.com>
 
 	* Metadata.cs (GenParamType): New enum.

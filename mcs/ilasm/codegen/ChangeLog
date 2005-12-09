@@ -1,3 +1,44 @@
+2005-12-09  Ankit Jain  <jankit@novell.com>
+
+	* ITypeRef.cs (ITypeRef.GetMethodRef): Add 'gen_param_count' param.
+	* Sentinel.cs (Sentinel.GetMethodRef): Update.
+	* GlobalMethodRef.cs (GlobalMethodRef.ctor): Add 'gen_param_count' param.
+	(GlobalMethodRef.Resolve): Update usage of MethodDef.CreateSignature .
+	* TypeDef.cs (TypeDef.GetGenericParamNum): New.
+	(TypeDef.DefineContents): Update usage of ITypeRef.GetMethodRef .
+	* ExternTypeRefInst.cs (ExternTypeRefInst.ctor): Add parameter for list of type
+	parameters (type_list).
+	(ExternTypeRefInst.Clone): Clone type_list also.
+	(ExternTypeRefInst.Resolve): Resolve the list of type parameters, and create
+	instance of PEAPI.GenericTypeInst instead of PEAPI.ClassRefInst .
+	(ExternTypeRefInst.GetMethodRef): Update.
+	* GenericTypeInst.cs (GenericTypeInst.GetMethodRef): Update signature. Update
+	usage of TypeSpecMethodRef.ctor .
+	* MethodRef.cs (MethodRef.ctor): Add 'gen_param_count' param.
+	(MethodRef.Resolve): Throw exception for non-existant owner. Update usage of
+	MethodDef.CreateSignature .
+	* ExternMethodRef.cs (ExternMethodRef.ctor): Add 'gen_param_count' param.
+	(ExternMethodRef.Resolve): Update usage of PEFile.AddMethodToTypeSpec and .AddMethod
+	* GenericMethodRef.cs (GenericMethodRef.PeapiMethod): Return PEAPI.Method obtained in 
+	.Resolve .
+	* GenericTypeRef.cs (GenericTypeRef.GetMethodRef): Update.
+	* MethodPointerTypeRef.cs (MethodPointerTypeRef.GetMethodRef): Likewise.
+	* TypeSpecMethodRef.cs (TypeSpecMethodRef.ctor): Add 'gen_param_count' param.
+	(TypeSpecMethodRef.Resolve): Update usage of PEFile.AddMethodToTypeSpec .
+	* MethodDef.cs (MethodDef.ctor): Add 'typars_list' param.
+	(MethodDef.AddGenericParam): Replace .. 
+	(MethodDef.AddGenericParams): .. with this.
+	(MethodDef.GenParamCount): New.
+	(MethodDef.GetGenericParamNum): New. Returns index for a given method type parameter name.
+	(MethodDef.ResolveGenParams): Resolves type parameter names in the parameter
+	list to their corresponding indices.
+	(MethodDef.ResolveGenParam): Resolves a give type parameter to its corresponding
+	index.
+	(MethodDef.CreateSignature): Add 'gen_param_count' param.
+	* TypeRef.cs (TypeRef.GetMethodRef): Update.
+	* ExternTypeRef.cs (ExternTypeRef.GetMethodRef): Likewise.
+	* PrimitiveTypeRef.cs (PrimitiveTypeRef.GetMethodRef): Likewise.
+
 2005-12-05  Ankit Jain  <jankit@novell.com>
 
 	* TypeDef.cs (TypeDef.GenericInfo.num): New.

@@ -17,16 +17,18 @@ namespace Mono.ILASM {
                 private IMethodRef meth;
                 private GenericMethodSig sig;
                 private bool is_resolved;
+                private PEAPI.Method ms;
 
                 public GenericMethodRef (IMethodRef meth, GenericMethodSig sig)
                 {
                         this.meth = meth;
                         this.sig = sig;
+                        ms = null;
                         is_resolved = false;
                 }
 
                 public PEAPI.Method PeapiMethod {
-                        get { return meth.PeapiMethod; }
+                        get { return ms; }
                 }
 
                 public PEAPI.CallConv CallConv {
@@ -44,7 +46,7 @@ namespace Mono.ILASM {
                                 return;
 
                         meth.Resolve (code_gen);
-                        code_gen.PEFile.AddMethodSpec (meth.PeapiMethod, sig.Resolve (code_gen));
+                        ms = code_gen.PEFile.AddMethodSpec (meth.PeapiMethod, sig.Resolve (code_gen));
 
                         is_resolved = true;
                 }

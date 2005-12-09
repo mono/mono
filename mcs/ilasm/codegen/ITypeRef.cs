@@ -70,7 +70,7 @@ namespace Mono.ILASM {
                 void Resolve (CodeGen code_gen);
 
                 IMethodRef GetMethodRef (ITypeRef ret_type, PEAPI.CallConv call_conv,
-                                string name, ITypeRef[] param);
+                                string name, ITypeRef[] param, int gen_param_count);
 
                 IFieldRef GetFieldRef (ITypeRef ret_type, string name);
 

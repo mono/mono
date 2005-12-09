@@ -22,14 +22,18 @@ namespace Mono.ILASM {
 
                 private PEAPI.Method peapi_method;
 		private bool is_resolved;
+		private int gen_param_count;
 
                 public GlobalMethodRef (ITypeRef ret_type, PEAPI.CallConv call_conv,
-                                string name, ITypeRef[] param)
+                                string name, ITypeRef[] param, int gen_param_count)
                 {
                         this.ret_type = ret_type;
                         this.call_conv = call_conv;
                         this.name = name;
                         this.param = param;
+			this.gen_param_count = gen_param_count;
+			if (gen_param_count > 0)
+				CallConv |= PEAPI.CallConv.Generic;
 
 			is_resolved = false;
                 }
@@ -55,7 +59,7 @@ namespace Mono.ILASM {
                         string sig;
 
                         if ((call_conv & PEAPI.CallConv.Vararg) == 0) {
-                                sig = MethodDef.CreateSignature (ret_type, name, param);
+                                sig = MethodDef.CreateSignature (ret_type, name, param, gen_param_count);
                                 peapi_method = code_gen.ResolveMethod (sig);
                         } else {
                                 ArrayList opt_list = new ArrayList ();

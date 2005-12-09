@@ -243,6 +243,18 @@ namespace Mono.ILASM {
                         typar_list.Add (gi);
                 }
 
+		public int GetGenericParamNum (string id)
+		{
+			if (typar_list == null)
+				// FIXME: Report error
+				throw new Exception (String.Format ("Invalid type parameter '{0}'", id));
+
+			foreach (GenericInfo gi in typar_list)
+				if (gi.Id == id)
+					return gi.num;
+			return -1;
+		}
+
                 public void AddGenericConstraint (int index, ITypeRef constraint)
                 {
                         GenericInfo gi = (GenericInfo) typar_list[index];
@@ -393,7 +405,7 @@ namespace Mono.ILASM {
                                         parent_type.Resolve (code_gen);
                                         string over_name = (string) decl.Value;
                                         IMethodRef over_meth = parent_type.GetMethodRef (body.RetType,
-                                                        body.CallConv, over_name, body.ParamTypeList ());
+                                                        body.CallConv, over_name, body.ParamTypeList (), body.GenParamCount);
                                         over_meth.Resolve (code_gen);
                                         classdef.AddMethodOverride (over_meth.PeapiMethod,
                                                         body.PeapiMethodDef);

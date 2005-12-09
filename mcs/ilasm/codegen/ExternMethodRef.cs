@@ -23,15 +23,19 @@ namespace Mono.ILASM {
 
                 private PEAPI.Method peapi_method;
 		private bool is_resolved;
+                private int gen_param_count;
 
                 public ExternMethodRef (ExternTypeRef owner, ITypeRef ret_type,
-                        PEAPI.CallConv call_conv, string name, ITypeRef[] param)
+                        PEAPI.CallConv call_conv, string name, ITypeRef[] param, int gen_param_count)
                 {
                         this.owner = owner;
                         this.ret_type = ret_type;
                         this.name = name;
                         this.param = param;
                         this.call_conv = call_conv;
+                        this.gen_param_count = gen_param_count;
+			if (gen_param_count > 0)
+				CallConv |= PEAPI.CallConv.Generic;
 			
 			is_resolved = false;
                 }
@@ -80,12 +84,12 @@ namespace Mono.ILASM {
                         if (owner.UseTypeSpec) {
                                 PEAPI.Type owner_ref = owner.PeapiType;
                                 peapi_method = code_gen.PEFile.AddMethodToTypeSpec (owner_ref, write_name,
-                                                ret_type.PeapiType, param_list);
+                                                ret_type.PeapiType, param_list, gen_param_count);
                         } else {
                                 PEAPI.ClassRef owner_ref;
                                 owner_ref = (PEAPI.ClassRef) owner.PeapiType;
                                 peapi_method = owner_ref.AddMethod (write_name,
-                                                ret_type.PeapiType, param_list);
+                                                ret_type.PeapiType, param_list, gen_param_count);
                         }
 
                         peapi_method.AddCallConv (call_conv);
