@@ -2592,6 +2592,24 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_BB, ins->inst_target_bb);
 			x86_call_imm (code, 0);
 			break;
+		case OP_START_HANDLER: {
+			MonoInst *spvar = mono_find_spvar_for_region (cfg, bb->region);
+			x86_mov_membase_reg (code, spvar->inst_basereg, spvar->inst_offset, X86_ESP, 4);
+			break;
+		}
+		case CEE_ENDFINALLY: {
+			MonoInst *spvar = mono_find_spvar_for_region (cfg, bb->region);
+			x86_mov_reg_membase (code, X86_ESP, spvar->inst_basereg, spvar->inst_offset, 4);
+			x86_ret (code);
+			break;
+		}
+		case OP_ENDFILTER: {
+			MonoInst *spvar = mono_find_spvar_for_region (cfg, bb->region);
+			x86_mov_reg_membase (code, X86_ESP, spvar->inst_basereg, spvar->inst_offset, 4);
+			/* The local allocator will put the result into EAX */
+			x86_ret (code);
+			break;
+		}
 		case OP_LABEL:
 			ins->inst_c0 = code - cfg->native_code;
 			break;
@@ -2778,6 +2796,12 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			x86_push_reg (code, ins->sreg1);
 			x86_fild_membase (code, X86_ESP, 0, FALSE);
 			x86_alu_reg_imm (code, X86_ADD, X86_ESP, 4);
+			break;
+		case OP_ICONV_TO_R_UN:
+			x86_push_imm (code, 0);
+			x86_push_reg (code, ins->sreg1);
+			x86_fild_membase (code, X86_ESP, 0, TRUE);
+			x86_alu_reg_imm (code, X86_ADD, X86_ESP, 8);
 			break;
 		case OP_X86_FP_LOAD_I8:
 			x86_fild_membase (code, ins->inst_basereg, ins->inst_offset, TRUE);

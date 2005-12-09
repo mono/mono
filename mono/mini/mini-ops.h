@@ -67,7 +67,7 @@ MINI_OP(OP_REGOFFSET,	"regoffset", NONE, NONE, NONE)
 MINI_OP(OP_LABEL,	"label", NONE, NONE, NONE)
 MINI_OP(OP_CHECK_ARRAY_TYPE,	"check_array_type", NONE, NONE, NONE)
 MINI_OP(OP_ARRAY_RANK,	"array_rank", NONE, NONE, NONE)
-MINI_OP(OP_THROW, "throw", NONE, IREG, NONE)
+MINI_OP(OP_THROW, "op_throw", NONE, IREG, NONE)
 MINI_OP(OP_THROW_OR_NULL,	"throw_or_null", NONE, NONE, NONE)
 MINI_OP(OP_RETHROW,	"op_rethrow", NONE, NONE, NONE)
 MINI_OP(OP_REFANYTYPE,	"refanytype", NONE, NONE, NONE)
@@ -293,6 +293,8 @@ MINI_OP(OP_ICONV_TO_R8,"int_conv_to_r8", FREG, IREG, NONE)
 MINI_OP(OP_ICONV_TO_U4,"int_conv_to_u4", IREG, IREG, NONE)
 MINI_OP(OP_ICONV_TO_U8,"int_conv_to_u8", LREG, IREG, NONE)
 
+MINI_OP(OP_ICONV_TO_R_UN, "int_conv_to_r_un", FREG, IREG, NONE)
+
 /* 32 bit opcodes: must be in the same order as the matching CEE_ opcodes: ovfops_op_map */
 MINI_OP(OP_ICONV_TO_U2,   "int_conv_to_u2", IREG, IREG, NONE)
 MINI_OP(OP_ICONV_TO_U1,   "int_conv_to_u1", IREG, IREG, NONE)
@@ -459,7 +461,7 @@ MINI_OP(OP_UNBOXCAST  , "unboxcast", NONE, NONE, NONE)
 /* exception related opcodes */
 MINI_OP(OP_CALL_HANDLER  , "call_handler", NONE, NONE, NONE)
 MINI_OP(OP_START_HANDLER  , "start_handler", NONE, NONE, NONE)
-MINI_OP(OP_ENDFILTER,  "op_endfilter", NONE, NONE, NONE)
+MINI_OP(OP_ENDFILTER,  "op_endfilter", NONE, IREG, NONE)
 
 /* inline (long)int * (long)int */
 MINI_OP(OP_BIGMUL, "op_bigmul", NONE, NONE, NONE)

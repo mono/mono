@@ -659,7 +659,6 @@ enum {
 #define OP_CLT_UN (256+CEE_CLT_UN)
 #define OP_CGT    (256+CEE_CGT)
 #define OP_CGT_UN (256+CEE_CGT_UN)
-#define OP_LOCALLOC (256+CEE_LOCALLOC)
 
 /* opcodes: value assigned after all the CIL opcodes */
 #ifdef MINI_OP
@@ -695,7 +694,7 @@ enum {
 #define OP_PCONV_TO_OVF_I1_UN OP_ICONV_TO_OVF_I1_UN
 #define OP_PCONV_TO_OVF_I1 OP_ICONV_TO_OVF_I1
 #define OP_PBEQ OP_IBEQ
-#define OP_PCEQ CEE_CEQ
+#define OP_PCEQ OP_ICEQ
 #define OP_STOREP_MEMBASE_REG OP_STOREI4_MEMBASE_REG
 #define OP_STOREP_MEMBASE_IMM OP_STOREI4_MEMBASE_IMM
 #else
@@ -898,6 +897,7 @@ void      mono_arch_instrument_mem_needs        (MonoMethod *method, int *stack,
 void     *mono_arch_instrument_prolog           (MonoCompile *cfg, void *func, void *p, gboolean enable_arguments);
 void     *mono_arch_instrument_epilog           (MonoCompile *cfg, void *func, void *p, gboolean enable_arguments);
 MonoCallInst *mono_arch_call_opcode             (MonoCompile *cfg, MonoBasicBlock* bb, MonoCallInst *call, int is_virtual);
+MonoCallInst *mono_arch_call_opcode2            (MonoCompile *cfg, MonoCallInst *call, int is_virtual);
 MonoInst *mono_arch_get_inst_for_method       (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args);
 void      mono_codegen                          (MonoCompile *cfg);
 void      mono_call_inst_add_outarg_reg         (MonoCallInst *call, int vreg, int hreg, gboolean fp);

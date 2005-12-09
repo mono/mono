@@ -155,8 +155,15 @@ int_conv_to_u2: dest:i src1:i len:3
 int_conv_to_u1: dest:i src1:y len:3
 int_conv_to_i: dest:i src1:i len:3
 
+int_conv_to_r_un: dest:f src1:i len:32
+
 throw: src1:i len:13
+op_throw: src1:i len:13
 op_rethrow: src1:i len:13
+start_handler: len:16
+endfinally: len:16
+op_endfilter: src1:a len:16
+
 ckfinite: dest:f src1:f len:22
 
 mul.ovf: dest:i src1:i src2:i clob:1 len:9

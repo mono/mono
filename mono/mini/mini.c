@@ -98,8 +98,9 @@ static int mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlo
 
 extern guint8 mono_burg_arity [];
 /* helper methods signature */
-static MonoMethodSignature *helper_sig_class_init_trampoline = NULL;
-static MonoMethodSignature *helper_sig_domain_get = NULL;
+/* FIXME: Make these static again */
+MonoMethodSignature *helper_sig_class_init_trampoline = NULL;
+MonoMethodSignature *helper_sig_domain_get = NULL;
 
 static guint32 default_opt = 0;
 
@@ -1697,46 +1698,50 @@ mono_compile_create_var (MonoCompile *cfg, MonoType *type, int opcode)
 	inst->unused = 0;
 
 	if (cfg->new_ir) {
-		switch (mono_type_get_underlying_type (type)->type) {
-		case MONO_TYPE_I1:
-		case MONO_TYPE_U1:
-		case MONO_TYPE_BOOLEAN:
-		case MONO_TYPE_I2:
-		case MONO_TYPE_U2:
-		case MONO_TYPE_CHAR:
-		case MONO_TYPE_I4:
-		case MONO_TYPE_U4:
-		case MONO_TYPE_I:
-		case MONO_TYPE_U:
-		case MONO_TYPE_PTR:
-		case MONO_TYPE_FNPTR:
-		case MONO_TYPE_CLASS:
-		case MONO_TYPE_STRING:
-		case MONO_TYPE_OBJECT:
-		case MONO_TYPE_SZARRAY:
-		case MONO_TYPE_ARRAY:    
-			/* FIXME: call alloc_dreg */
+		if (type->byref)
 			inst->dreg = cfg->next_vireg ++;
-			break;
-		case MONO_TYPE_R4:
-		case MONO_TYPE_R8:
-			inst->dreg = cfg->next_vfreg ++;
-			break;
-		case MONO_TYPE_I8:
-		case MONO_TYPE_U8:
+		else {
+			switch (mono_type_get_underlying_type (type)->type) {
+			case MONO_TYPE_I1:
+			case MONO_TYPE_U1:
+			case MONO_TYPE_BOOLEAN:
+			case MONO_TYPE_I2:
+			case MONO_TYPE_U2:
+			case MONO_TYPE_CHAR:
+			case MONO_TYPE_I4:
+			case MONO_TYPE_U4:
+			case MONO_TYPE_I:
+			case MONO_TYPE_U:
+			case MONO_TYPE_PTR:
+			case MONO_TYPE_FNPTR:
+			case MONO_TYPE_CLASS:
+			case MONO_TYPE_STRING:
+			case MONO_TYPE_OBJECT:
+			case MONO_TYPE_SZARRAY:
+			case MONO_TYPE_ARRAY:    
+				/* FIXME: call alloc_dreg */
+				inst->dreg = cfg->next_vireg ++;
+				break;
+			case MONO_TYPE_R4:
+			case MONO_TYPE_R8:
+				inst->dreg = cfg->next_vfreg ++;
+				break;
+			case MONO_TYPE_I8:
+			case MONO_TYPE_U8:
 #if SIZEOF_VOID_P == 8
-			inst->dreg = cfg->next_vireg ++;
+				inst->dreg = cfg->next_vireg ++;
 #else
-			/* Use a pair of vregs */
-			inst->dreg = cfg->next_vireg ++;
-			cfg->next_vireg ++;
+				/* Use a pair of vregs */
+				inst->dreg = cfg->next_vireg ++;
+				cfg->next_vireg ++;
 #endif
-			break;
-		case MONO_TYPE_VALUETYPE:
-			break;
-		default:
-			printf ("A: %s\n", mono_type_full_name (type));
-			NOT_IMPLEMENTED;
+				break;
+			case MONO_TYPE_VALUETYPE:
+				break;
+			default:
+				printf ("A: %s\n", mono_type_full_name (type));
+				NOT_IMPLEMENTED;
+			}
 		}
 	}
 
@@ -9391,8 +9396,11 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 	if (cfg->verbose_level > 2)
 		g_print ("converting method %s\n", mono_method_full_name (method, TRUE));
 
+	/*
 	if (strstr (method->name, "test_") == method->name)
 		cfg->new_ir = TRUE;
+	*/
+	cfg->new_ir = TRUE;
 
 	if (cfg->new_ir) {
 		cfg->rs = mono_regstate_new ();
