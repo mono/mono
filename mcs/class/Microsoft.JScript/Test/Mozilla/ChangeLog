@@ -1,3 +1,8 @@
+2005-12-08  Cesar Lopez Nataren  <cnataren@novell.com>
+
+	* mjs-most.tests: Disable  js1_4/Regress/function-001.js because
+	it causes hangs.
+
 2005-10-11  Cesar Lopez Nataren  <cnataren@novell.com>
 
 	* mjs-most.tests: Add js1_3/Script/in-001.js and js1_3/regress/in-001.js.

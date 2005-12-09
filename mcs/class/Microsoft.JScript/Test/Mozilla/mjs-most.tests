@@ -1108,7 +1108,7 @@ js1_3/regress/switch-001.js
 #js1_4/Eval/eval-003.js
 js1_4/Functions/function-001.js
 js1_4/Regress/date-001-n.js
-js1_4/Regress/function-001.js
+#js1_4/Regress/function-001.js
 # Needs JScriptEvaluate
 #js1_4/Regress/function-002.js
 js1_4/Regress/function-003.js
