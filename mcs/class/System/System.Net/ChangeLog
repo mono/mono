@@ -1,3 +1,8 @@
+2005-12-09 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CookieContainer.cs: fix matching of subdomains. Patch by Cyrille
+	Colin.
+
 2005-12-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpWebResponse.cs: don't loop forever when no name or value between

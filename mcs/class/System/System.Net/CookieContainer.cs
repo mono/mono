@@ -232,8 +232,11 @@ namespace System.Net
 			int dot = host.IndexOf ('.');
 			if (dot == -1)
 				return (String.Compare (host, domain, true, CultureInfo.InvariantCulture) == 0);
-			
-			string subdomain = host.Substring (dot);
+
+			if (host.Length < domain.Length)
+				return false;
+
+			string subdomain = host.Substring (host.Length - domain.Length);
 			return (String.Compare (subdomain, domain, true, CultureInfo.InvariantCulture) == 0);
 		}
 
