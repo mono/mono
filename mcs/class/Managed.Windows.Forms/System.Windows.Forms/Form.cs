@@ -1446,23 +1446,8 @@ namespace System.Windows.Forms {
 			switch((Msg)m.Msg) {
 				case Msg.WM_CLOSE: {
 					Close();
-#if not
-					CancelEventArgs args = new CancelEventArgs();
-
-					OnClosing(args);
-
-					if (!args.Cancel) {
-						OnClosed(EventArgs.Empty);
-						DestroyHandle();
-						if (context != null) {
-							XplatUI.PostQuitMessage(0);
-						}
-						base.WndProc(ref m);
-						break;
-					}
-#endif
 					base.WndProc(ref m);
-					break;
+					return;
 				}
 
 				case Msg.WM_ACTIVATE: {

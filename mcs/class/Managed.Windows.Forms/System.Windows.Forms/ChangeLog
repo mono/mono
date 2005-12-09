@@ -1,3 +1,7 @@
+2005-12-08  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* Form.cs: Removed commented out code
+
 2005-12-08  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* Control.cs:
