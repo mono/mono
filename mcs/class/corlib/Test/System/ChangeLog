@@ -1,3 +1,8 @@
+2005-12-09  Raja R Harinath  <rharinath@novell.com>
+
+	* TypeTest.cs (TypeParameterIsNotGeneric): New.  Test invariants
+	listed in MSDN docs.
+
 2005-12-08  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AppDomainSetupTest.cs: Adapted tests to work on both Mono/MS and

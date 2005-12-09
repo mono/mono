@@ -485,6 +485,20 @@ PublicKeyToken=b77a5c561934e089"));
 			Assert.IsNull (parameters[0].ParameterType.FullName);
 			Assert.IsNotNull (parameters[0].ParameterType.ToString ());
 		}
+
+		[Test]
+		public void TypeParameterIsNotGeneric ()
+		{
+			Type fooType = typeof (Foo<>);
+			Type type_param = fooType.GetGenericArguments () [0];
+			Assert.IsTrue (type_param.IsGenericParameter);
+			Assert.IsFalse (type_param.IsGenericType);
+			Assert.IsFalse (type_param.IsGenericTypeDefinition);
+
+			// LAMESPEC: MSDN claims that this should be false, but .NET v2.0.50727 says it's true
+			// http://msdn2.microsoft.com/en-us/library/system.type.isgenerictype.aspx
+			Assert.IsTrue (type_param.ContainsGenericParameters);
+		}
 #endif
 
 		public class NemerleAttribute : Attribute
