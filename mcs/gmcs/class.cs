@@ -1467,9 +1467,7 @@ namespace Mono.CSharp {
 
 			Type parent = ptype;
 			if (parent != null) {
-				if (parent.IsGenericInstance)
-					parent = parent.GetGenericTypeDefinition ();
-
+				parent = TypeManager.DropGenericTypeArguments (parent);
 				TypeContainer ptc = TypeManager.LookupTypeContainer (parent);
 				if ((ptc != null) && !ptc.CheckRecursiveDefinition (this))
 					return false;
@@ -1477,11 +1475,7 @@ namespace Mono.CSharp {
 
 			if (iface_exprs != null) {
 				foreach (TypeExpr iface in iface_exprs) {
-					Type itype = iface.Type;
-
-					if (itype.IsGenericInstance)
-						itype = itype.GetGenericTypeDefinition ();
-
+					Type itype = TypeManager.DropGenericTypeArguments (iface.Type);
 					TypeContainer ptc = TypeManager.LookupTypeContainer (itype);
 					if ((ptc != null) && !ptc.CheckRecursiveDefinition (this))
 						return false;

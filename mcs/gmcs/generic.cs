@@ -1967,9 +1967,7 @@ namespace Mono.CSharp {
 
 		public static TypeContainer LookupGenericTypeContainer (Type t)
 		{
-			while (t.IsGenericInstance)
-				t = t.GetGenericTypeDefinition ();
-
+			t = DropGenericTypeArguments (t);
 			return LookupTypeContainer (t);
 		}
 
@@ -2031,6 +2029,16 @@ namespace Mono.CSharp {
 				return ret;
 			} else
 				return t.GetGenericArguments ();
+		}
+
+		public static Type DropGenericTypeArguments (Type t)
+		{
+			if (!t.IsGenericType)
+				return t;
+			// Micro-optimization: a generic typebuilder is always a generic type definition
+			if (t is TypeBuilder)
+				return t;
+			return t.GetGenericTypeDefinition ();
 		}
 
 		//
@@ -2260,13 +2268,11 @@ namespace Mono.CSharp {
 			int tcount = GetNumberOfTypeArguments (type);
 			int pcount = GetNumberOfTypeArguments (parent);
 
-			if (type.IsGenericInstance)
-				type = type.GetGenericTypeDefinition ();
-			if (parent.IsGenericInstance)
-				parent = parent.GetGenericTypeDefinition ();
-
 			if (tcount != pcount)
 				return false;
+
+			type = DropGenericTypeArguments (type);
+			parent = DropGenericTypeArguments (parent);
 
 			return type.Equals (parent);
 		}
@@ -2582,11 +2588,7 @@ namespace Mono.CSharp {
 
 		public static bool IsNullableType (Type t)
 		{
-			if (!t.IsGenericInstance)
-				return false;
-
-			Type gt = t.GetGenericTypeDefinition ();
-			return gt == generic_nullable_type;
+			return generic_nullable_type == DropGenericTypeArguments (t);
 		}
 	}
 

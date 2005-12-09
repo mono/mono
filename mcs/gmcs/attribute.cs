@@ -1663,8 +1663,7 @@ namespace Mono.CSharp {
 
 		static bool AnalyzeTypeCompliance (Type type)
 		{
-			if (type.IsGenericInstance)
-				type = type.GetGenericTypeDefinition ();
+			type = TypeManager.DropGenericTypeArguments (type);
 			DeclSpace ds = TypeManager.LookupDeclSpace (type);
 			if (ds != null)
 				return ds.IsClsComplianceRequired (ds);

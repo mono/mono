@@ -335,8 +335,7 @@ namespace Mono.CSharp {
 
 		static public void SymbolRelatedToPreviousError (Type type)
 		{
-			if (type.IsGenericInstance)
-				type = type.GetGenericTypeDefinition ();
+			type = TypeManager.DropGenericTypeArguments (type);
 
 			if (type.IsGenericParameter) {
 				TypeParameter tp = TypeManager.LookupTypeParameter (type);

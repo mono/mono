@@ -889,9 +889,7 @@ namespace Mono.CSharp {
 			else
 				tb = TypeBuilder;
 
-			if (check_type.IsGenericInstance)
-				check_type = check_type.GetGenericTypeDefinition ();
-
+			check_type = TypeManager.DropGenericTypeArguments (check_type);
 			if (check_type == tb)
 				return true;
 
@@ -1098,8 +1096,7 @@ namespace Mono.CSharp {
 			for (Type current_type = TypeBuilder;
 			     current_type != null && current_type != TypeManager.object_type;
 			     current_type = current_type.BaseType) {
-				if (current_type.IsGenericInstance)
-					current_type = current_type.GetGenericTypeDefinition ();
+				current_type = TypeManager.DropGenericTypeArguments (current_type);
 				if (current_type is TypeBuilder) {
 					DeclSpace decl = this;
 					if (current_type != TypeBuilder)

@@ -1931,9 +1931,7 @@ namespace Mono.CSharp {
 				return false;
 
 			while (parent != null) {
-				if (parent.IsGenericInstance)
-					parent = parent.GetGenericTypeDefinition ();
-
+				parent = TypeManager.DropGenericTypeArguments (parent);
 				if (TypeManager.IsNestedChildOf (t, parent))
 					return true;
 

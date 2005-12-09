@@ -1,3 +1,10 @@
+2005-12-09  Raja R Harinath  <rharinath@novell.com>
+
+	* generic.cs (DropGenericTypeArguments): New.  Captures the common
+	pattern: if (t.IsGenericInstance) t = t.GetGenericTypeDefinition ();
+	* attribute.cs, class.cs, decl.cs, ecore.cs: Use it.
+	* generic.cs, report.cs, typemanager.cs: Likewise.
+
 2005-12-08  Martin Baulig  <martin@ximian.com>
 
 	* generic.cs (TypeArguments.Resolve): Added CS1547 check.

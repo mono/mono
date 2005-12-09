@@ -1428,9 +1428,7 @@ public partial class TypeManager {
 
 	public static bool IsDelegateType (Type t)
 	{
-		if (t.IsGenericInstance)
-			t = t.GetGenericTypeDefinition ();
-
+		t = DropGenericTypeArguments (t);
 		if (t.IsSubclassOf (TypeManager.delegate_type))
 			return true;
 		else
@@ -1600,14 +1598,7 @@ public partial class TypeManager {
 			return true;
 		}
 
-		if (type.IsGenericInstance && parent.IsGenericInstance) {
-			if (type.GetGenericTypeDefinition () != parent.GetGenericTypeDefinition ())
-				return false;
-
-			return true;
-		}
-
-		return false;
+		return DropGenericTypeArguments (type) == DropGenericTypeArguments (parent);
 	}
 
 	public static bool IsFamilyAccessible (Type type, Type parent)
@@ -2341,9 +2332,7 @@ public partial class TypeManager {
 	/// </remarks>
 	public static string IndexerPropertyName (Type t)
 	{
-		if (t.IsGenericInstance)
-			t = t.GetGenericTypeDefinition ();
-
+		t = DropGenericTypeArguments (t);
 		if (t is TypeBuilder) {
 			TypeContainer tc = t.IsInterface ? LookupInterface (t) : LookupTypeContainer (t);
 			return tc == null ? TypeContainer.DefaultIndexerName : tc.IndexerName;
