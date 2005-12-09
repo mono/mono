@@ -393,7 +393,6 @@ namespace System.Windows.Forms {
 
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		[MonoTODO]
 		public Color SelectionColor {
 			get {
 				Color	color;
