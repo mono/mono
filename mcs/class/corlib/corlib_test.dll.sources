@@ -52,6 +52,7 @@ System/FloatingPointFormatterTest.cs
 System.Globalization/CalendarTest.cs
 System.Globalization/CompareInfoTest.cs
 System.Globalization/CultureInfoTest.cs
+System.Globalization/DaylightTimeTest.cs
 System.Globalization/TextInfoTest.cs
 System/GuidTest.cs
 System/Int16Test.cs
@@ -126,6 +127,7 @@ System.Runtime.InteropServices/RuntimeEnvironmentTest.cs
 System.Runtime.Remoting/ContextTest.cs
 System.Runtime.Remoting/SoapServicesTest.cs
 System.Runtime.Remoting/SynchronizationAttributeTest.cs
+System.Runtime.Remoting.Contexts/SynchronizationAttributeTest.cs
 System.Runtime.Serialization/FormatterServicesTests.cs
 System.Runtime.Serialization/ObjectIDGeneratorTests.cs
 System.Runtime.Serialization/SerializationTest.cs
