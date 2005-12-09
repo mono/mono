@@ -1,5 +1,9 @@
 2005-12-09  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlTextReaderTests.cs : added test for Encoding property.
+
+2005-12-09  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlReaderCommonTests.cs : added tests for ReadToDescendant() and
 	  ReadToFollowing().
 

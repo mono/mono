@@ -122,6 +122,10 @@ namespace System.Xml
 			pos = 0;
 		}
 
+		public Encoding Encoding {
+			get { return encoding; }
+		}
+
 		public override void Close ()
 		{
 			Dispose (true);

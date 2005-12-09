@@ -1,5 +1,12 @@
 2005-12-09  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlInputStream.cs :
+	  Added Encoding property on NonBlockingStreamReader
+	* XmlTextReader.cs :
+	  set Encoding property when it proceeds to xml declaration.
+
+2005-12-09  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlReader.cs : ReadToDescendant() should work when its ReadState is
 	  Initial.
 

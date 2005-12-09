@@ -1980,6 +1980,16 @@ namespace System.Xml
 			if (message != null)
 				throw NotWFError (message);
 
+			string encoding = GetAttribute ("encoding");
+			if (encoding != null) {
+				if (!XmlChar.IsValidIANAEncoding (encoding))
+					throw new XmlException (String.Format ("Encoding name must be a valid IANA name: {0}", encoding));
+				if (reader is XmlStreamReader)
+					parserContext.Encoding = ((XmlStreamReader) reader).Encoding;
+				else
+					parserContext.Encoding = Encoding.Unicode;
+			}
+
 			SetProperties (
 				XmlNodeType.XmlDeclaration, // nodeType
 				"xml", // name

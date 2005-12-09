@@ -1153,5 +1153,15 @@ namespace MonoTests.System.Xml
 				XmlNodeType.Document, null);
 			xtr.Read ();
 		}
+
+		[Test]
+		public void EncodingProperty ()
+		{
+			string xml = "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>\n<root>\n<node>\nvalue\n</node>\n</root>";
+			XmlTextReader xr = new XmlTextReader (xml, XmlNodeType.Document, null);
+			AssertNull ("#1", xr.Encoding);
+			xr.Read ();
+			AssertEquals ("#2", Encoding.Unicode, xr.Encoding);
+		}
 	}
 }
