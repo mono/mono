@@ -92,7 +92,7 @@ namespace System.Runtime.Remoting.Contexts {
 			}
 		}
 
-		public IContextProperty[] ContextProperties
+		public virtual IContextProperty[] ContextProperties
 		{
 			get 
 			{

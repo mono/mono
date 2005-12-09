@@ -1,3 +1,10 @@
+2005-12-08  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* Context.cs: ContextProperties property is virtual.
+	* CrossContextDelegate.cs: Removed [Serializable] from 2.0 build.
+	* SynchronizationAttribute.cs: Fixed serialization to be compatible 
+	with MS FX. Removed old TODO.
+
 2005-05-09  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* SynchronizationAttribute.cs: Make it serializable. Fixes bug #60228.

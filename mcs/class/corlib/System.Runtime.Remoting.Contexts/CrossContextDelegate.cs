@@ -4,10 +4,7 @@
 // Author: Duncan Mak  (duncan@ximian.com)
 //
 // 2002 (C) Copyright, Ximian, Inc.
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -31,6 +28,8 @@
 
 namespace System.Runtime.Remoting.Contexts {
 
+#if ONLY_1_1
 	[Serializable]
+#endif
 	public delegate void CrossContextDelegate ();
 }

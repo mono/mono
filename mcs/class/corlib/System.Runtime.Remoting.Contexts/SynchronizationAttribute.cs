@@ -5,10 +5,7 @@
 //   Lluis Sanchez Gual (lluis@ximian.com)
 //
 // (C) Novell, Inc.  http://www.ximian.com
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -38,7 +35,6 @@ namespace System.Runtime.Remoting.Contexts
 {
 	[AttributeUsage(AttributeTargets.Class)]
 	[Serializable]
-	[MonoTODO ("Fix serialization compatibility with MS.NET")]
 	public class SynchronizationAttribute: ContextAttribute, IContributeClientContextSink, IContributeServerContextSink
 	{
 		public const int NOT_SUPPORTED = 1;
@@ -46,9 +42,12 @@ namespace System.Runtime.Remoting.Contexts
 		public const int REQUIRED = 4;
 		public const int REQUIRES_NEW = 8;
 		
-		bool _isReentrant;
+		bool _bReEntrant;
+		int _flavor;
+
+		[NonSerialized]
 		bool _locked;
-		int _flag;
+		[NonSerialized]
 		int _lockCount = 0;
 		
 		[NonSerialized]
@@ -77,13 +76,13 @@ namespace System.Runtime.Remoting.Contexts
 			if (flag != NOT_SUPPORTED && flag != REQUIRED && flag != REQUIRES_NEW && flag != SUPPORTED)
 				throw new ArgumentException ("flag");
 				
-			_isReentrant = reEntrant;
-			_flag = flag;
+			_bReEntrant = reEntrant;
+			_flavor = flag;
 		}
 		
 		public virtual bool IsReEntrant
 		{
-			get { return _isReentrant; }
+			get { return _bReEntrant; }
 		}
 		
 		public virtual bool Locked
@@ -147,7 +146,7 @@ namespace System.Runtime.Remoting.Contexts
 		
 		public override void GetPropertiesForNewContext (IConstructionCallMessage ctorMsg)
 		{
-			if (_flag != NOT_SUPPORTED) {
+			if (_flavor != NOT_SUPPORTED) {
 				ctorMsg.ContextProperties.Add (this);
 			}
 		}
@@ -165,7 +164,7 @@ namespace System.Runtime.Remoting.Contexts
 		public override bool IsContextOK (Context ctx, IConstructionCallMessage msg)
 		{
 			SynchronizationAttribute prop = ctx.GetProperty ("Synchronization") as SynchronizationAttribute;
-			switch (_flag)
+			switch (_flavor)
 			{
 				case NOT_SUPPORTED: return (prop == null);
 				case REQUIRED: return (prop != null);
