@@ -8491,7 +8491,7 @@ optimize_branches (MonoCompile *cfg)
 				bbn = bb->out_bb [0];
 
 				/* conditional branches where true and false targets are the same can be also replaced with CEE_BR */
-				if (bb->last_ins && MONO_IS_COND_BRANCH_OP (bb->last_ins)) {
+				if (!cfg->new_ir && bb->last_ins && MONO_IS_COND_BRANCH_OP (bb->last_ins)) {
 					MonoInst *pop;
 					MONO_INST_NEW (cfg, pop, CEE_POP);
 					pop->inst_left = bb->last_ins->inst_left->inst_left;

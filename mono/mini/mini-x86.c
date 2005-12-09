@@ -2052,6 +2052,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case CEE_NOP:
 		case OP_DUMMY_USE:
 		case OP_DUMMY_STORE:
+		case OP_NOT_REACHED:
 			break;
 		case OP_ADDCC:
 		case OP_IADDCC:
@@ -2574,7 +2575,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case CEE_RET:
 			x86_ret (code);
 			break;
-		case CEE_THROW: {
+		case CEE_THROW:
+		case OP_THROW: {
 			x86_push_reg (code, ins->sreg1);
 			code = emit_call (cfg, code, MONO_PATCH_INFO_INTERNAL_METHOD, 
 							  (gpointer)"mono_arch_throw_exception");
