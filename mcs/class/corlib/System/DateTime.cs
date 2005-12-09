@@ -229,11 +229,14 @@ namespace System
 		/// Constructs a DateTime for specified ticks
 		/// </summary>
 		/// 
-		public DateTime (long newticks)
+		public DateTime (long ticks)
 		{
-			ticks = new TimeSpan (newticks);
-			if (ticks.Ticks < MinValue.Ticks || ticks.Ticks > MaxValue.Ticks)
-			    throw new ArgumentOutOfRangeException ();
+			this.ticks = new TimeSpan (ticks);
+			if (ticks < MinValue.Ticks || ticks > MaxValue.Ticks) {
+				string msg = Locale.GetText ("Value {0} is outside the valid range [{1},{2}].", 
+					ticks, MinValue.Ticks, MaxValue.Ticks);
+				throw new ArgumentOutOfRangeException ("ticks", msg);
+			}
 		}
 
 		public DateTime (int year, int month, int day)

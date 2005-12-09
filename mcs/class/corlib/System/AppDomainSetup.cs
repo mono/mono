@@ -1,8 +1,9 @@
 //
 // System.AppDomainSetup.cs
 //
-// Author:
-//   Dietmar Maurer (dietmar@ximian.com)
+// Authors:
+//	Dietmar Maurer (dietmar@ximian.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 // Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
@@ -101,14 +102,24 @@ namespace System
 
 		static string GetAppBase (string appBase)
 		{
-			if (appBase == null) return null;
+			if (appBase == null)
+				return null;
+
 			int len = appBase.Length;
 			if (len >= 8 && appBase.ToLower ().StartsWith ("file://")) {
 				appBase = appBase.Substring (7);
 				if (Path.DirectorySeparatorChar != '/')
 					appBase = appBase.Replace ('/', Path.DirectorySeparatorChar);
-
-			} else if (appBase.IndexOf (':') == -1) {
+				if (Environment.IsRunningOnWindows) {
+					// Under Windows prepend "//" to indicate it's a local file
+					appBase = "//" + appBase;
+				}
+#if NET_2_0
+			} else {
+#else
+			// under 1.x the ":" gets a special treatment - but it doesn't make sense outside Windows
+			} else if (!Environment.IsRunningOnWindows || (appBase.IndexOf (':') == -1)) {
+#endif
 				appBase = Path.GetFullPath (appBase);
 			}
 
@@ -116,12 +127,8 @@ namespace System
 		}
 		
 		public string ApplicationBase {
-			get {
-				return application_base;
-			}
-			set {
-				application_base = GetAppBase (value);
-			}
+			get { return GetAppBase (application_base); }
+			set { application_base = value; } 
 		}
 
 		public string ApplicationName {
