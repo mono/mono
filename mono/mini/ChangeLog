@@ -1,5 +1,7 @@
 2005-12-09  Zoltan Varga  <vargaz@gmail.com>
 
+	* basic-long.cs: Add i4->u8 test.
+
 	* objects.cs: Add tests for JIT intrinsic.
 
 	* mini.c (mini_get_inst_for_method): Resurrect the array Rank/Length
