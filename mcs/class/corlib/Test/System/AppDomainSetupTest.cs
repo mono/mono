@@ -1,7 +1,9 @@
+//
 // AppDomainSetupTest.cs - NUnit Test Cases for the System.AppDomainSetup class
 //
 // Authors:
 // 	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//      Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Ximian, Inc.  http://www.ximian.com
 // Copyright (C) 2005 Novell, Inc (http://www.novell.com)
@@ -14,25 +16,47 @@ using System.IO;
 namespace MonoTests.System
 {
 	[TestFixture]
-	public class AppDomainSetupTest : Assertion
-	{
+	public class AppDomainSetupTest {
+
 		static readonly string tmpPath = Path.GetTempPath ();
 		static readonly string curDir = Directory.GetCurrentDirectory ();
 
-		[Test]
+		private bool RunningOnWindows {
+			get {
+				int os = (int)Environment.OSVersion.Platform;
 #if NET_2_0
-		// Invalid path format
-		[ExpectedException (typeof (NotSupportedException))]
+				return (os != 4);
+#else
+				return (os != 128);
 #endif
-		[Category ("NotWorking")]
+			}
+		}
+
+		[Test]
 		public void ApplicationBase1 ()
 		{
 			string expected_path = tmpPath.Replace(@"\", @"/");
 			AppDomainSetup setup = new AppDomainSetup ();
 			string fileUri = "file://" + expected_path;
 			setup.ApplicationBase = fileUri;
-			// with MS 1.1 SP1 the expected_path starts with "//"
-			AssertEquals ("AB1 #01", "//" + expected_path, setup.ApplicationBase);
+			// with MS 1.1 SP1 the expected_path starts with "//" but this make
+			// sense only under Windows (i.e. reversed \\ for local files)
+			if (RunningOnWindows)
+				expected_path = "//" + expected_path;
+#if NET_2_0
+			try {
+				// under 2.0 the NotSupportedException is throw when getting 
+				// (and not setting) the ApplicationBase property
+				Assert.AreEqual (expected_path, setup.ApplicationBase);
+			}
+			catch (NotSupportedException) {
+				// however the path is invalid only on Windows
+				if (!RunningOnWindows)
+					throw;
+			}
+#else
+			Assert.AreEqual (expected_path, setup.ApplicationBase);
+#endif
 		}
 
 		[Test]
@@ -40,7 +64,7 @@ namespace MonoTests.System
 		{
 			AppDomainSetup setup = new AppDomainSetup ();
 			setup.ApplicationBase = curDir;
-			AssertEquals ("AB2 #01", curDir, setup.ApplicationBase);
+			Assert.AreEqual (curDir, setup.ApplicationBase);
 		}
 
 		[Test]
@@ -49,34 +73,85 @@ namespace MonoTests.System
 			AppDomainSetup setup = new AppDomainSetup ();
 			string expected = Path.Combine (Environment.CurrentDirectory, "lalala");
 			setup.ApplicationBase = "lalala";
-			AssertEquals ("AB3 #01", expected, setup.ApplicationBase);
+			Assert.AreEqual (expected, setup.ApplicationBase);
 		}
 
 		[Test]
-#if NET_2_0
-		// Invalid path format
-		[ExpectedException (typeof (NotSupportedException))]
-		[Category ("NotWorking")]
-#endif
 		public void ApplicationBase4 ()
 		{
 			AppDomainSetup setup = new AppDomainSetup ();
 			setup.ApplicationBase = "lala:la";
-			AssertEquals ("AB4 #01", "lala:la", setup.ApplicationBase);
+#if NET_2_0
+			try {
+				// under 2.0 the NotSupportedException is throw when getting 
+				// (and not setting) the ApplicationBase property
+				Assert.AreEqual (Path.GetFullPath ("lala:la"), setup.ApplicationBase);
+			}
+			catch (NotSupportedException) {
+				// however the path is invalid only on Windows
+				// (same exceptions as Path.GetFullPath)
+				if (!RunningOnWindows)
+					throw;
+			}
+#else
+			// under 1.x a "bad" path containing ":" will be returned "as-is"
+			// but the name is legal for linux so we return a full path
+			if (RunningOnWindows)
+				Assert.AreEqual ("lala:la", setup.ApplicationBase);
+			else
+				Assert.AreEqual (Path.GetFullPath ("lala:la"), setup.ApplicationBase);
+#endif
 		}
 
 		[Test]
-#if NET_2_0
-		// Invalid path format
-		[ExpectedException (typeof (NotSupportedException))]
-#endif
-		[Category ("NotWorking")]
 		public void ApplicationBase5 ()
 		{
 			// This is failing because of (probably) a windows-ism, so don't worry
 			AppDomainSetup setup = new AppDomainSetup ();
 			setup.ApplicationBase = "file:///lala:la";
-			AssertEquals ("AB5 #01", "lala:la", setup.ApplicationBase);
+#if NET_2_0
+			try {
+				// under 2.0 the NotSupportedException is throw when getting 
+				// (and not setting) the ApplicationBase property
+				Assert.AreEqual ("/lala:la", setup.ApplicationBase);
+			}
+			catch (NotSupportedException) {
+				// however the path is invalid only on Windows
+				// (same exceptions as Path.GetFullPath)
+				if (!RunningOnWindows)
+					throw;
+			}
+#else
+			// under 1.x a "bad" path containing ":" will be returned "as-is"
+			// but the name is legal for linux so we return a full path
+			if (RunningOnWindows)
+				Assert.AreEqual ("lala:la", setup.ApplicationBase);
+			else
+				Assert.AreEqual ("/lala:la", setup.ApplicationBase);
+#endif
+		}
+
+		[Test]
+		public void ApplicationBase6 ()
+		{
+			AppDomainSetup setup = new AppDomainSetup ();
+			setup.ApplicationBase = "la?lala";
+			// paths containing "?" are *always* bad on Windows
+			// but are legal for linux so we return a full path
+			if (RunningOnWindows) {
+				try {
+					// ArgumentException is throw when getting 
+					// (and not setting) the ApplicationBase property
+					Assert.Fail ("setup.ApplicationBase returned :" + setup.ApplicationBase);
+				}
+				catch (ArgumentException) {
+				}
+				catch (Exception e) {
+					Assert.Fail ("Unexpected exception: " + e.ToString ());
+				}
+			} else {
+				Assert.AreEqual (Path.GetFullPath ("la?lala"), setup.ApplicationBase);
+			}
 		}
 	}
 }

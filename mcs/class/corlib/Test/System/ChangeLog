@@ -1,3 +1,9 @@
+2005-12-08  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AppDomainSetupTest.cs: Adapted tests to work on both Mono/MS and
+	both 1.1/2.0. Most of the previously "NonWorking" test cases were
+	really path issues (valid on Linux, invalid on Windows).
+
 2005-12-06  Sebastien Pouliot  <sebastien@ximian.com> 
  
 	* ConvertTest.cs: Added test case for bug #76876 (new lines in b64).
