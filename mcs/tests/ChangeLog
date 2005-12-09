@@ -1,5 +1,10 @@
 2005-12-09  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* known-issues-mcs : test-476 is broken (since the corresponding 
+	  patch is reverted.)
+
+2005-12-09  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* test-xml-050-ref.xml, test-xml-050.cs : new test for bug #76954.
 	* known-issues-gmcs : fixed filename and removed test-60.cs.
 

@@ -1,5 +1,10 @@
 2005-12-09  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* cs-tokenizer.cs : reverted the latest change: it somehow broke
+	  Mono.C5.
+
+2005-12-09  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* doc.cs : so it turned out that we cannot skip override check for 
 	  interface members. Fixed bug #76954.
 
