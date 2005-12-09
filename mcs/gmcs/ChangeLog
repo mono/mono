@@ -1,5 +1,11 @@
 2005-12-09  Raja R Harinath  <rharinath@novell.com>
 
+	* anonymous.cs (AnonymousMethod.Compatible): Use IsGenericType
+	instead of IsGenericInstance.
+	* generic.cs (TypeManager.IsEqual): Likewise.  Delete redundant
+	code that's now covered by the more general test.
+	* typemanager.cs (TypeManager.IsPrivateAccessible): Likewise.
+
 	* generic.cs (DropGenericTypeArguments): New.  Captures the common
 	pattern: if (t.IsGenericInstance) t = t.GetGenericTypeDefinition ();
 	* attribute.cs, class.cs, decl.cs, ecore.cs: Use it.

@@ -233,14 +233,17 @@ namespace Mono.CSharp {
 			invoke_mb = (MethodInfo) invoke_mg.Methods [0];
 			ParameterData invoke_pd = TypeManager.GetParameterData (invoke_mb);
 
-			if (delegate_type.IsGenericInstance) {
-				TypeArguments = TypeManager.GetTypeArguments (delegate_type);
-
+			if (delegate_type.IsGenericType) {
 				Type def = delegate_type.GetGenericTypeDefinition ();
-				Type[] tparam = TypeManager.GetTypeArguments (def);
-				TypeParameters = new string [tparam.Length];
-				for (int i = 0; i < tparam.Length; i++)
-					TypeParameters [i] = tparam [i].Name;
+
+				if (def != delegate_type) {
+					Type[] tparam = TypeManager.GetTypeArguments (def);
+
+					TypeArguments = TypeManager.GetTypeArguments (delegate_type);
+					TypeParameters = new string [tparam.Length];
+					for (int i = 0; i < tparam.Length; i++)
+						TypeParameters [i] = tparam [i].Name;
+				}
 			}
 
 			if (Parameters == null){				
