@@ -1,4 +1,33 @@
 
+
+
+2005-12-09  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
+
+    Npgsql/NpgsqlError.cs,
+    Npgsql/NpgsqlParameter.cs,
+    Npgsql/NpgsqlConnectionString.cs,
+    Npgsql/NpgsqlConnection.cs,
+    Npgsql/NpgsqlSchema.cs,
+    Npgsql/NpgsqlClosedState.cs,
+    Npgsql/NpgsqlCommand.cs,
+    Npgsql/NpgsqlState.cs,
+    Npgsql/NpgsqlAsciiRow.cs,
+    Npgsql/NpgsqlConnectorPool.cs,
+    Npgsql/NpgsqlConnector.cs,
+    Npgsql/NpgsqlQuery.cs,
+    Npgsql/NpgsqlRowDescription.cs,
+    Npgsql/NpgsqlCommandBuilder.cs,
+    Npgsql/NpgsqlDataReader.cs,
+    Npgsql/NpgsqlException.cs,
+    Npgsql/NpgsqlMediator.cs,
+    Npgsql/NpgsqlReadyState.cs,
+    Npgsql/NpgsqlEventLog.cs,
+    Npgsql.dll.resources,
+    NpgsqlTypes/NpgsqlTypeConverters.cs,
+    NpgsqlTypes/NpgsqlTypesHelper.cs,
+    Makefile: Updated to 1.0beta1
+
+
 2005-08-27  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
     * NpgsqlParameter.cs: Applied patch to fix a NullReferenceException when using Design Time support. Thanks Josh Cooley ( jbnpgsql at tuxinthebox dot net ) for patch.
     * NpgsqlDataReader.cs: Updated ProviderType metadata from NpgsqlDataReader.GetResultsetSchema to be the string for the type rather than the oid.  Fixed ColumnSize, NumericPrecision, NumericScale, BaseColumnName, AllowDBNull, and IsAliased. Also integrated patch from (rlp at bamafolks dot com), gborg 751. Thanks Josh Cooley (jbnpgsql at tuxinthebox dot net) for patches!

@@ -49,15 +49,17 @@ namespace Npgsql
         //
         // Responses collected from the backend.
         //
-        private ArrayList							_errors;
-        private ArrayList							_notices;
-        private	ArrayList							_resultSets;
-        private ArrayList							_responses;
-        private ArrayList             _notifications;
-        private ListDictionary        _parameters;
-        private NpgsqlBackEndKeyData  _backend_key_data;
+        private ArrayList				_errors;
+        private ArrayList				_notices;
+        private	ArrayList				_resultSets;
+        private ArrayList				_responses;
+        private ArrayList               _notifications;
+        private ListDictionary          _parameters;
+        private NpgsqlBackEndKeyData    _backend_key_data;
         private NpgsqlRowDescription	_rd;
-        private ArrayList							_rows;
+        private ArrayList				_rows;
+        private String                  _sqlSent;
+        
 
         public NpgsqlMediator()
         {
@@ -70,6 +72,7 @@ namespace Npgsql
             _notifications = new ArrayList();
             _parameters = new ListDictionary(CaseInsensitiveComparer.Default);
             _backend_key_data = null;
+            _sqlSent = String.Empty;
         }
 
         public void ResetExpectations()
@@ -86,6 +89,7 @@ namespace Npgsql
             _notifications.Clear();
             _parameters.Clear();
             _backend_key_data = null;
+            _sqlSent = String.Empty;
         }
 
 
@@ -166,6 +170,19 @@ namespace Npgsql
             get
             {
                 return _backend_key_data;
+            }
+        }
+        
+        public String SqlSent
+        {
+            set
+            {
+                _sqlSent = value;
+            }
+            
+            get
+            {
+                return _sqlSent;
             }
         }
 

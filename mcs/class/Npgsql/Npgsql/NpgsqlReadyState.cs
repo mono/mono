@@ -34,7 +34,7 @@ namespace Npgsql
 
     internal sealed class NpgsqlReadyState : NpgsqlState
     {
-        private static NpgsqlReadyState _instance = null;
+        private static NpgsqlReadyState _instance = new NpgsqlReadyState();
 
 
         // Flush and Sync messages. It doesn't need to be created every time it is called.
@@ -51,10 +51,6 @@ namespace Npgsql
         {
             get
             {
-                if ( _instance == null )
-                {
-                    _instance = new NpgsqlReadyState();
-                }
                 return _instance;
             }
         }

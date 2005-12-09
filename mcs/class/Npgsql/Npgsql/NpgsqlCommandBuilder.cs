@@ -1,9 +1,9 @@
 // NpgsqlCommandBuilder.cs
 //
 // Author:
-//   Pedro MartÌnez Juli· (yoros@wanadoo.es)
+//   Pedro Mart√≠nez Juli√° (yoros@wanadoo.es)
 //
-// Copyright (C) 2003 Pedro MartÌnez Juli·
+// Copyright (C) 2003 Pedro Mart√≠nez Juli√°
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,6 +29,7 @@ using System;
 using System.Data;
 using System.Data.Common;
 using System.ComponentModel;
+using NpgsqlTypes;
 
 namespace Npgsql
 {
@@ -48,6 +49,9 @@ namespace Npgsql
         private NpgsqlCommand delete_command;
 
         private string table_name = String.Empty;
+
+        private string quotePrefix = "\"";
+        private string quoteSuffix = "\"";
 
         public NpgsqlCommandBuilder ()
         {}
@@ -88,18 +92,19 @@ namespace Npgsql
             }
         }
 
-        private void OnRowUpdating(Object sender, NpgsqlRowUpdatingEventArgs value) {
+        private void OnRowUpdating(Object sender, NpgsqlRowUpdatingEventArgs value)
+        {
             switch (value.StatementType)
             {
-                case StatementType.Insert:
-                    value.Command = GetInsertCommand(value.Row);
-                    break;
-                case StatementType.Update:
-                    value.Command = GetUpdateCommand(value.Row);
-                    break;
-                case StatementType.Delete:
-                    value.Command = GetDeleteCommand(value.Row);
-                    break;
+            case StatementType.Insert:
+                value.Command = GetInsertCommand(value.Row);
+                break;
+            case StatementType.Update:
+                value.Command = GetUpdateCommand(value.Row);
+                break;
+            case StatementType.Delete:
+                value.Command = GetDeleteCommand(value.Row);
+                break;  
             }
 
             DataColumnMappingCollection columnMappings = value.TableMapping.ColumnMappings;
@@ -126,26 +131,77 @@ namespace Npgsql
             value.Row.AcceptChanges ();
         }
 
+
         public string QuotePrefix {
             get
             {
-                return "";
+                return quotePrefix;
             }
             set
-            { }
+            {
+                quotePrefix = value;
+            }
         }
+
 
         public string QuoteSuffix {
             get
             {
-                return "";
+                return quoteSuffix;
             }
             set
-            { }
+            {
+                quoteSuffix = value;
+            }
         }
 
+        ///<summary>
+        ///
+        /// This method is reponsible to derive the command parameter list with values obtained from function definition.
+        /// It clears the Parameters collection of command. Also, if there is any parameter type which is not supported by Npgsql, an InvalidOperationException will be thrown.
+        /// Parameters name will be parameter1, parameter2, ...
+        /// For while, only parameter name and NpgsqlDbType are obtained.
+        ///</summary>
+        /// <param name="command">NpgsqlCommand whose function parameters will be obtained.</param>
+
         public static void DeriveParameters (NpgsqlCommand command)
-        {}
+        {
+            String query = "select proargtypes from pg_proc where proname = :procname";
+
+            NpgsqlCommand c = new NpgsqlCommand(query, command.Connection);
+            c.Parameters.Add(new NpgsqlParameter("procname", NpgsqlDbType.Text));
+            c.Parameters[0].Value = command.CommandText;
+
+            String types = (String) c.ExecuteScalar();
+
+            command.Parameters.Clear();
+            Int32 i = 1;
+
+            foreach(String s in types.Split())
+            {
+                if (!c.Connector.OidToNameMapping.ContainsOID(Int32.Parse(s)))
+                {
+                    command.Parameters.Clear();
+                    throw new InvalidOperationException(String.Format("Invalid parameter type: {0}", s));
+                }
+                command.Parameters.Add(new NpgsqlParameter("parameter" + i++, c.Connector.OidToNameMapping[Int32.Parse(s)].NpgsqlDbType));
+            }
+
+        }
+
+        private string GetQuotedName(string str)
+        {
+            string result = str;
+            if ((QuotePrefix != string.Empty) && !str.StartsWith(QuotePrefix))
+            {
+                result = QuotePrefix + result;
+            }
+            if ((QuoteSuffix != string.Empty) && !str.EndsWith(QuoteSuffix))
+            {
+                result = result + QuoteSuffix;
+            }
+            return result;
+        }
 
         public NpgsqlCommand GetInsertCommand (DataRow row)
         {
@@ -161,17 +217,17 @@ namespace Npgsql
                         fields += ", ";
                         values += ", ";
                     }
-                    fields += column.ColumnName;
+                    fields += GetQuotedName(column.ColumnName);
                     values += ":param_" + column.ColumnName;
                 }
                 if (table_name == String.Empty)
                 {
                     table_name = row.Table.TableName;
                 }
-                NpgsqlCommand cmdaux = new NpgsqlCommand("insert into " + table_name + " (" + fields + ") values (" + values + ")", data_adapter.SelectCommand.Connection);
+                NpgsqlCommand cmdaux = new NpgsqlCommand("insert into " + GetQuotedName(table_name) + " (" + fields + ") values (" + values + ")", data_adapter.SelectCommand.Connection);
                 foreach (DataColumn column in row.Table.Columns)
                 {
-                    NpgsqlParameter aux = new NpgsqlParameter("param_" + column.ColumnName, row[column]);
+                    NpgsqlParameter aux = new NpgsqlParameter("param_" + column.ColumnName, row[column], NpgsqlTypesHelper.GetNativeTypeInfo(column.DataType));
                     aux.Direction = ParameterDirection.Input;
                     aux.SourceColumn = column.ColumnName;
                     cmdaux.Parameters.Add(aux);
@@ -195,17 +251,17 @@ namespace Npgsql
                         wheres += " and ";
                     }
                     DataColumn column = row.Table.Columns[i];
-                    sets += String.Format("{0} = :s_param_{0}", column.ColumnName);
-                    wheres += String.Format("(({0} is null) or ({0} = :w_param_{0}))", column.ColumnName);
+                    sets += String.Format(GetQuotedName("{0}") + " = :s_param_{0}", column.ColumnName);
+                    wheres += String.Format("((" + GetQuotedName("{0}") + " is null) or (" + GetQuotedName("{0}") + " = :w_param_{0}))", column.ColumnName);
                 }
                 if (table_name == String.Empty)
                 {
                     table_name = row.Table.TableName;
                 }
-                NpgsqlCommand cmdaux = new NpgsqlCommand("update " + table_name + " set " + sets + " where ( " + wheres + " )", data_adapter.SelectCommand.Connection);
+                NpgsqlCommand cmdaux = new NpgsqlCommand("update " + GetQuotedName(table_name) + " set " + sets + " where ( " + wheres + " )", data_adapter.SelectCommand.Connection);
                 foreach (DataColumn column in row.Table.Columns)
                 {
-                    NpgsqlParameter aux = new NpgsqlParameter("s_param_" + column.ColumnName, row[column]);
+                    NpgsqlParameter aux = new NpgsqlParameter("s_param_" + column.ColumnName, row[column], NpgsqlTypesHelper.GetNativeTypeInfo(column.DataType));
                     aux.Direction = ParameterDirection.Input;
                     aux.SourceColumn = column.ColumnName;
                     aux.SourceVersion = DataRowVersion.Current;
@@ -213,7 +269,7 @@ namespace Npgsql
                 }
                 foreach (DataColumn column in row.Table.Columns)
                 {
-                    NpgsqlParameter aux = new NpgsqlParameter("w_param_" + column.ColumnName, row[column]);
+                    NpgsqlParameter aux = new NpgsqlParameter("w_param_" + column.ColumnName, row[column], NpgsqlTypesHelper.GetNativeTypeInfo(column.DataType));
                     aux.Direction = ParameterDirection.Input;
                     aux.SourceColumn = column.ColumnName;
                     aux.SourceVersion = DataRowVersion.Original;
@@ -237,16 +293,16 @@ namespace Npgsql
                     {
                         wheres += " and ";
                     }
-                    wheres += String.Format("(({0} is null) or ({0} = :param_{0}))", column.ColumnName);
+                    wheres += String.Format("((" + GetQuotedName("{0}") + " is null) or (" + GetQuotedName("{0}") + " = :param_{0}))", column.ColumnName);
                 }
                 if (table_name == String.Empty)
                 {
                     table_name = row.Table.TableName;
                 }
-                NpgsqlCommand cmdaux = new NpgsqlCommand("delete from " + table_name + " where ( " + wheres + " )", data_adapter.SelectCommand.Connection);
+                NpgsqlCommand cmdaux = new NpgsqlCommand("delete from " + GetQuotedName(table_name) + " where ( " + wheres + " )", data_adapter.SelectCommand.Connection);
                 foreach (DataColumn column in row.Table.Columns)
                 {
-                    NpgsqlParameter aux = new NpgsqlParameter("param_" + column.ColumnName, row[column,DataRowVersion.Original]);
+                    NpgsqlParameter aux = new NpgsqlParameter("param_" + column.ColumnName, row[column,DataRowVersion.Original], NpgsqlTypesHelper.GetNativeTypeInfo(column.DataType));
                     aux.Direction = ParameterDirection.Input;
                     aux.SourceColumn = column.ColumnName;
                     aux.SourceVersion = DataRowVersion.Original;

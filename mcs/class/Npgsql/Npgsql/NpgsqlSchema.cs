@@ -111,7 +111,10 @@ namespace Npgsql
                     if (restrictions[i] != null && restrictions[i].Length != 0)
                     {
                         if (addWhere)
+                        {
                             query.Append(" WHERE ");
+                            addWhere = false;
+                        }
                         query.AppendFormat("{0} = :{0}", names[i]);
 
                         command.Parameters.Add(new NpgsqlParameter(names[i], restrictions[i]));

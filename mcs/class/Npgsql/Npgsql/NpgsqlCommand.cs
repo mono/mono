@@ -251,7 +251,7 @@ namespace Npgsql
         internal NpgsqlConnector Connector {
             get
             {
-                if (connector == null && this.connection != null)
+                if (this.connection != null)
                     connector = this.connection.Connector;
 
                 return connector;
@@ -813,6 +813,8 @@ namespace Npgsql
 
 
                 result = AddSingleRowBehaviorSupport(result);
+                
+                result = AddSchemaOnlyBehaviorSupport(result);
 
                 return result;
             }
@@ -912,7 +914,11 @@ namespace Npgsql
                 return ProcessRefcursorFunctionReturn(result);
 
 
-            return AddSingleRowBehaviorSupport(result);
+            result = AddSingleRowBehaviorSupport(result);
+            
+            result = AddSchemaOnlyBehaviorSupport(result);
+            
+            return result;
         }
         
         
@@ -1226,7 +1232,7 @@ namespace Npgsql
             
             ResultCommandText = ResultCommandText.Trim();
         
-            if ((commandBehavior & CommandBehavior.SingleRow) > 0)
+            if ((commandBehavior & CommandBehavior.SingleRow) == CommandBehavior.SingleRow)
             {
                 if (ResultCommandText.EndsWith(";"))
                     ResultCommandText = ResultCommandText.Substring(0, ResultCommandText.Length - 1);
@@ -1234,6 +1240,24 @@ namespace Npgsql
                 
             }
             
+            
+            
+            return ResultCommandText;
+            
+        }
+        
+        private String AddSchemaOnlyBehaviorSupport(String ResultCommandText)
+        {
+            
+            ResultCommandText = ResultCommandText.Trim();
+        
+            if ((commandBehavior & CommandBehavior.SchemaOnly) == CommandBehavior.SchemaOnly)
+            {
+                if (ResultCommandText.EndsWith(";"))
+                    ResultCommandText = ResultCommandText.Substring(0, ResultCommandText.Length - 1);
+                ResultCommandText += " limit 0;";
+                
+            }
             
             
             return ResultCommandText;
@@ -1247,7 +1271,7 @@ namespace Npgsql
             CheckConnectionState();
 
             // reset any responses just before getting new ones
-            connector.Mediator.ResetResponses();
+            Connector.Mediator.ResetResponses();
 
 
             if (parse == null)

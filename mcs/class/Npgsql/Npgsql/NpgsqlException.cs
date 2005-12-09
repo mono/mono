@@ -204,6 +204,18 @@ namespace Npgsql
                 return this[0].Routine;
             }
         }
+        
+        /// <summary>
+        /// String containing the sql sent which produced this error.
+        /// </summary>
+        public String ErrorSql
+        {
+            get
+            {
+                return this[0].ErrorSql;
+            }
+        }
+                
 
         /// <summary>
         /// Returns the entire list of errors provided by the PostgreSQL backend.

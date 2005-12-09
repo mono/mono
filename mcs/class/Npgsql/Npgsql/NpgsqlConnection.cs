@@ -140,18 +140,19 @@ namespace Npgsql
         /// <summary>
         /// Gets or sets the string used to connect to a PostgreSQL database.
         /// Valid values are:
-        /// Server:        Address/Name of Postgresql Server;
-        /// Port:          Port to connect to;
-        /// Protocol:      Protocol version to use, instead of automatic; Integer 2 or 3;
-        /// Database:      Database name. Defaults to user name if not specified;
-        /// User Id:       User name;
-        /// Password:      Password for clear text authentication;
-        /// SSL:           True or False. Controls whether to attempt a secure connection. Default = False;
-        /// Pooling:       True or False. Controls whether connection pooling is used. Default = True;
-        /// MinPoolSize:   Min size of connection pool;
-        /// MaxPoolSize:   Max size of connection pool;
-        /// Encoding:      Encoding to be used;
-        /// Timeout:       Time to wait for connection open in seconds.
+        /// Server:             Address/Name of Postgresql Server;
+        /// Port:               Port to connect to;
+        /// Protocol:           Protocol version to use, instead of automatic; Integer 2 or 3;
+        /// Database:           Database name. Defaults to user name if not specified;
+        /// User Id:            User name;
+        /// Password:           Password for clear text authentication;
+        /// SSL:                True or False. Controls whether to attempt a secure connection. Default = False;
+        /// Pooling:            True or False. Controls whether connection pooling is used. Default = True;
+        /// MinPoolSize:        Min size of connection pool;
+        /// MaxPoolSize:        Max size of connection pool;
+        /// Encoding:           Encoding to be used;
+        /// Timeout:            Time to wait for connection open in seconds.
+        /// ConnectionLifeTime: Time to wait before closing unused connections in the pool.
         /// </summary>
         /// <value>The connection string that includes the server name,
         /// the database name, and other parameters needed to establish
@@ -227,6 +228,24 @@ namespace Npgsql
             get
             {
                 return connection_string.ToInt32(ConnectionStringKeys.Timeout, ConnectionStringDefaults.Timeout);
+            }
+        }
+        
+        /// <summary>
+        /// Gets the time to wait before closing unused connections in the pool if the count
+        /// of all connections exeeds MinPoolSize.
+        /// </summary>
+        /// <remarks>
+        /// If connection pool contains unused connections for ConnectionLifeTime seconds,
+        /// the half of them will be closed. If there will be unused connections in a second
+        /// later then again the half of them will be closed and so on.
+        /// This strategy provide smooth change of connection count in the pool.
+        /// </remarks>
+        /// <value>The time (in seconds) to wait. The default value is 15 seconds.</value>
+        public Int32 ConnectionLifeTime {
+            get
+            {
+                return connection_string.ToInt32(ConnectionStringKeys.ConnectionLifeTime, ConnectionStringDefaults.ConnectionLifeTime);
             }
         }
 

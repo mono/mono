@@ -55,16 +55,17 @@ namespace Npgsql
         private static readonly String CLASSNAME = "NpgsqlError";
 
         private ProtocolVersion protocol_version;
-        private String _severity = "";
-        private String _code = "";
-        private String _message = "";
-        private String _detail = "";
-        private String _hint = "";
-        private String _position = "";
-        private String _where = "";
-        private String _file = "";
-        private String _line = "";
-        private String _routine = "";
+        private String _severity = String.Empty;
+        private String _code = String.Empty;
+        private String _message = String.Empty;
+        private String _detail = String.Empty;
+        private String _hint = String.Empty;
+        private String _position = String.Empty;
+        private String _where = String.Empty;
+        private String _file = String.Empty;
+        private String _line = String.Empty;
+        private String _routine = String.Empty;
+        private String _errorSql = String.Empty;
 
         /// <summary>
         /// Severity code.  All versions.
@@ -175,7 +176,21 @@ namespace Npgsql
                 return _routine;
             }
         }
-
+        
+        /// <summary>
+        /// String containing the sql sent which produced this error.
+        /// </summary>
+        public String ErrorSql
+        {
+            set
+            {
+                _errorSql = value;
+            }
+            get
+            {
+                return _errorSql;
+            }
+        }
         /// <summary>
         /// Return a string representation of this error object.
         /// </summary>

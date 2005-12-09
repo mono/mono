@@ -45,6 +45,10 @@ namespace Npgsql
         private readonly String CLASSNAME = "NpgsqlState";
         protected static ResourceManager resman = new ResourceManager(typeof(NpgsqlState));
 
+        internal NpgsqlState()
+        {
+        }
+
         public virtual void Open(NpgsqlConnector context)
         {
             throw new InvalidOperationException("Internal Error! " + this);
@@ -158,6 +162,9 @@ namespace Npgsql
 
             Boolean readyForQuery = false;
 
+            byte[] asciiRowBytes = new byte[300];
+            char[] asciiRowChars = new char[300];
+
             while (!readyForQuery)
             {
                 // Check the first Byte of response.
@@ -168,6 +175,7 @@ namespace Npgsql
                     {
                         NpgsqlError error = new NpgsqlError(context.BackendProtocolVersion);
                         error.ReadFromStream(stream, context.Encoding);
+                        error.ErrorSql = mediator.SqlSent;
 
                         mediator.Errors.Add(error);
 
@@ -300,7 +308,7 @@ namespace Npgsql
                     NpgsqlEventLog.LogMsg(resman, "Log_ProtocolMessage", LogLevel.Debug, "AsciiRow");
 
                     {
-                        NpgsqlAsciiRow asciiRow = new NpgsqlAsciiRow(context.Mediator.LastRowDescription, context.BackendProtocolVersion);
+                        NpgsqlAsciiRow asciiRow = new NpgsqlAsciiRow(context.Mediator.LastRowDescription, context.BackendProtocolVersion, asciiRowBytes, asciiRowChars);
                         asciiRow.ReadFromStream(stream, context.Encoding);
 
                         // Add this row to the rows array.
@@ -425,6 +433,9 @@ namespace Npgsql
 
             Boolean readyForQuery = false;
 
+            byte[] asciiRowBytes = new byte[300];
+            char[] asciiRowChars = new char[300];
+
             while (!readyForQuery)
             {
                 // Check the first Byte of response.
@@ -436,6 +447,7 @@ namespace Npgsql
                     {
                         NpgsqlError error = new NpgsqlError(context.BackendProtocolVersion);
                         error.ReadFromStream(stream, context.Encoding);
+                        error.ErrorSql = mediator.SqlSent;
 
                         mediator.Errors.Add(error);
 
@@ -566,7 +578,7 @@ namespace Npgsql
                     // This is the AsciiRow message.
                     NpgsqlEventLog.LogMsg(resman, "Log_ProtocolMessage", LogLevel.Debug, "DataRow");
                     {
-                        NpgsqlAsciiRow asciiRow = new NpgsqlAsciiRow(context.Mediator.LastRowDescription, context.BackendProtocolVersion);
+                        NpgsqlAsciiRow asciiRow = new NpgsqlAsciiRow(context.Mediator.LastRowDescription, context.BackendProtocolVersion, asciiRowBytes, asciiRowChars);
                         asciiRow.ReadFromStream(stream, context.Encoding);
 
                         // Add this row to the rows array.

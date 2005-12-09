@@ -64,8 +64,8 @@ namespace Npgsql
         private static readonly String CLASSNAME = "NpgsqlRowDescription";
 
 
-        private ArrayList                fields_data = new ArrayList();
-        private ArrayList                fields_index = new ArrayList();
+        private NpgsqlRowDescriptionFieldData[]  fields_data;
+        private string[]                fields_index;
 
         private ProtocolVersion          protocol_version;
 
@@ -103,6 +103,8 @@ namespace Npgsql
             // Temporary FieldData object to get data from stream and put in array.
             NpgsqlRowDescriptionFieldData fd;
 
+			fields_data = new NpgsqlRowDescriptionFieldData[num_fields];
+			fields_index = new string[num_fields];
             // Now, iterate through each field getting its data.
             for (Int16 i = 0; i < num_fields; i++)
             {
@@ -120,9 +122,9 @@ namespace Npgsql
                 fd.type_modifier = IPAddress.NetworkToHostOrder(BitConverter.ToInt32(input_buffer, 6));
 
                 // Add field data to array.
-                fields_data.Add(fd);
+                fields_data[i] = fd;
 
-                fields_index.Add(fd.name);
+                fields_index[i] = fd.name;
             }
         }
 
@@ -140,6 +142,8 @@ namespace Npgsql
             // Temporary FieldData object to get data from stream and put in array.
             NpgsqlRowDescriptionFieldData fd;
 
+			fields_data = new NpgsqlRowDescriptionFieldData[num_fields];
+			fields_index = new string[num_fields];
             for (Int16 i = 0; i < num_fields; i++)
             {
                 fd = new NpgsqlRowDescriptionFieldData();
@@ -153,8 +157,8 @@ namespace Npgsql
                 fd.type_modifier = PGUtil.ReadInt32(input_stream, input_buffer);
                 fd.format_code = (FormatCode)PGUtil.ReadInt16(input_stream, input_buffer);
 
-                fields_data.Add(fd);
-                fields_index.Add(fd.name);
+				fields_data[i] = fd;
+				fields_index[i] = fd.name;
             }
         }
 
@@ -162,7 +166,7 @@ namespace Npgsql
         {
             get
             {
-                return (NpgsqlRowDescriptionFieldData)fields_data[index];
+                return fields_data[index];
             }
         }
 
@@ -170,36 +174,28 @@ namespace Npgsql
         {
             get
             {
-                return (Int16)fields_data.Count;
+                return (Int16)fields_data.Length;
             }
         }
 
         public Int16 FieldIndex(String fieldName)
         {
-            Int16 result = -1;
+			// First try to find the index with IndexOf (case-sensitive)
+			Int16 result = (Int16)Array.IndexOf(fields_index, fieldName, 0, fields_index.Length);
 
-            // First try to find the index with IndexOf (case-sensitive)
-            result = (Int16)fields_index.IndexOf(fieldName);
-
-            if (result > -1)
-            {
-                return result;
-            }
-            else
-            {
-
-                result = 0;
-                foreach (String name in fields_index)
-                {
-
-                    if (name.ToLower().Equals(fieldName.ToLower()))
-                    {
-                        return result;
-                    }
-                    result++;
-                }
-
-            }
+			if (result != -1)
+			{
+				return result;
+			}
+			else
+			{
+				foreach(string name in fields_index)
+				{
+					++result;
+					if (string.Compare(name, fieldName, true) == 0)
+						return result;
+				}
+			}
             
             throw new ArgumentOutOfRangeException("fieldName", fieldName, "Field name not found");
 

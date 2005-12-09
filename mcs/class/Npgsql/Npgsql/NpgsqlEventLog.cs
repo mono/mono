@@ -151,13 +151,16 @@ namespace Npgsql
             {
                 if (logfile != "")
                 {
+                    lock(logfile)
+                    {
 
-                    StreamWriter writer = new StreamWriter(logfile, true);
+                        StreamWriter writer = new StreamWriter(logfile, true);
 
-                    // The format of the logfile is
-                    // [Date] [Time]  [PID]  [Level]  [Message]
-                    writer.WriteLine(System.DateTime.Now + "\t" + proc.Id + "\t" + msglevel + "\t" + message);
-                    writer.Close();
+                        // The format of the logfile is
+                        // [Date] [Time]  [PID]  [Level]  [Message]
+                        writer.WriteLine(System.DateTime.Now + "\t" + proc.Id + "\t" + msglevel + "\t" + message);
+                        writer.Close();
+                    }
                 }
             }
         }

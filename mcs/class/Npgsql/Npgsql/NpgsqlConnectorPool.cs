@@ -26,6 +26,7 @@
 using System;
 using System.Collections;
 using System.Threading;
+using System.Timers;
 
 namespace Npgsql
 {
@@ -44,6 +45,10 @@ namespace Npgsql
             /// are currently in use.
             /// </summary>
             public Int32            UseCount = 0;
+            public Int32            ConnectionLifeTime;
+            public Int32            InactiveTime = 0;
+            public Int32            MinPoolSize;
+
         }
 
         /// <value>Unique static instance of the connector pool
@@ -53,7 +58,61 @@ namespace Npgsql
         public NpgsqlConnectorPool()
         {
             PooledConnectors = new Hashtable();
+            Timer = new System.Timers.Timer(1000);
+            Timer.AutoReset = true;
+            Timer.Elapsed += new ElapsedEventHandler(TimerElapsedHandler);
+            Timer.Start();
+
         }
+        
+        
+        ~NpgsqlConnectorPool()
+        {
+            Timer.Stop();
+        }
+        
+        private void TimerElapsedHandler(object sender, ElapsedEventArgs e)
+        {
+            NpgsqlConnector     Connector;
+            lock (this)
+            {
+                foreach (ConnectorQueue Queue in PooledConnectors.Values)
+                {
+                    if (Queue.Count > 0)
+                    {
+                        if (Queue.Count + Queue.UseCount > Queue.MinPoolSize)
+                        {
+                            if (Queue.InactiveTime >= Queue.ConnectionLifeTime)
+                            {
+                                Int32 diff = Queue.Count + Queue.UseCount - Queue.MinPoolSize;
+                                Int32 toBeClosed = (diff + 1) / 2;
+                                if (diff < 2)
+                                    diff = 2;
+                                Queue.InactiveTime -= Queue.ConnectionLifeTime / (int)(Math.Log(diff) / Math.Log(2));
+                                for (Int32 i = 0; i < toBeClosed; ++i)
+                                {
+                                    Connector = (NpgsqlConnector)Queue.Dequeue();
+                                    Connector.Close();
+                                }
+                            }
+                            else
+                            {
+                                Queue.InactiveTime++;
+                            }
+                        }
+                        else
+                        {
+                            Queue.InactiveTime = 0;
+                        }
+                    }
+                    else
+                    {
+                        Queue.InactiveTime = 0;
+                    }
+                }
+            }
+        }
+
 
 
         /// <value>Map of index to unused pooled connectors, avaliable to the
@@ -68,6 +127,12 @@ namespace Npgsql
         /// This key will hold a list of shared connectors available to be used.</remarks>
         // To be implemented
         //private Hashtable SharedConnectors;
+
+                    
+        /// <value>Timer for tracking unused connections in pools.</value>
+        // I used System.Timers.Timer because of bad experience with System.Threading.Timer
+        // on Windows - it's going mad sometimes and don't respect interval was set.
+        private System.Timers.Timer Timer;
 
         /// <summary>
         /// Searches the shared and pooled connector lists for a
@@ -240,6 +305,8 @@ namespace Npgsql
             if (Queue == null)
             {
                 Queue = new ConnectorQueue();
+                Queue.ConnectionLifeTime = Connection.ConnectionLifeTime;
+                Queue.MinPoolSize = Connection.MinPoolSize;
                 PooledConnectors[Connection.ConnectionString.ToString()] = Queue;
             }
 
@@ -258,7 +325,8 @@ namespace Npgsql
                         break;
                     }
 
-                    Queue.UseCount--;
+                    // Don't need - we dequeue connector = decrease Queue.Count.
+                    //Queue.UseCount--;
 
                     if (Queue.Count <= 0)
                         return GetPooledConnector(Connection);

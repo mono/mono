@@ -376,21 +376,22 @@ namespace Npgsql
     /// </summary>
     internal abstract class ConnectionStringKeys
     {
-        public static readonly String Host             = "SERVER";
-        public static readonly String Port             = "PORT";
-        public static readonly String Protocol         = "PROTOCOL";
-        public static readonly String Database         = "DATABASE";
-        public static readonly String UserName         = "USER ID";
-        public static readonly String Password         = "PASSWORD";
-        public static readonly String SSL              = "SSL";
-        public static readonly String SslMode          = "SSLMODE";
-        public static readonly String Encoding         = "ENCODING";
-        public static readonly String Timeout          = "TIMEOUT";
-
+        public static readonly String Host                  = "SERVER";
+        public static readonly String Port                  = "PORT";
+        public static readonly String Protocol              = "PROTOCOL";
+        public static readonly String Database              = "DATABASE";
+        public static readonly String UserName              = "USER ID";
+        public static readonly String Password              = "PASSWORD";
+        public static readonly String SSL                   = "SSL";
+        public static readonly String SslMode               = "SSLMODE";
+        public static readonly String Encoding              = "ENCODING";
+        public static readonly String Timeout               = "TIMEOUT";
+        
         // These are for the connection pool
-        public static readonly String Pooling          = "POOLING";
-        public static readonly String MinPoolSize      = "MINPOOLSIZE";
-        public static readonly String MaxPoolSize      = "MAXPOOLSIZE";
+        public static readonly String Pooling               = "POOLING";
+        public static readonly String ConnectionLifeTime    = "CONNECTIONLIFETIME";
+        public static readonly String MinPoolSize           = "MINPOOLSIZE";
+        public static readonly String MaxPoolSize           = "MAXPOOLSIZE";
 
         // A list of aliases for some of the above values.  If one of these aliases is
         // encountered when parsing a connection string, it's real key name will
@@ -431,12 +432,13 @@ namespace Npgsql
     internal abstract class ConnectionStringDefaults
     {
         // Connection string defaults
-        public static readonly Int32 Port              = 5432;
-        public static readonly String Encoding         = "SQL_ASCII";
-        public static readonly Boolean Pooling         = true;
-        public static readonly Int32 MinPoolSize       = 1;
-        public static readonly Int32 MaxPoolSize       = 20;
-        public static readonly Int32 Timeout           = 15; // Seconds
+        public static readonly Int32 Port                   = 5432;
+        public static readonly String Encoding              = "SQL_ASCII";
+        public static readonly Boolean Pooling              = true;
+        public static readonly Int32 MinPoolSize            = 1;
+        public static readonly Int32 MaxPoolSize            = 20;
+        public static readonly Int32 Timeout                = 15; // Seconds
+        public static readonly Int32 ConnectionLifeTime     = 15; // Seconds
     }
     
     internal enum SslMode

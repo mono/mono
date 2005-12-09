@@ -10,6 +10,7 @@
 -resource:Npgsql/NpgsqlEventLog.resources,Npgsql.NpgsqlEventLog.resources
 -resource:Npgsql/NpgsqlException.resources,Npgsql.NpgsqlException.resources
 -resource:Npgsql/PGUtil.resources,Npgsql.PGUtil.resources
+-resource:Npgsql/NpgsqlConnectionString.resources,Npgsql.NpgsqlConnectionString.resources
 -resource:NpgsqlTypes/NpgsqlTypesHelper.resources,NpgsqlTypes.NpgsqlTypesHelper.resources
 
 

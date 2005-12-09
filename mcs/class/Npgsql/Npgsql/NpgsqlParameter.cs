@@ -65,7 +65,8 @@ namespace Npgsql
         private DataRowVersion		    source_version = DataRowVersion.Current;
         private Object				    value = DBNull.Value;
         private System.Resources.ResourceManager resman;
-
+        
+        
         /// <summary>
 
         /// Initializes a new instance of the <see cref="Npgsql.NpgsqlParameter">NpgsqlParameter</see> class.
@@ -74,7 +75,7 @@ namespace Npgsql
         {
             resman = new System.Resources.ResourceManager(this.GetType());
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, CLASSNAME);
-            type_info = NpgsqlTypesHelper.GetNativeTypeInfo(typeof(String));
+            //type_info = NpgsqlTypesHelper.GetNativeTypeInfo(typeof(String));
         }
 
         /// <summary>
@@ -114,10 +115,26 @@ namespace Npgsql
                 {
                     throw new InvalidCastException(String.Format(resman.GetString("Exception_ImpossibleToCast"), value.GetType()));
                 }
+                
+                
 
             }
         }
-
+		
+		/// <summary>
+		/// Internal constructor to handle parameter creation from CommandBuilder passing a NpgsqlNativeTypeInfo directly.
+		/// </summary>
+		internal NpgsqlParameter(String parameterName, object value, NpgsqlNativeTypeInfo type_info)
+		{
+			resman = new System.Resources.ResourceManager(this.GetType());
+			NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, CLASSNAME, parameterName, value, type_info);
+			
+			this.ParameterName = parameterName;
+			this.value = (value == null) ? DBNull.Value : value;
+			
+			this.type_info = (type_info == null) ? NpgsqlTypesHelper.GetNativeTypeInfo(typeof(String)) : type_info;
+		}
+		
         /// <summary>
         /// Initializes a new instance of the <see cref="Npgsql.NpgsqlParameter">NpgsqlParameter</see>
         /// class with the parameter name and the data type.
@@ -354,6 +371,8 @@ namespace Npgsql
         {
             get
             {
+            	if (type_info == null)
+            		type_info = NpgsqlTypesHelper.GetNativeTypeInfo(typeof(String));
                 return type_info;
             }
         }

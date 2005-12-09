@@ -248,6 +248,7 @@ namespace Npgsql
         /// </summary>
         public DataTable GetSchemaTable()
         {
+            
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "GetSchemaTable");
 
             if(_currentResultsetSchema == null)
@@ -291,6 +292,7 @@ namespace Npgsql
         /// <summary>
         /// Return the data type OID of the column at index <param name="Index"></param>.
         /// </summary>
+        /// FIXME: Why this method returns String?
         public String GetDataTypeOID(Int32 Index)
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "GetDataTypeName");
@@ -698,7 +700,13 @@ namespace Npgsql
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "FillSchemaTable_v2");
             NpgsqlRowDescription rd = _currentResultset.RowDescription;
-            ArrayList keyList = GetPrimaryKeys(GetTableNameFromQuery());
+            ArrayList keyList = null;
+			
+			if ((_behavior & CommandBehavior.KeyInfo) == CommandBehavior.KeyInfo)
+			{
+				keyList = GetPrimaryKeys(GetTableNameFromQuery());
+			}
+
             DataRow row;
 
             for (Int16 i = 0; i < rd.NumFields; i++)
@@ -750,30 +758,38 @@ namespace Npgsql
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "FillSchemaTable_v3");
             NpgsqlRowDescription rd = _currentResultset.RowDescription;
 
-            ArrayList tableOids = new ArrayList();
-            for(short i=0; i<rd.NumFields; ++i)
-            {
-                if (rd[i].table_oid != 0 && !tableOids.Contains(rd[i].table_oid))
-                    tableOids.Add(rd[i].table_oid);
-            }
-            Hashtable oidTableLookup = GetTablesFromOids(tableOids);
+			Hashtable oidTableLookup = null;
+			KeyLookup keyLookup = new KeyLookup();
+			Hashtable columnLookup = null;
 
-            ArrayList keyList = null;
-            if (oidTableLookup != null && oidTableLookup.Count == 1)
-            {
-                // only 1, but we can't index into the Hashtable
-                foreach(DictionaryEntry entry in oidTableLookup)
-                {
-                    GetPrimaryKeys(((object[])entry.Value)[Tables.table_name].ToString());
-                }
-            }
+			if ((_behavior & CommandBehavior.KeyInfo) == CommandBehavior.KeyInfo)
+			{
+				ArrayList tableOids = new ArrayList();
+				for(short i=0; i<rd.NumFields; ++i)
+				{
+					if (rd[i].table_oid != 0 && !tableOids.Contains(rd[i].table_oid))
+						tableOids.Add(rd[i].table_oid);
+				}
+				oidTableLookup = GetTablesFromOids(tableOids);
 
-            Hashtable columnLookup = GetColumns();
+				if (oidTableLookup != null && oidTableLookup.Count == 1)
+				{
+					// only 1, but we can't index into the Hashtable
+					foreach(DictionaryEntry entry in oidTableLookup)
+					{
+						keyLookup = GetKeys((Int32)entry.Key);
+					}
+				}
+
+				columnLookup = GetColumns();
+			}
 
             DataRow row;
             for (Int16 i = 0; i < rd.NumFields; i++)
             {
                 row = schema.NewRow();
+
+				string baseColumnName = GetBaseColumnName(columnLookup, i);
 
                 row["ColumnName"] = GetName(i);
                 row["ColumnOrdinal"] = i + 1;
@@ -793,8 +809,8 @@ namespace Npgsql
                     row["NumericPrecision"] = 0;
                     row["NumericScale"] = 0;
                 }
-                row["IsUnique"] = false;
-                row["IsKey"] = IsKey(GetName(i), keyList);
+                row["IsUnique"] = IsUnique(keyLookup, baseColumnName);
+                row["IsKey"] = IsKey(keyLookup, baseColumnName);
                 if (rd[i].table_oid != 0 && oidTableLookup != null)
                 {
                     row["BaseCatalogName"] = ((object[])oidTableLookup[rd[i].table_oid])[Tables.table_catalog];
@@ -807,14 +823,14 @@ namespace Npgsql
                     row["BaseSchemaName"] = "";
                     row["BaseTableName"] = "";
                 }
-                row["BaseColumnName"] = GetBaseColumnName(columnLookup, i);
+                row["BaseColumnName"] = baseColumnName;
                 row["DataType"] = GetFieldType(i);
                 row["AllowDBNull"] = IsNullable(columnLookup, i);
                 row["ProviderType"] = rd[i].type_info.Name;
-                row["IsAliased"] = string.CompareOrdinal((string)row["ColumnName"], (string)row["BaseColumnName"]) != 0;
+                row["IsAliased"] = string.CompareOrdinal((string)row["ColumnName"], baseColumnName) != 0;
                 row["IsExpression"] = false;
                 row["IsIdentity"] = false;
-                row["IsAutoIncrement"] = false;
+                row["IsAutoIncrement"] = IsAutoIncrement(columnLookup, i);
                 row["IsRowVersion"] = false;
                 row["IsHidden"] = false;
                 row["IsLong"] = false;
@@ -868,7 +884,104 @@ namespace Npgsql
             return result;
         }
 
+		private bool IsKey(KeyLookup keyLookup, string fieldName)
+		{
+			if (keyLookup.primaryKey == null || keyLookup.primaryKey.Count == 0)
+				return false;
 
+			for (int i=0; i<keyLookup.primaryKey.Count; ++i)
+			{
+                if (fieldName == (String)keyLookup.primaryKey[i])
+					return true;
+			}
+
+			return false;
+		}
+
+		private bool IsUnique(KeyLookup keyLookup, string fieldName)
+		{
+			if (keyLookup.uniqueColumns == null || keyLookup.uniqueColumns.Count == 0)
+				return false;
+
+			for (int i=0; i<keyLookup.uniqueColumns.Count; ++i)
+			{
+                if (fieldName == (String)keyLookup.uniqueColumns[i])
+					return true;
+			}
+
+			return false;
+		}
+
+		private struct KeyLookup
+		{
+			/// <summary>
+			/// Contains the column names as the keys
+			/// </summary>
+			public ArrayList primaryKey;
+			/// <summary>
+			/// Contains all unique columns
+			/// </summary>
+			public ArrayList uniqueColumns;
+		}
+
+		private KeyLookup GetKeys(Int32 tableOid)
+		{
+      
+			string getKeys = "select a.attname, ci.relname, i.indisprimary from pg_catalog.pg_class ct, pg_catalog.pg_class ci, pg_catalog.pg_attribute a, pg_catalog.pg_index i WHERE ct.oid=i.indrelid AND ci.oid=i.indexrelid AND a.attrelid=ci.oid AND i.indisunique AND ct.oid = :tableOid order by ci.relname";
+
+			KeyLookup lookup = new KeyLookup();
+			lookup.primaryKey = new ArrayList();
+			lookup.uniqueColumns = new ArrayList();
+
+			using (NpgsqlConnection metadataConn = _connection.Clone())
+			{
+				NpgsqlCommand c = new NpgsqlCommand(getKeys, metadataConn);
+				c.Parameters.Add(new NpgsqlParameter("tableOid", NpgsqlDbType.Integer)).Value = tableOid;
+
+				using (NpgsqlDataReader dr = c.ExecuteReader())
+				{
+					string previousKeyName = null;
+					string possiblyUniqueColumn = null;
+					string columnName;
+					string currentKeyName;
+					// loop through adding any column that is primary to the primary key list
+					// add any column that is the only column for that key to the unique list
+					// unique here doesn't mean general unique constraint (with possibly multiple columns)
+					// it means all values in this single column must be unique
+					while (dr.Read())
+					{
+         
+						columnName = dr.GetString(0);
+						currentKeyName = dr.GetString(1);
+						// if i.indisprimary
+						if (dr.GetBoolean(2))
+						{
+							// add column name as part of the primary key
+							lookup.primaryKey.Add(columnName);
+						}
+						if (currentKeyName != previousKeyName)
+						{
+							if (possiblyUniqueColumn != null)
+							{
+								lookup.uniqueColumns.Add(possiblyUniqueColumn);
+							}
+							possiblyUniqueColumn = columnName;
+						}
+						else
+						{
+							possiblyUniqueColumn = null;
+						}
+						previousKeyName = currentKeyName;
+					}
+					// if finished reading and have a possiblyUniqueColumn name that is
+					// not null, then it is the name of a unique column
+					if (possiblyUniqueColumn != null)
+						lookup.uniqueColumns.Add(possiblyUniqueColumn);
+				}
+			}
+
+			return lookup;
+		}
 
         private Boolean IsNullable(Hashtable columnLookup, Int32 FieldIndex)
         {
@@ -895,6 +1008,19 @@ namespace Npgsql
             else
                 return GetName(FieldIndex);
         }
+
+		private bool IsAutoIncrement(Hashtable columnLookup, Int32 FieldIndex)
+		{
+			if (columnLookup == null || _currentResultset.RowDescription[FieldIndex].table_oid == 0)
+				return false;
+
+			string lookupKey = _currentResultset.RowDescription[FieldIndex].table_oid.ToString() + "," + _currentResultset.RowDescription[FieldIndex].column_attribute_number;
+			object[] row = (object[])columnLookup[lookupKey];
+			if (row != null)
+				return row[Columns.column_default].ToString().StartsWith("nextval(");
+			else
+				return true;
+		}
 
 
         ///<summary>
@@ -973,6 +1099,7 @@ namespace Npgsql
             public const int column_notnull = 1;
             public const int table_id = 2;
             public const int column_num = 3;
+			public const int column_default = 4;
         }
 
         private Hashtable GetColumns()
@@ -981,8 +1108,8 @@ namespace Npgsql
 
             // the column index is used to find data.
             // any changes to the order of the columns needs to be reflected in struct Columns
-            sb.Append("SELECT a.attname AS column_name, a.attnotnull AS column_notnull, a.attrelid AS table_id, a.attnum AS column_num");
-            sb.Append(" from pg_attribute a WHERE a.attnum > 0 AND (");
+            sb.Append("SELECT a.attname AS column_name, a.attnotnull AS column_notnull, a.attrelid AS table_id, a.attnum AS column_num, d.adsrc as column_default");
+            sb.Append(" FROM pg_attribute a LEFT OUTER JOIN pg_attrdef d ON a.attrelid = d.adrelid AND a.attnum = d.adnum WHERE a.attnum > 0 AND (");
             bool first = true;
             for(int i=0; i<_currentResultset.RowDescription.NumFields; ++i)
             {

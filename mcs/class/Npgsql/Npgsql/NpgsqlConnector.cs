@@ -252,7 +252,8 @@ namespace Npgsql
             try
             {
                 // Here we use a fake NpgsqlCommand, just to send the test query string.
-                Query(new NpgsqlCommand("select 1 as ConnectionTest"));
+                
+                Query(new NpgsqlCommand("select 1 as ConnectionTest", this));
                 
                 // Clear mediator.
                 Mediator.ResetResponses();
@@ -279,7 +280,7 @@ namespace Npgsql
             if (_planIndex > 0)
             {
                 for(i = 1; i <= _planIndex; i++)
-                    Query(new NpgsqlCommand(String.Format("deallocate \"{0}\";", _planNamePrefix + i)));
+                    Query(new NpgsqlCommand(String.Format("deallocate \"{0}\";", _planNamePrefix + i), this));
             }
 
             _portalIndex = 0;

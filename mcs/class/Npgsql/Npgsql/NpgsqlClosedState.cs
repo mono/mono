@@ -35,7 +35,7 @@ namespace Npgsql
     internal sealed class NpgsqlClosedState : NpgsqlState
     {
 
-        private static NpgsqlClosedState _instance = null;
+        private static NpgsqlClosedState _instance = new NpgsqlClosedState();
         private static readonly String CLASSNAME = "NpgsqlClosedState";
 
         private NpgsqlClosedState() : base()
@@ -45,10 +45,6 @@ namespace Npgsql
             get
             {
                 NpgsqlEventLog.LogPropertyGet(LogLevel.Debug, CLASSNAME, "Instance");
-                if (_instance == null)
-                {
-                    _instance = new NpgsqlClosedState();
-                }
                 return _instance;
             }
         }
