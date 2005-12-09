@@ -168,7 +168,7 @@ namespace Mono.ILASM {
                 }
 		
 		public int GenParamCount {
-			get { return typar_list.Count; }
+			get { return (typar_list != null ? typar_list.Count : 0); }
 		}
 
 		public int GetGenericParamNum (string id)
