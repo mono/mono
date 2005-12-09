@@ -1088,7 +1088,7 @@ namespace System.Windows.Forms {
 				case Msg.WM_DESTROY: {
 					if (WindowMapping [hwnd.Handle] != null)
 
-						XplatUI.Exit ();
+						Exit ();
 					break;
 				}
 			}
@@ -1138,7 +1138,7 @@ namespace System.Windows.Forms {
 			//Like X11 we need not do anything here
 		}
 
-		internal override void Exit() {
+		internal void Exit() {
 			GetMessageResult = false;
 			ExitToShell ();
 		}
@@ -1375,6 +1375,11 @@ namespace System.Windows.Forms {
 			msg.wParam = wParam;
 			msg.lParam = lParam;
 			MessageQueue.Enqueue (msg);
+		}
+
+		[MonoTODO]
+		internal override void PostQuitMessage(int exitCode) {
+			throw new NotImplementedException();
 		}
 		
 		[MonoTODO]

@@ -106,7 +106,6 @@ namespace System.Windows.Forms {
 
 		#region XplatUI Driver Methods
 		internal abstract void AudibleAlert();
-		internal abstract void Exit();
 
 		internal abstract void EnableThemes();
 
@@ -157,6 +156,7 @@ namespace System.Windows.Forms {
 		internal abstract void HandleException(Exception e);
 		internal abstract void DoEvents();
 		internal abstract bool PeekMessage(ref MSG msg, IntPtr hWnd, int wFilterMin, int wFilterMax, uint flags);
+		internal abstract void PostQuitMessage(int exitCode);
 		internal abstract bool GetMessage(ref MSG msg, IntPtr hWnd, int wFilterMin, int wFilterMax);
 		internal abstract bool TranslateMessage(ref MSG msg);
 		internal abstract IntPtr DispatchMessage(ref MSG msg);

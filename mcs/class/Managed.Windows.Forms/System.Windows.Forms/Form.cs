@@ -74,6 +74,7 @@ namespace System.Windows.Forms {
 		private Rectangle		maximized_bounds;
 		private Rectangle		default_maximized_bounds;
 		private double			opacity;
+		internal ApplicationContext	context;
 		Color				transparency_key;
 
 		#endregion	// Local Variables
@@ -964,7 +965,10 @@ namespace System.Windows.Forms {
 			OnClosing (args);
 			if (!args.Cancel) {
 				OnClosed (EventArgs.Empty);
-				closing = true;
+				DestroyHandle();
+				if (context != null) {
+					XplatUI.PostQuitMessage(0);
+				}
 				return;
 			}
 		}
@@ -1441,16 +1445,23 @@ namespace System.Windows.Forms {
 
 			switch((Msg)m.Msg) {
 				case Msg.WM_CLOSE: {
+					Close();
+#if not
 					CancelEventArgs args = new CancelEventArgs();
 
 					OnClosing(args);
 
 					if (!args.Cancel) {
 						OnClosed(EventArgs.Empty);
-						closing = true;
+						DestroyHandle();
+						if (context != null) {
+							XplatUI.PostQuitMessage(0);
+						}
 						base.WndProc(ref m);
 						break;
 					}
+#endif
+					base.WndProc(ref m);
 					break;
 				}
 

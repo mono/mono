@@ -725,8 +725,8 @@ namespace System.Windows.Forms
 			}
 
 			if (this.InvokeRequired) {
-				this.Invoke(new MethodInvoker(DestroyHandle));
-				this.Invoke(new RemoveDelegate(controls.Remove), new object[] {this});
+				this.InvokeInternal(new MethodInvoker(DestroyHandle), true);
+				this.InvokeInternal(new RemoveDelegate(controls.Remove), new object[] {this}, true);
 			} else {
 				DestroyHandle();
 				controls.Remove(this);
@@ -757,18 +757,21 @@ namespace System.Windows.Forms
 		#endregion	// Internal Properties
 
 		#region Private & Internal Methods
-		internal IAsyncResult BeginInvokeInternal (Delegate method, object [] args) {
+		internal IAsyncResult BeginInvokeInternal (Delegate method, object [] args, bool disposing) {
 			AsyncMethodResult	result;
 			AsyncMethodData		data;
-			Control			p;
 
-			p = this;
-			do {
-				if (!p.IsHandleCreated) {
-					throw new InvalidOperationException("Cannot call Invoke or InvokeAsync on a control until the window handle is created");
-				}
-				p = p.parent;
-			} while (p != null);
+			if (!disposing) {
+				Control			p;
+
+				p = this;
+				do {
+					if (!p.IsHandleCreated) {
+						throw new InvalidOperationException("Cannot call Invoke or InvokeAsync on a control until the window handle is created");
+					}
+					p = p.parent;
+				} while (p != null);
+			}
 
 			result = new AsyncMethodResult ();
 			data = new AsyncMethodData ();
@@ -2313,12 +2316,12 @@ namespace System.Windows.Forms
 		#region	Public Instance Methods
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public IAsyncResult BeginInvoke(Delegate method) {
-			return BeginInvokeInternal(method, null);
+			return BeginInvokeInternal(method, null, false);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public IAsyncResult BeginInvoke (Delegate method, object[] args) {
-			return BeginInvokeInternal (method, args);
+			return BeginInvokeInternal (method, args, false);
 		}
 
 		public void BringToFront() {
@@ -2501,6 +2504,19 @@ namespace System.Windows.Forms
 			}
 
 			IAsyncResult result = BeginInvoke (method, args);
+			return EndInvoke(result);
+		}
+
+		internal object InvokeInternal (Delegate method, bool disposing) {
+			return InvokeInternal(method, null, disposing);
+		}
+
+		internal object InvokeInternal (Delegate method, object[] args, bool disposing) {
+			if (!this.InvokeRequired) {
+				return method.DynamicInvoke(args);
+			}
+
+			IAsyncResult result = BeginInvokeInternal (method, args, disposing);
 			return EndInvoke(result);
 		}
 
@@ -2905,18 +2921,9 @@ namespace System.Windows.Forms
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void DestroyHandle() {
 			if (IsHandleCreated) {
-				// Destroy our children before we destroy ourselves, to prevent them from
-				// being implictly (without us knowing) destroyed
-				Control [] controls = child_controls.GetAllControls ();
-				for (int i=0; i < controls.Length; i++) {
-					controls[i].DestroyHandle();
-				}
-
-
 				if (window != null) {
 					window.DestroyHandle();
 				}
-				OnHandleDestroyed(EventArgs.Empty);
 			}
 		}
 
@@ -3496,6 +3503,12 @@ namespace System.Windows.Forms
 			}
 
 			switch((Msg)m.Msg) {
+				case Msg.WM_DESTROY: {
+					OnHandleDestroyed(EventArgs.Empty);
+					window.InvalidateHandle();
+					break;
+				}
+
 				case Msg.WM_WINDOWPOSCHANGED: {
 					if (Visible) {
 						UpdateBounds();

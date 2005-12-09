@@ -17,12 +17,11 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004 Novell, Inc.
+// Copyright (c) 2004 - 2005 Novell, Inc.
 //
 // Authors:
 //	Peter Bartok	pbartok@novell.com
 //
-
 
 // COMPLETE
 
@@ -266,7 +265,7 @@ namespace System.Windows.Forms {
 #endif
 
 		public static void Exit() {
-			XplatUI.Exit();
+			XplatUI.PostQuitMessage(0);
 		}
 
 		public static void ExitThread() {
@@ -287,20 +286,13 @@ namespace System.Windows.Forms {
 				Application.ThreadException(null, new ThreadExceptionEventArgs(t));
 				return;
 			}
-#if !later
-			 else {
-				XplatUI.HandleException(t);
-			}
-#else
-			// TODO: Missing implementation
-			//if (SystemInformation.UserInteractive)
-			{
+
+			if (SystemInformation.UserInteractive) {
 				Form form = new ThreadExceptionDialog (t);
 				form.ShowDialog ();
-			}
-			//else
+			} else {
 				Console.WriteLine (t.ToString ());
-#endif
+			}
 		}
 
 		public static void RemoveMessageFilter(IMessageFilter filter) {
@@ -313,6 +305,7 @@ namespace System.Windows.Forms {
 
 			if (app_context != null) {
 				form = app_context.MainForm;
+				form.context = app_context;
 			}
 
 			if (form != null) {
@@ -356,6 +349,10 @@ namespace System.Windows.Forms {
 			}
 
 			messageloop_started = false;
+
+			if (form != null) {
+				form.context = null;
+			}
 
 			if (ThreadExit != null) {
 				ThreadExit(null, EventArgs.Empty);

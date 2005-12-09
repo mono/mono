@@ -390,10 +390,6 @@ namespace System.Windows.Forms {
 			driver.EnableWindow(handle, Enable);
 		}
 
-		internal static void Exit() {
-			driver.Exit();
-		}
-
 		internal static IntPtr GetActive() {
 			#if DriverDebug
 				Console.WriteLine("GetActive(): Called");
@@ -552,6 +548,10 @@ namespace System.Windows.Forms {
 
 		internal static bool PeekMessage(ref MSG msg, IntPtr hWnd, int wFilterMin, int wFilterMax, uint flags) {
 			return driver.PeekMessage(ref msg, hWnd, wFilterMin, wFilterMax, flags);
+		}
+
+		internal static void PostQuitMessage(int exitCode) {
+			driver.PostQuitMessage(exitCode);
 		}
 
 		internal static void ReleaseMenuDC(IntPtr handle, Graphics dc) {

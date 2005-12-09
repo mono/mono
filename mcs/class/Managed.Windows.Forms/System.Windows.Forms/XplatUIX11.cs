@@ -83,6 +83,7 @@ namespace System.Windows.Forms {
 		private static IntPtr		FosterParent;		// Container to hold child windows until their parent exists
 		private static XErrorHandler	ErrorHandler;		// Error handler delegate
 		private static bool		ErrorExceptions;	// Throw exceptions on X errors
+		private static bool		PostQuitState;		// True if we've got an pending exit
 
 		// Clipboard
 		private static IntPtr 		ClipMagic = new IntPtr(27051977);
@@ -93,7 +94,6 @@ namespace System.Windows.Forms {
 		private static int		AsyncAtom;		// Support for async messages
 
 		// Message Loop
-		private static bool		GetMessageResult;	// Value returned by GetMessage()
 		private static XEventQueue	MessageQueue;		// Holds our queued up events
 		#if __MonoCS__						//
 		private static Pollfd[]		pollfds;		// For watching the X11 socket
@@ -367,7 +367,7 @@ namespace System.Windows.Forms {
 				Keyboard = new X11Keyboard(DisplayHandle);
 				Dnd = new X11Dnd (DisplayHandle);
 
-				GetMessageResult = true;
+				PostQuitState = false;
 
 				DoubleClickInterval = 500;
 
@@ -997,7 +997,7 @@ namespace System.Windows.Forms {
 				lock (XlibLock) {
 					XNextEvent (DisplayHandle, ref xevent);
 				}
-
+//Console.WriteLine("Got x event {0}", xevent);
 				switch (xevent.type) {
 					case XEventName.Expose:
 						AddExpose (xevent);
@@ -2191,8 +2191,6 @@ namespace System.Windows.Forms {
 					XDestroyWindow(DisplayHandle, hwnd.whole_window);
 				}
 			}
-
-			hwnd.Dispose();
 		}
 
 		internal override IntPtr DispatchMessage(ref MSG msg) {
@@ -2277,11 +2275,6 @@ namespace System.Windows.Forms {
 
 		internal override void EnableWindow(IntPtr handle, bool Enable) {
 			// We do nothing; On X11 SetModal is used to create modal dialogs, on Win32 this function is used (see comment there)
-		}
-
-		internal override void Exit() {
-			GetMessageResult = false;
-			Graphics.FromHdcInternal (IntPtr.Zero);
 		}
 
 		internal override IntPtr GetActive() {
@@ -2415,9 +2408,13 @@ namespace System.Windows.Forms {
 				if (MessageQueue.Count > 0) {
 					xevent = (XEvent) MessageQueue.Dequeue ();
 				} else {
-					msg.hwnd= IntPtr.Zero;
-					msg.message = Msg.WM_ENTERIDLE;
-					return true;
+					if (!PostQuitState) {
+						msg.hwnd= IntPtr.Zero;
+						msg.message = Msg.WM_ENTERIDLE;
+						return true;
+					}
+
+					return false;
 				}
 			}
 
@@ -2738,6 +2735,10 @@ namespace System.Windows.Forms {
 				}
 
 				case XEventName.Expose: {
+					if (PostQuitState) {
+						goto ProcessNextMessage;
+					}
+
 					if (!client) {
 						switch (hwnd.border_style) {
 							case FormBorderStyle.Fixed3D: {
@@ -2792,7 +2793,7 @@ namespace System.Windows.Forms {
 					hwnd = Hwnd.ObjectFromHandle(xevent.DestroyWindowEvent.window);
 
 					// We may get multiple for the same window, act only one the first (when Hwnd still knows about it)
-					if (hwnd != null) {
+					if ((hwnd != null) && (hwnd.client_window == xevent.DestroyWindowEvent.window)) {
 						msg.hwnd = hwnd.client_window;
 						msg.message=Msg.WM_DESTROY;
 						hwnd.Dispose();
@@ -2864,7 +2865,7 @@ namespace System.Windows.Forms {
 				}
 			}
 
-			return GetMessageResult;
+			return true;
 		}
 
 		internal override bool GetText(IntPtr handle, out string text) {
@@ -3161,6 +3162,14 @@ namespace System.Windows.Forms {
 			xevent.ClientMessageEvent.ptr4 = lparam;
 
 			MessageQueue.Enqueue (xevent);
+		}
+
+		internal override void PostQuitMessage(int exitCode) {
+			XFlush(DisplayHandle);
+			PostQuitState = true;
+
+			// Remove our display handle from S.D
+			Graphics.FromHdcInternal (IntPtr.Zero);
 		}
 
 		internal override void ReleaseMenuDC(IntPtr handle, Graphics dc) {

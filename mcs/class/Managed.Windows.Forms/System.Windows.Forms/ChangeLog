@@ -1,3 +1,61 @@
+2005-12-08  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* Control.cs:
+	  - Added internal version of Invoke, with additional argument 
+	    indicating if we're calling it from a Dispose() handler. That
+	    way we can avoid BeginInvoke throwing an exception if we're
+	    calling for an already destroyed window.
+	  - Added a dispose argument to BeginInvokeInternal, and made the
+	    check if a valid window handle chain exists conditional on
+	    it not being a dispose call
+	  - Removed code in DestroyHandle to destroy our children. Since we
+	    now handle the WM_DESTROY message we will catch all our children
+	    being destroyed.
+	  - Now calling OnHandleDestroyed from our new WM_DESTROY handler
+	* Form.cs:
+	  - Added a field to track the application context of the form.
+	  - No need to set closing variable as response to WM_CLOSE, instead
+	    we destroy the window. We also call PostQuitMessage if the form
+	    has an application context (which makes it the main app form,
+	    which, when closed terminates the app)
+	* XplatUI.cs:
+	  - Dropped Exit() method, it's naming was confusing
+	  - Added PostQuitMessage() which causes GetMessage to return false
+	    once the message queue is empty
+	* XplatUIDriver.cs, XplatUIWin32.cs: Dropped Exit(), added 
+	  PostQuitMessage()
+	* XplatUIOSX.cs: Switched signature for Exit method since Exit() is
+	  no longer a valid XplatUI method, but left it in since it's used
+	  internally. Added empty PostQuitMessage() method.
+	* MenuAPI.cs: Replaced call to Exit() with call to
+	  PostQuitMessage, even though this is probably no longer needed.
+	* Hwnd.cs: Added 'pretty' ToString() to support debugging.
+	* X11Structs.cs: Added pretty XEvent.ToString() to support debugging.
+	* Application.cs:
+	  - Replaced call to XplatUI.Exit() with PostQuitMessage()
+	  - Removed old debug code that would call XplatUI for exception
+	    display, enabled standard exception handling (Still not enabled
+	    though, until NativeWindow's ExternalExceptionHandler define
+	    is removed
+	* NativeWindow.cs:
+	  - Added internal method to allow control to update NativeWindow
+	    after a window has been destroyed
+	  - Added handling of already destroyed windows when calling i
+	    DestroyWindow
+	  - Added removal of handle from list on ReleaseHandle
+	* XplatUIX11.cs:
+	  - Dropped GetMessageResult var and related code
+	  - Added PostQuitState to field to track if PostQuitMessage has been
+	    called
+	  - Dropped Exit() method
+	  - Added PostQuitMessage() method
+	  - GetMessage now will return false if PostQuitState is set and no
+	    more messages are in the queue.
+	  - Expose handler will no longer generate WM_PAINT messages if we are
+	    in PostQuitState since it's very likely any windows have already
+	    been destroyed, and since Hwnd won't get updated until we have
+	    processed the DestroyNotify we'd be causing X errors.
+	
 2005-12-07  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* Control.cs(WndProc): Apparently I'm suffering from brain cloud.

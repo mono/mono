@@ -481,6 +481,11 @@ namespace System.Windows.Forms {
 			invalid = Rectangle.Empty;
 			expose_pending = false;
 		}
+
+		public override string ToString() {
+			return String.Format("Hwnd, ClientWindow:{0:X}, WholeWindow:{1:X}, Handle:{2:X}", client_window, whole_window, handle);
+		}
+
 		#endregion	// Methods
 	}
 }

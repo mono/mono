@@ -63,10 +63,14 @@ namespace System.Windows.Forms
 		}
 		#endregion	// Public Static Methods
 
-		#region Private and Internal Static Methods
+		#region Private and Internal Methods
 		internal static NativeWindow FindWindow(IntPtr handle) {
 			return (NativeWindow)window_collection[handle];
-			
+		}
+
+		internal void InvalidateHandle() {
+			window_collection.Remove(window_handle);
+			window_handle = IntPtr.Zero;
 		}
 		#endregion
 
@@ -95,12 +99,15 @@ namespace System.Windows.Forms
 		}
 
 		public virtual void DestroyHandle() {
-			window_collection.Remove(window_handle);
-			XplatUI.DestroyWindow(window_handle);
-			window_handle=IntPtr.Zero;
+			if (window_handle != IntPtr.Zero) {
+				window_collection.Remove(window_handle);
+				XplatUI.DestroyWindow(window_handle);
+				window_handle=IntPtr.Zero;
+			}
 		}
 
 		public virtual void ReleaseHandle() {
+			window_collection.Remove(window_handle);
 			window_handle=IntPtr.Zero;
 			OnHandleChange();
 		}

@@ -216,7 +216,7 @@ namespace System.Windows.Forms {
 			}
 
 			if (!no_quit)
-				XplatUI.Exit();
+				XplatUI.PostQuitMessage(0);
 
 			tracker.Dispose ();
 

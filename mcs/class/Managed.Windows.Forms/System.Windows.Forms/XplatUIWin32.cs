@@ -994,10 +994,6 @@ namespace System.Windows.Forms {
 			Console.WriteLine("Xplat version $revision: $");
 		}
 
-		internal override void Exit() {
-			Win32PostQuitMessage(0);
-		}
-
 		internal override void AudibleAlert() {
 			Win32PlaySound("Default", IntPtr.Zero, SndFlags.SND_ALIAS | SndFlags.SND_ASYNC | SndFlags.SND_NOSTOP | SndFlags.SND_NOWAIT);
 		}
@@ -1235,6 +1231,10 @@ namespace System.Windows.Forms {
 
 		internal override bool PeekMessage(ref MSG msg, IntPtr hWnd, int wFilterMin, int wFilterMax, uint flags) {
 			return Win32PeekMessage(ref msg, hWnd, wFilterMin, wFilterMax, flags);
+		}
+
+		internal override void PostQuitMessage(int exitCode) {
+			Win32PostQuitMessage(exitCode);
 		}
 
 		internal override bool GetMessage(ref MSG msg, IntPtr hWnd, int wFilterMin, int wFilterMax) {

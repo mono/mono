@@ -550,6 +550,9 @@ namespace System.Windows.Forms {
 		//[MarshalAs(System.Runtime.InteropServices.UnmanagedType.ByValArray, SizeConst=24)]
 		//[ FieldOffset(0) ] internal int[] pad;
 		[ FieldOffset(0) ] internal XEventPad Pad;
+		public override string ToString() {
+			return type.ToString();
+		}
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
