@@ -1,5 +1,10 @@
 2005-12-09  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* doc.cs : so it turned out that we cannot skip override check for 
+	  interface members. Fixed bug #76954.
+
+2005-12-09  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* cs-tokenizer.cs : fixed bug #75984:
 	  - #warning and #error should not be handled when the source line
 	    is disabled.

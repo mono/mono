@@ -383,22 +383,9 @@ namespace Mono.CSharp {
 		{
 			if (ml == null)
 				return empty_member_infos;
-			if (type.IsInterface)
-				return ml;
 
 			ArrayList al = new ArrayList (ml.Length);
 			for (int i = 0; i < ml.Length; i++) {
-				// Interface methods which are returned
-				// from the filter must exist in the 
-				// target type (if there is only a 
-				// private implementation, then the 
-				// filter should not return it.)
-				// This filtering is required to 
-				// deambiguate results.
-				//
-				// It is common to properties, so check it here.
-				if (ml [i].DeclaringType.IsInterface)
-					continue;
 				MethodBase mx = ml [i] as MethodBase;
 				PropertyInfo px = ml [i] as PropertyInfo;
 				if (mx != null || px != null) {

@@ -1,5 +1,10 @@
 2005-12-09  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* test-xml-050-ref.xml, test-xml-050.cs : new test for bug #76954.
+	* known-issues-gmcs : fixed filename and removed test-60.cs.
+
+2005-12-09  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* test-476.cs : test for bug #75984.
 	* test-60.cs : unrecognized directive should be handled as an error
 	  even in a disable line (the behavior has changed in 2.0).
