@@ -5,10 +5,7 @@
 //   Chris Hynes (chrish@assistedsolutions.com)
 //
 // (C) 2001 Chris Hynes
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,28 +27,26 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Globalization;
-
 namespace System.Globalization
 {
 	[Serializable]
 	public class DaylightTime
 	{
-		DateTime start, end;
-		TimeSpan delta;
+		DateTime m_start, m_end;
+		TimeSpan m_delta;
 
 		public DaylightTime(DateTime start, DateTime end, TimeSpan delta)
 		{
-			this.start = start;
-			this.end = end;
-			this.delta = delta;
+			m_start = start;
+			m_end = end;
+			m_delta = delta;
 		}
 
 		public DateTime Start
 		{
 			get
 			{
-				return start;
+				return m_start;
 			}
 		}
 
@@ -59,7 +54,7 @@ namespace System.Globalization
 		{
 			get
 			{
-				return end;
+				return m_end;
 			}
 		}
 
@@ -67,7 +62,7 @@ namespace System.Globalization
 		{
 			get
 			{
-				return delta;
+				return m_delta;
 			}
 		}
 	}

@@ -1,3 +1,8 @@
+2005-12-08  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* DaylightTime.cs: Fixed serialization to be compatible with MS FX.
+	Pre-requisite to fix bug #76094.
+
 2005-12-06  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* DateTimeStyles.cs: ComVisible is only needed in 2.0.
