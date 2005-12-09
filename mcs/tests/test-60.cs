@@ -38,7 +38,7 @@
 #endif
 
 #if YY
-#errro this should not be printed
+//#errro this should not be printed // It used to compile under 1.x csc, but never under 2.x csc.
 #if X
 #elif Y
 #else

@@ -1,3 +1,10 @@
+2005-12-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* test-476.cs : test for bug #75984.
+	* test-60.cs : unrecognized directive should be handled as an error
+	  even in a disable line (the behavior has changed in 2.0).
+	* known-issues-gmcs : added above cases.
+
 2005-12-05  Marek Safar <marek.safar@seznam.cz>
 
 	* test-475.cs: Event initializer.
