@@ -275,37 +275,39 @@ namespace System.Xml
 			return Create (reader, settings, String.Empty);
 		}
 
+		static XmlReaderSettings PopulateSettings (XmlReaderSettings src)
+		{
+			if (src == null)
+				return new XmlReaderSettings ();
+			else
+				return src.Clone ();
+		}
+
 		public static XmlReader Create (Stream stream, XmlReaderSettings settings, string baseUri)
 		{
-			if (settings == null)
-				settings = new XmlReaderSettings ();
+			settings = PopulateSettings (settings);
 			return Create (stream, settings,
 				PopulateParserContext (settings, baseUri));
 		}
 
 		public static XmlReader Create (TextReader reader, XmlReaderSettings settings, string baseUri)
 		{
-			if (settings == null)
-				settings = new XmlReaderSettings ();
+			settings = PopulateSettings (settings);
 			return Create (reader, settings,
 				PopulateParserContext (settings, baseUri));
 		}
 
-		[MonoTODO ("ConformanceLevel")]
 		public static XmlReader Create (XmlReader reader, XmlReaderSettings settings)
 		{
-			if (settings == null)
-				settings = new XmlReaderSettings ();
+			settings = PopulateSettings (settings);
 			XmlReader r = CreateFilteredXmlReader (reader, settings);
 			r.settings = settings;
 			return r;
 		}
 
-		[MonoTODO ("ConformanceLevel")]
 		public static XmlReader Create (string url, XmlReaderSettings settings, XmlParserContext context)
 		{
-			if (settings == null)
-				settings = new XmlReaderSettings ();
+			settings = PopulateSettings (settings);
 			if (context == null)
 				context = PopulateParserContext (settings, url);
 			return CreateCustomizedTextReader (
@@ -313,21 +315,17 @@ namespace System.Xml
 				settings);
 		}
 
-		[MonoTODO ("ConformanceLevel")]
 		public static XmlReader Create (Stream stream, XmlReaderSettings settings, XmlParserContext context)
 		{
-			if (settings == null)
-				settings = new XmlReaderSettings ();
+			settings = PopulateSettings (settings);
 			if (context == null)
 				context = PopulateParserContext (settings, String.Empty);
 			return CreateCustomizedTextReader (new XmlTextReader (stream, GetNodeType (settings), context), settings);
 		}
 
-		[MonoTODO ("ConformanceLevel")]
 		public static XmlReader Create (TextReader reader, XmlReaderSettings settings, XmlParserContext context)
 		{
-			if (settings == null)
-				settings = new XmlReaderSettings ();
+			settings = PopulateSettings (settings);
 			if (context == null)
 				context = PopulateParserContext (settings, String.Empty);
 			return CreateCustomizedTextReader (new XmlTextReader (context.BaseURI, reader, GetNodeType (settings), context), settings);
@@ -373,6 +371,18 @@ namespace System.Xml
 
 		private static XmlReader CreateFilteredXmlReader (XmlReader reader, XmlReaderSettings settings)
 		{
+			ConformanceLevel conf = ConformanceLevel.Auto;
+			if (reader is XmlTextReader)
+				conf = ((XmlTextReader) reader).Conformance;
+			else if (reader.Settings != null)
+				conf = reader.Settings.ConformanceLevel;
+			else
+				conf = settings.ConformanceLevel;
+			if (settings.ConformanceLevel != ConformanceLevel.Auto &&
+				conf != settings.ConformanceLevel)
+				throw new InvalidOperationException (String.Format ("ConformanceLevel cannot be overwritten by a wrapping XmlReader. The source reader has {0}, while {1} is specified.", conf, settings.ConformanceLevel));
+			settings.ConformanceLevel = conf;
+
 			reader = CreateValidatingXmlReader (reader, settings);
 
 			if (reader.Settings != null ||

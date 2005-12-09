@@ -1,3 +1,9 @@
+2005-12-09  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlReaderSettingsTests.cs : added some ConformanceLevel tests.
+	  Added CreateClonesSettings() to make sure XmlReader.Create() clones
+	  XmlReaderSettings.
+
 2005-12-08  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlReaderSettingsTests.cs : (DefaultValue)

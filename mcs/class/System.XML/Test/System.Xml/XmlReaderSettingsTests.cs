@@ -16,6 +16,7 @@ using System.Xml.Schema;
 using NUnit.Framework;
 
 using ValidationFlags = System.Xml.Schema.XmlSchemaValidationFlags;
+using AssertType = NUnit.Framework.Assert;
 
 namespace MonoTests.System.Xml
 {
@@ -168,6 +169,129 @@ namespace MonoTests.System.Xml
 				.Read ();
 			XmlReader.Create (CreateStream ("<root/>"), s, (XmlParserContext) null)
 				.Read ();
+		}
+
+		#region ConformanceLevel
+
+		[Test]
+		public void InferConformanceLevel ()
+		{
+			XmlReader xr = XmlReader.Create (new StringReader ("<foo/><bar/>"));
+			
+			AssertType.AreEqual (ConformanceLevel.Document, xr.Settings.ConformanceLevel);
+		}
+
+		[Test]
+		public void InferWrappedReaderConformance ()
+		{
+			// Actually this test is weird, since XmlTextReader
+			// instance here does not have XmlReaderSettings.
+			XmlReaderSettings settings = new XmlReaderSettings ();
+			settings.ConformanceLevel = ConformanceLevel.Auto;
+			XmlReader xr = XmlReader.Create (
+				XmlReader.Create (new StringReader ("<foo/><bar/>")),
+				settings);
+			AssertType.AreEqual (ConformanceLevel.Document, xr.Settings.ConformanceLevel);
+		}
+
+		[Test]
+		[ExpectedException (typeof (XmlException))]
+		public void CreateConformanceDocument ()
+		{
+			XmlReaderSettings s = new XmlReaderSettings ();
+			s.ConformanceLevel = ConformanceLevel.Document;
+			XmlReader xr = XmlReader.Create (new StringReader (
+				"<foo/><bar/>"), s);
+			while (!xr.EOF)
+				xr.Read ();
+		}
+
+		[Test]
+		public void CreateConformanceFragment ()
+		{
+			XmlReaderSettings settings = new XmlReaderSettings ();
+			settings.ConformanceLevel = ConformanceLevel.Fragment;
+			XmlReader xr = XmlReader.Create (new StringReader (
+				"<foo/><bar/>"), settings);
+			while (!xr.EOF)
+				xr.Read ();
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void CreateConformanceChangeToDocument ()
+		{
+			// Actually this test is weird, since XmlTextReader
+			// instance here does not have XmlReaderSettings.
+			XmlReaderSettings settings = new XmlReaderSettings ();
+			settings.ConformanceLevel = ConformanceLevel.Document;
+			XmlReader xr = XmlReader.Create (
+				new XmlTextReader ("<foo/><bar/>", XmlNodeType.Element, null),
+				settings);
+			while (!xr.EOF)
+				xr.Read ();
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void CreateConformanceChangeToFragment ()
+		{
+			// Actually this test is weird, since XmlTextReader
+			// instance here does not have XmlReaderSettings.
+			XmlReaderSettings settings = new XmlReaderSettings ();
+			settings.ConformanceLevel = ConformanceLevel.Fragment;
+			XmlReader xr = XmlReader.Create (
+				new XmlTextReader ("<foo/>", XmlNodeType.Document, null),
+				settings);
+			while (!xr.EOF)
+				xr.Read ();
+		}
+
+		[Test]
+		public void CreateConformanceLevelExplicitAuto ()
+		{
+			// Even if we specify ConformanceLevel.Auto explicitly,
+			// XmlTextReader's ConformanceLevel becomes .Document.
+			XmlReaderSettings settings = new XmlReaderSettings ();
+			settings.ConformanceLevel = ConformanceLevel.Auto;
+			XmlReader xr = XmlReader.Create (
+				new XmlTextReader ("<foo/>", XmlNodeType.Document, null),
+				settings);
+			AssertType.AreEqual (ConformanceLevel.Document, xr.Settings.ConformanceLevel);
+		}
+
+		[Test]
+		public void CreateKeepConformance ()
+		{
+			XmlReaderSettings settings;
+			XmlReader xr;
+
+			// Fragment -> Fragment
+			settings = new XmlReaderSettings ();
+			settings.ConformanceLevel = ConformanceLevel.Fragment;
+			xr = XmlReader.Create (
+				XmlReader.Create (new StringReader ("<foo/>"), settings),
+				settings);
+			while (!xr.EOF)
+				xr.Read ();
+
+			// Document -> Document
+			settings.ConformanceLevel = ConformanceLevel.Document;
+			xr = XmlReader.Create (
+				XmlReader.Create (new StringReader ("<foo/>"), settings),
+				settings);
+			while (!xr.EOF)
+				xr.Read ();
+		}
+
+		#endregion
+
+		[Test]
+		public void CreateClonesSettings ()
+		{
+			XmlReaderSettings settings = new XmlReaderSettings ();
+			XmlReader xr = XmlReader.Create (new StringReader ("<doc/>"), settings);
+			AssertType.IsFalse (Object.ReferenceEquals (settings, xr.Settings));
 		}
 	}
 }

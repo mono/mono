@@ -1025,8 +1025,8 @@ namespace System.Xml
 		}
 
 #if NET_2_0
-		[MonoTODO ("Test")]
 		internal ConformanceLevel Conformance {
+			get { return allowMultipleRoot ? ConformanceLevel.Fragment : ConformanceLevel.Document; }
 			set {
 				if (value == ConformanceLevel.Fragment) {
 					currentState = XmlNodeType.Element;

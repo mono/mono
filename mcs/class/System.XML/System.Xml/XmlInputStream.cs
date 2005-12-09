@@ -68,7 +68,8 @@ namespace System.Xml
 	#endregion
 
 	#region NonBlockingStreamReader
-	// mostly copied from StreamReader.
+	// mostly copied from StreamReader, removing BOM checks, ctor
+	// parameter checks and some extra public members.
 	internal class NonBlockingStreamReader : TextReader {
 
 		const int DefaultBufferSize = 1024;
@@ -105,6 +106,7 @@ namespace System.Xml
 
 		Stream base_stream;
 		bool mayBlock;
+		StringBuilder line_builder;
 
 		public NonBlockingStreamReader(Stream stream, Encoding encoding)
 		{
@@ -142,6 +144,11 @@ namespace System.Xml
 		{
 			pos = decoded_count = 0;
 			mayBlock = false;
+#if NET_2_0
+			decoder.Reset ();
+#else
+			decoder = encoding.GetDecoder ();
+#endif
 		}
 		
 		// the buffer is empty, fill it again
@@ -218,47 +225,75 @@ namespace System.Xml
 			return chars_read;
 		}
 
+		bool foundCR;
+		int FindNextEOL ()
+		{
+			char c = '\0';
+			for (; pos < decoded_count; pos++) {
+				c = decoded_buffer [pos];
+				if (c == '\n') {
+					pos++;
+					int res = (foundCR) ? (pos - 2) : (pos - 1);
+					if (res < 0)
+						res = 0; // if a new buffer starts with a \n and there was a \r at
+							// the end of the previous one, we get here.
+					foundCR = false;
+					return res;
+				} else if (foundCR) {
+					foundCR = false;
+					return pos - 1;
+				}
+
+				foundCR = (c == '\r');
+			}
+
+			return -1;
+		}
+
 		public override string ReadLine()
 		{
 			if (base_stream == null)
 				throw new ObjectDisposedException ("StreamReader", "Cannot read from a closed StreamReader");
-			
-			bool foundCR = false;
-			StringBuilder text = new StringBuilder ();
+
+			if (pos >= decoded_count && ReadBuffer () == 0)
+				return null;
+
+			int begin = pos;
+			int end = FindNextEOL ();
+			if (end < decoded_count && end >= begin)
+				return new string (decoded_buffer, begin, end - begin);
+
+			if (line_builder == null)
+				line_builder = new StringBuilder ();
+			else
+				line_builder.Length = 0;
 
 			while (true) {
-				int c = Read ();
+				if (foundCR) // don't include the trailing CR if present
+					decoded_count--;
 
-				if (c == -1) {				// end of stream
-					if (text.Length == 0)
-						return null;
-
-					if (foundCR)
-						text.Length--;
-
-					break;
+				line_builder.Append (new string (decoded_buffer, begin, decoded_count - begin));
+				if (ReadBuffer () == 0) {
+					if (line_builder.Capacity > 32768) {
+						StringBuilder sb = line_builder;
+						line_builder = null;
+						return sb.ToString (0, sb.Length);
+					}
+					return line_builder.ToString (0, line_builder.Length);
 				}
 
-				if (c == '\n') {			// newline
-					if ((text.Length > 0) && (text [text.Length - 1] == '\r'))
-						text.Length--;
-
-					foundCR = false;
-					break;
-				} else if (foundCR) {
-					pos--;
-					text.Length--;
-					break;
+				begin = pos;
+				end = FindNextEOL ();
+				if (end < decoded_count && end >= begin) {
+					line_builder.Append (new string (decoded_buffer, begin, end - begin));
+					if (line_builder.Capacity > 32768) {
+						StringBuilder sb = line_builder;
+						line_builder = null;
+						return sb.ToString (0, sb.Length);
+					}
+					return line_builder.ToString (0, line_builder.Length);
 				}
-
-				if (c == '\r')
-					foundCR = true;
-					
-
-				text.Append ((char) c);
 			}
-
-			return text.ToString ();
 		}
 
 		public override string ReadToEnd()

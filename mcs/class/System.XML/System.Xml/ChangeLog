@@ -1,3 +1,13 @@
+2005-12-09  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlChar.cs : removed incorrect comment.
+	* XmlReader.cs : Create() clones XmlReaderSettings (if supplied).
+	  For wrapped XmlReader, check ConformanceLevel to be consistent.
+	* XmlTextReader.cs, XmlTextReader2.cs : added get_Conformance for
+	  internal use. Removed unused fields.
+	* XmlInputStream.cs : updated NonBlockingStreamReader to the latest
+	  StreamReader (it is almost a copy).
+
 2005-12-08  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlTextReader.cs : avoid Char.IsSurrogate() and do it inside

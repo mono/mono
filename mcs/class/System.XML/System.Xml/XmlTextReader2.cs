@@ -48,8 +48,6 @@ namespace System.Xml
 		XmlTextReaderImpl source;
 		bool entityInsideAttribute;
 		bool insideAttribute;
-		string cachedAttributeValue;
-		bool attributeValueConsumed;
 
 		protected XmlTextReader ()
 		{
@@ -286,6 +284,7 @@ namespace System.Xml
 		}
 
 		internal ConformanceLevel Conformance {
+			get { return source.Conformance; }
 			set {
 				if (entity != null)
 					entity.Conformance = value;
