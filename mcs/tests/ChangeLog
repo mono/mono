@@ -1,3 +1,8 @@
+2005-12-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* test-xml-051.cs test-xml-051-ref.xml : new test for bug #76960.
+	* known-issues-gmcs : updated.
+
 2005-12-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* known-issues-mcs : test-476 is broken (since the corresponding 

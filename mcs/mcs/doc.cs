@@ -705,12 +705,6 @@ namespace Mono.CSharp {
 				return; // a type
 			}
 
-			// don't use identifier here. System[] is not alloed.
-			if (RootNamespace.Global.IsNamespace (name)) {
-				xref.SetAttribute ("cref", "N:" + name);
-				return; // a namespace
-			}
-
 			int period = name.LastIndexOf ('.');
 			if (period > 0) {
 				string typeName = name.Substring (0, period);
@@ -747,6 +741,13 @@ namespace Mono.CSharp {
 					xref.SetAttribute ("cref", GetMemberDocHead (mi.MemberType) + fm.Type.FullName.Replace ("+", ".") + "." + name + GetParametersFormatted (mi));
 					return; // local member name
 				}
+			}
+
+			// It still might be part of namespace name.
+			Namespace ns = ds.NamespaceEntry.NS.GetNamespace (name, false);
+			if (ns != null) {
+				xref.SetAttribute ("cref", "N:" + ns.FullName);
+				return; // a namespace
 			}
 
 			Report.Warning (1574, 1, mc.Location, "XML comment on `{0}' has cref attribute `{1}' that could not be resolved",

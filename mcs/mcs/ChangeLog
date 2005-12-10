@@ -1,3 +1,8 @@
+2005-12-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* doc.cs : check name in cref in the last phase that whether it is
+	  namespace or not.
+
 2005-12-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* cs-tokenizer.cs : reverted the latest change: it somehow broke
