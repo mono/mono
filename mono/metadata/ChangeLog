@@ -1,5 +1,8 @@
 2005-12-10  Zoltan Varga  <vargaz@gmail.com>
 
+	* reflection.c (mono_custom_attrs_from_builders): Avoid returning
+	private attributes.
+	
 	* reflection.c (reflection_methodbuilder_to_mono_method): Fix
 	handling of null parameter defaults.
 
