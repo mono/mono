@@ -1,3 +1,8 @@
+2005-12-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* MethodBuilderTest.cs: Add test for handling not accessible custom
+	attributes.
+
 2005-10-27  Zoltan Varga  <vargaz@gmail.com>
 
 	* FieldBuilderTest.cs MethodBuilderTest.cs ConstructorBuilderTest.cs:

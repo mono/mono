@@ -535,6 +535,13 @@ public class MethodBuilderTest : Assertion
 		}
 	}
 
+	[AttributeUsage (AttributeTargets.Parameter)]
+	class PrivateAttribute : Attribute {
+
+		public PrivateAttribute () {
+		}
+	}
+
 	[Test]
 	public void GetCustomAttributes () {
 		TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public);
@@ -548,6 +555,9 @@ public class MethodBuilderTest : Assertion
 			attrType.GetConstructor (new Type [] { typeof (String) });
 
 		mb.SetCustomAttribute (new CustomAttributeBuilder (ctorInfo, new object [] { "FOO" }));
+
+		// Check that attributes not accessible are not returned
+		mb.SetCustomAttribute (new CustomAttributeBuilder (typeof (PrivateAttribute).GetConstructor (new Type [0]), new object [] { }));
 
 		Type t = tb.CreateType ();
 
