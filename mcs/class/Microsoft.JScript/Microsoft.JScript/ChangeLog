@@ -1,3 +1,11 @@
+2005-12-10  Cesar Lopez Nataren  <cnataren@novell.com>
+
+	* CodeGenerator.cs: Add EmitAssignAsExp.
+
+	* expression.cs: Take care of uses of assigment in a expression
+	context; we must save the right-side value in a local and then
+	load the local. Added  Assign.EmitAndReturnBuilder.
+
 2005-11-25  Cesar Lopez Nataren  <cnataren@novell.com>
 
 	* With.cs (JScriptWith): Use Convert.Object before we cast to

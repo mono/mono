@@ -725,5 +725,12 @@ namespace Microsoft.JScript {
 		{
 			return (string) source_file_to_type [srcName];
 		}
+
+		internal static void EmitAssignAsExp (EmitContext ec, AST ast)
+		{
+			Assign assign = (Assign) ast;
+			LocalBuilder builder = assign.EmitAndReturnBuilder (ec);
+			ec.ig.Emit (OpCodes.Ldloc, builder);
+		}
 	}
 }

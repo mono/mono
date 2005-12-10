@@ -935,7 +935,11 @@ namespace Microsoft.JScript {
 
 			for (int i = 0; i <= n; i++) {
 				ast = args.get_element (i);
-				ast.Emit (ec);
+
+				if (ast is Assign)
+					CodeGenerator.EmitAssignAsExp (ec, ast);
+				else
+					ast.Emit (ec);
 
 				if (ast is Relational) 
 					CodeGenerator.EmitRelationalComp (ig, (Relational) ast);
@@ -1103,8 +1107,13 @@ namespace Microsoft.JScript {
 			
 			if (n >= 1 && (member_exp.ToString () == "String" || member_exp.ToString () == "Boolean" || member_exp.ToString () == "Number")) {
 				ast = args.get_element (0);
-				ast.Emit (ec);
-				CodeGenerator.EmitBox (ig, ast);
+
+				if (ast is Assign)
+					CodeGenerator.EmitAssignAsExp (ec, ast);
+				else {
+					ast.Emit (ec);
+					CodeGenerator.EmitBox (ig, ast);
+				}
 				return;
 			}
 
@@ -1115,8 +1124,14 @@ namespace Microsoft.JScript {
 				ig.Emit (OpCodes.Dup);
 				ig.Emit (OpCodes.Ldc_I4, i);
 				ast = args.get_element (i);
-				ast.Emit (ec);
-				CodeGenerator.EmitBox (ig, ast);
+
+				if (ast is Assign)
+					CodeGenerator.EmitAssignAsExp (ec, ast);
+				else {
+					ast.Emit (ec);
+					CodeGenerator.EmitBox (ig, ast);
+				}
+
 				ig.Emit (OpCodes.Stelem_Ref);
 			}
 		}
@@ -1807,7 +1822,10 @@ namespace Microsoft.JScript {
 					if (ast != null) {
 						ig.Emit (OpCodes.Dup);
 						ig.Emit (OpCodes.Ldc_I4, k);
-						ast.Emit (ec);
+						if (ast is Assign)
+							CodeGenerator.EmitAssignAsExp (ec, ast);
+						else
+							ast.Emit (ec);
 
 						if (ast is Relational)
 							CodeGenerator.EmitRelationalComp (ig, (Relational) ast);
@@ -1841,7 +1859,11 @@ namespace Microsoft.JScript {
 			for (int i = 0; i < n; i++, j++) {
 				ast = get_element (i);
 				if (ast != null) {
-					ast.Emit (ec);
+					if (ast is Assign) {
+						CodeGenerator.EmitAssignAsExp (ec, ast);
+						continue;
+					} else
+						ast.Emit (ec);
 
 					if (ast is Relational)
 						CodeGenerator.EmitRelationalComp (ig, (Relational) ast);
@@ -1987,7 +2009,7 @@ namespace Microsoft.JScript {
 		// information about the assignment
 		//
 		internal override bool Resolve (Environment env)
-		{						
+		{
 			bool r;
 
 			if (left is IAssignable)
@@ -2003,7 +2025,19 @@ namespace Microsoft.JScript {
 
 		internal override bool Resolve (Environment env, bool no_effect)
 		{
-			return true;
+			this.no_effect = no_effect;
+			return Resolve (env);
+		}
+
+		internal LocalBuilder EmitAndReturnBuilder (EmitContext ec)
+		{
+			ILGenerator ig = ec.ig;
+			LocalBuilder builder = ig.DeclareLocal (typeof (object));
+			Emit (ec);
+			right.Emit (ec);
+			CodeGenerator.EmitBox (ig, right);
+			ig.Emit (OpCodes.Stloc, builder);
+			return builder;
 		}
 
 		internal override void Emit (EmitContext ec)
@@ -2198,8 +2232,13 @@ namespace Microsoft.JScript {
 						ig.Emit (OpCodes.Dup);
 						ig.Emit (OpCodes.Ldc_I4, i);
 						ast = args.get_element (i);
-						ast.Emit (ec);
-						CodeGenerator.EmitBox (ig, ast);
+
+						if (ast is Assign)
+							CodeGenerator.EmitAssignAsExp (ec, ast);
+						else {
+							ast.Emit (ec);
+							CodeGenerator.EmitBox (ig, ast);
+						}
 						ig.Emit (OpCodes.Stelem_Ref);
 					}
 
@@ -2272,8 +2311,13 @@ namespace Microsoft.JScript {
 				ig.Emit (OpCodes.Dup);
 				ig.Emit (OpCodes.Ldc_I4, i);
 				ast = args.get_element (i);
-				ast.Emit (ec);
-				CodeGenerator.EmitBox (ig, ast);
+
+				if (ast is Assign)
+					CodeGenerator.EmitAssignAsExp (ec, ast);
+				else {
+					ast.Emit (ec);
+					CodeGenerator.EmitBox (ig, ast);
+				}
 				ig.Emit (OpCodes.Stelem_Ref);
 			}
 		}
