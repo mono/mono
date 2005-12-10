@@ -1231,6 +1231,11 @@ namespace Npgsql
         {
             
             ResultCommandText = ResultCommandText.Trim();
+            
+            // Do not add SingleRowBehavior if SchemaOnly behavior is set.
+            
+            if ((commandBehavior & CommandBehavior.SchemaOnly) == CommandBehavior.SchemaOnly)
+                return ResultCommandText;
         
             if ((commandBehavior & CommandBehavior.SingleRow) == CommandBehavior.SingleRow)
             {

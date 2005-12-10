@@ -1,5 +1,8 @@
 
 
+2005-12-12  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
+
+	* Npgsql/NpgsqlCommand.cs: [bugzilla 76961] Fixed problem with ExecuteReader when using SchemaOnly and SingleRow behavior at same time. Thanks Kamil Skalski for feedback.
 
 2005-12-09  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
 
