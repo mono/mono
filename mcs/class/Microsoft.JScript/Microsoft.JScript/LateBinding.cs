@@ -254,7 +254,7 @@ namespace Microsoft.JScript {
 					return ((FunctionObject) val).CreateInstance (arguments);
 			} else if (brackets) {
 				object first_arg = arguments.Length > 0 ? arguments [0] : null;
-				return GetObjectProperty (val, Convert.ToString (first_arg));
+				return GetObjectProperty ((ScriptObject) Convert.ToObject (val, engine), Convert.ToString (first_arg));
 			} else {
 				if (val is Closure)
 					return ((Closure) val).func.Invoke (thisObj, arguments);
@@ -353,21 +353,28 @@ namespace Microsoft.JScript {
 		private static void DirectSetObjectProperty (object obj, string rhs, object value)
 		{
 			ArrayObject ary = obj as ArrayObject;
+			StringObject str = obj as StringObject;
 			ScriptObject js_obj = obj as ScriptObject;
 			bool is_js_obj = js_obj != null;
 
 			if (is_js_obj)
 				InvalidateCacheEntry (js_obj, rhs);
 
-			// Numeric index on Array?
+			// Numeric index?
 			uint index;
-			if (ary != null && IsArrayIndex (rhs, out index)) {
-				Hashtable elems = js_obj.elems;
-				bool had_value = elems.ContainsKey (index);
-				elems [index] = value;
-				if (!had_value)
-					AdjustArrayLength (ary, index);
-			} else if (!TrySetNativeProperty (obj, rhs, value) && is_js_obj) {
+			if (IsArrayIndex (rhs, out index)) {
+				if (ary != null) {
+					Hashtable elems = ary.elems;
+					bool had_value = elems.ContainsKey (index);
+					elems [index] = value;
+					if (!had_value)
+						AdjustArrayLength (ary, index);
+					return;
+				} else if (str != null) {
+					return;
+				}
+			}
+			if (!TrySetNativeProperty (obj, rhs, value) && is_js_obj) {
 				FieldInfo field = js_obj.GetField (rhs);
 				if (field == null)
 					field = js_obj.AddField (rhs);
@@ -507,16 +514,26 @@ namespace Microsoft.JScript {
 		private static bool TryDirectGetObjectProperty (out object result, object obj, string rhs)
 		{
 			ArrayObject ary = obj as ArrayObject;
+			StringObject str = obj as StringObject;
 			ScriptObject js_obj = obj as ScriptObject;
 
 			if (js_obj != null) {
 				Hashtable elems = js_obj.elems;
 
-				// Numeric index on array?
+				// Numeric index?
 				uint index;
-				if (ary != null && IsArrayIndex (rhs, out index)) {
-					result = elems [index];
-					return true;
+				if (IsArrayIndex (rhs, out index)) {
+					if (ary != null) {
+						result = elems [index];
+						return true;
+					} else if (str != null) {
+						string str_val = str.value;
+						if (index < str_val.Length)
+							result = str_val.Substring ((int) index, 1);
+						else
+							result = null;
+						return true;
+					}
 				}
 
 				if (elems.ContainsKey (rhs)) {

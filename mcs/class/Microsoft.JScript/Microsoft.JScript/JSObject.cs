@@ -35,6 +35,29 @@ using System.Runtime.InteropServices.Expando;
 
 namespace Microsoft.JScript {
 
+	internal class JSObjectEnumerator : IEnumerator {
+		private IDictionaryEnumerator enumerator;
+
+		internal JSObjectEnumerator (IDictionaryEnumerator enumerator)
+		{
+			this.enumerator = enumerator;
+		}
+
+		object IEnumerator.Current {
+			get { return this.enumerator.Key; }
+		}
+
+		bool IEnumerator.MoveNext ()
+		{
+			return this.enumerator.MoveNext ();
+		}
+
+		void IEnumerator.Reset ()
+		{
+			this.enumerator.Reset ();
+		}
+	}
+
 	public class JSObject : ScriptObject, IEnumerable, IExpando {
 
 		public JSObject ()
@@ -61,7 +84,7 @@ namespace Microsoft.JScript {
 
 		IEnumerator IEnumerable.GetEnumerator()
 		{
-			return elems.GetEnumerator ();
+			return new JSObjectEnumerator (elems.GetEnumerator ());
 		}
 
 		PropertyInfo IExpando.AddProperty (string name)

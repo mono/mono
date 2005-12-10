@@ -97,6 +97,8 @@ namespace Microsoft.JScript {
 					return "Invoked Function.prototype.toString on non-function";
 				else if (error_number == JSError.AssignmentToReadOnly)
 					return "Tried to assign to read only property";
+				else if (error_number == JSError.NotCollection)
+					return "Object is not a collection";
 				else {
 					Console.WriteLine ("JScriptException:get_Message: unknown error_number {0}", error_number);
 					throw new NotImplementedException ();

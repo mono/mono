@@ -246,7 +246,10 @@ namespace Microsoft.JScript {
 
 		public static object ToForInObject (object value, VsaEngine engine)
 		{
-			throw new NotImplementedException ();
+			if (value == null)
+				throw new NullReferenceException ("value is null");
+			
+			return GlobalObject.Object.CreateInstance (value);
 		}
 
 		public static int ToInt32 (object value)

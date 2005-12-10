@@ -48,7 +48,11 @@ namespace Microsoft.JScript {
 
 		public static IEnumerator JScriptGetEnumerator (object coll)
 		{
-			throw new NotImplementedException ();
+			IEnumerable e = coll as IEnumerable;
+			if (e == null)
+				throw new JScriptException(JSError.NotCollection);
+			
+			return e.GetEnumerator();
 		}
 
 		void ICanModifyContext.PopulateContext (Environment env, string ns)
