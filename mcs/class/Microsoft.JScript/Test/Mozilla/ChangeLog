@@ -1,5 +1,10 @@
 2005-12-10  Cesar Lopez Nataren  <cnataren@novell.com>
 
+	* runner.cs: Make the current direcory the place where we create
+	jstest.js, it's causing strange failures on my suse.10 using /tmp
+	for this purpose and it's easier to develop and test with new
+	configuration.
+
 	* mjs-most.tests: Enable ecma/Boolean/15.6.1.js,
 	ecma/Boolean/15.6.4.3-1.js, ecma/Boolean/15.6.4.3.js.
 

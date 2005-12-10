@@ -69,7 +69,7 @@ namespace JSTestRunner {
 			config.full_run = false;
 			config.test_dir = env ["MJS_TEST_DIR"] as string;
 			if (config.test_dir == null)
-				config.test_dir = config.is_win32 ? env ["TEMP"] as string : "/tmp";
+				config.test_dir = config.is_win32 ? env ["TEMP"] as string : "."; 
 
 			config.compile_cmd = env ["MJS_COMPILE_CMD"] as string;
 			if (config.compile_cmd == null)
