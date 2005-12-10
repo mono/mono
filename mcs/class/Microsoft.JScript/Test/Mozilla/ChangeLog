@@ -1,3 +1,8 @@
+2005-12-10  Cesar Lopez Nataren  <cnataren@novell.com>
+
+	* mjs-most.tests: Enable ecma/Boolean/15.6.1.js,
+	ecma/Boolean/15.6.4.3-1.js, ecma/Boolean/15.6.4.3.js.
+
 2005-12-08  Cesar Lopez Nataren  <cnataren@novell.com>
 
 	* mjs-most.tests: Disable  js1_4/Regress/function-001.js because
