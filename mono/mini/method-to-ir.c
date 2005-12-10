@@ -6039,7 +6039,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 					MONO_INST_NEW (cfg, ins, CEE_NOP);
 					ins->opcode = mono_type_to_stind (mono_method_signature (method)->ret);
 					if (ins->opcode == CEE_STOBJ) {
-						EMIT_NEW_RETLOADA (cfg, ins);
+						NEW_RETLOADA (cfg, ins);
 						handle_stobj (cfg, ins, *sp, ip, ins->klass, FALSE, FALSE);
 					} else {
 						ins->opcode = OP_MOVE;

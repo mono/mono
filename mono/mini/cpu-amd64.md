@@ -149,7 +149,12 @@ long_conv_to_u4: dest:i src1:i len:3
 long_conv_to_u8: dest:i src1:i len:3
 
 throw: src1:i len:18
+op_throw: src1:i len:18
 op_rethrow: src1:i len:18
+start_handler: len:32
+endfinally: len:32
+op_endfilter: src1:a len:32
+
 conv.ovf.i4.un: dest:i src1:i len:16
 conv.ovf.u4.un: 
 conv.ovf.u4: dest:i src1:i len:15
