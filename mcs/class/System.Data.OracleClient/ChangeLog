@@ -1,3 +1,34 @@
+2005-12-11  Daniel Morgan <danielmorgan@verizon.net>
+
+	* System.Data.OracleClient/OracleCommand.cs: when
+	binding the parameters, need to pass the parameter position
+	
+	* System.Data.OracleClient/OracleDataReader.cs: null the statement handle
+	after close
+	
+	* System.Data.OracleClient/OracleParameter.cs: add support for an output
+	parameter of Cursor to return an Oracle REF CURSOR as an OracleDataReader.
+	Zsolt Petrény - Zsolt.Petreny at sensenet.hu helped contribute to this patch.
+	
+	* Test/TestOracleClient.cs: add tests for REF CURSOR
+	
+	* System.Data.OracleClient.Oci/OciHandle.cs:
+	allow setting of the handle to free the previous handle if it existed
+	
+	* System.Data.OracleClient.Oci/OciCalls.cs: add OCI Bind functions
+	to bind a parameter using its position instead of its name
+	
+	* System.Data.OracleClient.Oci/OciDataType.cs: add an OCI type of
+	RSet for a REF CUROSR
+	
+	* System.Data.OracleClient.Oci/OciDataType.cs: add RSet (REF CURSOR)
+	
+	* System.Data.OracleClient.Oci/OciParameterDescriptor.cs: flush. REF
+	is not an RSet
+	
+	* System.Data.OracleClient.Oci/OciStatementHandle.cs: set up the result set
+	for a statement handle for a REF CURSOR
+
 2005-10-16  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* OracleException.cs: Pass message to base ctor, thereby avoiding

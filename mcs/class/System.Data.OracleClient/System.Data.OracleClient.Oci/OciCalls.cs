@@ -120,6 +120,51 @@ namespace System.Data.OracleClient.Oci
 				IntPtr curelp,
 				uint mode);
 
+			[DllImport ("oci", EntryPoint = "OCIBindByPos")]
+			internal static extern int OCIBindByPos (IntPtr stmtp,
+				out IntPtr bindpp,
+				IntPtr errhp,
+				uint position,
+				IntPtr valuep,
+				int value_sz,
+				[MarshalAs (UnmanagedType.U2)] OciDataType dty,
+				ref short indp,
+				IntPtr alenp,
+				IntPtr rcodep,
+				uint maxarr_len,
+				IntPtr curelp,
+				uint mode);
+
+			[DllImport ("oci", EntryPoint = "OCIBindByPos")]
+			internal static extern int OCIBindByPosBytes (IntPtr stmtp,
+				out IntPtr bindpp,
+				IntPtr errhp,
+				uint position,
+				byte[] valuep,
+				int value_sz,
+				[MarshalAs (UnmanagedType.U2)] OciDataType dty,
+				ref short indp,
+				IntPtr alenp,
+				IntPtr rcodep,
+				uint maxarr_len,
+				IntPtr curelp,
+				uint mode);
+
+			[DllImport ("oci", EntryPoint = "OCIBindByPos")]
+			internal static extern int OCIBindByPosRef (IntPtr stmtp,
+				out IntPtr bindpp,
+				IntPtr errhp,
+				uint position,
+				ref IntPtr valuep,
+				int value_sz,
+				[MarshalAs (UnmanagedType.U2)] OciDataType dty,
+				ref short indp,
+				IntPtr alenp,
+				IntPtr rcodep,
+				uint maxarr_len,
+				IntPtr curelp,
+				uint mode);
+
 			[DllImport ("oci")]
 			internal static extern int OCIDateTimeFromText (IntPtr hndl,
 				IntPtr errhp, [In][Out] byte[] date_str, uint dstr_length,
@@ -482,12 +527,13 @@ namespace System.Data.OracleClient.Oci
 			IntPtr rcodep,
 			uint maxarr_len,
 			IntPtr curelp,
-			uint mode) {
+			uint mode) 
+		{
 			Trace.WriteLineIf(traceOci, "OCIBindByName", "OCI");
 			return OciNativeCalls.OCIBindByNameRef (stmtp, out bindpp, errhp, placeholder, placeh_len, ref valuep, 
 				value_sz, dty, ref indp, alenp, rcodep, maxarr_len, curelp, mode);
 		}
-		
+
 		internal static int OCIBindByNameBytes (IntPtr stmtp,
 			out IntPtr bindpp,
 			IntPtr errhp,
@@ -506,7 +552,63 @@ namespace System.Data.OracleClient.Oci
 			Trace.WriteLineIf(traceOci, "OCIBindByName", "OCI");
 			return OciNativeCalls.OCIBindByNameBytes (stmtp, out bindpp, errhp, placeholder, placeh_len, valuep, 
 				value_sz, dty, ref indp, alenp, rcodep, maxarr_len, curelp, mode);
+		}
 
+		internal static int OCIBindByPos (IntPtr stmtp,
+			out IntPtr bindpp,
+			IntPtr errhp,
+			uint position,
+			IntPtr valuep,
+			int value_sz,
+			[MarshalAs (UnmanagedType.U2)] OciDataType dty,
+			ref short indp,
+			IntPtr alenp,
+			IntPtr rcodep,
+			uint maxarr_len,
+			IntPtr curelp,
+			uint mode) 
+		{
+			Trace.WriteLineIf(traceOci, "OCIBindByPos", "OCI");
+			return OciNativeCalls.OCIBindByPos (stmtp, out bindpp, errhp, position, valuep, 
+				value_sz, dty, ref indp, alenp, rcodep, maxarr_len, curelp, mode);
+		}
+
+		internal static int OCIBindByPosRef (IntPtr stmtp,
+			out IntPtr bindpp,
+			IntPtr errhp,
+			uint position,
+			ref IntPtr valuep,
+			int value_sz,
+			[MarshalAs (UnmanagedType.U2)] OciDataType dty,
+			ref short indp,
+			IntPtr alenp,
+			IntPtr rcodep,
+			uint maxarr_len,
+			IntPtr curelp,
+			uint mode) 
+		{
+			Trace.WriteLineIf(traceOci, "OCIBindByPos", "OCI");
+			return OciNativeCalls.OCIBindByPosRef (stmtp, out bindpp, errhp, position, ref valuep, 
+				value_sz, dty, ref indp, alenp, rcodep, maxarr_len, curelp, mode);
+		}
+
+		internal static int OCIBindByPosBytes (IntPtr stmtp,
+			out IntPtr bindpp,
+			IntPtr errhp,
+			uint position,
+			byte[] valuep,
+			int value_sz,
+			[MarshalAs (UnmanagedType.U2)] OciDataType dty,
+			ref short indp,
+			IntPtr alenp,
+			IntPtr rcodep,
+			uint maxarr_len,
+			IntPtr curelp,
+			uint mode) 
+		{
+			Trace.WriteLineIf(traceOci, "OCIBindByPos", "OCI");
+			return OciNativeCalls.OCIBindByPosBytes (stmtp, out bindpp, errhp, position, valuep, 
+				value_sz, dty, ref indp, alenp, rcodep, maxarr_len, curelp, mode);
 		}
 
 		[DllImport ("oci")]

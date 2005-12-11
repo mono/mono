@@ -109,6 +109,7 @@ namespace System.Data.OracleClient {
 				command.CloseDataReader ();
 			}
 			statement.Dispose();
+			statement = null;
 			isClosed = true;
 		}
 

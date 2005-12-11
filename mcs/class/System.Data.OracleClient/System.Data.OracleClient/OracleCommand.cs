@@ -198,8 +198,8 @@ namespace System.Data.OracleClient {
 
 		private void BindParameters (OciStatementHandle statement)
 		{
-			foreach (OracleParameter p in Parameters) 
-				p.Bind (statement, Connection);
+			for (int p = 0; p < Parameters.Count; p++)
+				Parameters[p].Bind (statement, Connection, (uint) p);
 		}
 
 		[MonoTODO]

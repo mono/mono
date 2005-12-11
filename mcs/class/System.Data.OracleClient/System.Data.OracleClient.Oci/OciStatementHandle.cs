@@ -187,6 +187,13 @@ namespace System.Data.OracleClient.Oci {
 			}
 			return true;
 		}
+		
+		internal void SetupRefCursorResult () 
+		{
+			GetColumnCount ();
+			Define ();
+			moreResults = true;
+		}
 
 		void GetColumnCount ()
 		{

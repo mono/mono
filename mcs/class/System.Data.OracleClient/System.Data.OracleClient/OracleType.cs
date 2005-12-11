@@ -25,7 +25,7 @@ namespace System.Data.OracleClient {
 		Byte = 0x17,
 		Char = 0x03,
 		Clob = 0x04,
-		Cursor = 0x05,
+		Cursor = 0x05, // REF CURSOR
 		DateTime = 0x06,
 		Double = 0x1e,
 		Float = 0x1d,

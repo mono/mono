@@ -25,8 +25,8 @@ namespace System.Data.OracleClient.Oci {
 		#region Fields
 
 		bool disposed = false;
-		IntPtr handle;
-		OciHandle parent;
+		IntPtr handle = IntPtr.Zero;
+		OciHandle parent = null;
 		OciHandleType type;
 
 		#endregion // Fields
@@ -288,6 +288,13 @@ namespace System.Data.OracleClient.Oci {
 
 		public void SetHandle (IntPtr h)
 		{
+			if (handle != IntPtr.Zero) {
+				// free handle if it already exists
+				if (type < OciHandleType.LobLocator)
+					FreeHandle ();
+				else
+					OciCalls.OCIDescriptorFree (this, HandleType);
+			}
 			handle = h;
 		}
 

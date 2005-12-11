@@ -1627,7 +1627,322 @@ namespace Test.OracleClient
 			Console.WriteLine("StateChange OriginalState:" + e.OriginalState.ToString ());
 		}
 
-		public static void ConnectionPoolingTest1 () {
+		static void RefCursorTests(OracleConnection con) 
+		{
+			SetupRefCursorTests(con); // for ref cursor tests 1 thru 3
+			RefCursorTest1(con); // using BEGIN/END
+			RefCursorTest2(con); // using call
+			RefCursorTest3(con); // using CommandType.StoredProcedure
+		
+			RefCursorTest4(con);
+		}
+
+		static void SetupRefCursorTests(OracleConnection con) 
+		{
+			Console.WriteLine("Setup Oracle package curspkg_join...");
+		
+			OracleCommand cmd = con.CreateCommand();
+
+			cmd.CommandText = 
+				"CREATE OR REPLACE PACKAGE curspkg_join AS\n" +
+				"TYPE t_cursor IS REF CURSOR;\n" +
+				"Procedure open_join_cursor1 (n_EMPNO IN NUMBER, io_cursor IN OUT t_cursor);\n" +
+				"END curspkg_join;";
+
+			cmd.CommandText = 
+				"CREATE OR REPLACE PACKAGE BODY curspkg_join AS\n" +
+				"   Procedure open_join_cursor1 (n_EMPNO IN NUMBER, io_cursor IN OUT t_cursor)\n" +
+				"   IS\n" +
+				"        v_cursor t_cursor;\n" +
+				"   BEGIN\n" +
+				"        IF n_EMPNO <> 0 THEN\n" +
+				"             OPEN v_cursor FOR\n" +
+				"             SELECT EMP.EMPNO, EMP.ENAME, DEPT.DEPTNO, DEPT.DNAME\n" +
+				"                  FROM EMP, DEPT\n" +
+				"                  WHERE EMP.DEPTNO = DEPT.DEPTNO\n" +
+				"                  AND EMP.EMPNO = n_EMPNO;\n" +
+				"\n" +
+				"        ELSE\n" +
+				"             OPEN v_cursor FOR\n" +
+				"             SELECT EMP.EMPNO, EMP.ENAME, DEPT.DEPTNO, DEPT.DNAME\n" +
+				"                  FROM EMP, DEPT\n" +
+				"                  WHERE EMP.DEPTNO = DEPT.DEPTNO;\n" +
+				"\n" +
+				"        END IF;\n" +
+				"        io_cursor := v_cursor;\n" +
+				"   END open_join_cursor1;\n" +
+				"END curspkg_join;";
+			cmd.ExecuteNonQuery();
+		}
+
+		public static void RefCursorTest4(OracleConnection connection) 
+		{
+			Console.WriteLine("Setup test package and data...");
+			OracleCommand cmddrop = connection.CreateCommand();
+
+			cmddrop.CommandText = "DROP TABLE TESTTABLE";
+			try { 
+				cmddrop.ExecuteNonQuery(); 
+			} 
+			catch(OracleException e) {
+				Console.WriteLine("Ignore this error: " + e.Message); 
+			}
+			cmddrop.Dispose();
+			cmddrop = null;
+
+			OracleCommand cmd = connection.CreateCommand();
+
+			// create table TESTTABLE
+			cmd.CommandText = 
+				"create table TESTTABLE (\n" +
+				" col1 numeric(18,0),\n" +
+				" col2 varchar(32),\n" +
+				" col3 date)";
+			cmd.ExecuteNonQuery();
+
+			// insert some rows into TESTTABLE
+			cmd.CommandText = 
+				"insert into TESTTABLE\n" +
+				"(col1, col2, col3)\n" +
+				"values(45, 'Mono', sysdate)";
+			cmd.ExecuteNonQuery();
+
+			cmd.CommandText = 
+				"insert into TESTTABLE\n" +
+				"(col1, col2, col3)\n" +
+				"values(136, 'Fun', sysdate)";
+			cmd.ExecuteNonQuery();
+
+			cmd.CommandText = 
+				"insert into TESTTABLE\n" +
+				"(col1, col2, col3)\n" +
+				"values(526, 'System.Data.OracleClient', sysdate)";
+			cmd.ExecuteNonQuery();
+
+			cmd.CommandText = "commit";
+			cmd.ExecuteNonQuery();
+
+			// create Oracle package TestTablePkg
+			cmd.CommandText = 
+				"CREATE OR REPLACE PACKAGE TestTablePkg\n" +
+				"AS\n" +
+				"	TYPE T_CURSOR IS REF CURSOR;\n" +
+				"\n" +
+				"	PROCEDURE GetData(tableCursor OUT T_CURSOR);\n" +
+				"END TestTablePkg;";
+			cmd.ExecuteNonQuery();
+
+			// create Oracle package body for package TestTablePkg
+			cmd.CommandText = 
+				"CREATE OR REPLACE PACKAGE BODY TestTablePkg AS\n" +
+				"  PROCEDURE GetData(tableCursor OUT T_CURSOR)\n" +
+				"  IS\n" +
+				"  BEGIN\n" +
+				"    OPEN tableCursor FOR\n" +
+				"    SELECT *\n" +
+				"    FROM TestTable;\n" +
+				"  END GetData;\n" +
+				"END TestTablePkg;";
+			cmd.ExecuteNonQuery();
+
+			cmd.Dispose();
+			cmd = null;
+
+			Console.WriteLine("Set up command and parameters to call stored proc...");
+			OracleCommand command = new OracleCommand("TestTablePkg.GetData", connection);
+			command.CommandType = CommandType.StoredProcedure;
+			OracleParameter parameter = new OracleParameter("tableCursor", OracleType.Cursor);
+			parameter.Direction = ParameterDirection.Output;
+			command.Parameters.Add(parameter);
+
+			Console.WriteLine("Execute...");
+			command.ExecuteNonQuery();
+
+			Console.WriteLine("Get OracleDataReader for cursor output parameter...");
+			OracleDataReader reader = (OracleDataReader) parameter.Value;
+			
+			Console.WriteLine("Read data...");
+			int r = 0;
+			while (reader.Read()) {
+				Console.WriteLine("Row {0}", r);
+				for (int f = 0; f < reader.FieldCount; f ++) {
+					object val = reader.GetValue(f);
+					Console.WriteLine("    Field {0} Value: {1}", f, val);
+				}
+				r ++;
+			}
+			Console.WriteLine("Rows retrieved: {0}", r);
+
+			Console.WriteLine("Clean up...");
+			reader.Close();
+			reader = null;
+			command.Dispose();
+			command = null;
+		}
+
+		static void RefCursorTest1(OracleConnection con) 
+		{
+			Console.WriteLine("Ref Cursor Test 1 - using BEGIN/END for proc - Begin...");
+
+			Console.WriteLine("Create command...");
+			OracleCommand cmd = new OracleCommand();
+			cmd.Connection = con;
+
+			cmd.CommandText = 
+				"BEGIN\n" +
+				"	curspkg_join.open_join_cursor1(:n_Empno,:io_cursor);\n" +
+				"END;";
+		
+			// PL/SQL definition of stored procedure in package curspkg_join
+			// open_join_cursor1 (n_EMPNO IN NUMBER, io_cursor IN OUT t_cursor)
+
+			Console.WriteLine("Create parameters...");
+
+			OracleParameter parm1 = new OracleParameter("n_Empno", OracleType.Number);
+			parm1.Direction = ParameterDirection.Input;
+			parm1.Value = 7902;
+
+			OracleParameter parm2 = new OracleParameter("io_cursor", OracleType.Cursor);
+			parm2.Direction = ParameterDirection.Output;
+
+			cmd.Parameters.Add(parm1);
+			cmd.Parameters.Add(parm2);
+
+			// positional parm
+			//cmd.Parameters.Add(new OracleParameter("io_cursor", OracleType.Cursor)).Direction = ParameterDirection.Output;
+			// named parm
+			//cmd.Parameters.Add("n_Empno", OracleType.Number, 4).Value = 7902;
+
+			OracleDataReader reader;
+			Console.WriteLine("Execute Non Query...");
+			cmd.ExecuteNonQuery();
+
+			Console.WriteLine("Get data reader (ref cursor) from out parameter...");
+			reader = (OracleDataReader) cmd.Parameters["io_cursor"].Value;
+
+			int x, count;
+			count = 0;
+
+			Console.WriteLine("Get data from ref cursor...");
+			while (reader.Read()) {
+				for (x = 0; x < reader.FieldCount; x++) 
+					Console.Write(reader[x] + " ");
+			
+				Console.WriteLine();
+				count += 1;
+			}
+			Console.WriteLine(count.ToString() + " Rows Returned.");
+
+			reader.Close();
+		}
+
+		static void RefCursorTest2(OracleConnection con) 
+		{
+			Console.WriteLine("Ref Cursor Test 2 - using call - Begin...");
+
+			Console.WriteLine("Create command...");
+			OracleCommand cmd = new OracleCommand();
+			cmd.Connection = con;
+			cmd.CommandText = "call curspkg_join.open_join_cursor1(:n_Empno,:io_cursor)";
+		
+			// PL/SQL definition of stored procedure in package curspkg_join
+			// open_join_cursor1 (n_EMPNO IN NUMBER, io_cursor IN OUT t_cursor)
+
+			Console.WriteLine("Create parameters...");
+
+			OracleParameter parm1 = new OracleParameter("n_Empno", OracleType.Number);
+			parm1.Direction = ParameterDirection.Input;
+			parm1.Value = 7902;
+
+			OracleParameter parm2 = new OracleParameter("io_cursor", OracleType.Cursor);
+			parm2.Direction = ParameterDirection.Output;
+
+			cmd.Parameters.Add(parm1);
+			cmd.Parameters.Add(parm2);
+
+			// positional parm
+			//cmd.Parameters.Add(new OracleParameter("io_cursor", OracleType.Cursor)).Direction = ParameterDirection.Output;
+			// named parm
+			//cmd.Parameters.Add("n_Empno", OracleType.Number, 4).Value = 7902;
+
+			OracleDataReader reader;
+			Console.WriteLine("Execute Non Query...");
+			cmd.ExecuteNonQuery();
+
+			Console.WriteLine("Get data reader (ref cursor) from out parameter...");
+			reader = (OracleDataReader) cmd.Parameters["io_cursor"].Value;
+
+			int x, count;
+			count = 0;
+
+			Console.WriteLine("Get data from ref cursor...");
+			while (reader.Read()) {
+				for (x = 0; x < reader.FieldCount; x++) 
+					Console.Write(reader[x] + " ");
+			
+				Console.WriteLine();
+				count += 1;
+			}
+			Console.WriteLine(count.ToString() + " Rows Returned.");
+
+			reader.Close();
+		}
+
+		static void RefCursorTest3(OracleConnection con) 
+		{
+			Console.WriteLine("Ref Cursor Test 3 - CommandType.StoredProcedure - Begin...");
+
+			Console.WriteLine("Create command...");
+			OracleCommand cmd = new OracleCommand();
+			cmd.Connection = con;
+			cmd.CommandText = "curspkg_join.open_join_cursor1";
+			cmd.CommandType = CommandType.StoredProcedure;
+		
+			// PL/SQL definition of stored procedure in package curspkg_join
+			// open_join_cursor1 (n_EMPNO IN NUMBER, io_cursor IN OUT t_cursor)
+
+			Console.WriteLine("Create parameters...");
+
+			OracleParameter parm1 = new OracleParameter("n_Empno", OracleType.Number);
+			parm1.Direction = ParameterDirection.Input;
+			parm1.Value = 7902;
+
+			OracleParameter parm2 = new OracleParameter("io_cursor", OracleType.Cursor);
+			parm2.Direction = ParameterDirection.Output;
+
+			cmd.Parameters.Add(parm1);
+			cmd.Parameters.Add(parm2);
+
+			// positional parm
+			//cmd.Parameters.Add(new OracleParameter("io_cursor", OracleType.Cursor)).Direction = ParameterDirection.Output;
+			// named parm
+			//cmd.Parameters.Add("n_Empno", OracleType.Number, 4).Value = 7902;
+
+			OracleDataReader reader;
+			Console.WriteLine("Execute Non Query...");
+			cmd.ExecuteNonQuery();
+
+			Console.WriteLine("Get data reader (ref cursor) from out parameter...");
+			reader = (OracleDataReader) cmd.Parameters["io_cursor"].Value;
+
+			int x, count;
+			count = 0;
+
+			Console.WriteLine("Get data from ref cursor...");
+			while (reader.Read()) {
+				for (x = 0; x < reader.FieldCount; x++) 
+					Console.Write(reader[x] + " ");
+			
+				Console.WriteLine();
+				count += 1;
+			}
+			Console.WriteLine(count.ToString() + " Rows Returned.");
+
+			reader.Close();
+		}
+
+		public static void ConnectionPoolingTest1 () 
+		{
 			Console.WriteLine("Start Connection Pooling Test 1...");
 			OracleConnection[] connections = null;
 			int maxCon = MAX_CONNECTIONS + 1; // add 1 more over the max connections to cause it to wait for the next available connection
@@ -1661,7 +1976,8 @@ namespace Test.OracleClient
 			Console.WriteLine("Done Connection Pooling Test 1.");
 		}
 
-		public static void ConnectionPoolingTest2 () {
+		public static void ConnectionPoolingTest2 () 
+		{
 			Console.WriteLine("Start Connection Pooling Test 2...");
 			OracleConnection[] connections = null;
 			int maxCon = MAX_CONNECTIONS;
@@ -1696,7 +2012,8 @@ namespace Test.OracleClient
 			connections = null;
 		}
 
-		private static void AnotherThreadProc () {
+		private static void AnotherThreadProc () 
+		{
 			Console.WriteLine("Open connection via another thread...");
 			OracleConnection[] connections = null;
 			int maxCon = MAX_CONNECTIONS; 
@@ -1828,6 +2145,10 @@ namespace Test.OracleClient
 			Console.WriteLine ("Null Aggregate Warning BEGIN test...");
 			NullAggregateTest (con1);
 			Console.WriteLine ("Null Aggregate Warning END test...");
+
+			Console.WriteLine ("Ref Cursor BEGIN tests...");
+			RefCursorTests (con1);
+			Console.WriteLine ("Ref Cursor END tests...");
 
 			Console.WriteLine("Closing...");
 			con1.Close ();
