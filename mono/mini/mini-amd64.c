@@ -68,6 +68,8 @@ static const char*const * ins_spec = amd64_desc;
 
 #define NOT_IMPLEMENTED g_assert_not_reached ()
 
+void mini_emit_memcpy2 (MonoCompile *cfg, int destreg, int doffset, int srcreg, int soffset, int size, int align);
+
 const char*
 mono_arch_regname (int reg) {
 	switch (reg) {
@@ -965,6 +967,7 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 			else {
 				cfg->ret->opcode = OP_REGVAR;
 				cfg->ret->inst_c0 = cinfo->ret.reg;
+				cfg->ret->dreg = cfg->ret->inst_c0;
 			}
 			break;
 		case ArgValuetypeInReg:
@@ -978,7 +981,6 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 		default:
 			g_assert_not_reached ();
 		}
-		cfg->ret->dreg = cfg->ret->inst_c0;
 	}
 
 	/* Allocate locals */
@@ -1087,6 +1089,11 @@ mono_arch_create_vars (MonoCompile *cfg)
 
 	if (cinfo->ret.storage == ArgValuetypeInReg)
 		cfg->ret_var_is_local = TRUE;
+	else
+		if (cfg->new_ir && ((MONO_TYPE_ISSTRUCT (sig->ret) && !mono_class_from_mono_type (sig->ret)->enumtype) || (sig->ret->type == MONO_TYPE_TYPEDBYREF))) {
+			/* cfg->ret will represent the implicit arg holding the vtype address */
+			cfg->ret = mono_compile_create_var (cfg, &mono_defaults.int_class->byval_arg, OP_LOCAL);
+		}
 
 	g_free (cinfo);
 }
@@ -1539,11 +1546,12 @@ mono_arch_call_opcode2 (MonoCompile *cfg, MonoCallInst *call, int is_virtual) {
 					MONO_ADD_INS (cfg->cbb, arg);
 				} else if (size <= 40) {
 					MONO_EMIT_NEW_BIALU_IMM (cfg, OP_SUB_IMM, X86_ESP, X86_ESP, ALIGN_TO (size, 8));
-					mini_emit_memcpy (cfg, X86_ESP, 0, in->dreg, 0, size, 0);
+					mini_emit_memcpy2 (cfg, X86_ESP, 0, in->dreg, 0, size, 0);
 				} else {
 					arg->opcode = OP_X86_PUSH_OBJ;
 					arg->inst_basereg = in->dreg;
 					arg->inst_offset = 0;
+					arg->inst_imm = size;
 					MONO_ADD_INS (cfg->cbb, arg);
 				}
 			}
@@ -2385,6 +2393,13 @@ emit_load_volatile_arguments (MonoCompile *cfg, guint8 *code)
 	
 	/* This is the opposite of the code in emit_prolog */
 
+	if (sig->ret->type != MONO_TYPE_VOID) {
+		if ((cinfo->ret.storage == ArgInIReg) && (cfg->ret->opcode != OP_REGVAR)) {
+			/* FIXME: Port this to the old JIT */
+			amd64_mov_reg_membase (code, cinfo->ret.reg, cfg->ret->inst_basereg, cfg->ret->inst_offset, 8);
+		}
+	}
+
 	for (i = 0; i < sig->param_count + sig->hasthis; ++i) {
 		ArgInfo *ainfo = cinfo->args + i;
 		MonoType *arg_type;
@@ -2601,6 +2616,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 		case CEE_CONV_U8:
 		case CEE_CONV_U:
+		case OP_ICONV_TO_U:
 			/* Clean out the upper word */
 			amd64_mov_reg_reg_size (code, ins->dreg, ins->sreg1, 4);
 			break;
@@ -5284,6 +5300,134 @@ mono_arch_get_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethod
 			   (strcmp (cmethod->klass->name_space, "System.Threading") == 0) &&
 			   (strcmp (cmethod->klass->name, "Interlocked") == 0)) {
 
+		if (strcmp (cmethod->name, "Increment") == 0) {
+			MonoInst *ins_iconst;
+			guint32 opcode;
+
+			if (fsig->params [0]->type == MONO_TYPE_I4)
+				opcode = OP_ATOMIC_ADD_NEW_I4;
+			else if (fsig->params [0]->type == MONO_TYPE_I8)
+				opcode = OP_ATOMIC_ADD_NEW_I8;
+			else
+				g_assert_not_reached ();
+			MONO_INST_NEW (cfg, ins, opcode);
+			MONO_INST_NEW (cfg, ins_iconst, OP_ICONST);
+			ins_iconst->inst_c0 = 1;
+
+			ins->inst_i0 = args [0];
+			ins->inst_i1 = ins_iconst;
+		} else if (strcmp (cmethod->name, "Decrement") == 0) {
+			MonoInst *ins_iconst;
+			guint32 opcode;
+
+			if (fsig->params [0]->type == MONO_TYPE_I4)
+				opcode = OP_ATOMIC_ADD_NEW_I4;
+			else if (fsig->params [0]->type == MONO_TYPE_I8)
+				opcode = OP_ATOMIC_ADD_NEW_I8;
+			else
+				g_assert_not_reached ();
+			MONO_INST_NEW (cfg, ins, opcode);
+			MONO_INST_NEW (cfg, ins_iconst, OP_ICONST);
+			ins_iconst->inst_c0 = -1;
+
+			ins->inst_i0 = args [0];
+			ins->inst_i1 = ins_iconst;
+		} else if (strcmp (cmethod->name, "Add") == 0) {
+			guint32 opcode;
+
+			if (fsig->params [0]->type == MONO_TYPE_I4)
+				opcode = OP_ATOMIC_ADD_I4;
+			else if (fsig->params [0]->type == MONO_TYPE_I8)
+				opcode = OP_ATOMIC_ADD_I8;
+			else
+				g_assert_not_reached ();
+			
+			MONO_INST_NEW (cfg, ins, opcode);
+
+			ins->inst_i0 = args [0];
+			ins->inst_i1 = args [1];
+		} else if (strcmp (cmethod->name, "Exchange") == 0) {
+			guint32 opcode;
+
+			if (fsig->params [0]->type == MONO_TYPE_I4)
+				opcode = OP_ATOMIC_EXCHANGE_I4;
+			else if ((fsig->params [0]->type == MONO_TYPE_I8) ||
+					 (fsig->params [0]->type == MONO_TYPE_I) ||
+					 (fsig->params [0]->type == MONO_TYPE_OBJECT))
+				opcode = OP_ATOMIC_EXCHANGE_I8;
+			else
+				return NULL;
+
+			MONO_INST_NEW (cfg, ins, opcode);
+
+			ins->inst_i0 = args [0];
+			ins->inst_i1 = args [1];
+		} else if (strcmp (cmethod->name, "Read") == 0 && (fsig->params [0]->type == MONO_TYPE_I8)) {
+			/* 64 bit reads are already atomic */
+			MONO_INST_NEW (cfg, ins, CEE_LDIND_I8);
+			ins->inst_i0 = args [0];
+		}
+
+		/* 
+		 * Can't implement CompareExchange methods this way since they have
+		 * three arguments.
+		 */
+	}
+
+	return ins;
+}
+
+MonoInst*
+mono_arch_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args)
+{
+	MonoInst *ins = NULL;
+	int opcode = 0;
+
+	if (cmethod->klass == mono_defaults.math_class) {
+		if (strcmp (cmethod->name, "Sin") == 0) {
+			opcode = OP_SIN;
+		} else if (strcmp (cmethod->name, "Cos") == 0) {
+			opcode = OP_COS;
+		} else if (strcmp (cmethod->name, "Tan") == 0) {
+			if (use_sse2)
+				return ins;
+			opcode = OP_TAN;
+		} else if (strcmp (cmethod->name, "Atan") == 0) {
+			if (use_sse2)
+				return ins;
+			opcode = OP_ATAN;
+		} else if (strcmp (cmethod->name, "Sqrt") == 0) {
+			opcode = OP_SQRT;
+		} else if (strcmp (cmethod->name, "Abs") == 0 && fsig->params [0]->type == MONO_TYPE_R8) {
+			opcode = OP_ABS;
+		}
+		
+		if (opcode) {
+			MONO_INST_NEW (cfg, ins, opcode);
+			ins->type = STACK_R8;
+			/* FIXME: Call alloc_freg */
+			ins->dreg = cfg->next_vfreg ++;
+			ins->sreg1 = args [0]->dreg;
+			MONO_ADD_INS (cfg->cbb, ins);
+		}
+
+#if 0
+		/* OP_FREM is not IEEE compatible */
+		else if (strcmp (cmethod->name, "IEEERemainder") == 0) {
+			MONO_INST_NEW (cfg, ins, OP_FREM);
+			ins->inst_i0 = args [0];
+			ins->inst_i1 = args [1];
+		}
+#endif
+	} else if (cmethod->klass == mono_defaults.thread_class &&
+			   strcmp (cmethod->name, "MemoryBarrier") == 0) {
+		MONO_INST_NEW (cfg, ins, OP_MEMORY_BARRIER);
+		MONO_ADD_INS (cfg->cbb, ins);
+	} else if(cmethod->klass->image == mono_defaults.corlib &&
+			   (strcmp (cmethod->klass->name_space, "System.Threading") == 0) &&
+			   (strcmp (cmethod->klass->name, "Interlocked") == 0)) {
+
+		NOT_IMPLEMENTED;
 		if (strcmp (cmethod->name, "Increment") == 0) {
 			MonoInst *ins_iconst;
 			guint32 opcode;

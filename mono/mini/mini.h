@@ -909,6 +909,7 @@ gint32*           mono_allocate_stack_slots_full (MonoCompile *cfg, gboolean bac
 gint32*           mono_allocate_stack_slots (MonoCompile *cfg, guint32 *stack_size, guint32 *stack_align);
 void              mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb);
 MonoInst         *mono_branch_optimize_exception_target (MonoCompile *cfg, MonoBasicBlock *bb, const char * exname);		  
+void              mini_emit_memcpy2 (MonoCompile *cfg, int destreg, int doffset, int srcreg, int soffset, int size, int align);
 
 /* methods that must be provided by the arch-specific port */
 void      mono_arch_cpu_init                    (void);
@@ -920,6 +921,7 @@ MonoCallInst *mono_arch_call_opcode             (MonoCompile *cfg, MonoBasicBloc
 MonoCallInst *mono_arch_call_opcode2            (MonoCompile *cfg, MonoCallInst *call, int is_virtual);
 void      mono_arch_emit_setret                 (MonoCompile *cfg, MonoMethod *method, MonoInst *val);
 MonoInst *mono_arch_get_inst_for_method       (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args);
+MonoInst *mono_arch_emit_inst_for_method       (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args);
 void      mono_codegen                          (MonoCompile *cfg);
 void      mono_call_inst_add_outarg_reg         (MonoCallInst *call, int vreg, int hreg, gboolean fp);
 const char *mono_arch_regname                   (int reg);

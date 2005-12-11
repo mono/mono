@@ -294,6 +294,7 @@ MINI_OP(OP_ICONV_TO_U4,"int_conv_to_u4", IREG, IREG, NONE)
 MINI_OP(OP_ICONV_TO_U8,"int_conv_to_u8", LREG, IREG, NONE)
 
 MINI_OP(OP_ICONV_TO_R_UN, "int_conv_to_r_un", FREG, IREG, NONE)
+MINI_OP(OP_ICONV_TO_U,   "int_conv_to_u", IREG, IREG, NONE)
 
 /* 32 bit opcodes: must be in the same order as the matching CEE_ opcodes: ovfops_op_map */
 MINI_OP(OP_ICONV_TO_U2,   "int_conv_to_u2", IREG, IREG, NONE)
@@ -491,12 +492,12 @@ MINI_OP(OP_ADD_OVF_UN_CARRY,   "add_ovf_un_carry", NONE, NONE, NONE)
 MINI_OP(OP_SUB_OVF_UN_CARRY,   "sub_ovf_un_carry", NONE, NONE, NONE)
 
 /* FP functions usually done by the CPU */
-MINI_OP(OP_SIN,     "sin", NONE, NONE, NONE)
-MINI_OP(OP_COS,     "cos", NONE, NONE, NONE)
-MINI_OP(OP_ABS,     "abs", NONE, NONE, NONE)
-MINI_OP(OP_TAN,     "tan", NONE, NONE, NONE)
-MINI_OP(OP_ATAN,    "atan", NONE, NONE, NONE)
-MINI_OP(OP_SQRT,    "sqrt", NONE, NONE, NONE)
+MINI_OP(OP_SIN,     "sin", FREG, FREG, NONE)
+MINI_OP(OP_COS,     "cos", FREG, FREG, NONE)
+MINI_OP(OP_ABS,     "abs", FREG, FREG, NONE)
+MINI_OP(OP_TAN,     "tan", FREG, FREG, NONE)
+MINI_OP(OP_ATAN,    "atan", FREG, FREG, NONE)
+MINI_OP(OP_SQRT,    "sqrt", FREG, FREG, NONE)
 /* to optimize strings */
 MINI_OP(OP_GETCHR, "getchar", NONE, NONE, NONE)
 MINI_OP(OP_STRLEN, "strlen", NONE, NONE, NONE)

@@ -69,7 +69,7 @@
  * because they have weird semantics with NaNs.
  */
 #define MONO_IS_COND_BRANCH_OP(ins) (((ins)->opcode >= CEE_BEQ && (ins)->opcode <= CEE_BLT_UN) || ((ins)->opcode >= OP_LBEQ && (ins)->opcode <= OP_LBLT_UN) || ((ins)->opcode >= OP_FBEQ && (ins)->opcode <= OP_FBLT_UN) || ((ins)->opcode >= OP_IBEQ && (ins)->opcode <= OP_IBLT_UN))
-#define MONO_IS_COND_BRANCH_NOFP(ins) (MONO_IS_COND_BRANCH_OP(ins) && !(((ins)->opcode >= OP_FBEQ) && ((ins)->opcode <= OP_FBLT_UN)))
+#define MONO_IS_COND_BRANCH_NOFP(ins) (MONO_IS_COND_BRANCH_OP(ins) && !(((ins)->opcode >= OP_FBEQ) && ((ins)->opcode <= OP_FBLT_UN)) && (!(ins)->inst_left || (ins)->inst_left->inst_left->type != STACK_R8))
 
 #define MONO_CHECK_THIS(ins) (mono_method_signature (cfg->method)->hasthis && (ins)->ssa_op == MONO_SSA_LOAD && (ins)->inst_left->inst_c0 == 0)
 
@@ -8675,6 +8675,8 @@ mono_compile_create_vars (MonoCompile *cfg)
 	sig = mono_method_signature (cfg->method);
 	
 	if (!MONO_TYPE_IS_VOID (sig->ret)) {
+		/* FIXME: Why doesn't this work ? */
+		//cfg->ret = mono_compile_create_var (cfg, sig->ret, OP_RETARG);
 		cfg->ret = mono_mempool_alloc0 (cfg->mempool, sizeof (MonoInst));
 		cfg->ret->opcode = OP_RETARG;
 		cfg->ret->inst_vtype = sig->ret;
@@ -9394,23 +9396,28 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 		cfg->new_ir = TRUE;
 	*/
 
-#if 0
 	{
 		static int count = 0;
 
 		count ++;
 
-		if (count == atoi (getenv ("COUNT"))) {
-			printf ("LAST: %s\n", mono_method_full_name (method, TRUE));
-			//cfg->opt &= ~MONO_OPT_BRANCH;
-			//cfg->verbose_level = 5;
+		if (getenv ("COUNT")) {
+			if (count == atoi (getenv ("COUNT"))) {
+				printf ("LAST: %s\n", mono_method_full_name (method, TRUE));
+				//cfg->opt &= ~MONO_OPT_BRANCH;
+				//cfg->verbose_level = 5;
+			}
+			if (count <= atoi (getenv ("COUNT")))
+				cfg->new_ir = TRUE;
 		}
-		if (count <= atoi (getenv ("COUNT")))
+		else
 			cfg->new_ir = TRUE;
 	}
-#endif
 
-	cfg->new_ir = TRUE;
+	/*
+	if (strstr (cfg->method->name, "get_simple"))
+		cfg->new_ir = FALSE;
+	*/
 
 	if (cfg->new_ir) {
 		cfg->rs = mono_regstate_new ();
