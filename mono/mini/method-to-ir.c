@@ -6042,11 +6042,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 						NEW_RETLOADA (cfg, ins);
 						handle_stobj (cfg, ins, *sp, ip, ins->klass, FALSE, FALSE);
 					} else {
-						ins->opcode = OP_MOVE;
-						ins->sreg1 = (*sp)->dreg;
-						ins->dreg = cfg->ret->dreg;
-						ins->cil_code = ip;
-						MONO_ADD_INS (bblock, ins);
+						mono_arch_emit_setret (cfg, method, *sp);
 					}
 				}
 			}
@@ -8961,6 +8957,9 @@ mono_spill_global_vars (MonoCompile *cfg)
 	for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
 		MonoInst *ins = bb->code;	
 		MonoInst *prev = NULL;
+
+		if (cfg->verbose_level > 0)
+			printf ("SPILL BLOCK %d:\n", bb->block_num);
 
 		cfg->cbb = bb;
 		for (; ins; ins = ins->next) {

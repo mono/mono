@@ -1038,8 +1038,10 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 			case ArgInIReg:
 			case ArgInFloatSSEReg:
 			case ArgInDoubleSSEReg:
-				inst->opcode = OP_REGVAR;
-				inst->dreg = ainfo->reg;
+				if (inreg) {
+					inst->opcode = OP_REGVAR;
+					inst->dreg = ainfo->reg;
+				}
 				break;
 			case ArgOnStack:
 				g_assert (!cfg->arch.omit_fp);
@@ -1616,6 +1618,24 @@ mono_arch_call_opcode2 (MonoCompile *cfg, MonoCallInst *call, int is_virtual) {
 	g_free (cinfo);
 
 	return call;
+}
+
+void
+mono_arch_emit_setret (MonoCompile *cfg, MonoMethod *method, MonoInst *val)
+{
+	MonoType *ret = mono_type_get_underlying_type (mono_method_signature (method)->ret);
+
+	if (!ret->byref) {
+		if (ret->type == MONO_TYPE_R4) {
+			MONO_EMIT_NEW_UNALU (cfg, OP_AMD64_SET_XMMREG_R4, cfg->ret->dreg, val->dreg);
+			return;
+		} else if (ret->type == MONO_TYPE_R8) {
+			MONO_EMIT_NEW_UNALU (cfg, OP_AMD64_SET_XMMREG_R8, cfg->ret->dreg, val->dreg);
+			return;
+		}
+	}
+			
+	MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, cfg->ret->dreg, val->dreg);
 }
 
 #define EMIT_COND_BRANCH(ins,cond,sign) \
@@ -2650,6 +2670,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case CEE_NOP:
 		case OP_DUMMY_USE:
 		case OP_DUMMY_STORE:
+		case OP_NOT_REACHED:
 			break;
 		case OP_ADDCC:
 		case CEE_ADD:
@@ -3263,7 +3284,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case CEE_RET:
 			amd64_ret (code);
 			break;
-		case CEE_THROW: {
+		case CEE_THROW:
+		case OP_THROW: {
 			amd64_mov_reg_reg (code, AMD64_RDI, ins->sreg1, 8);
 			code = emit_call (cfg, code, MONO_PATCH_INFO_INTERNAL_METHOD, 
 					     (gpointer)"mono_arch_throw_exception");

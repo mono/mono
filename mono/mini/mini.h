@@ -918,6 +918,7 @@ void     *mono_arch_instrument_prolog           (MonoCompile *cfg, void *func, v
 void     *mono_arch_instrument_epilog           (MonoCompile *cfg, void *func, void *p, gboolean enable_arguments);
 MonoCallInst *mono_arch_call_opcode             (MonoCompile *cfg, MonoBasicBlock* bb, MonoCallInst *call, int is_virtual);
 MonoCallInst *mono_arch_call_opcode2            (MonoCompile *cfg, MonoCallInst *call, int is_virtual);
+void      mono_arch_emit_setret                 (MonoCompile *cfg, MonoMethod *method, MonoInst *val);
 MonoInst *mono_arch_get_inst_for_method       (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args);
 void      mono_codegen                          (MonoCompile *cfg);
 void      mono_call_inst_add_outarg_reg         (MonoCallInst *call, int vreg, int hreg, gboolean fp);
