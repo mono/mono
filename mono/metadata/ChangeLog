@@ -1,3 +1,7 @@
+2005-12-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* reflection.c (custom_attr_visible): Fix build.
+
 2005-12-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* reflection.c (mono_custom_attrs_from_builders): Avoid returning
