@@ -749,6 +749,10 @@ namespace Mono.CSharp {
 				xref.SetAttribute ("cref", "N:" + ns.FullName);
 				return; // a namespace
 			}
+			if (RootNamespace.Global.IsNamespace (name)) {
+				xref.SetAttribute ("cref", "N:" + name);
+				return; // a namespace
+			}
 
 			Report.Warning (1574, 1, mc.Location, "XML comment on `{0}' has cref attribute `{1}' that could not be resolved",
 				mc.GetSignatureForError (), cref);
