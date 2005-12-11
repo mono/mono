@@ -341,6 +341,26 @@ mono_print_ins_index (int i, MonoInst *ins)
 	case CEE_BGE_UN:
 	case CEE_BLE:
 	case CEE_BLE_UN:
+	case OP_IBNE_UN:
+	case OP_IBEQ:
+	case OP_IBLT:
+	case OP_IBLT_UN:
+	case OP_IBGT:
+	case OP_IBGT_UN:
+	case OP_IBGE:
+	case OP_IBGE_UN:
+	case OP_IBLE:
+	case OP_IBLE_UN:
+	case OP_LBNE_UN:
+	case OP_LBEQ:
+	case OP_LBLT:
+	case OP_LBLT_UN:
+	case OP_LBGT:
+	case OP_LBGT_UN:
+	case OP_LBGE:
+	case OP_LBGE_UN:
+	case OP_LBLE:
+	case OP_LBLE_UN:
 		if (!(ins->flags & MONO_INST_BRLABEL))
 			g_print (" [B%dB%d]", ins->inst_true_bb->block_num, ins->inst_false_bb->block_num);
 		break;

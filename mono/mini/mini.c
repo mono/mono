@@ -8259,24 +8259,15 @@ replace_out_block_in_code (MonoBasicBlock *bb, MonoBasicBlock *orig, MonoBasicBl
 			}
 			break;
 		}
-		case CEE_BNE_UN:
-		case CEE_BEQ:
-		case CEE_BLT:
-		case CEE_BLT_UN:
-		case CEE_BGT:
-		case CEE_BGT_UN:
-		case CEE_BGE:
-		case CEE_BGE_UN:
-		case CEE_BLE:
-		case CEE_BLE_UN:
-			if (bb->last_ins->inst_true_bb == orig) {
-				bb->last_ins->inst_true_bb = repl;
-			}
-			if (bb->last_ins->inst_false_bb == orig) {
-				bb->last_ins->inst_false_bb = repl;
-			}
-			break;
 		default:
+			if (MONO_IS_COND_BRANCH_OP (bb->last_ins)) {
+				if (bb->last_ins->inst_true_bb == orig) {
+					bb->last_ins->inst_true_bb = repl;
+				}
+				if (bb->last_ins->inst_false_bb == orig) {
+					bb->last_ins->inst_false_bb = repl;
+				}
+			}
 			break;
 		}
 	}
@@ -8308,7 +8299,9 @@ static gboolean
 remove_block_if_useless (MonoCompile *cfg, MonoBasicBlock *bb, MonoBasicBlock *previous_bb) {
 	MonoBasicBlock *target_bb = NULL;
 	MonoInst *inst;
-	
+
+	return FALSE;
+
 	/* Do not touch handlers */
 	if (bb->region != -1) return FALSE;
 	
@@ -9400,6 +9393,23 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 	if (strstr (method->name, "test_") == method->name)
 		cfg->new_ir = TRUE;
 	*/
+
+#if 0
+	{
+		static int count = 0;
+
+		count ++;
+
+		if (count == atoi (getenv ("COUNT"))) {
+			printf ("LAST: %s\n", mono_method_full_name (method, TRUE));
+			//cfg->opt &= ~MONO_OPT_BRANCH;
+			//cfg->verbose_level = 5;
+		}
+		if (count <= atoi (getenv ("COUNT")))
+			cfg->new_ir = TRUE;
+	}
+#endif
+
 	cfg->new_ir = TRUE;
 
 	if (cfg->new_ir) {
@@ -9618,6 +9628,30 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 
 		mono_spill_global_vars (cfg);
 
+		/* Add branches between non-consecutive bblocks */
+		for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
+			if (bb->last_ins && MONO_IS_COND_BRANCH_OP (bb->last_ins) &&
+				bb->next_bb != bb->last_ins->inst_false_bb) {
+
+				/* we are careful when inverting, since bugs like #59580
+				 * could show up when dealing with NaNs.
+				 */
+				/* FIXME: */
+				if (0 && MONO_IS_COND_BRANCH_NOFP(bb->last_ins) && bb->next_bb == bb->last_ins->inst_true_bb) {
+					MonoBasicBlock *tmp =  bb->last_ins->inst_true_bb;
+					bb->last_ins->inst_true_bb = bb->last_ins->inst_false_bb;
+					bb->last_ins->inst_false_bb = tmp;
+
+					bb->last_ins->opcode = reverse_branch_op (bb->last_ins->opcode);
+				} else {			
+					MonoInst *inst = mono_mempool_alloc0 (cfg->mempool, sizeof (MonoInst));
+					inst->opcode = CEE_BR;
+					inst->inst_target_bb = bb->last_ins->inst_false_bb;
+					mono_bblock_add_inst (bb, inst);
+				}
+			}
+		}
+
 		if (cfg->verbose_level >= 4) {
 			for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
 				MonoInst *tree = bb->code;	
@@ -9629,7 +9663,6 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 				}
 			}
 		}
-		/* FIXME: branch inverting */	
 
 		/* FIXME: */
 		for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {

@@ -4237,6 +4237,12 @@ decompose_opcode (MonoCompile *cfg, MonoInst *ins)
 		ins->opcode = CEE_NOP;
 		break;
 
+	case OP_ICONV_TO_OVF_U8:
+		MONO_EMIT_NEW_COMPARE_IMM (cfg,ins->sreg1, 0);
+		MONO_EMIT_NEW_COND_EXC (cfg, LT, "OverflowException");
+		MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, ins->dreg, ins->sreg1);
+		ins->opcode = CEE_NOP;
+		break;
 	case OP_LCONV_TO_OVF_I1:
 		MONO_EMIT_NEW_COMPARE_IMM (cfg, ins->sreg1, 127);
 		MONO_EMIT_NEW_COND_EXC (cfg, GT, "OverflowException");
