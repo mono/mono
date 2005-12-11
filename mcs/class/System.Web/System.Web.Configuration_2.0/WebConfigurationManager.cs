@@ -3,6 +3,7 @@
 //
 // Authors:
 // 	Lluis Sanchez Gual (lluis@novell.com)
+// 	Chris Toshok (toshok@ximian.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,6 +28,7 @@
 //
 
 #if NET_2_0
+
 using System;
 using System.IO;
 using System.Collections;
@@ -51,10 +53,9 @@ namespace System.Web.Configuration {
 				configFactory = prop.GetValue (null, null) as IInternalConfigConfigurationFactory;
 		}
 
-		[MonoTODO]
 		public static _Configuration OpenMachineConfiguration ()
 		{
-			throw new NotImplementedException ();
+			return ConfigurationManager.OpenMachineConfiguration ();
 		}
 		
 		[MonoTODO]
@@ -89,17 +90,17 @@ namespace System.Web.Configuration {
 
 		public static _Configuration OpenWebConfiguration (string path)
 		{
-			return OpenWebConfiguration (path, null, null, null, IntPtr.Zero, null);
+			return OpenWebConfiguration (path, null, null, null, null, null);
 		}
 		
 		public static _Configuration OpenWebConfiguration (string path, string site)
 		{
-			return OpenWebConfiguration (path, site, null, null, IntPtr.Zero, null);
+			return OpenWebConfiguration (path, site, null, null, null, null);
 		}
 		
 		public static _Configuration OpenWebConfiguration (string path, string site, string locationSubPath)
 		{
-			return OpenWebConfiguration (path, site, locationSubPath, null, IntPtr.Zero, null);
+			return OpenWebConfiguration (path, site, locationSubPath, null, null, null);
 		}
 
 		[MonoTODO]
@@ -110,11 +111,11 @@ namespace System.Web.Configuration {
 
 		public static _Configuration OpenWebConfiguration (string path, string site, string locationSubPath, string server, IntPtr userToken)
 		{
-			return OpenWebConfiguration (path, site, locationSubPath, server, userToken, null);
+			return OpenWebConfiguration (path, site, locationSubPath, server, null, null);
 		}
 		
-		[MonoTODO ("Do something with the extra parameters")]
-		public static _Configuration OpenWebConfiguration (string path, string site, string locationSubPath, string server, IntPtr userToken, string password)
+		[MonoTODO]
+		public static _Configuration OpenWebConfiguration (string path, string site, string locationSubPath, string server, string userName, string password)
 		{
 			string basePath = GetBasePath (path);
 			_Configuration conf;
@@ -122,7 +123,7 @@ namespace System.Web.Configuration {
 			lock (configurations) {
 				conf = (_Configuration) configurations [basePath];
 				if (conf == null) {
-					conf = ConfigurationFactory.Create (typeof(WebConfigurationHost), null, path, site, locationSubPath, server, userToken, password);
+					conf = ConfigurationFactory.Create (typeof(WebConfigurationHost), null, path, site, locationSubPath, server, userName, password);
 					configurations [basePath] = conf;
 				}
 			}
@@ -146,12 +147,6 @@ namespace System.Web.Configuration {
 				}
 			}
 			return conf;
-		}
-
-		[MonoTODO]
-		public static _Configuration OpenWebConfiguration (string path, string site, string locationSubPath, string server, string userName, string password)
-		{
-			throw new NotImplementedException ();
 		}
 
 		public static _Configuration OpenMappedWebConfiguration (WebConfigurationFileMap fileMap, string path)
@@ -198,9 +193,18 @@ namespace System.Web.Configuration {
 		[MonoTODO]
 		public static object GetWebApplicationSection (string sectionName)
 		{
-			_Configuration config = OpenWebConfiguration (HttpContext.Current.Request.PhysicalApplicationPath);
+			_Configuration config;
 
-			return config.GetSection (sectionName);
+			if (HttpContext.Current == null
+			    || HttpContext.Current.Request == null
+			    || HttpContext.Current.Request.PhysicalApplicationPath == null)
+				config = OpenMachineConfiguration ();
+			else
+				config = OpenWebConfiguration (HttpContext.Current.Request.PhysicalApplicationPath);
+
+			ConfigurationSection section = config.GetSection (sectionName);
+
+			return section;
 		}
 
 		[MonoTODO]
@@ -223,7 +227,7 @@ namespace System.Web.Configuration {
 		
 		static string GetBasePath (string path)
 		{
-			if (path == "/")
+ 			if (path == "/")
 				return path;
 			
 			string pd = HttpContext.Current.Request.MapPath (path);

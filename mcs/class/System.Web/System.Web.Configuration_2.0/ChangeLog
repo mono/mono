@@ -1,3 +1,13 @@
+2005-12-11  Chris Toshok  <toshok@ximian.com>
+
+	* WebConfigurationManager.cs (OpenMachineConfiguration): just call
+	ConfigurationManager.OpenMachineConfiguration.
+	(OpenWebConfiguration): remove the "IntPtr userToken" version and
+	add a "string userName" version to clean up corcompare output.
+	Modify all the overloads to pass null instead of IntPtr.Zero.
+	(GetWebApplicationSection): if we're not running in a web
+	application, use the machine configuration.
+
 2005-12-06  Chris Toshok  <toshok@ximian.com>
 
 	* CodeSubDirectory.cs (DirectoryName): don't use an private field,
