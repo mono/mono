@@ -1,3 +1,32 @@
+2005-12-11  Chris Toshok  <toshok@ximian.com>
+
+	* ConnectionStringsSection.cs (..cctor): use "" instead of null
+	for the name of the default collection.
+
+	* AppSettingsSection.cs (..cctor): create a property for the
+	default collection.
+	(DeserializeElement): call base.DeserializeElement.
+	(File): index off the property, not the name.
+	(Settings): don't use an private variable here, use
+	base[_propSettings].
+
+	* ConfigurationManager.cs (GetSection): GetEntryAssembly returns
+	null for new app domains.  so deal with this by calling
+	GetCallingAssembly if it's null.  This is probably still wrong but
+	it doesn't NRE in xsp2.
+	(AppSettings): remove MonoTODO.
+	
+	* KeyValueConfigurationElement.cs (..ctor): new method, create the
+	ConfigurationProperty's and the collection here.
+	(.ctor): add internal arg-less ctor.
+	(Key): use keyProp instead of "key".
+	(Value): use vlaueProp instead of "value".
+	(Properties): return our class's properties.
+
+	* KeyValueConfigurationCollection.cs (CreateNewElement): use the
+	arg-less ctor.
+	(GetElementKey): re-enable the BaseIndexOf test.
+
 2005-12-02  Chris Toshok  <toshok@ximian.com>
 
 	* Configuration.cs (Save): call WriteStartDocument.

@@ -144,11 +144,17 @@ namespace System.Configuration {
 			get { return configFactory; }
 		}
 
+		[MonoTODO ("this assembly stuff is probably wrong")]
 		public static object GetSection (string sectionName)
 		{
+			Assembly a = Assembly.GetEntryAssembly ();
+			if (a == null)
+				a = Assembly.GetCallingAssembly ();
 			Configuration cfg = OpenExeConfigurationInternal (ConfigurationUserLevel.None,
-									  Assembly.GetEntryAssembly (),
-									  Assembly.GetEntryAssembly ().Location);
+									  a, a.Location);
+
+			if (cfg == null)
+				return null;
 
 			return cfg.GetSection (sectionName);
 		}
@@ -158,7 +164,6 @@ namespace System.Configuration {
 		{
 		}
 
-		[MonoTODO]
 		public static NameValueCollection AppSettings {
 			get {
 				AppSettingsSection appsettings = (AppSettingsSection) GetSection ("appSettings");

@@ -37,21 +37,25 @@ namespace System.Configuration {
 
 	public sealed class AppSettingsSection : ConfigurationSection
 	{
-		KeyValueConfigurationCollection values;
-		const string configFile = "file";
-
                 private static ConfigurationPropertyCollection _properties;
                 private static readonly ConfigurationProperty _propFile;
+                private static readonly ConfigurationProperty _propSettings;
 
                 static AppSettingsSection ()
                 {
-                        _properties     = new ConfigurationPropertyCollection ();
-                        _propFile = new ConfigurationProperty (configFile, 
+                        _propFile = new ConfigurationProperty ("file",
                                                                typeof(string), 
                                                                "", 
                                                                ConfigurationPropertyOptions.None);
+                        _propSettings = new ConfigurationProperty ("",
+								   typeof(KeyValueConfigurationCollection),
+								   null, 
+								   ConfigurationPropertyOptions.IsDefaultCollection);
+
+                        _properties     = new ConfigurationPropertyCollection ();
 
                         _properties.Add (_propFile);
+                        _properties.Add (_propSettings);
                 }
 
 		public AppSettingsSection ()
@@ -66,6 +70,8 @@ namespace System.Configuration {
 		[MonoTODO ("Read file attribute")]
 		protected internal override void DeserializeElement (XmlReader reader, bool serializeCollectionKey)
 		{
+			base.DeserializeElement (reader, serializeCollectionKey);
+
 			if (File != "") {
 				/* deserialize from the file */
 				throw new NotImplementedException ();
@@ -93,17 +99,13 @@ namespace System.Configuration {
 
 		[ConfigurationProperty ("file", DefaultValue = "")]
 		public string File {
-			get { return (string)base [configFile]; }
-			set { base [configFile] = value; }
+			get { return (string)base [_propFile]; }
+			set { base [_propFile] = value; }
 		}
 
 		[ConfigurationProperty ("", Options = ConfigurationPropertyOptions.IsDefaultCollection)]
 		public KeyValueConfigurationCollection Settings {
-			get {
-				if (values == null)
-					values = new KeyValueConfigurationCollection();
-				return values;
-			}
+			get { return (KeyValueConfigurationCollection) base [_propSettings]; }
 		}
 
 		protected internal override ConfigurationPropertyCollection Properties {
