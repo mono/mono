@@ -1,3 +1,8 @@
+2005-12-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XslTransformTests.cs : (LocalParameter) [NotDotNet] should not have
+	  been undone.
+
 2005-12-04  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* XslTransformTests.cs: Explictly omit xml declaration, allowing
