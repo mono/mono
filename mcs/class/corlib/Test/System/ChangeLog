@@ -1,3 +1,7 @@
+2005-12-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DoubleTest.cs : added test for bug #75228.
+
 2005-12-09  Raja R Harinath  <rharinath@novell.com>
 
 	* TypeTest.cs (TypeParameterIsNotGeneric): New.  Test invariants
