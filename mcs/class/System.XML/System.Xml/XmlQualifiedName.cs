@@ -119,6 +119,17 @@ namespace System.Xml
 			return new XmlQualifiedName (name.Substring (index + 1), ns);
 		}
 
+		internal static XmlQualifiedName Parse (string name, XmlReader reader)
+		{
+			int index = name.IndexOf (':');
+			if (index < 0)
+				return new XmlQualifiedName (name);
+			string ns = reader.LookupNamespace (name.Substring (0, index));
+			if (ns == null)
+				throw new ArgumentException ("Invalid qualified name.");
+			return new XmlQualifiedName (name.Substring (index + 1), ns);
+		}
+
 		// Operators
 		public static bool operator == (XmlQualifiedName a, XmlQualifiedName b)
 		{

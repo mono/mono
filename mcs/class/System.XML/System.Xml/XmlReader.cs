@@ -861,7 +861,6 @@ namespace System.Xml
 			return false;
 		}
 
-		[MonoTODO]
 		public virtual bool ReadToNextSibling (string name)
 		{
 			if (NodeType != XmlNodeType.Element || IsEmptyElement)
@@ -873,7 +872,6 @@ namespace System.Xml
 			return false;
 		}
 
-		[MonoTODO]
 		public virtual bool ReadToNextSibling (string localName, string namespaceURI)
 		{
 			if (NodeType != XmlNodeType.Element || IsEmptyElement)
@@ -885,7 +883,6 @@ namespace System.Xml
 			return false;
 		}
 
-		[MonoTODO]
 		public virtual XmlReader ReadSubtree ()
 		{
 			return new SubtreeXmlReader (this);
@@ -893,16 +890,22 @@ namespace System.Xml
 
 		private string ReadContentString ()
 		{
-			switch (NodeType) {
-			case XmlNodeType.Text:
-			case XmlNodeType.CDATA:
-			case XmlNodeType.SignificantWhitespace:
-			case XmlNodeType.Whitespace:
-				break;
-			default:
-				throw new InvalidOperationException (String.Format ("This method does not support node type {0}.", NodeType));
-			}
-			return ReadString ();
+			string value = String.Empty;
+			do {
+				switch (NodeType) {
+				case XmlNodeType.Element:
+					throw XmlError ("Child element is not expected in this operation.");
+				case XmlNodeType.EndElement:
+					return value;
+				case XmlNodeType.Text:
+				case XmlNodeType.CDATA:
+				case XmlNodeType.SignificantWhitespace:
+				case XmlNodeType.Whitespace:
+					value += Value;
+					break;
+				}
+			} while (Read ());
+			throw XmlError ("Unexpected end of document.");
 		}
 
 		[MonoTODO]
@@ -923,19 +926,22 @@ namespace System.Xml
 			return ReadContentAs (ValueType, null);
 		}
 
-		[MonoTODO]
 		public virtual object ReadElementContentAs (Type type, IXmlNamespaceResolver resolver)
 		{
-			return ValueAs (ReadElementString (), type, resolver);
+			ReadStartElement ();
+			object obj = ValueAs (ReadContentAsString (), type, resolver);
+			ReadEndElement ();
+			return obj;
 		}
 
-		[MonoTODO]
 		public virtual object ReadElementContentAs (Type type, IXmlNamespaceResolver resolver, string localName, string namespaceURI)
 		{
-			return ValueAs (ReadElementString (localName, namespaceURI), type, resolver);
+			ReadStartElement (localName, namespaceURI);
+			object obj = ReadContentAs (type, resolver);
+			ReadEndElement ();
+			return obj;
 		}
 
-		[MonoTODO]
 		public virtual object ReadContentAs (Type type, IXmlNamespaceResolver resolver)
 		{
 			return ValueAs (ReadContentString (), type, resolver);
@@ -944,172 +950,246 @@ namespace System.Xml
 		private object ValueAs (string text, Type type, IXmlNamespaceResolver resolver)
 		{
 			try {
-				if (type == typeof (XmlQualifiedName))
-					return XmlQualifiedName.Parse (text, resolver);
+				if (type == typeof (XmlQualifiedName)) {
+					if (resolver != null)
+						return XmlQualifiedName.Parse (text, resolver);
+					else
+						return XmlQualifiedName.Parse (text, this);
+				}
 
 				switch (Type.GetTypeCode (type)) {
 				case TypeCode.Boolean:
-					return ReadContentAsBoolean ();
+					return XQueryConvert.StringToBoolean (text);
 				case TypeCode.DateTime:
-					return ReadContentAsDateTime ();
+					return XQueryConvert.StringToDateTime (text);
 				case TypeCode.Decimal:
-					return ReadContentAsDecimal ();
+					return XQueryConvert.StringToDecimal (text);
 				case TypeCode.Double:
-					return ReadContentAsDouble ();
+					return XQueryConvert.StringToDouble (text);
 				case TypeCode.Int32:
-					return ReadContentAsInt ();
+					return XQueryConvert.StringToInt (text);
 				case TypeCode.Int64:
-					return ReadContentAsLong ();
+					return XQueryConvert.StringToInteger (text);
 				case TypeCode.Single:
-					return ReadContentAsFloat ();
+					return XQueryConvert.StringToFloat (text);
 				case TypeCode.String:
-					return ReadContentAsString ();
+					return text;
 				}
 			} catch (Exception ex) {
-				return new FormatException (String.Format ("Current text value '{0}' is not acceptable for specified type '{1}'.", text, type));
+				throw XmlError (String.Format ("Current text value '{0}' is not acceptable for specified type '{1}'. {2}", text, type, ex != null ? ex.Message : String.Empty), ex);
 			}
 			throw new ArgumentException (String.Format ("Specified type '{0}' is not supported.", type));
 		}
 
-		[MonoTODO]
 		public virtual bool ReadElementContentAsBoolean ()
 		{
-			return XQueryConvert.StringToBoolean (ReadElementString ());
+			try {
+				return XQueryConvert.StringToBoolean (ReadElementContentAsString ());
+			} catch (FormatException ex) {
+				throw XmlError ("Typed value is invalid.", ex);
+			}
 		}
 
-		[MonoTODO]
 		public virtual DateTime ReadElementContentAsDateTime ()
 		{
-			return XQueryConvert.StringToDateTime (ReadElementString ());
+			try {
+				return XQueryConvert.StringToDateTime (ReadElementContentAsString ());
+			} catch (FormatException ex) {
+				throw XmlError ("Typed value is invalid.", ex);
+			}
 		}
 
-		[MonoTODO]
 		public virtual decimal ReadElementContentAsDecimal ()
 		{
-			return XQueryConvert.StringToDecimal (ReadElementString ());
+			try {
+				return XQueryConvert.StringToDecimal (ReadElementContentAsString ());
+			} catch (FormatException ex) {
+				throw XmlError ("Typed value is invalid.", ex);
+			}
 		}
 
-		[MonoTODO]
 		public virtual double ReadElementContentAsDouble ()
 		{
-			return XQueryConvert.StringToDouble (ReadElementString ());
+			try {
+				return XQueryConvert.StringToDouble (ReadElementContentAsString ());
+			} catch (FormatException ex) {
+				throw XmlError ("Typed value is invalid.", ex);
+			}
 		}
 
-		[MonoTODO]
 		public virtual float ReadElementContentAsFloat ()
 		{
-			return XQueryConvert.StringToFloat (ReadElementString ());
+			try {
+				return XQueryConvert.StringToFloat (ReadElementContentAsString ());
+			} catch (FormatException ex) {
+				throw XmlError ("Typed value is invalid.", ex);
+			}
 		}
 
-		[MonoTODO]
 		public virtual int ReadElementContentAsInt ()
 		{
-			return XQueryConvert.StringToInt (ReadElementString ());
+			try {
+				return XQueryConvert.StringToInt (ReadElementContentAsString ());
+			} catch (FormatException ex) {
+				throw XmlError ("Typed value is invalid.", ex);
+			}
 		}
 
-		[MonoTODO]
 		public virtual long ReadElementContentAsLong ()
 		{
-			return XQueryConvert.StringToInteger (ReadElementString ());
+			try {
+				return XQueryConvert.StringToInteger (ReadElementContentAsString ());
+			} catch (FormatException ex) {
+				throw XmlError ("Typed value is invalid.", ex);
+			}
 		}
 
-		[MonoTODO]
 		public virtual string ReadElementContentAsString ()
 		{
-			return ReadElementString ();
+			ReadStartElement ();
+			if (IsEmptyElement)
+				return String.Empty;
+			string s = ReadContentString ();
+			ReadEndElement ();
+			return s;
 		}
 
-		[MonoTODO]
 		public virtual bool ReadElementContentAsBoolean (string localName, string namespaceURI)
 		{
-			return XQueryConvert.StringToBoolean (ReadElementString (localName, namespaceURI));
+			try {
+				return XQueryConvert.StringToBoolean (ReadElementContentAsString (localName, namespaceURI));
+			} catch (FormatException ex) {
+				throw XmlError ("Typed value is invalid.", ex);
+			}
 		}
 
-		[MonoTODO]
 		public virtual DateTime ReadElementContentAsDateTime (string localName, string namespaceURI)
 		{
-			return XQueryConvert.StringToDateTime (ReadElementString (localName, namespaceURI));
+			try {
+				return XQueryConvert.StringToDateTime (ReadElementContentAsString (localName, namespaceURI));
+			} catch (FormatException ex) {
+				throw XmlError ("Typed value is invalid.", ex);
+			}
 		}
 
-		[MonoTODO]
 		public virtual decimal ReadElementContentAsDecimal (string localName, string namespaceURI)
 		{
-			return XQueryConvert.StringToDecimal (ReadElementString (localName, namespaceURI));
+			try {
+				return XQueryConvert.StringToDecimal (ReadElementContentAsString (localName, namespaceURI));
+			} catch (FormatException ex) {
+				throw XmlError ("Typed value is invalid.", ex);
+			}
 		}
 
-		[MonoTODO]
 		public virtual double ReadElementContentAsDouble (string localName, string namespaceURI)
 		{
-			return XQueryConvert.StringToDouble (ReadElementString (localName, namespaceURI));
+			try {
+				return XQueryConvert.StringToDouble (ReadElementContentAsString (localName, namespaceURI));
+			} catch (FormatException ex) {
+				throw XmlError ("Typed value is invalid.", ex);
+			}
 		}
 
-		[MonoTODO]
 		public virtual float ReadElementContentAsFloat (string localName, string namespaceURI)
 		{
-			return XQueryConvert.StringToFloat (ReadElementString (localName, namespaceURI));
+			try {
+				return XQueryConvert.StringToFloat (ReadElementContentAsString (localName, namespaceURI));
+			} catch (FormatException ex) {
+				throw XmlError ("Typed value is invalid.", ex);
+			}
 		}
 
-		[MonoTODO]
 		public virtual int ReadElementContentAsInt (string localName, string namespaceURI)
 		{
-			return XQueryConvert.StringToInt (ReadElementString (localName, namespaceURI));
+			try {
+				return XQueryConvert.StringToInt (ReadElementContentAsString (localName, namespaceURI));
+			} catch (FormatException ex) {
+				throw XmlError ("Typed value is invalid.", ex);
+			}
 		}
 
-		[MonoTODO]
 		public virtual long ReadElementContentAsLong (string localName, string namespaceURI)
 		{
-			return XQueryConvert.StringToInteger (ReadElementString (localName, namespaceURI));
+			try {
+				return XQueryConvert.StringToInteger (ReadElementContentAsString (localName, namespaceURI));
+			} catch (FormatException ex) {
+				throw XmlError ("Typed value is invalid.", ex);
+			}
 		}
 
-		[MonoTODO]
 		public virtual string ReadElementContentAsString (string localName, string namespaceURI)
 		{
-			return ReadElementString (localName, namespaceURI);
+			ReadStartElement (localName, namespaceURI);
+			if (IsEmptyElement)
+				return String.Empty;
+			string s = ReadContentString ();
+			ReadEndElement ();
+			return s;
 		}
 
-		[MonoTODO]
 		public virtual bool ReadContentAsBoolean ()
 		{
-			return XQueryConvert.StringToBoolean (ReadContentString ());
+			try {
+				return XQueryConvert.StringToBoolean (ReadContentString ());
+			} catch (FormatException ex) {
+				throw XmlError ("Typed value is invalid.", ex);
+			}
 		}
 
-		[MonoTODO]
 		public virtual DateTime ReadContentAsDateTime ()
 		{
-			return XQueryConvert.StringToDateTime (ReadContentString ());
+			try {
+				return XQueryConvert.StringToDateTime (ReadContentString ());
+			} catch (FormatException ex) {
+				throw XmlError ("Typed value is invalid.", ex);
+			}
 		}
 
-		[MonoTODO]
 		public virtual decimal ReadContentAsDecimal ()
 		{
-			return XQueryConvert.StringToDecimal (ReadContentString ());
+			try {
+				return XQueryConvert.StringToDecimal (ReadContentString ());
+			} catch (FormatException ex) {
+				throw XmlError ("Typed value is invalid.", ex);
+			}
 		}
 
-		[MonoTODO]
 		public virtual double ReadContentAsDouble ()
 		{
-			return XQueryConvert.StringToDouble (ReadContentString ());
+			try {
+				return XQueryConvert.StringToDouble (ReadContentString ());
+			} catch (FormatException ex) {
+				throw XmlError ("Typed value is invalid.", ex);
+			}
 		}
 
-		[MonoTODO]
 		public virtual float ReadContentAsFloat ()
 		{
-			return XQueryConvert.StringToFloat (ReadContentString ());
+			try {
+				return XQueryConvert.StringToFloat (ReadContentString ());
+			} catch (FormatException ex) {
+				throw XmlError ("Typed value is invalid.", ex);
+			}
 		}
 
-		[MonoTODO]
 		public virtual int ReadContentAsInt ()
 		{
-			return XQueryConvert.StringToInt (ReadContentString ());
+			try {
+				return XQueryConvert.StringToInt (ReadContentString ());
+			} catch (FormatException ex) {
+				throw XmlError ("Typed value is invalid.", ex);
+			}
 		}
 
-		[MonoTODO]
 		public virtual long ReadContentAsLong ()
 		{
-			return XQueryConvert.StringToInteger (ReadContentString ());
+			try {
+				return XQueryConvert.StringToInteger (ReadContentString ());
+			} catch (FormatException ex) {
+				throw XmlError ("Typed value is invalid.", ex);
+			}
 		}
 
-		[MonoTODO]
 		public virtual string ReadContentAsString ()
 		{
 			return ReadContentString ();
@@ -1193,6 +1273,11 @@ namespace System.Xml
 		}
 
 		private XmlException XmlError (string message)
+		{
+			return new XmlException (this as IXmlLineInfo, BaseURI, message);
+		}
+
+		private XmlException XmlError (string message, Exception innerException)
 		{
 			return new XmlException (this as IXmlLineInfo, BaseURI, message);
 		}

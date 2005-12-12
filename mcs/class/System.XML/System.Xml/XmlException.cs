@@ -76,7 +76,18 @@ namespace System.Xml
 		{
 		}
 
-		internal XmlException (IXmlLineInfo li, string sourceUri, string message) : base (message)
+		internal XmlException (IXmlLineInfo li,
+			string sourceUri,
+			string message)
+			: this (li, null, sourceUri, message)
+		{
+		}
+
+		internal XmlException (IXmlLineInfo li,
+			Exception innerException,
+			string sourceUri,
+			string message)
+			: base (message, innerException)
 		{
 			if (li != null) {
 				this.lineNumber = li.LineNumber;

@@ -1443,6 +1443,38 @@ namespace MonoTests.System.Xml
 			AssertNull (xmlReader.LookupNamespace (String.Empty));
 		}
 
+		[Test]
+		public void ReadStartElement ()
+		{
+			string xml = "<root>test</root>";
+			RunTest (xml, new TestMethod (ReadStartElement));
+		}
+
+		void ReadStartElement (XmlReader xr)
+		{
+			xr.Read ();
+			xr.ReadStartElement ();
+			// consume Element node.
+			AssertEquals (XmlNodeType.Text, xr.NodeType);
+		}
+
+		[Test]
+		public void LookupNamespaceAtEndElement ()
+		{
+			string xml = "<root xmlns:x='urn:foo'><foo/></root>";
+			RunTest (xml, new TestMethod (LookupNamespaceAtEndElement));
+		}
+
+		void LookupNamespaceAtEndElement (XmlReader reader)
+		{
+			reader.Read ();
+			AssertEquals ("#1", "urn:foo", reader.LookupNamespace ("x"));
+			reader.Read ();
+			AssertEquals ("#2", "urn:foo", reader.LookupNamespace ("x"));
+			reader.Read ();
+			AssertEquals ("#3", "urn:foo", reader.LookupNamespace ("x"));
+		}
+
 #if NET_2_0
 		[Test]
 		public void CreateSimple ()
@@ -1473,7 +1505,7 @@ namespace MonoTests.System.Xml
 			RunTest (xml, new TestMethod (ReadToDescendant));
 		}
 
-		public void ReadToDescendant (XmlReader xmlReader)
+		void ReadToDescendant (XmlReader xmlReader)
 		{
 			// move to first <bar/>
 			Assert ("#1", xmlReader.ReadToDescendant ("bar"));
@@ -1499,7 +1531,7 @@ namespace MonoTests.System.Xml
 			RunTest (xml, new TestMethod (ReadToDescendant2));
 		}
 
-		public void ReadToDescendant2 (XmlReader xmlReader)
+		void ReadToDescendant2 (XmlReader xmlReader)
 		{
 			// make sure that it works when the reader is at Initial state.
 			Assert (xmlReader.ReadToDescendant ("root"));
@@ -1520,6 +1552,270 @@ namespace MonoTests.System.Xml
 			Assert ("#3", xmlReader.ReadToFollowing ("bar"));
 			AssertEquals ("#3-2", 3, xmlReader.Depth);
 			Assert ("#4", !xmlReader.ReadToFollowing ("bar"));
+		}
+
+/*
+		[Test]
+		public void ReadToNextSibling ()
+		{
+			string xml = @"<root><foo/><bar attr='value'/><foo><bar><bar></bar><foo></foo><bar/></bar></foo></root>";
+			RunTest (xml, new TestMethod (ReadToNextSibling));
+		}
+
+		void ReadToNextSibling (XmlReader xmlReader)
+		{
+			Assert ("#1", !xmlReader.ReadToNextSibling ("bar"));
+			Assert ("#2", !xmlReader.ReadToNextSibling ("root"));
+			xmlReader.Read (); // root
+			xmlReader.Read (); // foo
+			Assert ("#3", xmlReader.ReadToNextSibling ("bar"));
+			AssertEquals ("#3-2", "value", xmlReader.GetAttribute ("attr"));
+			xmlReader.Read (); // foo
+			xmlReader.Read (); // bar
+			Assert ("#4", xmlReader.ReadToNextSibling ("bar"));
+			Assert ("#4-2", !xmlReader.IsEmptyElement);
+			Assert ("#5", xmlReader.ReadToNextSibling ("bar"));
+			Assert ("#5-2", xmlReader.IsEmptyElement);
+			Assert ("#6", xmlReader.Read ()); // /bar
+
+			AssertNodeValues ("#7", xmlReader,
+				XmlNodeType.EndElement,
+				2,		// Depth
+				false,		// IsEmptyElement
+				"bar",		// Name
+				String.Empty,	// Prefix
+				"bar",		// LocalName
+				String.Empty,	// NamespaceURI
+				String.Empty,	// Value
+				false,		// HasValue
+				0,		// AttributeCount
+				false);		// HasAttributes
+		}
+*/
+
+		[Test]
+		public void ReadSubtree ()
+		{
+			string xml = @"<root><foo/><bar attr='value'></bar></root>";
+			RunTest (xml, new TestMethod (ReadSubtree));
+		}
+
+		void ReadSubtree (XmlReader reader)
+		{
+			reader.MoveToContent (); // root
+			reader.Read (); // foo
+			XmlReader st = reader.ReadSubtree (); // <foo/>
+
+			// MS bug: IsEmptyElement should be false here.
+			/*
+			AssertNodeValues ("#1", st,
+				XmlNodeType.None,
+				0,		// Depth
+				false,		// IsEmptyElement
+				String.Empty,	// Name
+				String.Empty,	// Prefix
+				String.Empty,	// LocalName
+				String.Empty,	// NamespaceURI
+				String.Empty,	// Value
+				false,		// HasValue
+				0,		// AttributeCount
+				false);		// HasAttributes
+			*/
+			AssertEquals ("#1", XmlNodeType.None, st.NodeType);
+
+			st.Read ();
+			AssertNodeValues ("#2", st,
+				XmlNodeType.Element,
+				0,
+				true,		// IsEmptyElement
+				"foo",		// Name
+				String.Empty,	// Prefix
+				"foo",		// LocalName
+				String.Empty,	// NamespaceURI
+				String.Empty,	// Value
+				false,		// HasValue
+				0,		// AttributeCount
+				false);		// HasAttributes
+
+			Assert ("#3", !st.Read ());
+
+			// At this state, reader is not positioned on <bar> yet
+			AssertNodeValues ("#3-2", reader,
+				XmlNodeType.Element,
+				1,		// Depth. It is 1 for main tree.
+				true,		// IsEmptyElement
+				"foo",		// Name
+				String.Empty,	// Prefix
+				"foo",		// LocalName
+				String.Empty,	// NamespaceURI
+				String.Empty,	// Value
+				false,		// HasValue
+				0,		// AttributeCount
+				false);		// HasAttributes
+
+			reader.Read ();
+
+			AssertNodeValues ("#4", reader,
+				XmlNodeType.Element,
+				1,		// Depth. It is 1 for main tree.
+				false,		// IsEmptyElement
+				"bar",		// Name
+				String.Empty,	// Prefix
+				"bar",		// LocalName
+				String.Empty,	// NamespaceURI
+				String.Empty,	// Value
+				false,		// HasValue
+				1,		// AttributeCount
+				true);		// HasAttributes
+
+			st = reader.ReadSubtree ();
+			st.Read (); // Initial -> Interactive
+			AssertNodeValues ("#5", st,
+				XmlNodeType.Element,
+				0,		// Depth. It is 0 for subtree.
+				false,		// IsEmptyElement
+				"bar",		// Name
+				String.Empty,	// Prefix
+				"bar",		// LocalName
+				String.Empty,	// NamespaceURI
+				String.Empty,	// Value
+				false,		// HasValue
+				1,		// AttributeCount
+				true);		// HasAttributes
+
+			st.Read ();
+			AssertNodeValues ("#6-1", st,
+				XmlNodeType.EndElement,
+				0,		// Depth. It is 0 for subtree.
+				false,		// IsEmptyElement
+				"bar",		// Name
+				String.Empty,	// Prefix
+				"bar",		// LocalName
+				String.Empty,	// NamespaceURI
+				String.Empty,	// Value
+				false,		// HasValue
+				0,		// AttributeCount
+				false);		// HasAttributes
+
+			AssertNodeValues ("#6-2", st,
+				XmlNodeType.EndElement,
+				0,		// Depth. It is 0 for subtree.
+				false,		// IsEmptyElement
+				"bar",		// Name
+				String.Empty,	// Prefix
+				"bar",		// LocalName
+				String.Empty,	// NamespaceURI
+				String.Empty,	// Value
+				false,		// HasValue
+				0,		// AttributeCount
+				false);		// HasAttributes
+
+			Assert ("#7", !st.Read ());
+		}
+
+		[Test]
+		public void ReadInteger ()
+		{
+			string xml1 = "<root>1</root>";
+			XmlReader xr;
+			
+			xr = XmlReader.Create (new StringReader (xml1));
+			xr.Read ();
+			AssertEquals ("#1", "1", xr.ReadElementContentAsString ());
+
+			AssertNodeValues ("#1-2", xr,
+				XmlNodeType.None,
+				0,		// Depth. It is 0 for subtree.
+				false,		// IsEmptyElement
+				String.Empty,	// Name
+				String.Empty,	// Prefix
+				String.Empty,	// LocalName
+				String.Empty,	// NamespaceURI
+				String.Empty,	// Value
+				false,		// HasValue
+				0,		// AttributeCount
+				false);		// HasAttributes
+
+			xr = XmlReader.Create (new StringReader (xml1));
+			xr.Read ();
+			// this XmlReader has no schema, thus the value is untyped
+			AssertEquals ("#2", "1", xr.ReadElementContentAsObject ());
+
+			xr = XmlReader.Create (new StringReader (xml1));
+			xr.Read ();
+			xr.Read ();
+			AssertEquals ("#3", "1", xr.ReadContentAsString ());
+
+			xr = XmlReader.Create (new StringReader (xml1));
+			xr.Read ();
+			AssertEquals ("#4", 1, xr.ReadElementContentAsInt ());
+
+			xr = XmlReader.Create (new StringReader (xml1));
+			xr.Read ();
+			AssertEquals ("#5", 1, xr.ReadElementContentAs (typeof (int), null));
+		}
+
+		[Test]
+		[ExpectedException (typeof (XmlException))]
+		public void ReadContentAsIntFail ()
+		{
+			XmlReader xr = XmlReader.Create (
+				new StringReader ("<doc>1.0</doc>"));
+			xr.Read ();
+			xr.ReadElementContentAsInt ();
+		}
+
+		[Test]
+		public void ReadDateTime ()
+		{
+			DateTime time = new DateTime (2006, 1, 2, 3, 4, 56);
+			string xml1 = "<root>2006-01-02T03:04:56</root>";
+			XmlReader xr;
+
+			xr = XmlReader.Create (new StringReader (xml1));
+			xr.Read ();
+			// this XmlReader has no schema, thus the value is untyped
+			AssertEquals ("#1", "2006-01-02T03:04:56",
+				xr.ReadElementContentAsString ());
+
+			xr = XmlReader.Create (new StringReader (xml1));
+			xr.Read ();
+			xr.Read ();
+			AssertEquals ("#2", time, xr.ReadContentAsDateTime ());
+
+			xr = XmlReader.Create (new StringReader (xml1));
+			xr.Read ();
+			AssertEquals ("#3", time, xr.ReadElementContentAsDateTime ());
+
+			xr = XmlReader.Create (new StringReader (xml1));
+			xr.Read ();
+			AssertEquals ("#4", time, xr.ReadElementContentAs (typeof (DateTime), null));
+		}
+
+		[Test]
+		[ExpectedException (typeof (XmlException))]
+		public void ReadContentAsDateTimeFail ()
+		{
+			XmlReader xr = XmlReader.Create (
+				new StringReader ("<doc>P1Y2M3D</doc>"));
+			xr.Read ();
+			xr.ReadElementContentAsDateTime ();
+		}
+
+		[Test]
+		public void ReadContentAs_QNameEmptyNSResolver ()
+		{
+			XmlReader xr = XmlReader.Create (
+				new StringReader ("<doc xmlns:x='urn:foo'>x:el</doc>"));
+			xr.Read ();
+			object o = xr.ReadElementContentAs (
+				typeof (XmlQualifiedName), null);
+			// without IXmlNamespaceResolver, it still resolves
+			// x:el as valid QName.
+			AssertNotNull ("#1", o);
+			XmlQualifiedName q = o as XmlQualifiedName;
+			AssertEquals ("#2 : " + o.GetType (),
+				new XmlQualifiedName ("el", "urn:foo"), q);
 		}
 #endif
 	}
