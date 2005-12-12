@@ -52,7 +52,8 @@ namespace PEAPI {
 		Abstract = 0x80, PublicAbstract = 0x81, Sealed = 0x100, 
 		PublicSealed = 0x101, SpecialName = 0x400, RTSpecialName = 0x800, 
 		Import = 0x1000, Serializable = 0x2000, UnicodeClass = 0x10000,
-		AutoClass = 0x20000, HasSecurity = 0x40000, BeforeFieldInit = 0x100000 }
+		AutoClass = 0x20000, HasSecurity = 0x40000, BeforeFieldInit = 0x100000,
+		VisibilityMask = 0x07 }
 
 	/// <summary>
 	/// Attributes for a field
