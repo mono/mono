@@ -845,6 +845,11 @@ mono_arch_create_vars (MonoCompile *cfg)
 
 	if (cinfo->ret.storage == ArgValuetypeInReg)
 		cfg->ret_var_is_local = TRUE;
+	else
+		if (cfg->new_ir && ((MONO_TYPE_ISSTRUCT (sig->ret) && !mono_class_from_mono_type (sig->ret)->enumtype) || (sig->ret->type == MONO_TYPE_TYPEDBYREF))) {
+			/* cfg->ret will represent the implicit arg holding the vtype address */
+			cfg->ret = mono_compile_create_var (cfg, &mono_defaults.int_class->byval_arg, OP_LOCAL);
+		}
 
 	if (cfg->ret)
 		cfg->ret->dreg = cinfo->ret.reg;
@@ -1089,7 +1094,7 @@ mono_arch_call_opcode2 (MonoCompile *cfg, MonoCallInst *call, int is_virtual) {
 				MONO_ADD_INS (cfg->cbb, arg);
 			} else if (size <= 20) {
 				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_SUB_IMM, X86_ESP, X86_ESP, ALIGN_TO (size, 4));
-				mini_emit_memcpy (cfg, X86_ESP, 0, in->dreg, 0, size, 0);
+				mini_emit_memcpy2 (cfg, X86_ESP, 0, in->dreg, 0, size, 0);
 			} else {
 				arg->opcode = OP_X86_PUSH_OBJ;
 				arg->inst_basereg = in->dreg;
@@ -1194,6 +1199,27 @@ mono_arch_call_opcode2 (MonoCompile *cfg, MonoCallInst *call, int is_virtual) {
 	g_free (cinfo);
 
 	return call;
+}
+
+void
+mono_arch_emit_setret (MonoCompile *cfg, MonoMethod *method, MonoInst *val)
+{
+	MonoType *ret = mono_type_get_underlying_type (mono_method_signature (method)->ret);
+
+	if (!ret->byref) {
+		if (ret->type == MONO_TYPE_R4) {
+			/* Nothing to do */
+			return;
+		} else if (ret->type == MONO_TYPE_R8) {
+			/* Nothing to do */
+			return;
+		} else if (ret->type == MONO_TYPE_I8 || ret->type == MONO_TYPE_U8) {
+			MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, X86_EAX, val->dreg);
+			MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, X86_EDX, val->dreg + 1);
+		}
+	}
+			
+	MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, cfg->ret->dreg, val->dreg);
 }
 
 /*
@@ -3944,6 +3970,12 @@ mono_arch_flush_register_windows (void)
 {
 }
 
+gboolean 
+mono_arch_is_inst_imm (gint64 imm)
+{
+	return (((glong)(imm) >= -(1<<16) && (glong)(imm) <= ((1<<16)-1)));
+}
+
 /*
  * Support for fast access to the thread-local lmf structure using the GS
  * segment register on NPTL + kernel 2.6.x.
@@ -4123,6 +4155,84 @@ mono_arch_get_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethod
 	return ins;
 }
 
+MonoInst*
+mono_arch_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args)
+{
+	MonoInst *ins = NULL;
+	int opcode;
+
+	if (cmethod->klass == mono_defaults.math_class) {
+		if (strcmp (cmethod->name, "Sin") == 0) {
+			opcode = OP_SIN;
+		} else if (strcmp (cmethod->name, "Cos") == 0) {
+			opcode = OP_COS;
+		} else if (strcmp (cmethod->name, "Tan") == 0) {
+			opcode = OP_TAN;
+		} else if (strcmp (cmethod->name, "Atan") == 0) {
+			opcode = OP_ATAN;
+		} else if (strcmp (cmethod->name, "Sqrt") == 0) {
+			opcode = OP_SQRT;
+		} else if (strcmp (cmethod->name, "Abs") == 0 && fsig->params [0]->type == MONO_TYPE_R8) {
+			opcode = OP_ABS;
+		}
+		
+		if (opcode) {
+			MONO_INST_NEW (cfg, ins, opcode);
+			ins->type = STACK_R8;
+			/* FIXME: Call alloc_freg */
+			ins->dreg = cfg->next_vfreg ++;
+			ins->sreg1 = args [0]->dreg;
+			MONO_ADD_INS (cfg->cbb, ins);
+		}
+
+#if 0
+		/* OP_FREM is not IEEE compatible */
+		else if (strcmp (cmethod->name, "IEEERemainder") == 0) {
+			MONO_INST_NEW (cfg, ins, OP_FREM);
+			ins->inst_i0 = args [0];
+			ins->inst_i1 = args [1];
+		}
+#endif
+	} else if (cmethod->klass == mono_defaults.thread_class &&
+			   strcmp (cmethod->name, "MemoryBarrier") == 0) {
+		MONO_INST_NEW (cfg, ins, OP_MEMORY_BARRIER);
+	} else if(cmethod->klass->image == mono_defaults.corlib &&
+			   (strcmp (cmethod->klass->name_space, "System.Threading") == 0) &&
+			   (strcmp (cmethod->klass->name, "Interlocked") == 0)) {
+		NOT_IMPLEMENTED;
+		if (strcmp (cmethod->name, "Increment") == 0 && fsig->params [0]->type == MONO_TYPE_I4) {
+			MonoInst *ins_iconst;
+
+			MONO_INST_NEW (cfg, ins, OP_ATOMIC_ADD_NEW_I4);
+			MONO_INST_NEW (cfg, ins_iconst, OP_ICONST);
+			ins_iconst->inst_c0 = 1;
+
+			ins->inst_i0 = args [0];
+			ins->inst_i1 = ins_iconst;
+		} else if (strcmp (cmethod->name, "Decrement") == 0 && fsig->params [0]->type == MONO_TYPE_I4) {
+			MonoInst *ins_iconst;
+
+			MONO_INST_NEW (cfg, ins, OP_ATOMIC_ADD_NEW_I4);
+			MONO_INST_NEW (cfg, ins_iconst, OP_ICONST);
+			ins_iconst->inst_c0 = -1;
+
+			ins->inst_i0 = args [0];
+			ins->inst_i1 = ins_iconst;
+		} else if (strcmp (cmethod->name, "Exchange") == 0 && fsig->params [0]->type == MONO_TYPE_I4) {
+			MONO_INST_NEW (cfg, ins, OP_ATOMIC_EXCHANGE_I4);
+
+			ins->inst_i0 = args [0];
+			ins->inst_i1 = args [1];
+		} else if (strcmp (cmethod->name, "Add") == 0 && fsig->params [0]->type == MONO_TYPE_I4) {
+			MONO_INST_NEW (cfg, ins, OP_ATOMIC_ADD_I4);
+
+			ins->inst_i0 = args [0];
+			ins->inst_i1 = args [1];
+		}
+	}
+
+	return ins;
+}
 
 gboolean
 mono_arch_print_tree (MonoInst *tree, int arity)

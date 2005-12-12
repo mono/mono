@@ -145,8 +145,11 @@ mono_arch_patch_delegate_trampoline (guint8 *code, guint8 *tramp, gssize *regs, 
 		reg = x86_modrm_rm (code [-2]);
 		disp = *(guint8*)(code - 1);
 		//printf ("B: [%%r%d+0x%x]\n", reg, disp);
-	}
-	else {
+	} else if ((code [-2] == 0xff) && (code [-1] == 0xd0)) {
+		/* call *%eax */
+		/* FIXME: This happens with the new IR */
+		return;
+	} else {
 		int i;
 
 		for (i = -16; i < 0; ++i)

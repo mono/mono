@@ -8300,8 +8300,6 @@ remove_block_if_useless (MonoCompile *cfg, MonoBasicBlock *bb, MonoBasicBlock *p
 	MonoBasicBlock *target_bb = NULL;
 	MonoInst *inst;
 
-	return FALSE;
-
 	/* Do not touch handlers */
 	if (bb->region != -1) return FALSE;
 	

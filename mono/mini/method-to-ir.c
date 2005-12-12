@@ -4195,9 +4195,9 @@ decompose_opcode (MonoCompile *cfg, MonoInst *ins)
 		ins->opcode = CEE_NOP;
 		break;
 	case OP_ICONV_TO_I4:
-		ins->opcode = OP_MOVE;
-		break;
+	case OP_ICONV_TO_U4:
 	case OP_ICONV_TO_I:
+	case OP_ICONV_TO_U:
 		ins->opcode = OP_MOVE;
 		break;
 
@@ -4478,6 +4478,10 @@ decompose_long_opts (MonoCompile *cfg)
 			case OP_ICONV_TO_OVF_U8:
 				MONO_EMIT_NEW_COMPARE_IMM (cfg, tree->sreg1, 0);
 				MONO_EMIT_NEW_COND_EXC (cfg, LT, "OverflowException");
+				MONO_EMIT_NEW_ICONST (cfg, tree->dreg + 1, 0);
+				MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, tree->dreg, tree->sreg1);
+				break;
+			case OP_ICONV_TO_OVF_U8_UN:
 				MONO_EMIT_NEW_ICONST (cfg, tree->dreg + 1, 0);
 				MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, tree->dreg, tree->sreg1);
 				break;
