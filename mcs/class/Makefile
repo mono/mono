@@ -29,6 +29,12 @@ net_1_1_java_SUBDIRS = \
 	System.Runtime.Serialization.Formatters.Soap	\
 	System.Runtime.Remoting
 
+net_2_0_SUBDIRS = $(SUBDIRS) \
+	Microsoft.Build.Framework	\
+	Microsoft.Build.Utilities	\
+	Microsoft.Build.Engine		\
+	Microsoft.Build.Tasks
+
 include ../build/rules.make
 
 # For now, Mono.Security.Win32 is built on Linux too.
