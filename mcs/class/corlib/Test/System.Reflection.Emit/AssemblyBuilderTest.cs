@@ -134,9 +134,9 @@ public class AssemblyBuilderTest
 		ab.SetCustomAttribute (cab);
 
 		Assert.IsTrue (ab.IsDefined (typeof (FooAttribute), false),
-			"IsDefined works");
+			"IsDefined(FooAttribute) works");
 		Assert.IsFalse (ab.IsDefined (typeof (AssemblyVersionAttribute), false),
-			"IsDefined works");
+			"!IsDefined(AssemblyVersionAttribute) works");
 	}
 
 	[ExpectedException (typeof (NotSupportedException))]
