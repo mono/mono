@@ -1,3 +1,12 @@
+2005-12-12  Ankit Jain  <jankit@novell.com>
+
+	* gen-1.il:New. Generic method reference.
+	* err-gen-2.il:
+	* err-gen-3.il: New. Negative tests for generic method refernce.
+	* global.il: New. Global generic method ref.
+	* gen-field.il: New. Generic field reference. (Compiles fine, but
+	will have PEVerify errors)
+
 2005-11-23  Ankit Jain  <jankit@novell.com>
 
 	* test-33.il:
