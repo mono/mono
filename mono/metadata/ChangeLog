@@ -2,7 +2,7 @@
 
 	* class.c (set_generic_param_owner): Delete.
 	(mono_class_create_from_typedef): Don't set ->owner field of
-	generic parameters to "param containers" of base classes.
+	generic parameters to "param containers" of enclosing classes.
 	* reflection.c (mono_reflection_initialize_generic_parameter):
 	Likewise.
 
