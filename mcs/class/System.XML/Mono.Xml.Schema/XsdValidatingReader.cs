@@ -58,7 +58,7 @@ using XsDatatype = System.Xml.Schema.XmlSchemaDatatype;
 
 namespace Mono.Xml.Schema
 {
-	internal class XsdValidatingReader : XmlReader, IXmlLineInfo, IHasXmlSchemaInfo, IHasXmlParserContext, IXmlNamespaceResolver
+	internal class XsdValidatingReader : XmlReader, IXmlLineInfo, IHasXmlSchemaInfo, IHasXmlParserContext
 	{
 		static readonly XsAttribute [] emptyAttributeArray =
 			new XsAttribute [0];
@@ -194,27 +194,6 @@ namespace Mono.Xml.Schema
 					throw new InvalidOperationException ("ValidationType must be set before reading.");
 				validationType = value;
 			}
-		}
-
-#if NET_2_0
-		IDictionary<string, string> 
-#else
-		IDictionary
-#endif
-		IXmlNamespaceResolver.GetNamespacesInScope (XmlNamespaceScope scope)
-		{
-			IXmlNamespaceResolver resolver = reader as IXmlNamespaceResolver;
-			if (resolver == null)
-				throw new NotSupportedException ("The input XmlReader does not implement IXmlNamespaceResolver and thus this validating reader cannot collect in-scope namespaces.");
-			return resolver.GetNamespacesInScope (scope);
-		}
-
-		string IXmlNamespaceResolver.LookupPrefix (string ns)
-		{
-			IXmlNamespaceResolver resolver = reader as IXmlNamespaceResolver;
-			if (resolver == null)
-				throw new NotSupportedException ("The input XmlReader does not implement IXmlNamespaceResolver and thus this validating reader cannot execute namespace prefix lookup.");
-			return resolver.LookupPrefix (ns);
 		}
 
 		// It is used only for independent XmlReader use, not for XmlValidatingReader.

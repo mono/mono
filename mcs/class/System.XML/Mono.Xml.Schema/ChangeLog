@@ -1,3 +1,7 @@
+2005-12-12  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XsdValidatingReader.cs : it is not IXmlNamespaceResolver anymore.
+
 2005-11-07  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlSchemaValidatingReader.cs : XmlSchemaValidationFlags is updated.
