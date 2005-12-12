@@ -1,3 +1,9 @@
+2005-12-12  Chris Toshok  <toshok@ximian.com>
+
+	* AppSettingsSection.cs (DeserializeElement): provide rather naive
+	version of the file="" handling.  It's enough to make our tests
+	pass.
+
 2005-12-11  Chris Toshok  <toshok@ximian.com>
 
 	* ConnectionStringsSection.cs (..cctor): use "" instead of null
