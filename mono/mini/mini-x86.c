@@ -1094,7 +1094,10 @@ mono_arch_call_opcode2 (MonoCompile *cfg, MonoCallInst *call, int is_virtual) {
 				MONO_ADD_INS (cfg->cbb, arg);
 			} else if (size <= 20) {
 				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_SUB_IMM, X86_ESP, X86_ESP, ALIGN_TO (size, 4));
-				mini_emit_memcpy2 (cfg, X86_ESP, 0, in->dreg, 0, size, 0);
+				if (cfg->new_ir)
+					mini_emit_memcpy2 (cfg, X86_ESP, 0, in->dreg, 0, size, 0);
+				else
+					mini_emit_memcpy (cfg, X86_ESP, 0, in->dreg, 0, size, 0);
 			} else {
 				arg->opcode = OP_X86_PUSH_OBJ;
 				arg->inst_basereg = in->dreg;

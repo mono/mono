@@ -3004,6 +3004,57 @@ handle_initobj (MonoCompile *cfg, MonoInst *dest, const guchar *ip, MonoClass *k
 	}
 }
 
+/**
+ * Handles unbox of a Nullable<T>
+ */
+static MonoInst*
+handle_unbox_nullable (MonoCompile* cfg, MonoInst* val, const guchar *ip, MonoClass* klass)
+{
+	MonoMethod* method = mono_class_get_method_from_name (klass, "Unbox", 1);
+	return mono_emit_method_call_spilled (cfg, method, mono_method_signature (method), &val, ip, NULL);
+}
+
+static MonoInst*
+handle_unbox (MonoCompile *cfg, MonoClass *klass, MonoInst **sp, const guchar *ip)
+{
+	MonoInst *add;
+	int obj_reg;
+	int vtable_reg = alloc_dreg (cfg ,STACK_PTR);
+	int klass_reg = alloc_dreg (cfg ,STACK_PTR);
+	int eclass_reg = alloc_dreg (cfg ,STACK_PTR);
+	int rank_reg = alloc_dreg (cfg ,STACK_I4);
+
+	obj_reg = sp [0]->dreg;
+	MONO_EMIT_NEW_LOAD_MEMBASE (cfg, vtable_reg, obj_reg, G_STRUCT_OFFSET (MonoObject, vtable));
+	MONO_EMIT_NEW_LOAD_MEMBASE_OP (cfg, OP_LOADU1_MEMBASE, rank_reg, vtable_reg, G_STRUCT_OFFSET (MonoVTable, rank));
+
+	/* FIXME: generics */
+	g_assert (klass->rank == 0);
+			
+	// Check rank == 0
+	MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, rank_reg, 0);
+	MONO_EMIT_NEW_COND_EXC (cfg, NE_UN, "InvalidCastException");
+
+	MONO_EMIT_NEW_LOAD_MEMBASE (cfg, klass_reg, vtable_reg, G_STRUCT_OFFSET (MonoVTable, klass));
+	MONO_EMIT_NEW_LOAD_MEMBASE (cfg, eclass_reg, klass_reg, G_STRUCT_OFFSET (MonoClass, element_class));
+			
+	if (cfg->compile_aot) {
+		int const_reg = alloc_preg (cfg);
+		MONO_EMIT_NEW_CLASSCONST (cfg, const_reg, klass->element_class);
+		MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, eclass_reg, const_reg);
+	} else {
+		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, eclass_reg, klass->element_class);
+	}
+	
+	MONO_EMIT_NEW_COND_EXC (cfg, NE_UN, "InvalidCastException");
+
+	NEW_BIALU_IMM (cfg, add, OP_ADD_IMM, alloc_dreg (cfg, STACK_PTR), obj_reg, sizeof (MonoObject));
+	MONO_ADD_INS (cfg->cbb, add);
+	add->type = STACK_PTR;
+
+	return add;
+}
+
 static MonoInst*
 handle_alloc (MonoCompile *cfg, MonoClass *klass, gboolean for_box, const guchar *ip)
 {
@@ -3042,7 +3093,8 @@ handle_box (MonoCompile *cfg, MonoInst *val, const guchar *ip, MonoClass *klass)
 	MonoInst *alloc, *dest, *vstore;
 
 	if (mono_class_is_nullable (klass)) {
-		NOT_IMPLEMENTED;
+		MonoMethod* method = mono_class_get_method_from_name (klass, "Box", 1);
+		return mono_emit_method_call_spilled (cfg, method, mono_method_signature (method), &val, ip, NULL);
 	}
 
 	alloc = handle_alloc (cfg, klass, TRUE, ip);
@@ -6700,13 +6752,13 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			{
 				MonoInst *dest, *temp;
 
-				temp = mono_compile_create_var (cfg, &ins->klass->byval_arg, OP_LOCAL);
+				temp = mono_compile_create_var (cfg, &klass->byval_arg, OP_LOCAL);
 				EMIT_NEW_TEMPLOADA (cfg, dest, temp->inst_c0);
-				handle_stobj (cfg, dest, sp [0], ip, ins->klass, FALSE, FALSE);
+				handle_stobj (cfg, dest, sp [0], ip, klass, FALSE, FALSE);
 
 				EMIT_NEW_TEMPLOADA (cfg, dest, temp->inst_c0);
 				dest->type = STACK_VTYPE;
-				dest->klass = ins->klass;
+				dest->klass = klass;
 				*sp++ = dest;
 			}
 
@@ -6990,11 +7042,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				ip += 5;
 			}
 			break;
-#if 0
 		case CEE_UNBOX_ANY: {
-			MonoInst *add, *vtoffset;
-			MonoInst *iargs [3];
-
 			CHECK_STACK (1);
 			--sp;
 			CHECK_OPSIZE (5);
@@ -7006,91 +7054,80 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			if (MONO_TYPE_IS_REFERENCE (&klass->byval_arg)) {
 				/* CASTCLASS */
 				if (klass->marshalbyref || klass->flags & TYPE_ATTRIBUTE_INTERFACE) {
+				
 					MonoMethod *mono_castclass;
 					MonoInst *iargs [1];
 					MonoBasicBlock *ebblock;
 					int costs;
-					int temp;
-					
+				
 					mono_castclass = mono_marshal_get_castclass (klass); 
 					iargs [0] = sp [0];
-					
-					costs = inline_method (cfg, mono_castclass, mono_method_signature (mono_castclass), bblock, 
-								   iargs, ip, real_offset, dont_inline, &ebblock, TRUE);
 				
+					costs = inline_method (cfg, mono_castclass, mono_method_signature (mono_castclass), bblock, 
+										   iargs, ip, real_offset, dont_inline, &ebblock, TRUE);
+			
 					g_assert (costs > 0);
-					
+				
 					ip += 5;
 					real_offset += 5;
-				
+			
 					GET_BBLOCK (cfg, bbhash, bblock, ip);
 					ebblock->next_bb = bblock;
 					link_bblock (cfg, ebblock, bblock);
-	
-					temp = iargs [0]->inst_i0->inst_c0;
-					NEW_TEMPLOAD (cfg, *sp, temp);
-					
-					sp++;
+
+					*sp++ = iargs [0];
 					bblock = ebblock;
-					inline_costs += costs;				
+					cfg->cbb = bblock;
+					inline_costs += costs;
 				}
 				else {
-					MONO_INST_NEW (cfg, ins, CEE_CASTCLASS);
-					ins->type = STACK_OBJ;
-					ins->inst_left = *sp;
-					ins->klass = klass;
-					ins->inst_newa_class = klass;
-					ins->cil_code = ip;
-					*sp++ = ins;
+					ins = handle_castclass (cfg, klass, *sp, ip);
+					*sp ++ = ins;
 					ip += 5;
 				}
 				break;
-			}
+			}			
 
 			if (mono_class_is_nullable (klass)) {
-				NOT_IMPLEMENTED;
+				ins = handle_unbox_nullable (cfg, *sp, ip, klass);
+				*sp++= ins;
+				ip += 5;
+				break;
 			}
 
-			MONO_INST_NEW (cfg, ins, OP_UNBOXCAST);
-			ins->type = STACK_OBJ;
-			ins->inst_left = *sp;
-			ins->klass = klass;
-			ins->inst_newa_class = klass;
-			ins->cil_code = ip;
+			/* UNBOX */
+			ins = handle_unbox (cfg, klass, sp, ip);
+			*sp = ins;
 
-			MONO_INST_NEW (cfg, add, OP_PADD);
-			NEW_ICONST (cfg, vtoffset, sizeof (MonoObject));
-			add->inst_left = ins;
-			add->inst_right = vtoffset;
-			add->type = STACK_MP;
-			*sp = add;
 			ip += 5;
-			/* LDOBJ impl */
-			n = mono_class_value_size (klass, NULL);
-			ins = mono_compile_create_var (cfg, &klass->byval_arg, OP_LOCAL);
-			NEW_TEMPLOADA (cfg, iargs [0], ins->inst_c0);
-			if ((cfg->opt & MONO_OPT_INTRINS) && n <= sizeof (gpointer) * 5) {
-				MonoInst *copy;
-				MONO_INST_NEW (cfg, copy, OP_MEMCPY);
-				copy->inst_left = iargs [0];
-				copy->inst_right = *sp;
-				copy->cil_code = ip;
-				copy->unused = n;
-				MONO_ADD_INS (bblock, copy);
-			} else {
-				MonoMethod *memcpy_method = get_memcpy_method ();
-				iargs [1] = *sp;
-				NEW_ICONST (cfg, iargs [2], n);
-				iargs [2]->cil_code = ip;
 
-				mono_emit_method_call_spilled (cfg, memcpy_method, memcpy_method->signature, iargs, ip, NULL);
+			/* LDOBJ */
+			/* FIXME: Put this into LDOBJ as well */
+			{
+				MonoInst *dest, *temp;
+				int stack_type;
+				int dreg;
+
+				stack_type = type_to_stack_type (&klass->byval_arg);
+				dreg = alloc_dreg (cfg, stack_type);
+				NEW_LOAD_MEMBASE (cfg, dest, mono_type_to_load_membase (&klass->byval_arg), dreg, sp[0]->dreg, 0);
+				if (dest->opcode == CEE_LDOBJ) {
+					temp = mono_compile_create_var (cfg, &klass->byval_arg, OP_LOCAL);
+					EMIT_NEW_TEMPLOADA (cfg, dest, temp->inst_c0);
+					handle_stobj (cfg, dest, sp[0], ip, klass, FALSE, FALSE);
+
+					EMIT_NEW_TEMPLOADA (cfg, dest, temp->inst_c0);
+					dest->type = temp->type;
+					dest->klass = klass;
+				}
+				else
+					MONO_ADD_INS (cfg->cbb, dest);
+				*sp++ = dest;
 			}
-			NEW_TEMPLOAD (cfg, *sp, ins->inst_c0);
-			++sp;
+
 			inline_costs += 2;
 			break;
 		}
-#endif
 		case CEE_BOX: {
 			MonoInst *val;
 			CHECK_STACK (1);
@@ -7113,13 +7150,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			break;
 		}
 		case CEE_UNBOX: {
-			MonoInst *add;
-			int obj_reg;
-			int vtable_reg = alloc_dreg (cfg ,STACK_PTR);
-			int klass_reg = alloc_dreg (cfg ,STACK_PTR);
-			int eclass_reg = alloc_dreg (cfg ,STACK_PTR);
-			int rank_reg = alloc_dreg (cfg ,STACK_I4);
-
 			CHECK_STACK (1);
 			--sp;
 			CHECK_OPSIZE (5);
@@ -7134,35 +7164,9 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 
 			/* Needed by the code generated in inssel.brg */
 			mono_get_got_var (cfg);
-
-			obj_reg = sp [0]->dreg;
-			MONO_EMIT_NEW_LOAD_MEMBASE (cfg, vtable_reg, obj_reg, G_STRUCT_OFFSET (MonoObject, vtable));
-			MONO_EMIT_NEW_LOAD_MEMBASE_OP (cfg, OP_LOADU1_MEMBASE, rank_reg, vtable_reg, G_STRUCT_OFFSET (MonoVTable, rank));
-
-			/* FIXME: generics */
-			g_assert (klass->rank == 0);
 			
-			// Check rank == 0
-			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, rank_reg, 0);
-			MONO_EMIT_NEW_COND_EXC (cfg, NE_UN, "InvalidCastException");
-
-			MONO_EMIT_NEW_LOAD_MEMBASE (cfg, klass_reg, vtable_reg, G_STRUCT_OFFSET (MonoVTable, klass));
-			MONO_EMIT_NEW_LOAD_MEMBASE (cfg, eclass_reg, klass_reg, G_STRUCT_OFFSET (MonoClass, element_class));
-			
-			if (cfg->compile_aot) {
-				int const_reg = alloc_preg (cfg);
-				MONO_EMIT_NEW_CLASSCONST (cfg, const_reg, klass->element_class);
-				MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, eclass_reg, const_reg);
-			} else {
-				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, eclass_reg, klass->element_class);
-			}
-	
-			MONO_EMIT_NEW_COND_EXC (cfg, NE_UN, "InvalidCastException");
-
-			NEW_BIALU_IMM (cfg, add, OP_ADD_IMM, alloc_dreg (cfg, STACK_PTR), obj_reg, sizeof (MonoObject));
-			MONO_ADD_INS (bblock, add);
-			add->type = STACK_PTR;
-			*sp++ = add;
+			ins = handle_unbox (cfg, klass, sp, ip);
+			*sp++ = ins;
 			ip += 5;
 			inline_costs += 2;
 			break;
@@ -7295,7 +7299,24 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 						load->cil_code = ip;
 						load->flags |= ins_flag;
 						ins_flag = 0;
-						MONO_ADD_INS (bblock, load);
+
+						if (load->opcode == CEE_LDOBJ) {
+							MonoInst *dest, *src, *temp;
+							dreg = alloc_preg (cfg);
+
+							temp = mono_compile_create_var (cfg, field->type, OP_LOCAL);
+							NEW_BIALU_IMM (cfg, src, OP_PADD_IMM, dreg, sp [0]->dreg, foffset);
+							MONO_ADD_INS (cfg->cbb, src);
+							EMIT_NEW_TEMPLOADA (cfg, dest, temp->inst_c0);
+							handle_stobj (cfg, dest, sp [0], ip, mono_class_from_mono_type (field->type), FALSE, FALSE);
+
+							EMIT_NEW_TEMPLOADA (cfg, dest, temp->inst_c0);
+							dest->type = STACK_VTYPE;
+							dest->klass = mono_class_from_mono_type (field->type);
+							load = dest;
+						}
+						else
+							MONO_ADD_INS (bblock, load);
 						*sp++ = load;
 					}
 				}
