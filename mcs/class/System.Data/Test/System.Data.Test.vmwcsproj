@@ -2,8 +2,8 @@
 	<CSHARP ProjectType="Local" ProductVersion="7.10.3077" SchemaVersion="2.0" ProjectGuid="{B1B135D9-4FB2-4369-8C4F-983AFD06044F}">
 		<Build>
 			<Settings ApplicationIcon="" AssemblyKeyContainerName="" AssemblyName="System.Data.Test" AssemblyOriginatorKeyFile="" DefaultClientScript="JScript" DefaultHTMLPageLayout="Grid" DefaultTargetSchema="IE50" DelaySign="false" OutputType="Library" PreBuildEvent="" PostBuildEvent="" RootNamespace="System.Data.Test" RunPostBuildEvent="OnBuildSuccess" StartupObject="">
-				<Config Name="Debug_Java" AllowUnsafeBlocks="false" BaseAddress="285212672" CheckForOverflowUnderflow="false" ConfigurationOverrideFile="" DefineConstants="DEBUG;TRACE;JAVA;TARGET_JVM" DocumentationFile="" DebugSymbols="true" FileAlignment="4096" IncrementalBuild="false" NoStdLib="false" NoWarn="1595" Optimize="false" OutputPath="bin\Debug_Java\" RegisterForComInterop="false" RemoveIntegerChecks="false" TreatWarningsAsErrors="false" WarningLevel="4"/>
-				<Config Name="Release_Java" AllowUnsafeBlocks="false" BaseAddress="285212672" CheckForOverflowUnderflow="false" ConfigurationOverrideFile="" DefineConstants="TRACE;JAVA" DocumentationFile="" DebugSymbols="false" FileAlignment="4096" IncrementalBuild="false" NoStdLib="false" NoWarn="1595" Optimize="true" OutputPath="bin\Release_Java\" RegisterForComInterop="false" RemoveIntegerChecks="false" TreatWarningsAsErrors="false" WarningLevel="4"/>
+				<Config Name="Debug_Java" AllowUnsafeBlocks="false" BaseAddress="285212672" CheckForOverflowUnderflow="false" ConfigurationOverrideFile="" DefineConstants="DEBUG;TRACE;JAVA;TARGET_JVM;NET_1_1" DocumentationFile="" DebugSymbols="true" FileAlignment="4096" IncrementalBuild="false" NoStdLib="false" NoWarn="1595" Optimize="false" OutputPath="bin\Debug_Java\" RegisterForComInterop="false" RemoveIntegerChecks="false" TreatWarningsAsErrors="false" WarningLevel="4"/>
+				<Config Name="Release_Java" AllowUnsafeBlocks="false" BaseAddress="285212672" CheckForOverflowUnderflow="false" ConfigurationOverrideFile="" DefineConstants="TRACE;JAVA;TARGET_JVM;NET_1_1" DocumentationFile="" DebugSymbols="false" FileAlignment="4096" IncrementalBuild="false" NoStdLib="false" NoWarn="1595" Optimize="true" OutputPath="bin\Release_Java\" RegisterForComInterop="false" RemoveIntegerChecks="false" TreatWarningsAsErrors="false" WarningLevel="4"/>
 			</Settings>
 			<References>
 				<Reference Name="System" AssemblyName="System" HintPath="..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.dll"/>
@@ -42,8 +42,8 @@
 				<File RelPath="System.Data\DataSetTest2.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data\DataTableCollectionTest.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data\DataTableCollectionTest2.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Data\DataTableLoadRowTest.cs" BuildAction="Compile"/>
-				<File RelPath="System.Data\DataTableReaderTest.cs" BuildAction="Compile"/>
+				<File RelPath="System.Data\DataTableLoadRowTest.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Data\DataTableReaderTest.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data\DataTableTest.cs" SubType="Component" BuildAction="Compile"/>
 				<File RelPath="System.Data\DataTableTest2.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data\DataViewManagerTest.cs" SubType="Code" BuildAction="Compile"/>
@@ -152,12 +152,12 @@
 				<Folder RelPath="System.Data\schemas\.svn\tmp\text-base\"/>
 				<Folder RelPath="System.Data\schemas\.svn\tmp\wcprops\"/>
 				<Folder RelPath="System.Data\schemas\.svn\wcprops\"/>
-				<File RelPath="System.Data.Common\ConnectionStringsSectionTest.cs" BuildAction="Compile"/>
+				<File RelPath="System.Data.Common\ConnectionStringsSectionTest.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.Common\DataColumnMappingCollectionTest.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.Common\DataTableMappingCollectionTest.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Data.Common\DbConnectionStringBuilderTest.cs" BuildAction="Compile"/>
+				<File RelPath="System.Data.Common\DbConnectionStringBuilderTest.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.Common\DBDataPermissionAttributeTest.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Data.Common\DbProviderFactoriesConfigurationHandlerTest.cs" BuildAction="Compile"/>
+				<File RelPath="System.Data.Common\DbProviderFactoriesConfigurationHandlerTest.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.SqlTypes\SqlBinaryTest.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.SqlTypes\SqlByteTest.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.SqlTypes\SqlDoubleTest.cs" SubType="Code" BuildAction="Compile"/>
