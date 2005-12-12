@@ -957,32 +957,26 @@ namespace System.Xml.XPath
 			get { throw new NotImplementedException (); }
 		}
 
-		[MonoTODO]
 		public override bool ValueAsBoolean {
 			get { return XQueryConvert.StringToBoolean (Value); }
 		}
 
-		[MonoTODO]
 		public override DateTime ValueAsDateTime {
 			get { return XmlConvert.ToDateTime (Value); }
 		}
 
-		[MonoTODO]
 		public override double ValueAsDouble {
 			get { return XQueryConvert.StringToDouble (Value); }
 		}
 
-		[MonoTODO]
 		public override int ValueAsInt {
 			get { return XQueryConvert.StringToInt (Value); }
 		}
 
-		[MonoTODO]
 		public override long ValueAsLong {
 			get { return XQueryConvert.StringToInteger (Value); }
 		}
 
-		[MonoTODO]
 		public override Type ValueType {
 			get {
 				return SchemaInfo != null &&
@@ -1001,12 +995,6 @@ namespace System.Xml.XPath
 				return null;
 			}
 		}
-
-
-
-
-
-
 
 		private XmlReader CreateFragmentReader (string fragment)
 		{

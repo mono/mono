@@ -283,5 +283,135 @@ namespace MonoTests.System.Xml
 			AssertEquals ("#2", XPathNodeType.SignificantWhitespace,
 				nav.NodeType);
 		}
+
+#if NET_2_0
+		[Test]
+		public void ValueAsBoolean ()
+		{
+			string xml = "<root>1</root>";
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml (xml);
+			XPathNavigator nav = doc.CreateNavigator ();
+			nav.MoveToFirstChild ();
+			AssertEquals ("#1", true, nav.ValueAsBoolean);
+			nav.MoveToFirstChild ();
+			AssertEquals ("#2", true, nav.ValueAsBoolean);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ValueAsBooleanFail ()
+		{
+			string xml = "<root>1.0</root>";
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml (xml);
+			XPathNavigator nav = doc.CreateNavigator ();
+			nav.MoveToFirstChild ();
+			bool i = nav.ValueAsBoolean;
+		}
+
+		[Test]
+		public void ValueAsDateTime ()
+		{
+			DateTime time = new DateTime (2005, 12, 13);
+			string xml = "<root>2005-12-13</root>";
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml (xml);
+			XPathNavigator nav = doc.CreateNavigator ();
+			nav.MoveToFirstChild ();
+			AssertEquals ("#1", time, nav.ValueAsDateTime);
+			nav.MoveToFirstChild ();
+			AssertEquals ("#2", time, nav.ValueAsDateTime);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ValueAsDateTimeFail ()
+		{
+			string xml = "<root>dating time</root>";
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml (xml);
+			XPathNavigator nav = doc.CreateNavigator ();
+			nav.MoveToFirstChild ();
+			DateTime time = nav.ValueAsDateTime;
+		}
+
+		[Test]
+		public void ValueAsDouble ()
+		{
+			string xml = "<root>3.14159265359</root>";
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml (xml);
+			XPathNavigator nav = doc.CreateNavigator ();
+			nav.MoveToFirstChild ();
+			AssertEquals ("#1", 3.14159265359, nav.ValueAsDouble);
+			nav.MoveToFirstChild ();
+			AssertEquals ("#2", 3.14159265359, nav.ValueAsDouble);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ValueAsDoubleFail ()
+		{
+			string xml = "<root>Double Dealer</root>";
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml (xml);
+			XPathNavigator nav = doc.CreateNavigator ();
+			nav.MoveToFirstChild ();
+			Double dealer = nav.ValueAsDouble;
+		}
+
+		[Test]
+		public void ValueAsInt ()
+		{
+			string xml = "<root>1</root>";
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml (xml);
+			XPathNavigator nav = doc.CreateNavigator ();
+			nav.MoveToFirstChild ();
+			AssertEquals ("#1", 1, nav.ValueAsInt);
+			nav.MoveToFirstChild ();
+			AssertEquals ("#2", 1, nav.ValueAsInt);
+		}
+
+		[Test]
+		// Here, it seems to be using XQueryConvert (whatever was called)
+		[ExpectedException (typeof (FormatException))]
+		public void ValueAsIntFail ()
+		{
+			string xml = "<root>1.0</root>";
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml (xml);
+			XPathNavigator nav = doc.CreateNavigator ();
+			nav.MoveToFirstChild ();
+			int i = nav.ValueAsInt;
+		}
+
+		[Test]
+		public void ValueAsLong ()
+		{
+			string xml = "<root>10000000000000000</root>";
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml (xml);
+			XPathNavigator nav = doc.CreateNavigator ();
+			nav.MoveToFirstChild ();
+			AssertEquals ("#1", 10000000000000000, nav.ValueAsLong);
+			nav.MoveToFirstChild ();
+			AssertEquals ("#2", 10000000000000000, nav.ValueAsLong);
+		}
+
+		[Test]
+		// Here, it seems to be using XQueryConvert (whatever was called)
+		[ExpectedException (typeof (FormatException))]
+		public void ValueAsLongFail ()
+		{
+			string xml = "<root>0x10000000000000000</root>";
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml (xml);
+			XPathNavigator nav = doc.CreateNavigator ();
+			nav.MoveToFirstChild ();
+			long l = nav.ValueAsLong;
+		}
+#endif
 	}
 }
