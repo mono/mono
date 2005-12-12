@@ -1,3 +1,10 @@
+2005-12-12  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (default_SUBDIRS): New.  Rename from SUBDIRS, and move
+	before including library.make.
+	(net_2_0_ONLY_SUBDIRS): New.
+	(DIST_ONLY_SUBDIRS): Add net_2_0_ONLY_SUBDIRS.
+
 2005-09-30  Miguel de Icaza  <miguel@novell.com>
 
 	* Recompile the

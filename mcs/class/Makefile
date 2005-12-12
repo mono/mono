@@ -29,17 +29,7 @@ net_1_1_java_SUBDIRS = \
 	System.Runtime.Serialization.Formatters.Soap	\
 	System.Runtime.Remoting
 
-net_2_0_SUBDIRS = $(SUBDIRS) \
-	Microsoft.Build.Framework	\
-	Microsoft.Build.Utilities	\
-	Microsoft.Build.Engine		\
-	Microsoft.Build.Tasks
-
-include ../build/rules.make
-
-# For now, Mono.Security.Win32 is built on Linux too.
-# However, it isn't tested on Linux, since it depends on a Win32 dll.
-SUBDIRS = \
+default_SUBDIRS := \
 	corlib				\
 	System				\
 	System.XML			\
@@ -91,17 +81,27 @@ SUBDIRS = \
 	Microsoft.JScript		\
 	FirebirdSql.Data.Firebird
 
-# Starting with Microsoft.Vsa, the libraries above weren't in the
-# Linux makefile.gnu before, but they build fine, so might as well
-# include them ...
-#
+net_2_0_SUBDIRS := $(default_SUBDIRS) $(net_2_0_ONLY_SUBDIRS)
+net_2_0_ONLY_SUBDIRS := \
+	Microsoft.Build.Framework	\
+	Microsoft.Build.Utilities	\
+	Microsoft.Build.Engine		\
+	Microsoft.Build.Tasks
+
+include ../build/rules.make
+
+SUBDIRS = $(default_SUBDIRS)
 
 # These libraries below are either unimplemented or don't compile, but
 # I wrote makefiles for them.
 
-DIST_ONLY_SUBDIRS = \
+BROKEN_SUBDIRS = \
 	Custommarshalers		\
 	Mono.Globalization
+
+DIST_ONLY_SUBDIRS = \
+	$(net_2_0_ONLY_SUBDIRS) \
+	$(BROKEN_SUBDIRS)
 
 # No new makefiles for: System.Messaging, System.Web.Mobile,
 # System.ServiceProcess
