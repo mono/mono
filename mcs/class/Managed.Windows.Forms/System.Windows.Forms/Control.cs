@@ -2546,14 +2546,10 @@ namespace System.Windows.Forms
 			Invalidate(region, false);
 		}
 
-		[MonoTODO("Figure out if GetRegionScans is usable")]
 		public void Invalidate(System.Drawing.Region region, bool invalidateChildren) {
-			throw new NotImplementedException();
-
-			// FIXME - should use the GetRegionScans function of the region to invalidate each area
-			//if (invalidateChildren) {
-			//	for (int i=0; i<child_controls.Count; i++) child_controls[i].Invalidate();
-			//}
+			RectangleF bounds = region.GetBounds (CreateGraphics ());
+			Invalidate (new Rectangle ((int) bounds.X, (int) bounds.Y, (int) bounds.Width, (int) bounds.Height),
+					invalidateChildren);
 		}
 
 		public object Invoke (Delegate method) {

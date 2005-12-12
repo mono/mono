@@ -1,3 +1,7 @@
+2005-12-12  Jackson Harper  <jackson@ximian.com>
+
+	* Control.cs: Implement Invalidate (Region).
+
 2005-12-12  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* Control.cs: 
