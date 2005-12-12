@@ -83,6 +83,10 @@ namespace Mono.ILASM {
                         get { return MakeFullName (); }
                 }
 
+		public string NestedFullName {
+			get { return (outer == null ? FullName : (outer.NestedFullName + "/" + FullName)); }
+		}
+
                 public TypeDef OuterType {
                         get { return outer; }
                         set { outer = value; }
@@ -274,6 +278,18 @@ namespace Mono.ILASM {
                                 throw new Exception ("Circular definition of class: " + FullName);
                         }
 
+                        if (outer != null) {
+				PEAPI.TypeAttr vis = attr & PEAPI.TypeAttr.VisibilityMask;
+
+				if (vis == PEAPI.TypeAttr.Private || vis == PEAPI.TypeAttr.Public) {
+					/* Nested class, but attr not set accordingly. */
+					//FIXME: 'report' warning here
+					Console.WriteLine ("Warning -- Nested class '{0}' has non-nested visibility, set to such.", NestedFullName);
+					attr = attr ^ vis;
+					attr |= (vis == PEAPI.TypeAttr.Public ? PEAPI.TypeAttr.NestedPublic : PEAPI.TypeAttr.NestedPrivate);
+				}		
+                        }
+                        
                         if (parent != null) {
                                 is_intransit = true;
                                 parent.Resolve (code_gen);

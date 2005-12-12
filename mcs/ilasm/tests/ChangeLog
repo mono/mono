@@ -1,5 +1,9 @@
 2005-12-12  Ankit Jain  <jankit@novell.com>
 
+	* nested.il: New. Ensure nested visibility for nested types.
+
+2005-12-12  Ankit Jain  <jankit@novell.com>
+
 	* gen-1.il:New. Generic method reference.
 	* err-gen-2.il:
 	* err-gen-3.il: New. Negative tests for generic method refernce.

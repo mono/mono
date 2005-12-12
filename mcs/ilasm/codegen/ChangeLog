@@ -1,3 +1,8 @@
+2005-12-12  Ankit Jain  <jankit@novell.com>
+
+	* TypeDef.cs (TypeDef.Define): Ensure nested visibility for a nested class.
+	(TypeDef.NestedFullName): New.
+
 2005-12-09  Ankit Jain  <jankit@novell.com>
 
 	* MethodDef.cs (MethodDef.GenParamCount): typar_list can be null.
