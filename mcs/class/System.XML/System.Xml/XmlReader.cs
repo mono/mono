@@ -863,10 +863,10 @@ namespace System.Xml
 
 		public virtual bool ReadToNextSibling (string name)
 		{
-			if (NodeType != XmlNodeType.Element || IsEmptyElement)
+			if (ReadState != ReadState.Interactive)
 				return false;
 			int depth = Depth;
-			for (Skip (); depth < Depth; Skip ())
+			for (Skip (); depth >= Depth; Skip ())
 				if (NodeType == XmlNodeType.Element && name == Name)
 					return true;
 			return false;
@@ -874,10 +874,10 @@ namespace System.Xml
 
 		public virtual bool ReadToNextSibling (string localName, string namespaceURI)
 		{
-			if (NodeType != XmlNodeType.Element || IsEmptyElement)
+			if (ReadState != ReadState.Interactive)
 				return false;
 			int depth = Depth;
-			for (Skip (); depth < Depth; Skip ())
+			for (Skip (); depth >= Depth; Skip ())
 				if (NodeType == XmlNodeType.Element && localName == LocalName && namespaceURI == NamespaceURI)
 					return true;
 			return false;

@@ -1554,44 +1554,57 @@ namespace MonoTests.System.Xml
 			Assert ("#4", !xmlReader.ReadToFollowing ("bar"));
 		}
 
-/*
+		[Test]
+		[Category ("NotDotNet")]
+		public void ReadToNextSiblingAtInitialState ()
+		{
+			string xml = @"<root></root>";
+			RunTest (xml, new TestMethod (ReadToNextSiblingAtInitialState ));
+		}
+
+		void ReadToNextSiblingAtInitialState (XmlReader xmlReader)
+		{
+			Assert ("#1", !xmlReader.ReadToNextSibling ("bar"));
+			Assert ("#2", !xmlReader.ReadToNextSibling ("root"));
+		}
+
 		[Test]
 		public void ReadToNextSibling ()
 		{
-			string xml = @"<root><foo/><bar attr='value'/><foo><bar><bar></bar><foo></foo><bar/></bar></foo></root>";
+			string xml = @"<root><foo/><bar attr='value'/><foo><pooh/><bar></bar><foo></foo><bar/></foo></root>";
 			RunTest (xml, new TestMethod (ReadToNextSibling));
 		}
 
 		void ReadToNextSibling (XmlReader xmlReader)
 		{
-			Assert ("#1", !xmlReader.ReadToNextSibling ("bar"));
-			Assert ("#2", !xmlReader.ReadToNextSibling ("root"));
+			// It is funky, but without it MS.NET results in an infinite loop.
 			xmlReader.Read (); // root
+
 			xmlReader.Read (); // foo
 			Assert ("#3", xmlReader.ReadToNextSibling ("bar"));
+
 			AssertEquals ("#3-2", "value", xmlReader.GetAttribute ("attr"));
 			xmlReader.Read (); // foo
-			xmlReader.Read (); // bar
+			xmlReader.Read (); // pooh
 			Assert ("#4", xmlReader.ReadToNextSibling ("bar"));
 			Assert ("#4-2", !xmlReader.IsEmptyElement);
 			Assert ("#5", xmlReader.ReadToNextSibling ("bar"));
 			Assert ("#5-2", xmlReader.IsEmptyElement);
-			Assert ("#6", xmlReader.Read ()); // /bar
+			Assert ("#6", xmlReader.Read ()); // /foo
 
 			AssertNodeValues ("#7", xmlReader,
 				XmlNodeType.EndElement,
-				2,		// Depth
+				1,		// Depth
 				false,		// IsEmptyElement
-				"bar",		// Name
+				"foo",		// Name
 				String.Empty,	// Prefix
-				"bar",		// LocalName
+				"foo",		// LocalName
 				String.Empty,	// NamespaceURI
 				String.Empty,	// Value
 				false,		// HasValue
 				0,		// AttributeCount
 				false);		// HasAttributes
 		}
-*/
 
 		[Test]
 		public void ReadSubtree ()

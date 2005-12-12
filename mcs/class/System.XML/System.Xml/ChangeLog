@@ -1,5 +1,10 @@
 2005-12-12  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlReader.cs : fixed several misconception in MoveToNextSibling().
+	  It should check its ReadState to avoid infinite loop.
+
+2005-12-12  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlException.cs : added another .ctor() overload that takes both
 	  IXmlLineInfo and innerException.
 	* XmlQualifiedName.cs : added Parse() overload that takes XmlReader
