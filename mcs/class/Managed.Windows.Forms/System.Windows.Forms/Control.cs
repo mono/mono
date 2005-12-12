@@ -344,8 +344,10 @@ namespace System.Windows.Forms
 					impl_list = new ArrayList ();
 				all_controls = null;
 				impl_list.Add (control);
-				control.Parent = owner;
+				control.ChangeParent (owner);
 				owner.UpdateZOrder ();
+				owner.PerformLayout (control, "Parent");
+				owner.OnControlAdded (new ControlEventArgs (control));
 			}
 
 			public virtual void AddRange (Control[] controls)
@@ -504,9 +506,11 @@ namespace System.Windows.Forms
 			{
 				if (impl_list != null) {
 					all_controls = null;
+					owner.PerformLayout (control, "Parent");
+					owner.OnControlRemoved (new ControlEventArgs (control));
 					impl_list.Remove (control);
 				}
-				control.Parent = null;
+				control.ChangeParent (null);
 				owner.UpdateZOrder ();
 			}
 
