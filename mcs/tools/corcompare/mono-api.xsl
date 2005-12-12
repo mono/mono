@@ -23,20 +23,20 @@
 
 				<table>
 					<tr>
-						<td> <input type="checkbox" ID="todo" onClick="selectTodo()" checked="1"/> </td>
+						<td> <input type="checkbox" ID="todo" onClick="selectTodo()" checked="checked"/> </td>
 						<td> <img src="cm/st.gif"/> </td>
 						<td> TODO </td>
 						<td width="20"/>
-						<td> <input type="checkbox" ID="missing" onClick="selectMissing()" checked="1"/> </td>
+						<td> <input type="checkbox" ID="missing" onClick="selectMissing()" checked="checked"/> </td>
 						<td> <img src="cm/sm.gif"/> </td>
 						<td> Missing </td>
 					</tr>
 					<tr>
-						<td> <input type="checkbox" ID="extra" onClick="selectExtra()" checked="1"/> </td>
+						<td> <input type="checkbox" ID="extra" onClick="selectExtra()" checked="checked"/> </td>
 						<td> <img src="cm/sx.gif"/> </td>
 						<td> Extra </td>
 						<td width="20"/>
-						<td> <input type="checkbox" ID="errors" onClick="selectErrors()" checked="1"/> </td>
+						<td> <input type="checkbox" ID="errors" onClick="selectErrors()" checked="checked"/> </td>
 						<td> <img src="cm/se.gif"/> </td>
 						<td> Errors </td>
 					</tr>

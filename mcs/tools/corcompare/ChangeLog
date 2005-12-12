@@ -1,3 +1,7 @@
+2005-12-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* mono-api.xsl : tiny checked="checked" sanitization.
+
 2005-11-29  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* mono-api.xsl : added toggle switch for referenced documentation
