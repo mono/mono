@@ -1402,6 +1402,10 @@ mono_arch_call_opcode2 (MonoCompile *cfg, MonoCallInst *call, int is_virtual) {
 
 	cinfo = get_call_info (sig, sig->pinvoke);
 
+	if (cinfo->need_stack_align) {
+		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_SUB_IMM, X86_ESP, X86_ESP, 8);
+	}
+
 	for (i = n - 1; i >= 0; --i) {
 		ainfo = cinfo->args + i;
 
@@ -1610,13 +1614,6 @@ mono_arch_call_opcode2 (MonoCompile *cfg, MonoCallInst *call, int is_virtual) {
 
 			mono_call_inst_add_outarg_reg (call, vtarg->dreg, cinfo->ret.reg, FALSE);
 		}
-	}
-
-	if (cinfo->need_stack_align) {
-		MONO_INST_NEW (cfg, arg, OP_AMD64_OUTARG_ALIGN_STACK);
-		/* prepend, so they get reversed */
-		arg->next = call->out_args;
-		call->out_args = arg;
 	}
 
 	call->stack_usage = cinfo->stack_usage;
