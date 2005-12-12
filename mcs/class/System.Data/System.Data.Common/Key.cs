@@ -163,29 +163,77 @@ namespace System.Data.Common
 			return _filter.EvalBoolean(_tmpRow);
 		}
 
+		internal bool ContainsVersion (DataRowState state, DataRowVersion version)
+		{
+			switch (state) {
+				case DataRowState.Unchanged: {
+					if ((_rowStateFilter & DataViewRowState.Unchanged) != DataViewRowState.None) {
+						return ((version & DataRowVersion.Default) != 0);
+					}
+
+					break;
+				}
+				case DataRowState.Added: {
+					if ((_rowStateFilter & DataViewRowState.Added) != DataViewRowState.None) {
+						return ((version & DataRowVersion.Default) != 0);
+					}
+
+					break;
+				}
+				case DataRowState.Deleted: {
+					if ((_rowStateFilter & DataViewRowState.Deleted) != DataViewRowState.None) {
+						return (version == DataRowVersion.Original);
+					}
+
+					break;
+				}
+				default:
+					if ((_rowStateFilter & DataViewRowState.ModifiedCurrent) != DataViewRowState.None) {
+						return ((version & DataRowVersion.Default) != 0);
+					}
+					else if ((_rowStateFilter & DataViewRowState.ModifiedOriginal) != DataViewRowState.None) {
+						return (version == DataRowVersion.Original);
+					}
+
+					break;
+			}
+
+            return false;
+		}
+
 		internal static int GetRecord(DataRow row, DataViewRowState rowStateFilter)
 		{
+			switch (row.RowState) {
+				case DataRowState.Unchanged: {
+					if ((rowStateFilter & DataViewRowState.Unchanged) != DataViewRowState.None) {
+						return row.Proposed >= 0 ? row.Proposed : row.Current;
+					}
 
-			if (row.Original == row.Current) {
-				 if ((rowStateFilter & DataViewRowState.Unchanged) != DataViewRowState.None) {
-					 return row.Current;
-				 }
-			}
-			else if (row.Original == -1) {
-				  if ((rowStateFilter & DataViewRowState.Added) != DataViewRowState.None) {
-					return row.Current;
-				  }
-			}
-			else if (row.Current == -1) {
-				     if ((rowStateFilter & DataViewRowState.Deleted) != DataViewRowState.None) {
+					break;
+				}
+				case DataRowState.Added: {
+					if ((rowStateFilter & DataViewRowState.Added) != DataViewRowState.None) {
+						return row.Proposed >= 0 ? row.Proposed : row.Current;
+					}
+
+					break;
+				}
+				case DataRowState.Deleted: {
+					if ((rowStateFilter & DataViewRowState.Deleted) != DataViewRowState.None) {
 						return row.Original;
-					 }
-			}
-			else if ((rowStateFilter & DataViewRowState.ModifiedCurrent) != DataViewRowState.None) {
-				return row.Current;
-			}
-			else if ((rowStateFilter & DataViewRowState.ModifiedOriginal) != DataViewRowState.None) {
-				return row.Original;
+					}
+
+					break;
+				}
+				default:
+					if ((rowStateFilter & DataViewRowState.ModifiedCurrent) != DataViewRowState.None) {
+						return row.Proposed >= 0 ? row.Proposed : row.Current;
+					}
+					else if ((rowStateFilter & DataViewRowState.ModifiedOriginal) != DataViewRowState.None) {
+						return row.Original;
+					}
+
+					break;
 			}
 
             return -1;

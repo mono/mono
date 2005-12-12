@@ -713,6 +713,8 @@ namespace System.Data {
 		public void Clear () {
                         // Foriegn key constraints are checked in _rows.Clear method
 			_rows.Clear ();
+			foreach(Index index in Indexes)
+				index.Reset();
 #if NET_2_0
                         OnTableCleared (new DataTableClearEventArgs (this));
 #endif // NET_2_0
@@ -1018,9 +1020,7 @@ namespace System.Data {
 				}
 			}
 
-			if (EnforceConstraints)
-				// we have to check that the new row doesn't colide with existing row
-				Rows.ValidateDataRowInternal(newRow);
+			newRow.Validate();
 
 			Rows.AddInternal(newRow);		
 	
@@ -1175,11 +1175,8 @@ namespace System.Data {
 					row.AcceptChanges();
 				}
 				
-				if (shouldUpdateIndex || !fAcceptChanges) {
-					// AcceptChanges not always updates indexes because it calls EndEdit
-					foreach(Index index in Indexes) {
-						index.Update(row,tmpRecord);
-					}
+				if (shouldUpdateIndex && !fAcceptChanges) {
+					AddRowToIndexes(row);
 				}
 
 			}
@@ -1222,9 +1219,7 @@ namespace System.Data {
                                 row = NewNotInitializedRow ();
                                 row.ImportRecord (CreateRecord(values));
 
-                                if (EnforceConstraints) 
-                                        // we have to check that the new row doesn't colide with existing row
-                                        Rows.ValidateDataRowInternal(row); // this adds to index ;-)
+                                row.Validate(); // this adds to index ;-)
                                      
                                 if (loadOption == LoadOption.OverwriteChanges ||
                                     loadOption == LoadOption.PreserveChanges) {
@@ -1585,6 +1580,14 @@ namespace System.Data {
 		{
 			if (index != null && index.RefCount == 0) {	
 				_indexes.Remove(index);
+			}
+		}
+
+		internal void AddRowToIndexes (DataRow row) {
+			if (_indexes != null) {
+				foreach (Index indx in _indexes) {
+					indx.Add (row);
+				}
 			}
 		}
 

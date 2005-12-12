@@ -1,3 +1,11 @@
+2005-12-12  Konstantin Triger <kostat@mainsoft.com>
+
+	* Key.cs: Added ContainsVersion function, refactoring.
+	* Index.cs: Fixed Reset() to be ready for Update() calls.
+	   Otherwise the index can be rebuilt with new values inside the
+	   Update() call itself.
+	   Fixed FindIndexExact(), Update(), Delete().
+
 2005-11-22  Konstantin Triger <kostat@mainsoft.com>
 
 	* DbProviderFactory.cs: TARGET_JVM ifdef.

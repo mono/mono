@@ -162,6 +162,7 @@ namespace System.Data.Common
 		internal void Reset()
 		{
 			_array = null;
+			RebuildIndex();
 		}
 
 		private void RebuildIndex()
@@ -333,8 +334,11 @@ namespace System.Data.Common
 		 */ 
 		private int FindIndexExact(int record)
 		{
-			int index = System.Array.BinarySearch(Array,record);
-			return (index > 0) ? index : -1;
+			for (int i = 0, size = Size; i < size; i++)
+				if (Array[i] == record)
+					return i;
+
+			return -1;
 		}
 
 		/*
@@ -359,7 +363,7 @@ namespace System.Data.Common
 			if (oldRecord == -1)
 				return;
 
-			int index = FindIndex(oldRecord);
+			int index = FindIndexExact(oldRecord);
 			if (index != -1) {
 				if ((_hasDuplicates == IndexDuplicatesState.True)) {
 					int c1 = 1;
@@ -388,18 +392,29 @@ namespace System.Data.Common
 			_size--;
 		}
 
-		internal void Update(DataRow row,int newRecord)
-		{
-			int oldRecord = Key.GetRecord(row);
 
-			if (oldRecord == -1 || Size == 0) {
-				Add(row,newRecord);
+		internal void Update(DataRow row,int oldRecord, DataRowVersion oldVersion, DataRowState oldState)
+		{			
+			bool contains = Key.ContainsVersion (oldState, oldVersion);
+			int newRecord = Key.GetRecord(row);	
+			// the record did not appeared in the index before update
+			if (oldRecord == -1 || Size == 0 || !contains) {
+				if (newRecord >= 0) {
+					if (FindIndexExact(newRecord) < 0)
+						Add(row,newRecord);
+				}
+				return;
+			}
+			
+			// the record will not appeare in the index after update
+			if (newRecord < 0 || !Key.CanContain (newRecord)) {
+				Delete (oldRecord);
 				return;
 			}
 
-			int oldIdx = FindIndex(oldRecord);
+			int oldIdx = FindIndexExact(oldRecord);
 
-			if( oldIdx == -1 || Key.Table.RecordCache[Array[oldIdx]] != row ) {
+			if( oldIdx == -1 ) {
 				Add(row,newRecord);
 				return;
 			}
@@ -477,11 +492,15 @@ namespace System.Data.Common
 			}
 		}
 
+		internal void Add(DataRow row) {
+			Add(row, Key.GetRecord(row));
+		}
+
 		private void Add(DataRow row,int newRecord)
 		{
 			int newIdx;
 
-			if (!Key.CanContain (newRecord))
+			if (newRecord < 0 || !Key.CanContain (newRecord))
 				return;
 
 			if (Size == 0) {

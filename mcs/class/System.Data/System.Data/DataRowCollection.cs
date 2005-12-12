@@ -95,9 +95,7 @@ namespace System.Data
 			
 			row.BeginEdit();
 
-			if (!table._duringDataLoad)
-				// we have to check that the new row doesn't colide with existing row
-				ValidateDataRowInternal(row);
+			row.Validate();
 
 			AddInternal(row);
 		}
@@ -124,9 +122,8 @@ namespace System.Data
 			DataRow row = table.NewNotInitializedRow();
 			int newRecord = table.CreateRecord(values);
 			row.ImportRecord(newRecord);
-			if ((table.DataSet == null || table.DataSet.EnforceConstraints) && !table._duringDataLoad)
-				// we have to check that the new row doesn't colide with existing row
-				ValidateDataRowInternal(row);
+
+			row.Validate();
 			AddInternal (row);
 			return row;
 		}
@@ -277,9 +274,7 @@ namespace System.Data
 			if (row.RowID != -1)
 				throw new ArgumentException ("This row already belongs to this table.");
 			
-			if ((table.DataSet == null || table.DataSet.EnforceConstraints) && !table._duringDataLoad)
-				// we have to check that the new row doesn't colide with existing row
-				ValidateDataRowInternal(row);
+			row.Validate();
 				
 			row.Table.ChangingDataRow (row, DataRowAction.Add);
 
@@ -339,42 +334,6 @@ namespace System.Data
 		public void RemoveAt (int index) 
 		{			
 			Remove(this[index]);
-		}
-
-		///<summary>
-		///Internal method used to validate a given DataRow with respect
-		///to the DataRowCollection
-		///</summary>
-		[MonoTODO]
-		internal void ValidateDataRowInternal(DataRow row)
-		{
-			int newRecord = (row.Proposed >= 0) ? row.Proposed : row.Current;
-			if (newRecord < 0)
-				return;
-
-			foreach(Index index in table.Indexes) {
-				index.Update(row,newRecord);
-			}
-
-			if (!(table.DataSet == null || table.DataSet.EnforceConstraints))
-				return;
-
-			//first check for null violations.
-			row._nullConstraintViolation = true;
-			row.CheckNullConstraints();
-
-			foreach(Constraint constraint in table.Constraints) {
-				try {
-					constraint.AssertConstraint(row);
-				}
-				catch(Exception e) {
-					// remove row from indexes
-					foreach(Index index in table.Indexes) {
-						index.Delete(newRecord);
-					}
-					throw e;
-				}
-			}
 		}
 	}
 }
