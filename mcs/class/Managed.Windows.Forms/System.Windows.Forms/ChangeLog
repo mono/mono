@@ -1,3 +1,18 @@
+2005-12-12  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* Control.cs: 
+	  - Changed handling of Controls.Add/Controls.Remove to fire (almost) 
+	    the same events as MS does. MS fires events for each property 
+	    except, for unknown reasons, Cursor, when the control is reparented. 
+	    I can't seem to totally match add/remove since MS also fires some 
+	    VisibleChanged events, which makes no sense. Consolidated the
+	    parenting code into a separate method so it can be called from
+	    both Add and Remove. set_Parent no longer needs any special logic
+	    as it calls the parent's add method which implicitly fires
+	    all events
+	  - Removed some obsolete code and debug output
+	  - Enabled state is inherited from parents, if this is enabled
+
 2005-12-08  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* Form.cs: Removed commented out code
