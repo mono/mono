@@ -1,3 +1,11 @@
+2005-12-12  Raja R Harinath  <harinath@gmail.com>
+
+	* class.c (set_generic_param_owner): Delete.
+	(mono_class_create_from_typedef): Don't set ->owner field of
+	generic parameters to "param containers" of base classes.
+	* reflection.c (mono_reflection_initialize_generic_parameter):
+	Likewise.
+
 2005-12-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* reflection.c (custom_attr_visible): Fix build.
