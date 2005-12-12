@@ -1,5 +1,8 @@
 2005-12-12  Zoltan Varga  <vargaz@gmail.com>
 
+	* reflection.c (custom_attr_visible): Allow nested public attributes
+	as well.
+
 	* class.c (mono_class_setup_vtable_general): Add missing != -1 to an
 	interface check.
 
