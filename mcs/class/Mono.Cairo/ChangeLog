@@ -1,3 +1,10 @@
+2005-12-12  Mike Kestner  <mkestner@novell.com>
+
+	* Mono.Cairo/Context.cs: renamed from Graphics.cs. renamed Graphics to
+	Context and added an Obsolete subclass to minimize the pain.
+	* Mono.Cairo/Surface.cs : s/Graphics/Context.  
+	Thanks to jluke for pointing out this change was needed.
+
 2005-12-06  John Luke  <john.luke@gmail.com>
 
 	* Mono.Cairo/Cairo.cs: fix Content and  Format values,

@@ -1,5 +1,5 @@
 //
-// Mono.Cairo.Graphics.cs
+// Mono.Cairo.Context.cs
 //
 // Author:
 //   Duncan Mak (duncan@ximian.com)
@@ -138,21 +138,27 @@ namespace Cairo {
 		
 	}
    
-        public class Graphics : IDisposable 
+	[Obsolete ("Renamed Cairo.Context per suggestion from cairo binding guidelines.")]
+	public class Graphics : Context {
+		public Graphics (IntPtr state) : base (state) {}
+		public Graphics (Surface surface) : base (surface) {}
+	}
+
+        public class Context : IDisposable 
         {
                 internal IntPtr state = IntPtr.Zero;
 		
-                public Graphics (Surface surface)
+                public Context (Surface surface)
                 {
 			state = CairoAPI.cairo_create (surface.Pointer);
                 }
 		
-		public Graphics (IntPtr state)
+		public Context (IntPtr state)
 		{
 			this.state = state;
 		}
 		
-		~Graphics ()
+		~Context ()
 		{
 			Dispose (false);
 		}
@@ -166,7 +172,7 @@ namespace Cairo {
                 protected virtual void Dispose (bool disposing)
                 {
 			if (!disposing){
-				//Console.WriteLine ("Cairo.Graphics: called from thread");
+				//Console.WriteLine ("Cairo.Context: called from thread");
 				return;
 			}
 			

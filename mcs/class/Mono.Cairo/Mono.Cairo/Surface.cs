@@ -214,7 +214,7 @@ namespace Cairo {
 			Dispose (false);
 		}
 
-		public void Show (Graphics gr, int width, int height) 
+		public void Show (Context gr, int width, int height) 
 		{
 			CairoAPI.cairo_set_source_surface (gr.Handle, surface, width, height);
 			CairoAPI.cairo_paint (gr.Handle);
