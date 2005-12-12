@@ -1,5 +1,7 @@
 2005-12-12  Zoltan Varga  <vargaz@gmail.com>
 
+	* generics.2.cs: Disable the newly added tests as they do not work yet.
+	
 	* generics.2.cs: Add valuetype tests.
 
 2005-12-09  Zoltan Varga  <vargaz@gmail.com>
