@@ -1,3 +1,7 @@
+2005-12-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile : seems like net_2_0_ONLY_SUBDIRS must precede.
+
 2005-12-12  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (default_SUBDIRS): New.  Rename from SUBDIRS, and move

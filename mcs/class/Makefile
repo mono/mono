@@ -81,12 +81,13 @@ default_SUBDIRS := \
 	Microsoft.JScript		\
 	FirebirdSql.Data.Firebird
 
-net_2_0_SUBDIRS := $(default_SUBDIRS) $(net_2_0_ONLY_SUBDIRS)
 net_2_0_ONLY_SUBDIRS := \
 	Microsoft.Build.Framework	\
 	Microsoft.Build.Utilities	\
 	Microsoft.Build.Engine		\
 	Microsoft.Build.Tasks
+
+net_2_0_SUBDIRS := $(default_SUBDIRS) $(net_2_0_ONLY_SUBDIRS)
 
 include ../build/rules.make
 
