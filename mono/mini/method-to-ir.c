@@ -2594,6 +2594,8 @@ callvirt_to_call_membase (int opcode)
 		return OP_VOIDCALL_MEMBASE;
 	case OP_FCALLVIRT:
 		return OP_FCALL_MEMBASE;
+	case OP_LCALLVIRT:
+		return OP_LCALL_MEMBASE;
 	case OP_VCALLVIRT:
 		return OP_VCALL_MEMBASE;
 	default:
@@ -2668,6 +2670,15 @@ mono_emit_method_call_full (MonoCompile *cfg, MonoMethod *method, MonoMethodSign
 	gboolean virtual = this != NULL;
 	gboolean enable_for_aot = TRUE;
 	MonoCallInst *call;
+
+	if (method->string_ctor) {
+		/* Create the real signature */
+		/* FIXME: Cache these */
+		MonoMethodSignature *ctor_sig = mono_metadata_signature_dup (sig);
+		ctor_sig->ret = &mono_defaults.string_class->byval_arg;
+
+		sig = ctor_sig;
+	}
 
 	call = mono_emit_call_args (cfg, sig, args, FALSE, virtual, ip, to_end);
 
@@ -4610,6 +4621,12 @@ decompose_long_opts (MonoCompile *cfg)
 
 			case OP_LCONV_TO_OVF_U4:
 			case OP_LCONV_TO_OVF_U4_UN:
+				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, tree->sreg1 + 1, 0);
+				MONO_EMIT_NEW_COND_EXC (cfg, NE_UN, "OverflowException");
+				MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, tree->dreg, tree->sreg1);
+				break;
+			case OP_LCONV_TO_OVF_I_UN:
+				/* FIXME: Need check for > 0x7fffff too */
 				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, tree->sreg1 + 1, 0);
 				MONO_EMIT_NEW_COND_EXC (cfg, NE_UN, "OverflowException");
 				MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, tree->dreg, tree->sreg1);
@@ -6797,11 +6814,10 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				EMIT_NEW_METHODCONST (cfg, *sp, cmethod);
 				alloc = handle_array_new (cfg, fsig->param_count, sp, ip);
 			} else if (cmethod->string_ctor) {
-				NOT_IMPLEMENTED;
 				/* we simply pass a null pointer */
 				EMIT_NEW_PCONST (cfg, *sp, NULL); 
 				/* now call the string ctor */
-				mono_emit_method_call_spilled (cfg, cmethod, fsig, sp, ip, NULL);
+				alloc = mono_emit_method_call_spilled (cfg, cmethod, fsig, sp, ip, NULL);
 			} else {
 				MonoInst* callvirt_this_arg = NULL;
 				
@@ -6945,7 +6961,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				MonoInst *iargs [1];
 				MonoBasicBlock *ebblock;
 				int costs;
-				int temp;
 
 				mono_isinst = mono_marshal_get_isinst (klass); 
 				iargs [0] = sp [0];
@@ -6962,14 +6977,12 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				ebblock->next_bb = bblock;
 				link_bblock (cfg, ebblock, bblock);
 
-				temp = iargs [0]->inst_i0->inst_c0;
-				NEW_TEMPLOAD (cfg, *sp, temp);
-				MONO_ADD_INS (cfg->cbb, *sp);
-				
- 				sp++;
-				bblock = ebblock;
-				inline_costs += costs;
+				*sp++= iargs [0];
 
+				bblock = ebblock;
+				cfg->cbb = bblock;
+
+				inline_costs += costs;
 			}
 			else {
 				ins = handle_isinst (cfg, klass, *sp, ip);
@@ -7148,6 +7161,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 
 			NEW_BIALU_IMM (cfg, add, OP_ADD_IMM, alloc_dreg (cfg, STACK_PTR), obj_reg, sizeof (MonoObject));
 			MONO_ADD_INS (bblock, add);
+			add->type = STACK_PTR;
 			*sp++ = add;
 			ip += 5;
 			inline_costs += 2;
@@ -8567,6 +8581,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				 */
 				ip += 3;
 				break;
+#endif
 			case CEE_RETHROW: {
 				MonoInst *load;
 				int handler_offset = -1;
@@ -8583,8 +8598,9 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 
 				NEW_TEMPLOAD (cfg, load, mono_find_exvar_for_offset (cfg, handler_offset)->inst_c0);
 				load->cil_code = ip;
+				MONO_ADD_INS (cfg->cbb, load);
 				MONO_INST_NEW (cfg, ins, OP_RETHROW);
-				ins->inst_left = load;
+				ins->sreg1 = load->dreg;
 				ins->cil_code = ip;
 				MONO_ADD_INS (bblock, ins);
 				sp = stack_start;
@@ -8594,6 +8610,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				mono_get_got_var (cfg);
 				break;
 			}
+#if 0
 			case CEE_SIZEOF:
 				CHECK_STACK_OVF (1);
 				CHECK_OPSIZE (6);

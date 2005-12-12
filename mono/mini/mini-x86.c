@@ -4159,7 +4159,7 @@ MonoInst*
 mono_arch_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args)
 {
 	MonoInst *ins = NULL;
-	int opcode;
+	int opcode = 0;
 
 	if (cmethod->klass == mono_defaults.math_class) {
 		if (strcmp (cmethod->name, "Sin") == 0) {
