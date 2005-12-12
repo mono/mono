@@ -1,3 +1,8 @@
+2005-12-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_class_setup_vtable_general): Add missing != -1 to an
+	interface check.
+
 2005-12-12  Raja R Harinath  <harinath@gmail.com>
 
 	* class.c (set_generic_param_owner): Delete.
