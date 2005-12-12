@@ -7,7 +7,7 @@ SUBDIRS = \
 
 net_1_1_bootstrap_SUBDIRS = gacutil security
 
-net_2_0_SUBDIRS = corcompare wsdl compiler-tester monop
+net_2_0_SUBDIRS = corcompare wsdl compiler-tester monop xbuild
 
 include ../build/rules.make
 
