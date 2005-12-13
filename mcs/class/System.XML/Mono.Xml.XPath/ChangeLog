@@ -1,6 +1,15 @@
 2005-12-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XPathEditableDocument.cs :
+	  - Now it does not append "written" nodes until Close() is invoked.
+	  - Use XmlDocumentFragment to store incomplete tree fragment.
+	  - Implemented DeleteRange() and ReplaceRange().
+	  - Added "Closed" event for ReplaceRange() to "not remove until
+	    Close() is called."
+
+2005-12-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XPathEditableDocument.cs :
 	  - Removed almost all redundant code in XPathEditableDocument,
 	    which is based on .net 1.2 XPathDocument functionality.
 	  - It was always doing AppendChild even if the operation is

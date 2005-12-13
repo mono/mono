@@ -1009,6 +1009,7 @@ namespace System.Xml.XPath
 				new XmlParserContext (NameTable, nsmgr, null, XmlSpace.None));
 		}
 
+		// must override it.
 		public virtual XmlWriter AppendChild ()
 		{
 			throw new NotSupportedException ();
@@ -1052,23 +1053,24 @@ namespace System.Xml.XPath
 			}
 		}
 
+		// must override it.
 		public virtual XmlWriter CreateAttributes ()
 		{
 			throw new NotSupportedException ();
 		}
 
+		// must override it.
 		public virtual void DeleteSelf ()
 		{
 			throw new NotSupportedException ();
 		}
 
-		[MonoTODO ("no concrete implementation yet")]
+		// must override it.
 		public virtual void DeleteRange (XPathNavigator nav)
 		{
 			throw new NotSupportedException ();
 		}
 
-		[MonoTODO ("no concrete implementation yet")]
 		public virtual XmlWriter ReplaceRange (XPathNavigator nav)
 		{
 			throw new NotSupportedException ();
@@ -1076,13 +1078,19 @@ namespace System.Xml.XPath
 	
 		public virtual XmlWriter InsertAfter ()
 		{
+			switch (NodeType) {
+			case XPathNodeType.Root:
+			case XPathNodeType.Attribute:
+			case XPathNodeType.Namespace:
+				throw new InvalidOperationException (String.Format ("Insertion after {0} is not allowed.", NodeType));
+			}
 			XPathNavigator nav = Clone ();
 			if (nav.MoveToNext ())
 				return nav.InsertBefore ();
 			else if (nav.MoveToParent ())
 				return nav.AppendChild ();
 			else
-				throw new InvalidOperationException ("Insertion after Root node is not allowed.");
+				throw new InvalidOperationException ("Could not move to parent to insert sibling node");
 		}
 
 		public virtual void InsertAfter (string xmlFragments)
@@ -1090,7 +1098,6 @@ namespace System.Xml.XPath
 			InsertAfter (CreateFragmentReader (xmlFragments));
 		}
 
-		[MonoTODO]
 		public virtual void InsertAfter (XmlReader reader)
 		{
 			using (XmlWriter w = InsertAfter ()) {

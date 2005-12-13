@@ -214,6 +214,37 @@ namespace MonoTests.System.Xml.XPath
 		}
 
 		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void InsertAfterAttribute ()
+		{
+			XPathNavigator nav = GetInstance ("<root a='b'/>");
+			nav.MoveToFirstChild ();
+			nav.MoveToFirstAttribute ();
+			nav.InsertAfter ();
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void InsertAfterNamespace ()
+		{
+			XPathNavigator nav = GetInstance ("<root xmlns='urn:foo'/>");
+			nav.MoveToFirstChild ();
+			nav.MoveToFirstNamespace ();
+			nav.InsertAfter ();
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		// xmlns:xml='...', which is likely to have XmlElement or XmlDocument as its node.
+		public void InsertAfterNamespace2 ()
+		{
+			XPathNavigator nav = GetInstance ("<root />");
+			nav.MoveToFirstChild ();
+			nav.MoveToFirstNamespace ();
+			nav.InsertAfter ();
+		}
+
+		[Test]
 		public void InsertBefore ()
 		{
 			XPathNavigator nav = GetInstance ("<root>test</root>");
@@ -263,6 +294,161 @@ namespace MonoTests.System.Xml.XPath
 		{
 			XPathNavigator nav = GetInstance ("<root/>");
 			nav.InsertBefore ();
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void InsertBeforeAttribute ()
+		{
+			XPathNavigator nav = GetInstance ("<root a='b'/>");
+			nav.MoveToFirstChild ();
+			nav.MoveToFirstAttribute ();
+			nav.InsertBefore ();
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void InsertBeforeNamespace ()
+		{
+			XPathNavigator nav = GetInstance ("<root xmlns='urn:foo'/>");
+			nav.MoveToFirstChild ();
+			nav.MoveToFirstNamespace ();
+			nav.InsertBefore ();
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		// xmlns:xml='...', which is likely to have XmlElement or XmlDocument as its node.
+		public void InsertBeforeNamespace2 ()
+		{
+			XPathNavigator nav = GetInstance ("<root />");
+			nav.MoveToFirstChild ();
+			nav.MoveToFirstNamespace ();
+			nav.InsertBefore ();
+		}
+
+		[Test]
+		public void DeleteRange ()
+		{
+			XPathNavigator nav = GetInstance ("<root><foo><bar/><baz/></foo><next>child<tmp/></next>final</root>");
+			nav.MoveToFirstChild ();
+			nav.MoveToFirstChild (); // <foo>
+			XPathNavigator end = nav.Clone ();
+			end.MoveToNext (); // <next>
+			end.MoveToNext (); // final
+			nav.DeleteRange (end);
+
+			AssertNavigator ("#1", nav,
+				XPathNodeType.Element,
+				String.Empty,	// Prefix
+				"root",		// LocalName
+				String.Empty,	// NamespaceURI
+				"root",		// Name
+				String.Empty,	// Value
+				false,		// HasAttributes
+				false,		// HasChildren
+				false);		// IsEmptyElement
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void DeleteRangeNullArg ()
+		{
+			XPathNavigator nav = GetInstance ("<root><foo><bar/><baz/></foo><next>child<tmp/></next>final</root>");
+			nav.MoveToFirstChild ();
+			nav.MoveToFirstChild (); // <foo>
+			nav.DeleteRange (null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void DeleteRangeInvalidArg ()
+		{
+			XPathNavigator nav = GetInstance ("<root><foo><bar/><baz/></foo><next>child<tmp/></next>final</root>");
+			nav.MoveToFirstChild ();
+			nav.MoveToFirstChild (); // <foo>
+
+			XPathNavigator end = nav.Clone ();
+			end.MoveToNext (); // <next>
+			end.MoveToFirstChild (); // child
+			nav.DeleteRange (end);
+		}
+
+		[Test]
+		public void ReplaceRange ()
+		{
+			XPathNavigator nav = GetInstance ("<root><foo><bar/><baz/></foo><next>child<tmp/></next>final</root>");
+			nav.MoveToFirstChild ();
+			nav.MoveToFirstChild (); // <foo>
+
+			XPathNavigator end = nav.Clone ();
+			end.MoveToNext (); // <next>
+			XmlWriter w = nav.ReplaceRange (end);
+
+			AssertNavigator ("#1", nav,
+				XPathNodeType.Element,
+				String.Empty,	// Prefix
+				"foo",		// LocalName
+				String.Empty,	// NamespaceURI
+				"foo",		// Name
+				String.Empty,	// Value
+				false,		// HasAttributes
+				true,		// HasChildren
+				false);		// IsEmptyElement
+
+			Assert.IsTrue (nav.MoveToParent (), "#1-2");
+
+			w.WriteStartElement ("whoa");
+			w.WriteEndElement ();
+			w.Close ();
+
+			AssertNavigator ("#2", nav,
+				XPathNodeType.Element,
+				String.Empty,	// Prefix
+				"whoa",		// LocalName
+				String.Empty,	// NamespaceURI
+				"whoa",		// Name
+				String.Empty,	// Value
+				false,		// HasAttributes
+				false,		// HasChildren
+				true);		// IsEmptyElement
+
+			Assert.IsTrue (nav.MoveToNext (), "#2-1");
+
+			AssertNavigator ("#3", nav,
+				XPathNodeType.Text,
+				String.Empty,	// Prefix
+				String.Empty,	// LocalName
+				String.Empty,	// NamespaceURI
+				String.Empty,	// Name
+				"final",	// Value
+				false,		// HasAttributes
+				false,		// HasChildren
+				false);		// IsEmptyElement
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void ReplaceRangeNullArg ()
+		{
+			XPathNavigator nav = GetInstance ("<root><foo><bar/><baz/></foo><next>child<tmp/></next>final</root>");
+			nav.MoveToFirstChild ();
+			nav.MoveToFirstChild (); // <foo>
+			nav.ReplaceRange (null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void ReplaceRangeInvalidArg ()
+		{
+			XPathNavigator nav = GetInstance ("<root><foo><bar/><baz/></foo><next>child<tmp/></next>final</root>");
+			nav.MoveToFirstChild ();
+			nav.MoveToFirstChild (); // <foo>
+
+			XPathNavigator end = nav.Clone ();
+			end.MoveToNext (); // <next>
+			end.MoveToFirstChild (); // child
+			nav.ReplaceRange (end);
 		}
 	}
 }

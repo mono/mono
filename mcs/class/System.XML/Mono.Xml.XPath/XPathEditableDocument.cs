@@ -66,23 +66,30 @@ namespace Mono.Xml.XPath
 		}
 	}
 
+	internal delegate void XmlWriterClosedEventHandler (
+		XmlWriter writer);
+
 	internal class XmlDocumentInsertionWriter : XmlWriter
 	{
+		XmlNode parent;
 		XmlNode current;
 		XmlNode nextSibling;
 		Stack nodeStack = new Stack ();
 
 		public XmlDocumentInsertionWriter (XmlNode owner, XmlNode nextSibling)
 		{
-			this.current = (XmlNode) owner;
-			if (current == null)
+			this.parent = (XmlNode) owner;
+			if (parent == null)
 				throw new InvalidOperationException ();
-			switch (current.NodeType) {
+			switch (parent.NodeType) {
 			case XmlNodeType.Document:
+				current = ((XmlDocument) parent).CreateDocumentFragment ();
+				break;
 			case XmlNodeType.Element:
+				current = parent.OwnerDocument.CreateDocumentFragment ();
 				break;
 			default:
-				throw new InvalidOperationException (String.Format ("Insertion into {0} node is not allowed.", current.NodeType));
+				throw new InvalidOperationException (String.Format ("Insertion into {0} node is not allowed.", parent.NodeType));
 			}
 			this.nextSibling = nextSibling;
 			state = WriteState.Content;
@@ -97,7 +104,19 @@ namespace Mono.Xml.XPath
 
 		public override void Close ()
 		{
+			while (nodeStack.Count > 0) {
+				XmlNode n = nodeStack.Pop () as XmlNode;
+				n.AppendChild (current);
+				current = n;
+			}
+			parent.InsertBefore ((XmlDocumentFragment) current, nextSibling);
+			if (Closed != null)
+				Closed (this);
 		}
+
+		internal event XmlWriterClosedEventHandler Closed;
+
+		internal XmlNode AppendedFirstChild;
 
 		public override void Flush ()
 		{
@@ -119,30 +138,25 @@ namespace Mono.Xml.XPath
 		public override void WriteProcessingInstruction (string name, string value)
 		{
 			XmlProcessingInstruction pi = current.OwnerDocument.CreateProcessingInstruction (name, value);
-			current.InsertBefore (pi, nextSibling);
+			current.AppendChild (pi);
 		}
 
 		public override void WriteComment (string text)
 		{
 			XmlComment comment = current.OwnerDocument.CreateComment (text);
-			current.InsertBefore (comment, nextSibling);
+			current.AppendChild (comment);
 		}
 
 		public override void WriteCData (string text)
 		{
 			XmlCDataSection cdata = current.OwnerDocument.CreateCDataSection (text);
-			current.InsertBefore (cdata, nextSibling);
+			current.AppendChild (cdata);
 		}
 
 		public override void WriteStartElement (string prefix, string name, string ns)
 		{
-			XmlDocument doc = current.OwnerDocument;
-			if (doc == null)
-				doc = current as XmlDocument;
-			if (doc == null)
-				throw new SystemException ("Should not happen.");
-			XmlElement el = doc.CreateElement (prefix, name, ns);
-			current.InsertBefore (el, nextSibling);
+			XmlElement el = current.OwnerDocument.CreateElement (prefix, name, ns);
+			current.AppendChild (el);
 			nodeStack.Push (current);
 			current = el;
 		}
@@ -553,6 +567,75 @@ namespace Mono.Xml.XPath
 			if (n == null)
 				throw new InvalidOperationException ("Should not happen.");
 			return new XmlDocumentInsertionWriter (n, null);
+		}
+
+		public override void DeleteRange (XPathNavigator lastSiblingToDelete)
+		{
+			if (lastSiblingToDelete == null)
+				throw new ArgumentNullException ();
+
+			XmlNode start = ((IHasXmlNode) navigator).GetNode ();
+			XmlNode end = null;
+			if (lastSiblingToDelete is IHasXmlNode)
+				end = ((IHasXmlNode) lastSiblingToDelete).GetNode ();
+			// After removal, it moves to parent node.
+			if (!navigator.MoveToParent ())
+				throw new InvalidOperationException ("There is no parent to remove current node.");
+
+			if (end == null || start.ParentNode != end.ParentNode)
+				throw new InvalidOperationException ("Argument XPathNavigator has different parent node.");
+
+			XmlNode parent = start.ParentNode;
+			XmlNode next;
+			bool loop = true;
+			for (XmlNode n = start; loop; n = next) {
+				loop = n != end;
+				next = n.NextSibling;
+				parent.RemoveChild (n);
+			}
+		}
+
+		public override XmlWriter ReplaceRange (XPathNavigator nav)
+		{
+			if (nav == null)
+				throw new ArgumentNullException ();
+
+			XmlNode start = ((IHasXmlNode) navigator).GetNode ();
+			XmlNode end = null;
+			if (nav is IHasXmlNode)
+				end = ((IHasXmlNode) nav).GetNode ();
+			if (end == null || start.ParentNode != end.ParentNode)
+				throw new InvalidOperationException ("Argument XPathNavigator has different parent node.");
+
+			XmlDocumentInsertionWriter w =
+				(XmlDocumentInsertionWriter) InsertBefore ();
+
+			// local variables to anonymous delegate
+			XPathNavigator prev = Clone ();
+			if (!prev.MoveToPrevious ())
+				prev = null;
+			XPathNavigator parentNav = Clone ();
+			parentNav.MoveToParent ();
+
+			w.Closed += delegate (XmlWriter w) {
+				XmlNode parent = start.ParentNode;
+				XmlNode next;
+				bool loop = true;
+				for (XmlNode n = start; loop; n = next) {
+					loop = n != end;
+					next = n.NextSibling;
+					parent.RemoveChild (n);
+				}
+				if (prev != null) {
+					MoveTo (prev);
+					MoveToNext ();
+				} else {
+					MoveTo (parentNav);
+					MoveToFirstChild ();
+				}
+			};
+
+			return w;
 		}
 
 		public override XmlWriter InsertBefore ()
