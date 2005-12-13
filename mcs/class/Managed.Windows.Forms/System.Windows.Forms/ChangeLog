@@ -1,5 +1,10 @@
 2005-12-13  Jackson Harper  <jackson@ximian.com>
 
+	* Form.cs: Update styles after setting the border style regardless
+	of whether or not the window is using a window manager.
+
+2005-12-13  Jackson Harper  <jackson@ximian.com>
+
 	* Form.cs: We now hook into an internal window manager instead of just an
 	MDI subsystem, this is so we can have properly behaving tool windows.
 	* MdiClient.cs: Naming change, MdiChildContext is now WindowManager

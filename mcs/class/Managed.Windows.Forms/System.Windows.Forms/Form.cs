@@ -329,7 +329,6 @@ namespace System.Windows.Forms {
 					if (IsHandleCreated) {
 						XplatUI.SetBorderStyle(window.Handle, form_border_style);
 					}
-					UpdateStyles();
 
 					if (value == FormBorderStyle.FixedToolWindow ||
 							value == FormBorderStyle.SizableToolWindow)
@@ -337,6 +336,8 @@ namespace System.Windows.Forms {
 				} else {
 					window_manager.UpdateBorderStyle (value);
 				}
+
+				UpdateStyles();
 			}
 		}
 
