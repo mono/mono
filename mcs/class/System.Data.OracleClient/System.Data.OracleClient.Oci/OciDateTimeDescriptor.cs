@@ -71,6 +71,9 @@ namespace System.Data.OracleClient.Oci {
 			byte[] bytes = new byte[rsize];
 			OciCalls.OCIUnicodeToCharSet (handle, bytes, timezone, out rsize);
 
+			if (fsec > 0)
+				fsec = fsec * 1000000;
+
 			uint timezoneSize = (uint) bytes.Length;
 			OciCalls.OCIDateTimeConstruct (handle,
 				errorHandle, this.Handle,

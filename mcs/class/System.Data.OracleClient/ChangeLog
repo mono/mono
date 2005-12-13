@@ -1,3 +1,31 @@
+2005-12-13  Daniel Morgan <danielmorgan@verizon.net>
+
+	* System.Data.OracleClient/OracleParameter.cs: free
+	unmanaged resources after update of values
+
+2005-12-13  Daniel Morgan <danielmorgan@verizon.net>
+
+	* System.Data.OracleClient.Oci/OciErrorHandle.cs patch
+	from  "Hubert FONGARNAND" <informatique.internet@fiducial.fr>
+	- fix error handling for non-English locales.  Bug# 76623.
+
+2005-12-13  Daniel Morgan <danielmorgan@verizon.net>
+
+	* System.Data.OracleClient/OracleParameter.cs: patch
+	from  "Hubert FONGARNAND" <informatique.internet@fiducial.fr>
+	- fix Timestamp when filling a DataSet.  Bug# 76437.
+
+2005-12-13  Daniel Morgan <danielmorgan@verizon.net>
+
+	* System.Data.OracleClient/OracleParameter.cs: patch
+	from "Hubert FONGARNAND" <informatique.internet@fiducial.fr>
+	- problems with OracleClob as input parameters 
+	  (when the input parameter is an OracleString, 
+	  mono crashes with a invalidcastexception)
+    - problems with OracleDateTime.Null, OracleString.Null 
+      as input parameters (it works with DBNull.Value, 
+      but it fails with those parameters)
+
 2005-12-11  Daniel Morgan <danielmorgan@verizon.net>
 
 	* System.Data.OracleClient/OracleCommand.cs: when

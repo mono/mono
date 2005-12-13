@@ -32,13 +32,25 @@ namespace System.Data.OracleClient.Oci {
 
 		#region Methods
 
-		protected override void FreeHandle ()
+		protected override void FreeHandle () 
 		{
-			if (HandleType != OciHandleType.Parameter) {	// Parameter handles are disposed implicitely
-				OciCalls.OCIDescriptorFree (this, HandleType);
+			// Parameter handles are disposed implicitely
+			if (HandleType >= OciHandleType.LobLocator) {
+				switch(HandleType) {
+				case OciHandleType.Parameter:
+				case OciHandleType.TimeStamp:
+					break;
+				default:
+					if (Handle != IntPtr.Zero) {
+						OciCalls.OCIDescriptorFree (this, HandleType);
+						SetHandle (IntPtr.Zero);
+					}
+					break;
+				}
 			}
 		}
 
 		#endregion // Methods
 	}
 }
+

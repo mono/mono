@@ -121,27 +121,30 @@ namespace System.Data.OracleClient.Oci {
 			GC.SuppressFinalize (this);
 		}
 
-		protected virtual void FreeHandle () {
-			switch (type) {
-			case OciHandleType.Bind:
-			case OciHandleType.Define:
-				// Bind and Define handles are freed when Statement handle is disposed
-				break;
-			case OciHandleType.Environment:
-				if (handle != IntPtr.Zero) {
-					OciCalls.OCIHandleFree (handle, type);
-				}
-				break;
-			default:
-				if ( handle != IntPtr.Zero &&
-					parent != null && 
-					parent.Handle != IntPtr.Zero )	{
+		protected virtual void FreeHandle () 
+		{
+			if (type < OciHandleType.LobLocator) {
+				switch (type) {
+				case OciHandleType.Bind:
+				case OciHandleType.Define:
+					// Bind and Define handles are freed when Statement handle is disposed
+					break;
+				case OciHandleType.Environment:
+					if (handle != IntPtr.Zero) {
+						OciCalls.OCIHandleFree (handle, type);
+					}
+					break;
+				default:
+					if ( handle != IntPtr.Zero &&
+						parent != null && 
+						parent.Handle != IntPtr.Zero )	{
 
-					OciCalls.OCIHandleFree (handle, type);
+						OciCalls.OCIHandleFree (handle, type);
+					}
+					break;
 				}
-				break;
+				handle = IntPtr.Zero;
 			}
-			handle = IntPtr.Zero;
 		}
 
 		public bool GetAttributeBool (OciAttributeType attrType, OciErrorHandle errorHandle) {
@@ -288,13 +291,6 @@ namespace System.Data.OracleClient.Oci {
 
 		public void SetHandle (IntPtr h)
 		{
-			if (handle != IntPtr.Zero) {
-				// free handle if it already exists
-				if (type < OciHandleType.LobLocator)
-					FreeHandle ();
-				else
-					OciCalls.OCIDescriptorFree (this, HandleType);
-			}
 			handle = h;
 		}
 

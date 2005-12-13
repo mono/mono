@@ -23,6 +23,7 @@ using System;
 using System.Collections;
 using System.ComponentModel;
 using System.Data;
+using System.Data.SqlTypes;
 using System.Data.OracleClient.Oci;
 using System.Globalization;
 using System.Runtime.InteropServices;
@@ -268,6 +269,20 @@ namespace System.Data.OracleClient {
 			bindType = ociType;
 			int rsize = 0;
 
+			bool isnull = false;
+			if (direction == ParameterDirection.Input || direction == ParameterDirection.InputOutput) {
+				try {
+					Type nullable = v.GetType ().GetInterface ("System.Data.SqlTypes.INullable", false);
+					if (nullable != null) {
+						INullable mynullable = (INullable)v;
+						isnull = mynullable.IsNull;
+					}
+				}
+				catch(Exception e) {
+					System.IO.TextWriter.Null.WriteLine(e.Message);
+				}
+			}
+
 			// TODO: handle InputOutput and Return parameters
 			if (direction == ParameterDirection.Output) {
 				// TODO: need to figure out how OracleParameter
@@ -358,7 +373,7 @@ namespace System.Data.OracleClient {
 				}
 				bindValue = bindOutValue;
 			}
-			else if (v == DBNull.Value || v == null) {
+			else if ((v == DBNull.Value || v == null || isnull == true) && direction == ParameterDirection.Input) {
 				indicator = 0;
 				bindType = OciDataType.VarChar2;
 				bindSize = 0;
@@ -383,6 +398,10 @@ namespace System.Data.OracleClient {
 						sDate = (string) v;
 						dt = DateTime.Parse (sDate);
 					}
+					else if (v is OracleDateTime) {
+						OracleDateTime odt = (OracleDateTime) v;
+						dt = (DateTime) odt.Value;
+					}
 					else
 						throw new NotImplementedException (); // ?
 					
@@ -404,6 +423,7 @@ namespace System.Data.OracleClient {
 						connection.ErrorHandle, 
 						year, month, day, hour, min, sec, fsec,
 						timezone);
+					useRef = true;
 				}
 				else if (oracleType == OracleType.DateTime) {
 					sDate = "";
@@ -435,7 +455,7 @@ namespace System.Data.OracleClient {
 					bindSize = bytes.Length;
 				}
 				else if (oracleType == OracleType.Clob) {
-					string sv = (string) v;
+					string sv = v.ToString();
 					rsize = 0;
 			
 					// Get size of buffer
@@ -450,7 +470,7 @@ namespace System.Data.OracleClient {
 				}
 				else if (oracleType == OracleType.Raw) {
 					byte[] val = v as byte[];
-						bindValue = Marshal.AllocHGlobal (val.Length);
+					bindValue = Marshal.AllocHGlobal (val.Length);
 					Marshal.Copy (val, 0, bindValue, val.Length);
 					bindSize = val.Length;
 				}
@@ -850,7 +870,7 @@ namespace System.Data.OracleClient {
 			return ParameterName;
 		}
 
-		internal void Update (OracleCommand cmd) 
+		private void GetOutValue (OracleCommand cmd) 
 		{
 			// used to update the parameter value
 			// for Output, the output of InputOutput, and Return parameters
@@ -914,6 +934,36 @@ namespace System.Data.OracleClient {
 			default:
 				throw new NotImplementedException ();
 			}
+			tmp = null;
+			buffer = null;
+		}
+
+		internal void Update (OracleCommand cmd) 
+		{
+			if (Direction != ParameterDirection.Input)
+				GetOutValue (cmd);
+			
+			FreeHandle ();
+		}
+
+		private void FreeHandle () 
+		{
+			switch (ociType) {
+			case OciDataType.Clob:
+			case OciDataType.Blob:
+				lobLocator = null;
+				break;
+			case OciDataType.Raw:
+				Marshal.FreeHGlobal (bindValue);
+				break;				
+			} 
+
+			bindOutValue = IntPtr.Zero;
+			bindValue = IntPtr.Zero;
+
+			bindHandle = null;
+			errorHandle = null;
+			connection = null;
 		}
 
 		// copied from OciDefineHandle
