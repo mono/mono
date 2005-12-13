@@ -1,3 +1,7 @@
+2005-12-13  Marek Safar  <marek.safar@seznam.cz>
+
+	* class.cs (Method.ApplyAttributeBuilder): Test out modifier properly.
+
 2005-12-11  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* doc.cs : The search for referenced namespace was insufficient to
