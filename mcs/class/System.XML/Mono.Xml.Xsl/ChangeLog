@@ -1,3 +1,7 @@
+2005-12-13  Andrew Skiba  <andrews@mainsoft.com>
+
+	* XslDecimalFormat.jvm.cs: set correct defaults for NaN and Infinity
+
 2005-11-30  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ScriptCompilerInfo.cs : (VBCompilerInfo) There was a space between

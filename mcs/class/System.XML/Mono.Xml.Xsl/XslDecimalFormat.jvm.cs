@@ -48,6 +48,8 @@ namespace Mono.Xml.Xsl {
 		XslDecimalFormat ()
 		{
 			javaFormat = new java.text.DecimalFormatSymbols ();
+			javaFormat.setNaN ("NaN");
+			javaFormat.setInfinity ("Infinity");
 		}
 
 		public XslDecimalFormat (Compiler c)
@@ -139,6 +141,10 @@ namespace Mono.Xml.Xsl {
 			java.text.DecimalFormat frm = new java.text.DecimalFormat("", javaFormat);
 
 			frm.applyLocalizedPattern (pattern);
+
+			//TODO: the next 4 string could be replaced by just 
+			//return frm.format (number);
+			//I don't want to do that before release
 			java.lang.StringBuffer buffer= new java.lang.StringBuffer ();
 			java.text.FieldPosition fld = new java.text.FieldPosition (0);
 
