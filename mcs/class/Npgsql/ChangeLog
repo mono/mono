@@ -1,4 +1,6 @@
+2005-12-13  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
 
+	* NpgsqlClosedState.cs:  Added a performance improvement fix. Npgsql now use a buffered stream for all server interactions.
 
 2005-12-12  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
 

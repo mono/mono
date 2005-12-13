@@ -110,7 +110,8 @@ namespace Npgsql
                     
                 }
     
-                context.Stream = stream;
+                context.Stream = new BufferedStream(stream);
+                
     
                 NpgsqlEventLog.LogMsg(resman, "Log_ConnectedTo", LogLevel.Normal, context.Host, context.Port);
                 ChangeState(context, NpgsqlConnectedState.Instance);
