@@ -73,6 +73,7 @@ System.Xml.Schema/XmlSchemaBuiltInDatatypeTests.cs
 System.Xml.Serialization/XmlSerializerTests.cs
 System.Xml.Serialization/XmlSerializerTestClasses.cs
 System.Xml.XPath/SelectNodesTests.cs
+System.Xml.XPath/XPathEditableNavigatorTests.cs
 System.Xml.XPath/XPathNavigatorEvaluateTests.cs
 System.Xml.XPath/XPathNavigatorMatchesTests.cs
 System.Xml.XPath/XPathNavigatorTests.cs

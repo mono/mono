@@ -1,3 +1,7 @@
+2005-12-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.Xml_test.dll.sources: Added XPathEditableNavigatorTests.cs.
+
 2005-12-08  Andrew Skiba  <andrews@mainsoft.com>
 
 	* System.XML.vmwcsproj: update the project with recent changes

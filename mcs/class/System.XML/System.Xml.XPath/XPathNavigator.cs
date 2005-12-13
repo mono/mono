@@ -998,7 +998,15 @@ namespace System.Xml.XPath
 
 		private XmlReader CreateFragmentReader (string fragment)
 		{
-			return new XmlTextReader (fragment, XmlNodeType.Element, new XmlParserContext (NameTable, null, null, XmlSpace.None));
+			XmlReaderSettings settings = new XmlReaderSettings ();
+			settings.ConformanceLevel = ConformanceLevel.Fragment;
+			XmlNamespaceManager nsmgr = new XmlNamespaceManager (NameTable);
+			foreach (KeyValuePair<string,string> nss in GetNamespacesInScope (XmlNamespaceScope.All))
+				nsmgr.AddNamespace (nss.Key, nss.Value);
+			return XmlReader.Create (
+				new StringReader (fragment),
+				settings,
+				new XmlParserContext (NameTable, nsmgr, null, XmlSpace.None));
 		}
 
 		public virtual XmlWriter AppendChild ()
@@ -1006,15 +1014,12 @@ namespace System.Xml.XPath
 			throw new NotSupportedException ();
 		}
 
-		[MonoTODO]
 		public virtual void AppendChild (
 			string xmlFragments)
 		{
-			// FIXME: should XmlParserContext be something?
 			AppendChild (CreateFragmentReader (xmlFragments));
 		}
 
-		[MonoTODO]
 		public virtual void AppendChild (
 			XmlReader reader)
 		{
