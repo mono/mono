@@ -1,5 +1,10 @@
 2005-12-13  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XPathEditableNavigatorTests.cs : added tests for InsertAfter and
+	  InsertBefore.
+
+2005-12-13  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XPathEditableNavigatorTests.cs : new file for testing all editor
 	  functionality in XPathNavigator.
 

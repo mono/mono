@@ -1079,8 +1079,10 @@ namespace System.Xml.XPath
 			XPathNavigator nav = Clone ();
 			if (nav.MoveToNext ())
 				return nav.InsertBefore ();
+			else if (nav.MoveToParent ())
+				return nav.AppendChild ();
 			else
-				return AppendChild ();
+				throw new InvalidOperationException ("Insertion after Root node is not allowed.");
 		}
 
 		public virtual void InsertAfter (string xmlFragments)
@@ -1112,7 +1114,6 @@ namespace System.Xml.XPath
 			InsertBefore (CreateFragmentReader (xmlFragments));
 		}
 
-		[MonoTODO]
 		public virtual void InsertBefore (XmlReader reader)
 		{
 			using (XmlWriter w = InsertBefore ()) {

@@ -150,6 +150,120 @@ namespace MonoTests.System.Xml.XPath
 			nav.MoveToFirstChild ();
 			nav.AppendChild ("<?xml version='1.0'?><root/>");
 		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void AppendChildToTextNode ()
+		{
+			XPathNavigator nav = GetInstance ("<root>text</root>");
+			nav.MoveToFirstChild ();
+			nav.MoveToFirstChild ();
+			XmlWriter w = nav.AppendChild ();
+		}
+
+		[Test]
+		public void InsertAfter ()
+		{
+			XPathNavigator nav = GetInstance ("<root>test</root>");
+			nav.MoveToFirstChild ();
+			nav.MoveToFirstChild ();
+			nav.InsertAfter ("<blah/><doh>sample</doh>");
+
+			AssertNavigator ("#1", nav,
+				XPathNodeType.Text,
+				String.Empty,	// Prefix
+				String.Empty,	// LocalName
+				String.Empty,	// NamespaceURI
+				String.Empty,	// Name
+				"test",		// Value
+				false,		// HasAttributes
+				false,		// HasChildren
+				false);		// IsEmptyElement
+
+			Assert.IsTrue (nav.MoveToNext (), "#2");
+			AssertNavigator ("#2-2", nav,
+				XPathNodeType.Element,
+				String.Empty,	// Prefix
+				"blah",		// LocalName
+				String.Empty,	// NamespaceURI
+				"blah",		// Name
+				String.Empty,	// Value
+				false,		// HasAttributes
+				false,		// HasChildren
+				true);		// IsEmptyElement
+
+			Assert.IsTrue (nav.MoveToNext (), "#3");
+			AssertNavigator ("#3-2", nav,
+				XPathNodeType.Element,
+				String.Empty,	// Prefix
+				"doh",		// LocalName
+				String.Empty,	// NamespaceURI
+				"doh",		// Name
+				"sample",	// Value
+				false,		// HasAttributes
+				true,		// HasChildren
+				false);		// IsEmptyElement
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void InsertAfterRoot ()
+		{
+			XPathNavigator nav = GetInstance ("<root/>");
+			nav.InsertAfter ();
+		}
+
+		[Test]
+		public void InsertBefore ()
+		{
+			XPathNavigator nav = GetInstance ("<root>test</root>");
+			nav.MoveToFirstChild ();
+			nav.MoveToFirstChild ();
+			nav.InsertBefore ("<blah/><doh>sample</doh>");
+
+			AssertNavigator ("#1", nav,
+				XPathNodeType.Text,
+				String.Empty,	// Prefix
+				String.Empty,	// LocalName
+				String.Empty,	// NamespaceURI
+				String.Empty,	// Name
+				"test",		// Value
+				false,		// HasAttributes
+				false,		// HasChildren
+				false);		// IsEmptyElement
+
+			Assert.IsTrue (nav.MoveToFirst (), "#2-1");
+			AssertNavigator ("#2-2", nav,
+				XPathNodeType.Element,
+				String.Empty,	// Prefix
+				"blah",		// LocalName
+				String.Empty,	// NamespaceURI
+				"blah",		// Name
+				String.Empty,	// Value
+				false,		// HasAttributes
+				false,		// HasChildren
+				true);		// IsEmptyElement
+
+			Assert.IsTrue (nav.MoveToNext (), "#3");
+			AssertNavigator ("#3-2", nav,
+				XPathNodeType.Element,
+				String.Empty,	// Prefix
+				"doh",		// LocalName
+				String.Empty,	// NamespaceURI
+				"doh",		// Name
+				"sample",	// Value
+				false,		// HasAttributes
+				true,		// HasChildren
+				false);		// IsEmptyElement
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void InsertBeforeRoot ()
+		{
+			XPathNavigator nav = GetInstance ("<root/>");
+			nav.InsertBefore ();
+		}
 	}
 }
 

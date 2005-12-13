@@ -49,67 +49,11 @@ namespace Mono.Xml.XPath
 {
 	internal class XPathEditableDocument : IXPathNavigable
 	{
-		/*
-		public static void Main ()
-		{
-			try {
-#if true
-				XmlDocument doc = new XmlDocument ();
-				XPathEditableDocument pd = new XPathEditableDocument (doc);
-				XPathNavigator nav = pd.CreateNavigator ();
-				IChangeTracking xp = pd;
-#else
-				XPathDocument doc = new XPathDocument ();
-				XPathNavigator nav = doc.CreateNavigator ();
-				IChangeTracking xp = doc;
-#endif
-				doc.LoadXml ("<root/>");
-				nav.MoveToFirstChild (); // root
-				XmlWriter w = nav.AppendChild ();
-				Console.WriteLine (((IChangeTracking) xp).IsChanged);
-				w.WriteElementString ("foo", "foo_text");
-				w.WriteElementString ("bar", "bar_text");
-				w.WriteStartElement ("hoge");
-				w.WriteAttributeString ("fuga", "fugafuga");
-				w.WriteAttributeString ("unya", "unyaunya");
-				w.WriteFullEndElement ();
-				w.Close ();
-
-				w = nav.CreateAttributes ();
-				w.WriteStartAttribute ("namara");
-				w.WriteString ("mokera");
-				w.WriteEndAttribute ();
-				w.WriteAttributeString ("beccho", "giccho");
-				w.Close ();
-
-				nav.MoveToRoot ();
-				nav.MoveToFirstChild ();
-				nav.MoveToFirstChild ();
-				nav.DeleteSelf (); // delete foo
-				Console.WriteLine (nav.Name);
-				nav.MoveToNext ();
-				Console.WriteLine (nav.Name);
-				Console.WriteLine (nav.MoveToFirstAttribute ());
-				nav.DeleteSelf (); // delete fuga
-
-				doc.Save (Console.Out);
-			} catch (Exception ex) {
-				Console.WriteLine (ex);
-			}
-		}
-		*/
-
 		XmlNode node;
-
-		ArrayList changes = new ArrayList ();
 
 		public XPathEditableDocument (XmlNode node)
 		{
 			this.node = node;
-		}
-
-		public virtual bool CanEdit {
-			get { return true; }
 		}
 
 		public XmlNode Node {
@@ -120,136 +64,27 @@ namespace Mono.Xml.XPath
 		{
 			return new XmlDocumentEditableNavigator (this);
 		}
-
-		public XmlWriter CreateWriter ()
-		{
-			return CreateNavigator ().AppendChild ();
-		}
-
-		public bool HasChanges ()
-		{
-			return IsChanged;
-		}
-
-		#region IRevertibleChangeTracking/IChangeTracking
-		public bool IsChanged {
-			get { return changes.Count != 0; }
-		}
-
-		public void AcceptChanges ()
-		{
-			changes.Clear ();
-		}
-
-		public void RejectChanges ()
-		{
-			for (int i = changes.Count - 1; i >= 0; i--) {
-				Insertion ins = changes [i] as Insertion;
-				if (ins != null) {
-					ins.ParentNode.RemoveChild (ins.InsertedNode);
-					continue;
-				}
-				
-				Removal rem = changes [i] as Removal;
-				if (rem != null) {
-					if (rem.RemovedNode.NodeType == XmlNodeType.Attribute) {
-						XmlElement el = (XmlElement) rem.OwnerNode;
-						el.SetAttributeNode ((XmlAttribute) rem.RemovedNode);
-					}
-					else
-						rem.OwnerNode.InsertBefore (rem.RemovedNode, rem.NextSibling);
-					continue;
-				}
-				AttributeUpdate au = changes [i] as AttributeUpdate;
-				if (au != null) {
-					if (au.OldAttribute != null)
-						au.Element.SetAttributeNode (au.OldAttribute);
-					else
-						au.Element.RemoveAttributeNode (au.NewAttribute);
-					continue;
-				}
-			}
-			changes.Clear ();
-		}
-		#endregion
-
-		#region IXmlSerializable
-		public void WriteXml (XmlWriter writer)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public void ReadXml (XmlReader reader)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public XmlSchema GetSchema ()
-		{
-			throw new NotImplementedException ();
-		}
-		#endregion
-
-		internal bool DeleteNode (XmlNode node)
-		{
-			Removal rem = new Removal ();
-			if (node.NodeType == XmlNodeType.Attribute) {
-				XmlAttribute attr = node as XmlAttribute;
-				rem.OwnerNode = attr.OwnerElement;
-				rem.RemovedNode = node;
-				attr.OwnerElement.RemoveAttributeNode (attr);
-				return false;
-			} else {
-				rem.OwnerNode = node.ParentNode;
-				rem.NextSibling = node.NextSibling;
-				rem.RemovedNode = node;
-				node.ParentNode.RemoveChild (node);
-				return rem.NextSibling != null;
-			}
-		}
-
-		internal XmlWriter CreateInsertionWriter (XmlNode owner, XmlNode previousSibling)
-		{
-			return new XmlDocumentInsertionWriter (owner, previousSibling, this);
-		}
-
-		internal XmlWriter CreateAttributesWriter (XmlNode owner)
-		{
-			return new XmlDocumentAttributeWriter (owner, this);
-		}
-
-		internal void AttributeUpdate (XmlElement element, XmlAttribute oldAttr, XmlAttribute newAttr)
-		{
-			AttributeUpdate au = new AttributeUpdate ();
-			au.Element = element;
-			au.OldAttribute = oldAttr;
-			au.NewAttribute = newAttr;
-			changes.Add (au);
-		}
-		
-		internal void AppendChild (XmlNode parent, XmlNode child)
-		{
-			Insertion ins = new Insertion ();
-			ins.ParentNode = parent;
-			ins.InsertedNode = child;
-			changes.Add (ins);
-		}
 	}
 
 	internal class XmlDocumentInsertionWriter : XmlWriter
 	{
 		XmlNode current;
-		XmlNode previousSibling;
-		XPathEditableDocument document;
+		XmlNode nextSibling;
 		Stack nodeStack = new Stack ();
 
-		public XmlDocumentInsertionWriter (XmlNode owner, XmlNode previousSibling, XPathEditableDocument doc)
+		public XmlDocumentInsertionWriter (XmlNode owner, XmlNode nextSibling)
 		{
 			this.current = (XmlNode) owner;
 			if (current == null)
 				throw new InvalidOperationException ();
-			this.previousSibling = previousSibling;
-			this.document = doc;
+			switch (current.NodeType) {
+			case XmlNodeType.Document:
+			case XmlNodeType.Element:
+				break;
+			default:
+				throw new InvalidOperationException (String.Format ("Insertion into {0} node is not allowed.", current.NodeType));
+			}
+			this.nextSibling = nextSibling;
 			state = WriteState.Content;
 		}
 
@@ -284,22 +119,19 @@ namespace Mono.Xml.XPath
 		public override void WriteProcessingInstruction (string name, string value)
 		{
 			XmlProcessingInstruction pi = current.OwnerDocument.CreateProcessingInstruction (name, value);
-			current.AppendChild (pi);
-			document.AppendChild (current, pi);
+			current.InsertBefore (pi, nextSibling);
 		}
 
 		public override void WriteComment (string text)
 		{
 			XmlComment comment = current.OwnerDocument.CreateComment (text);
-			current.AppendChild (comment);
-			document.AppendChild (current, comment);
+			current.InsertBefore (comment, nextSibling);
 		}
 
 		public override void WriteCData (string text)
 		{
 			XmlCDataSection cdata = current.OwnerDocument.CreateCDataSection (text);
-			current.AppendChild (cdata);
-			document.AppendChild (current, cdata);
+			current.InsertBefore (cdata, nextSibling);
 		}
 
 		public override void WriteStartElement (string prefix, string name, string ns)
@@ -310,8 +142,7 @@ namespace Mono.Xml.XPath
 			if (doc == null)
 				throw new SystemException ("Should not happen.");
 			XmlElement el = doc.CreateElement (prefix, name, ns);
-			current.AppendChild (el);
-			document.AppendChild (current, el);
+			current.InsertBefore (el, nextSibling);
 			nodeStack.Push (current);
 			current = el;
 		}
@@ -395,7 +226,6 @@ namespace Mono.Xml.XPath
 			else {
 				XmlText t = current.OwnerDocument.CreateTextNode (text);
 				current.AppendChild (t);
-				document.AppendChild (current, t);
 			}
 		}
 
@@ -414,7 +244,7 @@ namespace Mono.Xml.XPath
 			XmlElement element = current as XmlElement;
 			if (state != WriteState.Attribute || element == null)
 				throw new InvalidOperationException ("Current state is not inside attribute. Cannot close attribute.");
-			document.AttributeUpdate (element, element.SetAttributeNode (attribute), attribute);
+			element.SetAttributeNode (attribute);
 			attribute = null;
 			state = WriteState.Content;
 		}
@@ -423,15 +253,13 @@ namespace Mono.Xml.XPath
 	internal class XmlDocumentAttributeWriter : XmlWriter
 	{
 		XmlElement element;
-		XPathEditableDocument document;
 
-		public XmlDocumentAttributeWriter (XmlNode owner, XPathEditableDocument doc)
+		public XmlDocumentAttributeWriter (XmlNode owner)
 		{
 			element = owner as XmlElement;
 			if (element == null)
 				throw new ArgumentException ("To write attributes, current node must be an element.");
 			state = WriteState.Content;
-			document = doc;
 		}
 
 		WriteState state;
@@ -570,35 +398,10 @@ namespace Mono.Xml.XPath
 		{
 			if (state != WriteState.Attribute)
 				throw new InvalidOperationException ("Current state is not inside attribute. Cannot close attribute.");
-			document.AttributeUpdate (element, element.SetAttributeNode (attribute), attribute);
+			element.SetAttributeNode (attribute);
 			attribute = null;
 			state = WriteState.Content;
 		}
-	}
-
-	internal class Insertion
-	{
-		// AppendChild : last child / true
-		// InsertBefore : current node / false
-		// InsertAfter : current node / true
-		// PrependChild : first child / false
-		public XmlNode ParentNode;
-		public XmlNode InsertedNode;
-		public bool Afterward;
-	}
-
-	internal class Removal
-	{
-		public XmlNode OwnerNode;
-		public XmlNode NextSibling;
-		public XmlNode RemovedNode;
-	}
-
-	internal class AttributeUpdate
-	{
-		public XmlElement Element;
-		public XmlAttribute NewAttribute;
-		public XmlAttribute OldAttribute;
 	}
 
 	internal class XmlDocumentEditableNavigator : XPathNavigator, IHasXmlNode
@@ -749,19 +552,19 @@ namespace Mono.Xml.XPath
 			XmlNode n = ((IHasXmlNode) navigator).GetNode ();
 			if (n == null)
 				throw new InvalidOperationException ("Should not happen.");
-			return document.CreateInsertionWriter (n, null);
+			return new XmlDocumentInsertionWriter (n, null);
 		}
 
 		public override XmlWriter InsertBefore ()
 		{
 			XmlNode n = ((IHasXmlNode) navigator).GetNode ();
-			return document.CreateInsertionWriter (n.ParentNode, n.PreviousSibling);
+			return new XmlDocumentInsertionWriter (n.ParentNode, n);
 		}
 
 		public override XmlWriter CreateAttributes ()
 		{
 			XmlNode n = ((IHasXmlNode) navigator).GetNode ();
-			return document.CreateInsertionWriter (n, null);
+			return new XmlDocumentAttributeWriter (n);
 		}
 
 		public override void DeleteSelf ()
@@ -769,17 +572,17 @@ namespace Mono.Xml.XPath
 			XmlNode n = ((IHasXmlNode) navigator).GetNode ();
 			if (!navigator.MoveToNext ())
 				navigator.MoveToParent ();
-			document.DeleteNode (n);
+			if (n.ParentNode == null)
+				throw new InvalidOperationException ("This not cannot be removed since it has no parent.");
+			n.ParentNode.RemoveChild (n);
 		}
 
 		public override void SetValue (string value)
 		{
 			XmlNode n = ((IHasXmlNode) navigator).GetNode ();
-			foreach (XmlNode c in n.ChildNodes)
-				document.DeleteNode (c);
-			XmlWriter w = document.CreateInsertionWriter (n, null);
-			w.WriteValue (value);
-			w.Close ();
+			while (n.FirstChild != null)
+				n.RemoveChild (n.FirstChild);
+			n.InnerText = value;
 		}
 	}
 }

@@ -1,5 +1,11 @@
 2005-12-13  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XPathNavigator.cs : InsertAfter() should append children after it
+	  once moved to parent. This method shoulr raise an error when it is
+	  placed on Root.
+
+2005-12-13  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XPathNavigator.cs : (CreateFragmentReader) return XmlReader that
 	  considers current namespace contexts.
 

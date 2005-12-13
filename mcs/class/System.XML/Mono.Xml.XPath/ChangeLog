@@ -1,5 +1,13 @@
 2005-12-13  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XPathEditableDocument.cs :
+	  - Removed almost all redundant code in XPathEditableDocument,
+	    which is based on .net 1.2 XPathDocument functionality.
+	  - It was always doing AppendChild even if the operation is
+	    InsertBefore or InsertAfter.
+
+2005-12-13  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XPathEditableDocument.cs : 
 	  XmlDocumentInsertionWriter.WriteFullEndElement() should set IsEmpty
 	  of the element before pop.
