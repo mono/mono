@@ -450,6 +450,100 @@ namespace MonoTests.System.Xml.XPath
 			end.MoveToFirstChild (); // child
 			nav.ReplaceRange (end);
 		}
+
+		[Test]
+		public void PrependChildXmlReader ()
+		{
+			XPathNavigator nav = GetInstance ("<root><foo>existing_child</foo></root>");
+			nav.MoveToFirstChild ();
+			nav.MoveToFirstChild (); // foo
+
+			XmlReader reader = new XmlTextReader (
+				"<child>text</child><next_sibling/>", 
+				XmlNodeType.Element,
+				null);
+
+			nav.PrependChild (reader);
+
+			XmlAssert.AssertNode ("#0",
+				reader,
+				XmlNodeType.None,
+				0,		// Depth
+				false,		// IsEmptyElement
+				String.Empty,	// Name
+				String.Empty,	// Prefix
+				String.Empty,	// LocalName
+				String.Empty,	// NamespaceURI
+				String.Empty,	// Value
+				false,		// HasValue
+				0,		// AttributeCount
+				false);		// HasAttributes
+
+			AssertNavigator ("#1", nav,
+				XPathNodeType.Element,
+				String.Empty,	// Prefix
+				"foo",		// LocalName
+				String.Empty,	// NamespaceURI
+				"foo",		// Name
+				"textexisting_child",	// Value
+				false,		// HasAttributes
+				true,		// HasChildren
+				false);		// IsEmptyElement
+
+			Assert.IsTrue (nav.MoveToFirstChild (), "#1-2");
+
+			AssertNavigator ("#2", nav,
+				XPathNodeType.Element,
+				String.Empty,	// Prefix
+				"child",	// LocalName
+				String.Empty,	// NamespaceURI
+				"child",	// Name
+				"text",		// Value
+				false,		// HasAttributes
+				true,		// HasChildren
+				false);		// IsEmptyElement
+
+			Assert.IsTrue (nav.MoveToNext (), "#2-2");
+
+			AssertNavigator ("#3", nav,
+				XPathNodeType.Element,
+				String.Empty,	// Prefix
+				"next_sibling",	// LocalName
+				String.Empty,	// NamespaceURI
+				"next_sibling",	// Name
+				String.Empty,	// Value
+				false,		// HasAttributes
+				false,		// HasChildren
+				true);		// IsEmptyElement
+
+			Assert.IsTrue (nav.MoveToNext (), "#3-2");
+
+			AssertNavigator ("#4", nav,
+				XPathNodeType.Text,
+				String.Empty,	// Prefix
+				String.Empty,	// LocalName
+				String.Empty,	// NamespaceURI
+				String.Empty,	// Name
+				"existing_child",// Value
+				false,		// HasAttributes
+				false,		// HasChildren
+				false);		// IsEmptyElement
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void PrependChildInvalid ()
+		{
+			XPathNavigator nav = GetInstance ("<root><foo>existing_child</foo></root>");
+			nav.MoveToFirstChild ();
+			nav.MoveToFirstChild (); // foo
+
+			XmlWriter w = nav.PrependChild ();
+
+			w.WriteStartAttribute ("whoa");
+			w.WriteEndAttribute ();
+			w.Close ();
+		}
 	}
 }
 

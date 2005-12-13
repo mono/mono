@@ -1156,7 +1156,7 @@ namespace System.Xml.XPath
 			if (nav.MoveToFirstChild ())
 				return nav.InsertBefore ();
 			else
-				return InsertBefore ();
+				return AppendChild ();
 		}
 
 		public virtual void PrependChild (string xmlFragments)
@@ -1164,7 +1164,6 @@ namespace System.Xml.XPath
 			PrependChild (CreateFragmentReader (xmlFragments));
 		}
 
-		[MonoTODO]
 		public virtual void PrependChild (XmlReader reader)
 		{
 			using (XmlWriter w = PrependChild ()) {

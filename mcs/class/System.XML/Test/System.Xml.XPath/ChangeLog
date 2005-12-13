@@ -1,5 +1,9 @@
 2005-12-13  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XPathEditableNavigatorTests.cs : added tests for PrependChild().
+
+2005-12-13  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XPathEditableNavigatorTests.cs :
 	  Added more tests for InsertAfter() and InsertBefore().
 	  Added tests for DeleteRange() and ReplaceRange().

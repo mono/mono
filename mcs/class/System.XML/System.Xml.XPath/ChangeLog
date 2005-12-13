@@ -1,5 +1,10 @@
 2005-12-13  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XPathNavigator.cs : PrependChild() should use AppendChild() when
+	  there is no child.
+
+2005-12-13  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XPathNavigator.cs : InsertAfter() should raise an error before
 	  MoveToNext() when current node is either attribute or namespace.
 
