@@ -75,6 +75,15 @@ namespace MonoTests.System.Xml.XPath
 		}
 
 		[Test]
+		// empty content is allowed.
+		public void AppendChildEmptyString ()
+		{
+			XPathNavigator nav = GetInstance ("<root/>");
+			nav.MoveToFirstChild (); // root
+			nav.AppendChild (String.Empty);
+		}
+
+		[Test]
 		public void AppendChildElement ()
 		{
 			XPathNavigator nav = GetInstance ("<root/>");
@@ -245,6 +254,15 @@ namespace MonoTests.System.Xml.XPath
 		}
 
 		[Test]
+		// empty content is allowed.
+		public void InsertAfterEmptyString ()
+		{
+			XPathNavigator nav = GetInstance ("<root/>");
+			nav.MoveToFirstChild (); // root
+			nav.InsertAfter (String.Empty);
+		}
+
+		[Test]
 		public void InsertBefore ()
 		{
 			XPathNavigator nav = GetInstance ("<root>test</root>");
@@ -325,6 +343,15 @@ namespace MonoTests.System.Xml.XPath
 			nav.MoveToFirstChild ();
 			nav.MoveToFirstNamespace ();
 			nav.InsertBefore ();
+		}
+
+		[Test]
+		// empty content is allowed.
+		public void InsertBeforeEmptyString ()
+		{
+			XPathNavigator nav = GetInstance ("<root/>");
+			nav.MoveToFirstChild (); // root
+			nav.InsertBefore (String.Empty);
 		}
 
 		[Test]
@@ -543,6 +570,137 @@ namespace MonoTests.System.Xml.XPath
 			w.WriteStartAttribute ("whoa");
 			w.WriteEndAttribute ();
 			w.Close ();
+		}
+
+		[Test]
+		// empty content is allowed.
+		public void PrependChildEmptyString ()
+		{
+			XPathNavigator nav = GetInstance ("<root><foo/><bar/><baz/></root>");
+			nav.MoveToFirstChild ();
+			nav.MoveToFirstChild (); // foo
+			nav.MoveToNext (); // bar
+			nav.PrependChild (String.Empty);
+
+			AssertNavigator ("#1", nav,
+				XPathNodeType.Element,
+				String.Empty,	// Prefix
+				"bar",		// LocalName
+				String.Empty,	// NamespaceURI
+				"bar",		// Name
+				String.Empty,	// Value
+				false,		// HasAttributes
+				false,		// HasChildren
+				true);		// IsEmptyElement
+
+			Assert.IsTrue (nav.MoveToFirst (), "#1-2");
+
+			AssertNavigator ("#2", nav,
+				XPathNodeType.Element,
+				String.Empty,	// Prefix
+				"foo",		// LocalName
+				String.Empty,	// NamespaceURI
+				"foo",		// Name
+				String.Empty,	// Value
+				false,		// HasAttributes
+				false,		// HasChildren
+				true);		// IsEmptyElement
+		}
+
+		[Test]
+		public void ReplaceSelf ()
+		{
+			XPathNavigator nav = GetInstance ("<root><foo>existing_child</foo></root>");
+			nav.MoveToFirstChild ();
+			nav.MoveToFirstChild (); // foo
+
+			nav.ReplaceSelf ("<hijacker>hah, hah</hijacker><next/>");
+
+			AssertNavigator ("#1", nav,
+				XPathNodeType.Element,
+				String.Empty,	// Prefix
+				"hijacker",	// LocalName
+				String.Empty,	// NamespaceURI
+				"hijacker",	// Name
+				"hah, hah",	// Value
+				false,		// HasAttributes
+				true,		// HasChildren
+				false);		// IsEmptyElement
+
+			Assert.IsTrue (nav.MoveToNext (), "#1-2");
+
+			AssertNavigator ("#2", nav,
+				XPathNodeType.Element,
+				String.Empty,	// Prefix
+				"next",		// LocalName
+				String.Empty,	// NamespaceURI
+				"next",		// Name
+				String.Empty,	// Value
+				false,		// HasAttributes
+				false,		// HasChildren
+				true);		// IsEmptyElement
+		}
+
+		[Test]
+		// possible internal behavior difference e.g. due to ReadNode()
+		public void ReplaceSelfXmlReaderInteractive ()
+		{
+			XPathNavigator nav = GetInstance ("<root><foo>existing_child</foo></root>");
+			nav.MoveToFirstChild ();
+			nav.MoveToFirstChild (); // foo
+
+			XmlReader xr = new XmlTextReader (
+				"<hijacker>hah, hah</hijacker><next/>",
+				XmlNodeType.Element,
+				null);
+			xr.MoveToContent ();
+			nav.ReplaceSelf (xr);
+
+			AssertNavigator ("#1", nav,
+				XPathNodeType.Element,
+				String.Empty,	// Prefix
+				"hijacker",	// LocalName
+				String.Empty,	// NamespaceURI
+				"hijacker",	// Name
+				"hah, hah",	// Value
+				false,		// HasAttributes
+				true,		// HasChildren
+				false);		// IsEmptyElement
+
+			Assert.IsFalse (nav.MoveToNext (), "#1-2");
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		// empty content is not allowed
+		public void ReplaceSelfEmptyString ()
+		{
+			XPathNavigator nav = GetInstance ("<root><foo>existing_child</foo></root>");
+			nav.MoveToFirstChild ();
+			nav.MoveToFirstChild (); // foo
+
+			nav.ReplaceSelf (String.Empty);
+		}
+
+		[Test]
+		public void SetValueEmptyString ()
+		{
+			XPathNavigator nav = GetInstance ("<root><foo>existing_child</foo></root>");
+			nav.MoveToFirstChild ();
+			nav.MoveToFirstChild (); // foo
+
+			nav.SetValue (String.Empty);
+
+			AssertNavigator ("#1", nav,
+				XPathNodeType.Element,
+				String.Empty,	// Prefix
+				"foo",		// LocalName
+				String.Empty,	// NamespaceURI
+				"foo",		// Name
+				String.Empty,	// Value
+				false,		// HasAttributes
+				true,		// HasChildren
+				false);		// IsEmptyElement
 		}
 	}
 }

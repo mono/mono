@@ -1185,17 +1185,15 @@ namespace System.Xml.XPath
 			}
 		}
 
-		[MonoTODO]
 		public virtual void ReplaceSelf (string xmlFragment)
 		{
-			ReplaceSelf (XmlReader.Create (new StringReader (xmlFragment)));
+			ReplaceSelf (CreateFragmentReader (xmlFragment));
 		}
 
-		[MonoTODO]
+		// must override it.
 		public virtual void ReplaceSelf (XmlReader reader)
 		{
-			InsertBefore (reader);
-			DeleteSelf ();
+			throw new NotSupportedException ();
 		}
 
 		[MonoTODO]

@@ -1,5 +1,10 @@
 2005-12-13  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XPathEditableNavigatorTests.cs : added tests that passes empty
+	  string to editor methods. Added tests for ReplaceSelf().
+
+2005-12-13  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XPathEditableNavigatorTests.cs : added tests for PrependChild().
 
 2005-12-13  Atsushi Enomoto <atsushi@ximian.com>

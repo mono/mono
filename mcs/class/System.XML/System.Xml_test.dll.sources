@@ -1,4 +1,5 @@
 System.Xml/NameTableTests.cs
+System.Xml/XmlAssert.cs
 System.Xml/XmlAttributeCollectionTests.cs
 System.Xml/XmlAttributeTests.cs
 System.Xml/XmlCDataSectionTests.cs

@@ -656,8 +656,48 @@ namespace Mono.Xml.XPath
 			if (!navigator.MoveToNext ())
 				navigator.MoveToParent ();
 			if (n.ParentNode == null)
-				throw new InvalidOperationException ("This not cannot be removed since it has no parent.");
+				throw new InvalidOperationException ("This node cannot be removed since it has no parent.");
 			n.ParentNode.RemoveChild (n);
+		}
+
+		public override void ReplaceSelf (XmlReader reader)
+		{
+			XmlNode n = ((IHasXmlNode) navigator).GetNode ();
+			XmlNode p = n.ParentNode;
+			if (p == null)
+				throw new InvalidOperationException ("This node cannot be removed since it has no parent.");
+
+			bool movenext = false;
+			if (!MoveToPrevious ())
+				MoveToParent ();
+			else
+				movenext = true;
+
+			XmlDocument doc = p.NodeType == XmlNodeType.Document ?
+				p as XmlDocument : p.OwnerDocument;
+			bool error = false;
+			if (reader.ReadState == ReadState.Initial) {
+				reader.Read ();
+				if (reader.EOF)
+					error = true;
+				else
+					while (!reader.EOF)
+						p.AppendChild (doc.ReadNode (reader));
+			} else {
+				if (reader.EOF)
+					error = true;
+				else
+					p.AppendChild (doc.ReadNode (reader));
+			}
+			if (error)
+				throw new InvalidOperationException ("Content is required in argument XmlReader to replace current node.");
+
+			p.RemoveChild (n);
+
+			if (movenext)
+				MoveToNext ();
+			else
+				MoveToFirstChild ();
 		}
 
 		public override void SetValue (string value)

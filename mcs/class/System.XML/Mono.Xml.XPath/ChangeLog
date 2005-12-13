@@ -1,5 +1,9 @@
 2005-12-13  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XPathEditableDocument.cs : implement ReplaceSelf() here.
+
+2005-12-13  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XPathEditableDocument.cs :
 	  - Now it does not append "written" nodes until Close() is invoked.
 	  - Use XmlDocumentFragment to store incomplete tree fragment.
