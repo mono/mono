@@ -1,3 +1,7 @@
+2005-12-13  Konstantin Triger <kostat@mainsoft.com>
+
+	* Bitmap.jvm.cs: Fix MakeTransparent.
+
 2005-11-28 Konstantin Triger <kostat@mainsoft.com>
 
         * SystemIcons.jvm.cs: refactoring.

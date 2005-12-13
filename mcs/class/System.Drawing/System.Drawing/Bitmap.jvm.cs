@@ -274,15 +274,17 @@ namespace System.Drawing
 		#region MakeTransparent
 		public void MakeTransparent ()
 		{
-			Color clr = GetPixel(0,0);			
+			Color clr = Color.FromArgb(0,0,0);			
 			MakeTransparent (clr);
 		}
 
 		public void MakeTransparent (Color transparentColor)
 		{
-			byte A = transparentColor.A;
 			image.WritableRaster raster = NativeObject.getRaster();
 			int numBands  = raster.getNumBands();
+			if (numBands != 4)
+				return;
+
 			int maxWidth  = raster.getWidth() + raster.getMinX();
 			int maxHeight = raster.getHeight() + raster.getMinY();
 			int[] srcPix  = new int[numBands];
@@ -290,12 +292,11 @@ namespace System.Drawing
 			for (int y = raster.getMinY(); y < maxHeight; y++) {
 				for (int x = raster.getMinX(); x < maxWidth; x++) {
 					/*srcPix =*/ raster.getPixel(x, y, srcPix);
-					for (int z = 0; z < numBands; z++) {
-						int argb = srcPix[z];
-						if ((uint)argb >> 24 == A) {
-							argb &= 0x00FFFFFF;
-							srcPix[z] = argb;
-						}
+					if (srcPix[0] == transparentColor.R &&
+						srcPix[1] == transparentColor.G &&
+						srcPix[2] == transparentColor.B) {
+						srcPix[3] = 0;
+						raster.setPixel(x, y, srcPix);
 					}
 				}
 			}
