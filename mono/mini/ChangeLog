@@ -1,5 +1,9 @@
 2005-12-13 Neale Ferguson <neale@sinenomine.net>
 
+	* mini-s390.c (mono_arch_emit_prolog): Remove some debugging bits.
+
+2005-12-13 Neale Ferguson <neale@sinenomine.net>
+
 	* inssel-s390.brg tramp-s390.c cpu-s390.md mini-s390.c mini-s390.h:
 	  Bring s390 up to current level.
 
