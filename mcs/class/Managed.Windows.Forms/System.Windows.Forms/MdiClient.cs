@@ -304,7 +304,7 @@ namespace System.Windows.Forms {
 				if (!child.Visible)
 					continue;
 
-				if (child.MdiChildContext.Maximized)
+				if (child.WindowManager.Maximized)
 					child.Bounds = Bounds;
 			}
 		}

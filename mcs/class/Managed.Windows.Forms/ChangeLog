@@ -1,3 +1,8 @@
+2005-12-13  Jackson Harper  <jackson@ximian.com>
+
+	* System.Windows.Forms.dll.sources: Add the new internal window
+	managers
+
 2005-12-04  Alexander Olk  <alex.olk@googlemail.com>
 
 	* System.Windows.Forms.dll.sources: Added ThemeClearlooks.cs

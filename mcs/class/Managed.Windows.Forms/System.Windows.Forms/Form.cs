@@ -63,7 +63,7 @@ namespace System.Windows.Forms {
 		private Form			owner;
 		private Form.ControlCollection	owned_forms;
 		private MdiClient		mdi_container;
-		private MdiChildContext		mdi_child_context;
+		private InternalWindowManager	window_manager;
 		private Form			mdi_parent;
 		private bool			key_preview;
 		private MainMenu		menu;
@@ -325,18 +325,19 @@ namespace System.Windows.Forms {
 			set {
 				form_border_style = value;
 
-				// MDI windows handle borders themselves
-				if (!IsMdiChild) {
+				if (window_manager == null) {
 					if (IsHandleCreated) {
 						XplatUI.SetBorderStyle(window.Handle, form_border_style);
 					}
 					UpdateStyles();
+
+					if (value == FormBorderStyle.FixedToolWindow ||
+							value == FormBorderStyle.SizableToolWindow)
+						window_manager = new InternalWindowManager (this);
 				} else {
-					if (mdi_child_context != null && IsHandleCreated)
-						mdi_child_context.UpdateBorderStyle (value);
-					UpdateStyles ();
+					window_manager.UpdateBorderStyle (value);
 				}
-			} 
+			}
 		}
 
 		[DefaultValue(false)]
@@ -494,7 +495,7 @@ namespace System.Windows.Forms {
 
 				mdi_parent = value;
 				if (mdi_parent != null) {
-					mdi_child_context = new MdiChildContext (this,
+					window_manager = new MdiWindowManager (this,
 							mdi_parent.MdiContainer);
 					mdi_parent.MdiContainer.Controls.Add (this);
 				}
@@ -507,8 +508,8 @@ namespace System.Windows.Forms {
 			get { return mdi_container; }
 		}
 
-		internal MdiChildContext MdiChildContext {
-			get { return mdi_child_context; }
+		internal InternalWindowManager WindowManager {
+			get { return window_manager; }
 		}
 
 		[DefaultValue(null)]
@@ -538,9 +539,9 @@ namespace System.Windows.Forms {
 
 		public MainMenu MergedMenu {
 			get {
-				if (!IsMdiChild || mdi_child_context == null)
+				if (!IsMdiChild || window_manager == null)
 					return null;
-				return mdi_child_context.MergedMenu;
+				return ((MdiWindowManager) window_manager).MergedMenu;
 			}
 		}
 
@@ -1438,8 +1439,7 @@ namespace System.Windows.Forms {
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected override void WndProc(ref Message m) {
 
-			if (IsMdiChild && mdi_child_context != null &&
-					mdi_child_context.HandleMessage (ref m)) {
+			if (window_manager != null && window_manager.HandleMessage (ref m)) {
 				return;
 			}
 
@@ -1538,6 +1538,11 @@ namespace System.Windows.Forms {
 			}
 		}
 		#endregion	// Protected Instance Methods
+
+		internal void RemoveWindowManager ()
+		{
+			window_manager = null;
+		}
 
 		#region Events
 		public event EventHandler Activated;

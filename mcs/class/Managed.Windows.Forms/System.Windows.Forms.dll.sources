@@ -292,6 +292,7 @@ System.Windows.Forms/InputLanguageChangingEventArgs.cs
 System.Windows.Forms/InputLanguageChangingEventHandler.cs
 System.Windows.Forms/InputLanguageCollection.cs
 System.Windows.Forms/InputLanguage.cs
+System.Windows.Forms/InternalWindowManager.cs
 System.Windows.Forms/InvalidateEventArgs.cs
 System.Windows.Forms/InvalidateEventHandler.cs
 System.Windows.Forms/IRootGridEntry.cs
@@ -334,6 +335,7 @@ System.Windows.Forms/ListViewAlignment.cs
 System.Windows.Forms/ListViewItem.cs
 System.Windows.Forms/ListViewItemConverter.cs
 System.Windows.Forms/MainMenu.cs
+System.Windows.Forms/MdiWindowManager.cs
 System.Windows.Forms/MdiChildContext.cs
 System.Windows.Forms/MdiClient.cs
 System.Windows.Forms/MdiLayout.cs

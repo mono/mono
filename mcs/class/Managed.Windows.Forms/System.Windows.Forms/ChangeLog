@@ -1,3 +1,13 @@
+2005-12-13  Jackson Harper  <jackson@ximian.com>
+
+	* Form.cs: We now hook into an internal window manager instead of just an
+	MDI subsystem, this is so we can have properly behaving tool windows.
+	* MdiClient.cs: Naming change, MdiChildContext is now WindowManager
+	* InternalWindowManager.cs: New internal class that acts as a
+	window manager for tool windows and as a base for mdi windows.
+	* MdiWindowManager.cs: New class that acts as a window manager for
+	mdi windows.
+
 2005-12-12  Jackson Harper  <jackson@ximian.com>
 
 	* Control.cs: Updates so we match behavoir for for implicit
