@@ -55,8 +55,6 @@ namespace Mono.ILASM {
                                 IClassRef parent, ArrayList impl_list, Location location)
                 {
                         this.attr = attr;
-                        this.name_space = name_space;
-                        this.name = name;
                         this.parent = parent;
                         this.impl_list = impl_list;
 
@@ -73,6 +71,15 @@ namespace Mono.ILASM {
 
                         is_value_class = false;
                         is_enum_class = false;
+
+			int lastdot = name.LastIndexOf ('.');
+			if (lastdot >= 0) {
+				this.name_space = name_space + "." + name.Substring (0, lastdot);
+				this.name = name.Substring (lastdot + 1);
+			} else {
+	                        this.name_space = name_space;
+        	                this.name = name;
+			}
                 }
 
                 public string Name {

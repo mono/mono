@@ -554,7 +554,7 @@ class_all		: class_head OPEN_BRACE class_decls CLOSE_BRACE
                           }
 			;
 
-class_head 		: D_CLASS class_attr id formal_typars_clause extends_clause
+class_head 		: D_CLASS class_attr comp_name formal_typars_clause extends_clause
                           impl_clause
                           {
                                 codegen.BeginTypeDef ((TypeAttr) $2, (string) $3, 

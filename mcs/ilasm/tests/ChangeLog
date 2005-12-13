@@ -1,3 +1,7 @@
+2005-12-13  Ankit Jain  <jankit@novell.com>
+
+	* dotted-names.il: New. Test for dotted names in namespace, class.
+
 2005-12-12  Ankit Jain  <jankit@novell.com>
 
 	* nested.il: New. Ensure nested visibility for nested types.

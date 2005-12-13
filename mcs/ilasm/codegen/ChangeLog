@@ -1,3 +1,8 @@
+2005-12-13  Ankit Jain  <jankit@novell.com>
+
+	* TypeDef.cs (TypeDef.ctor): Ensure that 'name' contains only the last part
+	of the full (namespace + name) dotted name.
+
 2005-12-12  Ankit Jain  <jankit@novell.com>
 
 	* TypeDef.cs (TypeDef.Define): Ensure nested visibility for a nested class.

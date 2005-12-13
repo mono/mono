@@ -1,3 +1,8 @@
+2005-12-13  Ankit Jain  <jankit@novell.com>
+
+	* ILParser.jay (class_head | D_CLASS ..): Use 'comp_name' instead of 'id' to allow
+	dotted names.
+
 2005-12-09  Ankit Jain  <jankit@novell.com>
 
 	* ILParser.jay (class_decl | D_OVERRIDE ..): Update usage of ITypeRef.GetMethodRef 
