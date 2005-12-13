@@ -1,3 +1,8 @@
+2005-12-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* get.c (get_constant): Use finite() instead of isnormal () since the
+	latter is not available on solaris.
+
 2005-11-23  Ankit Jain  <jankit@novell.com>
 
 	* get.c (get_methodspec): Use mono_get_method_full so as to handle
