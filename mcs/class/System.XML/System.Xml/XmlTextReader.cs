@@ -548,6 +548,7 @@ namespace System.Xml
 			if (startNodeType == XmlNodeType.Attribute) {
 				if (currentAttribute == 0)
 					return false;	// already read.
+				SkipTextDeclaration ();
 				ClearAttributes ();
 				IncrementAttributeToken ();
 				ReadAttributeValueTokens ('"');
@@ -556,6 +557,8 @@ namespace System.Xml
 				readState = ReadState.Interactive;
 				return true;
 			}
+			if (readState == ReadState.Initial && currentState == XmlNodeType.Element)
+				SkipTextDeclaration ();
 
 			if (Binary != null)
 				Binary.Reset ();
@@ -1010,12 +1013,10 @@ namespace System.Xml
 			switch (fragType) {
 			case XmlNodeType.Attribute:
 				reader = new StringReader (fragment.ReadToEnd ().Replace ("\"", "&quot;"));
-				SkipTextDeclaration ();
 				break;
 			case XmlNodeType.Element:
 				currentState = XmlNodeType.Element;
 				allowMultipleRoot = true;
-				SkipTextDeclaration ();
 				break;
 			case XmlNodeType.Document:
 				break;
@@ -1951,7 +1952,7 @@ namespace System.Xml
 		// The reader is positioned after "<?xml "
 		private void ReadXmlDeclaration ()
 		{
-			if (currentState != XmlNodeType.None) {
+			if (!allowMultipleRoot && currentState != XmlNodeType.None) {
 				throw NotWFError ("XML declaration cannot appear in this state.");
 			}
 			currentState = XmlNodeType.XmlDeclaration;
@@ -2005,8 +2006,6 @@ namespace System.Xml
 
 		private void SkipTextDeclaration ()
 		{
-			this.currentState = XmlNodeType.Element;
-
 			if (PeekChar () != '<')
 				return;
 
@@ -2084,7 +2083,10 @@ namespace System.Xml
 				}
 				// Encoding value should be checked inside XmlInputStream.
 			}
-			else
+			// this condition is to check if this instance is
+			// not created by XmlReader.Create() (which just
+			// omits strict text declaration check).
+			else if (Conformance == ConformanceLevel.Auto)
 				throw NotWFError ("Encoding declaration is mandatory in text declaration.");
 
 			Expect ("?>");
