@@ -325,10 +325,10 @@ namespace Mono.Xml.XPath
 
 		public override void WriteFullEndElement ()
 		{
-			WriteEndElement ();
 			XmlElement el = current as XmlElement;
 			if (el != null)
 				el.IsEmpty = false;
+			WriteEndElement ();
 		}
 
 		public override void WriteDocType (string name, string pubid, string systemId, string intsubset)
