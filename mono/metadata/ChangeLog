@@ -1,3 +1,7 @@
+2005-12-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* reflection.c (custom_attr_visible): Really fix this.
+
 2005-12-12  Zoltan Varga  <vargaz@gmail.com>
 
 	* reflection.c (custom_attr_visible): Allow nested public attributes
