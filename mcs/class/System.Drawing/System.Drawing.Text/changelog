@@ -1,3 +1,7 @@
+2005-12-13 Konstantin Triger <kostat@mainsoft.com>
+
+	* TextLineIterator.jvm.cs: handle null string.
+
 2005-11-16 Konstantin Triger <kostat@mainsoft.com>
 
         * PrivateFontCollection.jvm.cs: open a correct stream.

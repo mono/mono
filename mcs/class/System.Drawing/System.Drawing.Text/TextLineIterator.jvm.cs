@@ -73,7 +73,7 @@ namespace System.Drawing.Text {
 		internal TextLineIterator(string s, Font font, font.FontRenderContext frc, StringFormat format, float width, float height) {
 			_format = (format != null) ? format : new StringFormat();
 			_font = font;
-			_s = s;
+			_s = (s != null) ? s : String.Empty;
 			_frc = frc;
 			FontFamily ff = font.FontFamily;
 			_margin = font.Size*ff.GetDrawMargin(font.Style)/ff.GetEmHeight(font.Style);
