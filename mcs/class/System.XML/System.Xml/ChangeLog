@@ -1,5 +1,9 @@
 2005-12-13  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlTextReader.cs : 1.x build fix.
+
+2005-12-13  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlTextReader.cs : when XmlReader.Create() creates this instance,
 	  don't expect strict text declaration. Check SkipTextDeclaration()
 	  on Read().

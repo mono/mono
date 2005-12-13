@@ -2083,11 +2083,13 @@ namespace System.Xml
 				}
 				// Encoding value should be checked inside XmlInputStream.
 			}
+#if NET_2_0
 			// this condition is to check if this instance is
 			// not created by XmlReader.Create() (which just
 			// omits strict text declaration check).
 			else if (Conformance == ConformanceLevel.Auto)
 				throw NotWFError ("Encoding declaration is mandatory in text declaration.");
+#endif
 
 			Expect ("?>");
 		}
