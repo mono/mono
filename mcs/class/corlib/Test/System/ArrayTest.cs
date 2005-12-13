@@ -686,6 +686,11 @@ public class ArrayTest : Assertion
 				AssertEquals("#F13(" + i + ")", src[i], array.GetValue(i+5));
 		}
 
+		// Test that a 1 dimensional array with 0 lower bound is the
+		// same as an szarray
+		Type szarrayType = new int [10].GetType ();
+		Assert (szarrayType == (Array.CreateInstance (typeof (int), new int[] {1}, new int[] {0})).GetType ());
+		Assert (szarrayType != (Array.CreateInstance (typeof (int), new int[] {1}, new int[] {1})).GetType ());
 	}
 	
 	[Test]
