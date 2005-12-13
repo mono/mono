@@ -87,7 +87,10 @@ namespace System.Web.Security
 #endif
 
 			string reqPath = context.Request.PhysicalPath;
-			string loginPath = context.Request.MapPath (loginPage);
+			string loginPath = null;
+			try {
+				loginPath = context.Request.MapPath (loginPage);
+			} catch {} // ignore
 
 			context.SkipAuthorization = (reqPath == loginPath);
 			

@@ -1,3 +1,8 @@
+2005-12-13 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* FormsAuthenticationModule.cs: ignore any exception thrown when mapping
+	the provided virtual path to the physical one. Patch by Cyrille Colin.
+
 2005-11-28  Chris Toshok  <toshok@ximian.com>
 
 	* FormsAuthenticationModule.cs (OnAuthenticateRequest):
