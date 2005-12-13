@@ -1,5 +1,8 @@
 2005-12-13  Zoltan Varga  <vargaz@gmail.com>
 
+	* object.c (mono_array_new_full): Treat a single dimensional array
+	with 0 lower bounds as an szarray. Fixes #76973.
+
 	* reflection.c (custom_attr_visible): Really fix this.
 
 2005-12-12  Zoltan Varga  <vargaz@gmail.com>
