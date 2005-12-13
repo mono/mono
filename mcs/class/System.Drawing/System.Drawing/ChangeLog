@@ -1,3 +1,7 @@
+2005-12-13  Konstantin Triger <kostat@mainsoft.com>
+
+	* Bitmap.jvm.cs: Fix MakeTransparent.
+
 2005-12-07 Jordi Mas i Hernandez <jordimash@gmail.com>
 
 	* Graphics.cs: Add new deephs support to CopyFromScreen
