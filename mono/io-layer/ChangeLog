@@ -1,3 +1,9 @@
+
+Tue Dec 13 11:41:49 GMT 2005 Paolo Molaro <lupus@ximian.com>
+
+	* shared.c: fallback to private mmap when shared mmap doesn't work
+	(like on jffs).
+
 2005-12-06  Dick Porter  <dick@ximian.com>
 
 	* wapi-private.h: 
