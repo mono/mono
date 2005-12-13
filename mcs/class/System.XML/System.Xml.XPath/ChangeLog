@@ -1,5 +1,10 @@
 2005-12-13  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XPathNavigator.cs : Reimplemented MoveToFollowing() to avoid
+	  inefficient MoveToDescendant() and to match .NET 2.0 behavior.
+
+2005-12-13  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XPathNavigator.cs : ReplaceSelf() should allow document fragment.
 	  Moved implementation to XPathEditableDocument.
 

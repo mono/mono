@@ -702,6 +702,43 @@ namespace MonoTests.System.Xml.XPath
 				true,		// HasChildren
 				false);		// IsEmptyElement
 		}
+
+		[Test]
+		public void MoveToFollowing ()
+		{
+			XPathNavigator end;
+
+			XPathNavigator nav = GetInstance ("<root><bar><foo attr='v1'><baz><foo attr='v2'/></baz></foo></bar><dummy/><foo attr='v3'></foo></root>");
+			Assert.IsTrue (nav.MoveToFollowing ("foo", String.Empty), "#1");
+			Assert.AreEqual ("v1", nav.GetAttribute ("attr", String.Empty), "#2");
+			Assert.IsTrue (nav.MoveToFollowing ("foo", String.Empty), "#3");
+			Assert.AreEqual ("v2", nav.GetAttribute ("attr", String.Empty), "#4");
+			Assert.IsTrue (nav.MoveToFollowing ("foo", String.Empty), "#5");
+			Assert.AreEqual ("v3", nav.GetAttribute ("attr", String.Empty), "#6");
+
+			// round 2
+			end = nav.Clone ();
+
+			nav.MoveToRoot ();
+			Assert.IsTrue (nav.MoveToFollowing ("foo", String.Empty, end), "#7");
+			Assert.AreEqual ("v1", nav.GetAttribute ("attr", String.Empty), "#8");
+			Assert.IsTrue (nav.MoveToFollowing ("foo", String.Empty, end), "#9");
+			Assert.AreEqual ("v2", nav.GetAttribute ("attr", String.Empty), "#10");
+			// end is exclusive
+			Assert.IsFalse (nav.MoveToFollowing ("foo", String.Empty, end), "#11");
+			// in this case it never moves to somewhere else.
+			Assert.AreEqual ("v2", nav.GetAttribute ("attr", String.Empty), "#12");
+		}
+
+		[Test]
+		public void MoveToFollowingFromAttribute ()
+		{
+			XPathNavigator nav = GetInstance ("<root a='b'><foo/></root>");
+			nav.MoveToFirstChild ();
+			nav.MoveToFirstAttribute ();
+			// should first move to owner element and go on.
+			Assert.IsTrue (nav.MoveToFollowing ("foo", String.Empty));
+		}
 	}
 }
 

@@ -721,16 +721,6 @@ namespace System.Xml.XPath
 			return MoveTo (SelectChildren (localName, namespaceURI));
 		}
 
-		bool MoveToDescendant (XPathNodeType type)
-		{
-			return MoveTo (SelectDescendants (type, false));
-		}
-
-		bool MoveToDescendant (string localName, string namespaceURI)
-		{
-			return MoveTo (SelectDescendants (localName, namespaceURI, false));
-		}
-
 		public virtual bool MoveToNext (string localName, string namespaceURI)
 		{
 			XPathNavigator nav = Clone ();
@@ -756,76 +746,89 @@ namespace System.Xml.XPath
 			return false;
 		}
 
-		[MonoTODO]
 		public virtual bool MoveToFollowing (string localName,
 			string namespaceURI)
 		{
 			return MoveToFollowing (localName, namespaceURI, null);
 		}
 
-		[MonoTODO]
 		public virtual bool MoveToFollowing (string localName,
 			string namespaceURI, XPathNavigator end)
 		{
+			if (localName == null)
+				throw new ArgumentNullException ("localName");
+			if (namespaceURI == null)
+				throw new ArgumentNullException ("namespaceURI");
+			localName = NameTable.Get (localName);
+			if (localName == null)
+				return false;
+			namespaceURI = NameTable.Get (namespaceURI);
+			if (namespaceURI == null)
+				return false;
+
 			XPathNavigator nav = Clone ();
-			bool skip = false;
+			switch (nav.NodeType) {
+			case XPathNodeType.Attribute:
+			case XPathNodeType.Namespace:
+				nav.MoveToParent ();
+				break;
+			}
 			do {
-				if (!skip && nav.MoveToDescendant (localName,
-					namespaceURI)) {
-					if (end != null) {
-						switch (nav.ComparePosition (end)) {
-						case XmlNodeOrder.After:
-						case XmlNodeOrder.Unknown:
-							return false;
+				if (!nav.MoveToFirstChild ()) {
+					do {
+						if (!nav.MoveToNext ()) {
+							if (!nav.MoveToParent ())
+								return false;
 						}
-					}
+						else
+							break;
+					} while (true);
+				}
+				if (end != null && end.IsSamePosition (nav))
+					return false;
+				if (object.ReferenceEquals (localName, nav.LocalName) &&
+					object.ReferenceEquals (namespaceURI, nav.NamespaceURI)) {
 					MoveTo (nav);
 					return true;
 				}
-				else
-					skip = false;
-				if (!nav.MoveToNext ()) {
-					if (!nav.MoveToParent ())
-						break;
-					skip = true;
-				}
 			} while (true);
-			return false;
 		}
 
-		[MonoTODO]
 		public virtual bool MoveToFollowing (XPathNodeType type)
 		{
 			return MoveToFollowing (type, null);
 		}
 
-		[MonoTODO]
 		public virtual bool MoveToFollowing (XPathNodeType type,
 			XPathNavigator end)
 		{
+			if (type == XPathNodeType.Root)
+				return false; // will never match
 			XPathNavigator nav = Clone ();
-			bool skip = false;
+			switch (nav.NodeType) {
+			case XPathNodeType.Attribute:
+			case XPathNodeType.Namespace:
+				nav.MoveToParent ();
+				break;
+			}
 			do {
-				if (!skip && nav.MoveToDescendant (type)) {
-					if (end != null) {
-						switch (nav.ComparePosition (end)) {
-						case XmlNodeOrder.After:
-						case XmlNodeOrder.Unknown:
-							return false;
+				if (!nav.MoveToFirstChild ()) {
+					do {
+						if (!nav.MoveToNext ()) {
+							if (!nav.MoveToParent ())
+								return false;
 						}
-					}
+						else
+							break;
+					} while (true);
+				}
+				if (end != null && end.IsSamePosition (nav))
+					return false;
+				if (nav.NodeType == type) {
 					MoveTo (nav);
 					return true;
 				}
-				else
-					skip = false;
-				if (!nav.MoveToNext ()) {
-					if (!nav.MoveToParent ())
-						break;
-					skip = true;
-				}
 			} while (true);
-			return false;
 		}
 
 		[MonoTODO]
