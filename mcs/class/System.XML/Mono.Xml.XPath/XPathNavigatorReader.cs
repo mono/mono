@@ -41,14 +41,13 @@ namespace Mono.Xml.XPath
 	{
 		public XPathNavigatorReader (XPathNavigator nav)
 		{
-			// It seems that this class have only to support linked
-			// node as its parameter
 			switch (nav.NodeType) {
-			case XPathNodeType.Attribute:
-			case XPathNodeType.Namespace:
+			case XPathNodeType.Element:
+			case XPathNodeType.Root:
+				break;
+			default:
 				throw new InvalidOperationException (String.Format ("NodeType {0} is not supported to read as a subtree of an XPathNavigator.", nav.NodeType));
 			}
-			root = nav.Clone ();
 			current = nav.Clone ();
 		}
 
@@ -66,7 +65,6 @@ namespace Mono.Xml.XPath
 		int depth = 0;
 		int attributeCount = 0;
 		bool eof;
-		bool nextIsEOF;
 
 		#region Properties
 
@@ -80,8 +78,7 @@ namespace Mono.Xml.XPath
 		}
 #endif
 
-		public override XmlNodeType NodeType 
-		{
+		public override XmlNodeType NodeType {
 			get {
 				if (ReadState != ReadState.Interactive)
 					return XmlNodeType.None;
@@ -118,7 +115,9 @@ namespace Mono.Xml.XPath
 
 		public override string Name {
 			get {
-				if (eof)
+				if (ReadState != ReadState.Interactive)
+					return String.Empty;
+				if (attributeValueConsumed)
 					return String.Empty;
 				else if (current.NodeType == XPathNodeType.Namespace)
 					return current.Name == String.Empty ? "xmlns" : "xmlns:" + current.Name;
@@ -129,7 +128,9 @@ namespace Mono.Xml.XPath
 
 		public override string LocalName {
 			get {
-				if (eof)
+				if (ReadState != ReadState.Interactive)
+					return String.Empty;
+				if (attributeValueConsumed)
 					return String.Empty;
 				else if (current.NodeType == XPathNodeType.Namespace && current.LocalName == String.Empty)
 					return "xmlns";
@@ -140,7 +141,9 @@ namespace Mono.Xml.XPath
 
 		public override string NamespaceURI {
 			get {
-				if (eof)
+				if (ReadState != ReadState.Interactive)
+					return String.Empty;
+				if (attributeValueConsumed)
 					return String.Empty;
 				else if (current.NodeType == XPathNodeType.Namespace)
 					return "http://www.w3.org/2000/xmlns/";
@@ -151,7 +154,9 @@ namespace Mono.Xml.XPath
 
 		public override string Prefix {
 			get {
-				if (eof)
+				if (ReadState != ReadState.Interactive)
+					return String.Empty;
+				if (attributeValueConsumed)
 					return String.Empty;
 				else if (current.NodeType == XPathNodeType.Namespace && current.LocalName != String.Empty)
 					return "xmlns";
@@ -178,18 +183,21 @@ namespace Mono.Xml.XPath
 
 		public override int Depth {
 			get {
-				switch (ReadState) {
-				case ReadState.EndOfFile:
-				case ReadState.Initial:
-				case ReadState.Closed:
+				if (ReadState != ReadState.Interactive)
 					return 0;
-				}
+
+				if (NodeType == XmlNodeType.Attribute)
+					return depth + 1;
+				if (attributeValueConsumed)
+					return depth + 2;
 				return depth;
 			}
 		}
 
 		public override string Value {
 			get {
+				if (ReadState != ReadState.Interactive)
+					return String.Empty;
 				switch (current.NodeType) {
 				case XPathNodeType.Namespace:
 				case XPathNodeType.Attribute:
@@ -213,7 +221,11 @@ namespace Mono.Xml.XPath
 		}
 
 		public override bool IsEmptyElement {
-			get { return current.IsEmptyElement; }
+			get {
+				if (ReadState != ReadState.Interactive)
+					return false;
+				return current.IsEmptyElement;
+			}
 		}
 
 		public override bool IsDefault {
@@ -253,6 +265,8 @@ namespace Mono.Xml.XPath
 
 		private int GetAttributeCount ()
 		{
+			if (ReadState != ReadState.Interactive)
+				return 0;
 			int count = 0;
 			if (current.MoveToFirstAttribute ()) {
 				do {
@@ -271,6 +285,8 @@ namespace Mono.Xml.XPath
 		
 		private bool MoveToAttributeNavigator (int i)
 		{
+			if (ReadState != ReadState.Interactive)
+				return false;
 			switch (current.NodeType) {
 			case XPathNodeType.Namespace:
 			case XPathNodeType.Attribute:
@@ -291,6 +307,7 @@ namespace Mono.Xml.XPath
 			return false;
 		}
 
+		/*
 		public override string this [int i] {
 			get {
 				XPathNavigator backup = current.Clone ();
@@ -304,15 +321,23 @@ namespace Mono.Xml.XPath
 				}
 			}
 		}
+		*/
 
 		private void SplitName (string name, out string localName, out string ns)
 		{
+			if (name == "xmlns") {
+				localName = "xmlns";
+				ns = XmlNamespaceManager.XmlnsXmlns;
+				return;
+			}
 			localName = name;
 			ns = String.Empty;
 			int colon = name.IndexOf (':');
 			if (colon > 0) {
 				localName = name.Substring (colon + 1, name.Length - colon - 1);
 				ns = this.LookupNamespace (name.Substring (0, colon));
+				if (name.Substring (0, colon) == "xmlns")
+					ns = XmlNamespaceManager.XmlnsXmlns;
 			}
 		}
 
@@ -388,23 +413,39 @@ namespace Mono.Xml.XPath
 			string localName;
 			string ns;
 			SplitName (name, out localName, out ns);
-			return CheckAttributeMove (MoveToAttribute (localName, ns));
+			return MoveToAttribute (localName, ns);
 		}
 
 		public override bool MoveToAttribute (string localName, string namespaceURI)
 		{
+			bool isNS = namespaceURI == "http://www.w3.org/2000/xmlns/";
 			XPathNavigator backup = null;
 			switch (current.NodeType) {
+			case XPathNodeType.Namespace:
 			case XPathNodeType.Attribute:
 				backup = current.Clone ();
 				this.MoveToElement ();
 				goto case XPathNodeType.Element;
 			case XPathNodeType.Element:
-				while (MoveToNextAttribute ())
-					if (current.LocalName == localName && current.NamespaceURI == namespaceURI) {
-						attributeValueConsumed = false;
-						return true;
-					}
+				if (MoveToFirstAttribute ()) {
+					do {
+						bool match = false;
+						if (isNS) {
+							if (localName == "xmlns")
+								match = current.Name == String.Empty;
+							else
+								match = localName == current.Name;
+						}
+						else
+							match = current.LocalName == localName &&
+								current.NamespaceURI == namespaceURI;
+						if (match) {
+							attributeValueConsumed = false;
+							return true;
+						}
+					} while (MoveToNextAttribute ());
+					MoveToElement ();
+				}
 				break;
 			}
 			if (backup != null)
@@ -412,32 +453,40 @@ namespace Mono.Xml.XPath
 			return false;
 		}
 
+		/*
 		public override void MoveToAttribute (int i)
 		{
 			if (!MoveToAttributeNavigator (i))
 				throw new ArgumentOutOfRangeException ();
 		}
+		*/
 
 		public override bool MoveToFirstAttribute ()
 		{
-			bool b = CheckAttributeMove (current.MoveToFirstNamespace (XPathNamespaceScope.Local));
-			if (b)
+			if (CheckAttributeMove (current.MoveToFirstNamespace (XPathNamespaceScope.Local)))
 				return true;
 			return CheckAttributeMove (current.MoveToFirstAttribute ());
 		}
 
 		public override bool MoveToNextAttribute ()
 		{
-			if (current.NodeType == XPathNodeType.Namespace) {
-				bool b = CheckAttributeMove (current.MoveToNextNamespace (XPathNamespaceScope.Local));
-				if (b)
+			switch (current.NodeType) {
+			case XPathNodeType.Element:
+				return MoveToFirstAttribute ();
+			case XPathNodeType.Namespace:
+				if (CheckAttributeMove (current.MoveToNextNamespace (XPathNamespaceScope.Local)))
 					return true;
+				XPathNavigator bak = current.Clone ();
 				current.MoveToParent ();
-				b = CheckAttributeMove (current.MoveToFirstAttribute ());
-				if (b)
+				if (CheckAttributeMove (current.MoveToFirstAttribute ()))
 					return true;
+				current.MoveTo (bak);
+				return false;
+			case XPathNodeType.Attribute:
+				return CheckAttributeMove (current.MoveToNextAttribute ());
+			default:
+				return false;
 			}
-			return CheckAttributeMove (current.MoveToNextAttribute ());
 		}
 
 		public override bool MoveToElement ()
@@ -458,66 +507,67 @@ namespace Mono.Xml.XPath
 
 		public override bool Read ()
 		{
+			if (eof)
+				return false;
 #if NET_2_0
 			if (Binary != null)
 				Binary.Reset ();
 #endif
 
 			switch (ReadState) {
+			case ReadState.Interactive:
+				if ((IsEmptyElement || endElement) && root.IsSamePosition (current)) {
+					eof = true;
+					return false;
+				}
+				if (!current.IsEmptyElement && current.NodeType == XPathNodeType.Element)
+					depth++;
+				break;
 			case ReadState.EndOfFile:
 			case ReadState.Closed:
 			case ReadState.Error:
 				return false;
 			case ReadState.Initial:
 				started = true;
-				switch (current.NodeType) {
-				case XPathNodeType.Root:
-					// recurse, but as Interactive
-					return Read ();
-				case XPathNodeType.Element:
-					if (current.IsEmptyElement)
-						nextIsEOF = true;
-					attributeCount = GetAttributeCount ();
-					return true;
-				default:
-					nextIsEOF = true;
-					return true;
+				root = current.Clone ();
+				if (current.NodeType == XPathNodeType.Root &&
+					!current.MoveToFirstChild ()) {
+					endElement = false;
+					eof = true;
+					return false;
 				}
-				break;
-			}
-
-			if (nextIsEOF) {
-				nextIsEOF = false;
-				eof = true;
-				return false;
+				attributeCount = GetAttributeCount ();
+				return true;
 			}
 
 			MoveToElement ();
 
 			if (endElement || !current.MoveToFirstChild ()) {
-				if (current.IsSamePosition (root)) {	// It should happen only when the root node was empty.
-					eof = true;
-					return false;
-				}
-				if (!current.MoveToNext ()) {
+				// EndElement of current element.
+				if (!endElement && !current.IsEmptyElement &&
+					current.NodeType == XPathNodeType.Element)
+					endElement = true;
+				else if (!current.MoveToNext ()) {
 					current.MoveToParent ();
-					depth--;
-					endElement = (current.NodeType == XPathNodeType.Element);
-					if (current.IsSamePosition (root)) {
-						if (current.NodeType == XPathNodeType.Element)
-							nextIsEOF = true;
-						else {
-							endElement = false;
-							eof = true;
-							return false;
-						}
+					if (current.NodeType == XPathNodeType.Root) {
+						endElement = false;
+						eof = true;
+						return false;
 					}
-				} else
+					endElement = (current.NodeType == XPathNodeType.Element);
+				}
+				else
 					endElement = false;
 			}
-			else if (!endElement)
-				depth++;
-			attributeCount = GetAttributeCount ();
+
+			if (!endElement && current.NodeType == XPathNodeType.Element)
+				attributeCount = GetAttributeCount ();
+			else
+				attributeCount = 0;
+
+			if (endElement)
+				depth--;
+
 			return true;
 		}
 

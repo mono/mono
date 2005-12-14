@@ -1,3 +1,7 @@
+2005-12-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.Xml_test.dll.sources: Added XPathNavigatorReaderTests.cs.
+
 2005-12-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.Xml_test.dll.sources: Added XmlAssert.cs.

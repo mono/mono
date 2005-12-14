@@ -77,6 +77,7 @@ System.Xml.XPath/SelectNodesTests.cs
 System.Xml.XPath/XPathEditableNavigatorTests.cs
 System.Xml.XPath/XPathNavigatorEvaluateTests.cs
 System.Xml.XPath/XPathNavigatorMatchesTests.cs
+System.Xml.XPath/XPathNavigatorReaderTests.cs
 System.Xml.XPath/XPathNavigatorTests.cs
 System.Xml.XPath/XPathNavigatorCommonTests.cs
 System.Xml.Xsl/XslTransformTests.cs

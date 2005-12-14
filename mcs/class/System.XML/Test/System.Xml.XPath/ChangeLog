@@ -1,3 +1,8 @@
+2005-12-14  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XPathNavigatorReaderTests.cs : new file for testing ReadSubtree()
+	  and all dependent members.
+
 2005-12-13  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XPathEditableNavigatorTests.cs : added tests for MoveToFollowing().

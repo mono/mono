@@ -1,5 +1,13 @@
 2005-12-14  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XPathNavigatorReader.cs : several fixes.
+	  - Unless ReadState is Interactive, all name stuff should return "". 
+	  - Refactored Read() to work fine when input navigator is Root.
+	  - Fixed all MoveTo*Attribute() methods match with other XmlReaders.
+	  - Namespace nodes were not handled fine in MoveTo*Attribute().
+
+2005-12-14  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XPathEditableDocument.cs : added UnderlyingObject.
 
 2005-12-14  Atsushi Enomoto <atsushi@ximian.com>
