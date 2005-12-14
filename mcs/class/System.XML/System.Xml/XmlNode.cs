@@ -347,8 +347,14 @@ namespace System.Xml
 
 		public virtual string GetNamespaceOfPrefix (string prefix)
 		{
-			if (prefix == null)
+			switch (prefix) {
+			case null:
 				throw new ArgumentNullException ("prefix");
+			case "xml":
+				return XmlNamespaceManager.XmlnsXml;
+			case "xmlns":
+				return XmlNamespaceManager.XmlnsXmlns;
+			}
 
 			XmlNode node;
 			switch (NodeType) {
@@ -384,6 +390,15 @@ namespace System.Xml
 
 		public virtual string GetPrefixOfNamespace (string namespaceURI)
 		{
+#if NET_2_0
+			switch (namespaceURI) {
+			case XmlNamespaceManager.XmlnsXml:
+				return XmlNamespaceManager.PrefixXml;
+			case XmlNamespaceManager.XmlnsXmlns:
+				return XmlNamespaceManager.PrefixXmlns;
+			}
+#endif
+
 			XmlNode node;
 			switch (NodeType) {
 			case XmlNodeType.Attribute:

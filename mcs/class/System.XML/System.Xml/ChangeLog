@@ -1,5 +1,11 @@
 2005-12-14  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlNode.cs : under 2.0 xml/xmlns are treated as special cases in
+	  GetNamespaceOfPrefix()/GetPrefixOfNamespace() (but it still does not
+	  implement IXmlNamespaceResolver, bummer).
+
+2005-12-14  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlDocument.cs : changed some exception types.
 	* XmlDocumentNavigator.cs : added 2.0 SchemaInfo.
 
