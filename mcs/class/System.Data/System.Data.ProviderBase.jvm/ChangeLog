@@ -1,3 +1,7 @@
+2005-14-12 Konstantin Triger <kostat@mainsoft.com>
+
+	* DbPortResolver.cs: fix port resolution for unnamed instances.
+
 2005-27-11 Boris Kirzner <borisk@mainsoft.com>
 	AbstractDBCommand.cs: TARGET_JVM fix. Proper handle of return value 
 	parameter and corresponding user parameter.
