@@ -507,6 +507,7 @@ System.Net.Configuration/ConnectionManagementHandler.cs
 System.Net.Configuration/ConnectionManagementSection.cs
 System.Net.Configuration/DefaultProxyHandler.cs
 System.Net.Configuration/DefaultProxySection.cs
+System.Net.Configuration/FtpCachePolicyElement.cs
 System.Net.Configuration/HttpCachePolicyElement.cs
 System.Net.Configuration/HttpWebRequestElement.cs
 System.Net.Configuration/Ipv6Element.cs
