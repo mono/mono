@@ -1,3 +1,7 @@
+2005-12-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* BadImageFormatExceptionCas.cs: MS fixed this in 2.0 final (#71861).
+
 2005-12-13  Zoltan Varga  <vargaz@gmail.com>
 
 	* ArrayTest.cs: Add regression test for #76973.
