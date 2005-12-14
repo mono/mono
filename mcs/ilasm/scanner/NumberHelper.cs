@@ -113,6 +113,7 @@ namespace Mono.ILASM {
                         if (ch == '.' && peek == '.') {
                                 num = num.Substring (0, num.Length-1);
                                 reader.Unread ('.');
+                                dec_found = false;
                         } else if (ch == '.') {
                                 num += '0';
                         }

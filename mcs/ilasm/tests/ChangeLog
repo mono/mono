@@ -1,5 +1,9 @@
 2005-12-14  Ankit Jain  <jankit@novell.com>
 
+	* test-array.il: New. Test for tokenizing 0...8
+
+2005-12-14  Ankit Jain  <jankit@novell.com>
+
 	* test-uint.il: New. Test for keywords uint8, uint16, uint32 & uint64.
 
 2005-12-14  Ankit Jain  <jankit@novell.com>

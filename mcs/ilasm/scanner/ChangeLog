@@ -1,5 +1,11 @@
 2005-12-14  Ankit Jain  <jankit@novell.com>
 
+	* NumberHelper.cs (NumberHelper.Build): Set dec_found to false, if a '..' is
+	found after a number so that it is parsed as INT64 and not FLOAT64.
+	Fix #76977.
+
+2005-12-14  Ankit Jain  <jankit@novell.com>
+
 	* ILTables.cs (keywords): Add uint8, uint16, uint32 and uint64 keywords.
 
 2005-11-28  Ankit Jain  <jankit@novell.com>
