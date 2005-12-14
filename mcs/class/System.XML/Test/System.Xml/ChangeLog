@@ -1,3 +1,11 @@
+2005-12-14  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlDocumentTests.cs, XmlAttributeCollectionTests.cs
+	  XmlElementTests.cs, XmlCharacterDataTests.cs :
+	  Marked NotDotNet for some tests broken under 2.0 (MS bugs).
+	  Marked Ignore for some tests which originally does not make sense.
+	  Changed types in ExpectedException for some tests under 2.0.
+
 2005-12-12  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlAssert.cs : new file.

@@ -18,6 +18,12 @@ using System.Text;
 
 using NUnit.Framework;
 
+#if NET_2_0
+using InvalidNodeTypeArgException = System.ArgumentException;
+#else // it makes less sense
+using InvalidNodeTypeArgException = System.ArgumentOutOfRangeException;
+#endif
+
 namespace MonoTests.System.Xml
 {
 	[TestFixture]
@@ -132,27 +138,27 @@ namespace MonoTests.System.Xml
 			try {
 				node = document.CreateNode (XmlNodeType.EndElement, null, null);
 				Fail ("Expected an ArgumentOutOfRangeException to be thrown.");
-			} catch (ArgumentOutOfRangeException) {}
+			} catch (InvalidNodeTypeArgException) {}
 
 			try {
 				node = document.CreateNode (XmlNodeType.EndEntity, null, null);
 				Fail ("Expected an ArgumentOutOfRangeException to be thrown.");
-			} catch (ArgumentOutOfRangeException) {}
+			} catch (InvalidNodeTypeArgException) {}
 
 			try {
 				node = document.CreateNode (XmlNodeType.Entity, null, null);
 				Fail ("Expected an ArgumentOutOfRangeException to be thrown.");
-			} catch (ArgumentOutOfRangeException) {}
+			} catch (InvalidNodeTypeArgException) {}
 
 			try {
 				node = document.CreateNode (XmlNodeType.None, null, null);
 				Fail ("Expected an ArgumentOutOfRangeException to be thrown.");
-			} catch (ArgumentOutOfRangeException) {}
+			} catch (InvalidNodeTypeArgException) {}
 
 			try {
 				node = document.CreateNode (XmlNodeType.Notation, null, null);
 				Fail ("Expected an ArgumentOutOfRangeException to be thrown.");
-			} catch (ArgumentOutOfRangeException) {}
+			} catch (InvalidNodeTypeArgException) {}
 
 			// TODO:  undocumented allowable type.
 			node = document.CreateNode (XmlNodeType.XmlDeclaration, null, null);
@@ -197,6 +203,9 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
+#if NET_2_0
+		[Category ("NotDotNet")] // enbug in 2.0
+#endif
 		public void CreateNodeNodeTypeName ()
 		{
 			XmlNode node;
@@ -204,8 +213,13 @@ namespace MonoTests.System.Xml
 			try {
 				node = document.CreateNode ("foo", null, null);
 				Fail ("Expected an ArgumentException to be thrown.");
-			} catch (ArgumentException) {}
+#if NET_2_0
+			} catch (ArgumentNullException) {}
+#else
+			} catch (ArgumentException) {} // makes less sense
+#endif
 
+			// .NET 2.0 fails here.
 			node = document.CreateNode("attribute", "foo", null);
 			AssertEquals (XmlNodeType.Attribute, node.NodeType);
 
@@ -220,7 +234,6 @@ namespace MonoTests.System.Xml
 			// TODO: test which constructor this ended up calling,
 			// i.e. reuse underlying NameTable or not?
 
-// TODO: add this back in to test when it's implemented.
 			node = document.CreateNode("documentfragment", null, null);
 			AssertEquals (XmlNodeType.DocumentFragment, node.NodeType);
 
