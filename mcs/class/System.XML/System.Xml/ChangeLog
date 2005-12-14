@@ -1,5 +1,10 @@
 2005-12-14  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlNode.cs : (GetNamespaceOfPrefix) return const xml/xmlns URIs
+	  only under 2.0.
+
+2005-12-14  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlDocumentNavigator.cs : added UnderlyingObject as to behave as
 	  documented in MSDN.
 

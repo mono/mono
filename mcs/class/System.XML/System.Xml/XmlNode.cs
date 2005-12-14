@@ -350,10 +350,12 @@ namespace System.Xml
 			switch (prefix) {
 			case null:
 				throw new ArgumentNullException ("prefix");
+#if NET_2_0
 			case "xml":
 				return XmlNamespaceManager.XmlnsXml;
 			case "xmlns":
 				return XmlNamespaceManager.XmlnsXmlns;
+#endif
 			}
 
 			XmlNode node;
