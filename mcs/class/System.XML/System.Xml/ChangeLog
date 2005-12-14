@@ -1,3 +1,8 @@
+2005-12-14  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlDocument.cs : changed some exception types.
+	* XmlDocumentNavigator.cs : added 2.0 SchemaInfo.
+
 2005-12-13  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlTextReader.cs : 1.x build fix.

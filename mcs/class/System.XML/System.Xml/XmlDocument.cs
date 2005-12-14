@@ -440,7 +440,13 @@ namespace System.Xml
 				case XmlNodeType.Text: return CreateTextNode (null);
 				case XmlNodeType.Whitespace: return CreateWhitespace (String.Empty);
 				case XmlNodeType.XmlDeclaration: return CreateXmlDeclaration ("1.0", null, null);
-				default: throw new ArgumentOutOfRangeException(String.Format("{0}\nParameter name: {1}",
+				default:
+#if NET_2_0
+					throw new ArgumentException (
+#else // makes less sense
+					throw new ArgumentOutOfRangeException (
+#endif
+						String.Format("{0}\nParameter name: {1}",
 							 "Specified argument was out of the range of valid values", type.ToString ()));
 			}
 		}
@@ -513,6 +519,10 @@ namespace System.Xml
 
 		private XmlNodeType GetNodeTypeFromString (string nodeTypeString)
 		{
+#if NET_2_0 // actually should be done in any version
+			if (nodeTypeString == null)
+				throw new ArgumentNullException ("nodeTypeString");
+#endif
 			switch (nodeTypeString) {
 				case "attribute": return XmlNodeType.Attribute;
 				case "cdatasection": return XmlNodeType.CDATA;

@@ -33,6 +33,7 @@
 using System;
 using System.Collections;
 using System.Xml;
+using System.Xml.Schema;
 using System.Xml.XPath;
 
 namespace System.Xml
@@ -213,6 +214,12 @@ namespace System.Xml
 		public override string Prefix {
 			get { return (NsNode != null) ? String.Empty : node.Prefix; }
 		}
+
+#if NET_2_0
+		public override IXmlSchemaInfo SchemaInfo {
+			get { return NsNode != null ? null : node.SchemaInfo; }
+		}
+#endif
 
 		public override string Value {
 			get {

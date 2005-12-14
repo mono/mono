@@ -479,6 +479,10 @@ namespace Mono.Xml.XPath
 			get { return navigator.Prefix; }
 		}
 
+		public override IXmlSchemaInfo SchemaInfo {
+			get { return navigator.SchemaInfo; }
+		}
+
 		public override string Value {
 			get { return navigator.Value; }
 		}
