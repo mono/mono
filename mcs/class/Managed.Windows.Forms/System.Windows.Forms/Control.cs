@@ -297,10 +297,8 @@ namespace System.Windows.Forms
 				if (value == null)
 					return;
 				
-                                if (Contains (value)) {
-					owner.PerformLayout();
+                                if (Contains (value))
                                         return;
-				}
 
 				if (value.tab_index == -1) {
 					int	end;
@@ -318,17 +316,10 @@ namespace System.Windows.Forms
 					value.tab_index = use;
 				}
 
-				if (value.parent != null) {
-					value.parent.Controls.Remove(value);
-				}
-
 				all_controls = null;
 				list.Add (value);
-
-				value.ChangeParent(owner);
-
+				value.Parent = owner;
 				owner.UpdateZOrder();
-				owner.PerformLayout(value, "Parent");
 				owner.OnControlAdded(new ControlEventArgs(value));
 			}
 			
@@ -344,10 +335,8 @@ namespace System.Windows.Forms
 					impl_list = new ArrayList ();
 				all_controls = null;
 				impl_list.Add (control);
-				control.ChangeParent (owner);
+				control.Parent = owner;
 				owner.UpdateZOrder ();
-				owner.PerformLayout (control, "Parent");
-				owner.OnControlAdded (new ControlEventArgs (control));
 			}
 
 			public virtual void AddRange (Control[] controls)
@@ -382,12 +371,13 @@ namespace System.Windows.Forms
 
 			public virtual void Clear ()
 			{
+				owner.SuspendLayout();
 				all_controls = null;
-
-				// MS sends remove events in reverse order
-				while (list.Count > 0) {
-					RemoveAt(list.Count - 1);
+				for (int i = 0; i < list.Count; i++) {
+					owner.OnControlRemoved(new ControlEventArgs((Control)list[i]));
 				}
+				list.Clear();
+				owner.ResumeLayout();
 			}
 
 			internal virtual void ClearImplicit ()
@@ -494,11 +484,9 @@ namespace System.Windows.Forms
 			public virtual void Remove(Control value) {
 				all_controls = null;
 
-				owner.PerformLayout(value, "Parent");
 				owner.OnControlRemoved(new ControlEventArgs(value));
 				list.Remove(value);
-
-				value.ChangeParent(null);
+				value.parent = null;
 				owner.UpdateZOrder();
 			}
 
@@ -506,11 +494,9 @@ namespace System.Windows.Forms
 			{
 				if (impl_list != null) {
 					all_controls = null;
-					owner.PerformLayout (control, "Parent");
-					owner.OnControlRemoved (new ControlEventArgs (control));
 					impl_list.Remove (control);
 				}
-				control.ChangeParent (null);
+				control.Parent = null;
 				owner.UpdateZOrder ();
 			}
 
@@ -1149,62 +1135,6 @@ namespace System.Windows.Forms
 				binding.Check (binding_context);
 			}
 		}
-
-
-		private void ChangeParent(Control new_parent) {
-			bool		pre_enabled;
-			bool		pre_visible;
-			Font		pre_font;
-			Color		pre_fore_color;
-			Color		pre_back_color;
-			RightToLeft	pre_rtl;
-
-			// These properties are inherited from our parent
-			// Get them pre parent-change and then send events
-			// if they are changed after we have our new parent
-			pre_enabled = Enabled;
-			pre_visible = Visible;
-			pre_font = Font;
-			pre_fore_color = ForeColor;
-			pre_back_color = BackColor;
-			pre_rtl = RightToLeft;
-			// MS doesn't seem to send a CursorChangedEvent
-
-			parent = new_parent;
-
-			OnParentChanged(EventArgs.Empty);
-
-			if (pre_enabled != Enabled) {
-				OnEnabledChanged(EventArgs.Empty);
-			}
-
-			if (pre_visible != Visible) {
-				OnVisibleChanged(EventArgs.Empty);
-			}
-
-			if (pre_font != Font) {
-				OnFontChanged(EventArgs.Empty);
-			}
-
-			if (pre_fore_color != ForeColor) {
-				OnForeColorChanged(EventArgs.Empty);
-			}
-
-			if (pre_back_color != BackColor) {
-				OnBackColorChanged(EventArgs.Empty);
-			}
-
-			if (pre_rtl != RightToLeft) {
-				// MS sneaks a OnCreateControl and OnHandleCreated in here, I guess
-				// because when RTL changes they have to recreate the win32 control
-				// We don't really need that (until someone runs into compatibility issues)
-				OnRightToLeftChanged(EventArgs.Empty);
-			}
-
-			if (binding_context == null) {	// seem to be sent whenever it's null?
-				OnBindingContextChanged(EventArgs.Empty);
-			}
-		}
 		#endregion	// Private & Internal Methods
 
 		#region Public Static Properties
@@ -1611,7 +1541,7 @@ namespace System.Windows.Forms
 					cursor = value;
 					
 					pt = Cursor.Position;
-					//Console.WriteLine ("{0}  {1}  {2}", bounds, pt, bounds.Contains (pt));
+					Console.WriteLine ("{0}  {1}  {2}", bounds, pt, bounds.Contains (pt));
 					if (bounds.Contains(pt)) {
 						if (GetChildAtPoint(pt) == null) {
 							if (cursor != null) {
@@ -1688,15 +1618,7 @@ namespace System.Windows.Forms
 		[Localizable(true)]
 		public bool Enabled {
 			get {
-				if (!is_enabled) {
-					return false;
-				}
-
-				if (parent != null) {
-					return parent.Enabled;
-				}
-
-				return true;
+				return is_enabled;
 			}
 
 			set {
@@ -1926,7 +1848,19 @@ namespace System.Windows.Forms
 						return;
 					}
 
-					value.Controls.Add(this);
+					parent=value;
+
+					if (!parent.Controls.AllContains (this)) {
+                                                Console.WriteLine ("Adding child:  " + this);
+						parent.Controls.Add(this);
+					}
+
+					if (IsHandleCreated) {
+						XplatUI.SetParent(Handle, value.Handle);
+					}
+
+					OnParentChanged(EventArgs.Empty);
+					InitLayout();
 				}
 			}
 		}
@@ -3531,6 +3465,20 @@ namespace System.Windows.Forms
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected void UpdateZOrder() {
 			Control [] controls;
+#if not
+			Control	ctl;
+
+			if (parent == null) {
+				return;
+			}
+
+			ctl = parent;
+
+			controls = ctl.child_controls.GetAllControls ();
+			for (int i = 1; i < controls.Length; i++ ) {
+				XplatUI.SetZOrder(controls[i].window.Handle, controls[i-1].window.Handle, false, false); 
+			}
+#else
 			if (!IsHandleCreated) {
 				return;
 			}
@@ -3539,6 +3487,7 @@ namespace System.Windows.Forms
 			for (int i = 1; i < controls.Length; i++ ) {
 				XplatUI.SetZOrder(controls[i].Handle, controls[i-1].Handle, false, false); 
 			}
+#endif
 		}
 
 		protected virtual void WndProc(ref Message m) {

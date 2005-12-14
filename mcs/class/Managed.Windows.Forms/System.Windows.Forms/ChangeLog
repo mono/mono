@@ -1,3 +1,8 @@
+2005-12-14  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* Control.cs: Undid 54254 (causing XConfigure errors) so we can
+	  have a working release
+
 2005-12-13  Jackson Harper  <jackson@ximian.com>
 
 	* Form.cs: Update styles after setting the border style regardless
