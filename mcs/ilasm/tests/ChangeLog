@@ -1,5 +1,9 @@
 2005-12-14  Ankit Jain  <jankit@novell.com>
 
+	* test-uint.il: New. Test for keywords uint8, uint16, uint32 & uint64.
+
+2005-12-14  Ankit Jain  <jankit@novell.com>
+
 	* dotted-names.il: Add test for class with no explicit namespace.
 
 2005-12-13  Ankit Jain  <jankit@novell.com>

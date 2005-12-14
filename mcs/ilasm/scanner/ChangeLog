@@ -1,3 +1,7 @@
+2005-12-14  Ankit Jain  <jankit@novell.com>
+
+	* ILTables.cs (keywords): Add uint8, uint16, uint32 and uint64 keywords.
+
 2005-11-28  Ankit Jain  <jankit@novell.com>
 
 	* StringHelper.cs (idChars): Add ` to the list.

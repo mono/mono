@@ -363,6 +363,10 @@ namespace Mono.ILASM {
 %token K_FLOAT64
 %token K_ERROR
 %token K_UNSIGNED
+%token K_UINT8
+%token K_UINT16
+%token K_UINT32
+%token K_UINT64
 %token K_DECIMAL
 %token K_DATE
 %token K_BSTR
@@ -915,15 +919,32 @@ type			: K_CLASS class_ref
                           {
                                 $$ = new PrimitiveTypeRef (PrimitiveType.UInt8, "System.Byte");
                           }
+			| K_UINT8
+                          {
+                                $$ = new PrimitiveTypeRef (PrimitiveType.UInt8, "System.Byte");
+                          }
 			| K_UNSIGNED K_INT16
                           {
                                 $$ = new PrimitiveTypeRef (PrimitiveType.UInt16, "System.UInt16");     
                           }
+			| K_UINT16
+                          {
+                                $$ = new PrimitiveTypeRef (PrimitiveType.UInt16, "System.UInt16");     
+                          }
+
 			| K_UNSIGNED K_INT32
                           {
                                 $$ = new PrimitiveTypeRef (PrimitiveType.UInt32, "System.UInt32");
                           }
+			| K_UINT32
+                          {
+                                $$ = new PrimitiveTypeRef (PrimitiveType.UInt32, "System.UInt32");
+                          }
 			| K_UNSIGNED K_INT64
+                          {
+                                $$ = new PrimitiveTypeRef (PrimitiveType.UInt64, "System.UInt64");
+                          }
+			| K_UINT64
                           {
                                 $$ = new PrimitiveTypeRef (PrimitiveType.UInt64, "System.UInt64");
                           }
@@ -1113,7 +1134,15 @@ native_type		: /* EMPTY */
                           {
                                 $$ = NativeType.UInt8;
                           }
+			| K_UINT8
+                          {
+                                $$ = NativeType.UInt8;
+                          }
 			| K_UNSIGNED K_INT16
+                          {
+                                $$ = NativeType.UInt16;
+                          }
+			| K_UINT16
                           {
                                 $$ = NativeType.UInt16;
                           }
@@ -1121,7 +1150,15 @@ native_type		: /* EMPTY */
                           {
                                 $$ = NativeType.UInt32;
                           }
+			| K_UINT32
+                          {
+                                $$ = NativeType.UInt32;
+                          }
 			| K_UNSIGNED K_INT64
+                          {
+                                $$ = NativeType.UInt64;
+                          }
+			| K_UINT64
                           {
                                 $$ = NativeType.UInt64;
                           }

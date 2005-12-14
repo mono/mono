@@ -211,6 +211,10 @@ namespace Mono.ILASM {
                                 keywords ["float64"] = new ILToken (Token.K_FLOAT64, "float64");
                                 keywords ["error"] = new ILToken (Token.K_ERROR, "error");
                                 keywords ["unsigned"] = new ILToken (Token.K_UNSIGNED, "unsigned");
+                                keywords ["uint8"] = new ILToken (Token.K_UINT8, "uint8");
+                                keywords ["uint16"] = new ILToken (Token.K_UINT16, "uint16");
+                                keywords ["uint32"] = new ILToken (Token.K_UINT32, "uint32");
+                                keywords ["uint64"] = new ILToken (Token.K_UINT64, "uint64");
                                 keywords ["decimal"] = new ILToken (Token.K_DECIMAL, "decimal");
                                 keywords ["date"] = new ILToken (Token.K_DATE, "date");
                                 keywords ["bstr"] = new ILToken (Token.K_BSTR, "bstr");

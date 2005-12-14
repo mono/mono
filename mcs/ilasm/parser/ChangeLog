@@ -1,3 +1,10 @@
+2005-12-14  Ankit Jain  <jankit@novell.com>
+
+	* ILParser.jay: Add K_UINT8, K_UINT16, K_UINT32 and K_UINT64 tokens.
+	(type): Add rule for the new keywords.
+	(native_type): Likewise.
+	Fix #76978.
+
 2005-12-13  Ankit Jain  <jankit@novell.com>
 
 	* ILParser.jay (class_head | D_CLASS ..): Use 'comp_name' instead of 'id' to allow
