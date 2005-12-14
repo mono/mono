@@ -457,6 +457,9 @@ openElements [openElementCount - 1]).IndentingOverriden;
 
 		public override void WriteCData (string text)
 		{
+			if (text == null)
+				text = String.Empty;
+
 			if (text.IndexOf ("]]>") >= 0)
 				throw ArgumentError ("CDATA section cannot contain text \"]]>\".");
 

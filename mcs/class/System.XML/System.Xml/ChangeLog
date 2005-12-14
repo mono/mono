@@ -1,3 +1,7 @@
+2005-12-14  Konstantin Triger <kostat@mainsoft.com>
+
+	* XmlTextWriter.cs: allow null string in WriteCData.
+
 2005-12-08  Andrew Skiba  <andrews@mainsoft.com>
 
 	* IXmlNamespaceResolver.cs: delete TARGET_JVM,
