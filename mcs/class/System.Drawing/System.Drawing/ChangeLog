@@ -1,3 +1,7 @@
+2005-12-14  Konstantin Triger <kostat@mainsoft.com>
+
+        * StrokeFactory.jvm.cs: create AdvancedStroke when have penTransform.
+
 2005-12-13  Konstantin Triger <kostat@mainsoft.com>
 
 	* Bitmap.jvm.cs: Fix MakeTransparent.
