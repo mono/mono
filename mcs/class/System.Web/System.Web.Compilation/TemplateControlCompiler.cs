@@ -77,6 +77,10 @@ namespace System.Web.Compilation
 
 		void CreateField (ControlBuilder builder, bool check)
 		{
+#if NET_2_0
+			if (partialNameOverride [builder.ID] != null)
+				return;
+#endif
 			currentLocation = builder.location;
 			if (check && CheckBaseFieldOrProperty (builder.ID, builder.ControlType))
 				return; // The field or property already exists in a base class and is accesible.

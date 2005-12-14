@@ -497,6 +497,19 @@ namespace System.Web.UI {
 		{
 			return CreateInstance ();
 		}
+
+		internal void ResetState()
+		{
+			haveParserVariable = false;
+
+			if (Children != null) {
+				foreach (object child in Children) {
+					ControlBuilder cb = child as ControlBuilder;
+					if (cb != null)
+						cb.ResetState ();
+				}
+			}
+		}
 #endif
 	}
 }

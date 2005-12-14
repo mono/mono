@@ -67,6 +67,10 @@ namespace System.Web.UI {
 		string oc_header, oc_custom, oc_param, oc_controls;
 		bool oc_shared;
 		OutputCacheLocation oc_location;
+#if NET_2_0
+		string src;
+		string partialClassName;
+#endif
 		Assembly srcAssembly;
 		int appAssemblyIndex = -1;
 
@@ -427,21 +431,48 @@ namespace System.Web.UI {
 			language = GetString (atts, "Language", CompilationConfig.DefaultLanguage);
 			strictOn = GetBool (atts, "Strict", CompilationConfig.Strict);
 			explicitOn = GetBool (atts, "Explicit", CompilationConfig.Explicit);
-#if NET_2_0
-			string src = GetString (atts, "CodeFile", null);
-#else
-			string src = GetString (atts, "Src", null);
-#endif
-			if (src != null)
-				srcAssembly = GetAssemblyFromSource (src);
 
 			string inherits = GetString (atts, "Inherits", null);
 #if NET_2_0
-			if (srcAssembly == null)
-				className = inherits;
-			else
+			// In ASP 2, the source file is actually integrated with
+			// the generated file via the use of partial classes. This
+			// means that the code file has to be confirmed, but not
+			// used at this point.
+			src = GetString (atts, "CodeFile", null);
+
+			if (src != null && inherits != null) {
+				// Make sure the source exists
+				src = UrlUtils.Combine (BaseVirtualDir, src);
+				string realPath = MapPath (src, false);
+				if (!File.Exists (realPath))
+					ThrowParseException ("File " + src + " not found");
+
+				// Verify that the inherits is a valid identify not a
+				// fully-qualified name.
+				if (!CodeGenerator.IsValidLanguageIndependentIdentifier (inherits))
+					ThrowParseException (String.Format ("'{0}' is not valid for 'inherits'", inherits));
+
+				// We are going to create a partial class that shares
+				// the same name as the inherits tag, so reset the
+				// name. The base type is changed because it is the
+				// code file's responsibilty to extend the classes
+				// needed.
+				partialClassName = inherits;
+
+				// Add the code file as an option to the
+				// compiler. This lets both files be compiled at once.
+				compilerOptions += " " + realPath;
+			} else if (inherits != null) {
+				// We just set the inherits directly because this is a
+				// Single-Page model.
 				SetBaseType (inherits);
+			}
 #else
+			string src = GetString (atts, "Src", null);
+
+			if (src != null)
+				srcAssembly = GetAssemblyFromSource (src);
+
 			if (inherits != null)
 				SetBaseType (inherits);
 
@@ -503,6 +534,18 @@ namespace System.Web.UI {
 			get { return inputFile; }
 			set { inputFile = value; }
 		}
+
+#if NET_2_0
+		internal bool IsPartial
+		{
+			get { return src != null; }
+		}
+
+		internal string PartialClassName
+		{
+			get { return partialClassName; }
+		}
+#endif
 
 		internal string Text
 		{

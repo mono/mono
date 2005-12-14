@@ -70,11 +70,18 @@ namespace System.Web.Compilation
 			Cache cache = HttpRuntime.Cache;
 			string key = cachePrefix + compiler.Parser.InputFile;
 			CompilerResults results = (CompilerResults) cache [key];
+
+#if NET_2_0
+			if (!compiler.IsRebuildingPartial)
+#endif
 			if (results != null)
 				return results;
 
 			lock (compilationLock) {
 				results = (CompilerResults) cache [key];
+#if NET_2_0
+				if (!compiler.IsRebuildingPartial)
+#endif
 				if (results != null)
 					return results;
 

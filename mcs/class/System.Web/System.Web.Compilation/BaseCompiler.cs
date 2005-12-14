@@ -42,12 +42,21 @@ namespace System.Web.Compilation
 {
 	abstract class BaseCompiler
 	{
+#if NET_2_0
+		static BindingFlags replaceableFlags = BindingFlags.Public | BindingFlags.NonPublic |
+						  BindingFlags.Instance;
+#endif
+
 		TemplateParser parser;
 		CodeDomProvider provider;
 		ICodeCompiler compiler;
 		CodeCompileUnit unit;
 		CodeNamespace mainNS;
 		CompilerParameters compilerParameters;
+#if NET_2_0
+		bool isRebuilding = false;
+		protected Hashtable partialNameOverride = new Hashtable();
+#endif
 		protected CodeTypeDeclaration mainClass;
 		protected CodeTypeReferenceExpression mainClassExpr;
 		protected static CodeThisReferenceExpression thisRef = new CodeThisReferenceExpression ();
@@ -61,13 +70,25 @@ namespace System.Web.Compilation
 		void Init ()
 		{
 			unit = new CodeCompileUnit ();
+#if NET_2_0
+			if (parser.IsPartial) {
+				mainNS = new CodeNamespace ();
+				mainClass = new CodeTypeDeclaration (parser.PartialClassName);
+				mainClass.IsPartial = true;	
+				mainClassExpr = new CodeTypeReferenceExpression (parser.PartialClassName);
+			} else {
+#endif
 			mainNS = new CodeNamespace ("ASP");
-			unit.Namespaces.Add (mainNS);
 			mainClass = new CodeTypeDeclaration (parser.ClassName);
-			mainClass.TypeAttributes = TypeAttributes.Public;
-			mainNS.Types.Add (mainClass);
 			mainClass.BaseTypes.Add (new CodeTypeReference (parser.BaseType.FullName));
 			mainClassExpr = new CodeTypeReferenceExpression ("ASP." + parser.ClassName);
+#if NET_2_0
+			}
+#endif
+			unit.Namespaces.Add (mainNS);
+			mainClass.TypeAttributes = TypeAttributes.Public;
+			mainNS.Types.Add (mainClass);
+
 			foreach (object o in parser.Imports) {
 				if (o is string)
 					mainNS.Imports.Add (new CodeNamespaceImport ((string) o));
@@ -111,6 +132,11 @@ namespace System.Web.Compilation
 				ctor.Statements.AddRange (localVars);
 
 			CodeTypeReferenceExpression r;
+#if NET_2_0
+			if (parser.IsPartial)
+				r = new CodeTypeReferenceExpression (mainClass.Name);
+			else
+#endif
 			r = new CodeTypeReferenceExpression (mainNS.Name + "." + mainClass.Name);
 			CodeFieldReferenceExpression intialized;
 			intialized = new CodeFieldReferenceExpression (r, "__intialized");
@@ -348,8 +374,89 @@ namespace System.Web.Compilation
 			}
 
 			results.TempFiles.Delete ();
-			return assembly.GetType (mainClassExpr.Type.BaseType, true);
+			Type mainClassType = assembly.GetType (mainClassExpr.Type.BaseType, true);
+
+#if NET_2_0
+			if (parser.IsPartial) {
+				// With the partial classes, we need to make sure we
+				// don't have any methods that should have not been
+				// created (because they are accessible from the base
+				// types). We cannot do this normally because the
+				// codebehind file is actually a partial class and we
+				// have no way of identifying the partial class' base
+				// type until now.
+				if (!isRebuilding && CheckPartialBaseType (mainClassType)) {
+					isRebuilding = true;
+					parser.RootBuilder.ResetState ();
+					return GetCompiledType ();
+				}
+			}
+#endif
+
+			return mainClassType;
 		}
+
+#if NET_2_0
+		internal bool IsRebuildingPartial
+		{
+			get { return isRebuilding; }
+		}
+
+		internal bool CheckPartialBaseType (Type type)
+		{
+			// Get the base type. If we don't have any (bad thing), we
+			// don't need to replace ourselves. Also check for the
+			// core file, since that won't have any either.
+			Type baseType = type.BaseType;
+			if (baseType == null || baseType == typeof(System.Web.UI.Page))
+				return false;
+
+			bool rebuild = false;
+
+			if (CheckPartialBaseFields (type, baseType))
+				rebuild = true;
+
+			if (CheckPartialBaseProperties (type, baseType))
+				rebuild = true;
+
+			return rebuild;
+		}
+
+		internal bool CheckPartialBaseFields (Type type, Type baseType)
+		{
+			bool rebuild = false;
+
+			foreach (FieldInfo baseInfo in baseType.GetFields (replaceableFlags)) {
+				if (baseInfo.IsPrivate)
+					continue;
+
+				FieldInfo typeInfo = type.GetField (baseInfo.Name, replaceableFlags);
+
+				if (typeInfo != null && typeInfo.DeclaringType == type) {
+					partialNameOverride [typeInfo.Name] = true;
+					rebuild = true;
+				}
+			}
+
+			return rebuild;
+		}
+
+		internal bool CheckPartialBaseProperties (Type type, Type baseType)
+		{
+			bool rebuild = false;
+
+			foreach (PropertyInfo baseInfo in baseType.GetProperties ()) {
+				PropertyInfo typeInfo = type.GetProperty (baseInfo.Name);
+
+				if (typeInfo != null && typeInfo.DeclaringType == type) {
+					partialNameOverride [typeInfo.Name] = true;
+					rebuild = true;
+				}
+			}
+
+			return rebuild;
+		}
+#endif
 
 		internal CompilerParameters CompilerParameters {
 			get { return compilerParameters; }
