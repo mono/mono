@@ -1,3 +1,7 @@
+2005-12-14  Jackson Harper  <jackson@ximian.com>
+
+	* XplatUIX11.cs: Tool windows still need to respek focus.
+
 2005-12-14  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* Control.cs: Undid 54254 (causing XConfigure errors) so we can

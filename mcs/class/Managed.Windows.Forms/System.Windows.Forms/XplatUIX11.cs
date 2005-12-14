@@ -696,7 +696,6 @@ namespace System.Windows.Forms {
 				atom_count = 0;
 
 				if ((cp.ExStyle & ((int)WindowStyles.WS_EX_TOOLWINDOW)) != 0) {
-					atoms[atom_count++] = (uint)NetAtoms[(int)NA._NET_WM_STATE_ABOVE];
 					atoms[atom_count++] = (uint)NetAtoms[(int)NA._NET_WM_STATE_NO_TASKBAR];
 				}
 
