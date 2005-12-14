@@ -80,7 +80,7 @@ namespace System.Data.Common
 
 				java.util.StringTokenizer st = new java.util.StringTokenizer(received, ";");
 				String prev = "";
-				bool instanceReached = false;
+				bool instanceReached = instanceName == null || instanceName.Length == 0;
 				while (st.hasMoreTokens())
 				{
 					if (!instanceReached)
