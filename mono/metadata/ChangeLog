@@ -1,5 +1,7 @@
 2005-12-14  Zoltan Varga  <vargaz@gmail.com>
 
+	* reflection.c (ensure_runtime_vtable): Fix build.
+	
 	* reflection.c (ensure_runtime_vtable): Disable an optimization which
 	doesn't work in all cases.
 
