@@ -86,9 +86,10 @@ namespace System.Web.Security
 			slidingExpiration = config.SlidingExpiration;
 #endif
 
-			string reqPath = context.Request.PhysicalPath;
+			string reqPath = "";
 			string loginPath = null;
 			try {
+				reqPath = context.Request.PhysicalPath;
 				loginPath = context.Request.MapPath (loginPage);
 			} catch {} // ignore
 
