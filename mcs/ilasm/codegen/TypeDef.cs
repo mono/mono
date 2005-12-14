@@ -72,14 +72,18 @@ namespace Mono.ILASM {
                         is_value_class = false;
                         is_enum_class = false;
 
-			int lastdot = name.LastIndexOf ('.');
-			if (lastdot >= 0) {
-				this.name_space = name_space + "." + name.Substring (0, lastdot);
-				this.name = name.Substring (lastdot + 1);
-			} else {
-	                        this.name_space = name_space;
-        	                this.name = name;
-			}
+
+                        int lastdot = name.LastIndexOf ('.');
+                        if (lastdot >= 0) {
+                                if (name_space == null || name_space == "")
+                                        this.name_space = name.Substring (0, lastdot);
+                                else
+                                        this.name_space = name_space + "." + name.Substring (0, lastdot);
+                                this.name = name.Substring (lastdot + 1);
+                        } else {
+                                this.name_space = name_space;
+                                this.name = name;
+                        }
                 }
 
                 public string Name {
