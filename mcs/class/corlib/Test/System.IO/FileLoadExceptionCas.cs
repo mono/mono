@@ -124,11 +124,7 @@ namespace MonoCasTests.System.IO {
 
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
-#if NET_2_0
-		[ExpectedException (typeof (FileLoadException))]
-#else
 		[ExpectedException (typeof (SecurityException))]
-#endif
 		public void Throw_FullRestriction ()
 		{
 			try {
@@ -147,11 +143,7 @@ namespace MonoCasTests.System.IO {
 
 		[Test]
 		[SecurityPermission (SecurityAction.Deny, ControlEvidence = true)]
-#if NET_2_0
-		[ExpectedException (typeof (FileLoadException))]
-#else
 		[ExpectedException (typeof (SecurityException))]
-#endif
 		public void Throw_GetFusionLog_Fail_ControlEvidence ()
 		{
 			try {
@@ -165,11 +157,7 @@ namespace MonoCasTests.System.IO {
 
 		[Test]
 		[SecurityPermission (SecurityAction.Deny, ControlPolicy = true)]
-#if NET_2_0
-		[ExpectedException (typeof (FileLoadException))]
-#else
 		[ExpectedException (typeof (SecurityException))]
-#endif
 		public void Throw_GetFusionLog_Fail_ControlPolicy ()
 		{
 			try {
