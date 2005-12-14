@@ -1,3 +1,12 @@
+2005-12-14  Martin Baulig  <martin@ximian.com>
+
+	* typemanager.cs (TypeManager.GetFullName): Make this public;
+	`Type.Fullname' now never returns null.
+
+	* class.cs (Method.Define): Use TypeManager.GetFullName() for
+	explicit interface implementations; we're now using the same
+	naming convention than csc does.
+
 2005-12-14  Miguel de Icaza  <miguel@novell.com>
 
 	* convert.cs (ExplicitConversionCore): Check the return value from

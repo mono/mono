@@ -653,16 +653,12 @@ public partial class TypeManager {
 			: CSharpName (mi.DeclaringType) + '.' + mi.Name;
 	}
 
-	static string GetFullName (Type t)
+	public static string GetFullName (Type t)
 	{
 		if (t.IsGenericParameter)
 			return t.Name;
 
-		string name = t.FullName;
-		if (name == null) // It looks like mono bug
-			name = t.Name;
-
-		StringBuilder sb = new StringBuilder (RemoveGenericArity (name));
+		StringBuilder sb = new StringBuilder (RemoveGenericArity (t.FullName));
 
 		Type[] this_args = GetTypeArguments (t);
 

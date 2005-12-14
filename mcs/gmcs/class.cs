@@ -4161,10 +4161,8 @@ namespace Mono.CSharp {
 				string method_name = MemberName.Name;
 
 				if (IsExplicitImpl) {
-					string iname = InterfaceType.FullName;
-					if (iname == null)
-						iname = InterfaceType.Name;
-					method_name = SimpleName.RemoveGenericArity (iname) + "." + method_name;
+					method_name = TypeManager.CSharpName (InterfaceType) +
+						'.' + method_name;
 				}
 
 				mb = Parent.TypeBuilder.DefineGenericMethod (method_name, flags);
@@ -5006,10 +5004,8 @@ namespace Mono.CSharp {
 						return false;
 					}
 
-					string iname = member.InterfaceType.FullName;
-					if (iname == null)
-						iname = member.InterfaceType.Name;
-					method_name = SimpleName.RemoveGenericArity (iname) + '.' + method_name;
+					method_name = TypeManager.GetFullName (member.InterfaceType) +
+						'.' + method_name;
 				} else {
 					if (implementing != null) {
 						AbstractPropertyEventMethod prop_method = method as AbstractPropertyEventMethod;
@@ -6835,7 +6831,7 @@ namespace Mono.CSharp {
 			PropertyAttributes.SpecialName;
 
 			PropertyBuilder = Parent.TypeBuilder.DefineProperty (
-				Name, prop_attr, MemberType, null);
+				MemberName.ToString (), prop_attr, MemberType, null);
 
 			if (!Get.IsDummy)
 				PropertyBuilder.SetGetMethod (GetBuilder);
