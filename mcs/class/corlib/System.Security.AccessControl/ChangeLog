@@ -1,3 +1,8 @@
+2005-12-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AccessControlSections.cs: New (2.0). Enum required for DirectoryInfo
+	* DirectorySecurity.cs: New (2.0). Partial stub for DirectoryInfo
+
 2005-04-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AccessControlActions.cs: Removed [ComVisible] and [Serializable] to
