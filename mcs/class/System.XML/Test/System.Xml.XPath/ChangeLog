@@ -1,5 +1,10 @@
 2005-12-14  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XPathNavigatorReaderTests.cs : Actually AttributesAndNamespaces()
+	  does not work under MS.NET.
+
+2005-12-14  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XPathNavigatorReaderTests.cs : new file for testing ReadSubtree()
 	  and all dependent members.
 

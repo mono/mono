@@ -341,6 +341,7 @@ namespace MonoTests.System.Xml.XPath
 		}
 
 		[Test]
+		[Category ("NotDotNet")] // MS bug
 		public void AttributesAndNamespaces ()
 		{
 			string xml = "<root attr='value' x:a2='v2' xmlns:x='urn:foo' xmlns='urn:default'></root>";
@@ -381,6 +382,54 @@ namespace MonoTests.System.Xml.XPath
 				// Value, HasValue, AttributeCount, HasAttributes
 				String.Empty, false, 4, true);
 
+			// Namespaces
+
+			Assert.IsTrue (r.MoveToAttribute ("xmlns:x"), label + "#4");
+			XmlAssert.AssertNode (label + "#5", r,
+				// NodeType, Depth, IsEmptyElement
+				XmlNodeType.Attribute, 1, false,
+				// Name, Prefix, LocalName, NamespaceURI
+				"xmlns:x", "xmlns", "x",
+				"http://www.w3.org/2000/xmlns/",
+				// Value, HasValue, AttributeCount, HasAttributes
+				"urn:foo", true, 4, true);
+
+			Assert.IsTrue (r.ReadAttributeValue (), label + "#6");
+///* MS.NET has a bug here
+			XmlAssert.AssertNode (label + "#7", r,
+				// NodeType, Depth, IsEmptyElement
+				XmlNodeType.Text, 2, false,
+				// Name, Prefix, LocalName, NamespaceURI
+				String.Empty, String.Empty, String.Empty, String.Empty,
+				// Value, HasValue, AttributeCount, HasAttributes
+				"urn:foo", true, 4, true);
+//*/
+
+			Assert.IsFalse (r.ReadAttributeValue (), label + "#8");
+
+			Assert.IsTrue (r.MoveToAttribute ("xmlns"), label + "#9");
+			XmlAssert.AssertNode (label + "#10", r,
+				// NodeType, Depth, IsEmptyElement
+				XmlNodeType.Attribute, 1, false,
+				// Name, Prefix, LocalName, NamespaceURI
+				"xmlns", String.Empty, "xmlns",
+				"http://www.w3.org/2000/xmlns/",
+				// Value, HasValue, AttributeCount, HasAttributes
+				"urn:default", true, 4, true);
+
+			Assert.IsTrue (r.ReadAttributeValue (), label + "#11");
+///* MS.NET has a bug here
+			XmlAssert.AssertNode (label + "#12", r,
+				// NodeType, Depth, IsEmptyElement
+				XmlNodeType.Text, 2, false,
+				// Name, Prefix, LocalName, NamespaceURI
+				String.Empty, String.Empty, String.Empty, String.Empty,
+				// Value, HasValue, AttributeCount, HasAttributes
+				"urn:default", true, 4, true);
+//*/
+
+			Assert.IsFalse (r.ReadAttributeValue (), label + "#13");
+
 			// Attributes
 
 			Assert.IsTrue (r.MoveToAttribute ("attr"), label + "#14");
@@ -420,54 +469,6 @@ namespace MonoTests.System.Xml.XPath
 				String.Empty, String.Empty, String.Empty, String.Empty,
 				// Value, HasValue, AttributeCount, HasAttributes
 				"v2", true, 4, true);
-
-			// Namespaces
-
-			Assert.IsTrue (r.MoveToAttribute ("xmlns"), label + "#9");
-			XmlAssert.AssertNode (label + "#10", r,
-				// NodeType, Depth, IsEmptyElement
-				XmlNodeType.Attribute, 1, false,
-				// Name, Prefix, LocalName, NamespaceURI
-				"xmlns", String.Empty, "xmlns",
-				"http://www.w3.org/2000/xmlns/",
-				// Value, HasValue, AttributeCount, HasAttributes
-				"urn:default", true, 4, true);
-
-			Assert.IsTrue (r.ReadAttributeValue (), label + "#11");
-//* here too
-			XmlAssert.AssertNode (label + "#12", r,
-				// NodeType, Depth, IsEmptyElement
-				XmlNodeType.Text, 2, false,
-				// Name, Prefix, LocalName, NamespaceURI
-				String.Empty, String.Empty, String.Empty, String.Empty,
-				// Value, HasValue, AttributeCount, HasAttributes
-				"urn:default", true, 4, true);
-//*/
-
-			Assert.IsFalse (r.ReadAttributeValue (), label + "#13");
-
-			Assert.IsTrue (r.MoveToAttribute ("xmlns:x"), label + "#4");
-			XmlAssert.AssertNode (label + "#5", r,
-				// NodeType, Depth, IsEmptyElement
-				XmlNodeType.Attribute, 1, false,
-				// Name, Prefix, LocalName, NamespaceURI
-				"xmlns:x", "xmlns", "x",
-				"http://www.w3.org/2000/xmlns/",
-				// Value, HasValue, AttributeCount, HasAttributes
-				"urn:foo", true, 4, true);
-
-			Assert.IsTrue (r.ReadAttributeValue (), label + "#6");
-///* temporarily comment out since MS.NET has a bug here
-			XmlAssert.AssertNode (label + "#7", r,
-				// NodeType, Depth, IsEmptyElement
-				XmlNodeType.Text, 2, false,
-				// Name, Prefix, LocalName, NamespaceURI
-				String.Empty, String.Empty, String.Empty, String.Empty,
-				// Value, HasValue, AttributeCount, HasAttributes
-				"urn:foo", true, 4, true);
-//*/
-
-			Assert.IsFalse (r.ReadAttributeValue (), label + "#8");
 
 			Assert.IsTrue (r.MoveToElement (), label + "#24");
 

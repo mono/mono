@@ -1,5 +1,10 @@
 2005-12-14  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XPathNavigator.cs : Added MonoTODO to CreateAttributes(). Removed
+	  MonoTODO from ReadSubtree().
+
+2005-12-14  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XPathNavigator.cs : UnderlyingObject returns null by default.
 
 2005-12-13  Atsushi Enomoto <atsushi@ximian.com>

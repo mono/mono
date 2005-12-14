@@ -831,7 +831,6 @@ namespace System.Xml.XPath
 			} while (true);
 		}
 
-		[MonoTODO]
 		public virtual XmlReader ReadSubtree ()
 		{
 			return new XPathNavigatorReader (this);
@@ -1055,6 +1054,7 @@ namespace System.Xml.XPath
 		}
 
 		// must override it.
+		[MonoTODO ("needs tests")]
 		public virtual XmlWriter CreateAttributes ()
 		{
 			throw new NotSupportedException ();
