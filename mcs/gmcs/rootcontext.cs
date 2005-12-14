@@ -85,6 +85,7 @@ namespace Mono.CSharp {
 		public static string StrongNameKeyContainer;
 		public static bool StrongNameDelaySign;
 
+		public static bool BrokenCircularDeps;
 		//
 		// If set, enable XML documentation generation
 		//

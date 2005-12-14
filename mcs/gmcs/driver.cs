@@ -854,6 +854,10 @@ namespace Mono.CSharp
 				Report.Warning (-29, 1, "Compatibility: Use -warnaserror: option instead of --werror");
 				Report.WarningsAreErrors = true;
 				return true;
+
+			case "--broken-cycles":
+				RootContext.BrokenCircularDeps = true;
+				return true;
 				
 			case "--nowarn":
 				Report.Warning (-29, 1, "Compatibility: Use -nowarn instead of --nowarn");

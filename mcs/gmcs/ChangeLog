@@ -1,3 +1,8 @@
+2005-12-14  Miguel de Icaza  <miguel@novell.com>
+
+	* convert.cs (ExplicitConversionCore): Check the return value from
+	ExplicitConversionCore which can return null on failure.  Fixes #76914
+
 2005-12-09  Raja R Harinath  <rharinath@novell.com>
 
 	* anonymous.cs (AnonymousMethod.Compatible): Use IsGenericType

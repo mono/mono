@@ -2093,6 +2093,24 @@ namespace Mono.CSharp {
 				return true;
 			}
 
+			//
+			// This is to build with the broken circular dependencies between
+			// System and System.Configuration in the 2.x profile where we
+			// end up with a situation where:
+			//
+			// System on the second build is referencing the System.Configuration
+			// that has references to the first System build.
+			//
+			// Point in case: NameValueCollection built on the first pass, vs
+			// NameValueCollection build on the second one.  The problem is that
+			// we need to override some methods sometimes, or we need to 
+			//
+			if (RootContext.BrokenCircularDeps){
+				if (a.Name == b.Name && a.Namespace == b.Namespace){
+					Console.WriteLine ("GonziMatch: {0}.{1}", a.Namespace, a.Name);
+					return true;
+				}
+			}
 			return false;
 		}
 
