@@ -1,5 +1,10 @@
 2005-12-14  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlDocumentNavigator.cs : added UnderlyingObject as to behave as
+	  documented in MSDN.
+
+2005-12-14  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlNode.cs : under 2.0 xml/xmlns are treated as special cases in
 	  GetNamespaceOfPrefix()/GetPrefixOfNamespace() (but it still does not
 	  implement IXmlNamespaceResolver, bummer).

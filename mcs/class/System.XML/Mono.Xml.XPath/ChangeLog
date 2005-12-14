@@ -1,5 +1,9 @@
 2005-12-14  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XPathEditableDocument.cs : added UnderlyingObject.
+
+2005-12-14  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XPathEditableDocument.cs : added 2.0 SchemaInfo.
 
 2005-12-13  Atsushi Enomoto  <atsushi@ximian.com>

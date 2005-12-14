@@ -903,7 +903,6 @@ namespace System.Xml.XPath
 			}
 		}
 
-		[MonoTODO]
 		public override bool IsNode {
 			get { return true; }
 		}
@@ -955,9 +954,8 @@ namespace System.Xml.XPath
 			}
 		}
 
-		[MonoTODO]
 		public virtual object UnderlyingObject {
-			get { throw new NotImplementedException (); }
+			get { return null; }
 		}
 
 		public override bool ValueAsBoolean {

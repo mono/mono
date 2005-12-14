@@ -483,6 +483,10 @@ namespace Mono.Xml.XPath
 			get { return navigator.SchemaInfo; }
 		}
 
+		public override object UnderlyingObject {
+			get { return navigator.UnderlyingObject; }
+		}
+
 		public override string Value {
 			get { return navigator.Value; }
 		}

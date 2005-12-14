@@ -219,6 +219,10 @@ namespace System.Xml
 		public override IXmlSchemaInfo SchemaInfo {
 			get { return NsNode != null ? null : node.SchemaInfo; }
 		}
+
+		public override object UnderlyingObject {
+			get { return node; }
+		}
 #endif
 
 		public override string Value {
