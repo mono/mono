@@ -3,9 +3,10 @@
 //
 // Authors:
 //	Tim Coleman (tim@timcoleman.com)
+//	Chris Toshok (toshok@ximian.com)
 //
 // Copyright (C) Tim Coleman, 2004
-// (c) 2004 Novell, Inc. (http://www.novell.com)
+// (C) 2004,2005 Novell, Inc. (http://www.novell.com)
 //
 
 //
@@ -39,41 +40,68 @@ namespace System.Net.Configuration
 	{
 		#region Fields
 
-		ConfigurationPropertyCollection properties;
-		static ConfigurationProperty bypassList = new ConfigurationProperty ("BypassList", typeof (BypassElementCollection), new BypassElementCollection ());
-		static ConfigurationProperty module = new ConfigurationProperty ("Module", typeof (ModuleElement), new ModuleElement ());
-		static ConfigurationProperty proxy = new ConfigurationProperty ("Proxy", typeof (ProxyElement), new ProxyElement ());
+		static ConfigurationPropertyCollection properties;
+		static ConfigurationProperty bypassListProp;
+		static ConfigurationProperty enabledProp;
+		static ConfigurationProperty moduleProp;
+		static ConfigurationProperty proxyProp;
+		static ConfigurationProperty useDefaultCredentialsProp;
 
 		#endregion // Fields
 
 		#region Constructors
 
+		static DefaultProxySection ()
+		{
+			bypassListProp = new ConfigurationProperty ("bypasslist", typeof (BypassElementCollection), null);
+			enabledProp = new ConfigurationProperty ("enabled", typeof (bool), true);
+			moduleProp = new ConfigurationProperty ("module", typeof (ModuleElement), null);
+			proxyProp = new ConfigurationProperty ("proxy", typeof (ProxyElement), null);
+			useDefaultCredentialsProp = new ConfigurationProperty ("useDefaultCredentials", typeof (bool), false);
+			properties = new ConfigurationPropertyCollection ();
+
+			properties.Add (bypassListProp);
+			properties.Add (moduleProp);
+			properties.Add (proxyProp);
+		}
+
 		public DefaultProxySection ()
 		{
-			properties = new ConfigurationPropertyCollection ();
-			properties.Add (bypassList);
-			properties.Add (module);
-			properties.Add (proxy);
 		}
 
 		#endregion // Constructors
 
 		#region Properties
 
+		[ConfigurationProperty ("bypasslist")]
 		public BypassElementCollection BypassList {
-			get { return (BypassElementCollection) base [bypassList]; }
+			get { return (BypassElementCollection) base [bypassListProp]; }
 		}
 
+		[ConfigurationProperty ("enabled", DefaultValue = "True")]
+		public bool Enabled {
+			get { return (bool) base [enabledProp]; }
+			set { base [enabledProp] = value; }
+		}
+
+		[ConfigurationProperty ("module")]
 		public ModuleElement Module {
-			get { return (ModuleElement) base [module]; }
+			get { return (ModuleElement) base [moduleProp]; }
+		}
+
+		[ConfigurationProperty ("proxy")]
+		public ProxyElement Proxy {
+			get { return (ProxyElement) base [proxyProp]; }
+		}
+
+		[ConfigurationProperty ("useDefaultCredentials", DefaultValue = "False")]
+		public bool UseDefaultCredentials {
+			get { return (bool) base [useDefaultCredentialsProp]; }
+			set { base [useDefaultCredentialsProp] = value; }
 		}
 
 		protected override ConfigurationPropertyCollection Properties {
 			get { return properties; }
-		}
-
-		public ProxyElement Proxy {
-			get { return (ProxyElement) base [proxy]; }
 		}
 
 		#endregion // Properties
@@ -81,7 +109,13 @@ namespace System.Net.Configuration
 		#region Methods
 
 		[MonoTODO]
-		protected override object GetRuntimeObject ()
+		protected override void PostDeserialize ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		protected override void Reset (ConfigurationElement parentElement)
 		{
 			throw new NotImplementedException ();
 		}

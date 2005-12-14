@@ -35,11 +35,11 @@ using System.Configuration;
 
 namespace System.Net.Configuration 
 {
+	[ConfigurationCollection (typeof (BypassElement), CollectionType = ConfigurationElementCollectionType.AddRemoveClearMap)]
 	public sealed class BypassElementCollection : ConfigurationElementCollection
 	{
 		#region Constructors
 
-		[MonoTODO]
 		public BypassElementCollection ()
 		{
 		}
@@ -63,30 +63,28 @@ namespace System.Net.Configuration
 
 		#region Methods
 
-		[MonoTODO]
 		public void Add (BypassElement element)
 		{
 			BaseAdd (element);
 		}
 
-		[MonoTODO]
 		public void Clear ()
 		{
 			BaseClear ();
 		}
 
-		[MonoTODO]
 		protected override ConfigurationElement CreateNewElement ()
 		{
 			return new BypassElement ();
 		}
 
-		[MonoTODO]
+		[MonoTODO ("argument exception?")]
 		protected override object GetElementKey (ConfigurationElement element)
 		{
 			if (!(element is BypassElement))
 				throw new ArgumentException ("element");
-			throw new NotImplementedException ();
+
+			return ((BypassElement)element).Address;
 		}
 
 		public int IndexOf (BypassElement element)

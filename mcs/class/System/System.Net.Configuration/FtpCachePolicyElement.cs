@@ -1,12 +1,10 @@
 //
-// System.Net.Configuration.ConnectionManagementSection.cs
+// System.Net.Configuration.HttpCachePolicyElement.cs
 //
 // Authors:
-//	Tim Coleman (tim@timcoleman.com)
 //	Chris Toshok (toshok@ximian.com)
 //
-// Copyright (C) Tim Coleman, 2004
-// (C) 2004,2005 Novell, Inc. (http://www.novell.com)
+// (C) 2005 Novell, Inc. (http://www.novell.com)
 //
 
 //
@@ -32,31 +30,33 @@
 
 #if NET_2_0 && CONFIGURATION_DEP
 
+using System;
 using System.Configuration;
+using System.Net.Cache;
+using System.Xml;
 
 namespace System.Net.Configuration 
 {
-	public sealed class ConnectionManagementSection : ConfigurationSection
+	public sealed class FtpCachePolicyElement : ConfigurationElement
 	{
 		#region Fields
 
-		static ConfigurationProperty connectionManagementProp;
+		static ConfigurationProperty policyLevelProp;
 		static ConfigurationPropertyCollection properties;
 
 		#endregion // Fields
 
 		#region Constructors
 
-		static ConnectionManagementSection ()
+		static FtpCachePolicyElement ()
 		{
-			connectionManagementProp = new ConfigurationProperty ("ConnectionManagement", typeof (ConnectionManagementElementCollection),
-									      null, ConfigurationPropertyOptions.IsDefaultCollection);
-
+			policyLevelProp = new ConfigurationProperty ("policyLevel", typeof (RequestCacheLevel), RequestCacheLevel.Default);
 			properties = new ConfigurationPropertyCollection ();
-			properties.Add (connectionManagementProp);
+
+			properties.Add (policyLevelProp);
 		}
 
-		public ConnectionManagementSection ()
+		public FtpCachePolicyElement ()
 		{
 		}
 
@@ -64,9 +64,10 @@ namespace System.Net.Configuration
 
 		#region Properties
 
-		[ConfigurationProperty ("", Options = ConfigurationPropertyOptions.IsDefaultCollection)]
-		public ConnectionManagementElementCollection ConnectionManagement {
-			get { return (ConnectionManagementElementCollection) base [connectionManagementProp]; }
+		[ConfigurationProperty ("policyLevel", DefaultValue = "Default")]
+		public RequestCacheLevel PolicyLevel {
+			get { return (RequestCacheLevel) base [policyLevelProp]; }
+			set { base [policyLevelProp] = value; }
 		}
 
 		protected override ConfigurationPropertyCollection Properties {
@@ -74,6 +75,22 @@ namespace System.Net.Configuration
 		}
 
 		#endregion // Properties
+
+		#region Methods
+
+		[MonoTODO]
+		protected override void DeserializeElement (XmlReader reader, bool serializeCollectionKey)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		protected override void Reset (ConfigurationElement parentElement)
+		{
+			throw new NotImplementedException ();
+		}
+
+		#endregion // Methods
 	}
 }
 

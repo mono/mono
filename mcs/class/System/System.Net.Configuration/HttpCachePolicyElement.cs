@@ -3,9 +3,10 @@
 //
 // Authors:
 //	Tim Coleman (tim@timcoleman.com)
+//	Chris Toshok (toshok@ximian.com)
 //
 // Copyright (C) Tim Coleman, 2004
-// (c) 2004 Novell, Inc. (http://www.novell.com)
+// (C) 2004,2005 Novell, Inc. (http://www.novell.com)
 //
 
 //
@@ -42,47 +43,61 @@ namespace System.Net.Configuration
 	{
 		#region Fields
 
-		ConfigurationPropertyCollection properties;
-		static ConfigurationProperty maximumAge = new ConfigurationProperty ("MaximumAge", typeof (TimeSpan), TimeSpan.MaxValue);
-		static ConfigurationProperty maximumStale = new ConfigurationProperty ("MaximumStale", typeof (TimeSpan), TimeSpan.MinValue);
-		static ConfigurationProperty minimumFresh = new ConfigurationProperty ("MinimumFresh", typeof (TimeSpan), TimeSpan.MinValue);
-		static ConfigurationProperty policyLevel = new ConfigurationProperty ("PolicyLevel", typeof (HttpRequestCacheLevel), HttpRequestCacheLevel.Default);
+		static ConfigurationProperty maximumAgeProp;
+		static ConfigurationProperty maximumStaleProp;
+		static ConfigurationProperty minimumFreshProp;
+		static ConfigurationProperty policyLevelProp;
+		static ConfigurationPropertyCollection properties;
 
 		#endregion // Fields
 
 		#region Constructors
 
+		static HttpCachePolicyElement ()
+		{
+			maximumAgeProp = new ConfigurationProperty ("maximumAge", typeof (TimeSpan), TimeSpan.MaxValue);
+			maximumStaleProp = new ConfigurationProperty ("maximumStale", typeof (TimeSpan), TimeSpan.MinValue);
+			minimumFreshProp = new ConfigurationProperty ("minimumFresh", typeof (TimeSpan), TimeSpan.MinValue);
+			policyLevelProp = new ConfigurationProperty ("policyLevel", typeof (HttpRequestCacheLevel),
+								     HttpRequestCacheLevel.Default, ConfigurationPropertyOptions.IsRequired);
+			properties = new ConfigurationPropertyCollection ();
+
+			properties.Add (maximumAgeProp);
+			properties.Add (maximumStaleProp);
+			properties.Add (minimumFreshProp);
+			properties.Add (policyLevelProp);
+		}
+
 		public HttpCachePolicyElement ()
 		{
-			properties = new ConfigurationPropertyCollection ();
-			properties.Add (maximumAge);
-			properties.Add (maximumStale);
-			properties.Add (minimumFresh);
-			properties.Add (policyLevel);
 		}
 
 		#endregion // Constructors
 
 		#region Properties
 
+		[ConfigurationProperty ("maximumAge", DefaultValue = "10675199.02:48:05.4775807")]
 		public TimeSpan MaximumAge {
-			get { return (TimeSpan) base [maximumAge]; }
-			set { base [maximumAge] = value; }
+			get { return (TimeSpan) base [maximumAgeProp]; }
+			set { base [maximumAgeProp] = value; }
 		}
 
+		[ConfigurationProperty ("maximumStale", DefaultValue = "-10675199.02:48:05.4775808")]
 		public TimeSpan MaximumStale {
-			get { return (TimeSpan) base [maximumStale]; }
-			set { base [maximumStale] = value; }
+			get { return (TimeSpan) base [maximumStaleProp]; }
+			set { base [maximumStaleProp] = value; }
 		}
 
+		[ConfigurationProperty ("minimumFresh", DefaultValue = "-10675199.02:48:05.4775808")]
 		public TimeSpan MinimumFresh {
-			get { return (TimeSpan) base [minimumFresh]; }
-			set { base [minimumFresh] = value; }
+			get { return (TimeSpan) base [minimumFreshProp]; }
+			set { base [minimumFreshProp] = value; }
 		}
 
+		[ConfigurationProperty ("policyLevel", DefaultValue = HttpRequestCacheLevel.Default, Options = ConfigurationPropertyOptions.IsRequired)]
 		public HttpRequestCacheLevel PolicyLevel {
-			get { return (HttpRequestCacheLevel) base [policyLevel]; }
-			set { base [policyLevel] = value; }
+			get { return (HttpRequestCacheLevel) base [policyLevelProp]; }
+			set { base [policyLevelProp] = value; }
 		}
 
 		protected override ConfigurationPropertyCollection Properties {

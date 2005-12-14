@@ -3,9 +3,10 @@
 //
 // Authors:
 //	Tim Coleman (tim@timcoleman.com)
+//	Chris Toshok (toshok@ximian.com)
 //
 // Copyright (C) Tim Coleman, 2004
-// (c) 2004 Novell, Inc. (http://www.novell.com)
+// (C) 2004,2005 Novell, Inc. (http://www.novell.com)
 //
 
 //
@@ -39,26 +40,32 @@ namespace System.Net.Configuration
 	{
 		#region Fields
 
-		ConfigurationPropertyCollection properties;
-		static ConfigurationProperty enabled = new ConfigurationProperty ("Enabled", typeof (bool), false);
+		static ConfigurationPropertyCollection properties;
+		static ConfigurationProperty enabledProp;
 
 		#endregion // Fields
 
 		#region Constructors
 
+		static Ipv6Element ()
+		{
+			enabledProp = new ConfigurationProperty ("enabled", typeof (bool), false);
+			properties = new ConfigurationPropertyCollection ();
+			properties.Add (enabledProp);
+		}
+
 		public Ipv6Element ()
 		{
-			properties = new ConfigurationPropertyCollection ();
-			properties.Add (enabled);
 		}
 
 		#endregion // Constructors
 
 		#region Properties
 
+		[ConfigurationProperty ("enabled", DefaultValue = "False")]
 		public bool Enabled {
-			get { return (bool) base [enabled]; }
-			set { base [enabled] = value; }
+			get { return (bool) base [enabledProp]; }
+			set { base [enabledProp] = value; }
 		}
 
 		protected override ConfigurationPropertyCollection Properties {

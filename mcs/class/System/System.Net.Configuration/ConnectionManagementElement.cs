@@ -3,9 +3,10 @@
 //
 // Authors:
 //	Tim Coleman (tim@timcoleman.com)
+//	Chris Toshok (toshok@ximian.com)
 //
 // Copyright (C) Tim Coleman, 2004
-// (c) 2004 Novell, Inc. (http://www.novell.com)
+// (C) 2004,2005 Novell, Inc. (http://www.novell.com)
 //
 
 //
@@ -39,21 +40,31 @@ namespace System.Net.Configuration
 	{
 		#region Fields
 
-		ConfigurationPropertyCollection properties;
-		static ConfigurationProperty address = new ConfigurationProperty ("Address", typeof (string), null);
-		static ConfigurationProperty maxConnection = new ConfigurationProperty ("MaxConnection", typeof (int), 1);
+		static ConfigurationPropertyCollection properties;
+		static ConfigurationProperty addressProp;
+		static ConfigurationProperty maxConnectionProp;
 
 		#endregion // Fields
 
 		#region Constructors
 
+		static ConnectionManagementElement ()
+		{
+			addressProp = new ConfigurationProperty ("address", typeof (string),
+								 null, ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey);
+			maxConnectionProp = new ConfigurationProperty ("maxconnection", typeof (int),
+								       1, ConfigurationPropertyOptions.IsRequired);
+			properties = new ConfigurationPropertyCollection ();
+
+			properties.Add (addressProp);
+			properties.Add (maxConnectionProp);
+		}
+
 		public ConnectionManagementElement ()
 		{
-			properties = new ConfigurationPropertyCollection ();
 		}
 
 		public ConnectionManagementElement (string address, int maxConnection)
-			: this ()
 		{
 			Address = address;
 			MaxConnection = maxConnection;
@@ -63,14 +74,16 @@ namespace System.Net.Configuration
 
 		#region Properties
 
+		[ConfigurationProperty ("address", Options = ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey)]
 		public string Address {
-			get { return (string) base [address]; }
-			set { base [address] = value; }
+			get { return (string) base [addressProp]; }
+			set { base [addressProp] = value; }
 		}
 
+		[ConfigurationProperty ("maxconnection", DefaultValue = "1", Options = ConfigurationPropertyOptions.IsRequired)]
 		public int MaxConnection {
-			get { return (int) base [maxConnection]; }
-			set { base [maxConnection] = value; } 
+			get { return (int) base [maxConnectionProp]; }
+			set { base [maxConnectionProp] = value; } 
 		}
 
 		protected override ConfigurationPropertyCollection Properties {

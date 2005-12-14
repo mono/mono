@@ -3,9 +3,10 @@
 //
 // Authors:
 //	Tim Coleman (tim@timcoleman.com)
+//	Chris Toshok (toshok@ximian.com)
 //
 // Copyright (C) Tim Coleman, 2004
-// (c) 2004 Novell, Inc. (http://www.novell.com)
+// (C) 2004,2005 Novell, Inc. (http://www.novell.com)
 //
 
 //
@@ -39,17 +40,24 @@ namespace System.Net.Configuration
 	{
 		#region Fields
 
-		ConfigurationPropertyCollection properties;
-		static ConfigurationProperty authenticationModules = new ConfigurationProperty ("AuthenticationModules", typeof (AuthenticationModuleElementCollection), new AuthenticationModuleElementCollection ());
+		static ConfigurationPropertyCollection properties;
+		static ConfigurationProperty authenticationModulesProp;
 
 		#endregion // Fields
 
 		#region Constructors
 
+		static AuthenticationModulesSection ()
+		{
+			authenticationModulesProp = new ConfigurationProperty ("", typeof (AuthenticationModuleElementCollection),
+									       null, ConfigurationPropertyOptions.IsDefaultCollection);
+									       
+			properties = new ConfigurationPropertyCollection ();
+			properties.Add (authenticationModulesProp);
+		}
+
 		public AuthenticationModulesSection ()
 		{
-			properties = new ConfigurationPropertyCollection ();
-			properties.Add (authenticationModules);
 		}
 
 		#endregion // Constructors
@@ -60,8 +68,9 @@ namespace System.Net.Configuration
 			get { return properties; }
 		}
 
+		[ConfigurationProperty ("", Options = ConfigurationPropertyOptions.IsDefaultCollection)]
 		public AuthenticationModuleElementCollection AuthenticationModules {
-			get { return (AuthenticationModuleElementCollection) base [authenticationModules]; }
+			get { return (AuthenticationModuleElementCollection) base [authenticationModulesProp]; }
 		}
 
 		#endregion // Properties

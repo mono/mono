@@ -3,9 +3,10 @@
 //
 // Authors:
 //	Tim Coleman (tim@timcoleman.com)
+//	Chris Toshok (toshok@ximian.com)
 //
 // Copyright (C) Tim Coleman, 2004
-// (c) 2004 Novell, Inc. (http://www.novell.com)
+// (C) 2004,2005 Novell, Inc. (http://www.novell.com)
 //
 
 //
@@ -35,11 +36,11 @@ using System.Configuration;
 
 namespace System.Net.Configuration 
 {
+	[ConfigurationCollection (typeof (ConnectionManagementElement), CollectionType = ConfigurationElementCollectionType.AddRemoveClearMap)]
 	public sealed class ConnectionManagementElementCollection : ConfigurationElementCollection
 	{
 		#region Constructors
 
-		[MonoTODO]
 		public ConnectionManagementElementCollection ()
 		{
 		}
@@ -63,30 +64,28 @@ namespace System.Net.Configuration
 
 		#region Methods
 
-		[MonoTODO]
 		public void Add (ConnectionManagementElement element)
 		{
 			BaseAdd (element);
 		}
 
-		[MonoTODO]
 		public void Clear ()
 		{
 			BaseClear ();
 		}
 
-		[MonoTODO]
 		protected override ConfigurationElement CreateNewElement ()
 		{
 			return new AuthenticationModuleElement ();
 		}
 
-		[MonoTODO]
+		[MonoTODO ("argument exception?")]
 		protected override object GetElementKey (ConfigurationElement element)
 		{
 			if (!(element is ConnectionManagementElement))
 				throw new ArgumentException ("element");
-			throw new NotImplementedException ();
+
+			return ((ConnectionManagementElement)element).Address;
 		}
 
 		public int IndexOf (ConnectionManagementElement element)

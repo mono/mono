@@ -1,3 +1,15 @@
+2005-12-13  Chris Toshok  <toshok@ximian.com>
+
+	* AuthenticationModuleElementCollection.cs,
+	AuthenticationModuleElement.cs, AuthenticationModulesSection.cs,
+	BypassElementCollection.cs, BypassElement.cs,
+	ConnectionManagementElementCollection.cs,
+	ConnectionManagementElement.cs, ConnectionManagementSection.cs,
+	DefaultProxySection.cs, FtpCachePolicyElement.cs,
+	HttpCachePolicyElement.cs, HttpWebRequestElement.cs,
+	Ipv6Element.cs, ModuleElement.cs, NetSectionGroup.cs,
+	ProxyElement.cs, RequestCachingSection.cs: 2.0 config cleanup work.
+
 2005-11-09 Michael Hutchinson <m.j.hutchinson@gmail.com>
 
 	* DefaultProxyHandler.cs: Read proxy address from environment, fall

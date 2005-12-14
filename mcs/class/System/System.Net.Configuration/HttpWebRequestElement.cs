@@ -3,9 +3,10 @@
 //
 // Authors:
 //	Tim Coleman (tim@timcoleman.com)
+//	Chris Toshok (toshok@ximian.com)
 //
 // Copyright (C) Tim Coleman, 2004
-// (c) 2004 Novell, Inc. (http://www.novell.com)
+// (C) 2004,2005 Novell, Inc. (http://www.novell.com)
 //
 
 //
@@ -39,60 +40,78 @@ namespace System.Net.Configuration
 	{
 		#region Fields
 
-		ConfigurationPropertyCollection properties;
-		static ConfigurationProperty maximumErrorResponseLength = new ConfigurationProperty("maximumErrorResponseLength", typeof(int), 64);
-		static ConfigurationProperty maximumResponseHeadersLength = new ConfigurationProperty ("maximumResponseHeadersLength", typeof (int), 64);
-		static ConfigurationProperty maximumUnauthorizedUploadLength = new ConfigurationProperty("maximumUnauthorizedUploadLength", typeof(int), -1);
-		static ConfigurationProperty useUnsafeHeaderParsing = new ConfigurationProperty("useUnsafeHeaderParsing", typeof(bool), false);
+		static ConfigurationProperty maximumErrorResponseLengthProp;
+		static ConfigurationProperty maximumResponseHeadersLengthProp;
+		static ConfigurationProperty maximumUnauthorizedUploadLengthProp;
+		static ConfigurationProperty useUnsafeHeaderParsingProp;
+		static ConfigurationPropertyCollection properties;
 
 		#endregion // Fields
 
 		#region Constructors
 
+		static HttpWebRequestElement ()
+		{
+			maximumErrorResponseLengthProp = new ConfigurationProperty ("maximumErrorResponseLength", typeof (int), 64);
+			maximumResponseHeadersLengthProp = new ConfigurationProperty ("maximumResponseHeadersLength", typeof (int), 64);
+			maximumUnauthorizedUploadLengthProp = new ConfigurationProperty ("maximumUnauthorizedUploadLength", typeof (int), -1);
+			useUnsafeHeaderParsingProp = new ConfigurationProperty ("useUnsafeHeaderParsing", typeof (bool), false);
+			properties = new ConfigurationPropertyCollection ();
+
+			properties.Add (maximumErrorResponseLengthProp);
+			properties.Add (maximumResponseHeadersLengthProp);
+			properties.Add (maximumUnauthorizedUploadLengthProp);
+			properties.Add (useUnsafeHeaderParsingProp);
+		}
+
 		public HttpWebRequestElement ()
 		{
-			properties = new ConfigurationPropertyCollection ();
-			properties.Add (maximumErrorResponseLength);
-			properties.Add (maximumResponseHeadersLength);
-			properties.Add (maximumUnauthorizedUploadLength);
-			properties.Add (useUnsafeHeaderParsing);
 		}
 
 		#endregion // Constructors
 
 		#region Properties
 
+		[ConfigurationProperty("maximumErrorResponseLength", DefaultValue = "64")]
+		public int MaximumErrorResponseLength {
+			get { return (int) base[maximumErrorResponseLengthProp]; }
+			set { base [maximumErrorResponseLengthProp] = value; }
+		}
+
+		[ConfigurationProperty("maximumResponseHeadersLength", DefaultValue = "64")]
+		public int MaximumResponseHeadersLength {
+			get { return (int) base [maximumResponseHeadersLengthProp]; }
+			set { base [maximumResponseHeadersLengthProp] = value; }
+		}
+
+		[ConfigurationProperty("maximumUnauthorizedUploadLength", DefaultValue = "-1")]
+		public int MaximumUnauthorizedUploadLength {
+			get { return (int) base [maximumUnauthorizedUploadLengthProp]; }
+			set { base [maximumUnauthorizedUploadLengthProp] = value; }
+		}
+
+		[ConfigurationProperty("useUnsafeHeaderParsing", DefaultValue = "False")]
+		public bool UseUnsafeHeaderParsing {
+			get { return (bool) base [useUnsafeHeaderParsingProp]; }
+			set { base[useUnsafeHeaderParsingProp] = value; }
+		}
+
 		protected override ConfigurationPropertyCollection Properties {
 			get { return properties; }
 		}
 
-		[MonoTODO ("Use value for HttpWebRequest.DefaultMaximumErrorResponseLength?")]
-		[ConfigurationProperty("maximumErrorResponseLength", DefaultValue=64)]
-		public int MaximumErrorResponseLength {
-			get { return (int) base[maximumErrorResponseLength]; }
-			set { base [maximumErrorResponseLength] = value; }
-		}
-
-		[MonoTODO ("Use value for HttpWebRequest.DefaultMaximumResponseHeadersLength?")]
-		[ConfigurationProperty("maximumResponseHeadersLength", DefaultValue=64)]
-		public int MaximumResponseHeadersLength {
-			get { return (int) base [maximumResponseHeadersLength]; }
-			set { base [maximumResponseHeadersLength] = value; }
-		}
-
-		[ConfigurationProperty("maximumUnauthorizedUploadLength", DefaultValue=-1)]
-		public int MaximumUnauthorizedUploadLength {
-			get { return (int) base [maximumUnauthorizedUploadLength]; }
-			set { base [maximumUnauthorizedUploadLength] = value; }
-		}
-
-		[ConfigurationProperty("useUnsafeHeaderParsing", DefaultValue=false)]
-		public bool UseUnsafeHeaderParsing {
-			get { return (bool) base [useUnsafeHeaderParsing]; }
-			set { base[useUnsafeHeaderParsing] = value; }
-		}
-
 		#endregion // Properties
+
+
+		#region Methods
+
+		[MonoTODO]
+		protected override void PostDeserialize ()
+		{
+			base.PostDeserialize ();
+		}
+
+		#endregion // Methods
 	}
 }
 

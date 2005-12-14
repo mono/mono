@@ -3,9 +3,10 @@
 //
 // Authors:
 //	Tim Coleman (tim@timcoleman.com)
+//	Chris Toshok (toshok@ximian.com)
 //
 // Copyright (C) Tim Coleman, 2004
-// (c) 2004 Novell, Inc. (http://www.novell.com)
+// (C) 2004,2005 Novell, Inc. (http://www.novell.com)
 //
 
 //
@@ -35,6 +36,7 @@ using System.Configuration;
 
 namespace System.Net.Configuration 
 {
+	[ConfigurationCollection (typeof (AuthenticationModuleElement), CollectionType = ConfigurationElementCollectionType.AddRemoveClearMap)]
 	public sealed class AuthenticationModuleElementCollection : ConfigurationElementCollection
 	{
 		#region Constructors
@@ -64,30 +66,28 @@ namespace System.Net.Configuration
 
 		#region Methods
 
-		[MonoTODO]
 		public void Add (AuthenticationModuleElement element)
 		{
 			BaseAdd (element);
 		}
 
-		[MonoTODO]
 		public void Clear ()
 		{
 			BaseClear ();
 		}
 
-		[MonoTODO]
 		protected override ConfigurationElement CreateNewElement ()
 		{
 			return new AuthenticationModuleElement ();
 		}
 
-		[MonoTODO]
+		[MonoTODO ("argument exception?")]
 		protected override object GetElementKey (ConfigurationElement element)
 		{
 			if (!(element is AuthenticationModuleElement))
 				throw new ArgumentException ("element");
-			throw new NotImplementedException ();
+
+			return ((AuthenticationModuleElement)element).Type;
 		}
 
 		public int IndexOf (AuthenticationModuleElement element)

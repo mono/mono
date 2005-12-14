@@ -3,9 +3,10 @@
 //
 // Authors:
 //	Tim Coleman (tim@timcoleman.com)
+//	Chris Toshok (toshok@ximian.com)
 //
 // Copyright (C) Tim Coleman, 2004
-// (c) 2004 Novell, Inc. (http://www.novell.com)
+// (C) 2004,2005 Novell, Inc. (http://www.novell.com)
 //
 
 //
@@ -39,21 +40,26 @@ namespace System.Net.Configuration
 	{
 		#region Fields
 
-		ConfigurationPropertyCollection properties;
-		static ConfigurationProperty type = new ConfigurationProperty ("Type", typeof (string), null);
+		static ConfigurationPropertyCollection properties;
+		static ConfigurationProperty typeProp;
 
 		#endregion // Fields
 
 		#region Constructors
 
+		static AuthenticationModuleElement ()
+		{
+			typeProp = new ConfigurationProperty ("type", typeof (string), null, ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey);
+			properties = new ConfigurationPropertyCollection ();
+
+			properties.Add (typeProp);
+		}
+
 		public AuthenticationModuleElement ()
 		{
-			properties = new ConfigurationPropertyCollection ();
-			properties.Add (type);
 		}
 
 		public AuthenticationModuleElement (string typeName)
-			: this ()
 		{
 			Type = typeName;
 		}
@@ -66,9 +72,10 @@ namespace System.Net.Configuration
 			get { return properties; }
 		}
 
+		[ConfigurationProperty ("type", Options = ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey)]
 		public string Type {
-			get { return (string) base [type]; }
-			set { base [type] = value; }
+			get { return (string) base [typeProp]; }
+			set { base [typeProp] = value; }
 		}
 
 		#endregion // Properties

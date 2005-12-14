@@ -3,9 +3,10 @@
 //
 // Authors:
 //	Tim Coleman (tim@timcoleman.com)
+//	Chris Toshok (toshok@ximian.com)
 //
 // Copyright (C) Tim Coleman, 2004
-// (c) 2004 Novell, Inc. (http://www.novell.com)
+// (C) 2004,2005 Novell, Inc. (http://www.novell.com)
 //
 
 //
@@ -39,21 +40,27 @@ namespace System.Net.Configuration
 	{
 		#region Fields
 
-		ConfigurationPropertyCollection properties;
-		static ConfigurationProperty address = new ConfigurationProperty ("Address", typeof (string), null);
+		static ConfigurationPropertyCollection properties;
+		static ConfigurationProperty addressProp;
 
 		#endregion // Fields
 
 		#region Constructors
 
+		static BypassElement ()
+		{
+			addressProp = new ConfigurationProperty ("Address", typeof (string),
+								 null, ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey);
+
+			properties = new ConfigurationPropertyCollection ();
+			properties.Add (addressProp);
+		}
+
 		public BypassElement ()
 		{
-			properties = new ConfigurationPropertyCollection ();
-			properties.Add (address);
 		}
 
 		public BypassElement (string address)
-			: this ()
 		{
 			Address = address;
 		}
@@ -62,9 +69,10 @@ namespace System.Net.Configuration
 
 		#region Properties
 
+		[ConfigurationProperty ("address", Options = ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey)]
 		public string Address {
-			get { return (string) base [address]; }
-			set { base [address] = value; }
+			get { return (string) base [addressProp]; }
+			set { base [addressProp] = value; }
 		}
 
 		protected override ConfigurationPropertyCollection Properties {

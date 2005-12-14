@@ -48,44 +48,42 @@ namespace System.Net.Configuration
 
 		#region Properties
 
-		[MonoTODO]
+		[ConfigurationProperty ("authenticationModules")]
 		public AuthenticationModulesSection AuthenticationModules {
-			get { throw new NotImplementedException (); }
+			get { return (AuthenticationModulesSection) Sections ["authenticationModules"]; }
 		}
 
-		[MonoTODO]
+		[ConfigurationProperty ("connectionManagement")]
 		public ConnectionManagementSection ConnectionManagement {
-			get { throw new NotImplementedException (); }
+			get { return (ConnectionManagementSection) Sections ["connectionManagement"]; }
 		}
 
-		[MonoTODO]
+		[ConfigurationProperty ("defaultProxy")]
 		public DefaultProxySection DefaultProxy {
-			get { throw new NotImplementedException (); }
+			get { return (DefaultProxySection) Sections ["defaultProxy"]; }
 		}
 
-		[MonoTODO]
-		public MailSettingsSection MailSettings {
-			get { throw new NotImplementedException (); }
+#if notyet
+		[ConfigurationProperty ("mailSettings")]
+		public MailSettingsSectionGroup MailSettings {
+			get { return (MailSettingsSectionGroup) SectionGroups ["mailSettings"]; }
 		}
+#endif
 
-		[MonoTODO]
+		[ConfigurationProperty ("requestCaching")]
 		public RequestCachingSection RequestCaching {
-			get { throw new NotImplementedException (); }
+			get { return (RequestCachingSection) Sections ["requestCaching"]; }
 		}
 
-		[MonoTODO]
+		
+		[ConfigurationProperty ("settings")]
 		public SettingsSection Settings {
-			get { throw new NotImplementedException (); }
+			get { return (SettingsSection) Sections ["settings"]; }
 		}
 
-		[MonoTODO]
-		public UriParserSection UriParser {
-			get { throw new NotImplementedException (); }
-		}
-
-		[MonoTODO]
+		[ConfigurationProperty ("webRequestModules")]
 		public WebRequestModulesSection WebRequestModules {
-			get { throw new NotImplementedException (); }
+			get { return (WebRequestModulesSection) Sections ["webRequestModules"]; }
 		}
 
 		#endregion // Properties

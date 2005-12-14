@@ -3,9 +3,10 @@
 //
 // Authors:
 //	Tim Coleman (tim@timcoleman.com)
+//	Chris Toshok (toshok@ximian.com)
 //
 // Copyright (C) Tim Coleman, 2004
-// (c) 2004 Novell, Inc. (http://www.novell.com)
+// (C) 2004,2005 Novell, Inc. (http://www.novell.com)
 //
 
 //
@@ -39,17 +40,23 @@ namespace System.Net.Configuration
 	{
 		#region Fields
 
-		ConfigurationPropertyCollection properties;
-		static ConfigurationProperty type = new ConfigurationProperty ("Type", typeof (string), null);
+		static ConfigurationPropertyCollection properties;
+		static ConfigurationProperty typeProp;
 
 		#endregion // Fields
 
 		#region Constructors
 
+		static ModuleElement ()
+		{
+			typeProp = new ConfigurationProperty ("type", typeof (string), null);
+			properties = new ConfigurationPropertyCollection ();
+
+			properties.Add (typeProp);
+		}
+
 		public ModuleElement ()
 		{
-			properties = new ConfigurationPropertyCollection ();
-			properties.Add (type);
 		}
 
 		#endregion // Constructors
@@ -60,9 +67,10 @@ namespace System.Net.Configuration
 			get { return properties; }
 		}
 
+		[ConfigurationProperty ("type")]
 		public string Type {
-			get { return (string) base [type]; }
-			set { base [type] = value; }
+			get { return (string) base [typeProp]; }
+			set { base [typeProp] = value; }
 		}
 
 		#endregion // Properties
