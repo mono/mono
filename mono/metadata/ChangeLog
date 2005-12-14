@@ -1,3 +1,21 @@
+2005-12-14  Martin Baulig  <martin@ximian.com>
+
+	* class.c
+	(mono_type_get_name_recurse): Don't return null for type
+	parameters and open generic classes.
+	(mono_class_setup_methods): Don't exclude generic instances.
+	(mono_get_unique_iid): Use different IDs for different
+	instantiations of the same generic type.
+	(mono_class_setup_vtable): Only use setup_generic_vtable() for
+	open generic instances; create a normal vtable for closed generic
+	instances.
+	(mono_class_setup_vtable_general): We're now also called for
+	closed generic instances.
+
+	* reflection.c
+	(mono_reflection_bind_generic_parameters): Correctly use
+	mono_metadata_lookup_generic_inst() everywhere.
+
 2005-12-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* loader.c (mono_loader_set_error_type_load): Print the type load
