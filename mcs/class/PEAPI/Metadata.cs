@@ -2175,6 +2175,8 @@ namespace PEAPI {
 		{
 			numDims = dimensions;
 			lowerBounds = loBounds;
+			if (upBounds == null)
+				return;
 			sizes = new int[loBounds.Length];
 			for (int i=0; i < loBounds.Length; i++) {
 				sizes[i] = upBounds[i] - loBounds[i] + 1;

@@ -149,9 +149,9 @@ namespace Mono.ILASM {
                                         }
                                 }
                         }
-                        if (lower_set && size_set) {
+                        if (lower_set) {
                                 peapi_type = new PEAPI.BoundArray (peapi_type,
-                                                (uint) dimen, lower_array, size_array);
+                                                (uint) dimen, lower_array, (size_set ? size_array : null));
                         } else if (size_set) {
                                 peapi_type = new PEAPI.BoundArray (peapi_type,
                                                 (uint) dimen, size_array);

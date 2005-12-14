@@ -1,5 +1,10 @@
 2005-12-14  Ankit Jain  <jankit@novell.com>
 
+	* PeapiTypeRef.cs (PeapiTypeRef.MakeBoundArray): Handle the case when only
+	lower bound (no size info) is available.
+
+2005-12-14  Ankit Jain  <jankit@novell.com>
+
 	* TypeDef.cs (TypeDef.ctor): name_space can be null.
 
 2005-12-13  Ankit Jain  <jankit@novell.com>

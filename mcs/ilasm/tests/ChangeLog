@@ -1,5 +1,10 @@
 2005-12-14  Ankit Jain  <jankit@novell.com>
 
+	* test-bounded-array.il: New. Test for [0...], should not lose its 
+	lower bound info.
+
+2005-12-14  Ankit Jain  <jankit@novell.com>
+
 	* test-array.il: New. Test for tokenizing 0...8
 
 2005-12-14  Ankit Jain  <jankit@novell.com>
