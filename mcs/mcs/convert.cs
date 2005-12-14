@@ -1679,7 +1679,7 @@ namespace Mono.CSharp {
 		///   type is expr.Type to `target_type'.
 		/// </summary>
 		static public Expression ExplicitConversionCore (EmitContext ec, Expression expr,
-							     Type target_type, Location loc)
+								 Type target_type, Location loc)
 		{
 			Type expr_type = expr.Type;
 
@@ -1701,8 +1701,11 @@ namespace Mono.CSharp {
 				return ExplicitConversionCore (ec, new EmptyCast (expr, TypeManager.EnumToUnderlying (expr_type)), target_type, loc);
 			}
 
-			if (TypeManager.IsEnumType (target_type))
-				return new EmptyCast (ExplicitConversionCore (ec, expr, TypeManager.EnumToUnderlying (target_type), loc), target_type);
+			if (TypeManager.IsEnumType (target_type)){
+				Expression ce = ExplicitConversionCore (ec, expr, TypeManager.EnumToUnderlying (target_type), loc);
+				if (ce != null)
+					return new EmptyCast (ce, target_type);
+			}
 
 			ne = ExplicitNumericConversion (expr, target_type);
 			if (ne != null)
