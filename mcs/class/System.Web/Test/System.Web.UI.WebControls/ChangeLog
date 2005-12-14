@@ -1,3 +1,7 @@
+2005-12-14 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* DropDownListTest.cs: test for html-encoding of the text.
+
 2005-11-21 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* RadioButtonTest.cs: more tests for the 'name' attribute.

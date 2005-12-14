@@ -383,5 +383,15 @@ namespace MonoTests.System.Web.UI.WebControls
 #endif
 			Assert.AreEqual (exp, ddl.Render ());
 		}
+
+		[Test]
+		public void HtmlEncodeItem ()
+		{
+			DropDownListTestClass d = new DropDownListTestClass ();
+			d.Items.Add(new ListItem ("text1", "<hola>"));
+			Assert.IsTrue (d.Render().IndexOf ("<hola>") == -1, "#01");
+			Assert.IsTrue (d.Render().IndexOf ("&lt;hola&gt;") != -1, "#02");
+		}
+
 	}
 }
