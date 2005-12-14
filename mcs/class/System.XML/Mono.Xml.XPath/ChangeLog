@@ -1,5 +1,9 @@
 2005-12-14  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XPathNavigatorReader.cs : oh, so it used to compile under 1.x.
+
+2005-12-14  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XPathNavigatorReader.cs : several fixes.
 	  - Unless ReadState is Interactive, all name stuff should return "". 
 	  - Refactored Read() to work fine when input navigator is Root.
