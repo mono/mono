@@ -213,11 +213,7 @@ namespace MonoTests.System.Xml
 			try {
 				node = document.CreateNode ("foo", null, null);
 				Fail ("Expected an ArgumentException to be thrown.");
-#if NET_2_0
-			} catch (ArgumentNullException) {}
-#else
-			} catch (ArgumentException) {} // makes less sense
-#endif
+			} catch (ArgumentException) {}
 
 			// .NET 2.0 fails here.
 			node = document.CreateNode("attribute", "foo", null);

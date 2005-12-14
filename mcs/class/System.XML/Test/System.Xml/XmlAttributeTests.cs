@@ -151,6 +151,9 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
+#if NET_2_0
+		[Category ("NotDotNet")] // enbug in 2.0
+#endif
 		public void SetInnerTextAndXml ()
 		{
 			string original = doc.OuterXml;
@@ -164,9 +167,10 @@ namespace MonoTests.System.Xml
 			AssertEquals ("setInnerXml.InnerXml", "'a&amp;b'", attr.InnerXml);
 			AssertEquals ("setInnerXml.Value", "'a&b'", attr.Value);
 			attr.InnerXml = "\"a&amp;b\"";
-			AssertEquals ("\"a&amp;b\"", attr.InnerXml);
+			AssertEquals ("Double_Quote", "\"a&amp;b\"", attr.InnerXml);
 			attr.InnerXml = "\"a&amp;b'";
-			AssertEquals ("\"a&amp;b'", attr.InnerXml);
+			AssertEquals ("DoubleQuoteStart_SingleQuoteEnd",
+				"\"a&amp;b'", attr.InnerXml);
 
 			attr.Value = "";
 			XmlNodeChangedEventHandler evInserted = new XmlNodeChangedEventHandler (EventNodeInserted);

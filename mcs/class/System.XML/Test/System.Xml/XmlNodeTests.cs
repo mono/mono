@@ -126,18 +126,28 @@ namespace MonoTests.System.Xml
 			document.LoadXml ("<root xmlns='urn:default' attr='value' "
 				+ "xml:lang='en' xmlns:foo='urn:foo' foo:att='fooatt'>text node</root>");
 			XmlNode n = document.DocumentElement;
-			AssertEquals ("urn:default", n.GetNamespaceOfPrefix (String.Empty));
-			AssertEquals ("urn:foo", n.GetNamespaceOfPrefix ("foo"));
-			AssertEquals (String.Empty, n.GetNamespaceOfPrefix ("bar"));
-			AssertEquals (String.Empty, n.GetNamespaceOfPrefix ("xml"));
-			AssertEquals (String.Empty, n.GetNamespaceOfPrefix ("xmlns"));
+			AssertEquals ("#1", "urn:default", n.GetNamespaceOfPrefix (String.Empty));
+			AssertEquals ("#2", "urn:foo", n.GetNamespaceOfPrefix ("foo"));
+			AssertEquals ("#3", String.Empty, n.GetNamespaceOfPrefix ("bar"));
+#if NET_2_0
+			AssertEquals ("#4", "http://www.w3.org/XML/1998/namespace", n.GetNamespaceOfPrefix ("xml"));
+			AssertEquals ("#5", "http://www.w3.org/2000/xmlns/", n.GetNamespaceOfPrefix ("xmlns"));
+#else
+			AssertEquals ("#4", String.Empty, n.GetNamespaceOfPrefix ("xml"));
+			AssertEquals ("#5", String.Empty, n.GetNamespaceOfPrefix ("xmlns"));
+#endif
 
 			n = document.DocumentElement.FirstChild;
-			AssertEquals ("urn:default", n.GetNamespaceOfPrefix (String.Empty));
-			AssertEquals ("urn:foo", n.GetNamespaceOfPrefix ("foo"));
-			AssertEquals (String.Empty, n.GetNamespaceOfPrefix ("bar"));
-			AssertEquals (String.Empty, n.GetNamespaceOfPrefix ("xml"));
-			AssertEquals (String.Empty, n.GetNamespaceOfPrefix ("xmlns"));
+			AssertEquals ("#6", "urn:default", n.GetNamespaceOfPrefix (String.Empty));
+			AssertEquals ("#7", "urn:foo", n.GetNamespaceOfPrefix ("foo"));
+			AssertEquals ("#8", String.Empty, n.GetNamespaceOfPrefix ("bar"));
+#if NET_2_0
+			AssertEquals ("#9", "http://www.w3.org/XML/1998/namespace", n.GetNamespaceOfPrefix ("xml"));
+			AssertEquals ("#10", "http://www.w3.org/2000/xmlns/", n.GetNamespaceOfPrefix ("xmlns"));
+#else
+			AssertEquals ("#9", String.Empty, n.GetNamespaceOfPrefix ("xml"));
+			AssertEquals ("#10", String.Empty, n.GetNamespaceOfPrefix ("xmlns"));
+#endif
 		}
 
 		[Test]

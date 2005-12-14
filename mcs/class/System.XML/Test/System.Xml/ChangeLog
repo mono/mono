@@ -1,5 +1,13 @@
 2005-12-14  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlDocumentTests.cs : (CreateNodeNodeTypeName) the previous fix was 
+	  wrong; ArgumentException is the expected exception (it anyways won't
+	  work under MS.NET 2.0).
+	* XmlNodeTests.cs : added labels to assertions. another NotDotNet case.
+	* XmlAttributeTests.cs : ditto.
+
+2005-12-14  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlDocumentTests.cs, XmlAttributeCollectionTests.cs
 	  XmlElementTests.cs, XmlCharacterDataTests.cs :
 	  Marked NotDotNet for some tests broken under 2.0 (MS bugs).
