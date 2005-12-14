@@ -1,5 +1,9 @@
 2005-12-14  Zoltan Varga  <vargaz@gmail.com>
 
+	* loader.c (mono_loader_set_error_type_load): Print the type load
+	warnings to the console so they are more visible to the user.
+	(mono_loader_set_error_method_load): Ditto.
+
 	* reflection.c (ensure_runtime_vtable): Revert the last change as it
 	is still broken.
 	
