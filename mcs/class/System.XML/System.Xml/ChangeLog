@@ -1,5 +1,10 @@
 2005-12-15  Atsushi Enomoto <atsushi@ximian.com>
 
+	* DTDObjectModel.cs : (CreateXsdParticle) element particle was
+	  missing occurence indicators.
+
+2005-12-15  Atsushi Enomoto <atsushi@ximian.com>
+
 	* DTDObjectModel.cs : some fixes on GetXmlSchema()
 	  - make generated schema cleaner.
 	  - enumeration was missing for attribute type.

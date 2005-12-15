@@ -439,6 +439,27 @@ namespace Mono.Xml
 
 		internal XmlSchemaParticle CreateXsdParticle ()
 		{
+			XmlSchemaParticle p = CreateXsdParticleCore ();
+			if (p == null)
+				return null;
+
+			switch (Occurence) {
+			case DTDOccurence.Optional:
+				p.MinOccurs = 0;
+				break;
+			case DTDOccurence.OneOrMore:
+				p.MaxOccursString = "unbounded";
+				break;
+			case DTDOccurence.ZeroOrMore:
+				p.MinOccurs = 0;
+				p.MaxOccursString = "unbounded";
+				break;
+			}
+			return p;
+		}
+
+		XmlSchemaParticle CreateXsdParticleCore ()
+		{
 			XmlSchemaParticle p = null;
 			if (ElementName != null) {
 				XmlSchemaElement el = new XmlSchemaElement ();
@@ -461,18 +482,6 @@ namespace Mono.Xml
 						gb.Items.Add (c);
 				}
 				p = gb;
-			}
-			switch (Occurence) {
-			case DTDOccurence.Optional:
-				p.MinOccurs = 0;
-				break;
-			case DTDOccurence.OneOrMore:
-				p.MaxOccursString = "unbounded";
-				break;
-			case DTDOccurence.ZeroOrMore:
-				p.MinOccurs = 0;
-				p.MaxOccursString = "unbounded";
-				break;
 			}
 			return p;
 		}
