@@ -1,3 +1,7 @@
+2005-12-07 Jelmer Vernooij <jelmer@samba.org>
+ 	* Makefile: allow build of only mbas, without the need to built the 
+	class library
+
 2005-11-29 Maverson Eduardo Schulze Rosa <maverson@gmail.com>
        * test-mbas.pl: Parsing Test Files in order to find necessary
        compilerOptions and generate the correct CompileCommand.
