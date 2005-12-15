@@ -1,3 +1,13 @@
+2005-12-15  Dick Porter  <dick@ximian.com>
+
+	* processes.c (CreateProcess): The pipe-based cross-process
+	exclusion technique was trying to write NULL buffers when appname
+	was NULL (eg when coming from ShellExecuteEx,) which usually
+	succeeded even though EFAULT was returned - but sometimes it
+	failed.  This meant that the child process could block forever on
+	the pipe read.  Replace it with the simpler shared handle
+	semaphore protection used everywhere else.  This showed up with
+	the test case in bug 76684.
 
 Tue Dec 13 11:41:49 GMT 2005 Paolo Molaro <lupus@ximian.com>
 
