@@ -1,5 +1,7 @@
 2005-12-15  Raja R Harinath  <rharinath@novell.com>
 
+	* generic.cs (TypeManager.IsGeneric): Remove unused method.
+
 	* typemanager.cs (TypeManager.GetFullName): Rewrite to handle
 	nested types.
 

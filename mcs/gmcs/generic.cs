@@ -1988,13 +1988,6 @@ namespace Mono.CSharp {
 			return ReflectionConstraints.GetConstraints (t);
 		}
 
-		public static bool IsGeneric (Type t)
-		{
-			DeclSpace ds = (DeclSpace) builder_to_declspace [t];
-
-			return ds.IsGeneric;
-		}
-
 		public static bool HasGenericArguments (Type t)
 		{
 			return GetNumberOfTypeArguments (t) > 0;
