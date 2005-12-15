@@ -445,15 +445,21 @@ namespace Mono.Xml
 				SetLineInfo (el);
 				el.RefName = new XmlQualifiedName (ElementName);
 				return el;
-			} else {
+			}
+			else if (ChildModels.Count == 0)
+				return null;
+			else {
 				XmlSchemaGroupBase gb = 
 					(OrderType == DTDContentOrderType.Seq) ?
 						(XmlSchemaGroupBase)
 						new XmlSchemaSequence () :
 						new XmlSchemaChoice ();
 				SetLineInfo (gb);
-				foreach (DTDContentModel cm in ChildModels.Items)
-					gb.Items.Add (cm.CreateXsdParticle ());
+				foreach (DTDContentModel cm in ChildModels.Items) {
+					XmlSchemaParticle c = cm.CreateXsdParticle ();
+					if (c != null)
+						gb.Items.Add (c);
+				}
 				p = gb;
 			}
 			switch (Occurence) {
@@ -673,6 +679,30 @@ namespace Mono.Xml
 			XmlSchemaElement el = new XmlSchemaElement ();
 			SetLineInfo (el);
 			el.Name = Name;
+
+			XmlSchemaComplexType ct = new XmlSchemaComplexType ();
+			el.SchemaType = ct;
+			if (Attributes != null) {
+				SetLineInfo (ct);
+				foreach (DTDAttributeDefinition a in
+					Attributes.Definitions)
+					ct.Attributes.Add (a.CreateXsdAttribute ());
+			}
+			if (IsEmpty)
+				; // nothing to do
+			else if (IsAny) {
+				XmlSchemaAny any = new XmlSchemaAny ();
+				any.MinOccurs = 0;
+				any.MaxOccursString = "unbounded";
+				ct.Particle = any;
+			}
+			else {
+				if (IsMixedContent)
+					ct.IsMixed = true;
+				ct.Particle = ContentModel.CreateXsdParticle ();
+			}
+
+			/*
 			if (IsEmpty) {
 				el.SchemaType = new XmlSchemaComplexType ();
 				SetLineInfo (el.SchemaType);
@@ -692,6 +722,7 @@ namespace Mono.Xml
 				ct.Particle = ContentModel.CreateXsdParticle ();
 				el.SchemaType = ct;
 			}
+			*/
 			return el;
 		}
 	}
@@ -839,6 +870,7 @@ namespace Mono.Xml
 						f.Value = name;
 					}
 				}
+				st.Content = r;
 			}
 			else if (qname != XmlQualifiedName.Empty)
 				a.SchemaTypeName = qname;

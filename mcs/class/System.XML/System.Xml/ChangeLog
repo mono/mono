@@ -1,3 +1,10 @@
+2005-12-15  Atsushi Enomoto <atsushi@ximian.com>
+
+	* DTDObjectModel.cs : some fixes on GetXmlSchema()
+	  - make generated schema cleaner.
+	  - enumeration was missing for attribute type.
+	* XmlTextReader.cs, XmlTextReader2.cs : added tiny notes for dtd2xsd.
+
 2005-12-15  Konstantin Triger <kostat@mainsoft.com>
 
         * XmlTextWriter.cs: allow null string in WriteCData.

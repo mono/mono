@@ -45,7 +45,7 @@ namespace System.Xml
 		IXmlLineInfo, IXmlNamespaceResolver, IHasXmlParserContext
 	{
 		XmlTextReader entity;
-		XmlTextReaderImpl source;
+		XmlTextReaderImpl source; // dtd2xsd expects this field's existence.
 		bool entityInsideAttribute;
 		bool insideAttribute;
 

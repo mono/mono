@@ -695,6 +695,7 @@ namespace System.Xml
 
 		#region Internals
 		// Parsed DTD Objects
+		// Note that thgis property must be kept since dtd2xsd uses it.
 		internal DTDObjectModel DTD {
 			get { return parserContext.Dtd; }
 		}
