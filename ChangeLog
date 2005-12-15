@@ -1,3 +1,7 @@
+2005-12-14 Wade Berrier <wberrier@novell.com>
+
+	* configure.in (AC_DISABLE_FAST_INSTALL): unset.
+
 2005-12-12 Mike Kestner <mkestner@novell.com>
 
 	* mono-cairo.pc.in: pkgconfig support for Mono.Cairo. Mono.Cairo.dll
