@@ -1,3 +1,9 @@
+2005-12-15  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DirectoryInfoTest.cs: Added test cases for #76191 and #76903.
+	* PathTest.cs: Added test cases for #76191, the possible modification 
+	of InvalidPathChars and the new 2.0 methods.
+
 2005-12-14  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* FileLoadExceptionCas.cs: MS fixed this in 2.0 final (#71861).

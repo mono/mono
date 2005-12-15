@@ -7,11 +7,13 @@
 //	Ben Maurer (bmaurer@users.sf.net)
 //	Gilles Freart (gfr@skynet.be)
 //	Atsushi Enomoto (atsushi@ximian.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (c) Marcin Szczepanski 
 // (c) 2002 Ximian, Inc. (http://www.ximian.com)
 // (c) 2003 Ben Maurer
 // (c) 2003 Gilles Freart
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 
 using NUnit.Framework;
@@ -624,6 +626,173 @@ namespace MonoTests.System.IO
 			AssertEquals ("#04", Path.Combine (Environment.CurrentDirectory, "hey"),
 					     Path.GetFullPath ("hey"));
 		}
+
+		[Test]
+		public void GetFullPath_EndingSeparator ()
+		{
+			string fp = Path.GetFullPath ("something/");
+			char end = fp[fp.Length - 1];
+			Assert (end == Path.DirectorySeparatorChar);
+		}
+
+		[Test]
+		public void WindowsSystem32_76191 ()
+		{
+			// check for Unix platforms - see FAQ for more details
+			// http://www.mono-project.com/FAQ:_Technical#How_to_detect_the_execution_platform_.3F
+			int platform = (int) Environment.OSVersion.Platform;
+			if ((platform == 4) || (platform == 128))
+				return;
+
+			string curdir = Directory.GetCurrentDirectory ();
+			try {
+				string system = Environment.SystemDirectory;
+				Directory.SetCurrentDirectory (system);
+				string drive = system.Substring (0, 2);
+				AssertEquals ("current dir", system, Path.GetFullPath (drive));
+			}
+			finally {
+				Directory.SetCurrentDirectory (curdir);
+			}
+		}
+
+		[Test]
+		public void InvalidPathChars_Values ()
+		{
+			char[] invalid = Path.InvalidPathChars;
+			if (Windows) {
+#if NET_2_0
+				AssertEquals ("Length", 36, invalid.Length);
+#else
+				AssertEquals ("Length", 15, invalid.Length);
+#endif
+				foreach (char c in invalid) {
+					int i = (int) c;
+#if NET_2_0
+					if (i < 32)
+						continue;
+#else
+					if ((i == 0) || (i == 8) || ((i > 15) && (i < 19)) || ((i > 19) && (i < 26)))
+						continue;
+#endif
+					// in both 1.1 SP1 and 2.0
+					if ((i == 34) || (i == 60) || (i == 62) || (i == 124))
+						continue;
+					Fail (String.Format ("'{0}' (#{1}) is invalid", c, i));
+				}
+			} else {
+				foreach (char c in invalid) {
+					int i = (int) c;
+					if (i == 0)
+						continue;
+					Fail (String.Format ("'{0}' (#{1}) is invalid", c, i));
+				}
+			}
+		}
+
+		[Test]
+		public void InvalidPathChars_Modify ()
+		{
+			char[] expected = Path.InvalidPathChars;
+			char[] invalid = Path.InvalidPathChars;
+			char original = invalid[0];
+			try {
+				invalid[0] = 'a';
+				// kind of scary
+				Assert ("expected", expected[0] == 'a');
+				AssertEquals ("readonly", expected[0], Path.InvalidPathChars[0]);
+			}
+			finally {
+				invalid[0] = original;
+			}
+		}
+#if NET_2_0
+		[Test]
+		public void GetInvalidFileNameChars_Values ()
+		{
+			char[] invalid = Path.GetInvalidFileNameChars ();
+			if (Windows) {
+				AssertEquals (41, invalid.Length);
+				foreach (char c in invalid) {
+					int i = (int) c;
+					if (i < 32)
+						continue;
+					if ((i == 34) || (i == 60) || (i == 62) || (i == 124))
+						continue;
+					// ':', '*', '?', '\', '/'
+					if ((i == 58) || (i == 42) || (i == 63) || (i == 92) || (i == 47))
+						continue;
+					Fail (String.Format ("'{0}' (#{1}) is invalid", c, i));
+				}
+			} else {
+				foreach (char c in invalid) {
+					int i = (int) c;
+					// null or '/'
+					if ((i == 0) || (i == 47))
+						continue;
+					Fail (String.Format ("'{0}' (#{1}) is invalid", c, i));
+				}
+			}
+		}
+
+		[Test]
+		public void GetInvalidFileNameChars_Modify ()
+		{
+			char[] expected = Path.GetInvalidFileNameChars ();
+			char[] invalid = Path.GetInvalidFileNameChars ();
+			invalid[0] = 'a';
+			Assert ("expected", expected[0] != 'a');
+			AssertEquals ("readonly", expected[0], Path.GetInvalidFileNameChars ()[0]);
+		}
+
+		[Test]
+		public void GetInvalidPathChars_Values ()
+		{
+			char[] invalid = Path.GetInvalidPathChars ();
+			if (Windows) {
+				AssertEquals (36, invalid.Length);
+				foreach (char c in invalid) {
+					int i = (int) c;
+					if (i < 32)
+						continue;
+					if ((i == 34) || (i == 60) || (i == 62) || (i == 124))
+						continue;
+					Fail (String.Format ("'{0}' (#{1}) is invalid", c, i));
+				}
+			} else {
+				foreach (char c in invalid) {
+					int i = (int) c;
+					if (i == 0)
+						continue;
+					Fail (String.Format ("'{0}' (#{1}) is invalid", c, i));
+				}
+			}
+		}
+
+		[Test]
+		public void GetInvalidPathChars_Modify ()
+		{
+			char[] expected = Path.GetInvalidPathChars ();
+			char[] invalid = Path.GetInvalidPathChars ();
+			invalid[0] = 'a';
+			Assert ("expected", expected[0] != 'a');
+			AssertEquals ("readonly", expected[0], Path.GetInvalidPathChars ()[0]);
+		}
+
+		[Test]
+		public void GetRandomFileName ()
+		{
+			string s = Path.GetRandomFileName ();
+			AssertEquals ("Length", 12, s.Length);
+			char[] invalid = Path.GetInvalidFileNameChars ();
+			for (int i=0; i < s.Length; i++) {
+				if (i == 8)
+					AssertEquals ("8", '.', s[i]);
+				else
+					Assert (i.ToString (), Array.IndexOf (invalid, s[i]) == -1);
+			}
+		}
+#endif
 	}
 }
 

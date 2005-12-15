@@ -1,12 +1,18 @@
 // DirectoryInfoTest.cs - NUnit Test Cases for System.IO.DirectoryInfo class
 //
-// Ville Palo (vi64pa@koti.soon.fi)
+// Authors
+//	Ville Palo (vi64pa@koti.soon.fi)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 // 
 // (C) 2003 Ville Palo
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 // 
+
 using NUnit.Framework;
 using System;
+using System.Collections;
 using System.IO;
+
 namespace MonoTests.System.IO
 {
 	[TestFixture]
@@ -15,18 +21,23 @@ namespace MonoTests.System.IO
 		string TempFolder = Path.Combine (Path.GetTempPath (), "MonoTests.System.IO.Tests");
 
 		static readonly char DSC = Path.DirectorySeparatorChar;
+		string current;
 
         	[SetUp]
-        	protected void SetUp() {
+        	protected void SetUp ()
+		{
+			current = Directory.GetCurrentDirectory ();
 			if (Directory.Exists (TempFolder))
 				Directory.Delete (TempFolder, true);
 			Directory.CreateDirectory (TempFolder);
         	}
         
         	[TearDown]
-        	protected void TearDown() {
+        	protected void TearDown ()
+		{
 			if (Directory.Exists (TempFolder))
 				Directory.Delete (TempFolder, true);
+			Directory.SetCurrentDirectory (current);
 		}
         
         	[Test]
@@ -267,14 +278,14 @@ namespace MonoTests.System.IO
 			DirectoryInfo di = new DirectoryInfo (String.Empty + Path.DirectorySeparatorChar);
 			if (Path.DirectorySeparatorChar == '/') {
 				// can't be sure of the root drive under windows
-				AssertEquals ("FullName", di.FullName, "/");
+				AssertEquals ("FullName", "/", di.FullName);
 			}
 			AssertNull ("Parent", di.Parent);
 
 			di = new DirectoryInfo (String.Empty + Path.AltDirectorySeparatorChar);
 			if (Path.DirectorySeparatorChar == '/') {
 				// can't be sure of the root drive under windows
-				AssertEquals ("FullName-Alt", di.FullName, "/");
+				AssertEquals ("FullName-Alt", "/", di.FullName);
 			}
 			AssertNull ("Parent-Alt", di.Parent);
 		}
@@ -687,5 +698,68 @@ namespace MonoTests.System.IO
 				DirectoryInfo info = new DirectoryInfo (TempFolder);
 				info.CreationTimeUtc = DateTime.Now;
 			}
-    	}
+
+
+		private void CheckName (string name)
+		{
+			DirectoryInfo di = new DirectoryInfo (name);
+			AssertEquals (name + ".Name", "share", di.Name);
+			AssertEquals (name + ".Parent.Name", "usr", di.Parent.Name);
+		}
+
+		[Test]
+		public void Name_Bug76903 ()
+		{
+			CheckName ("/usr/share");
+			CheckName ("/usr/share/");
+			CheckName ("/usr/share/.");
+			CheckName ("/usr/share/./");
+			CheckName ("/usr/share/blabla/../");
+			CheckName ("/usr/lib/../share/.");
+		}
+
+		[Test]
+		public void Hang_76191 ()
+		{
+			// from bug #76191 (hangs on Windows)
+			DirectoryInfo di = new DirectoryInfo (Environment.CurrentDirectory);
+			Stack s = new Stack ();
+			s.Push (di);
+			while (di.Parent != null) {
+				di = di.Parent;
+				s.Push (di);
+			}
+			while (s.Count > 0) {
+				di = (DirectoryInfo) s.Pop ();
+				Assert (di.Name, di.Exists);
+			}
+		}
+
+		private void WindowsParentFullName (string name, string expected)
+		{
+			DirectoryInfo di = new DirectoryInfo (name);
+			if (di.Parent == null)
+				AssertNull (name, expected);
+			else
+				AssertEquals (name, expected, di.Parent.FullName);
+		}
+
+		[Test]
+		public void WindowsSystem32_76191 ()
+		{
+			// check for Unix platforms - see FAQ for more details
+			// http://www.mono-project.com/FAQ:_Technical#How_to_detect_the_execution_platform_.3F
+			int platform = (int) Environment.OSVersion.Platform;
+			if ((platform == 4) || (platform == 128))
+				return;
+
+			Directory.SetCurrentDirectory (@"C:\WINDOWS\system32");
+			WindowsParentFullName ("C:", "C:\\WINDOWS");
+			WindowsParentFullName ("C:\\", null);
+			WindowsParentFullName ("C:\\dir", "C:\\");
+			WindowsParentFullName ("C:\\dir\\", "C:\\");
+			WindowsParentFullName ("C:\\dir\\dir", "C:\\dir");
+			WindowsParentFullName ("C:\\dir\\dir\\", "C:\\dir");
+		}
+	}
 }
