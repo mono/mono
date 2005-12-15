@@ -1,3 +1,8 @@
+2005-12-15  Ankit Jain  <jankit@novell.com>
+
+	* CodeGen.cs (CodeGen.SetAssemblyName): Multiple .assembly declarations with different
+	names are not allowed.
+
 2005-12-14  Ankit Jain  <jankit@novell.com>
 
 	* PeapiTypeRef.cs (PeapiTypeRef.MakeBoundArray): Handle the case when only

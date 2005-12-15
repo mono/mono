@@ -194,6 +194,9 @@ namespace Mono.ILASM {
 
                 public void SetAssemblyName (string name)
                 {
+                        if (assembly_name != null && assembly_name != name)
+                                //FIXME: Report error
+                                throw new Exception ("Multiple assembly declarations");
                         assembly_name = name;
                         if (assembly_name != "mscorlib")
                                 ExternTable.AddCorlib ();
