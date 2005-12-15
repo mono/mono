@@ -59,6 +59,7 @@ namespace System.Windows.Forms {
 		internal bool		expose_pending;
 		internal bool		nc_expose_pending;
 		internal bool		configure_pending;
+		internal bool		reparented;
 		internal Graphics	client_dc;
 		internal object		user_data;
 		internal Rectangle	client_rectangle;
@@ -83,6 +84,7 @@ namespace System.Windows.Forms {
 			invalid = Rectangle.Empty;
 			expose_pending = false;
 			nc_expose_pending = false;
+			reparented = false;
 			client_rectangle = Rectangle.Empty;
 			marshal_free_list = new ArrayList(2);
 		}
@@ -313,6 +315,16 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		public bool Reparented {
+			get {
+				return reparented;
+			}
+
+			set {
+				reparented = value;
+			}
+		}
+
 		public Point MenuOrigin {
 			get {
 				Point	pt;
@@ -483,7 +495,7 @@ namespace System.Windows.Forms {
 		}
 
 		public override string ToString() {
-			return String.Format("Hwnd, ClientWindow:{0:X}, WholeWindow:{1:X}, Handle:{2:X}", client_window, whole_window, handle);
+			return String.Format("Hwnd, ClientWindow:0x{0:X}, WholeWindow:0x{1:X}, Handle:0x{2:X}", client_window.ToInt32(), whole_window.ToInt32(), handle.ToInt32());
 		}
 
 		#endregion	// Methods

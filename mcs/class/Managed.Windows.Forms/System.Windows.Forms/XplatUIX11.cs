@@ -850,21 +850,14 @@ namespace System.Windows.Forms {
 			}
 
 			if (xevent.ConfigureEvent.window == hwnd.whole_window) {
-				if (hwnd.parent != null) {
+				if (!hwnd.reparented) {
 					hwnd.x = xevent.ConfigureEvent.x;
 					hwnd.y = xevent.ConfigureEvent.y;
 				} else {
-					int	decoration_x;
-					int	decoration_y;
-					int	whole_x;
-					int	whole_y;
-					IntPtr	child;
+					int	dummy_int;
+					IntPtr	dummy_ptr;
 
-					// We need to 'discount' the window the WM has put us in
-					XTranslateCoordinates(DisplayHandle, hwnd.whole_window, RootWindow, xevent.ConfigureEvent.x, xevent.ConfigureEvent.y, out whole_x, out whole_y, out child);
-					XTranslateCoordinates(DisplayHandle, XGetParent(hwnd.whole_window), RootWindow, xevent.ConfigureEvent.x, xevent.ConfigureEvent.y, out decoration_x, out decoration_y, out child);
-					hwnd.x = xevent.ConfigureEvent.x - whole_x + decoration_x;
-					hwnd.y = xevent.ConfigureEvent.y - whole_y + decoration_y;
+					XGetGeometry(DisplayHandle, XGetParent(hwnd.whole_window), out dummy_ptr, out hwnd.x, out hwnd.y, out dummy_int, out dummy_int, out dummy_int, out dummy_int);
 				}
 
 				hwnd.width = xevent.ConfigureEvent.width;
@@ -1127,6 +1120,7 @@ namespace System.Windows.Forms {
 					case XEventName.FocusIn:
 					case XEventName.FocusOut:
 					case XEventName.ClientMessage:
+					case XEventName.ReparentNotify:
 						MessageQueue.Enqueue (xevent);
 						break;
 
@@ -2679,6 +2673,27 @@ namespace System.Windows.Forms {
 					break;
 				}
 				#endif
+
+
+				case XEventName.ReparentNotify: {
+					if (hwnd.parent == null) {	// Toplevel
+						if (xevent.ReparentEvent.parent != IntPtr.Zero) {
+							// We need to adjust x/y
+							int	dummy_int;
+							IntPtr	dummy_ptr;
+
+							hwnd.Reparented = true;
+
+							XGetGeometry(DisplayHandle, XGetParent(hwnd.whole_window), out dummy_ptr, out hwnd.x, out hwnd.y, out dummy_int, out dummy_int, out dummy_int, out dummy_int);
+							msg.message = Msg.WM_WINDOWPOSCHANGED;
+
+						} else {
+							hwnd.Reparented = false;
+							goto ProcessNextMessage;
+						}
+					}
+					break;
+				}
 
 				case XEventName.ConfigureNotify: {
 					if (!client && (xevent.ConfigureEvent.xevent == xevent.ConfigureEvent.window)) {	// Ignore events for children (SubstructureNotify) and client areas

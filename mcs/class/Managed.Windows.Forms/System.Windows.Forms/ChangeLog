@@ -1,3 +1,20 @@
+2005-12-14  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* Hwnd.cs: 
+	  - Added Reparented property to allow tracking of Window Manager
+	    reparenting actions (which affect X/Y calculations of toplevel 
+	    windows)
+	  - Made ToString() print window handles in hex
+	* XplatUIX11.cs:
+	  - AddConfigureNotify(): Now uses reparented state off Hwnd to
+	    determine if X/Y needs offsetting
+	  - AddConfigureNotify(): Fixed offset calculations
+	  - Now adds ReparentNotify messages into the queue
+	  - Now processes ReparentNotify messages and causes a 
+	    WM_WINDOWPOSCHANGED message to be sent upstream if a window
+	    is reparented (as most likely it's X/Y coordinates are changed
+	    due to that)
+
 2005-12-14  Jackson Harper  <jackson@ximian.com>
 
 	* XplatUIX11.cs: Tool windows still need to respek focus.
