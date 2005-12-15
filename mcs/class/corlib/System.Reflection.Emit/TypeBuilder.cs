@@ -1494,6 +1494,10 @@ namespace System.Reflection.Emit {
 			}
 		}
 
+		public override bool IsGenericType {
+			get { return IsGenericTypeDefinition; }
+		}
+
 		public override int GenericParameterPosition {
 			get {
 				throw new NotImplementedException ();

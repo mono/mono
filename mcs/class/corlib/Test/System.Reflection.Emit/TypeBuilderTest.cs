@@ -1835,5 +1835,25 @@ public class TypeBuilderTest : Assertion
 		tb.DefineConstructor (0, CallingConventions.Standard, null);
 		tb.CreateType ();
 	}
+
+#if NET_2_0
+	[Test]
+	public void GenericType ()
+	{
+		TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public);
+		tb.DefineGenericParameters ("T");
+
+		Assert ("01", tb.IsGenericType);
+		Assert ("02", tb.IsGenericTypeDefinition);
+		Assert ("03", tb.ContainsGenericParameters);
+		Assert ("04", !tb.IsGenericParameter);
+
+		Type[] args = tb.GetGenericArguments ();
+		Assert ("a01", !args [0].IsGenericType);
+		Assert ("a02", !args [0].IsGenericTypeDefinition);
+		Assert ("a03", args [0].ContainsGenericParameters);
+		Assert ("a04", args [0].IsGenericParameter);
+	}
+#endif
 }
 }

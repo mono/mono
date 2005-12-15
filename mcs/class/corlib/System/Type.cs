@@ -1114,7 +1114,7 @@ namespace System {
 			get;
 		}
 
-		public extern bool IsGenericType {
+		public virtual extern bool IsGenericType {
 			[MethodImplAttribute(MethodImplOptions.InternalCall)]
 			get;
 		}
