@@ -45,7 +45,8 @@ namespace System.Data.SqlClient
 
 		protected static Hashtable _skippedUserParameters = new Hashtable(new CaseInsensitiveHashCodeProvider(),new CaseInsensitiveComparer());
 
-		private static DbStringManager _stringManager = new DbStringManager("System.Data.System.Data.ProviderBase.jvm.SqlClientStrings");
+		private static readonly object _lockObjectStringManager = new object();
+		//private static DbStringManager _stringManager = new DbStringManager("System.Data.System.Data.ProviderBase.jvm.SqlClientStrings");
 
 		private static readonly string[] _resourceIgnoredKeys = new string[] {"CON_DATA_SOURCE","CON_DATABASE",
 																			  "CON_PASSWORD","CON_USER_ID","CON_TIMEOUT",
@@ -142,7 +143,20 @@ namespace System.Data.SqlClient
 
 		protected override DbStringManager StringManager
 		{
-			get { return _stringManager; }
+			get {
+				const string stringManagerName = "System.Data.OleDbConnection.stringManager";
+				object stringManager = AppDomain.CurrentDomain.GetData(stringManagerName);
+				if (stringManager == null) {
+					lock(_lockObjectStringManager) {
+						stringManager = AppDomain.CurrentDomain.GetData(stringManagerName);
+						if (stringManager != null)
+							return (DbStringManager)stringManager;
+						stringManager = new DbStringManager("System.Data.System.Data.ProviderBase.jvm.SqlClientStrings");
+						AppDomain.CurrentDomain.SetData(stringManagerName, stringManager);
+					}
+				}
+				return (DbStringManager)stringManager;
+			}
 		}
 
 		#endregion // Properties

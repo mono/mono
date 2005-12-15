@@ -11,15 +11,15 @@
 				<Reference Name="J2SE.Helpers" AssemblyName="J2SE.Helpers" HintPath="..\lib\J2SE.Helpers.dll" Private="True"/>
 				<Reference Name="System" AssemblyName="System" HintPath="..\lib\System.dll" Private="False"/>
 				<Reference Name="System.Xml" AssemblyName="System.Xml" HintPath="..\lib\System.Xml.dll" Private="False"/>
-				<Reference Name="rt" AssemblyName="rt" HintPath="..\lib\j2sdk1.4.1\rt.dll" Private="False"/>
+				<Reference Name="rt" AssemblyName="rt" HintPath="C:\Program Files\Mainsoft\Visual MainWin for J2EE\jgac\jre5\rt.dll" Private="False"/>
 			</References>
 		</Build>
 		<Files>
 			<Include>
 				<File RelPath="Assembly\AssemblyInfo.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="Assembly\Consts.cs.in" Link="..\..\build\common\Consts.cs.in" SubType="Code" BuildAction="Compile"/>
-<File RelPath="Assembly\Locale.cs" Link="..\..\build\common\Locale.cs" SubType="Code" BuildAction="Compile"/>
- <File RelPath="Assembly\MonoTODOAttribute.cs" Link="..\..\build\common\MonoTODOAttribute.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="Assembly\Locale.cs" Link="..\..\build\common\Locale.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="Assembly\MonoTODOAttribute.cs" Link="..\..\build\common\MonoTODOAttribute.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="Mono.Data.SqlExpressions\Aggregation.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="Mono.Data.SqlExpressions\ArithmeticExpressions.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="Mono.Data.SqlExpressions\BooleanExpressions.cs" SubType="Code" BuildAction="Compile"/>
@@ -39,7 +39,7 @@
 				<File RelPath="System.Data\ColumnTypeConverter.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data\CommandBehavior.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data\CommandType.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Data\ConflictOption.cs" BuildAction="Compile"/>
+				<File RelPath="System.Data\ConflictOption.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data\ConflictOptions.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data\ConnectionState.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data\Constraint.cs" SubType="Code" BuildAction="Compile"/>
@@ -296,8 +296,8 @@
 				<File RelPath="System.Data.SqlClient.jvm\SqlInfoMessageEventHandler.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.SqlClient.jvm\SqlParameter.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.SqlClient.jvm\SqlParameterCollection.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Data.SqlClient.jvm\SqlParameterConverter.cs" BuildAction="Compile"/>
-				<File RelPath="System.Data.SqlClient.jvm\SqlResultSet.cs" BuildAction="Compile"/>
+				<File RelPath="System.Data.SqlClient.jvm\SqlParameterConverter.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Data.SqlClient.jvm\SqlResultSet.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.SqlClient.jvm\SqlRowUpdatedEventArgs.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.SqlClient.jvm\SqlRowUpdatedEventHandler.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.SqlClient.jvm\SqlRowUpdatingEventArgs.cs" SubType="Code" BuildAction="Compile"/>
@@ -332,6 +332,6 @@
 				<File RelPath="System.Xml\XmlDataDocument.cs" SubType="Code" BuildAction="Compile"/>
 			</Include>
 		</Files>
-		<UserProperties REFS.JarPath.j2se.helpers="..\lib\J2SE.Helpers.jar" project.JDKType="1.4.2_05" REFS.JarPath.j2ee="..\lib\j2ee.jar" REFS.JarPath.System.Xml="..\lib\System.Xml.jar" REFS.JarPath.vmwutils="..\lib\vmwutils.jar" REFS.JarPath.System="..\lib\System.jar" REFS.JarPath.rt="..\lib\rt.jar"/>
+		<UserProperties jarserver="ipa" REFS.JarPath.rt="..\lib\rt.jar" REFS.JarPath.System="..\lib\System.jar" REFS.JarPath.vmwutils="..\lib\vmwutils.jar" REFS.JarPath.System.Xml="..\lib\System.Xml.jar" REFS.JarPath.j2ee="..\lib\j2ee.jar" project.JDKType="1.5.0_05" REFS.JarPath.j2se.helpers="..\lib\J2SE.Helpers.jar"/>
 	</CSHARP>
-	<VisualMainWin><Project Prop2023="1.4.2_05" Prop2024="" Prop2026="" Prop2015="" Version="1.6.0" ProjectType="1"/><References/><Configs><Config Prop2000="1" Prop2001="0" Prop2002="0" Prop2003="0" Prop2004="0" Prop2005="0" Prop2006="" Prop2007="" Prop2008="" Prop2009="" Prop2010="" Prop2011="-1" Prop2012="0" Prop2013="" Prop2014="0" Prop2016="" Prop2027="" Prop2019="-1" Prop2020="285212672" Prop2021="4096" Prop2022="0" Prop2017="0" Prop2018="0" Name="Debug"/><Config Prop2000="1" Prop2001="0" Prop2002="0" Prop2003="0" Prop2004="0" Prop2005="0" Prop2006="" Prop2007="" Prop2008="" Prop2009="" Prop2010="" Prop2011="0" Prop2012="0" Prop2013="" Prop2014="0" Prop2016="" Prop2027="" Prop2019="0" Prop2020="285212672" Prop2021="4096" Prop2022="0" Prop2017="0" Prop2018="0" Name="Release"/><Config Prop2000="0" Prop2001="0" Prop2002="0" Prop2003="0" Prop2004="0" Prop2005="3" Prop2006="" Prop2007="" Prop2008="" Prop2009="" Prop2010="" Prop2011="0" Prop2012="-1" Prop2013="" Prop2014="8009" Prop2016="" Prop2027="" Prop2019="0" Prop2020="285212672" Prop2021="4096" Prop2022="0" Prop2017="0" Prop2018="-1" Name="Debug_Java"/><Config Prop2000="0" Prop2001="0" Prop2002="0" Prop2003="0" Prop2004="0" Prop2005="0" Prop2006="" Prop2007="" Prop2008="" Prop2009="" Prop2010="" Prop2011="0" Prop2012="0" Prop2013="" Prop2014="0" Prop2016="" Prop2027="" Prop2019="0" Prop2020="285212672" Prop2021="4096" Prop2022="0" Prop2017="0" Prop2018="0" Name="Release_Java"/></Configs></VisualMainWin></VisualStudioProject>
+	<VisualMainWin><Project Prop2023="1.5.0_05" Prop2024="" Prop2026="" Prop2015="" Version="1.7.0" ProjectType="1"/><References/><Configs><Config Prop2000="0" Prop2001="0" Prop2002="0" Prop2003="0" Prop2004="0" Prop2005="0" Prop2006="" Prop2007="" Prop2008="" Prop2009="" Prop2010="" Prop2011="0" Prop2013="" Prop2014="0" Prop2016="" Prop2027="" Prop2019="0" Prop2020="285212672" Prop2021="4096" Prop2022="0" Prop2017="0" Prop2018="0" Name="Release_Java"/><Config Prop2000="1" Prop2001="0" Prop2002="0" Prop2003="0" Prop2004="0" Prop2005="0" Prop2006="" Prop2007="" Prop2008="" Prop2009="" Prop2010="" Prop2011="0" Prop2013="" Prop2014="0" Prop2016="" Prop2027="" Prop2019="0" Prop2020="285212672" Prop2021="4096" Prop2022="0" Prop2017="0" Prop2018="0" Name="Release"/><Config Prop2000="0" Prop2001="0" Prop2002="0" Prop2003="0" Prop2004="0" Prop2005="3" Prop2006="" Prop2007="" Prop2008="" Prop2009="" Prop2010="" Prop2011="0" Prop2013="" Prop2014="8009" Prop2016="" Prop2027="" Prop2019="0" Prop2020="285212672" Prop2021="4096" Prop2022="0" Prop2017="0" Prop2018="-1" Name="Debug_Java"/><Config Prop2000="1" Prop2001="0" Prop2002="0" Prop2003="0" Prop2004="0" Prop2005="0" Prop2006="" Prop2007="" Prop2008="" Prop2009="" Prop2010="" Prop2011="-1" Prop2013="" Prop2014="0" Prop2016="" Prop2027="" Prop2019="-1" Prop2020="285212672" Prop2021="4096" Prop2022="0" Prop2017="0" Prop2018="0" Name="Debug"/></Configs></VisualMainWin></VisualStudioProject>

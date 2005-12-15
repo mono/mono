@@ -1,24 +1,47 @@
 Microsoft Visual Studio Solution File, Format Version 8.00
-Project("{83B010C7-76FC-4FAD-A26C-00D7EFE60256}") = "System.Data", "System.Data.vmwcsproj", "{12CA069B-C324-48C1-9836-0014497A212C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Data", "System.Data.vmwcsproj", "{12CA069B-C324-48C1-9836-0014497A212C}"
 	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PostBuild", "PostBuild.csproj", "{0D6AD76F-E1F6-4224-96E9-876B4585635C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{12CA069B-C324-48C1-9836-0014497A212C} = {12CA069B-C324-48C1-9836-0014497A212C}
 	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
 		Debug_Java = Debug_Java
+		Debug_Java_Beta = Debug_Java_Beta
 		Release = Release
 		Release_Java = Release_Java
+		Release_Java_Beta = Release_Java_Beta
 	EndGlobalSection
 	GlobalSection(ProjectConfiguration) = postSolution
 		{12CA069B-C324-48C1-9836-0014497A212C}.Debug.ActiveCfg = Debug|.NET
 		{12CA069B-C324-48C1-9836-0014497A212C}.Debug.Build.0 = Debug|.NET
 		{12CA069B-C324-48C1-9836-0014497A212C}.Debug_Java.ActiveCfg = Debug_Java|.NET
 		{12CA069B-C324-48C1-9836-0014497A212C}.Debug_Java.Build.0 = Debug_Java|.NET
+		{12CA069B-C324-48C1-9836-0014497A212C}.Debug_Java_Beta.ActiveCfg = Debug_Java|.NET
+		{12CA069B-C324-48C1-9836-0014497A212C}.Debug_Java_Beta.Build.0 = Debug_Java|.NET
 		{12CA069B-C324-48C1-9836-0014497A212C}.Release.ActiveCfg = Release|.NET
 		{12CA069B-C324-48C1-9836-0014497A212C}.Release.Build.0 = Release|.NET
 		{12CA069B-C324-48C1-9836-0014497A212C}.Release_Java.ActiveCfg = Release_Java|.NET
 		{12CA069B-C324-48C1-9836-0014497A212C}.Release_Java.Build.0 = Release_Java|.NET
+		{12CA069B-C324-48C1-9836-0014497A212C}.Release_Java_Beta.ActiveCfg = Release_Java|.NET
+		{12CA069B-C324-48C1-9836-0014497A212C}.Release_Java_Beta.Build.0 = Release_Java|.NET
+		{0D6AD76F-E1F6-4224-96E9-876B4585635C}.Debug.ActiveCfg = Debug|.NET
+		{0D6AD76F-E1F6-4224-96E9-876B4585635C}.Debug.Build.0 = Debug|.NET
+		{0D6AD76F-E1F6-4224-96E9-876B4585635C}.Debug_Java.ActiveCfg = Debug_Java|.NET
+		{0D6AD76F-E1F6-4224-96E9-876B4585635C}.Debug_Java.Build.0 = Debug_Java|.NET
+		{0D6AD76F-E1F6-4224-96E9-876B4585635C}.Debug_Java_Beta.ActiveCfg = Debug_Java_Beta|.NET
+		{0D6AD76F-E1F6-4224-96E9-876B4585635C}.Debug_Java_Beta.Build.0 = Debug_Java_Beta|.NET
+		{0D6AD76F-E1F6-4224-96E9-876B4585635C}.Release.ActiveCfg = Release|.NET
+		{0D6AD76F-E1F6-4224-96E9-876B4585635C}.Release.Build.0 = Release|.NET
+		{0D6AD76F-E1F6-4224-96E9-876B4585635C}.Release_Java.ActiveCfg = Release_Java|.NET
+		{0D6AD76F-E1F6-4224-96E9-876B4585635C}.Release_Java.Build.0 = Release_Java|.NET
+		{0D6AD76F-E1F6-4224-96E9-876B4585635C}.Release_Java_Beta.ActiveCfg = Release_Java_Beta|.NET
+		{0D6AD76F-E1F6-4224-96E9-876B4585635C}.Release_Java_Beta.Build.0 = Release_Java_Beta|.NET
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection
