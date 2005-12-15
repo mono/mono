@@ -1,3 +1,7 @@
+2005-12-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_class_setup_vtable): Call mono_reflection_get_dynamic_overrides () to get the overrides in dynamic assemblies.
+
 2005-12-14  Martin Baulig  <martin@ximian.com>
 
 	* class.c
@@ -17,6 +21,14 @@
 	mono_metadata_lookup_generic_inst() everywhere.
 
 2005-12-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* object.c (mono_class_create_runtime_vtable): Call 
+	mono_class_setup_vtable ().
+
+	* reflection.c (mono_reflection_get_dynamic_overrides): New helper
+	function.
+	(ensure_runtime_vtable): Initialize the generic vtable lazily. Fixes
+	#76959.
 
 	* loader.c (mono_loader_set_error_type_load): Print the type load
 	warnings to the console so they are more visible to the user.
