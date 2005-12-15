@@ -1,3 +1,10 @@
+2005-12-15  Cesar Lopez Nataren  <cnataren@novell.com>
+
+	* Statement.cs (For.Emit): Take into account what relational
+	operator is in place.
+
+	* expression.cs (Assign.Emit): Emit box in the op= cases.
+
 2005-12-10 Florian Gross  <flgr@ccan.de> and
 	   Evan Briones <evan@evanbriones.com>
 

@@ -508,9 +508,14 @@ namespace Microsoft.JScript {
 				if (a is Equality)
 					ig.Emit (OpCodes.Brfalse, forward);
 				else if (a is Relational) {
+					Relational rel = (Relational) a;
 					ig.Emit (OpCodes.Ldc_I4_0);
 					ig.Emit (OpCodes.Conv_R8);
-					ig.Emit (OpCodes.Bge, forward);
+
+					if (rel.op == JSToken.GreaterThan)
+						ig.Emit (OpCodes.Ble,  forward);
+					else
+						ig.Emit (OpCodes.Bge, forward);
 				}
 			}
 			/* emit stms */

@@ -2101,8 +2101,10 @@ namespace Microsoft.JScript {
 				ig.Emit (OpCodes.Ldloc, local);
 				ig.Emit (OpCodes.Ldloc, aux);
 
-				if (right != null)
+				if (right != null) {
 					right.Emit (ec);
+					CodeGenerator.EmitBox (ig, right);
+				}
 
 				emit_evaluation (op, type, ig);
 				
