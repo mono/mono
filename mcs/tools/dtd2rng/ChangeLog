@@ -1,4 +1,8 @@
 2005-12-15  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* dtd2rng.cs : mixed + empty should be text.
+
+2005-12-15  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* dtd2rng.cs, dtd2rng.exe.sources, Makefile, ChangeLog :
 	  new files.

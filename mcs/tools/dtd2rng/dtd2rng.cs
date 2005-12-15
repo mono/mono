@@ -122,10 +122,14 @@ namespace Mono.XmlTools
 			else
 				rpart = CreatePatternFromParticle (ct.Particle);
 
-			if (ct.IsMixed && rpart.PatternType != RelaxngPatternType.Empty) {
-				RelaxngMixed mixed = new RelaxngMixed ();
-				mixed.Patterns.Add (rpart);
-				rpart = mixed;
+			if (ct.IsMixed) {
+				if (rpart.PatternType != RelaxngPatternType.Empty) {
+					RelaxngMixed mixed = new RelaxngMixed ();
+					mixed.Patterns.Add (rpart);
+					rpart = mixed;
+				} else {
+					rpart = new RelaxngText ();
+				}
 			}
 
 			re.Patterns.Add (rpart);
