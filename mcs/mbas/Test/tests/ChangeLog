@@ -1,3 +1,7 @@
+2005-12-15 Maverson Eduardo Schulze Rosa <maverson@gmail.com>
+	* test-mbas.pl: Parsing Test Files in order to find necessary
+	compilerOptions and generate the correct CompileCommand.
+
 2005-05-27 Satya Sudha K <ksathyasudha@novell.com>
 	* Some more testcases for 'Select-Case' statements
 
