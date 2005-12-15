@@ -1,3 +1,7 @@
+2005-12-15  Cesar Lopez Nataren  <cnataren@novell.com>
+
+	* mjs-most.tests: Enable ecma/Date/15.9.1.1-2.js.
+
 2005-12-10  Cesar Lopez Nataren  <cnataren@novell.com>
 
 	* runner.cs: Make the current direcory the place where we create

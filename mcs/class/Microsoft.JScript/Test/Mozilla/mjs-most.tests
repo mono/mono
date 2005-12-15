@@ -90,8 +90,7 @@ ecma/Boolean/15.6.4.3-3.js
 ecma/Boolean/15.6.4.3.js
 ecma/Boolean/15.6.4.js
 ecma/Date/15.9.1.1-1.js
-# Invalid IL
-#ecma/Date/15.9.1.1-2.js
+ecma/Date/15.9.1.1-2.js
 ecma/Date/15.9.2.1.js
 ecma/Date/15.9.2.2-1.js
 ecma/Date/15.9.2.2-2.js
