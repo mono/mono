@@ -19,3 +19,10 @@ install-extras:
 	$(MKINSTALLDIRS) $(DESTDIR)$(EXTRAS_DIR)/MSBuild
 	$(INSTALL_DATA) xbuild/MSBuild/Microsoft.Build.Commontypes.xsd $(DESTDIR)$(EXTRAS_DIR)
 	$(INSTALL_DATA) xbuild/MSBuild/Microsoft.Build.Core.xsd $(DESTDIR)$(EXTRAS_DIR)
+
+EXTRA_DISTFILES = \
+	xbuild/xbuild.rsp \
+	xbuild/Microsoft.Common.tasks \
+	xbuild/Microsoft.Build.xsd \
+	xbuild/MSBuild/Microsoft.Build.Commontypes.xsd \
+	xbuild/MSBuild/Microsoft.Build.Core.xsd

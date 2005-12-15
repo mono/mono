@@ -1,3 +1,7 @@
+2005-12-14  Wade Berrier <wberrier@novell.com>
+
+	* Makefile: Add missing EXTRA_DISTFILES in order to 'make install'
+
 2005-11-05  Kornél Pál  <kornelpal@hotmail.com>
 
 	* AssemblyInfo.cs: Use Consts.MonoVersion as AssemblyVersion.
