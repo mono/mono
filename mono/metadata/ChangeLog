@@ -1,3 +1,7 @@
+2005-12-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_class_setup_vtable): Call mono_reflection_get_dynamic_overrides () for dynamic classes.
+
 2005-12-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* loader.c (mono_loader_set_error_type_load): Print the type load
