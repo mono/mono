@@ -1,3 +1,11 @@
+2005-12-15  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* RijndaelTest.cs: Add test cases for cycling key sizes and block 
+	sizes.
+	* SymmetricAlgorithm2Test.cs: Added test case for re-setting the 
+	BlockSize. Keeping the same value *doesn't* change the current IV 
+	(while doing the same on the KeySize *does* change the key).
+
 2005-11-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DSATest.cs: Added test case where J isn't imported. In this case we

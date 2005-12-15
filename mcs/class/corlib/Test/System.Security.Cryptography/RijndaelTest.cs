@@ -160,6 +160,40 @@ public class RijndaelTest {
 		decryptor.TransformBlock(output, 0, output.Length, original, 0);
 		AssertEquals ("FIPS197 C3 Decrypt", input, original);
 	}
+
+	[Test]
+	public void ChangingKeySize ()
+	{
+		byte[] original_key = aes.Key;
+		byte[] original_iv = aes.IV;
+		foreach (KeySizes ks in aes.LegalKeySizes) {
+			for (int key_size = ks.MinSize; key_size <= ks.MaxSize; key_size += ks.SkipSize) {
+				aes.KeySize = key_size;
+				string s = key_size.ToString ();
+				// key is updated
+				Assert.AreEqual ((key_size >> 3), aes.Key.Length, s + ".Key.Length");
+				// iv isn't
+				Assert.AreEqual (original_iv, aes.IV, s + ".IV");
+			}
+		}
+	}
+
+	[Test]
+	public void ChangingBlockSize ()
+	{
+		byte[] original_key = aes.Key;
+		byte[] original_iv = aes.IV;
+		foreach (KeySizes bs in aes.LegalBlockSizes) {
+			for (int block_size = bs.MinSize; block_size <= bs.MaxSize; block_size += bs.SkipSize) {
+				aes.BlockSize = block_size;
+				string s = block_size.ToString ();
+				// key isn't updated
+				Assert.AreEqual (original_key, aes.Key, s + ".Key");
+				// iv is updated
+				Assert.AreEqual ((block_size >> 3), aes.IV.Length, s + ".IV.Length");
+			}
+		}
+	}
 }
 
 }

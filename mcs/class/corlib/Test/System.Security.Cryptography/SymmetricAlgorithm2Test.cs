@@ -61,6 +61,20 @@ namespace MonoTests.System.Security.Cryptography {
 		}
 
 		[Test]
+		public void BlockSize_SameSize () 
+		{
+			using (SymmetricAlgorithm algo = SymmetricAlgorithm.Create ()) {
+				// get a copy of the IV
+				byte[] iv = algo.IV;
+				int bs = algo.BlockSize;
+				// set the iv size
+				algo.BlockSize = bs;
+				// did it change the IV ? No!
+				Assert ("IV", BitConverter.ToString (iv) == BitConverter.ToString (algo.IV));
+			}
+		}
+
+		[Test]
 		[ExpectedException (typeof (CryptographicException))]
 		public void InvalidBlockSize () 
 		{
