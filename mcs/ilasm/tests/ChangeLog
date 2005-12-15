@@ -1,5 +1,9 @@
 2005-12-15  Ankit Jain  <jankit@novell.com>
 
+	* test-array.il: Oops, contained two copies of the test case.
+
+2005-12-15  Ankit Jain  <jankit@novell.com>
+
 	* assembly.il: New. Test for multiple .assembly declarations.
 	* err-assembly.il: New. Negative test for the same.
 
