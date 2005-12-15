@@ -96,7 +96,11 @@ namespace System.Security.Cryptography {
 					throw new CryptographicException (
 						Locale.GetText ("block size not supported by algorithm"));
 				}
-				this.BlockSizeValue = value;
+				// re-setting the same BlockSize *doesn't* regenerate the IV
+				if (BlockSizeValue != value) {
+					BlockSizeValue = value;
+					IVValue = null;
+				}
 			}
 		}
 
@@ -157,7 +161,6 @@ namespace System.Security.Cryptography {
 					throw new CryptographicException (
 						Locale.GetText ("Key size not supported by algorithm"));
 				}
-
 				this.KeySizeValue = length;
 				this.KeyValue = (byte[]) value.Clone ();
 			}
@@ -170,9 +173,9 @@ namespace System.Security.Cryptography {
 					throw new CryptographicException (
 						Locale.GetText ("Key size not supported by algorithm"));
 				}
-				
-				this.KeyValue = null;
-				this.KeySizeValue = value;
+				// re-setting the same KeySize *does* regenerate the key
+				KeySizeValue = value;
+				KeyValue = null;
 			}
 		}
 

@@ -1,3 +1,9 @@
+2005-12-15  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SymmetricAlgorithm.cs: Changing (not setting) BlockSize must 
+	re-generate a new IV (so the properties are kept valid). Note that
+	changing or setting (same value) the KeySize always re-generate a key.
+
 2005-12-01  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* RIPEMD160Managed.cs: Endianess fix.
