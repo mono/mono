@@ -1,11 +1,10 @@
 //
-// System.Net.Configuration.MailSettingsSection.cs
+// System.Net.Configuration.PerformanceCountersElement
 //
 // Authors:
-//	Tim Coleman (tim@timcoleman.com)
+//	Chris Toshok (toshok@ximian.com)
 //
-// Copyright (C) Tim Coleman, 2004
-// (c) 2004 Novell, Inc. (http://www.novell.com)
+// (C) 2005 Novell, Inc. (http://www.novell.com)
 //
 
 //
@@ -31,51 +30,37 @@
 
 #if NET_2_0 && CONFIGURATION_DEP
 
+using System;
 using System.Configuration;
 
-namespace System.Net.Configuration 
-{
-	public sealed class MailSettingsSection : ConfigurationSection
-	{
-		#region Fields
+namespace System.Net.Configuration {
 
-		ConfigurationPropertyCollection properties;
-		static ConfigurationProperty smtp = new ConfigurationProperty ("Smtp", typeof (SmtpElement), new SmtpElement ());
+        public sealed class PerformanceCountersElement : ConfigurationElement
+        {
+                static ConfigurationProperty enabledProp;
+                static ConfigurationPropertyCollection properties;
 
-		#endregion // Fields
+                static PerformanceCountersElement ()
+                {
+                        enabledProp = new ConfigurationProperty ("enabled", typeof (bool), false);
+                        properties = new ConfigurationPropertyCollection ();
 
-		#region Constructors
+                        properties.Add (enabledProp);
 
-		public MailSettingsSection ()
-		{
-			properties = new ConfigurationPropertyCollection ();
-			properties.Add (smtp);
-		}
+                }
 
-		#endregion // Constructors
+                [ConfigurationProperty ("enabled", DefaultValue = "False")]
+                public bool Enabled {
+                        get { return (bool) base [enabledProp];}
+                        set { base[enabledProp] = value; }
+                }
 
-		#region Properties
+                protected override ConfigurationPropertyCollection Properties {
+                        get { return properties; }
+                }
 
-		protected override ConfigurationPropertyCollection Properties {
-			get { return properties; }
-		}
+        }
 
-		public SmtpElement Smtp {
-			get { return (SmtpElement) base [smtp]; }
-		}
-
-		#endregion // Properties
-
-		#region Methods
-
-		[MonoTODO]
-		protected override object GetRuntimeObject ()
-		{
-			throw new NotImplementedException ();
-		}
-
-		#endregion // Methods
-	}
 }
 
 #endif

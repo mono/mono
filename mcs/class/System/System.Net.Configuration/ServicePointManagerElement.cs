@@ -3,9 +3,10 @@
 //
 // Authors:
 //	Tim Coleman (tim@timcoleman.com)
+//	Chris Toshok (toshok@ximian.com)
 //
 // Copyright (C) Tim Coleman, 2004
-// (c) 2004 Novell, Inc. (http://www.novell.com)
+// (c) 2004,2005 Novell, Inc. (http://www.novell.com)
 //
 
 //
@@ -40,68 +41,95 @@ namespace System.Net.Configuration
 	{
 		#region Fields
 
-		ConfigurationPropertyCollection properties;
-		static ConfigurationProperty checkCertificateName = new ConfigurationProperty ("CheckCertificateName", typeof (bool), true);
-		static ConfigurationProperty checkCertificateRevocationList = new ConfigurationProperty ("CheckCertificateRevocationList", typeof (bool), false);
-		static ConfigurationProperty dnsRefreshTimeout = new ConfigurationProperty ("DnsRefreshTimeout", typeof (TimeSpan), new TimeSpan (0, 2, 0));
-		static ConfigurationProperty enableDnsRoundRobin = new ConfigurationProperty ("EnableDnsRoundRobin", typeof (bool), false);
-		static ConfigurationProperty expect100Continue = new ConfigurationProperty ("Expect100Continue", typeof (bool), true);
-		static ConfigurationProperty useNagleAlgorithm = new ConfigurationProperty ("UseNagleAlgorithm", typeof (bool), true);
+		static ConfigurationPropertyCollection properties;
+		static ConfigurationProperty checkCertificateNameProp;
+		static ConfigurationProperty checkCertificateRevocationListProp;
+		static ConfigurationProperty dnsRefreshTimeoutProp;
+		static ConfigurationProperty enableDnsRoundRobinProp;
+		static ConfigurationProperty expect100ContinueProp;
+		static ConfigurationProperty useNagleAlgorithmProp;
 
 		#endregion // Fields
 
 		#region Constructors
 
+		static ServicePointManagerElement ()
+		{
+			checkCertificateNameProp = new ConfigurationProperty ("checkCertificateName", typeof (bool), true);
+			checkCertificateRevocationListProp = new ConfigurationProperty ("checkCertificateRevocationList", typeof (bool), false);
+			dnsRefreshTimeoutProp = new ConfigurationProperty ("dnsRefreshTimeout", typeof (int), 120000);
+			enableDnsRoundRobinProp = new ConfigurationProperty ("enableDnsRoundRobin", typeof (bool), false);
+			expect100ContinueProp = new ConfigurationProperty ("expect100Continue", typeof (bool), true);
+			useNagleAlgorithmProp = new ConfigurationProperty ("useNagleAlgorithm", typeof (bool), true);
+			properties = new ConfigurationPropertyCollection ();
+
+			properties.Add (checkCertificateNameProp);
+			properties.Add (checkCertificateRevocationListProp);
+			properties.Add (dnsRefreshTimeoutProp);
+			properties.Add (enableDnsRoundRobinProp);
+			properties.Add (expect100ContinueProp);
+			properties.Add (useNagleAlgorithmProp);
+		}
+
 		public ServicePointManagerElement ()
 		{
-			properties = new ConfigurationPropertyCollection ();
-			properties.Add (checkCertificateName);
-			properties.Add (checkCertificateRevocationList);
-			properties.Add (dnsRefreshTimeout);
-			properties.Add (enableDnsRoundRobin);
-			properties.Add (expect100Continue);
-			properties.Add (useNagleAlgorithm);
 		}
 
 		#endregion // Constructors
 
 		#region Properties
 
+		[ConfigurationProperty ("checkCertificateName", DefaultValue = "True")]
 		public bool CheckCertificateName {
-			get { return (bool) base [checkCertificateName]; }
-			set { base [checkCertificateName] = value; }
+			get { return (bool) base [checkCertificateNameProp]; }
+			set { base [checkCertificateNameProp] = value; }
 		}
 
+		[ConfigurationProperty ("checkCertificateRevocationList", DefaultValue = "False")]
 		public bool CheckCertificateRevocationList {
-			get { return (bool) base [checkCertificateRevocationList]; }
-			set { base [checkCertificateRevocationList] = value; }
+			get { return (bool) base [checkCertificateRevocationListProp]; }
+			set { base [checkCertificateRevocationListProp] = value; }
 		}
 
-		public TimeSpan DnsRefreshTimeout {
-			get { return (TimeSpan) base [dnsRefreshTimeout]; }
-			set { base [dnsRefreshTimeout] = value; }
+		[ConfigurationProperty ("dnsRefreshTimeout", DefaultValue = "120000")]
+		public int DnsRefreshTimeout {
+			get { return (int) base [dnsRefreshTimeoutProp]; }
+			set { base [dnsRefreshTimeoutProp] = value; }
 		}
 
+		[ConfigurationProperty ("enableDnsRoundRobin", DefaultValue = "False")]
 		public bool EnableDnsRoundRobin {
-			get { return (bool) base [enableDnsRoundRobin]; }
-			set { base [enableDnsRoundRobin] = value; }
+			get { return (bool) base [enableDnsRoundRobinProp]; }
+			set { base [enableDnsRoundRobinProp] = value; }
 		}
 
+		[ConfigurationProperty ("expect100Continue", DefaultValue = "True")]
 		public bool Expect100Continue {
-			get { return (bool) base [expect100Continue]; }
-			set { base [expect100Continue] = value; }
+			get { return (bool) base [expect100ContinueProp]; }
+			set { base [expect100ContinueProp] = value; }
+		}
+
+		[ConfigurationProperty ("useNagleAlgorithm", DefaultValue = "True")]
+		public bool UseNagleAlgorithm {
+			get { return (bool) base [useNagleAlgorithmProp]; }
+			set { base [useNagleAlgorithmProp] = value; }
 		}
 
 		protected override ConfigurationPropertyCollection Properties {
 			get { return properties; }
 		}
 
-		public bool UseNagleAlgorithm {
-			get { return (bool) base [useNagleAlgorithm]; }
-			set { base [useNagleAlgorithm] = value; }
+		#endregion // Properties
+
+		#region Methods
+
+		[MonoTODO]
+		protected override void PostDeserialize ()
+		{
 		}
 
-		#endregion // Properties
+		#endregion // Methods
+
 	}
 }
 

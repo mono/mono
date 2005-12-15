@@ -39,60 +39,79 @@ namespace System.Net.Configuration
 	{
 		#region Fields
 
-		ConfigurationPropertyCollection properties;
-		static ConfigurationProperty httpWebRequest = new ConfigurationProperty ("HttpWebRequest", typeof (HttpWebRequestElement), new HttpWebRequestElement ());
-		static ConfigurationProperty ipv6 = new ConfigurationProperty ("Ipv6", typeof (Ipv6Element), new Ipv6Element ());
-		static ConfigurationProperty servicePointManager = new ConfigurationProperty ("ServicePointManager", typeof (ServicePointManagerElement), new ServicePointManagerElement ());
-		static ConfigurationProperty socket = new ConfigurationProperty ("Socket", typeof (SocketElement), new SocketElement ());
+		static ConfigurationPropertyCollection properties;
+		static ConfigurationProperty httpWebRequestProp;
+		static ConfigurationProperty ipv6Prop;
+		static ConfigurationProperty performanceCountersProp;
+		static ConfigurationProperty servicePointManagerProp;
+		static ConfigurationProperty webProxyScriptProp;
+		static ConfigurationProperty socketProp;
 
 		#endregion // Fields
 
 		#region Constructors
 
+		static SettingsSection ()
+		{
+			httpWebRequestProp = new ConfigurationProperty ("httpWebRequest", typeof (HttpWebRequestElement));
+			ipv6Prop = new ConfigurationProperty ("ipv6", typeof (Ipv6Element));
+			performanceCountersProp = new ConfigurationProperty ("performanceCounters", typeof (PerformanceCountersElement));
+			servicePointManagerProp = new ConfigurationProperty ("servicePointManager", typeof (ServicePointManagerElement));
+			socketProp = new ConfigurationProperty ("socket", typeof (SocketElement));
+			webProxyScriptProp = new ConfigurationProperty ("webProxyScript", typeof (WebProxyScriptElement));
+			properties = new ConfigurationPropertyCollection ();
+
+			properties.Add (httpWebRequestProp);
+			properties.Add (ipv6Prop);
+			properties.Add (performanceCountersProp);
+			properties.Add (servicePointManagerProp);
+			properties.Add (socketProp);
+			properties.Add (webProxyScriptProp);
+		}
+
 		public SettingsSection ()
 		{
-			properties = new ConfigurationPropertyCollection ();
-			properties.Add (httpWebRequest);
-			properties.Add (ipv6);
-			properties.Add (servicePointManager);
-			properties.Add (socket);
 		}
 
 		#endregion // Constructors
 
 		#region Properties
 
+		[ConfigurationProperty ("httpWebRequest")]
 		public HttpWebRequestElement HttpWebRequest {
-			get { return (HttpWebRequestElement) base [httpWebRequest]; }
+			get { return (HttpWebRequestElement) base [httpWebRequestProp]; }
 		}
 
+		[ConfigurationProperty ("ipv6")]
 		public Ipv6Element Ipv6 {
-			get { return (Ipv6Element) base [ipv6]; }
+			get { return (Ipv6Element) base [ipv6Prop]; }
+		}
+
+		[ConfigurationProperty ("performanceCounters")]
+		public PerformanceCountersElement PerformanceCounters {
+			get { return (PerformanceCountersElement) base[performanceCountersProp]; }
+		}
+
+		[ConfigurationProperty ("servicePointManager")]
+		public ServicePointManagerElement ServicePointManager {
+			get { return (ServicePointManagerElement) base [servicePointManagerProp]; }
+		}
+
+		[ConfigurationProperty ("socket")]
+		public SocketElement Socket {
+			get { return (SocketElement) base [socketProp]; }
+		}
+
+		[ConfigurationProperty ("webProxyScript")]
+		public WebProxyScriptElement WebProxyScript {
+			get { return (WebProxyScriptElement) base [webProxyScriptProp]; }
 		}
 
 		protected override ConfigurationPropertyCollection Properties {
 			get { return properties; }
 		}
 
-		public ServicePointManagerElement ServicePointManager {
-			get { return (ServicePointManagerElement) base [servicePointManager]; }
-		}
-
-		public SocketElement Socket {
-			get { return (SocketElement) base [socket]; }
-		}
-
 		#endregion // Properties
-
-		#region Methods
-
-		[MonoTODO]
-		protected override object GetRuntimeObject ()
-		{
-			throw new NotImplementedException ();
-		}
-
-		#endregion // Methods
 	}
 }
 

@@ -1,11 +1,10 @@
 //
-// System.Net.Configuration.UriParserSection.cs
+// System.Net.Configuration.MailSettingsSectionGroup
 //
 // Authors:
-//	Tim Coleman (tim@timcoleman.com)
+//	Chris Toshok (toshok@ximian.com)
 //
-// Copyright (C) Tim Coleman, 2004
-// (c) 2004 Novell, Inc. (http://www.novell.com)
+// (C) 2005 Novell, Inc. (http://www.novell.com)
 //
 
 //
@@ -35,47 +34,14 @@ using System.Configuration;
 
 namespace System.Net.Configuration 
 {
-	public sealed class UriParserSection : ConfigurationSection
-	{
-		#region Fields
-
-		ConfigurationPropertyCollection properties;
-		static ConfigurationProperty uriParsers = new ConfigurationProperty ("UriParsers", typeof (UriParserElementCollection), new UriParserElementCollection ());
-
-		#endregion // Fields
-
-		#region Constructors
-
-		public UriParserSection ()
-		{
-			properties = new ConfigurationPropertyCollection ();
-			properties.Add (uriParsers);
-		}
-
-		#endregion // Constructors
-
-		#region Properties
-
-		protected override ConfigurationPropertyCollection Properties {
-			get { return properties; }
-		}
-
-		public UriParserElementCollection UriParsers {
-			get { return (UriParserElementCollection) base [uriParsers]; }
-		}
-
-		#endregion // Properties
-
-		#region Methods
-
-		[MonoTODO]
-		protected override object GetRuntimeObject ()
-		{
-			throw new NotImplementedException ();
-		}
-
-		#endregion // Methods
-	}
+        public sealed class MailSettingsSectionGroup : ConfigurationSectionGroup
+        {
+		// for some reason MS doesn't provide a ConfigurationProperty for this property...
+		//[ConfigurationProperty ("smtp")]
+                public SmtpSection Smtp {
+                        get { return (SmtpSection) Sections ["smtp"]; }
+                }
+        }
 }
 
 #endif

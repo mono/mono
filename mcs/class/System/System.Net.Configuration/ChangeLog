@@ -1,3 +1,22 @@
+2005-12-14  Chris Toshok  <toshok@ximian.com>
+
+	* MailSettingsSectionGroup.cs, PerformanceCountersElement.cs,
+	SmtpNetworkElement.cs, SmtpSection.cs,
+	SmtpSpecifiedPickupDirectoryElement.cs, WebProxyScriptElement.cs:
+	add missing 2.0 configuration classes.
+
+	* AuthenticationModulesSection.cs, BypassElementCollection.cs,
+	HttpCachePolicyElement.cs, NetSectionGroup.cs,
+	ServicePointManagerElement.cs, SettingsSection.cs,
+	SocketElement.cs, WebRequestModuleElementCollection.cs,
+	WebRequestModuleElement.cs, WebRequestModulesSection.cs: more 2.0
+	config cleanup work.
+
+	* MailSettingsSection.cs, SmtpElement.cs,
+	UriParserElementCollection.cs, UriParserElement.cs,
+	UriParserSection.cs: remove these 2.0 classes as they aren't there
+	anymore.
+
 2005-12-13  Chris Toshok  <toshok@ximian.com>
 
 	* AuthenticationModuleElementCollection.cs,

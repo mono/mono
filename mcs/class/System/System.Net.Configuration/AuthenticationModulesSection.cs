@@ -78,9 +78,8 @@ namespace System.Net.Configuration
 		#region Methods
 
 		[MonoTODO]
-		protected override object GetRuntimeObject ()
+		protected override void PostDeserialize ()
 		{
-			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]

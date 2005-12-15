@@ -39,9 +39,9 @@ namespace System.Net.Configuration
 	{
 		#region Fields
 
-		ConfigurationPropertyCollection properties;
-		static ConfigurationProperty alwaysUseCompletionPortsForAccept = new ConfigurationProperty ("AlwaysUseCompletionPortsForAccept", typeof (bool), false);
-		static ConfigurationProperty alwaysUseCompletionPortsForConnect = new ConfigurationProperty ("AlwaysUseCompletionPortsForConnect", typeof (bool), false);
+		static ConfigurationPropertyCollection properties;
+		static ConfigurationProperty alwaysUseCompletionPortsForAcceptProp;
+		static ConfigurationProperty alwaysUseCompletionPortsForConnectProp;
 
 		#endregion // Fields
 
@@ -49,23 +49,28 @@ namespace System.Net.Configuration
 
 		public SocketElement ()
 		{
+			alwaysUseCompletionPortsForAcceptProp = new ConfigurationProperty ("alwaysUseCompletionPortsForAccept", typeof (bool), false);
+			alwaysUseCompletionPortsForConnectProp = new ConfigurationProperty ("alwaysUseCompletionPortsForConnect", typeof (bool), false);
 			properties = new ConfigurationPropertyCollection ();
-			properties.Add (alwaysUseCompletionPortsForAccept);
-			properties.Add (alwaysUseCompletionPortsForConnect);
+
+			properties.Add (alwaysUseCompletionPortsForAcceptProp);
+			properties.Add (alwaysUseCompletionPortsForConnectProp);
 		}
 
 		#endregion // Constructors
 
 		#region Properties
 
+		[ConfigurationProperty ("alwaysUseCompletionPortsForAccept", DefaultValue = "False")]
 		public bool AlwaysUseCompletionPortsForAccept {
-			get { return (bool) base [alwaysUseCompletionPortsForAccept]; }
-			set { base [alwaysUseCompletionPortsForAccept] = value; }
+			get { return (bool) base [alwaysUseCompletionPortsForAcceptProp]; }
+			set { base [alwaysUseCompletionPortsForAcceptProp] = value; }
 		}
 
+		[ConfigurationProperty ("alwaysUseCompletionPortsForConnect", DefaultValue = "False")]
 		public bool AlwaysUseCompletionPortsForConnect {
-			get { return (bool) base [alwaysUseCompletionPortsForConnect]; }
-			set { base [alwaysUseCompletionPortsForConnect] = value; }
+			get { return (bool) base [alwaysUseCompletionPortsForConnectProp]; }
+			set { base [alwaysUseCompletionPortsForConnectProp] = value; }
 		}
 
 		protected override ConfigurationPropertyCollection Properties {
@@ -73,6 +78,15 @@ namespace System.Net.Configuration
 		}
 
 		#endregion // Properties
+
+		#region Methods
+
+		[MonoTODO]
+		protected override void PostDeserialize ()
+		{
+		}
+
+		#endregion // Methods
 	}
 }
 

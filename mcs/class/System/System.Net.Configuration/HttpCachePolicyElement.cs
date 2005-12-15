@@ -94,7 +94,7 @@ namespace System.Net.Configuration
 			set { base [minimumFreshProp] = value; }
 		}
 
-		[ConfigurationProperty ("policyLevel", DefaultValue = HttpRequestCacheLevel.Default, Options = ConfigurationPropertyOptions.IsRequired)]
+		[ConfigurationProperty ("policyLevel", DefaultValue = "Default", Options = ConfigurationPropertyOptions.IsRequired)]
 		public HttpRequestCacheLevel PolicyLevel {
 			get { return (HttpRequestCacheLevel) base [policyLevelProp]; }
 			set { base [policyLevelProp] = value; }

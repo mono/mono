@@ -39,17 +39,20 @@ namespace System.Net.Configuration
 	{
 		#region Fields
 
-		ConfigurationPropertyCollection properties;
-		static ConfigurationProperty webRequestModules = new ConfigurationProperty ("WebRequestModules", typeof (WebRequestModuleElementCollection), new WebRequestModuleElementCollection ());
+		static ConfigurationPropertyCollection properties;
+		static ConfigurationProperty webRequestModulesProp;
 
 		#endregion // Fields
 
 		#region Constructors
 
-		public WebRequestModulesSection ()
+		static WebRequestModulesSection ()
 		{
+			webRequestModulesProp = new ConfigurationProperty ("", typeof (WebRequestModuleElementCollection),
+									   null, ConfigurationPropertyOptions.IsDefaultCollection);
+
 			properties = new ConfigurationPropertyCollection ();
-			properties.Add (webRequestModules);
+			properties.Add (webRequestModulesProp);
 		}
 
 		#endregion // Constructors
@@ -60,8 +63,9 @@ namespace System.Net.Configuration
 			get { return properties; }
 		}
 
+		[ConfigurationProperty ("", Options = ConfigurationPropertyOptions.IsDefaultCollection)]
 		public WebRequestModuleElementCollection WebRequestModules {
-			get { return (WebRequestModuleElementCollection) base [webRequestModules]; }
+			get { return (WebRequestModuleElementCollection) base [webRequestModulesProp]; }
 		}
 
 		#endregion // Properties
@@ -69,9 +73,8 @@ namespace System.Net.Configuration
 		#region Methods
 
 		[MonoTODO]
-		protected override object GetRuntimeObject ()
+		protected override void PostDeserialize ()
 		{
-			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]

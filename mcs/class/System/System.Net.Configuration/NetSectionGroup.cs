@@ -63,12 +63,11 @@ namespace System.Net.Configuration
 			get { return (DefaultProxySection) Sections ["defaultProxy"]; }
 		}
 
-#if notyet
-		[ConfigurationProperty ("mailSettings")]
+		// for some reason MS doesn't provide a ConfigurationProperty for this property...
+		//[ConfigurationProperty ("mailSettings")]
 		public MailSettingsSectionGroup MailSettings {
 			get { return (MailSettingsSectionGroup) SectionGroups ["mailSettings"]; }
 		}
-#endif
 
 		[ConfigurationProperty ("requestCaching")]
 		public RequestCachingSection RequestCaching {

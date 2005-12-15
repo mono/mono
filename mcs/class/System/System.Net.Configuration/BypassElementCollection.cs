@@ -59,6 +59,9 @@ namespace System.Net.Configuration
 			set { base [name] = value; }
 		}
 
+		protected override bool ThrowOnDuplicate {
+			get { return false; }
+		}
 		#endregion // Properties
 
 		#region Methods
