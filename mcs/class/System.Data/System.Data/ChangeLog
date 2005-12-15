@@ -1,3 +1,12 @@
+2005-12-12  Konstantin Triger <kostat@mainsoft.com>
+
+	* DataRow.cs: Added index Updates.
+		EndEdit() fixed to first update indices and then AssertConstraints
+		based on those indices.
+		Added Validate() and AssertConstraints() functions.
+	* DataRowCollection.cs: Removed ValidateDataRowInternal().
+	* DataTable: Fixed Clear().
+
 2005-12-06  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CustomDataClassGenerator.cs : (InitializeFields) handle AllowDBNull

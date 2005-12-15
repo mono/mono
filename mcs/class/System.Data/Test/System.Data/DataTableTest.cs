@@ -721,6 +721,19 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
+		public void SelectRowState()
+		{
+			DataTable d = new DataTable();
+			d.Columns.Add (new DataColumn ("aaa"));
+			DataRow [] rows = d.Select (null, null, DataViewRowState.Deleted);
+			AssertEquals(0, rows.Length);
+			d.Rows.Add (new object [] {"bbb"});
+			d.Rows.Add (new object [] {"bbb"});
+			rows = d.Select (null, null, DataViewRowState.Deleted);
+			AssertEquals(0, rows.Length);
+		}
+
+		[Test]
 		public void ToStringTest()
 		{
 			DataTable dt = new DataTable();

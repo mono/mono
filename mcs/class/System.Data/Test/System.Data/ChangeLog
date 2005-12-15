@@ -1,3 +1,7 @@
+2005-12-15 Konstantin Triger <kostat@mainsoft.com>
+
+	* DataTableTest.cs: added SelectRowState test.
+
 2005-12-07 Boris Kirzner <borisk@mainsoft.com>
 	* DataTableTest.cs: added ifdef for feature not supported in TARGET_JVM.
 

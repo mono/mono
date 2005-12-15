@@ -592,12 +592,17 @@ namespace System.Data {
 					return;
 			case DataRowState.Added:
 			case DataRowState.Modified:
+					int original = Original;
+					DataRowState oldState = RowState;
                                 if (Original >= 0) {
                                         Table.RecordCache.DisposeRecord(Original);
                                 }
                                 Original = Current;
+					foreach (Index index in Table.Indexes)
+						index.Update(this, original, DataRowVersion.Original, oldState);
 				break;
 			case DataRowState.Deleted:
+				Table.DeleteRowFromIndexes(this);
 				_table.Rows.RemoveInternal (this);
 				DetachRow();
 				break;
@@ -638,12 +643,13 @@ namespace System.Data {
 			 }
 
 			if (HasVersion (DataRowVersion.Proposed)) {
+				int oldRecord = Proposed;
+				DataRowState oldState = RowState;
 				Table.RecordCache.DisposeRecord(Proposed);
 				Proposed = -1;
 
-				int newVersion = (HasVersion (DataRowVersion.Current)) ? Current : Original;					
 				foreach(Index index in Table.Indexes)
-					index.Update(this,newVersion);					
+					index.Update(this,oldRecord, DataRowVersion.Proposed, oldState);					
 			}
 		}
 
@@ -679,14 +685,17 @@ namespace System.Data {
 			default:
 				// check what to do with child rows
 				CheckChildRows(DataRowAction.Delete);
-				_table.DeleteRowFromIndexes (this);
 				break;
 			}
 			if (Current >= 0) {
+				int current = Current;
+				DataRowState oldState = RowState;
 				if (Current != Original) {
 					_table.RecordCache.DisposeRecord(Current);
 				}
 				Current = -1;
+				foreach(Index index in Table.Indexes)
+					index.Update(this, current, DataRowVersion.Current, oldState);
 			}
 			_table.DeletedDataRow(this, DataRowAction.Delete);
 		}
@@ -843,36 +852,44 @@ namespace System.Data {
 					_inChangingEvent = false;
 				}
 				
-				//Calling next method validates UniqueConstraints
-				//and ForeignKeys.
-				bool rowValidated = false;
-				try
-				{
-					if ((_table.DataSet == null || _table.DataSet.EnforceConstraints) && !_table._duringDataLoad) {
-						_table.Rows.ValidateDataRowInternal(this);
-						rowValidated = true;
-					}
-				}
-				catch (Exception e)
-				{
-					Table.RecordCache.DisposeRecord(Proposed);
-					Proposed = -1;
-					throw e;
-				}
+				DataRowState oldState = RowState;
 
-				CheckChildRows(DataRowAction.Change);
-				if (Original != Current) {
-					Table.RecordCache.DisposeRecord(Current);
-				}
-
+				int oldRecord = Current;
 				Current = Proposed;
 				Proposed = -1;
 
-				if (!rowValidated) {
-					// keep indexes updated even if there was no need to validate row
+				if (!Table._duringDataLoad) {
 					foreach(Index index in Table.Indexes) {
-						index.Update(this,Current); //FIXME: why Current ?!
+						index.Update(this,oldRecord, DataRowVersion.Current, oldState);
 					}
+				}
+
+				try {
+					AssertConstraints();
+
+					// restore previous state to let the cascade update to find the rows
+					Proposed = Current;
+					Current = oldRecord;
+
+					CheckChildRows(DataRowAction.Change);
+
+					// apply new state
+					Current = Proposed;
+					Proposed = -1;
+				}
+				catch {
+					int proposed = Proposed >= 0 ? Proposed : Current;
+					Current = oldRecord;
+					if (!Table._duringDataLoad) {
+						foreach(Index index in Table.Indexes) {
+							index.Update(this,proposed, DataRowVersion.Current, RowState);
+						}
+					}
+					throw;
+				}
+
+				if (Original != oldRecord) {
+					Table.RecordCache.DisposeRecord(oldRecord);
 				}
 
 				// Note : row state must not be changed before all the job on indexes finished,
@@ -1304,10 +1321,7 @@ namespace System.Data {
 				CheckChildRows(DataRowAction.Rollback);
 
 				if (Current != Original) {
-					foreach(Index index in Table.Indexes) {
-						index.Delete (this);
-						index.Update(this,Original);
-					}
+					Table.DeleteRowFromIndexes(this);
 					Current = Original;
 				}
 			       
@@ -1320,12 +1334,9 @@ namespace System.Data {
 						_table.Rows.RemoveInternal (this);
 						break;
 					case DataRowState.Modified:
-						if ((_table.DataSet == null || _table.DataSet.EnforceConstraints) && !_table._duringDataLoad)
-							_table.Rows.ValidateDataRowInternal(this);
-						break;
 					case DataRowState.Deleted:
-						if ((_table.DataSet == null || _table.DataSet.EnforceConstraints) && !_table._duringDataLoad)
-							_table.Rows.ValidateDataRowInternal(this);
+						Table.AddRowToIndexes(this);
+						AssertConstraints();
 						break;
 				} 
 				
@@ -1624,6 +1635,35 @@ namespace System.Data {
 			}
 		}
 
+		internal void Validate() {
+			Table.AddRowToIndexes(this);
+			AssertConstraints();
+		}
+
+		void AssertConstraints() {
+			if (Table == null || Table._duringDataLoad)
+				return;
+				
+			if (Table.DataSet != null && !Table.DataSet.EnforceConstraints)
+				return;
+
+			foreach(DataColumn column in Table.Columns) {
+				if (!column.AllowDBNull && IsNull(column)) {
+					throw new NoNullAllowedException(_nullConstraintMessage);
+				}
+			}
+
+			foreach(Constraint constraint in Table.Constraints) {
+				try {
+					constraint.AssertConstraint(this);
+				}
+				catch(Exception e) {
+					Table.DeleteRowFromIndexes(this);
+					throw e;
+				}
+			}
+		}
+
 		internal void CheckNullConstraints()
 		{
 			if (_nullConstraintViolation) {
@@ -1665,17 +1705,15 @@ namespace System.Data {
                                 && RowState == DataRowState.Unchanged)) {
 				Table.ChangingDataRow (this, DataRowAction.ChangeCurrentAndOriginal);
 				temp = Table.CreateRecord (values);
+								Table.DeleteRowFromIndexes(this);
                                 if (HasVersion (DataRowVersion.Original) && Current != Original)
                                         Table.RecordCache.DisposeRecord (Original);
                                 Original = temp;
-                                // update the pk index
-                                index = Table.GetIndex(Table.PrimaryKey,null,DataViewRowState.None,null,false);
-                                if (index != null)
-                                        index.Update (this, temp);
 
                                 if (HasVersion (DataRowVersion.Current))
                                         Table.RecordCache.DisposeRecord (Current);
                                 Current = temp;
+								Table.AddRowToIndexes(this);
 				Table.ChangedDataRow (this, DataRowAction.ChangeCurrentAndOriginal);
                                 return;
                         }
@@ -1697,19 +1735,16 @@ namespace System.Data {
 				if (RowState == DataRowState.Added 
 				    || Table.CompareRecords (rindex, temp) != 0) {
 					Table.ChangingDataRow (this, DataRowAction.Change);
+										Table.DeleteRowFromIndexes(this);
                                         if (HasVersion (DataRowVersion.Proposed)) {
                                                 Table.RecordCache.DisposeRecord (Proposed);
                                                 Proposed = -1;
                                         }
-                                        
-                                        // update the pk index
-                                        index = Table.GetIndex(Table.PrimaryKey,null,DataViewRowState.None,null,false);
-                                        if (index != null)
-                                                index.Update (this, temp);
-
+  
                                         if (Original != Current)
                                                 Table.RecordCache.DisposeRecord (Current);
                                         Current = temp;
+										Table.AddRowToIndexes(this);
 					Table.ChangedDataRow (this, DataRowAction.Change);
                                 } else {
 					Table.ChangingDataRow (this, DataRowAction.Nothing);
