@@ -1,3 +1,12 @@
+2005-12-15 Neale Ferguson <neale@sinenomine.net>
+
+	* mini-s390.c: Fix ADDCC/SBB bug reveealed by test_0_ulong_regress; Correct 
+	register loading for Tail processing; Correct trace output.
+
+	* inssel-s390.brg: Reimplement LSUB_OVF due to s390 implemnetation of signed math.
+
+	* cpu-s390.md: Correct size of jmp instruction. 
+
 2005-12-13 Neale Ferguson <neale@sinenomine.net>
 
 	* mini-s390.c (mono_arch_emit_prolog): Remove some debugging bits.
