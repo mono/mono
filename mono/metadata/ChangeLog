@@ -1,3 +1,10 @@
+2005-12-15  Raja R Harinath  <rharinath@novell.com>
+
+	* metadata.c (mono_metadata_parse_method_signature_full): Remove a
+	dead store.
+	* loader.c (method_from_memberref): Don't inflate a signature if
+	it doesn't contain any type parameters.
+
 2005-12-15  Zoltan Varga  <vargaz@gmail.com>
 
 	* class.c (mono_class_setup_vtable): Call mono_reflection_get_dynamic_overrides () to get the overrides in dynamic assemblies.
