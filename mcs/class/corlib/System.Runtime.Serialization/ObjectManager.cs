@@ -207,6 +207,13 @@ namespace System.Runtime.Serialization
 			if (obj is IObjectReference) record.Status = ObjectRecordStatus.ReferenceUnsolved;
 			else record.Status = ObjectRecordStatus.ReferenceSolved;
 
+			if (_selector != null) {
+				record.Surrogate = _selector.GetSurrogate (
+					obj.GetType(), _context, out record.SurrogateSelector);
+				if (record.Surrogate != null)
+					record.Status = ObjectRecordStatus.ReferenceUnsolved;
+			}
+
 			record.DoFixups (true, this, false);
 			record.DoFixups (false, this, false);
 			_registeredObjectsCount++;
@@ -381,6 +388,8 @@ namespace System.Runtime.Serialization
 		public long ObjectID;
 		public SerializationInfo Info;
 		public long IdOfContainingObj;
+		public ISerializationSurrogate Surrogate;
+		public ISurrogateSelector SurrogateSelector;
 		public MemberInfo Member;
 		public int[] ArrayIndex;
 		public BaseFixupRecord FixupChainAsContainer;
@@ -520,14 +529,11 @@ namespace System.Runtime.Serialization
 		{
 			if (Info != null)
 			{
-				ISurrogateSelector foundSelector = null;
-				ISerializationSurrogate surrogate = null;
-					
-				if (selector != null)
-					surrogate = selector.GetSurrogate (ObjectInstance.GetType(), context, out foundSelector);
-					
-				if (surrogate != null) {
-					surrogate.SetObjectData (ObjectInstance, Info, context, foundSelector);
+				if (Surrogate != null) {
+					object new_obj = Surrogate.SetObjectData (ObjectInstance, Info, context, SurrogateSelector);
+					if (new_obj != null)
+						ObjectInstance = new_obj;
+					Status = ObjectRecordStatus.ReferenceSolved;
 				} else if (ObjectInstance is ISerializable) {
 					object[] pars = new object[] {Info, context};
 					ConstructorInfo con = ObjectInstance.GetType().GetConstructor (BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, new Type[] { typeof (SerializationInfo), typeof (StreamingContext) }, null );

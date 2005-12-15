@@ -1,3 +1,9 @@
+2005-12-15  Martin Baulig  <martin@ximian.com>
+
+	* ObjectManager.cs: When deserializing an object that has a
+	surrogate, actually check the return value of
+	ISerializationSurrogate.SetObjectData(); fixes #76931.
+
 2005-10-03  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* ObjectIDGenerator.cs: Use custom comparer instead of an instance
