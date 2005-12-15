@@ -1,0 +1,4 @@
+2005-12-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* dtd2rng.cs, dtd2rng.exe.sources, Makefile, ChangeLog :
+	  new files.
