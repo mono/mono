@@ -1,3 +1,7 @@
+2005-12-15  Konstantin Triger <kostat@mainsoft.com>
+
+        * XmlTextWriter.cs: allow null string in WriteCData.
+
 2005-12-14  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlNode.cs : (GetNamespaceOfPrefix) return const xml/xmlns URIs

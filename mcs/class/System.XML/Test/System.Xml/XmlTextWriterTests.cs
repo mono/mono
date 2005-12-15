@@ -170,6 +170,13 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
+                public void CDataNull ()
+                {
+                        xtw.WriteCData (null);
+                        AssertEquals ("WriteCData had incorrect output.", "<![CDATA[]]>", StringWriterText);
+                }
+
+		[Test]
 		[ExpectedException (typeof (ArgumentException))]
 		public void CDataInvalid ()
 		{
