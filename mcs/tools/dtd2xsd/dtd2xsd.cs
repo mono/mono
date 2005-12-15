@@ -23,7 +23,12 @@ class Dtd2XsdDriver
 			Console.WriteLine ("USAGE: mono dtd2xsd.exe instance-xmlfile [output-xsdfile]");
 			return;
 		}
-		XmlTextReader xtr = new XmlTextReader (args [0]);
+		XmlTextReader xtr;
+		if (args [0].EndsWith (".dtd"))
+			xtr = new XmlTextReader ("<!DOCTYPE dummy SYSTEM '" + args [0] + "'><dummy/>",
+				XmlNodeType.Document, null);
+		else
+			xtr = new XmlTextReader (args [0]);
 		XmlSchema xsd = Dtd2Xsd.Run (xtr);
 		if (args.Length > 1)
 			xsd.Write (new StreamWriter (args [1]));
