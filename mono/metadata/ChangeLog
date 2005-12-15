@@ -2,6 +2,10 @@
 
 	* metadata.c (mono_metadata_parse_method_signature_full): Remove a
 	dead store.
+	(do_mono_metadata_parse_generic_class): Don't pass the current
+	generic context when parsing the type being instantiated: it
+	cannot use it, anyway.
+
 	* loader.c (method_from_memberref): Don't inflate a signature if
 	it doesn't contain any type parameters.
 
