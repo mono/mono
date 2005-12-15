@@ -165,6 +165,7 @@ endfinally: len:16
 op_endfilter: src1:a len:16
 
 ckfinite: dest:f src1:f len:22
+op_ckfinite: dest:f src1:f len:22
 
 mul.ovf: dest:i src1:i src2:i clob:1 len:9
 mul.ovf.un: dest:i src1:i src2:i len:16
@@ -318,6 +319,7 @@ long_conv_to_ovf_i4_2: dest:i src1:i src2:i len:30
 long_mul_ovf: 
 long_conv_to_r8_2: dest:f src1:i src2:i len:37 
 long_conv_to_r_un: dest:f src1:i src2:i len:37 
+long_conv_to_r_un_2: dest:f src1:i src2:i len:37 
 long_shr_imm: dest:L src1:L clob:1 len:10
 long_shr_un_imm: dest:L src1:L clob:1 len:10
 long_shl_imm: dest:L src1:L clob:1 len:10

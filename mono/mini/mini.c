@@ -1737,6 +1737,7 @@ mono_compile_create_var (MonoCompile *cfg, MonoType *type, int opcode)
 #endif
 				break;
 			case MONO_TYPE_VALUETYPE:
+			case MONO_TYPE_TYPEDBYREF:
 				break;
 			default:
 				printf ("A: %s\n", mono_type_full_name (type));
@@ -8487,14 +8488,16 @@ optimize_branches (MonoCompile *cfg)
 				bbn = bb->out_bb [0];
 
 				/* conditional branches where true and false targets are the same can be also replaced with CEE_BR */
-				if (!cfg->new_ir && bb->last_ins && MONO_IS_COND_BRANCH_OP (bb->last_ins)) {
-					MonoInst *pop;
-					MONO_INST_NEW (cfg, pop, CEE_POP);
-					pop->inst_left = bb->last_ins->inst_left->inst_left;
-					mono_add_ins_to_end (bb, pop);
-					MONO_INST_NEW (cfg, pop, CEE_POP);
-					pop->inst_left = bb->last_ins->inst_left->inst_right;
-					mono_add_ins_to_end (bb, pop);
+				if (bb->last_ins && MONO_IS_COND_BRANCH_OP (bb->last_ins)) {
+					if (!cfg->new_ir) {
+						MonoInst *pop;
+						MONO_INST_NEW (cfg, pop, CEE_POP);
+						pop->inst_left = bb->last_ins->inst_left->inst_left;
+						mono_add_ins_to_end (bb, pop);
+						MONO_INST_NEW (cfg, pop, CEE_POP);
+						pop->inst_left = bb->last_ins->inst_left->inst_right;
+						mono_add_ins_to_end (bb, pop);
+					}
 					bb->last_ins->opcode = CEE_BR;
 					bb->last_ins->inst_target_bb = bb->last_ins->inst_true_bb;
 					changed = TRUE;

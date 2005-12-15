@@ -1025,38 +1025,6 @@ mono_arch_call_opcode2 (MonoCompile *cfg, MonoCallInst *call, int is_virtual) {
 		ArgInfo *ainfo = cinfo->args + i;
 		MonoType *t;
 
-		/* Emit the signature cookie just before the implicit arguments */
-		if (!sig->pinvoke && (sig->call_convention == MONO_CALL_VARARG) && (i == sentinelpos)) {
-			MonoMethodSignature *tmp_sig;
-			MonoInst *sig_arg;
-
-			NOT_IMPLEMENTED;
-
-			/* FIXME: Add support for signature tokens to AOT */
-			cfg->disable_aot = TRUE;
-			MONO_INST_NEW (cfg, arg, OP_OUTARG);
-
-			/*
-			 * mono_ArgIterator_Setup assumes the signature cookie is 
-			 * passed first and all the arguments which were before it are
-			 * passed on the stack after the signature. So compensate by 
-			 * passing a different signature.
-			 */
-			tmp_sig = mono_metadata_signature_dup (call->signature);
-			tmp_sig->param_count -= call->signature->sentinelpos;
-			tmp_sig->sentinelpos = 0;
-			memcpy (tmp_sig->params, call->signature->params + call->signature->sentinelpos, tmp_sig->param_count * sizeof (MonoType*));
-
-			MONO_INST_NEW (cfg, sig_arg, OP_ICONST);
-			sig_arg->inst_p0 = tmp_sig;
-
-			arg->inst_left = sig_arg;
-			arg->type = STACK_PTR;
-			/* prepend, so they get reversed */
-			arg->next = call->out_args;
-			call->out_args = arg;
-		}
-
 		if (i >= sig->hasthis)
 			t = sig->params [i - sig->hasthis];
 		else
@@ -1132,6 +1100,27 @@ mono_arch_call_opcode2 (MonoCompile *cfg, MonoCallInst *call, int is_virtual) {
 			}
 			
 			MONO_ADD_INS (cfg->cbb, arg);
+		}
+
+		/* Emit the signature cookie just before the implicit arguments */
+		if (!sig->pinvoke && (sig->call_convention == MONO_CALL_VARARG) && (i == sentinelpos)) {
+			MonoMethodSignature *tmp_sig;
+
+			/* FIXME: Add support for signature tokens to AOT */
+			cfg->disable_aot = TRUE;
+
+			/*
+			 * mono_ArgIterator_Setup assumes the signature cookie is 
+			 * passed first and all the arguments which were before it are
+			 * passed on the stack after the signature. So compensate by 
+			 * passing a different signature.
+			 */
+			tmp_sig = mono_metadata_signature_dup (call->signature);
+			tmp_sig->param_count -= call->signature->sentinelpos;
+			tmp_sig->sentinelpos = 0;
+			memcpy (tmp_sig->params, call->signature->params + call->signature->sentinelpos, tmp_sig->param_count * sizeof (MonoType*));
+
+			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_X86_PUSH_IMM, -1, -1, tmp_sig);
 		}
 	}
 
@@ -2880,7 +2869,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			x86_fild_membase (code, X86_ESP, 0, TRUE);
 			x86_alu_reg_imm (code, X86_ADD, X86_ESP, 8);
 			break;
-		case OP_LCONV_TO_R_UN: { 
+		case OP_LCONV_TO_R_UN:
+		case OP_LCONV_TO_R_UN_2: { 
 			static guint8 mn[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x80, 0x3f, 0x40 };
 			guint8 *br;
 
@@ -3303,7 +3293,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			x86_alu_reg_imm (code, X86_CMP, X86_EAX, X86_FP_C0);
 			EMIT_COND_BRANCH (ins, X86_CC_NE, FALSE);
 			break;
-		case CEE_CKFINITE: {
+		case CEE_CKFINITE:
+		case OP_CKFINITE:
 			x86_push_reg (code, X86_EAX);
 			x86_fxam (code);
 			x86_fnstsw (code);
@@ -3312,7 +3303,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			x86_pop_reg (code, X86_EAX);
 			EMIT_COND_SYSTEM_EXCEPTION (X86_CC_EQ, FALSE, "ArithmeticException");
 			break;
-		}
 		case OP_TLS_GET: {
 			code = emit_tls_get (code, ins->dreg, ins->inst_offset);
 			break;
@@ -4202,35 +4192,54 @@ mono_arch_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMetho
 	} else if(cmethod->klass->image == mono_defaults.corlib &&
 			   (strcmp (cmethod->klass->name_space, "System.Threading") == 0) &&
 			   (strcmp (cmethod->klass->name, "Interlocked") == 0)) {
-		NOT_IMPLEMENTED;
+		/* FIXME: Fuse these with ldaddr */
+		/* FIXME: Call alloc_ireg */
 		if (strcmp (cmethod->name, "Increment") == 0 && fsig->params [0]->type == MONO_TYPE_I4) {
 			MonoInst *ins_iconst;
 
-			MONO_INST_NEW (cfg, ins, OP_ATOMIC_ADD_NEW_I4);
 			MONO_INST_NEW (cfg, ins_iconst, OP_ICONST);
 			ins_iconst->inst_c0 = 1;
+			ins_iconst->dreg = cfg->next_vireg++;
+			MONO_ADD_INS (cfg->cbb, ins_iconst);
 
-			ins->inst_i0 = args [0];
-			ins->inst_i1 = ins_iconst;
+			MONO_INST_NEW (cfg, ins, OP_ATOMIC_ADD_NEW_I4);
+			ins->dreg = cfg->next_vireg ++;
+			ins->inst_basereg = args [0]->dreg;
+			ins->inst_offset = 0;
+			ins->sreg2 = ins_iconst->dreg;
+			ins->type = STACK_I4;
+			MONO_ADD_INS (cfg->cbb, ins);
 		} else if (strcmp (cmethod->name, "Decrement") == 0 && fsig->params [0]->type == MONO_TYPE_I4) {
 			MonoInst *ins_iconst;
 
-			MONO_INST_NEW (cfg, ins, OP_ATOMIC_ADD_NEW_I4);
 			MONO_INST_NEW (cfg, ins_iconst, OP_ICONST);
 			ins_iconst->inst_c0 = -1;
+			ins_iconst->dreg = cfg->next_vireg++;
+			MONO_ADD_INS (cfg->cbb, ins_iconst);
 
-			ins->inst_i0 = args [0];
-			ins->inst_i1 = ins_iconst;
+			MONO_INST_NEW (cfg, ins, OP_ATOMIC_ADD_NEW_I4);
+			ins->dreg = cfg->next_vireg ++;
+			ins->inst_basereg = args [0]->dreg;
+			ins->inst_offset = 0;
+			ins->sreg2 = ins_iconst->dreg;
+			ins->type = STACK_I4;
+			MONO_ADD_INS (cfg->cbb, ins);
 		} else if (strcmp (cmethod->name, "Exchange") == 0 && fsig->params [0]->type == MONO_TYPE_I4) {
 			MONO_INST_NEW (cfg, ins, OP_ATOMIC_EXCHANGE_I4);
-
-			ins->inst_i0 = args [0];
-			ins->inst_i1 = args [1];
+			ins->dreg = cfg->next_vireg ++;
+			ins->inst_basereg = args [0]->dreg;
+			ins->inst_offset = 0;
+			ins->sreg2 = args [1]->dreg;
+			ins->type = STACK_I4;
+			MONO_ADD_INS (cfg->cbb, ins);
 		} else if (strcmp (cmethod->name, "Add") == 0 && fsig->params [0]->type == MONO_TYPE_I4) {
 			MONO_INST_NEW (cfg, ins, OP_ATOMIC_ADD_I4);
-
-			ins->inst_i0 = args [0];
-			ins->inst_i1 = args [1];
+			ins->dreg = cfg->next_vireg ++;
+			ins->inst_basereg = args [0]->dreg;
+			ins->inst_offset = 0;
+			ins->sreg2 = args [1]->dreg;
+			ins->type = STACK_I4;
+			MONO_ADD_INS (cfg->cbb, ins);
 		}
 	}
 

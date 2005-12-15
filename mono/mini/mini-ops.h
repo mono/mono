@@ -15,7 +15,7 @@ MINI_OP(OP_ICOMPARE_IMM,	"icompare_imm", NONE, IREG, NONE)
 MINI_OP(OP_LCOMPARE_IMM,	"lcompare_imm", NONE, LREG, NONE)
 MINI_OP(OP_LOCAL,	"local", NONE, NONE, NONE)
 MINI_OP(OP_ARG,		"arg", NONE, NONE, NONE)
-MINI_OP(OP_ARGLIST,	"oparglist", NONE, NONE, NONE)
+MINI_OP(OP_ARGLIST,	"oparglist", NONE, IREG, NONE)
 MINI_OP(OP_OUTARG,	"outarg", NONE, NONE, NONE)
 MINI_OP(OP_OUTARG_REG,	"outarg_reg", NONE, NONE, NONE)
 MINI_OP(OP_OUTARG_FREG,	"outarg_freg", NONE, NONE, NONE)
@@ -264,6 +264,7 @@ MINI_OP(OP_LONG_SHRUN_32, "long_shr_un_32", NONE, NONE, NONE)
 
 /* Variants of the original opcodes which take the two parts of the long as two arguments */
 MINI_OP(OP_LCONV_TO_R8_2,"long_conv_to_r8_2", FREG, IREG, IREG)
+MINI_OP(OP_LCONV_TO_R_UN_2,"long_conv_to_r_un_2", FREG, IREG, IREG)
 MINI_OP(OP_LCONV_TO_OVF_I4_2,"long_conv_to_ovf_i4_2", IREG, IREG, IREG)
 
 /* 32 bit opcodes: must be in the same order as the matching CEE_ opcodes: binops_op_map */
@@ -448,6 +449,7 @@ MINI_OP(OP_FCLT_MEMBASE,   "float_clt_membase", NONE, NONE, NONE)
 MINI_OP(OP_FCLT_UN_MEMBASE,"float_clt_un_membase", NONE, NONE, NONE)
 
 MINI_OP(OP_FCONV_TO_U,	"float_conv_to_u", NONE, NONE, NONE)
+MINI_OP(OP_CKFINITE, "op_ckfinite", FREG, FREG, NONE)
 
 MINI_OP(OP_GROUP, "group", NONE, NONE, NONE)
 
@@ -534,11 +536,11 @@ MINI_OP(OP_NOT_REACHED, "not_reached", NONE, NONE, NONE)
 	Interlocked::Increment and Interlocked:Decrement
 	and atomic_add_i4 by Interlocked::Add
 */
-MINI_OP(OP_ATOMIC_ADD_I4, "atomic_add_i4", NONE, NONE, NONE)
-MINI_OP(OP_ATOMIC_ADD_NEW_I4, "atomic_add_new_i4", NONE, NONE, NONE)
-MINI_OP(OP_ATOMIC_ADD_IMM_I4, "atomic_add_imm_i4", NONE, NONE, NONE)
-MINI_OP(OP_ATOMIC_ADD_IMM_NEW_I4, "atomic_add_imm_new_i4", NONE, NONE, NONE)
-MINI_OP(OP_ATOMIC_EXCHANGE_I4, "atomic_exchange_i4", NONE, NONE, NONE)
+MINI_OP(OP_ATOMIC_ADD_I4, "atomic_add_i4", IREG, IREG, IREG)
+MINI_OP(OP_ATOMIC_ADD_NEW_I4, "atomic_add_new_i4", IREG, IREG, IREG)
+MINI_OP(OP_ATOMIC_ADD_IMM_I4, "atomic_add_imm_i4", IREG, IREG, NONE)
+MINI_OP(OP_ATOMIC_ADD_IMM_NEW_I4, "atomic_add_imm_new_i4", IREG, IREG, NONE)
+MINI_OP(OP_ATOMIC_EXCHANGE_I4, "atomic_exchange_i4", IREG, IREG, IREG)
 
 MINI_OP(OP_ATOMIC_ADD_I8, "atomic_add_i8", NONE, NONE, NONE)
 MINI_OP(OP_ATOMIC_ADD_NEW_I8, "atomic_add_new_i8", NONE, NONE, NONE)

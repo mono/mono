@@ -262,9 +262,12 @@ mono_print_ins_index (int i, MonoInst *ins)
 	}
 	if (spec [MONO_INST_SRC1]) {
 		gboolean fp = (spec [MONO_INST_SRC1] == 'f');
-		if (is_soft_reg (ins->sreg1, fp))
-			g_print (" R%d", ins->sreg1);
-		else if (spec [MONO_INST_SRC1] == 'b')
+		if (is_soft_reg (ins->sreg1, fp)) {
+			if (spec [MONO_INST_SRC1] == 'b')
+				g_print (" [R%d + 0x%lx]", ins->sreg1, (long)ins->inst_offset);
+			else
+				g_print (" R%d", ins->sreg1);
+		} else if (spec [MONO_INST_SRC1] == 'b')
 			g_print (" [%s + 0x%lx]", mono_arch_regname (ins->sreg1), (long)ins->inst_offset);
 		else
 			g_print (" %s", mono_regname_full (ins->sreg1, fp));
@@ -1140,6 +1143,13 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 				dreg_mask &= ~ (regmask (dest_sreg1));
 			if (dest_sreg2 != -1)
 				dreg_mask &= ~ (regmask (dest_sreg2));
+
+			val = rassign (cfg, ins->dreg, fp);
+			if (is_soft_reg (ins->dreg, fp) && (val >= 0) && (!(val & dreg_mask))) {
+				/* DREG is already allocated to a register needed for sreg1 */
+				get_register_force_spilling (cfg, tmp, ins, ins->dreg, FALSE);
+				mono_regstate_free_int (rs, val);
+			}
 		}
 
 		/*
