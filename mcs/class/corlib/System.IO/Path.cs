@@ -10,6 +10,7 @@
 //                 Dan Lewis (dihlewis@yahoo.co.uk)
 //                 Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //                 Ben Maurer (bmaurer@users.sourceforge.net)
+//                 Sebastien Pouliot  <sebastien@ximian.com>
 // Created:        Saturday, August 11, 2001 
 //
 //------------------------------------------------------------------------------
@@ -38,26 +39,37 @@
 //
 
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Security;
+using System.Security.Cryptography;
 using System.Security.Permissions;
+using System.Text;
 
-namespace System.IO
-{
-	public sealed class Path
-	{
+namespace System.IO {
+
+#if NET_2_0
+	[ComVisible (true)]
+	public static class Path {
+
+		[Obsolete ("see GetInvalidPathChars and GetInvalidfileNameChars methods.")]
+		public static readonly char[] InvalidPathChars;
+#else
+	public sealed class Path {
+
+		private Path ()
+		{
+		}
+
+		public static readonly char[] InvalidPathChars;
+#endif
 		public static readonly char AltDirectorySeparatorChar;
 		public static readonly char DirectorySeparatorChar;
-		public static readonly char[] InvalidPathChars;
 		public static readonly char PathSeparator;
 		internal static readonly string DirectorySeparatorStr;
 		public static readonly char VolumeSeparatorChar;
 
 		private static readonly char[] PathSeparatorChars;
 		private static readonly bool dirEqualsVolume;
-
-		private Path ()
-		{
-		}
 
 		// class methods
 		public static string ChangeExtension (string path, string extension)
@@ -204,12 +216,29 @@ namespace System.IO
 		internal static string InsecureGetFullPath (string path)
 		{
 			if (path == null)
-				throw (new ArgumentNullException (
-					"path",
-					"You must specify a path when calling System.IO.Path.GetFullPath"));
+				throw new ArgumentNullException ("path");
 
-			if (path.Trim () == String.Empty)
-				throw new ArgumentException ("The path is not of a legal form", "path");
+			if (path.Trim ().Length == 0) {
+				string msg = Locale.GetText ("The specified path is not of a legal form (empty).");
+				throw new ArgumentException (msg, "path");
+			}
+
+			// adjust for drives, i.e. a special case for windows
+			if (Environment.IsRunningOnWindows) {
+				// only a drive is specified
+				if ((path.Length == 2) && (path [1] == ':') && Char.IsLetter (path [0])) {
+					// then if the current directory is on the same drive
+					string current = Directory.GetCurrentDirectory ();
+					if (current [0] == path [0])
+						path = current; // we return it
+					else
+						path += '\\';
+				}
+			}
+
+			// if the supplied path ends with a separator...
+			char end = path [path.Length - 1];
+			bool end_dsc = ((end == DirectorySeparatorChar) || (end == AltDirectorySeparatorChar));
 
 			if (path.Length >= 2 &&
 				IsDsc (path [0]) &&
@@ -219,23 +248,27 @@ namespace System.IO
 
 				if (path [0] != DirectorySeparatorChar)
 					path = path.Replace (AltDirectorySeparatorChar, DirectorySeparatorChar);
-
-				return path;
+			} else {
+				if (!IsPathRooted (path))
+					path = Directory.GetCurrentDirectory () + DirectorySeparatorStr + path;
+				else if (DirectorySeparatorChar == '\\' &&
+					path.Length >= 2 &&
+					IsDsc (path [0]) &&
+					!IsDsc (path [1])) { // like `\abc\def'
+					string current = Directory.GetCurrentDirectory ();
+					if (current [1] == VolumeSeparatorChar)
+						path = current.Substring (0, 2) + path;
+					else
+						path = current.Substring (0, current.IndexOf ('\\', current.IndexOf ("\\\\") + 1));
+				}
+				path = CanonicalizePath (path);
 			}
 
-			if (!IsPathRooted (path))
-				path = Directory.GetCurrentDirectory () + DirectorySeparatorStr + path;
-			else if (DirectorySeparatorChar == '\\' &&
-				path.Length >= 2 &&
-				IsDsc (path [0]) &&
-				!IsDsc (path [1])) { // like `\abc\def'
-				string current = Directory.GetCurrentDirectory ();
-				if (current [1] == VolumeSeparatorChar)
-					path = current.Substring (0, 2) + path;
-				else
-					path = current.Substring (0, current.IndexOf ('\\', current.IndexOf ("\\\\") + 1));
-			}
-			return CanonicalizePath (path);
+			// if the original ended with a [Alt]DirectorySeparatorChar then ensure the full path also ends with one
+			if (end_dsc && (path [path.Length - 1] != DirectorySeparatorChar))
+				path += DirectorySeparatorChar;
+
+			return path;
 		}
 
 		static bool IsDsc (char c) {
@@ -352,6 +385,56 @@ namespace System.IO
 				(!dirEqualsVolume && path.Length > 1 && path [1] == VolumeSeparatorChar));
 		}
 
+#if NET_2_0
+		public static char[] GetInvalidFileNameChars ()
+		{
+			// return a new array as we do not want anyone to be able to change the values
+			if (Environment.IsRunningOnWindows) {
+				return new char [41] { '\x00', '\x01', '\x02', '\x03', '\x04', '\x05', '\x06', '\x07',
+					'\x08', '\x09', '\x0A', '\x0B', '\x0C', '\x0D', '\x0E', '\x0F', '\x10', '\x11', '\x12', 
+					'\x13', '\x14', '\x15', '\x16', '\x17', '\x18', '\x19', '\x1A', '\x1B', '\x1C', '\x1D', 
+					'\x1E', '\x1F', '\x22', '\x3C', '\x3E', '\x7C', ':', '*', '?', '\\', '/' };
+			} else {
+				return new char [2] { '\x00', '/' };
+			}
+		}
+
+		public static char[] GetInvalidPathChars ()
+		{
+			// return a new array as we do not want anyone to be able to change the values
+			if (Environment.IsRunningOnWindows) {
+				return new char [36] { '\x00', '\x01', '\x02', '\x03', '\x04', '\x05', '\x06', '\x07',
+					'\x08', '\x09', '\x0A', '\x0B', '\x0C', '\x0D', '\x0E', '\x0F', '\x10', '\x11', '\x12', 
+					'\x13', '\x14', '\x15', '\x16', '\x17', '\x18', '\x19', '\x1A', '\x1B', '\x1C', '\x1D', 
+					'\x1E', '\x1F', '\x22', '\x3C', '\x3E', '\x7C' };
+			} else {
+				return new char [1] { '\x00' };
+			}
+		}
+
+		public static string GetRandomFileName ()
+		{
+			char[] invalid = GetInvalidFileNameChars ();
+			// returns a 8.3 filename (total size 12)
+			StringBuilder sb = new StringBuilder (12);
+			// using strong crypto but without creating the file
+			RandomNumberGenerator rng = RandomNumberGenerator.Create ();
+			byte[] buffer = new byte [16];
+			while (sb.Length < 12) {
+				int i = 0;
+				rng.GetNonZeroBytes (buffer);
+				while ((i < buffer.Length) && (sb.Length < 12)) {
+					char c = (char)i;
+					if (Array.IndexOf (invalid, c) == -1)
+						sb.Append (c);
+					i++;
+					if (sb.Length == 8)
+						sb.Append ('.');
+				}
+			}
+			return sb.ToString ();
+		}
+#endif
 		// private class methods
 
 		private static int findExtension (string path)
@@ -368,14 +451,24 @@ namespace System.IO
 			return -1;
 		}
 
-		static Path () {
+		static Path ()
+		{
 			VolumeSeparatorChar = MonoIO.VolumeSeparatorChar;
 			DirectorySeparatorChar = MonoIO.DirectorySeparatorChar;
 			AltDirectorySeparatorChar = MonoIO.AltDirectorySeparatorChar;
 
 			PathSeparator = MonoIO.PathSeparator;
-			InvalidPathChars = MonoIO.InvalidPathChars;
-
+#if NET_2_0
+			// this copy will be modifiable ("by design")
+			InvalidPathChars = GetInvalidPathChars ();
+#else
+			if (Environment.IsRunningOnWindows) {
+				InvalidPathChars = new char [15] { '\x00', '\x08', '\x10', '\x11', '\x12', '\x14', '\x15', '\x16',
+					'\x17', '\x18', '\x19', '\x22', '\x3C', '\x3E', '\x7C' };
+			} else {
+				InvalidPathChars = new char [1] { '\x00' };
+			}
+#endif
 			// internal fields
 
 			DirectorySeparatorStr = DirectorySeparatorChar.ToString ();

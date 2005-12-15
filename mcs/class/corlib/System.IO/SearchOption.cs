@@ -30,12 +30,12 @@
 
 #if NET_2_0
 
-using System;
 using System.Runtime.InteropServices;
 
 namespace System.IO {
 
 	[ComVisible (true)]
+	[Serializable]
 	public enum SearchOption {
 		TopDirectoryOnly = 0,
 		AllDirectories = 1

@@ -1,10 +1,11 @@
 // 
 // System.IO.DirectoryInfo.cs 
 //
-// Author:
+// Authors:
 //   Miguel de Icaza, miguel@ximian.com
 //   Jim Richardson, develop@wtfo-guru.com
 //   Dan Lewis, dihlewis@yahoo.co.uk
+//   Sebastien Pouliot  <sebastien@ximian.com>
 //
 // Copyright (C) 2002 Ximian, Inc.
 // Copyright (C) 2001 Moonlight Enterprises, All Rights Reserved
@@ -32,6 +33,10 @@
 
 using System.Collections;
 using System.Runtime.InteropServices;
+using System.Text;
+#if NET_2_0
+using System.Security.AccessControl;
+#endif
 
 namespace System.IO {
 	
@@ -40,21 +45,33 @@ namespace System.IO {
 	[ComVisible (true)]
 #endif
 	public sealed class DirectoryInfo : FileSystemInfo {
+
+		private string current;
+		private string parent;
 	
 		public DirectoryInfo (string path)
 		{
 			CheckPath (path);
 
 			FullPath = Path.GetFullPath (path);
-
-			// Path.GetFullPath ends with / when it's the root directory (fix endless recursion problem)
-			if (Path.GetPathRoot (path) != path) {
-				char end = path [path.Length - 1];
-				if ((end == Path.DirectorySeparatorChar) || (end == Path.AltDirectorySeparatorChar))
-					FullPath += Path.DirectorySeparatorChar;
-			}
-
 			OriginalPath = path;
+
+			int len = FullPath.Length - 1;
+			if ((len > 1) && (FullPath [len] == Path.DirectorySeparatorChar))
+				len--;
+			int last = FullPath.LastIndexOf (Path.DirectorySeparatorChar, len);
+			if (last == -1) {
+				current = FullPath;
+				parent = null;
+			} else {
+				current = FullPath.Substring (last + 1, len - last);
+				parent = FullPath.Substring (0, last);
+				// adjust for drives, i.e. a special case for windows
+				if (Environment.IsRunningOnWindows) {
+					if ((parent.Length == 2) && (parent [1] == ':') && Char.IsLetter (parent [0]))
+						parent += Path.DirectorySeparatorChar;
+				}
+			}
 		}
 
 		// properties
@@ -74,21 +91,14 @@ namespace System.IO {
 		}
 
 		public override string Name {
-			get {
-				string result = Path.GetFileName (FullPath);
-				if (result == null || result == "")
-					return FullPath;
-				return result;
-			}
+			get { return current; }
 		}
 
 		public DirectoryInfo Parent {
 			get {
-				string dirname = Path.GetDirectoryName (FullPath);
-				if (dirname == null)
+				if ((parent == null) || (parent.Length == 0))
 					return null;
-
-				return new DirectoryInfo (dirname);
+				return new DirectoryInfo (parent);
 			}
 		}
 
@@ -123,40 +133,51 @@ namespace System.IO {
 			return GetFiles ("*");
 		}
 
-		public FileInfo [] GetFiles (string pattern) {
+		public FileInfo [] GetFiles (string pattern)
+		{
 			string [] names = Directory.GetFiles (FullPath, pattern);
 
-			ArrayList infos = new ArrayList ();
+			FileInfo[] infos = new FileInfo [names.Length];
+			int i = 0;
 			foreach (string name in names)
-				infos.Add (new FileInfo (name));
+				infos [i++] = new FileInfo (name);
 
-			return (FileInfo []) infos.ToArray (typeof (FileInfo));
+			return infos;
 		}
 
 		public DirectoryInfo [] GetDirectories () {
 			return GetDirectories ("*");
 		}
 
-		public DirectoryInfo [] GetDirectories (string pattern) {
+		public DirectoryInfo [] GetDirectories (string pattern)
+		{
 			string [] names = Directory.GetDirectories (FullPath, pattern);
 
-			ArrayList infos = new ArrayList ();
+			DirectoryInfo[] infos = new DirectoryInfo [names.Length];
+			int i = 0;
 			foreach (string name in names)
-				infos.Add (new DirectoryInfo (name));
+				infos [i++] = new DirectoryInfo (name);
 
-			return (DirectoryInfo []) infos.ToArray (typeof (DirectoryInfo));
+			return infos;
 		}
 
 		public FileSystemInfo [] GetFileSystemInfos () {
 			return GetFileSystemInfos ("*");
 		}
 
-		public FileSystemInfo [] GetFileSystemInfos (string pattern) {
-			ArrayList infos = new ArrayList ();
-			infos.AddRange (GetDirectories (pattern));
-			infos.AddRange (GetFiles (pattern));
+		public FileSystemInfo [] GetFileSystemInfos (string pattern)
+		{
+			string[] dirs = Directory.GetDirectories (FullPath, pattern);
+			string[] files = Directory.GetFiles (FullPath, pattern);
 
-			return (FileSystemInfo []) infos.ToArray (typeof (FileSystemInfo));
+			FileSystemInfo[] infos = new FileSystemInfo [dirs.Length + files.Length];
+			int i = 0;
+			foreach (string dir in dirs)
+				infos [i++] = new DirectoryInfo (dir);
+			foreach (string file in files)
+				infos [i++] = new FileInfo (file);
+
+			return infos;
 		}
 
 		// directory management methods
@@ -176,5 +197,74 @@ namespace System.IO {
 		public override string ToString () {
 			return OriginalPath;
 		}
+#if NET_2_0
+		// additional search methods
+
+		[MonoTODO ("AllDirectories isn't implemented")]
+		public DirectoryInfo[] GetDirectories (string pattern, SearchOption searchOption)
+		{
+			switch (searchOption) {
+			case SearchOption.TopDirectoryOnly:
+				return GetDirectories (pattern);
+			case SearchOption.AllDirectories:
+				throw new NotImplementedException ();
+			default:
+				string msg = Locale.GetText ("Invalid enum value '{0}' for '{1}'.", searchOption, "SearchOption");
+				throw new ArgumentOutOfRangeException ("searchOption", msg);
+			}
+		}	
+
+		[MonoTODO ("AllDirectories isn't implemented")]
+		public FileInfo[] GetFiles (string pattern, SearchOption searchOption)
+		{
+			switch (searchOption) {
+			case SearchOption.TopDirectoryOnly:
+				return GetFiles (pattern);
+			case SearchOption.AllDirectories:
+				throw new NotImplementedException ();
+			default:
+				string msg = Locale.GetText ("Invalid enum value '{0}' for '{1}'.", searchOption, "SearchOption");
+				throw new ArgumentOutOfRangeException ("searchOption", msg);
+			}
+		}
+
+		// access control methods
+
+		[MonoTODO ("DirectorySecurity isn't implemented")]
+		public void Create (DirectorySecurity directorySecurity)
+		{
+			if (directorySecurity != null)
+				throw new NotImplementedException ();
+			Create ();
+		}
+
+		[MonoTODO ("DirectorySecurity isn't implemented")]
+		public DirectoryInfo CreateSubdirectory (string name, DirectorySecurity directorySecurity)
+		{
+			if (directorySecurity != null)
+				throw new NotImplementedException ();
+			return CreateSubdirectory (name);
+		}
+
+		[MonoTODO ("DirectorySecurity isn't implemented")]
+		public DirectorySecurity GetAccessControl ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO ("DirectorySecurity isn't implemented")]
+		public DirectorySecurity GetAccessControl (AccessControlSections includeSections)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO ("DirectorySecurity isn't implemented")]
+		public void SetAccessControl (DirectorySecurity directorySecurity)
+		{
+			if (directorySecurity != null)
+				throw new ArgumentNullException ("directorySecurity");
+			throw new NotImplementedException ();
+		}
+#endif
 	}
 }

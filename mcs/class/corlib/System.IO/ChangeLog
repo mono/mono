@@ -1,3 +1,16 @@
+2005-12-15  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DirectoryInfo.cs: Fixed #76903 where the Name property wasn't 
+	correct in some cases. Added special case for Windows drives. Reduced
+	temporary allocations in Get* methods (removed ArrayList). Added some
+	new 2.0 methods (partial).
+	* MonoIO.cs: Removed InvalidPathChars icall as the return value is 
+	different from 1.x and 2.0. The values are now defined in Path.cs.
+	* Path.cs: Fixed #76191 so that GetFullPath on a Windows drive returns
+	the current directory (if it's on the specified drive). Fixed 2.0 API
+	changes (e.g. static class).
+	* SearchOption.cs: Added missing [Serializable] (2.0).
+
 2005-12-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* Directory.cs: Fix a warning.
