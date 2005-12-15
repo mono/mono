@@ -1,3 +1,8 @@
+2005-12-15  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DoubleTest.cs: Added test cases for parsing hexadecimal strings.
+	* SingleTest.cs: Added test cases for parsing hexadecimal strings.
+
 2005-12-14  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* BadImageFormatExceptionCas.cs: MS fixed this in 2.0 final (#71861).

@@ -1,8 +1,9 @@
-// BooleanTest.cs - NUnit Test Cases for the System.Double class
+// DoubleTest.cs - NUnit Test Cases for the System.Double class
 //
 // Bob Doan <bdoan@sicompos.com>
 //
 // (C) Ximian, Inc.  http://www.ximian.com
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 
 using System;
@@ -468,6 +469,37 @@ namespace MonoTests.System {
 			// from bug #72955
 			double d = 0.0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000222;
 			AssertEquals ("1.97626258336499E-323", d.ToString ("R"));
+		}
+
+		[Test]
+#if NET_2_0
+		[ExpectedException (typeof (ArgumentException))]
+#else
+		[Category ("NotWorking")]
+		// MS accept hex values under 1.x but the results neither match the long value
+		// nor the value of a 64bits double
+#endif
+		public void HexNumber_WithHexToParse ()
+		{
+			// from bug #72221
+			double d;
+			Assert ("parse", Double.TryParse ("0dead", NumberStyles.HexNumber, null, out d));
+			AssertEquals ("value", 57842, d, 0);
+		}
+
+		[Test]
+#if NET_2_0
+		[ExpectedException (typeof (ArgumentException))]
+#else
+		[Category ("NotWorking")]
+		// MS accept hex values under 1.x but the results neither match the long value
+		// nor the value of a 64bits double
+#endif
+		public void HexNumber_NoHexToParse ()
+		{
+			double d;
+			Assert ("parse", Double.TryParse ("0", NumberStyles.HexNumber, null, out d));
+			AssertEquals ("value", 0, d, 0);
 		}
 	}
 }

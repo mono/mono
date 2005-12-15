@@ -6,10 +6,11 @@
 //	Bob Doan  <bdoan@sicompos.com>
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2004 Novell (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 
 using System;
+using System.Globalization;
 using NUnit.Framework;
 
 namespace MonoTests.System  {
@@ -83,5 +84,24 @@ namespace MonoTests.System  {
 
 			AssertEquals ("ToString(G)", "254.9", def);
 		}
+
+#if NET_2_0
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void HexNumber_WithHexToParse ()
+		{
+			// from bug #72221
+			float f;
+			Single.TryParse ("0dead", NumberStyles.HexNumber, null, out f);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void HexNumber_NoHexToParse ()
+		{
+			float f;
+			Single.TryParse ("0", NumberStyles.HexNumber, null, out f);
+		}
+#endif
 	}
 }
