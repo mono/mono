@@ -1,4 +1,4 @@
-TESTS = t1.exe t2.exe t3.exe t4.exe t5.exe t6.exe t7.exe t8.exe t9.exe t10.exe t11.exe t12.exe t13.exe t14.exe
+TESTS = t1.exe t2.exe t3.exe t4.exe t5.exe t6.exe t7.exe t8.exe t9.exe t10.exe t11.exe t12.exe t13.exe t14.exe t15.exe t16.exe t17.exe t18.exe t19.exe
 
 check:	local compare
 
