@@ -1,3 +1,11 @@
+2005-12-15  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DateTime.cs: Added MonoTODO to ctor accepting a Calandar instance.
+	* Double.cs: Under 2.0 throw a ArgumentException when parsing with
+	 NumberStyles.AllowHexSpecifier. Partial fix for #72221. Added the
+	second, simpler, TryParse method (2.0).
+	* Single.cs: Added the TryParse methods for 2.0.
+
 2005-12-15  Raja R Harinath  <rharinath@novell.com>
 
 	* Type.cs (IsGenericType): Make virtual.

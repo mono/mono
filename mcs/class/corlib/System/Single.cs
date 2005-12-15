@@ -207,7 +207,27 @@ namespace System
 
 			return (float) parsed_value;
 		}
+#if NET_2_0
+		public static bool TryParse (string s, NumberStyles style, IFormatProvider provider, out float result)
+		{
+			double parsed_value;
+			Exception exc;
+			if (!Double.Parse (s, style, provider, true, out parsed_value, out exc)) {
+				result = 0;
+				return false;
+			} else if (parsed_value > (double) float.MaxValue) {
+				result = 0;
+				return false;
+			}
+			result = (float) parsed_value;
+			return true;
+		}
 
+		public static bool TryParse (string s, out float result)
+		{
+			return TryParse (s, NumberStyles.Any, null, out result);
+		}
+#endif
 		public override string ToString ()
 		{
 			return ToString (null, null);

@@ -220,13 +220,19 @@ namespace System {
 					exc = new ArgumentNullException ("s");
 				return false;
 			}
-			
+#if NET_2_0
+			// yes it's counter intuitive (buggy?) but even TryParse actually throws in this case
+			if ((style & NumberStyles.AllowHexSpecifier) != 0) {
+				string msg = Locale.GetText ("Double doesn't support parsing with '{0}'.", "AllowHexSpecifier");
+				throw new ArgumentException (msg);
+			}
+#endif
 			if (style > NumberStyles.Any) {
 				if (!tryParse)
 					exc = new ArgumentException();
 				return false;
 			}
-			
+
 			NumberFormatInfo format = NumberFormatInfo.GetInstance(provider);
 			if (format == null) throw new Exception("How did this happen?");
 			
@@ -460,7 +466,12 @@ namespace System {
 
 			return true;
 		}
-
+#if NET_2_0
+		public static bool TryParse (string s, out double result)
+		{
+			return TryParse (s, NumberStyles.Any, null, out result);
+		}
+#endif
 		public override string ToString ()
 		{
 			return ToString (null, null);
