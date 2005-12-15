@@ -653,25 +653,53 @@ public partial class TypeManager {
 			: CSharpName (mi.DeclaringType) + '.' + mi.Name;
 	}
 
+	private static int GetFullName (Type t, StringBuilder sb)
+	{
+		int pos = 0;
+
+		if (!t.IsGenericType) {
+			sb.Append (t.FullName);
+			return 0;
+		}
+
+		if (t.DeclaringType != null) {
+			pos = GetFullName (t.DeclaringType, sb);
+			sb.Append ('.');
+			sb.Append (RemoveGenericArity (t.Name));
+		} else {
+			sb.Append (RemoveGenericArity (t.FullName));
+		}
+
+		Type[] this_args = GetTypeArguments (t);
+
+		if (this_args.Length < pos)
+			throw new InternalErrorException (
+				"Enclosing class " + t.DeclaringType + " has more type arguments than " + t);
+		if (this_args.Length == pos)
+			return pos;
+
+		sb.Append ('<');
+		for (;;) {
+			sb.Append (CSharpName (this_args [pos++]));
+			if (pos == this_args.Length)
+				break;
+			sb.Append (',');
+		}
+		sb.Append ('>');
+		return pos;
+	}
+
 	public static string GetFullName (Type t)
 	{
 		if (t.IsGenericParameter)
 			return t.Name;
+		if (!t.IsGenericType)
+			return t.FullName;
 
-		StringBuilder sb = new StringBuilder (RemoveGenericArity (t.FullName));
-
-		Type[] this_args = GetTypeArguments (t);
-
-		if (this_args.Length > 0) {
-			sb.Append ('<');
-			for (int i = 0; i < this_args.Length; i++) {
-				if (i > 0)
-					sb.Append (',');
-				sb.Append (CSharpName (this_args[i]));
-			}
-			sb.Append ('>');
-		}
-
+		StringBuilder sb = new StringBuilder ();
+		int pos = GetFullName (t, sb);
+		if (pos <= 0)
+			throw new InternalErrorException ("Generic Type " + t + " doesn't have type arguments");
 		return sb.ToString ();
 	}
 
