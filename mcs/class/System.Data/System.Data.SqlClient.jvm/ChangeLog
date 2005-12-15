@@ -1,3 +1,7 @@
+2005-12-15 Konstantin Triger <kostat@mainsoft.com>
+
+	* SqlConnection.cs: save StringManager into AppDomain.
+
 2005-16-11 Boris Kirzner <borisk@mainsoft.com>
 	* SqlConnection.cs: Added override for CreateException().
 
