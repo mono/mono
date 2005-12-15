@@ -33,14 +33,8 @@ using System.Drawing;
 
 namespace System.Windows.Forms {
 	public class TextBox : TextBoxBase {
-		#region Local Variables
-		internal char			password_char;
-		#endregion	// Local Variables
-
 		#region Public Constructors
 		public TextBox() {
-			accepts_return = false;
-			password_char = '\u25cf';
 			scrollbars = RichTextBoxScrollBars.None;
 			alignment = HorizontalAlignment.Left;
 			this.LostFocus +=new EventHandler(TextBox_LostFocus);
@@ -97,6 +91,11 @@ namespace System.Windows.Forms {
 			set {
 				if (value != password_char) {
 					password_char = value;
+					if (!multiline) {
+						document.PasswordChar = value.ToString();
+					} else {
+						document.PasswordChar = "";
+					}
 				}
 			}
 		}

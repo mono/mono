@@ -343,6 +343,51 @@ namespace System.Windows.Forms {
 			return null;
 		}
 
+		/// <summary>
+		/// Recalculate a single line using the same char for every character in the line
+		/// </summary>
+		
+		internal bool RecalculatePasswordLine(Graphics g, Document doc) {
+			LineTag	tag;
+			int	pos;
+			int	len;
+			float	w;
+			bool	ret;
+			int	descent;
+
+			pos = 0;
+			len = this.text.Length;
+			tag = this.tags;
+			ascent = 0;
+			tag.shift = 0;
+			tag.width = 0;
+
+			this.recalc = false;
+			widths[0] = indent;
+			tag.X = indent;
+
+			w = g.MeasureString(doc.password_char, tags.font, 10000, string_format).Width;
+
+			if (this.height != (int)tag.font.Height) {
+				ret = true;
+			} else {
+				ret = false;
+			}
+
+			this.height = (int)tag.font.Height;
+			tag.height = this.height;
+
+			XplatUI.GetFontMetrics(g, tag.font, out tag.ascent, out descent);
+			this.ascent = tag.ascent;
+
+			while (pos < len) {
+				tag.width += w;
+				pos++;
+				widths[pos] = widths[pos-1] + w;
+			}
+
+			return ret;
+		}
 
 		/// <summary>
 		/// Go through all tags on a line and recalculate all size-related values;
@@ -647,6 +692,9 @@ namespace System.Windows.Forms {
 		private Line		last_found;
 		private int		document_id;
 		private Random		random = new Random();
+		internal string		password_char;
+		private StringBuilder	password_cache;
+		private bool		calc_pass;
 
 		internal bool		multiline;
 		internal bool		wrap;
@@ -683,6 +731,8 @@ namespace System.Windows.Forms {
 			this.owner = owner;
 
 			multiline = true;
+			password_char = "";
+			calc_pass = false;
 
 			// Tree related stuff
 			sentinel = new Line();
@@ -765,6 +815,29 @@ namespace System.Windows.Forms {
 
 			set {
 				crlf_size = value;
+			}
+		}
+
+		internal string PasswordChar {
+			get {
+				return password_char;
+			}
+
+			set {
+				password_char = value;
+				if ((password_char.Length != 0) && (password_char[0] != '\0')) {
+					char	ch;
+
+					calc_pass = true;
+					ch = value[0];
+					password_cache = new StringBuilder(1024);
+					for (int i = 0; i < 1024; i++) {
+						password_cache.Append(ch);
+					}
+				} else {
+					calc_pass = false;
+					password_cache = null;
+				}
 			}
 		}
 
@@ -1460,14 +1533,14 @@ namespace System.Windows.Forms {
 
 		// Draw the document
 		internal void Draw(Graphics g, Rectangle clip) {
-			Line	line;		// Current line being drawn
-			LineTag	tag;		// Current tag being drawn
-			int	start;		// First line to draw
-			int	end;		// Last line to draw
-			//string	s;		// String representing the current line
-			int	line_no;	//
-			Brush	hilight;
-			Brush	hilight_text;
+			Line		line;		// Current line being drawn
+			LineTag		tag;		// Current tag being drawn
+			int		start;		// First line to draw
+			int		end;		// Last line to draw
+			StringBuilder	text;	// String representing the current line
+			int		line_no;	//
+			Brush		hilight;
+			Brush		hilight_text;
 
 			// First, figure out from what line to what line we need to draw
 			start = GetLineByPixel(clip.Top + viewport_y, false).line_no;
@@ -1488,7 +1561,12 @@ namespace System.Windows.Forms {
 			while (line_no <= end) {
 				line = GetLine(line_no);
 				tag = line.tags;
-				//s = line.text.ToString();
+				if (!calc_pass) {
+					text = line.text;
+				} else {
+					// This fails if there's a password > 1024 chars...
+					text = this.password_cache;
+				}
 				while (tag != null) {
 					if (tag.length == 0) {
 						tag = tag.next;
@@ -1500,7 +1578,7 @@ namespace System.Windows.Forms {
 						if ((!selection_visible) || (!owner.has_focus) || (line_no < selection_start.line.line_no) || (line_no > selection_end.line.line_no)) {
 							// regular drawing, no selection to deal with
 							//g.DrawString(s.Substring(tag.start-1, tag.length), tag.font, tag.color, tag.X + line.align_shift - viewport_x, line.Y + tag.shift  - viewport_y, StringFormat.GenericTypographic);
-							g.DrawString(line.text.ToString(tag.start-1, tag.length), tag.font, tag.color, tag.X + line.align_shift - viewport_x, line.Y + tag.shift  - viewport_y, StringFormat.GenericTypographic);
+							g.DrawString(text.ToString(tag.start-1, tag.length), tag.font, tag.color, tag.X + line.align_shift - viewport_x, line.Y + tag.shift  - viewport_y, StringFormat.GenericTypographic);
 						} else {
 							// we might have to draw our selection
 							if ((line_no != selection_start.line.line_no) && (line_no != selection_end.line.line_no)) {
@@ -1515,7 +1593,7 @@ namespace System.Windows.Forms {
 
 								g.DrawString(
 									//s.Substring(tag.start-1, tag.length),		// String
-									line.text.ToString(tag.start-1, tag.length),	// String
+									text.ToString(tag.start-1, tag.length),	// String
 									tag.font,					// Font
 									hilight_text,					// Brush
 									tag.X + line.align_shift - viewport_x,		// X
@@ -1535,7 +1613,7 @@ namespace System.Windows.Forms {
 									// First, the regular part
 									g.DrawString(
 										//s.Substring(tag.start - 1, selection_start.pos - tag.start + 1),	// String
-										line.text.ToString(tag.start - 1, selection_start.pos - tag.start + 1),	// String
+										text.ToString(tag.start - 1, selection_start.pos - tag.start + 1),	// String
 										tag.font,								// Font
 										tag.color,								// Brush
 										tag.X + line.align_shift - viewport_x,					// X
@@ -1552,7 +1630,7 @@ namespace System.Windows.Forms {
 
 									g.DrawString(
 										//s.Substring(selection_start.pos, selection_end.pos - selection_start.pos), // String
-										line.text.ToString(selection_start.pos, selection_end.pos - selection_start.pos), // String
+										text.ToString(selection_start.pos, selection_end.pos - selection_start.pos), // String
 										tag.font,								// Font
 										hilight_text,								// Brush
 										line.widths[selection_start.pos] + line.align_shift - viewport_x,	// X
@@ -1562,7 +1640,7 @@ namespace System.Windows.Forms {
 									// And back to the regular
 									g.DrawString(
 										//s.Substring(selection_end.pos, tag.start + tag.length - selection_end.pos - 1), 	// String
-										line.text.ToString(selection_end.pos, tag.start + tag.length - selection_end.pos - 1), 	// String
+										text.ToString(selection_end.pos, tag.start + tag.length - selection_end.pos - 1), 	// String
 										tag.font,								// Font
 										tag.color,								// Brush
 										line.widths[selection_end.pos] + line.align_shift - viewport_x, 	// X
@@ -1582,7 +1660,7 @@ namespace System.Windows.Forms {
 
 									g.DrawString(
 										//s.Substring(selection_start.pos, tag.start + tag.length - selection_start.pos - 1), 	// String
-										line.text.ToString(selection_start.pos, tag.start + tag.length - selection_start.pos - 1), 	// String
+										text.ToString(selection_start.pos, tag.start + tag.length - selection_start.pos - 1), 	// String
 										tag.font,							    	// Font
 										hilight_text,							    	// Brush
 										line.widths[selection_start.pos] + line.align_shift - viewport_x,    	// X
@@ -1592,7 +1670,7 @@ namespace System.Windows.Forms {
 									// The regular part
 									g.DrawString(
 										//s.Substring(tag.start - 1, selection_start.pos - tag.start + 1),  	// String
-										line.text.ToString(tag.start - 1, selection_start.pos - tag.start + 1), // String
+										text.ToString(tag.start - 1, selection_start.pos - tag.start + 1), // String
 										tag.font,							  	// Font
 										tag.color,							  	// Brush
 										tag.X + line.align_shift - viewport_x,				  	// X
@@ -1611,7 +1689,7 @@ namespace System.Windows.Forms {
 
 									g.DrawString(
 										//s.Substring(tag.start - 1, selection_end.pos - tag.start + 1),	 // String
-										line.text.ToString(tag.start - 1, selection_end.pos - tag.start + 1),	 // String
+										text.ToString(tag.start - 1, selection_end.pos - tag.start + 1),	 // String
 										tag.font,							 	// Font
 										hilight_text,							 	// Brush
 										tag.X + line.align_shift - viewport_x,				 	// X
@@ -1621,7 +1699,7 @@ namespace System.Windows.Forms {
 									// The regular part
 									g.DrawString(
 										//s.Substring(selection_end.pos, tag.start + tag.length - selection_end.pos - 1),	  	// String
-										line.text.ToString(selection_end.pos, tag.start + tag.length - selection_end.pos - 1),	  	// String
+										text.ToString(selection_end.pos, tag.start + tag.length - selection_end.pos - 1),	  	// String
 										tag.font,							  	// Font
 										tag.color,							  	// Brush
 										line.widths[selection_end.pos] + line.align_shift - viewport_x,	  	// X
@@ -1662,7 +1740,7 @@ namespace System.Windows.Forms {
 
 										g.DrawString(
 											//s.Substring(tag.start-1, tag.length),		  	// String
-											line.text.ToString(tag.start-1, tag.length),		// String
+											text.ToString(tag.start-1, tag.length),		// String
 											tag.font,					  	// Font
 											hilight_text,					  	// Brush
 											tag.X + line.align_shift - viewport_x,		  	// X
@@ -1671,7 +1749,7 @@ namespace System.Windows.Forms {
 									} else {
 										g.DrawString(
 											//s.Substring(tag.start-1, tag.length),		       	// String
-											line.text.ToString(tag.start-1, tag.length),		// String
+											text.ToString(tag.start-1, tag.length),		// String
 											tag.font,					       	// Font
 											tag.color,					       	// Brush
 											tag.X + line.align_shift - viewport_x,		       	// X
@@ -3241,14 +3319,27 @@ namespace System.Windows.Forms {
 				line = GetLine(line_no++);
 				line.Y = Y;
 
-				if (!optimize) {
-					line.RecalculateLine(g, this);
+				if (!calc_pass) {
+					if (!optimize) {
+						line.RecalculateLine(g, this);
+					} else {
+						if (line.recalc && line.RecalculateLine(g, this)) {
+							changed = true;
+							// If the height changed, all subsequent lines change
+							end = this.lines;
+							shift = this.lines;
+						}
+					}
 				} else {
-					if (line.recalc && line.RecalculateLine(g, this)) {
-						changed = true;
-						// If the height changed, all subsequent lines change
-						end = this.lines;
-						shift = this.lines;
+					if (!optimize) {
+						line.RecalculatePasswordLine(g, this);
+					} else {
+						if (line.recalc && line.RecalculatePasswordLine(g, this)) {
+							changed = true;
+							// If the height changed, all subsequent lines change
+							end = this.lines;
+							shift = this.lines;
+						}
 					}
 				}
 

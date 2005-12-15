@@ -1,3 +1,24 @@
+2005-12-15  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* TextBox.cs: 
+	  - Removed local password_char field (moved to TextBoxBase)
+	  - Now setting the document's password var when password is
+	    set
+	* TextBoxBase.cs:
+	  - Added password_char field (needed here so MultiLine can
+	    access it)
+	  - Added logic to MultiLine property setter to set the document's
+	    variable when password display is allowed
+	  - Removed debug code and made some debug code conditional
+	* TextControl.cs:
+	  - Added RecalculatePasswordLine() method to handle special password
+	    char only lines
+	  - Added PasswordChar property, also added related tracking vars
+	  - Draw() method now uses local text var for grabbing text to draw,
+	    this var is set to line.text unless we're doing password display,
+	    then it is set to the pre-generated all-password-chars line
+	  - Added calling RecalculatePasswordLine() method for password lines
+
 2005-12-14  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* Hwnd.cs: 

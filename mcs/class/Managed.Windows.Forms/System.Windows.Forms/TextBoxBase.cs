@@ -50,6 +50,7 @@ namespace System.Windows.Forms {
 		internal int			max_length;
 		internal bool			modified;
 		internal bool			multiline;
+		internal char			password_char;
 		internal bool			read_only;
 		internal bool			word_wrap;
 		internal Document		document;
@@ -85,6 +86,7 @@ namespace System.Windows.Forms {
 			max_length = 32767;
 			modified = false;
 			multiline = false;
+			password_char = '\0';
 			read_only = false;
 			word_wrap = true;
 			richtext = false;
@@ -343,8 +345,15 @@ namespace System.Windows.Forms {
 
 				if (multiline) {
 					document.Wrap = word_wrap;
+					document.PasswordChar = "";
+
 				} else {
 					document.Wrap = false;
+					if (this.password_char != '\0') {
+						document.PasswordChar = password_char.ToString();
+					} else {
+						document.PasswordChar = "";
+					}
 				}
 			}
 		}
@@ -1183,15 +1192,16 @@ namespace System.Windows.Forms {
 			}
 		}
 
-static int current;
+		#if Debug
+		static int current;
+		#endif
 
 		private void PaintControl(PaintEventArgs pevent) {
 			// Fill background
 			pevent.Graphics.FillRectangle(ThemeEngine.Current.ResPool.GetSolidBrush(BackColor), pevent.ClipRectangle);
 			pevent.Graphics.TextRenderingHint=TextRenderingHint.AntiAlias;
-//blah Console.WriteLine("Redrawing {0}", pevent.ClipRectangle);
-			// Draw the viewable document
 
+			// Draw the viewable document
 			document.Draw(pevent.Graphics, pevent.ClipRectangle);
 
 			Rectangle	rect = ClientRectangle;
