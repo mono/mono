@@ -1,3 +1,7 @@
+2005-12-14  Wade Berrier <wberrier@novell.com>
+
+	* Makefile: Added EXTRA_DISTFILES to fix make dist build
+
 2005-09-25  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* Mono.XBuild.Shared: Moved to Mono.XBuild.Framework to be consistent.

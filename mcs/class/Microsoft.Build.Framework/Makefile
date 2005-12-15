@@ -16,3 +16,6 @@ LIB_MCS_FLAGS = \
 	/r:System.dll
 
 include ../../build/library.make
+
+EXTRA_DISTFILES = \
+	Mono.XBuild.Framework/AssemblyLoadInfo.cs
