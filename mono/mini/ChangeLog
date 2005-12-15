@@ -1,3 +1,8 @@
+2005-12-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* iltests.il: Add tests for some opcodes not covered by the other
+	tests.
+
 2005-12-15 Neale Ferguson <neale@sinenomine.net>
 
 	* mini-s390.c: Fix ADDCC/SBB bug reveealed by test_0_ulong_regress; Correct 
