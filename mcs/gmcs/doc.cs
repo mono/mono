@@ -381,22 +381,9 @@ namespace Mono.CSharp {
 		{
 			if (ml == null)
 				return empty_member_infos;
-			if (type.IsInterface)
-				return ml;
 
 			ArrayList al = new ArrayList (ml.Length);
 			for (int i = 0; i < ml.Length; i++) {
-				// Interface methods which are returned
-				// from the filter must exist in the 
-				// target type (if there is only a 
-				// private implementation, then the 
-				// filter should not return it.)
-				// This filtering is required to 
-				// deambiguate results.
-				//
-				// It is common to properties, so check it here.
-				if (ml [i].DeclaringType.IsInterface)
-					continue;
 				MethodBase mx = ml [i] as MethodBase;
 				PropertyInfo px = ml [i] as PropertyInfo;
 				if (mx != null || px != null) {
@@ -716,12 +703,6 @@ namespace Mono.CSharp {
 				return; // a type
 			}
 
-			// don't use identifier here. System[] is not alloed.
-			if (RootNamespace.Global.IsNamespace (name)) {
-				xref.SetAttribute ("cref", "N:" + name);
-				return; // a namespace
-			}
-
 			int period = name.LastIndexOf ('.');
 			if (period > 0) {
 				string typeName = name.Substring (0, period);
@@ -758,6 +739,17 @@ namespace Mono.CSharp {
 					xref.SetAttribute ("cref", GetMemberDocHead (mi.MemberType) + fm.Type.FullName.Replace ("+", ".") + "." + name + GetParametersFormatted (mi));
 					return; // local member name
 				}
+			}
+
+			// It still might be part of namespace name.
+			Namespace ns = ds.NamespaceEntry.NS.GetNamespace (name, false);
+			if (ns != null) {
+				xref.SetAttribute ("cref", "N:" + ns.FullName);
+				return; // a namespace
+			}
+			if (RootNamespace.Global.IsNamespace (name)) {
+				xref.SetAttribute ("cref", "N:" + name);
+				return; // a namespace
 			}
 
 			Report.Warning (1574, 1, mc.Location, "XML comment on `{0}' has cref attribute `{1}' that could not be resolved",

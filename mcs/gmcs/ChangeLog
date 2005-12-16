@@ -1,3 +1,41 @@
+2005-12-13  Marek Safar  <marek.safar@seznam.cz>
+
+	* class.cs (Method.ApplyAttributeBuilder): Test out modifier properly.
+
+2005-12-11  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* doc.cs : The search for referenced namespace was insufficient to
+	  get global one as it used to do. Fixed bug #76965.
+
+2005-12-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* doc.cs : check name in cref in the last phase that whether it is
+	  namespace or not.
+
+2005-12-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* cs-tokenizer.cs : reverted the latest change: it somehow broke
+	  Mono.C5.
+
+2005-12-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* doc.cs : so it turned out that we cannot skip override check for 
+	  interface members. Fixed bug #76954.
+
+2005-12-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* cs-tokenizer.cs : fixed bug #75984:
+	  - #warning and #error should not be handled when the source line
+	    is disabled.
+	  - #line is not checked strictly when the source line is disabled.
+	  - #define and #undef is on the other hand checked strictly at any
+	    state.
+
+2005-12-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* cs-tokenizer.cs : missing Location (actually, filename) in one of
+	  CS1027 report.
+
 2005-12-15  Raja R Harinath  <rharinath@novell.com>
 
 	* generic.cs (TypeManager.IsGeneric): Remove unused method.

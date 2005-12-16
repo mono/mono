@@ -4095,7 +4095,7 @@ namespace Mono.CSharp {
 				}
 
 				for (int i = 0; i < ParameterInfo.Count; ++i) {
-					if ((ParameterInfo.ParameterModifier (i) & Parameter.Modifier.OUT) != 0) {
+					if ((ParameterInfo.ParameterModifier (i) & Parameter.Modifier.OUTMASK) != 0) {
 						Report.Error (685, Location, "Conditional method `{0}' cannot have an out parameter", GetSignatureForError ());
 						return;
 					}
