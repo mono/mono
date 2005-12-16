@@ -1,3 +1,23 @@
+2005-12-16  Raja R Harinath  <rharinath@novell.com>
+
+	Remove all mention of TypeContainer from decl.cs.
+	* decl.cs (MemberCore.Parent): Change into a DeclSpace.
+	(MemberCore.MemberCore): Change type of 'parent' argument to DeclSpace.
+	(DeclSpace.DeclSpace): Likewise.
+	(DeclSpace.DefineMembers): Remove unused argument.
+	* cs-parser.jay (pop_current_class): Update to changes.  Simplify
+	debugging check -- we don't care if the debug code throws an
+	InvalidCastException instead of an InternalErrorException.
+	* class.cs (TypeContainer.DefineMembers): Update to changes.
+	(TypeContainer.DoDefineMembers): Likewise.
+	(TypeContainer.GetMethods): Likewise.
+	(PropertyMember.Define): Likewise.
+	(MemberBase.Parent): New property that forwards to
+	MemberCore.Parent, but ensures that we get a TypeContainer.
+	* rootcontext.cs (RootContext.PopulateCoreType): Update to changes.
+	(RootContext.PopulateTypes): Likewise.  Remove special case code
+	for !RootContext.StdLib: DefineMembers is idempotent.
+
 2005-12-14  Miguel de Icaza  <miguel@novell.com>
 
 	* convert.cs (ExplicitConversionCore): Check the return value from
