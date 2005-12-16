@@ -796,7 +796,7 @@ Console.WriteLine("FIXME - SelectionColor should not alter font");
 		}
 
 		public void Paste(DataFormats.Format clipFormat) {
-			base.Paste(clipFormat);
+			base.Paste(clipFormat, false);
 		}
 
 		[MonoTODO()]

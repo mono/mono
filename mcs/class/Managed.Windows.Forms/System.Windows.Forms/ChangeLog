@@ -1,5 +1,28 @@
 2005-12-15  Peter Dennis Bartok  <pbartok@novell.com> 
 
+	* TextBoxBase.cs:
+	  - MaxLength now treats 2^31-1 equal to unlimited length (this is
+	    not quite MS compatible, MS uses that number only for single line
+	    and 2^32-1 for multi-line, but I figure it won't hurt keeping
+	    the limit at 2GB)
+	  - Now enforcing the MaxLength limit when entering characters
+	  - Added argument to internal Paste() method to track if it's called
+	    from programatically or via keyboard, since keyboard driven pastes
+	    need to enforce max-length
+	  - Added logic to Paste to only paste as many chars as MaxLength 
+	    allows
+	* RichTextBox.cs: Updated to use new obey argument for internal Paste()
+	* TextControl.cs:
+	  - Added Length property to return number of characters in document
+	  - Added private CharCount property which only tracks actual chars
+	    in the document (no linefeeds) and fires event when CharCount
+	    changes
+	  - Added tracking of character count to all methods that alter it
+	  - Added LengthChanged event to allow applications to subscribe
+	    to any changes to the document
+
+2005-12-15  Peter Dennis Bartok  <pbartok@novell.com> 
+
 	* TextBox.cs: 
 	  - Removed local password_char field (moved to TextBoxBase)
 	  - Now setting the document's password var when password is

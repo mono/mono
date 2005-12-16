@@ -296,6 +296,9 @@ namespace System.Windows.Forms {
 		[Localizable(true)]
 		public virtual int MaxLength {
 			get {
+				if (max_length == 2147483646) {	// We don't distinguish between single and multi-line limits
+					return 0;
+				}
 				return max_length;
 			}
 
@@ -611,7 +614,7 @@ namespace System.Windows.Forms {
 		}
 
 		public void Paste() {
-			Paste(null);
+			Paste(null, false);
 		}
 
 		public void ScrollToCaret() {
@@ -755,7 +758,7 @@ namespace System.Windows.Forms {
 
 				case Keys.V: {	// Paste (Ctrl-V)
 					if (control) {
-						return Paste(null);
+						return Paste(null, true);
 					}
 					return false;
 				}
@@ -973,7 +976,7 @@ namespace System.Windows.Forms {
 
 				case Keys.Insert: {
 					if (shift) {
-						Paste();
+						Paste(null, true);
 						return true;
 					}
 
@@ -1122,23 +1125,35 @@ namespace System.Windows.Forms {
 
 						switch (character_casing) {
 							case CharacterCasing.Normal: {
-								document.InsertCharAtCaret((char)m.WParam, true);
-								OnTextChanged(EventArgs.Empty);
-								CaretMoved(this, null);
+								if (document.Length < max_length) {
+									document.InsertCharAtCaret((char)m.WParam, true);
+									OnTextChanged(EventArgs.Empty);
+									CaretMoved(this, null);
+								} else {
+									XplatUI.AudibleAlert();
+								}
 								return;
 							}
 
 							case CharacterCasing.Lower: {
-								document.InsertCharAtCaret(Char.ToLower((char)m.WParam), true);
-								OnTextChanged(EventArgs.Empty);
-								CaretMoved(this, null);
+								if (document.Length < max_length) {
+									document.InsertCharAtCaret(Char.ToLower((char)m.WParam), true);
+									OnTextChanged(EventArgs.Empty);
+									CaretMoved(this, null);
+								} else {
+									XplatUI.AudibleAlert();
+								}
 								return;
 							}
 
 							case CharacterCasing.Upper: {
-								document.InsertCharAtCaret(Char.ToUpper((char)m.WParam), true);
-								OnTextChanged(EventArgs.Empty);
-								CaretMoved(this, null);
+								if (document.Length < max_length) {
+									document.InsertCharAtCaret(Char.ToUpper((char)m.WParam), true);
+									OnTextChanged(EventArgs.Empty);
+									CaretMoved(this, null);
+								} else {
+									XplatUI.AudibleAlert();
+								}
 								return;
 							}
 						}
@@ -1554,8 +1569,9 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		internal bool Paste(DataFormats.Format format) {
+		internal bool Paste(DataFormats.Format format, bool obey_length) {
 			IDataObject	clip;
+			string		s;
 
 			clip = Clipboard.GetDataObject();
 
@@ -1581,10 +1597,23 @@ namespace System.Windows.Forms {
 
 			if (format.Name == DataFormats.Rtf) {
 				((RichTextBox)this).SelectedRtf = (string)clip.GetData(DataFormats.Rtf);
+				return true;
 			} else if (format.Name == DataFormats.UnicodeText) {
-				this.SelectedText = (string)clip.GetData(DataFormats.UnicodeText);
+				s = (string)clip.GetData(DataFormats.UnicodeText);
 			} else if (format.Name == DataFormats.Text) {
-				this.SelectedText = (string)clip.GetData(DataFormats.Text);
+				s = (string)clip.GetData(DataFormats.Text);
+			} else {
+				return false;
+			}
+
+			if (!obey_length) {
+				this.SelectedText = s;
+			} else {
+				if ((s.Length + document.Length) < max_length) {
+					this.SelectedText = s;
+				} else if (document.Length < max_length) {
+					this.SelectedText = s.Substring(0, max_length - document.Length);
+				}
 			}
 
 			return true;

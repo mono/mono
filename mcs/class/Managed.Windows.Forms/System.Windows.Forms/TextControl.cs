@@ -695,6 +695,7 @@ namespace System.Windows.Forms {
 		internal string		password_char;
 		private StringBuilder	password_cache;
 		private bool		calc_pass;
+		private int		char_count;
 
 		internal bool		multiline;
 		internal bool		wrap;
@@ -848,6 +849,26 @@ namespace System.Windows.Forms {
 
 			set {
 				viewport_x = value;
+			}
+		}
+
+		internal int Length {
+			get {
+				return char_count + lines - 1;	// Add \n for each line but the last
+			}
+		}
+
+		private int CharCount {
+			get {
+				return char_count;
+			}
+
+			set {
+				char_count = value;
+
+				if (LengthChanged != null) {
+					LengthChanged(this, EventArgs.Empty);
+				}
 			}
 		}
 
@@ -1786,6 +1807,7 @@ namespace System.Windows.Forms {
 			int		insert_lines;
 			LineTag		tag;
 
+
 			// The formatting at the insertion point is used for the inserted text
 			tag = LineTag.FindTag(line, pos);
 
@@ -1844,6 +1866,8 @@ namespace System.Windows.Forms {
 
 			len = s.Length;
 
+			CharCount += len;
+
 			line = tag.line;
 			line.text.Insert(pos, s);
 			tag.length += len;
@@ -1865,6 +1889,8 @@ namespace System.Windows.Forms {
 			int	len;
 
 			len = s.Length;
+
+			CharCount += len;
 
 			caret.line.text.Insert(caret.pos, s);
 			caret.tag.length += len;
@@ -1897,6 +1923,8 @@ namespace System.Windows.Forms {
 		internal void InsertChar(LineTag tag, int pos, char ch) {
 			Line	line;
 
+			CharCount++;
+
 			line = tag.line;
 			line.text.Insert(pos, ch);
 			tag.length++;
@@ -1915,6 +1943,8 @@ namespace System.Windows.Forms {
 		// Inserts a character at the current caret position
 		internal void InsertCharAtCaret(char ch, bool move_caret) {
 			LineTag	tag;
+
+			CharCount++;
 
 			caret.line.text.Insert(caret.pos, ch);
 			caret.tag.length++;
@@ -1942,9 +1972,10 @@ namespace System.Windows.Forms {
 			Line	line;
 			bool	streamline;
 
-
 			streamline = false;
 			line = tag.line;
+
+			CharCount -= count;
 
 			if (pos == line.text.Length) {
 				return;
@@ -2016,6 +2047,8 @@ namespace System.Windows.Forms {
 		internal void DeleteChar(LineTag tag, int pos, bool forward) {
 			Line	line;
 			bool	streamline;
+
+			CharCount--;
 
 			streamline = false;
 			line = tag.line;
@@ -2286,6 +2319,7 @@ namespace System.Windows.Forms {
 				selection_end.tag = new_line.FindTag(selection_end.pos);
 			}
 
+			CharCount -= line.text.Length - pos;
 			line.text.Remove(pos, line.text.Length - pos);
 		}
 
@@ -2299,6 +2333,8 @@ namespace System.Windows.Forms {
 			Line	add;
 			Line	line;
 			int	line_no;
+
+			CharCount += Text.Length;
 
 			if (LineNo<1 || Text == null) {
 				if (LineNo<1) {
@@ -2369,6 +2405,9 @@ namespace System.Windows.Forms {
 			}
 
 			line = GetLine(LineNo);
+
+			CharCount -= line.text.Length;
+
 			DecrementLines(LineNo + 1);
 			Delete(line);
 		}
@@ -3681,6 +3720,7 @@ namespace System.Windows.Forms {
 		internal event EventHandler CaretMoved;
 		internal event EventHandler WidthChanged;
 		internal event EventHandler HeightChanged;
+		internal event EventHandler LengthChanged;
 		#endregion	// Events
 
 		#region Administrative
