@@ -142,7 +142,36 @@ namespace MonoTests.System.Configuration {
 			col.SetFromList (" file ");
 			Assert.AreEqual (1, col.Count, "A1");
 			Assert.IsTrue (col.Contains ("file"), "A2");
+		}
 
+		[Test]
+		public void DuplicateAdd ()
+		{
+			SysConfig cfg = ConfigurationManager.OpenExeConfiguration (ConfigurationUserLevel.None);
+			AppSettingsSection app = cfg.AppSettings;
+
+			app.LockAttributes.Clear ();
+
+			app.LockAttributes.Add ("file");
+			app.LockAttributes.Add ("file");
+
+			Assert.AreEqual (1, app.LockAttributes.Count, "A1");
+		}
+
+		[Test]
+		public void IsReadOnly ()
+		{
+			SysConfig cfg = ConfigurationManager.OpenExeConfiguration (ConfigurationUserLevel.None);
+			AppSettingsSection app = cfg.AppSettings;
+
+			app.LockAttributes.Clear ();
+			app.LockAllAttributesExcept.Clear ();
+
+			app.LockAttributes.Add ("file");
+			Assert.IsFalse (app.LockAttributes.IsReadOnly ("file"), "A1");
+
+			app.LockAllAttributesExcept.Add ("file");
+			Assert.IsFalse (app.LockAllAttributesExcept.IsReadOnly ("file"), "A2");
 		}
 	}
 }
