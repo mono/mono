@@ -1,5 +1,13 @@
 2005-12-16  John Luke  <john.luke@gmail.com>
 
+	* Mono.Cairo/Cairo.cs: organize and add missing API
+	split out enums and structs
+	* Mono.Cairo/*.cs: add enums and structs as seperate files
+	implement ==, !=, Equals, and GetHashCode for the structs
+	move public fields to properties
+
+2005-12-16  John Luke  <john.luke@gmail.com>
+
 	* Mono.Cairo/Cairo.cs:
 	* Mono.Cairo/Context.cs:
 	* Mono.Cairo/Pattern.cs:

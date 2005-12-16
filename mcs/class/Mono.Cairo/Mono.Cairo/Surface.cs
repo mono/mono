@@ -238,14 +238,15 @@ namespace Cairo {
 			surface = (IntPtr) 0;
 		}
 		
-		public Cairo.Status Finish ()
+		public Status Finish ()
 		{
-			return CairoAPI.cairo_surface_finish (surface);
+			CairoAPI.cairo_surface_finish (surface);
+			return Status;
 		}
 		
-		public Cairo.Status Flush ()
+		public void Flush ()
 		{
-			return CairoAPI.cairo_surface_flush (surface);
+			CairoAPI.cairo_surface_flush (surface);
 		}
 		
 		public void MarkDirty ()
