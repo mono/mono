@@ -34,7 +34,7 @@ using Cairo;
 
 public class X11Test
 {
-	static void draw (Cairo.Graphics gr, int width, int height)
+	static void draw (Cairo.Context gr, int width, int height)
 	{
 		double x0 = 0.1;
 		double y0 = 0.1;
@@ -178,7 +178,7 @@ public class X11Test
 			       (int)win.Width, (int)win.Height);
 
 		
-		Cairo.Graphics g = new Cairo.Graphics (s);
+		Cairo.Context g = new Cairo.Context (s);
 		
 		draw (g, 500, 500);
 		

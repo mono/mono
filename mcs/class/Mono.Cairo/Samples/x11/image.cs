@@ -36,7 +36,7 @@ public class X11Test
 {
         static readonly double  M_PI = 3.14159265358979323846;
 	
-        static void draw (Cairo.Graphics gr, int width, int height)
+        static void draw (Cairo.Context gr, int width, int height)
 	{
 		int w, h;
 		ImageSurface image;
@@ -71,7 +71,7 @@ public class X11Test
 			       (int)win.Width, (int)win.Height);
 
 		
-		Cairo.Graphics g = new Cairo.Graphics (s);
+		Cairo.Context g = new Cairo.Context (s);
 		
 		draw (g, 500, 500);
 		
