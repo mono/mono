@@ -1,3 +1,13 @@
+2005-12-16  John Luke  <john.luke@gmail.com>
+
+	* Mono.Cairo.dll.sources:
+	* Mono.Cairo/Rectangle.cs: add
+	* Mono.Cairo/Cairo.cs: mark fill_extents and stroke extents
+	with out modifiers
+	* Mono.Cairo/Context.cs: FillExtents, and StrokeExtents return
+	a Rectangle (actually 2 points), remove previously unusable
+	versions, add an overload to Rectangle that takes a Rectangle
+	
 2005-12-12  Mike Kestner  <mkestner@novell.com>
 
 	* Mono.Cairo/Context.cs: renamed from Graphics.cs. renamed Graphics to

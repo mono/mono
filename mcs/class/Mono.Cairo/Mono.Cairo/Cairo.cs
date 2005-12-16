@@ -182,13 +182,13 @@ namespace Cairo {
                 public static extern void cairo_stroke_preserve (IntPtr cr);
 
                 [DllImport (CairoImp)]
-                public static extern void cairo_stroke_extents (IntPtr cr, double x1, double y1, double x2, double y2);
+                public static extern void cairo_stroke_extents (IntPtr cr, out double x1, out double y1, out double x2, out double y2);
 
                 [DllImport (CairoImp)]
                 public static extern void cairo_fill (IntPtr cr);
 
                 [DllImport (CairoImp)]
-                public static extern void cairo_fill_extents (IntPtr cr, double x1, double y1, double x2, double y2);
+                public static extern void cairo_fill_extents (IntPtr cr, out double x1, out double y1, out double x2, out double y2);
 
 		[DllImport (CairoImp)]
                 public static extern void cairo_fill_preserve (IntPtr cr);

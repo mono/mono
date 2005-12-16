@@ -431,10 +431,15 @@ namespace Cairo {
                         CairoAPI.cairo_arc_negative (state, xc, yc, radius, angle1, angle2);
                 }
 		
+                public void Rectangle (Rectangle rectangle)
+		{
+			Rectangle (rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height);
+		}
+
                 public void Rectangle (PointD p, double width, double height)
-				{
-						Rectangle (p.X, p.Y, width, height);
-				}
+		{
+			Rectangle (p.X, p.Y, width, height);
+		}
 
                 public void Rectangle (double x, double y, double width, double height)
                 {
@@ -478,20 +483,24 @@ namespace Cairo {
                         CairoAPI.cairo_stroke_preserve (state);
                 }		
 
-				public void StrokeExtents (double x1, double y1, double x2, double y2)
-				{
-                        CairoAPI.cairo_stroke_extents (state, x1, y1, x2, y2);
-				}
+		public Rectangle StrokeExtents ()
+		{
+			double x1, y1, x2, y2;
+			CairoAPI.cairo_stroke_extents (state, out x1, out y1, out x2, out y2);
+			return new Rectangle (x1, y1, x2, y2);
+		}
 
                 public void Fill ()
                 {
                         CairoAPI.cairo_fill (state);
                 }
 
-                public void FillExtents (double x1, double y1, double x2, double y2)
-				{
-					CairoAPI.cairo_fill_extents (state, x1, y1, x2, y2);
-				}
+                public Rectangle FillExtents ()
+		{
+			double x1, y1, x2, y2;
+			CairoAPI.cairo_fill_extents (state, out x1, out y1, out x2, out y2);
+			return new Rectangle (x1, y1, x2, y2);
+		}
 
 		public void FillPreserve ()
 		{

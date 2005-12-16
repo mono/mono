@@ -5,6 +5,7 @@
 ./Mono.Cairo/FontOptions.cs
 ./Mono.Cairo/Matrix.cs
 ./Mono.Cairo/Context.cs
+./Mono.Cairo/Rectangle.cs
 ./Mono.Cairo/Surface.cs
 ./Mono.Cairo/Pattern.cs
 
