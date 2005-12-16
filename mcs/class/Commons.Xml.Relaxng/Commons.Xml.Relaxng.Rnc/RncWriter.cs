@@ -282,6 +282,8 @@ namespace Commons.Xml.Relaxng.Rnc
 		// (compact syntax does not support "combine" attribute).
 		public void WriteDefine (RelaxngDefine define)
 		{
+			if (IsKeyword (define.Name))
+				w.Write ('\\');
 			w.Write (define.Name);
 			if (define.Combine == null)
 				w.Write (" = ");
