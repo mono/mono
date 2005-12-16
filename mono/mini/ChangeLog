@@ -1,3 +1,9 @@
+2005-12-16 Neale Ferguson <neale@sinenomine.net>
+
+	* mini-s390.c: Fix LOCALLOC processing.
+
+	* tramp-s390.c (s390_magic_trampoline): Fix base calculation.
+
 2005-12-15  Zoltan Varga  <vargaz@gmail.com>
 
 	* iltests.il: Add tests for some opcodes not covered by the other
@@ -5,10 +11,10 @@
 
 2005-12-15 Neale Ferguson <neale@sinenomine.net>
 
-	* mini-s390.c: Fix ADDCC/SBB bug reveealed by test_0_ulong_regress; Correct 
+	* mini-s390.c: Fix ADDCC/SBB bug revealed by test_0_ulong_regress; Correct 
 	register loading for Tail processing; Correct trace output.
 
-	* inssel-s390.brg: Reimplement LSUB_OVF due to s390 implemnetation of signed math.
+	* inssel-s390.brg: Reimplement LSUB_OVF due to s390 implementation of signed math.
 
 	* cpu-s390.md: Correct size of jmp instruction. 
 
