@@ -323,7 +323,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		public int ModFlags;
 
-		public /*readonly*/ TypeContainer Parent;
+		public /*readonly*/ DeclSpace Parent;
 
 		/// <summary>
 		///   Location where this declaration happens
@@ -365,7 +365,7 @@ namespace Mono.CSharp {
  		/// </summary>
 		internal Flags caching_flags;
 
-		public MemberCore (TypeContainer parent, MemberName name, Attributes attrs)
+		public MemberCore (DeclSpace parent, MemberName name, Attributes attrs)
 			: base (attrs)
 		{
 			if (parent is PartialContainer && !(this is PartialContainer))
@@ -406,23 +406,16 @@ namespace Mono.CSharp {
 			VerifyClsCompliance (Parent);
 		}
 
-		public virtual EmitContext EmitContext
-		{
-			get {
-				return Parent.EmitContext;
-			}
+		public virtual EmitContext EmitContext {
+			get { return Parent.EmitContext; }
 		}
 
 		public bool InUnsafe {
-			get {
-				return ((ModFlags & Modifiers.UNSAFE) != 0) || Parent.UnsafeContext;
-			}
+			get { return ((ModFlags & Modifiers.UNSAFE) != 0) || Parent.UnsafeContext; }
 		}
 
 		public virtual bool IsUsed {
-			get {
-				return (caching_flags & Flags.IsUsed) != 0;
-			}
+			get { return (caching_flags & Flags.IsUsed) != 0; }
 		}
 
 		public void SetMemberIsUsed ()
@@ -677,9 +670,7 @@ namespace Mono.CSharp {
 		protected EmitContext ec;
 		
 		public override EmitContext EmitContext {
-			get {
-				return ec;
-			}
+			get { return ec; }
 		}
 
 		//
@@ -698,7 +689,7 @@ namespace Mono.CSharp {
 
 		static string[] attribute_targets = new string [] { "type" };
 
-		public DeclSpace (NamespaceEntry ns, TypeContainer parent, MemberName name,
+		public DeclSpace (NamespaceEntry ns, DeclSpace parent, MemberName name,
 				  Attributes attrs)
 			: base (parent, name, attrs)
 		{
@@ -820,7 +811,7 @@ namespace Mono.CSharp {
 		///   Define all members, but don't apply any attributes or do anything which may
 		///   access not-yet-defined classes.  This method also creates the MemberCache.
 		/// </summary>
-		public virtual bool DefineMembers (TypeContainer parent)
+		public virtual bool DefineMembers ()
 		{
 			if (((ModFlags & Modifiers.NEW) != 0) && IsTopLevel) {
 				Report.Error (1530, Location, "Keyword `new' is not allowed on namespace elements");

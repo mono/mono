@@ -553,7 +553,7 @@ namespace Mono.CSharp {
 		Location loc;
 		GenericTypeParameterBuilder type;
 
-		public TypeParameter (TypeContainer parent, DeclSpace decl, string name,
+		public TypeParameter (DeclSpace parent, DeclSpace decl, string name,
 				      Constraints constraints, Attributes attrs, Location loc)
 			: base (parent, new MemberName (name, loc), attrs)
 		{
@@ -1802,7 +1802,7 @@ namespace Mono.CSharp {
 				OptAttributes.Emit (ec, this);
 		}
 
-		public override bool DefineMembers (TypeContainer parent)
+		public override bool DefineMembers ()
 		{
 			return true;
 		}

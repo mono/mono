@@ -34,7 +34,7 @@ namespace Mono.CSharp {
 
 		public EnumMember (Enum parent_enum, EnumMember prev_member, Expression expr,
 				MemberName name, Attributes attrs):
-			base (parent_enum.Parent, name, attrs)
+			base (parent_enum, name, attrs)
 		{
 			this.parent_enum = parent_enum;
 			this.ModFlags = parent_enum.ModFlags;

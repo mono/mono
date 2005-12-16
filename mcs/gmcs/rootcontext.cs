@@ -497,7 +497,7 @@ namespace Mono.CSharp {
 		{
 			DeclSpace ds = (DeclSpace) root.GetDefinition (name);
 
-			ds.DefineMembers (root);
+			ds.DefineMembers ();
 			ds.Define ();
 		}
 		
@@ -524,35 +524,20 @@ namespace Mono.CSharp {
 			if (type_container_resolve_order != null){
 				foreach (TypeContainer tc in type_container_resolve_order)
 					tc.ResolveType ();
-				if (RootContext.StdLib){
-					foreach (TypeContainer tc in type_container_resolve_order)
-						tc.DefineMembers (root);
-
-				} else {
-					foreach (TypeContainer tc in type_container_resolve_order) {
-						// When compiling corlib, these types have already been
-						// populated from BootCorlib_PopulateCoreTypes ().
-						if (((tc.Name == "System.Object") ||
-							(tc.Name == "System.Attribute") ||
-							(tc.Name == "System.ValueType") ||
-							(tc.Name == "System.Runtime.CompilerServices.IndexerNameAttribute")))
-						continue;
-
-						tc.DefineMembers (root);
-					}
-				} 
+				foreach (TypeContainer tc in type_container_resolve_order)
+					tc.DefineMembers ();
 			}
 
 			ArrayList delegates = root.Delegates;
 			if (delegates != null){
 				foreach (Delegate d in delegates)
-					d.DefineMembers (root);
+					d.DefineMembers ();
 			}
 
 			ArrayList enums = root.Enums;
 			if (enums != null){
 				foreach (Enum en in enums)
-					en.DefineMembers (root);
+					en.DefineMembers ();
 			}
 
 			//

@@ -1494,12 +1494,12 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Populates our TypeBuilder with fields and methods
 		/// </summary>
-		public override bool DefineMembers (TypeContainer container)
+		public override bool DefineMembers ()
 		{
 			if (members_defined)
 				return members_defined_ok;
 
-			if (!base.DefineMembers (container))
+			if (!base.DefineMembers ())
 				return false;
 
 			members_defined_ok = DoDefineMembers ();
@@ -1570,7 +1570,7 @@ namespace Mono.CSharp {
 
 			if (parts != null) {
 				foreach (ClassPart part in parts) {
-					if (!part.DefineMembers (this))
+					if (!part.DefineMembers ())
 						return false;
 				}
 			}
@@ -1615,7 +1615,7 @@ namespace Mono.CSharp {
 				}
 
 				foreach (Iterator iterator in iterators) {
-					if (!iterator.DefineMembers (this))
+					if (!iterator.DefineMembers ())
 						return false;
 				}
 			}
@@ -1686,7 +1686,7 @@ namespace Mono.CSharp {
 		{
 			ArrayList members = new ArrayList ();
 
-			DefineMembers (null);
+			DefineMembers ();
 
 			if (methods != null) {
 				int len = methods.Count;
@@ -5305,9 +5305,11 @@ namespace Mono.CSharp {
 		//
 		public string ShortName {
 			get { return MemberName.Name; }
-			set {
-				SetMemberName (new MemberName (MemberName.Left, value, Location));
-			}
+			set { SetMemberName (new MemberName (MemberName.Left, value, Location)); }
+		}
+
+		public new TypeContainer Parent {
+			get { return (TypeContainer) base.Parent; }
 		}
 
 		//
@@ -6481,8 +6483,7 @@ namespace Mono.CSharp {
 				// Setup iterator if we are one
 				//
 				if (yields) {
-					Iterator iterator = new Iterator (
-						this, Parent, null, ModFlags);
+					Iterator iterator = new Iterator (this, Parent as TypeContainer, null, ModFlags);
 					
 					if (!iterator.DefineIterator ())
 						return null;
