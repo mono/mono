@@ -1,3 +1,8 @@
+2005-12-16  Jackson Harper  <jackson@ximian.com>
+
+	* InternalWindowManager.cs: Don't translate tool windows screen
+	coordinates. This fixes windows 'bouncing' around when being moved.
+
 2005-12-15  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* TextBoxBase.cs:

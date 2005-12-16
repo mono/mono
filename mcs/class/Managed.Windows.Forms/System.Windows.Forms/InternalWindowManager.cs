@@ -163,7 +163,7 @@ namespace System.Windows.Forms {
 
 		public virtual void PointToClient (ref int x, ref int y)
 		{
-			XplatUI.ScreenToClient (form.Handle, ref x, ref y);
+			// toolwindows stay in screencoords
 		}
 
 		public virtual void PointToScreen (ref int x, ref int y)
