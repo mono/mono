@@ -47,6 +47,9 @@ namespace System.Configuration
 		ArrayList names;
 		ConfigurationElement element;
 		ConfigurationLockType lockType;
+		bool is_modified;
+		Hashtable valid_name_hash;
+		string valid_names;
 
 		internal ConfigurationLockCollection (ConfigurationElement element,
 						      ConfigurationLockType lockType)
@@ -54,27 +57,52 @@ namespace System.Configuration
 			names = new ArrayList ();
 			this.element = element;
 			this.lockType = lockType;
-
-			Populate();
 		}
 
-		void Populate ()
+		void checkName (string name)
 		{
-			foreach (ConfigurationProperty prop in element.Properties) {
-				if ((lockType & ConfigurationLockType.Attribute) != ConfigurationLockType.Attribute
-				    || !prop.IsDefaultCollection)
-					Add (prop.Name);
+			bool isAttribute = (lockType & ConfigurationLockType.Attribute) == ConfigurationLockType.Attribute;
+
+			if (valid_name_hash == null) {
+				valid_name_hash = new Hashtable ();
+				foreach (ConfigurationProperty prop in element.Properties) {
+					if (isAttribute == prop.IsElement)
+						continue;
+					valid_name_hash.Add (prop.Name, true);
+				}
+
+				/* add the add/remove/clear names of the
+				 * default collection if there is one */
+				if (!isAttribute) {
+					ConfigurationElementCollection c = element.GetDefaultCollection ();
+					valid_name_hash.Add (c.AddElementName, true);
+					valid_name_hash.Add (c.ClearElementName, true);
+					valid_name_hash.Add (c.RemoveElementName, true);
+				}
+
+				string[] valid_name_array = new string[valid_name_hash.Keys.Count];
+				valid_name_hash.Keys.CopyTo (valid_name_array, 0);
+				
+				valid_names = String.Join (",", valid_name_array);
 			}
+
+			if (valid_name_hash [name] == null)
+				throw new ConfigurationErrorsException (
+						String.Format ("The {2} '{0}' is not valid in the locked list for this section.  The following {3} can be locked: '{1}'",
+							       name, valid_names, isAttribute ? "attribute" : "element", isAttribute ? "attributes" : "elements"));
 		}
 
 		public void Add (string name)
 		{
+			CheckName (name);
 			names.Add (name);
+			is_modified = true;
 		}
 
 		public void Clear ()
 		{
 			names.Clear ();
+			is_modified = true;
 		}
 
 		public bool Contains (string name)
@@ -95,18 +123,29 @@ namespace System.Configuration
 		[MonoTODO]
 		public bool IsReadOnly (string name)
 		{
-			return false; /* XXX */
+			for (int i = 0; i < names.Count; i ++) {
+				if (names[i] == name)
+					return (lockType & ConfigurationLockType.Exclude) == 0; /* XXX is this what we want? */
+			}
+
+			throw new ConfigurationErrorsException (String.Format ("The entry '{0}' is not in the collection.", name));
 		}
 
 		public void Remove (string name)
 		{
 			names.Remove (name);
+			is_modified = true;
 		}
 
-		[MonoTODO]
 		public void SetFromList (string attributeList)
 		{
-			throw new NotImplementedException ();
+			Clear ();
+
+			char [] split = {','};
+			string [] attrs = attributeList.Split (split);
+			foreach (string a in attrs) {
+				Add (a.Trim ());
+			}
 		}
 
 		void ICollection.CopyTo (System.Array array, int index)
@@ -114,45 +153,37 @@ namespace System.Configuration
 			names.CopyTo (array, index);
 		}
 
-		[MonoTODO]
 		public string AttributeList {
 			get {
-				throw new NotImplementedException ();
+				string[] name_arr = new string[names.Count];
+				names.CopyTo (name_arr, 0);
+				return String.Join (",", name_arr);
 			}
 		}
 
 		public int Count {
-			get {
-				return names.Count;
-			}
+			get { return names.Count; }
 		}
 
 		[MonoTODO]
 		public bool HasParentElements {
-			get {
-				return false; /* XXX */
-			}
+			get { return false; /* XXX */ }
 		}
 
 		[MonoTODO]
 		public bool IsModified {
-			get {
-				return false; /* XXX */
-			}
+			get { return is_modified; }
+			internal set { is_modified = value; }
 		}
 
 		[MonoTODO]
 		public bool IsSynchronized {
-			get {
-				return false; /* XXX */
-			}
+			get { return false; /* XXX */ }
 		}
 
 		[MonoTODO]
 		public object SyncRoot {
-			get {
-				return this; /* XXX */
-			}
+			get { return this; /* XXX */ }
 		}
 	}
 }

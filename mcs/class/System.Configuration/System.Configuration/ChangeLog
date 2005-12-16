@@ -1,3 +1,19 @@
+2005-12-15  Chris Toshok  <toshok@ximian.com>
+
+	* ConfigurationLockCollection.cs (..ctor): don't call Populate.
+	(Populate): nuke.
+	(CheckName): make sure the passes in name is valid for this type
+	of lock collection.
+	(Add): call CheckName, and set is_modified to true.
+	(Clear): set is_modified.
+	(IsReadOnly): add plausable implementation, including exception in
+	the case where the name isn't found.
+	(Remove): set is_modified.
+	(SetFromList): implement.
+	(get_AttributeList): implement.
+	(set_IsModified): add internal setter so we can clear the modified
+	flag.
+
 2005-12-12  Chris Toshok  <toshok@ximian.com>
 
 	* AppSettingsSection.cs (DeserializeElement): provide rather naive
