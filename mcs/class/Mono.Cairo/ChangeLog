@@ -1,5 +1,13 @@
 2005-12-16  John Luke  <john.luke@gmail.com>
 
+	* Mono.Cairo/Cairo.cs:
+	* Mono.Cairo/Context.cs:
+	* Mono.Cairo/Pattern.cs:
+	* Mono.Cairo/Surface.cs: add MarkDirty and Flush,
+	mark Surface.Pointer obsolete in favor of Handle
+
+2005-12-16  John Luke  <john.luke@gmail.com>
+
 	* Mono.Cairo.dll.sources:
 	* Mono.Cairo/Rectangle.cs: add
 	* Mono.Cairo/Cairo.cs: mark fill_extents and stroke extents

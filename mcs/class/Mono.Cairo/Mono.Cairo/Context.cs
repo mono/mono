@@ -150,7 +150,7 @@ namespace Cairo {
 		
                 public Context (Surface surface)
                 {
-			state = CairoAPI.cairo_create (surface.Pointer);
+			state = CairoAPI.cairo_create (surface.Handle);
                 }
 		
 		public Context (IntPtr state)
@@ -328,7 +328,7 @@ namespace Cairo {
 
                 public Cairo.Surface Target {
                         set {
-				state = CairoAPI.cairo_create (value.Pointer);				
+				state = CairoAPI.cairo_create (value.Handle);
                         }
 
                         get {

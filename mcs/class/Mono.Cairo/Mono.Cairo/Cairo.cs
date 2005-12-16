@@ -392,7 +392,10 @@ namespace Cairo {
 		
 		[DllImport (CairoImp)]                
                 public static extern Cairo.Status cairo_surface_finish (IntPtr surface);
-		
+        	
+        [DllImport (CairoImp)]                
+        internal static extern Cairo.Status cairo_surface_flush (IntPtr surface);
+        	
 		[DllImport (CairoImp)]                
                 internal static extern Cairo.Status cairo_surface_status (IntPtr surface);
 		
@@ -407,7 +410,12 @@ namespace Cairo {
                 [DllImport (CairoImp)]
                 public static extern IntPtr cairo_image_surface_create (Cairo.Format format, int width,
                         int height);
-
+        	
+        [DllImport (CairoImp)]
+		internal static extern void cairo_surface_mark_dirty (IntPtr surface);
+		
+		[DllImport (CairoImp)]
+		internal static extern void cairo_surface_mark_dirty_rectangle (IntPtr surface, int x, int y, int width, int height);
 
                 [DllImport (CairoImp)]
                 public static extern IntPtr cairo_surface_create_similar (

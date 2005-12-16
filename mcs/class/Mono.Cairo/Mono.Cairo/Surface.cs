@@ -243,6 +243,21 @@ namespace Cairo {
 			return CairoAPI.cairo_surface_finish (surface);
 		}
 		
+		public Cairo.Status Flush ()
+		{
+			return CairoAPI.cairo_surface_flush (surface);
+		}
+		
+		public void MarkDirty ()
+		{
+			CairoAPI.cairo_surface_mark_dirty (Handle);
+		}
+		
+		public void MarkDirty (Rectangle rectangle)
+		{
+			CairoAPI.cairo_surface_mark_dirty_rectangle (Handle, (int)rectangle.X, (int)rectangle.Y, (int)rectangle.Width, (int)rectangle.Height);
+		}
+		
                 public IntPtr Handle {
                         get {
 				return surface;
@@ -265,6 +280,7 @@ namespace Cairo {
 			CairoAPI.cairo_surface_write_to_png (surface, filename);
 		}
 		
+		[Obsolete ("Use Handle instead.")]
                 public IntPtr Pointer {
                         get {
 				return surface;

@@ -82,7 +82,7 @@ namespace Cairo {
 		{
 			public SurfacePattern (Surface surface)
 			{
-				pattern = CairoAPI.cairo_pattern_create_for_surface (surface.Pointer);
+				pattern = CairoAPI.cairo_pattern_create_for_surface (surface.Handle);
 			}
 
 			public Extend Extend {
@@ -111,7 +111,7 @@ namespace Cairo {
 		
                 public Pattern (Surface surface)
                 {
-                        pattern = CairoAPI.cairo_pattern_create_for_surface (surface.Pointer);
+                        pattern = CairoAPI.cairo_pattern_create_for_surface (surface.Handle);
                 }
 		
                 protected void Reference ()
