@@ -1,3 +1,7 @@
+2005-12-16  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* X509Chain.cs: Fix chain building. Patch from Vincent Cote-Roy.
+
 2005-11-18  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* X509Extension.cs: Changed default ctor to protected to help 

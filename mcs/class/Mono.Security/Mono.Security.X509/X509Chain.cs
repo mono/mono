@@ -129,11 +129,9 @@ namespace Mono.Security.X509 {
 				X509Certificate x = leaf;
 				X509Certificate tmp = x;
 				while ((x != null) && (!x.IsSelfSigned)) {
-					tmp = FindCertificateParent (x);
-					if (x != null) {
-						_chain.Add (x);
-						x = tmp;	// last valid
-					}
+					tmp = x; // last valid
+					_chain.Add (x);
+					x = FindCertificateParent (x);
 				}
 				// find a trusted root
 				_root = FindCertificateRoot (tmp);
