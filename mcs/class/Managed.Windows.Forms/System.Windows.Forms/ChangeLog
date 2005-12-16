@@ -5,6 +5,8 @@
 	when Alt is pressed.
 	* TreeNodeCollection.cs: Some fixes to prevent null refs. Patch by
 	Dieter Bremes.
+	* RichTextBox.cs: Expand statement to help out gmcs and fix the
+	2.0 build.
 
 2005-12-16  Jackson Harper  <jackson@ximian.com>
 

@@ -1149,7 +1149,7 @@ Console.WriteLine("FIXME - SelectionColor should not alter font");
 							if (rtf.Param == RTF.RTF.NoParam) {
 								rtf_rtfstyle |= FontStyle.Underline;
 							} else {
-								rtf_rtfstyle &= ~FontStyle.Underline;
+								rtf_rtfstyle = rtf_rtfstyle & ~FontStyle.Underline;
 							}
 							break;
 						}
