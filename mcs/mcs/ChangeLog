@@ -1,5 +1,9 @@
 2005-12-16  Raja R Harinath  <rharinath@novell.com>
 
+	Fix #77008.
+	* enum.cs (EnumMember.EnumMember): Pass the parent_enum as the
+	'parent' argument to the base constructor.
+
 	Remove all mention of TypeContainer from decl.cs.
 	* decl.cs (MemberCore.Parent): Change into a DeclSpace.
 	(MemberCore.MemberCore): Change type of 'parent' argument to DeclSpace.
