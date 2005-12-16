@@ -1,6 +1,8 @@
 2005-12-16  Raja R Harinath  <rharinath@novell.com>
 
-	* test-478.cs: New test case from #77008.
+	* test-479.cs: New test from #77006.
+
+	* test-478.cs: New test from #77008.
 
 2005-12-10  Atsushi Enomoto  <atsushi@ximian.com>
 

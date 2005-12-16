@@ -1,5 +1,11 @@
 2005-12-16  Raja R Harinath  <rharinath@novell.com>
 
+	Fix #77006.
+	* class.cs (TypeContainer.Mark_HasEquals): New.
+	(TypeContainer.Mark_HasGetHashCode): New.
+	(ClassPart): Override them.
+	(MethodCore.CheckBase): Use them instead of referring to Parent.Methods.
+
 	Fix #77008.
 	* enum.cs (EnumMember.EnumMember): Pass the parent_enum as the
 	'parent' argument to the base constructor.
