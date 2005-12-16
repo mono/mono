@@ -1,5 +1,10 @@
 2005-12-16  Atsushi Enomoto <atsushi@ximian.com>
 
+	* RelaxngPattern.cs : RelaxngData and RelaxngValue was writing QName
+	  instead of NCName for type attribute (wrong).
+
+2005-12-16  Atsushi Enomoto <atsushi@ximian.com>
+
 	* RelaxngPattern.cs : in WriteCompact(), use WriteNamespace() to
 	  let RncWriter handle namespace output by itself.
 

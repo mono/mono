@@ -750,10 +750,8 @@ namespace Commons.Xml.Relaxng
 		{
 			writer.WriteStartElement ("", "data", RelaxngGrammar.NamespaceURI);
 			if (DatatypeLibrary != null && DatatypeLibrary != String.Empty)
-				writer.WriteAttributeString ("xmlns", "data", "http://www.w3.org/2000/xmlns/", DatatypeLibrary);
-			writer.WriteStartAttribute ("type", String.Empty);
-			writer.WriteQualifiedName (Type, DatatypeLibrary);
-			writer.WriteEndAttribute ();
+				writer.WriteAttributeString ("datatypeLibrary", DatatypeLibrary);
+			writer.WriteAttributeString ("type", Type);
 
 			foreach (RelaxngParam p in ParamList)
 				p.Write (writer);
@@ -816,9 +814,8 @@ namespace Commons.Xml.Relaxng
 			if (Type != null) {
 				writer.WriteStartAttribute ("type", String.Empty);
 				if (DatatypeLibrary != null && DatatypeLibrary != String.Empty)
-					writer.WriteAttributeString ("xmlns", "data", "http://www.w3.org/2000/xmlns/", DatatypeLibrary);
-				writer.WriteQualifiedName (Type, DatatypeLibrary);
-				writer.WriteEndAttribute ();
+					writer.WriteAttributeString ("datatypeLibrary", DatatypeLibrary);
+				writer.WriteAttributeString ("type", Type);
 			}
 			writer.WriteString (Value);
 			writer.WriteEndElement ();
