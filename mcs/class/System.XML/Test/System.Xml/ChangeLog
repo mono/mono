@@ -1,3 +1,9 @@
+2005-12-16  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* XmlTextWriterTests.cs: No longer derive from deprecated Assertion
+	class. Added WriteDocType tests.
+	* XmlWriterTests.cs: No longer derive from deprecated Assertion class.
+
 2005-12-15  Konstantin Triger <kostat@mainsoft.com>
 
 	* XmlTextWriterTests.cs: added WriteCDataNull test.

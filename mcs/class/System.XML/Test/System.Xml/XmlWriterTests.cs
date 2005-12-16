@@ -22,7 +22,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Xml
 {
 	[TestFixture]
-	public class XmlWriterTests : Assertion
+	public class XmlWriterTests
 	{
 		StringWriter writer;
 		XmlTextWriter xtw;
@@ -34,39 +34,33 @@ namespace MonoTests.System.Xml
 			xtw = new XmlTextWriter (writer);
 		}
 
-		private void setupWriter ()
-		{
-			writer.GetStringBuilder ().Length = 0;
-		}
-
 		[Test]
 		public void WriteNodeFullDocument ()
 		{
-			setupWriter ();
 			string xml = "<?xml version='1.0'?><root />";
 			XmlTextReader xtr = new XmlTextReader (xml, XmlNodeType.Document, null);
 			xtw.WriteNode (xtr, false);
-			AssertEquals (xml, writer.ToString ());
+			Assert.AreEqual (xml, writer.ToString ());
+
+			writer.GetStringBuilder ().Length = 0;
 
 			// With encoding
-			setupWriter ();
 			xml = "<?xml version='1.0' encoding='iso-2022-jp'?><root />";
 			xtr = new XmlTextReader (xml, XmlNodeType.Document, null);
 			xtw.WriteNode (xtr, false);
-			AssertEquals (xml, writer.ToString ());
+			Assert.AreEqual (xml, writer.ToString ());
 			xtr.Close ();
 		}
 
 		[Test]
 		public void WriteNodeXmlDecl ()
 		{
-			setupWriter ();
 			string xml = "<?xml version='1.0'?><root />";
 			StringReader sr = new StringReader (xml);
 			XmlTextReader xtr = new XmlTextReader (sr);
 			xtr.Read ();
 			xtw.WriteNode (xtr, false);
-			AssertEquals ("<?xml version='1.0'?>",
+			Assert.AreEqual ("<?xml version='1.0'?>",
 				 writer.ToString ());
 			xtr.Close ();
 		}
@@ -74,12 +68,11 @@ namespace MonoTests.System.Xml
 		[Test]
 		public void WriteNodeEmptyElement ()
 		{
-			setupWriter ();
 			string xml = "<root attr='value' attr2='value' />";
 			StringReader sr = new StringReader (xml);
 			XmlTextReader xtr = new XmlTextReader (sr);
 			xtw.WriteNode (xtr, false);
-			AssertEquals (xml.Replace ("'", "\""),
+			Assert.AreEqual (xml.Replace ("'", "\""),
 				writer.ToString ());
 			xtr.Close ();
 		}
@@ -87,21 +80,19 @@ namespace MonoTests.System.Xml
 		[Test]
 		public void WriteNodeNonEmptyElement ()
 		{
-			setupWriter ();
 			string xml = @"<foo><bar></bar></foo>";
 			xtw.WriteNode (new XmlTextReader (xml, XmlNodeType.Document, null), false);
-			AssertEquals (xml, writer.ToString ());
+			Assert.AreEqual (xml, writer.ToString ());
 		}
 
 		[Test]
 		public void WriteNodeSingleContentElement ()
 		{
-			setupWriter ();
 			string xml = "<root attr='value' attr2='value'><foo /></root>";
 			StringReader sr = new StringReader (xml);
 			XmlTextReader xtr = new XmlTextReader (sr);
 			xtw.WriteNode (xtr, false);
-			AssertEquals (xml.Replace ("'", "\""),
+			Assert.AreEqual (xml.Replace ("'", "\""),
 				writer.ToString ());
 			xtr.Close ();
 		}
@@ -109,7 +100,6 @@ namespace MonoTests.System.Xml
 		[Test]
 		public void WriteNodeNone ()
 		{
-			setupWriter ();
 			XmlTextReader xtr = new XmlTextReader ("", XmlNodeType.Element, null);
 			xtr.Read ();
 			xtw.WriteNode (xtr, false); // does not report any errors
@@ -136,28 +126,27 @@ namespace MonoTests.System.Xml
 		[Test]
 		public void WriteSurrogateCharEntity ()
 		{
-			setupWriter ();
 			xtw.WriteSurrogateCharEntity ('\udfff', '\udb00');
-			AssertEquals ("&#xD03FF;", writer.ToString ());
+			Assert.AreEqual ("&#xD03FF;", writer.ToString ());
 
 			try {
 				xtw.WriteSurrogateCharEntity ('\ud800', '\udc00');
-				Fail ();
+				Assert.Fail ();
 			} catch {
 			}
 			try {
 				xtw.WriteSurrogateCharEntity ('\udbff', '\ud800');
-				Fail ();
+				Assert.Fail ();
 			} catch {
 			}
 			try {
 				xtw.WriteSurrogateCharEntity ('\ue000', '\ud800');
-				Fail ();
+				Assert.Fail ();
 			} catch {
 			}
 			try {
 				xtw.WriteSurrogateCharEntity ('\udfff', '\udc00');
-				Fail ();
+				Assert.Fail ();
 			} catch {
 			}
 		}
@@ -171,13 +160,13 @@ namespace MonoTests.System.Xml
 			StartElementTestWriter xw = new StartElementTestWriter ();
 			xw.WriteStartDocument ();
 			xw.WriteStartElement ("test");
-			AssertEquals ("StartElementOverride.NS", null, xw.NS);
-			AssertEquals ("StartElementOverride.Prefix", null, xw.Prefix);
+			Assert.IsNull (xw.NS, "StartElementOverride.NS");
+			Assert.IsNull (xw.Prefix, "StartElementOverride.Prefix");
 			xw.NS = String.Empty;
 			xw.Prefix = String.Empty;
 			xw.WriteStartElement ("test", "urn:hoge");
-			AssertEquals ("StartElementOverride.NS", "urn:hoge", xw.NS);
-			AssertEquals ("StartElementOverride.Prefix", null, xw.Prefix);
+			Assert.AreEqual ("urn:hoge", xw.NS, "StartElementOverride.NS");
+			Assert.IsNull (null, xw.Prefix, "StartElementOverride.Prefix");
 		}
 		
 		class StartElementTestWriter : DefaultXmlWriter
@@ -205,13 +194,13 @@ namespace MonoTests.System.Xml
 			xtr.Read ();
 			xtw.WriteStartElement ("test"); // ><test
 			xtw.WriteAttributes (xtr, false); // a='b' c='d'
-			AssertEquals (XmlNodeType.Element, xtr.NodeType);
+			Assert.AreEqual (XmlNodeType.Element, xtr.NodeType);
 			xtw.WriteEndElement (); // />
 			xtw.WriteStartElement ("b"); // <b
 			xtw.WriteEndElement (); // />
 			xtw.WriteEndElement (); // </root>
 			xtw.Close ();
-			AssertEquals (xml, writer.ToString ());
+			Assert.AreEqual (xml, writer.ToString ());
 		}
 	}
 
