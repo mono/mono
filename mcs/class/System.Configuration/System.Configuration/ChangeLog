@@ -1,5 +1,12 @@
 2005-12-15  Chris Toshok  <toshok@ximian.com>
 
+	* ConfigurationElement.cs (LockAllAttributesExcept): implement.
+	(LockAllElementsExcept): implement.
+	(DeserializeElement): handle the built-in attributes (lock* for
+	the time being).
+
+2005-12-15  Chris Toshok  <toshok@ximian.com>
+
 	* ConfigurationLockCollection.cs (..ctor): don't call Populate.
 	(Populate): nuke.
 	(CheckName): make sure the passes in name is valid for this type

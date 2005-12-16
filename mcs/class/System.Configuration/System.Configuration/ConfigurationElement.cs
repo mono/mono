@@ -89,21 +89,28 @@ namespace System.Configuration
 			}
 		}
 
-		[MonoTODO]
+		ConfigurationLockCollection lockAllAttributesExcept;
 		public ConfigurationLockCollection LockAllAttributesExcept {
 			get {
-				throw new NotImplementedException ();
+				if (lockAllAttributesExcept == null) {
+					lockAllAttributesExcept = new ConfigurationLockCollection (this, ConfigurationLockType.Attribute | ConfigurationLockType.Exclude);
+				}
+
+				return lockAllAttributesExcept;
 			}
 		}
 
-		[MonoTODO]
+		ConfigurationLockCollection lockAllElementsExcept;
 		public ConfigurationLockCollection LockAllElementsExcept {
 			get {
-				throw new NotImplementedException ();
+				if (lockAllElementsExcept == null) {
+					lockAllElementsExcept = new ConfigurationLockCollection (this, ConfigurationLockType.Element | ConfigurationLockType.Exclude);
+				}
+
+				return lockAllElementsExcept;
 			}
 		}
 
-		[MonoTODO]
 		ConfigurationLockCollection lockAttributes;
 		public ConfigurationLockCollection LockAttributes {
 			get {
@@ -115,10 +122,14 @@ namespace System.Configuration
 			}
 		}
 
-		[MonoTODO]
+		ConfigurationLockCollection lockElements;
 		public ConfigurationLockCollection LockElements {
 			get {
-				throw new NotImplementedException ();
+				if (lockElements == null) {
+					lockElements = new ConfigurationLockCollection (this, ConfigurationLockType.Element);
+				}
+
+				return lockElements;
 			}
 		}
 
@@ -271,8 +282,22 @@ namespace System.Configuration
 			{
 				PropertyInformation prop = ElementInformation.Properties [reader.LocalName];
 				if (prop == null || (serializeCollectionKey && !prop.IsKey)) {
-					if (!OnDeserializeUnrecognizedAttribute (reader.LocalName, reader.Value))
+					/* handle the built in ConfigurationElement attributes here */
+					if (reader.LocalName == "lockAllAttributesExcept") {
+						LockAllAttributesExcept.SetFromList (reader.Value);
+					}
+					else if (reader.LocalName == "lockAllElementsExcept") {
+						LockAllElementsExcept.SetFromList (reader.Value);
+					}
+					else if (reader.LocalName == "lockAttributes") {
+						LockAttributes.SetFromList (reader.Value);
+					}
+					else if (reader.LocalName == "lockElements") {
+						LockElements.SetFromList (reader.Value);
+					}
+					else if (!OnDeserializeUnrecognizedAttribute (reader.LocalName, reader.Value))
 						throw new ConfigurationException ("Unrecognized attribute '" + reader.LocalName + "'.");
+
 					continue;
 				}
 				
