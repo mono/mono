@@ -35,7 +35,8 @@ using System.Xml;
 using Commons.Xml.Relaxng;
 
 #if NET_2_0
-using NSResolver = System.Xml.IXmlNamespaceResolver;
+using NSResolver = System.Xml.XmlNamespaceManager;
+//using NSResolver = System.Xml.IXmlNamespaceResolver;
 #else
 using NSResolver = System.Xml.XmlNamespaceManager;
 #endif
