@@ -33,6 +33,7 @@ using System.Globalization;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Security;
 using System.Security.Permissions;
 using System.Text;
 using System.Threading;
@@ -46,6 +47,7 @@ namespace System.Diagnostics {
 		public const int METHODS_TO_SKIP = 0;
 
 		private StackFrame[] frames;
+		private bool debug_info;
 
 		public StackTrace ()
 		{
@@ -84,6 +86,7 @@ namespace System.Diagnostics {
 				skipFrames++;
 			};
 
+			debug_info = needFileInfo;
 			frames = (StackFrame [])al.ToArray (typeof (StackFrame));	
 		}
 		
@@ -184,8 +187,9 @@ namespace System.Diagnostics {
 
 		public override string ToString ()
 		{
-			string newline = String.Format ("{0}\t {1} ", Environment.NewLine, Locale.GetText ("at"));
+			string newline = String.Format ("{0}   {1} ", Environment.NewLine, Locale.GetText ("at"));
 			string unknown = Locale.GetText ("<unknown method>");
+			string debuginfo = Locale.GetText (" in {0}:line {1}");
 			StringBuilder sb = new StringBuilder ();
 			for (int i = 0; i < FrameCount; i++) {
 				StackFrame frame = GetFrame (i);
@@ -199,8 +203,22 @@ namespace System.Diagnostics {
 					// Method information not available
 					sb.Append (unknown);
 				}
-			}
 
+				if (debug_info) {
+					// we were asked for debugging informations
+					try {
+						// but that doesn't mean we have the debug information available
+						string fname = frame.GetFileName ();
+						if ((fname != null) && (fname.Length > 0))
+							sb.AppendFormat (debuginfo, fname, frame.GetFileLineNumber ());
+					}
+					catch (SecurityException) {
+						// don't leak information (about the filename) if the security 
+						// manager doesn't allow it (but don't loop on this exception)
+						debug_info = false;
+					}
+				}
+			}
 			return sb.ToString ();
 		}
 	}

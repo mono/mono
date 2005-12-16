@@ -1,3 +1,9 @@
+2005-12-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* StackTrace.cs: Added, if avilable, the filename/lineno debug 
+	information in ToString() like it's done on the 2.0 framework (i.e. 
+	Mono will display it for all profile, MS only in 2.0). Fix bug #75932.
+
 2005-05-25  Zoltan Varga  <vargaz@freemail.hu>
 
 	* StackTrace.cs: Add an internal ctor which skips unmanaged frames.
