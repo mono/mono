@@ -1,3 +1,8 @@
+2005-12-16  Atsushi Enomoto <atsushi@ximian.com>
+
+	* RelaxngPattern.cs : in WriteCompact(), use WriteNamespace() to
+	  let RncWriter handle namespace output by itself.
+
 2005-09-20  Atsushi Enomoto <atsushi@ximian.com>
 
 	* RelaxngValidatingReader.cs : added explicit error message for

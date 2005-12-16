@@ -137,15 +137,21 @@ namespace Commons.Xml.Relaxng.Rnc
 			RelaxngGrammarContentList divs,
 			RelaxngGrammarContentList includes)
 		{
-			if (includes != null)
+			if (includes != null) {
 				foreach (RelaxngInclude inc in includes)
 					inc.WriteRnc (this);
-			if (divs != null)
+				w.WriteLine ();
+			}
+			if (divs != null) {
 				foreach (RelaxngDiv div in divs)
 					div.WriteRnc (this);
-			if (starts != null)
+				w.WriteLine ();
+			}
+			if (starts != null) {
 				foreach (RelaxngStart s in starts)
 					s.WriteRnc (this);
+				w.WriteLine ();
+			}
 			if (defines != null)
 				foreach (RelaxngDefine def in defines)
 					def.WriteRnc (this);
@@ -198,6 +204,34 @@ namespace Commons.Xml.Relaxng.Rnc
 
 		#endregion
 
+		public void WriteNamespaces (string defaultNamespace)
+		{
+			if (defaultNamespace == null)
+				defaultNamespace = String.Empty;
+
+			if (defaultNamespace.Length > 0)
+				w.WriteLine ("default namespace = {0}",
+					defaultNamespace);
+
+			foreach (string s in nsmgr) {
+				switch (s) {
+				case "xml":
+				case "xmlns":
+					continue;
+				case "":
+					if (defaultNamespace.Length > 0)
+						w.WriteLine ("default namespace = {0}",
+							nsmgr.LookupNamespace (s));
+					break;
+				default:
+					w.WriteLine ("namespace {0} = {1}",
+						s, nsmgr.LookupNamespace (s));
+					break;
+				}
+			}
+			w.WriteLine ();
+		}
+
 		#region Elements
 		// Note that it might not be used directly when a grammar
 		// contains more than one "start" (compact syntax does not
@@ -234,6 +268,7 @@ namespace Commons.Xml.Relaxng.Rnc
 					define.Patterns [i].WriteRnc (this);
 				}
 			}
+			w.WriteLine ();
 			w.WriteLine ();
 		}
 

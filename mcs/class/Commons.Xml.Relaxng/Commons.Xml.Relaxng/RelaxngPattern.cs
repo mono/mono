@@ -512,17 +512,20 @@ namespace Commons.Xml.Relaxng
 
 		public void WriteCompact (TextWriter writer)
 		{
-			WriteRnc (new RncWriter (writer));
+			WriteCompact (new RncWriter (writer));
 		}
 
 		public void WriteCompact (TextWriter writer, NSResolver res)
 		{
+			WriteCompact (new RncWriter (writer, res));
+		}
+
+		void WriteCompact (RncWriter writer)
+		{
 			RelaxngGrammar g = this as RelaxngGrammar;
-			if (g != null && g.DefaultNamespace != null) {
-				writer.Write ("default namespace = ");
-				writer.WriteLine (g.DefaultNamespace);
-			}
-			WriteRnc (new RncWriter (writer, res));
+			string ns = (g != null ? g.DefaultNamespace : null);
+			writer.WriteNamespaces (ns);
+			WriteRnc (writer);
 		}
 
 		// Internal

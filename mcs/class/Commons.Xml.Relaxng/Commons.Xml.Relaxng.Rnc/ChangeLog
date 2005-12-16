@@ -1,3 +1,8 @@
+2005-12-16  Atsushi Enomoto <atsushi@ximian.com>
+
+	* RncWriter.cs : added WriteNamespaces() to handle namespace output
+	  by itself.
+
 2005-03-28  Atsushi Enomoto <atsushi@ximian.com>
 
 	* RncTokenizer.cs : check names strictly.
