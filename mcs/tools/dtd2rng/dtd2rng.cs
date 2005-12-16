@@ -3,6 +3,7 @@ using System.Reflection;
 using System.Xml;
 using System.Xml.Schema;
 using Commons.Xml.Relaxng;
+using Commons.Xml.Relaxng.Rnc;
 
 using BF = System.Reflection.BindingFlags;
 
@@ -13,18 +14,46 @@ namespace Mono.XmlTools
 		public static int Main (string [] args)
 		{
 			if (args.Length == 0) {
-				Console.Error.WriteLine ("Usage dtd2rng dtdfile [namespace]");
+				Usage ();
 				return 1;
 			}
 
-			new Dtd2Rng ().Process (args);
-			return 0;
+			return new Dtd2Rng ().Process (args);
 		}
 
-		public void Process (string [] args)
+		static void Usage ()
 		{
-			string file = args [0];
-			ns = args.Length > 1 ? args [1] : String.Empty;
+			Console.Error.WriteLine (@"
+Usage dtd2rng [options] dtdfile [ns]
+
+options:
+	--help : show this message.
+	--compact, -c : output compact syntax.
+");
+		}
+
+		public int Process (string [] args)
+		{
+			string file = null;
+			bool compact = false;
+			string ns = String.Empty;
+			foreach (string arg in args) {
+				if (arg == "--help") {
+					Usage ();
+					return 1;
+				}
+				if (arg == "--compact" || arg == "-c")
+					compact = true;
+				else if (file == null)
+					file = arg;
+				else if (ns != String.Empty) {
+					Usage ();
+					Console.Error.WriteLine ("Extra command line argument.");
+					return 1;
+				}
+				else
+					ns = arg;
+			}
 
 			XmlTextReader xtr;
 			if (file.EndsWith (".dtd")) {
@@ -40,11 +69,16 @@ namespace Mono.XmlTools
 
 			XmlSchema xsd = GetXmlSchema (xtr);
 
-			RelaxngPattern rng = DtdXsd2Rng (xsd);
-			XmlTextWriter w = new XmlTextWriter (Console.Out);
-			w.Formatting = Formatting.Indented;
-			rng.Write (w);
-			w.Close ();
+			RelaxngPattern rng = DtdXsd2Rng (xsd, ns);
+			if (compact)
+				rng.WriteCompact (Console.Out);
+			else {
+				XmlTextWriter w = new XmlTextWriter (Console.Out);
+				w.Formatting = Formatting.Indented;
+				rng.Write (w);
+				w.Close ();
+			}
+			return 0;
 		}
 
 		XmlSchema GetXmlSchema (XmlTextReader xtr)
@@ -68,11 +102,11 @@ namespace Mono.XmlTools
 		}
 
 		RelaxngGrammar g;
-		string ns;
 
-		RelaxngGrammar DtdXsd2Rng (XmlSchema xsd)
+		RelaxngGrammar DtdXsd2Rng (XmlSchema xsd, string ns)
 		{
 			g = new RelaxngGrammar ();
+			g.DefaultNamespace = ns;
 			RelaxngStart start = new RelaxngStart ();
 			g.Starts.Add (start);
 			RelaxngChoice choice = new RelaxngChoice ();
@@ -109,7 +143,9 @@ namespace Mono.XmlTools
 			}
 
 			RelaxngElement re = new RelaxngElement ();
-			re.NameClass = new RelaxngName (xse.Name, ns);
+			RelaxngName name = new RelaxngName ();
+			name.LocalName = xse.Name;
+			re.NameClass = name;
 
 			XmlSchemaComplexType ct = xse.SchemaType as XmlSchemaComplexType;
 
@@ -140,7 +176,9 @@ namespace Mono.XmlTools
 		RelaxngAttribute CreateAttribute (XmlSchemaAttribute attr)
 		{
 			RelaxngAttribute ra = new RelaxngAttribute ();
-			ra.NameClass = new RelaxngName (attr.Name, String.Empty);
+			RelaxngName name = new RelaxngName ();
+			name.LocalName = attr.Name;
+			ra.NameClass = name;
 			ra.Pattern = attr.SchemaType != null ?
 				CreatePatternFromType (attr.SchemaType) :
 				CreatePatternFromTypeName (attr.SchemaTypeName);
@@ -205,7 +243,8 @@ namespace Mono.XmlTools
 					throw new NotSupportedException ("Only enumeration facet is supported.");
 				RelaxngValue v = new RelaxngValue ();
 				v.Type = r.BaseTypeName.Name;
-				v.DatatypeLibrary = r.BaseTypeName.Namespace;
+				v.DatatypeLibrary = RemapDatatypeLibrary (
+					r.BaseTypeName.Namespace);
 				v.Value = en.Value;
 				c.Patterns.Add (v);
 			}
@@ -218,8 +257,16 @@ namespace Mono.XmlTools
 				return new RelaxngText ();
 			RelaxngData data = new RelaxngData ();
 			data.Type = name.Name;
-			data.DatatypeLibrary = name.Namespace;
+			data.DatatypeLibrary = RemapDatatypeLibrary (
+				name.Namespace);
 			return data;
+		}
+
+		string RemapDatatypeLibrary (string ns)
+		{
+			return ns == XmlSchema.Namespace ?
+				"http://www.w3.org/2001/XMLSchema-datatypes" :
+				ns;
 		}
 	}
 }

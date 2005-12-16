@@ -1,3 +1,8 @@
+2005-12-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* dtd2rng.cs : datatypeLibrary remapping. Compact syntax output.
+	  Datatype library remapping is required.
+
 2005-12-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* dtd2rng.cs : mixed + empty should be text.
