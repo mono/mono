@@ -35,8 +35,7 @@ using System.Xml;
 using Commons.Xml.Relaxng;
 
 #if NET_2_0
-using NSResolver = System.Xml.XmlNamespaceManager;
-//using NSResolver = System.Xml.IXmlNamespaceResolver;
+using NSResolver = System.Xml.IXmlNamespaceResolver;
 #else
 using NSResolver = System.Xml.XmlNamespaceManager;
 #endif
@@ -243,7 +242,12 @@ namespace Commons.Xml.Relaxng.Rnc
 				w.WriteLine ("default namespace = {0}",
 					defaultNamespace);
 
+#if NET_2_0
+			foreach (string s in nsmgr.GetNamespacesInScope (
+				XmlNamespaceScope.All).Keys) {
+#else
 			foreach (string s in nsmgr) {
+#endif
 				switch (s) {
 				case "xml":
 				case "xmlns":

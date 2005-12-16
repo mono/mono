@@ -1,5 +1,10 @@
 2005-12-16  Atsushi Enomoto <atsushi@ximian.com>
 
+	* RncWriter.cs : actually no need to change signature; use
+	  GetNamespacesInScope().
+
+2005-12-16  Atsushi Enomoto <atsushi@ximian.com>
+
 	* RncWriter.cs : use XmlNamespaceManager for NSResolver even in NET_2_0.
 
 2005-12-16  Atsushi Enomoto <atsushi@ximian.com>
