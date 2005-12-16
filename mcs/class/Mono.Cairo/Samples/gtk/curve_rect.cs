@@ -57,7 +57,7 @@ public class GtkCairo
 
 public class CairoGraphic : DrawingArea
 {
-	static void draw (Cairo.Graphics gr, int width, int height)
+	static void draw (Cairo.Context gr, int width, int height)
 	{
 		double x0 = 0.1;
 		double y0 = 0.1;
@@ -194,7 +194,7 @@ public class CairoGraphic : DrawingArea
                 Gdk.Window win = args.Window;
 		//Gdk.Rectangle area = args.Area;
 
-		Cairo.Graphics g = Gdk.Graphics.CreateDrawable (win);
+		Cairo.Context g = Gdk.Context.CreateDrawable (win);
 
 		int x, y, w, h, d;
 		win.GetGeometry(out x, out y, out w, out h, out d);

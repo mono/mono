@@ -59,7 +59,7 @@ public class CairoGraphic : DrawingArea
 {
         static readonly double  M_PI = 3.14159265358979323846;
    
-	static void oval_path (Cairo.Graphics gr, double xc, double yc, double xr, double yr)
+	static void oval_path (Cairo.Context gr, double xc, double yc, double xr, double yr)
 	{
 		gr.Translate (xc, yc);
 		gr.Scale (1.0, yr / xr);
@@ -72,7 +72,7 @@ public class CairoGraphic : DrawingArea
 	* Draw a red, green, and blue circle equally spaced inside
 	* the larger circle of radius r at (xc, yc)
 	*/
-	static void draw_3circles (Cairo.Graphics gr, double xc, double yc, double radius)
+	static void draw_3circles (Cairo.Context gr, double xc, double yc, double radius)
 	{
 		double subradius = radius * (2 / 3.0 - 0.1);
 		
@@ -103,7 +103,7 @@ public class CairoGraphic : DrawingArea
 		gr.Fill ();
 	}
 
-	static void draw (Cairo.Graphics gr, int width, int height)
+	static void draw (Cairo.Context gr, int width, int height)
 	{
 		Surface overlay, punch, circles;
 		
@@ -169,7 +169,7 @@ public class CairoGraphic : DrawingArea
                 Gdk.Window win = args.Window;
 		//Gdk.Rectangle area = args.Area;
 		
-		Cairo.Graphics g = Gdk.Graphics.CreateDrawable (win);
+		Cairo.Context g = Gdk.Context.CreateDrawable (win);
 		
 		int x, y, w, h, d;
 		win.GetGeometry(out x, out y, out w, out h, out d);

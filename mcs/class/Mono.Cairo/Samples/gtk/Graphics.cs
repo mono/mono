@@ -4,9 +4,9 @@ using Cairo;
 
 namespace Gdk
 {
-	public class Graphics
+	public class Context
 	{
-		private Graphics () {}
+		private Context () {}
 
 		// Note: we don't need or want a .dll.config since we p/invoke
 		// the proper lib based on the os check below
@@ -31,12 +31,12 @@ namespace Gdk
 		[DllImport("libgdk-x11-2.0.so.0")]
 		internal static extern IntPtr gdk_x11_drawable_get_xid (IntPtr handle);
 		
-		public static Cairo.Graphics CreateDrawable (Gdk.Drawable drawable)
+		public static Cairo.Context CreateDrawable (Gdk.Drawable drawable)
 		{
 			return CreateDrawable (drawable, true);
 		}
 
-		public static Cairo.Graphics CreateDrawable (Gdk.Drawable drawable, bool double_buffered)
+		public static Cairo.Context CreateDrawable (Gdk.Drawable drawable, bool double_buffered)
 		{
 			int x = 0, y = 0;
 			Cairo.Surface surface;
@@ -63,7 +63,7 @@ namespace Gdk
 				surface = new XlibSurface (display, xdrawable, xvisual, x, y);
 			}
 			
-			return new Cairo.Graphics (surface);
+			return new Cairo.Context (surface);
 		}
 	}
 }

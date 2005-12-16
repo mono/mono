@@ -61,7 +61,7 @@ public class CairoGraphic : DrawingArea
 {
         static readonly double  M_PI = 3.14159265358979323846;
    
-	static void draw (Cairo.Graphics gr, int width, int height)
+	static void draw (Cairo.Context gr, int width, int height)
 	{		
 		//gr.Scale (width, height);
 		//gr.LineWidth = 0.04;
@@ -166,7 +166,7 @@ public class CairoGraphic : DrawingArea
 		Gdk.Window win = args.Window;
 		//Gdk.Rectangle area = args.Area;
 		
-		Cairo.Graphics g = Gdk.Graphics.CreateDrawable (win);
+		Cairo.Context g = Gdk.Context.CreateDrawable (win);
 		
 		int x, y, w, h, d;
 		win.GetGeometry(out x, out y, out w, out h, out d);
