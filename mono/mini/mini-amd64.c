@@ -1409,41 +1409,6 @@ mono_arch_call_opcode2 (MonoCompile *cfg, MonoCallInst *call, int is_virtual) {
 	for (i = n - 1; i >= 0; --i) {
 		ainfo = cinfo->args + i;
 
-		if (!sig->pinvoke && (sig->call_convention == MONO_CALL_VARARG) && (i == sig->sentinelpos)) {
-			MonoMethodSignature *tmp_sig;
-
-			/* Emit the signature cookie just before the implicit arguments */
-			MonoInst *sig_arg;
-			/* FIXME: Add support for signature tokens to AOT */
-			cfg->disable_aot = TRUE;
-
-			NOT_IMPLEMENTED;
-
-			g_assert (cinfo->sig_cookie.storage == ArgOnStack);
-
-			/*
-			 * mono_ArgIterator_Setup assumes the signature cookie is 
-			 * passed first and all the arguments which were before it are
-			 * passed on the stack after the signature. So compensate by 
-			 * passing a different signature.
-			 */
-			tmp_sig = mono_metadata_signature_dup (call->signature);
-			tmp_sig->param_count -= call->signature->sentinelpos;
-			tmp_sig->sentinelpos = 0;
-			memcpy (tmp_sig->params, call->signature->params + call->signature->sentinelpos, tmp_sig->param_count * sizeof (MonoType*));
-
-			MONO_INST_NEW (cfg, sig_arg, OP_ICONST);
-			sig_arg->inst_p0 = tmp_sig;
-
-			MONO_INST_NEW (cfg, arg, OP_OUTARG);
-			arg->inst_left = sig_arg;
-			arg->type = STACK_PTR;
-
-			/* prepend, so they get reversed */
-			arg->next = call->out_args;
-			call->out_args = arg;
-		}
-
 		MONO_INST_NEW (cfg, arg, OP_OUTARG);
 		in = call->args [i];
 		arg->cil_code = in->cil_code;
@@ -1589,6 +1554,37 @@ mono_arch_call_opcode2 (MonoCompile *cfg, MonoCallInst *call, int is_virtual) {
 			default:
 				g_assert_not_reached ();
 			}
+		}
+
+		if (!sig->pinvoke && (sig->call_convention == MONO_CALL_VARARG) && (i == sig->sentinelpos)) {
+			MonoMethodSignature *tmp_sig;
+
+			/* Emit the signature cookie just before the implicit arguments */
+			MonoInst *sig_arg;
+			/* FIXME: Add support for signature tokens to AOT */
+			cfg->disable_aot = TRUE;
+
+			g_assert (cinfo->sig_cookie.storage == ArgOnStack);
+
+			/*
+			 * mono_ArgIterator_Setup assumes the signature cookie is 
+			 * passed first and all the arguments which were before it are
+			 * passed on the stack after the signature. So compensate by 
+			 * passing a different signature.
+			 */
+			tmp_sig = mono_metadata_signature_dup (call->signature);
+			tmp_sig->param_count -= call->signature->sentinelpos;
+			tmp_sig->sentinelpos = 0;
+			memcpy (tmp_sig->params, call->signature->params + call->signature->sentinelpos, tmp_sig->param_count * sizeof (MonoType*));
+
+			MONO_INST_NEW (cfg, sig_arg, OP_ICONST);
+			sig_arg->dreg = cfg->next_vireg ++;
+			sig_arg->inst_p0 = tmp_sig;
+			MONO_ADD_INS (cfg->cbb, sig_arg);
+
+			MONO_INST_NEW (cfg, arg, OP_X86_PUSH);
+			arg->sreg1 = sig_arg->dreg;
+			MONO_ADD_INS (cfg->cbb, arg);
 		}
 	}
 
@@ -4104,7 +4100,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			amd64_alu_reg_imm (code, X86_CMP, AMD64_RAX, X86_FP_C0);
 			EMIT_COND_BRANCH (ins, X86_CC_NE, FALSE);
 			break;
-		case CEE_CKFINITE: {
+		case CEE_CKFINITE:
+		case OP_CKFINITE:
 			if (use_sse2) {
 				/* Transfer value to the fp stack */
 				amd64_alu_reg_imm (code, X86_SUB, AMD64_RSP, 16);
@@ -4124,7 +4121,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			if (use_sse2)
 				amd64_alu_reg_imm (code, X86_ADD, AMD64_RSP, 16);
 			break;
-		}
 		case OP_TLS_GET: {
 			x86_prefix (code, X86_FS_PREFIX);
 			amd64_mov_reg_mem (code, ins->dreg, ins->inst_offset, 8);
@@ -5435,12 +5431,19 @@ mono_arch_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMetho
 				opcode = OP_ATOMIC_ADD_NEW_I8;
 			else
 				g_assert_not_reached ();
-			MONO_INST_NEW (cfg, ins, opcode);
+
 			MONO_INST_NEW (cfg, ins_iconst, OP_ICONST);
 			ins_iconst->inst_c0 = 1;
+			ins_iconst->dreg = cfg->next_vireg++;
+			MONO_ADD_INS (cfg->cbb, ins_iconst);
 
-			ins->inst_i0 = args [0];
-			ins->inst_i1 = ins_iconst;
+			MONO_INST_NEW (cfg, ins, opcode);
+			ins->dreg = cfg->next_vireg ++;
+			ins->inst_basereg = args [0]->dreg;
+			ins->inst_offset = 0;
+			ins->sreg2 = ins_iconst->dreg;
+			ins->type = (opcode == OP_ATOMIC_ADD_NEW_I4) ? STACK_I4 : STACK_I8;
+			MONO_ADD_INS (cfg->cbb, ins);
 		} else if (strcmp (cmethod->name, "Decrement") == 0) {
 			MonoInst *ins_iconst;
 			guint32 opcode;
@@ -5451,12 +5454,19 @@ mono_arch_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMetho
 				opcode = OP_ATOMIC_ADD_NEW_I8;
 			else
 				g_assert_not_reached ();
-			MONO_INST_NEW (cfg, ins, opcode);
+
 			MONO_INST_NEW (cfg, ins_iconst, OP_ICONST);
 			ins_iconst->inst_c0 = -1;
+			ins_iconst->dreg = cfg->next_vireg++;
+			MONO_ADD_INS (cfg->cbb, ins_iconst);
 
-			ins->inst_i0 = args [0];
-			ins->inst_i1 = ins_iconst;
+			MONO_INST_NEW (cfg, ins, opcode);
+			ins->dreg = cfg->next_vireg ++;
+			ins->inst_basereg = args [0]->dreg;
+			ins->inst_offset = 0;
+			ins->sreg2 = ins_iconst->dreg;
+			ins->type = (opcode == OP_ATOMIC_ADD_NEW_I4) ? STACK_I4 : STACK_I8;
+			MONO_ADD_INS (cfg->cbb, ins);
 		} else if (strcmp (cmethod->name, "Add") == 0) {
 			guint32 opcode;
 
@@ -5466,11 +5476,14 @@ mono_arch_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMetho
 				opcode = OP_ATOMIC_ADD_I8;
 			else
 				g_assert_not_reached ();
-			
-			MONO_INST_NEW (cfg, ins, opcode);
 
-			ins->inst_i0 = args [0];
-			ins->inst_i1 = args [1];
+			MONO_INST_NEW (cfg, ins, opcode);
+			ins->dreg = cfg->next_vireg ++;
+			ins->inst_basereg = args [0]->dreg;
+			ins->inst_offset = 0;
+			ins->sreg2 = args [1]->dreg;
+			ins->type = (opcode == OP_ATOMIC_ADD_I4) ? STACK_I4 : STACK_I8;
+			MONO_ADD_INS (cfg->cbb, ins);
 		} else if (strcmp (cmethod->name, "Exchange") == 0) {
 			guint32 opcode;
 
@@ -5484,9 +5497,26 @@ mono_arch_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMetho
 				return NULL;
 
 			MONO_INST_NEW (cfg, ins, opcode);
+			ins->dreg = cfg->next_vireg ++;
+			ins->inst_basereg = args [0]->dreg;
+			ins->inst_offset = 0;
+			ins->sreg2 = args [1]->dreg;
+			MONO_ADD_INS (cfg->cbb, ins);
 
-			ins->inst_i0 = args [0];
-			ins->inst_i1 = args [1];
+			switch (fsig->params [0]->type) {
+			case MONO_TYPE_I4:
+				ins->type = STACK_I4;
+				break;
+			case MONO_TYPE_I8:
+			case MONO_TYPE_I:
+				ins->type = STACK_I8;
+				break;
+			case MONO_TYPE_OBJECT:
+				ins->type = STACK_OBJ;
+				break;
+			default:
+				g_assert_not_reached ();
+			}
 		} else if (strcmp (cmethod->name, "Read") == 0 && (fsig->params [0]->type == MONO_TYPE_I8)) {
 			/* 64 bit reads are already atomic */
 			MONO_INST_NEW (cfg, ins, CEE_LDIND_I8);

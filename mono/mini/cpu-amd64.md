@@ -165,6 +165,7 @@ conv.ovf.i4.un: dest:i src1:i len:16
 conv.ovf.u4.un: 
 conv.ovf.u4: dest:i src1:i len:15
 ckfinite: dest:f src1:f len:43
+op_ckfinite: dest:f src1:f len:43
 
 conv.u2: dest:i src1:i len:4
 conv.u1: dest:i src1:i len:4

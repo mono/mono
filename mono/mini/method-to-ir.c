@@ -6826,73 +6826,75 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 					} else
 						MONO_ADD_INS (bblock, store);
 				}
-			} else {
-				if ((klass->marshalbyref && !MONO_CHECK_THIS (sp [0])) || klass->contextbound || klass == mono_defaults.marshalbyrefobject_class) {
-					MonoMethod *wrapper = (*ip == CEE_LDFLDA) ? mono_marshal_get_ldflda_wrapper (field->type) : mono_marshal_get_ldfld_wrapper (field->type); 
-					MonoInst *iargs [4];
-					int temp;
+				ip += 5;
+				break;
+			}
 
-					iargs [0] = sp [0];
-					EMIT_NEW_CLASSCONST (cfg, iargs [1], klass);
-					EMIT_NEW_FIELDCONST (cfg, iargs [2], field);
-					EMIT_NEW_ICONST (cfg, iargs [3], klass->valuetype ? field->offset - sizeof (MonoObject) : field->offset);
-					if ((cfg->opt & MONO_OPT_INLINE) && !MONO_TYPE_ISSTRUCT (mono_method_signature (wrapper)->ret)) {
-						costs = inline_method (cfg, wrapper, mono_method_signature (wrapper), bblock, 
-								       iargs, ip, real_offset, dont_inline, &ebblock, TRUE);
-						g_assert (costs > 0);
+			if ((klass->marshalbyref && !MONO_CHECK_THIS (sp [0])) || klass->contextbound || klass == mono_defaults.marshalbyrefobject_class) {
+				MonoMethod *wrapper = (*ip == CEE_LDFLDA) ? mono_marshal_get_ldflda_wrapper (field->type) : mono_marshal_get_ldfld_wrapper (field->type); 
+				MonoInst *iargs [4];
+				int temp;
+
+				iargs [0] = sp [0];
+				EMIT_NEW_CLASSCONST (cfg, iargs [1], klass);
+				EMIT_NEW_FIELDCONST (cfg, iargs [2], field);
+				EMIT_NEW_ICONST (cfg, iargs [3], klass->valuetype ? field->offset - sizeof (MonoObject) : field->offset);
+				if ((cfg->opt & MONO_OPT_INLINE) && !MONO_TYPE_ISSTRUCT (mono_method_signature (wrapper)->ret)) {
+					costs = inline_method (cfg, wrapper, mono_method_signature (wrapper), bblock, 
+										   iargs, ip, real_offset, dont_inline, &ebblock, TRUE);
+					g_assert (costs > 0);
 						      
-						ip += 5;
-						real_offset += 5;
+					ip += 5;
+					real_offset += 5;
 
-						GET_BBLOCK (cfg, bbhash, bblock, ip);
-						ebblock->next_bb = bblock;
-						link_bblock (cfg, ebblock, bblock);
+					GET_BBLOCK (cfg, bbhash, bblock, ip);
+					ebblock->next_bb = bblock;
+					link_bblock (cfg, ebblock, bblock);
 
-						NOT_IMPLEMENTED;
+					NOT_IMPLEMENTED;
 
-						temp = iargs [0]->inst_i0->inst_c0;
+					temp = iargs [0]->inst_i0->inst_c0;
 
-						NEW_TEMPLOAD (cfg, *sp, temp);
-						sp++;
+					NEW_TEMPLOAD (cfg, *sp, temp);
+					sp++;
 
-						/* indicates start of a new block, and triggers a load of
-						   all stack arguments at bb boundarie */
-						bblock = ebblock;
+					/* indicates start of a new block, and triggers a load of
+					   all stack arguments at bb boundarie */
+					bblock = ebblock;
 						
-						inline_costs += costs;
-						break;
-					} else {
-						ins = mono_emit_method_call (cfg, wrapper, mono_method_signature (wrapper), iargs, ip, NULL);
-						*sp++ = ins;
-					}
+					inline_costs += costs;
+					break;
 				} else {
-					if (*ip == CEE_LDFLDA) {
+					ins = mono_emit_method_call (cfg, wrapper, mono_method_signature (wrapper), iargs, ip, NULL);
+					*sp++ = ins;
+				}
+			} else {
+				if (*ip == CEE_LDFLDA) {
+					dreg = alloc_preg (cfg);
+
+					EMIT_NEW_BIALU_IMM (cfg, ins, OP_PADD_IMM, dreg, sp [0]->dreg, foffset);
+					ins->type = STACK_MP;
+					*sp++ = ins;
+				} else {
+					MonoInst *load;
+
+					NEW_LOAD_MEMBASE (cfg, load, mono_type_to_load_membase (field->type), 0, sp [0]->dreg, foffset);
+					type_to_eval_stack_type (field->type, load);
+					load->dreg = alloc_dreg (cfg, load->type);
+					load->cil_code = ip;
+					load->flags |= ins_flag;
+					ins_flag = 0;
+
+					if (load->opcode == CEE_LDOBJ) {
+						MonoInst *src;
+
 						dreg = alloc_preg (cfg);
-
-						EMIT_NEW_BIALU_IMM (cfg, ins, OP_PADD_IMM, dreg, sp [0]->dreg, foffset);
-						ins->type = STACK_MP;
-						*sp++ = ins;
-					} else {
-						MonoInst *load;
-
-						NEW_LOAD_MEMBASE (cfg, load, mono_type_to_load_membase (field->type), 0, sp [0]->dreg, foffset);
-						type_to_eval_stack_type (field->type, load);
-						load->dreg = alloc_dreg (cfg, load->type);
-						load->cil_code = ip;
-						load->flags |= ins_flag;
-						ins_flag = 0;
-
-						if (load->opcode == CEE_LDOBJ) {
-							MonoInst *src;
-
-							dreg = alloc_preg (cfg);
-							EMIT_NEW_BIALU_IMM (cfg, src, OP_PADD_IMM, dreg, sp [0]->dreg, foffset);
-							load = emit_ldobj (cfg, src, ip, mono_class_from_mono_type (field->type));
-						}
-						else
-							MONO_ADD_INS (bblock, load);
-						*sp++ = load;
+						EMIT_NEW_BIALU_IMM (cfg, src, OP_PADD_IMM, dreg, sp [0]->dreg, foffset);
+						load = emit_ldobj (cfg, src, ip, mono_class_from_mono_type (field->type));
 					}
+					else
+						MONO_ADD_INS (bblock, load);
+					*sp++ = load;
 				}
 			}
 			ip += 5;
