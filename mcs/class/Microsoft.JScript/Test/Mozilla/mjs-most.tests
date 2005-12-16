@@ -1078,9 +1078,8 @@ js1_3/Script/switch-001.js
 js1_3/inherit/proto_1.js
 # Convert:ToObject throws JScriptException: Unexpected type
 #js1_3/inherit/proto_10.js
-# Invalid IL
-#js1_3/inherit/proto_11.js
-#js1_3/inherit/proto_12.js
+js1_3/inherit/proto_11.js
+js1_3/inherit/proto_12.js
 js1_3/inherit/proto_2.js
 js1_3/inherit/proto_3.js
 js1_3/inherit/proto_4.js

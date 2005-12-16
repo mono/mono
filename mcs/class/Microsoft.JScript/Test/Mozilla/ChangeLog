@@ -1,5 +1,8 @@
 2005-12-15  Cesar Lopez Nataren  <cnataren@novell.com>
 
+	* mjs-most.tests: Enable js1_3/inherit/proto_11.js and
+	js1_3/inherit/proto_12.js.
+
 	* mjs-most.tests: Enable ecma/Date/15.9.1.1-2.js.
 
 2005-12-10  Cesar Lopez Nataren  <cnataren@novell.com>
