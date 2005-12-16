@@ -4195,7 +4195,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			}
 
 			if (breg == AMD64_RAX) {
-				amd64_mov_reg_reg (code, AMD64_R11, AMD64_RAX, size);
+				amd64_mov_reg_reg (code, AMD64_R11, AMD64_RAX, 8);
 				breg = AMD64_R11;
 			}
 
@@ -5420,7 +5420,6 @@ mono_arch_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMetho
 			   (strcmp (cmethod->klass->name_space, "System.Threading") == 0) &&
 			   (strcmp (cmethod->klass->name, "Interlocked") == 0)) {
 
-		NOT_IMPLEMENTED;
 		if (strcmp (cmethod->name, "Increment") == 0) {
 			MonoInst *ins_iconst;
 			guint32 opcode;
@@ -5518,6 +5517,7 @@ mono_arch_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMetho
 				g_assert_not_reached ();
 			}
 		} else if (strcmp (cmethod->name, "Read") == 0 && (fsig->params [0]->type == MONO_TYPE_I8)) {
+			NOT_IMPLEMENTED;
 			/* 64 bit reads are already atomic */
 			MONO_INST_NEW (cfg, ins, CEE_LDIND_I8);
 			ins->inst_i0 = args [0];

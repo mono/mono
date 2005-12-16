@@ -4121,6 +4121,9 @@ decompose_opcode (MonoCompile *cfg, MonoInst *ins)
 		MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, ins->dreg, ins->sreg1);
 		ins->opcode = CEE_NOP;
 		break;
+	case OP_LCONV_TO_OVF_I:
+		ins->opcode = OP_MOVE;
+		break;
 	case OP_LCONV_TO_OVF_I_UN:
 	case OP_LCONV_TO_OVF_I8_UN:
 		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, ins->sreg1, 0);
@@ -8744,6 +8747,8 @@ mono_spill_global_vars (MonoCompile *cfg)
  *   - keeping them separate allows specialized compare instructions like
  *     compare_imm, compare_membase
  *   - most back ends unify fp compare+branch, fp compare+ceq
+ * - Things to backport to the old JIT:
+ *   - op_atomic_exchange fix for amd64
  */
 
 /*
