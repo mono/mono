@@ -3,6 +3,8 @@
 	* Control.cs: Make sure we have an active menu before trying to
 	process commands on it. Prevents menu-less forms from crashing
 	when Alt is pressed.
+	* TreeNodeCollection.cs: Some fixes to prevent null refs. Patch by
+	Dieter Bremes.
 
 2005-12-16  Jackson Harper  <jackson@ximian.com>
 

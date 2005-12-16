@@ -115,18 +115,21 @@ namespace System.Windows.Forms {
 			// Remove it from any old parents
 			node.Remove ();
 
-			TreeView tree_view = owner.TreeView;
-			if (owner != null && tree_view != null && tree_view.Sorted)
+			TreeView tree_view = null;
+			if (owner != null)
+				tree_view = owner.TreeView;
+			if (tree_view != null && tree_view.Sorted)
 				return AddSorted (node);
+
 			node.parent = owner;
 			if (count >= nodes.Length)
 				Grow ();
 			nodes [count++] = node;
 
-			if (tree_view != null && (owner.IsExpanded || owner.IsRoot)) {
+			if (owner != null && tree_view != null && (owner.IsExpanded || owner.IsRoot)) {
 				// XXX: Need to ensure the boxes for the nodes have been created
 				tree_view.UpdateNode (owner);
-			} else if (tree_view != null) {
+			} else if (owner != null && tree_view != null) {
 				tree_view.UpdateNodePlusMinus (owner);
 			}
 
@@ -152,9 +155,12 @@ namespace System.Windows.Forms {
 			Array.Clear (nodes, 0, count);
 			count = 0;
 
-			TreeView tree_view = owner.TreeView;
-			if (tree_view != null)
-				tree_view.UpdateBelow (owner);
+			TreeView tree_view = null;
+			if (owner != null) {
+				tree_view = owner.TreeView;
+				if (tree_view != null)
+					tree_view.UpdateBelow (owner);
+			}
 		}
 
 		public bool Contains (TreeNode node)
@@ -210,8 +216,10 @@ namespace System.Windows.Forms {
 			if (nodes.Length > OrigSize && nodes.Length > (count * 2))
 				Shrink ();
 
-			TreeView tree_view = owner.TreeView;
-			if (removed == tree_view.top_node) {
+                        TreeView tree_view = null;
+			if (owner != null)
+				tree_view = owner.TreeView;
+			if (tree_view != null && removed == tree_view.top_node) {
 				OpenTreeNodeEnumerator oe = new OpenTreeNodeEnumerator (removed);
 				if (oe.MoveNext () && oe.MoveNext ())
 					tree_view.top_node = oe.CurrentNode;
