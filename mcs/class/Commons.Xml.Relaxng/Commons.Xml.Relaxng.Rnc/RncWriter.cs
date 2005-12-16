@@ -70,6 +70,34 @@ namespace Commons.Xml.Relaxng.Rnc
 
 		#region Utility methods
 
+		private bool IsKeyword (string name)
+		{
+			switch (name) {
+			case "attribute":
+			case "default":
+			case "datatypes":
+			case "div":
+			case "element":
+			case "empty":
+			case "external":
+			case "grammar":
+			case "include":
+			case "inherit":
+			case "list":
+			case "mixed":
+			case "namespace":
+			case "notAllowed":
+			case "parent":
+			case "start":
+			case "string":
+			case "text":
+			case "token":
+				return true;
+			default:
+				return false;
+			}
+		}
+
 		private void WriteNames (RelaxngNameClassList l, bool wrap)
 		{
 			switch (l.Count) {
@@ -173,6 +201,8 @@ namespace Commons.Xml.Relaxng.Rnc
 				w.Write (prefix);
 				w.Write (':');
 			}
+			if (IsKeyword (name))
+				w.Write ('\\');
 			w.Write (name);
 		}
 
@@ -219,12 +249,12 @@ namespace Commons.Xml.Relaxng.Rnc
 					continue;
 				case "":
 					if (defaultNamespace.Length > 0)
-						w.WriteLine ("default namespace = {0}",
-							nsmgr.LookupNamespace (s));
+						w.WriteLine ("default namespace = '{0}'",
+							nsmgr.LookupNamespace (s).Replace ('\'', '\"'));
 					break;
 				default:
-					w.WriteLine ("namespace {0} = {1}",
-						s, nsmgr.LookupNamespace (s));
+					w.WriteLine ("namespace {0} = '{1}'",
+						s, nsmgr.LookupNamespace (s).Replace ('\'', '\"'));
 					break;
 				}
 			}
@@ -369,12 +399,16 @@ namespace Commons.Xml.Relaxng.Rnc
 
 		public void WriteRef (RelaxngRef r)
 		{
+			if (IsKeyword (r.Name))
+				w.Write ('\\');
 			w.Write (r.Name);
 		}
 
 		public void WriteParentRef (RelaxngParentRef r)
 		{
 			w.Write ("parent ");
+			if (IsKeyword (r.Name))
+				w.Write ('\\');
 			w.Write (r.Name);
 			w.Write (' ');
 		}
@@ -422,6 +456,8 @@ namespace Commons.Xml.Relaxng.Rnc
 
 		public void WriteParam (RelaxngParam p)
 		{
+			if (IsKeyword (p.Name))
+				w.Write ('\\');
 			w.Write (p.Name);
 			w.Write (" = ");
 			WriteLiteral (p.Value);

@@ -1,5 +1,9 @@
 2005-12-16  Atsushi Enomoto <atsushi@ximian.com>
 
+	* RncWriter.cs : oops, missing keyword escapement.
+
+2005-12-16  Atsushi Enomoto <atsushi@ximian.com>
+
 	* RncWriter.cs : no xsi in grammar, please.
 
 2005-12-16  Atsushi Enomoto <atsushi@ximian.com>
