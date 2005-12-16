@@ -29,6 +29,11 @@ namespace MonoTests.System.Xml
 		public void GetReady ()
 		{
 			sw = new StringWriter ();
+			CreateXmlTextWriter ();
+		}
+
+		private void CreateXmlTextWriter ()
+		{
 			xtw = new XmlTextWriter (sw);
 			xtw.QuoteChar = '\'';
 		}
@@ -65,26 +70,166 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-		public void AttributeNamespacesThreeParamWithTextInNamespaceParam ()
+		public void XmlNs_Valid ()
 		{
-			try  {
-				xtw.WriteAttributeString ("xmlns", "http://somenamespace.com", "http://abc.def");
-			} catch (ArgumentException) {}
+			xtw.WriteAttributeString ("xmlns", null, "http://abc.def");
+			Assert.AreEqual ("xmlns='http://abc.def'", StringWriterText, "#1");
+
+			sw.GetStringBuilder ().Length = 0;
+			CreateXmlTextWriter ();
+
+			xtw.WriteAttributeString ("xmlns", "http://www.w3.org/2000/xmlns/", "http://abc.def");
+			Assert.AreEqual ("xmlns='http://abc.def'", StringWriterText, "#2");
 		}
 
 		[Test]
+		[Category ("NotWorking")]
+		public void XmlNs_Valid2 ()
+		{
+			xtw.WriteAttributeString (null, "test", "http://www.w3.org/2000/xmlns/", "http://abc.def");
+			Assert.AreEqual ("xmlns:test='http://abc.def'", StringWriterText, "#3");
+
+			sw.GetStringBuilder ().Length = 0;
+			CreateXmlTextWriter ();
+
+			xtw.WriteAttributeString ("", "test", "http://www.w3.org/2000/xmlns/", "http://abc.def");
+			Assert.AreEqual ("xmlns:test='http://abc.def'", StringWriterText, "#4");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void XmlNs_Invalid1 ()
+		{
+			// The 'xmlns' attribute is bound to the reserved namespace 'http://www.w3.org/2000/xmlns/'
+			xtw.WriteAttributeString ("xmlns", "http://somenamespace.com", "http://abc.def");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void XmlNs_Invalid2 ()
+		{
+			// The 'xmlns' attribute is bound to the reserved namespace 'http://www.w3.org/2000/xmlns/'
+			xtw.WriteAttributeString (null, "xmlns", "http://somenamespace.com", "http://abc.def");
+		}
+
+		// causes ArgumentException on Mono
+		[Test]
+		[Category ("NotWorking")]
+		public void XmlSpace_Valid ()
+		{
+			xtw.WriteAttributeString ("xml", "space", null, "preserve");
+			Assert.AreEqual ("xml:space='preserve'", StringWriterText, "#1");
+
+			sw.GetStringBuilder ().Length = 0;
+			CreateXmlTextWriter ();
+
+			xtw.WriteAttributeString ("xml", "space", "whatever", "default");
+			Assert.AreEqual ("xml:space='default'", StringWriterText, "#1");
+		}
+
+		// MS special cases any attribute with prefix "xml"
+		[Test]
+		[Category ("NotWorking")]
+		public void XmlPrefix_ValidMS ()
+		{
+			xtw.WriteAttributeString ("xml", "something", "whatever", "default");
+			Assert.AreEqual ("xml:something='default'", StringWriterText, "#1");
+
+			sw.GetStringBuilder ().Length = 0;
+			CreateXmlTextWriter ();
+
+			xtw.WriteAttributeString ("xml", "else", null, "whatever");
+			Assert.AreEqual ("xml:else='whatever'", StringWriterText, "#2");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void XmlSpace_Invalid ()
+		{
+			// only preserve and default are valid values for xml:space
+			xtw.WriteAttributeString ("xml", "space", null, "something");
+		}
+
+		[Test]
+		public void AttributeNamespacesThreeParamWithTextInNamespaceParam ()
+		{
+			xtw.WriteAttributeString ("a", "http://somenamespace.com", "http://abc.def");
+			Assert.AreEqual ("d0p1:a='http://abc.def'", StringWriterText, "#1");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
 		public void AttributeNamespacesWithNullInNamespaceParam ()
 		{
-			xtw.WriteAttributeString ("xmlns", "abc", null, "http://abc.def");
-			Assert.AreEqual ("xmlns:abc='http://abc.def'", StringWriterText);
+			// you cannot use prefix with an empty namespace
+			xtw.WriteAttributeString ("a", "abc", null, "http://abc.def");
 		}
 
 		[Test]
 		public void AttributeNamespacesWithTextInNamespaceParam ()
 		{
-			try {
-				xtw.WriteAttributeString ("xmlns", "abc", "http://somenamespace.com", "http://abc.def");
-			} catch (ArgumentException) {}
+			xtw.WriteAttributeString ("a", "abc", "http://somenamespace.com", "http://abc.def");
+			Assert.AreEqual ("a:abc='http://abc.def'", StringWriterText, "#1");
+
+			sw.GetStringBuilder ().Length = 0;
+			CreateXmlTextWriter ();
+
+			xtw.WriteAttributeString ("", "abc", "http://somenamespace.com", "http://abc.def");
+			Assert.AreEqual ("d0p1:abc='http://abc.def'", StringWriterText, "#2");
+
+			sw.GetStringBuilder ().Length = 0;
+			CreateXmlTextWriter ();
+
+			xtw.WriteAttributeString (null, "abc", "http://somenamespace.com", "http://abc.def");
+			Assert.AreEqual ("d0p1:abc='http://abc.def'", StringWriterText, "#3");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void AutoCreatePrefixes ()
+		{
+			xtw.WriteAttributeString (null, "abc", "http://somenamespace.com", "http://abc.def");
+			xtw.WriteAttributeString (null, "def", "http://somenamespace.com", "http://def.ghi");
+			xtw.WriteAttributeString (null, "ghi", "http://othernamespace.com", "http://ghi.jkl");
+
+#if NET_2_0
+			Assert.AreEqual ("d0p1:abc='http://abc.def' d0p1:def='http://def.ghi'" +
+				" d0p2:ghi='http://ghi.jkl'", StringWriterText, "#1");
+#else
+			// on 1.x a new prefix is always created when level is 0 ?
+			Assert.AreEqual ("d0p1:abc='http://abc.def' d0p2:def='http://def.ghi'" +
+				" d0p3:ghi='http://ghi.jkl'", StringWriterText, "#1");
+#endif
+
+			sw.GetStringBuilder ().Length = 0;
+			CreateXmlTextWriter ();
+
+			xtw.WriteStartElement ("person");
+			xtw.WriteAttributeString (null, "name", "http://somenamespace.com", "Gates");
+			xtw.WriteAttributeString (null, "initials", "http://othernamespace.com", "BG");
+			xtw.WriteAttributeString (null, "firstName", "http://somenamespace.com", "Bill");
+			xtw.WriteStartElement ("address");
+			xtw.WriteAttributeString (null, "street", "http://somenamespace.com", "Campus");
+			xtw.WriteAttributeString (null, "number", "http://othernamespace.com", "1");
+			xtw.WriteAttributeString (null, "zip", "http://newnamespace.com", "3000");
+			xtw.WriteAttributeString (null, "box", "http://othernamespace.com", "a");
+			xtw.WriteEndElement ();
+			xtw.WriteEndElement ();
+
+			Assert.AreEqual (
+				"<person" +
+					" d1p1:name='Gates'" +
+					" d1p2:initials='BG'" +
+					" d1p1:firstName='Bill'" +
+					" xmlns:d1p2='http://othernamespace.com'" +
+					" xmlns:d1p1='http://somenamespace.com'>" +
+					"<address" +
+						" d1p1:street='Campus'" +
+						" d1p2:number='1'" +
+						" d2p1:zip='3000'" +
+						" d1p2:box='a'" +
+						" xmlns:d2p1='http://newnamespace.com' />" +
+				"</person>", StringWriterText, "#2");
 		}
 
 		[Test]
@@ -99,6 +244,105 @@ namespace MonoTests.System.Xml
 				Assert.Fail ("any prefix which name starts from \"xml\" must not be allowed.");
 			} catch (ArgumentException) {}
 			xtw.WriteAttributeString ("", "xmlns", null, "http://abc.def");
+		}
+
+		[Test]
+		public void WriteAttributeString_EmptyLocalName ()
+		{
+			xtw.WriteAttributeString ("", "something");
+			Assert.AreEqual ("='something'", StringWriterText, "#1");
+
+			sw.GetStringBuilder ().Length = 0;
+			CreateXmlTextWriter ();
+
+			xtw.WriteAttributeString ("", "", "something");
+			Assert.AreEqual ("='something'", StringWriterText, "#2");
+
+			sw.GetStringBuilder ().Length = 0;
+			CreateXmlTextWriter ();
+
+			xtw.WriteAttributeString ("", "http://somenamespace.com", "something");
+			Assert.AreEqual ("d0p1:='something'", StringWriterText, "#3");
+
+			sw.GetStringBuilder ().Length = 0;
+			CreateXmlTextWriter ();
+
+			xtw.WriteAttributeString ("x", "", "http://somenamespace.com", "something");
+			Assert.AreEqual ("x:='something'", StringWriterText, "#4");
+
+			sw.GetStringBuilder ().Length = 0;
+			CreateXmlTextWriter ();
+
+			xtw.WriteAttributeString (null, "something");
+			Assert.AreEqual ("='something'", StringWriterText, "#5");
+
+			sw.GetStringBuilder ().Length = 0;
+			CreateXmlTextWriter ();
+
+			xtw.WriteAttributeString (null, "", "something");
+			Assert.AreEqual ("='something'", StringWriterText, "#6");
+
+			sw.GetStringBuilder ().Length = 0;
+			CreateXmlTextWriter ();
+
+			xtw.WriteAttributeString (null, "http://somenamespace.com", "something");
+			Assert.AreEqual ("d0p1:='something'", StringWriterText, "#7");
+
+			sw.GetStringBuilder ().Length = 0;
+			CreateXmlTextWriter ();
+
+			xtw.WriteAttributeString ("x", null, "http://somenamespace.com", "something");
+			Assert.AreEqual ("x:='something'", StringWriterText, "#8");
+
+		}
+
+		[Test]
+		public void WriteStartAttribute_EmptyLocalName ()
+		{
+			xtw.WriteStartAttribute ("", "");
+			Assert.AreEqual ("='", StringWriterText, "#1");
+
+			sw.GetStringBuilder ().Length = 0;
+			CreateXmlTextWriter ();
+
+			xtw.WriteStartAttribute ("", "", "");
+			Assert.AreEqual ("='", StringWriterText, "#2");
+
+			sw.GetStringBuilder ().Length = 0;
+			CreateXmlTextWriter ();
+
+			xtw.WriteStartAttribute ("", "", "http://somenamespace.com");
+			Assert.AreEqual ("d0p1:='", StringWriterText, "#3");
+
+			sw.GetStringBuilder ().Length = 0;
+			CreateXmlTextWriter ();
+
+			xtw.WriteStartAttribute ("x", "", "http://somenamespace.com");
+			Assert.AreEqual ("x:='", StringWriterText, "#4");
+
+			sw.GetStringBuilder ().Length = 0;
+			CreateXmlTextWriter ();
+
+			xtw.WriteStartAttribute ("", null);
+			Assert.AreEqual ("='", StringWriterText, "#6");
+
+			sw.GetStringBuilder ().Length = 0;
+			CreateXmlTextWriter ();
+
+			xtw.WriteStartAttribute ("", null, "");
+			Assert.AreEqual ("='", StringWriterText, "#7");
+
+			sw.GetStringBuilder ().Length = 0;
+			CreateXmlTextWriter ();
+
+			xtw.WriteStartAttribute ("", null, "http://somenamespace.com");
+			Assert.AreEqual ("d0p1:='", StringWriterText, "#8");
+
+			sw.GetStringBuilder ().Length = 0;
+			CreateXmlTextWriter ();
+
+			xtw.WriteStartAttribute ("x", null, "http://somenamespace.com");
+			Assert.AreEqual ("x:='", StringWriterText, "#9");
 		}
 
 		[Test]
@@ -120,24 +364,6 @@ namespace MonoTests.System.Xml
 
 			xtw.WriteAttributeString ("fuga", " a\t\r\nb\t");
 			Assert.AreEqual ("<foo foo='bar' bar='' baz='' hoge='a&#xA;b' fuga=' a\t&#xD;&#xA;b\t'", StringWriterText);
-
-			try {
-				// Why does this pass Microsoft?
-				// Anyway, Mono should not allow such code.
-				xtw.WriteAttributeString ("", "quux");
-				// Assert.AreEqual ("<foo foo='bar' bar='' baz='' ='quux'", StringWriterText);
-				Assert.Fail ("empty name not allowed.");
-			} catch (Exception) {
-			}
-
-			try {
-				// Why does this pass Microsoft?
-				// Anyway, Mono should not allow such code.
-				xtw.WriteAttributeString (null, "quuux");
-				// Assert.AreEqual ("<foo foo='bar' bar='' baz='' ='quux' ='quuux'", StringWriterText);
-				Assert.Fail ("null name not allowed.");
-			} catch (Exception) {
-			}
 		}
 
 		[Test]

@@ -1,5 +1,10 @@
 2005-12-16  Gert Driesen <drieseng@users.sourceforge.net>
 
+	* XmlTextWriterTests.cs: Fixed some tests that caught exception to
+	become useful. Added few tests that fail on Mono.
+
+2005-12-16  Gert Driesen <drieseng@users.sourceforge.net>
+
 	* XmlTextWriterTests.cs: No longer derive from deprecated Assertion
 	class. Added WriteDocType tests.
 	* XmlWriterTests.cs: No longer derive from deprecated Assertion class.
