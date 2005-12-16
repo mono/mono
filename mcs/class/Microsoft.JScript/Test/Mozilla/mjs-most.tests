@@ -911,8 +911,7 @@ ecma_2/RegExp/regress-001.js
 ecma_2/Statements/dowhile-001.js
 # invalid IL
 #ecma_2/Statements/dowhile-002.js
-# Invalid IL
-#ecma_2/Statements/dowhile-003.js
+ecma_2/Statements/dowhile-003.js
 # invalid IL
 #ecma_2/Statements/dowhile-004.js
 ecma_2/Statements/dowhile-005.js

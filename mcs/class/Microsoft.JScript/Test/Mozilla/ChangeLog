@@ -1,3 +1,7 @@
+2005-12-16  Cesar Lopez Nataren  <cnataren@novell.com>
+
+	* mjs-most-tests: Enable ecma_2/Statements/dowhile-003.js.
+
 2005-12-15  Cesar Lopez Nataren  <cnataren@novell.com>
 
 	* mjs-most.tests: Enable js1_3/inherit/proto_11.js and
