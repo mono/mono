@@ -51,7 +51,6 @@ namespace Commons.Xml.Relaxng.Rnc
 			XmlNamespaceManager n = new XmlNamespaceManager (
 				new NameTable ());
 			n.AddNamespace ("xs", "http://www.w3.org/2001/XMLSchema-datatypes");
-			n.AddNamespace ("xsi", "http://www.w3.org/2001/XMLSchema-instance");
 			defaultNamespaceManager = n;
 		}
 
