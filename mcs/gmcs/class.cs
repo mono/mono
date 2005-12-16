@@ -2588,6 +2588,16 @@ namespace Mono.CSharp {
 			return false;
 		}
 
+		public virtual void Mark_HasEquals ()
+		{
+			Methods.HasEquals = true;
+		}
+
+		public virtual void Mark_HasGetHashCode ()
+		{
+			Methods.HasGetHashCode = true;
+		}
+
 		//
 		// IMemberContainer
 		//
@@ -2963,6 +2973,15 @@ namespace Mono.CSharp {
 			throw new InternalErrorException ("Should not get here");
 		}
 
+		public override void Mark_HasEquals ()
+		{
+			PartialContainer.Mark_HasEquals ();
+		}
+
+		public override void Mark_HasGetHashCode ()
+		{
+			PartialContainer.Mark_HasGetHashCode ();
+		}
 	}
 
 	public abstract class ClassOrStruct : TypeContainer {
@@ -3447,12 +3466,10 @@ namespace Mono.CSharp {
 					return false;
 				}
 
-				if (RootContext.WarningLevel > 2) {
-					if (Name == "Equals" && Parameters.Count == 1 && ParameterTypes [0] == TypeManager.object_type)
-						Parent.Methods.HasEquals = true;
-					else if (Name == "GetHashCode" && Parameters.Empty)
-						Parent.Methods.HasGetHashCode = true;
-				}
+				if (Name == "Equals" && Parameters.Count == 1 && ParameterTypes [0] == TypeManager.object_type)
+					Parent.Mark_HasEquals ();
+				else if (Name == "GetHashCode" && Parameters.Empty)
+					Parent.Mark_HasGetHashCode ();
 
 				if ((ModFlags & Modifiers.OVERRIDE) != 0) {
 					ObsoleteAttribute oa = AttributeTester.GetMethodObsoleteAttribute (base_method);
