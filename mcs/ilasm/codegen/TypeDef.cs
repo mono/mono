@@ -174,7 +174,7 @@ namespace Mono.ILASM {
                                 fielddef.Attributes |= PEAPI.FieldAttr.Static;
                         }
 
-                        field_table.Add (fielddef.Name, fielddef);
+                        field_table.Add (new DictionaryEntry (fielddef.Name, fielddef.Type.FullName), fielddef);
                         field_list.Add (fielddef);
                 }
 
@@ -477,9 +477,9 @@ namespace Mono.ILASM {
                         return methoddef.GetVarargSig (opt);
                 }
 
-                public PEAPI.Field ResolveField (string name, CodeGen code_gen)
+                public PEAPI.Field ResolveField (string name, string type_name, CodeGen code_gen)
                 {
-                        FieldDef fielddef = (FieldDef) field_table[name];
+                        FieldDef fielddef = (FieldDef) field_table[new DictionaryEntry (name, type_name)];
 
                         return fielddef.Resolve (code_gen, classdef);
                 }

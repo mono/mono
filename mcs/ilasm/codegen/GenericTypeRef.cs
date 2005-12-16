@@ -26,7 +26,10 @@ namespace Mono.ILASM {
                 }
 
                 public string FullName {
-                        get { return full_name + sig_mod; }
+                        get { 
+				PEAPI.GenParam gp = (PEAPI.GenParam) type;
+				return (gp.Type == PEAPI.GenParamType.Var ? "!" : "!!") + gp.Index + sig_mod;
+                        }
                 }
 
                 public override string SigMod {

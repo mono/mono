@@ -1,3 +1,12 @@
+2005-12-16  Ankit Jain  <jankit@novell.com>
+
+	Tests for fields with same name but different types.
+	* field-dup1.il, field-dup-gen2.il: Positive tests.
+	* err-field-dup1.il, err-field-dup2.il, err-field-dup3.il,
+	err-field-dup4.il, err-field-dup5.il, err-field-dup6-gen.il,
+	err-field-dup7-gen.il: Negative tests.
+	* one.cs, two.cs, oneg.cs: Required for use by above test cases.
+
 2005-12-15  Ankit Jain  <jankit@novell.com>
 
 	* test-array.il: Oops, contained two copies of the test case.

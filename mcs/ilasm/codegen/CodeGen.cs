@@ -291,8 +291,9 @@ namespace Mono.ILASM {
                         if (current_typedef != null) {
                                 current_typedef.AddFieldDef (fielddef);
                         } else {
-                                global_field_table.Add (fielddef.Name,
-                                                fielddef);
+                                global_field_table.Add (
+                                        new DictionaryEntry (fielddef.Name, fielddef.Type.FullName),
+                                        fielddef);
                         }
                 }
 
@@ -508,9 +509,9 @@ namespace Mono.ILASM {
                         return methoddef.GetVarargSig (opt);
                 }
 
-                public PEAPI.Field ResolveField (string name)
+                public PEAPI.Field ResolveField (string name, string type_name)
                 {
-                        FieldDef fielddef = (FieldDef) global_field_table[name];
+                        FieldDef fielddef = (FieldDef) global_field_table[new DictionaryEntry (name, type_name)]; 
 
                         return fielddef.Resolve (this);
                 }

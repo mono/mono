@@ -1,3 +1,27 @@
+2005-12-16  Ankit Jain  <jankit@novell.com>
+
+	Use tuple of (field name, type_name) for fielddef hashtable in TypeDef.cs and
+	CodeGen.cs
+	* FieldDef.cs (FieldDef.Type): New.
+	* TypeDef.cs (TypeDef.ResolveField): Add 'type_name' param.
+	* CodeGen.cs (CodeGen.ResolveField): Add 'type_name' param.
+	* FieldRef.cs (FieldRef.Resolve): Update usage of .ResolveField .
+	* GlobalFieldRef (GlobalFieldRef.Resolve): Likewise.
+	* ExternTable.cs (IScope.FullName): New. Returns full name including and enclosing class
+	or assembly/module name.
+	(ExternRef.FullName):
+	(ExternModule.FullName):
+	(ExternAssembly.FullName): Implement new IScope.FullName .
+	* ExternTypeRef.cs (ExternTypeRef.Clone): Clone SigMod also.
+	(ExternTypeRef.FullName): Update to return full name including enclosing type or assembly
+	or module name.	
+	(ExternTypeRef.Name): Update to return only full_name with modifiers (array/pointers etc).
+	(ExternTypeRef.GetReflectedType): Use Name instead of FullName as only type name is required here.
+	* GenericTypeRef.cs (GenericTypeRef.FullName): Return proper fullname of the form (!0 or !!0).
+	* GenericTypeInst.cs (GenericTypeInst.ctor): Change param 'full_name' to 'name'. 'full_name' is
+	constructed here using the type parameter list.
+	Update code to use name instead of full_name.
+			       
 2005-12-15  Ankit Jain  <jankit@novell.com>
 
 	* CodeGen.cs (CodeGen.SetAssemblyName): Multiple .assembly declarations with different

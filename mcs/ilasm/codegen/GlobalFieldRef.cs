@@ -38,7 +38,7 @@ namespace Mono.ILASM {
 			if (is_resolved)
 				return;
 
-                        peapi_field = code_gen.ResolveField (name);
+                        peapi_field = code_gen.ResolveField (name, ret_type.FullName);
 
 			is_resolved = true;
                 }

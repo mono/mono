@@ -56,8 +56,10 @@ namespace Mono.ILASM {
                 
                 public ExternTypeRef Clone ()
                 {
-                        return new ExternTypeRef (extern_ref, full_name, is_valuetype,
+                        ExternTypeRef etr = new ExternTypeRef (extern_ref, full_name, is_valuetype,
                                         (ArrayList) ConversionList.Clone ());
+                        etr.SigMod = SigMod;
+                        return etr;
                 }
                 
                 public PEAPI.Type PeapiType {
@@ -69,9 +71,17 @@ namespace Mono.ILASM {
                 }
 
                 public string FullName {
-                        get { return full_name + sig_mod; }
+                        get { 
+                                if (extern_ref == null)
+                                        return full_name + sig_mod;
+                                else
+                                        return extern_ref.FullName + (extern_ref is ExternTypeRef ? "/" : "") + full_name + sig_mod;
+                        }
                 }
 
+                public string Name {
+                        get { return full_name + sig_mod; }
+                }
 
                 public override string SigMod {
                         get { return sig_mod; }
@@ -187,9 +197,10 @@ namespace Mono.ILASM {
                         if (er != null) {
                                 ExternAssembly ea = er as ExternAssembly;
                                 if (ea != null) {
-                                        System.Reflection.Assembly asm = System.Reflection.Assembly.Load (er.Name);
+                                        System.Reflection.Assembly asm = System.Reflection.Assembly.Load (ea.Name);
 
-                                        return asm.GetType (FullName);
+                                        //Type name required here, so don't use FullName
+                                        return asm.GetType (Name);
                                 }/* else ExternModule */
 
                         } /*else - nested type? */

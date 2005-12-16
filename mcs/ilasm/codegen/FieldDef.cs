@@ -65,6 +65,10 @@ namespace Mono.ILASM {
                         set { attr = value; }
                 }
 
+                public ITypeRef Type {
+                        get { return type; }
+                }
+
                 public void SetOffset (uint val)
                 {
                         offset_set = true;

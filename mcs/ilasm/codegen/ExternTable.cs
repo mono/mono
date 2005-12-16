@@ -17,6 +17,7 @@ namespace Mono.ILASM {
         public interface IScope {
                 ExternTypeRef GetTypeRef (string full_name, bool is_valuetype);
                 PEAPI.ClassRef GetType (string full_name, bool is_valuetype);
+                string FullName { get; }
         }
 	
         public abstract class ExternRef : ICustomAttrTarget, IScope {
@@ -40,6 +41,10 @@ namespace Mono.ILASM {
 		public string Name {
 			get { return name; }
 		}
+
+                public virtual string FullName {
+                        get { return name; }
+                }
 
                 public void AddCustomAttribute (CustomAttr customattr)
                 {
@@ -101,6 +106,14 @@ namespace Mono.ILASM {
                 {
                 }
 
+                public override string FullName {
+                        get { 
+                                //'name' field should not contain the [.module ]
+                                //as its used for resolving
+                                return String.Format ("[.module {0}]", name); 
+                        }
+                }
+
                 public override void Resolve (CodeGen codegen)
                 {
                         if (is_resolved)
@@ -136,6 +149,14 @@ namespace Mono.ILASM {
                 {
                         this.name = name;
                         major = minor = build = revision = -1;
+                }
+
+                public override string FullName {
+                        get { 
+                                //'name' field should not contain the []
+                                //as its used for resolving
+                                return String.Format ("[{0}]", name); 
+                        }
                 }
 
                 public override void Resolve (CodeGen code_gen)

@@ -41,7 +41,7 @@ namespace Mono.ILASM {
 				return;
 
                         TypeDef owner_def = code_gen.TypeManager[owner.FullName];
-                        peapi_field = owner_def.ResolveField (name, code_gen);
+                        peapi_field = owner_def.ResolveField (name, ret_type.FullName, code_gen);
 
 			is_resolved = true;
                 }
