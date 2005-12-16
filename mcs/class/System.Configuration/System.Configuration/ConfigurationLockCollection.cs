@@ -59,7 +59,7 @@ namespace System.Configuration
 			this.lockType = lockType;
 		}
 
-		void checkName (string name)
+		void CheckName (string name)
 		{
 			bool isAttribute = (lockType & ConfigurationLockType.Attribute) == ConfigurationLockType.Attribute;
 
