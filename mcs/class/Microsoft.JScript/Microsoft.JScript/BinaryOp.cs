@@ -56,6 +56,7 @@ namespace Microsoft.JScript {
 
 		internal AST left {
 			get { return operand1; }
+			set { operand1 = value; }
 		}
 
 		internal AST right {

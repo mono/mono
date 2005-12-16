@@ -1998,9 +1998,15 @@ namespace Microsoft.JScript {
 
 		internal bool is_embedded;
 
-		internal Assign (AST parent, AST left, AST right, JSToken op, bool is_embedded, Location location)
-			: base (parent, left, right, op, location)
+		internal Assign (AST parent, JSToken op, Location location)
+			: base (parent, null, null, op, location)
 		{
+		}
+
+		internal void Init (AST left, AST right, bool is_embedded)
+		{
+			this.left = left;
+			this.right = right;
 			this.is_embedded = is_embedded;
 		}
 

@@ -1,5 +1,9 @@
 2005-12-15  Cesar Lopez Nataren  <cnataren@novell.com>
 
+	* Parser.cs: Use the new assign ctr and Init method.
+	* expression.cs (Assign): Modify the number of ctr and added the Init method.
+	* BinaryOp.cs: Add setter for left.
+
 	* Statement.cs (For.Emit): Take into account what relational
 	operator is in place.
 

@@ -372,7 +372,9 @@ namespace Microsoft.JScript {
 			} else {
 				// FIXME
 				pn = fn;
-				pn = new Assign (null, member_expr, pn, JSToken.Assign, false, new Location (ts.SourceName, ts.LineNumber));
+				Assign assign = new Assign (null, JSToken.Assign, new Location (ts.SourceName, ts.LineNumber));
+				assign.Init (member_expr, pn, false);
+				pn = assign;
 
 				// FIXME, research about createExprStatement
 				if (ft != FunctionType.Expression)
@@ -875,14 +877,17 @@ namespace Microsoft.JScript {
 			if (tt == Token.ASSIGN) {
 				ts.GetToken ();
 				decompiler.AddToken (Token.ASSIGN);
-				pn = new Assign (parent, pn, AssignExpr (parent, in_for_init), JSToken.Assign, false, new Location (ts.SourceName, ts.LineNumber));
+				Assign assign = new Assign (parent, JSToken.Assign, new Location (ts.SourceName, ts.LineNumber));
+				assign.Init (pn, AssignExpr (assign, in_for_init), false);
+				pn = assign;
 				return pn;
 			} else if (tt == Token.ASSIGNOP) {
 				ts.GetToken ();
 				int op = ts.GetOp ();
 				decompiler.AddAssignOp (op);
-				pn = new Assign (parent, pn, AssignExpr (parent, in_for_init), ToJSToken (op, tt), false, 
-					 new Location (ts.SourceName, ts.LineNumber));
+				Assign assign = new Assign (parent, ToJSToken (op, tt), new Location (ts.SourceName, ts.LineNumber));
+				assign.Init (pn, AssignExpr (assign, in_for_init), false);
+				pn = assign;
 			}
 			return pn;
 		}
