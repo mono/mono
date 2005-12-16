@@ -25,8 +25,6 @@ using System.Windows.Forms;
 	
 public class SwfCairo : Form
 {
-	const double M_PI = Math.PI;
-		
 	static void Main ()
 	{		
 		SwfCairo f = new SwfCairo ();
@@ -37,38 +35,36 @@ public class SwfCairo : Form
 	{
 		IntPtr hdc = a.Graphics.GetHdc ();
 		Win32Surface s = new Win32Surface (hdc);
-		Graphics g = new Graphics (s);
-		draw (g, this.Width, this.Height);
+		Context cr = new Context (s);
+		draw (cr, this.Width, this.Height);
 		
 		a.Graphics.ReleaseHdc (hdc);
 	}
 	
-	static void draw (Cairo.Graphics gr, int width, int height)
+	static void draw (Context cr, int width, int height)
 	{
 		double xc = 0.5;
 		double yc = 0.5;
 		double radius = 0.4;
-		double angle1 = 45.0  * (M_PI/180.0);  // angles are specified
-		double angle2 = 180.0 * (M_PI/180.0);  // in radians
+		double angle1 = 45.0  * (Math.PI / 180.0);  // angles are specified
+		double angle2 = 180.0 * (Math.PI / 180.0);  // in radians
 		
-		gr.Scale (width, height);
-		gr.LineWidth = 0.04;
+		cr.Scale (width, height);
+		cr.LineWidth = 0.04;
 
-		
-		gr.Arc (xc, yc, radius, angle1, angle2);
-		gr.Stroke ();
+		cr.Arc (xc, yc, radius, angle1, angle2);
+		cr.Stroke ();
 		
 		// draw helping lines
-		gr.Color = new Color(1, 0.2, 0.2, 0.6);
-		gr.Arc (xc, yc, 0.05, 0, 2*M_PI);
-		gr.Fill ();
-		gr.LineWidth = 0.03;
-		gr.Arc (xc, yc, radius, angle1, angle1);
-		gr.LineTo (new PointD(xc, yc));
-		gr.Arc (xc, yc, radius, angle2, angle2);
-		gr.LineTo (new PointD(xc, yc));
-		gr.Stroke ();
-		
+		cr.Color = new Color(1, 0.2, 0.2, 0.6);
+		cr.Arc (xc, yc, 0.05, 0, 2 * Math.PI);
+		cr.Fill ();
+		cr.LineWidth = 0.03;
+		cr.Arc (xc, yc, radius, angle1, angle1);
+		cr.LineTo (new PointD (xc, yc));
+		cr.Arc (xc, yc, radius, angle2, angle2);
+		cr.LineTo (new PointD (xc, yc));
+		cr.Stroke ();
 	}
 }
 
