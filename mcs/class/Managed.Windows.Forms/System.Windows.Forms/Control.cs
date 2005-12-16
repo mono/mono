@@ -3704,7 +3704,7 @@ namespace System.Windows.Forms
 						Form	form;
 
 						form = FindForm();
-						if (form != null) {
+						if (form != null && form.ActiveMenu != null) {
 							form.ActiveMenu.ProcessCmdKey(ref m, (Keys)m.WParam.ToInt32());
 						}
 					}

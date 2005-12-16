@@ -1,5 +1,11 @@
 2005-12-16  Jackson Harper  <jackson@ximian.com>
 
+	* Control.cs: Make sure we have an active menu before trying to
+	process commands on it. Prevents menu-less forms from crashing
+	when Alt is pressed.
+
+2005-12-16  Jackson Harper  <jackson@ximian.com>
+
 	* InternalWindowManager.cs: Don't translate tool windows screen
 	coordinates. This fixes windows 'bouncing' around when being moved.
 
