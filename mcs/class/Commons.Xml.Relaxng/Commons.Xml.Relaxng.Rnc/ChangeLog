@@ -1,5 +1,9 @@
 2005-12-16  Atsushi Enomoto <atsushi@ximian.com>
 
+	* RncWriter.cs : it needs another namespace resolver for datatypes.
+
+2005-12-16  Atsushi Enomoto <atsushi@ximian.com>
+
 	* RncWriter.cs : actually no need to change signature; use
 	  GetNamespacesInScope().
 

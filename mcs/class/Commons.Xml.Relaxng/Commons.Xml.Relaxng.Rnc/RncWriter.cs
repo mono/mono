@@ -56,19 +56,43 @@ namespace Commons.Xml.Relaxng.Rnc
 
 		TextWriter w;
 		NSResolver nsmgr;
+		NSResolver datansmgr;
 
 		public RncWriter (TextWriter writer)
-			: this (writer, defaultNamespaceManager)
+			: this (writer, null, defaultNamespaceManager)
 		{
 		}
 
 		public RncWriter (TextWriter writer, NSResolver nsmgr)
+			: this (writer, nsmgr, defaultNamespaceManager)
+		{
+		}
+
+		public RncWriter (TextWriter writer, NSResolver structureNamespaces, NSResolver dataNamespaces)
 		{
 			this.w = writer;
-			this.nsmgr = nsmgr;
+			this.nsmgr = structureNamespaces;
+			this.datansmgr = dataNamespaces;
+			XmlNameTable nt = GetNameTable (nsmgr, datansmgr);
+			if (nsmgr == null)
+				nsmgr = new XmlNamespaceManager (nt);
+			if (datansmgr == null)
+				datansmgr = new XmlNamespaceManager (nt);
 		}
 
 		#region Utility methods
+
+		private XmlNameTable GetNameTable (NSResolver nss1, NSResolver nss2)
+		{
+			XmlNameTable nt = null;
+			if (nss1 is XmlNamespaceManager)
+				nt = ((XmlNamespaceManager) nss1).NameTable;
+			if (nss2 is XmlNamespaceManager)
+				nt = ((XmlNamespaceManager) nss2).NameTable;
+			if (nt == null)
+				nt = new NameTable ();
+			return nt;
+		}
 
 		private bool IsKeyword (string name)
 		{
@@ -186,14 +210,19 @@ namespace Commons.Xml.Relaxng.Rnc
 
 		private void WriteQName (string name, string ns)
 		{
+			WriteQName (name, ns, nsmgr);
+		}
+
+		private void WriteQName (string name, string ns, NSResolver nss)
+		{
 			string prefix = String.Empty;
 			if (ns != null && ns != String.Empty) {
 #if NET_2_0
 #else
 				// XmlNamespaceManager sucks.
-				ns = nsmgr.NameTable.Add (ns);
+				ns = nss.NameTable.Add (ns);
 #endif
-				prefix = nsmgr.LookupPrefix (ns);
+				prefix = nss.LookupPrefix (ns);
 			}
 			if (prefix == null)
 				throw new RelaxngException (String.Format ("Namespace '{0}' is not mapped to a prefix in argument XmlNamespaceManager.", ns));
@@ -235,6 +264,12 @@ namespace Commons.Xml.Relaxng.Rnc
 
 		public void WriteNamespaces (string defaultNamespace)
 		{
+			WriteNamespaces (defaultNamespace, nsmgr, false);
+			WriteNamespaces (null, datansmgr, true);
+		}
+
+		public void WriteNamespaces (string defaultNamespace, NSResolver nsmgr, bool isData)
+		{
 			if (defaultNamespace == null)
 				defaultNamespace = String.Empty;
 
@@ -242,25 +277,29 @@ namespace Commons.Xml.Relaxng.Rnc
 				w.WriteLine ("default namespace = {0}",
 					defaultNamespace);
 
+			if (nsmgr != null) {
 #if NET_2_0
-			foreach (string s in nsmgr.GetNamespacesInScope (
-				XmlNamespaceScope.All).Keys) {
+				foreach (string s in nsmgr.GetNamespacesInScope (
+					XmlNamespaceScope.All).Keys) {
 #else
-			foreach (string s in nsmgr) {
+				foreach (string s in nsmgr) {
 #endif
-				switch (s) {
-				case "xml":
-				case "xmlns":
-					continue;
-				case "":
-					if (defaultNamespace.Length > 0)
-						w.WriteLine ("default namespace = '{0}'",
-							nsmgr.LookupNamespace (s).Replace ('\'', '\"'));
-					break;
-				default:
-					w.WriteLine ("namespace {0} = '{1}'",
-						s, nsmgr.LookupNamespace (s).Replace ('\'', '\"'));
-					break;
+					switch (s) {
+					case "xml":
+					case "xmlns":
+						continue;
+					case "":
+						if (defaultNamespace.Length > 0)
+							w.WriteLine ("default namespace = '{0}'",
+								nsmgr.LookupNamespace (s).Replace ('\'', '\"'));
+						break;
+					default:
+						w.WriteLine ("{2} {0} = '{1}'",
+							s,
+							nsmgr.LookupNamespace (s).Replace ('\'', '\"'),
+							isData ? "datatypes" : "namespace");
+						break;
+					}
 				}
 			}
 			w.WriteLine ();
@@ -351,7 +390,7 @@ namespace Commons.Xml.Relaxng.Rnc
 
 		public void WriteData (RelaxngData data)
 		{
-			WriteQName (data.Type, data.DatatypeLibrary);
+			WriteQName (data.Type, data.DatatypeLibrary, datansmgr);
 			if (data.ParamList.Count > 0) {
 				w.Write (" { ");
 				foreach (RelaxngParam p in data.ParamList)
@@ -364,7 +403,7 @@ namespace Commons.Xml.Relaxng.Rnc
 
 		public void WriteValue (RelaxngValue v)
 		{
-			WriteQName (v.Type, v.DatatypeLibrary);
+			WriteQName (v.Type, v.DatatypeLibrary, datansmgr);
 			w.Write (' ');
 			WriteLiteral (v.Value);
 		}
