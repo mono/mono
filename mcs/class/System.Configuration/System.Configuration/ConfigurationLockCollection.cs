@@ -95,8 +95,10 @@ namespace System.Configuration
 		public void Add (string name)
 		{
 			CheckName (name);
-			names.Add (name);
-			is_modified = true;
+			if (!names.Contains (name)) {
+				names.Add (name);
+				is_modified = true;
+			}
 		}
 
 		public void Clear ()
@@ -120,12 +122,17 @@ namespace System.Configuration
 			return names.GetEnumerator ();
 		}
 
-		[MonoTODO]
+		[MonoTODO ("we can't possibly *always* return false here...")]
 		public bool IsReadOnly (string name)
 		{
 			for (int i = 0; i < names.Count; i ++) {
-				if (names[i] == name)
-					return (lockType & ConfigurationLockType.Exclude) == 0; /* XXX is this what we want? */
+				if (names[i] == name) {
+					/* this test used to switch off whether the collection was 'Exclude' or not
+					 * (the LockAll*Except collections), but that doesn't seem to be the crux of
+					 * it.  maybe this returns true if the element/attribute is locked in a parent
+					 * element's lock collections? */
+					return false;
+				}
 			}
 
 			throw new ConfigurationErrorsException (String.Format ("The entry '{0}' is not in the collection.", name));

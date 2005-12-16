@@ -1,3 +1,10 @@
+2005-12-16  Chris Toshok  <toshok@ximian.com>
+
+	* ConfigurationLockCollection.cs (Add): only add the name if it's
+	not already there.
+	(IsReadOnly): always return false for the time being, in the
+	non-exceptional case.
+
 2005-12-15  Chris Toshok  <toshok@ximian.com>
 
 	* ConfigurationElement.cs (LockAllAttributesExcept): implement.
