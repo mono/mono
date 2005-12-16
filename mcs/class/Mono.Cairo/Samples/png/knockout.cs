@@ -3,7 +3,7 @@ using Cairo;
 
 class Knockout
 {
-	void OvalPath (Graphics ctx, double xc, double yc, double xr, double yr)
+	void OvalPath (Context ctx, double xc, double yc, double xr, double yr)
 	{
 		Matrix m = ctx.Matrix;
 
@@ -16,7 +16,7 @@ class Knockout
 		ctx.Matrix = m;
 	}
 
-	void FillChecks (Graphics ctx, int x, int y, int width, int height)
+	void FillChecks (Context ctx, int x, int y, int width, int height)
 	{
 		int CHECK_SIZE = 32;
 		
@@ -24,7 +24,7 @@ class Knockout
 		Surface check = ctx.Target.CreateSimilar (Content.Color, 2 * CHECK_SIZE, 2 * CHECK_SIZE);
 		
 		// draw the check
-		Graphics cr2 = new Graphics (check);
+		Context cr2 = new Context (check);
 		cr2.Operator = Operator.Source;
 		cr2.Color = new Color (0.4, 0.4, 0.4);
 		cr2.Rectangle (0, 0, 2 * CHECK_SIZE, 2 * CHECK_SIZE);
@@ -50,7 +50,7 @@ class Knockout
 		ctx.Restore ();
 	}
 
-	void Draw3Circles (Graphics ctx, int xc, int yc, double radius, double alpha)
+	void Draw3Circles (Context ctx, int xc, int yc, double radius, double alpha)
 	{
 		double subradius = radius * (2 / 3.0 - 0.1);
 
@@ -67,7 +67,7 @@ class Knockout
 		ctx.Fill ();
 	}
 
-	void Draw (Graphics ctx, int width, int height)
+	void Draw (Context ctx, int width, int height)
 	{
 		double radius = 0.5 * Math.Min (width, height) - 10;
 		int xc = width / 2;
@@ -81,14 +81,14 @@ class Knockout
 		ctx.Save ();
 
 		// Draw a black circle on the overlay
-		Graphics cr_overlay = new Graphics (overlay);
+		Context cr_overlay = new Context (overlay);
 		cr_overlay.Color = new Color (0.0, 0.0, 0.0);
 		OvalPath (cr_overlay, xc, yc, radius, radius);
 		cr_overlay.Fill ();
 
 		// Draw 3 circles to the punch surface, then cut
 		// that out of the main circle in the overlay
-		Graphics cr_tmp = new Graphics (punch);
+		Context cr_tmp = new Context (punch);
 		Draw3Circles (cr_tmp, xc, yc, radius, 1.0);
 		//cr_tmp.Destroy ();
 
@@ -99,7 +99,7 @@ class Knockout
 		// Now draw the 3 circles in a subgroup again
 		// at half intensity, and use OperatorAdd to join up
 		// without seams.
-		Graphics cr_circles = new Graphics (circles);
+		Context cr_circles = new Context (circles);
 		cr_circles.Operator = Operator.Over;
 		Draw3Circles (cr_circles, xc, yc, radius, 0.5);
 		// cr_circles.Destroy ();
@@ -125,7 +125,7 @@ class Knockout
 	Knockout ()
 	{
 		Surface s = new ImageSurface (Format.ARGB32, 400, 400);
-		Graphics ctx = new Graphics (s);
+		Context ctx = new Context (s);
 		Draw (ctx, 400, 400);
 		s.WriteToPng ("knockout.png");
 	}

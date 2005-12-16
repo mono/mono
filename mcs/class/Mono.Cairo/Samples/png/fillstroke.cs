@@ -33,7 +33,7 @@ using Cairo;
 public class CairoTest
 {	
 
-	static void draw (Cairo.Graphics gr, int width, int height)
+	static void draw (Cairo.Context gr, int width, int height)
 	{
 		gr.Scale (width, height);
 		gr.LineWidth = 0.04;
@@ -62,7 +62,7 @@ public class CairoTest
 	static void Main ()
 	{		
 		Surface s = new ImageSurface (Format.ARGB32, 500, 500);
-		Cairo.Graphics g = new Cairo.Graphics (s);
+		Cairo.Context g = new Cairo.Context (s);
 
 		draw (g, 500, 500);
 		
