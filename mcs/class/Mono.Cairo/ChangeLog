@@ -1,5 +1,12 @@
 2005-12-16  John Luke  <john.luke@gmail.com>
 
+	* Mono.Cairo/FontOptions.cs: fix bug with
+	fontOptions == null, check parameter to Merge
+	against null
+	* Mono.Cairo/Glyph.cs: add setters to properties
+	
+2005-12-16  John Luke  <john.luke@gmail.com>
+
 	* Mono.Cairo/Cairo.cs: organize and add missing API
 	split out enums and structs
 	* Mono.Cairo/*.cs: add enums and structs as seperate files

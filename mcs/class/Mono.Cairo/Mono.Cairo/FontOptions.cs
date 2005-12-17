@@ -25,6 +25,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
 using System;
 
 namespace Cairo
@@ -32,7 +33,7 @@ namespace Cairo
 	public class FontOptions : IDisposable
 	{
 		IntPtr handle;
-		bool disposed = false;
+		bool disposed;
 
 		public FontOptions ()
 		{
@@ -76,7 +77,7 @@ namespace Cairo
 
 		public static bool operator == (FontOptions options, FontOptions other)
 		{
-			return CairoAPI.cairo_font_options_equal (options.Handle, other.Handle);
+			return Equals (options, other);
 		}
 
 		public static bool operator != (FontOptions options, FontOptions other)
@@ -86,9 +87,12 @@ namespace Cairo
 
 		public override bool Equals (object other)
 		{
-			if (other is FontOptions)
-				return this == (FontOptions) other;
-			return false;
+			return Equals (other as FontOptions);
+		}
+
+		bool Equals (FontOptions options)
+		{
+			return options != null && CairoAPI.cairo_font_options_equal (Handle, options.Handle);
 		}
 
 		public IntPtr Handle {
@@ -102,6 +106,8 @@ namespace Cairo
 		
 		public void Merge (FontOptions other)
 		{
+			if (other == null)
+				throw new ArgumentNullException ("other");
 			CairoAPI.cairo_font_options_merge (handle, other.Handle);
 		}
 
