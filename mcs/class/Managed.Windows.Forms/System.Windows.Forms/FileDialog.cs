@@ -707,7 +707,6 @@ namespace System.Windows.Forms
 				helpButton.TabIndex = 11;
 				helpButton.Text = "Help";
 				helpButton.FlatStyle = FlatStyle.System;
-				helpButton.Hide( );
 				
 				// checkBox
 				checkBox.Anchor = ( (AnchorStyles)( ( ( AnchorStyles.Bottom | AnchorStyles.Left ) | AnchorStyles.Right ) ) );
@@ -716,7 +715,6 @@ namespace System.Windows.Forms
 				checkBox.Size = new Size( 245, 21 );
 				checkBox.FlatStyle = FlatStyle.System;
 				checkBox.TabIndex = 12;
-				checkBox.Hide( );
 				
 				ClientSize = new Size( 554, 405 ); // 384
 				
@@ -727,7 +725,6 @@ namespace System.Windows.Forms
 				Controls.Add( smallButtonToolBar );
 				Controls.Add( cancelButton );
 				Controls.Add( openSaveButton );
-				Controls.Add( helpButton );
 				Controls.Add( mwfFileView );
 				Controls.Add( fileTypeLabel );
 				Controls.Add( fileNameLabel );
@@ -736,7 +733,6 @@ namespace System.Windows.Forms
 				Controls.Add( dirComboBox );
 				Controls.Add( searchSaveLabel );
 				Controls.Add( popupButtonPanel );
-				Controls.Add( checkBox );
 				
 				ResumeLayout( false );
 				
@@ -1203,7 +1199,7 @@ namespace System.Windows.Forms
 			{
 				if ( fileDialog.ShowHelp || fileDialog.ShowReadOnly )
 				{
-					mwfFileView.Size = new Size( 449, 250 );
+					mwfFileView.Size = new Size( 449, 250 ); 
 					fileNameLabel.Location = new Point( 102, 298 );
 					fileNameComboBox.Location = new Point( 195, 298 );
 					fileTypeLabel.Location = new Point( 102, 324 );
@@ -1223,10 +1219,14 @@ namespace System.Windows.Forms
 				}
 				
 				if ( fileDialog.ShowHelp )
-					helpButton.Show( );
+					Controls.Add( helpButton );
+				else
+					Controls.Remove( helpButton );
 				
 				if ( fileDialog.ShowReadOnly )
-					checkBox.Show( );
+					Controls.Add( checkBox );
+				else
+					Controls.Remove( checkBox );
 			}
 			
 			internal class PopupButtonPanel : Panel
