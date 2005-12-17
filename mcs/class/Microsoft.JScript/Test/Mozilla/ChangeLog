@@ -1,5 +1,8 @@
 2005-12-16  Cesar Lopez Nataren  <cnataren@novell.com>
 
+	* mjs-most-tests: Enable ecma/Expressions/11.13.1.js and
+	ecma/TypeConversion/9.3.1-3.js.
+
 	* mjs-most-tests: Enable ecma_2/Statements/dowhile-003.js.
 
 2005-12-15  Cesar Lopez Nataren  <cnataren@novell.com>

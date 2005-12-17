@@ -299,7 +299,7 @@ ecma/ExecutionContexts/10.2.3-1.js
 ecma/Expressions/11.12-3.js
 # Invalid IL
 #ecma/Expressions/11.12-4.js
-#ecma/Expressions/11.13.1.js
+ecma/Expressions/11.13.1.js
 #ecma/Expressions/11.13.2-1.js
 #ecma/Expressions/11.13.2-2.js
 #ecma/Expressions/11.13.2-3.js
@@ -317,7 +317,7 @@ ecma/Expressions/11.2.2-1.js
 ecma/Expressions/11.2.2-10-n.js
 # Needs new Function
 #ecma/Expressions/11.2.2-11.js
-# Invalid IL
+# arguments failures
 #ecma/Expressions/11.2.2-2-n.js
 #ecma/Expressions/11.2.2-3-n.js
 #ecma/Expressions/11.2.2-4-n.js
@@ -746,8 +746,7 @@ ecma/String/15.5.5.1.js
 #ecma/TypeConversion/9.3-1.js
 ecma/TypeConversion/9.3.1-1.js
 ecma/TypeConversion/9.3.1-2.js
-# Invalid IL
-#ecma/TypeConversion/9.3.1-3.js
+ecma/TypeConversion/9.3.1-3.js
 # Needs eval
 #ecma/TypeConversion/9.3.js
 ecma/TypeConversion/9.4-1.js
@@ -909,10 +908,10 @@ ecma_2/RegExp/regress-001.js
 # RegExpObject:Initialize throws JScriptException
 #ecma_2/RegExp/unicode-001.js
 ecma_2/Statements/dowhile-001.js
-# invalid IL
+# SemanticAnalyser:NeedsToBoolean throws NotImplementedException
 #ecma_2/Statements/dowhile-002.js
 ecma_2/Statements/dowhile-003.js
-# invalid IL
+# SemanticAnalyser:NeedsToBoolean throws NotImplementedException
 #ecma_2/Statements/dowhile-004.js
 ecma_2/Statements/dowhile-005.js
 ecma_2/Statements/dowhile-006.js
@@ -952,7 +951,7 @@ ecma_2/String/match-003.js
 ecma_2/String/match-004.js
 ecma_2/String/replace-001.js
 ecma_2/String/split-001.js
-# Invalid IL
+# Trace/breakpoint trap
 #ecma_2/String/split-002.js
 ecma_2/String/split-003.js
 # Invalid IL
@@ -973,7 +972,7 @@ js1_2/Array/general2.js
 # LateBinding:CallValue throws NullReferenceException
 #js1_2/Array/tostring_1.js
 js1_2/Array/tostring_2.js
-# Invalid IL
+# Trace/breakpoint trap
 #js1_2/Objects/toString-001.js
 js1_2/String/charCodeAt.js
 js1_2/String/concat.js
