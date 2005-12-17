@@ -1,3 +1,12 @@
+2005-12-17  Cesar Lopez Nataren  <cnataren@novell.com>
+
+	* mjs-most.fail: Erase js1_3/inherit/proto_6.js,
+	js1_3/inherit/proto_7.js, js1_3/inherit/proto_8.js,
+	ecma/FunctionObjects/15.3.4-1.js, ecma_2/Exceptions/global-001.js,
+	ecma_2/Statements/dowhile-006.js,
+	ecma/ObjectObjects/15.2.3.1-2.js, js1_4/Regress/function-003.js as
+	they fail no more.
+
 2005-12-16  Cesar Lopez Nataren  <cnataren@novell.com>
 
 	* mjs-most-tests: Enable ecma/Expressions/11.13.1.js and

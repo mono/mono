@@ -17,9 +17,7 @@ ecma_2/Exceptions/date-001.js
 ecma_2/Statements/try-003.js
 ecma_2/Statements/try-004.js
 ecma_2/Statements/try-012.js
-js1_3/inherit/proto_6.js
-js1_3/inherit/proto_7.js
-js1_3/inherit/proto_8.js
+
 
 # System.NotImplementedException: Should emit LateBinding.CallValue logic for unknown constructor Math
 ecma/Expressions/11.2.2-10-n.js
@@ -57,20 +55,9 @@ ecma/Statements/12.6.3-19.js
 # System.NotImplementedException: The requested feature is not implemented. (Convert:ToForInObject)
 ecma/String/15.5.5.1.js
 
-# System.NotImplementedException: The requested feature is not implemented.
-# (Call:Emit, member_type = Property, member_exp = Function AccessField prototype)
-ecma/FunctionObjects/15.3.4-1.js
-
 # System.Exception: error JS5002 A: function expected.
 ecma_2/Exceptions/exception-001.js
 
-# System.NotImplementedException: The requested feature is not implemented.
-# (Convert:ToPrimitive, value = System.Object[])
-ecma_2/Exceptions/global-001.js
-
-# System.Exception: uknown type: Microsoft.JScript.Call
-# (fall_false, last_exp.GetType () == looping Microsoft.JScript.Args)
-ecma_2/Statements/dowhile-006.js
 # System.Exception: uknown type: Microsoft.JScript.Assign
 # (fall_false, last_exp.GetType () == expression Assign object AccessField whileExpression)
 ecma_2/Statements/while-002.js
@@ -98,8 +85,4 @@ ecma/Array/15.4.3.1-2.js
 ecma/FunctionObjects/15.3.3.1-3.js
 ecma/Number/15.7.3.3-2.js
 ecma/Number/15.7.3.5-2.jsc
-ecma/ObjectObjects/15.2.3.1-2.js
 ecma/Number/15.7.3.5-2.js
-
-# runtime error
-js1_4/Regress/function-003.js
