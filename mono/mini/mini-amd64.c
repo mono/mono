@@ -1544,7 +1544,7 @@ mono_arch_call_opcode2 (MonoCompile *cfg, MonoCallInst *call, int is_virtual) {
 						arg->inst_offset = 0;
 					} else if (sig->params [i - sig->hasthis]->type == MONO_TYPE_R8) {
 						MONO_EMIT_NEW_BIALU_IMM (cfg, OP_SUB_IMM, X86_ESP, X86_ESP, 8);
-						arg->opcode = OP_STORER4_MEMBASE_REG;
+						arg->opcode = OP_STORER8_MEMBASE_REG;
 						arg->inst_destbasereg = X86_ESP;
 						arg->inst_offset = 0;
 					}

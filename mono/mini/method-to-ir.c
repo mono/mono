@@ -1817,6 +1817,7 @@ handle_stack_args (MonoCompile *cfg, MonoInst **sp, int count) {
 			inst->cil_code = sp [i]->cil_code;
 			MONO_ADD_INS (cfg->cbb, inst);
 		}
+		sp [i] = locals [i];
 		if (cfg->verbose_level > 3)
 			g_print ("storing %d to temp %d\n", i, (int)locals [i]->inst_c0);
 	}
@@ -6560,6 +6561,9 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				
 				mono_castclass = mono_marshal_get_castclass (klass); 
 				iargs [0] = sp [0];
+
+				if (sp - stack_start)
+					handle_stack_args (cfg, stack_start, sp - stack_start);
 				
 				costs = inline_method (cfg, mono_castclass, mono_method_signature (mono_castclass), bblock, 
 							   iargs, ip, real_offset, dont_inline, &ebblock, TRUE);
@@ -6605,7 +6609,10 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 
 				mono_isinst = mono_marshal_get_isinst (klass); 
 				iargs [0] = sp [0];
-				
+
+				if (sp - stack_start)
+					handle_stack_args (cfg, stack_start, sp - stack_start);
+
 				costs = inline_method (cfg, mono_isinst, mono_method_signature (mono_isinst), bblock, 
 							   iargs, ip, real_offset, dont_inline, &ebblock, TRUE);
 			
@@ -6651,7 +6658,10 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				
 					mono_castclass = mono_marshal_get_castclass (klass); 
 					iargs [0] = sp [0];
-				
+
+					if (sp - stack_start)
+						handle_stack_args (cfg, stack_start, sp - stack_start);
+
 					costs = inline_method (cfg, mono_castclass, mono_method_signature (mono_castclass), bblock, 
 										   iargs, ip, real_offset, dont_inline, &ebblock, TRUE);
 			
@@ -6793,6 +6803,9 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 					iargs [4] = sp [1];
 
 					if (cfg->opt & MONO_OPT_INLINE) {
+						if (sp - stack_start)
+							handle_stack_args (cfg, stack_start, sp - stack_start);
+
 						costs = inline_method (cfg, stfld_wrapper, mono_method_signature (stfld_wrapper), bblock, 
 								       iargs, ip, real_offset, dont_inline, &ebblock, TRUE);
 						g_assert (costs > 0);
@@ -6843,6 +6856,9 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				EMIT_NEW_FIELDCONST (cfg, iargs [2], field);
 				EMIT_NEW_ICONST (cfg, iargs [3], klass->valuetype ? field->offset - sizeof (MonoObject) : field->offset);
 				if ((cfg->opt & MONO_OPT_INLINE) && !MONO_TYPE_ISSTRUCT (mono_method_signature (wrapper)->ret)) {
+					if (sp - stack_start)
+						handle_stack_args (cfg, stack_start, sp - stack_start);
+
 					costs = inline_method (cfg, wrapper, mono_method_signature (wrapper), bblock, 
 										   iargs, ip, real_offset, dont_inline, &ebblock, TRUE);
 					g_assert (costs > 0);
@@ -7687,35 +7703,34 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				/* Can't embed random pointers into AOT code */
 				cfg->disable_aot = 1;
 				break;
-#if 0
-			case CEE_MONO_VTADDR:
+			case CEE_MONO_VTADDR: {
+				int dreg = alloc_preg (cfg);
+
 				CHECK_STACK (1);
 				--sp;
-				MONO_INST_NEW (cfg, ins, OP_VTADDR);
-				ins->cil_code = ip;
+				EMIT_NEW_UNALU (cfg, ins, OP_MOVE, dreg, sp [0]->dreg);
 				ins->type = STACK_MP;
-				ins->inst_left = *sp;
 				*sp++ = ins;
 				ip += 2;
 				break;
+			}
 			case CEE_MONO_NEWOBJ: {
 				MonoInst *iargs [2];
-				int temp;
+
 				CHECK_STACK_OVF (1);
 				CHECK_OPSIZE (6);
 				token = read32 (ip + 2);
 				klass = (MonoClass *)mono_method_get_wrapper_data (method, token);
 				mono_class_init (klass);
 				NEW_DOMAINCONST (cfg, iargs [0]);
+				MONO_ADD_INS (cfg->cbb, iargs [0]);
 				NEW_CLASSCONST (cfg, iargs [1], klass);
-				temp = mono_emit_jit_icall (cfg, mono_object_new, iargs, ip);
-				NEW_TEMPLOAD (cfg, *sp, temp);
-				sp++;
+				MONO_ADD_INS (cfg->cbb, iargs [1]);
+				*sp++ = mono_emit_jit_icall (cfg, mono_object_new, iargs, ip);
 				ip += 6;
 				inline_costs += 10 * num_calls++;
 				break;
 			}
-#endif
 			case CEE_MONO_OBJADDR:
 				CHECK_STACK (1);
 				--sp;
@@ -7728,18 +7743,20 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				*sp++ = ins;
 				ip += 2;
 				break;
-#if 0
 			case CEE_MONO_LDNATIVEOBJ:
 				CHECK_STACK (1);
 				CHECK_OPSIZE (6);
+				--sp;
 				token = read32 (ip + 2);
 				klass = mono_method_get_wrapper_data (method, token);
 				g_assert (klass->valuetype);
 				mono_class_init (klass);
-				NEW_INDLOAD (cfg, ins, sp [-1], &klass->byval_arg);
-				sp [-1] = ins;
+
+				ins = emit_ldobj (cfg, sp [0], ip, klass);
+				*sp++ = ins;
 				ip += 6;
 				break;
+#if 0
 			case CEE_MONO_RETOBJ:
 				g_assert (cfg->ret);
 				g_assert (mono_method_signature (method)->pinvoke); 
@@ -8747,6 +8764,7 @@ mono_spill_global_vars (MonoCompile *cfg)
  *   - keeping them separate allows specialized compare instructions like
  *     compare_imm, compare_membase
  *   - most back ends unify fp compare+branch, fp compare+ceq
+ * - integrate handle_stack_args into inline_method
  * - Things to backport to the old JIT:
  *   - op_atomic_exchange fix for amd64
  */
