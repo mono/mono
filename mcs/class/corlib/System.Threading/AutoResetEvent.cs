@@ -9,7 +9,7 @@
 //
 
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004, 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -37,15 +37,32 @@ using System.Runtime.CompilerServices;
 namespace System.Threading 
 {
 
- 	public sealed class AutoResetEvent : WaitHandle 
+ 	public sealed class AutoResetEvent :
+#if NET_2_0
+	EventWaitHandle
+#else
+	WaitHandle 
+#endif
 	{
 		// Constructor
+#if NET_2_0
+		public AutoResetEvent (bool initialState)
+			: base(initialState, EventResetMode.AutoReset)
+		{
+		}
+#else
 		public AutoResetEvent(bool initialState) {
 			Handle = NativeEventCalls.CreateEvent_internal(false,initialState,null);
 		}
+#endif
 
 		// Methods
 
+/* Need BOOTSTRAP_NET_2_0 because System.Threading.Timer wants to use
+ * the Set and Reset methods that have moved to EventWaitHandle in the
+ * 2.0 profile
+ */
+#if ONLY_1_1 || BOOTSTRAP_NET_2_0
 		public bool Set() {
 			CheckDisposed ();
 			
@@ -57,6 +74,6 @@ namespace System.Threading
 			
 			return(NativeEventCalls.ResetEvent_internal(Handle));
 		}
-
+#endif
 	}
 }

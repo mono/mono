@@ -1,3 +1,12 @@
+2005-12-17  Dick Porter  <dick@ximian.com>
+
+	* corlib.dll.sources: Added in System.Security.AccessControl:
+	CommonObjectSecurity.cs, EventWaitHandleRights.cs,
+	EventWaitHandleSecurity.cs, ObjectSecurity.cs, MutexSecurity.cs,
+	NativeObjectSecurity.cs.  Added in System.Threading:
+	AbandonedMutexException.cs, EventResetMode.cs, EventWaitHandle.cs,
+	ThreadStartException.cs
+
 2005-12-15  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* corlib_test.dll.sources: Added ObjectManagerTest.cs in

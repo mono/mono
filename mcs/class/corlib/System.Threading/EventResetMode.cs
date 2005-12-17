@@ -1,16 +1,13 @@
-// ThreadPriority.cs
+// EventResetMode.cs
 //
-// This code was automatically generated from
-// ECMA CLI XML Library Specification.
-// Generator: libgen.xsl [1.0; (C) Sergey Chaban (serge@wildwestsoftware.com)]
-// Created: Wed, 5 Sep 2001 06:30:24 UTC
-// Source file: AllTypes.xml
-// URL: http://msdn.microsoft.com/net/ecma/AllTypes.xml
+// Author:
+//	Dick Porter (dick@ximian.com)
 //
-// (C) 2001 Ximian, Inc.  http://www.ximian.com
+// (C) Ximian, Inc.  http://www.ximian.com
+//
 
 //
-// Copyright (C) 2004, 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -33,38 +30,14 @@
 //
 
 #if NET_2_0
-using System.Runtime.Serialization;
+
+namespace System.Threading
+{
+	public enum EventResetMode
+	{
+		AutoReset = 0,
+		ManualReset = 1,
+	}
+}
+
 #endif
-
-namespace System.Threading {
-
-
-	/// <summary>
-	/// </summary>
-#if NET_2_0
-	[Serializable]
-#endif
-	public enum ThreadPriority {
-
-		/// <summary>
-		/// </summary>
-		Lowest = 0,
-
-		/// <summary>
-		/// </summary>
-		BelowNormal = 1,
-
-		/// <summary>
-		/// </summary>
-		Normal = 2,
-
-		/// <summary>
-		/// </summary>
-		AboveNormal = 3,
-
-		/// <summary>
-		/// </summary>
-		Highest = 4,
-	} // ThreadPriority
-
-} // System.Threading

@@ -49,9 +49,6 @@ namespace System.Threading
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static bool Monitor_try_enter(object obj, int ms);
 
-#if NET_2_0
-		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
-#endif
 		public static void Enter(object obj) {
 			if(obj==null) {
 				throw new ArgumentNullException("Object is null");

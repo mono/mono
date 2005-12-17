@@ -9,7 +9,7 @@
 //
 
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004, 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -138,6 +138,7 @@ namespace System.Threading
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static int Add(ref int location1, int add);
 
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static long Add(ref long location1, long add);
 #endif

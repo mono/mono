@@ -1036,8 +1036,14 @@ System.Security/VerificationException.cs
 System.Security/XmlSyntaxException.cs
 System.Security.AccessControl/AccessControlActions.cs
 System.Security.AccessControl/AccessControlSections.cs
+System.Security.AccessControl/CommonObjectSecurity.cs
 System.Security.AccessControl/CryptoKeySecurity.cs
 System.Security.AccessControl/DirectorySecurity.cs
+System.Security.AccessControl/EventWaitHandleRights.cs
+System.Security.AccessControl/EventWaitHandleSecurity.cs
+System.Security.AccessControl/ObjectSecurity.cs
+System.Security.AccessControl/MutexSecurity.cs
+System.Security.AccessControl/NativeObjectSecurity.cs
 System.Security.Cryptography/AsymmetricAlgorithm.cs
 System.Security.Cryptography/AsymmetricKeyExchangeDeformatter.cs
 System.Security.Cryptography/AsymmetricKeyExchangeFormatter.cs
@@ -1267,11 +1273,14 @@ System.Text/UnicodeEncoding.cs
 System.Text/UTF7Encoding.cs
 System.Text/UTF8Encoding.cs
 System.Text/UTF32Encoding.cs
+System.Threading/AbandonedMutexException.cs
 System.Threading/ApartmentState.cs
 System.Threading/AsyncFlowControl.cs
 System.Threading/AutoResetEvent.cs
 System.Threading/CompressedStack.cs
 System.Threading/ContextCallback.cs
+System.Threading/EventResetMode.cs
+System.Threading/EventWaitHandle.cs
 System.Threading/ExecutionContext.cs
 System.Threading/HostExecutionContext.cs
 System.Threading/HostExecutionContextManager.cs
@@ -1297,6 +1306,7 @@ System.Threading/ThreadInterruptedException.cs
 System.Threading/ThreadPool.cs
 System.Threading/ThreadPriority.cs
 System.Threading/ThreadStart.cs
+System.Threading/ThreadStartException.cs
 System.Threading/ThreadState.cs
 System.Threading/ThreadStateException.cs
 System.Threading/Timeout.cs

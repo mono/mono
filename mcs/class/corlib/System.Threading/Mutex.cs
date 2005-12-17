@@ -33,6 +33,7 @@ using System.Security.Permissions;
 
 #if NET_2_0
 using System.Runtime.ConstrainedExecution;
+using System.Security.AccessControl;
 #endif
 
 namespace System.Threading
@@ -48,12 +49,18 @@ namespace System.Threading
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern void ReleaseMutex_internal(IntPtr handle);
 
+#if NET_2_0
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
+#endif
 		public Mutex() {
 			bool created;
 			
 			Handle=CreateMutex_internal(false, null, out created);
 		}
 		
+#if NET_2_0
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
+#endif
 		public Mutex(bool initiallyOwned) {
 			bool created;
 			
@@ -61,6 +68,9 @@ namespace System.Threading
 						    out created);
 		}
 
+#if NET_2_0
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
+#endif
 		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
 		public Mutex (bool initiallyOwned, string name)
 		{
@@ -68,11 +78,23 @@ namespace System.Threading
 			Handle = CreateMutex_internal (initiallyOwned, name, out created);
 		}
 
+#if NET_2_0
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
+#endif
 		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
 		public Mutex (bool initiallyOwned, string name, out bool createdNew)
 		{
 			Handle = CreateMutex_internal (initiallyOwned, name, out createdNew);
 		}
+
+#if NET_2_0
+		[MonoTODO]
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
+		public Mutex (bool initiallyOwned, string name, out bool createdNew, MutexSecurity mutexSecurity)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 
 #if NET_2_0
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]

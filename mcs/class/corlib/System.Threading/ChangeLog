@@ -1,3 +1,19 @@
+2005-12-17  Dick Porter  <dick@ximian.com>
+
+	* ThreadStartException.cs: 
+	* EventWaitHandle.cs: 
+	* EventResetMode.cs: 
+	* AbandonedMutexException.cs: New for 2.0 profile
+
+	* ThreadState.cs: 
+	* Interlocked.cs: 
+	* RegisteredWaitHandle.cs: 
+	* Monitor.cs: 
+	* ThreadPriority.cs: 
+	* Mutex.cs: 
+	* ManualResetEvent.cs: 
+	* AutoResetEvent.cs: Updated for 2.0 profile
+
 2005-11-23  Zoltan Varga  <vargaz@gmail.com>
 
 	* Interlocked.cs: Add T:class constraint to the generic 
