@@ -446,7 +446,7 @@ namespace System.Windows.Forms
 		
 		protected void OnFileOk( CancelEventArgs e )
 		{
-			EventHandler fo = (EventHandler) Events [EventFileOk];
+			CancelEventHandler fo = (CancelEventHandler) Events [EventFileOk];
 			if (fo != null)
 				fo (this, e);
 		}

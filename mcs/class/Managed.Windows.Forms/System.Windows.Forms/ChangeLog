@@ -1,5 +1,9 @@
 2005-12-17  Alexander Olk  <alex.olk@googlemail.com>
 
+	* FileDialog.cs: Patch for #76901 by Atsushi Enomoto
+
+2005-12-17  Alexander Olk  <alex.olk@googlemail.com>
+
 	* FileDialog.cs: Add the Help button and the open readonly
 	  checkbox only if needed
 
