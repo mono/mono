@@ -1,3 +1,7 @@
+2005-12-18  Raja R Harinath  <harinath@gmail.com>
+
+	* TypeTest.cs (FullNameGenerics): Identify individual assertions.
+
 2005-12-15  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DoubleTest.cs: Added test cases for parsing hexadecimal strings.
