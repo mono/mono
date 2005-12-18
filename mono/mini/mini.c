@@ -7934,6 +7934,7 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 
 	switch (patch_info->type) {
 	case MONO_PATCH_INFO_BB:
+		g_assert (patch_info->data.bb->native_offset);
 		target = patch_info->data.bb->native_offset + code;
 		break;
 	case MONO_PATCH_INFO_ABS:
@@ -8240,6 +8241,15 @@ replace_out_block_in_code (MonoBasicBlock *bb, MonoBasicBlock *orig, MonoBasicBl
 		if (inst->opcode == OP_CALL_HANDLER) {
 			if (inst->inst_target_bb == orig) {
 				inst->inst_target_bb = repl;
+			}
+		}
+		if (inst->opcode == OP_JUMP_TABLE) {
+			int i;
+			MonoJumpInfoBBTable *table = inst->inst_p0;
+			for (i = 0; i < table->table_size; i++ ) {
+				if (table->table [i] == orig) {
+					table->table [i] = repl;
+				}
 			}
 		}
 	}
@@ -9000,10 +9010,11 @@ mono_codegen (MonoCompile *cfg)
 				mono_domain_unlock (cfg->domain);
 			}
 
-			if (!cfg->compile_aot)
+			if (!cfg->compile_aot && !cfg->new_ir)
 				/* In the aot case, the patch already points to the correct location */
 				patch_info->ip.i = patch_info->ip.label->inst_c0;
 			for (i = 0; i < patch_info->data.table->table_size; i++) {
+				g_assert (patch_info->data.table->table [i]->native_offset);
 				table [i] = GINT_TO_POINTER (patch_info->data.table->table [i]->native_offset);
 			}
 			patch_info->data.table->table = (MonoBasicBlock**)table;
@@ -9392,11 +9403,6 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 	if (cfg->verbose_level > 2)
 		g_print ("converting method %s\n", mono_method_full_name (method, TRUE));
 
-	/*
-	if (strstr (method->name, "test_") == method->name)
-		cfg->new_ir = TRUE;
-	*/
-
 	{
 		static int count = 0;
 
@@ -9416,7 +9422,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 	}
 
 	/*
-	if (strstr (cfg->method->name, "get_simple"))
+	if (strstr (cfg->method->name, "LoadData"))
 		cfg->new_ir = FALSE;
 	*/
 

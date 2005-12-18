@@ -6012,17 +6012,25 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			if (cfg->compile_aot) {
 				NOT_IMPLEMENTED;
 			} else {
+				int table_reg = alloc_preg (cfg);
+				int sum_reg = alloc_preg (cfg);
+				MonoJumpInfoBBTable *table;
+
+				table = mono_mempool_alloc (cfg->mempool, sizeof (MonoJumpInfoBBTable));
+				table->table = targets;
+				table->table_size = n;
+
+				MONO_INST_NEW (cfg, ins, OP_JUMP_TABLE);
+				ins->inst_c1 = MONO_PATCH_INFO_SWITCH;
+				ins->inst_p0 = table;
+				ins->dreg = table_reg;
+				MONO_ADD_INS (cfg->cbb, ins);
+
+				/* FIXME: Use load_memindex */
+				MONO_EMIT_NEW_BIALU (cfg, OP_PADD, sum_reg, table_reg, offset_reg);
+				MONO_EMIT_NEW_LOAD_MEMBASE (cfg, target_reg, sum_reg, 0);
+
 				MONO_NEW_LABEL (cfg, label);
-
-				mono_create_jump_table (cfg, label, targets, n);
-
-				/* the backend must patch the address. we use 0xf0f0f0f0 to avoid the usage 
-				 * of special (short) opcodes on x86 */
-				mono_bblock_add_inst (cfg->cbb, label);
-				if (sizeof (gpointer) == 8)
-					MONO_EMIT_NEW_LOAD_MEMBASE (cfg, target_reg, offset_reg, (long)0xf0f0f0f0f0f0f0f1LL);
-				else
-					MONO_EMIT_NEW_LOAD_MEMBASE (cfg, target_reg, offset_reg, 0xf0f0f0f0);
 			}
 			MONO_EMIT_NEW_UNALU (cfg, OP_BR_REG, -1, target_reg);
 			inline_costs += 20;
@@ -6558,12 +6566,11 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				MonoInst *iargs [1];
 				MonoBasicBlock *ebblock;
 				int costs;
+
+				handle_stack_args (cfg, stack_start, (sp + 1) - stack_start);
 				
 				mono_castclass = mono_marshal_get_castclass (klass); 
 				iargs [0] = sp [0];
-
-				if (sp - stack_start)
-					handle_stack_args (cfg, stack_start, sp - stack_start);
 				
 				costs = inline_method (cfg, mono_castclass, mono_method_signature (mono_castclass), bblock, 
 							   iargs, ip, real_offset, dont_inline, &ebblock, TRUE);
@@ -6607,11 +6614,10 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				MonoBasicBlock *ebblock;
 				int costs;
 
+				handle_stack_args (cfg, stack_start, (sp + 1) - stack_start);
+
 				mono_isinst = mono_marshal_get_isinst (klass); 
 				iargs [0] = sp [0];
-
-				if (sp - stack_start)
-					handle_stack_args (cfg, stack_start, sp - stack_start);
 
 				costs = inline_method (cfg, mono_isinst, mono_method_signature (mono_isinst), bblock, 
 							   iargs, ip, real_offset, dont_inline, &ebblock, TRUE);
@@ -6655,12 +6661,11 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 					MonoInst *iargs [1];
 					MonoBasicBlock *ebblock;
 					int costs;
+
+					handle_stack_args (cfg, stack_start, (sp + 1) - stack_start);
 				
 					mono_castclass = mono_marshal_get_castclass (klass); 
 					iargs [0] = sp [0];
-
-					if (sp - stack_start)
-						handle_stack_args (cfg, stack_start, sp - stack_start);
 
 					costs = inline_method (cfg, mono_castclass, mono_method_signature (mono_castclass), bblock, 
 										   iargs, ip, real_offset, dont_inline, &ebblock, TRUE);
@@ -6795,6 +6800,9 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 					MonoMethod *stfld_wrapper = mono_marshal_get_stfld_wrapper (field->type); 
 					MonoInst *iargs [5];
 
+					if (cfg->opt & MONO_OPT_INLINE)
+						handle_stack_args (cfg, stack_start, (sp + 2) - stack_start);
+
 					iargs [0] = sp [0];
 					EMIT_NEW_CLASSCONST (cfg, iargs [1], klass);
 					EMIT_NEW_FIELDCONST (cfg, iargs [2], field);
@@ -6803,9 +6811,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 					iargs [4] = sp [1];
 
 					if (cfg->opt & MONO_OPT_INLINE) {
-						if (sp - stack_start)
-							handle_stack_args (cfg, stack_start, sp - stack_start);
-
 						costs = inline_method (cfg, stfld_wrapper, mono_method_signature (stfld_wrapper), bblock, 
 								       iargs, ip, real_offset, dont_inline, &ebblock, TRUE);
 						g_assert (costs > 0);
@@ -6856,8 +6861,8 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				EMIT_NEW_FIELDCONST (cfg, iargs [2], field);
 				EMIT_NEW_ICONST (cfg, iargs [3], klass->valuetype ? field->offset - sizeof (MonoObject) : field->offset);
 				if ((cfg->opt & MONO_OPT_INLINE) && !MONO_TYPE_ISSTRUCT (mono_method_signature (wrapper)->ret)) {
-					if (sp - stack_start)
-						handle_stack_args (cfg, stack_start, sp - stack_start);
+					handle_stack_args (cfg, stack_start, (sp + 1) - stack_start);
+					iargs [0] = sp [0];
 
 					costs = inline_method (cfg, wrapper, mono_method_signature (wrapper), bblock, 
 										   iargs, ip, real_offset, dont_inline, &ebblock, TRUE);

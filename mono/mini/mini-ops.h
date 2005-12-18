@@ -452,6 +452,7 @@ MINI_OP(OP_FCONV_TO_U,	"float_conv_to_u", NONE, NONE, NONE)
 MINI_OP(OP_CKFINITE, "op_ckfinite", FREG, FREG, NONE)
 
 MINI_OP(OP_GROUP, "group", NONE, NONE, NONE)
+MINI_OP(OP_JUMP_TABLE, "op_jump_table", IREG, NONE, NONE)
 
 /* aot compiler */
 MINI_OP(OP_AOTCONST, "aot_const", NONE, NONE, NONE)
