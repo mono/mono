@@ -1,5 +1,10 @@
 2005-14-12 Konstantin Triger <kostat@mainsoft.com>
 
+	* DbPortResolver.cs, AbstractDBConnection.cs: differentiate between the situation where
+		don't have a response and where instance name does not exist.
+	
+2005-14-12 Konstantin Triger <kostat@mainsoft.com>
+
 	* DbPortResolver.cs: fix port resolution for unnamed instances.
 
 2005-27-11 Boris Kirzner <borisk@mainsoft.com>
