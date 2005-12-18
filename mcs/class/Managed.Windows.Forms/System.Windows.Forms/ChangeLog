@@ -1,3 +1,7 @@
+2005-12-18  Alexander Olk  <alex.olk@googlemail.com>
+
+	* ThemeClearlooks.cs: Updated TrackBar drawing.
+
 2005-12-17  Alexander Olk  <alex.olk@googlemail.com>
 
 	* FileDialog.cs: Patch for #76901 by Atsushi Enomoto

@@ -109,6 +109,12 @@ namespace System.Windows.Forms {
 		static readonly Color checkbox_pressed_inner_boder_color = Color.FromArgb( 203, 196, 189 );
 		static readonly Color checkbox_pressed_backcolor = Color.FromArgb( 212, 207, 202 );
 		
+		static readonly Color trackbar_second_gradient_color = Color.FromArgb( 114, 154, 190 );
+		static readonly Color trackbar_third_gradient_color = Color.FromArgb( 130, 168, 202 );
+		static readonly Color trackbar_inner_first_gradient_color = Color.FromArgb( 238, 233, 229 );
+		static readonly Color trackbar_inner_second_gradient_color = Color.FromArgb( 223, 215, 208 );
+		static readonly Color trackbar_inner_pressed_second_gradient_color = Color.FromArgb( 224, 217, 210 );
+		
 		const int SEPARATOR_HEIGHT = 7;
     		const int MENU_TAB_SPACE = 8;		// Pixels added to the width of an item because of a tab
     		const int MENU_BAR_ITEMS_SPACE = 8;	// Space between menu bar items
@@ -1713,6 +1719,440 @@ namespace System.Windows.Forms {
 			text_format.Dispose( );	
 		}
 		#endregion
+		
+		#region	TrackBar
+		private void DrawTrackBar_Vertical( Graphics dc, Rectangle clip_rectangle, TrackBar tb,
+						   ref Rectangle thumb_pos, ref Rectangle thumb_area,
+						   float ticks, int value_pos, bool mouse_value ) {			
+			
+			Point toptick_startpoint = new Point( );
+			Point bottomtick_startpoint = new Point( );
+			Point channel_startpoint = new Point( );
+			float pixel_len;
+			float pixels_betweenticks;
+			const int space_from_right = 8;
+			const int space_from_left = 8;
+			Rectangle area = tb.ClientRectangle;
+			
+			switch ( tb.TickStyle ) 	{
+				case TickStyle.BottomRight:
+				case TickStyle.None:
+					channel_startpoint.Y = 8;
+					channel_startpoint.X = 9;
+					bottomtick_startpoint.Y = 13;
+					bottomtick_startpoint.X = 24;				
+					break;
+				case TickStyle.TopLeft:
+					channel_startpoint.Y = 8;
+					channel_startpoint.X = 19;
+					toptick_startpoint.Y = 13;
+					toptick_startpoint.X = 8;
+					break;
+				case TickStyle.Both:
+					channel_startpoint.Y = 8;
+					channel_startpoint.X = 18;	
+					bottomtick_startpoint.Y = 13;
+					bottomtick_startpoint.X = 32;				
+					toptick_startpoint.Y = 13;
+					toptick_startpoint.X = 8;				
+					break;
+				default:
+					break;
+			}
+			
+			thumb_area.X = area.X + channel_startpoint.X;
+			thumb_area.Y = area.Y + channel_startpoint.Y;
+			thumb_area.Height = area.Height - space_from_right - space_from_left;
+			thumb_area.Width = 4;
+			
+			pixel_len = thumb_area.Height - 11;
+			pixels_betweenticks = pixel_len / ( tb.Maximum - tb.Minimum );
+			
+			/* Convert thumb position from mouse position to value*/
+			if ( mouse_value ) {
+				
+				if ( value_pos >= channel_startpoint.Y )
+					value_pos = (int)( ( (float) ( value_pos - channel_startpoint.Y ) ) / pixels_betweenticks );
+				else
+					value_pos = 0;			
+				
+				if ( value_pos + tb.Minimum > tb.Maximum )
+					value_pos = tb.Maximum - tb.Minimum;
+                                
+				tb.Value = value_pos + tb.Minimum;
+			}		
+			
+			thumb_pos.Width = 13;
+			thumb_pos.Height = 29;
+			
+			thumb_pos.Y = channel_startpoint.Y + (int) ( pixels_betweenticks * (float) value_pos ) - ( thumb_pos.Height / 3 );
+			
+			if ( thumb_pos.Y < channel_startpoint.Y )
+				thumb_pos.Y = channel_startpoint.Y;
+			
+			if ( thumb_pos.Y > thumb_area.Bottom - 29 )
+				thumb_pos.Y = thumb_area.Bottom - 29;
+			
+			/* Draw channel */
+			// bottom
+			Pen pen = ResPool.GetPen( tab_top_border_focus_color );
+			dc.DrawLine( pen, channel_startpoint.X, thumb_pos.Y + 29, channel_startpoint.X, thumb_area.Bottom );
+			dc.DrawLine( pen, channel_startpoint.X, thumb_area.Bottom, channel_startpoint.X + 4, thumb_area.Bottom );
+			dc.DrawLine( pen, channel_startpoint.X + 4, thumb_pos.Y + 29, channel_startpoint.X + 4, thumb_area.Bottom );
+			
+			pen = ResPool.GetPen( menuitem_gradient_first_color );
+			dc.DrawLine( pen, channel_startpoint.X + 1, thumb_pos.Y + 28, channel_startpoint.X + 1, thumb_area.Bottom - 1 );
+			pen = ResPool.GetPen( trackbar_second_gradient_color );
+			dc.DrawLine( pen, channel_startpoint.X + 2, thumb_pos.Y + 28, channel_startpoint.X + 2, thumb_area.Bottom - 1 );
+			pen = ResPool.GetPen( trackbar_third_gradient_color );
+			dc.DrawLine( pen, channel_startpoint.X + 3, thumb_pos.Y + 28, channel_startpoint.X + 3, thumb_area.Bottom - 1 );
+			
+			// top
+			pen = ResPool.GetPen( pressed_inner_border_dark_color );
+			dc.DrawLine( pen, channel_startpoint.X + 1, channel_startpoint.Y + 1, channel_startpoint.X + 1, thumb_pos.Y );
+			dc.DrawRectangle( ResPool.GetPen( scrollbar_background_color ), channel_startpoint.X + 2, channel_startpoint.Y + 1, 1, thumb_pos.Y );
+			
+			pen = ResPool.GetPen( scrollbar_border_color );
+			dc.DrawLine( pen, channel_startpoint.X, channel_startpoint.Y, channel_startpoint.X, thumb_pos.Y );
+			dc.DrawLine( pen, channel_startpoint.X, channel_startpoint.Y, channel_startpoint.X + 4, channel_startpoint.Y );
+			dc.DrawLine( pen, channel_startpoint.X + 4, channel_startpoint.Y, channel_startpoint.X + 4, thumb_pos.Y );
+			
+			/* Draw thumb */
+			thumb_pos.X = channel_startpoint.X - 4;
+			
+			// inner border
+			pen = ResPool.GetPen( Color.White );
+			dc.DrawLine( pen, thumb_pos.X + 1, thumb_pos.Y + 1, thumb_pos.X + 1, thumb_pos.Bottom - 2 );
+			dc.DrawLine( pen, thumb_pos.X + 2, thumb_pos.Y + 1, thumb_pos.Right - 2, thumb_pos.Y + 1 );
+			
+			pen = ResPool.GetPen( menu_separator_color );
+			dc.DrawLine( pen, thumb_pos.X + 2, thumb_pos.Bottom - 2, thumb_pos.Right - 2, thumb_pos.Bottom - 2 );
+			dc.DrawLine( pen, thumb_pos.Right - 2, thumb_pos.Y + 2, thumb_pos.Right - 2, thumb_pos.Bottom - 2 );
+			
+			// outer border
+			Point[] points = {
+				new Point( thumb_pos.X + 2, thumb_pos.Y ),
+				new Point( thumb_pos.Right - 3 , thumb_pos.Y ),
+				new Point( thumb_pos.Right - 1, thumb_pos.Y + 2 ),
+				new Point( thumb_pos.Right - 1, thumb_pos.Bottom - 3 ),
+				new Point( thumb_pos.Right - 3, thumb_pos.Bottom - 1 ),
+				new Point( thumb_pos.X + 2, thumb_pos.Bottom - 1 ),
+				new Point( thumb_pos.X, thumb_pos.Bottom - 3 ),
+				new Point( thumb_pos.X, thumb_pos.Y + 2 ),
+				new Point( thumb_pos.X + 2, thumb_pos.Y )
+			};
+			
+			dc.DrawLines( ResPool.GetPen( border_normal_dark_color ), points );
+			
+			Color first_gradient_color = mouse_value ? button_edge_bottom_outer_color : trackbar_inner_first_gradient_color;
+			Color second_gradient_color = mouse_value ? trackbar_inner_pressed_second_gradient_color : trackbar_inner_second_gradient_color;
+			
+			using ( LinearGradientBrush lgbr = new LinearGradientBrush( new Point( thumb_pos.X, thumb_pos.Y + 2 ), new Point( thumb_pos.X, thumb_pos.Bottom - 2 ), first_gradient_color, second_gradient_color ) ) {
+				dc.FillRectangle( lgbr, thumb_pos.X + 2, thumb_pos.Y + 2, thumb_pos.Width - 4, thumb_pos.Height - 4 );
+			}
+			
+			// outer egdes
+			pen = ResPool.GetPen( edge_top_inner_color );
+			dc.DrawLine( pen, thumb_pos.X, thumb_pos.Y + 1, thumb_pos.X + 1, thumb_pos.Y );
+			dc.DrawLine( pen, thumb_pos.Right - 2, thumb_pos.Y, thumb_pos.Right - 1, thumb_pos.Y + 1 );
+			
+			pen = ResPool.GetPen( edge_bottom_inner_color );
+			dc.DrawLine( pen, thumb_pos.X, thumb_pos.Bottom - 2, thumb_pos.X + 1, thumb_pos.Bottom - 1 );
+			dc.DrawLine( pen, thumb_pos.Right - 1, thumb_pos.Bottom - 2, thumb_pos.Right - 2, thumb_pos.Bottom - 1 );
+			
+			// draw grip lines
+			pen = ResPool.GetPen( pressed_inner_border_dark_color );
+			dc.DrawLine( pen, thumb_pos.X + 4, thumb_pos.Y + 11, thumb_pos.X + 8, thumb_pos.Y + 11 );
+			dc.DrawLine( pen, thumb_pos.X + 4, thumb_pos.Y + 14, thumb_pos.X + 8, thumb_pos.Y + 14 );
+			dc.DrawLine( pen, thumb_pos.X + 4, thumb_pos.Y + 17, thumb_pos.X + 8, thumb_pos.Y + 17 );
+			
+			pen = ResPool.GetPen( Color.White );
+			dc.DrawLine( pen, thumb_pos.X + 4, thumb_pos.Y + 12, thumb_pos.X + 8, thumb_pos.Y + 12 );
+			dc.DrawLine( pen, thumb_pos.X + 4, thumb_pos.Y + 15, thumb_pos.X + 8, thumb_pos.Y + 15 );
+			dc.DrawLine( pen, thumb_pos.X + 4, thumb_pos.Y + 18, thumb_pos.X + 8, thumb_pos.Y + 18 );
+			
+			pixel_len = thumb_area.Height - 11;
+			pixels_betweenticks = pixel_len / ticks;
+			
+			/* Draw ticks*/
+			thumb_area.X = thumb_pos.X;
+			thumb_area.Y = channel_startpoint.Y;
+			thumb_area.Width = thumb_pos.Width;
+			
+			Region outside = new Region( area );
+			outside.Exclude( thumb_area );			
+			
+			if ( outside.IsVisible( clip_rectangle ) ) {				
+				if ( pixels_betweenticks > 0 && ( ( tb.TickStyle & TickStyle.BottomRight ) == TickStyle.BottomRight ||
+				    ( ( tb.TickStyle & TickStyle.Both ) == TickStyle.Both ) ) ) {	
+					
+					for ( float inc = 0; inc < ( pixel_len + 1 ); inc += pixels_betweenticks ) 	{					
+						if ( inc == 0 || ( inc +  pixels_betweenticks ) >= pixel_len + 1 )
+							dc.DrawLine( ResPool.GetPen( pen_ticks_color ), area.X + bottomtick_startpoint.X , area.Y + bottomtick_startpoint.Y  + inc, 
+								    area.X + bottomtick_startpoint.X  + 3, area.Y + bottomtick_startpoint.Y + inc );
+						else
+							dc.DrawLine( ResPool.GetPen( pen_ticks_color ), area.X + bottomtick_startpoint.X, area.Y + bottomtick_startpoint.Y  + inc, 
+								    area.X + bottomtick_startpoint.X  + 2, area.Y + bottomtick_startpoint.Y + inc );
+					}
+				}
+				
+				if ( pixels_betweenticks > 0 &&  ( ( tb.TickStyle & TickStyle.TopLeft ) == TickStyle.TopLeft ||
+				    ( ( tb.TickStyle & TickStyle.Both ) == TickStyle.Both ) ) ) {
+					
+					pixel_len = thumb_area.Height - 11;
+					pixels_betweenticks = pixel_len / ticks;
+					
+					for ( float inc = 0; inc < ( pixel_len + 1 ); inc += pixels_betweenticks ) {					
+						if ( inc == 0 || ( inc +  pixels_betweenticks ) >= pixel_len + 1 )
+							dc.DrawLine( ResPool.GetPen( pen_ticks_color ), area.X + toptick_startpoint.X  - 3 , area.Y + toptick_startpoint.Y + inc, 
+								    area.X + toptick_startpoint.X, area.Y + toptick_startpoint.Y + inc );
+						else
+							dc.DrawLine( ResPool.GetPen( pen_ticks_color ), area.X + toptick_startpoint.X  - 2, area.Y + toptick_startpoint.Y + inc, 
+								    area.X + toptick_startpoint.X, area.Y + toptick_startpoint.Y  + inc );
+					}			
+				}
+			}
+			
+			outside.Dispose( );
+			
+		}
+		
+		private void DrawTrackBar_Horizontal( Graphics dc, Rectangle clip_rectangle, TrackBar tb,
+						     ref Rectangle thumb_pos, ref Rectangle thumb_area,
+						     float ticks, int value_pos, bool mouse_value ) {			
+			Point toptick_startpoint = new Point( );
+			Point bottomtick_startpoint = new Point( );
+			Point channel_startpoint = new Point( );
+			float pixel_len;
+			float pixels_betweenticks;
+			const int space_from_right = 8;
+			const int space_from_left = 8;
+			Rectangle area = tb.ClientRectangle;
+			
+			switch ( tb.TickStyle ) {
+				case TickStyle.BottomRight:
+				case TickStyle.None:
+					channel_startpoint.X = 8;
+					channel_startpoint.Y = 9;
+					bottomtick_startpoint.X = 13;
+					bottomtick_startpoint.Y = 24;				
+					break;
+				case TickStyle.TopLeft:
+					channel_startpoint.X = 8;
+					channel_startpoint.Y = 19;
+					toptick_startpoint.X = 13;
+					toptick_startpoint.Y = 8;
+					break;
+				case TickStyle.Both:
+					channel_startpoint.X = 8;
+					channel_startpoint.Y = 18;	
+					bottomtick_startpoint.X = 13;
+					bottomtick_startpoint.Y = 32;				
+					toptick_startpoint.X = 13;
+					toptick_startpoint.Y = 8;				
+					break;
+				default:
+					break;
+			}
+			
+			thumb_area.X = area.X + channel_startpoint.X;
+			thumb_area.Y = area.Y + channel_startpoint.Y;
+			thumb_area.Width = area.Width - space_from_right - space_from_left;
+			thumb_area.Height = 4;
+			
+			pixel_len = thumb_area.Width - 11;
+			pixels_betweenticks = pixel_len / ( tb.Maximum - tb.Minimum );
+			
+			/* Convert thumb position from mouse position to value*/
+			if ( mouse_value ) {			
+				if ( value_pos >= channel_startpoint.X )
+					value_pos = (int)( ( (float) ( value_pos - channel_startpoint.X ) ) / pixels_betweenticks );
+				else
+					value_pos = 0;				
+				
+				if ( value_pos + tb.Minimum > tb.Maximum )
+					value_pos = tb.Maximum - tb.Minimum;
+                                
+				tb.Value = value_pos + tb.Minimum;
+			}			
+			
+			thumb_pos.Width = 29;
+			thumb_pos.Height = 13;
+			
+			thumb_pos.X = channel_startpoint.X + (int) ( pixels_betweenticks * (float) value_pos ) - ( thumb_pos.Width / 3 );
+			
+			if ( thumb_pos.X < channel_startpoint.X )
+				thumb_pos.X = channel_startpoint.X;
+			
+			if ( thumb_pos.X > thumb_area.Right - 29 )
+				thumb_pos.X = thumb_area.Right - 29;
+			
+			/* Draw channel */
+			// left side
+			Pen pen = ResPool.GetPen( tab_top_border_focus_color );
+			dc.DrawLine( pen, channel_startpoint.X, channel_startpoint.Y, thumb_pos.X, channel_startpoint.Y );
+			dc.DrawLine( pen, channel_startpoint.X, channel_startpoint.Y, channel_startpoint.X, channel_startpoint.Y + 4 );
+			dc.DrawLine( pen, channel_startpoint.X, channel_startpoint.Y + 4, thumb_pos.X, channel_startpoint.Y + 4 );
+			
+			pen = ResPool.GetPen( menuitem_gradient_first_color );
+			dc.DrawLine( pen, channel_startpoint.X + 1, channel_startpoint.Y + 1, thumb_pos.X, channel_startpoint.Y + 1 );
+			pen = ResPool.GetPen( trackbar_second_gradient_color );
+			dc.DrawLine( pen, channel_startpoint.X + 1, channel_startpoint.Y + 2, thumb_pos.X, channel_startpoint.Y + 2 );
+			pen = ResPool.GetPen( trackbar_third_gradient_color );
+			dc.DrawLine( pen, channel_startpoint.X + 1, channel_startpoint.Y + 3, thumb_pos.X, channel_startpoint.Y + 3 );
+			
+			// right side
+			pen = ResPool.GetPen( pressed_inner_border_dark_color );
+			dc.DrawLine( pen, thumb_pos.X + 29, channel_startpoint.Y + 1, thumb_area.Right - 1, channel_startpoint.Y + 1 );
+			dc.DrawRectangle( ResPool.GetPen( scrollbar_background_color ), thumb_pos.X + 29, channel_startpoint.Y + 2, thumb_area.Right - thumb_pos.X - 30, 1 );
+			
+			pen = ResPool.GetPen( scrollbar_border_color );
+			dc.DrawLine( pen, thumb_pos.X + 29, channel_startpoint.Y, thumb_area.Right, channel_startpoint.Y );
+			dc.DrawLine( pen, thumb_area.Right, channel_startpoint.Y, thumb_area.Right, channel_startpoint.Y + 4 );
+			dc.DrawLine( pen, thumb_pos.X + 29, channel_startpoint.Y + 4, thumb_area.Right, channel_startpoint.Y + 4 );
+			
+			/* Draw thumb */
+			
+			thumb_pos.Y = channel_startpoint.Y - 4;
+			
+			// inner border
+			pen = ResPool.GetPen( Color.White );
+			dc.DrawLine( pen, thumb_pos.X + 1, thumb_pos.Y + 1, thumb_pos.X + 1, thumb_pos.Bottom - 2 );
+			dc.DrawLine( pen, thumb_pos.X + 2, thumb_pos.Y + 1, thumb_pos.Right - 2, thumb_pos.Y + 1 );
+			
+			pen = ResPool.GetPen( menu_separator_color );
+			dc.DrawLine( pen, thumb_pos.X + 2, thumb_pos.Bottom - 2, thumb_pos.Right - 2, thumb_pos.Bottom - 2 );
+			dc.DrawLine( pen, thumb_pos.Right - 2, thumb_pos.Y + 2, thumb_pos.Right - 2, thumb_pos.Bottom - 2 );
+			
+			// outer border
+			Point[] points = {
+				new Point( thumb_pos.X + 2, thumb_pos.Y ),
+				new Point( thumb_pos.Right - 3 , thumb_pos.Y ),
+				new Point( thumb_pos.Right - 1, thumb_pos.Y + 2 ),
+				new Point( thumb_pos.Right - 1, thumb_pos.Bottom - 3 ),
+				new Point( thumb_pos.Right - 3, thumb_pos.Bottom - 1 ),
+				new Point( thumb_pos.X + 2, thumb_pos.Bottom - 1 ),
+				new Point( thumb_pos.X, thumb_pos.Bottom - 3 ),
+				new Point( thumb_pos.X, thumb_pos.Y + 2 ),
+				new Point( thumb_pos.X + 2, thumb_pos.Y )
+			};
+			
+			dc.DrawLines( ResPool.GetPen( border_normal_dark_color ), points );
+			
+			Color first_gradient_color = mouse_value ? button_edge_bottom_outer_color : trackbar_inner_first_gradient_color;
+			Color second_gradient_color = mouse_value ? trackbar_inner_pressed_second_gradient_color : trackbar_inner_second_gradient_color;
+			
+			using ( LinearGradientBrush lgbr = new LinearGradientBrush( new Point( thumb_pos.X, thumb_pos.Y + 2 ), new Point( thumb_pos.X, thumb_pos.Bottom - 2 ), first_gradient_color, second_gradient_color ) ) {
+				dc.FillRectangle( lgbr, thumb_pos.X + 2, thumb_pos.Y + 2, thumb_pos.Width - 4, thumb_pos.Height - 4 );
+			}
+			
+			// outer egdes
+			pen = ResPool.GetPen( edge_top_inner_color );
+			dc.DrawLine( pen, thumb_pos.X, thumb_pos.Y + 1, thumb_pos.X + 1, thumb_pos.Y );
+			dc.DrawLine( pen, thumb_pos.Right - 2, thumb_pos.Y, thumb_pos.Right - 1, thumb_pos.Y + 1 );
+			
+			pen = ResPool.GetPen( edge_bottom_inner_color );
+			dc.DrawLine( pen, thumb_pos.X, thumb_pos.Bottom - 2, thumb_pos.X + 1, thumb_pos.Bottom - 1 );
+			dc.DrawLine( pen, thumb_pos.Right - 1, thumb_pos.Bottom - 2, thumb_pos.Right - 2, thumb_pos.Bottom - 1 );
+			
+			// draw grip lines
+			pen = ResPool.GetPen( pressed_inner_border_dark_color );
+			dc.DrawLine( pen, thumb_pos.X + 11, thumb_pos.Y + 4, thumb_pos.X + 11, thumb_pos.Y + 8 );
+			dc.DrawLine( pen, thumb_pos.X + 14, thumb_pos.Y + 4, thumb_pos.X + 14, thumb_pos.Y + 8 );
+			dc.DrawLine( pen, thumb_pos.X + 17, thumb_pos.Y + 4, thumb_pos.X + 17, thumb_pos.Y + 8 );
+			
+			pen = ResPool.GetPen( Color.White );
+			dc.DrawLine( pen, thumb_pos.X + 12, thumb_pos.Y + 4, thumb_pos.X  + 12, thumb_pos.Y + 8 );
+			dc.DrawLine( pen, thumb_pos.X + 15, thumb_pos.Y + 4, thumb_pos.X + 15, thumb_pos.Y + 8 );
+			dc.DrawLine( pen, thumb_pos.X + 18, thumb_pos.Y + 4, thumb_pos.X + 18, thumb_pos.Y + 8 );
+			
+			pixel_len = thumb_area.Width - 11;
+			pixels_betweenticks = pixel_len / ticks;
+			
+			/* Draw ticks*/
+			thumb_area.Y = thumb_pos.Y;
+			thumb_area.X = channel_startpoint.X;
+			thumb_area.Height = thumb_pos.Height;
+			Region outside = new Region( area );
+			outside.Exclude( thumb_area );			
+			
+			if ( outside.IsVisible( clip_rectangle ) ) {				
+				if ( pixels_betweenticks > 0 && ( ( tb.TickStyle & TickStyle.BottomRight ) == TickStyle.BottomRight ||
+				    ( ( tb.TickStyle & TickStyle.Both ) == TickStyle.Both ) ) ) {				
+					
+					for ( float inc = 0; inc < ( pixel_len + 1 ); inc += pixels_betweenticks ) {					
+						if ( inc == 0 || ( inc +  pixels_betweenticks ) >= pixel_len + 1 )
+							dc.DrawLine( ResPool.GetPen( pen_ticks_color ), area.X + bottomtick_startpoint.X + inc , area.Y + bottomtick_startpoint.Y, 
+								    area.X + bottomtick_startpoint.X + inc , area.Y + bottomtick_startpoint.Y + 3 );
+						else
+							dc.DrawLine( ResPool.GetPen( pen_ticks_color ), area.X + bottomtick_startpoint.X + inc, area.Y + bottomtick_startpoint.Y, 
+								    area.X + bottomtick_startpoint.X + inc, area.Y + bottomtick_startpoint.Y + 2 );
+					}
+				}
+				
+				if ( pixels_betweenticks > 0 && ( ( tb.TickStyle & TickStyle.TopLeft ) == TickStyle.TopLeft ||
+				    ( ( tb.TickStyle & TickStyle.Both ) == TickStyle.Both ) ) ) {
+					
+					for ( float inc = 0; inc < ( pixel_len + 1 ); inc += pixels_betweenticks ) {					
+						if ( inc == 0 || ( inc +  pixels_betweenticks ) >= pixel_len + 1 )
+							dc.DrawLine( ResPool.GetPen( pen_ticks_color ), area.X + toptick_startpoint.X + inc , area.Y + toptick_startpoint.Y - 3, 
+								    area.X + toptick_startpoint.X + inc , area.Y + toptick_startpoint.Y );
+						else
+							dc.DrawLine( ResPool.GetPen( pen_ticks_color ), area.X + toptick_startpoint.X + inc, area.Y + toptick_startpoint.Y - 2, 
+								    area.X + toptick_startpoint.X + inc, area.Y + toptick_startpoint.Y );
+					}			
+				}
+			}
+			
+			outside.Dispose( );			
+		}
+		
+		public override void DrawTrackBar( Graphics dc, Rectangle clip_rectangle, TrackBar tb ) {
+			int		value_pos;
+			bool		mouse_value;
+			float		ticks = ( tb.Maximum - tb.Minimum ) / tb.tickFrequency; /* N of ticks draw*/
+			Rectangle	area;
+			Rectangle	thumb_pos = tb.ThumbPos;
+			Rectangle	thumb_area = tb.ThumbArea;
+			
+			if ( tb.thumb_pressed ) {
+				value_pos = tb.thumb_mouseclick;
+				mouse_value = true;
+			} else {
+				value_pos = tb.Value - tb.Minimum;
+				mouse_value = false;
+			}
+			
+			area = tb.ClientRectangle;
+			
+			/* Control Background */
+			if ( tb.BackColor == DefaultControlBackColor ) {
+				dc.FillRectangle( ResPool.GetSolidBrush( ColorControl ), clip_rectangle );
+			} else {
+				dc.FillRectangle( ResPool.GetSolidBrush( tb.BackColor ), clip_rectangle );
+			}
+			
+			if ( tb.Orientation == Orientation.Vertical ) {
+				DrawTrackBar_Vertical( dc, clip_rectangle, tb, ref thumb_pos, ref thumb_area,
+						      ticks, value_pos, mouse_value );
+				
+			} else {
+				DrawTrackBar_Horizontal( dc, clip_rectangle, tb, ref thumb_pos, ref thumb_area,
+							ticks, value_pos, mouse_value );
+			}
+			
+			// TODO: draw better focus rectangle
+			if ( tb.Focused ) {
+				dc.FillRectangle( ResPool.GetHatchBrush( HatchStyle.Percent50, ColorControl, Color.Black ), area.X, area.Y, area.Width - 1, 1 );
+				dc.FillRectangle( ResPool.GetHatchBrush( HatchStyle.Percent50, ColorControl, Color.Black ), area.X, area.Y + area.Height - 1, area.Width - 1, 1 );
+				dc.FillRectangle( ResPool.GetHatchBrush( HatchStyle.Percent50, ColorControl, Color.Black ), area.X, area.Y, 1, area.Height - 1 );
+				dc.FillRectangle( ResPool.GetHatchBrush( HatchStyle.Percent50, ColorControl, Color.Black ), area.X + area.Width - 1, area.Y, 1, area.Height - 1 );
+			}
+			
+			tb.ThumbPos = thumb_pos;
+			tb.ThumbArea = thumb_area;
+		}
+		#endregion	// TrackBar
 		
 		public override void CPDrawBorder3D( Graphics graphics, Rectangle rectangle, Border3DStyle style, Border3DSide sides ) {
 			CPDrawBorder3D( graphics, rectangle, style, sides, ColorControl );
