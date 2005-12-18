@@ -1731,9 +1731,6 @@ mono_compile_get_interface_var (MonoCompile *cfg, int slot, MonoInst *ins)
  * at basic block boundaries. What happens is that we save the values to local variables
  * and we reload them later when first entering the target basic block (with the
  * handle_loaded_temps () function).
- * It is also used to handle items on the stack in store opcodes, since it is
- * possible that the variable to be stored into is already on the stack, in
- * which case its old value should be used.
  * A single joint point will use the same variables (stored in the array bb->out_stack or
  * bb->in_stack, if the basic block is before or after the joint point).
  *

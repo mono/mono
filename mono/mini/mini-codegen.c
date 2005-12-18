@@ -839,6 +839,9 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 			else
 				reginfo1 = reginfo;
 			g_assert (ins->sreg1 != -1);
+			if (is_soft_reg (ins->sreg1, fp))
+				/* This means the vreg is not local to this bb */
+				g_assert (reginfo1 [ins->sreg1].born_in > 0);
 			reginfo1 [ins->sreg1].prev_use = reginfo1 [ins->sreg1].last_use;
 			reginfo1 [ins->sreg1].last_use = i;
 			if (MONO_ARCH_INST_IS_REGPAIR (spec [MONO_INST_SRC2])) {
@@ -857,6 +860,9 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 			else
 				reginfo2 = reginfo;
 			g_assert (ins->sreg2 != -1);
+			if (is_soft_reg (ins->sreg2, fp))
+				/* This means the vreg is not local to this bb */
+				g_assert (reginfo2 [ins->sreg2].born_in > 0);
 			reginfo2 [ins->sreg2].prev_use = reginfo2 [ins->sreg2].last_use;
 			reginfo2 [ins->sreg2].last_use = i;
 			if (MONO_ARCH_INST_IS_REGPAIR (spec [MONO_INST_SRC2])) {
