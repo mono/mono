@@ -1,3 +1,25 @@
+2005-12-18  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* Control.cs:
+	  - Reworked Controls.Add(), Controls.Remove() and set_Parent() to
+	    cause events to be sent in the same order as MS does.
+	  - Added ChangeParent() method to trigger various OnXXXChanged events
+	    that need to be fired when a parent changes (This is a reworking
+	    of the patch from r54254, with the X11 errors fixed)
+	  - Removed SuspendLayout()/ResumeLayout() calls from Controls.Clear()
+	    since on MS we get OnLayoutChanged events when calling Clear()
+	  - Changed Enabled property to consider parent state as well, if a
+	    parent is not enabled, the control will not be either
+	  - Changed Parent property to simply call Controls.Add() since that
+	    now does all the work required, this way we avoid code duplication
+	  - Threw in a few OnBindingsContextChanged calls to try and match
+	    when MS sends them. We seem to send a few too many, though.
+	  - Added call to CreateControl when adding the control to a parent.
+	    We were never calling CreateControl. Still needs some work, in
+	    some places we treat HandleCreated and ControlCreated as equal, 
+	    which is wrong
+	  - Removed obsolete commented out code from UpdateZOrder()
+
 2005-12-18  Alexander Olk  <alex.olk@googlemail.com>
 
 	* ThemeClearlooks.cs: Updated TrackBar drawing.
