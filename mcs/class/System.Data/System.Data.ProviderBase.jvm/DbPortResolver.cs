@@ -36,10 +36,12 @@ using java.net;
 
 namespace System.Data.Common
 {
-	public class DbPortResolver
+	internal sealed  class DbPortResolver
 	{
-		public static int getMSSqlPort(String sqlName, String instanceName,int timeout)
+		public static int getMSSqlPort(AbstractDBConnection connection)
 		{
+			String instanceName = connection.InstanceName;
+			int timeout = connection.ConnectionTimeout;
 			int port = -1;
 			try
 			{
@@ -47,7 +49,7 @@ namespace System.Data.Common
 
 				// send request
 				sbyte[] buf = new sbyte[] {2};
-				InetAddress address = InetAddress.getByName(sqlName);
+				InetAddress address = InetAddress.getByName(connection.DataSource);
 				DatagramPacket packet = new DatagramPacket(buf, buf.Length, address, 1434);
 				socket.send(packet);
 				sbyte[] recbuf = new sbyte[1024];
@@ -56,8 +58,7 @@ namespace System.Data.Common
 				// try to receive from socket while increasing timeouts in geometric progression
 				int iterationTimeout = 1;
 				int totalTimeout = 0;
-				while (totalTimeout < timeout*1000)
-				{
+				for(;;) {
 					socket.setSoTimeout(iterationTimeout);
 					try
 					{
@@ -68,6 +69,11 @@ namespace System.Data.Common
 					{
 						totalTimeout += iterationTimeout;
 						iterationTimeout *= 2;
+						if (totalTimeout >= timeout*1000) {
+							throw new java.sql.SQLException(
+								String.Format ("Unable to retrieve the port number for {0} using UDP on port 1434. Please see your network administrator to solve this problem or add the port number of your SQL server instance to your connection string (i.e. port=1433).", connection.DataSource)
+								);
+						}
 					}
 				}
 				sbyte[] rcvdSbytes = packet.getData();
@@ -104,12 +110,19 @@ namespace System.Data.Common
 					prev = st.nextToken();
 				}
 				socket.close();
+
+				if (!instanceReached)
+					throw new java.sql.SQLException(
+						String.Format ("Specified SQL Server '{0}\\{1}' not found.", connection.DataSource, instanceName)
+						);
 				return port;
 
 			}
-			catch (java.lang.Exception e)
-			{
-				return port;
+			catch (java.sql.SQLException) {
+				throw;
+			}
+			catch (Exception e) {
+				throw new java.sql.SQLException(e.Message);
 			}
 		}
 	    

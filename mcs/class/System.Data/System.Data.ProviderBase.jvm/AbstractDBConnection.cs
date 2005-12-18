@@ -563,21 +563,14 @@ namespace System.Data.Common
 				switch (ProviderType) {
 					case PROVIDER_TYPE.SQLOLEDB : 
 						if (String.Empty.Equals(port)) {
-							// if needed - resolve MSSQL port
-							// FIXME : decide about behaviour in the case all the timeout spent on port resolution
-							//long start = DateTime.Now.Ticks;
-							port = DbPortResolver.getMSSqlPort(DataSource,InstanceName,ConnectionTimeout).ToString();
-							//long end = DateTime.Now.Ticks;													
-							//if( (end - start) < ConnectionTimeout*1000000) {								
-								//timeout -= (int)(end - start)/1000000;
-							//}
+							try {
+								port = DbPortResolver.getMSSqlPort(this).ToString();
+							}
+							catch (SQLException e) {
+								throw CreateException(e);
+							}
 						}
-						// todo : what should we do if all the timeout spent on port resolution ?
-						if ("-1".Equals(port)) {
-							string message = String.Format ("Unable to retrieve the port number for {0} using UDP on port 1434. Please see your network administrator to solve this problem or add the port number of your SQL server instance to your connection string (i.e. port=1681).",ServerName);
-							Exception e = CreateException (message);
-							throw e;
-						}
+
 						ConnectionStringHelper.AddValue(UserParameters,StringManager.GetStringArray("CON_PORT"),port);
 						break;
 				}
@@ -609,7 +602,7 @@ namespace System.Data.Common
 			}
 		}
 
-		protected virtual string InstanceName
+		internal string InstanceName
 		{
 			get {
 				string dataSource = ConnectionStringHelper.FindValue(UserParameters,StringManager.GetStringArray("CON_DATA_SOURCE"));
