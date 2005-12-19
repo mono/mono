@@ -3,6 +3,7 @@
 // David Brandt (bucky@keystreams.com)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
+// Copyright (C) 2005 Novell (http://www.novell.com)
 // 
 
 using System;
@@ -61,7 +62,15 @@ public class ArrayListTest : Assertion {
 		}
 	}
 
-	public void TestCapacity() {
+	public void TestCapacity () 
+	{
+#if NET_2_0
+		int default_capacity = 4;
+		int unspecified_capacity = 0;
+#else
+		int default_capacity = 16;
+		int unspecified_capacity = 16;
+#endif
 		for (int i = 1; i < 100; i++) {
 			ArrayList al1 = new ArrayList(i);
 			AssertEquals("Bad capacity of " + i,
@@ -72,14 +81,14 @@ public class ArrayListTest : Assertion {
 			// LAMESPEC: 
 			// AssertEquals("Bad capacity when set to 0",
 			//	     16, al1.Capacity);
-			al1.Add ("?");			
+			al1.Add ("?");
 			AssertEquals("Bad capacity when set to 0",
-				     16, al1.Capacity);
+				     default_capacity, al1.Capacity);
 		}		
 		{
 			ArrayList al1 = new ArrayList();
 			AssertEquals("Bad default capacity",
-				     16, al1.Capacity);
+				     unspecified_capacity, al1.Capacity);
 		}
 	}
 	
@@ -1797,38 +1806,84 @@ public class ArrayListTest : Assertion {
 		}
 	}
 
-	public void TestTrimToSize() {
-		{
-			bool errorThrown = false;
-			try {
-				ArrayList al1 = 
-					ArrayList.ReadOnly(new ArrayList());
-				al1.TrimToSize();
-			} catch (NotSupportedException) {
-				errorThrown = true;
-			}
-			Assert("trim read only error not thrown", 
-			       errorThrown);
-		}
-		{
-			ArrayList al1 = new ArrayList();
-			int capacity = al1.Capacity;
-			int size = capacity / 2;
-			for (int i = 1; i <=size; i++) {
-				al1.Add('?');
-			}
-			al1.RemoveAt(0);
-			al1.TrimToSize();
-			AssertEquals("no capacity match", 
-				     size - 1, al1.Capacity);
+	[Test]
+	[ExpectedException (typeof (NotSupportedException))]
+	public void TrimToSize_ReadOnly ()
+	{
+		ArrayList al1 = ArrayList.ReadOnly(new ArrayList());
+		al1.TrimToSize();
+	}
 
-			al1.Clear();
-			al1.TrimToSize();
-			AssertEquals("no default capacity", 
-				     capacity, al1.Capacity);
+	[Test]
+	public void TrimToSize ()
+	{
+		ArrayList al1 = new ArrayList();
+#if NET_2_0
+		// Capacity is 0 under 2.0
+		int capacity = 4;
+#else
+		int capacity = al1.Capacity;
+#endif
+		int size = capacity / 2;
+		for (int i = 1; i <=size; i++) {
+			al1.Add('?');
+		}
+		al1.RemoveAt(0);
+		al1.TrimToSize();
+		AssertEquals("no capacity match", size - 1, al1.Capacity);
+
+		al1.Clear();
+		al1.TrimToSize();
+		AssertEquals("no default capacity", capacity, al1.Capacity);
+	}
+
+	class Comparer: IComparer {
+
+		private bool called = false;
+
+		public bool Called
+		{
+			get
+			{
+				bool result = called;
+				called = false;
+				return called;
+			}
+		}
+
+		public int Compare (object x, object y)
+		{
+			called = true;
+			return 0;
 		}
 	}
 
+	[Test]
+	public void BinarySearch1_EmptyList ()
+	{
+		ArrayList list = new ArrayList ();
+		AssertEquals ("BinarySearch", -1, list.BinarySearch (0));
+	}
+
+	[Test]
+	public void BinarySearch2_EmptyList ()
+	{
+		Comparer comparer = new Comparer ();
+		ArrayList list = new ArrayList ();
+		AssertEquals ("BinarySearch", -1, list.BinarySearch (0, comparer));
+		// bug 77030 - the comparer isn't called for an empty array/list
+		Assert ("Called", !comparer.Called);
+	}
+
+	[Test]
+	public void BinarySearch3_EmptyList ()
+	{
+		Comparer comparer = new Comparer ();
+		ArrayList list = new ArrayList ();
+		AssertEquals ("BinarySearch", -1, list.BinarySearch (0, 0, 0, comparer));
+		// bug 77030 - the comparer isn't called for an empty array/list
+		Assert ("Called", !comparer.Called);
+	}
 }
  
 }

@@ -1,3 +1,9 @@
+2005-12-19  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ArrayListTest.cs: Added test cases for a binary search with an empty
+	list (bug #77030). Fixed other test cases so they execute without 
+	failures under MS 2.0.
+
 2005-12-07  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SortedTestList.cs: Added more test for the constructor accepting an
