@@ -442,9 +442,19 @@ namespace System.Collections.Generic {
 
 		void ICollection.CopyTo (Array array, int index)
 		{
-			// TODO: Verify this can be a KeyValuePair, and doesn't need to be
-			// a DictionaryEntry type
-			CopyTo ((KeyValuePair<TKey, TValue> []) array, index);
+			if (array == null)
+				throw new ArgumentNullException ("array");
+			if (index < 0)
+				throw new ArgumentOutOfRangeException ("index");
+			if (index >= array.Length)
+				throw new ArgumentException ("index larger than largest valid index of array");
+			if (array.Length - index < Count)
+				throw new ArgumentException ("Destination array cannot hold the requested elements!");
+
+			for (int i = 0; i < table.Length; ++i) {
+				for (Slot slot = table [i]; slot != null; slot = slot.Next)
+					array.SetValue (new DictionaryEntry (slot.Data.Key, slot.Data.Value), index++);
+			}
 		}
 
 		IEnumerator IEnumerable.GetEnumerator ()
@@ -574,6 +584,9 @@ namespace System.Collections.Generic {
 					throw new ArgumentNullException ("array");
 				if (index < 0)
 					throw new ArgumentOutOfRangeException ("index");
+				// no exception for index==array.Length in this case
+				if (dictionary.Count == 0)
+					return;
 				if (index >= array.Length)
 					throw new ArgumentException ("index larger than largest valid index of array");
 				if (array.Length - index < dictionary.Count)
@@ -690,6 +703,9 @@ namespace System.Collections.Generic {
 					throw new ArgumentNullException ("array");
 				if (index < 0)
 					throw new ArgumentOutOfRangeException ("index");
+				// no exception for index==array.Length in this case
+				if (dictionary.Count == 0)
+					return;
 				if (index >= array.Length)
 					throw new ArgumentException ("index larger than largest valid index of array");
 				if (array.Length - index < dictionary.Count)

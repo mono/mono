@@ -1,5 +1,8 @@
-2005-12-19  Sebastien Pouliot  <sebastien@ximian.com>
-
+2005-12-19  Sebastien Pouliot  <sebastien@ximian.com> 
+ 
+	* Dictionary.cs: Fixed ICollection.CopyTo to use DictionaryEntry. Fixed
+	Key and Value CopyTo not to throw exception if the dictionary is empty
+	(fix bug #77019).
 	* List.cs: Fix exception reporting to match MS behaviour (2.0 final).
 
 2005-11-19  Zoltan Varga  <vargaz@gmail.com>
