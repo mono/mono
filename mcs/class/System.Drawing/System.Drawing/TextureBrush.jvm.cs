@@ -73,10 +73,12 @@ namespace System.Drawing {
 			this( image, WrapMode.Tile, dstRect ) {
 		}
 
+		[MonoTODO]
 		public TextureBrush (Image image, Rectangle dstRect, ImageAttributes imageAttr) : this( image, dstRect ) {
 			// TBD: Implement ImageAttributes
 		}
 
+		[MonoTODO]
 		public TextureBrush (Image image, RectangleF dstRect, ImageAttributes imageAttr) : this( image, dstRect ) {
 			// TBD: Implement ImageAttributes
 		}
@@ -85,6 +87,7 @@ namespace System.Drawing {
 			this( image, wrapMode, new RectangleF(dstRect.X, dstRect.Y, dstRect.Width, dstRect.Height )){
 		}
 
+		[MonoTODO]
 		public TextureBrush (Image image, WrapMode wrapMode, RectangleF dstRect) {
 			// TBD: check if not metafile
 			_sourceRectangle = dstRect;

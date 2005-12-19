@@ -87,7 +87,7 @@ namespace System.Drawing
 	/// Summary description for ImageAnimator.
 	/// </summary>
 	/// 
-	
+	[MonoTODO]
 	public sealed class ImageAnimator
 	{
 		static Hashtable ht = new Hashtable (); 

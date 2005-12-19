@@ -7,26 +7,26 @@
 			</Settings>
 			<References>
 				<Reference Name="System" AssemblyName="System" HintPath="..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.dll"/>
-				<Reference Name="rt" AssemblyName="rt" HintPath="..\lib\j2sdk1.4.1\rt.dll" Private="False"/>
 				<Reference Name="J2SE.Helpers" AssemblyName="J2SE.Helpers" HintPath="..\lib\J2SE.Helpers.dll" Private="False"/>
 				<Reference Name="System.Xml" AssemblyName="System.Xml" HintPath="..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Xml.dll" Private="False"/>
+				<Reference Name="rt" AssemblyName="rt" HintPath="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE\jgac\jre5\rt.dll" Private="False"/>
 			</References>
 		</Build>
 		<Files>
 			<Include>
 				<File RelPath="Locale.cs" Link="..\..\build\common\Locale.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="MonoTODOAttribute.cs" Link="..\..\build\common\MonoTODOAttribute.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="Assembly\AssemblyInfo.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="Assembly\Consts.cs.in" Link="..\..\build\common\Consts.cs.in" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="Assembly\Application.ico" BuildAction="EmbeddedResource"/>
-                                <File RelPath="Assembly\Asterisk.ico" BuildAction="EmbeddedResource"/>
-                                <File RelPath="Assembly\Error.ico" BuildAction="EmbeddedResource"/>
-                                <File RelPath="Assembly\Exclamation.ico" BuildAction="EmbeddedResource"/>
-                                <File RelPath="Assembly\Hand.ico" BuildAction="EmbeddedResource"/>
-                                <File RelPath="Assembly\Information.ico" BuildAction="EmbeddedResource"/>
-                                <File RelPath="Assembly\Question.ico" BuildAction="EmbeddedResource"/>
-                                <File RelPath="Assembly\Warning.ico" BuildAction="EmbeddedResource"/>
-                                <File RelPath="Assembly\WinLogo.ico" BuildAction="EmbeddedResource"/>
+				<File RelPath="Assembly\AssemblyInfo.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="Assembly\Asterisk.ico" BuildAction="EmbeddedResource"/>
+				<File RelPath="Assembly\Consts.cs.in" Link="..\..\build\common\Consts.cs.in" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="Assembly\Error.ico" BuildAction="EmbeddedResource"/>
+				<File RelPath="Assembly\Exclamation.ico" BuildAction="EmbeddedResource"/>
+				<File RelPath="Assembly\Hand.ico" BuildAction="EmbeddedResource"/>
+				<File RelPath="Assembly\Information.ico" BuildAction="EmbeddedResource"/>
+				<File RelPath="Assembly\Question.ico" BuildAction="EmbeddedResource"/>
+				<File RelPath="Assembly\Warning.ico" BuildAction="EmbeddedResource"/>
+				<File RelPath="Assembly\WinLogo.ico" BuildAction="EmbeddedResource"/>
 				<File RelPath="Mainsoft.Drawing.Configuration.jvm\ResolutionConfiguration.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="Mainsoft.Drawing.Configuration.jvm\ResolutionConfigurationCollection.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="Mainsoft.Drawing.Configuration.jvm\ResolutionConfigurationHandler.cs" SubType="Code" BuildAction="Compile"/>
@@ -165,6 +165,6 @@
 				<File RelPath="System.Drawing.Text\TextRenderingHint.cs" SubType="Code" BuildAction="Compile"/>
 			</Include>
 		</Files>
-		<UserProperties jarserver="ip2" project.JDKType="1.4.2_05" REFS.JarPath.rt="..\Program Files\Mainsoft\Visual MainWin for J2EE\j2sdk1.4\lib\rt.jar" REFS.JarPath.system="..\Program Files\Mainsoft\Visual MainWin for J2EE\jgac\vmw4j2ee_110\System.jar" REFS.JarPath.j2se.helpers="..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE\jgac\vmw4j2ee_110\J2SE.Helpers.jar"/>
+		<UserProperties REFS.JarPath.system.xml="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE\jgac\vmw4j2ee_110\System.Xml.jar" REFS.JarPath.j2se.helpers="..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE\jgac\vmw4j2ee_110\J2SE.Helpers.jar" REFS.JarPath.system="..\Program Files\Mainsoft\Visual MainWin for J2EE\jgac\vmw4j2ee_110\System.jar" REFS.JarPath.rt="..\Program Files\Mainsoft\Visual MainWin for J2EE\j2sdk1.4\lib\rt.jar" project.JDKType="1.5.0_05" jarserver="ipa"/>
 	</CSHARP>
-	<VisualMainWin><Project Prop2023="1.4.2_05" Prop2024="" Prop2026="" Prop2015="" Version="1.6.0" ProjectType="1"/><References/><Configs><Config Prop2000="0" Prop2001="0" Prop2002="0" Prop2003="0" Prop2004="0" Prop2005="0" Prop2006="" Prop2007="" Prop2008="" Prop2009="" Prop2010="" Prop2011="-1" Prop2012="0" Prop2013="" Prop2014="0" Prop2016="" Prop2027="" Prop2019="0" Prop2020="285212672" Prop2021="4096" Prop2022="0" Prop2017="0" Prop2018="0" Name="Debug_Java"/><Config Prop2000="0" Prop2001="0" Prop2002="0" Prop2003="0" Prop2004="0" Prop2005="0" Prop2006="" Prop2007="" Prop2008="" Prop2009="" Prop2010="" Prop2011="-1" Prop2012="0" Prop2013="" Prop2014="0" Prop2016="" Prop2027="" Prop2019="0" Prop2020="285212672" Prop2021="4096" Prop2022="0" Prop2017="0" Prop2018="0" Name="Release_Java"/></Configs></VisualMainWin></VisualStudioProject>
+	<VisualMainWin><Project Prop2023="1.5.0_05" Prop2024="" Prop2026="" Prop2015="" Version="1.7.0" ProjectType="1"/><References/><Configs><Config Prop2000="0" Prop2001="0" Prop2002="0" Prop2003="0" Prop2004="0" Prop2005="0" Prop2006="" Prop2007="" Prop2008="" Prop2009="" Prop2010="" Prop2011="-1" Prop2013="" Prop2014="0" Prop2016="" Prop2027="" Prop2019="0" Prop2020="285212672" Prop2021="4096" Prop2022="0" Prop2017="0" Prop2018="0" Name="Release_Java"/><Config Prop2000="0" Prop2001="0" Prop2002="0" Prop2003="0" Prop2004="0" Prop2005="0" Prop2006="" Prop2007="" Prop2008="" Prop2009="" Prop2010="" Prop2011="-1" Prop2013="" Prop2014="0" Prop2016="" Prop2027="" Prop2019="0" Prop2020="285212672" Prop2021="4096" Prop2022="0" Prop2017="0" Prop2018="0" Name="Debug_Java"/></Configs></VisualMainWin></VisualStudioProject>

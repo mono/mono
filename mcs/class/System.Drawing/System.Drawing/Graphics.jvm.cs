@@ -15,6 +15,7 @@ namespace System.Drawing {
 		sealed class DummyStroke : awt.Stroke {
 			#region Stroke Members
 
+			[MonoTODO]
 			awt.Shape awt.Stroke.createStrokedShape(awt.Shape arg_0) {
 				throw new NotImplementedException("DummyStroke");
 			}
@@ -829,7 +830,7 @@ namespace System.Drawing {
 			DrawImage(image, destPoints, srcRect, srcUnit, null);
 		}
 
-		
+		[MonoTODO]
 		public void DrawImage (Image image, Point [] destPoints, Rectangle srcRect, GraphicsUnit srcUnit, ImageAttributes imageAttr) {
 			//TBD: ImageAttributes
 			if (srcUnit != GraphicsUnit.Pixel)
@@ -842,6 +843,7 @@ namespace System.Drawing {
 			DrawImage(image, mx, region);
 		}
 		
+		[MonoTODO]
 		public void DrawImage (Image image, PointF [] destPoints, RectangleF srcRect, GraphicsUnit srcUnit, ImageAttributes imageAttr) {
 			//TBD: ImageAttributes
 			if (srcUnit != GraphicsUnit.Pixel)
@@ -886,6 +888,7 @@ namespace System.Drawing {
 		}
 		
 
+		[MonoTODO]
 		public void DrawImage (Image image, Rectangle destRect, int srcX, int srcY, int srcWidth, int srcHeight, GraphicsUnit srcUnit, ImageAttributes imageAttr) {			
 			//TBD: attributes
 			DrawImage(
@@ -895,6 +898,7 @@ namespace System.Drawing {
 				srcUnit);
 		}
 		
+		[MonoTODO]
 		public void DrawImage (Image image, Rectangle destRect, float srcX, float srcY, float srcWidth, float srcHeight, GraphicsUnit srcUnit, ImageAttributes imageAttrs) {
 			//TBD: attributes
 			DrawImage(
@@ -975,19 +979,20 @@ namespace System.Drawing {
 		
 
 #if INTPTR_SUPPORT
+		[MonoTODO]
 		public void DrawImage (Image image, PointF [] destPoints, RectangleF srcRect, GraphicsUnit srcUnit, ImageAttributes imageAttr, DrawImageAbort callback)
 		{
 			throw new NotImplementedException();
 		}
 
-		
+		[MonoTODO]
 		public void DrawImage (Image image, Point [] destPoints, Rectangle srcRect, GraphicsUnit srcUnit, ImageAttributes imageAttr, DrawImageAbort callback)
 		{
 			
 			throw new NotImplementedException();
 		}
 
-		
+		[MonoTODO]
 		public void DrawImage (Image image, Point [] destPoints, Rectangle srcRect, GraphicsUnit srcUnit, ImageAttributes imageAttr, DrawImageAbort callback, int callbackData)
 		{
 			throw new NotImplementedException();
@@ -995,6 +1000,7 @@ namespace System.Drawing {
 #endif
 
 #if INTPTR_SUPPORT		
+		[MonoTODO]
 		public void DrawImage (Image image, PointF [] destPoints, RectangleF srcRect, GraphicsUnit srcUnit, ImageAttributes imageAttr, DrawImageAbort callback, int callbackData)
 		{
 			throw new NotImplementedException();
@@ -1355,187 +1361,224 @@ namespace System.Drawing {
 
 		#endregion
 
-		#region Metafiles Staff [TODO NotSupp]
+		#region Metafiles Staff
+		[MonoTODO]
 		public void AddMetafileComment (byte [] data) {
 			throw new NotImplementedException ();
 		}
 
 #if INTPTR_SUPPORT
+		[MonoTODO]
 		public void EnumerateMetafile (Metafile metafile, Point [] destPoints, EnumerateMetafileProc callback)
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public void EnumerateMetafile (Metafile metafile, RectangleF destRect, EnumerateMetafileProc callback)
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public void EnumerateMetafile (Metafile metafile, PointF [] destPoints, EnumerateMetafileProc callback)
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public void EnumerateMetafile (Metafile metafile, Rectangle destRect, EnumerateMetafileProc callback)
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public void EnumerateMetafile (Metafile metafile, Point destPoint, EnumerateMetafileProc callback)
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public void EnumerateMetafile (Metafile metafile, PointF destPoint, EnumerateMetafileProc callback)
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public void EnumerateMetafile (Metafile metafile, PointF destPoint, EnumerateMetafileProc callback, IntPtr callbackData)
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public void EnumerateMetafile (Metafile metafile, Rectangle destRect, EnumerateMetafileProc callback, IntPtr callbackData)
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public void EnumerateMetafile (Metafile metafile, PointF [] destPoints, EnumerateMetafileProc callback, IntPtr callbackData)
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public void EnumerateMetafile (Metafile metafile, Point destPoint, EnumerateMetafileProc callback, IntPtr callbackData)
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public void EnumerateMetafile (Metafile metafile, Point [] destPoints, EnumerateMetafileProc callback, IntPtr callbackData)
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public void EnumerateMetafile (Metafile metafile, RectangleF destRect, EnumerateMetafileProc callback, IntPtr callbackData)
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public void EnumerateMetafile (Metafile metafile, PointF destPoint, RectangleF srcRect, GraphicsUnit srcUnit, EnumerateMetafileProc callback)
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public void EnumerateMetafile (Metafile metafile, Point destPoint, Rectangle srcRect, GraphicsUnit srcUnit, EnumerateMetafileProc callback)
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public void EnumerateMetafile (Metafile metafile, PointF [] destPoints, RectangleF srcRect, GraphicsUnit srcUnit, EnumerateMetafileProc callback)
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public void EnumerateMetafile (Metafile metafile, Point [] destPoints, Rectangle srcRect, GraphicsUnit srcUnit, EnumerateMetafileProc callback)
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public void EnumerateMetafile (Metafile metafile, RectangleF destRect, RectangleF srcRect, GraphicsUnit srcUnit, EnumerateMetafileProc callback)
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public void EnumerateMetafile (Metafile metafile, Rectangle destRect, Rectangle srcRect, GraphicsUnit srcUnit, EnumerateMetafileProc callback)
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public void EnumerateMetafile (Metafile metafile, RectangleF destRect, EnumerateMetafileProc callback, IntPtr callbackData, ImageAttributes imageAttr)
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public void EnumerateMetafile (Metafile metafile, Point destPoint, EnumerateMetafileProc callback, IntPtr callbackData, ImageAttributes imageAttr)
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public void EnumerateMetafile (Metafile metafile, PointF destPoint, EnumerateMetafileProc callback, IntPtr callbackData, ImageAttributes imageAttr)
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public void EnumerateMetafile (Metafile metafile, Point [] destPoints, EnumerateMetafileProc callback, IntPtr callbackData, ImageAttributes imageAttr)
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public void EnumerateMetafile (Metafile metafile, PointF [] destPoints, EnumerateMetafileProc callback, IntPtr callbackData, ImageAttributes imageAttr)
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public void EnumerateMetafile (Metafile metafile, Rectangle destRect, EnumerateMetafileProc callback, IntPtr callbackData, ImageAttributes imageAttr)
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public void EnumerateMetafile (Metafile metafile, Rectangle destRect, Rectangle srcRect, GraphicsUnit srcUnit, EnumerateMetafileProc callback, IntPtr callbackData)
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public void EnumerateMetafile (Metafile metafile, PointF [] destPoints, RectangleF srcRect, GraphicsUnit srcUnit, EnumerateMetafileProc callback, IntPtr callbackData)
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public void EnumerateMetafile (Metafile metafile, RectangleF destRect, RectangleF srcRect, GraphicsUnit srcUnit, EnumerateMetafileProc callback, IntPtr callbackData)
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public void EnumerateMetafile (Metafile metafile, PointF destPoint, RectangleF srcRect, GraphicsUnit srcUnit, EnumerateMetafileProc callback, IntPtr callbackData)
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public void EnumerateMetafile (Metafile metafile, Point destPoint, Rectangle srcRect, GraphicsUnit srcUnit, EnumerateMetafileProc callback, IntPtr callbackData)
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public void EnumerateMetafile (Metafile metafile, Point [] destPoints, Rectangle srcRect, GraphicsUnit srcUnit, EnumerateMetafileProc callback, IntPtr callbackData)
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public void EnumerateMetafile (Metafile metafile, Point [] destPoints, Rectangle srcRect, GraphicsUnit unit, EnumerateMetafileProc callback, IntPtr callbackData, ImageAttributes imageAttr)
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public void EnumerateMetafile (Metafile metafile, Rectangle destRect, Rectangle srcRect, GraphicsUnit unit, EnumerateMetafileProc callback, IntPtr callbackData, ImageAttributes imageAttr)
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public void EnumerateMetafile (Metafile metafile, Point destPoint, Rectangle srcRect, GraphicsUnit unit, EnumerateMetafileProc callback, IntPtr callbackData, ImageAttributes imageAttr)
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public void EnumerateMetafile (Metafile metafile, RectangleF destRect, RectangleF srcRect, GraphicsUnit unit, EnumerateMetafileProc callback, IntPtr callbackData, ImageAttributes imageAttr)
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public void EnumerateMetafile (Metafile metafile, PointF [] destPoints, RectangleF srcRect, GraphicsUnit unit, EnumerateMetafileProc callback, IntPtr callbackData, ImageAttributes imageAttr)
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public void EnumerateMetafile (Metafile metafile, PointF destPoint, RectangleF srcRect, GraphicsUnit unit, EnumerateMetafileProc callback, IntPtr callbackData, ImageAttributes imageAttr)
 		{
 			throw new NotImplementedException ();
@@ -1714,65 +1757,76 @@ namespace System.Drawing {
 
 #if INTPTR_SUPPORTED
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		[MonoTODO]
 		public void ReleaseHdc (IntPtr hdc)
 		{
 			throw new NotImplementedException();
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		[MonoTODO]
 		public void ReleaseHdcInternal (IntPtr hdc)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]		
+		[MonoTODO]
 		public static Graphics FromHdc (IntPtr hdc)
 		{
 			throw new NotImplementedException();
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		[MonoTODO]
 		public static Graphics FromHdc (IntPtr hdc, IntPtr hdevice)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		[MonoTODO]
 		public static Graphics FromHdcInternal (IntPtr hdc)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]		
+		[MonoTODO]
 		public static Graphics FromHwnd (IntPtr hwnd)
 		{
 			throw new NotImplementedException();
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		[MonoTODO]
 		public static Graphics FromHwndInternal (IntPtr hwnd)
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		internal static Graphics FromXDrawable (IntPtr drawable, IntPtr display)
 		{
 			throw new NotImplementedException();
 		}
 
+		[MonoTODO]
 		public static IntPtr GetHalftonePalette ()
 		{
 			throw new NotImplementedException ();
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		[MonoTODO]
 		public IntPtr GetHdc ()
 		{
 			throw new NotImplementedException();
 		}
 #endif
 		
-		#region GetNearestColor [TODO]
+		#region GetNearestColor
+		[MonoTODO]
 		public Color GetNearestColor (Color color) {
 			throw new NotImplementedException();
 		}
@@ -2204,6 +2258,7 @@ namespace System.Drawing {
 		#endregion
 		
 		#region TransformPoints
+		[MonoTODO]
 		public void TransformPoints (CoordinateSpace destSpace, CoordinateSpace srcSpace, PointF [] pts) {
 			//TBD:CoordinateSpace
 			java.awt.geom.AffineTransform tr = this.Transform.NativeObject;
@@ -2217,6 +2272,7 @@ namespace System.Drawing {
 			}
 		}
 
+		[MonoTODO]
 		public void TransformPoints (CoordinateSpace destSpace, CoordinateSpace srcSpace, Point [] pts) {						
 			//TBD:CoordinateSpace
 			java.awt.geom.AffineTransform tr = this.Transform.NativeObject;
@@ -2487,6 +2543,7 @@ namespace System.Drawing {
 			}
 		}
 
+		[MonoTODO]
 		public Point RenderingOrigin {
 			get {
 				throw new NotImplementedException();

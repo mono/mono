@@ -175,6 +175,7 @@ namespace System.Drawing.Drawing2D {
 		#region Public Properties
 
 		// FALLBACK: no functionality implemented for this property
+		[MonoTODO]
 		public Blend Blend {
 			get {
 				return _blend;
@@ -185,6 +186,7 @@ namespace System.Drawing.Drawing2D {
 		}
 
 		// FALLBACK: no functionality implemented for this property
+		[MonoTODO]
 		public bool GammaCorrection {
 			get {
 				return _gammaCorrection;
@@ -195,6 +197,7 @@ namespace System.Drawing.Drawing2D {
 		}
 
 		// FALLBACK: functionality of two color gradient is implemented
+		[MonoTODO]
 		public ColorBlend InterpolationColors {
 			get {
 				return _interpolationColors;
@@ -243,6 +246,7 @@ namespace System.Drawing.Drawing2D {
 		}
 
 		// FALLBACK: not functionality implemented for this property
+		[MonoTODO]
 		public WrapMode WrapMode {
 			get {
 				return _wrapmode;
@@ -298,6 +302,7 @@ namespace System.Drawing.Drawing2D {
 			SetSigmaBellShape (focus, 1.0F);
 		}
 
+		[MonoTODO]
 		public void SetSigmaBellShape (float focus, float scale) {
 			// FALLBACK: Triangle shape used
 			SetBlendTriangularShape (focus, scale);

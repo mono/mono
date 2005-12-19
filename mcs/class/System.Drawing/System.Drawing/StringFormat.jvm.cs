@@ -143,12 +143,14 @@ namespace System.Drawing {
 			}
 		}
 
+		[MonoTODO]
 		public int DigitSubstitutionLanguage {
 			get {
 				return _digitSubstituteLanguage;
 			}
 		}
 
+		[MonoTODO]
 		public StringDigitSubstitute DigitSubstitutionMethod {
 			get {
 				return _digitSubstituteMethod;     
@@ -244,16 +246,19 @@ namespace System.Drawing {
 			return "[StringFormat, FormatFlags=" + this.FormatFlags.ToString() + "]";
 		}
 		
+		[MonoTODO]
 		public void SetTabStops(float firstTabOffset, float[] tabStops) {
 			_firstTabOffset = firstTabOffset;
 			_tabStops = tabStops != null ? (float[])tabStops.Clone() : null;
 		}
 
+		[MonoTODO]
 		public void SetDigitSubstitution(int language,  StringDigitSubstitute substitute) {
 			_digitSubstituteMethod = substitute;
 			_digitSubstituteLanguage = language;
 		}
 
+		[MonoTODO]
 		public float[] GetTabStops(out float firstTabOffset) {
 			firstTabOffset = _firstTabOffset;
 			return _tabStops != null ? (float[])_tabStops.Clone() : null;

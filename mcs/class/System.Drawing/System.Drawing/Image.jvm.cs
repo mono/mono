@@ -103,11 +103,13 @@ namespace System.Drawing {
 		#endregion
     
 		#region FromFile
+		[MonoTODO]
 		public static Image FromFile(string filename) {
 			//FIXME: check if it's not a metafile, throw NotImplementedException
 			return new Bitmap (filename);
 		}
 	
+		[MonoTODO]
 		public static Image FromFile(string filename, bool useIcm) {
 			//FIXME: check if it's not a metafile, throw NotImplementedException
 			return new Bitmap (filename, useIcm);
@@ -125,11 +127,13 @@ namespace System.Drawing {
 
 		// static
 		#region FromStream
+		[MonoTODO]
 		public static Image FromStream (Stream stream) {
 			//FIXME: check if it's not a metafile, throw NotImplementedException
 			return new Bitmap (stream);
 		}
 	
+		[MonoTODO]
 		public static Image FromStream (Stream stream, bool useIcm) {
 			//FIXME: check if it's not a metafile, throw NotImplementedException
 			return new Bitmap (stream, useIcm);
@@ -205,7 +209,7 @@ namespace System.Drawing {
 		#endregion
 	
 		#region GetEncoderParameterList
-		// TBD: implement this
+		[MonoTODO]
 		public EncoderParameters GetEncoderParameterList(Guid encoder) {
 			throw new NotImplementedException ();
 		}
@@ -222,14 +226,14 @@ namespace System.Drawing {
 		#endregion
 	
 		#region GetPropertyItem
-		// TBD: implement this
+		[MonoTODO]
 		public PropertyItem GetPropertyItem(int propid) {
 			throw new NotImplementedException ();
 		}
 		#endregion
 
 		#region RemovePropertyItem
-		// TBD: implement this
+		[MonoTODO]
 		public void RemovePropertyItem (int propid) {		
 			throw new NotImplementedException ();
 		}
@@ -294,6 +298,7 @@ namespace System.Drawing {
 		#region Save
 		protected abstract void InternalSave (ImageOutputStream output, Guid clsid);
 
+		[MonoTODO]
 		public void Save (Stream stream, ImageCodecInfo encoder, EncoderParameters encoderParams) {
 			//TBD: implement encoderParams
 			if (encoder == null)
@@ -331,11 +336,12 @@ namespace System.Drawing {
 		#endregion
 
 		#region SaveAdd
-		// TBD: implement this
+		[MonoTODO]
 		public void SaveAdd(EncoderParameters encoderParams) {
 			throw new NotImplementedException ();
 		}
 	
+		[MonoTODO]
 		public void SaveAdd(Image image, EncoderParameters encoderParams) {
 			throw new NotImplementedException ();
 		}
@@ -344,6 +350,7 @@ namespace System.Drawing {
 		#region SelectActiveFrame
 
 		// TBD: .Net does not load all frames at the initialization. New frames loaded by request.
+		[MonoTODO]
 		public int SelectActiveFrame(FrameDimension dimension, int frameIndex) {
 			// FALLBACK: now, only one dimension assigned for all frames
 			if (dimension.Guid != CurrentImage.Dimension.Guid) 
@@ -357,7 +364,7 @@ namespace System.Drawing {
 		#endregion
 	
 		#region SetPropertyItem
-		// TBD: implement this
+		[MonoTODO]
 		public void SetPropertyItem(PropertyItem propitem) {
 			throw new NotImplementedException ();
 		}
@@ -367,6 +374,7 @@ namespace System.Drawing {
 		#region Flags
 		public int Flags {
 			// TDB: ImageFlagsScalable, ImageFlagsHasTranslucent, ImageFlagsPartiallyScalable, ImageFlagsCaching
+			[MonoTODO]
 			get {
 				image.ColorModel colorModel = ((BufferedImage)CurrentImage.NativeImage).getColorModel();
 				int t = colorModel.getColorSpace().getType();
@@ -392,6 +400,7 @@ namespace System.Drawing {
 		#endregion
 
 		#region FrameDimensionsList
+		[MonoTODO]
 		public Guid[] FrameDimensionsList {
 			// TBD: look over all frames and build array of dimensions
 			// FALLBACK: now, only one dimension assigned for all frames
@@ -422,6 +431,7 @@ namespace System.Drawing {
 		#endregion
 	
 		#region ColorPalette
+		[MonoTODO]
 		public ColorPalette Palette {
 			get {
 				if (!(CurrentImage.NativeImage is BufferedImage))
@@ -441,7 +451,6 @@ namespace System.Drawing {
 				return new ColorPalette();
 			}
 			set {
-				// TBD: add set
 				throw new NotImplementedException ();
 			}
 		}
@@ -466,7 +475,7 @@ namespace System.Drawing {
 		#endregion
 		
 		#region PropertiIdList
-		// TBD: implement this
+		[MonoTODO]
 		public int[] PropertyIdList {
 			get {
 				throw new NotImplementedException ();
@@ -475,7 +484,7 @@ namespace System.Drawing {
 		#endregion
 		
 		#region PropertItems
-		// TBD: implement this
+		[MonoTODO]
 		public PropertyItem[] PropertyItems {
 			get {
 				throw new NotImplementedException ();
@@ -536,11 +545,13 @@ namespace System.Drawing {
 			return ImageFromNativeImage(img, RawFormat);
 		}
 #if INTPTR_SUPPORT
+		[MonoTODO]
 	public static Bitmap FromHbitmap(IntPtr hbitmap)
 	{		
 		throw new NotImplementedException ();
 	}	
 
+		[MonoTODO]
 	public static Bitmap FromHbitmap(IntPtr hbitmap, IntPtr hpalette)
 	{		
 		throw new NotImplementedException ();

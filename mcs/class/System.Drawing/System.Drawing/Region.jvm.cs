@@ -49,6 +49,7 @@ namespace System.Drawing
 		{
 		}
 
+		[MonoTODO]
 		public Region (RegionData region_data) : this((geom.Area)null)
 		{
 			throw new NotImplementedException ();
@@ -350,6 +351,7 @@ namespace System.Drawing
 		}
 		#endregion
 				
+		[MonoTODO]
 		public RegionData GetRegionData()
 		{
 			throw new NotImplementedException();
@@ -357,6 +359,7 @@ namespace System.Drawing
 		
 		
 		#region GetRegionScans [TODO]
+		[MonoTODO]
 		public RectangleF[] GetRegionScans(Matrix matrix)
 		{
 			geom.Area area = NativeObject;

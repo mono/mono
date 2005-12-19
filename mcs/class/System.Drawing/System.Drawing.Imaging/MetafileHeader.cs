@@ -33,6 +33,8 @@ using System;
 
 namespace System.Drawing.Imaging {
 
+	[MonoTODO]
+	[StructLayout(LayoutKind.Sequential)]
 	public sealed class MetafileHeader 
 	{
 		

@@ -6,6 +6,7 @@ namespace System.Drawing.Drawing2D
 	/// <summary>
 	/// Summary description for HatchBrush.
 	/// </summary>
+	[MonoTODO]
 	public sealed class HatchBrush : Brush 
 	{
 		private HatchStyle _style;

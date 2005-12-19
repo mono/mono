@@ -9,6 +9,7 @@ namespace System.Drawing.Drawing2D {
 	/// <summary>
 	/// Summary description for PathGradientBrush.
 	/// </summary>
+	[MonoTODO]
 	public sealed class PathGradientBrush : Brush {
 		Brush _nativeObject;
 		Blend _blend;
@@ -121,6 +122,7 @@ namespace System.Drawing.Drawing2D {
 
 		#region Properties
 
+		[MonoTODO]
 		public Blend Blend {
 			get {
 				return _blend;
@@ -247,6 +249,7 @@ namespace System.Drawing.Drawing2D {
 			SetSigmaBellShape (focus, 1.0F);
 		}
 
+		[MonoTODO]
 		public void SetSigmaBellShape (float focus, float scale) {
 			// FALLBACK: Triangle shape used
 			SetBlendTriangularShape (focus, scale);
