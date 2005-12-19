@@ -421,6 +421,8 @@ namespace Mono.CSharp {
 		public bool DeclarationFound = false;
 		bool UsingFound;
 
+		ListDictionary extern_aliases;
+
 		static ArrayList entries = new ArrayList ();
 
 		public static void Reset ()
@@ -679,6 +681,12 @@ namespace Mono.CSharp {
 			if (aliases == null)
 				aliases = new Hashtable ();
 			
+			// Share the extern_aliases field with the Doppelganger
+			if (extern_aliases == null) {
+				extern_aliases = new ListDictionary ();
+				Doppelganger.extern_aliases = extern_aliases;
+			}
+			
 			if (aliases.Contains (name)) {
 				AliasEntry ae = (AliasEntry) aliases [name];
 				Report.SymbolRelatedToPreviousError (ae.Location, ae.Name);
@@ -692,7 +700,11 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			aliases [name] = new ExternAliasEntry (Doppelganger, name, loc);
+			// Register the alias in aliases and extern_aliases, since we need both of them
+			// to keep things simple (different resolution scenarios)
+			ExternAliasEntry alias = new ExternAliasEntry (Doppelganger, name, loc);
+			aliases [name] = alias;
+			extern_aliases [name] = alias;
 		}
 
 		public FullNamedExpression LookupNamespaceOrType (DeclSpace ds, string name, Location loc, bool ignore_cs0104)
@@ -737,11 +749,17 @@ namespace Mono.CSharp {
 			if (fne != null)
 				return fne;
 
+			if (extern_aliases != null) {
+				AliasEntry entry = extern_aliases [name] as AliasEntry;
+				if (entry != null)
+					return entry.Resolve ();
+			}
+			
 			if (IsImplicit)
 				return null;
-
+			
 			//
-			// Check aliases.
+			// Check aliases. 
 			//
 			if (aliases != null) {
 				AliasEntry entry = aliases [name] as AliasEntry;

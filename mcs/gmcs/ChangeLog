@@ -1,3 +1,17 @@
+2005-12-18 Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	Fix #76995
+
+	* namespace.cs (NamespaceEntry): Add extern_aliases as a
+	ListDictionary, to contain the ExternAliasEntry entries (in
+	addition to the NamespaceEntry.aliases hashtable). This field is
+	shared between the original entry and its doppelganger (bodyless 
+	copy of it).
+	(NamespaceEntry.UsingExternalAlias): Add the extern alias entry to
+	extern_aliases field.
+	(NamespaceEntry.Lookup): Move the IsImplicit check after the
+	lookup in extern_aliases.
+
 2005-12-16  Raja R Harinath  <rharinath@novell.com>
 
 	Fix #77006.
