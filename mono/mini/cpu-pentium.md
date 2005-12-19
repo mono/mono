@@ -318,6 +318,7 @@ long_conv_to_ovf_i: dest:i src1:i src2:i len:30
 long_conv_to_ovf_i4_2: dest:i src1:i src2:i len:30
 long_mul_ovf: 
 long_conv_to_r8_2: dest:f src1:i src2:i len:37 
+long_conv_to_r4_2: dest:f src1:i src2:i len:64
 long_conv_to_r_un: dest:f src1:i src2:i len:37 
 long_conv_to_r_un_2: dest:f src1:i src2:i len:37 
 long_shr_imm: dest:L src1:L clob:1 len:10
@@ -364,6 +365,7 @@ float_clt_un: dest:y src1:f src2:f len:32
 float_conv_to_u: dest:i src1:f len:36
 call_handler: len:10
 aot_const: dest:i len:5
+op_jump_table: dest:i len:5
 load_gotaddr: dest:i len:64
 got_entry: dest:i src1:b len:7
 x86_test_null: src1:i len:2

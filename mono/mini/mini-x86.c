@@ -2403,6 +2403,10 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			mono_add_patch_info (cfg, offset, (MonoJumpInfoType)ins->inst_i1, ins->inst_p0);
 			x86_mov_reg_imm (code, ins->dreg, 0);
 			break;
+		case OP_JUMP_TABLE:
+			mono_add_patch_info (cfg, offset, (MonoJumpInfoType)ins->inst_i1, ins->inst_p0);
+			x86_mov_reg_imm (code, ins->dreg, 0);
+			break;
 		case OP_LOAD_GOTADDR:
 			x86_call_imm (code, 0);
 			/* 
@@ -2867,6 +2871,15 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			x86_push_reg (code, ins->sreg2);
 			x86_push_reg (code, ins->sreg1);
 			x86_fild_membase (code, X86_ESP, 0, TRUE);
+			x86_alu_reg_imm (code, X86_ADD, X86_ESP, 8);
+			break;
+		case OP_LCONV_TO_R4_2:
+			x86_push_reg (code, ins->sreg2);
+			x86_push_reg (code, ins->sreg1);
+			x86_fild_membase (code, X86_ESP, 0, TRUE);
+			/* Change precision */
+			x86_fst_membase (code, X86_ESP, 0, FALSE, TRUE);
+			x86_fld_membase (code, X86_ESP, 0, FALSE);
 			x86_alu_reg_imm (code, X86_ADD, X86_ESP, 8);
 			break;
 		case OP_LCONV_TO_R_UN:
@@ -4301,6 +4314,9 @@ mono_arch_get_patch_offset (guint8 *code)
 	else if ((code [0] >= 0x58) && (code [0] <= 0x58 + X86_NREG) && (code [1] == 0x81))
 		/* pop <REG>; add <OFFSET>, <REG> */
 		return 3;
+	else if ((code [0] >= 0xb8) && (code [0] < 0xb8 + 8))
+		/* mov <REG>, imm */
+		return 1;
 	else {
 		g_assert_not_reached ();
 		return -1;

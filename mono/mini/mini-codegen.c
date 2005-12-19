@@ -834,12 +834,10 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 		}
 
 		if (spec [MONO_INST_SRC1]) {
-			if (spec [MONO_INST_SRC1] == 'f')
-				reginfo1 = reginfof;
-			else
-				reginfo1 = reginfo;
+			fp = spec [MONO_INST_SRC1] == 'f';
+			reginfo1 = fp ? reginfof : reginfo;
 			g_assert (ins->sreg1 != -1);
-			if (is_soft_reg (ins->sreg1, fp))
+			if (cfg->new_ir && is_soft_reg (ins->sreg1, fp))
 				/* This means the vreg is not local to this bb */
 				g_assert (reginfo1 [ins->sreg1].born_in > 0);
 			reginfo1 [ins->sreg1].prev_use = reginfo1 [ins->sreg1].last_use;
@@ -855,12 +853,10 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 			ins->sreg1 = -1;
 		}
 		if (spec [MONO_INST_SRC2]) {
-			if (spec [MONO_INST_SRC2] == 'f')
-				reginfo2 = reginfof;
-			else
-				reginfo2 = reginfo;
+			fp = spec [MONO_INST_SRC2] == 'f';
+			reginfo2 = fp ? reginfof : reginfo;
 			g_assert (ins->sreg2 != -1);
-			if (is_soft_reg (ins->sreg2, fp))
+			if (cfg->new_ir && is_soft_reg (ins->sreg2, fp))
 				/* This means the vreg is not local to this bb */
 				g_assert (reginfo2 [ins->sreg2].born_in > 0);
 			reginfo2 [ins->sreg2].prev_use = reginfo2 [ins->sreg2].last_use;

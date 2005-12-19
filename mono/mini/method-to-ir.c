@@ -577,6 +577,8 @@ mono_print_bb_code_new (MonoBasicBlock *bb) {
 
 #define EMIT_NEW_ARGLOADA(cfg,dest,num) do { NEW_ARGLOADA ((cfg), (dest), (num)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
 
+#define EMIT_NEW_RETLOADA(cfg,dest) do { NEW_RETLOADA ((cfg), (dest)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
+
 #define EMIT_NEW_UNALU(cfg,dest,op,dr,sr1) do { \
         MONO_INST_NEW ((cfg), (dest), (op)); \
         (dest)->opcode = op; \
@@ -2923,7 +2925,7 @@ handle_castclass (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned ch
 		}
 	}
 
-	mono_bblock_add_inst (cfg->cbb, object_is_null);
+	MONO_ADD_INS (cfg->cbb, object_is_null);
 
 	return src;
 }
@@ -3048,13 +3050,13 @@ handle_isinst (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned char 
 		}
 	}
 
-	mono_bblock_add_inst (cfg->cbb, false_label);
+	MONO_ADD_INS (cfg->cbb, false_label);
 	MONO_EMIT_NEW_ICONST (cfg, res_reg, 0);
 	MONO_EMIT_NEW_BRANCH_LABEL (cfg, CEE_BR, end_label);
-	mono_bblock_add_inst (cfg->cbb, object_is_null);
+	MONO_ADD_INS (cfg->cbb, object_is_null);
 	EMIT_NEW_UNALU (cfg, ins, OP_MOVE, res_reg, obj_reg);
 	ins->type = STACK_OBJ;
-	mono_bblock_add_inst (cfg->cbb, end_label);
+	MONO_ADD_INS (cfg->cbb, end_label);
 
 	return ins;
 }
@@ -3087,7 +3089,7 @@ handle_cisinst (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned char
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, tmp_reg, obj_reg, G_STRUCT_OFFSET (MonoObject, vtable));
 		mini_emit_isninst_iface_cast (cfg, tmp_reg, klass, interface_fail_label, true_label);
 		
-		mono_bblock_add_inst (cfg->cbb, interface_fail_label);
+		MONO_ADD_INS (cfg->cbb, interface_fail_label);
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, klass_reg, tmp_reg, G_STRUCT_OFFSET (MonoVTable, klass));
 		
 		if (cfg->compile_aot) {
@@ -3127,19 +3129,19 @@ handle_cisinst (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned char
 		mini_emit_isninst_cast (cfg, klass_reg, klass, false2_label, true_label);
 		MONO_EMIT_NEW_BRANCH_LABEL (cfg, CEE_BR, false2_label);
 		
-		mono_bblock_add_inst (cfg->cbb, no_proxy_label);
+		MONO_ADD_INS (cfg->cbb, no_proxy_label);
 		mini_emit_isninst_cast (cfg, klass_reg, klass, false_label, true_label);	
 	}
 
-	mono_bblock_add_inst (cfg->cbb, false_label);
+	MONO_ADD_INS (cfg->cbb, false_label);
 	MONO_EMIT_NEW_ICONST (cfg, dreg, 1);
 	MONO_EMIT_NEW_BRANCH_LABEL (cfg, CEE_BR, end_label);
-	mono_bblock_add_inst (cfg->cbb, false2_label);
+	MONO_ADD_INS (cfg->cbb, false2_label);
 	MONO_EMIT_NEW_ICONST (cfg, dreg, 2);
 	MONO_EMIT_NEW_BRANCH_LABEL (cfg, CEE_BR, end_label);
-	mono_bblock_add_inst (cfg->cbb, true_label);
+	MONO_ADD_INS (cfg->cbb, true_label);
 	MONO_EMIT_NEW_ICONST (cfg, dreg, 0);
-	mono_bblock_add_inst (cfg->cbb, end_label);
+	MONO_ADD_INS (cfg->cbb, end_label);
 
 	/* FIXME: */
 	MONO_INST_NEW (cfg, ins, OP_ICONST);
@@ -3176,7 +3178,7 @@ handle_ccastclass (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned c
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, tmp_reg, obj_reg, G_STRUCT_OFFSET (MonoObject, vtable));
 		mini_emit_isninst_iface_cast (cfg, tmp_reg, klass, fail_label, ok_result_label);
 		
-		mono_bblock_add_inst (cfg->cbb, fail_label);
+		MONO_ADD_INS (cfg->cbb, fail_label);
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, klass_reg, tmp_reg, G_STRUCT_OFFSET (MonoVTable, klass));
 
 		if (cfg->compile_aot) {
@@ -3224,17 +3226,17 @@ handle_ccastclass (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned c
 		MONO_EMIT_NEW_BRANCH_LABEL (cfg, CEE_BEQ, no_proxy_label);
 		
 		mini_emit_isninst_cast (cfg, klass_reg, klass, fail_label, ok_result_label);
-		mono_bblock_add_inst (cfg->cbb, fail_label);
+		MONO_ADD_INS (cfg->cbb, fail_label);
 		MONO_EMIT_NEW_ICONST (cfg, dreg, 1);
 		MONO_EMIT_NEW_BRANCH_LABEL (cfg, CEE_BR, end_label);
 		
-		mono_bblock_add_inst (cfg->cbb, no_proxy_label);
+		MONO_ADD_INS (cfg->cbb, no_proxy_label);
 		mini_emit_castclass (cfg, klass_reg, klass);
 	}
 
-	mono_bblock_add_inst (cfg->cbb, ok_result_label);
+	MONO_ADD_INS (cfg->cbb, ok_result_label);
 	MONO_EMIT_NEW_ICONST (cfg, dreg, 0);
-	mono_bblock_add_inst (cfg->cbb, end_label);
+	MONO_ADD_INS (cfg->cbb, end_label);
 
 	/* FIXME: */
 	MONO_INST_NEW (cfg, ins, OP_ICONST);
@@ -4280,6 +4282,9 @@ decompose_long_opts (MonoCompile *cfg)
 			case OP_LCONV_TO_R8:
 				MONO_EMIT_NEW_BIALU (cfg, OP_LCONV_TO_R8_2, tree->dreg, tree->sreg1, tree->sreg1 + 1);
 				break;
+			case OP_LCONV_TO_R4:
+				MONO_EMIT_NEW_BIALU (cfg, OP_LCONV_TO_R4_2, tree->dreg, tree->sreg1, tree->sreg1 + 1);
+				break;
 			case OP_LCONV_TO_R_UN:
 				MONO_EMIT_NEW_BIALU (cfg, OP_LCONV_TO_R_UN_2, tree->dreg, tree->sreg1, tree->sreg1 + 1);
 				break;
@@ -4381,6 +4386,7 @@ decompose_long_opts (MonoCompile *cfg)
 				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_AND_IMM, tree->dreg, tree->sreg1, 0xffff);
 				break;
 			case OP_LCONV_TO_OVF_I4:
+			case OP_LCONV_TO_OVF_I:
 			case OP_LCONV_TO_OVF_I4_UN:
 				/* FIXME: Is the I4_UN variant correct ? */
 				MONO_EMIT_NEW_BIALU (cfg, OP_LCONV_TO_OVF_I4_2, tree->dreg, tree->sreg1, tree->sreg1 + 1);
@@ -5796,8 +5802,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 					MONO_INST_NEW (cfg, ins, CEE_NOP);
 					ins->opcode = mono_type_to_stind (mono_method_signature (method)->ret);
 					if (ins->opcode == CEE_STOBJ) {
-						NEW_RETLOADA (cfg, ins);
-						MONO_ADD_INS (cfg->cbb, ins);
+						EMIT_NEW_RETLOADA (cfg, ins);
 						/* 
 						 * cfg->ret is a scalar variable, so can't use its 
 						 * class field.
@@ -7746,6 +7751,10 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				ip += 2;
 				break;
 			case CEE_MONO_LDNATIVEOBJ:
+				/*
+				 * Similar to LDOBJ, but instead load the unmanaged 
+				 * representation of the vtype to the stack.
+				 */
 				CHECK_STACK (1);
 				CHECK_OPSIZE (6);
 				--sp;
@@ -7754,12 +7763,23 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				g_assert (klass->valuetype);
 				mono_class_init (klass);
 
-				ins = emit_ldobj (cfg, sp [0], ip, klass);
+				/* 
+				 * In theory, we should load the value to the stack, but that
+				 * would involve creating a variable whose type is the native
+				 * vtype, and this is a bit hard to do. So instead we 
+				 * simulate the load by loading the original address.
+				 */
+				ins = sp [0];
+				ins->type = STACK_VTYPE;
+				ins->klass = klass;
 				*sp++ = ins;
 				ip += 6;
 				break;
-#if 0
 			case CEE_MONO_RETOBJ:
+				/*
+				 * Same as RET, but return the native representation of a vtype
+				 * to the caller.
+				 */
 				g_assert (cfg->ret);
 				g_assert (mono_method_signature (method)->pinvoke); 
 				CHECK_STACK (1);
@@ -7769,7 +7789,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				token = read32 (ip + 2);    
 				klass = (MonoClass *)mono_method_get_wrapper_data (method, token);
 
-				NEW_RETLOADA (cfg, ins);
+				EMIT_NEW_RETLOADA (cfg, ins);
 				emit_stobj (cfg, ins, *sp, ip, klass, TRUE);
 				
 				if (sp != stack_start)
@@ -7783,7 +7803,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				start_new_bblock = 1;
 				ip += 6;
 				break;
-#endif
 			case CEE_MONO_CISINST:
 			case CEE_MONO_CCASTCLASS: {
 				int token;
