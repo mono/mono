@@ -1,3 +1,8 @@
+2005-12-19  Raja R Harinath  <rharinath@novell.com>
+
+	* icall.c (ves_icall_System_MonoType_getFullName): Return NULL for
+	type parameters.
+
 2005-12-15  Raja R Harinath  <rharinath@novell.com>
 
 	* metadata.c (mono_metadata_parse_method_signature_full): Remove a
