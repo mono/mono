@@ -1,3 +1,10 @@
+2005-12-18  Alexander Olk  <alex.olk@googlemail.com>
+
+	* ThemeClearlooks.cs:
+	  - Updated ProgressBar drawing
+	  - Corrected drawing of ScrollBars and scroll buttons
+	  - Some temporary fixes for minor pixel artefacts
+
 2005-12-18  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* Control.cs:

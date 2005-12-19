@@ -702,20 +702,23 @@ namespace System.Windows.Forms {
 					
 					lgbr.RotateTransform( 45.0f, MatrixOrder.Append );
 					
-					Pen pen = new Pen( lgbr, 12 );
+					float pen_width = bmp.Height / 2;
+					
+					Pen pen = new Pen( lgbr, pen_width );
+					
+					int add = bmp.Height + (int)pen.Width;
 					
 					int x_top = 0;
 					int x_bottom = - bmp.Height;
 					
 					while ( x_bottom < bmp.Width ) {
 						gr.DrawLine( pen, x_top, 0, x_bottom, bmp.Height );
-						x_top += 36;
-						x_bottom += 36;
+						x_top += add;
+						x_bottom += add;
 					}
 					
 					pen.Dispose( );
 					lgbr.Dispose( );
-					
 				}
 				
 				dc.DrawImage( bmp, bar.X + 1, bar.Y + 1 );
@@ -755,6 +758,89 @@ namespace System.Windows.Forms {
 		#endregion	// RadioButton
 		
 		#region ScrollBar
+		public override void DrawScrollBar( Graphics dc, Rectangle clip, ScrollBar bar ) {
+			int		scrollbutton_width = bar.scrollbutton_width;
+			int		scrollbutton_height = bar.scrollbutton_height;
+			Rectangle	first_arrow_area;
+			Rectangle	second_arrow_area;			
+			Rectangle	thumb_pos;
+			
+			thumb_pos = bar.ThumbPos;
+			
+			if ( bar.vert ) {
+				first_arrow_area = new Rectangle( 0, 0, bar.Width, scrollbutton_height + 1 );
+				bar.FirstArrowArea = first_arrow_area;
+				
+				second_arrow_area = new Rectangle( 0, bar.ClientRectangle.Height - scrollbutton_height - 1, bar.Width, scrollbutton_height + 1 );
+				bar.SecondArrowArea = second_arrow_area;
+				
+				thumb_pos.Width = bar.Width;
+				bar.ThumbPos = thumb_pos;
+				
+				/* Background */
+				switch ( bar.thumb_moving ) {
+					case ScrollBar.ThumbMoving.None: {
+							ScrollBar_Vertical_Draw_ThumbMoving_None( scrollbutton_height, bar, clip, dc );
+							break;
+						}
+					case ScrollBar.ThumbMoving.Forward: {
+							ScrollBar_Vertical_Draw_ThumbMoving_Forward( scrollbutton_height, bar, thumb_pos, clip, dc );
+							break;
+						}
+						
+					case ScrollBar.ThumbMoving.Backwards: {
+							ScrollBar_Vertical_Draw_ThumbMoving_Backwards( scrollbutton_height, bar, thumb_pos, clip, dc );
+							break;
+						}
+						
+					default:
+						break;
+				}
+				
+				/* Buttons */
+				if ( clip.IntersectsWith( first_arrow_area ) )
+					CPDrawScrollButton( dc, first_arrow_area, ScrollButton.Up, bar.firstbutton_state );
+				if ( clip.IntersectsWith( second_arrow_area ) )
+					CPDrawScrollButton( dc, second_arrow_area, ScrollButton.Down, bar.secondbutton_state );
+			} else {
+				first_arrow_area = new Rectangle( 0, 0, scrollbutton_width + 1, bar.Height );
+				bar.FirstArrowArea = first_arrow_area;
+				
+				second_arrow_area = new Rectangle( bar.ClientRectangle.Width - scrollbutton_width - 1, 0, scrollbutton_width + 1, bar.Height );
+				bar.SecondArrowArea = second_arrow_area;
+				
+				thumb_pos.Height = bar.Height;
+				bar.ThumbPos = thumb_pos;
+				
+				/* Background */					
+				switch ( bar.thumb_moving ) {
+					case ScrollBar.ThumbMoving.None: {
+							ScrollBar_Horizontal_Draw_ThumbMoving_None( scrollbutton_width, bar, clip, dc );
+							break;
+						}
+						
+					case ScrollBar.ThumbMoving.Forward: {
+							ScrollBar_Horizontal_Draw_ThumbMoving_Forward( scrollbutton_width, thumb_pos, bar, clip, dc );
+							break;
+						}
+						
+					case ScrollBar.ThumbMoving.Backwards: {
+							ScrollBar_Horizontal_Draw_ThumbMoving_Backwards( scrollbutton_width, thumb_pos, bar, clip, dc );
+							break;
+						}
+				}
+				
+				/* Buttons */
+				if ( clip.IntersectsWith( first_arrow_area ) )
+					CPDrawScrollButton( dc, first_arrow_area, ScrollButton.Left, bar.firstbutton_state );
+				if ( clip.IntersectsWith( second_arrow_area ) )
+					CPDrawScrollButton( dc, second_arrow_area, ScrollButton.Right, bar.secondbutton_state );
+			}
+			
+			/* Thumb */
+			ScrollBar_DrawThumb( bar, thumb_pos, clip, dc );				
+		}
+		
 		protected override void ScrollBar_DrawThumb( ScrollBar bar, Rectangle thumb_pos, Rectangle clip, Graphics dc ) {
 			if ( bar.Enabled && thumb_pos.Width > 0 && thumb_pos.Height > 0 && clip.IntersectsWith( thumb_pos ) )
 				DrawScrollBarThumb( dc, thumb_pos, bar );
@@ -766,7 +852,6 @@ namespace System.Windows.Forms {
 			Rectangle intersect = Rectangle.Intersect( clip, r );
 			
 			if ( intersect != Rectangle.Empty ) {
-				intersect.Y += 1; // small bugfix, otherwise we have a one pixel artefact on both upper corners of the scroll button
 				dc.FillRectangle( ResPool.GetSolidBrush( scrollbar_background_color ), intersect );
 				Pen pen = ResPool.GetPen( scrollbar_border_color );
 				dc.DrawLine( pen, intersect.X, intersect.Y, intersect.X, intersect.Bottom - 1 );
@@ -1422,7 +1507,7 @@ namespace System.Windows.Forms {
 			
 			switch ( scroll_button_type ) {
 				case ScrollButton.Down:
-					centerY += shift;
+					centerY += shift + 1;
 					arrow[ 0 ] = new Point( centerX - 4, centerY - 2 );
 					arrow[ 1 ] = new Point( centerX, centerY + 2 );
 					arrow[ 2 ] = new Point( centerX + 4, centerY - 2 );
@@ -1443,7 +1528,7 @@ namespace System.Windows.Forms {
 					arrow[ 3 ] = new Point( centerX + 2, centerY - 4 );
 					break;
 				case ScrollButton.Right:
-					centerX += shift;
+					centerX += shift + 1;
 					arrow[ 0 ] = new Point( centerX - 2, centerY - 4 );
 					arrow[ 1 ] = new Point( centerX + 2, centerY );
 					arrow[ 2 ] = new Point( centerX - 2, centerY + 4 );
@@ -1490,6 +1575,7 @@ namespace System.Windows.Forms {
 			
 			lgbr.Dispose( );
 			
+			// outer border
 			Pen pen = ResPool.GetPen( border_normal_dark_color );
 			
 			dc.DrawRectangle( pen, area.X, area.Y, area.Width - 1, area.Height - 1 );
@@ -1557,6 +1643,9 @@ namespace System.Windows.Forms {
 			
 			switch ( scroll_button_type ) {
 				case ScrollButton.Left:
+					// FIXME: temporary fix for artefacts, it should use the backcolor of the parent control
+					dc.DrawLine( ResPool.GetPen( ColorControl ), area.X, area.Y, area.X, area.Bottom - 1 );
+					
 					lgbr = new LinearGradientBrush( new Point( area.X + 2, area.Y + 2 ), new Point( area.X + 2, area.Bottom - 2 ), first_gradient_color, second_gradient_color );
 					dc.FillRectangle( lgbr, area.X + 2, area.Y + 2, area.Width - 4, area.Height - 2 );
 					
@@ -1584,6 +1673,9 @@ namespace System.Windows.Forms {
 					dc.DrawPolygon( pen, points );
 					break;
 				case ScrollButton.Right:
+					// FIXME: temporary fix for artefacts, it should use the backcolor of the parent control
+					dc.DrawLine( ResPool.GetPen( ColorControl ), area.Right - 1, area.Y, area.Right - 1, area.Bottom - 1 );
+					
 					lgbr = new LinearGradientBrush( new Point( area.X + 2, area.Y + 2 ), new Point( area.X + 2, area.Bottom - 2 ), first_gradient_color, second_gradient_color );
 					dc.FillRectangle( lgbr, area.X + 2, area.Y + 2, area.Width - 4, area.Height - 2 );
 					
@@ -1611,6 +1703,9 @@ namespace System.Windows.Forms {
 					dc.DrawPolygon( pen, points );
 					break;
 				case ScrollButton.Up:
+					// FIXME: temporary fix for artefacts, it should use the backcolor of the parent control
+					dc.DrawLine( ResPool.GetPen( ColorControl ), area.X, area.Y, area.Right - 1, area.Y );
+					
 					lgbr = new LinearGradientBrush( new Point( area.X + 2, area.Y ), new Point( area.Right - 2, area.Y ), first_gradient_color, second_gradient_color );
 					dc.FillRectangle( lgbr, area.X + 2, area.Y + 2, area.Width - 4, area.Height - 4 );
 					
@@ -1638,6 +1733,9 @@ namespace System.Windows.Forms {
 					dc.DrawPolygon( pen, points );
 					break;
 				case ScrollButton.Down:
+					// FIXME: temporary fix for artefacts, it should use the backcolor of the parent control
+					dc.DrawLine( ResPool.GetPen( ColorControl ), area.X, area.Bottom - 1, area.Right - 1, area.Bottom - 1 );
+					
 					lgbr = new LinearGradientBrush( new Point( area.X + 2, area.Y ), new Point( area.Right - 2, area.Y ), first_gradient_color, second_gradient_color );
 					dc.FillRectangle( lgbr, area.X + 2, area.Y + 2, area.Width - 4, area.Height - 4 );
 					
@@ -2160,6 +2258,10 @@ namespace System.Windows.Forms {
 		
 		private void CPDrawBorder3D( Graphics dc, Rectangle rectangle, Border3DStyle style, Border3DSide sides, Color control_color ) {
 			// currently we don't take care of Border3DStyle or Border3DSide
+			
+			// FIXME: temporary fix for artefacts, it should use the backcolor of the parent control
+			dc.DrawLine( ResPool.GetPen( ColorControl ), rectangle.X, rectangle.Y, rectangle.X, rectangle.Bottom - 1 );
+			dc.DrawLine( ResPool.GetPen( ColorControl ), rectangle.Right - 1, rectangle.Y, rectangle.Right - 1, rectangle.Bottom - 1 );
 			
 			Pen tmp_pen = ResPool.GetPen( edge_bottom_inner_color );
 			dc.DrawLine( tmp_pen, rectangle.X + 1, rectangle.Y + 2, rectangle.X + 2, rectangle.Y + 1 );
