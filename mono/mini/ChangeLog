@@ -1,3 +1,7 @@
+2005-12-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* basic-float.cs: Add float<->long conversion tests.
+
 2005-12-16 Neale Ferguson <neale@sinenomine.net>
 
 	* mini-s390.c: Fix LOCALLOC processing.
