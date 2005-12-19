@@ -34,10 +34,11 @@ namespace Cairo
 	[Serializable]
 	public enum Format
 	{
-		// FIXME: these should not be all caps
-		ARGB32,
-		RGB24,
-		A8,
-		A1,
+		ARGB32	= 0,
+		RGB24	= 1,
+		A8	= 2,
+		A1	= 3,
+		Argb32	= 0,
+		Rgb24	= 1,
 	}
 }

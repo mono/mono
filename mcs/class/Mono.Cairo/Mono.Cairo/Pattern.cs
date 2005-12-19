@@ -68,7 +68,6 @@ namespace Cairo {
                 }		
 		}
 
-		// FIXME: probably will change to a better name at some point
 		public class SolidPattern : Pattern
 		{
 			public SolidPattern (Color color, bool solid)

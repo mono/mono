@@ -1,3 +1,11 @@
+2005-12-19  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* Mono.Cairo/Format.cs: Removed fixme, added names in .Net format
+	* Mono.Cairo/Surface.cs: Removed fixme, added static method 
+	  FromBitmap() to allow creating a surface from a bitmap
+	* Mono.Cairo/Pattern.cs: Removed fixme to not tempt anyone to change
+	  the name down the road
+
 2005-12-16  John Luke  <john.luke@gmail.com>
 
 	* Mono.Cairo/FontOptions.cs: fix bug with

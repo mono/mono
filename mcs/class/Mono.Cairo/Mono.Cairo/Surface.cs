@@ -128,15 +128,17 @@ namespace Cairo {
 			}
 		}
 
-		/* FIXME: has the same parameters as above
-		public XlibSurface (IntPtr display, IntPtr bitmap, IntPtr screen, int width, int height)
+		public XlibSurface (IntPtr ptr, bool own) : base (ptr, own)
 		{
-			surface = CairoAPI.cairo_xlib_surface_create_for_bitmap (display, bitmap, screen, width, height);
-			lock (surfaces.SyncRoot){
-				surfaces [surface] = this;
-			}
 		}
-		*/
+
+		public static XlibSurface FromBitmap (IntPtr display, IntPtr bitmap, IntPtr screen, int width, int height)
+		{
+			IntPtr	ptr;
+
+			ptr = CairoAPI.cairo_xlib_surface_create_for_bitmap (display, bitmap, screen, width, height);
+			return new XlibSurface(ptr, true);
+		}
 
 		public void SetDrawable (IntPtr drawable, int width, int height)
 		{
@@ -158,7 +160,7 @@ namespace Cairo {
 		{
 		}
 		
-                private Surface (IntPtr ptr, bool owns)
+                protected Surface (IntPtr ptr, bool owns)
                 {
                         surface = ptr;
 			lock (surfaces.SyncRoot){
