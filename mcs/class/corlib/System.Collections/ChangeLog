@@ -1,3 +1,8 @@
+2005-12-19  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ArrayList.cs: Fix default capacity under 2.0 (and unit tests under 
+	MS 2.0).
+
 2005-12-07  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SortedList.cs: Removed check for IComparable in ctor (fixed bug 
