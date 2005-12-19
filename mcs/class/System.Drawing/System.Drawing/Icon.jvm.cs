@@ -115,6 +115,7 @@ namespace System.Drawing
 			}
 		}
 
+		[MonoTODO]
    		private Icon (SerializationInfo info, StreamingContext context)
 		{
 			//FIXME, need to check how MS stores Icon structure
@@ -123,6 +124,7 @@ namespace System.Drawing
 		}
 		#endregion
 
+		[MonoTODO]
 		void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
 		{
 			throw new NotImplementedException ();
@@ -144,6 +146,7 @@ namespace System.Drawing
 		}
 
 #if INTPTR_SUPPORT
+		[MonoTODO]
 		public static Icon FromHandle (IntPtr handle)
 		{
 			throw new NotImplementedException ();

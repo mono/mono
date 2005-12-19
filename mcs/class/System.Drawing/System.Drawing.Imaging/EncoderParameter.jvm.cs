@@ -38,6 +38,7 @@ using System.Runtime.InteropServices;
 
 namespace System.Drawing.Imaging {
 
+	[MonoTODO]
 	public sealed class EncoderParameter : IDisposable {
 
 		private Encoder encoder;
@@ -48,82 +49,97 @@ namespace System.Drawing.Imaging {
 		{
 		}
 
+		[MonoTODO]
 		public EncoderParameter (Encoder encoder, byte value)
 		{
 			throw new NotImplementedException();
 		}
 
+		[MonoTODO]
 		public EncoderParameter (Encoder encoder, byte[] value)
 		{
 			throw new NotImplementedException();
 		}
 
+		[MonoTODO]
 		public EncoderParameter (Encoder encoder, short value)
 		{
 			throw new NotImplementedException();
 		}
 
+		[MonoTODO]
 		public EncoderParameter (Encoder encoder, short[] value)
 		{
 			throw new NotImplementedException();
 		}
 
-
+		[MonoTODO]
 		public EncoderParameter (Encoder encoder, long value)
 		{
 			throw new NotImplementedException();
 		}
 
+		[MonoTODO]
 		public EncoderParameter (Encoder encoder, long[] value)
 		{
 			throw new NotImplementedException();
 		}
 
+		[MonoTODO]
 		public EncoderParameter (Encoder encoder, string value)
 		{
 			throw new NotImplementedException();
 		}
 
+		[MonoTODO]
 		public EncoderParameter (Encoder encoder, byte value, bool undefined)
 		{
 			throw new NotImplementedException();
 		}
 
+		[MonoTODO]
 		public EncoderParameter (Encoder encoder, byte[] value, bool undefined)
 		{
 			throw new NotImplementedException();
 		}
 
+		[MonoTODO]
 		public EncoderParameter (Encoder encoder, int numerator, int denominator)
 		{
 			throw new NotImplementedException();
 		}
 
+		[MonoTODO]
 		public EncoderParameter (Encoder encoder, int[] numerator, int[] denominator)
 		{
 			throw new NotImplementedException();
 		}
 
+		[MonoTODO]
 		public EncoderParameter (Encoder encoder, long rangebegin, long rangeend)
 		{
 			throw new NotImplementedException();
 		}
 
+		[MonoTODO]
 		public EncoderParameter (Encoder encoder, long[] rangebegin, long[] rangeend)
 		{
 			throw new NotImplementedException();
 		}
 
+		[MonoTODO]
 		public EncoderParameter (Encoder encoder, int numberOfValues, int type, int value)
 		{
 			throw new NotImplementedException();
 		}
 
+		[MonoTODO]
 		public EncoderParameter (Encoder encoder, int numerator1, int denominator1, int numerator2, int denominator2)
 		{
 			throw new NotImplementedException();
 		}
 
+		[MonoTODO]
 		public EncoderParameter (Encoder encoder, int[] numerator1, int[] denominator1, int[] numerator2, int[] denominator2)
 		{
 			throw new NotImplementedException();

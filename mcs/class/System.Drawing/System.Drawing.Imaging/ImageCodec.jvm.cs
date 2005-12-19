@@ -17,6 +17,7 @@ namespace Mainsoft.Drawing.Imaging {
 	/// <summary>
 	/// Summary description for ImageCodec.
 	/// </summary>
+	[MonoTODO]
 	public class ImageCodec : IDisposable {
 
 		#region Members
@@ -378,6 +379,7 @@ namespace Mainsoft.Drawing.Imaging {
 		
 		#region Image read/write methods
 
+		[MonoTODO]
 		public PlainImage ReadPlainImage() {
 			awt.Image img = ReadImage( _currentFrame );
 			if (img == null)

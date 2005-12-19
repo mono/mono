@@ -37,6 +37,7 @@ namespace System.Drawing.Drawing2D
 	/// <summary>
 	/// Summary description for GraphicsState.
 	/// </summary>
+	[MonoTODO]
 	public sealed class GraphicsState : MarshalByRefObject
 	{
 		readonly CompositingMode _compositingMode;

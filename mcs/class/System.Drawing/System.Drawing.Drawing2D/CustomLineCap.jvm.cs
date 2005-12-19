@@ -40,6 +40,7 @@ namespace System.Drawing.Drawing2D
 	/// <summary>
 	/// Summary description for CustomLineCap.
 	/// </summary>
+	[MonoTODO]
 	public class CustomLineCap : MarshalByRefObject, ICloneable
 	{
 		private bool disposed;
@@ -56,11 +57,13 @@ namespace System.Drawing.Drawing2D
 		{
 		}
 
+		[MonoTODO]
 		public CustomLineCap(GraphicsPath fillPath, GraphicsPath strokePath, LineCap baseCap, float baseInset)
 		{
 			throw new NotImplementedException();
 		}
 
+		[MonoTODO]
 		public LineCap BaseCap {
 			get {
 				throw new NotImplementedException();
@@ -71,6 +74,7 @@ namespace System.Drawing.Drawing2D
 			}
 		}
 
+		[MonoTODO]
 		public LineJoin StrokeJoin {
 			get {
 				throw new NotImplementedException();
@@ -81,6 +85,7 @@ namespace System.Drawing.Drawing2D
 			}
 		}
 
+		[MonoTODO]
 		public float BaseInset {
 			get {
 				throw new NotImplementedException();
@@ -91,6 +96,7 @@ namespace System.Drawing.Drawing2D
 			}
 		}
 
+		[MonoTODO]
 		public float WidthScale {
 			get {
 				throw new NotImplementedException();
@@ -102,18 +108,19 @@ namespace System.Drawing.Drawing2D
 		}
 
 		// Public Methods
-
+		[MonoTODO]
 		public virtual object Clone ()
 		{
 			throw new NotImplementedException();
 		}
 		
-
+		[MonoTODO]
 		public void GetStrokeCaps (out LineCap startCap, out LineCap endCap)
 		{
 			throw new NotImplementedException();
 		}
 
+		[MonoTODO]
 		public void SetStrokeCaps(LineCap startCap, LineCap endCap)
 		{
 			throw new NotImplementedException();

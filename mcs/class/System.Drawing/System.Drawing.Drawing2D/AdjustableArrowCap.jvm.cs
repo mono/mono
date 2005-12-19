@@ -39,6 +39,7 @@ namespace System.Drawing.Drawing2D
 	/// <summary>
 	/// Summary description for AdjustableArrowCap.
 	/// </summary>
+	[MonoTODO]
 	public sealed class AdjustableArrowCap : CustomLineCap
 	{
 		// Constructors
@@ -47,13 +48,14 @@ namespace System.Drawing.Drawing2D
 		{
 		}
 
+		[MonoTODO]
 		public AdjustableArrowCap (float width, float height, bool isFilled)
 		{
 			throw new NotImplementedException();
 		}
 
 		// Public Properities
-
+		[MonoTODO]
 		public bool Filled {
 			get {
 				throw new NotImplementedException();
@@ -64,6 +66,7 @@ namespace System.Drawing.Drawing2D
 			}
 		}
 
+		[MonoTODO]
 		public float Width {
 			get {
 				throw new NotImplementedException();
@@ -74,6 +77,7 @@ namespace System.Drawing.Drawing2D
 			}
 		}
 
+		[MonoTODO]
 		public float Height {
 			get {
 				throw new NotImplementedException();
@@ -84,6 +88,7 @@ namespace System.Drawing.Drawing2D
 			}
 		}
 
+		[MonoTODO]
 		public float MiddleInset {
 			get {
 				throw new NotImplementedException();

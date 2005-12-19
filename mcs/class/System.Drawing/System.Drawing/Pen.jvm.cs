@@ -135,6 +135,7 @@ namespace System.Drawing
 		#endregion 
 
 		#region CompoundArray [TODO]
+		[MonoTODO]
 		public float[] CompoundArray {
 			get {
 				throw new NotImplementedException ();
@@ -146,6 +147,7 @@ namespace System.Drawing
 		#endregion
             
 		#region CustomEndCap [TODO]
+		[MonoTODO]
 		public CustomLineCap CustomEndCap 
 		{
 			get 
@@ -161,9 +163,9 @@ namespace System.Drawing
 		#endregion 
 
 		#region CustomStartCap [TODO]
+		[MonoTODO]
 		public CustomLineCap CustomStartCap 
 		{
-
 			get 
 			{
 				throw new NotImplementedException ();                                
@@ -178,6 +180,7 @@ namespace System.Drawing
 		#endregion
 
 		#region DashCap
+		[MonoTODO]
 		public DashCap DashCap {
 			get {
 				return _dashCap;
@@ -243,7 +246,7 @@ namespace System.Drawing
 		#endregion 
 
 		#region StartCap [TODO - now allways endcap]
-
+		[MonoTODO]
 		public LineCap StartCap {
 			get { 
 				return _startCap;
@@ -257,6 +260,7 @@ namespace System.Drawing
 		#endregion
 
 		#region EndCap 
+		[MonoTODO]
 		public LineCap EndCap 
 		{
 			get 
@@ -274,6 +278,7 @@ namespace System.Drawing
 		#endregion
  
 		#region LineJoin [partial TODO - missed styles]
+		[MonoTODO]
 		public LineJoin LineJoin {
 			get {
 				return _lineJoin;

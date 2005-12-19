@@ -29,6 +29,7 @@ namespace System.Drawing
 			base.Initialize( orig, false );
 		}
 
+		[MonoTODO]
 		private Bitmap (SerializationInfo info, StreamingContext context) {
 			throw new NotImplementedException ();
 		}
@@ -51,6 +52,7 @@ namespace System.Drawing
 		internal Bitmap (java.awt.Image nativeObject, ImageFormat format)
 			:base (nativeObject, format) {}
 
+		[MonoTODO]
 		private Bitmap (java.awt.Image nativeObject, ImageFormat format, PixelFormat pixFormat)
 			:this (nativeObject, format) {
 			if (pixFormat != this.PixelFormat)
@@ -103,6 +105,7 @@ namespace System.Drawing
 			}
 		}
 #if INTPTR_SUPPORT
+		[MonoTODO]
 		public Bitmap (int width, int height, int stride, PixelFormat format, IntPtr scan0)
 		{						
 			throw new NotImplementedException();			
@@ -265,7 +268,7 @@ namespace System.Drawing
 		#endregion
 
 		#region LockBits
-		// TBD: implement this
+		[MonoTODO]
 		public BitmapData LockBits (Rectangle rect, ImageLockMode flags, PixelFormat format) {
 			throw new NotImplementedException();
 		}
@@ -312,7 +315,7 @@ namespace System.Drawing
 		#endregion 
 
 		#region UnlockBits
-		// TBD: implement this
+		[MonoTODO]
 		public void UnlockBits (BitmapData bitmap_data)
 		{
 			throw new NotImplementedException();
@@ -380,26 +383,31 @@ namespace System.Drawing
 		#endregion
 
 #if INTPTR_SUPPORT
+		[MonoTODO]
 		public static Bitmap FromHicon (IntPtr hicon)
 		{	
 			throw new NotImplementedException();
 		}
 
+		[MonoTODO]
 		public static Bitmap FromResource (IntPtr hinstance, string bitmapName)	//TBD: Untested
 		{
 			throw new NotImplementedException();
 		}
 
+		[MonoTODO]
 		public IntPtr GetHbitmap ()
 		{
 			throw new NotImplementedException();
 		}
 
+		[MonoTODO]
 		public IntPtr GetHbitmap (Color background)
 		{
 			throw new NotImplementedException();
 		}
 
+		[MonoTODO]
 		public IntPtr GetHicon ()
 		{
 			throw new NotImplementedException();

@@ -69,6 +69,7 @@ namespace System.Drawing {
 			: this(family, emSize, style, unit, charSet, false) {
 		}
 		
+		[MonoTODO]
 		public Font(FontFamily family, float emSize, FontStyle style, GraphicsUnit unit, byte charSet, bool isVertical) {
 			if (family == null)
 				throw new ArgumentNullException("family");
@@ -132,6 +133,7 @@ namespace System.Drawing {
 		#endregion
 		
 #if INTPTR_SUPPORT
+		[MonoTODO]
 		public IntPtr ToHfont ()
 		{
 			throw new NotImplementedException();
