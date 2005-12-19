@@ -57,12 +57,12 @@ namespace System.Collections.ObjectModel
 			syncRoot = (c != null) ? c.SyncRoot : new object ();
 		}
 
-		public void Add (T item)
+		void ICollection<T>.Add (T item)
 		{
 			throw new NotSupportedException ();
 		}
 		
-		public void Clear ()
+		void ICollection<T>.Clear ()
 		{
 			throw new NotSupportedException ();
 		}
@@ -87,17 +87,17 @@ namespace System.Collections.ObjectModel
 			return list.IndexOf (item);
 		}
 
-		public void Insert (int index, T item)
+		void IList<T>.Insert (int index, T item)
 		{
 			throw new NotSupportedException ();
 		}
 
-		public bool Remove (T item)
+		bool ICollection<T>.Remove (T item)
 		{
 			throw new NotSupportedException ();
 		}
 
-		public void RemoveAt (int index)
+		void IList<T>.RemoveAt (int index)
 		{
 			throw new NotSupportedException ();
 		}
@@ -108,10 +108,13 @@ namespace System.Collections.ObjectModel
 
 		public T this [int index] {
 			get { return list [index]; }
+		}
+
+		T IList<T>.this [int index] {
 			set { throw new NotSupportedException (); }
 		}
 
-		public bool IsReadOnly {
+		bool ICollection<T>.IsReadOnly {
 			get { return true; }
 		}
 
@@ -134,6 +137,11 @@ namespace System.Collections.ObjectModel
 			throw new NotSupportedException ();
 		}
 		
+		void IList.Clear ()
+		{
+			throw new NotSupportedException ();
+		}
+
 		bool IList.Contains (object item)
 		{
 			if (Collection <T>.IsValidItem (item))
@@ -158,6 +166,11 @@ namespace System.Collections.ObjectModel
 			throw new NotSupportedException ();
 		}
 		
+		void IList.RemoveAt (int index)
+		{
+			throw new NotSupportedException ();
+		}
+
 		bool ICollection.IsSynchronized {
 			get { return Collection <T>.IsSynchronized (list); }
 		}

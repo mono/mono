@@ -146,7 +146,7 @@ namespace System.Collections.ObjectModel
 			set { SetItem (index, value); }
 		}
 
-		public bool IsReadOnly {
+		bool ICollection<T>.IsReadOnly {
 			get { return list.IsReadOnly; }
 		}
 
