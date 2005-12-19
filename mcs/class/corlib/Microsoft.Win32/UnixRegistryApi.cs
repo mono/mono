@@ -154,7 +154,6 @@ namespace Microsoft.Win32 {
 				string f = Path.Combine (Dir, extra);
 				if (dir_to_key.Contains (f))
 					return (RegistryKey) dir_to_key [f];
-				Console.WriteLine ("Trying: " + f);
 				if (Directory.Exists (f)){
 					KeyHandler kh = new KeyHandler (rkey, f);
 					RegistryKey rk = new RegistryKey (kh, CombineName (rkey, extra));
