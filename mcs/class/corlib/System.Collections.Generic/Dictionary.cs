@@ -652,6 +652,7 @@ namespace System.Collections.Generic {
 				get { return ((ICollection) dictionary).SyncRoot; }
 			}
 
+			[Serializable]
 			public struct Enumerator : IEnumerator<TKey>, IDisposable, IEnumerator {
 				Dictionary<TKey, TValue>.Enumerator host_enumerator;
 
@@ -771,6 +772,7 @@ namespace System.Collections.Generic {
 				get { return ((ICollection) dictionary).SyncRoot; }
 			}
 
+			[Serializable]
 			public struct Enumerator : IEnumerator<TValue>, IDisposable, IEnumerator {
 				Dictionary<TKey, TValue>.Enumerator host_enumerator;
 

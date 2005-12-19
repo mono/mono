@@ -594,6 +594,7 @@ namespace System.Collections.Generic {
 		}
 #endregion
 				
+		[Serializable]
 		public struct Enumerator : IEnumerator <T>, IDisposable {
 			const int NOT_STARTED = -2;
 			

@@ -1,3 +1,11 @@
+2005-12-19  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Dictionary.cs: Added [Serializable] attribute to both inner 
+	Enumerator struct in Key and Value inner collection classes.
+	* EqualityComparer.cs: Added missing IEqualityComparer interface.
+	* List.cs: Added [Serializable] attribute to both inner Enumerator
+	struct.
+
 2005-12-19  Sebastien Pouliot  <sebastien@ximian.com> 
  
 	* Dictionary.cs: Fixed ICollection.CopyTo to use DictionaryEntry. Fixed
