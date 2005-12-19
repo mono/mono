@@ -6,6 +6,17 @@ LIBRARY = Mono.Cairo.dll
 LIB_MCS_FLAGS = 
 NO_TEST = yes
 
-EXTRA_DISTFILES =
+EXTRA_DISTFILES = \
+	Samples/gtk/*.cs \
+	Samples/gtk/*.sh \
+	Samples/gtk/data/* \
+	Samples/png/*.cs \
+	Samples/png/*.sh \
+	Samples/png/data/* \
+	Samples/win32/*.cs \
+	Samples/win32/*.sh \
+	Samples/x11/*.cs \
+	Samples/x11/*.sh \
+	Samples/x11/data/*
 
 include ../../build/library.make
