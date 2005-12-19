@@ -1,5 +1,12 @@
 2005-12-19  Sebastien Pouliot  <sebastien@ximian.com>
 
+	* DictionaryTest.cs: Added test cases for CopyTo, including a test for
+	DictionaryEntry.
+	* ListTest.cs: Added test case for #77019 when copying from an empty 
+	dictionary.
+
+2005-12-19  Sebastien Pouliot  <sebastien@ximian.com>
+
 	* ListTest.cs: Added test case for a binary search with an empty list
 	(bug #77030). Removed IsReadOnly test case as this isn't part of the 
 	public API anymore.

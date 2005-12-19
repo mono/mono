@@ -4,7 +4,7 @@
 // Authors:
 //      David Waite (mass@akuma.org)
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 // Copyright (C) 2005 David Waite (mass@akuma.org)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -559,13 +559,33 @@ namespace MonoTests.System.Collections.Generic {
 			_list1.Capacity = _list1.Count - 1;
 		}
 
-		[Test] // bug 77030
+		[Test]
 		public void BinarySearch_EmptyList ()
 		{
 			GenericComparer<int> comparer = new GenericComparer<int> ();
 			List<int> l = new List<int> ();
-			l.BinarySearch (0, comparer);
+			Assert.AreEqual (-1, l.BinarySearch (0, comparer), "BinarySearch");
+			// bug 77030 - the comparer isn't called for an empty array/list
 			Assert.IsFalse (comparer.Called, "Called");
+		}
+
+		[Test]
+		public void BinarySearch2_EmptyList ()
+		{
+			GenericComparer<int> comparer = new GenericComparer<int> ();
+			List<int> l = new List<int> ();
+			Assert.AreEqual (-1, l.BinarySearch (0, 0, 0, comparer), "BinarySearch");
+			// bug 77030 - the comparer isn't called for an empty array/list
+			Assert.IsFalse (comparer.Called, "Called");
+		}
+
+		[Test]
+		public void AddRange_Bug77019 ()
+		{
+			List<int> l = new List<int> ();
+			Dictionary<string, int> d = new Dictionary<string, int> ();
+			l.AddRange (d.Values);
+			Assert.AreEqual (0, l.Count, "Count");
 		}
 	}
 }

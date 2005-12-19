@@ -612,8 +612,23 @@ namespace MonoTests.System.Collections.Generic {
 			object ob = x.Values;
 			foreach (KeyValuePair<int,int> a in x){
 			}
+		}
 
-			
+		[Test]
+		public void Empty_Values_CopyTo ()
+		{
+			Dictionary<int, int> d = new Dictionary<int, int> ();
+			int[] array = new int[10];
+			d.Values.CopyTo (array, 0);
+		}
+
+		[Test]
+		public void Empty_CopyTo ()
+		{
+			Dictionary<int, int> d = new Dictionary<int, int> ();
+			ICollection c = (ICollection) d;
+			DictionaryEntry[] array = new DictionaryEntry[1];
+			c.CopyTo (array, 0);
 		}
 	}
 }
