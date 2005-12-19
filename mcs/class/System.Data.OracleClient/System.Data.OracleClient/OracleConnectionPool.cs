@@ -96,6 +96,23 @@ namespace System.Data.OracleClient
 			activeConnections++;
 			return manager.CreateConnection (info);
 		}
+
+		~OracleConnectionPool ()
+		{
+			if (list != null) {
+				if (list.Count > 0) {
+					for (int c = 0; c < list.Count; c++) {
+						// There are available connections in the pool
+						OciGlue connection = (OciGlue)list [c];
+						list.RemoveAt (c);
+						if (connection.Connected) {
+							connection.Disconnect ();
+							connection = null;
+						}
+					}
+				}
+			}
+		}
 	}
 }
 

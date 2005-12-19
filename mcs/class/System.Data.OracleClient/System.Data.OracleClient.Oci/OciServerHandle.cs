@@ -74,7 +74,7 @@ namespace System.Data.OracleClient.Oci {
 		{
 			if (!disposed) {
 				try {
-					Detach (errorHandle);
+					//Detach (errorHandle);
 					disposed = true;
 				} finally {
 					base.Dispose (disposing);

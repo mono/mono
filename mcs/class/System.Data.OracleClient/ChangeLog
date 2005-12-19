@@ -1,3 +1,14 @@
+2005-12-19  Daniel Morgan <danielmorgan@verizon.net>
+
+	* System.Data.OracleClient/OracleConnectionPoolManager.cs
+	* System.Data.OracleClient/OracleConnectionPool.cs
+	* System.Data.OracleClient/OracleConnection.cs: for connection pooling, need to
+	dispose of any connection pools properly otherwise a SEGSIGV may happen trying
+	to detach from the server during finalization at exit of app
+	
+	* System.Data.OracleClient/OracleDataReader.cs: need to make sure statement and command
+	exists during dispose because they are set to null when closed
+
 2005-12-13  Daniel Morgan <danielmorgan@verizon.net>
 
 	* System.Data.OracleClient/OracleParameter.cs: free

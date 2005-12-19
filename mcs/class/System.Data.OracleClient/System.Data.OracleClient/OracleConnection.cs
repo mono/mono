@@ -462,6 +462,11 @@ namespace System.Data.OracleClient
 			}
 		}
 
+		~OracleConnection() 
+		{
+			Dispose (false);
+		}
+
 		#endregion // Methods
 
 		public event OracleInfoMessageEventHandler InfoMessage;

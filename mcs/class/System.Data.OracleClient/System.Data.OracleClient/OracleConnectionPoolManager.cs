@@ -57,6 +57,10 @@ namespace System.Data.OracleClient
 			oci.CreateConnection (info);
 			return oci;
 		}
+
+		~OracleConnectionPoolManager () 
+		{
+		}
 	}
 }
 
