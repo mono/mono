@@ -35,7 +35,9 @@ using System.Runtime.InteropServices;
 namespace System.Drawing.Imaging {
 
 	[MonoTODO]
+#if !TARGET_JVM
 	[StructLayout(LayoutKind.Sequential)]
+#endif
 	public sealed class MetafileHeader 
 	{
 		
