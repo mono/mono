@@ -700,14 +700,16 @@ public class ArrayTest : Assertion
                 Array a = Array.CreateInstance (typeof (Int32), (int[])null);
         }
 
-#if NET_1_1
 	[Test]
-        [ExpectedException (typeof (NullReferenceException))]
+#if NET_2_0
+	[ExpectedException (typeof (ArgumentNullException))]
+#else
+	[ExpectedException (typeof (NullReferenceException))]
+#endif
         public void TestCreateInstance2b ()
         {
                 Array a = Array.CreateInstance (typeof (Int32), (long[])null);
         }
-#endif
 
 	[Test]
 	public void TestGetEnumerator() {
@@ -1167,14 +1169,17 @@ public class ArrayTest : Assertion
 		}
 	}
 
-#if NET_1_1
 	[Test]
-        [ExpectedException (typeof (NullReferenceException))]
-	public void TestGetValueLongArray() {
+#if NET_2_0
+	[ExpectedException (typeof (ArgumentNullException))]
+#else
+	[ExpectedException (typeof (NullReferenceException))]
+#endif
+	public void TestGetValueLongArray ()
+	{
 		char[] c = new Char[2];
 		c.GetValue((long [])null);
 	}
-#endif
 
 	[Test]
 	public void TestGetValueN() {
@@ -1780,15 +1785,17 @@ public class ArrayTest : Assertion
 		}
 	}
 
-#if NET_1_1
 	[Test]
-        [ExpectedException (typeof (NullReferenceException))]
-	public void TestSetValueLongArray() {
+#if NET_2_0
+	[ExpectedException (typeof (ArgumentNullException))]
+#else
+	[ExpectedException (typeof (NullReferenceException))]
+#endif
+	public void TestSetValueLongArray ()
+	{
 		char[] c = new Char[2];
 		c.SetValue("buh", (long [])null);
 	}
-#endif
-
 
 	[Test]
 	public void TestSetValueN() {
@@ -2620,54 +2627,65 @@ public class ArrayTest : Assertion
 		AssertEquals (1, Array.BinarySearch (x, 'b'));
 	}
 
+	class Comparer: IComparer {
+
+		private bool called = false;
+
+		public bool Called {
+			get {
+				bool result = called;
+				called = false;
+				return called;
+			}
+		}
+
+		public int Compare (object x, object y)
+		{
+			called = true;
+			return 0;
+		}
+	}
+
+	[Test]
+	public void BinarySearch1_EmptyList ()
+	{
+		int[] array = new int[0];
+		AssertEquals ("BinarySearch", - 1, Array.BinarySearch (array, 0));
+	}
+
+	[Test]
+	public void BinarySearch2_EmptyList ()
+	{
+		int[] array = new int[0];
+		AssertEquals ("BinarySearch", -1, Array.BinarySearch (array, 0, 0, 0));
+	}
+
+	[Test]
+	public void BinarySearch3_EmptyList ()
+	{
+		Comparer comparer = new Comparer ();
+		int[] array = new int[0];
+		AssertEquals ("BinarySearch", -1, Array.BinarySearch (array, 0, comparer));
+		// bug 77030 - the comparer isn't called for an empty array/list
+		Assert ("Called", !comparer.Called);
+	}
+
+	[Test]
+	public void BinarySearch4_EmptyList ()
+	{
+		Comparer comparer = new Comparer ();
+		int[] array = new int[0];
+		AssertEquals ("BinarySearch", -1, Array.BinarySearch (array, 0, 0, comparer));
+		// bug 77030 - the comparer isn't called for an empty array/list
+		Assert ("Called", !comparer.Called);
+	}
+
 #if NET_2_0
 	[Test]
 	[ExpectedException (typeof (ArgumentNullException))]
 	public void AsReadOnly_NullArray ()
 	{
 		Array.AsReadOnly <int> (null);
-	}
-
-	[Test]
-	[ExpectedException (typeof (NotSupportedException))]
-	public void ReadOnly_Add ()
-	{
-		Array.AsReadOnly (new int [10]).Add (5);
-	}
-
-
-	[Test]
-	[ExpectedException (typeof (NotSupportedException))]
-	public void ReadOnly_Remove ()
-	{
-		Array.AsReadOnly (new int [10]).Remove (5);
-	}
-
-	[Test]
-	[ExpectedException (typeof (NotSupportedException))]
-	public void ReadOnly_Clear ()
-	{
-		Array.AsReadOnly (new int [10]).Clear ();
-	}
-
-	[Test]
-	[ExpectedException (typeof (NotSupportedException))]
-	public void ReadOnly_Insert ()
-	{
-		Array.AsReadOnly (new int [10]).Insert (0, 5);
-	}
-
-	[Test]
-	[ExpectedException (typeof (NotSupportedException))]
-	public void ReadOnly_RemoveAt ()
-	{
-		Array.AsReadOnly (new int [10]).RemoveAt (5);
-	}
-
-	[Test]
-	public void ReadOnly_IsReadOnly ()
-	{
-		Assert (Array.AsReadOnly (new int [10]).IsReadOnly);
 	}
 
 	[Test]

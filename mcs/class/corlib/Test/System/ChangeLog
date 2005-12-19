@@ -1,3 +1,10 @@
+2005-12-19  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ArrayTest.cs: Added test cases for a binary search with an empty
+	list (bug #77030). Fixed other test cases so they execute without 
+	failures under MS 2.0. Removed test cases for API changes in 2.0 
+	final.
+
 2005-12-18  Raja R Harinath  <harinath@gmail.com>
 
 	* TypeTest.cs (FullNameGenerics): Identify individual assertions.
