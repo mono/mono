@@ -7,12 +7,7 @@
 //    Carlos Alberto Cortez (calberto.cortez@gmail.com)
 //    David Waite (mass@akuma.org)
 //
-// (C) 2004 Novell, Inc.
-// (C) 2005 David Waite
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 // Copyright (C) 2005 David Waite
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -36,8 +31,7 @@
 //
 
 #if NET_2_0
-using System;
-using System.Collections;
+
 using System.Collections.ObjectModel;
 using System.Runtime.InteropServices;
 
@@ -324,7 +318,15 @@ namespace System.Collections.Generic {
 		
 		public int IndexOf (T item, int index, int count)
 		{
-			CheckRange (index, count);
+			if (index < 0)
+				throw new ArgumentOutOfRangeException ("index");
+			
+			if (count < 0)
+				throw new ArgumentOutOfRangeException ("count");
+
+			if ((uint) index + (uint) count > (uint) size)
+				throw new ArgumentOutOfRangeException ("index and count exceed length of list");
+
 			return Array.IndexOf (data, item, index, count);
 		}
 		

@@ -1,3 +1,7 @@
+2005-12-19  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* List.cs: Fix exception reporting to match MS behaviour (2.0 final).
+
 2005-11-19  Zoltan Varga  <vargaz@gmail.com>
 
 	* KeyNotFoundException.cs: Add default message.
