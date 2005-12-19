@@ -38,6 +38,25 @@ using NUnit.Framework;
 
 namespace MonoTests.System.Collections.Generic {
 
+	class GenericComparer<T> : IComparer<T> {
+
+		private bool called = false;
+
+		public bool Called {
+			get {
+				bool result = called;
+				called = false;
+				return called;
+			}
+		}
+
+		public int Compare (T x, T y)
+		{
+			called = true;
+			return 0;
+		}
+	}
+
 	[TestFixture]
 	public class ListTest
 	{
@@ -110,7 +129,7 @@ namespace MonoTests.System.Collections.Generic {
 			Assert.AreEqual (1, l.IndexOf (200), "Could not find value");
 		}
 
-		[Test, ExpectedException (typeof (ArgumentException))]
+		[Test, ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void IndexOfOutOfRangeTest ()
 		{
 			List <int> l = new List <int> (4);
@@ -208,22 +227,6 @@ namespace MonoTests.System.Collections.Generic {
 		{
 			int [] n = null;
 			_list1.AddRange (n);
-		}
-
-		[Test]
-		public void AsReadOnlyTest ()
-		{
-			// FIXME: workaround for lack of ReadOnlyCollection <T>
-			ReadOnlyCollection <int> l = _list1.AsReadOnly ();
-			Assert.IsTrue (l.IsReadOnly);
-			Assert.AreEqual (_list1.Count, l.Count);
-			try
-			{
-				l.Add (4);
-				Assert.Fail ("must fail to modify read-only collection");
-			}
-			catch (NotSupportedException)
-			{ }
 		}
 
 		[Test]
@@ -554,6 +557,15 @@ namespace MonoTests.System.Collections.Generic {
 		public void CapacityOutOfRangeTest ()
 		{
 			_list1.Capacity = _list1.Count - 1;
+		}
+
+		[Test] // bug 77030
+		public void BinarySearch_EmptyList ()
+		{
+			GenericComparer<int> comparer = new GenericComparer<int> ();
+			List<int> l = new List<int> ();
+			l.BinarySearch (0, comparer);
+			Assert.IsFalse (comparer.Called, "Called");
 		}
 	}
 }

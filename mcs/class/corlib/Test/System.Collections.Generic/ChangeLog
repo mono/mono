@@ -1,3 +1,9 @@
+2005-12-19  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ListTest.cs: Added test case for a binary search with an empty list
+	(bug #77030). Removed IsReadOnly test case as this isn't part of the 
+	public API anymore.
+
 2005-08-16  Martin Baulig  <martin@ximian.com>
 
 	* DictionaryTest.cs (IEnumeratorGenericTest): Reflect latest
