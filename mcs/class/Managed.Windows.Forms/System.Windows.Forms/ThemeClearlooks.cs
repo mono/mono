@@ -706,7 +706,7 @@ namespace System.Windows.Forms {
 					
 					Pen pen = new Pen( lgbr, pen_width );
 					
-					int add = bmp.Height + (int)pen.Width;
+					int add = bmp.Height + (int)pen.Width / 2;
 					
 					int x_top = 0;
 					int x_bottom = - bmp.Height;
@@ -716,7 +716,6 @@ namespace System.Windows.Forms {
 						x_top += add;
 						x_bottom += add;
 					}
-					
 					pen.Dispose( );
 					lgbr.Dispose( );
 				}

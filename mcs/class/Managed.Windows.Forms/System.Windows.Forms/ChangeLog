@@ -1,5 +1,10 @@
 2005-12-18  Alexander Olk  <alex.olk@googlemail.com>
 
+	* ThemeClearlooks.cs: Corrected distance between ProgressBar
+	  stripes
+
+2005-12-18  Alexander Olk  <alex.olk@googlemail.com>
+
 	* ThemeClearlooks.cs:
 	  - Updated ProgressBar drawing
 	  - Corrected drawing of ScrollBars and scroll buttons
