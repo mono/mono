@@ -1,3 +1,8 @@
+2005-12-19  Sebastien Pouliot  <sebastien@ximian.com> 
+ 
+	* Array.cs: Fixed BinarySearch when the array is empty (#77030). Added
+	some null check which throws ArgumentNullException under 2.0.
+
 2005-12-15  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DateTime.cs: Added MonoTODO to ctor accepting a Calandar instance.

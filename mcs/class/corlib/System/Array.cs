@@ -8,10 +8,7 @@
 //   Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // (C) 2001-2003 Ximian, Inc.  http://www.ximian.com
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -477,33 +474,30 @@ namespace System
 
 		public static Array CreateInstance (Type elementType, params long [] lengths)
 		{
-			if (lengths == null) {
-				// LAMESPEC: Docs say we should throw a ArgumentNull, but .NET
-				// 1.1 actually throws a NullReference.
-				throw new NullReferenceException (Locale.GetText ("'lengths' cannot be null."));
-			}
+#if NET_2_0
+			if (lengths == null)
+				throw new ArgumentNullException ("lengths");
+#endif
 			return CreateInstance (elementType, GetIntArray (lengths));
 		}
 
 		[ComVisible (false)]
 		public object GetValue (params long [] indices)
 		{
-			if (indices == null) {
-				// LAMESPEC: Docs say we should throw a ArgumentNull, but .NET
-				// 1.1 actually throws a NullReference.
-				throw new NullReferenceException (Locale.GetText ("'indices' cannot be null."));
-			}
+#if NET_2_0
+			if (indices == null)
+				throw new ArgumentNullException ("indices");
+#endif
 			return GetValue (GetIntArray (indices));
 		}
 
 		[ComVisible (false)]
 		public void SetValue (object value, params long [] indices)
 		{
-			if (indices == null) {
-				// LAMESPEC: Docs say we should throw a ArgumentNull, but .NET
-				// 1.1 actually throws a NullReference.
-				throw new NullReferenceException (Locale.GetText ("'indices' cannot be null."));
-			}
+#if NET_2_0
+			if (indices == null)
+				throw new ArgumentNullException ("indices");
+#endif
 			SetValue (value, GetIntArray (indices));
 		}
 #endif
@@ -522,6 +516,9 @@ namespace System
 			if (array.Rank > 1)
 				throw new RankException (Locale.GetText ("Only single dimension arrays are supported."));
 
+			if (array.Length == 0)
+				return -1;
+
 			if (!(value is IComparable))
 				throw new ArgumentException (Locale.GetText ("value does not support IComparable."));
 
@@ -529,7 +526,7 @@ namespace System
 		}
 
 #if NET_2_0
-	[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
 #endif
 		public static int BinarySearch (Array array, object value, IComparer comparer)
 		{
@@ -538,6 +535,9 @@ namespace System
 
 			if (array.Rank > 1)
 				throw new RankException (Locale.GetText ("Only single dimension arrays are supported."));
+
+			if (array.Length == 0)
+				return -1;
 
 			if ((comparer == null) && (value != null) && !(value is IComparable))
 				throw new ArgumentException (Locale.GetText (
@@ -567,6 +567,10 @@ namespace System
 			if (index > array.GetLowerBound (0) + array.GetLength (0) - length)
 				throw new ArgumentException (Locale.GetText (
 					"index and length do not specify a valid range in array."));
+
+			if (array.Length == 0)
+				return -1;
+
 			if ((value != null) && (!(value is IComparable)))
 				throw new ArgumentException (Locale.GetText (
 					"value does not support IComparable"));
@@ -595,6 +599,9 @@ namespace System
 			if (index > array.GetLowerBound (0) + array.GetLength (0) - length)
 				throw new ArgumentException (Locale.GetText (
 					"index and length do not specify a valid range in array."));
+
+			if (array.Length == 0)
+				return -1;
 
 			if ((comparer == null) && (value != null) && !(value is IComparable))
 				throw new ArgumentException (Locale.GetText (
