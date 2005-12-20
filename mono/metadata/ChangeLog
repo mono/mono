@@ -1,3 +1,8 @@
+2005-12-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (emit_struct_conv): Add a check for fields with the same
+	offset.
+
 2005-12-20  Raja R Harinath  <rharinath@novell.com>
 
 	Fix regression in Mono.C5.
