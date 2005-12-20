@@ -1,3 +1,8 @@
+2005-12-15 Loren Bandiera <lorenb@mmgsecurity.com>
+
+        * Novell.Directory.Ldap.Utilclass/ResoucesHandler.cs: Fix loading of result code messages
+        * Novell.Directory.Ldap/Connection.cs: Check GAC for Mono.Security assembly
+
 2005-12-06 Konstantin Triger <kostat@mainsoft.com>
 
         * Novell.Directory.Ldap.vmwcsproj: fixing conditional compilation constants.
