@@ -46,10 +46,10 @@ namespace System.Windows.Forms {
 		private TitleButton [] title_buttons = new TitleButton [3];
 		
 		// moving windows
-		private Point start;
+		internal Point start;
 		private State state;
 		private FormPos sizing_edge;
-		private Rectangle virtual_position;
+		internal Rectangle virtual_position;
 		private Rectangle prev_virtual_position;
 		private Rectangle prev_bounds;
 		private bool maximized;
@@ -216,11 +216,7 @@ namespace System.Windows.Forms {
 			int x = Control.LowOrder ((int) m.LParam.ToInt32 ());
 			int y = Control.HighOrder ((int) m.LParam.ToInt32 ());
 
-			int client_x = x;
-			int client_y = y;
-			
-			PointToClient (ref client_x, ref client_y);
-			start = new Point (client_x, client_y);
+			start = Cursor.Position;
 			virtual_position = form.Bounds;
 
 			form.PointToClient (ref x, ref y);
@@ -341,12 +337,8 @@ namespace System.Windows.Forms {
 		{
 			Point move = MouseMove (m);
 
-			virtual_position.X = start.X + move.X;
-			virtual_position.Y = start.Y + move.Y;
-			virtual_position.Width = form.Width;
-			virtual_position.Height = form.Height;
-
-			DrawVirtualPosition (virtual_position);
+			UpdateVP (virtual_position.X + move.X, virtual_position.Y + move.Y,
+					virtual_position.Width, virtual_position.Height);
 		}
 
 		private void HandleSizing (Message m)
@@ -426,17 +418,17 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		private void UpdateVP (Rectangle r)
+		protected void UpdateVP (Rectangle r)
 		{
 			UpdateVP (r.X, r.Y, r.Width, r.Height);
 		}
 
-		private void UpdateVP (Point loc, int w, int h)
+		protected void UpdateVP (Point loc, int w, int h)
 		{
 			UpdateVP (loc.X, loc.Y, w, h);
 		}
 
-		private void UpdateVP (int x, int y, int w, int h)
+		protected void UpdateVP (int x, int y, int w, int h)
 		{
 			virtual_position.X = x;
 			virtual_position.Y = y;
@@ -583,23 +575,16 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		private Point MouseMove (Message m)
+		protected Point MouseMove (Message m)
 		{
-			int x = Control.LowOrder ((int) m.LParam.ToInt32 ());
-			int y = Control.HighOrder ((int) m.LParam.ToInt32 ());
-
-			form.PointToScreen (ref x, ref y);
-			PointToClient (ref x, ref y);
-			int x_move = x - start.X;
-			int y_move = y - start.Y;
-			
-			return new Point (x_move, y_move);
+			Point cp = Cursor.Position;
+			return new Point (cp.X - start.X, cp.Y - start.Y);
 		}
 
 		protected virtual void DrawVirtualPosition (Rectangle virtual_position)
 		{
-			form.Bounds = virtual_position;
-			start = form.Location;
+			form.Location = virtual_position.Location;
+			start = Cursor.Position;
 		}
 
 		protected virtual void ClearVirtualPosition ()

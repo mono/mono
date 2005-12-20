@@ -92,6 +92,17 @@ namespace System.Windows.Forms {
 			return false;
 		}
 
+		protected override void HandleWindowMove (Message m)
+		{
+			Point move = MouseMove (m);
+
+			int x = virtual_position.X + move.X;
+			int y = virtual_position.Y + move.Y;
+
+			UpdateVP (x, y, form.Width, form.Height);
+			start = Cursor.Position;
+		}
+
 		protected override void DrawVirtualPosition (Rectangle virtual_position)
 		{
 			ClearVirtualPosition ();
@@ -99,7 +110,6 @@ namespace System.Windows.Forms {
 			if (form.Parent != null)
 				XplatUI.DrawReversibleRectangle (form.Parent.Handle, virtual_position, 2);
 			prev_virtual_position = virtual_position;
-		
 		}
 
 		protected override void ClearVirtualPosition ()
