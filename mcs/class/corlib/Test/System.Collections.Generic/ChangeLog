@@ -1,3 +1,8 @@
+2005-12-20  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ListTest.cs: Added test case for #76361 for sorting the list with a
+	generic comparer.
+
 2005-12-19  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DictionaryTest.cs: Added test cases for CopyTo, including a test for

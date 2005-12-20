@@ -587,6 +587,27 @@ namespace MonoTests.System.Collections.Generic {
 			l.AddRange (d.Values);
 			Assert.AreEqual (0, l.Count, "Count");
 		}
+
+		class SortTestComparer: IComparer<string> {
+
+			public int Compare (string s1, string s2)
+			{
+				return String.Compare (s1, s2);
+			}
+		}
+
+		[Test]
+		public void Sort_Bug76361 ()
+		{
+			SortTestComparer comparer = new SortTestComparer ();
+			List<string> l = new List<string> ();
+			l.Add ("foo");
+			l.Add ("bar");
+			l.Sort (comparer);
+			Assert.AreEqual ("bar", l[0], "0");
+			Assert.AreEqual ("foo", l[1], "1");
+			Assert.AreEqual (2, l.Count, "Count");
+		}
 	}
 }
 #endif
