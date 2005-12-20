@@ -75,9 +75,11 @@ namespace System.Drawing
 		public Bitmap (string filename) 
 			:this (filename, false) {}
 
+		[MonoTODO]
 		public Bitmap (Stream stream, bool useIcm)
 			:this (stream, useIcm, null) {}
 
+		[MonoTODO]
 		public Bitmap (string filename, bool useIcm)
 			:this (filename, useIcm, null) {}
 

@@ -38,6 +38,9 @@ using System.IO;
 namespace System.Drawing.Imaging
 {
 	// MUST BE KEPT IN SYNC WITH gdip.h in libgdiplus!
+#if TARGET_JVM
+	[MonoTODO]
+#endif
 	[StructLayout(LayoutKind.Sequential)]
 	public sealed class BitmapData {
 		internal int width;

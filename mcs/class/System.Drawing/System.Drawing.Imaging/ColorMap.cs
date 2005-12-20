@@ -37,7 +37,9 @@ using System.IO;
 using System.Reflection;
 
 namespace System.Drawing.Imaging {
-
+#if TARGET_JVM
+	[MonoTODO]
+#endif
 	public sealed class ColorMap {
 
 		private Color newColor;

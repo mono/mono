@@ -15,7 +15,6 @@ namespace System.Drawing {
 		sealed class DummyStroke : awt.Stroke {
 			#region Stroke Members
 
-			[MonoTODO]
 			awt.Shape awt.Stroke.createStrokedShape(awt.Shape arg_0) {
 				throw new NotImplementedException("DummyStroke");
 			}

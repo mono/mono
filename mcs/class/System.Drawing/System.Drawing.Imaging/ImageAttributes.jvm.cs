@@ -9,21 +9,16 @@ namespace System.Drawing.Imaging
 	/// Summary description for ImageAttributes.
 	/// </summary>
 	/// 
+	[MonoTODO]
 	public sealed class ImageAttributes : ICloneable, IDisposable
 	{
-
+		[MonoTODO]
 		public ImageAttributes()
 		{
 		}
 
 		public  void Dispose()
 		{
-		}
-
-
-		public void Finalize()
-		{
-			Dispose();
 		}
 
 		public Object Clone()
