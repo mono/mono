@@ -1,3 +1,10 @@
+2005-12-20  Raja R Harinath  <rharinath@novell.com>
+
+	Fix regression in Mono.C5.
+	* class.c (mono_class_create_generic): If 'klass' is an interface
+	set up the interface offsets.
+	(mono_class_is_assignable_from): Don't throw away generic arguments.
+
 2005-12-19  Raja R Harinath  <rharinath@novell.com>
 
 	* icall.c (ves_icall_System_MonoType_getFullName): Return NULL for
