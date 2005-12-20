@@ -1,3 +1,16 @@
+2005-12-19  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* Control.cs: 
+	  - Removed call to InitLayout() from SetBoundsCore(); doc says
+	    it's only called when a control is added to a container
+	  - Split InitLayout logic, moved to separate UpdateDistances() method
+	    since we need to perform those calculations more often than just
+	    when adding the control to a container. (Needed to fix #77022)
+	  - Now calling UpdateDistances() from UpdateBounds() (fixes #77022)
+	  - Reduced the OnBindingContextChanged events count, don't send them
+	    unless the control is created, we still aren't totally matching
+	    MS, but I can't quite figure out some of their rules
+
 2005-12-18  Alexander Olk  <alex.olk@googlemail.com>
 
 	* ThemeClearlooks.cs: Corrected distance between ProgressBar

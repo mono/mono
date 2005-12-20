@@ -1212,8 +1212,17 @@ namespace System.Windows.Forms
 				CreateControl();
 			}
 
-			if (binding_context == null) {	// seem to be sent whenever it's null?
+			if ((binding_context == null) && Created) {
 				OnBindingContextChanged(EventArgs.Empty);
+			}
+		}
+
+		private void UpdateDistances() {
+			dist_left = bounds.X;
+			dist_top = bounds.Y;
+			if (parent != null) {
+				dist_right = parent.ClientSize.Width - bounds.X - bounds.Width;
+				dist_bottom = parent.ClientSize.Height - bounds.Y - bounds.Height;
 			}
 		}
 		#endregion	// Private & Internal Methods
@@ -3015,12 +3024,7 @@ namespace System.Windows.Forms
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void InitLayout() {
-			dist_left = bounds.X;
-			dist_top = bounds.Y;
-			if (parent != null) {
-				dist_right = parent.ClientSize.Width - bounds.X - bounds.Width;
-				dist_bottom = parent.ClientSize.Height - bounds.Y - bounds.Height;
-			}
+			UpdateDistances();
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -3371,12 +3375,6 @@ namespace System.Windows.Forms
 			}
 
 			UpdateBounds(x, y, width, height);
-
-			// 
-			Control [] controls = child_controls.GetAllControls ();
-			for (int i = controls.Length - 1; i >= 0; i--) {
-				controls[i].InitLayout();
-			}
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -3517,6 +3515,8 @@ namespace System.Windows.Forms
 			// Update client rectangle as well
 			client_size.Width=width-client_x_diff;
 			client_size.Height=height-client_y_diff;
+
+			UpdateDistances();
 
 			if (moved) {
 				OnLocationChanged(EventArgs.Empty);
