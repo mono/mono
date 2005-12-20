@@ -748,7 +748,7 @@ namespace Novell.Directory.Ldap
 						Assembly a;
 						try
 						{
-							a = Assembly.LoadFrom("Mono.Security.dll");
+							a = Assembly.LoadWithPartialName("Mono.Security");
 						}
 						catch(System.IO.FileNotFoundException)
 						{
