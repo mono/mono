@@ -1,3 +1,7 @@
+2005-12-19  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* Graphics.cs (Flush): Make sure nativeObject is not null
+
 2005-12-14  Konstantin Triger <kostat@mainsoft.com>
 
         * StrokeFactory.jvm.cs: create AdvancedStroke when have penTransform.

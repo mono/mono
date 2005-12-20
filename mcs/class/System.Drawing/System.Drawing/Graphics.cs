@@ -1638,6 +1638,10 @@ namespace System.Drawing
 		
 		public void Flush (FlushIntention intention)
 		{
+			if (nativeObject == IntPtr.Zero) {
+				return;
+			}
+
 			Status status = GDIPlus.GdipFlush (nativeObject, intention);
                         GDIPlus.CheckStatus (status);                    
 			if (GDIPlus.UseQuartzDrawable || GDIPlus.UseCocoaDrawable)
