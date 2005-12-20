@@ -49,6 +49,7 @@ namespace System.Windows.Forms {
 		private int width = 100;
 		private int twidth = -1;
 		private int min_width = 10;
+		internal int X;
 		#endregion	// Local Variables
 
 		#region Constructors
@@ -63,7 +64,7 @@ namespace System.Windows.Forms {
 			get { return alignment; }
 			set { 
 				alignment = value; 
-				Invalidate ();
+				InvalidateContents ();
 			}
 		}
 
@@ -92,7 +93,7 @@ namespace System.Windows.Forms {
 			get { return icon; }
 			set { 
 				icon = value; 
-				Invalidate ();
+				InvalidateContents ();
 			}
 		}
 
@@ -145,7 +146,7 @@ namespace System.Windows.Forms {
 			get { return text; }
 			set { 
 				text = value; 
-				Invalidate ();
+				InvalidateContents ();
 			}
 		}
 
@@ -161,17 +162,28 @@ namespace System.Windows.Forms {
 			get { return parent; }
 		}
 
-		void Invalidate ()
+		private void Invalidate ()
 		{
 			if (parent == null)
 				return;
+			parent.UpdatePanel (this);
+		}
 
-			parent.Refresh ();
+		private void InvalidateContents ()
+		{
+			if (parent == null)
+				return;
+			parent.UpdatePanelContents (this);
 		}
 
 		internal void SetParent (StatusBar parent)
 		{
 			this.parent = parent;
+		}
+
+		internal void SetWidth (int width)
+		{
+			this.width = width;
 		}
 
 		public override string ToString ()

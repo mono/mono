@@ -69,7 +69,7 @@ namespace System.Windows.Forms {
 				base.BackColor = value;
 				if (BackColorChanged != null)
 					BackColorChanged (this, EventArgs.Empty);
-				Refresh ();
+				Update ();
 			}
 		}
 
@@ -94,7 +94,7 @@ namespace System.Windows.Forms {
 				if (value == Dock)
 					return;
 				base.Dock = value;
-				Refresh ();
+				Update ();
 			}
 		}
 
@@ -105,7 +105,7 @@ namespace System.Windows.Forms {
 				if (value == Font)
 					return;
 				base.Font = value;
-				Refresh ();
+				Update ();
 			}
 		}
 
@@ -118,7 +118,7 @@ namespace System.Windows.Forms {
 					return;
 				if (ForeColorChanged != null)
 					ForeColorChanged (this, EventArgs.Empty);
-				Refresh ();
+				Update ();
 			}
 		}
 
@@ -153,6 +153,7 @@ namespace System.Windows.Forms {
 				if (show_panels == value)
 					return;
 				show_panels = value;
+				Update ();
 			}
 		}
 
@@ -163,6 +164,7 @@ namespace System.Windows.Forms {
 				if (sizing_grip == value)
 					return;
 				sizing_grip = value;
+				Update ();
 			}
 		}
 
@@ -179,7 +181,7 @@ namespace System.Windows.Forms {
 				if (value == Text)
 					return;
 				base.Text = value;
-				Refresh ();
+				Update ();
 			}
 			
 		}
@@ -228,6 +230,7 @@ namespace System.Windows.Forms {
 
 		protected override void OnHandleCreated (EventArgs e) {
 			base.OnHandleCreated (e);
+			CalcPanelSizes ();
 		}
 
 		protected override void OnHandleDestroyed (EventArgs e) {
@@ -295,12 +298,37 @@ namespace System.Windows.Forms {
 			OnDrawItem (e);
 		}
 
+		internal void UpdatePanel (StatusBarPanel panel)
+		{
+			if (panel.AutoSize == StatusBarPanelAutoSize.Contents) {
+				Update ();
+				return;
+			}
+
+			Update ();
+		}
+
+		internal void UpdatePanelContents (StatusBarPanel panel)
+		{
+			if (panel.AutoSize == StatusBarPanelAutoSize.Contents) {
+				Update ();
+				return;
+			}
+
+			Update ();
+		}
+
+		internal void Update ()
+		{
+			CalcPanelSizes ();
+			Refresh ();
+		}
+
 		private void DoPaint (PaintEventArgs pevent)
 		{
 			if (Width <= 0 || Height <=  0 || Visible == false)
 				return;
 
-			CalcPanelSizes ();
 			Draw (pevent.Graphics, pevent.ClipRectangle);
 		}
 
@@ -312,11 +340,15 @@ namespace System.Windows.Forms {
 			if (Width == 0 || Height == 0)
 				return;
 
+			int border = 2;
 			int gap = ThemeEngine.Current.StatusBarHorzGapWidth;
 			int taken = 0;
 			ArrayList springs = null;
+
+			taken = border;
 			for (int i = 0; i < panels.Count; i++) {
 				StatusBarPanel p = panels [i];
+
 				if (p.AutoSize == StatusBarPanelAutoSize.None) {
 					taken += p.Width;
 					taken += gap;
@@ -324,7 +356,7 @@ namespace System.Windows.Forms {
 				}
 				if (p.AutoSize == StatusBarPanelAutoSize.Contents) {
 					int len = (int) (DeviceContext.MeasureString (p.Text, Font).Width + 0.5F);
-					p.Width = (int) (len + 8);
+					p.SetWidth (len + 8);
 					taken += p.Width;
 					taken += gap;
 					continue;
@@ -346,7 +378,14 @@ namespace System.Windows.Forms {
 			for (int i = 0; i < spring_total; i++) {
 				StatusBarPanel p = (StatusBarPanel) springs [i];
 				int width = total_width / spring_total;
-				p.Width = (width >= p.MinWidth ? width : p.MinWidth);
+				p.SetWidth (width >= p.MinWidth ? width : p.MinWidth);
+			}
+
+			taken = border;
+			for (int i = 0; i < panels.Count; i++) {
+				StatusBarPanel p = panels [i];
+				p.X = taken;
+				taken += p.Width + gap;
 			}
 		}
 

@@ -1,3 +1,10 @@
+2005-12-20  Jackson Harper  <jackson@ximian.com>
+
+	* StatusBar.cs:
+	* StatusBarPanel.cs: Don't calculate panel sizes on draw
+	anymore. Just do them when needed, also track the rects of panels
+	so that we can optimize refreshing more in the future.
+
 2005-12-20  Alexander Olk  <alex.olk@googlemail.com>
 
 	* ColorDialog.cs: Fixed focus drawing in small color controls
