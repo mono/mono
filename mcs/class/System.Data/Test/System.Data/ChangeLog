@@ -1,3 +1,6 @@
+2005-12-20 Senganal T <tsenganal@novell.com>
+	* DataColumnTest.cs : added testcase for #77025
+	
 2005-12-15 Konstantin Triger <kostat@mainsoft.com>
 
 	* DataTableTest.cs: added SelectRowState test.

@@ -116,7 +116,9 @@ namespace Mono.Data.SqlExpressions {
 				count++;
 				Aggregate ((IConvertible)val);
 			}
-			
+			if (count == 0)
+				return DBNull.Value; 	
+
 			switch (function) {
 			case AggregationFunction.StDev:
 			case AggregationFunction.Var:
@@ -165,6 +167,9 @@ namespace Mono.Data.SqlExpressions {
 		
 		private IConvertible CalcStatisticalFunction (object[] values)
 		{
+			if (count < 2)
+				return DBNull.Value;
+
 			double average = (double)Convert.ChangeType(result, TypeCode.Double) / count;
 			double res = 0.0;
 						
@@ -179,7 +184,7 @@ namespace Mono.Data.SqlExpressions {
 			
 			if (function == AggregationFunction.StDev)
 				res = System.Math.Sqrt (res);
-			
+
 			return res;
 		}
 	}

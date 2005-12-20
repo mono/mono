@@ -1,3 +1,9 @@
+2005-12-20 Senganal T <tsenganal@novell.com>
+
+	* Aggregation.cs :
+		Modified the Eval and CalculateStatisticalFunction to add boundary checks.
+		Fixes #77025.
+
 2005-11-30 Konstantin Triger <kostat@mainsoft.com>
 
 	* Parser.jay: use Convert.ToInt32() instead of cast to throw OverflowException.

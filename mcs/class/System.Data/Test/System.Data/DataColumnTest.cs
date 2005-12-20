@@ -599,5 +599,21 @@ namespace MonoTests.System.Data
                                                                                                     
                 }
 
+		// Testcase for #77025
+		[Test]
+		public void CalcStatisticalFunction_SingleElement()
+		{
+			DataTable table = new DataTable ();
+			table.Columns.Add ("test", typeof (int));
+
+			table.Rows.Add (new object [] {0});
+			table.Columns.Add ("result_var", typeof (double), "var(test)");
+			table.Columns.Add ("result_stdev", typeof (double), "stdev(test)");
+
+			// Check DBNull.Value is set as the result 
+			AssertEquals ("#1" , typeof (DBNull), (table.Rows[0]["result_var"]).GetType ());
+			AssertEquals ("#2" , typeof (DBNull), (table.Rows[0]["result_stdev"]).GetType ());
+		}
+
 	}
 }
