@@ -1,3 +1,11 @@
+2005-12-20  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DecimalTest.cs: Fixed test cases to run (without failures) on 2.0.
+	Re-activated TestDiv by excluding only the failures from Mono (so it
+	doesn't get worse), in fact we only have 1 (very small) difference
+	with MS 2.0.
+	* DecimalTest2.cs: Fixed test cases to run (without failures) on 2.0.
+
 2005-12-20  Raja R Harinath  <rharinath@novell.com>
 
 	* TypeTest.cs (FullNameGenerics): Add tests for AssemblyQualifiedName.

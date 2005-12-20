@@ -1147,11 +1147,17 @@ namespace MonoTests.System {
 		AssertEquals ("-12.1 % 254.9", -12.1m, Decimal.Remainder (n2, p1));
 		AssertEquals ("12.1 % -254.9", 12.1m, Decimal.Remainder (p2, n1));
 		AssertEquals ("-12.1 % -254.9", -12.1m, Decimal.Remainder (n2, n1));
-
+#if NET_2_0
+		AssertEquals ("12.1 % 12.1", 0.0m, Decimal.Remainder (p1, p1));
+		AssertEquals ("-12.1 % 12.1", 0.0m, Decimal.Remainder (n1, p1));
+		AssertEquals ("12.1 % -12.1", 0.0m, Decimal.Remainder (p1, n1));
+		AssertEquals ("-12.1 % -12.1", 0.0m, Decimal.Remainder (n1, n1));
+#else
 		AssertEquals ("12.1 % 12.1", 0, Decimal.Remainder (p1, p1));
 		AssertEquals ("-12.1 % 12.1", 0, Decimal.Remainder (n1, p1));
 		AssertEquals ("12.1 % -12.1", 0, Decimal.Remainder (p1, n1));
 		AssertEquals ("-12.1 % -12.1", 0, Decimal.Remainder (n1, n1));
+#endif
 	}
 
 	[Test]
