@@ -8545,6 +8545,158 @@ ins_spec[] = {
 #undef MINI_OP
 
 /**
+ * compute_vreg_to_inst:
+ *
+ *  Fill out cfg->vreg_to_inst
+ */
+static void
+compute_vreg_to_inst (MonoCompile *cfg)
+{
+	int i;
+
+	/* FIXME: Do this in mono_create_var */
+
+	g_assert (!cfg->vreg_to_inst);
+
+	cfg->vreg_to_inst = mono_mempool_alloc0 (cfg->mempool, sizeof (MonoBasicBlock***) * 256);
+	cfg->vreg_to_inst_len = mono_mempool_alloc0 (cfg->mempool, sizeof (guint32) * 256);
+
+	cfg->vreg_to_inst ['i'] = mono_mempool_alloc0 (cfg->mempool, sizeof (MonoInst*) * cfg->next_vireg);
+	cfg->vreg_to_inst_len ['i'] = cfg->next_vireg;
+	
+	cfg->vreg_to_inst ['f'] = mono_mempool_alloc0 (cfg->mempool, sizeof (MonoInst*) * cfg->next_vfreg);
+	cfg->vreg_to_inst_len ['f'] = cfg->next_vfreg;
+
+	for (i = 0; i < cfg->num_varinfo; i++) {
+		MonoInst *ins = cfg->varinfo [i];
+
+		switch (ins->type) {
+		case STACK_I4:
+		case STACK_PTR:
+		case STACK_MP:
+		case STACK_OBJ:
+			g_assert (ins->dreg != -1);
+			cfg->vreg_to_inst ['i'][ins->dreg] = ins;
+			break;
+		case STACK_R8:
+			g_assert (ins->dreg != -1);
+			cfg->vreg_to_inst ['f'][ins->dreg] = ins;
+			break;
+		case STACK_VTYPE:
+			break;
+		case STACK_I8: {
+#if SIZEOF_VOID_P == 8
+			g_assert (ins->dreg != -1);
+			cfg->vreg_to_inst ['i'][ins->dreg] = ins;
+#else
+			MonoInst *tree;
+
+			g_assert (ins->dreg != -1);
+
+			/* FIXME: Clean this up */
+
+			/* Allocate a dummy MonoInst for the first vreg */
+			MONO_INST_NEW (cfg, tree, OP_LOCAL);
+			tree->dreg = ins->dreg;
+			tree->type = STACK_I4;
+			tree->inst_vtype = &mono_defaults.int32_class->byval_arg;
+			tree->klass = mono_class_from_mono_type (tree->inst_vtype);
+
+			cfg->vreg_to_inst ['i'][ins->dreg] = tree;
+
+			/* Allocate a dummy MonoInst for the second vreg */
+			MONO_INST_NEW (cfg, tree, OP_LOCAL);
+			tree->dreg = ins->dreg + 1;
+			tree->type = STACK_I4;
+			tree->inst_vtype = &mono_defaults.int32_class->byval_arg;
+			tree->klass = mono_class_from_mono_type (tree->inst_vtype);
+
+			cfg->vreg_to_inst ['i'][ins->dreg + 1] = tree;
+#endif
+			break;
+		}
+		default:
+			NOT_IMPLEMENTED;
+		}
+	}
+}
+
+/**
+ * mono_handle_global_vregs:
+ *
+ *   Make vregs used in more than one bblock 'global', i.e. allocate a variable
+ * for them.
+ */
+static void
+mono_handle_global_vregs (MonoCompile *cfg)
+{
+	MonoBasicBlock ***vreg_to_bb;
+	MonoBasicBlock *bb;
+
+	vreg_to_bb = g_new0 (MonoBasicBlock**, 256);
+	vreg_to_bb ['i'] = g_new0 (MonoBasicBlock*, cfg->next_vireg);
+	vreg_to_bb ['f'] = g_new0 (MonoBasicBlock*, cfg->next_vfreg);
+
+	/* Find local vregs used in more than one bb */
+	/* FIXME: Optimize this */
+	for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
+		MonoInst *ins = bb->code;	
+		MonoInst *prev = NULL;
+
+		if (cfg->verbose_level > 0)
+			printf ("HANDLE-GLOBAL-VREGS BLOCK %d:\n", bb->block_num);
+
+		cfg->cbb = bb;
+		for (; ins; ins = ins->next) {
+			const char *spec = ins_spec [ins->opcode - OP_START - 1];
+			int regtype, regindex;
+
+			if (cfg->verbose_level > 0)
+				mono_print_ins (ins);
+
+			if (ins->opcode == CEE_NOP) {
+				prev = ins;
+				continue;
+			}
+
+			if (ins->opcode < MONO_CEE_LAST)
+				spec = "   ";
+
+			for (regindex = 0; regindex < 3; regindex ++) {
+				int vreg;
+
+				if (regindex == 0) {
+					vreg = ins->dreg;
+					regtype = spec [MONO_INST_DEST];
+				} else if (regindex == 1) {
+					vreg = ins->sreg1;
+					regtype = spec [MONO_INST_SRC1];
+				} else {
+					vreg = ins->sreg2;
+					regtype = spec [MONO_INST_SRC2];
+				}
+
+				if (((regtype == 'i' && (vreg < MONO_MAX_IREGS))) || (regtype == 'f' && (vreg < MONO_MAX_FREGS)))
+					continue;
+
+				if ((vreg != -1) && (vreg < cfg->vreg_to_inst_len [regtype]) && !cfg->vreg_to_inst [regtype][vreg]) {
+					if (vreg_to_bb [regtype][vreg] == NULL) {
+						vreg_to_bb [regtype][vreg] = bb;
+					} else if (vreg_to_bb [regtype][vreg] != bb) {
+						printf ("VREG R%d used in BB%d and BB%d made global.\n", vreg, vreg_to_bb [regtype][vreg]->block_num, bb->block_num);
+						NOT_IMPLEMENTED;
+					}
+				}
+			}
+		}
+	}
+
+	g_free (vreg_to_bb ['i']);
+	g_free (vreg_to_bb ['f']);
+	g_free (vreg_to_bb);
+}
+
+/**
  * mono_spill_global_vars:
  *
  *   Generate spill code for variables which are not allocated to registers.
@@ -8553,86 +8705,52 @@ void
 mono_spill_global_vars (MonoCompile *cfg)
 {
 	int i;
-	MonoInst ***vreg_to_inst;
-	guint32 *num_vreg;
 	guint32 *stacktypes;
 	MonoBasicBlock *bb;
 
 	/* FIXME: Move this call elsewhere */
 	decompose_long_opts (cfg);
 
-	/* FIXME: Move this to mini.c */
+	compute_vreg_to_inst (cfg);
 
-	/* Collect the vregs which belong to a variable */
-	num_vreg = g_new0 (guint32, 256);
+	/* FIXME: Move this call elsewhere, _before_ global reg alloc and _after_ decompose */
+	mono_handle_global_vregs (cfg);
+
+	/* FIXME: Move this function to mini.c */
+
 	stacktypes = g_new0 (guint32, 256);
-	vreg_to_inst = g_new0 (MonoInst**, 256);
-
 	stacktypes ['i'] = STACK_PTR;
-	num_vreg ['i'] = cfg->next_vireg;
-	vreg_to_inst ['i'] = g_new0 (MonoInst*, cfg->next_vireg);
-
 	stacktypes ['f'] = STACK_R8;
-	num_vreg ['f'] = cfg->next_vfreg;
-	vreg_to_inst ['f'] = g_new0 (MonoInst*, cfg->next_vfreg);
 
+	/* FIXME: Clean this up */
+	/* Create MonoInsts for longs */
 	for (i = 0; i < cfg->num_varinfo; i++) {
 		MonoInst *ins = cfg->varinfo [i];
 
 		if (ins->opcode != OP_REGVAR) {
 			switch (ins->type) {
-			case STACK_I4:
-			case STACK_PTR:
-			case STACK_MP:
-			case STACK_OBJ:
-				g_assert (ins->dreg != -1);
-				vreg_to_inst ['i'][ins->dreg] = ins;
-				break;
-			case STACK_R8:
-				g_assert (ins->dreg != -1);
-				vreg_to_inst ['f'][ins->dreg] = ins;
-				break;
-			case STACK_VTYPE:
-				break;
 			case STACK_I8: {
-#if SIZEOF_VOID_P == 8
-				g_assert (ins->dreg != -1);
-				vreg_to_inst ['i'][ins->dreg] = ins;
-#else
+#if SIZEOF_VOID_P == 4
 				MonoInst *tree;
 
-				g_assert (ins->dreg != -1);
-
-				/* FIXME: Do this earlier */
-
-				/* Allocate a dummy MonoInst for the first vreg */
 				g_assert (ins->opcode == OP_REGOFFSET);
-				MONO_INST_NEW (cfg, tree, OP_REGOFFSET);
+
+				tree = cfg->vreg_to_inst ['i'][ins->dreg];
+				g_assert (tree);
+				tree->opcode = OP_REGOFFSET;
 				tree->inst_basereg = ins->inst_basereg;
 				tree->inst_offset = ins->inst_offset;
-				tree->dreg = ins->dreg;
-				tree->type = STACK_I4;
-				tree->inst_vtype = &mono_defaults.int32_class->byval_arg;
-				tree->klass = mono_class_from_mono_type (tree->inst_vtype);
 
-				vreg_to_inst ['i'][ins->dreg] = tree;
-
-				/* Allocate a dummy MonoInst for the second vreg */
-				g_assert (ins->opcode == OP_REGOFFSET);
-				MONO_INST_NEW (cfg, tree, OP_REGOFFSET);
+				tree = cfg->vreg_to_inst ['i'][ins->dreg + 1];
+				g_assert (tree);
+				tree->opcode = OP_REGOFFSET;
 				tree->inst_basereg = ins->inst_basereg;
 				tree->inst_offset = ins->inst_offset + 4;
-				tree->dreg = ins->dreg + 1;
-				tree->type = STACK_I4;
-				tree->inst_vtype = &mono_defaults.int32_class->byval_arg;
-				tree->klass = mono_class_from_mono_type (tree->inst_vtype);
-
-				vreg_to_inst ['i'][ins->dreg + 1] = tree;
 #endif
 				break;
 			}
 			default:
-				NOT_IMPLEMENTED;
+				break;
 			}
 		}
 	}
@@ -8686,8 +8804,8 @@ mono_spill_global_vars (MonoCompile *cfg)
 			regtype = spec [MONO_INST_DEST];
 			g_assert (((ins->dreg == -1) && (regtype == ' ')) || ((ins->dreg != -1) && (regtype != ' ')));
 
-			if ((ins->dreg != -1) && (ins->dreg < num_vreg [regtype]) && vreg_to_inst [regtype][ins->dreg]) {
-				MonoInst *var = vreg_to_inst [regtype][ins->dreg];
+			if ((ins->dreg != -1) && (ins->dreg < cfg->vreg_to_inst_len [regtype]) && cfg->vreg_to_inst [regtype][ins->dreg]) {
+				MonoInst *var = cfg->vreg_to_inst [regtype][ins->dreg];
 				MonoInst *store_ins;
 				int store_opcode;
 
@@ -8727,8 +8845,8 @@ mono_spill_global_vars (MonoCompile *cfg)
 				sreg = srcindex == 0 ? ins->sreg1 : ins->sreg2;
 				
 				g_assert (((sreg == -1) && (regtype == ' ')) || ((sreg != -1) && (regtype != ' ')));
-				if ((sreg != -1) && (sreg < num_vreg [regtype]) && (vreg_to_inst [regtype][sreg])) {
-					MonoInst *var = vreg_to_inst [regtype][sreg];
+				if ((sreg != -1) && (sreg < cfg->vreg_to_inst_len [regtype]) && (cfg->vreg_to_inst [regtype][sreg])) {
+					MonoInst *var = cfg->vreg_to_inst [regtype][sreg];
 					MonoInst *load_ins;
 
 					g_assert (var->opcode == OP_REGOFFSET);
@@ -8759,6 +8877,8 @@ mono_spill_global_vars (MonoCompile *cfg)
 			prev = ins;
 		}
 	}
+
+	g_free (stacktypes);
 }
 
 /**

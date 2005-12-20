@@ -565,6 +565,14 @@ typedef struct {
 	/* The current virtual register numbers */
 	guint32 next_vireg, next_vlreg, next_vfreg;
 
+	/* Maps vregs to their associated MonoInst's */
+	/* vregs with an associated MonoInst are 'global' while others are 'local' */
+	/* Indexed first by vreg type ('i' etc), then by the vreg itself */
+	MonoInst ***vreg_to_inst;
+
+	/* Size of above array, indexed by vreg type */
+	guint32 *vreg_to_inst_len;
+
 	unsigned char   *native_code;
 	guint            code_size;
 	guint            code_len;
@@ -596,9 +604,7 @@ typedef struct {
 	guint32          exception_type;	/* MONO_EXCEPTION_* */
 	guint32          exception_data;
 	char*            exception_message;
-#ifdef __ia64
-	guint8           ins, locals, outs; /* reg stack region sizes */
-#endif /* __ia64 */
+
 } MonoCompile;
 
 typedef enum {
