@@ -29,6 +29,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Globalization;
 using System.Resources;
+using System;
 
 namespace System.Windows.Forms
 {
@@ -1021,13 +1022,12 @@ namespace System.Windows.Forms
 				private Color color;
 				
 				private bool isSelected = false;
-				private bool hasFocus = false;
 				
 				public SmallColorControl( Color color )
 				{
 					this.color = color;
 					
-					Size = new Size( 26, 23 );
+					Size = new Size( 25, 23 );
 					
 					SetStyle( ControlStyles.DoubleBuffer, true );
 					SetStyle( ControlStyles.AllPaintingInWmPaint, true );
@@ -1041,7 +1041,6 @@ namespace System.Windows.Forms
 					{
 						isSelected = value;
 						Invalidate( );
-						Update( );
 					}
 					
 					get
@@ -1056,7 +1055,6 @@ namespace System.Windows.Forms
 					{
 						color = value;
 						Invalidate( );
-						Update( );
 					}
 					
 					get
@@ -1071,21 +1069,18 @@ namespace System.Windows.Forms
 					
 					pe.Graphics.FillRectangle( ThemeEngine.Current.ResPool.GetSolidBrush( BackColor ), 0, 0, 26, 23 );
 					
-					ControlPaint.DrawBorder3D( pe.Graphics, new Rectangle( 3, 3, 20, 18 ) );
-					
 					pe.Graphics.FillRectangle( ThemeEngine.Current.ResPool.GetSolidBrush( color ),
-								  new Rectangle( 4, 4, 16, 14 ) );
+								  new Rectangle( 4, 4, 17, 15 ) );
+					
+					DrawBorder( pe.Graphics, new Rectangle( 4, 4, 17, 15 ) );
 					
 					if ( isSelected )
 					{
-						using ( Pen pen = new Pen( ThemeEngine.Current.ResPool.GetSolidBrush( Color.Black ) ) )
-						{
-							pe.Graphics.DrawRectangle( pen,
-										  new Rectangle( 2, 2, 20, 18 ) );
-						}
+						pe.Graphics.DrawRectangle( ThemeEngine.Current.ResPool.GetPen( Color.Black ),
+									  new Rectangle( 2, 2, 20, 18 ) );
 					}
 					
-					if ( hasFocus && isSelected )
+					if ( Focused )
 					{
 						ControlPaint.DrawFocusRectangle(
 							pe.Graphics, new Rectangle( 0, 0, 25, 23 )
@@ -1093,26 +1088,26 @@ namespace System.Windows.Forms
 					}
 				}
 				
+				protected override void OnClick( EventArgs e ) {
+					Focus();
+					IsSelected = true;
+					
+					base.OnClick( e );
+				}
+				
+				
 				protected override void OnLostFocus( EventArgs e )
 				{
-					hasFocus = false;
-					
 					Invalidate( );
-					Update( );
 					
 					base.OnLostFocus( e );
 				}
 				
-				protected override void OnMouseUp( MouseEventArgs e )
+				private void DrawBorder( Graphics dc, Rectangle rect )
 				{
-					isSelected = true;
-					
-					hasFocus = true;
-					
-					Invalidate( );
-					Update( );
-					
-					base.OnMouseUp( e );
+					Pen pen = ThemeEngine.Current.ResPool.GetPen( Color.Black );
+					dc.DrawLine( pen, rect.X, rect.Y, rect.X, rect.Bottom - 1 );
+					dc.DrawLine( pen, rect.X + 1, rect.Y, rect.Right - 1, rect.Y );
 				}
 			}
 			
@@ -1122,8 +1117,6 @@ namespace System.Windows.Forms
 			
 			private Label userColorLabel;
 			private Label baseColorLabel;
-			
-			private bool panelSelected = false;
 			
 			private SmallColorControl selectedSmallColorControl;
 			
@@ -1555,8 +1548,6 @@ namespace System.Windows.Forms
 				selectedSmallColorControl.IsSelected = true;
 				
 				CheckIfColorIsInPanel( );
-				
-				panelSelected = false;
 			}
 			
 			private void CheckIfColorIsInPanel( )
@@ -1577,8 +1568,6 @@ namespace System.Windows.Forms
 			
 			void OnSmallColorControlClick( object sender, EventArgs e )
 			{
-				panelSelected = true;
-				
 				// previous selected smallcolorcontrol
 				if ( selectedSmallColorControl != (SmallColorControl)sender )
 					selectedSmallColorControl.IsSelected = false;

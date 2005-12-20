@@ -1,3 +1,7 @@
+2005-12-20  Alexander Olk  <alex.olk@googlemail.com>
+
+	* ColorDialog.cs: Fixed focus drawing in small color controls
+
 2005-12-19  Jackson Harper  <jackson@ximian.com>
 
 	* InternalWindowManager.cs:
