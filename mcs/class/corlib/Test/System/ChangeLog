@@ -1,3 +1,7 @@
+2005-12-20  Raja R Harinath  <rharinath@novell.com>
+
+	* TypeTest.cs (FullNameGenerics): Add tests for AssemblyQualifiedName.
+
 2005-12-19  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ArrayTest.cs: Added test cases for a binary search with an empty

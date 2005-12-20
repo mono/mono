@@ -464,25 +464,30 @@ PublicKeyToken=b77a5c561934e089"));
 			Type fooType = typeof (Foo<>);
 
 			Assert.IsNotNull (fooType.FullName, "#1");
+			Assert.IsNotNull (fooType.AssemblyQualifiedName, "#1a");
 
 			FieldInfo field = fooType.GetField ("Whatever");
 			Assert.IsNotNull (field, "#2");
 			Assert.IsNull (field.FieldType.FullName, "#3");
+			Assert.IsNull (field.FieldType.AssemblyQualifiedName, "#3a");
 			Assert.IsNotNull (field.FieldType.ToString (), "#4");
 
 			PropertyInfo prop = fooType.GetProperty ("Test");
 			Assert.IsNotNull (prop, "#5");
 			Assert.IsNull (prop.PropertyType.FullName, "#6");
+			Assert.IsNull (prop.PropertyType.AssemblyQualifiedName, "#6a");
 			Assert.IsNotNull (prop.PropertyType.ToString (), "#7");
 
 			MethodInfo method = fooType.GetMethod("Execute");
 			Assert.IsNotNull (method, "#8");
 			Assert.IsNull (method.ReturnType.FullName, "#9");
+			Assert.IsNull (method.ReturnType.AssemblyQualifiedName, "#9a");
 			Assert.IsNotNull (method.ReturnType.ToString (), "#10");
 
 			ParameterInfo[] parameters = method.GetParameters();
 			Assert.AreEqual (1, parameters.Length, "#11");
 			Assert.IsNull (parameters[0].ParameterType.FullName, "#12");
+			Assert.IsNull (parameters[0].ParameterType.AssemblyQualifiedName, "#12a");
 			Assert.IsNotNull (parameters[0].ParameterType.ToString (), "#13");
 		}
 
