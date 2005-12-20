@@ -591,16 +591,20 @@ namespace Commons.Xml.Relaxng.Derivative
 			set { r = value; }
 		}
 
+		RdpContentType computedContentType = RdpContentType.Invalid;
 		public override RdpContentType ContentType {
 			get {
-				if (l.ContentType == RdpContentType.Empty)
-					return r.ContentType;
-				if (r.ContentType == RdpContentType.Empty)
-					return l.ContentType;
-
-				if ((l.ContentType & RdpContentType.Simple) != 0 || ((r.ContentType & RdpContentType.Simple) != 0))
-					throw new RelaxngException ("The content type of this group is invalid.");
-				return RdpContentType.Complex;
+				if (computedContentType == RdpContentType.Invalid) {
+					if (l.ContentType == RdpContentType.Empty)
+						computedContentType = r.ContentType;
+					else if (r.ContentType == RdpContentType.Empty)
+						computedContentType = l.ContentType;
+					else if ((l.ContentType & RdpContentType.Simple) != 0 || ((r.ContentType & RdpContentType.Simple) != 0))
+						throw new RelaxngException ("The content type of this group is invalid.");
+					else
+						computedContentType = RdpContentType.Complex;
+				}
+				return computedContentType;
 			}
 		}
 
@@ -705,12 +709,17 @@ namespace Commons.Xml.Relaxng.Derivative
 			get { return RelaxngPatternType.Choice; }
 		}
 
+		RdpContentType computedContentType = RdpContentType.Invalid;
 		public override RdpContentType ContentType {
 			get {
-				if (LValue.ContentType == RdpContentType.Simple ||
-					RValue.ContentType == RdpContentType.Simple)
-					return RdpContentType.Simple;
-				return base.ContentType;
+				if (computedContentType == RdpContentType.Invalid) {
+					if (LValue.ContentType == RdpContentType.Simple ||
+						RValue.ContentType == RdpContentType.Simple)
+						computedContentType = RdpContentType.Simple;
+					else
+						computedContentType = base.ContentType;
+				}
+				return computedContentType;
 			}
 		}
 

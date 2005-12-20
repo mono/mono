@@ -1,3 +1,7 @@
+2005-12-20  Atsushi Enomoto <atsushi@ximian.com>
+
+	* RdpPattern.cs : cache ContentType and save speed.
+
 2005-09-20  Atsushi Enomoto <atsushi@ximian.com>
 
 	* Util.cs : Added name class analysis support. The algorithm is at
