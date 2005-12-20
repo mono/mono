@@ -103,6 +103,9 @@ namespace MonoTests.System
 			return a;
 		}
 	}
+
+	public interface IBar<T> { }
+	public class Baz<T> : IBar<T> { }
 #endif
 
 	[TestFixture]
@@ -503,6 +506,26 @@ PublicKeyToken=b77a5c561934e089"));
 			// LAMESPEC: MSDN claims that this should be false, but .NET v2.0.50727 says it's true
 			// http://msdn2.microsoft.com/en-us/library/system.type.isgenerictype.aspx
 			Assert.IsTrue (type_param.ContainsGenericParameters);
+		}
+
+		[Test]
+		public void IsAssignable ()
+		{
+			Type foo_type = typeof (Foo<>);
+			Type foo_int_type = typeof (Foo<int>);
+			Assert.IsFalse (foo_type.IsAssignableFrom (foo_int_type), "Foo<int> -!-> Foo<>");
+			Assert.IsFalse (foo_int_type.IsAssignableFrom (foo_type), "Foo<> -!-> Foo<int>");
+
+			Type ibar_short_type = typeof (IBar<short>);
+			Type ibar_int_type = typeof (IBar<int>);
+			Type baz_short_type = typeof (Baz<short>);
+			Type baz_int_type = typeof (Baz<int>);
+
+			Assert.IsTrue (ibar_int_type.IsAssignableFrom (baz_int_type), "Baz<int> -> IBar<int>");
+			Assert.IsTrue (ibar_short_type.IsAssignableFrom (baz_short_type), "Baz<short> -> IBaz<short>");
+
+			Assert.IsFalse (ibar_int_type.IsAssignableFrom (baz_short_type), "Baz<int> -!-> IBaz<short>");
+			Assert.IsFalse (ibar_short_type.IsAssignableFrom (baz_int_type), "Baz<short> -!-> IBaz<int>");
 		}
 #endif
 
