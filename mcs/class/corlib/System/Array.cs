@@ -919,6 +919,18 @@ namespace System
 		}
 
 #if NET_2_0
+		static Swapper get_swapper<T> (T [] array)
+		{
+			if (array is int[])
+				return new Swapper (array.int_swapper);
+			if (array is double[])
+				return new Swapper (array.double_swapper);
+
+			return new Swapper (array.obj_swapper);
+		}
+#endif
+
+#if NET_2_0
 		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, Cer.MayFail)]
 #endif
 		public static void Reverse (Array array)
@@ -1282,6 +1294,244 @@ namespace System
 				return comparer.Compare (value1, value2);
 		}
 	
+#if NET_2_0
+		[CLSCompliant (false)]
+		public static void Sort<T> (T [] array)
+		{
+			if (array == null)
+				throw new ArgumentNullException ("array");
+
+			Sort<T, T> (array, null, 0, array.Length, null);
+		}
+
+		[CLSCompliant (false)]
+		public static void Sort<K, V> (K [] keys, V [] items)
+		{
+			if (keys == null)
+				throw new ArgumentNullException ("keys");
+			
+			Sort<K, V> (keys, items, 0, keys.Length, null);
+		}
+
+		[CLSCompliant (false)]
+		public static void Sort<T> (T [] array, IComparer<T> comparer)
+		{
+			if (array == null)
+				throw new ArgumentNullException ("array");
+
+			Sort<T, T> (array, null, 0, array.Length, comparer);
+		}
+
+		[CLSCompliant (false)]
+		public static void Sort<K, V> (K [] keys, V [] items, IComparer<K> comparer)
+		{
+			if (keys == null)
+				throw new ArgumentNullException ("keys");
+			
+			Sort<K, V> (keys, items, 0, keys.Length, comparer);
+		}
+
+		[CLSCompliant (false)]
+		public static void Sort<T> (T [] array, int index, int length)
+		{
+			if (array == null)
+				throw new ArgumentNullException ("array");
+			
+			Sort<T, T> (array, null, index, length, null);
+		}
+
+		[CLSCompliant (false)]
+		public static void Sort<K, V> (K [] keys, V [] items, int index, int length)
+		{
+			Sort<K, V> (keys, items, index, length, null);
+		}
+
+		[CLSCompliant (false)]
+		public static void Sort<T> (T [] array, int index, int length, IComparer<T> comparer)
+		{
+			if (array == null)
+				throw new ArgumentNullException ("array");
+
+			Sort<T, T> (array, null, index, length, comparer);
+		}
+
+		[CLSCompliant (false)]
+		public static void Sort<K, V> (K [] keys, V [] items, int index, int length, IComparer<K> comparer)
+		{
+			if (keys == null)
+				throw new ArgumentNullException ("keys");
+
+			if (index < 0)
+				throw new ArgumentOutOfRangeException ("index");
+
+			if (length < 0)
+				throw new ArgumentOutOfRangeException ("length");
+
+			if (keys.Length - index < length
+				|| (items != null && index > items.Length - length))
+				throw new ArgumentException ();
+
+			if (length <= 1)
+				return;
+			
+			//
+			// Check for value types which can be sorted without Compare () method
+			//
+			if (comparer == null) {
+				Swapper iswapper;
+				if (items == null)
+					iswapper = null;
+				else 
+					iswapper = get_swapper<V> (items);
+				if (keys is double[]) {
+					combsort (keys as double[], index, length, iswapper);
+					return;
+				}
+				if (keys is int[]) {
+					combsort (keys as int[], index, length, iswapper);
+					return;
+				}
+				if (keys is char[]) {
+					combsort (keys as char[], index, length, iswapper);
+					return;
+				}
+
+				// Use Comparer<T>.Default instead
+				// comparer = Comparer<K>.Default;
+			}
+			
+			try {
+				int low0 = index;
+				int high0 = index + length - 1;
+				qsort<K, V> (keys, items, low0, high0, comparer);
+			}
+			catch (Exception e) {
+				throw new InvalidOperationException (Locale.GetText ("The comparer threw an exception."), e);
+			}
+		}
+
+		[CLSCompliant (false)]
+		public static void Sort<T> (T [] array, Comparison<T> comparison)
+		{
+			if (array == null)
+				throw new ArgumentNullException ("array");
+			if (comparison == null)
+				throw new ArgumentNullException ("comparison");
+
+			if (array.Length <= 1)
+				return;
+			
+			try {
+				int low0 = 0;
+				int high0 = array.Length - 1;
+				qsort<T> (array, low0, high0, comparison);
+			}
+			catch (Exception e) {
+				throw new InvalidOperationException (Locale.GetText ("Comparison threw an exception."), e);
+			}
+		}
+
+		private static void qsort<K, V> (K [] keys, V [] items, int low0, int high0, IComparer<K> comparer)
+		{
+			if (low0 >= high0)
+				return;
+
+			int low = low0;
+			int high = high0;
+
+			K keyPivot = keys [(low + high) / 2];
+
+			while (low <= high) {
+				// Move the walls in
+				//while (low < high0 && comparer.Compare (keys [low], keyPivot) < 0)
+				while (low < high0 && compare (keys [low], keyPivot, comparer) < 0)
+					++low;
+				//while (high > low0 && comparer.Compare (keyPivot, keys [high]) < 0)
+				while (high > low0 && compare (keyPivot, keys [high], comparer) < 0)
+					--high;
+
+				if (low <= high) {
+					swap<K, V> (keys, items, low, high);
+					++low;
+					--high;
+				}
+			}
+
+			if (low0 < high)
+				qsort<K, V> (keys, items, low0, high, comparer);
+			if (low < high0)
+				qsort<K, V> (keys, items, low, high0, comparer);
+		}
+
+		private static int compare<T> (T value1, T value2, IComparer<T> comparer)
+		{
+			if (value1 == null)
+				return value2 == null ? 0 : -1;
+			else if (value2 == null)
+				return 1;
+			else if (comparer == null)
+				if (value1 is IComparable<T>)
+					return ((IComparable<T>) value1).CompareTo (value2);
+				else
+					return ((IComparable) value1).CompareTo (value2);
+			else
+				return comparer.Compare (value1, value2);
+		}
+
+		private static void qsort<T> (T [] array, int low0, int high0, Comparison<T> comparison)
+		{
+			if (low0 >= high0)
+				return;
+
+			int low = low0;
+			int high = high0;
+
+			T keyPivot = array [(low + high) / 2];
+
+			while (low <= high) {
+				// Move the walls in
+				while (low < high0 && comparison (array [low], keyPivot) < 0)
+					++low;
+				while (high > low0 && comparison (keyPivot, array [high]) < 0)
+					--high;
+
+				if (low <= high) {
+					swap<T> (array, low, high);
+					++low;
+					--high;
+				}
+			}
+
+			if (low0 < high)
+				qsort<T> (array, low0, high, comparison);
+			if (low < high0)
+				qsort<T> (array, low, high0, comparison);
+		}
+
+		private static void swap<K, V> (K [] keys, V [] items, int i, int j)
+		{
+			K tmp;
+
+			tmp = keys [i];
+			keys [i] = keys [j];
+			keys [j] = tmp;
+
+			if (items != null) {
+				V itmp;
+				itmp = items [i];
+				items [i] = items [j];
+				items [j] = itmp;
+			}
+		}
+
+		private static void swap<T> (T [] array, int i, int j)
+		{
+			T tmp = array [i];
+			array [i] = array [j];
+			array [j] = tmp;
+		}
+#endif
+		
 		public virtual void CopyTo (Array array, int index)
 		{
 			if (array == null)

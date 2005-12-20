@@ -1,3 +1,7 @@
+2005-12-20  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* Array.cs: Added the Sort<T> methods (generics). 
+
 2005-12-19  Sebastien Pouliot  <sebastien@ximian.com> 
  
 	* Array.cs: Fixed BinarySearch when the array is empty (#77030). Added
