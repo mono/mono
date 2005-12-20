@@ -1,3 +1,8 @@
+2005-12-20  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* List.cs: Applied Atsushi's patch for Sort (bug 76361) now that the
+	generic versions of Array.Sort are implemented.
+
 2005-12-19  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Dictionary.cs: Added [Serializable] attribute to both inner 

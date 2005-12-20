@@ -456,11 +456,11 @@ namespace System.Collections.Generic {
 		
 		public void Sort ()
 		{
-			Array.Sort (data, 0, size, (IComparer) Comparer <T>.Default);
+			Array.Sort<T> (data, 0, size, Comparer <T>.Default);
 		}
 		public void Sort (IComparer <T> comparer)
 		{
-			Array.Sort (data, 0, size, (IComparer) comparer);
+			Array.Sort<T> (data, 0, size, comparer);
 		}
 		
 		// Waiting on Array
@@ -473,7 +473,7 @@ namespace System.Collections.Generic {
 		public void Sort (int index, int count, IComparer <T> comparer)
 		{
 			CheckRange (index, count);
-			Array.Sort (data, index, count, (IComparer) comparer);
+			Array.Sort<T> (data, index, count, comparer);
 		}
 
 		public T [] ToArray ()
