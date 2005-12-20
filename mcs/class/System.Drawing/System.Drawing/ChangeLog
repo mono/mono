@@ -1,3 +1,7 @@
+2005-12-20  Konstantin Triger <kostat@mainsoft.com>
+
+        * Font.jvm.cs: charset support.
+
 2005-12-14  Konstantin Triger <kostat@mainsoft.com>
 
         * StrokeFactory.jvm.cs: create AdvancedStroke when have penTransform.
