@@ -562,6 +562,9 @@ typedef struct {
 	
 	MonoDomain      *domain;
 
+	guint            real_offset;
+	GHashTable      *cbb_hash;
+
 	/* The current virtual register numbers */
 	guint32 next_vireg, next_vlreg, next_vfreg;
 

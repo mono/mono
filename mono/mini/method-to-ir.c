@@ -295,18 +295,21 @@ mono_print_bb_code_new (MonoBasicBlock *bb) {
  * dfn: Depth First Number
  * block_num: unique ID assigned at bblock creation
  */
-#define NEW_BBLOCK(cfg) (mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoBasicBlock)))
+#define NEW_BBLOCK(cfg,bblock) do { \
+	(bblock) = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoBasicBlock)); \
+	(bblock)->block_num = cfg->num_bblocks++; \
+    } while (0)
+
 #define ADD_BBLOCK(cfg,bbhash,b) do {	\
 		g_hash_table_insert (bbhash, (b)->cil_code, (b));	\
-		(b)->block_num = cfg->num_bblocks++;	\
-		(b)->real_offset = real_offset;	\
+		(b)->real_offset = cfg->real_offset;	\
 	} while (0)
 
 #define GET_BBLOCK(cfg,bbhash,tblock,ip) do {	\
 		(tblock) = g_hash_table_lookup (bbhash, (ip));	\
 		if (!(tblock)) {	\
 			if ((ip) >= end || (ip) < header->code) goto unverified; \
-			(tblock) = NEW_BBLOCK (cfg);	\
+            NEW_BBLOCK (cfg, (tblock)); \
 			(tblock)->cil_code = (ip);	\
 			ADD_BBLOCK (cfg, (bbhash), (tblock));	\
 		} \
@@ -2934,9 +2937,13 @@ static MonoInst*
 handle_isinst (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned char *ip)
 {
 	MonoInst *object_is_null, *end_label, *false_label, *ins;
+	MonoBasicBlock *is_null_bblock;
 	int obj_reg = src->dreg;
 	int vtable_reg = alloc_preg (cfg);
 	int res_reg = alloc_preg (cfg);
+
+	NEW_BBLOCK (cfg, is_null_bblock);
+	ADD_BBLOCK (cfg, cfg->cbb_hash, is_null_bblock);
 
 	MONO_NEW_LABEL (cfg, object_is_null);
 	MONO_NEW_LABEL (cfg, end_label);
@@ -3620,6 +3627,8 @@ inline_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig,
 	MonoBasicBlock *ebblock, *sbblock;
 	int i, costs, new_locals_offset;
 	MonoMethod *prev_inlined_method;
+	guint prev_real_offset;
+	GHashTable *prev_cbb_hash;
 
 	if (cfg->verbose_level > 2)
 		g_print ("INLINE START %p %s -> %s\n", cmethod,  mono_method_full_name (cfg->method, TRUE), mono_method_full_name (cmethod, TRUE));
@@ -3640,20 +3649,23 @@ inline_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig,
 		mono_compile_create_var (cfg, cheader->locals [i], OP_LOCAL);
 	
 	/* allocate start and end blocks */
-	sbblock = NEW_BBLOCK (cfg);
-	sbblock->block_num = cfg->num_bblocks++;
+	NEW_BBLOCK (cfg, sbblock);
 	sbblock->real_offset = real_offset;
 
-	ebblock = NEW_BBLOCK (cfg);
+	NEW_BBLOCK (cfg, ebblock);
 	ebblock->block_num = cfg->num_bblocks++;
 	ebblock->real_offset = real_offset;
 
 	prev_inlined_method = cfg->inlined_method;
 	cfg->inlined_method = cmethod;
+	prev_real_offset = cfg->real_offset;
+	prev_cbb_hash = cfg->cbb_hash;
 
 	costs = mono_method_to_ir2 (cfg, cmethod, sbblock, ebblock, new_locals_offset, rvar, dont_inline, sp, real_offset, *ip == CEE_CALLVIRT);
 
 	cfg->inlined_method = prev_inlined_method;
+	cfg->real_offset = prev_real_offset;
+	cfg->cbb_hash = prev_cbb_hash;
 
 	if ((costs >= 0 && costs < 60) || inline_allways) {
 		if (cfg->verbose_level > 2)
@@ -4190,7 +4202,7 @@ decompose_long_opts (MonoCompile *cfg)
 	 * Create a dummy bblock and emit code into it so we can use the normal 
 	 * code generation macros.
 	 */
-	cfg->cbb = NEW_BBLOCK (cfg);
+	cfg->cbb = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoBasicBlock));
 
 	for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
 		MonoInst *tree = bb->code;	
@@ -4732,7 +4744,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 	int i, n, start_new_bblock, dreg;
 	int num_calls = 0, inline_costs = 0;
 	int breakpoint_id = 0;
-	guint real_offset, num_args;
+	guint num_args;
 	MonoBoolean security, pinvoke;
 	MonoSecurityManager* secman = NULL;
 	MonoDeclSecurityActions actions;
@@ -4755,12 +4767,14 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 	g_assert (!sig->has_type_parameters);
 
 	if (cfg->method == method) {
-		real_offset = 0;
+		cfg->real_offset = 0;
 		bbhash = cfg->bb_hash;
 	} else {
-		real_offset = inline_offset;
+		cfg->real_offset = inline_offset;
 		bbhash = g_hash_table_new (g_direct_hash, NULL);
 	}
+
+	cfg->cbb_hash = bbhash;
 
 	if (cfg->verbose_level > 2)
 		g_print ("method to IR %s\n", mono_method_full_name (method, TRUE));
@@ -4776,16 +4790,16 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			cfg->coverage_info = mono_profiler_coverage_alloc (cfg->method, header->code_size);
 
 		/* ENTRY BLOCK */
-		cfg->bb_entry = start_bblock = NEW_BBLOCK (cfg);
+		NEW_BBLOCK (cfg, start_bblock);
+		cfg->bb_entry = start_bblock;
 		start_bblock->cil_code = NULL;
 		start_bblock->cil_length = 0;
-		start_bblock->block_num = cfg->num_bblocks++;
 
 		/* EXIT BLOCK */
-		cfg->bb_exit = end_bblock = NEW_BBLOCK (cfg);
+		NEW_BBLOCK (cfg, end_bblock);
+		cfg->bb_exit = end_bblock;
 		end_bblock->cil_code = NULL;
 		end_bblock->cil_length = 0;
-		end_bblock->block_num = cfg->num_bblocks++;
 		g_assert (cfg->num_bblocks == 2);
 
 		arg_array = alloca (sizeof (MonoInst *) * num_args);
@@ -4865,7 +4879,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 	}
 
 	/* FIRST CODE BLOCK */
-	bblock = NEW_BBLOCK (cfg);
+	NEW_BBLOCK (cfg, bblock);
 	bblock->cil_code = ip;
 	cfg->cbb = bblock;
 
@@ -4917,13 +4931,13 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 	
 	if ((header->init_locals || (cfg->method == method && (cfg->opt & MONO_OPT_SHARED))) || mono_compile_aot || security || pinvoke) {
 		/* we use a separate basic block for the initialization code */
-		cfg->bb_init = init_localsbb = NEW_BBLOCK (cfg);
-		init_localsbb->real_offset = real_offset;
+		NEW_BBLOCK (cfg, init_localsbb);
+		cfg->bb_init = init_localsbb;
+		init_localsbb->real_offset = cfg->real_offset;
 		start_bblock->next_bb = init_localsbb;
 		init_localsbb->next_bb = bblock;
 		link_bblock (cfg, start_bblock, init_localsbb);
 		link_bblock (cfg, init_localsbb, bblock);
-		init_localsbb->block_num = cfg->num_bblocks++;
 	} else {
 		start_bblock->next_bb = bblock;
 		link_bblock (cfg, start_bblock, bblock);
@@ -4966,7 +4980,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 		mono_emit_method_call (cfg, secman->demandunmanaged, mono_method_signature (secman->demandunmanaged), NULL, ip, NULL);
 	}
 
-	if (get_basic_blocks (cfg, bbhash, header, real_offset, ip, end, &err_pos)) {
+	if (get_basic_blocks (cfg, bbhash, header, cfg->real_offset, ip, end, &err_pos)) {
 		ip = err_pos;
 		goto unverified;
 	}
@@ -4998,9 +5012,9 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 	while (ip < end) {
 
 		if (cfg->method == method)
-			real_offset = ip - header->code;
+			cfg->real_offset = ip - header->code;
 		else
-			real_offset = inline_offset;
+			cfg->real_offset = inline_offset;
 
 		if (start_new_bblock) {
 			bblock->cil_length = ip - bblock->cil_code;
@@ -5050,7 +5064,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			}
 		}
 
-		bblock->real_offset = real_offset;
+		bblock->real_offset = cfg->real_offset;
 
 		if ((cfg->method == method) && cfg->coverage_info) {
 			MonoInst *store, *one;
@@ -5658,9 +5672,9 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 					allways = TRUE;
 				}
 
- 				if ((costs = inline_method (cfg, cmethod, fsig, bblock, sp, ip, real_offset, dont_inline, &ebblock, allways))) {
+ 				if ((costs = inline_method (cfg, cmethod, fsig, bblock, sp, ip, cfg->real_offset, dont_inline, &ebblock, allways))) {
 					ip += 5;
-					real_offset += 5;
+					cfg->real_offset += 5;
 
 					GET_BBLOCK (cfg, bbhash, bblock, ip);
 					ebblock->next_bb = bblock;
@@ -6514,10 +6528,10 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 					int costs;
 					MonoBasicBlock *ebblock;
 					NOT_IMPLEMENTED;
-					if ((costs = inline_method (cfg, cmethod, fsig, bblock, sp, ip, real_offset, dont_inline, &ebblock, FALSE))) {
+					if ((costs = inline_method (cfg, cmethod, fsig, bblock, sp, ip, cfg->real_offset, dont_inline, &ebblock, FALSE))) {
 
 						ip += 5;
-						real_offset += 5;
+						cfg->real_offset += 5;
 						
 						GET_BBLOCK (cfg, bbhash, bblock, ip);
 						ebblock->next_bb = bblock;
@@ -6581,12 +6595,12 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				iargs [0] = sp [0];
 				
 				costs = inline_method (cfg, mono_castclass, mono_method_signature (mono_castclass), bblock, 
-							   iargs, ip, real_offset, dont_inline, &ebblock, TRUE);
+							   iargs, ip, cfg->real_offset, dont_inline, &ebblock, TRUE);
 			
 				g_assert (costs > 0);
 				
 				ip += 5;
-				real_offset += 5;
+				cfg->real_offset += 5;
 			
 				GET_BBLOCK (cfg, bbhash, bblock, ip);
 				ebblock->next_bb = bblock;
@@ -6628,12 +6642,12 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				iargs [0] = sp [0];
 
 				costs = inline_method (cfg, mono_isinst, mono_method_signature (mono_isinst), bblock, 
-							   iargs, ip, real_offset, dont_inline, &ebblock, TRUE);
+							   iargs, ip, cfg->real_offset, dont_inline, &ebblock, TRUE);
 			
 				g_assert (costs > 0);
 				
 				ip += 5;
-				real_offset += 5;
+				cfg->real_offset += 5;
 			
 				GET_BBLOCK (cfg, bbhash, bblock, ip);
 				ebblock->next_bb = bblock;
@@ -6676,12 +6690,12 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 					iargs [0] = sp [0];
 
 					costs = inline_method (cfg, mono_castclass, mono_method_signature (mono_castclass), bblock, 
-										   iargs, ip, real_offset, dont_inline, &ebblock, TRUE);
+										   iargs, ip, cfg->real_offset, dont_inline, &ebblock, TRUE);
 			
 					g_assert (costs > 0);
 				
 					ip += 5;
-					real_offset += 5;
+					cfg->real_offset += 5;
 			
 					GET_BBLOCK (cfg, bbhash, bblock, ip);
 					ebblock->next_bb = bblock;
@@ -6820,11 +6834,11 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 
 					if (cfg->opt & MONO_OPT_INLINE) {
 						costs = inline_method (cfg, stfld_wrapper, mono_method_signature (stfld_wrapper), bblock, 
-								       iargs, ip, real_offset, dont_inline, &ebblock, TRUE);
+								       iargs, ip, cfg->real_offset, dont_inline, &ebblock, TRUE);
 						g_assert (costs > 0);
 						      
 						ip += 5;
-						real_offset += 5;
+						cfg->real_offset += 5;
 
 						GET_BBLOCK (cfg, bbhash, bblock, ip);
 						ebblock->next_bb = bblock;
@@ -6873,11 +6887,11 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 					iargs [0] = sp [0];
 
 					costs = inline_method (cfg, wrapper, mono_method_signature (wrapper), bblock, 
-										   iargs, ip, real_offset, dont_inline, &ebblock, TRUE);
+										   iargs, ip, cfg->real_offset, dont_inline, &ebblock, TRUE);
 					g_assert (costs > 0);
 						      
 					ip += 5;
-					real_offset += 5;
+					cfg->real_offset += 5;
 
 					GET_BBLOCK (cfg, bbhash, bblock, ip);
 					ebblock->next_bb = bblock;
