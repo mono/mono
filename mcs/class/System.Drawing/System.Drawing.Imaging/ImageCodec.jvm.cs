@@ -17,7 +17,6 @@ namespace Mainsoft.Drawing.Imaging {
 	/// <summary>
 	/// Summary description for ImageCodec.
 	/// </summary>
-	[MonoTODO]
 	public class ImageCodec : IDisposable {
 
 		#region Members
@@ -379,8 +378,7 @@ namespace Mainsoft.Drawing.Imaging {
 		
 		#region Image read/write methods
 
-		[MonoTODO]
-		public PlainImage ReadPlainImage() {
+		internal PlainImage ReadPlainImage() {
 			awt.Image img = ReadImage( _currentFrame );
 			if (img == null)
 				return null;
@@ -409,7 +407,7 @@ namespace Mainsoft.Drawing.Imaging {
 			return pi;
 		}
 
-		public PlainImage ReadNextPlainImage() {
+		internal PlainImage ReadNextPlainImage() {
 			_currentFrame++;
 			return ReadPlainImage();
 		}
@@ -452,7 +450,7 @@ namespace Mainsoft.Drawing.Imaging {
 			}
 		}
 #endif
-		public void WritePlainImage(PlainImageCollection pic) {
+		internal void WritePlainImage(PlainImageCollection pic) {
 			if ((pic == null) || (pic.Count == 0))
 				return;
 
@@ -478,7 +476,7 @@ namespace Mainsoft.Drawing.Imaging {
 			}
 		}
 
-		public void WritePlainImage(PlainImage pi) {
+		internal void WritePlainImage(PlainImage pi) {
 			try {
 				imageio.IIOImage iio = GetIIOImageContainer( pi );
 				WriteImage( iio );

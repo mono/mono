@@ -11,9 +11,12 @@ namespace System.Drawing {
 
 		#region variables
 
+		const byte DEFAULT_CHARSET = 1;
+
 		private readonly GraphicsUnit _gUnit = GraphicsUnit.Point;
 		private readonly FontFamily _fontFamily;
 		private readonly awt.Font _jFont;
+		private readonly byte _charset;
 
 		#endregion
 
@@ -51,32 +54,31 @@ namespace System.Drawing {
 		}
 
 		public Font(FontFamily family, float emSize)
-			: this(family, emSize, FontStyle.Regular, GraphicsUnit.Point, (byte)0, false) {
+			: this(family, emSize, FontStyle.Regular, GraphicsUnit.Point, DEFAULT_CHARSET, false) {
 		}
 
 		public Font(FontFamily family, float emSize, FontStyle style)
-			: this(family, emSize, style, GraphicsUnit.Point, (byte)0, false) {
+			: this(family, emSize, style, GraphicsUnit.Point, DEFAULT_CHARSET, false) {
 		}
 		public Font(FontFamily family, float emSize, GraphicsUnit unit)
-			: this(family, emSize, FontStyle.Regular, unit, (byte)0, false) {
+			: this(family, emSize, FontStyle.Regular, unit, DEFAULT_CHARSET, false) {
 		}
 
 		public Font(FontFamily family, float emSize, FontStyle style, GraphicsUnit unit)
-			: this(family, emSize, style, unit, (byte)0, false) {
+			: this(family, emSize, style, unit, DEFAULT_CHARSET, false) {
 		}
 
 		public Font(FontFamily family, float emSize, FontStyle style, GraphicsUnit unit, byte charSet)
 			: this(family, emSize, style, unit, charSet, false) {
 		}
 		
-		[MonoTODO]
 		public Font(FontFamily family, float emSize, FontStyle style, GraphicsUnit unit, byte charSet, bool isVertical) {
 			if (family == null)
 				throw new ArgumentNullException("family");
 
-			//TODO: charset management
 			_gUnit = unit;
 			_fontFamily = family;
+			_charset = charSet;
 
 			java.util.Hashtable attribs = new java.util.Hashtable();
 			attribs.put(TextAttribute.FAMILY, family.Name/*TODO: family doungrade possibility*/);
@@ -156,7 +158,7 @@ namespace System.Drawing {
 		
 		public byte GdiCharSet {
 			get {
-				return 1; //DEFAULT_CHARSET
+				return _charset;
 			}
 		}
 		

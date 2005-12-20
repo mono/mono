@@ -46,12 +46,14 @@ namespace System.Drawing.Drawing2D
 			colors = new Color [1];
 		}
 
+		[MonoTODO]
 		public ColorBlend (int count)
 		{
 			positions = new float [count];
 			colors = new Color [count];
 		}
 
+		[MonoTODO]
 		public Color [] Colors {
 			get {
 				return colors;
@@ -62,6 +64,7 @@ namespace System.Drawing.Drawing2D
 			}
 		}
 
+		[MonoTODO]
 		public float [] Positions {
 			get {
 				return positions;

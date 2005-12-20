@@ -113,6 +113,7 @@ namespace System.Drawing {
 			}
 		}
 
+		[MonoTODO]
 		public StringFormatFlags FormatFlags {
 			get {				
 				return _flags;
@@ -123,6 +124,7 @@ namespace System.Drawing {
 			}
 		}
 
+		[MonoTODO]
 		public HotkeyPrefix HotkeyPrefix {
 			get {				
 				return _hotkeyPrefix;
@@ -133,6 +135,7 @@ namespace System.Drawing {
 			}
 		}
 
+		[MonoTODO]
 		public StringTrimming Trimming {
 			get {
 				return _trimming;

@@ -356,6 +356,11 @@ namespace System.Drawing
 		{
 			throw new NotImplementedException();
 		}
+
+		[MonoTODO]
+		public IntPtr GetHrgn(Graphics g) {
+			throw new NotImplementedException();
+		}
 		
 		
 		#region GetRegionScans [TODO]

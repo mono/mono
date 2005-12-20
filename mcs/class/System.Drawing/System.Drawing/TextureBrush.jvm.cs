@@ -162,6 +162,7 @@ namespace System.Drawing {
 			}
 		}
 
+		[MonoTODO]
 		public WrapMode WrapMode {
 			get {
 				return _wrapMode;
