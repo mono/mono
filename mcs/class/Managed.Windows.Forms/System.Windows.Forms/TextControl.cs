@@ -452,7 +452,7 @@ namespace System.Windows.Forms {
 				}
 
 				if (doc.wrap) {
-					if ((widths[pos] + w) + 27 > (doc.viewport_width - this.right_indent)) {
+					if ((wrap_pos > 0) && (wrap_pos != len) && (widths[pos] + w) + 27 > (doc.viewport_width - this.right_indent)) {
 						pos = wrap_pos;
 						tag.width = wrap_width;
 						doc.Split(this, tag, pos, true);

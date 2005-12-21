@@ -1,3 +1,8 @@
+2005-12-21  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* TextControl.cs (RecalculateLine): Only wrap if the wrap point is
+	  neither the beginning nor the end of the line (Fixes bug #76479)
+
 2005-12-21  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* Control.cs:
