@@ -608,6 +608,96 @@ namespace MonoTests.System.Collections.Generic {
 			Assert.AreEqual ("foo", l[1], "1");
 			Assert.AreEqual (2, l.Count, "Count");
 		}
+
+		// for bug #77039 test case
+		class GenericIComparable: IComparable<GenericIComparable> {
+			private int _NumberToSortOn;
+
+			public int NumberToSortOn {
+				get { return _NumberToSortOn; }
+				set { _NumberToSortOn = value; }
+			}
+
+			public GenericIComparable (int val)
+			{
+				_NumberToSortOn = val;
+			}
+
+			public int CompareTo (GenericIComparable other)
+			{
+				return NumberToSortOn.CompareTo (other.NumberToSortOn);
+			}
+		}
+
+		[Test]
+		public void Sort_GenericIComparable_Bug77039 ()
+		{
+			List<GenericIComparable> l = new List<GenericIComparable> ();
+			l.Add (new GenericIComparable (2));
+			l.Add (new GenericIComparable (1));
+			l.Add (new GenericIComparable (3));
+			l.Sort ();
+			Assert.AreEqual (1, l[0].NumberToSortOn, "0");
+			Assert.AreEqual (2, l[1].NumberToSortOn, "1");
+			Assert.AreEqual (3, l[2].NumberToSortOn, "2");
+		}
+
+		class NonGenericIComparable: IComparable {
+			private int _NumberToSortOn;
+
+			public int NumberToSortOn {
+				get { return _NumberToSortOn; }
+				set { _NumberToSortOn = value; }
+			}
+
+			public NonGenericIComparable (int val)
+			{
+				_NumberToSortOn = val;
+			}
+
+			public int CompareTo (object obj)
+			{
+				return NumberToSortOn.CompareTo ((obj as NonGenericIComparable).NumberToSortOn);
+			}
+		}
+
+		[Test]
+		public void Sort_NonGenericIComparable ()
+		{
+			List<NonGenericIComparable> l = new List<NonGenericIComparable> ();
+			l.Add (new NonGenericIComparable (2));
+			l.Add (new NonGenericIComparable (1));
+			l.Add (new NonGenericIComparable (3));
+			l.Sort ();
+			Assert.AreEqual (1, l[0].NumberToSortOn, "0");
+			Assert.AreEqual (2, l[1].NumberToSortOn, "1");
+			Assert.AreEqual (3, l[2].NumberToSortOn, "2");
+		}
+
+		class NonComparable {
+		}
+
+		[Test]
+		public void Sort_GenericNonIComparable ()
+		{
+			List<NonComparable> l = new List<NonComparable> ();
+			l.Sort ();
+			// no element -> no sort -> no exception
+			l.Add (new NonComparable ());
+			l.Sort ();
+			// one element -> no sort -> no exception
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void Sort_GenericNonIComparable_2 ()
+		{
+			List<NonComparable> l = new List<NonComparable> ();
+			l.Add (new NonComparable ());
+			l.Add (new NonComparable ());
+			l.Sort ();
+			// two element -> sort -> exception!
+		}
 	}
 }
 #endif

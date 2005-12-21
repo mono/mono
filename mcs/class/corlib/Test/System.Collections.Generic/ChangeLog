@@ -1,3 +1,8 @@
+2005-12-21  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ListTest.cs: Added test cases for #77039 for sorting a list with
+	IComparable (generic or not) and without IComparable (exception).
+
 2005-12-20  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ListTest.cs: Added test case for #76361 for sorting the list with a
