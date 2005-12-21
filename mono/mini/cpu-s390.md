@@ -61,9 +61,9 @@ and_imm: dest:i src1:i len:16
 aot_const: dest:i len:8
 arg:
 arglist:
-atomic_add_i4: src1:b src2:i dest:i len:16
-atomic_exchange_i4: src1:b src2:i dest:i len:14
-atomic_add_new_i4: src1:b src2:i dest:i len:20
+atomic_add_i4: src1:b src2:i dest:i len:20
+atomic_exchange_i4: src1:b src2:i dest:i len:20
+atomic_add_new_i4: src1:b src2:i dest:i len:24
 beq.s:
 beq: len:8
 bge.s:
@@ -239,7 +239,7 @@ illegal:
 initblk:
 initobj:
 isinst:
-jmp: len:40
+jmp: len:56
 label:
 lcall: dest:L len:8 clob:c
 lcall_membase: dest:L src1:b len:12 clob:c
@@ -450,6 +450,7 @@ rem_un_imm: dest:i src1:i src2:i len:24
 rename:
 ret:
 retarg:
+s390_bkchain: len:16 dest:i src1:i
 s390_move: len:48 dest:b src1:b
 s390_setf4ret: dest:f src1:f len:4
 tls_get: dest:i len:44
