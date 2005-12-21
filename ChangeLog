@@ -1,3 +1,9 @@
+2005-12-21  Wade Berrier <wberrier@novell.com>
+
+	* mono-cairo.pc.in: use $prefix/lib instead of $libdir,
+	otherwise the cairo.dll can't be found on 64 bit architectures
+	(Merged from trunk)
+
 2005-12-14 Wade Berrier <wberrier@novell.com>
 
 	* configure.in (AC_DISABLE_FAST_INSTALL): unset.
