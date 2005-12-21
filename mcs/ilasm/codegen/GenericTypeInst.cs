@@ -19,27 +19,18 @@ namespace Mono.ILASM {
                 private string name;
                 private string full_name;
                 private string sig_mod;
-                private ITypeRef[] type_list;
+                private GenericArguments gen_args;
                 private PEAPI.Type gen_inst;
 
                 private bool is_resolved;
 
                 public GenericTypeInst (string name,
-                                ITypeRef[] type_list)
+                                GenericArguments gen_args)
                 {
                         this.name = name;
-                        this.type_list = type_list;
+                        this.gen_args = gen_args;
+                        full_name = name + gen_args.ToString ();
                         sig_mod = String.Empty;
-
-                        //Build full_name (foo < , >)
-                        StringBuilder sb = new StringBuilder (name);
-                        sb.Append ("<");
-                        foreach (ITypeRef tr in type_list)
-                                sb.AppendFormat ("{0}, ", tr.FullName);
-                        //Remove the extra ', ' at the end
-                        sb.Length -= 2;
-                        sb.Append (">");
-                        full_name = sb.ToString ();
 
                         is_resolved = false;
                 }
@@ -62,17 +53,9 @@ namespace Mono.ILASM {
                         if (is_resolved)
                                 return;
 
-                        PEAPI.Type p_gen_type;
-                        PEAPI.Type[] p_type_list = new PEAPI.Type[type_list.Length];
+                        PEAPI.Type p_gen_type = code_gen.TypeManager.GetPeapiType (name);
 
-                        p_gen_type = code_gen.TypeManager.GetPeapiType (name);
-
-                        for (int i=0; i<p_type_list.Length; i++) {
-                                type_list[i].Resolve (code_gen);
-                                p_type_list[i] = type_list[i].PeapiType;
-                        }
-
-                        gen_inst = new PEAPI.GenericTypeInst (p_gen_type, p_type_list);
+                        gen_inst = new PEAPI.GenericTypeInst (p_gen_type, gen_args.Resolve (code_gen));
                         gen_inst = Modify (code_gen, gen_inst);
 
                         is_resolved = true;

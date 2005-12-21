@@ -1,3 +1,10 @@
+2005-12-21  Ankit Jain  <jankit@novell.com>
+
+	* GenericArguments.cs (GenericArguments): New.
+	* ExternTypeRefInst.cs (ExternTypeRefInst):
+	* GenericTypeInst.cs (GenericTypeInst):
+	* GenericMethodSig.cs (GenericMethodSig): Update to use new GenericArguments class.
+
 2005-12-16  Ankit Jain  <jankit@novell.com>
 
 	Use tuple of (field name, type_name) for fielddef hashtable in TypeDef.cs and

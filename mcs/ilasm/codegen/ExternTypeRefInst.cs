@@ -19,13 +19,13 @@ namespace Mono.ILASM {
 		private PEAPI.Type type;
 		private bool is_valuetypeinst;
 		private bool is_resolved;
-		private ITypeRef [] type_list;
+		private GenericArguments gen_args;
 		private static Hashtable method_table = new Hashtable ();
 
-		public ExternTypeRefInst (ExternTypeRef type_ref, ITypeRef [] type_list, bool is_valuetypeinst)
+		public ExternTypeRefInst (ExternTypeRef type_ref, GenericArguments gen_args, bool is_valuetypeinst)
 		{
 			this.type_ref = type_ref;
-			this.type_list = type_list;
+			this.gen_args = gen_args;
 			this.is_valuetypeinst = is_valuetypeinst;
 
 			is_resolved = false;
@@ -64,7 +64,7 @@ namespace Mono.ILASM {
 
                 public ExternTypeRefInst Clone ()
 		{
-			return new ExternTypeRefInst (type_ref.Clone (), (ITypeRef []) type_list.Clone (), is_valuetypeinst);
+			return new ExternTypeRefInst (type_ref.Clone (), gen_args, is_valuetypeinst);
 		}
 
 		public void MakeArray ()
@@ -112,13 +112,7 @@ namespace Mono.ILASM {
 
 			type_ref.Resolve (code_gen);
 
-			PEAPI.Type [] p_type_list = new PEAPI.Type [type_list.Length];
-			for (int i = 0; i < type_list.Length; i ++) {
-				type_list [i].Resolve (code_gen);
-				p_type_list [i] = type_list [i].PeapiType;
-			}
- 
-			type = new PEAPI.GenericTypeInst (type_ref.PeapiType, p_type_list);
+			type = new PEAPI.GenericTypeInst (type_ref.PeapiType, gen_args.Resolve (code_gen));
 
 			is_resolved = true;
 		}

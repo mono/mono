@@ -13,13 +13,13 @@ namespace Mono.ILASM {
 
         public class GenericMethodSig {
 
-                private ITypeRef[] type_list;
+                private GenericArguments gen_args;
                 private bool is_resolved;
                 private PEAPI.GenericMethodSig sig;
 
-                public GenericMethodSig (ITypeRef[] type_list)
+                public GenericMethodSig (GenericArguments gen_args)
                 {
-                        this.type_list = type_list;
+                        this.gen_args = gen_args;
                         is_resolved = false;
                 }
 
@@ -32,13 +32,7 @@ namespace Mono.ILASM {
                         if (is_resolved)
                                 return sig;
 
-                        PEAPI.Type[] p_type_list = new PEAPI.Type[type_list.Length];
-                        for (int i=0; i<p_type_list.Length; i++) {
-                                type_list[i].Resolve (code_gen);
-                                p_type_list[i] = type_list[i].PeapiType;
-                        }
-
-                        sig = new PEAPI.GenericMethodSig (p_type_list);
+                        sig = new PEAPI.GenericMethodSig (gen_args.Resolve (code_gen));
                         is_resolved = true;
 
                         return sig;

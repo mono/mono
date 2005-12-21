@@ -648,15 +648,14 @@ typars_clause           : /* EMPTY */
 
 typars                  : type
                           {
-                                ArrayList typars_list = new ArrayList ();
-                                typars_list.Add ($1);
-                                $$ = typars_list;
+                                GenericArguments ga = new GenericArguments ();
+                                ga.Add ((ITypeRef) $1);
+                                $$ = ga;
                           }
                         | typars COMMA type
                           {
-                                ArrayList typars_list = (ArrayList) $1;
-                                typars_list.Add ($3);
-                                $$ = typars_list;
+                                ((GenericArguments) $1).Add ((ITypeRef) $3);
+                                $$ = $1;
                           }
                         ;
 
@@ -988,10 +987,7 @@ type			: K_CLASS class_ref
                           }
                         | K_CLASS slashed_name OPEN_ANGLE_BRACKET typars CLOSE_ANGLE_BRACKET
                           {
-                                ArrayList typar_list = (ArrayList) $4;
-                                ITypeRef[] typar_array = (ITypeRef[]) typar_list.ToArray (typeof (ITypeRef));
-                                
-                                $$ = new GenericTypeInst ((string)$2, typar_array);
+                                $$ = new GenericTypeInst ((string)$2, (GenericArguments) $4);
                           }
 			;
 
@@ -2392,7 +2388,7 @@ method_ref		: call_conv type type_spec DOUBLE_COLON method_name
 			  OPEN_PARENS type_list CLOSE_PARENS
                           {
                                 ArrayList arg_list = (ArrayList) $6;
-                                ArrayList tp = (ArrayList) $4;
+                                GenericArguments ga = (GenericArguments) $4;
                                 ITypeRef[] param_list;
   
                                 if (arg_list != null)
@@ -2401,12 +2397,10 @@ method_ref		: call_conv type type_spec DOUBLE_COLON method_name
                                         param_list = new ITypeRef[0];
 
 				IMethodRef methref = new GlobalMethodRef ((ITypeRef) $2, (CallConv) $1,
-                                        (string) $3, param_list, (tp != null ? tp.Count : 0));
+                                        (string) $3, param_list, (ga != null ? ga.Count : 0));
 
-                                if (tp != null) {
-                                        ITypeRef[] ta = (ITypeRef[]) tp.ToArray (typeof (ITypeRef));
-                                        methref = new GenericMethodRef (methref, new GenericMethodSig (ta));
-                                }
+                                if (ga != null)
+                                        methref = new GenericMethodRef (methref, new GenericMethodSig (ga));
 
                                 $$ = methref;
                           }
@@ -2415,7 +2409,7 @@ method_ref		: call_conv type type_spec DOUBLE_COLON method_name
                           {
                                 ITypeRef owner = (ITypeRef) $3;
                                 ArrayList arg_list = (ArrayList) $8;
-                                ArrayList tp = (ArrayList) $6;
+                                GenericArguments ga = (GenericArguments) $6;
                                 ITypeRef[] param_list;
                                 IMethodRef methref;
 
@@ -2426,16 +2420,14 @@ method_ref		: call_conv type type_spec DOUBLE_COLON method_name
 
                                 if (owner.UseTypeSpec) {
                                         methref = new TypeSpecMethodRef (owner, (ITypeRef) $2,
-                                                (CallConv) $1, (string) $5, param_list, (tp != null ? tp.Count : 0));
+                                                (CallConv) $1, (string) $5, param_list, (ga != null ? ga.Count : 0));
                                 } else {
                                         methref = owner.GetMethodRef ((ITypeRef) $2,
-                                                (CallConv) $1, (string) $5, param_list, (tp != null ? tp.Count : 0));
+                                                (CallConv) $1, (string) $5, param_list, (ga != null ? ga.Count : 0));
                                 }
 
-                                if (tp != null) {
-                                        ITypeRef[] ta = (ITypeRef[]) tp.ToArray (typeof (ITypeRef));
-                                        methref = new GenericMethodRef (methref, new GenericMethodSig (ta));
-                                }
+                                if (ga != null)
+                                        methref = new GenericMethodRef (methref, new GenericMethodSig (ga));
                                 
                                 $$ = methref;
                           }

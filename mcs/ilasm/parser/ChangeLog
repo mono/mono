@@ -1,3 +1,7 @@
+2005-12-21  Ankit Jain  <jankit@novell.com>
+
+	* ILParser.jay: Update to use new GenericArguments class for 'typars'.
+
 2005-12-14  Ankit Jain  <jankit@novell.com>
 
 	* ILParser.jay: Add K_UINT8, K_UINT16, K_UINT32 and K_UINT64 tokens.

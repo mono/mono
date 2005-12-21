@@ -63,6 +63,7 @@ codegen/ModifiableType.cs
 codegen/Sentinel.cs
 codegen/FileRef.cs
 codegen/MethodPointerTypeRef.cs
+codegen/GenericArguments.cs
 parser/ScannerAdapter.cs
 scanner/ILReader.cs
 scanner/ILTokenizingException.cs

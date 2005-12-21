@@ -1,3 +1,7 @@
+2005-12-21  Ankit Jain  <jankit@novell.com>
+
+	* ilasm.exe.sources: Add GenericArguments.cs to the build.
+
 2005-08-26  Kornél Pál  <kornelpal@hotmail.com>
 
 	* AssemblyInfo.cs: Using Consts.MonoVersion instead of MonoVersion.cs.
