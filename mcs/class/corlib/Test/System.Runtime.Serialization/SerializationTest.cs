@@ -91,15 +91,21 @@ namespace MonoTests.System.Runtime.Serialization
 
 			ms.Close();
 
-			((List)list).CheckEquals(CreateTestData());
+			List expected = CreateTestData ();
+			List actual = (List) list;
+			expected.CheckEquals (actual, "List");
+
+			for (int i = 0; i < actual.children.Length - 1; ++i)
+				if (actual.children [i] != actual.children [i+1])
+					Assert.Fail ("Deserialization did not restore pointer graph");
 
 			BinderTester_A bta = CreateBinderTestData();
-			Assertion.AssertEquals ("BinderTest.class", btbob.GetType(), typeof (BinderTester_B));
+			Assert.AreEqual (btbob.GetType(), typeof (BinderTester_B), "BinderTest.class");
 			BinderTester_B btb = btbob as BinderTester_B;
 			if (btb != null)
 			{
-				Assertion.AssertEquals ("BinderTest.x", btb.x, bta.x);
-				Assertion.AssertEquals ("BinderTest.y", btb.y, bta.y);
+				Assert.AreEqual (btb.x, bta.x, "BinderTest.x");
+				Assert.AreEqual (btb.y, bta.y, "BinderTest.y");
 			}
 			
 			CheckMessages ("MethodCall", originalMsgData, ProcessMessages (null, calls));
@@ -217,21 +223,21 @@ namespace MonoTests.System.Runtime.Serialization
 			if (expected != null && expected.GetType().IsArray)
 				EqualsArray (message, (Array)expected, (Array)actual);
 			else
-				Assertion.AssertEquals (message, expected, actual);
+				Assert.AreEqual (expected, actual, message);
 		}
 
 		public static void EqualsArray (string message, object oar1, object oar2)
 		{
 			if (oar1 == null || oar2 == null || !(oar1 is Array) || !(oar2 is Array))
 			{
-				SerializationTest.AssertEquals (message, oar1, oar2);
+				Assert.AreEqual (oar1, oar2, message);
 				return;
 			}
 
 			Array ar1 = (Array) oar1;
 			Array ar2 = (Array) oar2;
 
-			SerializationTest.AssertEquals(message + ".Length", ar1.Length,ar2.Length);
+			Assert.AreEqual (ar1.Length, ar2.Length, message + ".Length");
 
 			for (int n=0; n<ar1.Length; n++)
 			{
@@ -248,7 +254,7 @@ namespace MonoTests.System.Runtime.Serialization
 	{
 		public void GetObjectData(object obj, SerializationInfo info, StreamingContext context)
 		{
-			Point p = (Point)obj;
+			Point p = (Point) obj;
 			info.AddValue ("xv",p.x);
 			info.AddValue ("yv",p.y);
 		}
@@ -268,15 +274,15 @@ namespace MonoTests.System.Runtime.Serialization
 		public ListItem[] children = null; 
 		public SomeValues values;
 
-		public void CheckEquals(List val)
+		public void CheckEquals (List val, string context)
 		{
-			SerializationTest.AssertEquals ("List.children.Length", children.Length, val.children.Length);
+			Assert.AreEqual (name, val.name, context + ".name");
+			values.CheckEquals (val.values, context + ".values");
+
+			Assert.AreEqual (children.Length, val.children.Length, context + ".children.Length");
 
 			for (int n=0; n<children.Length; n++)
-				children[n].CheckEquals (val.children[n]);
-
-			SerializationTest.AssertEquals ("List.name", name, val.name);
-			values.CheckEquals (val.values);
+				children[n].CheckEquals (val.children[n], context + ".children[" + n + "]");
 		}
 	}
 
@@ -301,11 +307,17 @@ namespace MonoTests.System.Runtime.Serialization
 			info.AddValue ("label", label);
 		}
 
-		public void CheckEquals(ListItem val)
+		public void CheckEquals (ListItem val, string context)
 		{
-			SerializationTest.AssertEquals ("ListItem.next", next, val.next);
-			SerializationTest.AssertEquals ("ListItem.label", label, val.label);
-			value.CheckEquals (val.value);
+			Assert.AreEqual (label, val.label, context + ".label");
+			value.CheckEquals (val.value, context + ".value");
+
+			if (next == null) {
+				Assert.IsNull (val.next, context + ".next == null");
+			} else {
+				Assert.IsNotNull (val.next, context + ".next != null");
+				next.CheckEquals (val.next, context + ".next");
+			}
 		}
 		
 		public override bool Equals(object obj)
@@ -339,10 +351,10 @@ namespace MonoTests.System.Runtime.Serialization
 			return (color == val.color && point.Equals(val.point));
 		}
 
-		public void CheckEquals(ListValue val)
+		public void CheckEquals (ListValue val, string context)
 		{
-			SerializationTest.AssertEquals ("ListValue.color", color, val.color);
-			point.CheckEquals (val.point);
+			Assert.AreEqual (color, val.color, context + ".color");
+			point.CheckEquals (val.point, context + ".point");
 		}
 
 		public override int GetHashCode ()
@@ -362,10 +374,10 @@ namespace MonoTests.System.Runtime.Serialization
 			return (x == p.x && y == p.y);
 		}
 
-		public void CheckEquals(Point p)
+		public void CheckEquals (Point p, string context)
 		{
-			SerializationTest.AssertEquals ("Point.x", x, p.x);
-			SerializationTest.AssertEquals ("Point.y", y, p.y);
+			Assert.AreEqual (x, p.x, context + ".x");
+			Assert.AreEqual (y, p.y, context + ".y");
 		}
 
 		public override int GetHashCode ()
@@ -573,42 +585,42 @@ namespace MonoTests.System.Runtime.Serialization
 			return 99;
 		}
 
-		public void CheckEquals(SomeValues obj)
+		public void CheckEquals (SomeValues obj, string context)
 		{
-			SerializationTest.AssertEquals ("SomeValues._type", _type, obj._type);
-			SerializationTest.AssertEquals ("SomeValues._type2", _type2, obj._type2);
-			SerializationTest.AssertEquals ("SomeValues._dbnull", _dbnull, obj._dbnull);
-			SerializationTest.AssertEquals ("SomeValues._assembly", _assembly, obj._assembly);
+			Assert.AreEqual (_type, obj._type, context + "._type");
+			Assert.AreEqual (_type2, obj._type2, context + "._type2");
+			Assert.AreEqual (_dbnull, obj._dbnull, context + "._dbnull");
+			Assert.AreEqual (_assembly, obj._assembly, context + "._assembly");
 
-			SerializationTest.AssertEquals ("SomeValues._intEnum", _intEnum, obj._intEnum);
-			SerializationTest.AssertEquals ("SomeValues._byteEnum", _byteEnum, obj._byteEnum);
-			SerializationTest.AssertEquals ("SomeValues._bool", _bool, obj._bool);
-			SerializationTest.AssertEquals ("SomeValues._bool2", _bool2, obj._bool2);
-			SerializationTest.AssertEquals ("SomeValues._byte", _byte, obj._byte);
-			SerializationTest.AssertEquals ("SomeValues._char", _char, obj._char);
-			SerializationTest.AssertEquals ("SomeValues._dateTime", _dateTime, obj._dateTime);
-			SerializationTest.AssertEquals ("SomeValues._decimal", _decimal, obj._decimal);
-			SerializationTest.AssertEquals ("SomeValues._int", _int, obj._int);
-			SerializationTest.AssertEquals ("SomeValues._long", _long, obj._long);
-			SerializationTest.AssertEquals ("SomeValues._sbyte", _sbyte, obj._sbyte);
-			SerializationTest.AssertEquals ("SomeValues._float", _float, obj._float);
-			SerializationTest.AssertEquals ("SomeValues._ushort", _ushort, obj._ushort);
-			SerializationTest.AssertEquals ("SomeValues._uint", _uint, obj._uint);
-			SerializationTest.AssertEquals ("SomeValues._ulong", _ulong, obj._ulong);
+			Assert.AreEqual (_intEnum, obj._intEnum, context + "._intEnum");
+			Assert.AreEqual (_byteEnum, obj._byteEnum, context + "._byteEnum");
+			Assert.AreEqual (_bool, obj._bool, context + "._bool");
+			Assert.AreEqual (_bool2, obj._bool2, context + "._bool2");
+			Assert.AreEqual (_byte, obj._byte, context + "._byte");
+			Assert.AreEqual (_char, obj._char, context + "._char");
+			Assert.AreEqual (_dateTime, obj._dateTime, context + "._dateTime");
+			Assert.AreEqual (_decimal, obj._decimal, context + "._decimal");
+			Assert.AreEqual (_int, obj._int, context + "._int");
+			Assert.AreEqual (_long, obj._long, context + "._long");
+			Assert.AreEqual (_sbyte, obj._sbyte, context + "._sbyte");
+			Assert.AreEqual (_float, obj._float, context + "._float");
+			Assert.AreEqual (_ushort, obj._ushort, context + "._ushort");
+			Assert.AreEqual (_uint, obj._uint, context + "._uint");
+			Assert.AreEqual (_ulong, obj._ulong, context + "._ulong");
 
-			SerializationTest.EqualsArray ("SomeValues._objects", _objects, obj._objects);
-			SerializationTest.EqualsArray ("SomeValues._strings", _strings, obj._strings);
-			SerializationTest.EqualsArray ("SomeValues._doubles", _doubles, obj._doubles);
-			SerializationTest.EqualsArray ("SomeValues._ints", _ints, obj._ints);
-			SerializationTest.EqualsArray ("SomeValues._simples", _simples, obj._simples);
-			SerializationTest.EqualsArray ("SomeValues._almostEmpty", _almostEmpty, obj._almostEmpty);
+			SerializationTest.EqualsArray (context + "._objects", _objects, obj._objects);
+			SerializationTest.EqualsArray (context + "._strings", _strings, obj._strings);
+			SerializationTest.EqualsArray (context + "._doubles", _doubles, obj._doubles);
+			SerializationTest.EqualsArray (context + "._ints", _ints, obj._ints);
+			SerializationTest.EqualsArray (context + "._simples", _simples, obj._simples);
+			SerializationTest.EqualsArray (context + "._almostEmpty", _almostEmpty, obj._almostEmpty);
 
-			SerializationTest.EqualsArray ("SomeValues._emptyObjectArray", _emptyObjectArray, obj._emptyObjectArray);
-			SerializationTest.EqualsArray ("SomeValues._emptyTypeArray", _emptyTypeArray, obj._emptyTypeArray);
-			SerializationTest.EqualsArray ("SomeValues._emptySimpleArray", _emptySimpleArray, obj._emptySimpleArray);
-			SerializationTest.EqualsArray ("SomeValues._emptyIntArray", _emptyIntArray, obj._emptyIntArray);
-			SerializationTest.EqualsArray ("SomeValues._emptyStringArray", _emptyStringArray, obj._emptyStringArray);
-			SerializationTest.EqualsArray ("SomeValues._emptyPointArray", _emptyPointArray, obj._emptyPointArray);
+			SerializationTest.EqualsArray (context + "._emptyObjectArray", _emptyObjectArray, obj._emptyObjectArray);
+			SerializationTest.EqualsArray (context + "._emptyTypeArray", _emptyTypeArray, obj._emptyTypeArray);
+			SerializationTest.EqualsArray (context + "._emptySimpleArray", _emptySimpleArray, obj._emptySimpleArray);
+			SerializationTest.EqualsArray (context + "._emptyIntArray", _emptyIntArray, obj._emptyIntArray);
+			SerializationTest.EqualsArray (context + "._emptyStringArray", _emptyStringArray, obj._emptyStringArray);
+			SerializationTest.EqualsArray (context + "._emptyPointArray", _emptyPointArray, obj._emptyPointArray);
 
 			for (int i=0; i<2; i++)
 				for (int j=0; j<3; j++)
