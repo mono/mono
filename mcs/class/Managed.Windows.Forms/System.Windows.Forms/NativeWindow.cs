@@ -17,10 +17,10 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004 Novell, Inc.
+// Copyright (c) 2004-2005 Novell, Inc.
 //
 // Authors:
-//	Peter Bartok	pbartok@novell.com
+//	Peter Dennis Bartok	pbartok@novell.com
 //
 
 
@@ -100,8 +100,8 @@ namespace System.Windows.Forms
 
 		public virtual void DestroyHandle() {
 			if (window_handle != IntPtr.Zero) {
-				window_collection.Remove(window_handle);
 				XplatUI.DestroyWindow(window_handle);
+				window_collection.Remove(window_handle);
 				window_handle=IntPtr.Zero;
 			}
 		}

@@ -1,3 +1,28 @@
+2005-12-21  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* Control.cs:
+	  - ControlNativeWindow.ControlFromHandle(): Now handling situation
+	    where handle is invalid
+	  - FromHandle(): Now using hashtable-based ControlFromHandle() lookup
+	    instead of slower linear search
+	* NativeWindow.cs: Don't remove the window from the hashtable until
+	  after the driver has destroyed it (since the driver might use
+	  Control.FromHandle to lookup the control object
+	* Hwnd.cs: Added DestroyPending property to track if a window is 
+	  already destroyed as far as the driver is concerned and only hasn't
+	  yet notified the control
+	* XplatUIX11.cs:
+	  - Activate(): Check if the window is still valid before using the 
+	    handle
+	  - Implemented DestroyChildWindow() method to mark child windows as
+	    destroyed when a window is destroyed. This prevents situations 
+	    where we might call an X method based on queued events for a
+	    window that already has been destroyed but we haven't yet pulled
+	    the destroy method from the queue.
+	  - Added a call to the new DestroyChildWindow() method to the drivers
+	    DestroyWindow code. Also now marking the destroyed window itself
+	    as pending
+
 2005-12-20  Jackson Harper  <jackson@ximian.com>
 
 	* StatusBar.cs:

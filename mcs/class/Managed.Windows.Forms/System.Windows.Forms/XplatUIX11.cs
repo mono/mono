@@ -162,7 +162,6 @@ namespace System.Windows.Forms {
 		static readonly object lockobj = new object ();
 
 		#endregion	// Local Variables
-
 		#region Constructors
 		private XplatUIX11() {
 			// Handle singleton stuff first
@@ -1230,6 +1229,25 @@ namespace System.Windows.Forms {
 			}
 			return 0;
 		}
+
+		private void DestroyChildWindow(IntPtr handle) {
+			Hwnd	hwnd;
+			int	i;
+			Control		c;
+			ArrayList	handles;
+
+			c = Control.ControlNativeWindow.ControlFromHandle(handle);
+			if (c != null) for (i = 0; i < c.Controls.Count; i++) {
+				hwnd = Hwnd.ObjectFromHandle(c.Controls[i].Handle);
+				if (hwnd != null) {
+					hwnd.destroy_pending = true;
+				}
+				if (c.Controls[i].Controls.Count > 0) {
+					DestroyChildWindow(c.Controls[i].Handle);
+				}
+			}
+		}
+
 		#endregion	// Private Methods
 
 		#region	Callbacks
@@ -1563,8 +1581,12 @@ namespace System.Windows.Forms {
 
 
 		internal override void Activate(IntPtr handle) {
-			lock (XlibLock) {
-				SendNetWMMessage(Hwnd.ObjectFromHandle(handle).whole_window, (IntPtr)NetAtoms[(int)NA._NET_ACTIVE_WINDOW], IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
+			Hwnd hwnd;
+
+			hwnd = Hwnd.ObjectFromHandle(handle);
+
+			if (hwnd != null) lock (XlibLock) {
+				SendNetWMMessage(hwnd.whole_window, (IntPtr)NetAtoms[(int)NA._NET_ACTIVE_WINDOW], IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
 				//XRaiseWindow(DisplayHandle, handle);
 			}
 			return;
@@ -2175,6 +2197,12 @@ namespace System.Windows.Forms {
 				DestroyCaret(handle);
 			}
 
+			// The window is a goner, don't send it stuff like WM_PAINT anymore
+			hwnd.destroy_pending = true;
+
+			// Mark our children as gone as well
+			DestroyChildWindow(handle);
+
 			lock (XlibLock) {
 				if (hwnd.client_window != IntPtr.Zero) {
 					XDestroyWindow(DisplayHandle, hwnd.client_window);
@@ -2415,12 +2443,15 @@ namespace System.Windows.Forms {
 
 			hwnd = Hwnd.GetObjectFromWindow(xevent.AnyEvent.window);
 
-			// Handle messages for windows that are already destroyed
-			if (hwnd == null) {
-				#if DriverDebug
-					Console.WriteLine("GetMessage(): Got message {0} for non-existent window {1:X}", xevent.type, xevent.AnyEvent.window.ToInt32());
-				#endif
-				goto ProcessNextMessage;
+			// Handle messages for windows that are already or are about to be destroyed
+			if (hwnd == null || hwnd.destroy_pending) {
+				// We need to let the DestroyNotify go through so that the owning control can learn about it, too
+				if (hwnd == null || xevent.type != XEventName.DestroyNotify) {
+					#if DriverDebug
+						Console.WriteLine("GetMessage(): Got message {0} for non-existent or already destroyed window {1:X}", xevent.type, xevent.AnyEvent.window.ToInt32());
+					#endif
+					goto ProcessNextMessage;
+				}
 			}
 
 			if (hwnd.client_window == xevent.AnyEvent.window) {

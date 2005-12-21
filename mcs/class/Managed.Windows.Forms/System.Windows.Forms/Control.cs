@@ -141,8 +141,11 @@ namespace System.Windows.Forms
 				ControlNativeWindow	window;
 
 				window = (ControlNativeWindow)window_collection[hWnd];
+				if (window != null) {
+					return window.owner;
+				}
 
-				return window.owner;
+				return null;
 			}
 
 			protected override void WndProc(ref Message m) {
@@ -2355,6 +2358,7 @@ namespace System.Windows.Forms
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public static Control FromHandle(IntPtr handle) {
+#if not
 			IEnumerator control = Control.controls.GetEnumerator();
 
 			while (control.MoveNext()) {
@@ -2363,7 +2367,11 @@ namespace System.Windows.Forms
 					return ((Control)control.Current);
 				}
 			}
+
 			return null;
+#else
+			return Control.ControlNativeWindow.ControlFromHandle(handle);
+#endif
 		}
 
 		public static bool IsMnemonic(char charCode, string text) {
