@@ -1,7 +1,9 @@
 2005-12-20  Cesar Lopez Nataren  <cnataren@novell.com>
 
-	* mjs-most.tests:Enable ecma/Boolean/15.6.3.1-1.js
-
+	* mjs-most.tests:Enable ecma/Boolean/15.6.3.1-1.js,
+	ecma/FunctionObjects/15.3.4.js, ecma/GlobalObject/15.1.2.5-2.js,
+	ecma/Statements/12.6.2-8.js
+	
 2005-12-17  Cesar Lopez Nataren  <cnataren@novell.com>
 
 	* mjs-most.fail: Erase js1_3/inherit/proto_6.js,

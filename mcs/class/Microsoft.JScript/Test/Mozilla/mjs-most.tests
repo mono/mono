@@ -79,12 +79,12 @@ ecma/Boolean/15.6.4.1.js
 #ecma/Boolean/15.6.4.2-1.js
 ecma/Boolean/15.6.4.2-2.js
 ecma/Boolean/15.6.4.2-3.js
-# Needs eval
+# Invoked Boolean.prototype.toString or Boolean.prototype.valueOf method on non-boolean
 #ecma/Boolean/15.6.4.2-4-n.js
 ecma/Boolean/15.6.4.3-1.js
 ecma/Boolean/15.6.4.3-2.js
 ecma/Boolean/15.6.4.3-3.js
-# Needs eval
+# Invoked Boolean.prototype.toString or Boolean.prototype.valueOf method on non-boolean
 #ecma/Boolean/15.6.4.3-4-n.js
 ecma/Boolean/15.6.4.3.js
 ecma/Boolean/15.6.4.js
@@ -114,11 +114,10 @@ ecma/Date/15.9.3.8-4.js
 ecma/Date/15.9.3.8-5.js
 ecma/Date/15.9.4.2-1.js
 ecma/Date/15.9.4.2.js
-# for blocks seem to be disconnected from their parent scopes and this file needs that
-# to work
+# invalid IL
 #ecma/Date/15.9.4.3.js
 ecma/Date/15.9.5.1.js
-# Invalid IL
+# Trace/breakpoint trap
 #ecma/Date/15.9.5.10-1.js
 #ecma/Date/15.9.5.10-10.js
 #ecma/Date/15.9.5.10-11.js
@@ -139,7 +138,9 @@ ecma/Date/15.9.5.1.js
 #ecma/Date/15.9.5.11-6.js
 #ecma/Date/15.9.5.11-7.js
 #ecma/Date/15.9.5.12-1.js
+# Invalid IL
 #ecma/Date/15.9.5.12-2.js
+# Trace/breakpoint trap
 #ecma/Date/15.9.5.12-3.js
 #ecma/Date/15.9.5.12-4.js
 #ecma/Date/15.9.5.12-5.js
@@ -190,15 +191,13 @@ ecma/Date/15.9.5.22-8.js
 #ecma/Date/15.9.5.23-13.js
 #ecma/Date/15.9.5.23-14.js
 ecma/Date/15.9.5.23-15.js
-# Invalid IL
+# Trace/breakpoint trap
 #ecma/Date/15.9.5.23-16.js
-# Invalid IL
 #ecma/Date/15.9.5.23-17.js
 #ecma/Date/15.9.5.23-18.js
 #ecma/Date/15.9.5.23-2.js
-# Needs eval
+# System.Exception: Type error throw by DatePrototype:setTime
 #ecma/Date/15.9.5.23-3-n.js
-# Invalid IL
 #ecma/Date/15.9.5.23-4.js
 #ecma/Date/15.9.5.23-5.js
 #ecma/Date/15.9.5.23-6.js
@@ -208,13 +207,11 @@ ecma/Date/15.9.5.23-15.js
 #ecma/Date/15.9.5.24-1.js
 #ecma/Date/15.9.5.24-2.js
 ecma/Date/15.9.5.24-3.js
-# Invalid IL
+# Trace/breakpoint trap
 #ecma/Date/15.9.5.24-4.js
 ecma/Date/15.9.5.25-1.js
-# Invalid IL
 #ecma/Date/15.9.5.26-1.js
 ecma/Date/15.9.5.27-1.js
-# Invalid IL
 #ecma/Date/15.9.5.28-1.js
 ecma/Date/15.9.5.29-1.js
 ecma/Date/15.9.5.3-1-n.js
@@ -222,7 +219,7 @@ ecma/Date/15.9.5.3-2.js
 # Invalid IL
 #ecma/Date/15.9.5.30-1.js
 ecma/Date/15.9.5.31-1.js
-# Invalid IL
+# Trace/breakpoint trap
 #ecma/Date/15.9.5.32-1.js
 #ecma/Date/15.9.5.33-1.js
 #ecma/Date/15.9.5.34-1.js
@@ -240,9 +237,9 @@ ecma/Date/15.9.5.31-1.js
 #ecma/Date/15.9.5.37-4.js
 #ecma/Date/15.9.5.37-5.js
 ecma/Date/15.9.5.4-1.js
-# Needs eval
+# System.Exception: Type error thrown by DatePrototype:getTime
 #ecma/Date/15.9.5.4-2-n.js
-# Invalid IL
+# Trace/breakpoint trap
 #ecma/Date/15.9.5.5.js
 #ecma/Date/15.9.5.6.js
 ecma/Date/15.9.5.7.js
@@ -261,7 +258,7 @@ ecma/ExecutionContexts/10.1.4-10.js
 #ecma/ExecutionContexts/10.1.4-4.js
 #ecma/ExecutionContexts/10.1.4-5.js
 #ecma/ExecutionContexts/10.1.4-6.js
-# Needs with
+# NotImplementedException thrown by Unary:Emit
 #ecma/ExecutionContexts/10.1.4-7.js
 # Invalid IL
 #ecma/ExecutionContexts/10.1.4-8.js
@@ -282,18 +279,19 @@ ecma/ExecutionContexts/10.1.4-10.js
 # Needs for in loops
 #ecma/ExecutionContexts/10.2.1.js
 #ecma/ExecutionContexts/10.2.2-1.js
-# Needs eval
+# needs with
 #ecma/ExecutionContexts/10.2.2-2.js
 ecma/ExecutionContexts/10.2.3-1.js
+# NotImplementedException thrown by Unary:Emit
 #ecma/ExecutionContexts/10.2.3-2.js
-# Needs eval
+# syntax error
 #ecma/Expressions/11.1.1.js
 # Invalid IL
 #ecma/Expressions/11.10-1.js
 #ecma/Expressions/11.10-2.js
 #ecma/Expressions/11.10-3.js
 #ecma/Expressions/11.12-1.js
-# Needs eval
+# syntax error
 #ecma/Expressions/11.12-2-n.js
 ecma/Expressions/11.12-3.js
 # Invalid IL
@@ -306,11 +304,13 @@ ecma/Expressions/11.13.1.js
 #ecma/Expressions/11.13.2-5.js
 #ecma/Expressions/11.13.js
 #ecma/Expressions/11.14-1.js
+# needs eval
 #ecma/Expressions/11.2.1-1.js
 #ecma/Expressions/11.2.1-2.js
 ecma/Expressions/11.2.1-3-n.js
 ecma/Expressions/11.2.1-4-n.js
 #ecma/Expressions/11.2.1-5.js
+# invalid IL
 #ecma/Expressions/11.2.2-1-n.js
 ecma/Expressions/11.2.2-1.js
 ecma/Expressions/11.2.2-10-n.js
@@ -332,7 +332,7 @@ ecma/Expressions/11.2.3-4-n.js
 ecma/Expressions/11.2.3-5.js
 ecma/Expressions/11.3.1.js
 ecma/Expressions/11.3.2.js
-# Needs eval
+# syntax error
 #ecma/Expressions/11.4.1.js
 ecma/Expressions/11.4.2.js
 # NotImplementedException from Binary:emit_access
@@ -342,7 +342,7 @@ ecma/Expressions/11.4.5.js
 ecma/Expressions/11.4.6.js
 # NullReferenceException from Binary:emit_access
 #ecma/Expressions/11.4.8.js
-# System.Exception: must create expr stm with
+# syntax error
 #ecma/Expressions/11.4.9.js
 ecma/Expressions/11.5.1.js
 ecma/Expressions/11.5.2.js
@@ -366,33 +366,32 @@ ecma/Expressions/11.6.3.js
 #ecma/Expressions/11.9.2.js
 #ecma/Expressions/11.9.3.js
 #ecma/FunctionObjects/15.3.1.1-1.js
-# Needs new Function
 #ecma/FunctionObjects/15.3.1.1-2.js
-# Needs eval
+# syntax error
 #ecma/FunctionObjects/15.3.1.1-3.js
 # Needs FunctionConstructor:CreateInstance
 #ecma/FunctionObjects/15.3.2.1-1.js
 # Needs new Function
 #ecma/FunctionObjects/15.3.2.1-2.js
-# Needs eval
+# syntax error
 #ecma/FunctionObjects/15.3.2.1-3.js
 ecma/FunctionObjects/15.3.3.1-1.js
 # Needs for in
 #ecma/FunctionObjects/15.3.3.1-2.js
 ecma/FunctionObjects/15.3.3.1-3.js
+# invalid IL
 #ecma/FunctionObjects/15.3.3.1-4.js
 ecma/FunctionObjects/15.3.3.2.js
 ecma/FunctionObjects/15.3.4-1.js
 ecma/FunctionObjects/15.3.4.1.js
-# Needs new Function
-#ecma/FunctionObjects/15.3.4.js
-# Needs eval
+ecma/FunctionObjects/15.3.4.js
+# syntax error
 #ecma/FunctionObjects/15.3.5-1.js
 # Needs new Function
 #ecma/FunctionObjects/15.3.5-2.js
 #ecma/FunctionObjects/15.3.5.1.js
 #ecma/FunctionObjects/15.3.5.3.js
-# Needs eval
+# syntax error
 #ecma/GlobalObject/15.1-1-n.js
 #ecma/GlobalObject/15.1-2-n.js
 ecma/GlobalObject/15.1.1.1.js
@@ -410,14 +409,13 @@ ecma/GlobalObject/15.1.2.3-2.js
 # NullReferenceException from SemanticAnalyser:contains
 #ecma/GlobalObject/15.1.2.4.js
 #ecma/GlobalObject/15.1.2.5-1.js
-# NullReferenceException from Binary:emit_access
-#ecma/GlobalObject/15.1.2.5-2.js
+ecma/GlobalObject/15.1.2.5-2.js
 # NullReferenceException from For:Resolve
 #ecma/GlobalObject/15.1.2.5-3.js
 # NullReferenceException from SemanticAnalyser:contains
 #ecma/GlobalObject/15.1.2.6.js
 #ecma/GlobalObject/15.1.2.7.js
-# Needs eval
+# syntax error
 #ecma/LexicalConventions/7.1-1.js
 #ecma/LexicalConventions/7.1-2.js
 #ecma/LexicalConventions/7.1-3.js
@@ -433,7 +431,7 @@ ecma/LexicalConventions/7.2-6.js
 #ecma/LexicalConventions/7.3-10.js
 #ecma/LexicalConventions/7.3-11.js
 #ecma/LexicalConventions/7.3-12.js
-# Needs eval
+# syntax error
 #ecma/LexicalConventions/7.3-13-n.js
 # Invalid IL
 #ecma/LexicalConventions/7.3-2.js
@@ -444,8 +442,8 @@ ecma/LexicalConventions/7.2-6.js
 #ecma/LexicalConventions/7.3-7.js
 #ecma/LexicalConventions/7.3-8.js
 #ecma/LexicalConventions/7.3-9.js
+# syntax error
 #ecma/LexicalConventions/7.4.1-1-n.js
-# Needs eval
 #ecma/LexicalConventions/7.4.1-2-n.js
 #ecma/LexicalConventions/7.4.1-3-n.js
 #ecma/LexicalConventions/7.4.2-1-n.js
@@ -481,8 +479,9 @@ ecma/LexicalConventions/7.2-6.js
 #ecma/LexicalConventions/7.4.3-8-n.js
 #ecma/LexicalConventions/7.4.3-9-n.js
 ecma/LexicalConventions/7.5-1.js
-# Needs eval
+# Illegal assignment?
 #ecma/LexicalConventions/7.5-10-n.js
+# syntax error
 #ecma/LexicalConventions/7.5-2-n.js
 #ecma/LexicalConventions/7.5-3-n.js
 #ecma/LexicalConventions/7.5-4-n.js
@@ -499,12 +498,12 @@ ecma/LexicalConventions/7.7.3-1.js
 ecma/LexicalConventions/7.7.3-2.js
 ecma/LexicalConventions/7.7.3.js
 ecma/LexicalConventions/7.7.4.js
-# Needs eval
+# syntax error
 #ecma/LexicalConventions/7.8.2-n.js
 # ScriptObject:get_proto throws NullReferenceException
 #ecma/Math/15.8-1.js
 ecma/Math/15.8-2-n.js
-# Needs eval
+# Call.Resolve, function expected
 #ecma/Math/15.8-3-n.js
 # Invalid IL
 #ecma/Math/15.8.1.1-1.js
@@ -591,13 +590,13 @@ ecma/Number/15.7.3.js
 ecma/Number/15.7.4-1.js
 ecma/Number/15.7.4.1.js
 ecma/Number/15.7.4.2-1.js
-# Needs eval
+# Invoked Number.prototype.toString or Number.prototype.valueOf method on non-number
 #ecma/Number/15.7.4.2-2-n.js
 #ecma/Number/15.7.4.2-3-n.js
 ecma/Number/15.7.4.2-4.js
 ecma/Number/15.7.4.3-1.js
 ecma/Number/15.7.4.3-2.js
-# Needs eval
+#  Invoked Number.prototype.toString or Number.prototype.valueOf method on non-number
 #ecma/Number/15.7.4.3-3-n.js
 ecma/Number/15.7.4.js
 ecma/ObjectObjects/15.2.1.1.js
@@ -621,11 +620,11 @@ ecma/ObjectObjects/15.2.4.js
 # Invalid IL
 #ecma/SourceText/6-1.js
 #ecma/SourceText/6-2.js
-# Needs eval
+# syntax error
 #ecma/Statements/12.10-1.js
 ecma/Statements/12.10.js
 ecma/Statements/12.2-1.js
-# Needs eval
+# syntax error
 #ecma/Statements/12.5-1.js
 ecma/Statements/12.5-2.js
 # Invalid IL
@@ -637,11 +636,12 @@ ecma/Statements/12.5-2.js
 #ecma/Statements/12.6.2-3.js
 #ecma/Statements/12.6.2-4.js
 #ecma/Statements/12.6.2-5.js
+# For:Resolve throws NullReferenceException
 #ecma/Statements/12.6.2-6.js
 # endless runtime loop
 #ecma/Statements/12.6.2-7.js
-#ecma/Statements/12.6.2-8.js
-# Needs eval
+ecma/Statements/12.6.2-8.js
+# syntax error
 #ecma/Statements/12.6.2-9-n.js
 # Needs for in
 #ecma/Statements/12.6.3-1.js
@@ -650,7 +650,7 @@ ecma/Statements/12.6.3-10.js
 #ecma/Statements/12.6.3-11.js
 #ecma/Statements/12.6.3-12.js
 ecma/Statements/12.6.3-19.js
-# Needs eval
+# syntax error
 #ecma/Statements/12.6.3-2.js
 # Needs for in
 #ecma/Statements/12.6.3-3.js
@@ -663,7 +663,7 @@ ecma/Statements/12.6.3-19.js
 #ecma/Statements/12.6.3-8-n.js
 # Invalid IL
 #ecma/Statements/12.6.3-9-n.js
-# Needs eval
+# syntax error
 #ecma/Statements/12.7-1-n.js
 #ecma/Statements/12.8-1-n.js
 #ecma/Statements/12.9-1-n.js
@@ -686,7 +686,7 @@ ecma/String/15.5.3.js
 #ecma/String/15.5.4.1.js
 # Invalid IL
 #ecma/String/15.5.4.10-1.js
-# Needs eval
+# syntax error
 #ecma/String/15.5.4.11-1.js
 #ecma/String/15.5.4.11-2.js
 #ecma/String/15.5.4.11-3.js
@@ -696,7 +696,7 @@ ecma/String/15.5.3.js
 # Invalid IL
 #ecma/String/15.5.4.12-1.js
 #ecma/String/15.5.4.12-2.js
-# Needs eval
+# syntax error
 #ecma/String/15.5.4.12-3.js
 #ecma/String/15.5.4.12-4.js
 #ecma/String/15.5.4.12-5.js
@@ -727,7 +727,7 @@ ecma/String/15.5.4.6-1.js
 #ecma/String/15.5.4.6-2.js
 # invalid IL
 #ecma/String/15.5.4.7-1.js
-# Needs eval
+# syntax error
 #ecma/String/15.5.4.7-2.js
 ecma/String/15.5.4.7-3.js
 # Invalid IL
@@ -739,7 +739,7 @@ ecma/String/15.5.4.8-2.js
 #ecma/String/15.5.4.9-1.js
 ecma/String/15.5.4.js
 ecma/String/15.5.5.1.js
-# Needs eval
+# syntax error
 #ecma/TypeConversion/9.2.js
 # Invalid IL
 #ecma/TypeConversion/9.3-1.js
