@@ -1778,9 +1778,7 @@ namespace System.Windows.Forms
 			
 			private void Draw( PaintEventArgs e )
 			{
-				Bitmap bmp = new Bitmap( drawingBitmap.Bitmap );
-				
-				e.Graphics.DrawImage( bmp, 0, 0 );
+				e.Graphics.DrawImage( drawingBitmap.Bitmap, 0, 0 );
 				
 				// drawCross is false if the mouse gets moved...
 				if ( drawCross )

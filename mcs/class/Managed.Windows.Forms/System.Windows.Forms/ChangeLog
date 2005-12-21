@@ -1,3 +1,8 @@
+2005-12-21  Alexander Olk  <alex.olk@googlemail.com>
+
+	* ColorDialog.cs: Fixed a memory leak that caused a SIGSEV. A lot of
+	  Bitmaps were created and not disposed.
+
 2005-12-21  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* Control.cs (CreateControl): Don't do anything if the control is
