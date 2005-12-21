@@ -1,3 +1,10 @@
+2005-12-21  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* codegen.cs (AssemblyClass.CheckInternalsVisibleAttribute): Generate
+	errors 1726 for strong named assemblies with InternalsVisibleToAttribute 
+	that doesn't contain the full public key. This is a update of the
+	friend assemblies in .Net 2.0 release.
+	
 2005-12-18 Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	Fix #76995
