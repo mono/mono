@@ -1,3 +1,8 @@
+2005-12-20  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PathTest.cs: Added new test case for #77007 where a Windows drive is
+	specified with a partial path.
+
 2005-12-15  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DirectoryInfoTest.cs: Added test cases for #76191 and #76903.
