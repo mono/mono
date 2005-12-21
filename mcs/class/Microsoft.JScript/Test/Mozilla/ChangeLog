@@ -1,5 +1,9 @@
 2005-12-21  Cesar Lopez Nataren  <cnataren@novell.com>
 
+	* mjs-most.tests: Enable js1_2/Array/tostring_1.js,
+	js1_2/regexp/alphanumeric.js, js1_2/regexp/digit.js,
+	js1_2/regexp/whitespace.js and js1_2/regexp/word_boundary.js.
+
 	* mjs-most.tests: Enable ecma_2/Expressions/instanceof-002.js.
 
 2005-12-20  Cesar Lopez Nataren  <cnataren@novell.com>

@@ -967,8 +967,7 @@ js1_2/Array/general2.js
 # NullReferenceException from Binary:emit_access
 #js1_2/Array/splice1.js
 #js1_2/Array/splice2.js
-# LateBinding:CallValue throws NullReferenceException
-#js1_2/Array/tostring_1.js
+js1_2/Array/tostring_1.js
 js1_2/Array/tostring_2.js
 # Trace/breakpoint trap
 #js1_2/Objects/toString-001.js
@@ -1011,8 +1010,7 @@ js1_2/regexp/RegExp_multiline_as_array.js
 js1_2/regexp/RegExp_object.js
 js1_2/regexp/RegExp_rightContext.js
 js1_2/regexp/RegExp_rightContext_as_array.js
-# LateBinding:CallValue throws InvalidCastException
-#js1_2/regexp/alphanumeric.js
+js1_2/regexp/alphanumeric.js
 js1_2/regexp/asterisk.js
 js1_2/regexp/backslash.js
 js1_2/regexp/backspace.js
@@ -1021,8 +1019,7 @@ js1_2/regexp/backspace.js
 js1_2/regexp/character_class.js
 js1_2/regexp/compile.js
 js1_2/regexp/control_characters.js
-# LateBinding:CallValue throws InvalidCastException
-#js1_2/regexp/digit.js
+js1_2/regexp/digit.js
 js1_2/regexp/dot.js
 # Invalid IL
 #js1_2/regexp/endLine.js
@@ -1049,9 +1046,8 @@ js1_2/regexp/string_split.js
 js1_2/regexp/test.js
 js1_2/regexp/toString.js
 js1_2/regexp/vertical_bar.js
-# LateBinding:CallValue  throws InvalidCastException
-#js1_2/regexp/whitespace.js
-#js1_2/regexp/word_boundary.js
+js1_2/regexp/whitespace.js
+js1_2/regexp/word_boundary.js
 # Need for in
 #js1_2/regress/regress-7703.js
 js1_2/statements/break.js
