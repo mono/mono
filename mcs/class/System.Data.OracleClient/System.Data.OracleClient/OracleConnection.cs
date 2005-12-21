@@ -32,6 +32,7 @@ using System.Data;
 using System.Data.OracleClient.Oci;
 using System.Drawing.Design;
 using System.EnterpriseServices;
+using System.Globalization;
 using System.Text;
 
 namespace System.Data.OracleClient 
@@ -42,6 +43,7 @@ namespace System.Data.OracleClient
 		internal string Password;
 		internal string Database;
 		internal string ConnectionString;
+		internal OciCredentialType CredentialType;
 	}
 
 	[DefaultEvent ("InfoMessage")]
@@ -351,6 +353,7 @@ namespace System.Data.OracleClient
 			conInfo.Username = "";
 			conInfo.Database = "";
 			conInfo.Password = "";
+			conInfo.CredentialType = OciCredentialType.RDBMS;
 
 			if (connectionString == String.Empty)
 				return;
@@ -420,7 +423,11 @@ namespace System.Data.OracleClient
 					// TODO:
 					break;
 				case "INTEGRATED SECURITY":
-					throw new NotImplementedException ();
+					if (ConvertToBoolean("integrated security", value) == false)
+						conInfo.CredentialType = OciCredentialType.RDBMS;
+					else
+						conInfo.CredentialType = OciCredentialType.External;
+					break;
 				case "PERSIST SECURITY INFO":
 					// TODO:
 					break;
@@ -443,24 +450,29 @@ namespace System.Data.OracleClient
 					conInfo.Username = value;
 					break;
 				case "POOLING" :
-					switch (value.ToUpper ()) {
-					case "YES":
-					case "TRUE":
-						pooling = true;
-						break;
-					case "NO":
-					case "FALSE":
-						pooling = false;
-						break;
-					default:
-						throw new ArgumentException("Connection parameter not supported: '" + name + "'");
-					}
+					pooling = ConvertToBoolean("pooling", value);
 					break;
 				default:
 					throw new ArgumentException("Connection parameter not supported: '" + name + "'");
 				}
 			}
 		}
+
+		private bool ConvertToBoolean(string key, string value) 
+		{
+			string upperValue = value.ToUpper();
+
+			if (upperValue == "TRUE" ||upperValue == "YES") {
+				return true;
+			} 
+			else if (upperValue == "FALSE" || upperValue == "NO") {
+				return false;
+			}
+
+			throw new ArgumentException(string.Format(CultureInfo.InvariantCulture,
+				"Invalid value \"{0}\" for key '{1}'.", value, key));
+		}
+
 
 		~OracleConnection() 
 		{

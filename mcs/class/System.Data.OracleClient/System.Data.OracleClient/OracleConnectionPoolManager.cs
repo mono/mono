@@ -58,8 +58,19 @@ namespace System.Data.OracleClient
 			return oci;
 		}
 
+		public void Dispose () 
+		{
+			if (pools != null) {
+				foreach (OracleConnectionPool pool in pools)
+					pool.Dispose ();
+				pools.Clear ();
+				pools = null;
+			}
+		}
+
 		~OracleConnectionPoolManager () 
 		{
+			Dispose ();
 		}
 	}
 }

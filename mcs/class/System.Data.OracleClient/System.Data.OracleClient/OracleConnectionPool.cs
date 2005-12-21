@@ -97,21 +97,16 @@ namespace System.Data.OracleClient
 			return manager.CreateConnection (info);
 		}
 
-		~OracleConnectionPool ()
+		public void Dispose () 
 		{
 			if (list != null) {
-				if (list.Count > 0) {
-					for (int c = 0; c < list.Count; c++) {
-						// There are available connections in the pool
-						OciGlue connection = (OciGlue)list [c];
-						list.RemoveAt (c);
-						if (connection.Connected) {
+				if (list.Count > 0)
+					foreach (OciGlue connection in list)
+						if (connection.Connected)
 							connection.Disconnect ();
-							connection = null;
-						}
-					}
-				}
-			}
+				list.Clear ();
+				list = null;
+			}			
 		}
 	}
 }

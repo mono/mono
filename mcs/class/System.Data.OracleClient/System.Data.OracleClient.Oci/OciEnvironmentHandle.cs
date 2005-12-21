@@ -50,28 +50,7 @@ namespace System.Data.OracleClient.Oci {
 
 		public OciErrorInfo HandleError ()
 		{
-			int errbufSize = 512;
-			IntPtr errbuf = Marshal.AllocHGlobal (errbufSize);
-
-			OciErrorInfo info;
-			info.ErrorCode = 0;
-			info.ErrorMessage = String.Empty;
-
-			OciCalls.OCIErrorGet (Handle,
-					1,
-					IntPtr.Zero,
-					out info.ErrorCode,
-					errbuf,
-					(uint) errbufSize,
-					OciHandleType.Environment);
-
-			object err = Marshal.PtrToStringAnsi (errbuf);
-			if (err != null) {
-				string errmsg = (string) err;
-				info.ErrorMessage = String.Copy (errmsg);
-				Marshal.FreeHGlobal (errbuf);
-			}
-
+			OciErrorInfo info = OciErrorHandle.HandleError (this);
 			return info;
 		}
 

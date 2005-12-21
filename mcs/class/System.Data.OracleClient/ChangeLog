@@ -1,3 +1,17 @@
+2005-12-20  Daniel Morgan <danielmorgan@verizon.net>
+
+	* System.Data.OracleClient/OracleConnectionPoolManager.cs
+	* System.Data.OracleClient/OracleConnectionPool.cs
+	* System.Data.OracleClient/OracleConnection.cs
+	* System.Data.OracleClient/OciGlue.cs
+	* System.Data.OracleClient.Oci/OciEnvironmentHandle.cs
+	* System.Data.OracleClient.Oci/OciErrorHandle.cs
+	* System.Data.OracleClient.Oci/OciServiceHandle.cs
+	* System.Data.OracleClient.Oci/OciSessionHandle.cs: modified
+		- support Integrated Security which is external authentication
+		- dispose of OCI handles properly to prevent SEGSIGV during finalization
+		at application exit
+
 2005-12-19  Daniel Morgan <danielmorgan@verizon.net>
 
 	* System.Data.OracleClient/OracleConnectionPoolManager.cs

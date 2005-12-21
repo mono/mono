@@ -56,10 +56,10 @@ namespace System.Data.OracleClient.Oci {
 			if (!disposed) {
 				try {
 					if (disposing) {
-						if (server != null)
-							server.Dispose ();
-						if (session != null)
-							session.Dispose ();
+						//if (server != null)
+						//	server.Dispose ();
+						//if (session != null)
+						//	session.Dispose ();
 					}
 					disposed = true;
 				} finally {
