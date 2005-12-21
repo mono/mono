@@ -1,3 +1,8 @@
+2005-12-21  Miguel de Icaza  <miguel@novell.com>
+
+	* HttpUtility.cs (UrlEncodeUnicode): The generated encoding of
+	unicode values must be in %XXXX format, not %XX sometimes.
+	
 2005-12-08 Robert Jordan  <robertj@gmx.net> 
 
 	* MimeTypes.cs: added entry for "jpg".
