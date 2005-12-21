@@ -1,3 +1,9 @@
+2005-12-21  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* gtest-friend-00-lib.cs: Include the public key in 
+	InternalsVisibleToAttribute declarations (needed by an update
+	in friendly assembly access).
+
 2005-12-18  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* test-externalias-09.cs: New test for #76995
