@@ -63,8 +63,7 @@ ecma/Array/15.4.5.1-2.js
 #ecma/Array/15.4.5.2-2.js
 ecma/Boolean/15.6.1.js
 ecma/Boolean/15.6.2.js
-# ToForInObject
-#ecma/Boolean/15.6.3.1-1.js
+ecma/Boolean/15.6.3.1-1.js
 ecma/Boolean/15.6.3.1-2.js
 # invalid IL
 #ecma/Boolean/15.6.3.1-3.js
