@@ -2443,6 +2443,9 @@ namespace System.Windows.Forms
 		}
 
 		public void CreateControl() {
+			if (is_created) {
+				return;
+			}
 
 			if (!IsHandleCreated) {
 				CreateHandle();

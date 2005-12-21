@@ -1,3 +1,9 @@
+2005-12-21  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* Control.cs (CreateControl): Don't do anything if the control is
+	  already created, otherwise we'd fire the OnCreated event more than
+	  once
+
 2005-12-21  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* ComboBox.cs (FindStringCaseInsensitive): Don't search for emtpy strings,
