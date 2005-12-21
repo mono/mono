@@ -877,7 +877,6 @@ ecma_2/Exceptions/string-002.js
 ecma_2/Expressions/StrictEquality-001.js
 # Needs new Function
 #ecma_2/Expressions/instanceof-001.js
-# Convert:ToObject throws JScriptException: Unexpected type
 ecma_2/Expressions/instanceof-002.js
 # Needs new Function
 #ecma_2/Expressions/instanceof-003-n.js
