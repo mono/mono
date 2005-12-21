@@ -212,6 +212,36 @@ namespace System.IO {
 			return fullpath;
 		}
 
+		internal static string WindowsDriveAdjustment (string path)
+		{
+			// two special cases to consider when a drive is specified
+			if (path.Length < 2)
+				return path;
+			if ((path [1] != ':') || !Char.IsLetter (path [0]))
+				return path;
+
+			string current = Directory.GetCurrentDirectory ();
+			// first, only the drive is specified
+			if (path.Length == 2) {
+				// then if the current directory is on the same drive
+				if (current [0] == path [0])
+					path = current; // we return it
+				else
+					path += '\\';
+			} else if ((path [2] != Path.DirectorySeparatorChar) && (path [2] != Path.AltDirectorySeparatorChar)) {
+				// second, the drive + a directory is specified *without* a separator between them (e.g. C:dir).
+				// If the current directory is on the specified drive...
+				if (current [0] == path [0]) {
+					// then specified directory is appended to the current drive directory
+					path = Path.Combine (current, path.Substring (2, path.Length - 2));
+				} else {
+					// if not, then just pretend there was a separator (Path.Combine won't work in this case)
+					path = String.Concat (path.Substring (0, 2), DirectorySeparatorStr, path.Substring (2, path.Length - 2));
+				}
+			}
+			return path;
+		}
+
 		// insecure - do not call directly
 		internal static string InsecureGetFullPath (string path)
 		{
@@ -224,17 +254,8 @@ namespace System.IO {
 			}
 
 			// adjust for drives, i.e. a special case for windows
-			if (Environment.IsRunningOnWindows) {
-				// only a drive is specified
-				if ((path.Length == 2) && (path [1] == ':') && Char.IsLetter (path [0])) {
-					// then if the current directory is on the same drive
-					string current = Directory.GetCurrentDirectory ();
-					if (current [0] == path [0])
-						path = current; // we return it
-					else
-						path += '\\';
-				}
-			}
+			if (Environment.IsRunningOnWindows)
+				path = WindowsDriveAdjustment (path);
 
 			// if the supplied path ends with a separator...
 			char end = path [path.Length - 1];
