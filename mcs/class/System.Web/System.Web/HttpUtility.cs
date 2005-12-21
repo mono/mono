@@ -673,10 +673,9 @@ namespace System.Web {
 				return null;
 
 			StringBuilder result = new StringBuilder ();
-			int end = str.Length;
-			for (int i = 0; i < end; i++) {
+			foreach (char c in str){
 				int idx;
-				char c = str [i];
+
 				if (c > 255) {
 					result.Append ("%u");
 					idx = ((int) c) >> 24;
@@ -694,7 +693,7 @@ namespace System.Web {
 				    (c < 'A' && c > '9') ||
 				    (c > 'Z' && c < 'a' && c != '_') ||
 				    (c > 'z')) {
-					result.Append ('%');
+					result.Append ("%00");
 					idx = ((int) c) >> 4;
 					result.Append (hexChars [idx]);
 					idx = ((int) c) & 0x0F;

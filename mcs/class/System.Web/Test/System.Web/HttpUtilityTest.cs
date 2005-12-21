@@ -119,7 +119,15 @@ namespace MonoTests.System.Web {
 					" + \"&mid=\" + ModuleID + \"&pageindex=\" + Request.Params.Get(\"pageindex\") %>";
 			Assert.AreEqual (str, HttpUtility.HtmlDecode (str));
 		}
-		
+
+		[Test]
+		public void UrlEncodeUnicodeTest ()
+		{
+			string str = "schön";
+
+			Assert.AreEqual (str, HttpUtility.UrlEncodeUnicode ("sch%00f6n"), "#1");
+			Assert.AreEqual ("abc", "abc", "#2");
+		}
 	}
 }
 
