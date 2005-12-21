@@ -179,7 +179,6 @@ namespace MonoTests.System.Reflection
 
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
-		[Category ("NotWorking")]
 		public void InvokeOnRefOnlyAssembly ()
 		{
 			Assembly a = Assembly.ReflectionOnlyLoad (typeof (MethodInfoTest).Assembly.FullName);
