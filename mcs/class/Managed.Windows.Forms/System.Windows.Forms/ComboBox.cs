@@ -1083,6 +1083,10 @@ namespace System.Windows.Forms
 		
 		private int FindStringCaseInsensitive (string search)
 		{			
+			if (search.Length == 0) {
+				return -1;
+			}
+			
 			for (int i = 0; i < Items.Count; i++) 
 			{				
 				if (String.Compare (GetItemText (Items[i]), 0, search, 0, search.Length, true) == 0)
