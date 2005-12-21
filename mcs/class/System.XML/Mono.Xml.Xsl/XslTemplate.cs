@@ -257,7 +257,9 @@ namespace Mono.Xml.Xsl {
 			
 			c.PushScope ();
 
-			if (c.Input.MoveToAttribute ("mode", String.Empty)) {
+			if (c.Input.Name == "template" &&
+			    c.Input.NamespaceURI == Compiler.XsltNamespace &&
+			    c.Input.MoveToAttribute ("mode", String.Empty)) {
 				c.Input.MoveToParent ();
 				if (!c.Input.MoveToAttribute ("match", String.Empty))
 					throw new XsltCompileException ("XSLT 'template' element must not have 'mode' attribute when it does not have 'match' attribute.", null, c.Input);

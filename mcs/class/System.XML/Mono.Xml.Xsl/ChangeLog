@@ -1,3 +1,8 @@
+2005-12-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XslTemplate.cs : don't check name and mode attributes on
+	  non-'xsl:template' element. This should fix bug #77051.
+
 2005-12-13  Andrew Skiba  <andrews@mainsoft.com>
 
 	* XslDecimalFormat.jvm.cs: set correct defaults for NaN and Infinity
