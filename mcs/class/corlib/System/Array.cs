@@ -1469,13 +1469,15 @@ namespace System
 				return value2 == null ? 0 : -1;
 			else if (value2 == null)
 				return 1;
-			else if (comparer == null)
-				if (value1 is IComparable<T>)
-					return ((IComparable<T>) value1).CompareTo (value2);
-				else
-					return ((IComparable) value1).CompareTo (value2);
-			else
+			else if (value1 is IComparable<T>)
+				return ((IComparable<T>) value1).CompareTo (value2);
+			else if (value1 is IComparable)
+				return ((IComparable) value1).CompareTo (value2);
+			else if (comparer != null)
 				return comparer.Compare (value1, value2);
+
+			string msg = Locale.GetText ("No IComparable or IComparable<T> interface found for type '{0}'.");
+			throw new InvalidOperationException (String.Format (msg, typeof (T)));
 		}
 
 		private static void qsort<T> (T [] array, int low0, int high0, Comparison<T> comparison)
