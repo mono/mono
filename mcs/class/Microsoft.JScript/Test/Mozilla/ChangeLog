@@ -1,3 +1,7 @@
+2005-12-21  Cesar Lopez Nataren  <cnataren@novell.com>
+
+	* mjs-most.tests: Enable ecma_2/Expressions/instanceof-002.js.
+
 2005-12-20  Cesar Lopez Nataren  <cnataren@novell.com>
 
 	* mjs-most.tests:Enable ecma/Boolean/15.6.3.1-1.js,
