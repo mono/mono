@@ -1,5 +1,14 @@
 2005-12-21  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* CSFriendAssembly-lib.cs: Update friend assembly info
+	after the latest updates to this feature.
+
+	* gcs1726.cs: Likewise.
+
+	* gcs0281.cs: Likewise.
+	
+2005-12-21  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* gcs1726-2.cs: New test based on last update to
 	friend assembly access.
 
