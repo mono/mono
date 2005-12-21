@@ -1,3 +1,15 @@
+2005-12-21 Neale Ferguson <neale@sinenomine.net>
+
+	* mini-ops.h: Add s390_backchain instruction
+
+	* inssel-s390.brg: Use backchaining instruction for LOADARG/STKARG operations.
+
+	* cpu-s390.md: Add s390_backchain instruction
+
+	* mini-s390.c: Significant ABI changes
+
+	* mini-s390.h: Cater for zero length structures
+
 2005-12-20 Neale Ferguson <neale@sinenomine.net>
 
 	* mini-s390.c: ABI fixes
