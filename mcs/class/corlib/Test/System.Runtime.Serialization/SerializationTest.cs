@@ -96,7 +96,7 @@ namespace MonoTests.System.Runtime.Serialization
 			expected.CheckEquals (actual, "List");
 
 			for (int i = 0; i < actual.children.Length - 1; ++i)
-				if (actual.children [i] != actual.children [i+1])
+				if (actual.children [i].next != actual.children [i+1])
 					Assert.Fail ("Deserialization did not restore pointer graph");
 
 			BinderTester_A bta = CreateBinderTestData();
