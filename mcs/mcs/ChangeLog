@@ -1,3 +1,8 @@
+2005-12-21  Miguel de Icaza  <miguel@novell.com>
+
+	* driver.cs: Report the case of no source files and no -out:
+	argument provided.
+
 2005-12-20  Raja R Harinath  <rharinath@novell.com>
 
 	Fix #77035.

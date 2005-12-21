@@ -1597,6 +1597,11 @@ namespace Mono.CSharp
 			// Quick hack
 			//
 			if (output_file == null){
+				if (first_source == null){
+					Report.Error (1562, "If no source files are specified you must specify the output file with -out:");
+					return false;
+				}
+					
 				int pos = first_source.LastIndexOf ('.');
 
 				if (pos > 0)
