@@ -693,7 +693,7 @@ namespace System.Web {
 				    (c < 'A' && c > '9') ||
 				    (c > 'Z' && c < 'a' && c != '_') ||
 				    (c > 'z')) {
-					result.Append ("%00");
+					result.Append ("%u00");
 					idx = ((int) c) >> 4;
 					result.Append (hexChars [idx]);
 					idx = ((int) c) & 0x0F;
