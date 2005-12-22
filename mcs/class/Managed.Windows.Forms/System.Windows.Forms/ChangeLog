@@ -1,3 +1,8 @@
+2005-12-22  Jackson Harper  <jackson@ximian.com>
+
+	* TextBoxBase.cs: It's difficult to do, but you can have an empty
+	clipboard. This prevents a NullRef in that case.
+
 2005-12-21  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* XplatUIWin32.cs: Fixed the TEXTMETRIC structure, we were calling

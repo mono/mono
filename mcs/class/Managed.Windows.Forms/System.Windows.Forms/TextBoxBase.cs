@@ -1574,7 +1574,9 @@ namespace System.Windows.Forms {
 			string		s;
 
 			clip = Clipboard.GetDataObject();
-
+			if (clip == null)
+				return false;
+			
 			if (format == null) {
 				if ((this is RichTextBox) && clip.GetDataPresent(DataFormats.Rtf)) {
 					format = DataFormats.GetFormat(DataFormats.Rtf);
