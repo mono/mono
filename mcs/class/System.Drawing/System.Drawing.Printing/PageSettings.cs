@@ -98,7 +98,7 @@ namespace System.Drawing.Printing
 					width = height;
 					height = tmp;
 				}
-				return new Rectangle(0, 0, width, height);
+				return new Rectangle (Margins.Left, Margins.Top, width, height);
 			}
 		}
 		

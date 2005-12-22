@@ -91,7 +91,7 @@ namespace System.Drawing.Printing
 			}
 			set {
 				if (right < 0)
-					throw new System.ArgumentException("All Margins must be greater than 0", "left");
+					throw new System.ArgumentException("All Margins must be greater than 0", "right");
 				right = value;
 			}
 		}
@@ -102,7 +102,7 @@ namespace System.Drawing.Printing
 			}
 			set {
 				if (top < 0)
-					throw new System.ArgumentException("All Margins must be greater than 0", "left");
+					throw new System.ArgumentException("All Margins must be greater than 0", "top");
 				top = value;
 			}
 		}
@@ -113,7 +113,7 @@ namespace System.Drawing.Printing
 			}
 			set {
 				if (bottom < 0)
-					throw new System.ArgumentException("All Margins must be greater than 0", "left");
+					throw new System.ArgumentException("All Margins must be greater than 0", "bottom");
 				bottom = value;
 			}
 		}

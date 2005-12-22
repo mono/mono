@@ -126,9 +126,11 @@ namespace System.Drawing.Printing
 				return;
 			PrintController.OnStartPrint(this, printArgs);
 			if (printArgs.Cancel)
-				return;
+				return;			
+				
+			Graphics g = null;
 			
-			// while there is more pages
+			// while there are more pages
 			PrintPageEventArgs printPageArgs;
 			do
 			{
@@ -140,20 +142,27 @@ namespace System.Drawing.Printing
 						pageSettings.Bounds,
 						new Rectangle(0, 0, pageSettings.PaperSize.Width, pageSettings.PaperSize.Height),
 						pageSettings);
-				Graphics g = PrintController.OnStartPage(this, printPageArgs);
+							
+				if (g == null) {
+					g = Graphics.FromHdc (printArgs.GraphicsContext.Hdc);
+					printArgs.GraphicsContext.Graphics = g;
+				}
+					
+				printPageArgs.GraphicsContext = printArgs.GraphicsContext;
+				PrintController.OnStartPage(this, printPageArgs);
 				// assign Graphics in printPageArgs
-				printPageArgs.SetGraphics(g);
+				printPageArgs.SetGraphics(g);				
 				
 				if (!printPageArgs.Cancel)
-					this.OnPrintPage(printPageArgs);
+					this.OnPrintPage(printPageArgs);				
 				
-				PrintController.OnEndPage(this, printPageArgs);
+				PrintController.OnEndPage(this, printPageArgs);				
 				if (printPageArgs.Cancel)
-					break;
-			} while (printPageArgs.HasMorePages);
-			
+					break;				
+			} while (printPageArgs.HasMorePages);			
+
 			this.OnEndPrint(printArgs);
-			PrintController.OnEndPrint(this, printArgs);
+			PrintController.OnEndPrint(this, printArgs);			
 		}
 
 		public override string ToString(){

@@ -1,3 +1,21 @@
+2005-12-22 Jordi Mas i Hernandez <jordimash@gmail.com>
+
+	* PrintingServices.cs: Printing services abstration class
+	* PrintingServicesWin32.cs: Win32 printer driver
+	* PrintingServicesUnix.cs: Unix printer driver
+	* Margins.cs: Fixes exceptions error messages
+	* PrinterResolution.cs: Fixes
+	* PrintEventArgs.cs: New internal method
+	* PrintPageEventArgs.cs: New internal method
+	* StandardPrintController.cs: Fixes
+	* PrinterUnitConvert.cs: Fixes conversion errors
+	* PrintDocument.cs: Fixes to make it print
+	* PageSettings.cs: Take margains into account
+	* PrintController.cs: Fixes
+	* PaperSize.cs: Method to set paper Kind
+	* PrinterSettings.cs: Implements settings and fixes
+	* 	
+
 2005-12-07 Jordi Mas i Hernandez <jordimash@gmail.com>
 	
 	* PrinterResolutionKind.cs: Fixes signature for .Net 2.0

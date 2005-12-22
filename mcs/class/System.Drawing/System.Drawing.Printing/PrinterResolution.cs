@@ -41,7 +41,7 @@ namespace System.Drawing.Printing
 #endif
 	public class PrinterResolution 
 	{
-		private PrinterResolutionKind kind;
+		private PrinterResolutionKind kind = PrinterResolutionKind.Custom;
 		private int x;
 		private int y;
 		
@@ -97,6 +97,9 @@ namespace System.Drawing.Printing
 
 		public override string ToString ()
 		{
+			if (kind != PrinterResolutionKind.Custom)
+				return "[PrinterResolution " + kind.ToString () +  "]";
+			
 			return "[PrinterResolution X=" + x + " Y=" + y + "]";
 		}
 	}

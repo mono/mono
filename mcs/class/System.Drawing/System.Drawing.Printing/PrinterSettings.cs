@@ -47,8 +47,38 @@ namespace System.Drawing.Printing
 #endif	
 	public class PrinterSettings : ICloneable
 	{
-		public PrinterSettings()
-		{
+		private string printer_name;
+		private string print_filename;
+		private short copies;
+		private int maximum_page;
+		private int minimum_page; 
+		private int from_page;
+		private int to_page;
+		private bool collate;
+		private PrintRange print_range;
+		internal int maximum_copies;
+		internal bool can_duplex;
+		internal bool supports_color;
+		internal int landscape_angle;		
+		internal PrinterSettings.PrinterResolutionCollection printer_resolutions;
+		internal PrinterSettings.PaperSizeCollection paper_sizes;
+		
+		public PrinterSettings() : this (SysPrn.Service.DefaultPrinter)
+		{			
+		}
+		
+		internal PrinterSettings (string printer)
+		{						
+			printer_name = printer;			
+			ResetToDefaults ();
+			SysPrn.Service.LoadPrinterSettings (printer_name, this);			
+		}
+		
+		private void ResetToDefaults ()
+		{			
+			printer_resolutions = null;
+			paper_sizes = null;
+			maximum_page = 9999; 	
 		}
 
 		// Public subclasses
@@ -107,8 +137,10 @@ namespace System.Drawing.Printing
 			object ICollection.SyncRoot { get { return this; } }			
 #if NET_2_0		
 			[EditorBrowsable(EditorBrowsableState.Never)]
-			public int Add (PaperSize paperSize) {throw new NotImplementedException (); }	
+			public int Add (PaperSize paperSize) {return _PaperSizes.Add (paperSize); }	
 			public void CopyTo (PaperSize[] paperSizes, int index) {throw new NotImplementedException (); }			
+#else
+			internal int Add (PaperSize paperSize) {return _PaperSizes.Add (paperSize); }	
 #endif
 			
 			public virtual PaperSize this[int index] {
@@ -129,6 +161,11 @@ namespace System.Drawing.Printing
 			{
 				_PaperSizes.CopyTo(array, index);
 			}
+			
+			internal void Clear ()
+			{ 
+				_PaperSizes.Clear (); 
+			}
 		}
 
 		public class PrinterResolutionCollection : ICollection, IEnumerable
@@ -143,12 +180,14 @@ namespace System.Drawing.Printing
 			public int Count { get { return _PrinterResolutions.Count; } }
 			int ICollection.Count { get { return _PrinterResolutions.Count; } }
 			bool ICollection.IsSynchronized { get { return false; } }
-			object ICollection.SyncRoot { get { return this; } }
+			object ICollection.SyncRoot { get { return this; } }			
 #if NET_2_0
 			[EditorBrowsable(EditorBrowsableState.Never)]
-			public int Add (PrinterResolution printerResolution) {throw new NotImplementedException (); }
+			public int Add (PrinterResolution printerResolution) { return _PrinterResolutions.Add (printerResolution); }
 			public void CopyTo (PrinterResolution[] printerResolutions, int index) {throw new NotImplementedException (); }
-#endif			
+#else
+			internal int Add (PrinterResolution printerResolution) { return _PrinterResolutions.Add (printerResolution); }
+#endif
 						
 			public virtual PrinterResolution this[int index] {
 				get { return _PrinterResolutions[index] as PrinterResolution; }
@@ -167,6 +206,11 @@ namespace System.Drawing.Printing
 			void ICollection.CopyTo(Array array, int index)
 			{
 				_PrinterResolutions.CopyTo(array, index);
+			}
+			
+			internal void Clear ()
+			{ 
+				_PrinterResolutions.Clear (); 
 			}
 		}
 
@@ -189,9 +233,11 @@ namespace System.Drawing.Printing
 			}
 #if NET_2_0
 			[EditorBrowsable(EditorBrowsableState.Never)]
-      			public int Add (string value) {throw new NotImplementedException (); }
-      			public void CopyTo (string[] strings, int index) {throw new NotImplementedException (); }
-#endif			
+      			public int Add (string value) { return _Strings.Add (value); }
+      			public void CopyTo (string[] strings, int index) {throw new NotImplementedException (); }      			
+#else
+			internal int Add (string value) { return _Strings.Add (value); }
+#endif
 
 			IEnumerator IEnumerable.GetEnumerator()
 			{
@@ -210,25 +256,27 @@ namespace System.Drawing.Printing
 		}
 		
 		//properties
-
-		[MonoTODO("PrinterSettings.CanDuplex")]
+		
 		public bool CanDuplex
 		{
-			get { throw new NotImplementedException(); }
+			get { return can_duplex; }
 		}
-
-		[MonoTODO("PrinterSettings.Collate")]
+		
 		public bool Collate
 		{
-			get { throw new NotImplementedException(); }
-			set { throw new NotImplementedException(); }
+			get { return collate; }
+			set { collate = value; }
 		}
 
-		[MonoTODO("PrinterSettings.Copies")]
 		public short Copies
 		{
-			get { throw new NotImplementedException(); }
-			set { throw new NotImplementedException(); }
+			get { return copies; }
+			set { 
+				if (value < 0)
+					throw new ArgumentException ("The value of the Copies property is less than zero.");
+				
+				copies = value;
+			}
 		}
 
 		[MonoTODO("PrinterSettings.DefaultPageSettings")]
@@ -258,68 +306,82 @@ namespace System.Drawing.Printing
 			get { throw new NotImplementedException(); }
 			set { throw new NotImplementedException(); }
 		}
-
-		[MonoTODO("PrinterSettings.FromPage")]
+		
 		public int FromPage
 		{
-			get { throw new NotImplementedException(); }
-			set { throw new NotImplementedException(); }
+			get { return from_page; }
+			set {
+				if (value < 0)
+					throw new ArgumentException ("The value of the FromPage property is less than zero");
+				
+				from_page = value;
+			}
 		}
-
-		[MonoTODO("PrinterSettings.InstalledPrinters")]
+		
 		public static PrinterSettings.StringCollection InstalledPrinters
 		{
-			get { throw new NotImplementedException(); }
+			get { return SysPrn.Service.InstalledPrinters; }
 		}
-
-		[MonoTODO("PrinterSettings.IsDefaultPrinter")]
+	
 		public bool IsDefaultPrinter
 		{
-			get { throw new NotImplementedException(); }
+			get { return (printer_name == SysPrn.Service.DefaultPrinter); }
 		}
 
 		[MonoTODO("PrinterSettings.IsPlotter")]
 		public bool IsPlotter
 		{
-			get { throw new NotImplementedException(); }
+			get { return false; }
 		}
 
 		[MonoTODO("PrinterSettings.IsValid")]
 		public bool IsValid
 		{
-			get { throw new NotImplementedException(); }
+			get { return true; }
 		}
-
-		[MonoTODO("PrinterSettings.LandscapeAngle")]
+		
 		public int LandscapeAngle
 		{
-			get { throw new NotImplementedException(); }
+			get { return landscape_angle; }
 		}
-
-		[MonoTODO("PrinterSettings.MaximumCopies")]
+		
 		public int MaximumCopies
 		{
-			get { throw new NotImplementedException(); }
+			get { return maximum_copies; }
 		}
-
-		[MonoTODO("PrinterSettings.MaximumPage")]
+		
 		public int MaximumPage
 		{
-			get { throw new NotImplementedException(); }
-			set { throw new NotImplementedException(); }
+			get { return maximum_page; }
+			set {
+				// This not documented but behaves like MinimumPage
+				if (value < 0)
+					throw new ArgumentException ("The value of the MaximumPage property is less than zero");
+				
+				maximum_page = value;
+			}
 		}
-
-		[MonoTODO("PrinterSettings.MinimumPage")]
+		
 		public int MinimumPage
 		{
-			get { throw new NotImplementedException(); }
-			set { throw new NotImplementedException(); }
+			get { return minimum_page; }
+			set {
+				if (value < 0)
+					throw new ArgumentException ("The value of the MaximumPage property is less than zero");
+				
+				minimum_page = value;
+			}
 		}
-
-		[MonoTODO("PrinterSettings.PaperSizes")]
+		
 		public PrinterSettings.PaperSizeCollection PaperSizes
 		{
-			get { throw new NotImplementedException(); }
+			get {
+				if (paper_sizes == null) {
+					paper_sizes = new PrinterSettings.PaperSizeCollection (new PaperSize [] {});
+					SysPrn.Service.LoadPrinterPaperSizes (printer_name, this);
+				}				
+				return paper_sizes;				
+			}
 		}
 
 		[MonoTODO("PrinterSettings.PaperSources")]
@@ -328,31 +390,46 @@ namespace System.Drawing.Printing
 			get { throw new NotImplementedException(); }
 		}
 #if NET_2_0		
-		[MonoTODO("PrinterSettings.PrintFileName")]
+		
 		public string PrintFileName
 		{
-			get { throw new NotImplementedException(); }
-			set { throw new NotImplementedException(); }
+			get { return print_filename; }
+			set { print_filename = value; }
 		}
-#endif
-		[MonoTODO("PrinterSettings.PrinterName")]
+#endif		
 		public string PrinterName
 		{
-			get { throw new NotImplementedException(); }
-			set { throw new NotImplementedException(); }
+			get { return printer_name; }
+			set { 
+				if (printer_name == value)
+					return;
+					
+				printer_name = value;
+				SysPrn.Service.LoadPrinterSettings (printer_name, this);
+			}
 		}
-
-		[MonoTODO("PrinterSettings.PrinterResolutions")]
+		
 		public PrinterSettings.PrinterResolutionCollection PrinterResolutions
 		{
-			get { throw new NotImplementedException(); }
+			get {
+				if (printer_resolutions == null) {
+					printer_resolutions = new PrinterSettings.PrinterResolutionCollection (new PrinterResolution[] {});
+					SysPrn.Service.LoadPrinterResolutions (printer_name, this);
+				}
+				return printer_resolutions;
+			}
 		}
-
-		[MonoTODO("PrinterSettings.PrintRange")]
+		
 		public PrintRange PrintRange
 		{
-			get { throw new NotImplementedException(); }
-			set { throw new NotImplementedException(); }
+			get { return print_range; }
+			set { 
+				if (value != PrintRange.AllPages && value != PrintRange.Selection &&
+					value != PrintRange.SomePages)
+					throw new InvalidEnumArgumentException ("The value of the PrintRange property is not one of the PrintRange values");
+				
+				print_range = value;
+			}
 		}
 
 		[MonoTODO("PrinterSettings.PrintToFile")]
@@ -361,26 +438,28 @@ namespace System.Drawing.Printing
 			get { throw new NotImplementedException(); }
 			set { throw new NotImplementedException(); }
 		}
-
-		[MonoTODO("PrinterSettings.SupportsColor")]
+		
 		public bool SupportsColor
 		{
-			get { throw new NotImplementedException(); }
+			get { return supports_color; }
 		}
-
-		[MonoTODO("PrinterSettings.ToPage")]
+		
 		public int ToPage
 		{
-			get { throw new NotImplementedException(); }
-			set { throw new NotImplementedException(); }
+			get { return to_page; }
+			set {
+				if (value < 0)
+					throw new ArgumentException ("The value of the ToPage property is less than zero");
+				
+				to_page = value;
+			}		
 		}
 
-		//methods
-
-		[MonoTODO("PrinterSettings.Clone")]
+		//methods		
 		public virtual object Clone()
 		{
-			throw new NotImplementedException();
+			PrinterSettings ps = new PrinterSettings (printer_name);
+			return ps;
 		}
 
 		[MonoTODO("PrinterSettings.CreateMeasurementGraphics")]
@@ -457,6 +536,6 @@ namespace System.Drawing.Printing
 		public override string ToString()
 		{
 			throw new NotImplementedException();
-		}
+		}		
 	}
 }

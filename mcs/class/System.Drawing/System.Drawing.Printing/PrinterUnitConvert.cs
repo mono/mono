@@ -50,8 +50,8 @@ namespace System.Drawing.Printing
 					{
 						case PrinterUnit.Display: return value;
 						case PrinterUnit.ThousandthsOfAnInch: return value * 10;
-						case PrinterUnit.HundredthsOfAMillimeter: return value * 2.54;
-						case PrinterUnit.TenthsOfAMillimeter: return value * .254;
+						case PrinterUnit.HundredthsOfAMillimeter: return value * 25.4;
+						case PrinterUnit.TenthsOfAMillimeter: return value * 2.54;
 					}
 					break;
 				case PrinterUnit.ThousandthsOfAnInch:
@@ -59,15 +59,15 @@ namespace System.Drawing.Printing
 					{
 						case PrinterUnit.Display: return value / 10;
 						case PrinterUnit.ThousandthsOfAnInch: return value;
-						case PrinterUnit.HundredthsOfAMillimeter: return value * .254;
-						case PrinterUnit.TenthsOfAMillimeter: return value * .0254;
+						case PrinterUnit.HundredthsOfAMillimeter: return value * 2.54;
+						case PrinterUnit.TenthsOfAMillimeter: return value * 0.254;
 					}
 					break;
 				case PrinterUnit.HundredthsOfAMillimeter:
 					switch (toUnit)
 					{
-						case PrinterUnit.Display: return value / 2.54;
-						case PrinterUnit.ThousandthsOfAnInch: return value / .254;
+						case PrinterUnit.Display: return value / 25.4;
+						case PrinterUnit.ThousandthsOfAnInch: return value / 2.54;
 						case PrinterUnit.HundredthsOfAMillimeter: return value;
 						case PrinterUnit.TenthsOfAMillimeter: return value / 10;
 					}
@@ -75,8 +75,8 @@ namespace System.Drawing.Printing
 				case PrinterUnit.TenthsOfAMillimeter:
 					switch (toUnit)
 					{
-						case PrinterUnit.Display: return value / .254;
-						case PrinterUnit.ThousandthsOfAnInch: return value / .0254;
+						case PrinterUnit.Display: return value / 2.54;
+						case PrinterUnit.ThousandthsOfAnInch: return value / 0.254;
 						case PrinterUnit.HundredthsOfAMillimeter: return value * 10;
 						case PrinterUnit.TenthsOfAMillimeter: return value;
 					}
@@ -90,7 +90,10 @@ namespace System.Drawing.Printing
 					   PrinterUnit fromUnit,
 					   PrinterUnit toUnit)
 		{
-			return (int)Convert((double)value, fromUnit, toUnit);
+			double rslt;
+			rslt = Convert ((double) value, fromUnit, toUnit);
+			return (int) Math.Round (rslt);			
+
 		}
 
 		public static Margins Convert (Margins value,

@@ -97,6 +97,7 @@ namespace System.Drawing.Printing
 				return kind;
 			}
 		}
+		internal void SetKind (PaperKind k) {kind = k;}
 #if NET_2_0
 		[MonoTODO]
 		public int RawKind {

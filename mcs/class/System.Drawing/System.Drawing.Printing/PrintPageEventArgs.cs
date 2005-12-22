@@ -43,6 +43,7 @@ namespace System.Drawing.Printing {
 		Rectangle marginBounds;
 		Rectangle pageBounds;
 		PageSettings pageSettings;
+		GraphicsPrinter graphics_context;
 
 		public PrintPageEventArgs(Graphics graphics, Rectangle marginBounds,
 			Rectangle pageBounds, PageSettings pageSettings) {
@@ -74,7 +75,7 @@ namespace System.Drawing.Printing {
 		}
 		public Rectangle MarginBounds {
 			get{
-                return marginBounds;
+                		return marginBounds;
 			}
 		}
 		public Rectangle PageBounds {
@@ -92,6 +93,11 @@ namespace System.Drawing.Printing {
 		internal void SetGraphics(Graphics g)
 		{
 			graphics = g;
+		}
+		
+		internal GraphicsPrinter GraphicsContext {
+			get { return graphics_context; }
+			set { graphics_context = value; }
 		}
 }
 }

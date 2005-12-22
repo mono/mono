@@ -35,6 +35,7 @@ System.Drawing.Imaging/TestBmpCodec.cs
 System.Drawing.Imaging/TestJpegCodec.cs
 System.Drawing.Imaging/TestColorMatrix.cs
 System.Drawing.Imaging/TestImageAttributes.cs
+System.Drawing.Printing/PrinterUnitConvertTest.cs
 System.Drawing.Printing/PrintingPermissionAttributeTest.cs
 System.Drawing.Printing/PrintingPermissionTest.cs
 System.Drawing/BitmapCas.cs

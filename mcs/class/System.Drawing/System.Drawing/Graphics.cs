@@ -63,7 +63,7 @@ namespace System.Drawing
 		[ComVisible (false)]
 		public delegate bool DrawImageAbort (IntPtr callbackData);
 
-		private Graphics (IntPtr nativeGraphics)
+		internal Graphics (IntPtr nativeGraphics)
 		{
 			nativeObject = nativeGraphics;
 		}

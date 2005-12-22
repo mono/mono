@@ -39,31 +39,27 @@ namespace System.Drawing.Printing
 		public PrintController ()
 		{
 		}		
-#if NET_2_0
-		[MonoTODO]
+#if NET_2_0		
 		public virtual bool IsPreview { 
-			get { throw new NotImplementedException(); }
+			get { return false; }
 		}
 #endif
-		[MonoTODO]
 		public virtual void OnEndPage (PrintDocument document, PrintPageEventArgs e)
 		{
 		}
 
-		[MonoTODO]
 		public virtual void OnStartPrint (PrintDocument document, PrintEventArgs e)
 		{
 		}
 
-		[MonoTODO]
 		public virtual void OnEndPrint (PrintDocument document, PrintEventArgs e)
 		{
 		}
 
-		[MonoTODO]
+		
 		public virtual Graphics OnStartPage (PrintDocument document, PrintPageEventArgs e)
 		{
-			throw new NotImplementedException();
+			return null;
 		}
 	}
 }

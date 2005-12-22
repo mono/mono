@@ -154,6 +154,9 @@ System.Drawing.Printing/Duplex.cs
 System.Drawing.Printing/InvalidPrinterException.cs
 System.Drawing.Printing/MarginsConverter.cs
 System.Drawing.Printing/Margins.cs
+System.Drawing.Printing/PrintingServices.cs
+System.Drawing.Printing/PrintingServicesWin32.cs
+System.Drawing.Printing/PrintingServicesUnix.cs
 System.Drawing.Printing/PageSettings.cs
 System.Drawing.Printing/PaperKind.cs
 System.Drawing.Printing/PaperSize.cs
