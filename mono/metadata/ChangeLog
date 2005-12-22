@@ -1,5 +1,8 @@
 2005-12-22  Zoltan Varga  <vargaz@gmail.com>
 
+	* marshal.c (mono_mb_emit_restore_result): Add generics support. Fixes
+	#76967.
+
 	* reflection.c (mono_custom_attrs_construct_by_type): Handle the case 
 	when attr_klass is an interface. Fixes #77045.
 
