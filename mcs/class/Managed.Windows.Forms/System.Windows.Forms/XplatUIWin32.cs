@@ -334,10 +334,10 @@ namespace System.Windows.Forms {
 			internal int			tmOverhang;
 			internal int			tmDigitizedAspectX;
 			internal int			tmDigitizedAspectY;
-			internal byte			tmFirstChar; 
-			internal byte			tmLastChar; 
-			internal byte			tmDefaultChar; 
-			internal byte			tmBreakChar; 
+			internal short			tmFirstChar; 
+			internal short			tmLastChar; 
+			internal short			tmDefaultChar; 
+			internal short			tmBreakChar; 
 			internal byte			tmItalic; 
 			internal byte			tmUnderlined; 
 			internal byte			tmStruckOut; 
