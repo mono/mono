@@ -1101,6 +1101,10 @@ public class cilc
 					C.WriteLine (rettype + "* retval = (" + rettype + "*) mono_object_unbox (mono_runtime_invoke (_mono_method, " + mono_obj + ", " + params_arg + ", NULL));");
 					C.WriteLine ("return (" + rettype + ") *retval;");
 					C.WriteLine ("}");
+				} else if (rettype == "const gchar *")
+				{
+					//convert the MonoString to a UTF8 before returning
+					C.WriteLine ("return (" + rettype + ") mono_string_to_utf8 ((MonoString*) mono_runtime_invoke (_mono_method, " + mono_obj + ", " + params_arg + ", NULL));");
 				} else {
 					//TODO: this isn't right
 					C.WriteLine ("return (" + rettype + ") mono_runtime_invoke (_mono_method, " + mono_obj + ", " + params_arg + ", NULL);");

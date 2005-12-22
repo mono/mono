@@ -1,5 +1,10 @@
 2005-12-22  Alp Toker  <alp@atoker.com>
 
+	* cilc.cs: Add support for string return types and properties
+	* Test.cs, demo.c: Update tests
+
+2005-12-22  Alp Toker  <alp@atoker.com>
+
 	* cilc.cs: Add support for char, sbyte, byte and double
 	* Test.cs, demo.c: Update tests
 

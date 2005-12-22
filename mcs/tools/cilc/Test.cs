@@ -51,7 +51,7 @@ namespace Demo
 
 		public double GetDoubleValue ()
 		{
-			return (double)counter;
+			return (double)counter/2;
 		}
 
 		public int GetValue ()
@@ -73,6 +73,11 @@ namespace Demo
 		public void Echo (string arg1string)
 		{
 			Console.WriteLine ("string: " + arg1string);
+		}
+
+		public string MakeUpper (string arg1string)
+		{
+			return arg1string.ToUpper ();
 		}
 
 		public void Method4 (string arg1string, int arg2int)

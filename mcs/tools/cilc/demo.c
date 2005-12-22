@@ -4,7 +4,7 @@
 
 int main () {
   DemoTest *my_test;
-	//gchar *tmp;
+	const gchar *mystr;
 	int num;
 	gdouble num_dbl;
 	DemoDrink drink;
@@ -25,12 +25,17 @@ int main () {
   //run an instance method with arguments
   demo_test_echo (my_test, "hello from c");
 
+  //run an instance method with arguments and a return string
+  mystr = demo_test_make_upper (my_test, "lower to upper");
+	g_printf ("Lower to upper: %s\n", mystr);
+
   //run a property set accessor
   demo_test_set_title (my_test, "set property from c");
   
-	//run a property set accessor
-  //tmp = demo_test_get_title (my_test);
-	//g_print (tmp);
+	//run a property get accessor
+  mystr = demo_test_get_title (my_test);
+	g_printf ("Title property: %s\n", mystr);
+
   num = demo_test_get_value (my_test);
 	g_printf ("The counter's value is %d\n", num);
   
