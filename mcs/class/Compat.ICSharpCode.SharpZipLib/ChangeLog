@@ -1,3 +1,12 @@
+2005-12-22  Raja R Harinath  <rharinath@novell.com>
+
+	Mark this as a backwards-compatibility library.
+	* Makefile (thisdir): Update to new location.
+	(LIBRARY): Rename to be unique.
+	(LIBRARY_NAME, LIBRARY_COMPAT): Define.
+	* Compat.ICSharpCode.SharpZipLib.dll.sources: Rename from
+	ICSharpCode.SharpZipLib.dll.sources to reflect changes.
+
 2004-11-25  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (EXTRA_DISTFILES): Add SharpZipLib.pub.

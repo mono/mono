@@ -38,8 +38,14 @@ ifndef LIBRARY_NAME
 LIBRARY_NAME = $(LIBRARY)
 endif
 
+ifdef LIBRARY_COMPAT
+lib_dir = compat
+else
+lib_dir = lib
+endif
+
 makefrag = $(depsdir)/$(PROFILE)_$(LIBRARY).makefrag
-the_lib = $(topdir)/class/lib/$(PROFILE)/$(LIBRARY_NAME)
+the_lib = $(topdir)/class/$(lib_dir)/$(PROFILE)/$(LIBRARY_NAME)
 the_pdb = $(the_lib:.dll=.pdb)
 the_mdb = $(the_lib).mdb
 library_CLEAN_FILES += $(makefrag) $(the_lib) $(the_pdb) $(the_mdb)

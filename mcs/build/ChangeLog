@@ -1,3 +1,9 @@
+2005-12-22  Raja R Harinath  <rharinath@novell.com>
+
+	* library.make (lib_dir): Define to 'compat' if LIBRARY_COMPAT is
+	defined, 'lib' otherwise.
+	(the_lib): Use it to decide where to place the output library.
+
 2005-12-03  Kornél Pál  <kornelpal@hotmail.com>
 
 	* config-default.make: Corrected default CODEPAGE comment to ISO-8859-1

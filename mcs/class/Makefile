@@ -66,6 +66,7 @@ default_SUBDIRS := \
 	PEAPI				\
 	Npgsql				\
 	ICSharpCode.SharpZipLib		\
+	Compat.ICSharpCode.SharpZipLib	\
 	ByteFX.Data			\
 	Commons.Xml.Relaxng		\
 	Novell.Directory.Ldap		\

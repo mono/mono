@@ -1,3 +1,10 @@
+2005-12-22  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (default_SUBDIRS): Add Compat.ICSharpCode.SharpZipLib.
+	* compat/default, compat/net_2_0: New directories for holding
+	backwards-compatibility libraries.  These will not be used inside
+	the tree, but will be installed into the GAC.
+
 2005-12-12  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Makefile : seems like net_2_0_ONLY_SUBDIRS must precede.
