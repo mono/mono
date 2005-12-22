@@ -1727,15 +1727,13 @@ method_head		: D_METHOD meth_attr call_conv param_attr type method_name
                                 MethodDef methdef = new MethodDef (
                                         codegen, (MethAttr) $2, cc,
                                         (ImplAttr) $11, (string) $6, (ITypeRef) $5,
-                                        (ArrayList) $9, tokenizer.Reader.Location, (ArrayList) $7);
+                                        (ArrayList) $9, tokenizer.Reader.Location, (ArrayList) $7, codegen.CurrentTypeDef);
 
                                 if (pinvoke_info) {
                                         ExternModule mod = codegen.ExternTable.AddModule (pinvoke_mod);
                                         methdef.AddPInvokeInfo (pinvoke_attr, mod, pinvoke_meth);
                                         pinvoke_info = false;
                                 }
-				
-				methdef.ResolveGenParams (codegen.CurrentTypeDef);
                           }
 			| D_METHOD meth_attr call_conv param_attr type 
 			  K_MARSHAL OPEN_PARENS native_type CLOSE_PARENS method_name
@@ -1744,7 +1742,7 @@ method_head		: D_METHOD meth_attr call_conv param_attr type method_name
                                 MethodDef methdef = new MethodDef (
                               		codegen, (MethAttr) $2, (CallConv) $3,
                                         (ImplAttr) $14, (string) $10, (ITypeRef) $5,
-                                        (ArrayList) $12, tokenizer.Reader.Location, null);
+                                        (ArrayList) $12, tokenizer.Reader.Location, null, codegen.CurrentTypeDef);
 
                                 if (pinvoke_info) {
                                         ExternModule mod = codegen.ExternTable.AddModule (pinvoke_mod);
@@ -2283,7 +2281,7 @@ instr			: INSTR_NONE
                                 ITypeRef owner = (ITypeRef) $3;
 				GenericTypeRef gtr = $2 as GenericTypeRef;
 				if (gtr != null && codegen.CurrentMethodDef != null)
-					codegen.CurrentMethodDef.ResolveGenParam ((PEAPI.GenParam) gtr.PeapiType, codegen.CurrentTypeDef);
+					codegen.CurrentMethodDef.ResolveGenParam ((PEAPI.GenParam) gtr.PeapiType);
                                 IFieldRef fieldref = owner.GetFieldRef (
                                         (ITypeRef) $2, (string) $5);
 

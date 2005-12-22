@@ -53,11 +53,12 @@ namespace Mono.ILASM {
                 private PEAPI.PInvokeAttr pinvoke_attr;
 		private SourceMethod source;
                 private PEAPI.NativeType ret_native_type;
+                private TypeDef type_def;
 
                 public MethodDef (CodeGen codegen, PEAPI.MethAttr meth_attr,
 				  PEAPI.CallConv call_conv, PEAPI.ImplAttr impl_attr,
 				  string name, ITypeRef ret_type, ArrayList param_list,
-				  Location start, ArrayList typars_list)
+				  Location start, ArrayList typars_list, TypeDef type_def)
                 {
                         this.meth_attr = meth_attr;
                         this.call_conv = call_conv;
@@ -65,6 +66,7 @@ namespace Mono.ILASM {
                         this.name = name;
                         this.ret_type = ret_type;
                         this.param_list = param_list;
+                        this.type_def = type_def;
 
                         inst_list = new ArrayList ();
                         label_table = new Hashtable ();
@@ -82,6 +84,7 @@ namespace Mono.ILASM {
                         is_defined = false;
                         is_resolved = false;
 			AddGenericParams (typars_list);
+                        ResolveGenParams ();
                         CreateSignature ();
 
 			codegen.BeginMethodDef (this);
@@ -302,7 +305,7 @@ namespace Mono.ILASM {
                         this.max_stack = max_stack;
                 }
 
-		public void ResolveGenParam (PEAPI.GenParam gpar, TypeDef type_def)
+		public void ResolveGenParam (PEAPI.GenParam gpar)
 		{
 			if (gpar.Index != -1)
 				return;
@@ -319,11 +322,11 @@ namespace Mono.ILASM {
 							 gpar.Name));
 		}
 
-                public void ResolveGenParams (TypeDef type_def)
+                public void ResolveGenParams ()
                 {
 			GenericTypeRef gtr = ret_type as GenericTypeRef;
 			if (gtr != null)
-				ResolveGenParam ((PEAPI.GenParam) gtr.PeapiType, type_def);
+				ResolveGenParam ((PEAPI.GenParam) gtr.PeapiType);
 
 			if (param_list == null)
 				return;
@@ -331,7 +334,7 @@ namespace Mono.ILASM {
 			foreach (ParamDef param in param_list) {
 				gtr = param.Type as GenericTypeRef;
 				if (gtr != null)
-					ResolveGenParam ((PEAPI.GenParam) gtr.PeapiType, type_def);
+					ResolveGenParam ((PEAPI.GenParam) gtr.PeapiType);
 			}
                 }
 
@@ -420,30 +423,19 @@ namespace Mono.ILASM {
                 }
 
                 /// <summary>
-                ///  Define a global method
+                ///  Define a member method
                 /// </summary>
                 public void Define (CodeGen code_gen)
                 {
                         if (is_defined)
                                 return;
 
-                        Resolve (code_gen);
-
-                        WriteCode (code_gen, methoddef);
-
-                        //code_gen.Report.Message (String.Format ("Assembled method '<Module>'::{0}", name));
-                        is_defined = true;
-                }
-
-                /// <summary>
-                ///  Define a member method
-                /// </summary>
-                public void Define (CodeGen code_gen, TypeDef typedef)
-                {
-                        if (is_defined)
-                                return;
-
-                        Resolve (code_gen, (PEAPI.ClassDef) typedef.ClassDef);
+                        if (type_def == null)
+                                /* Global method */
+                                Resolve (code_gen, null);
+                        else
+                                Resolve (code_gen, (PEAPI.ClassDef) type_def.ClassDef);
+                                
                         WriteCode (code_gen, methoddef);
 
                         //code_gen.Report.Message (String.Format ("Assembled method {0}::{1}", typedef.FullName, name));                        is_defined = true;
@@ -653,6 +645,7 @@ namespace Mono.ILASM {
 			builder.Append (RetType.FullName);
 			builder.Append (" ");
                         builder.Append (name);
+			builder.AppendFormat ("`{0}", gen_param_count);
                         builder.Append ('(');
 
                         if (param_list != null) {
@@ -665,7 +658,6 @@ namespace Mono.ILASM {
                                 }
                         }
                         builder.Append (')');
-			builder.AppendFormat ("`{0}", gen_param_count);
 
                         return builder.ToString ();
                 }
@@ -745,6 +737,7 @@ namespace Mono.ILASM {
 			builder.Append (RetType.FullName);
 			builder.Append (" ");
                         builder.Append (name);
+                        builder.AppendFormat ("`{0}", gen_param_count);
                         builder.Append ('(');
 
                         if (param_list != null) {
@@ -759,7 +752,6 @@ namespace Mono.ILASM {
                                 }
                         }
                         builder.Append (')');
-			builder.AppendFormat ("`{0}", gen_param_count);
 
                         return builder.ToString ();
                 }

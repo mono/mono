@@ -394,7 +394,7 @@ namespace Mono.ILASM {
                         classdef.SetFieldOrder (fielddef_list);
 
                         foreach (MethodDef methoddef in method_table.Values) {
-                                methoddef.Define (code_gen, this);
+                                methoddef.Define (code_gen);
                         }
 
                         if (event_list != null) {
