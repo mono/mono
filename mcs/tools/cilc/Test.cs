@@ -49,6 +49,11 @@ namespace Demo
 			Console.WriteLine ("Instance method with an argument invoked: " + num + " added to value, making it " + counter);
 		}
 
+		public double GetDoubleValue ()
+		{
+			return (double)counter;
+		}
+
 		public int GetValue ()
 		{
 			return counter;

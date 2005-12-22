@@ -6,6 +6,7 @@ int main () {
   DemoTest *my_test;
 	//gchar *tmp;
 	int num;
+	gdouble num_dbl;
 	DemoDrink drink;
 	//GEnumClass *enum_class;
   
@@ -32,6 +33,9 @@ int main () {
 	//g_print (tmp);
   num = demo_test_get_value (my_test);
 	g_printf ("The counter's value is %d\n", num);
+  
+  num_dbl = demo_test_get_double_value (my_test);
+	g_printf ("The counter's double value is %.16f\n", num_dbl);
   
 	drink = demo_test_pick_drink ();
 	//enum_class = g_type_class_peek (demo_drink_get_type ());

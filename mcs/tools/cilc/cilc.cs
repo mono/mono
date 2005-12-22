@@ -34,6 +34,10 @@ public class cilc
 		RegisterByVal (typeof (int));
 		RegisterByVal (typeof (IntPtr));
 		RegisterByVal (typeof (bool));
+		RegisterByVal (typeof (char));
+		RegisterByVal (typeof (sbyte));
+		RegisterByVal (typeof (byte));
+		RegisterByVal (typeof (double));
 
 		if (args.Length == 1) {
 			SmartBind (args[0]);
@@ -866,6 +870,18 @@ public class cilc
 
 			case "System.IntPtr":
 				return "gpointer ";
+			
+			case "System.Char":
+				return "guint16 ";
+
+			case "System.SByte":
+				return "gint8 ";
+
+			case "System.Byte":
+				return "guint8 ";
+
+			case "System.Double":
+				return "gdouble ";
 
 			//questionable
 			case "System.EventHandler":
