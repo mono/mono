@@ -161,11 +161,19 @@ ifndef RUNTIME_HAS_CONSISTENT_GACDIR
 gacdir_flag = /gacdir $(GACDIR)
 endif
 
+ifndef LIBRARY_PACKAGE
+ifdef LIBRARY_COMPAT
+LIBRARY_PACKAGE = compat-$(FRAMEWORK_VERSION)
+else
+LIBRARY_PACKAGE = $(FRAMEWORK_VERSION)
+endif
+endif
+
 install-local: $(gacutil)
-	$(GACUTIL) /i $(the_lib) /f $(gacdir_flag) /root $(GACROOT) /package $(FRAMEWORK_VERSION)
+	$(GACUTIL) /i $(the_lib) /f $(gacdir_flag) /root $(GACROOT) /package $(LIBRARY_PACKAGE)
 
 uninstall-local: $(gacutil)
-	-$(GACUTIL) /u $(LIBRARY_NAME:.dll=) $(gacdir_flag) /root $(GACROOT) /package $(FRAMEWORK_VERSION)
+	-$(GACUTIL) /u $(LIBRARY_NAME:.dll=) $(gacdir_flag) /root $(GACROOT) /package $(LIBRARY_PACKAGE)
 
 endif
 endif
