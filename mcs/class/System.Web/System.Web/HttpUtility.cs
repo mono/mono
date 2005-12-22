@@ -693,7 +693,11 @@ namespace System.Web {
 				    (c < 'A' && c > '9') ||
 				    (c > 'Z' && c < 'a' && c != '_') ||
 				    (c > 'z')) {
-					result.Append ("%u00");
+					if (c > 127)
+						result.Append ("%u00");
+					else
+						result.Append ("%");
+					
 					idx = ((int) c) >> 4;
 					result.Append (hexChars [idx]);
 					idx = ((int) c) & 0x0F;

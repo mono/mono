@@ -123,10 +123,13 @@ namespace MonoTests.System.Web {
 		[Test]
 		public void UrlEncodeUnicodeTest ()
 		{
-			string str = "schön";
+			string str = "sch" + (char) 0xf6 + "n";
 
-			Assert.AreEqual (str, HttpUtility.UrlEncodeUnicode ("sch%00f6n"), "#1");
+			Assert.AreEqual ("sch%u00f6n", HttpUtility.UrlEncodeUnicode (str), "#1");
 			Assert.AreEqual ("abc", "abc", "#2");
+			Assert.AreEqual ("%26", HttpUtility.UrlEncodeUnicode ("&"), "#3");
+			Assert.AreEqual ("%7f", HttpUtility.UrlEncodeUnicode ("" + (char) 127), "#4");
+			Assert.AreEqual ("%u0080", HttpUtility.UrlEncodeUnicode ("" + (char) 128), "#5");
 		}
 	}
 }
