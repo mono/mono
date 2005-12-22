@@ -1,3 +1,8 @@
+2005-12-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* reflection.c (mono_custom_attrs_construct_by_type): Handle the case 
+	when attr_klass is an interface. Fixes #77045.
+
 2005-12-20  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c (emit_struct_conv): Fix previous patch.
