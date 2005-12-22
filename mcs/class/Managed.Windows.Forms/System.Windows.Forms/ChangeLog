@@ -1,3 +1,10 @@
+2005-12-21  Jackson Harper  <jackson@ximian.com>
+
+	* StatusBar.cs: Statusbar handles its fore/back colours on it's
+	on. Because thats how it rolls. (and this avoids it using ambient
+	colours).
+	* ThemeWin32Classic.cs: Use the proper back color for filling.
+
 2005-12-21  Alexander Olk  <alex.olk@googlemail.com>
 
 	* ColorDialog.cs: Fixed a memory leak that caused a SIGSEV. A lot of

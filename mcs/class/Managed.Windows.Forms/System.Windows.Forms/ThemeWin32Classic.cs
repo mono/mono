@@ -3178,7 +3178,7 @@ namespace System.Windows.Forms
 				Border3DStyle border_style = Border3DStyle.SunkenInner;
 				if (panel.BorderStyle == StatusBarPanelBorderStyle.Raised)
 					border_style = Border3DStyle.RaisedOuter;
-				CPDrawBorder3D(dc, area, border_style, Border3DSide.All, ColorControl);
+				CPDrawBorder3D(dc, area, border_style, Border3DSide.All, panel.Parent.BackColor);
 			}
 
 			if (panel.Style == StatusBarPanelStyle.OwnerDraw) {

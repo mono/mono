@@ -42,6 +42,9 @@ namespace System.Windows.Forms {
 		#region Fields
 		private StatusBarPanelCollection panels;
 
+		private Color back_color;
+		private Color fore_color;
+
 		private bool show_panels = false;
 		private bool sizing_grip = true;
 
@@ -52,6 +55,8 @@ namespace System.Windows.Forms {
 		public StatusBar ()
 		{
 			base.Dock = DockStyle.Bottom;
+			back_color = SystemColors.Control;
+			fore_color = SystemColors.ControlText;
 			Anchor = AnchorStyles.Top | AnchorStyles.Left;
 			this.TabStop = false;
 			this.SetStyle(ControlStyles.UserPaint | ControlStyles.Selectable, false);
@@ -62,11 +67,11 @@ namespace System.Windows.Forms {
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public override Color BackColor {
-			get { return base.BackColor; }
+			get { return back_color; }
 			set {
 				if (value == BackColor)
 					return;
-				base.BackColor = value;
+				back_color = value;
 				if (BackColorChanged != null)
 					BackColorChanged (this, EventArgs.Empty);
 				Update ();
@@ -112,10 +117,11 @@ namespace System.Windows.Forms {
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public override Color ForeColor {
-			get { return base.ForeColor; }
+			get { return fore_color; }
 			set {
 				if (value == ForeColor)
 					return;
+				fore_color = value;
 				if (ForeColorChanged != null)
 					ForeColorChanged (this, EventArgs.Empty);
 				Update ();
@@ -272,7 +278,7 @@ namespace System.Windows.Forms {
 			if (Width <= 0 || Height <= 0)
 				return;
 
-			CalcPanelSizes ();
+			Update ();
 		}
 
 		protected override void WndProc(ref Message m) {
