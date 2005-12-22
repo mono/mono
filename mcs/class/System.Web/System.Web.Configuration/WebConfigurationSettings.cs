@@ -210,7 +210,12 @@ namespace System.Web.Configuration
 			if (data != null)
 				return data;
 
-			string realpath = context.Request.MapPath (dir);
+			string realpath = null;
+			try {
+				realpath = context.Request.MapPath (dir);
+			} catch {
+				realpath = context.Request.MapPath (HttpRuntime.AppDomainAppVirtualPath);
+			}
 			string lower = Path.Combine (realpath, "web.config");
 			bool isLower = File.Exists (lower);
 			string wcfile = null;

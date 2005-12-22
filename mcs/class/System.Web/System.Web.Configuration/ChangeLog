@@ -1,3 +1,8 @@
+2005-12-22 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* WebConfigurationSettings.cs: patch by Cyrille Colin that sets the
+	right application path even when MapPath fails. Closes bug #77044.
+
 2005-12-02 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* WebConfigurationSettings.cs: don't fail if <location> has more
