@@ -114,10 +114,14 @@ namespace System.Web.Security
 			if (ticket == null || (ticket.IsPersistent && ticket.Expired))
 				return;
 
+			FormsAuthenticationTicket oldticket = ticket;
 			if (slidingExpiration)
 				ticket = FormsAuthentication.RenewTicketIfOld (ticket);
 
 			context.User = new GenericPrincipal (new FormsIdentity (ticket), new string [0]);
+
+			if (cookie.Expires == DateTime.MinValue && oldticket == ticket) 
+				return;
 
 			cookie.Value = FormsAuthentication.Encrypt (ticket);
 			cookie.Path = cookiePath;

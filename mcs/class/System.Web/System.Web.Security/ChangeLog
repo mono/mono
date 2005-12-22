@@ -1,3 +1,8 @@
+2005-12-22 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* FormsAuthenticationModule.cs: expire the cookie. Fixes bug #77043.
+	Patch by Cyrille Colin.
+
 2005-12-13 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* FormsAuthenticationModule.cs: ignore any exception thrown when mapping
