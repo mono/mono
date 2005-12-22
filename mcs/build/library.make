@@ -38,8 +38,14 @@ ifndef LIBRARY_NAME
 LIBRARY_NAME = $(LIBRARY)
 endif
 
+ifdef LIBRARY_COMPAT
+lib_dir = compat
+else
+lib_dir = lib
+endif
+
 makefrag = $(depsdir)/$(PROFILE)_$(LIBRARY).makefrag
-the_lib = $(topdir)/class/lib/$(PROFILE)/$(LIBRARY_NAME)
+the_lib = $(topdir)/class/$(lib_dir)/$(PROFILE)/$(LIBRARY_NAME)
 the_pdb = $(the_lib:.dll=.pdb)
 the_mdb = $(the_lib).mdb
 library_CLEAN_FILES += $(makefrag) $(the_lib) $(the_pdb) $(the_mdb)
@@ -155,11 +161,19 @@ ifndef RUNTIME_HAS_CONSISTENT_GACDIR
 gacdir_flag = /gacdir $(GACDIR)
 endif
 
+ifndef LIBRARY_PACKAGE
+ifdef LIBRARY_COMPAT
+LIBRARY_PACKAGE = compat-$(FRAMEWORK_VERSION)
+else
+LIBRARY_PACKAGE = $(FRAMEWORK_VERSION)
+endif
+endif
+
 install-local: $(gacutil)
-	$(GACUTIL) /i $(the_lib) /f $(gacdir_flag) /root $(GACROOT) /package $(FRAMEWORK_VERSION)
+	$(GACUTIL) /i $(the_lib) /f $(gacdir_flag) /root $(GACROOT) /package $(LIBRARY_PACKAGE)
 
 uninstall-local: $(gacutil)
-	-$(GACUTIL) /u $(LIBRARY_NAME:.dll=) $(gacdir_flag) /root $(GACROOT) /package $(FRAMEWORK_VERSION)
+	-$(GACUTIL) /u $(LIBRARY_NAME:.dll=) $(gacdir_flag) /root $(GACROOT) /package $(LIBRARY_PACKAGE)
 
 endif
 endif

@@ -66,6 +66,7 @@ default_SUBDIRS := \
 	PEAPI				\
 	Npgsql				\
 	ICSharpCode.SharpZipLib		\
+	Compat.ICSharpCode.SharpZipLib	\
 	ByteFX.Data			\
 	Commons.Xml.Relaxng		\
 	Novell.Directory.Ldap		\
@@ -128,6 +129,7 @@ basic_files = mcs.exe mscorlib.dll System.dll System.Xml.dll
 monolite_files = $(basic_files:%=lib/monolite/%)
 
 DIST_PROFILE_DIRS = basic net_1_1_bootstrap default net_2_0_bootstrap net_2_0
+COMPAT_PROFILE_DIRS = default net_2_0
 
 lib/monolite:
 	$(MKINSTALLDIRS) $@
@@ -140,4 +142,4 @@ $(basic_files:%=lib/basic/%):
 
 dist-default: $(monolite_files)
 dist-local: dist-default
-	-$(MKINSTALLDIRS) $(DIST_PROFILE_DIRS:%=$(distdir)/lib/%)
+	-$(MKINSTALLDIRS) $(DIST_PROFILE_DIRS:%=$(distdir)/lib/%) $(COMPAT_PROFILE_DIRS:%=$(distdir)/compat/%)
