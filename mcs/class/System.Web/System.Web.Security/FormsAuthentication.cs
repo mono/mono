@@ -403,7 +403,7 @@ namespace System.Web.Security
 
 			Initialize ();
 			SetAuthCookie (userName, createPersistentCookie, strCookiePath);
-			Redirect (GetRedirectUrl (userName, createPersistentCookie));
+			Redirect (GetRedirectUrl (userName, createPersistentCookie), false);
 		}
 
 		public static FormsAuthenticationTicket RenewTicketIfOld (FormsAuthenticationTicket tOld)
@@ -532,6 +532,11 @@ namespace System.Web.Security
 		private static void Redirect (string url)
 		{
 			HttpContext.Current.Response.Redirect (url);
+		}
+
+		private static void Redirect (string url, bool end)
+		{
+			HttpContext.Current.Response.Redirect (url, end);
 		}
 	}
 }

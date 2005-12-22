@@ -1,5 +1,10 @@
 2005-12-22 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* FormsAuthentication.cs: don't end the request in
+	RedirectFromLoginPage.
+
+2005-12-22 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* FormsAuthenticationModule.cs: expire the cookie. Fixes bug #77043.
 	Patch by Cyrille Colin.
 
