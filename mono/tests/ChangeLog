@@ -1,3 +1,7 @@
+2005-12-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* custom-attr.cs: Add test for #77045.
+
 2005-12-15  Zoltan Varga  <vargaz@gmail.com>
 
 	* cpblkTest.il: Fix storage of addresses into int32 variables.
