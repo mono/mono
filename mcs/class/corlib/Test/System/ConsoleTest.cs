@@ -12,48 +12,59 @@ using System.IO;
 
 namespace MonoTests.System
 {
-
-public class ConsoleTest : TestCase
+[TestFixture]
+public class ConsoleTest
 {
 	public ConsoleTest() {}
 
 	TextWriter _err;
 	TextReader _in;
 	TextWriter _out;
-	protected override void SetUp() 
+
+	[SetUp]
+	public void SetUp() 
 	{
 		_err = Console.Error;
 		_in = Console.In;
 		_out = Console.Out;
 	}
 
-	protected override void TearDown() 
+	[TearDown]
+	public void TearDown() 
 	{
 		Console.SetError(_err);
 		Console.SetIn(_in);
 		Console.SetOut(_out);
 	}
 
-	public void TestError() {
-		AssertNotNull("No error", Console.Error);
+	[Test]
+	public void TestError()
+	{
+		Assert.IsNotNull (Console.Error, "No error");
 	}
 
-	public void TestIn() {
-		AssertNotNull("No in", Console.In);
+	[Test]
+	public void TestIn()
+	{
+		Assert.IsNotNull (Console.In, "No in");
 	}
 
-	public void TestOut() {
-		AssertNotNull("No out", Console.Out);
+	[Test]
+	public void TestOut()
+	{
+		Assert.IsNotNull (Console.Out, "No out");
 	}
 
-	public void TestOpenStandardError() {
+	[Test]
+	public void TestOpenStandardError()
+	{
 		{
-			Stream err = Console.OpenStandardError();
-			AssertNotNull("Can't open error", err);
+			Stream err = Console.OpenStandardError ();
+			Assert.IsNotNull (err, "Can't open error #1");
 		}
 		{
-			Stream err = Console.OpenStandardError(512);
-			AssertNotNull("Can't open error", err);
+			Stream err = Console.OpenStandardError (512);
+			Assert.IsNotNull (err, "Can't open error #2");
 		}
 		// Spec says these are here, MS implementation says no.
 		//{
@@ -77,31 +88,37 @@ public class ConsoleTest : TestCase
 		//}
 	}
 
-	public void TestOpenStandardInput() {
+	[Test]
+	public void TestOpenStandardInput()
+	{
 		{
-			Stream in1 = Console.OpenStandardInput();
-			AssertNotNull("Can't open input", in1);
+			Stream in1 = Console.OpenStandardInput ();
+			Assert.IsNotNull (in1, "Can't open input #1");
 		}
 		{
-			Stream in1 = Console.OpenStandardInput(512);
-			AssertNotNull("Can't open input", in1);
+			Stream in1 = Console.OpenStandardInput (512);
+			Assert.IsNotNull (in1, "Can't open input #2");
 		}
 		// see commented-out tests in TestOpenStandardError
 	}
-	
-	public void TestOpenStandardOutput() {
+
+	[Test]
+	public void TestOpenStandardOutput()
+	{
 		{
-			Stream out1 = Console.OpenStandardOutput();
-			AssertNotNull("Can't open output", out1);
+			Stream out1 = Console.OpenStandardOutput ();
+			Assert.IsNotNull(out1, "Can't open output #1");
 		}
 		{
 			Stream out1 = Console.OpenStandardOutput(512);
-			AssertNotNull("Can't open output", out1);
+			Assert.IsNotNull (out1, "Can't open output #2");
 		}
 		// see commented-out tests in TestOpenStandardError
 	}
-	
-	public void TestRead() {
+
+	[Test]
+	public void TestRead()
+	{
 		String testStr = "This is a readline test";
 		Stream s = new MemoryStream();
 		TextWriter w = new StreamWriter(s);
@@ -111,10 +128,12 @@ public class ConsoleTest : TestCase
 		w.WriteLine(testStr);
 		s.Position = 0;
 		char val = (char) Console.Read();
-		AssertEquals("Wrong read", 'T', val);
+		Assert.AreEqual ('T', val, "Wrong read");
 	}
 
-	public void TestReadLine() {
+	[Test]
+	public void TestReadLine()
+	{
 		String testStr = "This is a readline test";
 		Stream s = new MemoryStream();
 		TextWriter w = new StreamWriter(s);
@@ -124,10 +143,12 @@ public class ConsoleTest : TestCase
 		w.WriteLine(testStr);
 		s.Position = 0;
 		String line = Console.ReadLine();
-		AssertEquals("Wrong line", testStr, line);
+		Assert.AreEqual (testStr, line, "Wrong line");
 	}
 
-	public void TestSetError() {
+	[Test]
+	public void TestSetError()
+	{
 		{
 			bool errorThrown = false;
 			try {
@@ -135,7 +156,7 @@ public class ConsoleTest : TestCase
 			} catch (ArgumentNullException) {
 				errorThrown = true;
 			}
-			Assert("null error error not thrown", errorThrown);
+			Assert.IsTrue (errorThrown, "null error error not thrown");
 		}
 		{
 			String testStr = "This is a stderr test";
@@ -147,11 +168,13 @@ public class ConsoleTest : TestCase
 			Console.Error.WriteLine(testStr);
 			s.Position = 0;
 			String line = r.ReadLine();
-			AssertEquals("Wrong line", testStr, line);
+			Assert.AreEqual (testStr, line, "Wrong line");
 		}
 	}
 
-	public void TestSetIn() {
+	[Test]
+	public void TestSetIn()
+	{
 		{
 			bool errorThrown = false;
 			try {
@@ -159,7 +182,7 @@ public class ConsoleTest : TestCase
 			} catch (ArgumentNullException) {
 				errorThrown = true;
 			}
-			Assert("null in error not thrown", errorThrown);
+			Assert.IsTrue (errorThrown, "null in error not thrown");
 		}
 		{
 			String testStr = "This is a stdin test";
@@ -171,11 +194,13 @@ public class ConsoleTest : TestCase
 			w.WriteLine(testStr);
 			s.Position = 0;
 			String line = Console.In.ReadLine();
-			AssertEquals("Wrong line", testStr, line);
+			Assert.AreEqual (testStr, line, "Wrong line");
 		}
 	}
 
-	public void TestSetOut() {
+	[Test]
+	public void TestSetOut()
+	{
 		{
 			bool errorThrown = false;
 			try {
@@ -183,7 +208,7 @@ public class ConsoleTest : TestCase
 			} catch (ArgumentNullException) {
 				errorThrown = true;
 			}
-			Assert("null out error not thrown", errorThrown);
+			Assert.IsTrue (errorThrown, "null out error not thrown");
 		}
 		{
 			String testStr = "This is a stdout test";
@@ -195,11 +220,13 @@ public class ConsoleTest : TestCase
 			Console.Out.WriteLine(testStr);
 			s.Position = 0;
 			String line = r.ReadLine();
-			AssertEquals("Wrong line", testStr, line);
+			Assert.AreEqual (testStr, line, "Wrong line");
 		}
 	}
 
-	public void TestWrite() {
+	[Test]
+	public void TestWrite()
+	{
 		Stream s = new MemoryStream();
 		TextWriter w = new StreamWriter(s);
 		((StreamWriter)w).AutoFlush = true;
@@ -212,24 +239,24 @@ public class ConsoleTest : TestCase
 		Console.Write(testStr);
 		s.Position = endPos;
 		String line = r.ReadToEnd();
-		AssertEquals("Wrong line", testStr, line);
+		Assert.AreEqual (testStr, line, "Wrong line");
 		endPos = s.Position;
 
 		Boolean[] booleans = {true, false};
-		foreach (bool b in booleans ) {
+		foreach (bool b in booleans) {
 			Console.Write(b);
 			s.Position = endPos;
 			line = r.ReadToEnd();
-			AssertEquals("Wrong boolean", b.ToString(), line);
+			Assert.AreEqual (b.ToString(), line, "Wrong boolean");
 			endPos = s.Position;
 		}
 
 		Char[] chars = {'a', ';', '?'};
-		foreach (Char c in chars ) {
+		foreach (Char c in chars) {
 			Console.Write(c);
 			s.Position = endPos;
 			line = r.ReadToEnd();
-			AssertEquals("Wrong char", c.ToString(), line);
+			Assert.AreEqual (c.ToString(), line, "Wrong char");
 			endPos = s.Position;
 		}
 
@@ -240,7 +267,10 @@ public class ConsoleTest : TestCase
 		// TODO - Likewise for char[], decimal, double, int, long, object, single, uint32, uint64
 		// TODO - write with format string
 	}
-	public void TestWriteLine() {
+
+	[Test]
+	public void TestWriteLine()
+	{
 		Stream s = new MemoryStream();
 		TextWriter w = new StreamWriter(s);
 		((StreamWriter)w).AutoFlush = true;
@@ -253,24 +283,24 @@ public class ConsoleTest : TestCase
 		Console.WriteLine(testStr);
 		s.Position = endPos;
 		String line = r.ReadLine();
-		AssertEquals("Wrong line", testStr, line);
+		Assert.AreEqual (testStr, line, "Wrong line");
 		endPos = s.Position;
 
 		Boolean[] booleans = {true, false};
-		foreach (bool b in booleans ) {
+		foreach (bool b in booleans) {
 			Console.WriteLine(b);
 			s.Position = endPos;
 			line = r.ReadLine();
-			AssertEquals("Wrong boolean", b.ToString(), line);
+			Assert.AreEqual (b.ToString(), line, "Wrong boolean");
 			endPos = s.Position;
 		}
 
 		Char[] chars = {'a', ';', '?'};
-		foreach (Char c in chars ) {
+		foreach (Char c in chars) {
 			Console.WriteLine(c);
 			s.Position = endPos;
 			line = r.ReadLine();
-			AssertEquals("Wrong char", c.ToString(), line);
+			Assert.AreEqual (c.ToString(), line, "Wrong char");
 			endPos = s.Position;
 		}
 

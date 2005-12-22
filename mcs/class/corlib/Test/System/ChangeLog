@@ -1,3 +1,7 @@
+2005-12-22  Raja R Harinath  <rharinath@novell.com>
+
+	* ConsoleTest.cs: Modernize to use attributes and Assert class.
+
 2005-12-20  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DecimalTest.cs: Fixed test cases to run (without failures) on 2.0.
