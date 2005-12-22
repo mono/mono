@@ -54,6 +54,23 @@ class TestConst {
 	public const int C = 3;
 }
 
+
+[Obsolete ("Use Native.Stdlib", true)]
+public class XX {
+	private static readonly SignalHandler[] registered_signals;
+}
+
+[Obsolete ("Use Native.Pollfd", true)]
+public struct Pollfd {
+}
+
+[Obsolete ("Use Native.Syscall", true)]
+public class Syscall : XX {
+	public static int poll (Pollfd [] fds, uint nfds, int timeout) {
+		return -1;
+	}
+}
+
 class Test {
 	public static void Main () {
 	}
