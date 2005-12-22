@@ -1,3 +1,7 @@
+2005-12-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* inssel-sparc.brg: Add an implementation of lneg which actually works.
+
 2005-12-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* aliasing.c (mono_build_aliasing_information): Add a workaround for
