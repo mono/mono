@@ -8642,7 +8642,7 @@ namespace Mono.CSharp {
 				return null;
 
 			bool old = ec.TestObsoleteMethodUsage;
-			ec.TestObsoleteMethodUsage = true;
+			ec.TestObsoleteMethodUsage = false;
 			Type ltype = lexpr.ResolveType (ec);
 			ec.TestObsoleteMethodUsage = old;
 
