@@ -1,5 +1,5 @@
 // cilc -- a CIL-to-C binding generator
-// Copyright (C) 2003, 2004 Alp Toker <alp@atoker.com>
+// Copyright (C) 2003, 2004, 2005 Alp Toker <alp@atoker.com>
 // Licensed under the terms of the GNU GPL
 
 using System;
@@ -340,6 +340,7 @@ public class cilc
 		Hdecls.WriteLine ();
 
 		Cindex.WriteLine ("#include <glib.h>");
+		Cindex.WriteLine ("#include <glib-object.h>");
 		Cindex.WriteLine ("#include <mono/jit/jit.h>");
 		Cindex.WriteLine ();
 		Cindex.WriteLine ("#include <mono/metadata/object.h>");
@@ -378,7 +379,13 @@ public class cilc
 		Cindex.WriteLine ();
 
 
-		Cindex.WriteLine ("gpointer " + NsToC (ns) + "_cilc_glib_object_get_handle (MonoObject *_mono_object)");
+		Cindex.WriteLine ("MonoObject *" + NsToC (ns) + "_cilc_glib_gobject_get_mobject (GObject *_handle)");
+		Cindex.WriteLine ("{");
+		//FIXME: instantiate monobject if it doesn't exist
+		Cindex.WriteLine ("return g_object_get_data (G_OBJECT (" + "_handle" + "), \"mono-object\");");
+		Cindex.WriteLine ("}");
+
+		Cindex.WriteLine ("gpointer " + NsToC (ns) + "_cilc_glib_mobject_get_gobject (MonoObject *_mono_object)");
 		Cindex.WriteLine ("{");
 		Cindex.WriteLine ("static MonoAssembly *_mono_assembly = NULL;");
 		Cindex.WriteLine ("static MonoMethod *_mono_method = NULL;");
@@ -1080,7 +1087,7 @@ public class cilc
 		//assign the parameters
 		for (int i = 0 ; i < parameters.Length ; i++) {
 			ParameterInfo p = parameters[i];
-			C.WriteLine  (params_arg + "[" + i + "] = " + GetMonoVal (KeywordAvoid (p.Name), p.ParameterType.ToString ()) + ";");
+			C.WriteLine (params_arg + "[" + i + "] = " + GetMonoVal (p.ParameterType, KeywordAvoid (p.Name)) + ";");
 		}
 
 		if (parameters.Length != 0)
@@ -1118,7 +1125,7 @@ public class cilc
 
 			//TODO: use ->priv, not data for better performance if not wrapping a gobject
 			if (wrap_gobject)
-				C.WriteLine (instance + " = (" + CurType + " *) " + NsToC (ns) + "_cilc_glib_object_get_handle (" + mono_obj + ");");
+				C.WriteLine (instance + " = (" + CurType + " *) " + NsToC (ns) + "_cilc_glib_mobject_get_gobject (" + mono_obj + ");");
 			else
 				C.WriteLine (instance + " = (" + CurType + " *) g_object_new (" + NsToC (ns).ToUpper () + "_TYPE_" + CamelToC (t.Name).ToUpper () + ", NULL);");
 
@@ -1148,8 +1155,13 @@ public class cilc
 		}
 	}
 
-	static string GetMonoVal (string name, string type)
+	static string GetMonoVal (Type t, string name)
 	{
+		string type = t.FullName;
+
+		if (TypeIsGObject (t))
+			return "(gpointer*) " + NsToC (ns) + "_cilc_glib_gobject_get_mobject (G_OBJECT (" + name + "))";
+
 		switch (type) {
 			case "System.String":
 				return "(gpointer*) mono_string_new ((MonoDomain*) mono_domain_get (), " + name + ")";

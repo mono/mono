@@ -1,6 +1,7 @@
 2005-12-22  Alp Toker  <alp@atoker.com>
 
-	* cilc.cs: Add support for string return types and properties
+	* cilc.cs: Add support for string return types and properties, begin work to
+	improve GObject tie-in
 	* Test.cs, demo.c: Update tests
 
 2005-12-22  Alp Toker  <alp@atoker.com>
