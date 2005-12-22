@@ -259,7 +259,6 @@ namespace System.IO {
 
 			// if the supplied path ends with a separator...
 			char end = path [path.Length - 1];
-			bool end_dsc = ((end == DirectorySeparatorChar) || (end == AltDirectorySeparatorChar));
 
 			if (path.Length >= 2 &&
 				IsDsc (path [0]) &&
@@ -286,7 +285,7 @@ namespace System.IO {
 			}
 
 			// if the original ended with a [Alt]DirectorySeparatorChar then ensure the full path also ends with one
-			if (end_dsc && (path [path.Length - 1] != DirectorySeparatorChar))
+			if (IsDsc (end) && (path [path.Length - 1] != DirectorySeparatorChar))
 				path += DirectorySeparatorChar;
 
 			return path;
@@ -502,64 +501,65 @@ namespace System.IO {
 			dirEqualsVolume = (DirectorySeparatorChar == VolumeSeparatorChar);
 		}
 		
-		
-		static string CanonicalizePath (string path) {
-			
+		static string CanonicalizePath (string path)
+		{
 			// STEP 1: Check for empty string
-			if (path == null) return path;
+			if (path == null)
+				return path;
 			if (Environment.IsRunningOnWindows)
 				path = path.Trim ();
 
-			if (path == String.Empty) return path;
-			
+			if (path.Length == 0)
+				return path;
+
 			// STEP 2: Check to see if this is only a root
-			string root = GetPathRoot (path);
+			string root = Path.GetPathRoot (path);
 			// it will return '\' for path '\', while it should return 'c:\' or so.
 			// Note: commenting this out makes the ened for the (target == 1...) check in step 5
 			//if (root == path) return path;
-				
+
 			// STEP 3: split the directories, this gets rid of consecutative "/"'s
-			string [] dirs = path.Split (DirectorySeparatorChar, AltDirectorySeparatorChar);
+			string[] dirs = path.Split (Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
 			// STEP 4: Get rid of directories containing . and ..
 			int target = 0;
-			
+
 			for (int i = 0; i < dirs.Length; i++) {
-				if (dirs [i] == "." || (i != 0 && dirs [i] == String.Empty)) continue;
-				else if (dirs [i] == "..") {
-					if (target != 0) target--;
-				}
-				else
-					dirs [target++] = dirs [i];
+				if (dirs[i] == "." || (i != 0 && dirs[i].Length == 0))
+					continue;
+				else if (dirs[i] == "..") {
+					if (target != 0)
+						target--;
+				} else
+					dirs[target++] = dirs[i];
 			}
 
 			// STEP 5: Combine everything.
-			if (target == 0 || (target == 1 && dirs [0] == ""))
+			if (target == 0 || (target == 1 && dirs[0] == ""))
 				return root;
 			else {
 				string ret = String.Join (DirectorySeparatorStr, dirs, 0, target);
-				switch (DirectorySeparatorChar) {
-				case '\\': // Windows
+				if (Environment.IsRunningOnWindows) {
+					if (!ret.StartsWith (root))
+						ret = root + ret;
 					// In GetFullPath(), it is assured that here never comes UNC. So this must only applied to such path that starts with '\', without drive specification.
-					if (path [0] != DirectorySeparatorChar && path.StartsWith (root)) {
+					if (path[0] != Path.DirectorySeparatorChar && path.StartsWith (root)) {
 						if (ret.Length <= 2 && !ret.EndsWith (DirectorySeparatorStr)) // '\' after "c:"
-							ret += DirectorySeparatorChar;
+							ret += Path.DirectorySeparatorChar;
 						return ret;
 					} else {
 						string current = Directory.GetCurrentDirectory ();
-						if (current.Length > 1 && current [1] == VolumeSeparatorChar) {
+						if (current.Length > 1 && current[1] == Path.VolumeSeparatorChar) {
 							// DOS local file path
-							if (ret.Length == 0 || IsDsc (ret [0]))
+							if (ret.Length == 0 || IsDsc (ret[0]))
 								ret += '\\';
 							return current.Substring (0, 2) + ret;
-						}
-						else if (IsDsc (current [current.Length - 1]) && IsDsc (ret [0]))
+						} else if (IsDsc (current[current.Length - 1]) && IsDsc (ret[0]))
 							return current + ret.Substring (1);
 						else
 							return current + ret;
 					}
-				default: // Unix/Mac
-					return ret;
 				}
+				return ret;
 			}
 		}
 	}
