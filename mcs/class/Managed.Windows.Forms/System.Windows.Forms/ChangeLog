@@ -4,6 +4,9 @@
 	on. Because thats how it rolls. (and this avoids it using ambient
 	colours).
 	* ThemeWin32Classic.cs: Use the proper back color for filling.
+	* Menu.cs: Use the system menu bar color for drawing menu
+	bars. Using the window back color will bring ambient colours into
+	the picture.
 
 2005-12-21  Alexander Olk  <alex.olk@googlemail.com>
 
