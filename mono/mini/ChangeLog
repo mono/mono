@@ -1,5 +1,8 @@
 2005-12-22  Zoltan Varga  <vargaz@gmail.com>
 
+	* aliasing.c (mono_build_aliasing_information): Add a workaround for
+	a crash seen on sparc.
+
 	* mini-sparc.c: Add implementation of Thread.MemoryBarrier.
 	
 	* cpu-sparc.md: Add memory_barrier opcode. Remove unused opcodes.
