@@ -507,8 +507,7 @@ namespace System.Windows.Forms {
 			NetAtoms[(int)NA._NET_WM_CONTEXT_HELP] = XInternAtom(DisplayHandle, "_NET_WM_CONTEXT_HELP", false);
 
 			// Clipboard support
-			//NetAtoms[(int)NA.CLIPBOARD] = XInternAtom(DisplayHandle, "CLIPBOARD", false);
-			NetAtoms[(int)NA.CLIPBOARD] = (int)Atom.XA_PRIMARY;
+			NetAtoms[(int)NA.CLIPBOARD] = XInternAtom (DisplayHandle, "CLIPBOARD", false);
 			NetAtoms[(int)NA.DIB] = (int)Atom.XA_PIXMAP;
 			NetAtoms[(int)NA.OEMTEXT] = XInternAtom(DisplayHandle, "COMPOUND_TEXT", false);
 			NetAtoms[(int)NA.UNICODETEXT] = XInternAtom(DisplayHandle, "UTF8_STRING", false);

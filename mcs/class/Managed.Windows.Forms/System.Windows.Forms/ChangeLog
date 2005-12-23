@@ -2,6 +2,9 @@
 
 	* TextBoxBase.cs: It's difficult to do, but you can have an empty
 	clipboard. This prevents a NullRef in that case.
+	* XplatUIX11.cs: Use CLIPBOARD not PRIMARY for our
+	clipboard. PRIMARY is for the currently selected text only. (We
+	should implement PRIMARY at some point.
 
 2005-12-21  Peter Dennis Bartok  <pbartok@novell.com>
 
