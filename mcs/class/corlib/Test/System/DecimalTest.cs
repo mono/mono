@@ -580,32 +580,30 @@ namespace MonoTests.System {
             }
         }
 
-	[Category("NotWorking")]
-	// see bugzilla #60227
-        public void TestConstructSingleRounding_NotWorking()
-        {
+	public void TestConstructSingleRounding_NowWorking ()
+	{
             decimal d;
 
             d = new Decimal(1765.23454f);
-            Assert("failed banker's rule rounding test 2", d == 1765.234m);
+            AssertEquals ("failed banker's rule rounding test 2", 1765.234m, d);
 
             d = new Decimal(0.00017652356f);
-            Assert("06", d == 0.0001765236m);
+            AssertEquals ("06", 0.0001765236m, d);
 
             d = new Decimal(0.000176523554f);
-            Assert("failed banker's rule rounding test 3", d == 0.0001765236m);
+            AssertEquals ("failed banker's rule rounding test 3", 0.0001765236m, d);
 
             d = new Decimal(0.00017652354f);
-            Assert("08", d == 0.0001765235m);
+            AssertEquals ("08", 0.0001765235m, d);
 
             d = new Decimal(0.00017652346f);
-            Assert("09", d == 0.0001765235m);
+            AssertEquals ("09", 0.0001765235m, d);
 
             d = new Decimal(0.000176523454f);
-            Assert("failed banker's rule rounding test 4", d == 0.0001765234m);
+            AssertEquals ("failed banker's rule rounding test 4", 0.0001765234m, d);
 
             d = new Decimal(0.00017652344f);
-            Assert("11", d == 0.0001765234m);
+            AssertEquals ("11", 0.0001765234m, d);
 	}
 
         public void TestConstructSingleRounding()

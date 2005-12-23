@@ -1,3 +1,9 @@
+2005-12-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DecimalTest.cs: Re-enabled Single rounding tests (which had nothing
+	to do with bug #60227). The problems were in the string output of the
+	float - which was then used to parse the decimal.
+
 2005-12-22  Raja R Harinath  <rharinath@novell.com>
 
 	* ConsoleTest.cs: Modernize to use attributes and Assert class.
