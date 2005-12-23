@@ -343,17 +343,6 @@ stmt: OP_MEMSET (base) "0" {
 	for (unit = align; unit >= 1; unit = unit >> 1) {
 		dest_reg2 = mono_regstate_next_int (s->rs);
 
-		/* Use two destination regs to increase paralellism */
-		if (size >= 2 * unit) {
-			MONO_EMIT_NEW_BIALU_IMM (s, OP_ADD_IMM, dest_reg2, state->left->tree->inst_basereg, state->left->tree->inst_offset + unit);
-
-			while (size >= (2 * unit)) {
-				MONO_EMIT_NEW_STORE_MEMBASE (s, size_to_ia64_store_membase_inc_reg (unit), dest_reg, 0, val_reg);
-				MONO_EMIT_NEW_STORE_MEMBASE (s, size_to_ia64_store_membase_inc_reg (unit), dest_reg2, 0, val_reg);
-				size -= 2 * unit;
-			}
-		}
-
 		while (size >= unit) {
 			MONO_EMIT_NEW_STORE_MEMBASE (s, size_to_ia64_store_membase_inc_reg (unit), dest_reg, 0, val_reg);
 			size -= unit;
