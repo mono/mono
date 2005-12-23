@@ -1,3 +1,8 @@
+2005-12-23  Miguel de Icaza  <miguel@novell.com>
+
+	* anonymous.cs (ScopeInfo.LinkScope): Do not link the scope to its
+	parent if its the same scope.  Fixes #77060.
+
 2005-12-14  Miguel de Icaza  <miguel@novell.com>
 
 	* convert.cs (ExplicitConversionCore): Check the return value from
