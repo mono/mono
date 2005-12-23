@@ -1,3 +1,7 @@
+2005-12-23  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* XslTransformTests.cs: Added bug numbers to test cases.
+
 2005-12-17  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* XsltCompileExceptionTests.cs: Added tests for ctors.

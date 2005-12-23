@@ -885,7 +885,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 		}
 
 		[Test]
-		[Category ("NotWorking")] // mono does not output newline after xml declaration
+		[Category ("NotWorking")] // bug #77082: mono does not output newline after xml declaration
 		public void Output_Indent_Xml ()
 		{
 			XsltArgumentList xsltArgs = new XsltArgumentList ();
@@ -953,7 +953,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 		}
 
 		[Test]
-		[Category ("NotWorking")] // mono does not output newline and indentation for non-html elements
+		[Category ("NotWorking")] // bug #77081: mono does not output newline and indentation for non-html elements
 		public void Output_Indent_Html ()
 		{
 			XsltArgumentList xsltArgs = new XsltArgumentList ();
