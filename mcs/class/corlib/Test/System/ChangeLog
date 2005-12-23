@@ -1,3 +1,7 @@
+2005-12-23  Sebastien Pouliot  <sebastien@ximian.com> 
+ 
+	* TimeZoneTest.cs: Added test cases for serialization interop.
+
 2005-12-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DecimalTest.cs: Re-enabled Single rounding tests (which had nothing
