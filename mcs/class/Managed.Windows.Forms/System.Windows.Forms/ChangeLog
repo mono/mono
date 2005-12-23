@@ -1,3 +1,15 @@
+2005-12-22  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* Control.cs: 
+	  - After many hours of debugging, for both Jackson and
+	    myself, it turns out that it helps to set the parent of a control
+	    if you want to actually see it onscreen. In the spirit of that
+	    discovery, we're now setting the parent of the control and
+	    it's children when the control's handle is created. This fix
+	    will make Lutz Roeder's Reflector run happily. 
+	  - now just creating the handle instead of the whole control when
+	    getting a graphics context for the control.
+
 2005-12-22  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* ScrollableControl.cs: When calculating the canvas, don't consider

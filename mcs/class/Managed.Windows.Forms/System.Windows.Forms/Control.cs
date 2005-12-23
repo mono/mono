@@ -946,6 +946,7 @@ namespace System.Windows.Forms
 
 		void DrawBackgroundImage (Graphics g)
 		{
+Console.WriteLine("Background image: {0}", background_image);
 			using (TextureBrush b = new TextureBrush (background_image)) {
 				g.FillRectangle (b, ClientRectangle);
 			}
@@ -2469,7 +2470,7 @@ namespace System.Windows.Forms
 
 		public Graphics CreateGraphics() {
 			if (!IsHandleCreated) {
-				this.CreateControl();
+				this.CreateHandle();
 			}
 			return Graphics.FromHwnd(this.window.Handle);
 		}
@@ -3001,6 +3002,21 @@ namespace System.Windows.Forms
 				creator_thread = Thread.CurrentThread;
 
 				OnHandleCreated(EventArgs.Empty);
+
+				// Set our handle with our parent
+				if ((parent != null) && (parent.IsHandleCreated)) {
+					XplatUI.SetParent(window.Handle, parent.Handle);
+				}
+
+				// Set our handle as parent for our children
+				Control [] children;
+
+				children = child_controls.GetAllControls ();
+				for (int i = 0; i < children.Length; i++ ) {
+					if (children[i].IsHandleCreated) {
+						XplatUI.SetParent(children[i].Handle, window.Handle); 
+					}
+				}
 			}
 
 			// Find out where the window manager placed us
