@@ -1,3 +1,23 @@
+2005-12-23  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ScriptCompilerInfo.cs: Fixed line endings.
+	* XslStylesheet.cs: Beautify error messages.
+	* Debug.cs: Fixed line endings.
+	* XslOutput.cs: Indent is now bool instead of string, use
+	MoveToAttribute to navigate through attributes instead of using
+	GetAttribute, as we also need to distinguish attributes with 
+	zero-length value from attributes that are not specified for
+	correct implementation of DOCTYPE. Implemented validation for 
+	value of "omit-xml-declaration", "standalone" and "indent".
+	We now throw a XsltCompileException for unknown attribute.
+	* XmlWriterEmitter.cs: only skip WriteDocType is systemId is null.
+	* HtmlEmitter.cs: XslOutput.Indent is now bool. Fixed WriteDocType
+	to match MS.NET.
+	* XmlDecimalFormat.cs: Beautify error messages.
+	* XslTemplate.cs: Beautify error messages.
+	* GenericOutputter.cs: XslOutput.Indent is now bool.
+	* Compiler.cs: Beautify error messages.
+
 2005-12-21  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XslTemplate.cs : don't check name and mode attributes on

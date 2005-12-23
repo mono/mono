@@ -56,9 +56,9 @@ namespace Mono.Xml.Xsl
 		NONE,
 		YES,
 		NO
-        }
-	
-	internal class XslOutput	// also usable for xsl:result-document
+	}
+
+	internal class XslOutput // also usable for xsl:result-document
 	{
 		string uri;
 		QName customMethod;
@@ -70,11 +70,18 @@ namespace Mono.Xml.Xsl
 		string doctypePublic;
 		string doctypeSystem;
 		QName [] cdataSectionElements;
-		string indent;
+		IndentType indent = IndentType.NotSet;
 		string mediaType;
 
 		// for compilation only.
 		ArrayList cdSectsList = new ArrayList ();
+
+		private enum IndentType
+		{
+			NotSet,
+			Yes,
+			No
+		}
 
 		public XslOutput (string uri)
 		{
@@ -120,8 +127,8 @@ namespace Mono.Xml.Xsl
 			}
 		}
 
-		public string Indent {
-			get { return indent; }
+		public bool Indent {
+			get { return indent == IndentType.Yes; }
 		}
 
 		public string MediaType {
@@ -130,84 +137,157 @@ namespace Mono.Xml.Xsl
 
 		public void Fill (XPathNavigator nav)
 		{
-			string att;
-			
-			att = nav.GetAttribute ("cdata-section-elements", "");
-			if (att != String.Empty)
-				cdSectsList.AddRange (XslNameUtil.FromListString (att, nav));
-
-			att = nav.GetAttribute ("method", "");
-
-			if (att != String.Empty) {
-				switch (att) {
-				case "xml":
-					method = OutputMethod.XML;
-					break;
-				case "html":
-					omitXmlDeclaration = true;
-					method = OutputMethod.HTML;
-					break;
-				case "text":
-					omitXmlDeclaration = true;
-					method = OutputMethod.Text;
-					break;
-				default:
-					method = OutputMethod.Custom;
-					customMethod = XslNameUtil.FromString (att, nav);
-					if (customMethod.Namespace == String.Empty) {
-						IXmlLineInfo li = nav as IXmlLineInfo;
-						throw new XsltCompileException (new ArgumentException ("Invalid output method value: '" + att + 
-							"'. It must be either 'xml' or 'html' or 'text' or QName."),
-							nav.BaseURI,
-							li != null ? li.LineNumber : 0,
-							li != null ? li.LinePosition : 0);
-					}
-					break;
+			if (nav.MoveToFirstAttribute ()) {
+				ProcessAttribute (nav);
+				while (nav.MoveToNextAttribute ()) {
+					ProcessAttribute (nav);
 				}
+
+				// move back to original position
+				nav.MoveToParent ();
+			}
+		}
+
+		private void ProcessAttribute (XPathNavigator nav)
+		{
+			// skip attributes from non-default namespace
+			if (nav.NamespaceURI != string.Empty) {
+				return;
 			}
 
-			att = nav.GetAttribute ("version", "");
-			if (att != String.Empty)
-				this.version = att;
+			string value = nav.Value;
 
-			att = nav.GetAttribute ("encoding", "");
-			if (att != String.Empty)
-				try {
-					this.encoding = System.Text.Encoding.GetEncoding (att);
-				}
-				catch (ArgumentException) {
-					// MS.NET just leaves the default encoding when encoding is unknown
-				}
-				catch (NotSupportedException) {
-					// Workaround for a bug in System.Text, it throws invalid exception
-				}
+			switch (nav.LocalName) {
+				case "cdata-section-elements":
+					if (value.Length > 0) {
+						cdSectsList.AddRange (XslNameUtil.FromListString (value, nav));
+					}
+					break;
+				case "method":
+					if (value.Length == 0) {
+						break;
+					}
 
-			att = nav.GetAttribute ("standalone", "");
-			if (att != String.Empty)
-				//TODO: Should we validate values?                
-				this.standalone = att == "yes" ? StandaloneType.YES : StandaloneType.NO;
-
-
-			att = nav.GetAttribute ("doctype-public", "");
-			if (att != String.Empty)
-				this.doctypePublic = att;
-
-			att = nav.GetAttribute ("doctype-system", "");
-			if (att != String.Empty)
-				this.doctypeSystem = att;
-
-			att = nav.GetAttribute ("media-type", "");
-			if (att != String.Empty)
-				this.mediaType = att;
-
-			att = nav.GetAttribute ("omit-xml-declaration", "");
-			if (att != String.Empty)
-				this.omitXmlDeclaration = att == "yes";
-
-			att = nav.GetAttribute ("indent", "");
-			if (att != String.Empty)
-				this.indent = att;
+					switch (value) {
+						case "xml":
+							method = OutputMethod.XML;
+							break;
+						case "html":
+							omitXmlDeclaration = true;
+							if (indent == IndentType.NotSet) {
+								indent = IndentType.Yes;
+							}
+							method = OutputMethod.HTML;
+							break;
+						case "text":
+							omitXmlDeclaration = true;
+							method = OutputMethod.Text;
+							break;
+						default:
+							method = OutputMethod.Custom;
+							customMethod = XslNameUtil.FromString (value, nav);
+							if (customMethod.Namespace == String.Empty) {
+								IXmlLineInfo li = nav as IXmlLineInfo;
+								throw new XsltCompileException (new ArgumentException (
+									"Invalid output method value: '" + value + "'. It" +
+									" must be either 'xml' or 'html' or 'text' or QName."),
+									nav.BaseURI,
+									li != null ? li.LineNumber : 0,
+									li != null ? li.LinePosition : 0);
+							}
+							break;
+					}
+					break;
+				case "version":
+					if (value.Length > 0) {
+						this.version = value;
+					}
+					break;
+				case "encoding":
+					if (value.Length > 0) {
+						try {
+							this.encoding = System.Text.Encoding.GetEncoding (value);
+						} catch (ArgumentException) {
+							// MS.NET just leaves the default encoding when encoding is unknown
+						} catch (NotSupportedException) {
+							// Workaround for a bug in System.Text, it throws invalid exception
+						}
+					}
+					break;
+				case "standalone":
+					switch (value) {
+						case "yes":
+							this.standalone = StandaloneType.YES;
+							break;
+						case "no":
+							this.standalone = StandaloneType.NO;
+							break;
+						default:
+							IXmlLineInfo li = nav as IXmlLineInfo;
+							throw new XsltCompileException (new XsltException (
+								"'" + value + "' is an invalid value for 'standalone'" +
+								" attribute.", (Exception) null),
+								nav.BaseURI,
+								li != null ? li.LineNumber : 0,
+								li != null ? li.LinePosition : 0);
+					}
+					break;
+				case "doctype-public":
+					this.doctypePublic = value;
+					break;
+				case "doctype-system":
+					this.doctypeSystem = value;
+					break;
+				case "media-type":
+					if (value.Length > 0) {
+						this.mediaType = value;
+					}
+					break;
+				case "omit-xml-declaration":
+					switch (value) {
+						case "yes":
+							this.omitXmlDeclaration = true;
+							break;
+						case "no":
+							this.omitXmlDeclaration = false;
+							break;
+						default:
+							IXmlLineInfo li = nav as IXmlLineInfo;
+							throw new XsltCompileException (new XsltException (
+								"'" + value + "' is an invalid value for 'omit-xml-declaration'" +
+								" attribute.", (Exception) null),
+								nav.BaseURI,
+								li != null ? li.LineNumber : 0,
+								li != null ? li.LinePosition : 0);
+					}
+					break;
+				case "indent":
+					switch (value) {
+						case "yes":
+							this.indent = IndentType.Yes;
+							break;
+						case "no":
+							this.indent = IndentType.No;
+							break;
+						default:
+							IXmlLineInfo li = nav as IXmlLineInfo;
+							throw new XsltCompileException (new XsltException (
+								"'" + value + "' is an invalid value for 'indent'" +
+								" attribute.", (Exception) null),
+								nav.BaseURI,
+								li != null ? li.LineNumber : 0,
+								li != null ? li.LinePosition : 0);
+					}
+					break;
+				default:
+					IXmlLineInfo li = nav as IXmlLineInfo;
+					throw new XsltCompileException (new XsltException (
+						"'" + nav.LocalName + "' is an invalid attribute for 'output'" +
+						" element.", (Exception) null),
+						nav.BaseURI,
+						li != null ? li.LineNumber : 0,
+						li != null ? li.LinePosition : 0);
+			}
 		}
 	}
-
 }

@@ -1,3 +1,10 @@
+2005-12-17  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* XsltCompileExceptionTests.cs: Added tests for ctors.
+	* XsltExceptionTests.cs: Added tests for ctors.
+	* XslTransformTests.cs: Added tests for validation of <xsl:output>
+	attributes.
+
 2005-12-12  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XslTransformTests.cs : (LocalParameter) [NotDotNet] should not have

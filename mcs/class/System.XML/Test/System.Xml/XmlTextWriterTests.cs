@@ -124,7 +124,15 @@ namespace MonoTests.System.Xml
 			CreateXmlTextWriter ();
 
 			xtw.WriteAttributeString ("xml", "space", "whatever", "default");
-			Assert.AreEqual ("xml:space='default'", StringWriterText, "#1");
+			Assert.AreEqual ("xml:space='default'", StringWriterText, "#2");
+
+			sw.GetStringBuilder ().Length = 0;
+			CreateXmlTextWriter ();
+
+			xtw.WriteStartElement ("person");
+			xtw.WriteAttributeString ("xml", "space", "whatever", "default");
+			xtw.WriteEndElement ();
+			Assert.AreEqual ("<person xml:space='default' />", StringWriterText, "#3");
 		}
 
 		// MS special cases any attribute with prefix "xml"
@@ -140,6 +148,16 @@ namespace MonoTests.System.Xml
 
 			xtw.WriteAttributeString ("xml", "else", null, "whatever");
 			Assert.AreEqual ("xml:else='whatever'", StringWriterText, "#2");
+
+			sw.GetStringBuilder ().Length = 0;
+			CreateXmlTextWriter ();
+
+			xtw.WriteStartElement ("person");
+			xtw.WriteAttributeString ("xml", "something", "whatever", "default");
+			xtw.WriteAttributeString ("xml", "else", null, "whatever");
+			xtw.WriteEndElement ();
+			Assert.AreEqual ("<person xml:something='default' xml:else='whatever' />", 
+				StringWriterText, "#3");
 		}
 
 		[Test]

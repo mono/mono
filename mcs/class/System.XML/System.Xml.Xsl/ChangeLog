@@ -1,3 +1,15 @@
+2005-12-23  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* IXsltContextFunction.cs: Fixed line endings (all CRLF).
+	* IXsltContextVariable.cs: Fixed line endings (all CRLF).
+	* XsltContext.cs: Fixed line endings (all CRLF).
+	* XsltCompileException.cs: Fixed line endings (all CRLF).
+	Fixed message to correspond with both MS.NET 1.x and 2.0.
+	* XslTransform.cs: Fixed line endings (all CRLF).
+	* XsltArgumentList.cs: Fixed line endings (all CRLF).
+	* XsltException.cs: Fixed line endings (all CRLF). Fixed message to
+	correspond with MS.NET 1.x and 2.0.
+
 2005-11-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XslCompiledTransform.cs : added non-compiler transformer (aka. stub).

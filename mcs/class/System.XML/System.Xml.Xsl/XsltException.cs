@@ -29,6 +29,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Globalization;
 using System.Runtime.Serialization;
 using System.Xml.XPath;
 using System.Security.Permissions;
@@ -43,19 +44,19 @@ namespace System.Xml.Xsl
 			IXmlLineInfo li = nav as IXmlLineInfo;
 			int lineNumber = li != null ? li.LineNumber : 0;
 			int linePosition = li != null ? li.LinePosition : 0;
-			string sourceUri = nav != null ? nav.BaseURI : String.Empty;
-			return CreateMessage (lineNumber, linePosition, sourceUri, message);
+			string sourceUri = nav != null ? nav.BaseURI : string.Empty;
+
+			if (lineNumber != 0) {
+				return CreateMessage ("{0} at {1}({2},{3}).", message, lineNumber, linePosition, sourceUri);
+			}
+			return CreateMessage ("{0}.", message, lineNumber, linePosition, sourceUri);
 		}
 
-		static string CreateMessage (int lineNumber, int linePosition, string sourceUri, string msg)
+		static string CreateMessage (string msgFormat, string message, int lineNumber, int linePosition, string sourceUri)
 		{
-			if (sourceUri != null)
-				msg += " " + sourceUri;
-			if (lineNumber != 0)
-				msg += " line " + lineNumber;
-			if (linePosition != 0)
-				msg += ", position " + linePosition;
-			return msg;
+			return string.Format (CultureInfo.InvariantCulture, msgFormat,
+				message, sourceUri, lineNumber.ToString (CultureInfo.InvariantCulture),
+				linePosition.ToString (CultureInfo.InvariantCulture));
 		}
 
 		#region Fields
@@ -70,18 +71,18 @@ namespace System.Xml.Xsl
 
 #if NET_2_0
 		public XsltException ()
-			: base (String.Empty, null)
+			: this (string.Empty, (Exception) null)
 		{
 		}
 
 		public XsltException (string message)
-			: base (message, null)
+			: this (message, (Exception) null)
 		{
 		}
 #endif
 
 		public XsltException (string message, Exception innerException)
-			: base (message, innerException)
+			: this ("{0}", message, innerException, 0, 0, (string) null)
 		{
 		}
 
@@ -92,8 +93,8 @@ namespace System.Xml.Xsl
 			sourceUri = info.GetString ("sourceUri");
 		}
 
-		internal XsltException (string message, Exception innerException, int lineNumber, int linePosition, string sourceUri)
-			: base (CreateMessage (lineNumber, linePosition, sourceUri, message), innerException)
+		internal XsltException (string msgFormat, string message, Exception innerException, int lineNumber, int linePosition, string sourceUri)
+			: base (CreateMessage (msgFormat, message, lineNumber, linePosition, sourceUri), innerException)
 		{
 			this.lineNumber = lineNumber;
 			this.linePosition = linePosition;
@@ -106,7 +107,7 @@ namespace System.Xml.Xsl
 			IXmlLineInfo li = nav as IXmlLineInfo;
 			this.lineNumber = li != null ? li.LineNumber : 0;
 			this.linePosition = li != null ? li.LinePosition : 0;
-			this.sourceUri = nav != null ? nav.BaseURI : String.Empty;
+			this.sourceUri = nav != null ? nav.BaseURI : string.Empty;
 		}
 
 		#endregion
@@ -131,14 +132,7 @@ namespace System.Xml.Xsl
 
 		public override string Message {
 			get {
-				string msg = base.Message;
-				if (sourceUri != null)
-					msg += " " + sourceUri;
-				if (lineNumber != 0)
-					msg += " line " + lineNumber;
-				if (linePosition != 0)
-					msg += ", position " + linePosition;
-				return msg;
+				return base.Message;
 			}
 		}
 

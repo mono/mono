@@ -124,21 +124,21 @@ namespace Mono.Xml.Xsl {
 			// move to root element
 			while (c.Input.NodeType != XPathNodeType.Element)
 				if (!c.Input.MoveToNext ())
-					throw new XsltCompileException ("Stylesheet root element must be either \"stylesheet\" or \"transform\" or any literal element.", null, c.Input);
+					throw new XsltCompileException ("Stylesheet root element must be either \"stylesheet\" or \"transform\" or any literal element", null, c.Input);
 
 			if (c.Input.NamespaceURI != XsltNamespace) {
 				if (c.Input.GetAttribute ("version", XsltNamespace) == String.Empty)
-					throw new XsltCompileException ("Mandatory global attribute version is missing.", null, c.Input);
+					throw new XsltCompileException ("Mandatory global attribute version is missing", null, c.Input);
 				// then it is simplified stylesheet.
 				templates.Add (new XslTemplate (c));
 			} else {
 				if (c.Input.LocalName != "stylesheet" &&
 					c.Input.LocalName != "transform")
-					throw new XsltCompileException ("Stylesheet root element must be either \"stylesheet\" or \"transform\" or any literal element.", null, c.Input);
+					throw new XsltCompileException ("Stylesheet root element must be either \"stylesheet\" or \"transform\" or any literal element", null, c.Input);
 
 				version = c.Input.GetAttribute ("version", "");
 				if (version == String.Empty)
-					throw new XsltCompileException ("Mandatory attribute version is missing.", null, c.Input);
+					throw new XsltCompileException ("Mandatory attribute version is missing", null, c.Input);
 
 				extensionElementPrefixes = ParseMappedPrefixes (c.GetAttribute ("extension-element-prefixes"), c.Input);
 				excludeResultPrefixes = ParseMappedPrefixes (c.GetAttribute ("exclude-result-prefixes"), c.Input);
@@ -334,7 +334,7 @@ namespace Mono.Xml.Xsl {
 			if (c.Input.NamespaceURI != XsltNamespace) {
 				if (c.Input.GetAttribute ("version",
 					XsltNamespace) == String.Empty)
-					throw new XsltCompileException ("Mandatory global attribute version is missing.", null, c.Input);
+					throw new XsltCompileException ("Mandatory global attribute version is missing", null, c.Input);
 				// simplified style == never imports.
 				// Keep this position
 				return;
@@ -449,7 +449,7 @@ namespace Mono.Xml.Xsl {
 					break;
 				default:
 					if (version == "1.0")
-						throw new XsltCompileException ("Unrecognized top level element after imports.", null, c.Input);
+						throw new XsltCompileException ("Unrecognized top level element after imports", null, c.Input);
 					break;
 				}
 				break;

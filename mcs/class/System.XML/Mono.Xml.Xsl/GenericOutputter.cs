@@ -145,10 +145,10 @@ namespace Mono.Xml.Xsl
 					break;
 				case OutputMethod.XML:
 					XmlTextWriter w = new XmlTextWriter (pendingTextWriter);
-					if (xslOutput.Indent == "yes")
+					if (xslOutput.Indent)
 						w.Formatting = Formatting.Indented;
 
-					_emitter = new XmlWriterEmitter (w);					
+					_emitter = new XmlWriterEmitter (w);
 					if (!_omitXmlDeclaration && !xslOutput.OmitXmlDeclaration)
 						_emitter.WriteStartDocument (
 							_encoding != null ? _encoding : xslOutput.Encoding,

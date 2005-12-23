@@ -81,7 +81,7 @@ namespace Mono.Xml.Xsl.Operations {
 							while ((c = (char)r.Read ()) != unq) {
 								sb.Append (c);
 								if (r.Peek () == -1)
-									throw new XsltCompileException ("unexpected end of AVT", null, comp.Input);
+									throw new XsltCompileException ("Unexpected end of AVT", null, comp.Input);
 							}
 								
 							
@@ -92,7 +92,7 @@ namespace Mono.Xml.Xsl.Operations {
 							sb.Append (c);
 							break;
 						}
-						if (r.Peek () == -1) throw new XsltCompileException ("unexpected end of AVT", null, comp.Input);
+						if (r.Peek () == -1) throw new XsltCompileException ("Unexpected end of AVT", null, comp.Input);
 					}
 					
 						

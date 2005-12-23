@@ -70,13 +70,13 @@ namespace Mono.Xml.Xsl {
 					case "name": break; // already handled
 					case "decimal-separator":
 						if (n.Value.Length != 1)
-							throw new XsltCompileException ("XSLT decimal-separator value must be exact one character.", null, n);
+							throw new XsltCompileException ("XSLT decimal-separator value must be exact one character", null, n);
 						info.NumberDecimalSeparator = n.Value;
 						break;
 						
 					case "grouping-separator":
 						if (n.Value.Length != 1)
-							throw new XsltCompileException ("XSLT grouping-separator value must be exact one character.", null, n);
+							throw new XsltCompileException ("XSLT grouping-separator value must be exact one character", null, n);
 						info.NumberGroupSeparator = n.Value;
 						break;
 						
@@ -85,7 +85,7 @@ namespace Mono.Xml.Xsl {
 						break;
 					case "minus-sign":
 						if (n.Value.Length != 1)
-							throw new XsltCompileException ("XSLT minus-sign value must be exact one character.", null, n);
+							throw new XsltCompileException ("XSLT minus-sign value must be exact one character", null, n);
 						info.NegativeSign = n.Value;
 						break;
 					case "NaN":
@@ -93,27 +93,27 @@ namespace Mono.Xml.Xsl {
 						break;
 					case "percent":
 						if (n.Value.Length != 1)
-							throw new XsltCompileException ("XSLT percent value must be exact one character.", null, n);
+							throw new XsltCompileException ("XSLT percent value must be exact one character", null, n);
 						info.PercentSymbol = n.Value;
 						break;
 					case "per-mille":
 						if (n.Value.Length != 1)
-							throw new XsltCompileException ("XSLT per-mille value must be exact one character.", null, n);
+							throw new XsltCompileException ("XSLT per-mille value must be exact one character", null, n);
 						info.PerMilleSymbol = n.Value;
 						break;
 					case "digit":
 						if (n.Value.Length != 1)
-							throw new XsltCompileException ("XSLT digit value must be exact one character.", null, n);
+							throw new XsltCompileException ("XSLT digit value must be exact one character", null, n);
 						digit = n.Value [0];
 						break;
 					case "zero-digit":
 						if (n.Value.Length != 1)
-							throw new XsltCompileException ("XSLT zero-digit value must be exact one character.", null, n);
+							throw new XsltCompileException ("XSLT zero-digit value must be exact one character", null, n);
 						zeroDigit = n.Value [0];
 						break;
 					case "pattern-separator":
 						if (n.Value.Length != 1)
-							throw new XsltCompileException ("XSLT pattern-separator value must be exact one character.", null, n);
+							throw new XsltCompileException ("XSLT pattern-separator value must be exact one character", null, n);
 						patternSeparator = n.Value [0];
 						break;
 					}

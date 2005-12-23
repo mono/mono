@@ -47,7 +47,7 @@ namespace Mono.Xml.Xsl
 			this.writer = writer;
 		}
 
-		#region # Emitter's methods implementaion			
+		#region # Emitter's methods implementaion
 		
 		public override void WriteStartDocument (Encoding encoding, StandaloneType standalone)
 		{
@@ -86,11 +86,9 @@ namespace Mono.Xml.Xsl
 
 		public override void WriteDocType (string type, string publicId, string systemId)
 		{
-			if (publicId != null && publicId != String.Empty &&
-				(systemId == null || systemId == String.Empty))
-				// This is an error.
-				// when PUBLIC id exists, SYSTEM id is required.
+			if (systemId == null) {
 				return;
+			}
 			writer.WriteDocType (type, publicId, systemId, null);
 		}
 

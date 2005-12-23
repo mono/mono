@@ -137,7 +137,7 @@ namespace Mono.Xml.Xsl.Operations
 						case "sort":
 							if (xslForEach)
 								break;
-							throw new XsltCompileException ("'sort' element is not allowed here as a templete content.", null, n);
+							throw new XsltCompileException ("'sort' element is not allowed here as a templete content", null, n);
 						default:
 							// TODO: handle fallback, like we should
 //							throw new XsltCompileException ("Did not recognize element " + n.Name, null, n);

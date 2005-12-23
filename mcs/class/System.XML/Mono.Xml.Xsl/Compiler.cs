@@ -139,7 +139,7 @@ namespace Mono.Xml.Xsl
 
 			// reject empty document.
 			if (nav.NodeType == XPathNodeType.Root && !nav.MoveToFirstChild ())
-				throw new XsltCompileException ("Stylesheet root element must be either \"stylesheet\" or \"transform\" or any literal element.", null, nav);
+				throw new XsltCompileException ("Stylesheet root element must be either \"stylesheet\" or \"transform\" or any literal element", null, nav);
 				
 			outputs [""] = new XslOutput ("");
 				
@@ -211,7 +211,7 @@ namespace Mono.Xml.Xsl
 			using (Stream s = (Stream)res.GetEntity (absUri, null, typeof(Stream)))
 			{
 				if (s == null)
-					throw new XsltCompileException ("Can not access URI "+absUri.ToString (), null, Input);
+					throw new XsltCompileException ("Can not access URI " + absUri.ToString (), null, Input);
 				XmlValidatingReader vr = new XmlValidatingReader (new XmlTextReader (absUriString, s, nsMgr.NameTable));
 				vr.ValidationType = ValidationType.None;
 				XPathNavigator n = new XPathDocument (vr, XmlSpace.Preserve).CreateNavigator ();
@@ -299,7 +299,7 @@ namespace Mono.Xml.Xsl
 			case "yes": return true;
 			case "no": return false;
 			default:
-				throw new XsltCompileException ("invalid value for " + localName, null, Input);
+				throw new XsltCompileException ("Invalid value for " + localName, null, Input);
 			}
 		}
 		
@@ -333,7 +333,7 @@ namespace Mono.Xml.Xsl
 		public void AssertAttribute (string localName, string ns)
 		{
 			if (Input.GetAttribute (localName, ns) == null)
-				throw new XsltCompileException ("Was expecting the " + localName + " attribute.", null, Input);
+				throw new XsltCompileException ("Was expecting the " + localName + " attribute", null, Input);
 		}
 		
 		public XslAvt ParseAvt (string s)
@@ -350,7 +350,7 @@ namespace Mono.Xml.Xsl
 			if (pattern == null || pattern == "") return null;
 			Pattern p = Pattern.Compile (pattern, this);
 			if (p == null)
-				throw new XsltCompileException (String.Format ("Invalid pattern '{0}'.", pattern), null, loc);
+				throw new XsltCompileException (String.Format ("Invalid pattern '{0}'", pattern), null, loc);
 			exprStore.AddPattern (p, this);
 			
 			return p;
@@ -524,7 +524,7 @@ namespace Mono.Xml.Xsl
 				if (nm.Name != String.Empty)
 					XmlConvert.VerifyNCName (nm.Name);
 			} catch (XmlException ex) {
-				throw new XsltCompileException ("Invalid qualified name.", ex, Input);
+				throw new XsltCompileException ("Invalid qualified name", ex, Input);
 			}
 			XslDecimalFormat df = new XslDecimalFormat (this);
 			
@@ -567,7 +567,7 @@ namespace Mono.Xml.Xsl
 				case "format-number": return new XsltFormatNumber (args, this);
 				case "key":
 					if (KeyCompilationMode)
-						throw new XsltCompileException ("Cannot use key() function inside key definition.", null, this.Input);
+						throw new XsltCompileException ("Cannot use key() function inside key definition", null, this.Input);
 					return new XsltKey (args, this);
 				case "document": return new XsltDocument (args, this);
 			}

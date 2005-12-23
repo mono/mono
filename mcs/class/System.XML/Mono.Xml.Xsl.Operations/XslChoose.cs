@@ -69,7 +69,7 @@ namespace Mono.Xml.Xsl.Operations {
 
 				default:
 					if (c.CurrentStylesheet.Version == "1.0")
-						throw new XsltCompileException ("XSLT choose element accepts only when and otherwise elements.", null, c.Input);
+						throw new XsltCompileException ("XSLT choose element accepts only when and otherwise elements", null, c.Input);
 					break;
 				}
 			} while (c.Input.MoveToNext ());

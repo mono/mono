@@ -68,7 +68,7 @@ namespace Mono.Xml.Xsl.Operations {
 			try {
 				XmlConvert.VerifyName (name.Name);
 			} catch (XmlException ex) {
-				throw new XsltCompileException ("Variable name is not qualified name.", ex, c.Input);
+				throw new XsltCompileException ("Variable name is not qualified name", ex, c.Input);
 			}
 
 			string sel = c.GetAttribute ("select");
@@ -167,7 +167,7 @@ namespace Mono.Xml.Xsl.Operations {
 			
 			if (varInfo.Contains (this)) {
 				if (varInfo [this] == busyObject)
-					throw new XsltException ("Circular dependency was detected.", null, p.CurrentNode);
+					throw new XsltException ("Circular dependency was detected", null, p.CurrentNode);
 				return;
 			}
 			

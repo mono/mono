@@ -54,7 +54,7 @@ namespace Mono.Xml.Xsl.Operations {
 			{
 				do {
 					if (c.Input.NamespaceURI == String.Empty && c.Input.LocalName != "use-attribute-sets")
-						throw new XsltCompileException ("Unrecognized attribute \"" + c.Input.Name + "\" in XSLT copy element.", null, c.Input);
+						throw new XsltCompileException ("Unrecognized attribute \"" + c.Input.Name + "\" in XSLT copy element", null, c.Input);
 				} while (c.Input.MoveToNextAttribute ());
 				c.Input.MoveToParent ();
 			}
@@ -75,7 +75,7 @@ namespace Mono.Xml.Xsl.Operations {
 					foreach (XmlQualifiedName s in useAttributeSets) {
 						XslAttributeSet attset = p.ResolveAttributeSet (s);
 						if (attset == null)
-							throw new XsltException ("Attribute set was not found.", null, p.CurrentNode);
+							throw new XsltException ("Attribute set was not found", null, p.CurrentNode);
 						attset.Evaluate (p);
 					}
 

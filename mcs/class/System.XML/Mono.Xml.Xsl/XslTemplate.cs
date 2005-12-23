@@ -262,7 +262,7 @@ namespace Mono.Xml.Xsl {
 			    c.Input.MoveToAttribute ("mode", String.Empty)) {
 				c.Input.MoveToParent ();
 				if (!c.Input.MoveToAttribute ("match", String.Empty))
-					throw new XsltCompileException ("XSLT 'template' element must not have 'mode' attribute when it does not have 'match' attribute.", null, c.Input);
+					throw new XsltCompileException ("XSLT 'template' element must not have 'mode' attribute when it does not have 'match' attribute", null, c.Input);
 				c.Input.MoveToParent ();
 			}
 
@@ -280,7 +280,7 @@ namespace Mono.Xml.Xsl {
 					try {
 						this.priority = double.Parse (pri, CultureInfo.InvariantCulture);
 					} catch (FormatException ex) {
-						throw new XsltException ("Invalid priority number format.", ex, c.Input);
+						throw new XsltException ("Invalid priority number format", ex, c.Input);
 					}
 				}
 			}

@@ -1,3 +1,15 @@
+2005-12-23  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* XslVariable.cs: Beautify error messages.
+	* XslElement.cs: Same.
+	* XslAvt.cs: Same.
+	* XslAttribute.cs: Same.
+	* XslApplyTemplates.cs: Same.
+	* XslTemplateContent.cs: Same.
+	* XslCallTemplate.cs: Same.
+	* XslCopy.cs: Same.
+	* XslChoose.cs: Same.
+
 2005-03-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XslVariable.cs : removed last ListIterator.ctor() argument.

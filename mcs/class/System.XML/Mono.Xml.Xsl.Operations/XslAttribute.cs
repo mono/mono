@@ -55,7 +55,7 @@ namespace Mono.Xml.Xsl.Operations {
 			nsDecls = c.GetNamespacesToCopy ();
 			name = c.ParseAvtAttribute ("name");
 			if (name == null)
-				throw new XsltCompileException ("attribute \"name\" is required on XSLT attribute element.", null, c.Input);
+				throw new XsltCompileException ("Attribute \"name\" is required on XSLT attribute element", null, c.Input);
 			ns = c.ParseAvtAttribute ("namespace");
 
 			calcName = XslAvt.AttemptPreCalc (ref name);
@@ -71,7 +71,7 @@ namespace Mono.Xml.Xsl.Operations {
 					if (calcPrefix != String.Empty)
 						XmlConvert.VerifyNCName (calcPrefix);
 				} catch (XmlException ex) {
-					throw new XsltCompileException ("Invalid attribute name.", ex, c.Input);
+					throw new XsltCompileException ("Invalid attribute name", ex, c.Input);
 				}
 			}
 

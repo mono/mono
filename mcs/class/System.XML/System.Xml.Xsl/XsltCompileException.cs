@@ -42,12 +42,11 @@ namespace System.Xml.Xsl
 
 #if NET_2_0
 		public XsltCompileException ()
-			: base (String.Empty, null)
 		{
 		}
 
 		public XsltCompileException (string message)
-			: base (message, null)
+			: base (message)
 		{
 		}
 
@@ -63,7 +62,12 @@ namespace System.Xml.Xsl
 		}
 
 		public XsltCompileException (Exception inner, String sourceUri, int lineNumber, int linePosition)
-			: base (Locale.GetText ("XSLT compile error"), inner, lineNumber, linePosition, sourceUri)
+#if NET_2_0
+			: base (lineNumber != 0 ? "{0} at {1}({2},{3}). See InnerException for details." : "{0}.",
+				"XSLT compile error", inner, lineNumber, linePosition, sourceUri)
+#else
+			: base ("{0}{1}({2},{3}) :\n", string.Empty, inner, lineNumber, linePosition, sourceUri)
+#endif
 		{
 		}
 

@@ -55,7 +55,7 @@ namespace Mono.Xml.Xsl
 		public HtmlEmitter (TextWriter writer, XslOutput output)
 		{
 			this.writer = writer;
-			indent = !(output.Indent == "no");
+			indent = output.Indent;
 			elementNameStack = new Stack ();
 			nonHtmlDepth = -1;
 			outputEncoding = writer.Encoding == null ? output.Encoding : writer.Encoding;
@@ -77,16 +77,16 @@ namespace Mono.Xml.Xsl
 		public override void WriteDocType (string name, string publicId, string systemId)
 		{
 			writer.Write ("<!DOCTYPE html ");
-			if (publicId != null && publicId != String.Empty) {
+			if (publicId != null) {
 				writer.Write ("PUBLIC \"");
 				writer.Write (publicId);
 				writer.Write ("\" ");
-				if (systemId != null && systemId != String.Empty) {
+				if (systemId != null) {
 					writer.Write ("\"");
  					writer.Write (systemId);
 					writer.Write ("\"");
 				}
-			} else if (systemId != null && systemId != String.Empty) {
+			} else if (systemId != null) {
 				writer.Write ("SYSTEM \"");
 				writer.Write (systemId);
 				writer.Write ('\"');

@@ -1,3 +1,7 @@
+2005-12-23  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* XmlTextWriterTests.cs: Improved coverage of xml prefix tests.
+
 2005-12-16  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* XmlTextWriterTests.cs: Fixed some tests that caught exception to

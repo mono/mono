@@ -1,3 +1,8 @@
+2005-12-17  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* System.Xml_test.dll.sources: Added XsltCompilerExceptionTests.cs
+	and XsltExceptionTests.cs.
+
 2005-12-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.Xml_test.dll.sources: Added XPathNavigatorReaderTests.cs.

@@ -87,5 +87,7 @@ System.Xml/XmlSecureResolverCas.cs
 System.Xml.Schema/XmlSchemaExceptionCas.cs
 System.Xml.Xsl/XsltArgumentListCas.cs
 System.Xml.Xsl/XsltCompileExceptionCas.cs
+System.Xml.Xsl/XsltCompileExceptionTests.cs
 System.Xml.Xsl/XsltExceptionCas.cs
+System.Xml.Xsl/XsltExceptionTests.cs
 System.Xml.XPath/XPathExceptionCas.cs
