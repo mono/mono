@@ -83,7 +83,7 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+		[Category ("NotWorking")] // bug #77083
 		public void XmlNs_Valid2 ()
 		{
 			xtw.WriteAttributeString (null, "test", "http://www.w3.org/2000/xmlns/", "http://abc.def");
@@ -94,6 +94,14 @@ namespace MonoTests.System.Xml
 
 			xtw.WriteAttributeString ("", "test", "http://www.w3.org/2000/xmlns/", "http://abc.def");
 			Assert.AreEqual ("xmlns:test='http://abc.def'", StringWriterText, "#4");
+
+			sw.GetStringBuilder ().Length = 0;
+			CreateXmlTextWriter ();
+
+			xtw.WriteStartElement ("person");
+			xtw.WriteAttributeString ("", "test", "http://www.w3.org/2000/xmlns/", "http://abc.def");
+			xtw.WriteEndElement ();
+			Assert.AreEqual ("<person xmlns:test='http://abc.def' />", StringWriterText, "#5");
 		}
 
 		[Test]
@@ -112,10 +120,9 @@ namespace MonoTests.System.Xml
 			xtw.WriteAttributeString (null, "xmlns", "http://somenamespace.com", "http://abc.def");
 		}
 
-		// causes ArgumentException on Mono
 		[Test]
 		[Category ("NotWorking")]
-		public void XmlSpace_Valid ()
+		public void XmlSpace_Valid () // bug #77084
 		{
 			xtw.WriteAttributeString ("xml", "space", null, "preserve");
 			Assert.AreEqual ("xml:space='preserve'", StringWriterText, "#1");
@@ -135,9 +142,7 @@ namespace MonoTests.System.Xml
 			Assert.AreEqual ("<person xml:space='default' />", StringWriterText, "#3");
 		}
 
-		// MS special cases any attribute with prefix "xml"
 		[Test]
-		[Category ("NotWorking")]
 		public void XmlPrefix_ValidMS ()
 		{
 			xtw.WriteAttributeString ("xml", "something", "whatever", "default");
@@ -203,7 +208,7 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+		[Category ("NotWorking")] // bug #77086, #77087 and #77088
 		public void AutoCreatePrefixes ()
 		{
 			xtw.WriteAttributeString (null, "abc", "http://somenamespace.com", "http://abc.def");
