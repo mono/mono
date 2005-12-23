@@ -764,8 +764,24 @@ namespace Mono.CSharp {
 				ig.Emit (OpCodes.Ldloc, scope_instance);
 		}
 
+		public static void CheckCycles (string msg, ScopeInfo s)
+		{
+			ArrayList l = new ArrayList ();
+			int n = 0;
+			
+			for (ScopeInfo p = s; p != null; p = p.ParentScope,n++){
+				if (l.Contains (p)){
+					Console.WriteLine ("Loop detected {0} in {1}", n, msg);
+					throw new Exception ();
+				}
+				l.Add (p);
+			}
+		}
+		
 		static void DoPath (StringBuilder sb, ScopeInfo start)
 		{
+			CheckCycles ("print", start);
+			
 			if (start.ParentScope != null){
 				DoPath (sb, start.ParentScope);
 				sb.Append (", ");
@@ -919,6 +935,9 @@ namespace Mono.CSharp {
 		void LinkScope (ScopeInfo scope, int id)
 		{
 			ScopeInfo parent = (ScopeInfo) scopes [id];
+			if (parent == scope)
+				return;
+			
 			scope.ParentScope = parent;
 			parent.AddChild (scope);
 
