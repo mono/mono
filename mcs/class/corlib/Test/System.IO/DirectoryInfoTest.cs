@@ -761,5 +761,13 @@ namespace MonoTests.System.IO
 			WindowsParentFullName ("C:\\dir\\dir", "C:\\dir");
 			WindowsParentFullName ("C:\\dir\\dir\\", "C:\\dir");
 		}
+
+		[Test]
+		public void Parent_Bug77090 ()
+		{
+			DirectoryInfo di = new DirectoryInfo ("/home");
+			AssertEquals ("/home parent", "/", di.Parent.Name);
+			AssertNull ("/home parent parent", di.Parent.Parent);
+		}
 	}
 }

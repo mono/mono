@@ -1,3 +1,8 @@
+2005-12-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DirectoryInfoTest.cs: Added test case for #77090 where we skipped
+	/ as a parent between /home and null.
+
 2005-12-21  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PathTest.cs: Added new test case for #77058 where a Windows drive
