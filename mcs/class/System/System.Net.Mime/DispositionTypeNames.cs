@@ -1,5 +1,5 @@
 //
-// System.Net.Mail.DispositionTypeNames.cs
+// System.Net.Mime.DispositionTypeNames.cs
 //
 // Author:
 //	Tim Coleman (tim@timcoleman.com)
@@ -31,7 +31,7 @@
 #if NET_2_0
 
 namespace System.Net.Mime {
-	public struct DispositionTypeNames
+	public static class DispositionTypeNames
 	{
 		public const string Attachment = "attachment";
 		public const string Inline = "inline";

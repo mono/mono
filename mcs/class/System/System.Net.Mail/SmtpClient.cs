@@ -454,14 +454,10 @@ namespace System.Net.Mail {
 			switch (encoding) {
 			case TransferEncoding.QuotedPrintable:
 				return "quoted-printable";
-			case TransferEncoding.EightBit:
-				return "8bit";
 			case TransferEncoding.SevenBit:
 				return "7bit";
 			case TransferEncoding.Base64:
 				return "base64";
-			case TransferEncoding.Binary:
-				return "binary";
 			}
 			return "unknown";
 		}

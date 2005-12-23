@@ -1,3 +1,10 @@
+2005-12-22  John Luke  <john.luke@gmail.com>
+
+	minor updates I noticed for 2.0 final API
+	* DispositionTypeNames.cs: change to a static class
+	* MediaTypeNames.cs: change these to static classes
+	* TransferEncoding.cs: remove Binary and EightBit
+	
 2004-09-09  Tim Coleman <tim@timcoleman.com>
 	* ContentType.cs: Changes to MIME headers
 

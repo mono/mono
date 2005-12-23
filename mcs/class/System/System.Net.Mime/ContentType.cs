@@ -1,5 +1,5 @@
 //
-// System.Net.Mail.ContentType.cs
+// System.Net.Mime.ContentType.cs
 //
 // Author:
 //	Tim Coleman (tim@timcoleman.com)

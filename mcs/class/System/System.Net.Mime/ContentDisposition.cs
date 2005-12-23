@@ -1,5 +1,5 @@
 //
-// System.Net.Mail.ContentDisposition.cs
+// System.Net.Mime.ContentDisposition.cs
 //
 // Author:
 //	Tim Coleman (tim@timcoleman.com)

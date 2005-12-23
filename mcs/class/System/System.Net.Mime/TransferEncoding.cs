@@ -34,8 +34,6 @@ namespace System.Net.Mime {
 	public enum TransferEncoding
 	{
 		Base64,
-		Binary,
-		EightBit,
 		QuotedPrintable,
 		SevenBit, 
 		Unknown

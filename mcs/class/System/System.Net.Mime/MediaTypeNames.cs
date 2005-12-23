@@ -1,5 +1,5 @@
 //
-// System.Net.Mail.MediaTypeNames.cs
+// System.Net.Mime.MediaTypeNames.cs
 //
 // Author:
 //	Tim Coleman (tim@timcoleman.com)
@@ -31,9 +31,9 @@
 #if NET_2_0
 
 namespace System.Net.Mime {
-	public struct MediaTypeNames
+	public static class MediaTypeNames
 	{
-		public struct Application {
+		public static class Application {
 			const string prefix		= "application/";
 			public const string Octet	= prefix + "octet-stream";
 			public const string Pdf		= prefix + "pdf";
@@ -41,13 +41,13 @@ namespace System.Net.Mime {
 			public const string Soap	= prefix + "soap+xml";
 			public const string Zip		= prefix + "zip";
 		}
-		public struct Image {
+		public static class Image {
 			const string prefix		= "image/";
 			public const string Gif		= prefix + "gif";
 			public const string Jpeg	= prefix + "jpeg";
 			public const string Tiff	= prefix + "tiff";
 		}
-		public struct Text {
+		public static class Text {
 			const string prefix		= "text/";
 			public const string Html	= prefix + "html";
 			public const string Plain	= prefix + "plain";
