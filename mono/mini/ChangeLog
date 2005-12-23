@@ -1,5 +1,7 @@
 2005-12-23  Zoltan Varga  <vargaz@gmail.com>
 
+	* tramp-ia64.c (mono_arch_get_unbox_trampoline): Flush icache.
+
 	* aliasing.c inssel.brg: Fix warnings.
 
 	* inssel-ia64.brg (OP_MEMSET): Fix an optimization which previously
