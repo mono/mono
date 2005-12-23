@@ -886,7 +886,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 
 		[Test]
 		[Category ("NotWorking")] // bug #77082: mono does not output newline after xml declaration
-		public void Output_Indent_Xml ()
+		public void Output_Indent_Xml_DocType ()
 		{
 			XsltArgumentList xsltArgs = new XsltArgumentList ();
 			XslTransform xsltProcessor = new XslTransform ();
@@ -954,7 +954,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 
 		[Test]
 		[Category ("NotWorking")] // bug #77081: mono does not output newline and indentation for non-html elements
-		public void Output_Indent_Html ()
+		public void Output_Indent_Html_DocType ()
 		{
 			XsltArgumentList xsltArgs = new XsltArgumentList ();
 			XslTransform xsltProcessor = new XslTransform ();
@@ -1021,6 +1021,131 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 				"    </else>{0}" +
 				"  </something>{0}" +
 				"</test>", Environment.NewLine), sw.ToString (), "#3");
+		}
+
+		[Test]
+		public void Output_Indent_Xml ()
+		{
+			XsltArgumentList xsltArgs = new XsltArgumentList ();
+			XslTransform xsltProcessor = new XslTransform ();
+
+			string xsltFragment = @"<?xml version=""1.0"" encoding=""UTF-8"" ?>
+				<xsl:stylesheet xmlns:xsl=""http://www.w3.org/1999/XSL/Transform"" version=""1.0"">
+					<xsl:output
+						{0} />
+					<xsl:template match=""/"">
+						<xsl:element name=""test"">
+							<xsl:element name=""something"">
+								<xsl:element name=""else"" />
+							</xsl:element>
+						</xsl:element>
+					</xsl:template>
+				</xsl:stylesheet>";
+
+			XmlDocument xmlDoc = new XmlDocument ();
+			xmlDoc.LoadXml ("<dummy />");
+
+			// set indent to yes
+			StringWriter sw = new StringWriter ();
+			xsltProcessor.Load (new XmlTextReader (new StringReader (
+				string.Format (xsltFragment, "indent=\"yes\""))),
+				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+			xsltProcessor.Transform (xmlDoc, xsltArgs, sw, new XmlUrlResolver ());
+
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
+				"<test>{0}" +
+				"  <something>{0}" +
+				"    <else />{0}" +
+				"  </something>{0}" +
+				"</test>", Environment.NewLine), sw.ToString (), "#1");
+
+			// set indent to no
+			sw.GetStringBuilder ().Length = 0;
+			xsltProcessor.Load (new XmlTextReader (new StringReader (
+				string.Format (xsltFragment, "indent=\"no\""))),
+				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+			xsltProcessor.Transform (xmlDoc, xsltArgs, sw, new XmlUrlResolver ());
+
+			Assert.AreEqual (
+				"<?xml version=\"1.0\" encoding=\"utf-16\"?>" +
+				"<test><something><else /></something></test>", sw.ToString (),
+				"#2");
+
+			// indent not set
+			sw.GetStringBuilder ().Length = 0;
+			xsltProcessor.Load (new XmlTextReader (new StringReader (
+				string.Format (xsltFragment, ""))),
+				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+			xsltProcessor.Transform (xmlDoc, xsltArgs, sw, new XmlUrlResolver ());
+
+			Assert.AreEqual (
+				"<?xml version=\"1.0\" encoding=\"utf-16\"?>" +
+				"<test><something><else /></something></test>", sw.ToString (),
+				"#3");
+		}
+
+		[Test]
+		public void Output_Indent_Html ()
+		{
+			XsltArgumentList xsltArgs = new XsltArgumentList ();
+			XslTransform xsltProcessor = new XslTransform ();
+
+			string xsltFragment = @"<?xml version=""1.0"" encoding=""UTF-8"" ?>
+				<xsl:stylesheet xmlns:xsl=""http://www.w3.org/1999/XSL/Transform"" version=""1.0"">
+					<xsl:output
+						method=""html""
+						{0} />
+					<xsl:template match=""/"">
+						<xsl:element name=""html"">
+							<xsl:element name=""body"">
+								<xsl:element name=""p"" />
+							</xsl:element>
+						</xsl:element>
+					</xsl:template>
+				</xsl:stylesheet>";
+
+			XmlDocument xmlDoc = new XmlDocument ();
+			xmlDoc.LoadXml ("<dummy />");
+
+			// set indent to yes
+			StringWriter sw = new StringWriter ();
+			xsltProcessor.Load (new XmlTextReader (new StringReader (
+				string.Format (xsltFragment, "indent=\"yes\""))),
+				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+			xsltProcessor.Transform (xmlDoc, xsltArgs, sw, new XmlUrlResolver ());
+
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"<html>{0}" +
+				"  <body>{0}" +
+				"    <p></p>{0}" +
+				"  </body>{0}" +
+				"</html>", Environment.NewLine), sw.ToString (), "#1");
+
+			// set indent to no
+			sw.GetStringBuilder ().Length = 0;
+			xsltProcessor.Load (new XmlTextReader (new StringReader (
+				string.Format (xsltFragment, "indent=\"no\""))),
+				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+			xsltProcessor.Transform (xmlDoc, xsltArgs, sw, new XmlUrlResolver ());
+
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"<html><body><p></p></body></html>",
+				Environment.NewLine), sw.ToString (), "#2");
+
+			// indent not set
+			sw.GetStringBuilder ().Length = 0;
+			xsltProcessor.Load (new XmlTextReader (new StringReader (
+				string.Format (xsltFragment, ""))),
+				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+			xsltProcessor.Transform (xmlDoc, xsltArgs, sw, new XmlUrlResolver ());
+
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"<html>{0}" +
+				"  <body>{0}" +
+				"    <p></p>{0}" +
+				"  </body>{0}" +
+				"</html>", Environment.NewLine), sw.ToString (), "#3");
 		}
 
 		[Test]
