@@ -1,3 +1,8 @@
+2005-12-22  Jonathan Chambers <jonathan.chambers@ansys.com>
+
+        * gdipFunctions.cs: Do not call GdiplusShutdown for
+        now as it causes a crash on MS GDI+.
+
 2005-12-20  Konstantin Triger <kostat@mainsoft.com>
 
         * Font.jvm.cs: charset support.
