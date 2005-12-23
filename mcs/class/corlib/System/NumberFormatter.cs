@@ -107,7 +107,7 @@ namespace System
 				case 'g':
 				case 'G':
 					if (precision <= 0)
-						ns.RoundEffectiveDigits (ns.DefaultPrecision);
+						ns.RoundEffectiveDigits (ns.DefaultPrecision, ns.IsBankerApplicable, true);
 					else
 						ns.RoundEffectiveDigits (precision);
 					break;
@@ -441,7 +441,7 @@ namespace System
 				if (ns.IsDecimalSource)
 					ns.RoundPos (precision);
 				else
-					ns.RoundDecimal (precision);
+					ns.RoundDecimal (precision, true, false);
 			}
 
 			if (!ns.Positive) {
@@ -1844,6 +1844,13 @@ namespace System
 			public bool IsDecimalSource {
 				get { return _defPrecision > 30; }
 			}
+			public bool IsBankerApplicable {
+				get {
+					if ((_digits == null) || (_digits.Length < 2))
+						return false;
+					return ((_digits [_digits.Length - 2] & 1) == 1);
+				}
+			}
 			public bool ZeroOnly {
 				get {
 					for (int i = 0; i < _digits.Length; i++)
@@ -1902,13 +1909,14 @@ namespace System
 			}
 			public bool RoundDecimal (int decimals)
 			{
-				return RoundDecimal (decimals, true);
+				return RoundDecimal (decimals, true, true);
 			}
-			public bool RoundDecimal (int decimals, bool carryFive)
+			public bool RoundDecimal (int decimals, bool carryFive, bool countZero)
 			{
 				bool carry = false;
 
-				decimals += _decPointPos;
+				if (countZero || (_decPointPos > 0))
+					decimals += _decPointPos;
 
 				if (!HasDecimal || decimals >= _digits.Length)
 					return false;

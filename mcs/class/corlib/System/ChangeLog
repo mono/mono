@@ -1,3 +1,9 @@
+2005-12-23  Sebastien Pouliot  <sebastien@ximian.com> 
+ 
+	* NumberFormatter.cs: Fixed rounding for float and the string output
+	now includes all the precision (not counting preceding zeros). This
+	fix the DecimalTest.TestConstructSingleRounding_NotWorking test cases.
+
 2005-12-21  Sebastien Pouliot  <sebastien@ximian.com> 
  
 	* Array.cs: Fixed Sort<T> with IComparable (generic or not) bug #77039
