@@ -66,6 +66,8 @@ mono_arch_get_unbox_trampoline (MonoMethod *m, gpointer addr)
 
 	g_assert (code.buf - buf < 256);
 
+	mono_arch_flush_icache (buf, code.buf - buf);
+
 	/* FIXME: */
 
 	gpointer *desc = g_malloc0 (sizeof (gpointer) * 2);
