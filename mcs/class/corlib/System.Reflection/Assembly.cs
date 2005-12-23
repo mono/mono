@@ -89,7 +89,7 @@ namespace System.Reflection {
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern string get_code_base ();
+		private extern string get_code_base (bool escaped);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern string get_location ();
@@ -101,9 +101,9 @@ namespace System.Reflection {
 		private extern bool get_global_assembly_cache ();
 
 		// SECURITY: this should be the only caller to icall get_code_base
-		private string GetCodeBase ()
+		private string GetCodeBase (bool escaped)
 		{
-			string cb = get_code_base ();
+			string cb = get_code_base (escaped);
 			if (SecurityManager.SecurityEnabled) {
 				// we cannot divulge local file informations
 				if (String.Compare ("FILE://", 0, cb, 0, 7, true, CultureInfo.InvariantCulture) == 0) {
@@ -115,11 +115,11 @@ namespace System.Reflection {
 		}
 
 		public virtual string CodeBase {
-			get { return GetCodeBase (); }
+			get { return GetCodeBase (false); }
 		}
 
 		public virtual string EscapedCodeBase {
-			get { return Uri.EscapeString (GetCodeBase (), false, true, true); }
+			get { return GetCodeBase (true); }
 		}
 
 		public virtual string FullName {
@@ -350,7 +350,7 @@ namespace System.Reflection {
 		{
 			// CodeBase, which is restricted, will be copied into the AssemblyName object so...
 			if (SecurityManager.SecurityEnabled) {
-				GetCodeBase (); // this will ensure the Demand is made
+				GetCodeBase (true); // this will ensure the Demand is made
 			}
 			return UnprotectedGetName ();
 		}
