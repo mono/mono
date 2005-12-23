@@ -7,10 +7,7 @@
 //   Martin Baulig (martin@gnome.org)
 //
 // (C) Ximian, Inc.
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -35,6 +32,7 @@
 using System.Collections;
 using System.Globalization;
 using System.Runtime.CompilerServices;
+using System.Runtime.Serialization;
 
 namespace System
 {
@@ -52,9 +50,10 @@ namespace System
 		// Properties
 		public static TimeZone CurrentTimeZone {
 			get {
-				if (currentTimeZone == null)
-					currentTimeZone = new CurrentTimeZone ();
-
+				if (currentTimeZone == null) {
+					DateTime now = new DateTime (DateTime.GetNow ());
+					currentTimeZone = new CurrentSystemTimeZone (now);
+				}
 				return currentTimeZone;
 			}
 		}
@@ -153,20 +152,26 @@ namespace System
 		}
 	}
 
-	internal class CurrentTimeZone : TimeZone
-	{
+	[Serializable]
+	internal class CurrentSystemTimeZone : TimeZone, IDeserializationCallback {
+
 		// Fields
-		private static string daylightName;
-		private static string standardName;
+		private string m_standardName;
+		private string m_daylightName;
 
 		// A yearwise cache of DaylightTime.
-		private static Hashtable daylightCache = new Hashtable (1);
+		private Hashtable m_CachedDaylightChanges = new Hashtable (1);
+
+		// the offset when daylightsaving is not on (in ticks)
+		private long m_ticksOffset;
 
 		// the offset when daylightsaving is not on.
-		private static TimeSpan utcOffsetWithOutDLS;
-
+		[NonSerialized]
+		private TimeSpan utcOffsetWithOutDLS;
+  
 		// the offset when daylightsaving is on.
-		private static TimeSpan utcOffsetWithDLS;
+		[NonSerialized]
+		private TimeSpan utcOffsetWithDLS;
 
 		internal enum TimeZoneData
 		{
@@ -193,31 +198,35 @@ namespace System
 		private static extern bool GetTimeZoneData (int year, out Int64[] data, out string[] names);
 
 		// Constructor
-		internal CurrentTimeZone ()
-			: base ()
+		internal CurrentSystemTimeZone ()
+		{
+		}
+
+		internal CurrentSystemTimeZone (DateTime now)
 		{
 			Int64[] data;
 			string[] names;
 
-			DateTime now = new DateTime(DateTime.GetNow ());			
 			if (!GetTimeZoneData (now.Year, out data, out names))
 				throw new NotSupportedException (Locale.GetText ("Can't get timezone name."));
 
-			standardName = Locale.GetText (names[(int)TimeZoneNames.StandardNameIdx]);
-			daylightName = Locale.GetText (names[(int)TimeZoneNames.DaylightNameIdx]);
+			m_standardName = Locale.GetText (names[(int)TimeZoneNames.StandardNameIdx]);
+			m_daylightName = Locale.GetText (names[(int)TimeZoneNames.DaylightNameIdx]);
 
-			utcOffsetWithOutDLS = new TimeSpan (data[(int)TimeZoneData.UtcOffsetIdx]);
-			utcOffsetWithDLS = new TimeSpan (data[(int)TimeZoneData.UtcOffsetIdx]
-				+ data[(int)TimeZoneData.AdditionalDaylightOffsetIdx]);
+			m_ticksOffset = data[(int)TimeZoneData.UtcOffsetIdx];
+
+			DaylightTime dlt = GetDaylightTimeFromData (data);
+			m_CachedDaylightChanges.Add (now.Year, dlt);
+			OnDeserialization (dlt);
 		}
 
 		// Properties
 		public override string DaylightName {
-			get { return daylightName; }
+			get { return m_daylightName; }
 		}
 
 		public override string StandardName {
-			get { return standardName; }
+			get { return m_standardName; }
 		}
 
 		// Methods
@@ -228,8 +237,8 @@ namespace System
 				throw new ArgumentOutOfRangeException ("year", year +
 					Locale.GetText (" is not in a range between 1 and 9999."));
 
-			lock (daylightCache) {
-				DaylightTime dlt = (DaylightTime) daylightCache [year];
+			lock (m_CachedDaylightChanges) {
+				DaylightTime dlt = (DaylightTime) m_CachedDaylightChanges [year];
 				if (dlt == null) {
 					Int64[] data;
 					string[] names;
@@ -237,10 +246,8 @@ namespace System
 					if (!GetTimeZoneData (year, out data, out names))
 						throw new ArgumentException (Locale.GetText ("Can't get timezone data for " + year));
 
-					dlt = new DaylightTime (new DateTime (data[(int)TimeZoneData.DaylightSavingStartIdx]),
-									     new DateTime (data[(int)TimeZoneData.DaylightSavingEndIdx]),
-									     new TimeSpan (data[(int)TimeZoneData.AdditionalDaylightOffsetIdx]));
-					daylightCache.Add (year, dlt);
+					dlt = GetDaylightTimeFromData (data);
+					m_CachedDaylightChanges.Add (year, dlt);
 				}
 				return dlt;
 			}
@@ -252,6 +259,33 @@ namespace System
 				return utcOffsetWithDLS;
 
 			return utcOffsetWithOutDLS;
+		}
+
+		void IDeserializationCallback.OnDeserialization (object sender)
+		{
+			OnDeserialization (null);
+		}
+
+		private void OnDeserialization (DaylightTime dlt)
+		{
+			if (dlt == null) {
+				Int64[] data;
+				string[] names;
+
+				int year = DateTime.Now.Year;
+				if (!GetTimeZoneData (year, out data, out names))
+					throw new ArgumentException (Locale.GetText ("Can't get timezone data for " + year));
+				dlt = GetDaylightTimeFromData (data);
+			}
+			utcOffsetWithOutDLS = new TimeSpan (m_ticksOffset);
+			utcOffsetWithDLS = new TimeSpan (m_ticksOffset + dlt.Delta.Ticks);
+		}
+
+		private DaylightTime GetDaylightTimeFromData (long[] data)
+		{
+			return new DaylightTime (new DateTime (data[(int)TimeZoneData.DaylightSavingStartIdx]),
+				new DateTime (data[(int)TimeZoneData.DaylightSavingEndIdx]),
+				new TimeSpan (data[(int)TimeZoneData.AdditionalDaylightOffsetIdx]));
 		}
 	}
 }

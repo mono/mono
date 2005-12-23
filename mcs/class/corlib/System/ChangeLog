@@ -1,3 +1,11 @@
+2005-12-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Environment.cs: Bump corlib version to 46.
+	* TimeZone.cs: Partial fix for #76094. Added [Serializable] attribute 
+	and renamed internal CurrentTimeZone class to CurrentSystemTimeZone 
+	(like MS). This allows serialization roundtrip to work in Mono but 
+	there's still an issue when deserializing a stream from MS. 
+
 2005-12-23  Sebastien Pouliot  <sebastien@ximian.com> 
  
 	* NumberFormatter.cs: Fixed rounding for float and the string output
