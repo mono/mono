@@ -1,3 +1,8 @@
+2005-12-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DirectoryInfo.cs: Fixed #77090 to fix /home parent to be / (and not
+	null).
+
 2005-12-21  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Path.cs: Fixed #77058 where a Windows drive wasn't considered during

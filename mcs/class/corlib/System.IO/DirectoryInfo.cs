@@ -60,12 +60,15 @@ namespace System.IO {
 			if ((len > 1) && (FullPath [len] == Path.DirectorySeparatorChar))
 				len--;
 			int last = FullPath.LastIndexOf (Path.DirectorySeparatorChar, len);
-			if (last == -1) {
+			if ((last == -1) || ((last == 0) && (len == 0))) {
 				current = FullPath;
 				parent = null;
 			} else {
 				current = FullPath.Substring (last + 1, len - last);
-				parent = FullPath.Substring (0, last);
+				if (last == 0)
+					parent = Path.DirectorySeparatorStr;
+				else
+					parent = FullPath.Substring (0, last);
 				// adjust for drives, i.e. a special case for windows
 				if (Environment.IsRunningOnWindows) {
 					if ((parent.Length == 2) && (parent [1] == ':') && Char.IsLetter (parent [0]))
