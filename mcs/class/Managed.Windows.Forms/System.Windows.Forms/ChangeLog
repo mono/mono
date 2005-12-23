@@ -1,3 +1,7 @@
+2005-12-23  Jackson Harper  <jackson@ximian.com>
+
+	* ThemeWin32Classic.cs:  Draw the text for all tab appearances.
+
 2005-12-23  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* Control.cs: Removed debug code

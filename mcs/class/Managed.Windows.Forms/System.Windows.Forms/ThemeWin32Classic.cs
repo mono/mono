@@ -3507,30 +3507,30 @@ namespace System.Windows.Forms
 
 					break;
 				}
+			}
 
-				if (tab.DrawMode == TabDrawMode.Normal && page.Text != null) {
-					if (tab.Alignment == TabAlignment.Left) {
-						int wo = interior.Width / 2;
-						int ho = interior.Height / 2;
-						dc.TranslateTransform (interior.X + wo, interior.Y + ho);
-						dc.RotateTransform (180);
-						dc.DrawString (page.Text, page.Font, ThemeEngine.Current.ResPool.GetSolidBrush (SystemColors.ControlText), 0, 0, string_format);
-						dc.ResetTransform ();
-					} else {
-						dc.DrawString (page.Text, page.Font,
-								ThemeEngine.Current.ResPool.GetSolidBrush (SystemColors.ControlText),
-								interior, string_format);
-					}
-				} else if (page.Text != null) {
-					DrawItemState state = DrawItemState.None;
-					if (page == tab.SelectedTab)
-						state |= DrawItemState.Selected;
-					DrawItemEventArgs e = new DrawItemEventArgs (dc,
-							tab.Font, bounds, tab.IndexForTabPage (page),
-							state, page.ForeColor, page.BackColor);
-					tab.OnDrawItemInternal (e);
-					return res;
+			if (tab.DrawMode == TabDrawMode.Normal && page.Text != null) {
+				if (tab.Alignment == TabAlignment.Left) {
+					int wo = interior.Width / 2;
+					int ho = interior.Height / 2;
+					dc.TranslateTransform (interior.X + wo, interior.Y + ho);
+					dc.RotateTransform (180);
+					dc.DrawString (page.Text, page.Font, ThemeEngine.Current.ResPool.GetSolidBrush (SystemColors.ControlText), 0, 0, string_format);
+					dc.ResetTransform ();
+				} else {
+					dc.DrawString (page.Text, page.Font,
+							ThemeEngine.Current.ResPool.GetSolidBrush (SystemColors.ControlText),
+							interior, string_format);
 				}
+			} else if (page.Text != null) {
+				DrawItemState state = DrawItemState.None;
+				if (page == tab.SelectedTab)
+					state |= DrawItemState.Selected;
+				DrawItemEventArgs e = new DrawItemEventArgs (dc,
+						tab.Font, bounds, tab.IndexForTabPage (page),
+						state, page.ForeColor, page.BackColor);
+				tab.OnDrawItemInternal (e);
+				return res;
 			}
 
 			if (page.Focused) {
