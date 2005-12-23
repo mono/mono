@@ -1,3 +1,8 @@
+2005-12-23  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlTextWriter.cs : (WriteStartAttribute) set prefix as "xmlns" when
+	  namespaceURI is that of xmlns attributes.
+
 2005-12-15  Atsushi Enomoto <atsushi@ximian.com>
 
 	* DTDObjectModel.cs : (CreateXsdParticle) element particle was

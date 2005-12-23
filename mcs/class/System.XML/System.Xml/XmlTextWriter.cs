@@ -777,6 +777,9 @@ openElements [openElementCount - 1]).IndentingOverriden;
 #endif
 				throw ArgumentError (String.Format ("The 'xmlns' attribute is bound to the reserved namespace '{0}'", XmlnsNamespace));
 
+			if (ns == XmlnsNamespace) // see bug #77083
+				prefix = localName == "xmlns" ? String.Empty : "xmlns";
+
 			CheckState ();
 
 			if (ws == WriteState.Content)

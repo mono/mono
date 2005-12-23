@@ -82,8 +82,7 @@ namespace MonoTests.System.Xml
 			Assert.AreEqual ("xmlns='http://abc.def'", StringWriterText, "#2");
 		}
 
-		[Test]
-		[Category ("NotWorking")] // bug #77083
+		[Test] // bug #77083
 		public void XmlNs_Valid2 ()
 		{
 			xtw.WriteAttributeString (null, "test", "http://www.w3.org/2000/xmlns/", "http://abc.def");
