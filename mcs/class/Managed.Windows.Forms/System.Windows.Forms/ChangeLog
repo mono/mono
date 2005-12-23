@@ -1,3 +1,8 @@
+2005-12-23  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* Control.cs: Do not update the anchoring distances if layout is
+	  suspended, instead do it once layout is resumed
+
 2005-12-22  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* Control.cs: 

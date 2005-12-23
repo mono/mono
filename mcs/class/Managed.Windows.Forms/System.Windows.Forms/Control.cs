@@ -946,7 +946,6 @@ namespace System.Windows.Forms
 
 		void DrawBackgroundImage (Graphics g)
 		{
-Console.WriteLine("Background image: {0}", background_image);
 			using (TextureBrush b = new TextureBrush (background_image)) {
 				g.FillRectangle (b, ClientRectangle);
 			}
@@ -1224,7 +1223,7 @@ Console.WriteLine("Background image: {0}", background_image);
 		private void UpdateDistances() {
 			dist_left = bounds.X;
 			dist_top = bounds.Y;
-			if (parent != null) {
+			if ((parent != null) && (parent.layout_suspended == 0)) {
 				dist_right = parent.ClientSize.Width - bounds.X - bounds.Width;
 				dist_bottom = parent.ClientSize.Height - bounds.Y - bounds.Height;
 			}
@@ -2882,6 +2881,11 @@ Console.WriteLine("Background image: {0}", background_image);
 			
 			if (layout_suspended > 0) {
 				return;
+			}
+
+			Control [] controls = child_controls.GetAllControls ();
+			for (int i=0; i<controls.Length; i++) {
+				controls [i].UpdateDistances ();
 			}
 
 			if (performLayout || layout_pending) {
