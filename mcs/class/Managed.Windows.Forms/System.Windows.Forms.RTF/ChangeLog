@@ -1,3 +1,12 @@
+2005-12-22  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* RTF.cs: Added method to allow setting the default font for the RTF
+	  document. This font will be used if the document does not contain
+	  a font table.
+	* Font.cs: Added method to delete font with a given number; 
+	  changed set_Num to call this method (to allow replacing fonts
+	  with the same number, particulary the default font)
+
 2005-09-04  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* Charcode.cs: Created; provides StandardCharCode <-> character 

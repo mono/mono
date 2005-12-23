@@ -233,6 +233,15 @@ namespace System.Windows.Forms.RTF {
 		#endregion	// Properties
 
 		#region Methods
+		/// <summary>Set the default font for documents without font table</summary>
+		public void DefaultFont(string name) {
+			Font font;
+
+			font = new Font(this);
+			font.Num = 0;
+			font.Name = name;
+		}
+
 		/// <summary>Read the next character from the input</summary>
 		private char GetChar() {
 			char	c;

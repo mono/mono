@@ -38,10 +38,12 @@ namespace System.Windows.Forms.RTF {
 		private int		type;
 		private int		codepage;
 		private Font		next;
+		private RTF		rtf;
 		#endregion	// Local Variables
 
 		#region Constructors
 		public Font(RTF rtf) {
+			this.rtf = rtf;
 			num = -1;
 
 			lock (rtf) {
@@ -84,6 +86,8 @@ namespace System.Windows.Forms.RTF {
 			}
 
 			set {
+				// Whack any previous font with the same number
+				DeleteFont(rtf, value);
 				num = value;
 			}
 		}
@@ -141,6 +145,34 @@ namespace System.Windows.Forms.RTF {
 		#endregion	// Properties
 
 		#region Methods
+		static public bool DeleteFont(RTF rtf, int font_number) {
+			Font	f;
+			Font	prev;
+
+			lock (rtf) {
+				f = rtf.Fonts;
+				prev = null;
+				while ((f != null) && (f.num != font_number)) {
+					prev = f;
+					f = f.next;
+				}
+
+				if (f != null) {
+					if (f == rtf.Fonts) {
+						rtf.Fonts = f.next;
+					} else {
+						if (prev != null) {
+							prev.next = f.next;
+						} else {
+							rtf.Fonts = f.next;
+						}
+					}
+					return true;
+				}
+			}
+			return false;
+		}
+
 		static public Font GetFont(RTF rtf, int font_number) {
 			Font	f;
 
