@@ -1,3 +1,15 @@
+2005-12-23  Dick Porter  <dick@ximian.com>
+
+	* EventWaitHandle.cs: 
+	* Mutex.cs: Implement OpenExisting
+
+	* NativeEventCalls.cs: Add OpenEvent icall for OpenExisting in
+	2.0.  Add a "created" boolean out parameter to CreateEvent icall.
+
+	* ManualResetEvent.cs: 
+	* AutoResetEvent.cs: Update CreateEvent icall signature (now has
+	"created" boolean out parameter.)
+
 2005-12-17  Dick Porter  <dick@ximian.com>
 
 	* ThreadStartException.cs: 

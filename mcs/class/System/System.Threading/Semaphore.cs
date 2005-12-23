@@ -32,6 +32,7 @@ using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
 using System.Security.AccessControl;
 using System.Runtime.CompilerServices;
+using System.IO;
 
 namespace System.Threading {
 
@@ -47,6 +48,14 @@ namespace System.Threading {
 		private static extern int ReleaseSemaphore_internal (
 			IntPtr handle, int releaseCount, out bool fail);
 
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private static extern IntPtr OpenSemaphore_internal (string name, SemaphoreRights rights, out MonoIOError error);
+		
+		private Semaphore (IntPtr handle)
+		{
+			Handle = handle;
+		}
+		
 		public Semaphore (int initialCount, int maximumCount)
 			: this (initialCount, maximumCount, null)
 		{
@@ -137,7 +146,6 @@ namespace System.Threading {
 			return OpenExisting (name, SemaphoreRights.Synchronize | SemaphoreRights.Modify);
 		}
 
-		[MonoTODO]
 		public static Semaphore OpenExisting (string name, SemaphoreRights rights)
 		{
 			if (name == null)
@@ -145,7 +153,20 @@ namespace System.Threading {
 			if ((name.Length ==0) || (name.Length > 260))
 				throw new ArgumentException ("name", Locale.GetText ("Invalid length [1-260]."));
 
-			throw new NotImplementedException ();
+			MonoIOError error;
+			IntPtr handle = OpenSemaphore_internal (name, rights,
+								out error);
+			if (handle == (IntPtr)null) {
+				if (error == MonoIOError.ERROR_FILE_NOT_FOUND) {
+					throw new WaitHandleCannotBeOpenedException (Locale.GetText ("Named Semaphore handle does not exist: ") + name);
+				} else if (error == MonoIOError.ERROR_ACCESS_DENIED) {
+					throw new UnauthorizedAccessException ();
+				} else {
+					throw new IOException (Locale.GetText ("Win32 IO error: ") + error.ToString ());
+				}
+			}
+			
+			return(new Semaphore (handle));
 		}
 	}
 }

@@ -53,7 +53,9 @@ namespace System.Threading
 #else
 		public ManualResetEvent (bool initialState)
 		{
-			Handle = NativeEventCalls.CreateEvent_internal (true, initialState, null);
+			bool created;
+			
+			Handle = NativeEventCalls.CreateEvent_internal (true, initialState, null, out created);
 		}
 #endif
 

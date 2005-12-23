@@ -212,7 +212,6 @@ namespace MonoTests.System.Threading {
 		}
 
 		[Test]
-		[Category ("NotWorking")] // not implemented in Mono
 		[ExpectedException (typeof (WaitHandleCannotBeOpenedException))]
 		public void OpenExisting_Unexisting ()
 		{

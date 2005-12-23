@@ -30,37 +30,44 @@
 #if NET_2_0
 
 using System.Security.AccessControl;
+using System.IO;
 
 namespace System.Threading
 {
 	public class EventWaitHandle : WaitHandle
 	{
+		private EventWaitHandle (IntPtr handle)
+		{
+			Handle = handle;
+		}
+		
 		public EventWaitHandle (bool initialState, EventResetMode mode)
 		{
-			Handle = NativeEventCalls.CreateEvent_internal ((mode == EventResetMode.ManualReset), initialState, null);
+			bool created;
+			
+			Handle = NativeEventCalls.CreateEvent_internal ((mode == EventResetMode.ManualReset), initialState, null, out created);
 		}
 		
 		public EventWaitHandle (bool initialState, EventResetMode mode,
 					string name)
 		{
-			Handle = NativeEventCalls.CreateEvent_internal ((mode == EventResetMode.ManualReset), initialState, name);
+			bool created;
+			
+			Handle = NativeEventCalls.CreateEvent_internal ((mode == EventResetMode.ManualReset), initialState, name, out created);
 		}
 		
-		[MonoTODO ("Implement createdNew")]
 		public EventWaitHandle (bool initialState, EventResetMode mode,
 					string name, out bool createdNew)
 		{
-			Handle = NativeEventCalls.CreateEvent_internal ((mode == EventResetMode.ManualReset), initialState, name);
-			createdNew = false;
+			Handle = NativeEventCalls.CreateEvent_internal ((mode == EventResetMode.ManualReset), initialState, name, out createdNew);
 		}
 		
-		[MonoTODO ("Implement createdNew and access control")]
+		[MonoTODO ("Implement access control")]
 		public EventWaitHandle (bool initialState, EventResetMode mode,
 					string name, out bool createdNew,
 					EventWaitHandleSecurity eventSecurity)
 		{
-			Handle = NativeEventCalls.CreateEvent_internal ((mode == EventResetMode.ManualReset), initialState, name);
-			createdNew = false;
+			Handle = NativeEventCalls.CreateEvent_internal ((mode == EventResetMode.ManualReset), initialState, name, out createdNew);
 		}
 		
 		[MonoTODO]
@@ -74,10 +81,29 @@ namespace System.Threading
 			return(OpenExisting (name, EventWaitHandleRights.Synchronize | EventWaitHandleRights.Modify));
 		}
 
-		[MonoTODO]
 		public static EventWaitHandle OpenExisting (string name, EventWaitHandleRights rights)
 		{
-			throw new NotImplementedException ();
+			if (name == null) {
+				throw new ArgumentNullException ("name");
+			}
+			if ((name.Length == 0) ||
+			    (name.Length > 260)) {
+				throw new ArgumentException ("name", Locale.GetText ("Invalid length [1-260]."));
+			}
+			
+			MonoIOError error;
+			IntPtr handle = NativeEventCalls.OpenEvent_internal (name, rights, out error);
+			if (handle == (IntPtr)null) {
+				if (error == MonoIOError.ERROR_FILE_NOT_FOUND) {
+					throw new WaitHandleCannotBeOpenedException (Locale.GetText ("Named Event handle does not exist: ") + name);
+				} else if (error == MonoIOError.ERROR_ACCESS_DENIED) {
+					throw new UnauthorizedAccessException ();
+				} else {
+					throw new IOException (Locale.GetText ("Win32 IO error: ") + error.ToString ());
+				}
+			}
+			
+			return(new EventWaitHandle (handle));
 		}
 		
 		public bool Reset ()

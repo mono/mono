@@ -34,6 +34,7 @@ using System.Security.Permissions;
 #if NET_2_0
 using System.Runtime.ConstrainedExecution;
 using System.Security.AccessControl;
+using System.IO;
 #endif
 
 namespace System.Threading
@@ -49,6 +50,16 @@ namespace System.Threading
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern void ReleaseMutex_internal(IntPtr handle);
 
+#if NET_2_0
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private static extern IntPtr OpenMutex_internal (string name, MutexRights rights, out MonoIOError error);
+		
+		private Mutex (IntPtr handle)
+		{
+			Handle = handle;
+		}
+#endif
+		
 #if NET_2_0
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
 #endif
@@ -88,11 +99,44 @@ namespace System.Threading
 		}
 
 #if NET_2_0
-		[MonoTODO]
+		[MonoTODO ("Implement MutexSecurity")]
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
 		public Mutex (bool initiallyOwned, string name, out bool createdNew, MutexSecurity mutexSecurity)
 		{
-			throw new NotImplementedException ();
+			Handle = CreateMutex_internal (initiallyOwned, name, out createdNew);
+		}
+
+		public static Mutex OpenExisting (string name)
+		{
+			return(OpenExisting (name, MutexRights.Synchronize |
+					     MutexRights.Modify));
+		}
+		
+		public static Mutex OpenExisting (string name,
+						  MutexRights rights)
+		{
+			if (name == null) {
+				throw new ArgumentNullException ("name");
+			}
+			if ((name.Length == 0) ||
+			    (name.Length > 260)) {
+				throw new ArgumentException ("name", Locale.GetText ("Invalid length [1-260]."));
+			}
+			
+			MonoIOError error;
+			IntPtr handle = OpenMutex_internal (name, rights,
+							    out error);
+			if (handle == (IntPtr)null) {
+				if (error == MonoIOError.ERROR_FILE_NOT_FOUND) {
+					throw new WaitHandleCannotBeOpenedException (Locale.GetText ("Named Mutex handle does not exist: ") + name);
+				} else if (error == MonoIOError.ERROR_ACCESS_DENIED) {
+					throw new UnauthorizedAccessException ();
+				} else {
+					throw new IOException (Locale.GetText ("Win32 IO error: ") +  error.ToString ());
+				}
+			}
+			
+			return(new Mutex (handle));
 		}
 #endif
 

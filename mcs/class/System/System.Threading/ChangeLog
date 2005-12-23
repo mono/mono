@@ -1,3 +1,7 @@
+2005-12-23  Dick Porter  <dick@ximian.com>
+
+	* Semaphore.cs: Implement OpenExisting
+
 2005-11-26  Dick Porter  <dick@ximian.com>
 
 	* Semaphore.cs: Implemented with icalls

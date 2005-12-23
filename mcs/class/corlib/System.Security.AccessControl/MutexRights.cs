@@ -1,8 +1,8 @@
 //
-// System.Security.AccessControl.SemaphoreRights enum
+// System.Security.AccessControl.MutexRights enum
 //
 // Author:
-//	Sebastien Pouliot  <sebastien@ximian.com>
+//	Dick Porter  <dick@ximian.com>
 //
 // Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
@@ -28,20 +28,17 @@
 
 #if NET_2_0
 
-using System.Runtime.InteropServices;
-
 namespace System.Security.AccessControl {
 
-	[ComVisible (false)]
 	[Flags]
-	public enum SemaphoreRights {
-		Modify			= 0x000002,
+	public enum MutexRights {
+		Modify			= 0x000001,
 		Delete			= 0x010000,
 		ReadPermissions		= 0x020000,
 		ChangePermissions	= 0x040000,
 		TakeOwnership		= 0x080000,
 		Synchronize		= 0x100000,
-		FullControl		= 0x1F0003	/* not 0x1F0002 according to corcompare */
+		FullControl		= 0x1F0001
 	}
 }
 

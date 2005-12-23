@@ -1041,9 +1041,10 @@ System.Security.AccessControl/CryptoKeySecurity.cs
 System.Security.AccessControl/DirectorySecurity.cs
 System.Security.AccessControl/EventWaitHandleRights.cs
 System.Security.AccessControl/EventWaitHandleSecurity.cs
-System.Security.AccessControl/ObjectSecurity.cs
+System.Security.AccessControl/MutexRights.cs
 System.Security.AccessControl/MutexSecurity.cs
 System.Security.AccessControl/NativeObjectSecurity.cs
+System.Security.AccessControl/ObjectSecurity.cs
 System.Security.Cryptography/AsymmetricAlgorithm.cs
 System.Security.Cryptography/AsymmetricKeyExchangeDeformatter.cs
 System.Security.Cryptography/AsymmetricKeyExchangeFormatter.cs

@@ -52,7 +52,9 @@ namespace System.Threading
 		}
 #else
 		public AutoResetEvent(bool initialState) {
-			Handle = NativeEventCalls.CreateEvent_internal(false,initialState,null);
+			bool created;
+			
+			Handle = NativeEventCalls.CreateEvent_internal(false,initialState,null, out created);
 		}
 #endif
 
