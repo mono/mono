@@ -1229,20 +1229,21 @@ namespace System.Windows.Forms {
 			return 0;
 		}
 
-		private void DestroyChildWindow(IntPtr handle) {
-			Hwnd	hwnd;
-			int	i;
-			Control		c;
-			ArrayList	handles;
+		private void DestroyChildWindow(Control c) {
+			Hwnd		hwnd;
+			int		i;
+			Control[]	controls;
 
-			c = Control.ControlNativeWindow.ControlFromHandle(handle);
-			if (c != null) for (i = 0; i < c.Controls.Count; i++) {
-				hwnd = Hwnd.ObjectFromHandle(c.Controls[i].Handle);
-				if (hwnd != null) {
-					hwnd.destroy_pending = true;
-				}
-				if (c.Controls[i].Controls.Count > 0) {
-					DestroyChildWindow(c.Controls[i].Handle);
+			if (c != null) {
+				controls = c.child_controls.GetAllControls ();
+
+				for (i = 0; i < controls.Length; i++) {
+					hwnd = Hwnd.ObjectFromHandle(controls[i].Handle);
+
+					if (hwnd != null) {
+						hwnd.destroy_pending = true;
+					}
+					DestroyChildWindow(controls[i]);
 				}
 			}
 		}
@@ -2200,7 +2201,7 @@ namespace System.Windows.Forms {
 			hwnd.destroy_pending = true;
 
 			// Mark our children as gone as well
-			DestroyChildWindow(handle);
+			DestroyChildWindow(Control.ControlNativeWindow.ControlFromHandle(handle));
 
 			lock (XlibLock) {
 				if (hwnd.client_window != IntPtr.Zero) {

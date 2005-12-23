@@ -1,3 +1,9 @@
+2005-12-23  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* Control.cs: Removed debug code
+	* XplatUIX11.cs: Changed DestroyChildWindows to also consider
+	  implicit children
+
 2005-12-23  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* Control.cs: When creating the control, update the Z-order after

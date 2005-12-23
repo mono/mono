@@ -2999,7 +2999,6 @@ namespace System.Windows.Forms
 			}
 
 			window.CreateHandle(CreateParams);
-//Console.WriteLine("Created window {0:X}, control {1}", window.Handle.ToInt32(), this);
 
 			if (window.Handle!=IntPtr.Zero) {
 				if (!controls.Contains(window.Handle)) {
