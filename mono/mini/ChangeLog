@@ -1,5 +1,10 @@
 2005-12-23  Zoltan Varga  <vargaz@gmail.com>
 
+	* inssel-ia64.brg (OP_MEMSET): Fix an optimization which previously
+	could skip initialization of some parts of memory.
+
+	* mini.c mini-ia64.c: Fix warnings.
+
 	* inssel-sparc.brg: Add an implementation of lneg which actually works.
 
 2005-12-22  Zoltan Varga  <vargaz@gmail.com>
