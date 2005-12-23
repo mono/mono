@@ -126,7 +126,7 @@ namespace Commons.Xml.Nvdl
 			NvdlTrigger el = new NvdlTrigger ();
 			FillLocation (el);
 			el.NS = reader.GetAttribute ("ns");
-			el.Name = reader.GetAttribute ("name");
+			el.NameList = reader.GetAttribute ("nameList");
 			FillForeignAttribute (el);
 			if (reader.IsEmptyElement) {
 				reader.Skip ();
@@ -237,7 +237,7 @@ namespace Commons.Xml.Nvdl
 			NvdlNamespace el = new NvdlNamespace ();
 			FillLocation (el);
 			el.NS = reader.GetAttribute ("ns");
-			el.Wildcard = reader.GetAttribute ("wildcard");
+			el.Wildcard = reader.GetAttribute ("wildCard");
 			el.Match = ParseMatch (reader.GetAttribute ("match"));
 			FillForeignAttribute (el);
 			if (reader.IsEmptyElement) {
@@ -278,8 +278,8 @@ namespace Commons.Xml.Nvdl
 			case "attach":
 				el.Actions.Add (ReadAttach ());
 				break;
-			case "attachPlaceHolder":
-				el.Actions.Add (ReadAttachPlaceHolder ());
+			case "attachPlaceholder":
+				el.Actions.Add (ReadAttachPlaceholder ());
 				break;
 			case "unwrap":
 				el.Actions.Add (ReadUnwrap ());
@@ -379,9 +379,9 @@ namespace Commons.Xml.Nvdl
 			return el;
 		}
 
-		private NvdlAttachPlaceHolder ReadAttachPlaceHolder ()
+		private NvdlAttachPlaceholder ReadAttachPlaceholder ()
 		{
-			NvdlAttachPlaceHolder el = new NvdlAttachPlaceHolder ();
+			NvdlAttachPlaceholder el = new NvdlAttachPlaceholder ();
 			ReadCommonActionContent (el);
 			return el;
 		}

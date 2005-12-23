@@ -122,12 +122,18 @@ namespace Commons.Xml.Nvdl
 
 			// 6.4.10 : done in SimpleRule.Simplify
 
-			triggers = new XmlQualifiedName [rules.Triggers.Count];
+			ArrayList tl = new ArrayList ();
 			for (int i = 0; i < triggers.Length; i++) {
 				NvdlTrigger t = rules.Triggers [i];
-				triggers [i] = new XmlQualifiedName (
-					t.Name, t.NS);
+				foreach (string ss in t.NameList.Split (' ')) {
+					string s = ss.Trim ();
+					if (s.Length == 0)
+						continue;
+					tl.Add (new XmlQualifiedName (s, t.NS));
+				}
 			}
+			triggers = (XmlQualifiedName []) tl.ToArray (
+				typeof (XmlQualifiedName));
 
 			modes = (SimpleMode [])
 				new ArrayList (ctx.GetCompiledModes ())
@@ -363,7 +369,7 @@ namespace Commons.Xml.Nvdl
 				if (nss.Wildcard == null)
 					wildcard = "*";
 				else if (nss.Wildcard.Length > 1)
-					throw new NvdlCompileException ("'wildcard' attribute can specify at most one character string.", rule);
+					throw new NvdlCompileException ("'wildCard' attribute can specify at most one character string.", rule);
 				else
 					wildcard = nss.Wildcard;
 			}

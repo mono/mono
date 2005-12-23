@@ -19,11 +19,11 @@ namespace Commons.Xml.Nvdl
 			return !Reader.EOF;
 		}
 
-		public void AttachPlaceHolder ()
+		public void AttachPlaceholder ()
 		{
 		}
 
-		public void DetachPlaceHolder ()
+		public void DetachPlaceholder ()
 		{
 		}
 	}
@@ -57,7 +57,7 @@ namespace Commons.Xml.Nvdl
 			this.validate = validate;
 		}
 
-		public void AttachPlaceHolder ()
+		public void AttachPlaceholder ()
 		{
 			if (placeHolderDepthStack == null)
 				placeHolderDepthStack = new Stack ();
@@ -67,7 +67,7 @@ namespace Commons.Xml.Nvdl
 			nextPlaceHolder = XmlNodeType.Element;
 		}
 
-		public void DetachPlaceHolder ()
+		public void DetachPlaceholder ()
 		{
 			if (placeHolderDepthStack.Count > 0)
 				placeHolderDepth = (int) placeHolderDepthStack.Pop ();

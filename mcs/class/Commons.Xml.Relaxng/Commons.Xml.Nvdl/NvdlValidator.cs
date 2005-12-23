@@ -345,8 +345,8 @@ NvdlDebug.Writer.WriteLine ("    <state.EndElement {0} (for {2}). {1} interp.", 
 			get { return parent; }
 		}
 
-		public abstract void AttachPlaceHolder ();
-		public abstract void DetachPlaceHolder ();
+		public abstract void AttachPlaceholder ();
+		public abstract void DetachPlaceholder ();
 		public abstract void StartElement ();
 		public abstract void EndElement ();
 		public abstract void Text ();
@@ -371,26 +371,26 @@ NvdlDebug.Writer.WriteLine ("    <state.EndElement {0} (for {2}). {1} interp.", 
 NvdlDebug.Writer.WriteLine ("++++++ new resultAction " + resultAction.Location);
 			type = resultAction.ResultType;
 
-			if (type == NvdlResultType.AttachPlaceHolder && parent != null)
-				parent.AttachPlaceHolder ();
+			if (type == NvdlResultType.AttachPlaceholder && parent != null)
+				parent.AttachPlaceholder ();
 		}
 
 		public override void EndSection ()
 		{
-			if (type == NvdlResultType.AttachPlaceHolder && Parent != null)
-				Parent.DetachPlaceHolder ();
+			if (type == NvdlResultType.AttachPlaceholder && Parent != null)
+				Parent.DetachPlaceholder ();
 		}
 
-		public override void AttachPlaceHolder ()
+		public override void AttachPlaceholder ()
 		{
 			if (type == NvdlResultType.Unwrap)
-				Parent.AttachPlaceHolder ();
+				Parent.AttachPlaceholder ();
 		}
 
-		public override void DetachPlaceHolder ()
+		public override void DetachPlaceholder ()
 		{
 			if (type == NvdlResultType.Unwrap)
-				Parent.DetachPlaceHolder ();
+				Parent.DetachPlaceholder ();
 		}
 
 		public override void StartElement ()
@@ -434,7 +434,7 @@ NvdlDebug.Writer.WriteLine (": : : : Unwrapping StartElement ");
 			case NvdlResultType.Attach:
 				Parent.ValidateStartElement ();
 				break;
-			case NvdlResultType.AttachPlaceHolder:
+			case NvdlResultType.AttachPlaceholder:
 				throw new NotImplementedException ();
 			}
 		}
@@ -447,7 +447,7 @@ NvdlDebug.Writer.WriteLine (": : : : Unwrapping EndElement ");
 			case NvdlResultType.Attach:
 				Parent.ValidateEndElement ();
 				break;
-			case NvdlResultType.AttachPlaceHolder:
+			case NvdlResultType.AttachPlaceholder:
 				throw new NotImplementedException ();
 			}
 		}
@@ -460,7 +460,7 @@ NvdlDebug.Writer.WriteLine (": : : : Unwrapping Text ");
 			case NvdlResultType.Attach:
 				Parent.ValidateText ();
 				break;
-			case NvdlResultType.AttachPlaceHolder:
+			case NvdlResultType.AttachPlaceholder:
 				throw new NotImplementedException ();
 			}
 		}
@@ -473,7 +473,7 @@ NvdlDebug.Writer.WriteLine (": : : : Unwrapping Whitespace ");
 			case NvdlResultType.Attach:
 				Parent.ValidateWhitespace ();
 				break;
-			case NvdlResultType.AttachPlaceHolder:
+			case NvdlResultType.AttachPlaceholder:
 				throw new NotImplementedException ();
 			}
 		}
@@ -496,15 +496,15 @@ NvdlDebug.Writer.WriteLine ("++++++ new validate " + validate.Location);
 			dispatcher.Validator.OnMessage (validate.Messages);
 		}
 
-		public override void AttachPlaceHolder ()
+		public override void AttachPlaceholder ()
 		{
-			reader.AttachPlaceHolder ();
+			reader.AttachPlaceholder ();
 			validator.Read (); // check start Element
 		}
 
-		public override void DetachPlaceHolder ()
+		public override void DetachPlaceholder ()
 		{
-			reader.DetachPlaceHolder ();
+			reader.DetachPlaceholder ();
 			validator.Read (); // check EndElement
 		}
 

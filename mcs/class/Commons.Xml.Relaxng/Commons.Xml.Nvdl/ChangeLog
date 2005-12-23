@@ -1,3 +1,13 @@
+2005-12-23  Atsushi Enomoto <atsushi@ximian.com>
+
+	* NvdlFilteredXmlReader.cs, NvdlReader.cs, NvdlStructures.cs,
+	  NvdlSimplified.cs, NvdlValidator.cs:
+	  Reflected the latest changes in NVDL Final Draft:
+	  http://www.jtc1sc34.org/repository/0694.pdf
+	  - wildcard -> wildCard
+	  - renamed from "PlaceHolder" to "Placeholder"
+	  - trigger/@name of NCName -> trigger/@nameList of list of NCName
+
 2005-09-30  Atsushi Enomoto <atsushi@ximian.com>
 
 	* NvdlConfig.cs : changed mime type due to the suggestion from Makoto

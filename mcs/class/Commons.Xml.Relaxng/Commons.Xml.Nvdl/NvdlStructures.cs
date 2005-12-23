@@ -182,14 +182,14 @@ namespace Commons.Xml.Nvdl
 	/*
 	element trigger {
 		(attribute ns { xsd:string },
-		attribute name { xsd:NCName })
+		attribute nameList { list { xsd:NCName } })
 		& foreign
 	}
 	*/
 	public class NvdlTrigger : NvdlAttributable
 	{
 		string ns;
-		string name;
+		string nameList;
 
 //		[Map.Attribute]
 		public string NS {
@@ -198,10 +198,10 @@ namespace Commons.Xml.Nvdl
 		}
 
 //		[Map.Attribute]
-//		[MapType ("NCName", XmlSchema.Namespace)]
-		public string Name {
-			get { return name; }
-			set { name = value != null ? value.Trim (Nvdl.Whitespaces) : null; }
+//		[Map.List]
+		public string NameList {
+			get { return nameList; }
+			set { nameList = value != null ? value.Trim (Nvdl.Whitespaces) : null; }
 		}
 	}
 
@@ -283,7 +283,7 @@ namespace Commons.Xml.Nvdl
 	/*
 	element namespace {
 		(attribute ns { xsd:string },
-		attribute wildcard {xsd:string{maxLength = "1"}}?,
+		attribute wildCard {xsd:string{maxLength = "1"}}?,
 		ruleModel)
 		& foreign
 	}
@@ -304,7 +304,7 @@ namespace Commons.Xml.Nvdl
 			get { return wildcard; }
 			set {
 				if (value != null && value.Length > 1)
-					throw new ArgumentException ("wildcard attribute can contain at most one character.");
+					throw new ArgumentException ("wildCard attribute can contain at most one character.");
 				wildcard = value;
 			}
 		}
@@ -355,7 +355,7 @@ namespace Commons.Xml.Nvdl
 
 	public enum NvdlResultType {
 		Attach,
-		AttachPlaceHolder,
+		AttachPlaceholder,
 		Unwrap
 	}
 
@@ -371,10 +371,10 @@ namespace Commons.Xml.Nvdl
 		}
 	}
 
-	public class NvdlAttachPlaceHolder : NvdlResultAction
+	public class NvdlAttachPlaceholder : NvdlResultAction
 	{
 		public override NvdlResultType ResultType {
-			get { return NvdlResultType.AttachPlaceHolder; }
+			get { return NvdlResultType.AttachPlaceholder; }
 		}
 	}
 
