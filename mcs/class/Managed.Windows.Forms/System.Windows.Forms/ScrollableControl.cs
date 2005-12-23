@@ -538,12 +538,15 @@ namespace System.Windows.Forms {
 			canvas = Canvas;
 			client = ClientRectangle.Size;
 
-			canvas.Width += auto_scroll_margin.Width + SystemInformation.VerticalScrollBarWidth;
-			canvas.Height += auto_scroll_margin.Height + SystemInformation.HorizontalScrollBarHeight;
+			canvas.Width += auto_scroll_margin.Width;
+			canvas.Height += auto_scroll_margin.Height;
 
 			//  || (scroll_position.X == 0 && scroll_position.Y == 0)
 
-			if ((canvas.Width >= client.Width) || (auto_scroll_min_size.Width > client.Width) || force_hscroll_visible) {
+			if ((canvas.Width > client.Width) ||							// Regular decision
+			    ((canvas.Height > client.Height) && ((canvas.Width + SystemInformation.HorizontalScrollBarHeight) > client.Width)) ||
+			    (auto_scroll_min_size.Width > client.Width) ||
+			    force_hscroll_visible) {
 				// Need horz
 
 				hscrollbar.Left = 0;
@@ -558,7 +561,10 @@ namespace System.Windows.Forms {
 				scroll_position.X = 0;
 			}
 
-			if ((canvas.Height >= client.Height) || (auto_scroll_min_size.Height > client.Height) || force_vscroll_visible) {
+			if ((canvas.Height > client.Height) || 
+			    ((canvas.Width > client.Width) && ((canvas.Height + SystemInformation.VerticalScrollBarWidth) > client.Height)) ||
+			    (auto_scroll_min_size.Height > client.Height) || 
+			    force_vscroll_visible) {
 				// Need vert
 				vscrollbar.Left = client.Width - SystemInformation.VerticalScrollBarWidth;
 				vscrollbar.Top = 0;

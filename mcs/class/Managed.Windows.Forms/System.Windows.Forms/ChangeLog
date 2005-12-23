@@ -1,5 +1,11 @@
 2005-12-22  Peter Dennis Bartok  <pbartok@novell.com>
 
+	* ScrollableControl.cs: When calculating the canvas, don't consider
+	  the scrollbar widths. Instead, predict if horizontal scrollbar
+	  will affect canvas when deciding on vertical display and vice versa.
+
+2005-12-22  Peter Dennis Bartok  <pbartok@novell.com>
+
 	* RichTextBox.cs: Set default RTF font for documents that don't
 	  have a font table (Fixes #77076)
 
