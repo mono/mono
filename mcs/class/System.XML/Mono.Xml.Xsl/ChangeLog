@@ -1,5 +1,9 @@
 2005-12-23  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* XslOutput.cs: Reduced indentation of cases in switch statement.
+
+2005-12-23  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* ScriptCompilerInfo.cs: Fixed line endings.
 	* XslStylesheet.cs: Beautify error messages.
 	* Debug.cs: Fixed line endings.

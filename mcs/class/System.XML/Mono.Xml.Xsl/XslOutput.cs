@@ -158,135 +158,135 @@ namespace Mono.Xml.Xsl
 			string value = nav.Value;
 
 			switch (nav.LocalName) {
-				case "cdata-section-elements":
-					if (value.Length > 0) {
-						cdSectsList.AddRange (XslNameUtil.FromListString (value, nav));
-					}
+			case "cdata-section-elements":
+				if (value.Length > 0) {
+					cdSectsList.AddRange (XslNameUtil.FromListString (value, nav));
+				}
+				break;
+			case "method":
+				if (value.Length == 0) {
 					break;
-				case "method":
-					if (value.Length == 0) {
-						break;
-					}
+				}
 
-					switch (value) {
-						case "xml":
-							method = OutputMethod.XML;
-							break;
-						case "html":
-							omitXmlDeclaration = true;
-							if (indent == IndentType.NotSet) {
-								indent = IndentType.Yes;
-							}
-							method = OutputMethod.HTML;
-							break;
-						case "text":
-							omitXmlDeclaration = true;
-							method = OutputMethod.Text;
-							break;
-						default:
-							method = OutputMethod.Custom;
-							customMethod = XslNameUtil.FromString (value, nav);
-							if (customMethod.Namespace == String.Empty) {
-								IXmlLineInfo li = nav as IXmlLineInfo;
-								throw new XsltCompileException (new ArgumentException (
-									"Invalid output method value: '" + value + "'. It" +
-									" must be either 'xml' or 'html' or 'text' or QName."),
-									nav.BaseURI,
-									li != null ? li.LineNumber : 0,
-									li != null ? li.LinePosition : 0);
-							}
-							break;
-					}
-					break;
-				case "version":
-					if (value.Length > 0) {
-						this.version = value;
-					}
-					break;
-				case "encoding":
-					if (value.Length > 0) {
-						try {
-							this.encoding = System.Text.Encoding.GetEncoding (value);
-						} catch (ArgumentException) {
-							// MS.NET just leaves the default encoding when encoding is unknown
-						} catch (NotSupportedException) {
-							// Workaround for a bug in System.Text, it throws invalid exception
+				switch (value) {
+					case "xml":
+						method = OutputMethod.XML;
+						break;
+					case "html":
+						omitXmlDeclaration = true;
+						if (indent == IndentType.NotSet) {
+							indent = IndentType.Yes;
 						}
-					}
-					break;
-				case "standalone":
-					switch (value) {
-						case "yes":
-							this.standalone = StandaloneType.YES;
-							break;
-						case "no":
-							this.standalone = StandaloneType.NO;
-							break;
-						default:
+						method = OutputMethod.HTML;
+						break;
+					case "text":
+						omitXmlDeclaration = true;
+						method = OutputMethod.Text;
+						break;
+					default:
+						method = OutputMethod.Custom;
+						customMethod = XslNameUtil.FromString (value, nav);
+						if (customMethod.Namespace == String.Empty) {
 							IXmlLineInfo li = nav as IXmlLineInfo;
-							throw new XsltCompileException (new XsltException (
-								"'" + value + "' is an invalid value for 'standalone'" +
-								" attribute.", (Exception) null),
+							throw new XsltCompileException (new ArgumentException (
+								"Invalid output method value: '" + value + "'. It" +
+								" must be either 'xml' or 'html' or 'text' or QName."),
 								nav.BaseURI,
 								li != null ? li.LineNumber : 0,
 								li != null ? li.LinePosition : 0);
+						}
+						break;
+				}
+				break;
+			case "version":
+				if (value.Length > 0) {
+					this.version = value;
+				}
+				break;
+			case "encoding":
+				if (value.Length > 0) {
+					try {
+						this.encoding = System.Text.Encoding.GetEncoding (value);
+					} catch (ArgumentException) {
+						// MS.NET just leaves the default encoding when encoding is unknown
+					} catch (NotSupportedException) {
+						// Workaround for a bug in System.Text, it throws invalid exception
 					}
-					break;
-				case "doctype-public":
-					this.doctypePublic = value;
-					break;
-				case "doctype-system":
-					this.doctypeSystem = value;
-					break;
-				case "media-type":
-					if (value.Length > 0) {
-						this.mediaType = value;
-					}
-					break;
-				case "omit-xml-declaration":
-					switch (value) {
-						case "yes":
-							this.omitXmlDeclaration = true;
-							break;
-						case "no":
-							this.omitXmlDeclaration = false;
-							break;
-						default:
-							IXmlLineInfo li = nav as IXmlLineInfo;
-							throw new XsltCompileException (new XsltException (
-								"'" + value + "' is an invalid value for 'omit-xml-declaration'" +
-								" attribute.", (Exception) null),
-								nav.BaseURI,
-								li != null ? li.LineNumber : 0,
-								li != null ? li.LinePosition : 0);
-					}
-					break;
-				case "indent":
-					switch (value) {
-						case "yes":
-							this.indent = IndentType.Yes;
-							break;
-						case "no":
-							this.indent = IndentType.No;
-							break;
-						default:
-							IXmlLineInfo li = nav as IXmlLineInfo;
-							throw new XsltCompileException (new XsltException (
-								"'" + value + "' is an invalid value for 'indent'" +
-								" attribute.", (Exception) null),
-								nav.BaseURI,
-								li != null ? li.LineNumber : 0,
-								li != null ? li.LinePosition : 0);
-					}
-					break;
-				default:
-					IXmlLineInfo li = nav as IXmlLineInfo;
-					throw new XsltCompileException (new XsltException (
-						"'" + nav.LocalName + "' is an invalid attribute for 'output'" +
-						" element.", (Exception) null),
-						nav.BaseURI,
-						li != null ? li.LineNumber : 0,
-						li != null ? li.LinePosition : 0);
+				}
+				break;
+			case "standalone":
+				switch (value) {
+					case "yes":
+						this.standalone = StandaloneType.YES;
+						break;
+					case "no":
+						this.standalone = StandaloneType.NO;
+						break;
+					default:
+						IXmlLineInfo li = nav as IXmlLineInfo;
+						throw new XsltCompileException (new XsltException (
+							"'" + value + "' is an invalid value for 'standalone'" +
+							" attribute.", (Exception) null),
+							nav.BaseURI,
+							li != null ? li.LineNumber : 0,
+							li != null ? li.LinePosition : 0);
+				}
+				break;
+			case "doctype-public":
+				this.doctypePublic = value;
+				break;
+			case "doctype-system":
+				this.doctypeSystem = value;
+				break;
+			case "media-type":
+				if (value.Length > 0) {
+					this.mediaType = value;
+				}
+				break;
+			case "omit-xml-declaration":
+				switch (value) {
+					case "yes":
+						this.omitXmlDeclaration = true;
+						break;
+					case "no":
+						this.omitXmlDeclaration = false;
+						break;
+					default:
+						IXmlLineInfo li = nav as IXmlLineInfo;
+						throw new XsltCompileException (new XsltException (
+							"'" + value + "' is an invalid value for 'omit-xml-declaration'" +
+							" attribute.", (Exception) null),
+							nav.BaseURI,
+							li != null ? li.LineNumber : 0,
+							li != null ? li.LinePosition : 0);
+				}
+				break;
+			case "indent":
+				switch (value) {
+					case "yes":
+						this.indent = IndentType.Yes;
+						break;
+					case "no":
+						this.indent = IndentType.No;
+						break;
+					default:
+						IXmlLineInfo li = nav as IXmlLineInfo;
+						throw new XsltCompileException (new XsltException (
+							"'" + value + "' is an invalid value for 'indent'" +
+							" attribute.", (Exception) null),
+							nav.BaseURI,
+							li != null ? li.LineNumber : 0,
+							li != null ? li.LinePosition : 0);
+				}
+				break;
+			default:
+				IXmlLineInfo li = nav as IXmlLineInfo;
+				throw new XsltCompileException (new XsltException (
+					"'" + nav.LocalName + "' is an invalid attribute for 'output'" +
+					" element.", (Exception) null),
+					nav.BaseURI,
+					li != null ? li.LineNumber : 0,
+					li != null ? li.LinePosition : 0);
 			}
 		}
 	}
