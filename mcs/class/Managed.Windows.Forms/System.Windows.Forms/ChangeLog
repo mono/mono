@@ -1,3 +1,8 @@
+2005-12-22  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* RichTextBox.cs: Set default RTF font for documents that don't
+	  have a font table (Fixes #77076)
+
 2005-12-22  Jackson Harper  <jackson@ximian.com>
 
 	* TextBoxBase.cs: It's difficult to do, but you can have an empty

@@ -1336,6 +1336,7 @@ Console.WriteLine("FIXME - SelectionColor should not alter font");
 			rtf_rtffont = null;
 			rtf_cursor_x = cursor_x;
 			rtf_cursor_y = cursor_y;
+			rtf.DefaultFont(this.Font.Name);
 
 			rtf_text_map = new RTF.TextMap();
 			RTF.TextMap.SetupStandardTable(rtf_text_map.Table);
