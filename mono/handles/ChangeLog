@@ -1,3 +1,7 @@
+2005-12-23  Dick Porter  <dick@ximian.com>
+
+	* hps.c: Add named event support
+
 2005-12-06  Dick Porter  <dick@ximian.com>
 
 	* hps.c: Add named semaphore support

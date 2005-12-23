@@ -1,3 +1,10 @@
+2005-12-23  Dick Porter  <dick@ximian.com>
+
+	* icall.c: 
+	* threads-types.h: 
+	* threads.c: Added OpenMutex, OpenSemaphore and OpenEvent icalls.
+	CreateEvent icall now returns "created" boolean parameter.
+
 2005-12-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c (mono_mb_emit_restore_result): Add generics support. Fixes

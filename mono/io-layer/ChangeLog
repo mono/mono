@@ -1,3 +1,18 @@
+2005-12-23  Dick Porter  <dick@ximian.com>
+
+
+	* semaphores.h: 
+	* semaphores.c: Implement OpenSemaphore
+
+	* mutexes.c: 
+	* mutexes.h: Implement OpenMutex
+
+	* wapi-private.h: 
+	* handles.c: 
+	* events.c: 
+	* events.h: 
+	* event-private.h: Implement named events.  Implement OpenEvent.
+
 2005-12-15  Dick Porter  <dick@ximian.com>
 
 	* processes.c (CreateProcess): The pipe-based cross-process
