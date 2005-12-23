@@ -1,7 +1,13 @@
 2005-12-23  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlTextWriter.cs : When xml:space or xml:lang attribute was
+	  directly written without an element, it caused ArgumentOutOfRange.
+	  Fixed bug #77084.
+
+2005-12-23  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlTextWriter.cs : (WriteStartAttribute) set prefix as "xmlns" when
-	  namespaceURI is that of xmlns attributes.
+	  namespaceURI is that of xmlns attributes. Fixed bug #77083.
 
 2005-12-15  Atsushi Enomoto <atsushi@ximian.com>
 

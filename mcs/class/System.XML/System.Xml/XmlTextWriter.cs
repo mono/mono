@@ -558,7 +558,8 @@ openElements [openElementCount - 1]).IndentingOverriden;
 			if (openXmlLang) {
 				w.Write (xmlLang);
 				openXmlLang = false;
-				((XmlTextWriterOpenElement) openElements [openElementCount - 1]).XmlLang = xmlLang;
+				if (openElementCount > 0)
+					((XmlTextWriterOpenElement) openElements [openElementCount - 1]).XmlLang = xmlLang;
 			}
 
 			if (openXmlSpace) 
@@ -568,7 +569,8 @@ openElements [openElementCount - 1]).IndentingOverriden;
 				else if (xmlSpace == XmlSpace.Default)
 					w.Write ("default");
 				openXmlSpace = false;
-				((XmlTextWriterOpenElement) openElements [openElementCount - 1]).XmlSpace = xmlSpace;
+				if (openElementCount > 0)
+					((XmlTextWriterOpenElement) openElements [openElementCount - 1]).XmlSpace = xmlSpace;
 			}
 
 			w.Write (quoteChar);

@@ -1,5 +1,9 @@
 2005-12-23  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlTextWriterTests.cs : XmlSpace_Valid() is working now.
+
+2005-12-23  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlTextWriterTests.cs : XmlNs_Valid2() is working now.
 
 2005-12-23  Gert Driesen <drieseng@users.sourceforge.net>

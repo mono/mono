@@ -120,7 +120,6 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void XmlSpace_Valid () // bug #77084
 		{
 			xtw.WriteAttributeString ("xml", "space", null, "preserve");
