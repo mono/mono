@@ -4,6 +4,7 @@
 	* DispositionTypeNames.cs: change to a static class
 	* MediaTypeNames.cs: change these to static classes
 	* TransferEncoding.cs: remove Binary and EightBit
+	add [Serializable] and fix the values
 	
 2004-09-09  Tim Coleman <tim@timcoleman.com>
 	* ContentType.cs: Changes to MIME headers
