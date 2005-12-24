@@ -1,3 +1,8 @@
+2005-12-24  Kornél Pál  <kornelpal@hotmail.com>
+
+	* FileStream.cs: Set buf_start to actual initial position when creating
+	  FileStreams from handles.
+
 2005-12-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DirectoryInfo.cs: Fixed #77090 to fix /home parent to be / (and not

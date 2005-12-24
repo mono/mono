@@ -94,6 +94,13 @@ namespace System.IO
 
 			InitBuffer (bufferSize, noBuffering);
 
+			if (canseek) {
+				buf_start = MonoIO.Seek (handle, 0, SeekOrigin.Current, out error);
+				if (error != MonoIOError.ERROR_SUCCESS) {
+					throw MonoIO.GetException (name, error);
+				}
+			}
+
 			/* Can't set append mode */
 			this.append_startpos=0;
 		}
