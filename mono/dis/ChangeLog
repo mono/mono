@@ -1,3 +1,7 @@
+2005-12-24  Jb Evain  <jbevain@gmail.com>
+
+	* main.c (dis_property_signature): read the hasthis flag.
+
 2005-12-13  Zoltan Varga  <vargaz@gmail.com>
 
 	* get.c (get_constant): Use finite() instead of isnormal () since the
