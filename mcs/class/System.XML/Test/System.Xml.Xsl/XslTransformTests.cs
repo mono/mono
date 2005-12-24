@@ -516,6 +516,46 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 		}
 
 		[Test]
+		[Category ("NotWorking")]
+		public void Output_Standalone_ForwardsCompatible ()
+		{
+			StringWriter sw = new StringWriter ();
+			XsltArgumentList xsltArgs = new XsltArgumentList ();
+			XslTransform xsltProcessor = new XslTransform ();
+			XmlDocument xmlDoc = new XmlDocument ();
+			xmlDoc.LoadXml ("<dummy />");
+
+			string xsltFragment = @"<?xml version=""1.0"" encoding=""UTF-8"" ?>
+				<xsl:stylesheet xmlns:xsl=""http://www.w3.org/1999/XSL/Transform"" version=""1.5"">
+					<xsl:output standalone=""{0}"" />
+					<xsl:template match=""/"">
+						<root />
+					</xsl:template>
+				</xsl:stylesheet>";
+
+			// standalone is "Yes"
+			xsltProcessor.Load (new XmlTextReader (new StringReader (
+				string.Format (xsltFragment, "Yes"))),
+				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+			xsltProcessor.Transform (xmlDoc, xsltArgs, sw, new XmlUrlResolver ());
+
+			Assert.AreEqual (
+				"<?xml version=\"1.0\" encoding=\"utf-16\"?>" +
+				"<root />", sw.ToString (), "#1");
+
+			// standalone is empty
+			sw.GetStringBuilder ().Length = 0;
+			xsltProcessor.Load (new XmlTextReader (new StringReader (
+				string.Format (xsltFragment, ""))),
+				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+			xsltProcessor.Transform (xmlDoc, xsltArgs, sw, new XmlUrlResolver ());
+
+			Assert.AreEqual (
+				"<?xml version=\"1.0\" encoding=\"utf-16\"?>" +
+				"<root />", sw.ToString (), "#2");
+		}
+
+		[Test]
 		[ExpectedException (typeof (XsltCompileException))]
 		public void Output_Standalone_Empty ()
 		{
@@ -554,7 +594,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 
 			Assert.AreEqual ("<root />", sw.ToString (), "#1");
 
-			sw = new StringWriter ();
+			sw.GetStringBuilder ().Length = 0;
 			xsltProcessor.Load (new XmlTextReader (new StringReader (
 				string.Format (xsltFragment, "omit-xml-declaration=\"no\""))),
 				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
@@ -589,6 +629,46 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 			XslTransform xsltProcessor = new XslTransform ();
 			xsltProcessor.Load (new XmlTextReader (new StringReader (xsltFragment)),
 				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Output_OmitXmlDeclaration_ForwardsCompatible ()
+		{
+			StringWriter sw = new StringWriter ();
+			XsltArgumentList xsltArgs = new XsltArgumentList ();
+			XslTransform xsltProcessor = new XslTransform ();
+			XmlDocument xmlDoc = new XmlDocument ();
+			xmlDoc.LoadXml ("<dummy />");
+
+			string xsltFragment = @"<?xml version=""1.0"" encoding=""UTF-8"" ?>
+				<xsl:stylesheet xmlns:xsl=""http://www.w3.org/1999/XSL/Transform"" version=""1.5"">
+					<xsl:output omit-xml-declaration=""{0}"" />
+					<xsl:template match=""/"">
+						<root />
+					</xsl:template>
+				</xsl:stylesheet>";
+
+			// omit-xml-declaration is "Yes"
+			xsltProcessor.Load (new XmlTextReader (new StringReader (
+				string.Format (xsltFragment, "Yes"))),
+				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+			xsltProcessor.Transform (xmlDoc, xsltArgs, sw, new XmlUrlResolver ());
+
+			Assert.AreEqual (
+				"<?xml version=\"1.0\" encoding=\"utf-16\"?>" +
+				"<root />", sw.ToString (), "#1");
+
+			// omit-xml-declaration is empty
+			sw.GetStringBuilder ().Length = 0;
+			xsltProcessor.Load (new XmlTextReader (new StringReader (
+				string.Format (xsltFragment, ""))),
+				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+			xsltProcessor.Transform (xmlDoc, xsltArgs, sw, new XmlUrlResolver ());
+
+			Assert.AreEqual (
+				"<?xml version=\"1.0\" encoding=\"utf-16\"?>" +
+				"<root />", sw.ToString (), "#2");
 		}
 
 		[Test]
@@ -1175,6 +1255,46 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 		}
 
 		[Test]
+		[Category ("NotWorking")]
+		public void Output_Indent_ForwardsCompatible ()
+		{
+			StringWriter sw = new StringWriter ();
+			XsltArgumentList xsltArgs = new XsltArgumentList ();
+			XslTransform xsltProcessor = new XslTransform ();
+			XmlDocument xmlDoc = new XmlDocument ();
+			xmlDoc.LoadXml ("<dummy />");
+
+			string xsltFragment = @"<?xml version=""1.0"" encoding=""UTF-8"" ?>
+				<xsl:stylesheet xmlns:xsl=""http://www.w3.org/1999/XSL/Transform"" version=""1.5"">
+					<xsl:output indent=""{0}"" />
+					<xsl:template match=""/"">
+						<root />
+					</xsl:template>
+				</xsl:stylesheet>";
+
+			// indent is "Yes"
+			xsltProcessor.Load (new XmlTextReader (new StringReader (
+				string.Format (xsltFragment, "Yes"))),
+				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+			xsltProcessor.Transform (xmlDoc, xsltArgs, sw, new XmlUrlResolver ());
+
+			Assert.AreEqual (
+				"<?xml version=\"1.0\" encoding=\"utf-16\"?>" +
+				"<root />", sw.ToString (), "#1");
+
+			// indent is empty
+			sw.GetStringBuilder ().Length = 0;
+			xsltProcessor.Load (new XmlTextReader (new StringReader (
+				string.Format (xsltFragment, ""))),
+				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+			xsltProcessor.Transform (xmlDoc, xsltArgs, sw, new XmlUrlResolver ());
+
+			Assert.AreEqual (
+				"<?xml version=\"1.0\" encoding=\"utf-16\"?>" +
+				"<root />", sw.ToString (), "#2");
+		}
+
+		[Test]
 		public void Output_MediaType ()
 		{
 			StringWriter sw = null;
@@ -1589,6 +1709,33 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 			XslTransform xsltProcessor = new XslTransform ();
 			xsltProcessor.Load (new XmlTextReader (new StringReader (xsltFragment)),
 				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Output_Unknown_Attribute_ForwardsCompatible ()
+		{
+			StringWriter sw = new StringWriter ();
+			XsltArgumentList xsltArgs = new XsltArgumentList ();
+			XslTransform xsltProcessor = new XslTransform ();
+			XmlDocument xmlDoc = new XmlDocument ();
+			xmlDoc.LoadXml ("<dummy />");
+
+			string xsltFragment = @"<?xml version=""1.0"" encoding=""UTF-8"" ?>
+				<xsl:stylesheet xmlns:xsl=""http://www.w3.org/1999/XSL/Transform"" version=""1.5"">
+					<xsl:output whatever="""" />
+					<xsl:template match=""/"">
+						<root />
+					</xsl:template>
+				</xsl:stylesheet>";
+
+			xsltProcessor.Load (new XmlTextReader (new StringReader (xsltFragment)),
+				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+			xsltProcessor.Transform (xmlDoc, xsltArgs, sw, new XmlUrlResolver ());
+
+			Assert.AreEqual (
+				"<?xml version=\"1.0\" encoding=\"utf-16\"?>" +
+				"<root />", sw.ToString (), "#1");
 		}
 
 		[Test]

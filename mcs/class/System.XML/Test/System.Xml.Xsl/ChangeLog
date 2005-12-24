@@ -1,5 +1,9 @@
 2005-12-23  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* XslTransformTests.cs: Added forwards compatible tests.
+
+2005-12-23  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* XslTransformTests.cs: Added working XML/HTML indentation tests.
 
 2005-12-23  Gert Driesen  <drieseng@users.sourceforge.net>
