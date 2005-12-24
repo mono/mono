@@ -68,7 +68,7 @@ namespace System.Net.Mail {
 			attachments = new AttachmentCollection ();
 			bcc = new MailAddressCollection ();
 			cc = new MailAddressCollection ();
-			bodyContentType = new ContentType (MediaTypeNames.Application.Octet);
+			bodyContentType = new ContentType (MediaTypeNames.Text.Plain);
 			headers = new NameValueCollection ();
 
 			headers.Add ("MIME-Version", "1.0");

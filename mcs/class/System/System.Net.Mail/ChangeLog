@@ -1,3 +1,9 @@
+2005-12-24  John Luke  <john.luke@gmail.com>
+
+	* MailMessage.cs: use text/plain by default,
+	patch by Andy Waddell <awaddell@fnfr.com>,
+	fixes bug #76972
+
 2005-12-22  John Luke  <john.luke@gmail.com>
 
 	* SmtpClient.cs: remove use of TransferEncodings that
