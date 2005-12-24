@@ -62,7 +62,6 @@ namespace System.Windows.Forms
 		private ComboListBox listbox_ctrl;		
 		private TextBox textbox_ctrl;
 		private bool process_textchanged_event;
-		private bool has_focus;	
 
 		[ComVisible(true)]
 		public class ChildAccessibleObject : AccessibleObject {
@@ -273,6 +272,8 @@ namespace System.Windows.Forms
 					textbox_ctrl.BorderStyle = BorderStyle.None;
 					textbox_ctrl.TextChanged += new EventHandler (OnTextChangedEdit);
 					textbox_ctrl.KeyPress += new KeyPressEventHandler(textbox_ctrl_KeyPress);
+					textbox_ctrl.GotFocus += new EventHandler(textbox_ctrl_GotFocus);
+					textbox_ctrl.LostFocus += new EventHandler(textbox_ctrl_LostFocus);
 
 					if (IsHandleCreated == true) {
 						Controls.AddImplicit (textbox_ctrl);
@@ -957,6 +958,16 @@ namespace System.Windows.Forms
 		private void textbox_ctrl_KeyPress(object sender, KeyPressEventArgs e) 
 		{
 			OnKeyPress (e);
+		}
+		
+		private void textbox_ctrl_GotFocus(object sender, EventArgs e )
+		{
+			OnGotFocus(e);
+		}
+		
+		private void textbox_ctrl_LostFocus(object sender, EventArgs e )
+		{
+			OnLostFocus(e);
 		}
 		
 		// Calcs the text area size
