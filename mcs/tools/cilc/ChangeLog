@@ -1,3 +1,7 @@
+2005-12-24  Alp Toker  <alp@atoker.com>
+
+	* cilc.cs: Fix generation of mono method signature a bit (still needs work)
+
 2005-12-22  Alp Toker  <alp@atoker.com>
 
 	* cilc.cs: Add support for string return types and properties, begin work to

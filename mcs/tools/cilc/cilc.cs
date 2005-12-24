@@ -1150,8 +1150,8 @@ public class cilc
 			case TypeCode.String:
 				return "string";
 
-			default:
-				return tc.ToString ();
+			default: //TODO: construct signature based on mono docs
+				return tc.ToString ().ToLower ();
 		}
 	}
 
