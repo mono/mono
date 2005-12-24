@@ -3,7 +3,8 @@
 	* TabControl.cs: Give the panels focus, keyboard navigation is
 	fixed so this works correctly now.
 	- We need these key events also.
-
+	* ToolBar.cs: Remove some of the poor mans double buffering.
+	
 2005-12-24  Alexander Olk  <alex.olk@googlemail.com>
 
 	* ComboBox.cs: The internal TextBox now returns the focus.

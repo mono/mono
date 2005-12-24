@@ -650,13 +650,7 @@ namespace System.Windows.Forms
 
 		private void ToolBar_Paint (object sender, PaintEventArgs pevent)
 		{
-			if (this.Width <= 0 || this.Height <=  0 || this.Visible == false)
-				return;
-
-			if (redraw) {
-				ThemeEngine.Current.DrawToolBar (pevent.Graphics, pevent.ClipRectangle, this);
-				redraw = false;
-			}
+			ThemeEngine.Current.DrawToolBar (pevent.Graphics, pevent.ClipRectangle, this);
 
 			if (Paint != null) {
 				Paint (this, pevent);
@@ -665,9 +659,9 @@ namespace System.Windows.Forms
 
 		internal void Redraw (bool recalculate)
 		{
-			if (recalculate) {
-				CalcToolBar ();
-			}
+			// if (recalculate) {
+			CalcToolBar ();
+				// }
 
 			redraw = true;
 			Refresh ();
