@@ -127,7 +127,8 @@ namespace Mono.Xml.Xsl
 		XslStylesheet rootStyle;
 		Hashtable outputs = new Hashtable ();
 		bool keyCompilationMode;	
-	
+		string stylesheetVersion;
+
 		public CompiledStylesheet Compile (XPathNavigator nav, XmlResolver res, Evidence evidence)
 		{
 			this.xpathParser = new XPathParser (this);
@@ -140,11 +141,13 @@ namespace Mono.Xml.Xsl
 			// reject empty document.
 			if (nav.NodeType == XPathNodeType.Root && !nav.MoveToFirstChild ())
 				throw new XsltCompileException ("Stylesheet root element must be either \"stylesheet\" or \"transform\" or any literal element", null, nav);
-				
-			outputs [""] = new XslOutput ("");
-				
 			while (nav.NodeType != XPathNodeType.Element) nav.MoveToNext();
 			
+			stylesheetVersion = nav.GetAttribute ("version", 
+				(nav.NamespaceURI != XsltNamespace) ?
+				XsltNamespace : String.Empty);
+			outputs [""] = new XslOutput ("", stylesheetVersion);
+				
 			PushInputDocument (nav);
 			if (nav.MoveToFirstNamespace (XPathNamespaceScope.ExcludeXml))
 			{
@@ -600,7 +603,7 @@ namespace Mono.Xml.Xsl
 			string uri = n.GetAttribute ("href", "");
 			XslOutput output = outputs [uri] as XslOutput;
 			if (output == null) {
-				output = new XslOutput (uri);
+				output = new XslOutput (uri, stylesheetVersion);
 				outputs.Add (uri, output);
 			}
 			output.Fill (n);

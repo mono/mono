@@ -55,7 +55,7 @@ namespace Mono.Xml.Xsl
 		public HtmlEmitter (TextWriter writer, XslOutput output)
 		{
 			this.writer = writer;
-			indent = output.Indent;
+			indent = output.Indent == "yes" || output.Indent == null;
 			elementNameStack = new Stack ();
 			nonHtmlDepth = -1;
 			outputEncoding = writer.Encoding == null ? output.Encoding : writer.Encoding;

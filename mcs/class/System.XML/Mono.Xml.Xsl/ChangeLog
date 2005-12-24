@@ -1,3 +1,11 @@
+2005-12-24  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Compiler.cs : pass stylesheet version to XslOutput to determine
+	  "indent" value validity.
+	* XslOutput.cs, HtmlEmitter.cs, GenericOutputter.cs : Reverted
+	  buggy changes on "indent" attribute handling.
+	  http://www.w3.org/TR/xslt#section-HTML-Output-Method
+
 2005-12-23  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* XslOutput.cs: Reduced indentation of cases in switch statement.

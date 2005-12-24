@@ -145,7 +145,7 @@ namespace Mono.Xml.Xsl
 					break;
 				case OutputMethod.XML:
 					XmlTextWriter w = new XmlTextWriter (pendingTextWriter);
-					if (xslOutput.Indent)
+					if (xslOutput.Indent == "yes")
 						w.Formatting = Formatting.Indented;
 
 					_emitter = new XmlWriterEmitter (w);

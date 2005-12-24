@@ -70,22 +70,17 @@ namespace Mono.Xml.Xsl
 		string doctypePublic;
 		string doctypeSystem;
 		QName [] cdataSectionElements;
-		IndentType indent = IndentType.NotSet;
+		string indent;
 		string mediaType;
+		string stylesheetVersion;
 
 		// for compilation only.
 		ArrayList cdSectsList = new ArrayList ();
 
-		private enum IndentType
-		{
-			NotSet,
-			Yes,
-			No
-		}
-
-		public XslOutput (string uri)
+		public XslOutput (string uri, string stylesheetVersion)
 		{
 			this.uri = uri;
+			this.stylesheetVersion = stylesheetVersion;
 		}
 
 		public OutputMethod Method { get { return method; }}
@@ -127,8 +122,8 @@ namespace Mono.Xml.Xsl
 			}
 		}
 
-		public bool Indent {
-			get { return indent == IndentType.Yes; }
+		public string Indent {
+			get { return indent; }
 		}
 
 		public string MediaType {
@@ -174,9 +169,6 @@ namespace Mono.Xml.Xsl
 						break;
 					case "html":
 						omitXmlDeclaration = true;
-						if (indent == IndentType.NotSet) {
-							indent = IndentType.Yes;
-						}
 						method = OutputMethod.HTML;
 						break;
 					case "text":
@@ -262,21 +254,22 @@ namespace Mono.Xml.Xsl
 				}
 				break;
 			case "indent":
+				indent = value;
+				if (stylesheetVersion != "1.0")
+					break;
 				switch (value) {
-					case "yes":
-						this.indent = IndentType.Yes;
-						break;
-					case "no":
-						this.indent = IndentType.No;
+				case "yes":
+				case "no":
+					break;
+				default:
+					switch (method) {
+					case OutputMethod.Custom:
 						break;
 					default:
 						IXmlLineInfo li = nav as IXmlLineInfo;
-						throw new XsltCompileException (new XsltException (
-							"'" + value + "' is an invalid value for 'indent'" +
-							" attribute.", (Exception) null),
-							nav.BaseURI,
-							li != null ? li.LineNumber : 0,
-							li != null ? li.LinePosition : 0);
+						throw new XsltCompileException (String.Format ("Unexpected 'indent' attribute value in 'output' element: '{0}'", value), null, nav);
+					}
+					break;
 				}
 				break;
 			default:
