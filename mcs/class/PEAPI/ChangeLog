@@ -1,3 +1,9 @@
+2005-12-24  Jb Evain  <jbevain@gmail.com>
+
+	* Metadata.cs (Property): Add a new 'instance' field.
+	(Property.SetInstance): New mutator for the instance field.
+	(Property.BuildTables): Emit the correct property tag depending on the instance field.
+
 2005-12-14  Ankit Jain  <jankit@novell.com>
 
 	* Metadata.cs (BoundArray.ctor): Don't calculate sizes if upBounds is

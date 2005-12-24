@@ -3136,6 +3136,7 @@ namespace PEAPI {
 	public class Property : Feature {
 
 		private static readonly byte PropertyTag = 0x8;
+		private bool instance;
 		MethodDef getterMeth;
 		ConstantElem constVal;
 		uint typeBlobIx = 0;
@@ -3188,12 +3189,20 @@ namespace PEAPI {
 			this.constVal = new ConstantElem(this,constVal);
 		}
 
+		public void SetInstance (bool isInstance)
+		{
+			this.instance = isInstance;
+		}
+
 		internal sealed override void BuildTables(MetaData md) 
 		{
 			if (done) return;
 			nameIx = md.AddToStringsHeap(name);
 			MemoryStream sig = new MemoryStream();
-			sig.WriteByte(PropertyTag);
+			byte tag = PropertyTag;
+			if (instance)
+				tag |= 0x20;
+			sig.WriteByte(tag);
 			MetaData.CompressNum(numPars,sig);
 			returnType.TypeSig(sig);
 			for (int i=0; i < numPars; i++) {
