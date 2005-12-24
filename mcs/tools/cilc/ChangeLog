@@ -1,6 +1,7 @@
 2005-12-24  Alp Toker  <alp@atoker.com>
 
-	* cilc.cs: Fix generation of mono method signature a bit (still needs work)
+	* cilc.cs: Fix generation of mono method signature a bit (still needs work),
+	Make JIT parse default config files before init
 
 2005-12-22  Alp Toker  <alp@atoker.com>
 

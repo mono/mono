@@ -356,6 +356,7 @@ public class cilc
 		Cindex.WriteLine ("{");
 		Cindex.WriteLine ("static MonoDomain *domain = NULL;");
 		Cindex.WriteLine ("if (domain != NULL) return domain;");
+		Cindex.WriteLine ("mono_config_parse (NULL);");
 		Cindex.WriteLine ("domain = mono_jit_init (\"cilc\");");
 		Cindex.WriteLine ();
 		Cindex.WriteLine ("#ifdef CILC_BUNDLE");
