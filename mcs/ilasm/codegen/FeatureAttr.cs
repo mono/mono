@@ -12,9 +12,12 @@ using System;
 
 namespace Mono.ILASM {
 
+        [Flags]
         public enum FeatureAttr {
-                Rtspecialname,
-                Specialname
+                None = 0x0,
+                Instance = 0x1,
+                Rtspecialname = 0x2,
+                Specialname = 0x4
         }
 
 }

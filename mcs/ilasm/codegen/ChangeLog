@@ -1,3 +1,8 @@
+2005-12-24  Jb Evain  <jbevain@gmail.com>
+
+	* FeatureAttr.cs: tag as Flags, add an Instance value.
+	* PropertyDef.cs (PropertyDef.Resolve): Tag the property as instance or class.
+
 2005-12-22  Ankit Jain  <jankit@novell.com>
 
 	* MethodDef.cs (MethodDef.ctor): Add type_def param. Use this for all uses of

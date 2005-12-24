@@ -67,6 +67,8 @@ namespace Mono.ILASM {
                         if ((attr & FeatureAttr.Specialname) != 0)
                                 prop_def.SetSpecialName ();
 
+                        prop_def.SetInstance ((attr & FeatureAttr.Instance) != 0);
+
                         if (customattr_list != null)
                                 foreach (CustomAttr customattr in customattr_list)
                                         customattr.AddTo (code_gen, prop_def);

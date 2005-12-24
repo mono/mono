@@ -2572,6 +2572,7 @@ prop_attr 		: /* EMPTY */
                           }
                         | prop_attr K_INSTANCE
                           {
+                                $$ = (FeatureAttr) $1 | FeatureAttr.Instance;
                           }
 			;
 
