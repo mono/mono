@@ -1,3 +1,9 @@
+2005-12-23  John Luke  <toshok@gmail.com>
+
+	* System_test.dll.sources: add
+	System.Net.Mime/ContentDispositionTest.cs
+	System.Net.Mime/ContentTypeTest.cs
+
 2005-12-13  Chris Toshok  <toshok@ximian.com>
 
 	* System.dll.sources: add

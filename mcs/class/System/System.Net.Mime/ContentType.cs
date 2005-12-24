@@ -1,10 +1,12 @@
 //
 // System.Net.Mime.ContentType.cs
 //
-// Author:
+// Authors:
 //	Tim Coleman (tim@timcoleman.com)
+//	John Luke (john.luke@gmail.com)
 //
 // Copyright (C) Tim Coleman, 2004
+// Copyright (C) John Luke, 2005
 //
 
 //
@@ -30,18 +32,20 @@
 
 #if NET_2_0
 
+using System.Collections;
 using System.Collections.Specialized;
+using System.Text;
 
 namespace System.Net.Mime {
 	public class ContentType
 	{
 		#region Fields
 
-		string contentType;
 		string boundary;
 		string charset;
 		string mediaType;
 		string name;
+		StringDictionary parameters = new StringDictionary ();
 
 		#endregion // Fields
 
@@ -49,18 +53,60 @@ namespace System.Net.Mime {
 
 		public ContentType ()
 		{
+			mediaType = "application/octet-stream";
 		}
 	
 		[MonoTODO ("Parse content type")]
 		public ContentType (string contentType)
 		{
-			this.contentType = contentType;
+			if (contentType == null)
+				throw new ArgumentNullException ("contentType");
+			if (contentType.Length < 1)
+				throw new ArgumentException ("contentType");
 
-			int index = contentType.IndexOf (";");
-			if (index > 0)
-				this.mediaType = contentType.Substring (0, index);
-			else
-				this.mediaType = contentType;
+			try {
+				int index = contentType.IndexOf (";");
+				if (index > 0) {
+					string[] split = contentType.Split (';');
+					this.mediaType = split[0].Trim ();
+					for (int i = 1; i < split.Length; i++)
+					{
+						Parse (split[i]);
+					}
+				}
+				else {
+					this.mediaType = contentType.Trim ();
+				}
+			} catch {
+				throw new FormatException ();
+			}
+		}
+
+		// parse key=value pairs like:
+		// "charset=us-ascii"
+		void Parse (string pair)
+		{
+			if (pair == null || pair.Length < 1)
+				return;
+
+			string[] split = pair.Split ('=');
+			if (split.Length == 2) {
+				switch (split[0]) {
+					case "charset":
+						charset = split[1].Trim ();
+						break;
+					case "boundary":
+						boundary = split[1].Trim ();
+						break;
+					case "name":
+						name = split[1].Trim ();
+						break;
+					default:
+						// FIXME: this is just a guess, not tested
+						parameters.Add (split[0].Trim (), split[1].Trim ());
+						break;
+				}
+			}
 		}
 
 		#endregion // Constructors
@@ -69,60 +115,75 @@ namespace System.Net.Mime {
 
 		public string Boundary {
 			get { return boundary; }
-			set { 
-				contentType = null;
-				boundary = value; 
-			}
+			set { boundary = value; }
 		}
 
 		public string CharSet {
 			get { return charset; }
-			set { 
-				contentType = null;
-				charset = value; 
-			}
+			set { charset = value; }
 		}
 
 		public string MediaType {
 			get { return mediaType; }
-			set {
-				contentType = null;
-				mediaType = value; 
-			}
+			set { mediaType = value; }
 		}
 
 		public string Name {
 			get { return name; }
-			set {
-				contentType = null;
-				name = value;
-			}
+			set { name = value; }
 		}
 
-		[MonoTODO]
 		public StringDictionary Parameters {
-			get { 	
-				throw new NotImplementedException ();
-			}
+			get { return parameters; }
 		}
 
 		#endregion // Properties
 
 		#region Methods
 
-		[MonoTODO ("Fix this")]
+		[MonoTODO]
+		public override bool Equals (object obj)
+		{
+			return Equals (obj as ContentType);
+		}
+
+		bool Equals (ContentType other)
+		{
+			return other != null && ToString () == other.ToString ();
+		}
+		
+		[MonoTODO]
+		public override int GetHashCode ()
+		{
+			return ToString ().GetHashCode ();
+		}
+
 		public override string ToString ()
 		{
-			if (contentType != null)
-				return contentType;
-			string output = MediaType;
-			if (CharSet != null)
-				output += String.Format ("; charset={0}", CharSet);
-			if (Name != null)
-				output += String.Format ("; name={0}", Name);
-			if (Boundary != null)
-				output += String.Format ("; boundary={0}", Boundary);
-			return output;
+			StringBuilder sb = new StringBuilder ();
+			sb.Append (MediaType);
+			if (CharSet != null && CharSet.Length > 0) {
+				sb.Append ("; charset=");
+				sb.Append (CharSet);
+			}
+			if (Name != null) {
+				sb.Append ("; name=");
+				sb.Append (Name);
+			}
+			if (Boundary != null) {
+				sb.Append ("; boundary=");
+				sb.Append (Boundary);
+			}
+			if (Parameters != null && Parameters.Count > 0) {
+				foreach (DictionaryEntry pair in parameters)
+				{
+					sb.Append ("; ");
+					sb.Append (pair.Key);
+					sb.Append ("=");
+					sb.Append (pair.Value);
+				}
+			}
+			return sb.ToString ();
 		}
 
 		#endregion // Methods

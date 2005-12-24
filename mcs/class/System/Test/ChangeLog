@@ -1,3 +1,8 @@
+2005-12-23  John Luke  <john.luke@gmail.com>
+
+	* System.Net.Mime/ContentDispositionTest.cs:
+	* System.Net.Mime/ContentTypeTest.cs: add new tests
+
 2005-09-22  Chris Toshok  <toshok@ximian.com>
 
 	* System.Configuration.Provider/ProviderBaseTest.cs: add test for

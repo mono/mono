@@ -1,3 +1,13 @@
+2005-12-23  John Luke  <john.luke@gmail.com>
+
+	* ContentDisposition.cs: override GetHashCode and
+	Equals, implement ToString,
+	fix Size to be long not int,
+	implement Inline property,
+	implement the ctors
+	* ContentType.cs: override GetHashCode and Equals
+	implement ToString, implement the ctors
+	
 2005-12-22  John Luke  <john.luke@gmail.com>
 
 	minor updates I noticed for 2.0 final API
