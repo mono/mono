@@ -493,8 +493,11 @@ namespace System.Windows.Forms {
 		protected override bool IsInputKey (Keys key)
 		{
 			switch (key & Keys.KeyCode) {
-			case Keys.Prior:
 			case Keys.Home:
+			case Keys.End:
+			case Keys.Left:
+			case Keys.Right:
+			case Keys.Tab:
 				return true;
 			}
 			return base.IsInputKey (key);
