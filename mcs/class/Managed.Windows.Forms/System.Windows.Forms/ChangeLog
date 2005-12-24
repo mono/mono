@@ -1,3 +1,8 @@
+2005-12-23  Jackson Harper  <jackson@ximian.com>
+
+	* TabControl.cs: Give the panels focus, keyboard navigation is
+	fixed so this works correctly now.
+
 2005-12-24  Alexander Olk  <alex.olk@googlemail.com>
 
 	* ComboBox.cs: The internal TextBox now returns the focus.

@@ -249,7 +249,7 @@ namespace System.Windows.Forms {
 				if (selected_index != -1) {
 					invalid = Rectangle.Union (invalid, GetTabRect (selected_index));
 					selected.Visible = true;
-					// selected.Focus ();
+					selected.Focus ();
 				}
 
 				ResumeLayout ();
