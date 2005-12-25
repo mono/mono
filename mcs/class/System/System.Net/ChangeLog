@@ -1,3 +1,7 @@
+2005-12-25  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* FtpStatusCode.cs: New 2.0 enum.
+
 2005-12-09 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CookieContainer.cs: fix matching of subdomains. Patch by Cyrille
