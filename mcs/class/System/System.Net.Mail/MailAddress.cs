@@ -45,15 +45,12 @@ namespace System.Net.Mail {
 
 		#region Constructors
 
-		public MailAddress (string address)
+		public MailAddress (string address) : this (address, null)
 		{
-			this.address = address;
 		}
 
-		public MailAddress (string address, string displayName)
+		public MailAddress (string address, string displayName) : this (address, displayName, Encoding.Default)
 		{
-			this.address = address;
-			this.displayName = displayName;
 		}
 
 		public MailAddress (string address, string name, Encoding displayNameEncoding)
@@ -86,17 +83,39 @@ namespace System.Net.Mail {
 		#endregion // Properties
 
 		#region Methods
+		
+		[MonoTODO]
+		public override bool Equals (object obj)
+		{
+			return Equals (obj as MailAddress);
+		}
+
+		bool Equals (MailAddress other)
+		{
+			return other != null && Address == other.Address;
+		}
+
+		[MonoTODO]
+		public override int GetHashCode ()
+		{
+			return address.GetHashCode ();
+		}
 
 		public override string ToString ()
 		{
 			StringBuilder sb = new StringBuilder ();
 			if (DisplayName != null && DisplayName.Length > 0) {
+				sb.Append ("\"");
 				sb.Append (DisplayName);
+				sb.Append ("\"");
 				sb.Append (" ");
+				sb.Append ("<");
+				sb.Append (Address);
+				sb.Append (">");
 			}
-			sb.Append ("<");
-			sb.Append (Address);
-			sb.Append (">");
+			else {
+				sb.Append (Address);
+			}
 
 			return sb.ToString ();
 		}

@@ -1,10 +1,10 @@
 //
-// System.Net.Mail.SmtpException.cs
+// System.Net.Mail.LinkedResourceCollection.cs
 //
 // Author:
-//	Tim Coleman (tim@timcoleman.com)
+//	John Luke (john.luke@gmail.com)
 //
-// Copyright (C) Tim Coleman, 2004
+// Copyright (C) John Luke, 2005
 //
 
 //
@@ -30,70 +30,42 @@
 
 #if NET_2_0
 
-using System.Runtime.Serialization;
+using System.Collections.ObjectModel;
+using System.Net.Mime;
 
 namespace System.Net.Mail {
-	[Serializable]
-	public class SmtpException : Exception, ISerializable
+	public sealed class LinkedResourceCollection : Collection<LinkedResource>, IDisposable
 	{
 		#region Fields
-
-		SmtpStatusCode statusCode;
-
+		
 		#endregion // Fields
 
 		#region Constructors
 
-		public SmtpException ()
+		~LinkedResourceCollection ()
 		{
-		}
-
-		public SmtpException (SmtpStatusCode statusCode)
-		{
-			StatusCode = statusCode;
-		}
-
-		public SmtpException (string message)
-			: base (message)
-		{
-		}
-
-		public SmtpException (SerializationInfo info, StreamingContext context)
-			: base (info, context)
-		{
-		}
-
-		public SmtpException (SmtpStatusCode statusCode, string message)
-			: base (message)
-		{
-			StatusCode = statusCode;
-		}
-
-		public SmtpException (string message, Exception innerException)
-			: base (message, innerException)
-		{
+			Dispose (false);
 		}
 
 		#endregion // Constructors
 
 		#region Properties
 
-		public SmtpStatusCode StatusCode {
-			get { return statusCode; }
-			set { statusCode = value; }
-		}
-
 		#endregion // Properties
 
-		[MonoTODO]
-		public override void GetObjectData (SerializationInfo info, StreamingContext context)
+		#region Methods
+
+		public void Dispose ()
+		{
+			Dispose (true);
+			GC.SuppressFinalize (this);
+		}
+
+		private void Dispose (bool disposing)
 		{
 		}
 
-		[MonoTODO]
-		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context)
-		{
-		}
+		#endregion // Methods
 	}
 }
 

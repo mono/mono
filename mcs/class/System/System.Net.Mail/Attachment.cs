@@ -35,187 +35,104 @@ using System.Net.Mime;
 using System.Text;
 
 namespace System.Net.Mail {
-	public class Attachment : IDisposable
+	public class Attachment : AttachmentBase
 	{
 		#region Fields
 
-		ContentType contentType = new ContentType ();
-		Encoding encoding;
-
-		ContentDisposition contentDisposition;
-		Stream contentStream;
-		string contentString;
-		string name;
-		TransferEncoding transferEncoding;
+		ContentDisposition contentDisposition = new ContentDisposition ();
+		Encoding nameEncoding;
 
 		#endregion // Fields
 
 		#region Constructors
 
-		public Attachment ()
+		[MonoTODO]
+		public Attachment (string fileName) : base (fileName)
 		{
-			contentDisposition = new ContentDisposition ("attachment"); 
 		}
 
-		public Attachment (string contentString)
+		[MonoTODO]
+		public Attachment (string fileName, ContentType contentType) : base (fileName, contentType)
 		{
-			SetContent (contentString);
 		}
 
-		public Attachment (Stream contentStream, ContentType contentType)
+		[MonoTODO]
+		public Attachment (Stream contentStream, ContentType contentType) : base (contentStream, contentType)
 		{
-			SetContent (contentStream);
-			this.contentType = contentType;
 		}
 
-		public Attachment (Stream contentStream, string name)
+		[MonoTODO]
+		public Attachment (Stream contentStream, string mediaType) : base (contentStream, mediaType)
 		{
-			SetContent (contentStream, name);
 		}
 
-		public Attachment (string contentString, string mediaType)
+		[MonoTODO]
+		public Attachment (Stream contentStream, string name, string mediaType) : base (contentStream, mediaType)
 		{
-			SetContent (contentString, mediaType);
+			Name = name;
 		}
 
-		public Attachment (Stream contentStream, string name, string mediaType)
-		{
-			SetContent (contentStream, name, mediaType);
-		}
-
-		public Attachment (string contentString, string mediaType, Encoding encoding)
-		{
-			SetContent (contentString, mediaType, encoding);
-		}
 
 
 		#endregion // Constructors
 
 		#region Properties
 
-		[MonoTODO]
 		public ContentDisposition ContentDisposition {
 			get { return contentDisposition; }
 		}
 
-		public Stream ContentStream {
-			get { return contentStream; }
-		}
-
-		public string ContentString {
-			get { return contentString; }
-		}
-
-		public Encoding ContentStringEncoding {
-			get { return encoding; }
-		}
-
-		public ContentType ContentType {
-			get { return contentType; }
-		}
-
-		[MonoTODO]
-		public string FileName {
-			get { throw new NotImplementedException (); }
-		}
-
 		public string Name {
-			get { return contentType.Name; }
+			get { return ContentType.Name; }
 			set { 
 				if (value == null)
 					throw new ArgumentNullException ();
 				if (value.Equals (""))
 					throw new ArgumentException ();
-				contentType.Name = value;
+				ContentType.Name = value;
 			}
 		}
 
-		public TransferEncoding TransferEncoding {
-			get { return transferEncoding; }
-			set { transferEncoding = value; }
+		[MonoTODO]
+		public Encoding NameEncoding {
+			get { return nameEncoding; }
 		}
 
 		#endregion // Properties
 
 		#region Methods
-
+		
 		[MonoTODO]
-		public void Dispose ()
+		public static Attachment CreateAttachmentFromString (string content, ContentType contentType)
 		{
-		}
-
-		public void SetContent (Stream contentStream)
-		{
-			this.contentStream = contentStream;
-			contentType.MediaType = MediaTypeNames.Application.Octet;
-			contentType.CharSet = null;
-			transferEncoding = TransferEncoding.Base64;
-		}
-
-		public void SetContent (string contentString)
-		{
-			SetContent (contentString, MediaTypeNames.Text.Plain, Encoding.Default);
-		}
-
-		public void SetContent (Stream contentStream, string name)
-		{
-			SetContent (contentStream);
-			contentType.Name = name;
-		}
-
-		public void SetContent (string contentString, string mediaType)
-		{
-			SetContent (contentString, mediaType, Encoding.Default);
-		}
-
-		public void SetContent (Stream contentStream, string name, string mediaType)
-		{
-			SetContent (contentStream, name);
-			contentType.MediaType = mediaType;
-		}
-
-		public void SetContent (string contentString, string mediaType, Encoding encoding)
-		{
-			contentType.MediaType = mediaType;
-			contentType.CharSet = encoding.WebName;
-
-			transferEncoding = TransferEncoding.QuotedPrintable;
-
-			contentStream = new MemoryStream ();
-			StreamWriter sw = new StreamWriter (contentStream);
-			sw.Write (contentString);
+			MemoryStream ms = new MemoryStream ();
+			StreamWriter sw = new StreamWriter (ms);
+			sw.Write (content);
 			sw.Flush ();
-
-			contentStream.Position = 0;
-
-			this.contentString = contentString;
-		}
-
-		public void SetContent (string contentString, string mediaType, Encoding encoding, TransferEncoding transferEncoding)
-		{
-		}
-
-		public void SetContentFromFile (string fileName)
-		{
-			SetContentFromFile (fileName, null, null);
+			ms.Position = 0;
+			return new Attachment (ms, contentType);
 		}
 		
-		public void SetContentFromFile (string fileName, string name)
+		[MonoTODO]
+		public static Attachment CreateAttachmentFromString (string content, string name)
 		{
-			SetContentFromFile (fileName, name, null);
+			MemoryStream ms = new MemoryStream ();
+			StreamWriter sw = new StreamWriter (ms);
+			sw.Write (content);
+			sw.Flush ();
+			ms.Position = 0;
+			return new Attachment (ms, name);
 		}
-
-		public void SetContentFromFile (string fileName, string name, string mediaType)
+		
+		[MonoTODO]
+		public static Attachment CreateAttachmentFromString (string content, string name, Encoding encoding, string mediaType)
 		{
-			if (name == null) {
-				char[] match = new char [2] {';','\\'};
-				if (fileName.IndexOfAny (match) > 0)
-					name = fileName.Substring (fileName.LastIndexOfAny (match));
-			}
-
-			Stream s = new FileStream (fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
-
-			SetContent (s, name, mediaType);
+			MemoryStream ms = new MemoryStream ();
+			StreamWriter sw = new StreamWriter (ms);
+			sw.Write (content);
+			sw.Flush ();
+			ms.Position = 0;
+			return new Attachment (ms, name, mediaType);
 		}
 
 		#endregion // Methods

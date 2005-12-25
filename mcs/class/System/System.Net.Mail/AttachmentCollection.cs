@@ -31,12 +31,11 @@
 #if NET_2_0
 
 using System;
-using System.Collections;
+using System.Collections.ObjectModel;
 using System.Collections.Generic;
 
 namespace System.Net.Mail {
-	[CLSCompliant (false)]
-	public class AttachmentCollection : List<Attachment>, IDisposable, ICollection, IEnumerable, IList, ICollection<Attachment>, IEnumerable<Attachment>, IList<Attachment>
+	public class AttachmentCollection : Collection<Attachment>
 	{
 		[MonoTODO]
 		public void Dispose ()

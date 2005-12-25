@@ -161,6 +161,15 @@ System.Net.Sockets/TcpClientTest.cs
 System.Net.Sockets/TcpListenerTest.cs
 System.Net.Sockets/SocketTest.cs
 System.Net.Sockets/UdpClientTest.cs
+System.Net.Mail/LinkedResourceTest.cs
+System.Net.Mail/AttachmentCollectionTest.cs
+System.Net.Mail/MailAddressCollectionTest.cs
+System.Net.Mail/AlternateViewCollectionTest.cs
+System.Net.Mail/MailMessageTest.cs
+System.Net.Mail/MailAddressTest.cs
+System.Net.Mail/AttachmentTest.cs
+System.Net.Mail/AlternateViewTest.cs
+System.Net.Mail/LinkedResourceCollectionTest.cs
 System.Net.Mime/ContentDispositionTest.cs
 System.Net.Mime/ContentTypeTest.cs
 System.Security.Cryptography/AsnEncodedDataTest.cs

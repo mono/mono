@@ -1,10 +1,10 @@
 //
-// System.Net.Mail.SmtpAccess.cs
+// System.Net.Mail.DeliveryNotificationOptions
 //
-// Author:
-//	Tim Coleman (tim@timcoleman.com)
+// Authors:
+//	John Luke (john.luke@gmail.com)
 //
-// Copyright (C) Tim Coleman, 2004
+// (C) 2005 John Luke
 //
 
 //
@@ -30,13 +30,19 @@
 
 #if NET_2_0
 
+using System;
+
 namespace System.Net.Mail {
-	public enum SmtpAccess
+
+	[Flags]
+	public enum DeliveryNotificationOptions
 	{
+		Delay,
+		Never,
 		None,
-		Connect,
-		ConnectToUnrestrictedPort,
+		OnFailure,
+		OnSuccess,
 	}
 }
 
-#endif // NET_2_0
+#endif

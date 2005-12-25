@@ -1,10 +1,10 @@
 //
-// System.Net.Mail.SmtpAccess.cs
+// System.Net.Mail.MailPriority
 //
-// Author:
-//	Tim Coleman (tim@timcoleman.com)
+// Authors:
+//	John Luke (john.luke@gmail.com)
 //
-// Copyright (C) Tim Coleman, 2004
+// (C) 2005 John Luke
 //
 
 //
@@ -31,12 +31,14 @@
 #if NET_2_0
 
 namespace System.Net.Mail {
-	public enum SmtpAccess
+
+	public enum MailPriority
 	{
-		None,
-		Connect,
-		ConnectToUnrestrictedPort,
+		Normal,
+		Low,
+		High,
 	}
+
 }
 
-#endif // NET_2_0
+#endif

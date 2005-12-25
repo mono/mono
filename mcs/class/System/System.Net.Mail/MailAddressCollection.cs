@@ -31,38 +31,32 @@
 #if NET_2_0
 
 using System;
-using System.Collections;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Text;
 
 namespace System.Net.Mail {
-	[CLSCompliant (false)]
-	public class MailAddressCollection : List<MailAddress>, ICollection, IEnumerable, IList, ICollection<MailAddress>, IEnumerable<MailAddress>, IList<MailAddress>
+	public class MailAddressCollection : Collection<MailAddress>
 	{
-		#region Constructors
-
-		internal MailAddressCollection ()
-		{
-		}
-
-		public MailAddressCollection (string addresses)
-		{
-			AddAddresses (addresses.Split (new char [1] {','}));
-		}
-
-		public MailAddressCollection (string[] addresses)
-		{
-			AddAddresses (addresses);
-		}
-
-		#endregion
-
 		#region Methods
 
-		private void AddAddresses (string[] addresses)
+		public void Add (string addresses)
 		{
-			foreach (string address in addresses)
+			foreach (string address in addresses.Split (','))
 				Add (new MailAddress (address));
+		}
+
+		protected override void InsertItem (int index, MailAddress item)
+		{
+			if (item == null)
+				throw new ArgumentNullException ();
+			base.InsertItem (index, item);
+		}
+		
+		protected override void SetItem (int index, MailAddress item)
+		{
+			if (item == null)
+				throw new ArgumentNullException ();
+			base.SetItem (index, item);
 		}
 
 		public override string ToString ()

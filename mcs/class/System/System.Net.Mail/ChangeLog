@@ -1,5 +1,25 @@
 2005-12-24  John Luke  <john.luke@gmail.com>
 
+	* LinkedResource.cs: new File
+	* AttachmentBase.cs: new File
+	* MailPriority.cs: new File
+	* AlternateViewCollection.cs: new File
+	* DeliveryNotificationOptions.cs: new File
+	* SmtpFailedRecipientException.cs: new File
+	* AlternateView.cs: new File
+	* LinkedResourceCollection.cs: new File
+	* MailMessage.cs: add some missing properties, update API for 2.0 final 
+	* Attachment.cs: inherit from AttachmentBase, update API for 2.0 final
+	* MailAddress.cs: fix ToString, override Equals and GetHashCode
+	* SmtpFailedRecipientsException.cs: use SmtpFailedRecipientException
+	* SmtpException.cs: add [Serializable], ISerializable
+	* MailAddressCollection.cs: inherit from Collection<MailAddress>
+	* AttachmentCollection.cs: inherit from Collection<Attachment>
+	* SmtpAccess.cs: add missing value
+	* SmtpClient.cs: update for 2.0 final API
+	* SmtpStatusCode.cs: add missing value
+2005-12-24  John Luke  <john.luke@gmail.com>
+
 	* MailMessage.cs: use text/plain by default,
 	patch by Andy Waddell <awaddell@fnfr.com>,
 	fixes bug #76972

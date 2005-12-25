@@ -1,4 +1,8 @@
-2005-12-23  John Luke  <toshok@gmail.com>
+2005-12-24  John Luke  <john.luke@gmail.com>
+
+	* System_test.dll.sources: add System.Net.Mail tests
+
+2005-12-23  John Luke  <john.luke@gmail.com>
 
 	* System_test.dll.sources: add
 	System.Net.Mime/ContentDispositionTest.cs

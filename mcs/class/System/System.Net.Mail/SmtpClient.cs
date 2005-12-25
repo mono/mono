@@ -31,16 +31,18 @@
 #if NET_2_0
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Net;
 using System.Net.Mime;
 using System.Net.Sockets;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
 
 namespace System.Net.Mail {
-	public class SmtpClient : IDisposable //, IGetContextAwareResult
+	public class SmtpClient
 	{
 		#region Fields
 
@@ -49,6 +51,10 @@ namespace System.Net.Mail {
 		int timeout;
 		ICredentialsByHost credentials;
 		bool useDefaultCredentials;
+		string pickupDirectoryLocation;
+		SmtpDeliveryMethod deliveryMethod;
+		bool enableSsl;
+		X509CertificateCollection clientCertificates;
 
 		TcpClient client;
 		NetworkStream stream;
@@ -85,14 +91,34 @@ namespace System.Net.Mail {
 
 		#region Properties
 
+		[MonoTODO]
+		public X509CertificateCollection ClientCertificates {
+			get { return clientCertificates; }
+		}
+
 		public ICredentialsByHost Credentials {
 			get { return credentials; }
 			set { credentials = value; }
 		}
 
+		public SmtpDeliveryMethod DeliveryMethod {
+			get { return deliveryMethod; }
+			set { deliveryMethod = value; }
+		}
+
+		public bool EnableSsl {
+			get { return enableSsl; }
+			set { enableSsl = value; }
+		}
+
 		public string Host {
 			get { return host; }
 			set { host = value; }
+		}
+
+		public string PickupDirectoryLocation {
+			get { return pickupDirectoryLocation; }
+			set { pickupDirectoryLocation = value; }
 		}
 
 		public int Port {
@@ -134,11 +160,6 @@ namespace System.Net.Mail {
 		#endregion // Events 
 
 		#region Methods
-
-		[MonoTODO]
-		public void Dispose ()
-		{
-		}
 
 		private void EndSection (string section)
 		{
@@ -215,26 +236,26 @@ namespace System.Net.Mail {
 				throw new SmtpException (status.StatusCode);
 
 			// Send RCPT TO: for all recipients
-			SmtpFailedRecipientsException sfre = new SmtpFailedRecipientsException ();
+			List<SmtpFailedRecipientException> sfre = new List<SmtpFailedRecipientException> ();
 
-			for (int i = 0; i < message.To.Count; i += 1) {
+			for (int i = 0; i < message.To.Count; i ++) {
 				status = SendCommand (Command.RcptTo, message.To [i].Address);
 				if (IsError (status)) 
-					sfre.AddFailedRecipient (new SmtpException (status.StatusCode), message.To [i].Address);
+					sfre.Add (new SmtpFailedRecipientException (status.StatusCode, message.To [i].Address.ToString ()));
 			}
-			for (int i = 0; i < message.CC.Count; i += 1) {
+			for (int i = 0; i < message.CC.Count; i ++) {
 				status = SendCommand (Command.RcptTo, message.CC [i].Address);
 				if (IsError (status)) 
-					sfre.AddFailedRecipient (new SmtpException (status.StatusCode), message.CC [i].Address);
+					sfre.Add (new SmtpFailedRecipientException (status.StatusCode, message.CC [i].Address.ToString ()));
 			}
-			for (int i = 0; i < message.Bcc.Count; i += 1) {
+			for (int i = 0; i < message.Bcc.Count; i ++) {
 				status = SendCommand (Command.RcptTo, message.Bcc [i].Address);
 				if (IsError (status)) 
-					sfre.AddFailedRecipient (new SmtpException (status.StatusCode), message.Bcc [i].Address);
+					sfre.Add (new SmtpFailedRecipientException (status.StatusCode, message.Bcc [i].Address.ToString ()));
 			}
 
-			if (sfre.FailedRecipients.Length > 0)
-				throw sfre;
+			if (sfre.Count > 0)
+				throw new SmtpFailedRecipientsException ("failed recipients", sfre.ToArray ());
 
 			// DATA
 			status = SendCommand (Command.Data);
@@ -242,9 +263,9 @@ namespace System.Net.Mail {
 				throw new SmtpException (status.StatusCode);
 
 			// Figure out the message content type
-			ContentType messageContentType = message.BodyContentType;
+			ContentType messageContentType = new ContentType ("text/plain");
 			if (hasAttachments || hasAlternateViews) {
-				messageContentType = new ContentType ();
+				//messageContentType = new ContentType ();
 				messageContentType.Boundary = boundary;
 
 				if (hasAttachments)
@@ -291,19 +312,22 @@ namespace System.Net.Mail {
 				// Start the section for the body text.  This is either section "1" or "0" depending
 				// on whether there are attachments.
 
-				StartSection (innerBoundary, message.BodyContentType, TransferEncoding.QuotedPrintable);
+				StartSection (innerBoundary, messageContentType, TransferEncoding.QuotedPrintable);
 				SendData (message.Body);
 
 				// Send message attachments.
-				SendAttachments (message.AlternateViews, innerBoundary);
+				SendAttachments (message.Attachments, innerBoundary);
 
 				if (hasAttachments) 
 					EndSection (innerBoundary);
 			}
 			else {
 				// If this is multipart then we need to send a boundary before the body.
-				if (hasAttachments)
-					StartSection (boundary, message.BodyContentType, TransferEncoding.QuotedPrintable);
+				if (hasAttachments) {
+					// FIXME: check this
+					ContentType contentType = new ContentType ("multipart/alternative");
+					StartSection (boundary, contentType, TransferEncoding.QuotedPrintable);
+				}
 				SendData (message.Body);
 			}
 
@@ -376,18 +400,22 @@ namespace System.Net.Mail {
 		private void SendAttachments (AttachmentCollection attachments, string boundary)
 		{
 			for (int i = 0; i < attachments.Count; i += 1) {
-				StartSection (boundary, attachments [i].ContentType, attachments [i].TransferEncoding);
+				// FIXME: check this
+				ContentType contentType = new ContentType ("multipart/alternative");
+				StartSection (boundary, contentType, attachments [i].TransferEncoding);
 
 				switch (attachments [i].TransferEncoding) {
 				case TransferEncoding.Base64:
-					StreamReader reader = new StreamReader (attachments [i].ContentStream);
 					byte[] content = new byte [attachments [i].ContentStream.Length];
 					attachments [i].ContentStream.Read (content, 0, content.Length);
 					SendData (Convert.ToBase64String (content, Base64FormattingOptions.InsertLineBreaks));
 					break;
 				case TransferEncoding.QuotedPrintable:
-					SendData (ToQuotedPrintable (attachments [i].ContentString));
+					StreamReader sr = new StreamReader (attachments [i].ContentStream);
+					SendData (ToQuotedPrintable (sr.ReadToEnd ()));
 					break;
+				//case TransferEncoding.SevenBit:
+				//case TransferEncoding.Unknown:
 				default:
 					SendData ("TO BE IMPLEMENTED");
 					break;
@@ -397,7 +425,6 @@ namespace System.Net.Mail {
 
 		private SmtpResponse SendCommand (string command, string data)
 		{
-			SmtpResponse response;
 			writer.Write (command);
 			writer.Write (" ");
 			SendData (data);
@@ -423,7 +450,7 @@ namespace System.Net.Mail {
 			SendData ("");
 		}
 
-		private void StartSection (string section, ContentType sectionContentType, TransferEncoding transferEncoding)
+		private void StartSection (string section, ContentType sectionContentType,TransferEncoding transferEncoding)
 		{
 			SendData (String.Format ("--{0}", section));
 			SendHeader ("content-type", sectionContentType.ToString ());

@@ -1,10 +1,10 @@
 //
-// System.Net.Mail.SmtpFailedRecipientsException.cs
+// System.Net.Mail.SmtpFailedRecipientException.cs
 //
 // Author:
-//	Tim Coleman (tim@timcoleman.com)
+//	John Luke (john.luke@gmail.com)
 //
-// Copyright (C) Tim Coleman, 2004
+// Copyright (C) John Luke, 2005
 //
 
 //
@@ -30,49 +30,60 @@
 
 #if NET_2_0
 
+using System;
 using System.Collections;
 using System.Runtime.Serialization;
 
 namespace System.Net.Mail {
 	[Serializable]
-	public class SmtpFailedRecipientsException : SmtpFailedRecipientException, ISerializable
+	public class SmtpFailedRecipientException : SmtpException, ISerializable
 	{
 		#region Fields
 
-		SmtpFailedRecipientException[] innerExceptions;
+		string failedRecipient;
 
 		#endregion // Fields
 
 		#region Constructors
 
-		public SmtpFailedRecipientsException ()
+		public SmtpFailedRecipientException ()
 		{
 		}
 
-		public SmtpFailedRecipientsException (string message) : base (message)
+		public SmtpFailedRecipientException (string message) : base (message)
 		{
-		}
-
-		public SmtpFailedRecipientsException (string message, Exception innerException) : base (message, innerException)
-		{
-		}
-
-		public SmtpFailedRecipientsException (string message, SmtpFailedRecipientException[] innerExceptions) : base (message)
-		{
-			this.innerExceptions = innerExceptions;
 		}
 
 		[MonoTODO]
-		protected SmtpFailedRecipientsException (SerializationInfo info, StreamingContext context)
+		protected SmtpFailedRecipientException (SerializationInfo serializationInfo, StreamingContext streamingContext)
 		{
 		}
-		
-		#endregion
 
+		public SmtpFailedRecipientException (SmtpStatusCode statusCode, string failedRecipient) : base (statusCode)
+		{
+			this.failedRecipient = failedRecipient;
+		}
+
+		public SmtpFailedRecipientException (string message, Exception innerException) : base (message, innerException)
+		{
+		}
+
+		public SmtpFailedRecipientException (string message, string failedRecipient, Exception innerException) : base (message, innerException)
+		{
+			this.failedRecipient = failedRecipient;
+		}
+
+		public SmtpFailedRecipientException (SmtpStatusCode statusCode, string failedRecipient, string serverResponse) : base (statusCode, serverResponse)
+		{
+			this.failedRecipient = failedRecipient;
+		}
+		
+		#endregion // Constructors
+		
 		#region Properties
 
-		public SmtpFailedRecipientException[] InnerExceptions {
-			get { return innerExceptions; }
+		public string FailedRecipient {
+			get { return failedRecipient; }
 		}
 
 		#endregion // Properties
@@ -80,12 +91,12 @@ namespace System.Net.Mail {
 		#region Methods
 
 		[MonoTODO]
-		public override void GetObjectData (SerializationInfo info, StreamingContext context)
+		public override void GetObjectData (SerializationInfo serializationInfo, StreamingContext streamingContext)
 		{
 		}
 
 		[MonoTODO]
-		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context)
+		void ISerializable.GetObjectData (SerializationInfo serializationInfo, StreamingContext streamingContext)
 		{
 		}
 

@@ -40,11 +40,14 @@ namespace System.Net.Mail {
 	{
 		#region Fields
 
-		AttachmentCollection alternateViews;
+		AlternateViewCollection alternateViews;
 		AttachmentCollection attachments;
 		MailAddressCollection bcc;
 		string body;
-		ContentType bodyContentType;
+		bool isBodyHtml;
+		MailPriority priority;
+		MailAddress replyTo, sender;
+		DeliveryNotificationOptions deliveryNotificationOptions;
 		Encoding bodyEncoding;
 		MailAddressCollection cc;
 		MailAddress from;
@@ -64,11 +67,10 @@ namespace System.Net.Mail {
 			this.to = new MailAddressCollection ();
 			this.to.Add (to);
 
-			alternateViews = new AttachmentCollection ();
+			alternateViews = new AlternateViewCollection ();
 			attachments = new AttachmentCollection ();
 			bcc = new MailAddressCollection ();
 			cc = new MailAddressCollection ();
-			bodyContentType = new ContentType (MediaTypeNames.Text.Plain);
 			headers = new NameValueCollection ();
 
 			headers.Add ("MIME-Version", "1.0");
@@ -90,17 +92,14 @@ namespace System.Net.Mail {
 
 		#region Properties
 
-		[CLSCompliant (false)]
-		public AttachmentCollection AlternateViews {
+		public AlternateViewCollection AlternateViews {
 			get { return alternateViews; }
 		}
 
-		[CLSCompliant (false)]
 		public AttachmentCollection Attachments {
 			get { return attachments; }
 		}
 
-		[CLSCompliant (false)]
 		public MailAddressCollection Bcc {
 			get { return bcc; }
 		}
@@ -110,21 +109,21 @@ namespace System.Net.Mail {
 			set { body = value; }
 		}
 
-		public ContentType BodyContentType {
-			get { return bodyContentType; }
-		}
-
 		public Encoding BodyEncoding {
 			get { return bodyEncoding; }
 			set { 
 				bodyEncoding = value;
-				bodyContentType.CharSet = value.WebName; 
+				//bodyContentType.CharSet = value.WebName; 
 			}
 		}
 
-		[CLSCompliant (false)]
 		public MailAddressCollection CC {
 			get { return cc; }
+		}
+
+		public DeliveryNotificationOptions DeliveryNotificationOptions {
+			get { return deliveryNotificationOptions; }
+			set { deliveryNotificationOptions = value; }
 		}
 
 		public MailAddress From {
@@ -134,6 +133,26 @@ namespace System.Net.Mail {
 
 		public NameValueCollection Headers {
 			get { return headers; }
+		}
+
+		public bool IsBodyHtml {
+			get { return isBodyHtml; }
+			set { isBodyHtml = value; }
+		}
+
+		public MailPriority Priority {
+			get { return priority; }
+			set { priority = value; }
+		}
+
+		public MailAddress ReplyTo {
+			get { return replyTo; }
+			set { replyTo = value; }
+		}
+
+		public MailAddress Sender {
+			get { return sender; }
+			set { sender = value; }
 		}
 
 		public string Subject {
@@ -146,7 +165,6 @@ namespace System.Net.Mail {
 			set { subjectEncoding = value; }
 		}
 
-		[CLSCompliant (false)]
 		public MailAddressCollection To {
 			get { return to; }
 		}
@@ -155,14 +173,19 @@ namespace System.Net.Mail {
 
 		#region Methods
 
-		[MonoTODO]
 		public void Dispose ()
+		{
+			Dispose (true);
+			GC.SuppressFinalize (this);
+		}
+
+		protected virtual void Dispose (bool disposing)
 		{
 		}
 
-		[MonoTODO]
 		~MailMessage ()
 		{
+			Dispose (false);
 		}
 
 		#endregion // Methods

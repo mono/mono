@@ -56,7 +56,8 @@ namespace System.Net.Mail {
 		SystemStatus = 211,
 		TransactionFailed = 554,
 		UserNotLocalTryAlternatePath = 551,
-		UserNotLocalWillForward = 251
+		UserNotLocalWillForward = 251,
+		MustIssueStartTlsFirst = 530,
 	}
 }
 
