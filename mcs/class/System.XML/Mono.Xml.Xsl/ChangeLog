@@ -1,3 +1,9 @@
+2005-12-24  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* XslOutput.cs: Do not report error for unknown value for "standalone"
+	and "omit-xml-declaration" attributes, and extranous attributes if
+	stylesheet version is not "1.0".
+
 2005-12-24  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Compiler.cs : pass stylesheet version to XslOutput to determine

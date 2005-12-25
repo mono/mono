@@ -516,7 +516,6 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Output_Standalone_ForwardsCompatible ()
 		{
 			StringWriter sw = new StringWriter ();
@@ -632,7 +631,6 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Output_OmitXmlDeclaration_ForwardsCompatible ()
 		{
 			StringWriter sw = new StringWriter ();
@@ -1255,7 +1253,6 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Output_Indent_ForwardsCompatible ()
 		{
 			StringWriter sw = new StringWriter ();
@@ -1712,7 +1709,6 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Output_Unknown_Attribute_ForwardsCompatible ()
 		{
 			StringWriter sw = new StringWriter ();

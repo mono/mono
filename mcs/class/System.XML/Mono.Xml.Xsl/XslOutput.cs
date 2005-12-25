@@ -215,6 +215,9 @@ namespace Mono.Xml.Xsl
 						this.standalone = StandaloneType.NO;
 						break;
 					default:
+						if (stylesheetVersion != "1.0")
+							break;
+
 						IXmlLineInfo li = nav as IXmlLineInfo;
 						throw new XsltCompileException (new XsltException (
 							"'" + value + "' is an invalid value for 'standalone'" +
@@ -244,6 +247,9 @@ namespace Mono.Xml.Xsl
 						this.omitXmlDeclaration = false;
 						break;
 					default:
+						if (stylesheetVersion != "1.0")
+							break;
+
 						IXmlLineInfo li = nav as IXmlLineInfo;
 						throw new XsltCompileException (new XsltException (
 							"'" + value + "' is an invalid value for 'omit-xml-declaration'" +
@@ -273,6 +279,9 @@ namespace Mono.Xml.Xsl
 				}
 				break;
 			default:
+				if (stylesheetVersion != "1.0")
+					break;
+
 				IXmlLineInfo li = nav as IXmlLineInfo;
 				throw new XsltCompileException (new XsltException (
 					"'" + nav.LocalName + "' is an invalid attribute for 'output'" +
