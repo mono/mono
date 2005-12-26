@@ -1,3 +1,7 @@
+2005-12-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* TimeZoneTest.cs: Fix CET tests.
+
 2005-12-23  Sebastien Pouliot  <sebastien@ximian.com> 
  
 	* TimeZoneTest.cs: Added test cases for serialization interop.
