@@ -50,7 +50,7 @@ namespace System.Net.Mime {
 		string filename;
 		DateTime modificationDate;
 		DateTime readDate;
-		long size;
+		long size = -1; // -1 means the size is unknown
 		StringDictionary parameters = new StringDictionary ();
 
 		#endregion // Fields
@@ -129,7 +129,13 @@ namespace System.Net.Mime {
 
 		public string DispositionType {
 			get { return dispositionType; }
-			set { dispositionType = value; }
+			set {
+				if (value == null)
+					throw new ArgumentNullException ();
+				if (value.Length < 1)
+					throw new ArgumentException ();
+				dispositionType = value;
+			}
 		}
 
 		public string FileName {
@@ -214,7 +220,7 @@ namespace System.Net.Mime {
 				sb.Append ("; filename=");
 				sb.Append (FileName);
 			}
-			if (Size > 0) {
+			if (Size > -1) {
 				sb.Append ("; size=");
 				sb.Append (Size.ToString ());
 			}

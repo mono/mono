@@ -25,12 +25,6 @@ namespace MonoTests.System.Net.Mime
 		}
 
 		[Test]
-		public void MediaType ()
-		{
-			Assert.IsTrue (ct.MediaType == "application/octet-stream");
-		}
-
-		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void ArgumentNullException ()
 		{
@@ -44,12 +38,51 @@ namespace MonoTests.System.Net.Mime
 			new ContentType ("");
 		}
 
-		//[Test]
-		//[ExpectedException (typeof (FormatException))]
-		//public void FormatException ()
-		//{
-			// new ContentType ("some unparsable format");
-		//}
+		/*[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void FormatException ()
+		{
+			new ContentType (";;;");
+		}*/
+
+		[Test]
+		public void Boundary ()
+		{
+			Assert.IsNull (ct.Boundary);
+		}
+
+		[Test]
+		public void CharSet ()
+		{
+			Assert.IsNull (ct.CharSet);
+		}
+
+		[Test]
+		public void MediaType ()
+		{
+			Assert.IsTrue (ct.MediaType == "application/octet-stream");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void MediaTypeNullException ()
+		{
+			ct.MediaType = null;
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void MediaTypeEmptyException ()
+		{
+			ct.MediaType = "";
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void MediaTypeFormatException ()
+		{
+			ct.MediaType = "application/x-myType;";
+		}
 
 		[Test]
 		public void ToStringTest ()

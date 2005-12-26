@@ -35,6 +35,20 @@ namespace MonoTests.System.Net.Mime
 		}
 
 		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void DispositionTypeNull ()
+		{
+			cd.DispositionType = null;
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void DispositionTypeEmpty ()
+		{
+			cd.DispositionType = "";
+		}
+
+		[Test]
 		public void EqualsHashCode ()
 		{
 			ContentDisposition dummy1 = new ContentDisposition ();
@@ -61,6 +75,12 @@ namespace MonoTests.System.Net.Mime
 		public void FileName ()
 		{
 			Assert.IsTrue (cd.FileName == "genome.jpeg");
+		}
+
+		[Test]
+		public void Size ()
+		{
+			Assert.IsTrue (cd.Size == -1);
 		}
 
 		[Test]
@@ -94,6 +114,14 @@ namespace MonoTests.System.Net.Mime
 		{
 			ContentDisposition dummy = new ContentDisposition ();
 			Assert.IsTrue (dummy.ToString () == "attachment");
+		}
+
+		[Test]
+		public void ToStringTest3 ()
+		{
+			ContentDisposition dummy = new ContentDisposition ();
+			dummy.Size = 0;
+			Assert.IsTrue (dummy.ToString () == "attachment; size=0");
 		}
 	}
 }

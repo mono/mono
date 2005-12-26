@@ -125,7 +125,15 @@ namespace System.Net.Mime {
 
 		public string MediaType {
 			get { return mediaType; }
-			set { mediaType = value; }
+			set {
+				if (value == null)
+					throw new ArgumentNullException ();
+				if (value.Length < 1)
+					throw new ArgumentException ();
+				if (value.IndexOf (';') != -1)
+					throw new FormatException ();
+				mediaType = value;
+			}
 		}
 
 		public string Name {
@@ -166,11 +174,11 @@ namespace System.Net.Mime {
 				sb.Append ("; charset=");
 				sb.Append (CharSet);
 			}
-			if (Name != null) {
+			if (Name != null && Name.Length > 0) {
 				sb.Append ("; name=");
 				sb.Append (Name);
 			}
-			if (Boundary != null) {
+			if (Boundary != null && Boundary.Length > 0) {
 				sb.Append ("; boundary=");
 				sb.Append (Boundary);
 			}
