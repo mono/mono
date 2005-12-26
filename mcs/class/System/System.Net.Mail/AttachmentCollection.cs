@@ -35,14 +35,14 @@ using System.Collections.ObjectModel;
 using System.Collections.Generic;
 
 namespace System.Net.Mail {
-	public class AttachmentCollection : Collection<Attachment>, IDisposable
+	public sealed class AttachmentCollection : Collection<Attachment>, IDisposable
 	{
 		internal AttachmentCollection ()
 		{
 		}
 		
 		[MonoTODO]
-		public virtual void Dispose ()
+		public void Dispose ()
 		{
 			for (int i = 0; i < Count; i += 1)
 				this [i].Dispose ();

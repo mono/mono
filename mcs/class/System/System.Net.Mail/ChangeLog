@@ -1,3 +1,8 @@
+2005-12-26  John Luke  <john.luke@gmail.com>
+
+	* AttachmentCollection.cs: mark sealed
+	* DeliveryNotificationOptions.cs: fix values
+	
 2005-12-25  John Luke  <john.luke@gmail.com>
 
 	* SmtpStatusCode.cs: OK > Ok

@@ -37,11 +37,11 @@ namespace System.Net.Mail {
 	[Flags]
 	public enum DeliveryNotificationOptions
 	{
-		Delay,
-		Never,
 		None,
-		OnFailure,
 		OnSuccess,
+		OnFailure,
+		Delay,
+		Never = 134217728,
 	}
 }
 
