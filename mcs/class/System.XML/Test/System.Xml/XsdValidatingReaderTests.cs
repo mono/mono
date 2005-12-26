@@ -227,5 +227,14 @@ namespace MonoTests.System.Xml
 			vr.Read (); // bug
 			AssertEquals ("#4", "urn:a", vr.NamespaceURI);
 		}
+
+		[Test]
+		public void MultipleSchemaInSchemaLocation ()
+		{
+			XmlTextReader xtr = new XmlTextReader ("Test/XmlFiles/xsd/multi-schemaLocation.xml");
+			XmlValidatingReader vr = new XmlValidatingReader (xtr);
+			while (!vr.EOF)
+				vr.Read ();
+		}
 	}
 }

@@ -1487,28 +1487,32 @@ namespace Mono.Xml.Schema
 				if (tmp.Length % 2 != 0)
 					if (schemas.Count == 0)
 						HandleError ("Invalid schemaLocation attribute format.");
-				for (int i = 0; i < tmp.Length; i += 2) {
+				int i=0;
+				do {
 					try {
-						schema = ReadExternalSchema (tmp [i + 1]);
-					} catch (Exception) { // FIXME: (wishlist) It is bad manner ;-(
+						for (; i < tmp.Length; i += 2) {
+							schema = ReadExternalSchema (tmp [i + 1]);
+							if (schema.TargetNamespace == null)
+								schema.TargetNamespace = tmp [i];
+							else if (schema.TargetNamespace != tmp [i])
+								HandleError ("Specified schema has different target namespace.");
+							if (schema != null) {
+								if (!schemas.Contains (schema.TargetNamespace)) {
+									schemaAdded = true;
+									schemas.Add (schema);
+								}
+								schema = null;
+							}
+						}
+					} catch (Exception) {
 						if (!schemas.Contains (tmp [i]))
 							HandleError (String.Format ("Could not resolve schema location URI: {0}",
 								i + 1 < tmp.Length ? tmp [i + 1] : String.Empty), null, true);
+						i += 2;
 						continue;
 					}
-					if (schema.TargetNamespace == null)
-						schema.TargetNamespace = tmp [i];
-					else if (schema.TargetNamespace != tmp [i])
-						HandleError ("Specified schema has different target namespace.");
-				}
+				} while (i < tmp.Length);
 			}
-			if (schema != null) {
-				if (!schemas.Contains (schema.TargetNamespace)) {
-					schemaAdded = true;
-					schemas.Add (schema);
-				}
-			}
-			schema = null;
 			string noNsSchemaLocation = reader.GetAttribute ("noNamespaceSchemaLocation", XmlSchema.InstanceNamespace);
 			if (noNsSchemaLocation != null) {
 				try {

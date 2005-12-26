@@ -1,3 +1,8 @@
+2005-12-26  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XsdValidatingReader.cs : Fixed the bug that only the last schema
+	  URL in a schemaLocation was processed. Patch by Vorobiev Maksim.
+
 2005-12-12  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XsdValidatingReader.cs : it is not IXmlNamespaceResolver anymore.
