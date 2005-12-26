@@ -106,6 +106,21 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
+		public void AddNamespace_XmlPrefix ()
+		{
+			namespaceManager.AddNamespace ("xml", "http://www.w3.org/XML/1998/namespace");
+			namespaceManager.AddNamespace ("XmL", "http://foo/");
+			namespaceManager.AddNamespace ("xmlsomething", "http://foo/");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void AddNamespace_XmlPrefix_Invalid ()
+		{
+			namespaceManager.AddNamespace ("xml", "http://foo/");
+		}
+
+		[Test]
 		public void PushScope ()
 		{
 			// add a new namespace.
