@@ -47,7 +47,7 @@ namespace System.Net.Mail {
 		MailboxBusy = 450,
 		MailboxNameNotAllowed = 553,
 		MailboxUnavailable = 550,
-		OK = 250,
+		Ok = 250,
 		ServiceClosingTransmissionChannel = 221,
 		ServiceNotAvailable = 421,
 		ServiceReady = 220,

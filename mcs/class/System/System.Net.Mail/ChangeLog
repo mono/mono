@@ -1,3 +1,19 @@
+2005-12-25  John Luke  <john.luke@gmail.com>
+
+	* SmtpStatusCode.cs: OK > Ok
+	* AttachmentBase.cs: ContentID > ContentId,
+	add set_ContentType
+	* AlternateViewCollection.cs: remove destructor,
+	make default ctor internal
+	* MailMessage.cs: add default ctor,
+	remove destructor
+	* Attachment.cs: add (string, string) ctor,
+	add set_NameEncoding
+	* LinkedResourceCollection.cs: remove destructor,
+	make default ctor internal
+	* AttachmentCollection.cs: mark Dispose virtual,
+	add ISerializable, make default ctor internal
+
 2005-12-24  John Luke  <john.luke@gmail.com>
 
 	* LinkedResource.cs: new File

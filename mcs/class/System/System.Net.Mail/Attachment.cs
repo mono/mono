@@ -52,6 +52,11 @@ namespace System.Net.Mail {
 		}
 
 		[MonoTODO]
+		public Attachment (string fileName, string mediaType) : base (fileName, mediaType)
+		{
+		}
+
+		[MonoTODO]
 		public Attachment (string fileName, ContentType contentType) : base (fileName, contentType)
 		{
 		}
@@ -96,6 +101,7 @@ namespace System.Net.Mail {
 		[MonoTODO]
 		public Encoding NameEncoding {
 			get { return nameEncoding; }
+			set { nameEncoding = value; }
 		}
 
 		#endregion // Properties

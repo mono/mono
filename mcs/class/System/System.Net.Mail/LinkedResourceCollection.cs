@@ -42,9 +42,8 @@ namespace System.Net.Mail {
 
 		#region Constructors
 
-		~LinkedResourceCollection ()
+		internal LinkedResourceCollection ()
 		{
-			Dispose (false);
 		}
 
 		#endregion // Constructors

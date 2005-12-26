@@ -60,6 +60,10 @@ namespace System.Net.Mail {
 
 		#region Constructors
 
+		public MailMessage ()
+		{
+		}
+
 		public MailMessage (MailAddress from, MailAddress to)
 		{
 			From = from;
@@ -181,11 +185,6 @@ namespace System.Net.Mail {
 
 		protected virtual void Dispose (bool disposing)
 		{
-		}
-
-		~MailMessage ()
-		{
-			Dispose (false);
 		}
 
 		#endregion // Methods

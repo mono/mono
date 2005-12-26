@@ -108,7 +108,7 @@ namespace System.Net.Mail {
 
 		#region Properties
 
-		public string ContentID {
+		public string ContentId {
 			get { return id; }
 			set {
 				if (value == null)
@@ -123,6 +123,7 @@ namespace System.Net.Mail {
 
 		public ContentType ContentType {
 			get { return contentType; }
+			set { contentType = value; }
 		}
 
 		public TransferEncoding TransferEncoding {

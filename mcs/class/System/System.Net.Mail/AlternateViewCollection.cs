@@ -42,9 +42,8 @@ namespace System.Net.Mail {
 
 		#region Constructors
 
-		~AlternateViewCollection ()
+		internal AlternateViewCollection ()
 		{
-			Dispose (false);
 		}
 
 		#endregion // Constructors
@@ -56,12 +55,6 @@ namespace System.Net.Mail {
 		#region Methods
 
 		public void Dispose ()
-		{
-			Dispose (true);
-			GC.SuppressFinalize (this);
-		}
-
-		private void Dispose (bool disposing)
 		{
 		}
 
