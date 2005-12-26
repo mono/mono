@@ -1,3 +1,7 @@
+2005-12-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* exceptions-x86.c mini-x86.h: Fix solaris/x86 exception handling.
+
 2005-12-23  Zoltan Varga  <vargaz@gmail.com>
 
 	* tramp-ia64.c (mono_arch_get_unbox_trampoline): Flush icache.
