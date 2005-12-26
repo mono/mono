@@ -1,3 +1,8 @@
+2005-12-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* include/private/gcconfig.h: Disable PROC_VDB on solaris/x86 as it
+	doesn't seem to work.
+
 2005-12-06  Todd Berman  <tberman@off.net>
 
 	* pthread_support.c (GC_thread_register_foreign): Wrap a GC_printf1
