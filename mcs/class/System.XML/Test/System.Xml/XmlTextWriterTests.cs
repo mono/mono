@@ -503,22 +503,15 @@ namespace MonoTests.System.Xml
 			Assert.AreEqual ("< xmlns='http://somenamespace.com' />", StringWriterText, "#8");
 		}
 
-#if NET_2_0
-		[Category ("NotWorking")] // bug #77095: in 2.0 profile, an empty namespace should be allowed
-#else
-		[ExpectedException (typeof (ArgumentException))]
-#endif
 		[Test]
 		public void WriteStartElement_Prefix_EmptyNamespace ()
 		{
 			xtw.WriteStartElement ("x", "whatever", "");
-#if NET_2_0
 			Assert.AreEqual ("<whatever", StringWriterText, "#1");
 
 			xtw.WriteEndElement ();
 
 			Assert.AreEqual ("<whatever />", StringWriterText, "#2");
-#endif
 		}
 
 		[Test]
@@ -1014,10 +1007,6 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
-#if NET_2_0
-		[Category ("NotDotNet")] // ... bug or design?
-#endif
 		public void NamespacesPrefixWithEmptyAndNullNamespaceEmpty ()
 		{
 			xtw.WriteStartElement ("foo", "bar", "");

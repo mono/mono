@@ -910,7 +910,7 @@ openElements [openElementCount - 1]).IndentingOverriden;
 			if (!Namespaces && (((prefix != null) && (prefix != String.Empty))
 				|| ((ns != null) && (ns != String.Empty))))
 				throw ArgumentError ("Cannot set the namespace if Namespaces is 'false'.");
-			if ((prefix != null && prefix != String.Empty) && ((ns == null) || (ns == String.Empty)))
+			if ((prefix != null && prefix.Length > 0) && ((ns == null)))
 				throw ArgumentError ("Cannot use a prefix with an empty namespace.");
 
 			// ignore non-namespaced node's prefix.

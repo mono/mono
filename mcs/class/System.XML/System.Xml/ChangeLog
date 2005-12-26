@@ -1,5 +1,12 @@
 2005-12-26  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlTextWriter.cs : when namespaceURI is String.Empty, Prefix
+	  should be just ignored (it is likely to happen that DOM nodes
+	  with empty namespace URI are specified non-empty prefix by
+	  users, which had better be just ignored). Fixed bug #77095.
+
+2005-12-26  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlElement.cs : patch for Prefix property by Vorobiev Maksim.
 	  - null should cause ArgumentNullException.
 	  - "" should not raise an error.
