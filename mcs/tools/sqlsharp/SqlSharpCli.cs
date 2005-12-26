@@ -900,12 +900,21 @@ namespace Mono.Data.SqlSharp {
 					UseParameters = false;
 					UseSimpleReader = false;
 					break;
-				case "MYSQL":
-				case "MYSQLNET":
+				case "BYTEFX":
 					extp = new string[3] {
 								     "\\loadextprovider",
 								     @"ByteFX.Data, Version=0.7.6.1, Culture=neutral, PublicKeyToken=0738eb9f132ed756",
 								     "ByteFX.Data.MySqlClient.MySqlConnection"};
+					SetupExternalProvider (extp);
+					UseParameters = false;
+					UseSimpleReader = false;
+					break;
+				case "MYSQL":
+				case "MYSQLNET":
+					extp = new string[3] {
+								     "\\loadextprovider",
+								     @"MySql.Data, Version=1.0.7.30073, Culture=neutral, PublicKeyToken=8e323390df8d9ed4",
+								     "MySql.Data.MySqlClient.MySqlConnection"};
 					SetupExternalProvider (extp);
 					UseParameters = false;
 					UseSimpleReader = false;
@@ -950,7 +959,7 @@ namespace Mono.Data.SqlSharp {
 				case "FIREBIRD":
 					extp = new string[3] {
 								     "\\loadextprovider",
-								     @"FirebirdSql.Data.Firebird, Version=1.6.3.0, Culture=neutral, PublicKeyToken=e1b4f92304d7b12f",
+								     @"FirebirdSql.Data.Firebird, Version=1.7.1.0, Culture=neutral, PublicKeyToken=0706f5520aae4ff4",
 								     "FirebirdSql.Data.Firebird.FbConnection"};
 					SetupExternalProvider (extp);
 					UseParameters = false;

@@ -41,6 +41,9 @@ CONNECTION AND PROVIDER COMMANDS
 		
 	MySQL via ByteFX.Data.MySqlClient provider:
 		SQL# \ConnectionString Server=localhost;Database=test;User ID=mysql;Password=
+
+	MySQL via MySql.Data provider:
+		SQL# \ConnectionString Server=localhost;Database=test;User ID=mysql;Password=mypass;Pooling=false
 		
 	ODBC via System.Data.Odbc provider using a DSN named "MSSQLDSN"	I set up 
 	in the Windows control panel's ODBC Data Sources which connects 
@@ -73,8 +76,9 @@ CONNECTION AND PROVIDER COMMANDS
 	Tds         TDS Generic   Mono.Data.TdsClient        Mono.Data.TdsClient
 	Oracle      Oracle 8i     System.Data.OracleClient   System.Data.OracleClient
 	PostgreSql  NET Postgres  Npgsql                     Npgsql
-	MySql       ByteFX MySQL  ByteFX.Data.MySqlClient    ByteFX.Data
+	ByteFX      ByteFX MySQL  ByteFX.Data.MySqlClient    ByteFX.Data
 	Firebird    Firebird      FirebirdSql.Data.Firebird  FirebirdSql.Data.Firebird
+	MySql       MySQL AB      MySql.Data.MySqlClient     MySql.Data
 	
 	Example: to set the provider for MySQL:
 		SQL# \provider mysql
@@ -84,10 +88,10 @@ CONNECTION AND PROVIDER COMMANDS
 
 \loadextprovider ASSEMBLY CLASS to load an external provider
                                 use the complete name of its assembly and
-                                its Connection class.
+                                its Connection class.  No spaces in the assembly name.
 
-	Example: to load the MySQL provider Mono.Data.MySql
-		SQL# \loadextprovider Mono.Data.MySql Mono.Data.MySql.MySqlConnection
+	Example: to load the MySQL provider MySql.Data.dll from the GAC:
+		SQL# \loadextprovider MySql.Data,Version=1.0.7.30073,Culture=neutral,PublicKeyToken=8e323390df8d9ed4 MySql.Data.MySqlCliet.MySqlConnection
 	
 \Open to open the connection
 

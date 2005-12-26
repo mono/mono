@@ -1,3 +1,11 @@
+2005-12-25  Daniel Morgan <danielmorgan@verizon.net>
+
+	* SqlSharpCli.cs: make the MySQL Connector/Net the default mysql provider.  
+	If people still need to use ByteFX, they can use bytefx.  Update assembly
+	version for Firebird SQL.
+	
+	* README: update MySQL provider info
+
 2004-12-27  Alp Toker <alp@atoker.com>
 
 	* SqlSharpCli.cs: Math and Mono.Math clash. Refer to System.Math directly to
