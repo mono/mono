@@ -1,5 +1,12 @@
 2005-12-26  Gert Driesen <drieseng@users.sourceforge.net>
 
+	* XmlTextWriterTests.cs: Renamed tests to avoid ambiguity, and
+	renumbered some tests. Added tests for WriteStartElement and
+	WriteElementString for zero-length and null local names.
+	Added tests bugs #77093, #77094 and #77095.
+
+2005-12-26  Gert Driesen <drieseng@users.sourceforge.net>
+
 	* XmlNamespaceManagerTests.cs: Added tests for xml prefix.
 
 2005-12-23  Atsushi Enomoto <atsushi@ximian.com>
