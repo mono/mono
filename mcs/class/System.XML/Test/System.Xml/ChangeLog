@@ -1,5 +1,9 @@
 2005-12-26  Gert Driesen <drieseng@users.sourceforge.net>
 
+	* XmlElementTests.cs: Fixed line endings.
+
+2005-12-26  Gert Driesen <drieseng@users.sourceforge.net>
+
 	* XmlTextWriterTests.cs: Renamed tests to avoid ambiguity, and
 	renumbered some tests. Added tests for WriteStartElement and
 	WriteElementString for zero-length and null local names.
