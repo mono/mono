@@ -559,5 +559,22 @@ namespace MonoTests.System.Xml
 			document.DocumentElement.WriteTo (xtw);
 			AssertEquals ("<root>&foo;</root>", sw.ToString ());
 		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void SetNullPrefix ()
+		{
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml ("<root/>");
+			doc.DocumentElement.Prefix = null;
+		}
+
+		[Test]
+		public void SetEmptyStringPrefix ()
+		{
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml ("<root/>");
+			doc.DocumentElement.Prefix = String.Empty;
+		}
 	}
 }

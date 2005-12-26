@@ -215,8 +215,10 @@ namespace System.Xml
 			get { return name.Prefix; }
 			set {
 				if (IsReadOnly)
-					throw new XmlException ("This node is readonly.");
-				if (!XmlChar.IsNCName (value))
+					throw new ArgumentException ("This node is readonly.");
+				if (value == null)
+					throw new ArgumentNullException("Prefix value is null.");
+				if ((!String.Empty.Equals(value))&&(!XmlChar.IsNCName (value)))
 					throw new ArgumentException ("Specified name is not a valid NCName: " + value);
 
 				value = OwnerDocument.NameTable.Add (value);

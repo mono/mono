@@ -1,5 +1,11 @@
 2005-12-26  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlElementTests.cs : Patch by Vorobiev Maksim.
+	  - setting null to Prefix should raise ArgumentNullException.
+	  - setting String.Empty to Prefix should be allowed.
+
+2005-12-26  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XsdValidatingReaderTests.cs : test for multi URLs in
 	  schemaLocation. Test by Vorobiev Maskim.
 

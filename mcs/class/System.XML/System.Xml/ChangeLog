@@ -1,3 +1,10 @@
+2005-12-26  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlElement.cs : patch for Prefix property by Vorobiev Maksim.
+	  - null should cause ArgumentNullException.
+	  - "" should not raise an error.
+	  - throws ArgumentException when it is readonly.
+
 2005-12-23  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlTextWriter.cs : When xml:space or xml:lang attribute was
