@@ -1,4 +1,4 @@
-.TH sqlsharp 1 "21 October 2004"
+.TH sqlsharp 1 "25 December 2005"
 .SH NAME 
 sqlsharp \- Mono SQL Query command-line tool
 .SH SYNOPSIS
@@ -344,25 +344,32 @@ ption defaulting to true.
 
 PROVIDER   NAME          NAMESPACE                  ASSEMBLY
 
-Oracle     Oracle 8i     System.Data.OracleClient   System.Data.OracleClient
-PostgreSql NetPostgreSQL Npgsql                     Npgsql
-MySQL      ByteFX MySQL  ByteFX.Data.MySqlClient    ByteFX.Data
-SqlClient  MS SQL 7/2000 System.Data.SqlClient      System.Data
-Odbc       ODBC          System.Data.Odbc           System.Data
-Sqlite     SQL Lite      Mono.Data.SqliteClient     Mono.Data.SqliteClient
-Sybase     Sybase        Mono.Data.SybaseClient     Mono.Data.SybaseClient
-OleDb      OLE DB        System.Data.OleDb          System.Data 
-Tds        TDS Generic   Mono.Data.TdsClient        Mono.Data.TdsClient
-MSOdbc     MS ODBC       Microsoft.Data.Odbc        Microsoft.Data.Odbc
-Firebird   Firebird SQL  FirebirdSql.Data.FirebirdSql FirebirdSql.Data.Firebird
+oracle     Oracle 8i     System.Data.OracleClient   System.Data.OracleClient
+postgresql NetPostgreSQL Npgsql                     Npgsql
+bytefx     ByteFX MySQL  ByteFX.Data.MySqlClient    ByteFX.Data
+sqlclient  MS SQL 7/2000 System.Data.SqlClient      System.Data
+odbc       ODBC          System.Data.Odbc           System.Data
+sqlite     SQL Lite      Mono.Data.SqliteClient     Mono.Data.SqliteClient
+sybase     Sybase        Mono.Data.SybaseClient     Mono.Data.SybaseClient
+olebb      OLE DB        System.Data.OleDb          System.Data 
+tds        TDS Generic   Mono.Data.TdsClient        Mono.Data.TdsClient
+msodbc     MS ODBC       Microsoft.Data.Odbc        Microsoft.Data.Odbc
+firebird   Firebird SQL  FirebirdSql.Data.FirebirdSql FirebirdSql.Data.Firebird
+mysql      MySQL AB      MySql.Data.MySqlClient     MySql.Data
 
-NOTES
+NOTES:
 
-Npgsql maps to PostgreSql above.
-MySqlNet maps to MySql above.  
-Odbc is treated as an external provider for .NET 1.1 and above.
-MSODBC is an external provider for compatibility with .NET 1.0
-Firebird is not included with Mono.
+npgsql maps to postgresql above.
+mysqlnet maps to mysql above.
+odbc is treated as an external provider for .NET 1.1 and above.
+msodbc is an external provider for compatibility with .NET 1.0
+
+MySql.Data has replaced the mysql provider.  If you still need to use ByteFX.Data, then
+use bytefx.
+
+MySql.Data is not included with Mono.  You need to 
+download the MySQL Connector/Net from MySQL AB at
+http://dev.mysql.com/downloads/connector/net/1.0.html
 
 .fi
 .SH CONNECTION STRING SAMPLES
@@ -416,14 +423,19 @@ http://gborg.postgresql.org/project/npgsql/projdisplay.php
 	Server=localhost;Database=test;User ID=postgres;Password=fun2db
 
 		
-MySQLNet (ByteFX MySQL) from 
-http://sourceforge.net/projects/mysqlnet/
+ByteFX (ByteFX MySQL) from 
 
 	Server=localhost;Database=test;User ID=mysql;Password=
+
 
 FirebirdSql via FirebirdSql.Data.Firebird (not included with Mono)
 
 	Database=C:\\FIREBIRD\\EXAMPLES\\EMPLOYEE.FDB;User=SYSDBA;Password=masterkey;Dialect=3;Server=localhost
+
+
+MySQL (MySQL AB) from http://www.mysql.com/
+
+	Server=localhost;Database=test;User ID=mysql;Password=mypass;Pooling=false
 
 
 .fi
