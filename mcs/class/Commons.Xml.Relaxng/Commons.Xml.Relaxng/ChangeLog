@@ -1,5 +1,15 @@
 2005-12-27  Atsushi Enomoto <atsushi@ximian.com>
 
+	* RelaxngDatatype.cs RelaxngPattern.cs RelaxngException.cs
+	  RelaxngMergedProvider.cs RelaxngPatternType.cs RelaxngReader.cs
+	  RelaxngDefaultDatatypes.cs XsdDatatypeProvider.cs
+	  RelaxngValidatingReader.cs RelaxngDatatypeProvider.cs
+	  RelaxngGrammar.cs RelaxngNameClass.cs :
+	  turned out that they all have LF on copyright lines while they are
+	  written to have CRLF.
+
+2005-12-27  Atsushi Enomoto <atsushi@ximian.com>
+
 	* Misc.cs : it has inconsistent newlines. Removed unused code.
 
 2005-12-27  Atsushi Enomoto <atsushi@ximian.com>
