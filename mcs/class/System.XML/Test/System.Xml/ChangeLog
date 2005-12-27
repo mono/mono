@@ -1,5 +1,9 @@
 2005-12-27  Gert Driesen <drieseng@users.sourceforge.net>
 
+	* NameTableTests.cs: Added additional tests for Add and Get methods.
+
+2005-12-27  Gert Driesen <drieseng@users.sourceforge.net>
+
 	* XmlTextWriterTests.cs: Allow all tests to pass on .NET 1.1.
 
 2005-12-26  Atsushi Enomoto <atsushi@ximian.com>
