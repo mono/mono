@@ -1,5 +1,11 @@
 2005-12-27  Gert Driesen <drieseng@users.sourceforge.net>
 
+	* XmlTextWriterTests.cs: Do not yet enable tests for WriteNmToken
+	with null or zero-length value (await approval for XmlTextWriter
+	change from Atsushi).
+
+2005-12-27  Gert Driesen <drieseng@users.sourceforge.net>
+
 	* XmlTextWriterTests.cs: Added tests for WriteWhitespace and
 	WriteNmToken.
 

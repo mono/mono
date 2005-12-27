@@ -1527,6 +1527,7 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		[ExpectedException (typeof (ArgumentException))]
 		public void WriteNmToken_Null ()
 		{
@@ -1534,6 +1535,7 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		[ExpectedException (typeof (ArgumentException))]
 		public void WriteNmToken_Empty ()
 		{
