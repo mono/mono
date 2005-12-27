@@ -250,13 +250,64 @@ namespace Commons.Xml.Relaxng.Derivative
 		}
 
 		// Name class analysis
+		internal static bool NamesOverlap (RdpPattern p1,
+			RdpPattern p2, bool checkElements)
+		{
+			if (p1 == p2)
+				return true;
+			RdpAbstractBinary bp1 = p1 as RdpAbstractBinary;
+			if (bp1 != null)
+				return NamesOverlap (bp1.LValue, p2, checkElements)
+					|| NamesOverlap (bp1.RValue, p2, checkElements);
+			RdpOneOrMore rp1 = p1 as RdpOneOrMore;
+			if (rp1 != null)
+				return NamesOverlap (rp1.Child, p2, checkElements);
+			RdpAttribute ap1 = p1 as RdpAttribute;
+			if (ap1 != null)
+				return NamesOverlap (p2, ap1.NameClass, checkElements);
+
+			if (!checkElements)
+				return false;
+
+			RdpElement ep1 = p1 as RdpElement;
+			if (ep1 != null)
+				return NamesOverlap (p2, ep1.NameClass, checkElements);
+
+			return false;
+		}
+
+		// Name class analysis
+		static bool NamesOverlap (RdpPattern p1,
+			RdpNameClass n, bool checkElements)
+		{
+			RdpAbstractBinary bp1 = p1 as RdpAbstractBinary;
+			if (bp1 != null)
+				return NamesOverlap (bp1.LValue, n, checkElements)
+					|| NamesOverlap (bp1.RValue, n, checkElements);
+			RdpOneOrMore rp1 = p1 as RdpOneOrMore;
+			if (rp1 != null)
+				return NamesOverlap (rp1.Child, n, checkElements);
+			RdpAttribute ap1 = p1 as RdpAttribute;
+			if (ap1 != null)
+				return NameClassOverlap (ap1.NameClass, n);
+
+			if (!checkElements)
+				return false;
+
+			RdpElement ep1 = p1 as RdpElement;
+			if (ep1 != null)
+				return NameClassOverlap (ep1.NameClass, n);
+
+			return false;
+		}
+
 		internal static bool NameClassOverlap (RdpNameClass n1, RdpNameClass n2)
 		{
 			Hashtable names = new Hashtable ();
 			GetNameClassRepresentatives (n1, names);
 			GetNameClassRepresentatives (n2, names);
 			foreach (QName qn in names.Keys)
-				if (NameClassBothContains (n1, n2, qn))
+				if (NameClassBothContain (n1, n2, qn))
 					return true;
 			return false;
 		}
@@ -303,7 +354,7 @@ namespace Commons.Xml.Relaxng.Derivative
 			}
 		}
 
-		static bool NameClassBothContains (
+		static bool NameClassBothContain (
 			RdpNameClass n1, RdpNameClass n2, QName qn)
 		{
 			return Contains (n1, qn.Name, qn.Namespace) &&

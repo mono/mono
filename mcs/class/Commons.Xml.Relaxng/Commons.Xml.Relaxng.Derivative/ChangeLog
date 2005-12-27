@@ -1,5 +1,11 @@
 2005-12-27  Atsushi Enomoto <atsushi@ximian.com>
 
+	* RdpPattern.cs, RdpUtil.cs : reimplemented name class analysis to
+	  not create extraneous QName instances. This also fixes some weird
+	  bugs (test #362 and #363).
+
+2005-12-27  Atsushi Enomoto <atsushi@ximian.com>
+
 	* RdpPattern.cs : Checking interleave restriction in section 7.4 with
 	  PatternType was not insufficient. Now I use ContainsText(). It fixes
 	  testcase #371.

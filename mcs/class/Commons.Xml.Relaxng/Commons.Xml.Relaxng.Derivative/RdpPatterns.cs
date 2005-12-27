@@ -659,32 +659,9 @@ namespace Commons.Xml.Relaxng.Derivative
 		// simplified grammar, expanding all refs.
 		internal void CheckNameOverlap (bool checkElements)
 		{
-			// expecting that all items are interned.
-			bool checkAttributes = false;
-			Hashtable lca = new Hashtable ();
-			Hashtable lce = checkElements ? new Hashtable () : null;
-			LValue.GetLabels (lce, lca, true);
-			if ((lce == null || lce.Count == 0) && lca.Count == 0)
-				return;
-
-			Hashtable rca = new Hashtable ();
-			Hashtable rce = checkElements ? new Hashtable () : null;
-			RValue.GetLabels (rce, rca, true);
-			if ((rce == null || rce.Count == 0) && rca.Count == 0)
-				return;
-
-			foreach (RdpNameClass ncl in lca.Values)
-				foreach (RdpNameClass ncr in rca.Values)
-					if (RdpUtil.NameClassOverlap (ncl, ncr))
-						throw new RelaxngException ("Duplicate attributes inside a group or an interleave is not allowed.");
-
-			if (!checkElements)
-				return;
-
-			foreach (RdpNameClass ncl in lce.Values)
-				foreach (RdpNameClass ncr in rce.Values)
-					if (RdpUtil.NameClassOverlap (ncl, ncr))
-						throw new RelaxngException ("Duplicate attributes inside a group or an interleave is not allowed.");
+			if (RdpUtil.NamesOverlap (LValue, RValue, checkElements))
+				throw new RelaxngException ("Duplicate attributes inside a group or an interleave is not allowed.");
+			return;
 		}
 	}
 
