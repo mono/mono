@@ -76,6 +76,7 @@ namespace Commons.Xml.Relaxng
 		bool roughLabelCheck;
 		ArrayList strictCheckCache;
 		bool reportDetails;
+		string cachedValue;
 
 		internal string CurrentStateXml {
 			get { return RdpUtil.DebugRdpPattern (vState, new Hashtable ()); }
@@ -357,6 +358,24 @@ namespace Commons.Xml.Relaxng
 
 			bool ret = reader.Read ();
 
+			// Process pending text node validation if required.
+			if (cachedValue != null) {
+				switch (reader.NodeType) {
+				case XmlNodeType.Element:
+				case XmlNodeType.EndElement:
+					prevState = vState;
+					vState = vState.TextDeriv (cachedValue, reader);
+					if (vState.PatternType == RelaxngPatternType.NotAllowed)
+						throw createValidationError (String.Format ("Invalid text found. Text value = {0} ", cachedValue));
+					cachedValue = null;
+					break;
+				default:
+					if (!ret)
+						goto case XmlNodeType.Element;
+					break;
+				}
+			}
+
 			switch (reader.NodeType) {
 			case XmlNodeType.Element:
 				// StartTagOpenDeriv
@@ -422,12 +441,8 @@ namespace Commons.Xml.Relaxng
 			case XmlNodeType.SignificantWhitespace:
 				// Whitespace cannot be skipped because data and
 				// value types are required to validate whitespaces.
-				prevState = vState;
-				vState = vState.TextDeriv (this.Value, reader);
-				if (vState.PatternType == RelaxngPatternType.NotAllowed)
-					throw createValidationError (String.Format ("Invalid text found. Text value = {0} ", reader.Value));
+				cachedValue += Value;
 				break;
-				
 			}
 			return ret;
 		}

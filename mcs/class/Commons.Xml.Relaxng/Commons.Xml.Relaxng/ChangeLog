@@ -1,5 +1,11 @@
 2005-12-27  Atsushi Enomoto <atsushi@ximian.com>
 
+	* RelaxngValidatingReader.cs : it needs to cache text nodes to allow
+	  split texts by such nodes as comments or processing instructions.
+	  This fixes test #268 and #269.
+
+2005-12-27  Atsushi Enomoto <atsushi@ximian.com>
+
 	* RelaxngGrammar.cs : expand refs before checking content pattern.
 
 2005-12-16  Atsushi Enomoto <atsushi@ximian.com>
