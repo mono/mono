@@ -201,11 +201,10 @@ namespace Commons.Xml.Relaxng
 			// see RELAX NG 4.17.
 			AssembleCombine ();
 
-			// FIXME: It should not return NotAllowed
-			if (assembledStart != null)
-				compiledStart = assembledStart.Compile (this);
-			else
-				return RdpNotAllowed.Instance;
+			// 4.18 : <grammar> must have at least one <start>.
+			if (assembledStart == null)
+				throw new RelaxngException ("A grammar elements must contain at least one start element.");
+			compiledStart = assembledStart.Compile (this);
 
 			// Assemble all define components into top grammar and
 			// return start patterns for descendant grammars.
