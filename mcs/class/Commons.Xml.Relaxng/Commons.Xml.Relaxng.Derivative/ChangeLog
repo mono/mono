@@ -1,5 +1,11 @@
 2005-12-27  Atsushi Enomoto <atsushi@ximian.com>
 
+	* RdpPatterns.cs : oneOrMore ancestor check for anyName/nsName in
+	  section 7.3 was missing. This fixes test #357, #358 and #359.
+	* RdpNameClass.cs : added HasInfiniteName property to RdpNameClass.
+
+2005-12-27  Atsushi Enomoto <atsushi@ximian.com>
+
 	* RdpPattern.cs, RdpUtil.cs : reimplemented name class analysis to
 	  not create extraneous QName instances. This also fixes some weird
 	  bugs (test #362 and #363).

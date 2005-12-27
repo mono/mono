@@ -49,6 +49,7 @@ namespace Commons.Xml.Relaxng.Derivative
 
 	public abstract class RdpNameClass
 	{
+		public abstract bool HasInfiniteName { get; }
 		public abstract RdpNameClassType NameClassType { get; }
 		public abstract bool Contains (string name, string ns);
 	}
@@ -67,6 +68,10 @@ namespace Commons.Xml.Relaxng.Derivative
 
 		private RdpAnyName () {}
 
+		public override bool HasInfiniteName {
+			get { return true; }
+		}
+
 		public override RdpNameClassType NameClassType {
 			get { return RdpNameClassType.AnyName; }
 		}
@@ -84,6 +89,10 @@ namespace Commons.Xml.Relaxng.Derivative
 		public RdpAnyNameExcept (RdpNameClass except)
 		{
 			this.except = except;
+		}
+
+		public override bool HasInfiniteName {
+			get { return true; }
 		}
 
 		public override RdpNameClassType NameClassType {
@@ -107,6 +116,10 @@ namespace Commons.Xml.Relaxng.Derivative
 		public RdpNsName (string ns)
 		{
 			this.ns = ns;
+		}
+
+		public override bool HasInfiniteName {
+			get { return true; }
 		}
 
 		public override RdpNameClassType NameClassType {
@@ -135,6 +148,10 @@ namespace Commons.Xml.Relaxng.Derivative
 			this.except = except;
 		}
 
+		public override bool HasInfiniteName {
+			get { return true; }
+		}
+
 		public override RdpNameClassType NameClassType {
 			get { return RdpNameClassType.NsNameExcept; }
 		}
@@ -159,6 +176,10 @@ namespace Commons.Xml.Relaxng.Derivative
 		{
 			this.ns = ns;
 			this.local = local;
+		}
+
+		public override bool HasInfiniteName {
+			get { return false; }
 		}
 
 		public override RdpNameClassType NameClassType {
@@ -188,6 +209,10 @@ namespace Commons.Xml.Relaxng.Derivative
 		{
 			this.l = l;
 			this.r = r;
+		}
+
+		public override bool HasInfiniteName {
+			get { return l.HasInfiniteName || r.HasInfiniteName; }
 		}
 
 		public override RdpNameClassType NameClassType {

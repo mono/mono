@@ -1476,8 +1476,14 @@ namespace Commons.Xml.Relaxng.Derivative
 
 		internal override void CheckConstraints (bool attribute, bool oneOrMore, bool oneOrMoreGroup, bool oneOrMoreInterleave, bool list, bool dataExcept) 
 		{
+			// 7.1.1 and 7.1.2
 			if (attribute || oneOrMoreGroup || oneOrMoreInterleave || list || dataExcept)
 				throw new RelaxngException ("Not allowed attribute occurence was specified in the pattern.");
+
+			// latter part of 7.3
+			if (!oneOrMore && NameClass.HasInfiniteName)
+				throw new RelaxngException ("Attributes that has an infinite name class must be repeatable.");
+
 			this.Children.CheckConstraints (true, oneOrMore, false, false, false, false);
 		}
 
