@@ -1,5 +1,16 @@
 2005-12-27  Atsushi Enomoto <atsushi@ximian.com>
 
+	* Misc.cs RelaxngDatatype.cs RelaxngPattern.cs RelaxngException.cs
+	  RelaxngMergedProvider.cs RelaxngPatternType.cs RelaxngReader.cs
+	  RelaxngDefaultDatatypes.cs XsdDatatypeProvider.cs
+	  RelaxngValidatingReader.cs RelaxngDatatypeProvider.cs
+	  RelaxngGrammar.cs RelaxngNameClass.cs :
+
+	  This is the smarter way to set eol-style without messing code
+	  history.
+
+2005-12-27  Atsushi Enomoto <atsushi@ximian.com>
+
 	* RelaxngDatatype.cs RelaxngPattern.cs RelaxngException.cs
 	  RelaxngMergedProvider.cs RelaxngPatternType.cs RelaxngReader.cs
 	  RelaxngDefaultDatatypes.cs XsdDatatypeProvider.cs
