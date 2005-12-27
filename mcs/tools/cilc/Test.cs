@@ -2,7 +2,12 @@ namespace Demo
 {
 	using System;
 
-	public class Counter
+	public interface INumbered
+	{
+		void Increment ();
+	}
+
+	public class Counter : INumbered
 	{
 		int counter;
 

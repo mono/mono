@@ -536,6 +536,8 @@ public class cilc
 		EventInfo[] events;
 		events = t.GetEvents (BindingFlags.Public|BindingFlags.Instance|BindingFlags.DeclaredOnly);
 
+		Type[] ifaces;
+		ifaces = t.GetInterfaces ();
 
 		H.WriteLine ("G_BEGIN_DECLS");
 		H.WriteLine ();
@@ -580,7 +582,9 @@ public class cilc
 		H.WriteLine ("struct _" + CurTypeClass);
 		H.WriteLine ("{");
 		H.WriteLine (ParentNameClass + " parent_class;" + " /* inherits " + t.BaseType.Namespace + " " + t.BaseType.Name + " */");
-		H.WriteLine ();
+
+		if (events.Length != 0)
+			H.WriteLine ();
 
 		//TODO: event arguments
 		foreach (EventInfo ei in events)
@@ -659,7 +663,21 @@ public class cilc
 		C.WriteLine ("}");
 
 		C.WriteLine ();
+		C.WriteLine ("static void " + cur_type + "_interface_init (gpointer g_iface, gpointer iface_data)");
+		C.WriteLine ("{");
+		
+		foreach (Type iface in ifaces) {
+			C.WriteLine ("//" + CsTypeToG (iface) + "Interface" + " *iface = (" + CsTypeToG (iface) + "Interface" + ")g_iface;");
+			foreach (MethodInfo imi in iface.GetMethods (BindingFlags.Public|BindingFlags.Instance|BindingFlags.DeclaredOnly)) {
+				string funcname = ToValidFuncName (CamelToC (imi.Name));
+				C.WriteLine ("//iface->" + funcname + " = " + cur_type + "_" + funcname + ";");
+			}
+			//TODO: properties etc.
+		}
+		
+		C.WriteLine ("}");
 
+		C.WriteLine ();
 
 		//generate the GObject get_type function
 		C.WriteLine ("GType " + cur_type + "_get_type (void)", H, ";");
@@ -672,9 +690,9 @@ public class cilc
 		C.WriteLine ("static const GTypeInfo object_info =");
 		C.WriteLine ("{");
 		C.WriteLine ("sizeof (" + CurTypeClass + "),");
-		C.WriteLine ("(GBaseInitFunc) NULL,");
-		C.WriteLine ("(GBaseFinalizeFunc) NULL,");
-		C.WriteLine ("(GClassInitFunc) " + cur_type + "_class_init,");
+		C.WriteLine ("(GBaseInitFunc) NULL, /* base_init */");
+		C.WriteLine ("(GBaseFinalizeFunc) NULL, /* base_finalize */");
+		C.WriteLine ("(GClassInitFunc) " + cur_type + "_class_init, /* class_init */");
 		C.WriteLine ("NULL, /* class_finalize */");
 		C.WriteLine ("NULL, /* class_data */");
 		C.WriteLine ("sizeof (" + CurType + "),");
@@ -683,11 +701,18 @@ public class cilc
 		C.WriteLine ("};");
 		C.WriteLine ();
 
+		foreach (Type iface in ifaces) {
+			C.WriteLine ("//static const GInterfaceInfo bar_ifoo_info = {};");
+		}
+
 		string parent_type = "G_TYPE_OBJECT";
 		if (IsRegistered (t.BaseType))
 			parent_type = NsToC (t.BaseType.Namespace).ToUpper () + "_TYPE_" + CamelToC (t.BaseType.Name).ToUpper ();
 
 		C.WriteLine ("object_type = g_type_register_static (" + parent_type + ", \"" + CurType + "\", &object_info, 0);");
+
+		foreach (Type iface in ifaces)
+			C.WriteLine ("//g_type_add_interface_static (object_type, BAR_IFOO_TYPE, bar_ifoo_info);");
 		C.WriteLine ();
 		C.WriteLine ("return object_type;");
 		C.WriteLine ("}");
