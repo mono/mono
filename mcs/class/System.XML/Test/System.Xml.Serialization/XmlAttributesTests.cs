@@ -19,7 +19,7 @@ using NUnit.Framework;
 namespace MonoTests.System.XmlSerialization
 {
 	[TestFixture]
-	public class XmlAttributesTests : Assertion
+	public class XmlAttributesTests
 	{
 		StringWriter sw;
 		XmlTextWriter xtw;
@@ -65,26 +65,26 @@ namespace MonoTests.System.XmlSerialization
 		{
 			// seems not different from Type specified ctor().
 			XmlAttributes atts = new XmlAttributes ();
-			AssertNull (atts.XmlAnyAttribute);
-			AssertNotNull (atts.XmlAnyElements);
-			AssertEquals (0, atts.XmlAnyElements.Count);
-			AssertNull (atts.XmlArray);
-			AssertNotNull (atts.XmlArrayItems);
-			AssertEquals (0, atts.XmlArrayItems.Count);
-			AssertNull (atts.XmlAttribute);
-			AssertNull (atts.XmlChoiceIdentifier);
-			AssertNotNull (atts.XmlDefaultValue);
+			Assert.IsNull (atts.XmlAnyAttribute, "#1");
+			Assert.IsNotNull (atts.XmlAnyElements, "#2");
+			Assert.AreEqual (0, atts.XmlAnyElements.Count, "#3");
+			Assert.IsNull (atts.XmlArray, "#4");
+			Assert.IsNotNull (atts.XmlArrayItems, "#5");
+			Assert.AreEqual (0, atts.XmlArrayItems.Count, "#6");
+			Assert.IsNull (atts.XmlAttribute, "#7");
+			Assert.IsNull (atts.XmlChoiceIdentifier, "#8");
+			Assert.IsNotNull (atts.XmlDefaultValue, "#9");
 			// DBNull??
-			AssertEquals (DBNull.Value, atts.XmlDefaultValue);
-			AssertNotNull (atts.XmlElements);
-			AssertEquals (0, atts.XmlElements.Count);
-			AssertNull (atts.XmlEnum);
-			AssertNotNull (atts.XmlIgnore);
-			AssertEquals (TypeCode.Boolean, atts.XmlIgnore.GetTypeCode ());
-			AssertEquals (false, atts.Xmlns);
-			AssertNull (atts.XmlRoot);
-			AssertNull (atts.XmlText);
-			AssertNull (atts.XmlType);
+			Assert.AreEqual (DBNull.Value, atts.XmlDefaultValue, "#10");
+			Assert.IsNotNull (atts.XmlElements, "#11");
+			Assert.AreEqual (0, atts.XmlElements.Count, "#12");
+			Assert.IsNull (atts.XmlEnum, "#13");
+			Assert.IsNotNull (atts.XmlIgnore, "#14");
+			Assert.AreEqual (TypeCode.Boolean, atts.XmlIgnore.GetTypeCode (), "#15");
+			Assert.AreEqual (false, atts.Xmlns, "#16");
+			Assert.IsNull (atts.XmlRoot, "#17");
+			Assert.IsNull (atts.XmlText, "#18");
+			Assert.IsNull (atts.XmlType, "#19");
 		}
 
 		[Test]
@@ -92,12 +92,12 @@ namespace MonoTests.System.XmlSerialization
 		{
 			// based on default ctor.
 			XmlTextAttribute attr = new XmlTextAttribute ();
-			AssertEquals ("", attr.DataType);
-			AssertNull (attr.Type);
+			Assert.AreEqual ("", attr.DataType, "#1");
+			Assert.IsNull (attr.Type, "#2");
 			// based on a type.
 			XmlTextAttribute attr2 = new XmlTextAttribute (typeof (XmlNode));
-			AssertEquals ("", attr.DataType);
-			AssertNull (attr.Type);
+			Assert.AreEqual ("", attr.DataType, "#3");
+			Assert.IsNull (attr.Type, "#4");
 		}
 
 		[Test]
@@ -109,7 +109,7 @@ namespace MonoTests.System.XmlSerialization
 			ao.Add (typeof (int), atts);
 			try {
 				Serialize (10, ao);
-				Fail ("Should be invalid.");
+				Assert.Fail ("Should be invalid.");
 			} catch (InvalidOperationException ex) {
 			}
 		}

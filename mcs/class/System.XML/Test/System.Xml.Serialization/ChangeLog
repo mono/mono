@@ -1,3 +1,8 @@
+2005-12-27  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* XmlAttributesTests.cs: No longer derive from Assertion, number
+	individual tests.
+
 2005-12-05  Lluis Sanchez Gual  <lluis@novell.com> 
 
 	* XmlSerializerTestClasses.cs:
