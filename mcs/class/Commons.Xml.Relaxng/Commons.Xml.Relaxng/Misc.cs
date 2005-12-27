@@ -40,19 +40,6 @@ namespace Commons.Xml.Relaxng
 {
 	internal class Util
 	{
-		/*
-		public static string ResolveUri (string baseUri, string href, XmlResolver resolver)
-		{
-			Uri uri = null;
-			if (baseUri != null && baseUri.Length > 0)
-				uri = new Uri (baseUri);
-			Uri result = resolver.ResolveUri (uri, href);
-			if (result.Query.Length > 0 || result.Fragment.Length > 0)
-				throw new RelaxngException ("Invalid URI format: " + href);
-			return result.ToString ();
-		}
-		*/
-
 		public static string NormalizeWhitespace (string s)
 		{
 			if (s.Length == 0)

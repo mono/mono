@@ -1,5 +1,9 @@
 2005-12-27  Atsushi Enomoto <atsushi@ximian.com>
 
+	* Misc.cs : it has inconsistent newlines. Removed unused code.
+
+2005-12-27  Atsushi Enomoto <atsushi@ximian.com>
+
 	* RelaxngGrammar.cs : A constraint in 4.18 that grammar must have at
 	  least one start element was missing. This fixes test #199 and #200.
 
