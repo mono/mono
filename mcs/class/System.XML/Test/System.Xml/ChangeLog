@@ -1,5 +1,10 @@
 2005-12-27  Gert Driesen <drieseng@users.sourceforge.net>
 
+	* XmlTextWriterTests.cs: Added tests for WriteWhitespace and
+	WriteNmToken.
+
+2005-12-27  Gert Driesen <drieseng@users.sourceforge.net>
+
 	* NameTableTests.cs: Added additional tests for Add and Get methods.
 
 2005-12-27  Gert Driesen <drieseng@users.sourceforge.net>

@@ -1513,6 +1513,49 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void WriteWhitespace_Null ()
+		{
+			xtw.WriteWhitespace ((string) null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void WriteWhitespace_Empty ()
+		{
+			xtw.WriteWhitespace (string.Empty);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void WriteNmToken_Null ()
+		{
+			xtw.WriteNmToken ((string) null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void WriteNmToken_Empty ()
+		{
+			xtw.WriteNmToken (string.Empty);
+		}
+
+		[Test]
+		[Category ("NotWorking")] // on mono, an XmlException is thrown instead
+		[ExpectedException (typeof (ArgumentException))]
+		public void WriteNmToken_InvalidChars ()
+		{
+			xtw.WriteNmToken ("\uFFFF");
+ 		}
+
+		[Test]
+		public void WriteNmToken ()
+		{
+			xtw.WriteNmToken ("some:name");
+			Assert.AreEqual ("some:name", StringWriterText);
+		}
+
+		[Test]
 		public void XmlSpaceRaw ()
 		{
 			xtw.WriteStartElement ("foo");
