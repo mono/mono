@@ -1164,6 +1164,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 		}
 
 		[Test]
+		[Category ("NotWorking")] // bug #77081: mono does not output newline and indentation for non-html elements
 		public void Output_Indent_Html ()
 		{
 			XsltArgumentList xsltArgs = new XsltArgumentList ();
@@ -1178,6 +1179,15 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 						<xsl:element name=""html"">
 							<xsl:element name=""body"">
 								<xsl:element name=""p"" />
+								<xsl:element name=""p"">
+									<xsl:text>something</xsl:text>
+								</xsl:element>
+								<xsl:element name=""p"">
+									<xsl:element name=""div"" />
+								</xsl:element>
+								<xsl:element name=""p"">
+									<xsl:element name=""whatever"" />
+								</xsl:element>
 							</xsl:element>
 						</xsl:element>
 					</xsl:template>
@@ -1196,7 +1206,17 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<html>{0}" +
 				"  <body>{0}" +
-				"    <p></p>{0}" +
+				"    <p>{0}" +
+				"    </p>{0}" +
+				"    <p>something</p>{0}" +
+				"    <p>{0}" +
+				"      <div>{0}" +
+				"      </div>{0}" +
+				"    </p>{0}" +
+				"    <p>{0}" +
+				"      <whatever>{0}" +
+				"      </whatever>{0}" +
+				"    </p>{0}" +
 				"  </body>{0}" +
 				"</html>", Environment.NewLine), sw.ToString (), "#1");
 
@@ -1208,7 +1228,8 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 			xsltProcessor.Transform (xmlDoc, xsltArgs, sw, new XmlUrlResolver ());
 
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-				"<html><body><p></p></body></html>",
+				"<html><body><p></p><p>something</p><p><div></div></p>" +
+				"<p><whatever></whatever></p></body></html>",
 				Environment.NewLine), sw.ToString (), "#2");
 
 			// indent not set
@@ -1221,7 +1242,17 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<html>{0}" +
 				"  <body>{0}" +
-				"    <p></p>{0}" +
+				"    <p>{0}" +
+				"    </p>{0}" +
+				"    <p>something</p>{0}" +
+				"    <p>{0}" +
+				"      <div>{0}" +
+				"      </div>{0}" +
+				"    </p>{0}" +
+				"    <p>{0}" +
+				"      <whatever>{0}" +
+				"      </whatever>{0}" +
+				"    </p>{0}" +
 				"  </body>{0}" +
 				"</html>", Environment.NewLine), sw.ToString (), "#3");
 		}
@@ -1744,6 +1775,79 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 			XslTransform xsltProcessor = new XslTransform ();
 			xsltProcessor.Load (new XmlTextReader (new StringReader (xsltFragment)),
 				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+		}
+
+		// http://support.microsoft.com/kb/832757/en-us
+		[Test]
+		public void FormatNumber_KB_832757 ()
+		{
+			string xsltFragment = @"<?xml version=""1.0"" encoding=""UTF-8""?>
+				<xsl:stylesheet version=""1.0"" xmlns:xsl=""http://www.w3.org/1999/XSL/Transform"">
+					<xsl:output method=""xml"" version=""1.0"" encoding=""UTF-8"" indent=""yes"" />
+					<xsl:template match=""/"">
+						<table>
+							<xsl:apply-templates />
+						</table>
+					</xsl:template>
+					<xsl:template match=""number"">
+						<tr><td><xsl:value-of select=""format-number(.,'#,##0;(#,##0)')""/></td></tr>
+					</xsl:template>
+				</xsl:stylesheet>";
+
+			XmlDocument xmlDoc = new XmlDocument ();
+			xmlDoc.LoadXml ("<root><number>1000</number></root>");
+
+			StringWriter sw = new StringWriter ();
+			XslTransform xsltProcessor = new XslTransform ();
+			xsltProcessor.Load (new XmlTextReader (new StringReader (xsltFragment)),
+				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+			xsltProcessor.Transform (xmlDoc, new XsltArgumentList (), sw, 
+				new XmlUrlResolver ());
+
+			Assert.AreEqual (string.Format(CultureInfo.InvariantCulture,
+				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
+				"<table>{0}" +
+				"  <tr>{0}" +
+				"    <td>1,000</td>{0}" +
+				"  </tr>{0}" +
+				"</table>", Environment.NewLine), sw.ToString ());
+		}
+
+		// http://support.microsoft.com/kb/293469/en-us
+		[Test]
+		public void FormatNumber_KB_293469 ()
+		{
+			string xsltFragment = @"<?xml version=""1.0""?>
+				<xsl:stylesheet version=""1.0"" xmlns:xsl=""http://www.w3.org/1999/XSL/Transform"">
+					<xsl:output method=""xml"" indent=""yes"" />
+					<xsl:decimal-format name=""european"" decimal-separator="","" grouping-separator=""."" />
+					<xsl:template match=""/"">
+						<xsl:element name=""html"">
+							<xsl:element name=""body"">
+								<xsl:apply-templates select=""root/amount"" />
+							</xsl:element>
+						</xsl:element>
+					</xsl:template>
+					<xsl:template match=""amount"">
+						<xsl:value-of select=""format-number(., '###.###,00', 'european')""/>
+					</xsl:template>
+				</xsl:stylesheet>";
+
+			XmlDocument xmlDoc = new XmlDocument ();
+			xmlDoc.LoadXml ("<root><amount currency='USD'>44442.7</amount></root>");
+
+			StringWriter sw = new StringWriter ();
+			XslTransform xsltProcessor = new XslTransform ();
+			xsltProcessor.Load (new XmlTextReader (new StringReader (xsltFragment)),
+				new XmlUrlResolver (), AppDomain.CurrentDomain.Evidence);
+			xsltProcessor.Transform (xmlDoc, new XsltArgumentList (), sw,
+				new XmlUrlResolver ());
+
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
+				"<html>{0}" +
+				"  <body>44.442,70</body>{0}" +
+				"</html>", Environment.NewLine), sw.ToString ());
 		}
 	}
 }

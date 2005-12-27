@@ -1,3 +1,8 @@
+2005-12-27  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* XslTransformTests.cs: Extended html indentation test (and marked
+	it NotWorking). Added tests for MS bugs (that have been fixed since).
+
 2005-12-24  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* XslTransformTests.cs: Enabled forwards compatible tests.
