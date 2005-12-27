@@ -131,7 +131,11 @@ namespace Commons.Xml.Relaxng.XmlSchema
 			XmlSchemaSimpleTypeRestriction r =
 				new XmlSchemaSimpleTypeRestriction ();
 			type.Content = r;
-			r.BaseTypeName = new XmlQualifiedName (primitive.Name, primitive.NamespaceURI);
+			string ns = primitive.NamespaceURI;
+			// Remap XML Schema datatypes namespace -> XML Schema namespace.
+			if (ns == "http://www.w3.org/2001/XMLSchema-datatypes")
+				ns = XSchema.Namespace;
+			r.BaseTypeName = new XmlQualifiedName (primitive.Name, ns);
 			foreach (RelaxngParam p in parameters) {
 				XmlSchemaFacet f = null;
 				switch (p.Name) {

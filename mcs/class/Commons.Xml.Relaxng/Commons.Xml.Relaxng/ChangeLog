@@ -1,5 +1,11 @@
 2005-12-27  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XsdDatatypeProvider.cs : Namespace remapping was required to make
+	  simple type restriction work fine. This fixes test #261/1.v.xml,
+	  #268/2.v.xml and #269/2.v.xml.
+
+2005-12-27  Atsushi Enomoto <atsushi@ximian.com>
+
 	* RelaxngValidatingReader.cs : it needs to cache text nodes to allow
 	  split texts by such nodes as comments or processing instructions.
 	  This fixes test #268 and #269.
