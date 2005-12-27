@@ -3,6 +3,14 @@
 	* Util.cs RdpObjects.cs RdpContentType.cs RdpNameClasses.cs
 	  RdpPatterns.cs :
 
+	  ... and svn:eol-style as well, since there is exactly no one else
+	  who develops this assembly and messes no one else.
+
+2005-12-27  Atsushi Enomoto <atsushi@ximian.com>
+
+	* Util.cs RdpObjects.cs RdpContentType.cs RdpNameClasses.cs
+	  RdpPatterns.cs :
+
 	  Ugh, seems like svn server shows different diffs than that of
 	  client. Anyways here I fixed all mixed line endings.
 
