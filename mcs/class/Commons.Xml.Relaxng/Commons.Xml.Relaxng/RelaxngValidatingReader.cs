@@ -398,7 +398,7 @@ namespace Commons.Xml.Relaxng
 
 						prevState = vState;
 						string attrNS = reader.NamespaceURI;
-						vState = vState.AttDeriv (reader.LocalName, attrNS, reader.GetAttribute (reader.Name), this);
+						vState = vState.AttDeriv (reader.LocalName, attrNS, reader.GetAttribute (reader.LocalName, attrNS), this);
 						if (vState.PatternType == RelaxngPatternType.NotAllowed) {
 							string labels = String.Empty;
 							if (reportDetails)
@@ -439,6 +439,7 @@ namespace Commons.Xml.Relaxng
 			case XmlNodeType.CDATA:
 			case XmlNodeType.Text:
 			case XmlNodeType.SignificantWhitespace:
+			case XmlNodeType.Whitespace:
 				// Whitespace cannot be skipped because data and
 				// value types are required to validate whitespaces.
 				cachedValue += Value;

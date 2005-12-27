@@ -1,5 +1,14 @@
 2005-12-27  Atsushi Enomoto <atsushi@ximian.com>
 
+	* RelaxngValidatingReader.cs : validate whitespaces as text nodes. It
+	  rather invalidated some valid documents incorrectly (since it kept
+	  text pattern remaining). This fixed following tests: 237/2.v.xml,
+	  256/2.i.xml, 258/2.i.xml, 261/1.v.xml, 261/3.v.xml, 261/4.v.xml,
+	  268/2.v.xml and 269/2.v.xml, while it exposed bugs on 260/2.i.xml
+	  and 261/6.i.xml (they are not regressions).
+
+2005-12-27  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XsdDatatypeProvider.cs : Namespace remapping was required to make
 	  simple type restriction work fine. This fixes test #261/1.v.xml,
 	  #268/2.v.xml and #269/2.v.xml.
