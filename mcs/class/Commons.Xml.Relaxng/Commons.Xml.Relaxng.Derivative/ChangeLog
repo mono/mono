@@ -1,5 +1,10 @@
 2005-12-27  Atsushi Enomoto <atsushi@ximian.com>
 
+	* RdpPatterns.cs : in ValueMatch() it should not strip whitespaces
+	  which could be validated. This fixes test #256/2.i.xml.
+
+2005-12-27  Atsushi Enomoto <atsushi@ximian.com>
+
 	* RdpPatterns.cs : oneOrMore ancestor check for anyName/nsName in
 	  section 7.3 was missing. This fixes test #357, #358 and #359.
 	* RdpNameClass.cs : added HasInfiniteName property to RdpNameClass.

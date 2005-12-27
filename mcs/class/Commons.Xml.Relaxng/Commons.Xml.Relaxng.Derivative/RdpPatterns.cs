@@ -353,8 +353,7 @@ namespace Commons.Xml.Relaxng.Derivative
 
 		public bool ValueMatch (string s, XmlReader reader)
 		{
-			return (Nullable && RdpUtil.Whitespace (s)) ||
-				TextDeriv (s, reader).Nullable;
+			return TextDeriv (s, reader).Nullable;
 		}
 
 		public virtual RdpPattern StartTagCloseDeriv ()
