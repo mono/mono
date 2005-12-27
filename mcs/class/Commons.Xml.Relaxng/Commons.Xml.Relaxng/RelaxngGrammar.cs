@@ -250,11 +250,11 @@ namespace Commons.Xml.Relaxng
 			// 7.1.5
 			CheckStartPatternContent (startPattern);
 
-			// 7.2
-			RdpContentType ct = startPattern.ContentType;
-
 			// 4.19 (c) expandRef - actual replacement
 			startPattern = compiledStart.ExpandRef (assembledDefs);
+
+			// 7.2
+			RdpContentType ct = startPattern.ContentType;
 
 			// return its start pattern.
 			IsCompiled = true;
