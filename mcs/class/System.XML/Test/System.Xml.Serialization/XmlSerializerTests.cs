@@ -538,28 +538,28 @@ namespace MonoTests.System.XmlSerialization
 			// null
 			SimpleClass simple = new SimpleClass();;
 			Serialize(simple, overrides);
-			AssertEquals(Infoset("<SimpleClass xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' />"), WriterText);
+			AssertEquals("#1", Infoset("<SimpleClass xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' />"), WriterText);
 			
 			// not null
 			simple.something = "hello";
 			Serialize(simple, overrides);
-			AssertEquals (Infoset("<SimpleClass xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><something>hello</something></SimpleClass>"), WriterText);
+			AssertEquals ("#2", Infoset("<SimpleClass xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><something>hello</something></SimpleClass>"), WriterText);
 			
 			//ElementName
 			element.ElementName = "saying";
 			Serialize(simple, overrides);
-			AssertEquals (Infoset("<SimpleClass xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><saying>hello</saying></SimpleClass>"), WriterText);
+			AssertEquals ("#3", Infoset("<SimpleClass xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><saying>hello</saying></SimpleClass>"), WriterText);
 			
 			//IsNullable
 			element.IsNullable = false;
 			simple.something = null;
 			Serialize(simple, overrides);
-			AssertEquals(Infoset("<SimpleClass xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' />"),WriterText);
+			AssertEquals("#4", Infoset("<SimpleClass xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' />"),WriterText);
 			
 			element.IsNullable = true;
 			simple.something = null;
 			Serialize(simple, overrides);
-			AssertEquals (Infoset("<SimpleClass xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><saying xsi:nil='true' /></SimpleClass>"), WriterText);
+			AssertEquals ("#5", Infoset("<SimpleClass xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><saying xsi:nil='true' /></SimpleClass>"), WriterText);
 			
 			//Namespace
 			element.ElementName = null;
@@ -567,7 +567,7 @@ namespace MonoTests.System.XmlSerialization
 			element.Namespace = "some:urn";
 			simple.something = "hello";
 			Serialize(simple, overrides);
-			AssertEquals (Infoset("<SimpleClass xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><something xmlns='some:urn'>hello</something></SimpleClass>"), WriterText);
+			AssertEquals ("#6", Infoset("<SimpleClass xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><something xmlns='some:urn'>hello</something></SimpleClass>"), WriterText);
 			
 			//FIXME DataType
 			//FIXME Form

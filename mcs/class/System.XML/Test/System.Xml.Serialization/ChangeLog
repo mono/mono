@@ -1,5 +1,9 @@
 2005-12-27  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* XmlSerializerTests.cs: Number individual tests.
+
+2005-12-27  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* XmlAttributesTests.cs: No longer derive from Assertion, number
 	individual tests.
 
