@@ -1,5 +1,13 @@
 2005-12-27  Atsushi Enomoto <atsushi@ximian.com>
 
+	* Util.cs RdpObjects.cs RdpContentType.cs RdpNameClasses.cs
+	  RdpPatterns.cs :
+
+	  Ugh, seems like svn server shows different diffs than that of
+	  client. Anyways here I fixed all mixed line endings.
+
+2005-12-27  Atsushi Enomoto <atsushi@ximian.com>
+
 	* RdpPatterns.cs : in ValueMatch() it should not strip whitespaces
 	  which could be validated. This fixes test #256/2.i.xml.
 
