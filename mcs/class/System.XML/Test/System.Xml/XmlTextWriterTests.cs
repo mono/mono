@@ -504,6 +504,9 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
+#if ONLY_1_1
+		[Category ("NotDotNet")] // MS.NET 1.1 does not allow zero-length namespace URI
+#endif
 		public void WriteStartElement_Prefix_EmptyNamespace ()
 		{
 			xtw.WriteStartElement ("x", "whatever", "");
@@ -1007,6 +1010,9 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
+#if ONLY_1_1
+		[Category ("NotDotNet")] // MS.NET 1.1 does not allow zero-length namespace URI
+#endif
 		public void NamespacesPrefixWithEmptyAndNullNamespaceEmpty ()
 		{
 			xtw.WriteStartElement ("foo", "bar", "");
