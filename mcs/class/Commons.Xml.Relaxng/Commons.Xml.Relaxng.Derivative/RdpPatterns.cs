@@ -203,6 +203,7 @@ namespace Commons.Xml.Relaxng.Derivative
 
 		internal abstract void CheckConstraints (bool attribute, bool oneOrMore, bool oneOrMoreGroup, bool oneOrMoreInterleave, bool list, bool dataExcept);
 
+		// This method is to detect text pattern inside interleave child.
 		internal abstract bool ContainsText ();
 
 		internal virtual RdpPattern ExpandRef (Hashtable defs)
@@ -918,13 +919,11 @@ namespace Commons.Xml.Relaxng.Derivative
 			LValue.CheckConstraints (attribute, oneOrMore, oneOrMoreGroup, oneOrMore, list, dataExcept);
 			RValue.CheckConstraints (attribute, oneOrMore, oneOrMoreGroup, oneOrMore, list, dataExcept);
 
-			// 7.3
+			// unique name analysis - 7.3 and part of 7.4
 			CheckNameOverlap (true);
 
-			// 7.4
-			// TODO: (1) unique name analysis
 			// (2) text/text prohibited
-			if (LValue.PatternType == RelaxngPatternType.Text && RValue.PatternType == RelaxngPatternType.Text)
+			if (LValue.ContainsText () && RValue.ContainsText ())
 				throw new RelaxngException ("Both branches of the interleave contains a text pattern.");
 		}
 	}
@@ -1507,7 +1506,9 @@ namespace Commons.Xml.Relaxng.Derivative
 
 		internal override bool ContainsText()
 		{
-			return children.ContainsText ();
+			// This method is to detect text pattern inside interleave child.
+			// return children.ContainsText ();
+			return false;
 		}
 	}
 

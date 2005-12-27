@@ -1,3 +1,9 @@
+2005-12-27  Atsushi Enomoto <atsushi@ximian.com>
+
+	* RdpPattern.cs : Checking interleave restriction in section 7.4 with
+	  PatternType was not insufficient. Now I use ContainsText(). It fixes
+	  testcase #371.
+
 2005-12-20  Atsushi Enomoto <atsushi@ximian.com>
 
 	* RdpPattern.cs : cache ContentType and save speed.
