@@ -25,6 +25,7 @@
 
 using System;
 using System.Collections;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Xml;
@@ -299,7 +300,6 @@ namespace MonoTests.System.XmlSerialization
 			strings.Add("goodbye");
 			Serialize(strings);
 			AssertEquals(Infoset("<ArrayOfString xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><string>hello</string><string>goodbye</string></ArrayOfString>"), WriterText);
-			
 		}
 		
 		[Test]
@@ -378,7 +378,39 @@ namespace MonoTests.System.XmlSerialization
 			Serialize(simple, overrides);
 			AssertEquals(Infoset("<simple xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' />"), WriterText);
 		}
-		
+
+		[Test]
+		public void TestSerializeSchema ()
+		{
+			XmlSchema schema = new XmlSchema ();
+			schema.Items.Add (new XmlSchemaAttribute ());
+			schema.Items.Add (new XmlSchemaAttributeGroup ());
+			schema.Items.Add (new XmlSchemaComplexType ());
+			schema.Items.Add (new XmlSchemaNotation ());
+			schema.Items.Add (new XmlSchemaSimpleType ());
+			schema.Items.Add (new XmlSchemaGroup ());
+			schema.Items.Add (new XmlSchemaElement ());
+
+			StringWriter sw = new StringWriter ();
+			XmlTextWriter xtw = new XmlTextWriter (sw);
+			xtw.QuoteChar = '\'';
+			xtw.Formatting = Formatting.Indented;
+			XmlSerializer xs = new XmlSerializer (schema.GetType ());
+			xs.Serialize (xtw, schema);
+
+			AssertEquals (string.Format(CultureInfo.InvariantCulture,
+				"<?xml version='1.0' encoding='utf-16'?>{0}" +
+				"<xsd:schema xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xmlns:xsd='http://www.w3.org/2001/XMLSchema'>{0}" +
+				"  <xsd:attribute />{0}" +
+				"  <xsd:attributeGroup />{0}" +
+				"  <xsd:complexType />{0}" +
+				"  <xsd:notation />{0}" +
+				"  <xsd:simpleType />{0}" +
+				"  <xsd:group />{0}" +
+				"  <xsd:element />{0}" +
+				"</xsd:schema>", Environment.NewLine), sw.ToString ());
+		}
+
 		// test xmlText //////////////////////////////////////////////////////////
 		[Test]
 		public void TestSerializeXmlTextAttribute()

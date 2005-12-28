@@ -1,3 +1,9 @@
+2005-12-28  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* XmlSerializerTests.cs: Added serialization test for XmlSchema.
+	* XmlSchemaExporterTests.cs: Added tests for class, IXmlSerializable
+	and primitives.
+
 2005-12-27  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* XmlSerializerTests.cs: Number individual tests.

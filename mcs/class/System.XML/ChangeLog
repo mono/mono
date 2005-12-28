@@ -1,3 +1,7 @@
+2005-12-28  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* System.Xml_test.dll.sources: Added XmlSchemaExporterTests.cs.
+
 2005-12-17  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* System.Xml_test.dll.sources: Added XsltCompilerExceptionTests.cs

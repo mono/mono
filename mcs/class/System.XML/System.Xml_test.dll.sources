@@ -66,6 +66,7 @@ System.Xml.Serialization/XmlEnumAttributeTests.cs
 System.Xml.Serialization/XmlIncludeAttributeTests.cs
 System.Xml.Serialization/XmlReflectionImporterTests.cs
 System.Xml.Serialization/XmlRootAttributeTests.cs
+System.Xml.Serialization/XmlSchemaExporterTests.cs
 System.Xml.Serialization/XmlSerializationWriterTests.cs
 System.Xml.Serialization/XmlTextAttributeTests.cs
 System.Xml.Serialization/XmlTypeAttributeTests.cs
