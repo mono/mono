@@ -51,6 +51,8 @@ namespace Mono.Unix {
 
 		public static void AdviseFileAccessPattern (FileStream file, FileAccessPattern pattern, long offset, long len)
 		{
+			if (file == null)
+				throw new ArgumentNullException ("file");
 			int r = Native.Syscall.posix_fadvise (file.Handle.ToInt32(), offset, len,
 				(Native.PosixFadviseAdvice) pattern);
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
@@ -63,6 +65,8 @@ namespace Mono.Unix {
 
 		public static void AdviseFileAccessPattern (UnixStream stream, FileAccessPattern pattern, long offset, long len)
 		{
+			if (stream == null)
+				throw new ArgumentNullException ("stream");
 			int r = Native.Syscall.posix_fadvise (stream.Handle, offset, len,
 				(Native.PosixFadviseAdvice) pattern);
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);

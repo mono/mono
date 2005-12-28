@@ -1,5 +1,9 @@
 2005-12-28  Jonathan Pryor <jonpryor@vt.edu>
 
+	* FileHandleOperations.cs: Check for null references.
+
+2005-12-28  Jonathan Pryor <jonpryor@vt.edu>
+
 	* UnixMarshal.cs: Errno.EBADF should also trigger a ArgumentException.
 
 2005-12-27  Jonathan Pryor <jonpryor@vt.edu>
