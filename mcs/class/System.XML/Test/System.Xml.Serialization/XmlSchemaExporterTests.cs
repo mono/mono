@@ -190,7 +190,7 @@ namespace MonoTests.System.XmlSerialization
 			XmlReflectionImporter ri = new XmlReflectionImporter ("NSPrimGuid");
 			XmlSchemas schemas = new XmlSchemas ();
 			XmlSchemaExporter sx = new XmlSchemaExporter (schemas);
-			XmlTypeMapping tm = ri.ImportTypeMapping (typeof (int));
+			XmlTypeMapping tm = ri.ImportTypeMapping (typeof (Guid));
 			sx.ExportTypeMapping (tm);
 
 			Assert.AreEqual (2, schemas.Count, "#1");
