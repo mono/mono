@@ -191,7 +191,7 @@ namespace Mono.Unix {
 		}
 
 		public DateTime LastAccessTime {
-			get {AssertValid (); return UnixConvert.ToDateTime (stat.st_atime);}
+			get {AssertValid (); return Native.NativeConvert.ToDateTime (stat.st_atime);}
 		}
 
 		public DateTime LastAccessTimeUtc {
@@ -199,7 +199,7 @@ namespace Mono.Unix {
 		}
 
 		public DateTime LastWriteTime {
-			get {AssertValid (); return UnixConvert.ToDateTime (stat.st_mtime);}
+			get {AssertValid (); return Native.NativeConvert.ToDateTime (stat.st_mtime);}
 		}
 
 		public DateTime LastWriteTimeUtc {
@@ -207,7 +207,7 @@ namespace Mono.Unix {
 		}
 
 		public DateTime LastStatusChangeTime {
-			get {AssertValid (); return UnixConvert.ToDateTime (stat.st_ctime);}
+			get {AssertValid (); return Native.NativeConvert.ToDateTime (stat.st_ctime);}
 		}
 
 		public DateTime LastStatusChangeTimeUtc {
@@ -265,6 +265,7 @@ namespace Mono.Unix {
 			get {AssertValid (); return IsType (stat.st_mode, Native.FilePermissions.S_ISVTX);}
 		}
 
+		[Obsolete ("Use IsType(Native.FilePermissions, Native.FilePermissions)", true)]
 		internal static bool IsType (FilePermissions mode, FilePermissions type)
 		{
 			return (mode & type) == type;
@@ -276,7 +277,7 @@ namespace Mono.Unix {
 		}
 
 		[CLSCompliant (false)]
-		[Obsolete ("Use CanAccess (Mono.Unix.Native.AccessModes)")]
+		[Obsolete ("Use CanAccess (Mono.Unix.Native.AccessModes)", true)]
 		public bool CanAccess (AccessMode mode)
 		{
 			int r = Syscall.access (FullPath, mode);
@@ -292,14 +293,14 @@ namespace Mono.Unix {
 
 		public UnixFileSystemInfo CreateLink (string path)
 		{
-			int r = Syscall.link (FullName, path);
+			int r = Native.Syscall.link (FullName, path);
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 			return Create (path);
 		}
 
 		public UnixSymbolicLinkInfo CreateSymbolicLink (string path)
 		{
-			int r = Syscall.symlink (FullName, path);
+			int r = Native.Syscall.symlink (FullName, path);
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 			return new UnixSymbolicLinkInfo (path);
 		}
@@ -307,7 +308,7 @@ namespace Mono.Unix {
 		public abstract void Delete ();
 
 		[CLSCompliant (false)]
-		[Obsolete ("Use GetConfigurationValue (Mono.Unix.Native.PathconfName)")]
+		[Obsolete ("Use GetConfigurationValue (Mono.Unix.Native.PathconfName)", true)]
 		public long GetConfigurationValue (PathConf name)
 		{
 			long r = Syscall.pathconf (FullPath, name);
@@ -320,7 +321,7 @@ namespace Mono.Unix {
 		public long GetConfigurationValue (Native.PathconfName name)
 		{
 			long r = Native.Syscall.pathconf (FullPath, name);
-			if (r == -1 && Syscall.GetLastError() != (Error) 0)
+			if (r == -1 && Native.Stdlib.GetLastError() != (Native.Errno) 0)
 				UnixMarshal.ThrowExceptionForLastError ();
 			return r;
 		}
@@ -347,13 +348,13 @@ namespace Mono.Unix {
 		{
 			int r;
 			do {
-				r = Syscall.truncate (FullPath, length);
+				r = Native.Syscall.truncate (FullPath, length);
 			}	while (UnixMarshal.ShouldRetrySyscall (r));
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 		}
 
 		[CLSCompliant (false)]
-		[Obsolete ("Use Protection setter")]
+		[Obsolete ("Use Protection setter", true)]
 		public void SetPermissions (FilePermissions perms)
 		{
 			int r = Syscall.chmod (FullPath, perms);
@@ -361,7 +362,7 @@ namespace Mono.Unix {
 		}
 
 		[CLSCompliant (false)]
-		[Obsolete ("Use SetOwner (long, long)")]
+		[Obsolete ("Use SetOwner (long, long)", true)]
 		public virtual void SetOwner (uint owner, uint group)
 		{
 			int r = Syscall.chown (FullPath, owner, group);
@@ -372,24 +373,24 @@ namespace Mono.Unix {
 		{
 			uint _owner = Convert.ToUInt32 (owner);
 			uint _group = Convert.ToUInt32 (group);
-			int r = Syscall.chown (FullPath, _owner, _group);
+			int r = Native.Syscall.chown (FullPath, _owner, _group);
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 		}
 
 		public void SetOwner (string owner)
 		{
-			Passwd pw = Syscall.getpwnam (owner);
+			Native.Passwd pw = Native.Syscall.getpwnam (owner);
 			if (pw == null)
 				throw new ArgumentException (Locale.GetText ("invalid username"), "owner");
 			uint uid = pw.pw_uid;
 			uint gid = pw.pw_gid;
-			SetOwner (uid, gid);
+			SetOwner ((long) uid, (long) gid);
 		}
 
 		public void SetOwner (string owner, string group)
 		{
-			uint uid = UnixUser.GetUserId (owner);
-			uint gid = UnixGroup.GetGroupId (group);
+			long uid = new UnixUserInfo (owner).UserId;
+			long gid = new UnixGroupInfo (group).GroupId;
 
 			SetOwner (uid, gid);
 		}

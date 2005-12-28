@@ -55,7 +55,7 @@ namespace Mono.Unix {
 				throw new ArgumentException (Locale.GetText ("invalid group id"), "group");
 		}
 
-		[Obsolete ("Use UnixGroupInfo(Mono.Unix.Native.Group)")]
+		[Obsolete ("Use UnixGroupInfo(Mono.Unix.Native.Group)", true)]
 		public UnixGroupInfo (Group group)
 		{
 			this.group = new Native.Group ();
@@ -82,7 +82,7 @@ namespace Mono.Unix {
 			get {return group.gr_gid;}
 		}
 
-		[Obsolete ("Use GetMemberNames()")]
+		[Obsolete ("Use GetMemberNames()", true)]
 		public string[] Members {
 			get {return group.gr_mem;}
 		}
@@ -125,14 +125,14 @@ namespace Mono.Unix {
 		public static UnixGroupInfo[] GetLocalGroups ()
 		{
 			ArrayList entries = new ArrayList ();
-			lock (Syscall.grp_lock) {
+			lock (Native.Syscall.grp_lock) {
 				if (Native.Syscall.setgrent () != 0)
 					UnixMarshal.ThrowExceptionForLastError ();
 				try {
-					Group g;
-					while ((g = Syscall.getgrent()) != null)
+					Native.Group g;
+					while ((g = Native.Syscall.getgrent()) != null)
 						entries.Add (new UnixGroupInfo (g));
-					if (Syscall.GetLastError() != (Error) 0)
+					if (Native.Syscall.GetLastError() != (Native.Errno) 0)
 						UnixMarshal.ThrowExceptionForLastError ();
 				}
 				finally {

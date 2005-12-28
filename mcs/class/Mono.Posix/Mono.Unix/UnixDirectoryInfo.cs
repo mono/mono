@@ -114,14 +114,14 @@ namespace Mono.Unix {
 						e.Delete ();
 				}
 			}
-			int r = Syscall.rmdir (FullPath);
+			int r = Native.Syscall.rmdir (FullPath);
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 			base.Refresh ();
 		}
 
 		public Native.Dirent[] GetEntries ()
 		{
-			IntPtr dirp = Syscall.opendir (FullPath);
+			IntPtr dirp = Native.Syscall.opendir (FullPath);
 			if (dirp == IntPtr.Zero)
 				UnixMarshal.ThrowExceptionForLastError ();
 
@@ -132,7 +132,7 @@ namespace Mono.Unix {
 				return entries;
 			}
 			finally {
-				int r = Syscall.closedir (dirp);
+				int r = Native.Syscall.closedir (dirp);
 				// don't throw an exception if an exception is in progress
 				if (complete)
 					UnixMarshal.ThrowExceptionForLastErrorIf (r);
@@ -233,8 +233,8 @@ namespace Mono.Unix {
 			IntPtr r = IntPtr.Zero;
 			do {
 				buf.Capacity *= 2;
-				r = Syscall.getcwd (buf, (ulong) buf.Capacity);
-			} while (r == IntPtr.Zero && Syscall.GetLastError() == Error.ERANGE);
+				r = Native.Syscall.getcwd (buf, (ulong) buf.Capacity);
+			} while (r == IntPtr.Zero && Native.Syscall.GetLastError() == Native.Errno.ERANGE);
 			if (r == IntPtr.Zero)
 				UnixMarshal.ThrowExceptionForLastError ();
 			return buf.ToString ();

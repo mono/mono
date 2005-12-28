@@ -52,13 +52,13 @@ namespace Mono.Unix {
 			this.fileDescriptor = fileDescriptor;
 			this.owner = ownsHandle;
 			
-			long offset = Syscall.lseek (fileDescriptor, 0, SeekFlags.SEEK_CUR);
+			long offset = Native.Syscall.lseek (fileDescriptor, 0, Native.SeekFlags.SEEK_CUR);
 			if (offset != -1)
 				canSeek = true;
-			long read = Syscall.read (fileDescriptor, IntPtr.Zero, 0);
+			long read = Native.Syscall.read (fileDescriptor, IntPtr.Zero, 0);
 			if (read != -1)
 				canRead = true;
-			long write = Syscall.write (fileDescriptor, IntPtr.Zero, 0);
+			long write = Native.Syscall.write (fileDescriptor, IntPtr.Zero, 0);
 			if (write != -1)
 				canWrite = true;  
 		}
@@ -100,7 +100,7 @@ namespace Mono.Unix {
 				AssertNotDisposed ();
 				if (!CanSeek)
 					throw new NotSupportedException ("The stream does not support seeking");
-				long pos = Syscall.lseek (fileDescriptor, 0, SeekFlags.SEEK_CUR);
+				long pos = Native.Syscall.lseek (fileDescriptor, 0, Native.SeekFlags.SEEK_CUR);
 				if (pos == -1)
 					UnixMarshal.ThrowExceptionForLastError ();
 				return (long) pos;
@@ -111,7 +111,7 @@ namespace Mono.Unix {
 		}
 
 		[CLSCompliant (false)]
-		[Obsolete ("Use Protection")]
+		[Obsolete ("Use Protection", true)]
 		public FilePermissions Permissions {
 			get {
 				RefreshStat ();
@@ -203,73 +203,73 @@ namespace Mono.Unix {
 			AdviseFileAccessPattern (pattern, 0, 0);
 		}
 
-		[Obsolete ("Use AdviseFileAccessPattern (FileAccessPattern.Normal, offset, len)")]
+		[Obsolete ("Use AdviseFileAccessPattern (FileAccessPattern.Normal, offset, len)", true)]
 		public void AdviseNormalAccess (long offset, long len)
 		{
 			UnixFile.AdviseNormalAccess (fileDescriptor, offset, len);
 		}
 
-		[Obsolete ("Use AdviseFileAccessPattern (FileAccessPattern.Normal)")]
+		[Obsolete ("Use AdviseFileAccessPattern (FileAccessPattern.Normal)", true)]
 		public void AdviseNormalAccess ()
 		{
 			UnixFile.AdviseNormalAccess (fileDescriptor);
 		}
 
-		[Obsolete ("Use AdviseFileAccessPattern (FileAccessPattern.Sequential, offset, len)")]
+		[Obsolete ("Use AdviseFileAccessPattern (FileAccessPattern.Sequential, offset, len)", true)]
 		public void AdviseSequentialAccess (long offset, long len)
 		{
 			UnixFile.AdviseSequentialAccess (fileDescriptor, offset, len);
 		}
 
-		[Obsolete ("Use AdviseFileAccessPattern (FileAccessPattern.Sequential)")]
+		[Obsolete ("Use AdviseFileAccessPattern (FileAccessPattern.Sequential)", true)]
 		public void AdviseSequentialAccess ()
 		{
 			UnixFile.AdviseSequentialAccess (fileDescriptor);
 		}
 
-		[Obsolete ("Use AdviseFileAccessPattern (FileAccessPattern.Random, offset, len)")]
+		[Obsolete ("Use AdviseFileAccessPattern (FileAccessPattern.Random, offset, len)", true)]
 		public void AdviseRandomAccess (long offset, long len)
 		{
 			UnixFile.AdviseRandomAccess (fileDescriptor, offset, len);
 		}
 
-		[Obsolete ("Use AdviseFileAccessPattern (FileAccessPattern.Random)")]
+		[Obsolete ("Use AdviseFileAccessPattern (FileAccessPattern.Random)", true)]
 		public void AdviseRandomAccess ()
 		{
 			UnixFile.AdviseRandomAccess (fileDescriptor);
 		}
 
-		[Obsolete ("Use AdviseFileAccessPattern (FileAccessPattern.UseSoon, offset, len)")]
+		[Obsolete ("Use AdviseFileAccessPattern (FileAccessPattern.UseSoon, offset, len)", true)]
 		public void AdviseNeedAccess (long offset, long len)
 		{
 			UnixFile.AdviseNeedAccess (fileDescriptor, offset, len);
 		}
 
-		[Obsolete ("Use AdviseFileAccessPattern (FileAccessPattern.UseSoon)")]
+		[Obsolete ("Use AdviseFileAccessPattern (FileAccessPattern.UseSoon)", true)]
 		public void AdviseNeedAccess ()
 		{
 			UnixFile.AdviseNeedAccess (fileDescriptor);
 		}
 
-		[Obsolete ("Use AdviseFileAccessPattern (FileAccessPattern.WillNotUse, offset, len)")]
+		[Obsolete ("Use AdviseFileAccessPattern (FileAccessPattern.WillNotUse, offset, len)", true)]
 		public void AdviseNoAccess (long offset, long len)
 		{
 			UnixFile.AdviseNoAccess (fileDescriptor, offset, len);
 		}
 
-		[Obsolete ("Use AdviseFileAccessPattern (FileAccessPattern.WillNotUse)")]
+		[Obsolete ("Use AdviseFileAccessPattern (FileAccessPattern.WillNotUse)", true)]
 		public void AdviseNoAccess ()
 		{
 			UnixFile.AdviseNoAccess (fileDescriptor);
 		}
 
-		[Obsolete ("Use AdviseFileAccessPattern (FileAccessPattern.UseOnce, offset, len)")]
+		[Obsolete ("Use AdviseFileAccessPattern (FileAccessPattern.UseOnce, offset, len)", true)]
 		public void AdviseOnceAccess (long offset, long len)
 		{
 			UnixFile.AdviseOnceAccess (fileDescriptor, offset, len);
 		}
 
-		[Obsolete ("Use AdviseFileAccessPattern (FileAccessPattern.UseOnce)")]
+		[Obsolete ("Use AdviseFileAccessPattern (FileAccessPattern.UseOnce)", true)]
 		public void AdviseOnceAccess ()
 		{
 			UnixFile.AdviseOnceAccess (fileDescriptor);
@@ -307,7 +307,7 @@ namespace Mono.Unix {
 			long r = 0;
 			fixed (byte* buf = &buffer[offset]) {
 				do {
-					r = Syscall.read (fileDescriptor, buf, (ulong) count);
+					r = Native.Syscall.read (fileDescriptor, buf, (ulong) count);
 				} while (UnixMarshal.ShouldRetrySyscall ((int) r));
 			}
 			if (r == -1)
@@ -340,7 +340,7 @@ namespace Mono.Unix {
 			long r = 0;
 			fixed (byte* buf = &buffer[offset]) {
 				do {
-					r = Syscall.pread (fileDescriptor, buf, (ulong) count, fileOffset);
+					r = Native.Syscall.pread (fileDescriptor, buf, (ulong) count, fileOffset);
 				} while (UnixMarshal.ShouldRetrySyscall ((int) r));
 			}
 			if (r == -1)
@@ -356,14 +356,14 @@ namespace Mono.Unix {
 			if (offset > int.MaxValue)
 				throw new ArgumentOutOfRangeException ("offset", "too large");
 					
-			SeekFlags sf = SeekFlags.SEEK_CUR;
+			Native.SeekFlags sf = Native.SeekFlags.SEEK_CUR;
 			switch (origin) {
-				case SeekOrigin.Begin:   sf = SeekFlags.SEEK_SET; break;
-				case SeekOrigin.Current: sf = SeekFlags.SEEK_CUR; break;
-				case SeekOrigin.End:     sf = SeekFlags.SEEK_END; break;
+				case SeekOrigin.Begin:   sf = Native.SeekFlags.SEEK_SET; break;
+				case SeekOrigin.Current: sf = Native.SeekFlags.SEEK_CUR; break;
+				case SeekOrigin.End:     sf = Native.SeekFlags.SEEK_END; break;
 			}
 
-			long pos = Syscall.lseek (fileDescriptor, offset, sf);
+			long pos = Native.Syscall.lseek (fileDescriptor, offset, sf);
 			if (pos == -1)
 				UnixMarshal.ThrowExceptionForLastError ();
 			return (long) pos;
@@ -379,7 +379,7 @@ namespace Mono.Unix {
 			
 			int r;
 			do {
-				r = Syscall.ftruncate (fileDescriptor, value);
+				r = Native.Syscall.ftruncate (fileDescriptor, value);
 			} while (UnixMarshal.ShouldRetrySyscall (r));
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 		}
@@ -394,7 +394,7 @@ namespace Mono.Unix {
 			long r = 0;
 			fixed (byte* buf = &buffer[offset]) {
 				do {
-					r = Syscall.write (fileDescriptor, buf, (ulong) count);
+					r = Native.Syscall.write (fileDescriptor, buf, (ulong) count);
 				} while (UnixMarshal.ShouldRetrySyscall ((int) r));
 			}
 			if (r == -1)
@@ -412,7 +412,7 @@ namespace Mono.Unix {
 			long r = 0;
 			fixed (byte* buf = &buffer[offset]) {
 				do {
-					r = Syscall.pwrite (fileDescriptor, buf, (ulong) count, fileOffset);
+					r = Native.Syscall.pwrite (fileDescriptor, buf, (ulong) count, fileOffset);
 				} while (UnixMarshal.ShouldRetrySyscall ((int) r));
 			}
 			if (r == -1)
@@ -436,18 +436,18 @@ namespace Mono.Unix {
 			if (!CanWrite)
 				throw new NotSupportedException ("Unable to write to the current file descriptor");
 			long offset = Position;
-			long r = Syscall.sendfile (out_fd, fileDescriptor, ref offset, count);
+			long r = Native.Syscall.sendfile (out_fd, fileDescriptor, ref offset, count);
 			if (r == -1)
 				UnixMarshal.ThrowExceptionForLastError ();
 		}
 		
 		[CLSCompliant (false)]
-		[Obsolete ("Use SetOwner (long, long)")]
+		[Obsolete ("Use SetOwner (long, long)", true)]
 		public void SetOwner (uint user, uint group)
 		{
 			AssertNotDisposed ();
 
-			int r = Syscall.fchown (fileDescriptor, user, group);
+			int r = Native.Syscall.fchown (fileDescriptor, user, group);
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 		}
 
@@ -455,7 +455,7 @@ namespace Mono.Unix {
 		{
 			AssertNotDisposed ();
 
-			int r = Syscall.fchown (fileDescriptor, 
+			int r = Native.Syscall.fchown (fileDescriptor, 
 					Convert.ToUInt32 (user), Convert.ToUInt32 (group));
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 		}
@@ -464,8 +464,8 @@ namespace Mono.Unix {
 		{
 			AssertNotDisposed ();
 
-			uint uid = UnixUser.GetUserId (user);
-			uint gid = UnixGroup.GetGroupId (group);
+			long uid = new UnixUserInfo (user).UserId;
+			long gid = new UnixGroupInfo (group).GroupId;
 			SetOwner (uid, gid);
 		}
 
@@ -473,16 +473,16 @@ namespace Mono.Unix {
 		{
 			AssertNotDisposed ();
 
-			Passwd pw = Syscall.getpwnam (user);
+			Native.Passwd pw = Native.Syscall.getpwnam (user);
 			if (pw == null)
 				throw new ArgumentException (Locale.GetText ("invalid username"), "user");
-			uint uid = pw.pw_uid;
-			uint gid = pw.pw_gid;
+			long uid = pw.pw_uid;
+			long gid = pw.pw_gid;
 			SetOwner (uid, gid);
 		}
 
 		[CLSCompliant (false)]
-		[Obsolete ("Use GetConfigurationValue (Mono.Unix.Native.PathconfName")]
+		[Obsolete ("Use GetConfigurationValue (Mono.Unix.Native.PathconfName", true)]
 		public long GetConfigurationValue (PathConf name)
 		{
 			AssertNotDisposed ();
@@ -497,7 +497,7 @@ namespace Mono.Unix {
 		{
 			AssertNotDisposed ();
 			long r = Native.Syscall.fpathconf (fileDescriptor, name);
-			if (r == -1 && Syscall.GetLastError() != (Error) 0)
+			if (r == -1 && Native.Syscall.GetLastError() != (Native.Errno) 0)
 				UnixMarshal.ThrowExceptionForLastError ();
 			return r;
 		}
@@ -515,7 +515,7 @@ namespace Mono.Unix {
 			Flush ();
 			int r;
 			do {
-				r = Syscall.close (fileDescriptor);
+				r = Native.Syscall.close (fileDescriptor);
 			} while (UnixMarshal.ShouldRetrySyscall (r));
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 			fileDescriptor = InvalidFileDescriptor;

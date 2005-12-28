@@ -69,7 +69,7 @@ namespace Mono.Unix {
 	// on most platforms.
 	//
 	// This class is intended to be thread-safe.
-	[Obsolete ("Use Mono.Unix.Native.CdeclFunction")]
+	[Obsolete ("Use Mono.Unix.Native.CdeclFunction", true)]
 	public sealed class CdeclFunction
 	{
 		// The readonly fields (1) shouldn't be modified, and (2) should only be

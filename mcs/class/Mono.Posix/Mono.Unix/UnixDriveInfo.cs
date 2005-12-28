@@ -46,14 +46,14 @@ namespace Mono.Unix {
 	// All methods & properties can throw IOException
 	public sealed class UnixDriveInfo
 	{
-		private Statvfs stat;
-		private Fstab   fstab;
+		private Native.Statvfs stat;
+		private Native.Fstab   fstab;
 
 		public UnixDriveInfo (string mountPoint)
 		{
 			if (mountPoint == null)
 				throw new ArgumentNullException ("mountPoint");
-			fstab = Syscall.getfsfile (mountPoint);
+			fstab = Native.Syscall.getfsfile (mountPoint);
 			if (fstab == null)
 				throw new ArgumentException ("mountPoint isn't valid: " + mountPoint);
 			// throws ArgumentException if driveName isn't valid
@@ -65,13 +65,13 @@ namespace Mono.Unix {
 		{
 			if (specialFile == null)
 				throw new ArgumentNullException ("specialFile");
-			Fstab f = Syscall.getfsspec (specialFile);
+			Native.Fstab f = Native.Syscall.getfsspec (specialFile);
 			if (f == null)
 				throw new ArgumentException ("specialFile isn't valid: " + specialFile);
 			return new UnixDriveInfo (f);
 		}
 
-		private UnixDriveInfo (Fstab fstab)
+		private UnixDriveInfo (Native.Fstab fstab)
 		{
 			this.fstab = fstab;
 		}
@@ -124,20 +124,20 @@ namespace Mono.Unix {
 			// throws IOException, UnauthorizedAccessException (no permission)
 			ArrayList entries = new ArrayList ();
 
-			lock (Syscall.fstab_lock) {
-				int r = Syscall.setfsent ();
+			lock (Native.Syscall.fstab_lock) {
+				int r = Native.Syscall.setfsent ();
 				if (r != 1)
 					throw new IOException ("Error calling setfsent(3)", new UnixIOException ());
 				try {
-					Fstab fs;
-					while ((fs = Syscall.getfsent()) != null) {
+					Native.Fstab fs;
+					while ((fs = Native.Syscall.getfsent()) != null) {
 						// avoid virtual entries, such as "swap"
 						if (fs.fs_file.StartsWith ("/"))
 							entries.Add (new UnixDriveInfo (fs));
 					}
 				}
 				finally {
-					Syscall.endfsent ();
+					Native.Syscall.endfsent ();
 				}
 			}
 			return (UnixDriveInfo[]) entries.ToArray (typeof(UnixDriveInfo));
@@ -155,9 +155,9 @@ namespace Mono.Unix {
 
 		private bool Refresh (bool throwException)
 		{
-			int r = Syscall.statvfs (fstab.fs_file, out stat);
+			int r = Native.Syscall.statvfs (fstab.fs_file, out stat);
 			if (r == -1 && throwException) {
-				Error e = Syscall.GetLastError ();
+				Native.Errno e = Native.Syscall.GetLastError ();
 				throw new IOException (UnixMarshal.GetErrorDescription (e),
 					UnixMarshal.CreateExceptionForError (e));
 			}

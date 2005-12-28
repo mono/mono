@@ -50,7 +50,7 @@ namespace Mono.Unix {
 		public static UnixPipes CreatePipes ()
 		{
 			int reading, writing;
-			int r = Syscall.pipe (out reading, out writing);
+			int r = Native.Syscall.pipe (out reading, out writing);
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 			return new UnixPipes (new UnixStream (reading), new UnixStream (writing));
 		}

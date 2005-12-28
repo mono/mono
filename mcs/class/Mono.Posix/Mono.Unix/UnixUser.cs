@@ -33,7 +33,7 @@ using Mono.Unix;
 
 namespace Mono.Unix {
 
-	[Obsolete ("Use UnixUserInfo")]
+	[Obsolete ("Use UnixUserInfo", true)]
 	public sealed class UnixUser
 	{
 		private UnixUser () {}
