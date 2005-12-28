@@ -232,7 +232,7 @@ namespace Mono.Data.SqliteClient
 			}
 			
 			SqliteError err = SqliteError.OK;
-			IntPtr psql = UnixMarshal.StringToAlloc(sqlcmds);
+			IntPtr psql = UnixMarshal.StringToHeap(sqlcmds);
 			IntPtr pzTail = psql;
 			try {
 				do { // sql may contain multiple sql commands, loop until they're all processed
@@ -345,7 +345,7 @@ namespace Mono.Data.SqliteClient
 					}
 				} while ((int)pzTail - (int)psql < sql.Length);
 			} finally {
-				UnixMarshal.Free(psql);
+				UnixMarshal.FreeHeap(psql);
 			}
 			prepared=true;
 		}

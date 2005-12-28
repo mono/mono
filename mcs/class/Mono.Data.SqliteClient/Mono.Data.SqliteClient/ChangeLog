@@ -1,3 +1,7 @@
+2005-12-27  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* SqliteCommand.cs: Use non-obsolete UnixMarshal members.
+
 2005-10-06  Chris Lahey  <clahey@localhost.localdomain>
 
 	* SqliteCommand.cs (Prepare): Use UnixMarshal here to get proper
