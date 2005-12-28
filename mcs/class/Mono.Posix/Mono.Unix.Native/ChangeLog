@@ -1,5 +1,9 @@
 2005-12-27  Jonathan Pryor <jonpryor@vt.edu>
 
+	* Syscall.cs: Include <sys/mman.h> for map.c generation.  Fixes #77091.
+
+2005-12-27  Jonathan Pryor <jonpryor@vt.edu>
+
 	* make-map.cs: Always include 2nd parameter of [Obsolete] attributes; mark
 	  the [DllImport]ed method with [Obsolete] if the underlying type is
 	  [Obsolete].

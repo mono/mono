@@ -67,6 +67,7 @@ using Mono.Unix.Native;
 		"ah:sys/wait.h," +
 		"ah:sys/statvfs.h," +
 		"ah:sys/xattr.h," +
+		"ah:sys/mman.h," +
 		"unistd.h," + 
 		"fcntl.h," + 
 		"signal.h," + 
