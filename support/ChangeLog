@@ -1,3 +1,7 @@
+2005-12-27  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* map.c: Include <sys/mman.h>.  Fixes #77091.  Thanks to Ben Gamari.
+
 2005-12-01  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* Makefile.am: Use $(CRYPT_LIB), not -lcrypt, as not all platforms 
