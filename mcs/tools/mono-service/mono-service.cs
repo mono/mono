@@ -11,7 +11,7 @@
 using System;
 using System.IO;
 using System.Reflection;
-using Mono.Unix;
+using Mono.Unix.Native;
 using System.ServiceProcess;
 using System.Threading;
 using System.Runtime.InteropServices;
@@ -256,7 +256,7 @@ class MonoServiceRunner : MarshalByRefObject
 				
 				Signum v;
 				
-				if (UnixConvert.TryToSignum (signum, out v)){
+				if (NativeConvert.TryToSignum (signum, out v)){
 					signum = 0;
 					
 					switch (v){
