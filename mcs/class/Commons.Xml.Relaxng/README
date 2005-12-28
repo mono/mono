@@ -93,28 +93,25 @@
 
 *** Known bugs
 
-  Currently it is beta version as yet. It has some bugs:
+  RELAX NG implementation should mostly work fine. Known problem are:
 
-	- Grammar simplification is incorrectly implemented as yet. It will
-	  fail to check incorrect recursion and might bind ref to incorrect
-	  definitions.
-	  not handle the same name define components properly.
-	- Name class analysis and constraint check is not implemented (part
-	  of spec 7).
-	- Empty string might not be validated properly.
-
+	- Grammar simplification is somewhat shorthanded. I believe it mostly
+	  works fine, but might fail to check incorrect recursion and might
+	  bind ref to incorrect definitions or might not handle the 
+	  definitions which have the same name.
+	- URI string check is not strictly done; especially it does not check
+	  things described in XLink section 5.4.
 
 ** NvdlValidatingReader
 
 *** NVDL
 
 	NvdlValidatingReader is an implementation of ISO DSDL Part 4
-	Namespace-based Validation Dispatching Language (NVDL). Note that the
-	development is still ongoing, and NVDL specification itself is also
-	still not in standard status as yet.
-	http://www.asahi-net.or.jp/~eb2m-mrt/dsdl/
+	Namespace-based Validation Dispatching Language (NVDL) which is
+	now FDIS.
+	http://www.jtc1sc34.org/repository/0694c.htm
 
-	NOTE: It is "just started" implementation and may have limitations
+	NOTE: It is still "untested" implementation and may have limitations
 	and problems.
 
 	By default, NvdlValidatingReader supports RELAX NG, RELAX NG Compact
@@ -152,6 +149,8 @@
 
 	[*1] Of course Schematron should receive its input as XPathNavigator
 	or IXPathNavigable, but we could still use ReadSubtree() in .NET 2.0.
+	Our XPathNavigatorReader (implementation of ReadSubtree()) can be
+	easily modified and used in 1.x code base.
 
 *** NvdlValidationProvider
 
