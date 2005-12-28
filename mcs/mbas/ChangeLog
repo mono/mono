@@ -1,3 +1,7 @@
+2005-12-21 Maverson Eduardo Schulze Rosa <maverson@gmail.com>
+ 	* ecore.cs, cfold.cs: Changed for reflecting correct Error Number/Message with
+	Implict Convertions when Option Strict is On.
+
 2005-12-07 Jelmer Vernooij <jelmer@samba.org>
  	* Makefile: allow build of only mbas, without the need to built the 
 	class library

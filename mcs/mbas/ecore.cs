@@ -2440,6 +2440,14 @@ namespace Mono.MonoBASIC {
 			// Report.Error (30512, loc, msg);
 		}
 
+                static public void Error_CannotConvertTypeStrict (Type source, Type target, Location loc)
+	        {
+		        Report.Error (
+				30512, loc, "Cannot convert implicitly from '" +
+				TypeManager.MonoBASIC_Name (source) + "' to '" +
+				TypeManager.MonoBASIC_Name (target) + "' with Option Strict On.");
+		}		
+
 		/// <summary>
 		///   Attemptes to implicityly convert 'target' into 'type', using
 		///   ConvertImplicit.  If there is no implicit conversion, then

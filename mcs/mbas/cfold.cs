@@ -700,6 +700,13 @@ namespace Mono.MonoBASIC {
 					return null;
 
 				try {
+					if (Mono.MonoBASIC.Parser.OptionStrict && (!(left is LongConstant) && !(left is IntConstant)) )
+					{
+						Expression.Error_CannotConvertTypeStrict (left.Type, Type.GetType("System.Int64"), loc);
+						
+						return null;
+					}
+					
 					if (left is DoubleConstant) {
 						long left_val, right_val, res;
 						left_val = (long) ((DoubleConstant) left).Value;

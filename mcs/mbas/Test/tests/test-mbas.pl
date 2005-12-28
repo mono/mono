@@ -62,10 +62,9 @@ sub ParseTestFile
 sub Command
 {
     my $retVal;
-#   my $cmdLine = shift(@_);
-    my $cmdLine  = $CompileCmd;
-#    $cmdLine =~ s/MONO_PATH="/MONO_PATH="$mbasPath\/Test\/dlls\/:/;
-
+    my $cmdLine = shift(@_);
+    $cmdLine =~ s/MONO_PATH="/MONO_PATH="$mbasPath\/Test\/dlls\/:/;
+    
     open SAVEOUT, ">&STDOUT";
     open SAVEERR, ">&STDERR";
 

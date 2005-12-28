@@ -1,3 +1,6 @@
+2005-12-28 Maverson Eduardo Schulze Rosa <maverson@gmail.com>
+	* test-mbas.pl: Corrections on the Test Files Parsing
+	
 2005-12-15 Maverson Eduardo Schulze Rosa <maverson@gmail.com>
 	* test-mbas.pl: Parsing Test Files in order to find necessary
 	compilerOptions and generate the correct CompileCommand.
