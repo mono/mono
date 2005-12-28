@@ -1,5 +1,10 @@
+2005-12-18 Alexandre Rocha Lima e Marcondes
+<alexandre@psl-pr.softwarelivre.org>
 
-Thu Dec 1 13:01:54 EST 2005 Paolo Molaro <lupus@ximian.com>
+	* mkbundle.cs: Updated obsolete Alloc and Free (now its AllocHeap and
+	FreeHeap).
+
+2005-12-01 Paolo Molaro <lupus@ximian.com>
 
 	* mkbundle.cs: add warning for --static. Handle --static for non-linux
 	systems.

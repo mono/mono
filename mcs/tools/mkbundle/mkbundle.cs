@@ -480,7 +480,7 @@ class MakeBundle {
 		
 	static void DetectOS ()
 	{
-		IntPtr buf = UnixMarshal.Alloc (8192);
+		IntPtr buf = UnixMarshal.AllocHeap(8192);
 		if (uname (buf) != 0){
 			Console.WriteLine ("Warning: Unable to detect OS");
 			return;
@@ -490,7 +490,7 @@ class MakeBundle {
 		if (os == "Darwin")
 			style = "osx";
 		
-		UnixMarshal.Free (buf);
+		UnixMarshal.FreeHeap(buf);
 	}
 	
 }
