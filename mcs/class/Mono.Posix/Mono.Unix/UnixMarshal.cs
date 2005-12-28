@@ -458,6 +458,7 @@ namespace Mono.Unix {
 			switch (errno) {
 				case Native.Errno.EFAULT:        return new NullReferenceException (message, p);
 				case Native.Errno.EINVAL:        return new ArgumentException (message, p);
+				case Native.Errno.EBADF:         return new ArgumentException (message, p);
 				case Native.Errno.EIO:
 				  case Native.Errno.ENOSPC:
 				  case Native.Errno.EROFS:
