@@ -1,3 +1,8 @@
+2005-12-29  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* XmlSchemaExporterTests.cs: Added tests for exporting structs, and 
+	arrays. Added tests for bug #77117. Refactored some existing tests.
+
 2005-12-28  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* XmlSerializerTests.cs: Added serialization test for XmlSchema.

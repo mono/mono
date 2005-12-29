@@ -8,6 +8,7 @@
 // 
 
 using System;
+using System.Collections;
 using System.Globalization;
 using System.IO;
 using System.Xml;
@@ -25,24 +26,70 @@ namespace MonoTests.System.XmlSerialization
 	{
 		[Test]
 		[Category ("NotWorking")] // on Mono, element is output before type
+		public void ExportStruct ()
+		{
+			XmlReflectionImporter ri = new XmlReflectionImporter ("NSTimeSpan");
+			XmlSchemas schemas = new XmlSchemas ();
+			XmlSchemaExporter sx = new XmlSchemaExporter (schemas);
+			XmlTypeMapping tm = ri.ImportTypeMapping (typeof (TimeSpan));
+			sx.ExportTypeMapping (tm);
+
+			Assert.AreEqual (1, schemas.Count, "#1");
+
+			StringWriter sw = new StringWriter ();
+			schemas[0].Write (sw);
+
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
+				"<xs:schema xmlns:tns=\"NSTimeSpan\" elementFormDefault=\"qualified\" targetNamespace=\"NSTimeSpan\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
+				"  <xs:element name=\"TimeSpan\" type=\"tns:TimeSpan\" />{0}" +
+				"  <xs:complexType name=\"TimeSpan\" />{0}" +
+				"</xs:schema>", Environment.NewLine), sw.ToString (), "#2");
+		}
+
+		[Test]
+		[Category ("NotWorking")] // on Mono, element is output before type
+		public void ExportStruct_Array ()
+		{
+			XmlReflectionImporter ri = new XmlReflectionImporter ("NSTimeSpanArray");
+			XmlSchemas schemas = new XmlSchemas ();
+			XmlSchemaExporter sx = new XmlSchemaExporter (schemas);
+			XmlTypeMapping tm = ri.ImportTypeMapping (typeof (TimeSpan[]));
+			sx.ExportTypeMapping (tm);
+
+			Assert.AreEqual (1, schemas.Count, "#1");
+
+			StringWriter sw = new StringWriter ();
+			schemas[0].Write (sw);
+
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
+				"<xs:schema xmlns:tns=\"NSTimeSpanArray\" elementFormDefault=\"qualified\" targetNamespace=\"NSTimeSpanArray\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
+				"  <xs:element name=\"ArrayOfTimeSpan\" nillable=\"true\" type=\"tns:ArrayOfTimeSpan\" />{0}" +
+				"  <xs:complexType name=\"ArrayOfTimeSpan\">{0}" +
+				"    <xs:sequence>{0}" +
+				"      <xs:element minOccurs=\"0\" maxOccurs=\"unbounded\" name=\"TimeSpan\" type=\"tns:TimeSpan\" />{0}" +
+				"    </xs:sequence>{0}" +
+				"  </xs:complexType>{0}" +
+				"  <xs:complexType name=\"TimeSpan\" />{0}" +
+				"</xs:schema>", Environment.NewLine), sw.ToString (), "#2");
+		}
+
+		[Test]
+		[Category ("NotWorking")] // on Mono, element is output before type
 		public void ExportClass ()
 		{
 			XmlAttributeOverrides overrides = new XmlAttributeOverrides ();
 			XmlAttributes attr = new XmlAttributes ();
 			XmlElementAttribute element = new XmlElementAttribute ();
+			element.ElementName = "saying";
+			element.IsNullable = true;
 			attr.XmlElements.Add (element);
 			overrides.Add (typeof (SimpleClass), "something", attr);
 
-			SimpleClass simple = new SimpleClass ();
-			element.ElementName = "saying";
-			element.IsNullable = true;
-			simple.something = null;
-
 			XmlReflectionImporter ri = new XmlReflectionImporter (overrides, "NS1");
-
 			XmlSchemas schemas = new XmlSchemas ();
 			XmlSchemaExporter sx = new XmlSchemaExporter (schemas);
-
 			XmlTypeMapping tm = ri.ImportTypeMapping (typeof (SimpleClass));
 			sx.ExportTypeMapping (tm);
 
@@ -65,13 +112,51 @@ namespace MonoTests.System.XmlSerialization
 
 		[Test]
 		[Category ("NotWorking")] // on Mono, element is output before type
+		public void ExportClass_Array ()
+		{
+			XmlAttributeOverrides overrides = new XmlAttributeOverrides ();
+			XmlAttributes attr = new XmlAttributes ();
+			XmlElementAttribute element = new XmlElementAttribute ();
+			element.ElementName = "saying";
+			element.IsNullable = true;
+			attr.XmlElements.Add (element);
+			overrides.Add (typeof (SimpleClass), "something", attr);
+
+			XmlReflectionImporter ri = new XmlReflectionImporter (overrides, "NSSimpleClassArray");
+			XmlSchemas schemas = new XmlSchemas ();
+			XmlSchemaExporter sx = new XmlSchemaExporter (schemas);
+			XmlTypeMapping tm = ri.ImportTypeMapping (typeof (SimpleClass[]));
+			sx.ExportTypeMapping (tm);
+
+			Assert.AreEqual (1, schemas.Count, "#1");
+
+			StringWriter sw = new StringWriter ();
+			schemas[0].Write (sw);
+
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
+				"<xs:schema xmlns:tns=\"NSSimpleClassArray\" elementFormDefault=\"qualified\" targetNamespace=\"NSSimpleClassArray\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
+				"  <xs:element name=\"ArrayOfSimpleClass\" nillable=\"true\" type=\"tns:ArrayOfSimpleClass\" />{0}" +
+				"  <xs:complexType name=\"ArrayOfSimpleClass\">{0}" +
+				"    <xs:sequence>{0}" +
+				"      <xs:element minOccurs=\"0\" maxOccurs=\"unbounded\" name=\"SimpleClass\" nillable=\"true\" type=\"tns:SimpleClass\" />{0}" +
+				"    </xs:sequence>{0}" +
+				"  </xs:complexType>{0}" +
+				"  <xs:complexType name=\"SimpleClass\">{0}" +
+				"    <xs:sequence>{0}" +
+				"      <xs:element minOccurs=\"1\" maxOccurs=\"1\" name=\"saying\" nillable=\"true\" type=\"xs:string\" />{0}" +
+				"    </xs:sequence>{0}" +
+				"  </xs:complexType>{0}" +
+				"</xs:schema>", Environment.NewLine), sw.ToString (), "#2");
+		}
+
+		[Test]
+		[Category ("NotWorking")] // on Mono, element is output before type
 		public void ExportEnum ()
 		{
 			XmlReflectionImporter ri = new XmlReflectionImporter ("NS2");
-
 			XmlSchemas schemas = new XmlSchemas ();
 			XmlSchemaExporter sx = new XmlSchemaExporter (schemas);
-
 			XmlTypeMapping tm = ri.ImportTypeMapping (typeof (EnumDefaultValue));
 			sx.ExportTypeMapping (tm);
 
@@ -103,10 +188,8 @@ namespace MonoTests.System.XmlSerialization
 		public void ExportXmlSerializable ()
 		{
 			XmlReflectionImporter ri = new XmlReflectionImporter ("NS3");
-
 			XmlSchemas schemas = new XmlSchemas ();
 			XmlSchemaExporter sx = new XmlSchemaExporter (schemas);
-
 			XmlTypeMapping tm = ri.ImportTypeMapping (typeof (Employee));
 			sx.ExportTypeMapping (tm);
 
@@ -133,7 +216,6 @@ namespace MonoTests.System.XmlSerialization
 
 			schemas = new XmlSchemas ();
 			sx = new XmlSchemaExporter (schemas);
-
 			tm = ri.ImportTypeMapping (typeof (EmployeeSchema));
 			sx.ExportTypeMapping (tm);
 
@@ -163,12 +245,59 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		public void ExportPrimitive_Int ()
+		[Category ("NotWorking")] // bug #77117
+		public void ExportXsdPrimitive ()
 		{
-			XmlReflectionImporter ri = new XmlReflectionImporter ("NSPrim1");
+			ArrayList types = new ArrayList ();
+			types.Add (new TypeDescription (typeof (byte), true, "unsignedByte", "Byte"));
+			types.Add (new TypeDescription (typeof (sbyte), true, "byte", "Byte"));
+			types.Add (new TypeDescription (typeof (bool), true, "boolean", "Boolean"));
+			types.Add (new TypeDescription (typeof (short), true, "short", "Short"));
+			types.Add (new TypeDescription (typeof (int), true, "int", "Int"));
+			types.Add (new TypeDescription (typeof (long), true, "long", "Long"));
+			types.Add (new TypeDescription (typeof (float), true, "float", "Float"));
+			types.Add (new TypeDescription (typeof (double), true, "double", "Double"));
+			types.Add (new TypeDescription (typeof (decimal), true, "decimal", "Decimal"));
+			types.Add (new TypeDescription (typeof (ushort), true, "unsignedShort", "UnsignedShort"));
+			types.Add (new TypeDescription (typeof (uint), true, "unsignedInt", "UnsignedInt"));
+			types.Add (new TypeDescription (typeof (ulong), true, "unsignedLong", "UnsignedLong"));
+			types.Add (new TypeDescription (typeof (DateTime), true, "dateTime", "DateTime"));
+#if NET_2_0
+			types.Add (new TypeDescription (typeof (XmlQualifiedName), true, "QName", "QName", true));
+#else
+			types.Add (new TypeDescription (typeof (XmlQualifiedName), true, "QName", "QName"));
+#endif
+			types.Add (new TypeDescription (typeof (string), true, "string", "String", true));
+
+			foreach (TypeDescription typeDesc in types) {
+				XmlReflectionImporter ri = new XmlReflectionImporter (typeDesc.Type.Name);
+				XmlSchemas schemas = new XmlSchemas ();
+				XmlSchemaExporter sx = new XmlSchemaExporter (schemas);
+				XmlTypeMapping tm = ri.ImportTypeMapping (typeDesc.Type);
+				sx.ExportTypeMapping (tm);
+
+				Assert.AreEqual (1, schemas.Count, typeDesc.Type.FullName + "#1");
+
+				StringWriter sw = new StringWriter ();
+				schemas[0].Write (sw);
+
+				Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+					"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
+					"<xs:schema xmlns:tns=\"{1}\" elementFormDefault=\"qualified\" targetNamespace=\"{1}\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
+					"  <xs:element name=\"{2}\" {3}type=\"xs:{2}\" />{0}" +
+					"</xs:schema>", Environment.NewLine, typeDesc.Type.Name, typeDesc.XmlType, typeDesc.IsNillable ? "nillable=\"true\" " : ""),
+					sw.ToString (), typeDesc.Type.FullName + "#2");
+			}
+		}
+
+		[Test]
+		[Category ("NotWorking")] // bug #77117
+		public void ExportXsdPrimitive_ByteArray ()
+		{
+			XmlReflectionImporter ri = new XmlReflectionImporter ("ByteArray");
 			XmlSchemas schemas = new XmlSchemas ();
 			XmlSchemaExporter sx = new XmlSchemaExporter (schemas);
-			XmlTypeMapping tm = ri.ImportTypeMapping (typeof (int));
+			XmlTypeMapping tm = ri.ImportTypeMapping (typeof (byte[]));
 			sx.ExportTypeMapping (tm);
 
 			Assert.AreEqual (1, schemas.Count, "#1");
@@ -178,14 +307,65 @@ namespace MonoTests.System.XmlSerialization
 
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
-				"<xs:schema xmlns:tns=\"NSPrim1\" elementFormDefault=\"qualified\" targetNamespace=\"NSPrim1\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
-				"  <xs:element name=\"int\" type=\"xs:int\" />{0}" +
+				"<xs:schema xmlns:tns=\"ByteArray\" elementFormDefault=\"qualified\" targetNamespace=\"ByteArray\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
+				"  <xs:element name=\"base64Binary\" nillable=\"true\" type=\"xs:base64Binary\" />{0}" +
 				"</xs:schema>", Environment.NewLine), sw.ToString (), "#2");
 		}
 
 		[Test]
-		[Category ("NotWorking")] // on Mono, only one schema is created
-		public void ExportPrimitive_Guid ()
+		[Category ("NotWorking")] // bug #77117
+		public void ExportXsdPrimitive_Arrays ()
+		{
+			ArrayList types = new ArrayList ();
+			types.Add (new TypeDescription (typeof (sbyte[]), true, "byte", "Byte"));
+			types.Add (new TypeDescription (typeof (bool[]), true, "boolean", "Boolean"));
+			types.Add (new TypeDescription (typeof (short[]), true, "short", "Short"));
+			types.Add (new TypeDescription (typeof (int[]), true, "int", "Int"));
+			types.Add (new TypeDescription (typeof (long[]), true, "long", "Long"));
+			types.Add (new TypeDescription (typeof (float[]), true, "float", "Float"));
+			types.Add (new TypeDescription (typeof (double[]), true, "double", "Double"));
+			types.Add (new TypeDescription (typeof (decimal[]), true, "decimal", "Decimal"));
+			types.Add (new TypeDescription (typeof (ushort[]), true, "unsignedShort", "UnsignedShort"));
+			types.Add (new TypeDescription (typeof (uint[]), true, "unsignedInt", "UnsignedInt"));
+			types.Add (new TypeDescription (typeof (ulong[]), true, "unsignedLong", "UnsignedLong"));
+			types.Add (new TypeDescription (typeof (DateTime[]), true, "dateTime", "DateTime"));
+#if NET_2_0
+			types.Add (new TypeDescription (typeof (XmlQualifiedName[]), true, "QName", "QName", true));
+#else
+			types.Add (new TypeDescription (typeof (XmlQualifiedName[]), true, "QName", "QName"));
+#endif
+			types.Add (new TypeDescription (typeof (string[]), true, "string", "String", true));
+
+			foreach (TypeDescription typeDesc in types) {
+				XmlReflectionImporter ri = new XmlReflectionImporter (typeDesc.Type.Name);
+				XmlSchemas schemas = new XmlSchemas ();
+				XmlSchemaExporter sx = new XmlSchemaExporter (schemas);
+				XmlTypeMapping tm = ri.ImportTypeMapping (typeDesc.Type);
+				sx.ExportTypeMapping (tm);
+
+				Assert.AreEqual (1, schemas.Count, typeDesc.Type.FullName + "#1");
+
+				StringWriter sw = new StringWriter ();
+				schemas[0].Write (sw);
+
+				Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+					"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
+					"<xs:schema xmlns:tns=\"{1}\" elementFormDefault=\"qualified\" targetNamespace=\"{1}\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
+					"  <xs:element name=\"ArrayOf{2}\" nillable=\"true\" type=\"tns:ArrayOf{2}\" />{0}" +
+					"  <xs:complexType name=\"ArrayOf{2}\">{0}" +
+					"    <xs:sequence>{0}" +
+					"      <xs:element minOccurs=\"0\" maxOccurs=\"unbounded\" name=\"{3}\" {5}type=\"{4}:{3}\" />{0}" +
+					"    </xs:sequence>{0}" +
+					"  </xs:complexType>{0}" +
+					"</xs:schema>", Environment.NewLine, typeDesc.Type.Name, typeDesc.ArrayType, typeDesc.XmlType, 
+					typeDesc.XsdType ? "xs" : "tns", typeDesc.IsNillable ? "nillable=\"true\" " : ""),
+					sw.ToString (), typeDesc.Type.FullName + "#2");
+			}
+		}
+
+		[Test]
+		[Category ("NotWorking")] // bug #77117
+		public void ExportNonXsdPrimitive_Guid ()
 		{
 			XmlReflectionImporter ri = new XmlReflectionImporter ("NSPrimGuid");
 			XmlSchemas schemas = new XmlSchemas ();
@@ -215,6 +395,40 @@ namespace MonoTests.System.XmlSerialization
 				"    <xs:restriction base=\"xs:string\">{0}" +
 				"      <xs:pattern value=\"[0-9a-fA-F]{{8}}-[0-9a-fA-F]{{4}}-[0-9a-fA-F]{{4}}-[0-9a-fA-F]{{4}}-[0-9a-fA-F]{{12}}\" />{0}" +
 				"    </xs:restriction>{0}" +
+				"  </xs:simpleType>{0}" +
+				"</xs:schema>", Environment.NewLine), sw.ToString (), "#3");
+		}
+
+		[Test]
+		[Category ("NotWorking")] // bug #77117
+		public void ExportNonXsdPrimitive_Char ()
+		{
+			XmlReflectionImporter ri = new XmlReflectionImporter ("NSPrimChar");
+			XmlSchemas schemas = new XmlSchemas ();
+			XmlSchemaExporter sx = new XmlSchemaExporter (schemas);
+			XmlTypeMapping tm = ri.ImportTypeMapping (typeof (Char));
+			sx.ExportTypeMapping (tm);
+
+			Assert.AreEqual (2, schemas.Count, "#1");
+
+			StringWriter sw = new StringWriter ();
+			schemas[0].Write (sw);
+
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
+				"<xs:schema xmlns:tns=\"NSPrimChar\" elementFormDefault=\"qualified\" targetNamespace=\"NSPrimChar\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
+				"  <xs:import namespace=\"http://microsoft.com/wsdl/types/\" />{0}" +
+				"  <xs:element name=\"char\" xmlns:q1=\"http://microsoft.com/wsdl/types/\" type=\"q1:char\" />{0}" +
+				"</xs:schema>", Environment.NewLine), sw.ToString (), "#2");
+
+			sw = new StringWriter ();
+			schemas[1].Write (sw);
+
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
+				"<xs:schema xmlns:tns=\"http://microsoft.com/wsdl/types/\" elementFormDefault=\"qualified\" targetNamespace=\"http://microsoft.com/wsdl/types/\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
+				"  <xs:simpleType name=\"char\">{0}" +
+				"    <xs:restriction base=\"xs:unsignedShort\" />{0}" +
 				"  </xs:simpleType>{0}" +
 				"</xs:schema>", Environment.NewLine), sw.ToString (), "#3");
 		}
@@ -287,6 +501,48 @@ namespace MonoTests.System.XmlSerialization
 				return name;
 			}
 #endif
+		}
+
+		private class TypeDescription
+		{
+			public TypeDescription (Type type, bool xsdType, string xmlType, string arrayType) : this (type, xsdType, xmlType, arrayType, false)
+			{
+			}
+
+			public TypeDescription (Type type, bool xsdType, string xmlType, string arrayType, bool isNillable)
+			{
+				_type = type;
+				_xsdType = xsdType;
+				_xmlType = xmlType;
+				_arrayType = arrayType;
+				_isNillable = isNillable;
+			}
+
+			public Type Type {
+				get { return _type; }
+			}
+
+			public string XmlType {
+				get { return _xmlType; }
+			}
+
+			public string ArrayType {
+				get { return _arrayType; }
+			}
+
+			public bool XsdType {
+				get { return _xsdType; }
+			}
+
+			public bool IsNillable {
+				get { return _isNillable; }
+			}
+
+			private Type _type;
+			private bool _xsdType;
+			private string _xmlType;
+			private string _arrayType;
+			private bool _isNillable;
 		}
 	}
 }
