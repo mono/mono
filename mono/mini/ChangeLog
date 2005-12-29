@@ -1,3 +1,12 @@
+2005-12-29 Neale Ferguson <neale@sinenomine.net>
+
+	* inssel-s390.brg: Correct register assignment; Rework L[ADD|SUB]_OVF[_UN] for s390.
+	
+	* cpu-s390.md: Fix lengths of a couple of long instructions; Add memory_barrier.
+
+	* mini-s390.c: Fix long add/sub overflow instructions; Fix displacement handling in
+	instrument_prolog; Add memory_barrier instruction.
+
 2005-12-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* exceptions-x86.c mini-x86.h: Fix solaris/x86 exception handling.
