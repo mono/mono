@@ -1,3 +1,10 @@
+2005-12-19  Kornél Pál  <kornelpal@hotmail.com>
+
+	* Regex.cs: Added support for regular expressions compiled to
+	  assemblies by compiling the pattern. This solution ignores existing
+	  CIL code but provides full support for regular expression classes
+	  compiled by MS.NET.
+
 2005-11-21  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* CaptureCollection.cs: Fixed length check.

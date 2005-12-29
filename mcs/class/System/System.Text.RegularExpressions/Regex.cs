@@ -193,10 +193,10 @@ namespace System.Text.RegularExpressions {
 
 		// constructors
 
+		// This constructor is used by compiled regular expressions that are
+		// classes derived from Regex class. No initialization required.
 		protected Regex ()
 		{
-			// XXX what's this constructor for?
-			// : Used to compile to assembly (Custum regex inherit from Regex and use this constructor)
 		}
 
 		public Regex (string pattern) : this (pattern, RegexOptions.None)
@@ -207,21 +207,25 @@ namespace System.Text.RegularExpressions {
 		{
 			this.pattern = pattern;
 			this.roptions = options;
-		
-			this.machineFactory = cache.Lookup (pattern, options);
+			Init ();
+		}
+
+		private void Init ()
+		{
+			this.machineFactory = cache.Lookup (this.pattern, this.roptions);
 
 			if (this.machineFactory == null) {
 				// parse and install group mapping
 
 				Parser psr = new Parser ();
-				RegularExpression re = psr.ParseRegularExpression (pattern, options);
+				RegularExpression re = psr.ParseRegularExpression (this.pattern, this.roptions);
 				this.group_count = re.GroupCount;
 				this.mapping = psr.GetMapping ();
 
 				// compile
 				
 				ICompiler cmp;
-				//if ((options & RegexOptions.Compiled) != 0)
+				//if ((this.roptions & RegexOptions.Compiled) != 0)
 				//	//throw new Exception ("Not implemented.");
 				//	cmp = new CILCompiler ();
 				//else
@@ -233,7 +237,7 @@ namespace System.Text.RegularExpressions {
 
 				this.machineFactory = cmp.GetMachineFactory ();
 				this.machineFactory.Mapping = mapping;
-				cache.Add (pattern, options, this.machineFactory);
+				cache.Add (this.pattern, this.roptions, this.machineFactory);
 			} else {
 				this.group_count = this.machineFactory.GroupCount;
 				this.mapping = this.machineFactory.Mapping;
@@ -251,7 +255,7 @@ namespace System.Text.RegularExpressions {
 		{
 		}
 
-#if ONLY_1_1
+#if NET_1_1
 		// fixes public API signature
 		~Regex ()
 		{
@@ -469,10 +473,19 @@ namespace System.Text.RegularExpressions {
 			return (string []) splits.ToArray (typeof (string));
 		}
 
-		[MonoTODO]
-		protected void InitializeReferences()
+		// This method is called at the end of the constructor of compiled
+		// regular expression classes to do internal initialization.
+		protected void InitializeReferences ()
 		{
-			throw new NotImplementedException ();
+			if (refsInitialized)
+				throw new NotSupportedException ("This operation is only allowed once per object.");
+
+			refsInitialized = true;
+
+			// Compile pattern that results in performance loss as existing
+			// CIL code is ignored but provides support for regular
+			// expressions compiled to assemblies.
+			Init ();
 		}
 
 		protected bool UseOptionC ()
@@ -515,6 +528,7 @@ namespace System.Text.RegularExpressions {
 		private IMachineFactory machineFactory;
 		private IDictionary mapping;
 		private int group_count;
+		private bool refsInitialized;
 
 		
 		// protected members
