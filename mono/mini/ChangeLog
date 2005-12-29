@@ -1,5 +1,9 @@
 2005-12-29 Neale Ferguson <neale@sinenomine.net>
 
+	* mini-s390.c (mono_arch_get_inst_for_method): Add memory_barrier support.
+
+2005-12-29 Neale Ferguson <neale@sinenomine.net>
+
 	* inssel-s390.brg: Correct register assignment; Rework L[ADD|SUB]_OVF[_UN] for s390.
 	
 	* cpu-s390.md: Fix lengths of a couple of long instructions; Add memory_barrier.
