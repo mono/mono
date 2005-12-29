@@ -1513,6 +1513,7 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		[ExpectedException (typeof (ArgumentException))]
 		public void WriteWhitespace_Null ()
 		{
@@ -1520,6 +1521,7 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		[ExpectedException (typeof (ArgumentException))]
 		public void WriteWhitespace_Empty ()
 		{
