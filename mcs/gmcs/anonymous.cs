@@ -281,13 +281,6 @@ namespace Mono.CSharp {
 				Parameter.Modifier amp_mod = amp.ParameterModifier (i);
 
 				if (!probe) {
-					if ((amp_mod & (Parameter.Modifier.OUT | Parameter.Modifier.REF)) != 0){
-						Report.Error (1677, loc, "Parameter `{0}' should not be declared with the `{1}' keyword", 
-							(i+1).ToString (), Parameter.GetModifierSignature (amp_mod));
-						Error_ParameterMismatch (delegate_type);
-						return null;
-					}
-
 					if (amp_mod != invoke_pd.ParameterModifier (i)){
 						Report.Error (1676, loc, "Parameter `{0}' must be declared with the `{1}' keyword",
 							(i+1).ToString (), Parameter.GetModifierSignature (invoke_pd.ParameterModifier (i)));
