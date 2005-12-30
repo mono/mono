@@ -1,3 +1,8 @@
+2005-12-28  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* map-icalls.h: Flush (add utimes_bad, lutimes, futimes).
+	* sys-time.c: Add lutimes(2) and futimes(2) wrapper.
+
 2005-12-27  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* map.c: Include <sys/mman.h>.  Fixes #77091.  Thanks to Ben Gamari.
