@@ -6,7 +6,7 @@
 //  Jonathan Pryor (jonpryor@vt.edu)
 //
 // (C) 2003 Novell, Inc.
-// (C) 2004 Jonathan Pryor
+// (C) 2004-2005 Jonathan Pryor
 //
 
 //
@@ -247,7 +247,8 @@ abstract class FileGenerator {
 		if (t.Namespace.StartsWith ("System"))
 			return "int /* warning: unknown mapping for type: " + t.Name + " */";
 		string ts = "struct " +
-			MakeMap.GetNativeName (t.FullName).Replace ("+", "_").Replace ("&", "*");
+			MakeMap.GetNativeName (t.FullName).Replace ("+", "_").Replace ("&", "*")
+				.Replace ("[]", "*");
 		return ts;
 	}
 }

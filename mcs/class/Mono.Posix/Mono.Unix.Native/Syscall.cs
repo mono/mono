@@ -2774,7 +2774,7 @@ namespace Mono.Unix.Native {
 		//
 		// <sys/time.h>
 		//
-		// TODO: adjtime(), getitimer(2), setitimer(2), lutimes(), futimes()
+		// TODO: adjtime(), getitimer(2), setitimer(2)
 
 		[DllImport (MPH, SetLastError=true, 
 				EntryPoint="Mono_Posix_Syscall_gettimeofday")]
@@ -2812,10 +2812,56 @@ namespace Mono.Unix.Native {
 		}
 
 		[DllImport (MPH, SetLastError=true, 
-				EntryPoint="Mono_Posix_Syscall_utimes")]
+				EntryPoint="Mono_Posix_Syscall_utimes_bad")]
+		[Obsolete ("Use utimes(string, Timeval[]);", true)]
 		public static extern int utimes (
 				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
 				string filename, ref Timeval tvp);
+
+		[DllImport (MPH, SetLastError=true, 
+				EntryPoint="Mono_Posix_Syscall_utimes")]
+		private static extern int sys_utimes (
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string filename, Timeval[] tvp);
+
+		public static int utimes (string filename, Timeval[] tvp)
+		{
+			if (tvp != null && tvp.Length != 2) {
+				SetLastError (Errno.EINVAL);
+				return -1;
+			}
+			return sys_utimes (filename, tvp);
+		}
+
+		[DllImport (MPH, SetLastError=true, 
+				EntryPoint="Mono_Posix_Syscall_lutimes")]
+		private static extern int sys_lutimes (
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string filename, Timeval[] tvp);
+
+		public static int lutimes (string filename, Timeval[] tvp)
+		{
+			if (tvp != null && tvp.Length != 2) {
+				SetLastError (Errno.EINVAL);
+				return -1;
+			}
+			return sys_lutimes (filename, tvp);
+		}
+
+		[DllImport (MPH, SetLastError=true, 
+				EntryPoint="Mono_Posix_Syscall_futimes")]
+		private static extern int sys_futimes (
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				int fd, Timeval[] tvp);
+
+		public static int futimes (int fd, Timeval[] tvp)
+		{
+			if (tvp != null && tvp.Length != 2) {
+				SetLastError (Errno.EINVAL);
+				return -1;
+			}
+			return sys_futimes (fd, tvp);
+		}
 
 		#endregion
 

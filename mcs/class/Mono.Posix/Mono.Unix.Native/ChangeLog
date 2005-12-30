@@ -1,3 +1,9 @@
+2005-12-29  Jonathan Pryor <jonpryor@vt.edu>
+
+	* make-map.cs: Properly handle managed arrays in argument lists.
+	* Syscall.cs: Properly bind utimes(2) (the Linux man pages are vague on what
+	  it does; the BSD ones are much better).  Bind lutimes(2) and futimes(2).
+
 2005-12-27  Jonathan Pryor <jonpryor@vt.edu>
 
 	* Syscall.cs: Include <sys/mman.h> for map.c generation.  Fixes #77091.
