@@ -3682,7 +3682,7 @@ namespace Mono.CSharp {
 				vi = block.ParameterMap [idx];
 
 			if (ec.CurrentAnonymousMethod != null){
-				if (is_ref){
+				if (is_ref && !block.Toplevel.IsLocalParameter (name)){
 					Report.Error (1628, Location, "Cannot use ref or out parameter `{0}' inside an anonymous method block",
 						par.Name);
 					return;

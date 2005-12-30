@@ -1,3 +1,24 @@
+2005-12-30  Miguel de Icaza  <miguel@novell.com>
+
+	* expression.cs (ParameterReference.DoResolveBase): Allow
+	reference parameters if they are local to this block. 
+
+	This allows the ref and out parameters of a delegate to be used in
+	an anonymous method, for example:
+
+	delegate void set (out int x);
+
+	set s = delegate (out int x){
+		x = 0;
+	};
+
+	This is used by functionality introduced late in the C# language.
+	
+	* anonymous.cs (AnonymousMethod.Compatible): Allow anonymous
+	method that take ref and out parameters. 
+
+	Fixes #77119 which was a late change in the spec.
+
 2005-12-23  Miguel de Icaza  <miguel@novell.com>
 
 	* anonymous.cs (ScopeInfo.LinkScope): Do not link the scope to its
