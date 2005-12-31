@@ -413,6 +413,10 @@ namespace System.Windows.Forms
 			// MWF has no svg support yet (cairo's libsvg!?!)
 			if ( SVGOnly( ) )
 				icon_theme = "default.kde";
+			else
+			// check if there is a /48x48 directory
+			if( No48x48( ) )
+				icon_theme = "default.kde";
 			
 			ReadMimetypes( );
 			
@@ -434,6 +438,24 @@ namespace System.Windows.Forms
 			}
 			
 			return false;
+		}
+		
+		private bool No48x48( )
+		{
+			// check only the first path in icon_paths
+			if ( icon_paths.Count > 0 )
+			{
+				string icon_path = icon_paths[ 0 ] + icon_theme;
+				string[] dirs = Directory.GetDirectories( icon_path );
+				
+				foreach( string path in dirs )
+				{
+					if ( path.EndsWith( "48x48" ) )
+						return false;
+				}
+			}
+			
+			return true;
 		}
 		
 		protected override bool CheckPlatformDirectories( )

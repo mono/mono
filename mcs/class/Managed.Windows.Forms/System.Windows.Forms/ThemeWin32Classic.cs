@@ -95,13 +95,13 @@ namespace System.Windows.Forms
 		protected SolidBrush GetControlBackBrush (Color c) {
 			if (c == DefaultControlBackColor)
 				return ResPool.GetSolidBrush (ColorControl);
-			return new SolidBrush (c);
+			return ResPool.GetSolidBrush (c);
 		}
 
 		protected SolidBrush GetControlForeBrush (Color c) {
 			if (c == DefaultControlForeColor)
 				return ResPool.GetSolidBrush (ColorControlText);
-			return new SolidBrush (c);
+			return ResPool.GetSolidBrush (c);
 		}
 		#endregion	// Internal Methods
 
@@ -1538,7 +1538,7 @@ namespace System.Windows.Forms
 		}
 
 		// draws the ListViewItem of the given index
-		private void DrawListViewItem (Graphics dc, ListView control, ListViewItem item)
+		protected virtual void DrawListViewItem (Graphics dc, ListView control, ListViewItem item)
 		{				
 			Rectangle rect_checkrect = item.CheckRectReal;
 			Rectangle rect_iconrect = item.GetBounds (ItemBoundsPortion.Icon);

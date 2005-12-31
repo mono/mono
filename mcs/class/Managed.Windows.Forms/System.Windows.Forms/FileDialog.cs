@@ -84,6 +84,7 @@ namespace System.Windows.Forms
 		
 		internal FileDialog( ) : base()
 		{
+			form.MaximizeBox = true;
 		}
 		
 		[DefaultValue(true)]
@@ -1681,8 +1682,13 @@ namespace System.Windows.Forms
 				listViewItem.ImageIndex = MimeIconEngine.GetIconIndexForFile( fileStruct.fullname );
 				
 				long fileLen = 1;
-				if ( fileInfo.Length > 1024 )
-					fileLen = fileInfo.Length / 1024;
+				try {
+					if ( fileInfo.Length > 1024 )
+						fileLen = fileInfo.Length / 1024;
+				} catch( Exception e )
+				{
+					fileLen = 1;
+				}
 				
 				listViewItem.SubItems.Add( fileLen.ToString( ) + " KB" );
 				listViewItem.SubItems.Add( "File" );

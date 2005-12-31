@@ -154,12 +154,12 @@ namespace System.Windows.Forms
 			current_file_name = filename;
 			is_zero_file = false;
 			
-			if ( !CheckForInode( ) )
-			{
+//			if ( !CheckForInode( ) )
+//			{
 				global_result = octet_stream;
 				
 				GoByFileName( );
-			}
+//			}
 			
 			if ( !mime_file_cache.ContainsKey( current_file_name ) )
 				mime_file_cache.Add( current_file_name, global_result );
@@ -210,64 +210,70 @@ namespace System.Windows.Forms
 				return;
 		}
 		
-		private bool CheckForInode( )
-		{
-			if ( ( platform == 4 ) || ( platform == 128 ) )
-			{
-#if __MonoCS__
-				// *nix platform
-				Mono.Unix.UnixFileInfo ufi = new Mono.Unix.UnixFileInfo( current_file_name );
-				
-				if ( ufi.IsFile )
-				{
-					return false;
-				}
-				else
-				if ( ufi.IsDirectory )
-				{
-					global_result = "inode/directory";
-					return true;
-				}
-				else
-				if ( ufi.IsBlockDevice )
-				{
-					global_result = "inode/blockdevice";
-					return true;
-				}
-				else
-				if ( ufi.IsSocket )
-				{
-					global_result = "inode/socket";
-					return true;
-				}
-				else
-				if ( ufi.IsSymbolicLink )
-				{
-					global_result = "inode/symlink";
-					return true;
-				}
-				else
-				if ( ufi.IsCharacterDevice )
-				{
-					global_result = "inode/chardevice";
-					return true;
-				}
-				else
-				if ( ufi.IsFIFO )
-				{
-					global_result = "inode/fifo";
-					return true;
-				}
-#endif
-			}
-			else
-			{
-				// TODO!!!!
-				// windows platform
-			}
-			
-			return false;
-		}
+//		private bool CheckForInode( )
+//		{
+//			if ( ( platform == 4 ) || ( platform == 128 ) )
+//			{
+//#if __MonoCS__
+//				try
+//				{
+//					// *nix platform
+//					Mono.Unix.UnixFileInfo ufi = new Mono.Unix.UnixFileInfo( current_file_name );
+//
+//					if ( ufi.IsFile )
+//					{
+//						return false;
+//					}
+//					else
+//					if ( ufi.IsDirectory )
+//					{
+//						global_result = "inode/directory";
+//						return true;
+//					}
+//					else
+//					if ( ufi.IsBlockDevice )
+//					{
+//						global_result = "inode/blockdevice";
+//						return true;
+//					}
+//					else
+//					if ( ufi.IsSocket )
+//					{
+//						global_result = "inode/socket";
+//						return true;
+//					}
+//					else
+//					if ( ufi.IsSymbolicLink )
+//					{
+//						global_result = "inode/symlink";
+//						return true;
+//					}
+//					else
+//					if ( ufi.IsCharacterDevice )
+//					{
+//						global_result = "inode/chardevice";
+//						return true;
+//					}
+//					else
+//					if ( ufi.IsFIFO )
+//					{
+//						global_result = "inode/fifo";
+//						return true;
+//					}
+//				} catch( Exception e )
+//				{
+//					return false;
+//				}
+//#endif
+//			}
+//			else
+//			{
+//				// TODO!!!!
+//				// windows platform
+//			}
+//			
+//			return false;
+//		}
 		
 		private void GoByFileName( )
 		{

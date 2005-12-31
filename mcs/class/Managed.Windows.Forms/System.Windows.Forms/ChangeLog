@@ -1,3 +1,16 @@
+2005-12-31  Alexander Olk  <alex.olk@googlemail.com>
+
+	* MimeIcon.cs: Use default KDE icon theme if there is no
+	  "48x48" directory for the current icon theme, fixes #77114
+	* Mime.cs: Disable not working and actually not used code. 
+	* ThemeWin32Classic.cs:
+	  - Replace "new SolidBrush" in GetControlBackBrush and
+	    GetControlForeBrush with ResPool.GetSolidBrush
+	  - Changed DrawListViewItem from private to protected virtual
+	* FileDialog.cs:
+	  - Added form.MaximizeBox = true
+	  - Don't throw an exception if there is a broken symbolic link
+
 2005-12-23  Jackson Harper  <jackson@ximian.com>
 
 	* TabControl.cs: Give the panels focus, keyboard navigation is
