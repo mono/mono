@@ -1,5 +1,15 @@
 2005-12-31  Alexander Olk  <alex.olk@googlemail.com>
 
+	* ThemeClearlooks.cs:
+	  - Added CPDrawStringDisabled
+	  - ButtonBase_DrawText: Workaround for a DrawString bug; cut off
+	    some chars if the text doesn't fit into text_rect
+	  - DrawListViewItem: If View = View.LargeIcon center the image;
+	    rewrote the drawing of ListViewItem.Text if View = 
+	    View.LargeIcon
+
+2005-12-31  Alexander Olk  <alex.olk@googlemail.com>
+
 	* MimeIcon.cs: Use default KDE icon theme if there is no
 	  "48x48" directory for the current icon theme, fixes #77114
 	* Mime.cs: Disable not working and actually not used code. 

@@ -115,6 +115,8 @@ namespace System.Windows.Forms {
 		static readonly Color trackbar_inner_second_gradient_color = Color.FromArgb( 223, 215, 208 );
 		static readonly Color trackbar_inner_pressed_second_gradient_color = Color.FromArgb( 224, 217, 210 );
 		
+		static readonly Color disabled_color_foreground = Color.FromArgb( 182, 180, 173 );
+		
 		const int SEPARATOR_HEIGHT = 7;
     		const int MENU_TAB_SPACE = 8;		// Pixels added to the width of an item because of a tab
     		const int MENU_BAR_ITEMS_SPACE = 8;	// Space between menu bar items
@@ -328,7 +330,40 @@ namespace System.Windows.Forms {
 		
 		protected override void ButtonBase_DrawText( ButtonBase button, Graphics dc ) {
 			if ( !( button is CheckBox ) && !( button is RadioButton ) ) {
-				base.ButtonBase_DrawText( button, dc );
+				Rectangle buttonRectangle = button.ClientRectangle;
+				Rectangle text_rect = Rectangle.Inflate( buttonRectangle, -4, -4 );
+				
+				string text = button.Text;
+				
+				if ( text.Length > 1 ) {
+					SizeF sizef = dc.MeasureString( text, button.Font, text_rect.Width, button.text_format );
+					
+					if ( (int)sizef.Width > text_rect.Width - 3 ) {
+						for ( int i = 1; i < text.Length + 1; i++ ) {
+							sizef = dc.MeasureString( text.Substring( 0, i ), button.Font, text_rect.Width, button.text_format );
+							
+							if ( (int)sizef.Width > text_rect.Width - 3 ) {
+								text = text.Substring( 0, i - 1 );
+								break;
+							}
+						}
+					}
+				}
+				
+				if ( button.is_pressed ) {
+					text_rect.X++;
+					text_rect.Y++;
+				}
+				
+				if ( button.is_enabled ) {					
+					dc.DrawString( text, button.Font, ResPool.GetSolidBrush( button.ForeColor ), text_rect, button.text_format );
+				} else {
+					if ( button.FlatStyle == FlatStyle.Flat || button.FlatStyle == FlatStyle.Popup ) {
+						dc.DrawString( text, button.Font, ResPool.GetSolidBrush( ControlPaint.DarkDark( this.ColorControl ) ), text_rect, button.text_format );
+					} else {
+						CPDrawStringDisabled( dc, text, button.Font, ColorControlText, text_rect, button.text_format );
+					}
+				}
 			}
 		}
 		#endregion	// ButtonBase
@@ -2251,6 +2286,256 @@ namespace System.Windows.Forms {
 		}
 		#endregion	// TrackBar
 		
+		#region ListView
+		// draws the ListViewItem of the given index
+		protected override void DrawListViewItem( Graphics dc, ListView control, ListViewItem item ) {				
+			Rectangle rect_checkrect = item.CheckRectReal;
+			Rectangle rect_iconrect = item.GetBounds( ItemBoundsPortion.Icon );
+			Rectangle full_rect = item.GetBounds( ItemBoundsPortion.Entire );
+			Rectangle text_rect = item.GetBounds( ItemBoundsPortion.Label );			
+			
+			if ( control.CheckBoxes ) {
+				if ( control.StateImageList == null ) {
+					// Make sure we've got at least a line width of 1
+					int check_wd = Math.Max( 3, rect_checkrect.Width / 6 );
+					int scale = Math.Max( 1, rect_checkrect.Width / 12 );
+					
+					// set the checkbox background
+					dc.FillRectangle( this.ResPool.GetSolidBrush( this.ColorWindow ),
+							 rect_checkrect );
+					// define a rectangle inside the border area
+					Rectangle rect = new Rectangle( rect_checkrect.X + 2,
+								       rect_checkrect.Y + 2,
+								       rect_checkrect.Width - 4,
+								       rect_checkrect.Height - 4 );
+					Pen pen = new Pen( this.ColorWindowText, 2 );
+					dc.DrawRectangle( pen, rect );
+					
+					// Need to draw a check-mark
+					if ( item.Checked ) {
+						pen.Width = 1;
+						// adjustments to get the check-mark at the right place
+						rect.X ++; rect.Y ++;
+						// following logic is taken from DrawFrameControl method
+						for ( int i = 0; i < check_wd; i++ ) {
+							dc.DrawLine( pen, rect.Left + check_wd / 2,
+								    rect.Top + check_wd + i,
+								    rect.Left + check_wd / 2 + 2 * scale,
+								    rect.Top + check_wd + 2 * scale + i );
+							dc.DrawLine( pen,
+								    rect.Left + check_wd / 2 + 2 * scale,
+								    rect.Top + check_wd + 2 * scale + i,
+								    rect.Left + check_wd / 2 + 6 * scale,
+								    rect.Top + check_wd - 2 * scale + i );
+						}
+					}
+				} else {
+					if ( item.Checked && control.StateImageList.Images.Count > 1 )
+						control.StateImageList.Draw( dc,
+									    rect_checkrect.Location, 1 );
+					else if ( ! item.Checked && control.StateImageList.Images.Count > 0 )
+						control.StateImageList.Draw( dc,
+									    rect_checkrect.Location, 0 );
+				}
+			}
+			
+			// Item is drawn as a special case, as it is not just text
+			if ( control.View == View.LargeIcon ) {
+				if ( item.ImageIndex > -1 &&
+				    control.LargeImageList != null &&
+				    item.ImageIndex < control.LargeImageList.Images.Count ) {
+					// center image
+					Point image_location = rect_iconrect.Location;
+					Image image = control.LargeImageList.Images[ item.ImageIndex ];
+					if ( image.Width < rect_iconrect.Width ) {
+						int icon_rect_middle = rect_iconrect.Width / 2;
+						int image_middle = image.Width / 2;
+						image_location.X = image_location.X + icon_rect_middle - image_middle;
+					}
+					control.LargeImageList.Draw( dc, image_location,
+								    item.ImageIndex );
+				}
+			} else {
+				if ( item.ImageIndex > -1 &&
+				    control.SmallImageList != null &&
+				    item.ImageIndex < control.SmallImageList.Images.Count )
+					control.SmallImageList.Draw( dc, rect_iconrect.Location,
+								    item.ImageIndex );
+			}
+			
+			// draw the item text			
+			// format for the item text
+			StringFormat format = new StringFormat( );
+			format.LineAlignment = StringAlignment.Center;
+			if ( control.View == View.LargeIcon )
+				format.Alignment = StringAlignment.Center; 
+			else
+				format.Alignment = StringAlignment.Near;
+			
+			if ( !control.LabelWrap )
+				format.FormatFlags = StringFormatFlags.NoWrap;
+			
+			if ( item.Selected ) {
+				if ( control.View == View.Details ) {
+					if ( control.FullRowSelect ) {
+						// fill the entire rect excluding the checkbox						
+						full_rect.Location = item.LabelRect.Location;
+						dc.FillRectangle( this.ResPool.GetSolidBrush
+								 ( this.ColorHighlight ), full_rect );
+					} else {
+						Size text_size = Size.Ceiling( dc.MeasureString( item.Text,
+												item.Font ) );
+						text_rect.Width = text_size.Width;
+						dc.FillRectangle( this.ResPool.GetSolidBrush
+								 ( this.ColorHighlight ), text_rect );
+					}
+				} else {
+					/*Size text_size = Size.Ceiling (dc.MeasureString (item.Text,
+					 item.Font));
+					 Point loc = text_rect.Location;
+					 loc.X += (text_rect.Width - text_size.Width) / 2;
+					 text_rect.Width = text_size.Width;*/
+					dc.FillRectangle( this.ResPool.GetSolidBrush( this.ColorHighlight ),
+							 text_rect );
+				}
+			} else
+				dc.FillRectangle( ResPool.GetSolidBrush( item.BackColor ), text_rect );
+			
+			if ( item.Text != null && item.Text.Length > 0 ) {
+				
+				if ( control.View != View.LargeIcon ) {
+					if ( item.Selected )
+						dc.DrawString( item.Text, item.Font, this.ResPool.GetSolidBrush
+							      ( this.ColorHighlightText ), text_rect, format );
+					else
+						dc.DrawString( item.Text, item.Font, this.ResPool.GetSolidBrush
+							      ( item.ForeColor ), text_rect, format );
+				} else {
+					// ListView CalcTextSize says wrapping is done for two lines only !?!
+					// text is centered for the complete text_rect but it should be centered per available row/line
+					
+					// calculate how much lines we get out of text_rect and current item.Font
+					int nr_lines = text_rect.Height / item.Font.Height;
+					int rest = text_rect.Height % item.Font.Height;
+					int line_height = item.Font.Height + ( rest > 1 ? 2 : 0 );
+					
+					Rectangle[] text_rects = new Rectangle[ nr_lines ];
+					
+					for ( int i = 0; i < nr_lines; i++ ) {
+						text_rects[ i ].X = text_rect.X;
+						text_rects[ i ].Y = text_rect.Y + i * line_height;
+						text_rects[ i ].Width = text_rect.Width;
+						text_rects[ i ].Height = line_height;
+					}
+					
+					string[] lines = new string[ nr_lines ];
+					
+					string text = item.Text;
+					
+					int line_nr = 0;
+					int current_pos = 0;
+					for ( int k = 1; k <= text.Length; k++ ) {
+						lines[ line_nr ] = text.Substring( current_pos, k - current_pos );
+						
+						// FIXME: Graphics.MeasureString returns wrong results if there is a 
+						//        space char in the string
+						SizeF sizef = dc.MeasureString( lines[ line_nr ], item.Font, text_rect.Width, format );
+						
+						if ( (int)sizef.Width > text_rect.Width - 3 ) {
+							lines[ line_nr ] = lines[ line_nr ].Remove( lines[ line_nr ].Length - 1, 1 );
+							k--;
+							current_pos = k;
+							line_nr++;
+							if ( line_nr == nr_lines )
+								break;
+						}
+					}
+					
+					int j = 0;
+					foreach ( Rectangle t_rect in text_rects ) {
+						if ( item.Selected )
+							dc.DrawString( lines[ j ], item.Font, this.ResPool.GetSolidBrush
+								      ( this.ColorHighlightText ), t_rect, format );
+						else
+							dc.DrawString( lines[ j ], item.Font, this.ResPool.GetSolidBrush
+								      ( item.ForeColor ), t_rect, format );
+						j++;
+					}
+				} 
+			}
+			
+			if ( control.View == View.Details && control.Columns.Count > 0 ) {
+				// draw subitems for details view
+				ListViewItem.ListViewSubItemCollection subItems = item.SubItems;
+				int count = ( control.Columns.Count < subItems.Count ? 
+					control.Columns.Count : subItems.Count );
+				
+				if ( count > 0 ) {
+					ColumnHeader col;
+					ListViewItem.ListViewSubItem subItem;
+					Rectangle sub_item_rect = text_rect; 
+					
+					// set the format for subitems
+					format.FormatFlags = StringFormatFlags.NoWrap;
+					format.Alignment = StringAlignment.Near;
+					
+					// 0th subitem is the item already drawn
+					for ( int index = 1; index < count; index++ ) {
+						subItem = subItems[ index ];
+						col = control.Columns[ index ];
+						sub_item_rect.X = col.Rect.Left;
+						sub_item_rect.Width = col.Wd;
+						sub_item_rect.X -= control.h_marker;
+						
+						SolidBrush sub_item_back_br = null;
+						SolidBrush sub_item_fore_br = null;
+						Font sub_item_font = null;
+						
+						if ( item.UseItemStyleForSubItems ) {
+							sub_item_back_br = this.ResPool.GetSolidBrush
+							( item.BackColor );
+							sub_item_fore_br = this.ResPool.GetSolidBrush
+							( item.ForeColor );
+							sub_item_font = item.Font;
+						} else {
+							sub_item_back_br = this.ResPool.GetSolidBrush
+							( subItem.BackColor );
+							sub_item_fore_br = this.ResPool.GetSolidBrush
+							( subItem.ForeColor );
+							sub_item_font = subItem.Font;
+						}
+						
+						// In case of fullrowselect, background is filled
+						// for the entire rect above
+						if ( item.Selected && control.FullRowSelect ) {
+							if ( subItem.Text != null && subItem.Text.Length > 0 )
+								dc.DrawString( subItem.Text, sub_item_font,
+									      this.ResPool.GetSolidBrush
+									      ( this.ColorHighlightText ),
+									      sub_item_rect, format );
+						} else {
+							dc.FillRectangle( sub_item_back_br, sub_item_rect );
+							if ( subItem.Text != null && subItem.Text.Length > 0 )
+								dc.DrawString( subItem.Text, sub_item_font,
+									      sub_item_fore_br,
+									      sub_item_rect, format );
+						}
+						sub_item_rect.X += col.Wd;
+					}
+				}
+			}
+			
+			if ( item.Focused ) {				
+				if ( item.Selected )
+					CPDrawFocusRectangle( dc, text_rect, ColorHighlightText, ColorHighlight );
+				else
+					CPDrawFocusRectangle( dc, text_rect, control.ForeColor, control.BackColor );
+			}
+			
+			format.Dispose( );
+		}
+		#endregion ListView
+		
 		public override void CPDrawBorder3D( Graphics graphics, Rectangle rectangle, Border3DStyle style, Border3DSide sides ) {
 			CPDrawBorder3D( graphics, rectangle, style, sides, ColorControl );
 		}
@@ -2371,6 +2656,16 @@ namespace System.Windows.Forms {
 					dc.DrawLine( tmp_pen, rect.Left + lineWidth / 2 + 2 * scale, rect.Top + lineWidth + 2 * scale + i, rect.Left + lineWidth / 2 + 6 * scale, rect.Top + lineWidth - 2 * scale + i );
 				}
 			}
+		}
+		
+		public  override void CPDrawStringDisabled( Graphics graphics, string s, Font font, Color color, RectangleF layoutRectangle,
+							   StringFormat format ) {			
+			
+			layoutRectangle.Offset( 1.0f, 1.0f );
+			graphics.DrawString( s, font, ResPool.GetSolidBrush( Color.White ), layoutRectangle, format );			
+			layoutRectangle.Offset( -1.0f, -1.0f );
+			graphics.DrawString( s, font, ResPool.GetSolidBrush( disabled_color_foreground ), layoutRectangle, format );
+			
 		}
 	} //class
 }
