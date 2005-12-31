@@ -32,6 +32,7 @@
 using System;
 using System.Data;
 using System.Reflection;
+using System.IO;
 
 namespace Mono.Data
 {
@@ -44,6 +45,7 @@ namespace Mono.Data
 		private Type connectionType;
 		private Type adapterType;
 		private Type commandType;
+		private Assembly providerAssembly;
 		private string assemblyName;
 		private string description;
       
@@ -82,13 +84,24 @@ namespace Mono.Data
 			get {return description;}
 		}
 
+		public Assembly ProviderAssembly {
+			get {
+				if (providerAssembly == null)
+					providerAssembly = Assembly.Load (assemblyName);
+
+				return providerAssembly;
+			}
+		}
+
 		public Type ConnectionType
 		{
-			get 
-			{
-				if (connectionType==null)
-				{
-					connectionType=Type.GetType(connectionTypeName+","+assemblyName);
+			get {
+				if (connectionType == null) {
+					connectionType = ProviderAssembly.GetType (connectionTypeName, false);
+					if (connectionType == null) {
+						throw new Exception (String.Format ("Unable to load type of connection class: {0} from assembly: {1}",
+							connectionTypeName, assemblyName));
+					}
 				}
 				return connectionType;
 			}
@@ -96,23 +109,26 @@ namespace Mono.Data
 
 		public Type DataAdapterType
 		{
-			get 
-			{
-				if (adapterType==null)
-				{
-					adapterType=Type.GetType(adapterTypeName+","+assemblyName);
+			get {
+				if (adapterType == null) {
+					adapterType = ProviderAssembly.GetType (adapterTypeName, false);
+					if (adapterType == null) {
+						throw new Exception (String.Format ("Unable to load type of adapter class: {0} from assembly: {1}",
+							adapterTypeName, assemblyName));
+					}
 				}
 				return adapterType;
 			}
 		}
 
-		public Type CommandType
-		{
-			get 
-			{
-				if (commandType==null)
-				{
-					commandType=Type.GetType(commandTypeName+","+assemblyName);
+		public Type CommandType {
+			get {
+				if (commandType == null) {
+					commandType = ProviderAssembly.GetType (commandTypeName, false);
+					if (commandType == null) {
+						throw new Exception (String.Format ("Unable to load type of command class: {0} from assembly: {1}",
+							commandTypeName, assemblyName));
+					}
 				}
 				return commandType;
 			}
@@ -120,17 +136,48 @@ namespace Mono.Data
 
 		public IDbConnection CreateConnection()
 		{
-			return (IDbConnection) Activator.CreateInstance(ConnectionType);
+			object connObj = null;
+
+			switch (Name) {
+			case "System.Data.SqlClient":
+				connObj = new System.Data.SqlClient.SqlConnection ();
+				break;
+			case "System.Data.Odbc":
+				connObj = new System.Data.Odbc.OdbcConnection ();
+				break;
+			case "System.Data.OleDb":
+				connObj = new System.Data.OleDb.OleDbConnection ();
+				break;
+			default:
+				connObj = Activator.CreateInstance (ConnectionType);
+				break;
+			}
+
+			if (connObj == null)
+				throw new Exception (String.Format ("Unable to create instance of connection class: {0} from assembly: {1}",
+					connectionTypeName, assemblyName));
+			
+			return (IDbConnection) connObj;
 		}
 
 		public IDbDataAdapter CreateDataAdapter()
 		{
-			return (IDbDataAdapter) Activator.CreateInstance(DataAdapterType);
+			object adapterObj = Activator.CreateInstance (DataAdapterType);
+			if (adapterObj == null)
+				throw new Exception (String.Format ("Unable to create instance of adapter class: {0} from assembly: {1}",
+					adapterTypeName, assemblyName));
+
+			return (IDbDataAdapter) adapterObj;
 		}
 
 		public IDbCommand CreateCommand()
 		{
-			return (IDbCommand) Activator.CreateInstance(CommandType);
+			object commandObj = Activator.CreateInstance (CommandType);
+			if (commandObj == null)
+				throw new Exception (String.Format ("Unable to create instance of command class: {0} from assembly: {1}",
+					commandTypeName, assemblyName));
+
+			return (IDbCommand) commandObj;
 		}
 	}
 }

@@ -1,3 +1,12 @@
+2005-12-31  Daniel Morgan <danielmorgan@verizon.net>
+
+	* test/test.exe.config	
+	* app.config: add new ADO.NET providers, remove obsolete providers, and
+	add more sample connection strings
+	
+	* Provider.cs: load providers internal to System.Data differently than those
+	that are external, better error handling for assembly or connection class not found
+
 2004-03-30  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* DataTools.cs: in FillDataSet(string,SelectCommand), use the connection
