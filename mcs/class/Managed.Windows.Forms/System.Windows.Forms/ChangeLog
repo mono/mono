@@ -1,3 +1,9 @@
+2006-01-01  Alexander Olk  <alex.olk@googlemail.com>
+
+	* FileDialog.cs: Breathe some life into "last open"/"recently used"
+	  button
+	* MimeIcon.cs: Do a check for the top level media type also
+
 2005-12-31  Alexander Olk  <alex.olk@googlemail.com>
 
 	* ThemeClearlooks.cs:

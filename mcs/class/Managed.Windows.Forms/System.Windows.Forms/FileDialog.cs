@@ -36,6 +36,7 @@ using System.Resources;
 using System.IO;
 using System.Collections;
 using System.Collections.Specialized;
+using System.Xml;
 
 namespace System.Windows.Forms
 {
@@ -1230,6 +1231,76 @@ namespace System.Windows.Forms
 					Controls.Remove( checkBox );
 			}
 			
+			public void ShowRecentlyUsed( ) 
+			{
+				// check for GNOME and KDE
+				string personal_folder = Environment.GetFolderPath( Environment.SpecialFolder.Personal );
+				ArrayList files_al = new ArrayList( );
+				
+				// GNOME
+				if ( File.Exists( personal_folder + "/.recently-used" ) )
+				{
+					try
+					{
+						
+						XmlTextReader xtr = new XmlTextReader( personal_folder + "/.recently-used" );
+						while ( xtr.Read( ) ) 
+						{
+							if ( xtr.NodeType == XmlNodeType.Element && xtr.Name.ToUpper() == "URI" )
+							{
+								xtr.Read();
+								Uri uri = new Uri( xtr.Value );
+								if ( !files_al.Contains( uri.LocalPath ) )
+									files_al.Add( uri.LocalPath );
+							}
+						}
+						xtr.Close();
+					} catch ( Exception e )
+					{
+						
+					}
+				}
+				
+				// KDE
+				string full_kde_recent_document_dir = personal_folder
+					+ "/"
+					+ ".kde/share/apps/RecentDocuments";
+				
+				if ( Directory.Exists( full_kde_recent_document_dir ) )
+				{
+					string[] files = Directory.GetFiles( full_kde_recent_document_dir, "*.desktop" );
+					
+					foreach( string file_name in files )
+					{
+						StreamReader sr = new StreamReader( file_name );
+						
+						string line = sr.ReadLine();
+						
+						while (line != null) 
+						{
+							line = line.Trim();
+							
+							if ( line.StartsWith( "URL=" ) )
+							{
+								line = line.Replace( "URL=", "" );
+								line = line.Replace( "$HOME", personal_folder );
+								
+								Uri uri = new Uri( line );
+								if ( !files_al.Contains( uri.LocalPath ) )
+									files_al.Add( uri.LocalPath );
+								break;
+							}
+							
+							line = sr.ReadLine();
+						}
+						
+						sr.Close();
+					}
+				}
+				
+				mwfFileView.UpdateFileViewByArrayList( files_al );
+			}
+			
 			internal class PopupButtonPanel : Panel
 			{
 				internal class PopupButton : Control
@@ -1368,12 +1439,14 @@ namespace System.Windows.Forms
 					// use ImageList to scale the bitmaps
 					imageList.ColorDepth = ColorDepth.Depth32Bit;
 					imageList.ImageSize = new Size( 38, 38 );
-					imageList.Images.Add( (Image)Locale.GetResource( "last_open" ) );
+//					imageList.Images.Add( (Image)Locale.GetResource( "last_open" ) );
+					imageList.Images.Add( MimeIconEngine.GetIconForMimeTypeAndSize( "recently/recently", imageList.ImageSize ) );
 					//imageList.Images.Add( (Image)Locale.GetResource( "desktop" ) );
 					imageList.Images.Add( MimeIconEngine.GetIconForMimeTypeAndSize( "desktop/desktop", imageList.ImageSize ) );
 					//imageList.Images.Add( (Image)Locale.GetResource( "folder_with_paper" ) );
 					imageList.Images.Add( MimeIconEngine.GetIconForMimeTypeAndSize( "directory/home", imageList.ImageSize ) );
-					imageList.Images.Add( (Image)Locale.GetResource( "monitor-computer" ) );
+//					imageList.Images.Add( (Image)Locale.GetResource( "monitor-computer" ) );
+					imageList.Images.Add( MimeIconEngine.GetIconForMimeTypeAndSize( "workplace/workplace", imageList.ImageSize ) );
 					//imageList.Images.Add( (Image)Locale.GetResource( "monitor-planet" ) );
 					imageList.Images.Add( MimeIconEngine.GetIconForMimeTypeAndSize( "network/network", imageList.ImageSize ) );
 					imageList.TransparentColor = Color.Transparent;
@@ -1439,7 +1512,7 @@ namespace System.Windows.Forms
 					
 					if ( sender == lastOpenButton )
 					{
-						
+						fileDialogPanel.ShowRecentlyUsed();
 					}
 					else
 					if ( sender == desktopButton )
@@ -1625,6 +1698,22 @@ namespace System.Windows.Forms
 			return arrayList;
 		}
 		
+		private ArrayList GetFileInfoArrayListByArrayList( ArrayList al )
+		{
+			ArrayList arrayList = new ArrayList( );
+			
+			foreach ( string path in al )
+			{
+				if ( File.Exists( path ) )
+				{
+					FileInfo fi = new FileInfo( path );
+					arrayList.Add( fi );
+				}
+			}
+			
+			return arrayList;
+		}
+		
 		public void UpdateFileView( DirectoryInfo inputDirectoryInfo )
 		{
 			DirectoryInfo directoryInfo = inputDirectoryInfo;
@@ -1669,39 +1758,62 @@ namespace System.Windows.Forms
 			
 			foreach ( FileInfo fileInfo in fileInfoArrayList )
 			{
-				if ( !ShowHiddenFiles )
-					if ( fileInfo.Name.StartsWith( "." )  || fileInfo.Attributes == FileAttributes.Hidden )
-						continue;
-				
-				FileStruct fileStruct = new FileStruct( );
-				
-				fileStruct.fullname = fileInfo.FullName;
-				
-				ListViewItem listViewItem = new ListViewItem( fileInfo.Name );
-				
-				listViewItem.ImageIndex = MimeIconEngine.GetIconIndexForFile( fileStruct.fullname );
-				
-				long fileLen = 1;
-				try {
-					if ( fileInfo.Length > 1024 )
-						fileLen = fileInfo.Length / 1024;
-				} catch( Exception e )
-				{
-					fileLen = 1;
-				}
-				
-				listViewItem.SubItems.Add( fileLen.ToString( ) + " KB" );
-				listViewItem.SubItems.Add( "File" );
-				listViewItem.SubItems.Add( fileInfo.LastAccessTime.ToShortDateString( ) + " " + fileInfo.LastAccessTime.ToShortTimeString( ) );
-				
-				fileStruct.attributes = FileAttributes.Normal;
-				
-				fileHashtable.Add( fileInfo.Name, fileStruct );
-				
-				Items.Add( listViewItem );
+				DoOneFileInfo(fileInfo);
 			}
 			
 			EndUpdate( );
+		}
+		
+		public void UpdateFileViewByArrayList( ArrayList al ) 
+		{
+			ArrayList fileInfoArrayList = GetFileInfoArrayListByArrayList( al );
+			
+			fileHashtable.Clear( );
+			
+			BeginUpdate( );
+			
+			Items.Clear( );
+			SelectedItems.Clear( );
+			
+			foreach ( FileInfo fileInfo in fileInfoArrayList )
+			{
+				DoOneFileInfo(fileInfo);
+			}
+			
+			EndUpdate( );
+		}
+
+		private void DoOneFileInfo( FileInfo fileInfo ) 
+		{
+			if ( !ShowHiddenFiles )
+				if ( fileInfo.Name.StartsWith( "." )  || fileInfo.Attributes == FileAttributes.Hidden )
+					return;
+			
+			FileStruct fileStruct = new FileStruct( );
+			
+			fileStruct.fullname = fileInfo.FullName;
+			
+			ListViewItem listViewItem = new ListViewItem( fileInfo.Name );
+			
+			listViewItem.ImageIndex = MimeIconEngine.GetIconIndexForFile( fileStruct.fullname );
+			
+			long fileLen = 1;
+			try {
+				if ( fileInfo.Length > 1024 )
+					fileLen = fileInfo.Length / 1024;
+			} catch ( Exception e ) {
+				fileLen = 1;
+			}
+			
+			listViewItem.SubItems.Add( fileLen.ToString( ) + " KB" );
+			listViewItem.SubItems.Add( "File" );
+			listViewItem.SubItems.Add( fileInfo.LastAccessTime.ToShortDateString( ) + " " + fileInfo.LastAccessTime.ToShortTimeString( ) );
+			
+			fileStruct.attributes = FileAttributes.Normal;
+			
+			fileHashtable.Add( fileInfo.Name, fileStruct );
+			
+			Items.Add( listViewItem );
 		}
 		
 		protected override void OnClick( EventArgs e )

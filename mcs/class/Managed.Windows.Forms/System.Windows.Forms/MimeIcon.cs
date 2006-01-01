@@ -328,18 +328,19 @@ namespace System.Windows.Forms
 							oindex = MimeTypeIconIndexHash[ s ];
 							
 							if ( oindex != null )
-								break;
+								return oindex;
 						}
 					}
 					
 					// if oindex is still null check if mime_type is a sub class of an other mime type
-					if ( oindex == null )
-					{
-						string sub_class = MimeGenerated.SubClasses[ mime_type ];
-						
-						if ( sub_class != null )
-							oindex = MimeTypeIconIndexHash[ sub_class ];
-					}
+					string sub_class = MimeGenerated.SubClasses[ mime_type ];
+					
+					if ( sub_class != null )
+						return MimeTypeIconIndexHash[ sub_class ];
+					
+					// last check, see if we find an entry for the main mime type class
+					string mime_class_main = mime_type.Substring( 0, mime_type.IndexOf( '/' ) );
+					return MimeTypeIconIndexHash[ mime_class_main ];
 				}
 			}
 			
@@ -382,12 +383,16 @@ namespace System.Windows.Forms
 			MimeIconEngine.AddMimeTypeAndIconName( "desktop/desktop", "desktop" );
 			MimeIconEngine.AddMimeTypeAndIconName( "directory/home", "folder_with_paper" );
 			MimeIconEngine.AddMimeTypeAndIconName( "network/network", "monitor-planet" );
+			MimeIconEngine.AddMimeTypeAndIconName( "recently/recently", "last_open" );
+			MimeIconEngine.AddMimeTypeAndIconName( "workplace/workplace", "monitor-computer" );
 			
 			MimeIconEngine.AddIconByImage( "folder",  (Image)Locale.GetResource( "folder" ) );
 			MimeIconEngine.AddIconByImage( "paper",  (Image)Locale.GetResource( "paper" ) );
 			MimeIconEngine.AddIconByImage( "desktop",  (Image)Locale.GetResource( "desktop" ) );
 			MimeIconEngine.AddIconByImage( "folder_with_paper",  (Image)Locale.GetResource( "folder_with_paper" ) );
 			MimeIconEngine.AddIconByImage( "monitor-planet",  (Image)Locale.GetResource( "monitor-planet" ) );
+			MimeIconEngine.AddIconByImage( "last_open",  (Image)Locale.GetResource( "last_open" ) );
+			MimeIconEngine.AddIconByImage( "monitor-computer",  (Image)Locale.GetResource( "monitor-computer" ) );
 			
 			return MimeExtensionHandlerStatus.OK; // return always ok
 		}
@@ -546,6 +551,8 @@ namespace System.Windows.Forms
 			MimeIconEngine.AddMimeTypeAndIconName( "desktop/desktop", "desktop" );
 			MimeIconEngine.AddMimeTypeAndIconName( "directory/home", "folder_home" );
 			MimeIconEngine.AddMimeTypeAndIconName( "network/network", "network" );
+			MimeIconEngine.AddMimeTypeAndIconName( "recently/recently", "folder_man" );
+			MimeIconEngine.AddMimeTypeAndIconName( "workplace/workplace", "system" );
 			
 			foreach ( string mime_path in mime_paths )
 			{
@@ -698,6 +705,8 @@ namespace System.Windows.Forms
 			MimeIconEngine.AddMimeTypeAndIconName( "desktop/desktop", "gnome-fs-desktop" );
 			MimeIconEngine.AddMimeTypeAndIconName( "directory/home", "gnome-fs-home" );
 			MimeIconEngine.AddMimeTypeAndIconName( "network/network", "gnome-fs-network" );
+			MimeIconEngine.AddMimeTypeAndIconName( "recently/recently", "gnome-fs-directory-accept" );
+			MimeIconEngine.AddMimeTypeAndIconName( "workplace/workplace", "gnome-fs-client" );
 			
 			foreach ( string ip in icon_paths )
 			{
