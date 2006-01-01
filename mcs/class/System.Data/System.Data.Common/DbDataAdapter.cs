@@ -104,49 +104,49 @@ namespace System.Data.Common {
 
 		[MonoTODO]
 		IDbCommand IDbDataAdapter.SelectCommand {
-			get { throw new NotImplementedException(); }
+			get { return ((IDbDataAdapter) this).SelectCommand; }
 			set { throw new NotImplementedException(); }
 		}
 
 		[MonoTODO]
 		IDbCommand IDbDataAdapter.UpdateCommand{
-			get { throw new NotImplementedException(); }
+			get { return ((IDbDataAdapter) this).UpdateCommand; }
 			set { throw new NotImplementedException(); }
 		}
 
 		[MonoTODO]
 		IDbCommand IDbDataAdapter.DeleteCommand{
-			get { throw new NotImplementedException(); }
+			get { return ((IDbDataAdapter) this).DeleteCommand; }
 			set { throw new NotImplementedException(); }
 		}
 
 		[MonoTODO]
 		IDbCommand IDbDataAdapter.InsertCommand{
-			get { throw new NotImplementedException(); }
+			get { return ((IDbDataAdapter) this).InsertCommand; }
 			set { throw new NotImplementedException(); }
 		}
 		
 		[MonoTODO]
 		public DbCommand SelectCommand {
-			get { throw new NotImplementedException(); }
+			get { return (DbCommand) ((IDbDataAdapter) this).SelectCommand; }
 			set { throw new NotImplementedException(); }
 		}
 
 		[MonoTODO]
 		public DbCommand DeleteCommand {
-			get { throw new NotImplementedException(); }
+			get { return (DbCommand) ((IDbDataAdapter) this).DeleteCommand; }
 			set { throw new NotImplementedException(); }
 		}
 
 		[MonoTODO]
 		public DbCommand InsertCommand {
-			get { throw new NotImplementedException(); }
+			get { return (DbCommand) ((IDbDataAdapter) this).InsertCommand; }
 			set { throw new NotImplementedException(); }
 		}
 
 		[MonoTODO]
 		public DbCommand UpdateCommand {
-			get { throw new NotImplementedException(); }
+			get { return (DbCommand) ((IDbDataAdapter) this).UpdateCommand; }
 			set { throw new NotImplementedException(); }
 		}
 
@@ -246,7 +246,7 @@ namespace System.Data.Common {
 
 		public override int Fill (DataSet dataSet)
 		{
-			return Fill (dataSet, 0, 0, DefaultSourceTableName, SelectCommand, CommandBehavior.Default);
+			return Fill (dataSet, 0, 0, DefaultSourceTableName, ((IDbDataAdapter) this).SelectCommand, CommandBehavior.Default);
 		}
 
 		public int Fill (DataTable dataTable) 
@@ -254,12 +254,12 @@ namespace System.Data.Common {
 			if (dataTable == null)
 				throw new NullReferenceException ();
 
-			return Fill (dataTable, SelectCommand, CommandBehavior.Default);
+			return Fill (dataTable, ((IDbDataAdapter) this).SelectCommand, CommandBehavior.Default);
 		}
 
 		public int Fill (DataSet dataSet, string srcTable) 
 		{
-			return Fill (dataSet, 0, 0, srcTable, SelectCommand, CommandBehavior.Default);
+			return Fill (dataSet, 0, 0, srcTable, ((IDbDataAdapter) this).SelectCommand, CommandBehavior.Default);
 		}
 
 #if NET_2_0
@@ -310,7 +310,7 @@ namespace System.Data.Common {
 
 		public int Fill (DataSet dataSet, int startRecord, int maxRecords, string srcTable) 
 		{
-			return this.Fill (dataSet, startRecord, maxRecords, srcTable, SelectCommand, CommandBehavior.Default);
+			return this.Fill (dataSet, startRecord, maxRecords, srcTable, ((IDbDataAdapter) this).SelectCommand, CommandBehavior.Default);
 		}
 
 #if NET_2_0
@@ -475,17 +475,17 @@ namespace System.Data.Common {
 
 		public override DataTable[] FillSchema (DataSet dataSet, SchemaType schemaType) 
 		{
-			return FillSchema (dataSet, schemaType, SelectCommand, DefaultSourceTableName, CommandBehavior.Default);
+			return FillSchema (dataSet, schemaType, ((IDbDataAdapter) this).SelectCommand, DefaultSourceTableName, CommandBehavior.Default);
 		}
 
 		public DataTable FillSchema (DataTable dataTable, SchemaType schemaType) 
 		{
-			return FillSchema (dataTable, schemaType, SelectCommand, CommandBehavior.Default);
+			return FillSchema (dataTable, schemaType, ((IDbDataAdapter) this).SelectCommand, CommandBehavior.Default);
 		}
 
 		public DataTable[] FillSchema (DataSet dataSet, SchemaType schemaType, string srcTable) 
 		{
-			return FillSchema (dataSet, schemaType, SelectCommand, srcTable, CommandBehavior.Default);
+			return FillSchema (dataSet, schemaType, ((IDbDataAdapter) this).SelectCommand, srcTable, CommandBehavior.Default);
 		}
 
 		[MonoTODO ("Verify")]
@@ -887,17 +887,17 @@ namespace System.Data.Common {
 				switch (row.RowState) {
 				case DataRowState.Added:
 					statementType = StatementType.Insert;
-					command = InsertCommand;
+					command = ((IDbDataAdapter) this).InsertCommand;
 					commandName = "Insert";
 					break;
 				case DataRowState.Deleted:
 					statementType = StatementType.Delete;
-					command = DeleteCommand;
+					command = ((IDbDataAdapter) this).DeleteCommand;
 					commandName = "Delete";
 					break;
 				case DataRowState.Modified:
 					statementType = StatementType.Update;
-					command = UpdateCommand;
+					command = ((IDbDataAdapter) this).UpdateCommand;
 					commandName = "Update";
 					break;
 				case DataRowState.Unchanged:

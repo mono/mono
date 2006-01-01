@@ -1,3 +1,9 @@
+2006-01-01  Daniel Morgan <danielmorgan@verizon.net>
+
+	* System.Data.Common/DbDataAdapter.cs: fix
+	regression for NET_2_0 causing NotImplementedException.
+	Fixes bug #77105.
+
 2005-11-30  Konstantin Triger <kostat@mainsoft.com>
 
         * jay.bat: quoting passes
