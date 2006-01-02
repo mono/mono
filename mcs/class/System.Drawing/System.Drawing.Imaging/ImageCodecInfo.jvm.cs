@@ -69,19 +69,7 @@ namespace System.Drawing.Imaging {
 			ImageCodecInfo [] newInfo = new ImageCodecInfo [oldInfo.Count];
 			int i=0;
 			foreach (ImageCodecInfo codec in oldInfo.Values) {
-				//newInfo [i++] = (ImageCodecInfo) codec.MemberwiseClone ();
-				newInfo [i] = new ImageCodecInfo ();
-				newInfo [i].clsid = codec.clsid;
-				newInfo [i].formatID = codec.formatID;
-				newInfo [i].codecName = codec.codecName;
-				newInfo [i].dllName = codec.dllName;
-				newInfo [i].flags = codec.flags;
-				newInfo [i].filenameExtension = codec.filenameExtension;
-				newInfo [i].formatDescription = codec.formatDescription;
-				newInfo [i].mimeType = codec.mimeType;
-				newInfo [i].signatureMasks = codec.signatureMasks;
-				newInfo [i].signaturePatterns = codec.signaturePatterns;
-				newInfo [i++].version = codec.version;
+				newInfo [i++] = (ImageCodecInfo) codec.MemberwiseClone ();
 			}
 			return newInfo;
 		}
