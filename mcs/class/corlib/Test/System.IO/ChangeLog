@@ -1,3 +1,10 @@
+2006-01-02  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* StreamReaderTest.cs: Added test case when reading a new line (see 
+	bug #77108 for details).
+	* StringReaderTest.cs: Added test case when reading a new line (see 
+	bug #77108 for details).
+
 2005-12-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DirectoryInfoTest.cs: Added test case for #77090 where we skipped

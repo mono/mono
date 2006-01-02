@@ -724,6 +724,14 @@ public class StreamReaderTest : Assertion
 		char[] array = new char [16];
 		StreamReader r = new StreamReader (new MemoryStream (16));
 		r.Read (array, Int32.MaxValue, 1);
+	}
+
+	[Test]
+	public void Read_DoesntStopAtLineEndings ()
+	{
+		MemoryStream ms = new MemoryStream (Encoding.ASCII.GetBytes ("Line1\rLine2\r\nLine3\nLine4"));
+		StreamReader reader = new StreamReader (ms);
+		AssertEquals (24, reader.Read (new char[24], 0, 24));
 	}	
 }
 }

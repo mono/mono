@@ -194,6 +194,13 @@ public class StringReaderTest : Assertion {
 		StringReader sr = new StringReader ("Mono");
 		sr.Read (new char [4], 1, Int32.MaxValue);
 	}
+
+	[Test]
+	public void Read_DoesntStopAtLineEndings ()
+	{
+		StringReader reader = new StringReader ("Line1\rLine2\r\nLine3\nLine4");
+		AssertEquals (24, reader.Read (new char[24], 0, 24));
+	}	
 }
 
 }
