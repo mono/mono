@@ -1,4 +1,6 @@
 DefaultProvider = MyRsaProtectedConfigurationProvider
 MyRsaProtectedConfigurationProvider
-keyContainerName = MyKeys
-useMachineContainer = True
+cspProviderName = '(null)'
+keyContainerName = 'MyKeys'
+useMachineContainer = 'True'
+useOAEP = 'True'

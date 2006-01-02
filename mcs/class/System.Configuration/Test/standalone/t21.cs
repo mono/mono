@@ -7,15 +7,13 @@ class T1
 	{
 		try {
 			Console.WriteLine ("DefaultProvider = {0}", ProtectedConfiguration.DefaultProvider);
-			foreach (ProtectedConfigurationProvider pc in ProtectedConfiguration.Providers) {
-				Console.WriteLine (pc.Name);
-				if (pc is RsaProtectedConfigurationProvider) {
-					RsaProtectedConfigurationProvider rsa = (RsaProtectedConfigurationProvider)pc;
+			RsaProtectedConfigurationProvider rsa = (RsaProtectedConfigurationProvider)ProtectedConfiguration.Providers [ProtectedConfiguration.DefaultProvider];
+			Console.WriteLine (rsa.Name);
 
-					Console.WriteLine ("keyContainerName = {0}", rsa.KeyContainerName);
-					Console.WriteLine ("useMachineContainer = {0}", rsa.UseMachineContainer);
-				}
-			}
+			Console.WriteLine ("cspProviderName = '{0}'", rsa.CspProviderName == null ? "(null)" : rsa.CspProviderName);
+			Console.WriteLine ("keyContainerName = '{0}'", rsa.KeyContainerName == null ? "(null)" : rsa.KeyContainerName);
+			Console.WriteLine ("useMachineContainer = '{0}'", rsa.UseMachineContainer);
+			Console.WriteLine ("useOAEP = '{0}'", rsa.UseOAEP);
 		}
 		catch (Exception e)
 		{
