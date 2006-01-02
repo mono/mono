@@ -161,7 +161,7 @@ namespace System
 			return CreateInstance (type, false);
 		}
 
-		public static object CreateInstance (Type type, object [] args)
+		public static object CreateInstance (Type type, params object [] args)
 		{
 			return CreateInstance (type, args, new object [0]);
 		}

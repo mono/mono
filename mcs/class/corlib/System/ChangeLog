@@ -1,5 +1,7 @@
 2006-01-02  Zoltan Varga  <vargaz@gmail.com>
 
+	* Activator.cs: Add a 'params' to one of the CreateInstance overloads.
+
 	* RuntimeTypeHandle.cs RuntimeMethodHandle.cs RuntimeFieldHandle.cs:
 	Add == and != operators.
 
