@@ -117,7 +117,30 @@ public class FieldInfoTest : Assertion
 
 		f.SetValue (null, 8);
 	}
-	
+
+	public int? nullable_field;
+
+	public static int? static_nullable_field;
+
+	[Test]
+	public void NullableTests ()
+	{
+		FieldInfoTest t = new FieldInfoTest ();
+
+		FieldInfo fi = typeof (FieldInfoTest).GetField ("nullable_field");
+
+		fi.SetValue (t, 101);
+		AssertEquals (101, fi.GetValue (t));
+		fi.SetValue (t, null);
+		AssertEquals (null, fi.GetValue (t));
+
+		FieldInfo fi2 = typeof (FieldInfoTest).GetField ("static_nullable_field");
+
+		fi2.SetValue (t, 101);
+		AssertEquals (101, fi2.GetValue (t));
+		fi2.SetValue (t, null);
+		AssertEquals (null, fi2.GetValue (t));
+	}
 #endif
 }		
 #if NET_2_0

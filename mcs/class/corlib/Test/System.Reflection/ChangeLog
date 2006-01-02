@@ -1,3 +1,8 @@
+2006-01-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* FieldInfoTest.cs PropertyInfoTest.cs MethodInfoTest.cs: Add Nullable
+	tests.
+
 2005-12-20  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* AssemblyTest.cs: Remove 'NotWorking' category attribute

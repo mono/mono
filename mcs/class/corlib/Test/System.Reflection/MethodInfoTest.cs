@@ -198,6 +198,19 @@ namespace MonoTests.System.Reflection
 				"MakeGenericMethodArgsMismatchFoo")
 				.MakeGenericMethod ();
 		}
+
+		public static int? pass_nullable (int? i)
+		{
+			return i;
+		}
+
+		[Test]
+		public void NullableTests ()
+		{
+			MethodInfo mi = typeof (MethodInfoTest).GetMethod ("pass_nullable");
+			AssertEquals (102, mi.Invoke (null, new object [] { 102 }));
+			AssertEquals (null, mi.Invoke (null, new object [] { null }));
+		}
 #endif
 	}
 	
