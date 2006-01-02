@@ -143,7 +143,6 @@ public class StringTest : Assertion
 	}
 
 	[Test]
-	[Category("NotWorking")]
 	// http://bugzilla.ximian.com/show_bug.cgi?id=70478
 	public void CompareNotWorking ()
 	{
