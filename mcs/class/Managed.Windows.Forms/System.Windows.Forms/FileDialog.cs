@@ -1345,7 +1345,9 @@ namespace System.Windows.Forms
 							
 							new_child = xml_doc.CreateElement( "Timestamp" );
 							long seconds = 0;
+							#if __MonoCS__
 							Mono.Unix.Native.Syscall.time( out seconds );
+							#endif
 							new_text_child = xml_doc.CreateTextNode( seconds.ToString( ) );
 							new_child.AppendChild( new_text_child );
 							
@@ -1415,7 +1417,9 @@ namespace System.Windows.Forms
 						
 						new_child = xml_doc.CreateElement( "Timestamp" );
 						long seconds = 0;
+						#if __MonoCS__
 						Mono.Unix.Native.Syscall.time( out seconds );
+						#endif
 						new_text_child = xml_doc.CreateTextNode( seconds.ToString( ) );
 						new_child.AppendChild( new_text_child );
 						

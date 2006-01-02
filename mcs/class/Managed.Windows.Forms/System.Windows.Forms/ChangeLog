@@ -1,5 +1,9 @@
 2006-01-02  Alexander Olk  <alex.olk@googlemail.com>
 
+	* FileDialog.cs: Forgot too add __MonoCS__
+
+2006-01-02  Alexander Olk  <alex.olk@googlemail.com>
+
 	* FileDialog.cs: We are able to read recently used files now let's
 	  go on and write them.
 
