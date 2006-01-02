@@ -111,19 +111,6 @@ namespace Mono.Unix {
 		}
 
 		[CLSCompliant (false)]
-		[Obsolete ("Use Protection", true)]
-		public FilePermissions Permissions {
-			get {
-				RefreshStat ();
-				return (FilePermissions) stat.st_mode;
-			}
-			set {
-				int r = Syscall.fchmod (fileDescriptor, value);
-				UnixMarshal.ThrowExceptionForLastErrorIf (r);
-			}
-		}
-
-		[CLSCompliant (false)]
 		public Native.FilePermissions Protection {
 			get {
 				RefreshStat ();
@@ -140,7 +127,7 @@ namespace Mono.Unix {
 		public FileTypes FileType {
 			get {
 				int type = (int) Protection;
-				return (FileTypes) (type & (int) FileTypes.AllTypes);
+				return (FileTypes) (type & (int) UnixFileSystemInfo.AllFileTypes);
 			}
 			// no set as fchmod(2) won't accept changing the file type.
 		}
@@ -201,78 +188,6 @@ namespace Mono.Unix {
 		public void AdviseFileAccessPattern (FileAccessPattern pattern)
 		{
 			AdviseFileAccessPattern (pattern, 0, 0);
-		}
-
-		[Obsolete ("Use AdviseFileAccessPattern (FileAccessPattern.Normal, offset, len)", true)]
-		public void AdviseNormalAccess (long offset, long len)
-		{
-			UnixFile.AdviseNormalAccess (fileDescriptor, offset, len);
-		}
-
-		[Obsolete ("Use AdviseFileAccessPattern (FileAccessPattern.Normal)", true)]
-		public void AdviseNormalAccess ()
-		{
-			UnixFile.AdviseNormalAccess (fileDescriptor);
-		}
-
-		[Obsolete ("Use AdviseFileAccessPattern (FileAccessPattern.Sequential, offset, len)", true)]
-		public void AdviseSequentialAccess (long offset, long len)
-		{
-			UnixFile.AdviseSequentialAccess (fileDescriptor, offset, len);
-		}
-
-		[Obsolete ("Use AdviseFileAccessPattern (FileAccessPattern.Sequential)", true)]
-		public void AdviseSequentialAccess ()
-		{
-			UnixFile.AdviseSequentialAccess (fileDescriptor);
-		}
-
-		[Obsolete ("Use AdviseFileAccessPattern (FileAccessPattern.Random, offset, len)", true)]
-		public void AdviseRandomAccess (long offset, long len)
-		{
-			UnixFile.AdviseRandomAccess (fileDescriptor, offset, len);
-		}
-
-		[Obsolete ("Use AdviseFileAccessPattern (FileAccessPattern.Random)", true)]
-		public void AdviseRandomAccess ()
-		{
-			UnixFile.AdviseRandomAccess (fileDescriptor);
-		}
-
-		[Obsolete ("Use AdviseFileAccessPattern (FileAccessPattern.UseSoon, offset, len)", true)]
-		public void AdviseNeedAccess (long offset, long len)
-		{
-			UnixFile.AdviseNeedAccess (fileDescriptor, offset, len);
-		}
-
-		[Obsolete ("Use AdviseFileAccessPattern (FileAccessPattern.UseSoon)", true)]
-		public void AdviseNeedAccess ()
-		{
-			UnixFile.AdviseNeedAccess (fileDescriptor);
-		}
-
-		[Obsolete ("Use AdviseFileAccessPattern (FileAccessPattern.WillNotUse, offset, len)", true)]
-		public void AdviseNoAccess (long offset, long len)
-		{
-			UnixFile.AdviseNoAccess (fileDescriptor, offset, len);
-		}
-
-		[Obsolete ("Use AdviseFileAccessPattern (FileAccessPattern.WillNotUse)", true)]
-		public void AdviseNoAccess ()
-		{
-			UnixFile.AdviseNoAccess (fileDescriptor);
-		}
-
-		[Obsolete ("Use AdviseFileAccessPattern (FileAccessPattern.UseOnce, offset, len)", true)]
-		public void AdviseOnceAccess (long offset, long len)
-		{
-			UnixFile.AdviseOnceAccess (fileDescriptor, offset, len);
-		}
-
-		[Obsolete ("Use AdviseFileAccessPattern (FileAccessPattern.UseOnce)", true)]
-		public void AdviseOnceAccess ()
-		{
-			UnixFile.AdviseOnceAccess (fileDescriptor);
 		}
 
 		public override void Flush ()
@@ -441,16 +356,6 @@ namespace Mono.Unix {
 				UnixMarshal.ThrowExceptionForLastError ();
 		}
 		
-		[CLSCompliant (false)]
-		[Obsolete ("Use SetOwner (long, long)", true)]
-		public void SetOwner (uint user, uint group)
-		{
-			AssertNotDisposed ();
-
-			int r = Native.Syscall.fchown (fileDescriptor, user, group);
-			UnixMarshal.ThrowExceptionForLastErrorIf (r);
-		}
-
 		public void SetOwner (long user, long group)
 		{
 			AssertNotDisposed ();
@@ -479,17 +384,6 @@ namespace Mono.Unix {
 			long uid = pw.pw_uid;
 			long gid = pw.pw_gid;
 			SetOwner (uid, gid);
-		}
-
-		[CLSCompliant (false)]
-		[Obsolete ("Use GetConfigurationValue (Mono.Unix.Native.PathconfName", true)]
-		public long GetConfigurationValue (PathConf name)
-		{
-			AssertNotDisposed ();
-			long r = Syscall.fpathconf (fileDescriptor, name);
-			if (r == -1 && Syscall.GetLastError() != (Error) 0)
-				UnixMarshal.ThrowExceptionForLastError ();
-			return r;
 		}
 
 		[CLSCompliant (false)]

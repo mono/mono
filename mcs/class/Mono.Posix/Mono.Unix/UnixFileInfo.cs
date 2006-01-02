@@ -73,17 +73,6 @@ namespace Mono.Unix {
 		}
 
 		[CLSCompliant (false)]
-		[Obsolete ("Use Create(Mono.Unix.Native.FilePermissions)", true)]
-		public UnixStream Create (FilePermissions mode)
-		{
-			int fd = Syscall.creat (FullPath, mode);
-			if (fd < 0)
-				UnixMarshal.ThrowExceptionForLastError ();
-			base.Refresh ();
-			return new UnixStream (fd);
-		}
-
-		[CLSCompliant (false)]
 		public UnixStream Create (Native.FilePermissions mode)
 		{
 			int fd = Native.Syscall.creat (FullPath, mode);
@@ -99,16 +88,6 @@ namespace Mono.Unix {
 		}
 
 		[CLSCompliant (false)]
-		[Obsolete ("Use Open(Mono.Unix.Native.OpenFlags)", true)]
-		public UnixStream Open (OpenFlags flags)
-		{
-			int fd = Syscall.open (FullPath, flags);
-			if (fd < 0)
-				UnixMarshal.ThrowExceptionForLastError ();
-			return new UnixStream (fd);
-		}
-
-		[CLSCompliant (false)]
 		public UnixStream Open (Native.OpenFlags flags)
 		{
 			if ((flags & Native.OpenFlags.O_CREAT) != 0)
@@ -117,16 +96,6 @@ namespace Mono.Unix {
 						"FilePermissions.  Use the Open(OpenFlags, FilePermissions) " +
 						"method instead");
 			int fd = Native.Syscall.open (FullPath, flags);
-			if (fd < 0)
-				UnixMarshal.ThrowExceptionForLastError ();
-			return new UnixStream (fd);
-		}
-
-		[CLSCompliant (false)]
-		[Obsolete ("Use Open(Mono.Unix.Native.OpenFlags,Mono.Unix.Native.FilePermissions)", true)]
-		public UnixStream Open (OpenFlags flags, FilePermissions mode)
-		{
-			int fd = Syscall.open (FullPath, flags, mode);
 			if (fd < 0)
 				UnixMarshal.ThrowExceptionForLastError ();
 			return new UnixStream (fd);
@@ -151,14 +120,6 @@ namespace Mono.Unix {
 		{
 			Native.OpenFlags flags = Native.NativeConvert.ToOpenFlags (mode, access);
 			return Open (flags);
-		}
-
-		[CLSCompliant (false)]
-		[Obsolete ("Use Open (System.IO.FileMode,System.IO.FileAccess,Mono.Unix.Native.FilePermissions)", true)]
-		public UnixStream Open (FileMode mode, FileAccess access, FilePermissions perms)
-		{
-			OpenFlags flags = UnixConvert.ToOpenFlags (mode, access);
-			return Open (flags, perms);
 		}
 
 		[CLSCompliant (false)]

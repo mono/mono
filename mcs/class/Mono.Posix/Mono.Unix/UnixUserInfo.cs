@@ -65,19 +65,6 @@ namespace Mono.Unix {
 				throw new ArgumentException (Locale.GetText ("invalid user id"), "user");
 		}
 
-		[Obsolete ("Use UnixUserInfo (Mono.Unix.Native.Passwd)", true)]
-		public UnixUserInfo (Passwd passwd)
-		{
-			this.passwd = new Native.Passwd ();
-			this.passwd.pw_name   = passwd.pw_name;
-			this.passwd.pw_passwd = passwd.pw_passwd;
-			this.passwd.pw_uid    = passwd.pw_uid;
-			this.passwd.pw_gid    = passwd.pw_gid;
-			this.passwd.pw_gecos  = passwd.pw_gecos;
-			this.passwd.pw_dir    = passwd.pw_dir;
-			this.passwd.pw_shell  = passwd.pw_shell;
-		}
-
 		public UnixUserInfo (Native.Passwd passwd)
 		{
 			this.passwd = passwd;

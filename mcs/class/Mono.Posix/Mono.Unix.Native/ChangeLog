@@ -1,5 +1,10 @@
 2005-01-02  Jonathan Pryor <jonpryor@vt.edu>
 
+	* NativeConvert.generated.cs: Flush (remove Obsolete members).
+	* Syscall.cs: Remove invalid utimes(2) wrapper.
+
+2005-01-02  Jonathan Pryor <jonpryor@vt.edu>
+
 	* Stdlib.cs: s/ACCES/ACCESS/g.  How'd I create a badly named errno value?
 
 2005-12-29  Jonathan Pryor <jonpryor@vt.edu>

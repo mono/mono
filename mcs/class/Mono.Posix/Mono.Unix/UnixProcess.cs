@@ -136,14 +136,6 @@ namespace Mono.Unix {
 		}
 
 		[CLSCompliant (false)]
-		[Obsolete ("Use Signal (Mono.Unix.Native.Signum)", true)]
-		public void Signal (Signum signal)
-		{
-			int r = Syscall.kill (pid, signal);
-			UnixMarshal.ThrowExceptionForLastErrorIf (r);
-		}
-
-		[CLSCompliant (false)]
 		public void Signal (Native.Signum signal)
 		{
 			int r = Native.Syscall.kill (pid, signal);

@@ -109,18 +109,6 @@ namespace Mono.Unix {
 		}
 
 		[CLSCompliant (false)]
-		[Obsolete ("Use Protection.")]
-		public FilePermissions Mode {
-			get {AssertValid (); return (FilePermissions) stat.st_mode;}
-		}
-
-		[CLSCompliant (false)]
-		[Obsolete ("Use FileAccessPermissions.")]
-		public FilePermissions Permissions {
-			get {AssertValid (); return (FilePermissions) stat.st_mode & ~FilePermissions.S_IFMT;}
-		}
-
-		[CLSCompliant (false)]
 		public Native.FilePermissions Protection {
 			get {AssertValid (); return (Native.FilePermissions) stat.st_mode;}
 			set {
@@ -240,19 +228,8 @@ namespace Mono.Unix {
 			get {AssertValid (); return IsType (stat.st_mode, Native.FilePermissions.S_IFBLK);}
 		}
 
-		[Obsolete ("Use IsRegularFile")]
-		public bool IsFile {
-			get {AssertValid (); return IsType (stat.st_mode, Native.FilePermissions.S_IFREG);}
-		}
-
 		public bool IsRegularFile {
 			get {AssertValid (); return IsType (stat.st_mode, Native.FilePermissions.S_IFREG);}
-		}
-
-		[Obsolete ("Use IsFifo")]
-		[CLSCompliant (false)]
-		public bool IsFIFO {
-			get {AssertValid (); return IsType (stat.st_mode, Native.FilePermissions.S_IFIFO);}
 		}
 
 		public bool IsFifo {
@@ -279,23 +256,9 @@ namespace Mono.Unix {
 			get {AssertValid (); return IsType (stat.st_mode, Native.FilePermissions.S_ISVTX);}
 		}
 
-		[Obsolete ("Use IsType(Native.FilePermissions, Native.FilePermissions)", true)]
-		internal static bool IsType (FilePermissions mode, FilePermissions type)
-		{
-			return (mode & type) == type;
-		}
-
 		internal static bool IsType (Native.FilePermissions mode, Native.FilePermissions type)
 		{
 			return (mode & type) == type;
-		}
-
-		[CLSCompliant (false)]
-		[Obsolete ("Use CanAccess (Mono.Unix.Native.AccessModes)", true)]
-		public bool CanAccess (AccessMode mode)
-		{
-			int r = Syscall.access (FullPath, mode);
-			return r == 0;
 		}
 
 		[CLSCompliant (false)]
@@ -320,16 +283,6 @@ namespace Mono.Unix {
 		}
 
 		public abstract void Delete ();
-
-		[CLSCompliant (false)]
-		[Obsolete ("Use GetConfigurationValue (Mono.Unix.Native.PathconfName)", true)]
-		public long GetConfigurationValue (PathConf name)
-		{
-			long r = Syscall.pathconf (FullPath, name);
-			if (r == -1 && Syscall.GetLastError() != (Error) 0)
-				UnixMarshal.ThrowExceptionForLastError ();
-			return r;
-		}
 
 		[CLSCompliant (false)]
 		public long GetConfigurationValue (Native.PathconfName name)
@@ -363,22 +316,6 @@ namespace Mono.Unix {
 			do {
 				r = Native.Syscall.truncate (FullPath, length);
 			}	while (UnixMarshal.ShouldRetrySyscall (r));
-			UnixMarshal.ThrowExceptionForLastErrorIf (r);
-		}
-
-		[CLSCompliant (false)]
-		[Obsolete ("Use Protection setter", true)]
-		public void SetPermissions (FilePermissions perms)
-		{
-			int r = Syscall.chmod (FullPath, perms);
-			UnixMarshal.ThrowExceptionForLastErrorIf (r);
-		}
-
-		[CLSCompliant (false)]
-		[Obsolete ("Use SetOwner (long, long)", true)]
-		public virtual void SetOwner (uint owner, uint group)
-		{
-			int r = Syscall.chown (FullPath, owner, group);
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 		}
 

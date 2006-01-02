@@ -55,16 +55,6 @@ namespace Mono.Unix {
 				throw new ArgumentException (Locale.GetText ("invalid group id"), "group");
 		}
 
-		[Obsolete ("Use UnixGroupInfo(Mono.Unix.Native.Group)", true)]
-		public UnixGroupInfo (Group group)
-		{
-			this.group = new Native.Group ();
-			this.group.gr_name    = group.gr_name;
-			this.group.gr_passwd  = group.gr_passwd;
-			this.group.gr_gid     = group.gr_gid;
-			this.group.gr_mem     = group.gr_mem;
-		}
-
 		public UnixGroupInfo (Native.Group group)
 		{
 			this.group = group;
@@ -80,11 +70,6 @@ namespace Mono.Unix {
 
 		public long GroupId {
 			get {return group.gr_gid;}
-		}
-
-		[Obsolete ("Use GetMemberNames()", true)]
-		public string[] Members {
-			get {return group.gr_mem;}
 		}
 
 		public UnixUserInfo[] GetMembers ()

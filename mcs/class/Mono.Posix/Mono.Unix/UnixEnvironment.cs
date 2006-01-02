@@ -65,18 +65,6 @@ namespace Mono.Unix {
 			}
 		}
 
-		[CLSCompliant (false)]
-		[Obsolete ("Use RealUserId", true)]
-		public static uint User {
-			get {return UnixUser.GetCurrentUserId ();}
-		}
-
-		[CLSCompliant (false)]
-		[Obsolete ("Use RealUserId", true)]
-		public static uint UserId {
-			get {return UnixUser.GetCurrentUserId ();}
-		}
-
 		public static string UserName {
 			get {return UnixUserInfo.GetRealUser ().UserName;}
 		}
@@ -126,34 +114,12 @@ namespace Mono.Unix {
 		}
 
 		[CLSCompliant (false)]
-		[Obsolete ("Use GetConfigurationValue (Mono.Unix.Native.SysconfName)", true)]
-		public static long GetConfigurationValue (SysConf name)
-		{
-			long r = Syscall.sysconf (name);
-			if (r == -1 && Syscall.GetLastError() == Error.EINVAL)
-				UnixMarshal.ThrowExceptionForLastError ();
-			return r;
-		}
-
-		[CLSCompliant (false)]
 		public static long GetConfigurationValue (Native.SysconfName name)
 		{
 			long r = Native.Syscall.sysconf (name);
 			if (r == -1 && Native.Stdlib.GetLastError() == Native.Errno.EINVAL)
 				UnixMarshal.ThrowExceptionForLastError ();
 			return r;
-		}
-
-		[CLSCompliant (false)]
-		[Obsolete ("Use GetConfigurationString (Mono.Unix.Native.ConfstrName)", true)]
-		public static string GetConfigurationString (ConfStr name)
-		{
-			ulong len = Syscall.confstr (name, null, 0);
-			if (len == 0)
-				return "";
-			StringBuilder buf = new StringBuilder ((int) len+1);
-			len = Syscall.confstr (name, buf, len);
-			return buf.ToString ();
 		}
 
 		[CLSCompliant (false)]
@@ -226,21 +192,6 @@ namespace Mono.Unix {
 			for (int i = 0; i < groups.Length; ++i)
 				groups [i] = _groups [i];
 			return groups;
-		}
-
-		[CLSCompliant (false)]
-		[Obsolete ("Use SetSupplementaryGroupIds(long[])", true)]
-		public static void SetSupplementaryGroups (uint[] list)
-		{
-			SetSupplementaryGroupIds (list);
-		}
-
-		[CLSCompliant (false)]
-		[Obsolete ("Use SetSupplementaryGroupIds(long[])", true)]
-		public static void SetSupplementaryGroupIds (uint[] list)
-		{
-			int r = Syscall.setgroups (list);
-			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 		}
 
 		public static void SetSupplementaryGroupIds (long[] list)

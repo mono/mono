@@ -2812,13 +2812,6 @@ namespace Mono.Unix.Native {
 		}
 
 		[DllImport (MPH, SetLastError=true, 
-				EntryPoint="Mono_Posix_Syscall_utimes_bad")]
-		[Obsolete ("Use utimes(string, Timeval[]);", true)]
-		public static extern int utimes (
-				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
-				string filename, ref Timeval tvp);
-
-		[DllImport (MPH, SetLastError=true, 
 				EntryPoint="Mono_Posix_Syscall_utimes")]
 		private static extern int sys_utimes (
 				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]

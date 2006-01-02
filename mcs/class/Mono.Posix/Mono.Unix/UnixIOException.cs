@@ -55,20 +55,6 @@ namespace Mono.Unix {
 			this.errno = errno;
 		}
 
-		[Obsolete ("Use UnixIOException (Mono.Unix.Native.Errno) constructor", true)]
-		public UnixIOException (Error errno)
-			: base (UnixMarshal.GetErrorDescription (errno))
-		{
-			this.errno = UnixConvert.FromError (errno);
-		}
-
-		[Obsolete ("Use UnixIOException (Mono.Unix.Native.Errno, System.Exception) constructor", true)]
-		public UnixIOException (Error errno, Exception inner)
-			: base (UnixMarshal.GetErrorDescription (errno), inner)
-		{
-			this.errno = UnixConvert.FromError (errno);
-		}
-
 		public UnixIOException (Native.Errno errno)
 			: base (UnixMarshal.GetErrorDescription (errno))
 		{

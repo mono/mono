@@ -1,5 +1,17 @@
 2006-01-02  Jonathan Pryor <jonpryor@vt.edu>
 
+	* StdioFileStream.cs, UnixDirectoryInfo.cs, UnixEnvironment.cs, 
+	  UnixFileInfo.cs, UnixFileSystemInfo.cs, UnixGroupInfo.cs,
+	  UnixIOException.cs, UnixMarshal.cs, UnixProcess.cs, UnixStream.cs,
+	  UnixSymbolicLinkInfo.cs, UnixUserInfo.cs: Remove Obsolete API.
+	* CdeclFunction.cs, IncludeAttribute.cs, Stdlib.cs, Syscall.cs,
+	  UnixConvert.cs, UnixDirectory.cs, UnixFile.cs, UnixGroup.cs, 
+	  UnixUser.cs: Delete.
+	* UnixPath.cs: Remove InvalidPathChars; use GetInvalidPathChars() instead.
+	* FileTypes.cs: Remove Obsolete API
+
+2006-01-02  Jonathan Pryor <jonpryor@vt.edu>
+
 	* FileAccessPermissions.cs: Remove UserMask, GroupMask, OtherMask values.
 	* FileSpecialAttributes.cs: Remove AllAttributes member; it shouldn't be
 	  public.  Use UnixFileSystemInfo.AllSpecialAttributes instead.

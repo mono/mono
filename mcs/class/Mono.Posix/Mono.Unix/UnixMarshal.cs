@@ -94,22 +94,10 @@ namespace Mono.Unix {
 	{
 		private UnixMarshal () {}
 
-		[Obsolete ("Use GetErrorDescription (Mono.Unix.Native.Errno)", true)]
-		public static string GetErrorDescription (Error errno)
-		{
-			return ErrorMarshal.Translate ((Native.Errno) (int) errno);
-		}
-
 		[CLSCompliant (false)]
 		public static string GetErrorDescription (Native.Errno errno)
 		{
 			return ErrorMarshal.Translate (errno);
-		}
-
-		[Obsolete ("Use AllocHeap(long)", true)]
-		public static IntPtr Alloc (long size)
-		{
-			return AllocHeap (size);
 		}
 
 		public static IntPtr AllocHeap (long size)
@@ -119,23 +107,11 @@ namespace Mono.Unix {
 			return Native.Stdlib.malloc ((ulong) size);
 		}
 
-		[Obsolete ("Use ReAllocHeap(long)", true)]
-		public static IntPtr ReAlloc (IntPtr ptr, long size)
-		{
-			return ReAllocHeap (ptr, size);
-		}
-
 		public static IntPtr ReAllocHeap (IntPtr ptr, long size)
 		{
 			if (size < 0)
 				throw new ArgumentOutOfRangeException ("size", "< 0");
 			return Native.Stdlib.realloc (ptr, (ulong) size);
-		}
-
-		[Obsolete ("Use FreeHeap(IntPtr)", true)]
-		public static void Free (IntPtr ptr)
-		{
-			FreeHeap (ptr);
 		}
 
 		public static void FreeHeap (IntPtr ptr)
@@ -317,12 +293,6 @@ namespace Mono.Unix {
 			return members;
 		}
 
-		[Obsolete ("Use StringToHeap(string)", true)]
-		public static IntPtr StringToAlloc (string s)
-		{
-			return StringToHeap (s, UnixEncoding.Instance);
-		}
-
 		public static IntPtr StringToHeap (string s)
 		{
 			return StringToHeap (s, UnixEncoding.Instance);
@@ -373,15 +343,6 @@ namespace Mono.Unix {
 			return false;
 		}
 
-		[Obsolete ("Use ShouldRetrySyscall (int, out Mono.Unix.Native.Errno", true)]
-		public static bool ShouldRetrySyscall (int r, out Error errno)
-		{
-			errno = (Error) 0;
-			if (r == -1 && (errno = Stdlib.GetLastError ()) == Error.EINTR)
-				return true;
-			return false;
-		}
-
 		[CLSCompliant (false)]
 		public static bool ShouldRetrySyscall (int r, out Native.Errno errno)
 		{
@@ -428,29 +389,6 @@ namespace Mono.Unix {
 			return false;
 		}
 
-		[Obsolete ("Use CreateExceptionForError (Mono.Unix.Native.Errno)", true)]
-		internal static Exception CreateExceptionForError (Error errno)
-		{
-			string message = GetErrorDescription (errno);
-			UnixIOException p = new UnixIOException (errno);
-			switch (errno) {
-				case Error.EFAULT:        return new NullReferenceException (message, p);
-				case Error.EINVAL:        return new ArgumentException (message, p);
-				case Error.EIO:
-				  case Error.ENOSPC:
-				  case Error.EROFS:
-				  case Error.ESPIPE:
-					return new IOException (message, p);
-				case Error.ENAMETOOLONG:  return new PathTooLongException (message, p);
-				case Error.ENOENT:        return new FileNotFoundException (message, p);
-				case Error.ENOEXEC:       return new InvalidProgramException (message, p);
-				case Error.EOVERFLOW:     return new OverflowException (message, p);
-				case Error.ERANGE:        return new ArgumentOutOfRangeException (message);
-				default: /* ignore */     break;
-			}
-			return p;
-		}
-
 		internal static Exception CreateExceptionForError (Native.Errno errno)
 		{
 			string message = GetErrorDescription (errno);
@@ -495,12 +433,6 @@ namespace Mono.Unix {
 			return CreateExceptionForError (Native.Stdlib.GetLastError());
 		}
 
-		[Obsolete ("Use ThrowExceptionForError (Mono.Unix.Native.Errno)", true)]
-		public static void ThrowExceptionForError (Error errno)
-		{
-			throw CreateExceptionForError (errno);
-		}
-
 		[CLSCompliant (false)]
 		public static void ThrowExceptionForError (Native.Errno errno)
 		{
@@ -510,13 +442,6 @@ namespace Mono.Unix {
 		public static void ThrowExceptionForLastError ()
 		{
 			throw CreateExceptionForLastError ();
-		}
-
-		[Obsolete ("Use ThrowExceptionForErrorIf (int, Mono.Unix.Native.Errno)", true)]
-		public static void ThrowExceptionForErrorIf (int retval, Error errno)
-		{
-			if (retval == -1)
-				ThrowExceptionForError (errno);
 		}
 
 		[CLSCompliant (false)]

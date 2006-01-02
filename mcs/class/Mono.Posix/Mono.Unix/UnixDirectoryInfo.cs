@@ -75,15 +75,6 @@ namespace Mono.Unix {
 		}
 
 		[CLSCompliant (false)]
-		[Obsolete ("Use Create(Mono.Unix.Native.FilePermissions)")]
-		public void Create (FilePermissions mode)
-		{
-			Mono.Unix.Native.FilePermissions _mode = 
-				(Mono.Unix.Native.FilePermissions) mode;
-			Create (_mode);
-		}
-
-		[CLSCompliant (false)]
 		public void Create (Mono.Unix.Native.FilePermissions mode)
 		{
 			int r = Mono.Unix.Native.Syscall.mkdir (FullPath, mode);

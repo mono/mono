@@ -244,30 +244,10 @@ namespace Mono.Unix {
 			}
 		}
 
-		[Obsolete ("Use SaveFilePosition (Mono.Unix.Native.FilePosition)", true)]
-		public void SaveFilePosition (FilePosition pos)
-		{
-			AssertNotDisposed ();
-			int r = Stdlib.fgetpos (file, pos);
-			UnixMarshal.ThrowExceptionForLastErrorIf (r);
-			GC.KeepAlive (this);
-		}
-
 		public void SaveFilePosition (Native.FilePosition pos)
 		{
 			AssertNotDisposed ();
 			int r = Native.Stdlib.fgetpos (file, pos);
-			UnixMarshal.ThrowExceptionForLastErrorIf (r);
-			GC.KeepAlive (this);
-		}
-
-		[Obsolete ("Use RestoreFilePosition (Mono.Unix.Native.FilePosition)", true)]
-		public void RestoreFilePosition (FilePosition pos)
-		{
-			AssertNotDisposed ();
-			if (pos == null)
-				throw new ArgumentNullException ("value");
-			int r = Stdlib.fsetpos (file, pos);
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 			GC.KeepAlive (this);
 		}

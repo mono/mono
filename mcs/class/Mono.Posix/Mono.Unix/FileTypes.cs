@@ -4,7 +4,7 @@
 // Authors:
 //   Jonathan Pryor (jonpryor@vt.edu)
 //
-// (C) 2005 Jonathan Pryor
+// (C) 2005-2006 Jonathan Pryor
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -34,19 +34,12 @@ namespace Mono.Unix {
 	[Flags]
 	public enum FileTypes {
 		Directory         = (int) Native.FilePermissions.S_IFDIR,
-		[Obsolete ("Use CharacterDevice", true)]
-		CharacterSpecial  = (int) Native.FilePermissions.S_IFCHR,
 		CharacterDevice   = (int) Native.FilePermissions.S_IFCHR,
-		[Obsolete ("Use BlockDevice", true)]
-		BlockSpecial      = (int) Native.FilePermissions.S_IFBLK,
 		BlockDevice       = (int) Native.FilePermissions.S_IFBLK,
 		RegularFile       = (int) Native.FilePermissions.S_IFREG,
 		Fifo              = (int) Native.FilePermissions.S_IFIFO,
 		SymbolicLink      = (int) Native.FilePermissions.S_IFLNK,
 		Socket            = (int) Native.FilePermissions.S_IFSOCK,
-		AllTypes          = 
-			Directory | CharacterDevice | BlockDevice | RegularFile | Fifo | 
-			SymbolicLink | Socket,
 	}
 }
 
