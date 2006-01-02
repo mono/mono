@@ -37,7 +37,7 @@ using System;
 
 public sealed class FrameDimension {
 
-	internal Guid guid;
+	readonly Guid guid;
 	
 	// constructor
 	public FrameDimension(Guid guid) 
@@ -69,14 +69,6 @@ public sealed class FrameDimension {
 			return new FrameDimension (new Guid ("6aedbd6d-3fb5-418a-83a6-7f45229dc872" ));			
 		}
 	}
-
-#if TARGET_JVM
-	internal static FrameDimension PixelFormat { 
-		get {
-			return new FrameDimension (new Guid ("9BCCD13D-9D8C-401a-B9ED-BB548E5B3329" ));
-	    }
-	}
-#endif
 
 	//methods
 	public override bool Equals(object o) 
