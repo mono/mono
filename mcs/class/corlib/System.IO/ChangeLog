@@ -1,3 +1,8 @@
+2006-01-02  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* UnexceptionalStreamReader.cs: Re-implemented the Read method to fix 
+	the new line handling when reading from the Console (bug #77108).
+
 2005-12-24  Kornél Pál  <kornelpal@hotmail.com>
 
 	* FileStream.cs: Set buf_start to actual initial position when creating

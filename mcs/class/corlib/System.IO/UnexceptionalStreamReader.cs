@@ -5,13 +5,10 @@
 //   Dietmar Maurer (dietmar@ximian.com)
 //   Miguel de Icaza (miguel@ximian.com)
 //   Dick Porter (dick@ximian.com)
+//   Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) Ximian, Inc.  http://www.ximian.com
-// Copyright (C) 2004 Novell (http://www.novell.com)
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -39,12 +36,14 @@
 // get IO errors when their terminal vanishes.  See
 // UnexceptionalStreamWriter too.
 
-using System;
 using System.Text;
 using System.Runtime.InteropServices;
 
 namespace System.IO {
 	internal class UnexceptionalStreamReader : StreamReader {
+
+		private bool[] newline = new bool [Environment.NewLine.Length];
+
 		public UnexceptionalStreamReader(Stream stream)
 			: base (stream)
 		{
@@ -118,12 +117,53 @@ namespace System.IO {
 		public override int Read ([In, Out] char[] dest_buffer,
 					  int index, int count)
 		{
-			try {
-				return(base.Read (dest_buffer, index, count));
-			} catch (IOException) {
-			}
+			if (dest_buffer == null)
+				throw new ArgumentNullException ("dest_buffer");
+			if (index < 0)
+				throw new ArgumentOutOfRangeException ("index", "< 0");
+			if (count < 0)
+				throw new ArgumentOutOfRangeException ("count", "< 0");
+			// ordered to avoid possible integer overflow
+			if (index > dest_buffer.Length - count)
+				throw new ArgumentException ("index + count > dest_buffer.Length");
 
-			return(0);
+			int chars_read = 0;
+			int c = Read ();
+			if (c == -1)
+				return -1;
+
+			while ((c != -1) && (count > 0)) {
+				chars_read++;
+				count--;
+
+				dest_buffer [index] = (char) c;
+				if (CheckEOL (dest_buffer [index++]))
+					return chars_read;
+
+				c = Read ();
+			}
+			return chars_read;
+		}
+
+		private bool CheckEOL (char current)
+		{
+			// shortcut when a new line is only one character (e.g. Linux, Mac)
+			if (newline.Length == 1)
+				return (current == Environment.NewLine [0]);
+
+			// general case for any length (e.g. Windows)
+			for (int i=0; i < newline.Length; i++) {
+				if (!newline [i]) {
+					if (current == Environment.NewLine [i]) {
+						newline [i] = true;
+						return (i == newline.Length - 1);
+					}
+					break;
+				}
+			}
+			for (int j=0; j < newline.Length; j++)
+				newline [j] = false;
+			return false;
 		}
 
 		public override string ReadLine()
