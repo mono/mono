@@ -1,5 +1,15 @@
 2006-01-02  Jonathan Pryor <jonpryor@vt.edu>
 
+	* StdioFileStream.cs: Shut up FxCop - add a GC.KeepAlive to 
+	  AssertNotDisposed().
+	* UnixClient.cs, UnixListener.cs: Use System.MarshalByRefObject as the base
+	  class.  These types implement IDisposable and have a finalizer, so if an
+	  instance of these types were sent to another AppDomain they'd previously 
+	  marshal by copy, which could lead to a double release of an unmanaged
+	  resource -- potential badness.  Using MarshalByRefObject fixes this.
+
+2006-01-02  Jonathan Pryor <jonpryor@vt.edu>
+
 	* UnixMarshal.cs: s/EACCESS/EACCES/g.  I can't read.
 
 2006-01-02  Jonathan Pryor <jonpryor@vt.edu>

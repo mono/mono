@@ -182,6 +182,7 @@ namespace Mono.Unix {
 		{
 			if (file == InvalidFileStream)
 				throw new ObjectDisposedException ("Invalid File Stream");
+			GC.KeepAlive (this);
 		}
 
 		public IntPtr Handle {

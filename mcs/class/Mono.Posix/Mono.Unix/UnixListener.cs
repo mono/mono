@@ -35,7 +35,7 @@ using System.IO;
 
 namespace Mono.Unix {
 
-	public class UnixListener : IDisposable {
+	public class UnixListener : MarshalByRefObject, IDisposable {
 		bool disposed;
 		bool listening;
 		Socket server;

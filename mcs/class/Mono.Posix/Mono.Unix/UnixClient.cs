@@ -35,7 +35,7 @@ using System.Runtime.InteropServices;
 
 namespace Mono.Unix {
 
-	public class UnixClient : IDisposable {
+	public class UnixClient : MarshalByRefObject, IDisposable {
 		NetworkStream stream;
 		Socket client;
 		bool disposed;
