@@ -100,6 +100,16 @@ namespace System
 		{
 			return value.GetHashCode ();
 		}
+
+		public static bool operator == (RuntimeFieldHandle left, RuntimeFieldHandle right)
+		{
+			return left.Equals (right);
+		}
+
+		public static bool operator != (RuntimeFieldHandle left, RuntimeFieldHandle right)
+		{
+			return !left.Equals (right);
+		}
 #endif
 	}
 }

@@ -100,6 +100,26 @@ namespace System
 			return value.GetHashCode ();
 		}
 
+		public static bool operator == (RuntimeTypeHandle left, RuntimeTypeHandle right)
+		{
+			return left.Equals (right);
+		}
+
+		public static bool operator != (RuntimeTypeHandle left, RuntimeTypeHandle right)
+		{
+			return !left.Equals (right);
+		}
+
+		public static bool operator == (Object left, RuntimeTypeHandle right)
+		{
+			return (left != null) && (left is RuntimeTypeHandle) && ((RuntimeTypeHandle)left).Equals (right);
+		}
+
+		public static bool operator != (Object left, RuntimeTypeHandle right)
+		{
+			return (left == null) || !(left is RuntimeTypeHandle) || !((RuntimeTypeHandle)left).Equals (right);
+		}
+
 		[CLSCompliant (false)]
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 		public ModuleHandle GetModuleHandle () {

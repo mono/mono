@@ -109,6 +109,16 @@ namespace System
 		{
 			return value.GetHashCode ();
 		}
+
+		public static bool operator == (RuntimeMethodHandle left, RuntimeMethodHandle right)
+		{
+			return left.Equals (right);
+		}
+
+		public static bool operator != (RuntimeMethodHandle left, RuntimeMethodHandle right)
+		{
+			return !left.Equals (right);
+		}
 #endif
 	}
 }
