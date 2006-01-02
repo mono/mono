@@ -1,5 +1,26 @@
 2006-01-02  Chris Toshok  <toshok@ximian.com>
 
+	* ProtectedConfigurationSection.cs: flesh this out (and add logic
+	to instantiate providers, based on some of the standalone test
+	exception stack traces.)
+
+	* ProtectedConfiguration.cs: new implementation.
+
+	* ProtectedConfigurationProviderCollection.cs: new
+	implementation.
+
+	* ProtectedProviderSettings.cs: new implementation.
+
+	* ProtectedConfigurationProvider.cs: trim the superclass's name.
+
+	* RsaProtectedConfigurationProvider.cs: stubbed, unimplemented.
+
+	* DpapiProtectedConfigurationProvider.cs: add stubbed
+	implementation that throws NotSupportedException telling people
+	they should be using RsaProtectedConfigurationProvider.
+
+2006-01-02  Chris Toshok  <toshok@ximian.com>
+
 	* DefaultSection.cs (Properties): implement.
 
 	* IgnoreSection.cs: move from lazily creating the properties

@@ -1,8 +1,10 @@
 //
-// System.Configuration.ProtectedConfigurationProvider.cs
+// System.Configuration.DpapiProtectedConfigurationProvider.cs
 //
 // Authors:
-//	Duncan Mak (duncan@ximian.com)
+// 	Chris Toshok (toshok@ximian.com)
+//
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -23,24 +25,45 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
-//
 
 #if NET_2_0
 using System.Xml;
-using System.Configuration.Provider;
+using System.Collections.Specialized;
 
 namespace System.Configuration
 {
-	public abstract class ProtectedConfigurationProvider: ProviderBase
+	public sealed class DpapiProtectedConfigurationProvider: ProtectedConfigurationProvider
 	{
-		protected ProtectedConfigurationProvider ()
+		public DpapiProtectedConfigurationProvider ()
 		{
+			throw new NotSupportedException (
+@"DpapiProtectedConfigurationProvider depends on the Microsoft Data
+Protection API, and is unimplemented in Mono.  For portability's sake,
+it is suggested that you use the RsaProtectedConfigurationProvider.");
 		}
 
-		public abstract XmlNode Decrypt (XmlNode encrypted_node);
+		[MonoTODO]
+		public override XmlNode Decrypt (XmlNode encrypted_node)
+		{
+			throw new NotImplementedException ();
+		}
 
-		public abstract XmlNode Encrypt (XmlNode node);
+		[MonoTODO]
+		public override XmlNode Encrypt (XmlNode node)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public override void Initialize (string name, NameValueCollection configurationValues)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public bool UseMachineProtection {
+			get { throw new NotImplementedException (); }
+		}
 	}
 }
 #endif

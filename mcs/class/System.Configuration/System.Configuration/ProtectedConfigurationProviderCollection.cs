@@ -1,8 +1,10 @@
 //
-// System.Configuration.ProtectedConfigurationProvider.cs
+// System.Configuration.ProtectedConfigurationProviderCollection.cs
 //
 // Authors:
-//	Duncan Mak (duncan@ximian.com)
+// 	Chris Toshok (toshok@ximian.com)
+//
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -23,24 +25,31 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
-//
 
 #if NET_2_0
-using System.Xml;
+
 using System.Configuration.Provider;
 
 namespace System.Configuration
 {
-	public abstract class ProtectedConfigurationProvider: ProviderBase
+	public class ProtectedConfigurationProviderCollection : ProviderCollection
 	{
-		protected ProtectedConfigurationProvider ()
+		public ProtectedConfigurationProviderCollection ()
 		{
 		}
 
-		public abstract XmlNode Decrypt (XmlNode encrypted_node);
+		[MonoTODO]
+		public new ProtectedConfigurationProvider this [string name] {
+			get { return (ProtectedConfigurationProvider) base[name]; }
+		}
 
-		public abstract XmlNode Encrypt (XmlNode node);
+		[MonoTODO]
+		public override void Add (ProviderBase provider)
+		{
+			base.Add (provider);
+		}
 	}
+
 }
+
 #endif

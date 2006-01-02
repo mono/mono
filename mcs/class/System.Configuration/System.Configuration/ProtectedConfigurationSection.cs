@@ -33,29 +33,61 @@ namespace System.Configuration
 {
 	public sealed class ProtectedConfigurationSection: ConfigurationSection
 	{
-		[ConfigurationProperty ("defaultProvider", DefaultValue="RsaProtectedConfigurationProvider")]
-		public string DefaultProvider {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+		static ConfigurationProperty defaultProviderProp;
+		static ConfigurationProperty providersProp;
+		static ConfigurationPropertyCollection properties;
+
+		ProtectedConfigurationProviderCollection providers;
+
+		static ProtectedConfigurationSection ()
+		{
+			defaultProviderProp = new ConfigurationProperty ("defaultProvider", typeof (string), "RsaProtectedConfigurationProvider");
+			providersProp = new ConfigurationProperty ("providers", typeof (ProviderSettingsCollection), null);
+
+			properties = new ConfigurationPropertyCollection();
+			properties.Add (defaultProviderProp);
+			properties.Add (providersProp);
 		}
 
-		protected internal override ConfigurationPropertyCollection Properties {
-			get {
-				throw new NotImplementedException ();
-			}
+		[ConfigurationProperty ("defaultProvider", DefaultValue="RsaProtectedConfigurationProvider")]
+		public string DefaultProvider {
+			get { return (string)base[defaultProviderProp]; }
+			set { base[defaultProviderProp] = value; }
 		}
 
 		[ConfigurationProperty ("providers")] 
 		public ProviderSettingsCollection Providers {
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return (ProviderSettingsCollection)base[providersProp]; }
 		}
 
+		protected internal override ConfigurationPropertyCollection Properties {
+			get { return properties; }
+		}
+
+		internal ProtectedConfigurationProviderCollection GetAllProviders ()
+		{
+			if (providers == null) {
+				providers = new ProtectedConfigurationProviderCollection ();
+
+				foreach (ProviderSettings ps in Providers) {
+					providers.Add (InstantiateProvider (ps));
+				}
+			}
+
+			return providers;
+		}
+
+		ProtectedConfigurationProvider InstantiateProvider (ProviderSettings ps)
+		{
+			Type t = Type.GetType (ps.Type, true);
+			ProtectedConfigurationProvider prov = Activator.CreateInstance (t) as ProtectedConfigurationProvider;
+			if (prov == null)
+				throw new Exception ("The type specified does not extend ProtectedConfigurationProvider class.");
+
+			prov.Initialize (ps.Name, ps.Parameters);
+
+			return prov;
+		}
 	}
 }
 #endif
