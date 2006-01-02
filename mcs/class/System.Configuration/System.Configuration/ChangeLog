@@ -1,5 +1,10 @@
 2006-01-02  Chris Toshok  <toshok@ximian.com>
 
+	* RsaProtectedConfigurationProvider.cs: implement the
+	CspProviderName and UseOAEP properties..
+
+2006-01-02  Chris Toshok  <toshok@ximian.com>
+
 	* ProtectedConfigurationSection.cs: flesh this out (and add logic
 	to instantiate providers, based on some of the standalone test
 	exception stack traces.)

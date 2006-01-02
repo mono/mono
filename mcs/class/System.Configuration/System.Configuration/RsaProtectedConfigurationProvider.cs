@@ -35,8 +35,10 @@ namespace System.Configuration
 {
 	public sealed class RsaProtectedConfigurationProvider: ProtectedConfigurationProvider
 	{
+		string cspProviderName;
 		string keyContainerName;
 		bool useMachineContainer;
+		bool useOAEP;
 
 		public RsaProtectedConfigurationProvider ()
 		{
@@ -62,10 +64,15 @@ namespace System.Configuration
 			base.Initialize (name, configurationValues);
 
 			keyContainerName = configurationValues ["keyContainerName"];
+			cspProviderName = configurationValues ["cspProviderName"];
 
 			flag = configurationValues ["useMachineContainer"];
 			if (flag != null && flag.ToLower() == "true")
 				useMachineContainer = true;
+
+			flag = configurationValues ["useOAEP"];
+			if (flag != null && flag.ToLower() == "true")
+				useOAEP = true;
 		}
 
 		[MonoTODO]
@@ -92,10 +99,9 @@ namespace System.Configuration
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public string CspProviderName
 		{
-			get { throw new NotImplementedException (); }
+			get { return cspProviderName; }
 		}
 
 		public string KeyContainerName {
@@ -111,9 +117,8 @@ namespace System.Configuration
 			get { return useMachineContainer; }
 		}
 
-		[MonoTODO]
 		public bool UseOAEP {
-			get { throw new NotImplementedException (); }
+			get { return useOAEP; }
 		}
 	}
 }
