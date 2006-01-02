@@ -1,3 +1,7 @@
+2006-01-02 Boris Kirzner <borisk@mainsoft.com>
+	
+	* System.Data.Test.vmwcsproj: added new tests to TARGET_JVM project file.
+
 2005-12-12 Konstantin Triger <kostat@mainsoft.com>
 
 	* System.Data.Test.vmwcsproj: add NET_1_1 define.

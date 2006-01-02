@@ -32,6 +32,7 @@ using System.Text;
 using System.IO;
 using System.Data;
 using MonoTests.System.Data.Utils;
+using System.Xml;
 
 namespace MonoTests_System.Data
 {
@@ -2752,5 +2753,157 @@ namespace MonoTests_System.Data
 		}	
 #endif
 
+		///<?xml version="1.0" encoding="utf-16"?>
+		///<xs:schema id="NewDataSet" xmlns="" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+		///	<xs:element name="NewDataSet" msdata:IsDataSet="true">
+		///		<xs:complexType>
+		///			<xs:choice maxOccurs="unbounded">
+		///				<xs:element name="Parent">
+		///					<xs:complexType>
+		///						<xs:sequence>
+		///							<xs:element name="ParentId" type="xs:int" minOccurs="0"/>
+		///							<xs:element name="String1" type="xs:string" minOccurs="0"/>
+		///							<xs:element name="String2" type="xs:string" minOccurs="0"/>
+		///							<xs:element name="ParentDateTime" type="xs:dateTime" minOccurs="0"/>
+		///							<xs:element name="ParentDouble" type="xs:double" minOccurs="0"/>
+		///							<xs:element name="ParentBool" type="xs:boolean" minOccurs="0"/>
+		///						</xs:sequence>
+		///					</xs:complexType>
+		///				</xs:element>
+		///			</xs:choice>
+		///		</xs:complexType>
+		///	</xs:element>
+		///</xs:schema>
+		
+		[Test]
+		public void ParentDataTableSchema()
+		{
+			XmlDocument testedSchema;
+			XmlNamespaceManager testedSchemaNamepaces;
+			InitParentDataTableSchema(out testedSchema, out testedSchemaNamepaces);
+
+			TestNode("DataSet name", "/xs:schema/xs:element[@name='NewDataSet']", 1, testedSchema, testedSchemaNamepaces);
+
+			TestNode("Parent datatable name", "/xs:schema/xs:element/xs:complexType/xs:choice/xs:element[@name='Parent']", 1, testedSchema, testedSchemaNamepaces);
+
+			TestNode("ParentId column - name", "/xs:schema/xs:element/xs:complexType/xs:choice/xs:element/xs:complexType/xs:sequence/xs:element[@name='ParentId']", 1, testedSchema, testedSchemaNamepaces);
+
+			TestNode("String1 column - name",	 "/xs:schema/xs:element/xs:complexType/xs:choice/xs:element/xs:complexType/xs:sequence/xs:element[@name='String1']", 1, testedSchema, testedSchemaNamepaces);
+
+			TestNode("String2 column - name", "/xs:schema/xs:element/xs:complexType/xs:choice/xs:element/xs:complexType/xs:sequence/xs:element[@name='String1']", 1, testedSchema, testedSchemaNamepaces);
+
+			TestNode("ParentDateTime column - name", "/xs:schema/xs:element/xs:complexType/xs:choice/xs:element/xs:complexType/xs:sequence/xs:element[@name='ParentDateTime']", 1, testedSchema, testedSchemaNamepaces);
+
+			TestNode("ParentDouble column - name",	"/xs:schema/xs:element/xs:complexType/xs:choice/xs:element/xs:complexType/xs:sequence/xs:element[@name='ParentDouble']", 1, testedSchema, testedSchemaNamepaces);
+
+			TestNode("ParentBool column - name", "/xs:schema/xs:element/xs:complexType/xs:choice/xs:element/xs:complexType/xs:sequence/xs:element[@name='ParentBool']", 1, testedSchema, testedSchemaNamepaces);
+
+			TestNode("Int columns", "/xs:schema/xs:element/xs:complexType/xs:choice/xs:element/xs:complexType/xs:sequence/xs:element[@type='xs:int']", 1, testedSchema, testedSchemaNamepaces);
+
+			TestNode("string columns", "/xs:schema/xs:element/xs:complexType/xs:choice/xs:element/xs:complexType/xs:sequence/xs:element[@type='xs:string']",	2, testedSchema, testedSchemaNamepaces);
+
+			TestNode("dateTime columns", "/xs:schema/xs:element/xs:complexType/xs:choice/xs:element/xs:complexType/xs:sequence/xs:element[@type='xs:dateTime']",	1, testedSchema, testedSchemaNamepaces);
+
+			TestNode("double columns", "/xs:schema/xs:element/xs:complexType/xs:choice/xs:element/xs:complexType/xs:sequence/xs:element[@type='xs:double']",	1, testedSchema, testedSchemaNamepaces);
+
+			TestNode("boolean columns", "/xs:schema/xs:element/xs:complexType/xs:choice/xs:element/xs:complexType/xs:sequence/xs:element[@type='xs:boolean']",	1, testedSchema, testedSchemaNamepaces);
+
+			TestNode("minOccurs columns", "/xs:schema/xs:element/xs:complexType/xs:choice/xs:element/xs:complexType/xs:sequence/xs:element[@minOccurs='0']", 6, testedSchema, testedSchemaNamepaces);
+		}
+
+		private void InitParentDataTableSchema(out XmlDocument schemaDocInit, out XmlNamespaceManager namespaceManagerToInit)
+		{
+			DataSet ds = new DataSet();
+			ds.Tables.Add(DataProvider.CreateParentDataTable());
+			string strXML = ds.GetXmlSchema();
+			schemaDocInit = new XmlDocument();
+			schemaDocInit.LoadXml(strXML);
+			namespaceManagerToInit = new XmlNamespaceManager(schemaDocInit.NameTable);
+			namespaceManagerToInit.AddNamespace("xs", "http://www.w3.org/2001/XMLSchema");
+			namespaceManagerToInit.AddNamespace("msdata", "urn:schemas-microsoft-com:xml-msdata");
+		}
+
+		private void TestNode(string description, string xPath, int expectedNodesCout, XmlDocument schemaDoc, XmlNamespaceManager nm)
+		{
+			int actualNodeCount = schemaDoc.SelectNodes(xPath, nm).Count;
+			Assert.AreEqual(expectedNodesCout,actualNodeCount, "DS75" + description);
+		}
+
+		[Test]
+		public void WriteXml_Stream()
+		{
+			{
+			DataSet ds = new DataSet();
+			string input = "<a><b><c>2</c></b></a>";
+			System.IO.StringReader sr = new System.IO.StringReader(input) ;
+			System.Xml.XmlTextReader xReader = new System.Xml.XmlTextReader(sr) ;
+			ds.ReadXml (xReader);
+
+			System.Text.StringBuilder sb = new System.Text.StringBuilder();
+			System.IO.StringWriter sw = new System.IO.StringWriter(sb);
+			System.Xml.XmlTextWriter xWriter = new System.Xml.XmlTextWriter(sw);
+			ds.WriteXml(xWriter);
+			string output = sb.ToString();
+			Assert.AreEqual(input,output, "DS76");
+			}
+			{
+			DataSet ds = new DataSet();
+			string input = "<?xml version=\"1.0\" encoding=\"utf-8\" ?><a><b><c>2</c></b></a>";
+			string expectedOutput = "<a><b><c>2</c></b></a>";
+			System.IO.StringReader sr = new System.IO.StringReader(input) ;
+			System.Xml.XmlTextReader xReader = new System.Xml.XmlTextReader(sr) ;
+			ds.ReadXml (xReader);
+			
+			System.Text.StringBuilder sb = new System.Text.StringBuilder();
+			System.IO.StringWriter sw = new System.IO.StringWriter(sb);
+			System.Xml.XmlTextWriter xWriter = new System.Xml.XmlTextWriter(sw);
+			ds.WriteXml(xWriter);
+			string output = sb.ToString();
+			Assert.AreEqual(expectedOutput,output, "DS77");
+			}
+			{
+			DataSet ds = new DataSet("DSName"); 
+			System.IO.StringWriter sr = new System.IO.StringWriter();
+			ds.WriteXml(sr); 
+			Assert.AreEqual("<DSName />",sr.ToString(), "DS78");
+			}
+			{
+			DataSet ds = new DataSet();
+			DataTable dt;
+
+			//Create parent table.
+			dt = ds.Tables.Add("ParentTable");
+			dt.Columns.Add("ParentTable_Id", typeof(int));
+			dt.Columns.Add("ParentTableCol", typeof(int));
+			dt.Rows.Add(new object[] {0,1});
+
+			//Create child table.
+			dt = ds.Tables.Add("ChildTable");
+			dt.Columns.Add("ParentTable_Id", typeof(int));
+			dt.Columns.Add("ChildTableCol", typeof(string));
+			dt.Rows.Add(new object[] {0,"aa"});
+
+			//Add a relation between parent and child table.
+			ds.Relations.Add("ParentTable_ChildTable", ds.Tables["ParentTable"].Columns["ParentTable_Id"], ds.Tables["ChildTable"].Columns["ParentTable_Id"], true);
+			ds.Relations["ParentTable_ChildTable"].Nested=true;
+
+			//Reomve the Parent_Child relation.
+			dt = ds.Tables["ChildTable"];
+			dt.ParentRelations.Remove("ParentTable_ChildTable");
+
+			//Remove the constraint created automatically to enforce the "ParentTable_ChildTable" relation.
+			dt.Constraints.Remove("ParentTable_ChildTable");
+
+			//Remove the child table from the dataset.
+			ds.Tables.Remove("ChildTable");
+
+			//Get the xml representation of the dataset.
+			System.IO.StringWriter sr = new System.IO.StringWriter();
+			ds.WriteXml(sr); 
+			string xml = sr.ToString();
+
+			Assert.AreEqual(-1,xml.IndexOf("<ChildTable>"), "DS79");
+			}
+		}
 	}
 }

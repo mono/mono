@@ -69,6 +69,26 @@ namespace MonoTests_System.Data
 			{
 				return CreateInstance();
 			}
+
+			public void OnRowChanged_Test(DataRowAction drAction )
+			{
+				base.OnRowChanged(new DataRowChangeEventArgs(this.Rows[0],drAction )); 
+			}
+
+			public void OnRowChanging_Test(DataRowAction drAction )
+			{
+				base.OnRowChanging(new DataRowChangeEventArgs(this.Rows[0],drAction )); 
+			}
+
+			public void OnRowDeleted_Test(DataRowAction drAction )
+			{
+				base.OnRowDeleted(new DataRowChangeEventArgs(this.Rows[0],drAction )); 
+			}
+
+			public void OnRowDeleting_Test(DataRowAction drAction )
+			{
+				base.OnRowDeleting(new DataRowChangeEventArgs(this.Rows[0],drAction )); 
+			}
 		}
 
 		[Test] public void AcceptChanges()
@@ -1641,6 +1661,409 @@ namespace MonoTests_System.Data
 				 table.Compute ("Min(Value)",String.Empty),"#3");	
 			Assert.AreEqual ("7.5",
 				 table.Compute ("Max(Value)",String.Empty),"#4");	
+		}
+
+		[Test]
+		public void BeginLoadData()
+		{
+			DataTable dt = DataProvider.CreateParentDataTable();
+			dt.Columns[0].AllowDBNull = false;
+			       
+			//dt.BeginLoadData();
+			try
+			{
+				//if BeginLoadData has not been called, an exception will be throw
+				dt.LoadDataRow(new object[] {null,"A","B"},false);
+				Assert.Fail("DT170: Failed to throw NoNullAllowedException");
+			}
+			catch (NoNullAllowedException) {}
+			catch (AssertionException exc) {throw  exc;}
+			catch (Exception exc)
+			{
+				Assert.Fail("DT171: Wrong exception type. Got:" + exc);
+			}
+
+
+			DataTable dt1 = DataProvider.CreateUniqueConstraint();
+
+			bool excptionOccurd = false;
+
+			try
+			{
+				dt1.BeginLoadData();
+
+				DataRow  dr = dt1.NewRow();
+				dr[0] = 3;
+				dt1.Rows.Add(dr);
+				dt1.EndLoadData(); // constraint violation
+
+				Assert.Fail("DT172: Failed to throw ConstraintException");
+			}
+			catch (ConstraintException) 
+			{
+				Assert.AreEqual(2,dt1.GetErrors().Length,"DT173");
+				Assert.AreEqual(true,dt1.GetErrors()[0].RowError.Length > 10,"DT174");
+				Assert.AreEqual(true,dt1.GetErrors()[1].RowError.Length > 10,"DT175");
+			}
+			catch (AssertionException exc) {throw  exc;}
+			catch (Exception exc)
+			{
+				Assert.Fail("DT176: Wrong exception type. Got:" + exc);
+			}
+			
+
+			DataSet ds=null;
+			excptionOccurd = false;
+			try
+			{
+				ds= DataProvider.CreateForigenConstraint();
+				ds.Tables[0].BeginLoadData();
+				ds.Tables[0].Rows[0][0] = 10; //Forigen constraint violation
+				//ds.Tables[0].AcceptChanges();
+				ds.Tables[0].EndLoadData();
+
+				Assert.Fail("DT177: Failed to throw ConstraintException");
+			}
+			catch (ConstraintException) 
+			{
+				Assert.AreEqual(3,ds.Tables[1].GetErrors().Length,"DT178");
+				for(int index=0;index<3;index++)
+				{
+					Assert.AreEqual(true,ds.Tables[1].GetErrors()[index].RowError.Length > 10,"DT179");
+				}
+			}
+			catch (AssertionException exc) {throw  exc;}
+			catch (Exception exc)
+			{
+				Assert.Fail("DT180: Wrong exception type. Got:" + exc);
+			}
+		}
+
+		private DataRowAction drExpectedAction;
+		
+		public void OnRowChanged()
+		{
+			ProtectedTestClass dt = new ProtectedTestClass(); 
+
+			EventRaised = false;
+			dt.OnRowChanged_Test(DataRowAction.Nothing );
+			
+			Assert.IsFalse(EventRaised ,"DT181" );
+
+			dt.RowChanged += new DataRowChangeEventHandler(OnRowChanged_Handler);
+			foreach (int i in Enum.GetValues(typeof(DataRowAction)))
+			{
+				EventRaised = false;
+				EventValues = false;
+				drExpectedAction = (DataRowAction)i;
+				dt.OnRowChanged_Test(drExpectedAction);
+	            
+				Assert.IsTrue(EventRaised ,"DT182" );
+
+				Assert.IsTrue(EventValues  ,"DT183" );
+			}
+			dt.RowChanged -= new DataRowChangeEventHandler(OnRowChanged_Handler);
+		}
+
+		private void OnRowChanged_Handler(Object sender,DataRowChangeEventArgs e)
+		{
+			
+			DataTable dt = (DataTable)sender;
+			if (dt.Rows[0].Equals(e.Row) && e.Action == drExpectedAction)
+				EventValues = true;
+			EventRaised = true;
+		}
+
+		[Test]
+		public void OnRowChanging()
+		{
+			ProtectedTestClass dt = new ProtectedTestClass(); 
+
+			EventRaised = false;
+			dt.OnRowChanging_Test(DataRowAction.Nothing );
+			
+			Assert.IsFalse(EventRaised ,"DT184" );
+
+			dt.RowChanging += new DataRowChangeEventHandler(OnRowChanging_Handler);
+			foreach (int i in Enum.GetValues(typeof(DataRowAction)))
+			{
+				EventRaised = false;
+				EventValues = false;
+				drExpectedAction = (DataRowAction)i;
+				dt.OnRowChanging_Test(drExpectedAction);
+	            
+				Assert.IsTrue(EventRaised ,"DT185" );
+				
+				Assert.IsTrue(EventValues  ,"DT186" );
+			}
+			dt.RowChanging -= new DataRowChangeEventHandler(OnRowChanging_Handler);
+		}
+
+		private void OnRowChanging_Handler(Object sender,DataRowChangeEventArgs e)
+		{
+			
+			DataTable dt = (DataTable)sender;
+			if (dt.Rows[0].Equals(e.Row) && e.Action == drExpectedAction)
+				EventValues = true;
+			EventRaised = true;
+		}
+
+		[Test]
+		public void OnRowDeleted()
+		{
+			ProtectedTestClass dt = new ProtectedTestClass(); 
+
+			EventRaised = false;
+			dt.OnRowDeleted_Test(DataRowAction.Nothing );
+
+			Assert.IsFalse(EventRaised ,"DT187" );
+
+			dt.RowDeleted += new DataRowChangeEventHandler(OnRowDeleted_Handler);
+			foreach (int i in Enum.GetValues(typeof(DataRowAction)))
+			{
+				EventRaised = false;
+				EventValues = false;
+				drExpectedAction = (DataRowAction)i;
+				dt.OnRowDeleted_Test(drExpectedAction);
+
+				Assert.IsTrue(EventRaised ,"DT188" );
+				
+				Assert.IsTrue(EventValues  ,"DT189" );
+			}
+			dt.RowDeleted -= new DataRowChangeEventHandler(OnRowDeleted_Handler);
+		}
+
+
+		private void OnRowDeleted_Handler(Object sender,DataRowChangeEventArgs e)
+		{
+			DataTable dt = (DataTable)sender;
+			if (dt.Rows[0].Equals(e.Row) && e.Action == drExpectedAction)
+				EventValues = true;
+			EventRaised = true;
+		}
+
+		public void OnRowDeleting()
+		{
+			ProtectedTestClass dt = new ProtectedTestClass(); 
+
+			EventRaised = false;
+			dt.OnRowDeleting_Test(DataRowAction.Nothing );
+
+			Assert.IsFalse(EventRaised ,"DT190" );
+
+			dt.RowDeleting += new DataRowChangeEventHandler(OnRowDeleting_Handler);
+			foreach (int i in Enum.GetValues(typeof(DataRowAction)))
+			{
+				EventRaised = false;
+				EventValues = false;
+				drExpectedAction = (DataRowAction)i;
+				dt.OnRowDeleting_Test(drExpectedAction);
+	            
+				Assert.IsTrue(EventRaised ,"DT191" );
+				
+				Assert.IsTrue(EventValues  ,"DT192" );
+			}
+			dt.RowDeleting -= new DataRowChangeEventHandler(OnRowDeleting_Handler);
+		}
+
+		private void OnRowDeleting_Handler(Object sender,DataRowChangeEventArgs e)
+		{
+			
+			DataTable dt = (DataTable)sender;
+			if (dt.Rows[0].Equals(e.Row) && e.Action == drExpectedAction)
+				EventValues = true;
+			EventRaised = true;
+		}
+
+		[Test]
+#if !TARGET_JVM
+		[Category ("NotWorking")]
+#endif
+		public void Select_StringString()
+		{
+        	DataTable dt = DataProvider.CreateChildDataTable();
+	        
+			DataRow[] drSelect;
+			System.Collections.ArrayList al;
+
+			//add some rows
+			dt.Rows.Add(new object[] {99,88,"bla","wowww"});
+			dt.Rows.Add(new object[] {999,888,"","woowww"});
+
+			//get excepted resault
+			al = new System.Collections.ArrayList();
+			foreach (DataRow dr in dt.Rows )
+			{
+				if ((int)dr["ChildId"] == 1)
+					al.Add(dr);
+			}
+			//al.Reverse();
+			al.Sort(new DataRowsComparer("ParentId", "Desc"));
+
+			drSelect = dt.Select("ChildId=1","ParentId Desc");
+			Assert.AreEqual(al.ToArray(),drSelect ,"DT193");
+
+
+			//get excepted resault
+			al = new System.Collections.ArrayList();
+			foreach (DataRow dr in dt.Rows )
+			{
+				if (dr["String1"].ToString() == "1-String1")
+					al.Add(dr);
+			}
+			//al.Reverse();
+			al.Sort(new DataRowsComparer("ParentId", "Desc"));
+
+			drSelect = dt.Select("String1='1-String1'","ParentId Desc");
+			Assert.AreEqual(al.ToArray(),drSelect ,"DT194");
+			
+
+			//get excepted resault
+			al = new System.Collections.ArrayList();
+			foreach (DataRow dr in dt.Rows )
+			{
+				if ((int)dr["ChildId"] == 1 && dr["String1"].ToString() == "1-String1")
+					al.Add(dr);
+			}
+			//al.Reverse();
+			al.Sort(new DataRowsComparer("ParentId", "Desc"));
+
+			drSelect = dt.Select("ChildId=1 and String1='1-String1'","ParentId Desc");
+			Assert.AreEqual(al.ToArray(),drSelect ,"DT195");
+			
+
+			//get excepted resault
+			al = new System.Collections.ArrayList();
+			foreach (DataRow dr in dt.Rows )
+			{
+				if (dr["String1"].ToString().Length < 4 )
+					al.Add(dr);
+			}
+			//al.Reverse();
+			al.Sort(new DataRowsComparer("ParentId", "Desc"));
+
+			drSelect = dt.Select("Len(String1) < 4 ","ParentId Desc");
+			Assert.AreEqual(al.ToArray(),drSelect ,"DT196");
+			
+
+			//get excepted resault
+			al = new System.Collections.ArrayList();
+			foreach (DataRow dr in dt.Rows )
+			{
+				if ( dr["String1"].ToString().IndexOf("String") > 0 )
+					al.Add(dr);
+			}
+			//al.Reverse();
+			al.Sort(new DataRowsComparer("ParentId", "Desc"));
+
+			drSelect = dt.Select("String1 like '%%String*'  ","ParentId Desc");
+			Assert.AreEqual(al.ToArray(),drSelect ,"DT197");
+			
+
+			//get excepted resault
+			al = new System.Collections.ArrayList();
+			foreach (DataRow dr in dt.Rows )
+			{
+				if (((int)dr["ChildId"] == 2) || ((int)dr["ChildId"] == 3))
+					al.Add(dr);
+			}
+			//al.Reverse();
+			al.Sort(new DataRowsComparer("ParentId", "Desc"));
+
+			drSelect = dt.Select("ChildId in (2,3)  ","ParentId Desc");
+			Assert.AreEqual(al.ToArray(),drSelect ,"DT198");
+			
+
+			//get excepted resault
+			al = new System.Collections.ArrayList();
+			foreach (DataRow dr in dt.Rows )
+			{
+				if ((((int)dr["ChildId"] * (int)dr["ParentId"]) > 5 ))
+					al.Add(dr);
+			}
+			al.Sort(new DataRowsComparer("ChildId", "Asc"));
+
+			drSelect = dt.Select("ChildId * ParentId > 5 ","ChildId Asc");
+			Assert.AreEqual(al.ToArray(),drSelect ,"DT199");
+			
+
+			//get excepted resault
+			al = new System.Collections.ArrayList();
+			foreach (DataRow dr in dt.Rows )
+			{
+				if (dr["String2"].ToString().Substring(2,3) == "Str" )
+					al.Add(dr);
+			}
+			al.Sort(new DataRowsComparer("ParentId", "Desc"));
+
+			drSelect = dt.Select("SubString(String2,3,3) like 'Str' ","ParentId Desc");
+			Assert.AreEqual(al.ToArray(),drSelect ,"DT200");
+		}
+
+		[Test]
+		[ExpectedException(typeof(ArgumentException))]
+#if !TARGET_JVM
+		[Category ("NotWorking")]
+#endif
+		public void Select_StringString_2()
+		{
+			DataTable dt = DataProvider.CreateParentDataTable();
+			//Checking the parsing of the sort string
+			dt.Select(dt.Columns[0].ColumnName + "=1","[x");
+		}
+
+		[Test]
+		[ExpectedException(typeof(IndexOutOfRangeException))]
+		public void Select_StringString_3()
+		{	
+			DataTable dt = DataProvider.CreateParentDataTable();
+			//Select - parse sort string checking 1");
+			dt.Select(dt.Columns[0].ColumnName,dt.Columns[0].ColumnName + "1");
+		}
+
+		internal class DataRowsComparer : System.Collections.IComparer
+		{
+			#region Memebers
+			private string _columnName;
+			private string _direction;
+			#endregion
+
+			#region Constructors
+			public DataRowsComparer(string columnName, string direction)
+			{
+				_columnName = columnName;
+				if (direction.ToLower() != "asc" && direction.ToLower() != "desc")
+				{
+					throw new ArgumentException("Direction can only be one of: 'asc' or 'desc'");
+				}
+				_direction = direction;
+			}
+			#endregion
+
+			#region IComparer Members
+
+			public int Compare(object x, object y)
+			{
+				DataRow drX = (DataRow)x;
+				DataRow drY = (DataRow)y;
+
+				object objX = drX[_columnName];
+				object objY = drY[_columnName];
+
+				int compareResult = System.Collections.Comparer.Default.Compare(objX, objY);
+
+				//If we are comparing desc we need to reverse the result.
+				if (_direction.ToLower() == "desc")
+				{
+					compareResult = -compareResult;
+				}
+
+				return compareResult;
+
+			}
+
+			#endregion
+
 		}
 	}
 }

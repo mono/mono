@@ -1318,5 +1318,248 @@ namespace MonoTests.System.Data
 			ds.Tables[0].Rows[0][0] = 10; 
 			ds.Tables[0].EndLoadData(); //Foreign constraint violation
 		}
+
+		[Test]
+		public void BeginEdit()
+		{
+			DataTable myTable = new DataTable("myTable"); 
+			DataColumn dc = new DataColumn("Id",typeof(int));
+			dc.Unique=true;
+			myTable.Columns.Add(dc);
+			myTable.Rows.Add(new object[] {1});
+			myTable.Rows.Add(new object[] {2});
+			myTable.Rows.Add(new object[] {3});
+			
+			DataRow myRow = myTable.Rows[0];
+			
+			try	
+			{ 
+				myRow[0] = 2; //row[0] now conflict with row[1] 
+				Assert.Fail("DRW121: failed to throw ConstraintException");
+			}
+			catch (ConstraintException) {}
+			catch (AssertionException exc) {throw  exc;}
+			catch (Exception exc)
+			{
+				Assert.Fail("DRW122: Add. Wrong exception type. Got:" + exc);
+			}
+
+			//Will NOT! throw exception
+			myRow.BeginEdit();
+			myRow[0] = 2; //row[0] now conflict with row[1] 
+					
+			DataTable dt = DataProvider.CreateParentDataTable();
+			DataRow dr = dt.Rows[0];
+			dr.Delete();
+			try
+			{
+				dr.BeginEdit();				
+				Assert.Fail("DRW123: failed to throw DeletedRowInaccessibleException");
+			}
+			catch (DeletedRowInaccessibleException) {}
+			catch (AssertionException exc) {throw  exc;}
+			catch (Exception exc)
+			{
+				Assert.Fail("DRW124: Add. Wrong exception type. Got:" + exc);
+			}
+		}
+
+		[Test]
+		public void GetChildRows_DataRelation()
+		{
+			DataRow dr;
+			DataRow[] drArrExcepted,drArrResult;
+			DataTable dtChild,dtParent;
+			DataSet ds = new DataSet();
+
+			//Create tables
+			dtChild = DataProvider.CreateChildDataTable();
+			dtParent= DataProvider.CreateParentDataTable(); 
+
+			//Add tables to dataset
+			ds.Tables.Add(dtChild);
+			ds.Tables.Add(dtParent);
+			dr = dtParent.Rows[0];
+
+			//Add Relation
+			DataRelation dRel = new DataRelation("Parent-Child",dtParent.Columns["ParentId"],dtChild.Columns["ParentId"]);
+			ds.Relations.Add(dRel);
+			//Get Excepted result
+			drArrExcepted = dtChild.Select("ParentId=" + dr["ParentId"]);
+			//Get Result
+			drArrResult = dr.GetChildRows(dRel);
+			
+			Assert.AreEqual(drArrExcepted, drArrResult, "DRW125");
+		}
+
+		[Test]
+		public void GetParentRows_DataRelation_DataRowVersion()
+		{
+			DataRow drParent,drChild;
+			DataRow[] drArrExcepted,drArrResult;
+			DataTable dtChild,dtParent;
+			DataSet ds = new DataSet();
+			//Create tables
+			dtChild = DataProvider.CreateChildDataTable();
+			dtParent= DataProvider.CreateParentDataTable(); 
+			//Add tables to dataset
+			ds.Tables.Add(dtChild);
+			ds.Tables.Add(dtParent);
+					
+			drParent = dtParent.Rows[0];
+			drChild = dtChild.Select("ParentId=" + drParent["ParentId"])[0];
+
+			//Duplicate several rows in order to create Many to Many relation
+			dtParent.ImportRow(drParent); 
+			dtParent.ImportRow(drParent); 
+			dtParent.ImportRow(drParent); 				
+					
+			//Add Relation
+			DataRelation dRel = new DataRelation("Parent-Child",dtParent.Columns["ParentId"],dtChild.Columns["ParentId"],false);
+			ds.Relations.Add(dRel);
+
+			//Get Excepted result
+			drArrExcepted = dtParent.Select("ParentId=" + drParent["ParentId"],"",DataViewRowState.CurrentRows );
+			//Get Result DataRowVersion.Current
+			drArrResult = drChild.GetParentRows(dRel,DataRowVersion.Current);
+			Assert.AreEqual(drArrExcepted, drArrResult, "DRW126");
+
+			//Get Excepted result
+			drArrExcepted = dtParent.Select("ParentId=" + drParent["ParentId"],"",DataViewRowState.OriginalRows );
+			//Get Result DataRowVersion.Current
+			drArrResult = drChild.GetParentRows(dRel,DataRowVersion.Original );
+			Assert.AreEqual(drArrExcepted, drArrResult, "DRW127");
+
+			//Get Excepted result, in this case Current = Default
+			drArrExcepted = dtParent.Select("ParentId=" + drParent["ParentId"],"",DataViewRowState.CurrentRows);
+			//Get Result DataRowVersion.Current
+			drArrResult = drChild.GetParentRows(dRel,DataRowVersion.Default  );
+			Assert.AreEqual(drArrExcepted, drArrResult, "DRW128");
+			
+			try
+			{
+				DataTable dtOtherParent = DataProvider.CreateParentDataTable();
+				DataTable dtOtherChild = DataProvider.CreateChildDataTable();
+
+				DataRelation drl = new DataRelation("newRelation",dtOtherParent.Columns[0],dtOtherChild.Columns[0]);
+				drChild.GetParentRows(drl,DataRowVersion.Current); 
+				Assert.Fail("DRW129: failed to throw ArgumentException");
+			}
+			catch (ArgumentException) {}
+			catch (AssertionException exc) {throw  exc;}
+			catch (Exception exc)
+			{
+				Assert.Fail("DRW130: Add. Wrong exception type. Got:" + exc);
+			}
+		}
+
+		[Test]
+		public void ItemArray()
+		{
+			DataTable dt = GetDataTable();				
+			DataRow dr = dt.Rows[0];
+	        
+			Assert.AreEqual(1, (int)dr.ItemArray[0] , "DRW131" );
+
+			Assert.AreEqual("Ofer", (string)dr.ItemArray[1] , "DRW132" );
+
+			dt = GetDataTable();
+
+			dr = dt.Rows[0];
+			
+			//Changing row via itemArray
+
+			dt.Rows[0].ItemArray = new object[] {2,"Oren"};
+
+			Assert.AreEqual(2, (Int32)dr.ItemArray[0] , "DRW133" );
+			Assert.AreEqual("Oren", (string)dr.ItemArray[1] , "DRW134" );
+
+			try
+			{
+				dt.Rows[0].ItemArray = new object[] {2,"Oren","some1else"};
+				Assert.Fail("DRW135: failed to throw ArgumentException");
+			}
+			catch (ArgumentException) {}
+			catch (AssertionException exc) {throw  exc;}
+			catch (Exception exc)
+			{
+				Assert.Fail("DRW136: Add. Wrong exception type. Got:" + exc);
+			}
+		}
+
+		private DataTable GetDataTable()
+		{
+			DataTable dt = new DataTable("myTable"); 
+			dt.Columns.Add("Id",typeof(int));
+			dt.Columns.Add("Name",typeof(string));
+
+			DataRow dr = dt.NewRow();
+			dr.ItemArray = new object[] {1,"Ofer"};
+
+			dt.Rows.Add(dr);
+
+			return dt;
+		}
+
+		public void RowError()
+		{
+			DataTable dt = new DataTable("myTable"); 
+			DataRow dr = dt.NewRow();
+
+			Assert.AreEqual(string.Empty , dr.RowError, "DRW137");
+						
+			dr.RowError = "Err";	        
+
+			Assert.AreEqual("Err", dr.RowError , "DRW138" );
+
+			DataTable dt1 = DataProvider.CreateUniqueConstraint();
+
+			try
+			{
+				dt1.BeginLoadData();
+
+				dr = dt1.NewRow();
+				dr[0] = 3;
+				dt1.Rows.Add(dr);
+				dt1.EndLoadData();
+				Assert.Fail("DRW139: failed to throw ConstraintException");
+			}
+			catch (ConstraintException) 
+			{
+				Assert.AreEqual(2,dt1.GetErrors().Length,"DRW141");
+				Assert.AreEqual(true,dt1.GetErrors()[0].RowError.Length > 10,"DRW142");
+				Assert.AreEqual(true,dt1.GetErrors()[1].RowError.Length > 10,"DRW143");
+			}
+			catch (AssertionException exc) {throw  exc;}
+			catch (Exception exc)
+			{
+				Assert.Fail("DRW144: Wrong exception type. Got:" + exc);
+			}
+
+
+			DataSet ds=null;
+			try
+			{
+				ds= DataProvider.CreateForigenConstraint();
+				ds.Tables[0].BeginLoadData();
+				ds.Tables[0].Rows[0][0] = 10; //Forigen constraint violation
+				//ds.Tables[0].AcceptChanges();
+				ds.Tables[0].EndLoadData();
+				Assert.Fail("DRW139: failed to throw ConstraintException");
+			}
+			catch (ConstraintException) 
+			{
+				Assert.AreEqual(3,ds.Tables[1].GetErrors().Length,"DRW145");
+				for(int index=0;index<3;index++)
+				{
+					Assert.AreEqual(true,ds.Tables[1].GetErrors()[index].RowError.Length > 10,"RDW146");
+				}
+			}
+			catch (AssertionException exc) {throw  exc;}
+			catch (Exception exc)
+			{
+				Assert.Fail("DRW147: Wrong exception type. Got:" + exc);
+			}
+		}
 	}
 }

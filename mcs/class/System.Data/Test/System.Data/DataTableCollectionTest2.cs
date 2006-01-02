@@ -287,5 +287,196 @@ namespace MonoTests_System.Data
 			Assert.AreEqual(dt, ds.Tables["NewTable1"], "DTC41");
 			Assert.AreEqual(dt1, ds.Tables["NewTable2"], "DTC42");
 		}
+
+		[Test]
+		public void DataTableCollection_Add_D1()
+		{
+			DataSet ds = new DataSet();
+			DataTable dt = new DataTable("NewTable1");
+			ds.Tables.Add(dt);
+			Assert.AreEqual("NewTable1",ds.Tables[0].TableName,"DTC43");
+		}
+
+		[Test]
+		[ExpectedException(typeof(ArgumentNullException))]
+		public void DataTableCollection_Add_D2()
+		{
+			DataSet ds = new DataSet();
+
+			ds.Tables.Add((DataTable)null);
+		}
+
+		[Test]
+		[ExpectedException(typeof(ArgumentException))]
+#if !TARGET_JVM
+		[Category ("NotWorking")]
+#endif
+		public void DataTableCollection_Add_D3()
+		{
+			DataSet ds = new DataSet();
+			DataSet ds1 = new DataSet();
+			ds1.Tables.Add();
+
+			ds.Tables.Add(ds1.Tables[0]);
+		}
+
+		[Test]
+		[ExpectedException(typeof(DuplicateNameException))]
+		public void DataTableCollection_Add_D4()
+		{
+			DataSet ds = new DataSet();
+			ds.Tables.Add();
+
+			DataTable dt = new DataTable("Table1");
+			ds.Tables.Add(dt);
+		}
+
+		[Test]
+		public void DataTableCollection_Add_S1()
+		{
+			DataSet ds = new DataSet();
+			ds.Tables.Add("NewTable1");
+			Assert.AreEqual("NewTable1",ds.Tables[0].TableName,"DTC44");
+			ds.Tables.Add("NewTable2");
+			Assert.AreEqual("NewTable2",ds.Tables[1].TableName,"DTC45");
+		}
+
+		[Test]
+		[ExpectedException(typeof(DuplicateNameException))]
+		public void DataTableCollection_Add_S2()
+		{
+			DataSet ds = new DataSet();
+			ds.Tables.Add("NewTable1");
+
+			ds.Tables.Add("NewTable1");
+		}
+
+		[Test]
+		public void DataTableCollection_Clear1()
+		{
+			DataSet ds = new DataSet();
+			ds.Tables.Add();
+			ds.Tables.Add();
+			ds.Tables.Clear();
+			Assert.AreEqual(0,ds.Tables.Count,"DTC46");
+
+		}
+
+		[Test]
+		[ExpectedException(typeof(IndexOutOfRangeException))]
+		public void DataTableCollection_Clear2()
+		{
+			DataSet ds = new DataSet();
+			ds.Tables.Add();
+			ds.Tables.Add();
+			ds.Tables.Clear();
+
+			ds.Tables[0].TableName = "Error";
+		}
+
+		[Test]
+		public void DataTableCollection_Remove_D1()
+		{
+			DataSet ds = new DataSet();
+			DataTable dt = new DataTable("NewTable1");
+			DataTable dt1 = new DataTable("NewTable2");
+			ds.Tables.AddRange(new DataTable[] {dt,dt1});
+
+			ds.Tables.Remove(dt);
+			Assert.AreEqual(1,ds.Tables.Count,"DTC47");
+			Assert.AreEqual(dt1,ds.Tables[0],"DTC48");
+			ds.Tables.Remove(dt1);
+			Assert.AreEqual(0,ds.Tables.Count,"DTC49");
+		}
+
+		[Test]
+		[ExpectedException(typeof(ArgumentException))]
+		public void DataTableCollection_Remove_D2()
+		{
+			DataSet ds = new DataSet();
+			DataTable dt = new DataTable("NewTable1");
+
+			ds.Tables.Remove(dt);
+		}
+
+		[Test]
+		[ExpectedException(typeof(ArgumentNullException))]
+		public void DataTableCollection_Remove_D3()
+		{
+			DataSet ds = new DataSet();
+
+			ds.Tables.Remove((DataTable)null);
+		}
+
+		[Test]
+		public void DataTableCollection_Remove_S1()
+		{
+			DataSet ds = new DataSet();
+			DataTable dt = new DataTable("NewTable1");
+			DataTable dt1 = new DataTable("NewTable2");
+			ds.Tables.AddRange(new DataTable[] {dt,dt1});
+
+			ds.Tables.Remove("NewTable1");
+			Assert.AreEqual(1,ds.Tables.Count,"DTC50");
+			Assert.AreEqual(dt1,ds.Tables[0],"DTC51");
+			ds.Tables.Remove("NewTable2");
+			Assert.AreEqual(0,ds.Tables.Count,"DTC52");	
+		}
+
+		[Test]
+		[ExpectedException(typeof(ArgumentException))]
+#if !TARGET_JVM
+		[Category ("NotWorking")]
+#endif
+		public void DataTableCollection_Remove_S2()
+		{
+			DataSet ds = new DataSet();
+
+			ds.Tables.Remove("NewTable2");
+		}
+
+		[Test]
+		[ExpectedException(typeof(ArgumentException))]
+#if !TARGET_JVM
+		[Category ("NotWorking")]
+#endif
+		public void DataTableCollection_Remove_S3()
+		{
+			DataSet ds = new DataSet();
+
+			ds.Tables.Remove((string)null);
+		}
+
+		[Test]
+		public void DataTableCollection_RemoveAt_I1()
+		{
+			DataSet ds = new DataSet();
+			DataTable dt = new DataTable("NewTable1");
+			DataTable dt1 = new DataTable("NewTable2");
+			ds.Tables.AddRange(new DataTable[] {dt,dt1});
+
+			ds.Tables.RemoveAt(1);
+			Assert.AreEqual(dt,ds.Tables[0],"DTC53");
+			ds.Tables.RemoveAt(0);
+			Assert.AreEqual(0,ds.Tables.Count,"DTC54");
+		}
+
+		[Test]
+		[ExpectedException(typeof(IndexOutOfRangeException))]
+		public void DataTableCollection_RemoveAt_I2()
+		{
+			DataSet ds = new DataSet();
+
+			ds.Tables.RemoveAt(-1);
+		}
+
+		[Test]
+		[ExpectedException(typeof(ArgumentException))]
+		public void DataTableCollection_RemoveAt_I3()
+		{
+			DataSet ds = DataProvider.CreateForigenConstraint();
+
+			ds.Tables.RemoveAt(0); //Parent table
+		}
 	}
 }

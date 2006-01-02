@@ -31,6 +31,7 @@ using System;
 using System.ComponentModel;
 using System.Data;
 using MonoTests.System.Data.Utils;
+using System.Collections;
 
 namespace MonoTests.System.Data
 {
@@ -425,6 +426,346 @@ namespace MonoTests.System.Data
 			{
 				Assert.Fail("DCC78: Remove. Wrong exception type. Got:" + exc);
 			}
+		}
+
+		[Test] 
+		public void Add_DataColumn1()
+		{
+			DataTable dt = new DataTable();
+			DataColumn col = new DataColumn("col1",Type.GetType("System.String"));
+			dt.Columns.Add(col);
+			Assert.AreEqual(1,dt.Columns.Count,"dccadc1#1");
+			Assert.AreEqual("col1",dt.Columns[0].ColumnName,"dccadc1#2");
+			Assert.AreEqual("System.String",dt.Columns[0].DataType.ToString(),"dccadc1#3");			
+		}
+
+		[Test] 
+		public void Add_DataColumn2()
+		{
+			DataTable dt = new DataTable();
+			DataColumn col = new DataColumn("col1",Type.GetType("System.String"));
+			dt.Columns.Add(col);
+			try
+			{
+				dt.Columns.Add(col); 
+				Assert.Fail("dccadc2#1: Add failed to throw ArgmentException");
+			}
+			catch (ArgumentException) {}
+			catch (AssertionException exc) {throw  exc;}
+			catch (Exception exc)
+			{
+				Assert.Fail("dccadc2#2: Add. Wrong exception type. Got:" + exc);
+			}
+		}
+
+		[Test] 
+		public void Add_DataColumn3()
+		{
+			DataTable dt = new DataTable();
+			DataColumn col = new DataColumn("col1",Type.GetType("System.String"));
+			dt.Columns.Add(col);
+			try
+			{
+				DataColumn col1 = new DataColumn("col1",Type.GetType("System.String"));
+				dt.Columns.Add(col1);
+				Assert.Fail("dccadc3#1: Add failed to throw DuplicateNameExcpeion");
+			}
+			catch (DuplicateNameException) {}
+			catch (AssertionException exc) {throw  exc;}
+			catch (Exception exc)
+			{
+				Assert.Fail("dccadc3#2: Add. Wrong exception type. Got:" + exc);
+			}
+		}
+
+		[Test]
+		public void Add_String1()
+		{
+			DataTable dt = new DataTable();
+			dt.Columns.Add("col1");
+			Assert.AreEqual(1,dt.Columns.Count,"dccas1#1");
+			Assert.AreEqual("col1",dt.Columns[0].ColumnName,"dccas1#2");
+
+		}
+
+		[Test]
+		public void Add_String2()
+		{
+			DataTable dt = new DataTable();
+			dt.Columns.Add("col1");
+			try
+			{
+				dt.Columns.Add("col1");
+				Assert.Fail("dccas2#1: Add failed to throw DuplicateNameExcpeion");
+			}
+			catch (DuplicateNameException) {}
+			catch (AssertionException exc) {throw  exc;}
+			catch (Exception exc)
+			{
+				Assert.Fail("dccas2#2: Add. Wrong exception type. Got:" + exc);
+			}
+		}
+
+		[Test]
+		public void AddRange_DataColumn1()
+		{
+			DataTable dt = new DataTable();
+			dt.Columns.AddRange(GetDataColumArray());
+			Assert.AreEqual(2,dt.Columns.Count,"dccardc1#1");
+			Assert.AreEqual("col1",dt.Columns[0].ColumnName,"dccardc1#2");
+			Assert.AreEqual("col2",dt.Columns[1].ColumnName,"dccardc1#3");
+			Assert.AreEqual(typeof(int),dt.Columns[0].DataType,"dccardc1#4");
+			Assert.AreEqual(typeof(string),dt.Columns[1].DataType,"dccardc1#5");			
+		}
+
+		[Test]
+		public void AddRange_DataColumn2()
+		{
+			DataTable dt = new DataTable();
+			try
+			{
+				dt.Columns.AddRange(GetBadDataColumArray());
+				Assert.Fail("dccardc2#1: AddRange failed to throw DuplicateNameExcpeion");
+			}
+			catch (DuplicateNameException) {}
+			catch (AssertionException exc) {throw  exc;}
+			catch (Exception exc)
+			{
+				Assert.Fail("dccardc2#2: Add. Wrong exception type. Got:" + exc);
+			}
+		}
+
+		[Test]
+		public void DataColumnCollection_AddRange_DataColumn3()
+		{
+			DataTable dt = new DataTable();
+			dt.Columns.AddRange(null);
+		}
+
+		private DataColumn[] GetDataColumArray()
+		{
+			DataColumn[] arr = new DataColumn[2];
+
+			arr[0] = new DataColumn("col1",typeof(int));
+			arr[1] = new DataColumn("col2",typeof(string));
+			
+			return arr;
+		}
+
+		private DataColumn[] GetBadDataColumArray()
+		{
+			DataColumn[] arr = new DataColumn[2];
+
+			arr[0] = new DataColumn("col1",typeof(int));
+			arr[1] = new DataColumn("col1",typeof(string));
+			
+			return arr;
+		}
+
+		[Test]
+		public void Clear1()
+		{
+			DataTable dt = DataProvider.CreateParentDataTable();
+			dt.Columns.Clear();
+			Assert.AreEqual(0,dt.Columns.Count,"dccc1#1");
+		}
+
+		[Test]
+		public void Clear2()
+		{
+			DataSet ds = DataProvider.CreateForigenConstraint();
+
+			try
+			{
+				ds.Tables[0].Columns.Clear();
+				Assert.Fail("dccc2#1: Clear failed to throw ArgmentException");
+			}
+			catch (ArgumentException) {}
+			catch (AssertionException exc) {throw  exc;}
+			catch (Exception exc)
+			{
+				Assert.Fail("dccc2#2: Clear. Wrong exception type. Got:" + exc);
+			}
+		}
+
+		[Test]
+		public void Clear3()
+		{
+			DataSet ds = DataProvider.CreateForigenConstraint();
+			ds.Tables[1].Constraints.RemoveAt(0);
+			ds.Tables[0].Constraints.RemoveAt(0);
+			ds.Tables[0].Columns.Clear();
+			ds.Tables[1].Columns.Clear();
+			Assert.AreEqual(0,ds.Tables[0].Columns.Count,"dccc3#1");
+			Assert.AreEqual(0,ds.Tables[1].Columns.Count,"dccc3#2");
+		}
+
+		[Test]
+		public void GetEnumerator()
+		{
+			DataTable dt = DataProvider.CreateUniqueConstraint();
+			
+			int counter=0;
+			IEnumerator myEnumerator = dt.Columns.GetEnumerator();
+			while (myEnumerator.MoveNext())
+			{
+				counter++;
+			}
+			Assert.AreEqual(6,counter,"dccge#1");
+
+			try
+			{
+				DataColumn col = (DataColumn)myEnumerator.Current;
+				Assert.Fail("dccc2#1: GetEnumerator failed to throw InvalidOperationException");
+			}
+			catch (InvalidOperationException) {}
+			catch (AssertionException exc) {throw  exc;}
+			catch (Exception exc)
+			{
+				Assert.Fail("dccc2#2: GetEnumerator. Wrong exception type. Got:" + exc);
+			}
+		}
+
+		[Test]
+		public void Item()
+		{
+			DataTable dt = DataProvider.CreateParentDataTable();
+			
+			Assert.AreEqual("ParentId",dt.Columns["ParentId"].ColumnName,"dcci#1");
+			Assert.AreEqual("ParentId",dt.Columns["parentId"].ColumnName ,"dcci#2");
+			Assert.AreEqual("String1",dt.Columns[1].ColumnName,"dcci#3");
+
+			try
+			{
+				dt.Columns[-1].ColumnName = "error";
+				Assert.Fail("dcci#3: Item failed to throw IndexOutOfRangeException");
+			}
+			catch (IndexOutOfRangeException) {}
+			catch (AssertionException exc) {throw  exc;}
+			catch (Exception exc)
+			{
+				Assert.Fail("dcci#4: Item. Wrong exception type. Got:" + exc);
+			}
+
+			try
+			{
+				dt.Columns[null].ColumnName = "error";
+				Assert.Fail("dcci#5: Item failed to throw ArgmentException");
+			}
+			catch (ArgumentException) {}
+			catch (AssertionException exc) {throw  exc;}
+			catch (Exception exc)
+			{
+				Assert.Fail("dcci#6: Item. Wrong exception type. Got:" + exc);
+			}
+		}
+
+		[Test]
+		public void Remove()
+		{
+			//prepare a DataSet with DataTable to be checked
+			DataTable dtSource = new DataTable();
+			dtSource.Columns.Add("Col_0", typeof(int)); 
+			dtSource.Columns.Add("Col_1", typeof(int)); 
+			dtSource.Columns.Add("Col_2", typeof(int)); 
+			dtSource.Rows.Add(new object[] {0,1,2}); 
+
+			DataTable dt = null;
+
+			//------Check Remove first column---------
+			dt = dtSource.Clone();
+			dt.ImportRow(dtSource.Rows[0]);
+
+			dt.Columns.Remove(dt.Columns[0].ColumnName); 
+			Assert.AreEqual(2,dt.Columns.Count , "dccr#1");
+			Assert.AreEqual(false,dt.Columns.Contains("Col_0"),"dccr#2");
+			Assert.AreEqual(1,dt.Rows[0][0],"dccr#3");
+			Assert.AreEqual(2,dt.Rows[0][1],"dccr#4");
+
+
+
+			//------Check Remove middle column---------
+			dt = dtSource.Clone();
+			dt.ImportRow(dtSource.Rows[0]);
+
+			dt.Columns.Remove(dt.Columns[1].ColumnName); 
+			Assert.AreEqual(2,dt.Columns.Count , "dccr#5");
+			Assert.AreEqual(false,dt.Columns.Contains("Col_1"),"dccr#6");
+			Assert.AreEqual(0,dt.Rows[0][0],"dccr#7");
+			Assert.AreEqual(2,dt.Rows[0][1],"dccr#8");
+
+
+			//------Check Remove last column---------
+			dt = dtSource.Clone();
+			dt.ImportRow(dtSource.Rows[0]);
+
+			dt.Columns.Remove(dt.Columns[2].ColumnName); 
+
+			Assert.AreEqual(2,dt.Columns.Count , "dccr#9");
+			Assert.AreEqual(false,dt.Columns.Contains("Col_2"),"dccr#10");
+			Assert.AreEqual(0,dt.Rows[0][0],"dccr#11");
+			Assert.AreEqual(1,dt.Rows[0][1],"dccr#12");
+
+
+			//------Check Remove column exception---------
+			dt = dtSource.Clone();
+			dt.ImportRow(dtSource.Rows[0]);
+
+			try
+			{
+				dt.Columns.Remove("NotExist"); 
+				Assert.Fail("dccr#13: Remove failed to throw ArgmentException");
+			}
+			catch (ArgumentException) {}
+			catch (AssertionException exc) {throw  exc;}
+			catch (Exception exc)
+			{
+				Assert.Fail("dccr#14: Remove. Wrong exception type. Got:" + exc);
+			}
+
+			dt.Columns.Clear();
+
+			try
+			{
+				dt.Columns.Remove("Col_0"); 
+				Assert.Fail("dccr#15: Remove failed to throw ArgmentException");
+			}
+			catch (ArgumentException) {}
+			catch (AssertionException exc) {throw  exc;}
+			catch (Exception exc)
+			{
+				Assert.Fail("dccr#16: Remove. Wrong exception type. Got:" + exc);
+			}
+		}
+
+		private bool eventOccured = false;
+
+		[Test]
+		public void RemoveAt_Integer()
+		{
+			DataTable dt = DataProvider.CreateParentDataTable();
+			dt.Columns.CollectionChanged+=new CollectionChangeEventHandler(Columns_CollectionChanged1);
+			int originalColumnCount = dt.Columns.Count;
+			dt.Columns.RemoveAt(0);
+			Assert.AreEqual(originalColumnCount-1,dt.Columns.Count,"dccrai#1"); 
+			Assert.AreEqual(true,eventOccured,"dccrai#2");
+
+			try
+			{
+				dt.Columns.RemoveAt(-1);
+				Assert.Fail("dccrai#3: RemoveAt failed to throw IndexOutOfRangeException");
+			}
+			catch (IndexOutOfRangeException) {}
+			catch (AssertionException exc) {throw  exc;}
+			catch (Exception exc)
+			{
+				Assert.Fail("dccrai#4: RemoveAt. Wrong exception type. Got:" + exc);
+			}
+		}
+
+		private void Columns_CollectionChanged1(object sender, CollectionChangeEventArgs e)
+		{
+			eventOccured = true;
 		}
 	}
 }

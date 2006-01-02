@@ -40,6 +40,7 @@
 				<File RelPath="System.Data\DataSetReadXmlTest.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data\DataSetTest.cs" SubType="Component" BuildAction="Compile"/>
 				<File RelPath="System.Data\DataSetTest2.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Data\DataSetTypedDataSetTest.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data\DataTableCollectionTest.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data\DataTableCollectionTest2.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data\DataTableLoadRowTest.cs" SubType="Code" BuildAction="Compile"/>
@@ -57,6 +58,7 @@
 				<File RelPath="System.Data\ForeignKeyConstraintTest2.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data\InRowChangingEventExceptionTest.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data\InvalidConstraintExceptionTest.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Data\MissingPrimaryKeyExceptionTest.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data\NoNullAllowedExceptionTest.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data\own_schema.xsd" BuildAction="Content"/>
 				<File RelPath="System.Data\ReadOnlyExceptionTest.cs" SubType="Code" BuildAction="Compile"/>
@@ -67,8 +69,10 @@
 				<File RelPath="System.Data\store3.xsd" BuildAction="Content"/>
 				<File RelPath="System.Data\store4.xsd" BuildAction="Content"/>
 				<File RelPath="System.Data\SyntaxErrorExceptionTest.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Data\TypedDataSet.xml" BuildAction="Content"/>
 				<File RelPath="System.Data\UniqueConstraintTest.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data\UniqueConstraintTest2.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Data\VersionNotFoundException.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data\schemas\ChangeLog" BuildAction="None"/>
 				<File RelPath="System.Data\schemas\test001.xsd" BuildAction="Content"/>
 				<File RelPath="System.Data\schemas\test002.xsd" BuildAction="Content"/>

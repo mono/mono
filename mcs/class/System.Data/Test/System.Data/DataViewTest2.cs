@@ -1040,5 +1040,31 @@ namespace MonoTests_System.Data
 			// ctor - RowStateFilter 
 			Assert.AreEqual(DataViewRowState.Added , dv.RowStateFilter , "DV113");
 		}
+
+		[Test]
+		public void DataViewManager()
+		{
+			DataView dv = null; 
+			DataViewManager dvm = null;
+			DataSet ds = new DataSet();
+			DataTable dt = new DataTable("myTable");
+			ds.Tables.Add(dt);
+
+			dv = dt.DefaultView;
+
+			//	public DataViewManager DataViewManager {get;} -	The DataViewManager that created this view. 
+			//	If this is the default DataView for a DataTable, the DataViewManager property returns the default DataViewManager for the DataSet.
+			//	Otherwise, if the DataView was created without a DataViewManager, this property is a null reference (Nothing in Visual Basic).
+
+			dvm = dv.DataViewManager;
+			Assert.AreEqual(ds.DefaultViewManager,dvm, "DV114");
+
+			dv = new DataView(dt);
+			dvm = dv.DataViewManager;
+			Assert.AreEqual(null,dvm,"DV115");
+			
+			dv = ds.DefaultViewManager.CreateDataView(dt);
+			Assert.AreEqual(ds.DefaultViewManager,dv.DataViewManager , "DV116");
+		}
 	}
 }

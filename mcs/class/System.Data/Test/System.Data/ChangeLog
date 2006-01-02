@@ -1,3 +1,13 @@
+2006-01-02 Boris Kirzner <borisk@mainsoft.com>
+	* DataTableCollectionTest2.cs, DataColumnTest2.cs,
+	DataViewTest2.cs, DataRowCollectionTest2.cs, DataTableTest2.cs,
+	DataRelationCollectionTest2.cs, ForeignKeyConstraintTest2.cs,
+	DataSetTest2.cs, ConstraintCollectionTest2.cs, DataRowTest2.cs,
+	DataColumnCollectionTest2.cs: new tests from Mainsoft repository.
+	* DataSetTypedDataSetTest.cs, VersionNotFoundException.cs,
+	MissingPrimaryKeyExceptionTest.cs: added files with new tests.
+	* TypedDataSet.xml - new xml file (for TypeDataSetTest.cs).
+
 2005-12-20 Senganal T <tsenganal@novell.com>
 	* DataColumnTest.cs : added testcase for #77025
 	

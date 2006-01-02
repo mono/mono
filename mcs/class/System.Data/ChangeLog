@@ -1,3 +1,6 @@
+2006-01-02	Boris Kirzner <borisk@mainsoft.com>
+	* System.Data_test.dll.sources: added new tests.
+
 2006-01-01  Daniel Morgan <danielmorgan@verizon.net>
 
 	* System.Data.Common/DbDataAdapter.cs: fix
