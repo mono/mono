@@ -1,3 +1,9 @@
+2006-01-02  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ActivatorTest.cs: Added new test cases for bug #71300 and for some
+	specific types that cannot be created using Activator.
+	* TypeTest.cs: Added new test cases for bug #71300.
+
 2006-01-02  Zoltan Varga  <vargaz@gmail.com>
 
 	* TypeTest.cs: Add Nullable tests.

@@ -13,6 +13,7 @@ using System;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
+using System.Reflection.Emit;
 using System.Runtime.InteropServices;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
@@ -114,6 +115,50 @@ namespace MonoTests.System {
 			object[] objArray = new object[1] { 7 };
 			COMTest objCOMTest = (COMTest)Activator.CreateInstance (typeof (COMTest), objArray);
 			Assert.AreEqual (7, objCOMTest.Id, "#A05");
+		}
+
+		[Test]
+		[ExpectedException (typeof (MissingMethodException))]
+		public void CreateInstance_TypeBuilder ()
+		{
+			Type tb = typeof (TypeBuilder); // no public ctor - but why is it documented as NotSupportedException ?
+			ConstructorInfo[] ctors = tb.GetConstructors (BindingFlags.Instance | BindingFlags.NonPublic);
+			Activator.CreateInstance (tb, new object [ctors [0].GetParameters ().Length]);
+		}
+
+		[Test]
+		[ExpectedException (typeof (NotSupportedException))]
+		public void CreateInstance_TypedReference ()
+		{
+			Activator.CreateInstance (typeof (TypedReference), null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (NotSupportedException))]
+		public void CreateInstance_ArgIterator ()
+		{
+			Activator.CreateInstance (typeof (ArgIterator), null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (NotSupportedException))]
+		public void CreateInstance_Void ()
+		{
+			Activator.CreateInstance (typeof (void), null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (NotSupportedException))]
+		public void CreateInstance_RuntimeArgumentHandle ()
+		{
+			Activator.CreateInstance (typeof (RuntimeArgumentHandle), null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (NotSupportedException))]
+		public void CreateInstance_NotMarshalByReferenceWithActivationAttributes ()
+		{
+			Activator.CreateInstance (typeof (object), null, new object[1] { null });
 		}
 
 		// TODO: Implemente the test methods for all the overriden functions using activationAttribute
@@ -252,7 +297,7 @@ namespace MonoTests.System {
 		public void Unification_FromFx99_Corlib ()
 		{
 			Unification (String.Format (CorlibPermissionPattern, "9.99.999.9999"));
-#if NET_1_1
+#if ONLY_1_1
 			Unification (String.Format (SystemPermissionPattern, "9.99.999.9999"));
 #endif
 		}

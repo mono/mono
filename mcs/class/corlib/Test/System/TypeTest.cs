@@ -413,7 +413,16 @@ PublicKeyToken=b77a5c561934e089"));
 		}			
 
 		class TakesInt {
-			public TakesInt (int x) {}
+			private int i;
+
+			public TakesInt (int x)
+			{
+				i = x;
+			}
+
+			public int Integer {
+				get { return i; }
+			}
 		}
 
 		class TakesObject {
@@ -422,11 +431,25 @@ PublicKeyToken=b77a5c561934e089"));
 
 		// Filed as bug #75241
 		[Test]
-		public void GetConstructoNullInTypes ()
+		public void GetConstructorNullInTypes ()
 		{
 			// This ends up calling type.GetConstructor ()
 			Activator.CreateInstance (typeof (TakesInt), new object [] { null });
 			Activator.CreateInstance (typeof (TakesObject), new object [] { null });
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void GetConstructorNullInTypes_Bug71300 ()
+		{
+			typeof (TakesInt).GetConstructor (new Type[1] { null });
+			// so null in types isn't valid for GetConstructor!
+		}
+
+		[Test]
+		public void GetConstructor_TakeInt_Object ()
+		{
+			Assert.IsNull (typeof (TakesInt).GetConstructor (new Type[1] { typeof (object) }));
 		}
 
 		// bug #76150
@@ -458,6 +481,34 @@ PublicKeyToken=b77a5c561934e089"));
 			Assert.AreEqual (TypeCode.UInt16, Type.GetTypeCode (typeof (ushort)), "#16");
 			Assert.AreEqual (TypeCode.UInt32, Type.GetTypeCode (typeof (uint)), "#17");
 			Assert.AreEqual (TypeCode.UInt64, Type.GetTypeCode (typeof (ulong)), "#18");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void GetConstructor1a_Bug71300 ()
+		{
+			typeof (BindingFlags).GetConstructor (null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void GetConstructor1b_Bug71300 ()
+		{
+			typeof (BindingFlags).GetConstructor (new Type[1] { null });
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void GetConstructor4_Bug71300 ()
+		{
+			typeof (BindingFlags).GetConstructor (BindingFlags.Default, null, new Type[1] { null }, null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void GetConstructor5_Bug71300 ()
+		{
+			typeof (BindingFlags).GetConstructor (BindingFlags.Default, null, CallingConventions.Any, new Type[1] { null }, null);
 		}
 
 #if NET_2_0
