@@ -1,3 +1,7 @@
+2006-01-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* TypeTest.cs: Add Nullable tests.
+
 2005-12-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* TimeZoneTest.cs: Fix CET tests.

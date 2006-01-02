@@ -526,6 +526,17 @@ PublicKeyToken=b77a5c561934e089"));
 
 			Assert.IsFalse (ibar_int_type.IsAssignableFrom (baz_short_type), "Baz<int> -!-> IBaz<short>");
 			Assert.IsFalse (ibar_short_type.IsAssignableFrom (baz_int_type), "Baz<short> -!-> IBaz<int>");
+
+			// Nullable tests
+			Assert.IsTrue (typeof (Nullable<int>).IsAssignableFrom (typeof (int)));
+			Assert.IsFalse (typeof (int).IsAssignableFrom (typeof (Nullable<int>)));
+			Assert.IsTrue (typeof (Nullable<FooStruct>).IsAssignableFrom (typeof (FooStruct)));
+		}
+
+		[Test]
+		public void IsInstanceOf ()
+		{
+			Assert.IsTrue (typeof (Nullable<int>).IsInstanceOfType (5));
 		}
 #endif
 
@@ -537,5 +548,8 @@ PublicKeyToken=b77a5c561934e089"));
 
 		[VolatileModifier]
 		class A { }
+
+		struct FooStruct {
+		}
 	}
 }
