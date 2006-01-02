@@ -1,3 +1,8 @@
+2006-01-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_class_is_assignable_from): Make T assignable to 
+	Nullable<T>.
+
 2005-12-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* appdomain.c: Bump corlib version to 46.
