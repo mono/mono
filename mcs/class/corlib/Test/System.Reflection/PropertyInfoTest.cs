@@ -29,6 +29,27 @@ namespace MonoTests.System.Reflection
 						
 		}
 
+#if NET_2_0
+		public int? nullable_field;
+
+		public int? NullableProperty {
+			get { return nullable_field; }
+			set { nullable_field = value; }
+		}
+
+		[Test]
+		public void NullableTests ()
+		{
+			PropertyInfoTest t = new PropertyInfoTest ();
+
+			PropertyInfo pi = typeof(PropertyInfoTest).GetProperty("NullableProperty");
+
+			pi.SetValue (t, 100, null);
+			AssertEquals (100, pi.GetValue (t, null));
+			pi.SetValue (t, null, null);
+			AssertEquals (null, pi.GetValue (t, null));
+		}
+#endif
 
 		private class TestClass 
 		{
