@@ -12,7 +12,7 @@
 //    Tim Coleman <tim@timcoleman.com>
 //    Hubert FONGARNAND <informatique.internet@fiducial.fr>
 //
-// Copyright (C) Daniel Morgan, 2002, 2005
+// Copyright (C) Daniel Morgan, 2002, 2005, 2006
 // Copyright (C) Tim Coleman, 2003
 // Copyright (C) Hubert FONGARNAND, 2005
 //
@@ -55,13 +55,15 @@ namespace System.Data.OracleClient
 		ConnectionState state;
 		OracleConnectionInfo conInfo;
 		OracleTransaction transaction = null;
-		string connectionString = "";
+		string connectionString = String.Empty;
+		string parsedConnectionString = String.Empty;
 		OracleDataReader dataReader = null;
 		bool pooling = true;
 		static OracleConnectionPoolManager pools = new OracleConnectionPoolManager ();
 		OracleConnectionPool pool;
 		int minPoolSize = 0;
 		int maxPoolSize = 100;
+		byte persistSecurityInfo = 1;
 
 		#endregion // Fields
 
@@ -75,7 +77,7 @@ namespace System.Data.OracleClient
 		public OracleConnection (string connectionString) 
 			: this() 
 		{
-			SetConnectionString (connectionString);
+			SetConnectionString (connectionString, false);
 		}
 
 		#endregion // Constructors
@@ -132,8 +134,12 @@ namespace System.Data.OracleClient
 		[RefreshProperties (RefreshProperties.All)]
 		[Editor ("Microsoft.VSDesigner.Data.Oracle.Design.OracleConnectionStringEditor, " + Consts.AssemblyMicrosoft_VSDesigner, typeof(UITypeEditor))]
 		public string ConnectionString {
-			get { return connectionString; }
-			set { SetConnectionString (value); }
+			get { 
+				return parsedConnectionString;
+			}
+			set { 
+				SetConnectionString (value, false); 
+			}
 		}
 
 		[MonoTODO]
@@ -222,9 +228,7 @@ namespace System.Data.OracleClient
 		object ICloneable.Clone ()
 		{
 			OracleConnection con = new OracleConnection ();
-			con.ConnectionString = this.ConnectionString;
-			if (this.State == ConnectionState.Open)
-				con.Open ();
+			con.SetConnectionString (connectionString, true);
 			// TODO: what other properties need to be cloned?
 			return con;
 		}
@@ -297,6 +301,8 @@ namespace System.Data.OracleClient
 
 		public void Open () 
 		{
+			PersistSecurityInfo ();
+
 			if (!pooling) {	
 				oci = new OciGlue ();
 				oci.CreateConnection (conInfo);
@@ -347,13 +353,109 @@ namespace System.Data.OracleClient
 			CreateStateChange (ConnectionState.Open, ConnectionState.Closed);
 		}
 
-		void SetConnectionString (string connectionString) 
+		private void PersistSecurityInfo () 
 		{
-			this.connectionString = connectionString;
+			// persistSecurityInfo:
+			// 0 = true/yes
+			// 1 = false/no (have not parsed out password yet)
+			// 2 = like 1, but have parsed out password
+
+			if (persistSecurityInfo == 0 || persistSecurityInfo == 2)
+				return;
+
+			persistSecurityInfo = 2;
+
+			if (connectionString == null)
+				return;
+
+			if (connectionString == String.Empty)
+				return;
+			
+			string conString = connectionString + ";";
+
+			bool inQuote = false;
+			bool inDQuote = false;
+
+			string name = String.Empty;
+			StringBuilder sb = new StringBuilder ();
+			int nStart = 0;
+			int nFinish = 0;
+			int i = -1;
+
+			foreach (char c in conString) {
+				i ++;
+
+				switch (c) {
+				case '\'':
+					inQuote = !inQuote;
+					break;
+				case '"' :
+					inDQuote = !inDQuote;
+					break;
+				case ';' :
+					if (!inDQuote && !inQuote) {
+						if (name != String.Empty && name != null) {
+							name = name.ToUpper ().Trim ();
+							if (name.Equals ("PASSWORD") || name.Equals ("PWD")) {
+								nFinish = i;
+								string part1 = String.Empty;
+								string part3 = String.Empty;
+								sb = new StringBuilder ();
+								if (nStart > 0) {
+									part1 = conString.Substring (0, nStart);
+									if (part1[part1.Length - 1] == ';')
+										part1 = part1.Substring (0, part1.Length - 1);
+									sb.Append (part1);
+								}
+								if (!part1.Equals (String.Empty))
+									sb.Append (';');
+								if (conString.Length - nFinish - 1 > 0) {
+									part3 = conString.Substring (nFinish, conString.Length - nFinish);
+									if (part3[0] == ';')  
+										part3 = part3.Substring(1, part3.Length - 1);
+									sb.Append (part3);
+								}
+								parsedConnectionString = sb.ToString ();
+								return;
+							}
+						}
+						name = String.Empty;
+						sb = new StringBuilder ();
+						nStart = i;
+						nFinish = i;
+					}
+					else
+						sb.Append (c);
+					break;
+				case '=' :
+					if (!inDQuote && !inQuote) {
+						name = sb.ToString ();
+						sb = new StringBuilder ();
+					}
+					else
+						sb.Append (c);
+					break;
+				default:
+					sb.Append (c);
+					break;
+				}
+			}
+		}
+
+		internal void SetConnectionString (string connectionString, bool persistSecurity) 
+		{
+			persistSecurityInfo = 1;
+			this.connectionString = String.Copy (connectionString);
+			this.parsedConnectionString = this.connectionString;
+			if (this.connectionString == null)
+				this.connectionString = String.Empty;
 			conInfo.Username = "";
 			conInfo.Database = "";
 			conInfo.Password = "";
 			conInfo.CredentialType = OciCredentialType.RDBMS;
+
+			if (connectionString == null)
+				return;
 
 			if (connectionString == String.Empty)
 				return;
@@ -379,8 +481,9 @@ namespace System.Data.OracleClient
 				case ';' :
 					if (!inDQuote && !inQuote) {
 						if (name != String.Empty && name != null) {
-							value = sb.ToString ();
-							parameters [name.ToUpper ().Trim ()] = value.Trim ();
+							name = name.ToUpper ().Trim ();
+							value = sb.ToString ().Trim ();
+							parameters [name] = value;
 						}
 						name = String.Empty;
 						value = String.Empty;
@@ -405,7 +508,10 @@ namespace System.Data.OracleClient
 
 			SetProperties (parameters);
 
-			conInfo.ConnectionString = connectionString;
+			conInfo.ConnectionString = this.connectionString;
+
+			if (persistSecurity == true)
+				PersistSecurityInfo ();
 		}
 
 		private void SetProperties (NameValueCollection parameters) 
@@ -423,13 +529,16 @@ namespace System.Data.OracleClient
 					// TODO:
 					break;
 				case "INTEGRATED SECURITY":
-					if (ConvertToBoolean("integrated security", value) == false)
+					if (ConvertToBoolean ("integrated security", value) == false)
 						conInfo.CredentialType = OciCredentialType.RDBMS;
 					else
 						conInfo.CredentialType = OciCredentialType.External;
 					break;
 				case "PERSIST SECURITY INFO":
-					// TODO:
+					if (ConvertToBoolean ("persist security info", value) == false)
+						persistSecurityInfo = 1;
+					else
+						persistSecurityInfo = 0;
 					break;
 				case "MIN POOL SIZE":
 					minPoolSize = int.Parse (value);

@@ -1,3 +1,9 @@
+2006-01-01  Daniel Morgan <danielmorgan@verizon.net>
+
+	* System.Data.OracleClient/OracleConnection.cs: implement
+	support for connection parameter PERSIST SECURITY INFO and
+	correct what Clone() does
+
 2005-12-20  Daniel Morgan <danielmorgan@verizon.net>
 
 	* System.Data.OracleClient/OracleConnectionPoolManager.cs
