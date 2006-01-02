@@ -4,7 +4,7 @@
 // Authors:
 //   Jonathan Pryor (jonpryor@vt.edu)
 //
-// (C) 2005 Jonathan Pryor
+// (C) 2005-2006 Jonathan Pryor
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -36,7 +36,6 @@ namespace Mono.Unix {
 		SetUserId   = (int) Native.FilePermissions.S_ISUID,
 		SetGroupId  = (int) Native.FilePermissions.S_ISGID,
 		Sticky      = (int) Native.FilePermissions.S_ISVTX,
-		AllAttributes = SetUserId | SetGroupId | Sticky,
 	}
 }
 

@@ -4,7 +4,7 @@
 // Authors:
 //   Jonathan Pryor (jonpryor@vt.edu)
 //
-// (C) 2004-2005 Jonathan Pryor
+// (C) 2004-2006 Jonathan Pryor
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -455,20 +455,36 @@ namespace Mono.Unix {
 		{
 			string message = GetErrorDescription (errno);
 			UnixIOException p = new UnixIOException (errno);
+
+			// Ordering: Order alphabetically by exception first (right column),
+			// then order alphabetically by Errno value (left column) for the given
+			// exception.
 			switch (errno) {
-				case Native.Errno.EFAULT:        return new NullReferenceException (message, p);
+				case Native.Errno.EBADF:
 				case Native.Errno.EINVAL:        return new ArgumentException (message, p);
-				case Native.Errno.EBADF:         return new ArgumentException (message, p);
-				case Native.Errno.EIO:
-				  case Native.Errno.ENOSPC:
-				  case Native.Errno.EROFS:
-				  case Native.Errno.ESPIPE:
-					return new IOException (message, p);
-				case Native.Errno.ENAMETOOLONG:  return new PathTooLongException (message, p);
-				case Native.Errno.ENOENT:        return new FileNotFoundException (message, p);
-				case Native.Errno.ENOEXEC:       return new InvalidProgramException (message, p);
-				case Native.Errno.EOVERFLOW:     return new OverflowException (message, p);
 				case Native.Errno.ERANGE:        return new ArgumentOutOfRangeException (message);
+				case Native.Errno.ENOTDIR:       return new DirectoryNotFoundException (message, p);
+				case Native.Errno.EFAULT:        return new NullReferenceException (message, p);
+
+				case Native.Errno.EACCESS:
+				case Native.Errno.EISDIR:        return new UnauthorizedAccessException (message, p);
+
+				case Native.Errno.ENOENT:        return new FileNotFoundException (message, p);
+
+				case Native.Errno.EIO:
+				case Native.Errno.ENOSPC:
+				case Native.Errno.ENOTEMPTY:
+				case Native.Errno.ENXIO:
+				case Native.Errno.EROFS:
+				case Native.Errno.ESPIPE:        return new IOException (message, p);
+
+				case Native.Errno.EOPNOTSUPP:
+				case Native.Errno.EPERM:         return new InvalidOperationException (message, p);
+
+				case Native.Errno.ENOEXEC:       return new InvalidProgramException (message, p);
+				case Native.Errno.ENOMEM:        return new OutOfMemoryException (message, p);
+				case Native.Errno.EOVERFLOW:     return new OverflowException (message, p);
+				case Native.Errno.ENAMETOOLONG:  return new PathTooLongException (message, p);
 				default: /* ignore */     break;
 			}
 			return p;

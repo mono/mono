@@ -4,7 +4,7 @@
 // Authors:
 //   Jonathan Pryor (jonpryor@vt.edu)
 //
-// (C) 2004-2005 Jonathan Pryor
+// (C) 2004-2006 Jonathan Pryor
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -89,6 +89,11 @@ namespace Mono.Unix {
 			int r = Mono.Unix.Native.Syscall.mkdir (FullPath, mode);
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 			base.Refresh ();
+		}
+
+		public void Create (FileAccessPermissions mode)
+		{
+			Create ((Native.FilePermissions) mode);
 		}
 
 		public void Create ()
@@ -211,7 +216,8 @@ namespace Mono.Unix {
 		{
 			UnixFileSystemInfo[] entries = new UnixFileSystemInfo[dentries.Length];
 			for (int i = 0; i != entries.Length; ++i)
-				entries [i] = UnixFileSystemInfo.Create (dentries[i].d_name);
+				entries [i] = UnixFileSystemInfo.Create (
+						UnixPath.Combine (FullPath, dentries[i].d_name));
 			return entries;
 		}
 

@@ -4,7 +4,7 @@
 // Authors:
 //   Jonathan Pryor (jonpryor@vt.edu)
 //
-// (C) 2004-2005 Jonathan Pryor
+// (C) 2004-2006 Jonathan Pryor
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -54,7 +54,7 @@ namespace Mono.Unix.Native {
 		ECHILD          =  10, // No child processes 
 		EAGAIN          =  11, // Try again 
 		ENOMEM          =  12, // Out of memory 
-		EACCES          =  13, // Permission denied 
+		EACCESS         =  13, // Permission denied 
 		EFAULT          =  14, // Bad address 
 		ENOTBLK         =  15, // Block device required 
 		EBUSY           =  16, // Device or resource busy 

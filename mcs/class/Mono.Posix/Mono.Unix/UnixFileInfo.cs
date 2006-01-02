@@ -4,7 +4,7 @@
 // Authors:
 //   Jonathan Pryor (jonpryor@vt.edu)
 //
-// (C) 2004 Jonathan Pryor
+// (C) 2004-2006 Jonathan Pryor
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -93,6 +93,11 @@ namespace Mono.Unix {
 			return new UnixStream (fd);
 		}
 
+		public UnixStream Create (FileAccessPermissions mode)
+		{
+			return Create ((Native.FilePermissions) mode);
+		}
+
 		[CLSCompliant (false)]
 		[Obsolete ("Use Open(Mono.Unix.Native.OpenFlags)", true)]
 		public UnixStream Open (OpenFlags flags)
@@ -106,6 +111,11 @@ namespace Mono.Unix {
 		[CLSCompliant (false)]
 		public UnixStream Open (Native.OpenFlags flags)
 		{
+			if ((flags & Native.OpenFlags.O_CREAT) != 0)
+				throw new ArgumentException (
+						"Cannot specify OpenFlags.O_CREAT without providing " + 
+						"FilePermissions.  Use the Open(OpenFlags, FilePermissions) " +
+						"method instead");
 			int fd = Native.Syscall.open (FullPath, flags);
 			if (fd < 0)
 				UnixMarshal.ThrowExceptionForLastError ();
@@ -134,19 +144,13 @@ namespace Mono.Unix {
 		public UnixStream Open (FileMode mode)
 		{
 			Native.OpenFlags flags = Native.NativeConvert.ToOpenFlags (mode, FileAccess.ReadWrite);
-			int fd = Native.Syscall.open (FullPath, flags);
-			if (fd < 0)
-				UnixMarshal.ThrowExceptionForLastError ();
-			return new UnixStream (fd);
+			return Open (flags);
 		}
 
 		public UnixStream Open (FileMode mode, FileAccess access)
 		{
 			Native.OpenFlags flags = Native.NativeConvert.ToOpenFlags (mode, access);
-			int fd = Native.Syscall.open (FullPath, flags);
-			if (fd < 0)
-				UnixMarshal.ThrowExceptionForLastError ();
-			return new UnixStream (fd);
+			return Open (flags);
 		}
 
 		[CLSCompliant (false)]
@@ -154,10 +158,7 @@ namespace Mono.Unix {
 		public UnixStream Open (FileMode mode, FileAccess access, FilePermissions perms)
 		{
 			OpenFlags flags = UnixConvert.ToOpenFlags (mode, access);
-			int fd = Syscall.open (FullPath, flags, perms);
-			if (fd < 0)
-				UnixMarshal.ThrowExceptionForLastError ();
-			return new UnixStream (fd);
+			return Open (flags, perms);
 		}
 
 		[CLSCompliant (false)]

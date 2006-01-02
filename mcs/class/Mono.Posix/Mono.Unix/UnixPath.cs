@@ -4,7 +4,7 @@
 // Authors:
 //   Jonathan Pryor (jonpryor@vt.edu)
 //
-// (C) 2004 Jonathan Pryor
+// (C) 2004-2006 Jonathan Pryor
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -39,9 +39,17 @@ namespace Mono.Unix {
 
 		public static readonly char DirectorySeparatorChar = '/';
 		public static readonly char AltDirectorySeparatorChar = '/';
+		[Obsolete ("Use GetInvalidPathChars()")]
 		public static readonly char[] InvalidPathChars = new char[]{};
 		public static readonly char PathSeparator = ':';
 		public static readonly char VolumeSeparatorChar = '/';
+
+		private static readonly char[] _InvalidPathChars = new char[]{};
+
+		public static char[] GetInvalidPathChars ()
+		{
+			return (char[]) _InvalidPathChars.Clone ();
+		}
 
 		public static string Combine (string path1, params string[] paths)
 		{
@@ -49,7 +57,7 @@ namespace Mono.Unix {
 				throw new ArgumentNullException ("path1");
 			if (paths == null)
 				throw new ArgumentNullException ("paths");
-			if (path1.IndexOfAny (InvalidPathChars) != -1)
+			if (path1.IndexOfAny (_InvalidPathChars) != -1)
 				throw new ArgumentException ("Illegal characters in path", "path1");
 
 			int len = path1.Length + 1;
@@ -68,7 +76,7 @@ namespace Mono.Unix {
 
 		private static void Combine (StringBuilder path, string part)
 		{
-			if (part.IndexOfAny (InvalidPathChars) != -1)
+			if (part.IndexOfAny (_InvalidPathChars) != -1)
 				throw new ArgumentException ("Illegal characters in path", "path1");
 			char end = path [path.Length-1];
 			if (end != DirectorySeparatorChar && 
@@ -229,8 +237,10 @@ namespace Mono.Unix {
 		{
 			if (path == null)
 				throw new ArgumentNullException ();
-			if (path.IndexOfAny (UnixPath.InvalidPathChars) != -1)
-				throw new ArgumentException ("Invalid characters in path.");
+			if (path.Length == 0)
+				throw new ArgumentException ("Path cannot contain a zero-length string", "path");
+			if (path.IndexOfAny (_InvalidPathChars) != -1)
+				throw new ArgumentException ("Invalid characters in path.", "path");
 		}
 	}
 }

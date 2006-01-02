@@ -4,7 +4,7 @@
 // Authors:
 //   Jonathan Pryor (jonpryor@vt.edu)
 //
-// (C) 2004-2005 Jonathan Pryor
+// (C) 2004-2006 Jonathan Pryor
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -161,11 +161,11 @@ namespace Mono.Unix {
 		public FileSpecialAttributes FileSpecialAttributes {
 			get {
 				int attrs = (int) Protection;
-				return (FileSpecialAttributes) (attrs & (int) FileSpecialAttributes.AllAttributes);
+				return (FileSpecialAttributes) (attrs & (int) UnixFileSystemInfo.AllSpecialAttributes);
 			}
 			set {
 				int perms = (int) Protection;
-				perms &= (int) ~FileSpecialAttributes.AllAttributes;
+				perms &= (int) ~UnixFileSystemInfo.AllSpecialAttributes;
 				perms |= (int) value;
 				Protection = (Native.FilePermissions) perms;
 			}

@@ -4,7 +4,7 @@
 // Authors:
 //   Jonathan Pryor (jonpryor@vt.edu)
 //
-// (C) 2005 Jonathan Pryor
+// (C) 2005-2006 Jonathan Pryor
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -34,17 +34,14 @@ namespace Mono.Unix {
 	[Flags]
 	public enum FileAccessPermissions {
 		UserReadWriteExecute  = (int) Native.FilePermissions.S_IRWXU,
-		UserMask              = UserReadWriteExecute,
 		UserRead              = (int) Native.FilePermissions.S_IRUSR,
 		UserWrite             = (int) Native.FilePermissions.S_IWUSR,
 		UserExecute           = (int) Native.FilePermissions.S_IXUSR,
 		GroupReadWriteExecute = (int) Native.FilePermissions.S_IRWXG,
-		GroupMask             = GroupReadWriteExecute,
 		GroupRead             = (int) Native.FilePermissions.S_IRGRP,
 		GroupWrite            = (int) Native.FilePermissions.S_IWGRP,
 		GroupExecute          = (int) Native.FilePermissions.S_IXGRP,
 		OtherReadWriteExecute = (int) Native.FilePermissions.S_IRWXO,
-		OtherMask             = OtherReadWriteExecute,
 		OtherRead             = (int) Native.FilePermissions.S_IROTH,
 		OtherWrite            = (int) Native.FilePermissions.S_IWOTH,
 		OtherExecute          = (int) Native.FilePermissions.S_IXOTH,

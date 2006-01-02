@@ -1,3 +1,28 @@
+2006-01-02  Jonathan Pryor <jonpryor@vt.edu>
+
+	* FileAccessPermissions.cs: Remove UserMask, GroupMask, OtherMask values.
+	* FileSpecialAttributes.cs: Remove AllAttributes member; it shouldn't be
+	  public.  Use UnixFileSystemInfo.AllSpecialAttributes instead.
+	* StdioFileStream.cs: Open files in binary mode, not text;
+	  Fix exception message for StdioFileStream(path, mode) mode param check.
+	* UnixDirectoryInfo.cs: Add Create(FileAccessPermissions) overload; change
+	  GetFileSystemEntries() to include the directory name that the files came
+	  from (otherwise they're in the current working direcetory, which they
+	  probably aren't).
+	* UnixFileInfo.cs: Add Create(FileAccessPermissions) overload; Add better
+	  argument checking to several Open() overloads.
+	* UnixFileSystemInfo.cs: Add AllSpecialAttributes, AllFileTypes members;
+	  FullPath member should invalidate instance if path changes; Change return
+	  type of GetFileStatus for maintenance/better documentation; ToStat()
+	  should ensure that the instance is valid first.
+	* UnixMarshal.cs: Add additional Errno values to CreateExceptionForError();
+	  reformat CreateExceptionForError for maintenance.
+	* UnixPath.cs: Obsolete InvalidPathChars -- FxCop never liked it, and now I
+	  know why it didn't like it (thank you Framework Design Guidelines!).
+	* UnixStream.cs: Use UnixFileSystemInfo.AllSpecialAttributes, not 
+	  FileSpecialAttributes.AllAttributes (which was removed).
+	* UnixSymbolicLinkInfo.cs: Change return type of GetFileStatus().
+
 2005-12-28  Jonathan Pryor <jonpryor@vt.edu>
 
 	* FileHandleOperations.cs: Check for null references.

@@ -29,7 +29,7 @@ namespace MonoTests.Mono.Unix.Native {
 			}
 		}
 
-		[Test]
+		// [Test]
 #if !NET_2_0
 		// .NET 1.1 marshals delegates as Stdcall functions, while signal(3)
 		// expects a Cdecl function.  Result: stack corruption.

@@ -32,6 +32,7 @@
 using System;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Security.Permissions;
 
 [assembly: AssemblyVersion (Consts.FxVersion)]
 
@@ -50,3 +51,18 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyDelaySign (true)]
 [assembly: AssemblyKeyFile ("../mono.pub")]
 
+/*
+ * TODO:
+ * 
+ * Anything implementing IDisposable should derive from MarshalByRefObject.
+ * This is for remoting situations (e.g. across AppDomains).
+ * Impacts UnixClient, UnixListener.
+ * 
+ * UnixPath.InvalidPathChars should be const, not readonly.
+ * 
+ * Mono.Remoting.Channels.Unix.UnixChannel.CreateMessageSink should have a LinkDemand
+ * idential to IChannelSender's CreateMessageSink LinkDemand.
+ * Repeat for all other members of UnixChannel, UnixClient, UnixServer.
+ * 
+ * Override .Equals and the == operator for all structures.
+ */

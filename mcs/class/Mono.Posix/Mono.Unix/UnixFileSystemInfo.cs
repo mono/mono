@@ -4,7 +4,7 @@
 // Authors:
 //   Jonathan Pryor (jonpryor@vt.edu)
 //
-// (C) 2004-2005 Jonathan Pryor
+// (C) 2004-2006 Jonathan Pryor
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -40,6 +40,14 @@ namespace Mono.Unix {
 		private string originalPath;
 		private bool valid = false;
 
+		internal const FileSpecialAttributes AllSpecialAttributes = 
+			FileSpecialAttributes.SetUserId | FileSpecialAttributes.SetGroupId |
+			FileSpecialAttributes.Sticky;
+		internal const FileTypes AllFileTypes = 
+			FileTypes.Directory | FileTypes.CharacterDevice | FileTypes.BlockDevice |
+			FileTypes.RegularFile | FileTypes.Fifo | FileTypes.SymbolicLink | 
+			FileTypes.Socket;
+
 		protected UnixFileSystemInfo (string path)
 		{
 			UnixPath.CheckPath (path);
@@ -58,7 +66,13 @@ namespace Mono.Unix {
 
 		protected string FullPath {
 			get {return fullPath;}
-			set {fullPath = value;}
+			set {
+				if (fullPath != value) {
+					UnixPath.CheckPath (value);
+					valid = false;
+					fullPath = value;
+				}
+			}
 		}
 
 		protected string OriginalPath {
@@ -119,7 +133,7 @@ namespace Mono.Unix {
 			get {
 				AssertValid ();
 				int type = (int) stat.st_mode;
-				return (FileTypes) (type & (int) FileTypes.AllTypes);
+				return (FileTypes) (type & (int) AllFileTypes);
 			}
 			// no set as chmod(2) won't accept changing the file type.
 		}
@@ -143,12 +157,12 @@ namespace Mono.Unix {
 			get {
 				AssertValid ();
 				int attrs = (int) stat.st_mode;
-				return (FileSpecialAttributes) (attrs & (int) FileSpecialAttributes.AllAttributes);
+				return (FileSpecialAttributes) (attrs & (int) AllSpecialAttributes);
 			}
 			set {
 				AssertValid ();
 				int perms = (int) stat.st_mode;
-				perms &= (int) ~FileSpecialAttributes.AllAttributes;
+				perms &= (int) ~AllSpecialAttributes;
 				perms |= (int) value;
 				Protection = (Native.FilePermissions) perms;
 			}
@@ -335,13 +349,12 @@ namespace Mono.Unix {
 		{
 			if (valid && !force)
 				return;
-			int r = GetFileStatus (FullPath, out this.stat);
-			valid = r == 0;
+			valid = GetFileStatus (FullPath, out this.stat);
 		}
 
-		protected virtual int GetFileStatus (string path, out Native.Stat stat)
+		protected virtual bool GetFileStatus (string path, out Native.Stat stat)
 		{
-			return Native.Syscall.stat (path, out stat);
+			return Native.Syscall.stat (path, out stat) == 0;
 		}
 
 		public void SetLength (long length)
@@ -389,9 +402,35 @@ namespace Mono.Unix {
 
 		public void SetOwner (string owner, string group)
 		{
-			long uid = new UnixUserInfo (owner).UserId;
-			long gid = new UnixGroupInfo (group).GroupId;
+			long uid = -1;
+			if (owner != null)
+				uid = new UnixUserInfo (owner).UserId;
+			long gid = -1;
+			if (group != null)
+				gid = new UnixGroupInfo (group).GroupId;
 
+			SetOwner (uid, gid);
+		}
+
+		public void SetOwner (UnixUserInfo owner)
+		{
+			long uid, gid;
+			uid = gid = -1;
+			if (owner != null) {
+				uid = owner.UserId;
+				gid = owner.GroupId;
+			}
+			SetOwner (uid, gid);
+		}
+
+		public void SetOwner (UnixUserInfo owner, UnixGroupInfo group)
+		{
+			long uid, gid;
+			uid = gid = -1;
+			if (owner != null)
+				uid = owner.UserId;
+			if (group != null)
+				gid = owner.GroupId;
 			SetOwner (uid, gid);
 		}
 
@@ -402,6 +441,7 @@ namespace Mono.Unix {
 
 		public Native.Stat ToStat ()
 		{
+			AssertValid ();
 			return stat;
 		}
 

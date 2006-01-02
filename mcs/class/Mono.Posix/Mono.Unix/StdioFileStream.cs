@@ -4,7 +4,7 @@
 // Authors:
 //   Jonathan Pryor (jonpryor@vt.edu)
 //
-// (C) 2005 Jonathan Pryor
+// (C) 2005-2006 Jonathan Pryor
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -60,7 +60,7 @@ namespace Mono.Unix {
 
 		public StdioFileStream (string path)
 		{
-			InitStream (Fopen (path, "r"), true);
+			InitStream (Fopen (path, "rb"), true);
 		}
 
 		public StdioFileStream (string path, string mode)
@@ -92,7 +92,7 @@ namespace Mono.Unix {
 			if (path.Length == 0)
 				throw new ArgumentException ("path");
 			if (mode == null)
-				throw new ArgumentNullException ("path");
+				throw new ArgumentNullException ("mode");
 			IntPtr f = Native.Stdlib.fopen (path, mode);
 			if (f == IntPtr.Zero)
 				throw new DirectoryNotFoundException ("path", 
