@@ -53,7 +53,12 @@ namespace System
 			Encoding.InternalCodePage (ref code_page);
 			Encoding encoding;
 
-			if (((int) Environment.Platform) == 128){
+			if (Environment.IsRunningOnWindows) {
+				//
+				// On Windows, follow the Windows tradition
+				//
+				encoding = Encoding.Default;
+			} else {
 				//
 				// On Unix systems (128), do not output the
 				// UTF-8 ZWNBSP (zero-width non-breaking space).
@@ -62,11 +67,6 @@ namespace System
 					encoding = Encoding.UTF8Unmarked;
 				else
 					encoding = Encoding.Default;
-			} else {
-				//
-				// On Windows, follow the Windows tradition
-				//
-				encoding = Encoding.Default;
 			}
 
 			stderr = new UnexceptionalStreamWriter (OpenStandardError (0), encoding); 

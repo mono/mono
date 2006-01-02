@@ -1,3 +1,11 @@
+2006-01-02  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Activator.cs: Now find the best ctor when null are used for 
+	paramaters. Fix bug #71300. Added checks for specific types (void,
+	TypedReference, ArgIterator and RuntimeArgumentHandle).
+	* Console.cs: Re-use Environment logic to detect Windows.
+	* Type.cs: Re-applied r45150 as the real bug was in Activator.
+
 2006-01-02  Zoltan Varga  <vargaz@gmail.com>
 
 	* Activator.cs: Add a 'params' to one of the CreateInstance overloads.

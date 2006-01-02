@@ -168,19 +168,27 @@ namespace System
 
 		public static object CreateInstance (Type type, object [] args, object [] activationAttributes)
 		{
-			if (type == null)
-				throw new ArgumentNullException ("type");
+			CheckType (type);
 
 			int length = 0;
 			if (args != null)
 				length = args.Length;
 
+			bool find_best = false;
 			Type [] atypes = new Type [length];
-			for (int i = 0; i < length; ++i)
+			for (int i = 0; i < length; ++i) {
 				if (args [i] != null)
 					atypes [i] = args [i].GetType ();
+				else
+					find_best = true;
+			}
 			
-			ConstructorInfo ctor = type.GetConstructor (atypes);
+			ConstructorInfo ctor = null;
+			if (find_best)
+				ctor = FindBestCtor (type.GetConstructors (), atypes);
+			else
+				ctor = type.GetConstructor (atypes);
+
 			if (ctor == null) {
 				if (type.IsValueType && atypes.Length == 0)
 					return CreateInstanceInternal (type);
@@ -189,16 +197,13 @@ namespace System
 								type.FullName);
 			}
 
-			if (type.IsAbstract)
-#if NET_2_0
-				throw new MissingMethodException (Locale.GetText ("Cannot create an abstract class. Class name: ") +
-								type.FullName);
-#else
-				throw new MemberAccessException (Locale.GetText ("Cannot create an abstract class. Class name: ") +
-								type.FullName);
-#endif
+			CheckAbstractType (type);
 
-			if (activationAttributes != null && activationAttributes.Length > 0 && type.IsMarshalByRef) {
+			if (activationAttributes != null && activationAttributes.Length > 0) {
+				if (!type.IsMarshalByRef) {
+					string msg = Locale.GetText ("Type '{0}' doesn't derive from MarshalByRefObject.", type.FullName);
+					throw new NotSupportedException (msg);
+				}
 				object newOb = ActivationServices.CreateProxyFromAttributes (type, activationAttributes);
 				if (newOb != null)
 					return ctor.Invoke (newOb, args);
@@ -216,8 +221,7 @@ namespace System
 		public static object CreateInstance (Type type, BindingFlags bindingAttr, Binder binder, object [] args,
 		                                     CultureInfo culture, object [] activationAttributes)
 		{
-			if (type == null)
-				throw new ArgumentNullException ("type");
+			CheckType (type);
 		
 			// It seems to apply the same rules documented for InvokeMember: "If the type of lookup
 			// is omitted, BindingFlags.Public | BindingFlags.Instance will apply".
@@ -228,12 +232,21 @@ namespace System
 			if (args != null)
 				length = args.Length;
 
+			bool find_best = false;
 			Type[] atypes = new Type [length];
-			for (int i = 0; i < length; ++i)
+			for (int i = 0; i < length; ++i) {
 				if (args [i] != null)
 					atypes [i] = args [i].GetType ();
-				
-			ConstructorInfo ctor = type.GetConstructor (bindingAttr, binder, atypes, null);
+				else
+					find_best = true;
+			}
+
+			ConstructorInfo ctor = null;
+			if (find_best)
+				ctor = FindBestCtor (type.GetConstructors (bindingAttr), atypes);
+			else
+				ctor = type.GetConstructor (bindingAttr, binder, atypes, null);
+
 			if (ctor == null) {
 				// Not sure about this
 				if (type.IsValueType && atypes.Length == 0) {
@@ -244,16 +257,13 @@ namespace System
 								type.FullName);
 			}
 
-			if (type.IsAbstract)
-#if NET_2_0
-				throw new MissingMethodException (Locale.GetText ("Cannot create an abstract class. Class name: ") +
-					type.FullName);
-#else
-				throw new MemberAccessException (Locale.GetText ("Cannot create an abstract class. Class name: ") +
-					type.FullName);
-#endif
+			CheckAbstractType (type);
 
-			if (activationAttributes != null && activationAttributes.Length > 0 && type.IsMarshalByRef) {
+			if (activationAttributes != null && activationAttributes.Length > 0) {
+				if (!type.IsMarshalByRef) {
+					string msg = Locale.GetText ("Type '{0}' doesn't derive from MarshalByRefObject.", type.FullName);
+					throw new NotSupportedException (msg);
+				}
 				object newOb = ActivationServices.CreateProxyFromAttributes (type, activationAttributes);
 				if (newOb != null)
 					return ctor.Invoke (newOb, bindingAttr, binder, args, culture);
@@ -264,17 +274,8 @@ namespace System
 
 		public static object CreateInstance (Type type, bool nonPublic)
 		{ 
-			if (type == null)
-				throw new ArgumentNullException ("type");
-		
-			if (type.IsAbstract)
-#if NET_2_0
-				throw new MissingMethodException (Locale.GetText ("Cannot create an abstract class. Class name: ") +
-								 type.FullName);
-#else
-				throw new MemberAccessException (Locale.GetText ("Cannot create an abstract class. Class name: ") +
-								type.FullName);
-#endif
+			CheckType (type);
+			CheckAbstractType (type);
 
 			BindingFlags flags = BindingFlags.Public | BindingFlags.Instance;
 			if (nonPublic)
@@ -291,6 +292,54 @@ namespace System
 			}
 
 			return ctor.Invoke (null);
+		}
+
+		private static void CheckType (Type type)
+		{
+			if (type == null)
+				throw new ArgumentNullException ("type");
+
+			if ((type == typeof (TypedReference)) || (type == typeof (ArgIterator)) || (type == typeof (void)) ||
+				(type == typeof (RuntimeArgumentHandle))) {
+				string msg = Locale.GetText ("CreateInstance cannot be used to create this type ({0}).", type.FullName);
+				throw new NotSupportedException (msg);
+			}
+		}
+
+		private static void CheckAbstractType (Type type)
+		{
+			if (type.IsAbstract) {
+				string msg = Locale.GetText ("Cannot create an abstract class '{0}'.", type.FullName);
+#if NET_2_0
+				throw new MissingMethodException (msg);
+#else
+				throw new MemberAccessException (msg);
+#endif
+			}
+		}
+
+		private static ConstructorInfo FindBestCtor (ConstructorInfo[] ctors, Type[] parameters)
+		{
+			foreach (ConstructorInfo ctor in ctors) {
+				ParameterInfo[] pis = ctor.GetParameters ();
+				if (parameters.Length != pis.Length)
+					continue;
+
+				bool full_match = true;
+				int i=0;
+				foreach (ParameterInfo pi in pis) {
+					if (parameters [i] == null)
+						continue;
+					if (parameters [i] != pi.ParameterType) {
+						full_match = false;
+						break;
+					}
+				}
+
+				if (full_match)
+					return ctor;
+			}
+			return null;
 		}
 
 		[SecurityPermission (SecurityAction.LinkDemand, RemotingConfiguration = true)]
