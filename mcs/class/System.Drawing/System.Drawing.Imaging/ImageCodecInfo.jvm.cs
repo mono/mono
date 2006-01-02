@@ -131,7 +131,7 @@ namespace System.Drawing.Imaging {
 		public string DllName 
 		{
 			get { return dllName; }
-			set { dllName = value; }
+			set { throw new NotSupportedException(); }
 		}
 
 		

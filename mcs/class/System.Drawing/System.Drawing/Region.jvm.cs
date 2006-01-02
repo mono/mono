@@ -363,17 +363,10 @@ namespace System.Drawing
 		}
 		
 		
-		#region GetRegionScans [TODO]
-		[MonoTODO]
 		public RectangleF[] GetRegionScans(Matrix matrix)
 		{
-			geom.Area area = NativeObject;
-			if (matrix !=null)
-				area = area.createTransformedArea (matrix.NativeObject);
-			//FIXME: return more exact result
-			return new RectangleF [] {new RectangleF (area.getBounds2D ())};
+			throw new NotSupportedException();
 		}
-		#endregion
 		
 		#region Transform 
 		public void Transform(Matrix matrix)
