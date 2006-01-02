@@ -937,6 +937,8 @@ namespace System.Windows.Forms
 					}
 					
 					fileDialog.FileName = currentFileName;
+					
+					WriteRecentlyUsed();
 				}
 				else // multiSelect = true
 				if ( fileDialog.fileDialogType != FileDialogType.SaveFileDialog )
@@ -1235,15 +1237,17 @@ namespace System.Windows.Forms
 			{
 				// check for GNOME and KDE
 				string personal_folder = Environment.GetFolderPath( Environment.SpecialFolder.Personal );
+				string recently_used_path = Path.Combine( personal_folder, ".recently-used" );
+				
 				ArrayList files_al = new ArrayList( );
 				
 				// GNOME
-				if ( File.Exists( personal_folder + "/.recently-used" ) )
+				if ( File.Exists( recently_used_path ) )
 				{
 					try
 					{
 						
-						XmlTextReader xtr = new XmlTextReader( personal_folder + "/.recently-used" );
+						XmlTextReader xtr = new XmlTextReader( recently_used_path );
 						while ( xtr.Read( ) ) 
 						{
 							if ( xtr.NodeType == XmlNodeType.Element && xtr.Name.ToUpper() == "URI" )
@@ -1299,6 +1303,138 @@ namespace System.Windows.Forms
 				}
 				
 				mwfFileView.UpdateFileViewByArrayList( files_al );
+			}
+			
+			private void WriteRecentlyUsed( )
+			{
+				int platform = (int) Environment.OSVersion.Platform;
+				
+				// on a *nix platform we use "$HOME/.recently-used" to store our recently used files (GNOME, libegg like)
+				if ((platform == 4) || (platform == 128)) 
+				{
+					string personal_folder = Environment.GetFolderPath( Environment.SpecialFolder.Personal );
+					string recently_used_path = Path.Combine( personal_folder, ".recently-used" );
+					
+					if ( File.Exists( recently_used_path ) )
+					{
+						XmlDocument xml_doc = new XmlDocument( );
+						xml_doc.Load( recently_used_path );
+						
+						XmlNode grand_parent_node = xml_doc.SelectSingleNode( "RecentFiles" );
+						
+						if ( grand_parent_node != null )
+						{
+							// create a new element
+							XmlElement new_recent_item_node = xml_doc.CreateElement( "RecentItem" );
+							
+							XmlElement new_child = xml_doc.CreateElement( "URI" );
+							UriBuilder ub = new UriBuilder( );
+							ub.Path = currentFileName;
+							ub.Host = null;
+							ub.Scheme = "file";
+							XmlText new_text_child = xml_doc.CreateTextNode( ub.ToString() );
+							new_child.AppendChild( new_text_child );
+							
+							new_recent_item_node.AppendChild( new_child );
+							
+							new_child = xml_doc.CreateElement( "Mime-Type" );
+							new_text_child = xml_doc.CreateTextNode( Mime.GetMimeTypeForFile( currentFileName ) );
+							new_child.AppendChild( new_text_child );
+							
+							new_recent_item_node.AppendChild( new_child );
+							
+							new_child = xml_doc.CreateElement( "Timestamp" );
+							long seconds = 0;
+							Mono.Unix.Native.Syscall.time( out seconds );
+							new_text_child = xml_doc.CreateTextNode( seconds.ToString( ) );
+							new_child.AppendChild( new_text_child );
+							
+							new_recent_item_node.AppendChild( new_child );
+							
+							new_child = xml_doc.CreateElement( "Groups" );
+							
+							new_recent_item_node.AppendChild( new_child );
+							
+							// now search the nodes in grand_parent_node for another instance of the new uri and if found remove it
+							// so that the new node is the first one
+							foreach ( XmlNode n in grand_parent_node.ChildNodes )
+							{
+								XmlNode uri_node = n.SelectSingleNode( "URI" );
+								if ( uri_node != null )
+								{
+									XmlNode uri_node_child = uri_node.FirstChild;
+									if ( uri_node_child is XmlText )
+										if ( ub.ToString() == ((XmlText)uri_node_child).Data )
+										{
+											grand_parent_node.RemoveChild( n );
+											break;
+										}
+								}
+							}
+							
+							// prepend the new recent item to the grand parent node list
+							grand_parent_node.PrependChild( new_recent_item_node );
+							
+							// limit the # of RecentItems to 10
+							if ( grand_parent_node.ChildNodes.Count > 10 )
+							{
+								while( grand_parent_node.ChildNodes.Count > 10 )
+									grand_parent_node.RemoveChild( grand_parent_node.LastChild );
+							}
+							
+							try {
+								xml_doc.Save( recently_used_path );
+							} catch ( Exception e ) {
+							}
+						}
+					}
+					else // create a new .recently-used file
+					{
+						XmlDocument xml_doc = new XmlDocument();
+						xml_doc.AppendChild( xml_doc.CreateXmlDeclaration( "1.0", "", "" ) );
+						
+						XmlElement recentFiles_element = xml_doc.CreateElement( "RecentFiles" );
+						
+						XmlElement new_recent_item_node = xml_doc.CreateElement( "RecentItem" );
+						
+						XmlElement new_child = xml_doc.CreateElement( "URI" );
+						UriBuilder ub = new UriBuilder( );
+						ub.Path = currentFileName;
+						ub.Host = null;
+						ub.Scheme = "file";
+						XmlText new_text_child = xml_doc.CreateTextNode( ub.ToString() );
+						new_child.AppendChild( new_text_child );
+						
+						new_recent_item_node.AppendChild( new_child );
+						
+						new_child = xml_doc.CreateElement( "Mime-Type" );
+						new_text_child = xml_doc.CreateTextNode( Mime.GetMimeTypeForFile( currentFileName ) );
+						new_child.AppendChild( new_text_child );
+						
+						new_recent_item_node.AppendChild( new_child );
+						
+						new_child = xml_doc.CreateElement( "Timestamp" );
+						long seconds = 0;
+						Mono.Unix.Native.Syscall.time( out seconds );
+						new_text_child = xml_doc.CreateTextNode( seconds.ToString( ) );
+						new_child.AppendChild( new_text_child );
+						
+						new_recent_item_node.AppendChild( new_child );
+						
+						new_child = xml_doc.CreateElement( "Groups" );
+						
+						new_recent_item_node.AppendChild( new_child );
+						
+						recentFiles_element.AppendChild( new_recent_item_node );
+						
+						xml_doc.AppendChild( recentFiles_element );
+
+						try {
+							xml_doc.Save( recently_used_path );
+						} catch ( Exception e ) {
+						}
+					}
+				}
 			}
 			
 			internal class PopupButtonPanel : Panel
