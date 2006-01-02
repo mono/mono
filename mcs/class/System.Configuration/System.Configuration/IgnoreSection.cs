@@ -39,6 +39,13 @@ namespace System.Configuration {
 	{
 		string xml;
 
+		static ConfigurationPropertyCollection properties;
+
+		static IgnoreSection ()
+		{
+			properties = new ConfigurationPropertyCollection ();
+		}
+
 		public IgnoreSection ()
 		{
 		}
@@ -70,13 +77,8 @@ namespace System.Configuration {
 			return xml;
 		}
 
-		ConfigurationPropertyCollection properties;
 		protected internal override ConfigurationPropertyCollection Properties {
-			get {
-				if (properties == null)
-					properties = new ConfigurationPropertyCollection ();
-				return properties;
-			}
+			get { return properties; }
 		}
 	}
 }

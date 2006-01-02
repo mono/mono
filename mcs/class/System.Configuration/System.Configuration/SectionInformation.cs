@@ -46,6 +46,7 @@ namespace System.Configuration
 		string config_source;
 		bool force_update, is_declared, is_locked, is_protected;
 		string name, type_name;
+		string raw_xml;
 
 		ProtectedConfigurationProvider protected_provider;
 		
@@ -136,7 +137,7 @@ namespace System.Configuration
 
 		[MonoTODO]
 		public string SectionName {
-			get { throw new NotImplementedException (); }
+			get { return name; }
 		}
 
 		public string Type {
@@ -150,10 +151,9 @@ namespace System.Configuration
 			return parent;
 		}
 
-		[MonoTODO]
 		public string GetRawXml ()
 		{
-			throw new NotImplementedException ();
+			return raw_xml;
 		}
 
 		[MonoTODO]
@@ -178,18 +178,16 @@ namespace System.Configuration
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public void UnprotectSection ()
 		{
-			throw new NotImplementedException ();
+			is_protected = false;
 		}
 
-		[MonoTODO]
 		public void SetRawXml (string xml)
 		{
-			throw new NotImplementedException ();
+			raw_xml = xml;
 		}
-		
+
 		[MonoTODO]
 		internal void SetName (string name)
 		{

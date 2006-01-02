@@ -45,8 +45,10 @@ namespace System.Configuration
 		[MonoTODO]
 		public SectionInformation SectionInformation {
 			get {
-				if (sectionInformation == null)
+				if (sectionInformation == null) {
 					sectionInformation = new SectionInformation ();
+					sectionInformation.Type = GetType().AssemblyQualifiedName;
+				}
 				return sectionInformation;
 			}
 		}
@@ -79,6 +81,7 @@ namespace System.Configuration
 
 		protected internal virtual void DeserializeSection (XmlReader reader)
 		{
+			SectionInformation.SetRawXml (RawXml);
 			DeserializeElement (reader, false);
 		}
 

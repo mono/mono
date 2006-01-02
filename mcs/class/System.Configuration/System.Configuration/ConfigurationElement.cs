@@ -133,14 +133,10 @@ namespace System.Configuration
 			}
 		}
 
-		[MonoTODO]
+		bool lockItem;
 		public bool LockItem {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+			get { return lockItem; }
+			set { lockItem = value; }
 		}
 
 		[MonoTODO]
@@ -294,6 +290,9 @@ namespace System.Configuration
 					}
 					else if (reader.LocalName == "lockElements") {
 						LockElements.SetFromList (reader.Value);
+					}
+					else if (reader.LocalName == "lockItem") {
+						LockItem = (reader.Value.ToLower() == "true");
 					}
 					else if (!OnDeserializeUnrecognizedAttribute (reader.LocalName, reader.Value))
 						throw new ConfigurationException ("Unrecognized attribute '" + reader.LocalName + "'.");

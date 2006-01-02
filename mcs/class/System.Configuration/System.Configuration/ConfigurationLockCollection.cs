@@ -126,7 +126,7 @@ namespace System.Configuration
 		public bool IsReadOnly (string name)
 		{
 			for (int i = 0; i < names.Count; i ++) {
-				if (names[i] == name) {
+				if ((string)names[i] == name) {
 					/* this test used to switch off whether the collection was 'Exclude' or not
 					 * (the LockAll*Except collections), but that doesn't seem to be the crux of
 					 * it.  maybe this returns true if the element/attribute is locked in a parent

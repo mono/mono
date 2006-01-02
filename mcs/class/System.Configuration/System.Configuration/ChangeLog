@@ -1,3 +1,29 @@
+2006-01-02  Chris Toshok  <toshok@ximian.com>
+
+	* DefaultSection.cs (Properties): implement.
+
+	* IgnoreSection.cs: move from lazily creating the properties
+	collection to sharing a single one across all instances.
+
+	* ConfigurationLockCollection.cs (IsReadOnly): fix compiler warning.
+
+	* ConfigurationElementCollection.cs (BaseAdd) remove logic to
+	remove an old matching element.
+	(BaseGetKey): throw an exception if @index is out of range.
+
+	* SectionInformation.cs (SectionName): just return name, like Name
+	does.. redundant, but it matches tests.
+	(GetRawXml): implement.
+	(SetRawXml): implement.
+
+	* ConfigurationSection.cs (SectionInformation): fill in
+	sectionInformation.Type before returning.
+	(DeserializeSection): save off the raw xml to our
+	SectionInformation.
+
+	* ConfigurationElement.cs (LockItem): implement.
+	(DeserializeElement): add support for the "lockItem" attribute.
+
 2005-12-16  Chris Toshok  <toshok@ximian.com>
 
 	* ConfigurationLockCollection.cs (Add): only add the name if it's

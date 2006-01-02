@@ -70,6 +70,10 @@ namespace System.Configuration {
 		{
 			return base.SerializeSection (parentSection, name, saveMode);
 		}
+
+		protected internal override ConfigurationPropertyCollection Properties {
+			get { return properties; }
+		}
 	}
 }
 

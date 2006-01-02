@@ -159,9 +159,10 @@ namespace System.Configuration
 				list.Insert (inheritedLimitIndex, element);
 				inheritedLimitIndex++;
 			}
-			else
+			else {
 				list.Add (element);
-			if (old_index != -1)
+			}
+			if (!IsAlternate && old_index != -1)
 				list.RemoveAt (old_index);
 			modified = true;
 		}
@@ -178,10 +179,7 @@ namespace System.Configuration
 			if (!IsAlternate && (index <= inheritedLimitIndex))
 				throw new ConfigurationErrorsException ("Can't insert new elements above the inherited elements.");
 			
-			int old_index = IndexOfKey (GetElementKey (element));
 			list.Insert (index, element);
-			if (old_index != -1)
-				list.RemoveAt (old_index);
 			modified = true;
 		}
 
@@ -216,6 +214,9 @@ namespace System.Configuration
 
 		protected internal object BaseGetKey (int index)
 		{
+			if (index < 0 || index >= list.Count)
+				throw new ConfigurationErrorsException (String.Format ("Index {0} is out of range", index));
+
 			return GetElementKey ((ConfigurationElement) list[index]).ToString ();
 		}
 
