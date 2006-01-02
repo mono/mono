@@ -54,7 +54,7 @@ namespace Mono.Unix.Native {
 		ECHILD          =  10, // No child processes 
 		EAGAIN          =  11, // Try again 
 		ENOMEM          =  12, // Out of memory 
-		EACCESS         =  13, // Permission denied 
+		EACCES          =  13, // Permission denied 
 		EFAULT          =  14, // Bad address 
 		ENOTBLK         =  15, // Block device required 
 		EBUSY           =  16, // Device or resource busy 

@@ -404,7 +404,7 @@ namespace Mono.Unix {
 				case Native.Errno.ENOTDIR:       return new DirectoryNotFoundException (message, p);
 				case Native.Errno.EFAULT:        return new NullReferenceException (message, p);
 
-				case Native.Errno.EACCESS:
+				case Native.Errno.EACCES:
 				case Native.Errno.EISDIR:        return new UnauthorizedAccessException (message, p);
 
 				case Native.Errno.ENOENT:        return new FileNotFoundException (message, p);

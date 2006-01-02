@@ -1,5 +1,10 @@
 2005-01-02  Jonathan Pryor <jonpryor@vt.edu>
 
+	* Stdlib.cs: s/ACCESS/ACCES/g.  I didn't create a badly named errno value, I
+	  mis-read EACCES in man pages.  I can't read. :-(
+
+2005-01-02  Jonathan Pryor <jonpryor@vt.edu>
+
 	* NativeConvert.generated.cs: Flush (remove Obsolete members).
 	* Syscall.cs: Remove invalid utimes(2) wrapper.
 

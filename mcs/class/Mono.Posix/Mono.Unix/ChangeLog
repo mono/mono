@@ -1,5 +1,9 @@
 2006-01-02  Jonathan Pryor <jonpryor@vt.edu>
 
+	* UnixMarshal.cs: s/EACCESS/EACCES/g.  I can't read.
+
+2006-01-02  Jonathan Pryor <jonpryor@vt.edu>
+
 	* StdioFileStream.cs, UnixDirectoryInfo.cs, UnixEnvironment.cs, 
 	  UnixFileInfo.cs, UnixFileSystemInfo.cs, UnixGroupInfo.cs,
 	  UnixIOException.cs, UnixMarshal.cs, UnixProcess.cs, UnixStream.cs,
