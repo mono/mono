@@ -64,6 +64,7 @@ namespace System.Data.OracleClient
 		int minPoolSize = 0;
 		int maxPoolSize = 100;
 		byte persistSecurityInfo = 1;
+		bool disposed = false;
 
 		#endregion // Fields
 
@@ -257,7 +258,21 @@ namespace System.Data.OracleClient
 		[MonoTODO]
 		protected override void Dispose (bool disposing)
 		{
-			base.Dispose (disposing);
+			if (!disposed) {
+				if (State == ConnectionState.Open)
+					Close ();
+				dataReader = null;
+				transaction = null;
+				oci = null;
+				pool = null;
+				conInfo.Username = "";
+				conInfo.Database = "";
+				conInfo.Password = "";
+				connectionString = "";
+				parsedConnectionString = "";
+				base.Dispose (disposing);
+				disposed = true;
+			}
 		}
 
 		[MonoTODO]

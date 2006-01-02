@@ -1941,6 +1941,132 @@ namespace Test.OracleClient
 			reader.Close();
 		}
 
+		static void ExternalAuthenticationTest () 
+		{
+			string user = Environment.UserName;
+			if (!Environment.UserDomainName.Equals(String.Empty))
+				user = Environment.UserDomainName + "\\" + Environment.UserName;
+			Console.WriteLine("Environment UserDomainName and UserName: " + user);
+			Console.WriteLine("Open connection using external authentication...");
+			OracleConnection con = new OracleConnection("Data Source=palis;Integrated Security=true");
+			try {
+				con.Open();
+				OracleCommand cmd = con.CreateCommand();
+				cmd.CommandText = "SELECT USER FROM DUAL";
+				OracleDataReader reader = cmd.ExecuteReader();
+				if (reader.Read())
+					Console.WriteLine("User: " + reader.GetString(reader.GetOrdinal("USER")));
+				con.Close();
+			}
+			catch (Exception e) {
+				Console.WriteLine("Exception caught: " + e.Message);
+				Console.WriteLine("Probably not setup for external authentication.");
+			}
+			con.Dispose();
+			con = null;
+		}
+
+		public static void TestPersistSucurityInfo1() 
+		{
+			Console.WriteLine("\nTestPersistSucurityInfo1 - persist security info=false");
+			OracleConnection con = new OracleConnection("data source=palis;user id=scott;password=tiger;persist security info=false");
+			Console.WriteLine("ConnectionString before open: " + con.ConnectionString);
+			con.Open();
+			Console.WriteLine("ConnectionString after open: " + con.ConnectionString);
+			con.Close();
+			Console.WriteLine("ConnectionString after close: " + con.ConnectionString);
+			con = null;
+		}
+
+		public static void TestPersistSucurityInfo2() 
+		{
+			Console.WriteLine("\nTestPersistSucurityInfo2 - persist security info=true");
+			OracleConnection con = new OracleConnection("data source=palis;user id=scott;password=tiger;persist security info=true");
+			Console.WriteLine("ConnectionString before open: " + con.ConnectionString);
+			con.Open();
+			Console.WriteLine("ConnectionString after open: " + con.ConnectionString);
+			con.Close();
+			Console.WriteLine("ConnectionString after close: " + con.ConnectionString);
+			con = null;
+		}
+
+		public static void TestPersistSucurityInfo3() 
+		{
+			Console.WriteLine("\nTestPersistSucurityInfo3 - use default for persist security info which is false");
+			OracleConnection con = new OracleConnection("data source=palis;user id=scott;password=tiger");
+			Console.WriteLine("ConnectionString before open: " + con.ConnectionString);
+			con.Open();
+			Console.WriteLine("ConnectionString after open: " + con.ConnectionString);
+			con.Close();
+			Console.WriteLine("ConnectionString after close: " + con.ConnectionString);
+			con = null;
+		}
+
+		public static void TestPersistSucurityInfo4() 
+		{
+			Console.WriteLine("\nTestPersistSucurityInfo4 - persist security info=false with password at front");
+			OracleConnection con = new OracleConnection(";password=tiger;data source=palis;user id=scott;persist security info=false");
+			Console.WriteLine("ConnectionString before open: " + con.ConnectionString);
+			con.Open();
+			Console.WriteLine("ConnectionString after open: " + con.ConnectionString);
+			con.Close();
+			Console.WriteLine("ConnectionString after close: " + con.ConnectionString);
+			con = null;
+		}
+
+		public static void TestPersistSucurityInfo5() 
+		{
+			Console.WriteLine("\nTestPersistSucurityInfo5 - persist security info=false");
+			OracleConnection con = new OracleConnection("data source=palis;user id=scott;password=tiger;persist security info=false");
+			Console.WriteLine("ConnectionString before open: " + con.ConnectionString);
+			con.Open();
+			Console.WriteLine("ConnectionString after open: " + con.ConnectionString);
+			Console.WriteLine("ConnectionState for con: " + con.State.ToString() + "\n");
+		
+			Console.WriteLine("Clone OracleConnection...");
+			OracleConnection con2 = (OracleConnection) ((ICloneable) con).Clone();
+		
+			Console.WriteLine("ConnectionState for con2: " + con2.State.ToString());
+			Console.WriteLine("con2 ConnectionString before open: " + con2.ConnectionString);
+			con2.Open();
+			Console.WriteLine("con2 ConnectionString after open: " + con2.ConnectionString);
+			con2.Close();
+			Console.WriteLine("con2 ConnectionString after close: " + con2.ConnectionString);
+		
+			con.Close();
+		}
+
+		public static void TestPersistSucurityInfo6() 
+		{
+			Console.WriteLine("\nTestPersistSucurityInfo6 - external auth using persist security info");
+
+			string user = Environment.UserName;
+			if (!Environment.UserDomainName.Equals(String.Empty))
+				user = Environment.UserDomainName + "\\" + Environment.UserName;
+			Console.WriteLine("Environment UserDomainName and UserName: " + user);
+			Console.WriteLine("Open connection using external authentication...");
+			OracleConnection con = new OracleConnection("Data Source=palis;Integrated Security=true");
+			Console.WriteLine("ConnectionString before open: " + con.ConnectionString);
+			try {
+				con.Open();
+				OracleCommand cmd = con.CreateCommand();
+				cmd.CommandText = "SELECT USER FROM DUAL";
+				OracleDataReader reader = cmd.ExecuteReader();
+				if (reader.Read())
+					Console.WriteLine("User: " + reader.GetString(reader.GetOrdinal("USER")));
+				con.Close();
+				Console.WriteLine("ConnectionString after close: " + con.ConnectionString);
+			}
+			catch (Exception e) {
+				Console.WriteLine("Exception caught: " + e.Message);
+				Console.WriteLine("Probably not setup for external authentication. This is fine.");
+			}
+			con.Dispose();
+			Console.WriteLine("ConnectionString after dispose: " + con.ConnectionString);
+			con = null;
+			Console.WriteLine("\n\n");
+		}
+
 		public static void ConnectionPoolingTest1 () 
 		{
 			Console.WriteLine("Start Connection Pooling Test 1...");
@@ -2153,6 +2279,15 @@ namespace Test.OracleClient
 			Console.WriteLine("Closing...");
 			con1.Close ();
 			Console.WriteLine("Closed.");
+
+			ExternalAuthenticationTest();
+
+			TestPersistSucurityInfo1();
+			TestPersistSucurityInfo2();
+			TestPersistSucurityInfo3();
+			TestPersistSucurityInfo4();
+			TestPersistSucurityInfo5();
+			TestPersistSucurityInfo6();
 
 			//conStr = conStr + ";pooling=true;min pool size=4;max pool size=" + MAX_CONNECTIONS.ToString ();
 			//ConnectionPoolingTest1 ();

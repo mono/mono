@@ -1,3 +1,11 @@
+2006-01-02  Daniel Morgan <danielmorgan@verizon.net>
+
+	* System.Data.OracleClient/OracleConnection.cs: dispose of the
+	connection string and other fields
+	
+	* Test/TestOracleClient.cs: tests for Intergrated Security
+	and Persist Secuirty Info connection string parameters
+
 2006-01-01  Daniel Morgan <danielmorgan@verizon.net>
 
 	* System.Data.OracleClient/OracleConnection.cs: implement
