@@ -1,3 +1,14 @@
+2006-01-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* object.c (mono_nullable_init): New helper function.
+	(mono_nullable_box): Ditto.
+
+	* marshal.c (mono_marshal_get_runtime_invoke): Handle Nullables.
+
+	* icall.c (ves_icall_FieldInfo_SetValueInternal): Handle Nullables.
+
+	* icall.c (ves_icall_MonoField_GetValueInternal): Handle Nullables.
+	
 2006-01-02  Zoltan Varga  <vargaz@gmail.com>
 
 	* class.c (mono_class_is_assignable_from): Make T assignable to 
