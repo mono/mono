@@ -1,3 +1,8 @@
+2006-01-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* Nullable.cs: Add comments about runtime dependencies on the layout of
+	this type.
+
 2006-01-02  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Activator.cs: Now find the best ctor when null are used for 

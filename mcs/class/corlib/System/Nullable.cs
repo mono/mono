@@ -92,11 +92,13 @@ namespace System {
 			return (object)value.value;
 		}
 	}
-	
+
 	public struct Nullable<T> : IComparable, INullableValue
 	{
+		#region Sync with runtime code
 		internal T value;
 		internal bool has_value;
+		#endregion
 
 		public Nullable (T value)
 		{
