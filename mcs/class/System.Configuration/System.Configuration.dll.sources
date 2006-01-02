@@ -61,6 +61,7 @@ System.Configuration/ConnectionStringSettings.cs
 System.Configuration/ContextInformation.cs
 System.Configuration/DefaultSection.cs
 System.Configuration/DefaultValidator.cs
+System.Configuration/DpapiProtectedConfigurationProvider.cs
 System.Configuration/ElementInformation.cs
 System.Configuration/ExeConfigurationFileMap.cs
 System.Configuration/ExeContext.cs
@@ -86,12 +87,16 @@ System.Configuration/PositiveTimeSpanValidatorAttribute.cs
 System.Configuration/PropertyInformation.cs
 System.Configuration/PropertyInformationCollection.cs
 System.Configuration/PropertyValueOrigin.cs
+System.Configuration/ProtectedConfiguration.cs
 System.Configuration/ProtectedConfigurationProvider.cs
+System.Configuration/ProtectedConfigurationProviderCollection.cs
 System.Configuration/ProtectedConfigurationSection.cs
+System.Configuration/ProtectedProviderSettings.cs
 System.Configuration/ProviderSettings.cs
 System.Configuration/ProviderSettingsCollection.cs
 System.Configuration/RegexStringValidator.cs
 System.Configuration/RegexStringValidatorAttribute.cs
+System.Configuration/RsaProtectedConfigurationProvider.cs
 System.Configuration/SectionInfo.cs
 System.Configuration/SectionGroupInfo.cs
 System.Configuration/SectionInformation.cs

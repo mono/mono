@@ -1,3 +1,8 @@
+2006-01-02  Chris Toshok  <toshok@ximian.com>
+
+	* System.Configuration.dll.sources: add the Protected
+	configuration classes to the build.
+
 2005-10-24  Chris Toshok  <toshok@ximian.com>
 
 	* System.Configuration_test.dll.sources: add
