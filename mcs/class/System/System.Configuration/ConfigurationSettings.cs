@@ -32,6 +32,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if CONFIGURATION_DEP
+extern alias PrebuiltSystem;
+using NameValueCollection = PrebuiltSystem.System.Collections.Specialized.NameValueCollection;
+#endif
+
 using System;
 using System.Collections;
 using System.Collections.Specialized;
@@ -63,11 +68,19 @@ namespace System.Configuration
 		public static NameValueCollection AppSettings
 		{
 			get {
+#if NET_2_0 && CONFIGURATION_2_0
+#if CONFIGURATION_DEP
+				return ConfigurationManager.AppSettings;
+#else
+				return null;
+#endif
+#else
 				object appSettings = GetConfig ("appSettings");
 				if (appSettings == null)
 					appSettings = new NameValueCollection ();
 
 				return (NameValueCollection) appSettings;
+#endif
 			}
 		}
 
@@ -108,8 +121,18 @@ namespace System.Configuration
 #endif
 		public object GetConfig (string sectionName)
 		{
+#if NET_2_0 && CONFIGURATION_2_0
+#if CONFIGURATION_DEP
+			Init ();
+			return ConfigurationManager.GetSection (sectionName);
+#else
+			return null;
+#endif
+
+#else
 			Init ();
 			return config.GetConfig (sectionName);
+#endif
 		}
 
 		public void Init ()
@@ -513,7 +536,7 @@ namespace System.Configuration
 					value = reader.Value;
 				}
 				else 
-#if NET_2_0
+#if NET_2_0 && CONFIGURATION_2_0
 				if (reader.Name != "type")
 #endif
 					ThrowException ("Unrecognized attribute.", reader);

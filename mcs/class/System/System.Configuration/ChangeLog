@@ -1,3 +1,20 @@
+2006-01-02  Chris Toshok  <toshok@ximian.com>
+
+	* LocalFileSettingsProvider.cs: use the PrebuiltSystem extern
+	alias to make sure we use the right type for NameValueCollection.
+	(Initialize): enable (under the CONFIGURATION_2_0 ifdef).
+
+	* ConfigurationSettings.cs: use the PrebuiltSystem extern alias to
+	make sure we use the right type for NameValueCollection.
+	(AppSettings): provide an implementation for the NET_2_0 &&
+	CONFIGURATION_2_0 case.
+	(GetConfig): same.
+	(ReadSectionGroup): allow a type attribute in the NET_2_0 &&
+	CONFIGURATION_2_0 case.
+
+	* AppSettingsReader.cs: use the PrebuiltSystem extern alias to
+	make sure we use the right type for NameValueCollection.
+
 2005-11-28  Chris Toshok  <toshok@ximian.com>
 
 	* SettingValueElement.cs: wrap a few more things in

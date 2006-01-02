@@ -1,5 +1,5 @@
 //
-// System.Web.UI.WebControls.LocalFileSettingsProvider.cs
+// System.Configuration.LocalFileSettingsProvider.cs
 //
 // Authors:
 //	Chris Toshok (toshok@ximian.com)
@@ -27,6 +27,11 @@
 //
 
 #if NET_2_0
+#if CONFIGURATION_DEP
+extern alias PrebuiltSystem;
+using NameValueCollection = PrebuiltSystem.System.Collections.Specialized.NameValueCollection;
+#endif
+
 using System;
 using System.Collections.Specialized;
 
@@ -51,7 +56,7 @@ namespace System.Configuration
 			throw new NotImplementedException ();
 		}
 
-#if notyet
+#if CONFIGURATION_DEP
 		public override void Initialize (string name,
 						 NameValueCollection values)
 		{
