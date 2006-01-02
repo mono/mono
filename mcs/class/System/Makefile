@@ -7,8 +7,8 @@ LIBRARY = System.dll
 LIBRARY_USE_INTERMEDIATE_FILE = yes
 
 # Because System.dll, Mono.Security.dll System.Xml.dll have a cyclic dependency, we need a two-pass build.
-# 1st pass - build System.dll without System.Xml.dll or Mono.Security.dll references
-# 2nd pass - build System.dll with System.Xml.dll and Mono.Security.dll references
+# 1st pass - build System.dll without System.Xml.dll or Mono.Security.dll or System.Configuration.dll references
+# 2nd pass - build System.dll with System.Xml.dll and Mono.Security.dll or System.Configuration.dll references
 
 TEST_RESOURCES = \
 	Test/System/test-uri-props.txt \
@@ -67,7 +67,7 @@ ifdef      SECURITY_DEP_FILE
 echo-warning:
 	@echo "** Warning: built System.dll with 'Mono.Security.dll'-dependent parts"
 	@echo "** Warning: ... without 'System.Xml.dll' present: it may not be usable"
-
+	@echo "** Warning: ... without 'System.Configuration.dll' present: it may not be usable"
 else
 echo-warning:
 	@echo "** Warning: System.dll built without parts that depend on Mono.Security.dll"
@@ -88,7 +88,7 @@ $(the_lib): $(SECURITY_DEP_FILE)
 endif
 
 ifdef CONFIGURATION_DEP_FILE
-LIB_MCS_FLAGS += /define:CONFIGURATION_DEP /r:$(CONFIGURATION_DEP)
+LIB_MCS_FLAGS += /define:CONFIGURATION_DEP /r:$(CONFIGURATION_DEP) /r:PrebuiltSystem=$(topdir)/class/lib/$(PROFILE)/System.dll
 $(the_lib): $(CONFIGURATION_DEP_FILE)
 endif
 
