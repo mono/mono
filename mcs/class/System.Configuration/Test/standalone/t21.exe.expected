@@ -1,0 +1,4 @@
+DefaultProvider = MyRsaProtectedConfigurationProvider
+MyRsaProtectedConfigurationProvider
+keyContainerName = MyKeys
+useMachineContainer = True
