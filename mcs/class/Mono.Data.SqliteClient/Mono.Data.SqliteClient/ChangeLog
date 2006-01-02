@@ -1,3 +1,24 @@
+2006-01-02  Joshua Tauberer  <tauberer@for.net>
+
+	* SqliteCommand.cs: It was revealed that preparing
+	  statements ahead of time was not possible as table
+	  schema changes lead to errors.  This needed serious
+	  reorganization.  SQL syntax errors and BUSY errors
+	  are now raised in nice exceptions.
+	* SqliteDataReader.cs:
+		* Use object[] in place of ArrayList for each row.
+		* For Sqlite3, which remembers whether a value was
+		  an integer, text, real, or blob, actually return
+		  longs, strings, doubles, and byte[]s.
+		* GetDataTypeName() works where possible (Sqlite3).
+		* INT/INTEGER columns are now returned as ints,
+		  rather than longs, for Sqlite3.  Similarly for
+		  DATE and DATETIME columns, now returning DateTimes.
+	* SqliteConnection.cs.cs: BeginTransaction(IsolationLevel)
+	  throws InvalidOperationException per the MS docs.
+	* SqliteExceptions.cs: New file with SqliteSyntaxException,
+	  SqliteExecutionException, and its subclass SqliteBusyException.
+
 2005-12-27  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* SqliteCommand.cs: Use non-obsolete UnixMarshal members.

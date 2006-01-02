@@ -6,6 +6,7 @@
 //
 // Author(s): Vladimir Vukicevic  <vladimir@pobox.com>
 //            Everaldo Canuto  <everaldo_canuto@yahoo.com.br>
+//			  Joshua Tauberer <tauberer@for.net>
 //
 // Copyright (C) 2002  Vladimir Vukicevic
 //
@@ -44,12 +45,13 @@ namespace Mono.Data.SqliteClient
 		
 		private SqliteCommand command;
 		private ArrayList rows;
-		private ArrayList columns;
+		private string[] columns;
 		private Hashtable column_names;
 		private int current_row;
 		private bool closed;
 		private bool reading;
 		private int records_affected;
+		private string[] decltypes;
 		
 		#endregion
 
@@ -59,12 +61,11 @@ namespace Mono.Data.SqliteClient
 		{
 			command = cmd;
 			rows = new ArrayList ();
-			columns = new ArrayList ();
 			column_names = new Hashtable ();
 			closed = false;
 			current_row = -1;
 			reading = true;
-			ReadpVm (pVm, version);
+			ReadpVm (pVm, version, cmd);
 			ReadingDone ();
 		}
 		
@@ -77,15 +78,15 @@ namespace Mono.Data.SqliteClient
 		}
 		
 		public int FieldCount {
-			get { return columns.Count; }
+			get { return columns.Length; }
 		}
 		
 		public object this[string name] {
-			get { return ((ArrayList) rows[current_row])[(int) column_names[name]]; }
+			get { return ((object[]) rows[current_row])[(int) column_names[name]]; }
 		}
 		
 		public object this[int i] {
-			get { return ((ArrayList) rows[current_row])[i]; }
+			get { return ((object[]) rows[current_row])[i]; }
 		}
 		
 		public bool IsClosed {
@@ -100,75 +101,96 @@ namespace Mono.Data.SqliteClient
 
 		#region Internal Methods
 		
-		internal void ReadpVm (IntPtr pVm, int version)
+		internal void ReadpVm (IntPtr pVm, int version, SqliteCommand cmd)
 		{
-			int pN = 0;
-			IntPtr pazValue = IntPtr.Zero;
-			IntPtr pazColName = IntPtr.Zero;
-			SqliteError res;
+			int pN;
+			IntPtr pazValue;
+			IntPtr pazColName;
+			bool first = true;
+			
+			int[] declmode = null;
 
 			while (true) {
-				if (version == 3) {
-					res = Sqlite.sqlite3_step (pVm);
-					pN = Sqlite.sqlite3_column_count (pVm);
-				} else
-					res = Sqlite.sqlite_step (pVm, out pN, out pazValue, out pazColName);
-				if (res == SqliteError.ERROR) {		
-					throw new ApplicationException ("Sqlite error");
-				}
-				if (res == SqliteError.DONE) {
-					break;
-				}
-				// We have some data; lets read it
-				if (column_names.Count == 0) {
+				bool hasdata = cmd.ExecuteStatement(pVm, out pN, out pazValue, out pazColName);
+			
+				// For the first row, get the column information
+				if (first) {
+					first = false;
+					
+					if (version == 3) {
+						// A decltype might be null if the type is unknown to sqlite.
+						decltypes = new string[pN];
+						declmode = new int[pN]; // 1 == integer, 2 == datetime
+						for (int i = 0; i < pN; i++) {
+							IntPtr decl = Sqlite.sqlite3_column_decltype (pVm, i);
+							if (decl != IntPtr.Zero) {
+								decltypes[i] = Marshal.PtrToStringAnsi (decl).ToLower();
+								if (decltypes[i] == "int" || decltypes[i] == "integer")
+									declmode[i] = 1;
+								else if (decltypes[i] == "date" || decltypes[i] == "datetime")
+									declmode[i] = 2;
+							}
+						}
+					}
+					
+					columns = new string[pN];	
 					for (int i = 0; i < pN; i++) {
-						string colName = "";
+						string colName;
 						if (version == 2) {
 							IntPtr fieldPtr = (IntPtr)Marshal.ReadInt32 (pazColName, i*IntPtr.Size);
 							colName = Marshal.PtrToStringAnsi (fieldPtr);
 						} else {
 							colName = Marshal.PtrToStringAnsi (Sqlite.sqlite3_column_name (pVm, i));
 						}
-						columns.Add (colName);
+						columns[i] = colName;
 						column_names [colName] = i;
 					}
 				}
-				ArrayList data_row = new ArrayList (pN);
+
+				if (!hasdata) break;
+				
+				object[] data_row = new object [pN];
 				for (int i = 0; i < pN; i++) {
-					string colData = "";
 					if (version == 2) {
 						IntPtr fieldPtr = (IntPtr)Marshal.ReadInt32 (pazValue, i*IntPtr.Size);
-						colData = Marshal.PtrToStringAnsi (fieldPtr);
-						data_row.Add (Marshal.PtrToStringAnsi (fieldPtr));
+						data_row[i] = Marshal.PtrToStringAnsi (fieldPtr);
 					} else {
 						switch (Sqlite.sqlite3_column_type (pVm, i)) {
 							case 1:
-								Int64 sqliteint64 = Sqlite.sqlite3_column_int64 (pVm, i);
-								data_row.Add (sqliteint64.ToString ());
+								// If the column was declared as an 'int' or 'integer', let's play
+								// nice and return an int (version 3 only).
+								if (declmode[i] == 1)
+									data_row[i] = (int)Sqlite.sqlite3_column_int64 (pVm, i);
+								else
+									data_row[i] = Sqlite.sqlite3_column_int64 (pVm, i);
 								break;
 							case 2:
-								double sqlitedouble = Sqlite.sqlite3_column_double (pVm, i);
-								data_row.Add (sqlitedouble.ToString ());
+								data_row[i] = Sqlite.sqlite3_column_double (pVm, i);
 								break;
 							case 3:
-								colData = Marshal.PtrToStringAnsi (Sqlite.sqlite3_column_text (pVm, i));
-								data_row.Add (colData);
+								data_row[i] = Marshal.PtrToStringAnsi (Sqlite.sqlite3_column_text (pVm, i));
+								
+								// If the column was declared as a 'date' or 'datetime', let's play
+								// nice and return a DateTime (version 3 only).
+								if (declmode[i] == 2)
+									data_row[i] = DateTime.Parse((string)data_row[i]);
 								break;
 							case 4:
 								int blobbytes = Sqlite.sqlite3_column_bytes (pVm, i);
 								IntPtr blobptr = Sqlite.sqlite3_column_blob (pVm, i);
 								byte[] blob = new byte[blobbytes];
 								Marshal.Copy (blobptr, blob, 0, blobbytes);
-								data_row.Add (blob);
+								data_row[i] = blob;
 								break;
 							case 5:
-								data_row.Add (null);
+								data_row[i] = null;
 								break;
 							default:
 								throw new ApplicationException ("FATAL: Unknown sqlite3_column_type");
 						}
-					}	
+					}
 				}
+				
 				rows.Add (data_row);
 			}
 		}
@@ -278,12 +300,12 @@ namespace Mono.Data.SqliteClient
 		
 		public bool GetBoolean (int i)
 		{
-			return Convert.ToBoolean ((string) ((ArrayList) rows[current_row])[i]);
+			return Convert.ToBoolean (((object[]) rows[current_row])[i]);
 		}
 		
 		public byte GetByte (int i)
 		{
-			return Convert.ToByte ((string) ((ArrayList) rows[current_row])[i]);
+			return Convert.ToByte (((object[]) rows[current_row])[i]);
 		}
 		
 		public long GetBytes (int i, long fieldOffset, byte[] buffer, int bufferOffset, int length)
@@ -293,7 +315,7 @@ namespace Mono.Data.SqliteClient
 		
 		public char GetChar (int i)
 		{
-			return Convert.ToChar ((string) ((ArrayList) rows[current_row])[i]);
+			return Convert.ToChar (((object[]) rows[current_row])[i]);
 		}
 		
 		public long GetChars (int i, long fieldOffset, char[] buffer, int bufferOffset, int length)
@@ -308,32 +330,34 @@ namespace Mono.Data.SqliteClient
 		
 		public string GetDataTypeName (int i)
 		{
+			if (decltypes != null && decltypes[i] != null)
+				return decltypes[i];
 			return "text"; // SQL Lite data type
 		}
 		
 		public DateTime GetDateTime (int i)
 		{
-			return Convert.ToDateTime ((string) ((ArrayList) rows[current_row])[i]);
+			return Convert.ToDateTime (((object[]) rows[current_row])[i]);
 		}
 		
 		public decimal GetDecimal (int i)
 		{
-			return Convert.ToDecimal ((string) ((ArrayList) rows[current_row])[i]);
+			return Convert.ToDecimal (((object[]) rows[current_row])[i]);
 		}
 		
 		public double GetDouble (int i)
 		{
-			return Convert.ToDouble ((string) ((ArrayList) rows[current_row])[i]);
+			return Convert.ToDouble (((object[]) rows[current_row])[i]);
 		}
 		
 		public Type GetFieldType (int i)
 		{
-			return System.Type.GetType ("System.String"); // .NET data type
+			return ((object[]) rows[current_row])[i].GetType();
 		}
 		
 		public float GetFloat (int i)
 		{
-			return Convert.ToSingle ((string) ((ArrayList) rows[current_row])[i]);
+			return Convert.ToSingle (((object[]) rows[current_row])[i]);
 		}
 		
 		public Guid GetGuid (int i)
@@ -343,22 +367,22 @@ namespace Mono.Data.SqliteClient
 		
 		public short GetInt16 (int i)
 		{
-			return Convert.ToInt16 ((string) ((ArrayList) rows[current_row])[i]);
+			return Convert.ToInt16 (((object[]) rows[current_row])[i]);
 		}
 		
 		public int GetInt32 (int i)
 		{
-			return Convert.ToInt32 ((string) ((ArrayList) rows[current_row])[i]);
+			return Convert.ToInt32 (((object[]) rows[current_row])[i]);
 		}
 		
 		public long GetInt64 (int i)
 		{
-			return Convert.ToInt64 ((string) ((ArrayList) rows[current_row])[i]);
+			return Convert.ToInt64 (((object[]) rows[current_row])[i]);
 		}
 		
 		public string GetName (int i)
 		{
-			return (string) columns[i];
+			return columns[i];
 		}
 		
 		public int GetOrdinal (string name)
@@ -368,20 +392,20 @@ namespace Mono.Data.SqliteClient
 		
 		public string GetString (int i)
 		{
-			return ((string) ((ArrayList) rows[current_row])[i]);
+			return (((object[]) rows[current_row])[i]).ToString();
 		}
 		
 		public object GetValue (int i)
 		{
-			return ((ArrayList) rows[current_row])[i];
+			return ((object[]) rows[current_row])[i];
 		}
 		
 		public int GetValues (object[] values)
 		{
-			int num_to_fill = System.Math.Min (values.Length, columns.Count);
+			int num_to_fill = System.Math.Min (values.Length, columns.Length);
 			for (int i = 0; i < num_to_fill; i++) {
-				if (((ArrayList) rows[current_row])[i] != null) {
-					values[i] = ((ArrayList) rows[current_row])[i];
+				if (((object[]) rows[current_row])[i] != null) {
+					values[i] = ((object[]) rows[current_row])[i];
 				} else {
 					values[i] = DBNull.Value;
 				}
@@ -391,7 +415,7 @@ namespace Mono.Data.SqliteClient
 		
 		public bool IsDBNull (int i)
 		{
-			return (((ArrayList) rows[current_row])[i] == null);
+			return (((object[]) rows[current_row])[i] == null);
 		}
 		        
 		#endregion

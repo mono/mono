@@ -1,3 +1,8 @@
+2006-01-02  Joshua Tauberer  <tauberer@for.net
+
+	* Added Mono.Data.SqliteClient/SqliteExceptions.cs to
+	  the sources files.
+
 2005-10-06  Chris Lahey  <clahey@localhost.localdomain>
 
 	* Makefile (LIB_MCS_FLAGS): Requires Mono.Posix.dll.

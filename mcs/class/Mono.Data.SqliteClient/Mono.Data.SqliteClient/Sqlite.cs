@@ -185,6 +185,9 @@ namespace Mono.Data.SqliteClient
 		[DllImport ("sqlite3")]
 		internal static extern double sqlite3_column_double (IntPtr pVm, int col);
 		
+		[DllImport ("sqlite3")]
+		internal static extern IntPtr sqlite3_column_decltype (IntPtr pVm, int col);
+
  		[DllImport ("sqlite3")]
 		internal static extern int sqlite3_bind_parameter_count (IntPtr pStmt);
 

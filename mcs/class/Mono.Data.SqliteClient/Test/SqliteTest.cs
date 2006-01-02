@@ -28,11 +28,19 @@ namespace Test.Mono.Data.SqliteClient
 		[STAThread]
 		static void Main(string[] args)
 		{
-			Console.WriteLine("If this test works, you should get:");
-			Console.WriteLine("Data 1: 5");
-			Console.WriteLine("Data 2: Mono");
-
-			Console.WriteLine("create SqliteConnection...");
+			Test(false);
+			Console.WriteLine();
+			Test(true);
+		}
+		
+		static void Test(bool v3) {
+			if (!v3)
+				Console.WriteLine("Testing Version 2");
+			else
+				Console.WriteLine("Testing Version 3");
+				
+			System.IO.File.Delete("SqliteTest.db");
+		
 			SqliteConnection dbcon = new SqliteConnection();
 			
 			// the connection string is a URL that points
@@ -42,43 +50,47 @@ namespace Test.Mono.Data.SqliteClient
 			// "URI=file:some/path"
 			string connectionString =
 				"URI=file:SqliteTest.db";
-			Console.WriteLine("setting ConnectionString using: " + 
-				connectionString);
+			if (v3)
+				connectionString += ",Version=3";
 			dbcon.ConnectionString = connectionString;
 				
-			Console.WriteLine("open the connection...");
 			dbcon.Open();
 
-			Console.WriteLine("create SqliteCommand to CREATE TABLE MONO_TEST");
 			SqliteCommand dbcmd = new SqliteCommand();
 			dbcmd.Connection = dbcon;
 			
 			dbcmd.CommandText = 
 				"CREATE TABLE MONO_TEST ( " +
 				"NID INT, " +
-				"NDESC TEXT )";
-			Console.WriteLine("execute command...");
-			dbcmd.ExecuteNonQuery();
+				"NDESC TEXT, " +
+				"NTIME DATETIME); " +
+				"INSERT INTO MONO_TEST  " +
+				"(NID, NDESC, NTIME )"+
+				"VALUES(1,'One', '2006-01-01')";
+			Console.WriteLine("Create & insert modified rows = 1: " + dbcmd.ExecuteNonQuery());
 
-			Console.WriteLine("set and execute command to INSERT INTO MONO_TEST");
 			dbcmd.CommandText =
 				"INSERT INTO MONO_TEST  " +
-				"(NID, NDESC )"+
-				"VALUES(5,'Mono')";
-			dbcmd.ExecuteNonQuery();
+				"(NID, NDESC, NTIME )"+
+				"VALUES(2,'Two', '2006-01-02')";
+			Console.WriteLine("Insert modified rows and ID = 1, 2: " + dbcmd.ExecuteNonQuery() + " , " + dbcmd.LastInsertRowID());
 
-			Console.WriteLine("set command to SELECT FROM MONO_TEST");
 			dbcmd.CommandText =
 				"SELECT * FROM MONO_TEST";
 			SqliteDataReader reader;
-			Console.WriteLine("execute reader...");
 			reader = dbcmd.ExecuteReader();
 
 			Console.WriteLine("read and display data...");
-			while(reader.Read()) {
-				Console.WriteLine("Data 1: " + reader[0].ToString());
-				Console.WriteLine("Data 2: " + reader[1].ToString());
-			}
+			while(reader.Read())
+				for (int i = 0; i < reader.FieldCount; i++)
+					Console.WriteLine(" Col {0}: {1} (type: {2}, data type: {3})",
+						i, reader[i].ToString(), reader[i].GetType().FullName, reader.GetDataTypeName(i));
+
+			dbcmd.CommandText = "SELECT NDESC FROM MONO_TEST WHERE NID=2";
+			Console.WriteLine("read and display a scalar = 'Two': " + dbcmd.ExecuteScalar());
+
+			dbcmd.CommandText = "SELECT count(*) FROM MONO_TEST";
+			Console.WriteLine("read and display a non-column scalar = 2: " + dbcmd.ExecuteScalar());
 
 			Console.WriteLine("read and display data using DataAdapter...");
 			SqliteDataAdapter adapter = new SqliteDataAdapter("SELECT * FROM MONO_TEST", connectionString);
@@ -87,20 +99,31 @@ namespace Test.Mono.Data.SqliteClient
 			foreach(DataTable myTable in dataset.Tables){
 				foreach(DataRow myRow in myTable.Rows){
 					foreach (DataColumn myColumn in myTable.Columns){
-						Console.WriteLine(myRow[myColumn]);
+						Console.WriteLine(" " + myRow[myColumn]);
 					}
 				}
 			}
 
-			
-			Console.WriteLine("clean up...");
+			try {
+				dbcmd.CommandText = "SELECT NDESC INVALID SYNTAX FROM MONO_TEST WHERE NID=2";
+				dbcmd.ExecuteNonQuery();
+				Console.WriteLine("Should not reach here.");
+			} catch (Exception e) {
+				Console.WriteLine("Testing a syntax error: " + e.GetType().Name + ": " + e.Message);
+			}
+
+			/*try {
+				dbcmd.CommandText = "SELECT 0/0 FROM MONO_TEST WHERE NID=2";
+				Console.WriteLine("Should not reach here: " + dbcmd.ExecuteScalar());
+			} catch (Exception e) {
+				Console.WriteLine("Testing an execution error: " + e.GetType().Name + ": " + e.Message);
+			}*/
+
 			dataset.Dispose();
 			adapter.Dispose();
 			reader.Close();
 			dbcmd.Dispose();
 			dbcon.Close();
-
-			Console.WriteLine("Done.");
 		}
 	}
 }

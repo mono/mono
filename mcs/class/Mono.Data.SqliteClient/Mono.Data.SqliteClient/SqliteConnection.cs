@@ -184,7 +184,7 @@ namespace Mono.Data.SqliteClient
 		public IDbTransaction BeginTransaction ()
 		{
 			if (state != ConnectionState.Open)
-				throw new InvalidOperationException("Invalid operation: The connection is close");
+				throw new InvalidOperationException("Invalid operation: The connection is closed");
 			
 			SqliteTransaction t = new SqliteTransaction();
 			t.Connection = this;
@@ -196,7 +196,7 @@ namespace Mono.Data.SqliteClient
 		
 		public IDbTransaction BeginTransaction (IsolationLevel il)
 		{
-			return null;
+			throw new InvalidOperationException();
 		}
 		
 		public void Close ()
@@ -240,7 +240,6 @@ namespace Mono.Data.SqliteClient
 			}
 			
 			IntPtr errmsg = IntPtr.Zero;
-			Exception dll_error = null;
 
 			if (Version == 2){
 				try {
@@ -250,8 +249,7 @@ namespace Mono.Data.SqliteClient
 						Sqlite.sqliteFree (errmsg);
 						throw new ApplicationException (msg);
 					}
-				} catch (DllNotFoundException dll){
-					dll_error = dll;
+				} catch (DllNotFoundException dll) {
 					db_version = 3;
 				}
 			}

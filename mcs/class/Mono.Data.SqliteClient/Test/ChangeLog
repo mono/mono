@@ -1,3 +1,7 @@
+2006-01-02  Joshua Tauberer <tauberer@for.net>
+
+	* SqliteTest.cs: Cleaned up and added new stuff.
+
 2005-05-20  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* test.sql: script to create a test db.

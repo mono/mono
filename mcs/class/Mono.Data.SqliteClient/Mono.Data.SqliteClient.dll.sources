@@ -13,3 +13,4 @@ Mono.Data.SqliteClient/SqliteRowUpdatedEventHandler.cs
 Mono.Data.SqliteClient/SqliteRowUpdatingEventArgs.cs
 Mono.Data.SqliteClient/SqliteRowUpdatingEventHandler.cs
 Mono.Data.SqliteClient/SqliteTransaction.cs
+Mono.Data.SqliteClient/SqliteExceptions.cs
