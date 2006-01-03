@@ -43,6 +43,13 @@ namespace Commons.Xml.Relaxng.Derivative
 	{
 		public static char[] WhitespaceChars = " \t\r\n".ToCharArray ();
 
+		internal static RdpBinaryFunction AfterFunction =
+			new RdpBinaryFunction (After);
+		internal static RdpBinaryFunction GroupFunction =
+			new RdpBinaryFunction (Group);
+		internal static RdpBinaryFunction InterleaveFunction =
+			new RdpBinaryFunction (Interleave);
+
 		// Generating simplified pattern status (similar to XML representation).
 		#region Debug
 		private static string DebugNameClass (RdpNameClass n)

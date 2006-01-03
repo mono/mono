@@ -1,3 +1,8 @@
+2005-01-03  Atsushi Enomoto <atsushi@ximian.com>
+
+	* Util.cs, RdpPatterns.cs : optimization. Removed extraneous
+	  delegate instantiation. Avoid using enum for HashTable keys.
+
 2005-12-27  Atsushi Enomoto <atsushi@ximian.com>
 
 	* Util.cs RdpObjects.cs RdpContentType.cs RdpNameClasses.cs

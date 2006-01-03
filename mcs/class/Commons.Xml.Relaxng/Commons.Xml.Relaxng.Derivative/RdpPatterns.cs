@@ -125,11 +125,10 @@ namespace Commons.Xml.Relaxng.Derivative
 
 		public RdpOneOrMore MakeOneOrMore (RdpPattern p)
 		{
-			Hashtable p1Table = setupTable (typeof (RdpOneOrMore), p);
-			Hashtable pTable = (Hashtable) patternPool [RelaxngPatternType.OneOrMore];
+			Hashtable pTable = (Hashtable) patternPool [typeof (RdpOneOrMore)];
 			if (pTable == null) {
 				pTable = new Hashtable ();
-				patternPool [RelaxngPatternType.OneOrMore] = pTable;
+				patternPool [typeof (RdpOneOrMore)] = pTable;
 			}
 			if (pTable [p] == null)
 				pTable [p] = new RdpOneOrMore (p);
@@ -140,10 +139,10 @@ namespace Commons.Xml.Relaxng.Derivative
 		{
 			this.patternPool = ht;
 
-			Hashtable pt = ht [PatternType] as Hashtable;
+			Hashtable pt = ht [GetType ()] as Hashtable;
 			if (pt == null) {
 				pt = new Hashtable ();
-				ht [PatternType] = pt;
+				ht [GetType ()] = pt;
 			}
 
 			RdpAbstractSingleContent single =
@@ -843,7 +842,7 @@ namespace Commons.Xml.Relaxng.Derivative
 		{
 			RdpPattern handledL = LValue.StartTagOpenDeriv (name, ns);
 			RdpPattern handledR = RValue.StartTagOpenDeriv (name, ns);
-			RdpFlip flipL = new RdpFlip (new RdpBinaryFunction (RdpUtil.Interleave), RValue);
+			RdpFlip flipL = new RdpFlip (RdpUtil.InterleaveFunction, RValue);
 			RdpPattern choiceL = handledL.ApplyAfter (new RdpApplyAfterHandler (flipL.Apply));
 			RdpPattern choiceR = handledR.ApplyAfter (new RdpApplyAfterHandler (LValue.Interleave));
 			return choiceL.Choice (choiceR);
@@ -947,7 +946,7 @@ namespace Commons.Xml.Relaxng.Derivative
 		public override RdpPattern StartTagOpenDeriv (string name, string ns)
 		{
 			RdpPattern handled = LValue.StartTagOpenDeriv (name, ns);
-			RdpFlip f = new RdpFlip (new RdpBinaryFunction (RdpUtil.Group), RValue);
+			RdpFlip f = new RdpFlip (RdpUtil.GroupFunction, RValue);
 			RdpPattern x = handled.ApplyAfter (new RdpApplyAfterHandler (f.Apply));
 			if (LValue.Nullable)
 				return x.Choice (RValue.StartTagOpenDeriv (name, ns));
@@ -1094,7 +1093,7 @@ namespace Commons.Xml.Relaxng.Derivative
 		{
 			RdpPattern rest = RdpEmpty.Instance.Choice (Child.OneOrMore ());
 			RdpPattern handled = Child.StartTagOpenDeriv (name, ns);
-			RdpFlip f = new RdpFlip (new RdpBinaryFunction (RdpUtil.Group), rest);
+			RdpFlip f = new RdpFlip (RdpUtil.GroupFunction, rest);
 			return handled.ApplyAfter (new RdpApplyAfterHandler (f.Apply));
 		}
 
@@ -1632,7 +1631,7 @@ namespace Commons.Xml.Relaxng.Derivative
 		public override RdpPattern StartTagOpenDeriv (string name, string ns)
 		{
 			RdpPattern handled = LValue.StartTagOpenDeriv (name, ns);
-			RdpFlip f = new RdpFlip (new RdpBinaryFunction (RdpUtil.After), RValue);
+			RdpFlip f = new RdpFlip (RdpUtil.AfterFunction, RValue);
 			return handled.ApplyAfter (new RdpApplyAfterHandler (
 				f.Apply));
 		}
