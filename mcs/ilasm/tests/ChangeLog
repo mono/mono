@@ -1,3 +1,7 @@
+2006-01-03  Ankit Jain  <jankit@novell.com>
+
+	* gen-dotted-name.il: New. Test for dotted-name of a generic type.
+
 2005-12-16  Ankit Jain  <jankit@novell.com>
 
 	Tests for fields with same name but different types.

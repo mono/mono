@@ -1,3 +1,7 @@
+2006-01-03  Ankit Jain  <jankit@novell.com>
+
+	* ILTokenizer.cs (ILTokenizer.idchars): Add ` to the list.
+
 2005-12-14  Ankit Jain  <jankit@novell.com>
 
 	* NumberHelper.cs (NumberHelper.Build): Set dec_found to false, if a '..' is

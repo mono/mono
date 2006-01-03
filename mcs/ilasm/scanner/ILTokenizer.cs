@@ -25,7 +25,7 @@ namespace Mono.ILASM {
         /// </summary>
         public class ILTokenizer : ITokenStream {
 
-                private static readonly string idchars = "_$@?.";
+                private static readonly string idchars = "_$@?.`";
 
                 private static Hashtable keywords;
                 private static Hashtable directives;
