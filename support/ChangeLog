@@ -1,3 +1,8 @@
+2006-01-03  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* sys-time.c: lutimes(2) only exists on some BSDs.  There's a configure
+	  check for it now -- use it.
+
 2005-12-28  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* map-icalls.h: Flush (add utimes_bad, lutimes, futimes).

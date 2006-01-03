@@ -4,7 +4,7 @@
  * Authors:
  *   Jonathan Pryor (jonpryor@vt.edu)
  *
- * Copyright (C) 2004 Jonathan Pryor
+ * Copyright (C) 2004-2006 Jonathan Pryor
  */
 
 #include <sys/types.h>
@@ -121,6 +121,7 @@ Mono_Posix_Syscall_utimes(const char *filename, struct Mono_Posix_Timeval *tv)
 	return utimes (filename, ptv);
 }
 
+#ifdef HAVE_LUTIMES
 gint32
 Mono_Posix_Syscall_lutimes(const char *filename, struct Mono_Posix_Timeval *tv)
 {
@@ -131,6 +132,7 @@ Mono_Posix_Syscall_lutimes(const char *filename, struct Mono_Posix_Timeval *tv)
 
 	return lutimes (filename, ptv);
 }
+#endif /* def HAVE_LUTIMES */
 
 gint32
 Mono_Posix_Syscall_futimes(int fd, struct Mono_Posix_Timeval *tv)
