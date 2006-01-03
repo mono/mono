@@ -1,3 +1,10 @@
+2006-01-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mono_method_to_ir): Fix DynamicMethod support in some opcodes.
+
+	* mini-sparc.c (mono_arch_call_opcode): Use mono_class_value_size ()
+	here as on other archs.
+
 2005-12-29 Neale Ferguson <neale@sinenomine.net>
 
 	* mini-s390.c (mono_arch_get_inst_for_method): Add memory_barrier support.
