@@ -1,3 +1,9 @@
+2006-01-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* object.c (mono_runtime_invoke_array): Add Nullable support.
+
+	* icall.c (ves_icall_System_Activator_CreateInstanceInternal): Ditto.
+
 2006-01-03  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* file-io.c: Don't consider sockets as directory and avoid an endless
