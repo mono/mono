@@ -33,7 +33,17 @@ using System.Reflection;
 
 namespace System.Windows.Forms
 {
-	
+	internal enum UIIcon {
+		PlacesRecentDocuments,
+		PlacesDesktop,
+		PlacesPersonal,
+		PlacesMyComputer,
+		PlacesMyNetwork,
+		MessageBoxError,
+		MessageBoxQuestion,
+		MessageBoxWarning,
+		MessageBoxInfo,
+	}
 	
 	// Implements a pool of system resources	
 	internal class SystemResPool
@@ -425,6 +435,96 @@ namespace System.Windows.Forms
 				return 16;
 			}
 		}
+
+		[MonoTODO("Figure out where to point for My Network Places")]
+		public virtual string Places(UIIcon index) {
+			switch (index) {
+				case UIIcon.PlacesRecentDocuments: {
+					// Default = "Recent Documents"
+					return Environment.GetFolderPath(Environment.SpecialFolder.Recent);
+				}
+
+				case UIIcon.PlacesDesktop: {
+					// Default = "Desktop"
+					return Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+				}
+
+				case UIIcon.PlacesPersonal: {
+					// Default = "My Documents"
+					return Environment.GetFolderPath(Environment.SpecialFolder.Personal);
+				}
+
+				case UIIcon.PlacesMyComputer: {
+					// Default = "My Computer"
+					return Environment.GetFolderPath(Environment.SpecialFolder.MyComputer);
+				}
+
+				case UIIcon.PlacesMyNetwork: {
+					// Default = "My Network Places"
+					return "/tmp";
+				}
+
+				default: {
+					throw new ArgumentOutOfRangeException("index", index, "Unsupported place");
+				}
+			}
+		}
+
+		private Image GetSizedResourceImage(string name, int size) {
+			Image	image;
+			string	fullname;
+
+			if (size > 0) {
+				// Try name name_sizexsize
+				fullname = String.Format("{0}_{1}x{1}", name, size);
+				image = (Image)Locale.GetResource(fullname);
+				if (image != null) {
+					return image;
+				}
+
+				// Try name_size
+				fullname = String.Format("{0}_{1}", name, size);
+				image = (Image)Locale.GetResource(fullname);
+				if (image != null) {
+					return image;
+				}
+			}
+
+			// Just try name
+			return (Image)Locale.GetResource(name);
+		}
+
+		public virtual Image Images(UIIcon index) {
+			return Images(index, 0);
+		}
+			
+		[MonoTODO("Cache these to be less resource intensive")]
+		public virtual Image Images(UIIcon index, int size) {
+			switch (index) {
+				case UIIcon.PlacesRecentDocuments:	return GetSizedResourceImage("last_open", size);
+				
+				case UIIcon.PlacesDesktop:		return GetSizedResourceImage("desktop", size); // MimeIconEngine.GetIconForMimeTypeAndSize( "desktop/desktop", imageList.ImageSize )
+				case UIIcon.PlacesPersonal:		return GetSizedResourceImage("folder_with_paper", size); // MimeIconEngine.GetIconForMimeTypeAndSize( "directory/home", imageList.ImageSize )
+				case UIIcon.PlacesMyComputer:		return GetSizedResourceImage("monitor-computer", size);
+				case UIIcon.PlacesMyNetwork:		return GetSizedResourceImage("monitor-planet", size); // MimeIconEngine.GetIconForMimeTypeAndSize( "network/network", imageList.ImageSize )
+
+				// Icons for message boxes
+				case UIIcon.MessageBoxError:		return GetSizedResourceImage("mbox_error.png", size);
+				case UIIcon.MessageBoxInfo:		return GetSizedResourceImage("mbox_info.png", size);
+				case UIIcon.MessageBoxQuestion:		return GetSizedResourceImage("mbox_question.png", size);
+				case UIIcon.MessageBoxWarning:		return GetSizedResourceImage("mbox_warn.png", size);
+
+				default: {
+					throw new ArgumentException("Invalid Icon type requested", "index");
+				}
+			}
+			return null;
+		}
+
+		public virtual Image Images(string mimetype, string extension, int size) {
+			return null;
+		}
+
 		#region Principal Theme Methods
 		// To let the theme now that a change of defaults (colors, etc) was detected and force a re-read (and possible recreation of cached resources)
 		public abstract void ResetDefaults();

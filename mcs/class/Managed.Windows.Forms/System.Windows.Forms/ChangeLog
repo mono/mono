@@ -1,3 +1,10 @@
+2006-01-03  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* Theme.cs: Added theme interface for images to allow the theme to
+	  control what images are used for things like FileDialog, MessageBox
+	  icons, etc.
+	* MessageBox.cs: Now uses the new Theme icon/image interfaces
+
 2006-01-03  Alexander Olk  <alex.olk@googlemail.com>
 
 	* FileDialog.cs:

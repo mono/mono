@@ -47,10 +47,6 @@ namespace System.Windows.Forms
 		private class MessageBoxForm : Form
 		{
 			#region MessageBoxFrom Local Variables
-			internal static Image	error_icon	= (Image)Locale.GetResource("mbox_error.png");
-			internal static Image	question_icon	= (Image)Locale.GetResource("mbox_question.png");
-			internal static Image	warning_icon	= (Image)Locale.GetResource("mbox_warn.png");
-			internal static Image	info_icon	= (Image)Locale.GetResource("mbox_info.png");
 			internal static string	Yes;
 			internal const int	space_border	= 10;
 			string			msgbox_text;
@@ -74,22 +70,22 @@ namespace System.Windows.Forms
 					}
 
 					case MessageBoxIcon.Error: {		// Same as MessageBoxIcon.Hand and MessageBoxIcon.Stop
-						icon_image = error_icon;
+						icon_image = ThemeEngine.Current.Images(UIIcon.MessageBoxError);
 						break;
 					}
 
 					case MessageBoxIcon.Question: {
- 						icon_image = question_icon;
+ 						icon_image = ThemeEngine.Current.Images(UIIcon.MessageBoxQuestion);
 						break;
 					}
 
 					case MessageBoxIcon.Asterisk: {		// Same as MessageBoxIcon.Information
-						icon_image = info_icon;
+						icon_image = ThemeEngine.Current.Images(UIIcon.MessageBoxInfo);
 						break;
 					}
 
 					case MessageBoxIcon.Warning: {		// Same as MessageBoxIcon.Exclamation:
-						icon_image = warning_icon;
+						icon_image = ThemeEngine.Current.Images(UIIcon.MessageBoxWarning);
 						break;
 					}
 				}
