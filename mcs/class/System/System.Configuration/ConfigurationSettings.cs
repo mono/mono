@@ -124,7 +124,22 @@ namespace System.Configuration
 #if NET_2_0 && CONFIGURATION_2_0
 #if CONFIGURATION_DEP
 			Init ();
-			return ConfigurationManager.GetSection (sectionName);
+			object o = ConfigurationManager.GetSection (sectionName);
+			if (o == null || o is IgnoreSection) {
+				/* this can happen when the section
+				 * handler doesn't subclass from
+				 * ConfigurationSection.  let's be
+				 * nice and try to load it using the
+				 * 1.x style routines in case there's
+				 * a 1.x section handler registered
+				 * for it.
+				 */
+				object o1 = config.GetConfig (sectionName);
+				if (o1 != null)
+					return o1;
+			}
+
+			return o;
 #else
 			return null;
 #endif

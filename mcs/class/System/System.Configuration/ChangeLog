@@ -1,3 +1,10 @@
+2006-01-03  Chris Toshok  <toshok@ximian.com>
+
+	* ConfigurationSettings.cs (GetConfig): be nice to people using
+	old 1.x style section handlers with the new 2.0 config stuff.  If
+	we're about to return null or IgnoreSection, try to load it using
+	the 1.x api.  If that works, return that object.
+
 2006-01-02  Chris Toshok  <toshok@ximian.com>
 
 	* LocalFileSettingsProvider.cs: use the PrebuiltSystem extern
