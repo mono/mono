@@ -1,4 +1,8 @@
 2006-01-03 Senganal T <tsenganal@novell.com>
+	* DataSetTypedDataSetTest.cs : corrected the path to file : TypedDataSet.xml
+	to make sure the testcases pass 
+
+2006-01-03 Senganal T <tsenganal@novell.com>
 	*DataViewTest.cs : added testcases for bug #77104
 
 2006-01-02 Boris Kirzner <borisk@mainsoft.com>

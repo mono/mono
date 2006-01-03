@@ -56,8 +56,8 @@ namespace MonoTests.System.Data
 			Assert.IsFalse(ds == null ,"TDS0" );
 			Assert.AreEqual(typeof(myTypedDataSet), ds.GetType() ,"TDS1" );
 		
-			// fill dtataset
-			ds.ReadXml("Test\\System.Data\\typeddataset.xml");
+			// fill dataset
+			ds.ReadXml("Test/System.Data/TypedDataSet.xml");
 
 			// check DataSet named property "Orders"
 			myTypedDataSet.OrdersDataTable tblOrders = null;
