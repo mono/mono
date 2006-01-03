@@ -6,18 +6,19 @@ namespace System.Drawing.Drawing2D
 	/// <summary>
 	/// Summary description for HatchBrush.
 	/// </summary>
-	[MonoTODO]
 	public sealed class HatchBrush : Brush 
 	{
 		private HatchStyle _style;
 		private Color _foreColor;
 		private Color _backColor;
 
+		[MonoTODO]
 		public HatchBrush (HatchStyle hatchStyle, Color foreColor)
 					: this (hatchStyle, foreColor, Color.Black)
 		{
 		}
 
+		[MonoTODO]
 		public HatchBrush(HatchStyle hatchStyle, Color foreColor, Color backColor)
 		{
 			_style = hatchStyle;
