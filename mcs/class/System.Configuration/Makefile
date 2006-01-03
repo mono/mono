@@ -5,7 +5,7 @@ include ../../build/rules.make
 LIBRARY = System.Configuration.dll
 LIBRARY_USE_INTERMEDIATE_FILE = yes
 
-LIB_MCS_FLAGS = -r:$(corlib) -r:System.dll -r:System.Xml.dll
+LIB_MCS_FLAGS = -r:$(corlib) -r:System.dll -r:System.Xml.dll -r:System.Security.dll
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 
 # This is a .NET 2.0 only assembly
