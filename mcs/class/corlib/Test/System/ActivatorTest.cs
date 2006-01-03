@@ -210,6 +210,18 @@ namespace MonoTests.System {
 			Activator.CreateInstance (typeof (Type), BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance, null, null, CultureInfo.InvariantCulture, null);
 		}
 
+#if NET_2_0
+		[Test]
+		public void CreateInstance_Nullable ()
+		{
+			Assert.AreEqual (5, Activator.CreateInstance (typeof (Nullable<int>), new object [] { 5 }));
+			Assert.AreEqual (typeof (int), Activator.CreateInstance (typeof (Nullable<int>), new object [] { 5 }).GetType ());
+			Assert.AreEqual (0, Activator.CreateInstance (typeof (Nullable<int>), new object [] { null }));
+			Assert.AreEqual (typeof (int), Activator.CreateInstance (typeof (Nullable<int>), new object [] { null }).GetType ());
+			Assert.AreEqual (null, Activator.CreateInstance (typeof (Nullable<int>)));
+		}
+#endif
+
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void GetObject_TypeNull ()

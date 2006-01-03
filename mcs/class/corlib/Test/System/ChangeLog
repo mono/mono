@@ -1,3 +1,7 @@
+2006-01-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* ActivatorTest.cs: Add Nullable tests.
+
 2006-01-02  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ActivatorTest.cs: Added new test cases for bug #71300 and for some
