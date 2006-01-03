@@ -1,5 +1,7 @@
 2006-01-03  Zoltan Varga  <vargaz@gmail.com>
 
+	* Nullable.cs: Update to Net 2.0 RTM.
+	
 	* Nullable.cs: Add comments about runtime dependencies on the layout of
 	this type.
 

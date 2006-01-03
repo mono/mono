@@ -58,38 +58,14 @@ namespace System {
 			return value1.Equals (value2);
 		}
 
-		public static Nullable<T> FromObject<T> (object value)
+		public static Type GetUnderlyingType (Type nullableType)
 		{
-			if (!(value is T))
-				throw new ArgumentException ("Object type can not be converted to target type.");
-
-			return new Nullable<T> ((T) value);
-		}
-
-		public static T GetValueOrDefault<T>(Nullable<T> value)
-		{
-			return GetValueOrDefault<T> (value, default (T));
-		}
-
-		public static T GetValueOrDefault<T> (Nullable<T> value, T defaultValue)
-		{
-			if (!value.has_value)
-				return defaultValue;
-
-			return value.value;
-		}
-
-		public static bool HasValue<T> (Nullable <T> value)
-		{
-			return value.has_value;
-		}
-
-		public static object ToObject<T> (Nullable<T> value)
-		{
-			if (!value.has_value)
+			if (nullableType == null)
+				throw new ArgumentNullException ("nullableType");
+			if (nullableType.IsGenericInstance && nullableType.GetGenericTypeDefinition () == typeof (Nullable<>))
+				return nullableType.GetGenericArguments ()[0];
+			else
 				return null;
-
-			return (object)value.value;
 		}
 	}
 
@@ -163,12 +139,6 @@ namespace System {
 			return other.value.Equals (value);
 		}
 
-		[Obsolete]
-		public static Nullable<T> FromObject (object value)
-		{
-			return Nullable.FromObject<T> (value);
-		}
-
 		public override int GetHashCode ()
 		{
 			if (!has_value)
@@ -177,24 +147,17 @@ namespace System {
 			return value.GetHashCode ();
 		}
 
-		[Obsolete]
 		public T GetValueOrDefault ()
 		{
-			return Nullable.GetValueOrDefault<T> (this, default (T));
+			return GetValueOrDefault (default (T));
 		}
 
-		[Obsolete]
 		public T GetValueOrDefault (T def_value)
 		{
-			return Nullable.GetValueOrDefault<T> (this, def_value);
-		}
-
-		public object ToObject ()
-		{
 			if (!has_value)
-				return null;
-
-			return (object)value;
+				return def_value;
+			else
+				return value;
 		}
 
 		public override string ToString ()
