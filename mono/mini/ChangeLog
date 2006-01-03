@@ -1,5 +1,7 @@
 2006-01-03  Zoltan Varga  <vargaz@gmail.com>
 
+	* iltests.il: Add test for #77148.
+
 	* mini.c (mini_get_ldelema_ins): Handle arrays with rank 1 too. Fixes
 	#77148.
 
