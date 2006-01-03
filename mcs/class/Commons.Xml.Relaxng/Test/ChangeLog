@@ -1,3 +1,8 @@
+2006-01-03  Atsushi Enomoto <atsushi@ximian.com>
+
+	* RelaxngValidatingReaderTests.cs : seems like there are some sort
+	  of regressions. Will be fixed after my end of vacations.
+
 2004-05-30  Atsushi Enomoto <atsushi@ximian.com>
 
 	* RncTests.cs : fixed test that got impossible to build anymore.
