@@ -1,3 +1,7 @@
+2006-01-03  Ankit Jain  <jankit@novell.com>
+
+	* get.c (init_key_table): Add keywords uint8, uint16, uint32 and uint64.
+
 2005-12-24  Jb Evain  <jbevain@gmail.com>
 
 	* main.c (dis_property_signature): read the hasthis flag.
