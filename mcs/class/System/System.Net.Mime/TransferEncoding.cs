@@ -31,11 +31,10 @@
 #if NET_2_0
 
 namespace System.Net.Mime {
-	[Serializable]
 	public enum TransferEncoding
 	{
-		Base64 = 1,
 		QuotedPrintable = 0,
+		Base64 = 1,
 		SevenBit = 2, 
 		Unknown = -1
 	}

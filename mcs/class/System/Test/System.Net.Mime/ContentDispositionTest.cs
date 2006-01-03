@@ -54,9 +54,8 @@ namespace MonoTests.System.Net.Mime
 			ContentDisposition dummy1 = new ContentDisposition ();
 			dummy1.Inline = true;
 			ContentDisposition dummy2 = new ContentDisposition ("inline");
-			Console.WriteLine (dummy1);
-			Console.WriteLine (dummy2);
 			Assert.IsTrue (dummy1.Equals (dummy2));
+			Assert.IsFalse (dummy1 == dummy2);
 			Assert.IsTrue (dummy1.GetHashCode () == dummy2.GetHashCode ());
 		}
 
@@ -66,8 +65,6 @@ namespace MonoTests.System.Net.Mime
 			ContentDisposition dummy1 = new ContentDisposition ();
 			dummy1.FileName = "genome.jpeg";
 			ContentDisposition dummy2 = new ContentDisposition ("attachment; filename=genome.jpeg");
-			Console.WriteLine (dummy1);
-			Console.WriteLine (dummy2);
 			Assert.IsTrue (dummy1.Equals (dummy2));
 		}
 
@@ -98,9 +95,22 @@ namespace MonoTests.System.Net.Mime
 		}
 
 		[Test]
+		public void NoFormatException ()
+		{
+			new ContentDisposition ("attachment; foo=bar");
+		}
+
+		[Test]
 		public void IsInline ()
 		{
 			Assert.IsFalse (cd.Inline);
+		}
+
+		[Test]
+		public void Parameters ()
+		{
+			Assert.IsNotNull (cd.Parameters, "is not null");
+			Assert.IsTrue (cd.Parameters.Count == 2, "count is " + cd.Parameters.Count);
 		}
 
 		[Test]
@@ -122,6 +132,15 @@ namespace MonoTests.System.Net.Mime
 			ContentDisposition dummy = new ContentDisposition ();
 			dummy.Size = 0;
 			Assert.IsTrue (dummy.ToString () == "attachment; size=0");
+		}
+
+		[Test]
+		public void ToStringTest4 ()
+		{
+			ContentDisposition dummy = new ContentDisposition ("attachment");
+			dummy.Parameters.Add ("foo", "bar");
+			Assert.IsTrue (dummy.Parameters.Count == 1);
+			Assert.IsTrue (dummy.ToString () == "attachment; foo=bar");
 		}
 	}
 }

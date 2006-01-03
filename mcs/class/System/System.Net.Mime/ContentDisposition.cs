@@ -45,30 +45,24 @@ namespace System.Net.Mime {
 		
 		#region Fields
 
-		DateTime creationDate;
 		string dispositionType;
-		string filename;
-		DateTime modificationDate;
-		DateTime readDate;
-		long size = -1; // -1 means the size is unknown
 		StringDictionary parameters = new StringDictionary ();
 
 		#endregion // Fields
 
 		#region Constructors
 
-		public ContentDisposition ()
+		public ContentDisposition () : this (DispositionTypeNames.Attachment)
 		{
-			dispositionType = DispositionTypeNames.Attachment;
 		}
 
-		[MonoTODO]
 		public ContentDisposition (string disposition)
 		{
 			if (disposition == null)
 				throw new ArgumentNullException ();
 			if (disposition.Length < 1)
 				throw new FormatException ();
+			Size = -1;
 
 			try {
 				int index = disposition.IndexOf (';');
@@ -79,9 +73,7 @@ namespace System.Net.Mime {
 					string[] split = disposition.Split (';');
 					dispositionType = split[0].Trim ();
 					for (int i = 1; i < split.Length; i++)
-					{
 						Parse (split[i]);
-					}
 				}
 			} catch {
 				throw new FormatException ();
@@ -95,27 +87,10 @@ namespace System.Net.Mime {
 				return;
 
 			string[] split = pair.Split ('=');
-			switch (split[0]) {
-				case "creation-date":
-					creationDate = DateTime.ParseExact (split[1], rfc822, null);
-					break;
-				case "modification-date":
-					modificationDate = DateTime.ParseExact (split[1], rfc822, null);
-					break;
-				case "read-date":
-					readDate = DateTime.ParseExact (split[1], rfc822, null);
-					break;
-				case "filename":
-					filename = split[1].Trim ();
-					break;
-				case "size":
-					size = long.Parse (split[1]);
-					break;
-				// FIXME: this is a guess, not yet tested
-				default:
-					parameters.Add (split[0].Trim (), split[1].Trim ());
-					break;
-			}
+			if (split.Length == 2)
+				parameters.Add (split[0].Trim (), split[1].Trim ());
+			else
+				throw new FormatException ();
 		}
 
 		#endregion // Constructors
@@ -123,8 +98,18 @@ namespace System.Net.Mime {
 		#region Properties
 
 		public DateTime CreationDate {
-			get { return creationDate; }
-			set { creationDate = value; }
+			get {
+				if (parameters.ContainsKey ("creation-date"))
+					return DateTime.ParseExact (parameters["creation-date"], rfc822, null);
+				else
+					return DateTime.MinValue;
+			}
+			set {
+				if (value > DateTime.MinValue)
+					parameters["creation-date"] = value.ToString (rfc822);
+				else
+					parameters.Remove ("modification-date");
+			}
 		}
 
 		public string DispositionType {
@@ -139,8 +124,8 @@ namespace System.Net.Mime {
 		}
 
 		public string FileName {
-			get { return filename; }
-			set { filename = value; }
+			get { return parameters["filename"]; }
+			set { parameters["filename"] = value; }
 		}
 
 		public bool Inline {
@@ -154,8 +139,18 @@ namespace System.Net.Mime {
 		}
 
 		public DateTime ModificationDate {
-			get { return modificationDate; }
-			set { modificationDate = value; } 
+			get {
+				if (parameters.ContainsKey ("modification-date"))
+					return DateTime.ParseExact (parameters["modification-date"], rfc822, null);
+				else
+					return DateTime.MinValue;
+			}
+			set {
+				if (value > DateTime.MinValue)
+					parameters["modification-date"] = value.ToString (rfc822);
+				else
+					parameters.Remove ("modification-date");
+			}
 		}
 
 		public StringDictionary Parameters {
@@ -163,20 +158,39 @@ namespace System.Net.Mime {
 		}
 
 		public DateTime ReadDate {
-			get { return readDate; } 
-			set { readDate = value; }
+			get {
+				if (parameters.ContainsKey ("read-date"))
+					return DateTime.ParseExact (parameters["read-date"], rfc822, null);
+				else
+					return DateTime.MinValue;
+			}
+			set {
+				if (value > DateTime.MinValue)
+					parameters["read-date"] = value.ToString (rfc822);
+				else
+					parameters.Remove ("read-date");
+			}
 		}
 
 		public long Size {
-			get { return size; }
-			set { size = value; }
+			get {
+				if (parameters.ContainsKey ("size"))
+					return long.Parse (parameters["size"]);
+				else
+					return -1;
+			}
+			set {
+				if (value > -1)
+					parameters["size"] = value.ToString ();
+				else
+					parameters.Remove ("size");
+			}
 		}
 
 		#endregion // Properties
 
 		#region Methods
 
-		[MonoTODO]
 		public override bool Equals (object obj)
 		{
 			return Equals (obj as ContentDisposition);
@@ -187,13 +201,11 @@ namespace System.Net.Mime {
 			return other != null && ToString () == other.ToString ();
 		}
 
-		[MonoTODO]
 		public override int GetHashCode ()
 		{
 			return ToString ().GetHashCode ();
 		}
 
-		[MonoTODO]
 		public override string ToString ()
 		{
 			// the content-disposition header as in RFC 2183
@@ -201,37 +213,19 @@ namespace System.Net.Mime {
 			// the dates must be quoted and in RFC 822 format
 			StringBuilder sb = new StringBuilder ();
 			sb.Append (DispositionType.ToLower ());
-			if (CreationDate > DateTime.MinValue) {
-				sb.Append ("; creation-date=\"");
-				sb.Append (CreationDate.ToString (rfc822));
-				sb.Append ("\"");
-			}
-			if (ModificationDate > DateTime.MinValue) {
-				sb.Append ("; modification-date=\"");
-				sb.Append (ModificationDate.ToString (rfc822));
-				sb.Append ("\"");
-			}
-			if (ReadDate > DateTime.MinValue) {
-				sb.Append ("; read-date=\"");
-				sb.Append (ReadDate.ToString (rfc822));
-				sb.Append ("\"");
-			}
-			if (FileName != null && FileName.Length > 0) {
-				sb.Append ("; filename=");
-				sb.Append (FileName);
-			}
-			if (Size > -1) {
-				sb.Append ("; size=");
-				sb.Append (Size.ToString ());
-			}
-			// this is a guess, not tested yet
 			if (Parameters != null && Parameters.Count > 0) {
 				foreach (DictionaryEntry pair in Parameters)
 				{
-					sb.Append ("; ");
-					sb.Append (pair.Key);
-					sb.Append ("=");
-					sb.Append (pair.Value);
+					if (pair.Value != null && pair.Value.ToString ().Length > 0) {
+						sb.Append ("; ");
+						sb.Append (pair.Key);
+						sb.Append ("=");
+						if (pair.Key.ToString ().EndsWith ("date"))
+							sb.Append ("\"");
+						sb.Append (pair.Value);
+						if (pair.Key.ToString ().EndsWith ("date"))
+							sb.Append ("\"");
+					}
 				}
 			}
 			return sb.ToString ();

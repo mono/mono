@@ -38,12 +38,12 @@ namespace MonoTests.System.Net.Mime
 			new ContentType ("");
 		}
 
-		/*[Test]
+		[Test]
 		[ExpectedException (typeof (FormatException))]
 		public void FormatException ()
 		{
-			new ContentType (";;;");
-		}*/
+			new ContentType ("attachment; foo=bar");
+		}
 
 		[Test]
 		public void Boundary ()
@@ -55,6 +55,19 @@ namespace MonoTests.System.Net.Mime
 		public void CharSet ()
 		{
 			Assert.IsNull (ct.CharSet);
+		}
+
+		[Test]
+		public void Equals ()
+		{
+			Assert.IsTrue (ct.Equals (new ContentType ()));
+			Assert.IsFalse (ct  == new ContentType ());
+		}
+
+		[Test]
+		public void GetHashCode ()
+		{
+			Assert.IsTrue (ct.GetHashCode () == new ContentType ().GetHashCode ());
 		}
 
 		[Test]
@@ -85,6 +98,22 @@ namespace MonoTests.System.Net.Mime
 		}
 
 		[Test]
+		public void Parameters ()
+		{
+			ContentType dummy = new ContentType ();
+			Assert.IsTrue (dummy.Parameters.Count == 0);
+			dummy.CharSet = "us-ascii";
+			dummy.Name = "test";
+			dummy.Boundary = "-----boundary---0";
+			dummy.Parameters.Add ("foo", "bar");
+			Assert.IsTrue (dummy.Parameters.Count == 4);
+			Assert.IsTrue (dummy.Parameters["charset"] == "us-ascii");
+			Assert.IsTrue (dummy.Parameters["name"] == "test");
+			Assert.IsTrue (dummy.Parameters["boundary"] == "-----boundary---0");
+			Assert.IsTrue (dummy.Parameters["foo"] == "bar");
+		}
+
+		[Test]
 		public void ToStringTest ()
 		{
 			Assert.IsTrue (ct.ToString () == "application/octet-stream");
@@ -95,6 +124,13 @@ namespace MonoTests.System.Net.Mime
 		{
 			ContentType dummy = new ContentType ("text/plain; charset=us-ascii");
 			Assert.IsTrue (dummy.ToString () == "text/plain; charset=us-ascii");
+		}
+
+		[Test]
+		public void ToStringTest3 ()
+		{
+			ct.Parameters.Add ("foo", "bar");
+			Assert.IsTrue (ct.ToString () == "application/octet-stream; foo=bar");
 		}
 	}
 }

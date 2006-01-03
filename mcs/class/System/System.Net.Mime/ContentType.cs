@@ -41,10 +41,7 @@ namespace System.Net.Mime {
 	{
 		#region Fields
 
-		string boundary;
-		string charset;
 		string mediaType;
-		string name;
 		StringDictionary parameters = new StringDictionary ();
 
 		#endregion // Fields
@@ -56,7 +53,6 @@ namespace System.Net.Mime {
 			mediaType = "application/octet-stream";
 		}
 	
-		[MonoTODO ("Parse content type")]
 		public ContentType (string contentType)
 		{
 			if (contentType == null)
@@ -91,20 +87,15 @@ namespace System.Net.Mime {
 
 			string[] split = pair.Split ('=');
 			if (split.Length == 2) {
-				switch (split[0]) {
-					case "charset":
-						charset = split[1].Trim ();
-						break;
+				switch (split[0].Trim ()) {
 					case "boundary":
-						boundary = split[1].Trim ();
-						break;
+					case "charset":
 					case "name":
-						name = split[1].Trim ();
-						break;
-					default:
-						// FIXME: this is just a guess, not tested
 						parameters.Add (split[0].Trim (), split[1].Trim ());
 						break;
+					default:
+						// apparently parameters must go through Parameters.Add
+						throw new FormatException ("invalid content-type format");
 				}
 			}
 		}
@@ -114,13 +105,13 @@ namespace System.Net.Mime {
 		#region Properties
 
 		public string Boundary {
-			get { return boundary; }
-			set { boundary = value; }
+			get { return parameters["boundary"]; }
+			set { parameters["boundary"] = value; }
 		}
 
 		public string CharSet {
-			get { return charset; }
-			set { charset = value; }
+			get { return parameters["charset"]; }
+			set { parameters["charset"] = value; }
 		}
 
 		public string MediaType {
@@ -137,8 +128,8 @@ namespace System.Net.Mime {
 		}
 
 		public string Name {
-			get { return name; }
-			set { name = value; }
+			get { return parameters["name"]; }
+			set { parameters["name"] = value; }
 		}
 
 		public StringDictionary Parameters {
@@ -149,7 +140,6 @@ namespace System.Net.Mime {
 
 		#region Methods
 
-		[MonoTODO]
 		public override bool Equals (object obj)
 		{
 			return Equals (obj as ContentType);
@@ -160,7 +150,6 @@ namespace System.Net.Mime {
 			return other != null && ToString () == other.ToString ();
 		}
 		
-		[MonoTODO]
 		public override int GetHashCode ()
 		{
 			return ToString ().GetHashCode ();
@@ -170,25 +159,15 @@ namespace System.Net.Mime {
 		{
 			StringBuilder sb = new StringBuilder ();
 			sb.Append (MediaType);
-			if (CharSet != null && CharSet.Length > 0) {
-				sb.Append ("; charset=");
-				sb.Append (CharSet);
-			}
-			if (Name != null && Name.Length > 0) {
-				sb.Append ("; name=");
-				sb.Append (Name);
-			}
-			if (Boundary != null && Boundary.Length > 0) {
-				sb.Append ("; boundary=");
-				sb.Append (Boundary);
-			}
 			if (Parameters != null && Parameters.Count > 0) {
 				foreach (DictionaryEntry pair in parameters)
 				{
-					sb.Append ("; ");
-					sb.Append (pair.Key);
-					sb.Append ("=");
-					sb.Append (pair.Value);
+					if (pair.Value != null && pair.Value.ToString ().Length > 0) {	
+						sb.Append ("; ");
+						sb.Append (pair.Key);
+						sb.Append ("=");
+						sb.Append (pair.Value);
+					}
 				}
 			}
 			return sb.ToString ();
