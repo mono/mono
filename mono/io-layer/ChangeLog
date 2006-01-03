@@ -1,3 +1,7 @@
+2006-01-03  Neale Ferguson <neale@sinenomine.net>
+
+	* atomic.h: Correct s390x definitions.
+
 2006-01-03  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* io.c: Patch _wapi_stat_to_file_attributes against bug #76966, where

@@ -1,3 +1,10 @@
+2006-01-03  Neale Ferguson <neale@sinenomine.net>
+
+	* mini-s390x.c, mini-s390x.h, exceptions-s390x.c, tramp-s390x.c, inssel-s390x.brg,
+	cpu-s390x.md, mini-codegen.c, Makefile.am: add 64-bit s390 support to JIT.
+
+	* basic-long.cs: Add lconv-to-r4/r8 tests.
+
 2006-01-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (mono_method_to_ir): Fix DynamicMethod support in some opcodes.
