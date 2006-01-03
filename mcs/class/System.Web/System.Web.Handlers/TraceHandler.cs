@@ -87,8 +87,10 @@ namespace System.Web.Handlers
 				
 			HtmlTextWriter output = new HtmlTextWriter (context.Response.Output);
 
-			if (context.Request.QueryString ["clear"] != null)
+			if (context.Request.QueryString ["clear"] != null) {
 				manager.Clear ();
+				context.Response.Redirect (context.Request.FilePath);
+			}
 			
 			string id_str = context.Request.QueryString ["id"];
 			int id = -1;
