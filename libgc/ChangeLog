@@ -1,3 +1,8 @@
+2006-01-03  Geoff Norton  <gnorton@customerdna.com>
+
+	* darwin_stop_world.c:  Merge a patch from Bruce Mitchener that fixes a small
+	leak on OS X.
+
 2005-12-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* include/private/gcconfig.h: Disable PROC_VDB on solaris/x86 as it

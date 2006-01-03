@@ -154,6 +154,7 @@ void GC_push_all_stacks() {
 #     endif
       GC_push_all_stack(lo, hi); 
     } /* for(p=GC_threads[i]...) */
+    vm_deallocate(current_task(), (vm_address_t)act_list, sizeof(thread_t) * listcount);
 }
 
 static mach_port_t GC_mach_handler_thread;
@@ -296,6 +297,7 @@ void GC_stop_world()
 	changes = result;
 	prev_list = act_list;
 	prevcount = listcount;
+        vm_deallocate(current_task(), (vm_address_t)act_list, sizeof(thread_t) * listcount);
       } while (changes);
       
  
@@ -367,6 +369,7 @@ void GC_start_world()
 	}
       }
     }
+    vm_deallocate(current_task(), (vm_address_t)act_list, sizeof(thread_t) * listcount);
 #   if DEBUG_THREADS
      GC_printf0("World started\n");
 #   endif
