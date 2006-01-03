@@ -1,5 +1,10 @@
 2005-01-03  Atsushi Enomoto <atsushi@ximian.com>
 
+	* RdpPattern.cs : reduced RdpFlip instantiation. Share patternPool
+	  only when it does not exist.
+
+2005-01-03  Atsushi Enomoto <atsushi@ximian.com>
+
 	* Util.cs, RdpPatterns.cs : optimization. Removed extraneous
 	  delegate instantiation. Avoid using enum for HashTable keys.
 
