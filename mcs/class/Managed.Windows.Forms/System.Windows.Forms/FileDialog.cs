@@ -26,9 +26,6 @@
 
 // NOT COMPLETE - work in progress
 
-// TODO:
-// file/path security stuff ???
-
 using System;
 using System.Drawing;
 using System.ComponentModel;
@@ -483,19 +480,14 @@ namespace System.Windows.Forms
 			private Label fileTypeLabel;
 			private ToolBarButton menueToolBarButton;
 			private ContextMenu menueToolBarButtonContextMenu;
-			private ToolBarButton desktopToolBarButton;
 			private ToolBar smallButtonToolBar;
 			private DirComboBox dirComboBox;
-			private ToolBarButton lastUsedToolBarButton;
 			private ComboBox fileNameComboBox;
-			private ToolBarButton networkToolBarButton;
 			private Label fileNameLabel;
 			private MWFFileView mwfFileView;
 			private Label searchSaveLabel;
 			private ToolBarButton newdirToolBarButton;
 			private ToolBarButton backToolBarButton;
-			private ToolBarButton homeToolBarButton;
-			private ToolBarButton workplaceToolBarButton;
 			private ComboBox fileTypeComboBox;
 			private ImageList imageListTopToolbar;
 			private ContextMenu contextMenu;
@@ -508,7 +500,7 @@ namespace System.Windows.Forms
 			internal string currentFileName = "";
 			
 			// store current directoryInfo
-			private DirectoryInfo directoryInfo;
+			private DirectoryInfo currentDirectoryInfo;
 			
 			// store DirectoryInfo for backButton
 			internal Stack directoryStack = new Stack();
@@ -519,24 +511,25 @@ namespace System.Windows.Forms
 			
 			private string restoreDirectory = "";
 			
+			private bool show_special_case = false;
+			
+			internal static readonly string recently_string = "[recently/recently]";
+			
+			private string current_special_case;
+			
 			public FileDialogPanel( FileDialog fileDialog )
 			{
 				this.fileDialog = fileDialog;
 				
 				fileTypeComboBox = new ComboBox( );
-				workplaceToolBarButton = new ToolBarButton( );
-				homeToolBarButton = new ToolBarButton( );
 				backToolBarButton = new ToolBarButton( );
 				newdirToolBarButton = new ToolBarButton( );
 				searchSaveLabel = new Label( );
 				mwfFileView = new MWFFileView( );
 				fileNameLabel = new Label( );
-				networkToolBarButton = new ToolBarButton( );
 				fileNameComboBox = new ComboBox( );
-				lastUsedToolBarButton = new ToolBarButton( );
 				dirComboBox = new DirComboBox( );
 				smallButtonToolBar = new ToolBar( );
-				desktopToolBarButton = new ToolBarButton( );
 				menueToolBarButton = new ToolBarButton( );
 				fileTypeLabel = new Label( );
 				openSaveButton = new Button( );
@@ -629,6 +622,7 @@ namespace System.Windows.Forms
 				fileNameComboBox.Location = new Point( 195, 330 );
 				fileNameComboBox.Size = new Size( 245, 21 );
 				fileNameComboBox.TabIndex = 6;
+				fileNameComboBox.Items.Add( " " );
 				
 				// fileTypeLabel
 				fileTypeLabel.Anchor = ( (AnchorStyles)( ( AnchorStyles.Bottom | AnchorStyles.Left ) ) );
@@ -740,23 +734,20 @@ namespace System.Windows.Forms
 				
 				currentDirectoryName = Environment.CurrentDirectory;
 				
-				directoryInfo = new DirectoryInfo( currentDirectoryName );
+				currentDirectoryInfo = new DirectoryInfo( currentDirectoryName );
 				
 				dirComboBox.CurrentPath = currentDirectoryName;
 				
 				if ( fileDialog.RestoreDirectory )
 					restoreDirectory = currentDirectoryName;
 				
-				mwfFileView.UpdateFileView( directoryInfo );
+				mwfFileView.UpdateFileView( currentDirectoryInfo );
 				
 				openSaveButton.Click += new EventHandler( OnClickOpenSaveButton );
 				cancelButton.Click += new EventHandler( OnClickCancelButton );
 				helpButton.Click += new EventHandler( OnClickHelpButton );
 				
 				smallButtonToolBar.ButtonClick += new ToolBarButtonClickEventHandler( OnClickSmallButtonToolBar );
-				
-				// Key events DONT'T work
-				fileNameComboBox.KeyUp += new KeyEventHandler( OnKeyUpFileNameComboBox );
 				
 				fileTypeComboBox.SelectedIndexChanged += new EventHandler( OnSelectedIndexChangedFileTypeComboBox );
 				
@@ -768,39 +759,6 @@ namespace System.Windows.Forms
 				dirComboBox.DirectoryChanged += new EventHandler( OnDirectoryChangedDirComboBox );
 				
 				checkBox.CheckedChanged += new EventHandler( OnCheckCheckChanged );
-			}
-			
-			public ComboBox FileNameComboBox
-			{
-				set {
-					fileNameComboBox = value;
-				}
-				
-				get {
-					return fileNameComboBox;
-				}
-			}
-			
-			public string CurrentFileName
-			{
-				set {
-					currentFileName = value;
-				}
-				
-				get {
-					return currentFileName;
-				}
-			}
-			
-			public DirectoryInfo DirectoryInfo
-			{
-				set {
-					directoryInfo = value;
-				}
-				
-				get {
-					return directoryInfo;
-				}
 			}
 			
 			public bool MultiSelect
@@ -835,7 +793,7 @@ namespace System.Windows.Forms
 					senderMenuItem.Checked = !senderMenuItem.Checked;
 					fileDialog.ShowHiddenFiles = senderMenuItem.Checked;
 					mwfFileView.ShowHiddenFiles = fileDialog.ShowHiddenFiles;
-					mwfFileView.UpdateFileView( directoryInfo );
+					mwfFileView.UpdateFileView( currentDirectoryInfo_or_current_special_case );
 				}
 			}
 			
@@ -843,45 +801,73 @@ namespace System.Windows.Forms
 			{
 				if ( !multiSelect )
 				{
-					string fileFromComboBox = fileNameComboBox.Text.Trim( );
-															
-					if ( fileFromComboBox.Length > 0 ) {
-						if (!Path.IsPathRooted (fileFromComboBox))
-						  fileFromComboBox = Path.Combine( currentDirectoryName, fileFromComboBox );
+					if ( !show_special_case )
+					{
+						string fileFromComboBox = fileNameComboBox.Text.Trim( );
 						
-						FileInfo fileInfo = new FileInfo (fileFromComboBox);
-						if (fileInfo.Exists)
-						  currentFileName = fileFromComboBox;
-						else {
-							DirectoryInfo dirInfo = new DirectoryInfo (fileFromComboBox);
-							if (dirInfo.Exists) {
-																
-								PushDirectory( dirInfo );								
-								directoryInfo = dirInfo.Parent;
-								currentDirectoryName = dirInfo.FullName;
-								dirComboBox.CurrentPath = currentDirectoryName;
-								mwfFileView.UpdateFileView( dirInfo );
-								
-								currentFileName = "";								
-								return;
-							}								
+						if ( fileFromComboBox.Length > 0 ) 
+						{
+							if (!Path.IsPathRooted (fileFromComboBox))
+								fileFromComboBox = Path.Combine( currentDirectoryName, fileFromComboBox );
+							
+							FileInfo fileInfo = new FileInfo (fileFromComboBox);
+							if (fileInfo.Exists)
+								currentFileName = fileFromComboBox;
+							else 
+							{
+								DirectoryInfo dirInfo = new DirectoryInfo ( fileFromComboBox );
+								if (dirInfo.Exists) 
+								{
+									ChangeDirectory( null, dirInfo.FullName );
+									
+									currentFileName = "";
+									
+									fileNameComboBox.Text = " ";
+									return;
+								}								
+							}
 						}
+						else
+							return;
+					}
+					else
+					{
+						if ( currentFileName == null || currentFileName == String.Empty )
+						{
+							currentFileName = fileNameComboBox.Text.Trim( );
+							
+							if ( currentFileName.Length > 0 )
+							{
+								FileInfo fileInfo = new FileInfo (currentFileName);
+								if (!fileInfo.Exists)
+								{
+									DirectoryInfo dirInfo = new DirectoryInfo ( currentFileName );
+									if (dirInfo.Exists) 
+									{
+										ChangeDirectory( null, dirInfo.FullName );
+										
+										currentFileName = "";
+										
+										fileNameComboBox.Text = " ";
+										return;
+									}								
+								}
+							}
+							else
+								return;
+						}
+						
+						if ( currentDirectoryName == String.Empty )
+							currentDirectoryName = Path.GetDirectoryName( currentFileName );
 					}
 					
-					if ( currentFileName != fileFromComboBox )
-						currentFileName = fileFromComboBox;
-					
-					if ( currentFileName.Length == 0 )
-						return;
-					
-
 					if ( fileDialog.fileDialogType == FileDialogType.OpenFileDialog )
 					{
 						if ( fileDialog.CheckFileExists )
 						{
 							if ( !File.Exists( currentFileName ) )
 							{
-								string message = currentFileName + " doesn't exist. Please verify that you have entered the correct file name.";
+								string message = "\"" + currentFileName + "\" doesn't exist. Please verify that you have entered the correct file name.";
 								MessageBox.Show( message, fileDialog.OpenSaveButtonText, MessageBoxButtons.OK, MessageBoxIcon.Warning );
 								
 								currentFileName = "";
@@ -896,7 +882,7 @@ namespace System.Windows.Forms
 						{
 							if ( File.Exists( currentFileName ) )
 							{
-								string message = currentFileName + " exists. Overwrite ?";
+								string message = "\"" + currentFileName + "\" exists. Overwrite ?";
 								DialogResult dr = MessageBox.Show( message, fileDialog.OpenSaveButtonText, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning );
 								
 								if ( dr == DialogResult.Cancel )
@@ -912,7 +898,7 @@ namespace System.Windows.Forms
 						{
 							if ( !File.Exists( currentFileName ) )
 							{
-								string message = currentFileName + " doesn't exist. Create ?";
+								string message = "\"" + currentFileName + "\" doesn't exist. Create ?";
 								DialogResult dr = MessageBox.Show( message, fileDialog.OpenSaveButtonText, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning );
 								
 								if ( dr == DialogResult.Cancel )
@@ -975,7 +961,7 @@ namespace System.Windows.Forms
 				{
 					if ( !Directory.Exists( currentDirectoryName ) )
 					{
-						string message = currentDirectoryName + " doesn't exist. Please verify that you have entered the correct directory name.";
+						string message = "\"" + currentDirectoryName + "\" doesn't exist. Please verify that you have entered the correct directory name.";
 						MessageBox.Show( message, fileDialog.OpenSaveButtonText, MessageBoxButtons.OK, MessageBoxIcon.Warning );
 						
 						if ( fileDialog.InitialDirectory == String.Empty )
@@ -1024,30 +1010,13 @@ namespace System.Windows.Forms
 			{
 				if ( e.Button == upToolBarButton )
 				{
-					if ( directoryInfo.Parent != null )
-					{
-						PushDirectory( directoryInfo );
-						
-						directoryInfo = directoryInfo.Parent;
-						
-						currentDirectoryName = directoryInfo.FullName;
-						
-						dirComboBox.CurrentPath = currentDirectoryName;
-						
-						mwfFileView.UpdateFileView( directoryInfo );
-					}
+					if ( currentDirectoryInfo != null && currentDirectoryInfo.Parent != null )
+						ChangeDirectory( null, currentDirectoryInfo.Parent.FullName );
 				}
 				else
 				if ( e.Button == backToolBarButton )
 				{
-					if ( directoryStack.Count != 0 )
-					{
-						PopDirectory( );
-						
-						dirComboBox.CurrentPath = currentDirectoryName;
-						
-						mwfFileView.UpdateFileView( directoryInfo );
-					}
+					PopDirectory( );
 				}
 				else
 				if ( e.Button == newdirToolBarButton )
@@ -1088,16 +1057,7 @@ namespace System.Windows.Forms
 				}
 				
 				
-				mwfFileView.UpdateFileView( directoryInfo );
-			}
-			
-			void OnKeyUpFileNameComboBox( object sender, KeyEventArgs e )
-			{
-				if ( e.KeyCode == Keys.Enter )
-				{		
-					currentFileName = currentDirectoryName + fileNameComboBox.Text;
-					ForceDialogEnd( );
-				}
+				mwfFileView.UpdateFileView( currentDirectoryInfo_or_current_special_case );
 			}
 			
 			void OnSelectedIndexChangedFileTypeComboBox( object sender, EventArgs e )
@@ -1106,7 +1066,7 @@ namespace System.Windows.Forms
 				
 				mwfFileView.FilterIndex = fileDialog.FilterIndex;
 				
-				mwfFileView.UpdateFileView( directoryInfo );
+				mwfFileView.UpdateFileView( currentDirectoryInfo_or_current_special_case );
 			}
 			
 			void OnSelectedFileChangedFileView( object sender, EventArgs e )
@@ -1161,21 +1121,43 @@ namespace System.Windows.Forms
 				
 				mwfFileView.FilterIndex = fileDialog.FilterIndex;
 				
-				mwfFileView.UpdateFileView( directoryInfo );
+				mwfFileView.UpdateFileView( currentDirectoryInfo_or_current_special_case );
 			}
 			
-			public void ChangeDirectory( object sender, string path )
+			public void ChangeDirectory( object sender, string path_or_special_case )
 			{
-				currentDirectoryName = path;
-				
-				PushDirectory( directoryInfo );
-				
-				directoryInfo = new DirectoryInfo( path );
+				show_special_case = false;
 				
 				if ( sender != dirComboBox )
-					dirComboBox.CurrentPath = path;
+					dirComboBox.CurrentPath = path_or_special_case;
 				
-				mwfFileView.UpdateFileView( directoryInfo );
+				if ( sender != popupButtonPanel )
+					popupButtonPanel.SetPopupButtonStateByPath( path_or_special_case );
+				
+				if ( currentDirectoryInfo != null )
+					PushDirectory( currentDirectoryInfo );
+				else
+					PushDirectory( current_special_case );
+				
+				if ( path_or_special_case == recently_string )
+				{
+					currentDirectoryName = String.Empty;
+					
+					currentDirectoryInfo = null;
+					show_special_case = true;
+					
+					current_special_case = recently_string;
+					
+					mwfFileView.UpdateFileView( recently_string );
+				}
+				else
+				{
+					currentDirectoryName = path_or_special_case;
+					
+					currentDirectoryInfo = new DirectoryInfo( path_or_special_case );
+					
+					mwfFileView.UpdateFileView( currentDirectoryInfo );
+				}
 			}
 			
 			public void ForceDialogEnd( )
@@ -1183,20 +1165,46 @@ namespace System.Windows.Forms
 				OnClickOpenSaveButton( this, EventArgs.Empty );
 			}
 			
-			private void PushDirectory( DirectoryInfo di )
+			private void PushDirectory( object directoryInfo_or_string )
 			{
-				directoryStack.Push( directoryInfo );
+				directoryStack.Push( directoryInfo_or_string );
 				backToolBarButton.Enabled = true;
 			}
 			
 			private void PopDirectory( )
 			{
-				directoryInfo = (DirectoryInfo)directoryStack.Pop( );
+				if ( directoryStack.Count == 0 )
+					return;
 				
-				currentDirectoryName = directoryInfo.FullName;
+				show_special_case = false;
+				
+				object directoryInfo_or_string = directoryStack.Pop( );
+				
+				if ( directoryInfo_or_string is DirectoryInfo )
+				{
+					currentDirectoryInfo = directoryInfo_or_string as DirectoryInfo;
+				
+					currentDirectoryName = currentDirectoryInfo.FullName;
+					
+					current_special_case = String.Empty;
+				}
+				else
+				if ( directoryInfo_or_string is string )
+				{
+					currentDirectoryInfo = null;
+					currentDirectoryName = String.Empty;
+					show_special_case = true;
+					current_special_case = directoryInfo_or_string as string;
+				}
 				
 				if ( directoryStack.Count == 0 )
 					backToolBarButton.Enabled = false;
+				
+				dirComboBox.CurrentPath = currentDirectoryName_or_special_case;
+				
+				popupButtonPanel.SetPopupButtonStateByPath( currentDirectoryName_or_special_case );
+				
+				mwfFileView.UpdateFileView( currentDirectoryInfo_or_current_special_case );
 			}
 			
 			public void ResizeAndRelocateForHelpOrReadOnly( )
@@ -1231,78 +1239,6 @@ namespace System.Windows.Forms
 					Controls.Add( checkBox );
 				else
 					Controls.Remove( checkBox );
-			}
-			
-			public void ShowRecentlyUsed( ) 
-			{
-				// check for GNOME and KDE
-				string personal_folder = Environment.GetFolderPath( Environment.SpecialFolder.Personal );
-				string recently_used_path = Path.Combine( personal_folder, ".recently-used" );
-				
-				ArrayList files_al = new ArrayList( );
-				
-				// GNOME
-				if ( File.Exists( recently_used_path ) )
-				{
-					try
-					{
-						
-						XmlTextReader xtr = new XmlTextReader( recently_used_path );
-						while ( xtr.Read( ) ) 
-						{
-							if ( xtr.NodeType == XmlNodeType.Element && xtr.Name.ToUpper() == "URI" )
-							{
-								xtr.Read();
-								Uri uri = new Uri( xtr.Value );
-								if ( !files_al.Contains( uri.LocalPath ) )
-									files_al.Add( uri.LocalPath );
-							}
-						}
-						xtr.Close();
-					} catch ( Exception e )
-					{
-						
-					}
-				}
-				
-				// KDE
-				string full_kde_recent_document_dir = personal_folder
-					+ "/"
-					+ ".kde/share/apps/RecentDocuments";
-				
-				if ( Directory.Exists( full_kde_recent_document_dir ) )
-				{
-					string[] files = Directory.GetFiles( full_kde_recent_document_dir, "*.desktop" );
-					
-					foreach( string file_name in files )
-					{
-						StreamReader sr = new StreamReader( file_name );
-						
-						string line = sr.ReadLine();
-						
-						while (line != null) 
-						{
-							line = line.Trim();
-							
-							if ( line.StartsWith( "URL=" ) )
-							{
-								line = line.Replace( "URL=", "" );
-								line = line.Replace( "$HOME", personal_folder );
-								
-								Uri uri = new Uri( line );
-								if ( !files_al.Contains( uri.LocalPath ) )
-									files_al.Add( uri.LocalPath );
-								break;
-							}
-							
-							line = sr.ReadLine();
-						}
-						
-						sr.Close();
-					}
-				}
-				
-				mwfFileView.UpdateFileViewByArrayList( files_al );
 			}
 			
 			private void WriteRecentlyUsed( )
@@ -1441,6 +1377,26 @@ namespace System.Windows.Forms
 				}
 			}
 			
+			private object currentDirectoryInfo_or_current_special_case
+			{
+				get {
+					if ( currentDirectoryInfo != null )
+						return currentDirectoryInfo;
+					else
+						return current_special_case;
+				}
+			}
+			
+			private string currentDirectoryName_or_special_case
+			{
+				get {
+					if ( currentDirectoryName != String.Empty )
+						return currentDirectoryName;
+					else
+						return current_special_case;
+				}
+			}
+			
 			internal class PopupButtonPanel : Panel
 			{
 				internal class PopupButton : Control
@@ -1568,6 +1524,8 @@ namespace System.Windows.Forms
 				
 				private ImageList imageList = new ImageList();
 				
+				private int platform = (int) Environment.OSVersion.Platform;
+				
 				public PopupButtonPanel( FileDialogPanel fileDialogPanel )
 				{
 					this.fileDialogPanel = fileDialogPanel;
@@ -1652,7 +1610,10 @@ namespace System.Windows.Forms
 					
 					if ( sender == lastOpenButton )
 					{
-						fileDialogPanel.ShowRecentlyUsed();
+						if ((platform == 4) || (platform == 128))
+							fileDialogPanel.ChangeDirectory( this, FileDialog.FileDialogPanel.recently_string );
+						else
+							fileDialogPanel.ChangeDirectory( this, Environment.GetFolderPath( Environment.SpecialFolder.Recent ) );
 					}
 					else
 					if ( sender == desktopButton )
@@ -1667,12 +1628,72 @@ namespace System.Windows.Forms
 					else
 					if ( sender == workplaceButton )
 					{
-//						fileDialogPanel.ChangeDirectory(this, Environment.GetFolderPath( Environment.SpecialFolder.MyComputer ) );
+						if ((platform == 4) || (platform == 128))
+							fileDialogPanel.ChangeDirectory(this, "/" );
+						else
+							fileDialogPanel.ChangeDirectory(this, Environment.GetFolderPath( Environment.SpecialFolder.MyComputer ) );
 					}
 					else
 					if ( sender == networkButton )
 					{
 						
+					}
+				}
+				
+				public void SetPopupButtonStateByPath( string path )
+				{
+					if ( path == FileDialog.FileDialogPanel.recently_string || 
+					    path == Environment.GetFolderPath( Environment.SpecialFolder.Recent ) )
+					{
+						if ( lastPopupButton != lastOpenButton )
+						{
+							if ( lastPopupButton != null )
+								lastPopupButton.ButtonState = PopupButton.PopupButtonState.Normal;
+							lastOpenButton.ButtonState = PopupButton.PopupButtonState.Down;
+							lastPopupButton = lastOpenButton;
+						}
+					}
+					else
+					if ( path == Environment.GetFolderPath( Environment.SpecialFolder.Desktop ) )
+					{
+						if ( lastPopupButton != desktopButton )
+						{
+							if ( lastPopupButton != null )
+								lastPopupButton.ButtonState = PopupButton.PopupButtonState.Normal;
+							desktopButton.ButtonState = PopupButton.PopupButtonState.Down;
+							lastPopupButton = desktopButton;
+						}
+					}
+					else
+					if ( path == Environment.GetFolderPath( Environment.SpecialFolder.Personal ) )
+					{
+						if ( lastPopupButton != homeButton )
+						{
+							if ( lastPopupButton != null )
+								lastPopupButton.ButtonState = PopupButton.PopupButtonState.Normal;
+							homeButton.ButtonState = PopupButton.PopupButtonState.Down;
+							lastPopupButton = homeButton;
+						}
+					}
+					else
+					if ( path == "/" || 
+					    path == Environment.GetFolderPath( Environment.SpecialFolder.MyComputer ) )
+					{
+						if ( lastPopupButton != workplaceButton )
+						{
+							if ( lastPopupButton != null )
+								lastPopupButton.ButtonState = PopupButton.PopupButtonState.Normal;
+							workplaceButton.ButtonState = PopupButton.PopupButtonState.Down;
+							lastPopupButton = workplaceButton;
+						}
+					}
+					else
+					{
+						if ( lastPopupButton != null )
+						{
+							lastPopupButton.ButtonState = PopupButton.PopupButtonState.Normal;
+							lastPopupButton = null;
+						}
 					}
 				}
 			}
@@ -1854,7 +1875,15 @@ namespace System.Windows.Forms
 			return arrayList;
 		}
 		
-		public void UpdateFileView( DirectoryInfo inputDirectoryInfo )
+		public void UpdateFileView( object directoryInfo_or_string )
+		{
+			if ( directoryInfo_or_string is DirectoryInfo )
+				UpdateFileViewByDirectoryInfo( directoryInfo_or_string as DirectoryInfo);
+			else
+				UpdateFileViewByString( directoryInfo_or_string as string );
+		}
+
+		private void UpdateFileViewByDirectoryInfo( DirectoryInfo inputDirectoryInfo ) 
 		{
 			DirectoryInfo directoryInfo = inputDirectoryInfo;
 			
@@ -1869,8 +1898,7 @@ namespace System.Windows.Forms
 			Items.Clear( );
 			SelectedItems.Clear( );
 			
-			foreach ( DirectoryInfo directoryInfoi in directoryInfoArray )
-			{
+			foreach ( DirectoryInfo directoryInfoi in directoryInfoArray ) {
 				if ( !ShowHiddenFiles )
 					if ( directoryInfoi.Name.StartsWith( "." ) || directoryInfoi.Attributes == FileAttributes.Hidden )
 						continue;
@@ -1896,31 +1924,33 @@ namespace System.Windows.Forms
 				Items.Add( listViewItem );
 			}
 			
-			foreach ( FileInfo fileInfo in fileInfoArrayList )
-			{
-				DoOneFileInfo(fileInfo);
+			foreach ( FileInfo fileInfo in fileInfoArrayList ) {
+				DoOneFileInfo( fileInfo );
 			}
 			
 			EndUpdate( );
 		}
 		
-		public void UpdateFileViewByArrayList( ArrayList al ) 
+		private void UpdateFileViewByString( string kind ) 
 		{
-			ArrayList fileInfoArrayList = GetFileInfoArrayListByArrayList( al );
-			
-			fileHashtable.Clear( );
-			
-			BeginUpdate( );
-			
-			Items.Clear( );
-			SelectedItems.Clear( );
-			
-			foreach ( FileInfo fileInfo in fileInfoArrayList )
+			if ( kind == FileDialog.FileDialogPanel.recently_string )
 			{
-				DoOneFileInfo(fileInfo);
+				ArrayList fileInfoArrayList = GetFileInfoArrayListByArrayList( GetFreedesktopSpecRecentlyUsed() );
+				
+				fileHashtable.Clear( );
+				
+				BeginUpdate( );
+				
+				Items.Clear( );
+				SelectedItems.Clear( );
+				
+				foreach ( FileInfo fileInfo in fileInfoArrayList )
+				{
+					DoOneFileInfo(fileInfo);
+				}
+				
+				EndUpdate( );
 			}
-			
-			EndUpdate( );
 		}
 
 		private void DoOneFileInfo( FileInfo fileInfo ) 
@@ -1954,6 +1984,79 @@ namespace System.Windows.Forms
 			fileHashtable.Add( fileInfo.Name, fileStruct );
 			
 			Items.Add( listViewItem );
+		}
+		
+		private ArrayList GetFreedesktopSpecRecentlyUsed( ) 
+		{
+			// check for GNOME and KDE
+			string personal_folder = Environment.GetFolderPath( Environment.SpecialFolder.Personal );
+			string recently_used_path = Path.Combine( personal_folder, ".recently-used" );
+			
+			ArrayList files_al = new ArrayList( );
+			
+			// GNOME
+			if ( File.Exists( recently_used_path ) )
+			{
+				try
+				{
+					
+					XmlTextReader xtr = new XmlTextReader( recently_used_path );
+					while ( xtr.Read( ) ) 
+					{
+						if ( xtr.NodeType == XmlNodeType.Element && xtr.Name.ToUpper() == "URI" )
+						{
+							xtr.Read();
+							Uri uri = new Uri( xtr.Value );
+							if ( !files_al.Contains( uri.LocalPath ) )
+								files_al.Add( uri.LocalPath );
+						}
+					}
+					xtr.Close();
+				} catch ( Exception e )
+				{
+					
+				}
+			}
+			
+			// KDE
+			string full_kde_recent_document_dir = personal_folder
+				+ "/"
+				+ ".kde/share/apps/RecentDocuments";
+			
+			if ( Directory.Exists( full_kde_recent_document_dir ) )
+			{
+				string[] files = Directory.GetFiles( full_kde_recent_document_dir, "*.desktop" );
+				
+				foreach( string file_name in files )
+				{
+					StreamReader sr = new StreamReader( file_name );
+					
+					string line = sr.ReadLine();
+					
+					while (line != null) 
+					{
+						line = line.Trim();
+						
+						if ( line.StartsWith( "URL=" ) )
+						{
+							line = line.Replace( "URL=", "" );
+							line = line.Replace( "$HOME", personal_folder );
+							
+							Uri uri = new Uri( line );
+							if ( !files_al.Contains( uri.LocalPath ) )
+								files_al.Add( uri.LocalPath );
+							break;
+						}
+						
+						line = sr.ReadLine();
+					}
+					
+					sr.Close();
+				}
+			}
+			
+			
+			return files_al;
 		}
 		
 		protected override void OnClick( EventArgs e )
@@ -2202,9 +2305,14 @@ namespace System.Windows.Forms
 		
 		private string currentPath;
 		
-		private bool firstTime = true;
-		
 		private EventHandler on_directory_changed;
+		
+		private bool currentpath_internal_change = false;
+		
+		private int platform = (int) Environment.OSVersion.Platform;
+		private string recently_tmp;
+		private string workplace_tmp;
+		private Stack dirStack = new Stack();
 		
 		public DirComboBox( )
 		{
@@ -2212,14 +2320,30 @@ namespace System.Windows.Forms
 			
 			imageList.ColorDepth = ColorDepth.Depth32Bit;
 			imageList.ImageSize = new Size( 16, 16 );
+			imageList.Images.Add( MimeIconEngine.GetIconForMimeTypeAndSize( "recently/recently", imageList.ImageSize ) );
 			imageList.Images.Add( MimeIconEngine.GetIconForMimeTypeAndSize( "desktop/desktop", imageList.ImageSize ) );
 			imageList.Images.Add( MimeIconEngine.GetIconForMimeTypeAndSize( "directory/home", imageList.ImageSize ) );
+			imageList.Images.Add( MimeIconEngine.GetIconForMimeTypeAndSize( "workplace/workplace", imageList.ImageSize ) );
+			imageList.Images.Add( MimeIconEngine.GetIconForMimeTypeAndSize( "network/network", imageList.ImageSize ) );
 			imageList.Images.Add( MimeIconEngine.GetIconForMimeTypeAndSize( "inode/directory", imageList.ImageSize ) );
 			imageList.TransparentColor = Color.Transparent;
 			
+			if ((platform == 4) || (platform == 128))
+			{
+				recently_tmp = FileDialog.FileDialogPanel.recently_string;
+				workplace_tmp = "/";
+			}
+			else
+			{
+				recently_tmp = Environment.GetFolderPath( Environment.SpecialFolder.Recent );
+				workplace_tmp = Environment.GetFolderPath( Environment.SpecialFolder.MyComputer );
+			}
+			
 			Items.AddRange( new object[] {
-					       new DirComboBoxItem( 0, "Desktop", Environment.GetFolderPath( Environment.SpecialFolder.Desktop ), 0 ),
-					       new DirComboBoxItem( 1, "Home", Environment.GetFolderPath( Environment.SpecialFolder.Personal ), 0 )
+						new DirComboBoxItem( 0, "Recently used", recently_tmp, 0 ),
+						new DirComboBoxItem( 1, "Desktop", Environment.GetFolderPath( Environment.SpecialFolder.Desktop ), 0 ),
+						new DirComboBoxItem( 2, "Home", Environment.GetFolderPath( Environment.SpecialFolder.Personal ), 0 ),
+						new DirComboBoxItem( 3, "Workplace", workplace_tmp, 0 )
 				       }
 				       );
 		}
@@ -2229,52 +2353,103 @@ namespace System.Windows.Forms
 			set {
 				currentPath = value;
 				
-				ShowPath( );
+				currentpath_internal_change = true;
+				
+				CreateComboList( );
 			}
 			get {
 				return currentPath;
 			}
 		}
 		
-		private void ShowPath( )
+		private void CreateComboList( )
 		{
-			DirectoryInfo di = new DirectoryInfo( currentPath );
+			int selection = -1;
+			int child_of = - 1;
 			
-			Stack dirStack = new Stack( );
+			if ( currentPath == recently_tmp ||
+			    currentPath == Environment.GetFolderPath( Environment.SpecialFolder.Desktop ) ||
+			    currentPath == Environment.GetFolderPath( Environment.SpecialFolder.Personal ) || 
+			    currentPath == workplace_tmp )
+			{
+				if ( currentPath == recently_tmp )
+					selection = 0;
+				else
+				if ( currentPath == Environment.GetFolderPath( Environment.SpecialFolder.Desktop ) )
+					selection = 1;
+				else
+				if ( currentPath == Environment.GetFolderPath( Environment.SpecialFolder.Personal ) )
+					selection = 2;
+				else
+				if( currentPath == workplace_tmp )
+					selection = 3;
+			}
+			else
+				child_of = CheckChildOf();
+			
+			
+			BeginUpdate( );
+			
+			Items.Clear( );
+			
+			Items.Add( new DirComboBoxItem( 0, "Recently used", recently_tmp, 0 ) );
+			
+			Items.Add( new DirComboBoxItem( 1, "Desktop", Environment.GetFolderPath( Environment.SpecialFolder.Desktop ), 0 ) );
+			if ( child_of == 1 )
+				selection = AppendToParent();
+			
+			Items.Add( new DirComboBoxItem( 2, "Home", Environment.GetFolderPath( Environment.SpecialFolder.Personal ), 0 ) );
+			if ( child_of == 2 )
+				selection = AppendToParent();
+				
+			Items.Add( new DirComboBoxItem( 3, "Workplace", workplace_tmp, 0 ) );
+			if ( child_of == 3 )
+				selection = AppendToParent();
+				
+			if ( selection != -1 )
+				SelectedIndex = selection;
+
+			EndUpdate( );
+		}
+		
+		private int CheckChildOf()
+		{
+			dirStack.Clear();
+			DirectoryInfo di = new DirectoryInfo( currentPath );
 			
 			dirStack.Push( di );
 			
 			while ( di.Parent != null )
 			{
 				di = di.Parent;
+				if ( di.FullName == Environment.GetFolderPath( Environment.SpecialFolder.Desktop ) )
+					return 1;
+				else
+				if ( di.FullName == Environment.GetFolderPath( Environment.SpecialFolder.Personal ) )
+					return 2;
+				else
+				if ( di.FullName == workplace_tmp )
+					return 3;
+				
 				dirStack.Push( di );
 			}
 			
-			BeginUpdate( );
-			
-			Items.Clear( );
-			
-			Items.AddRange( new object[] {
-					       new DirComboBoxItem( 0, "Desktop", Environment.GetFolderPath( Environment.SpecialFolder.Desktop ), 0 ),
-					       new DirComboBoxItem( 1, "Home", Environment.GetFolderPath( Environment.SpecialFolder.Personal ), 0 )
-				       }
-				       );
-			
-			int sel = -1;
-			
-			int xPos = -4;
+			return -1;
+		}
+		
+		private int AppendToParent()
+		{
+			int xPos = 0;
+			int selection = -1;
 			
 			while ( dirStack.Count != 0 )
 			{
-				DirectoryInfo dii = (DirectoryInfo)dirStack.Pop( );
-				sel = Items.Add( new DirComboBoxItem( 2, dii.Name, dii.FullName, xPos + 4 ) );
+				DirectoryInfo dii = dirStack.Pop( ) as DirectoryInfo;
+				selection = Items.Add( new DirComboBoxItem( 5, dii.Name, dii.FullName, xPos + 4 ) );
 				xPos += 4;
 			}
 			
-			if ( sel != -1 )
-				SelectedIndex = sel;
-			
-			EndUpdate( );
+			return selection;
 		}
 		
 		protected override void OnDrawItem( DrawItemEventArgs e )
@@ -2292,8 +2467,6 @@ namespace System.Windows.Forms
 			
 			int xPos = dcbi.XPos;
 			
-			// Bug in ComboBox !!!!!
-			// we never receive DrawItemState.ComboBoxEdit
 			if ( ( e.State & DrawItemState.ComboBoxEdit ) != 0 )
 				xPos = 0;
 			else
@@ -2315,22 +2488,21 @@ namespace System.Windows.Forms
 		
 		protected override void OnSelectedIndexChanged( EventArgs e )
 		{
-			// do not call ChangeDirectory when invoked from FileDialogPanel ctor...
-			if ( firstTime )
-			{
-				firstTime = false;
-				return;
-			}
-			
 			if ( Items.Count > 0 )
 			{
 				DirComboBoxItem dcbi = Items[ SelectedIndex ] as DirComboBoxItem;
 				
 				currentPath = dcbi.Path;
 				
-				if ( on_directory_changed != null )
-					on_directory_changed( this, EventArgs.Empty );
+				// call DirectoryChange event only if the user changes the index with the ComboBox
+				if ( !currentpath_internal_change )
+				{
+					if ( on_directory_changed != null )
+						on_directory_changed( this, EventArgs.Empty );
+				}
 			}
+			
+			currentpath_internal_change = false;
 		}
 		
 		public event EventHandler DirectoryChanged

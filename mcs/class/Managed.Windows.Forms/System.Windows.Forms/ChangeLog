@@ -1,3 +1,11 @@
+2006-01-03  Alexander Olk  <alex.olk@googlemail.com>
+
+	* FileDialog.cs:
+	  - Removed some dead code
+	  - Opening a recently used file does work now
+	  - Small UI enhancements
+	  - Refactoring
+
 2006-01-02  Alexander Olk  <alex.olk@googlemail.com>
 
 	* FileDialog.cs: Forgot too add __MonoCS__
