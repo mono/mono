@@ -1368,13 +1368,14 @@ namespace System.Windows.Forms {
 			return true;
 		}
 
-		public static void PostMessage (IntPtr hwnd, Msg message, IntPtr wParam, IntPtr lParam) {
+		internal override bool PostMessage (IntPtr hwnd, Msg message, IntPtr wParam, IntPtr lParam) {
 			MSG msg = new MSG();
 			msg.hwnd = hwnd;
 			msg.message = message;
 			msg.wParam = wParam;
 			msg.lParam = lParam;
 			MessageQueue.Enqueue (msg);
+			return true;
 		}
 
 		[MonoTODO]
@@ -1478,6 +1479,11 @@ namespace System.Windows.Forms {
 		
 		[MonoTODO]
 		internal override void SendAsyncMethod (AsyncMethodData method) {
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		internal override IntPtr SendMessage (IntPtr hwnd, Msg message, IntPtr wParam, IntPtr lParam) {
 			throw new NotImplementedException ();
 		}
 		

@@ -2089,6 +2089,14 @@ namespace System.Windows.Forms {
 			return new SizeF(width, font.Height);
 		}
 
+		internal override IntPtr SendMessage (IntPtr hwnd, Msg message, IntPtr wParam, IntPtr lParam) {
+			return Win32SendMessage(hwnd, message, wParam, lParam);
+		}
+
+		internal override bool PostMessage (IntPtr hwnd, Msg message, IntPtr wParam, IntPtr lParam) {
+			return Win32PostMessage(hwnd, message, wParam, lParam);
+		}
+
 		internal override int KeyboardSpeed {
 			get {
 				Console.WriteLine ("KeyboardSpeed: need to query Windows");
@@ -2271,9 +2279,6 @@ namespace System.Windows.Forms {
 		[DllImport ("gdi32.dll", EntryPoint="DeleteObject", CallingConvention=CallingConvention.StdCall)]
 		private extern static bool Win32DeleteObject(IntPtr o);
 
-		[DllImport ("user32.dll", EntryPoint="PostMessage", CallingConvention=CallingConvention.StdCall)]
-		private extern static bool Win32PostMessage(IntPtr hwnd, Msg msg, IntPtr wParam, IntPtr lParam);
-
 		[DllImport ("user32.dll", EntryPoint="GetKeyState", CallingConvention=CallingConvention.StdCall)]
 		private extern static short Win32GetKeyState(VirtualKeys nVirtKey);
 
@@ -2350,7 +2355,10 @@ namespace System.Windows.Forms {
 		private extern static bool Win32SetClassLong(IntPtr hwnd, ClassLong nIndex, IntPtr dwNewLong);
 
 		[DllImport ("user32.dll", EntryPoint="SendMessageW", CharSet=CharSet.Unicode, CallingConvention=CallingConvention.StdCall)]
-		private extern static bool Win32SendMessage(IntPtr hwnd, Msg msg, IntPtr wParam, IntPtr lParam);
+		private extern static IntPtr Win32SendMessage(IntPtr hwnd, Msg msg, IntPtr wParam, IntPtr lParam);
+
+		[DllImport ("user32.dll", EntryPoint="PostMessageW", CharSet=CharSet.Unicode, CallingConvention=CallingConvention.StdCall)]
+		private extern static bool Win32PostMessage(IntPtr hwnd, Msg msg, IntPtr wParam, IntPtr lParam);
 
 		[DllImport ("user32.dll", EntryPoint="SystemParametersInfoW", CharSet=CharSet.Unicode, CallingConvention=CallingConvention.StdCall)]
 		private extern static bool Win32SystemParametersInfo(SPIAction uiAction, uint uiParam, ref RECT rect, uint fWinIni);

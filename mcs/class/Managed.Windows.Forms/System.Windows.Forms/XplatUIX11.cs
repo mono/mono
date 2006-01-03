@@ -3187,17 +3187,19 @@ namespace System.Windows.Forms {
 			return GetMessage(ref msg, hWnd, wFilterMin, wFilterMax);
 		}
 
-		internal static void PostMessage (IntPtr handle, Msg message, IntPtr wparam, IntPtr lparam) {
+		// FIXME - I think this should just enqueue directly
+		internal override bool PostMessage (IntPtr handle, Msg message, IntPtr wparam, IntPtr lparam) {
 			XEvent xevent = new XEvent ();
 			Hwnd hwnd = Hwnd.ObjectFromHandle(handle);
 
 			xevent.type = XEventName.ClientMessage;
 			xevent.ClientMessageEvent.display = DisplayHandle;
 
-			if (hwnd != null)
+			if (hwnd != null) {
 				xevent.ClientMessageEvent.window = hwnd.whole_window;
-			else
+			} else {
 				xevent.ClientMessageEvent.window = IntPtr.Zero;
+			}
 
 			xevent.ClientMessageEvent.message_type = (IntPtr) PostAtom;
 			xevent.ClientMessageEvent.format = 32;
@@ -3207,6 +3209,8 @@ namespace System.Windows.Forms {
 			xevent.ClientMessageEvent.ptr4 = lparam;
 
 			MessageQueue.Enqueue (xevent);
+
+			return true;
 		}
 
 		internal override void PostQuitMessage(int exitCode) {
@@ -3328,6 +3332,10 @@ namespace System.Windows.Forms {
 			MessageQueue.EnqueueLocked (xevent);
 
 			WakeupMain ();
+		}
+
+		internal override IntPtr SendMessage (IntPtr hwnd, Msg message, IntPtr wParam, IntPtr lParam) {
+			return NativeWindow.WndProc(hwnd, message, wParam, lParam);
 		}
 
 		internal override void SetAllowDrop (IntPtr handle, bool value)

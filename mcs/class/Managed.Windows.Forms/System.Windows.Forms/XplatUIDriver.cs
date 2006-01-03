@@ -224,6 +224,9 @@ namespace System.Windows.Forms {
 
 		internal abstract SizeF GetAutoScaleSize(Font font);
 
+		internal abstract IntPtr SendMessage(IntPtr hwnd, Msg message, IntPtr wParam, IntPtr lParam);
+		internal abstract bool PostMessage(IntPtr hwnd, Msg message, IntPtr wParam, IntPtr lParam);
+
 		// System information
 		internal abstract int KeyboardSpeed { get; } 
 		internal abstract int KeyboardDelay { get; } 

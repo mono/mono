@@ -550,7 +550,24 @@ namespace System.Windows.Forms {
 			return driver.PeekMessage(ref msg, hWnd, wFilterMin, wFilterMax, flags);
 		}
 
+		internal static bool PostMessage(IntPtr hwnd, Msg message, IntPtr wParam, IntPtr lParam) {
+			#if DriverDebug
+				Console.WriteLine("PostMessage({0:X}, {1}, {2:X}, {3:X}): Called", hwnd.ToInt32(), message, wParam.ToInt32(), lParam.ToInt32());
+			#endif
+			return driver.PostMessage(hwnd, message, wParam, lParam);
+		}
+
+		internal static bool PostMessage(ref MSG msg) {
+			#if DriverDebug
+				Console.WriteLine("PostMessage({0}): Called", msg);
+			#endif
+			return driver.PostMessage(msg.hwnd, msg.message, msg.wParam, msg.lParam);
+		}
+
 		internal static void PostQuitMessage(int exitCode) {
+			#if DriverDebug
+				Console.WriteLine("ReleaseMenuDC({0:X}): Called", handle.ToInt32());
+			#endif
 			driver.PostQuitMessage(exitCode);
 		}
 
@@ -594,6 +611,20 @@ namespace System.Windows.Forms {
 				Console.WriteLine("SendAsyncMethod({0}): Called", data);
 			#endif
 			driver.SendAsyncMethod (data);
+		}
+
+		internal static IntPtr SendMessage (IntPtr handle, Msg message, IntPtr wParam, IntPtr lParam) {
+			#if DriverDebug
+				Console.WriteLine("SendMessage ({0:X}, {1}, {2:X}, {3:X}): Called", handle.ToInt32(), message, wParam.ToInt32(), lParam.ToInt32());
+			#endif
+			return driver.SendMessage (handle, message, wParam, lParam);
+		}
+
+		internal static void SendMessage (ref Message m) {
+			#if DriverDebug
+				Console.WriteLine("SendMessage ({0}): Called", m);
+			#endif
+			m.Result = driver.SendMessage(m.HWnd, (Msg)m.Msg, m.WParam, m.LParam);
 		}
 
 		internal static void SetAllowDrop (IntPtr handle, bool value)
