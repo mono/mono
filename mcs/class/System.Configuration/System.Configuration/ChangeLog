@@ -1,3 +1,44 @@
+2006-01-03  Chris Toshok  <toshok@ximian.com>
+
+	* Configuration.cs (SaveAs): open with FileMode.OpenOrCreate so we
+	can save to a new file.
+	(CreateSection): don't bother to set the section information's
+	Name here.  we'll do it in SectionInfo.CreateInstance.
+
+	* ProtectedConfiguration.cs (Section): new static property so we
+	can remove all the GetSection calls.
+	(GetProvider): load a named provider, optionally throwing an
+	exception if it's not found.
+
+	* InternalConfigurationHost.cs (EncryptSection, DecryptSection):
+	make these private interface implementations, and call
+	protectedSection.{EncryptSection,DecryptSection}.
+
+	* ProtectedConfigurationSection.cs (EncryptSection,
+	DecryptSection): add these two calls.  They really shouldn't be
+	here, but I saw them in an MS stack trace and thought "why not?".
+
+	* ConfigurationSection.cs (SectionInformation): don't set
+	attributes here, that's done in SectionInfo.CreateInstance.
+	(DeserializeSection): shoehorn in the decryption stuff here.  It
+	doesn't belong here, and I've added a MonoTODO about it.  It
+	should live someplace like SectionInfo.ReadData (which would make
+	it similar to the encryption stuff in .WriteData).
+
+	* SectionInformation.cs (IsProtected): remove the special flag,
+	just return true if we have a non-null protection_provider.
+	(ProtectSection): do nothing but try to instantiate the named
+	provider.
+	(UnprotectSection): null out protection_provider.
+
+	* DpapiProtectedConfigurationProvider.cs: move the
+	NotSupportedExceptions to Decrypt/Encrypt so we don't bomb out
+	when parsing our machine.config file.
+
+	* RsaProtectedConfigurationProvider.cs: initial implementation.
+	much is missing (OAEP support, key importing, adding/deleting
+	keys), but it can be used.
+
 2006-01-02  Chris Toshok  <toshok@ximian.com>
 
 	* RsaProtectedConfigurationProvider.cs: implement the

@@ -31,6 +31,7 @@
 using System.Collections;
 using System.Xml;
 using System.IO;
+using System.Security.Cryptography.Xml;
 
 namespace System.Configuration
 {
@@ -45,10 +46,8 @@ namespace System.Configuration
 		[MonoTODO]
 		public SectionInformation SectionInformation {
 			get {
-				if (sectionInformation == null) {
+				if (sectionInformation == null)
 					sectionInformation = new SectionInformation ();
-					sectionInformation.Type = GetType().AssemblyQualifiedName;
-				}
 				return sectionInformation;
 			}
 		}
@@ -79,8 +78,38 @@ namespace System.Configuration
 			return elem;
 		}
 
+		[MonoTODO ("find the proper location for the decryption stuff")]
 		protected internal virtual void DeserializeSection (XmlReader reader)
 		{
+			reader.MoveToContent ();
+
+			/* XXX this stuff shouldn't be here */
+			{
+				string protection_provider = null;
+
+				while (reader.MoveToNextAttribute ()) {
+					if (reader.LocalName == "configProtectionProvider")
+						protection_provider = reader.Value;
+				}
+
+				if (protection_provider != null) {
+					ProtectedConfigurationProvider prov = ProtectedConfiguration.GetProvider (protection_provider, true);
+					XmlDocument doc = new XmlDocument ();
+
+					reader.MoveToElement ();
+
+					doc.Load (new StringReader (reader.ReadInnerXml ()));
+
+					XmlNode n = prov.Decrypt (doc);
+
+					reader = new XmlNodeReader (n);
+
+					SectionInformation.ProtectSection (protection_provider);
+
+					reader.MoveToContent ();
+				}
+			}
+
 			SectionInformation.SetRawXml (RawXml);
 			DeserializeElement (reader, false);
 		}

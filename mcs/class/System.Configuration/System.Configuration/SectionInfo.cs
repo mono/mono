@@ -30,6 +30,7 @@ using System;
 using System.Collections;
 using System.Collections.Specialized;
 using System.Xml;
+using System.Text;
 using System.IO;
 
 namespace System.Configuration
@@ -62,6 +63,7 @@ namespace System.Configuration
 				sec.SectionInformation.AllowLocation = allowLocation;
 				sec.SectionInformation.AllowDefinition = allowDefinition;
 				sec.SectionInformation.AllowExeDefinition = allowExeDefinition;
+				sec.SectionInformation.SetName (Name);
 			}
 			return ob;
 		}
@@ -169,6 +171,18 @@ namespace System.Configuration
 			if (section != null) {
 				ConfigurationSection parentSection = config.Parent != null ? config.Parent.GetSectionInstance (this, false) : null;
 				xml = section.SerializeSection (parentSection, Name, mode);
+
+				if (section.SectionInformation.IsProtected) {
+					StringBuilder sb = new StringBuilder ();
+					sb.AppendFormat ("<{0} configProtectionProvider=\"{1}\">\n",
+							 Name,
+							 section.SectionInformation.ProtectionProvider.Name);
+					sb.Append (config.ConfigHost.EncryptSection (xml,
+										     section.SectionInformation.ProtectionProvider,
+										     ProtectedConfiguration.Section));
+					sb.AppendFormat ("</{0}>", Name);
+					xml = sb.ToString ();
+				}
 			}
 			else {
 				xml = config.GetSectionXml (this);

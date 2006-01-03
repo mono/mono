@@ -28,8 +28,10 @@
 
 #if NET_2_0
 using System.Xml;
+using System.IO;
 using System.Collections.Specialized;
 using System.Security.Cryptography;
+using System.Security.Cryptography.Xml;
 
 namespace System.Configuration
 {
@@ -40,6 +42,23 @@ namespace System.Configuration
 		bool useMachineContainer;
 		bool useOAEP;
 
+		RSACryptoServiceProvider rsa;
+
+		RSACryptoServiceProvider GetProvider ()
+		{
+			if (rsa == null) {
+				CspParameters c = new CspParameters ();
+				c.ProviderName = cspProviderName;
+				c.KeyContainerName = keyContainerName;
+				if (useMachineContainer)
+					c.Flags |= CspProviderFlags.UseMachineKeyStore;
+
+				rsa = new RSACryptoServiceProvider (c);
+			}
+
+			return rsa;
+		}
+
 		public RsaProtectedConfigurationProvider ()
 		{
 		}
@@ -47,13 +66,33 @@ namespace System.Configuration
 		[MonoTODO]
 		public override XmlNode Decrypt (XmlNode encrypted_node)
 		{
-			throw new NotImplementedException ();
+			XmlDocument doc = new XmlDocument ();
+			
+			doc.Load (new StringReader (encrypted_node.OuterXml));
+
+			EncryptedXml ex = new EncryptedXml (doc);
+
+			ex.AddKeyNameMapping ("Rsa Key", GetProvider ());
+
+			ex.DecryptDocument ();
+			
+			return doc.DocumentElement;
 		}
 
 		[MonoTODO]
 		public override XmlNode Encrypt (XmlNode node)
 		{
-			throw new NotImplementedException ();
+			XmlDocument doc = new XmlDocument ();
+			
+			doc.Load (new StringReader (node.OuterXml));
+
+			EncryptedXml ex = new EncryptedXml (doc);
+
+			ex.AddKeyNameMapping ("Rsa Key", GetProvider ());
+
+			EncryptedData d = ex.Encrypt (doc.DocumentElement, "Rsa Key");
+
+			return d.GetXml();
 		}
 
 		[MonoTODO]
@@ -90,7 +129,14 @@ namespace System.Configuration
 		[MonoTODO]
 		public void ExportKey (string xmlFileName, bool includePrivateParameters)
 		{
-			throw new NotImplementedException ();
+			RSACryptoServiceProvider prov = GetProvider ();
+			string xml = prov.ToXmlString (includePrivateParameters);
+
+			FileStream stream = new FileStream (xmlFileName, FileMode.OpenOrCreate, FileAccess.Write);
+			StreamWriter writer = new StreamWriter (stream);
+
+			writer.Write (xml);
+			writer.Close ();
 		}
 
 		[MonoTODO]
@@ -108,9 +154,11 @@ namespace System.Configuration
 			get { return keyContainerName; }
 		}
 
-		[MonoTODO]
 		public RSAParameters RsaPublicKey {
-			get { throw new NotImplementedException (); }
+			get {
+				RSACryptoServiceProvider prov = GetProvider ();
+				return prov.ExportParameters (false);
+			}
 		}
 
 		public bool UseMachineContainer {

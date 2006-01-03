@@ -29,6 +29,9 @@
 
 #if NET_2_0
 
+using System.IO;
+using System.Xml;
+
 namespace System.Configuration
 {
 	public sealed class ProtectedConfigurationSection: ConfigurationSection
@@ -62,6 +65,26 @@ namespace System.Configuration
 
 		protected internal override ConfigurationPropertyCollection Properties {
 			get { return properties; }
+		}
+
+		internal string EncryptSection (string clearXml, ProtectedConfigurationProvider protectionProvider)
+		{
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml (clearXml);
+
+			XmlNode encryptedNode = protectionProvider.Encrypt (doc.DocumentElement);
+
+			return encryptedNode.OuterXml;
+		}
+
+		internal string DecryptSection (string encryptedXml, ProtectedConfigurationProvider protectionProvider)
+		{
+			XmlDocument doc = new XmlDocument ();
+			doc.InnerXml = encryptedXml;
+
+			XmlNode decryptedNode = protectionProvider.Decrypt (doc.DocumentElement);
+
+			return decryptedNode.OuterXml;
 		}
 
 		internal ProtectedConfigurationProviderCollection GetAllProviders ()

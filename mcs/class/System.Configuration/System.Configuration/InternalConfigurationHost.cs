@@ -47,19 +47,19 @@ namespace System.Configuration
 			throw new NotImplementedException ();
 		}
 		
-		public virtual string DecryptSection (string encryptedXml, ProtectedConfigurationProvider protectionProvider, ProtectedConfigurationSection protectedSection)
-		{
-			throw new NotImplementedException ();
-		}
-		
 		public virtual void DeleteStream (string streamName)
 		{
 			File.Delete (streamName);
 		}
 		
-		public virtual string EncryptSection (string encryptedXml, ProtectedConfigurationProvider protectionProvider, ProtectedConfigurationSection protectedSection)
+		string IInternalConfigHost.DecryptSection (string encryptedXml, ProtectedConfigurationProvider protectionProvider, ProtectedConfigurationSection protectedSection)
 		{
-			throw new NotImplementedException ();
+			return protectedSection.DecryptSection (encryptedXml, protectionProvider);
+		}
+		
+		string IInternalConfigHost.EncryptSection (string clearXml, ProtectedConfigurationProvider protectionProvider, ProtectedConfigurationSection protectedSection)
+		{
+			return protectedSection.EncryptSection (clearXml, protectionProvider);
 		}
 		
 		public virtual string GetConfigPathFromLocationSubPath (string configPath, string locationSubPath)

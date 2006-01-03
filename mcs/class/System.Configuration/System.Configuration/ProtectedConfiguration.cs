@@ -40,19 +40,25 @@ namespace System.Configuration
 		public const string RsaProviderName = "RsaProtectedConfigurationProvider";
 
 		public static string DefaultProvider {
-			get {
-				ProtectedConfigurationSection section = (ProtectedConfigurationSection)ConfigurationManager.GetSection ("configProtectedData");
-
-				return section.DefaultProvider;
-			}
+			get { return Section.DefaultProvider; }
 		}
 
 		public static ProtectedConfigurationProviderCollection Providers {
-			get {
-				ProtectedConfigurationSection section = (ProtectedConfigurationSection)ConfigurationManager.GetSection ("configProtectedData");
+			get { return Section.GetAllProviders(); }
+		}
 
-				return section.GetAllProviders();
-			}
+		internal static ProtectedConfigurationSection Section {
+			get { return (ProtectedConfigurationSection)ConfigurationManager.GetSection ("configProtectedData"); }
+		}
+
+		internal static ProtectedConfigurationProvider GetProvider (string name, bool throwOnError)
+		{
+			ProtectedConfigurationProvider p = Providers[name];
+
+			if (p == null && throwOnError)
+				throw new Exception (String.Format ("The protection provider '{0}' was not found.", name));
+
+			return p;
 		}
 	}
 

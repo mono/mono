@@ -34,7 +34,17 @@ namespace System.Configuration
 {
 	public sealed class DpapiProtectedConfigurationProvider: ProtectedConfigurationProvider
 	{
-		public DpapiProtectedConfigurationProvider ()
+		bool useMachineProtection;
+
+		public override XmlNode Decrypt (XmlNode encrypted_node)
+		{
+			throw new NotSupportedException (
+@"DpapiProtectedConfigurationProvider depends on the Microsoft Data
+Protection API, and is unimplemented in Mono.  For portability's sake,
+it is suggested that you use the RsaProtectedConfigurationProvider.");
+		}
+
+		public override XmlNode Encrypt (XmlNode node)
 		{
 			throw new NotSupportedException (
 @"DpapiProtectedConfigurationProvider depends on the Microsoft Data
@@ -43,26 +53,19 @@ it is suggested that you use the RsaProtectedConfigurationProvider.");
 		}
 
 		[MonoTODO]
-		public override XmlNode Decrypt (XmlNode encrypted_node)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public override XmlNode Encrypt (XmlNode node)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
 		public override void Initialize (string name, NameValueCollection configurationValues)
 		{
-			throw new NotImplementedException ();
+			base.Initialize (name, configurationValues);
+
+			string flag;
+
+			flag = configurationValues ["useMachineProtection"];
+			if (flag != null && flag.ToLower() == "true")
+				useMachineProtection = true;
 		}
 
-		[MonoTODO]
 		public bool UseMachineProtection {
-			get { throw new NotImplementedException (); }
+			get { return useMachineProtection; }
 		}
 	}
 }

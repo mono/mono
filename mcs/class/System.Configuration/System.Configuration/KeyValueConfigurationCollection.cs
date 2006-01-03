@@ -77,8 +77,8 @@ namespace System.Configuration
 		
 		protected override object GetElementKey (ConfigurationElement element)
 		{
-			if (BaseIndexOf (element) == -1)
-				return "";
+			//			if (BaseIndexOf (element) == -1)
+			//				return "";
 
 			return ((KeyValueConfigurationElement)element).Key;
 		}

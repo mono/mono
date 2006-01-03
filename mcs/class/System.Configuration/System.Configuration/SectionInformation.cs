@@ -44,11 +44,11 @@ namespace System.Configuration
 		bool restart_on_external_changes;
 
 		string config_source;
-		bool force_update, is_declared, is_locked, is_protected;
+		bool force_update, is_declared, is_locked;
 		string name, type_name;
 		string raw_xml;
 
-		ProtectedConfigurationProvider protected_provider;
+		ProtectedConfigurationProvider protection_provider;
 		
 		internal SectionInformation ()
 		{
@@ -109,18 +109,16 @@ namespace System.Configuration
 			get { return is_locked; }
 		}
 
-		[MonoTODO]
 		public bool IsProtected {
-			get { return is_protected; }
+			get { return protection_provider != null; }
 		}
 
 		public string Name {
 			get { return name; }
 		}
 
-		[MonoTODO]
 		public ProtectedConfigurationProvider ProtectionProvider {
-			get { return protected_provider; }
+			get { return protection_provider; }
 		}
 
 		[MonoTODO]
@@ -156,10 +154,9 @@ namespace System.Configuration
 			return raw_xml;
 		}
 
-		[MonoTODO]
 		public void ProtectSection (string provider)
 		{
-			throw new NotImplementedException ();
+			protection_provider = ProtectedConfiguration.GetProvider (provider, true);
 		}
 
 		[MonoTODO]
@@ -180,7 +177,7 @@ namespace System.Configuration
 
 		public void UnprotectSection ()
 		{
-			is_protected = false;
+			protection_provider = null;
 		}
 
 		public void SetRawXml (string xml)

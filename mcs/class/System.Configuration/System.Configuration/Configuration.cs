@@ -293,8 +293,6 @@ namespace System.Configuration {
 			if (sec.SectionInformation.Type == null)
 				sec.SectionInformation.Type = system.Host.GetConfigTypeName (sec.GetType ());
 			
-			sec.SectionInformation.SetName (name);
-
 			SectionInfo section = new SectionInfo (name, sec.SectionInformation.Type, sec.SectionInformation.AllowLocation, sec.SectionInformation.AllowDefinition, sec.SectionInformation.AllowExeDefinition);
 			section.StreamName = streamName;
 			section.ConfigHost = system.Host;
@@ -358,7 +356,7 @@ namespace System.Configuration {
 		[MonoTODO ("Detect if file has changed")]
 		public void SaveAs (string filename, ConfigurationSaveMode mode, bool forceUpdateAll)
 		{
-			Save (new FileStream (filename, FileMode.Open, FileAccess.Write), mode, forceUpdateAll);
+			Save (new FileStream (filename, FileMode.OpenOrCreate, FileAccess.Write), mode, forceUpdateAll);
 		}
 
 		void Save (Stream stream, ConfigurationSaveMode mode, bool forceUpdateAll)
