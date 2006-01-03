@@ -420,7 +420,6 @@ namespace Mono.Unix {
 				case Native.Errno.EPERM:         return new InvalidOperationException (message, p);
 
 				case Native.Errno.ENOEXEC:       return new InvalidProgramException (message, p);
-				case Native.Errno.ENOMEM:        return new OutOfMemoryException (message, p);
 				case Native.Errno.EOVERFLOW:     return new OverflowException (message, p);
 				case Native.Errno.ENAMETOOLONG:  return new PathTooLongException (message, p);
 				default: /* ignore */     break;

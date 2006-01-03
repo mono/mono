@@ -1,3 +1,9 @@
+2006-01-03  Jonathan Pryor <jonpryor@vt.edu>
+
+	* UnixMarshal.cs (CreateExceptionForError): Don't map ENOMEM to
+	  System.OutOfMemoryException.  OOME should be reserved for use by the CLR.
+	  Return a UnixIOException instead (default behavior).
+
 2006-01-02  Jonathan Pryor <jonpryor@vt.edu>
 
 	* StdioFileStream.cs: Shut up FxCop - add a GC.KeepAlive to 
