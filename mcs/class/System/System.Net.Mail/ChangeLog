@@ -1,3 +1,7 @@
+2006-1-02  John Luke  <john.luke@gmail.com>
+
+	* DeliveryNotificationOptions: fix value of Delay
+	
 2005-12-26  John Luke  <john.luke@gmail.com>
 
 	* AttachmentCollection.cs: mark sealed

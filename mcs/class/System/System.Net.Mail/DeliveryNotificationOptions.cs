@@ -40,7 +40,7 @@ namespace System.Net.Mail {
 		None,
 		OnSuccess,
 		OnFailure,
-		Delay,
+		Delay = 4,
 		Never = 134217728,
 	}
 }
