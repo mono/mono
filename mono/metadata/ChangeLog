@@ -1,3 +1,8 @@
+2006-01-03  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* file-io.c: Don't consider sockets as directory and avoid an endless
+	loop. Fix bug #76966.
+
 2006-01-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* object.c (mono_nullable_init): New helper function.
