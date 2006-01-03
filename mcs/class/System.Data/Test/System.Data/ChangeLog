@@ -1,3 +1,6 @@
+2006-01-03 Senganal T <tsenganal@novell.com>
+	*DataViewTest.cs : added testcases for bug #77104
+
 2006-01-02 Boris Kirzner <borisk@mainsoft.com>
 	* DataTableCollectionTest2.cs, DataColumnTest2.cs,
 	DataViewTest2.cs, DataRowCollectionTest2.cs, DataTableTest2.cs,

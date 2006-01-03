@@ -278,14 +278,43 @@ namespace MonoTests.System.Data
 			AssertEquals (s + "Third entry has wrong item", 3, dataView[2][0]);
 			AssertEquals (s + "Fourth entry has wrong item", 2, dataView[3][0]);
 
-			s = "Ascending sorting: ";
+			s = "Ascending sorting 1: ";
 			dataView.Sort = "itemId ASC";
 			AssertEquals (s + "First entry has wrong item", 0, dataView[0][0]);
 			AssertEquals (s + "Second entry has wrong item", 1, dataView[1][0]);
 			AssertEquals (s + "Third entry has wrong item", 2, dataView[2][0]);
 			AssertEquals (s + "Fourth entry has wrong item", 3, dataView[3][0]);
 
-			s = "Descending sorting: ";
+			// bug #77104 (2-5)
+			s = "Ascending sorting 2: ";
+			dataView.Sort = "itemId     ASC";
+			AssertEquals (s + "First entry has wrong item", 0, dataView[0][0]);
+			AssertEquals (s + "Second entry has wrong item", 1, dataView[1][0]);
+			AssertEquals (s + "Third entry has wrong item", 2, dataView[2][0]);
+			AssertEquals (s + "Fourth entry has wrong item", 3, dataView[3][0]);
+
+			s = "Ascending sorting 3: ";
+			dataView.Sort = "[itemId] ASC";
+			AssertEquals (s + "First entry has wrong item", 0, dataView[0][0]);
+			AssertEquals (s + "Second entry has wrong item", 1, dataView[1][0]);
+			AssertEquals (s + "Third entry has wrong item", 2, dataView[2][0]);
+			AssertEquals (s + "Fourth entry has wrong item", 3, dataView[3][0]);
+
+			s = "Ascending sorting 4: ";
+			dataView.Sort = "[itemId]       ASC";
+			AssertEquals (s + "First entry has wrong item", 0, dataView[0][0]);
+			AssertEquals (s + "Second entry has wrong item", 1, dataView[1][0]);
+			AssertEquals (s + "Third entry has wrong item", 2, dataView[2][0]);
+			AssertEquals (s + "Fourth entry has wrong item", 3, dataView[3][0]);
+
+			s = "Ascending sorting 5: ";
+			try {
+				dataView.Sort = "itemId \tASC";
+				AssertEquals (s + "Tab cannot be a separator" , true, false);
+			}catch (IndexOutOfRangeException e) {
+			}
+
+			s = "Descending sorting : ";
 			dataView.Sort = "itemId DESC";
 			AssertEquals (s + "First entry has wrong item", 3, dataView[0][0]);
 			AssertEquals (s + "Second entry has wrong item", 2, dataView[1][0]);
@@ -298,9 +327,8 @@ namespace MonoTests.System.Data
 			AssertEquals (s + "Second entry has wrong item", 0, dataView[1][0]);
 			AssertEquals (s + "Third entry has wrong item", 3, dataView[2][0]);
 			AssertEquals (s + "Fourth entry has wrong item", 2, dataView[3][0]);
-
 		}
-
+		
 		#endregion // Sort Tests
 
 		[Test]

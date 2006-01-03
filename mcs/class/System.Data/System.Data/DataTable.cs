@@ -49,6 +49,7 @@ using System.IO;
 using System.Runtime.Serialization;
 using System.Xml;
 using System.Xml.Schema;
+using System.Text.RegularExpressions;
 using Mono.Data.SqlExpressions;
 
 namespace System.Data {
@@ -103,6 +104,10 @@ namespace System.Data {
 		
 		private PropertyDescriptorCollection _propertyDescriptorsCache;
 		static DataColumn[] _emptyColumnArray = new DataColumn[0];
+
+		// Regex to parse the Sort string.
+		static Regex SortRegex = new Regex ( @"^((\[(?<ColName>.+)\])|(?<ColName>\S+))([ ]+(?<Order>ASC|DESC))?$",
+							RegexOptions.IgnoreCase|RegexOptions.ExplicitCapture);
 		
 		#endregion //Fields
 		
@@ -1891,54 +1896,13 @@ namespace System.Data {
 			
 				for (int c = 0; c < columnExpression.Length; c++) {
 					string rawColumnName = columnExpression[c].Trim ();
-					string[] columnSortInfo;
-					
-					if (rawColumnName.StartsWith ("[") && (rawColumnName.IndexOf ("]") > 0)) {
-						// Column name is "escaped" a la "[Name with spaces]", so we can't
-						// split at spaces. We just split it manually. 
-						int i = rawColumnName.LastIndexOf ("]"); 
 
-						if (i + 1 < rawColumnName.Length) {
-							// The "]" is not the last character which means we also have
-							// an optional sort order... we extract that one and trim it.
-							columnSortInfo = new String[2];
-							columnSortInfo[1] = rawColumnName.Substring (i + 1,
-								rawColumnName.Length - i - 1).Trim ();
-						} else {
-							// The "]" is the last character, we don't have a sort order
-							columnSortInfo = new String[1];
-						}
-
-						// Get everything between leading "[" and the LAST "]", no trimming !
-						columnSortInfo[0] = rawColumnName.Substring (1, i - 1);
-					} else {
-						// No column name "escaping", just split at spaces and trim just to
-						// be sure. 
-						columnSortInfo = rawColumnName.Split (new char[1] {' '});
-
-						// Fix entries (trim strings)
-						for (int i = 0; i < columnSortInfo.Length; i++) {
-							columnSortInfo[i] = columnSortInfo[i].Trim ();
-						}
-					}
-				
-					string columnName = columnSortInfo[0];
-					string sortOrder = "ASC";
-					if (columnSortInfo.Length > 1) 
-						sortOrder = columnSortInfo[1].ToUpper (table.Locale);
-					
-					ListSortDirection sortDirection = ListSortDirection.Ascending;
-					switch (sortOrder) {
-					case "ASC":
-						sortDirection = ListSortDirection.Ascending;
-						break;
-					case "DESC":
-						sortDirection = ListSortDirection.Descending;
-						break;
-					default:
+					Match match = SortRegex.Match (rawColumnName);
+					CaptureCollection cc = match.Groups["ColName"].Captures ;
+					if (cc.Count == 0)
 						throw new IndexOutOfRangeException ("Could not find column: " + rawColumnName);
-					}
 
+					string columnName = cc[0].Value;
 					DataColumn dc = table.Columns[columnName];
 					if (dc == null){
 						try {
@@ -1947,9 +1911,13 @@ namespace System.Data {
 							throw new IndexOutOfRangeException("Cannot find column " + columnName);
 						}
 					}
-
 					columns.Add (dc);
-					sorts.Add(sortDirection);
+
+					cc = match.Groups["Order"].Captures;
+					if (cc.Count == 0 || String.Compare (cc[0].Value, "ASC", true) == 0)
+						sorts.Add(ListSortDirection.Ascending);
+					else
+						sorts.Add (ListSortDirection.Descending);
 				}
 
 				sortColumns = (DataColumn[]) columns.ToArray (typeof (DataColumn));

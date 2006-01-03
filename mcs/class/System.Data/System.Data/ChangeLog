@@ -1,3 +1,9 @@
+2006-01-03  Senganal T <tsenganal@novell.com>
+
+	* DataTable.cs :
+		- ParseSortString() : Changed the way the sort string is parsed.
+		Using a regex to parse the string.Fixes bug #77104
+
 2005-12-12  Konstantin Triger <kostat@mainsoft.com>
 
 	* DataRow.cs: Added index Updates.
