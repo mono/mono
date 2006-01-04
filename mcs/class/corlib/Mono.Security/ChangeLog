@@ -1,3 +1,7 @@
+2006-01-04  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ASN1Convert.cs: Fix convertion of integer 0 to ASN.1.
+
 2005-11-07  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* StrongName.cs: Synch with Mono.Security.dll to get support for 

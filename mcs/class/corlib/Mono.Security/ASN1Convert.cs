@@ -88,7 +88,7 @@ namespace Mono.Security {
 				asn1.Value = integer;
 				break;
 			case 4:
-				asn1.Value = new byte [0];
+				asn1.Value = new byte [1];
 				break;
 			default:
 				byte[] smallerInt = new byte [4 - x];
