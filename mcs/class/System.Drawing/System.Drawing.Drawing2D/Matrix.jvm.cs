@@ -174,7 +174,7 @@ namespace System.Drawing.Drawing2D
         
 		public void Rotate (float angle)
 		{
-			Rotate (angle, MatrixOrder.Prepend);
+			NativeObject.rotate (JMath.toRadians(angle));
 		}
         
 		public void Rotate (float angle, MatrixOrder order)
@@ -184,7 +184,7 @@ namespace System.Drawing.Drawing2D
         
 		public void RotateAt (float angle, PointF point)
 		{
-			RotateAt (angle, point, MatrixOrder.Prepend);
+			NativeObject.rotate (JMath.toRadians(angle), point.X, point.Y);
 		}
         
 		public void RotateAt (float angle, PointF point, MatrixOrder order)
@@ -194,7 +194,7 @@ namespace System.Drawing.Drawing2D
         
 		public void Scale (float scaleX, float scaleY)
 		{
-			Scale (scaleX, scaleY, MatrixOrder.Prepend);
+			NativeObject.scale (scaleX, scaleY);
 		}
         
 		public void Scale (float scaleX, float scaleY, MatrixOrder order)
@@ -204,7 +204,7 @@ namespace System.Drawing.Drawing2D
         
 		public void Shear (float shearX, float shearY)
 		{
-			Shear (shearX, shearY, MatrixOrder.Prepend);
+			NativeObject.shear(shearX, shearY);
 		}
         
 		public void Shear (float shearX, float shearY, MatrixOrder order)
@@ -258,7 +258,7 @@ namespace System.Drawing.Drawing2D
         
 		public void Translate (float offsetX, float offsetY)
 		{
-			Translate (offsetX, offsetY, MatrixOrder.Prepend);
+			NativeObject.translate (offsetX, offsetY);
 		}
         
 		public void Translate (float offsetX, float offsetY, MatrixOrder order)
