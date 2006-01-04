@@ -2,6 +2,8 @@
 
 	* AsyncMethodResult.cs: Use a ManualResetEvent instead of a mutex,
 	this gives the behavoir I was looking for.
+	* Control.cs: Special case Invoking EventHandlers, this matches MS
+	and fixes part of bug #76326.
 
 2006-01-04  Alexander Olk  <alex.olk@googlemail.com>
 

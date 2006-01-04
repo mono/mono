@@ -2595,7 +2595,11 @@ namespace System.Windows.Forms
 		}
 
 		public object Invoke (Delegate method) {
-			return Invoke(method, null);
+			object [] prms = null;
+			if (method is EventHandler)
+				prms = new object [] { this, EventArgs.Empty };
+
+			return Invoke(method, prms);
 		}
 
 		public object Invoke (Delegate method, object[] args) {
