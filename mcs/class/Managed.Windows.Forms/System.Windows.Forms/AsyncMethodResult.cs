@@ -30,14 +30,14 @@ namespace System.Windows.Forms {
 
 	internal class AsyncMethodResult : IAsyncResult {
 
-		private Mutex handle;
+		private ManualResetEvent handle;
 		private object state;
 		private bool completed;
 		private object return_value;
 
 		public AsyncMethodResult ()
 		{
-			handle = new Mutex ();
+			handle = new ManualResetEvent (false);
 		}
 
 		public virtual WaitHandle AsyncWaitHandle {
@@ -76,7 +76,7 @@ namespace System.Windows.Forms {
 			lock (this) {
 				completed = true;
 				return_value = result;
-				handle.ReleaseMutex ();
+				handle.Set ();
 			}
 		}
 	}
