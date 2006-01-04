@@ -3563,6 +3563,9 @@ namespace Mono.CSharp {
 			if (param_types.Length != ParameterTypes.Length)
 				return false;
 
+			if (method.Parameters.HasArglist != Parameters.HasArglist)
+				return false;
+			
 			for (int i = 0; i < param_types.Length; i++)
 				if (param_types [i] != ParameterTypes [i])
 					return false;
