@@ -91,6 +91,8 @@ int mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *st
 		   guint inline_offset, gboolean is_virtual_call);
 
 void mono_spill_global_vars (MonoCompile *cfg);
+void mono_decompose_long_opts (MonoCompile *cfg);
+void mono_handle_global_vregs (MonoCompile *cfg);
 
 static int mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_bblock, MonoBasicBlock *end_bblock, 
 		   int locals_offset, MonoInst *return_var, GList *dont_inline, MonoInst **inline_args, 
@@ -1675,7 +1677,7 @@ mono_get_got_var (MonoCompile *cfg)
 }
 
 MonoInst*
-mono_compile_create_var (MonoCompile *cfg, MonoType *type, int opcode)
+mono_compile_create_var_for_vreg (MonoCompile *cfg, MonoType *type, int opcode, int vreg)
 {
 	MonoInst *inst;
 	int num = cfg->num_varinfo;
@@ -1696,10 +1698,26 @@ mono_compile_create_var (MonoCompile *cfg, MonoType *type, int opcode)
 	type_to_eval_stack_type (type, inst);
 	/* if set to 1 the variable is native */
 	inst->unused = 0;
+	inst->dreg = vreg;
+
+	cfg->varinfo [num] = inst;
+
+	cfg->vars [num] = mono_mempool_alloc0 (cfg->mempool, sizeof (MonoMethodVar));
+	MONO_INIT_VARINFO (cfg->vars [num], num);
+
+	cfg->num_varinfo++;
+	//g_print ("created temp %d of type %s\n", num, mono_type_get_name (type));
+	return inst;
+}
+
+MonoInst*
+mono_compile_create_var (MonoCompile *cfg, MonoType *type, int opcode)
+{
+	int dreg;
 
 	if (cfg->new_ir) {
 		if (type->byref)
-			inst->dreg = cfg->next_vireg ++;
+			dreg = cfg->next_vireg ++;
 		else {
 			switch (mono_type_get_underlying_type (type)->type) {
 			case MONO_TYPE_I1:
@@ -1720,19 +1738,19 @@ mono_compile_create_var (MonoCompile *cfg, MonoType *type, int opcode)
 			case MONO_TYPE_SZARRAY:
 			case MONO_TYPE_ARRAY:    
 				/* FIXME: call alloc_dreg */
-				inst->dreg = cfg->next_vireg ++;
+				dreg = cfg->next_vireg ++;
 				break;
 			case MONO_TYPE_R4:
 			case MONO_TYPE_R8:
-				inst->dreg = cfg->next_vfreg ++;
+				dreg = cfg->next_vfreg ++;
 				break;
 			case MONO_TYPE_I8:
 			case MONO_TYPE_U8:
 #if SIZEOF_VOID_P == 8
-				inst->dreg = cfg->next_vireg ++;
+				dreg = cfg->next_vireg ++;
 #else
 				/* Use a pair of vregs */
-				inst->dreg = cfg->next_vireg ++;
+				dreg = cfg->next_vireg ++;
 				cfg->next_vireg ++;
 #endif
 				break;
@@ -1746,14 +1764,7 @@ mono_compile_create_var (MonoCompile *cfg, MonoType *type, int opcode)
 		}
 	}
 
-	cfg->varinfo [num] = inst;
-
-	cfg->vars [num] = mono_mempool_alloc0 (cfg->mempool, sizeof (MonoMethodVar));
-	MONO_INIT_VARINFO (cfg->vars [num], num);
-
-	cfg->num_varinfo++;
-	//g_print ("created temp %d of type %s\n", num, mono_type_get_name (type));
-	return inst;
+	return mono_compile_create_var_for_vreg (cfg, type, opcode, dreg);
 }
 
 /*
@@ -9630,6 +9641,14 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 	//mono_print_code (cfg);
 
     //print_dfn (cfg);
+
+	if (cfg->new_ir) {
+		/* FIXME: Move this call elsewhere */
+		mono_decompose_long_opts (cfg);
+
+		/* FIXME: Move this call elsewhere, _before_ global reg alloc and _after_ decompose */
+		mono_handle_global_vregs (cfg);
+	}
 	
 	/* variables are allocated after decompose, since decompose could create temps */
 	mono_arch_allocate_vars (cfg);

@@ -283,6 +283,7 @@ mono_print_ins_index (int i, MonoInst *ins)
 	switch (ins->opcode) {
 	case OP_ICONST:
 	case OP_ICOMPARE_IMM:
+	case OP_COMPARE_IMM:
 		g_print (" [%d]", (int)ins->inst_c0);
 		break;
 	case OP_ADD_IMM:
@@ -780,7 +781,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 
 	i = 1;
 	fpcount = 0;
-	DEBUG (g_print ("\nLOCAL regalloc: basic block: %d\n", bb->block_num));
+	DEBUG (g_print ("\nLOCAL regalloc: basic block %d:\n", bb->block_num));
 	/* forward pass on the instructions to collect register liveness info */
 	while (ins) {
 		spec = ins_spec [ins->opcode];

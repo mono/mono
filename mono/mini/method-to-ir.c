@@ -748,6 +748,27 @@ mono_print_bb_code_new (MonoBasicBlock *bb) {
         MONO_ADD_INS ((cfg)->cbb, inst); \
 	} while (0)
 
+/* Emit a conditional branch and start a new basic block */
+#define	MONO_EMIT_NEW_BRANCH_BLOCK2(cfg,op,truebb) do { \
+        MonoInst *ins; \
+        MonoBasicBlock *falsebb; \
+	    NEW_BBLOCK ((cfg), falsebb); \
+	    ADD_BBLOCK ((cfg), cfg->cbb_hash, falsebb); \
+        MONO_INST_NEW ((cfg), (ins), (op)); \
+        if ((op) == CEE_BR) { \
+            ins->inst_target_bb = (truebb); \
+        } else { \
+		    ins->inst_many_bb = mono_mempool_alloc (cfg->mempool, sizeof(gpointer)*2);	\
+            ins->inst_true_bb = (truebb); \
+            ins->inst_false_bb = (falsebb); \
+        } \
+        link_bblock ((cfg), (cfg)->cbb, (truebb)); \
+        link_bblock ((cfg), (cfg)->cbb, (falsebb)); \
+        MONO_ADD_INS ((cfg)->cbb, ins); \
+	    cfg->cbb->next_bb = falsebb; \
+        cfg->cbb = falsebb; \
+	} while (0)
+
 #define	MONO_EMIT_NEW_BRANCH_LABEL(cfg,op,label) do { \
         MonoInst *inst; \
         MONO_INST_NEW ((cfg), (inst), (op)); \
@@ -755,6 +776,12 @@ mono_print_bb_code_new (MonoBasicBlock *bb) {
 		inst->flags = MONO_INST_BRLABEL;	\
         MONO_ADD_INS ((cfg)->cbb, inst); \
 	} while (0)
+
+#define MONO_START_BB(cfg, bblock) do { \
+        link_bblock ((cfg), (cfg)->cbb, (bblock)); \
+	    (cfg)->cbb->next_bb = (bblock); \
+	    (cfg)->cbb = (bblock); \
+    } while (0)
 
 #define MONO_EMIT_BOUNDS_CHECK(cfg, array_reg, array_type, array_length_field, index_reg) do { \
 			int _length_reg = alloc_ireg (cfg); \
@@ -1922,7 +1949,7 @@ mini_emit_load_intf_reg_class (MonoCompile *cfg, int intf_reg, int klass_reg, Mo
 */
 static void
 mini_emit_max_iid_check (MonoCompile *cfg, int max_iid_reg, MonoClass *klass,
-						 MonoInst *false_target)
+						 MonoBasicBlock *false_target)
 {
 	if (cfg->compile_aot) {
 		int iid_reg = alloc_preg (cfg);
@@ -1932,7 +1959,7 @@ mini_emit_max_iid_check (MonoCompile *cfg, int max_iid_reg, MonoClass *klass,
 	else
 		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, max_iid_reg, klass->interface_id);
 	if (false_target)
-		MONO_EMIT_NEW_BRANCH_LABEL (cfg, CEE_BLT_UN, false_target);
+		MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, CEE_BLT_UN, false_target);
 	else
 		MONO_EMIT_NEW_COND_EXC (cfg, LT_UN, "InvalidCastException");
 }
@@ -1940,7 +1967,7 @@ mini_emit_max_iid_check (MonoCompile *cfg, int max_iid_reg, MonoClass *klass,
 /* Same as above, but obtains max_iid from a vtable */
 static void
 mini_emit_max_iid_check_vtable (MonoCompile *cfg, int vtable_reg, MonoClass *klass,
-								 MonoInst *false_target)
+								 MonoBasicBlock *false_target)
 {
 	int max_iid_reg = alloc_preg (cfg);
 		
@@ -1951,7 +1978,7 @@ mini_emit_max_iid_check_vtable (MonoCompile *cfg, int vtable_reg, MonoClass *kla
 /* Same as above, but obtains max_iid from a klass */
 static void
 mini_emit_max_iid_check_class (MonoCompile *cfg, int klass_reg, MonoClass *klass,
-								 MonoInst *false_target)
+								 MonoBasicBlock *false_target)
 {
 	int max_iid_reg = alloc_preg (cfg);
 
@@ -1960,7 +1987,7 @@ mini_emit_max_iid_check_class (MonoCompile *cfg, int klass_reg, MonoClass *klass
 }
 
 static void 
-mini_emit_isninst_cast (MonoCompile *cfg, int klass_reg, MonoClass *klass, MonoInst *false_target, MonoInst *true_target)
+mini_emit_isninst_cast (MonoCompile *cfg, int klass_reg, MonoClass *klass, MonoBasicBlock *false_target, MonoBasicBlock *true_target)
 {
 	int idepth_reg = alloc_preg (cfg);
 	int stypes_reg = alloc_preg (cfg);
@@ -1969,7 +1996,7 @@ mini_emit_isninst_cast (MonoCompile *cfg, int klass_reg, MonoClass *klass, MonoI
 	if (klass->idepth > MONO_DEFAULT_SUPERTABLE_SIZE) {
 		MONO_EMIT_NEW_LOAD_MEMBASE_OP (cfg, OP_LOADU2_MEMBASE, idepth_reg, klass_reg, G_STRUCT_OFFSET (MonoClass, idepth));
 		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, idepth_reg, klass->idepth);
-		MONO_EMIT_NEW_BRANCH_LABEL (cfg, CEE_BLT_UN, false_target);
+		MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, CEE_BLT_UN, false_target);
 	}
 	MONO_EMIT_NEW_LOAD_MEMBASE (cfg, stypes_reg, klass_reg, G_STRUCT_OFFSET (MonoClass, supertypes));
 	MONO_EMIT_NEW_LOAD_MEMBASE (cfg, stype, stypes_reg, ((klass->idepth - 1) * SIZEOF_VOID_P));
@@ -1980,19 +2007,21 @@ mini_emit_isninst_cast (MonoCompile *cfg, int klass_reg, MonoClass *klass, MonoI
 	} else {
 		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, stype, klass);
 	}
-	MONO_EMIT_NEW_BRANCH_LABEL (cfg, CEE_BEQ, true_target);
+	MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, CEE_BEQ, true_target);
 }
 
 static void 
-mini_emit_isninst_iface_cast (MonoCompile *cfg, int vtable_reg, MonoClass *klass, MonoInst *false_target, MonoInst *true_target)
+mini_emit_iface_cast (MonoCompile *cfg, int vtable_reg, MonoClass *klass, MonoBasicBlock *false_target, MonoBasicBlock *true_target)
 {
 	int intf_reg = alloc_preg (cfg);
 
 	mini_emit_max_iid_check_vtable (cfg, vtable_reg, klass, false_target);
 	mini_emit_load_intf_reg_vtable (cfg, intf_reg, vtable_reg, klass);
 	MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, intf_reg, 0);
-	/* the object_is_null target simply copies the input register to the output */
-	MONO_EMIT_NEW_BRANCH_LABEL (cfg, CEE_BNE_UN, true_target);
+	if (true_target)
+		MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, CEE_BNE_UN, true_target);
+	else
+		MONO_EMIT_NEW_COND_EXC (cfg, EQ, "InvalidCastException");		
 }
 
 /*
@@ -2000,15 +2029,17 @@ mini_emit_isninst_iface_cast (MonoCompile *cfg, int vtable_reg, MonoClass *klass
  * Note that inside interfaces_offsets the empty value is -1, not NULL, in this case.
  */
 static void 
-mini_emit_isninst_iface_class_cast (MonoCompile *cfg, int klass_reg, MonoClass *klass, MonoInst *false_target, MonoInst *true_target)
+mini_emit_iface_class_cast (MonoCompile *cfg, int klass_reg, MonoClass *klass, MonoBasicBlock *false_target, MonoBasicBlock *true_target)
 {
 	int intf_reg = alloc_preg (cfg);
 
 	mini_emit_max_iid_check_class (cfg, klass_reg, klass, false_target);
 	mini_emit_load_intf_reg_class (cfg, intf_reg, klass_reg, klass);
 	MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, intf_reg, -1);
-	/* the object_is_null target simply copies the input register to the output */
-	MONO_EMIT_NEW_BRANCH_LABEL (cfg, CEE_BGE, true_target);
+	if (true_target)
+		MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, CEE_BGE, true_target);
+	else
+		MONO_EMIT_NEW_COND_EXC (cfg, EQ, "InvalidCastException");
 }
 
 static void 
@@ -2033,32 +2064,6 @@ mini_emit_castclass (MonoCompile *cfg, int klass_reg, MonoClass *klass)
 		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, stype, klass);
 	}
 	MONO_EMIT_NEW_COND_EXC (cfg, NE_UN, "InvalidCastException");
-}
-
-static void 
-mini_emit_castclass_iface (MonoCompile *cfg, int vtable_reg, MonoClass *klass)
-{
-	int intf_reg = alloc_preg (cfg);
-
-	mini_emit_max_iid_check_vtable (cfg, vtable_reg, klass, NULL);
-	mini_emit_load_intf_reg_vtable (cfg, intf_reg, vtable_reg, klass);
-	MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, intf_reg, 0);
-	MONO_EMIT_NEW_COND_EXC (cfg, EQ, "InvalidCastException");
-}
-
-/*
- * Variant of the aboce that takes a register to the class, not the vtable.
- * Note that inside interfaces_offsets the empty value is -1, not NULL, in this case.
- */
-static void 
-mini_emit_castclass_iface_class (MonoCompile *cfg, int klass_reg, MonoClass *klass)
-{
-	int intf_reg = alloc_preg (cfg);
-
-	mini_emit_max_iid_check_class (cfg, klass_reg, klass, NULL);
-	mini_emit_load_intf_reg_class (cfg, intf_reg, klass_reg, klass);
-	MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, intf_reg, -1);
-	MONO_EMIT_NEW_COND_EXC (cfg, EQ, "InvalidCastException");
 }
 
 static void 
@@ -2827,18 +2832,19 @@ handle_box (MonoCompile *cfg, MonoInst *val, const guchar *ip, MonoClass *klass)
 static MonoInst*
 handle_castclass (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned char *ip)
 {
-	MonoInst *object_is_null;
+	MonoBasicBlock *is_null_bb;
 	int obj_reg = src->dreg;
 	int vtable_reg = alloc_preg (cfg);
 
-	MONO_NEW_LABEL (cfg, object_is_null);
+	NEW_BBLOCK (cfg, is_null_bb);
+	ADD_BBLOCK (cfg, cfg->cbb_hash, is_null_bb);
 
 	MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, obj_reg, 0);
-	MONO_EMIT_NEW_BRANCH_LABEL (cfg, CEE_BEQ, object_is_null);
+	MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, CEE_BEQ, is_null_bb);
 
 	if (klass->flags & TYPE_ATTRIBUTE_INTERFACE) {
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, vtable_reg, obj_reg, G_STRUCT_OFFSET (MonoObject, vtable));
-		mini_emit_castclass_iface (cfg, vtable_reg, klass);
+		mini_emit_iface_cast (cfg, vtable_reg, klass, NULL, NULL);
 	} else {
 		int klass_reg = alloc_preg (cfg);
 
@@ -2864,7 +2870,7 @@ handle_castclass (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned ch
 				} else {
 					MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, parent_reg, mono_defaults.enum_class->parent);
 				}
-				MONO_EMIT_NEW_BRANCH_LABEL (cfg, CEE_BNE_UN, object_is_null);
+				MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, CEE_BNE_UN, is_null_bb);
 				if (cfg->compile_aot) {
 					MONO_EMIT_NEW_CLASSCONST (cfg, const_reg, mono_defaults.enum_class);
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, eclass_reg, const_reg);
@@ -2880,7 +2886,7 @@ handle_castclass (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned ch
 				} else {
 					MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, eclass_reg, mono_defaults.enum_class->parent);
 				}
-				MONO_EMIT_NEW_BRANCH_LABEL (cfg, CEE_BEQ, object_is_null);
+				MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, CEE_BEQ, is_null_bb);
 				if (cfg->compile_aot) {
 					MONO_EMIT_NEW_CLASSCONST (cfg, const_reg, mono_defaults.enum_class);
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, eclass_reg, const_reg);
@@ -2898,7 +2904,7 @@ handle_castclass (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned ch
 				}
 				MONO_EMIT_NEW_COND_EXC (cfg, NE_UN, "InvalidCastException");
 			} else if (klass->cast_class->flags & TYPE_ATTRIBUTE_INTERFACE) {
-				mini_emit_castclass_iface_class (cfg, eclass_reg, klass->cast_class);
+				mini_emit_iface_class_cast (cfg, eclass_reg, klass->cast_class, NULL, NULL);
 			} else {
 				mini_emit_castclass (cfg, eclass_reg, klass->cast_class);
 			}
@@ -2928,7 +2934,7 @@ handle_castclass (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned ch
 		}
 	}
 
-	MONO_ADD_INS (cfg->cbb, object_is_null);
+	MONO_START_BB (cfg, is_null_bb);
 
 	return src;
 }
@@ -2936,26 +2942,28 @@ handle_castclass (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned ch
 static MonoInst*
 handle_isinst (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned char *ip)
 {
-	MonoInst *object_is_null, *end_label, *false_label, *ins;
-	MonoBasicBlock *is_null_bblock;
+	MonoInst *ins;
+	MonoBasicBlock *is_null_bb, *false_bb, *end_bb;
 	int obj_reg = src->dreg;
 	int vtable_reg = alloc_preg (cfg);
 	int res_reg = alloc_preg (cfg);
 
-	NEW_BBLOCK (cfg, is_null_bblock);
-	ADD_BBLOCK (cfg, cfg->cbb_hash, is_null_bblock);
+	NEW_BBLOCK (cfg, is_null_bb);
+	ADD_BBLOCK (cfg, cfg->cbb_hash, is_null_bb);
 
-	MONO_NEW_LABEL (cfg, object_is_null);
-	MONO_NEW_LABEL (cfg, end_label);
-	MONO_NEW_LABEL (cfg, false_label);
+	NEW_BBLOCK (cfg, false_bb);
+	ADD_BBLOCK (cfg, cfg->cbb_hash, false_bb);
+
+	NEW_BBLOCK (cfg, end_bb);
+	ADD_BBLOCK (cfg, cfg->cbb_hash, end_bb);
 
 	MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, obj_reg, 0);
-	MONO_EMIT_NEW_BRANCH_LABEL (cfg, CEE_BEQ, object_is_null);
+	MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, CEE_BEQ, is_null_bb);
 
 	if (klass->flags & TYPE_ATTRIBUTE_INTERFACE) {
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, vtable_reg, obj_reg, G_STRUCT_OFFSET (MonoObject, vtable));
-		/* the object_is_null target simply copies the input register to the output */
-		mini_emit_isninst_iface_cast (cfg, vtable_reg, klass, false_label, object_is_null);
+		/* the is_null_bb target simply copies the input register to the output */
+		mini_emit_iface_cast (cfg, vtable_reg, klass, false_bb, is_null_bb);
 	} else {
 		int klass_reg = alloc_preg (cfg);
 
@@ -2967,7 +2975,7 @@ handle_isinst (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned char 
 
 			MONO_EMIT_NEW_LOAD_MEMBASE_OP (cfg, OP_LOADU1_MEMBASE, rank_reg, vtable_reg, G_STRUCT_OFFSET (MonoVTable, rank));
 			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, rank_reg, klass->rank);
-			MONO_EMIT_NEW_BRANCH_LABEL (cfg, CEE_BNE_UN, false_label);
+			MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, CEE_BNE_UN, false_bb);
 			MONO_EMIT_NEW_LOAD_MEMBASE (cfg, klass_reg, vtable_reg, G_STRUCT_OFFSET (MonoVTable, klass));
 			MONO_EMIT_NEW_LOAD_MEMBASE (cfg, eclass_reg, klass_reg, G_STRUCT_OFFSET (MonoClass, cast_class));
 			if (klass->cast_class == mono_defaults.object_class) {
@@ -2981,15 +2989,15 @@ handle_isinst (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned char 
 				} else {
 					MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, parent_reg, mono_defaults.enum_class->parent);
 				}
-				MONO_EMIT_NEW_BRANCH_LABEL (cfg, CEE_BNE_UN, object_is_null);
+				MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, CEE_BNE_UN, is_null_bb);
 				if (cfg->compile_aot) {
 					MONO_EMIT_NEW_CLASSCONST (cfg, const_reg, mono_defaults.enum_class);
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, eclass_reg, const_reg);
 				} else {
 					MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, eclass_reg, mono_defaults.enum_class);
 				}
-				MONO_EMIT_NEW_BRANCH_LABEL (cfg, CEE_BEQ, object_is_null);
-				MONO_EMIT_NEW_BRANCH_LABEL (cfg, CEE_BR, false_label);
+				MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, CEE_BEQ, is_null_bb);
+				MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, CEE_BR, false_bb);
 			} else if (klass->cast_class == mono_defaults.enum_class->parent) {
 				int const_reg = -1;
 				
@@ -3000,15 +3008,15 @@ handle_isinst (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned char 
 				} else {
 					MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, eclass_reg, mono_defaults.enum_class->parent);
 				}
-				MONO_EMIT_NEW_BRANCH_LABEL (cfg, CEE_BEQ, object_is_null);
+				MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, CEE_BEQ, is_null_bb);
 				if (cfg->compile_aot) {
 					MONO_EMIT_NEW_CLASSCONST (cfg, const_reg, mono_defaults.enum_class);
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, eclass_reg, const_reg);
 				} else {
 					MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, eclass_reg, mono_defaults.enum_class);
 				}
-				MONO_EMIT_NEW_BRANCH_LABEL (cfg, CEE_BEQ, object_is_null);
-				MONO_EMIT_NEW_BRANCH_LABEL (cfg, CEE_BR, false_label);
+				MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, CEE_BEQ, is_null_bb);
+				MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, CEE_BR, false_bb);
 			} else if (klass->cast_class == mono_defaults.enum_class) {
 				if (cfg->compile_aot) {
 					int const_reg = alloc_preg (cfg);
@@ -3017,26 +3025,26 @@ handle_isinst (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned char 
 				} else {
 					MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, eclass_reg, mono_defaults.enum_class);
 				}
-				MONO_EMIT_NEW_BRANCH_LABEL (cfg, CEE_BEQ, object_is_null);
-				MONO_EMIT_NEW_BRANCH_LABEL (cfg, CEE_BR, false_label);
+				MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, CEE_BEQ, is_null_bb);
+				MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, CEE_BR, false_bb);
 			} else if (klass->cast_class->flags & TYPE_ATTRIBUTE_INTERFACE) {
-				mini_emit_isninst_iface_class_cast (cfg, eclass_reg, klass->cast_class, false_label, object_is_null);
+				mini_emit_iface_class_cast (cfg, eclass_reg, klass->cast_class, false_bb, is_null_bb);
 			} else {
 				if ((klass->rank == 1) && (klass->byval_arg.type == MONO_TYPE_SZARRAY)) {
 					/* Check that the object is a vector too */
 					int bounds_reg = alloc_preg (cfg);
 					MONO_EMIT_NEW_LOAD_MEMBASE (cfg, bounds_reg, obj_reg, G_STRUCT_OFFSET (MonoArray, bounds));
 					MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, bounds_reg, 0);
-					MONO_EMIT_NEW_BRANCH_LABEL (cfg, CEE_BNE_UN, false_label);
+					MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, CEE_BNE_UN, false_bb);
 				}
 
-				/* the object_is_null target simply copies the input register to the output */
-				mini_emit_isninst_cast (cfg, eclass_reg, klass->cast_class, false_label, object_is_null);
+				/* the is_null_bb target simply copies the input register to the output */
+				mini_emit_isninst_cast (cfg, eclass_reg, klass->cast_class, false_bb, is_null_bb);
 			}
 		} else if (mono_class_is_nullable (klass)) {
 			MONO_EMIT_NEW_LOAD_MEMBASE (cfg, klass_reg, vtable_reg, G_STRUCT_OFFSET (MonoVTable, klass));
-			/* the object_is_null target simply copies the input register to the output */
-			mini_emit_isninst_cast (cfg, klass_reg, klass->cast_class, false_label, object_is_null);
+			/* the is_null_bb target simply copies the input register to the output */
+			mini_emit_isninst_cast (cfg, klass_reg, klass->cast_class, false_bb, is_null_bb);
 		} else {
 			if (!cfg->compile_aot && !(cfg->opt & MONO_OPT_SHARED) && (klass->flags & TYPE_ATTRIBUTE_SEALED)) {
 				/* the remoting code is broken, access the class for now */
@@ -3047,23 +3055,27 @@ handle_isinst (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned char 
 					MONO_EMIT_NEW_LOAD_MEMBASE (cfg, klass_reg, vtable_reg, G_STRUCT_OFFSET (MonoVTable, klass));
 					MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, klass_reg, klass);
 				}
-				MONO_EMIT_NEW_BRANCH_LABEL (cfg, CEE_BNE_UN, false_label);
-				MONO_EMIT_NEW_BRANCH_LABEL (cfg, CEE_BR, object_is_null);
+				MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, CEE_BNE_UN, false_bb);
+				MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, CEE_BR, is_null_bb);
 			} else {
 				MONO_EMIT_NEW_LOAD_MEMBASE (cfg, klass_reg, vtable_reg, G_STRUCT_OFFSET (MonoVTable, klass));
-				/* the object_is_null target simply copies the input register to the output */
-				mini_emit_isninst_cast (cfg, klass_reg, klass, false_label, object_is_null);
+				/* the is_null_bb target simply copies the input register to the output */
+				mini_emit_isninst_cast (cfg, klass_reg, klass, false_bb, is_null_bb);
 			}
 		}
 	}
 
-	MONO_ADD_INS (cfg->cbb, false_label);
+	MONO_START_BB (cfg, false_bb);
+
 	MONO_EMIT_NEW_ICONST (cfg, res_reg, 0);
-	MONO_EMIT_NEW_BRANCH_LABEL (cfg, CEE_BR, end_label);
-	MONO_ADD_INS (cfg->cbb, object_is_null);
+	MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, CEE_BR, end_bb);
+
+	MONO_START_BB (cfg, is_null_bb);
+
 	EMIT_NEW_UNALU (cfg, ins, OP_MOVE, res_reg, obj_reg);
 	ins->type = STACK_OBJ;
-	MONO_ADD_INS (cfg->cbb, end_label);
+
+	MONO_START_BB (cfg, end_bb);
 
 	return ins;
 }
@@ -3075,28 +3087,31 @@ handle_cisinst (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned char
 	0) if the object is an instance of the class,
 	1) if the object is not instance of the class,
 	2) if the object is a proxy whose type cannot be determined */
-	
-	MonoInst *end_label, *true_label, *false_label, *false2_label;
-	MonoInst *no_proxy_label, *interface_fail_label, *ins;
+
+	MonoInst *ins;
+	MonoBasicBlock *true_bb, *false_bb, *false2_bb, *end_bb, *no_proxy_bb;
 	int obj_reg = src->dreg;
 	int dreg = alloc_ireg (cfg);
 	int tmp_reg = alloc_preg (cfg);
 	int klass_reg = alloc_preg (cfg);
 
-	MONO_NEW_LABEL (cfg, end_label);
-	MONO_NEW_LABEL (cfg, true_label);
-	MONO_NEW_LABEL (cfg, false_label);
-	MONO_NEW_LABEL (cfg, false2_label);
+	NEW_BBLOCK (cfg, true_bb);
+	ADD_BBLOCK (cfg, cfg->cbb_hash, true_bb);
+	NEW_BBLOCK (cfg, false_bb);
+	ADD_BBLOCK (cfg, cfg->cbb_hash, false_bb);
+	NEW_BBLOCK (cfg, false2_bb);
+	ADD_BBLOCK (cfg, cfg->cbb_hash, false2_bb);
+	NEW_BBLOCK (cfg, end_bb);
+	ADD_BBLOCK (cfg, cfg->cbb_hash, end_bb);
+	NEW_BBLOCK (cfg, no_proxy_bb);
+	ADD_BBLOCK (cfg, cfg->cbb_hash, no_proxy_bb);
 
 	MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, obj_reg, 0);
-	MONO_EMIT_NEW_BRANCH_LABEL (cfg, CEE_BEQ, false_label);
+	MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, CEE_BEQ, false_bb);
 
 	if (klass->flags & TYPE_ATTRIBUTE_INTERFACE) {
-		MONO_NEW_LABEL (cfg, interface_fail_label);
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, tmp_reg, obj_reg, G_STRUCT_OFFSET (MonoObject, vtable));
-		mini_emit_isninst_iface_cast (cfg, tmp_reg, klass, interface_fail_label, true_label);
-		
-		MONO_ADD_INS (cfg->cbb, interface_fail_label);
+		mini_emit_iface_cast (cfg, tmp_reg, klass, NULL, true_bb);
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, klass_reg, tmp_reg, G_STRUCT_OFFSET (MonoVTable, klass));
 		
 		if (cfg->compile_aot) {
@@ -3106,18 +3121,16 @@ handle_cisinst (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned char
 		} else {
 			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, klass_reg, mono_defaults.transparent_proxy_class);
 		}
-		MONO_EMIT_NEW_BRANCH_LABEL (cfg, CEE_BNE_UN, false_label);
+		MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, CEE_BNE_UN, false_bb);
 		
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, tmp_reg, obj_reg, G_STRUCT_OFFSET (MonoTransparentProxy, custom_type_info));
 		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, tmp_reg, 0);
-		MONO_EMIT_NEW_BRANCH_LABEL (cfg, CEE_BNE_UN, false2_label);
+		MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, CEE_BNE_UN, false2_bb);
 		
 	} else {
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, tmp_reg, obj_reg, G_STRUCT_OFFSET (MonoObject, vtable));
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, klass_reg, tmp_reg, G_STRUCT_OFFSET (MonoVTable, klass));
 		
-		MONO_NEW_LABEL (cfg, no_proxy_label);
-		
 		if (cfg->compile_aot) {
 			int tproxy_reg = alloc_preg (cfg);
 			MONO_EMIT_NEW_CLASSCONST (cfg, tproxy_reg, mono_defaults.transparent_proxy_class);
@@ -3125,30 +3138,37 @@ handle_cisinst (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned char
 		} else {
 			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, klass_reg, mono_defaults.transparent_proxy_class);
 		}
-		MONO_EMIT_NEW_BRANCH_LABEL (cfg, CEE_BNE_UN, no_proxy_label);
+		MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, CEE_BNE_UN, no_proxy_bb);
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, tmp_reg, obj_reg, G_STRUCT_OFFSET (MonoTransparentProxy, remote_class));
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, klass_reg, tmp_reg, G_STRUCT_OFFSET (MonoRemoteClass, proxy_class));
 		
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, tmp_reg, obj_reg, G_STRUCT_OFFSET (MonoTransparentProxy, custom_type_info));
 		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, tmp_reg, 0);
-		MONO_EMIT_NEW_BRANCH_LABEL (cfg, CEE_BEQ, no_proxy_label);
+		MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, CEE_BEQ, no_proxy_bb);
 		
-		mini_emit_isninst_cast (cfg, klass_reg, klass, false2_label, true_label);
-		MONO_EMIT_NEW_BRANCH_LABEL (cfg, CEE_BR, false2_label);
-		
-		MONO_ADD_INS (cfg->cbb, no_proxy_label);
-		mini_emit_isninst_cast (cfg, klass_reg, klass, false_label, true_label);	
+		mini_emit_isninst_cast (cfg, klass_reg, klass, NULL, true_bb);
+		MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, CEE_BR, false2_bb);
+
+		MONO_START_BB (cfg, no_proxy_bb);
+
+		mini_emit_isninst_cast (cfg, klass_reg, klass, false_bb, true_bb);
 	}
 
-	MONO_ADD_INS (cfg->cbb, false_label);
+	MONO_START_BB (cfg, false_bb);
+
 	MONO_EMIT_NEW_ICONST (cfg, dreg, 1);
-	MONO_EMIT_NEW_BRANCH_LABEL (cfg, CEE_BR, end_label);
-	MONO_ADD_INS (cfg->cbb, false2_label);
+	MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, CEE_BR, end_bb);
+
+	MONO_START_BB (cfg, false2_bb);
+
 	MONO_EMIT_NEW_ICONST (cfg, dreg, 2);
-	MONO_EMIT_NEW_BRANCH_LABEL (cfg, CEE_BR, end_label);
-	MONO_ADD_INS (cfg->cbb, true_label);
+	MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, CEE_BR, end_bb);
+
+	MONO_START_BB (cfg, true_bb);
+
 	MONO_EMIT_NEW_ICONST (cfg, dreg, 0);
-	MONO_ADD_INS (cfg->cbb, end_label);
+
+	MONO_START_BB (cfg, end_bb);
 
 	/* FIXME: */
 	MONO_INST_NEW (cfg, ins, OP_ICONST);
@@ -3166,26 +3186,26 @@ handle_ccastclass (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned c
 	1) if the object is a proxy whose type cannot be determined
 	an InvalidCastException exception is thrown otherwhise*/
 	
-	MonoInst *end_label, *fail_label, *no_proxy_label, *ok_result_label, *ins;
+	MonoInst *ins;
+	MonoBasicBlock *end_bb, *ok_result_bb, *no_proxy_bb;
 	int obj_reg = src->dreg;
 	int dreg = alloc_ireg (cfg);
 	int tmp_reg = alloc_preg (cfg);
 	int klass_reg = alloc_preg (cfg);
 
-	MONO_NEW_LABEL (cfg, end_label);
-	MONO_NEW_LABEL (cfg, ok_result_label);
+	NEW_BBLOCK (cfg, end_bb);
+	ADD_BBLOCK (cfg, cfg->cbb_hash, end_bb);
+	NEW_BBLOCK (cfg, ok_result_bb);
+	ADD_BBLOCK (cfg, cfg->cbb_hash, ok_result_bb);
 
 	MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, obj_reg, 0);
-	MONO_EMIT_NEW_BRANCH_LABEL (cfg, CEE_BEQ, ok_result_label);
+	MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, CEE_BEQ, ok_result_bb);
 
 	if (klass->flags & TYPE_ATTRIBUTE_INTERFACE) {
 	
-		MONO_NEW_LABEL (cfg, fail_label);
-		
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, tmp_reg, obj_reg, G_STRUCT_OFFSET (MonoObject, vtable));
-		mini_emit_isninst_iface_cast (cfg, tmp_reg, klass, fail_label, ok_result_label);
+		mini_emit_iface_cast (cfg, tmp_reg, klass, NULL, ok_result_bb);
 		
-		MONO_ADD_INS (cfg->cbb, fail_label);
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, klass_reg, tmp_reg, G_STRUCT_OFFSET (MonoVTable, klass));
 
 		if (cfg->compile_aot) {
@@ -3206,13 +3226,13 @@ handle_ccastclass (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned c
 		MONO_EMIT_NEW_COND_EXC (cfg, EQ, "InvalidCastException");
 		
 		MONO_EMIT_NEW_ICONST (cfg, dreg, 1);
-		MONO_EMIT_NEW_BRANCH_LABEL (cfg, CEE_BR, end_label);
+		MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, CEE_BR, end_bb);
 		
 	} else {
 
-		MONO_NEW_LABEL (cfg, no_proxy_label);
-		MONO_NEW_LABEL (cfg, fail_label);
-		
+		NEW_BBLOCK (cfg, no_proxy_bb);
+		ADD_BBLOCK (cfg, cfg->cbb_hash, no_proxy_bb);
+
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, tmp_reg, obj_reg, G_STRUCT_OFFSET (MonoObject, vtable));
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, klass_reg, tmp_reg, G_STRUCT_OFFSET (MonoVTable, klass));
 
@@ -3223,27 +3243,30 @@ handle_ccastclass (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned c
 		} else {
 			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, klass_reg, mono_defaults.transparent_proxy_class);
 		}
-		MONO_EMIT_NEW_BRANCH_LABEL (cfg, CEE_BNE_UN, no_proxy_label);
+		MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, CEE_BNE_UN, no_proxy_bb);
 		
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, tmp_reg, obj_reg, G_STRUCT_OFFSET (MonoTransparentProxy, remote_class));
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, klass_reg, tmp_reg, G_STRUCT_OFFSET (MonoRemoteClass, proxy_class));
 		
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, tmp_reg, obj_reg, G_STRUCT_OFFSET (MonoTransparentProxy, custom_type_info));
 		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, tmp_reg, 0);
-		MONO_EMIT_NEW_BRANCH_LABEL (cfg, CEE_BEQ, no_proxy_label);
+		MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, CEE_BEQ, no_proxy_bb);
 		
-		mini_emit_isninst_cast (cfg, klass_reg, klass, fail_label, ok_result_label);
-		MONO_ADD_INS (cfg->cbb, fail_label);
+		mini_emit_isninst_cast (cfg, klass_reg, klass, NULL, ok_result_bb);
+
 		MONO_EMIT_NEW_ICONST (cfg, dreg, 1);
-		MONO_EMIT_NEW_BRANCH_LABEL (cfg, CEE_BR, end_label);
-		
-		MONO_ADD_INS (cfg->cbb, no_proxy_label);
+		MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, CEE_BR, end_bb);
+
+		MONO_START_BB (cfg, no_proxy_bb);
+
 		mini_emit_castclass (cfg, klass_reg, klass);
 	}
 
-	MONO_ADD_INS (cfg->cbb, ok_result_label);
+	MONO_START_BB (cfg, ok_result_bb);
+
 	MONO_EMIT_NEW_ICONST (cfg, dreg, 0);
-	MONO_ADD_INS (cfg->cbb, end_label);
+
+	MONO_START_BB (cfg, end_bb);
 
 	/* FIXME: */
 	MONO_INST_NEW (cfg, ins, OP_ICONST);
@@ -4192,8 +4215,8 @@ decompose_opcode (MonoCompile *cfg, MonoInst *ins)
  *
  *  Decompose 64bit opcodes into 32bit opcodes on 32 bit platforms.
  */
-static void
-decompose_long_opts (MonoCompile *cfg)
+void
+mono_decompose_long_opts (MonoCompile *cfg)
 {
 #if SIZEOF_VOID_P == 4
 	MonoBasicBlock *bb;
@@ -6613,6 +6636,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			}
 			else {
 				ins = handle_castclass (cfg, klass, *sp, ip);
+				bblock = cfg->cbb;
 				*sp ++ = ins;
 				ip += 5;
 			}
@@ -6662,6 +6686,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			}
 			else {
 				ins = handle_isinst (cfg, klass, *sp, ip);
+				bblock = cfg->cbb;
 				*sp ++ = ins;
 				ip += 5;
 			}
@@ -6708,6 +6733,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				}
 				else {
 					ins = handle_castclass (cfg, klass, *sp, ip);
+					bblock = cfg->cbb;
 					*sp ++ = ins;
 					ip += 5;
 				}
@@ -7835,6 +7861,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 					ins = handle_cisinst (cfg, klass, sp [0], ip);
 				else
 					ins = handle_ccastclass (cfg, klass, sp [0], ip);
+				bblock = cfg->cbb;
 				*sp++ = ins;
 				ip += 6;
 				break;
@@ -8641,11 +8668,13 @@ compute_vreg_to_inst (MonoCompile *cfg)
  *   Make vregs used in more than one bblock 'global', i.e. allocate a variable
  * for them.
  */
-static void
+void
 mono_handle_global_vregs (MonoCompile *cfg)
 {
 	MonoBasicBlock ***vreg_to_bb;
 	MonoBasicBlock *bb;
+
+	compute_vreg_to_inst (cfg);
 
 	vreg_to_bb = g_new0 (MonoBasicBlock**, 256);
 	vreg_to_bb ['i'] = g_new0 (MonoBasicBlock*, cfg->next_vireg);
@@ -8697,8 +8726,21 @@ mono_handle_global_vregs (MonoCompile *cfg)
 					if (vreg_to_bb [regtype][vreg] == NULL) {
 						vreg_to_bb [regtype][vreg] = bb;
 					} else if (vreg_to_bb [regtype][vreg] != bb) {
-						printf ("VREG R%d used in BB%d and BB%d made global.\n", vreg, vreg_to_bb [regtype][vreg]->block_num, bb->block_num);
-						NOT_IMPLEMENTED;
+						if (cfg->verbose_level > 0)
+							printf ("VREG R%d used in BB%d and BB%d made global.\n", vreg, vreg_to_bb [regtype][vreg]->block_num, bb->block_num);
+						//NOT_IMPLEMENTED;
+
+						// FIXME:
+						switch (regtype) {
+						case 'i':
+							cfg->vreg_to_inst [regtype][vreg] = mono_compile_create_var_for_vreg (cfg, &mono_defaults.int_class->byval_arg, OP_LOCAL, vreg);
+							break;
+						case 'f':
+							cfg->vreg_to_inst [regtype][vreg] = mono_compile_create_var_for_vreg (cfg, &mono_defaults.double_class->byval_arg, OP_LOCAL, vreg);
+							break;
+						default:
+							NOT_IMPLEMENTED;
+						}
 					}
 				}
 			}
@@ -8721,14 +8763,6 @@ mono_spill_global_vars (MonoCompile *cfg)
 	int i;
 	guint32 *stacktypes;
 	MonoBasicBlock *bb;
-
-	/* FIXME: Move this call elsewhere */
-	decompose_long_opts (cfg);
-
-	compute_vreg_to_inst (cfg);
-
-	/* FIXME: Move this call elsewhere, _before_ global reg alloc and _after_ decompose */
-	mono_handle_global_vregs (cfg);
 
 	/* FIXME: Move this function to mini.c */
 
@@ -8782,7 +8816,9 @@ mono_spill_global_vars (MonoCompile *cfg)
 		cfg->cbb = bb;
 		for (; ins; ins = ins->next) {
 			const char *spec = ins_spec [ins->opcode - OP_START - 1];
-			int regtype, srcindex, sreg;
+			char spec2 [16];
+			int regtype, srcindex, sreg, tmp_reg;
+			gboolean store;
 
 			if (cfg->verbose_level > 0)
 				mono_print_ins (ins);
@@ -8811,13 +8847,54 @@ mono_spill_global_vars (MonoCompile *cfg)
 			if (ins->opcode < MONO_CEE_LAST)
 				spec = "   ";
 
+			/*
+			 * Store opcodes have destbasereg in the dreg, but in reality, it is an
+			 * src register.
+			 * FIXME:
+			 */
+			switch (ins->opcode) {
+			case OP_STORE:       
+			case OP_STORE_MEMBASE_REG:
+			case OP_STOREI1_MEMBASE_REG: 
+			case OP_STOREI2_MEMBASE_REG: 
+			case OP_STOREI4_MEMBASE_REG: 
+			case OP_STOREI8_MEMBASE_REG:
+			case OP_STORER4_MEMBASE_REG: 
+			case OP_STORER8_MEMBASE_REG:
+			case OP_STORE_MEMBASE_IMM:
+			case OP_STOREI1_MEMBASE_IMM: 
+			case OP_STOREI2_MEMBASE_IMM: 
+			case OP_STOREI4_MEMBASE_IMM: 
+			case OP_STOREI8_MEMBASE_IMM: 
+				tmp_reg = ins->dreg;
+				ins->dreg = ins->sreg2;
+				ins->sreg2 = tmp_reg;
+				store = TRUE;
+
+				spec2 [MONO_INST_DEST] = ' ';
+				spec2 [MONO_INST_SRC1] = spec [MONO_INST_SRC1];
+				spec2 [MONO_INST_SRC2] = spec [MONO_INST_DEST];
+				spec = spec2;
+				break;
+			case OP_STORE_MEMINDEX:
+			case OP_STOREI1_MEMINDEX:
+			case OP_STOREI2_MEMINDEX:
+			case OP_STOREI4_MEMINDEX:
+			case OP_STOREI8_MEMINDEX:
+			case OP_STORER4_MEMINDEX:
+			case OP_STORER8_MEMINDEX:
+				NOT_IMPLEMENTED;
+			default:
+				store = FALSE;
+			}
+
 			if (cfg->verbose_level > 0)
 				printf ("A: %s %d %d %d\n", spec, ins->dreg, ins->sreg1, ins->sreg2);
 
 			/* DREG */
 			regtype = spec [MONO_INST_DEST];
 			g_assert (((ins->dreg == -1) && (regtype == ' ')) || ((ins->dreg != -1) && (regtype != ' ')));
-
+				
 			if ((ins->dreg != -1) && (ins->dreg < cfg->vreg_to_inst_len [regtype]) && cfg->vreg_to_inst [regtype][ins->dreg]) {
 				MonoInst *var = cfg->vreg_to_inst [regtype][ins->dreg];
 				MonoInst *store_ins;
@@ -8882,7 +8959,14 @@ mono_spill_global_vars (MonoCompile *cfg)
 						bb->code = load_ins;
 					
 					load_ins->next = ins;
+					prev = load_ins;
 				}
+			}
+
+			if (store) {
+				tmp_reg = ins->dreg;
+				ins->dreg = ins->sreg2;
+				ins->sreg2 = tmp_reg;
 			}
 
 			if (cfg->verbose_level > 0)
@@ -8926,6 +9010,9 @@ mono_spill_global_vars (MonoCompile *cfg)
  *     compare_imm, compare_membase
  *   - most back ends unify fp compare+branch, fp compare+ceq
  * - integrate handle_stack_args into inline_method
+ * - use sreg2 for destbasereg since it is not really a dreg
+ * - cleanup creation of branches+bblocks in opcode decomposition
+ * - get rid of the empty bblocks created by MONO_EMIT_NEW_BRACH_BLOCK2
  * - Things to backport to the old JIT:
  *   - op_atomic_exchange fix for amd64
  */
