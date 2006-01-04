@@ -125,8 +125,11 @@ namespace System.Net.Sockets
 		/// <summary>
 		/// The socket that all network comms passes through
 		/// </summary>
-		protected Socket Client
-		{
+#if NET_2_0
+		public Socket Client {
+#else
+		protected Socket Client {
+#endif
 			get { return client; }
 			set {
 				client = value;
