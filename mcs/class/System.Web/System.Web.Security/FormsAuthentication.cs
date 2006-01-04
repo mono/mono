@@ -48,6 +48,7 @@ namespace System.Web.Security
 		const int SHA1_hash_size = 20;
 
 		static string authConfigPath = "system.web/authentication";
+		static string machineKeyConfigPath = "system.web/machineKey";
 		static bool initialized;
 		static string cookieName;
 		static string cookiePath;
@@ -91,9 +92,19 @@ namespace System.Web.Security
 			if (context == null)
 				throw new HttpException ("Context is null!");
 
+#if CONFIGURATION_2_0
+			AuthenticationSection section = (AuthenticationSection) WebConfigurationManager.GetWebApplicationSection (authConfigPath);
+			FormsAuthenticationCredentials config = section.Forms.Credentials;
+			FormsAuthenticationUser user = config.Users[name];
+			string stored = null;
+
+			if (user != null)
+				stored = user.Password;
+#else
 			AuthConfig config = context.GetConfig (authConfigPath) as AuthConfig;
 			Hashtable users = config.CredentialUsers;
 			string stored = users [name] as string;
+#endif
 			if (stored == null)
 				return false;
 
@@ -117,7 +128,11 @@ namespace System.Web.Security
 			if (protection == FormsProtectionEnum.None)
 				return FormsAuthenticationTicket.FromByteArray (bytes);
 
-			MachineKeyConfig config = HttpContext.GetAppConfig ("system.web/machineKey") as MachineKeyConfig;
+#if CONFIGURATION_2_0
+			MachineKeySection config = (MachineKeySection) WebConfigurationManager.GetWebApplicationSection (machineKeyConfigPath);
+#else
+			MachineKeyConfig config = HttpContext.GetAppConfig (machineKeyConfigPath) as MachineKeyConfig;
+#endif
 			bool all = (protection == FormsProtectionEnum.All);
 
 			byte [] result = bytes;
@@ -130,19 +145,29 @@ namespace System.Web.Security
 
 			if (all || protection == FormsProtectionEnum.Validation) {
 				int count;
+				MachineKeyValidation validationType;
 
-				if (config.ValidationType == MachineKeyValidation.MD5)
+#if CONFIGURATION_2_0
+				validationType = config.Validation;
+#else
+				validationType = config.ValidationType;
+#endif
+				if (validationType == MachineKeyValidation.MD5)
 					count = MD5_hash_size;
 				else
 					count = SHA1_hash_size; // 3DES and SHA1
 
+#if CONFIGURATION_2_0
+				byte [] vk = config.ValidationKeyBytes;
+#else
 				byte [] vk = config.ValidationKey;
+#endif
 				byte [] mix = new byte [result.Length - count + vk.Length];
 				Buffer.BlockCopy (result, 0, mix, 0, result.Length - count);
 				Buffer.BlockCopy (vk, 0, mix, result.Length - count, vk.Length);
 
 				byte [] hash = null;
-				switch (config.ValidationType) {
+				switch (validationType) {
 				case MachineKeyValidation.MD5:
 					hash = MD5.Create ().ComputeHash (mix);
 					break;
@@ -174,7 +199,11 @@ namespace System.Web.Security
 			Initialize ();
 
 			FormsAuthenticationTicket ticket;
+#if CONFIGURATION_2_0
+			byte [] bytes = MachineKeySection.GetBytes (encryptedTicket, encryptedTicket.Length);
+#else
 			byte [] bytes = MachineKeyConfig.GetBytes (encryptedTicket, encryptedTicket.Length);
+#endif
 			try {
 				ticket = Decrypt2 (bytes);
 			} catch (Exception) {
@@ -195,16 +224,30 @@ namespace System.Web.Security
 				return GetHexString (ticket_bytes);
 
 			byte [] result = ticket_bytes;
-			MachineKeyConfig config = HttpContext.GetAppConfig ("system.web/machineKey") as MachineKeyConfig;
+#if CONFIGURATION_2_0
+			MachineKeySection config = (MachineKeySection) WebConfigurationManager.GetWebApplicationSection (machineKeyConfigPath);
+#else
+			MachineKeyConfig config = HttpContext.GetAppConfig (machineKeyConfigPath) as MachineKeyConfig;
+#endif
 			bool all = (protection == FormsProtectionEnum.All);
 			if (all || protection == FormsProtectionEnum.Validation) {
 				byte [] valid_bytes = null;
+#if CONFIGURATION_2_0
+				byte [] vk = config.ValidationKeyBytes;
+#else
 				byte [] vk = config.ValidationKey;
+#endif
 				byte [] mix = new byte [ticket_bytes.Length + vk.Length];
 				Buffer.BlockCopy (ticket_bytes, 0, mix, 0, ticket_bytes.Length);
 				Buffer.BlockCopy (vk, 0, mix, result.Length, vk.Length);
 
-				switch (config.ValidationType) {
+				switch (
+#if CONFIGURATION_2_0
+					config.Validation
+#else
+					config.ValidationType
+#endif
+					) {
 				case MachineKeyValidation.MD5:
 					valid_bytes = MD5.Create ().ComputeHash (mix);
 					break;
@@ -335,6 +378,23 @@ namespace System.Web.Security
 				if (initialized)
 					return;
 
+#if CONFIGURATION_2_0
+				AuthenticationSection section = (AuthenticationSection)WebConfigurationManager.GetWebApplicationSection (authConfigPath);
+				FormsAuthenticationConfiguration config = section.Forms;
+
+				cookieName = config.Name;
+				timeout = (int)config.Timeout.TotalMinutes;
+				cookiePath = config.Path;
+				protection = config.Protection;
+				requireSSL = config.RequireSSL;
+				slidingExpiration = config.SlidingExpiration;
+				cookie_domain = config.Domain;
+				cookie_mode = config.Cookieless;
+				cookies_supported = true; /* XXX ? */
+				default_url = config.DefaultUrl;
+				enable_crossapp_redirects = config.EnableCrossAppRedirects;
+				login_url = config.LoginUrl;
+#else
 				HttpContext context = HttpContext.Current;
 #if NET_2_0
 				AuthConfig authConfig = null;
@@ -376,6 +436,7 @@ namespace System.Web.Security
 					login_url = "/login.aspx";
 #endif
 				}
+#endif
 
 				// IV is 8 bytes long for 3DES
 				init_vector = new byte [8];

@@ -1,5 +1,14 @@
 2006-01-04  Chris Toshok  <toshok@ximian.com>
 
+	* FormsAuthentication.cs (Authenticate): add CONFIGURATION_2_0
+	code.
+	(Decrypt2): same.
+	(Decrypt): same.
+	(Encrypt): same.
+	(Initialize): same.
+
+2006-01-04  Chris Toshok  <toshok@ximian.com>
+
 	* Membership.cs (.cctor): enable the code here under
 	CONFIGURATION_2_0.
 
