@@ -36,3 +36,6 @@ Mono.Security.X509/PKCS12Test.cs
 Mono.Security.X509/X501NameTest.cs
 Mono.Security.X509/X509CrlTest.cs
 Mono.Security.X509/X520AttributesTest.cs
+Mono.Security.X509.Extensions/KeyUsageExtensionTest.cs
+Mono.Security.X509.Extensions/ExtendedKeyUsageExtensionTest.cs
+Mono.Security.X509.Extensions/BasicConstraintsExtensionTest.cs
