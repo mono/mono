@@ -70,9 +70,15 @@ namespace System.Web.Compilation
 			}
 
 			string lang = parser.Language;
+#if CONFIGURATION_2_0
+			CompilationSection config = (CompilationSection)WebConfigurationManager.GetWebApplicationSection ("system.web/compilation");
+			Compiler c = config.Compilers[lang];
+			provider = (c == null) ? null : c.Provider;
+#else
 			CompilationConfiguration config;
 			config = CompilationConfiguration.GetInstance (parser.Context);
 			provider = config.GetProvider (lang);
+#endif
 			if (provider == null)
 				throw new HttpException ("Configuration error. Language not supported: " +
 							  lang, 500);
@@ -81,8 +87,13 @@ namespace System.Web.Compilation
 
 			compilerParameters = CachingCompiler.GetOptions (parser.Assemblies);
 			compilerParameters.IncludeDebugInformation = parser.Debug;
+#if CONFIGURATION_2_0
+			compilerParameters.CompilerOptions = c.CompilerOptions;
+			compilerParameters.WarningLevel = c.WarningLevel;
+#else
 			compilerParameters.CompilerOptions = config.GetCompilerOptions (lang);
 			compilerParameters.WarningLevel = config.GetWarningLevel (lang);
+#endif
 
 			bool keepFiles = (Environment.GetEnvironmentVariable ("MONO_ASPNET_NODELETE") != null);
 

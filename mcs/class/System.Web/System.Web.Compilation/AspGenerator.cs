@@ -629,12 +629,16 @@ namespace System.Web.Compilation
 			if (String.Compare (lang, tparser.Language, true) == 0)
 				return;
 
+#if CONFIGURATION_2_0
+			CompilationSection section = (CompilationSection) WebConfigurationManager.GetWebApplicationSection ("system.web/compilation");
+			if (section.Compilers[tparser.Language] != section.Compilers[lang])
+#else
 			CompilationConfiguration cfg = CompilationConfiguration.GetInstance (HttpContext.Current); 
-			if (!cfg.Compilers.CompareLanguages (tparser.Language, lang)) {
+			if (!cfg.Compilers.CompareLanguages (tparser.Language, lang))
+#endif
 				throw new ParseException (Location,
 						String.Format ("Trying to mix language '{0}' and '{1}'.", 
 								tparser.Language, lang));
-			}
 		}
 
 		// Used to get CodeRender tags in attribute values

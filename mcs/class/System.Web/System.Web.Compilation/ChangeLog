@@ -1,3 +1,10 @@
+2006-01-04  Chris Toshok  <toshok@ximian.com>
+
+	* WebServiceCompiler.cs (GetCompiledType): add CONFIGURATION_2_0
+	code.
+
+	* AspGenerator.cs (CheckLanguage): add CONFIGURATION_2_0 code.
+
 2005-12-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AspGenerator.cs: fix yesterday's fix.
