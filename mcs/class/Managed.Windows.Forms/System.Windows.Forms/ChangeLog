@@ -1,3 +1,12 @@
+2006-01-03  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* RichTextBox.cs: FormatText is 1-based, make it so when SelectionFont
+	  is called. This fixes the crash in Nexxia when setting the font
+	  attributes in the chat. [However, RTF needs a look-over to make sure
+	  that all SelectionXXX methods handle the special case that selection
+	  is empty and therefore the change must be applied to all text starting
+	  at the cursor/selection start]
+
 2006-01-03  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* XplatUI.cs, XplatUIDriver.cs, XplatUIX11.cs, XplatUIWin32.cs,

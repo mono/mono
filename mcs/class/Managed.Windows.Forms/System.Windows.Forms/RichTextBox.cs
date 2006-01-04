@@ -481,7 +481,7 @@ Console.WriteLine("FIXME - SelectionColor should not alter font");
 				sel_start = document.LineTagToCharIndex(document.selection_start.line, document.selection_start.pos);
 				sel_end = document.LineTagToCharIndex(document.selection_end.line, document.selection_end.pos);
 
-				document.FormatText(document.selection_start.line, document.selection_start.pos + 1, document.selection_end.line, document.selection_end.pos, value, document.selection_start.tag.color);
+				document.FormatText(document.selection_start.line, document.selection_start.pos + 1, document.selection_end.line, document.selection_end.pos + 1, value, document.selection_start.tag.color);
 
 				document.CharIndexToLineTag(sel_start, out document.selection_start.line, out document.selection_start.tag, out document.selection_start.pos);
 				document.CharIndexToLineTag(sel_end, out document.selection_end.line, out document.selection_end.tag, out document.selection_end.pos);
