@@ -44,6 +44,9 @@ using System.Web.Util;
 #if NET_2_0
 using System.Web.Profile;
 #endif
+#if CONFIGURATION_2_0
+using CustomErrorMode = System.Web.Configuration.CustomErrorsMode;
+#endif
 
 namespace System.Web {
 	
@@ -164,18 +167,23 @@ namespace System.Web {
 
 		public bool IsCustomErrorEnabled {
 			get {
+#if CONFIGURATION_2_0
+				CustomErrorsSection cfg = (CustomErrorsSection) WebConfigurationManager.GetWebApplicationSection ("system.web/customErrors");
+#else
 				CustomErrorsConfig cfg = null;
 				try {
 					cfg = (CustomErrorsConfig) GetConfig ("system.web/customErrors");
 				} catch {
 				}
+
 				if (cfg == null)
 					return false;
+#endif
 
 				if (cfg.Mode == CustomErrorMode.On)
 					return true;
 
-				return (cfg.Mode == CustomErrorMode.RemoteOnly) &&
+				return (cfg.Mode == CustomErrorMode.RemoteOnly) && 
 					(Request.WorkerRequest.GetLocalAddress () != Request.UserHostAddress);
 			}
 		}
@@ -184,11 +192,16 @@ namespace System.Web {
 #else
 		public bool IsDebuggingEnabled {
 			get {
+#if CONFIGURATION_2_0
+				CompilationSection section = (CompilationSection) WebConfigurationManager.GetWebApplicationSection ("system.web/compilation");
+				return section.Debug;
+#else
 				try {
 					return CompilationConfiguration.GetInstance (this).Debug;
 				} catch {
 					return false;
 				}
+#endif
 			}
 		}
 #endif
@@ -462,9 +475,14 @@ namespace System.Web {
 		internal TimeSpan ConfigTimeout {
 			get {
 				if (config_timeout == null) {
+#if CONFIGURATION_2_0
+					HttpRuntimeSection section = (HttpRuntimeSection)WebConfigurationManager.GetWebApplicationSection ("system.web/httpRuntime");
+					config_timeout = section.ExecutionTimeout;
+#else
 					HttpRuntimeConfig config = (HttpRuntimeConfig)
 								GetConfig ("system.web/httpRuntime");
 					config_timeout = new TimeSpan (0, 0, config.ExecutionTimeout);
+#endif
 				}
 
 				return (TimeSpan) config_timeout;

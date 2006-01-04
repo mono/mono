@@ -47,8 +47,7 @@ namespace System.Web {
 		{
 			lock (locker) {
 				if (provider == null) {
-					System.Configuration.Configuration conf = WebConfigurationManager.OpenWebConfiguration ("/");
-					SiteMapSection section = (SiteMapSection) conf.GetSection ("system.web/siteMap");
+					SiteMapSection section = (SiteMapSection) WebConfigurationManager.GetWebApplicationSection ("system.web/siteMap");
 					providers = new SiteMapProviderCollection ();
 					
 					if (section.Enabled) {

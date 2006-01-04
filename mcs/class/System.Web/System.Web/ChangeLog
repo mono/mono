@@ -1,3 +1,19 @@
+2006-01-04  Chris Toshok  <toshok@ximian.com>
+
+	* HttpContext.cs (IsCustomErrorEnabled): add CONFIGURATION_2_0
+	code.  use a nasty 'using' hack to map the 2.0 CustomErrorsMode to
+	the 1.x CustomErrorMode name.
+	(IsDebuggingEnabled): add CONFIGURATION_2_0 code.
+	(ConfigTimeout): add CONFIGURATION_2_0 code.
+
+	* HttpRequest.cs (MakeInputStream): add CONFIGURATION_2_0 code.
+
+	* HttpApplication.cs (RedirectCustomError): add CONFIGURATION_2_0
+	code.
+
+	* SiteMap.c (Init): use
+	WebConfigurationManager.GetWebApplicationSection.
+
 2005-12-21  Miguel de Icaza  <miguel@novell.com>
 
 	* HttpUtility.cs (UrlEncodeUnicode): The generated encoding of

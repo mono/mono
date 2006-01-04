@@ -553,7 +553,11 @@ namespace System.Web {
 			if (content_length == 0 && HttpMethod == "POST")
 				throw new HttpException (411, "Length expected");
 			
+#if CONFIGURATION_2_0
+			HttpRuntimeSection config = (HttpRuntimeSection) WebConfigurationManager.GetWebApplicationSection ("system.web/httpRuntime");
+#else
 			HttpRuntimeConfig config = (HttpRuntimeConfig) HttpContext.GetAppConfig ("system.web/httpRuntime");
+#endif
 			
 			if (content_length > (config.MaxRequestLength * 1024))
 				throw new HttpException ("File exceeds httpRuntime limit");

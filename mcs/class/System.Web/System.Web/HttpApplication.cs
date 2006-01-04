@@ -1109,10 +1109,14 @@ namespace System.Web {
 			if (!context.IsCustomErrorEnabled)
 				return false;
 			
+#if CONFIGURATION_2_0
+			CustomErrorsSection config = (CustomErrorsSection)WebConfigurationManager.GetWebApplicationSection ("system.web/customErrors");
+#else
 			CustomErrorsConfig config = null;
 			try {
 				config = (CustomErrorsConfig) context.GetConfig ("system.web/customErrors");
 			} catch { }
+#endif
 			
 			if (config == null) {
 				if (context.ErrorPage != null)
@@ -1121,7 +1125,12 @@ namespace System.Web {
 				return false;
 			}
 			
+#if CONFIGURATION_2_0
+			CustomError err = config.Errors [context.Response.StatusCode.ToString()];
+			string redirect = err == null ? null : err.Redirect;
+#else
 			string redirect =  config [context.Response.StatusCode];
+#endif
 			if (redirect == null) {
 				redirect = context.ErrorPage;
 				if (redirect == null)
