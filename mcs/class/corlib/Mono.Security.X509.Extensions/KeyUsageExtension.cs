@@ -5,11 +5,7 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-// (C) 2004 Novell (http://www.novell.com)
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -88,6 +84,11 @@ namespace Mono.Security.X509.Extensions {
 
 		public KeyUsageExtension (X509Extension extension) : base (extension) {}
 
+		public KeyUsageExtension () : base ()
+		{
+			extnOid = "2.5.29.15";
+		}
+
 		protected override void Decode () 
 		{
 			ASN1 bitString = new ASN1 (extnValue.Value);
@@ -96,6 +97,38 @@ namespace Mono.Security.X509.Extensions {
 			int i = 1; // byte zero has the number of unused bits (ASN1's BITSTRING)
 			while (i < bitString.Value.Length)
 				kubits = (kubits << 8) + bitString.Value [i++];
+		}
+
+		protected override void Encode ()
+		{
+			extnValue = new ASN1 (0x04);
+
+			ushort ku = (ushort) kubits;
+			byte unused = 16;
+			if (ku > 0) {
+				// count the unused bits
+				for (unused = 15; unused > 0; unused--) {
+					if ((ku & 0x8000) == 0x8000)
+						break;
+					ku <<= 1;
+				}
+
+				if (kubits > Byte.MaxValue) {
+					unused -= 8;
+					extnValue.Add (new ASN1 (0x03, new byte[] { unused, (byte) kubits, (byte) (kubits >> 8) }));
+				} else {
+					extnValue.Add (new ASN1 (0x03, new byte[] { unused, (byte) kubits }));
+				}
+			} else {
+				// note: a BITSTRING with a 0 length is invalid (in ASN.1), so would an
+				// empty OCTETSTRING (at the parent level) so we're encoding a 0
+				extnValue.Add (new ASN1 (0x03, new byte[] { 7, 0 }));
+			}
+		}
+
+		public KeyUsages KeyUsage {
+			get { return (KeyUsages) kubits; }
+			set { kubits = Convert.ToInt32 (value, CultureInfo.InvariantCulture); }
 		}
 
 		public override string Name {
