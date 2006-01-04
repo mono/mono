@@ -44,6 +44,7 @@ namespace Mono.CSharp
 		bool handle_assembly = false;
 		bool handle_constraints = false;
 		bool handle_typeof = false;
+		bool simple_name_deambiguation = false;
 		Location current_location;
 		Location current_comment_location = Location.Null;
 		ArrayList escapedIdentifiers = new ArrayList ();
@@ -172,6 +173,25 @@ namespace Mono.CSharp
 			}
 		}
 
+		Stack state = new Stack ();
+
+		//
+		// Sets the new state for the simple-name-deambiguation.
+		//
+		public void PushSND (bool value)
+		{
+			state.Push (simple_name_deambiguation);
+			simple_name_deambiguation = value;
+		}
+
+		//
+		// Restores the previous state for the simple-name-deambiguation.
+		//
+		public void PopSND ()
+		{
+			simple_name_deambiguation = (bool) state.Pop ();
+		}
+		
 		public XmlCommentState doc_state {
 			get { return xmlDocState; }
 			set {
@@ -255,6 +275,55 @@ namespace Mono.CSharp
 			}
 		}
 
+		//
+		// This is used when the tokenizer needs to save
+		// the current position as it needs to do some parsing
+		// on its own to deamiguate a token in behalf of the
+		// parser.
+		//
+		Stack position_stack = new Stack ();
+		class Position {
+			public int position;
+			public int ref_line;
+			public int col;
+			public int putback_char;
+			public int previous_col;
+			public int parsing_generic_less_than;
+			
+			public Position (Tokenizer t)
+			{
+				position = t.reader.Position;
+				ref_line = t.ref_line;
+				col = t.col;
+				putback_char = t.putback_char;
+				previous_col = t.previous_col;
+				parsing_generic_less_than = t.parsing_generic_less_than;
+			}
+		}
+		
+		public void PushPosition ()
+		{
+			position_stack.Push (new Position (this));
+		}
+
+		public void PopPosition ()
+		{
+			Position p = (Position) position_stack.Pop ();
+
+			reader.Position = p.position;
+			ref_line = p.ref_line;
+			col = p.col;
+			putback_char = p.putback_char;
+			previous_col = p.previous_col;
+
+		}
+
+		// Do not reset the position, ignore it.
+		public void DiscardPosition ()
+		{
+			position_stack.Pop ();
+		}
+		
 		static void AddKeyword (string kw, int token) {
 			keywordStrings.Add (kw, kw);
 			if (keywords [kw.Length] == null) {
@@ -478,7 +547,12 @@ namespace Mono.CSharp
 			return false;
 		}
 
-		bool parse_less_than ()
+		//
+		// The level indicates the nestedness level.  This is required
+		// to perform the extra check in case that simple_name_deambiguation
+		// is set to true
+		//
+		bool parse_less_than (int level)
 		{
 		start:
 			int the_token = token ();
@@ -514,14 +588,25 @@ namespace Mono.CSharp
 		again:
 			the_token = token ();
 
-			if (the_token == Token.OP_GENERICS_GT)
+			if (the_token == Token.OP_GENERICS_GT){
+				//
+				// Check for the 9.2.3 special cases
+				//
+				if (level == 0 && simple_name_deambiguation){
+					PushPosition ();
+					bool v = next_token_is_allowed_after_generic_closing ();
+					PopPosition ();
+					return v;
+				}
 				return true;
+			}
+			
 			else if ((the_token == Token.COMMA) || (the_token == Token.DOT))
 				goto start;
 			else if (the_token == Token.INTERR)
 				goto again;
 			else if (the_token == Token.OP_GENERICS_LT) {
-				if (!parse_less_than ())
+				if (!parse_less_than (level+1))
 					return false;
 				goto again;
 			} else if (the_token == Token.OPEN_BRACKET) {
@@ -537,7 +622,61 @@ namespace Mono.CSharp
 			return false;
 		}
 
-		int parsing_generic_less_than = 0;
+		//
+		// This method is used to deamiguate the meaning of '>'
+		// while parsing a '<'...'>' structure.  It implements the
+		// check specified in 9.2.3 "Grammar Ambiguities" on the C# 3rd
+		// edition
+		//
+		bool next_token_is_allowed_after_generic_closing ()
+		{
+			PushPosition ();
+			int next_token = token ();
+			bool ret;
+
+			//Console.WriteLine ("NextToken used for deambiguation is: " + next_token);
+			if (next_token == Token.OPEN_PARENS ||
+			    next_token == Token.CLOSE_PARENS ||
+			    next_token == Token.CLOSE_PARENS_OPEN_PARENS ||
+			    next_token == Token.CLOSE_PARENS_MINUS ||
+			    next_token == Token.CLOSE_PARENS_CAST ||
+			    next_token == Token.CLOSE_PARENS_NO_CAST ||
+			    next_token == Token.CLOSE_PARENS ||
+			    next_token == Token.CLOSE_BRACKET ||
+			    next_token == Token.COLON || next_token == Token.SEMICOLON ||
+			    next_token == Token.COMMA || next_token == Token.DOT ||
+			    next_token == Token.INTERR ||
+			    next_token == Token.OP_NE || next_token == Token.OP_EQ)
+				ret = true;
+			else
+				ret = false;
+
+			//
+			// The following line is a *hack*, it is here to parse:
+			// (Blah<a,b>[]) case.   but it is likely going to show
+			// up as another bug elsewhere.
+			//
+			// The following test case fails without this:
+			//
+			// namespace System.Collections.Generic {
+			// public class Dictionary<TKey, TValue> {
+			// public void ContainsValue (object b){ 
+			// object a = (KeyValuePair<TKey, TValue> []) b;
+			// } }
+			//
+			// This probably means that we should have turned
+			// deambuguation off in this particular context, but
+			// am puzzled about how to fix it.
+			//
+			if (next_token == Token.OPEN_BRACKET)
+				ret = true;
+
+			PopPosition ();
+
+			return ret;
+		}
+		
+		public int parsing_generic_less_than = 0;
 
 		int is_punct (char c, ref bool doread)
 		{
@@ -568,16 +707,9 @@ namespace Mono.CSharp
 
 				--deambiguate_close_parens;
 
-				// Save current position and parse next token.
-				int old = reader.Position;
-				int old_ref_line = ref_line;
-				int old_col = col;
-
+				PushPosition ();
 				int new_token = token ();
-				reader.Position = old;
-				ref_line = old_ref_line;
-				col = old_col;
-				putback_char = -1;
+				PopPosition ();
 
 				if (new_token == Token.OPEN_PARENS)
 					return Token.CLOSE_PARENS_OPEN_PARENS;
@@ -605,22 +737,21 @@ namespace Mono.CSharp
 				if (parsing_generic_less_than++ > 0)
 					return Token.OP_GENERICS_LT;
 
-				int old = reader.Position;
 				if (handle_typeof) {
 					int dimension;
+					PushPosition ();
 					if (parse_generic_dimension (out dimension)) {
 						val = dimension;
+						DiscardPosition ();
 						return Token.GENERIC_DIMENSION;
 					}
-					reader.Position = old;
-					putback_char = -1;
+					PopPosition ();
 				}
 
 				// Save current position and parse next token.
-				old = reader.Position;
-				bool is_generic_lt = parse_less_than ();
-				reader.Position = old;
-				putback_char = -1;
+				PushPosition ();
+				bool is_generic_lt = parse_less_than (0);
+				PopPosition ();
 
 				if (is_generic_lt) {
 					parsing_generic_less_than++;
@@ -1252,8 +1383,7 @@ namespace Mono.CSharp
 			if (putback_char != -1) {
 				x = putback_char;
 				putback_char = -1;
-			}
-			else
+			} else
 				x = reader.Read ();
 			if (x == '\n') {
 				line++;
@@ -2015,12 +2145,7 @@ namespace Mono.CSharp
 
 			if (res == Token.PARTIAL) {
 				// Save current position and parse next token.
-				int old = reader.Position;
-				int old_putback = putback_char;
-				int old_ref_line = ref_line;
-				int old_col = col;
-
-				putback_char = -1;
+				PushPosition ();
 
 				int next_token = token ();
 				bool ok = (next_token == Token.CLASS) ||
@@ -2028,10 +2153,7 @@ namespace Mono.CSharp
 					(next_token == Token.INTERFACE) ||
 					(next_token == Token.ENUM); // "partial" is a keyword in 'partial enum', even though it's not valid
 
-				reader.Position = old;
-				ref_line = old_ref_line;
-				col = old_col;
-				putback_char = old_putback;
+				PopPosition ();
 
 				if (ok)
 					return res;

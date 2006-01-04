@@ -104,6 +104,13 @@ namespace Mono.CSharp
 		bool global_attrs_enabled = true;
 		bool has_get, has_set;
 
+		//
+		// Used to pass information down to member-name that we are 
+		// parsing namespace_or_type_name and that it should not
+		// activate the grammar deambiguation.
+		//
+		bool in_namespace_or_typename;
+
 %}
 
 %token EOF
@@ -2695,18 +2702,39 @@ opt_nullable
 	;
 
 namespace_or_type_name
-	: member_name
+	: // 
+	  // inline member_name here
+	  //
+	  // IMPORTANT: Keep in sync with member_name (modulo the PushSND handling)
+	  //
+	  IDENTIFIER { 
+		lexer.PushSND (false);
+		oob_stack.Push (in_namespace_or_typename);
+		in_namespace_or_typename = true;
+	  } opt_type_argument_list {
+		lexer.PopSND ();
+		in_namespace_or_typename = (bool) oob_stack.Pop ();
+		LocatedToken lt = (LocatedToken) $1;
+		$$ = new MemberName (lt.Value, (TypeArguments) $3, lt.Location);
+	  }
 	| IDENTIFIER DOUBLE_COLON IDENTIFIER {
 		LocatedToken lt1 = (LocatedToken) $1;
 		LocatedToken lt2 = (LocatedToken) $3;
 		$$ = new MemberName (lt1.Value, lt2.Value, lt2.Location);
 	  }
-	| namespace_or_type_name DOT IDENTIFIER opt_type_argument_list {
-		LocatedToken lt = (LocatedToken) $3;
-		$$ = new MemberName ((MemberName) $1, lt.Value, (TypeArguments) $4, lt.Location);
+	| namespace_or_type_name DOT {
+		lexer.PushSND (false);
+	  } IDENTIFIER opt_type_argument_list {
+		lexer.PopSND ();
+		LocatedToken lt = (LocatedToken) $4;
+		$$ = new MemberName ((MemberName) $1, lt.Value, (TypeArguments) $5, lt.Location);
 	  }
 	;
 
+	//
+	// IMPORTANT:
+	// keep this code in sync (modulo handling of PushSND) with namespace_or_type_name
+	//
 member_name
 	: IDENTIFIER opt_type_argument_list {
 		LocatedToken lt = (LocatedToken) $1;
@@ -2722,6 +2750,7 @@ opt_type_argument_list
 		if (RootContext.Version == LanguageVersion.ISO_1)
 			Report.FeatureIsNotStandardized (lexer.Location, "generics");
 	  }
+
 	| GENERIC_DIMENSION
 	  {
 		$$ = new TypeArguments ((int) $1, lexer.Location);
@@ -2757,7 +2786,6 @@ type_arguments
 	  }
 	;
 
-	
 /* 
  * Before you think of adding a return_type, notice that we have been
  * using two rules in the places where it matters (one rule using type
@@ -2892,6 +2920,50 @@ array_type
 	  }
 	;
 
+type_argument_list_or_qualified
+	: opt_type_argument_list
+	| DOUBLE_COLON IDENTIFIER { $$ = $2; }
+	;
+
+//
+// This is used so we can push the SimpleNameDeambiguation state
+// before we parse a member-base (which might need the extra token
+// reading to deamiguate).
+//
+// To avoid a grammar conflict between a qualified-alias and a 
+// member-name, I merged both rules into this one and call
+// PushSND before.  It does not matter/hurt QualifiedAliasMember
+// and helps our cause
+//
+// This production merges two old productions in primary-expression:
+//  | member_name
+//  | IDENTIFIER DOUBLE_COLON IDENTIFIER
+//
+
+member_name_or_qualified_alias 
+	: IDENTIFIER 
+	  { 
+		lexer.PushSND (in_namespace_or_typename == false); 
+	  } 
+	  type_argument_list_or_qualified
+	  {
+		lexer.PopSND ();
+
+		//
+		// Its a member-name with or without type-arguments
+		//
+		if ($3 == null || $3 is TypeArguments){
+			LocatedToken lt = (LocatedToken) $1;
+			MemberName mn = new MemberName (lt.Value, (TypeArguments) $3, lt.Location);
+			$$ = mn.GetTypeExpression ();
+		} else {
+			LocatedToken lt1 = (LocatedToken) $1;
+			LocatedToken lt2 = (LocatedToken) $3;
+			$$ = new QualifiedAliasMember (lt1.Value, lt2.Value, lt2.Location);
+		}
+	  }
+	;
+
 //
 // Expressions, section 7.5
 //
@@ -2900,17 +2972,7 @@ primary_expression
 	  {
 		// 7.5.1: Literals
 	  }
- 	| member_name
-	  {
-		MemberName mn = (MemberName) $1;
-		$$ = mn.GetTypeExpression ();
-	  }
-	| IDENTIFIER DOUBLE_COLON IDENTIFIER
-	  {
-		LocatedToken lt1 = (LocatedToken) $1;
-		LocatedToken lt2 = (LocatedToken) $3;
-		$$ = new QualifiedAliasMember (lt1.Value, lt2.Value, lt2.Location);
-	  }
+	| member_name_or_qualified_alias 
 	| parenthesized_expression
 	| default_value_expression
 	| member_access
@@ -4041,7 +4103,7 @@ opt_statement_list
 	;
 
 statement_list
-	: statement
+	: statement 
 	| statement_list statement
 	;
 
