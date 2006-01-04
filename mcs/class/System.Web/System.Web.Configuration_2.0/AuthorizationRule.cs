@@ -30,6 +30,7 @@
 
 using System;
 using System.Collections.Specialized;
+using System.Security.Principal;
 using System.Configuration;
 using System.ComponentModel;
 using System.Xml;
@@ -216,6 +217,34 @@ namespace System.Web.Configuration {
 
 		protected override ConfigurationPropertyCollection Properties {
 			get { return properties; }
+		}
+
+
+		internal bool CheckVerb (string verb)
+		{
+			foreach (string v in Verbs) {
+				if (verb == v)
+					return true;
+			}
+			return false;
+		}
+
+		internal bool CheckUser (string user)
+		{
+			foreach (string u in Users) {
+				if (u == user)
+					return true;
+			}
+			return false;
+		}
+
+		internal bool CheckRole (IPrincipal user)
+		{
+			foreach (string r in Roles) {
+				if (user.IsInRole (r))
+					return true;
+			}
+			return false;
 		}
 
 	}

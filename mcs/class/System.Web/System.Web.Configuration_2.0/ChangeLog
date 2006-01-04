@@ -1,3 +1,11 @@
+2006-01-03  Chris Toshok  <toshok@ximian.com>
+
+	* AuthorizationSection.cs (IsValidUser): add analogous method from
+	AuthorizationConfig.cs.
+
+	* AuthorizationRule.cs: add predicates for Verb, User, and Role
+	analogous to what existed in AuthorizationConfig.cs.
+
 2005-12-11  Chris Toshok  <toshok@ximian.com>
 
 	* WebConfigurationManager.cs (OpenMachineConfiguration): just call

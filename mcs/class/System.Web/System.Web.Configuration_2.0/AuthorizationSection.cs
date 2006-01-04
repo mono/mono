@@ -30,6 +30,7 @@
 
 using System;
 using System.Configuration;
+using System.Security.Principal;
 
 #if NET_2_0
 
@@ -63,6 +64,20 @@ namespace System.Web.Configuration {
 
 		protected override ConfigurationPropertyCollection Properties {
 			get { return properties; }
+		}
+
+
+		internal bool IsValidUser (IPrincipal user, string verb)
+		{
+			foreach (AuthorizationRule rule in Rules) {
+				if (!rule.CheckVerb (verb))
+					continue;
+
+				if (rule.CheckUser (user.Identity.Name) || rule.CheckRole(user))
+					return (rule.Action == AuthorizationRuleAction.Allow);
+			}
+
+			return true;
 		}
 
 	}
