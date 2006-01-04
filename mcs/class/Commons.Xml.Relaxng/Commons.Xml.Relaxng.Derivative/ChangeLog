@@ -1,3 +1,16 @@
+2005-01-04  Atsushi Enomoto <atsushi@ximian.com>
+
+	* RdpPattern.cs :
+	  - Implemented textOnlyDeriv and mixedTextDeriv of "memoization".
+	    Details are described in the "derivative" algorithm:
+	    http://www.thaiopensource.com/relaxng/derivative.html#Memoization
+	  - Added MakeChoiceLeaf() to implement "choice-leaves":
+	    http://www.thaiopensource.com/relaxng/derivative.html#Avoiding_exponential_blowup
+	  - To intern effectively, reorder choice and interleave contents by
+	    hash code.
+	  - Avoid extra pattern creation with related to empty and notAllowed
+	    as one hand of binary branches.
+
 2005-01-03  Atsushi Enomoto <atsushi@ximian.com>
 
 	* RdpPattern.cs : reduced RdpFlip instantiation. Share patternPool

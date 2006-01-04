@@ -239,9 +239,6 @@ namespace Commons.Xml.Relaxng
 
 			Hashtable ht = new Hashtable ();
 			startPattern.setInternTable (ht);
-			RdpNotAllowed.Instance.setInternTable (ht);
-			RdpEmpty.Instance.setInternTable (ht);
-			RdpText.Instance.setInternTable (ht);
 
 			// Check Constraints: RELAX NG spec 7
 			// 7.1.1-4, 7.3, 7.4

@@ -77,6 +77,8 @@ namespace Commons.Xml.Relaxng
 		ArrayList strictCheckCache;
 		bool reportDetails;
 		string cachedValue;
+		int startElementDepth = -1;
+		bool inContent;
 
 		internal string CurrentStateXml {
 			get { return RdpUtil.DebugRdpPattern (vState, new Hashtable ()); }
@@ -316,7 +318,19 @@ namespace Commons.Xml.Relaxng
 		}
 		#endregion
 
-		private RelaxngException createValidationError (string message)
+		private RelaxngException CreateValidationError (string message,
+			bool elements)
+		{
+			if (ReportDetails)
+				return CreateValidationError (String.Concat (message,
+					" Expected ",
+					elements ? "elements are: " : "attributes are: ",
+					BuildLabels (elements),
+					"."));
+			return CreateValidationError (message);
+		}
+
+		private RelaxngException CreateValidationError (string message)
 		{
 			IXmlLineInfo li = reader as IXmlLineInfo;
 			string lineInfo = reader.BaseURI;
@@ -328,6 +342,8 @@ namespace Commons.Xml.Relaxng
 
 		private void PrepareState ()
 		{
+			if (vState != null)
+				return;
 			if (!pattern.IsCompiled) {
 				pattern.Compile ();
 			}
@@ -359,35 +375,18 @@ namespace Commons.Xml.Relaxng
 			bool ret = reader.Read ();
 
 			// Process pending text node validation if required.
-			if (cachedValue != null) {
-				switch (reader.NodeType) {
-				case XmlNodeType.Element:
-				case XmlNodeType.EndElement:
-					prevState = vState;
-					vState = vState.TextDeriv (cachedValue, reader);
-					if (vState.PatternType == RelaxngPatternType.NotAllowed)
-						throw createValidationError (String.Format ("Invalid text found. Text value = {0} ", cachedValue));
-					cachedValue = null;
-					break;
-				default:
-					if (!ret)
-						goto case XmlNodeType.Element;
-					break;
-				}
-			}
+			if (cachedValue != null)
+				ValidateText (ret);
 
 			switch (reader.NodeType) {
 			case XmlNodeType.Element:
+				inContent = true;
 				// StartTagOpenDeriv
 				prevState = vState;
-				vState = vState.StartTagOpenDeriv (
+				vState = StartTagOpenDeriv (vState,
 					reader.LocalName, reader.NamespaceURI);
-				if (vState.PatternType == RelaxngPatternType.NotAllowed) {
-					string labels = String.Empty;
-					if (reportDetails)
-						labels = "Allowed elements are: " + BuildLabels (true);
-					throw createValidationError (String.Format ("Invalid start tag found. LocalName = {0}, NS = {1}. {2}", reader.LocalName, reader.NamespaceURI, labels));
-				}
+				if (vState.PatternType == RelaxngPatternType.NotAllowed)
+					throw CreateValidationError (String.Format ("Invalid start tag found. LocalName = {0}, NS = {1}.", reader.LocalName, reader.NamespaceURI), true);
 
 				// AttsDeriv equals to for each AttDeriv
 				string elementNS = reader.NamespaceURI;
@@ -399,54 +398,199 @@ namespace Commons.Xml.Relaxng
 						prevState = vState;
 						string attrNS = reader.NamespaceURI;
 						vState = vState.AttDeriv (reader.LocalName, attrNS, reader.GetAttribute (reader.LocalName, attrNS), this);
-						if (vState.PatternType == RelaxngPatternType.NotAllowed) {
-							string labels = String.Empty;
-							if (reportDetails)
-								labels = "Allowed attributes are: " + BuildLabels (false);
-
-							throw createValidationError (String.Format ("Invalid attribute found. LocalName = {0}, NS = {1}. {2}", reader.LocalName, reader.NamespaceURI, labels));
-						}
+						if (vState.PatternType == RelaxngPatternType.NotAllowed)
+							throw CreateValidationError (String.Format ("Invalid attribute found. LocalName = {0}, NS = {1}.", reader.LocalName, reader.NamespaceURI), false);
 					} while (reader.MoveToNextAttribute ());
 					MoveToElement ();
 				}
 
 				// StarTagCloseDeriv
 				prevState = vState;
-				vState = vState.StartTagCloseDeriv ();
-				if (vState.PatternType == RelaxngPatternType.NotAllowed) {
-					string labels = String.Empty;
-					if (reportDetails)
-						labels = "Expected attributes are: " + BuildLabels (false);
-
-					throw createValidationError (String.Format ("Invalid start tag closing found. LocalName = {0}, NS = {1}. {2}", reader.LocalName, reader.NamespaceURI, labels));
-				}
+				vState = StartTagCloseDeriv (vState);
+				if (vState.PatternType == RelaxngPatternType.NotAllowed)
+					throw CreateValidationError (String.Format ("Invalid start tag closing found. LocalName = {0}, NS = {1}.", reader.LocalName, reader.NamespaceURI), false);
 
 				// if it is empty, then redirect to EndElement
 				if (reader.IsEmptyElement)
 					goto case XmlNodeType.EndElement;
 				break;
 			case XmlNodeType.EndElement:
+				if (reader.Depth == 0)
+					inContent = false;
 				// EndTagDeriv
 				prevState = vState;
-				vState = vState.EndTagDeriv ();
-				if (vState.PatternType == RelaxngPatternType.NotAllowed) {
-					string labels = String.Empty;
-					if (reportDetails)
-						labels = "Expected elements are: " + BuildLabels (true);
-					throw createValidationError (String.Format ("Invalid end tag found. LocalName = {0}, NS = {1}. {2}", reader.LocalName, reader.NamespaceURI, labels));
-				}
+				vState = EndTagDeriv (vState);
+				if (vState.PatternType == RelaxngPatternType.NotAllowed)
+					throw CreateValidationError (String.Format ("Invalid end tag found. LocalName = {0}, NS = {1}.", reader.LocalName, reader.NamespaceURI), true);
+				break;
+			case XmlNodeType.Whitespace:
+				if (inContent)
+					goto case XmlNodeType.Text;
 				break;
 			case XmlNodeType.CDATA:
 			case XmlNodeType.Text:
 			case XmlNodeType.SignificantWhitespace:
-			case XmlNodeType.Whitespace:
 				// Whitespace cannot be skipped because data and
 				// value types are required to validate whitespaces.
 				cachedValue += Value;
 				break;
 			}
+
+			if (reader.NodeType == XmlNodeType.Element)
+				startElementDepth = reader.Depth;
+			else if (reader.NodeType == XmlNodeType.EndElement)
+				startElementDepth = -1;
+
 			return ret;
 		}
+
+		void ValidateText (bool remain)
+		{
+			RdpPattern ts = vState;
+			switch (reader.NodeType) {
+			case XmlNodeType.EndElement:
+				if (startElementDepth != reader.Depth)
+					goto case XmlNodeType.Element;
+				ts = TextOnlyDeriv (ts);
+				ts = ts.TextDeriv (cachedValue, reader);
+				// FIXME: shouldn't it be done?
+//				if (Util.IsWhitespace (cachedValue))
+//					ts = vState.MakeChoice (ts, vState);
+				break;
+			case XmlNodeType.Element:
+				startElementDepth = -1;
+				if (!Util.IsWhitespace (cachedValue)) {
+					ts = MixedTextDeriv (ts, cachedValue);
+					ts = ts.TextDeriv (cachedValue, reader);
+				}
+				break;
+			default:
+				if (!remain)
+					goto case XmlNodeType.Element;
+				return;
+			}
+
+			prevState = vState;
+			vState = ts;
+
+			if (vState.PatternType == RelaxngPatternType.NotAllowed)
+				throw CreateValidationError (String.Format ("Invalid text found. Text value = {0} ", cachedValue), true);
+			cachedValue = null;
+			return;
+		}
+
+		#region Memoization support
+
+		ArrayList memo = new ArrayList ();
+
+		enum DerivativeType {
+			StartTagOpen,
+			StartTagClose,
+			EndTag,
+			Mixed,
+			TextOnly
+		}
+
+		class Memoization
+		{
+			public Memoization (DerivativeType type, RdpPattern input, RdpPattern output)
+			{
+				Type = type;
+				Input = input;
+				Output = output;
+			}
+
+			public readonly DerivativeType Type;
+			public readonly RdpPattern Input;
+			public readonly RdpPattern Output;
+		}
+
+		class MemoizationStartTagOpen : Memoization
+		{
+			public MemoizationStartTagOpen (string name, string ns, RdpPattern input, RdpPattern output)
+				: base (DerivativeType.StartTagOpen, input, output)
+			{
+				Name = name;
+				NS = ns;
+			}
+
+			public readonly string Name;
+			public readonly string NS;
+		}
+
+		RdpPattern StartTagOpenDeriv (RdpPattern p, string local, string ns)
+		{
+			for (int i = 0; i < memo.Count; i++) {
+				Memoization tag = (Memoization) memo [i];
+				if (tag.Type != DerivativeType.StartTagOpen)
+					continue;
+				MemoizationStartTagOpen sto =
+					tag as MemoizationStartTagOpen;
+				if (sto.Input == p &&
+				    object.ReferenceEquals (sto.Name, local) &&
+				    object.ReferenceEquals (sto.NS, ns))
+					return tag.Output;
+			}
+
+			RdpPattern m = p.StartTagOpenDeriv (local, ns);
+			memo.Add (new MemoizationStartTagOpen (local, ns, p, m));
+			return m;
+		}
+
+		RdpPattern StartTagCloseDeriv (RdpPattern p)
+		{
+			for (int i = 0; i < memo.Count; i++) {
+				Memoization tag = (Memoization) memo [i];
+				if (tag.Type == DerivativeType.StartTagClose && tag.Input == p)
+					return tag.Output;
+			}
+
+			RdpPattern m = p.StartTagCloseDeriv ();
+			memo.Add (new Memoization (
+					DerivativeType.StartTagClose, p, m));
+			return m;
+		}
+
+		RdpPattern EndTagDeriv (RdpPattern p)
+		{
+			for (int i = 0; i < memo.Count; i++) {
+				Memoization tag = (Memoization) memo [i];
+				if (tag.Type == DerivativeType.EndTag && tag.Input == p)
+					return tag.Output;
+			}
+
+			RdpPattern m = p.EndTagDeriv ();
+			memo.Add (new Memoization (DerivativeType.EndTag, p, m));
+			return m;
+		}
+
+		RdpPattern MixedTextDeriv (RdpPattern p, string s)
+		{
+			for (int i = 0; i < memo.Count; i++) {
+				Memoization tag = (Memoization) memo [i];
+				if (tag.Type == DerivativeType.Mixed && tag.Input == p)
+					return tag.Output;
+			}
+
+			RdpPattern m = p.MixedTextDeriv (s);
+			memo.Add (new Memoization (DerivativeType.Mixed, p, m));
+			return m;
+		}
+
+		RdpPattern TextOnlyDeriv (RdpPattern p)
+		{
+			for (int i = 0; i < memo.Count; i++) {
+				Memoization tag = (Memoization) memo [i];
+				if (tag.Type == DerivativeType.TextOnly && tag.Input == p)
+					return tag.Output;
+			}
+
+			RdpPattern m = p.TextOnlyDeriv ();
+			memo.Add (new Memoization (DerivativeType.TextOnly, p, m));
+			return m;
+		}
+
+		#endif
 	}
 }
 

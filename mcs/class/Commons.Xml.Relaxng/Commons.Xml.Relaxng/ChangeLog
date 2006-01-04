@@ -1,3 +1,15 @@
+2006-01-04  Atsushi Enomoto <atsushi@ximian.com>
+
+	* RelaxngValidatingReader.cs :
+	  - Simplified CreateValidationError().
+	  - Don't validate 1) whitespaces outside element and 2) whitespaces
+	    which do not consist of text only content.
+	  - Implemented "memoization":
+	    http://www.thaiopensource.com/relaxng/derivative.html#Memoization
+	  - with related to memoization, use new TextOnlyDeriv() and 
+	    MixedTextDeriv() to validate texts. See also RdpPattern changes.
+	* RelaxngGrammar.cs : don't update pool tables for static instances.
+
 2005-12-27  Atsushi Enomoto <atsushi@ximian.com>
 
 	* Misc.cs RelaxngDatatype.cs RelaxngPattern.cs RelaxngException.cs

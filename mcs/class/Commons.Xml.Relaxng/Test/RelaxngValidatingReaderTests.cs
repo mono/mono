@@ -63,7 +63,6 @@ namespace MonoTests.Commons.Xml.Relaxng
 		}
 
 		[Test]
-		[Category ("NotWorking")] // some sort of performance regression
 		public void ReadPracticalSample1 ()
 		{
 			SetupReaderFromUrl ("Test/XmlFiles/team.xml", "Test/XmlFiles/team.rng");
@@ -72,7 +71,6 @@ namespace MonoTests.Commons.Xml.Relaxng
 		}
 
 		[Test]
-		[Category ("NotWorking")] // some sort of performance regression
 		public void ValidateRelaxngGrammar ()
 		{
 			// validate relaxng.rng with relaxng.rng
