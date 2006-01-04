@@ -805,6 +805,17 @@ public class HashtableTest : Assertion {
 		e.MoveNext ();
 		DictionaryEntry de = (DictionaryEntry) e.Current;
 	}
+
+	[Test]
+	public void SerializableSubClasses ()
+	{
+		Hashtable ht = new Hashtable ();
+		// see bug #76300
+		Assert ("Keys.IsSerializable", ht.Keys.GetType ().IsSerializable);
+		Assert ("Values.IsSerializable", ht.Values.GetType ().IsSerializable);
+		Assert ("GetEnumerator.IsSerializable", ht.GetEnumerator ().GetType ().IsSerializable);
+		Assert ("Synchronized.IsSerializable", Hashtable.Synchronized (ht).GetType ().IsSerializable);
+	}
 }
 
 [Serializable]
