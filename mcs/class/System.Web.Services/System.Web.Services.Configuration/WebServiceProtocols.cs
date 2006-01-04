@@ -36,11 +36,11 @@ namespace System.Web.Services.Configuration {
 	public enum WebServiceProtocols {
 		Unknown = 0,
 		HttpSoap = 1,
-		HttpGet = 2,
-		HttpPost = 4,
-		Documentation = 8,
-		HttpPostLocalhost = 16,
-		HttpSoap12 = 32,
+		HttpGet = 1 << 1,
+		HttpPost = 1 << 2,
+		Documentation = 1 << 3,
+		HttpPostLocalhost = 1 << 4,
+		HttpSoap12 = 1 << 5,
 		AnyHttpSoap = HttpSoap | HttpSoap12
 	}
 }

@@ -1,3 +1,11 @@
+2006-01-04  Chris Toshok  <toshok@ximian.com>
+
+	* WebServiceProtocols.cs: use 1 << n instead of explicit numbers.
+
+	* WebServicesSection.cs (Instance): new property to make it easier
+	to port over the existing configuration code.
+	(IsSupported): new method, same rationale.
+
 2006-01-03  Chris Toshok  <toshok@ximian.com>
 
 	* DiagnosticsElement.cs: new implementation.

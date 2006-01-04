@@ -32,10 +32,10 @@
 
 using System;
 using System.Configuration;
+using System.Web.Configuration;
 
 namespace System.Web.Services.Configuration
 {
-
         public sealed class WebServicesSection : ConfigurationSection
         {
                 static ConfigurationProperty conformanceWarningsProp;
@@ -162,6 +162,14 @@ namespace System.Web.Services.Configuration
                         get { return properties; }
                 }
 
+		internal static WebServicesSection Instance {
+			get { return (WebServicesSection)WebConfigurationManager.GetWebApplicationSection ("system.web/webServices"); }
+		}
+
+		internal static bool IsSupported (WebServiceProtocols proto)
+		{
+			return ((Instance.EnabledProtocols & proto) == proto && (proto != 0));
+		}
         }
 
 }
