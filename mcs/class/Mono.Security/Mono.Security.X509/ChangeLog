@@ -1,3 +1,8 @@
+2006-01-04  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X509Extension.cs: Added setter for Critical property (fix #77154).
+	Fixed asymmetry between encoding and decoding (fix #75781).
+
 2005-12-16  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* X509Chain.cs: Fix chain building. Patch from Vincent Cote-Roy.

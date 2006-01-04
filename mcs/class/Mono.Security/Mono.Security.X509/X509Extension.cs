@@ -5,7 +5,7 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -60,31 +60,35 @@ namespace Mono.Security.X509 {
 		public X509Extension (ASN1 asn1) 
 		{
 			if ((asn1.Tag != 0x30) || (asn1.Count < 2))
-				throw new ArgumentException ("Invalid X.509 extension");
+				throw new ArgumentException (Locale.GetText ("Invalid X.509 extension."));
 			if (asn1[0].Tag != 0x06)
-				throw new ArgumentException ("Invalid X.509 extension");
-			extnOid = ASN1Convert.ToOid (asn1 [0]);
+				throw new ArgumentException (Locale.GetText ("Invalid X.509 extension."));
+
+			extnOid = ASN1Convert.ToOid (asn1[0]);
 			extnCritical = ((asn1[1].Tag == 0x01) && (asn1[1].Value[0] == 0xFF));
 			extnValue = asn1 [asn1.Count - 1]; // last element
 			Decode ();
 		}
 
-		public X509Extension (X509Extension extension) : this () 
+		public X509Extension (X509Extension extension)
 		{
 			if (extension == null)
 				throw new ArgumentNullException ("extension");
-			if ((extension.Value.Tag != 0x04) || (extension.Value.Count != 0))
-				throw new ArgumentException ("Invalid extension");
+			if ((extension.Value == null) || (extension.Value.Tag != 0x04) || (extension.Value.Count != 1))
+				throw new ArgumentException (Locale.GetText ("Invalid X.509 extension."));
+
 			extnOid = extension.Oid;
 			extnCritical = extension.Critical;
 			extnValue = extension.Value;
 			Decode ();
 		}
 
+		// encode the extension *into* an OCTET STRING
 		protected virtual void Decode () 
 		{
 		}
 
+		// decode the extension from *inside* an OCTET STRING
 		protected virtual void Encode ()
 		{
 		}
@@ -94,10 +98,9 @@ namespace Mono.Security.X509 {
 				ASN1 extension = new ASN1 (0x30);
 				extension.Add (ASN1Convert.FromOid (extnOid));
 				if (extnCritical)
-					extension.Add (new ASN1 (0x01, new byte [1] { 0x01 }));
-				ASN1 os = extension.Add (new ASN1 (0x04));
+					extension.Add (new ASN1 (0x01, new byte [1] { 0xFF }));
 				Encode ();
-				os.Add (extnValue);
+				extension.Add (extnValue);
 				return extension;
 			}
 		}
@@ -108,6 +111,7 @@ namespace Mono.Security.X509 {
 
 		public bool Critical {
 			get { return extnCritical; }
+			set { extnCritical = value; }
 		}
 
 		// this gets overrided with more meaningful names
@@ -116,7 +120,12 @@ namespace Mono.Security.X509 {
 		}
 
 		public ASN1 Value {
-			get { return extnValue; }
+			get {
+				if (extnValue == null) {
+					Encode ();
+				}
+				return extnValue;
+			}
 		}
 
 		public override bool Equals (object obj) 
