@@ -64,9 +64,13 @@ namespace System.Web.Services.Description
 			RegisterExtensionType (typeof (SoapHeaderBinding));
 //			RegisterExtensionType (typeof (SoapHeaderFaultBinding));
 			RegisterExtensionType (typeof (SoapOperationBinding));
-			
+#if NET_2_0 && CONFIGURATION_2_0
+			foreach (TypeElement el in WebServicesSection.Instance.ServiceDescriptionFormatExtensionTypes)
+				RegisterExtensionType (el.Type);
+#else
 			foreach (Type type in WSConfig.Instance.FormatExtensionTypes)
 				RegisterExtensionType (type);
+#endif
 				
 			CreateExtensionSerializers ();
 		}
@@ -151,20 +155,38 @@ namespace System.Web.Services.Description
 		
 		public static ArrayList BuildExtensionImporters ()
 		{
+#if NET_2_0 && CONFIGURATION_2_0
+			return BuildExtensionList (WebServicesSection.Instance.SoapExtensionImporterTypes);
+#else
 			return BuildExtensionList (WSConfig.Instance.ExtensionImporterTypes);
+#endif
 		}
 		
 		public static ArrayList BuildExtensionReflectors ()
 		{
+#if NET_2_0 && CONFIGURATION_2_0
+			return BuildExtensionList (WebServicesSection.Instance.SoapExtensionReflectorTypes);
+#else
 			return BuildExtensionList (WSConfig.Instance.ExtensionReflectorTypes);
+#endif
 		}
 		
+#if NET_2_0 && CONFIGURATION_2_0
+		public static ArrayList BuildExtensionList (TypeElementCollection exts)
+#else
 		public static ArrayList BuildExtensionList (ArrayList exts)
+#endif
 		{
 			ArrayList extensionTypes = new ArrayList ();
 			
 			if (exts != null)
 			{
+#if NET_2_0 && CONFIGURATION_2_0
+				foreach (TypeElement econf in exts)
+				{
+					extensionTypes.Add (econf);
+				}
+#else
 				foreach (WSExtensionConfig econf in exts)
 				{
 					bool added = false;
@@ -179,10 +201,15 @@ namespace System.Web.Services.Description
 					}
 					if (!added) extensionTypes.Add (econf);
 				}
+#endif
 			}
 
 			ArrayList extensions = new ArrayList (extensionTypes.Count);
+#if NET_2_0 && CONFIGURATION_2_0
+			foreach (TypeElement econf in extensionTypes)
+#else
 			foreach (WSExtensionConfig econf in extensionTypes)
+#endif
 				extensions.Add (Activator.CreateInstance (econf.Type));
 				
 			return extensions;
