@@ -1,3 +1,7 @@
+2006-01-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile.am: Use CFLAGS_FOR_BUILD.
+
 2005-12-19  Zoltan Varga  <vargaz@gmail.com>
 
 	* monoburg.c (create_term): Fix warning.
