@@ -437,7 +437,7 @@ namespace System.Runtime.Serialization
 				if (IsUnsolvedObjectReference) return false;
 
 				// Embedded value objects cannot be assigned to their containers until fully completed
-				if (Member != null && (HasPendingFixups || Info != null))
+				if (ObjectInstance.GetType ().IsValueType && (HasPendingFixups || Info != null))
 					return false;
 
 				return true;

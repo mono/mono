@@ -1,3 +1,8 @@
+2006-01-04  Raja R Harinath  <rharinath@novell.com>
+
+	* ObjectManager.cs (ObjectRecord.IsInstanceReady): Fix regression
+	introduced in previous patch.  See the re-opened bug #76931.
+
 2005-12-15  Martin Baulig  <martin@ximian.com>
 
 	* ObjectManager.cs: When deserializing an object that has a
