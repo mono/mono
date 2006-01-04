@@ -1,3 +1,10 @@
+2006-01-03  Chris Toshok  <toshok@ximian.com>
+
+	* System.Web.Services.dll.sources: add the 2.0 config classes.
+
+	* Makefile (LIB_MCS_FLAGS): if PROFILE == net_2_0, include
+	-r:System.Configuration.dll
+
 2005-10-05  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.Web.Services_test.dll.sources : added ServiceDescriptionTest.cs

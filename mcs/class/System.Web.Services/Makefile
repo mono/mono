@@ -10,6 +10,11 @@ LIB_MCS_FLAGS = \
 	-r:System.EnterpriseServices.dll	\
 	-r:System.Xml.dll			\
 	-r:System.Web.dll
+
+ifeq (net_2_0, $(PROFILE))
+LIB_MCS_FLAGS += -r:System.Configuration.dll
+endif
+
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -nowarn:618
 
 include ../../build/library.make
