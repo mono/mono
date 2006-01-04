@@ -1248,7 +1248,7 @@ namespace System.Windows.Forms
 				// on a *nix platform we use "$HOME/.recently-used" to store our recently used files (GNOME, libegg like)
 				if ((platform == 4) || (platform == 128)) 
 				{
-					string personal_folder = Environment.GetFolderPath( Environment.SpecialFolder.Personal );
+					string personal_folder = ThemeEngine.Current.Places(UIIcon.PlacesPersonal);
 					string recently_used_path = Path.Combine( personal_folder, ".recently-used" );
 					
 					if ( File.Exists( recently_used_path ) )
@@ -1280,10 +1280,7 @@ namespace System.Windows.Forms
 							new_recent_item_node.AppendChild( new_child );
 							
 							new_child = xml_doc.CreateElement( "Timestamp" );
-							long seconds = 0;
-							#if __MonoCS__
-							Mono.Unix.Native.Syscall.time( out seconds );
-							#endif
+							long seconds = (long)( DateTime.UtcNow - new DateTime( 1970, 1, 1 ) ).TotalSeconds;
 							new_text_child = xml_doc.CreateTextNode( seconds.ToString( ) );
 							new_child.AppendChild( new_text_child );
 							
@@ -1352,10 +1349,7 @@ namespace System.Windows.Forms
 						new_recent_item_node.AppendChild( new_child );
 						
 						new_child = xml_doc.CreateElement( "Timestamp" );
-						long seconds = 0;
-						#if __MonoCS__
-						Mono.Unix.Native.Syscall.time( out seconds );
-						#endif
+						long seconds = (long)( DateTime.UtcNow - new DateTime( 1970, 1, 1 ) ).TotalSeconds;
 						new_text_child = xml_doc.CreateTextNode( seconds.ToString( ) );
 						new_child.AppendChild( new_text_child );
 						
@@ -1522,8 +1516,6 @@ namespace System.Windows.Forms
 				
 				private PopupButton lastPopupButton = null;
 				
-				private ImageList imageList = new ImageList();
-				
 				private int platform = (int) Environment.OSVersion.Platform;
 				
 				public PopupButtonPanel( FileDialogPanel fileDialogPanel )
@@ -1534,21 +1526,6 @@ namespace System.Windows.Forms
 					BackColor = Color.FromArgb( 128, 128, 128 );
 					Size = new Size( 85, 336 );
 					
-					// use ImageList to scale the bitmaps
-					imageList.ColorDepth = ColorDepth.Depth32Bit;
-					imageList.ImageSize = new Size( 38, 38 );
-//					imageList.Images.Add( (Image)Locale.GetResource( "last_open" ) );
-					imageList.Images.Add( MimeIconEngine.GetIconForMimeTypeAndSize( "recently/recently", imageList.ImageSize ) );
-					//imageList.Images.Add( (Image)Locale.GetResource( "desktop" ) );
-					imageList.Images.Add( MimeIconEngine.GetIconForMimeTypeAndSize( "desktop/desktop", imageList.ImageSize ) );
-					//imageList.Images.Add( (Image)Locale.GetResource( "folder_with_paper" ) );
-					imageList.Images.Add( MimeIconEngine.GetIconForMimeTypeAndSize( "directory/home", imageList.ImageSize ) );
-//					imageList.Images.Add( (Image)Locale.GetResource( "monitor-computer" ) );
-					imageList.Images.Add( MimeIconEngine.GetIconForMimeTypeAndSize( "workplace/workplace", imageList.ImageSize ) );
-					//imageList.Images.Add( (Image)Locale.GetResource( "monitor-planet" ) );
-					imageList.Images.Add( MimeIconEngine.GetIconForMimeTypeAndSize( "network/network", imageList.ImageSize ) );
-					imageList.TransparentColor = Color.Transparent;
-					
 					lastOpenButton = new PopupButton( );
 					desktopButton = new PopupButton( );
 					homeButton = new PopupButton( );
@@ -1556,14 +1533,14 @@ namespace System.Windows.Forms
 					networkButton = new PopupButton( );
 					
 					lastOpenButton.Size = new Size( 82, 64 );
-					lastOpenButton.Image = imageList.Images[ 0 ];
+					lastOpenButton.Image = ThemeEngine.Current.Images(UIIcon.PlacesRecentDocuments, 38);
 					lastOpenButton.BackColor = BackColor;
 					lastOpenButton.ForeColor = Color.White;
 					lastOpenButton.Location = new Point( 2, 2 );
 					lastOpenButton.Text = "Last Open";
 					lastOpenButton.Click += new EventHandler( OnClickButton );
 					
-					desktopButton.Image = imageList.Images[ 1 ];
+					desktopButton.Image = ThemeEngine.Current.Images(UIIcon.PlacesDesktop, 38);
 					desktopButton.BackColor = BackColor;
 					desktopButton.ForeColor = Color.White;
 					desktopButton.Size = new Size( 82, 64 );
@@ -1571,7 +1548,7 @@ namespace System.Windows.Forms
 					desktopButton.Text = "Desktop";
 					desktopButton.Click += new EventHandler( OnClickButton );
 					
-					homeButton.Image = imageList.Images[ 2 ];
+					homeButton.Image = ThemeEngine.Current.Images(UIIcon.PlacesPersonal, 38);
 					homeButton.BackColor = BackColor;
 					homeButton.ForeColor = Color.White;
 					homeButton.Size = new Size( 82, 64 );
@@ -1579,7 +1556,7 @@ namespace System.Windows.Forms
 					homeButton.Text = "Home";
 					homeButton.Click += new EventHandler( OnClickButton );
 					
-					workplaceButton.Image = imageList.Images[ 3 ];
+					workplaceButton.Image = ThemeEngine.Current.Images(UIIcon.PlacesMyComputer, 38);
 					workplaceButton.BackColor = BackColor;
 					workplaceButton.ForeColor = Color.White;
 					workplaceButton.Size = new Size( 82, 64 );
@@ -1587,7 +1564,7 @@ namespace System.Windows.Forms
 					workplaceButton.Text = "Workplace";
 					workplaceButton.Click += new EventHandler( OnClickButton );
 					
-					networkButton.Image = imageList.Images[ 4 ];
+					networkButton.Image = ThemeEngine.Current.Images(UIIcon.PlacesMyNetwork, 38);
 					networkButton.BackColor = BackColor;
 					networkButton.ForeColor = Color.White;
 					networkButton.Size = new Size( 82, 64 );
@@ -1611,39 +1588,49 @@ namespace System.Windows.Forms
 					if ( sender == lastOpenButton )
 					{
 						if ((platform == 4) || (platform == 128))
+							// do NOT change the following line!
+							// FileDialog uses a special handling for recently used files on *nix
+							// recently used files are not stored as links in a directory but
+							// as a xml file called .recently-used in the users home dir
+							// This matches the Freedesktop.org spec which gnome uses
 							fileDialogPanel.ChangeDirectory( this, FileDialog.FileDialogPanel.recently_string );
 						else
-							fileDialogPanel.ChangeDirectory( this, Environment.GetFolderPath( Environment.SpecialFolder.Recent ) );
+							fileDialogPanel.ChangeDirectory(this, ThemeEngine.Current.Places(UIIcon.PlacesRecentDocuments));
 					}
 					else
 					if ( sender == desktopButton )
 					{
-						fileDialogPanel.ChangeDirectory( this, Environment.GetFolderPath( Environment.SpecialFolder.Desktop ) );
+						fileDialogPanel.ChangeDirectory(this, ThemeEngine.Current.Places(UIIcon.PlacesDesktop));
 					}
 					else
 					if ( sender == homeButton )
 					{
-						fileDialogPanel.ChangeDirectory( this, Environment.GetFolderPath( Environment.SpecialFolder.Personal ) );
+						fileDialogPanel.ChangeDirectory(this, ThemeEngine.Current.Places(UIIcon.PlacesPersonal));
 					}
 					else
 					if ( sender == workplaceButton )
 					{
 						if ((platform == 4) || (platform == 128))
+							// do NOT change the following line!
+							// on *nix we do not have a special folder MyComputer
+							// so we use the root dir
+							// FIXME: the output should be the same as in gnome's Places->Computer
 							fileDialogPanel.ChangeDirectory(this, "/" );
 						else
-							fileDialogPanel.ChangeDirectory(this, Environment.GetFolderPath( Environment.SpecialFolder.MyComputer ) );
+							fileDialogPanel.ChangeDirectory(this, ThemeEngine.Current.Places(UIIcon.PlacesMyComputer));
 					}
 					else
 					if ( sender == networkButton )
 					{
-						
+						// FIXME: only available on win, see Theme.cs, MonoTodo
+						fileDialogPanel.ChangeDirectory(this, ThemeEngine.Current.Places(UIIcon.PlacesMyNetwork));
 					}
 				}
 				
 				public void SetPopupButtonStateByPath( string path )
 				{
 					if ( path == FileDialog.FileDialogPanel.recently_string || 
-					    path == Environment.GetFolderPath( Environment.SpecialFolder.Recent ) )
+					    path == ThemeEngine.Current.Places(UIIcon.PlacesRecentDocuments) )
 					{
 						if ( lastPopupButton != lastOpenButton )
 						{
@@ -1654,7 +1641,7 @@ namespace System.Windows.Forms
 						}
 					}
 					else
-					if ( path == Environment.GetFolderPath( Environment.SpecialFolder.Desktop ) )
+					if ( path == ThemeEngine.Current.Places(UIIcon.PlacesDesktop) )
 					{
 						if ( lastPopupButton != desktopButton )
 						{
@@ -1665,7 +1652,7 @@ namespace System.Windows.Forms
 						}
 					}
 					else
-					if ( path == Environment.GetFolderPath( Environment.SpecialFolder.Personal ) )
+					if ( path == ThemeEngine.Current.Places(UIIcon.PlacesPersonal) )
 					{
 						if ( lastPopupButton != homeButton )
 						{
@@ -1677,7 +1664,7 @@ namespace System.Windows.Forms
 					}
 					else
 					if ( path == "/" || 
-					    path == Environment.GetFolderPath( Environment.SpecialFolder.MyComputer ) )
+					    path == ThemeEngine.Current.Places(UIIcon.PlacesMyComputer) )
 					{
 						if ( lastPopupButton != workplaceButton )
 						{
@@ -1687,6 +1674,7 @@ namespace System.Windows.Forms
 							lastPopupButton = workplaceButton;
 						}
 					}
+					// TODO: add networkPopupButton
 					else
 					{
 						if ( lastPopupButton != null )
@@ -1737,10 +1725,8 @@ namespace System.Windows.Forms
 	// MWFFileView
 	internal class MWFFileView : ListView
 	{
-//		private ImageList fileViewSmallImageList = new ImageList();
-//		private ImageList fileViewBigImageList = new ImageList();
-		
 		private ArrayList filterArrayList;
+		
 		// store the FileStruct of all files in the current directory
 		private Hashtable fileHashtable = new Hashtable();
 		
@@ -1989,7 +1975,7 @@ namespace System.Windows.Forms
 		private ArrayList GetFreedesktopSpecRecentlyUsed( ) 
 		{
 			// check for GNOME and KDE
-			string personal_folder = Environment.GetFolderPath( Environment.SpecialFolder.Personal );
+			string personal_folder = ThemeEngine.Current.Places(UIIcon.PlacesPersonal);
 			string recently_used_path = Path.Combine( personal_folder, ".recently-used" );
 			
 			ArrayList files_al = new ArrayList( );
@@ -2320,12 +2306,12 @@ namespace System.Windows.Forms
 			
 			imageList.ColorDepth = ColorDepth.Depth32Bit;
 			imageList.ImageSize = new Size( 16, 16 );
-			imageList.Images.Add( MimeIconEngine.GetIconForMimeTypeAndSize( "recently/recently", imageList.ImageSize ) );
-			imageList.Images.Add( MimeIconEngine.GetIconForMimeTypeAndSize( "desktop/desktop", imageList.ImageSize ) );
-			imageList.Images.Add( MimeIconEngine.GetIconForMimeTypeAndSize( "directory/home", imageList.ImageSize ) );
-			imageList.Images.Add( MimeIconEngine.GetIconForMimeTypeAndSize( "workplace/workplace", imageList.ImageSize ) );
-			imageList.Images.Add( MimeIconEngine.GetIconForMimeTypeAndSize( "network/network", imageList.ImageSize ) );
-			imageList.Images.Add( MimeIconEngine.GetIconForMimeTypeAndSize( "inode/directory", imageList.ImageSize ) );
+			imageList.Images.Add(ThemeEngine.Current.Images(UIIcon.PlacesRecentDocuments, 16));
+			imageList.Images.Add(ThemeEngine.Current.Images(UIIcon.PlacesDesktop, 16));
+			imageList.Images.Add(ThemeEngine.Current.Images(UIIcon.PlacesPersonal, 16));
+			imageList.Images.Add(ThemeEngine.Current.Images(UIIcon.PlacesMyComputer, 16));
+			imageList.Images.Add(ThemeEngine.Current.Images(UIIcon.PlacesMyNetwork, 16));
+			imageList.Images.Add(ThemeEngine.Current.Images(UIIcon.NormalFolder, 16));
 			imageList.TransparentColor = Color.Transparent;
 			
 			if ((platform == 4) || (platform == 128))
@@ -2335,14 +2321,14 @@ namespace System.Windows.Forms
 			}
 			else
 			{
-				recently_tmp = Environment.GetFolderPath( Environment.SpecialFolder.Recent );
-				workplace_tmp = Environment.GetFolderPath( Environment.SpecialFolder.MyComputer );
+				recently_tmp = ThemeEngine.Current.Places(UIIcon.PlacesRecentDocuments);
+				workplace_tmp = ThemeEngine.Current.Places(UIIcon.PlacesMyComputer);
 			}
 			
 			Items.AddRange( new object[] {
 						new DirComboBoxItem( 0, "Recently used", recently_tmp, 0 ),
-						new DirComboBoxItem( 1, "Desktop", Environment.GetFolderPath( Environment.SpecialFolder.Desktop ), 0 ),
-						new DirComboBoxItem( 2, "Home", Environment.GetFolderPath( Environment.SpecialFolder.Personal ), 0 ),
+						new DirComboBoxItem( 1, "Desktop", ThemeEngine.Current.Places(UIIcon.PlacesDesktop), 0),
+						new DirComboBoxItem( 2, "Home", ThemeEngine.Current.Places(UIIcon.PlacesPersonal), 0 ),
 						new DirComboBoxItem( 3, "Workplace", workplace_tmp, 0 )
 				       }
 				       );
@@ -2368,17 +2354,17 @@ namespace System.Windows.Forms
 			int child_of = - 1;
 			
 			if ( currentPath == recently_tmp ||
-			    currentPath == Environment.GetFolderPath( Environment.SpecialFolder.Desktop ) ||
-			    currentPath == Environment.GetFolderPath( Environment.SpecialFolder.Personal ) || 
+			    currentPath == ThemeEngine.Current.Places(UIIcon.PlacesDesktop) ||
+			    currentPath == ThemeEngine.Current.Places(UIIcon.PlacesPersonal) || 
 			    currentPath == workplace_tmp )
 			{
 				if ( currentPath == recently_tmp )
 					selection = 0;
 				else
-				if ( currentPath == Environment.GetFolderPath( Environment.SpecialFolder.Desktop ) )
+				if ( currentPath == ThemeEngine.Current.Places(UIIcon.PlacesDesktop) )
 					selection = 1;
 				else
-				if ( currentPath == Environment.GetFolderPath( Environment.SpecialFolder.Personal ) )
+				if ( currentPath == ThemeEngine.Current.Places(UIIcon.PlacesPersonal) )
 					selection = 2;
 				else
 				if( currentPath == workplace_tmp )
@@ -2394,11 +2380,11 @@ namespace System.Windows.Forms
 			
 			Items.Add( new DirComboBoxItem( 0, "Recently used", recently_tmp, 0 ) );
 			
-			Items.Add( new DirComboBoxItem( 1, "Desktop", Environment.GetFolderPath( Environment.SpecialFolder.Desktop ), 0 ) );
+			Items.Add( new DirComboBoxItem( 1, "Desktop", ThemeEngine.Current.Places(UIIcon.PlacesDesktop), 0 ) );
 			if ( child_of == 1 )
 				selection = AppendToParent();
 			
-			Items.Add( new DirComboBoxItem( 2, "Home", Environment.GetFolderPath( Environment.SpecialFolder.Personal ), 0 ) );
+			Items.Add( new DirComboBoxItem( 2, "Home", ThemeEngine.Current.Places(UIIcon.PlacesPersonal), 0 ) );
 			if ( child_of == 2 )
 				selection = AppendToParent();
 				
@@ -2422,10 +2408,10 @@ namespace System.Windows.Forms
 			while ( di.Parent != null )
 			{
 				di = di.Parent;
-				if ( di.FullName == Environment.GetFolderPath( Environment.SpecialFolder.Desktop ) )
+				if ( di.FullName == ThemeEngine.Current.Places(UIIcon.PlacesDesktop) )
 					return 1;
 				else
-				if ( di.FullName == Environment.GetFolderPath( Environment.SpecialFolder.Personal ) )
+				if ( di.FullName == ThemeEngine.Current.Places(UIIcon.PlacesPersonal) )
 					return 2;
 				else
 				if ( di.FullName == workplace_tmp )

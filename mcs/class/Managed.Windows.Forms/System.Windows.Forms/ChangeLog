@@ -1,5 +1,12 @@
 2006-01-04  Alexander Olk  <alex.olk@googlemail.com>
 
+	* ThemeClearlooks.cs, FileDialog.cs:
+	  - Reflect the latest Theme class changes
+	  - Remove Mono.Unix.Syscall.time in FileDialg and replace it 
+	    with DateTime
+	    
+2006-01-04  Alexander Olk  <alex.olk@googlemail.com>
+
 	* Theme.cs: Cache UI resource images and resize them if needed
 
 2006-01-03  Peter Dennis Bartok  <pbartok@novell.com>
