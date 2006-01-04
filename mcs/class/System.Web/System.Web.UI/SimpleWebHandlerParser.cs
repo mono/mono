@@ -58,10 +58,15 @@ namespace System.Web.UI
 		string privateBinPath;
 		string baseDir;
 		string baseVDir;
+#if !CONFIGURATION_2_0
 		CompilationConfiguration compilationConfig;
+#endif
 		int appAssemblyIndex = -1;
 		Type cachedType;
 
+#if CONFIGURATION_2_0
+		[MonoTODO ("revisit the AddAssembliesInBin stuff")]
+#endif
 		protected SimpleWebHandlerParser (HttpContext context, string virtualPath, string physicalPath)
 		{
 			cachedType = CachingCompiler.GetTypeFromCache (physicalPath);
@@ -79,8 +84,10 @@ namespace System.Web.UI
 				appAssemblyIndex = assemblies.Add (location);
 
 			assemblies.AddRange (CompilationConfig.Assemblies);
+#if !CONFIGURATION_2_0
 			if (CompilationConfig.AssembliesInBin)
 				AddAssembliesInBin ();
+#endif
 
 			language = CompilationConfig.DefaultLanguage;
 
@@ -448,6 +455,13 @@ namespace System.Web.UI
 			}
 		}
 
+#if CONFIGURATION_2_0
+		CompilationSection CompilationConfig {
+			get {
+				return (CompilationSection)WebConfigurationManager.GetWebApplicationSection ("system.web/compilation");
+			}
+		}
+#else
 		internal CompilationConfiguration CompilationConfig {
 			get {
 				if (compilationConfig == null)
@@ -456,6 +470,7 @@ namespace System.Web.UI
 				return compilationConfig;
 			}
 		}
+#endif
 	}
 }
 

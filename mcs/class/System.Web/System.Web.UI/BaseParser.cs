@@ -46,9 +46,7 @@ namespace System.Web.UI
 		string baseDir;
 		string baseVDir;
 		ILocation location;
-#if CONFIGURATION_2_0
-		CompilationSection compilationConfig;
-#else
+#if !CONFIGURATION_2_0
 		CompilationConfiguration compilationConfig;
 #endif
 
