@@ -590,7 +590,7 @@ namespace Commons.Xml.Relaxng
 			return m;
 		}
 
-		#endif
+		#endregion
 	}
 }
 
