@@ -58,12 +58,15 @@ namespace System.Web.Security
 			if (context.SkipAuthorization)
 				return;
 
+#if CONFIGURATION_2_0
+			AuthorizationSection config = (AuthorizationSection) WebConfigurationManager.GetWebApplicationSection ("system.web/authorization");
+#else
 			AuthorizationConfig config = (AuthorizationConfig) context.GetConfig ("system.web/authorization");
 			if (config == null)
 				return;
-
+#endif
 			if (!config.IsValidUser (context.User, context.Request.HttpMethod)) {
-				HttpException e =  new HttpException (401, "Unauthorized");
+				HttpException e = new HttpException (401, "Unauthorized");
 				
 				context.Response.StatusCode = 401;
 				context.Response.Write (e.GetHtmlErrorMessage ());
