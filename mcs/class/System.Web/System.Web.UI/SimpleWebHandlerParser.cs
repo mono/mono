@@ -64,9 +64,6 @@ namespace System.Web.UI
 		int appAssemblyIndex = -1;
 		Type cachedType;
 
-#if CONFIGURATION_2_0
-		[MonoTODO ("revisit the AddAssembliesInBin stuff")]
-#endif
 		protected SimpleWebHandlerParser (HttpContext context, string virtualPath, string physicalPath)
 		{
 			cachedType = CachingCompiler.GetTypeFromCache (physicalPath);
@@ -83,10 +80,23 @@ namespace System.Web.UI
 			if (location != typeof (TemplateParser).Assembly.Location)
 				appAssemblyIndex = assemblies.Add (location);
 
+#if CONFIGURATION_2_0
+			bool addAssembliesInBin = false;
+			foreach (AssemblyInfo info in CompilationConfig.Assemblies) {
+				if (info.Assembly == "*")
+					addAssembliesInBin = true;
+				else
+					assemblies.Add (info.Assembly);
+			}
+			if (addAssembliesInBin)
+				AddAssembliesInBin ();
+#else
 			assemblies.AddRange (CompilationConfig.Assemblies);
-#if !CONFIGURATION_2_0
 			if (CompilationConfig.AssembliesInBin)
 				AddAssembliesInBin ();
+#endif
+
+#if !CONFIGURATION_2_0
 #endif
 
 			language = CompilationConfig.DefaultLanguage;

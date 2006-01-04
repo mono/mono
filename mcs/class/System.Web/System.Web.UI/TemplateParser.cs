@@ -74,7 +74,6 @@ namespace System.Web.UI {
 		Assembly srcAssembly;
 		int appAssemblyIndex = -1;
 
-		[MonoTODO ("deal with AddAssembliesInBin in the 2.0 case")]
 		internal TemplateParser ()
 		{
 			imports = new ArrayList ();
@@ -94,8 +93,15 @@ namespace System.Web.UI {
 
 			assemblies = new ArrayList ();
 #if CONFIGURATION_2_0
-			foreach (AssemblyInfo info in CompilationConfig.Assemblies)
-				AddAssemblyByName (info.Assembly);
+			bool addAssembliesInBin = false;
+			foreach (AssemblyInfo info in CompilationConfig.Assemblies) {
+				if (info.Assembly == "*")
+					addAssembliesInBin = true;
+				else
+					AddAssemblyByName (info.Assembly);
+			}
+			if (addAssembliesInBin)
+				AddAssembliesInBin ();
 #else
 			foreach (string a in CompilationConfig.Assemblies)
 				AddAssemblyByName (a);
