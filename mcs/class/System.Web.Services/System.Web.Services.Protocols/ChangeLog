@@ -1,5 +1,9 @@
 2006-01-04  Chris Toshok  <toshok@ximian.com>
 
+	* SoapDocumentationHandler.cs: add CONFIGURATION_2_0 stuff.
+
+2006-01-04  Chris Toshok  <toshok@ximian.com>
+
 	* WebServiceHandlerFactory.cs: add CONFIGURATION_2_0 stuff.
 
 	* SoapExtension.cs: add CONFIGURATION_2_0 stuff.

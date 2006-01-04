@@ -39,6 +39,7 @@ using System.Xml.Schema;
 using System.Web.Services.Description;
 using System.Web.Services.Discovery;
 using System.Web.Services.Configuration;
+using System.Configuration;
 using System.CodeDom;
 using System.CodeDom.Compiler;
 using Microsoft.CSharp;
@@ -75,8 +76,13 @@ namespace System.Web.Services.Protocols
 			if (key == "wsdl" || key == "schema" || key == "code" || key == "disco")
 				return;
 				
+#if NET_2_0 && CONFIGURATION_2_0
+			string help = WebServicesSection.Instance.WsdlHelpGenerator.Href;
+			string path = Path.GetDirectoryName (ConfigurationManager.OpenMachineConfiguration().FilePath);
+#else
 			string help = WSConfig.Instance.WsdlHelpPage;
 			string path = Path.GetDirectoryName (WSConfig.Instance.ConfigFilePath);
+#endif
 			string appPath = AppDomain.CurrentDomain.GetData (".appPath").ToString ();
 			string vpath;
 			if (path.StartsWith (appPath)) {
