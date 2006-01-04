@@ -1,5 +1,9 @@
 2006-01-04  Chris Toshok  <toshok@ximian.com>
 
+	* WebServicesSection.cs (EnabledProtocols): implement.
+
+2006-01-04  Chris Toshok  <toshok@ximian.com>
+
 	* WebServiceProtocols.cs: use 1 << n instead of explicit numbers.
 
 	* WebServicesSection.cs (Instance): new property to make it easier

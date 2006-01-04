@@ -108,8 +108,16 @@ namespace System.Web.Services.Configuration
                 }
 
 		[MonoTODO]
+		WebServiceProtocols enabledProtocols = WebServiceProtocols.Unknown;
                 public WebServiceProtocols EnabledProtocols {
-                        get { throw new NotImplementedException (); }
+                        get {
+				if (enabledProtocols == WebServiceProtocols.Unknown) {
+					foreach (ProtocolElement el in Protocols)
+						enabledProtocols |= el.Name;
+				}
+
+				return enabledProtocols;
+			}
                 }
 
                 [ConfigurationProperty ("protocols")]
