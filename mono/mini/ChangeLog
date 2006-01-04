@@ -1,3 +1,7 @@
+2006-01-03  Neale Ferguson <neale@sinenomine.net>
+
+	* mini-s390x.h, exceptions-s390x.c, inssel-s390x.brg: Fix compiler warnings
+
 2006-01-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* iltests.il: Add test for #77148.

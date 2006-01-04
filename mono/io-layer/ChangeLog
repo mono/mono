@@ -1,6 +1,6 @@
 2006-01-03  Neale Ferguson <neale@sinenomine.net>
 
-	* atomic.h: Correct s390x definitions.
+	* atomic.h: Correct s390x definitions and eliminate compiler warnings.
 
 2006-01-03  Sebastien Pouliot  <sebastien@ximian.com>
 
