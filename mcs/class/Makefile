@@ -34,9 +34,10 @@ default_SUBDIRS := \
 	System				\
 	System.XML			\
 	Mono.Security			\
-	System.Configuration	\
 	System				\
 	System.Security			\
+	System.Configuration		\
+	System				\
 	I18N				\
 	System.Drawing			\
 	System.EnterpriseServices	\

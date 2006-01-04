@@ -1,3 +1,10 @@
+2006-01-03  Chris Toshok  <toshok@ximian.com>
+
+	* Makefile (default_SUBDIRS): more futzing with ordering, thanks
+	to the complicated circular deps.  Build System.Configuration
+	after System.Security, and build System yet another time after
+	System.Configuration has been built.
+
 2005-12-22  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (default_SUBDIRS): Add Compat.ICSharpCode.SharpZipLib.
