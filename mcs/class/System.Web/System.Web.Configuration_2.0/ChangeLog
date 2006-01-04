@@ -1,3 +1,9 @@
+2006-01-04  Chris Toshok  <toshok@ximian.com>
+
+	* MachineKeySection.cs: bring over some more internal methods from
+	MachineKeyConfig, and call Set{Decryption,Validation}Key from
+	their respective property setters.
+
 2006-01-03  Chris Toshok  <toshok@ximian.com>
 
 	* AuthorizationSection.cs (IsValidUser): add analogous method from
