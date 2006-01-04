@@ -43,6 +43,8 @@ namespace System.Windows.Forms
 		MessageBoxQuestion,
 		MessageBoxWarning,
 		MessageBoxInfo,
+		
+		NormalFolder
 	}
 	
 	// Implements a pool of system resources	
@@ -51,6 +53,7 @@ namespace System.Windows.Forms
 		private Hashtable pens = new Hashtable ();
 		private Hashtable solidbrushes = new Hashtable ();
 		private Hashtable hatchbrushes = new Hashtable ();
+		private Hashtable uiImages = new Hashtable();
 		
 		public SystemResPool () {}
 		
@@ -92,6 +95,23 @@ namespace System.Windows.Forms
 			return brush;
 		}
 		
+		public void AddUIImage (Image image, string name, int size)
+		{
+			string hash = name + size.ToString();
+			
+			if (uiImages.Contains (hash))
+				return;
+			uiImages.Add (hash, image);
+		}
+		
+		public Image GetUIImage(string name, int size)
+		{
+			string hash = name + size.ToString();
+			
+			Image image = uiImages [hash] as Image;
+			
+			return image;
+		}
 	}
 
 	internal abstract class Theme
@@ -435,7 +455,7 @@ namespace System.Windows.Forms
 				return 16;
 			}
 		}
-
+		
 		[MonoTODO("Figure out where to point for My Network Places")]
 		public virtual string Places(UIIcon index) {
 			switch (index) {
@@ -471,48 +491,74 @@ namespace System.Windows.Forms
 		}
 
 		private Image GetSizedResourceImage(string name, int size) {
-			Image	image;
+			
+			Image image = ResPool.GetUIImage (name, size);
+			if (image != null)
+				return image;
+			
 			string	fullname;
 
 			if (size > 0) {
 				// Try name name_sizexsize
 				fullname = String.Format("{0}_{1}x{1}", name, size);
-				image = (Image)Locale.GetResource(fullname);
-				if (image != null) {
+				image = ResPool.GetUIImage (fullname, size);
+				if (image != null)
 					return image;
+				else {
+					image = (Image)Locale.GetResource(fullname);
+					if (image != null) {
+						ResPool.AddUIImage (image, fullname, size);
+						return image;
+					}
 				}
 
 				// Try name_size
 				fullname = String.Format("{0}_{1}", name, size);
-				image = (Image)Locale.GetResource(fullname);
+				image = ResPool.GetUIImage (fullname, size);
+				if (image != null)
+					return image;
+				else {
+					image = (Image)Locale.GetResource(fullname);
+					if (image != null) {
+						ResPool.AddUIImage (image, fullname, size);
+						return image;
+					}
+				}
+				
+				image = (Image)Locale.GetResource(name);
 				if (image != null) {
+					image = new Bitmap (image, new Size (size, size));
+					ResPool.AddUIImage (image, name, size);
 					return image;
 				}
 			}
 
 			// Just try name
-			return (Image)Locale.GetResource(name);
+			image = (Image)Locale.GetResource(name);
+			ResPool.AddUIImage (image, name, size);
+			return image;
 		}
-
+		
 		public virtual Image Images(UIIcon index) {
 			return Images(index, 0);
 		}
 			
-		[MonoTODO("Cache these to be less resource intensive")]
 		public virtual Image Images(UIIcon index, int size) {
 			switch (index) {
-				case UIIcon.PlacesRecentDocuments:	return GetSizedResourceImage("last_open", size);
-				
-				case UIIcon.PlacesDesktop:		return GetSizedResourceImage("desktop", size); // MimeIconEngine.GetIconForMimeTypeAndSize( "desktop/desktop", imageList.ImageSize )
-				case UIIcon.PlacesPersonal:		return GetSizedResourceImage("folder_with_paper", size); // MimeIconEngine.GetIconForMimeTypeAndSize( "directory/home", imageList.ImageSize )
-				case UIIcon.PlacesMyComputer:		return GetSizedResourceImage("monitor-computer", size);
-				case UIIcon.PlacesMyNetwork:		return GetSizedResourceImage("monitor-planet", size); // MimeIconEngine.GetIconForMimeTypeAndSize( "network/network", imageList.ImageSize )
+				case UIIcon.PlacesRecentDocuments:	return GetSizedResourceImage ("last_open", size);
+				case UIIcon.PlacesDesktop:		return GetSizedResourceImage ("desktop", size);
+				case UIIcon.PlacesPersonal:		return GetSizedResourceImage ("folder_with_paper", size);
+				case UIIcon.PlacesMyComputer:		return GetSizedResourceImage ("monitor-computer", size);
+				case UIIcon.PlacesMyNetwork:		return GetSizedResourceImage ("monitor-planet", size);
 
 				// Icons for message boxes
-				case UIIcon.MessageBoxError:		return GetSizedResourceImage("mbox_error.png", size);
-				case UIIcon.MessageBoxInfo:		return GetSizedResourceImage("mbox_info.png", size);
-				case UIIcon.MessageBoxQuestion:		return GetSizedResourceImage("mbox_question.png", size);
-				case UIIcon.MessageBoxWarning:		return GetSizedResourceImage("mbox_warn.png", size);
+				case UIIcon.MessageBoxError:		return GetSizedResourceImage ("mbox_error.png", size);
+				case UIIcon.MessageBoxInfo:		return GetSizedResourceImage ("mbox_info.png", size);
+				case UIIcon.MessageBoxQuestion:		return GetSizedResourceImage ("mbox_question.png", size);
+				case UIIcon.MessageBoxWarning:		return GetSizedResourceImage ("mbox_warn.png", size);
+				
+				// misc Icons
+				case UIIcon.NormalFolder:		return GetSizedResourceImage ("folder", size);
 
 				default: {
 					throw new ArgumentException("Invalid Icon type requested", "index");

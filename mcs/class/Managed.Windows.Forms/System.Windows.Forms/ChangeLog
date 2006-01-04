@@ -1,3 +1,7 @@
+2006-01-04  Alexander Olk  <alex.olk@googlemail.com>
+
+	* Theme.cs: Cache UI resource images and resize them if needed
+
 2006-01-03  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* RichTextBox.cs: FormatText is 1-based, make it so when SelectionFont
