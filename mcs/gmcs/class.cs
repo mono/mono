@@ -3819,6 +3819,9 @@ namespace Mono.CSharp {
 			if (param_types.Length != ParameterTypes.Length)
 				return false;
 
+			if (method.Parameters.HasArglist != Parameters.HasArglist)
+				return false;
+			
 			bool equal = true;
 			bool may_unify = MayUnify (this, method);
 
@@ -3843,11 +3846,15 @@ namespace Mono.CSharp {
 				Parameters info = ParameterInfo;
 				Parameters other_info = method.ParameterInfo;
 				for (int i = 0; i < info.Count; i++){
+					try {
 					if (info.ParameterModifier (i) != other_info.ParameterModifier (i)){
 						Report.SymbolRelatedToPreviousError (method);
 						Report.Error (663, Location, "`{0}': Methods cannot differ only on their use of ref and out on a parameters",
 							      GetSignatureForError ());
 						return false;
+					}} catch {
+						Console.WriteLine ("Method is: {0} {1}", method.Location, method);
+						Console.WriteLine ("this is: {0} {1}", Location, this);
 					}
 				}
 

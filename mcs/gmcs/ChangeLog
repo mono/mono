@@ -1,5 +1,11 @@
 2006-01-04  Miguel de Icaza  <miguel@novell.com>
 
+	* class.cs (MethodCore.IsDuplicateImplementation): This method was
+	doing a low-level comparission of parameter types.  It was lacking
+	a check for __argslist. 
+
+2006-01-04  Miguel de Icaza  <miguel@novell.com>
+
 	* cs-parser.jay (in_namespace_or_typename): This variable is used
 	to pass information down to member-name that we are parsing
 	namespace_or_type_name and that it should not activate the
@@ -53,12 +59,6 @@
 		Position save = current_position;
 		xxxx
 		current_position = save;
-
-	
-
-	
-
-
 
 2005-12-30  Miguel de Icaza  <miguel@novell.com>
 
