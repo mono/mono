@@ -5,9 +5,7 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-// (C) 2004 Novell (http://www.novell.com)
-//
-
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -103,8 +101,28 @@ namespace Mono.Security.X509.Extensions {
 
 		protected override void Encode ()
 		{
-			if (extnValue == null) {
-				extnValue = new ASN1 (0x03, new byte[] { 0x00, (byte)kubits });
+			extnValue = new ASN1 (0x04);
+
+			ushort ku = (ushort) kubits;
+			byte unused = 16;
+			if (ku > 0) {
+				// count the unused bits
+				for (unused = 15; unused > 0; unused--) {
+					if ((ku & 0x8000) == 0x8000)
+						break;
+					ku <<= 1;
+				}
+
+				if (kubits > Byte.MaxValue) {
+					unused -= 8;
+					extnValue.Add (new ASN1 (0x03, new byte[] { unused, (byte) kubits, (byte) (kubits >> 8) }));
+				} else {
+					extnValue.Add (new ASN1 (0x03, new byte[] { unused, (byte) kubits }));
+				}
+			} else {
+				// note: a BITSTRING with a 0 length is invalid (in ASN.1), so would an
+				// empty OCTETSTRING (at the parent level) so we're encoding a 0
+				extnValue.Add (new ASN1 (0x03, new byte[] { 7, 0 }));
 			}
 		}
 

@@ -4,9 +4,7 @@
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// (C) 2004 Novell (http://www.novell.com)
-//
-
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -86,6 +84,14 @@ namespace Mono.Security.X509.Extensions {
 
 		public override string Name {
 			get { return "Authority Key Identifier"; }
+		}
+
+		public byte[] Identifier {
+			get {
+				if (aki == null)
+					return null;
+				return (byte[]) aki.Clone (); 
+			}
 		}
 
 		public override string ToString () 

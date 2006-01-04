@@ -1,3 +1,16 @@
+2006-01-04  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AuthorityKeyIdentifierExtension.cs: Added property to publish the 
+	identifier. Fix bug #77155.
+	* BasicConstraintsExtension.cs: Fix encoding to include the octet 
+	string (#75781). Fix encoding when the key usage > 255.
+	* ExtendedKeyUsageExtension.cs: Fix encoding to include the octet 
+	string (#75781).
+	* KeyUsageExtension.cs: Fix encoding to include the octet string 
+	(#75781). Added NoPathLengthConstraint (-1) as it is different than
+	0. Throw if PathLenConstraint is negative (unless it's -1). Do not
+	encode PathLenConstraint if CA isn't set.
+
 2005-02-25  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CRLDistributionPointsExtension.cs: Added more decoding code (but 

@@ -5,9 +5,7 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-// (C) 2004 Novell (http://www.novell.com)
-//
-
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -56,12 +54,15 @@ namespace Mono.Security.X509.Extensions {
 #endif
 	class BasicConstraintsExtension : X509Extension {
 
+		public const int NoPathLengthConstraint = -1;
+
 		private bool cA;
 		private int pathLenConstraint;
 
 		public BasicConstraintsExtension () : base () 
 		{
 			extnOid = "2.5.29.19";
+			pathLenConstraint = NoPathLengthConstraint;
 		}
 
 		public BasicConstraintsExtension (ASN1 asn1) : base (asn1) {}
@@ -72,7 +73,7 @@ namespace Mono.Security.X509.Extensions {
 		{
 			// default values
 			cA = false;
-			pathLenConstraint = 0; // no constraint
+			pathLenConstraint = NoPathLengthConstraint;
 
 			ASN1 sequence = new ASN1 (extnValue.Value);
 			if (sequence.Tag != 0x30)
@@ -89,13 +90,15 @@ namespace Mono.Security.X509.Extensions {
 
 		protected override void Encode () 
 		{
-			if (extnValue == null) {
-				extnValue = new ASN1 (0x30);
-				if (cA)
-					extnValue.Add (new ASN1 (0x01, new byte[] { 0xFF }));
-				if (pathLenConstraint > 0)
-					extnValue.Add (ASN1Convert.FromInt32 (pathLenConstraint));
-			}
+			ASN1 seq = new ASN1 (0x30);
+			if (cA)
+				seq.Add (new ASN1 (0x01, new byte[] { 0xFF }));
+			// CAs MUST NOT include the pathLenConstraint field unless the cA boolean is asserted
+			if (cA && (pathLenConstraint >= 0))
+				seq.Add (ASN1Convert.FromInt32 (pathLenConstraint));
+
+			extnValue = new ASN1 (0x04);
+			extnValue.Add (seq);
 		}
 
 		public bool CertificateAuthority {
@@ -109,7 +112,13 @@ namespace Mono.Security.X509.Extensions {
 
 		public int PathLenConstraint {
 			get { return pathLenConstraint; }
-			set { pathLenConstraint = value; }
+			set {
+				if (value < NoPathLengthConstraint) {
+					string msg = Locale.GetText ("PathLenConstraint must be positive or -1 for none ({0}).", value);
+					throw new ArgumentOutOfRangeException (msg);
+				}
+				pathLenConstraint = value;
+			}
 		}
 
 		public override string ToString () 
@@ -119,7 +128,7 @@ namespace Mono.Security.X509.Extensions {
 			sb.Append ((cA) ? "CA" : "End Entity");
 			sb.Append (Environment.NewLine);
 			sb.Append ("Path Length Constraint=");
-			if (pathLenConstraint == 0)
+			if (pathLenConstraint == NoPathLengthConstraint)
 				sb.Append ("None");
 			else
 				sb.Append (pathLenConstraint.ToString (CultureInfo.InvariantCulture));

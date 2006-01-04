@@ -5,9 +5,7 @@
 //	Sebastien Pouliot <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-// (C) 2004 Novell (http://www.novell.com)
-//
-
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -77,12 +75,13 @@ namespace Mono.Security.X509.Extensions {
 
 		protected override void Encode () 
 		{
-			if (extnValue == null) {
-				extnValue = new ASN1 (0x30);
-				foreach (string oid in keyPurpose) {
-					extnValue.Add (ASN1Convert.FromOid (oid));
-				}
+			ASN1 seq = new ASN1 (0x30);
+			foreach (string oid in keyPurpose) {
+				seq.Add (ASN1Convert.FromOid (oid));
 			}
+
+			extnValue = new ASN1 (0x04);
+			extnValue.Add (seq);
 		}
 
 		public ArrayList KeyPurpose {
