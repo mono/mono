@@ -39,6 +39,10 @@ using System.Web.Services.Configuration;
 using System.Web.SessionState;
 using System.Web.UI;
 using System.Collections.Specialized;
+#if NET_2_0 && CONFIGURATION_2_0
+using WSConfig = System.Web.Services.Configuration.WebServicesSection;
+using WSProtocol = System.Web.Services.Configuration.WebServiceProtocols;
+#endif
 
 namespace System.Web.Services.Protocols
 {

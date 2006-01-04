@@ -1,3 +1,9 @@
+2006-01-04  Chris Toshok  <toshok@ximian.com>
+
+	* WebServiceHandlerFactory.cs: add CONFIGURATION_2_0 stuff.
+
+	* SoapExtension.cs: add CONFIGURATION_2_0 stuff.
+
 2005-09-26  Lluis Sanchez Gual <lluis@novell.com>
 
 	* LogicalMethodInfo.cs: GetCustomAttribute* does not return
