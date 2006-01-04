@@ -41,11 +41,11 @@ namespace System.Drawing
 		{	
 		}
 
-		public Region (Rectangle rect) : this(new geom.Area(new awt.Rectangle(rect.X,rect.Y,rect.Width,rect.Height)))
+		public Region (Rectangle rect) : this(new geom.Area(rect.NativeObject))
 		{
 		}
 
-		public Region (RectangleF rect) : this(new geom.Area(new geom.Rectangle2D.Float(rect.X,rect.Y,rect.Width,rect.Height)))
+		public Region (RectangleF rect) : this(new geom.Area(rect.NativeObject))
 		{
 		}
 
@@ -67,19 +67,19 @@ namespace System.Drawing
 
 		public void Union (Rectangle rect)
 		{                                    
-			NativeObject.add(new geom.Area(new awt.Rectangle(rect.X,rect.Y,rect.Width,rect.Height)));
+			NativeObject.add(new geom.Area(rect.NativeObject));
 		}
 
 		public void Union (RectangleF rect)
 		{
-			NativeObject.add(new geom.Area(new geom.Rectangle2D.Float(rect.X,rect.Y,rect.Width,rect.Height)));
+			NativeObject.add(new geom.Area(rect.NativeObject));
 		}
 
 		public void Union (Region region)
 		{
 			if (region == null)
 				throw new ArgumentNullException("region");
-			NativeObject.add(new geom.Area(region.NativeObject));
+			NativeObject.add(region.NativeObject);
 		}
 		#endregion                                                                                 
 
@@ -94,19 +94,19 @@ namespace System.Drawing
 
 		public void Intersect (Rectangle rect)
 		{
-			NativeObject.intersect(new geom.Area(new awt.Rectangle(rect.X,rect.Y,rect.Width,rect.Height)));
+			NativeObject.intersect(new geom.Area(rect.NativeObject));
 		}
 
 		public void Intersect (RectangleF rect)
 		{
-			NativeObject.intersect(new geom.Area(new geom.Rectangle2D.Float(rect.X,rect.Y,rect.Width,rect.Height)));
+			NativeObject.intersect(new geom.Area(rect.NativeObject));
 		}
 
 		public void Intersect (Region region)
 		{
 			if (region == null)
 				throw new ArgumentNullException("region");
-			NativeObject.intersect(new geom.Area(region.NativeObject));
+			NativeObject.intersect(region.NativeObject);
 		}
 		#endregion
 
@@ -123,14 +123,14 @@ namespace System.Drawing
 
 		public void Complement (Rectangle rect)
 		{
-			geom.Area a = new geom.Area(new geom.Area(new awt.Rectangle(rect.X,rect.Y,rect.Width,rect.Height)));
+			geom.Area a = new geom.Area(rect.NativeObject);
 			a.subtract(NativeObject);
 			Shape = a;
 		}
 
 		public void Complement (RectangleF rect)
 		{
-			geom.Area a = new geom.Area(new geom.Area(new geom.Rectangle2D.Float(rect.X,rect.Y,rect.Width,rect.Height)));
+			geom.Area a = new geom.Area(rect.NativeObject);
 			a.subtract(NativeObject);
 			Shape = a;
 		}
@@ -139,7 +139,7 @@ namespace System.Drawing
 		{
 			if (region == null)
 				throw new ArgumentNullException("region");
-			geom.Area a = new geom.Area(region);
+			geom.Area a = (geom.Area)region.NativeObject.clone();
 			a.subtract(NativeObject);
 			Shape = a;
 		}
@@ -156,12 +156,12 @@ namespace System.Drawing
 
 		public void Exclude (Rectangle rect)
 		{
-			NativeObject.subtract(new geom.Area(new awt.Rectangle(rect.X,rect.Y,rect.Width,rect.Height)));
+			NativeObject.subtract(new geom.Area(rect.NativeObject));
 		}
 
 		public void Exclude (RectangleF rect)
 		{
-			NativeObject.subtract(new geom.Area(new geom.Rectangle2D.Float(rect.X,rect.Y,rect.Width,rect.Height)));
+			NativeObject.subtract(new geom.Area(rect.NativeObject));
 		}
 
 		public void Exclude (Region region)
@@ -183,12 +183,12 @@ namespace System.Drawing
 
 		public void Xor (Rectangle rect)
 		{
-			NativeObject.exclusiveOr(new geom.Area(new awt.Rectangle(rect.X,rect.Y,rect.Width,rect.Height)));
+			NativeObject.exclusiveOr(new geom.Area(rect.NativeObject));
 		}
 
 		public void Xor (RectangleF rect)
 		{
-			NativeObject.exclusiveOr(new geom.Area(new geom.Rectangle2D.Float(rect.X,rect.Y,rect.Width,rect.Height)));
+			NativeObject.exclusiveOr(new geom.Area(rect.NativeObject));
 		}
 
 		public void Xor (Region region)
@@ -205,8 +205,7 @@ namespace System.Drawing
 		{
 			if (graphics == null)
 				throw new ArgumentNullException("graphics");
-			geom.Rectangle2D r = NativeObject.getBounds2D();
-			return new RectangleF((float)r.getX(),(float)r.getY(),(float)r.getWidth(),(float)r.getHeight());                        
+			return new RectangleF(NativeObject.getBounds2D());
 		}
 		#endregion
 
@@ -214,9 +213,7 @@ namespace System.Drawing
 		//
 		public void Translate (int dx, int dy)
 		{
-			NativeObject.transform(geom.AffineTransform.getTranslateInstance(
-				(float)dx,
-				(float)dy));
+			Translate((float)dx, (float)dy);
 		}
 
 		public void Translate (float dx, float dy)
