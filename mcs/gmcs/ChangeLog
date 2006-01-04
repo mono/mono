@@ -4,62 +4,6 @@
 	doing a low-level comparission of parameter types.  It was lacking
 	a check for __argslist. 
 
-2006-01-04  Miguel de Icaza  <miguel@novell.com>
-
-	* cs-parser.jay (in_namespace_or_typename): This variable is used
-	to pass information down to member-name that we are parsing
-	namespace_or_type_name and that it should not activate the
-	grammar deambiguation.
-
-	(namespace_or_type_name): Inline the member_name production here
-	so we can avoid a shift/reduce conflict as we need to turn off
-	simple-name-deamiguation after the identifier is seen. 
-
-	(primary_expression): Replace member_name and IDENTIFIER
-	DOUBLE_COLON IDENTIFIER rules with a merged rule.  This is
-	required to control the lexer simple-name-deambuguation feature
-	which needs to be activated after the first IDENTIFIER has been
-	parsed.
-
-	The new merged rule is member_name_or_qualified_alias.
-
-	(member_name_or_qualified_alias): This rules is a combination of
-	member_name and IDENTIFIER DOUBLE_COLON IDENTIFIER.   After the
-	first IDENTIFIER is parsed we enable the simple-name-deambuguation
-	flag in the lexer if we are not in a namespace or typename. 
-
-	* cs-tokenizer.cs: Add support for simple-name-deambuguation which
-	is specified in section 9.2.3 of the third edition of the C#
-	specification. 
-
-	simple-name-deambuguation is a short-hand for the actual required
-	cases: simple-name, member-access and pointer-member-access.
-	During those context we must check the token to deambiguate the
-	expression.
-
-	(next_token_is_allowed_after_generic_closing): This routine
-	implements the check for the next-token.
-
-	This routine currently contains a hack: it considers "[" a valid
-	character after the >.  This is against the spec, but we require
-	it for this particular cast:
-
-		(Blah<a,b>[])
-
-	This is probably a sign that something is wrong elsewhere.
-
-	(Position): Introduce a new class to track the current position
-	instead of saving all the state everywhere.  The state was being
-	incorrecly saved/restored in the past (not complete enough
-	everywhere).  
-
-	Maybe this should become a struct, and saving should not use a
-	parallel stack, but just use a construct like:
-
-		Position save = current_position;
-		xxxx
-		current_position = save;
-
 2005-12-30  Miguel de Icaza  <miguel@novell.com>
 
 	* expression.cs (ParameterReference.DoResolveBase): Allow
