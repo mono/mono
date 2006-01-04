@@ -6,7 +6,7 @@
 //
 
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -854,6 +854,7 @@ namespace System.Collections {
 
 		private enum EnumeratorMode : int {KEY_MODE = 0, VALUE_MODE, ENTRY_MODE};
 
+		[Serializable]
 		private sealed class Enumerator : IDictionaryEnumerator, IEnumerator {
 
 			private Hashtable host;
@@ -958,8 +959,7 @@ namespace System.Collections {
 			}
 		}
 
-
-
+		[Serializable]
 		private class HashKeys : ICollection, IEnumerable {
 
 			private Hashtable host;
@@ -1011,7 +1011,7 @@ namespace System.Collections {
 			}
 		}
 
-
+		[Serializable]
 		private class HashValues : ICollection, IEnumerable {
 
 			private Hashtable host;

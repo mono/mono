@@ -1,3 +1,8 @@
+2006-01-04  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Hashtable.cs: Mark all inner classes as [Serializable] to match MS
+	behaviour. Fix bug #76300.
+
 2005-12-19  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ArrayList.cs: Fix default capacity under 2.0 (and unit tests under 
