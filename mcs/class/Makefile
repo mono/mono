@@ -29,7 +29,7 @@ net_1_1_java_SUBDIRS = \
 	System.Runtime.Serialization.Formatters.Soap	\
 	System.Runtime.Remoting
 
-default_SUBDIRS := \
+common_dirs := \
 	corlib				\
 	System				\
 	System.XML			\
@@ -80,20 +80,22 @@ default_SUBDIRS := \
 	Microsoft.Vsa			\
 	Mono.Cairo                      \
 	IBM.Data.DB2			\
-	Microsoft.JScript		\
-	FirebirdSql.Data.Firebird
+	Microsoft.JScript
 
-net_2_0_ONLY_SUBDIRS := \
+default_dirs := FirebirdSql.Data.Firebird
+
+net_2_0_dirs := \
 	Microsoft.Build.Framework	\
 	Microsoft.Build.Utilities	\
 	Microsoft.Build.Engine		\
 	Microsoft.Build.Tasks
 
-net_2_0_SUBDIRS := $(default_SUBDIRS) $(net_2_0_ONLY_SUBDIRS)
+default_SUBDIRS := $(common_dirs) $(default_dirs)
+net_2_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs)
 
 include ../build/rules.make
 
-SUBDIRS = $(default_SUBDIRS)
+SUBDIRS = $(common_dirs) $(default_dirs) $(net_2_0_dirs)
 
 # These libraries below are either unimplemented or don't compile, but
 # I wrote makefiles for them.
@@ -103,7 +105,6 @@ BROKEN_SUBDIRS = \
 	Mono.Globalization
 
 DIST_ONLY_SUBDIRS = \
-	$(net_2_0_ONLY_SUBDIRS) \
 	$(BROKEN_SUBDIRS)
 
 # No new makefiles for: System.Messaging, System.Web.Mobile,
