@@ -1,3 +1,10 @@
+2006-01-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlTextWriterTests.cs : removed silly part from
+	  WriteStartElement_XmlPrefix (). We are not reproducing MS bugs.
+	  (kept remaining part of this test; see if it makes sense after
+	  bug #77094 got fixed).
+
 2005-12-29  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* XmlTextWriterTests.cs: Do not yet enable tests for WriteWhitespace

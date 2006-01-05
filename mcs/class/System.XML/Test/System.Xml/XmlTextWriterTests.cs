@@ -525,7 +525,7 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-		[Category ("NotWorking")] // bug #77093: namespace declaration is not output if prefix is "xml"
+		[Category ("NotWorking")]
 		public void WriteStartElement_XmlPrefix ()
 		{
 			// uncomment the next code block once bug #77094 has been fixed.
@@ -549,11 +549,6 @@ namespace MonoTests.System.Xml
 			sw.GetStringBuilder ().Length = 0;
 			CreateXmlTextWriter ();
 			*/
-
-			xtw.WriteStartElement ("xml", "something", "http://www.w3.org/XML/1998/namespace");
-			xtw.WriteEndElement ();
-			Assert.AreEqual ("<xml:something xmlns:xml='http://www.w3.org/XML/1998/namespace' />", 
-				StringWriterText, "#4");
 		}
 
 		[Test]
