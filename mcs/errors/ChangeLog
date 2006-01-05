@@ -1,3 +1,7 @@
+2006-01-06  Ankit Jain  <jankit@novell.com>
+
+	* known-issues-gmcs: Removed cs0619-18.cs and cs0619-24.cs (working now).
+
 2005-12-21  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* CSFriendAssembly-lib.cs: Update friend assembly info
