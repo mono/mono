@@ -6455,14 +6455,9 @@ namespace Mono.CSharp {
 			}
 
 			// FIXME - PropertyAttributes.HasDefault ?
-			
-			PropertyAttributes prop_attr = PropertyAttributes.None;
-			if (!IsInterface)
-				prop_attr |= PropertyAttributes.RTSpecialName |
-					PropertyAttributes.SpecialName;
 
 			PropertyBuilder = Parent.TypeBuilder.DefineProperty (
-			     Name, prop_attr, MemberType, null);
+			     Name, PropertyAttributes.None, MemberType, null);
 			
 			if (!Get.IsDummy)
 				PropertyBuilder.SetGetMethod (GetBuilder);
@@ -7109,10 +7104,6 @@ namespace Mono.CSharp {
 		       
 		public override bool Define ()
 		{
-			PropertyAttributes prop_attr =
-				PropertyAttributes.RTSpecialName |
-				PropertyAttributes.SpecialName;
-			
 			if (!base.Define ())
 				return false;
 
@@ -7189,7 +7180,7 @@ namespace Mono.CSharp {
 			}
 
 			PropertyBuilder = Parent.TypeBuilder.DefineProperty (
-				Name, prop_attr, MemberType, ParameterTypes);
+				Name, PropertyAttributes.None, MemberType, ParameterTypes);
 			
 			if (!Get.IsDummy)
 				PropertyBuilder.SetGetMethod (GetBuilder);

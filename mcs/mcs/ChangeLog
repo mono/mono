@@ -1,3 +1,8 @@
+2006-01-05  Jb Evain  <jbevain@gmail.com>
+
+	* class.cs (Property.Define, Indexer.Define): do not tag the
+	properties as SpecialName | RTSpecialName.
+
 2006-01-04  Miguel de Icaza  <miguel@novell.com>
 
 	* class.cs (MethodCore.IsDuplicateImplementation): This method was
