@@ -9699,8 +9699,8 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 
 		/* FIXME: */
 		for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
-			bb->max_ireg = 64000;
-			bb->max_freg = 64000;
+			bb->max_ireg = cfg->next_vireg;
+			bb->max_freg = cfg->next_vfreg;
 		}
 	}
 	else

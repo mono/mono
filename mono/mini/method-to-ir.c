@@ -748,7 +748,7 @@ mono_print_bb_code_new (MonoBasicBlock *bb) {
         MONO_ADD_INS ((cfg)->cbb, inst); \
 	} while (0)
 
-/* Emit a conditional branch and start a new basic block */
+/* Emit a one-way conditional branch and start a new basic block */
 #define	MONO_EMIT_NEW_BRANCH_BLOCK2(cfg,op,truebb) do { \
         MonoInst *ins; \
         MonoBasicBlock *falsebb; \
@@ -767,6 +767,18 @@ mono_print_bb_code_new (MonoBasicBlock *bb) {
         MONO_ADD_INS ((cfg)->cbb, ins); \
 	    cfg->cbb->next_bb = falsebb; \
         cfg->cbb = falsebb; \
+	} while (0)
+
+/* Emit a two-way conditional branch */
+#define	MONO_EMIT_NEW_BRANCH_BLOCK3(cfg,op,truebb,falsebb) do { \
+        MonoInst *ins; \
+        MONO_INST_NEW ((cfg), (ins), (op)); \
+		ins->inst_many_bb = mono_mempool_alloc (cfg->mempool, sizeof(gpointer)*2);	\
+        ins->inst_true_bb = (truebb); \
+        ins->inst_false_bb = (falsebb); \
+        link_bblock ((cfg), (cfg)->cbb, (truebb)); \
+        link_bblock ((cfg), (cfg)->cbb, (falsebb)); \
+        MONO_ADD_INS ((cfg)->cbb, ins); \
 	} while (0)
 
 #define	MONO_EMIT_NEW_BRANCH_LABEL(cfg,op,label) do { \
@@ -3089,7 +3101,7 @@ handle_cisinst (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned char
 	2) if the object is a proxy whose type cannot be determined */
 
 	MonoInst *ins;
-	MonoBasicBlock *true_bb, *false_bb, *false2_bb, *end_bb, *no_proxy_bb;
+	MonoBasicBlock *true_bb, *false_bb, *false2_bb, *end_bb, *no_proxy_bb, *interface_fail_bb;
 	int obj_reg = src->dreg;
 	int dreg = alloc_ireg (cfg);
 	int tmp_reg = alloc_preg (cfg);
@@ -3110,8 +3122,12 @@ handle_cisinst (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned char
 	MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, CEE_BEQ, false_bb);
 
 	if (klass->flags & TYPE_ATTRIBUTE_INTERFACE) {
+		NEW_BBLOCK (cfg, interface_fail_bb);
+		ADD_BBLOCK (cfg, cfg->cbb_hash, interface_fail_bb);
+
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, tmp_reg, obj_reg, G_STRUCT_OFFSET (MonoObject, vtable));
-		mini_emit_iface_cast (cfg, tmp_reg, klass, NULL, true_bb);
+		mini_emit_iface_cast (cfg, tmp_reg, klass, interface_fail_bb, true_bb);
+		MONO_START_BB (cfg, interface_fail_bb);
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, klass_reg, tmp_reg, G_STRUCT_OFFSET (MonoVTable, klass));
 		
 		if (cfg->compile_aot) {
@@ -3187,7 +3203,7 @@ handle_ccastclass (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned c
 	an InvalidCastException exception is thrown otherwhise*/
 	
 	MonoInst *ins;
-	MonoBasicBlock *end_bb, *ok_result_bb, *no_proxy_bb;
+	MonoBasicBlock *end_bb, *ok_result_bb, *no_proxy_bb, *interface_fail_bb;
 	int obj_reg = src->dreg;
 	int dreg = alloc_ireg (cfg);
 	int tmp_reg = alloc_preg (cfg);
@@ -3202,10 +3218,12 @@ handle_ccastclass (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned c
 	MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, CEE_BEQ, ok_result_bb);
 
 	if (klass->flags & TYPE_ATTRIBUTE_INTERFACE) {
+		NEW_BBLOCK (cfg, interface_fail_bb);
+		ADD_BBLOCK (cfg, cfg->cbb_hash, interface_fail_bb);
 	
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, tmp_reg, obj_reg, G_STRUCT_OFFSET (MonoObject, vtable));
-		mini_emit_iface_cast (cfg, tmp_reg, klass, NULL, ok_result_bb);
-		
+		mini_emit_iface_cast (cfg, tmp_reg, klass, interface_fail_bb, ok_result_bb);
+		MONO_START_BB (cfg, interface_fail_bb);
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, klass_reg, tmp_reg, G_STRUCT_OFFSET (MonoVTable, klass));
 
 		if (cfg->compile_aot) {
@@ -4219,27 +4237,22 @@ void
 mono_decompose_long_opts (MonoCompile *cfg)
 {
 #if SIZEOF_VOID_P == 4
-	MonoBasicBlock *bb;
+	MonoBasicBlock *bb, *first_bb;
 
 	/**
 	 * Create a dummy bblock and emit code into it so we can use the normal 
 	 * code generation macros.
 	 */
 	cfg->cbb = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoBasicBlock));
+	first_bb = cfg->cbb;
 
 	for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
 		MonoInst *tree = bb->code;	
 		MonoInst *prev = NULL;
 
-		/* FIXME: Move this to a function */
 		   /*
-		tree = bb->code;	
 		g_print ("BEFORE LOWER_LONG_OPTS: %d:\n", bb->block_num);
-		if (!tree)
-			continue;
-		for (; tree; tree = tree->next) {
-			mono_print_ins (tree);
-		}
+		mono_print_bb_code_new (bb);
 		*/
 
 		tree = bb->code;
@@ -4539,7 +4552,13 @@ mono_decompose_long_opts (MonoCompile *cfg)
 				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_XOR_IMM, tree->dreg, tree->sreg1, tree->inst_ls_word);
 				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_XOR_IMM, tree->dreg + 1, tree->sreg1 + 1, tree->inst_ms_word);
 				break;
-
+			case OP_LSHR:
+#ifdef __i386__
+				NOT_IMPLEMENTED;
+#else
+#error "Not implemented"
+#endif
+				break;
 			case OP_LCOMPARE: {
 				MonoInst *next = tree->next;
 
@@ -4548,9 +4567,10 @@ mono_decompose_long_opts (MonoCompile *cfg)
 				switch (next->opcode) {
 				case OP_LBEQ:
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1, tree->sreg2);
-					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBNE_UN, next->inst_false_bb);
+					MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, OP_IBNE_UN, next->inst_false_bb);
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 1, tree->sreg2 + 1);
-					next->opcode = OP_IBEQ;
+					MONO_EMIT_NEW_BRANCH_BLOCK3 (cfg, OP_IBEQ, next->inst_true_bb, next->inst_false_bb);
+					next->opcode = CEE_NOP;
 					break;
 				case OP_LBNE_UN:
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1, tree->sreg2);
@@ -4711,29 +4731,67 @@ mono_decompose_long_opts (MonoCompile *cfg)
 
 			if (cfg->cbb->code) {
 				/* Replace the original instruction with the new code sequence */
-				if (prev)
-					prev->next = cfg->cbb->code;
-				else
-					bb->code = cfg->cbb->code;
-				cfg->cbb->last_ins->next = tree->next;
-				if (tree->next == NULL)
-					bb->last_ins = cfg->cbb->last_ins;
-				prev = cfg->cbb->last_ins;
 
-				cfg->cbb->code = cfg->cbb->last_ins = NULL;
+				if (cfg->cbb == first_bb) {
+					/* 
+					 * Only one replacement bb, merge the code into
+					 * the current bb.
+					 */
+
+					/* Head */
+					if (prev)
+						prev->next = first_bb->code;
+					else
+						bb->code = first_bb->code;
+
+					/* Tail */
+					cfg->cbb->last_ins->next = tree->next;
+					if (tree->next == NULL)
+						bb->last_ins = cfg->cbb->last_ins;
+					prev = cfg->cbb->last_ins;
+				}
+				else {
+					int i;
+					MonoInst *next = tree->next;
+
+					/* Multiple BBs */
+
+					/* Split the original bb */
+					tree->next = NULL;
+					bb->last_ins = tree;
+
+					/* Merge the second part of the original bb into the last bb */
+					g_assert (cfg->cbb->last_ins);
+					cfg->cbb->last_ins->next = next;
+
+					for (i = 0; i < bb->out_count; ++i)
+						link_bblock (cfg, cfg->cbb, bb->out_bb [i]);
+
+					/* Merge the first (dummy) bb to the original bb */
+					if (prev)
+						prev->next = first_bb->code;
+					else
+						bb->code = first_bb->code;
+					for (i = 0; i < first_bb->out_count; ++i)
+						link_bblock (cfg, bb, first_bb->out_bb [i]);
+
+					cfg->cbb->next_bb = bb->next_bb;
+					bb->next_bb = first_bb->next_bb;
+
+					prev = NULL;
+				}
+
+				first_bb->code = first_bb->last_ins = NULL;
+				first_bb->in_count = first_bb->out_count = 0;
+				cfg->cbb = first_bb;
 			}
 			else
 				prev = tree;
 		}
 
 		/*
-		tree = bb->code;	
 		g_print ("AFTER LOWER_LONG_OPTS: %d:\n", bb->block_num);
-		if (!tree)
-			continue;
-		for (; tree; tree = tree->next) {
-			mono_print_ins (tree);
-		}
+		mono_print_bb_code_new (bb);
 		*/
 	}
 #endif
@@ -9015,6 +9073,9 @@ mono_spill_global_vars (MonoCompile *cfg)
  * - get rid of the empty bblocks created by MONO_EMIT_NEW_BRACH_BLOCK2
  * - Things to backport to the old JIT:
  *   - op_atomic_exchange fix for amd64
+ *   - long shift ops have sreg1:L but they use ins->unused=eax
+ * - handle long shift opts on 32 bit platforms somehow: they require 
+ *   3 sregs (2 for arg1 and 1 for arg2)
  */
 
 /*
