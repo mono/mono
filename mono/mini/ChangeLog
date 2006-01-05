@@ -1,3 +1,8 @@
+2006-01-05 Neale Ferguson <neale@sinenomine.net>
+
+	* mini-s390x.c, mini-s390x.h: Fix lmf handling when localloc is encountered. 
+	Fixes crash in test-183.cs when using gmcs (stack walk problem).
+
 2006-01-04  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot.c (mono_aot_load_method): Fix a warning.
