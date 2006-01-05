@@ -211,7 +211,14 @@ namespace System.Windows.Forms {
 		[Localizable(true)]
 		public int ImageIndex {
 			get { return image_index; }
-			set { image_index = value; }
+			set {
+				if (image_index == value)
+					return;
+				image_index = value;
+				TreeView tree = TreeView;
+				if (tree != null)
+					tree.UpdateNode (this);
+			}
 		}
 
 		public bool IsEditing {

@@ -1,3 +1,7 @@
+2006-01-04  Jackson Harper  <jackson@ximian.com>
+
+	* TreeNode.cs: redraw the node when its image index is changed.
+
 2006-01-04  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* RichTextBox.cs: Same fix as last, just for SelectionColor. This
