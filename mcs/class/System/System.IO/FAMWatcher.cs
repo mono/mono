@@ -320,7 +320,7 @@ namespace System.IO {
 
 			if (newdirs != null) {
 				int count = newdirs.Count;
-				for (int n = 0; n < count; n++) {
+				for (int n = 0; n < count; n += 2) {
 					FAMData newdir = (FAMData) newdirs [n];
 					FAMData parent = (FAMData) newdirs [n + 1];
 					StartMonitoringDirectory (newdir);

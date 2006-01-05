@@ -1,3 +1,8 @@
+2006-01-05 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* FAMWatcher.cs: fix arraylist access when a new directory is added and
+	the new directory is watched too. Closes bug #77068.
+
 2005-12-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* FAMWatcher.cs: 
