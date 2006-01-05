@@ -300,7 +300,7 @@ namespace System.Security.Policy {
 		static internal Evidence GetDefaultHostEvidence (Assembly a) 
 		{
 			Evidence e = new Evidence ();
-			string aname = a.CodeBase;
+			string aname = a.EscapedCodeBase;
 
 			// by default all assembly have the Zone, Url and Hash evidences
 			e.AddHost (Zone.CreateFromUrl (aname));
