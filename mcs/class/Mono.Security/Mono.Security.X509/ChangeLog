@@ -1,3 +1,9 @@
+2006-01-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X509Extension.cs: Extension data may be encapsulated (i.e. ASN.1
+	data inside the octet string) if it comes from the X509Certificate 
+	parser.
+
 2006-01-04  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X509Extension.cs: Added setter for Critical property (fix #77154).

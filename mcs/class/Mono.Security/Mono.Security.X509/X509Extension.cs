@@ -66,7 +66,18 @@ namespace Mono.Security.X509 {
 
 			extnOid = ASN1Convert.ToOid (asn1[0]);
 			extnCritical = ((asn1[1].Tag == 0x01) && (asn1[1].Value[0] == 0xFF));
-			extnValue = asn1 [asn1.Count - 1]; // last element
+			// last element is an octet string which may need to be decoded
+			extnValue = asn1 [asn1.Count - 1];
+			if ((extnValue.Tag == 0x04) && (extnValue.Length > 0) && (extnValue.Count == 0)) {
+				try {
+					ASN1 encapsulated = new ASN1 (extnValue.Value);
+					extnValue.Value = null;
+					extnValue.Add (encapsulated);
+				}
+				catch {
+					// data isn't ASN.1
+				}
+			}
 			Decode ();
 		}
 
