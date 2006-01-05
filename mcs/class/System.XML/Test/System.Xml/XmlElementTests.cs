@@ -561,20 +561,48 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
+#if ONLY_1_1
 		[ExpectedException (typeof (ArgumentNullException))]
+#endif
 		public void SetNullPrefix ()
 		{
 			XmlDocument doc = new XmlDocument ();
 			doc.LoadXml ("<root/>");
 			doc.DocumentElement.Prefix = null;
+
+#if NET_2_0
+			AssertEquals ("#1", string.Empty, doc.DocumentElement.Prefix);
+			AssertClearPrefix ((string) null);
+#endif
 		}
 
 		[Test]
 		public void SetEmptyStringPrefix ()
 		{
 			XmlDocument doc = new XmlDocument ();
-			doc.LoadXml ("<root/>");
+			doc.LoadXml ("<root />");
 			doc.DocumentElement.Prefix = String.Empty;
+			AssertEquals ("#1", string.Empty, doc.DocumentElement.Prefix);
+
+			AssertClearPrefix (string.Empty);
+
+		}
+
+		private void AssertClearPrefix (string newPrefix)
+		{
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml ("<x:root xmlns:x=\"http://somenamespace.com\" />");
+			AssertEquals ("#Clear1", "<x:root xmlns:x=\"http://somenamespace.com\" />",
+				doc.OuterXml);
+			AssertEquals ("#Clear2", "<x:root xmlns:x=\"http://somenamespace.com\" />",
+				doc.DocumentElement.OuterXml);
+			AssertEquals ("#Clear3", "x", doc.DocumentElement.Prefix);
+			doc.DocumentElement.Prefix = newPrefix;
+			AssertEquals ("#Clear4", "<root xmlns:x=\"http://somenamespace.com\" xmlns=\"http://somenamespace.com\" />",
+				doc.OuterXml);
+			AssertEquals ("#Clear5", "<root xmlns:x=\"http://somenamespace.com\" xmlns=\"http://somenamespace.com\" />",
+				doc.DocumentElement.OuterXml);
+			AssertEquals ("#Clear6", string.Empty, doc.DocumentElement.Prefix);
 		}
 	}
 }

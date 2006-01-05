@@ -1,3 +1,12 @@
+2006-01-05  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* XmlTextWriter.cs: Modified WriteWhitespace to throw ArgumentException
+	if value is null or zero-length string. Modified WriteNmToken to throw
+	ArgumentException if name is null or zero-length string. Cosmetic
+	change to WriteStringInternal.
+	* XmlElement.cs: In 2.0 profile, do not throw ArgumentNullException
+	if new value for Prefix is null.
+
 2005-12-26  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlTextWriter.cs : when namespaceURI is String.Empty, Prefix

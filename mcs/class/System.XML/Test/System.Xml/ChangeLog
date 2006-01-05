@@ -1,3 +1,11 @@
+2006-01-05  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* XmlElementTests.cs: Improved tests for setting prefix to null
+	or zero-length string. On 2.0 profile, setting prefix to null should
+	not result in ArgumentNullException.
+	* XmlTextWriterTests.cs: Enabled WriteNmToken tests and 
+	WriteWhitespace tests for null or zero-length value.
+
 2006-01-05  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlTextWriterTests.cs : removed silly part from

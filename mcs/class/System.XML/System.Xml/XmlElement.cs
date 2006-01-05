@@ -216,8 +216,13 @@ namespace System.Xml
 			set {
 				if (IsReadOnly)
 					throw new ArgumentException ("This node is readonly.");
-				if (value == null)
-					throw new ArgumentNullException("Prefix value is null.");
+				if (value == null) {
+#if NET_2_0
+					value = string.Empty;
+#else
+					throw new ArgumentNullException ("Prefix value is null.");
+#endif
+				}
 				if ((!String.Empty.Equals(value))&&(!XmlChar.IsNCName (value)))
 					throw new ArgumentException ("Specified name is not a valid NCName: " + value);
 

@@ -683,6 +683,9 @@ openElements [openElementCount - 1]).IndentingOverriden;
 
 		public override void WriteNmToken (string name)
 		{
+			if (name == null || name.Length == 0)
+				throw ArgumentError ("The Name cannot be empty.");
+
 			WriteNmTokenInternal (name);
 		}
 
@@ -1077,40 +1080,38 @@ openElements [openElementCount - 1]).IndentingOverriden;
 
 		private void WriteStringInternal (string text, bool entitize)
 		{
-			if (text == null)
-				text = String.Empty;
+			if (text == null || text.Length == 0)
+				return;
+			
+			CheckState ();
 
-			if (text != String.Empty) {
-				CheckState ();
+			if (entitize)
+				text = EscapeString (text, !openAttribute);
 
-				if (entitize)
-					text = EscapeString (text, !openAttribute);
+			if (!openAttribute)
+			{
+				IndentingOverriden = true;
+				CloseStartElement ();
+			}
 
-				if (!openAttribute)
-				{
-					IndentingOverriden = true;
-					CloseStartElement ();
-				}
-
-				if (!openXmlLang && !openXmlSpace)
-					w.Write (text);
+			if (!openXmlLang && !openXmlSpace)
+				w.Write (text);
+			else 
+			{
+				if (openXmlLang)
+					xmlLang = text;
 				else 
 				{
-					if (openXmlLang)
-						xmlLang = text;
-					else 
+					switch (text) 
 					{
-						switch (text) 
-						{
-							case "default":
-								xmlSpace = XmlSpace.Default;
-								break;
-							case "preserve":
-								xmlSpace = XmlSpace.Preserve;
-								break;
-							default:
-								throw ArgumentError ("'{0}' is an invalid xml:space value.");
-						}
+						case "default":
+							xmlSpace = XmlSpace.Default;
+							break;
+						case "preserve":
+							xmlSpace = XmlSpace.Preserve;
+							break;
+						default:
+							throw ArgumentError ("'{0}' is an invalid xml:space value.");
 					}
 				}
 			}
@@ -1136,6 +1137,10 @@ openElements [openElementCount - 1]).IndentingOverriden;
 
 		public override void WriteWhitespace (string ws)
 		{
+			if (ws == null || ws.Length == 0) {
+				throw ArgumentError ("Only white space characters should be used.");
+			}
+
 			if (!XmlChar.IsWhitespace (ws))
 				throw ArgumentError ("Invalid Whitespace");
 
