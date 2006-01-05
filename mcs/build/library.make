@@ -212,13 +212,13 @@ run-test-ondotnet-local: run-test-ondotnet-lib
 run-test-lib: test-local
 	ok=:; \
 	$(TEST_RUNTIME) $(TEST_HARNESS) $(TEST_HARNESS_FLAGS) $(LOCAL_TEST_HARNESS_FLAGS) /output:TestResult-$(PROFILE).log /exclude:NotWorking,ValueAdd,CAS,InetAccess /xml:TestResult-$(PROFILE).xml $(test_assemblies) || ok=false; \
-	sed '1,/^Tests run: /d' TestResult-$(PROFILE).log; \
+	(echo ''; cat TestResult-$(PROFILE).log) | sed '1,/^Tests run: /d'; \
 	$$ok
 
 run-test-ondotnet-lib: test-local
 	ok=:; \
 	$(TEST_HARNESS) $(TEST_HARNESS_FLAGS) $(LOCAL_TEST_HARNESS_ONDOTNET_FLAGS) /exclude=NotDotNet,CAS /output:TestResult-ondotnet-$(PROFILE).log /xml:TestResult-ondotnet-$(PROFILE).xml $(test_assemblies) || ok=false; \
-	sed '1,/^Tests run: /d' TestResult-ondotnet-$(PROFILE).log; \
+	(echo ''; cat TestResult-ondotnet-$(PROFILE).log) | sed '1,/^Tests run: /d'; \
 	$$ok
 endif
 
