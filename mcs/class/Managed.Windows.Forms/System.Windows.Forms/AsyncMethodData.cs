@@ -32,7 +32,7 @@ namespace System.Windows.Forms {
 	internal class AsyncMethodData {
 		public Delegate Method;
 		public object [] Args;
-		public WeakReference Result;
+		public AsyncMethodResult Result;
 #if NET_2_0
 		public ExecutionContext Context;
 #else

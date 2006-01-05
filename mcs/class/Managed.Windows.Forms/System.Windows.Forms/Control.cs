@@ -745,8 +745,10 @@ namespace System.Windows.Forms
 			}
 
 			if (this.InvokeRequired) {
-				this.InvokeInternal(new MethodInvoker(DestroyHandle), true);
-				this.InvokeInternal(new RemoveDelegate(controls.Remove), new object[] {this}, true);
+				if (Application.MessageLoop) {
+					this.BeginInvokeInternal(new MethodInvoker(DestroyHandle), null, true);
+					this.BeginInvokeInternal(new RemoveDelegate(controls.Remove), new object[] {this}, true);
+				}
 			} else {
 				DestroyHandle();
 				controls.Remove(this);
@@ -798,7 +800,7 @@ namespace System.Windows.Forms
 
 			data.Method = method;
 			data.Args = args;
-			data.Result = new WeakReference (result);
+			data.Result = result;
 
 #if NET_2_0
 			if (!ExecutionContext.IsFlowSuppressed ()) {

@@ -267,6 +267,7 @@ namespace System.Windows.Forms {
 		internal static void ExecuteClientMessage (GCHandle gchandle) {
 			AsyncMethodData data = (AsyncMethodData) gchandle.Target;
 			CompressedStack original = null;
+			
 #if !MWF_ON_MSRUNTIME
 			// Stack is non-null only if the security manager is active
 			if (data.Stack != null) {
@@ -276,12 +277,9 @@ namespace System.Windows.Forms {
 #endif
 
 			try {
-				AsyncMethodResult result = data.Result.Target as AsyncMethodResult;
+				AsyncMethodResult result = data.Result;
 				object ret = data.Method.DynamicInvoke (data.Args);
-
-				if (result != null) {
-					result.Complete (ret);
-				}
+				result.Complete (ret);
 			}
 			finally {
 #if !MWF_ON_MSRUNTIME

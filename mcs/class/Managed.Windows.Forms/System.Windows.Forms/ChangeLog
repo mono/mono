@@ -1,3 +1,16 @@
+2006-01-05  Jackson Harper  <jackson@ximian.com>
+
+	* AsyncMethodData.cs: Check if the call is complete before doing a WaitOne
+	* AsyncMethodResult.cs: We no longer use a WeakReference for the
+	AsyncMethodResult, this is because we ALWAYS want the
+	ManualResetEvent to get set.
+	* Control.cs: When disposing use an async invoke to call shutdown
+	code, so that thigns don't block on the finalizer thread.  Also
+	check if we even have a message loop before trying to send
+	messages, if we don't then don't bother sending messages.
+	- No more weak references for async methods
+	* XplatUIDriver.cs: No more weak references for async methods.
+
 2006-01-04  Alexander Olk  <alex.olk@googlemail.com>
 
 	* FontDialog.cs: Fix, don't throw an exception if FontFamily.Families

@@ -67,6 +67,10 @@ namespace System.Windows.Forms {
 		
 		public object EndInvoke ()
 		{
+			lock (this) {
+				if (completed)
+					return return_value;
+			}
 			handle.WaitOne ();
 			return return_value;
 		}
