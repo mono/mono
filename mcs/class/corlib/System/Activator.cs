@@ -168,48 +168,7 @@ namespace System
 
 		public static object CreateInstance (Type type, object [] args, object [] activationAttributes)
 		{
-			CheckType (type);
-
-			int length = 0;
-			if (args != null)
-				length = args.Length;
-
-			bool find_best = false;
-			Type [] atypes = new Type [length];
-			for (int i = 0; i < length; ++i) {
-				if (args [i] != null)
-					atypes [i] = args [i].GetType ();
-				else
-					find_best = true;
-			}
-			
-			ConstructorInfo ctor = null;
-			if (find_best)
-				ctor = FindBestCtor (type.GetConstructors (), atypes);
-			else
-				ctor = type.GetConstructor (atypes);
-
-			if (ctor == null) {
-				if (type.IsValueType && atypes.Length == 0)
-					return CreateInstanceInternal (type);
-
-				throw new MissingMethodException (Locale.GetText ("Constructor not found. Class") +
-								type.FullName);
-			}
-
-			CheckAbstractType (type);
-
-			if (activationAttributes != null && activationAttributes.Length > 0) {
-				if (!type.IsMarshalByRef) {
-					string msg = Locale.GetText ("Type '{0}' doesn't derive from MarshalByRefObject.", type.FullName);
-					throw new NotSupportedException (msg);
-				}
-				object newOb = ActivationServices.CreateProxyFromAttributes (type, activationAttributes);
-				if (newOb != null)
-					return ctor.Invoke (newOb, args);
-			}
-
-			return ctor.Invoke (args);
+			return CreateInstance (type, BindingFlags.Default, Binder.DefaultBinder, args, null, activationAttributes);
 		}
 
 		public static object CreateInstance (Type type, BindingFlags bindingAttr, Binder binder, object [] args,
@@ -232,20 +191,15 @@ namespace System
 			if (args != null)
 				length = args.Length;
 
-			bool find_best = false;
-			Type[] atypes = new Type [length];
-			for (int i = 0; i < length; ++i) {
+			Type[] atypes = length == 0 ? Type.EmptyTypes : new Type [length];
+			for (int i = 0; i < length; ++i)
 				if (args [i] != null)
 					atypes [i] = args [i].GetType ();
-				else
-					find_best = true;
-			}
 
-			ConstructorInfo ctor = null;
-			if (find_best)
-				ctor = FindBestCtor (type.GetConstructors (bindingAttr), atypes);
-			else
-				ctor = type.GetConstructor (bindingAttr, binder, atypes, null);
+			if (binder == null)
+				binder = Binder.DefaultBinder;
+
+			ConstructorInfo ctor = (ConstructorInfo) binder.SelectMethod (bindingAttr, type.GetConstructors (bindingAttr), atypes, null);
 
 			if (ctor == null) {
 				// Not sure about this
@@ -316,30 +270,6 @@ namespace System
 				throw new MemberAccessException (msg);
 #endif
 			}
-		}
-
-		private static ConstructorInfo FindBestCtor (ConstructorInfo[] ctors, Type[] parameters)
-		{
-			foreach (ConstructorInfo ctor in ctors) {
-				ParameterInfo[] pis = ctor.GetParameters ();
-				if (parameters.Length != pis.Length)
-					continue;
-
-				bool full_match = true;
-				int i=0;
-				foreach (ParameterInfo pi in pis) {
-					if (parameters [i] == null)
-						continue;
-					if (parameters [i] != pi.ParameterType) {
-						full_match = false;
-						break;
-					}
-				}
-
-				if (full_match)
-					return ctor;
-			}
-			return null;
 		}
 
 		[SecurityPermission (SecurityAction.LinkDemand, RemotingConfiguration = true)]
