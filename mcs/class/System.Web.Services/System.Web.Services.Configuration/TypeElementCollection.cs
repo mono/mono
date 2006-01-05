@@ -29,6 +29,7 @@
 //
 
 using System;
+using System.Collections;
 using System.Configuration;
 
 #if NET_2_0
@@ -48,16 +49,14 @@ namespace System.Web.Services.Configuration {
 			BaseClear ();
 		}
 
-		[MonoTODO]
 		public bool ContainsKey (object key)
 		{
-			throw new NotImplementedException ();
+			return (BaseGet (key) != null);
 		}
 
-		[MonoTODO]
 		public void CopyTo (TypeElement[] array, int index)
 		{
-			throw new NotImplementedException ();
+			((ICollection)this).CopyTo (array, index);
 		}
 
 		protected override ConfigurationElement CreateNewElement ()
@@ -70,40 +69,46 @@ namespace System.Web.Services.Configuration {
 			return ((TypeElement)element).Type;
 		}
 
-		[MonoTODO]
 		public int IndexOf (TypeElement element)
 		{
-			throw new NotImplementedException ();
+			return BaseIndexOf (element);
 		}
 
-		[MonoTODO]
 		public void Remove (TypeElement element)
 		{
-			throw new NotImplementedException ();
+			BaseRemove (element.Type);
 		}
 
-		[MonoTODO]
 		public void RemoveAt (int index)
 		{
-			throw new NotImplementedException ();
+			BaseRemoveAt (index);
 		}
 
-		[MonoTODO]
+		[MonoTODO ("is this right?")]
 		public void RemoveAt (object key)
 		{
-			throw new NotImplementedException ();
+			BaseRemove (key);
 		}
 
 		[MonoTODO]
 		public TypeElement this [int index] {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return (TypeElement)BaseGet (index); }
+			set { if (BaseGet (index) != null) BaseRemoveAt (index); BaseAdd (index, value); }
 		}
 
 		[MonoTODO]
 		public TypeElement this [object key] {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return (TypeElement)BaseGet (key); }
+			set {
+				TypeElement el = (TypeElement)BaseGet (key);
+				if (el == null) {
+					BaseAdd (value);
+					return;
+				}
+				int index = IndexOf (el);
+				BaseRemoveAt (index);
+				BaseAdd (index, value);
+			}
 		}
 
 	}

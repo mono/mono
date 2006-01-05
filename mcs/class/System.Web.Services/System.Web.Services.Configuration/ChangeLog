@@ -1,3 +1,24 @@
+2006-01-05  Chris Toshok  <toshok@ximian.com>
+
+	* ProtocolElementCollection.cs,
+	SoapExtensionTypeElementCollection.cs,
+	WsiProfilesElementCollection.cs, TypeElementCollection.cs: Flesh
+	out these classes.  Untested at the moment, but no more
+	NotImplementedExceptions.
+	
+	* WebServicesSection.cs (Diagnostics): add TODO.
+
+	* WsdlHelpGeneratorElement.cs: add TODO on DeserializeElement and
+	Reset.
+
+	* TypeElement.cs (.ctor): fill in the Type overload, and add a
+	comment and TODO for the string overload.
+
+	* DiagnosticsElement.cs: some cleanup.
+
+	* SoapExtensionTypeElement.cs (GetKey): new internal method, used
+	by SoapExtensionTypeElementCollection.
+
 2006-01-04  Chris Toshok  <toshok@ximian.com>
 
 	* WebServicesSection.cs (EnabledProtocols): implement.

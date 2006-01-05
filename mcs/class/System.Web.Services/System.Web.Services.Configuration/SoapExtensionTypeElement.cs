@@ -95,6 +95,11 @@ namespace System.Web.Services.Configuration {
 			set { base[typeProp] = value; }
 		}
 
+		internal object GetKey ()
+		{
+			return String.Format ("{0}-{0}-{0}", Type, Priority, Group);
+		}
+
 		protected override ConfigurationPropertyCollection Properties {
 			get { return properties; }
 		}

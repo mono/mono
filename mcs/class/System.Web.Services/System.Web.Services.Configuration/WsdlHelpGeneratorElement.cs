@@ -54,11 +54,13 @@ namespace System.Web.Services.Configuration {
 		{
 		}
 
+		[MonoTODO ("probably verifies the Href property here, after deserializing?")]
 		protected override void DeserializeElement (XmlReader reader, bool serializeCollectionKey)
 		{
 			base.DeserializeElement (reader, serializeCollectionKey);
 		}
 
+		[MonoTODO]
 		protected override void Reset (ConfigurationElement parentElement)
 		{
 			base.Reset (parentElement);

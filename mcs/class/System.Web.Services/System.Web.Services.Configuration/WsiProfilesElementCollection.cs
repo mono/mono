@@ -29,6 +29,7 @@
 //
 
 using System;
+using System.Collections;
 using System.Configuration;
 
 #if NET_2_0
@@ -48,64 +49,66 @@ namespace System.Web.Services.Configuration {
 			BaseClear ();
 		}
 
-		[MonoTODO]
 		public bool ContainsKey (object key)
 		{
-			throw new NotImplementedException ();
+			return (BaseGet (key) != null);
 		}
 
-		[MonoTODO]
 		public void CopyTo (WsiProfilesElement[] array, int index)
 		{
-			throw new NotImplementedException ();
+			((ICollection)this).CopyTo (array, index);
 		}
 
-		[MonoTODO]
 		protected override ConfigurationElement CreateNewElement ()
 		{
-			throw new NotImplementedException ();
+			return new WsiProfilesElement ();
 		}
 
-		[MonoTODO]
 		protected override object GetElementKey (ConfigurationElement element)
 		{
-			throw new NotImplementedException ();
+			return ((WsiProfilesElement)element).Name;
 		}
 
-		[MonoTODO]
 		public int IndexOf (WsiProfilesElement element)
 		{
-			throw new NotImplementedException ();
+			return BaseIndexOf (element);
 		}
 
-		[MonoTODO]
 		public void Remove (WsiProfilesElement element)
 		{
-			throw new NotImplementedException ();
+			BaseRemove (element.Name);
 		}
 
-		[MonoTODO]
 		public void RemoveAt (int index)
 		{
-			throw new NotImplementedException ();
+			BaseRemoveAt (index);
 		}
 
-		[MonoTODO]
+		[MonoTODO ("is this right?")]
 		public void RemoveAt (object key)
 		{
-			throw new NotImplementedException ();
+			BaseRemove (key);
 		}
 
 		[MonoTODO]
 		public WsiProfilesElement this [int index] {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return (WsiProfilesElement)BaseGet (index); }
+			set { if (BaseGet (index) != null) BaseRemoveAt (index); BaseAdd (index, value); }
 		}
 
 		[MonoTODO]
 		public WsiProfilesElement this [object key] {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return (WsiProfilesElement)BaseGet (key); }
+			set {
+				WsiProfilesElement el = (WsiProfilesElement)BaseGet (key);
+				if (el == null) {
+					BaseAdd (value);
+					return;
+				}
+				int index = IndexOf (el);
+				BaseRemoveAt (index);
+				BaseAdd (index, value);
+			}
 		}
 
 	}

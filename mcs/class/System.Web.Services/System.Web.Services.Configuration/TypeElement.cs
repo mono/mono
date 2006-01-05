@@ -51,10 +51,13 @@ namespace System.Web.Services.Configuration {
 
 		public TypeElement (Type type)
 		{
+			this.Type = type;
 		}
 
+		[MonoTODO]
 		public TypeElement (string type)
 		{
+			/* XXX Type */
 		}
 
 		public TypeElement ()

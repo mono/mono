@@ -29,6 +29,7 @@
 //
 
 using System;
+using System.Collections;
 using System.Configuration;
 
 #if NET_2_0
@@ -48,16 +49,14 @@ namespace System.Web.Services.Configuration {
 			BaseClear ();
 		}
 
-		[MonoTODO]
 		public bool ContainsKey (object key)
 		{
-			throw new NotImplementedException ();
+			return (BaseGet (key) != null);
 		}
 
-		[MonoTODO]
 		public void CopyTo (SoapExtensionTypeElement[] array, int index)
 		{
-			throw new NotImplementedException ();
+			((ICollection)this).CopyTo (array, index);
 		}
 
 		protected override ConfigurationElement CreateNewElement ()
@@ -65,46 +64,49 @@ namespace System.Web.Services.Configuration {
 			return new SoapExtensionTypeElement ();
 		}
 
-		[MonoTODO]
 		protected override object GetElementKey (ConfigurationElement element)
 		{
-			throw new NotImplementedException ();
+			return ((SoapExtensionTypeElement)element).GetKey();
 		}
 
-		[MonoTODO]
 		public int IndexOf (SoapExtensionTypeElement element)
 		{
-			throw new NotImplementedException ();
+			return BaseIndexOf (element);
 		}
 
-		[MonoTODO]
 		public void Remove (SoapExtensionTypeElement element)
 		{
-			throw new NotImplementedException ();
+			BaseRemove (element.GetKey());
 		}
 
-		[MonoTODO]
 		public void RemoveAt (int index)
 		{
-			throw new NotImplementedException ();
+			BaseRemoveAt (index);
 		}
 
-		[MonoTODO]
+		[MonoTODO ("is this right?")]
 		public void RemoveAt (object key)
 		{
-			throw new NotImplementedException ();
+			BaseRemove (key);
 		}
 
-		[MonoTODO]
 		public SoapExtensionTypeElement this [int index] {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return (SoapExtensionTypeElement)BaseGet (index); }
+			set { if (BaseGet (index) != null) BaseRemoveAt (index); BaseAdd (index, value); }
 		}
 
-		[MonoTODO]
 		public SoapExtensionTypeElement this [object key] {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return (SoapExtensionTypeElement)BaseGet (key); }
+			set {
+				SoapExtensionTypeElement el = (SoapExtensionTypeElement)BaseGet (key);
+				if (el == null) {
+					BaseAdd (value);
+					return;
+				}
+				int index = IndexOf (el);
+				BaseRemoveAt (index);
+				BaseAdd (index, value);
+			}
 		}
 
 	}

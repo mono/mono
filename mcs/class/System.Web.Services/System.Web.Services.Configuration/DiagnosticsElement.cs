@@ -46,7 +46,6 @@ namespace System.Web.Services.Configuration {
 			properties = new ConfigurationPropertyCollection ();
 
 			properties.Add (suppressReturningExceptionsProp);
-
 		}
 
 		[ConfigurationProperty ("suppressReturningExceptions", DefaultValue = "False")]
@@ -58,7 +57,6 @@ namespace System.Web.Services.Configuration {
 		protected override ConfigurationPropertyCollection Properties {
 			get { return properties; }
 		}
-
 	}
 
 }

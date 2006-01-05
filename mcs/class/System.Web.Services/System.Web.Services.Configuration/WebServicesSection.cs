@@ -101,7 +101,7 @@ namespace System.Web.Services.Configuration
                         get { throw new NotImplementedException (); }
                 }
 
-		[MonoTODO]
+		[MonoTODO ("why doesn't this have a ConfigurationPropertyAttribute?")]
                 public DiagnosticsElement Diagnostics {
                         get { throw new NotImplementedException (); }
                         set { throw new NotImplementedException (); }
