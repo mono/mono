@@ -1,5 +1,11 @@
 2006-01-06  Ankit Jain  <jankit@novell.com>
 
+	* ILParser.jay (sec_decl | D_PERMISSION sec_action comp_qstring): New. Support
+	new (2.0) syntax which uses string(xml) instead of a bytearray for specifying
+	value of the security attribute.
+
+2006-01-06  Ankit Jain  <jankit@novell.com>
+
 	* ILParser.jay (GetTypeRef): Use new IClassRef.Clone .
 	(extends_clause): Use new IClassRef.GetGenericTypeInst.
 	(impl_clause | K_IMPLEMENTS class_refs): Remove.

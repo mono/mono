@@ -1,3 +1,8 @@
+2006-01-06  Ankit Jain  <jankit@novell.com>
+
+	* test-perm_pass-2.il: New. Test for new(2.0) syntax of specifying value
+	of a permissionset, which uses string instead of a bytearray. 
+
 2006-01-05  Ankit Jain  <jankit@novell.com>
 
 	* gen-extern-type.il: New. Test for ref to an external generic type.

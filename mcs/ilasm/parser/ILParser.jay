@@ -2685,6 +2685,12 @@ sec_decl		: D_PERMISSION sec_action type_spec OPEN_PARENS nameval_pairs CLOSE_PA
 				psa.XML = ue.GetString ((byte []) $4);
 				$$ = new PermPair ((PEAPI.SecurityAction) $2, psa.CreatePermissionSet ());
 			  }
+			| D_PERMISSIONSET sec_action comp_qstring
+			  {
+				PermissionSetAttribute psa = new PermissionSetAttribute ((System.Security.Permissions.SecurityAction) (short) $2);
+				psa.XML = (string) $3;
+				$$ = new PermPair ((PEAPI.SecurityAction) $2, psa.CreatePermissionSet ());
+			  }
 			;
 
 nameval_pairs		: nameval_pair 
