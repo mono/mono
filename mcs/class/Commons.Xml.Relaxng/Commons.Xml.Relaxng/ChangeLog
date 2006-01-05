@@ -1,3 +1,13 @@
+2006-01-05  Atsushi Enomoto <atsushi@ximian.com>
+
+	* RelaxngValidatingReader.cs :
+	  - weak match 3 in Section 6.2.7 was missing (in derivative, it is
+	    childrenDeriv cx p [] = childrenDeriv cx p [(TextNode "")] ).
+	  - uncommented out whitespace handling in TextOnlyDeriv (it is 
+	    "in if whitespace s then choice p p1 else p1" in derivative).
+	  - MixedTextDeriv() is not fixed to not require string argument.
+	* XsdDatatypeProvider.cs : call Read() after ReadTypedValue().
+
 2006-01-04  Alexandre Miguel Pedro Gomes <alexmipego@gmail.com>
 
 	* RelaxngValidatingReader.cs: fix typo

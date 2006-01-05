@@ -1,3 +1,20 @@
+2005-01-05  Atsushi Enomoto <atsushi@ximian.com>
+
+	* RdpPattern.cs :
+	  - Fixed RdpPattern.TextDeriv() and MixedTextDeriv() to not allow 
+	    whitespaces incorrectly.
+	  - Fixed MixedTextDeriv() to not require string argument.
+	  - Erased commented code.
+	  - in listDerivInternal(), skip empty strings.
+	  - ValueMatch() should allow whitespaces if the pattern is nullable
+	    (as defined in derivative).
+	  - Replaced MakeChoice()/MakeGroup()/MakeInterleave()/MakeAfter()
+	    in TextOnlyDeriv() and MixedTextDeriv(). They should not be
+	    constructions but should be functions (thus, member methods).
+	  - Fixed Nullable in RdpData and RdpValue to conform to the
+	    derivative algorithm (it incorrectly extended to return false
+	    for RELAX NG predefined datatypes).
+
 2005-01-04  Atsushi Enomoto <atsushi@ximian.com>
 
 	* RdpPattern.cs :

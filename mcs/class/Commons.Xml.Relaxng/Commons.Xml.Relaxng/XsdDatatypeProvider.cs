@@ -210,7 +210,11 @@ namespace Commons.Xml.Relaxng.XmlSchema
 					null));
 			v.Schemas.Add (schema);
 			v.Read (); // <root>
-			return v.ReadTypedValue ();
+			try {
+				return v.ReadTypedValue ();
+			} finally {
+				v.Read (); // </root>
+			}
 		}
 	}
 

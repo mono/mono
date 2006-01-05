@@ -377,6 +377,10 @@ namespace Commons.Xml.Relaxng
 			// Process pending text node validation if required.
 			if (cachedValue != null)
 				ValidateText (ret);
+			else if (cachedValue == null &&
+				reader.NodeType == XmlNodeType.EndElement && 
+				startElementDepth == reader.Depth)
+				ValidateWeakMatch3 ();
 
 			switch (reader.NodeType) {
 			case XmlNodeType.Element:
@@ -411,8 +415,10 @@ namespace Commons.Xml.Relaxng
 					throw CreateValidationError (String.Format ("Invalid start tag closing found. LocalName = {0}, NS = {1}.", reader.LocalName, reader.NamespaceURI), false);
 
 				// if it is empty, then redirect to EndElement
-				if (reader.IsEmptyElement)
+				if (reader.IsEmptyElement) {
+					ValidateWeakMatch3 ();
 					goto case XmlNodeType.EndElement;
+				}
 				break;
 			case XmlNodeType.EndElement:
 				if (reader.Depth == 0)
@@ -436,7 +442,7 @@ namespace Commons.Xml.Relaxng
 				break;
 			}
 
-			if (reader.NodeType == XmlNodeType.Element)
+			if (reader.NodeType == XmlNodeType.Element && !reader.IsEmptyElement)
 				startElementDepth = reader.Depth;
 			else if (reader.NodeType == XmlNodeType.EndElement)
 				startElementDepth = -1;
@@ -451,16 +457,12 @@ namespace Commons.Xml.Relaxng
 			case XmlNodeType.EndElement:
 				if (startElementDepth != reader.Depth)
 					goto case XmlNodeType.Element;
-				ts = TextOnlyDeriv (ts);
-				ts = ts.TextDeriv (cachedValue, reader);
-				// FIXME: shouldn't it be done?
-//				if (Util.IsWhitespace (cachedValue))
-//					ts = vState.MakeChoice (ts, vState);
+				ts = ValidateTextOnlyCore ();
 				break;
 			case XmlNodeType.Element:
 				startElementDepth = -1;
 				if (!Util.IsWhitespace (cachedValue)) {
-					ts = MixedTextDeriv (ts, cachedValue);
+					ts = MixedTextDeriv (ts);
 					ts = ts.TextDeriv (cachedValue, reader);
 				}
 				break;
@@ -477,6 +479,31 @@ namespace Commons.Xml.Relaxng
 				throw CreateValidationError (String.Format ("Invalid text found. Text value = {0} ", cachedValue), true);
 			cachedValue = null;
 			return;
+		}
+
+		// section 6.2.7 weak match 3
+		// childrenDeriv cx p [] = childrenDeriv cx p [(TextNode "")]
+		void ValidateWeakMatch3 ()
+		{
+			cachedValue = String.Empty;
+			RdpPattern ts = ValidateTextOnlyCore ();
+
+			prevState = vState;
+			vState = ts;
+
+			if (vState.PatternType == RelaxngPatternType.NotAllowed)
+				throw CreateValidationError (String.Format ("Invalid text found. Text value = {0} ", cachedValue), true);
+			cachedValue = null;
+			startElementDepth = -1;
+		}
+
+		RdpPattern ValidateTextOnlyCore ()
+		{
+			RdpPattern ts = TextOnlyDeriv (vState);
+			ts = ts.TextDeriv (cachedValue, reader);
+			if (Util.IsWhitespace (cachedValue))
+				ts = vState.MakeChoice (ts, vState);
+			return ts;
 		}
 
 		#region Memoization support
@@ -564,7 +591,7 @@ namespace Commons.Xml.Relaxng
 			return m;
 		}
 
-		RdpPattern MixedTextDeriv (RdpPattern p, string s)
+		RdpPattern MixedTextDeriv (RdpPattern p)
 		{
 			for (int i = 0; i < memo.Count; i++) {
 				Memoization tag = (Memoization) memo [i];
@@ -572,7 +599,7 @@ namespace Commons.Xml.Relaxng
 					return tag.Output;
 			}
 
-			RdpPattern m = p.MixedTextDeriv (s);
+			RdpPattern m = p.MixedTextDeriv ();
 			memo.Add (new Memoization (DerivativeType.Mixed, p, m));
 			return m;
 		}

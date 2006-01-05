@@ -319,14 +319,7 @@ namespace Commons.Xml.Relaxng.Derivative
 		#region Derivative
 		public virtual RdpPattern TextDeriv (string s, XmlReader reader)
 		{
-			// This is an extension to JJC algorithm.
-			// Whitespace text are allowed except for Data and Value
-			// (their TextDeriv are overridden)
-			//
-			// FIXME: taking stripChildrenDeriv which we don't
-			// implement into consideration, it should not be done.
-			return Util.IsWhitespace (s) ? this : RdpNotAllowed.Instance;
-//			return RdpNotAllowed.Instance;
+			return RdpNotAllowed.Instance;
 		}
 
 		internal virtual RdpPattern TextOnlyDeriv ()
@@ -334,30 +327,10 @@ namespace Commons.Xml.Relaxng.Derivative
 			return this;
 		}
 
-		// FIXME: this should not require argument string
-		internal virtual RdpPattern MixedTextDeriv (string s)
+		internal virtual RdpPattern MixedTextDeriv ()
 		{
-			return Util.IsWhitespace (s) ? this : RdpNotAllowed.Instance;
-//			return RdpNotAllowed.Instance;
+			return RdpNotAllowed.Instance;
 		}
-
-/*
-		public RdpPattern ChildDeriv (RdpChildNode child)
-		{
-			RdpTextChild tc = child as RdpTextChild;
-//			RdpElementChild ec = child as RdpElementChild;
-			if (tc != null) {
-				return TextDeriv (tc.Text);
-			} else {
-				// complex stuff;-(
-				return StartTagOpenDeriv (ec.LocalName, ec.NamespaceURI)
-						.AttsDeriv (ec.Attributes)
-						.StartTagCloseDeriv ()
-					.ChildrenDeriv (ec.ChildNodes)
-					.EndTagDeriv ();
-			}
-		}
-*/
 
 		public RdpPattern ListDeriv (string [] list, int index, XmlReader reader)
 		{
@@ -368,8 +341,10 @@ namespace Commons.Xml.Relaxng.Derivative
 		{
 			if (list.Length <= start)
 				return this;
+			else if (list [start].Length == 0)
+				return listDerivInternal (list, start + 1, reader);
 			else
-				return this.TextDeriv (list [start], reader).listDerivInternal (list, start + 1, reader);
+				return this.TextDeriv (list [start].Trim (RdpUtil.WhitespaceChars), reader).listDerivInternal (list, start + 1, reader);
 		}
 
 		// Choice(this, p)
@@ -422,7 +397,7 @@ namespace Commons.Xml.Relaxng.Derivative
 		// applyAfter((f, p1=this), p2)
 		public virtual RdpPattern ApplyAfter (RdpApplyAfterHandler h)
 		{
-			return RdpNotAllowed.Instance;
+			throw new Exception ("INTERNAL ERROR: should not happen. This is " + this);
 		}
 
 		// startTagOpenDeriv (this, qname)
@@ -441,52 +416,14 @@ namespace Commons.Xml.Relaxng.Derivative
 
 		public bool ValueMatch (string s, XmlReader reader)
 		{
-			return TextDeriv (s, reader).Nullable;
+			return Nullable && Util.IsWhitespace (s) ||
+				TextDeriv (s, reader).Nullable;
 		}
 
 		public virtual RdpPattern StartTagCloseDeriv ()
 		{
 			return this;
 		}
-
-		/*
-		public RdpPattern ChildrenDeriv (RdpChildNodes children)
-		{
-			return childrenDerivInternal (children, 0);
-		}
-
-		RdpPattern childrenDerivInternal (RdpChildNodes children, int start)
-		{
-			if (children.Count == 0) {
-				// childrenDeriv cx p []
-				RdpChildNodes c = new RdpChildNodes ();
-				c.Add (new RdpTextChild (String.Empty));
-				return ChildrenDeriv (c);
-			} else if (children.Count == 1 && children [0] is RdpTextChild) {
-				// childrenDeriv cx p [(TextNode s)]
-				RdpTextChild tc = children [0] as RdpTextChild;
-				RdpPattern p1 = ChildDeriv (tc);
-				return RdpUtil.Whitespace (tc.Text) ?
-					RdpUtil.Choice (this, p1) : p1;
-			} else
-				// childrenDeriv cx p children
-				return stripChildrenDerivInternal (children, start);
-		}
-
-		RdpPattern stripChildrenDerivInternal (RdpChildNodes children, int start)
-		{
-			if (children.Count == start)
-				return this;
-			else {
-				RdpChildNode firstChild =
-					children [start] as RdpChildNode;
-				RdpPattern p =
-					(firstChild.IsNonWhitespaceText) ?
-					this : ChildDeriv (firstChild);
-				return p.childrenDerivInternal (children, start + 1);
-			}
-		}
-		*/
 
 		public RdpPattern OneOrMore ()
 		{
@@ -634,7 +571,7 @@ namespace Commons.Xml.Relaxng.Derivative
 			return this;
 		}
 
-		internal override RdpPattern MixedTextDeriv (string s)
+		internal override RdpPattern MixedTextDeriv ()
 		{
 			return this;
 		}
@@ -839,14 +776,14 @@ namespace Commons.Xml.Relaxng.Derivative
 
 		internal override RdpPattern TextOnlyDeriv ()
 		{
-			return MakeChoice (LValue.TextOnlyDeriv (),
+			return LValue.TextOnlyDeriv ().Choice (
 				RValue.TextOnlyDeriv ());
 		}
 
-		internal override RdpPattern MixedTextDeriv (string s)
+		internal override RdpPattern MixedTextDeriv ()
 		{
-			return MakeChoice (LValue.MixedTextDeriv (s),
-				RValue.MixedTextDeriv (s));
+			return LValue.MixedTextDeriv ().Choice (
+				RValue.MixedTextDeriv ());
 		}
 
 		public override RdpPattern ApplyAfter (RdpApplyAfterHandler handler)
@@ -944,15 +881,14 @@ namespace Commons.Xml.Relaxng.Derivative
 
 		internal override RdpPattern TextOnlyDeriv ()
 		{
-			return MakeInterleave (LValue.TextOnlyDeriv (),
+			return LValue.TextOnlyDeriv ().Interleave (
 				RValue.TextOnlyDeriv ());
 		}
 
-		internal override RdpPattern MixedTextDeriv (string s)
+		internal override RdpPattern MixedTextDeriv ()
 		{
-			return MakeChoice (
-				MakeInterleave (LValue.MixedTextDeriv (s), RValue),
-				MakeInterleave (LValue, RValue.MixedTextDeriv (s)));
+			return MakeInterleave (LValue.MixedTextDeriv (), RValue).Choice (
+				MakeInterleave (LValue, RValue.MixedTextDeriv ()));
 		}
 
 		// => choice (applyAfter (flip interleave p2) (startTagOpenDeriv p1 qn)) (applyAfter (interleave p1) (startTagOpenDeriv p2 qn)
@@ -985,18 +921,6 @@ namespace Commons.Xml.Relaxng.Derivative
 			return LValue.StartTagCloseDeriv ()
 				.Interleave (RValue.StartTagCloseDeriv ());
 		}
-
-		/*
-		// FIXME: This is not specified in James Clark's algorithm, so
-		// this may raise unstable behaviour!!
-		// I think this is right but not confident.
-		
-		// ... then I reminded to include it.
-		public override RdpPattern EndTagDeriv ()
-		{
-			return LValue.Nullable ? RValue : RdpNotAllowed.Instance;
-		}
-		*/
 
 		public override RelaxngPatternType PatternType {
 			get { return RelaxngPatternType.Interleave; }
@@ -1053,21 +977,20 @@ namespace Commons.Xml.Relaxng.Derivative
 		{
 			RdpPattern p = LValue.TextDeriv (s, reader).Group (RValue);
 			return LValue.Nullable ?
-				p.Choice (RValue.TextDeriv(s, reader)) : p;
+				p.Choice (RValue.TextDeriv (s, reader)) : p;
 		}
 
 		internal override RdpPattern TextOnlyDeriv ()
 		{
-			return MakeGroup (LValue.TextOnlyDeriv (),
+			return LValue.TextOnlyDeriv ().Group (
 				RValue.TextOnlyDeriv ());
 		}
 
-		internal override RdpPattern MixedTextDeriv (string s)
+		internal override RdpPattern MixedTextDeriv ()
 		{
-			RdpPattern p = MakeGroup (
-				LValue.MixedTextDeriv (s), RValue);
+			RdpPattern p = LValue.MixedTextDeriv ().Group (RValue);
 			return LValue.Nullable ?
-				MakeChoice (p, RValue.MixedTextDeriv (s)) : p;
+				p.Choice (RValue.MixedTextDeriv ()) : p;
 		}
 
 		// startTagOpenDeriv (Group p1 p2) qn =
@@ -1202,18 +1125,18 @@ namespace Commons.Xml.Relaxng.Derivative
 
 		public override RdpPattern TextDeriv (string s, XmlReader reader)
 		{
-			return Child.TextDeriv (s, reader).Group (Choice (RdpEmpty.Instance));
+			return Child.TextDeriv (s, reader).Group (this.Choice (RdpEmpty.Instance));
 		}
 
 		internal override RdpPattern TextOnlyDeriv ()
 		{
-			return MakeOneOrMore (Child.TextOnlyDeriv ());
+			return Child.TextOnlyDeriv ().OneOrMore ();
 		}
 
-		internal override RdpPattern MixedTextDeriv (string s)
+		internal override RdpPattern MixedTextDeriv ()
 		{
-			return MakeGroup (Child.MixedTextDeriv (s),
-				MakeChoice (this, RdpEmpty.Instance));
+			return Child.MixedTextDeriv ().Group (
+				this.Choice (RdpEmpty.Instance));
 		}
 
 		// attDeriv cx (OneOrMore p) att =
@@ -1283,17 +1206,6 @@ namespace Commons.Xml.Relaxng.Derivative
 			}
 		}
 
-/*
-		// This is not written in James Clark's derivative algorithm
-		// ( http://www.thaiopensource.com/relaxng/derivative.html ),
-		// but it looks required.
-		public override bool Nullable {
-			get { return this.Child.Nullable; }
-		}
-		
-		// ... but it also causes different error:
-		// <list><group><data .../><data .../></group></list>
-*/
 		public override bool Nullable {
 			get { return false; }
 		}
@@ -1313,7 +1225,9 @@ namespace Commons.Xml.Relaxng.Derivative
 
 		public override RdpPattern TextDeriv (string s, XmlReader reader)
 		{
-			RdpPattern p = Child.ListDeriv (Util.NormalizeWhitespace (s).Split (RdpUtil.WhitespaceChars), 0, reader);			
+			s = Util.NormalizeWhitespace (s);
+
+			RdpPattern p = Child.ListDeriv (s.Split (RdpUtil.WhitespaceChars), 0, reader);			
 			if (p.Nullable)
 				return RdpEmpty.Instance;
 			else
@@ -1343,15 +1257,8 @@ namespace Commons.Xml.Relaxng.Derivative
 			get { return dt; }
 		}
 
-		// This is not written in James Clark's derivative algorithm
-		// ( http://www.thaiopensource.com/relaxng/derivative.html ),
-		// but it looks required.
 		public override bool Nullable {
-			get {
-				if (dt.NamespaceURI.Length == 0)
-					return true;
-				return false; 
-			}
+			get { return false; }
 		}
 
 		public override RelaxngPatternType PatternType {
@@ -1470,15 +1377,8 @@ namespace Commons.Xml.Relaxng.Derivative
 			get { return value; }
 		}
 
-		// This is not written in James Clark's derivative algorithm
-		// ( http://www.thaiopensource.com/relaxng/derivative.html ),
-		// but it looks required.
 		public override bool Nullable {
-			get {
-				if (dt.NamespaceURI.Length == 0 && value.Length == 0)
-					return true;
-				return false; 
-			}
+			get { return false; }
 		}
 
 		public override RelaxngPatternType PatternType {
@@ -1777,12 +1677,12 @@ namespace Commons.Xml.Relaxng.Derivative
 
 		internal override RdpPattern TextOnlyDeriv ()
 		{
-			return MakeAfter (LValue.TextOnlyDeriv (), RValue);
+			return LValue.TextOnlyDeriv ().After (RValue);
 		}
 
-		internal override RdpPattern MixedTextDeriv (string s)
+		internal override RdpPattern MixedTextDeriv ()
 		{
-			return MakeAfter (LValue.MixedTextDeriv (s), RValue);
+			return LValue.MixedTextDeriv ().After (RValue);
 		}
 
 		// startTagOpenDeriv (After p1 p2) qn =
