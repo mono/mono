@@ -544,8 +544,10 @@ namespace System.Windows.Forms
 			fontListBox.BeginUpdate( );
 			foreach ( FontFamily ff in fontFamilies )
 			{
-				fontListBox.Items.Add( ff.Name );
-				fontHash.Add( ff.Name, ff );
+				if ( !fontHash.ContainsKey (ff.Name) ) {
+					fontListBox.Items.Add( ff.Name );
+					fontHash.Add( ff.Name, ff );
+				}
 			}
 			fontListBox.EndUpdate( );
 			

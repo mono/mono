@@ -1,3 +1,8 @@
+2006-01-04  Alexander Olk  <alex.olk@googlemail.com>
+
+	* FontDialog.cs: Fix, don't throw an exception if FontFamily.Families
+	  returns two FontFamily with the same name
+
 2006-01-04  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* ThemeWin32Classic.cs, ThemeClearlooks.cs: Dropped stupid scheme of 
