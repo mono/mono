@@ -1,3 +1,8 @@
+2006-01-04  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* ThemeWin32Classic.cs, ThemeClearlooks.cs: Dropped stupid scheme of 
+	  drawing disabled text. Instead using the ColorGrayText color
+
 2006-01-04  Jackson Harper  <jackson@ximian.com>
 
 	* TreeNode.cs: redraw the node when its image index is changed.

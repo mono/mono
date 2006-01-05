@@ -5075,10 +5075,7 @@ namespace System.Windows.Forms
 		public  override void CPDrawStringDisabled (Graphics graphics, string s, Font font, Color color, RectangleF layoutRectangle,
 			StringFormat format) {			
 
-			layoutRectangle.Offset(1.0f, 1.0f);
-			graphics.DrawString(s, font, ResPool.GetSolidBrush (ControlPaint.Light(color, 95)), layoutRectangle, format);			
-			layoutRectangle.Offset(-1.0f, -1.0f);
-			graphics.DrawString(s, font, ResPool.GetSolidBrush (ControlPaint.Light(color, 50)), layoutRectangle, format);
+			graphics.DrawString(s, font, ResPool.GetSolidBrush (ThemeEngine.Current.ColorGrayText), layoutRectangle, format);
 			
 		}
 

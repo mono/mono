@@ -2710,10 +2710,7 @@ namespace System.Windows.Forms {
 		public  override void CPDrawStringDisabled( Graphics graphics, string s, Font font, Color color, RectangleF layoutRectangle,
 							   StringFormat format ) {			
 			
-			layoutRectangle.Offset( 1.0f, 1.0f );
-			graphics.DrawString( s, font, ResPool.GetSolidBrush( Color.White ), layoutRectangle, format );			
-			layoutRectangle.Offset( -1.0f, -1.0f );
-			graphics.DrawString( s, font, ResPool.GetSolidBrush( disabled_color_foreground ), layoutRectangle, format );
+			graphics.DrawString( s, font, ResPool.GetSolidBrush( ThemeEngine.Current.ColorGrayText), layoutRectangle, format );			
 			
 		}
 	} //class
