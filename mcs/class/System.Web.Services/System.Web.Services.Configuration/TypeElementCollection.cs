@@ -90,13 +90,11 @@ namespace System.Web.Services.Configuration {
 			BaseRemove (key);
 		}
 
-		[MonoTODO]
 		public TypeElement this [int index] {
 			get { return (TypeElement)BaseGet (index); }
 			set { if (BaseGet (index) != null) BaseRemoveAt (index); BaseAdd (index, value); }
 		}
 
-		[MonoTODO]
 		public TypeElement this [object key] {
 			get { return (TypeElement)BaseGet (key); }
 			set {
