@@ -1,3 +1,9 @@
+2006-01-05  Chris Toshok  <toshok@ximian.com>
+
+	* System.Web.Services_test.dll.sources: enable a bunch of the 2.0
+	configuration tests.  Just Element types for now.  Collections
+	coming soon.
+
 2006-01-03  Chris Toshok  <toshok@ximian.com>
 
 	* System.Web.Services.dll.sources: add the 2.0 config classes.
