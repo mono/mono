@@ -1,3 +1,17 @@
+2006-01-06  Ankit Jain  <jankit@novell.com>
+
+	* PEAPI.cs (PEFile.AddGenericClass): New. Adds a GenericTypeInst to the TypeSpec table.
+	* Metadata.cs (GenericTypeInst): Change base class from 'Type' to 'Class'.
+	(GenericTypeInst.GetTypeSpec):
+	(GenericTypeInst.BuildTables):
+	(GenericTypeInst.Size):
+	(GenericTypeInst.Write):
+	(GenericTypeInst.GetCodedIx): Implement these for GenericTypeInst.
+	(ClassDef.SetSuper): Set typeIndexChecked to false if 'super' is not GenericTypeInst.
+	Fixup of typeIndex is not required for GenericTypeInst .     
+	(ClassDef.CheckTypeIndex): Recursively fix typeIndex if superType is ClassDef.
+	(MetaData.BuildMetaData): BuildTable for TypeSpec.
+
 2005-12-24  Jb Evain  <jbevain@gmail.com>
 
 	* Metadata.cs (Property): Add a new 'instance' field.

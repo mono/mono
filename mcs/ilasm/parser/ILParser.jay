@@ -110,16 +110,8 @@ namespace Mono.ILASM {
 
                 private ITypeRef GetTypeRef (ITypeRef b)
                 {
-                        ExternTypeRefInst etri = b as ExternTypeRefInst;
-                        ExternTypeRef etr;
-
-                        if (etri != null)
-                                return etri.Clone ();
-
-                        etr = b as ExternTypeRef;
-                        if (etr != null)
-                                return etr.Clone ();
-
+                        if (b is IClassRef)
+                                return ((IClassRef) b).Clone ();
                         return b;
                 }
 
@@ -617,7 +609,7 @@ class_attr		: /* EMPTY */
 extends_clause		: /* EMPTY */
 			| K_EXTENDS K_CLASS class_ref typars_clause
                           {
-                                $$ = $2;
+                                $$ = ((IClassRef) $3).GetGenericTypeInst ((GenericArguments) $4);
                           }
 			| K_EXTENDS class_ref
                           {
@@ -626,11 +618,39 @@ extends_clause		: /* EMPTY */
 			;
 
 impl_clause		: /* EMPTY */
-			| K_IMPLEMENTS class_refs
-                          {
-                                $$ = $2;
-                          }
+			| impl_class_refs
 			;
+
+impl_class_refs		: K_IMPLEMENTS K_CLASS class_ref typars_clause
+                          {
+                                GenericTypeInst gti = ((IClassRef) $3).GetGenericTypeInst ((GenericArguments) $4);
+ 
+                                ArrayList al = new ArrayList ();
+                                al.Add (gti);
+                                $$ = al;
+                          }
+			| K_IMPLEMENTS class_ref
+                          {
+                                ArrayList al = new ArrayList ();
+                                al.Add ($2);
+                                $$ = al;
+                          }
+			| impl_class_refs COMMA K_CLASS class_ref typars_clause
+                          {
+                                ArrayList al = (ArrayList) $1;
+
+                                GenericTypeInst gti = ((IClassRef) $4).GetGenericTypeInst ((GenericArguments) $5);
+                                al.Insert (0, gti);
+                                $$ = al;
+                          }
+			| impl_class_refs COMMA class_ref 
+                          {
+                                ArrayList al = (ArrayList) $1;
+
+                                al.Insert (0, $3);
+                                $$ = al;
+                          }
+ 			;
 
 formal_typars_clause           : /* EMPTY */
                         | OPEN_ANGLE_BRACKET formal_typars CLOSE_ANGLE_BRACKET
@@ -723,7 +743,7 @@ class_ref		: OPEN_BRACKET slashed_name CLOSE_BRACKET slashed_name
                                 if (prim != null && !codegen.IsThisAssembly ("mscorlib"))
                                         $$ = prim;
                                 else
-                                        $$ = new TypeRef ((string) $1, false, null);
+                                        $$ = codegen.GetTypeRef ((string) $1);
                           }
                       
 			;
@@ -789,9 +809,12 @@ class_decl		: method_all
                         | constraint_decl
 			;
 
-type			: K_CLASS class_ref
+type			: K_CLASS class_ref typars_clause
                           {
-                                $$ = $2;
+                                if ($3 != null)
+                                        $$ = ((IClassRef) $2).GetGenericTypeInst ((GenericArguments) $3);
+                                else
+                                        $$ = $2;
                           }
 			| K_OBJECT
                           {
@@ -807,16 +830,22 @@ type			: K_CLASS class_ref
 				class_ref.MakeValueClass ();
                                 $$ = class_ref;
                           }
-			| K_VALUETYPE OPEN_BRACKET slashed_name CLOSE_BRACKET slashed_name
+			| K_VALUETYPE OPEN_BRACKET slashed_name CLOSE_BRACKET slashed_name typars_clause
                           {
                                 ExternTypeRef ext_ref = codegen.ExternTable.GetTypeRef ((string) $3, (string) $5, true);
-                                $$ = ext_ref;
+                                if ($6 != null)
+                                        $$ = ext_ref.GetGenericTypeInst ((GenericArguments) $6);
+                                else
+                                        $$ = ext_ref;
                           }
-                        | K_VALUETYPE slashed_name
+                        | K_VALUETYPE slashed_name typars_clause
                           {
                                 TypeRef t_ref = new TypeRef ((string) $2, true, null);
                                 t_ref.MakeValueClass ();
-                                $$ = t_ref;
+                                if ($3 != null)
+                                        $$ = t_ref.GetGenericTypeInst ((GenericArguments) $3);
+                                else
+                                        $$ = t_ref;
                           }
 			| type OPEN_BRACKET CLOSE_BRACKET
                           {
@@ -984,10 +1013,6 @@ type			: K_CLASS class_ref
 					num = codegen.CurrentMethodDef.GetGenericParamNum (name);
 				GenParam gpar = new GenParam (num, name, GenParamType.MVar);
                                 $$ = new GenericTypeRef (gpar, name);
-                          }
-                        | K_CLASS slashed_name OPEN_ANGLE_BRACKET typars CLOSE_ANGLE_BRACKET
-                          {
-                                $$ = new GenericTypeInst ((string)$2, (GenericArguments) $4);
                           }
 			;
 

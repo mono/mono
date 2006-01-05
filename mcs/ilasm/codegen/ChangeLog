@@ -1,3 +1,26 @@
+2006-01-06  Ankit Jain  <jankit@novell.com>
+
+	* IClassRef.cs (IClassRef.Clone): New.
+	(IClassRef.GetGenericTypeInst): Get the Generic Instance of the IClassRef.
+	(IClassRef.ResolveInstance): Resolves the generic instance and returns the
+	resolved PEAPI type.     
+
+	* TypeRef.cs:
+	* ExternTypeRef.cs: Implement new methods of IClassRef.
+	Classes implementing IClassRef cache their generic instances (GenericTypeInst)
+	and their corresponding resolved PEAPI types.
+
+	* CodeGen.cs (CodeGen.GetTypeRef): Gets a TypeRef given a type name and caches them.
+
+	GenericTypeInst is now used for any Generic Type Instance, including any
+	extern types. ExternTypeRefInst is not used now.
+	* GenericTypeInst.cs (GenericTypeInst): Implement IClassRef instead of ITypeRef.
+	(GenericTypeInst.ResolveAsClass): Adds the instance to the TypeSpec table after Resolve()'ing it.
+	Clone () returns a cloned instance which shares its class_ref and generic arguments.
+
+	* TypeDef.cs (TypeDef.Define): Use ResolveAsClass for base class and interfaces
+	being implemented if they are GenericTypeInsts.
+
 2005-12-24  Jb Evain  <jbevain@gmail.com>
 
 	* FeatureAttr.cs: tag as Flags, add an Instance value.

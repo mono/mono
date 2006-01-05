@@ -1,5 +1,5 @@
 //
-// Mono.ILASM.TypeArguments
+// Mono.ILASM.GenericArguments
 //
 // Author(s):
 //  Ankit Jain  <jankit@novell.com>

@@ -1,3 +1,16 @@
+2006-01-06  Ankit Jain  <jankit@novell.com>
+
+	* ILParser.jay (GetTypeRef): Use new IClassRef.Clone .
+	(extends_clause): Use new IClassRef.GetGenericTypeInst.
+	(impl_clause | K_IMPLEMENTS class_refs): Remove.
+	(impl_clause | impl_class_refs): New.
+	(impl_class_refs): New. Add rules for generic and non-generic interface
+	implementations.
+	(class_ref | slashed_name): Use new codegen.GetTypeRef so that the TypeRef 
+	gets cached.
+	(type | K_CLASS class_ref): Add typars_clause to the rule and handle accordingly.
+	(type | K_VALUETYPE ...): Likewise.
+
 2005-12-24  Jb Evain  <jbevain@gmail.com>
 
 	* ILParser.jay (prop_attr): Activate instance keyword on properties.

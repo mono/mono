@@ -30,14 +30,21 @@ namespace Mono.ILASM {
                 private Hashtable nestedclass_table;
                 private Hashtable method_table;
                 private Hashtable field_table;
+                private Hashtable genericinst_table;
+                private Hashtable p_genericinst_table;
                 
-                public ExternTypeRef (IScope extern_ref, string full_name,
-                                bool is_valuetype)
+                public ExternTypeRef (IScope extern_ref, string full_name, bool is_valuetype) 
+                        : this (extern_ref, full_name, is_valuetype, null, null)
+                {
+                }
+
+                private ExternTypeRef (IScope extern_ref, string full_name,
+                                bool is_valuetype, ArrayList conv_list, string sig_mod)
                 {
                         this.extern_ref = extern_ref;
                         this.full_name = full_name;
                         this.is_valuetype = is_valuetype;
-                        sig_mod = String.Empty;
+                        this.sig_mod = sig_mod;
 
                         nestedclass_table = new Hashtable ();
                         nestedtypes_table = new Hashtable ();
@@ -45,23 +52,55 @@ namespace Mono.ILASM {
                         field_table = new Hashtable ();
                         
                         is_resolved = false;
+                        if (conv_list != null)
+                                ConversionList = conv_list;
+                }
+                
+                public IClassRef Clone ()
+                {
+                        return new ExternTypeRef (extern_ref, full_name, is_valuetype, 
+                                        (ArrayList) ConversionList.Clone (), sig_mod);
+                }
+                
+                public GenericTypeInst GetGenericTypeInst (GenericArguments gen_args)
+                {
+                        string sig = gen_args.ToString ();
+                        GenericTypeInst gti = null;
+
+                        if (genericinst_table == null)
+                                genericinst_table = new Hashtable ();
+                        else
+                                gti = genericinst_table [sig] as GenericTypeInst;
+
+                        if (gti == null) {
+                                gti = new GenericTypeInst (this, gen_args, is_valuetype);
+                                genericinst_table [sig] = gti;
+                        }
+
+                        return gti;
                 }
 
-                private ExternTypeRef (IScope extern_ref, string full_name,
-                                bool is_valuetype, ArrayList conv_list) : this (
-					extern_ref, full_name, is_valuetype)
+                public PEAPI.Type ResolveInstance (CodeGen code_gen, GenericArguments gen_args)
                 {
-                        ConversionList = conv_list;
+                        string sig = gen_args.ToString ();
+                        PEAPI.GenericTypeInst gti = null;
+
+                        if (p_genericinst_table == null)
+                                p_genericinst_table = new Hashtable ();
+                        else
+                                gti = p_genericinst_table [sig] as PEAPI.GenericTypeInst;
+
+                        if (gti == null) {
+                                if (!is_resolved)
+                                        throw new Exception ("Can't ResolveInstance on unresolved ExternTypeRef");
+
+				gti = new PEAPI.GenericTypeInst (PeapiType, gen_args.Resolve (code_gen));
+                                p_genericinst_table [sig] = gti;
+                        }
+
+                        return gti;
                 }
-                
-                public ExternTypeRef Clone ()
-                {
-                        ExternTypeRef etr = new ExternTypeRef (extern_ref, full_name, is_valuetype,
-                                        (ArrayList) ConversionList.Clone ());
-                        etr.SigMod = SigMod;
-                        return etr;
-                }
-                
+
                 public PEAPI.Type PeapiType {
                         get { return type; }
                 }

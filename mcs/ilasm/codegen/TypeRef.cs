@@ -23,6 +23,8 @@ namespace Mono.ILASM {
                 private string sig_mod;
                 private PEAPI.Type type;
                 private bool is_valuetype;
+                private Hashtable genericinst_table;
+                private Hashtable p_genericinst_table;
 
                 private bool is_resolved;
 
@@ -30,14 +32,21 @@ namespace Mono.ILASM {
                 public static readonly TypeRef Any = new TypeRef ("any", false, null);
 
                 public TypeRef (string full_name, bool is_valuetype, Location location)
+                        : this (full_name, is_valuetype, location, null, null)
+                {
+                }
+
+                public TypeRef (string full_name, bool is_valuetype, Location location, ArrayList conv_list, string sig_mod)
                 {
                         this.full_name = full_name;
                         this.location = location;
                         this.is_valuetype = is_valuetype;
-                        sig_mod = String.Empty;
+                        this.sig_mod = sig_mod;
+                        if (conv_list != null)
+                                ConversionList = conv_list;
                         is_resolved = false;
                 }
-
+                
                 public string FullName {
                         get { return full_name + sig_mod; }
                 }
@@ -55,6 +64,11 @@ namespace Mono.ILASM {
                         get { return type as PEAPI.Class; }
                 }
 
+                public IClassRef Clone ()
+                {
+                        return new TypeRef (full_name, is_valuetype, location, (ArrayList) ConversionList.Clone (), sig_mod);
+                }
+
                 public bool IsResolved {
                         get { return is_resolved; }
                 }
@@ -62,6 +76,45 @@ namespace Mono.ILASM {
                 public void MakeValueClass ()
                 {
                         is_valuetype = true;
+                }
+
+                public GenericTypeInst GetGenericTypeInst (GenericArguments gen_args)
+                {
+                        string sig = gen_args.ToString ();
+                        GenericTypeInst gtri = null;
+
+                        if (genericinst_table == null)
+                                genericinst_table = new Hashtable ();
+                        else
+                                gtri = genericinst_table [sig] as GenericTypeInst;
+
+                        if (gtri == null) {
+                                gtri = new GenericTypeInst (this, gen_args, is_valuetype);
+                                genericinst_table [sig] = gtri;
+                        }
+
+                        return gtri;
+                }
+
+                public PEAPI.Type ResolveInstance (CodeGen code_gen, GenericArguments gen_args)
+                {
+                        PEAPI.GenericTypeInst gtri = null;
+                        string sig = gen_args.ToString ();
+
+                        if (p_genericinst_table == null)
+                                p_genericinst_table = new Hashtable ();
+                        else
+                                gtri = p_genericinst_table [sig] as PEAPI.GenericTypeInst;
+
+                        if (gtri == null) {
+                                if (!IsResolved)
+                                        Resolve (code_gen);
+
+				gtri = new PEAPI.GenericTypeInst (PeapiType, gen_args.Resolve (code_gen));
+                                p_genericinst_table [sig] = gtri;
+                        }
+                        
+                        return gtri;
                 }
 
                 public  IMethodRef GetMethodRef (ITypeRef ret_type,

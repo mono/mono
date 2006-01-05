@@ -55,6 +55,7 @@ namespace Mono.ILASM {
                 private ArrayList data_list;
                 private FileRef file_ref;
                 private ArrayList manifestResources;
+                private Hashtable typeref_table;
                 
                 private ArrayList defcont_list;
 
@@ -170,6 +171,23 @@ namespace Mono.ILASM {
                                         throw new Exception ("Multiple .entrypoint declarations.");
                                 entry_point = value;
                         }                
+                }
+
+                public TypeRef GetTypeRef (string name)
+                {
+                        TypeRef tr = null;
+
+                        if (typeref_table == null) 
+                                typeref_table = new Hashtable ();
+                        else 
+                                tr = typeref_table [name] as TypeRef;
+
+                        if (tr == null) {
+                                tr = new TypeRef (name, false, null);
+                                typeref_table [name] = tr;
+                        }
+
+                        return tr;
                 }
 
                 public void SetSubSystem (int sub_system)

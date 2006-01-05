@@ -1346,6 +1346,12 @@ namespace PEAPI {
 			nameIx = nIx;
 		}
 
+		internal Class (byte typeIndex) : base (typeIndex)
+		{
+			nameSpace = "Should not be used";
+			name = "Should not be used";
+		}
+
 		internal virtual uint TypeDefOrRefToken() { return 0; }
 
 		internal virtual void MakeValueClass(ValueClass vClass) 
@@ -1406,9 +1412,7 @@ namespace PEAPI {
 		internal void SetSuper(Class sClass) 
 		{
 			superType = sClass;
-			if (sClass is ClassRef)
-				typeIndex = superType.GetTypeIndex();
-			else
+			if (! (sClass is GenericTypeInst))
 				typeIndexChecked = false;
 		}
 
@@ -1645,7 +1649,7 @@ namespace PEAPI {
 		internal void CheckTypeIndex() 
 		{
 			if (typeIndexChecked) return;
-			if (!(superType is ClassRef)) 
+			if (superType is ClassDef) 
 				((ClassDef)superType).CheckTypeIndex();
 			typeIndex = superType.GetTypeIndex();
 			typeIndexChecked = true;
@@ -1980,10 +1984,13 @@ namespace PEAPI {
 		}
 	}
 
-	public class GenericTypeInst : Type {
+	public class GenericTypeInst : Class {
 
 		private Type gen_type;
 		private Type[] gen_param;
+		bool done = false;
+		bool inTable = false;
+		uint sigIx = 0;
 
 		public GenericTypeInst (Type gen_type, Type[] gen_param) 
 			: base ((byte) PrimitiveType.GenericInst.GetTypeIndex ())
@@ -1993,6 +2000,16 @@ namespace PEAPI {
 			tabIx = MDTable.TypeSpec;
 		}
 
+		internal override MetaDataElement GetTypeSpec (MetaData md)
+		{
+			if (!inTable) {
+				md.AddToTable (MDTable.TypeSpec, this);
+				inTable = true;
+			}
+
+			return this;
+		}
+
 		internal sealed override void TypeSig(MemoryStream str) 
 		{
 			str.WriteByte(typeIndex);
@@ -2000,6 +2017,37 @@ namespace PEAPI {
 			MetaData.CompressNum ((uint) gen_param.Length, str);
 			foreach (Type param in gen_param)
 				param.TypeSig (str);
+		}
+
+		internal sealed override void BuildTables (MetaData md)
+		{
+			if (done)
+				return;
+			MemoryStream str = new MemoryStream ();
+			TypeSig (str);
+			sigIx = md.AddToBlobHeap (str.ToArray ());
+
+			done = true;
+		}
+
+		internal sealed override uint Size (MetaData md)
+		{
+			return md.BlobIndexSize ();
+		}
+
+		internal sealed override void Write (FileImage output)
+		{
+			output.BlobIndex (sigIx);	
+		}
+
+		internal sealed override uint GetCodedIx (CIx code)
+		{
+			switch (code) {
+				case (CIx.TypeDefOrRef): return 2;
+				case (CIx.MemberRefParent): return 4;
+				case (CIx.HasCustomAttr): return 13;
+			}
+			return 0;
 		}
 	}
 
@@ -5030,6 +5078,7 @@ namespace PEAPI {
 		{
 			codeStart = codeStartOffset;
 			BuildTable(metaDataTables[(int)MDTable.TypeDef]);
+			BuildTable(metaDataTables[(int)MDTable.TypeSpec]);
 			BuildTable(metaDataTables[(int)MDTable.MemberRef]);
 #if NET_2_0 || BOOTSTRAP_NET_2_0
 			BuildTable(metaDataTables[(int)MDTable.GenericParam]);

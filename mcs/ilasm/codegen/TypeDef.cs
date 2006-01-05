@@ -303,7 +303,12 @@ namespace Mono.ILASM {
                         
                         if (parent != null) {
                                 is_intransit = true;
-                                parent.Resolve (code_gen);
+                                GenericTypeInst gti = parent as GenericTypeInst;
+                                if (gti != null)
+                                        gti.ResolveAsClass (code_gen);
+                                else
+                                        parent.Resolve (code_gen);
+
                                 is_intransit = false;
                                 if (parent.PeapiClass == null) {
                                         throw new Exception ("this type can not be a base type: "
@@ -359,7 +364,11 @@ namespace Mono.ILASM {
 
                         if (impl_list != null) {
                                 foreach (IClassRef impl in impl_list) {
-                                        impl.Resolve (code_gen);
+                                        GenericTypeInst gti = impl as GenericTypeInst;
+                                        if (gti != null)
+                                                gti.ResolveAsClass (code_gen);
+                                        else
+                                                impl.Resolve (code_gen);
                                         classdef.AddImplementedInterface (impl.PeapiClass);
                                 }
                         }

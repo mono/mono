@@ -891,6 +891,11 @@ namespace PEAPI {
 			return aClass;
 		}
 
+		public void  AddGenericClass (GenericTypeInst gti)
+		{
+			metaData.AddToTable (MDTable.TypeSpec, gti);
+		}
+
 		public FileRef AddFile(string fName, byte[] hashBytes, bool hasMetaData, bool entryPoint) 
 		{
 			FileRef file = new FileRef(fName,hashBytes,hasMetaData,entryPoint,metaData);
