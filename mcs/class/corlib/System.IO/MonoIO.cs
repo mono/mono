@@ -63,7 +63,7 @@ namespace System.IO
 								  path);
 
 			case MonoIOError.ERROR_TOO_MANY_OPEN_FILES:
-				return new IOException ("Too many open files");
+				return new IOException ("Too many open files", unchecked((int)0x80070000) | (int)error);
 				
 			case MonoIOError.ERROR_PATH_NOT_FOUND:
 				message = String.Format ("Could not find a part of the path \"{0}\"", path);
@@ -75,11 +75,17 @@ namespace System.IO
 
 			case MonoIOError.ERROR_INVALID_HANDLE:
 				message = String.Format ("Invalid handle to path \"{0}\"", path);
-				return new IOException (message);
-				
+				return new IOException (message, unchecked((int)0x80070000) | (int)error);
+			case MonoIOError.ERROR_INVALID_DRIVE:
+				message = String.Format ("Could not find the drive  '{0}'. The drive might not be ready or might not be mapped.", path);
+#if NET_2_0
+				return new DriveNotFoundException (message);
+#else
+				return new IOException (message, unchecked((int)0x80070000) | (int)error);
+#endif
 			case MonoIOError.ERROR_FILE_EXISTS:
 				message = String.Format ("Could not create file \"{0}\". File already exists.", path);
-				return new IOException (message);
+				return new IOException (message, unchecked((int)0x80070000) | (int)error);
 
 			case MonoIOError.ERROR_FILENAME_EXCED_RANGE:
 				message = String.Format ("Path is too long. Path: {0}", path); 
@@ -87,27 +93,27 @@ namespace System.IO
 
 			case MonoIOError.ERROR_INVALID_PARAMETER:
 				message = String.Format ("Invalid parameter");
-				return new IOException (message);
+				return new IOException (message, unchecked((int)0x80070000) | (int)error);
 
 			case MonoIOError.ERROR_WRITE_FAULT:
 				message = String.Format ("Write fault on path {0}", path);
-				return new IOException (message);
+				return new IOException (message, unchecked((int)0x80070000) | (int)error);
 
 			case MonoIOError.ERROR_SHARING_VIOLATION:
 				message = String.Format ("Sharing violation on path {0}", path);
-				return new IOException (message);
+				return new IOException (message, unchecked((int)0x80070000) | (int)error);
 				
 			case MonoIOError.ERROR_LOCK_VIOLATION:
 				message = String.Format ("Lock violation on path {0}", path);
-				return new IOException (message);
+				return new IOException (message, unchecked((int)0x80070000) | (int)error);
 
 			case MonoIOError.ERROR_DIR_NOT_EMPTY:
 				message = String.Format ("Directory {0} is not empty", path);
-				return new IOException (message);
+				return new IOException (message, unchecked((int)0x80070000) | (int)error);
 				
 			default:
 				message = String.Format ("Win32 IO returned {0}. Path: {1}", error, path);
-				return new IOException (message);
+				return new IOException (message, unchecked((int)0x80070000) | (int)error);
 			}
 		}
 

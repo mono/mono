@@ -1,9 +1,16 @@
+2006-01-05  Kornél Pál  <kornelpal@hotmail.com>
+
+	* DriveNotFoundException.cs: Added.
+	* MonoIO.cs: Added ERROR_INVALID_DRIVE handling. Pass HResult to
+	  IOException constructors.
+	* MonoIOError.cs: Expose ERROR_INVALID_DRIVE.
+
 2006-01-02  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* UnexceptionalStreamReader.cs: Re-implemented the Read method to fix 
 	the new line handling when reading from the Console (bug #77108).
 
-2005-12-24  Korn�l P�l  <kornelpal@hotmail.com>
+2005-12-24  Kornél Pál  <kornelpal@hotmail.com>
 
 	* FileStream.cs: Set buf_start to actual initial position when creating
 	  FileStreams from handles.

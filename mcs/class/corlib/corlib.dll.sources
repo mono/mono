@@ -332,6 +332,7 @@ System.IO/CheckPermission.cs
 System.IO/Directory.cs
 System.IO/DirectoryInfo.cs
 System.IO/DirectoryNotFoundException.cs
+System.IO/DriveNotFoundException.cs
 System.IO/EndOfStreamException.cs
 System.IO/File.cs
 System.IO/FileAccess.cs
