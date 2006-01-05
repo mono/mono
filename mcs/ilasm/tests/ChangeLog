@@ -1,3 +1,15 @@
+2006-01-05  Ankit Jain  <jankit@novell.com>
+
+	* gen-extern-type.il: New. Test for ref to an external generic type.
+	* gen-array1.il, gen-array-2.il: New. Test for duplicate typespecs for
+	generic types and arrays of the same.
+	* gen-interf-1.il, gen-interf-2.il: New. Test for inheriting from a generic
+	base class and implementing generic interfaces.
+	* gen-struct.il: New. Test for generic valuetype.
+	* gen-local.il: New. No entry in the TypeSpec table should be emitted if a
+	generic type is referenced only as a local var.
+	* one.cs, two.cs: Updated to include types required the new tests.
+
 2006-01-03  Ankit Jain  <jankit@novell.com>
 
 	* gen-dotted-name.il: New. Test for dotted-name of a generic type.
