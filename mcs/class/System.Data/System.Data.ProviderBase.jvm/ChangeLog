@@ -1,3 +1,8 @@
+2006-05-01 Konstantin Triger <kostat@mainsoft.com
+
+	*      AbstractDataReader.cs, ReaderCache.cs: use stream interfaces
+		where appropriate.
+
 2005-14-12 Konstantin Triger <kostat@mainsoft.com>
 
 	* DbPortResolver.cs, AbstractDBConnection.cs: differentiate between the situation where

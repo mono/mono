@@ -36,7 +36,7 @@ namespace System.Data.Common
 {
 	public interface IReaderCacheContainer
 	{
-		void Fetch(ResultSet rs, int columnIndex);
+		void Fetch(ResultSet rs, int columnIndex, bool isSequential);
 		bool IsNull();
 		object GetValue();
 	}
@@ -52,12 +52,15 @@ namespace System.Data.Common
 		#region Methods
 
 		protected abstract void FetchInternal(ResultSet rs, int columnIndex);
+		protected virtual void FetchInternal(ResultSet rs, int columnIndex, bool isSequential) {
+			FetchInternal(rs, columnIndex);
+		}
 
 		public abstract object GetValue();		
 
-		public void Fetch(ResultSet rs, int columnIndex)
+		public void Fetch(ResultSet rs, int columnIndex, bool isSequential)
 		{
-			FetchInternal(rs, columnIndex + 1);
+			FetchInternal(rs, columnIndex + 1, isSequential);
 			_isNull = rs.wasNull();
 		}
 
@@ -74,7 +77,7 @@ namespace System.Data.Common
 	{
 		#region Fields
 
-		java.sql.Array _a;
+		object _a;
 
 		#endregion // Fields
 
@@ -82,15 +85,10 @@ namespace System.Data.Common
 
 		protected override void FetchInternal(ResultSet rs, int columnIndex)
 		{
-			_a = rs.getArray(columnIndex);
+			_a = rs.getArray(columnIndex).getArray();
 		}
 
 		public override object GetValue()
-		{
-			return _a;
-		}
-
-		internal java.sql.Array GetArray()
 		{
 			return _a;
 		}
@@ -153,7 +151,21 @@ namespace System.Data.Common
 
 		internal byte[] GetBytes()
 		{
-			return _b;
+			return (byte[])GetValue();
+		}
+
+		internal virtual long GetBytes(
+			long dataIndex,
+			byte[] buffer,
+			int bufferIndex,
+			int length) {
+			if (_b == null)
+				return 0;
+			if (buffer == null)
+				return _b.LongLength;
+			long actualLength = ((dataIndex + length) >= _b.LongLength) ? (_b.LongLength - dataIndex) : length;
+			Array.Copy(_b,dataIndex,buffer,bufferIndex,actualLength);
+			return actualLength;
 		}
 
 		#endregion // Methods
@@ -194,21 +206,33 @@ namespace System.Data.Common
 		#region Fields
 
 		static readonly byte[] _emptyByteArr = new byte[0];
+		java.sql.Blob _blob;
 
 		#endregion // Fields
 
 		#region Methods
 
-		protected override void FetchInternal(ResultSet rs, int columnIndex)
+		protected override void FetchInternal(ResultSet rs, int columnIndex) {
+			throw new NotImplementedException("Should not be called");
+		}
+
+
+		protected override void FetchInternal(ResultSet rs, int columnIndex, bool isSequential)
 		{
-			java.sql.Blob blob = rs.getBlob(columnIndex);
-			if (blob != null) {
-				long length = blob.length();								
+			_blob = rs.getBlob(columnIndex);
+			if (!isSequential)
+				ReadAll();
+			
+		}
+
+		void ReadAll() {
+			if (_blob != null) {
+				long length = _blob.length();								
 				if (length == 0) {
 					_b = _emptyByteArr;
 				}
 				else {	
-					java.io.InputStream input = blob.getBinaryStream();	
+					java.io.InputStream input = _blob.getBinaryStream();	
 					byte[] byteValue = new byte[length];
 					sbyte[] sbyteValue = vmw.common.TypeUtils.ToSByteArray(byteValue);
 					input.read(sbyteValue);
@@ -219,8 +243,26 @@ namespace System.Data.Common
 
 		public override object GetValue()
 		{
-			return _b;
+			if (_b == null)
+				ReadAll();
+			return base.GetValue();
 		}
+
+		internal override long GetBytes(long dataIndex, byte[] buffer, int bufferIndex, int length) {
+			if (_b != null)
+				return base.GetBytes (dataIndex, buffer, bufferIndex, length);
+
+			if (_blob == null)
+				return 0;
+
+			if (buffer == null)
+				return _blob.length();
+
+			java.io.InputStream input = _blob.getBinaryStream();
+			input.skip(dataIndex);
+			return input.read(vmw.common.TypeUtils.ToSByteArray(buffer), bufferIndex, length);
+		}
+
 
 		#endregion // Methods
 	}
@@ -234,7 +276,11 @@ namespace System.Data.Common
 
 		#region Methods
 
-		internal abstract char[] GetChars();
+		internal abstract long GetChars(
+			long dataIndex,
+			char[] buffer,
+			int bufferIndex,
+			int length);
 
 		#endregion // Methods
 	}
@@ -275,45 +321,58 @@ namespace System.Data.Common
 	{
 		#region Fields
 		
-		char[] _c;
+		java.sql.Clob _clob;
 
 		#endregion // Fields
 
 		#region Methods
 
-		// FIXME : conside adding stream wrapper interface
-
-		protected override void FetchInternal(ResultSet rs, int columnIndex)
+		protected override void FetchInternal(ResultSet rs, int columnIndex, bool isSequential)
 		{
-			java.sql.Clob clob = rs.getClob(columnIndex);			
-			if (clob != null) {
-				long length = clob.length();								
+			_clob = rs.getClob(columnIndex);
+			if (!isSequential)
+				ReadAll();
+			
+		}
+
+		void ReadAll() {
+			if (_clob != null) {
+				long length = _clob.length();								
 				if (length == 0) {
 					_s = String.Empty;
-					_c = String.Empty.ToCharArray();
 				}
 				else {	
-					java.io.Reader reader = clob.getCharacterStream();	
+					java.io.Reader reader = _clob.getCharacterStream();	
 					char[] charValue = new char[length];
 					reader.read(charValue);
-					_c = charValue;
-					
+					if (charValue != null)
+						_s = new String(charValue);
 				}
 			}
 		}
 
 		public override object GetValue()
 		{
-			if (_s == null && _c != null) {
-				_s = (_c.Length != 0) ? new String(_c) : String.Empty;
-			}
-			return _s;
+			if (_s == null)
+				ReadAll();
+			return base.GetValue();
 		}
 
-		internal override char[] GetChars()
-		{
-			return _c;
+		internal override long GetChars(long dataIndex, char[] buffer, int bufferIndex, int length) {
+			if (_s != null)
+				return base.GetChars (dataIndex, buffer, bufferIndex, length);
+
+			if (_clob == null)
+				return 0;
+
+			if (buffer == null)
+				return _clob.length();
+
+			java.io.Reader reader = _clob.getCharacterStream();
+			reader.skip(dataIndex);
+			return reader.read(buffer, bufferIndex, length);
 		}
+
 
 		#endregion // Methods
 	}
@@ -524,11 +583,18 @@ namespace System.Data.Common
 		{
 			return _s;
 		}
-
-		internal override char[] GetChars()
-		{
-			return _s.ToCharArray();
+		
+		internal override long GetChars(long dataIndex, char[] buffer, int bufferIndex, int length) {
+			if (_s == null)
+				return 0;
+			if (buffer == null)
+				return _s.Length;
+			int actualLength = ((dataIndex + length) >= _s.Length) ? (_s.Length - (int)dataIndex) : length;
+			for (int i = 0, stringIndex = (int)dataIndex; i < actualLength; i++)
+				buffer[bufferIndex++] = _s[stringIndex++];
+			return actualLength;
 		}
+
 
 		#endregion // Methods
 	}

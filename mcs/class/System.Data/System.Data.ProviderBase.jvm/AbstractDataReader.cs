@@ -439,14 +439,8 @@ namespace System.Data.Common
 			int length)
 		{
 			FillReaderCache(columnIndex);
-			byte[] byteArr = ((BytesReaderCacheContainer)ReaderCache[columnIndex]).GetBytes();
-			if (byteArr == null)
-				return 0;
-			if (buffer == null)
-				return byteArr.LongLength;
-			long actualLength = ((dataIndex + length) >= byteArr.Length) ? (byteArr.Length - dataIndex) : length;
-			Array.Copy(byteArr,dataIndex,buffer,bufferIndex,actualLength);
-			return actualLength;
+			return ((BytesReaderCacheContainer)ReaderCache[columnIndex])
+				.GetBytes(dataIndex, buffer, bufferIndex, length);
 		}
 
 		public virtual byte[] GetBytes(int columnIndex)
@@ -483,10 +477,8 @@ namespace System.Data.Common
 			int length)
 		{
 			FillReaderCache(columnIndex);
-			char[] charArr = ((CharsReaderCacheContainer)ReaderCache[columnIndex]).GetChars();
-			long actualLength = ((dataIndex + length) >= charArr.Length) ? (charArr.Length - dataIndex) : length;
-			Array.Copy(charArr,dataIndex,buffer,bufferIndex,actualLength);
-			return actualLength;
+			return ((CharsReaderCacheContainer)ReaderCache[columnIndex])
+				.GetChars(dataIndex, buffer, bufferIndex, length);
 		}
 
 		public override string GetDataTypeName(int columnIndex)
@@ -694,11 +686,11 @@ namespace System.Data.Common
 				if ((Behavior & CommandBehavior.SequentialAccess) == 0) {					
 					while (_currentCacheFilledPosition < columnIndex) {
 						_currentCacheFilledPosition++;
-						readerCache[_currentCacheFilledPosition].Fetch(Results,_currentCacheFilledPosition);
+						readerCache[_currentCacheFilledPosition].Fetch(Results,_currentCacheFilledPosition, false);
 					}					
 				}
 				else {
-					readerCache[columnIndex].Fetch(Results,columnIndex);
+					readerCache[columnIndex].Fetch(Results,columnIndex, true);
 				}
 			}
 			catch(SQLException e) {
