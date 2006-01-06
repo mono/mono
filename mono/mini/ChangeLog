@@ -1,5 +1,13 @@
 2006-01-05 Neale Ferguson <neale@sinenomine.net>
 
+	* mini-s390.c, mini-s390.h, inssel-s390.brg, cpu-s390.md: Fix r8 to unsigned int 
+	conversion and implement LADD/LSUB.
+
+	* exceptions-s390.c: Standardize mono_arch_find_jit_info to match other
+	architectures.
+
+2006-01-05 Neale Ferguson <neale@sinenomine.net>
+
 	* mini-s390x.c, mini-s390x.h: Fix r8 to unsigned int conversion.
 
 	* exceptions-s390x.c: Standardize mono_arch_find_jit_info to match other
