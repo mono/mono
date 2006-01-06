@@ -21,19 +21,19 @@ ifndef NO_INSTALL
 install-local:
 	$(MKINSTALLDIRS) $(DESTDIR)$(prefix)/bin
 	$(MKINSTALLDIRS) $(DESTDIR)$(prefix)/share/jay
-	$(MKINSTALLDIRS) $(DESTDIR)$(prefix)/man/man1
+	$(MKINSTALLDIRS) $(DESTDIR)$(prefix)/share/man/man1
 	$(INSTALL_BIN) jay $(DESTDIR)$(prefix)/bin
 	for datafile in $(datafiles) ; do \
 	   $(INSTALL_DATA) $$datafile $(DESTDIR)$(prefix)/share/jay ; \
 	done
-	$(INSTALL_DATA) jay.1 $(DESTDIR)$(prefix)/man/man1
+	$(INSTALL_DATA) jay.1 $(DESTDIR)$(prefix)/share/man/man1
 
 uninstall-local:
 	-rm -f $(DESTDIR)$(prefix)/bin/jay
 	for datafile in $(datafiles) ; do \
 	   rm -f $(DESTDIR)$(prefix)/share/jay/$$datafile || : ; \
 	done
-	-rm -f $(DESTDIR)$(prefix)/man/man1/jay.1
+	-rm -f $(DESTDIR)$(prefix)/share/man/man1/jay.1
 endif
 
 clean-local:

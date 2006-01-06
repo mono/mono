@@ -1,3 +1,7 @@
+2006-01-06 Wade Berrier <wberrier@novell.com>
+
+	* Makefile: fix man path
+
 2005-09-20 Konstantin Triger <kostat@mainsift.com>
 
 	* Added jay.vcproj to build jay on pure Win32
