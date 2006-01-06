@@ -303,11 +303,7 @@ namespace Mono.ILASM {
                         
                         if (parent != null) {
                                 is_intransit = true;
-                                GenericTypeInst gti = parent as GenericTypeInst;
-                                if (gti != null)
-                                        gti.ResolveAsClass (code_gen);
-                                else
-                                        parent.Resolve (code_gen);
+                                parent.Resolve (code_gen);
 
                                 is_intransit = false;
                                 if (parent.PeapiClass == null) {
@@ -364,11 +360,7 @@ namespace Mono.ILASM {
 
                         if (impl_list != null) {
                                 foreach (IClassRef impl in impl_list) {
-                                        GenericTypeInst gti = impl as GenericTypeInst;
-                                        if (gti != null)
-                                                gti.ResolveAsClass (code_gen);
-                                        else
-                                                impl.Resolve (code_gen);
+                                        impl.Resolve (code_gen);
                                         classdef.AddImplementedInterface (impl.PeapiClass);
                                 }
                         }

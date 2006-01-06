@@ -1,5 +1,18 @@
 2006-01-06  Ankit Jain  <jankit@novell.com>
 
+	GenericTypeInst.Resolve should do the expected thing ie., resolve and add
+	the Generic Inst to the typespec table. Use ResolveOnly to Resolve w/o 
+	adding to the table.
+	* GenericTypeInst.cs (GenericTypeInst.Resolve): Rename to ..
+	(GenericTypeInst.ResolveOnly): .. this.
+	(GenericTypeInst.ResolveAsClass): Rename to Resolve.
+
+	* TypeDef.cs (TypeDef.Define): Revert the ResolveAsClass calls added here.
+	* Local.cs (Local.GetPeapiLocal): Use new GenericTypeInst.ResolveOnly if type is
+	GenericTypeInst.
+
+2006-01-06  Ankit Jain  <jankit@novell.com>
+
 	* IClassRef.cs (IClassRef.Clone): New.
 	(IClassRef.GetGenericTypeInst): Get the Generic Instance of the IClassRef.
 	(IClassRef.ResolveInstance): Resolves the generic instance and returns the

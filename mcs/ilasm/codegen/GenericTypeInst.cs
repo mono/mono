@@ -19,6 +19,7 @@ namespace Mono.ILASM {
 
                 private IClassRef class_ref;
                 private PEAPI.Type ptype;
+                private PEAPI.GenericTypeInst p_gen_inst;
                 private bool is_valuetypeinst;
                 private bool is_resolved;
                 private GenericArguments gen_args;
@@ -88,34 +89,28 @@ namespace Mono.ILASM {
                         throw new Exception (String.Format ("Invalid attempt to create '{0}''{1}'", FullName, gen_args.ToString ()));
                 }
                 
-                public void Resolve (CodeGen code_gen)
+                /* Only resolves, does not add it to the TypeSpec
+                   table */
+                public void ResolveOnly (CodeGen code_gen)
                 {
                         if (is_resolved)
                                 return;
 
                         class_ref.Resolve (code_gen);
-                        ptype = class_ref.ResolveInstance (code_gen, gen_args);
+                        p_gen_inst = (PEAPI.GenericTypeInst) class_ref.ResolveInstance (code_gen, gen_args);
 
-                        ptype = Modify (code_gen, ptype);
+                        ptype = Modify (code_gen, p_gen_inst);
 
                         is_resolved = true;
                 }
 
-                /* Resolves, AND adds to the TypeSpec table,
-		   called from TypeDef.Define for base class and
-		   interface implementations.
-		   
-		   Not required to be called for method/field refs, as
-		   PEFile's AddMethodToTypeSpec & AddFieldToTypeSpec is
-		   used which adds it to the TypeSpec table.
-		 */
-                public void ResolveAsClass (CodeGen code_gen)
+                public void Resolve (CodeGen code_gen)
                 {
-                        Resolve (code_gen);
+                        ResolveOnly (code_gen);
                         if (is_added)
                                 return;
 
-                        code_gen.PEFile.AddGenericClass ((PEAPI.GenericTypeInst) ptype);
+                        code_gen.PEFile.AddGenericClass ((PEAPI.GenericTypeInst) p_gen_inst);
                         is_added = true;
                 }
 
