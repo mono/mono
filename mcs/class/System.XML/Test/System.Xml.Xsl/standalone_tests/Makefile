@@ -84,13 +84,13 @@ endif
 $(GENERATE_EXE) : generate.cs XsltTestUtils.cs
 	$(CSCOMPILE) generate.cs XsltTestUtils.cs -out:$@
 $(TEST_PROG) : xslttest.cs XsltTestUtils.cs
-	$(CSCOMPILE) xslttest.cs XsltTestUtils.cs XmlCompare.cs -r:NUnit.core -r:NUnit.framework -out:$@ -t:library
+	$(CSCOMPILE) xslttest.cs XsltTestUtils.cs XmlCompare.cs -r:nunit.core -r:nunit.framework -out:$@ -t:library
 
 catalog-fixed : $(FIXED_CATALOG)
 
 $(FIXED_CATALOG) : $(CATALOG) catalog.sed catalog-fixed.diff
 	sed -f catalog.sed $(CATALOG) > $(FIXED_CATALOG)
-	patch -p0 $(FIXED_CATALOG) < catalog-fixed.diff
+	patch -p0 -i catalog-fixed.diff
 
 catalog : $(CATALOG)
 

@@ -183,7 +183,7 @@ namespace MonoTests.oasis_xslt {
 			if (_transform.Succeeded) {
 				try {
 					using (StreamReader sr = new StreamReader (_transform.TestCase.OutFile))
-						failureMessage = CompareResult (_transform.Result, sr.ReadToEnd (), _transform.TestCase.Compare);
+						failureMessage = CompareResult (_transform.Result, sr.ReadToEnd ().Replace ("\r\n", "\n"), _transform.TestCase.Compare);
 				}
 				catch {
 					//if there is no reference result because of expectedException, we

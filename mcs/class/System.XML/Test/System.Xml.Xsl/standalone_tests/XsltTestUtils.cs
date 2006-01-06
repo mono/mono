@@ -257,7 +257,7 @@ namespace MonoTests.oasis_xslt {
 				IXPathNavigable input = LoadInput ();
 				using (StringWriter sw = new StringWriter ()) {
 					trans.Transform (input, null, sw, null);
-					_result = sw.ToString ();
+					_result = sw.ToString ().Replace ("\r\n", "\n");
 				}
 			}
 			catch (System.Exception e) {
