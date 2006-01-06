@@ -352,7 +352,13 @@ namespace Mono.Data.SqliteClient
 		
 		public Type GetFieldType (int i)
 		{
-			return ((object[]) rows[current_row])[i].GetType();
+			int row = current_row;
+			if (row == -1 && rows.Count == 0) return typeof(string);
+			if (row == -1) row = 0;
+			return ((object[]) rows[row])[i].GetType();
+			// Note that the return value isn't guaranteed to
+			// be the same as the rows are read if different
+			// types of information are stored in the column.
 		}
 		
 		public float GetFloat (int i)
