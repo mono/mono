@@ -1,5 +1,18 @@
 2006-01-06  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlSchemaSet.cs : Add() rollbacks IsCompiled to false.
+	  Global components are not added when Add() is called.
+
+2006-01-06  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlSchemaSet.cs : reverted previous fix; it broke inclusions.
+
+2006-01-06  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlSchemaSet.cs : Add() needs (consistent) namespace duplicate check.
+
+2006-01-06  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlSchemaSimpleTypeRestriction.cs : maxLength and minLength were
 	  likely to be ignored in ValidateNonListValueWithFacets().
 	* XmlSchemaValidator.cs : Don't use normalized string value as the

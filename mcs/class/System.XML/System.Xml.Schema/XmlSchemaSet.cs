@@ -176,8 +176,6 @@ namespace System.Xml.Schema
 			foreach (XmlSchema schema in schemaSet.schemas) {
 				if (!schemas.Contains (schema))
 					al.Add (schema);
-				else
-					AddGlobalComponents (schema);
 			}
 			foreach (XmlSchema schema in al)
 				Add (schema);
@@ -187,7 +185,7 @@ namespace System.Xml.Schema
 		public XmlSchema Add (XmlSchema schema)
 		{
 			schemas.Add (schema);
-			AddGlobalComponents (schema);
+			ResetCompile ();
 			return schema;
 		}
 
@@ -280,12 +278,16 @@ namespace System.Xml.Schema
 			if (!schema.IsCompiled)
 				schema.Compile (handler, this, xmlResolver);
 			schemas.Remove (schema);
-			isCompiled = false;
-			ClearGlobalComponents ();
+			ResetCompile ();
 			return schema;
 		}
 
-		[MonoTODO ("Check exact behavior")]
+		void ResetCompile ()
+		{
+			isCompiled = false;
+			ClearGlobalComponents ();
+		}
+
 		public bool RemoveRecursive (XmlSchema schema)
 		{
 			if (schema == null)
@@ -296,6 +298,10 @@ namespace System.Xml.Schema
 				return false;
 			al.Remove (schema);
 			schemas.Remove (schema);
+
+			if (!IsCompiled)
+				return true;
+
 			ClearGlobalComponents ();
 			foreach (XmlSchema s in al) {
 				if (s.IsCompiled)
