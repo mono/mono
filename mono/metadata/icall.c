@@ -957,11 +957,31 @@ ves_icall_ModuleBuilder_build_metadata (MonoReflectionModuleBuilder *mb)
 	mono_image_build_metadata (mb);
 }
 
+static gboolean
+get_caller (MonoMethod *m, gint32 no, gint32 ilo, gboolean managed, gpointer data)
+{
+	MonoMethod **dest = data;
+
+	/* skip unmanaged frames */
+	if (!managed)
+		return FALSE;
+
+	if (m == *dest) {
+		*dest = NULL;
+		return FALSE;
+	}
+	if (!(*dest)) {
+		*dest = m;
+		return TRUE;
+	}
+	return FALSE;
+}
+
 static MonoReflectionType *
 type_from_name (const char *str, MonoBoolean ignoreCase)
 {
 	MonoType *type = NULL;
-	MonoAssembly *assembly;
+	MonoAssembly *assembly = NULL;
 	MonoTypeNameParse info;
 	char *temp_str = g_strdup (str);
 	gboolean type_resolve = FALSE;
@@ -979,10 +999,26 @@ type_from_name (const char *str, MonoBoolean ignoreCase)
 	if (info.assembly.name) {
 		assembly = mono_assembly_load (&info.assembly, NULL, NULL);
 	} else {
-		MonoReflectionAssembly *refass;
+		MonoMethod *m = mono_method_get_last_managed ();
+		MonoMethod *dest = m;
 
-		refass = ves_icall_System_Reflection_Assembly_GetCallingAssembly  ();
-		assembly = refass->assembly;
+		mono_stack_walk_no_il (get_caller, &dest);
+		if (!dest)
+			dest = m;
+
+		/*
+		 * FIXME: mono_method_get_last_managed() sometimes returns NULL, thus
+		 *        causing ves_icall_System_Reflection_Assembly_GetCallingAssembly()
+		 *        to crash.  This only seems to happen in some strange remoting
+		 *        scenarios and I was unable to figure out what's happening there.
+		 *        Dec 10, 2005 - Martin.
+		 */
+
+		if (dest)
+			assembly = dest->klass->image->assembly;
+		else {
+			g_warning (G_STRLOC);
+		}
 	}
 
 	if (assembly)
@@ -1384,6 +1420,19 @@ ves_icall_MonoField_GetValueInternal (MonoReflectionField *field, MonoObject *ob
 		return o;
 	}
 
+	if (mono_class_is_nullable (mono_class_from_mono_type (cf->type))) {
+		MonoClass *nklass = mono_class_from_mono_type (cf->type);
+		guint8 *buf;
+
+		/* Convert the Nullable structure into a boxed vtype */
+		if (is_static)
+			buf = (char*)vtable->data + cf->offset;
+		else
+			buf = (char*)obj + cf->offset;
+
+		return mono_nullable_box (buf, nklass);
+	}
+
 	/* boxed value type */
 	klass = mono_class_from_mono_type (cf->type);
 	o = mono_object_new (domain, klass);
@@ -1440,8 +1489,26 @@ ves_icall_FieldInfo_SetValueInternal (MonoReflectionField *field, MonoObject *ob
 		case MONO_TYPE_GENERICINST: {
 			MonoGenericClass *gclass = cf->type->data.generic_class;
 			g_assert (!gclass->inst->is_open);
-			if (gclass->container_class->valuetype && (v != NULL))
-				v += sizeof (MonoObject);
+
+			if (mono_class_is_nullable (mono_class_from_mono_type (cf->type))) {
+				MonoClass *nklass = mono_class_from_mono_type (cf->type);
+				guint8 *buf;
+
+				/* 
+				 * Convert the boxed vtype into a Nullable structure.
+				 * This is complicated by the fact that Nullables have
+				 * a variable structure.
+				 */
+				/* Allocate using alloca so it gets GC tracking */
+				buf = alloca (nklass->instance_size);
+
+				mono_nullable_init (buf, value, nklass);
+
+				v = buf;
+			}
+			else 
+				if (gclass->container_class->valuetype && (v != NULL))
+					v += sizeof (MonoObject);
 			break;
 		}
 		default:
@@ -2476,7 +2543,7 @@ ves_icall_InternalInvoke (MonoReflectionMethod *method, MonoObject *this, MonoAr
 	 * is stupid), mono_runtime_invoke_*() calls the provided method, allowing
 	 * greater flexibility.
 	 */
-	MonoMethod *m = method->method;
+	MonoMethod *m = mono_get_inflated_method (method->method);
 	int pcount;
 	void *obj = this;
 
@@ -3006,6 +3073,8 @@ ves_icall_Type_GetMethodsByName (MonoReflectionType *type, MonoString *name, gui
 		mname = mono_string_to_utf8 (name);
 		compare_func = (ignore_case) ? g_strcasecmp : strcmp;
 	}
+
+	mono_class_setup_vtable (klass);
 
 	if (klass->vtable_size >= sizeof (method_slots_default) * 8) {
 		method_slots = g_new0 (guint32, klass->vtable_size / 32 + 1);
@@ -3554,20 +3623,27 @@ ves_icall_System_Reflection_Assembly_InternalGetType (MonoReflectionAssembly *as
 }
 
 static MonoString *
-ves_icall_System_Reflection_Assembly_get_code_base (MonoReflectionAssembly *assembly)
+ves_icall_System_Reflection_Assembly_get_code_base (MonoReflectionAssembly *assembly, MonoBoolean escaped)
 {
 	MonoDomain *domain = mono_object_domain (assembly); 
 	MonoAssembly *mass = assembly->assembly;
-	MonoString *res;
+	MonoString *res = NULL;
 	gchar *uri;
 	gchar *absolute;
 	
 	MONO_ARCH_SAVE_REGS;
 
 	absolute = g_build_filename (mass->basedir, mass->image->module_name, NULL);
-	uri = g_filename_to_uri (absolute, NULL, NULL);
-	res = mono_string_new (domain, uri);
-	g_free (uri);
+	if (escaped) {
+		uri = g_filename_to_uri (absolute, NULL, NULL);
+	} else {
+		uri = g_strconcat ("file://", absolute, NULL);
+	}
+
+	if (uri) {
+		res = mono_string_new (domain, uri);
+		g_free (uri);
+	}
 	g_free (absolute);
 	return res;
 }
@@ -4079,26 +4155,6 @@ ves_icall_System_Reflection_Assembly_GetExecutingAssembly (void)
 }
 
 
-static gboolean
-get_caller (MonoMethod *m, gint32 no, gint32 ilo, gboolean managed, gpointer data)
-{
-	MonoMethod **dest = data;
-
-	/* skip unmanaged frames */
-	if (!managed)
-		return FALSE;
-
-	if (m == *dest) {
-		*dest = NULL;
-		return FALSE;
-	}
-	if (!(*dest)) {
-		*dest = m;
-		return TRUE;
-	}
-	return FALSE;
-}
-
 static MonoReflectionAssembly*
 ves_icall_System_Reflection_Assembly_GetEntryAssembly (void)
 {
@@ -4111,7 +4167,6 @@ ves_icall_System_Reflection_Assembly_GetEntryAssembly (void)
 
 	return mono_assembly_get_object (domain, domain->entry_assembly);
 }
-
 
 static MonoReflectionAssembly*
 ves_icall_System_Reflection_Assembly_GetCallingAssembly (void)
@@ -4146,6 +4201,9 @@ ves_icall_System_MonoType_getFullName (MonoReflectionType *object, gboolean full
  
 	name = mono_type_get_name_full (object->type, format);
 	if (!name)
+		return NULL;
+
+	if (full_name && (object->type->type == MONO_TYPE_VAR || object->type->type == MONO_TYPE_MVAR))
 		return NULL;
 
 	res = mono_string_new (domain, name);
@@ -5009,7 +5067,7 @@ gmt_offset(struct tm *tm, time_t t)
  *  Returns true on success and zero on failure.
  */
 static guint32
-ves_icall_System_CurrentTimeZone_GetTimeZoneData (guint32 year, MonoArray **data, MonoArray **names)
+ves_icall_System_CurrentSystemTimeZone_GetTimeZoneData (guint32 year, MonoArray **data, MonoArray **names)
 {
 #ifndef PLATFORM_WIN32
 	MonoDomain *domain = mono_domain_get ();
@@ -5802,6 +5860,10 @@ ves_icall_System_Activator_CreateInstanceInternal (MonoReflectionType *type)
 	domain = mono_object_domain (type);
 	klass = mono_class_from_mono_type (type->type);
 
+	if (mono_class_is_nullable (klass))
+		/* No arguments -> null */
+		return NULL;
+
 	return mono_object_new (domain, klass);
 }
 
@@ -6275,7 +6337,7 @@ static const IcallEntry convert_icalls [] = {
 };
 
 static const IcallEntry timezone_icalls [] = {
-	{"GetTimeZoneData", ves_icall_System_CurrentTimeZone_GetTimeZoneData}
+	{"GetTimeZoneData", ves_icall_System_CurrentSystemTimeZone_GetTimeZoneData}
 };
 
 static const IcallEntry datetime_icalls [] = {
@@ -6894,17 +6956,20 @@ static const IcallEntry interlocked_icalls [] = {
 
 static const IcallEntry mutex_icalls [] = {
 	{"CreateMutex_internal(bool,string,bool&)", ves_icall_System_Threading_Mutex_CreateMutex_internal},
+	{"OpenMutex_internal(string,System.Security.AccessControl.MutexRights,System.IO.MonoIOError&)", ves_icall_System_Threading_Mutex_OpenMutex_internal},
 	{"ReleaseMutex_internal(intptr)", ves_icall_System_Threading_Mutex_ReleaseMutex_internal}
 };
 
 static const IcallEntry semaphore_icalls [] = {
 	{"CreateSemaphore_internal(int,int,string,bool&)", ves_icall_System_Threading_Semaphore_CreateSemaphore_internal},
+	{"OpenSemaphore_internal(string,System.Security.AccessControl.SemaphoreRights,System.IO.MonoIOError&)", ves_icall_System_Threading_Semaphore_OpenSemaphore_internal},
 	{"ReleaseSemaphore_internal(intptr,int,bool&)", ves_icall_System_Threading_Semaphore_ReleaseSemaphore_internal}
 };
 
 static const IcallEntry nativeevents_icalls [] = {
 	{"CloseEvent_internal", ves_icall_System_Threading_Events_CloseEvent_internal},
-	{"CreateEvent_internal", ves_icall_System_Threading_Events_CreateEvent_internal},
+	{"CreateEvent_internal(bool,bool,string,bool&)", ves_icall_System_Threading_Events_CreateEvent_internal},
+	{"OpenEvent_internal(string,System.Security.AccessControl.EventWaitHandleRights,System.IO.MonoIOError&)", ves_icall_System_Threading_Events_OpenEvent_internal},
 	{"ResetEvent_internal",  ves_icall_System_Threading_Events_ResetEvent_internal},
 	{"SetEvent_internal",    ves_icall_System_Threading_Events_SetEvent_internal}
 };
@@ -7079,7 +7144,7 @@ static const IcallMap icall_entries [] = {
 	{"System.Configuration.DefaultConfig", defaultconf_icalls, G_N_ELEMENTS (defaultconf_icalls)},
 	{"System.ConsoleDriver", consoledriver_icalls, G_N_ELEMENTS (consoledriver_icalls)},
 	{"System.Convert", convert_icalls, G_N_ELEMENTS (convert_icalls)},
-	{"System.CurrentTimeZone", timezone_icalls, G_N_ELEMENTS (timezone_icalls)},
+	{"System.CurrentSystemTimeZone", timezone_icalls, G_N_ELEMENTS (timezone_icalls)},
 	{"System.DateTime", datetime_icalls, G_N_ELEMENTS (datetime_icalls)},
 #ifndef DISABLE_DECIMAL
 	{"System.Decimal", decimal_icalls, G_N_ELEMENTS (decimal_icalls)},

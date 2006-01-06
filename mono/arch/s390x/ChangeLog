@@ -1,3 +1,11 @@
+2006-01-06	Neale Ferguson <neale@sinenomine.net>
+
+	* s390x-codegen.h: Add lpdbr instruction (OP_ABS).
+
+2006-01-03	Neale Ferguson <neale@sinenomine.net>
+
+	* s390x-codegen.h: Add some new instructions.
+
 2004-12-15	Neale Ferguson <Neale.Ferguson@SoftwareAG-usa.com>
 
 	* s390x-codegen.h: Add some new instructions (CS, CSG, CSY, CDS, CDSG, CDSY)

@@ -333,7 +333,7 @@ mono_delegate_free_ftnptr (MonoDelegate *delegate)
 
 	delegate_hash_table_remove (delegate);
 
-	ptr = InterlockedExchangePointer (&delegate->delegate_trampoline, NULL);
+	ptr = (gpointer)InterlockedExchangePointer (&delegate->delegate_trampoline, NULL);
 
 	if (!delegate->target) {
 		/* The wrapper method is shared between delegates -> no need to free it */
@@ -1344,6 +1344,14 @@ emit_struct_conv (MonoMethodBuilder *mb, MonoClass *klass, gboolean to_object)
 			msize = info->fields [i + 1].field->offset - info->fields [i].field->offset;
 			usize = info->fields [i + 1].offset - info->fields [i].offset;
 		}
+
+		/* 
+		 * FIXME: Should really check for usize==0 and msize>0, but we apply 
+		 * the layout to the managed structure as well.
+		 */
+		if (((klass->flags & TYPE_ATTRIBUTE_LAYOUT_MASK) == TYPE_ATTRIBUTE_EXPLICIT_LAYOUT) && (usize == 0))
+			g_error ("Type %s which has an [ExplicitLayout] attribute cannot have two fields with the same offset.", mono_type_full_name (&klass->byval_arg));
+
 		if ((klass->flags & TYPE_ATTRIBUTE_LAYOUT_MASK) == TYPE_ATTRIBUTE_AUTO_LAYOUT)
 			g_error ("Type %s which is passed to unmanaged code must have a StructLayout attribute", mono_type_full_name (&klass->byval_arg));
 
@@ -1968,12 +1976,12 @@ mono_delegate_end_invoke (MonoDelegate *delegate, gpointer *params)
 static void
 mono_mb_emit_restore_result (MonoMethodBuilder *mb, MonoType *return_type)
 {
+	MonoType *t = mono_type_get_underlying_type (return_type);
+
 	if (return_type->byref)
 		return_type = &mono_defaults.int_class->byval_arg;
-	else if (return_type->type == MONO_TYPE_VALUETYPE && return_type->data.klass->enumtype)
-		return_type = return_type->data.klass->enum_basetype;
 
-	switch (return_type->type) {
+	switch (t->type) {
 	case MONO_TYPE_VOID:
 		g_assert_not_reached ();
 		break;
@@ -3480,8 +3488,16 @@ handle_enum:
 				type = t->data.klass->enum_basetype->type;
 				goto handle_enum;
 			}
-			mono_mb_emit_byte (mb, CEE_LDOBJ);
-			mono_mb_emit_i4 (mb, mono_mb_add_data (mb, t->data.klass));
+			if (mono_class_is_nullable (mono_class_from_mono_type (sig->params [i]))) {
+				/* Need to convert a boxed vtype to an mp to a Nullable struct */
+				mono_mb_emit_byte (mb, CEE_UNBOX);
+				mono_mb_emit_i4 (mb, mono_mb_add_data (mb, mono_class_from_mono_type (sig->params [i])));
+				mono_mb_emit_byte (mb, CEE_LDOBJ);
+				mono_mb_emit_i4 (mb, mono_mb_add_data (mb, mono_class_from_mono_type (sig->params [i])));
+			} else {
+				mono_mb_emit_byte (mb, CEE_LDOBJ);
+				mono_mb_emit_i4 (mb, mono_mb_add_data (mb, t->data.klass));
+			}
 			break;
 		case MONO_TYPE_GENERICINST:
 			t = &t->data.generic_class->container_class->byval_arg;

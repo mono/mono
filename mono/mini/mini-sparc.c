@@ -1096,8 +1096,16 @@ mono_arch_call_opcode (MonoCompile *cfg, MonoBasicBlock* bb, MonoCallInst *call,
 				else
 				if (sig->pinvoke)
 					size = mono_type_native_stack_size (&in->klass->byval_arg, &align);
-				else
-					size = mono_type_stack_size (&in->klass->byval_arg, &align);
+				else {
+					/* 
+					 * Can't use mono_type_stack_size (), but that
+					 * aligns the size to sizeof (gpointer), which is larger 
+					 * than the size of the source, leading to reads of invalid
+					 * memory if the source is at the end of address space or
+					 * misaligned reads.
+					 */
+					size = mono_class_value_size (in->klass, &align);
+				}
 
 				/* 
 				 * We use OP_OUTARG_VT to copy the valuetype to a stack location, then
@@ -3446,6 +3454,11 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 #endif
 			break;
 		}
+
+		case OP_MEMORY_BARRIER:
+			sparc_membar (code, sparc_membar_all);
+			break;
+
 		default:
 #ifdef __GNUC__
 			g_warning ("unknown opcode %s in %s()\n", mono_inst_name (ins->opcode), __FUNCTION__);
@@ -4238,7 +4251,15 @@ mono_arch_emit_this_vret_args (MonoCompile *cfg, MonoCallInst *call, int this_re
 MonoInst*
 mono_arch_get_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args)
 {
-	return NULL;
+	MonoInst *ins = NULL;
+
+	if (cmethod->klass == mono_defaults.thread_class &&
+		strcmp (cmethod->name, "MemoryBarrier") == 0) {
+		if (sparcv9)
+			MONO_INST_NEW (cfg, ins, OP_MEMORY_BARRIER);
+	}
+
+	return ins;
 }
 
 /*

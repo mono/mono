@@ -6,7 +6,7 @@ public class foo {
 	public static int Main() {
 		Thread thr=new Thread(new ThreadStart(foo.thread));
 		thr.Start();
-		Thread.Sleep(1200);
+		Thread.Sleep(2200);
 		Console.WriteLine("Main thread returns");
 		// the subthread calls Exit(0) before we reach here
 		return 1;

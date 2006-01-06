@@ -1,3 +1,174 @@
+2006-01-06  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #77160.
+	* icall.c (ves_icall_InternalInvoke): Use mono_get_inflated_method
+	on passed-in method.
+
+2006-01-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* object.c (mono_runtime_invoke_array): Add Nullable support.
+
+	* icall.c (ves_icall_System_Activator_CreateInstanceInternal): Ditto.
+
+2006-01-03  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* file-io.c: Don't consider sockets as directory and avoid an endless
+	loop. Fix bug #76966.
+
+2006-01-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* object.c (mono_nullable_init): New helper function.
+	(mono_nullable_box): Ditto.
+
+	* marshal.c (mono_marshal_get_runtime_invoke): Handle Nullables.
+
+	* icall.c (ves_icall_FieldInfo_SetValueInternal): Handle Nullables.
+
+	* icall.c (ves_icall_MonoField_GetValueInternal): Handle Nullables.
+	
+2006-01-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_class_is_assignable_from): Make T assignable to 
+	Nullable<T>.
+
+2005-12-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* appdomain.c: Bump corlib version to 46.
+	* icalls.c: Renamed CurrentTimeZone to CurrentSystemTimeZone (for
+	serialization purpose) and changed ves_icall_System_Reflection_
+	Assembly_get_code_base signature to accept a boolean (to escape, or 
+	not, the assembly code base).
+
+2005-12-23  Dick Porter  <dick@ximian.com>
+
+	* icall.c: 
+	* threads-types.h: 
+	* threads.c: Added OpenMutex, OpenSemaphore and OpenEvent icalls.
+	CreateEvent icall now returns "created" boolean parameter.
+
+2005-12-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (mono_mb_emit_restore_result): Add generics support. Fixes
+	#76967.
+
+	* reflection.c (mono_custom_attrs_construct_by_type): Handle the case 
+	when attr_klass is an interface. Fixes #77045.
+
+2005-12-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (emit_struct_conv): Fix previous patch.
+	
+	* marshal.c (emit_struct_conv): Add a check for fields with the same
+	offset.
+
+2005-12-20  Raja R Harinath  <rharinath@novell.com>
+
+	Fix regression in Mono.C5.
+	* class.c (mono_class_create_generic): If 'klass' is an interface
+	set up the interface offsets.
+	(mono_class_is_assignable_from): Don't throw away generic arguments.
+
+2005-12-19  Raja R Harinath  <rharinath@novell.com>
+
+	* icall.c (ves_icall_System_MonoType_getFullName): Return NULL for
+	type parameters.
+
+2005-12-15  Raja R Harinath  <rharinath@novell.com>
+
+	* metadata.c (mono_metadata_parse_method_signature_full): Remove a
+	dead store.
+	(do_mono_metadata_parse_generic_class): Don't pass the current
+	generic context when parsing the type being instantiated: it
+	cannot use it, anyway.
+
+	* loader.c (method_from_memberref): Don't inflate a signature if
+	it doesn't contain any type parameters.
+
+2005-12-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_class_setup_vtable): Call mono_reflection_get_dynamic_overrides () to get the overrides in dynamic assemblies.
+
+2005-12-14  Martin Baulig  <martin@ximian.com>
+
+	* class.c
+	(mono_type_get_name_recurse): Don't return null for type
+	parameters and open generic classes.
+	(mono_class_setup_methods): Don't exclude generic instances.
+	(mono_get_unique_iid): Use different IDs for different
+	instantiations of the same generic type.
+	(mono_class_setup_vtable): Only use setup_generic_vtable() for
+	open generic instances; create a normal vtable for closed generic
+	instances.
+	(mono_class_setup_vtable_general): We're now also called for
+	closed generic instances.
+
+	* reflection.c
+	(mono_reflection_bind_generic_parameters): Correctly use
+	mono_metadata_lookup_generic_inst() everywhere.
+
+2005-12-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* object.c (mono_class_create_runtime_vtable): Call 
+	mono_class_setup_vtable ().
+
+	* reflection.c (mono_reflection_get_dynamic_overrides): New helper
+	function.
+	(ensure_runtime_vtable): Initialize the generic vtable lazily. Fixes
+	#76959.
+
+	* loader.c (mono_loader_set_error_type_load): Print the type load
+	warnings to the console so they are more visible to the user.
+	(mono_loader_set_error_method_load): Ditto.
+
+	* reflection.c (ensure_runtime_vtable): Revert the last change as it
+	is still broken.
+	
+	* reflection.c (ensure_runtime_vtable): Fix build.
+
+	* reflection.c (ensure_runtime_vtable): Disable an optimization which
+	doesn't work in all cases.
+
+2005-12-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* object.c (mono_array_new_full): Treat a single dimensional array
+	with 0 lower bounds as an szarray. Fixes #76973.
+
+	* reflection.c (custom_attr_visible): Really fix this.
+
+2005-12-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* reflection.c (custom_attr_visible): Allow nested public attributes
+	as well.
+
+	* class.c (mono_class_setup_vtable_general): Add missing != -1 to an
+	interface check.
+
+2005-12-12  Raja R Harinath  <harinath@gmail.com>
+
+	* class.c (set_generic_param_owner): Delete.
+	(mono_class_create_from_typedef): Don't set ->owner field of
+	generic parameters to "param containers" of enclosing classes.
+	* reflection.c (mono_reflection_initialize_generic_parameter):
+	Likewise.
+
+2005-12-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* reflection.c (custom_attr_visible): Fix build.
+
+2005-12-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* reflection.c (mono_custom_attrs_from_builders): Avoid returning
+	private attributes.
+	
+	* reflection.c (reflection_methodbuilder_to_mono_method): Fix
+	handling of null parameter defaults.
+
+2005-12-09  Raja R Harinath  <rharinath@novell.com>
+
+	* class.c (mono_class_from_generic_parameter): Don't set
+	klass->generic_container.
+	(my_mono_class_from_generic_parameter): Likewise.
+
 2005-12-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* reflection.c (load_public_key): Fix a warning.

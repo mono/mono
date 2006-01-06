@@ -1,3 +1,11 @@
+2006-01-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* mono-codeman.c (new_codechunk): Fix warnings.
+
+2005-12-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* strtod.c : un-constified some variables to fix bug #75228.
+
 2005-09-30 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* strenc.c: don't use the UTF16 conversion with g_convert. It returns

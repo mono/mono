@@ -7,7 +7,7 @@ public class foo {
 		Thread thr=new Thread(new ThreadStart(foo.thread));
 		thr.IsBackground=true;
 		thr.Start();
-		Thread.Sleep(1200);
+		Thread.Sleep(2200);
 		Console.WriteLine("Main thread returns");
 	}
 

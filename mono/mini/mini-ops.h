@@ -653,6 +653,8 @@ MINI_OP(OP_IA64_STOREI8,        "ia64_storei8", NONE, NONE, NONE)
 MINI_OP(OP_IA64_STOREU8,        "ia64_storeu8", NONE, NONE, NONE)
 MINI_OP(OP_IA64_STORER4,        "ia64_storer4", NONE, NONE, NONE)
 MINI_OP(OP_IA64_STORER8,        "ia64_storer8", NONE, NONE, NONE)
+MINI_OP(OP_S390_BKCHAIN, 	   "s390_bkchain")
+MINI_OP(OP_S390_BKCHAIN, 	   "s390_bkchain")
 
 MINI_OP(OP_IA64_CMP4_EQ,        "ia64_cmp4_eq", NONE, NONE, NONE)
 MINI_OP(OP_IA64_CMP4_NE,        "ia64_cmp4_ne", NONE, NONE, NONE)

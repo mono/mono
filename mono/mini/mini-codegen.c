@@ -40,6 +40,9 @@ static const char*const * ins_spec = ia64_desc;
 #elif defined(__arm__)
 const char * const arm_cpu_desc [OP_LAST];
 static const char*const * ins_spec = arm_cpu_desc;
+#elif defined(__s390x__)
+const char * const s390x_cpu_desc [OP_LAST];
+static const char*const * ins_spec = s390x_cpu_desc;
 #elif defined(__s390__)
 const char * const s390_cpu_desc [OP_LAST];
 static const char*const * ins_spec = s390_cpu_desc;
@@ -236,6 +239,25 @@ mono_print_ins_index (int i, MonoInst *ins)
 			g_print (" R%d", ins->sreg1);
 		if (ins->sreg2 != -1)
 			g_print (" R%d", ins->sreg2);
+
+		switch (ins->opcode) {
+		case OP_LBNE_UN:
+		case OP_LBEQ:
+		case OP_LBLT:
+		case OP_LBLT_UN:
+		case OP_LBGT:
+		case OP_LBGT_UN:
+		case OP_LBGE:
+		case OP_LBGE_UN:
+		case OP_LBLE:
+		case OP_LBLE_UN:
+			if (!(ins->flags & MONO_INST_BRLABEL))
+				g_print (" [B%dB%d]", ins->inst_true_bb->block_num, ins->inst_false_bb->block_num);
+			break;
+		default:
+			break;
+		}
+
 		g_print ("\n");
 		//g_error ("Unknown opcode: %s\n", mono_inst_name (ins->opcode));
 		return;

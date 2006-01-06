@@ -1,3 +1,43 @@
+2006-01-03  Neale Ferguson <neale@sinenomine.net>
+
+	* atomic.h: Correct s390x definitions and eliminate compiler warnings.
+
+2006-01-03  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* io.c: Patch _wapi_stat_to_file_attributes against bug #76966, where
+	sockets could be considered as directory.
+
+2005-12-23  Dick Porter  <dick@ximian.com>
+
+
+	* semaphores.h: 
+	* semaphores.c: Implement OpenSemaphore
+
+	* mutexes.c: 
+	* mutexes.h: Implement OpenMutex
+
+	* wapi-private.h: 
+	* handles.c: 
+	* events.c: 
+	* events.h: 
+	* event-private.h: Implement named events.  Implement OpenEvent.
+
+2005-12-15  Dick Porter  <dick@ximian.com>
+
+	* processes.c (CreateProcess): The pipe-based cross-process
+	exclusion technique was trying to write NULL buffers when appname
+	was NULL (eg when coming from ShellExecuteEx,) which usually
+	succeeded even though EFAULT was returned - but sometimes it
+	failed.  This meant that the child process could block forever on
+	the pipe read.  Replace it with the simpler shared handle
+	semaphore protection used everywhere else.  This showed up with
+	the test case in bug 76684.
+
+Tue Dec 13 11:41:49 GMT 2005 Paolo Molaro <lupus@ximian.com>
+
+	* shared.c: fallback to private mmap when shared mmap doesn't work
+	(like on jffs).
+
 2005-12-06  Dick Porter  <dick@ximian.com>
 
 	* wapi-private.h: 

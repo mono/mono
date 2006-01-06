@@ -27,6 +27,9 @@
 #ifdef HAVE_SYS_XATTR_H
 #include <sys/xattr.h>
 #endif
+#ifdef HAVE_SYS_MMAN_H
+#include <sys/mman.h>
+#endif
 #include <unistd.h>
 #include <fcntl.h>
 #include <signal.h>

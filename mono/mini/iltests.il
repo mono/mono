@@ -510,6 +510,17 @@ COND:   ldloc.0
 		ret
 	}
 
+	.method public static int32 test_5_jmp () cil managed {
+		jmp int32 Tests::jmp2 ()
+		ldc.i4.0
+		ret
+	}
+
+	.method public static int32 jmp2 () cil managed {
+		ldc.i4.5
+		ret
+	}		
+
 	.method static public int32 test_11_switch_with_nonempty_stack () il managed {
 		.maxstack 16
 
@@ -716,7 +727,7 @@ COND:   ldloc.0
 		ret
 	}
 
-	.class public auto ansi Integer
+	.class nested public auto ansi Integer
   		extends [mscorlib]System.Object {
 
 		.field public bool n
@@ -820,5 +831,174 @@ COND:   ldloc.0
 		IL_0033:
 		ldloc res
 		ret
+	}
+
+	.class nested private auto ansi sealed beforefieldinit TheStruct
+		extends [mscorlib]System.ValueType {
+		.field public int32 a
+		.field public int32 b
+	}
+
+	.method public static int32 test_5_cpobj () {
+		.maxstack 8
+		.locals init (  
+				valuetype Tests/TheStruct v_0, 
+				valuetype Tests/TheStruct v_1
+					 )
+
+		ldloca v_0
+		ldc.i4.2
+		stfld int32 Tests/TheStruct::a
+
+		ldloca v_0
+		ldc.i4.3
+		stfld int32 Tests/TheStruct::b
+
+		ldloca v_1
+		ldloca v_0
+		cpobj Tests/TheStruct
+
+		ldloca v_1
+		ldfld int32 Tests/TheStruct::a
+		ldloca v_1
+		ldfld int32 Tests/TheStruct::b
+		add
+
+		ret
+	}
+
+	.method public static int32 test_5_ldobj_stloc_optimization () {
+		.maxstack 8
+		.locals init (  
+				valuetype Tests/TheStruct v_0, 
+				valuetype Tests/TheStruct v_1
+					 )
+
+		ldloca v_0
+		ldc.i4.2
+		stfld int32 Tests/TheStruct::a
+
+		ldloca v_0
+		ldc.i4.3
+		stfld int32 Tests/TheStruct::b
+
+		ldloca v_0
+		ldobj valuetype Tests/TheStruct
+		stloc.s v_1
+
+		ldloca v_1
+		ldfld int32 Tests/TheStruct::a
+		ldloca v_1
+		ldfld int32 Tests/TheStruct::b
+		add
+
+		ret
+	}
+
+	.method public static int32 test_1_cpobj_reference () {
+		.maxstack 8
+		.locals init (  
+				object v_0, 
+				object v_1
+					 )
+
+		newobj instance void object::.ctor()
+		stloc v_0
+
+		ldloca v_1
+		ldloca v_0
+		cpobj object
+
+		ldloc v_0
+		ldloc v_1
+		ceq
+		ret
+	}
+
+	.method public static int32 test_1_initobj_reference () {
+		.maxstack 8
+		.locals init (  
+				object v_0
+					 )
+
+		newobj instance void object::.ctor()
+		stloc v_0
+
+		ldloca v_0
+		initobj object
+
+		ldloc v_0
+		ldnull
+		ceq
+		ret
+	}
+
+	.method public static int32 test_1_ldobj_reference () {
+		.maxstack 8
+		.locals init (  
+				object v_0
+					 )
+
+		newobj instance void object::.ctor()
+		stloc v_0
+
+		ldloc v_0
+		ldloca v_0
+		ldobj object
+		ceq
+		ret
+	}
+
+	.method public static int32 test_5_vtype_on_bb_boundary () {
+		.maxstack 8
+		.locals init (  
+				valuetype Tests/TheStruct v_0, 
+				valuetype Tests/TheStruct v_1
+					 )
+
+		ldloca v_0
+		ldc.i4.2
+		stfld int32 Tests/TheStruct::a
+
+		ldloca v_0
+		ldc.i4.3
+		stfld int32 Tests/TheStruct::b
+
+		ldloc v_0
+		br L_0
+	L_0: stloc v_1
+
+		ldloca v_1
+		ldfld int32 Tests/TheStruct::a
+		ldloca v_1
+		ldfld int32 Tests/TheStruct::b
+		add
+		ret
+	}
+
+	.method public static int32 test_3_larray_get_set () {
+		.locals init (
+			int32[2]	V_0)
+			  
+			ldc.i4.2 
+			newobj instance void int32[0...]::.ctor(int32)
+			stloc.0 
+			ldloc.0 
+			ldc.i4.0 
+			ldc.i4 1
+			call instance void int32[0...]::Set(int32, int32)
+		    ldloc.0 
+		    ldc.i4.1 
+			ldc.i4 2
+			call instance void int32[0...]::Set(int32, int32)
+
+			ldloc.0
+			ldc.i4.0
+			call instance int32 int32[0...]::Get(int32)
+			ldloc.0
+			ldc.i4.1
+			call instance int32 int32[0...]::Get(int32)
+			add
+			ret
 	}
 }

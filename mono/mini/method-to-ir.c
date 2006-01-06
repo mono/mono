@@ -290,6 +290,21 @@ mono_print_bb_code_new (MonoBasicBlock *bb) {
 	}
 }
 
+G_GNUC_UNUSED
+static void
+mono_print_bb (MonoBasicBlock *bb, const char *msg)
+{
+	int i;
+	MonoInst *tree;
+
+	g_print ("\n%s %d: [", msg, bb->block_num);
+	for (i = 0; i < bb->out_count; ++i)
+		printf (" BB%d %d", bb->out_bb [i]->block_num, bb->out_bb [i]->dfn);
+	printf (" ]\n");
+	for (tree = bb->code; tree; tree = tree->next)
+		mono_print_ins_index (-1, tree);
+}
+
 /*
  * Basic blocks have two numeric identifiers:
  * dfn: Depth First Number
@@ -4239,6 +4254,11 @@ mono_decompose_long_opts (MonoCompile *cfg)
 #if SIZEOF_VOID_P == 4
 	MonoBasicBlock *bb, *first_bb;
 
+	/*
+	 * Some opcodes, like lcall can't be decomposed so the rest of the JIT
+	 * needs to be able to handle long vregs.
+	 */
+
 	/**
 	 * Create a dummy bblock and emit code into it so we can use the normal 
 	 * code generation macros.
@@ -4552,13 +4572,7 @@ mono_decompose_long_opts (MonoCompile *cfg)
 				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_XOR_IMM, tree->dreg, tree->sreg1, tree->inst_ls_word);
 				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_XOR_IMM, tree->dreg + 1, tree->sreg1 + 1, tree->inst_ms_word);
 				break;
-			case OP_LSHR:
-#ifdef __i386__
-				NOT_IMPLEMENTED;
-#else
-#error "Not implemented"
-#endif
-				break;
+
 			case OP_LCOMPARE: {
 				MonoInst *next = tree->next;
 
@@ -4574,65 +4588,74 @@ mono_decompose_long_opts (MonoCompile *cfg)
 					break;
 				case OP_LBNE_UN:
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1, tree->sreg2);
-					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBNE_UN, next->inst_true_bb);
+					MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, OP_IBNE_UN, next->inst_true_bb);
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 1, tree->sreg2 + 1);
-					next->opcode = OP_IBNE_UN;
+					MONO_EMIT_NEW_BRANCH_BLOCK3 (cfg, OP_IBNE_UN, next->inst_true_bb, next->inst_false_bb);
+					next->opcode = CEE_NOP;
 					break;
 				case OP_LBLT:
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 1, tree->sreg2 + 1);
-					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBLT, next->inst_true_bb);
-					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBNE_UN, next->inst_false_bb);
+					MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, OP_IBLT, next->inst_true_bb);
+					MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, OP_IBNE_UN, next->inst_false_bb);
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1, tree->sreg2);
-					next->opcode = OP_IBLT_UN;
+					MONO_EMIT_NEW_BRANCH_BLOCK3 (cfg, OP_IBLT_UN, next->inst_true_bb, next->inst_false_bb);
+					next->opcode = CEE_NOP;
 					break;
 				case OP_LBGT:
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 1, tree->sreg2 + 1);
-					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBGT, next->inst_true_bb);
-					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBNE_UN, next->inst_false_bb);
+					MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, OP_IBGT, next->inst_true_bb);
+					MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, OP_IBNE_UN, next->inst_false_bb);
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1, tree->sreg2);
-					next->opcode = OP_IBGT_UN;
+					MONO_EMIT_NEW_BRANCH_BLOCK3 (cfg, OP_IBGT_UN, next->inst_true_bb, next->inst_false_bb);
+					next->opcode = CEE_NOP;
 					break;
 				case OP_LBGE:
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 1, tree->sreg2 + 1);
-					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBGT, next->inst_true_bb);
-					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBNE_UN, next->inst_false_bb);
+					MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, OP_IBGT, next->inst_true_bb);
+					MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, OP_IBNE_UN, next->inst_false_bb);
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1, tree->sreg2);
-					next->opcode = OP_IBGE_UN;
+					MONO_EMIT_NEW_BRANCH_BLOCK3 (cfg, OP_IBGE_UN, next->inst_true_bb, next->inst_false_bb);
+					next->opcode = CEE_NOP;
 					break;
 				case OP_LBLE:
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 1, tree->sreg2 + 1);
-					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBLT, next->inst_true_bb);
-					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBNE_UN, next->inst_false_bb);
+					MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, OP_IBLT, next->inst_true_bb);
+					MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, OP_IBNE_UN, next->inst_false_bb);
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1, tree->sreg2);
-					next->opcode = OP_IBLE_UN;
+					MONO_EMIT_NEW_BRANCH_BLOCK3 (cfg, OP_IBLE_UN, next->inst_true_bb, next->inst_false_bb);
+					next->opcode = CEE_NOP;
 					break;
 				case OP_LBLT_UN:
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 1, tree->sreg2 + 1);
-					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BLT_UN, next->inst_true_bb);
-					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BNE_UN, next->inst_false_bb);
+					MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, CEE_BLT_UN, next->inst_true_bb);
+					MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, CEE_BNE_UN, next->inst_false_bb);
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1, tree->sreg2);
-					next->opcode = OP_IBLT_UN;
+					MONO_EMIT_NEW_BRANCH_BLOCK3 (cfg, OP_IBLT_UN, next->inst_true_bb, next->inst_false_bb);
+					next->opcode = CEE_NOP;
 					break;
 				case OP_LBGT_UN:
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 1, tree->sreg2 + 1);
-					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BGT_UN, next->inst_true_bb);
-					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BNE_UN, next->inst_false_bb);
+					MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, CEE_BGT_UN, next->inst_true_bb);
+					MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, CEE_BNE_UN, next->inst_false_bb);
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1, tree->sreg2);
-					next->opcode = OP_IBGT_UN;
+					MONO_EMIT_NEW_BRANCH_BLOCK3 (cfg, OP_IBGT_UN, next->inst_true_bb, next->inst_false_bb);
+					next->opcode = CEE_NOP;
 					break;
 				case OP_LBGE_UN:
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 1, tree->sreg2 + 1);
-					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBGT_UN, next->inst_true_bb);
-					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBNE_UN, next->inst_false_bb);
+					MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, OP_IBGT_UN, next->inst_true_bb);
+					MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, OP_IBNE_UN, next->inst_false_bb);
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1, tree->sreg2);
-					next->opcode = OP_IBGE_UN;
+					MONO_EMIT_NEW_BRANCH_BLOCK3 (cfg, OP_IBGE_UN, next->inst_true_bb, next->inst_false_bb);
+					next->opcode = CEE_NOP;
 					break;
 				case OP_LBLE_UN:
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 1, tree->sreg2 + 1);
-					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBLT_UN, next->inst_true_bb);
-					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBNE_UN, next->inst_false_bb);
+					MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, OP_IBLT_UN, next->inst_true_bb);
+					MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, OP_IBNE_UN, next->inst_false_bb);
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1, tree->sreg2);
-					next->opcode = OP_IBLE_UN;
+					MONO_EMIT_NEW_BRANCH_BLOCK3 (cfg, OP_IBLE_UN, next->inst_true_bb, next->inst_false_bb);
+					next->opcode = CEE_NOP;
 					break;
 				case OP_LCEQ: {
 					MonoInst *word_differs;
@@ -4754,6 +4777,10 @@ mono_decompose_long_opts (MonoCompile *cfg)
 					int i;
 					MonoInst *next = tree->next;
 
+					if (next && next->opcode == CEE_NOP)
+						/* Avoid NOPs following branches */
+						next = next->next;
+
 					/* Multiple BBs */
 
 					/* Split the original bb */
@@ -4772,6 +4799,7 @@ mono_decompose_long_opts (MonoCompile *cfg)
 						prev->next = first_bb->code;
 					else
 						bb->code = first_bb->code;
+					bb->last_ins = first_bb->last_ins;
 					for (i = 0; i < first_bb->out_count; ++i)
 						link_bblock (cfg, bb, first_bb->out_bb [i]);
 
@@ -4788,13 +4816,13 @@ mono_decompose_long_opts (MonoCompile *cfg)
 			else
 				prev = tree;
 		}
-
-		/*
-		g_print ("AFTER LOWER_LONG_OPTS: %d:\n", bb->block_num);
-		mono_print_bb_code_new (bb);
-		*/
 	}
 #endif
+
+	/*
+	for (bb = cfg->bb_entry; bb; bb = bb->next_bb)
+		mono_print_bb (bb, "AFTER LOWER-LONG-OPTS");
+	*/
 }
 
 /*
@@ -8666,6 +8694,9 @@ compute_vreg_to_inst (MonoCompile *cfg)
 	cfg->vreg_to_inst ['f'] = mono_mempool_alloc0 (cfg->mempool, sizeof (MonoInst*) * cfg->next_vfreg);
 	cfg->vreg_to_inst_len ['f'] = cfg->next_vfreg;
 
+	cfg->vreg_to_inst ['l'] = mono_mempool_alloc0 (cfg->mempool, sizeof (MonoInst*) * cfg->next_vireg);
+	cfg->vreg_to_inst_len ['l'] = cfg->next_vireg;
+
 	for (i = 0; i < cfg->num_varinfo; i++) {
 		MonoInst *ins = cfg->varinfo [i];
 
@@ -8689,6 +8720,9 @@ compute_vreg_to_inst (MonoCompile *cfg)
 			cfg->vreg_to_inst ['i'][ins->dreg] = ins;
 #else
 			MonoInst *tree;
+
+			g_assert (ins->dreg != -1);
+			cfg->vreg_to_inst ['l'][ins->dreg] = ins;
 
 			g_assert (ins->dreg != -1);
 
@@ -8736,6 +8770,7 @@ mono_handle_global_vregs (MonoCompile *cfg)
 
 	vreg_to_bb = g_new0 (MonoBasicBlock**, 256);
 	vreg_to_bb ['i'] = g_new0 (MonoBasicBlock*, cfg->next_vireg);
+	vreg_to_bb ['l'] = g_new0 (MonoBasicBlock*, cfg->next_vireg);
 	vreg_to_bb ['f'] = g_new0 (MonoBasicBlock*, cfg->next_vfreg);
 
 	/* Find local vregs used in more than one bb */
@@ -8745,7 +8780,7 @@ mono_handle_global_vregs (MonoCompile *cfg)
 		MonoInst *prev = NULL;
 
 		if (cfg->verbose_level > 0)
-			printf ("HANDLE-GLOBAL-VREGS BLOCK %d:\n", bb->block_num);
+			printf ("\nHANDLE-GLOBAL-VREGS BLOCK %d:\n", bb->block_num);
 
 		cfg->cbb = bb;
 		for (; ins; ins = ins->next) {
@@ -8780,6 +8815,41 @@ mono_handle_global_vregs (MonoCompile *cfg)
 				if (((regtype == 'i' && (vreg < MONO_MAX_IREGS))) || (regtype == 'f' && (vreg < MONO_MAX_FREGS)))
 					continue;
 
+				if ((regtype == 'l') && (vreg != -1)) {
+					/*
+					 * Since some instructions reference the original long vreg,
+					 * and some references the two component vregs, it is quite hard
+					 * to determine when it needs to be global. So be conservative.
+					 */
+					if (!cfg->vreg_to_inst ['l'][vreg]) {
+						MonoInst *tree;
+
+						cfg->vreg_to_inst ['l'][vreg] = mono_compile_create_var_for_vreg (cfg, &mono_defaults.int64_class->byval_arg, OP_LOCAL, vreg);
+
+						if (cfg->verbose_level > 0)
+							printf ("LONG VREG R%d made global.\n", vreg);
+
+						/* FIXME: Move this elsewhere */
+						/* Allocate a dummy MonoInst for the first vreg */
+						MONO_INST_NEW (cfg, tree, OP_LOCAL);
+						tree->dreg = vreg;
+						tree->type = STACK_I4;
+						tree->inst_vtype = &mono_defaults.int32_class->byval_arg;
+						tree->klass = mono_class_from_mono_type (tree->inst_vtype);
+
+						cfg->vreg_to_inst ['i'][vreg] = tree;
+
+						/* Allocate a dummy MonoInst for the second vreg */
+						MONO_INST_NEW (cfg, tree, OP_LOCAL);
+						tree->dreg = vreg + 1;
+						tree->type = STACK_I4;
+						tree->inst_vtype = &mono_defaults.int32_class->byval_arg;
+						tree->klass = mono_class_from_mono_type (tree->inst_vtype);
+
+						cfg->vreg_to_inst ['i'][vreg + 1] = tree;
+					}
+				}
+
 				if ((vreg != -1) && (vreg < cfg->vreg_to_inst_len [regtype]) && !cfg->vreg_to_inst [regtype][vreg]) {
 					if (vreg_to_bb [regtype][vreg] == NULL) {
 						vreg_to_bb [regtype][vreg] = bb;
@@ -8791,7 +8861,7 @@ mono_handle_global_vregs (MonoCompile *cfg)
 						// FIXME:
 						switch (regtype) {
 						case 'i':
-							cfg->vreg_to_inst [regtype][vreg] = mono_compile_create_var_for_vreg (cfg, &mono_defaults.int_class->byval_arg, OP_LOCAL, vreg);
+							cfg->vreg_to_inst [regtype][vreg] = mono_compile_create_var_for_vreg (cfg, &mono_defaults.int32_class->byval_arg, OP_LOCAL, vreg);
 							break;
 						case 'f':
 							cfg->vreg_to_inst [regtype][vreg] = mono_compile_create_var_for_vreg (cfg, &mono_defaults.double_class->byval_arg, OP_LOCAL, vreg);
@@ -8810,6 +8880,27 @@ mono_handle_global_vregs (MonoCompile *cfg)
 	g_free (vreg_to_bb);
 }
 
+static void
+insert_before_ins (MonoBasicBlock *bb, MonoInst *ins, MonoInst *ins_to_insert, MonoInst **prev)
+{
+	if (*prev)
+		(*prev)->next = ins_to_insert;
+	else
+		bb->code = ins_to_insert;
+	
+	ins_to_insert->next = ins;
+	*prev = ins_to_insert;
+}
+
+static void
+insert_after_ins (MonoBasicBlock *bb, MonoInst *ins, MonoInst *ins_to_insert)
+{
+   ins_to_insert->next = ins->next;
+   ins->next = ins_to_insert;
+   if (bb->last_ins == ins)
+	   bb->last_ins = ins_to_insert;
+}
+
 /**
  * mono_spill_global_vars:
  *
@@ -8821,11 +8912,15 @@ mono_spill_global_vars (MonoCompile *cfg)
 	int i;
 	guint32 *stacktypes;
 	MonoBasicBlock *bb;
+	char spec2 [16];
+
+	memset (spec2, 0, sizeof (spec2));
 
 	/* FIXME: Move this function to mini.c */
 
 	stacktypes = g_new0 (guint32, 256);
 	stacktypes ['i'] = STACK_PTR;
+	stacktypes ['l'] = STACK_I8;
 	stacktypes ['f'] = STACK_R8;
 
 	/* FIXME: Clean this up */
@@ -8874,7 +8969,6 @@ mono_spill_global_vars (MonoCompile *cfg)
 		cfg->cbb = bb;
 		for (; ins; ins = ins->next) {
 			const char *spec = ins_spec [ins->opcode - OP_START - 1];
-			char spec2 [16];
 			int regtype, srcindex, sreg, tmp_reg;
 			gboolean store;
 
@@ -8962,29 +9056,34 @@ mono_spill_global_vars (MonoCompile *cfg)
 
 				ins->dreg = alloc_dreg (cfg, stacktypes [regtype]);
 
-				store_opcode = mono_type_to_store_membase (var->inst_vtype);
+				if (regtype == 'l') {
+					NEW_STORE_MEMBASE (cfg, store_ins, OP_STOREI4_MEMBASE_REG, var->inst_basereg, var->inst_offset + MINI_LS_WORD_OFFSET, ins->dreg);
+					insert_after_ins (bb, ins, store_ins);
+					NEW_STORE_MEMBASE (cfg, store_ins, OP_STOREI4_MEMBASE_REG, var->inst_basereg, var->inst_offset + MINI_MS_WORD_OFFSET, ins->dreg + 1);
+					insert_after_ins (bb, ins, store_ins);
+				}
+				else {
+					store_opcode = mono_type_to_store_membase (var->inst_vtype);
 
-				/* Try to fuse the store into the instruction itself */
-				/* FIXME: Add more instructions */
-				if (ins->opcode == OP_ICONST) {
-					ins->opcode = store_membase_reg_to_store_membase_imm (store_opcode);
-					ins->inst_imm = ins->inst_c0;
-					ins->inst_destbasereg = var->inst_basereg;
-					ins->inst_offset = var->inst_offset;
-				} else if ((ins->opcode == OP_MOVE) || (ins->opcode == OP_FMOVE) || (ins->opcode == OP_LMOVE)) {
-					ins->opcode = store_opcode;
-					ins->inst_destbasereg = var->inst_basereg;
-					ins->inst_offset = var->inst_offset;
-				} else {
-					/* printf ("INS: "); mono_print_ins (ins); */
-					/* Create a store instruction */					
-					NEW_STORE_MEMBASE (cfg, store_ins, store_opcode, var->inst_basereg, var->inst_offset, ins->dreg);
-				
-					/* Insert it after the instruction */
-					store_ins->next = ins->next;
-					ins->next = store_ins;
-					if (bb->last_ins == ins)
-						bb->last_ins = store_ins;
+					/* Try to fuse the store into the instruction itself */
+					/* FIXME: Add more instructions */
+					if (ins->opcode == OP_ICONST) {
+						ins->opcode = store_membase_reg_to_store_membase_imm (store_opcode);
+						ins->inst_imm = ins->inst_c0;
+						ins->inst_destbasereg = var->inst_basereg;
+						ins->inst_offset = var->inst_offset;
+					} else if ((ins->opcode == OP_MOVE) || (ins->opcode == OP_FMOVE) || (ins->opcode == OP_LMOVE)) {
+						ins->opcode = store_opcode;
+						ins->inst_destbasereg = var->inst_basereg;
+						ins->inst_offset = var->inst_offset;
+					} else {
+						/* printf ("INS: "); mono_print_ins (ins); */
+						/* Create a store instruction */					
+						NEW_STORE_MEMBASE (cfg, store_ins, store_opcode, var->inst_basereg, var->inst_offset, ins->dreg);
+
+						/* Insert it after the instruction */
+						insert_after_ins (bb, ins, store_ins);
+					}
 				}
 			}
 
@@ -8992,7 +9091,7 @@ mono_spill_global_vars (MonoCompile *cfg)
 			for (srcindex = 0; srcindex < 2; ++srcindex) {
 				regtype = spec [(srcindex == 0) ? MONO_INST_SRC1 : MONO_INST_SRC2];
 				sreg = srcindex == 0 ? ins->sreg1 : ins->sreg2;
-				
+
 				g_assert (((sreg == -1) && (regtype == ' ')) || ((sreg != -1) && (regtype != ' ')));
 				if ((sreg != -1) && (sreg < cfg->vreg_to_inst_len [regtype]) && (cfg->vreg_to_inst [regtype][sreg])) {
 					MonoInst *var = cfg->vreg_to_inst [regtype][sreg];
@@ -9007,17 +9106,16 @@ mono_spill_global_vars (MonoCompile *cfg)
 					else
 						ins->sreg2 = sreg;
 
-					/* Create a load instruction */					
-					NEW_LOAD_MEMBASE (cfg, load_ins, mono_type_to_load_membase (var->inst_vtype), sreg, var->inst_basereg, var->inst_offset);
-				
-					/* Insert it before the instruction */
-					if (prev)
-						prev->next = load_ins;
-					else
-						bb->code = load_ins;
-					
-					load_ins->next = ins;
-					prev = load_ins;
+					if (regtype == 'l') {
+						NEW_LOAD_MEMBASE (cfg, load_ins, OP_LOADI4_MEMBASE, sreg + 1, var->inst_basereg, var->inst_offset + MINI_MS_WORD_OFFSET);
+						insert_before_ins (bb, ins, load_ins, &prev);
+						NEW_LOAD_MEMBASE (cfg, load_ins, OP_LOADI4_MEMBASE, sreg, var->inst_basereg, var->inst_offset + MINI_LS_WORD_OFFSET);
+						insert_before_ins (bb, ins, load_ins, &prev);
+					}
+					else {
+						NEW_LOAD_MEMBASE (cfg, load_ins, mono_type_to_load_membase (var->inst_vtype), sreg, var->inst_basereg, var->inst_offset);
+						insert_before_ins (bb, ins, load_ins, &prev);
+					}
 				}
 			}
 
@@ -9076,6 +9174,8 @@ mono_spill_global_vars (MonoCompile *cfg)
  *   - long shift ops have sreg1:L but they use ins->unused=eax
  * - handle long shift opts on 32 bit platforms somehow: they require 
  *   3 sregs (2 for arg1 and 1 for arg2)
+ * - fix #define MONO_ARCH_NO_EMULATE_LONG_SHIFT_OPS for x86
+ * - same goes for lcall and other non-decomposable long opcodes
  */
 
 /*

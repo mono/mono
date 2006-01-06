@@ -27,7 +27,7 @@ if BUILD_MCS
 # The write check is to foil 'make distcheck'
 all-local: $(SUPPORT_FILES)
 	if test -w $(mcs_topdir); then :; else chmod -R +w $(mcs_topdir); fi
-	cd $(mcs_topdir) && $(MAKE) PROFILES='$(build_profiles)' all-profiles
+	cd $(mcs_topdir) && $(MAKE) PROFILES='$(build_profiles)' CC='$(CC)' all-profiles
 
 # override automake
 install: install-exec install-data

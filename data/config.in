@@ -1,7 +1,7 @@
 <configuration>
 	<dllmap dll="cygwin1.dll" target="@LIBC@" />
 	<dllmap dll="libc" target="@LIBC@" />
-	<dllmap dll="libintl" target="@INTL@" />
+	<dllmap dll="intl" target="@INTL@" />
 	<dllmap dll="libxslt.dll" target="libxslt@libsuffix@" />
 	<dllmap dll="libmySQL.dll" target="libmysqlclient@libsuffix@" />
 	<dllmap dll="odbc32.dll" target="libodbc@libsuffix@" />

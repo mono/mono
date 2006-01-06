@@ -50,20 +50,20 @@ adc: dest:i src1:i src2:i len:6
 adc_imm: dest:i src1:i len:18
 add.ovf.un: len: 10 dest:i src1:i src2:i
 add.ovf: len: 24 dest:i src1:i src2:i
-add: dest:i src1:i src2:i len:6 clob:1
+add: dest:i src1:i src2:i len:6
 add_imm: dest:i src1:i len:18
 addcc_imm: dest:i src1:i len:18
 add_ovf_carry: dest:i src1:1 src2:i len:28
 add_ovf_un_carry: dest:i src1:1 src2:i len:28
 addcc: dest:i src1:i src2:i len:6
-and: dest:i src1:i src2:i len:6 clob:1
+and: dest:i src1:i src2:i len:6
 and_imm: dest:i src1:i len:16
 aot_const: dest:i len:8
 arg:
 arglist:
-atomic_add_i4: src1:b src2:i dest:i len:16
-atomic_exchange_i4: src1:b src2:i dest:i len:14
-atomic_add_new_i4: src1:b src2:i dest:i len:20
+atomic_add_i4: src1:b src2:i dest:i len:20
+atomic_exchange_i4: src1:b src2:i dest:i len:20
+atomic_add_new_i4: src1:b src2:i dest:i len:24
 beq.s:
 beq: len:8
 bge.s:
@@ -239,7 +239,7 @@ illegal:
 initblk:
 initobj:
 isinst:
-jmp: len:40
+jmp: len:56
 label:
 lcall: dest:L len:8 clob:c
 lcall_membase: dest:L src1:b len:12 clob:c
@@ -327,10 +327,10 @@ loadu4_mem: dest:i len:8
 loadu4_membase: dest:i src1:b len:18
 local:
 localloc: dest:i src1:i len:62
-long_add:
+long_add: len: 18 dest:l src1:l src2:i clob:1
 long_add_imm:
-long_add_ovf_un: len:18 dest:l src1:l src2:i
-long_add_ovf: len:24 dest:l src1:l src2:i
+long_add_ovf_un: len:22 dest:l src1:l src2:i clob:1
+long_add_ovf: len:28 dest:l src1:l src2:i clob:1
 long_and:
 long_beq:
 long_bge:
@@ -396,11 +396,12 @@ long_shr:
 long_shr_imm:
 long_shr_un:
 long_shr_un_imm:
-long_sub:
+long_sub: len: 18 dest:l src1:l src2:i clob:1
 long_sub_imm:
-long_sub_ovf_un: len:18 dest:l src1:l src2:i
-long_sub_ovf: len:36 dest:l src1:l src2:i
+long_sub_ovf_un: len:22 dest:l src1:l src2:i clob:1
+long_sub_ovf: len:36 dest:l src1:l src2:i clob:1
 long_xor:
+memory_barrier: len: 10
 mkrefany:
 mono_ldptr:
 mono_newobj:
@@ -450,6 +451,7 @@ rem_un_imm: dest:i src1:i src2:i len:24
 rename:
 ret:
 retarg:
+s390_bkchain: len:16 dest:i src1:i
 s390_move: len:48 dest:b src1:b
 s390_setf4ret: dest:f src1:f len:4
 tls_get: dest:i len:44

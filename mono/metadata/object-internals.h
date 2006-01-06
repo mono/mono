@@ -1026,6 +1026,8 @@ void        mono_reflection_create_generic_class  (MonoReflectionTypeBuilder *tb
 
 MonoReflectionType* mono_reflection_create_runtime_class  (MonoReflectionTypeBuilder *tb);
 
+void        mono_reflection_get_dynamic_overrides (MonoClass *klass, MonoMethod ***overrides, int *num_overrides);
+
 void mono_reflection_create_dynamic_method (MonoReflectionDynamicMethod *m);
 
 void        mono_reflection_initialize_generic_parameter (MonoReflectionGenericParam *gparam);
@@ -1079,6 +1081,12 @@ mono_upgrade_remote_class (MonoDomain *domain, MonoObject *tproxy, MonoClass *kl
 
 gpointer
 mono_get_addr_from_ftnptr (gpointer descr);
+
+void
+mono_nullable_init (guint8 *buf, MonoObject *value, MonoClass *klass);
+
+MonoObject*
+mono_nullable_box (guint8 *buf, MonoClass *klass);
 
 #endif /* __MONO_OBJECT_INTERNALS_H__ */
 

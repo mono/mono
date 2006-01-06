@@ -1,3 +1,173 @@
+2006-01-06 Neale Ferguson <neale@sinenomine.net>
+
+	* mini-s390x.c, inssel-s390x.brg, cpu-s390x.md: Fix ATOMIC_I8 operations. Provide
+	initial support for OP_ABS.
+
+2006-01-05 Neale Ferguson <neale@sinenomine.net>
+
+	* mini-s390x.c (emit_float_to_int): Correct r8 to unsigned int algorithm.
+
+2006-01-05 Neale Ferguson <neale@sinenomine.net>
+
+	* mini-s390.c, mini-s390.h, inssel-s390.brg, cpu-s390.md: Fix r8 to unsigned int 
+	conversion and implement LADD/LSUB.
+
+	* exceptions-s390.c: Standardize mono_arch_find_jit_info to match other
+	architectures.
+
+2006-01-05 Neale Ferguson <neale@sinenomine.net>
+
+	* mini-s390x.c, mini-s390x.h: Fix r8 to unsigned int conversion.
+
+	* exceptions-s390x.c: Standardize mono_arch_find_jit_info to match other
+	architectures.
+
+2006-01-05 Neale Ferguson <neale@sinenomine.net>
+
+	* mini-s390x.c, mini-s390x.h, mini-s390.c, mini-s390.h: Fix lmf handling when 
+	localloc is encountered.  Fixes crash in test-183.cs when using gmcs 
+	(stack walk problem).
+
+2006-01-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot.c (mono_aot_load_method): Fix a warning.
+
+2006-01-03  Neale Ferguson <neale@sinenomine.net>
+
+	* mini-s390x.h, exceptions-s390x.c, inssel-s390x.brg: Fix compiler warnings
+
+2006-01-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* iltests.il: Add test for #77148.
+
+	* mini.c (mini_get_ldelema_ins): Handle arrays with rank 1 too. Fixes
+	#77148.
+
+2006-01-03  Neale Ferguson <neale@sinenomine.net>
+
+	* mini-s390x.c, inssel-s390x.brg: Remove debug statements
+
+2006-01-03  Neale Ferguson <neale@sinenomine.net>
+
+	* mini-s390x.c, mini-s390x.h, exceptions-s390x.c, tramp-s390x.c, inssel-s390x.brg,
+	cpu-s390x.md, mini-codegen.c, Makefile.am: add 64-bit s390 support to JIT.
+
+	* basic-long.cs: Add lconv-to-r4/r8 tests.
+
+2006-01-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mono_method_to_ir): Fix DynamicMethod support in some opcodes.
+
+	* mini-sparc.c (mono_arch_call_opcode): Use mono_class_value_size ()
+	here as on other archs.
+
+2005-12-29 Neale Ferguson <neale@sinenomine.net>
+
+	* mini-s390.c (mono_arch_get_inst_for_method): Add memory_barrier support.
+
+2005-12-29 Neale Ferguson <neale@sinenomine.net>
+
+	* inssel-s390.brg: Correct register assignment; Rework L[ADD|SUB]_OVF[_UN] for s390.
+	
+	* cpu-s390.md: Fix lengths of a couple of long instructions; Add memory_barrier.
+
+	* mini-s390.c: Fix long add/sub overflow instructions; Fix displacement handling in
+	instrument_prolog; Add memory_barrier instruction.
+
+2005-12-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* exceptions-x86.c mini-x86.h: Fix solaris/x86 exception handling.
+
+2005-12-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* tramp-ia64.c (mono_arch_get_unbox_trampoline): Flush icache.
+
+	* aliasing.c inssel.brg: Fix warnings.
+
+	* inssel-ia64.brg (OP_MEMSET): Fix an optimization which previously
+	could skip initialization of some parts of memory.
+
+	* mini.c mini-ia64.c: Fix warnings.
+
+	* inssel-sparc.brg: Add an implementation of lneg which actually works.
+
+2005-12-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* aliasing.c (mono_build_aliasing_information): Add a workaround for
+	a crash seen on sparc.
+
+	* mini-sparc.c: Add implementation of Thread.MemoryBarrier.
+	
+	* cpu-sparc.md: Add memory_barrier opcode. Remove unused opcodes.
+
+2005-12-21 Neale Ferguson <neale@sinenomine.net>
+
+	* mini-ops.h: Add s390_backchain instruction
+
+	* inssel-s390.brg: Use backchaining instruction for LOADARG/STKARG operations.
+
+	* cpu-s390.md: Add s390_backchain instruction
+
+	* mini-s390.c: Significant ABI changes
+
+	* mini-s390.h: Cater for zero length structures
+
+2005-12-20 Neale Ferguson <neale@sinenomine.net>
+
+	* mini-s390.c: ABI fixes
+
+	* inssel-s390.brg: Remove debug statements
+
+	* cpu-s390.md: Fix length of ATOMIC_xx operations
+
+2005-12-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* basic-float.cs: Add float<->long conversion tests.
+
+2005-12-16 Neale Ferguson <neale@sinenomine.net>
+
+	* mini-s390.c: Fix LOCALLOC processing.
+
+	* tramp-s390.c (s390_magic_trampoline): Fix base calculation.
+
+2005-12-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* iltests.il: Add tests for some opcodes not covered by the other
+	tests.
+
+2005-12-15 Neale Ferguson <neale@sinenomine.net>
+
+	* mini-s390.c: Fix ADDCC/SBB bug revealed by test_0_ulong_regress; Correct 
+	register loading for Tail processing; Correct trace output.
+
+	* inssel-s390.brg: Reimplement LSUB_OVF due to s390 implementation of signed math.
+
+	* cpu-s390.md: Correct size of jmp instruction. 
+
+2005-12-13 Neale Ferguson <neale@sinenomine.net>
+
+	* mini-s390.c (mono_arch_emit_prolog): Remove some debugging bits.
+
+2005-12-13 Neale Ferguson <neale@sinenomine.net>
+
+	* inssel-s390.brg tramp-s390.c cpu-s390.md mini-s390.c mini-s390.h:
+	  Bring s390 up to current level.
+
+2005-12-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* generics.2.cs: Disable the newly added tests as they do not work yet.
+	
+	* generics.2.cs: Add valuetype tests.
+
+2005-12-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* basic-long.cs: Add i4->u8 test.
+
+	* objects.cs: Add tests for JIT intrinsic.
+
+	* mini.c (mini_get_inst_for_method): Resurrect the array Rank/Length
+	optimizations lost by a mistake.
+
 2005-12-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* basic-long.cs: Remove a test moved to objects.cs.

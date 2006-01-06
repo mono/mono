@@ -2385,10 +2385,14 @@ emit_load_volatile_arguments (MonoCompile *cfg, guint8 *code)
 	cinfo = get_call_info (sig, FALSE);
 	
 	/* This is the opposite of the code in emit_prolog */
+	if (sig->ret->type != MONO_TYPE_VOID) {
+		if ((cinfo->ret.storage == ArgInIReg) && (cfg->ret->opcode != OP_REGVAR)) {
+			amd64_mov_reg_membase (code, cinfo->ret.reg, cfg->ret->inst_basereg, cfg->ret->inst_offset, 8);
+		}
+	}
 
 	if (sig->ret->type != MONO_TYPE_VOID) {
 		if ((cinfo->ret.storage == ArgInIReg) && (cfg->ret->opcode != OP_REGVAR)) {
-			/* FIXME: Port this to the old JIT */
 			amd64_mov_reg_membase (code, cinfo->ret.reg, cfg->ret->inst_basereg, cfg->ret->inst_offset, 8);
 		}
 	}

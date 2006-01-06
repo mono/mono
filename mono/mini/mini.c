@@ -872,7 +872,7 @@ df_visit (MonoBasicBlock *start, int *dfn, MonoBasicBlock **array)
 	int i;
 
 	array [*dfn] = start;
-	/*g_print ("visit %d at %p (BB%ld)\n", *dfn, start->cil_code, start->block_num);*/
+	/* g_print ("visit %d at %p (BB%ld)\n", *dfn, start->cil_code, start->block_num); */
 	for (i = 0; i < start->out_count; ++i) {
 		if (start->out_bb [i]->dfn)
 			continue;
@@ -2617,7 +2617,7 @@ static void
 handle_stobj (MonoCompile *cfg, MonoBasicBlock *bblock, MonoInst *dest, MonoInst *src, const unsigned char *ip, MonoClass *klass, gboolean to_end, gboolean native) {
 	MonoInst *iargs [3];
 	int n;
-	int align = 0;
+	guint32 align = 0;
 	MonoMethod *memcpy_method;
 
 	g_assert (klass);
@@ -2973,6 +2973,16 @@ mini_get_ldelema_ins (MonoCompile *cfg, MonoBasicBlock *bblock, MonoMethod *cmet
 
 	rank = mono_method_signature (cmethod)->param_count - (is_set? 1: 0);
 
+	if (rank == 1) {
+		MONO_INST_NEW (cfg, addr, CEE_LDELEMA);
+		addr->inst_left = sp [0];
+		addr->inst_right = sp [1];
+		addr->cil_code = ip;
+		addr->type = STACK_MP;
+		addr->klass = cmethod->klass;
+		return addr;
+	}
+
 	if (rank == 2 && (cfg->opt & MONO_OPT_INTRINS)) {
 #ifdef MONO_ARCH_EMULATE_MUL_DIV
 		/* OP_LDELEMA2D depends on OP_LMUL */
@@ -3096,7 +3106,7 @@ mini_get_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSigna
 			return ins;
 		} else
 			return NULL;
-	} else if (mini_class_is_system_array (cmethod->klass)) {
+	} else if (cmethod->klass == mono_defaults.array_class) {
  		if (cmethod->name [0] != 'g')
  			return NULL;
 
@@ -3478,9 +3488,10 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 	MonoGenericContainer *generic_container = NULL;
 	MonoType **param_types;
 	GList *bb_recheck = NULL, *tmp;
-	int i, n, start_new_bblock, align;
+	int i, n, start_new_bblock, ialign;
 	int num_calls = 0, inline_costs = 0;
 	int breakpoint_id = 0;
+	guint32 align;
 	guint real_offset, num_args;
 	MonoBoolean security, pinvoke;
 	MonoSecurityManager* secman = NULL;
@@ -5411,7 +5422,12 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			//	goto unverified;
 			CHECK_OPSIZE (5);
 			token = read32 (ip + 1);
-			field = mono_field_from_token (image, token, &klass, generic_context);
+			if (method->wrapper_type != MONO_WRAPPER_NONE) {
+				field = mono_method_get_wrapper_data (method, token);
+				klass = field->parent;
+			}
+			else
+				field = mono_field_from_token (image, token, &klass, generic_context);
 			if (!field)
 				goto load_error;
 			mono_class_init (klass);
@@ -5544,8 +5560,12 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 			CHECK_OPSIZE (5);
 			token = read32 (ip + 1);
-
-			field = mono_field_from_token (image, token, &klass, generic_context);
+			if (method->wrapper_type != MONO_WRAPPER_NONE) {
+				field = mono_method_get_wrapper_data (method, token);
+				klass = field->parent;
+			}
+			else
+				field = mono_field_from_token (image, token, &klass, generic_context);
 			if (!field)
 				goto load_error;
 			mono_class_init (klass);
@@ -6076,6 +6096,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			if (method->wrapper_type == MONO_WRAPPER_DYNAMIC_METHOD) {
 				handle = mono_method_get_wrapper_data (method, n);
 				handle_class = mono_method_get_wrapper_data (method, n + 1);
+				if (handle_class == mono_defaults.typehandle_class)
+					handle = &((MonoClass*)handle)->byval_arg;
 			}
 			else {
 				handle = mono_ldtoken (image, n, &handle_class, generic_context);
@@ -6805,7 +6827,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				/* FIXXME: handle generics. */
 				if (mono_metadata_token_table (token) == MONO_TABLE_TYPESPEC) {
 					MonoType *type = mono_type_create_from_typespec (image, token);
-					token = mono_type_size (type, &align);
+					token = mono_type_size (type, &ialign);
 				} else {
 					MonoClass *klass = mono_class_get_full (image, token, generic_context);
 					if (!klass)
@@ -7399,7 +7421,8 @@ typedef struct {
 gint32*
 mono_allocate_stack_slots_full (MonoCompile *m, gboolean backward, guint32 *stack_size, guint32 *stack_align)
 {
-	int i, slot, offset, size, align;
+	int i, slot, offset, size;
+	guint32 align;
 	MonoMethodVar *vmv;
 	MonoInst *inst;
 	gint32 *offsets;
@@ -7437,8 +7460,12 @@ mono_allocate_stack_slots_full (MonoCompile *m, gboolean backward, guint32 *stac
 		* pinvoke wrappers when they call functions returning structures */
 		if (inst->unused && MONO_TYPE_ISSTRUCT (inst->inst_vtype) && inst->inst_vtype->type != MONO_TYPE_TYPEDBYREF)
 			size = mono_class_native_size (inst->inst_vtype->data.klass, &align);
-		else
-			size = mono_type_size (inst->inst_vtype, &align);
+		else {
+			int ialign;
+
+			size = mono_type_size (inst->inst_vtype, &ialign);
+			align = ialign;
+		}
 
 		t = mono_type_get_underlying_type (inst->inst_vtype);
 		switch (t->type) {
@@ -9477,6 +9504,9 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 
 	/*g_print ("numblocks = %d\n", cfg->num_bblocks);*/
 
+	if (cfg->new_ir)
+		mono_decompose_long_opts (cfg);
+
 	if (cfg->opt & MONO_OPT_BRANCH)
 		optimize_branches (cfg);
 
@@ -9643,9 +9673,6 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
     //print_dfn (cfg);
 
 	if (cfg->new_ir) {
-		/* FIXME: Move this call elsewhere */
-		mono_decompose_long_opts (cfg);
-
 		/* FIXME: Move this call elsewhere, _before_ global reg alloc and _after_ decompose */
 		mono_handle_global_vregs (cfg);
 	}

@@ -1,3 +1,7 @@
+2005-12-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* sparc/sparc-codegen.h (sparc_membar): Add membar instruction.
+
 2005-10-30  Zoltan Varga  <vargaz@gmail.com>
 
 	* ia64/ia64-codegen.h (ia64_m17): Fix a warning.

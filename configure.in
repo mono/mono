@@ -6,7 +6,7 @@ AC_CANONICAL_SYSTEM
 m4_ifdef([_A][M_PROG_TAR],[_A][M_SET_OPTION([tar-ustar])])
 
 AM_CONFIG_HEADER(config.h)
-AM_INIT_AUTOMAKE(mono,1.1.10)
+AM_INIT_AUTOMAKE(mono,1.1.13)
 AM_MAINTAINER_MODE
 
 AC_PROG_LN_S
@@ -249,12 +249,15 @@ dnl may require a specific autoconf version
 dnl AC_PROG_CC_FOR_BUILD
 dnl CC_FOR_BUILD not automatically detected
 CC_FOR_BUILD=$CC
+CFLAGS_FOR_BUILD=$CFLAGS
 BUILD_EXEEXT=
 if test "x$cross_compiling" = "xyes"; then
 	CC_FOR_BUILD=cc
+	CFLAGS_FOR_BUILD=
 	BUILD_EXEEXT=""
 fi
 AC_SUBST(CC_FOR_BUILD)
+AC_SUBST(CFLAGS_FOR_BUILD)
 AC_SUBST(HOST_CC)
 AC_SUBST(BUILD_EXEEXT)
 
@@ -263,7 +266,8 @@ AM_CONDITIONAL(CROSS_COMPILING, [test x$cross_compiling = xyes])
 # Set STDC_HEADERS
 AC_HEADER_STDC
 AC_LIBTOOL_WIN32_DLL
-AC_DISABLE_FAST_INSTALL
+# This causes monodis to not link correctly
+#AC_DISABLE_FAST_INSTALL
 AM_PROG_LIBTOOL
 
 # Test whenever ld supports -version-script
@@ -1201,12 +1205,14 @@ if test x$platform_win32 = xno; then
 	AC_CHECK_HEADERS(sys/statvfs.h)
 	AC_CHECK_HEADERS(sys/vfstab.h)
 	AC_CHECK_HEADERS(sys/xattr.h)
+	AC_CHECK_HEADERS(sys/mman.h)
 	AC_CHECK_FUNCS(getdomainname)
 	AC_CHECK_FUNCS(setdomainname)
 	AC_CHECK_FUNCS(fgetgrent)
 	AC_CHECK_FUNCS(fgetpwent)
 	AC_CHECK_FUNCS(fgetpwent)
 	AC_CHECK_FUNCS(getfsstat)
+	AC_CHECK_FUNCS(lutimes)
 	AC_CHECK_FUNCS(mremap)
 	AC_CHECK_FUNCS(remap_file_pages)
 	AC_CHECK_FUNCS(posix_fadvise)
@@ -1426,6 +1432,11 @@ case "$host" in
 		arch_target=x86;
 		JIT_SUPPORTED=yes
 		jit_wanted=true
+		case $host_os in
+		  solaris*)
+			LIBC="libc.so"
+			INTL="libintl.so"
+		esac
 		;;
 	x86_64-*-* | amd64-*-*)
 		TARGET=AMD64;
@@ -1767,6 +1778,7 @@ AC_OUTPUT([
 Makefile
 mint.pc
 mono.pc
+mono-cairo.pc
 dotnet.pc
 mono-uninstalled.pc
 scripts/mono-nunit.pc
@@ -1849,7 +1861,13 @@ fi
     echo 'IL_FLAGS = /debug' >> $srcdir/$mcsdir/build/config.make
     echo "RUNTIME = $mono_build_root/runtime/mono-wrapper" >> $srcdir/$mcsdir/build/config.make
     echo "ILDISASM = $mono_build_root/runtime/monodis-wrapper" >> $srcdir/$mcsdir/build/config.make
-    echo "INSTALL = $INSTALL" >> $srcdir/$mcsdir/build/config.make
+
+    case $INSTALL in
+    [[\\/$]]* | ?:[[\\/]]* ) mcs_INSTALL=$INSTALL ;;
+    *) mcs_INSTALL=$mono_build_root/$INSTALL ;;
+    esac
+
+    echo "INSTALL = $mcs_INSTALL" >> $srcdir/$mcsdir/build/config.make
 
     export VERSION
     [myver=$($AWK 'BEGIN {

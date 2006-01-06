@@ -56,6 +56,10 @@
 #define MONO_OUTPUT_VTR(cfg, size, dr, sr, so) do {				\
 	int reg = mono_regstate_next_int (cfg->rs);				\
 	switch (size) {								\
+		case 0: 							\
+			MONO_EMIT_NEW_ICONST(cfg, reg, 0);			\
+			mono_call_inst_add_outarg_reg (call, reg, dr, FALSE);	\
+		break;								\
 		case 1:								\
 			MONO_EMIT_NEW_LOAD_MEMBASE_OP(cfg, OP_LOADU1_MEMBASE,	\
 				reg, sr, so);					\
@@ -87,19 +91,25 @@
 #define MONO_OUTPUT_VTS(cfg, size, dr, dx, sr, so) do {				\
 	int tmpr;								\
 	switch (size) {								\
+		case 0: 							\
+			tmpr = mono_regstate_next_int (cfg->rs);		\
+			MONO_EMIT_NEW_ICONST(cfg, tmpr, 0);			\
+			MONO_EMIT_NEW_STORE_MEMBASE(cfg, OP_STORE_MEMBASE_REG,  \
+				dr, dx, tmpr);					\
+		break;								\
 		case 1:								\
 			tmpr = mono_regstate_next_int (cfg->rs);		\
 			MONO_EMIT_NEW_LOAD_MEMBASE_OP(cfg, OP_LOADU1_MEMBASE,	\
 				tmpr, sr, so);					\
 			MONO_EMIT_NEW_STORE_MEMBASE(cfg, OP_STORE_MEMBASE_REG,  \
-				tmpr, dr, dx);					\
+				dr, dx, tmpr);					\
 		break;								\
 		case 2:								\
 			tmpr = mono_regstate_next_int (cfg->rs);		\
 			MONO_EMIT_NEW_LOAD_MEMBASE_OP(cfg, OP_LOADU2_MEMBASE,	\
 				tmpr, sr, so);					\
 			MONO_EMIT_NEW_STORE_MEMBASE(cfg, OP_STORE_MEMBASE_REG,  \
-				tmpr, dr, dx);					\
+				dr, dx, tmpr);					\
 		break;								\
 		case 4:								\
 		case 8:								\
@@ -146,12 +156,14 @@ typedef struct
 #define MONO_ARCH_EMULATE_LMUL 			1
 #define MONO_ARCH_HAVE_IS_INT_OVERFLOW  	1
 #define MONO_ARCH_NEED_DIV_CHECK		1
+// #define MONO_ARCH_SIGSEGV_ON_ALTSTACK		1
+// #define MONO_ARCH_SIGNAL_STACK_SIZE		65536
 // #define MONO_ARCH_HAVE_THROW_CORLIB_EXCEPTION	1
 
 #define MONO_ARCH_USE_SIGACTION 	1
 // #define CUSTOM_STACK_WALK 		1
 // #define CUSTOM_EXCEPTION_HANDLING 	1
-#define mono_find_jit_info 		mono_arch_find_jit_info
+// #define mono_find_jit_info 		mono_arch_find_jit_info
 
 #define S390_STACK_ALIGNMENT		 8
 #define S390_FIRST_ARG_REG 		s390_r2

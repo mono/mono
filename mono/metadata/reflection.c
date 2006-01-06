@@ -140,7 +140,7 @@ static void    encode_type (MonoDynamicImage *assembly, MonoType *type, char *p,
 static guint32 type_get_signature_size (MonoType *type);
 static void get_default_param_value_blobs (MonoMethod *method, char **blobs, guint32 *types);
 static MonoObject *mono_get_object_from_blob (MonoDomain *domain, MonoType *type, const char *blob);
-
+static inline MonoType *dup_type (const MonoType *original);
 
 static void
 alloc_table (MonoDynamicTable *table, guint nrows)
@@ -1044,10 +1044,24 @@ find_index_in_table (MonoDynamicImage *assembly, int table_idx, int col, guint32
 
 static GHashTable *dynamic_custom_attrs = NULL;
 
+static gboolean
+custom_attr_visible (MonoImage *image, MonoReflectionCustomAttr *cattr)
+{
+	/* FIXME: Need to do more checks */
+	if (cattr->ctor->method && (cattr->ctor->method->klass->image != image)) {
+		int visibility = cattr->ctor->method->klass->flags & TYPE_ATTRIBUTE_VISIBILITY_MASK;
+
+		if ((visibility != TYPE_ATTRIBUTE_PUBLIC) && (visibility != TYPE_ATTRIBUTE_NESTED_PUBLIC))
+			return FALSE;
+	}
+
+	return TRUE;
+}
+
 static MonoCustomAttrInfo*
 mono_custom_attrs_from_builders (MonoImage *image, MonoArray *cattrs)
 {
-	int i, count;
+	int i, index, count, not_visible;
 	MonoCustomAttrInfo *ainfo;
 	MonoReflectionCustomAttr *cattr;
 
@@ -1057,16 +1071,30 @@ mono_custom_attrs_from_builders (MonoImage *image, MonoArray *cattrs)
 
 	count = mono_array_length (cattrs);
 
+	/* Skip nonpublic attributes since MS.NET seems to do the same */
+	/* FIXME: This needs to be done more globally */
+	not_visible = 0;
+	for (i = 0; i < count; ++i) {
+		cattr = (MonoReflectionCustomAttr*)mono_array_get (cattrs, gpointer, i);
+		if (!custom_attr_visible (image, cattr))
+			not_visible ++;
+	}
+	count -= not_visible;
+
 	ainfo = g_malloc0 (sizeof (MonoCustomAttrInfo) + sizeof (MonoCustomAttrEntry) * (count - MONO_ZERO_LEN_ARRAY));
 
 	ainfo->image = image;
 	ainfo->num_attrs = count;
+	index = 0;
 	for (i = 0; i < count; ++i) {
 		cattr = (MonoReflectionCustomAttr*)mono_array_get (cattrs, gpointer, i);
-		ainfo->attrs [i].ctor = cattr->ctor->method;
-		/* FIXME: might want to memdup the data here */
-		ainfo->attrs [i].data = mono_array_addr (cattr->data, char, 0);
-		ainfo->attrs [i].data_size = mono_array_length (cattr->data);
+		if (custom_attr_visible (image, cattr)) {
+			ainfo->attrs [index].ctor = cattr->ctor->method;
+			/* FIXME: might want to memdup the data here */
+			ainfo->attrs [index].data = mono_array_addr (cattr->data, char, 0);
+			ainfo->attrs [index].data_size = mono_array_length (cattr->data);
+			index ++;
+		}
 	}
 
 	return ainfo;
@@ -7018,7 +7046,7 @@ mono_custom_attrs_construct_by_type (MonoCustomAttrInfo *cinfo, MonoClass *attr_
 
 	n = 0;
 	for (i = 0; i < cinfo->num_attrs; ++i) {
-		if (mono_class_has_parent (cinfo->attrs [i].ctor->klass, attr_klass))
+		if (mono_class_is_assignable_from (attr_klass, cinfo->attrs [i].ctor->klass))
 			n ++;
 	}
 
@@ -7026,7 +7054,7 @@ mono_custom_attrs_construct_by_type (MonoCustomAttrInfo *cinfo, MonoClass *attr_
 	result = mono_array_new (mono_domain_get (), klass, n);
 	n = 0;
 	for (i = 0; i < cinfo->num_attrs; ++i) {
-		if (mono_class_has_parent (cinfo->attrs [i].ctor->klass, attr_klass)) {
+		if (mono_class_is_assignable_from (attr_klass, cinfo->attrs [i].ctor->klass)) {
 			attr = create_custom_attr (cinfo->image, cinfo->attrs [i].ctor, cinfo->attrs [i].data, cinfo->attrs [i].data_size);
 			mono_array_set (result, gpointer, n, attr);
 			n ++;
@@ -8299,7 +8327,7 @@ reflection_methodbuilder_to_mono_method (MonoClass *klass,
 					m->signature->params [i - 1]->attrs = pb->attrs;
 				}
 
-				if (pb->def_value) {
+				if (pb->attrs & PARAM_ATTRIBUTE_HAS_DEFAULT) {
 					MonoDynamicImage *assembly;
 					guint32 idx, def_type, len;
 					char *p;
@@ -8502,15 +8530,20 @@ do_mono_reflection_bind_generic_parameters (MonoReflectionType *type, int type_a
 	gclass->inst = g_new0 (MonoGenericInst, 1);
 
 	gclass->inst->type_argc = type_argc;
-	gclass->inst->type_argv = types;
+	gclass->inst->type_argv = g_new0 (MonoType *, gclass->inst->type_argc);
 	gclass->inst->is_reference = 1;
 
 	for (i = 0; i < gclass->inst->type_argc; ++i) {
+		MonoType *t = dup_type (types [i]);
+
 		if (!gclass->inst->is_open)
-			gclass->inst->is_open = mono_class_is_open_constructed_type (types [i]);
+			gclass->inst->is_open = mono_class_is_open_constructed_type (t);
 		if (gclass->inst->is_reference)
-			gclass->inst->is_reference = MONO_TYPE_IS_REFERENCE (types [i]);
+			gclass->inst->is_reference = MONO_TYPE_IS_REFERENCE (t);
+		gclass->inst->type_argv [i] = t;
 	}
+
+	gclass->inst = mono_metadata_lookup_generic_inst (gclass->inst);
 
 	gclass->container_class = klass;
 
@@ -8552,6 +8585,8 @@ do_mono_reflection_bind_generic_parameters (MonoReflectionType *type, int type_a
 
 			gclass->inst->type_argv [i] = t;
 		}
+
+		gclass->inst = mono_metadata_lookup_generic_inst (gclass->inst);
 
 		gclass->container_class = kgclass->container_class;
 	}
@@ -8673,15 +8708,21 @@ mono_class_bind_generic_parameters (MonoType *type, int type_argc, MonoType **ty
 
 	gclass->inst = g_new0 (MonoGenericInst, 1);
 	gclass->inst->type_argc = type_argc;
-	gclass->inst->type_argv = types;
+	gclass->inst->type_argv = g_new0 (MonoType *, gclass->inst->type_argc);
 	gclass->inst->is_reference = 1;
 
 	for (i = 0; i < gclass->inst->type_argc; ++i) {
+		MonoType *t = dup_type (types [i]);
+
 		if (!gclass->inst->is_open)
-			gclass->inst->is_open = mono_class_is_open_constructed_type (types [i]);
+			gclass->inst->is_open = mono_class_is_open_constructed_type (t);
 		if (gclass->inst->is_reference)
-			gclass->inst->is_reference = MONO_TYPE_IS_REFERENCE (types [i]);
+			gclass->inst->is_reference = MONO_TYPE_IS_REFERENCE (t);
+
+		gclass->inst->type_argv [i] = t;
 	}
+
+	gclass->inst = mono_metadata_lookup_generic_inst (gclass->inst);
 
 	gclass->container_class = klass;
 
@@ -8714,6 +8755,8 @@ mono_class_bind_generic_parameters (MonoType *type, int type_argc, MonoType **ty
 
 			gclass->inst->type_argv [i] = t;
 		}
+
+		gclass->inst = mono_metadata_lookup_generic_inst (gclass->inst);
 
 		gclass->container_class = kgclass->container_class;
 	}
@@ -9029,8 +9072,7 @@ static void
 ensure_runtime_vtable (MonoClass *klass)
 {
 	MonoReflectionTypeBuilder *tb = klass->reflection_info;
-	int i, num, j, onum;
-	MonoMethod **overrides;
+	int i, num, j;
 
 	if (!tb || klass->wastypebuilder)
 		return;
@@ -9062,11 +9104,36 @@ ensure_runtime_vtable (MonoClass *klass)
 		for (i = 0; i < klass->method.count; ++i)
 			klass->methods [i]->slot = i;
 
-	if (!((MonoDynamicImage*)klass->image)->run)
-		/* No need to create a generic vtable */
+	/*
+	 * The generic vtable is needed even if image->run is not set since some
+	 * runtime code like ves_icall_Type_GetMethodsByName depends on 
+	 * method->slot being defined.
+	 */
+
+	/* 
+	 * tb->methods could not be freed since it is used for determining 
+	 * overrides during dynamic vtable construction.
+	 */
+}
+
+void
+mono_reflection_get_dynamic_overrides (MonoClass *klass, MonoMethod ***overrides, int *num_overrides)
+{
+	MonoReflectionTypeBuilder *tb;
+	int i, onum;
+
+	*overrides = NULL;
+	*num_overrides = 0;
+
+	g_assert (klass->image->dynamic);
+
+	if (!klass->reflection_info)
 		return;
 
-	/* Overrides */
+	g_assert (strcmp (((MonoObject*)klass->reflection_info)->vtable->klass->name, "TypeBuilder") == 0);
+
+	tb = (MonoReflectionTypeBuilder*)klass->reflection_info;
+
 	onum = 0;
 	if (tb->methods) {
 		for (i = 0; i < tb->num_methods; ++i) {
@@ -9077,20 +9144,21 @@ ensure_runtime_vtable (MonoClass *klass)
 		}
 	}
 
-	overrides = g_new0 (MonoMethod*, onum * 2);
+	if (onum) {
+		*overrides = g_new0 (MonoMethod*, onum * 2);
 
-	if (tb->methods) {
 		onum = 0;
 		for (i = 0; i < tb->num_methods; ++i) {
 			MonoReflectionMethodBuilder *mb = 
 				mono_array_get (tb->methods, MonoReflectionMethodBuilder*, i);
 			if (mb->override_method) {
-				/* FIXME: What if 'override_method' is a MethodBuilder ? */
-				overrides [onum * 2] = 
+				(*overrides) [onum * 2] = 
 					mb->override_method->method;
-				overrides [onum * 2 + 1] =
+				(*overrides) [onum * 2 + 1] =
 					mb->mhandle;
 
+				/* FIXME: What if 'override_method' is a MethodBuilder ? */
+				g_assert (mb->override_method->method);
 				g_assert (mb->mhandle);
 
 				onum ++;
@@ -9098,8 +9166,7 @@ ensure_runtime_vtable (MonoClass *klass)
 		}
 	}
 
-	mono_class_setup_vtable_general (klass, overrides, onum);
-	g_free (overrides);
+	*num_overrides = onum;
 }
 
 static void
@@ -9348,22 +9415,8 @@ mono_reflection_initialize_generic_parameter (MonoReflectionGenericParam *gparam
 			gparam->mbuilder->generic_container = g_new0 (MonoGenericContainer, 1);
 		param->owner = gparam->mbuilder->generic_container;
 	} else if (gparam->tbuilder) {
-		MonoReflectionTypeBuilder *nesting = (MonoReflectionTypeBuilder*) gparam->tbuilder->nesting_type;
-		MonoGenericContainer *container = gparam->tbuilder->generic_container;
-
-		while (nesting) {
-			int count;
-
-			count = nesting->generic_params ? mono_array_length (nesting->generic_params) : 0;
-			if (gparam->index >= count)
-				break;
-
-			container = nesting->generic_container;
-			nesting = (MonoReflectionTypeBuilder*) nesting->nesting_type;
-		}
-
-		g_assert (container);
-		param->owner = container;
+		g_assert (gparam->tbuilder->generic_container);
+		param->owner = gparam->tbuilder->generic_container;
 	}
 
 	param->method = NULL;

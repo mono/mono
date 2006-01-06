@@ -706,6 +706,8 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *class)
 	if (!class->inited)
 		mono_class_init (class);
 
+	mono_class_setup_vtable (class);
+
 	mono_stats.used_class_count++;
 	mono_stats.class_vtable_size += sizeof (MonoVTable) + class->vtable_size * sizeof (gpointer);
 
@@ -1713,6 +1715,50 @@ mono_property_get_value (MonoProperty *prop, void *obj, void **params, MonoObjec
 	return default_mono_runtime_invoke (prop->get, obj, params, exc);
 }
 
+/*
+ * mono_nullable_init:
+ *
+ *   Initialize the nullable structure pointed to by @buf from @value which
+ * should be a boxed value type. Since Nullables have variable structure, we 
+ * can't define a C structure for them.
+ */
+void
+mono_nullable_init (guint8 *buf, MonoObject *value, MonoClass *klass)
+{
+	MonoClass *param_class = klass->cast_class;
+				
+	g_assert (mono_class_from_mono_type (klass->fields [0].type) == param_class);
+	g_assert (mono_class_from_mono_type (klass->fields [1].type) == mono_defaults.boolean_class);
+
+	*(guint8*)(buf + klass->fields [1].offset - sizeof (MonoObject)) = value ? 1 : 0;
+	if (value)
+		memcpy (buf + klass->fields [0].offset - sizeof (MonoObject), mono_object_unbox (value), mono_class_value_size (param_class, NULL));
+	else
+		memset (buf + klass->fields [0].offset - sizeof (MonoObject), 0, mono_class_value_size (param_class, NULL));
+}
+
+/**
+ * mono_nullable_box:
+ *
+ *   Creates a boxed vtype or NULL from the Nullable structure pointed to by
+ * @buf.
+ */
+MonoObject*
+mono_nullable_box (guint8 *buf, MonoClass *klass)
+{
+	MonoClass *param_class = klass->cast_class;
+
+	g_assert (mono_class_from_mono_type (klass->fields [0].type) == param_class);
+	g_assert (mono_class_from_mono_type (klass->fields [1].type) == mono_defaults.boolean_class);
+
+	if (*(guint8*)(buf + klass->fields [1].offset - sizeof (MonoObject))) {
+		MonoObject *o = mono_object_new (mono_domain_get (), param_class);
+		memcpy (mono_object_unbox (o), buf + klass->fields [0].offset - sizeof (MonoObject), mono_class_value_size (param_class, NULL));
+		return o;
+	}
+	else
+		return NULL;
+}
 
 /**
  * mono_get_delegate_invoke:
@@ -2111,7 +2157,7 @@ mono_runtime_invoke_array (MonoMethod *method, void *obj, MonoArray *params,
 	MonoMethodSignature *sig = mono_method_signature (method);
 	gpointer *pa = NULL;
 	int i;
-		
+
 	if (NULL != params) {
 		pa = alloca (sizeof (gpointer) * mono_array_length (params));
 		for (i = 0; i < mono_array_length (params); i++) {
@@ -2138,10 +2184,15 @@ mono_runtime_invoke_array (MonoMethod *method, void *obj, MonoArray *params,
 			case MONO_TYPE_R4:
 			case MONO_TYPE_R8:
 			case MONO_TYPE_VALUETYPE:
-				/* MS seems to create the objects if a null is passed in */
-				if (! ((gpointer *)params->vector)[i])
-					((gpointer*)params->vector)[i] = mono_object_new (mono_domain_get (), mono_class_from_mono_type (sig->params [i]));
-				pa [i] = (char *)(((gpointer *)params->vector)[i]) + sizeof (MonoObject);
+				if (t->type == MONO_TYPE_VALUETYPE && mono_class_is_nullable (mono_class_from_mono_type (sig->params [i]))) {
+					/* The runtime invoke wrapper needs the original boxed vtype */
+					pa [i] = (char *)(((gpointer *)params->vector)[i]);
+				} else {
+					/* MS seems to create the objects if a null is passed in */
+					if (!((gpointer *)params->vector)[i])
+						((gpointer*)params->vector)[i] = mono_object_new (mono_domain_get (), mono_class_from_mono_type (sig->params [i]));
+					pa [i] = (char *)(((gpointer *)params->vector)[i]) + sizeof (MonoObject);
+				}
 				break;
 			case MONO_TYPE_STRING:
 			case MONO_TYPE_OBJECT:
@@ -2164,6 +2215,17 @@ mono_runtime_invoke_array (MonoMethod *method, void *obj, MonoArray *params,
 
 	if (!strcmp (method->name, ".ctor") && method->klass != mono_defaults.string_class) {
 		void *o = obj;
+
+		if (mono_class_is_nullable (method->klass)) {
+			/* Need to create a boxed vtype instead */
+			g_assert (!obj);
+
+			if (!params)
+				return NULL;
+			else
+				return mono_value_box (mono_domain_get (), method->klass->cast_class, pa [0]);
+		}
+
 		if (!obj) {
 			obj = mono_object_new (mono_domain_get (), method->klass);
 			if (mono_object_class(obj) == mono_defaults.transparent_proxy_class) {
@@ -2549,7 +2611,8 @@ mono_array_new_full (MonoDomain *domain, MonoClass *array_class,
 	byte_len = mono_array_element_size (array_class);
 	len = 1;
 
-	if (array_class->rank == 1 && array_class->byval_arg.type == MONO_TYPE_SZARRAY) {
+	/* A single dimensional array with a 0 lower bound is the same as an szarray */
+	if (array_class->rank == 1 && ((array_class->byval_arg.type == MONO_TYPE_SZARRAY) || (lower_bounds && lower_bounds [0] == 0))) {
 		len = lengths [0];
 		if ((int) len < 0)
 			arith_overflow ();

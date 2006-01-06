@@ -799,11 +799,11 @@ get_generic_param (MonoImage *m, MonoGenericContainer *container)
 			g_string_append (result, ",");
 
 		flags = param->flags & GENERIC_PARAMETER_ATTRIBUTE_SPECIAL_CONSTRAINTS_MASK;
-		if (flags == GENERIC_PARAMETER_ATTRIBUTE_REFERENCE_TYPE_CONSTRAINT)
+		if ((flags & GENERIC_PARAMETER_ATTRIBUTE_REFERENCE_TYPE_CONSTRAINT) == GENERIC_PARAMETER_ATTRIBUTE_REFERENCE_TYPE_CONSTRAINT)
 			g_string_append (result, "class ");
-		else if (flags == GENERIC_PARAMETER_ATTRIBUTE_VALUE_TYPE_CONSTRAINT)
+		if ((flags & GENERIC_PARAMETER_ATTRIBUTE_VALUE_TYPE_CONSTRAINT) == GENERIC_PARAMETER_ATTRIBUTE_VALUE_TYPE_CONSTRAINT)
 			g_string_append (result, "valuetype ");
-		else if (flags == GENERIC_PARAMETER_ATTRIBUTE_CONSTRUCTOR_CONSTRAINT)
+		if ((flags & GENERIC_PARAMETER_ATTRIBUTE_CONSTRUCTOR_CONSTRAINT) == GENERIC_PARAMETER_ATTRIBUTE_CONSTRUCTOR_CONSTRAINT)
 			g_string_append (result, ".ctor ");
 
 		for (constr = param->constraints; constr && *constr; constr++) {
@@ -883,7 +883,7 @@ dis_stringify_method_signature (MonoImage *m, MonoMethodSignature *method, int m
 			}
 
 			mono_metadata_decode_blob_size (sig, &sig);
-			method = mono_metadata_parse_method_signature_full (m, context, methoddef_row, sig, &sig);
+			method = mono_metadata_parse_method_signature_full (m, container, methoddef_row, sig, &sig);
 			free_method = 1;
 		} else if (context)
 			container = context->container;
@@ -2190,17 +2190,33 @@ get_constant (MonoImage *m, MonoTypeEnum t, guint32 blob_index)
 		return g_strdup_printf ("int64(0x%08x%08x)", high, low);
 	}
 	case MONO_TYPE_R4: {
+		gboolean normal;
 		float r;
 		readr4 (ptr, &r);
-		if (! isnormal (r))
+
+		/* Crazy solaris systems doesn't have isnormal */
+#ifdef HAVE_FINITE
+		normal = finite (r);
+#else
+		normal = isnormal (r);
+#endif
+		if (!normal)
 			return g_strdup_printf ("float32(0x%08x)", read32 (ptr));
 		else
 			return g_strdup_printf ("float32(%.20g)", r);
 	}	
 	case MONO_TYPE_R8: {
+		gboolean normal;
 		double r;
 		readr8 (ptr, &r);
-		if (! isnormal (r)) {
+
+		/* Crazy solaris systems doesn't have isnormal */
+#ifdef HAVE_FINITE
+		normal = finite (r);
+#else
+		normal = isnormal (r);
+#endif
+		if (!normal) {
 			guint32 low, high;
 			low = read32 (ptr);
 			high = read32 (ptr + 4);
@@ -2897,6 +2913,10 @@ init_key_table (void)
 	g_hash_table_insert (key_table, (char *) "type", GINT_TO_POINTER (TRUE));
 	g_hash_table_insert (key_table, (char *) "typedref", GINT_TO_POINTER (TRUE));
 	g_hash_table_insert (key_table, (char *) "uint", GINT_TO_POINTER (TRUE));
+	g_hash_table_insert (key_table, (char *) "uint8", GINT_TO_POINTER (TRUE));
+	g_hash_table_insert (key_table, (char *) "uint16", GINT_TO_POINTER (TRUE));
+	g_hash_table_insert (key_table, (char *) "uint32", GINT_TO_POINTER (TRUE));
+	g_hash_table_insert (key_table, (char *) "uint64", GINT_TO_POINTER (TRUE));
 	g_hash_table_insert (key_table, (char *) "unbox", GINT_TO_POINTER (TRUE));
 	g_hash_table_insert (key_table, (char *) "unicode", GINT_TO_POINTER (TRUE));
 	g_hash_table_insert (key_table, (char *) "unmanagedexp", GINT_TO_POINTER (TRUE));

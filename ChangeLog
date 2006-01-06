@@ -1,3 +1,56 @@
+2006-01-06  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* data/config.in: s/libintl/intl/g.  Mono.Unix.Catalog DllImports "intl"
+	  now, as intl.dll is the file actually shipped/available on Windows.
+
+2006-01-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* configure.in: Add a CFLAGS_FOR_BUILD autoconf variable.
+
+2006-01-03  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* configure.in: Add check for lutimes(2).  Mac OS X doesn't provide this.
+
+2005-12-28  Kornél Pál  <kornelpal@hotmail.com>
+
+	* runtime/Makefile.am (all-local): Enclose CC by apostrophes to fix
+	  build when CC contains spaces.
+
+2005-12-27  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* configure.in: Add check for <sys/mman.h>.  Fixes #77091.
+	  Thanks to Ben Gamari for the patch.
+
+2005-12-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* configure.in: Add support for solaris/x86.
+
+	* runtime/Makefile.am (all-local): Pass CC to the mcs makefile.
+
+2005-12-21  Wade Berrier <wberrier@novell.com>
+
+	* mono-cairo.pc.in: use $prefix/lib instead of $libdir, 
+	otherwise the cairo.dll can't be found on 64 bit architectures
+
+2005-12-18  Raja R Harinath  <harinath@gmail.com>
+
+	* configure.in (config.make): Don't blindly copy over $INSTALL,
+	since it can be relative to the mono tree.  Use the same trick as
+	ac_INSTALL, but against an absolute path.
+
+2005-12-16 Wade Berrier <wberrier@novell.com>
+
+	* configure.in: Unset AC_DISABLE_FAST_INSTALL
+	This caused some weird monodis linking errors
+
+2005-12-12 Mike Kestner <mkestner@novell.com>
+
+	* mono-cairo.pc.in: pkgconfig support for Mono.Cairo. Mono.Cairo.dll
+	and this file can be extracted post-build to be packaged separately 
+	on win32.
+	* configure.in: expand mono-cairo.pc
+	* Makefile.am: dist and install mono-cairo.pc
+
 2005-12-01  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* configure.in: Check for setkey(3) in -lcrypt and define CRYPT_LIBS

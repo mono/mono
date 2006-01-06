@@ -102,7 +102,7 @@ mono_loader_set_error_type_load (char *class_name, char *assembly_name)
 	 * can't deal with load errors, and this message is more helpful than an
 	 * assert.
 	 */
-	mono_trace (G_LOG_LEVEL_WARNING, MONO_TRACE_TYPE, "The class %s could not be loaded, used in %s", class_name, assembly_name);
+	g_warning ("The class %s could not be loaded, used in %s", class_name, assembly_name);
 	
 	set_loader_error (error);
 }
@@ -127,7 +127,7 @@ mono_loader_set_error_method_load (MonoClass *klass, const char *member_name)
 	error->klass = klass;
 	error->member_name = member_name;
 
-	mono_trace (G_LOG_LEVEL_WARNING, MONO_TRACE_TYPE, "Missing member %s in type %s, assembly %s", member_name, mono_class_get_name (klass), klass->image->name);
+	g_warning ("Missing member %s in type %s, assembly %s", member_name, mono_class_get_name (klass), klass->image->name);
 	
 	set_loader_error (error);
 }
@@ -534,7 +534,7 @@ method_from_memberref (MonoImage *image, guint32 idx, MonoGenericContext *typesp
 
 	/* If the class is a generic instantiation, ensure that all VAR references in the signature
 	   are replaced by the corresponding type argument.  Note that MVARs are left alone. */
-	if (klass->generic_class) {
+	if (klass->generic_class && sig->has_type_parameters) {
 		MonoMethodSignature *old_sig = sig;
 		sig = mono_class_inflate_generic_signature (image, sig, klass->generic_class->context);
 		g_assert (sig != old_sig);

@@ -1582,9 +1582,6 @@ mono_metadata_parse_method_signature_full (MonoImage *m, MonoGenericContainer *c
 	method->call_convention = call_convention;
 	method->generic_param_count = gen_param_count;
 
-	if (gen_param_count)
-		method->has_type_parameters = 1;
-
 	if (call_convention != 0xa) {
 		method->ret = mono_metadata_parse_type_full (m, (MonoGenericContext *) container, MONO_PARSE_RET, ret_attrs, ptr, &ptr);
 		is_open = mono_class_is_open_constructed_type (method->ret);
@@ -1801,7 +1798,7 @@ do_mono_metadata_parse_generic_class (MonoType *type, MonoImage *m, MonoGenericC
 	 */
 	igclass->klass = g_new0 (MonoClass, 1);
 
-	gtype = mono_metadata_parse_type_full (m, generic_context, MONO_PARSE_TYPE, 0, ptr, &ptr);
+	gtype = mono_metadata_parse_type (m, MONO_PARSE_TYPE, 0, ptr, &ptr);
 	gclass->container_class = gklass = mono_class_from_mono_type (gtype);
 
 	g_assert (gklass->generic_container);

@@ -51,7 +51,7 @@ static guchar *_wapi_shm_file (_wapi_shm_t type)
 		name = g_strdup_printf ("shared_data-%s-%s-%s-%d-%d-%d",
 					machine_name, ubuf.sysname,
 					ubuf.machine,
-					sizeof(struct _WapiHandleShared),
+					(int) sizeof(struct _WapiHandleShared),
 					_WAPI_HANDLE_VERSION, 0);
 		break;
 		
@@ -59,7 +59,7 @@ static guchar *_wapi_shm_file (_wapi_shm_t type)
 		name = g_strdup_printf ("shared_fileshare-%s-%s-%s-%d-%d-%d",
 					machine_name, ubuf.sysname,
 					ubuf.machine,
-					sizeof(struct _WapiFileShare),
+					(int) sizeof(struct _WapiFileShare),
 					_WAPI_HANDLE_VERSION, 0);
 		break;
 	}
@@ -235,10 +235,13 @@ gpointer _wapi_shm_attach (_wapi_shm_t type)
 	shm_seg = mmap (NULL, statbuf.st_size, PROT_READ|PROT_WRITE,
 			MAP_SHARED, fd, 0);
 	if (shm_seg == MAP_FAILED) {
-		g_critical ("%s: mmap error: %s", __func__,
-			    g_strerror (errno));
-		close (fd);
-		return(NULL);
+		shm_seg = mmap (NULL, statbuf.st_size, PROT_READ|PROT_WRITE,
+			MAP_PRIVATE, fd, 0);
+		if (shm_seg == MAP_FAILED) {
+			g_critical ("%s: mmap error: %s", __func__, g_strerror (errno));
+			close (fd);
+			return(NULL);
+		}
 	}
 		
 	close (fd);
