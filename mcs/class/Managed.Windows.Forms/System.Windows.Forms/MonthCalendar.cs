@@ -1506,7 +1506,6 @@ namespace System.Windows.Forms {
 				if (click_state [1] || click_state [2]) {
 					// invalidate the area where the mouse was last held
 					DoMouseUp ();
-					Application.DoEvents ();
 					// register the click
 					if (hti.HitArea == HitArea.PrevMonthButton ||
 						hti.HitArea == HitArea.NextMonthButton) {
@@ -1514,8 +1513,8 @@ namespace System.Windows.Forms {
 						click_state [1] = (hti.HitArea == HitArea.PrevMonthButton);
 						click_state [2] = !click_state [1];
 					}
-					if (timer.Interval != 100) {
-						timer.Interval = 100;
+					if (timer.Interval != 300) {
+						timer.Interval = 300;
 					}
 				}
 			} else  {
@@ -1653,7 +1652,7 @@ namespace System.Windows.Forms {
 					DoButtonMouseDown (hti);
 					click_state [1] = (hti.HitArea == HitArea.PrevMonthDate);
 					click_state [2] = !click_state [1];					
-					timer.Interval = 500;
+					timer.Interval = 750;
 					timer.Start ();
 					break;
 				case HitArea.Date:
