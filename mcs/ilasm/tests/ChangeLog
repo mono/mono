@@ -1,5 +1,10 @@
 2006-01-06  Ankit Jain  <jankit@novell.com>
 
+	* test-field-init.il: New. Test for field initialization (simple signed/unsigned
+	int variants).
+
+2006-01-06  Ankit Jain  <jankit@novell.com>
+
 	* test-perm_pass-2.il: New. Test for new(2.0) syntax of specifying value
 	of a permissionset, which uses string instead of a bytearray. 
 

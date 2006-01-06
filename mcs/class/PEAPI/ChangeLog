@@ -1,5 +1,12 @@
 2006-01-06  Ankit Jain  <jankit@novell.com>
 
+	* Metadata.cs (UIntConst): Change constructor param from signed int/sbyte/etc to
+	unsigned.
+	(UIntConst.GetBlobIndex):
+	(UIntConst.Write): Change use of signed types to unsigned ones.
+
+2006-01-06  Ankit Jain  <jankit@novell.com>
+
 	* PEAPI.cs (PEFile.AddGenericClass): New. Adds a GenericTypeInst to the TypeSpec table.
 	* Metadata.cs (GenericTypeInst): Change base class from 'Type' to 'Class'.
 	(GenericTypeInst.GetTypeSpec):

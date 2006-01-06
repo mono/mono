@@ -1509,13 +1509,25 @@ field_init		: K_FLOAT32 OPEN_PARENS float64 CLOSE_PARENS
                           {
                                 $$ = new IntConst (Convert.ToInt64 ($3));
                           }
+			| K_UINT64 OPEN_PARENS int64 CLOSE_PARENS
+                          {
+                                $$ = new UIntConst (Convert.ToUInt64 ((ulong)(long) $3));
+                          }
 			| K_INT32 OPEN_PARENS int64 CLOSE_PARENS
                           {
                                 $$ = new IntConst ((int)((long)$3));
                           }
+			| K_UINT32 OPEN_PARENS int64 CLOSE_PARENS
+                          {
+                                $$ = new UIntConst ((uint)((long)$3));
+                          }
 			| K_INT16 OPEN_PARENS int64 CLOSE_PARENS
                           {
                                 $$ = new IntConst ((short)((long) $3));
+                          }
+			| K_UINT16 OPEN_PARENS int64 CLOSE_PARENS
+                          {
+                                $$ = new UIntConst ((ushort)((long) $3));
                           }
 			| K_CHAR OPEN_PARENS int64 CLOSE_PARENS
                           {
@@ -1527,7 +1539,11 @@ field_init		: K_FLOAT32 OPEN_PARENS float64 CLOSE_PARENS
 			  }
 			| K_INT8 OPEN_PARENS int64 CLOSE_PARENS
                           {
-                                $$ = new IntConst ((byte)((long) ($3)));
+                                $$ = new IntConst ((sbyte)((long) ($3)));
+                          }
+			| K_UINT8 OPEN_PARENS int64 CLOSE_PARENS
+                          {
+                                $$ = new UIntConst ((byte)((long) ($3)));
                           }
 			| K_BOOL OPEN_PARENS truefalse CLOSE_PARENS
                           {

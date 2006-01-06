@@ -2813,27 +2813,27 @@ namespace PEAPI {
 	}
 
 	public class UIntConst : Constant {
-		long val;
+		ulong val;
 
-		public UIntConst(sbyte val) 
+		public UIntConst(byte val) 
 		{
 			this.val = val;
 			size = 1;
 			type = PrimitiveType.UInt8;
 		}
-		public UIntConst(short val) 
+		public UIntConst(ushort val) 
 		{
 			this.val = val;
 			size = 2;
 			type = PrimitiveType.UInt16;
 		}
-		public UIntConst(int val) 
+		public UIntConst(uint val) 
 		{
 			this.val = val;
 			size = 4;
 			type = PrimitiveType.UInt32;
 		}
-		public UIntConst(long val) 
+		public UIntConst(ulong val) 
 		{
 			this.val = val;
 			size = 8;
@@ -2844,9 +2844,9 @@ namespace PEAPI {
 		{
 			if (!addedToBlobHeap) {
 				switch (size) {
-					case (1) : blobIndex = md.AddToBlobHeap((sbyte)val); break;
-					case (2) : blobIndex = md.AddToBlobHeap((short)val); break;
-					case (4) : blobIndex = md.AddToBlobHeap((int)val); break;
+					case (1) : blobIndex = md.AddToBlobHeap((byte)val); break;
+					case (2) : blobIndex = md.AddToBlobHeap((ushort)val); break;
+					case (4) : blobIndex = md.AddToBlobHeap((uint)val); break;
 					default : blobIndex = md.AddToBlobHeap(val); break;
 				}
 				addedToBlobHeap = true;
@@ -2857,9 +2857,9 @@ namespace PEAPI {
 		internal sealed override void Write(BinaryWriter bw) 
 		{
 			switch (size) {
-				case (1) : bw.Write((sbyte)val); break;
-				case (2) : bw.Write((short)val); break;
-				case (4) : bw.Write((int)val); break;
+				case (1) : bw.Write((byte)val); break;
+				case (2) : bw.Write((ushort)val); break;
+				case (4) : bw.Write((uint)val); break;
 				default : bw.Write(val); break;
 			}
 		}
