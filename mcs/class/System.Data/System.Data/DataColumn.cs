@@ -891,8 +891,14 @@ namespace System.Data {
                                         return rel;
                         return null;
                 }
-                
-
+               
+		internal void ResetCollectionInfo ()
+		{
+			_ordinal = -1;
+			_table = null;
+			if (_compiledExpression != null)
+				_compiledExpression.Reset ();
+		}
 		#endregion // Methods
 
 	}

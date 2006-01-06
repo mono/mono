@@ -465,17 +465,18 @@ namespace System.Data {
 				}
 			}
 
-            // whether all columns can be removed
-            foreach (DataColumn col in this) {
-                if (!CanRemove (col))
-                    throw new ArgumentException ("Cannot remove column {0}", col.ColumnName);
-            }
+			// whether all columns can be removed
+			foreach (DataColumn col in this) 
+				if (!CanRemove (col))
+					throw new ArgumentException ("Cannot remove column {0}", col.ColumnName);
+			
+			foreach (DataColumn col in this)
+				col.ResetCollectionInfo ();
 
 			columnFromName.Clear();
 			autoIncrement.Clear();
 			base.List.Clear();
 			OnCollectionChanged(e);
-
 		}
 
 		/// <summary>
@@ -561,7 +562,8 @@ namespace System.Data {
 			int ordinal = column.Ordinal;
 			UnregisterName(column.ColumnName);
 			base.List.Remove(column);
-			
+			column.ResetCollectionInfo ();
+	
 			//Update the ordinals
 			for( int i = ordinal ; i < this.Count ; i ++ )
 			{

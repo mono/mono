@@ -1,3 +1,10 @@
+2006-01-06  Senganal T <tsenganal@novell.com>
+	
+	* DataColumn.cs
+	* DataColumnCollection.cs
+		- Reset the Parameters of DataColumn to Default Values when 
+		column is removed from the Table's Collection
+
 2006-01-03  Senganal T <tsenganal@novell.com>
 
 	* DataTable.cs :

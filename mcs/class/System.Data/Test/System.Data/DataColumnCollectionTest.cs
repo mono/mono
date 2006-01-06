@@ -390,6 +390,17 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
+		[Category ("NotWorking")]
+		public void Clear_ExpressionColumn ()
+		{
+			DataTable table = new DataTable ("test");
+			table.Columns.Add ("col1", typeof(int));
+			table.Columns.Add ("col2", typeof (int), "sum(col1)");
+			table.Columns.Clear ();
+			AssertEquals ("#1", 0, table.Columns.Count);
+		}
+
+		[Test]
 		public void Contains ()
 		{
 			DataTable Table = new DataTable ("test_table");

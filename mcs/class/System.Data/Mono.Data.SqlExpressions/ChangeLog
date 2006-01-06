@@ -1,3 +1,16 @@
+2006-01-06 Senganal T <tsenganal@novell.com>
+
+	* Aggregation.cs
+		- Modified the cache to listen for RowChangedEvents.
+	* Expression.cs
+	* IExpression.cs
+		- Added a Reset Method to cleanup when a Datacolumn is removed
+		from a table.
+	* Parser.jay
+		- Modified to check :
+		1.Aggregate Functions : Only for columns returning multiple values (child/local)
+		2.Other Numeric/Functions : Only for columns that return single value (parent/local)
+
 2005-12-20 Senganal T <tsenganal@novell.com>
 
 	* Aggregation.cs :

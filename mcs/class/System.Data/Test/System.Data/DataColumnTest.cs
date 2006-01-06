@@ -561,7 +561,7 @@ namespace MonoTests.System.Data
 			AssertEquals ("DC76", "False", T.Rows [4] [2]);
 			AssertEquals ("DC77", "True", T.Rows [1] [2]);
 		}
-
+			
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
 		public void SetMaxLengthException ()
@@ -615,5 +615,203 @@ namespace MonoTests.System.Data
 			AssertEquals ("#2" , typeof (DBNull), (table.Rows[0]["result_stdev"]).GetType ());
 		}
 
+		[Test]
+		public void Aggregation_CheckIfChangesDynamically()
+		{
+			DataTable table = new DataTable ();
+
+			table.Columns.Add ("test", typeof (int));
+			table.Columns.Add ("result_count", typeof (int), "count(test)");
+			table.Columns.Add ("result_sum", typeof (int), "sum(test)");
+			table.Columns.Add ("result_avg", typeof (int), "avg(test)");
+			table.Columns.Add ("result_max", typeof (int), "max(test)");
+			table.Columns.Add ("result_min", typeof (int), "min(test)");
+			table.Columns.Add ("result_var", typeof (double), "var(test)");
+			table.Columns.Add ("result_stdev", typeof (double), "stdev(test)");
+
+			// Adding the rows after all the expression columns are added
+			table.Rows.Add (new object[] {0});
+			AssertEquals ("#1", 1, table.Rows[0]["result_count"]);
+			AssertEquals ("#2", 0, table.Rows[0]["result_sum"]);
+			AssertEquals ("#3", 0, table.Rows[0]["result_avg"]);
+			AssertEquals ("#4", 0, table.Rows[0]["result_max"]);
+			AssertEquals ("#5", 0, table.Rows[0]["result_min"]);
+			AssertEquals ("#6", DBNull.Value, table.Rows[0]["result_var"]);
+			AssertEquals ("#7", DBNull.Value, table.Rows[0]["result_stdev"]);
+
+			table.Rows.Add (new object[] {1});
+			table.Rows.Add (new object[] {-2});
+
+			// Check if the aggregate columns are updated correctly
+			AssertEquals ("#8", 3, table.Rows[0]["result_count"]);
+			AssertEquals ("#9", -1, table.Rows[0]["result_sum"]);
+			AssertEquals ("#10", 0, table.Rows[0]["result_avg"]);
+			AssertEquals ("#11", 1, table.Rows[0]["result_max"]);
+			AssertEquals ("#12", -2, table.Rows[0]["result_min"]);
+			AssertEquals ("#13", (7.0/3), table.Rows[0]["result_var"]);
+			AssertEquals ("#14", Math.Sqrt(7.0/3), table.Rows[0]["result_stdev"]);
+		}
+		
+		[Test]
+		public void Aggregation_CheckIfChangesDynamically_ChildTable ()
+		{
+			DataSet ds = new DataSet ();
+
+			DataTable table = new DataTable ();
+			DataTable table2 = new DataTable ();
+			ds.Tables.Add (table);
+			ds.Tables.Add (table2);
+
+			table.Columns.Add ("test", typeof (int));
+			table2.Columns.Add ("test", typeof (int));
+			table2.Columns.Add ("val", typeof (int));
+			DataRelation rel = new DataRelation ("rel", table.Columns[0], table2.Columns[0]);
+			ds.Relations.Add (rel);
+
+			table.Columns.Add ("result_count", typeof (int), "count(child.test)");
+			table.Columns.Add ("result_sum", typeof (int), "sum(child.test)");
+			table.Columns.Add ("result_avg", typeof (int), "avg(child.test)");
+			table.Columns.Add ("result_max", typeof (int), "max(child.test)");
+			table.Columns.Add ("result_min", typeof (int), "min(child.test)");
+			table.Columns.Add ("result_var", typeof (double), "var(child.test)");
+			table.Columns.Add ("result_stdev", typeof (double), "stdev(child.test)");
+
+			table.Rows.Add (new object[] {1});
+			table.Rows.Add (new object[] {2});
+			// Add rows to the child table
+			for (int j=0; j<10; j++)
+				table2.Rows.Add (new object[] {1,j});
+		
+			// Check the values for the expression columns in parent table 
+			AssertEquals ("#1", 10, table.Rows[0]["result_count"]);
+			AssertEquals ("#2", 0, table.Rows[1]["result_count"]);
+
+			AssertEquals ("#3", 10, table.Rows[0]["result_sum"]);
+			AssertEquals ("#4", DBNull.Value, table.Rows[1]["result_sum"]);
+
+			AssertEquals ("#5", 1, table.Rows[0]["result_avg"]);
+			AssertEquals ("#6", DBNull.Value, table.Rows[1]["result_avg"]);
+
+			AssertEquals ("#7", 1, table.Rows[0]["result_max"]);
+			AssertEquals ("#8", DBNull.Value, table.Rows[1]["result_max"]);
+
+			AssertEquals ("#7", 1, table.Rows[0]["result_min"]);
+			AssertEquals ("#8", DBNull.Value, table.Rows[1]["result_min"]);
+
+			AssertEquals ("#9", 0, table.Rows[0]["result_var"]);
+			AssertEquals ("#10", DBNull.Value, table.Rows[1]["result_var"]);
+
+			AssertEquals ("#11", 0, table.Rows[0]["result_stdev"]);
+			AssertEquals ("#12", DBNull.Value, table.Rows[1]["result_stdev"]);
+		}
+
+		[Test]
+		public void Aggregation_TestForSyntaxErrors ()
+		{
+			string error = "Aggregation functions cannot be called on Singular(Parent) Columns";
+			DataSet ds = new DataSet ();
+			DataTable table1 = new DataTable ();
+			DataTable table2 = new DataTable ();
+			DataTable table3 = new DataTable ();
+			
+			table1.Columns.Add ("test", typeof(int));
+			table2.Columns.Add ("test", typeof(int));
+			table3.Columns.Add ("test", typeof(int));
+
+			DataRelation rel1 = new DataRelation ("rel1", table1.Columns[0], table2.Columns[0]);
+			DataRelation rel2 = new DataRelation ("rel2", table2.Columns[0], table3.Columns[0]);
+
+			ds.Tables.Add (table1);
+			ds.Tables.Add (table2);
+			ds.Tables.Add (table3);
+			ds.Relations.Add (rel1);
+			ds.Relations.Add (rel2);
+
+			error = "Aggregation Functions cannot be called on Columns Returning Single Row (Parent Column)";
+			try {
+				table2.Columns.Add ("result", typeof (int), "count(parent.test)");
+				Fail ("#1" + error);
+			}catch (SyntaxErrorException) {
+			}
+
+			error = "Numerical or Functions cannot be called on Columns Returning Multiple Rows (Child Column)";
+			// Check arithematic operator
+			try {
+				table2.Columns.Add ("result", typeof (int), "10*(child.test)");
+				Fail ("#2" + error);
+			}catch (SyntaxErrorException) {
+			}
+
+			// Check rel operator
+			try {
+				table2.Columns.Add ("result", typeof (int), "(child.test) > 10");
+				Fail ("#3" + error);
+			}catch (SyntaxErrorException) {
+			}
+
+			// Check predicates 
+			try {
+				table2.Columns.Add ("result", typeof (int), "(child.test) IN (1,2,3)");
+				Fail ("#4" + error);
+			}catch (SyntaxErrorException) {
+			}
+
+			try {
+				table2.Columns.Add ("result", typeof (int), "(child.test) LIKE 1");
+				Fail ("#5" + error);
+			}catch (SyntaxErrorException) {
+			}
+
+			try {
+				table2.Columns.Add ("result", typeof (int), "(child.test) IS null");
+				Fail ("#6" + error);
+			}catch (SyntaxErrorException) {
+			}
+
+			// Check Calc Functions
+			try {
+				table2.Columns.Add ("result", typeof (int), "isnull(child.test,10)");
+				Fail ("#7" + error);
+			}catch (SyntaxErrorException) {
+			}
+		}
+
+		[Test]
+		[Ignore ("passes in ms.net but looks more like a bug in ms.net")]
+		public void ExpressionColumns_CheckConversions ()
+		{
+			DataTable table = new DataTable ();
+			table.Columns.Add ("result_int_div", typeof (int), "(5/10) + 0.5");
+			table.Columns.Add ("result_float_div", typeof (int), "(5.0/10) + 0.5");
+			table.Rows.Add (new object[] {});
+
+			// ms.net behavior.. seems to covert all numbers to double
+			AssertEquals ("#1", 1, table.Rows[0][0]);
+			AssertEquals ("#2", 1, table.Rows[0][1]);
+		}
+
+		[Test]
+		public void CheckValuesAfterRemovedFromCollection ()
+		{
+			DataTable table = new DataTable ("table1");
+			DataColumn col1 = new DataColumn ("col1", typeof (int));
+			DataColumn col2 = new DataColumn ("col2", typeof (int));
+
+			AssertEquals ("#1" , -1, col1.Ordinal);
+			AssertEquals ("#2" , null, col1.Table);
+
+			table.Columns.Add (col1);
+			table.Columns.Add (col2);
+			AssertEquals ("#3" , 0, col1.Ordinal);
+			AssertEquals ("#4" , table, col1.Table);
+
+			table.Columns.RemoveAt(0);
+			AssertEquals ("#5" , -1, col1.Ordinal);
+			AssertEquals ("#6" , null, col1.Table);
+
+			table.Columns.Clear ();
+			AssertEquals ("#7" , -1, col2.Ordinal);
+			AssertEquals ("#8" , null, col2.Table);
+		}
 	}
 }
