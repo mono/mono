@@ -240,7 +240,7 @@ namespace System.Windows.Forms {
 		internal static void ExecutionCallback (object state)
 		{
 			AsyncMethodData data = (AsyncMethodData) state;
-			AsyncMethodResult result = data.Result.Target as AsyncMethodResult;
+			AsyncMethodResult result = data.Result;
 			object ret = data.Method.DynamicInvoke (data.Args);
 			if (result != null) {
 				result.Complete (ret);
