@@ -236,5 +236,30 @@ namespace MonoTests.System.Xml
 			while (!vr.EOF)
 				vr.Read ();
 		}
+
+		[Test]
+		public void ReadTypedValueSimpleTypeRestriction ()
+		{
+			string xml = "<root>xx</root><!-- after -->";
+			string xsd = @"
+<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>
+  <xs:element name='root'>
+    <xs:simpleType>
+      <xs:restriction base='xs:string'>
+        <xs:minLength value='2' />
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:element>
+</xs:schema>";
+			XmlTextReader xir = 
+				new XmlTextReader (xml, XmlNodeType.Document, null);
+			XmlTextReader xsr =
+				new XmlTextReader (xsd, XmlNodeType.Document, null);
+			XmlValidatingReader vr = new XmlValidatingReader (xir);
+			vr.Schemas.Add (XmlSchema.Read (xsr, null));
+			vr.Read (); // root
+			AssertEquals ("xx", vr.ReadTypedValue ());
+			AssertEquals (XmlNodeType.EndElement, vr.NodeType);
+		}
 	}
 }

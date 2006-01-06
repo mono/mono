@@ -547,6 +547,11 @@ namespace System.Xml
 			if (dtdReader == null)
 				return null;
 			XmlSchemaDatatype dt = schemaInfo.SchemaType as XmlSchemaDatatype;
+			if (dt == null) {
+				XmlSchemaType st = schemaInfo.SchemaType as XmlSchemaType;
+				if (st != null)
+					dt = st.Datatype;
+			}
 			if (dt == null)
 				return null;
 			switch (NodeType) {
