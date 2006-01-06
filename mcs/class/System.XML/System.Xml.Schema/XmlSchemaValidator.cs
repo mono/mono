@@ -1034,9 +1034,9 @@ namespace System.Xml.Schema
 						 // mmm, will check later.
 						SimpleType baseType = st.BaseXmlSchemaType as SimpleType;
 						if (baseType != null) {
-							 ret = AssessStringValid (baseType, dt, normalized);
+							 ret = AssessStringValid (baseType, dt, value);
 						}
-						if (!str.ValidateValueWithFacets (normalized, nameTable)) {
+						if (!str.ValidateValueWithFacets (value, nameTable)) {
 							HandleError ("Specified value was invalid against the facets.");
 							break;
 						}

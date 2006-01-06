@@ -261,5 +261,33 @@ namespace MonoTests.System.Xml
 			AssertEquals ("xx", vr.ReadTypedValue ());
 			AssertEquals (XmlNodeType.EndElement, vr.NodeType);
 		}
+
+		// If we normalize string before validating with facets,
+		// this test will fail. It will also fail if ReadTypedValue()
+		// ignores whitespace nodes.
+		[Test]
+		public void ReadTypedValueWhitespaces ()
+		{
+			string xml = "<root>  </root><!-- after -->";
+			string xsd = @"
+<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>
+  <xs:element name='root'>
+    <xs:simpleType>
+      <xs:restriction base='xs:string'>
+        <xs:minLength value='2' />
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:element>
+</xs:schema>";
+			XmlTextReader xir = 
+				new XmlTextReader (xml, XmlNodeType.Document, null);
+			XmlTextReader xsr =
+				new XmlTextReader (xsd, XmlNodeType.Document, null);
+			XmlValidatingReader vr = new XmlValidatingReader (xir);
+			vr.Schemas.Add (XmlSchema.Read (xsr, null));
+			vr.Read (); // root
+			AssertEquals ("  ", vr.ReadTypedValue ());
+			AssertEquals (XmlNodeType.EndElement, vr.NodeType);
+		}
 	}
 }

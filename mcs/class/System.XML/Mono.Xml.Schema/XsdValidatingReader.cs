@@ -526,7 +526,7 @@ namespace Mono.Xml.Schema
 					switch (ct.ContentType) {
 					case XmlSchemaContentType.ElementOnly:
 					case XmlSchemaContentType.Empty:
-						if (value.Length > 0)
+						if (value.Length > 0 && !XmlChar.IsWhitespace (value))
 							HandleError ("Character content not allowed.");
 						break;
 					}
@@ -624,9 +624,9 @@ namespace Mono.Xml.Schema
 						 // mmm, will check later.
 						SimpleType baseType = st.BaseXmlSchemaType as SimpleType;
 						if (baseType != null) {
-							 AssessStringValid(baseType, dt, normalized);
+							 AssessStringValid(baseType, dt, value);
 						}
-						if (!str.ValidateValueWithFacets (normalized, NameTable)) {
+						if (!str.ValidateValueWithFacets (value, NameTable)) {
 							HandleError ("Specified value was invalid against the facets.");
 							break;
 						}
@@ -1595,6 +1595,7 @@ namespace Mono.Xml.Schema
 
 			case XmlNodeType.CDATA:
 			case XmlNodeType.SignificantWhitespace:
+			case XmlNodeType.Whitespace:
 			case XmlNodeType.Text:
 				// FIXME: does this check make sense?
 				ComplexType ct = Context.ActualType as ComplexType;

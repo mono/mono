@@ -694,7 +694,7 @@ namespace System.Xml.Schema
 			
 			if (! ( (dt is XsdQName) || (dt is XsdNotation))) {  
         // Length potentially slower now, so only calculate if needed			
-				if (! (lengthFacet == -1) && (maxLengthFacet == -1) && (minLengthFacet == -1)) {
+				if (! ((lengthFacet == -1) && (maxLengthFacet == -1) && (minLengthFacet == -1))) {
 											
 					// numeric
 					// : length

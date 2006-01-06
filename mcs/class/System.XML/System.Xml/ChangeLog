@@ -1,5 +1,10 @@
 2006-01-06  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlValidatingReader.cs : In ReadTypedValue(), treat Whitespace
+	  nodes as target string nodes as well as other text nodes.
+
+2006-01-06  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlValidatingReader.cs : ReadTypedValue() was not working with
 	  non-XmlSchemaDatatype types.
 

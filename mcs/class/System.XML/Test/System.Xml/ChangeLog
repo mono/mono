@@ -1,5 +1,11 @@
 2006-01-06  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XsdValidatingReaderTests.cs : test for ReadTypeValue() that it
+	  does not ignore whitespace nodes, and it does not normalize string
+	  incorrectly.
+
+2006-01-06  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XsdValidatingReaderTests.cs : test for ReadTypeValue() with simple
 	  type restriction.
 

@@ -564,6 +564,7 @@ namespace System.Xml
 				do {
 					Read ();
 					switch (NodeType) {
+					case XmlNodeType.Whitespace:
 					case XmlNodeType.SignificantWhitespace:
 					case XmlNodeType.Text:
 					case XmlNodeType.CDATA:

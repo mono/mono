@@ -1,3 +1,12 @@
+2006-01-06  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XsdValidatingReader.cs :
+	  Don't use normalized string as input to AssessStringValid(). It 
+	  incorrectly invalidates strings against simple types with length-
+	  related facets.
+	  Now that we don't ignore whitespaces, we need to explicitly allow
+	  pure whitespace texts in ElementOnly/Empty model.
+
 2005-12-26  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XsdValidatingReader.cs : Fixed the bug that only the last schema
