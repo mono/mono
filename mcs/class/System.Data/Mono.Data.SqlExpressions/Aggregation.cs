@@ -198,7 +198,8 @@ namespace Mono.Data.SqlExpressions {
 
 		public override Void Reset ()
 		{
-			InvalidateCache (table, null);
+			if (table != null)
+				InvalidateCache (table, null);
 		}
 
 		private void InvalidateCache (Object sender, DataRowChangeEventArgs args)

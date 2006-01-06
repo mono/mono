@@ -1,6 +1,11 @@
 2006-01-06 Senganal T <tsenganal@novell.com>
 
 	* Aggregation.cs
+		- a correction to the previous check-in
+
+2006-01-06 Senganal T <tsenganal@novell.com>
+
+	* Aggregation.cs
 		- Modified the cache to listen for RowChangedEvents.
 	* Expression.cs
 	* IExpression.cs
