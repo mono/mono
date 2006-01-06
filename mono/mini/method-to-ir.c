@@ -7774,22 +7774,28 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				MonoExceptionClause *clause = &header->clauses [i];
 
 				if (MONO_OFFSET_IN_HANDLER (clause, ip - header->code) && (clause->flags == MONO_EXCEPTION_CLAUSE_NONE) && (ip - header->code + ((*ip == CEE_LEAVE) ? 5 : 2)) == (clause->handler_offset + clause->handler_len)) {
-					//MonoInst *load;
+					MonoInst *dont_throw, *load, *exc_ins;
 
 					/* FIXME: */
-#if 0
 					NEW_TEMPLOAD (cfg, load, mono_find_exvar_for_offset (cfg, clause->handler_offset)->inst_c0);
-					load->cil_code = ip;
 
-					temp = mono_emit_jit_icall (cfg, mono_thread_get_pending_exception, NULL, ip);
-					NEW_TEMPLOAD (cfg, *sp, temp);
-				
-					MONO_INST_NEW (cfg, ins, OP_THROW_OR_NULL);
-					ins->inst_left = *sp;
-					ins->inst_right = load;
-					ins->cil_code = ip;
-					MONO_ADD_INS (bblock, ins);
-#endif
+					exc_ins = mono_emit_jit_icall (cfg, mono_thread_get_pending_exception, NULL, ip);
+
+					/* FIXME: Get rid of the branch */
+
+					MONO_NEW_LABEL (cfg, dont_throw);
+
+					/*
+					 * Currently, we allways rethrow the abort exception, despite the 
+					 * fact that this is not correct. See thread6.cs for an example. 
+					 * But propagating the abort exception is more important than 
+					 * getting the sematics right.
+					 */
+					MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, exc_ins->dreg, 0);
+					MONO_EMIT_NEW_BRANCH_LABEL (cfg, CEE_BEQ, dont_throw);
+					MONO_EMIT_NEW_UNALU (cfg, OP_THROW, -1, exc_ins->dreg);
+
+					mono_bblock_add_inst (cfg->cbb, dont_throw);
 				}
 			}
 
