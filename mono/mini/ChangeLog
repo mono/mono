@@ -1,3 +1,8 @@
+2006-01-06 Neale Ferguson <neale@sinenomine.net>
+
+	* mini-s390x.c, inssel-s390x.brg, cpu-s390x.md: Fix ATOMIC_I8 operations. Provide
+	initial support for OP_ABS.
+
 2006-01-05 Neale Ferguson <neale@sinenomine.net>
 
 	* mini-s390x.c (emit_float_to_int): Correct r8 to unsigned int algorithm.
