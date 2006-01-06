@@ -31,7 +31,7 @@ namespace MonoTests.System.Net.Mime
 		[Test]
 		public void DispositionType ()
 		{
-			Assert.IsTrue (cd.DispositionType == "attachment");
+			Assert.AreEqual ("attachment", cd.DispositionType);
 		}
 
 		[Test]
@@ -71,13 +71,13 @@ namespace MonoTests.System.Net.Mime
 		[Test]
 		public void FileName ()
 		{
-			Assert.IsTrue (cd.FileName == "genome.jpeg");
+			Assert.AreEqual ("genome.jpeg", cd.FileName);
 		}
 
 		[Test]
 		public void Size ()
 		{
-			Assert.IsTrue (cd.Size == -1);
+			Assert.AreEqual (-1, cd.Size);
 		}
 
 		[Test]
@@ -110,20 +110,22 @@ namespace MonoTests.System.Net.Mime
 		public void Parameters ()
 		{
 			Assert.IsNotNull (cd.Parameters, "is not null");
-			Assert.IsTrue (cd.Parameters.Count == 2, "count is " + cd.Parameters.Count);
+			Assert.AreEqual (2, cd.Parameters.Count);
 		}
 
 		[Test]
 		public void ToStringTest ()
 		{
-			Assert.IsTrue (cd.ToString () == "attachment; modification-date=\"31 Dec 9999 23:59:59 -0500\"; filename=genome.jpeg");
+			string rfc822 = "dd MMM yyyy HH':'mm':'ss zz00";
+			string modification_date = DateTime.MaxValue.ToString (rfc822);
+			Assert.AreEqual ("attachment; modification-date=\"" + modification_date + "\"; filename=genome.jpeg", cd.ToString ());
 		}
 
 		[Test]
 		public void ToStringTest2 ()
 		{
 			ContentDisposition dummy = new ContentDisposition ();
-			Assert.IsTrue (dummy.ToString () == "attachment");
+			Assert.AreEqual ("attachment", dummy.ToString ());
 		}
 
 		[Test]
@@ -131,7 +133,7 @@ namespace MonoTests.System.Net.Mime
 		{
 			ContentDisposition dummy = new ContentDisposition ();
 			dummy.Size = 0;
-			Assert.IsTrue (dummy.ToString () == "attachment; size=0");
+			Assert.AreEqual ("attachment; size=0", dummy.ToString ());
 		}
 
 		[Test]
@@ -139,8 +141,8 @@ namespace MonoTests.System.Net.Mime
 		{
 			ContentDisposition dummy = new ContentDisposition ("attachment");
 			dummy.Parameters.Add ("foo", "bar");
-			Assert.IsTrue (dummy.Parameters.Count == 1);
-			Assert.IsTrue (dummy.ToString () == "attachment; foo=bar");
+			Assert.AreEqual (1, dummy.Parameters.Count);
+			Assert.AreEqual ("attachment; foo=bar", dummy.ToString ());
 		}
 	}
 }
