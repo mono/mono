@@ -65,10 +65,8 @@ namespace System.Web.Services.Configuration {
 
 		[MonoTODO]
 		public SoapExtensionTypeElement (string type, int priority, PriorityGroup group)
+			: this (Type.GetType (type), priority, group)
 		{
-			/* XXX type */
-			this.Priority = priority;
-			this.Group = group;
 		}
 
 		public SoapExtensionTypeElement ()

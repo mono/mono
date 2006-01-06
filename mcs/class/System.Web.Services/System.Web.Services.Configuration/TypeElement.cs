@@ -56,8 +56,8 @@ namespace System.Web.Services.Configuration {
 
 		[MonoTODO]
 		public TypeElement (string type)
+			: this (Type.GetType (type))
 		{
-			/* XXX Type */
 		}
 
 		public TypeElement ()
