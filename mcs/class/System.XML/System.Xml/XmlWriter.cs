@@ -405,7 +405,7 @@ namespace System.Xml
 		}
 
 #if NET_2_0
-		[MonoTODO ("defattr handling")]
+		[MonoTODO ("test defattr handling")]
 		public virtual void WriteNode (XPathNavigator navigator, bool defattr)
 		{
 			if (navigator == null)
@@ -413,7 +413,27 @@ namespace System.Xml
 			switch (navigator.NodeType) {
 			case XPathNodeType.Attribute:
 			case XPathNodeType.Namespace:
-				WriteAttributeString (navigator.Prefix, navigator.LocalName, navigator.NamespaceURI, navigator.Value);
+				if (defattr || navigator.SchemaInfo == null ||
+				    !navigator.SchemaInfo.IsDefault)
+					WriteAttributeString (navigator.Prefix, 
+						navigator.LocalName,
+						navigator.NamespaceURI,
+						navigator.Value);
+				break;
+			case XPathNodeType.Text:
+				WriteString (navigator.Value);
+				break;
+			case XPathNodeType.SignificantWhitespace:
+				WriteWhitespace (navigator.Value);
+				break;
+			case XPathNodeType.Whitespace:
+				WriteWhitespace (navigator.Value);
+				break;
+			case XPathNodeType.Comment:
+				WriteComment (navigator.Value);
+				break;
+			case XPathNodeType.ProcessingInstruction:
+				WriteProcessingInstruction (navigator.Name, navigator.Value);
 				break;
 			default:
 				WriteNode (navigator.ReadSubtree (), defattr);
