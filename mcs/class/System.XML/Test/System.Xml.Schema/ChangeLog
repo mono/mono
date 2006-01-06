@@ -1,5 +1,9 @@
 2006-01-06  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlSchemaSetTests.cs : reverted the patch, thus restore [Ignore].
+
+2006-01-06  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlSchemaSetTests.cs : re-enabled test for Add() which was
 	  inconsistent in beta versions.
 

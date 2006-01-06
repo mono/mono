@@ -158,17 +158,9 @@ namespace System.Xml.Schema
 			}
 		}
 
-		void CheckDuplicateNS (string targetNamespace)
-		{
-			if (Schemas (GetSafeNs (targetNamespace)).Count > 0)
-				throw new ArgumentException (String.Format ("Corresponding schema for namespace '{0}' has been already added.", targetNamespace));
-		}
-
+		[MonoTODO ("It has weird namespace duplication check that is different from Add(XmlSchema).")]
 		public XmlSchema Add (string targetNamespace, XmlReader reader)
 		{
-			// don't check it here; check only in-use TargetNamespace
-			//CheckDuplicateNS (targetNamespace);
-
 			XmlSchema schema = XmlSchema.Read (reader, handler);
 			if (targetNamespace != null
 				&& targetNamespace.Length > 0)
@@ -177,6 +169,7 @@ namespace System.Xml.Schema
 			return schema;
 		}
 
+		[MonoTODO ("Check the exact behavior when namespaces are in conflict (but it would be preferable to wait for 2.0 RTM).")]
 		public void Add (XmlSchemaSet schemaSet)
 		{
 			ArrayList al = new ArrayList ();
@@ -190,12 +183,10 @@ namespace System.Xml.Schema
 				Add (schema);
 		}
 
+		[MonoTODO ("We need to research more about the expected behavior")]
 		public XmlSchema Add (XmlSchema schema)
 		{
-			if (!schemas.Contains (schema)) {
-				CheckDuplicateNS (schema.TargetNamespace);
-				schemas.Add (schema);
-			}
+			schemas.Add (schema);
 			AddGlobalComponents (schema);
 			return schema;
 		}
@@ -336,6 +327,7 @@ namespace System.Xml.Schema
 			return schemas;
 		}
 
+		[MonoTODO]
 		public ICollection Schemas (string targetNamespace)
 		{
 			targetNamespace = GetSafeNs (targetNamespace);

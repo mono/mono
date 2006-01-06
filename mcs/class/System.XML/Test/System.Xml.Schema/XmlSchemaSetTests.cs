@@ -56,7 +56,7 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-		//[Ignore ("This behavior might be changed, since Add(XmlSchema) does not throw any exceptions, while this does.")]
+		[Ignore ("This behavior might be changed, since Add(XmlSchema) does not throw any exceptions, while this does.")]
 		[ExpectedException (typeof (ArgumentException))]
 		public void AddTwice ()
 		{
