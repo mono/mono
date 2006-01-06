@@ -15,7 +15,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Reflection
 {
 	[TestFixture]
-	public class PropertyInfoTest : Assertion 
+	public class PropertyInfoTest
 	{
 		[Test]
 		public void GetAccessorsTest()
@@ -24,12 +24,20 @@ namespace MonoTests.System.Reflection
 			PropertyInfo property = type.GetProperty ("ReadOnlyProperty");
         		MethodInfo[] methods = property.GetAccessors (true);
 
-			AssertEquals ("GetAccessors#1", 1, methods.Length);
-			AssertNotNull ("GetAccessors#2", methods[0]);
+			Assert.AreEqual (1, methods.Length, "GetAccessors#1");
+			Assert.IsNotNull (methods[0], "GetAccessors#2");
 						
 		}
 
 #if NET_2_0
+
+		public class A<T> 
+		{
+			public string Property {
+				get { return typeof (T).FullName; }
+			}
+		}
+
 		public int? nullable_field;
 
 		public int? NullableProperty {
@@ -45,9 +53,18 @@ namespace MonoTests.System.Reflection
 			PropertyInfo pi = typeof(PropertyInfoTest).GetProperty("NullableProperty");
 
 			pi.SetValue (t, 100, null);
-			AssertEquals (100, pi.GetValue (t, null));
+			Assert.AreEqual (100, pi.GetValue (t, null));
 			pi.SetValue (t, null, null);
-			AssertEquals (null, pi.GetValue (t, null));
+			Assert.AreEqual (null, pi.GetValue (t, null));
+		}
+
+		[Test]
+		public void Bug77160 ()
+		{
+			object instance = new A<string> ();
+			Type type = instance.GetType ();
+			PropertyInfo property = type.GetProperty ("Property");
+			Assert.AreEqual (typeof (string).FullName, property.GetValue (instance, null));
 		}
 #endif
 

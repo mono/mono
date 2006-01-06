@@ -1,3 +1,8 @@
+2006-01-06  Raja R Harinath  <rharinath@novell.com>
+
+	* PropertyInfoTest.cs: Use newer nunit API.
+	(Bug77160): New test from #77160.
+
 2006-01-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* FieldInfoTest.cs PropertyInfoTest.cs MethodInfoTest.cs: Add Nullable
