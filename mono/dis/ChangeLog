@@ -1,3 +1,8 @@
+2006-01-06  Ankit Jain  <jankit@novell.com>
+
+	* get.c (get_generic_param): Generic param attributes can be any combination
+	of .ctor, valuetype and class, emit correctly.
+
 2006-01-03  Ankit Jain  <jankit@novell.com>
 
 	* get.c (init_key_table): Add keywords uint8, uint16, uint32 and uint64.
