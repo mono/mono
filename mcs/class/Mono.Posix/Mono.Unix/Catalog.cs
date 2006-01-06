@@ -6,7 +6,7 @@
 //   Jonathan Pryor (jonpryor@vt.edu)
 //
 // (C) 2004 Edd Dumbill
-// (C) 2005 Jonathan Pryor
+// (C) 2005-2006 Jonathan Pryor
 //
 // This file implements the low-level syscall interface to the POSIX
 // subsystem.
@@ -40,12 +40,12 @@ namespace Mono.Unix {
 	public class Catalog {
 		private Catalog () {}
 
-		[DllImport("libintl")]
+		[DllImport("intl")]
 		static extern IntPtr bindtextdomain (IntPtr domainname, IntPtr dirname);
-		[DllImport("libintl")]
+		[DllImport("intl")]
 		static extern IntPtr bind_textdomain_codeset (IntPtr domainname,
 			IntPtr codeset);
-		[DllImport("libintl")]
+		[DllImport("intl")]
 		static extern IntPtr textdomain (IntPtr domainname);
 		
 		public static void Init (String package, String localedir)
@@ -91,7 +91,7 @@ namespace Mono.Unix {
 			}
 		}
 	
-		[DllImport("libintl")]
+		[DllImport("intl")]
 		static extern IntPtr gettext (IntPtr instring);
 		
 		public static String GetString (String s)
@@ -109,7 +109,7 @@ namespace Mono.Unix {
 			}
 		}
 	
-		[DllImport("libintl")]
+		[DllImport("intl")]
 		static extern IntPtr ngettext (IntPtr singular, IntPtr plural, Int32 n);
 		
 		public static String GetPluralString (String s, String p, Int32 n)

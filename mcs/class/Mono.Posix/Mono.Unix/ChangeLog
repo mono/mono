@@ -1,3 +1,9 @@
+2006-01-06  Jonathan Pryor <jonpryor@vt.edu>
+
+	* Catalog.cs: s/libintl/intl/g, since intl.dll is used by GTK+ on Windows,
+	  not libintl.dll (according to
+	  http://www.gimp.org/~tml/gimp/win32/downloads.html).
+
 2006-01-03  Jonathan Pryor <jonpryor@vt.edu>
 
 	* UnixMarshal.cs (CreateExceptionForError): Don't map ENOMEM to
