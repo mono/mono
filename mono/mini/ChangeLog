@@ -1,3 +1,9 @@
+2006-01-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* generics.2.cs: Reenable vtype tests.
+
+	* inssel-x86.brg: Remove an icorrect valuetype rule.
+
 2006-01-06 Neale Ferguson <neale@sinenomine.net>
 
 	* mini-s390x.c, inssel-s390x.brg, cpu-s390x.md: Fix ATOMIC_I8 operations. Provide
