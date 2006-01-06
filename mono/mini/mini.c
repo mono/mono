@@ -1756,6 +1756,7 @@ mono_compile_create_var (MonoCompile *cfg, MonoType *type, int opcode)
 				break;
 			case MONO_TYPE_VALUETYPE:
 			case MONO_TYPE_TYPEDBYREF:
+				dreg = -1;
 				break;
 			default:
 				printf ("A: %s\n", mono_type_full_name (type));

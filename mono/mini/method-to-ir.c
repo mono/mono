@@ -3477,7 +3477,32 @@ mini_field_access_needs_cctor_run (MonoCompile *cfg, MonoMethod *method, MonoVTa
 }
 
 static MonoInst*
-mini_get_ldelema_ins (MonoCompile *cfg, MonoMethod *cmethod, MonoInst **sp, unsigned char *ip, gboolean is_set)
+mini_emit_ldelema_1_ins (MonoCompile *cfg, MonoClass *klass, MonoInst *arr, MonoInst *index)
+{
+	MonoInst *ins;
+	guint32 size;
+	int mult_reg, add_reg, array_reg, index_reg;
+
+	mono_class_init (klass);
+	size = mono_class_array_element_size (klass);
+
+	mult_reg = alloc_preg (cfg);
+	add_reg = alloc_preg (cfg);
+	array_reg = arr->dreg;
+	index_reg = index->dreg;
+
+	MONO_EMIT_BOUNDS_CHECK (cfg, array_reg, MonoArray, max_length, index_reg);
+	MONO_EMIT_NEW_BIALU_IMM (cfg, OP_MUL_IMM, mult_reg, index_reg, size);
+	MONO_EMIT_NEW_BIALU (cfg, OP_PADD, add_reg, array_reg, mult_reg);
+	NEW_BIALU_IMM (cfg, ins, OP_PADD_IMM, add_reg, add_reg, G_STRUCT_OFFSET (MonoArray, vector));
+	ins->type = STACK_PTR;
+	MONO_ADD_INS (cfg->cbb, ins);
+
+	return ins;
+}
+
+static MonoInst*
+mini_emit_ldelema_ins (MonoCompile *cfg, MonoMethod *cmethod, MonoInst **sp, unsigned char *ip, gboolean is_set)
 {
 	int rank;
 	MonoInst *addr;
@@ -3487,6 +3512,9 @@ mini_get_ldelema_ins (MonoCompile *cfg, MonoMethod *cmethod, MonoInst **sp, unsi
 	MonoJitICallInfo *info;
 
 	rank = mono_method_signature (cmethod)->param_count - (is_set? 1: 0);
+
+	if (rank == 1)
+		return mini_emit_ldelema_1_ins (cfg, cmethod->klass, sp [0], sp [1]);
 
 	/* FIXME: Add this back */
 #if 0
@@ -5281,8 +5309,9 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 		case CEE_LDARG_S:
 			CHECK_OPSIZE (2);
 			CHECK_STACK_OVF (1);
-			CHECK_ARG (ip [1]);
-			NEW_ARGLOAD (cfg, ins, ip [1]);
+			n = ip [1];
+			CHECK_ARG (n);
+			NEW_ARGLOAD (cfg, ins, n);
 			ins->cil_code = ip;
 			if (ins->opcode == CEE_LDOBJ) {
 				MonoInst *src;
@@ -5298,8 +5327,9 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 		case CEE_LDARGA_S:
 			CHECK_OPSIZE (2);
 			CHECK_STACK_OVF (1);
-			CHECK_ARG (ip [1]);
-			NEW_ARGLOADA (cfg, ins, ip [1]);
+			n = ip [1];
+			CHECK_ARG (n);
+			NEW_ARGLOADA (cfg, ins, n);
 			ins->cil_code = ip;
 			MONO_ADD_INS (cfg->cbb, ins);
 			*sp++ = ins;
@@ -5309,11 +5339,12 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			CHECK_OPSIZE (2);
 			CHECK_STACK (1);
 			--sp;
-			CHECK_ARG (ip [1]);
-			NEW_ARGSTORE (cfg, ins, ip [1], *sp);
+			n = ip [1];
+			CHECK_ARG (n);
+			NEW_ARGSTORE (cfg, ins, n, *sp);
 			ins->cil_code = ip;
 			if (ins->opcode == CEE_STOBJ) {
-				NEW_ARGLOADA (cfg, ins, ip [1]);
+				NEW_ARGLOADA (cfg, ins, n);
 				MONO_ADD_INS (cfg->cbb, ins);
 				emit_stobj (cfg, ins, *sp, ip, ins->klass, FALSE);
 			} else
@@ -5863,7 +5894,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 						mono_emit_jit_icall (cfg, helper_stelem_ref_check, iargs, ip);
 					}
 					
-					addr = mini_get_ldelema_ins (cfg, cmethod, sp, ip, TRUE);
+					addr = mini_emit_ldelema_ins (cfg, cmethod, sp, ip, TRUE);
 					NEW_STORE_MEMBASE (cfg, ins, mono_type_to_store_membase (fsig->params [fsig->param_count - 1]), addr->dreg, 0, sp [fsig->param_count]->dreg);
 					if (ins->opcode == CEE_STOBJ) {
 						emit_stobj (cfg, addr, sp [fsig->param_count], ip, mono_class_from_mono_type (fsig->params [fsig->param_count-1]), FALSE);
@@ -5872,7 +5903,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 					}
 
 				} else if (strcmp (cmethod->name, "Get") == 0) { /* array Get */
-					addr = mini_get_ldelema_ins (cfg, cmethod, sp, ip, FALSE);
+					addr = mini_emit_ldelema_ins (cfg, cmethod, sp, ip, FALSE);
 
 					stack_type = type_to_stack_type (fsig->ret);
 					dreg = alloc_dreg (cfg, stack_type);
@@ -5887,7 +5918,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 
 					*sp++ = ins;
 				} else if (strcmp (cmethod->name, "Address") == 0) { /* array Address */
-					addr = mini_get_ldelema_ins (cfg, cmethod, sp, ip, FALSE);
+					addr = mini_emit_ldelema_ins (cfg, cmethod, sp, ip, FALSE);
 					*sp++ = addr;
 				} else {
 					g_assert_not_reached ();
@@ -6922,7 +6953,12 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			//	goto unverified;
 			CHECK_OPSIZE (5);
 			token = read32 (ip + 1);
-			field = mono_field_from_token (image, token, &klass, generic_context);
+			if (method->wrapper_type != MONO_WRAPPER_NONE) {
+				field = mono_method_get_wrapper_data (method, token);
+				klass = field->parent;
+			}
+			else
+				field = mono_field_from_token (image, token, &klass, generic_context);
 			if (!field)
 				goto load_error;
 			mono_class_init (klass);
@@ -7067,7 +7103,12 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			CHECK_OPSIZE (5);
 			token = read32 (ip + 1);
 
-			field = mono_field_from_token (image, token, &klass, generic_context);
+			if (method->wrapper_type != MONO_WRAPPER_NONE) {
+				field = mono_method_get_wrapper_data (method, token);
+				klass = field->parent;
+			}
+			else
+				field = mono_field_from_token (image, token, &klass, generic_context);
 			if (!field)
 				goto load_error;
 			mono_class_init (klass);
@@ -7316,10 +7357,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			*sp++ = ins;
 			break;
 		}
-		case CEE_LDELEMA: {
-			guint32 size;
-			int mult_reg, add_reg, array_reg, index_reg;
-
+		case CEE_LDELEMA:
 			CHECK_STACK (2);
 			sp -= 2;
 			CHECK_OPSIZE (5);
@@ -7362,26 +7400,10 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				MONO_EMIT_NEW_COND_EXC (cfg, NE_UN, "ArrayTypeMismatchException");
 			}
 
-			/* FIXME: Move the ldelema code to a common function */
-			mono_class_init (klass);
-			size = mono_class_array_element_size (klass);
-
-			mult_reg = alloc_preg (cfg);
-			add_reg = alloc_preg (cfg);
-			array_reg = sp [0]->dreg;
-			index_reg = sp [1]->dreg;
-
-			MONO_EMIT_BOUNDS_CHECK (cfg, array_reg, MonoArray, max_length, index_reg);
-			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_MUL_IMM, mult_reg, index_reg, size);
-			MONO_EMIT_NEW_BIALU (cfg, OP_PADD, add_reg, array_reg, mult_reg);
-			NEW_BIALU_IMM (cfg, ins, OP_PADD_IMM, add_reg, add_reg, G_STRUCT_OFFSET (MonoArray, vector));
-			ins->type = STACK_PTR;
-			MONO_ADD_INS (cfg->cbb, ins);
-
+			ins = mini_emit_ldelema_1_ins (cfg, klass, sp [0], sp [1]);
 			*sp++ = ins;
 			ip += 5;
 			break;
-		}
 #if 0
 		case CEE_LDELEM_ANY: {
 			MonoInst *load;
@@ -7423,6 +7445,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 
 			CHECK_STACK (2);
 			sp -= 2;
+
 			klass = array_access_to_klass (*ip);
 			size = mono_class_array_element_size (klass);
 
@@ -7636,6 +7659,8 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			if (method->wrapper_type == MONO_WRAPPER_DYNAMIC_METHOD) {
 				handle = mono_method_get_wrapper_data (method, n);
 				handle_class = mono_method_get_wrapper_data (method, n + 1);
+				if (handle_class == mono_defaults.typehandle_class)
+					handle = &((MonoClass*)handle)->byval_arg;
 			}
 			else {
 				handle = mono_ldtoken (image, n, &handle_class, generic_context);
@@ -9176,6 +9201,7 @@ mono_spill_global_vars (MonoCompile *cfg)
  *   3 sregs (2 for arg1 and 1 for arg2)
  * - fix #define MONO_ARCH_NO_EMULATE_LONG_SHIFT_OPS for x86
  * - same goes for lcall and other non-decomposable long opcodes
+ * - LAST MERGE: 55174
  */
 
 /*
