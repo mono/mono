@@ -95,6 +95,41 @@ namespace MonoTests.System.Xml
 
 			xss.Compile ();
 		}
+
+		[Test]
+		public void AddRollbackIsCompiled ()
+		{
+			XmlSchemaSet ss = new XmlSchemaSet ();
+			ss.Add (new XmlSchema ());
+			ss.Compile ();
+			Assert.IsTrue (ss.IsCompiled, "#1");
+			XmlSchema sc = new XmlSchema (); // compiled one
+			sc.Compile (null);
+			ss.Add (sc);
+			Assert.IsFalse (ss.IsCompiled, "#2");
+			ss.Add (new XmlSchema ()); // not-compiled one
+			Assert.IsFalse (ss.IsCompiled, "#3");
+			XmlSchema s;
+
+			s = new XmlSchema ();
+			s.TargetNamespace = "urn:foo";
+			XmlSchemaElement el;
+			el = new XmlSchemaElement ();
+			el.Name = "root";
+			s.Items.Add (el);
+			ss.Add (s);
+
+			s = new XmlSchema ();
+			s.TargetNamespace = "urn:foo";
+			el = new XmlSchemaElement ();
+			el.Name = "foo";
+			s.Items.Add (el);
+			ss.Add (s);
+			ss.Compile ();
+			Assert.IsTrue (ss.IsCompiled, "#4");
+			ss.RemoveRecursive (s);
+			Assert.IsTrue (ss.IsCompiled, "#5");
+		}
 	}
 }
 #endif
