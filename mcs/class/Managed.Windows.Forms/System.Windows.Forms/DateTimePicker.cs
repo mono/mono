@@ -685,7 +685,6 @@ namespace System.Windows.Forms {
 		
 		#region internal / private methods
 		
-		[MonoTODO("Fix Dropdown location when System.Windows.Forms.Screen gets added")]
 		private Point CalculateDropDownLocation (Rectangle parent_control_rect, Size child_size, bool align_left)
 		{
 			// default bottom left
@@ -696,8 +695,6 @@ namespace System.Windows.Forms {
 			}
 			
 			Point screen_location = PointToScreen (location);			
-// TODO: enable this part when screen comes into the classes
-/*			
 			Rectangle working_area = Screen.FromControl(this).WorkingArea;
 			// now adjust if off the right side of the screen			
 			if (screen_location.X < working_area.X) {
@@ -707,7 +704,6 @@ namespace System.Windows.Forms {
 			if (screen_location.Y + child_size.Height > working_area.Bottom) {
 				screen_location.Y -= (parent_control_rect.Height + child_size.Height);
 			}
-*/
 			return screen_location;
 		}
 		
