@@ -1,3 +1,8 @@
+2006-01-06  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XPathNavigator.cs : use WriteNode(XPathNavigator, bool)
+	  rather than WriteNode(XmlWriter, bool) in WriteSubtree().
+
 2005-12-14  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XPathNavigator.cs : Added MonoTODO to CreateAttributes(). Removed

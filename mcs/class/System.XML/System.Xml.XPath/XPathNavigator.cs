@@ -868,11 +868,9 @@ namespace System.Xml.XPath
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public virtual void WriteSubtree (XmlWriter writer)
 		{
-			XmlReader st = ReadSubtree ();
-			writer.WriteNode (st, false);
+			writer.WriteNode (this, false);
 		}
 
 		[MonoTODO]

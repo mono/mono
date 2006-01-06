@@ -16,8 +16,11 @@ using System;
 using System.IO;
 using System.Text;
 using System.Xml;
+using System.Xml.XPath;
 
 using NUnit.Framework;
+
+using AssertType = NUnit.Framework.Assert;
 
 namespace MonoTests.System.Xml
 {
@@ -202,6 +205,76 @@ namespace MonoTests.System.Xml
 			xtw.Close ();
 			Assert.AreEqual (xml, writer.ToString ());
 		}
+
+#if NET_2_0
+
+		XPathNavigator GetNavigator (string xml)
+		{
+			return new XPathDocument (XmlReader.Create (
+				new StringReader (xml))).CreateNavigator ();
+		}
+
+		string WriteNavigator (XPathNavigator nav, bool defattr)
+		{
+			StringWriter sw = new StringWriter ();
+			XmlWriterSettings settings = new XmlWriterSettings ();
+			settings.OmitXmlDeclaration = true;
+			settings.ConformanceLevel = ConformanceLevel.Fragment;
+			using (XmlWriter w = XmlWriter.Create (sw, settings)) {
+				w.WriteNode (nav, defattr);
+			}
+			return sw.ToString ();
+		}
+
+		[Test]
+		public void WriteNodeNavigator1 ()
+		{
+			XPathNavigator nav = GetNavigator ("<root>test<!-- comment --></root>");
+			// at Root
+			AssertType.AreEqual ("<root>test<!-- comment --></root>", WriteNavigator (nav, false), "#1");
+			// at document element
+			nav.MoveToFirstChild ();
+			AssertType.AreEqual ("<root>test<!-- comment --></root>", WriteNavigator (nav, false), "#2");
+			// at text
+			nav.MoveToFirstChild ();
+			AssertType.AreEqual ("test", WriteNavigator (nav, false), "#3");
+
+			// at comment
+			nav.MoveToNext ();
+			AssertType.AreEqual ("<!-- comment -->", WriteNavigator (nav, false), "#4");
+		}
+
+		string WriteSubtree (XPathNavigator nav)
+		{
+			StringWriter sw = new StringWriter ();
+			XmlWriterSettings settings = new XmlWriterSettings ();
+			settings.OmitXmlDeclaration = true;
+			settings.ConformanceLevel = ConformanceLevel.Fragment;
+			using (XmlWriter w = XmlWriter.Create (sw, settings)) {
+				nav.WriteSubtree(w);
+			}
+			return sw.ToString ();
+		}
+
+		[Test]
+		public void NavigatorWriteSubtree1 ()
+		{
+			XPathNavigator nav = GetNavigator ("<root>test<!-- comment --></root>");
+			// at Root
+			AssertType.AreEqual ("<root>test<!-- comment --></root>", WriteSubtree (nav), "#1");
+			// at document element
+			nav.MoveToFirstChild ();
+			AssertType.AreEqual ("<root>test<!-- comment --></root>", WriteSubtree (nav), "#2");
+			// at text
+			nav.MoveToFirstChild ();
+			AssertType.AreEqual ("test", WriteSubtree (nav), "#3");
+
+			// at comment
+			nav.MoveToNext ();
+			AssertType.AreEqual ("<!-- comment -->", WriteSubtree (nav), "#4");
+		}
+#endif
+
 	}
 
 	internal class DefaultXmlWriter : XmlWriter
