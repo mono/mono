@@ -1,3 +1,7 @@
+2006-01-08  Ankit Jain  <jankit@novell.com>
+
+	* Metadata.cs (TypeOp): Add 'constrained' op.
+
 2006-01-07  Ankit Jain  <jankit@novell.com>
 
 	* Metadata.cs (GenericParamAttributes): New.

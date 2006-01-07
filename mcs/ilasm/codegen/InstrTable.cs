@@ -232,6 +232,9 @@ namespace Mono.ILASM {
                         inst_table["sizeof"] = new ILToken (Token.INSTR_TYPE, TypeOp.sizeOf);
                         // inst_table["stelem"] = new ILToken (Token.INSTR_TYPE, TypeOp.stelem);
                         // inst_table["ldelem"] = new ILToken (Token.INSTR_TYPE, TypeOp.ldelem);
+                        inst_table["stelem.any"] = new ILToken (Token.INSTR_TYPE, TypeOp.stelem);
+                        inst_table["ldelem.any"] = new ILToken (Token.INSTR_TYPE, TypeOp.ldelem);
+                        inst_table["constrained."] = new ILToken (Token.INSTR_TYPE, TypeOp.constrained);
 
                         //
                         // MethodRef operations
