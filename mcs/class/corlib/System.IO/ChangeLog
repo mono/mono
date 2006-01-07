@@ -1,3 +1,8 @@
+2006-01-07  Miguel de Icaza  <miguel@novell.com>
+
+	* Path.cs (GetTempFilename): Append ".tmp" to the path, some
+	external application expect this extension.
+
 2006-01-05  Kornél Pál  <kornelpal@hotmail.com>
 
 	* DriveNotFoundException.cs: Added.
