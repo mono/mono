@@ -111,6 +111,18 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
+		[Category ("NotWorking")]
+		[ExpectedException (typeof (InvalidOperationException))] // Cannot use wildcards at the top level of a schema.
+		public void ExportClass_XmlElement ()
+		{
+			XmlReflectionImporter ri = new XmlReflectionImporter ("NS1");
+			XmlSchemas schemas = new XmlSchemas ();
+			XmlSchemaExporter sx = new XmlSchemaExporter (schemas);
+			XmlTypeMapping tm = ri.ImportTypeMapping (typeof (XmlElement));
+			sx.ExportTypeMapping (tm);
+		}
+
+		[Test]
 		[Category ("NotWorking")] // on Mono, element is output before type
 		public void ExportClass_Array ()
 		{
@@ -154,7 +166,7 @@ namespace MonoTests.System.XmlSerialization
 		[Category ("NotWorking")] // on Mono, element is output before type
 		public void ExportEnum ()
 		{
-			XmlReflectionImporter ri = new XmlReflectionImporter ("NS2");
+			XmlReflectionImporter ri = new XmlReflectionImporter ("NSEnumDefaultValue");
 			XmlSchemas schemas = new XmlSchemas ();
 			XmlSchemaExporter sx = new XmlSchemaExporter (schemas);
 			XmlTypeMapping tm = ri.ImportTypeMapping (typeof (EnumDefaultValue));
@@ -167,7 +179,7 @@ namespace MonoTests.System.XmlSerialization
 
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
-				"<xs:schema xmlns:tns=\"NS2\" elementFormDefault=\"qualified\" targetNamespace=\"NS2\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
+				"<xs:schema xmlns:tns=\"NSEnumDefaultValue\" elementFormDefault=\"qualified\" targetNamespace=\"NSEnumDefaultValue\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
 				"  <xs:element name=\"EnumDefaultValue\" type=\"tns:EnumDefaultValue\" />{0}" +
 				"  <xs:simpleType name=\"EnumDefaultValue\">{0}" +
 				"    <xs:list>{0}" +
@@ -181,6 +193,30 @@ namespace MonoTests.System.XmlSerialization
 				"    </xs:list>{0}" +
 				"  </xs:simpleType>{0}" +
 				"</xs:schema>", Environment.NewLine), sw.ToString (), "#2");
+
+			ri = new XmlReflectionImporter ("NSEnumDefaultValueNF");
+			schemas = new XmlSchemas ();
+			sx = new XmlSchemaExporter (schemas);
+			tm = ri.ImportTypeMapping (typeof (EnumDefaultValueNF));
+			sx.ExportTypeMapping (tm);
+
+			Assert.AreEqual (1, schemas.Count, "#3");
+
+			sw = new StringWriter ();
+			schemas[0].Write (sw);
+
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
+				"<xs:schema xmlns:tns=\"NSEnumDefaultValueNF\" elementFormDefault=\"qualified\" targetNamespace=\"NSEnumDefaultValueNF\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
+				"  <xs:element name=\"EnumDefaultValueNF\" type=\"tns:EnumDefaultValueNF\" />{0}" +
+				"  <xs:simpleType name=\"EnumDefaultValueNF\">{0}" +
+				"    <xs:restriction base=\"xs:string\">{0}" +
+				"      <xs:enumeration value=\"e1\" />{0}" +
+				"      <xs:enumeration value=\"e2\" />{0}" +
+				"      <xs:enumeration value=\"e3\" />{0}" +
+				"    </xs:restriction>{0}" +
+				"  </xs:simpleType>{0}" +
+				"</xs:schema>", Environment.NewLine), sw.ToString (), "#4");
 		}
 
 		[Test]
@@ -292,6 +328,28 @@ namespace MonoTests.System.XmlSerialization
 
 		[Test]
 		[Category ("NotWorking")] // bug #77117
+		public void ExportXsdPrimitive_Object ()
+		{
+			XmlReflectionImporter ri = new XmlReflectionImporter ("NSAnyType");
+			XmlSchemas schemas = new XmlSchemas ();
+			XmlSchemaExporter sx = new XmlSchemaExporter (schemas);
+			XmlTypeMapping tm = ri.ImportTypeMapping (typeof (object));
+			sx.ExportTypeMapping (tm);
+
+			Assert.AreEqual (1, schemas.Count, "#1");
+
+			StringWriter sw = new StringWriter ();
+			schemas[0].Write (sw);
+
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
+				"<xs:schema xmlns:tns=\"NSAnyType\" elementFormDefault=\"qualified\" targetNamespace=\"NSAnyType\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
+				"  <xs:element name=\"anyType\" nillable=\"true\" />{0}" +
+				"</xs:schema>", Environment.NewLine), sw.ToString (), "#2");
+		}
+
+		[Test]
+		[Category ("NotWorking")] // bug #77117
 		public void ExportXsdPrimitive_ByteArray ()
 		{
 			XmlReflectionImporter ri = new XmlReflectionImporter ("ByteArray");
@@ -361,6 +419,33 @@ namespace MonoTests.System.XmlSerialization
 					typeDesc.XsdType ? "xs" : "tns", typeDesc.IsNillable ? "nillable=\"true\" " : ""),
 					sw.ToString (), typeDesc.Type.FullName + "#2");
 			}
+		}
+
+		[Test]
+		[Category ("NotWorking")] // bug #77117
+		public void ExportXsdPrimitive_Object_Arrays ()
+		{
+			XmlReflectionImporter ri = new XmlReflectionImporter ("NSArrayOfAnyType");
+			XmlSchemas schemas = new XmlSchemas ();
+			XmlSchemaExporter sx = new XmlSchemaExporter (schemas);
+			XmlTypeMapping tm = ri.ImportTypeMapping (typeof (object[]));
+			sx.ExportTypeMapping (tm);
+
+			Assert.AreEqual (1, schemas.Count, "#1");
+
+			StringWriter sw = new StringWriter ();
+			schemas[0].Write (sw);
+
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
+				"<xs:schema xmlns:tns=\"NSArrayOfAnyType\" elementFormDefault=\"qualified\" targetNamespace=\"NSArrayOfAnyType\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
+				"  <xs:element name=\"ArrayOfAnyType\" nillable=\"true\" type=\"tns:ArrayOfAnyType\" />{0}" +
+				"  <xs:complexType name=\"ArrayOfAnyType\">{0}" +
+				"    <xs:sequence>{0}" +
+				"      <xs:element minOccurs=\"0\" maxOccurs=\"unbounded\" name=\"anyType\" nillable=\"true\" />{0}" +
+				"    </xs:sequence>{0}" +
+				"  </xs:complexType>{0}" +
+				"</xs:schema>", Environment.NewLine), sw.ToString (), "#2");
 		}
 
 		[Test]

@@ -1,3 +1,12 @@
+2006-01-07  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* XmlReflectionImporterTests.cs: Added numerous tests. No longer
+	derive from Assertion.
+	* SoapReflectionImporterTests.cs: Added numerous tests.
+	* XmlSchemaImporterTests.cs: Added numerous tests.
+	* XmlSchemaExporterTests.cs: Added numerous tests.
+	* SoapSchemaExporterTests.cs: Added numerous tests.
+
 2005-12-29  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* XmlSchemaExporterTests.cs: Added tests for exporting structs, and 
