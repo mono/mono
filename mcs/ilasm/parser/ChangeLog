@@ -1,3 +1,8 @@
+2006-01-08  Ankit Jain  <jankit@novell.com>
+
+	* ILParser.jay (constraint_decl): Remove. This syntax is no longer used.
+	(class_decl | constraint_decl): Remove.
+
 2006-01-07  Ankit Jain  <jankit@novell.com>
 
 	* ILParser.jay: Update to use new GenericParameters class.

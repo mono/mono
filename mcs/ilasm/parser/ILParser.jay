@@ -515,10 +515,6 @@ language_decl		: D_LANGUAGE SQSTRING
 			| D_LANGUAGE SQSTRING COMMA SQSTRING COMMA SQSTRING
 			;
 
-constraint_decl         : D_CONSTRAINT BANG int32 K_IS type
-                          {
-                          }
-                        ;
                         
 vtfixup_decl		: D_VTFIXUP OPEN_BRACKET int32 CLOSE_BRACKET 
 			  vtfixup_attr K_AT id
@@ -833,7 +829,6 @@ class_decl		: method_all
                           }
 			  OPEN_PARENS sig_args CLOSE_PARENS
 			| language_decl
-                        | constraint_decl
 			;
 
 type			: generic_class_ref
