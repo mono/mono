@@ -1,3 +1,12 @@
+2006-01-07  Ankit Jain  <jankit@novell.com>
+
+	* Metadata.cs (GenericParamAttributes): New.
+	(MetaDataElement.Row): Always set value.
+	(GenericParameter): Update to use GenericParameterAttributes.
+	(GenericParameterConstraint.SortKey): New. override to support sorting.
+	(ClassDef.AddGenericParameter):
+	(MethodDef.AddGenericParameter): New overloads for accepting attributes also.
+
 2006-01-06  Ankit Jain  <jankit@novell.com>
 
 	* Metadata.cs (UIntConst): Change constructor param from signed int/sbyte/etc to

@@ -1,3 +1,13 @@
+2006-01-07  Ankit Jain  <jankit@novell.com>
+
+	* ILParser.jay: Update to use new GenericParameters class.
+	(generic_class_ref| K_CLASS class_ref typars_clause): New.
+	Update rules to use generic_class_ref instead of 'K_CLASS class_ref..'
+	(constraints_clause): New.
+	(constraints): New. Rules for constraints on generic parameters.
+	(formal_typar_attr): New. Generic param attributes (.ctor, valuetype, class).
+	(formal_typars): Update to use new constraints stuff.
+
 2006-01-06  Ankit Jain  <jankit@novell.com>
 
 	* ILParser.jay (field_init): Add rules for UINT8/UINT16/etc

@@ -37,7 +37,7 @@ namespace Mono.ILASM {
                 private DeclSecurity decl_sec;
                 private ArrayList event_list;
                 private ArrayList property_list;
-                private ArrayList typar_list;
+                private GenericParameters gen_params;
                 private ArrayList override_list;
                 private ArrayList override_long_list;
                 private TypeDef outer;
@@ -52,11 +52,12 @@ namespace Mono.ILASM {
                 private bool is_enum_class;
 
                 public TypeDef (PEAPI.TypeAttr attr, string name_space, string name,
-                                IClassRef parent, ArrayList impl_list, Location location)
+                                IClassRef parent, ArrayList impl_list, Location location, GenericParameters gen_params)
                 {
                         this.attr = attr;
                         this.parent = parent;
                         this.impl_list = impl_list;
+                        this.gen_params = gen_params;
 
                         field_table = new Hashtable ();
                         field_list = new ArrayList ();
@@ -112,7 +113,7 @@ namespace Mono.ILASM {
                 }
 
                 public bool IsGenericType {
-                        get { return (typar_list == null); }
+                        get { return (gen_params == null); }
                 }
 
                 public bool IsDefined {
@@ -246,37 +247,12 @@ namespace Mono.ILASM {
                         decl_sec.AddPermission (sec_action, iper);
                 }
 
-                public void AddGenericParam (string id)
+                public int GetGenericParamNum (string id)
                 {
-                        if (typar_list == null)
-                                typar_list = new ArrayList ();
-
-                        GenericInfo gi = new GenericInfo ();
-                        gi.Id = id;
-                        gi.num = typar_list.Count;
-
-                        typar_list.Add (gi);
-                }
-
-		public int GetGenericParamNum (string id)
-		{
-			if (typar_list == null)
-				// FIXME: Report error
-				throw new Exception (String.Format ("Invalid type parameter '{0}'", id));
-
-			foreach (GenericInfo gi in typar_list)
-				if (gi.Id == id)
-					return gi.num;
-			return -1;
-		}
-
-                public void AddGenericConstraint (int index, ITypeRef constraint)
-                {
-                        GenericInfo gi = (GenericInfo) typar_list[index];
-
-                        if (gi.ConstraintList == null)
-                                gi.ConstraintList = new ArrayList ();
-                        gi.ConstraintList.Add (constraint);
+                        if (gen_params == null)
+                                throw new Exception ("Not a generic type");
+                        
+                        return gen_params.GetGenericParamNum (id);
                 }
 
                 public void Define (CodeGen code_gen)
@@ -365,18 +341,8 @@ namespace Mono.ILASM {
                                 }
                         }
 
-                        if (typar_list != null) {
-                                short index = 0;
-                                foreach (GenericInfo gi in typar_list) {
-                                        PEAPI.GenericParameter gp = classdef.AddGenericParameter (index++, gi.Id);
-                                        if (gi.ConstraintList != null) {
-                                                foreach (ITypeRef cnst in gi.ConstraintList) {
-                                                        cnst.Resolve (code_gen);
-                                                        gp.AddConstraint (cnst.PeapiType);
-                                                }
-                                        }
-                                }
-                        }
+                        if (gen_params != null)
+                                gen_params.Resolve (code_gen, classdef);
 
                         is_intransit = false;
                         is_defined = true;

@@ -253,7 +253,7 @@ namespace Mono.ILASM {
 		}
 
                 public void BeginTypeDef (TypeAttr attr, string name, IClassRef parent,
-                                ArrayList impl_list, Location location)
+                                ArrayList impl_list, Location location, GenericParameters gen_params)
                 {
                         TypeDef outer = null;
                         string cache_name = CacheName (name);
@@ -282,7 +282,7 @@ namespace Mono.ILASM {
                         }
 
                         typedef = new TypeDef (attr, current_namespace,
-                                        name, parent, impl_list, location);
+                                        name, parent, impl_list, location, gen_params);
 
                         if (outer != null)
                                 typedef.OuterType = outer;

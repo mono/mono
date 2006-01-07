@@ -517,7 +517,6 @@ language_decl		: D_LANGUAGE SQSTRING
 
 constraint_decl         : D_CONSTRAINT BANG int32 K_IS type
                           {
-                                codegen.CurrentTypeDef.AddGenericConstraint ((int) $3, (ITypeRef) $5);
                           }
                         ;
                         
@@ -554,18 +553,12 @@ class_head 		: D_CLASS class_attr comp_name formal_typars_clause extends_clause
                           impl_clause
                           {
                                 codegen.BeginTypeDef ((TypeAttr) $2, (string) $3, 
-						$5 as IClassRef, $6 as ArrayList, null);
+						$5 as IClassRef, $6 as ArrayList, null, (GenericParameters) $4);
 				
 				if (is_value_class)
 					codegen.CurrentTypeDef.MakeValueClass ();
 				if (is_enum_class)
 					codegen.CurrentTypeDef.MakeEnumClass ();
-
-                                if ($4 != null) {
-                                        ArrayList typars_list = (ArrayList) $4;
-                                        foreach (string id in typars_list)
-                                                codegen.CurrentTypeDef.AddGenericParam (id);
-                                }                                
                           }
 			;
 
@@ -607,11 +600,7 @@ class_attr		: /* EMPTY */
 			;
 
 extends_clause		: /* EMPTY */
-			| K_EXTENDS K_CLASS class_ref typars_clause
-                          {
-                                $$ = ((IClassRef) $3).GetGenericTypeInst ((GenericArguments) $4);
-                          }
-			| K_EXTENDS class_ref
+			| K_EXTENDS generic_class_ref
                           {
                                 $$ = $2;
                           }
@@ -621,29 +610,13 @@ impl_clause		: /* EMPTY */
 			| impl_class_refs
 			;
 
-impl_class_refs		: K_IMPLEMENTS K_CLASS class_ref typars_clause
-                          {
-                                GenericTypeInst gti = ((IClassRef) $3).GetGenericTypeInst ((GenericArguments) $4);
- 
-                                ArrayList al = new ArrayList ();
-                                al.Add (gti);
-                                $$ = al;
-                          }
-			| K_IMPLEMENTS class_ref
+impl_class_refs		: K_IMPLEMENTS generic_class_ref
                           {
                                 ArrayList al = new ArrayList ();
                                 al.Add ($2);
                                 $$ = al;
                           }
-			| impl_class_refs COMMA K_CLASS class_ref typars_clause
-                          {
-                                ArrayList al = (ArrayList) $1;
-
-                                GenericTypeInst gti = ((IClassRef) $4).GetGenericTypeInst ((GenericArguments) $5);
-                                al.Insert (0, gti);
-                                $$ = al;
-                          }
-			| impl_class_refs COMMA class_ref 
+			| impl_class_refs COMMA generic_class_ref
                           {
                                 ArrayList al = (ArrayList) $1;
 
@@ -679,20 +652,74 @@ typars                  : type
                           }
                         ;
 
-formal_typars           : formal_typar
+constraints_clause	: /* EMTPY */
+			| OPEN_PARENS constraints CLOSE_PARENS
                           {
-                                ArrayList formal_list = new ArrayList ();
-                                formal_list.Add ($1);
-                                $$ = formal_list;
+                                $$ = $2;
                           }
-                        | formal_typars COMMA formal_typar
+                       ;
+
+
+constraints		: generic_class_ref
+			  {
+                                ArrayList al = new ArrayList ();
+                                al.Add ($1);
+                                $$ = al;
+                           }
+			| constraints COMMA generic_class_ref
                           {
-                                ArrayList formal_list = (ArrayList) $1;
-                                formal_list.Add ($3);
-                                $$ = formal_list;
+                                ArrayList al = (ArrayList) $1;
+                                al.Add ($3);
+                                $$ = al;
+                          }
+			;
+
+generic_class_ref	: class_ref
+			  {
+                                $$ = $1;
+			  }
+			| K_CLASS class_ref typars_clause
+			  {
+                                if ($3 != null)
+                                        $$ = ((IClassRef) $2).GetGenericTypeInst ((GenericArguments) $3);
+                                else
+                                        $$ = $2;
+			  }
+			; 
+
+formal_typars           : formal_typar_attr constraints_clause formal_typar
+                          {
+                                GenericParameter gp = new GenericParameter ((string) $3, (PEAPI.GenericParamAttributes) $1, (ArrayList) $2);
+
+                                GenericParameters colln = new GenericParameters ();
+                                colln.Add (gp);
+                                $$ = colln;
+                          }
+                        | formal_typars COMMA formal_typar_attr constraints_clause formal_typar
+                          {
+                                GenericParameters colln = (GenericParameters) $1;
+                                colln.Add (new GenericParameter ((string) $5, (PEAPI.GenericParamAttributes) $3, (ArrayList) $4));
+                                $$ = colln;
+                          }
+                         ;
+ 
+formal_typar_attr	: /* EMPTY */
+                          {
+                                $$ = new PEAPI.GenericParamAttributes ();
+                          }
+			| formal_typar_attr D_CTOR
+                          {
+                               $$ = (PEAPI.GenericParamAttributes) $1 | PEAPI.GenericParamAttributes.DefaultConstructorConstrait; 
+                          }
+			| formal_typar_attr K_VALUETYPE
+                          {
+                               $$ = (PEAPI.GenericParamAttributes) $1 | PEAPI.GenericParamAttributes.NotNullableValueTypeConstraint; 
+                          }
+			| formal_typar_attr K_CLASS
+                          {
+                               $$ = (PEAPI.GenericParamAttributes) $1 | PEAPI.GenericParamAttributes.ReferenceTypeConstraint; 
                           }
                         ;
-
 
 formal_typar            : id
                           {
@@ -809,12 +836,9 @@ class_decl		: method_all
                         | constraint_decl
 			;
 
-type			: K_CLASS class_ref typars_clause
+type			: generic_class_ref
                           {
-                                if ($3 != null)
-                                        $$ = ((IClassRef) $2).GetGenericTypeInst ((GenericArguments) $3);
-                                else
-                                        $$ = $2;
+			  	$$ = $1;
                           }
 			| K_OBJECT
                           {
@@ -1768,8 +1792,7 @@ method_head		: D_METHOD meth_attr call_conv param_attr type method_name
                                 MethodDef methdef = new MethodDef (
                                         codegen, (MethAttr) $2, cc,
                                         (ImplAttr) $11, (string) $6, (ITypeRef) $5,
-                                        (ArrayList) $9, tokenizer.Reader.Location, (ArrayList) $7, codegen.CurrentTypeDef);
-
+                                        (ArrayList) $9, tokenizer.Reader.Location, (GenericParameters) $7, codegen.CurrentTypeDef);
                                 if (pinvoke_info) {
                                         ExternModule mod = codegen.ExternTable.AddModule (pinvoke_mod);
                                         methdef.AddPInvokeInfo (pinvoke_attr, mod, pinvoke_meth);

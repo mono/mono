@@ -189,6 +189,19 @@ namespace PEAPI {
 		Var = 0x13, MVar = 0x1E 
 	}
 
+	[Flags]
+	public enum GenericParamAttributes : ushort {
+		VarianceMask  = 0x0003,
+		NonVariant    = 0x0000,
+		Covariant     = 0x0001,
+		Contravariant = 0x0002,
+
+		SpecialConstraintMask = 0x001c,
+		ReferenceTypeConstraint = 0x0004,
+		NotNullableValueTypeConstraint = 0x0008,
+		DefaultConstructorConstrait = 0x0010
+	}
+
 	/* Taken from Mono.Cecil */
 	public enum SecurityAction : short {
 		Request = 1,
@@ -232,7 +245,7 @@ namespace PEAPI {
 				return row;
 			}
 			set {
-				if (row == 0) row = value;
+				row = value;
 			}
 		}
 
@@ -744,27 +757,29 @@ namespace PEAPI {
 
 		MetaDataElement owner;
 		MetaData metadata;
-		string name;
+		public string name;
 		uint nameIx;
 		short index;
+		GenericParamAttributes attr;
 
 		internal GenericParameter (ClassDef owner, MetaData metadata,
-				short index, string name) : this (owner, metadata, index, name, true)
+				short index, string name, GenericParamAttributes attr) : this (owner, metadata, index, name, attr, true)
 		{
 		}
 
 		internal GenericParameter (MethodDef owner, MetaData metadata,
-				short index, string name) : this (owner, metadata, index, name, true)
+				short index, string name, GenericParamAttributes attr) : this (owner, metadata, index, name, attr, true)
 		{
 		}
 
 		private GenericParameter (MetaDataElement owner, MetaData metadata,
-				short index, string name, bool nadda) {
+				short index, string name, GenericParamAttributes attr, bool nadda) {
 			this.owner = owner;
 			this.metadata = metadata;
 			this.index = index;
 			tabIx = MDTable.GenericParam;
 			this.name = name;
+			this.attr = attr;
 		}
 
 		internal override uint SortKey() 
@@ -801,7 +816,7 @@ namespace PEAPI {
 		internal sealed override void Write(FileImage output) 
 		{
 			output.Write ((short) index);
-			output.Write ((short) 0);
+			output.Write ((short) attr);
 			output.WriteCodedIndex(CIx.TypeOrMethodDef, owner);
 			output.StringsIndex (nameIx);
 		}
@@ -819,6 +834,11 @@ namespace PEAPI {
 			this.param = param;
 			this.type = type;
 			tabIx = MDTable.GenericParamConstraint;
+		}
+
+		internal override uint SortKey() 
+		{
+			return param.Row;
 		}
 
 		internal sealed override uint Size(MetaData md) 
@@ -1454,7 +1474,15 @@ namespace PEAPI {
 		/// </summary>
 		public GenericParameter AddGenericParameter (short index, string name) 
 		{
-			GenericParameter gp = new GenericParameter (this, metaData, index, name);
+			return AddGenericParameter (index, name, 0);
+		}
+
+		/// <summary>
+		///  Add a named generic type parameter with attributes
+		/// </summary>
+		public GenericParameter AddGenericParameter (short index, string name, GenericParamAttributes attr)
+		{
+			GenericParameter gp = new GenericParameter (this, metaData, index, name, attr);
 			metaData.AddToTable (MDTable.GenericParam, gp);
 			return gp;
 		}
@@ -1988,7 +2016,6 @@ namespace PEAPI {
 
 		private Type gen_type;
 		private Type[] gen_param;
-		bool done = false;
 		bool inTable = false;
 		uint sigIx = 0;
 
@@ -3598,7 +3625,15 @@ namespace PEAPI {
 		/// </summary>
 		public GenericParameter AddGenericParameter (short index, string name) 
 		{
-			GenericParameter gp = new GenericParameter (this, metaData, index, name);
+			return AddGenericParameter (index, name, 0);
+		}
+
+		/// <summary>
+		///  Add a named generic type parameter with attributes
+		/// </summary>
+		public GenericParameter AddGenericParameter (short index, string name, GenericParamAttributes attr) 
+		{
+			GenericParameter gp = new GenericParameter (this, metaData, index, name, attr);
 			metaData.AddToTable (MDTable.GenericParam, gp);
 			gen_param_count ++;
 			return gp;

@@ -30,7 +30,6 @@ namespace Mono.ILASM {
                 private string signature;
                 private Hashtable vararg_sig_table;
                 private ITypeRef ret_type;
-                private ArrayList typar_list;
                 private ArrayList param_list;
                 private ArrayList inst_list;
                 private ArrayList customattr_list;
@@ -54,11 +53,12 @@ namespace Mono.ILASM {
 		private SourceMethod source;
                 private PEAPI.NativeType ret_native_type;
                 private TypeDef type_def;
+                private GenericParameters gen_params;
 
                 public MethodDef (CodeGen codegen, PEAPI.MethAttr meth_attr,
 				  PEAPI.CallConv call_conv, PEAPI.ImplAttr impl_attr,
 				  string name, ITypeRef ret_type, ArrayList param_list,
-				  Location start, ArrayList typars_list, TypeDef type_def)
+				  Location start, GenericParameters gen_params, TypeDef type_def)
                 {
                         this.meth_attr = meth_attr;
                         this.call_conv = call_conv;
@@ -67,6 +67,7 @@ namespace Mono.ILASM {
                         this.ret_type = ret_type;
                         this.param_list = param_list;
                         this.type_def = type_def;
+                        this.gen_params = gen_params;
 
                         inst_list = new ArrayList ();
                         label_table = new Hashtable ();
@@ -83,7 +84,6 @@ namespace Mono.ILASM {
 
                         is_defined = false;
                         is_resolved = false;
-			AddGenericParams (typars_list);
                         ResolveGenParams ();
                         CreateSignature ();
 
@@ -155,44 +155,16 @@ namespace Mono.ILASM {
                         pinvoke_info = true;
                 }
 
-                internal void AddGenericParams (ArrayList typars_list)
-                {
-                        if (typars_list == null)
-                                return;
-
-			typar_list = new ArrayList ();
-			foreach (string id in typars_list) {
-				GenericInfo gi = new GenericInfo ();
-				gi.Id = id;
-				gi.num = typar_list.Count;
-
-				typar_list.Add (gi);
-			}
+                public int GenParamCount {
+                        get { return (gen_params != null ? gen_params.Count : 0); }
                 }
-		
-		public int GenParamCount {
-			get { return (typar_list != null ? typar_list.Count : 0); }
-		}
 
-		public int GetGenericParamNum (string id)
-		{
-			if (typar_list == null)
-				//FIXME: Report error
-				throw new Exception (String.Format ("Invalid method type parameter '{0}'", id));
-
-			foreach (GenericInfo gi in typar_list)
-				if (gi.Id == id)
-					return gi.num;
-			return -1;
-		}
-
-                public void AddGenericConstraint (int index, ITypeRef constraint)
+                public int GetGenericParamNum (string id)
                 {
-                        GenericInfo gi = (GenericInfo) typar_list[index];
-
-                        if (gi.ConstraintList == null)
-                                gi.ConstraintList = new ArrayList ();
-                        gi.ConstraintList.Add (constraint);
+                        if (gen_params == null)
+                                throw new Exception ("Not a generic method");
+                        
+                        return gen_params.GetGenericParamNum (id);
                 }
 
                 public void AddParamDefaultValue (int index, PEAPI.Constant defval)
@@ -465,6 +437,10 @@ namespace Mono.ILASM {
                         if (IsAbstract)
                                 return;
 
+                        // Generic type parameters
+                        if (gen_params != null)
+                                gen_params.Resolve (code_gen, methoddef);
+
                         if (entry_point)
                                 methoddef.DeclareEntryPoint ();
 
@@ -559,20 +535,6 @@ namespace Mono.ILASM {
 
 			if (source != null)
 				source.MarkLocation (source.EndLine, cil.Offset);
-
-                        // Generic type parameters
-                        if (typar_list != null) {
-                                short index = 0;
-                                foreach (GenericInfo gi in typar_list) {
-                                        PEAPI.GenericParameter gp = methoddef.AddGenericParameter (index++, gi.Id);
-                                        if (gi.ConstraintList != null) {
-                                                foreach (ITypeRef cnst in gi.ConstraintList) {
-                                                        cnst.Resolve (code_gen);
-                                                        gp.AddConstraint (cnst.PeapiType);
-                                                }
-                                        }
-                                }
-                        }
                 }
 
                 public LabelInfo AddLabel (string name)
@@ -635,7 +597,7 @@ namespace Mono.ILASM {
                         if (IsVararg)
                                 signature = CreateVarargSignature (RetType, name, param_list);
                         else
-                                signature = CreateSignature (RetType, name, param_list, (typar_list != null ? typar_list.Count : 0));
+                                signature = CreateSignature (RetType, name, param_list, GenParamCount);
                 }
 
                 public static string CreateSignature (ITypeRef RetType, string name, IList param_list, int gen_param_count)
