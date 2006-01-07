@@ -1,3 +1,7 @@
+2006-01-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* inssel-long.brg: Fix int->long ovf conversion rules. Fixes #77172.
+	
 2006-01-06 Neale Ferguson <neale@sinenomine.net>
 
 	* mini-s390x.c, inssel-s390x.brg, cpu-s390x.md: Fix ATOMIC_I8 operations. Provide
