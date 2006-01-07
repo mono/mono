@@ -352,7 +352,7 @@ namespace System.IO {
 			do {
 				num = rnd.Next ();
 				num++;
-				path = Path.Combine (GetTempPath(), "tmp" + num.ToString("x"));
+				path = Path.Combine (GetTempPath(), "tmp" + num.ToString("x") + ".tmp");
 
 				try {
 					f = new FileStream (path, FileMode.CreateNew);
