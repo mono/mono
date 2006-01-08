@@ -243,9 +243,80 @@ namespace System.Web.UI.WebControls {
 			return String.Empty; // as documented
 		}
 
+#if TARGET_JVM
+		internal class ListEnum : IEnumerator
+		{
+			int start;
+			int end;
+			int ind;
+			IList list;
+
+			internal ListEnum(IList list, int start, int end)
+			{
+				this.list = list;
+				this.start = start;
+				this.end = end;
+				this.ind = start - 1;
+			}
+
+			public bool MoveNext()
+			{
+				ind++;
+				return (ind < end);
+			}
+
+			public void Reset() { ind = start - 1; }
+			public object Current { get { return list[ind]; }}
+		}
+
 		private IEnumerator GetListEnum (IList list, int start, int end)
 		{
 			if (!allow_paging)
+				end = list.Count;
+			return new ListEnum(list, start, end);
+		}
+
+		internal class EnumeratorEnum : IEnumerator
+		{
+			int start;
+			int end;
+			int ind;
+			IEnumerator en;
+			PagedDataSource parent;
+
+			internal EnumeratorEnum(PagedDataSource parent, IEnumerator en, int start, int end)
+			{
+				this.parent = parent;
+				this.en = en;
+				this.start = start;
+				this.end = end;
+				this.ind = start - 1;
+				for (int i = 0; i < start; i++)
+					en.MoveNext ();
+			}
+
+			public bool MoveNext()
+			{
+				ind++;
+				return (!parent.allow_paging || ind < end) && en.MoveNext ();
+			}
+
+			public void Reset()
+			{
+				throw new NotSupportedException();
+			}
+
+			public object Current { get { return en.Current; }}
+		}
+
+		private IEnumerator GetEnumeratorEnum (IEnumerator e, int start, int end)
+		{
+			return new EnumeratorEnum(this, e, start, end);
+		}
+#else
+		private IEnumerator GetListEnum (IList list, int start, int end)
+		{
+			if (!AllowPaging)
 				end = list.Count;
 			else if (start >= list.Count)
 				yield break;
@@ -261,6 +332,7 @@ namespace System.Web.UI.WebControls {
 			for (int i = start; (!allow_paging || i < end) && e.MoveNext (); i++)
 				yield return e.Current;
 		}
+#endif
 	}
 }
 

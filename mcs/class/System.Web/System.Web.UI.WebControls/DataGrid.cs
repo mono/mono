@@ -858,6 +858,29 @@ namespace System.Web.UI.WebControls {
 
 		class NCollection : ICollection {
 			int n;
+#if TARGET_JVM
+			class SequenceEnumerator : IEnumerator {
+				readonly int _max;
+				object _current;
+				public SequenceEnumerator(int max) {
+					_max = max;
+					Reset();
+				}
+
+				public bool MoveNext() {
+					_current = (int)_current + 1;
+					return (int)_current >= 0 && (int)_current < _max;
+				}
+
+				public void Reset() {
+					_current = -1;
+				}
+
+				public object Current {
+					get { return _current; }
+				}
+			}
+#endif
 
 			public NCollection (int n)
 			{
@@ -866,8 +889,12 @@ namespace System.Web.UI.WebControls {
 
 			public IEnumerator GetEnumerator ()
 			{
+#if TARGET_JVM
+				return new SequenceEnumerator(n);
+#else
 				for (int i = 0; i < n; i++)
 					yield return i;
+#endif
 			}
 
 			public int Count {
