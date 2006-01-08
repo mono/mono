@@ -1,3 +1,7 @@
+2006-01-08  Konstantin Triger <kostat@mainsoft.com>
+
+	* System.Web.vmwcsproj: fixing compilation.
+
 2005-11-29 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* System.Web_test.dll.sources: add new file.

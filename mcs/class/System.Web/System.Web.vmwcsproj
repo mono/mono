@@ -8,15 +8,14 @@
 				<Config Name="Release_Java" AllowUnsafeBlocks="false" BaseAddress="285212672" CheckForOverflowUnderflow="false" ConfigurationOverrideFile="" DefineConstants="NET_1_1;TARGET_J2EE;TARGET_JVM;GH_ONLY;ONLY_1_1" DocumentationFile="" DebugSymbols="true" FileAlignment="4096" IncrementalBuild="false" NoStdLib="false" NoWarn="1595,169,649,67,168,219" Optimize="true" OutputPath="bin\Release_Java\" RegisterForComInterop="false" RemoveIntegerChecks="false" TreatWarningsAsErrors="false" WarningLevel="4"/>
 			</Settings>
 			<References>
-				<Reference Name="System.EnterpriseServices" AssemblyName="System.EnterpriseServices" Private="False"/>
-				<Reference Name="System.Xml" AssemblyName="System.Xml" HintPath="..\lib\System.Xml.dll" Private="False"/>
-				<Reference Name="SystemDll" AssemblyName="System" HintPath="..\lib\System.dll" Private="True"/>
-				<Reference Name="System.Drawing" AssemblyName="System.Drawing" HintPath="..\lib\System.Drawing.dll" Private="True"/>
 				<Reference Name="J2EE.Helpers" AssemblyName="J2EE.Helpers" HintPath="..\lib\J2EE.Helpers.dll" Private="True"/>
 				<Reference Name="J2SE.Helpers" AssemblyName="J2SE.Helpers" HintPath="..\lib\J2SE.Helpers.dll" Private="True"/>
-				<Reference Name="System.Data" AssemblyName="System.Data" HintPath="..\lib\System.Data.dll" Private="False"/>
-				<Reference Name="rt" AssemblyName="rt" HintPath="..\lib\j2sdk1.4.1\rt.dll" Private="False"/>
-				<Reference Name="j2ee" AssemblyName="j2ee" HintPath="..\lib\j2ee.dll"/>
+				<Reference Name="rt" AssemblyName="rt" HintPath="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE\jgac\jre5\rt.dll" Private="False"/>
+				<Reference Name="System" AssemblyName="System" HintPath="..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.dll" Private="False"/>
+				<Reference Name="System.Data" AssemblyName="System.Data" HintPath="..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Data.dll" Private="False"/>
+				<Reference Name="System.Xml" AssemblyName="System.Xml" HintPath="..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Xml.dll" Private="False"/>
+				<Reference Name="System.Drawing" AssemblyName="System.Drawing" HintPath="..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Drawing.dll"/>
+				<Reference Name="j2ee" AssemblyName="j2ee" HintPath="refs.jvm\j2ee.dll" Private="False"/>
 			</References>
 		</Build>
 		<Files>
@@ -25,7 +24,6 @@
 				<File RelPath="Locale.cs" Link="..\..\build\common\Locale.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="Consts.cs" Link="..\..\build\common\Consts.cs.in" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="MonoTODOAttribute.cs" Link="..\..\build\common\MonoTODOAttribute.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Mail\ChangeLog" BuildAction="None"/>
 				<File RelPath="Assembly\AssemblyInfo.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web\ApplicationShutdownReason.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web\BeginEventHandler.cs" SubType="Code" BuildAction="Compile"/>
@@ -76,8 +74,10 @@
 				<File RelPath="System.Web\IHttpHandlerFactory.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web\IHttpMapPath.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web\IHttpModule.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web\InputFilterStream.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web\MimeTypes.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web\NoParamsInvoker.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web\OutputFilterStream.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web\ParserError.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web\ParserErrorCollection.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web\ProcessInfo.cs" SubType="Code" BuildAction="Compile"/>
@@ -115,30 +115,14 @@
 				<File RelPath="System.Web.Compilation\ILocation.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Compilation\Location.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Compilation\ParseException.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Configuration\AdapterDictionary.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Configuration\AnonymousIdentificationSection.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Configuration\AssemblyCollection.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Configuration\AssemblyInfo.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Configuration\AuthConfig.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Configuration\AuthenticationConfigHandler.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Configuration\AuthenticationMode.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Configuration\AuthenticationSection.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Configuration\AuthorizationConfig.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Configuration\AuthorizationConfigHandler.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Configuration\AuthorizationRuleAction.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Configuration\BuildProvider.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Configuration\BuildProviderAppliesTo.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Configuration\BuildProviderCollection.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Configuration\CodeSubDirectoriesCollection.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Configuration\CodeSubDirectory.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Configuration\CompilationSection.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Configuration\Compiler.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Configuration\CustomErrorsConfigHandler.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Configuration\CustomErrorsMode.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Configuration\ExpressionBuilder.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Configuration\ExpressionBuilderCollection.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Configuration\FormsAuthPasswordFormat.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Configuration\FormsAuthenticationConfiguration.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Configuration\FormsProtectionEnum.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Configuration\GlobalizationConfiguration.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Configuration\GlobalizationConfigurationHandler.cs" SubType="Code" BuildAction="Compile"/>
@@ -149,30 +133,14 @@
 				<File RelPath="System.Web.Configuration\HttpModulesConfigurationHandler.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Configuration\HttpRuntimeConfig.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Configuration\HttpRuntimeConfigurationHandler.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Configuration\IRemoteWebConfigurationHostServer.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Configuration\InternalSection.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Configuration\MachineKeyConfig.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Configuration\MachineKeyConfigHandler.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Configuration\MachineKeyValidation.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Configuration\MembershipSection.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Configuration\ModulesConfiguration.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Configuration\PagesConfiguration.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Configuration\PagesConfigurationHandler.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Configuration\PagesEnableSessionState.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Configuration\PagesToCountAction.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Configuration\ProcessModelComAuthenticationLevel.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Configuration\ProcessModelComImpersonationLevel.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Configuration\ProcessModelLogLevel.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Configuration\SerializationMode.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Configuration\SiteMapSection.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Configuration\TraceConfig.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Configuration\TraceConfigurationHandler.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Configuration\TraceDisplayMode.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Configuration\VirtualDirectoryMapping.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Configuration\VirtualDirectoryMappingCollection.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Configuration\WebConfigurationFileMap.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Configuration\WebConfigurationHost.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Configuration\WebConfigurationManager.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Configuration\WebConfigurationSettings.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Configuration\WebControlsSectionHandler.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Handlers\AssemblyResourceLoader.cs" SubType="Code" BuildAction="Compile"/>
@@ -896,7 +864,6 @@
 				<File RelPath="System.Web.Util\StrUtils.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Util\TimeUtil.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Util\TransactedCallback.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Util\Transactions.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Util\UrlUtils.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Util\WebEncoding.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Util\WebTrace.cs" SubType="Code" BuildAction="Compile"/>
@@ -904,6 +871,6 @@
 				<File RelPath="System.Web.Util\WorkItemCallback.cs" SubType="Code" BuildAction="Compile"/>
 			</Include>
 		</Files>
-		<UserProperties REFS.JarPath.System.Drawing="..\lib\System.Drawing.jar" REFS.JarPath.j2ee.helpers="..\lib\J2EE.Helpers.jar" REFS.JarPath.j2se.helpers="..\lib\J2SE.Helpers.jar" project.JDKType="1.4.2_05" REFS.JarPath.System="..\lib\System.jar" REFS.JarPath.j2ee="..\lib\j2ee.jar" REFS.JarPath.rt="..\lib\rt.jar" REFS.JarPath.System.Data="..\lib\System.Data.jar" REFS.JarPath.vmwutils="..\lib\vmwutils.jar" REFS.JarPath.System.Xml="..\lib\System.Xml.jar" jarserver="ip2"/>
+		<UserProperties REFS.JarPath.System.Xml="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE\jgac\vmw4j2ee_110\System.Xml.jar" REFS.JarPath.vmwutils="..\lib\vmwutils.jar" REFS.JarPath.System.Data="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE\jgac\vmw4j2ee_110\System.Data.jar" REFS.JarPath.rt="..\lib\rt.jar" REFS.JarPath.j2ee="refs.jvm\j2ee.jar" REFS.JarPath.System="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE\jgac\vmw4j2ee_110\System.jar" project.JDKType="1.5.0_05" REFS.JarPath.j2se.helpers="..\lib\J2SE.Helpers.jar" REFS.JarPath.j2ee.helpers="..\lib\J2EE.Helpers.jar" REFS.JarPath.System.Drawing="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE\jgac\vmw4j2ee_110\System.Drawing.jar;..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE\jgac\vmw4j2ee_110\jai_imageio.jar"/>
 	</CSHARP>
-	<VisualMainWin><Project Prop2023="1.4.2_05" Prop2024="" Prop2026="" Prop2015="" Version="1.6.0" ProjectType="1"/><References/><Configs><Config Prop2000="0" Prop2001="0" Prop2002="0" Prop2003="0" Prop2004="0" Prop2005="3" Prop2006="" Prop2007="" Prop2008="" Prop2009="" Prop2010="" Prop2011="0" Prop2012="-1" Prop2013="yen" Prop2014="8009" Prop2016="" Prop2027="" Prop2019="0" Prop2020="285212672" Prop2021="4096" Prop2022="0" Prop2017="0" Prop2018="0" Name="Debug_Java"/><Config Prop2000="0" Prop2001="0" Prop2002="0" Prop2003="0" Prop2004="0" Prop2005="3" Prop2006="" Prop2007="" Prop2008="" Prop2009="" Prop2010="" Prop2011="0" Prop2012="-1" Prop2013="yen" Prop2014="8007" Prop2016="" Prop2027="" Prop2019="0" Prop2020="285212672" Prop2021="4096" Prop2022="0" Prop2017="0" Prop2018="-1" Name="Release_Java"/><Config Prop2000="1" Prop2001="0" Prop2002="0" Prop2003="0" Prop2004="0" Prop2005="0" Prop2006="" Prop2007="" Prop2008="" Prop2009="" Prop2010="" Prop2011="0" Prop2012="0" Prop2013="" Prop2014="0" Prop2016="" Prop2027="" Prop2019="0" Prop2020="285212672" Prop2021="4096" Prop2022="0" Prop2017="0" Prop2018="-1" Name="Release"/><Config Prop2000="1" Prop2001="0" Prop2002="0" Prop2003="0" Prop2004="0" Prop2005="0" Prop2006="" Prop2007="" Prop2008="" Prop2009="" Prop2010="" Prop2011="-1" Prop2012="0" Prop2013="" Prop2014="8000" Prop2016="" Prop2027="" Prop2019="-1" Prop2020="285212672" Prop2021="4096" Prop2022="0" Prop2017="0" Prop2018="-1" Name="Debug"/></Configs></VisualMainWin></VisualStudioProject>
+	<VisualMainWin><Project Prop2023="1.5.0_05" Prop2024="" Prop2026="" Prop2015="" Version="1.7.0" ProjectType="1"/><References/><Configs><Config Prop2000="1" Prop2001="0" Prop2002="0" Prop2003="0" Prop2004="0" Prop2005="0" Prop2006="" Prop2007="" Prop2008="" Prop2009="" Prop2010="" Prop2011="0" Prop2012="0" Prop2013="" Prop2014="0" Prop2016="" Prop2027="" Prop2019="0" Prop2020="285212672" Prop2021="4096" Prop2022="0" Prop2017="0" Prop2018="-1" Name="Release"/><Config Prop2000="0" Prop2001="0" Prop2002="0" Prop2003="0" Prop2004="0" Prop2005="3" Prop2006="" Prop2007="" Prop2008="" Prop2009="" Prop2010="" Prop2011="0" Prop2012="-1" Prop2013="yen" Prop2014="8009" Prop2016="" Prop2027="" Prop2019="0" Prop2020="285212672" Prop2021="4096" Prop2022="0" Prop2017="0" Prop2018="1" Name="Debug_Java"/><Config Prop2000="0" Prop2001="0" Prop2002="0" Prop2003="0" Prop2004="0" Prop2005="3" Prop2006="" Prop2007="" Prop2008="" Prop2009="" Prop2010="" Prop2011="0" Prop2012="-1" Prop2013="yen" Prop2014="8007" Prop2016="" Prop2027="" Prop2019="0" Prop2020="285212672" Prop2021="4096" Prop2022="0" Prop2017="0" Prop2018="-1" Name="Release_Java"/><Config Prop2000="1" Prop2001="0" Prop2002="0" Prop2003="0" Prop2004="0" Prop2005="0" Prop2006="" Prop2007="" Prop2008="" Prop2009="" Prop2010="" Prop2011="-1" Prop2012="0" Prop2013="" Prop2014="8000" Prop2016="" Prop2027="" Prop2019="-1" Prop2020="285212672" Prop2021="4096" Prop2022="0" Prop2017="0" Prop2018="-1" Name="Debug"/></Configs></VisualMainWin></VisualStudioProject>
