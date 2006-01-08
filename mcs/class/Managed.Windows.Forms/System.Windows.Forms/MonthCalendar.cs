@@ -501,7 +501,7 @@ namespace System.Windows.Forms {
 							diff_end = old_range.Start;
 						}
 					}
-
+					
 					// invalidate the region required
 					this.InvalidateDateRange (new SelectionRange (diff_start, diff_end));
 					// raise date changed event
@@ -1873,7 +1873,7 @@ namespace System.Windows.Forms {
 					// otherwise it simply means we have a selection spaning
 					// multiple months simply set rectangle inside the current month
 					start_rect = GetDateRowRect (current, current);
-					end_rect = GetDateRowRect (last_month, month_end);
+					end_rect = GetDateRowRect (month_end, month_end);
 				} else {
 					// it's outside the visible range
 					start_rect = GetDateRowRect (last_month, last_month.AddDays (1));
