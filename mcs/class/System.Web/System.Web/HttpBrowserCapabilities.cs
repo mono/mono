@@ -27,6 +27,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if NET_2_0
 using System.Security.Permissions;
 using System.Web.Configuration;
 using System.Web.UI;
@@ -40,16 +41,12 @@ namespace System.Web
 	// CAS
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	public partial class HttpBrowserCapabilities : HttpCapabilitiesBase
-#if NET_2_0
-		, IFilterResolutionService
-#endif
+	public class HttpBrowserCapabilities : HttpCapabilitiesBase, IFilterResolutionService
 	{
 		public HttpBrowserCapabilities ()
 		{
 		}
 
-#if NET_2_0
 		bool IFilterResolutionService.EvaluateFilter (string filterName)
 		{
 			throw new NotImplementedException ();
@@ -59,7 +56,7 @@ namespace System.Web
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 	}
 }
 
+#endif

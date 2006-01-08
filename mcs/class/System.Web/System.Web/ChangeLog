@@ -1,3 +1,9 @@
+2006-01-08  Konstantin Triger <kostat@mainsoft.com>
+
+	* BrowserCapabilities.cs, HttpBrowserCapabilities.cs,
+	HttpResponseStream.cs: TARGET_JVM changes to let the compilation
+	pass with csc 1.1.
+
 2006-01-04  Chris Toshok  <toshok@ximian.com>
 
 	* HttpContext.cs (IsCustomErrorEnabled): add CONFIGURATION_2_0

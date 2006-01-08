@@ -75,93 +75,70 @@ namespace System.Web {
 			}
 		}
 #if TARGET_JVM
-		class Chunk
-		{
-			public byte[] data;
-			public int size;
-			public const int Length = 32 * 1024;
-			
-			public Chunk Next, Prev;
 
-			public Chunk () 
-			{
-				data = new byte[Length];
-				size = Length;
-			}
-	
-			public void Dispose ()
-			{
-			}
-	
-			public static Chunk Unlink (ref Chunk head, Chunk b)
-			{
-				if (head == b)
-					head = head.Next;
-				if (b.Prev != null)
-					b.Prev.Next = b.Next;
-				if (b.Next != null)
-					b.Next.Prev = b.Prev;
+		class BlockManager {
+			const int PreferredLength = 16 * 1024;
+			static readonly byte[] EmptyBuffer = new byte[0];
 
-				b.Next = b.Prev = null;
-				return b;
-			}
-	
-			public static Chunk Link (Chunk head, Chunk b)
-			{
-				b.Next = head;
-				if (head != null)
-					head.Prev = b;
-				return b;
+			byte[] buffer = EmptyBuffer;
+			int position;
+
+			public BlockManager () {
 			}
 
-			public static void Copy(byte[] buff, int offset, Chunk c, int pos, int len)
-			{
-				Array.Copy(buff, offset, c.data, pos, len);
+			public int Position {
+				get { return position; }
 			}
 
-			public static void Copy(Chunk c, int pos, byte[] buff, int offset, int len)
-			{
-				Array.Copy(c.data, pos, buff, offset, len);
-			}
-		}
+			void EnsureCapacity (int capacity) {
+				if (buffer.Length >= capacity)
+					return;
 
-		sealed class BufferManager {
-			static Chunk filled;
-			static Chunk empty;
-	
-			public static Chunk GetChunk (int cb)
-			{
-				Chunk c;
-				if (empty == null)
-					empty = new Chunk (cb);
-				
-				c = empty;
-				filled = Chunk.Link (filled, Chunk.Unlink (ref empty, c));
-				return c;
+				capacity += PreferredLength;
+				capacity = (capacity / PreferredLength) * PreferredLength;
+				byte[] temp = new byte[capacity];
+				Array.Copy(buffer, 0, temp, 0, buffer.Length);
+				buffer = temp;
 			}
-	
-			public static void DisposeChunk (Chunk c)
-			{
-				empty = Chunk.Link (empty, Chunk.Unlink (ref filled, c));
+
+			public void Write (byte [] buffer, int offset, int count) {
+				if (count == 0)
+					return;
+
+				EnsureCapacity (position + count);
+				Array.Copy(buffer, offset, this.buffer, position, count);
+				position += count;
 			}
-	
-			public static void DisposeEmptyChunks ()
-			{
-				for (Chunk c = empty; c != null; c = c.Next)
-					c.Dispose ();
-				empty = null;
+
+			public void Send (HttpWorkerRequest wr, int start, int end) {
+				int length = end - start;
+				if (length <= 0)
+					return;
+
+				if (length > buffer.Length - start)
+					length = buffer.Length - start;
+
+				if (start > 0) {
+					byte[] temp = new byte[length];
+					Array.Copy(buffer, start, temp, 0, length);
+					buffer = temp;
+				}
+				wr.SendResponseFromMemory(buffer, length);
 			}
-			
-	
-			public static void PrintState ()
-			{
-				Console.WriteLine ("Filled blocks:");
-				for (Chunk c = filled; c != null; c = c.Next)
-					Console.WriteLine ("\t{0}", c);
-				Console.WriteLine ("Empty blocks:");
-				for (Chunk c = empty; c != null; c = c.Next)
-					Console.WriteLine ("\t{0}", c);	
-				
+
+			public void Send (Stream stream, int start, int end) {
+				int length = end - start;
+				if (length <= 0)
+					return;
+
+				if (length > buffer.Length - start)
+					length = buffer.Length - start;
+
+				stream.Write(buffer, start, length);
+			}
+
+			public void Dispose () {
+				buffer = null;
 			}
 		}
 
@@ -505,13 +482,24 @@ namespace System.Web {
 			}
 		}
 
+#if TARGET_JVM
+		void UnsafeWrite (HttpWorkerRequest wr, byte [] buffer, int offset, int count)
+		{
+			if (count <= 0)
+				return;
+
+			byte[] copy = new byte[count];
+			Array.Copy(buffer, offset, copy, 0, count);
+			wr.SendResponseFromMemory (copy, count);
+		}
+#else
 		unsafe void UnsafeWrite (HttpWorkerRequest wr, byte [] buffer, int offset, int count)
 		{
 			fixed (byte *ptr = buffer) {
 				wr.SendResponseFromMemory ((IntPtr) (ptr + offset), count);
 			}
 		}
-
+#endif
 		void AppendBuffer (byte [] buffer, int offset, int count)
 		{
 			if (!(cur_bucket is ByteBucket))

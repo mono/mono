@@ -33,6 +33,7 @@ using System.Collections;
 using System.Globalization;
 using System.Web.Configuration;
 using System.Web.UI;
+using System.Security.Permissions;
 
 #if NET_2_0
 namespace System.Web.Configuration {
@@ -40,7 +41,9 @@ namespace System.Web.Configuration {
 #else
 
 namespace System.Web {
-	public partial class HttpBrowserCapabilities : HttpCapabilitiesBase
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	public class HttpBrowserCapabilities : HttpCapabilitiesBase
 #endif
 	{
 		const int HaveActiveXControls = 1;
@@ -95,6 +98,12 @@ namespace System.Web {
 		bool win32;
 		Version [] clrVersions;
 		internal string useragent;
+
+#if !NET_2_0
+		public HttpBrowserCapabilities ()
+		{
+		}
+#endif
 
 		public bool ActiveXControls {
 			get {
