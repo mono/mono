@@ -14,7 +14,7 @@ int main (int argc, char* argv[])
 	newargs [++i] = NULL;
 
 	if (config_dir != NULL && getenv ("MONO_CFG_DIR") == NULL)
-		setenv ("MONO_CFG_DIR", config_dir, 1);
+		mono_set_dirs (getenv ("MONO_PATH"), config_dir);
 	
 	install_dll_config_files ();
 	mono_register_bundled_assemblies(bundled);

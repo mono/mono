@@ -8,3 +8,25 @@ Files:
 	* Need to trace a typical execution and locate the files that this
 	  will require at runtime, provide hooks of some form.
 
+Windows Issues:
+
+--static doesn't work because libmono.a is not distributed with the
+Windows package.
+
+Not a big deal, because the needed dlls can be simply distributed with
+the mkbundle-generated executable.
+
+For example, a bundled XSP needs:
+
+mono-1.dll
+libglib*.dll
+libgmodule*.dll
+libgthread*.dll
+iconv.dll
+intl.dll
+
+(roundabout 10MB). This seems to be the minimal working set of dlls
+that have to be distributed with a bundled application.
+
+-z doesn't work due to some weird cygwin zlib problems.
+

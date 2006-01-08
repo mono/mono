@@ -1,3 +1,7 @@
+2005-12-29  Robert Jordan  <robertj@gmx.net>
+
+	* mkbundle.cs, template.c, template_z.c: Added support for Windows.
+
 2005-12-18 Alexandre Rocha Lima e Marcondes
 <alexandre@psl-pr.softwarelivre.org>
 
