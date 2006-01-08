@@ -144,6 +144,7 @@ namespace System.Windows.Forms
 			MouseDown += new MouseEventHandler (OnMouseDownCB);
 			MouseUp += new MouseEventHandler (OnMouseUpCB);
 			MouseMove += new MouseEventHandler (OnMouseMoveCB);
+			KeyDown +=new KeyEventHandler(OnKeyDownCB);
 		}
 
 		#region events
@@ -1106,6 +1107,33 @@ namespace System.Windows.Forms
 
 			return -1;
 		}
+
+		private void OnKeyDownCB(object sender, KeyEventArgs e)
+		{
+			switch (e.KeyCode) 
+			{			
+				case Keys.Up:
+					SelectedIndex = Math.Max(SelectedIndex-1, 0);
+					break;				
+	
+				case Keys.Down:			
+					SelectedIndex = Math.Min(SelectedIndex+1, Items.Count-1);
+					break;
+				
+				case Keys.PageUp:
+					if (listbox_ctrl != null)
+						SelectedIndex = Math.Max(SelectedIndex- (listbox_ctrl.page_size-1), 0);
+					break;				
+	
+				case Keys.PageDown:		
+					if (listbox_ctrl != null)		
+						SelectedIndex = Math.Min(SelectedIndex+(listbox_ctrl.page_size-1), Items.Count-1);
+					break;
+				
+				default:
+					break;
+			}
+		}
 		
 		internal virtual void OnMouseDownCB (object sender, MouseEventArgs e)
     		{    			
@@ -1932,8 +1960,8 @@ namespace System.Windows.Forms
 				if (owner.DropDownStyle != ComboBoxStyle.Simple && owner.Items.Count == 0)
 					return false;
 					
-				SetTopItem (0);
 				SetHighLightedItem (owner.SelectedItem);
+				SetTopItem (GetHighLightedIndex ());
 				
 				CalcListBoxArea ();				
 				Show ();
