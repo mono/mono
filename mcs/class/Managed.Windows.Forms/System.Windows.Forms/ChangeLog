@@ -1,5 +1,9 @@
 2006-01-08  Alexander Olk  <alex.olk@googlemail.com>
 
+	* MimeIcon.cs: Added internal class SVGUtil.
+
+2006-01-08  Alexander Olk  <alex.olk@googlemail.com>
+
 	* FileDialog.cs: Don't crash if there are two files with the
 	  same name but different locations.
 

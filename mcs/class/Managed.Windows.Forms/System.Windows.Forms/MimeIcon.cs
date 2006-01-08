@@ -48,6 +48,7 @@ using System.Collections;
 using System.Collections.Specialized;
 using System.IO;
 using System.Text;
+using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms
 {
@@ -122,7 +123,7 @@ namespace System.Windows.Forms
 			else
 				session = "";
 			
-			Console.WriteLine( "Desktop session is: " + session );
+			//Console.WriteLine( "Desktop session is: " + session ); 
 			
 			if ( session == "KDE" )
 			{
@@ -257,6 +258,25 @@ namespace System.Windows.Forms
 			
 			int index = SmallIcons.Images.Add( bmp, Color.Transparent );
 			LargeIcons.Images.Add( bmp, Color.Transparent );
+			
+			AddMimeTypeIconIndexHash( name, index );
+		}
+		
+		internal static void AddSVGIcon( string name, string fullname )
+		{
+			if ( !CheckIfIconIsNeeded( name ) )
+				return;
+			
+			if ( added_icons.Contains( name ) )
+				return;
+			
+			added_icons.Add( name );
+			
+			Image image = SVGUtil.GetSVGasImage (fullname, 24, 24);
+			
+			int index = SmallIcons.Images.Add( image, Color.Transparent );
+			image = SVGUtil.GetSVGasImage (fullname, 48, 48);
+			LargeIcons.Images.Add( image, Color.Transparent );
 			
 			AddMimeTypeIconIndexHash( name, index );
 		}
@@ -761,6 +781,68 @@ namespace System.Windows.Forms
 					}
 				}
 			}
+		}
+	}
+	
+	internal class SVGUtil {
+		[DllImport("librsvg-2.so")]
+		static extern IntPtr rsvg_pixbuf_from_file_at_size (string file_name, int  width, int  height, out IntPtr error);
+		
+		[DllImport("libgdk-x11-2.0.so")]
+		static extern bool gdk_pixbuf_save_to_buffer (IntPtr pixbuf, out IntPtr buffer, out uint buffer_size, string type, out IntPtr error, IntPtr option_dummy);
+		
+		[DllImport("libglib-2.0.so")]
+		static extern void g_free (IntPtr mem);
+		
+		[DllImport("libgdk-x11-2.0.so")]
+		static extern bool gdk_init_check(out int argc, string argv);
+		
+		[DllImport("libgobject-2.0.so")]
+		static extern void g_object_unref (IntPtr nativeObject);
+		
+		static bool inited = false;
+		
+		static void Init () {
+			int argc = 0;
+			string argv = "";
+			
+			gdk_init_check (out argc, argv);
+			
+			inited = true;
+		}
+		
+		public static Image GetSVGasImage (string filename, int width, int height) {
+			if (!inited)
+				Init ();
+			
+			if (!File.Exists (filename))
+				return null;
+			IntPtr error = IntPtr.Zero;
+			IntPtr pixbuf = rsvg_pixbuf_from_file_at_size (filename, width, height, out error);
+			
+			if (error != IntPtr.Zero)
+				return null;
+			
+			error = IntPtr.Zero;
+			IntPtr buffer;
+			uint buffer_size;
+			string type = "png";
+			
+			bool saved = gdk_pixbuf_save_to_buffer (pixbuf, out buffer, out buffer_size, type, out error, IntPtr.Zero);
+			
+			if (!saved)
+				return null;
+			
+			byte[] result = new byte [buffer_size];
+			Marshal.Copy (buffer, result, 0, (int) buffer_size);
+			g_free (buffer);
+			g_object_unref (pixbuf);
+			
+			Image image = null;
+			using (MemoryStream s = new MemoryStream (result))
+				image = Image.FromStream (s);
+			
+			return image;
 		}
 	}
 }
