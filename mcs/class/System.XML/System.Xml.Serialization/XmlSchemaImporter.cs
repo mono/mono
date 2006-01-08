@@ -1786,7 +1786,8 @@ namespace System.Xml.Serialization
 		}
 		
 		XmlTypeMapping ReflectType (Type type, string ns)
-		{			if (!encodedFormat)
+		{
+			if (!encodedFormat)
 			{
 				if (auxXmlRefImporter == null) auxXmlRefImporter = new XmlReflectionImporter ();
 				return auxXmlRefImporter.ImportTypeMapping (type, ns);
