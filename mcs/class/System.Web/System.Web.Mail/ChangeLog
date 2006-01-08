@@ -1,3 +1,9 @@
+2006-01-08  Konstantin Triger <kostat@mainsoft.com>
+
+	* SmtpClient.cs, SmtpMail.cs, MailMessage.cs, MailMessageWrapper.cs,
+		MailAttachment.cs: TARGET_JVM changes to let the compilation
+		pass with csc 1.1.
+
 2005-11-28  Chris Toshok  <toshok@ximian.com>
 
 	* SmtpClient.cs: ignore warning 618 (obsolete) when compiling an
