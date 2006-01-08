@@ -87,9 +87,22 @@ When passed, DIR will be set for the MONO_CFG_DIR environment variable
 Compresses the assemblies before embedding. This results in smaller
 executable files, but increases startup time and requires zlib to be
 installed on the target system.
+.SH ENVIRONMENT VARIABLES
+.TP
+.I "AS"
+Assembler command. The default is "as".
+.TP
+.I "CC"
+C compiler command. The default is "cc" under Linux and "gcc -mno-cygwin"
+under Windows.
 .SH FILES
 This program will load referenced assemblies from the Mono assembly
 cache. 
+.SH BUGS
+The options "--static" and "-z" are not supported under Windows.
+Moreover, a full cygwin environment containing at least "gcc" and "as"
+is required for the build process. The generated executable does not
+depend on cygwin.
 .SH MAILING LISTS
 Visit http://lists.ximian.com/mailman/listinfo/mono-devel-list for details.
 .SH WEB SITE
