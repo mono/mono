@@ -35,7 +35,11 @@ namespace System.Web.Configuration
 	// CAS
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+#if NET_2_0
 	public partial class HttpCapabilitiesBase
+#else
+	public class HttpCapabilitiesBase
+#endif
 	{
 		Hashtable capabilities;
 
