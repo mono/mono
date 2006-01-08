@@ -1949,7 +1949,17 @@ namespace System.Windows.Forms
 			
 			fileStruct.fullname = fileInfo.FullName;
 			
-			ListViewItem listViewItem = new ListViewItem( fileInfo.Name );
+			string fileName = fileInfo.Name;
+
+			if (fileHashtable.ContainsKey (fileName)) {
+				int i = 1;
+				while(fileHashtable.ContainsKey (fileName + i)) {
+					i++;
+				}
+				fileName += "[" + i + "]";
+			}
+			
+			ListViewItem listViewItem = new ListViewItem( fileName );
 			
 			listViewItem.ImageIndex = MimeIconEngine.GetIconIndexForFile( fileStruct.fullname );
 			
@@ -1967,7 +1977,7 @@ namespace System.Windows.Forms
 			
 			fileStruct.attributes = FileAttributes.Normal;
 			
-			fileHashtable.Add( fileInfo.Name, fileStruct );
+			fileHashtable.Add( fileName, fileStruct );
 			
 			Items.Add( listViewItem );
 		}
@@ -1985,7 +1995,6 @@ namespace System.Windows.Forms
 			{
 				try
 				{
-					
 					XmlTextReader xtr = new XmlTextReader( recently_used_path );
 					while ( xtr.Read( ) ) 
 					{
