@@ -1961,7 +1961,8 @@ namespace System.Windows.Forms
 					return false;
 					
 				SetHighLightedItem (owner.SelectedItem);
-				SetTopItem (GetHighLightedIndex ());
+				int index = GetHighLightedIndex ();
+				SetTopItem (index == -1 ? 0 : index );
 				
 				CalcListBoxArea ();				
 				Show ();

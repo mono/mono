@@ -1,7 +1,11 @@
+2006-01-10  Jonathan Chambers  <jonathan.chambers@ansys.com>
+
+	* ComboBox.cs: Fix crash when there is no selected item (due to last commit)
+
 2006-01-09  Jonathan Chambers  <jonathan.chambers@ansys.com>
 
 	* ComboBox.cs: Added KeyDown event handler for processing arrow keys
-	and PgUp/PgDown. Also, scroll to selected item upon dropdown.
+	and PgUp/PgDown. Also, scroll to selected item upon dropdown. Bugs 76857 and 76788.
 
 2006-01-08  Alexander Olk  <alex.olk@googlemail.com>
 
