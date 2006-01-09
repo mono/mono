@@ -1,3 +1,14 @@
+2006-01-09  Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* CapabilitiesLoader.cs: Merged TARGET_JVM parts in LoadFile
+	from /main/9
+	* HttpException.cs: Merged TARGET_JVM parts in GetHtmlizedErrorMessage
+	from /main/13
+	* HttpRequest.cs: Merged TARGET_JVM parts in MapPath from /main/29
+	* HttpResponse.cs: Merged TARGET_JVM parts in End() from /main/30
+	* StaticFileHandler.cs: Merged TARGET_JVM parts in ProcessRequest
+	from /main/7
+
 2006-01-08  Konstantin Triger <kostat@mainsoft.com>
 
 	* BrowserCapabilities.cs, HttpBrowserCapabilities.cs,

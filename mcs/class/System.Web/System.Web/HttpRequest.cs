@@ -1051,6 +1051,15 @@ namespace System.Web {
 			if (worker_request == null)
 				throw new HttpException ("No HttpWorkerRequest");
 
+#if TARGET_J2EE
+ 			if (baseVirtualDir.Equals(BaseVirtualDir))
+ 			{
+ 				string val =  System.Web.J2EE.PageMapper.GetFromMapPathCache(virtualPath);
+ 				if (val != null)				
+ 					return val;				
+ 			}
+#endif 
+
 			if (virtualPath == null || virtualPath == "")
 				virtualPath = "";
 			else
@@ -1059,6 +1068,11 @@ namespace System.Web {
 			if (virtualPath.IndexOf (':') != -1)
 				throw new ArgumentNullException (
 					String.Format ("MapPath: Invalid path '{0}', only virtual paths are accepted", virtualPath));
+
+#if TARGET_J2EE
+ 			if (virtualPath.StartsWith(vmw.common.IAppDomainConfig.WAR_ROOT_SYMBOL))			
+ 				return 	virtualPath;			
+#endif 
 
 			if (System.IO.Path.DirectorySeparatorChar != '/')
 				virtualPath.Replace (System.IO.Path.DirectorySeparatorChar, '/');

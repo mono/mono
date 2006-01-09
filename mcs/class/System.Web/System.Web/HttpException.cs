@@ -35,9 +35,7 @@ using System.Runtime.InteropServices;
 using System.Security.Permissions;
 using System.Text;
 using System.Web.Util;
-#if !TARGET_J2EE
 using System.Web.Compilation;
-#endif
 
 namespace System.Web
 {
@@ -164,42 +162,7 @@ namespace System.Web
 			string res = HttpUtility.HtmlEncode (s);
 			return res.Replace ("\r\n", "<br />");
 		}
-#if TARGET_J2EE
-		string GetHtmlizedErrorMessage ()
-		{
-			StringBuilder builder = new StringBuilder ("<html>\r\n<title>");
-			HtmlizedException exc = (HtmlizedException) this.InnerException;
-			builder.Append (exc.Title);
-			builder.AppendFormat ("</title><body bgcolor=\"white\">" +
-					      "<h1><font color=\"red\">Server Error in '{0}' " +
-					      "Application</font></h1><hr>\r\n",
-					      HttpRuntime.AppDomainAppVirtualPath);
-		
-			builder.AppendFormat ("<h2><font color=\"maroon\"><i>{0}</i></font></h2>\r\n", exc.Title);
-			builder.AppendFormat ("<b>Description: </b>{0}\r\n<p>\r\n", HtmlEncode (exc.Description));
-			builder.AppendFormat ("<b>Error message: </b>{0}\r\n<p>\r\n", HtmlEncode (exc.ErrorMessage));
 
-			if (exc.FileName != null)
-				builder.AppendFormat ("<b>File name: </b> {0}", HtmlEncode (exc.FileName));
-
-			if (exc.FileText != null) {
-				if (exc.SourceFile != exc.FileName)
-					builder.AppendFormat ("<p><b>Source File: </b>{0}", exc.SourceFile);
-
-				builder.Append ("\r\n<p>\r\n");
-
-				builder.Append ("<table summary=\"Source file\" width=\"100%\" " +
-							"bgcolor=\"#ffffc\">\r\n<tr><td>");
-					WriteSource (builder, exc);
-					builder.Append ("</td></tr>\r\n</table>\r\n<p>\r\n");
-			}
-
-			builder.Append ("<hr>\r\n</body>\r\n</html>\r\n");
-			builder.AppendFormat ("<!--\r\n{0}\r\n-->\r\n", HtmlEncode (exc.ToString ()));
-			builder.AppendFormat ("<!--\r\n{0}\r\n-->\r\n", HtmlEncode (exc.StackTrace));
-			return builder.ToString ();
-		}
-#else
 		string GetHtmlizedErrorMessage ()
 		{
 			StringBuilder builder = new StringBuilder ("<html>\r\n<title>");
@@ -244,9 +207,12 @@ namespace System.Web
 			
 			builder.Append ("<hr>\r\n</body>\r\n</html>\r\n");
 			builder.AppendFormat ("<!--\r\n{0}\r\n-->\r\n", HtmlEncode (exc.ToString ()));
+#if TARGET_JVM
+			builder.AppendFormat ("<!--\r\n{0}\r\n-->\r\n", HtmlEncode (exc.StackTrace));
+#endif
 			return builder.ToString ();
 		}
-#endif
+
 		static void WriteTextAsCode (StringBuilder builder, string text)
 		{
 			builder.Append ("<code><pre>\r\n");

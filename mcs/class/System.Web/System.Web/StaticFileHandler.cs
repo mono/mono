@@ -54,7 +54,21 @@ namespace System.Web
 			try {
 				if (strHeader != null) {
 					DateTime dtIfModifiedSince = DateTime.ParseExact (strHeader, "r", null);
-					DateTime ftime = fi.LastWriteTime.ToUniversalTime ();
+					DateTime ftime;
+#if TARGET_JVM
+					try 
+					{
+						ftime = fi.LastWriteTime.ToUniversalTime ();
+					} 
+					catch (NotSupportedException) 
+					{
+						// The file is in a WAR, it was not modified.
+						response.StatusCode = 304;
+						return;
+					}
+#else
+					ftime = fi.LastWriteTime.ToUniversalTime ();
+#endif
 					if (ftime <= dtIfModifiedSince) {
 						response.StatusCode = 304;
 						return;

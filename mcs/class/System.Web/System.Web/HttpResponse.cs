@@ -536,7 +536,12 @@ namespace System.Web {
 		public void End ()
 		{
 			if (context.TimeoutPossible) {
+#if TARGET_JVM
+				Flush();
+				throw new vmw.@internal.j2ee.StopExecutionException();
+#else
 				Thread.CurrentThread.Abort (FlagEnd);
+#endif
 			} else {
 				// If this is called from an async event, signal the completion
 				// but don't thow.
@@ -827,7 +832,11 @@ namespace System.Web {
 			Flush ();
 		}
 
-#if !TARGET_JVM
+#if TARGET_JVM
+		public void WriteFile (IntPtr fileHandle, long offset, long size) {
+			throw new NotSupportedException("IntPtr not supported");
+		}
+#else
 		public void WriteFile (IntPtr fileHandle, long offset, long size)
 		{
 			if (offset < 0)

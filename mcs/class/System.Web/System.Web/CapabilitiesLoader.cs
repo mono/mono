@@ -224,7 +224,19 @@ namespace System.Web
 		static void LoadFile (string filename)
 		{
 #if TARGET_J2EE
-			TextReader input = GetJavaTextReader(filename);
+			Stream s;
+			try {
+				string custom = String.Concat("browscap/", filename);
+				s = (Stream)vmw.common.IOUtils.getStreamForGHConfigs(custom);
+				if (s == null)
+					s = (Stream)vmw.common.IOUtils.getStreamForGHConfigs(filename);
+				if (s == null)
+					return;
+			}
+			catch (Exception e) {
+				return;
+			}
+			TextReader input = new StreamReader (s);
 			if(input == null)
 				return;
 #else
