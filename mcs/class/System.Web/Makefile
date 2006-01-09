@@ -49,7 +49,7 @@ RESOURCE_FILES_2 = \
 OTHER_RES = $(RESOURCE_FILES_1)
 ifeq (net_2_0, $(PROFILE))
 OTHER_RES += $(RESOURCE_FILES_2)
-OTHER_LIB_MCS_FLAGS = -r:System.Configuration.dll
+OTHER_LIB_MCS_FLAGS = -r:System.Configuration.dll -d:CONFIGURATION_2_0
 endif
 
 
