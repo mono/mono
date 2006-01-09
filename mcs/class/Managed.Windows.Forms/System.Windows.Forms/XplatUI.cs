@@ -741,6 +741,14 @@ namespace System.Windows.Forms {
 			driver.SetWindowStyle(handle, cp);
 		}
 
+		internal static void SetWindowTransparency(IntPtr handle, double transparency, Color key) 
+		{
+			#if DriverDebug
+				Console.WriteLine("SetWindowTransparency({0:X}): Called", handle.ToInt32());
+			#endif
+			driver.SetWindowTransparency(handle, transparency, key);
+		}
+
 		internal static bool SetZOrder(IntPtr handle, IntPtr AfterhWnd, bool Top, bool Bottom) {
 			#if DriverDebug
 				Console.WriteLine("SetZOrder({0:X}, {1:X}, {2}, {3}): Called", handle.ToInt32(), AfterhWnd.ToInt32(), Top, Bottom);

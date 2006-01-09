@@ -120,6 +120,8 @@ namespace System.Windows.Forms {
 
 		internal abstract void SetWindowStyle(IntPtr handle, CreateParams cp);
 
+		internal abstract void SetWindowTransparency(IntPtr handle, double transparency, Color key);
+
 		internal virtual void SetAllowDrop (IntPtr handle, bool value)
 		{
 			Console.Error.WriteLine ("Drag and Drop is currently " +

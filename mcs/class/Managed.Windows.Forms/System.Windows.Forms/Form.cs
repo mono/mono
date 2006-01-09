@@ -607,6 +607,10 @@ namespace System.Windows.Forms {
 
 			set {
 				opacity = value;
+
+				UpdateStyles();
+				if (Opacity < 1.0)
+					XplatUI.SetWindowTransparency(Handle, opacity, TransparencyKey);
 			}
 		}
 			
@@ -768,7 +772,10 @@ namespace System.Windows.Forms {
 			set {
 				AllowTransparency = true;
 				transparency_key = value;
-				// TODO: change window attributes; a new driver call
+
+				UpdateStyles();
+				if (TransparencyKey != Color.Empty)
+					XplatUI.SetWindowTransparency(Handle, Opacity, TransparencyKey);
 			}
 		}
 
@@ -887,6 +894,10 @@ namespace System.Windows.Forms {
 
 				if (HelpButton) {
 					cp.ExStyle |= (int)WindowStyles.WS_EX_CONTEXTHELP;
+				}
+				
+				if (Opacity < 1.0 || TransparencyKey != Color.Empty) {
+					cp.ExStyle |= (int)WindowStyles.WS_EX_LAYERED;
 				}
 
 				return cp;

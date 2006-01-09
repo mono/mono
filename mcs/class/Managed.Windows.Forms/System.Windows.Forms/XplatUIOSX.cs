@@ -1668,6 +1668,9 @@ namespace System.Windows.Forms {
 				ChangeWindowAttributes ((IntPtr)WindowMapping [hwnd.Handle], attributes, outAttributes);
 			}
 		}
+
+		internal override void SetWindowTransparency(IntPtr handle, double transparency, Color key) {
+		}
 		
 		internal override bool SetZOrder(IntPtr handle, IntPtr after_handle, bool Top, bool Bottom) {
 			Hwnd hwnd = Hwnd.ObjectFromHandle (handle);

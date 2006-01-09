@@ -3642,6 +3642,10 @@ namespace System.Windows.Forms {
 			SetHwndStyles(hwnd, cp);
 			SetWMStyles(hwnd, cp);
 		}
+
+		internal override void SetWindowTransparency(IntPtr handle, double transparency, Color key) {
+		}
+
 		internal override bool SetZOrder(IntPtr handle, IntPtr after_handle, bool top, bool bottom) {
 			Hwnd	hwnd = Hwnd.ObjectFromHandle(handle);
 

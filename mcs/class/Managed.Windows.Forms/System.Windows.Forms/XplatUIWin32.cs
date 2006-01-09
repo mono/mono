@@ -308,9 +308,9 @@ namespace System.Windows.Forms {
 		}
 
 		internal struct COLORREF {
-			internal byte			B;
-			internal byte			G;
 			internal byte			R;
+			internal byte			G;
+			internal byte			B;
 			internal byte			A;
 		}
 
@@ -615,6 +615,14 @@ namespace System.Windows.Forms {
 			SND_PURGE			= 0x0040,
 			SND_APPLICATION			= 0x0080,
 		}
+
+		[Flags]
+		internal enum LayeredWindowAttributes : int {
+			LWA_COLORKEY		= 0x1,
+			LWA_ALPHA			= 0x2,
+		}
+
+		
 		#endregion
 
 		#region Constructor & Destructor
@@ -1111,6 +1119,23 @@ namespace System.Windows.Forms {
 		internal override void SetWindowStyle(IntPtr handle, CreateParams cp) {
 			Win32SetWindowLong(handle, WindowLong.GWL_STYLE, (uint)cp.Style);
 			Win32SetWindowLong(handle, WindowLong.GWL_EXSTYLE, (uint)cp.ExStyle);
+		}
+
+		
+		internal override void SetWindowTransparency(IntPtr handle, double transparency, Color key) {
+			LayeredWindowAttributes lwa = LayeredWindowAttributes.LWA_ALPHA;
+			byte opacity = (byte)(transparency*255);
+			COLORREF clrRef = new COLORREF();
+			if (key != Color.Empty) {
+				clrRef.R = key.R;
+				clrRef.G = key.G;
+				clrRef.B = key.B;
+				lwa = (LayeredWindowAttributes)( (int)lwa | (int)LayeredWindowAttributes.LWA_COLORKEY );
+			}
+			RECT rc;
+			rc.right = 1000;
+			rc.bottom = 1000;
+			uint error = Win32SetLayeredWindowAttributes(handle, clrRef, opacity, lwa);
 		}
 
 		internal override void UpdateWindow(IntPtr handle) {
@@ -2275,6 +2300,9 @@ namespace System.Windows.Forms {
 
 		[DllImport ("user32.dll", EntryPoint="GetWindowLong", CallingConvention=CallingConvention.StdCall)]
 		private extern static uint Win32GetWindowLong(IntPtr hwnd, WindowLong index);
+
+		[DllImport ("user32.dll", EntryPoint="SetLayeredWindowAttributes", CallingConvention=CallingConvention.StdCall)]
+		private extern static uint Win32SetLayeredWindowAttributes (IntPtr hwnd, COLORREF crKey, byte bAlpha, LayeredWindowAttributes dwFlags);
 
 		[DllImport ("gdi32.dll", EntryPoint="DeleteObject", CallingConvention=CallingConvention.StdCall)]
 		private extern static bool Win32DeleteObject(IntPtr o);
