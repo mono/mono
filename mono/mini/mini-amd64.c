@@ -377,7 +377,8 @@ add_valuetype (MonoMethodSignature *sig, ArgInfo *ainfo, MonoType *type,
 	}
 
 	for (quad = 0; quad < nquads; ++quad) {
-		int size, align;
+		int size;
+		guint32 align;
 		ArgumentClass class1;
 		
 		class1 = ARG_CLASS_NO_CLASS;
@@ -1253,7 +1254,7 @@ mono_arch_call_opcode (MonoCompile *cfg, MonoBasicBlock* bb, MonoCallInst *call,
 			call->out_args = arg;
 
 			if ((i >= sig->hasthis) && (MONO_TYPE_ISSTRUCT(sig->params [i - sig->hasthis]))) {
-				gint align;
+				guint32 align;
 				guint32 size;
 
 				if (sig->params [i - sig->hasthis]->type == MONO_TYPE_TYPEDBYREF) {
@@ -1419,7 +1420,7 @@ mono_arch_call_opcode2 (MonoCompile *cfg, MonoCallInst *call, int is_virtual) {
 		call->out_args = arg;
 
 		if ((i >= sig->hasthis) && (MONO_TYPE_ISSTRUCT(sig->params [i - sig->hasthis]))) {
-			gint align;
+			guint32 align;
 			guint32 size;
 
 			if (sig->params [i - sig->hasthis]->type == MONO_TYPE_TYPEDBYREF) {
@@ -1591,8 +1592,6 @@ mono_arch_call_opcode2 (MonoCompile *cfg, MonoCallInst *call, int is_virtual) {
 	if (sig->ret && MONO_TYPE_ISSTRUCT (sig->ret)) {
 		MonoInst *vtarg;
 
-		g_assert (call->inst.dreg != -1);
-
 		if (cinfo->ret.storage == ArgValuetypeInReg) {
 			/*
 			 * The valuetype is in RAX:RDX after the call, need to be copied to
@@ -1603,7 +1602,7 @@ mono_arch_call_opcode2 (MonoCompile *cfg, MonoCallInst *call, int is_virtual) {
 		}
 		else {
 			MONO_INST_NEW (cfg, vtarg, OP_MOVE);
-			vtarg->sreg1 = call->inst.dreg;
+			vtarg->sreg1 = call->vret_var->dreg;
 			/* FIXME: */
 			vtarg->dreg = cfg->next_vireg ++;
 			mono_bblock_add_inst (cfg->cbb, vtarg);
