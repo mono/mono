@@ -1,6 +1,7 @@
 System.Configuration/CallbackValidatorTest.cs
 System.Configuration/CommaDelimitedStringCollectionConverterTest.cs
 System.Configuration/CommaDelimitedStringCollectionTest.cs
+System.Configuration/ConfigurationElementTest.cs
 System.Configuration/ConfigurationLockCollectionTest.cs
 System.Configuration/ConfigurationPermissionTest.cs
 System.Configuration/ConfigurationManagerTest.cs
