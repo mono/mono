@@ -109,7 +109,7 @@ namespace System.Data
 			return filter != null ? filter.DependsOn(other) : false;
 		}
 		
-		void IExpression.Reset()
+		void IExpression.ResetExpression()
 		{
 		}
 

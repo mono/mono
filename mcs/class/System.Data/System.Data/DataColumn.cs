@@ -897,9 +897,8 @@ namespace System.Data {
 			_ordinal = -1;
 			_table = null;
 			if (_compiledExpression != null)
-				_compiledExpression.Reset ();
+				_compiledExpression.ResetExpression ();
 		}
 		#endregion // Methods
-
 	}
 }
