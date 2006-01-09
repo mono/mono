@@ -2086,8 +2086,7 @@ slot_num                : OPEN_BRACKET int32 CLOSE_BRACKET
                           }
                         ;
 
-type_spec		: class_ref
-			| OPEN_BRACKET slashed_name CLOSE_BRACKET
+type_spec		: OPEN_BRACKET slashed_name CLOSE_BRACKET
                           {
                                 // This is a reference to a global method in another
                                 // assembly. This is not supported in the MS version of ilasm
