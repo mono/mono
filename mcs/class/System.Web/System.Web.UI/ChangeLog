@@ -1,3 +1,8 @@
+2006-01-09  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* ObjectStateFormatter.cs: Merged TARGET_JVM parts in 
+	TypeFormatter.Read, TypeFormatter.Write from /main/5
+
 2006-01-09  Konstantin Triger <kostat@mainsoft.com>
 
 	* Page.cs: make ProcessRequest virtual under TARGET_JVM.
