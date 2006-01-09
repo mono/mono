@@ -1125,8 +1125,6 @@ mono_arch_call_opcode2 (MonoCompile *cfg, MonoCallInst *call, int is_virtual) {
 	}
 
 	if (sig->ret && MONO_TYPE_ISSTRUCT (sig->ret)) {
-		g_assert (call->inst.dreg != -1);
-
 		if (cinfo->ret.storage == ArgValuetypeInReg) {
 
 			MonoInst *zero_inst;
@@ -1178,7 +1176,7 @@ mono_arch_call_opcode2 (MonoCompile *cfg, MonoCallInst *call, int is_virtual) {
 				MonoInst *vtarg;
 				MONO_INST_NEW (cfg, vtarg, OP_X86_PUSH);
 				vtarg->type = STACK_MP;
-				vtarg->sreg1 = call->inst.dreg;
+				vtarg->sreg1 = call->vret_var->dreg;
 				mono_bblock_add_inst (cfg->cbb, vtarg);
 			}
 

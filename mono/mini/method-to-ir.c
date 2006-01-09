@@ -2402,7 +2402,7 @@ mono_emit_call_args (MonoCompile *cfg, MonoMethodSignature *sig,
 		NEW_TEMPLOADA (cfg, loada, temp->inst_c0);
 		MONO_ADD_INS (cfg->cbb, loada);
 
-		call->inst.dreg = loada->dreg;
+		call->vret_var = loada;
 	} else if (!MONO_TYPE_IS_VOID (sig->ret))
 		call->inst.dreg = alloc_dreg (cfg, call->inst.type);
 
@@ -2411,7 +2411,27 @@ mono_emit_call_args (MonoCompile *cfg, MonoMethodSignature *sig,
 	return call;
 }
 
-inline static MonoCallInst*
+/**
+ * mono_emit_call_result:
+ *
+ *   Return an ins representing the result of a call.
+ */
+static MonoInst*
+mono_emit_call_result (MonoCompile *cfg, MonoCallInst *call)
+{
+	if (MONO_TYPE_ISSTRUCT (call->signature->ret)) {
+		MonoInst *loada = call->vret_var;
+
+		loada->type = call->inst.type;
+		loada->klass = call->inst.klass;
+
+		return loada;
+	}
+	else
+		return (MonoInst*)call;
+}
+
+inline static MonoInst*
 mono_emit_calli (MonoCompile *cfg, MonoMethodSignature *sig, MonoInst **args, MonoInst *addr, const guint8 *ip)
 {
 	MonoCallInst *call = mono_emit_call_args (cfg, sig, args, TRUE, FALSE, ip);
@@ -2420,10 +2440,10 @@ mono_emit_calli (MonoCompile *cfg, MonoMethodSignature *sig, MonoInst **args, Mo
 
 	MONO_ADD_INS (cfg->cbb, (MonoInst*)call);
 
-	return call;
+	return mono_emit_call_result (cfg, call);
 }
 
-static MonoCallInst*
+static MonoInst*
 mono_emit_method_call_full (MonoCompile *cfg, MonoMethod *method, MonoMethodSignature *sig,
 		       MonoInst **args, const guint8 *ip, MonoInst *this)
 {
@@ -2476,7 +2496,7 @@ mono_emit_method_call_full (MonoCompile *cfg, MonoMethod *method, MonoMethodSign
 
 			MONO_ADD_INS (cfg->cbb, (MonoInst*)call);
 
-			return call;
+			return mono_emit_call_result (cfg, call);
 		}
 
 		call->inst.opcode = callvirt_to_call_membase (call->inst.opcode);
@@ -2507,7 +2527,7 @@ mono_emit_method_call_full (MonoCompile *cfg, MonoMethod *method, MonoMethodSign
 
 	MONO_ADD_INS (cfg->cbb, (MonoInst*)call);
 
-	return call;
+	return mono_emit_call_result (cfg, call);
 }
 
 static MonoInst*
@@ -2532,7 +2552,7 @@ mono_emit_native_call (MonoCompile *cfg, gconstpointer func, MonoMethodSignature
 
 	mono_get_got_var (cfg);
 
-	return (MonoInst*)call;
+	return mono_emit_call_result (cfg, call);
 }
 
 inline static MonoInst*

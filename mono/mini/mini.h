@@ -282,6 +282,7 @@ struct MonoCallInst {
 	MonoMethod *method;
 	MonoInst **args;
 	MonoInst *out_args;
+	MonoInst *vret_var;
 	gconstpointer fptr;
 	guint stack_usage;
 	gboolean virtual;
