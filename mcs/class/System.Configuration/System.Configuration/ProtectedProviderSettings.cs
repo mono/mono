@@ -37,7 +37,8 @@ namespace System.Configuration
 
 		static ProtectedProviderSettings ()
 		{
-			providersProp = new ConfigurationProperty ("", typeof (ProviderSettingsCollection), null, ConfigurationPropertyOptions.IsDefaultCollection);
+			providersProp = new ConfigurationProperty ("", typeof (ProviderSettingsCollection), null,
+								   null, null, ConfigurationPropertyOptions.IsDefaultCollection);
 
 			properties = new ConfigurationPropertyCollection ();
 			properties.Add (providersProp);

@@ -43,14 +43,10 @@ namespace System.Configuration {
 
                 static AppSettingsSection ()
                 {
-                        _propFile = new ConfigurationProperty ("file",
-                                                               typeof(string), 
-                                                               "", 
-                                                               ConfigurationPropertyOptions.None);
-                        _propSettings = new ConfigurationProperty ("",
-								   typeof(KeyValueConfigurationCollection),
-								   null, 
-								   ConfigurationPropertyOptions.IsDefaultCollection);
+                        _propFile = new ConfigurationProperty ("file", typeof(string), "",
+							       null, null, ConfigurationPropertyOptions.None);
+                        _propSettings = new ConfigurationProperty ("", typeof(KeyValueConfigurationCollection), null, 
+								   null, null, ConfigurationPropertyOptions.IsDefaultCollection);
 
                         _properties     = new ConfigurationPropertyCollection ();
 

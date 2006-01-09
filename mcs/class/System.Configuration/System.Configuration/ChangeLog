@@ -1,3 +1,11 @@
+2006-01-09  Chris Toshok  <toshok@ximian.com>
+
+	* AppSettingsSection.cs (.cctor): specify null for
+	validator/converter.
+
+	* ProtectedProviderSettings.cs (.cctor): specify null for
+	validator/converter.
+
 2006-01-03  Chris Toshok  <toshok@ximian.com>
 
 	* Configuration.cs (SaveAs): open with FileMode.OpenOrCreate so we
