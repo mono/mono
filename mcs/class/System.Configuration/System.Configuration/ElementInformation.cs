@@ -36,7 +36,7 @@ namespace System.Configuration
 		PropertyInformation propertyInfo;
 		ConfigurationElement owner;
 		PropertyInformationCollection properties;
-		
+
 		internal ElementInformation (ConfigurationElement owner, PropertyInformation propertyInfo)
 		{
 			this.propertyInfo = propertyInfo;
@@ -76,7 +76,7 @@ namespace System.Configuration
 		}
 		
 		public ConfigurationValidatorBase Validator {
-			get { return propertyInfo != null ? propertyInfo.Validator : null; }
+			get { return propertyInfo != null ? propertyInfo.Validator : new DefaultValidator(); }
 		}
 		
 		public PropertyInformationCollection Properties {

@@ -1,5 +1,10 @@
 2006-01-09  Chris Toshok  <toshok@ximian.com>
 
+	* ElementInformation.cs (Validator): if propertyInfo == null,
+	return a DefaultValidator instance.
+
+2006-01-09  Chris Toshok  <toshok@ximian.com>
+
 	* AppSettingsSection.cs (.cctor): specify null for
 	validator/converter.
 
