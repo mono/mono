@@ -7,9 +7,6 @@
 // Copyright 2005 Novell, Inc (http://www.novell.com)
 //
 
-//Note: This is shared by modified types of the same generic instance
-//      Eg. foo`1<int32> and foo`1<int32> [] would share their GenericArguments
-
 using System;
 using System.Collections;
 using System.Text;
@@ -20,12 +17,16 @@ namespace Mono.ILASM {
 		ArrayList type_list;
 		string type_str;
 		ITypeRef [] type_arr;
+		bool is_resolved;
+		PEAPI.Type [] p_type_list;
 
 		public GenericArguments ()
 		{
 			type_list = null;
 			type_arr = null;
 			type_str = null;
+			is_resolved = false;
+			p_type_list = null;
 		}
 
 		public int Count {
@@ -56,13 +57,17 @@ namespace Mono.ILASM {
 
 		public PEAPI.Type [] Resolve (CodeGen code_gen)
 		{
+			if (is_resolved)
+				return p_type_list;
+
 			int i = 0;
-			PEAPI.Type [] p_type_list = new PEAPI.Type [type_list.Count];
+			p_type_list = new PEAPI.Type [type_list.Count];
 			foreach (ITypeRef type in type_list) {
 				type.Resolve (code_gen);
 				p_type_list [i ++] = type.PeapiType;
 			}
-
+			is_resolved = true;
+			type_str = null;
 			return p_type_list;
 		}
 
