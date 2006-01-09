@@ -65,7 +65,7 @@ namespace System.Web.J2EE
 			string path = "";
 			ServletContext context = config.getServletContext();
 			string appDir = config.getInitParameter(IAppDomainConfig.APP_DIR_NAME);
-			Console.WriteLine("appdir = {0}", appDir);
+//			Console.WriteLine("appdir = {0}", appDir);
 			if (appDir != null)
 			{
 				try
@@ -73,7 +73,7 @@ namespace System.Web.J2EE
 					java.io.File f = new java.io.File(appDir);
 					if(f.exists())
 					{
-						Console.WriteLine("Physical path= {0}", appDir);
+//						Console.WriteLine("Physical path= {0}", appDir);
 						path = appDir;
 					}
 				}
@@ -91,7 +91,7 @@ namespace System.Web.J2EE
 			if (!path.EndsWith ("/") && !path.EndsWith ("\\"))
 				path += "/";
 
-			Console.WriteLine("Physical path= {0}", path); 
+//			Console.WriteLine("Physical path= {0}", path); 
 			return path;
 		}
 

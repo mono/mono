@@ -60,8 +60,6 @@ namespace System.Web.J2EE
 			try 
 			{
 				AppDomain servletDomain = createServletDomain(config);
-				if(servletDomain == null)
-					throw new ArgumentException("cannot initialize AppDomain!");
 
 				//GH Infromation Initizalization
 				servletDomain.SetData(J2EEConsts.CLASS_LOADER, vmw.common.TypeUtils.ToClass(this).getClassLoader());
@@ -80,11 +78,6 @@ namespace System.Web.J2EE
 		{
 			try 
 			{
-				String pathInfo = req.getRequestURI();
-				String contextPath = req.getContextPath();
-				if (pathInfo.Equals(contextPath) ||
-					((pathInfo.Length - contextPath.Length) == 1) && pathInfo[pathInfo.Length-1] == '/' && pathInfo.StartsWith(contextPath))
-					pathInfo = contextPath + req.getServletPath();
 				// Very important - to update Virtual Path!!!
 				AppDomain servletDomain = (AppDomain)this.getServletContext().getAttribute(J2EEConsts.APP_DOMAIN);
 				servletDomain.SetData(IAppDomainConfig.APP_VIRT_DIR, req.getContextPath());
@@ -100,8 +93,7 @@ namespace System.Web.J2EE
 				resp.setHeader("X-Powered-By", "ASP.NET");
 				resp.setHeader("X-AspNet-Version", "1.1.4322");
 
-				ServletOutputStream hos = resp.getOutputStream();
-				PageMapper.LoadFileList();
+//				PageMapper.LoadFileList();
 
 				resp.setContentType("text/html");
 				HttpWorkerRequest gwr = new ServletWorkerRequest(this, req, resp, resp.getOutputStream());
@@ -146,8 +138,6 @@ namespace System.Web.J2EE
 
 		private AppDomain createServletDomain(ServletConfig config)
 		{
-			try
-			{
 				string rootPath = J2EEUtils.GetApplicationRealPath(config);
 				AppDomainSetup domainSetup = new AppDomainSetup();
 				string name = config.getServletName();//.getServletContextName();
@@ -183,13 +173,6 @@ namespace System.Web.J2EE
 				//servletDomain.SetData(".hostingVirtualPath", "/");
 				servletDomain.SetData(".hostingInstallDir", "/");
 				return servletDomain;
-			}
-			catch(Exception e)
-			{
-				Console.WriteLine("ERROR in createServletDomain {0},{1}",e.GetType(), e.Message);
-				Console.WriteLine(e.StackTrace);
-				return null;
-			}
 		}
 	
 		virtual protected vmw.@internal.io.IObjectsDeserializer GetDeserializer()

@@ -40,27 +40,37 @@ namespace System.Web.J2EE
 	public class PageMapper
 	{
 		private static readonly string _fileListName = "/filelist.xml";
+		private static readonly object LOCK_GETASSEMBLIESCACHEDDOCUMENT = new object();
+		private static readonly object LOCK_GETFROMMAPPATHCACHE = new object();
 
 		public static string GetFromMapPathCache(string key)
 		{
-			Hashtable answer = (Hashtable) AppDomain.CurrentDomain.GetData(J2EEConsts.MAP_PATH_CACHE);
-			if (answer == null)
+			Hashtable answer = null;
+			lock(LOCK_GETFROMMAPPATHCACHE)
 			{
-				answer = new Hashtable();
-				CachedDocumentTypeStorage storage = (CachedDocumentTypeStorage)GetAssembliesCachedDocument();
-				IDictionaryEnumerator e = storage.GetEnumerator();
-				e.Reset();
-				while (e.MoveNext())
-				{					
-					string currentFile = (string)((DictionaryEntry)e.Current).Key;
-					answer[currentFile]= IAppDomainConfig.WAR_ROOT_SYMBOL + currentFile;
-				}
-				AppDomain.CurrentDomain.SetData(J2EEConsts.MAP_PATH_CACHE,answer);
+				answer = (Hashtable) AppDomain.CurrentDomain.GetData(J2EEConsts.MAP_PATH_CACHE);
+				if (answer == null)
+				{
+					answer = new Hashtable();
+					CachedDocumentTypeStorage storage = (CachedDocumentTypeStorage)GetAssembliesCachedDocument();
+					IDictionaryEnumerator e = storage.GetEnumerator();
+					e.Reset();
+					while (e.MoveNext())
+					{					
+						string currentFile = (string)((DictionaryEntry)e.Current).Key;
+						answer[currentFile]= IAppDomainConfig.WAR_ROOT_SYMBOL + currentFile;
+					}
+					AppDomain.CurrentDomain.SetData(J2EEConsts.MAP_PATH_CACHE,answer);
 
+				}
 			}
 			return (string)answer[key];
 		}
 
+		// UNUSED METHOD
+		//The method was used by runtime to force file names casesensitivity
+		// problem. The filelist.xml file should contain correct file names,
+		// but currently it is unused
 		public static void LoadFileList()
 		{
 			Hashtable hashTable = (Hashtable) AppDomain.CurrentDomain.GetData(J2EEConsts.FILE_LIST_FILE);
@@ -70,6 +80,12 @@ namespace System.Web.J2EE
 				try
 				{
 					Stream fs = (Stream)IOUtils.getStream(_fileListName);
+					if (fs == null)
+					{
+						AppDomain.CurrentDomain.SetData(J2EEConsts.FILE_LIST_FILE, new Hashtable());
+						return;
+					}
+
 					doc = new XmlDocument();
 					doc.Load(fs);
 				}
@@ -94,11 +110,10 @@ namespace System.Web.J2EE
 			}
 
 		}
-		private static readonly object LOCK_OBJECT = new object();
 
 		private static ICachedXmlDoc GetAssembliesCachedDocument()
 		{
-			lock(LOCK_OBJECT)
+			lock(LOCK_GETASSEMBLIESCACHEDDOCUMENT)
 			{
 				ICachedXmlDoc doc = (ICachedXmlDoc) AppDomain.CurrentDomain.GetData(J2EEConsts.ASSEMBLIES_FILE);
 				if (doc == null)
@@ -129,9 +144,7 @@ namespace System.Web.J2EE
 			if (url.StartsWith(IAppDomainConfig.WAR_ROOT_SYMBOL))
 				url = url.Substring(IAppDomainConfig.WAR_ROOT_SYMBOL.Length);
 			
-			string query = url.ToLower();
-				
-			Type t = (Type) doc.Get(query);
+			Type t = doc.Get(url);
 
 			if (t == null)
 				throw new HttpException(404,"The requested resource (" + url + ") is not available.");
@@ -142,7 +155,7 @@ namespace System.Web.J2EE
 		#region ICachedXmlDoc interface
 		interface ICachedXmlDoc
 		{
-			object Get(object key);
+			Type Get(string key);
 			//bool ContainsKey(object key);
 		}
 		#endregion
@@ -159,18 +172,16 @@ namespace System.Web.J2EE
 
 			private CachedDocumentTypeStorage(int initTableSize)
 			{
-				_table = new Hashtable(initTableSize);
+				_table = Hashtable.Synchronized(new Hashtable(initTableSize));
 			}
 
 			public CachedDocumentTypeStorage() :
 				this(DEFAULT_PAGES_NUMBER)
 			{}
 
-			object ICachedXmlDoc.Get(object o)
+			Type ICachedXmlDoc.Get(string o)
 			{
-				if(o is string)
-					return GetTypeByURL((string) o);
-				throw new ArgumentException("the key should be a string");
+				return GetTypeByURL(o);
 			}
 
 			internal IDictionaryEnumerator GetEnumerator()
@@ -180,14 +191,19 @@ namespace System.Web.J2EE
 
 			public Type GetTypeByURL(string url)
 			{
-				if (!_table.ContainsKey(url))
+				string lwUrl = url.ToLower();
+				lock (_table)
 				{
-					PageCompiler compiler = new PageCompiler(url);
-					_table[url] = compiler.GetCachedType();
-				}
+					object retVal = _table[lwUrl];
+					if (retVal == null)
+					{
+						PageCompiler compiler = new PageCompiler(url);
+						retVal = compiler.GetCachedType();
+						_table[lwUrl] = retVal;
+					}
 				
-
-				return (Type)_table[url];
+					return (Type)retVal;
+				}
 			}
 		}
 		#endregion
@@ -229,7 +245,10 @@ namespace System.Web.J2EE
 				Console.WriteLine(descPath);
 #endif
 				Stream fs = (Stream)IOUtils.getStream("/" + descPath);
-				typeName = GetTypeFromDescStream(fs);
+				if (fs != null)
+				{
+					typeName = GetTypeFromDescStream(fs);
+				}
 			}
 			catch (Exception ex)
 			{
@@ -250,10 +269,17 @@ namespace System.Web.J2EE
 			if (fileName.ToLower() != "global.asax"
 				&& fileName.ToLower() != "defaultwsdlhelpgenerator.aspx")
 			{
-				//type not found - run aspxparser
-				string[] command = GetParserCmd();
-				if (J2EEUtils.RunProc(command) != 0)
-					throw GetCompilerError();
+				string fullFileName = HttpContext.Current.Request.MapPath(_url);
+				if ( File.Exists(fullFileName) ) {
+					//type not found - run aspxparser
+					string[] command = GetParserCmd();
+					if (J2EEUtils.RunProc(command) != 0)
+						throw GetCompilerError();
+				}
+				else {
+					string message = "The requested resource (" + _url + ") is not available.";
+					throw new HttpException(404, message);
+				}
 			}
 			//if the desciptor exists in the real app dir - get the type
 			try
@@ -363,15 +389,10 @@ namespace System.Web.J2EE
 
 			if (file != null)
 			{
-				try {
-					Location loc = new Location(null);
-					loc.Filename = file;
-					loc.BeginLine = int.Parse(lineInFile);
-					return new ParseException(loc,message);
-				}
-				// If file doesn't exist, or is unreadable just go on and send
-				// the original error message.
-				catch(Exception e) {}
+				Location loc = new Location(null);
+				loc.Filename = file;
+				loc.BeginLine = int.Parse(lineInFile);
+				return new ParseException(loc,message);
 			}
 
 			if (message.IndexOf(typeof(FileNotFoundException).Name) != -1 &&
@@ -379,12 +400,5 @@ namespace System.Web.J2EE
 				message = "The requested resource (" + _url + ") is not available.";
 			return new HttpException(404,(message !=  null ? message : string.Empty));
 		}
-	}
-}
-
-namespace System.Web.GH
-{
-	public class PageMapper : System.Web.J2EE.PageMapper
-	{
 	}
 }

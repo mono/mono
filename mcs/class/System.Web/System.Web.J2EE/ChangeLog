@@ -1,3 +1,10 @@
+2006-01-09  Konstantin Triger <kostat@mainsoft.com>
+
+	* BaseHttpServlet.cs: merging main/32, main/33
+	* PageMapper.cs: merging main/17-27
+	* J2EEUtils.cs: mergind ghutils.cs@@/main/9
+	* Added ObjectInputStream.cs, ObjectOutputStream.cs
+
 2005-09-08  Eyal Alalouf  <eyala@mainsoft.com>
 	* BaseHttpServlet.cs, PageMapper.cs, BaseStaticHttpServlet.cs,
 	  SessionListener.cs - backward compatibility fixes.
