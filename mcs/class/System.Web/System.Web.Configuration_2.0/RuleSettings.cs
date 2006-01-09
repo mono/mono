@@ -60,7 +60,9 @@ namespace System.Web.Configuration {
 								      TypeDescriptor.GetConverter (typeof (int)),
 								      new IntegerValidator (1, Int32.MaxValue),
 								      ConfigurationPropertyOptions.None);
-			minIntervalProp = new ConfigurationProperty ("minInterval", typeof (TimeSpan), TimeSpan.FromSeconds (0));
+			minIntervalProp = new ConfigurationProperty ("minInterval", typeof (TimeSpan), TimeSpan.FromSeconds (0),
+								     PropertyHelper.InfiniteTimeSpanConverter, null,
+								     ConfigurationPropertyOptions.None);
 			nameProp = new ConfigurationProperty ("name", typeof (string), "",
 							      TypeDescriptor.GetConverter (typeof (string)),
 							      PropertyHelper.NonEmptyStringValidator,

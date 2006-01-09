@@ -46,7 +46,8 @@ namespace System.Web.Configuration {
 
 		static SqlCacheDependencySection ()
 		{
-			databasesProp = new ConfigurationProperty ("databases", typeof (SqlCacheDependencyDatabaseCollection));
+			databasesProp = new ConfigurationProperty ("databases", typeof (SqlCacheDependencyDatabaseCollection), null,
+								   null, null, ConfigurationPropertyOptions.None);
 			enabledProp = new ConfigurationProperty ("enabled", typeof (bool), true);
 			pollTimeProp = new ConfigurationProperty ("pollTime", typeof (int), 60000);
 			properties = new ConfigurationPropertyCollection ();

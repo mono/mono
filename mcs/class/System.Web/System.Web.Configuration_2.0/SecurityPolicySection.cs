@@ -42,7 +42,8 @@ namespace System.Web.Configuration {
 
 		static SecurityPolicySection ()
 		{
-			Prop = new ConfigurationProperty ("", typeof (TrustLevelCollection), null, ConfigurationPropertyOptions.IsDefaultCollection);
+			Prop = new ConfigurationProperty ("", typeof (TrustLevelCollection), null,
+							  null, null, ConfigurationPropertyOptions.IsDefaultCollection);
 			properties = new ConfigurationPropertyCollection ();
 
 			properties.Add (Prop);

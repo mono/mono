@@ -64,12 +64,17 @@ namespace System.Web.Configuration {
 			cookielessProp = new ConfigurationProperty ("cookieless", typeof (string), null);
 			cookieNameProp = new ConfigurationProperty ("cookieName", typeof (string), "ASP.NET_SessionId");
 			customProviderProp = new ConfigurationProperty ("customProvider", typeof (string), "");
-			modeProp = new ConfigurationProperty ("mode", typeof (SessionStateMode), SessionStateMode.InProc);
+			modeProp = new ConfigurationProperty ("mode", typeof (SessionStateMode), SessionStateMode.InProc,
+							      new GenericEnumConverter (typeof (SessionStateMode)), null,
+							      ConfigurationPropertyOptions.None);
 			partitionResolverTypeProp = new ConfigurationProperty ("partitionResolverType", typeof (string), "");
-			providersProp = new ConfigurationProperty ("providers", typeof (ProviderSettingsCollection));
+			providersProp = new ConfigurationProperty ("providers", typeof (ProviderSettingsCollection), null,
+								   null, null, ConfigurationPropertyOptions.None);
 			regenerateExpiredSessionIdProp = new ConfigurationProperty ("regenerateExpiredSessionId", typeof (bool), true);
 			sessionIDManagerTypeProp = new ConfigurationProperty ("sessionIDManagerType", typeof (string), "");
-			sqlCommandTimeoutProp = new ConfigurationProperty ("sqlCommandTimeout", typeof (TimeSpan), TimeSpan.FromSeconds (30));
+			sqlCommandTimeoutProp = new ConfigurationProperty ("sqlCommandTimeout", typeof (TimeSpan), TimeSpan.FromSeconds (30),
+									   PropertyHelper.TimeSpanSecondsOrInfiniteConverter, null,
+									   ConfigurationPropertyOptions.None);
 			sqlConnectionStringProp = new ConfigurationProperty ("sqlConnectionString", typeof (string), "data source=localhost;Integrated Security=SSPI");
 			stateConnectionStringProp = new ConfigurationProperty ("stateConnectionString", typeof (string), "tcpip=loopback:42424");
 			stateNetworkTimeoutProp = new ConfigurationProperty ("stateNetworkTimeout", typeof (TimeSpan), TimeSpan.FromSeconds (10),

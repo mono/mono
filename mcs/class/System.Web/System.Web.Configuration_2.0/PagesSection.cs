@@ -72,7 +72,8 @@ namespace System.Web.Configuration
 								      ConfigurationPropertyOptions.None);
 			autoEventWireupProp = new ConfigurationProperty ("autoEventWireup", typeof(bool), true);
 			bufferProp = new ConfigurationProperty ("buffer", typeof(bool), false);
-			controlsProp = new ConfigurationProperty ("controls", typeof(TagPrefixCollection), null);
+			controlsProp = new ConfigurationProperty ("controls", typeof(TagPrefixCollection), null,
+								  null, null, ConfigurationPropertyOptions.None);
 			enableEventValidationProp = new ConfigurationProperty ("enableEventValidation", typeof (bool), true);
 			enableSessionStateProp = new ConfigurationProperty ("enableSessionState", typeof (PagesEnableSessionState), true);
 			enableViewStateProp = new ConfigurationProperty ("enableViewState", typeof (bool), true);
@@ -83,12 +84,14 @@ namespace System.Web.Configuration
 			modeProp = new ConfigurationProperty ("compilationMode", typeof (CompilationMode), CompilationMode.Always,
 							      new GenericEnumConverter (typeof (CompilationMode)), PropertyHelper.DefaultValidator,
 							      ConfigurationPropertyOptions.None);
-			namespacesProp = new ConfigurationProperty ("namespacesProp", typeof (NamespaceCollection), null);
+			namespacesProp = new ConfigurationProperty ("namespaces", typeof (NamespaceCollection), null,
+								    null, null, ConfigurationPropertyOptions.None);
 			pageBaseTypeProp = new ConfigurationProperty ("pageBaseType", typeof (string), "System.Web.UI.Page");
 			pageParserFilterTypeProp = new ConfigurationProperty ("pageParserFilterType", typeof (string), "");
 			smartNavigationProp = new ConfigurationProperty ("smartNavigation", typeof (bool), false);
 			styleSheetThemeProp = new ConfigurationProperty ("styleSheetTheme", typeof (string), "");
-			tagMappingProp = new ConfigurationProperty ("tagMapping", typeof (TagMapCollection), null);
+			tagMappingProp = new ConfigurationProperty ("tagMapping", typeof (TagMapCollection), null,
+								    null, null, ConfigurationPropertyOptions.None);
 			themeProp = new ConfigurationProperty ("theme", typeof (string), "");
 			userControlBaseTypeProp = new ConfigurationProperty ("userControlBaseType", typeof (string), "System.Web.UI.UserControl");
 			validateRequestProp = new ConfigurationProperty ("validateRequest", typeof (bool), true);
@@ -100,6 +103,7 @@ namespace System.Web.Configuration
 			properties.Add (asyncTimeoutProp);
 			properties.Add (autoEventWireupProp);
 			properties.Add (bufferProp);
+			properties.Add (controlsProp);
 			properties.Add (enableEventValidationProp);
 			properties.Add (enableSessionStateProp);
 			properties.Add (enableViewStateProp);
@@ -108,10 +112,12 @@ namespace System.Web.Configuration
 			properties.Add (masterPageFileProp);
 			properties.Add (maxPageStateFieldLengthProp);
 			properties.Add (modeProp);
+			properties.Add (namespacesProp);
 			properties.Add (pageBaseTypeProp);
 			properties.Add (pageParserFilterTypeProp);
 			properties.Add (smartNavigationProp);
 			properties.Add (styleSheetThemeProp);
+			properties.Add (tagMappingProp);
 			properties.Add (themeProp);
 			properties.Add (userControlBaseTypeProp);
 			properties.Add (validateRequestProp);

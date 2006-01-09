@@ -1,5 +1,12 @@
 2006-01-09  Chris Toshok  <toshok@ximian.com>
 
+	* RoleManagerSection.cs, SqlCacheDepencendySection.cs,
+	SessionStateSection.cs, TraceSection.cs, SecurityPolicySection.cs,
+	PagesSection.cs, RulesSettings.cs, UrlMappingSection.cs: fix
+	dumper output.
+
+2006-01-09  Chris Toshok  <toshok@ximian.com>
+
 	* ExpressionBuilderCollection.cs (.cctor): no need to create a
 	collection property here.  we're already in the collection.
 

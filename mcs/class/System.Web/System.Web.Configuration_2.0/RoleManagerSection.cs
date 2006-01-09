@@ -85,7 +85,8 @@ namespace System.Web.Configuration {
 			domainProp = new ConfigurationProperty ("domain", typeof (string));
 			enabledProp = new ConfigurationProperty ("enabled", typeof (bool), false);
 			maxCachedResultsProp = new ConfigurationProperty ("maxCachedResults", typeof (int), 25);
-			providersProp = new ConfigurationProperty ("providers", typeof (ProviderSettingsCollection));
+			providersProp = new ConfigurationProperty ("providers", typeof (ProviderSettingsCollection), null,
+								   null, null, ConfigurationPropertyOptions.None);
 			properties = new ConfigurationPropertyCollection ();
 
 			properties.Add (cacheRolesInCookieProp);

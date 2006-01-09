@@ -58,7 +58,9 @@ namespace System.Web.Configuration {
 								      TypeDescriptor.GetConverter (typeof (int)),
 								      PropertyHelper.IntFromZeroToMaxValidator,
 								      ConfigurationPropertyOptions.None);
-			traceModeProp = new ConfigurationProperty ("traceMode", typeof (TraceDisplayMode), TraceDisplayMode.SortByTime);
+			traceModeProp = new ConfigurationProperty ("traceMode", typeof (TraceDisplayMode), TraceDisplayMode.SortByTime,
+								   new GenericEnumConverter (typeof (TraceDisplayMode)), null,
+								   ConfigurationPropertyOptions.None);
 			writeToDiagnosticsTraceProp = new ConfigurationProperty ("writeToDiagnosticsTrace", typeof (bool), false);
 			properties = new ConfigurationPropertyCollection ();
 

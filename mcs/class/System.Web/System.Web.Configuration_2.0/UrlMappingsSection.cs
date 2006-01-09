@@ -44,7 +44,8 @@ namespace System.Web.Configuration {
 		static UrlMappingsSection ()
 		{
 			enabledProp = new ConfigurationProperty ("enabled", typeof (bool), true);
-			urlMappingsProp = new ConfigurationProperty ("", typeof (UrlMappingCollection), null, ConfigurationPropertyOptions.IsDefaultCollection);
+			urlMappingsProp = new ConfigurationProperty ("", typeof (UrlMappingCollection), null,
+								     null, null, ConfigurationPropertyOptions.IsDefaultCollection);
 			properties = new ConfigurationPropertyCollection ();
 
 			properties.Add (enabledProp);
