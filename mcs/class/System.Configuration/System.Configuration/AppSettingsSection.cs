@@ -29,6 +29,7 @@
 
 #if NET_2_0
 using System;
+using System.ComponentModel;
 using System.Collections.Specialized;
 using System.Xml;
 using System.IO;
@@ -44,7 +45,7 @@ namespace System.Configuration {
                 static AppSettingsSection ()
                 {
                         _propFile = new ConfigurationProperty ("file", typeof(string), "",
-							       null, null, ConfigurationPropertyOptions.None);
+							       new StringConverter(), null, ConfigurationPropertyOptions.None);
                         _propSettings = new ConfigurationProperty ("", typeof(KeyValueConfigurationCollection), null, 
 								   null, null, ConfigurationPropertyOptions.IsDefaultCollection);
 
@@ -118,10 +119,17 @@ namespace System.Configuration {
 			}
 		}
 
-		[MonoTODO]
 		protected internal override object GetRuntimeObject ()
 		{
-			return base.GetRuntimeObject();
+			KeyValueInternalCollection col = new KeyValueInternalCollection ();
+				
+			foreach (string key in Settings.AllKeys) {
+				col.Add (Settings[key].Key, Settings[key].Value);
+			}
+				
+			col.SetReadOnly ();
+
+			return col;
 		}
 	}
 }

@@ -1,5 +1,15 @@
 2006-01-09  Chris Toshok  <toshok@ximian.com>
 
+	* ConfigurationManager.cs (AppSettings): just return
+	AppSettingsSection.GetRuntimeObject() here.
+
+	* AppSettingsSection.cs: fix the "file" property to match dumper
+	output.
+	(GetRuntimeObject): this returns a KeyValueInternalCollection in
+	MS's implementation.
+
+2006-01-09  Chris Toshok  <toshok@ximian.com>
+
 	* ElementInformation.cs (Validator): if propertyInfo == null,
 	return a DefaultValidator instance.
 

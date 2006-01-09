@@ -167,15 +167,7 @@ namespace System.Configuration {
 		public static NameValueCollection AppSettings {
 			get {
 				AppSettingsSection appsettings = (AppSettingsSection) GetSection ("appSettings");
-				KeyValueInternalCollection col = new KeyValueInternalCollection ();
-				
-				foreach (string key in appsettings.Settings.AllKeys) {
-					col.Add (appsettings.Settings[key].Key, appsettings.Settings[key].Value);
-				}
-				
-				col.SetReadOnly ();
-
-				return col;
+				return (NameValueCollection)appsettings.GetRuntimeObject ();
 			}
 		}
 
