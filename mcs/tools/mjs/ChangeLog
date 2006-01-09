@@ -1,3 +1,7 @@
+2006-01-08  Cesar Lopez Nataren  <cnataren@novell.com>
+
+	* mjs.cs: Add support for nostdlib, out, pkg and reference.
+
 2005-09-13  Cesar Lopez Nataren  <cnataren@novell.com>
 
 	* mjs.cs: Add support for flags parsing.

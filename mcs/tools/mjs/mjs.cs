@@ -5,7 +5,7 @@
 //	Cesar Lopez Nataren (cesar@ciencias.unam.mx)
 //
 // (C) 2003, Cesar Lopez Nataren
-// (C) Copyright 2005, Novell Inc. (http://www.novell.com)
+// (C) Copyright 2005, 2006, Novell Inc. (http://www.novell.com)
 //
 
 //
@@ -36,6 +36,7 @@ using Microsoft.Vsa;
 using Microsoft.JScript;
 using System.Reflection;
 using System.Collections;
+using System.Diagnostics;
 using Microsoft.JScript.Vsa;
 using System.Reflection.Emit;
 using Mono.CSharp;
@@ -63,25 +64,33 @@ namespace Mono.JScript {
 
 		private static Assembly [] assemblies = new Assembly [0];
 
-		private static bool StdLib;
+		private static bool StdLib = true;
 
 		private static void Usage ()
 		{
 			Console.WriteLine ("Mono JScript compiler\n" +
-					   "(C) 2003 - 2004 Cesar Lopez Nataren\n" +
-					   "(C) 2004 - 2005 Novell Inc (http://novell.com)\n\n" +
+					   "Copyright (C) 2003 - 2004 Cesar Lopez Nataren\n" +
+					   "Copyright (C) 2004 - 2006 Novell Inc (http://novell.com)\n\n" +
 					   "mjs [options] source-file\n" +
 					   "   /about              About the Mono JScript compiler\n" +
 					   "   /lib:PATH1,PATH2    Adds the paths to the assembly link path\n" +
-					   "   /r[eference]:ASS    Reference the specified assembly\n");
+					   "   /nostdlib[+|-]      Does not load core libraries\n" +
+					   "   /out:<file>         Specify name of binary output file\n" +
+					   "   /pkg:P1[,Pn]        References packages P1..Pn\n" +
+					   "   /r[eference]:ASS    Reference the specified assembly\n" +
+
+					   "\n" +
+					   "Resources:\n" +
+					   "   @file               Read response file for more options\n\n" +
+					   "Options can be of the form -option or /option");
 		}
 
 		private static void About ()
 		{
 			Console.WriteLine (
 					   "The Mono JScript compiler is:\n" +
-					   "(C) 2003 - 2004 Cesar Lopez Nataren\n" +
-					   "(C) 2004 - 2005 Novell Inc.\n\n" +
+					   "Copyright (C) 2003 - 2004 Cesar Lopez Nataren\n" +
+					   "Copyright (C) 2004 - 2006 Novell Inc.\n\n" +
 					   "The compiler source code is released under the terms of both the MIT X11 and MPL\n" +
 					   "The compiler was written by Cesar Lopez Nataren");
 			Environment.Exit (0);
@@ -94,7 +103,6 @@ namespace Mono.JScript {
 		{
 			foreach (string r in references)
 				LoadAssembly (r, false);
-			return;
 		}
 
 		private static void LoadAssembly (string assembly, bool soft)
@@ -155,10 +163,10 @@ namespace Mono.JScript {
 			Assembly [] n = new Assembly [top + 1];
 
 			assemblies.CopyTo (n, 0);
-		
+
 			n [top] = a;
 			assemblies = n;
- 		}
+		}
 
 		static string [] LoadArgs (string file)
 		{
@@ -255,7 +263,7 @@ namespace Mono.JScript {
 					Usage ();
 					Environment.Exit (1);
 				}
-				
+
 				references.Add (args [++i]);
 				return true;
 				
@@ -303,6 +311,47 @@ namespace Mono.JScript {
 				SetOutputFile (value);
 				return true;
 
+			case "/pkg":
+				string packages;
+
+				if (value == String.Empty) {
+					Usage ();
+					Environment.Exit (1);
+				}
+				packages = String.Join (" ", value.Split (new Char [] { ';', ',', '\n', '\r'}));
+
+				ProcessStartInfo pi = new ProcessStartInfo ();
+				pi.FileName = "pkg-config";
+				pi.RedirectStandardOutput = true;
+				pi.UseShellExecute = false;
+				pi.Arguments = "--libs " + packages;
+				Process p = null;
+				try {
+					p = Process.Start (pi);
+				} catch (Exception e) {
+					Console.Error.WriteLine ("Couldn't run pkg-config: " + e.Message);
+					Environment.Exit (1);
+				}
+
+				if (p.StandardOutput == null){
+					Console.Error.WriteLine ("Specified package did not return any information");
+					return true;
+				}
+				string pkgout = p.StandardOutput.ReadToEnd ();
+				p.WaitForExit ();
+				if (p.ExitCode != 0) {
+					Console.Error.WriteLine ("Error running pkg-config. Check the above output.");
+					Environment.Exit (1);
+				}
+
+				if (pkgout != null){
+					string [] xargs = pkgout.Trim (new Char [] {' ', '\n', '\r', '\t'}).
+						Split (new Char [] { ' ', '\t'});
+					args = AddArgs (args, xargs);
+				}
+				p.Close ();
+				return true;
+
 			case "/r":
 			case "/reference": {
 				if (value == ""){
@@ -311,9 +360,8 @@ namespace Mono.JScript {
 				}
 
 				string [] refs = value.Split (new char [] { ';', ',' });
-				foreach (string r in refs){
+				foreach (string r in refs)
 					references.Add (r);
-				}
 				return true;
 			}
 
@@ -334,6 +382,16 @@ namespace Mono.JScript {
 			case "/about":
 				About ();
 				return true;
+
+
+			case "/nostdlib":
+			case "/nostdlib+":
+				StdLib = false;
+				return true;
+
+			case "/nostdlib-":
+				StdLib = true;
+				return true;
 			}
 			return false;
 		}
@@ -347,18 +405,14 @@ namespace Mono.JScript {
 			// split args into first half and second half based on '--'
 			// and add the extra_args before --
 			int split_position = Array.IndexOf (args, "--");
-			if (split_position != -1)
-				{
-					Array.Copy (args, new_args, split_position);
-					extra_args.CopyTo (new_args, split_position);
-					Array.Copy (args, split_position, new_args, split_position + extra_args.Length, args.Length - split_position);
-				}
-			else
-				{
-					args.CopyTo (new_args, 0);
-					extra_args.CopyTo (new_args, args.Length);
-				}
-
+			if (split_position != -1) {
+				Array.Copy (args, new_args, split_position);
+				extra_args.CopyTo (new_args, split_position);
+				Array.Copy (args, split_position, new_args, split_position + extra_args.Length, args.Length - split_position);
+			} else {
+				args.CopyTo (new_args, 0);
+				extra_args.CopyTo (new_args, args.Length);
+			}
 			return new_args;
 		}
 
@@ -535,7 +589,6 @@ namespace Mono.JScript {
 		// Entry point
 		//
 		private static void Main (string [] args) {
-	
 			if (args.Length < 1) {
 				Usage ();
 				Environment.Exit (0);
