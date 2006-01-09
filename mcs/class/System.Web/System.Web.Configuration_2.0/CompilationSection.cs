@@ -63,7 +63,7 @@ namespace System.Web.Configuration
 								    ConfigurationPropertyOptions.None);
 			assemblyPostProcessorTypeProp = new ConfigurationProperty ("assemblyPostProcessorType", typeof (string), "");
 			batchProp = new ConfigurationProperty ("batch", typeof (bool), true);
-			buildProvidersProp = new ConfigurationProperty ("buidProviders", typeof (BuildProviderCollection), null,
+			buildProvidersProp = new ConfigurationProperty ("buildProviders", typeof (BuildProviderCollection), null,
 									null, PropertyHelper.DefaultValidator,
 									ConfigurationPropertyOptions.None);
 			batchTimeoutProp = new ConfigurationProperty ("batchTimeout", typeof (TimeSpan), new TimeSpan (0, 15, 0),

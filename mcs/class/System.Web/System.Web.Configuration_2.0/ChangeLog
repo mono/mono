@@ -1,3 +1,7 @@
+2006-01-09  Chris Toshok  <toshok@ximian.com>
+
+	* CompilationSection.cs: fix typo.
+
 2006-01-04  Chris Toshok  <toshok@ximian.com>
 
 	* MachineKeySection.cs: bring over some more internal methods from
