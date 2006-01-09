@@ -196,7 +196,7 @@ namespace Mono.Data.SqlExpressions {
 			return res;
 		}
 
-		public override Void Reset ()
+		public override void Reset ()
 		{
 			if (table != null)
 				InvalidateCache (table, null);
