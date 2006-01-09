@@ -2637,7 +2637,7 @@ static void
 emit_stobj (MonoCompile *cfg, MonoInst *dest, MonoInst *src, const unsigned char *ip, MonoClass *klass, gboolean native) {
 	MonoInst *iargs [3];
 	int n;
-	int align = 0;
+	guint32 align = 0;
 	MonoMethod *memcpy_method;
 
 	g_assert (klass);
@@ -6148,6 +6148,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			}
 
 			if (sp != stack_start) {
+				/* FIXME: The out bblocks of this bblock are not set yet */
 				handle_stack_args (cfg, stack_start, sp - stack_start);
 				sp = stack_start;
 			}
@@ -8373,7 +8374,8 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				break;
 			}
 			case CEE_SIZEOF: {
-				int align;
+				guint32 align;
+				int ialign;
 
 				CHECK_STACK_OVF (1);
 				CHECK_OPSIZE (6);
@@ -8381,7 +8383,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				/* FIXXME: handle generics. */
 				if (mono_metadata_token_table (token) == MONO_TABLE_TYPESPEC) {
 					MonoType *type = mono_type_create_from_typespec (image, token);
-					token = mono_type_size (type, &align);
+					token = mono_type_size (type, &ialign);
 				} else {
 					MonoClass *klass = mono_class_get_full (image, token, generic_context);
 					if (!klass)
@@ -8883,7 +8885,7 @@ mono_handle_global_vregs (MonoCompile *cfg)
 						// FIXME:
 						switch (regtype) {
 						case 'i':
-							cfg->vreg_to_inst [regtype][vreg] = mono_compile_create_var_for_vreg (cfg, &mono_defaults.int32_class->byval_arg, OP_LOCAL, vreg);
+							cfg->vreg_to_inst [regtype][vreg] = mono_compile_create_var_for_vreg (cfg, &mono_defaults.int_class->byval_arg, OP_LOCAL, vreg);
 							break;
 						case 'f':
 							cfg->vreg_to_inst [regtype][vreg] = mono_compile_create_var_for_vreg (cfg, &mono_defaults.double_class->byval_arg, OP_LOCAL, vreg);
@@ -8986,7 +8988,7 @@ mono_spill_global_vars (MonoCompile *cfg)
 		MonoInst *prev = NULL;
 
 		if (cfg->verbose_level > 0)
-			printf ("SPILL BLOCK %d:\n", bb->block_num);
+			printf ("\nSPILL BLOCK %d:\n", bb->block_num);
 
 		cfg->cbb = bb;
 		for (; ins; ins = ins->next) {
