@@ -899,7 +899,11 @@ public class Page : TemplateControl, IHttpHandler
 	}
 
 	[EditorBrowsable (EditorBrowsableState.Never)]
+#if TARGET_JVM
+	public virtual void ProcessRequest (HttpContext context)
+#else
 	public void ProcessRequest (HttpContext context)
+#endif
 	{
 		_context = context;
 		if (clientTarget != null)

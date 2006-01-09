@@ -1,3 +1,7 @@
+2006-01-09  Konstantin Triger <kostat@mainsoft.com>
+
+	* Page.cs: make ProcessRequest virtual under TARGET_JVM.
+
 2006-01-04  Chris Toshok  <toshok@ximian.com>
 
 	* TemplateParser.cs (.ctor): kinda gross, but handle the
