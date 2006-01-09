@@ -29,15 +29,59 @@
 //
 
 using System;
+using System.Reflection;
 using Microsoft.JScript.Vsa;
+using System.Collections;
 
 namespace Microsoft.JScript {
 
-	public sealed class Namespace 
-	{
+	public sealed class Namespace {
+
+		static Hashtable namespaces;
+		static string fullname;
+
+		public Namespace (string name)
+		{
+			fullname = name;
+		}
+
+		static Namespace ()
+		{
+			namespaces = new Hashtable ();
+		}
+
+		internal static void GetNamespace (string name, bool create)
+		{
+			int pos = name.IndexOf ('.');
+
+			Namespace ns;
+			string first;
+			if (pos >= 0)
+				first = name.Substring (0, pos);
+			else
+				first = name;
+
+			ns = (Namespace) namespaces [first];
+			if (ns == null) {
+				if (!create)
+					throw new Exception ("unknown case");
+
+				ns = new Namespace (first);
+				namespaces.Add (first, ns);
+			}
+
+			if (pos >= 0)
+				Namespace.GetNamespace (name.Substring (pos + 1), create);
+		}
+
 		public static Namespace GetNamespace (string name, VsaEngine engine)
 		{
 			throw new NotImplementedException ();
+		}
+
+		internal static bool IsNamespace (string name)
+		{
+			return namespaces.Contains (name);
 		}
 	}
 }

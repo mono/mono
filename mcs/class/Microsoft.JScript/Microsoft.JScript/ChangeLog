@@ -1,3 +1,11 @@
+2006-01-08  Cesar Lopez Nataren  <cnataren@novell.com>
+
+	* SemanticAnalizer.cs, Import.cs: No longer use the Mono.CSharp
+	stuff; we lookup for the namespaces in our code (stolen from mcs
+	source code though :)
+	
+	* Namespace.cs: Handle the namespace lookup here.
+
 2005-12-15  Cesar Lopez Nataren  <cnataren@novell.com>
 
 	* Parser.cs: Use the new assign ctr and Init method.

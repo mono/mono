@@ -142,7 +142,10 @@ namespace Microsoft.JScript {
 		internal static bool Run (ScriptBlock [] blocks, Assembly [] ref_items)
 		{
 			assemblies = ref_items;
-			ComputeNamespaces ();
+
+			if (assemblies != null && assemblies.Length > 0)
+				ComputeNamespaces ();
+
 			env = new Environment (blocks);
 			bool r = true;
 
@@ -401,7 +404,7 @@ namespace Microsoft.JScript {
 					foreach (string ns in namespaces){
 						if (ns == "")
 							continue;
-						Mono.CSharp.RootNamespace.Global.GetNamespace (ns, true);
+						Namespace.GetNamespace (ns, true);
 					}
 				}
 			} else {
@@ -412,7 +415,7 @@ namespace Microsoft.JScript {
 						string ns = t.Namespace;
 						if (ns == null || cache.Contains (ns))
 							continue;
-						Mono.CSharp.RootNamespace.Global.GetNamespace (ns, true);
+						Namespace.GetNamespace (ns, true);
 						cache.Add (ns, null);
 					}
 				}
