@@ -1,3 +1,8 @@
+2006-01-09  Chris Toshok  <toshok@ximian.com>
+
+	* Makefile (LIB_MCS_FLAGS): if we're building net_2_0, define
+	CONFIGURATION_2_0 to use the new System.Configuration api.
+
 2006-01-02  Chris Toshok  <toshok@ximian.com>
 
 	* Makefile: use an external alias (PrebuiltSystem) when building
