@@ -120,8 +120,7 @@ namespace Mono.Unix {
 		public FileTypes FileType {
 			get {
 				AssertValid ();
-				int type = (int) stat.st_mode;
-				return (FileTypes) (type & (int) AllFileTypes);
+				return (FileTypes) (stat.st_mode & Native.FilePermissions.S_IFMT);
 			}
 			// no set as chmod(2) won't accept changing the file type.
 		}
@@ -217,46 +216,51 @@ namespace Mono.Unix {
 		}
 
 		public bool IsDirectory {
-			get {AssertValid (); return IsType (stat.st_mode, Native.FilePermissions.S_IFDIR);}
+			get {AssertValid (); return IsFileType (stat.st_mode, Native.FilePermissions.S_IFDIR);}
 		}
 
 		public bool IsCharacterDevice {
-			get {AssertValid (); return IsType (stat.st_mode, Native.FilePermissions.S_IFCHR);}
+			get {AssertValid (); return IsFileType (stat.st_mode, Native.FilePermissions.S_IFCHR);}
 		}
 
 		public bool IsBlockDevice {
-			get {AssertValid (); return IsType (stat.st_mode, Native.FilePermissions.S_IFBLK);}
+			get {AssertValid (); return IsFileType (stat.st_mode, Native.FilePermissions.S_IFBLK);}
 		}
 
 		public bool IsRegularFile {
-			get {AssertValid (); return IsType (stat.st_mode, Native.FilePermissions.S_IFREG);}
+			get {AssertValid (); return IsFileType (stat.st_mode, Native.FilePermissions.S_IFREG);}
 		}
 
 		public bool IsFifo {
-			get {AssertValid (); return IsType (stat.st_mode, Native.FilePermissions.S_IFIFO);}
+			get {AssertValid (); return IsFileType (stat.st_mode, Native.FilePermissions.S_IFIFO);}
 		}
 
 		public bool IsSymbolicLink {
-			get {AssertValid (); return IsType (stat.st_mode, Native.FilePermissions.S_IFLNK);}
+			get {AssertValid (); return IsFileType (stat.st_mode, Native.FilePermissions.S_IFLNK);}
 		}
 
 		public bool IsSocket {
-			get {AssertValid (); return IsType (stat.st_mode, Native.FilePermissions.S_IFSOCK);}
+			get {AssertValid (); return IsFileType (stat.st_mode, Native.FilePermissions.S_IFSOCK);}
 		}
 
 		public bool IsSetUser {
-			get {AssertValid (); return IsType (stat.st_mode, Native.FilePermissions.S_ISUID);}
+			get {AssertValid (); return IsSet (stat.st_mode, Native.FilePermissions.S_ISUID);}
 		}
 
 		public bool IsSetGroup {
-			get {AssertValid (); return IsType (stat.st_mode, Native.FilePermissions.S_ISGID);}
+			get {AssertValid (); return IsSet (stat.st_mode, Native.FilePermissions.S_ISGID);}
 		}
 
 		public bool IsSticky {
-			get {AssertValid (); return IsType (stat.st_mode, Native.FilePermissions.S_ISVTX);}
+			get {AssertValid (); return IsSet (stat.st_mode, Native.FilePermissions.S_ISVTX);}
 		}
 
-		internal static bool IsType (Native.FilePermissions mode, Native.FilePermissions type)
+		internal static bool IsFileType (Native.FilePermissions mode, Native.FilePermissions type)
+		{
+			return (mode & Native.FilePermissions.S_IFMT) == type;
+		}
+
+		internal static bool IsSet (Native.FilePermissions mode, Native.FilePermissions type)
 		{
 			return (mode & type) == type;
 		}
@@ -388,9 +392,9 @@ namespace Mono.Unix {
 			int r = Native.Syscall.lstat (path, out stat);
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 
-			if (IsType (stat.st_mode, Native.FilePermissions.S_IFDIR))
+			if (IsFileType (stat.st_mode, Native.FilePermissions.S_IFDIR))
 				return new UnixDirectoryInfo (path, stat);
-			else if (IsType (stat.st_mode, Native.FilePermissions.S_IFLNK))
+			else if (IsFileType (stat.st_mode, Native.FilePermissions.S_IFLNK))
 				return new UnixSymbolicLinkInfo (path, stat);
 			return new UnixFileInfo (path, stat);
 		}

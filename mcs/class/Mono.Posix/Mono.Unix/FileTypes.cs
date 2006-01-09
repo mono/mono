@@ -31,7 +31,6 @@ using Mono.Unix;
 
 namespace Mono.Unix {
 
-	[Flags]
 	public enum FileTypes {
 		Directory         = (int) Native.FilePermissions.S_IFDIR,
 		CharacterDevice   = (int) Native.FilePermissions.S_IFCHR,

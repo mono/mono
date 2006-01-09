@@ -141,9 +141,9 @@ namespace Mono.Unix.Native {
 			FilePermissions read, FilePermissions write, FilePermissions exec,
 			char both, char setonly, FilePermissions setxbit)
 		{
-			if (UnixFileSystemInfo.IsType (value, read))
+			if (UnixFileSystemInfo.IsSet (value, read))
 				access [index] = 'r';
-			if (UnixFileSystemInfo.IsType (value, write))
+			if (UnixFileSystemInfo.IsSet (value, write))
 				access [index+1] = 'w';
 			access [index+2] = GetSymbolicMode (value, exec, both, setonly, setxbit);
 		}
@@ -153,8 +153,8 @@ namespace Mono.Unix.Native {
 		private static char GetSymbolicMode (FilePermissions value, 
 			FilePermissions xbit, char both, char setonly, FilePermissions setxbit)
 		{
-			bool is_x  = UnixFileSystemInfo.IsType (value, xbit);
-			bool is_sx = UnixFileSystemInfo.IsType (value, setxbit);
+			bool is_x  = UnixFileSystemInfo.IsSet (value, xbit);
+			bool is_sx = UnixFileSystemInfo.IsSet (value, setxbit);
 			
 			if (is_x && is_sx)
 				return both;

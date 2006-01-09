@@ -1,3 +1,8 @@
+2005-01-09  Jonathan Pryor <jonpryor@vt.edu>
+
+	* NativeConvert.cs: s/IsType/IsSet/g: deal with UnixFileSystemInfo method 
+	  name change.
+
 2005-01-02  Jonathan Pryor <jonpryor@vt.edu>
 
 	* Stdlib.cs: s/ACCESS/ACCES/g.  I didn't create a badly named errno value, I

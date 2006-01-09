@@ -1,3 +1,12 @@
+2006-01-09  Jonathan Pryor <jonpryor@vt.edu>
+
+	* FileTypes.cs: Remove [Flags] attribute -- these aren't bitfield values.
+	* UnixFileSystemInfo.cs: Fix Is<<Type>> properties -- before it would
+	  erroneously say that a symlink was a character device.  (This is because
+	  device values are *not* [Flags] values, but code was assuming they were.)
+	* UnixGroupInfo.cs: Clone the string[] returned from GetMemberNames().  We
+	  don't want callers to change the underlying list.
+
 2006-01-07  Jonathan Pryor <jonpryor@vt.edu>
 
 	* UnixMarshal.cs: *Actually* put things in alphabetical order (like the
