@@ -1,5 +1,10 @@
 2006-01-09  Ankit Jain  <jankit@novell.com>
 
+	* TypeDef.cs (TypeDef.Define): Set is_defined to true as soon as the
+	Peapi type gets created.
+
+2006-01-09  Ankit Jain  <jankit@novell.com>
+
 	* GenericTypeRef.cs: Rename to ..
 	* GenericParamRef.cs: .. this.
 	(IGenericTypeRef): New.

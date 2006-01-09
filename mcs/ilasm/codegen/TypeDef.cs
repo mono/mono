@@ -331,6 +331,8 @@ namespace Mono.ILASM {
                                         classdef.SpecialNoSuper ();
                         }
 
+                        is_defined = true;
+
                         if (size != -1 || pack != -1)
                                 classdef.AddLayoutInfo ( (pack == -1) ? 1 : pack, (size == -1) ? 0 : size);
 
@@ -345,7 +347,6 @@ namespace Mono.ILASM {
                                 gen_params.Resolve (code_gen, classdef);
 
                         is_intransit = false;
-                        is_defined = true;
 
                         code_gen.AddToDefineContentsList (this);
                 }
