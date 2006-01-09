@@ -161,6 +161,8 @@
 				<File RelPath="System.Web.J2EE\BaseStaticHttpServlet.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.J2EE\J2EEConsts.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.J2EE\J2EEUtils.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.J2EE\ObjectInputStream.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.J2EE\ObjectOutputStream.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.J2EE\PageMapper.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.J2EE\SessionListener.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Mail\Base64AttachmentEncoder.cs" SubType="Code" BuildAction="Compile"/>
