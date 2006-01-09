@@ -1,3 +1,11 @@
+2006-01-09  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #75636.
+	* expression.cs (Invocation.OverloadResolve): Replace reflected
+	override methods with their base virtual methods, rather than
+	skipping over them.
+	* typemanager.cs (TypeManager.GetOverride): New.
+
 2006-01-05  Jb Evain  <jbevain@gmail.com>
 
 	* class.cs (Property.Define, Indexer.Define): do not tag the

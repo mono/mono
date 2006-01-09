@@ -61,7 +61,9 @@ COMPILER = $(topdir)/class/lib/$(PROFILE)/mcs.exe
 TEST_PATTERN = 'test-*.cs'
 endif
 
-run-test-local: test-377-lib.dll test-443-lib.dll
+TEST_ILS := $(wildcard *-lib.il)
+
+run-test-local: $(TEST_ILS:.il=.dll)
 	MONO_RUNTIME='$(RUNTIME)' $(TEST_RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(PROFILE)/compiler-tester.exe positive $(TEST_PATTERN) $(COMPILER) known-issues-$(COMPILER_NAME) $(COMPILER_NAME).log
 
 # do nothing for this target

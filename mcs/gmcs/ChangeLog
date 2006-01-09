@@ -1,3 +1,11 @@
+2006-01-09  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #75636.
+	* expression.cs (Invocation.OverloadResolve): Replace reflected
+	override methods with their base virtual methods, rather than
+	skipping over them.
+	* typemanager.cs (TypeManager.GetOverride): New.
+
 2005-12-21  Miguel de Icaza  <miguel@novell.com>
 
 	* driver.cs: Report the case of no source files and no -out:

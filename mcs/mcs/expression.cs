@@ -4559,45 +4559,55 @@ namespace Mono.CSharp {
 
 			MethodBase[] methods = me.Methods;
 
+			int nmethods = methods.Length;
+
+			if (!me.IsBase) {
+				//
+				// Methods marked 'override' don't take part in 'applicable_type'
+				// computation, nor in the actual overload resolution.
+				// However, they still need to be emitted instead of a base virtual method.
+				// So, we salt them away into the 'candidate_overrides' array.
+				//
+				// In case of reflected methods, we replace each overriding method with
+				// its corresponding base virtual method.  This is to improve compatibility
+				// with non-C# libraries which change the visibility of overrides (#75636)
+				//
+				int j = 0;
+				for (int i = 0; i < methods.Length; ++i) {
+					MethodBase m = methods [i];
+					if (TypeManager.IsOverride (m)) {
+						if (candidate_overrides == null)
+							candidate_overrides = new ArrayList ();
+						candidate_overrides.Add (m);
+						m = TypeManager.GetOverride (m);
+					}
+					if (m != null)
+						methods [j++] = m;
+				}
+				nmethods = j;
+			}
+
 			//
 			// First we construct the set of applicable methods
 			//
 			bool is_sorted = true;
-			for (int i = 0; i < methods.Length; i++){
+			for (int i = 0; i < nmethods; i++){
 				Type decl_type = methods [i].DeclaringType;
 
 				//
 				// If we have already found an applicable method
 				// we eliminate all base types (Section 14.5.5.1)
 				//
-				if ((applicable_type != null) &&
-					IsAncestralType (decl_type, applicable_type))
+				if (applicable_type != null && IsAncestralType (decl_type, applicable_type))
 					continue;
-
-				//
-				// Methods marked 'override' don't take part in 'applicable_type'
-				// computation, nor in the actual overload resolution.
-				// However, they still need to be emitted instead of a base virtual method.
-				// We avoid doing the 'applicable' test here, since it'll anyway be applied
-				// to the base virtual function, and IsOverride is much faster than IsApplicable.
-				//
-				if (!me.IsBase && TypeManager.IsOverride (methods [i])) {
-					if (candidate_overrides == null)
-						candidate_overrides = new ArrayList ();
-					candidate_overrides.Add (methods [i]);
-					continue;
-				}
 
 				//
 				// Check if candidate is applicable (section 14.4.2.1)
 				//   Is candidate applicable in normal form?
 				//
-				bool is_applicable = IsApplicable (
-					ec, Arguments, arg_count, methods [i]);
+				bool is_applicable = IsApplicable (ec, Arguments, arg_count, methods [i]);
 
-				if (!is_applicable &&
-					(IsParamsMethodApplicable (
-					ec, Arguments, arg_count, methods [i]))) {
+				if (!is_applicable && IsParamsMethodApplicable (ec, Arguments, arg_count, methods [i])) {
 					MethodBase candidate = methods [i];
 					if (candidate_to_form == null)
 						candidate_to_form = new PtrHashtable ();
@@ -4628,7 +4638,7 @@ namespace Mono.CSharp {
 				// return by providing info about the closest match
 				//
 				int errors = Report.Errors;
-				for (int i = 0; i < methods.Length; ++i) {
+				for (int i = 0; i < nmethods; ++i) {
 					MethodBase c = (MethodBase) methods [i];
 					ParameterData pd = TypeManager.GetParameterData (c);
 

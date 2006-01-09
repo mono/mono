@@ -1,3 +1,8 @@
+2006-01-09  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (TEST_ILS): New list of CIL test libraries.
+	* test-483-lib.il, test-483.cs: New test from #75636.
+
 2005-12-21  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* gtest-friend-00-lib.cs: Include the public key in 
