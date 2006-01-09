@@ -38,6 +38,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security;
@@ -501,6 +502,19 @@ namespace System.IO {
 			dirEqualsVolume = (DirectorySeparatorChar == VolumeSeparatorChar);
 		}
 		
+		static bool SameRoot (string root, string path)
+		{
+			// compare path's root with the specified root
+			int sep = root.Length - 1;
+			// but don't compare the directory separator
+			if (String.Compare (root, 0, path, 0, sep, true, CultureInfo.InvariantCulture) == 0) {
+				// as they can be different for each one
+				if (IsDsc (root[sep]) && IsDsc (path[sep]))
+					return true;
+			}
+			return false;
+		}
+
 		static string CanonicalizePath (string path)
 		{
 			// STEP 1: Check for empty string
@@ -539,10 +553,10 @@ namespace System.IO {
 			else {
 				string ret = String.Join (DirectorySeparatorStr, dirs, 0, target);
 				if (Environment.IsRunningOnWindows) {
-					if (!ret.StartsWith (root))
+					if (!SameRoot (root, ret))
 						ret = root + ret;
 					// In GetFullPath(), it is assured that here never comes UNC. So this must only applied to such path that starts with '\', without drive specification.
-					if (path[0] != Path.DirectorySeparatorChar && path.StartsWith (root)) {
+					if (!IsDsc (path[0]) && SameRoot (root, path)) {
 						if (ret.Length <= 2 && !ret.EndsWith (DirectorySeparatorStr)) // '\' after "c:"
 							ret += Path.DirectorySeparatorChar;
 						return ret;
