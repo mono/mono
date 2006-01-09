@@ -42,7 +42,8 @@ namespace System.Web.Services.Configuration {
 
 		static ProtocolElement ()
 		{
-			nameProp = new ConfigurationProperty ("name", typeof (WebServiceProtocols), WebServiceProtocols.Unknown, ConfigurationPropertyOptions.IsKey);
+			nameProp = new ConfigurationProperty ("name", typeof (WebServiceProtocols), WebServiceProtocols.Unknown,
+							      new GenericEnumConverter (typeof (WebServiceProtocols)), null, ConfigurationPropertyOptions.IsKey);
 			properties = new ConfigurationPropertyCollection ();
 
 			properties.Add (nameProp);

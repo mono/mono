@@ -45,7 +45,9 @@ namespace System.Web.Services.Configuration {
 		static SoapEnvelopeProcessingElement ()
 		{
 			strictProp = new ConfigurationProperty ("strict", typeof (bool), false);
-			readTimeoutProp = new ConfigurationProperty ("readTimeout", typeof (int), Int32.MaxValue);
+			readTimeoutProp = new ConfigurationProperty ("readTimeout", typeof (int), Int32.MaxValue,
+								     new InfiniteIntConverter(), null,
+								     ConfigurationPropertyOptions.None);
 			properties = new ConfigurationPropertyCollection ();
 
 			properties.Add (strictProp);

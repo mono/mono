@@ -39,6 +39,7 @@ namespace System.Web.Services.Configuration
         public sealed class WebServicesSection : ConfigurationSection
         {
                 static ConfigurationProperty conformanceWarningsProp;
+		static ConfigurationProperty diagnosticsProp;
                 static ConfigurationProperty protocolsProp;
                 static ConfigurationProperty serviceDescriptionFormatExtensionTypesProp;
                 static ConfigurationProperty soapEnvelopeProcessingProp;
@@ -52,19 +53,32 @@ namespace System.Web.Services.Configuration
 
                 static WebServicesSection ()
                 {
-			conformanceWarningsProp = new ConfigurationProperty ("conformanceWarnings", typeof (WsiProfilesElementCollection));
-                        protocolsProp = new ConfigurationProperty ("protocols", typeof (ProtocolElementCollection));
-			serviceDescriptionFormatExtensionTypesProp = new ConfigurationProperty ("serviceDescriptionFormatExtensionTypes", typeof (TypeElementCollection));
-			soapEnvelopeProcessingProp = new ConfigurationProperty ("soapEnvelopeProcessing", typeof (SoapEnvelopeProcessingElement));
-			soapExtensionImporterTypesProp = new ConfigurationProperty ("soapExtensionImporterTypes", typeof (TypeElementCollection));
-			soapExtensionReflectorTypesProp = new ConfigurationProperty ("soapExtensionReflectorTypes", typeof (TypeElementCollection));
-			soapExtensionTypesProp = new ConfigurationProperty ("soapExtensionTypes", typeof (SoapExtensionTypeElementCollection));
-			soapServerProtocolFactoryProp = new ConfigurationProperty ("soapServerProtocolFactory", typeof (TypeElement));
-			soapTransportImporterTypesProp = new ConfigurationProperty ("soapTransportImporterTypes", typeof (TypeElementCollection));
-			wsdlHelpGeneratorProp = new ConfigurationProperty ("wsdlHelpGenerator", typeof (WsdlHelpGeneratorElement));
+			conformanceWarningsProp = new ConfigurationProperty ("conformanceWarnings", typeof (WsiProfilesElementCollection), null,
+									     null, null, ConfigurationPropertyOptions.None);
+			diagnosticsProp = new ConfigurationProperty ("diagnostics", typeof (DiagnosticsElement), null,
+								     null, null, ConfigurationPropertyOptions.None);
+                        protocolsProp = new ConfigurationProperty ("protocols", typeof (ProtocolElementCollection), null,
+								   null, null, ConfigurationPropertyOptions.None);
+			serviceDescriptionFormatExtensionTypesProp = new ConfigurationProperty ("serviceDescriptionFormatExtensionTypes", typeof (TypeElementCollection), null,
+												null, null, ConfigurationPropertyOptions.None);
+			soapEnvelopeProcessingProp = new ConfigurationProperty ("soapEnvelopeProcessing", typeof (SoapEnvelopeProcessingElement), null,
+										null, null, ConfigurationPropertyOptions.None);
+			soapExtensionImporterTypesProp = new ConfigurationProperty ("soapExtensionImporterTypes", typeof (TypeElementCollection), null,
+										    null, null, ConfigurationPropertyOptions.None);
+			soapExtensionReflectorTypesProp = new ConfigurationProperty ("soapExtensionReflectorTypes", typeof (TypeElementCollection), null,
+										     null, null, ConfigurationPropertyOptions.None);
+			soapExtensionTypesProp = new ConfigurationProperty ("soapExtensionTypes", typeof (SoapExtensionTypeElementCollection), null,
+									    null, null, ConfigurationPropertyOptions.None);
+			soapServerProtocolFactoryProp = new ConfigurationProperty ("soapServerProtocolFactory", typeof (TypeElement), null,
+										   null, null, ConfigurationPropertyOptions.None);
+			soapTransportImporterTypesProp = new ConfigurationProperty ("soapTransportImporterTypes", typeof (TypeElementCollection), null,
+										    null, null, ConfigurationPropertyOptions.None);
+			wsdlHelpGeneratorProp = new ConfigurationProperty ("wsdlHelpGenerator", typeof (WsdlHelpGeneratorElement), null,
+									   null, null, ConfigurationPropertyOptions.None);
                         properties = new ConfigurationPropertyCollection ();
 
 			properties.Add (conformanceWarningsProp);
+			properties.Add (diagnosticsProp);
                         properties.Add (protocolsProp);
 			properties.Add (serviceDescriptionFormatExtensionTypesProp);
 			properties.Add (soapEnvelopeProcessingProp);
@@ -101,10 +115,9 @@ namespace System.Web.Services.Configuration
                         get { throw new NotImplementedException (); }
                 }
 
-		[MonoTODO ("why doesn't this have a ConfigurationPropertyAttribute?")]
                 public DiagnosticsElement Diagnostics {
-                        get { throw new NotImplementedException (); }
-                        set { throw new NotImplementedException (); }
+                        get { return (DiagnosticsElement) base [diagnosticsProp]; }
+                        set { base[diagnosticsProp] = value; }
                 }
 
 		[MonoTODO]
@@ -176,7 +189,7 @@ namespace System.Web.Services.Configuration
 
 		internal static bool IsSupported (WebServiceProtocols proto)
 		{
-			return ((Instance.EnabledProtocols & proto) == proto && (proto != 0));
+			return ((Instance.EnabledProtocols & proto) == proto && (proto != WebServiceProtocols.Unknown));
 		}
         }
 

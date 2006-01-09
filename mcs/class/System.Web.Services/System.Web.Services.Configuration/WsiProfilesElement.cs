@@ -43,7 +43,10 @@ namespace System.Web.Services.Configuration {
 
 		static WsiProfilesElement ()
 		{
-			nameProp = new ConfigurationProperty ("name", typeof (WsiProfiles), WsiProfiles.None, ConfigurationPropertyOptions.IsKey);
+			nameProp = new ConfigurationProperty ("name", typeof (WsiProfiles), WsiProfiles.None,
+							      new GenericEnumConverter (typeof (WsiProfiles)),
+							      null,
+							      ConfigurationPropertyOptions.IsKey);
 			properties = new ConfigurationPropertyCollection ();
 
 			properties.Add (nameProp);

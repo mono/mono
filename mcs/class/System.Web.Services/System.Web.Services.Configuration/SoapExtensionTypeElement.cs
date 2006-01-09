@@ -46,8 +46,11 @@ namespace System.Web.Services.Configuration {
 		static SoapExtensionTypeElement ()
 		{
 			groupProp = new ConfigurationProperty ("group", typeof (PriorityGroup), PriorityGroup.Low, ConfigurationPropertyOptions.IsKey);
-			priorityProp = new ConfigurationProperty ("priority", typeof (int), 0, ConfigurationPropertyOptions.IsKey);
-			typeProp = new ConfigurationProperty ("type", typeof (Type), null, ConfigurationPropertyOptions.IsKey);
+			priorityProp = new ConfigurationProperty ("priority", typeof (int), 0,
+								  new Int32Converter(), new IntegerValidator (0, Int32.MaxValue),
+								  ConfigurationPropertyOptions.IsKey);
+			typeProp = new ConfigurationProperty ("type", typeof (Type), null,
+							      null, null, ConfigurationPropertyOptions.IsKey);
 			properties = new ConfigurationPropertyCollection ();
 
 			properties.Add (groupProp);
