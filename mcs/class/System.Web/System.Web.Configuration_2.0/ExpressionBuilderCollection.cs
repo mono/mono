@@ -42,10 +42,6 @@ namespace System.Web.Configuration
 		static ExpressionBuilderCollection ()
 		{
 			props = new ConfigurationPropertyCollection ();
-			ConfigurationProperty prop = new ConfigurationProperty ("", typeof (ExpressionBuilderCollection), null,
-										null, PropertyHelper.DefaultValidator,
-										ConfigurationPropertyOptions.IsDefaultCollection);
-			props.Add (prop);
 		}
 		
 		public ExpressionBuilderCollection (): base (CaseInsensitiveComparer.DefaultInvariant)

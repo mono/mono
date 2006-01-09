@@ -1,5 +1,8 @@
 2006-01-09  Chris Toshok  <toshok@ximian.com>
 
+	* ExpressionBuilderCollection.cs (.cctor): no need to create a
+	collection property here.  we're already in the collection.
+
 	* CompilationSection.cs: fix typo.
 
 2006-01-04  Chris Toshok  <toshok@ximian.com>
