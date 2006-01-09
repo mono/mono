@@ -748,27 +748,11 @@ mono_print_bb (MonoBasicBlock *bb, const char *msg)
         MONO_INST_NEW ((cfg), (inst), OP_LABEL); \
 	} while (0)
 
-/* FIXME: Why is this label thing needed ? */
-#define	MONO_EMIT_NEW_BRANCH_BLOCK(cfg,op,targetbb) do { \
-        MonoInst *inst; \
-        MonoInst *target_label; \
-        MONO_INST_NEW ((cfg), (target_label), OP_LABEL); \
-	        target_label->next = (targetbb)->code; \
-		target_label->inst_c0 = (targetbb)->native_offset; \
-        if (!(targetbb)->last_ins) (targetbb)->last_ins = target_label; \
-	        (targetbb)->code = target_label; \
-        MONO_INST_NEW ((cfg), inst, (op)); \
-		inst->inst_i0 = target_label;	\
-		inst->flags = MONO_INST_BRLABEL;	\
-        MONO_ADD_INS ((cfg)->cbb, inst); \
-	} while (0)
-
 /* Emit a one-way conditional branch and start a new basic block */
-#define	MONO_EMIT_NEW_BRANCH_BLOCK2(cfg,op,truebb) do { \
+#define	MONO_EMIT_NEW_BRANCH_BLOCK(cfg,op,truebb) do { \
         MonoInst *ins; \
         MonoBasicBlock *falsebb; \
 	    NEW_BBLOCK ((cfg), falsebb); \
-	    ADD_BBLOCK ((cfg), cfg->cbb_hash, falsebb); \
         MONO_INST_NEW ((cfg), (ins), (op)); \
         if ((op) == CEE_BR) { \
             ins->inst_target_bb = (truebb); \
@@ -780,12 +764,11 @@ mono_print_bb (MonoBasicBlock *bb, const char *msg)
         link_bblock ((cfg), (cfg)->cbb, (truebb)); \
         link_bblock ((cfg), (cfg)->cbb, (falsebb)); \
         MONO_ADD_INS ((cfg)->cbb, ins); \
-	    cfg->cbb->next_bb = falsebb; \
-        cfg->cbb = falsebb; \
+        MONO_START_BB ((cfg), falsebb); \
 	} while (0)
 
 /* Emit a two-way conditional branch */
-#define	MONO_EMIT_NEW_BRANCH_BLOCK3(cfg,op,truebb,falsebb) do { \
+#define	MONO_EMIT_NEW_BRANCH_BLOCK2(cfg,op,truebb,falsebb) do { \
         MonoInst *ins; \
         MONO_INST_NEW ((cfg), (ins), (op)); \
 		ins->inst_many_bb = mono_mempool_alloc (cfg->mempool, sizeof(gpointer)*2);	\
@@ -796,15 +779,8 @@ mono_print_bb (MonoBasicBlock *bb, const char *msg)
         MONO_ADD_INS ((cfg)->cbb, ins); \
 	} while (0)
 
-#define	MONO_EMIT_NEW_BRANCH_LABEL(cfg,op,label) do { \
-        MonoInst *inst; \
-        MONO_INST_NEW ((cfg), (inst), (op)); \
-		inst->inst_i0 = label;	\
-		inst->flags = MONO_INST_BRLABEL;	\
-        MONO_ADD_INS ((cfg)->cbb, inst); \
-	} while (0)
-
 #define MONO_START_BB(cfg, bblock) do { \
+        ADD_BBLOCK ((cfg), (cfg)->cbb_hash, (bblock)); \
         link_bblock ((cfg), (cfg)->cbb, (bblock)); \
 	    (cfg)->cbb->next_bb = (bblock); \
 	    (cfg)->cbb = (bblock); \
@@ -1986,7 +1962,7 @@ mini_emit_max_iid_check (MonoCompile *cfg, int max_iid_reg, MonoClass *klass,
 	else
 		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, max_iid_reg, klass->interface_id);
 	if (false_target)
-		MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, CEE_BLT_UN, false_target);
+		MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BLT_UN, false_target);
 	else
 		MONO_EMIT_NEW_COND_EXC (cfg, LT_UN, "InvalidCastException");
 }
@@ -2023,7 +1999,7 @@ mini_emit_isninst_cast (MonoCompile *cfg, int klass_reg, MonoClass *klass, MonoB
 	if (klass->idepth > MONO_DEFAULT_SUPERTABLE_SIZE) {
 		MONO_EMIT_NEW_LOAD_MEMBASE_OP (cfg, OP_LOADU2_MEMBASE, idepth_reg, klass_reg, G_STRUCT_OFFSET (MonoClass, idepth));
 		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, idepth_reg, klass->idepth);
-		MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, CEE_BLT_UN, false_target);
+		MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BLT_UN, false_target);
 	}
 	MONO_EMIT_NEW_LOAD_MEMBASE (cfg, stypes_reg, klass_reg, G_STRUCT_OFFSET (MonoClass, supertypes));
 	MONO_EMIT_NEW_LOAD_MEMBASE (cfg, stype, stypes_reg, ((klass->idepth - 1) * SIZEOF_VOID_P));
@@ -2034,7 +2010,7 @@ mini_emit_isninst_cast (MonoCompile *cfg, int klass_reg, MonoClass *klass, MonoB
 	} else {
 		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, stype, klass);
 	}
-	MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, CEE_BEQ, true_target);
+	MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BEQ, true_target);
 }
 
 static void 
@@ -2046,7 +2022,7 @@ mini_emit_iface_cast (MonoCompile *cfg, int vtable_reg, MonoClass *klass, MonoBa
 	mini_emit_load_intf_reg_vtable (cfg, intf_reg, vtable_reg, klass);
 	MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, intf_reg, 0);
 	if (true_target)
-		MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, CEE_BNE_UN, true_target);
+		MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BNE_UN, true_target);
 	else
 		MONO_EMIT_NEW_COND_EXC (cfg, EQ, "InvalidCastException");		
 }
@@ -2064,7 +2040,7 @@ mini_emit_iface_class_cast (MonoCompile *cfg, int klass_reg, MonoClass *klass, M
 	mini_emit_load_intf_reg_class (cfg, intf_reg, klass_reg, klass);
 	MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, intf_reg, -1);
 	if (true_target)
-		MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, CEE_BGE, true_target);
+		MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BGE, true_target);
 	else
 		MONO_EMIT_NEW_COND_EXC (cfg, EQ, "InvalidCastException");
 }
@@ -2884,10 +2860,9 @@ handle_castclass (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned ch
 	int vtable_reg = alloc_preg (cfg);
 
 	NEW_BBLOCK (cfg, is_null_bb);
-	ADD_BBLOCK (cfg, cfg->cbb_hash, is_null_bb);
 
 	MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, obj_reg, 0);
-	MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, CEE_BEQ, is_null_bb);
+	MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BEQ, is_null_bb);
 
 	if (klass->flags & TYPE_ATTRIBUTE_INTERFACE) {
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, vtable_reg, obj_reg, G_STRUCT_OFFSET (MonoObject, vtable));
@@ -2917,7 +2892,7 @@ handle_castclass (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned ch
 				} else {
 					MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, parent_reg, mono_defaults.enum_class->parent);
 				}
-				MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, CEE_BNE_UN, is_null_bb);
+				MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BNE_UN, is_null_bb);
 				if (cfg->compile_aot) {
 					MONO_EMIT_NEW_CLASSCONST (cfg, const_reg, mono_defaults.enum_class);
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, eclass_reg, const_reg);
@@ -2933,7 +2908,7 @@ handle_castclass (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned ch
 				} else {
 					MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, eclass_reg, mono_defaults.enum_class->parent);
 				}
-				MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, CEE_BEQ, is_null_bb);
+				MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BEQ, is_null_bb);
 				if (cfg->compile_aot) {
 					MONO_EMIT_NEW_CLASSCONST (cfg, const_reg, mono_defaults.enum_class);
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, eclass_reg, const_reg);
@@ -2996,16 +2971,11 @@ handle_isinst (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned char 
 	int res_reg = alloc_preg (cfg);
 
 	NEW_BBLOCK (cfg, is_null_bb);
-	ADD_BBLOCK (cfg, cfg->cbb_hash, is_null_bb);
-
 	NEW_BBLOCK (cfg, false_bb);
-	ADD_BBLOCK (cfg, cfg->cbb_hash, false_bb);
-
 	NEW_BBLOCK (cfg, end_bb);
-	ADD_BBLOCK (cfg, cfg->cbb_hash, end_bb);
 
 	MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, obj_reg, 0);
-	MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, CEE_BEQ, is_null_bb);
+	MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BEQ, is_null_bb);
 
 	if (klass->flags & TYPE_ATTRIBUTE_INTERFACE) {
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, vtable_reg, obj_reg, G_STRUCT_OFFSET (MonoObject, vtable));
@@ -3022,7 +2992,7 @@ handle_isinst (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned char 
 
 			MONO_EMIT_NEW_LOAD_MEMBASE_OP (cfg, OP_LOADU1_MEMBASE, rank_reg, vtable_reg, G_STRUCT_OFFSET (MonoVTable, rank));
 			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, rank_reg, klass->rank);
-			MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, CEE_BNE_UN, false_bb);
+			MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BNE_UN, false_bb);
 			MONO_EMIT_NEW_LOAD_MEMBASE (cfg, klass_reg, vtable_reg, G_STRUCT_OFFSET (MonoVTable, klass));
 			MONO_EMIT_NEW_LOAD_MEMBASE (cfg, eclass_reg, klass_reg, G_STRUCT_OFFSET (MonoClass, cast_class));
 			if (klass->cast_class == mono_defaults.object_class) {
@@ -3036,15 +3006,15 @@ handle_isinst (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned char 
 				} else {
 					MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, parent_reg, mono_defaults.enum_class->parent);
 				}
-				MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, CEE_BNE_UN, is_null_bb);
+				MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BNE_UN, is_null_bb);
 				if (cfg->compile_aot) {
 					MONO_EMIT_NEW_CLASSCONST (cfg, const_reg, mono_defaults.enum_class);
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, eclass_reg, const_reg);
 				} else {
 					MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, eclass_reg, mono_defaults.enum_class);
 				}
-				MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, CEE_BEQ, is_null_bb);
-				MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, CEE_BR, false_bb);
+				MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BEQ, is_null_bb);
+				MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BR, false_bb);
 			} else if (klass->cast_class == mono_defaults.enum_class->parent) {
 				int const_reg = -1;
 				
@@ -3055,15 +3025,15 @@ handle_isinst (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned char 
 				} else {
 					MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, eclass_reg, mono_defaults.enum_class->parent);
 				}
-				MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, CEE_BEQ, is_null_bb);
+				MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BEQ, is_null_bb);
 				if (cfg->compile_aot) {
 					MONO_EMIT_NEW_CLASSCONST (cfg, const_reg, mono_defaults.enum_class);
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, eclass_reg, const_reg);
 				} else {
 					MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, eclass_reg, mono_defaults.enum_class);
 				}
-				MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, CEE_BEQ, is_null_bb);
-				MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, CEE_BR, false_bb);
+				MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BEQ, is_null_bb);
+				MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BR, false_bb);
 			} else if (klass->cast_class == mono_defaults.enum_class) {
 				if (cfg->compile_aot) {
 					int const_reg = alloc_preg (cfg);
@@ -3072,8 +3042,8 @@ handle_isinst (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned char 
 				} else {
 					MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, eclass_reg, mono_defaults.enum_class);
 				}
-				MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, CEE_BEQ, is_null_bb);
-				MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, CEE_BR, false_bb);
+				MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BEQ, is_null_bb);
+				MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BR, false_bb);
 			} else if (klass->cast_class->flags & TYPE_ATTRIBUTE_INTERFACE) {
 				mini_emit_iface_class_cast (cfg, eclass_reg, klass->cast_class, false_bb, is_null_bb);
 			} else {
@@ -3082,7 +3052,7 @@ handle_isinst (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned char 
 					int bounds_reg = alloc_preg (cfg);
 					MONO_EMIT_NEW_LOAD_MEMBASE (cfg, bounds_reg, obj_reg, G_STRUCT_OFFSET (MonoArray, bounds));
 					MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, bounds_reg, 0);
-					MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, CEE_BNE_UN, false_bb);
+					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BNE_UN, false_bb);
 				}
 
 				/* the is_null_bb target simply copies the input register to the output */
@@ -3102,8 +3072,8 @@ handle_isinst (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned char 
 					MONO_EMIT_NEW_LOAD_MEMBASE (cfg, klass_reg, vtable_reg, G_STRUCT_OFFSET (MonoVTable, klass));
 					MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, klass_reg, klass);
 				}
-				MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, CEE_BNE_UN, false_bb);
-				MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, CEE_BR, is_null_bb);
+				MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BNE_UN, false_bb);
+				MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BR, is_null_bb);
 			} else {
 				MONO_EMIT_NEW_LOAD_MEMBASE (cfg, klass_reg, vtable_reg, G_STRUCT_OFFSET (MonoVTable, klass));
 				/* the is_null_bb target simply copies the input register to the output */
@@ -3115,7 +3085,7 @@ handle_isinst (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned char 
 	MONO_START_BB (cfg, false_bb);
 
 	MONO_EMIT_NEW_ICONST (cfg, res_reg, 0);
-	MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, CEE_BR, end_bb);
+	MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BR, end_bb);
 
 	MONO_START_BB (cfg, is_null_bb);
 
@@ -3143,22 +3113,16 @@ handle_cisinst (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned char
 	int klass_reg = alloc_preg (cfg);
 
 	NEW_BBLOCK (cfg, true_bb);
-	ADD_BBLOCK (cfg, cfg->cbb_hash, true_bb);
 	NEW_BBLOCK (cfg, false_bb);
-	ADD_BBLOCK (cfg, cfg->cbb_hash, false_bb);
 	NEW_BBLOCK (cfg, false2_bb);
-	ADD_BBLOCK (cfg, cfg->cbb_hash, false2_bb);
 	NEW_BBLOCK (cfg, end_bb);
-	ADD_BBLOCK (cfg, cfg->cbb_hash, end_bb);
 	NEW_BBLOCK (cfg, no_proxy_bb);
-	ADD_BBLOCK (cfg, cfg->cbb_hash, no_proxy_bb);
 
 	MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, obj_reg, 0);
-	MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, CEE_BEQ, false_bb);
+	MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BEQ, false_bb);
 
 	if (klass->flags & TYPE_ATTRIBUTE_INTERFACE) {
 		NEW_BBLOCK (cfg, interface_fail_bb);
-		ADD_BBLOCK (cfg, cfg->cbb_hash, interface_fail_bb);
 
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, tmp_reg, obj_reg, G_STRUCT_OFFSET (MonoObject, vtable));
 		mini_emit_iface_cast (cfg, tmp_reg, klass, interface_fail_bb, true_bb);
@@ -3172,11 +3136,11 @@ handle_cisinst (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned char
 		} else {
 			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, klass_reg, mono_defaults.transparent_proxy_class);
 		}
-		MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, CEE_BNE_UN, false_bb);
+		MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BNE_UN, false_bb);
 		
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, tmp_reg, obj_reg, G_STRUCT_OFFSET (MonoTransparentProxy, custom_type_info));
 		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, tmp_reg, 0);
-		MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, CEE_BNE_UN, false2_bb);
+		MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BNE_UN, false2_bb);
 		
 	} else {
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, tmp_reg, obj_reg, G_STRUCT_OFFSET (MonoObject, vtable));
@@ -3189,16 +3153,16 @@ handle_cisinst (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned char
 		} else {
 			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, klass_reg, mono_defaults.transparent_proxy_class);
 		}
-		MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, CEE_BNE_UN, no_proxy_bb);
+		MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BNE_UN, no_proxy_bb);
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, tmp_reg, obj_reg, G_STRUCT_OFFSET (MonoTransparentProxy, remote_class));
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, klass_reg, tmp_reg, G_STRUCT_OFFSET (MonoRemoteClass, proxy_class));
 		
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, tmp_reg, obj_reg, G_STRUCT_OFFSET (MonoTransparentProxy, custom_type_info));
 		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, tmp_reg, 0);
-		MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, CEE_BEQ, no_proxy_bb);
+		MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BEQ, no_proxy_bb);
 		
 		mini_emit_isninst_cast (cfg, klass_reg, klass, NULL, true_bb);
-		MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, CEE_BR, false2_bb);
+		MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BR, false2_bb);
 
 		MONO_START_BB (cfg, no_proxy_bb);
 
@@ -3208,12 +3172,12 @@ handle_cisinst (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned char
 	MONO_START_BB (cfg, false_bb);
 
 	MONO_EMIT_NEW_ICONST (cfg, dreg, 1);
-	MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, CEE_BR, end_bb);
+	MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BR, end_bb);
 
 	MONO_START_BB (cfg, false2_bb);
 
 	MONO_EMIT_NEW_ICONST (cfg, dreg, 2);
-	MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, CEE_BR, end_bb);
+	MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BR, end_bb);
 
 	MONO_START_BB (cfg, true_bb);
 
@@ -3245,16 +3209,13 @@ handle_ccastclass (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned c
 	int klass_reg = alloc_preg (cfg);
 
 	NEW_BBLOCK (cfg, end_bb);
-	ADD_BBLOCK (cfg, cfg->cbb_hash, end_bb);
 	NEW_BBLOCK (cfg, ok_result_bb);
-	ADD_BBLOCK (cfg, cfg->cbb_hash, ok_result_bb);
 
 	MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, obj_reg, 0);
-	MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, CEE_BEQ, ok_result_bb);
+	MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BEQ, ok_result_bb);
 
 	if (klass->flags & TYPE_ATTRIBUTE_INTERFACE) {
 		NEW_BBLOCK (cfg, interface_fail_bb);
-		ADD_BBLOCK (cfg, cfg->cbb_hash, interface_fail_bb);
 	
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, tmp_reg, obj_reg, G_STRUCT_OFFSET (MonoObject, vtable));
 		mini_emit_iface_cast (cfg, tmp_reg, klass, interface_fail_bb, ok_result_bb);
@@ -3279,12 +3240,10 @@ handle_ccastclass (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned c
 		MONO_EMIT_NEW_COND_EXC (cfg, EQ, "InvalidCastException");
 		
 		MONO_EMIT_NEW_ICONST (cfg, dreg, 1);
-		MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, CEE_BR, end_bb);
+		MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BR, end_bb);
 		
 	} else {
-
 		NEW_BBLOCK (cfg, no_proxy_bb);
-		ADD_BBLOCK (cfg, cfg->cbb_hash, no_proxy_bb);
 
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, tmp_reg, obj_reg, G_STRUCT_OFFSET (MonoObject, vtable));
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, klass_reg, tmp_reg, G_STRUCT_OFFSET (MonoVTable, klass));
@@ -3296,19 +3255,19 @@ handle_ccastclass (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned c
 		} else {
 			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, klass_reg, mono_defaults.transparent_proxy_class);
 		}
-		MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, CEE_BNE_UN, no_proxy_bb);
+		MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BNE_UN, no_proxy_bb);
 		
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, tmp_reg, obj_reg, G_STRUCT_OFFSET (MonoTransparentProxy, remote_class));
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, klass_reg, tmp_reg, G_STRUCT_OFFSET (MonoRemoteClass, proxy_class));
 		
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, tmp_reg, obj_reg, G_STRUCT_OFFSET (MonoTransparentProxy, custom_type_info));
 		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, tmp_reg, 0);
-		MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, CEE_BEQ, no_proxy_bb);
+		MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BEQ, no_proxy_bb);
 		
 		mini_emit_isninst_cast (cfg, klass_reg, klass, NULL, ok_result_bb);
 
 		MONO_EMIT_NEW_ICONST (cfg, dreg, 1);
-		MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, CEE_BR, end_bb);
+		MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BR, end_bb);
 
 		MONO_START_BB (cfg, no_proxy_bb);
 
@@ -4405,10 +4364,10 @@ mono_decompose_long_opts (MonoCompile *cfg)
 				MONO_EMIT_NEW_BIALU (cfg, OP_LCONV_TO_R_UN_2, tree->dreg, tree->sreg1, tree->sreg1 + 1);
 				break;
 			case OP_LCONV_TO_OVF_I1: {
-				MonoInst *is_negative, *end_label;
+				MonoBasicBlock *is_negative, *end_label;
 
-				MONO_NEW_LABEL (cfg, is_negative);
-				MONO_NEW_LABEL (cfg, end_label);
+				NEW_BBLOCK (cfg, is_negative);
+				NEW_BBLOCK (cfg, end_label);
 
 				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, tree->sreg1 + 1, 0);
 				MONO_EMIT_NEW_COND_EXC (cfg, GT, "OverflowException");
@@ -4416,18 +4375,19 @@ mono_decompose_long_opts (MonoCompile *cfg)
 				MONO_EMIT_NEW_COND_EXC (cfg, LT, "OverflowException");
 
 				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, tree->sreg1 + 1, 0);
-				MONO_EMIT_NEW_BRANCH_LABEL (cfg, OP_IBLT, is_negative);
+				MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBLT, is_negative);
 
 				/* Positive */
 				MONO_EMIT_NEW_COMPARE_IMM (cfg, tree->sreg1, 127);
 				MONO_EMIT_NEW_COND_EXC (cfg, GT_UN, "OverflowException");
-				MONO_EMIT_NEW_BRANCH_LABEL (cfg, CEE_BR, end_label);
+				MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BR, end_label);
 
 				/* Negative */
-				MONO_ADD_INS (cfg->cbb, is_negative);
+				MONO_START_BB (cfg, is_negative);
 				MONO_EMIT_NEW_COMPARE_IMM (cfg, tree->sreg1, -128);
 				MONO_EMIT_NEW_COND_EXC (cfg, LT_UN, "OverflowException");
-				MONO_ADD_INS (cfg->cbb, end_label);
+
+				MONO_START_BB (cfg, end_label);
 
 				MONO_EMIT_NEW_UNALU (cfg, OP_ICONV_TO_I1, tree->dreg, tree->sreg1);
 				break;
@@ -4453,10 +4413,10 @@ mono_decompose_long_opts (MonoCompile *cfg)
 				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_AND_IMM, tree->dreg, tree->sreg1, 0xff);
 				break;
 			case OP_LCONV_TO_OVF_I2: {
-				MonoInst *is_negative, *end_label;
+				MonoBasicBlock *is_negative, *end_label;
 
-				MONO_NEW_LABEL (cfg, is_negative);
-				MONO_NEW_LABEL (cfg, end_label);
+				NEW_BBLOCK (cfg, is_negative);
+				NEW_BBLOCK (cfg, end_label);
 
 				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, tree->sreg1 + 1, 0);
 				MONO_EMIT_NEW_COND_EXC (cfg, GT, "OverflowException");
@@ -4464,18 +4424,18 @@ mono_decompose_long_opts (MonoCompile *cfg)
 				MONO_EMIT_NEW_COND_EXC (cfg, LT, "OverflowException");
 
 				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, tree->sreg1 + 1, 0);
-				MONO_EMIT_NEW_BRANCH_LABEL (cfg, OP_IBLT, is_negative);
+				MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBLT, is_negative);
 
 				/* Positive */
 				MONO_EMIT_NEW_COMPARE_IMM (cfg, tree->sreg1, 32767);
 				MONO_EMIT_NEW_COND_EXC (cfg, GT_UN, "OverflowException");
-				MONO_EMIT_NEW_BRANCH_LABEL (cfg, CEE_BR, end_label);
+				MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BR, end_label);
 
 				/* Negative */
-				MONO_ADD_INS (cfg->cbb, is_negative);
+				MONO_START_BB (cfg, is_negative);
 				MONO_EMIT_NEW_COMPARE_IMM (cfg, tree->sreg1, -32768);
 				MONO_EMIT_NEW_COND_EXC (cfg, LT_UN, "OverflowException");
-				MONO_ADD_INS (cfg->cbb, end_label);
+				MONO_START_BB (cfg, end_label);
 
 				MONO_EMIT_NEW_UNALU (cfg, OP_ICONV_TO_I2, tree->dreg, tree->sreg1);
 				break;
@@ -4629,166 +4589,166 @@ mono_decompose_long_opts (MonoCompile *cfg)
 				switch (next->opcode) {
 				case OP_LBEQ:
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1, tree->sreg2);
-					MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, OP_IBNE_UN, next->inst_false_bb);
+					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBNE_UN, next->inst_false_bb);
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 1, tree->sreg2 + 1);
-					MONO_EMIT_NEW_BRANCH_BLOCK3 (cfg, OP_IBEQ, next->inst_true_bb, next->inst_false_bb);
+					MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, OP_IBEQ, next->inst_true_bb, next->inst_false_bb);
 					next->opcode = CEE_NOP;
 					break;
 				case OP_LBNE_UN:
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1, tree->sreg2);
-					MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, OP_IBNE_UN, next->inst_true_bb);
+					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBNE_UN, next->inst_true_bb);
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 1, tree->sreg2 + 1);
-					MONO_EMIT_NEW_BRANCH_BLOCK3 (cfg, OP_IBNE_UN, next->inst_true_bb, next->inst_false_bb);
+					MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, OP_IBNE_UN, next->inst_true_bb, next->inst_false_bb);
 					next->opcode = CEE_NOP;
 					break;
 				case OP_LBLT:
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 1, tree->sreg2 + 1);
-					MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, OP_IBLT, next->inst_true_bb);
-					MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, OP_IBNE_UN, next->inst_false_bb);
+					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBLT, next->inst_true_bb);
+					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBNE_UN, next->inst_false_bb);
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1, tree->sreg2);
-					MONO_EMIT_NEW_BRANCH_BLOCK3 (cfg, OP_IBLT_UN, next->inst_true_bb, next->inst_false_bb);
+					MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, OP_IBLT_UN, next->inst_true_bb, next->inst_false_bb);
 					next->opcode = CEE_NOP;
 					break;
 				case OP_LBGT:
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 1, tree->sreg2 + 1);
-					MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, OP_IBGT, next->inst_true_bb);
-					MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, OP_IBNE_UN, next->inst_false_bb);
+					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBGT, next->inst_true_bb);
+					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBNE_UN, next->inst_false_bb);
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1, tree->sreg2);
-					MONO_EMIT_NEW_BRANCH_BLOCK3 (cfg, OP_IBGT_UN, next->inst_true_bb, next->inst_false_bb);
+					MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, OP_IBGT_UN, next->inst_true_bb, next->inst_false_bb);
 					next->opcode = CEE_NOP;
 					break;
 				case OP_LBGE:
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 1, tree->sreg2 + 1);
-					MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, OP_IBGT, next->inst_true_bb);
-					MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, OP_IBNE_UN, next->inst_false_bb);
+					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBGT, next->inst_true_bb);
+					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBNE_UN, next->inst_false_bb);
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1, tree->sreg2);
-					MONO_EMIT_NEW_BRANCH_BLOCK3 (cfg, OP_IBGE_UN, next->inst_true_bb, next->inst_false_bb);
+					MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, OP_IBGE_UN, next->inst_true_bb, next->inst_false_bb);
 					next->opcode = CEE_NOP;
 					break;
 				case OP_LBLE:
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 1, tree->sreg2 + 1);
-					MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, OP_IBLT, next->inst_true_bb);
-					MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, OP_IBNE_UN, next->inst_false_bb);
+					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBLT, next->inst_true_bb);
+					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBNE_UN, next->inst_false_bb);
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1, tree->sreg2);
-					MONO_EMIT_NEW_BRANCH_BLOCK3 (cfg, OP_IBLE_UN, next->inst_true_bb, next->inst_false_bb);
+					MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, OP_IBLE_UN, next->inst_true_bb, next->inst_false_bb);
 					next->opcode = CEE_NOP;
 					break;
 				case OP_LBLT_UN:
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 1, tree->sreg2 + 1);
-					MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, CEE_BLT_UN, next->inst_true_bb);
-					MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, CEE_BNE_UN, next->inst_false_bb);
+					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BLT_UN, next->inst_true_bb);
+					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BNE_UN, next->inst_false_bb);
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1, tree->sreg2);
-					MONO_EMIT_NEW_BRANCH_BLOCK3 (cfg, OP_IBLT_UN, next->inst_true_bb, next->inst_false_bb);
+					MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, OP_IBLT_UN, next->inst_true_bb, next->inst_false_bb);
 					next->opcode = CEE_NOP;
 					break;
 				case OP_LBGT_UN:
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 1, tree->sreg2 + 1);
-					MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, CEE_BGT_UN, next->inst_true_bb);
-					MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, CEE_BNE_UN, next->inst_false_bb);
+					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BGT_UN, next->inst_true_bb);
+					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BNE_UN, next->inst_false_bb);
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1, tree->sreg2);
-					MONO_EMIT_NEW_BRANCH_BLOCK3 (cfg, OP_IBGT_UN, next->inst_true_bb, next->inst_false_bb);
+					MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, OP_IBGT_UN, next->inst_true_bb, next->inst_false_bb);
 					next->opcode = CEE_NOP;
 					break;
 				case OP_LBGE_UN:
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 1, tree->sreg2 + 1);
-					MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, OP_IBGT_UN, next->inst_true_bb);
-					MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, OP_IBNE_UN, next->inst_false_bb);
+					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBGT_UN, next->inst_true_bb);
+					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBNE_UN, next->inst_false_bb);
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1, tree->sreg2);
-					MONO_EMIT_NEW_BRANCH_BLOCK3 (cfg, OP_IBGE_UN, next->inst_true_bb, next->inst_false_bb);
+					MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, OP_IBGE_UN, next->inst_true_bb, next->inst_false_bb);
 					next->opcode = CEE_NOP;
 					break;
 				case OP_LBLE_UN:
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 1, tree->sreg2 + 1);
-					MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, OP_IBLT_UN, next->inst_true_bb);
-					MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, OP_IBNE_UN, next->inst_false_bb);
+					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBLT_UN, next->inst_true_bb);
+					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBNE_UN, next->inst_false_bb);
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1, tree->sreg2);
-					MONO_EMIT_NEW_BRANCH_BLOCK3 (cfg, OP_IBLE_UN, next->inst_true_bb, next->inst_false_bb);
+					MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, OP_IBLE_UN, next->inst_true_bb, next->inst_false_bb);
 					next->opcode = CEE_NOP;
 					break;
 				case OP_LCEQ: {
-					MonoInst *word_differs;
+					MonoBasicBlock *word_differs;
 	
-					MONO_NEW_LABEL (cfg, word_differs);
+					NEW_BBLOCK (cfg, word_differs);
 
 					MONO_EMIT_NEW_ICONST (cfg, next->dreg, 0);
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 1, tree->sreg2 + 1);
-					MONO_EMIT_NEW_BRANCH_LABEL (cfg, OP_IBNE_UN, word_differs);
+					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBNE_UN, word_differs);
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1, tree->sreg2);
-					MONO_EMIT_NEW_BRANCH_LABEL (cfg, OP_IBNE_UN, word_differs);
+					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBNE_UN, word_differs);
 					MONO_EMIT_NEW_ICONST (cfg, next->dreg, 1);
-					MONO_ADD_INS (cfg->cbb, word_differs);
+					MONO_START_BB (cfg, word_differs);
 					next->opcode = CEE_NOP;
 					break;
 				}
 				case OP_LCLT: {
-					MonoInst *set_to_0, *set_to_1;
+					MonoBasicBlock *set_to_0, *set_to_1;
 	
-					MONO_NEW_LABEL (cfg, set_to_0);
-					MONO_NEW_LABEL (cfg, set_to_1);
+					NEW_BBLOCK (cfg, set_to_0);
+					NEW_BBLOCK (cfg, set_to_1);
 
 					MONO_EMIT_NEW_ICONST (cfg, next->dreg, 0);
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 1, tree->sreg2 + 1);
-					MONO_EMIT_NEW_BRANCH_LABEL (cfg, OP_IBGT, set_to_0);
-					MONO_EMIT_NEW_BRANCH_LABEL (cfg, OP_IBNE_UN, set_to_1);
+					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBGT, set_to_0);
+					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBNE_UN, set_to_1);
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1, tree->sreg2);
-					MONO_EMIT_NEW_BRANCH_LABEL (cfg, OP_IBGE_UN, set_to_0);
-					MONO_ADD_INS (cfg->cbb, set_to_1);
+					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBGE_UN, set_to_0);
+					MONO_START_BB (cfg, set_to_1);
 					MONO_EMIT_NEW_ICONST (cfg, next->dreg, 1);
-					MONO_ADD_INS (cfg->cbb, set_to_0);
+					MONO_START_BB (cfg, set_to_0);
 					next->opcode = CEE_NOP;
 					break;	
 				}
 				case OP_LCLT_UN: {
-					MonoInst *set_to_0, *set_to_1;
+					MonoBasicBlock *set_to_0, *set_to_1;
 	
-					MONO_NEW_LABEL (cfg, set_to_0);
-					MONO_NEW_LABEL (cfg, set_to_1);
+					NEW_BBLOCK (cfg, set_to_0);
+					NEW_BBLOCK (cfg, set_to_1);
 
 					MONO_EMIT_NEW_ICONST (cfg, next->dreg, 0);
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 1, tree->sreg2 + 1);
-					MONO_EMIT_NEW_BRANCH_LABEL (cfg, OP_IBGT_UN, set_to_0);
-					MONO_EMIT_NEW_BRANCH_LABEL (cfg, OP_IBNE_UN, set_to_1);
+					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBGT_UN, set_to_0);
+					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBNE_UN, set_to_1);
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1, tree->sreg2);
-					MONO_EMIT_NEW_BRANCH_LABEL (cfg, OP_IBGE_UN, set_to_0);
-					MONO_ADD_INS (cfg->cbb, set_to_1);
+					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBGE_UN, set_to_0);
+					MONO_START_BB (cfg, set_to_1);
 					MONO_EMIT_NEW_ICONST (cfg, next->dreg, 1);
-					MONO_ADD_INS (cfg->cbb, set_to_0);
+					MONO_START_BB (cfg, set_to_0);
 					next->opcode = CEE_NOP;
 					break;	
 				}
 				case OP_LCGT: {
-					MonoInst *set_to_0, *set_to_1;
+					MonoBasicBlock *set_to_0, *set_to_1;
 	
-					MONO_NEW_LABEL (cfg, set_to_0);
-					MONO_NEW_LABEL (cfg, set_to_1);
+				    NEW_BBLOCK (cfg, set_to_0);
+					NEW_BBLOCK (cfg, set_to_1);
 
 					MONO_EMIT_NEW_ICONST (cfg, next->dreg, 0);
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg2 + 1, tree->sreg1 + 1);
-					MONO_EMIT_NEW_BRANCH_LABEL (cfg, OP_IBGT, set_to_0);
-					MONO_EMIT_NEW_BRANCH_LABEL (cfg, OP_IBNE_UN, set_to_1);
+					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBGT, set_to_0);
+					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBNE_UN, set_to_1);
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg2, tree->sreg1);
-					MONO_EMIT_NEW_BRANCH_LABEL (cfg, OP_IBGE_UN, set_to_0);
-					MONO_ADD_INS (cfg->cbb, set_to_1);
+					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBGE_UN, set_to_0);
+					MONO_START_BB (cfg, set_to_1);
 					MONO_EMIT_NEW_ICONST (cfg, next->dreg, 1);
-					MONO_ADD_INS (cfg->cbb, set_to_0);
+					MONO_START_BB (cfg, set_to_0);
 					next->opcode = CEE_NOP;
 					break;
 				}
 				case OP_LCGT_UN: {
-					MonoInst *set_to_0, *set_to_1;
+					MonoBasicBlock *set_to_0, *set_to_1;
 	
-					MONO_NEW_LABEL (cfg, set_to_0);
-					MONO_NEW_LABEL (cfg, set_to_1);
+					NEW_BBLOCK (cfg, set_to_0);
+					NEW_BBLOCK (cfg, set_to_1);
 
 					MONO_EMIT_NEW_ICONST (cfg, next->dreg, 0);
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg2 + 1, tree->sreg1 + 1);
-					MONO_EMIT_NEW_BRANCH_LABEL (cfg, OP_IBGT_UN, set_to_0);
-					MONO_EMIT_NEW_BRANCH_LABEL (cfg, OP_IBNE_UN, set_to_1);
+					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBGT_UN, set_to_0);
+					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBNE_UN, set_to_1);
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg2, tree->sreg1);
-					MONO_EMIT_NEW_BRANCH_LABEL (cfg, OP_IBGE_UN, set_to_0);
-					MONO_ADD_INS (cfg->cbb, set_to_1);
+					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBGE_UN, set_to_0);
+					MONO_START_BB (cfg, set_to_1);
 					MONO_EMIT_NEW_ICONST (cfg, next->dreg, 1);
-					MONO_ADD_INS (cfg->cbb, set_to_0);
+					MONO_START_BB (cfg, set_to_0);
 					next->opcode = CEE_NOP;
 					break;
 				}
@@ -4800,7 +4760,7 @@ mono_decompose_long_opts (MonoCompile *cfg)
 				break;
 			}
 
-			if (cfg->cbb->code) {
+			if (cfg->cbb->code || (cfg->cbb != first_bb)) {
 				/* Replace the original instruction with the new code sequence */
 
 				if (cfg->cbb == first_bb) {
@@ -4836,8 +4796,19 @@ mono_decompose_long_opts (MonoCompile *cfg)
 					bb->last_ins = tree;
 
 					/* Merge the second part of the original bb into the last bb */
-					g_assert (cfg->cbb->last_ins);
-					cfg->cbb->last_ins->next = next;
+					if (cfg->cbb->last_ins)
+						cfg->cbb->last_ins->next = next;
+					else {
+						MonoInst *last;
+
+						cfg->cbb->code = next;
+
+						if (next) {
+							for (last = next; last->next != NULL; last = last->next)
+								;
+							cfg->cbb->last_ins = last;
+						}
+					}
 
 					for (i = 0; i < bb->out_count; ++i)
 						link_bblock (cfg, cfg->cbb, bb->out_bb [i]);
@@ -6149,7 +6120,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			inline_costs += 10;
 			break;
 		case CEE_SWITCH: {
-			MonoInst *label, *src1;
+			MonoInst *src1;
 			MonoBasicBlock **targets;
 			MonoBasicBlock *default_bblock;
 			int offset_reg = alloc_preg (cfg);
@@ -6185,6 +6156,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 
 			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, src1->dreg, n);
 			MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BGE_UN, default_bblock);
+			bblock = cfg->cbb;
 
 			if (sizeof (gpointer) == 8)
 				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_SHL_IMM, offset_reg, src1->dreg, 3);
@@ -6211,8 +6183,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				/* FIXME: Use load_memindex */
 				MONO_EMIT_NEW_BIALU (cfg, OP_PADD, sum_reg, table_reg, offset_reg);
 				MONO_EMIT_NEW_LOAD_MEMBASE (cfg, target_reg, sum_reg, 0);
-
-				MONO_NEW_LABEL (cfg, label);
 			}
 			MONO_EMIT_NEW_UNALU (cfg, OP_BR_REG, -1, target_reg);
 			inline_costs += 20;
@@ -7794,16 +7764,15 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				MonoExceptionClause *clause = &header->clauses [i];
 
 				if (MONO_OFFSET_IN_HANDLER (clause, ip - header->code) && (clause->flags == MONO_EXCEPTION_CLAUSE_NONE) && (ip - header->code + ((*ip == CEE_LEAVE) ? 5 : 2)) == (clause->handler_offset + clause->handler_len)) {
-					MonoInst *dont_throw, *load, *exc_ins;
+					MonoInst *load, *exc_ins;
+					MonoBasicBlock *dont_throw;
 
 					/* FIXME: */
 					NEW_TEMPLOAD (cfg, load, mono_find_exvar_for_offset (cfg, clause->handler_offset)->inst_c0);
 
 					exc_ins = mono_emit_jit_icall (cfg, mono_thread_get_pending_exception, NULL, ip);
 
-					/* FIXME: Get rid of the branch */
-
-					MONO_NEW_LABEL (cfg, dont_throw);
+					NEW_BBLOCK (cfg, dont_throw);
 
 					/*
 					 * Currently, we allways rethrow the abort exception, despite the 
@@ -7812,10 +7781,11 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 					 * getting the sematics right.
 					 */
 					MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, exc_ins->dreg, 0);
-					MONO_EMIT_NEW_BRANCH_LABEL (cfg, CEE_BEQ, dont_throw);
+					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BEQ, dont_throw);
 					MONO_EMIT_NEW_UNALU (cfg, OP_THROW, -1, exc_ins->dreg);
 
-					mono_bblock_add_inst (cfg->cbb, dont_throw);
+					MONO_START_BB (cfg, dont_throw);
+					bblock = cfg->cbb;
 				}
 			}
 
