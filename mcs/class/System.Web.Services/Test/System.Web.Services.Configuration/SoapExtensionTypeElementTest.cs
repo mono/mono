@@ -30,6 +30,7 @@
 #if NET_2_0
 
 using System;
+using System.Configuration;
 using System.Web.Services.Configuration;
 using NUnit.Framework;
 
@@ -70,6 +71,22 @@ namespace MonoTests.System.Web.Services {
 
 			el.Type = typeof (string);
 			Assert.AreEqual (typeof (string), el.Type, "A3");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ConfigurationErrorsException))]
+		public void PriorityValidator1 ()
+		{
+			SoapExtensionTypeElement el = new SoapExtensionTypeElement ();
+			el.Priority = -1;
+		}
+
+		[Test]
+		public void PriorityValidator2 ()
+		{
+			SoapExtensionTypeElement el = new SoapExtensionTypeElement ();
+			el.Priority = 0;
+			el.Priority = Int32.MaxValue;
 		}
 	}
 }

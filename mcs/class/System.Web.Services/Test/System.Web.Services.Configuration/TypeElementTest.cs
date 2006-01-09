@@ -38,10 +38,17 @@ namespace MonoTests.System.Web.Services {
 	public class TypeElementTest
 	{
 		[Test]
-		public void Ctors ()
+		[ExpectedException (typeof (NullReferenceException))]
+		public void Ctors1 ()
 		{
 			TypeElement el = new TypeElement ();
 			Assert.IsNull (el.Type, "A1");
+		}
+
+		[Test]
+		public void Ctors2 ()
+		{
+			TypeElement el;
 
 			el = new TypeElement (typeof (string));
 			Assert.AreEqual (typeof (string), el.Type, "A2");
