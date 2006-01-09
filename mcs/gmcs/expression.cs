@@ -8688,15 +8688,16 @@ namespace Mono.CSharp {
 		}
 
 		public override string Name {
-			get {
-				return left + dim;
-			}
+			get { return left + dim; }
 		}
 
 		public override string FullName {
-			get {
-				return type.FullName;
-			}
+			get { return type.FullName; }
+		}
+
+		public override string GetSignatureForError ()
+		{
+			return left.GetSignatureForError () + dim;
 		}
 	}
 

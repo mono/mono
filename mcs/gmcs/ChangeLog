@@ -1,3 +1,13 @@
+2005-12-21  Miguel de Icaza  <miguel@novell.com>
+
+	* driver.cs: Report the case of no source files and no -out:
+	argument provided.
+
+2005-12-20  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #77035.
+	* expression.cs (ComposedCast.GetSignatureForError): Define.
+
 2006-01-05  Jb Evain  <jbevain@gmail.com>
 
 	* class.cs (Property.Define, Indexer.Define): do not tag the
@@ -29,6 +39,11 @@
 	method that take ref and out parameters. 
 
 	Fixes #77119 which was a late change in the spec.
+
+2005-12-23  Miguel de Icaza  <miguel@novell.com>
+
+	* anonymous.cs (ScopeInfo.LinkScope): Do not link the scope to its
+	parent if its the same scope.  Fixes #77060.
 
 2005-12-22  Marek Safar  <marek.safar@seznam.cz>
 
