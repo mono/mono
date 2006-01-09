@@ -71,8 +71,12 @@ namespace System.Web.Util {
 			int i = types.IndexOf (type);
 			if (i == -1) {
 				w.Write (15); // types.Count
+#if TARGET_JVM
+				((System.Web.J2EE.ObjectOutputStream)w.BaseStream).NativeStream.writeObject(value);
+#else
 				BinaryFormatter bf = new BinaryFormatter ();
 				bf.Serialize (w.BaseStream, value);
+#endif
 				return;
 			}
 			
@@ -126,8 +130,12 @@ namespace System.Web.Util {
 		internal static object DeserializeFromIndex (int index, BinaryReader r)
 		{
 			if (index == 15){
+#if TARGET_JVM
+				return ((System.Web.J2EE.ObjectInputStream)r.BaseStream).NativeStream.readObject();
+#else
 				BinaryFormatter bf = new BinaryFormatter ();
 				return bf.Deserialize (r.BaseStream);
+#endif
 			}
 			
 			object value = null;

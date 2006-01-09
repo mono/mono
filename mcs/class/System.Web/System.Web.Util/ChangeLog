@@ -1,3 +1,7 @@
+2006-01-09  Konstantin Triger <kostat@mainsoft.com>
+
+	AltSerialization.cs: under TARGET_JVM: merging /main/4
+
 2005-11-28  Chris Toshok  <toshok@ximian.com>
 
 	* WebEncoding.cs (FileEncoding, ResponseEncoding,
