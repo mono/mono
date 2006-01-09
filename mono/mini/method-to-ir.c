@@ -6139,12 +6139,10 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			target = ip + n * sizeof (guint32);
 
 			GET_BBLOCK (cfg, bbhash, default_bblock, target);
-			link_bblock (cfg, bblock, default_bblock);
 
 			targets = mono_mempool_alloc (cfg->mempool, sizeof (MonoBasicBlock*) * n);
 			for (i = 0; i < n; ++i) {
 				GET_BBLOCK (cfg, bbhash, tblock, target + (gint32)read32(ip));
-				link_bblock (cfg, bblock, tblock);
 				targets [i] = tblock;
 				ip += 4;
 			}
@@ -6157,6 +6155,9 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, src1->dreg, n);
 			MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BGE_UN, default_bblock);
 			bblock = cfg->cbb;
+
+			for (i = 0; i < n; ++i)
+				link_bblock (cfg, bblock, targets [i]);
 
 			if (sizeof (gpointer) == 8)
 				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_SHL_IMM, offset_reg, src1->dreg, 3);
