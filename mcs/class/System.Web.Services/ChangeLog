@@ -1,3 +1,8 @@
+2006-01-09  Chris Toshok  <toshok@ximian.com>
+
+	* Makefile (LIB_MCS_FLAGS): if we're building net_2_0, define
+	CONFIGURATION_2_0 to use the new System.Configuration api.
+
 2006-01-05  Chris Toshok  <toshok@ximian.com>
 
 	* System.Web.Services_test.dll.sources: enable a bunch of the 2.0
