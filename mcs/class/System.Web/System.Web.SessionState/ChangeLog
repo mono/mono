@@ -1,3 +1,7 @@
+2006-01-09  Konstantin Triger <kostat@mainsoft.com>
+
+	* HttpSessionState.jvm.cs: merging HttpSessionState.cs@@/main/19-24
+
 2005-11-28  Chris Toshok  <toshok@ximian.com>
 
 	* SessionStateModule.cs: CONFIGURATION_2_0 work.

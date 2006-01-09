@@ -57,6 +57,7 @@ public sealed class HttpSessionState : ICollection, IEnumerable, java.io.Externa
 	private object _app;
 	private bool _readFirstTime = true;
 	private bool _needSessionPersistence = false;
+	private const bool HAS_CONTENT_TO_SERIALIZE = true;
 
 	internal HttpSessionState (string id,
 				   SessionDictionary dict,
@@ -112,9 +113,13 @@ public sealed class HttpSessionState : ICollection, IEnumerable, java.io.Externa
 			output.writeBoolean(_needSessionPersistence);
 			if (!_needSessionPersistence)
 			{
+				//indicates that there is nothing to serialize for this object
+				output.writeBoolean(!HAS_CONTENT_TO_SERIALIZE);
 				return;
 			}
-			System.IO.MemoryStream ms = new System.IO.MemoryStream();
+			//indicates that there is a content for serialization
+			output.writeBoolean(HAS_CONTENT_TO_SERIALIZE);
+			System.Web.J2EE.ObjectOutputStream ms = new System.Web.J2EE.ObjectOutputStream(output);
 			System.IO.BinaryWriter bw = new System.IO.BinaryWriter(ms);
 			bw.Write(_id);
 			_dict.Serialize(bw);
@@ -131,7 +136,6 @@ public sealed class HttpSessionState : ICollection, IEnumerable, java.io.Externa
 			else 
 				bw.Write(3);
 			bw.Write(_isReadonly);
-			output.writeObject(vmw.common.TypeUtils.ToSByteArray(ms.GetBuffer()));
 		}
 	}
 
@@ -139,18 +143,15 @@ public sealed class HttpSessionState : ICollection, IEnumerable, java.io.Externa
 	{
 		lock(this)
 		{
-			_needSessionPersistence = input.readBoolean();
-			if (!_needSessionPersistence)
-			{
+			if(input.readBoolean() != HAS_CONTENT_TO_SERIALIZE) //noting has been written 
+				return;
+
+			if (!_readFirstTime) {
 				return;
 			}
-			sbyte[] array = (sbyte[])input.readObject();
-			if (!_readFirstTime || array == null || array.Length == 0)
-			{
-				return;
-			}
+
 			_readFirstTime = false;
-			System.IO.MemoryStream ms = new System.IO.MemoryStream((byte[])vmw.common.TypeUtils.ToByteArray(array));
+			System.Web.J2EE.ObjectInputStream ms = new System.Web.J2EE.ObjectInputStream( input );
 			System.IO.BinaryReader br = new System.IO.BinaryReader(ms);
 			_id = br.ReadString();
 			_dict =  SessionDictionary.Deserialize(br);
