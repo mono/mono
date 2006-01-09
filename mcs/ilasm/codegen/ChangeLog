@@ -1,3 +1,16 @@
+2006-01-09  Ankit Jain  <jankit@novell.com>
+
+	* GenericTypeRef.cs: Rename to ..
+	* GenericParamRef.cs: .. this.
+	(IGenericTypeRef): New.
+	(GenericParamRef): Implement IGenericTypeRef.
+	* GenericTypeInst.cs (GenericTypeInst): Implement IGenericTypeRef instead
+	of IClassRef.
+	(GenericTypeInst.ResolveOnly): Rename to ResolveNoTypeSpec to implement
+	IGenericTypeRef.ResolveNoTypeSpec .
+	* MethodDef.cs (MethodDef.ResolveGenParams): Update to use GenericParamRef.
+	* Local.cs (Local.GetPeapiLocal): Use IGenericTypeRef.
+
 2006-01-08  Ankit Jain  <jankit@novell.com>
 
 	* InstrTable.cs (inst_table): Add stelem.any, ldelem.any and

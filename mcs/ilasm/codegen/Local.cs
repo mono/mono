@@ -45,11 +45,11 @@ namespace Mono.ILASM {
                 public PEAPI.Local GetPeapiLocal (CodeGen code_gen)
                 {
                         int ec = code_gen.Report.ErrorCount;
-                        GenericTypeInst gti = type as GenericTypeInst;
-                        if (gti == null)
+                        IGenericTypeRef gtr = type as IGenericTypeRef;
+                        if (gtr == null)
                                 type.Resolve (code_gen);
                         else
-                                gti.ResolveOnly (code_gen);
+                                gtr.ResolveNoTypeSpec (code_gen);
 
                         if (code_gen.Report.ErrorCount > ec)
                                 return null;

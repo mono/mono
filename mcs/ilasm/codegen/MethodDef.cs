@@ -296,7 +296,7 @@ namespace Mono.ILASM {
 
                 public void ResolveGenParams ()
                 {
-			GenericTypeRef gtr = ret_type as GenericTypeRef;
+			GenericParamRef gtr = ret_type as GenericParamRef;
 			if (gtr != null)
 				ResolveGenParam ((PEAPI.GenParam) gtr.PeapiType);
 
@@ -304,7 +304,7 @@ namespace Mono.ILASM {
 				return;
 
 			foreach (ParamDef param in param_list) {
-				gtr = param.Type as GenericTypeRef;
+				gtr = param.Type as GenericParamRef;
 				if (gtr != null)
 					ResolveGenParam ((PEAPI.GenParam) gtr.PeapiType);
 			}

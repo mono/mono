@@ -1,3 +1,7 @@
+2006-01-09  Ankit Jain  <jankit@novell.com>
+
+        * ilasm.exe.sources: Replace GenericTypeRef.cs with GenericParamRef.cs
+
 2006-01-07  Ankit Jain  <jankit@novell.com>
 
 	* ilasm.exe.sources: Add GenericParameters.cs to the build.

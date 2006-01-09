@@ -1978,15 +1978,15 @@ namespace PEAPI {
 
 	}
 
-	public class GenParam : Type {
+	public class GenParam : Class {
 
 		private int index;
-		private string name;
+		private string param_name;
 
 		public GenParam (int index, string name, GenParamType ptype) : base ((byte) ptype) 
 		{
 			this.index = index;
-			this.name = name;
+			this.param_name = name;
 			tabIx = MDTable.TypeSpec;
 		}
 
@@ -1996,17 +1996,27 @@ namespace PEAPI {
 		}
 
 		public string Name {
-			get { return name; }
-			set { name = value; }
+			get { return param_name; }
+			set { param_name = value; }
 		}
 
 		public GenParamType Type {
 			get { return (GenParamType) GetTypeIndex (); }
 		}
+		
+		internal override MetaDataElement GetTypeSpec(MetaData md) 
+		{
+			if (typeSpec == null) {
+				typeSpec = new TypeSpec(this,md);
+				md.AddToTable(MDTable.TypeSpec,typeSpec);
+			}
+			return typeSpec;
+		}
+
 		internal sealed override void TypeSig(MemoryStream str) 
 		{
 			if (index < 0)
-				throw new Exception (String.Format ("Unresolved {0} - {1}", (GenParamType) GetTypeIndex (), name));
+				throw new Exception (String.Format ("Unresolved {0} - {1}", (GenParamType) GetTypeIndex (), param_name));
 			str.WriteByte(typeIndex);
 			MetaData.CompressNum ((uint) index, str);
 		}

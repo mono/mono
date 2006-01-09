@@ -1,3 +1,11 @@
+2006-01-09  Ankit Jain  <jankit@novell.com>
+
+	* PEAPI.cs (PEFile.AddGenricParam): New. Adds a GenParam to the TypeSpec
+	table.
+	* Metadata.cs (GenParam): Inherit from 'Class' instead of 'Type'.
+	(GenParam.name): Rename to param_name as it hides Class.name .
+	(GenParam.GetTypeSpec): Override to create TypeSpec for genparam.
+
 2006-01-08  Ankit Jain  <jankit@novell.com>
 
 	* Metadata.cs (TypeOp): Add 'constrained' op.

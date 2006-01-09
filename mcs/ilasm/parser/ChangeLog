@@ -1,3 +1,7 @@
+2006-01-09  Ankit Jain  <jankit@novell.com>
+
+        * ILParser.jay: Update to use GenericParamRef instead of GenericTypeRef.
+
 2006-01-08  Ankit Jain  <jankit@novell.com>
 
 	* ILParser.jay (constraint_decl): Remove. This syntax is no longer used.

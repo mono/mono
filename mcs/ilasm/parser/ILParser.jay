@@ -1008,12 +1008,12 @@ type			: generic_class_ref
                         | BANG int32
                           {
                                 GenParam gpar = new GenParam ((int) $2, "", GenParamType.Var);
-                                $$ = new GenericTypeRef (gpar, $2.ToString ());
+                                $$ = new GenericParamRef (gpar, $2.ToString ());
                           }
                         | BANG BANG int32
                           {
                                 GenParam gpar = new GenParam ((int) $3, "", GenParamType.MVar);
-                                $$ = new GenericTypeRef (gpar, $3.ToString ());
+                                $$ = new GenericParamRef (gpar, $3.ToString ());
                           }
 			| BANG id
                           {
@@ -1022,7 +1022,7 @@ type			: generic_class_ref
 				if (codegen.CurrentTypeDef != null)
 					num = codegen.CurrentTypeDef.GetGenericParamNum (name);
 				GenParam gpar = new GenParam (num, name, GenParamType.Var);
-                                $$ = new GenericTypeRef (gpar, name);
+                                $$ = new GenericParamRef (gpar, name);
                           }
                         | BANG BANG id
                           {
@@ -1031,7 +1031,7 @@ type			: generic_class_ref
 				if (codegen.CurrentMethodDef != null)
 					num = codegen.CurrentMethodDef.GetGenericParamNum (name);
 				GenParam gpar = new GenParam (num, name, GenParamType.MVar);
-                                $$ = new GenericTypeRef (gpar, name);
+                                $$ = new GenericParamRef (gpar, name);
                           }
 			;
 
@@ -2338,9 +2338,9 @@ instr			: INSTR_NONE
                           {
                                 
                                 ITypeRef owner = (ITypeRef) $3;
-				GenericTypeRef gtr = $2 as GenericTypeRef;
-				if (gtr != null && codegen.CurrentMethodDef != null)
-					codegen.CurrentMethodDef.ResolveGenParam ((PEAPI.GenParam) gtr.PeapiType);
+                                GenericParamRef gpr = $2 as GenericParamRef;
+                                if (gpr != null && codegen.CurrentMethodDef != null)
+                                        codegen.CurrentMethodDef.ResolveGenParam ((PEAPI.GenParam) gpr.PeapiType);
                                 IFieldRef fieldref = owner.GetFieldRef (
                                         (ITypeRef) $2, (string) $5);
 

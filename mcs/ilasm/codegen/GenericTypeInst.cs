@@ -15,7 +15,7 @@ using System.Collections;
 
 namespace Mono.ILASM {
 
-        public class GenericTypeInst : ModifiableType, IClassRef {
+        public class GenericTypeInst : ModifiableType, IGenericTypeRef {
 
                 private IClassRef class_ref;
                 private PEAPI.Type ptype;
@@ -89,9 +89,7 @@ namespace Mono.ILASM {
                         throw new Exception (String.Format ("Invalid attempt to create '{0}''{1}'", FullName, gen_args.ToString ()));
                 }
                 
-                /* Only resolves, does not add it to the TypeSpec
-                   table */
-                public void ResolveOnly (CodeGen code_gen)
+                public void ResolveNoTypeSpec (CodeGen code_gen)
                 {
                         if (is_resolved)
                                 return;
@@ -106,12 +104,17 @@ namespace Mono.ILASM {
 
                 public void Resolve (CodeGen code_gen)
                 {
-                        ResolveOnly (code_gen);
+                        ResolveNoTypeSpec (code_gen);
                         if (is_added)
                                 return;
 
                         code_gen.PEFile.AddGenericClass ((PEAPI.GenericTypeInst) p_gen_inst);
                         is_added = true;
+                }
+
+                public void Resolve (GenericParameters type_gen_params, GenericParameters method_gen_params)
+                {
+                        throw new Exception ("Not implemented yet");
                 }
 
                 public IMethodRef GetMethodRef (ITypeRef ret_type, PEAPI.CallConv call_conv,

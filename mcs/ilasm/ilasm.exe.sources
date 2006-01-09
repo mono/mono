@@ -54,7 +54,7 @@ codegen/FaultBlock.cs
 codegen/CatchBlock.cs
 codegen/CustomAttr.cs
 codegen/DeclSecurity.cs
-codegen/GenericTypeRef.cs
+codegen/GenericParamRef.cs
 codegen/GenericTypeInst.cs
 codegen/TypeSpecMethodRef.cs
 codegen/TypeSpecFieldRef.cs
