@@ -88,7 +88,7 @@ namespace MonoTests.System.Security.Policy {
 			// and we can't change the instance data by keeping a reference to what we supply
 			hash.HashValue = value;
 			byte old_value = value [0];
-			value [0] = 0x00;
+			value [0] += 42;
 			Assert.IsFalse (value [0] == hash.HashValue [0], "reference-2");
 			Assert.AreEqual (old_value, hash.HashValue [0], "HashValue[0]");
 		}
