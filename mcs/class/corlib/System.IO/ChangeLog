@@ -1,3 +1,8 @@
+2006-01-09  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Path.cs: Fix c14n on Windows when the first separator after the root
+	isn't '\'. Fix problems for XSP with 1.1.13.
+
 2006-01-07  Miguel de Icaza  <miguel@novell.com>
 
 	* Path.cs (GetTempFilename): Append ".tmp" to the path, some
