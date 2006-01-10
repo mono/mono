@@ -1,3 +1,12 @@
+2006-01-10  Jonathan Pryor <jonpryor@vt.edu>
+
+	* Catalog.cs: Don't use
+	  System.Runtime.InteropServices.Marshal.StringToHGlobalAuto(), use
+	  UnixMarshal.StringToHeap().  We require that the converted string be in
+	  UTF-8 format, but .NET's Marshal.StringToHGlobalAuto converts to the local
+	  code page, *not* UTF-8 (Mono's does UTF-8).  UnixMarshal.StringToHeap
+	  *always* does UTF-8, so use that instead.
+
 2006-01-09  Jonathan Pryor <jonpryor@vt.edu>
 
 	* FileTypes.cs: Remove [Flags] attribute -- these aren't bitfield values.
