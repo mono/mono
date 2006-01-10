@@ -5,6 +5,7 @@
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // (C) 2002,2003 Ximian, Inc (http://www.ximian.com)
+// Copyright (c) 2004,2006 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -176,7 +177,7 @@ namespace System.Web.Compilation
 		TemplateParser tparser;
 		StringBuilder text;
 		RootBuilder rootBuilder;
-		bool inScript, javascript;
+		bool inScript, javascript, ignore_text;
 		ILocation location;
 		bool isApplication;
 		StringBuilder tagInnerText = new StringBuilder ();
@@ -318,8 +319,9 @@ namespace System.Web.Compilation
 				FlushText ();
 
 			if (0 == String.Compare (tagid, "script", true)) {
-				if (inScript || (tagtype != TagType.Close && attributes != null)) {
-					if ((inScript || attributes.IsRunAtServer ()) && ProcessScript (tagtype, attributes))
+				bool in_script = (inScript || ignore_text);
+				if (in_script || (tagtype != TagType.Close && attributes != null)) {
+					if ((in_script || attributes.IsRunAtServer ()) && ProcessScript (tagtype, attributes))
 						return;
 				}
 			}
@@ -417,6 +419,9 @@ namespace System.Web.Compilation
 		
 		void TextParsed (ILocation location, string text)
 		{
+			if (ignore_text)
+				return;
+
 			if (text.IndexOf ("<%") != -1 && !inScript) {
 				if (this.text.Length > 0)
 					FlushText ();
@@ -527,16 +532,39 @@ namespace System.Web.Compilation
 			return true;
 		}
 
+		string ReadFile (string filename)
+		{
+			string realpath = tparser.MapPath (filename);
+			using (StreamReader sr = new StreamReader (realpath, WebEncoding.FileEncoding)) {
+				string content = sr.ReadToEnd ();
+				return content;
+			}
+		}
+
 		bool ProcessScript (TagType tagtype, TagAttributes attributes)
 		{
 			if (tagtype != TagType.Close) {
 				if (attributes != null && attributes.IsRunAtServer ()) {
 					CheckLanguage ((string) attributes ["language"]);
-					if (tagtype == TagType.Tag) {
+					string src = (string) attributes ["src"];
+					if (src != null) {
+						if (src == "")
+							throw new ParseException (Parser,
+								"src cannot be an empty string");
+
+						string content = ReadFile (src);
+						inScript = true;
+						TextParsed (Parser, content);
+						FlushText ();
+						inScript = false;
+						if (tagtype != TagType.SelfClosing) {
+							ignore_text = true;
+							Parser.VerbatimID = "script";
+						}
+					} else if (tagtype == TagType.Tag) {
 						Parser.VerbatimID = "script";
 						inScript = true;
-					} //else if (tagtype == TagType.SelfClosing)
-						// load script file here
+					}
 
 					return true;
 				} else {
@@ -553,10 +581,13 @@ namespace System.Web.Compilation
 			if (inScript) {
 				result = inScript;
 				inScript = false;
-			} else {
+			} else if (!ignore_text) {
 				result = javascript;
 				javascript = false;
 				TextParsed (location, location.PlainText);
+			} else {
+				ignore_text = false;
+				result = true;
 			}
 
 			return result;
