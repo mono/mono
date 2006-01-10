@@ -580,7 +580,7 @@ typedef struct {
 	GHashTable      *cbb_hash;
 
 	/* The current virtual register numbers */
-	guint32 next_vireg, next_vlreg, next_vfreg;
+	guint32 next_vireg, next_vfreg;
 
 	/* Maps vregs to their associated MonoInst's */
 	/* vregs with an associated MonoInst are 'global' while others are 'local' */
@@ -852,6 +852,9 @@ void      mono_compile_make_var_load        (MonoCompile *cfg, MonoInst *dest, g
 MonoInst* mono_compile_create_var_load      (MonoCompile *cfg, gssize var_index);
 MonoInst* mono_compile_create_var_store     (MonoCompile *cfg, gssize var_index, MonoInst *value);
 MonoType* mono_type_from_stack_type         (MonoInst *ins);
+guint32   mono_alloc_ireg                   (MonoCompile *cfg);
+guint32   mono_alloc_freg                   (MonoCompile *cfg);
+guint32   mono_alloc_preg                   (MonoCompile *cfg);
 void      mono_blockset_print               (MonoCompile *cfg, MonoBitSet *set, const char *name, guint idom);
 void      mono_print_tree                   (MonoInst *tree);
 void      mono_print_tree_nl                (MonoInst *tree);

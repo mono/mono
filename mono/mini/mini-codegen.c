@@ -67,10 +67,13 @@ mono_call_inst_add_outarg_reg (MonoCallInst *call, int vreg, int hreg, gboolean 
 	guint32 regpair;
 
 	regpair = (((guint32)hreg) << 24) + vreg;
-	if (fp)
+	if (fp) {
+		call->used_fregs |= 1 << hreg;
 		call->out_freg_args = g_slist_append (call->out_freg_args, (gpointer)(gssize)(regpair));
-	else
+	} else {
+		call->used_iregs |= 1 << hreg;
 		call->out_ireg_args = g_slist_append (call->out_ireg_args, (gpointer)(gssize)(regpair));
+	}
 }
 
 /*

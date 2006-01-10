@@ -160,6 +160,24 @@ alloc_dreg (MonoCompile *cfg, MonoStackType stack_type)
 	}
 }
 
+guint32
+mono_alloc_ireg (MonoCompile *cfg)
+{
+	return alloc_ireg (cfg);
+}
+
+guint32
+mono_alloc_freg (MonoCompile *cfg)
+{
+	return alloc_freg (cfg);
+}
+
+guint32
+mono_alloc_preg (MonoCompile *cfg)
+{
+	return alloc_preg (cfg);
+}
+
 static guint
 mono_type_to_regstore (MonoType *type)
 {

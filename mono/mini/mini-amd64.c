@@ -1137,25 +1137,19 @@ add_outarg_reg2 (MonoCompile *cfg, MonoCallInst *call, MonoInst *arg, ArgStorage
 	switch (storage) {
 	case ArgInIReg:
 		arg->opcode = OP_MOVE;
-		/* FIXME: */
-		arg->dreg = cfg->next_vireg ++;
-		call->used_iregs |= 1 << reg;
+		arg->dreg = mono_alloc_ireg (cfg);
 
 		mono_call_inst_add_outarg_reg (call, arg->dreg, reg, FALSE);
 		break;
 	case ArgInFloatSSEReg:
 		arg->opcode = OP_AMD64_SET_XMMREG_R4;
-		/* FIXME: */
-		arg->dreg = cfg->next_vfreg ++;
-		call->used_fregs |= 1 << reg;
+		arg->dreg = mono_alloc_freg (cfg);
 
 		mono_call_inst_add_outarg_reg (call, arg->dreg, reg, TRUE);
 		break;
 	case ArgInDoubleSSEReg:
 		arg->opcode = OP_AMD64_SET_XMMREG_R8;
-		/* FIXME: */
-		arg->dreg = cfg->next_vfreg ++;
-		call->used_fregs |= 1 << reg;
+		arg->dreg = mono_alloc_freg (cfg);
 
 		mono_call_inst_add_outarg_reg (call, arg->dreg, reg, TRUE);
 		break;
@@ -1176,6 +1170,23 @@ arg_storage_to_ldind (ArgStorage storage)
 		return CEE_LDIND_R8;
 	case ArgInFloatSSEReg:
 		return CEE_LDIND_R4;
+	default:
+		g_assert_not_reached ();
+	}
+
+	return -1;
+}
+
+static int
+arg_storage_to_load_membase (ArgStorage storage)
+{
+	switch (storage) {
+	case ArgInIReg:
+		return OP_LOAD_MEMBASE;
+	case ArgInDoubleSSEReg:
+		return OP_LOADR8_MEMBASE;
+	case ArgInFloatSSEReg:
+		return OP_LOADR4_MEMBASE;
 	default:
 		g_assert_not_reached ();
 	}
@@ -1412,12 +1423,7 @@ mono_arch_call_opcode2 (MonoCompile *cfg, MonoCallInst *call, int is_virtual) {
 
 		MONO_INST_NEW (cfg, arg, OP_OUTARG);
 		in = call->args [i];
-		arg->cil_code = in->cil_code;
 		arg->sreg1 = in->dreg;
-		arg->type = in->type;
-		/* prepend, so they get reversed */
-		arg->next = call->out_args;
-		call->out_args = arg;
 
 		if ((i >= sig->hasthis) && (MONO_TYPE_ISSTRUCT(sig->params [i - sig->hasthis]))) {
 			guint32 align;
@@ -1440,73 +1446,32 @@ mono_arch_call_opcode2 (MonoCompile *cfg, MonoCallInst *call, int is_virtual) {
 					size = mono_class_value_size (in->klass, &align);
 				}
 			if (ainfo->storage == ArgValuetypeInReg) {
-				if (ainfo->pair_storage [1] == ArgNone) {
-					MonoInst *load;
+				MonoInst *load, *arg;
+				int part;
 
-					NOT_IMPLEMENTED;
+				for (part = 0; part < 2; ++part) {
+					if (ainfo->pair_storage [part] == ArgNone)
+						continue;
 
-					/* Simpler case */
+					MONO_INST_NEW (cfg, load, arg_storage_to_load_membase (ainfo->pair_storage [part]));
+					load->inst_basereg = in->dreg;
+					load->inst_offset = part * sizeof (gpointer);
 
-					MONO_INST_NEW (cfg, load, arg_storage_to_ldind (ainfo->pair_storage [0]));
-					load->inst_left = in;
-
-					add_outarg_reg2 (cfg, call, arg, ainfo->pair_storage [0], ainfo->pair_regs [0], load);
-				}
-				else {
-					/* Trees can't be shared so make a copy */
-					MonoInst *vtaddr = mono_compile_create_var (cfg, &mono_defaults.int_class->byval_arg, OP_LOCAL);
-					MonoInst *load, *load2, *offset_ins;
-
-					NOT_IMPLEMENTED;
-
-					/* Reg1 */
-					MONO_INST_NEW (cfg, load, CEE_LDIND_I);
-					load->ssa_op = MONO_SSA_LOAD;
-					load->inst_i0 = (cfg)->varinfo [vtaddr->inst_c0];
-
-					NEW_ICONST (cfg, offset_ins, 0);
-					MONO_INST_NEW (cfg, load2, CEE_ADD);
-					load2->inst_left = load;
-					load2->inst_right = offset_ins;
-
-					MONO_INST_NEW (cfg, load, arg_storage_to_ldind (ainfo->pair_storage [0]));
-					load->inst_left = load2;
-
-					add_outarg_reg2 (cfg, call, arg, ainfo->pair_storage [0], ainfo->pair_regs [0], load);
-
-					/* Reg2 */
-					MONO_INST_NEW (cfg, load, CEE_LDIND_I);
-					load->ssa_op = MONO_SSA_LOAD;
-					load->inst_i0 = (cfg)->varinfo [vtaddr->inst_c0];
-
-					NEW_ICONST (cfg, offset_ins, 8);
-					MONO_INST_NEW (cfg, load2, CEE_ADD);
-					load2->inst_left = load;
-					load2->inst_right = offset_ins;
-
-					MONO_INST_NEW (cfg, load, arg_storage_to_ldind (ainfo->pair_storage [1]));
-					load->inst_left = load2;
+					switch (ainfo->pair_storage [part]) {
+					case ArgInIReg:
+						load->dreg = mono_alloc_ireg (cfg);
+						break;
+					case ArgInDoubleSSEReg:
+					case ArgInFloatSSEReg:
+						load->dreg = mono_alloc_freg (cfg);
+						break;
+					default:
+						g_assert_not_reached ();
+					}
+					MONO_ADD_INS (cfg->cbb, load);
 
 					MONO_INST_NEW (cfg, arg, OP_OUTARG);
-					arg->cil_code = in->cil_code;
-					arg->type = in->type;
-					/* prepend, so they get reversed */
-					arg->next = call->out_args;
-					call->out_args = arg;
-
-					add_outarg_reg2 (cfg, call, arg, ainfo->pair_storage [1], ainfo->pair_regs [1], load);
-
-					/* Prepend a copy inst */
-					MONO_INST_NEW (cfg, arg, CEE_STIND_I);
-					arg->cil_code = in->cil_code;
-					arg->ssa_op = MONO_SSA_STORE;
-					arg->inst_left = vtaddr;
-					arg->inst_right = in;
-					arg->type = in->type;
-
-					/* prepend, so they get reversed */
-					arg->next = call->out_args;
-					call->out_args = arg;
+					add_outarg_reg2 (cfg, call, arg, ainfo->pair_storage [part], ainfo->pair_regs [part], load);
 				}
 			}
 			else {
@@ -1582,7 +1547,7 @@ mono_arch_call_opcode2 (MonoCompile *cfg, MonoCallInst *call, int is_virtual) {
 			memcpy (tmp_sig->params, call->signature->params + call->signature->sentinelpos, tmp_sig->param_count * sizeof (MonoType*));
 
 			MONO_INST_NEW (cfg, sig_arg, OP_ICONST);
-			sig_arg->dreg = cfg->next_vireg ++;
+			sig_arg->dreg = mono_alloc_ireg (cfg);
 			sig_arg->inst_p0 = tmp_sig;
 			MONO_ADD_INS (cfg->cbb, sig_arg);
 
@@ -1601,13 +1566,17 @@ mono_arch_call_opcode2 (MonoCompile *cfg, MonoCallInst *call, int is_virtual) {
 			 * the stack. Push the address here, so the call instruction can
 			 * access it.
 			 */
-			NOT_IMPLEMENTED;
+			MONO_INST_NEW (cfg, vtarg, OP_X86_PUSH);
+			vtarg->sreg1 = call->vret_var->dreg;
+			MONO_ADD_INS (cfg->cbb, vtarg);
+
+			/* Align stack */
+			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_SUB_IMM, X86_ESP, X86_ESP, 8);
 		}
 		else {
 			MONO_INST_NEW (cfg, vtarg, OP_MOVE);
 			vtarg->sreg1 = call->vret_var->dreg;
-			/* FIXME: */
-			vtarg->dreg = cfg->next_vireg ++;
+			vtarg->dreg = mono_alloc_preg (cfg);
 			mono_bblock_add_inst (cfg->cbb, vtarg);
 
 			mono_call_inst_add_outarg_reg (call, vtarg->dreg, cinfo->ret.reg, FALSE);
@@ -5443,11 +5412,11 @@ mono_arch_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMetho
 
 			MONO_INST_NEW (cfg, ins_iconst, OP_ICONST);
 			ins_iconst->inst_c0 = 1;
-			ins_iconst->dreg = cfg->next_vireg++;
+			ins_iconst->dreg = mono_alloc_ireg (cfg);
 			MONO_ADD_INS (cfg->cbb, ins_iconst);
 
 			MONO_INST_NEW (cfg, ins, opcode);
-			ins->dreg = cfg->next_vireg ++;
+			ins->dreg = mono_alloc_ireg (cfg);
 			ins->inst_basereg = args [0]->dreg;
 			ins->inst_offset = 0;
 			ins->sreg2 = ins_iconst->dreg;
@@ -5466,11 +5435,11 @@ mono_arch_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMetho
 
 			MONO_INST_NEW (cfg, ins_iconst, OP_ICONST);
 			ins_iconst->inst_c0 = -1;
-			ins_iconst->dreg = cfg->next_vireg++;
+			ins_iconst->dreg = mono_alloc_ireg (cfg);
 			MONO_ADD_INS (cfg->cbb, ins_iconst);
 
 			MONO_INST_NEW (cfg, ins, opcode);
-			ins->dreg = cfg->next_vireg ++;
+			ins->dreg = mono_alloc_ireg (cfg);
 			ins->inst_basereg = args [0]->dreg;
 			ins->inst_offset = 0;
 			ins->sreg2 = ins_iconst->dreg;
@@ -5487,7 +5456,7 @@ mono_arch_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMetho
 				g_assert_not_reached ();
 
 			MONO_INST_NEW (cfg, ins, opcode);
-			ins->dreg = cfg->next_vireg ++;
+			ins->dreg = mono_alloc_ireg (cfg);
 			ins->inst_basereg = args [0]->dreg;
 			ins->inst_offset = 0;
 			ins->sreg2 = args [1]->dreg;
@@ -5506,7 +5475,7 @@ mono_arch_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMetho
 				return NULL;
 
 			MONO_INST_NEW (cfg, ins, opcode);
-			ins->dreg = cfg->next_vireg ++;
+			ins->dreg = mono_alloc_ireg (cfg);
 			ins->inst_basereg = args [0]->dreg;
 			ins->inst_offset = 0;
 			ins->sreg2 = args [1]->dreg;
