@@ -1,3 +1,7 @@
+2006-01-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Calendar.cs: Modified file.
+
 2006-01-08  Konstantin Triger <kostat@mainsoft.com>
 
 	* PagedDataSource.cs, DataGrid.cs: TARGET_JVM changes to let the
