@@ -40,6 +40,7 @@ scripts_2_0 = \
 	gmcs			\
 	ilasm2			\
 	monop2 			\
+	nunit-console2		\
 	wsdl2			\
 	xbuild
 
