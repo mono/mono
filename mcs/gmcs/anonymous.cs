@@ -630,7 +630,11 @@ namespace Mono.CSharp {
 			if (ScopeTypeBuilder != null)
 				return;
 			
-			TypeBuilder container = ec.TypeContainer.TypeBuilder;
+			Type container;
+			if (ec.TypeContainer.CurrentType != null)
+				container = ec.TypeContainer.CurrentType;
+			else
+				container = ec.TypeContainer.TypeBuilder;
 
 			CaptureContext.Host.CreateScopeType (ec, this);
 			

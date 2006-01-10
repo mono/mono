@@ -1,3 +1,9 @@
+2006-01-10  Martin Baulig  <martin@ximian.com>
+
+	* anonymous.cs (ScopeInfo.EmitScopeType): Use the `CurrentType'
+	instead of the `TypeBuilder' for this "<>THIS" variable; fixes
+	#77061.	
+
 2006-01-09  Raja R Harinath  <rharinath@novell.com>
 
 	Fix #75636.
