@@ -1440,9 +1440,10 @@ mono_arch_call_opcode2 (MonoCompile *cfg, MonoCallInst *call, int is_virtual) {
 					size = mono_class_value_size (in->klass, &align);
 				}
 			if (ainfo->storage == ArgValuetypeInReg) {
-				NOT_IMPLEMENTED;
 				if (ainfo->pair_storage [1] == ArgNone) {
 					MonoInst *load;
+
+					NOT_IMPLEMENTED;
 
 					/* Simpler case */
 
@@ -1455,6 +1456,8 @@ mono_arch_call_opcode2 (MonoCompile *cfg, MonoCallInst *call, int is_virtual) {
 					/* Trees can't be shared so make a copy */
 					MonoInst *vtaddr = mono_compile_create_var (cfg, &mono_defaults.int_class->byval_arg, OP_LOCAL);
 					MonoInst *load, *load2, *offset_ins;
+
+					NOT_IMPLEMENTED;
 
 					/* Reg1 */
 					MONO_INST_NEW (cfg, load, CEE_LDIND_I);

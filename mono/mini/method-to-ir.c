@@ -6148,6 +6148,15 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			}
 
 			if (sp != stack_start) {
+				/* 
+				 * Link the current bb with the targets as well, so handle_stack_args
+				 * will set their in_stack correctly.
+				 */
+				link_bblock (cfg, bblock, default_bblock);
+				for (i = 0; i < n; ++i)
+					link_bblock (cfg, bblock, targets [i]);
+
+
 				/* FIXME: The out bblocks of this bblock are not set yet */
 				handle_stack_args (cfg, stack_start, sp - stack_start);
 				sp = stack_start;
