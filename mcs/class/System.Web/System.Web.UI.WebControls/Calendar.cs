@@ -34,6 +34,7 @@ using System.Collections;
 using System.ComponentModel;
 using System.Drawing;
 using System.Security.Permissions;
+using System.Threading;
 
 namespace System.Web.UI.WebControls {
 	// CAS
@@ -70,7 +71,7 @@ namespace System.Web.UI.WebControls {
 
 		public Calendar ()
 		{
-			dateInfo = new DateTimeFormatInfo ();
+			dateInfo = Thread.CurrentThread.CurrentUICulture.DateTimeFormat;
 		}
 
 #if NET_2_0

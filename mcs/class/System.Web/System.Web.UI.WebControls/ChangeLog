@@ -1,3 +1,7 @@
+2006-01-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Calendar.cs: Modified file.
+
 2005-12-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* DropDownList.cs: HtmlEncode the item text. Fixes bug #76949.
