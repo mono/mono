@@ -544,7 +544,7 @@ namespace System.Web {
 #endif
 			} else {
 				// If this is called from an async event, signal the completion
-				// but don't thow.
+				// but don't throw.
 				context.ApplicationInstance.CompleteRequest ();
 			}
 		}
