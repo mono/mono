@@ -4,7 +4,7 @@ include ../../build/rules.make
 
 PROGRAM = $(topdir)/class/lib/$(PROFILE)/nunit-console.exe
 LOCAL_MCS_FLAGS = /r:nunit.framework.dll /r:nunit.util.dll /r:nunit.core.dll
-DISTFILES = app.config App.ico nunit-console.csproj
+DISTFILES = app.config App.ico nunit-console.csproj nunit-console.exe.net_2_0.config
 
 ifeq (1.0, $(FRAMEWORK_VERSION))
 
