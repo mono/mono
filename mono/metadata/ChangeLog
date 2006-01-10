@@ -1,3 +1,8 @@
+2006-01-10  Martin Baulig  <martin@ximian.com>
+
+	* class.c (mono_class_setup_events): Add support for generic
+	classes; fixes #76440.
+
 2006-01-06  Raja R Harinath  <rharinath@novell.com>
 
 	Fix #77160.
