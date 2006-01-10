@@ -1,3 +1,8 @@
+2006-01-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpWebResponse.cs: cope with malformed cookies with '=' as value.
+	Patch by Cyrille Colin. Fixes bug #77179.
+
 2005-12-25  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* FtpStatusCode.cs: New 2.0 enum.
