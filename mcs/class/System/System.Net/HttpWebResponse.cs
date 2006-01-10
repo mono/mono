@@ -347,7 +347,7 @@ namespace System.Net
 			CookieParser parser = new CookieParser (header);
 
 			while (parser.GetNextNameValue (out name, out val)) {
-				if (name == null || name == "")
+				if ((name == null || name == "") && cookie == null)
 					continue;
 
 				if (cookie == null) {
