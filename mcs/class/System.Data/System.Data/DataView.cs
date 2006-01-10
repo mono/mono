@@ -636,6 +636,14 @@ namespace System.Data
 			dataTable.RowDeleted     += new DataRowChangeEventHandler(OnRowDeleted);
 			dataTable.Columns.CollectionChanged += new CollectionChangeEventHandler(ColumnCollectionChanged);
 			dataTable.Constraints.CollectionChanged += new CollectionChangeEventHandler(OnConstraintCollectionChanged);
+
+			dataTable.Rows.ListChanged += new ListChangedEventHandler (OnRowCollectionChanged);
+		}
+		
+		private void OnRowCollectionChanged (object sender, ListChangedEventArgs args)
+		{
+			if (args.ListChangedType == ListChangedType.Reset)
+				OnListChanged (new ListChangedEventArgs (ListChangedType.Reset, -1, -1 ));
 		}
 
 		private void UnregisterEventHandlers()
@@ -647,6 +655,8 @@ namespace System.Data
 			dataTable.RowDeleted     -= new DataRowChangeEventHandler(OnRowDeleted);
 			dataTable.Columns.CollectionChanged -= new CollectionChangeEventHandler(ColumnCollectionChanged);
 			dataTable.Constraints.CollectionChanged -= new CollectionChangeEventHandler(OnConstraintCollectionChanged);
+
+			dataTable.Rows.ListChanged -= new ListChangedEventHandler (OnRowCollectionChanged);
 		}
 
 		// These index storing and rowView preservation must be done
@@ -674,12 +684,12 @@ namespace System.Data
 				
 			/* ItemChanged or ItemMoved */
 			if (args.Action == DataRowAction.Change) {
-					if (oldIndex == newIndex)
-						OnListChanged (new ListChangedEventArgs (ListChangedType.ItemChanged, newIndex, -1));
-					else
-						OnListChanged (new ListChangedEventArgs (ListChangedType.ItemMoved, newIndex, oldIndex));
-				}
+				if (oldIndex == newIndex)
+					OnListChanged (new ListChangedEventArgs (ListChangedType.ItemChanged, newIndex, -1));
+				else
+					OnListChanged (new ListChangedEventArgs (ListChangedType.ItemMoved, newIndex, oldIndex));
 			}
+		}
 
 		private void OnRowDeleted (object sender, DataRowChangeEventArgs args)
 		{

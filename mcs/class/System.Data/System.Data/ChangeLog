@@ -1,3 +1,12 @@
+2006-01-10  Senganal T <tsenganal@novell.com>
+	* DataRowCollection.cs
+		- Added ListChangedEvent to signal reset of the collection.
+		Ideally, all the row collection changes should be notified 
+		thru this event. 
+	* DataView.cs
+		- Subscribes to the ListChangedEvent of DataRowCollection
+		Fixes bug #77188
+
 2006-01-09  Senganal T <tsenganal@novell.com>
 	* RelatedDataView.cs
 	* DataColumn.cs

@@ -1066,5 +1066,41 @@ namespace MonoTests_System.Data
 			dv = ds.DefaultViewManager.CreateDataView(dt);
 			Assert.AreEqual(ds.DefaultViewManager,dv.DataViewManager , "DV116");
 		}
+
+		[Test]
+		public void DataView_ListChangedEventTest ()
+		{
+			// Test DataView generates events, when datatable is directly modified
+
+			DataTable table = new DataTable ("test");
+			table.Columns.Add ("col1", typeof(int));
+			
+			DataView view = new DataView (table);
+			
+			view.ListChanged += new ListChangedEventHandler (dv_ListChanged);
+			
+			evProp = null;
+			table.Rows.Add (new object[] {1});
+			Assert.AreEqual (0, evProp.NewIndex, "#1");
+			Assert.AreEqual (-1, evProp.OldIndex, "#2");
+			Assert.AreEqual (ListChangedType.ItemAdded, evProp.lstType, "#3");
+
+			evProp = null;
+			table.Rows[0][0] = 5;
+			Assert.AreEqual (0, evProp.NewIndex, "#4");
+			Assert.AreEqual (-1, evProp.OldIndex, "#5");
+			Assert.AreEqual (ListChangedType.ItemChanged, evProp.lstType, "#6");
+
+			evProp = null;
+			table.Rows.RemoveAt (0);
+			Assert.AreEqual (0, evProp.NewIndex, "#7");
+			Assert.AreEqual (-1, evProp.OldIndex, "#8");
+			Assert.AreEqual (ListChangedType.ItemDeleted, evProp.lstType, "#9");
+
+			table.Rows.Clear();
+			Assert.AreEqual (-1, evProp.NewIndex, "#10");
+			Assert.AreEqual (-1, evProp.OldIndex, "#11");
+			Assert.AreEqual (ListChangedType.Reset, evProp.lstType, "#12");
+		}
 	}
 }

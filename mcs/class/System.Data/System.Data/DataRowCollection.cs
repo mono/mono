@@ -43,10 +43,13 @@ namespace System.Data
 	/// <summary>
 	/// Collection of DataRows in a DataTable
 	/// </summary>
+
 	[Serializable]
 	public class DataRowCollection : InternalDataCollectionBase 
 	{
 		private DataTable table;
+		
+		internal event ListChangedEventHandler ListChanged;
 
 		/// <summary>
 		/// Internal constructor used to build a DataRowCollection.
@@ -159,6 +162,7 @@ namespace System.Data
                                 this.table.DeleteRowFromIndexes (this [i]);
 
 			List.Clear ();
+			OnListChanged (this, new ListChangedEventArgs (ListChangedType.Reset, -1, -1));
 		}
 
 		/// <summary>
@@ -334,6 +338,12 @@ namespace System.Data
 		public void RemoveAt (int index) 
 		{			
 			Remove(this[index]);
+		}
+
+		private void OnListChanged (object sender, ListChangedEventArgs args)
+		{
+			if (ListChanged != null)
+				ListChanged (sender, args);
 		}
 	}
 }
