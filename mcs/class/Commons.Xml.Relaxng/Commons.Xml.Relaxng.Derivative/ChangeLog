@@ -1,6 +1,14 @@
-2005-01-05  Atsushi Enomoto <atsushi@ximian.com>
+2006-01-10  Atsushi Enomoto <atsushi@ximian.com>
 
-	* RdpPattern.cs :
+	* RdpPatterns.cs :
+	  - Added StartAttDeriv(), EndAttDeriv() and IsTextValueDependent.
+	    (See corresponding changes in RelaxngValidatingReader.cs).
+	  - Added a bunch of derivative method overloads to receive 
+	    MemoizationStore and memoize results efficiently.
+
+2006-01-05  Atsushi Enomoto <atsushi@ximian.com>
+
+	* RdpPatterns.cs :
 	  - Fixed RdpPattern.TextDeriv() and MixedTextDeriv() to not allow 
 	    whitespaces incorrectly.
 	  - Fixed MixedTextDeriv() to not require string argument.
@@ -15,7 +23,7 @@
 	    derivative algorithm (it incorrectly extended to return false
 	    for RELAX NG predefined datatypes).
 
-2005-01-04  Atsushi Enomoto <atsushi@ximian.com>
+2006-01-04  Atsushi Enomoto <atsushi@ximian.com>
 
 	* RdpPattern.cs :
 	  - Implemented textOnlyDeriv and mixedTextDeriv of "memoization".
@@ -28,12 +36,12 @@
 	  - Avoid extra pattern creation with related to empty and notAllowed
 	    as one hand of binary branches.
 
-2005-01-03  Atsushi Enomoto <atsushi@ximian.com>
+2006-01-03  Atsushi Enomoto <atsushi@ximian.com>
 
 	* RdpPattern.cs : reduced RdpFlip instantiation. Share patternPool
 	  only when it does not exist.
 
-2005-01-03  Atsushi Enomoto <atsushi@ximian.com>
+2006-01-03  Atsushi Enomoto <atsushi@ximian.com>
 
 	* Util.cs, RdpPatterns.cs : optimization. Removed extraneous
 	  delegate instantiation. Avoid using enum for HashTable keys.

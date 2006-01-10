@@ -290,6 +290,10 @@ namespace Commons.Xml.Relaxng.Derivative
 
 		public abstract bool Nullable { get; }
 
+		internal virtual bool IsTextValueDependent {
+			get { return false; }
+		}
+
 		// fills QName collection
 		public void GetLabels (LabelList elements, LabelList attributes)
 		{
@@ -327,7 +331,17 @@ namespace Commons.Xml.Relaxng.Derivative
 			return this;
 		}
 
+		internal virtual RdpPattern TextOnlyDeriv (MemoizationStore store)
+		{
+			return this;
+		}
+
 		internal virtual RdpPattern MixedTextDeriv ()
+		{
+			return RdpNotAllowed.Instance;
+		}
+
+		internal virtual RdpPattern MixedTextDeriv (MemoizationStore memo)
 		{
 			return RdpNotAllowed.Instance;
 		}
@@ -407,11 +421,36 @@ namespace Commons.Xml.Relaxng.Derivative
 			return RdpNotAllowed.Instance;
 		}
 
+		internal virtual RdpPattern StartTagOpenDeriv (string name, string ns, MemoizationStore memo)
+		{
+			return StartTagOpenDeriv (name, ns);
+		}
+
 		// attDeriv(ctx, this, att)
 		// attDeriv _ _ _ = NotAllowed
 		public virtual RdpPattern AttDeriv (string name, string ns, string value, XmlReader reader)
 		{
 			return RdpNotAllowed.Instance;
+		}
+
+		public virtual RdpPattern StartAttDeriv (string name, string ns)
+		{
+			return RdpNotAllowed.Instance;
+		}
+
+		internal virtual RdpPattern StartAttDeriv (string name, string ns, MemoizationStore memo)
+		{
+			return StartAttDeriv (name, ns);
+		}
+
+		public virtual RdpPattern EndAttDeriv ()
+		{
+			return RdpNotAllowed.Instance;
+		}
+
+		internal virtual RdpPattern EndAttDeriv (MemoizationStore memo)
+		{
+			return EndAttDeriv ();
 		}
 
 		public bool ValueMatch (string s, XmlReader reader)
@@ -425,6 +464,11 @@ namespace Commons.Xml.Relaxng.Derivative
 			return this;
 		}
 
+		internal virtual RdpPattern StartTagCloseDeriv (MemoizationStore memo)
+		{
+			return StartTagCloseDeriv ();
+		}
+
 		public RdpPattern OneOrMore ()
 		{
 			if (PatternType == RelaxngPatternType.NotAllowed)
@@ -436,6 +480,11 @@ namespace Commons.Xml.Relaxng.Derivative
 		public virtual RdpPattern EndTagDeriv ()
 		{
 			return RdpNotAllowed.Instance;
+		}
+
+		internal virtual RdpPattern EndTagDeriv (MemoizationStore memo)
+		{
+			return EndTagDeriv ();
 		}
 		#endregion
 	}
@@ -451,6 +500,10 @@ namespace Commons.Xml.Relaxng.Derivative
 
 		public override bool Nullable {
 			get { return true; }
+		}
+
+		internal override bool IsTextValueDependent {
+			get { return false; }
 		}
 
 		static RdpEmpty instance;
@@ -506,6 +559,10 @@ namespace Commons.Xml.Relaxng.Derivative
 			get { return false; }
 		}
 
+		internal override bool IsTextValueDependent {
+			get { return false; }
+		}
+
 		public override RdpPattern ApplyAfter (RdpApplyAfterHandler h)
 		{
 			return RdpNotAllowed.Instance;
@@ -558,6 +615,10 @@ namespace Commons.Xml.Relaxng.Derivative
 			get { return true; }
 		}
 
+		internal override bool IsTextValueDependent {
+			get { return false; }
+		}
+
 		public override RelaxngPatternType PatternType {
 			get { return RelaxngPatternType.Text; }
 		}
@@ -572,6 +633,11 @@ namespace Commons.Xml.Relaxng.Derivative
 		}
 
 		internal override RdpPattern MixedTextDeriv ()
+		{
+			return this;
+		}
+
+		internal override RdpPattern MixedTextDeriv (MemoizationStore memo)
 		{
 			return this;
 		}
@@ -712,6 +778,19 @@ namespace Commons.Xml.Relaxng.Derivative
 			}
 		}
 
+		bool isTextValueDependentComputed;
+		bool isTextValueDependent;
+
+		internal override bool IsTextValueDependent {
+			get {
+				if (!isTextValueDependentComputed) {
+					isTextValueDependent = LValue.IsTextValueDependent || RValue.IsTextValueDependent;
+					isTextValueDependentComputed = true;
+				}
+				return isTextValueDependent;
+			}
+		}
+
 		public override RelaxngPatternType PatternType {
 			get { return RelaxngPatternType.Choice; }
 		}
@@ -780,10 +859,22 @@ namespace Commons.Xml.Relaxng.Derivative
 				RValue.TextOnlyDeriv ());
 		}
 
+		internal override RdpPattern TextOnlyDeriv (MemoizationStore memo)
+		{
+			return memo.TextOnlyDeriv (LValue).Choice (
+				memo.TextOnlyDeriv (RValue));
+		}
+
 		internal override RdpPattern MixedTextDeriv ()
 		{
 			return LValue.MixedTextDeriv ().Choice (
 				RValue.MixedTextDeriv ());
+		}
+
+		internal override RdpPattern MixedTextDeriv (MemoizationStore memo)
+		{
+			return memo.MixedTextDeriv (LValue).Choice (
+				memo.MixedTextDeriv (RValue));
 		}
 
 		public override RdpPattern ApplyAfter (RdpApplyAfterHandler handler)
@@ -804,12 +895,40 @@ namespace Commons.Xml.Relaxng.Derivative
 #endif
 		}
 
+		internal override RdpPattern StartTagOpenDeriv (string name, string ns, MemoizationStore memo)
+		{
+			RdpPattern lDeriv = memo.StartTagOpenDeriv (LValue, name, ns);
+			return lDeriv.Choice (memo.StartTagOpenDeriv (RValue, name, ns));
+		}
+
 		// attDeriv cx (Choice p1 p2) att =
 		//  choice (attDeriv cx p1 att) (attDeriv cx p2 att)
 		public override RdpPattern AttDeriv (string name, string ns, string value, XmlReader reader)
 		{
 			return LValue.AttDeriv (name, ns, value, reader)
 				.Choice (RValue.AttDeriv (name, ns, value, reader));
+		}
+
+		public override RdpPattern StartAttDeriv (string name, string ns)
+		{
+			RdpPattern lDeriv = LValue.StartAttDeriv (name, ns);
+			return lDeriv.Choice (RValue.StartAttDeriv (name, ns));
+		}
+
+		internal override RdpPattern StartAttDeriv (string name, string ns, MemoizationStore memo)
+		{
+			return memo.StartAttDeriv (LValue, name, ns)
+				.Choice (memo.StartAttDeriv (RValue, name, ns));
+		}
+
+		public override RdpPattern EndAttDeriv ()
+		{
+			return LValue.EndAttDeriv ().Choice (RValue.EndAttDeriv ());
+		}
+
+		internal override RdpPattern EndAttDeriv (MemoizationStore memo)
+		{
+			return memo.EndAttDeriv (LValue).Choice (memo.EndAttDeriv (RValue));
 		}
 
 		// startTagCloseDeriv (Choice p1 p2) =
@@ -820,9 +939,20 @@ namespace Commons.Xml.Relaxng.Derivative
 				.Choice (RValue.StartTagCloseDeriv ());
 		}
 
+		internal override RdpPattern StartTagCloseDeriv (MemoizationStore memo)
+		{
+			return memo.StartTagCloseDeriv (LValue)
+				.Choice (memo.StartTagCloseDeriv (RValue));
+		}
+
 		public override RdpPattern EndTagDeriv ()
 		{
 			return LValue.EndTagDeriv ().Choice (RValue.EndTagDeriv ());
+		}
+
+		internal override RdpPattern EndTagDeriv (MemoizationStore memo)
+		{
+			return memo.EndTagDeriv (LValue).Choice (memo.EndTagDeriv (RValue));
 		}
 
 		internal override void CheckConstraints (bool attribute, bool oneOrMore, bool oneOrMoreGroup, bool oneOrMoreInterleave, bool list, bool dataExcept)
@@ -848,6 +978,10 @@ namespace Commons.Xml.Relaxng.Derivative
 				}
 				return isNullable;
 			}
+		}
+
+		internal override bool IsTextValueDependent {
+			get { return LValue.IsTextValueDependent || RValue.IsTextValueDependent; }
 		}
 
 		public override void GetLabels (LabelList elements, LabelList attributes, bool collectNameClass)
@@ -885,10 +1019,22 @@ namespace Commons.Xml.Relaxng.Derivative
 				RValue.TextOnlyDeriv ());
 		}
 
+		internal override RdpPattern TextOnlyDeriv (MemoizationStore memo)
+		{
+			return memo.TextOnlyDeriv (LValue).Interleave (
+				memo.TextOnlyDeriv (RValue));
+		}
+
 		internal override RdpPattern MixedTextDeriv ()
 		{
-			return MakeInterleave (LValue.MixedTextDeriv (), RValue).Choice (
-				MakeInterleave (LValue, RValue.MixedTextDeriv ()));
+			return LValue.MixedTextDeriv ().Interleave (RValue).Choice (
+				LValue.Interleave (RValue.MixedTextDeriv ()));
+		}
+
+		internal override RdpPattern MixedTextDeriv (MemoizationStore memo)
+		{
+			return memo.MixedTextDeriv (LValue).Interleave (RValue).Choice (
+				LValue.Interleave (memo.MixedTextDeriv (RValue)));
 		}
 
 		// => choice (applyAfter (flip interleave p2) (startTagOpenDeriv p1 qn)) (applyAfter (interleave p1) (startTagOpenDeriv p2 qn)
@@ -897,6 +1043,16 @@ namespace Commons.Xml.Relaxng.Derivative
 		{
 			RdpPattern handledL = LValue.StartTagOpenDeriv (name, ns);
 			RdpPattern handledR = RValue.StartTagOpenDeriv (name, ns);
+			RdpFlip flipL = MakeFlip (RdpUtil.InterleaveFunction, RValue);
+			RdpPattern choiceL = handledL.ApplyAfter (new RdpApplyAfterHandler (flipL.Apply));
+			RdpPattern choiceR = handledR.ApplyAfter (new RdpApplyAfterHandler (LValue.Interleave));
+			return choiceL.Choice (choiceR);
+		}
+
+		internal override RdpPattern StartTagOpenDeriv (string name, string ns, MemoizationStore memo)
+		{
+			RdpPattern handledL = memo.StartTagOpenDeriv (LValue, name, ns);
+			RdpPattern handledR = memo.StartTagOpenDeriv (RValue, name, ns);
 			RdpFlip flipL = MakeFlip (RdpUtil.InterleaveFunction, RValue);
 			RdpPattern choiceL = handledL.ApplyAfter (new RdpApplyAfterHandler (flipL.Apply));
 			RdpPattern choiceR = handledR.ApplyAfter (new RdpApplyAfterHandler (LValue.Interleave));
@@ -914,12 +1070,38 @@ namespace Commons.Xml.Relaxng.Derivative
 					RValue.AttDeriv (name, ns, value, reader)));
 		}
 
+		public override RdpPattern StartAttDeriv (string name, string ns)
+		{
+			RdpPattern handledL = LValue.StartAttDeriv (name, ns);
+			RdpPattern handledR = RValue.StartAttDeriv (name, ns);
+			RdpFlip flipL = MakeFlip (RdpUtil.InterleaveFunction, RValue);
+			RdpPattern choiceL = handledL.ApplyAfter (new RdpApplyAfterHandler (flipL.Apply));
+			RdpPattern choiceR = handledR.ApplyAfter (new RdpApplyAfterHandler (LValue.Interleave));
+			return choiceL.Choice (choiceR);
+		}
+
+		internal override RdpPattern StartAttDeriv (string name, string ns, MemoizationStore memo)
+		{
+			RdpPattern handledL = memo.StartAttDeriv (LValue, name, ns);
+			RdpPattern handledR = memo.StartAttDeriv (RValue, name, ns);
+			RdpFlip flipL = MakeFlip (RdpUtil.InterleaveFunction, RValue);
+			RdpPattern choiceL = handledL.ApplyAfter (new RdpApplyAfterHandler (flipL.Apply));
+			RdpPattern choiceR = handledR.ApplyAfter (new RdpApplyAfterHandler (LValue.Interleave));
+			return choiceL.Choice (choiceR);
+		}
+
 		// startTagCloseDeriv (Interleave p1 p2) =
 		//  interleave (startTagCloseDeriv p1) (startTagCloseDeriv p2)
 		public override RdpPattern StartTagCloseDeriv ()
 		{
 			return LValue.StartTagCloseDeriv ()
 				.Interleave (RValue.StartTagCloseDeriv ());
+		}
+
+		internal override RdpPattern StartTagCloseDeriv (MemoizationStore memo)
+		{
+			return memo.StartTagCloseDeriv (LValue)
+				.Interleave (memo.StartTagCloseDeriv (RValue));
 		}
 
 		public override RelaxngPatternType PatternType {
@@ -964,6 +1146,10 @@ namespace Commons.Xml.Relaxng.Derivative
 			}
 		}
 
+		internal override bool IsTextValueDependent {
+			get { return LValue.IsTextValueDependent || (LValue.Nullable ? RValue.IsTextValueDependent : false); }
+		}
+
 		public override void GetLabels (LabelList elements, LabelList attributes, bool collectNameClass)
 		{
 			LValue.GetLabels (elements, attributes, collectNameClass);
@@ -986,11 +1172,24 @@ namespace Commons.Xml.Relaxng.Derivative
 				RValue.TextOnlyDeriv ());
 		}
 
+		internal override RdpPattern TextOnlyDeriv (MemoizationStore memo)
+		{
+			return memo.TextOnlyDeriv (LValue).Group (
+				memo.TextOnlyDeriv (RValue));
+		}
+
 		internal override RdpPattern MixedTextDeriv ()
 		{
 			RdpPattern p = LValue.MixedTextDeriv ().Group (RValue);
 			return LValue.Nullable ?
 				p.Choice (RValue.MixedTextDeriv ()) : p;
+		}
+
+		internal override RdpPattern MixedTextDeriv (MemoizationStore memo)
+		{
+			RdpPattern p = memo.MixedTextDeriv (LValue).Group (RValue);
+			return LValue.Nullable ?
+				p.Choice (memo.MixedTextDeriv (RValue)) : p;
 		}
 
 		// startTagOpenDeriv (Group p1 p2) qn =
@@ -1010,6 +1209,17 @@ namespace Commons.Xml.Relaxng.Derivative
 				return x;
 		}
 
+		internal override RdpPattern StartTagOpenDeriv (string name, string ns, MemoizationStore memo)
+		{
+			RdpPattern handled = memo.StartTagOpenDeriv (LValue, name, ns);
+			RdpFlip f = MakeFlip (RdpUtil.GroupFunction, RValue);
+			RdpPattern x = handled.ApplyAfter (new RdpApplyAfterHandler (f.Apply));
+			if (LValue.Nullable)
+				return x.Choice (memo.StartTagOpenDeriv (RValue, name, ns));
+			else
+				return x;
+		}
+
 		// attDeriv cx (Group p1 p2) att =
 		//  choice (group (attDeriv cx p1 att) p2)
 		//         (group p1 (attDeriv cx p2 att))
@@ -1020,12 +1230,39 @@ namespace Commons.Xml.Relaxng.Derivative
 					RValue.AttDeriv (name, ns, value, reader)));
 		}
 
+		// startAttDeriv (group p1 p2) == startAttDeriv (interleave p1 p2)
+		public override RdpPattern StartAttDeriv (string name, string ns)
+		{
+			RdpPattern handledL = LValue.StartAttDeriv (name, ns);
+			RdpPattern handledR = RValue.StartAttDeriv (name, ns);
+			RdpFlip flipL = MakeFlip (RdpUtil.GroupFunction, RValue);
+			RdpPattern choiceL = handledL.ApplyAfter (new RdpApplyAfterHandler (flipL.Apply));
+			RdpPattern choiceR = handledR.ApplyAfter (new RdpApplyAfterHandler (LValue.Group));
+			return choiceL.Choice (choiceR);
+		}
+
+		internal override RdpPattern StartAttDeriv (string name, string ns, MemoizationStore memo)
+		{
+			RdpPattern handledL = memo.StartAttDeriv (LValue, name, ns);
+			RdpPattern handledR = memo.StartAttDeriv (RValue, name, ns);
+			RdpFlip flipL = MakeFlip (RdpUtil.GroupFunction, RValue);
+			RdpPattern choiceL = handledL.ApplyAfter (new RdpApplyAfterHandler (flipL.Apply));
+			RdpPattern choiceR = handledR.ApplyAfter (new RdpApplyAfterHandler (LValue.Group));
+			return choiceL.Choice (choiceR);
+		}
+
 		// startTagCloseDeriv (Group p1 p2) =
 		//  group (startTagCloseDeriv p1) (startTagCloseDeriv p2)
 		public override RdpPattern StartTagCloseDeriv ()
 		{
 			return LValue.StartTagCloseDeriv ()
 				.Group (RValue.StartTagCloseDeriv ());
+		}
+
+		internal override RdpPattern StartTagCloseDeriv (MemoizationStore memo)
+		{
+			return memo.StartTagCloseDeriv (LValue)
+				.Group (memo.StartTagCloseDeriv (RValue));
 		}
 
 		public override RelaxngPatternType PatternType {
@@ -1101,6 +1338,10 @@ namespace Commons.Xml.Relaxng.Derivative
 			get { return Child.Nullable; }
 		}
 
+		internal override bool IsTextValueDependent {
+			get { return Child.IsTextValueDependent; }
+		}
+
 		public override void GetLabels (LabelList elements, LabelList attributes, bool collectNameClass)
 		{
 			Child.GetLabels (elements, attributes, collectNameClass);
@@ -1133,9 +1374,20 @@ namespace Commons.Xml.Relaxng.Derivative
 			return Child.TextOnlyDeriv ().OneOrMore ();
 		}
 
+		internal override RdpPattern TextOnlyDeriv (MemoizationStore memo)
+		{
+			return memo.TextOnlyDeriv (Child).OneOrMore ();
+		}
+
 		internal override RdpPattern MixedTextDeriv ()
 		{
 			return Child.MixedTextDeriv ().Group (
+				this.Choice (RdpEmpty.Instance));
+		}
+
+		internal override RdpPattern MixedTextDeriv (MemoizationStore memo)
+		{
+			return memo.MixedTextDeriv (Child).Group (
 				this.Choice (RdpEmpty.Instance));
 		}
 
@@ -1164,6 +1416,30 @@ namespace Commons.Xml.Relaxng.Derivative
 			return handled.ApplyAfter (new RdpApplyAfterHandler (f.Apply));
 		}
 
+		internal override RdpPattern StartTagOpenDeriv (string name, string ns, MemoizationStore memo)
+		{
+			RdpPattern rest = RdpEmpty.Instance.Choice (Child.OneOrMore ());
+			RdpPattern handled = memo.StartTagOpenDeriv (Child, name, ns);
+			RdpFlip f = MakeFlip (RdpUtil.GroupFunction, rest);
+			return handled.ApplyAfter (new RdpApplyAfterHandler (f.Apply));
+		}
+
+		public override RdpPattern StartAttDeriv (string name, string ns)
+		{
+			RdpPattern rest = RdpEmpty.Instance.Choice (Child.OneOrMore ());
+			RdpPattern handled = Child.StartAttDeriv (name, ns);
+			RdpFlip f = MakeFlip (RdpUtil.GroupFunction, rest);
+			return handled.ApplyAfter (new RdpApplyAfterHandler (f.Apply));
+		}
+
+		internal override RdpPattern StartAttDeriv (string name, string ns, MemoizationStore memo)
+		{
+			RdpPattern rest = RdpEmpty.Instance.Choice (Child.OneOrMore ());
+			RdpPattern handled = memo.StartAttDeriv (Child, name, ns);
+			RdpFlip f = MakeFlip (RdpUtil.GroupFunction, rest);
+			return handled.ApplyAfter (new RdpApplyAfterHandler (f.Apply));
+		}
+
 		// startTagCloseDeriv (OneOrMore p) =
 		//  oneOrMore (startTagCloseDeriv p)
 		public override RdpPattern StartTagCloseDeriv ()
@@ -1174,6 +1450,11 @@ namespace Commons.Xml.Relaxng.Derivative
 #else
 			return Child.StartTagCloseDeriv ().OneOrMore ();
 #endif
+		}
+
+		internal override RdpPattern StartTagCloseDeriv (MemoizationStore memo)
+		{
+			return memo.StartTagCloseDeriv (Child).OneOrMore ();
 		}
 
 		internal override void CheckConstraints (bool attribute, bool oneOrMore, bool oneOrMoreGroup, bool oneOrMoreInterleave, bool list, bool dataExcept)
@@ -1208,6 +1489,10 @@ namespace Commons.Xml.Relaxng.Derivative
 
 		public override bool Nullable {
 			get { return false; }
+		}
+
+		internal override bool IsTextValueDependent {
+			get { return true; }
 		}
 
 		public override RelaxngPatternType PatternType {
@@ -1259,6 +1544,10 @@ namespace Commons.Xml.Relaxng.Derivative
 
 		public override bool Nullable {
 			get { return false; }
+		}
+
+		internal override bool IsTextValueDependent {
+			get { return true; }
 		}
 
 		public override RelaxngPatternType PatternType {
@@ -1381,6 +1670,10 @@ namespace Commons.Xml.Relaxng.Derivative
 			get { return false; }
 		}
 
+		internal override bool IsTextValueDependent {
+			get { return true; }
+		}
+
 		public override RelaxngPatternType PatternType {
 			get { return RelaxngPatternType.Value; }
 		}
@@ -1439,6 +1732,10 @@ namespace Commons.Xml.Relaxng.Derivative
 		}
 
 		public override bool Nullable {
+			get { return false; }
+		}
+
+		internal override bool IsTextValueDependent {
 			get { return false; }
 		}
 
@@ -1505,8 +1802,25 @@ namespace Commons.Xml.Relaxng.Derivative
 #endif
 		}
 
+		public override RdpPattern StartAttDeriv (string name, string ns)
+		{
+			return nameClass.Contains (name, ns) ?
+				children.After (RdpEmpty.Instance) : RdpNotAllowed.Instance;
+		}
+
+		internal override RdpPattern StartAttDeriv (string name, string ns, MemoizationStore memo)
+		{
+			return nameClass.Contains (name, ns) ?
+				children.After (RdpEmpty.Instance) : RdpNotAllowed.Instance;
+		}
+
 		// startTagCloseDeriv (Attribute _ _) = NotAllowed
 		public override RdpPattern StartTagCloseDeriv ()
+		{
+			return RdpNotAllowed.Instance;
+		}
+
+		internal override RdpPattern StartTagCloseDeriv (MemoizationStore memo)
 		{
 			return RdpNotAllowed.Instance;
 		}
@@ -1558,6 +1872,10 @@ namespace Commons.Xml.Relaxng.Derivative
 		}
 
 		public override bool Nullable {
+			get { return false; }
+		}
+
+		internal override bool IsTextValueDependent {
 			get { return false; }
 		}
 
@@ -1618,6 +1936,11 @@ namespace Commons.Xml.Relaxng.Derivative
 			return RdpNotAllowed.Instance;
 		}
 
+		internal override RdpPattern TextOnlyDeriv (MemoizationStore memo)
+		{
+			return RdpNotAllowed.Instance;
+		}
+
 		public override RdpPattern StartTagOpenDeriv (string name, string ns)
 		{
 #if UseStatic
@@ -1630,6 +1953,13 @@ namespace Commons.Xml.Relaxng.Derivative
 				children.After (RdpEmpty.Instance) :
 				RdpNotAllowed.Instance;
 #endif
+		}
+
+		internal override RdpPattern StartTagOpenDeriv (string name, string ns, MemoizationStore memo)
+		{
+			return nameClass.Contains (name, ns) ?
+				children.After (RdpEmpty.Instance) :
+				RdpNotAllowed.Instance;
 		}
 
 		internal override void MarkReachableDefs () 
@@ -1665,6 +1995,10 @@ namespace Commons.Xml.Relaxng.Derivative
 			get { return false; }
 		}
 
+		internal override bool IsTextValueDependent {
+			get { return LValue.IsTextValueDependent; }
+		}
+
 		public override void GetLabels (LabelList elements, LabelList attributes, bool collectNameClass)
 		{
 			LValue.GetLabels (elements, attributes, collectNameClass);
@@ -1680,9 +2014,19 @@ namespace Commons.Xml.Relaxng.Derivative
 			return LValue.TextOnlyDeriv ().After (RValue);
 		}
 
+		internal override RdpPattern TextOnlyDeriv (MemoizationStore memo)
+		{
+			return memo.TextOnlyDeriv (LValue).After (RValue);
+		}
+
 		internal override RdpPattern MixedTextDeriv ()
 		{
 			return LValue.MixedTextDeriv ().After (RValue);
+		}
+
+		internal override RdpPattern MixedTextDeriv (MemoizationStore memo)
+		{
+			return memo.MixedTextDeriv (LValue).After (RValue);
 		}
 
 		// startTagOpenDeriv (After p1 p2) qn =
@@ -1690,6 +2034,14 @@ namespace Commons.Xml.Relaxng.Derivative
 		public override RdpPattern StartTagOpenDeriv (string name, string ns)
 		{
 			RdpPattern handled = LValue.StartTagOpenDeriv (name, ns);
+			RdpFlip f = MakeFlip (RdpUtil.AfterFunction, RValue);
+			return handled.ApplyAfter (new RdpApplyAfterHandler (
+				f.Apply));
+		}
+
+		internal override RdpPattern StartTagOpenDeriv (string name, string ns, MemoizationStore memo)
+		{
+			RdpPattern handled = memo.StartTagOpenDeriv (LValue, name, ns);
 			RdpFlip f = MakeFlip (RdpUtil.AfterFunction, RValue);
 			return handled.ApplyAfter (new RdpApplyAfterHandler (
 				f.Apply));
@@ -1707,9 +2059,35 @@ namespace Commons.Xml.Relaxng.Derivative
 			return LValue.AttDeriv (name, ns, value, reader).After (RValue);
 		}
 
+		public override RdpPattern StartAttDeriv (string name, string ns)
+		{
+			RdpPattern handled = LValue.StartAttDeriv (name, ns);
+			RdpFlip f = MakeFlip (RdpUtil.AfterFunction, RValue);
+			return handled.ApplyAfter (new RdpApplyAfterHandler (
+				f.Apply));
+		}
+
+		internal override RdpPattern StartAttDeriv (string name, string ns, MemoizationStore memo)
+		{
+			RdpPattern handled = memo.StartAttDeriv (LValue, name, ns);
+			RdpFlip f = MakeFlip (RdpUtil.AfterFunction, RValue);
+			return handled.ApplyAfter (new RdpApplyAfterHandler (
+				f.Apply));
+		}
+
+		public override RdpPattern EndAttDeriv ()
+		{
+			return LValue.Nullable ? RValue : RdpNotAllowed.Instance;
+		}
+
 		public override RdpPattern StartTagCloseDeriv ()
 		{
 			return LValue.StartTagCloseDeriv ().After (RValue);
+		}
+
+		internal override RdpPattern StartTagCloseDeriv (MemoizationStore memo)
+		{
+			return memo.StartTagCloseDeriv (LValue).After (RValue);
 		}
 
 		public override RdpPattern EndTagDeriv ()

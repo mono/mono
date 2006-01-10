@@ -1,5 +1,19 @@
 2006-01-10  Atsushi Enomoto <atsushi@ximian.com>
 
+	* RelaxngValidatingReader.cs :
+	  - Split memoization support things into MemoizationStore class.
+	  - Split single memo ArrayList into a couple of Hashtables and 
+	    ArrayLists which memoize each kind of derivative results.
+	  - Introduced StartAttDeriv() and EndAttDeriv() to replace AttDeriv()
+	    and memoize results efficiently. It is textually written in the
+	    "derivative algorithm", but not formally specified.
+	  - Introduced IsTextValueDependent and EmptyTextDeriv() to 
+	    differentiate those patterns which results differ depending on
+	    the text value and those which doesn't.
+	    Those EmptyTextDeriv results are memoized.
+
+2006-01-10  Atsushi Enomoto <atsushi@ximian.com>
+
 	* Misc.cs : NormalizeWhitespace() was creating extraneous char[] and
 	  it could be heavily called depending on patterns.
 	* RelaxngDefaultDatatypes.cs : avoid extraneous call to

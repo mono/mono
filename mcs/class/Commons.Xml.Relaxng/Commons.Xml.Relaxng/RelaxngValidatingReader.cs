@@ -387,7 +387,7 @@ namespace Commons.Xml.Relaxng
 				inContent = true;
 				// StartTagOpenDeriv
 				prevState = vState;
-				vState = StartTagOpenDeriv (vState,
+				vState = memo.StartTagOpenDeriv (vState,
 					reader.LocalName, reader.NamespaceURI);
 				if (vState.PatternType == RelaxngPatternType.NotAllowed)
 					throw CreateValidationError (String.Format ("Invalid start tag found. LocalName = {0}, NS = {1}.", reader.LocalName, reader.NamespaceURI), true);
@@ -401,16 +401,36 @@ namespace Commons.Xml.Relaxng
 
 						prevState = vState;
 						string attrNS = reader.NamespaceURI;
+
+#if false // old code
+
 						vState = vState.AttDeriv (reader.LocalName, attrNS, reader.GetAttribute (reader.LocalName, attrNS), this);
-						if (vState.PatternType == RelaxngPatternType.NotAllowed)
+						if (vState == RdpNotAllowed.Instance)
 							throw CreateValidationError (String.Format ("Invalid attribute found. LocalName = {0}, NS = {1}.", reader.LocalName, reader.NamespaceURI), false);
+
+#else
+
+						prevState = vState;
+						vState = memo.StartAttDeriv (vState, reader.LocalName, attrNS);
+						if (vState == RdpNotAllowed.Instance)
+							throw CreateValidationError (String.Format ("Invalid attribute found. LocalName = {0}, NS = {1}.", reader.LocalName, reader.NamespaceURI), false);
+						prevState = vState;
+						vState = memo.TextOnlyDeriv (vState);
+						vState = TextDeriv (vState, reader.Value, reader);
+						if (Util.IsWhitespace (reader.Value))
+							vState = vState.Choice (prevState);
+						vState = memo.EndAttDeriv (vState);
+						if (vState == RdpNotAllowed.Instance)
+							throw CreateValidationError (String.Format ("Invalid attribute value is found. Value = '{0}'", reader.Value), false);
+
+#endif
 					} while (reader.MoveToNextAttribute ());
 					MoveToElement ();
 				}
 
 				// StarTagCloseDeriv
 				prevState = vState;
-				vState = StartTagCloseDeriv (vState);
+				vState = memo.StartTagCloseDeriv (vState);
 				if (vState.PatternType == RelaxngPatternType.NotAllowed)
 					throw CreateValidationError (String.Format ("Invalid start tag closing found. LocalName = {0}, NS = {1}.", reader.LocalName, reader.NamespaceURI), false);
 
@@ -425,7 +445,7 @@ namespace Commons.Xml.Relaxng
 					inContent = false;
 				// EndTagDeriv
 				prevState = vState;
-				vState = EndTagDeriv (vState);
+				vState = memo.EndTagDeriv (vState);
 				if (vState.PatternType == RelaxngPatternType.NotAllowed)
 					throw CreateValidationError (String.Format ("Invalid end tag found. LocalName = {0}, NS = {1}.", reader.LocalName, reader.NamespaceURI), true);
 				break;
@@ -450,6 +470,14 @@ namespace Commons.Xml.Relaxng
 			return ret;
 		}
 
+		RdpPattern TextDeriv (RdpPattern p, string value, XmlReader context)
+		{
+			if (p.IsTextValueDependent)
+				return p.TextDeriv (value, context);
+			else
+				return memo.EmptyTextDeriv (p);
+		}
+
 		void ValidateText (bool remain)
 		{
 			RdpPattern ts = vState;
@@ -462,8 +490,8 @@ namespace Commons.Xml.Relaxng
 			case XmlNodeType.Element:
 				startElementDepth = -1;
 				if (!Util.IsWhitespace (cachedValue)) {
-					ts = MixedTextDeriv (ts);
-					ts = ts.TextDeriv (cachedValue, reader);
+					ts = memo.MixedTextDeriv (ts);
+					ts = TextDeriv (ts, cachedValue, reader);
 				}
 				break;
 			default:
@@ -499,21 +527,34 @@ namespace Commons.Xml.Relaxng
 
 		RdpPattern ValidateTextOnlyCore ()
 		{
-			RdpPattern ts = TextOnlyDeriv (vState);
-			ts = ts.TextDeriv (cachedValue, reader);
+			RdpPattern ts = memo.TextOnlyDeriv (vState);
+			ts = TextDeriv (ts, cachedValue, reader);
 			if (Util.IsWhitespace (cachedValue))
-				ts = vState.MakeChoice (ts, vState);
+				ts = vState.Choice (ts);
 			return ts;
 		}
 
-		#region Memoization support
+		MemoizationStore memo = new MemoizationStore ();
+	}
 
-		ArrayList memo = new ArrayList ();
+	#region Memoization support
+	internal class MemoizationStore
+	{
+		ArrayList startOpen = new ArrayList ();
+		Hashtable startClose = new Hashtable ();
+		ArrayList startAtt = new ArrayList ();
+		Hashtable endTag = new Hashtable ();
+		Hashtable endAtt = new Hashtable ();
+		Hashtable textOnly = new Hashtable ();
+		Hashtable mixedText = new Hashtable ();
+		Hashtable emptyText = new Hashtable ();
 
 		enum DerivativeType {
 			StartTagOpen,
+			StartAtt,
 			StartTagClose,
 			EndTag,
+			EndAtt,
 			Mixed,
 			TextOnly
 		}
@@ -532,10 +573,10 @@ namespace Commons.Xml.Relaxng
 			public readonly RdpPattern Output;
 		}
 
-		class MemoizationStartTagOpen : Memoization
+		class MemoizationStart : Memoization
 		{
-			public MemoizationStartTagOpen (string name, string ns, RdpPattern input, RdpPattern output)
-				: base (DerivativeType.StartTagOpen, input, output)
+			public MemoizationStart (DerivativeType type, string name, string ns, RdpPattern input, RdpPattern output)
+				: base (type, input, output)
 			{
 				Name = name;
 				NS = ns;
@@ -545,79 +586,105 @@ namespace Commons.Xml.Relaxng
 			public readonly string NS;
 		}
 
-		RdpPattern StartTagOpenDeriv (RdpPattern p, string local, string ns)
+		public RdpPattern StartTagOpenDeriv (RdpPattern p, string local, string ns)
 		{
-			for (int i = 0; i < memo.Count; i++) {
-				Memoization tag = (Memoization) memo [i];
-				if (tag.Type != DerivativeType.StartTagOpen)
-					continue;
-				MemoizationStartTagOpen sto =
-					tag as MemoizationStartTagOpen;
-				if (sto.Input == p &&
-				    object.ReferenceEquals (sto.Name, local) &&
-				    object.ReferenceEquals (sto.NS, ns))
-					return tag.Output;
-			}
-
-			RdpPattern m = p.StartTagOpenDeriv (local, ns);
-			memo.Add (new MemoizationStartTagOpen (local, ns, p, m));
+			RdpPattern m = GetStartDeriv (startOpen, p, DerivativeType.StartTagOpen, local, ns);
+			if (m != null)
+				return m;
+			m = p.StartTagOpenDeriv (local, ns, this);
+			startOpen.Add (new MemoizationStart (DerivativeType.StartTagOpen, local, ns, p, m));
 			return m;
 		}
 
-		RdpPattern StartTagCloseDeriv (RdpPattern p)
+int nStartAttDeriv = 0;
+		public RdpPattern StartAttDeriv (RdpPattern p, string local, string ns)
 		{
-			for (int i = 0; i < memo.Count; i++) {
-				Memoization tag = (Memoization) memo [i];
-				if (tag.Type == DerivativeType.StartTagClose && tag.Input == p)
-					return tag.Output;
-			}
-
-			RdpPattern m = p.StartTagCloseDeriv ();
-			memo.Add (new Memoization (
-					DerivativeType.StartTagClose, p, m));
+			RdpPattern m = GetStartDeriv (startAtt, p, DerivativeType.StartAtt, local, ns);
+			if (m != null)
+				return m;
+			m = p.StartAttDeriv (local, ns, this);
+			startAtt.Add (new MemoizationStart (DerivativeType.StartAtt, local, ns, p, m));
 			return m;
 		}
 
-		RdpPattern EndTagDeriv (RdpPattern p)
+		RdpPattern GetStartDeriv (ArrayList memo, RdpPattern p, DerivativeType type, string local, string ns)
 		{
 			for (int i = 0; i < memo.Count; i++) {
-				Memoization tag = (Memoization) memo [i];
-				if (tag.Type == DerivativeType.EndTag && tag.Input == p)
+				MemoizationStart tag = (MemoizationStart) memo [i];
+				if (tag.Input == p &&
+				    object.ReferenceEquals (tag.Name, local) &&
+				    object.ReferenceEquals (tag.NS, ns))
 					return tag.Output;
 			}
+			return null;
+		}
 
-			RdpPattern m = p.EndTagDeriv ();
-			memo.Add (new Memoization (DerivativeType.EndTag, p, m));
+		public RdpPattern StartTagCloseDeriv (RdpPattern p)
+		{
+			RdpPattern m = startClose [p] as RdpPattern;
+			if (m != null)
+				return m;
+
+			m = p.StartTagCloseDeriv (this);
+			startClose [p] = m;
 			return m;
 		}
 
-		RdpPattern MixedTextDeriv (RdpPattern p)
+		public RdpPattern EndTagDeriv (RdpPattern p)
 		{
-			for (int i = 0; i < memo.Count; i++) {
-				Memoization tag = (Memoization) memo [i];
-				if (tag.Type == DerivativeType.Mixed && tag.Input == p)
-					return tag.Output;
-			}
+			RdpPattern m = endTag [p] as RdpPattern;
+			if (m != null)
+				return m;
 
-			RdpPattern m = p.MixedTextDeriv ();
-			memo.Add (new Memoization (DerivativeType.Mixed, p, m));
+			m = p.EndTagDeriv (this);
+			endTag [p] = m;
 			return m;
 		}
 
-		RdpPattern TextOnlyDeriv (RdpPattern p)
+		public RdpPattern EndAttDeriv (RdpPattern p)
 		{
-			for (int i = 0; i < memo.Count; i++) {
-				Memoization tag = (Memoization) memo [i];
-				if (tag.Type == DerivativeType.TextOnly && tag.Input == p)
-					return tag.Output;
-			}
+			RdpPattern m = endAtt [p] as RdpPattern;
+			if (m != null)
+				return m;
 
-			RdpPattern m = p.TextOnlyDeriv ();
-			memo.Add (new Memoization (DerivativeType.TextOnly, p, m));
+			m = p.EndAttDeriv (this);
+			endAtt [p] = m;
 			return m;
 		}
 
-		#endregion
+		public RdpPattern MixedTextDeriv (RdpPattern p)
+		{
+			RdpPattern m = mixedText [p] as RdpPattern;
+			if (m != null)
+				return m;
+
+			m = p.MixedTextDeriv (this);
+			mixedText [p] = m;
+			return m;
+		}
+
+		public RdpPattern TextOnlyDeriv (RdpPattern p)
+		{
+			RdpPattern m = textOnly [p] as RdpPattern;
+			if (m != null)
+				return m;
+
+			m = p.TextOnlyDeriv (this);
+			textOnly [p] = m;
+			return m;
+		}
+
+		public RdpPattern EmptyTextDeriv (RdpPattern p)
+		{
+			RdpPattern m = emptyText [p] as RdpPattern;
+			if (m != null)
+				return m;
+
+			m = p.TextDeriv (String.Empty, null);
+			emptyText [p] = m;
+			return m;
+		}
 	}
+	#endregion
 }
 
