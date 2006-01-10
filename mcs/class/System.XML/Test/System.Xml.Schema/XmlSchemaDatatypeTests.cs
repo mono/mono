@@ -8,10 +8,12 @@
 //
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using System.Xml.Schema;
+#if NET_2_0
+using System.Collections.Generic;
+#endif
 using NUnit.Framework;
 
 using QName = System.Xml.XmlQualifiedName;

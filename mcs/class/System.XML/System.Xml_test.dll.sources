@@ -44,9 +44,12 @@ System.Xml/nist_dom/fundamental/Element/Element.cs
 System.Xml/nist_dom/fundamental/NamedNodeMap/NamedNodeMap.cs
 System.Xml/nist_dom/fundamental/NodeList/NodeList.cs
 System.Xml/nist_dom/fundamental/Text/Text.cs
+System.Xml.Schema/XmlSchemaAssertion.cs
+System.Xml.Schema/XmlSchemaBuiltInDatatypeTests.cs
+System.Xml.Schema/XmlSchemaDatatypeTests.cs
+System.Xml.Schema/XmlSchemaLengthFacetTests.cs
 System.Xml.Schema/XmlSchemaTests.cs
 System.Xml.Schema/XmlSchemaSetTests.cs
-System.Xml.Schema/XmlSchemaLengthFacetTests.cs
 System.Xml.Serialization/ComplexDataStructure.cs
 System.Xml.Serialization/DeserializeTests.cs
 System.Xml.Serialization/SoapAttributeAttributeTests.cs
@@ -73,8 +76,6 @@ System.Xml.Serialization/XmlSchemaImporterTests.cs
 System.Xml.Serialization/XmlSerializationWriterTests.cs
 System.Xml.Serialization/XmlTextAttributeTests.cs
 System.Xml.Serialization/XmlTypeAttributeTests.cs
-System.Xml.Schema/XmlSchemaAssertion.cs
-System.Xml.Schema/XmlSchemaBuiltInDatatypeTests.cs
 System.Xml.Serialization/XmlSerializerTests.cs
 System.Xml.Serialization/XmlSerializerTestClasses.cs
 System.Xml.XPath/SelectNodesTests.cs
