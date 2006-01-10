@@ -442,12 +442,12 @@ namespace Mono.ILASM {
                                 methoddef.AddMethAttribute (PEAPI.MethAttr.HasSecurity);
                         }        
 
-                        if (IsAbstract)
-                                return;
-
                         // Generic type parameters
                         if (gen_params != null)
                                 gen_params.Resolve (code_gen, methoddef);
+
+                        if (IsAbstract)
+                                return;
 
                         if (entry_point)
                                 methoddef.DeclareEntryPoint ();

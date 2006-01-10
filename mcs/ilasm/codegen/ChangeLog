@@ -1,5 +1,10 @@
 2006-01-10  Ankit Jain  <jankit@novell.com>
 
+	* MethodDef.cs (MethodDef.WriteCode): Resolve generic params for abstract
+	methods also.
+
+2006-01-10  Ankit Jain  <jankit@novell.com>
+
 	* TypeDef.cs (TypeDef.TypeParameters): New.
 	(TypeDef.ResolveGenParams): New. Resolve any gen param refs in
 	constraints, base class ref or implemented interfaces.

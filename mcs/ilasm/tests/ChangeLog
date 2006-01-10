@@ -1,5 +1,9 @@
 2006-01-10  Ankit Jain  <jankit@novell.com>
 
+	* gen-meth3.il: New. Test for abstract generic method.
+
+2006-01-10  Ankit Jain  <jankit@novell.com>
+
 	* gen-meth1.il: New. Test for use of VAR/MVAR by name (!!A)
 	* gen-meth2.il: New. Test for using VAR/MVAR as class ref.
 
