@@ -539,7 +539,7 @@ namespace System.Web {
 				Thread.CurrentThread.Abort (FlagEnd);
 			} else {
 				// If this is called from an async event, signal the completion
-				// but don't thow.
+				// but don't throw.
 				context.ApplicationInstance.CompleteRequest ();
 			}
 		}

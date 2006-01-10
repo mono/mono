@@ -1,3 +1,14 @@
+2006-01-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpResponse.cs: typo in comment.
+
+	* HttpApplicationFactory.cs:
+	* HttpApplication.cs: don't discard the application used for running the
+	Application_Start event to allow for Redirect/Transfer to be used. Fail
+	to get the request/response from the application object as MS does (it
+	can still be retrieved through HttpContext.Current.blah). Fixes
+	bug #77162.
+
 2006-01-04  Chris Toshok  <toshok@ximian.com>
 
 	* HttpContext.cs (IsCustomErrorEnabled): add CONFIGURATION_2_0

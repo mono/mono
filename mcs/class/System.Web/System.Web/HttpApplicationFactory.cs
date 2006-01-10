@@ -170,13 +170,14 @@ namespace System.Web {
 			return true;
 		}
 
-		void FireOnAppStart (HttpContext context)
+		HttpApplication FireOnAppStart (HttpContext context)
 		{
 			HttpApplication app = (HttpApplication) Activator.CreateInstance (app_type, true);
+			context.ApplicationInstance = app;
 			app.SetContext (context);
 			object [] args = new object [] {app, EventArgs.Empty};
 			FireEvent ("Application_Start", app, args);
-			Recycle (app);
+			return app;
 		}
 
 		void FireOnAppEnd ()
@@ -399,6 +400,7 @@ namespace System.Web {
 		internal static HttpApplication GetApplication (HttpContext context)
 		{
 			HttpApplicationFactory factory = theFactory;
+			HttpApplication app = null;
 			if (factory.needs_init){
 				if (context == null)
 					return null;
@@ -414,20 +416,22 @@ namespace System.Web {
 						// We watch bin or bin/*.dll if the directory exists
 						factory.bin_watcher = CreateWatcher (bin, new FileSystemEventHandler (factory.OnAppFileChanged));
 #endif
-						factory.FireOnAppStart (context);
+						app = factory.FireOnAppStart (context);
 						factory.app_start_needed = false;
+						return app;
 					}
 				}
 			}
 
 			lock (factory.available) {
-				if (factory.available.Count > 0)
-					return (HttpApplication) factory.available.Pop ();
+				if (factory.available.Count > 0) {
+					app = (HttpApplication) factory.available.Pop ();
+					app.RequestCompleted = false;
+					return app;
+				}
 			}
 			
-			HttpApplication app = (HttpApplication) Activator.CreateInstance (factory.app_type, true);
-
-			return app;
+			return (HttpApplication) Activator.CreateInstance (factory.app_type, true);
 		}
 
 		// The lock is in InvokeSessionEnd
@@ -463,6 +467,10 @@ namespace System.Web {
 				else
 					app.Dispose ();
 			}
+		}
+
+		internal static bool ContextAvailable {
+			get { return theFactory != null && theFactory.app_start_needed && theFactory.needs_init; }
 		}
 	}
 }

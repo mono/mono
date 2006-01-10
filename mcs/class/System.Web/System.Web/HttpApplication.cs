@@ -224,6 +224,10 @@ namespace System.Web {
 			get {
 				if (context == null)
 					throw new HttpException (Locale.GetText ("No context is available."));
+
+				if (false == HttpApplicationFactory.ContextAvailable)
+					throw new HttpException (Locale.GetText ("Request is not available in this context."));
+
 				return context.Request;
 			}
 		}
@@ -234,6 +238,10 @@ namespace System.Web {
 			get {
 				if (context == null)
 					throw new HttpException (Locale.GetText ("No context is available."));
+
+				if (false == HttpApplicationFactory.ContextAvailable)
+					throw new HttpException (Locale.GetText ("Response is not available in this context."));
+
 				return context.Response;
 			}
 		}
@@ -538,6 +546,10 @@ namespace System.Web {
 			stop_processing = true;
 		}
 
+		internal bool RequestCompleted {
+			set { stop_processing = value; }
+		}
+
 		public virtual void Dispose ()
 		{
 			if (modcoll != null) {
@@ -800,6 +812,9 @@ namespace System.Web {
 		//
 		IEnumerator Pipeline ()
 		{
+			if (stop_processing)
+				yield return true;
+
 			if (BeginRequest != null)
 				foreach (bool stop in RunHooks (BeginRequest))
 					yield return stop;
@@ -999,7 +1014,6 @@ namespace System.Web {
 		{
 			InitOnce (true);
 			PreStart ();
-			stop_processing = false;
 			pipeline = Pipeline ();
 			Tick ();
 		}
