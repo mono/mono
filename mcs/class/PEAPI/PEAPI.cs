@@ -898,7 +898,7 @@ namespace PEAPI {
 
 		public void AddGenericParam (GenParam param)
 		{
-			param.GetTypeSpec (metaData);
+			metaData.AddToTable (MDTable.TypeSpec, param);
 		}
 
 		public FileRef AddFile(string fName, byte[] hashBytes, bool hasMetaData, bool entryPoint) 

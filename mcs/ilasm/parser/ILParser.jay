@@ -681,6 +681,34 @@ generic_class_ref	: class_ref
                                 else
                                         $$ = $2;
 			  }
+			| BANG int32
+                          {
+                                GenParam gpar = new GenParam ((int) $2, "", GenParamType.Var);
+                                $$ = new GenericParamRef (gpar, $2.ToString ());
+                          }
+                        | BANG BANG int32
+                          {
+                                GenParam gpar = new GenParam ((int) $3, "", GenParamType.MVar);
+                                $$ = new GenericParamRef (gpar, $3.ToString ());
+                          }
+			| BANG id
+                          {
+				int num = -1;
+				string name = (string) $2;
+				if (codegen.CurrentTypeDef != null)
+					num = codegen.CurrentTypeDef.GetGenericParamNum (name);
+				GenParam gpar = new GenParam (num, name, GenParamType.Var);
+                                $$ = new GenericParamRef (gpar, name);
+                          }
+                        | BANG BANG id
+                          {
+				int num = -1;
+				string name = (string) $3;
+				if (codegen.CurrentMethodDef != null)
+					num = codegen.CurrentMethodDef.GetGenericParamNum (name);
+				GenParam gpar = new GenParam (num, name, GenParamType.MVar);
+                                $$ = new GenericParamRef (gpar, name);
+                          }
 			; 
 
 formal_typars           : formal_typar_attr constraints_clause formal_typar
@@ -1004,34 +1032,6 @@ type			: generic_class_ref
 			| K_NATIVE K_UNSIGNED K_INT
                           {
                                 $$ = new PrimitiveTypeRef (PrimitiveType.NativeUInt, "System.UIntPtr");
-                          }
-                        | BANG int32
-                          {
-                                GenParam gpar = new GenParam ((int) $2, "", GenParamType.Var);
-                                $$ = new GenericParamRef (gpar, $2.ToString ());
-                          }
-                        | BANG BANG int32
-                          {
-                                GenParam gpar = new GenParam ((int) $3, "", GenParamType.MVar);
-                                $$ = new GenericParamRef (gpar, $3.ToString ());
-                          }
-			| BANG id
-                          {
-				int num = -1;
-				string name = (string) $2;
-				if (codegen.CurrentTypeDef != null)
-					num = codegen.CurrentTypeDef.GetGenericParamNum (name);
-				GenParam gpar = new GenParam (num, name, GenParamType.Var);
-                                $$ = new GenericParamRef (gpar, name);
-                          }
-                        | BANG BANG id
-                          {
-				int num = -1;
-				string name = (string) $3;
-				if (codegen.CurrentMethodDef != null)
-					num = codegen.CurrentMethodDef.GetGenericParamNum (name);
-				GenParam gpar = new GenParam (num, name, GenParamType.MVar);
-                                $$ = new GenericParamRef (gpar, name);
                           }
 			;
 

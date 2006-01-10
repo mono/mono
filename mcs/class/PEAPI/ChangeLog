@@ -1,3 +1,9 @@
+2006-01-10  Ankit Jain  <jankit@novell.com>
+
+	* Metadata.cs (GenParam): Don't use GetTypeSpec to create typespec for GenParam. 
+	Adding required methods directly to GenParam.
+	* PEAPI.cs (PEFile.AddGenericParam): Add it to the TypeSpec table directly.
+
 2006-01-09  Ankit Jain  <jankit@novell.com>
 
 	* PEAPI.cs (PEFile.AddGenricParam): New. Adds a GenParam to the TypeSpec

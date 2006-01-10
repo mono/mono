@@ -1,3 +1,9 @@
+2006-01-10  Ankit Jain  <jankit@novell.com>
+
+	* ILParser.jay (type | BANG ..): Move !* and !!* rules to ..
+	(generic_class_ref): ..this, to allow using VAR/MVARs as class refs.
+	Eg. "extends !0"
+
 2006-01-09  Ankit Jain  <jankit@novell.com>
 
 	* ILParser.jay (type_spec : class_ref): Remove.

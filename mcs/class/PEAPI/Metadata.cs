@@ -1982,6 +1982,8 @@ namespace PEAPI {
 
 		private int index;
 		private string param_name;
+		private uint sigIx = 0;
+		private bool done = false;
 
 		public GenParam (int index, string name, GenParamType ptype) : base ((byte) ptype) 
 		{
@@ -2004,13 +2006,15 @@ namespace PEAPI {
 			get { return (GenParamType) GetTypeIndex (); }
 		}
 		
-		internal override MetaDataElement GetTypeSpec(MetaData md) 
+		internal sealed override void BuildTables (MetaData md)
 		{
-			if (typeSpec == null) {
-				typeSpec = new TypeSpec(this,md);
-				md.AddToTable(MDTable.TypeSpec,typeSpec);
-			}
-			return typeSpec;
+			if (done)
+				return;
+			MemoryStream str = new MemoryStream ();
+			TypeSig (str);
+			sigIx = md.AddToBlobHeap (str.ToArray ());
+
+			done = true;
 		}
 
 		internal sealed override void TypeSig(MemoryStream str) 
@@ -2019,6 +2023,26 @@ namespace PEAPI {
 				throw new Exception (String.Format ("Unresolved {0} - {1}", (GenParamType) GetTypeIndex (), param_name));
 			str.WriteByte(typeIndex);
 			MetaData.CompressNum ((uint) index, str);
+		}
+		
+		internal override uint Size(MetaData md) 
+		{
+			return md.BlobIndexSize();
+		}
+
+		internal sealed override void Write (FileImage output)
+		{
+			output.BlobIndex (sigIx);	
+		}
+
+		internal sealed override uint GetCodedIx(CIx code) 
+		{
+			switch (code) {
+				case (CIx.TypeDefOrRef) : return 2; 
+				case (CIx.HasCustomAttr) : return 13; 
+				case (CIx.MemberRefParent) : return 4; 
+			}
+			return 0;
 		}
 	}
 
