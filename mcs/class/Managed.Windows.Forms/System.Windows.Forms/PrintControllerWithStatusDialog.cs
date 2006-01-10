@@ -35,6 +35,7 @@ namespace System.Windows.Forms
 		PrintController underlyingController;
 		string dialogTitle;
 		PrintingDialog dialog;
+		int currentPage;
 		#endregion // Local variables
 
 		#region Public Constructors
@@ -71,10 +72,12 @@ namespace System.Windows.Forms
 				e.Cancel = true;
 				dialog.Close();
 			}
+			dialog.LabelText = string.Format("Page {0} of document", ++currentPage);
 			return base.OnStartPage (document, e);
 		}
 
 		public override void OnStartPrint(PrintDocument document, PrintEventArgs e) {
+			currentPage = 0;
 			dialog.Show();
 			base.OnStartPrint (document, e);
 		}
@@ -114,6 +117,11 @@ namespace System.Windows.Forms
 				ShowInTaskbar = false;
 				Text = "Printing";
 				ResumeLayout(false);
+			}
+
+			public string LabelText {
+				get { return label.Text; }
+				set { label.Text = value; }
 			}
 		}
 		#endregion Internal Class

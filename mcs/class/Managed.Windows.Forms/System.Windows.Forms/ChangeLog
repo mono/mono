@@ -1,5 +1,9 @@
 2006-01-9  Jonathan Chambers  <jonathan.chambers@ansys.com>
 
+	* PrintControllerWithStatusDialog.cs: Update page number in dialog.
+
+2006-01-9  Jonathan Chambers  <jonathan.chambers@ansys.com>
+
 	* PrintDialog.cs: Added attributes and set default property values.
 
 2006-01-9  Jonathan Chambers  <jonathan.chambers@ansys.com>
