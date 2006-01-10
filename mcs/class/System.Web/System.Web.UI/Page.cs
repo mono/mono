@@ -72,6 +72,7 @@ namespace System.Web.UI
 #endif
 public class Page : TemplateControl, IHttpHandler
 {
+	private bool _eventValidation = true;
 	private bool _viewState = true;
 	private bool _viewStateMac;
 	private string _errorPage;
@@ -157,8 +158,8 @@ public class Page : TemplateControl, IHttpHandler
 
 	[EditorBrowsable (EditorBrowsableState.Never)]
 #if NET_2_0
-    [DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-    [BrowsableAttribute (false)]
+	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+	[BrowsableAttribute (false)]
 	public bool Buffer
 	{
 		get { return Response.BufferOutput; }
@@ -183,7 +184,7 @@ public class Page : TemplateControl, IHttpHandler
 	}
 
 #if NET_2_0
-    [EditorBrowsableAttribute (EditorBrowsableState.Advanced)]
+	[EditorBrowsableAttribute (EditorBrowsableState.Advanced)]
 #endif
 	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	[Browsable (false), DefaultValue ("")]
@@ -200,8 +201,8 @@ public class Page : TemplateControl, IHttpHandler
 
 	[EditorBrowsable (EditorBrowsableState.Never)]
 #if NET_2_0
-    [DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-    [BrowsableAttribute (false)]
+	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+	[BrowsableAttribute (false)]
 	public int CodePage
 	{
 		get { return Response.ContentEncoding.CodePage; }
@@ -216,8 +217,8 @@ public class Page : TemplateControl, IHttpHandler
 
 	[EditorBrowsable (EditorBrowsableState.Never)]
 #if NET_2_0
-    [DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-    [BrowsableAttribute (false)]
+	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+	[BrowsableAttribute (false)]
 	public string ContentType
 	{
 		get { return Response.ContentType; }
@@ -242,8 +243,8 @@ public class Page : TemplateControl, IHttpHandler
 
 	[EditorBrowsable (EditorBrowsableState.Never)]
 #if NET_2_0
-    [DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-    [BrowsableAttribute (false)]
+	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+	[BrowsableAttribute (false)]
 	public string Culture
 	{
 		get { return Thread.CurrentThread.CurrentCulture.Name; }
@@ -256,6 +257,13 @@ public class Page : TemplateControl, IHttpHandler
 	}
 #endif
 
+#if NET_2_0
+	public virtual bool EnableEventValidation {
+		get { return _eventValidation; }
+		set { _eventValidation = value;}
+	}
+#endif
+
 	[Browsable (false)]
 	public override bool EnableViewState
 	{
@@ -264,8 +272,8 @@ public class Page : TemplateControl, IHttpHandler
 	}
 
 #if NET_2_0
-    [DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-    [BrowsableAttribute (false)]
+	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+	[BrowsableAttribute (false)]
 #endif
 	[EditorBrowsable (EditorBrowsableState.Never)]
 	protected bool EnableViewStateMac
@@ -333,8 +341,8 @@ public class Page : TemplateControl, IHttpHandler
 
 	[EditorBrowsable (EditorBrowsableState.Never)]
 #if NET_2_0
-    [DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-    [BrowsableAttribute (false)]
+	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+	[BrowsableAttribute (false)]
 	public int LCID {
 		get { return Thread.CurrentThread.CurrentCulture.LCID; }
 		set { Thread.CurrentThread.CurrentCulture = new CultureInfo (value); }
@@ -379,8 +387,8 @@ public class Page : TemplateControl, IHttpHandler
 
 	[EditorBrowsable (EditorBrowsableState.Never)]
 #if NET_2_0
-    [DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-    [BrowsableAttribute (false)]
+	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+	[BrowsableAttribute (false)]
 	public string ResponseEncoding
 	{
 		get { return Response.ContentEncoding.WebName; }
@@ -439,8 +447,8 @@ public class Page : TemplateControl, IHttpHandler
 
 	[EditorBrowsable (EditorBrowsableState.Never)]
 #if NET_2_0
-    [DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-    [BrowsableAttribute (false)]
+	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+	[BrowsableAttribute (false)]
 	public bool TraceEnabled
 	{
 		get { return Trace.IsEnabled; }
@@ -455,8 +463,8 @@ public class Page : TemplateControl, IHttpHandler
 
 	[EditorBrowsable (EditorBrowsableState.Never)]
 #if NET_2_0
-    [DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-    [BrowsableAttribute (false)]
+	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+	[BrowsableAttribute (false)]
 	public TraceMode TraceModeValue
 	{
 		get { return Trace.TraceMode; }
@@ -485,8 +493,8 @@ public class Page : TemplateControl, IHttpHandler
 
 	[EditorBrowsable (EditorBrowsableState.Never)]
 #if NET_2_0
-    [DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-    [BrowsableAttribute (false)]
+	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+	[BrowsableAttribute (false)]
 	public string UICulture
 	{
 		get { return Thread.CurrentThread.CurrentUICulture.Name; }
@@ -1440,21 +1448,21 @@ public class Page : TemplateControl, IHttpHandler
 		_form = form;
 	}
 	
-    [BrowsableAttribute (false)]
-    [DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+	[BrowsableAttribute (false)]
+	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	public Page PreviousPage {
 		get { return previousPage; }
 	}
 
 	
-    [DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-    [BrowsableAttribute (false)]
+	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+	[BrowsableAttribute (false)]
 	public bool IsCallback {
 		get { return _requestValueCollection != null && _requestValueCollection [CallbackArgumentID] != null; }
 	}
 	
-    [BrowsableAttribute (false)]
-    [DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+	[BrowsableAttribute (false)]
+	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	public bool IsCrossPagePostBack {
 		get { return _requestValueCollection != null && isCrossPagePostBack; }
 	}
@@ -1473,8 +1481,8 @@ public class Page : TemplateControl, IHttpHandler
 		return target.RaiseCallbackEvent (callbackArgument);
 	}
 
-    [BrowsableAttribute (false)]
-    [DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+	[BrowsableAttribute (false)]
+	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	public HtmlHead Header {
 		get { return htmlHeader; }
 	}
@@ -1484,14 +1492,14 @@ public class Page : TemplateControl, IHttpHandler
 		htmlHeader = header;
 	}
 	
-    [DefaultValueAttribute ("")]
+	[DefaultValueAttribute ("")]
 	public string MasterPageFile {
 		get { return masterPageFile; }
 		set { masterPageFile = value; masterPage = null; }
 	}
 	
-    [DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-    [BrowsableAttribute (false)]
+	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+	[BrowsableAttribute (false)]
 	public MasterPage Master {
 		get {
 			if (masterPage == null)
