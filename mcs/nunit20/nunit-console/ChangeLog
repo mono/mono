@@ -1,3 +1,14 @@
+2006-01-10  Raja R Harinath  <rharinath@novell.com>
+
+	This should fix #76928.  This fix incorporates ideas from a patch
+	posted on that bugreport.
+	* Makefile [net_2_0 profile]: Don't build nunit-console.exe.  Copy
+	the executable from the 'default' profile, and use a slightly
+	customized nunit-console.exe.config.
+	* nunit-console.exe.net_2_0.config: New config file for the
+	net_2_0 profile.  Alter the list of 'supportedRuntime's to prefer
+	the 2.0 runtime.
+
 2005-11-05  Kornél Pál  <kornelpal@hotmail.com>
 
 	* nunit-console.exe.config: Updated runtime version to v2.0.50727 (2.0 RTM).
