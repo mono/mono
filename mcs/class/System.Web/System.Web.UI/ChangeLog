@@ -1,3 +1,8 @@
+2006-01-10  Chris Toshok  <toshok@ximian.com>
+
+	* Page.cs (ValidateCollection): in NET_2_0 if event validation is
+	off, return true.
+
 2006-01-09  Chris Toshok  <toshok@ximian.com>
 
 	* Page.cs: fix a lot of indentation, and add the
