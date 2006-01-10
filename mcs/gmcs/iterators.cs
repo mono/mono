@@ -587,6 +587,11 @@ namespace Mono.CSharp {
 			else
 				current_type = new TypeExpression (TypeBuilder, Location);
 
+			if (IsGeneric) {
+				foreach (TypeParameter tparam in TypeParameters)
+					tparam.InflateConstraints (current_type.Type);
+			}
+
 			parameters = InflateParameters (original_parameters, ec);
 			if (!parameters.Resolve (ec)) {
 				// TODO:
