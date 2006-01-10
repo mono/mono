@@ -1,5 +1,9 @@
 2006-01-9  Jonathan Chambers  <jonathan.chambers@ansys.com>
 
+	* Form.cs: Fix support for Form TransparencyKey and Opacity on Windows.
+
+2006-01-9  Jonathan Chambers  <jonathan.chambers@ansys.com>
+
 	* PrintControllerWithStatusDialog.cs: Update page number in dialog.
 
 2006-01-9  Jonathan Chambers  <jonathan.chambers@ansys.com>

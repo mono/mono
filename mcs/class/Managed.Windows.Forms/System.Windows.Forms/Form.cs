@@ -609,8 +609,7 @@ namespace System.Windows.Forms {
 				opacity = value;
 
 				UpdateStyles();
-				if (Opacity < 1.0)
-					XplatUI.SetWindowTransparency(Handle, opacity, TransparencyKey);
+				XplatUI.SetWindowTransparency(Handle, opacity, TransparencyKey);
 			}
 		}
 			
@@ -774,8 +773,7 @@ namespace System.Windows.Forms {
 				transparency_key = value;
 
 				UpdateStyles();
-				if (TransparencyKey != Color.Empty)
-					XplatUI.SetWindowTransparency(Handle, Opacity, TransparencyKey);
+				XplatUI.SetWindowTransparency(Handle, Opacity, TransparencyKey);
 			}
 		}
 
@@ -896,6 +894,9 @@ namespace System.Windows.Forms {
 					cp.ExStyle |= (int)WindowStyles.WS_EX_CONTEXTHELP;
 				}
 				
+				if (Visible)
+					cp.Style |= (int)WindowStyles.WS_VISIBLE;
+
 				if (Opacity < 1.0 || TransparencyKey != Color.Empty) {
 					cp.ExStyle |= (int)WindowStyles.WS_EX_LAYERED;
 				}
