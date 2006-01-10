@@ -49,6 +49,7 @@ System.Xml.Schema/XmlSchemaBuiltInDatatypeTests.cs
 System.Xml.Schema/XmlSchemaDatatypeTests.cs
 System.Xml.Schema/XmlSchemaLengthFacetTests.cs
 System.Xml.Schema/XmlSchemaTests.cs
+System.Xml.Schema/XmlSchemaTypeTests.cs
 System.Xml.Schema/XmlSchemaSetTests.cs
 System.Xml.Serialization/ComplexDataStructure.cs
 System.Xml.Serialization/DeserializeTests.cs

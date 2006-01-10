@@ -1,5 +1,11 @@
 2006-01-10  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlSchemaTypeTests.cs : new file. Test for TypeCode.
+	* XmlSchemaSetTests.cs : added more tests for Add() and marked one as
+	  NotWorking (we need info on how consistent this method is).
+
+2006-01-10  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlSchemaDatatypeTests.cs : oops sys.col.generic is NET_2_0.
 
 2006-01-10  Atsushi Enomoto <atsushi@ximian.com>
