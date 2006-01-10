@@ -1,3 +1,7 @@
+2006-01-10 Senganal T <tsenganal@novell.com>
+	* DataViewTest2.cs 
+		- Added testcase for bug #77188
+
 2006-01-06 Senganal T <tsenganal@novell.com>
 	* DataColumnTest.cs
 	* DataColumnCollectionTest.cs
