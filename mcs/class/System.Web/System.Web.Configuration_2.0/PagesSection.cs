@@ -75,7 +75,7 @@ namespace System.Web.Configuration
 			controlsProp = new ConfigurationProperty ("controls", typeof(TagPrefixCollection), null,
 								  null, null, ConfigurationPropertyOptions.None);
 			enableEventValidationProp = new ConfigurationProperty ("enableEventValidation", typeof (bool), true);
-			enableSessionStateProp = new ConfigurationProperty ("enableSessionState", typeof (PagesEnableSessionState), true);
+			enableSessionStateProp = new ConfigurationProperty ("enableSessionState", typeof (PagesEnableSessionState), PagesEnableSessionState.True);
 			enableViewStateProp = new ConfigurationProperty ("enableViewState", typeof (bool), true);
 			enableViewStateMacProp = new ConfigurationProperty ("enableViewStateMac", typeof (bool), true);
 			maintainScrollPositionOnPostBackProp = new ConfigurationProperty ("maintainScrollPositionOnPostBack", typeof (bool), false);

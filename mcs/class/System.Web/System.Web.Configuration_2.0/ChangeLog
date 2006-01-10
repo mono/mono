@@ -1,5 +1,11 @@
 2006-01-10  Chris Toshok  <toshok@ximian.com>
 
+	* PagesSection.cs (.cctor): fix the default value for the
+	enableSessionState attribute - it's not a bool, but a
+	PagesEnableSessionState enum.
+
+2006-01-10  Chris Toshok  <toshok@ximian.com>
+
 	* MachineKeySection.cs (ValidationKeyBytes, DecryptionKeyBytes,
 	DecryptionKey192Bits): if the keys are null, generate them.  Fixes
 	Page.EnableViewStateMac support.
