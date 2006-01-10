@@ -40,7 +40,11 @@ namespace System.Web.Compilation
 		static string [] page_atts = {  "AspCompat", "AutoEventWireup", "Buffer",
 						"ClassName", "ClientTarget", "CodePage",
 						"CompilerOptions", "ContentType", "Culture", "Debug",
-						"Description", "EnableSessionState", "EnableViewState",
+						"Description",
+#if NET_2_0
+						"EnableEventValidation", 
+#endif
+						"EnableSessionState", "EnableViewState",
 						"EnableViewStateMac", "ErrorPage", "Explicit",
 						"Inherits", "Language", "LCID", "ResponseEncoding",
 						"Src", "SmartNavigation", "Strict", "Trace",

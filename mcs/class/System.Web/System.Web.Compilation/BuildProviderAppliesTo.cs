@@ -1,10 +1,10 @@
 //
-// System.Web.Compilation.ExpressionBuilder
+// System.Web.Compilation.BuildProviderAppliesTo
 //
 // Authors:
-//	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//	Chris Toshok (toshok@ximian.com)
 //
-// Copyright (c) 2005 Novell, Inc (http://www.novell.com)
+// (C) 2006 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -27,36 +27,20 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
 #if NET_2_0
-using System.CodeDom;
-using System.Web.UI;
 
-namespace System.Web.Compilation
-{
-	public abstract class ExpressionBuilder {
-		protected ExpressionBuilder ()
-		{
-		}
+namespace System.Web.Compilation {
 
-		public abstract CodeExpression GetCodeExpression (BoundPropertyEntry entry, object parsedData,
-								  ExpressionBuilderContext context);
-
-		public virtual object EvaluateExpression (object target, BoundPropertyEntry entry, object parsedData,
-							  ExpressionBuilderContext context)
-		{
-			return null;
-		}
-
-		public virtual object ParseExpression (string expression, Type propertyType, ExpressionBuilderContext context)
-		{
-			return null;
-		}
-
-		public virtual bool SupportsEvaluate {
-			get { return false; }
-		}
+	[Flags]
+	public enum BuildProviderAppliesTo
+	{
+		Web = 1,            /* generate code from files in directories *other* than App_Code,
+				       App_LocalResources, and App_GlobalResources */
+		Code = 1 << 1,      /* generate code only for App_Code/* */
+		Resources = 1 << 2, /* generate code only for App_LocalResources/* and App_GlobalResources/* */
+		All = 7             /* generate code for everything.  default value for the attribute */
 	}
-	
 }
-#endif // NET_2_0
 
+#endif

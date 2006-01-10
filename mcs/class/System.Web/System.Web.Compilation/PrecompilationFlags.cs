@@ -1,10 +1,10 @@
 //
-// System.Web.Compilation.ExpressionBuilder
+// System.Web.Compilation.IAssemblyPostProcessor
 //
 // Authors:
-//	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//	Chris Toshok (toshok@ximian.com)
 //
-// Copyright (c) 2005 Novell, Inc (http://www.novell.com)
+// (C) 2006 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -27,36 +27,25 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
 #if NET_2_0
-using System.CodeDom;
-using System.Web.UI;
 
-namespace System.Web.Compilation
-{
-	public abstract class ExpressionBuilder {
-		protected ExpressionBuilder ()
-		{
-		}
+namespace System.Web.Compilation {
 
-		public abstract CodeExpression GetCodeExpression (BoundPropertyEntry entry, object parsedData,
-								  ExpressionBuilderContext context);
-
-		public virtual object EvaluateExpression (object target, BoundPropertyEntry entry, object parsedData,
-							  ExpressionBuilderContext context)
-		{
-			return null;
-		}
-
-		public virtual object ParseExpression (string expression, Type propertyType, ExpressionBuilderContext context)
-		{
-			return null;
-		}
-
-		public virtual bool SupportsEvaluate {
-			get { return false; }
-		}
+	[Flags]
+	public enum PrecompilationFlags
+	{
+		Default                      =   0,
+		Updatable                    =   1,
+		OverwriteTarget              =   2,
+		ForceDebug                   =   4,
+		Clean                        =   8,
+		CodeAnalysis                 =  16,
+		AllowPartiallyTrustedCallers =  32,
+		DelaySign                    =  64,
+		FixedNames                   = 128
 	}
-	
-}
-#endif // NET_2_0
 
+}
+
+#endif

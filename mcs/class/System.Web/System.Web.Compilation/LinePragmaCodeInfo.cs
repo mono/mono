@@ -1,8 +1,12 @@
 //
-// System.Web.Compilation.IResourceProvider.cs
+// System.Web.Compilation.LinePragmaCodeInfo
 //
 // Authors:
-//	Duncan Mak (duncan@ximian.com)
+//	Chris Toshok (toshok@ximian.com)
+//
+// (C) 2006 Novell, Inc (http://www.novell.com)
+//
+
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -23,17 +27,54 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
-//
-
-using System.Resources;
 
 #if NET_2_0
-namespace System.Web.Compilation
-{
-        public interface IResourceProvider
-        {
-                IResourceReader ResourceReader { get; }
-        }
+
+namespace System.Web.Compilation {
+
+	[Serializable]
+	public sealed class LinePragmaCodeInfo {
+
+		public LinePragmaCodeInfo ()
+		{
+		}
+
+		[MonoTODO]
+		public int CodeLength {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		[MonoTODO]
+		public bool IsCodeNugget {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		[MonoTODO]
+		public int StartColumn {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		[MonoTODO]
+		public int StartGeneratedColumn {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		[MonoTODO]
+		public int StartLine {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+	}
+
 }
+
 #endif

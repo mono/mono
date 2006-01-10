@@ -1,12 +1,8 @@
 //
-// System.Web.Compilation.ExpressionBuilder
+// System.Web.Compilation.IResourceProvider.cs
 //
 // Authors:
-//	Gonzalo Paniagua Javier (gonzalo@ximian.com)
-//
-// Copyright (c) 2005 Novell, Inc (http://www.novell.com)
-//
-
+//	Duncan Mak (duncan@ximian.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,36 +23,19 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-#if NET_2_0
-using System.CodeDom;
-using System.Web.UI;
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+//
 
+using System.Resources;
+using System.Globalization;
+
+#if NET_2_0
 namespace System.Web.Compilation
 {
-	public abstract class ExpressionBuilder {
-		protected ExpressionBuilder ()
-		{
-		}
-
-		public abstract CodeExpression GetCodeExpression (BoundPropertyEntry entry, object parsedData,
-								  ExpressionBuilderContext context);
-
-		public virtual object EvaluateExpression (object target, BoundPropertyEntry entry, object parsedData,
-							  ExpressionBuilderContext context)
-		{
-			return null;
-		}
-
-		public virtual object ParseExpression (string expression, Type propertyType, ExpressionBuilderContext context)
-		{
-			return null;
-		}
-
-		public virtual bool SupportsEvaluate {
-			get { return false; }
-		}
-	}
-	
+        public interface IResourceProvider
+        {
+		object GetObject (string resourceKey, CultureInfo culture);
+                IResourceReader ResourceReader { get; }
+        }
 }
-#endif // NET_2_0
-
+#endif

@@ -1,10 +1,10 @@
 //
-// System.Web.Compilation.ExpressionBuilder
+// System.Web.Compilation.ResourceExpressionFields
 //
 // Authors:
-//	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//	Chris Toshok (toshok@ximian.com)
 //
-// Copyright (c) 2005 Novell, Inc (http://www.novell.com)
+// (C) 2006 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -27,36 +27,33 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
 #if NET_2_0
-using System.CodeDom;
-using System.Web.UI;
 
-namespace System.Web.Compilation
-{
-	public abstract class ExpressionBuilder {
-		protected ExpressionBuilder ()
+namespace System.Web.Compilation {
+
+	public sealed class ResourceExpressionFields {
+
+		internal ResourceExpressionFields ()
 		{
 		}
 
-		public abstract CodeExpression GetCodeExpression (BoundPropertyEntry entry, object parsedData,
-								  ExpressionBuilderContext context);
-
-		public virtual object EvaluateExpression (object target, BoundPropertyEntry entry, object parsedData,
-							  ExpressionBuilderContext context)
-		{
-			return null;
+		[MonoTODO]
+		public string ClassKey {
+			get {
+				throw new NotImplementedException ();
+			}
 		}
 
-		public virtual object ParseExpression (string expression, Type propertyType, ExpressionBuilderContext context)
-		{
-			return null;
-		}
 
-		public virtual bool SupportsEvaluate {
-			get { return false; }
+		[MonoTODO]
+		public string ResourceKey {
+			get {
+				throw new NotImplementedException ();
+			}
 		}
 	}
-	
-}
-#endif // NET_2_0
 
+}
+
+#endif

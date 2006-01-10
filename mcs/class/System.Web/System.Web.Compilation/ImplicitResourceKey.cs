@@ -29,15 +29,37 @@
 #if NET_2_0
 namespace System.Web.Compilation
 {
-        public class ImplicitResourceKey
+        public sealed class ImplicitResourceKey
         {
+		string filter;
+		string keyPrefix;
+		string property;
+
+		public ImplicitResourceKey (string filter, string keyPrefix, string property)
+		{
+			this.filter = filter;
+			this.keyPrefix = keyPrefix;
+			this.property = property;
+		}
+
                 public ImplicitResourceKey ()
                 {
                 }
 
-                public string Filter;
-                public string KeyPrefix;
-                public string Property;
+                public string Filter {
+			get { return filter; }
+			set { filter = value; }
+		}
+
+                public string KeyPrefix {
+			get { return keyPrefix; }
+			set { keyPrefix = value; }
+		}
+
+                public string Property {
+			get { return property; }
+			set { property = value; }
+		}
         }
 }
 #endif

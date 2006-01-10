@@ -33,7 +33,7 @@ using System.Web.UI;
 
 namespace System.Web.Compilation
 {
-	public class ExpressionBuilderContext {
+	public sealed class ExpressionBuilderContext {
 		TemplateControl tcontrol;
 		string vpath;
 

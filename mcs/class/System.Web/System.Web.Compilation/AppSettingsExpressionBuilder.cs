@@ -1,10 +1,10 @@
 //
-// System.Web.Compilation.ExpressionBuilder
+// System.Web.Compilation.AppSettingsExpressionBuilder
 //
 // Authors:
-//	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//	Chris Toshok (toshok@ximian.com)
 //
-// Copyright (c) 2005 Novell, Inc (http://www.novell.com)
+// (C) 2006 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -27,36 +27,59 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
 #if NET_2_0
+
+using System;
 using System.CodeDom;
 using System.Web.UI;
+#if notyet
+using System.Web.UI.Design;
+#endif
 
-namespace System.Web.Compilation
-{
-	public abstract class ExpressionBuilder {
-		protected ExpressionBuilder ()
+namespace System.Web.Compilation {
+
+#if notyet
+	[ExpressionEditor(typeof (AppSettingsExpressionEditor))]
+#endif
+	[ExpressionPrefix("AppSettings")]
+	public class AppSettingsExpressionBuilder : ExpressionBuilder {
+
+		public AppSettingsExpressionBuilder ()
 		{
 		}
 
-		public abstract CodeExpression GetCodeExpression (BoundPropertyEntry entry, object parsedData,
-								  ExpressionBuilderContext context);
-
-		public virtual object EvaluateExpression (object target, BoundPropertyEntry entry, object parsedData,
-							  ExpressionBuilderContext context)
+		[MonoTODO]
+		public override object EvaluateExpression (object target, BoundPropertyEntry entry, object parsedData, ExpressionBuilderContext context)
 		{
-			return null;
+			throw new NotImplementedException ();
 		}
 
-		public virtual object ParseExpression (string expression, Type propertyType, ExpressionBuilderContext context)
+		[MonoTODO]
+		public static object GetAppSetting (string key)
 		{
-			return null;
+			throw new NotImplementedException ();
 		}
 
-		public virtual bool SupportsEvaluate {
-			get { return false; }
+		[MonoTODO]
+		public static object GetAppSetting (string key, Type targetType, string propertyName)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public override CodeExpression GetCodeExpression (BoundPropertyEntry entry, object parsedData, ExpressionBuilderContext context)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override bool SupportsEvaluate {
+			get { return true; }
 		}
 	}
-	
+
 }
-#endif // NET_2_0
+
+#endif
+
 

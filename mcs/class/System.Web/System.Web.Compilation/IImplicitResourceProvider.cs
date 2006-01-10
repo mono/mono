@@ -36,7 +36,7 @@ namespace System.Web.Compilation
         public interface IImplicitResourceProvider
         {
                 object GetObject (ImplicitResourceKey key, CultureInfo culture);
-                ICollection GetResources (string keyPrefix);
+		ICollection GetImplicitResourceKeys (string keyPrefix);
         }
 }
 #endif
