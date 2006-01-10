@@ -1,5 +1,10 @@
 2006-01-9  Jonathan Chambers  <jonathan.chambers@ansys.com>
 
+	* PrintControllerWithStatusDialog.cs: 
+	Added PrintControllerWithStatusDialog.
+
+2006-01-9  Jonathan Chambers  <jonathan.chambers@ansys.com>
+
 	* XplatUI.cs, Form.cs, XplatUIDriver.cs, XplatUIX11.cs, XplatUIOSX.cs, 
 	XplatUIWin32.cs: Added support for Form TransparencyKey and Opacity on Windows.
 
