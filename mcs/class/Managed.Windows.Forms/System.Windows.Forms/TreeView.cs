@@ -327,7 +327,8 @@ namespace System.Windows.Forms {
 							Bloat (focused_node.Bounds));
 				}
 
-				invalid = Rectangle.Union (invalid, Bloat (value.Bounds));
+				if (value != null)
+					invalid = Rectangle.Union (invalid, Bloat (value.Bounds));
 
 				selected_node = value;
 				focused_node = value;
@@ -337,11 +338,13 @@ namespace System.Windows.Forms {
 					invalid.Width = ViewportRectangle.Width;
 				}
 
-				Invalidate (invalid);
+				if (invalid != Rectangle.Empty)
+					Invalidate (invalid);
 
 				// We ensure its visible after we update because
 				// scrolling is used for insure visible
-				selected_node.EnsureVisible ();
+				if (selected_node != null)
+					selected_node.EnsureVisible ();
 
 				OnAfterSelect (new TreeViewEventArgs (value, TreeViewAction.Unknown));
 			}

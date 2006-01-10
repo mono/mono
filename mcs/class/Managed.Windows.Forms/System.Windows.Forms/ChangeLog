@@ -1,3 +1,7 @@
+2006-01-10  Jackson Harper  <jackson@ximian.com>
+
+	* TreeView.cs: Allow setting SelectedNode to null.
+
 2006-01-9  Jonathan Chambers  <jonathan.chambers@ansys.com>
 
 	* Form.cs: Fix support for Form TransparencyKey and Opacity on Windows.
