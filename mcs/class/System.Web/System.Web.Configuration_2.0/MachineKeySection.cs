@@ -191,15 +191,27 @@ namespace System.Web.Configuration {
 		}
 		
 		internal byte [] ValidationKeyBytes {
-			get { return validation_key; }
+			get {
+				if (validation_key == null)
+					SetValidationKey (ValidationKey);
+				return validation_key;
+			}
 		}
 
 		internal byte [] DecryptionKeyBytes {
-			get { return decryption_key; }
+			get {
+				if (decryption_key == null)
+					SetDecryptionKey (DecryptionKey);
+				return decryption_key;
+			}
 		}
 
 		internal byte [] DecryptionKey192Bits {
-			get { return decryption_key_192bits; }
+			get {
+				if (decryption_key_192bits == null)
+					SetDecryptionKey (DecryptionKey);
+				return decryption_key_192bits;
+			}
 		}
 #endregion
 

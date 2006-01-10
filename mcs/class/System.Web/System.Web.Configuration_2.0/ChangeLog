@@ -1,3 +1,9 @@
+2006-01-10  Chris Toshok  <toshok@ximian.com>
+
+	* MachineKeySection.cs (ValidationKeyBytes, DecryptionKeyBytes,
+	DecryptionKey192Bits): if the keys are null, generate them.  Fixes
+	Page.EnableViewStateMac support.
+
 2006-01-09  Chris Toshok  <toshok@ximian.com>
 
 	* RoleManagerSection.cs, SqlCacheDepencendySection.cs,
