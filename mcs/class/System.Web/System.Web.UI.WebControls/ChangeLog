@@ -1,6 +1,7 @@
 2006-01-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
-	* Calendar.cs: Modified file.
+	* Calendar.cs: use the DateTimeFormatInfo from the current thread. Patch
+	by Cyrille Colin. Closes bug #77184.
 
 2005-12-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
