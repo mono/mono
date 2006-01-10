@@ -19,6 +19,10 @@
 //
 // Copyright (c) 2005 Novell, Inc.
 //
+// Authors:
+//	Someone
+//	Jonathan Chambers (jonathan.chambers@ansys.com)
+//
 
 using System;
 using System.ComponentModel;
@@ -32,6 +36,7 @@ using System.Reflection;
 
 namespace System.Windows.Forms
 {
+
 	public sealed class PrintDialog : CommonDialog {
 		PrintDocument document;
 		PrinterSettings printer_settings;
@@ -45,6 +50,8 @@ namespace System.Windows.Forms
 		
 		public PrintDialog ()
 		{
+			allow_print_to_file = true;
+			show_network = true;
 		}
 
 		public override void Reset ()
@@ -63,6 +70,7 @@ namespace System.Windows.Forms
 		}
 #endif
 
+		[DefaultValue(true)]
 		public bool AllowPrintToFile {
 			get {
 				return allow_print_to_file;
@@ -73,6 +81,7 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DefaultValue(false)]
 		public bool AllowSelection {
 			get {
 				return allow_selection;
@@ -83,6 +92,7 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DefaultValue(false)]
 		public bool AllowSomePages {
 			get {
 				return allow_some_pages;
@@ -93,6 +103,7 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DefaultValue(null)]
 		public PrintDocument Document {
 			get {
 				return document;
@@ -103,6 +114,9 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[Browsable(false)]
+		[DefaultValue(null)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public PrinterSettings PrinterSettings {
 			get {
 				return printer_settings;
@@ -113,6 +127,7 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DefaultValue(false)]
 		public bool PrintToFile {
 			get {
 				return print_to_file;
@@ -123,6 +138,7 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DefaultValue(true)]
 		public bool ShowNetwork {
 			get {
 				return show_network;
@@ -133,6 +149,7 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DefaultValue(false)]
 		public bool ShowHelp {
 			get {
 				return show_help;
