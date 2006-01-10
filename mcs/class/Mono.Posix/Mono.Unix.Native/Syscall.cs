@@ -2843,9 +2843,7 @@ namespace Mono.Unix.Native {
 
 		[DllImport (MPH, SetLastError=true, 
 				EntryPoint="Mono_Posix_Syscall_futimes")]
-		private static extern int sys_futimes (
-				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
-				int fd, Timeval[] tvp);
+		private static extern int sys_futimes (int fd, Timeval[] tvp);
 
 		public static int futimes (int fd, Timeval[] tvp)
 		{

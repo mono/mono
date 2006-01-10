@@ -1,3 +1,7 @@
+2006-01-10  Raja R Harinath  <rharinath@novell.com>
+
+	* Syscall.cs (sys_futimes): Remove buggy custom marshaller on 'fd' parameter.
+
 2005-01-09  Jonathan Pryor <jonpryor@vt.edu>
 
 	* NativeConvert.cs: s/IsType/IsSet/g: deal with UnixFileSystemInfo method 
