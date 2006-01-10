@@ -109,6 +109,10 @@ namespace System.Data
 			return filter != null ? filter.DependsOn(other) : false;
 		}
 
+		public void ResetExpression ()
+		{
+		}
+
 		#endregion
 	}
 }

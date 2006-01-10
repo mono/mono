@@ -1,3 +1,8 @@
+2006-01-09 Senganal T <tsenganal@novell.com>
+	* Aggregation.cs
+	* Expression.cs
+		- resolving a name clash in IExpression 
+
 2006-01-06 Senganal T <tsenganal@novell.com>
 
 	* Aggregation.cs
