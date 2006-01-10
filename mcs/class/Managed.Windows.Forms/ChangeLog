@@ -1,5 +1,9 @@
 2006-1-10  Jonathan Chambers  <jonathan.chambers@ansys.com>
 
+	* System.Windows.Forms.dll.sources: Add PrintPreviewDialog and PrintPreviewControl
+
+2006-1-10  Jonathan Chambers  <jonathan.chambers@ansys.com>
+
 	* System.Windows.Forms.dll.sources: Add PrintControllerWithStatusDialog
 
 2005-12-13  Jackson Harper  <jackson@ximian.com>
