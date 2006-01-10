@@ -1,3 +1,7 @@
+2006-01-10 Neale Ferguson <neale@sinenomine.net>
+
+	* mini-s390.c: Fix ATOMIC_ADD_I4 operation.
+
 2006-01-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* inssel-long.brg: Fix int->long ovf conversion rules. Fixes #77172.
