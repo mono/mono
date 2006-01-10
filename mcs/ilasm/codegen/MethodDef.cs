@@ -162,7 +162,7 @@ namespace Mono.ILASM {
                 public int GetGenericParamNum (string id)
                 {
                         if (gen_params == null)
-                                throw new Exception ("Not a generic method");
+                                return -1;
                         
                         return gen_params.GetGenericParamNum (id);
                 }

@@ -1,5 +1,11 @@
 2006-01-10  Ankit Jain  <jankit@novell.com>
 
+	* TypeDef.cs (TypeDef.GetGenericParamNum): Return -1 if type has no
+	generic parameters.
+	* MethodDef.cs (MethodDef.GetGenericParamNum): Likewise.
+
+2006-01-10  Ankit Jain  <jankit@novell.com>
+
 	* MethodDef.cs (MethodDef.WriteCode): Resolve generic params for abstract
 	methods also.
 

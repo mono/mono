@@ -1,5 +1,10 @@
 2006-01-10  Ankit Jain  <jankit@novell.com>
 
+	* gen-nested.il: New. Test for a generic type nested in a non-generic
+	one.
+
+2006-01-10  Ankit Jain  <jankit@novell.com>
+
 	* gen-meth3.il: New. Test for abstract generic method.
 
 2006-01-10  Ankit Jain  <jankit@novell.com>
