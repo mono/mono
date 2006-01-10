@@ -373,8 +373,11 @@ namespace System.Net
 						cookie.Domain = val;
 					break;
 				case "MAX-AGE": // RFC Style Set-Cookie2
-					if (cookie.Expires == DateTime.MinValue)
-						cookie.Expires = cookie.TimeStamp.AddSeconds (Int32.Parse (val));
+					if (cookie.Expires == DateTime.MinValue) {
+						try {
+						cookie.Expires = cookie.TimeStamp.AddSeconds (UInt32.Parse (val));
+						} catch {}
+					}
 					break;
 				case "EXPIRES": // Netscape Style Set-Cookie
 					if (cookie.Expires != DateTime.MinValue)
@@ -402,7 +405,9 @@ namespace System.Net
 					cookie.Secure = true;
 					break;
 				case "VERSION":
-					cookie.Version = Int32.Parse (val);
+					try {
+						cookie.Version = (int) UInt32.Parse (val);
+					} catch {}
 					break;
 				}
 			}
