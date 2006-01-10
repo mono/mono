@@ -73,6 +73,7 @@ namespace Mono.ILASM {
                         is_value_class = false;
                         is_enum_class = false;
 
+                        ResolveGenParams ();
 
                         int lastdot = name.LastIndexOf ('.');
                         if (lastdot >= 0) {
@@ -130,6 +131,10 @@ namespace Mono.ILASM {
 
                 public bool IsInterface {
                         get { return (attr & PEAPI.TypeAttr.Interface) != 0; }
+                }
+
+                public GenericParameters TypeParameters {
+                        get { return gen_params; }
                 }
 
                 public void AddOverride (MethodDef body, ITypeRef parent, string name)
@@ -253,6 +258,28 @@ namespace Mono.ILASM {
                                 throw new Exception ("Not a generic type");
                         
                         return gen_params.GetGenericParamNum (id);
+                }
+
+                /* Resolve any GenParams in constraints, parent & impl_list */
+                private void ResolveGenParams ()
+                {
+                        if (gen_params == null)
+                                return;
+
+                        gen_params.ResolveConstraints (gen_params, null);
+
+                        IGenericTypeRef gtr = parent as IGenericTypeRef;
+                        if (gtr != null)
+                                gtr.Resolve (gen_params, null);
+                        
+                        if (impl_list == null)
+                                return;
+                                
+                        foreach (IClassRef impl in impl_list) {
+                                gtr = impl as IGenericTypeRef;
+                                if (gtr != null)
+                                        gtr.Resolve (gen_params, null);
+                        }
                 }
 
                 public void Define (CodeGen code_gen)

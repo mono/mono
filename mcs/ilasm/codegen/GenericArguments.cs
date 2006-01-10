@@ -71,6 +71,17 @@ namespace Mono.ILASM {
 			return p_type_list;
 		}
 
+		public void Resolve (GenericParameters type_gen_params, GenericParameters method_gen_params)
+		{
+			foreach (ITypeRef type in type_list) {
+				IGenericTypeRef gtr = type as IGenericTypeRef;
+				if (gtr != null)
+					gtr.Resolve (type_gen_params, method_gen_params);
+			}
+			/* Reset, might have changed (think GenericParamRef) */
+			type_str = null;
+		}
+
 		private void MakeString ()
 		{
 			//Build full_name (foo < , >)

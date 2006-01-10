@@ -73,6 +73,18 @@ namespace Mono.ILASM {
 			ResolveConstraints (code_gen, gp);
 		}
 
+		public void ResolveConstraints (GenericParameters type_gen_params, GenericParameters method_gen_params)
+		{
+			if (constraintsList == null)
+				return;
+				
+			foreach (ITypeRef constraint in constraintsList) {
+				IGenericTypeRef gtr = constraint as IGenericTypeRef;
+				if (gtr != null)
+					gtr.Resolve (type_gen_params, method_gen_params);
+			}
+		}
+
 		public void ResolveConstraints (CodeGen code_gen, PEAPI.GenericParameter gp)
 		{
 			if (constraintsList == null)
@@ -139,6 +151,13 @@ namespace Mono.ILASM {
 		{
 			foreach (GenericParameter param in param_list)
 				param.Resolve (code_gen, methoddef);
+		}
+
+		public void ResolveConstraints (GenericParameters type_gen_params, GenericParameters method_gen_params)
+		{
+			foreach (GenericParameter param in param_list)
+				param.ResolveConstraints (type_gen_params, method_gen_params);
+			param_str = null;
 		}
 
 		private void MakeString ()

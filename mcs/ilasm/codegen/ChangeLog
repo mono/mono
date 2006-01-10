@@ -1,3 +1,20 @@
+2006-01-10  Ankit Jain  <jankit@novell.com>
+
+	* TypeDef.cs (TypeDef.TypeParameters): New.
+	(TypeDef.ResolveGenParams): New. Resolve any gen param refs in
+	constraints, base class ref or implemented interfaces.
+	* MethodDef.cs (MethodDef.ResolveGenParams): Update to use new Resolve
+	overloads and ResolveConstraints for GenericParameters.
+
+	* GenericTypeInst.cs (GenericTypeInst.Resolve): Resolve generic args.
+	* GenericParamRef.cs (GenericParamRef.Resolve): Implement.
+	* GenericParameters.cs (GenericParameter.ResolveConstraints): New.
+	(GenericParameters.ResolveConstraints): New.
+	* GenericArguments.cs (GenericArguments.Resolve): New.
+
+	* TypeRef.cs (TypeRef.GetGenericTypeInst): Don't cache.
+	* ExternTypeRef.cs (ExternTypeRef.GetGenericTypeInst): Likewise.
+
 2006-01-09  Ankit Jain  <jankit@novell.com>
 
 	* GenericArguments.cs (GenericArguments.is_resolved): New.

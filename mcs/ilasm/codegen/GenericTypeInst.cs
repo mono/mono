@@ -114,7 +114,7 @@ namespace Mono.ILASM {
 
                 public void Resolve (GenericParameters type_gen_params, GenericParameters method_gen_params)
                 {
-                        throw new Exception ("Not implemented yet");
+                        gen_args.Resolve (type_gen_params, method_gen_params);
                 }
 
                 public IMethodRef GetMethodRef (ITypeRef ret_type, PEAPI.CallConv call_conv,

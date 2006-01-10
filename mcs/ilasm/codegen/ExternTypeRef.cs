@@ -30,7 +30,6 @@ namespace Mono.ILASM {
                 private Hashtable nestedclass_table;
                 private Hashtable method_table;
                 private Hashtable field_table;
-                private Hashtable genericinst_table;
                 private Hashtable p_genericinst_table;
                 
                 public ExternTypeRef (IScope extern_ref, string full_name, bool is_valuetype) 
@@ -64,20 +63,7 @@ namespace Mono.ILASM {
                 
                 public GenericTypeInst GetGenericTypeInst (GenericArguments gen_args)
                 {
-                        string sig = gen_args.ToString ();
-                        GenericTypeInst gti = null;
-
-                        if (genericinst_table == null)
-                                genericinst_table = new Hashtable ();
-                        else
-                                gti = genericinst_table [sig] as GenericTypeInst;
-
-                        if (gti == null) {
-                                gti = new GenericTypeInst (this, gen_args, is_valuetype);
-                                genericinst_table [sig] = gti;
-                        }
-
-                        return gti;
+                        return new GenericTypeInst (this, gen_args, is_valuetype);
                 }
 
                 public PEAPI.Type ResolveInstance (CodeGen code_gen, GenericArguments gen_args)

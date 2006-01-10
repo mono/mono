@@ -113,7 +113,21 @@ namespace Mono.ILASM {
                 
                 public void Resolve (GenericParameters type_gen_params, GenericParameters method_gen_params)
                 {
-                        throw new Exception ("Not implemented yet");
+                        if (param.Name == "") {
+                                /* Name wasn't specified */
+                                return;
+                        }
+
+                        if (param.Type == PEAPI.GenParamType.MVar && method_gen_params != null)
+                                param.Index = method_gen_params.GetGenericParamNum (param.Name); 
+                        else if (type_gen_params != null)
+                                param.Index = type_gen_params.GetGenericParamNum (param.Name);
+
+                        if (param.Index < 0)
+                                /* TODO: Report error */
+                                throw new Exception (String.Format ("Invalid {0}type parameter '{1}'", 
+                                                        (param.Type == PEAPI.GenParamType.MVar ? "method " : ""),
+                                                         param.Name));
                 }
 
                 public IMethodRef GetMethodRef (ITypeRef ret_type, PEAPI.CallConv call_conv,

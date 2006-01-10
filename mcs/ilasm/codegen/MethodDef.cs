@@ -296,18 +296,26 @@ namespace Mono.ILASM {
 
                 public void ResolveGenParams ()
                 {
-			GenericParamRef gtr = ret_type as GenericParamRef;
+			GenericParameters type_params = (type_def != null) ? type_def.TypeParameters : null;
+
+			if (gen_params == null && type_params == null)
+				return;
+
+			if (gen_params != null)
+				gen_params.ResolveConstraints (type_params, gen_params);
+			
+			IGenericTypeRef gtr = ret_type as IGenericTypeRef;
 			if (gtr != null)
-				ResolveGenParam ((PEAPI.GenParam) gtr.PeapiType);
+				gtr.Resolve (type_params, gen_params);
 
 			if (param_list == null)
 				return;
 
 			foreach (ParamDef param in param_list) {
-				gtr = param.Type as GenericParamRef;
-				if (gtr != null)
-					ResolveGenParam ((PEAPI.GenParam) gtr.PeapiType);
-			}
+				gtr = param.Type as IGenericTypeRef;
+ 				if (gtr != null)
+					gtr.Resolve (type_params, gen_params);
+                        }        
                 }
 
                 public PEAPI.MethodDef Resolve (CodeGen code_gen)

@@ -23,7 +23,6 @@ namespace Mono.ILASM {
                 private string sig_mod;
                 private PEAPI.Type type;
                 private bool is_valuetype;
-                private Hashtable genericinst_table;
                 private Hashtable p_genericinst_table;
 
                 private bool is_resolved;
@@ -80,20 +79,7 @@ namespace Mono.ILASM {
 
                 public GenericTypeInst GetGenericTypeInst (GenericArguments gen_args)
                 {
-                        string sig = gen_args.ToString ();
-                        GenericTypeInst gtri = null;
-
-                        if (genericinst_table == null)
-                                genericinst_table = new Hashtable ();
-                        else
-                                gtri = genericinst_table [sig] as GenericTypeInst;
-
-                        if (gtri == null) {
-                                gtri = new GenericTypeInst (this, gen_args, is_valuetype);
-                                genericinst_table [sig] = gtri;
-                        }
-
-                        return gtri;
+                        return new GenericTypeInst (this, gen_args, is_valuetype);
                 }
 
                 public PEAPI.Type ResolveInstance (CodeGen code_gen, GenericArguments gen_args)
