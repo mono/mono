@@ -1,5 +1,10 @@
 2006-01-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* HttpWebResponse.cs: ignore non-integer values for max-age and version.
+	Fixes bug #77199. Thanks to Cyrille Colin.
+
+2006-01-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* HttpWebResponse.cs: cope with malformed cookies with '=' as value.
 	Patch by Cyrille Colin. Fixes bug #77179.
 
