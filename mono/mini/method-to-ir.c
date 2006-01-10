@@ -5518,7 +5518,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				NEW_TEMPSTORE (cfg, store, temp->inst_c0, ins);
 				store->cil_code = ip;
 				if (store->opcode == CEE_STOBJ) {
-					NEW_TEMPLOADA (cfg, store, temp->inst_c0);
+					EMIT_NEW_TEMPLOADA (cfg, store, temp->inst_c0);
 					emit_stobj (cfg, store, sp [0], sp [0]->cil_code, store->klass, FALSE);
 				} else {
 					MONO_ADD_INS (bblock, store);
