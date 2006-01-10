@@ -33,6 +33,7 @@
 using System;
 using System.Collections;
 using System.IO;
+using System.Text;
 using System.Xml;
 using Commons.Xml.Relaxng.Derivative;
 
@@ -45,28 +46,42 @@ namespace Commons.Xml.Relaxng
 			if (s.Length == 0)
 				return s;
 
-			char [] ca = s.ToCharArray ();
-			int j = 0;
-			for (int i = 0; i < ca.Length; i++) {
-				switch (ca [i]) {
+			StringBuilder sb = null;
+			int noSpaceIndex = 0;
+			bool inSpace = false;
+
+			for (int i = 0; i < s.Length; i++) {
+				switch (s [i]) {
 				case ' ':
 				case '\r':
 				case '\t':
 				case '\n':
-					if (j == 0)
-						break;
-					if (ca [j - 1] != ' ')
-						ca [j++] = ' ';
+					if (inSpace)
+						continue;
+					if (sb == null)
+						sb = new StringBuilder (s.Length);
+					if (noSpaceIndex < i) {
+						if (sb.Length > 0)
+							sb.Append (' ');
+						sb.Append (s, noSpaceIndex, i - noSpaceIndex);
+					}
+					inSpace = true;
 					break;
 				default:
-					ca [j++] = ca [i];
+					if (inSpace) {
+						noSpaceIndex = i;
+						inSpace = false;
+					}
 					break;
 				}
 			}
-			if (j == 0)
-				return String.Empty;
-			string r = new string (ca, 0, (ca [j - 1] != ' ') ? j : j - 1);
-			return r;
+			if (sb == null)
+				return s;
+			if (!inSpace && noSpaceIndex < s.Length) {
+				sb.Append (' ');
+				sb.Append (s, noSpaceIndex, s.Length - noSpaceIndex);
+			}
+			return sb.ToString ();
 		}
 
 		public static bool IsWhitespace (string s)

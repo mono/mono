@@ -1,3 +1,10 @@
+2006-01-10  Atsushi Enomoto <atsushi@ximian.com>
+
+	* Misc.cs : NormalizeWhitespace() was creating extraneous char[] and
+	  it could be heavily called depending on patterns.
+	* RelaxngDefaultDatatypes.cs : avoid extraneous call to
+	  NormalizeWhitespace().
+
 2006-01-05  Atsushi Enomoto <atsushi@ximian.com>
 
 	* RelaxngValidatingReader.cs :

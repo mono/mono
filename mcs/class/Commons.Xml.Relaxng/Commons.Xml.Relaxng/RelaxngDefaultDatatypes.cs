@@ -89,10 +89,55 @@ namespace Commons.Xml.Relaxng
 			return Util.NormalizeWhitespace (text);
 		}
 
+		int SkipWhitespaces (string s, int i)
+		{
+			while (i < s.Length) {
+				switch (s [i]) {
+				case '\n': case '\r': case ' ': case '\t':
+					i++;
+					continue;
+				}
+				break;
+			}
+			return i;
+		}
+
 		public override bool Compare (object o1, object o2)
 		{
-			return Util.NormalizeWhitespace ((string) o1) == 
-				Util.NormalizeWhitespace ((string) o2);
+			string s1 = o1 as string;
+			string s2 = o2 as string;
+
+			int i1 = 0;
+			int i2 = 0;
+
+			while (i1 < s1.Length && i2 < s2.Length) {
+				i1 = SkipWhitespaces (s1, i1);
+				i2 = SkipWhitespaces (s2, i2);
+				while (i1 < s1.Length && i2 < s2.Length) {
+					if (s1 [i1] != s2 [i2])
+						return false;
+					i1++;
+					i2++;
+					if (i1 == s1.Length || i2 == s2.Length)
+						break;
+					if (XmlChar.IsWhitespace (s1 [i1])) {
+						if (!XmlChar.IsWhitespace (s2 [i2]))
+							return false;
+						else
+							break;
+					}
+					else if (XmlChar.IsWhitespace (s2 [i2]))
+						return false;
+				}
+			}
+			i1 = SkipWhitespaces (s1, i1);
+			i2 = SkipWhitespaces (s2, i2);
+			return i1 == s1.Length && i2 == s2.Length;
+		}
+
+		public override bool CompareString (string s1, string s2, XmlReader reader)
+		{
+			return Compare (s1, s2);
 		}
 	}
 }
