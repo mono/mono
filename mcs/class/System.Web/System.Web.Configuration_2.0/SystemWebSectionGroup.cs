@@ -32,6 +32,9 @@
 
 using System;
 using System.Configuration;
+#if notyet
+using System.Web.Services.Configuration;
+#endif
 
 namespace System.Web.Configuration
 {
@@ -92,12 +95,10 @@ namespace System.Web.Configuration
 			get { return (HealthMonitoringSection)Sections ["healthMonitoring"]; }
 		}
 
-#if notyet
 		[ConfigurationProperty ("hostingEnvironment")]
 		public HostingEnvironmentSection HostingEnvironment {
 			get { return (HostingEnvironmentSection)Sections ["hostingEnvironment"]; }
 		}
-#endif
 
 		[ConfigurationProperty ("httpCookies")]
 		public HttpCookiesSection HttpCookies {
@@ -144,6 +145,7 @@ namespace System.Web.Configuration
 			get { return (PagesSection)Sections ["pages"]; }
 		}
 
+		[ConfigurationProperty ("processModel")]
 		public ProcessModelSection ProcessModel {
 			get { return (ProcessModelSection)Sections ["processModel"]; }
 		}
