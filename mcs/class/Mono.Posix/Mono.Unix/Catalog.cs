@@ -62,9 +62,9 @@ namespace Mono.Unix {
 					throw new OutOfMemoryException ("textdomain");
 			}
 			finally {
-				Marshal.FreeHGlobal (ipackage);
-				Marshal.FreeHGlobal (ilocaledir);
-				Marshal.FreeHGlobal (iutf8);
+				UnixMarshal.FreeHeap (ipackage);
+				UnixMarshal.FreeHeap (ilocaledir);
+				UnixMarshal.FreeHeap (iutf8);
 			}
 		}
 
@@ -76,17 +76,17 @@ namespace Mono.Unix {
 			bool cleanup = true;
 
 			try {
-				p1 = Marshal.StringToHGlobalAuto (s1);
-				p2 = Marshal.StringToHGlobalAuto (s2);
+				p1 = UnixMarshal.StringToHeap (s1);
+				p2 = UnixMarshal.StringToHeap (s2);
 				if (s3 != null)
-					p3 = Marshal.StringToHGlobalAuto (s3);
+					p3 = UnixMarshal.StringToHeap (s3);
 				cleanup = false;
 			}
 			finally {
 				if (cleanup) {
-					Marshal.FreeHGlobal (p1);
-					Marshal.FreeHGlobal (p2);
-					Marshal.FreeHGlobal (p3);
+					UnixMarshal.FreeHeap (p1);
+					UnixMarshal.FreeHeap (p2);
+					UnixMarshal.FreeHeap (p3);
 				}
 			}
 		}
@@ -96,16 +96,16 @@ namespace Mono.Unix {
 		
 		public static String GetString (String s)
 		{
-			IntPtr ints = Marshal.StringToHGlobalAuto (s);
+			IntPtr ints = UnixMarshal.StringToHeap (s);
 			try {
 				// gettext(3) returns the input pointer if no translation is found
 				IntPtr r = gettext (ints);
 				if (r != ints)
-					return Marshal.PtrToStringAuto (r);
+					return UnixMarshal.PtrToStringUnix (r);
 				return s;
 			}
 			finally {
-				Marshal.FreeHGlobal (ints);
+				UnixMarshal.FreeHeap (ints);
 			}
 		}
 	
@@ -124,11 +124,11 @@ namespace Mono.Unix {
 					return s;
 				if (r == intp)
 					return p;
-				return Marshal.PtrToStringAnsi (r); 
+				return UnixMarshal.PtrToStringUnix (r); 
 			}
 			finally {
-				Marshal.FreeHGlobal (ints);
-				Marshal.FreeHGlobal (intp);
+				UnixMarshal.FreeHeap (ints);
+				UnixMarshal.FreeHeap (intp);
 			}
 		}
 	}

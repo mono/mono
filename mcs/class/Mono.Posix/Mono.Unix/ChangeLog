@@ -1,3 +1,26 @@
+2006-01-10  Jonathan Pryor <jonpryor@vt.edu>
+
+	* Catalog.cs: Don't use
+	  System.Runtime.InteropServices.Marshal.StringToHGlobalAuto(), use
+	  UnixMarshal.StringToHeap().  We require that the converted string be in
+	  UTF-8 format, but .NET's Marshal.StringToHGlobalAuto converts to the local
+	  code page, *not* UTF-8 (Mono's does UTF-8).  UnixMarshal.StringToHeap
+	  *always* does UTF-8, so use that instead.
+
+2006-01-09  Jonathan Pryor <jonpryor@vt.edu>
+
+	* FileTypes.cs: Remove [Flags] attribute -- these aren't bitfield values.
+	* UnixFileSystemInfo.cs: Fix Is<<Type>> properties -- before it would
+	  erroneously say that a symlink was a character device.  (This is because
+	  device values are *not* [Flags] values, but code was assuming they were.)
+	* UnixGroupInfo.cs: Clone the string[] returned from GetMemberNames().  We
+	  don't want callers to change the underlying list.
+
+2006-01-07  Jonathan Pryor <jonpryor@vt.edu>
+
+	* UnixMarshal.cs: *Actually* put things in alphabetical order (like the
+	  comment says).  I can speak english, really I can.
+
 2006-01-06  Jonathan Pryor <jonpryor@vt.edu>
 
 	* Catalog.cs: s/libintl/intl/g, since intl.dll is used by GTK+ on Windows,

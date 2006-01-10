@@ -82,7 +82,7 @@ namespace Mono.Unix {
 
 		public string[] GetMemberNames ()
 		{
-			return group.gr_mem;
+			return (string[]) group.gr_mem.Clone ();
 		}
 
 		public override int GetHashCode ()
