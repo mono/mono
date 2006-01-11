@@ -1,12 +1,11 @@
 //
 // Region class testing unit
 //
-// Author:
+// Authors:
 //   Jordi Mas, jordi@ximian.com
+//   Sebastien Pouliot  <sebastien@ximian.com>
 //
-
-//
-// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -42,15 +41,6 @@ namespace MonoTests.System.Drawing
 	[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
 	public class TestRegion
 	{
-		[TearDown]
-		public void Clean() {}
-
-		[SetUp]
-		public void GetReady()
-		{
-
-		}
-
 		/* For debugging */
 		public static void DumpRegion (Region rgn)
 		{
@@ -1037,7 +1027,208 @@ namespace MonoTests.System.Drawing
 			Assert.AreEqual (120, rects[0].Height);
 		}
 
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void Constructor_GraphicsPath_Null ()
+		{
+			GraphicsPath gp = null;
+			Region r = new Region (gp);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void Constructor_RegionData_Null ()
+		{
+			RegionData rd = null;
+			Region r = new Region (rd);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void Union_GraphicsPath_Null ()
+		{
+			GraphicsPath gp = null;
+			new Region ().Union (gp);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void Union_Region_Null ()
+		{
+			Region r = null;
+			new Region ().Union (r);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void Intersect_GraphicsPath_Null ()
+		{
+			GraphicsPath gp = null;
+			new Region ().Intersect (gp);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void Intersect_Region_Null ()
+		{
+			Region r = null;
+			new Region ().Intersect (r);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void Complement_GraphicsPath_Null ()
+		{
+			GraphicsPath gp = null;
+			new Region ().Complement (gp);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void Complement_Region_Null ()
+		{
+			Region r = null;
+			new Region ().Complement (r);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void Exclude_GraphicsPath_Null ()
+		{
+			GraphicsPath gp = null;
+			new Region ().Exclude (gp);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void Exclude_Region_Null ()
+		{
+			Region r = null;
+			new Region ().Exclude (r);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void Xor_GraphicsPath_Null ()
+		{
+			GraphicsPath gp = null;
+			new Region ().Xor (gp);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void Xor_Region_Null ()
+		{
+			Region r = null;
+			new Region ().Xor (r);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void GetBounds_Null ()
+		{
+			new Region ().GetBounds (null);
+		}
+
+		[Test]
+		public void IsVisible_IntIntNull ()
+		{
+			Assert.IsTrue (new Region ().IsVisible (0, 0, null));
+		}
+
+		[Test]
+		public void IsVisible_IntIntIntIntNull ()
+		{
+			Assert.IsFalse (new Region ().IsVisible (0, 0, 0, 0, null));
+		}
+
+		[Test]
+		public void IsVisible_PointNull ()
+		{
+			Point p = new Point ();
+			Assert.IsTrue (new Region ().IsVisible (p, null));
+		}
+
+		[Test]
+		public void IsVisible_PointFNull ()
+		{
+			PointF p = new PointF ();
+			Assert.IsTrue (new Region ().IsVisible (p, null));
+		}
+
+		[Test]
+		public void IsVisible_RectangleNull ()
+		{
+			Rectangle r = new Rectangle ();
+			Assert.IsFalse (new Region ().IsVisible (r, null));
+		}
+
+		[Test]
+		public void IsVisible_RectangleFNull ()
+		{
+			RectangleF r = new RectangleF ();
+			Assert.IsFalse (new Region ().IsVisible (r, null));
+		}
+
+		[Test]
+		public void IsVisible_SingleSingleNull ()
+		{
+			Assert.IsTrue (new Region ().IsVisible (0f, 0f, null));
+		}
+
+		[Test]
+		public void IsVisible_SingleSingleSingleSingleNull ()
+		{
+			Assert.IsFalse (new Region ().IsVisible (0f, 0f, 0f, 0f, null));
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void IsEmpty_Null ()
+		{
+			new Region ().IsEmpty (null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void IsInfinite_Null ()
+		{
+			new Region ().IsInfinite (null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void Equals_NullGraphics ()
+		{
+			new Region ().Equals (null, Graphics.FromImage (new Bitmap (10, 10)));
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void Equals_RegionNull ()
+		{
+			new Region ().Equals (new Region (), null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void GetHrgn_Null ()
+		{
+			new Region ().GetHrgn (null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void GetRegionScans_Null ()
+		{
+			new Region ().GetRegionScans (null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void Transform_Null ()
+		{
+			new Region ().Transform (null);
+		}
 	}
 }
-
-
