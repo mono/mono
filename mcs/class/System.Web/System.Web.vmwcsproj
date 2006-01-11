@@ -20,11 +20,13 @@
 		</Build>
 		<Files>
 			<Include>
+				<File RelPath="browscap.ini" Link="..\..\..\mono\data\browscap.ini" BuildAction="EmbeddedResource"/>
 				<File RelPath="jar.resources" BuildAction="None"/>
 				<File RelPath="Locale.cs" Link="..\..\build\common\Locale.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="Consts.cs" Link="..\..\build\common\Consts.cs.in" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="MonoTODOAttribute.cs" Link="..\..\build\common\MonoTODOAttribute.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="Assembly\AssemblyInfo.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="resources\WebUIValidation.js" BuildAction="EmbeddedResource"/>
 				<File RelPath="System.Web\ApplicationShutdownReason.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web\BeginEventHandler.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web\BrowserCapabilities.cs" SubType="Code" BuildAction="Compile"/>

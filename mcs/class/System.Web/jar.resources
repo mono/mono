@@ -1,0 +1,5 @@
+<resources>
+	<add key="browscap.ini"			value="/browscap.ini" />
+	<add key="WebUIValidation.js"	value="/WebUIValidation.js" />
+</resources>
+
