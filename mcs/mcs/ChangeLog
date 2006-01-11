@@ -1,3 +1,9 @@
+2006-01-11  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #77200.
+	* cfold.cs (BinaryFold): Implement folding of BinaryOr, BinaryAnd
+	and ExclusiveOr for boolean constants too.
+
 2006-01-09  Raja R Harinath  <rharinath@novell.com>
 
 	Fix #75636.

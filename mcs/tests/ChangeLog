@@ -1,5 +1,7 @@
 2006-01-11  Raja R Harinath  <rharinath@novell.com>
 
+	* test-484.cs: New test based on #77200.
+
 	* test-xml-050.cs: Set output to xml-050.xml, not xml-050.cs.
 	* gtest-233.cs: Rename from gtest-233-exe.cs.
 
