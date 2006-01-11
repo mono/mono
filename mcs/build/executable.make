@@ -4,7 +4,10 @@
 
 base_prog = $(shell basename $(PROGRAM))
 sourcefile = $(base_prog).sources
+base_prog_config := $(wildcard $(base_prog).config.$(PROFILE))
+ifndef base_prog_config
 base_prog_config := $(wildcard $(base_prog).config)
+endif
 ifdef base_prog_config
 PROGRAM_config := $(PROGRAM).config
 endif

@@ -1,3 +1,9 @@
+2006-01-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* executable.make: allow installing a different .config file for
+	executables such as nunit-console.exe that should use a different one
+	depending on the profile.
+
 2006-01-05  Raja R Harinath  <rharinath@novell.com>
 
 	* library.make (run-test-lib, run-test-ondotnet-lib): Workaround a
