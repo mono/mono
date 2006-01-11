@@ -7039,6 +7039,11 @@ namespace Mono.CSharp {
 				return null;
 			}
 
+			if (expr_type == TypeManager.void_type) {
+				Error (23, "The `.' operator can not be applied to operands of type 'void'");
+				return null;
+			}
+
 			Expression member_lookup;
 			member_lookup = MemberLookupFinal (ec, expr_type, expr_type, Identifier, loc);
 			if (member_lookup == null)

@@ -1,5 +1,9 @@
 2006-01-11  Raja R Harinath  <rharinath@novell.com>
 
+	Fix #77204.
+	* expression.cs (MemberAccess.DoResolve): Disallow the use of '.'
+	on operands of 'void' type.
+
 	Fix #77200.
 	* cfold.cs (BinaryFold): Implement folding of BinaryOr, BinaryAnd
 	and ExclusiveOr for boolean constants too.
