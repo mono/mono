@@ -1,3 +1,8 @@
+2006-01-11  Chris Toshok  <toshok@ximian.com>
+
+	* ClientScriptManager.cs (RegisterClientScriptResource):
+	implement.
+
 2006-01-11  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* ObjectStateFormatter.cs: Removed TARGET_JVM parts in 

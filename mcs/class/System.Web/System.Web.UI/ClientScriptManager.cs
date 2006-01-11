@@ -295,10 +295,9 @@ namespace System.Web.UI
 		}
 
 #if NET_2_0
-		[MonoTODO]
 		public void RegisterClientScriptResource (Type type, string resourceName)
 		{
-			throw new NotImplementedException ();
+			RegisterScript (ref scriptIncludes, type, "resource-" + resourceName, GetWebResourceUrl (typeof(Page), "resourceName"), false);
 		}
 
 		[MonoTODO]
