@@ -1,3 +1,12 @@
+2006-01-11  Ankit Jain  <jankit@novell.com>
+
+	Support new syntax of specifying namespace, ie., as
+	part of the type name. (gen-nested2.il)
+	* TypeDef.cs (TypeDef.ctor): Add outer as a param.
+	Don't split name on '.' for inner classes.
+	* CodeGen.cs (CodeGen.BeginTypeDef): Update to use only 'name'
+	for inner classes and FullName for outermost class.
+
 2006-01-10  Ankit Jain  <jankit@novell.com>
 
 	* TypeDef.cs (TypeDef.GetGenericParamNum): Return -1 if type has no

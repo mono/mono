@@ -1,3 +1,9 @@
+2006-01-11  Ankit Jain  <jankit@novell.com>
+
+	* gen-nested2.il: New.
+	* gen-nested3.il: New. Test for new syntax for specifying namespace ie.,
+	as part of the type name instead of using '.namespace' directive.
+
 2006-01-10  Ankit Jain  <jankit@novell.com>
 
 	* gen-nested.il: New. Test for a generic type nested in a non-generic

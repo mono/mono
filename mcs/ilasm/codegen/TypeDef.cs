@@ -52,12 +52,13 @@ namespace Mono.ILASM {
                 private bool is_enum_class;
 
                 public TypeDef (PEAPI.TypeAttr attr, string name_space, string name,
-                                IClassRef parent, ArrayList impl_list, Location location, GenericParameters gen_params)
+                                IClassRef parent, ArrayList impl_list, Location location, GenericParameters gen_params, TypeDef outer)
                 {
                         this.attr = attr;
                         this.parent = parent;
                         this.impl_list = impl_list;
                         this.gen_params = gen_params;
+                        this.outer = outer;
 
                         field_table = new Hashtable ();
                         field_list = new ArrayList ();
@@ -76,7 +77,8 @@ namespace Mono.ILASM {
                         ResolveGenParams ();
 
                         int lastdot = name.LastIndexOf ('.');
-                        if (lastdot >= 0) {
+                        /* Namespace . name split should not be done for nested classes */
+                        if (lastdot >= 0 && outer == null) {
                                 if (name_space == null || name_space == "")
                                         this.name_space = name.Substring (0, lastdot);
                                 else
@@ -102,7 +104,6 @@ namespace Mono.ILASM {
 
                 public TypeDef OuterType {
                         get { return outer; }
-                        set { outer = value; }
                 }
 
                 public PEAPI.ClassDef PeapiType {

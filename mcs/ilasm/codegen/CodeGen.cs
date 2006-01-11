@@ -257,17 +257,21 @@ namespace Mono.ILASM {
                 {
                         TypeDef outer = null;
                         string cache_name = CacheName (name);
-
                         if (typedef_stack_top > 0) {
 				StringBuilder sb = new StringBuilder ();
-				
+
 				for (int i = 0; i < typedef_stack_top; i++){
 					outer = (TypeDef) typedef_stack [i];
-					sb.Append (outer.Name);
+					if (i == 0)
+						/* Use FullName for outermost class to get the
+						   namespace also */
+						sb.Append (outer.FullName);
+					else
+						sb.Append (outer.Name);
 					sb.Append ("/");
 				}
 				sb.Append (name);
-                                cache_name = CacheName (sb.ToString ());
+				cache_name = sb.ToString ();
                         }
 
                         TypeDef typedef = type_manager[cache_name];
@@ -282,10 +286,7 @@ namespace Mono.ILASM {
                         }
 
                         typedef = new TypeDef (attr, current_namespace,
-                                        name, parent, impl_list, location, gen_params);
-
-                        if (outer != null)
-                                typedef.OuterType = outer;
+                                        name, parent, impl_list, location, gen_params, outer);
 
                         type_manager[cache_name] = typedef;
                         current_customattrtarget = current_typedef = typedef;
