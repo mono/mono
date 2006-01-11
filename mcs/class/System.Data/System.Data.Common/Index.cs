@@ -57,7 +57,6 @@ namespace System.Data.Common
 		{
 			_key = key;
 			Reset();
-			RebuildIndex ();
 		}
 
 		#endregion // Constructors
