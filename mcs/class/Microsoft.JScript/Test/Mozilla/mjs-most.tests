@@ -629,7 +629,7 @@ ecma/Statements/12.2-1.js
 ecma/Statements/12.5-2.js
 # Invalid IL
 #ecma/Statements/12.6.1-1.js
-# Needs ForIn
+# invalid IL, PostOrPrefixExpression.Emit error
 #ecma/Statements/12.6.2-1.js
 # NullReferenceException from For:Resolve
 #ecma/Statements/12.6.2-2.js
