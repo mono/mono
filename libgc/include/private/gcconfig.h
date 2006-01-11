@@ -834,6 +834,10 @@
 #     define CPP_WORDSZ 32
 #   endif
 #   define ALIGN_DOUBLE
+#   ifdef _FILE_OFFSET_BITS
+#     undef _FILE_OFFSET_BITS /* libelf.h & procfs.h doesn't compile with large file support */
+#     define _FILE_OFFSET_BITS 32
+#   endif
 #   ifdef SUNOS5
 #	define OS_TYPE "SUNOS5"
 	extern int _etext[];
