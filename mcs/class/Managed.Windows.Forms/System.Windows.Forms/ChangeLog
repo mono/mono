@@ -1,3 +1,10 @@
+2006-01-11  Jackson Harper  <jackson@ximian.com>
+
+	* TreeView.cs: Use the property for setting the selected node so
+	the correct events get raised.
+	* TreeNode.cs: Update the tree when the fore/back colours of a
+	node are set.
+
 2006-01-10  Jackson Harper  <jackson@ximian.com>
 
 	* TreeView.cs: Allow setting SelectedNode to null.

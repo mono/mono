@@ -155,6 +155,10 @@ namespace System.Windows.Forms {
 				if (prop_bag == null)
 					prop_bag = new OwnerDrawPropertyBag ();
 				prop_bag.BackColor = value;
+
+				TreeView tree_view = TreeView;
+				if (tree_view != null)
+					tree_view.UpdateNode (this);
 			}
 		}
 
@@ -194,6 +198,10 @@ namespace System.Windows.Forms {
 				if (prop_bag == null)
 					prop_bag = new OwnerDrawPropertyBag ();
 				prop_bag.ForeColor = value;
+
+				TreeView tree_view = TreeView;
+				if (tree_view != null)
+					tree_view.UpdateNode (this);
 			}
 		}
 

@@ -1377,7 +1377,7 @@ namespace System.Windows.Forms {
 				return;
 			} else if (IsSelectableArea (node, e.X) || full_row_select) {
 				TreeNode old_selected = selected_node;
-				selected_node = node;
+				SelectedNode = node;
 				if (label_edit && e.Clicks == 1 && selected_node == old_selected) {
 					node.BeginEdit ();
 					if (edit_node != null) {
@@ -1388,18 +1388,7 @@ namespace System.Windows.Forms {
 					UpdateNode (edit_node);
 				} else if (selected_node != focused_node) {
 					select_mmove = true;
-					
-					if (old_selected != null) {
-						Invalidate (Rectangle.Union (Bloat (old_selected.Bounds),
-									    Bloat (selected_node.Bounds)));
-					} else {
-						Invalidate (Bloat (selected_node.Bounds));
-					}
 				}
-
-				// We ensure its visible after we update because
-				// scrolling is used for insure visible
-				selected_node.EnsureVisible ();
 			} 
 		}
 
