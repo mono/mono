@@ -1061,7 +1061,7 @@ namespace System.Web {
 					String.Format ("MapPath: Invalid path '{0}', only virtual paths are accepted", virtualPath));
 
 			if (System.IO.Path.DirectorySeparatorChar != '/')
-				virtualPath.Replace (System.IO.Path.DirectorySeparatorChar, '/');
+				virtualPath = virtualPath.Replace (System.IO.Path.DirectorySeparatorChar, '/');
 
 			if (UrlUtils.IsRooted (virtualPath))
 				virtualPath = UrlUtils.Canonic (virtualPath);
