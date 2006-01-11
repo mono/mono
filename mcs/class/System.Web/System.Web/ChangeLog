@@ -1,3 +1,7 @@
+2006-01-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpApplicationFactory.cs: fix condition for ContextAvailable.
+
 2006-01-11  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* HttpRequest.cs: little fix in MapPath(), virtualPath.Replace
