@@ -6,7 +6,7 @@
 //      Jordi Mas i Hernandez (jordi@ximian.com)
 //
 // Copyright (C) 2003 Ximian, Inc. http://www.ximian.com
-// Copyright (C) 2004 Novell, Inc. http://www.novell.com
+// Copyright (C) 2004,2006 Novell, Inc. http://www.novell.com
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,9 +28,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Drawing.Drawing2D;
 using System.Runtime.InteropServices;
+using System.Security.Permissions;
 
 namespace System.Drawing
 {
@@ -52,9 +52,11 @@ namespace System.Drawing
                         nativeRegion = native; 
                 }
                 
-		
+		[MonoTODO ("GdipCreateRegionPath is not implemented in libgdiplus")]
 		public Region (GraphicsPath path)
-		{	
+		{
+			if (path == null)
+				throw new ArgumentNullException ("path");
 			Status status = GDIPlus.GdipCreateRegionPath (path.NativeObject, out nativeRegion);
 			GDIPlus.CheckStatus (status);
 		}
@@ -71,9 +73,13 @@ namespace System.Drawing
 			GDIPlus.CheckStatus (status);
 		}
 
-                [MonoTODO]
-		public Region (RegionData region_data)
+		[MonoTODO ("GdipCreateRegionRgnData is not implemented in libgdiplus")]
+		public Region (RegionData rgnData)
 		{
+			if (rgnData == null)
+				throw new ArgumentNullException ("rgnData");
+			//Status status = GDIPlus.GdipCreateRegionRgnData (rgnData.Data, out nativeRegion);
+			//GDIPlus.CheckStatus (status);
 			throw new NotImplementedException ();
 		}
 		
@@ -83,7 +89,9 @@ namespace System.Drawing
 
 		public void Union (GraphicsPath path)
 		{
-                        Status status = GDIPlus.GdipCombineRegionPath (nativeRegion, path.NativeObject, CombineMode.Union);
+			if (path == null)
+				throw new ArgumentNullException ("path");
+			Status status = GDIPlus.GdipCombineRegionPath (nativeRegion, path.NativeObject, CombineMode.Union);
                         GDIPlus.CheckStatus (status);                        
 		}
 
@@ -102,6 +110,8 @@ namespace System.Drawing
 
 		public void Union (Region region)
 		{
+			if (region == null)
+				throw new ArgumentNullException ("region");
                         Status status = GDIPlus.GdipCombineRegionRegion (nativeRegion, region.NativeObject, CombineMode.Union);
                         GDIPlus.CheckStatus (status);
 		}                                                                                         
@@ -112,6 +122,8 @@ namespace System.Drawing
 		//
 		public void Intersect (GraphicsPath path)
                 {
+			if (path == null)
+				throw new ArgumentNullException ("path");
                         Status status = GDIPlus.GdipCombineRegionPath (nativeRegion, path.NativeObject, CombineMode.Intersect);
                         GDIPlus.CheckStatus (status);  
 		}
@@ -130,6 +142,8 @@ namespace System.Drawing
 
                 public void Intersect (Region region)
 		{
+			if (region == null)
+				throw new ArgumentNullException ("region");
                         Status status = GDIPlus.GdipCombineRegionRegion (nativeRegion, region.NativeObject, CombineMode.Intersect);
                         GDIPlus.CheckStatus (status);
 		}
@@ -139,6 +153,8 @@ namespace System.Drawing
 		//
 		public void Complement (GraphicsPath path)
 		{
+			if (path == null)
+				throw new ArgumentNullException ("path");
                         Status status = GDIPlus.GdipCombineRegionPath (nativeRegion, path.NativeObject, CombineMode.Complement);
                         GDIPlus.CheckStatus (status);  
 		}
@@ -157,6 +173,8 @@ namespace System.Drawing
 
                 public void Complement (Region region)
 		{
+			if (region == null)
+				throw new ArgumentNullException ("region");
                         Status status = GDIPlus.GdipCombineRegionRegion (nativeRegion, region.NativeObject, CombineMode.Complement);
                         GDIPlus.CheckStatus (status);
 		}
@@ -166,6 +184,8 @@ namespace System.Drawing
 		//
 		public void Exclude (GraphicsPath path)
 		{
+			if (path == null)
+				throw new ArgumentNullException ("path");
                         Status status = GDIPlus.GdipCombineRegionPath (nativeRegion, path.NativeObject, CombineMode.Exclude);
                         GDIPlus.CheckStatus (status);                                                   
 		}
@@ -184,6 +204,8 @@ namespace System.Drawing
 
                 public void Exclude (Region region)
 		{
+			if (region == null)
+				throw new ArgumentNullException ("region");
                         Status status = GDIPlus.GdipCombineRegionRegion (nativeRegion, region.NativeObject, CombineMode.Exclude);
                         GDIPlus.CheckStatus (status);
 		}
@@ -193,6 +215,8 @@ namespace System.Drawing
 		//
 		public void Xor (GraphicsPath path)
 		{
+			if (path == null)
+				throw new ArgumentNullException ("path");
                         Status status = GDIPlus.GdipCombineRegionPath (nativeRegion, path.NativeObject, CombineMode.Xor);
                         GDIPlus.CheckStatus (status);  
 		}
@@ -211,6 +235,8 @@ namespace System.Drawing
 
                 public void Xor (Region region)
 		{
+			if (region == null)
+				throw new ArgumentNullException ("region");
                         Status status = GDIPlus.GdipCombineRegionRegion (nativeRegion, region.NativeObject, CombineMode.Xor);
                         GDIPlus.CheckStatus (status); 
 		}
@@ -220,6 +246,9 @@ namespace System.Drawing
 		//
 		public RectangleF GetBounds (Graphics graphics)
 		{
+			if (graphics == null)
+				throw new ArgumentNullException ("graphics");
+
                         RectangleF rect = new Rectangle();
                         
                         Status status = GDIPlus.GdipGetRegionBounds (nativeRegion, graphics.NativeObject, ref rect);
@@ -248,9 +277,10 @@ namespace System.Drawing
 		//
 		public bool IsVisible (int x, int y, Graphics g)
 		{
+			IntPtr ptr = (g == null) ? IntPtr.Zero : g.NativeObject;
                         bool result;
                         
-		    	Status status = GDIPlus.GdipIsVisibleRegionPointI (nativeRegion, x, y, g.NativeObject, out result);
+		    	Status status = GDIPlus.GdipIsVisibleRegionPointI (nativeRegion, x, y, ptr, out result);
                         GDIPlus.CheckStatus (status);
 
                         return result;
@@ -270,10 +300,11 @@ namespace System.Drawing
 
 		public bool IsVisible (int x, int y, int width, int height, Graphics g)
 		{
+			IntPtr ptr = (g == null) ? IntPtr.Zero : g.NativeObject;
 		        bool result;
 
                         Status status = GDIPlus.GdipIsVisibleRegionRectI (nativeRegion, x, y,
-                                width, height, g.NativeObject, out result);
+                                width, height, ptr, out result);
 
                         GDIPlus.CheckStatus (status);
 
@@ -306,10 +337,11 @@ namespace System.Drawing
 
 		public bool IsVisible (Point point, Graphics g)
 		{
+			IntPtr ptr = (g == null) ? IntPtr.Zero : g.NativeObject;
                         bool result;
 
 		    	Status status = GDIPlus.GdipIsVisibleRegionPointI (nativeRegion, point.X, point.Y,
-                                g.NativeObject, out result);
+                                ptr, out result);
 
                         GDIPlus.CheckStatus (status);
 
@@ -318,10 +350,11 @@ namespace System.Drawing
 
 		public bool IsVisible (PointF point, Graphics g)
 		{
+			IntPtr ptr = (g == null) ? IntPtr.Zero : g.NativeObject;
 		        bool result;
 
 		    	Status status = GDIPlus.GdipIsVisibleRegionPoint (nativeRegion, point.X, point.Y,
-                                g.NativeObject, out result);
+                                ptr, out result);
 
                         GDIPlus.CheckStatus (status);
 
@@ -354,10 +387,11 @@ namespace System.Drawing
 
 		public bool IsVisible (Rectangle rect, Graphics g)
 		{
+			IntPtr ptr = (g == null) ? IntPtr.Zero : g.NativeObject;
 		        bool result;
 
                         Status status = GDIPlus.GdipIsVisibleRegionRectI (nativeRegion, rect.X, rect.Y,
-                                rect.Width, rect.Height, g.NativeObject, out result);
+                                rect.Width, rect.Height, ptr, out result);
                         
                         GDIPlus.CheckStatus (status);
 
@@ -366,10 +400,11 @@ namespace System.Drawing
 
 		public bool IsVisible (RectangleF rect, Graphics g)
 		{
-		      bool result;
+			IntPtr ptr = (g == null) ? IntPtr.Zero : g.NativeObject;
+			bool result;
 
                         Status status = GDIPlus.GdipIsVisibleRegionRect (nativeRegion, rect.X, rect.Y,
-                                rect.Width, rect.Height, g.NativeObject, out result);
+                                rect.Width, rect.Height, ptr, out result);
                                 
                         GDIPlus.CheckStatus (status);
 
@@ -388,9 +423,10 @@ namespace System.Drawing
 
 		public bool IsVisible (float x, float y, Graphics g)
 		{
+			IntPtr ptr = (g == null) ? IntPtr.Zero : g.NativeObject;
 		        bool result;
 
-		    	Status status = GDIPlus.GdipIsVisibleRegionPoint (nativeRegion, x, y, g.NativeObject, out result);
+		    	Status status = GDIPlus.GdipIsVisibleRegionPoint (nativeRegion, x, y, ptr, out result);
                         GDIPlus.CheckStatus (status);
 
                         return result;
@@ -408,9 +444,10 @@ namespace System.Drawing
 
 		public bool IsVisible (float x, float y, float width, float height, Graphics g) 
 		{
+			IntPtr ptr = (g == null) ? IntPtr.Zero : g.NativeObject;
                         bool result;
 
-                        Status status = GDIPlus.GdipIsVisibleRegionRect (nativeRegion, x, y, width, height, g.NativeObject, out result);
+                        Status status = GDIPlus.GdipIsVisibleRegionRect (nativeRegion, x, y, width, height, ptr, out result);
                         GDIPlus.CheckStatus (status);
 
                         return result;
@@ -423,6 +460,9 @@ namespace System.Drawing
 
 		public bool IsEmpty(Graphics g)
 		{
+			if (g == null)
+				throw new ArgumentNullException ("g");
+
                         bool result;               
 
                         Status status = GDIPlus.GdipIsEmptyRegion (nativeRegion, g.NativeObject, out result);
@@ -433,6 +473,9 @@ namespace System.Drawing
 
 		public bool IsInfinite(Graphics g)
 		{
+			if (g == null)
+				throw new ArgumentNullException ("g");
+
                         bool result;
 
                         Status status = GDIPlus.GdipIsInfiniteRegion (nativeRegion, g.NativeObject, out result);
@@ -455,6 +498,11 @@ namespace System.Drawing
 		
 		public bool Equals(Region region, Graphics g)
 		{
+			if (region == null)
+				throw new ArgumentNullException ("region");
+			if (g == null)
+				throw new ArgumentNullException ("g");
+
 			bool result;
 			
 			Status status = GDIPlus.GdipIsEqualRegion (nativeRegion, region.NativeObject,
@@ -465,15 +513,19 @@ namespace System.Drawing
 			return result;			
 		}
 		
-		
-		public static Region FromHrgn(IntPtr hrgn)
+		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
+		public static Region FromHrgn (IntPtr hrgn)
 		{
+			if (hrgn == IntPtr.Zero)
+				throw new ArgumentException ("hrgn");
 			return new Region (hrgn);
 		}
 		
 		
 		public IntPtr GetHrgn(Graphics g)
 		{
+			if (g == null)
+				throw new ArgumentNullException ("g");
 			return nativeRegion;
 		}
 		
@@ -499,7 +551,10 @@ namespace System.Drawing
 		
 		public RectangleF[] GetRegionScans(Matrix matrix)
 		{
-			int cnt;			
+			if (matrix == null)
+				throw new ArgumentNullException ("matrix");
+
+			int cnt;
 			
 			Status status = GDIPlus.GdipGetRegionScansCount (nativeRegion, out cnt, matrix.NativeObject);                  
                         GDIPlus.CheckStatus (status);                                 
@@ -521,6 +576,9 @@ namespace System.Drawing
 		
 		public void Transform(Matrix matrix)
 		{
+			if (matrix == null)
+				throw new ArgumentNullException ("matrix");
+
 			Status status = GDIPlus.GdipTransformRegion (nativeRegion, matrix.NativeObject);
 			GDIPlus.CheckStatus (status);                      				
 		}		
@@ -564,13 +622,13 @@ namespace System.Drawing
 			}
 		}
 #if NET_2_0
+		[MonoTODO]
+		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
 		public void ReleaseHrgn (IntPtr regionHandle)		
 		{
 			if (regionHandle == IntPtr.Zero) 
-				throw new ArgumentNullException ("regionHandle is a null reference ");
-
+				throw new ArgumentNullException ("regionHandle");
 		}
 #endif
-        
 	}
 }

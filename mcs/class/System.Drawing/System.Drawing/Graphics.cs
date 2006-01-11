@@ -79,6 +79,7 @@ namespace System.Drawing
 					Bitmap bmp = new Bitmap (1, 1);
 					Graphics g = Graphics.FromImage (bmp);
 					defDpiX = g.DpiX;
+					defDpiY = g.DpiY;
 				}
 				return defDpiX;
 			}
@@ -89,6 +90,7 @@ namespace System.Drawing
 				if (defDpiY == 0) {
 					Bitmap bmp = new Bitmap (1, 1);
 					Graphics g = Graphics.FromImage (bmp);
+					defDpiX = g.DpiX;
 					defDpiY = g.DpiY;
 				}
 				return defDpiY;

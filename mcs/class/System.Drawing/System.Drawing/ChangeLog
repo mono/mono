@@ -1,3 +1,11 @@
+2006-01-11  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Graphics.cs: Avoid creating bitmaps two times if both X and Y 
+	default DPI are required (i.e. init both value in both cases).
+	* Region.cs: Added null check to match MS behaviour (exception type)
+	and avoid NRE (before CheckStatus is called). Added security demands
+	for unmanaged code on both FromHrgn and ReleaseHrgn (2.0) methods.
+
 2005-12-22  Jonathan Chambers <jonathan.chambers@ansys.com>
 
         * gdipFunctions.cs: Do not call GdiplusShutdown for
