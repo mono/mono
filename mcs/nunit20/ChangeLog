@@ -1,3 +1,8 @@
+2006-01-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* nunit-console/nunit-console.exe.config.net_2_0: configuration for
+	nunit-console in the 2.0 profile.
+
 
 Wed Apr 20 18:05:41 CEST 2005 Paolo Molaro <lupus@ximian.com>
 
