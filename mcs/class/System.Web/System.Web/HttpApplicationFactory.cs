@@ -470,7 +470,7 @@ namespace System.Web {
 		}
 
 		internal static bool ContextAvailable {
-			get { return theFactory != null && theFactory.app_start_needed && theFactory.needs_init; }
+			get { return theFactory != null && !theFactory.app_start_needed; }
 		}
 	}
 }
