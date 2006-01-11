@@ -1,3 +1,8 @@
+2006-01-11  Atsushi Enomoto <atsushi@ximian.com>
+
+	* DTDObjectModel.cs : dtd2xsd fix; set use="optional" when an
+	  attribute is #IMPLIED.
+
 2006-01-06  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlWriter.cs : In WriteNode(XPathNavigator, bool), Avoid
