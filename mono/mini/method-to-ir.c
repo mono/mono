@@ -533,13 +533,16 @@ mono_print_bb (MonoBasicBlock *bb, const char *msg)
 #define NEW_LOCLOADA(cfg,dest,num) NEW_VARLOADA ((cfg), (dest), (cfg)->varinfo [locals_offset + (num)])
 
 #define NEW_RETLOADA(cfg,dest) do {	\
-        if (cfg->ret_var_is_local) NOT_IMPLEMENTED; \
-        MONO_INST_NEW ((cfg), (dest), OP_MOVE); \
-		(dest)->ssa_op = MONO_SSA_LOAD;	\
-        (dest)->type = STACK_MP; \
-		(dest)->klass = cfg->ret->klass;	\
-		(dest)->sreg1 = cfg->ret->dreg;   \
-        (dest)->dreg = alloc_dreg ((cfg), (dest)->type); \
+        if (cfg->ret_var_is_local) { \
+			NEW_VARLOADA ((cfg), (dest), (cfg)->ret); \
+        } else { \
+            MONO_INST_NEW ((cfg), (dest), OP_MOVE); \
+		    (dest)->ssa_op = MONO_SSA_LOAD;	\
+            (dest)->type = STACK_MP; \
+		    (dest)->klass = cfg->ret->klass;	\
+		    (dest)->sreg1 = cfg->ret->dreg;   \
+            (dest)->dreg = alloc_dreg ((cfg), (dest)->type); \
+        } \
 	} while (0)
 
 #define NEW_ARGLOADA(cfg,dest,num) NEW_VARLOADA ((cfg), (dest), arg_array [(num)])
@@ -876,17 +879,6 @@ mono_print_bb (MonoBasicBlock *bb, const char *msg)
 		(dest)->klass = (k);	\
 		(cfg)->flags |= MONO_CFG_HAS_LDELEMA; \
 	} while (0)
-
-#if 0
-static gint
-compare_bblock (gconstpointer a, gconstpointer b)
-{
-	const MonoBasicBlock *b1 = a;
-	const MonoBasicBlock *b2 = b;
-
-	return b2->cil_code - b1->cil_code;
-}
-#endif
 
 /* *
  * link_bblock: Links two basic blocks
@@ -7423,28 +7415,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			*sp++ = ins;
 			ip += 5;
 			break;
-#if 0
-		case CEE_LDELEM_ANY: {
-			MonoInst *load;
-			CHECK_STACK (2);
-			sp -= 2;
-			CHECK_OPSIZE (5);
-			token = read32 (ip + 1);
-			klass = mono_class_get_full (image, token, generic_context);
-			if (!klass)
-				goto load_error;
-			mono_class_init (klass);
-			NEW_LDELEMA (cfg, load, sp, klass);
-			load->cil_code = ip;
-			MONO_INST_NEW (cfg, ins, mono_type_to_ldind (&klass->byval_arg));
-			ins->cil_code = ip;
-			ins->inst_left = load;
-			*sp++ = ins;
-			type_to_eval_stack_type (&klass->byval_arg, ins);
-			ip += 5;
-			break;
-		}
-#endif
+		case CEE_LDELEM_ANY:
 		case CEE_LDELEM_I1:
 		case CEE_LDELEM_U1:
 		case CEE_LDELEM_I2:
@@ -7465,7 +7436,17 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			CHECK_STACK (2);
 			sp -= 2;
 
-			klass = array_access_to_klass (*ip);
+			if (*ip == CEE_LDELEM_ANY) {
+				CHECK_OPSIZE (5);
+				token = read32 (ip + 1);
+				klass = mono_class_get_full (image, token, generic_context);
+				if (!klass)
+					goto load_error;
+				mono_class_init (klass);
+			}
+			else
+				klass = array_access_to_klass (*ip);
+
 			size = mono_class_array_element_size (klass);
 
 			mult_reg = alloc_preg (cfg);
@@ -7481,10 +7462,16 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			dreg = alloc_dreg (cfg, stack_type);
 			NEW_LOAD_MEMBASE (cfg, ins, mono_type_to_load_membase (&klass->byval_arg), dreg, add_reg, G_STRUCT_OFFSET (MonoArray, vector));
 			ins->type = stack_type;
-			MONO_ADD_INS (cfg->cbb, ins);
+			if (ins->opcode == CEE_LDOBJ)
+				NOT_IMPLEMENTED;
+			else
+				MONO_ADD_INS (cfg->cbb, ins);
 
 			*sp++ = ins;
-			++ip;
+			if (*ip == CEE_LDELEM_ANY)
+				ip += 5;
+			else
+				++ip;
 			break;
 		}
 		case CEE_STELEM_I:
@@ -7493,13 +7480,25 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 		case CEE_STELEM_I4:
 		case CEE_STELEM_I8:
 		case CEE_STELEM_R4:
-		case CEE_STELEM_R8: {
+		case CEE_STELEM_R8:
+		case CEE_STELEM_ANY: {
 			guint32 size;
 			int mult_reg, add_reg, array_reg, index_reg, val_reg;
 
 			CHECK_STACK (3);
 			sp -= 3;
-			klass = array_access_to_klass (*ip);
+
+			if (*ip == CEE_STELEM_ANY) {
+				CHECK_OPSIZE (5);
+				token = read32 (ip + 1);
+				klass = mono_class_get_full (image, token, generic_context);
+				if (!klass)
+					goto load_error;
+				mono_class_init (klass);
+			}
+			else
+				klass = array_access_to_klass (*ip);
+
 			size = mono_class_array_element_size (klass);
 
 			/* FIXME: Add back the LDELEMA(reg,OP_ICONST) optimization */
@@ -7515,9 +7514,16 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_MUL_IMM, mult_reg, index_reg, size);
 			MONO_EMIT_NEW_BIALU (cfg, OP_PADD, add_reg, array_reg, mult_reg);
 
-			MONO_EMIT_NEW_STORE_MEMBASE (cfg, mono_type_to_store_membase (&klass->byval_arg), add_reg, G_STRUCT_OFFSET (MonoArray, vector), val_reg);
+			NEW_STORE_MEMBASE (cfg, ins, mono_type_to_store_membase (&klass->byval_arg), add_reg, G_STRUCT_OFFSET (MonoArray, vector), val_reg);
+			if (ins->opcode == CEE_STOBJ)
+				NOT_IMPLEMENTED;
+			else
+				MONO_ADD_INS (cfg->cbb, ins);
 
-			++ip;
+			if (*ip == CEE_STELEM_ANY)
+				ip += 5;
+			else
+				++ip;
 			inline_costs += 1;
 			break;
 		}
