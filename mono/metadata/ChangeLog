@@ -1,3 +1,12 @@
+2006-01-11  Ben Maurer  <bmaurer@andrew.cmu.edu>
+
+	* domain.c: Accessors for MonoJitInfo
+
+	* profiler-private.h: Add jitinfo to the end jit hook
+
+	* profiler.[ch]: Define new hooks, called after jitting which give
+	the MonoJitInfo that was compiled
+
 2006-01-10  Martin Baulig  <martin@ximian.com>
 
 	* class.c (mono_class_setup_events): Add support for generic

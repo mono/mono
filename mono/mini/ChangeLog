@@ -1,3 +1,7 @@
+2006-01-11  Ben Maurer  <bmaurer@andrew.cmu.edu>
+
+	* mini.c: pass the jitinfo to mono_profiler_method_end_jit.
+
 2006-01-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* generics.2.cs: Add ldelem/stelem_any test.
