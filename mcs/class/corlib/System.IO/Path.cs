@@ -504,15 +504,20 @@ namespace System.IO {
 		
 		static bool SameRoot (string root, string path)
 		{
-			// compare path's root with the specified root
-			int sep = root.Length - 1;
-			// but don't compare the directory separator
-			if (String.Compare (root, 0, path, 0, sep, true, CultureInfo.InvariantCulture) == 0) {
-				// as they can be different for each one
-				if (IsDsc (root[sep]) && IsDsc (path[sep]))
-					return true;
+			// compare root - if enough details are available
+			if ((root.Length < 2) || (path.Length < 2))
+				return false;
+			// same volume/drive
+			if (!root [0].Equals (path [0]))
+				return false;
+			// presence if the separator
+			if (path[1] != Path.VolumeSeparatorChar)
+				return false;
+			if ((root.Length > 2) && (path.Length > 2)) {
+				// but don't directory compare the directory separator
+				return (IsDsc (root[2]) && IsDsc (path[2]));
 			}
-			return false;
+			return true;
 		}
 
 		static string CanonicalizePath (string path)
