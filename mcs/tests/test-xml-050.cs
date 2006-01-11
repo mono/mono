@@ -1,4 +1,4 @@
-// Compiler options: -doc:xml-050.cs -warnaserror
+// Compiler options: -doc:xml-050.xml -warnaserror
 // see bug #76954.
 // NOTE: It might got broken after some /doc related merge.
 /// <summary>
