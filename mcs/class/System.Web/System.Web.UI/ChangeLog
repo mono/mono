@@ -1,3 +1,8 @@
+2006-01-11  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* ObjectStateFormatter.cs: Removed TARGET_JVM parts in 
+	TypeFormatter.Read
+
 2006-01-10  Chris Toshok  <toshok@ximian.com>
 
 	* Page.cs (ValidateCollection): in NET_2_0 if event validation is

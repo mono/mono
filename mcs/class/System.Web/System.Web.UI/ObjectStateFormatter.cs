@@ -721,10 +721,9 @@ namespace System.Web.UI {
 				} else {
 					w.Write (PrimaryId);
 					w.Write (((Type) o).FullName);
-#if !TRAGET_JVM
+
 					// We should cache the name of the assembly
 					w.Write (((Type) o).Assembly.FullName);
-#endif
 				}
 			}
 			
@@ -732,12 +731,8 @@ namespace System.Web.UI {
 			{
 				if (token == PrimaryId) {
 					string type = r.ReadString ();
-#if !TARGET_JVM
 					string assembly = r.ReadString ();
 					Type t = Assembly.Load (assembly).GetType (type);
-#else
-					Type t = Type.GetType(type);
-#endif
 					ctx.CacheItem (t);
 					return t;
 				} else {
