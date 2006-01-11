@@ -1,3 +1,7 @@
+2006-01-11 Evan Briones <evan@evanbriones.com>
+	
+	* mjs.cs: Fixed out by adding SetOption to the compiler engine.
+
 2006-01-08  Cesar Lopez Nataren  <cnataren@novell.com>
 
 	* mjs.cs: Add support for nostdlib, out, pkg and reference.

@@ -618,6 +618,7 @@ namespace Mono.JScript {
 			engine.SetOption ("link_path", link_paths);
 			engine.SetOption ("first_source", first_source);
 			engine.SetOption ("assemblies", assemblies);
+			engine.SetOption ("out", output_file);
 			engine.Compile ();
 		}
 
