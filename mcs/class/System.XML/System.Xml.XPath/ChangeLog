@@ -1,3 +1,9 @@
+2006-01-11  Atsushi Enomoto <atsushi@ximian.com>
+
+	* Iterator.cs : (DescendantOrSelfIterator/DescendantIterator) the
+	  error message is for blaming custom XPathNavigator
+	  implementation, not us ;-) (see also #77194)
+
 2006-01-06  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XPathNavigator.cs : use WriteNode(XPathNavigator, bool)
