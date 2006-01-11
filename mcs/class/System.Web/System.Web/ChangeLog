@@ -1,5 +1,9 @@
 2006-01-11  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
+	* HttpRequest.cs: removed TARGET_JVM block from MapPath
+
+2006-01-11  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
 	* HttpRequest.cs: little fix in MapPath(), virtualPath.Replace
 	return value wasnt stored.
 

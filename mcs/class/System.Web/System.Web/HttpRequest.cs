@@ -1051,15 +1051,6 @@ namespace System.Web {
 			if (worker_request == null)
 				throw new HttpException ("No HttpWorkerRequest");
 
-#if TARGET_J2EE
- 			if (baseVirtualDir.Equals(BaseVirtualDir))
- 			{
- 				string val =  System.Web.J2EE.PageMapper.GetFromMapPathCache(virtualPath);
- 				if (val != null)				
- 					return val;				
- 			}
-#endif 
-
 			if (virtualPath == null || virtualPath == "")
 				virtualPath = "";
 			else
