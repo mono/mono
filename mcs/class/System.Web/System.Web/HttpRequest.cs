@@ -1073,9 +1073,8 @@ namespace System.Web {
  			if (virtualPath.StartsWith(vmw.common.IAppDomainConfig.WAR_ROOT_SYMBOL))			
  				return 	virtualPath;			
 #endif 
-
 			if (System.IO.Path.DirectorySeparatorChar != '/')
-				virtualPath.Replace (System.IO.Path.DirectorySeparatorChar, '/');
+				virtualPath = virtualPath.Replace (System.IO.Path.DirectorySeparatorChar, '/');
 
 			if (UrlUtils.IsRooted (virtualPath))
 				virtualPath = UrlUtils.Canonic (virtualPath);
