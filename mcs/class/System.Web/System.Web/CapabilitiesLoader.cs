@@ -210,7 +210,13 @@ namespace System.Web
 					AppDomain.CurrentDomain.GetData("GH_ContextClassLoader");
 				if (cl == null)
 					return null;
-				java.io.InputStream inputStream = cl.getResourceAsStream(filename);
+
+				string custom = String.Concat("browscap/", filename);
+				
+				java.io.InputStream inputStream = cl.getResourceAsStream(custom);
+				if (inputStream == null)
+					inputStream = cl.getResourceAsStream(filename);
+
 				s = (Stream)vmw.common.IOUtils.getStream(inputStream);
 			}
 			catch (Exception e)
@@ -224,19 +230,7 @@ namespace System.Web
 		static void LoadFile (string filename)
 		{
 #if TARGET_J2EE
-			Stream s;
-			try {
-				string custom = String.Concat("browscap/", filename);
-				s = (Stream)vmw.common.IOUtils.getStreamForGHConfigs(custom);
-				if (s == null)
-					s = (Stream)vmw.common.IOUtils.getStreamForGHConfigs(filename);
-				if (s == null)
-					return;
-			}
-			catch (Exception e) {
-				return;
-			}
-			TextReader input = new StreamReader (s);
+			TextReader input = GetJavaTextReader(filename);
 			if(input == null)
 				return;
 #else

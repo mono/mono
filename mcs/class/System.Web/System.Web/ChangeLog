@@ -1,5 +1,11 @@
 2006-01-11  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
+	* HttpResponse.cs: removed TARGET_JVM block from End
+	* GetJavaTextReader: Merged TARGET_JVM block from LoadFile
+	to GetJavaTextReader
+
+2006-01-11  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
 	* HttpRequest.cs: removed TARGET_JVM block from MapPath
 
 2006-01-11  Vladimir Krasnov  <vladimirk@mainsoft.com>
