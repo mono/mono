@@ -134,7 +134,6 @@ namespace System.Xml.Schema
 		}
 
 #if NET_2_0
-		[MonoTODO]
 		// LAMESPEC: for IDREFS it returns Idref. for ENTITIES 
 		// it returns Entity. for NMTOKENS it returns NmToken.
 		[XmlIgnore]

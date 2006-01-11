@@ -448,9 +448,13 @@ namespace System.Xml.Schema
 				validatedUse = Use;
 
 #if NET_2_0
-			attributeSchemaType = attributeType as XmlSchemaSimpleType;
-			if (attributeSchemaType == null)
-				attributeSchemaType = XmlSchemaType.GetBuiltInSimpleType (((XmlSchemaDatatype) attributeType).TypeCode);
+			if (attributeType != null) {
+				attributeSchemaType = attributeType as XmlSchemaSimpleType;
+				if (attributeType == XmlSchemaSimpleType.AnySimpleType)
+					attributeSchemaType = XmlSchemaSimpleType.XsAnySimpleType;
+				if (attributeSchemaType == null)
+					attributeSchemaType = XmlSchemaType.GetBuiltInSimpleType (SchemaTypeName);
+			}
 #endif
 
 			ValidationId = schema.ValidationId;
