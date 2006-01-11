@@ -1057,22 +1057,17 @@ namespace System.Xml.XPath
 
 		public ListIterator (BaseIterator iter, IList list) : base (iter.NamespaceManager)
 		{
-			if (!(list is ICloneable))
-				throw new ArgumentException ("Target enumerator must be cloneable.");
 			_list = list;
 		}
 		
 		public ListIterator (IList list, NSResolver nsm) : base (nsm)
 		{
-			if (!(list is ICloneable))
-				throw new ArgumentException ("Target enumerator must be cloneable.");
 			_list = list;
 		}
 
 		private ListIterator (ListIterator other) : base (other)
 		{
-			ICloneable listClone = other._list as ICloneable;
-			_list = (IList) listClone.Clone ();
+			_list = other._list;
 		}
 		public override XPathNodeIterator Clone () { return new ListIterator (this); }
 
