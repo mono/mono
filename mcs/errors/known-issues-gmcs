@@ -11,7 +11,7 @@
 # csXXXX.cs NO ERROR	: error test case doesn't report any error. An exception is considered
 #			  as NO ERROR and CS5001 is automatically ignored.
 
-cs0023-3.cs
+cs0023-3.cs NO ERROR
 cs0229-2.cs
 cs0229.cs NO ERROR
 cs0231-2.cs

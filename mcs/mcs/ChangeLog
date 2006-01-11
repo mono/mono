@@ -1,5 +1,10 @@
 2006-01-11  Raja R Harinath  <rharinath@novell.com>
 
+	Fix #77180.
+	* expression.cs (Unary.Emit): When in /checked+ mode, don't emit
+	unary negation of floating point types as 0-expr; negation cannot
+	overflow in floating point types.
+
 	Fix #77204.
 	* expression.cs (MemberAccess.DoResolve): Disallow the use of '.'
 	on operands of 'void' type.

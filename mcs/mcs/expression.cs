@@ -613,7 +613,7 @@ namespace Mono.CSharp {
 				throw new Exception ("This should be caught by Resolve");
 				
 			case Operator.UnaryNegation:
-				if (ec.CheckState) {
+				if (ec.CheckState && type != TypeManager.float_type && type != TypeManager.double_type) {
 					ig.Emit (OpCodes.Ldc_I4_0);
 					if (type == TypeManager.int64_type)
 						ig.Emit (OpCodes.Conv_U8);
