@@ -40,6 +40,7 @@ System.Drawing.Printing/PrintingPermissionAttributeTest.cs
 System.Drawing.Printing/PrintingPermissionTest.cs
 System.Drawing/BitmapCas.cs
 System.Drawing/GraphicsCas.cs
+System.Drawing/RegionCas.cs
 System.Drawing.Design/CategoryNameCollectionCas.cs
 System.Drawing.Design/PaintValueEventArgsCas.cs
 System.Drawing.Design/PropertyValueUIItemCas.cs

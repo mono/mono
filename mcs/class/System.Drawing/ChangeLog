@@ -1,3 +1,8 @@
+2006-01-11  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* System.Drawing_test.dll.sources: Added CAS unit tests for Region to 
+	the build.
+
 2005-12-05 Jordi Mas i Hernandez <jordimash@gmail.com>
 
 	* MetaHeader.cs: Classes need to specify StructLayout attribute
