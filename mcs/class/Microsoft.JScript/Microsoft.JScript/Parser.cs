@@ -597,7 +597,7 @@ namespace Microsoft.JScript {
 				tt = ts.PeekToken ();
 
 				if (tt == Token.SEMI)
-					init = null;
+					init = new EmptyAST ();
 				else {
 					if (tt == Token.VAR) {
 						// set init to a var list or initial
@@ -616,7 +616,7 @@ namespace Microsoft.JScript {
 					decompiler.AddToken (Token.SEMI);
 					
 					if (ts.PeekToken () == Token.SEMI)
-						cond = null; // no loop condition
+						cond = new EmptyAST (); // no loop condition
 					else
 						cond = Expr (parent, false);
 
@@ -624,7 +624,7 @@ namespace Microsoft.JScript {
 					decompiler.AddToken (Token.SEMI);
 
 					if (ts.PeekToken () == Token.RP)
-						incr = null;
+						incr = new EmptyAST ();
 					else
 						incr = Expr (parent, false);
 				}

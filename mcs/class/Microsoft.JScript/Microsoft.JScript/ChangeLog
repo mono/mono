@@ -1,3 +1,10 @@
+2006-01-10  Cesar Lopez Nataren  <cnataren@novell.com>
+
+	* Empty.cs: Add internal type EmptyAST.
+
+	* Parser.cs: Avoid creating a ForIn object when we only have empty
+	condition, test or increment expressions in the loop.
+
 2006-01-08  Cesar Lopez Nataren  <cnataren@novell.com>
 
 	* SemanticAnalizer.cs, Import.cs: No longer use the Mono.CSharp

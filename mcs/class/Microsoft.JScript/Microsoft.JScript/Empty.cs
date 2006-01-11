@@ -4,6 +4,7 @@
 // Author: Cesar Octavio Lopez Nataren
 //
 // (C) 2003, Cesar Octavio Lopez Nataren, <cesar@ciencias.unam.mx>
+// Copyright (C) 2006 Novell Inc (http://novell.com)
 //
 
 //
@@ -32,5 +33,22 @@ namespace Microsoft.JScript {
 	public class Empty {
 
 		public static readonly Empty Value = null;
+	}
+
+	internal class EmptyAST : AST {
+
+		internal EmptyAST ()
+			: base (null, null)
+		{
+		}
+
+		internal override bool Resolve (Environment env)
+		{
+			return true;
+		}
+
+		internal override void Emit (EmitContext ec)
+		{
+		}
 	}
 }
