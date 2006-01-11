@@ -79,7 +79,13 @@ namespace Microsoft.JScript.Vsa {
 			ScriptBlock [] blocks = parser.ParseAll ();
 			if (blocks != null) {
 				SemanticAnalyser.Run (blocks, (Assembly []) GetOption ("assemblies"));
-				CodeGenerator.Run ((string) GetOption ("first_source"), blocks);
+				object outfile = GetOption ("out");
+
+				if (outfile == null)
+					CodeGenerator.Run ((string) GetOption ("first_source"), blocks);
+				else
+					CodeGenerator.Run ((string) outfile, blocks);
+
 				Console.WriteLine ("Compilation succeeded");
 			}
 			return false;

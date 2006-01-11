@@ -1,3 +1,7 @@
+2006-01-11 Evan Briones  <evan@evanbriones.com>
+	
+	* VsaEngine.cs: Fixed out compiler flag
+
 2005-10-11  Cesar Lopez Nataren  <cnataren@novell.com>
 
 	* VsaEngine.cs: Parse all the files.
