@@ -1,3 +1,7 @@
+2006-01-11  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Path.cs: Previous fix caused regression of bug #76191. Fixed (again)
+
 2006-01-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Path.cs: Fix c14n on Windows when the first separator after the root
