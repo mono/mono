@@ -1,3 +1,9 @@
+2006-01-11 Neale Ferguson <neale@sinenomine.net>
+
+	* inssel-s390x.brg: Fix reg: OP_LDADDR(OP_S390_LOADARG) register setting.
+
+	* mini-s390x.c: Remove warning messages.
+
 2006-01-11  Ben Maurer  <bmaurer@andrew.cmu.edu>
 
 	* mini.c: pass the jitinfo to mono_profiler_method_end_jit.
