@@ -1,3 +1,9 @@
+2006-01-12  Miguel de Icaza  <miguel@novell.com>
+
+	* PeerCred.cs: Do not define PeerCredData as this is a structure
+	known to the runtime.  Instead use the Mono.Posix.PeerCredData
+	internal class. 
+
 2006-01-10  Jonathan Pryor <jonpryor@vt.edu>
 
 	* Catalog.cs: Don't use

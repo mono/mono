@@ -33,15 +33,15 @@ using System.Net.Sockets;
 
 namespace Mono.Posix
 {
+	internal struct PeerCredData {
+		public int pid;
+		public int uid;
+		public int gid;
+	}
+
 	[Obsolete ("Use Mono.Unix.PeerCred")]
 	public class PeerCred
 	{
-		private struct PeerCredData {
-			public int pid;
-			public int uid;
-			public int gid;
-		}
-
 		/* Make sure this doesn't clash with anything in
 		 * SocketOptionName, and keep it synchronised with the
 		 * runtime
