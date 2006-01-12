@@ -1,3 +1,9 @@
+2006-01-11 Neale Ferguson <neale@sinenomine.net>
+
+	* inssel-s390x.brg: Fix reg: OP_LDADDR(OP_S390_LOADARG) register setting.
+
+	* mini-s390x.c: Remove warning messages.
+
 2006-01-10 Neale Ferguson <neale@sinenomine.net>
 
 	* mini-s390.c: Fix ATOMIC_ADD_I4 operation.
