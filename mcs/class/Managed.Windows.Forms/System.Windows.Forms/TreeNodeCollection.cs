@@ -115,25 +115,28 @@ namespace System.Windows.Forms {
 			// Remove it from any old parents
 			node.Remove ();
 
+			int res;
 			TreeView tree_view = null;
 			if (owner != null)
 				tree_view = owner.TreeView;
-			if (tree_view != null && tree_view.Sorted)
-				return AddSorted (node);
-
-			node.parent = owner;
-			if (count >= nodes.Length)
-				Grow ();
-			nodes [count++] = node;
+			if (tree_view != null && tree_view.Sorted) {
+				res = AddSorted (node);
+			} else {
+				node.parent = owner;
+				if (count >= nodes.Length)
+					Grow ();
+				nodes [count++] = node;
+				res = count;
+			}
 
 			if (owner != null && tree_view != null && (owner.IsExpanded || owner.IsRoot)) {
 				// XXX: Need to ensure the boxes for the nodes have been created
-				tree_view.UpdateNode (owner);
+				tree_view.UpdateBelow (owner);
 			} else if (owner != null && tree_view != null) {
-				tree_view.UpdateNodePlusMinus (owner);
+				tree_view.UpdateBelow (owner);
 			}
 
-			return count;
+			return res;
 		}
 
 		public virtual void AddRange (TreeNode [] nodes)
@@ -261,7 +264,6 @@ namespace System.Windows.Forms {
 
 		private int AddSorted (TreeNode node)
 		{
-			
 			if (count >= nodes.Length)
 				Grow ();
 

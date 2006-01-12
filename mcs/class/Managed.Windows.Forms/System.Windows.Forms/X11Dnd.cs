@@ -792,7 +792,7 @@ namespace System.Windows.Forms {
 				} else {
 					if (data == null)
 						data = new DataObject ();
-					data.SetData (drag_data.Data);
+					SetDataWithFormats (drag_data.Data);
 				}
 				return true;
 			}
@@ -807,6 +807,16 @@ namespace System.Windows.Forms {
 				match = true;
 			}
 			return match;
+		}
+
+		private void SetDataWithFormats (object value)
+		{
+			if (value is string) {
+				data.SetData (DataFormats.Text, value);
+				data.SetData (DataFormats.UnicodeText, value);
+			}
+
+			data.SetData (value);
 		}
 
 		private MimeHandler FindHandler (IntPtr atom)
@@ -955,7 +965,7 @@ namespace System.Windows.Forms {
 			XdndActionDescription = XInternAtom (display, "XdndActionDescription", false);
 			XdndActionAsk = XInternAtom (display, "XdndActionAsk", false);
 
-		foreach (MimeHandler handler in MimeHandlers) {
+			foreach (MimeHandler handler in MimeHandlers) {
 				handler.Type = XInternAtom (display, handler.Name, false);
 				handler.NonProtocol = XInternAtom (display,
 						String.Concat ("MWFNonP+", handler.Name), false);

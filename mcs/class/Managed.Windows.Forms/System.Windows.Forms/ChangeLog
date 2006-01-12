@@ -1,3 +1,11 @@
+2006-01-11  Jackson Harper  <jackson@ximian.com>
+
+	* X11Dnd.cs: Make sure to add all the text formats when adding
+	strings to the data object.
+	* TreeNodeCollection.cs: When adding to a sorted tree we need to
+	do some redrawing too.  Also change the UpdateNode to an
+	UpdateBelow so the newly added node gets painted.
+	
 2006-01-11  Miguel de Icaza  <miguel@novell.com>
 
 	* ButtonBase.cs, CheckedListBox.cs, GroupBox.cs, Label.cs,
