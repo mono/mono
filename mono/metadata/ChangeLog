@@ -1,3 +1,13 @@
+2006-01-12  Miguel de Icaza  <miguel@novell.com>
+	
+	* socket-io.c
+	(ves_icall_System_Net_Sockets_Socket_GetSocketOption_obj_internal):
+	To avoid initing the nested_classes when not needed I turned the
+	PeerCredData as a toplevel internal class, as it has to be shared
+	anyways. 
+
+ 	Fixes the CASA issue.
+ 
 2006-01-10  Martin Baulig  <martin@ximian.com>
 
 	* class.c (mono_class_setup_events): Add support for generic
