@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004-2005 Novell, Inc.
+// Copyright (c) 2004-2006 Novell, Inc.
 //
 // Authors:
 //	Peter Bartok	pbartok@novell.com
@@ -49,7 +49,6 @@ namespace System.Windows.Forms {
 		private Size		        autoscale_base_size;
 		private static Icon		default_icon;
 		internal bool			is_modal;
-		internal bool			end_modal;			// This var is being monitored by the application modal loop
 		private bool			control_box;
 		private bool			minimize_box;
 		private bool			maximize_box;
@@ -117,7 +116,6 @@ namespace System.Windows.Forms {
 			autoscale_base_size = new Size ((int)current_scale.Width, (int) current_scale.Height);
 			closing = false;
 			is_modal = false;
-			end_modal = false;
 			dialog_result = DialogResult.None;
 			start_position = FormStartPosition.WindowsDefaultLocation;
 			form_border_style = FormBorderStyle.Sizable;
@@ -309,9 +307,8 @@ namespace System.Windows.Forms {
 
 			set {
 				dialog_result = value;
-
-				if (is_modal && (dialog_result != DialogResult.None)) {
-					end_modal = true;
+				if (is_modal) {
+					closing = true;
 				}
 			}
 		}
@@ -901,6 +898,10 @@ namespace System.Windows.Forms {
 					cp.ExStyle |= (int)WindowStyles.WS_EX_LAYERED;
 				}
 
+				if (!is_enabled && context == null) {
+					cp.Style |= (int)(WindowStyles.WS_DISABLED);
+				}
+
 				return cp;
 			}
 		}
@@ -975,15 +976,8 @@ namespace System.Windows.Forms {
 		}
 
 		public void Close () {
-			CancelEventArgs args = new CancelEventArgs ();
-			OnClosing (args);
-			if (!args.Cancel) {
-				OnClosed (EventArgs.Empty);
-				DestroyHandle();
-				if (context != null) {
-					XplatUI.PostQuitMessage(0);
-				}
-				return;
+			if (!IsDisposed) {
+				XplatUI.SendMessage(this.Handle, Msg.WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
 			}
 		}
 
@@ -1013,15 +1007,27 @@ namespace System.Windows.Forms {
 			Form		previous;
 
 			if (ownerWin32 != null) {
-				this.owner = (Form)Control.FromHandle(ownerWin32.Handle);
+				owner = (Form)Control.FromHandle(ownerWin32.Handle);
+			}
+
+			if (owner == this) {
+				throw new InvalidOperationException("The 'ownerWin32' cannot be the form being shown.");
 			}
 
 			if (is_modal) {
-				return DialogResult.None;
+				throw new InvalidOperationException("The form is already displayed as a modal dialog.");
 			}
 
 			if (Visible) {
 				throw new InvalidOperationException("Already visible forms cannot be displayed as a modal dialog. Set the Visible property to 'false' prior to calling Form.ShowDialog.");
+			}
+
+			if (!Enabled) {
+				throw new InvalidOperationException("Cannot display a disabled form as modal dialog.");
+			}
+
+			if (TopLevelControl != this) {
+				throw new InvalidOperationException("Can only display TopLevel forms as modal dialog.");
 			}
 
 			#if broken
@@ -1035,17 +1041,7 @@ namespace System.Windows.Forms {
 				CreateControl();
 			}
 
-			XplatUI.SetModal(window.Handle, true);
-
-			Show();
-			PerformLayout();
-
-			is_modal = true;
-			Application.ModalRun(this);
-			is_modal = false;
-			Hide();
-
-			XplatUI.SetModal(window.Handle, false);
+			Application.RunLoop(true, new ApplicationContext(this));
 
 			if (previous != null) {
 				// Cannot use Activate(), it has a check for the current active window...
@@ -1457,9 +1453,30 @@ namespace System.Windows.Forms {
 			}
 
 			switch((Msg)m.Msg) {
-				case Msg.WM_CLOSE: {
-					Close();
+				case Msg.WM_DESTROY: {
 					base.WndProc(ref m);
+					this.closing = true;
+					return;
+				}
+
+				case Msg.WM_CLOSE_INTERNAL: {
+					DestroyHandle();
+					break;
+				}
+
+				case Msg.WM_CLOSE: {
+					if (!is_modal) {
+						CancelEventArgs args = new CancelEventArgs ();
+
+						OnClosing (args);
+						if (!args.Cancel) {
+							OnClosed (EventArgs.Empty);
+							DestroyHandle();
+						}
+						return;
+					} else {
+						closing = true;
+					}
 					return;
 				}
 

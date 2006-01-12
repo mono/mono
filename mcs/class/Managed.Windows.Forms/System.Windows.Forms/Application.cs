@@ -17,13 +17,15 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004 - 2005 Novell, Inc.
+// Copyright (c) 2004 - 2006 Novell, Inc.
 //
 // Authors:
 //	Peter Bartok	pbartok@novell.com
 //
 
 // COMPLETE
+
+#undef DebugRunLoop
 
 using Microsoft.Win32;
 using System;
@@ -40,78 +42,47 @@ using System.Threading;
 namespace System.Windows.Forms {
 	public sealed class Application {
 		private static bool			browser_embedded	= false;
-		private static bool			exiting			= false;
 		private static InputLanguage		input_language		= InputLanguage.CurrentInputLanguage;
 		private static bool			messageloop_started	= false;
 		private static string			safe_caption_format	= "{1} - {0} - {2}";
 		private static ArrayList		message_filters		= new ArrayList();
-		private static ApplicationContext	app_context		= null;
 
 		private Application () {
 		}
 
-		#region Private and Internal Methods
-		internal static void ModalRun(Form form) {
-			MSG	msg = new MSG();
-			Queue	toplevels = new Queue();
-			IEnumerator control = Control.controls.GetEnumerator();
+		#region Private Methods
+		private static void CloseForms(Thread thread) {
+			Control		c;
+			IEnumerator	control;
+			bool		all;
 
-			if (form == null) {
-				return;
+			#if DebugRunLoop
+				Console.WriteLine("   CloseForms({0}) called", thread);
+			#endif
+			if (thread == null) {
+				all = true;
+			} else {
+				all = false;
 			}
 
-			// Both calls are needed, one is for the WM, the other for our focus logic
-			XplatUI.Activate(form.window.Handle);
-			form.Activate();
+			control = Control.controls.GetEnumerator();
 
 			while (control.MoveNext()) {
-				if ((((Control)control.Current).parent == null) && (((Control)control.Current).is_visible) && (((Control)control.Current).is_enabled)) {
-					if ((control.Current is Form)  && (((Form)control.Current)!=form)) {
-						XplatUI.EnableWindow(((Control)control.Current).window.Handle, false);
-						toplevels.Enqueue((Control)control.Current);
-					}
-				}
-			}
-
-			form.CreateControl();
-
-			while (!exiting && !form.end_modal && XplatUI.GetMessage(ref msg, IntPtr.Zero, 0, 0)) {
-				if ((message_filters != null) && (message_filters.Count > 0)) {
-					Message	m;
-					bool	drop;
-
-					drop = false;
-					m = new Message();
-					m.Msg = (int)msg.message;
-					m.HWnd = msg.hwnd;
-					m.LParam = msg.lParam;
-					m.WParam = msg.wParam;
-					for (int i = 0; i < message_filters.Count; i++) {
-						if (((IMessageFilter)message_filters[i]).PreFilterMessage(ref m)) {
-							// we're dropping the message
-							drop = true;
-							break;
+				c = (Control)control.Current;
+				if (c is Form) {
+					if (all || (thread == c.creator_thread)) {
+						if (c.IsHandleCreated) {
+							XplatUI.PostMessage(c.Handle, Msg.WM_CLOSE_INTERNAL, IntPtr.Zero, IntPtr.Zero);
 						}
+						#if DebugRunLoop
+							Console.WriteLine("      Closing form {0}", c);
+						#endif
 					}
-					if (drop) {
-						continue;
-					}
-				}
-
-				XplatUI.TranslateMessage(ref msg);
-				XplatUI.DispatchMessage(ref msg);
-
-				// Handle exit, Form might have received WM_CLOSE and set 'closing' in response
-				if (form.closing) {
-					form.end_modal = true;
 				}
 			}
 
-			while (toplevels.Count>0) {
-				XplatUI.EnableWindow(((Control)toplevels.Dequeue()).window.Handle, true);
-			}
 		}
-		#endregion	// Private and Internal Methods
+		#endregion	// Private methods
 
 		#region Public Static Properties
 		public static bool AllowQuit {
@@ -275,15 +246,18 @@ namespace System.Windows.Forms {
 #endif
 
 		public static void Exit() {
-			XplatUI.PostQuitMessage(0);
+			CloseForms(null);
+
+			// FIXME - this needs to be fired when they're all closed
+			// But CloseForms uses PostMessage, so it gets fired before
+			// We need to wait on something...
+			if (ApplicationExit != null) {
+				ApplicationExit(null, EventArgs.Empty);
+			}
 		}
 
 		public static void ExitThread() {
-			exiting=true;
-		}
-
-		private static void InternalExit(object sender, EventArgs e) {
-			Application.Exit();
+			CloseForms(Thread.CurrentThread);
 		}
 
 		public static ApartmentState OleRequired() {
@@ -310,23 +284,75 @@ namespace System.Windows.Forms {
 		}
 
 		public static void Run() {
-			MSG	msg = new MSG();
-			Form	form = null;
+			RunLoop(false, new ApplicationContext());
+		}
 
-			if (app_context != null) {
-				form = app_context.MainForm;
-				form.context = app_context;
+		public static void Run(Form mainForm) {
+			RunLoop(false, new ApplicationContext(mainForm));
+		}
+
+		public static void Run(ApplicationContext context) {
+			RunLoop(false, context);
+		}
+
+		internal static void RunLoop(bool Modal, ApplicationContext context) {
+			Queue		toplevels;
+			IEnumerator	control;
+			MSG		msg;
+
+			msg = new MSG();
+
+			if (context == null) {
+				context = new ApplicationContext();
 			}
 
-			if (form != null) {
-				// Both calls are needed, one is for the WM, the other for our focus logic
-				XplatUI.Activate(form.window.Handle);
-				form.Activate();
+			if (context.MainForm != null) {
+				context.MainForm.Show();
+				// FIXME - do we need this?
+				//context.MainForm.PerformLayout();
+				context.MainForm.context = context;
+				context.MainForm.Activate();
+				context.MainForm.closing = false;
+			}
+
+			#if DebugRunLoop
+				Console.WriteLine("Entering RunLoop(Modal={0}, Form={1})", Modal, context.MainForm != null ? context.MainForm.ToString() : "NULL");
+			#endif
+
+			if (Modal) {
+				Control c;
+
+				if (context.MainForm.Modal) {
+					throw new Exception("fixme");
+				}
+				context.MainForm.is_modal = true;
+
+				toplevels = new Queue();
+				control = Control.controls.GetEnumerator();
+
+				while (control.MoveNext()) {
+
+					c = (Control)control.Current;
+					if (c is Form && (c != context.MainForm)) {
+						if (c.IsHandleCreated && XplatUI.IsEnabled(c.Handle)) {
+							#if DebugRunLoop
+								Console.WriteLine("      Disabling form {0}", c);
+							#endif
+							XplatUI.EnableWindow(c.Handle, false);
+							toplevels.Enqueue(c);
+						}
+					}
+				}
+				// FIXME - need activate?
+
+				XplatUI.SetModal(context.MainForm.Handle, true);
+			} else {
+				toplevels = null;
 			}
 
 			messageloop_started = true;
 
-			while (!exiting && XplatUI.GetMessage(ref msg, IntPtr.Zero, 0, 0)) {
+			while (XplatUI.GetMessage(ref msg, IntPtr.Zero, 0, 0)) {
 				if ((message_filters != null) && (message_filters.Count > 0)) {
 					Message	m;
 					bool	drop;
@@ -353,44 +379,62 @@ namespace System.Windows.Forms {
 				XplatUI.DispatchMessage(ref msg);
 
 				// Handle exit, Form might have received WM_CLOSE and set 'closing' in response
-				if ((form != null) && form.closing) {
-					exiting = true;
+				if ((context.MainForm != null) && context.MainForm.closing) {
+					if (!Modal) {
+						XplatUI.PostQuitMessage(0);
+					} else {
+						break;
+					}
 				}
 			}
+			#if DebugRunLoop
+				Console.WriteLine("   RunLoop loop left");
+			#endif
 
 			messageloop_started = false;
 
-			if (form != null) {
-				form.context = null;
+			if (Modal) {
+				Control c;
+
+				context.MainForm.Hide();
+				context.MainForm.is_modal = false;
+
+				while (toplevels.Count>0) {
+					#if DebugRunLoop
+						Console.WriteLine("      Re-Enabling form form {0}", toplevels.Peek());
+					#endif
+					c = (Control)toplevels.Dequeue();
+					if (c.IsHandleCreated) {
+						XplatUI.EnableWindow(c.window.Handle, true);
+					}
+				}
+				#if DebugRunLoop
+					Console.WriteLine("   Done with the re-enable");
+				#endif
+				if (context.MainForm.IsHandleCreated) {
+					XplatUI.SetModal(context.MainForm.Handle, false);
+				}
+				#if DebugRunLoop
+					Console.WriteLine("   Done with the SetModal");
+				#endif
 			}
 
-			if (ThreadExit != null) {
-				ThreadExit(null, EventArgs.Empty);
+			#if DebugRunLoop
+				Console.WriteLine("Leaving RunLoop(Modal={0}, Form={1})", Modal, context.MainForm != null ? context.MainForm.ToString() : "NULL");
+			#endif
+			if (context.MainForm != null) {
+				context.MainForm.context = null;
 			}
 
-			if (ApplicationExit != null) {
-				ApplicationExit(null, EventArgs.Empty);
-			}
+			if (!Modal) {
+				if (ThreadExit != null) {
+					ThreadExit(null, EventArgs.Empty);
+				}
 
-			if (app_context != null) {
-				app_context.ExitThread();
+				context.ExitThread();
 			}
 		}
 
-		public static void Run(Form mainForm) {
-			mainForm.CreateControl();
-			Run(new ApplicationContext(mainForm));
-		}
-
-		public static void Run(ApplicationContext context) {
-			app_context=context;
-			if (app_context.MainForm!=null) {
-				app_context.MainForm.Show();
-				app_context.MainForm.PerformLayout();
-				app_context.ThreadExit += new EventHandler(InternalExit);
-			}
-			Run();
-		}
 		#endregion	// Public Static Methods
 
 		#region Events

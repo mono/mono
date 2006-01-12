@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004-2005 Novell, Inc.
+// Copyright (c) 2004-2006 Novell, Inc.
 //
 // Authors:
 //	Peter Bartok	pbartok@novell.com
@@ -26,6 +26,10 @@
 
 // define to log API calls to stdout
 #undef DriverDebug
+#undef DriverDebugPaint
+#undef DriverDebugCreate
+#undef DriverDebugDestroy
+#undef DriverDebugState
 
 using System;
 using System.Drawing;
@@ -33,6 +37,7 @@ using System.ComponentModel;
 using System.Collections;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 /// X11 Version
 namespace System.Windows.Forms {
@@ -41,6 +46,12 @@ namespace System.Windows.Forms {
 		static XplatUIDriver		driver;
 		static String			default_class_name;
 		#endregion	// Local Variables
+
+		#region Private Methods
+		internal static string Window(IntPtr handle) {
+			return String.Format("'{0}' ({1:X})", Control.FromHandle(handle), handle.ToInt32());
+		}
+		#endregion	// Private Methods
 
 		#region Subclasses
 		public class State {
@@ -232,7 +243,7 @@ namespace System.Windows.Forms {
 		#region Public Static Methods
 		internal static void Activate(IntPtr handle) {
 			#if DriverDebug
-				Console.WriteLine("Activate({0:X}): Called", handle.ToInt32());
+				Console.WriteLine("Activate({0}): Called", Window(handle));
 			#endif
 			driver.Activate(handle);
 		}
@@ -246,7 +257,7 @@ namespace System.Windows.Forms {
 
 		internal static bool CalculateWindowRect(IntPtr handle, ref Rectangle ClientRect, int Style, int ExStyle, Menu menu, out Rectangle WindowRect) {
 			#if DriverDebug
-				Console.WriteLine("CalculateWindowRect({0:X}): Called", handle.ToInt32());
+				Console.WriteLine("CalculateWindowRect({0}): Called", Window(handle));
 			#endif
 			return driver.CalculateWindowRect(handle, ref ClientRect, Style, ExStyle, menu, out WindowRect);
 		}
@@ -266,14 +277,14 @@ namespace System.Windows.Forms {
 		}
 
 		internal static IntPtr CreateWindow(CreateParams cp) {
-			#if DriverDebug
+			#if DriverDebug || DriverDebugCreate
 				Console.WriteLine("CreateWindow(): Called");
 			#endif
 			return driver.CreateWindow(cp);
 		}
 
 		internal static IntPtr CreateWindow(IntPtr Parent, int X, int Y, int Width, int Height) {
-			#if DriverDebug
+			#if DriverDebug || DriverDebugCreate
 				Console.WriteLine("CreateWindow(): Called");
 			#endif
 			return driver.CreateWindow(Parent, X, Y, Width, Height);
@@ -281,7 +292,7 @@ namespace System.Windows.Forms {
 
 		internal static void ClientToScreen(IntPtr handle, ref int x, ref int y) {
 			#if DriverDebug
-				Console.WriteLine("ClientToScreen({0:X}, {1}, {2}): Called", handle.ToInt32(), x, y);
+				Console.WriteLine("ClientToScreen({0}, {1}, {2}): Called", Window(handle), x, y);
 			#endif
 			driver.ClientToScreen(handle, ref x, ref y);
 		}
@@ -316,7 +327,7 @@ namespace System.Windows.Forms {
 
 		internal static void ClipboardStore(IntPtr handle, object obj, int type, XplatUI.ObjectToClipboard converter) {
 			#if DriverDebug
-				Console.WriteLine("ClipboardStore({0:X}, {1}, {2}): Called", handle.ToInt32(), obj, (ClipboardFormat)type, converter);
+				Console.WriteLine("ClipboardStore({0:X}, {1}, {2}): Called", handle.ToInt32(), obj, type, converter);
 			#endif
 			driver.ClipboardStore(handle, obj, type, converter);
 		}
@@ -358,8 +369,8 @@ namespace System.Windows.Forms {
 		}
 
 		internal static void DestroyWindow(IntPtr handle) {
-			#if DriverDebug
-				Console.WriteLine("DestroyWindow({0:X}): Called", handle.ToInt32());
+			#if DriverDebug || DriverDebugDestroy
+				Console.WriteLine("DestroyWindow({0}): Called", Window(handle));
 			#endif
 			driver.DestroyWindow(handle);
 		}
@@ -374,7 +385,7 @@ namespace System.Windows.Forms {
 
 		internal static void DrawReversibleRectangle(IntPtr handle, Rectangle rect, int line_width) {
 			#if DriverDebug
-				Console.WriteLine("DrawReversibleRectangle({0:X}, {1}, {2}): Called", handle.ToInt32(), rect, line_width);
+				Console.WriteLine("DrawReversibleRectangle({0}, {1}, {2}): Called", Window(handle), rect, line_width);
 			#endif
 			driver.DrawReversibleRectangle(handle, rect, line_width);
 		}
@@ -384,8 +395,8 @@ namespace System.Windows.Forms {
 		}
 
 		internal static void EnableWindow(IntPtr handle, bool Enable) {
-			#if DriverDebug
-				Console.WriteLine("EnableWindow({0:X}, {1}): Called", handle.ToInt32(), Enable);
+			#if DriverDebug || DriverDebugState
+				Console.WriteLine("EnableWindow({0}, {1}): Called", Window(handle), Enable);
 			#endif
 			driver.EnableWindow(handle, Enable);
 		}
@@ -406,14 +417,14 @@ namespace System.Windows.Forms {
 
 		internal static void GetCursorInfo(IntPtr cursor, out int width, out int height, out int hotspot_x, out int hotspot_y) {
 			#if DriverDebug
-				Console.WriteLine("GetCursorInfo({0:X}): Called", cursor.ToInt32());
+				Console.WriteLine("GetCursorInfo({0}): Called", cursor.ToInt32());
 			#endif
 			driver.GetCursorInfo(cursor, out width, out height, out hotspot_x, out hotspot_y);
 		}
 
 		internal static void GetCursorPos(IntPtr handle, out int x, out int y) {
 			#if DriverDebug
-				Console.WriteLine("GetCursorPos({0:X}): Called", handle.ToInt32());
+				Console.WriteLine("GetCursorPos({0}): Called", Window(handle));
 			#endif
 			driver.GetCursorPos(handle, out x, out y);
 		}
@@ -434,14 +445,14 @@ namespace System.Windows.Forms {
 			
 		internal static Graphics GetMenuDC(IntPtr handle, IntPtr ncpaint_region) {
 			#if DriverDebug
-				Console.WriteLine("GetMenuDC({0:X}): Called", handle.ToInt32());
+				Console.WriteLine("GetMenuDC({0}): Called", Window(handle));
 			#endif
 			return driver.GetMenuDC(handle, ncpaint_region);
 		}
 
 		internal static Point GetMenuOrigin(IntPtr handle) {
 			#if DriverDebug
-				Console.WriteLine("GetMenuOrigin({0:X}): Called", handle.ToInt32());
+				Console.WriteLine("GetMenuOrigin({0}): Called", Window(handle));
 			#endif
 			return driver.GetMenuOrigin(handle);
 		}
@@ -450,30 +461,30 @@ namespace System.Windows.Forms {
 			return driver.GetMessage(ref msg, hWnd, wFilterMin, wFilterMax);
 		}
 
-		internal static IntPtr GetParent(IntPtr hWnd) {
+		internal static IntPtr GetParent(IntPtr handle) {
 			#if DriverDebug
-				Console.WriteLine("GetParent({0:X}): Called", hWnd.ToInt32());
+				Console.WriteLine("GetParent({0}): Called", Window(handle));
 			#endif
-			return driver.GetParent(hWnd);
+			return driver.GetParent(handle);
 		}
 
-		internal static bool GetText(IntPtr hWnd, out string text) {
+		internal static bool GetText(IntPtr handle, out string text) {
 			#if DriverDebug
-				Console.WriteLine("GetText(): Called");
+				Console.WriteLine("GetText({0}): Called", Window(handle));
 			#endif
-			return driver.GetText(hWnd, out text);
+			return driver.GetText(handle, out text);
 		}
 
 		internal static void GetWindowPos(IntPtr handle, bool is_toplevel, out int x, out int y, out int width, out int height, out int client_width, out int client_height) {
 			#if DriverDebug
-				Console.WriteLine("GetWindowPos({0:X}): Called", handle.ToInt32());
+				Console.WriteLine("GetWindowPos({0}): Called", Window(handle));
 			#endif
 			driver.GetWindowPos(handle, is_toplevel, out x, out y, out width, out height, out client_width, out client_height);
 		}
 
 		internal static FormWindowState GetWindowState(IntPtr handle) {
 			#if DriverDebug
-				Console.WriteLine("GetWindowState({0:X}): Called", handle.ToInt32());
+				Console.WriteLine("GetWindowState({0}): Called", Window(handle));
 			#endif
 			return driver.GetWindowState(handle);
 		}
@@ -487,7 +498,7 @@ namespace System.Windows.Forms {
 
 		internal static void GrabWindow(IntPtr handle, IntPtr ConfineToHwnd) {
 			#if DriverDebug
-				Console.WriteLine("GrabWindow({0:X}): Called", handle.ToInt32());
+				Console.WriteLine("GrabWindow({0}, {1}): Called", Window(handle), Window(ConfineToHwnd));
 			#endif
 			driver.GrabWindow(handle, ConfineToHwnd);
 		}
@@ -498,16 +509,23 @@ namespace System.Windows.Forms {
 
 		internal static void Invalidate(IntPtr handle, Rectangle rc, bool clear) {
 			#if DriverDebug
-				Console.WriteLine("Invalidate({0:X}, {1}, {2}): Called", handle.ToInt32(), rc, clear);
+				Console.WriteLine("Invalidate({0}, {1}, {2}): Called", Window(handle), rc, clear);
 			#endif
 			driver.Invalidate(handle, rc, clear);
 		}
 
-		internal static bool IsVisible(IntPtr hWnd) {
-			#if DriverDebug
-				Console.WriteLine("IsVisible({0:X}): Called", hWnd.ToInt32());
+		internal static bool IsEnabled(IntPtr handle) {
+			#if DriverDebug || DriverDebugState
+				Console.WriteLine("IsEnabled({0}): Called, Result={1}", Window(handle), driver.IsEnabled(handle));
 			#endif
-			return driver.IsVisible(hWnd);
+			return driver.IsEnabled(handle);
+		}
+
+		internal static bool IsVisible(IntPtr handle) {
+			#if DriverDebug || DriverDebugState
+				Console.WriteLine("IsVisible({0}): Called, Result={1}", Window(handle), driver.IsVisible(handle));
+			#endif
+			return driver.IsVisible(handle);
 		}
 
 		internal static void KillTimer (Timer timer)
@@ -520,7 +538,7 @@ namespace System.Windows.Forms {
 
 		internal static void MenuToScreen(IntPtr handle, ref int x, ref int y) {
 			#if DriverDebug
-				Console.WriteLine("MenuToScreen({0:X}, {1}, {2}): Called", handle.ToInt32(), x, y);
+				Console.WriteLine("MenuToScreen({0}, {1}, {2}): Called", Window(handle), x, y);
 			#endif
 			driver.MenuToScreen(handle, ref x, ref y);
 		}
@@ -533,15 +551,15 @@ namespace System.Windows.Forms {
 		}
 
 		internal static void PaintEventEnd(IntPtr handle, bool client) {
-			#if DriverDebug
-				Console.WriteLine("PaintEventEnd({0:X}, {1}): Called", handle.ToInt32(), client);
+			#if DriverDebug || DriverDebugPaint
+				Console.WriteLine("PaintEventEnd({0}, {1}): Called from thread {2}", Window(handle), client, Thread.CurrentThread.GetHashCode());
 			#endif
 			driver.PaintEventEnd(handle, client);
 		}
 
 		internal static PaintEventArgs PaintEventStart(IntPtr handle, bool client) {
-			#if DriverDebug
-				Console.WriteLine("PaintEventStart({0:X}, {1}): Called", handle.ToInt32(), client);
+			#if DriverDebug || DriverDebugPaint
+				Console.WriteLine("PaintEventStart({0}, {1}): Called from thread {2}", Window(handle), client, Thread.CurrentThread.GetHashCode());
 			#endif
 			return driver.PaintEventStart(handle, client);
 		}
@@ -552,7 +570,7 @@ namespace System.Windows.Forms {
 
 		internal static bool PostMessage(IntPtr hwnd, Msg message, IntPtr wParam, IntPtr lParam) {
 			#if DriverDebug
-				Console.WriteLine("PostMessage({0:X}, {1}, {2:X}, {3:X}): Called", hwnd.ToInt32(), message, wParam.ToInt32(), lParam.ToInt32());
+				Console.WriteLine("PostMessage({0}, {1}, {2:X}, {3:X}): Called", Window(hwnd), message, wParam.ToInt32(), lParam.ToInt32());
 			#endif
 			return driver.PostMessage(hwnd, message, wParam, lParam);
 		}
@@ -566,7 +584,7 @@ namespace System.Windows.Forms {
 
 		internal static void PostQuitMessage(int exitCode) {
 			#if DriverDebug
-				Console.WriteLine("ReleaseMenuDC({0:X}): Called", handle.ToInt32());
+				Console.WriteLine("PostQuitMessage({0}): Called", exitCode);
 			#endif
 			driver.PostQuitMessage(exitCode);
 		}
@@ -580,28 +598,28 @@ namespace System.Windows.Forms {
 
 		internal static void ScreenToClient(IntPtr handle, ref int x, ref int y) {
 			#if DriverDebug
-				Console.WriteLine("ScreenToClient({0:X}, {1}, {2}): Called", handle.ToInt32(), x, y);
+				Console.WriteLine("ScreenToClient({0}, {1}, {2}): Called", Window(handle), x, y);
 			#endif
 			driver.ScreenToClient (handle, ref x, ref y);
 		}
 
 		internal static void ScreenToMenu(IntPtr handle, ref int x, ref int y) {
 			#if DriverDebug
-				Console.WriteLine("ScreenToMenu({0:X}, {1}, {2}): Called", handle.ToInt32(), x, y);
+				Console.WriteLine("ScreenToMenu({0}, {1}, {2}): Called", Window(handle), x, y);
 			#endif
 			driver.ScreenToMenu(handle, ref x, ref y);
 		}
 
 		internal static void ScrollWindow(IntPtr handle, Rectangle rectangle, int XAmount, int YAmount, bool with_children) {
 			#if DriverDebug
-				Console.WriteLine("ScrollWindow({0:X}, {1}, {2}, {3}, {4}): Called", handle.ToInt32(), rectangle, XAmount, YAmount, with_children);
+				Console.WriteLine("ScrollWindow({0}, {1}, {2}, {3}, {4}): Called", Window(handle), rectangle, XAmount, YAmount, with_children);
 			#endif
 			driver.ScrollWindow(handle, rectangle, XAmount, YAmount, with_children);
 		}
 
 		internal static void ScrollWindow(IntPtr handle, int XAmount, int YAmount, bool with_children) {
 			#if DriverDebug
-				Console.WriteLine("ScrollWindow({0:X}, {2}, {3}, {4}): Called", handle.ToInt32(), XAmount, YAmount, with_children);
+				Console.WriteLine("ScrollWindow({0}, {2}, {3}, {4}): Called", Window(handle), XAmount, YAmount, with_children);
 			#endif
 			driver.ScrollWindow(handle, XAmount, YAmount, with_children);
 		}
@@ -615,7 +633,7 @@ namespace System.Windows.Forms {
 
 		internal static IntPtr SendMessage (IntPtr handle, Msg message, IntPtr wParam, IntPtr lParam) {
 			#if DriverDebug
-				Console.WriteLine("SendMessage ({0:X}, {1}, {2:X}, {3:X}): Called", handle.ToInt32(), message, wParam.ToInt32(), lParam.ToInt32());
+				Console.WriteLine("SendMessage ({0}, {1}, {2:X}, {3:X}): Called", Window(handle), message, wParam.ToInt32(), lParam.ToInt32());
 			#endif
 			return driver.SendMessage (handle, message, wParam, lParam);
 		}
@@ -637,65 +655,65 @@ namespace System.Windows.Forms {
 
 		internal static void SetBorderStyle(IntPtr handle, FormBorderStyle border_style) {
 			#if DriverDebug
-				Console.WriteLine("SetBorderStyle({0:X}, {1}): Called", handle.ToInt32(), border_style);
+				Console.WriteLine("SetBorderStyle({0}, {1}): Called", Window(handle), border_style);
 			#endif
 			driver.SetBorderStyle(handle, border_style);
 		}
 
 		internal static void SetCaretPos(IntPtr handle, int x, int y) {
 			#if DriverDebug
-				Console.WriteLine("SetCaretPos({0:X}, {1}, {2}): Called", handle.ToInt32(), x, y);
+				Console.WriteLine("SetCaretPos({0}, {1}, {2}): Called", Window(handle), x, y);
 			#endif
 			driver.SetCaretPos(handle, x, y);
 		}
 
 		internal static void SetCursor(IntPtr handle, IntPtr cursor) {
 			#if DriverDebug
-				Console.WriteLine("SetCursor({0:X}, {1:X}): Called", handle.ToInt32(), cursor.ToInt32());
+				Console.WriteLine("SetCursor({0}, {1:X}): Called", Window(handle), cursor.ToInt32());
 			#endif
 			driver.SetCursor(handle, cursor);
 		}
 
 		internal static void SetCursorPos(IntPtr handle, int x, int y) {
 			#if DriverDebug
-				Console.WriteLine("SetCursorPos({0:X}, {1}, {2}): Called", handle.ToInt32(), x, y);
+				Console.WriteLine("SetCursorPos({0}, {1}, {2}): Called", Window(handle), x, y);
 			#endif
 			driver.SetCursorPos(handle, x, y);
 		}
 
 		internal static void SetFocus(IntPtr handle) {
 			#if DriverDebug
-				Console.WriteLine("SetFocus({0:X}): Called", handle.ToInt32());
+				Console.WriteLine("SetFocus({0}): Called", Window(handle));
 			#endif
 			driver.SetFocus(handle);
 		}
 
 		internal static void SetIcon(IntPtr handle, Icon icon) {
 			#if DriverDebug
-				Console.WriteLine("SetIcon({0:X}, {1}): Called", handle.ToInt32(), icon);
+				Console.WriteLine("SetIcon({0}, {1}): Called", Window(handle), icon);
 			#endif
 			driver.SetIcon(handle, icon);
 		}
 
 		internal static void SetMenu(IntPtr handle, Menu menu) {
 			#if DriverDebug
-				Console.WriteLine("SetMenu({0:X}, {1}): Called", handle.ToInt32(), menu);
+				Console.WriteLine("SetMenu({0}, {1}): Called", Window(handle), menu);
 			#endif
 			driver.SetMenu(handle, menu);
 		}
 
 		internal static void SetModal(IntPtr handle, bool Modal) {
-			#if DriverDebug
-				Console.WriteLine("SetModal({0:X}, {1}): Called", handle.ToInt32(), Modal);
+			#if DriverDebug || DriverDebugState
+				Console.WriteLine("SetModal({0}, {1}): Called", Window(handle), Modal);
 			#endif
 			driver.SetModal(handle, Modal);
 		}
 
-		internal static IntPtr SetParent(IntPtr hWnd, IntPtr hParent) {
+		internal static IntPtr SetParent(IntPtr handle, IntPtr hParent) {
 			#if DriverDebug
-				Console.WriteLine("SetParent({0:X}, {1:X}): Called", hWnd.ToInt32(), hParent.ToInt32());
+				Console.WriteLine("SetParent({0}, {1:X}): Called", Window(handle), Window(hParent));
 			#endif
-			return driver.SetParent(hWnd, hParent);
+			return driver.SetParent(handle, hParent);
 		}
 
 		internal static void SetTimer (Timer timer)
@@ -708,35 +726,35 @@ namespace System.Windows.Forms {
 
 		internal static bool SetTopmost(IntPtr handle, IntPtr hWndOwner, bool Enabled) {
 			#if DriverDebug
-				Console.WriteLine("SetTopMost({0:X}, {1:X}, {2}): Called", handle.ToInt32(), hWndOwner.ToInt32(), Enabled);
+				Console.WriteLine("SetTopMost({0}, {1}, {2}): Called", Window(handle), Window(hWndOwner), Enabled);
 			#endif
 			return driver.SetTopmost(handle, hWndOwner, Enabled);
 		}
 
-		internal static bool SetVisible(IntPtr hWnd, bool visible) {
-			#if DriverDebug
-				Console.WriteLine("SetVisible({0:X}, {1}): Called", hWnd.ToInt32(), visible);
+		internal static bool SetVisible(IntPtr handle, bool visible) {
+			#if DriverDebug || DriverDebugState
+				Console.WriteLine("SetVisible({0}, {1}): Called", Window(handle), visible);
 			#endif
-			return driver.SetVisible(hWnd, visible);
+			return driver.SetVisible(handle, visible);
 		}
 
 		internal static void SetWindowPos(IntPtr handle, int x, int y, int width, int height) {
 			#if DriverDebug
-				Console.WriteLine("SetWindowPos({0:X}, {1}, {2}, {3}, {4}): Called", handle.ToInt32(), x, y, width, height);
+				Console.WriteLine("SetWindowPos({0}, {1}, {2}, {3}, {4}): Called", Window(handle), x, y, width, height);
 			#endif
 			driver.SetWindowPos(handle, x, y, width, height);
 		}
 
 		internal static void SetWindowState(IntPtr handle, FormWindowState state) {
-			#if DriverDebug
-				Console.WriteLine("SetWindowState({0:X} {1}): Called", handle.ToInt32(), state);
+			#if DriverDebug || DriverDebugState
+				Console.WriteLine("SetWindowState({0} {1}): Called", Window(handle), state);
 			#endif
 			driver.SetWindowState(handle, state);
 		}
 
 		internal static void SetWindowStyle(IntPtr handle, CreateParams cp) {
 			#if DriverDebug
-				Console.WriteLine("SetWindowStyle({0:X}): Called", handle.ToInt32());
+				Console.WriteLine("SetWindowStyle({0}): Called", Window(handle));
 			#endif
 			driver.SetWindowStyle(handle, cp);
 		}
@@ -744,14 +762,14 @@ namespace System.Windows.Forms {
 		internal static void SetWindowTransparency(IntPtr handle, double transparency, Color key) 
 		{
 			#if DriverDebug
-				Console.WriteLine("SetWindowTransparency({0:X}): Called", handle.ToInt32());
+				Console.WriteLine("SetWindowTransparency({0}): Called", Window(handle));
 			#endif
 			driver.SetWindowTransparency(handle, transparency, key);
 		}
 
 		internal static bool SetZOrder(IntPtr handle, IntPtr AfterhWnd, bool Top, bool Bottom) {
 			#if DriverDebug
-				Console.WriteLine("SetZOrder({0:X}, {1:X}, {2}, {3}): Called", handle.ToInt32(), AfterhWnd.ToInt32(), Top, Bottom);
+				Console.WriteLine("SetZOrder({0}, {1:X}, {2}, {3}): Called", Window(handle), Window(AfterhWnd), Top, Bottom);
 			#endif
 			return driver.SetZOrder(handle, AfterhWnd, Top, Bottom);
 		}
@@ -765,37 +783,37 @@ namespace System.Windows.Forms {
 
 		internal static DragDropEffects StartDrag(IntPtr handle, object data, DragDropEffects allowedEffects) {
 			#if DriverDebug
-			Console.WriteLine ("StartDrag({0}, {1}, {2}): Called", handle, data, allowedEffects);
+			Console.WriteLine ("StartDrag({0}, {1}, {2}): Called", Window(handle), data, allowedEffects);
 			#endif
 			return driver.StartDrag (handle, data, allowedEffects);
 		}
 
 		internal static bool SystrayAdd(IntPtr handle, string tip, Icon icon, out ToolTip tt) {
 			#if DriverDebug
-				Console.WriteLine("SystrayAdd({0:X}, {1}): Called", handle.ToInt32(), tip);
+				Console.WriteLine("SystrayAdd({0}, {1}): Called", Window(handle), tip);
 			#endif
 			return driver.SystrayAdd(handle, tip, icon, out tt);
 		}
 
 		internal static void SystrayChange(IntPtr handle, string tip, Icon icon, ref ToolTip tt) {
 			#if DriverDebug
-				Console.WriteLine("SystrayChange({0:X}, {1}): Called", handle.ToInt32(), tip);
+				Console.WriteLine("SystrayChange({0}, {1}): Called", Window(handle), tip);
 			#endif
 			driver.SystrayChange(handle, tip, icon, ref tt);
 		}
 
 		internal static void SystrayRemove(IntPtr handle, ref ToolTip tt) {
 			#if DriverDebug
-				Console.WriteLine("SystrayRemove({0:X}): Called", handle.ToInt32());
+				Console.WriteLine("SystrayRemove({0}): Called", Window(handle));
 			#endif
 			driver.SystrayRemove(handle, ref tt);
 		}
 
-		internal static bool Text(IntPtr hWnd, string text) {
+		internal static bool Text(IntPtr handle, string text) {
 			#if DriverDebug
-				Console.WriteLine("Text({0:X}, {1}): Called", hWnd.ToInt32(), text);
+				Console.WriteLine("Text({0}, {1}): Called", Window(handle), text);
 			#endif
-			return driver.Text(hWnd, text);
+			return driver.Text(handle, text);
 		}
 
 		internal static bool TranslateMessage(ref MSG msg) {
@@ -804,14 +822,14 @@ namespace System.Windows.Forms {
 
 		internal static void UngrabWindow(IntPtr handle) {
 			#if DriverDebug
-				Console.WriteLine("UngrabWindow({0:X}): Called", handle.ToInt32());
+				Console.WriteLine("UngrabWindow({0}): Called", Window(handle));
 			#endif
 			driver.UngrabWindow(handle);
 		}
 
 		internal static void UpdateWindow(IntPtr handle) {
 			#if DriverDebug
-				Console.WriteLine("UpdateWindow({0:X}): Called", handle.ToInt32());
+				Console.WriteLine("UpdateWindow({0}): Called", Window(handle));
 			#endif
 			driver.UpdateWindow(handle);
 		}

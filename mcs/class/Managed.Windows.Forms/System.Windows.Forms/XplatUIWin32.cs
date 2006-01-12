@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004 Novell, Inc.
+// Copyright (c) 2004-2006 Novell, Inc.
 //
 // Authors:
 //	Peter Bartok	pbartok@novell.com
@@ -1407,6 +1407,10 @@ namespace System.Windows.Forms {
 			return true;
 		}
 
+		internal override bool IsEnabled(IntPtr handle) {
+			return IsWindowEnabled (handle);
+		}
+		
 		internal override bool IsVisible(IntPtr handle) {
 			return IsWindowVisible (handle);
 		}
@@ -2375,6 +2379,9 @@ namespace System.Windows.Forms {
 
 		[DllImport ("gdi32.dll", EntryPoint="CreateRectRgn", CallingConvention=CallingConvention.StdCall)]
 		internal extern static IntPtr Win32CreateRectRgn(int nLeftRect, int nTopRect, int nRightRect, int nBottomRect);
+
+		[DllImport ("user32.dll", EntryPoint="IsWindowEnabled", CallingConvention=CallingConvention.StdCall)]
+		private extern static bool IsWindowEnabled(IntPtr hwnd);
 
 		[DllImport ("user32.dll", EntryPoint="IsWindowVisible", CallingConvention=CallingConvention.StdCall)]
 		private extern static bool IsWindowVisible(IntPtr hwnd);

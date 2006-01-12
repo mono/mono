@@ -1,3 +1,86 @@
+2006-01-12  Peter Dennis Bartok  <pbartok@novell.com
+
+	* XplatUI.cs:
+	  - Added more granular debug options
+	  - Added method to print both window text and id
+	  - Switched debug output to use new Window() debug method
+	  - Added IsEnabled() driver method
+	  - Added EnableWindow() driver method
+	* Form.cs:
+	  - Removed end_modal; no longer needed, new loop handles termination
+	    via 'closing' variable
+	  - If form is modal, setting DialogResult will now initiate loop
+	    termination via 'closing' variable
+	  - Added support for is_enabled/WS_DISABLED to CreateParams
+	  - Close() now just send the WM_CLOSE message; the WM_CLOSE handler
+	    does all the work
+	  - Removed code that's now in RunLoop from ShowDialog()
+	  - Added various documented sanity checks to ShowDialog()
+	  - Added handling of WM_DESTROY message; we set 'closing' on getting
+	    the message to indicate the message pump to terminate
+	  - Added handling of new internal WM_CLOSE_INTERNAL message - it's
+	    send by the Application.ExitThread method. (We send the message
+	    to destroy the window after all other events have been
+	    processed through the queue, instead of destroying the handle 
+	    directly)
+	  - Moved code from Close() method to WM_CLOSE handler; added logic
+	    to only send close-related events if the form is not displayed
+	    modal
+	* Splitter.cs (..ctor): Fixed typo in resource name
+	* Control.cs:
+	  - DrawBackgroundImage: Explicitly selecting the wrap mode for the
+	    brush now
+	  - set_Cursor: Now only setting calling into XplatUI if the handle for
+	    the control is already created; this avoids implict handle creation
+	    or crashes if it's not created
+	  - set_Enabled: Now setting the enabled state via the new driver method
+	    instead of just tracking it
+	  - CreateParams: Added logic to set WS_DISABLED based on enabled state
+	  - CreateControl: Reordered event firing and method calls to more
+	    closely fire events in the order MS does. Now setting the
+	    enabled state in the driver when creating the control.
+	  - SetVisibleCore: Moved when the OnVisibleChanged event is fired to
+	    match MS order
+	* FolderBrowserDialog.cs, MessageBox.cs, ButtonBase.cs, TrackBar.cs,
+	  MonthCalendar.cs: get_CreateParams: Added setting of WS_DISABLED 
+	* XplatUIStructs.cs: Added internal WM_CLOSE_INTERNAL mesage id
+	* Hwnd.cs:
+	  - Added tracking of window enabled state (get_Enabled/set_Enabled)
+	  - Added EnabledHwnd property to easily allow a driver to find the
+	    handle of the first enabled window in the parent chain (this is
+	    used by drivers to pass up input events of disabled windows)
+	* XplatUIDriver.cs: Added IsEnabled() method
+	* Application.cs:
+	  - Removed crude and obsolete exiting tracking variable
+	  - Removed internal ModalRun(); replaced by RunLoop()
+	  - Implemented private CloseForms() method to allow closing all 
+	    windows owned by a particular (or all) threads
+	  - Exit() now properly closes all windows without forcing the message
+	    pump to quit
+	  - Removed obsolete InternalExit() method
+	  - Changed Run() methods to use new RunLoop() message pump
+	  - Implemented new RunLoop() method for both modal and non-modal forms
+	* CommonDialog.cs:
+	  - get_CreateParams: Added setting of WS_DISABLED
+	  - Simplified ShowDialog(); now all the work is done in RunLoop(),
+	    invoked via Form.ShowDialog()
+	* NativeWindow.cs: We don't remove the window from the collection when
+	  the handle is destroyed; there might still be messages for it in the
+	  queue (mainly the resulting WM_DESTROY); instead it will be removed
+	  when Control calls InvalidateHandle in the WM_DESTROY handler
+	* XplatUIX11.cs:
+	  - CreateWindow: Added logic to handle the WS_DISABLED window style
+	  - EnableWindow: Implemented based on Hwnd.Enabled
+	  - GetMessage: Reset PostQuitState so the method can be called again
+	  - Implemented support for disabled windows (passing messages to the
+	    first enabled parent) in handling all input messages
+	  - Added optimizations for handling Expose events
+	  - Implemeted new driver method IsEnabled()
+	  - Now always resetting paint pending tracking vars when we start paint
+	  - Re-implemented UpdateWindow via just sending a WM_PAINT message
+	* XplatUIOSX.cs: Added IsEnabled method stub
+	* XplatUIWin32.cs: Implemented new IsEnabled() method
+
 2006-01-11  Jackson Harper  <jackson@ximian.com>
 
 	* ButtonBase.cs, CheckedListBox.cs, GroupBox.cs, Label.cs,

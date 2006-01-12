@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2005 Novell, Inc. (http://www.novell.com)
+// Copyright (c) 2005-2006 Novell, Inc. (http://www.novell.com)
 //
 // Authors:
 //	Peter Dennis Bartok	(pbartok@novell.com)
@@ -68,7 +68,7 @@ namespace System.Windows.Forms {
 		#region Constructors
 		static Splitter() {
 			try {
-				splitter_ns = new Cursor(typeof(Splitter), "SpliterNS.cur");
+				splitter_ns = new Cursor(typeof(Splitter), "SplitterNS.cur");
 			}
 
 			catch (System.IO.FileNotFoundException) {

@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004-2005 Novell, Inc.
+// Copyright (c) 2004-2006 Novell, Inc.
 //
 // Authors:
 //	Peter Bartok		pbartok@novell.com
@@ -39,6 +39,7 @@ using System.ComponentModel.Design.Serialization;
 using System.Collections;
 using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security;
@@ -948,7 +949,7 @@ namespace System.Windows.Forms
 
 		void DrawBackgroundImage (Graphics g)
 		{
-			using (TextureBrush b = new TextureBrush (background_image)) {
+			using (TextureBrush b = new TextureBrush (background_image, WrapMode.Tile)) {
 				g.FillRectangle (b, ClientRectangle);
 			}
 		}
@@ -1635,17 +1636,19 @@ namespace System.Windows.Forms
 
 					cursor = value;
 					
-					pt = Cursor.Position;
-					//Console.WriteLine ("{0}  {1}  {2}", bounds, pt, bounds.Contains (pt));
-					if (bounds.Contains(pt)) {
-						if (GetChildAtPoint(pt) == null) {
-							if (cursor != null) {
-								XplatUI.SetCursor(window.Handle, cursor.handle);
-							} else {
-								if (parent != null) {
-									XplatUI.SetCursor(window.Handle, parent.Cursor.handle);
+					if (IsHandleCreated) {
+						pt = Cursor.Position;
+
+						if (bounds.Contains(pt)) {
+							if (GetChildAtPoint(pt) == null) {
+								if (cursor != null) {
+									XplatUI.SetCursor(window.Handle, cursor.handle);
 								} else {
-									XplatUI.SetCursor(window.Handle, Cursors.def.handle);
+									if (parent != null) {
+										XplatUI.SetCursor(window.Handle, parent.Cursor.handle);
+									} else {
+										XplatUI.SetCursor(window.Handle, Cursors.def.handle);
+									}
 								}
 							}
 						}
@@ -1729,6 +1732,15 @@ namespace System.Windows.Forms
 					return;
 				}
 
+				if (IsHandleCreated) {
+					if (this is Form) {
+						if (((Form)this).context == null) {
+							XplatUI.EnableWindow(window.Handle, value);
+						}
+					} else {
+						XplatUI.EnableWindow(window.Handle, value);
+					}
+				}
 				is_enabled = value;
 				Refresh();
 				OnEnabledChanged (EventArgs.Empty);				
@@ -2270,6 +2282,10 @@ namespace System.Windows.Forms
 
 				if (is_visible) {
 					create_params.Style |= (int)WindowStyles.WS_VISIBLE;
+				}
+
+				if (!is_enabled) {
+					create_params.Style |= (int)WindowStyles.WS_DISABLED;
 				}
 
 				switch (border_style) {
@@ -3006,14 +3022,14 @@ namespace System.Windows.Forms
 
 			window.CreateHandle(CreateParams);
 
-			if (window.Handle!=IntPtr.Zero) {
+			if (window.Handle != IntPtr.Zero) {
 				if (!controls.Contains(window.Handle)) {
 					controls.Add(this);
 				}
 
 				creator_thread = Thread.CurrentThread;
 
-				OnHandleCreated(EventArgs.Empty);
+				XplatUI.EnableWindow(window.Handle, is_enabled);
 
 				// Set our handle with our parent
 				if ((parent != null) && (parent.IsHandleCreated)) {
@@ -3029,14 +3045,17 @@ namespace System.Windows.Forms
 						XplatUI.SetParent(children[i].Handle, window.Handle); 
 					}
 				}
+
+				// Find out where the window manager placed us
+				UpdateStyles();
+				if ((CreateParams.Style & (int)WindowStyles.WS_CHILD) != 0) {
+					XplatUI.SetBorderStyle(window.Handle, (FormBorderStyle)border_style);
+				}
+				UpdateBounds();
+
+				OnHandleCreated(EventArgs.Empty);
 			}
 
-			// Find out where the window manager placed us
-			UpdateStyles();
-			if ((CreateParams.Style & (int)WindowStyles.WS_CHILD) != 0) {
-				XplatUI.SetBorderStyle(window.Handle, (FormBorderStyle)border_style);
-			}
-			UpdateBounds();
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -3475,8 +3494,6 @@ namespace System.Windows.Forms
 					}
 				}
 
-				OnVisibleChanged(EventArgs.Empty);
-
 				if (!is_visible) {
 					if (dc_mem != null) {
 						dc_mem.Dispose();
@@ -3491,6 +3508,8 @@ namespace System.Windows.Forms
 					this.CreateBuffers(bounds.Width, bounds.Height);
 					CreateControl();
 				}
+
+				OnVisibleChanged(EventArgs.Empty);
 
 				if (value == false && parent != null) {
 					Control	container;
@@ -3598,7 +3617,7 @@ namespace System.Windows.Forms
 
 		protected virtual void WndProc(ref Message m) {
 #if debug
-			Console.WriteLine("Control received message {0}", (Msg)m.Msg);
+			Console.WriteLine("Control {0} received message {1}", window.Handle == IntPtr.Zero ? this.Text : XplatUI.Window(window.Handle), (Msg)m.Msg);
 #endif
 			if ((this.control_style & ControlStyles.EnableNotifyMessage) != 0) {
 				OnNotifyMessage(m);
@@ -3608,7 +3627,7 @@ namespace System.Windows.Forms
 				case Msg.WM_DESTROY: {
 					OnHandleDestroyed(EventArgs.Empty);
 					window.InvalidateHandle();
-					break;
+					return;
 				}
 
 				case Msg.WM_WINDOWPOSCHANGED: {

@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004 Novell, Inc. (http://www.novell.com)
+// Copyright (c) 2004-2006 Novell, Inc. (http://www.novell.com)
 //
 // Authors:
 //	Peter Bartok	(pbartok@novell.com)
@@ -55,6 +55,9 @@ namespace System.Windows.Forms {
 					cp = base.CreateParams;
 
 					cp.Style = (int)(WindowStyles.WS_POPUP | WindowStyles.WS_CAPTION | WindowStyles.WS_SYSMENU | WindowStyles.WS_CLIPCHILDREN | WindowStyles.WS_CLIPSIBLINGS);
+					if (!is_enabled) {
+						cp.Style |= (int)(WindowStyles.WS_DISABLED);
+					}
 
 					return cp;
 				}
@@ -102,39 +105,13 @@ namespace System.Windows.Forms {
 		}
 
 		public DialogResult ShowDialog(IWin32Window ownerWin32) {
-			#if broken
-			Control		owner = null;
+			DialogResult	result;
 
-			if (ownerWin32 != null) {
-				owner = Control.FromHandle(ownerWin32.Handle);
-			}
-			#endif
-
+			// Prep the dialog
 			RunDialog(form.Handle);
 
-			if (form.Visible) {
-				throw new InvalidOperationException("Already visible forms cannot be displayed as a modal dialog. Set the Visible property to 'false' prior to calling Form.ShowDialog.");
-			}
-
-			if (!form.IsHandleCreated) {
-				form.CreateControl();
-			}
-
-			#if broken
-			form.form_parent_window.Parent = owner;
-			#endif
-
-			XplatUI.SetModal(form.window.Handle, true);
-
-			form.Show();
-
-			form.end_modal = false;
-			form.is_modal = true;
-			Application.ModalRun(form);
-			form.is_modal = false;
-			form.Hide();
-
-			XplatUI.SetModal(form.window.Handle, false);
+			// Run
+			result = form.ShowDialog(ownerWin32);
 
 			return form.DialogResult;
 		}

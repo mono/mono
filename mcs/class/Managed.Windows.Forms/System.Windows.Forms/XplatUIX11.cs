@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004-2005 Novell, Inc.
+// Copyright (c) 2004-2006 Novell, Inc.
 //
 // Authors:
 //	Peter Bartok	pbartok@novell.com
@@ -928,8 +928,8 @@ namespace System.Windows.Forms {
 					timer = (Timer) TimerList[i];
 
 					if (timer.Enabled && timer.Expires <= now) {
-						timer.FireTick ();
 						timer.Update (now);
+						timer.FireTick ();
 					}
 				}
 			}
@@ -1840,6 +1840,10 @@ namespace System.Windows.Forms {
 			hwnd.height = Height;
 			hwnd.parent = Hwnd.ObjectFromHandle(cp.Parent);
 
+			if ((cp.Style & ((int)WindowStyles.WS_DISABLED)) != 0) {
+				hwnd.enabled = false;
+			}
+
 			ClientRect = hwnd.ClientRect;
 			ClientWindow = IntPtr.Zero;
 
@@ -2295,7 +2299,12 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void EnableWindow(IntPtr handle, bool Enable) {
-			// We do nothing; On X11 SetModal is used to create modal dialogs, on Win32 this function is used (see comment there)
+			Hwnd	hwnd;
+
+			hwnd = Hwnd.ObjectFromHandle(handle);
+			if (hwnd != null) {
+				hwnd.Enabled = Enable;
+			}
 		}
 
 		internal override IntPtr GetActive() {
@@ -2435,6 +2444,9 @@ namespace System.Windows.Forms {
 						return true;
 					}
 
+					// We reset ourselves so GetMessage can be called again
+					PostQuitState = false;
+
 					return false;
 				}
 			}
@@ -2536,6 +2548,14 @@ namespace System.Windows.Forms {
 					MousePosition.X = xevent.ButtonEvent.x;
 					MousePosition.Y = xevent.ButtonEvent.y;
 
+					if (!hwnd.Enabled) {
+						IntPtr dummy;
+
+						msg.hwnd = hwnd.EnabledHwnd;
+						XTranslateCoordinates(DisplayHandle, xevent.AnyEvent.window, Hwnd.ObjectFromHandle(msg.hwnd).ClientWindow, xevent.ButtonEvent.x, xevent.ButtonEvent.y, out xevent.ButtonEvent.x, out xevent.ButtonEvent.y, out dummy);
+						msg.lParam = (IntPtr)(MousePosition.Y << 16 | MousePosition.X);
+					}
+
 					if (Grab.Hwnd != IntPtr.Zero) {
 						msg.hwnd = Grab.Hwnd;
 					}
@@ -2621,6 +2641,14 @@ namespace System.Windows.Forms {
 						}
 					}
 
+					if (!hwnd.Enabled) {
+						IntPtr dummy;
+
+						msg.hwnd = hwnd.EnabledHwnd;
+						XTranslateCoordinates(DisplayHandle, xevent.AnyEvent.window, Hwnd.ObjectFromHandle(msg.hwnd).ClientWindow, xevent.ButtonEvent.x, xevent.ButtonEvent.y, out xevent.ButtonEvent.x, out xevent.ButtonEvent.y, out dummy);
+						msg.lParam = (IntPtr)(MousePosition.Y << 16 | MousePosition.X);
+					}
+
 					if (Grab.Hwnd != IntPtr.Zero) {
 						msg.hwnd = Grab.Hwnd;
 					}
@@ -2649,6 +2677,14 @@ namespace System.Windows.Forms {
 						msg.wParam = GetMousewParam(0);
 						msg.lParam = (IntPtr) (xevent.MotionEvent.y << 16 | xevent.MotionEvent.x & 0xFFFF);
 
+						if (!hwnd.Enabled) {
+							IntPtr dummy;
+
+							msg.hwnd = hwnd.EnabledHwnd;
+							XTranslateCoordinates(DisplayHandle, xevent.AnyEvent.window, Hwnd.ObjectFromHandle(msg.hwnd).ClientWindow, xevent.MotionEvent.x, xevent.MotionEvent.y, out xevent.MotionEvent.x, out xevent.MotionEvent.y, out dummy);
+							msg.lParam = (IntPtr)(MousePosition.Y << 16 | MousePosition.X);
+						}
+
 						HoverState.X = MousePosition.X = xevent.MotionEvent.x;
 						HoverState.Y = MousePosition.Y = xevent.MotionEvent.y;
 
@@ -2659,6 +2695,14 @@ namespace System.Windows.Forms {
 						#endif
 						msg.message = Msg.WM_NCMOUSEMOVE;
 						msg.lParam = (IntPtr) (xevent.MotionEvent.y << 16 | xevent.MotionEvent.x & 0xFFFF);
+
+						if (!hwnd.Enabled) {
+							IntPtr dummy;
+
+							msg.hwnd = hwnd.EnabledHwnd;
+							XTranslateCoordinates(DisplayHandle, xevent.AnyEvent.window, Hwnd.ObjectFromHandle(msg.hwnd).ClientWindow, xevent.MotionEvent.x, xevent.MotionEvent.y, out xevent.MotionEvent.x, out xevent.MotionEvent.y, out dummy);
+							msg.lParam = (IntPtr)(MousePosition.Y << 16 | MousePosition.X);
+						}
 
 						#if notyet
 							// Not sure we need this...
@@ -2674,6 +2718,9 @@ namespace System.Windows.Forms {
 				}
 
 				case XEventName.EnterNotify: {
+					if (!hwnd.Enabled) {
+						goto ProcessNextMessage;
+					}
 					if (xevent.CrossingEvent.mode != NotifyMode.NotifyNormal) {
 						goto ProcessNextMessage;
 					}
@@ -2684,6 +2731,9 @@ namespace System.Windows.Forms {
 				}
 
 				case XEventName.LeaveNotify: {
+					if (!hwnd.Enabled) {
+						goto ProcessNextMessage;
+					}
 					if (xevent.CrossingEvent.mode != NotifyMode.NotifyNormal) {
 						goto ProcessNextMessage;
 					}
@@ -2768,12 +2818,18 @@ namespace System.Windows.Forms {
 				}
 
 				case XEventName.FocusIn: {
+					if (!hwnd.Enabled) {
+						goto ProcessNextMessage;
+					}
 					msg.message=Msg.WM_SETFOCUS;
 					msg.wParam=IntPtr.Zero;
 					break;
 				}
 
 				case XEventName.FocusOut: {
+					if (!hwnd.Enabled) {
+						goto ProcessNextMessage;
+					}
 					msg.message=Msg.WM_KILLFOCUS;
 					msg.wParam=IntPtr.Zero;
 					break;
@@ -2784,7 +2840,16 @@ namespace System.Windows.Forms {
 						goto ProcessNextMessage;
 					}
 
-					if (!client) {
+
+					if (client) {
+						if (!hwnd.expose_pending) {
+							goto ProcessNextMessage;
+						}
+					} else {
+						if (!hwnd.nc_expose_pending) {
+							goto ProcessNextMessage;
+						}
+
 						switch (hwnd.border_style) {
 							case FormBorderStyle.Fixed3D: {
 								Graphics g;
@@ -3084,6 +3149,10 @@ namespace System.Windows.Forms {
 			AddExpose (xevent);
 		}
 
+		internal override bool IsEnabled(IntPtr handle) {
+			return Hwnd.ObjectFromHandle(handle).Enabled;
+		}
+		
 		internal override bool IsVisible(IntPtr handle) {
 			return Hwnd.ObjectFromHandle(handle).visible;
 		}
@@ -3129,11 +3198,13 @@ namespace System.Windows.Forms {
 				hwnd.client_dc = Graphics.FromHwnd (hwnd.client_window);
 				hwnd.client_dc.SetClip(hwnd.invalid);
 				paint_event = new PaintEventArgs(hwnd.client_dc, hwnd.invalid);
+				hwnd.expose_pending = false;
 
 				return paint_event;
 			} else {
 				hwnd.client_dc = Graphics.FromHwnd (hwnd.whole_window);
 				paint_event = new PaintEventArgs(hwnd.client_dc, new Rectangle(0, 0, hwnd.width, hwnd.height));
+				hwnd.nc_expose_pending = false;
 
 				return paint_event;
 			}
@@ -3795,11 +3866,15 @@ namespace System.Windows.Forms {
 			Hwnd	hwnd;
 
 			hwnd = Hwnd.ObjectFromHandle(handle);
-#if true
-			if (!hwnd.visible || hwnd.expose_pending) {
+
+//			if (!hwnd.visible || hwnd.expose_pending) {
+			if (!hwnd.visible || hwnd.destroy_pending) {
 				return;
 			}
 
+			SendMessage(handle, Msg.WM_PAINT, IntPtr.Zero, IntPtr.Zero);
+#if not
+#if true
 			xevent = new XEvent();
 			xevent.type = XEventName.Expose;
 			xevent.ExposeEvent.display = DisplayHandle;
@@ -3823,6 +3898,7 @@ namespace System.Windows.Forms {
 				hwnd.expose_pending = true;
 			}
 			NativeWindow.WndProc(hwnd.client_window, Msg.WM_PAINT, IntPtr.Zero, IntPtr.Zero);
+#endif
 #endif
 		}
 		#endregion	// Public Static Methods

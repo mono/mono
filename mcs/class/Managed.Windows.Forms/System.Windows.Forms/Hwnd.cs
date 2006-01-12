@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2005 Novell, Inc. (http://www.novell.com)
+// Copyright (c) 2005-2006 Novell, Inc. (http://www.novell.com)
 //
 // Authors:
 //	Peter Bartok	(pbartok@novell.com)
@@ -54,6 +54,7 @@ namespace System.Windows.Forms {
 		internal bool		allow_drop;
 		internal Hwnd		parent;
 		internal bool		visible;
+		internal bool		enabled;
 		internal bool		zero_sized;
 		internal Rectangle	invalid;
 		internal bool		expose_pending;
@@ -86,6 +87,7 @@ namespace System.Windows.Forms {
 			expose_pending = false;
 			destroy_pending = false;
 			nc_expose_pending = false;
+			enabled = true;
 			reparented = false;
 			client_rectangle = Rectangle.Empty;
 			marshal_free_list = new ArrayList(2);
@@ -334,6 +336,34 @@ namespace System.Windows.Forms {
 
 			set {
 				reparented = value;
+			}
+		}
+
+		public bool Enabled {
+			get {
+				if (!enabled) {
+					return false;
+				}
+
+				if (parent != null) {
+					return parent.Enabled;
+				}
+
+				return true;
+			}
+
+			set {
+				enabled = value;
+			}
+		}
+
+		public IntPtr EnabledHwnd {
+			get {
+				if (Enabled || parent == null) {
+					return Handle;
+				}
+
+				return parent.EnabledHwnd;
 			}
 		}
 

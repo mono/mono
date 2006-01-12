@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004 Novell, Inc.
+// Copyright (c) 2004-2006 Novell, Inc.
 //
 // Authors:
 //	Geoff Norton  <gnorton@customerdna.com>
@@ -1294,6 +1294,10 @@ namespace System.Windows.Forms {
 				hwnd.AddInvalidArea (0, 0, hwnd.ClientRect.Width, hwnd.ClientRect.Height);
 				hwnd.expose_pending = true;
 			}
+		}
+		
+		internal override bool IsEnabled(IntPtr handle) {
+			return Hwnd.ObjectFromHandle(handle).Enabled;
 		}
 		
 		internal override bool IsVisible(IntPtr handle) {

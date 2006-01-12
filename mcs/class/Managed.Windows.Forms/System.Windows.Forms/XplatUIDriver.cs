@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004-2005 Novell, Inc.
+// Copyright (c) 2004-2006 Novell, Inc.
 //
 // Authors:
 //	Peter Bartok		pbartok@novell.com
@@ -141,6 +141,7 @@ namespace System.Windows.Forms {
 		internal abstract bool Text(IntPtr handle, string text);
 		internal abstract bool SetVisible(IntPtr handle, bool visible);
 		internal abstract bool IsVisible(IntPtr handle);
+		internal abstract bool IsEnabled(IntPtr handle);
 		internal abstract IntPtr SetParent(IntPtr handle, IntPtr parent);
 		internal abstract IntPtr GetParent(IntPtr handle);
 

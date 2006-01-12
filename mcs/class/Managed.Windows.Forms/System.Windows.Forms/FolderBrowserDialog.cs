@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2005 Novell, Inc. (http://www.novell.com)
+// Copyright (c) 2005-2006 Novell, Inc. (http://www.novell.com)
 //
 // Authors:
 //	Alexander Olk (xenomorph2@onlinehome.de)
@@ -166,6 +166,10 @@ namespace System.Windows.Forms
 					cp = base.CreateParams;
 					cp.Style = (int)( WindowStyles.WS_POPUP | WindowStyles.WS_CAPTION | WindowStyles.WS_SYSMENU | WindowStyles.WS_CLIPCHILDREN | WindowStyles.WS_CLIPSIBLINGS );
 					cp.Style |= (int)WindowStyles.WS_OVERLAPPEDWINDOW;
+
+					if (!is_enabled) {
+						cp.Style |= (int)(WindowStyles.WS_DISABLED);
+					}
 					
 					return cp;
 				}

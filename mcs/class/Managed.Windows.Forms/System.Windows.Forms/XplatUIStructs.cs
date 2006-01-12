@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004 Novell, Inc.
+// Copyright (c) 2004-2006 Novell, Inc.
 //
 // Authors:
 //	Peter Bartok	pbartok@novell.com
@@ -334,7 +334,8 @@ namespace System.Windows.Forms {
 		WM_MOUSE_ENTER            = 0x0401,
 		WM_MOUSE_LEAVE            = 0x0402,
 		WM_ASYNC_MESSAGE          = 0x0403,
-		WM_REFLECT                = WM_USER + 0x1c00
+		WM_REFLECT                = WM_USER + 0x1c00,
+		WM_CLOSE_INTERNAL	  = WM_USER + 0x1c01
 	}
 
 #if notdef
