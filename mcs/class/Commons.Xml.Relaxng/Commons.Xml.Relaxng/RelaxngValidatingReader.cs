@@ -680,7 +680,7 @@ int nStartAttDeriv = 0;
 			if (m != null)
 				return m;
 
-			m = p.TextDeriv (String.Empty, null);
+			m = p.EmptyTextDeriv (this);
 			emptyText [p] = m;
 			return m;
 		}

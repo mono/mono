@@ -326,6 +326,11 @@ namespace Commons.Xml.Relaxng.Derivative
 			return RdpNotAllowed.Instance;
 		}
 
+		internal virtual RdpPattern EmptyTextDeriv (MemoizationStore memo)
+		{
+			return TextDeriv (String.Empty, null);
+		}
+
 		internal virtual RdpPattern TextOnlyDeriv ()
 		{
 			return this;
@@ -632,6 +637,11 @@ namespace Commons.Xml.Relaxng.Derivative
 			return this;
 		}
 
+		internal override RdpPattern EmptyTextDeriv (MemoizationStore memo)
+		{
+			return this;
+		}
+
 		internal override RdpPattern MixedTextDeriv ()
 		{
 			return this;
@@ -853,6 +863,12 @@ namespace Commons.Xml.Relaxng.Derivative
 			return LValue.TextDeriv (s, reader).Choice (RValue.TextDeriv (s, reader));
 		}
 
+		internal override RdpPattern EmptyTextDeriv (MemoizationStore memo)
+		{
+			return memo.EmptyTextDeriv (LValue)
+				.Choice (memo.EmptyTextDeriv (RValue));
+		}
+
 		internal override RdpPattern TextOnlyDeriv ()
 		{
 			return LValue.TextOnlyDeriv ().Choice (
@@ -1013,6 +1029,12 @@ namespace Commons.Xml.Relaxng.Derivative
 				.Choice (LValue.Interleave (RValue.TextDeriv (s, reader)));
 		}
 
+		internal override RdpPattern EmptyTextDeriv (MemoizationStore memo)
+		{
+			return memo.EmptyTextDeriv (LValue).Interleave (RValue)
+				.Choice (LValue.Interleave (memo.EmptyTextDeriv (RValue)));
+		}
+
 		internal override RdpPattern TextOnlyDeriv ()
 		{
 			return LValue.TextOnlyDeriv ().Interleave (
@@ -1164,6 +1186,13 @@ namespace Commons.Xml.Relaxng.Derivative
 			RdpPattern p = LValue.TextDeriv (s, reader).Group (RValue);
 			return LValue.Nullable ?
 				p.Choice (RValue.TextDeriv (s, reader)) : p;
+		}
+
+		internal override RdpPattern EmptyTextDeriv (MemoizationStore memo)
+		{
+			RdpPattern p = memo.EmptyTextDeriv (LValue).Group (RValue);
+			return LValue.Nullable ?
+				p.Choice (memo.EmptyTextDeriv (RValue)) : p;
 		}
 
 		internal override RdpPattern TextOnlyDeriv ()
@@ -1369,6 +1398,11 @@ namespace Commons.Xml.Relaxng.Derivative
 			return Child.TextDeriv (s, reader).Group (this.Choice (RdpEmpty.Instance));
 		}
 
+		internal virtual RdpPattern EmptyTextDeriv (MemoizationStore memo)
+		{
+			return memo.EmptyTextDeriv (Child).Group (this.Choice (RdpEmpty.Instance));
+		}
+
 		internal override RdpPattern TextOnlyDeriv ()
 		{
 			return Child.TextOnlyDeriv ().OneOrMore ();
@@ -1517,6 +1551,11 @@ namespace Commons.Xml.Relaxng.Derivative
 				return RdpEmpty.Instance;
 			else
 				return RdpNotAllowed.Instance;
+		}
+
+		internal virtual RdpPattern EmptyTextDeriv (MemoizationStore memo)
+		{
+			return RdpEmpty.Instance;
 		}
 
 		internal override void CheckConstraints (bool attribute, bool oneOrMore, bool oneOrMoreGroup, bool oneOrMoreInterleave, bool list, bool dataExcept)
@@ -2007,6 +2046,11 @@ namespace Commons.Xml.Relaxng.Derivative
 		public override RdpPattern TextDeriv (string s, XmlReader reader)
 		{
 			return LValue.TextDeriv (s, reader).After (RValue);
+		}
+
+		internal override RdpPattern EmptyTextDeriv (MemoizationStore memo)
+		{
+			return memo.EmptyTextDeriv (LValue).After (RValue);
 		}
 
 		internal override RdpPattern TextOnlyDeriv ()

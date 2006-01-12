@@ -1,3 +1,8 @@
+2006-01-12  Atsushi Enomoto <atsushi@ximian.com>
+
+	* RelaxngValidatingReader.cs : Use RdpPattern.EmptyTextDeriv(). It
+	  significantly improves performance wrt empty text nodes.
+
 2006-01-10  Atsushi Enomoto <atsushi@ximian.com>
 
 	* RelaxngValidatingReader.cs :
