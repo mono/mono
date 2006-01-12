@@ -797,7 +797,7 @@ openElements [openElementCount - 1]).IndentingOverriden;
 			string formatPrefix = "";
 
 			if (ns != String.Empty && prefix != "xmlns") {
-				string existingPrefix = namespaceManager.LookupPrefix (ns, false);
+				string existingPrefix = GetExistingPrefix (ns);
 
 				if (existingPrefix == null || existingPrefix == "") {
 					bool createPrefix = false;
@@ -850,6 +850,15 @@ openElements [openElementCount - 1]).IndentingOverriden;
 				savedAttributePrefix = (prefix == "xmlns") ? localName : String.Empty;
 				savingAttributeValue = String.Empty;
 			}
+		}
+
+		string GetExistingPrefix (string ns)
+		{
+			if (newAttributeNamespaces.ContainsValue (ns))
+				foreach (DictionaryEntry de in newAttributeNamespaces)
+					if (de.Value as string == ns)
+						return (string) de.Key;
+			return namespaceManager.LookupPrefix (ns, false);
 		}
 
 		private string CheckNewPrefix (bool createPrefix, string prefix, string ns)

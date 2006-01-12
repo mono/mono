@@ -1,5 +1,11 @@
 2006-01-12  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlTextWriter.cs : Do not local duplicate of automatically-created
+	  prefixes (i.e. check local autocreated prefixes other than
+	  namespaces from ancestors). Fixed bug #77086 and #77087.
+
+2006-01-12  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlWriter.cs : use XmlChar.IsNmToken() to check argument and throw
 	  ArgumentException in WriteNmTokenInternal().
 
