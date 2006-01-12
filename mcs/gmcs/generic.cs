@@ -874,8 +874,6 @@ namespace Mono.CSharp {
 
 			ArrayList members = new ArrayList ();
 
-			GenericConstraints gc = (GenericConstraints) constraints;
-
 			if (gc.HasClassConstraint) {
 				MemberList list = TypeManager.FindMembers (
 					gc.ClassConstraint, mt, bf, filter, criteria);
@@ -923,6 +921,12 @@ namespace Mono.CSharp {
 			}
 			sb.Append ('>');
 			return sb.ToString ();
+		}
+
+		public void InflateConstraints (Type declaring)
+		{
+			if (constraints != null)
+				gc = new InflatedConstraints (constraints, declaring);
 		}
 
 		protected class InflatedConstraints : GenericConstraints
