@@ -44,6 +44,7 @@ namespace System.Windows.Forms
 	{
 		private FlatStyle flat_style;
 		private Rectangle display_rectangle = new Rectangle ();
+		private bool use_compatible_text_rendering = Application.use_compatible_text_rendering;
 
 		#region Events
 		[Browsable(false)]

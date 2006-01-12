@@ -229,16 +229,16 @@ namespace System.Windows.Forms {
 			XplatUI.EnableThemes();
 		}
 
-#if NET_2_0
-		public static void EnableRTLMirroring () 
-		{
-		}
-
 		//
 		// If true, it uses GDI+, performance reasons were quoted
 		//
 		static internal bool use_compatible_text_rendering = true;
 		
+#if NET_2_0
+		public static void EnableRTLMirroring () 
+		{
+		}
+
 		public static void SetCompatibleTextRenderingDefault (bool defaultValue)
 		{
 			use_compatible_text_rendering = defaultValue;

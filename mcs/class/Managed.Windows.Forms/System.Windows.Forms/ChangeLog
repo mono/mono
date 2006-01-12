@@ -1,3 +1,13 @@
+2006-01-12  Miguel de Icaza  <miguel@novell.com>
+
+	Revert's Jackson's revert which broke 2.0 builds.   Fix both
+	builds. 
+	
+	* Application.cs: Move the use_compatible_text_rendering outside
+	the NET_2_0 define.  If we ever need to use the
+	use_compatible_text_rendering on the individual controls they will
+	access the variable from the common shared code paths.
+
 2006-01-12  Peter Dennis Bartok  <pbartok@novell.com
 
 	* XplatUI.cs:
