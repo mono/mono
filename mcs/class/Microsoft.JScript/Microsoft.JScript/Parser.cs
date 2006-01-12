@@ -770,8 +770,7 @@ namespace Microsoft.JScript {
 				pn = Statements (parent);
 				MustMatchToken (Token.RC, "msg.no.brace.block");
 			} else if (tt == Token.ERROR || tt == Token.EOL || tt == Token.SEMI) {
-				// FIXME:
-				pn = null;
+ 				pn = new EmptyAST ();
 				skip_semi = true;
 			} else if (tt == Token.FUNCTION) {
 				pn = Function (parent, FunctionType.ExpressionStatement);
