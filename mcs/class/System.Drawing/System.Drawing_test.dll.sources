@@ -24,6 +24,8 @@ System.Drawing/TestImageConverter.cs
 System.Drawing/TestImageFormatConverter.cs
 System.Drawing/TestIconConverter.cs
 System.Drawing/TestIcon.cs
+System.Drawing.Drawing2D/GraphicsPathTest.cs
+System.Drawing.Drawing2D/PathDataTest.cs
 System.Drawing.Drawing2D/TestBlend.cs
 System.Drawing.Drawing2D/TestColorBlend.cs
 System.Drawing.Drawing2D/TestHatchBrush.cs
