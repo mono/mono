@@ -615,7 +615,8 @@ namespace Mono.ILASM {
 			builder.Append (RetType.FullName);
 			builder.Append (" ");
                         builder.Append (name);
-			builder.AppendFormat ("`{0}", gen_param_count);
+                        if (gen_param_count > 0)
+                                builder.AppendFormat ("`{0}", gen_param_count);
                         builder.Append ('(');
 
                         if (param_list != null) {
@@ -707,7 +708,8 @@ namespace Mono.ILASM {
 			builder.Append (RetType.FullName);
 			builder.Append (" ");
                         builder.Append (name);
-                        builder.AppendFormat ("`{0}", gen_param_count);
+                        if (gen_param_count > 0)
+                                builder.AppendFormat ("`{0}", gen_param_count);
                         builder.Append ('(');
 
                         if (param_list != null) {

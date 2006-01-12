@@ -1,3 +1,8 @@
+2006-01-12  Ankit Jain  <jankit@novell.com>
+
+	* MethodDef.cs (MethodDef.CreateSignature): Use "`n" only for generic
+	methods.
+
 2006-01-11  Ankit Jain  <jankit@novell.com>
 
 	* InstrTable.cs (inst_table): Uncomment stelem and ldelem .
