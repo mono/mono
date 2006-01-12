@@ -1,3 +1,7 @@
+2006-1-12  Jonathan Chambers  <jonathan.chambers@ansys.com>
+
+	* System.Windows.Forms.dll.sources: Added printing items and *committed* file this time.
+
 2006-1-10  Jonathan Chambers  <jonathan.chambers@ansys.com>
 
 	* System.Windows.Forms.dll.sources: Add PrintPreviewDialog and PrintPreviewControl
