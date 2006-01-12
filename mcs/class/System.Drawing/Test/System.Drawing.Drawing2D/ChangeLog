@@ -1,3 +1,9 @@
+2006-01-12  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* GraphicsPathTest.cs: New. Basic test cases for empty path and 
+	cloning.
+	* PathDataTest.cs: New. Test cases for PathData.
+
 2005-09-16  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TestBlend.cs, TestColorBlend.cs, TestHatchBrush.cs, TestMatrix.cs:
