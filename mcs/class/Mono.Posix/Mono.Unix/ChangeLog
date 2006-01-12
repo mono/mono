@@ -1,3 +1,7 @@
+2006-01-12  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* UnixPath.cs: Add ReadLink() and TryReadLink() methods.
+
 2006-01-12  Miguel de Icaza  <miguel@novell.com>
 
 	* PeerCred.cs: Do not define PeerCredData as this is a structure
