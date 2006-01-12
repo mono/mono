@@ -1,3 +1,12 @@
+2006-01-12  Martin Baulig  <martin@ximian.com>
+
+	* icall.c (ves_icall_MonoGenericClass_GetInterfaces): Inflate the
+	interfaces on-the-fly; fixes #76625.
+
+	* class-internals.h
+	(MonoDynamicGenericClass): Removed `ifaces' and `count_ifaces'; we
+	don't need that anymore.
+
 2006-01-12  Miguel de Icaza  <miguel@novell.com>
 
 	* socket-io.c
