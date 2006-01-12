@@ -4579,7 +4579,7 @@ namespace Mono.CSharp {
 						if (candidate_overrides == null)
 							candidate_overrides = new ArrayList ();
 						candidate_overrides.Add (m);
-						m = TypeManager.GetOverride (m);
+						m = TypeManager.TryGetBaseDefinition (m);
 					}
 					if (m != null)
 						methods [j++] = m;
@@ -4925,8 +4925,13 @@ namespace Mono.CSharp {
 			return true;
 		}
 
+		private bool resolved = false;
 		public override Expression DoResolve (EmitContext ec)
 		{
+			if (resolved)
+				return this.method == null ? null : this;
+
+			resolved = true;
 			//
 			// First, resolve the expression that is used to
 			// trigger the invocation
@@ -4962,7 +4967,7 @@ namespace Mono.CSharp {
 			}
 
 			MethodGroupExpr mg = (MethodGroupExpr) expr;
-			method = OverloadResolve (ec, mg, Arguments, false, loc);
+			MethodBase method = OverloadResolve (ec, mg, Arguments, false, loc);
 
 			if (method == null)
 				return null;
@@ -5019,6 +5024,7 @@ namespace Mono.CSharp {
 				mg.InstanceExpression.CheckMarshallByRefAccess (ec.ContainerType);
 
 			eclass = ExprClass.Value;
+			this.method = method;
 			return this;
 		}
 
