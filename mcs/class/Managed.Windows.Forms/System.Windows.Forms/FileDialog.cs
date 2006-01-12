@@ -1743,8 +1743,15 @@ namespace System.Windows.Forms
 		
 		private int filterIndex;
 		
+		private ToolTip toolTip;
+		private int oldItemIndexForToolTip = -1;
+		
 		public MWFFileView( )
 		{
+			toolTip = new ToolTip ();
+			toolTip.InitialDelay = 300;
+			toolTip.ReshowDelay = 0; 
+			
 			SmallImageList = MimeIconEngine.SmallIcons;
 			LargeImageList = MimeIconEngine.LargeIcons;
 			
@@ -1953,7 +1960,7 @@ namespace System.Windows.Forms
 
 			if (fileHashtable.ContainsKey (fileName)) {
 				int i = 1;
-				while(fileHashtable.ContainsKey (fileName + i)) {
+				while(fileHashtable.ContainsKey (fileName + "[" + i + "]")) {
 					i++;
 				}
 				fileName += "[" + i + "]";
@@ -2143,6 +2150,30 @@ namespace System.Windows.Forms
 			}
 			
 			base.OnSelectedIndexChanged( e );
+		}
+		
+		protected override void OnMouseMove (MouseEventArgs e)
+		{
+			ListViewItem item = GetItemAt (e.X, e.Y);
+			
+			if (item != null) {
+				int currentItemIndex = item.Index;
+				
+				if (currentItemIndex != oldItemIndexForToolTip) {
+					oldItemIndexForToolTip = currentItemIndex;
+					
+					if (toolTip != null && toolTip.Active)
+						toolTip.Active = false;
+					
+					FileStruct fileStruct = (FileStruct)fileHashtable [item.Text];
+					
+					toolTip.SetToolTip (this, String.Format ("File: \n {0}", fileStruct.fullname));	
+					
+					toolTip.Active = true;
+				}
+			}
+			
+			base.OnMouseMove (e);
 		}
 		
 		public event EventHandler SelectedFileChanged

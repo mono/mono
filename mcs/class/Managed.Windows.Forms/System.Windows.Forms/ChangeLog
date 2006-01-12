@@ -1,3 +1,12 @@
+2006-01-12  Alexander Olk  <alex.olk@googlemail.com>
+
+	* FileDialog.cs: Added ToolTip for MWFFileView
+	* MimeIcon.cs: Rewrote GnomeHandler.
+	  - Get currently used gnome icon theme from
+	    ($HOME)/.gconf/%gconf-tree.xml
+	  - Make use of inherited icon themes
+	  - Support SVG icon themes like Tango via librsvg
+
 2006-01-12  Miguel de Icaza  <miguel@novell.com>
 
 	Revert's Jackson's revert which broke 2.0 builds.   Fix both

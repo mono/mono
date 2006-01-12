@@ -49,6 +49,7 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Text;
 using System.Runtime.InteropServices;
+using System.Xml;
 
 namespace System.Windows.Forms
 {
@@ -73,8 +74,6 @@ namespace System.Windows.Forms
 	{
 		public static ImageList SmallIcons = new ImageList();
 		public static ImageList LargeIcons = new ImageList();
-		
-		private static PlatformMimeIconHandler platformMimeHandler = null;
 		
 		private static EPlatformHandler platform = EPlatformHandler.Default;
 		
@@ -124,6 +123,8 @@ namespace System.Windows.Forms
 				session = "";
 			
 			//Console.WriteLine( "Desktop session is: " + session ); 
+			
+			PlatformMimeIconHandler platformMimeHandler = null;
 			
 			if ( session == "KDE" )
 			{
@@ -272,10 +273,9 @@ namespace System.Windows.Forms
 			
 			added_icons.Add( name );
 			
-			Image image = SVGUtil.GetSVGasImage (fullname, 24, 24);
+			Image image = SVGUtil.GetSVGasImage (fullname, 48, 48);
 			
 			int index = SmallIcons.Images.Add( image, Color.Transparent );
-			image = SVGUtil.GetSVGasImage (fullname, 48, 48);
 			LargeIcons.Images.Add( image, Color.Transparent );
 			
 			AddMimeTypeIconIndexHash( name, index );
@@ -435,7 +435,6 @@ namespace System.Windows.Forms
 			// check if the theme is svg only
 			// if true, use theme "default.kde"
 			// don't know if that is available in every linux distribution
-			// MWF has no svg support yet (cairo's libsvg!?!)
 			if ( SVGOnly( ) )
 				icon_theme = "default.kde";
 			else
@@ -677,110 +676,277 @@ namespace System.Windows.Forms
 		}
 	}
 	
-	// GnomeHandler uses the default gnome icon theme (many others are svg only)
 	internal class GnomeHandler : PlatformMimeIconHandler
 	{
+		string full_gnome_gconf_tree = Environment.GetFolderPath( Environment.SpecialFolder.Personal )
+		+ "/"
+		+ ".gconf/%gconf-tree.xml";
+		
+		bool is_svg_icon_theme = false;
+		
+		string main_icon_theme_path;
+		
+		StringCollection inherits_path_collection = new StringCollection ();
+		
 		public override MimeExtensionHandlerStatus Start( )
 		{
-			if ( !CheckPlatformDirectories( ) )
-				return mimeExtensionHandlerStatus;
+			icon_theme = String.Empty;
 			
-			CreateMimeTypeFromIconName( );
+			GetIconThemeFromGConf ();
 			
-			ReadIcons( );
+			if (!GetIconPaths ())
+				return MimeExtensionHandlerStatus.NO_ICONS;
+			
+			if (!GetMainIconThemePath ())
+				return MimeExtensionHandlerStatus.NO_ICONS;
+			
+			GetIconThemeInherits ();
+			
+			CreateUIIcons ();
+			
+			CreateMimeTypeIcons( );
+			
+			inherits_path_collection = null;
+			icon_paths = null;
 			
 			return MimeExtensionHandlerStatus.OK;
 		}
 		
-		protected override bool CheckPlatformDirectories( )
+		private bool GetIconThemeFromGConf ()
 		{
-			// add more directories ???
-			if ( Directory.Exists( "/opt/gnome/share/icons/gnome/48x48" ) )
-			{
-				icon_paths.Add( "/opt/gnome/share/icons/gnome/48x48/" );
-			}
-			else
-			if ( Directory.Exists( "/usr/share/icons/gnome/48x48" ) )
-			{
-				icon_paths.Add( "/usr/share/icons/gnome/48x48/" );
-			}
-			else
-			if ( Directory.Exists( "/usr/local/share/icons/gnome/48x48" ) )
-			{
-				icon_paths.Add( "/usr/local/share/icons/gnome/48x48/" );
-			}
-			else
-			{
-				mimeExtensionHandlerStatus = MimeExtensionHandlerStatus.NO_ICONS;
+			if (!File.Exists (full_gnome_gconf_tree))
+				return false;
+			
+			try {
+				bool found_icon_theme_in_xml = false;
+				
+				XmlTextReader xtr = new XmlTextReader (full_gnome_gconf_tree);
+				
+				while (xtr.Read ()) {
+					if (xtr.NodeType == XmlNodeType.Element && xtr.Name.ToUpper () == "ENTRY" && xtr.GetAttribute ("name") == "icon_theme") {
+						found_icon_theme_in_xml = true;
+					} else
+					if (xtr.NodeType == XmlNodeType.Element && xtr.Name.ToUpper () == "STRINGVALUE" && found_icon_theme_in_xml) {
+						xtr.Read ();
+						icon_theme = xtr.Value;
+						break;
+					}
+				}
+				xtr.Close ();
+				
+				if (icon_theme != String.Empty)
+					return true;
+				else {
+					icon_theme = "gnome";
+					return false;
+				}
+			} catch ( Exception e ) {
 				return false;
 			}
+		}
+		
+		private bool GetIconPaths () 
+		{
+			string global_icon_path = "";
+			
+			if (Directory.Exists ("/opt/gnome/share/icons"))
+				global_icon_path = "/opt/gnome/share/icons";
+			else
+			if (Directory.Exists ("/usr/share/icons"))
+				global_icon_path = "/usr/share/icons";
+			else
+			if (Directory.Exists ("/usr/local/share/icons"))
+				global_icon_path = "/usr/local/share/icons";
+			
+			if (global_icon_path.Length > 0)
+				icon_paths.Add (global_icon_path);
+			
+			if (Directory.Exists (Environment.GetFolderPath (Environment.SpecialFolder.Personal) + "/.icons"))
+				icon_paths.Add (Environment.GetFolderPath (Environment.SpecialFolder.Personal) + "/.icons");
+			
+			if (icon_paths.Count == 0)
+				return false;
 			
 			return true;
 		}
 		
-		private void CreateMimeTypeFromIconName( )
+		private bool GetMainIconThemePath ()
 		{
-			MimeIconEngine.AddMimeTypeAndIconName( "inode/directory", "gnome-fs-directory" );
-			MimeIconEngine.AddMimeTypeAndIconName( "unknown/unknown", "gnome-fs-regular" );
-			MimeIconEngine.AddMimeTypeAndIconName( "desktop/desktop", "gnome-fs-desktop" );
-			MimeIconEngine.AddMimeTypeAndIconName( "directory/home", "gnome-fs-home" );
-			MimeIconEngine.AddMimeTypeAndIconName( "network/network", "gnome-fs-network" );
-			MimeIconEngine.AddMimeTypeAndIconName( "recently/recently", "gnome-fs-directory-accept" );
-			MimeIconEngine.AddMimeTypeAndIconName( "workplace/workplace", "gnome-fs-client" );
+			foreach (string path in icon_paths) {
+				if (Directory.Exists (path + "/" + icon_theme)) {
+					main_icon_theme_path = path + "/" + icon_theme;
+					return true;
+				}
+			}
 			
-			foreach ( string ip in icon_paths )
-			{
-				string[] files = Directory.GetFiles( ip + "mimetypes" );
+			return false;
+		}
+		
+		private void GetIconThemeInherits ()
+		{
+			inherits_path_collection.Add (main_icon_theme_path);
+			GetIndexThemeInherits (main_icon_theme_path + "/" + "index.theme");
+		}
+		
+		private void GetIndexThemeInherits (string filename)
+		{
+			StringCollection tmp_inherits = new StringCollection ();
+			
+			try {
+				StreamReader sr = new StreamReader (filename);
 				
-				foreach ( string file in files )
-				{
-					string extension = Path.GetExtension( file );
-					
-					if ( extension != ".png" )
-						continue;
-					
-					string file_name = Path.GetFileNameWithoutExtension( file );
-					
-					if ( !file_name.StartsWith( "gnome-mime-" ) )
-						continue;
-					
-					StringBuilder mime_type = new StringBuilder( file_name.Replace( "gnome-mime-", "" ) );
-					
-					for ( int i = 0; i < mime_type.Length; i++ )
-						if ( mime_type[ i ] == '-' )
-						{
-							mime_type[ i ] = '/';
+				string line = sr.ReadLine ();
+				
+				while (line != null) {
+					if (line.IndexOf ("Inherits=") != -1) {
+						line = line.Trim ();
+						line = line.Replace ("Inherits=", "");
+						
+						line = line.Trim ();
+						
+						string[] split = line.Split (new char [] { ',' });
+						
+						tmp_inherits.AddRange (split);
+						break;
+					}
+					line = sr.ReadLine ();
+				}
+				
+				sr.Close ();
+			} catch (Exception e) {
+				
+			}
+			
+			if (tmp_inherits.Count > 0) {
+				foreach (string icon_theme in tmp_inherits) {
+					foreach (string path in icon_paths) {
+						if (Directory.Exists (path + "/" + icon_theme)) {
+							if (!inherits_path_collection.Contains (path + "/" + icon_theme))
+								inherits_path_collection.Add (path + "/" + icon_theme);
+							if (File.Exists (path + "/" + icon_theme + "/" + "index.theme"))
+								GetIndexThemeInherits (path + "/" + icon_theme + "/" + "index.theme");
 							break;
 						}
-					
-					MimeIconEngine.AddMimeTypeAndIconName( mime_type.ToString( ), file_name );
+					}
 				}
 			}
 		}
 		
-		private void ReadIcons( )
+		private void CreateUIIcons ()
 		{
-			foreach ( string icon_path in icon_paths )
-			{
-				string[] directories = Directory.GetDirectories( icon_path );
+			string resolv_path = ResolvePath (main_icon_theme_path);
+			
+			string[] dirs = Directory.GetDirectories (resolv_path);
+			
+			Hashtable name_mime_hash = new Hashtable ();
+			
+			name_mime_hash ["gnome-fs-directory"] = "inode/directory";
+			name_mime_hash ["gnome-fs-regular"] = "unknown/unknown";
+			name_mime_hash ["gnome-fs-desktop"] = "desktop/desktop";
+			name_mime_hash ["gnome-fs-home"] = "directory/home";
+			name_mime_hash ["gnome-fs-network"] = "network/network";
+			name_mime_hash ["gnome-fs-directory-accept"] = "recently/recently";
+			name_mime_hash ["gnome-fs-client"] = "workplace/workplace";
+			
+			if (!CheckAndAddUIIcons (dirs, name_mime_hash)) {
+				//could be a kde icon theme, so we check kde icon names also
+				name_mime_hash.Clear ();
+				name_mime_hash ["folder"] = "inode/directory";
+				name_mime_hash ["unknown"] = "unknown/unknown";
+				name_mime_hash ["desktop"] = "desktop/desktop";
+				name_mime_hash ["folder_home"] = "directory/home";
+				name_mime_hash ["network"] = "network/network";
+				name_mime_hash ["folder_man"] = "recently/recently";
+				name_mime_hash ["system"] = "workplace/workplace";
 				
-				foreach ( string directory in directories )
-				{
-					DirectoryInfo di = new DirectoryInfo( directory );
-					
-					FileInfo[] fileinfo = di.GetFiles( );
-					
-					foreach ( FileInfo fi in fileinfo )
-					{
-						if ( fi.Extension != ".png" )
-							continue;
-						
-						string name = Path.GetFileNameWithoutExtension( fi.Name );
-						
-						MimeIconEngine.AddIcon( name, fi.FullName );
+				CheckAndAddUIIcons (dirs, name_mime_hash);
+			}
+		}
+		
+		private bool CheckAndAddUIIcons (string[] dirs, Hashtable name_mime_hash)
+		{
+			string extension = is_svg_icon_theme ? "svg" : "png";
+			int counter = 0;
+			
+			foreach (string place in dirs) {
+				foreach (DictionaryEntry entry in name_mime_hash) {
+					string key = (string)entry.Key;
+					if (File.Exists (place + "/" + key + "." + extension)) {
+						string value = (string)entry.Value;
+						MimeIconEngine.AddMimeTypeAndIconName (value, key);
+						if (!is_svg_icon_theme)
+							MimeIconEngine.AddIcon (key, place + "/" + key + "." + extension);
+						else
+							MimeIconEngine.AddSVGIcon (key, place + "/" + key + "." + extension);
+						counter++;
+						if (counter == name_mime_hash.Count)
+							return true;
 					}
 				}
 			}
+			
+			return false;
+		}
+		
+		private void CreateMimeTypeIcons ()
+		{
+			foreach (string ip in inherits_path_collection) {
+				string path_to_use = ResolvePath (ip);
+				
+				if (path_to_use == String.Empty)
+					continue;
+				
+				if (!Directory.Exists (path_to_use + "mimetypes"))
+				    continue;
+				
+				string[] files = Directory.GetFiles (path_to_use + "mimetypes");
+				
+				foreach (string file in files) {
+					string extension = Path.GetExtension (file);
+					
+					if (!is_svg_icon_theme) {
+						if (extension != ".png")
+							continue;
+					} else
+					if (extension != ".svg")
+						continue;
+					
+					string file_name = Path.GetFileNameWithoutExtension (file);
+					
+					if (!file_name.StartsWith ("gnome-mime-"))
+						continue;
+					
+					StringBuilder mime_type = new StringBuilder (file_name.Replace ("gnome-mime-", ""));
+					
+					for (int i = 0; i < mime_type.Length; i++)
+						if (mime_type [i] == '-') {
+							mime_type [i] = '/';
+							break;
+						}
+					
+					MimeIconEngine.AddMimeTypeAndIconName (mime_type.ToString (), file_name);
+					
+					if (!is_svg_icon_theme)
+						MimeIconEngine.AddIcon (file_name, file);
+					else
+						MimeIconEngine.AddSVGIcon (file_name, file);
+				}
+			}
+		}
+		
+		private string ResolvePath (string path)
+		{
+			if (Directory.Exists (path + "/48x48")) {
+				is_svg_icon_theme = false;
+				return path + "/48x48/";
+			}
+			
+			if (Directory.Exists (path + "/scalable")) {
+				is_svg_icon_theme = true;
+				return path + "/scalable/";
+			}
+			
+			return String.Empty;
 		}
 	}
 	
