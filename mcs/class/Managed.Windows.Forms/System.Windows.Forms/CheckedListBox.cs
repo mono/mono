@@ -41,6 +41,7 @@ namespace System.Windows.Forms
 		private CheckedItemCollection checked_items;
 		private bool check_onclick;
 		private bool three_dcheckboxes;
+		private bool use_compatible_text_rendering = Application.use_compatible_text_rendering;
 		
 		public CheckedListBox ()
 		{
@@ -667,6 +668,19 @@ namespace System.Windows.Forms
 			}
 			#endregion Private Methods
 		}
+#if NET_2_0
+
+		public bool UseCompatibleTextRendering {
+			get {
+				return use_compatible_text_rendering;
+			}
+
+			set {
+				use_compatible_text_rendering = value;
+			}
+		}
+#endif
+
 	}
 }
 

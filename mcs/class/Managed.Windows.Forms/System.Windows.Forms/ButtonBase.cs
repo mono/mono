@@ -44,6 +44,8 @@ namespace System.Windows.Forms {
 		internal bool			is_pressed;
 		internal bool			enter_state;
 		internal StringFormat		text_format;
+		private bool use_compatible_text_rendering = Application.use_compatible_text_rendering;
+		
 		#endregion	// Local Variables
 
 		#region ButtonBaseAccessibleObject sub-class
@@ -542,5 +544,18 @@ namespace System.Windows.Forms {
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler ImeModeChanged;
 		#endregion	// Events
+
+#if NET_2_0
+
+		public bool UseCompatibleTextRendering {
+			get {
+				return use_compatible_text_rendering;
+			}
+
+			set {
+				use_compatible_text_rendering = value;
+			}
+		}
+#endif
 	}
 }

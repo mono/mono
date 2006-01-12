@@ -79,7 +79,7 @@ namespace System.Windows.Forms
 		private MenuItem reset_menuitem;
 		private MenuItem description_menuitem;
 		private object current_property_value;
-
+		private bool use_compatible_text_rendering = Application.use_compatible_text_rendering;
 
 		#endregion	// Private Members
 
@@ -1053,5 +1053,17 @@ namespace System.Windows.Forms
 			e.Graphics.FillRectangle(ThemeEngine.Current.ResPool.GetSolidBrush(help_panel.BackColor), help_panel.ClientRectangle );
 			e.Graphics.DrawRectangle(SystemPens.ControlDark, 0,0,help_panel.Width-1,help_panel.Height-1 );
 		}
+#if NET_2_0
+
+		public bool UseCompatibleTextRendering {
+			get {
+				return use_compatible_text_rendering;
+			}
+
+			set {
+				use_compatible_text_rendering = value;
+			}
+		}
+#endif
 	}
 }

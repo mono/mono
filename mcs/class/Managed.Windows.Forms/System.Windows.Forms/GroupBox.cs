@@ -44,6 +44,7 @@ namespace System.Windows.Forms
 	{
 		private FlatStyle flat_style;
 		private Rectangle display_rectangle = new Rectangle ();
+		private bool use_compatible_text_rendering = Application.use_compatible_text_rendering;
 
 		#region Events
 		[Browsable(false)]
@@ -205,5 +206,17 @@ namespace System.Windows.Forms
 		}
 				
 		#endregion Public Methods
+#if NET_2_0
+
+		public bool UseCompatibleTextRendering {
+			get {
+				return use_compatible_text_rendering;
+			}
+
+			set {
+				use_compatible_text_rendering = value;
+			}
+		}
+#endif
 	}
 }

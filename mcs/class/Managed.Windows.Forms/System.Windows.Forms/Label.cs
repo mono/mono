@@ -51,7 +51,8 @@ namespace System.Windows.Forms
     		private ImageList image_list;
 		internal ContentAlignment image_align;
 		internal StringFormat string_format;
-    		internal ContentAlignment text_align;    		
+    		internal ContentAlignment text_align;
+		private bool use_compatible_text_rendering = Application.use_compatible_text_rendering;
     		static SizeF req_witdthsize = new SizeF (0,0);
 
     		#region Events
@@ -613,6 +614,18 @@ namespace System.Windows.Forms
     		}
 
 		#endregion Private Methods
+#if NET_2_0
+
+		public bool UseCompatibleTextRendering {
+			get {
+				return use_compatible_text_rendering;
+			}
+
+			set {
+				use_compatible_text_rendering = value;
+			}
+		}
+#endif
 
 	}
 }

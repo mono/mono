@@ -1,3 +1,11 @@
+2006-01-11  Miguel de Icaza  <miguel@novell.com>
+
+	* ButtonBase.cs, CheckedListBox.cs, GroupBox.cs, Label.cs,
+	LinkLabel.cs, PropertyGrid.cs: Implement the
+	UseCompatibleTextRendering property for 2.x
+
+	* Application.cs (SetCompatibleTextRenderingDefault): Add. 
+
 2006-01-11  Jackson Harper  <jackson@ximian.com>
 
 	* TreeView.cs: Use the property for setting the selected node so

@@ -262,6 +262,16 @@ namespace System.Windows.Forms {
 		public static void EnableRTLMirroring () 
 		{
 		}
+
+		//
+		// If true, it uses GDI+, performance reasons were quoted
+		//
+		static internal bool use_compatible_text_rendering = true;
+		
+		public static void SetCompatibleTextRenderingDefault (bool defaultValue)
+		{
+			use_compatible_text_rendering = defaultValue;
+		}
 #endif
 
 		public static void Exit() {
