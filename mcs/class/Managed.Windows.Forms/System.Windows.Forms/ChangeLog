@@ -3,6 +3,8 @@
 	* ButtonBase.cs, CheckedListBox.cs, GroupBox.cs, Label.cs,
 	LinkLabel.cs, PropertyGrid.cs: Unbreak 1.1 build. Consolidate the
 	variables a little.
+	* ColorDialog.cs: Clear out the old form before adding the new
+	panel.	
 
 2006-01-11  Jackson Harper  <jackson@ximian.com>
 

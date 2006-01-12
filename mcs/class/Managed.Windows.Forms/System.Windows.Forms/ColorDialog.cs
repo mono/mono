@@ -201,6 +201,8 @@ namespace System.Windows.Forms
 		protected override bool RunDialog( IntPtr hwndOwner )
 		{
 			colorDialogPanel = new ColorDialogPanel (this);
+
+			form.Controls.Clear ();
 			form.Controls.Add( colorDialogPanel );
 			
 			if ( customColors != null )
