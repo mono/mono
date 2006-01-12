@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004-2005 Novell, Inc.
+// Copyright (c) 2004-2006 Novell, Inc.
 //
 // Authors:
 //	Jordi Mas i Hernandez	(jordi@ximian.com)
@@ -118,6 +118,9 @@ namespace System.Windows.Forms
 					cp = base.CreateParams;
 
 					cp.Style = (int)(WindowStyles.WS_DLGFRAME | WindowStyles.WS_POPUP | WindowStyles.WS_CLIPCHILDREN | WindowStyles.WS_CLIPSIBLINGS | WindowStyles.WS_CAPTION);
+					if (!is_enabled) {
+						cp.Style |= (int)(WindowStyles.WS_DISABLED);
+					}
 
 					return cp;
 				}

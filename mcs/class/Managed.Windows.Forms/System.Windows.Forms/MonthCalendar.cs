@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004 Novell, Inc.
+// Copyright (c) 2004-2006 Novell, Inc.
 //
 // Authors:
 //	John BouAntoun	jba-mono@optusnet.com.au
@@ -705,6 +705,10 @@ namespace System.Windows.Forms {
 					CreateParams cp = base.CreateParams;					
 					cp.Style = unchecked ((int)(WindowStyles.WS_POPUP | WindowStyles.WS_VISIBLE | WindowStyles.WS_CLIPSIBLINGS | WindowStyles.WS_CLIPCHILDREN));
 					cp.ExStyle |= (int)(WindowStyles.WS_EX_TOOLWINDOW | WindowStyles.WS_EX_TOPMOST);
+
+					if (!is_enabled) {
+						cp.Style |= (int)(WindowStyles.WS_DISABLED);
+					}
 					return cp;
 				}
 			}

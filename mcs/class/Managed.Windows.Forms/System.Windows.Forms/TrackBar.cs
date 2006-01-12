@@ -21,7 +21,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 //
-// Copyright (c) 2004-2005 Novell, Inc.
+// Copyright (c) 2004-2006 Novell, Inc.
 //
 // Authors:
 //	Jordi Mas i Hernandez, jordi@ximian.com
@@ -175,6 +175,10 @@ namespace System.Windows.Forms
 				createParams.Style = (int) (
 					WindowStyles.WS_CHILD |
 					WindowStyles.WS_VISIBLE);
+
+				if (!is_enabled) {
+					createParams.Style |= (int)(WindowStyles.WS_DISABLED);
+				}
 
 				return createParams;
 			}
