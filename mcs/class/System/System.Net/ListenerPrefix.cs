@@ -3,6 +3,7 @@
 //
 // Author:
 //	Gonzalo Paniagua Javier (gonzalo@novell.com)
+//	Oleg Mihailik (mihailik gmail co_m)
 //
 // Copyright (c) 2005 Novell, Inc. (http://www.novell.com)
 //
