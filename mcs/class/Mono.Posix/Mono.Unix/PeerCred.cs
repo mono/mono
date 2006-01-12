@@ -35,25 +35,20 @@ namespace Mono.Unix
 {
 	public class PeerCred
 	{
-		private struct PeerCredData {
-			public int pid;
-			public int uid;
-			public int gid;
-		}
-
 		/* Make sure this doesn't clash with anything in
 		 * SocketOptionName, and keep it synchronised with the
 		 * runtime
 		 */
 		private const int so_peercred=10001;
-		private PeerCredData data;
+		private Mono.Posix.PeerCredData data;
 		
 		public PeerCred (Socket sock) {
 			if (sock.AddressFamily != AddressFamily.Unix) {
 				throw new ArgumentException ("Only Unix sockets are supported", "sock");
 			}
 
-			data = (PeerCredData)sock.GetSocketOption (SocketOptionLevel.Socket, (SocketOptionName)so_peercred);
+			data = (Mono.Posix.PeerCredData)
+				sock.GetSocketOption (SocketOptionLevel.Socket, (SocketOptionName)so_peercred);
 		}
 		
 		public int ProcessID {
