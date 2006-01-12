@@ -1,3 +1,15 @@
+2006-01-12  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile: Revert my '2006-01-10' commit.  Prefer the more
+	generic fix to build/executable.make.
+	(DISTFILES): Distribute nunit-console.exe.config.net_2_0.
+	* nunit-console.exe.net_2_0.config: Delete.
+
+2006-01-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* nunit-console.exe.config.net_2_0: configuration for
+	nunit-console in the 2.0 profile.
+
 2006-01-10  Raja R Harinath  <rharinath@novell.com>
 
 	This should fix #76928.  This fix incorporates ideas from a patch
