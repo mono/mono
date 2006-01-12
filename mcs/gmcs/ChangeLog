@@ -1,3 +1,11 @@
+2006-01-12  Miguel de Icaza  <miguel@novell.com>
+
+	* cs-tokenizer.cs (Position): New class used to save and restore
+	the position state in the tokenizer.  Before this patch the save
+	and restore was not complete enough so the line and columns would
+	start to drift and the debugger and stack traces will get the
+	wrong data.
+
 2006-01-10  Martin Baulig  <martin@ximian.com>
 
 	* generic.cs

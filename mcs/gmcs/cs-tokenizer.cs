@@ -255,6 +255,55 @@ namespace Mono.CSharp
 			}
 		}
 
+		//
+		// This is used when the tokenizer needs to save
+		// the current position as it needs to do some parsing
+		// on its own to deamiguate a token in behalf of the
+		// parser.
+		//
+		Stack position_stack = new Stack ();
+		class Position {
+			public int position;
+			public int ref_line;
+			public int col;
+			public int putback_char;
+			public int previous_col;
+			public int parsing_generic_less_than;
+			
+			public Position (Tokenizer t)
+			{
+				position = t.reader.Position;
+				ref_line = t.ref_line;
+				col = t.col;
+				putback_char = t.putback_char;
+				previous_col = t.previous_col;
+				parsing_generic_less_than = t.parsing_generic_less_than;
+			}
+		}
+		
+		public void PushPosition ()
+		{
+			position_stack.Push (new Position (this));
+		}
+
+		public void PopPosition ()
+		{
+			Position p = (Position) position_stack.Pop ();
+
+			reader.Position = p.position;
+			ref_line = p.ref_line;
+			col = p.col;
+			putback_char = p.putback_char;
+			previous_col = p.previous_col;
+
+		}
+
+		// Do not reset the position, ignore it.
+		public void DiscardPosition ()
+		{
+			position_stack.Pop ();
+		}
+		
 		static void AddKeyword (string kw, int token) {
 			keywordStrings.Add (kw, kw);
 			if (keywords [kw.Length] == null) {
@@ -568,16 +617,9 @@ namespace Mono.CSharp
 
 				--deambiguate_close_parens;
 
-				// Save current position and parse next token.
-				int old = reader.Position;
-				int old_ref_line = ref_line;
-				int old_col = col;
-
+				PushPosition ();
 				int new_token = token ();
-				reader.Position = old;
-				ref_line = old_ref_line;
-				col = old_col;
-				putback_char = -1;
+				PopPosition ();
 
 				if (new_token == Token.OPEN_PARENS)
 					return Token.CLOSE_PARENS_OPEN_PARENS;
@@ -605,22 +647,21 @@ namespace Mono.CSharp
 				if (parsing_generic_less_than++ > 0)
 					return Token.OP_GENERICS_LT;
 
-				int old = reader.Position;
 				if (handle_typeof) {
 					int dimension;
+					PushPosition ();
 					if (parse_generic_dimension (out dimension)) {
 						val = dimension;
+						DiscardPosition ();
 						return Token.GENERIC_DIMENSION;
 					}
-					reader.Position = old;
-					putback_char = -1;
+					PopPosition ();
 				}
 
 				// Save current position and parse next token.
-				old = reader.Position;
+				PushPosition ();
 				bool is_generic_lt = parse_less_than ();
-				reader.Position = old;
-				putback_char = -1;
+				PopPosition ();
 
 				if (is_generic_lt) {
 					parsing_generic_less_than++;
@@ -1252,8 +1293,7 @@ namespace Mono.CSharp
 			if (putback_char != -1) {
 				x = putback_char;
 				putback_char = -1;
-			}
-			else
+			} else
 				x = reader.Read ();
 			if (x == '\n') {
 				line++;
@@ -2015,12 +2055,7 @@ namespace Mono.CSharp
 
 			if (res == Token.PARTIAL) {
 				// Save current position and parse next token.
-				int old = reader.Position;
-				int old_putback = putback_char;
-				int old_ref_line = ref_line;
-				int old_col = col;
-
-				putback_char = -1;
+				PushPosition ();
 
 				int next_token = token ();
 				bool ok = (next_token == Token.CLASS) ||
@@ -2028,10 +2063,7 @@ namespace Mono.CSharp
 					(next_token == Token.INTERFACE) ||
 					(next_token == Token.ENUM); // "partial" is a keyword in 'partial enum', even though it's not valid
 
-				reader.Position = old;
-				ref_line = old_ref_line;
-				col = old_col;
-				putback_char = old_putback;
+				PopPosition ();
 
 				if (ok)
 					return res;
