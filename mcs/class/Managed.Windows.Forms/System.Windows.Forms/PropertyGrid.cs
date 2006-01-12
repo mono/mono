@@ -79,7 +79,6 @@ namespace System.Windows.Forms
 		private MenuItem reset_menuitem;
 		private MenuItem description_menuitem;
 		private object current_property_value;
-		private bool use_compatible_text_rendering = Application.use_compatible_text_rendering;
 
 		#endregion	// Private Members
 

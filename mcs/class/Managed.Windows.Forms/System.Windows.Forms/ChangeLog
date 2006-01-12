@@ -1,3 +1,37 @@
+2006-01-12  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* XplatUI.cs:
+	  - Added StartLoop() driver method. This is used to allow drivers to
+	    prepare for an upcoming GetMessage/TranslateMessage/DispatchMessage
+	    loop for a particular thread
+	  - Added EndLoop() driver method. This is called once the message
+	    pump for the thread is shut down
+	  - Added SupportsTransparency method to allow the driver to indicate
+	    opacity support for windows
+	* Form.cs:
+	  - Removed TODO attribute, completed AllowTransparency property
+	  - Added documented logic to Opacity
+	* GroupBox.cs, Label.cs, LinkLabel.cs, PropertyGrid.cs, Control.cs,
+	  ButtonBase.cs, CheckedListBox.cs: Combined Jackson's and Miguel's
+	  versions of CompatibleTextRendering
+	* X11Structs.cs: Added opacity atom to our atom enumeration
+	* Hwnd.cs: Added opacity tracking (we need to track since the opacity
+	  of a form might be set before it's reparented by the WM, and we need
+	  the opacity value without calling up to Form)
+	* XplatUIDriver.cs: Added StartLoop(), EndLoop() and 
+	  SupportsTransparency() driver methods
+	* Application.cs: Now calling StartLoop and EndLoop driver methods
+	* XplatUIX11.cs:
+	  - Added opacity atom registration
+	  - Added StartLoop()/EndLoop() methods. They're empty right now but
+	    will need to get implemented when we switch to a per-thread queue
+	  - Implemented SupportsTransparency() method
+	  - Implemented SetWindowTransparency() method
+	  - Added support for setting the opacity value when a window is
+	    reparented (since the opacity needs to be set on the WM frame)
+	* XplatUIOSX.cs, XplatUIWin32.cs:
+	  - Added SupportsTransparency(), StartLoop() and EndLoop() methods
+
 2006-01-12  Alexander Olk  <alex.olk@googlemail.com>
 
 	* ThemeClearlooks.cs: Don't crash if TabControl.Parent is null.
@@ -21,7 +55,7 @@
 	use_compatible_text_rendering on the individual controls they will
 	access the variable from the common shared code paths.
 
-2006-01-12  Peter Dennis Bartok  <pbartok@novell.com
+2006-01-12  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* XplatUI.cs:
 	  - Added more granular debug options

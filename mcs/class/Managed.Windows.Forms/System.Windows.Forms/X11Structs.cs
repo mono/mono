@@ -1395,6 +1395,8 @@ namespace System.Windows.Forms {
 		_NET_WM_STATE_MODAL,
 		_NET_WM_CONTEXT_HELP,
 
+		_NET_WM_WINDOW_OPACITY,
+
 		CLIPBOARD,
 		DIB,
 		OEMTEXT,

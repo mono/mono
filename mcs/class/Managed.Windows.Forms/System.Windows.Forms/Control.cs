@@ -120,6 +120,10 @@ namespace System.Windows.Forms
 
 		private ControlBindingsCollection data_bindings;
 
+#if NET_2_0
+		internal bool			use_compatible_text_rendering;
+#endif
+
 		#endregion	// Local Variables
 
 		#region Private Classes
@@ -682,6 +686,10 @@ namespace System.Windows.Forms
 			dist_right = 0;
 			dist_top = 0;
 			dist_bottom = 0;
+
+#if NET_2_0
+			use_compatible_text_rendering = Application.use_compatible_text_rendering;
+#endif
 
 			control_style = ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint | 
 					ControlStyles.Selectable | ControlStyles.StandardClick | 

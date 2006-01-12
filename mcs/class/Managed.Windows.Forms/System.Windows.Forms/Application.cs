@@ -229,16 +229,16 @@ namespace System.Windows.Forms {
 			XplatUI.EnableThemes();
 		}
 
-		//
-		// If true, it uses GDI+, performance reasons were quoted
-		//
-		static internal bool use_compatible_text_rendering = true;
-		
 #if NET_2_0
 		public static void EnableRTLMirroring () 
 		{
 		}
 
+		//
+		// If true, it uses GDI+, performance reasons were quoted
+		//
+		static internal bool use_compatible_text_rendering = true;
+		
 		public static void SetCompatibleTextRenderingDefault (bool defaultValue)
 		{
 			use_compatible_text_rendering = defaultValue;
@@ -350,6 +350,7 @@ namespace System.Windows.Forms {
 				toplevels = null;
 			}
 
+			XplatUI.StartLoop(Thread.CurrentThread);
 			messageloop_started = true;
 
 			while (XplatUI.GetMessage(ref msg, IntPtr.Zero, 0, 0)) {
@@ -392,6 +393,7 @@ namespace System.Windows.Forms {
 			#endif
 
 			messageloop_started = false;
+			XplatUI.EndLoop(Thread.CurrentThread);
 
 			if (Modal) {
 				Control c;

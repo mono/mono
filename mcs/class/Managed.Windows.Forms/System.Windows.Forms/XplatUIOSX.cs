@@ -1138,6 +1138,10 @@ namespace System.Windows.Forms {
 			//Like X11 we need not do anything here
 		}
 
+		internal override void EndLoop(Thread thread) {
+			throw new NotImplementedException();
+		}
+
 		internal void Exit() {
 			GetMessageResult = false;
 			ExitToShell ();
@@ -1675,6 +1679,10 @@ namespace System.Windows.Forms {
 
 		internal override void SetWindowTransparency(IntPtr handle, double transparency, Color key) {
 		}
+
+		internal override bool SupportsTransparency() {
+			return false;
+		}
 		
 		internal override bool SetZOrder(IntPtr handle, IntPtr after_handle, bool Top, bool Bottom) {
 			Hwnd hwnd = Hwnd.ObjectFromHandle (handle);
@@ -1697,6 +1705,10 @@ namespace System.Windows.Forms {
 				CGDisplayShowCursor (CGMainDisplayID ());
 			else
 				CGDisplayHideCursor (CGMainDisplayID ());
+		}
+
+		internal override void StartLoop(Thread thread) {
+			throw new NotImplementedException();
 		}
 		
 		[MonoTODO]

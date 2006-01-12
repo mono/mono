@@ -401,6 +401,13 @@ namespace System.Windows.Forms {
 			driver.EnableWindow(handle, Enable);
 		}
 
+		internal static void EndLoop(Thread thread) {
+			#if DriverDebug
+				Console.WriteLine("EndLoop({0:X}): Called", thread.GetHashCode());
+			#endif
+			driver.EndLoop(thread);
+		}
+
 		internal static IntPtr GetActive() {
 			#if DriverDebug
 				Console.WriteLine("GetActive(): Called");
@@ -786,6 +793,20 @@ namespace System.Windows.Forms {
 			Console.WriteLine ("StartDrag({0}, {1}, {2}): Called", Window(handle), data, allowedEffects);
 			#endif
 			return driver.StartDrag (handle, data, allowedEffects);
+		}
+
+		internal static void StartLoop(Thread thread) {
+			#if DriverDebug
+				Console.WriteLine("StartLoop({0:X}): Called", thread.GetHashCode());
+			#endif
+			driver.StartLoop(thread);
+		}
+
+		internal static bool SupportsTransparency() {
+			#if DriverDebug
+				Console.WriteLine("SupportsTransparency(): Called, result={1}", driver.SupportsTransparency());
+			#endif
+			return driver.SupportsTransparency();
 		}
 
 		internal static bool SystrayAdd(IntPtr handle, string tip, Icon icon, out ToolTip tt) {

@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2005-2006 Novell, Inc. (http://www.novell.com)
+// Copyright (c) 2005 Novell, Inc. (http://www.novell.com)
 //
 // Authors:
 //	Peter Bartok	(pbartok@novell.com)
@@ -54,6 +54,7 @@ namespace System.Windows.Forms {
 		internal bool		allow_drop;
 		internal Hwnd		parent;
 		internal bool		visible;
+		internal uint		opacity;
 		internal bool		enabled;
 		internal bool		zero_sized;
 		internal Rectangle	invalid;
@@ -91,6 +92,7 @@ namespace System.Windows.Forms {
 			reparented = false;
 			client_rectangle = Rectangle.Empty;
 			marshal_free_list = new ArrayList(2);
+			opacity = 0xffffffff;
 		}
 
 		public void Dispose() {
@@ -336,6 +338,16 @@ namespace System.Windows.Forms {
 
 			set {
 				reparented = value;
+			}
+		}
+
+		public uint Opacity {
+			get {
+				return opacity;
+			}
+
+			set {
+				opacity = value;
 			}
 		}
 

@@ -505,6 +505,7 @@ namespace System.Windows.Forms {
 			NetAtoms[(int)NA._NET_WM_STATE_ABOVE] = XInternAtom(DisplayHandle, "_NET_WM_STATE_ABOVE", false);
 			NetAtoms[(int)NA._NET_WM_STATE_MODAL] = XInternAtom(DisplayHandle, "_NET_WM_STATE_MODAL", false);
 			NetAtoms[(int)NA._NET_WM_CONTEXT_HELP] = XInternAtom(DisplayHandle, "_NET_WM_CONTEXT_HELP", false);
+			NetAtoms[(int)NA._NET_WM_WINDOW_OPACITY] = XInternAtom(DisplayHandle, "_NET_WM_WINDOW_OPACITY", false);
 
 			// Clipboard support
 			NetAtoms[(int)NA.CLIPBOARD] = XInternAtom (DisplayHandle, "CLIPBOARD", false);
@@ -2307,6 +2308,11 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		internal override void EndLoop(Thread thread) {
+			// This is where we one day will shut down the loop for the thread
+		}
+
+
 		internal override IntPtr GetActive() {
 			Atom	actual_atom;
 			int	actual_format;
@@ -2767,7 +2773,12 @@ namespace System.Windows.Forms {
 
 							XGetGeometry(DisplayHandle, XGetParent(hwnd.whole_window), out dummy_ptr, out hwnd.x, out hwnd.y, out dummy_int, out dummy_int, out dummy_int, out dummy_int);
 							msg.message = Msg.WM_WINDOWPOSCHANGED;
+							if (hwnd.opacity != 0xffffffff) {
+								uint opacity;
 
+								opacity = hwnd.opacity;
+								XChangeProperty(DisplayHandle, XGetParent(hwnd.whole_window), NetAtoms[(int)NA._NET_WM_WINDOW_OPACITY], Atom.XA_CARDINAL, 32, PropertyMode.Replace, ref opacity, 1);
+							}
 						} else {
 							hwnd.Reparented = false;
 							goto ProcessNextMessage;
@@ -3715,6 +3726,21 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void SetWindowTransparency(IntPtr handle, double transparency, Color key) {
+			Hwnd	hwnd;
+			uint	opacity;
+
+			hwnd = Hwnd.ObjectFromHandle(handle);
+
+			if (hwnd == null) {
+				return;
+			}
+
+			hwnd.opacity = (uint)(0xffffffff * transparency);
+			opacity = hwnd.opacity;
+
+			if (hwnd.reparented) {
+				XChangeProperty(DisplayHandle, XGetParent(hwnd.whole_window), NetAtoms[(int)NA._NET_WM_WINDOW_OPACITY], Atom.XA_CARDINAL, 32, PropertyMode.Replace, ref opacity, 1);
+			}
 		}
 
 		internal override bool SetZOrder(IntPtr handle, IntPtr after_handle, bool top, bool bottom) {
@@ -3755,6 +3781,15 @@ namespace System.Windows.Forms {
 
 		internal override void ShowCursor(bool show) {
 			;	// FIXME - X11 doesn't 'hide' the cursor. we could create an empty cursor
+		}
+
+		internal override void StartLoop(Thread thread) {
+			// Future place for prepping a new queue for this specific thread
+		}
+
+		internal override bool SupportsTransparency() {
+			// We need to check if the x compositing manager is running
+			return true;
 		}
 
 		internal override bool SystrayAdd(IntPtr handle, string tip, Icon icon, out ToolTip tt) {
@@ -3862,7 +3897,7 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void UpdateWindow(IntPtr handle) {
-			XEvent	xevent;
+//			XEvent	xevent;
 			Hwnd	hwnd;
 
 			hwnd = Hwnd.ObjectFromHandle(handle);
@@ -4055,6 +4090,9 @@ namespace System.Windows.Forms {
 
 		[DllImport ("libX11", EntryPoint="XChangeProperty")]
 		internal extern static int XChangeProperty(IntPtr display, IntPtr window, int property, Atom format, int type, PropertyMode  mode, uint[] atoms, int nelements);
+
+		[DllImport ("libX11", EntryPoint="XChangeProperty")]
+		internal extern static int XChangeProperty(IntPtr display, IntPtr window, int property, Atom format, int type, PropertyMode  mode, ref uint value, int nelements);
 
 		[DllImport ("libX11", EntryPoint="XChangeProperty")]
 		internal extern static int XChangeProperty(IntPtr display, IntPtr window, int property, int format, int type, PropertyMode  mode, uint[] atoms, int nelements);

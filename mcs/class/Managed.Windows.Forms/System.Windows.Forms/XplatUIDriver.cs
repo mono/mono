@@ -121,6 +121,7 @@ namespace System.Windows.Forms {
 		internal abstract void SetWindowStyle(IntPtr handle, CreateParams cp);
 
 		internal abstract void SetWindowTransparency(IntPtr handle, double transparency, Color key);
+		internal abstract bool SupportsTransparency();
 
 		internal virtual void SetAllowDrop (IntPtr handle, bool value)
 		{
@@ -229,6 +230,9 @@ namespace System.Windows.Forms {
 
 		internal abstract IntPtr SendMessage(IntPtr hwnd, Msg message, IntPtr wParam, IntPtr lParam);
 		internal abstract bool PostMessage(IntPtr hwnd, Msg message, IntPtr wParam, IntPtr lParam);
+
+		internal abstract void StartLoop(Thread thread);
+		internal abstract void EndLoop(Thread thread);
 
 		// System information
 		internal abstract int KeyboardSpeed { get; } 

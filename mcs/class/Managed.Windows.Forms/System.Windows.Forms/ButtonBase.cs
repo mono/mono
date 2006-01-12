@@ -44,8 +44,6 @@ namespace System.Windows.Forms {
 		internal bool			is_pressed;
 		internal bool			enter_state;
 		internal StringFormat		text_format;
-		private bool use_compatible_text_rendering = Application.use_compatible_text_rendering;
-		
 		#endregion	// Local Variables
 
 		#region ButtonBaseAccessibleObject sub-class

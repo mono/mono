@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004-2006 Novell, Inc.
+// Copyright (c) 2004-2005 Novell, Inc.
 //
 // Authors:
 //	Peter Bartok	pbartok@novell.com
@@ -47,6 +47,7 @@ namespace System.Windows.Forms {
 		FormBorderStyle			form_border_style;
 		private bool		        autoscale;
 		private Size		        autoscale_base_size;
+		private bool			allow_transparency;
 		private static Icon		default_icon;
 		internal bool			is_modal;
 		private bool			control_box;
@@ -114,6 +115,7 @@ namespace System.Windows.Forms {
 
 			autoscale = true;
 			autoscale_base_size = new Size ((int)current_scale.Width, (int) current_scale.Height);
+			allow_transparency = false;
 			closing = false;
 			is_modal = false;
 			dialog_result = DialogResult.None;
@@ -182,15 +184,23 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		[MonoTODO("Figure out a way for transparency support in windows")]
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public bool AllowTransparency {
 			get {
-				return false;
+				return allow_transparency;
 			}
 
 			set {
+				if (XplatUI.SupportsTransparency()) {
+					allow_transparency = value;
+
+					if (value) {
+						XplatUI.SetWindowTransparency(Handle, Opacity, TransparencyKey);
+					} else {
+						UpdateStyles(); // Remove the WS_EX_LAYERED style
+					}
+				}
 			}
 		}
 
@@ -594,7 +604,6 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		[MonoTODO("Investigate ways to implement opacity")]
 		[DefaultValue(1D)]
 		[TypeConverter(typeof(OpacityConverter))]
 		public double Opacity {
@@ -605,6 +614,7 @@ namespace System.Windows.Forms {
 			set {
 				opacity = value;
 
+				AllowTransparency = true;
 				UpdateStyles();
 				XplatUI.SetWindowTransparency(Handle, opacity, TransparencyKey);
 			}
@@ -766,11 +776,11 @@ namespace System.Windows.Forms {
 			}
 
 			set {
-				AllowTransparency = true;
 				transparency_key = value;
 
+				AllowTransparency = true;
 				UpdateStyles();
-				XplatUI.SetWindowTransparency(Handle, Opacity, TransparencyKey);
+				XplatUI.SetWindowTransparency(Handle, Opacity, transparency_key);
 			}
 		}
 

@@ -74,7 +74,6 @@ namespace System.Windows.Forms
 		internal Font link_font;		
 		private Cursor override_cursor;
 		private DialogResult dialog_result;
-		private bool use_compatible_text_rendering = Application.use_compatible_text_rendering;
 
 		#region Events
 		public event LinkLabelLinkClickedEventHandler LinkClicked;

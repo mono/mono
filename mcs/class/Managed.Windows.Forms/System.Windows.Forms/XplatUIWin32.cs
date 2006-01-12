@@ -1135,7 +1135,12 @@ namespace System.Windows.Forms {
 			RECT rc;
 			rc.right = 1000;
 			rc.bottom = 1000;
-			uint error = Win32SetLayeredWindowAttributes(handle, clrRef, opacity, lwa);
+			Win32SetLayeredWindowAttributes(handle, clrRef, opacity, lwa);
+		}
+
+		internal override bool SupportsTransparency() {
+			// We might check with the OS, but I think we're only >=W2k
+			return true;
 		}
 
 		internal override void UpdateWindow(IntPtr handle) {
@@ -1569,8 +1574,16 @@ namespace System.Windows.Forms {
 			Win32EnableWindow(handle, Enable);
 		}
 
+		internal override void EndLoop(System.Threading.Thread thread) {
+			// Nothing to do
+		}
+
+		internal override void StartLoop(System.Threading.Thread thread) {
+			// Nothing to do
+		}
+
 		internal override void SetModal(IntPtr handle, bool Modal) {
-			// we do nothing on Win32; Application.cs simulates modal dialogs by disabling all toplevel windows
+			// we do nothing on Win32
 		}
 
 		internal override void GetCursorPos(IntPtr handle, out int x, out int y) {
