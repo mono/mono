@@ -6851,9 +6851,18 @@ namespace Mono.CSharp {
 			if (ec.TypeContainer is Struct){
 				ec.EmitThis ();
 				source.Emit (ec);
-				if (leave_copy)
+				
+				LocalTemporary t = null;
+				if (leave_copy) {
+					t = new LocalTemporary (ec, type);
 					ec.ig.Emit (OpCodes.Dup);
+					t.Store (ec);
+				}
+
 				ig.Emit (OpCodes.Stobj, type);
+				
+				if (leave_copy)
+					t.Emit (ec);
 			} else {
 				throw new Exception ("how did you get here");
 			}
