@@ -121,6 +121,8 @@ extern gboolean mono_compile_aot;
 #endif
 extern gboolean mono_use_security_manager;
 
+extern const char* const ins_info[];
+
 struct MonoEdge {
 	MonoEdge *next;
 	MonoBasicBlock *bb;

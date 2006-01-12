@@ -63,6 +63,10 @@ update_gen_kill_set (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *inst, int i
 	int arity = mono_burg_arity [inst->opcode];
 	int max_vars = cfg->num_varinfo;
 
+	if (cfg->new_ir) {
+		g_assert_not_reached ();
+	}
+
 	if (arity)
 		update_gen_kill_set (cfg, bb, inst->inst_i0, inst_num);
 

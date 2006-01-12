@@ -99,6 +99,28 @@ MonoMethodSignature *helper_sig_domain_get;
 #define mono_jit_unlock() LeaveCriticalSection (&jit_mutex)
 static CRITICAL_SECTION jit_mutex;
 
+/*
+ * Instruction metadata
+ */
+#ifdef MINI_OP
+#undef MINI_OP
+#endif
+#define MINI_OP(a,b,dest,src1,src2) dest src1 src2,
+#define NONE " "
+#define IREG "i"
+#define FREG "f"
+#if SIZEOF_VOID_P == 8
+#define LREG IREG
+#else
+#define LREG "l"
+#endif
+/* keep in sync with the enum in mini.h */
+const char* const
+ins_info[] = {
+#include "mini-ops.h"
+};
+#undef MINI_OP
+
 extern GHashTable *jit_icall_name_hash;
 
 #define MONO_INIT_VARINFO(vi,id) do { \
@@ -8709,25 +8731,6 @@ stind_to_store_membase (int opcode)
 	return -1;
 }
 
-#ifdef MINI_OP
-#undef MINI_OP
-#endif
-#define MINI_OP(a,b,dest,src1,src2) dest src1 src2,
-#define NONE " "
-#define IREG "i"
-#define FREG "f"
-#if SIZEOF_VOID_P == 8
-#define LREG IREG
-#else
-#define LREG "l"
-#endif
-/* keep in sync with the enum in mini.h */
-static const char* const
-ins_spec[] = {
-#include "mini-ops.h"
-};
-#undef MINI_OP
-
 /**
  * compute_vreg_to_inst:
  *
@@ -8841,7 +8844,7 @@ mono_handle_global_vregs (MonoCompile *cfg)
 
 		cfg->cbb = bb;
 		for (; ins; ins = ins->next) {
-			const char *spec = ins_spec [ins->opcode - OP_START - 1];
+			const char *spec = ins_info [ins->opcode - OP_START - 1];
 			int regtype, regindex;
 
 			if (cfg->verbose_level > 0)
@@ -9025,7 +9028,7 @@ mono_spill_global_vars (MonoCompile *cfg)
 
 		cfg->cbb = bb;
 		for (; ins; ins = ins->next) {
-			const char *spec = ins_spec [ins->opcode - OP_START - 1];
+			const char *spec = ins_info [ins->opcode - OP_START - 1];
 			int regtype, srcindex, sreg, tmp_reg;
 			gboolean store;
 
@@ -9050,7 +9053,7 @@ mono_spill_global_vars (MonoCompile *cfg)
 				ins->sreg1 = var->inst_basereg;
 				ins->inst_imm = var->inst_offset;
 
-				spec = ins_spec [ins->opcode - OP_START - 1];
+				spec = ins_info [ins->opcode - OP_START - 1];
 			}
 
 			if (ins->opcode < MONO_CEE_LAST)
