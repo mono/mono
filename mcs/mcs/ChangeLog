@@ -1,3 +1,34 @@
+2006-01-12  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #77221.
+	* typemanager.cs (TryGetBaseDefinition): Rename from the mis-named
+	GetOverride.
+	* expression.cs (Invocation.OverloadResolve): Update.
+	(Invocation.DoResolve): Avoid double resolution of invocation.
+
+2006-01-11  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #77180.
+	* expression.cs (Unary.Emit): When in /checked+ mode, don't emit
+	unary negation of floating point types as 0-expr; negation cannot
+	overflow in floating point types.
+
+	Fix #77204.
+	* expression.cs (MemberAccess.DoResolve): Disallow the use of '.'
+	on operands of 'void' type.
+
+	Fix #77200.
+	* cfold.cs (BinaryFold): Implement folding of BinaryOr, BinaryAnd
+	and ExclusiveOr for boolean constants too.
+
+2006-01-09  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #75636.
+	* expression.cs (Invocation.OverloadResolve): Replace reflected
+	override methods with their base virtual methods, rather than
+	skipping over them.
+	* typemanager.cs (TypeManager.GetOverride): New.
+
 2006-01-05  Jb Evain  <jbevain@gmail.com>
 
 	* class.cs (Property.Define, Indexer.Define): do not tag the

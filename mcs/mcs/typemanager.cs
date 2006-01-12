@@ -1489,12 +1489,10 @@ public class TypeManager {
 
 	static public void RegisterOverride (MethodBase override_method, MethodBase base_method)
 	{
-		if (method_overrides.Contains (override_method)) {
-			if (method_overrides [override_method] != base_method)
-				throw new InternalErrorException ("Override mismatch: " + override_method);
-			return;
-		}
-		method_overrides [override_method] = base_method;
+		if (!method_overrides.Contains (override_method))
+			method_overrides [override_method] = base_method;
+		if (method_overrides [override_method] != base_method)
+			throw new InternalErrorException ("Override mismatch: " + override_method);
 	}
 
 	static public bool IsOverride (MethodBase m)
@@ -1502,6 +1500,11 @@ public class TypeManager {
 		return m.IsVirtual &&
 			(m.Attributes & MethodAttributes.NewSlot) == 0 &&
 			(m is MethodBuilder || method_overrides.Contains (m));
+	}
+
+	static public MethodBase TryGetBaseDefinition (MethodBase m)
+	{
+		return (MethodBase) method_overrides [m];
 	}
 
 	/// <summary>
