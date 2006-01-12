@@ -661,7 +661,6 @@ namespace System.Windows.Forms
 		
 		#region Public Constructors
 		public Control() {			
-			creator_thread = Thread.CurrentThread;
 
 			anchor_style = AnchorStyles.Top | AnchorStyles.Left;
 
@@ -1876,7 +1875,7 @@ namespace System.Windows.Forms
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public bool InvokeRequired {						// ISynchronizeInvoke
 			get {
-				if (creator_thread!=Thread.CurrentThread) {
+				if (creator_thread != null && creator_thread!=Thread.CurrentThread) {
 					return true;
 				}
 				return false;

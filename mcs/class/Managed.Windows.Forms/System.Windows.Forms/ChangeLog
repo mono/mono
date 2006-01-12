@@ -1,3 +1,13 @@
+2006-01-12  Jackson Harper  <jackson@ximian.com>
+
+	* ComboBox.cs: We always need to refresh the text area when
+	EndUpdate is called. Fixes the combobox in the file dialog.
+	* Control.cs: Don't create the creator_thread until the controls
+	handle is created.  Also in InvokeRequired we check if the
+	creator_thread is null. This gives the effect of InvokeRequired
+	returning true if the controls handle is not created yet, and
+	matches MS.
+
 2006-01-12  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* XplatUI.cs:
