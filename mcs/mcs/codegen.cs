@@ -886,7 +886,7 @@ namespace Mono.CSharp {
 		// Emits the proper object to address fields on a remapped
 		// variable/parameter to field in anonymous-method/iterator proxy classes.
 		//
-		public void EmitThis ()
+		public void EmitThis (bool need_address)
 		{
 			ig.Emit (OpCodes.Ldarg_0);
 			if (capture_context != null && CurrentAnonymousMethod != null){
@@ -895,7 +895,10 @@ namespace Mono.CSharp {
 					if (si.ParentLink != null)
 						ig.Emit (OpCodes.Ldfld, si.ParentLink);
 					if (si.THIS != null){
-						ig.Emit (OpCodes.Ldfld, si.THIS);
+						if (need_address && TypeManager.IsValueType (si.THIS.FieldType))
+							ig.Emit (OpCodes.Ldflda, si.THIS);
+						else
+							ig.Emit (OpCodes.Ldfld, si.THIS);
 						break;
 					}
 					si = si.ParentScope;

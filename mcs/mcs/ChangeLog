@@ -1,3 +1,18 @@
+2006-01-12  Miguel de Icaza  <miguel@novell.com>
+
+	This fixes the problem where we used ldfld instead of ldflda to
+	load the "THIS" pointer on captured parameters, when THIS is a
+	value type.  See bug #77205.
+	
+	* iterators.cs (CapturedThisReference.Emit): Pass false to
+	EmitThis (we do not need the address).
+
+	* codegen.cs (EmitThis): it needs to know whether we need the
+	address of `this' or not.  This is used by value types.  
+
+	* expression.cs (This.AddressOf): Pass true to the EmitThis call,
+	every other call passes false.
+
 2006-01-12  Raja R Harinath  <rharinath@novell.com>
 
 	Fix #77221.

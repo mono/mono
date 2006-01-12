@@ -781,7 +781,7 @@ namespace Mono.CSharp {
 
 			public override void Emit (EmitContext ec)
 			{
-				ec.EmitThis ();
+				ec.EmitThis (false);
 			}
 		}
 

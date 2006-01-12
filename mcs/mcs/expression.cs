@@ -6635,7 +6635,7 @@ namespace Mono.CSharp {
 			ILGenerator ig = ec.ig;
 			
 			if (ec.TypeContainer is Struct){
-				ec.EmitThis ();
+				ec.EmitThis (false);
 				source.Emit (ec);
 				if (leave_copy)
 					ec.ig.Emit (OpCodes.Dup);
@@ -6649,7 +6649,7 @@ namespace Mono.CSharp {
 		{
 			ILGenerator ig = ec.ig;
 
-			ec.EmitThis ();
+			ec.EmitThis (false);
 			if (ec.TypeContainer is Struct)
 				ig.Emit (OpCodes.Ldobj, type);
 		}
@@ -6670,7 +6670,7 @@ namespace Mono.CSharp {
 
 		public void AddressOf (EmitContext ec, AddressOp mode)
 		{
-			ec.EmitThis ();
+			ec.EmitThis (true);
 
 			// FIMXE
 			// FIGURE OUT WHY LDARG_S does not work
