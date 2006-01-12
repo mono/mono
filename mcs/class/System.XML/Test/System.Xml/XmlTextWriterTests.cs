@@ -1530,7 +1530,6 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-		[Category ("NotWorking")] // on mono, an XmlException is thrown instead
 		[ExpectedException (typeof (ArgumentException))]
 		public void WriteNmToken_InvalidChars ()
 		{

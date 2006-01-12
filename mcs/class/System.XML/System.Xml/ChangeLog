@@ -1,5 +1,10 @@
 2006-01-12  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlWriter.cs : use XmlChar.IsNmToken() to check argument and throw
+	  ArgumentException in WriteNmTokenInternal().
+
+2006-01-12  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlTextWriter.cs : Fixed bug #77094. Only XmlTextWriter checks
 	  such invalid "xml" prefix which is being mapped to different
 	  namespace URI than the predefined one.
