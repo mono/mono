@@ -1115,7 +1115,10 @@ namespace System.Windows.Forms {
 		// FIXME: regions near the borders don't get filles with the correct backcolor
 		// TODO: TabAlignment.Left and TabAlignment.Bottom
 		public override void DrawTabControl( Graphics dc, Rectangle area, TabControl tab ) {
-			dc.FillRectangle( ResPool.GetSolidBrush( tab.Parent.BackColor ), area ); 
+			if (tab.Parent != null)
+				dc.FillRectangle( ResPool.GetSolidBrush( tab.Parent.BackColor ), area );
+			else
+				dc.FillRectangle( ResPool.GetSolidBrush( tab.BackColor ), area );
 			Rectangle panel_rect = GetTabPanelRectExt( tab );
 			
 			if ( tab.Appearance == TabAppearance.Normal ) {
