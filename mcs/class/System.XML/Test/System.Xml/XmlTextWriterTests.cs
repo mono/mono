@@ -525,12 +525,8 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void WriteStartElement_XmlPrefix ()
 		{
-			// uncomment the next code block once bug #77094 has been fixed.
-
-			/*
 			xtw.WriteStartElement ("xml", "something", "http://www.w3.org/XML/1998/namespace");
 			Assert.AreEqual ("<xml:something", StringWriterText, "#1");
 
@@ -548,7 +544,6 @@ namespace MonoTests.System.Xml
 
 			sw.GetStringBuilder ().Length = 0;
 			CreateXmlTextWriter ();
-			*/
 		}
 
 		[Test]
@@ -559,7 +554,6 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-		[Category ("NotWorking")] // bug #77094
 		[ExpectedException (typeof (ArgumentException))]
 		public void WriteStartElement_XmlPrefix_Invalid2 ()
 		{

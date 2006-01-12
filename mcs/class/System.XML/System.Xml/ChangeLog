@@ -1,3 +1,12 @@
+2006-01-12  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlTextWriter.cs : Fixed bug #77094. Only XmlTextWriter checks
+	  such invalid "xml" prefix which is being mapped to different
+	  namespace URI than the predefined one.
+	  Removed comment that does not make sense.
+	* XmlNamespaceManager.cs : IsValidDeclaration() could be private.
+	  Added some comments.
+
 2006-01-11  Atsushi Enomoto <atsushi@ximian.com>
 
 	* DTDObjectModel.cs : dtd2xsd fix; set use="optional" when an
