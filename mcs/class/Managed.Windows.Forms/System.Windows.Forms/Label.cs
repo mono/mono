@@ -52,7 +52,6 @@ namespace System.Windows.Forms
 		internal ContentAlignment image_align;
 		internal StringFormat string_format;
     		internal ContentAlignment text_align;
-		private bool use_compatible_text_rendering = Application.use_compatible_text_rendering;
     		static SizeF req_witdthsize = new SizeF (0,0);
 
     		#region Events
