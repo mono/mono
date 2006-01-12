@@ -224,6 +224,44 @@ namespace Mono.Unix {
 			} while (true);
 		}
 
+		// Read the specified symbolic link.  If the file isn't a symbolic link,
+		// return null; otherwise, return the contents of the symbolic link.
+		//
+		// readlink(2) is horribly evil, as there is no way to query how big the
+		// symlink contents are.  Consequently, it's trial and error...
+		private static string ReadSymbolicLink (string path, out Native.Errno errno)
+		{
+			errno = (Native.Errno) 0;
+			StringBuilder buf = new StringBuilder (256);
+			do {
+				int r = Native.Syscall.readlink (path, buf);
+				if (r < 0) {
+					errno = Native.Stdlib.GetLastError ();
+					return null;
+				}
+				else if (r == buf.Capacity) {
+					buf.Capacity *= 2;
+				}
+				else
+					return buf.ToString (0, r);
+			} while (true);
+		}
+
+		public static string TryReadLink (string path)
+		{
+			Native.Errno errno;
+			return ReadSymbolicLink (path, out errno);
+		}
+
+		public static string ReadLink (string path)
+		{
+			Native.Errno errno;
+			path = ReadSymbolicLink (path, out errno);
+			if (errno != 0)
+				UnixMarshal.ThrowExceptionForError (errno);
+			return path;
+		}
+
 		public static bool IsPathRooted (string path)
 		{
 			if (path == null || path.Length == 0)
