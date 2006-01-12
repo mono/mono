@@ -146,9 +146,21 @@ namespace System.Drawing.Drawing2D
 
 		public PathData PathData {
 			get {
+				int count;
+				Status status = GDIPlus.GdipGetPointCount (nativePath, out count);
+				GDIPlus.CheckStatus (status);
+
+				PointF [] points = new PointF [count];
+				status = GDIPlus.GdipGetPathPoints (nativePath, points, count); 
+				GDIPlus.CheckStatus (status);		      	
+
+				byte [] types = new byte [count];
+				status = GDIPlus.GdipGetPathTypes (nativePath, types, count);
+				GDIPlus.CheckStatus (status);
+
 				PathData pdata = new PathData ();
-				pdata.Points = PathPoints;
-				pdata.Types = PathTypes;
+				pdata.Points = points;
+				pdata.Types = types;
 				return pdata;
 			}
 		}
@@ -158,6 +170,8 @@ namespace System.Drawing.Drawing2D
 				int count;
 				Status status = GDIPlus.GdipGetPointCount (nativePath, out count);
 				GDIPlus.CheckStatus (status);
+				if (count == 0)
+					throw new ArgumentException ("PathPoints");
 
 				PointF [] points = new PointF [count];
 				status = GDIPlus.GdipGetPathPoints (nativePath, points, count); 
@@ -172,6 +186,8 @@ namespace System.Drawing.Drawing2D
 				int count;
 				Status status = GDIPlus.GdipGetPointCount (nativePath, out count);
 				GDIPlus.CheckStatus (status);
+				if (count == 0)
+					throw new ArgumentException ("PathTypes");
 
 				byte [] types = new byte [count];
 				status = GDIPlus.GdipGetPathTypes (nativePath, types, count);

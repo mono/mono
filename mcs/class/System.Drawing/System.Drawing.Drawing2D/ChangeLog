@@ -1,3 +1,10 @@
+2006-01-12  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* GraphicsPath.cs: Throw an ArgumentException if either PathPoints or
+	PathTypes properties are empty (0 length). Note that PathData property
+	still works in that case.
+	* PathData.cs: Don't clone empty arrays (results in NRE).
+
 2005-11-13 Konstantin Triger <kostat@mainsoft.com>
 
         * GraphicsPath.jvm.cs: AddString support.

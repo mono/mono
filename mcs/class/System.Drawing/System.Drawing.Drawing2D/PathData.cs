@@ -4,12 +4,10 @@
 // Authors:
 //   Dennis Hayes (dennish@Raytek.com)
 //   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//   Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002/3 Ximian, Inc
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004,2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -31,27 +29,32 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-
 namespace System.Drawing.Drawing2D
 {
-	/// <summary>
-	/// Summary description for PathData.
-	/// </summary>
 	public sealed class PathData
 	{
-		private PointF[] points = null;
-		private byte[] types = null;
+		private PointF[] points;
+		private byte[] types;
 
-		public PathData () { }
+		public PathData ()
+		{
+		}
 
 		public PointF[] Points {
-			get { return (PointF[]) points.Clone (); } 
+			get {
+				if (points == null)
+					return null;
+				return (PointF[]) points.Clone ();
+			}
 			set { points = value; }
 		}
 
 		public byte[] Types {
-			get { return (byte[]) types.Clone (); }
+			get {
+				if (types == null)
+					return null;
+				return (byte[]) types.Clone ();
+			}
 			set { types = value; }
 		}
 
