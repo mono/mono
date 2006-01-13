@@ -32,7 +32,14 @@ namespace System.Runtime.InteropServices
 {
 	[MonoTODO]
 	public abstract class SafeHandle : CriticalFinalizerObject, IDisposable {
-	
+		protected IntPtr handle;
+
+		[MonoTODO]
+		protected SafeHandle (IntPtr invalidHandleValue, bool ownsHandle)
+		{
+			throw new NotImplementedException ();
+		}
+
 		[MonoTODO]
 		public void Close () {
 			throw new NotImplementedException ();
@@ -62,7 +69,19 @@ namespace System.Runtime.InteropServices
 		public void SetHandleAsInvalid () {
 			throw new NotImplementedException ();
 		}
-	
+		
+		[MonoTODO]
+		protected virtual void Dispose (bool disposing) {
+			throw new NotImplementedException ();
+		}
+
+		protected abstract bool ReleaseHandle ();
+
+		[MonoTODO]
+		protected void SetHandle (IntPtr handle) {
+			throw new NotImplementedException ();
+		}
+
 		[MonoTODO]
 		public bool IsClosed {
 			get {

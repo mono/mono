@@ -35,14 +35,22 @@ namespace Microsoft.Win32.SafeHandles {
 	[MonoTODO]
 	public sealed class SafeFileHandle : SafeHandleZeroOrMinusOneIsInvalid {
 
-		public SafeFileHandle (IntPtr preexistingHandle, bool ownsHandle)
+		public SafeFileHandle (IntPtr preexistingHandle, bool ownsHandle) : base (ownsHandle)
 		{
+			SetHandle (preexistingHandle);
 		}
 
+		[MonoTODO]
 		public override bool IsInvalid {
 			get {
 				throw new NotImplementedException ();
 			}
+		}
+
+		[MonoTODO]
+		protected override bool ReleaseHandle ()
+		{
+			throw new NotImplementedException ();
 		}
 
 	}

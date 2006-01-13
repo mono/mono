@@ -35,6 +35,14 @@ namespace Microsoft.Win32.SafeHandles {
 
 	[MonoTODO]
 	public abstract class SafeHandleZeroOrMinusOneIsInvalid : SafeHandle, IDisposable {
+		protected SafeHandleZeroOrMinusOneIsInvalid (bool ownsHandle) : base ((IntPtr) 0, ownsHandle) {
+		}
+
+		public override bool IsInvalid {
+			get {
+				return handle == (IntPtr)(-1) || handle == (IntPtr) 0;
+			}
+		}
 	}
 }
 

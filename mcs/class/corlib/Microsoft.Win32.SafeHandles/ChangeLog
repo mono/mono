@@ -1,3 +1,9 @@
+2006-01-12  Ben Maurer  <bmaurer@andrew.cmu.edu>
+
+	* SafeHandleZeroOrMinusOneIsInvalid.cs: Update to RTM api
+
+	* SafeFileHandle.cs: Update to RTM api
+
 2005-08-10  Zoltan Varga  <vargaz@freemail.hu>
 
 	* SafeFileHandle.cs: Make this inherit from SafeHandleZeroOrMinusOneIsInvalid.

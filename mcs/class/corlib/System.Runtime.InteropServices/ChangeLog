@@ -1,3 +1,7 @@
+2006-01-12  Ben Maurer  <bmaurer@andrew.cmu.edu>
+
+	* SafeHandle.cs: Update to RTM api
+
 2005-11-17  Zoltan Varga  <vargaz@gmail.com>
 
 	* DefaultParameterValueAttribute.cs: New file.
