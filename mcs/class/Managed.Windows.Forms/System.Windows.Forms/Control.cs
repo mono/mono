@@ -2950,7 +2950,7 @@ namespace System.Windows.Forms
 					break;
 				}
 
-				if (c.CanSelect && (c != ctl) && ((c.parent == ctl.parent) || nested) && (c.tab_stop || !tabStopOnly)) {
+				if (c.CanSelect && ((c.parent == ctl.parent) || nested) && (c.tab_stop || !tabStopOnly)) {
 					Select(c);
 					return true;
 				}

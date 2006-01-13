@@ -1,3 +1,13 @@
+2006-01-12  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* Control.cs: Undid my selection check fix, since it's not needed
+	* TextBoxBase.cs:
+	  - Now considering the presence of hscroll/vscroll when sizing
+	    vscroll/hscroll respectively. Fixed bug #77077
+	  - Added Left/Up/Down/Right to IsInputKey list to prevent
+	    ContainerControl from stealing them. This fixes what I broke
+	    with my last checkin.
+
 2006-01-12  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* ScrollableControl.cs: Implemented dockpadding. Fixes #77166. And

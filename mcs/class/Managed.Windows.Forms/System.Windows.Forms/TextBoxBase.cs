@@ -671,13 +671,16 @@ namespace System.Windows.Forms {
 					return false;
 				}
 
+				case Keys.Left:
+				case Keys.Right:
+				case Keys.Up:
+				case Keys.Down:
 				case Keys.PageUp:
 				case Keys.PageDown:
 				case Keys.Home:
 				case Keys.End: {
 					return true;
 				}
-
 			}
 			return false;
 		}
@@ -1369,8 +1372,8 @@ namespace System.Windows.Forms {
 			canvas_height = ClientSize.Height;
 
 			// We always move them, they just might not be displayed
-			hscroll.Bounds = new Rectangle (ClientRectangle.Left, ClientRectangle.Bottom - hscroll.Height, ClientSize.Width, hscroll.Height);
-			vscroll.Bounds = new Rectangle (ClientRectangle.Right - vscroll.Width, ClientRectangle.Top, vscroll.Width, ClientSize.Height);
+			hscroll.Bounds = new Rectangle (ClientRectangle.Left, ClientRectangle.Bottom - hscroll.Height, ClientSize.Width - (vscroll.Visible ? SystemInformation.VerticalScrollBarWidth : 0), hscroll.Height);
+			vscroll.Bounds = new Rectangle (ClientRectangle.Right - vscroll.Width, ClientRectangle.Top, vscroll.Width, ClientSize.Height - (hscroll.Visible ? SystemInformation.HorizontalScrollBarHeight : 0));
 			
 		}
 
@@ -1462,6 +1465,8 @@ namespace System.Windows.Forms {
 				hscroll.Maximum += vscroll.Width * 2;
 				canvas_width = ClientSize.Width - vscroll.Width * 2;
 			}
+
+			TextBoxBase_SizeChanged(this, EventArgs.Empty);
 		}
 
 		private void document_WidthChanged(object sender, EventArgs e) {
