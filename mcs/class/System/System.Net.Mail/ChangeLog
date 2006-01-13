@@ -1,3 +1,19 @@
+2006-1-13  John Luke  <john.luke@gmail.com>
+
+	* MailMessage.cs: add [MonoTODO] for FormatException in ctor,
+	throw ArugmentNullException's from the ctors,
+	add internal BodyContentType property,
+	change BodyEncoding to use BodyContentType,
+	change IsBodyHtml to use BodyContentType,
+	* SmtpClient.cs: set timeout initially to 100000,
+	don't throw ArgumentOutOfRangeException when Timeout = 0,
+	add [MonoTODO] for set_host, and throw Exceptions for it,
+	add [MonoTODO] for UseDefaultCredentials,
+	get messageContentType from the message,
+	use "127.0.0.1" for Host and 25 for Port
+	if host or port is not specified until reading
+	them from the configuration files is done
+
 2006-1-02  John Luke  <john.luke@gmail.com>
 
 	* DeliveryNotificationOptions: fix value of Delay

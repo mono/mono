@@ -48,7 +48,7 @@ namespace System.Net.Mail {
 
 		string host;
 		int port;
-		int timeout;
+		int timeout = 100000;
 		ICredentialsByHost credentials;
 		bool useDefaultCredentials;
 		string pickupDirectoryLocation;
@@ -83,8 +83,19 @@ namespace System.Net.Mail {
 		[MonoTODO ("Load default settings from configuration.")]
 		public SmtpClient (string host, int port)
 		{
-			Host = host;
-			Port = port;
+			// FIXME: load from configuration
+			if (String.IsNullOrEmpty (host))
+				Host = "127.0.0.1";
+			else
+				Host = host;
+			
+			// FIXME: load from configuration
+			if (port == 0)
+				Port = 25;
+			else
+				Port = port;
+
+			// FIXME: load credentials from configuration
 		}
 
 		#endregion // Constructors
@@ -113,7 +124,14 @@ namespace System.Net.Mail {
 
 		public string Host {
 			get { return host; }
-			set { host = value; }
+			[MonoTODO ("Check to make sure an email is not being sent.")]
+			set {
+				if (value == null)
+					throw new ArgumentNullException ();
+				if (value.Length == 0)
+					throw new ArgumentException ();
+				host = value;
+			}
 		}
 
 		public string PickupDirectoryLocation {
@@ -140,12 +158,13 @@ namespace System.Net.Mail {
 			get { return timeout; }
 			[MonoTODO ("Check to make sure an email is not being sent.")]
 			set { 
-				if (value <= 0)
+				if (value < 0)
 					throw new ArgumentOutOfRangeException ();
 				timeout = value; 
 			}
 		}
 
+		[MonoTODO]
 		public bool UseDefaultCredentials {
 			get { return useDefaultCredentials; }
 			set { useDefaultCredentials = value; }
@@ -263,9 +282,8 @@ namespace System.Net.Mail {
 				throw new SmtpException (status.StatusCode);
 
 			// Figure out the message content type
-			ContentType messageContentType = new ContentType ("text/plain");
+			ContentType messageContentType = message.BodyContentType;
 			if (hasAttachments || hasAlternateViews) {
-				//messageContentType = new ContentType ();
 				messageContentType.Boundary = boundary;
 
 				if (hasAttachments)

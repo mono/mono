@@ -31,6 +31,7 @@
 #if NET_2_0
 
 using System.Collections.Specialized;
+using System.Globalization;
 using System.Net.Mime;
 using System.Text;
 
@@ -44,17 +45,16 @@ namespace System.Net.Mail {
 		AttachmentCollection attachments;
 		MailAddressCollection bcc;
 		string body;
-		bool isBodyHtml;
 		MailPriority priority;
 		MailAddress replyTo, sender;
 		DeliveryNotificationOptions deliveryNotificationOptions;
-		Encoding bodyEncoding;
 		MailAddressCollection cc;
 		MailAddress from;
 		NameValueCollection headers;
 		MailAddressCollection to;
 		string subject;
 		Encoding subjectEncoding;
+		ContentType bodyContentType;
 
 		#endregion // Fields
 
@@ -64,8 +64,12 @@ namespace System.Net.Mail {
 		{
 		}
 
+		[MonoTODO ("FormatException")]
 		public MailMessage (MailAddress from, MailAddress to)
 		{
+			if (from == null || to == null)
+				throw new ArgumentNullException ();
+			
 			From = from;
 
 			this.to = new MailAddressCollection ();
@@ -83,11 +87,15 @@ namespace System.Net.Mail {
 		public MailMessage (string from, string to)
 			: this (new MailAddress (from), new MailAddress (to))
 		{
+			if (from == null || to == null)
+				throw new ArgumentNullException ();
 		}
 
 		public MailMessage (string from, string to, string subject, string body)
 			: this (new MailAddress (from), new MailAddress (to))
 		{
+			if (from == null || to == null)
+				throw new ArgumentNullException ();
 			Body = body;
 			Subject = subject;
 		}
@@ -113,12 +121,17 @@ namespace System.Net.Mail {
 			set { body = value; }
 		}
 
-		public Encoding BodyEncoding {
-			get { return bodyEncoding; }
-			set { 
-				bodyEncoding = value;
-				//bodyContentType.CharSet = value.WebName; 
+		internal ContentType BodyContentType {
+			get {
+				if (bodyContentType == null)
+					bodyContentType = new ContentType ("text/plain; charset=us-ascii");
+				return bodyContentType;
 			}
+		}
+
+		public Encoding BodyEncoding {
+			get { return Encoding.GetEncoding (BodyContentType.CharSet); }
+			set { BodyContentType.CharSet = value.WebName; }
 		}
 
 		public MailAddressCollection CC {
@@ -140,8 +153,13 @@ namespace System.Net.Mail {
 		}
 
 		public bool IsBodyHtml {
-			get { return isBodyHtml; }
-			set { isBodyHtml = value; }
+			get { return String.Compare (BodyContentType.MediaType, "text/html", true, CultureInfo.InvariantCulture) == 0; }
+			set {
+				if (value)
+					BodyContentType.MediaType = "text/html";
+				else
+					BodyContentType.MediaType = "text/plain";
+			}
 		}
 
 		public MailPriority Priority {

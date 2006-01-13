@@ -4,7 +4,7 @@
 // Authors:
 //   John Luke (john.luke@gmail.com)
 //
-// (C) 2005 John Luke
+// (C) 2005, 2006 John Luke
 //
 #if NET_2_0
 using NUnit.Framework;
@@ -30,11 +30,39 @@ namespace MonoTests.System.Net.Mail
 			//Attachment a = Attachment.CreateAttachmentFromString ("blah blah", "text/plain");
 			//msg.Attachments.Add (a);
 		}
+		
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void ArgumentNullCtor1 ()
+		{
+			new MailMessage (null, "to@example.com");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void ArgumentNullCtor2 ()
+		{
+			new MailMessage (null, new MailAddress ("to@example.com"));
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void ArgumentNullCtor3 ()
+		{
+			new MailMessage ("from@example.com", null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void ArgumentNullCtor4 ()
+		{
+			new MailMessage (new MailAddress ("from@example.com"), null);
+		}
 
 		/*[Test]
 		public void AlternateView ()
 		{
-			Assert.IsTrue (msg.AlternateViews.Count == 1);
+			Assert.AreEqual (msg.AlternateViews.Count, 1);
 			AlternateView av = msg.AlternateViews[0];
 			// test that the type is ok, etc.
 		}*/
@@ -42,21 +70,27 @@ namespace MonoTests.System.Net.Mail
 		/*[Test]
 		public void Attachment ()
 		{
-			Assert.IsTrue (msg.Attachments.Count == 1);
+			Assert.AreEqual (msg.Attachments.Count, 1);
 			Attachment at = msg.Attachments[0];
-			Assert.IsTrue (at.ContentType.MediaType == "text/plain");
+			Assert.AreEqual (at.ContentType.MediaType, "text/plain");
 		}*/
 
 		[Test]
 		public void Body ()
 		{
-			Assert.IsTrue (msg.Body == "hello");
+			Assert.AreEqual (msg.Body, "hello");
+		}
+		
+		[Test]
+		public void BodyEncoding ()
+		{
+			Assert.AreEqual (msg.BodyEncoding, Encoding.ASCII);
 		}
 
 		[Test]
 		public void From ()
 		{
-			Assert.IsTrue (msg.From.Address == "from@example.com");
+			Assert.AreEqual (msg.From.Address, "from@example.com");
 		}
 
 		[Test]
@@ -68,20 +102,20 @@ namespace MonoTests.System.Net.Mail
 		[Test]
 		public void Priority ()
 		{
-			Assert.IsTrue (msg.Priority == MailPriority.Normal);
+			Assert.AreEqual (msg.Priority, MailPriority.Normal);
 		}
 
 		[Test]
 		public void Subject ()
 		{
-			Assert.IsTrue (msg.Subject == "the subject");
+			Assert.AreEqual (msg.Subject, "the subject");
 		}
 
 		[Test]
 		public void To ()
 		{
-			Assert.IsTrue (msg.To.Count == 1);
-			Assert.IsTrue (msg.To[0].Address == "to@example.com");
+			Assert.AreEqual (msg.To.Count, 1);
+			Assert.AreEqual (msg.To[0].Address, "to@example.com");
 		}
 	}
 }
