@@ -41,29 +41,13 @@ namespace System.Drawing.Drawing2D
 		}
 
 		public PointF[] Points {
-			get {
-				if (points == null)
-					return null;
-				return (PointF[]) points.Clone ();
-			}
+			get { return points; }
 			set { points = value; }
 		}
 
 		public byte[] Types {
-			get {
-				if (types == null)
-					return null;
-				return (byte[]) types.Clone ();
-			}
-			set { types = value; }
-		}
-
-		internal PointF[] InternalPoints {
-			get { return points; } 
-		}
-
-		internal byte[] InternalTypes {
 			get { return types; }
+			set { types = value; }
 		}
 	}
 }

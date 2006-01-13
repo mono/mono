@@ -7,9 +7,9 @@
 //   Duncan Mak (duncan@ximian.com)
 //   Jordi Mas i Hernandez (jordi@ximian.com)
 //   Ravindra (rkumar@novell.com)
+//   Sebastien Pouliot  <sebastien@ximian.com>
 //
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004,2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Runtime.InteropServices;
 
@@ -59,42 +59,34 @@ namespace System.Drawing.Drawing2D
 		}
 
 		public GraphicsPath (Point[] pts, byte[] types)
+			: this (pts, types, FillMode.Alternate)
 		{
-			Status status;
-			if (pts.Length != types.Length)
-				throw new ArgumentException ("Invalid parameter passed. Number of points and types must be same.");
-
-			status = GDIPlus.GdipCreatePath2I (pts, types, pts.Length, FillMode.Alternate, out nativePath);
-			GDIPlus.CheckStatus (status);
 		}
 
 		public GraphicsPath (PointF[] pts, byte[] types)
+			: this (pts, types, FillMode.Alternate)
 		{
-			Status status;
-			if (pts.Length != types.Length)
-				throw new ArgumentException ("Invalid parameter passed. Number of points and types must be same.");
-
-			status = GDIPlus.GdipCreatePath2 (pts, types, pts.Length, FillMode.Alternate, out nativePath);
-			GDIPlus.CheckStatus (status);
 		}
 
 		public GraphicsPath (Point[] pts, byte[] types, FillMode fillMode)
 		{
-			Status status;
+			if (pts == null)
+				throw new ArgumentNullException ("pts");
 			if (pts.Length != types.Length)
 				throw new ArgumentException ("Invalid parameter passed. Number of points and types must be same.");
 
-			status = GDIPlus.GdipCreatePath2I (pts, types, pts.Length, fillMode, out nativePath);
+			Status status = GDIPlus.GdipCreatePath2I (pts, types, pts.Length, fillMode, out nativePath);
 			GDIPlus.CheckStatus (status);
 		}
 
 		public GraphicsPath (PointF[] pts, byte[] types, FillMode fillMode)
 		{
-			Status status;
+			if (pts == null)
+				throw new ArgumentNullException ("pts");
 			if (pts.Length != types.Length)
 				throw new ArgumentException ("Invalid parameter passed. Number of points and types must be same.");
 
-			status = GDIPlus.GdipCreatePath2 (pts, types, pts.Length, fillMode, out nativePath);
+			Status status = GDIPlus.GdipCreatePath2 (pts, types, pts.Length, fillMode, out nativePath);
 			GDIPlus.CheckStatus (status);
 		}
 	
@@ -139,6 +131,9 @@ namespace System.Drawing.Drawing2D
 				return mode;
 			}
 			set {
+				if ((value < FillMode.Alternate) || (value > FillMode.Winding))
+					throw new InvalidEnumArgumentException ("FillMode", (int)value, typeof (FillMode));
+
 				Status status = GDIPlus.GdipSetPathFillMode (nativePath, value);
 				GDIPlus.CheckStatus (status);
 			}
@@ -279,12 +274,16 @@ namespace System.Drawing.Drawing2D
                 //
                 public void AddBeziers (Point [] pts)
                 {
+			if (pts == null)
+				throw new ArgumentNullException ("pts");
                         Status status = GDIPlus.GdipAddPathBeziersI (nativePath, pts, pts.Length);
                         GDIPlus.CheckStatus (status);                      	
                 }
 
                 public void AddBeziers (PointF [] pts)
                 {
+			if (pts == null)
+				throw new ArgumentNullException ("pts");
                         Status status = GDIPlus.GdipAddPathBeziers (nativePath, pts, pts.Length);
                         GDIPlus.CheckStatus (status);                      	
                 }
@@ -353,8 +352,12 @@ namespace System.Drawing.Drawing2D
                 //
                 public void AddLines (Point [] points)
                 {
-                        int length = points.Length;
+			if (points == null)
+				throw new ArgumentNullException ("points");
+			if (points.Length == 0)
+				throw new ArgumentException ("points");
 
+                        int length = points.Length;
                         for (int i = 0; i < length - 1; i++) {
                                 int j = i + 1;
                                 Status status = GDIPlus.GdipAddPathLineI (
@@ -365,6 +368,11 @@ namespace System.Drawing.Drawing2D
 
                 public void AddLines (PointF [] points)
                 {
+			if (points == null)
+				throw new ArgumentNullException ("points");
+			if (points.Length == 0)
+				throw new ArgumentException ("points");
+
                         int length = points.Length;
 
                         for (int i = 0; i < length - 1; i++) {
@@ -402,12 +410,18 @@ namespace System.Drawing.Drawing2D
                 //
                 public void AddPolygon (Point [] points)
                 {
+			if (points == null)
+				throw new ArgumentNullException ("points");
+
                         Status status = GDIPlus.GdipAddPathPolygonI (nativePath, points, points.Length);
                         GDIPlus.CheckStatus (status);                      	
                 }
 
                 public void AddPolygon (PointF [] points)
                 {
+			if (points == null)
+				throw new ArgumentNullException ("points");
+
                         Status status = GDIPlus.GdipAddPathPolygon (nativePath, points, points.Length);
                         GDIPlus.CheckStatus (status);                      	
                 }
@@ -432,12 +446,22 @@ namespace System.Drawing.Drawing2D
                 //
                 public void AddRectangles (Rectangle [] rects)
                 {
+			if (rects == null)
+				throw new ArgumentNullException ("rects");
+			if (rects.Length == 0)
+				throw new ArgumentException ("rects");
+
                         Status status = GDIPlus.GdipAddPathRectanglesI (nativePath, rects, rects.Length);
                         GDIPlus.CheckStatus (status);                      	
                 }
 
                 public void AddRectangles (RectangleF [] rects)
                 {
+			if (rects == null)
+				throw new ArgumentNullException ("rects");
+			if (rects.Length == 0)
+				throw new ArgumentException ("rects");
+
                         Status status = GDIPlus.GdipAddPathRectangles (nativePath, rects, rects.Length);
                         GDIPlus.CheckStatus (status);                      	
                 }
@@ -447,6 +471,9 @@ namespace System.Drawing.Drawing2D
                 //
                 public void AddPath (GraphicsPath addingPath, bool connect)
                 {
+			if (addingPath == null)
+				throw new ArgumentNullException ("addingPath");
+
                         Status status = GDIPlus.GdipAddPathPath (nativePath, addingPath.nativePath, connect);
                         GDIPlus.CheckStatus (status);                      	
                 }
@@ -465,24 +492,36 @@ namespace System.Drawing.Drawing2D
                 //
                 public void AddClosedCurve (Point [] points)
                 {
+			if (points == null)
+				throw new ArgumentNullException ("points");
+
                         Status status = GDIPlus.GdipAddPathClosedCurveI (nativePath, points, points.Length);
                         GDIPlus.CheckStatus (status);                      	
                 }
 
                 public void AddClosedCurve (PointF [] points)
                 {
+			if (points == null)
+				throw new ArgumentNullException ("points");
+
                         Status status = GDIPlus.GdipAddPathClosedCurve (nativePath, points, points.Length);
                         GDIPlus.CheckStatus (status);                      	
                 }
 
                 public void AddClosedCurve (Point [] points, float tension)
                 {
+			if (points == null)
+				throw new ArgumentNullException ("points");
+
                         Status status = GDIPlus.GdipAddPathClosedCurve2I (nativePath, points, points.Length, tension);
                         GDIPlus.CheckStatus (status);                      	
                 }
 
                 public void AddClosedCurve (PointF [] points, float tension)
                 {
+			if (points == null)
+				throw new ArgumentNullException ("points");
+
                         Status status = GDIPlus.GdipAddPathClosedCurve2 (nativePath, points, points.Length, tension);
                         GDIPlus.CheckStatus (status);                      	
                 }
@@ -492,30 +531,45 @@ namespace System.Drawing.Drawing2D
                 //
                 public void AddCurve (Point [] points)
                 {
+			if (points == null)
+				throw new ArgumentNullException ("points");
+
                         Status status = GDIPlus.GdipAddPathCurveI (nativePath, points, points.Length);
                         GDIPlus.CheckStatus (status);                      	
                 }
                 
                 public void AddCurve (PointF [] points)
                 {
+			if (points == null)
+				throw new ArgumentNullException ("points");
+
                         Status status = GDIPlus.GdipAddPathCurve (nativePath, points, points.Length);
                         GDIPlus.CheckStatus (status);                      	
                 }
                 
                 public void AddCurve (Point [] points, float tension)
                 {
+			if (points == null)
+				throw new ArgumentNullException ("points");
+
                         Status status = GDIPlus.GdipAddPathCurve2I (nativePath, points, points.Length, tension);
                         GDIPlus.CheckStatus (status);                      	
                 }
                 
                 public void AddCurve (PointF [] points, float tension)
                 {
+			if (points == null)
+				throw new ArgumentNullException ("points");
+
                         Status status = GDIPlus.GdipAddPathCurve2 (nativePath, points, points.Length, tension);
                         GDIPlus.CheckStatus (status);                      	
                 }
 
                 public void AddCurve (Point [] points, int offset, int numberOfSegments, float tension)
                 {
+			if (points == null)
+				throw new ArgumentNullException ("points");
+
                         Status status = GDIPlus.GdipAddPathCurve3I (nativePath, points, points.Length,
                                         offset, numberOfSegments, tension);
                                         
@@ -524,6 +578,9 @@ namespace System.Drawing.Drawing2D
                 
                 public void AddCurve (PointF [] points, int offset, int numberOfSegments, float tension)
                 {
+			if (points == null)
+				throw new ArgumentNullException ("points");
+
                         Status status = GDIPlus.GdipAddPathCurve3 (nativePath, points, points.Length,
                                         offset, numberOfSegments, tension);
                                         
@@ -544,6 +601,9 @@ namespace System.Drawing.Drawing2D
 
                 public void Transform (Matrix matrix)
                 {
+			if (matrix == null)
+				throw new ArgumentNullException ("matrix");
+
                         Status status = GDIPlus.GdipTransformPath (nativePath, matrix.nativeMatrix);
                         GDIPlus.CheckStatus (status);                      	
                 }
@@ -593,20 +653,24 @@ namespace System.Drawing.Drawing2D
                         GDIPlus.CheckStatus (s);
                 } 
 
+                [MonoTODO ("GdipFlattenPath isn't implemented in libgdiplus")]
                 public void Flatten ()
                 {
                         // 1/4 is the FlatnessDefault as defined in GdiPlusEnums.h
                 	Flatten (null, 1.0f / 4.0f); 
                 }  	
   
+                [MonoTODO ("GdipFlattenPath isn't implemented in libgdiplus")]
 		public void Flatten (Matrix matrix)
 		{
                 	Flatten (matrix, 1.0f / 4.0f);
                 }
 		
+                [MonoTODO ("GdipFlattenPath isn't implemented in libgdiplus")]
 		public void Flatten (Matrix matrix, float flatness)
 		{
-                	Status status = GDIPlus.GdipFlattenPath (nativePath, matrix.nativeMatrix, flatness);
+                        IntPtr m = (matrix == null) ? IntPtr.Zero : matrix.nativeMatrix;
+                	Status status = GDIPlus.GdipFlattenPath (nativePath, m, flatness);
 
                         GDIPlus.CheckStatus (status);
                 }  		
@@ -621,7 +685,7 @@ namespace System.Drawing.Drawing2D
                 	return GetBounds (matrix, null);
                 }
 
-                [MonoTODO]
+                [MonoTODO ("GdipGetPathWorldBounds isn't implemented in libgdiplus")]
                 public RectangleF GetBounds (Matrix matrix, Pen pen)
                 {
                         RectangleF retval;
@@ -761,24 +825,30 @@ namespace System.Drawing.Drawing2D
                         GDIPlus.CheckStatus (s);
                 }  		
                 
+		[MonoTODO ("GdipWarpPath isn't implemented in libgdiplus")]
                 public void Warp (PointF[] destPoints, RectangleF srcRect)
                 {
                 	Warp (destPoints, srcRect, null, WarpMode.Perspective, 1.0f / 4.0f);
                 }  		
 
+		[MonoTODO ("GdipWarpPath isn't implemented in libgdiplus")]
 		public void Warp (PointF[] destPoints, RectangleF srcRect, Matrix matrix)
 		{
                 	Warp (destPoints, srcRect, matrix, WarpMode.Perspective, 1.0f / 4.0f);
                 }  		
 
+		[MonoTODO ("GdipWarpPath isn't implemented in libgdiplus")]
 		public void Warp (PointF[] destPoints, RectangleF srcRect, Matrix matrix, WarpMode warpMode)
 		{
                 	Warp (destPoints, srcRect, matrix, warpMode, 1.0f / 4.0f);
                 }  		
 
-		[MonoTODO]
+		[MonoTODO ("GdipWarpPath isn't implemented in libgdiplus")]
 		public void Warp (PointF[] destPoints, RectangleF srcRect, Matrix matrix,  WarpMode warpMode, float flatness)
 		{
+			if (destPoints == null)
+				throw new ArgumentNullException ("destPoints");
+
                 	IntPtr m = (matrix == null) ? IntPtr.Zero : matrix.nativeMatrix;
 
                         Status s = GDIPlus.GdipWarpPath (nativePath, m, destPoints, destPoints.Length,
@@ -787,17 +857,19 @@ namespace System.Drawing.Drawing2D
                         GDIPlus.CheckStatus (s);
                 }
                 
+		[MonoTODO ("GdipWidenPath isn't implemented in libgdiplus")]
                 public void Widen (Pen pen)
 		{
                 	Widen (pen, null, 1.0f / 4.0f);
                 }  		
                 
+		[MonoTODO ("GdipWidenPath isn't implemented in libgdiplus")]
 		public void Widen (Pen pen, Matrix matrix)
 		{	
                 	Widen (pen, matrix, 1.0f / 4.0f);
                 }  		
                 
-		[MonoTODO]
+		[MonoTODO ("GdipWidenPath isn't implemented in libgdiplus")]
 		public void Widen (Pen pen, Matrix matrix, float flatness)
                 {
                         IntPtr p = (pen == null) ? IntPtr.Zero : pen.nativeObject;
@@ -809,5 +881,3 @@ namespace System.Drawing.Drawing2D
                 } 
         }
 }
-
-

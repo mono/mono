@@ -1,3 +1,10 @@
+2006-01-13  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* GraphicsPath.cs: Added more parameter checks to methods (to match
+	unit tests). Added descriptions to TODOs.
+	* PathData.cs: Don't clone the arrays! Removed unused internal 
+	properties.
+
 2006-01-12  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* GraphicsPath.cs: Throw an ArgumentException if either PathPoints or
