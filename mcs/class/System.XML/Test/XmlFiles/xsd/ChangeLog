@@ -1,3 +1,7 @@
+2006-01-11  Atsushi Enomoto <atsushi@ximian.com>
+
+	* datatypesTest.xsd : missing required file for xsd tests.
+
 2005-12-26  Atsushi Enomoto <atsushi@ximian.com>
 
 	* multi-schemaLocation.xml,

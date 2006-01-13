@@ -205,29 +205,26 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-		[Category ("NotWorking")] // bug #77086, #77087 and #77088
+		[Ignore ("Due to the (silly) dependency on bug #77088, this test will not be fixed. The test could be rewritten but it depends on the original test author.")]
 		public void AutoCreatePrefixes ()
 		{
+			xtw.WriteStartElement ("root");
 			xtw.WriteAttributeString (null, "abc", "http://somenamespace.com", "http://abc.def");
 			xtw.WriteAttributeString (null, "def", "http://somenamespace.com", "http://def.ghi");
 			xtw.WriteAttributeString (null, "ghi", "http://othernamespace.com", "http://ghi.jkl");
+			xtw.WriteEndElement ();
 
-#if NET_2_0
-			Assert.AreEqual ("d0p1:abc='http://abc.def' d0p1:def='http://def.ghi'" +
-				" d0p2:ghi='http://ghi.jkl'", StringWriterText, "#1");
-#else
-			// on 1.x a new prefix is always created when level is 0 ?
-			Assert.AreEqual ("d0p1:abc='http://abc.def' d0p2:def='http://def.ghi'" +
-				" d0p3:ghi='http://ghi.jkl'", StringWriterText, "#1");
-#endif
+			Assert.AreEqual ("<root d1p1:abc='http://abc.def' d1p1:def='http://def.ghi' d1p2:ghi='http://ghi.jkl' xmlns:d1p2='http://othernamespace.com' xmlns:d1p1='http://somenamespace.com' />", StringWriterText, "#1");
+		}
 
-			sw.GetStringBuilder ().Length = 0;
-			CreateXmlTextWriter ();
-
+		[Test]
+		[Ignore ("Due to the (silly) dependency on bug #77088, this test will not be fixed. The test could be rewritten but it depends on the original test author.")]
+		public void AutoCreatePrefixes2 ()
+		{
 			xtw.WriteStartElement ("person");
-			xtw.WriteAttributeString (null, "name", "http://somenamespace.com", "Gates");
-			xtw.WriteAttributeString (null, "initials", "http://othernamespace.com", "BG");
-			xtw.WriteAttributeString (null, "firstName", "http://somenamespace.com", "Bill");
+			xtw.WriteAttributeString (null, "name", "http://somenamespace.com", "Driesen");
+			xtw.WriteAttributeString (null, "initials", "http://othernamespace.com", "GD");
+			xtw.WriteAttributeString (null, "firstName", "http://somenamespace.com", "Gert");
 			xtw.WriteStartElement ("address");
 			xtw.WriteAttributeString (null, "street", "http://somenamespace.com", "Campus");
 			xtw.WriteAttributeString (null, "number", "http://othernamespace.com", "1");
@@ -238,9 +235,9 @@ namespace MonoTests.System.Xml
 
 			Assert.AreEqual (
 				"<person" +
-					" d1p1:name='Gates'" +
-					" d1p2:initials='BG'" +
-					" d1p1:firstName='Bill'" +
+					" d1p1:name='Driesen'" +
+					" d1p2:initials='GD'" +
+					" d1p1:firstName='Gert'" +
 					" xmlns:d1p2='http://othernamespace.com'" +
 					" xmlns:d1p1='http://somenamespace.com'>" +
 					"<address" +
@@ -525,12 +522,8 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void WriteStartElement_XmlPrefix ()
 		{
-			// uncomment the next code block once bug #77094 has been fixed.
-
-			/*
 			xtw.WriteStartElement ("xml", "something", "http://www.w3.org/XML/1998/namespace");
 			Assert.AreEqual ("<xml:something", StringWriterText, "#1");
 
@@ -548,7 +541,6 @@ namespace MonoTests.System.Xml
 
 			sw.GetStringBuilder ().Length = 0;
 			CreateXmlTextWriter ();
-			*/
 		}
 
 		[Test]
@@ -559,7 +551,6 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-		[Category ("NotWorking")] // bug #77094
 		[ExpectedException (typeof (ArgumentException))]
 		public void WriteStartElement_XmlPrefix_Invalid2 ()
 		{
@@ -1536,7 +1527,6 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-		[Category ("NotWorking")] // on mono, an XmlException is thrown instead
 		[ExpectedException (typeof (ArgumentException))]
 		public void WriteNmToken_InvalidChars ()
 		{
