@@ -220,9 +220,11 @@ namespace System.Windows.Forms
 			}
 			
 			set {
-				initialDirectory = value;
+				if (Directory.Exists (value)) {
+					initialDirectory = value;
 				
-				fileDialogPanel.ChangeDirectory( null, initialDirectory );
+					fileDialogPanel.ChangeDirectory( null, initialDirectory );
+				}
 			}
 		}
 		
@@ -1712,14 +1714,16 @@ namespace System.Windows.Forms
 	
 	internal struct FileStruct
 	{
-		public FileStruct( string fullname, FileAttributes attributes )
+		public FileStruct( string fullname, FileAttributes attributes, long size )
 		{
 			this.fullname = fullname;
 			this.attributes = attributes;
+			this.size = size;
 		}
 		
 		public string fullname;
 		public FileAttributes attributes;
+		public long size;
 	}
 	
 	// MWFFileView
@@ -1751,6 +1755,8 @@ namespace System.Windows.Forms
 			toolTip = new ToolTip ();
 			toolTip.InitialDelay = 300;
 			toolTip.ReshowDelay = 0; 
+			
+			LabelWrap = true;
 			
 			SmallImageList = MimeIconEngine.SmallIcons;
 			LargeImageList = MimeIconEngine.LargeIcons;
@@ -1978,6 +1984,8 @@ namespace System.Windows.Forms
 				fileLen = 1;
 			}
 			
+			fileStruct.size = fileLen;
+			
 			listViewItem.SubItems.Add( fileLen.ToString( ) + " KB" );
 			listViewItem.SubItems.Add( "File" );
 			listViewItem.SubItems.Add( fileInfo.LastAccessTime.ToShortDateString( ) + " " + fileInfo.LastAccessTime.ToShortTimeString( ) );
@@ -2167,7 +2175,15 @@ namespace System.Windows.Forms
 					
 					FileStruct fileStruct = (FileStruct)fileHashtable [item.Text];
 					
-					toolTip.SetToolTip (this, String.Format ("File: \n {0}", fileStruct.fullname));	
+					string output = String.Empty;
+					
+					if (fileStruct.attributes != FileAttributes.Directory) {
+						output = String.Format ("File: {0}", fileStruct.fullname);
+					}
+					else
+						output = String.Format ("Directory: {0}\n", fileStruct.fullname);
+					
+					toolTip.SetToolTip (this, output);	
 					
 					toolTip.Active = true;
 				}

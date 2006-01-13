@@ -1,5 +1,9 @@
 2006-01-13  Alexander Olk  <alex.olk@googlemail.com>
 
+	* FileDialog.cs: Don't crash if InitialDirectory doesn't exist
+
+2006-01-13  Alexander Olk  <alex.olk@googlemail.com>
+
 	* ToolTip.cs: If SetToolTip is called from a control and the mouse
 	  is currently over that control, make sure that tooltip_window.Text
 	  gets updated
