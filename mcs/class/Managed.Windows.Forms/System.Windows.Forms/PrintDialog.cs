@@ -36,7 +36,7 @@ using System.Reflection;
 
 namespace System.Windows.Forms
 {
-
+	[DefaultProperty("Document")]
 	public sealed class PrintDialog : CommonDialog {
 		PrintDocument document;
 		PrinterSettings printer_settings;

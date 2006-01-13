@@ -34,7 +34,7 @@ using System.Drawing.Printing;
 using System.Reflection;
 
 namespace System.Windows.Forms {
-
+	[DefaultPropertyAttribute("Document")]
 	public class PrintPreviewControl : Control {
 		#region Local variables
 		private bool autozoom;
@@ -52,35 +52,54 @@ namespace System.Windows.Forms {
 			columns = 1;
 			rows = 0;
 			startPage = 0;
+
+			this.BackColor = SystemColors.AppWorkspace;
 		}
 		#endregion // Public Constructors
 
 		
 		#region Public Instance Properties
+		[DefaultValue(true)]
 		public bool AutoZoom {
 			get { return autozoom; }
 			set { autozoom = value; }
 		}
+		[DefaultValue(1)]
 		public int Columns {
 			get { return columns; }
 			set { columns = value; }
 		}
+		[DefaultValue(null)]
 		public PrintDocument Document {
 			get { return document; }
 			set { document = value; }
 		}
+		[DefaultValue(0)]
 		public int Rows {
 			get { return rows; }
 			set { rows = value; }
 		}
+		[DefaultValue(0)]
 		public int StartPage {
 			get { return startPage; }
 			set { startPage = value; }
 		}
+
+		public override string Text {
+			get {
+				return base.Text;
+			}
+			set {
+				base.Text = value;
+			}
+		}
+
+		[DefaultValue(false)]
 		public bool UseAntiAlias {
 			get { return useAntiAlias; }
 			set { useAntiAlias = value; }
 		}
+		[DefaultValue(1.0)]
 		public double Zoom {
 			get { return zoom; }
 			set { zoom = value; }
@@ -91,10 +110,13 @@ namespace System.Windows.Forms {
 		#region Public Instance Methods
 		public void InvalidatePreview() {
 		}
+
+		[EditorBrowsable(EditorBrowsableState.Never)]
 		public override void ResetBackColor() {
 			base.ResetBackColor();
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Never)]
 		public override void ResetForeColor() {
 			base.ResetForeColor ();
 		}
@@ -131,5 +153,7 @@ namespace System.Windows.Forms {
 		#endregion // Protected Instance Methods
 
 		public event EventHandler StartPageChanged;
+
+		public new event EventHandler TextChanged;
 	}
 }

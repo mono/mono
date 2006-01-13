@@ -37,18 +37,19 @@ namespace System.Windows.Forms {
 
 	public class PrintPreviewDialog : Form {
 		#region Local variables
-		PrintPreviewControl printPreview;
+		PrintPreviewControl print_preview;
 		#endregion // Local variables
 
 		#region Public Constructors
 		public PrintPreviewDialog() {
+			print_preview = new PrintPreviewControl();
 		}
 		#endregion // Public Constructors
 
 		#region Public Instance Properties
 		public PrintDocument Document {
-			get { return printPreview.Document; }
-			set { printPreview.Document = value; }
+			get { return print_preview.Document; }
+			set { print_preview.Document = value; }
 		}
 		public override ISite Site {
 			get {
@@ -59,8 +60,8 @@ namespace System.Windows.Forms {
 			}
 		}
 		public bool UseAntiAlias {
-			get { return printPreview.UseAntiAlias; }
-			set { printPreview.UseAntiAlias = value; }
+			get { return print_preview.UseAntiAlias; }
+			set { print_preview.UseAntiAlias = value; }
 		}
 
 		#endregion // Public Instance Properties

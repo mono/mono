@@ -1,3 +1,10 @@
+2006-01-13  Jonathan Chambers  <jonathan.chambers@ansys.com>
+
+	* PageSetupDialog.cs: Added.
+	* PrintDialog.cs: Attributes.
+	* PrintPreviewControl.cs: Updates.
+	* PrintPreviewDialog.cs: Updates.
+	
 2006-01-12  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* Control.cs: Undid my selection check fix, since it's not needed
