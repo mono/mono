@@ -1787,7 +1787,7 @@ public partial class TypeManager {
 			(m is MethodBuilder || method_overrides.Contains (m));
 	}
 
-	static public MethodBase GetOverride (MethodBase m)
+	static public MethodBase TryGetBaseDefinition (MethodBase m)
 	{
 		return (MethodBase) method_overrides [m];
 	}

@@ -1,3 +1,41 @@
+2006-01-12  Miguel de Icaza  <miguel@novell.com>
+
+	This fixes the problem where we used ldfld instead of ldflda to
+	load the "THIS" pointer on captured parameters, when THIS is a
+	value type.  See bug #77205.
+	
+	* iterators.cs (CapturedThisReference.Emit): Pass false to
+	EmitThis (we do not need the address).
+
+	* codegen.cs (EmitThis): it needs to know whether we need the
+	address of `this' or not.  This is used by value types.  
+
+	* expression.cs (This.AddressOf): Pass true to the EmitThis call,
+	every other call passes false.
+
+2006-01-12  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #77221.
+	* typemanager.cs (TryGetBaseDefinition): Rename from the mis-named
+	GetOverride.
+	* expression.cs (Invocation.OverloadResolve): Update.
+	(Invocation.DoResolve): Avoid double resolution of invocation.
+
+2006-01-11  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #77180.
+	* expression.cs (Unary.Emit): When in /checked+ mode, don't emit
+	unary negation of floating point types as 0-expr; negation cannot
+	overflow in floating point types.
+
+	Fix #77204.
+	* expression.cs (MemberAccess.DoResolve): Disallow the use of '.'
+	on operands of 'void' type.
+
+	Fix #77200.
+	* cfold.cs (BinaryFold): Implement folding of BinaryOr, BinaryAnd
+	and ExclusiveOr for boolean constants too.
+
 2006-01-12  Ben Maurer  <bmaurer@andrew.cmu.edu>
 
 	* expression.cs: Fix Console.WriteLine ((this = x).foo);

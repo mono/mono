@@ -202,6 +202,23 @@ namespace Mono.CSharp {
 					right = ((EnumConstant) right).Child;
 			}
 
+			if (left is BoolConstant && right is BoolConstant) {
+				bool lv = ((BoolConstant) left ).Value;
+				bool rv = ((BoolConstant) right).Value;
+				switch (oper) {
+				case Binary.Operator.BitwiseAnd:
+				case Binary.Operator.LogicalAnd:
+					return new BoolConstant (lv && rv, left.Location);
+				case Binary.Operator.BitwiseOr:
+				case Binary.Operator.LogicalOr:
+					return new BoolConstant (lv || rv, left.Location);
+				case Binary.Operator.ExclusiveOr:
+					return new BoolConstant (lv ^ rv, left.Location);
+				default:
+					throw new InternalErrorException ("Invalid operator on booleans: " + oper);
+				}
+			}
+
 			Type wrap_as;
 			Constant result = null;
 			switch (oper){
@@ -998,22 +1015,6 @@ namespace Mono.CSharp {
 				Binary.Error_OperatorCannotBeApplied (loc, ">>", lt, rt);
 				break;
 
-			case Binary.Operator.LogicalAnd:
-				if (left is BoolConstant && right is BoolConstant){
-					return new BoolConstant (
-						((BoolConstant) left).Value &&
-						((BoolConstant) right).Value, left.Location);
-				}
-				break;
-
-			case Binary.Operator.LogicalOr:
-				if (left is BoolConstant && right is BoolConstant){
-					return new BoolConstant (
-						((BoolConstant) left).Value ||
-						((BoolConstant) right).Value, left.Location);
-				}
-				break;
-				
 			case Binary.Operator.Equality:
 				if (left is BoolConstant && right is BoolConstant){
 					return new BoolConstant (

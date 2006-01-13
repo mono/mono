@@ -615,7 +615,7 @@ namespace Mono.CSharp {
 				throw new Exception ("This should be caught by Resolve");
 				
 			case Operator.UnaryNegation:
-				if (ec.CheckState) {
+				if (ec.CheckState && type != TypeManager.float_type && type != TypeManager.double_type) {
 					ig.Emit (OpCodes.Ldc_I4_0);
 					if (type == TypeManager.int64_type)
 						ig.Emit (OpCodes.Conv_U8);
@@ -4701,7 +4701,7 @@ namespace Mono.CSharp {
 						if (candidate_overrides == null)
 							candidate_overrides = new ArrayList ();
 						candidate_overrides.Add (m);
-						m = TypeManager.GetOverride (m);
+						m = TypeManager.TryGetBaseDefinition (m);
 					}
 					if (m != null)
 						methods [j++] = m;
@@ -5080,8 +5080,13 @@ namespace Mono.CSharp {
 			return true;
 		}
 
+		private bool resolved = false;
 		public override Expression DoResolve (EmitContext ec)
 		{
+			if (resolved)
+				return this.method == null ? null : this;
+
+			resolved = true;
 			//
 			// First, resolve the expression that is used to
 			// trigger the invocation
@@ -5121,7 +5126,7 @@ namespace Mono.CSharp {
 			}
 
 			MethodGroupExpr mg = (MethodGroupExpr) expr;
-			method = OverloadResolve (ec, mg, Arguments, false, loc);
+			MethodBase method = OverloadResolve (ec, mg, Arguments, false, loc);
 
 			if (method == null)
 				return null;
@@ -5178,6 +5183,7 @@ namespace Mono.CSharp {
 				mg.InstanceExpression.CheckMarshallByRefAccess (ec.ContainerType);
 
 			eclass = ExprClass.Value;
+			this.method = method;
 			return this;
 		}
 
@@ -6849,7 +6855,7 @@ namespace Mono.CSharp {
 			ILGenerator ig = ec.ig;
 			
 			if (ec.TypeContainer is Struct){
-				ec.EmitThis ();
+				ec.EmitThis (false);
 				source.Emit (ec);
 				
 				LocalTemporary t = null;
@@ -6872,7 +6878,7 @@ namespace Mono.CSharp {
 		{
 			ILGenerator ig = ec.ig;
 
-			ec.EmitThis ();
+			ec.EmitThis (false);
 			if (ec.TypeContainer is Struct)
 				ig.Emit (OpCodes.Ldobj, type);
 		}
@@ -6893,7 +6899,7 @@ namespace Mono.CSharp {
 
 		public void AddressOf (EmitContext ec, AddressOp mode)
 		{
-			ec.EmitThis ();
+			ec.EmitThis (true);
 
 			// FIMXE
 			// FIGURE OUT WHY LDARG_S does not work
@@ -7281,6 +7287,11 @@ namespace Mono.CSharp {
 			if (expr_type.IsPointer){
 				Error (23, "The `.' operator can not be applied to pointer operands (" +
 				       TypeManager.CSharpName (expr_type) + ")");
+				return null;
+			}
+
+			if (expr_type == TypeManager.void_type) {
+				Error (23, "The `.' operator can not be applied to operands of type 'void'");
 				return null;
 			}
 
