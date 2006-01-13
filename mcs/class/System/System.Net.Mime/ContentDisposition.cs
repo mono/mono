@@ -35,6 +35,7 @@
 using System.Text;
 using System.Collections;
 using System.Collections.Specialized;
+using System.Globalization;
 
 namespace System.Net.Mime {
 	public class ContentDisposition
@@ -129,7 +130,7 @@ namespace System.Net.Mime {
 		}
 
 		public bool Inline {
-			get { return dispositionType.ToLower () == DispositionTypeNames.Inline.ToLower (); }
+			get { return String.Compare (dispositionType, DispositionTypeNames.Inline, true, CultureInfo.InvariantCulture) == 0; }
 			set {
 				if (value)
 					dispositionType = DispositionTypeNames.Inline;

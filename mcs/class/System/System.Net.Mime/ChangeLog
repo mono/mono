@@ -1,3 +1,8 @@
+2006-01-13  John Luke  <john.luke@gmail.com>
+
+	* ContentDisposition.cs: use String.Compare instead
+	of comparing .ToLower's
+	
 2006-01-02  John Luke  <john.luke@gmail.com>
 
 	* ContentDisposition.cs: remove [MonoTODO]'s
