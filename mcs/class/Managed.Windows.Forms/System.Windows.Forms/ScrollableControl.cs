@@ -56,20 +56,22 @@ namespace System.Windows.Forms {
 		#region Subclass DockPaddingEdges
 		public class DockPaddingEdges : ICloneable {
 			#region DockPaddingEdges Local Variables
-			private int all;
-			private int left;
-			private int right;
-			private int top;
-			private int bottom;
+			private int	all;
+			private int	left;
+			private int	right;
+			private int	top;
+			private int	bottom;
+			private Control	owner;
 			#endregion	// DockPaddingEdges Local Variables
 
 			#region DockPaddingEdges Constructor
-			internal DockPaddingEdges() {
+			internal DockPaddingEdges(Control owner) {
 				all = 0;
 				left = 0;
 				right = 0;
 				top = 0;
 				bottom = 0;
+				this.owner = owner;
 			}
 			#endregion	// DockPaddingEdges Constructor
 
@@ -86,6 +88,8 @@ namespace System.Windows.Forms {
 					right = value;
 					top = value;
 					bottom = value;
+
+					owner.PerformLayout();
 				}
 			}
 
@@ -98,6 +102,8 @@ namespace System.Windows.Forms {
 				set {
 					bottom = value;
 					all = 0;
+
+					owner.PerformLayout();
 				}
 			}
 
@@ -110,6 +116,8 @@ namespace System.Windows.Forms {
 				set {
 					left=value;
 					all = 0;
+
+					owner.PerformLayout();
 				}
 			}
 
@@ -122,6 +130,8 @@ namespace System.Windows.Forms {
 				set {
 					right=value;
 					all = 0;
+
+					owner.PerformLayout();
 				}
 			}
 
@@ -134,6 +144,8 @@ namespace System.Windows.Forms {
 				set {
 					top=value;
 					all = 0;
+
+					owner.PerformLayout();
 				}
 			}
 
@@ -165,7 +177,7 @@ namespace System.Windows.Forms {
 			object ICloneable.Clone() {
 				DockPaddingEdges padding_edge;
 
-				padding_edge=new DockPaddingEdges();
+				padding_edge=new DockPaddingEdges(owner);
 
 				padding_edge.all=all;
 				padding_edge.left=left;
@@ -209,7 +221,7 @@ namespace System.Windows.Forms {
 			auto_scroll_margin = new Size(0, 0);
 			auto_scroll_min_size = new Size(0, 0);
 			scroll_position = new Point(0, 0);
-			dock_padding = new DockPaddingEdges();
+			dock_padding = new DockPaddingEdges(this);
 			SizeChanged +=new EventHandler(Recalculate);
 			VisibleChanged += new EventHandler(Recalculate);
 		}
@@ -363,6 +375,13 @@ namespace System.Windows.Forms {
 						rect.Height = 0;
 					}
 				}
+
+				rect.X += dock_padding.Left;
+				rect.Y += dock_padding.Top;
+
+				rect.Width -= dock_padding.Right + dock_padding.Left;
+				rect.Height -= dock_padding.Bottom + dock_padding.Top;
+
 				return rect;
 				//return new Rectangle(-scroll_position.X, -scroll_position.Y, auto_scroll_min_size.Width, auto_scroll_min_size.Height);
 			}
@@ -374,12 +393,6 @@ namespace System.Windows.Forms {
 			get {
 				return dock_padding;
 			}
-
-			// DockPadding is documented as 'get' only ( http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfSystemWindowsFormsScrollableControlClassAutoScrollTopic.asp )
-			// but Microsoft's examples on that page show 'set' usage
-//			set {
-//				dock_padding = value;
-//			}
 		}
 		#endregion	// Public Instance Properties
 
