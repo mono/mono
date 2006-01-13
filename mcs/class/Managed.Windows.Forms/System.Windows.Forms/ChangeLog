@@ -1,3 +1,31 @@
+2006-01-12  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* Application.cs:
+	  - Switched RunLoop to use static Message.Create to create a 
+	    Message object
+	  - Added PreProcessMessage call in runloop for keyboard events; this
+	    is part of the fix for #77219, I overlooked this originally in the
+	    MSDN doc for PreProcessMessage
+	* Control.cs:
+	  - Removed call to PreProcessMessage from handling of keyboard 
+	    messages; it's supposed to be done in the message pump
+	  - Moved call to ProcessKeyEventArgs inside ProcessKeyMessage as
+	    per MSDN documentation.
+	  - IsInputChar: All chars are input chars by default; removed the 
+	    parent calling chain, MS does not document that
+	  - PreProcessMessage: If IsInputChar is true, we want to return false
+	    to allow dispatching of the message
+	  - When selecting the next control, now also check that we're not
+	    selecting ourselves again and therefore return a false positive.
+	* TextBoxBase.cs:
+	  - Tried to match return values for IsInputKey and ProcessDialogKey
+	    to what MS returns; moved processing of our special keys outside
+	    ProcessDialogKey since MS does not seem to return true on those.
+	  - Moved code that previously was in ProcessDialogKey into new private
+	    ProcessKey method, which gets called upon receipt of WM_KEYDOWN
+	  - Reworked handling of WM_CHAR to not have to duplicate code from
+	    Control.cs anymore, instead we simply call down to base.
+	   
 2006-01-12  Jackson Harper  <jackson@ximian.com>
 
 	* ComboBox.cs: We always need to refresh the text area when

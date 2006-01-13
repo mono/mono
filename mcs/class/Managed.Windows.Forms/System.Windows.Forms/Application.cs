@@ -359,11 +359,7 @@ namespace System.Windows.Forms {
 					bool	drop;
 
 					drop = false;
-					m = new Message();
-					m.Msg = (int)msg.message;
-					m.HWnd = msg.hwnd;
-					m.LParam = msg.lParam;
-					m.WParam = msg.wParam;
+					m = Message.Create(msg.hwnd, (int)msg.message, msg.wParam, msg.lParam);
 					for (int i = 0; i < message_filters.Count; i++) {
 						if (((IMessageFilter)message_filters[i]).PreFilterMessage(ref m)) {
 							// we're dropping the message
@@ -376,8 +372,29 @@ namespace System.Windows.Forms {
 					}
 				}
 
-				XplatUI.TranslateMessage(ref msg);
-				XplatUI.DispatchMessage(ref msg);
+				switch((Msg)msg.message) {
+					case Msg.WM_KEYDOWN:
+					case Msg.WM_SYSKEYDOWN:
+					case Msg.WM_CHAR:
+					case Msg.WM_SYSCHAR:
+					case Msg.WM_KEYUP:
+					case Msg.WM_SYSKEYUP: {
+						Message m;
+						Control c;
+
+						m = Message.Create(msg.hwnd, (int)msg.message, msg.wParam, msg.lParam);
+						c = Control.FromHandle(msg.hwnd);
+						if ((c != null) && !c.PreProcessMessage(ref m)) {
+							goto default;
+						}
+						break;
+					}
+					default: {
+						XplatUI.TranslateMessage(ref msg);
+						XplatUI.DispatchMessage(ref msg);
+						break;
+					}
+				}
 
 				// Handle exit, Form might have received WM_CLOSE and set 'closing' in response
 				if ((context.MainForm != null) && context.MainForm.closing) {

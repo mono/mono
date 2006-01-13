@@ -2830,11 +2830,11 @@ namespace System.Windows.Forms
 				return true;
 			} else if (msg.Msg == (int)Msg.WM_CHAR) {
 				if (IsInputChar((char)msg.WParam)) {
-					return true;
+					return false;
 				}
 			} else if (msg.Msg == (int)Msg.WM_SYSCHAR) {
 				if (IsInputChar((char)msg.WParam)) {
-					return true;
+					return false;
 				}
 				return ProcessDialogChar((char)msg.WParam);
 			}
@@ -2950,7 +2950,7 @@ namespace System.Windows.Forms
 					break;
 				}
 
-				if (c.CanSelect && ((c.parent == ctl.parent) || nested) && (c.tab_stop || !tabStopOnly)) {
+				if (c.CanSelect && (c != ctl) && ((c.parent == ctl.parent) || nested) && (c.tab_stop || !tabStopOnly)) {
 					Select(c);
 					return true;
 				}
@@ -3116,11 +3116,7 @@ namespace System.Windows.Forms
 		}
 
 		protected virtual bool IsInputChar (char charCode) {
-			if (parent != null) {
-				return parent.IsInputChar(charCode);
-			}
-
-			return false;
+			return true;
 		}
 
 		protected virtual bool IsInputKey (Keys keyData) {
@@ -3204,7 +3200,7 @@ namespace System.Windows.Forms
 				}
 			}
 
-			return false;
+			return ProcessKeyEventArgs(ref msg);
 		}
 
 		protected virtual bool ProcessKeyPreview(ref Message msg) {
@@ -3820,15 +3816,7 @@ namespace System.Windows.Forms
 				case Msg.WM_KEYUP:
 				case Msg.WM_SYSCHAR:
 				case Msg.WM_CHAR: {
-					if (PreProcessMessage(ref m)) {
-						return;
-					}
-
 					if (ProcessKeyMessage(ref m)) {
-						return;
-					}
-
-					if (ProcessKeyEventArgs(ref m)) {
 						return;
 					}
 

@@ -650,23 +650,34 @@ namespace System.Windows.Forms {
 		}
 
 		protected override bool IsInputKey(Keys keyData) {
-			switch (keyData) {
-#if not
-				// We handle Enter in ProcessDialogKey
+			if ((keyData & Keys.Alt) != 0) {
+				return base.IsInputKey(keyData);
+			}
+
+			switch (keyData & Keys.KeyCode) {
 				case Keys.Enter: {
-					if (multiline && (accepts_return || ((keyData & Keys.Control) != 0))) {
+					if (multiline && accepts_return) {
 						return true;
 					}
 					return false;
 				}
-#endif
 
 				case Keys.Tab: {
 					if (accepts_tab && multiline) {
-						return true;
+						if ((keyData & Keys.Control) == 0) {
+							return true;
+						}
 					}
 					return false;
 				}
+
+				case Keys.PageUp:
+				case Keys.PageDown:
+				case Keys.Home:
+				case Keys.End: {
+					return true;
+				}
+
 			}
 			return false;
 		}
@@ -733,6 +744,10 @@ namespace System.Windows.Forms {
 		}
 
 		protected override bool ProcessDialogKey(Keys keyData) {
+			return base.ProcessDialogKey(keyData);
+		}
+
+		private bool ProcessKey(Keys keyData) {
 			bool control;
 			bool shift;
 
@@ -1050,7 +1065,7 @@ namespace System.Windows.Forms {
 					return true;
 				}
 			}
-			return base.ProcessDialogKey (keyData);
+			return false;
 		}
 
 		protected override void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified) {
@@ -1100,23 +1115,20 @@ namespace System.Windows.Forms {
 					return;
 				}
 
+				case Msg.WM_KEYDOWN: {
+					ProcessKey((Keys)m.WParam.ToInt32() | XplatUI.State.ModifierKeys);
+					base.WndProc(ref m);
+					return;
+				}
+
 				case Msg.WM_CHAR: {
-					if (ProcessKeyEventArgs(ref m)) {
-						return;
-					}
-
-					if (PreProcessMessage(ref m)) {
-						return;
-					}
-
-					if (ProcessKeyMessage(ref m)) {
-						return;
-					}
-
 					// Ctrl-Backspace generates a real char, whack it
 					if (m.WParam.ToInt32() == 127) {
+						base.WndProc(ref m);
 						return;
 					}
+
+					base.WndProc(ref m);
 
 					if (!read_only && (m.WParam.ToInt32() >= 32)) {	// FIXME, tabs should probably go through
 						if (document.selection_visible) {
@@ -1158,7 +1170,6 @@ namespace System.Windows.Forms {
 							}
 						}
 					}
-					DefWndProc(ref m);
 					return;
 				}
 
