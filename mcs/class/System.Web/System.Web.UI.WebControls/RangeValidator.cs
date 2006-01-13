@@ -115,7 +115,7 @@ namespace System.Web.UI.WebControls {
 			string	control_value;
 
 			control_value = GetControlValidationValue(this.ControlToValidate);
-			if (control_value == null) {
+			if (control_value == null || control_value == "") {
 				return true;
 			}
 

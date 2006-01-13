@@ -1,3 +1,8 @@
+2006-01-13 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* RangeValidator.cs: allow empty data from the control. Patch from Marek
+	Habersack that fixes bug #77239.
+
 2006-01-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Calendar.cs: use the DateTimeFormatInfo from the current thread. Patch
