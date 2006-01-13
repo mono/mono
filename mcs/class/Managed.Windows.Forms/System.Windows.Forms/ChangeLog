@@ -1,3 +1,7 @@
+2006-01-13  Mike Kestner  <mkestner@novell.com>
+
+	* MimeIcon.cs: size_t on lp64 fix for gdk_pixbuf_save_to_file extern.
+
 2006-01-13  Jackson Harper  <jackson@ximian.com>
 
 	* TreeView.cs: On MS GetNodeAt never actually factors in the X

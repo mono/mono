@@ -960,7 +960,7 @@ namespace System.Windows.Forms
 		static extern IntPtr rsvg_pixbuf_from_file_at_size (string file_name, int  width, int  height, out IntPtr error);
 		
 		[DllImport("libgdk-x11-2.0.so")]
-		static extern bool gdk_pixbuf_save_to_buffer (IntPtr pixbuf, out IntPtr buffer, out uint buffer_size, string type, out IntPtr error, IntPtr option_dummy);
+		static extern bool gdk_pixbuf_save_to_buffer (IntPtr pixbuf, out IntPtr buffer, out UIntPtr buffer_size, string type, out IntPtr error, IntPtr option_dummy);
 		
 		[DllImport("libglib-2.0.so")]
 		static extern void g_free (IntPtr mem);
@@ -996,14 +996,15 @@ namespace System.Windows.Forms
 			
 			error = IntPtr.Zero;
 			IntPtr buffer;
-			uint buffer_size;
+			UIntPtr buffer_size_as_ptr;
 			string type = "png";
 			
-			bool saved = gdk_pixbuf_save_to_buffer (pixbuf, out buffer, out buffer_size, type, out error, IntPtr.Zero);
+			bool saved = gdk_pixbuf_save_to_buffer (pixbuf, out buffer, out buffer_size_as_ptr, type, out error, IntPtr.Zero);
 			
 			if (!saved)
 				return null;
 			
+			int buffer_size = (int) (uint) buffer_size_as_ptr;
 			byte[] result = new byte [buffer_size];
 			Marshal.Copy (buffer, result, 0, (int) buffer_size);
 			g_free (buffer);
