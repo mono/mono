@@ -80,9 +80,11 @@ namespace System.Web {
 			output_stream.Flush ();
 		}
 
+		char [] chars = new char [1];
 		public override void Write (char ch)
 		{
-			Write (new string (ch, 1));
+			chars [0] = ch;
+			Write (chars, 0, 1);
 		}
 
 		public override void Write (object obj)

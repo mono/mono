@@ -1,3 +1,8 @@
+2006-01-13 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpWriter.cs: made Write (char) less memory hungry. Thanks to Mike
+	Glenn for pointing this out.
+
 2006-01-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpApplicationFactory.cs: fix condition for ContextAvailable.
