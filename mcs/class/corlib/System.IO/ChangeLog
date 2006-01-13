@@ -1,3 +1,9 @@
+2006-01-13  Ben Maurer  <bmaurer@andrew.cmu.edu>
+
+	* TextWriter.cs: Call char[],int,int from the Write(char[]) method
+	both for msft compat and for performance. Thanks to "Mike Glenn" 
+	<mglenn@zoominternet.net> for pointing.
+
 2006-01-12  Ben Maurer  <bmaurer@andrew.cmu.edu>
 
 	* File.cs: Support for Read/WriteAllText

@@ -50,5 +50,26 @@ namespace MonoTests.System.IO
 			w.UpdateLine2 ();
 			AssertEquals ('Y', w.NewLine [0]);
 		}
+
+		class ArrayOrCharTester : TextWriter {
+			public bool called_array;
+			public override Encoding Encoding { get { return Encoding.UTF8; }}
+
+			public override void Write (char [] x, int a, int b)
+			{
+				called_array = true;
+			}
+			public override void Write (char c)
+			{
+			}
+		}
+
+		[Test]
+		public void TestCharArrayCallsArrayIntInt ()
+		{
+			ArrayOrCharTester x = new ArrayOrCharTester ();
+			x.Write (new char [] {'a','b','c'});
+			AssertEquals (true, x.called_array);			
+		}
 	}
 }

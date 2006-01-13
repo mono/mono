@@ -117,10 +117,9 @@ namespace System.IO {
 
                 public virtual void Write (char[] value)
 		{
-			if (value != null) {
-				for (int i = 0; i < value.Length; ++i)
-					Write (value [i]);
-			}
+			if (value == null)
+				return;
+			Write (value, 0, value.Length);
 		}
 		
                 public virtual void Write (decimal value)
