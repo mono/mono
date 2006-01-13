@@ -138,6 +138,13 @@ namespace System.Web.Services.Protocols {
 				uri = new Uri (url);
 			}
 		}
+#if NET_2_0
+		[MonoTODO]
+		public bool UseDefaultCredentials {
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
+#endif
 
 		#endregion // Properties
 

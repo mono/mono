@@ -1,3 +1,7 @@
+2006-01-12  Ben Maurer  <bmaurer@andrew.cmu.edu>
+
+	* WebClientProtocol.cs: Add a 2.0 stub
+
 2006-01-04  Chris Toshok  <toshok@ximian.com>
 
 	* SoapDocumentationHandler.cs: add CONFIGURATION_2_0 stuff.
