@@ -1,3 +1,7 @@
+2006-01-13  Ben Maurer  <bmaurer@andrew.cmu.edu>
+
+	* ServiceInstaller.cs: Stubs for 2.0 stuff
+
 2005-11-14  Marek Safar  <marek.safar@seznam.cz>
 
 	* ServiceController.cs: Simple stub only.

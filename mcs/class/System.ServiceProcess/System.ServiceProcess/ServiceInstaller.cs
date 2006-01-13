@@ -39,11 +39,23 @@ namespace System.ServiceProcess
 	public class ServiceInstaller : System.Configuration.Install.ComponentInstaller
 	{
 		public ServiceInstaller () {}
-
+		
 		private string display_name;
 		private string service_name;
 		private string[] services_depended_on;
 		private ServiceStartMode start_type;
+
+#if NET_2_0
+		private string description;
+		public string Description {
+			get {
+				return description;
+			}
+			set {
+				description = value;
+			}
+		}
+#endif
 
 		public string DisplayName {
 			get {
