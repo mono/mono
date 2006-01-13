@@ -111,6 +111,9 @@ public unsafe class CP932 : MonoEncoding
 							++length;
 						}
 					}
+					else if(ch >= 0xE000 && ch <= 0xE757)
+						// PrivateUse
+						++length;
 					else if(ch >= 0xFF01 && ch <= 0xFFEF)
 					{
 						// This range contains extra characters,
@@ -185,60 +188,60 @@ public unsafe class CP932 : MonoEncoding
 							}
 							switch(ch)
 							{
-								case 0x00A2:
-									bytes[posn++] = (byte)0x81;
-									bytes[posn++] = (byte)0x91;
-									break;
+							case 0x00A2:
+								bytes[posn++] = (byte)0x81;
+								bytes[posn++] = (byte)0x91;
+								break;
 
-								case 0x00A3:
-									bytes[posn++] = (byte)0x81;
-									bytes[posn++] = (byte)0x92;
-									break;
+							case 0x00A3:
+								bytes[posn++] = (byte)0x81;
+								bytes[posn++] = (byte)0x92;
+								break;
 
-								case 0x00A7:
-									bytes[posn++] = (byte)0x81;
-									bytes[posn++] = (byte)0x98;
-									break;
+							case 0x00A7:
+								bytes[posn++] = (byte)0x81;
+								bytes[posn++] = (byte)0x98;
+								break;
 
-								case 0x00A8:
-									bytes[posn++] = (byte)0x81;
-									bytes[posn++] = (byte)0x4E;
-									break;
+							case 0x00A8:
+								bytes[posn++] = (byte)0x81;
+								bytes[posn++] = (byte)0x4E;
+								break;
 
-								case 0x00AC:
-									bytes[posn++] = (byte)0x81;
-									bytes[posn++] = (byte)0xCA;
-									break;
+							case 0x00AC:
+								bytes[posn++] = (byte)0x81;
+								bytes[posn++] = (byte)0xCA;
+								break;
 
-								case 0x00B0:
-									bytes[posn++] = (byte)0x81;
-									bytes[posn++] = (byte)0x8B;
-									break;
+							case 0x00B0:
+								bytes[posn++] = (byte)0x81;
+								bytes[posn++] = (byte)0x8B;
+								break;
 
-								case 0x00B1:
-									bytes[posn++] = (byte)0x81;
-									bytes[posn++] = (byte)0x7D;
-									break;
+							case 0x00B1:
+								bytes[posn++] = (byte)0x81;
+								bytes[posn++] = (byte)0x7D;
+								break;
 
-								case 0x00B4:
-									bytes[posn++] = (byte)0x81;
-									bytes[posn++] = (byte)0x4C;
-									break;
+							case 0x00B4:
+								bytes[posn++] = (byte)0x81;
+								bytes[posn++] = (byte)0x4C;
+								break;
 
-								case 0x00B6:
-									bytes[posn++] = (byte)0x81;
-									bytes[posn++] = (byte)0xF7;
-									break;
+							case 0x00B6:
+								bytes[posn++] = (byte)0x81;
+								bytes[posn++] = (byte)0xF7;
+								break;
 
-								case 0x00D7:
-									bytes[posn++] = (byte)0x81;
-									bytes[posn++] = (byte)0x7E;
-									break;
+							case 0x00D7:
+								bytes[posn++] = (byte)0x81;
+								bytes[posn++] = (byte)0x7E;
+								break;
 
-								case 0x00F7:
-									bytes[posn++] = (byte)0x81;
-									bytes[posn++] = (byte)0x80;
-									break;
+							case 0x00F7:
+								bytes[posn++] = (byte)0x81;
+								bytes[posn++] = (byte)0x80;
+								break;
 							}
 						}
 						else if(ch == 0x00A5)
