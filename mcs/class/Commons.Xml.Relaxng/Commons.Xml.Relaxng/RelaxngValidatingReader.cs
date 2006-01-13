@@ -540,15 +540,16 @@ namespace Commons.Xml.Relaxng
 	#region Memoization support
 	internal class MemoizationStore
 	{
-		ArrayList startOpen = new ArrayList ();
+		Hashtable startOpen = new Hashtable ();
 		Hashtable startClose = new Hashtable ();
-		ArrayList startAtt = new ArrayList ();
+		Hashtable startAtt = new Hashtable ();
 		Hashtable endTag = new Hashtable ();
 		Hashtable endAtt = new Hashtable ();
 		Hashtable textOnly = new Hashtable ();
 		Hashtable mixedText = new Hashtable ();
 		Hashtable emptyText = new Hashtable ();
 		Hashtable text = new Hashtable ();
+		Hashtable qnames = new Hashtable ();
 
 		enum DerivativeType {
 			StartTagOpen,
@@ -560,64 +561,52 @@ namespace Commons.Xml.Relaxng
 			TextOnly
 		}
 
-		class Memoization
+		XmlQualifiedName GetQName (string local, string ns)
 		{
-			public Memoization (DerivativeType type, RdpPattern input, RdpPattern output)
-			{
-				Type = type;
-				Input = input;
-				Output = output;
+			Hashtable nst = qnames [ns] as Hashtable;
+			if (nst == null) {
+				nst = new Hashtable ();
+				qnames [ns] = nst;
 			}
-
-			public readonly DerivativeType Type;
-			public readonly RdpPattern Input;
-			public readonly RdpPattern Output;
-		}
-
-		class MemoizationStart : Memoization
-		{
-			public MemoizationStart (DerivativeType type, string name, string ns, RdpPattern input, RdpPattern output)
-				: base (type, input, output)
-			{
-				Name = name;
-				NS = ns;
+			XmlQualifiedName qn = nst [local] as XmlQualifiedName;
+			if (qn == null) {
+				qn = new XmlQualifiedName (local, ns);
+				nst [local] = qn;
 			}
-
-			public readonly string Name;
-			public readonly string NS;
+			return qn;
 		}
 
 		public RdpPattern StartTagOpenDeriv (RdpPattern p, string local, string ns)
 		{
-			RdpPattern m = GetStartDeriv (startOpen, p, DerivativeType.StartTagOpen, local, ns);
-			if (m != null)
-				return m;
-			m = p.StartTagOpenDeriv (local, ns, this);
-			startOpen.Add (new MemoizationStart (DerivativeType.StartTagOpen, local, ns, p, m));
+			Hashtable h = startOpen [p] as Hashtable;
+			if (h == null) {
+				h = new Hashtable ();
+				startOpen [p] = h;
+			}
+			XmlQualifiedName qn = GetQName (local, ns);
+			RdpPattern m = h [qn] as RdpPattern;
+			if (m == null) {
+				m = p.StartTagOpenDeriv (local, ns, this);
+				h [qn] = m;
+			}
 			return m;
 		}
 
 int nStartAttDeriv = 0;
 		public RdpPattern StartAttDeriv (RdpPattern p, string local, string ns)
 		{
-			RdpPattern m = GetStartDeriv (startAtt, p, DerivativeType.StartAtt, local, ns);
-			if (m != null)
-				return m;
-			m = p.StartAttDeriv (local, ns, this);
-			startAtt.Add (new MemoizationStart (DerivativeType.StartAtt, local, ns, p, m));
-			return m;
-		}
-
-		RdpPattern GetStartDeriv (ArrayList memo, RdpPattern p, DerivativeType type, string local, string ns)
-		{
-			for (int i = 0; i < memo.Count; i++) {
-				MemoizationStart tag = (MemoizationStart) memo [i];
-				if (tag.Input == p &&
-				    object.ReferenceEquals (tag.Name, local) &&
-				    object.ReferenceEquals (tag.NS, ns))
-					return tag.Output;
+			Hashtable h = startAtt [p] as Hashtable;
+			if (h == null) {
+				h = new Hashtable ();
+				startAtt [p] = h;
 			}
-			return null;
+			XmlQualifiedName qn = GetQName (local, ns);
+			RdpPattern m = h [qn] as RdpPattern;
+			if (m == null) {
+				m = p.StartAttDeriv (local, ns, this);
+				h [qn] = m;
+			}
+			return m;
 		}
 
 		public RdpPattern StartTagCloseDeriv (RdpPattern p)

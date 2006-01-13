@@ -1,5 +1,12 @@
 2006-01-13  Atsushi Enomoto <atsushi@ximian.com>
 
+	* RelaxngValidatingReader.cs : actually using Hashtable of Hashtable
+	  (instead of ArrayList of custom MemoizationStart class) is much
+	  better for performance. It makes StartTagOpenDeriv and
+	  StartAttDeriv more than 10x faster than before.
+
+2006-01-13  Atsushi Enomoto <atsushi@ximian.com>
+
 	* RelaxngDatatype.cs, RelaxngDefaultDatatypes.cs,
 	  XsdDatatypeProvider.cs, RelaxngValidatingReader.cs :
 	  Memoize TextDeriv() results for context independent inputs.
