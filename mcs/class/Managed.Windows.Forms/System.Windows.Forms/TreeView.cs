@@ -1141,12 +1141,14 @@ namespace System.Windows.Forms {
 		
 		private void DrawSelectionAndFocus(TreeNode node, Graphics dc, Rectangle r)
 		{
+			if (Focused && focused_node == node) {
+				ControlPaint.DrawFocusRectangle (dc, r, ForeColor, BackColor);
+			}
+			r.Inflate(-1, -1);
 			if ((!HideSelection || Focused) && SelectedNode == node)
 				dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (ThemeEngine.Current.ColorHighlight), r);
 			else
 				dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (node.BackColor), r);
-			if (Focused && focused_node == node)
-				ControlPaint.DrawFocusRectangle (dc, r, ForeColor, BackColor);
 		}
 		 
 		private void DrawStaticNode (TreeNode node, Graphics dc)

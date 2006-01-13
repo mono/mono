@@ -1,3 +1,8 @@
+2006-01-13  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* TreeView.cs: Draw the focus rectangle outside the highlight, to
+	  make sure it's always visible. Fixes #76680.
+
 2006-01-13  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* TreeView.cs: Implemented Wheel scrolling. Fixes #76531
