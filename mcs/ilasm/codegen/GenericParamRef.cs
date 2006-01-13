@@ -75,8 +75,8 @@ namespace Mono.ILASM {
                                 param_table [key] = param;
                         } else {
                                 /* Set this instance's "type" to the cached
-                                   PEAPI.GenParam */
-                                type = (PEAPI.GenParam) val;
+                                   PEAPI.GenParam, after applying modifications */
+                                type = Modify (code_gen, val);
                         }
 
                         is_added = true;

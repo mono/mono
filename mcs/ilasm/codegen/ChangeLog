@@ -1,5 +1,10 @@
 2006-01-14  Ankit Jain  <jankit@novell.com>
 
+	* GenericParamRef.cs (GenericParamRef.Resolve): Apply modifications to the
+	cached type.
+
+2006-01-14  Ankit Jain  <jankit@novell.com>
+
 	* GenericParamRef.cs (GenericParamRef.Resolve): Set PeapiType of the instance
 	to the cached one.
 
