@@ -1560,6 +1560,7 @@ namespace System.Windows.Forms {
 			int		end;		// Last line to draw
 			StringBuilder	text;	// String representing the current line
 			int		line_no;	//
+			Brush		disabled;
 			Brush		hilight;
 			Brush		hilight_text;
 
@@ -1576,6 +1577,7 @@ namespace System.Windows.Forms {
 				Console.WriteLine("Started drawing: {0}s {1}ms", n.Second, n.Millisecond);
 			#endif
 
+			disabled = ThemeEngine.Current.ResPool.GetSolidBrush(ThemeEngine.Current.ColorGrayText);
 			hilight = ThemeEngine.Current.ResPool.GetSolidBrush(ThemeEngine.Current.ColorHighlight);
 			hilight_text = ThemeEngine.Current.ResPool.GetSolidBrush(ThemeEngine.Current.ColorHighlightText);
 
@@ -1599,7 +1601,21 @@ namespace System.Windows.Forms {
 						if ((!selection_visible) || (!owner.has_focus) || (line_no < selection_start.line.line_no) || (line_no > selection_end.line.line_no)) {
 							// regular drawing, no selection to deal with
 							//g.DrawString(s.Substring(tag.start-1, tag.length), tag.font, tag.color, tag.X + line.align_shift - viewport_x, line.Y + tag.shift  - viewport_y, StringFormat.GenericTypographic);
-							g.DrawString(text.ToString(tag.start-1, tag.length), tag.font, tag.color, tag.X + line.align_shift - viewport_x, line.Y + tag.shift  - viewport_y, StringFormat.GenericTypographic);
+							if (owner.is_enabled) {
+								g.DrawString(text.ToString(tag.start-1, tag.length), tag.font, tag.color, tag.X + line.align_shift - viewport_x, line.Y + tag.shift  - viewport_y, StringFormat.GenericTypographic);
+							} else {
+								Color a;
+								Color b;
+
+								a = ((SolidBrush)tag.color).Color;
+								b = ThemeEngine.Current.ColorWindowText;
+
+								if ((a.R == b.R) && (a.G == b.G) && (a.B == b.B)) {
+									g.DrawString(text.ToString(tag.start-1, tag.length), tag.font, disabled, tag.X + line.align_shift - viewport_x, line.Y + tag.shift  - viewport_y, StringFormat.GenericTypographic);
+								} else {
+									g.DrawString(text.ToString(tag.start-1, tag.length), tag.font, tag.color, tag.X + line.align_shift - viewport_x, line.Y + tag.shift  - viewport_y, StringFormat.GenericTypographic);
+								}
+							}
 						} else {
 							// we might have to draw our selection
 							if ((line_no != selection_start.line.line_no) && (line_no != selection_end.line.line_no)) {
@@ -3826,6 +3842,7 @@ namespace System.Windows.Forms {
 				return retval;
 			}
 
+//Console.WriteLine("Finding tag for {0} {1}", line, start);
 			start_tag = FindTag(line, start);
 
 			tag = new LineTag(line, start, length);
@@ -3835,7 +3852,7 @@ namespace System.Windows.Forms {
 			if (start == 1) {
 				line.tags = tag;
 			}
-
+//Console.WriteLine("Start tag: '{0}'", start_tag!=null ? start_tag.ToString() : "NULL");
 			if (start_tag.start == start) {
 				tag.next = start_tag;
 				tag.previous = start_tag.previous;

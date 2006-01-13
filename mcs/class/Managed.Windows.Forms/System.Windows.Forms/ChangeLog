@@ -26,6 +26,10 @@
 
 2006-01-13  Peter Dennis Bartok  <pbartok@novell.com> 
 
+	* TextControl.cs: Draw text in gray if control is disabled
+
+2006-01-13  Peter Dennis Bartok  <pbartok@novell.com> 
+
 	* TreeView.cs: Draw the focus rectangle outside the highlight, to
 	  make sure it's always visible. Fixes #76680.
 
