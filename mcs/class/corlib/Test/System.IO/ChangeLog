@@ -1,3 +1,7 @@
+2006-01-12  Ben Maurer  <bmaurer@andrew.cmu.edu>
+
+	* FileTest.cs: Tests tests for read/writealltext.
+
 2006-01-02  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* StreamReaderTest.cs: Added test case when reading a new line (see 

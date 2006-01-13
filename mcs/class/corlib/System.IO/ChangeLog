@@ -1,3 +1,7 @@
+2006-01-12  Ben Maurer  <bmaurer@andrew.cmu.edu>
+
+	* File.cs: Support for Read/WriteAllText
+
 2006-01-11  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Path.cs: Previous fix caused regression of bug #76191. Fixed (again)

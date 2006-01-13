@@ -1499,6 +1499,42 @@ namespace MonoTests.System.IO
 			DeleteFile (fn);
 		}
 
+#if NET_2_0
+		void TestRWAT (string s)
+		{
+			string f = Path.GetTempFileName ();
+			try {
+				File.WriteAllText (f, s);
+				string r = File.ReadAllText (f);
+				AssertEquals (r, s);
+			} finally {
+				DeleteFile (f);
+			}
+		}
+		[Test]
+		public void ReadWriteAllText ()
+		{
+			// The MSDN docs said something about
+			// not including a final new line. it looks
+			// like that was not true. I'm not sure what
+			// that was talking about
+			TestRWAT ("");
+			TestRWAT ("\r");
+			TestRWAT ("\n");
+			TestRWAT ("\r\n");
+			TestRWAT ("a\r");
+			TestRWAT ("a\n");
+			TestRWAT ("a\r\n");	
+			TestRWAT ("a\ra");
+			TestRWAT ("a\na");
+			TestRWAT ("a\r\na");
+			TestRWAT ("a");
+			TestRWAT ("\r\r");
+			TestRWAT ("\n\n");
+			TestRWAT ("\r\n\r\n");
+		}
+#endif
+
 		private void DeleteFile (string path)
 		{
 			if (File.Exists (path))
