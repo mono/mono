@@ -1,3 +1,8 @@
+2006-01-09  Raja R Harinath  <rharinath@novell.com>
+
+	* HashMembershipConditionTest.cs (HashValue): Remove 1/256 chance
+	of false negative.
+
 2005-06-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ApplicationSecurityManagerCas.cs: New. CAS unit tests (2.0).

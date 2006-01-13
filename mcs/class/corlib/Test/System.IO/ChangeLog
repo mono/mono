@@ -1,3 +1,8 @@
+2006-01-13  Ben Maurer  <bmaurer@andrew.cmu.edu>
+
+	* TextWriterTest.cs: Make sure TextWriter calls the char[],int,int
+	overload when calling the char[].
+	
 2006-01-02  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* StreamReaderTest.cs: Added test case when reading a new line (see 
