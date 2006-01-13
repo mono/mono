@@ -1,3 +1,7 @@
+2006-01-13  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* TreeView.cs: Implemented Wheel scrolling. Fixes #76531
+
 2006-01-13  Jonathan Chambers  <jonathan.chambers@ansys.com>
 
 	* PageSetupDialog.cs: Added.

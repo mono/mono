@@ -119,6 +119,7 @@ namespace System.Windows.Forms {
 			SizeChanged += new EventHandler (SizeChangedHandler);
 			FontChanged += new EventHandler (FontChangedHandler);
 			LostFocus += new EventHandler (LostFocusHandler);
+			MouseWheel += new MouseEventHandler(MouseWheelHandler);
 
 			SetStyle (ControlStyles.UserPaint | ControlStyles.StandardClick, false);
 
@@ -1349,6 +1350,26 @@ namespace System.Windows.Forms {
 				hbar_offset = 0;
 
 			XplatUI.ScrollWindow (Handle, ViewportRectangle, old_offset - hbar_offset, 0, false);
+		}
+
+		private void MouseWheelHandler(object sender, MouseEventArgs e) {
+			int scroll_to;
+
+			if (vbar == null || !vbar.Visible) {
+				return;
+			}
+
+			if (e.Delta < 0) {
+				// Scrolling down "SystemInformation.MouseWheelScrollLines"
+				// FIXME - put logic here
+				scroll_to = Math.Min(vbar.Value + SystemInformation.MouseWheelScrollLines, vbar.Maximum);
+			} else {
+				// Scrolling up "SystemInformation.MouseWheelScrollLines"
+				// FIXME - put logic here
+				scroll_to = Math.Max(0, vbar.Value - SystemInformation.MouseWheelScrollLines);
+			}
+
+			vbar.Value = scroll_to;
 		}
 
 		private void FontChangedHandler (object sender, EventArgs e)
