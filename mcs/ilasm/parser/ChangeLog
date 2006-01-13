@@ -1,5 +1,10 @@
 2006-01-13  Ankit Jain  <jankit@novell.com>
 
+	* ILParser.jay: Update to use CodeGen.GetGlobalMethodRef &
+	CodeGen.GetGlobalFieldRef instead of creating objects.
+
+2006-01-13  Ankit Jain  <jankit@novell.com>
+
 	* ILParser.jay: Update to use Base* instead of ITypeRef, IClassRef
 	& IGenTypeRef.
 

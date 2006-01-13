@@ -2347,7 +2347,7 @@ instr			: INSTR_NONE
                           }
 			| INSTR_FIELD type id
                           {
-                                GlobalFieldRef fieldref = new GlobalFieldRef ((BaseTypeRef) $2, (string) $3);
+                                GlobalFieldRef fieldref = codegen.GetGlobalFieldRef ((BaseTypeRef) $2, (string) $3);
 
                                 codegen.CurrentMethodDef.AddInstr (new FieldInstr ((FieldOp) $1, fieldref, tokenizer.Location));
                           }
@@ -2437,7 +2437,7 @@ method_ref		: call_conv type type_spec DOUBLE_COLON method_name
                                 else
                                         param_list = new BaseTypeRef[0];
 
-                                $$ = new GlobalMethodRef ((BaseTypeRef) $2, (CallConv) $1,
+                                $$ = codegen.GetGlobalMethodRef ((BaseTypeRef) $2, (CallConv) $1,
                                         (string) $3, param_list, 0);
                           }
 			| call_conv type method_name typars_clause
@@ -2452,7 +2452,7 @@ method_ref		: call_conv type type_spec DOUBLE_COLON method_name
                                 else
                                         param_list = new BaseTypeRef[0];
 
-				IMethodRef methref = new GlobalMethodRef ((BaseTypeRef) $2, (CallConv) $1,
+				IMethodRef methref = codegen.GetGlobalMethodRef ((BaseTypeRef) $2, (CallConv) $1,
                                         (string) $3, param_list, (ga != null ? ga.Count : 0));
 
                                 if (ga != null)
@@ -2531,7 +2531,7 @@ member_ref		: K_METHOD method_ref
                           }
 			| K_FIELD type id
                           {
-                                $$ = new GlobalFieldRef ((BaseTypeRef) $2, (string) $3);
+                                $$ = codegen.GetGlobalFieldRef ((BaseTypeRef) $2, (string) $3);
                           }
 			;
 
@@ -2698,7 +2698,7 @@ custom_type		: call_conv type type_spec DOUBLE_COLON D_CTOR OPEN_PARENS type_lis
                                 else
                                         param_list = new BaseTypeRef[0];
 
-                                $$ = new GlobalMethodRef ((BaseTypeRef) $2, (CallConv) $1,
+                                $$ = codegen.GetGlobalMethodRef ((BaseTypeRef) $2, (CallConv) $1,
                                         (string) $3, param_list, 0);
                           }
 			;

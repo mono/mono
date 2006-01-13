@@ -21,8 +21,6 @@ namespace Mono.ILASM {
                 private IScope extern_ref;
                 private Hashtable nestedtypes_table;
                 private Hashtable nestedclass_table;
-                private Hashtable method_table;
-                private Hashtable field_table;
                 
                 public ExternTypeRef (IScope extern_ref, string full_name, bool is_valuetype) 
                         : this (extern_ref, full_name, is_valuetype, null, null)
@@ -37,8 +35,6 @@ namespace Mono.ILASM {
 
                         nestedclass_table = new Hashtable ();
                         nestedtypes_table = new Hashtable ();
-                        method_table = new Hashtable ();
-                        field_table = new Hashtable ();
                 }
                 
                 public override BaseClassRef Clone ()
@@ -80,30 +76,15 @@ namespace Mono.ILASM {
                         is_resolved = true;
                 }
 
-                public override IMethodRef GetMethodRef (BaseTypeRef ret_type, PEAPI.CallConv call_conv,
+                public override IMethodRef CreateMethodRef (BaseTypeRef ret_type, PEAPI.CallConv call_conv,
                                 string name, BaseTypeRef[] param, int gen_param_count)
                 {
-                        string sig = MethodDef.CreateSignature (ret_type, name, param, gen_param_count);
-                        ExternMethodRef mr = method_table [sig] as ExternMethodRef;
-                       
-                        if (mr == null) {
-                                mr = new ExternMethodRef (this, ret_type, call_conv, name, param, gen_param_count);
-                                method_table [sig] = mr;
-                        }
-
-                        return mr;
+                        return new ExternMethodRef (this, ret_type, call_conv, name, param, gen_param_count);
                 }
 
-                public override IFieldRef GetFieldRef (BaseTypeRef ret_type, string name)
+                public override IFieldRef CreateFieldRef (BaseTypeRef ret_type, string name)
                 {
-                        ExternFieldRef fr = field_table [name] as ExternFieldRef;
-
-                        if (fr == null) {
-                                fr = new ExternFieldRef (this, ret_type, name);
-                                field_table [name] = fr;
-                        }
-
-                        return fr;
+                        return new ExternFieldRef (this, ret_type, name);
                 }
 
                 public ExternTypeRef GetTypeRef (string _name, bool is_valuetype)

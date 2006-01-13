@@ -37,13 +37,13 @@ namespace Mono.ILASM {
                         return new TypeRef (full_name, is_valuetype, location, (ArrayList) ConversionList.Clone (), sig_mod);
                 }
 
-                public override IMethodRef GetMethodRef (BaseTypeRef ret_type,
+                public override IMethodRef CreateMethodRef (BaseTypeRef ret_type,
                         PEAPI.CallConv call_conv, string name, BaseTypeRef[] param, int gen_param_count)
                 {
                          return new MethodRef (this, call_conv, ret_type, name, param, gen_param_count);
                 }
 
-                public override IFieldRef GetFieldRef (BaseTypeRef ret_type, string name)
+                public override IFieldRef CreateFieldRef (BaseTypeRef ret_type, string name)
                 {
                          return new FieldRef (this, ret_type, name);
                 }

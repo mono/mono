@@ -18,12 +18,13 @@ namespace Mono.ILASM {
         /// </summary>
         public class PrimitiveTypeRef : BaseTypeRef {
 
-                private static Hashtable method_table = new Hashtable ();
+                private static Hashtable s_method_table = new Hashtable ();
 
                 public PrimitiveTypeRef (PEAPI.PrimitiveType type, string full_name)
                         : base (full_name)
                 {
                         this.type = type;
+                        SigMod = String.Empty;
                 }
 
 		public string Name {
@@ -62,20 +63,21 @@ namespace Mono.ILASM {
                 public override IMethodRef GetMethodRef (BaseTypeRef ret_type, PEAPI.CallConv call_conv,
                                 string name, BaseTypeRef[] param, int gen_param_count)
                 {
-                        string key = full_name + MethodDef.CreateSignature (ret_type, name, param, gen_param_count) + sig_mod;
-                        TypeSpecMethodRef mr = method_table [key] as TypeSpecMethodRef;
+                        /* Use FullName also here, as we are caching in a static hashtable */
+                        string key = FullName + MethodDef.CreateSignature (ret_type, name, param, gen_param_count);
+                        TypeSpecMethodRef mr = s_method_table [key] as TypeSpecMethodRef;
                         if (mr != null)
                                 return mr;
 
 			//FIXME: generic methodref for primitive type?
                         mr = new TypeSpecMethodRef (this, call_conv, ret_type, name, param, gen_param_count);
-                        method_table [key] = mr;
+                        s_method_table [key] = mr;
                         return mr;
                 }
 
-                public override IFieldRef GetFieldRef (BaseTypeRef ret_type, string name)
+                public override IFieldRef CreateFieldRef (BaseTypeRef ret_type, string name)
                 {
-                        return new TypeSpecFieldRef (this, ret_type, name);
+			throw new Exception ("PrimitiveType's can't have fields!");
                 }
 
                 public BaseClassRef AsClassRef (CodeGen code_gen)

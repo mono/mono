@@ -52,6 +52,8 @@ namespace Mono.ILASM {
                 private ExternTable extern_table;
                 private Hashtable global_field_table;
                 private Hashtable global_method_table;
+                private Hashtable global_methodref_table;
+                private Hashtable global_fieldref_table;
                 private ArrayList data_list;
                 private FileRef file_ref;
                 private ArrayList manifestResources;
@@ -188,6 +190,45 @@ namespace Mono.ILASM {
                         }
 
                         return tr;
+                }
+
+                public GlobalMethodRef GetGlobalMethodRef (BaseTypeRef ret_type, PEAPI.CallConv call_conv,
+                                string name, BaseTypeRef[] param, int gen_param_count)
+                {
+                        string key = MethodDef.CreateSignature (ret_type, name, param, gen_param_count);
+
+                        GlobalMethodRef methref = null;
+
+                        if (global_methodref_table == null)
+                                global_methodref_table = new Hashtable ();
+                        else
+                                methref = (GlobalMethodRef) global_methodref_table [key];
+
+                        if (methref == null) {
+                                methref = new GlobalMethodRef (ret_type, call_conv, name, param, gen_param_count);
+                                global_methodref_table [key] = methref;
+                        }
+                        
+                        return methref;
+                }
+
+                public GlobalFieldRef GetGlobalFieldRef (BaseTypeRef ret_type, string name)
+                {
+                        string key = ret_type.FullName + name;
+
+                        GlobalFieldRef fieldref = null;
+
+                        if (global_fieldref_table == null)
+                                global_fieldref_table = new Hashtable ();
+                        else
+                                fieldref = (GlobalFieldRef) global_fieldref_table [key];
+
+                        if (fieldref == null) {
+                                fieldref = new GlobalFieldRef (ret_type, name);
+                                global_fieldref_table [key] = fieldref;
+                        }
+                        
+                        return fieldref;
                 }
 
                 public void SetSubSystem (int sub_system)

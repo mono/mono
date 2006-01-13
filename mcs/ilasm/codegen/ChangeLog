@@ -1,5 +1,28 @@
 2006-01-13  Ankit Jain  <jankit@novell.com>
 
+	Move caching of method-refs and field-refs to BaseTypeRef, and use
+	CreateMethodRef & CreateFieldRef for creating the actual object.
+	Override these in derived classes to return the right objects.
+
+	* BaseTypeRef.cs (BaseTypeRef.CreateMethodRef): New.
+	(BaseTypeRef.CreateFieldRef): New.
+	(BaseTypeRef.GetMethodRef): Implement caching.
+	(BaseTypeRef.GetFieldRef): Likewise.
+	
+	GenericTypeInst and PrimitiveTypeRef are not cached, so static hashtables
+	are used here for caching their MethodRefs n FieldRefs.
+
+	* GenericTypeInst.cs (GenericTypeInst.GetMethodRef): Override and use
+	static hashtable to do caching.
+	(GenericTypeInst.GetFieldRef): Likewise.
+	* PrimitiveTypeRef.cs (PrimitiveTypeRef.GetMethodRef): Likewise.
+	(PrimitiveTypeRef.GetFieldRef): Likewise.
+
+	* CodeGen.cs (CodeGen.GetGlobalMethodRef): New. Cache global method refs.
+	(CodeGen.GetGlobalFieldRef): New. Cache global field refs.
+
+2006-01-13  Ankit Jain  <jankit@novell.com>
+
 	Create BaseClassRef, BaseGenericTypeRef from IClassRef & IGenTypeRef.
 	Replace usage of interfaces ITypeRef, IClassRef & IGenTypeRef with their
 	corresponding Base* types.

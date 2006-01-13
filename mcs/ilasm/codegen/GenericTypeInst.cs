@@ -22,7 +22,9 @@ namespace Mono.ILASM {
                 private bool is_valuetypeinst;
                 private GenericArguments gen_args;
                 private bool is_added; /* Added to PEFile (to TypeSpec table) ? */
-                private static Hashtable method_table = new Hashtable ();
+                /* Note: Using static hashtable here as GenericTypeInsts is not cached */
+                private static Hashtable s_method_table = new Hashtable ();
+                private static Hashtable s_field_table = new Hashtable ();
 
                 public GenericTypeInst (BaseClassRef class_ref, GenericArguments gen_args, bool is_valuetypeinst)
                         : this (class_ref, gen_args, is_valuetypeinst, null, null)
@@ -89,19 +91,30 @@ namespace Mono.ILASM {
                 public override IMethodRef GetMethodRef (BaseTypeRef ret_type, PEAPI.CallConv call_conv,
                                 string meth_name, BaseTypeRef[] param, int gen_param_count)
                 {
+			/* Note: Using FullName here as we are caching in a static hashtable */
                         string key = FullName + MethodDef.CreateSignature (ret_type, meth_name, param, gen_param_count);
-                        TypeSpecMethodRef mr = method_table [key] as TypeSpecMethodRef;
+                        TypeSpecMethodRef mr = s_method_table [key] as TypeSpecMethodRef;
                         if (mr == null) {         
                                 mr = new TypeSpecMethodRef (this, call_conv, ret_type, meth_name, param, gen_param_count);
-                                method_table [key] = mr;
+                                s_method_table [key] = mr;
                         }
 
                         return mr;
                 }
 
-                public override IFieldRef GetFieldRef (BaseTypeRef ret_type, string field_name)
+                public override IFieldRef CreateFieldRef (BaseTypeRef ret_type, string field_name)
                 {
-                        return new TypeSpecFieldRef (this, ret_type, field_name);
+			/* Note: Using FullName here as we are caching in a static hashtable */
+                        string key = FullName + ret_type.FullName + field_name;
+
+                        IFieldRef fr = (IFieldRef) s_field_table [key];
+
+                        if (fr == null) {
+                                fr = new TypeSpecFieldRef (this, ret_type, field_name);
+                                s_field_table [key] = fr;
+                        }
+
+                        return fr;
                 }
         }
 }
