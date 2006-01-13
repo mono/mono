@@ -8743,11 +8743,6 @@ compute_vreg_to_inst (MonoCompile *cfg)
 
 	/* FIXME: Do this in mono_create_var */
 
-	g_assert (!cfg->vreg_to_inst);
-
-	cfg->vreg_to_inst = mono_mempool_alloc0 (cfg->mempool, sizeof (MonoBasicBlock***) * 256);
-	cfg->vreg_to_inst_len = mono_mempool_alloc0 (cfg->mempool, sizeof (guint32) * 256);
-
 	cfg->vreg_to_inst ['i'] = mono_mempool_alloc0 (cfg->mempool, sizeof (MonoInst*) * cfg->next_vireg);
 	cfg->vreg_to_inst_len ['i'] = cfg->next_vireg;
 	
@@ -8884,7 +8879,7 @@ mono_handle_global_vregs (MonoCompile *cfg)
 					if (!cfg->vreg_to_inst ['l'][vreg]) {
 						MonoInst *tree;
 
-						cfg->vreg_to_inst ['l'][vreg] = mono_compile_create_var_for_vreg (cfg, &mono_defaults.int64_class->byval_arg, OP_LOCAL, vreg);
+						cfg->vreg_to_inst ['l'][vreg] = mono_compile_create_var_for_vreg (cfg, &mono_defaults.int64_class->byval_arg, OP_LOCAL, 'l', vreg);
 
 						if (cfg->verbose_level > 0)
 							printf ("LONG VREG R%d made global.\n", vreg);
@@ -8921,10 +8916,10 @@ mono_handle_global_vregs (MonoCompile *cfg)
 						// FIXME:
 						switch (regtype) {
 						case 'i':
-							cfg->vreg_to_inst [regtype][vreg] = mono_compile_create_var_for_vreg (cfg, &mono_defaults.int_class->byval_arg, OP_LOCAL, vreg);
+							cfg->vreg_to_inst [regtype][vreg] = mono_compile_create_var_for_vreg (cfg, &mono_defaults.int_class->byval_arg, OP_LOCAL, 'i', vreg);
 							break;
 						case 'f':
-							cfg->vreg_to_inst [regtype][vreg] = mono_compile_create_var_for_vreg (cfg, &mono_defaults.double_class->byval_arg, OP_LOCAL, vreg);
+							cfg->vreg_to_inst [regtype][vreg] = mono_compile_create_var_for_vreg (cfg, &mono_defaults.double_class->byval_arg, OP_LOCAL, 'f', vreg);
 							break;
 						default:
 							NOT_IMPLEMENTED;
@@ -9236,6 +9231,7 @@ mono_spill_global_vars (MonoCompile *cfg)
  *   3 sregs (2 for arg1 and 1 for arg2)
  * - fix #define MONO_ARCH_NO_EMULATE_LONG_SHIFT_OPS for x86
  * - same goes for lcall and other non-decomposable long opcodes
+ * - make byref a 'normal' type.
  * - LAST MERGE: 55174
  */
 

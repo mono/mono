@@ -584,14 +584,6 @@ typedef struct {
 	/* The current virtual register numbers */
 	guint32 next_vireg, next_vfreg;
 
-	/* Maps vregs to their associated MonoInst's */
-	/* vregs with an associated MonoInst are 'global' while others are 'local' */
-	/* Indexed first by vreg type ('i' etc), then by the vreg itself */
-	MonoInst ***vreg_to_inst;
-
-	/* Size of above array, indexed by vreg type */
-	guint32 *vreg_to_inst_len;
-
 	unsigned char   *native_code;
 	guint            code_size;
 	guint            code_len;
@@ -623,6 +615,14 @@ typedef struct {
 	guint32          exception_type;	/* MONO_EXCEPTION_* */
 	guint32          exception_data;
 	char*            exception_message;
+
+	/* Maps vregs to their associated MonoInst's */
+	/* vregs with an associated MonoInst are 'global' while others are 'local' */
+	/* Indexed first by vreg type ('i' etc), then by the vreg itself */
+	MonoInst **vreg_to_inst [256];
+
+	/* Size of above array, indexed by vreg type */
+	guint32 vreg_to_inst_len [256];
 
 } MonoCompile;
 
@@ -849,7 +849,7 @@ int       mono_eval_cond_branch             (MonoInst *branch);
 int       mono_is_power_of_two              (guint32 val);
 void      mono_cprop_local                  (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst **acp, int acp_size);
 MonoInst* mono_compile_create_var           (MonoCompile *cfg, MonoType *type, int opcode);
-MonoInst* mono_compile_create_var_for_vreg  (MonoCompile *cfg, MonoType *type, int opcode, int vreg);
+MonoInst* mono_compile_create_var_for_vreg  (MonoCompile *cfg, MonoType *type, int opcode, int regtype, int vreg);
 void      mono_compile_make_var_load        (MonoCompile *cfg, MonoInst *dest, gssize var_index);
 MonoInst* mono_compile_create_var_load      (MonoCompile *cfg, gssize var_index);
 MonoInst* mono_compile_create_var_store     (MonoCompile *cfg, gssize var_index, MonoInst *value);
@@ -857,6 +857,7 @@ MonoType* mono_type_from_stack_type         (MonoInst *ins);
 guint32   mono_alloc_ireg                   (MonoCompile *cfg);
 guint32   mono_alloc_freg                   (MonoCompile *cfg);
 guint32   mono_alloc_preg                   (MonoCompile *cfg);
+guint32   mono_alloc_dreg                   (MonoCompile *cfg, MonoStackType stack_type);
 void      mono_blockset_print               (MonoCompile *cfg, MonoBitSet *set, const char *name, guint idom);
 void      mono_print_tree                   (MonoInst *tree);
 void      mono_print_tree_nl                (MonoInst *tree);

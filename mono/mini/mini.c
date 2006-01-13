@@ -1677,7 +1677,7 @@ mono_get_got_var (MonoCompile *cfg)
 }
 
 MonoInst*
-mono_compile_create_var_for_vreg (MonoCompile *cfg, MonoType *type, int opcode, int vreg)
+mono_compile_create_var_for_vreg (MonoCompile *cfg, MonoType *type, int opcode, int regtype, int vreg)
 {
 	MonoInst *inst;
 	int num = cfg->num_varinfo;
@@ -1714,58 +1714,41 @@ MonoInst*
 mono_compile_create_var (MonoCompile *cfg, MonoType *type, int opcode)
 {
 	int dreg;
+	int regtype;
+	MonoInst dummy;
 
-	if (cfg->new_ir) {
-		if (type->byref)
-			dreg = cfg->next_vireg ++;
-		else {
-			switch (mono_type_get_underlying_type (type)->type) {
-			case MONO_TYPE_I1:
-			case MONO_TYPE_U1:
-			case MONO_TYPE_BOOLEAN:
-			case MONO_TYPE_I2:
-			case MONO_TYPE_U2:
-			case MONO_TYPE_CHAR:
-			case MONO_TYPE_I4:
-			case MONO_TYPE_U4:
-			case MONO_TYPE_I:
-			case MONO_TYPE_U:
-			case MONO_TYPE_PTR:
-			case MONO_TYPE_FNPTR:
-			case MONO_TYPE_CLASS:
-			case MONO_TYPE_STRING:
-			case MONO_TYPE_OBJECT:
-			case MONO_TYPE_SZARRAY:
-			case MONO_TYPE_ARRAY:    
-				/* FIXME: call alloc_dreg */
-				dreg = cfg->next_vireg ++;
-				break;
-			case MONO_TYPE_R4:
-			case MONO_TYPE_R8:
-				dreg = cfg->next_vfreg ++;
-				break;
-			case MONO_TYPE_I8:
-			case MONO_TYPE_U8:
+	type_to_eval_stack_type (type, &dummy);
+
+	switch (dummy.type) {
+	case STACK_I4:
+	case STACK_OBJ:
+	case STACK_PTR:
+	case STACK_MP:
+		dreg = cfg->next_vireg ++;
+		regtype = 'i';
+		break;
+	case STACK_R8:
+		dreg = cfg->next_vfreg ++;
+		regtype = 'f';
+		break;
+	case STACK_I8:
 #if SIZEOF_VOID_P == 8
-				dreg = cfg->next_vireg ++;
+		dreg = cfg->next_vireg ++;
+		regtype = 'i';
 #else
-				/* Use a pair of vregs */
-				dreg = cfg->next_vireg ++;
-				cfg->next_vireg ++;
+		/* Use a pair of vregs */
+		dreg = cfg->next_vireg ++;
+		cfg->next_vireg ++;
+		regtype = 'l';
 #endif
-				break;
-			case MONO_TYPE_VALUETYPE:
-			case MONO_TYPE_TYPEDBYREF:
-				dreg = -1;
-				break;
-			default:
-				printf ("A: %s\n", mono_type_full_name (type));
-				NOT_IMPLEMENTED;
-			}
-		}
+		break;
+	default:
+		dreg = -1;
+		regtype = ' ';
+		break;
 	}
 
-	return mono_compile_create_var_for_vreg (cfg, type, opcode, dreg);
+	return mono_compile_create_var_for_vreg (cfg, type, opcode, regtype, dreg);
 }
 
 /*
@@ -9477,7 +9460,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 	mono_compile_create_vars (cfg);
 
 	if (cfg->new_ir) {
-		cfg->opt &= MONO_OPT_PEEPHOLE | MONO_OPT_INTRINS | MONO_OPT_LOOP | MONO_OPT_EXCEPTION | MONO_OPT_AOT | MONO_OPT_BRANCH | MONO_OPT_LINEARS;
+		cfg->opt &= MONO_OPT_PEEPHOLE | MONO_OPT_INTRINS | MONO_OPT_LOOP | MONO_OPT_EXCEPTION | MONO_OPT_AOT | MONO_OPT_BRANCH;
 
 		i = mono_method_to_ir2 (cfg, method, NULL, NULL, cfg->locals_start, NULL, NULL, NULL, 0, FALSE);
 	}
