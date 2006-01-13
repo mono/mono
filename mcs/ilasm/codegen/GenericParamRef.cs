@@ -69,9 +69,14 @@ namespace Mono.ILASM {
                                 return;
 
                         string key = param.Type.ToString () + param.Index.ToString ();
-                        if (param_table [key] == null) {
+                        PEAPI.GenParam val = (PEAPI.GenParam) param_table [key];
+                        if (val == null) {
                                 code_gen.PEFile.AddGenericParam (param);
                                 param_table [key] = param;
+                        } else {
+                                /* Set this instance's "type" to the cached
+                                   PEAPI.GenParam */
+                                type = (PEAPI.GenParam) val;
                         }
 
                         is_added = true;
