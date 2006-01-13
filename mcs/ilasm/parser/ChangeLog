@@ -1,3 +1,8 @@
+2006-01-13  Ankit Jain  <jankit@novell.com>
+
+	* ILParser.jay: Update to use Base* instead of ITypeRef, IClassRef
+	& IGenTypeRef.
+
 2006-01-10  Ankit Jain  <jankit@novell.com>
 
 	* ILParser.jay (type | BANG ..): Move !* and !!* rules to ..

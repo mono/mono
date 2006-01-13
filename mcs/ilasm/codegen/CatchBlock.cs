@@ -15,10 +15,10 @@ namespace Mono.ILASM {
 
         public class CatchBlock : ISehClause {
 
-                private IClassRef class_ref;
+                private BaseClassRef class_ref;
                 private HandlerBlock handler_block;
 
-                public CatchBlock (IClassRef class_ref)
+                public CatchBlock (BaseClassRef class_ref)
                 {
                         this.class_ref = class_ref;
                 }

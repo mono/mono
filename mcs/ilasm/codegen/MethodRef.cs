@@ -17,16 +17,16 @@ namespace Mono.ILASM {
 
                 private TypeRef owner;
                 private PEAPI.CallConv call_conv;
-                private ITypeRef ret_type;
+                private BaseTypeRef ret_type;
                 private string name;
-                private ITypeRef[] param;
+                private BaseTypeRef[] param;
 
                 private PEAPI.Method peapi_method;
                 private bool is_resolved;
 		private int gen_param_count;
 
                 public MethodRef (TypeRef owner, PEAPI.CallConv call_conv,
-                        ITypeRef ret_type, string name, ITypeRef[] param, int gen_param_count)
+                        BaseTypeRef ret_type, string name, BaseTypeRef[] param, int gen_param_count)
                 {
                         this.owner = owner;
                         this.call_conv = call_conv;
@@ -46,7 +46,7 @@ namespace Mono.ILASM {
 			set { call_conv = value; }
 		}
 
-		public ITypeRef Owner {
+		public BaseTypeRef Owner {
 			get { return owner; }
 		}
 
@@ -75,7 +75,7 @@ namespace Mono.ILASM {
                                 sig = MethodDef.CreateVarargSignature (ret_type, name, param);
                                 ArrayList opt_list = new ArrayList ();
                                 bool in_opt = false;
-                                foreach (ITypeRef type in param) {
+                                foreach (BaseTypeRef type in param) {
                                         if (type is SentinelTypeRef) {
                                                 in_opt = true;
                                         } else if (in_opt) {

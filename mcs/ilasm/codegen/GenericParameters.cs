@@ -32,7 +32,7 @@ namespace Mono.ILASM {
 			constraintsList = null;
 				
 			if (constraints != null)
-				foreach (ITypeRef typeref in constraints)
+				foreach (BaseTypeRef typeref in constraints)
 					AddConstraint (typeref);
 		}
 
@@ -45,7 +45,7 @@ namespace Mono.ILASM {
 			set { num = value; }
 		}
 
-		public void AddConstraint (ITypeRef constraint)
+		public void AddConstraint (BaseTypeRef constraint)
 		{
 			if (constraint == null)
 				throw new ArgumentException ("constraint");
@@ -78,8 +78,8 @@ namespace Mono.ILASM {
 			if (constraintsList == null)
 				return;
 				
-			foreach (ITypeRef constraint in constraintsList) {
-				IGenericTypeRef gtr = constraint as IGenericTypeRef;
+			foreach (BaseTypeRef constraint in constraintsList) {
+				BaseGenericTypeRef gtr = constraint as BaseGenericTypeRef;
 				if (gtr != null)
 					gtr.Resolve (type_gen_params, method_gen_params);
 			}
@@ -90,7 +90,7 @@ namespace Mono.ILASM {
 			if (constraintsList == null)
 				return;
 
-			foreach (ITypeRef constraint in constraintsList) {
+			foreach (BaseTypeRef constraint in constraintsList) {
 				constraint.Resolve (code_gen);
 				gp.AddConstraint (constraint.PeapiType);
 			}

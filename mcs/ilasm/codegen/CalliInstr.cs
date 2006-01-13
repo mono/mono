@@ -16,11 +16,11 @@ namespace Mono.ILASM {
         public class CalliInstr : IInstr {
 
                 private PEAPI.CallConv call_conv;
-                private ITypeRef ret_type;
-                private ITypeRef[] param;
+                private BaseTypeRef ret_type;
+                private BaseTypeRef[] param;
 
-                public CalliInstr (PEAPI.CallConv call_conv, ITypeRef ret_type,
-				   ITypeRef[] param, Location loc)
+                public CalliInstr (PEAPI.CallConv call_conv, BaseTypeRef ret_type,
+				   BaseTypeRef[] param, Location loc)
 			: base (loc)
                 {
                         this.call_conv = call_conv;
@@ -37,7 +37,7 @@ namespace Mono.ILASM {
                         if (param != null) {
                                 param_array = new PEAPI.Type[param.Length];
                                 int count = 0;
-                                foreach (ITypeRef typeref in param) {
+                                foreach (BaseTypeRef typeref in param) {
                                         typeref.Resolve (code_gen);
                                         param_array[count++] = typeref.PeapiType;
                                 }

@@ -16,17 +16,17 @@ namespace Mono.ILASM {
         public class ExternMethodRef : IMethodRef {
 
                 private ExternTypeRef owner;
-                private ITypeRef ret_type;
+                private BaseTypeRef ret_type;
                 private string name;
-                private ITypeRef[] param;
+                private BaseTypeRef[] param;
                 private PEAPI.CallConv call_conv;
 
                 private PEAPI.Method peapi_method;
 		private bool is_resolved;
                 private int gen_param_count;
 
-                public ExternMethodRef (ExternTypeRef owner, ITypeRef ret_type,
-                        PEAPI.CallConv call_conv, string name, ITypeRef[] param, int gen_param_count)
+                public ExternMethodRef (ExternTypeRef owner, BaseTypeRef ret_type,
+                        PEAPI.CallConv call_conv, string name, BaseTypeRef[] param, int gen_param_count)
                 {
                         this.owner = owner;
                         this.ret_type = ret_type;
@@ -49,7 +49,7 @@ namespace Mono.ILASM {
 			set { call_conv = value; }
 		}
 
-		public ITypeRef Owner {
+		public BaseTypeRef Owner {
 			get { return owner; }
 		}
 
@@ -69,7 +69,7 @@ namespace Mono.ILASM {
                         ret_type.Resolve (code_gen);
 
                         int count = 0;
-                        foreach (ITypeRef typeref in param) {
+                        foreach (BaseTypeRef typeref in param) {
                                 typeref.Resolve (code_gen);
                                 param_list[count++] = typeref.PeapiType;
                         }
@@ -110,7 +110,7 @@ namespace Mono.ILASM {
                         ret_type.Resolve (code_gen);
 
                         int count = 0;
-                        foreach (ITypeRef typeref in param) {
+                        foreach (BaseTypeRef typeref in param) {
                                 if (in_opt) {
                                         typeref.Resolve (code_gen);
                                         opt_list.Add (typeref.PeapiType);

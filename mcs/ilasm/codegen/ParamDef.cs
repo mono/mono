@@ -21,7 +21,7 @@ namespace Mono.ILASM {
 
                 private PEAPI.ParamAttr attr;
                 private string name;
-                private ITypeRef typeref;
+                private BaseTypeRef typeref;
                 private bool is_defined;
                 private PEAPI.Param peapi_param;
                 private PEAPI.Constant defval;
@@ -31,7 +31,7 @@ namespace Mono.ILASM {
                 public static readonly ParamDef Ellipsis = new ParamDef (new PEAPI.ParamAttr (), "ELLIPSIS", null);
 
                 public ParamDef (PEAPI.ParamAttr attr, string name,
-                                ITypeRef typeref) {
+                                BaseTypeRef typeref) {
                         this.attr = attr;
                         this.name = name;
                         this.typeref = typeref;
@@ -57,7 +57,7 @@ namespace Mono.ILASM {
                         this.native_type = native_type;
                 }
 
-                public ITypeRef Type {
+                public BaseTypeRef Type {
                         get { return typeref; }
                 }
 

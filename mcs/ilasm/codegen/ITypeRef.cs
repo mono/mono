@@ -1,5 +1,5 @@
 //
-// Mono.ILASM.ITypeRef
+// Mono.ILASM.BaseTypeRef
 //
 // Interface that all Type references must implement
 //

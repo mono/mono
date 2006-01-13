@@ -5,14 +5,15 @@ codegen/CodeGen.cs
 codegen/DebuggingInfo.cs
 codegen/ExternTable.cs
 codegen/InstrTable.cs
-codegen/ITypeRef.cs
-codegen/IClassRef.cs
 codegen/FieldDef.cs
 codegen/ParamDef.cs
 codegen/MethodDef.cs
 codegen/LabelInfo.cs
 codegen/TypeDef.cs
 codegen/DataDef.cs
+codegen/BaseTypeRef.cs
+codegen/BaseClassRef.cs
+codegen/BaseGenericTypeRef.cs
 codegen/TypeRef.cs
 codegen/PeapiTypeRef.cs
 codegen/ExternTypeRef.cs

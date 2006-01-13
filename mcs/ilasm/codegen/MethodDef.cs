@@ -29,7 +29,7 @@ namespace Mono.ILASM {
                 private string name;
                 private string signature;
                 private Hashtable vararg_sig_table;
-                private ITypeRef ret_type;
+                private BaseTypeRef ret_type;
                 private ArrayList param_list;
                 private ArrayList inst_list;
                 private ArrayList customattr_list;
@@ -57,7 +57,7 @@ namespace Mono.ILASM {
 
                 public MethodDef (CodeGen codegen, PEAPI.MethAttr meth_attr,
 				  PEAPI.CallConv call_conv, PEAPI.ImplAttr impl_attr,
-				  string name, ITypeRef ret_type, ArrayList param_list,
+				  string name, BaseTypeRef ret_type, ArrayList param_list,
 				  Location start, GenericParameters gen_params, TypeDef type_def)
                 {
                         this.meth_attr = meth_attr;
@@ -101,7 +101,7 @@ namespace Mono.ILASM {
                         get { return signature; }
                 }
 
-                public ITypeRef RetType {
+                public BaseTypeRef RetType {
                         get { return ret_type; }
                 }
 
@@ -134,12 +134,12 @@ namespace Mono.ILASM {
                         get { return (meth_attr & PEAPI.MethAttr.Abstract) != 0; }
                 }
 
-                public ITypeRef[] ParamTypeList () {
+                public BaseTypeRef[] ParamTypeList () {
 
                         if (param_list == null)
-                                return new ITypeRef[0];
+                                return new BaseTypeRef[0];
                         int count = 0;
-                        ITypeRef[] type_list = new ITypeRef[param_list.Count];
+                        BaseTypeRef[] type_list = new BaseTypeRef[param_list.Count];
                         foreach (ParamDef param in param_list) {
                                 type_list[count++] = param.Type;
                         }
@@ -304,7 +304,7 @@ namespace Mono.ILASM {
 			if (gen_params != null)
 				gen_params.ResolveConstraints (type_params, gen_params);
 			
-			IGenericTypeRef gtr = ret_type as IGenericTypeRef;
+			BaseGenericTypeRef gtr = ret_type as BaseGenericTypeRef;
 			if (gtr != null)
 				gtr.Resolve (type_params, gen_params);
 
@@ -312,7 +312,7 @@ namespace Mono.ILASM {
 				return;
 
 			foreach (ParamDef param in param_list) {
-				gtr = param.Type as IGenericTypeRef;
+				gtr = param.Type as BaseGenericTypeRef;
  				if (gtr != null)
 					gtr.Resolve (type_params, gen_params);
                         }        
@@ -418,7 +418,8 @@ namespace Mono.ILASM {
                                 
                         WriteCode (code_gen, methoddef);
 
-                        //code_gen.Report.Message (String.Format ("Assembled method {0}::{1}", typedef.FullName, name));                        is_defined = true;
+                        //code_gen.Report.Message (String.Format ("Assembled method {0}::{1}", typedef.FullName, name));
+			is_defined = true;
                 }
 
                 public void AddInstr (IInstr instr)
@@ -608,7 +609,7 @@ namespace Mono.ILASM {
                                 signature = CreateSignature (RetType, name, param_list, GenParamCount);
                 }
 
-                public static string CreateSignature (ITypeRef RetType, string name, IList param_list, int gen_param_count)
+                public static string CreateSignature (BaseTypeRef RetType, string name, IList param_list, int gen_param_count)
                 {
                         StringBuilder builder = new StringBuilder ();
 
@@ -633,7 +634,7 @@ namespace Mono.ILASM {
                         return builder.ToString ();
                 }
 
-                public static string CreateVarargSignature (ITypeRef RetType, string name, IList param_list)
+                public static string CreateVarargSignature (BaseTypeRef RetType, string name, IList param_list)
                 {
                         StringBuilder builder = new StringBuilder ();
                         ParamDef last = null;
@@ -666,10 +667,10 @@ namespace Mono.ILASM {
                         return builder.ToString ();
                 }
 
-                public static string CreateVarargSignature (ITypeRef RetType, string name, ITypeRef [] param_list)
+                public static string CreateVarargSignature (BaseTypeRef RetType, string name, BaseTypeRef [] param_list)
                 {
                         StringBuilder builder = new StringBuilder ();
-                        ITypeRef last = null;
+                        BaseTypeRef last = null;
 
 			builder.Append (RetType.FullName);
 			builder.Append (" ");
@@ -678,7 +679,7 @@ namespace Mono.ILASM {
 
                         bool first = true;
                         if (param_list != null && param_list.Length > 0) {
-                                foreach (ITypeRef param in param_list) {
+                                foreach (BaseTypeRef param in param_list) {
                                         if (!first)
                                                 builder.Append (',');
                                         builder.Append (param.FullName);
@@ -701,7 +702,7 @@ namespace Mono.ILASM {
                         return builder.ToString ();
                 }
 
-                public static string CreateSignature (ITypeRef RetType, string name, ITypeRef[] param_list, int gen_param_count)
+                public static string CreateSignature (BaseTypeRef RetType, string name, BaseTypeRef[] param_list, int gen_param_count)
                 {
                         StringBuilder builder = new StringBuilder ();
 
@@ -714,7 +715,7 @@ namespace Mono.ILASM {
 
                         if (param_list != null) {
                                 bool first = true;
-                                foreach (ITypeRef param in param_list) {
+                                foreach (BaseTypeRef param in param_list) {
                                         if (!first)
                                                 builder.Append (',');
                                         builder.Append (param.FullName);

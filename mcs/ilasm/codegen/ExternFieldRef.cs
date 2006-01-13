@@ -15,13 +15,13 @@ namespace Mono.ILASM {
         public class ExternFieldRef : IFieldRef {
 
                 private ExternTypeRef owner;
-                private ITypeRef type;
+                private BaseTypeRef type;
                 private string name;
 
 		private bool is_resolved;
                 private PEAPI.FieldRef peapi_field;
 
-                public ExternFieldRef (ExternTypeRef owner, ITypeRef type, string name)
+                public ExternFieldRef (ExternTypeRef owner, BaseTypeRef type, string name)
                 {
                         this.owner = owner;
                         this.type = type;

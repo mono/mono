@@ -252,7 +252,7 @@ namespace Mono.ILASM {
 				symwriter.EndSourceFile ();
 		}
 
-                public void BeginTypeDef (TypeAttr attr, string name, IClassRef parent,
+                public void BeginTypeDef (TypeAttr attr, string name, BaseClassRef parent,
                                 ArrayList impl_list, Location location, GenericParameters gen_params)
                 {
                         TypeDef outer = null;

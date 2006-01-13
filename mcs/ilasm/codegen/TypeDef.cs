@@ -27,7 +27,7 @@ namespace Mono.ILASM {
                 private string name;
                 private bool is_defined;
                 private bool is_intransit;
-                private IClassRef parent;
+                private BaseClassRef parent;
                 private ArrayList impl_list;
                 private PEAPI.ClassDef classdef;
                 private Hashtable field_table;
@@ -52,7 +52,7 @@ namespace Mono.ILASM {
                 private bool is_enum_class;
 
                 public TypeDef (PEAPI.TypeAttr attr, string name_space, string name,
-                                IClassRef parent, ArrayList impl_list, Location location, GenericParameters gen_params, TypeDef outer)
+                                BaseClassRef parent, ArrayList impl_list, Location location, GenericParameters gen_params, TypeDef outer)
                 {
                         this.attr = attr;
                         this.parent = parent;
@@ -138,7 +138,7 @@ namespace Mono.ILASM {
                         get { return gen_params; }
                 }
 
-                public void AddOverride (MethodDef body, ITypeRef parent, string name)
+                public void AddOverride (MethodDef body, BaseTypeRef parent, string name)
                 {
                         if (override_list == null)
                                 override_list = new ArrayList ();
@@ -269,15 +269,15 @@ namespace Mono.ILASM {
 
                         gen_params.ResolveConstraints (gen_params, null);
 
-                        IGenericTypeRef gtr = parent as IGenericTypeRef;
+                        BaseGenericTypeRef gtr = parent as BaseGenericTypeRef;
                         if (gtr != null)
                                 gtr.Resolve (gen_params, null);
                         
                         if (impl_list == null)
                                 return;
                                 
-                        foreach (IClassRef impl in impl_list) {
-                                gtr = impl as IGenericTypeRef;
+                        foreach (BaseClassRef impl in impl_list) {
+                                gtr = impl as BaseGenericTypeRef;
                                 if (gtr != null)
                                         gtr.Resolve (gen_params, null);
                         }
@@ -365,7 +365,7 @@ namespace Mono.ILASM {
                                 classdef.AddLayoutInfo ( (pack == -1) ? 1 : pack, (size == -1) ? 0 : size);
 
                         if (impl_list != null) {
-                                foreach (IClassRef impl in impl_list) {
+                                foreach (BaseClassRef impl in impl_list) {
                                         impl.Resolve (code_gen);
                                         classdef.AddImplementedInterface (impl.PeapiClass);
                                 }
@@ -424,7 +424,7 @@ namespace Mono.ILASM {
                                 foreach (DictionaryEntry entry in override_list) {
                                         MethodDef body = (MethodDef) entry.Key;
                                         DictionaryEntry decl = (DictionaryEntry) entry.Value;
-                                        ITypeRef parent_type = (ITypeRef) decl.Key;
+                                        BaseTypeRef parent_type = (BaseTypeRef) decl.Key;
                                         parent_type.Resolve (code_gen);
                                         string over_name = (string) decl.Value;
                                         IMethodRef over_meth = parent_type.GetMethodRef (body.RetType,

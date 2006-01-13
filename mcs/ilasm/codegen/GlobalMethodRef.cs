@@ -15,17 +15,17 @@ namespace Mono.ILASM {
 
         public class GlobalMethodRef : IMethodRef {
 
-                private ITypeRef ret_type;
+                private BaseTypeRef ret_type;
                 private string name;
-                private ITypeRef[] param;
+                private BaseTypeRef[] param;
                 private PEAPI.CallConv call_conv;
 
                 private PEAPI.Method peapi_method;
 		private bool is_resolved;
 		private int gen_param_count;
 
-                public GlobalMethodRef (ITypeRef ret_type, PEAPI.CallConv call_conv,
-                                string name, ITypeRef[] param, int gen_param_count)
+                public GlobalMethodRef (BaseTypeRef ret_type, PEAPI.CallConv call_conv,
+                                string name, BaseTypeRef[] param, int gen_param_count)
                 {
                         this.ret_type = ret_type;
                         this.call_conv = call_conv;
@@ -47,7 +47,7 @@ namespace Mono.ILASM {
 			set { call_conv = value; }
 		}
 
-		public ITypeRef Owner {
+		public BaseTypeRef Owner {
 			get { return null; }
 		}
 
@@ -64,7 +64,7 @@ namespace Mono.ILASM {
                         } else {
                                 ArrayList opt_list = new ArrayList ();
                                 bool in_opt = false;
-                                foreach (ITypeRef type in param) {
+                                foreach (BaseTypeRef type in param) {
                                         if (type is SentinelTypeRef) {
                                                 in_opt = true;
                                         } else if (in_opt) {

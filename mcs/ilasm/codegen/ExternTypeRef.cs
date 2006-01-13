@@ -16,21 +16,13 @@ namespace Mono.ILASM {
         /// <summary>
         /// A reference to a type in another assembly
         /// </summary>
-        public class ExternTypeRef : ModifiableType, IClassRef, IScope {
+        public class ExternTypeRef : BaseClassRef , IScope {
 
-                private PEAPI.Type type;
                 private IScope extern_ref;
-                private string full_name;
-                private string sig_mod;
-                private bool is_valuetype;
-
-                private bool is_resolved;
-
                 private Hashtable nestedtypes_table;
                 private Hashtable nestedclass_table;
                 private Hashtable method_table;
                 private Hashtable field_table;
-                private Hashtable p_genericinst_table;
                 
                 public ExternTypeRef (IScope extern_ref, string full_name, bool is_valuetype) 
                         : this (extern_ref, full_name, is_valuetype, null, null)
@@ -39,63 +31,23 @@ namespace Mono.ILASM {
 
                 private ExternTypeRef (IScope extern_ref, string full_name,
                                 bool is_valuetype, ArrayList conv_list, string sig_mod)
+			: base (full_name, is_valuetype, conv_list, sig_mod)
                 {
                         this.extern_ref = extern_ref;
-                        this.full_name = full_name;
-                        this.is_valuetype = is_valuetype;
-                        this.sig_mod = sig_mod;
 
                         nestedclass_table = new Hashtable ();
                         nestedtypes_table = new Hashtable ();
                         method_table = new Hashtable ();
                         field_table = new Hashtable ();
-                        
-                        is_resolved = false;
-                        if (conv_list != null)
-                                ConversionList = conv_list;
                 }
                 
-                public IClassRef Clone ()
+                public override BaseClassRef Clone ()
                 {
                         return new ExternTypeRef (extern_ref, full_name, is_valuetype, 
                                         (ArrayList) ConversionList.Clone (), sig_mod);
                 }
-                
-                public GenericTypeInst GetGenericTypeInst (GenericArguments gen_args)
-                {
-                        return new GenericTypeInst (this, gen_args, is_valuetype);
-                }
 
-                public PEAPI.Type ResolveInstance (CodeGen code_gen, GenericArguments gen_args)
-                {
-                        string sig = gen_args.ToString ();
-                        PEAPI.GenericTypeInst gti = null;
-
-                        if (p_genericinst_table == null)
-                                p_genericinst_table = new Hashtable ();
-                        else
-                                gti = p_genericinst_table [sig] as PEAPI.GenericTypeInst;
-
-                        if (gti == null) {
-                                if (!is_resolved)
-                                        throw new Exception ("Can't ResolveInstance on unresolved ExternTypeRef");
-
-				gti = new PEAPI.GenericTypeInst (PeapiType, gen_args.Resolve (code_gen));
-                                p_genericinst_table [sig] = gti;
-                        }
-
-                        return gti;
-                }
-
-                public PEAPI.Type PeapiType {
-                        get { return type; }
-                }
-
-                public PEAPI.Class PeapiClass {
-                        get { return type as PEAPI.Class; }
-                }
-
-                public string FullName {
+                public override string FullName {
                         get { 
                                 if (extern_ref == null)
                                         return full_name + sig_mod;
@@ -108,16 +60,11 @@ namespace Mono.ILASM {
                         get { return full_name + sig_mod; }
                 }
 
-                public override string SigMod {
-                        get { return sig_mod; }
-                        set { sig_mod = value; }
-                }
-
                 public IScope ExternRef {
                         get { return extern_ref; }
                 }
 
-                public void Resolve (CodeGen code_gen)
+                public override void Resolve (CodeGen code_gen)
                 {
                         if (is_resolved)
                                 return;
@@ -133,17 +80,12 @@ namespace Mono.ILASM {
                         is_resolved = true;
                 }
 
-                public void MakeValueClass ()
-                {
-                        is_valuetype = true;
-                }
-
-                public IMethodRef GetMethodRef (ITypeRef ret_type, PEAPI.CallConv call_conv,
-                                string name, ITypeRef[] param, int gen_param_count)
+                public override IMethodRef GetMethodRef (BaseTypeRef ret_type, PEAPI.CallConv call_conv,
+                                string name, BaseTypeRef[] param, int gen_param_count)
                 {
                         string sig = MethodDef.CreateSignature (ret_type, name, param, gen_param_count);
                         ExternMethodRef mr = method_table [sig] as ExternMethodRef;
-                        
+                       
                         if (mr == null) {
                                 mr = new ExternMethodRef (this, ret_type, call_conv, name, param, gen_param_count);
                                 method_table [sig] = mr;
@@ -152,7 +94,7 @@ namespace Mono.ILASM {
                         return mr;
                 }
 
-                public IFieldRef GetFieldRef (ITypeRef ret_type, string name)
+                public override IFieldRef GetFieldRef (BaseTypeRef ret_type, string name)
                 {
                         ExternFieldRef fr = field_table [name] as ExternFieldRef;
 

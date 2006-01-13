@@ -38,7 +38,7 @@ namespace Mono.ILASM {
                 {
 			string asmname = "";
 			
-			ITypeRef owner = method_ref.Owner;
+			BaseTypeRef owner = method_ref.Owner;
 			if (owner == null)
 				return false;
 				

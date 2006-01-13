@@ -13,43 +13,25 @@ using System.Collections;
 
 namespace Mono.ILASM {
 
-        public class MethodPointerTypeRef : ModifiableType, ITypeRef {
+        public class MethodPointerTypeRef : BaseTypeRef {
 
                 private PEAPI.CallConv callconv;
-                private ITypeRef ret;
+                private BaseTypeRef ret;
                 private ArrayList param_list;
-                private PEAPI.Type type;
-                private string full_name;
-                private string sig_mod;
-                private bool is_resolved;
 
-                public MethodPointerTypeRef (PEAPI.CallConv callconv, ITypeRef ret, ArrayList param_list)
+                public MethodPointerTypeRef (PEAPI.CallConv callconv, BaseTypeRef ret, ArrayList param_list)
+			: base (String.Empty)
                 {
                         this.callconv = callconv;
                         this.ret = ret;
                         this.param_list = param_list;
 
                         // We just need these to not break the interface
-                        full_name = String.Empty;
+                        //full_name = String.Empty;
                         sig_mod = String.Empty;
                 }
 
-                public string FullName {
-                        get { return full_name + sig_mod; }
-                }
-
-                public override string SigMod {
-                        get { return sig_mod; }
-                        set { sig_mod = value; }
-                }
-
-                public PEAPI.Type PeapiType {
-                        get {
-                                return type;
-                        }
-                }
-                
-                public void Resolve (CodeGen code_gen)
+                public override void Resolve (CodeGen code_gen)
                 {
                         if (is_resolved)
                                 return;
@@ -96,13 +78,13 @@ namespace Mono.ILASM {
                         is_resolved = true;
                 }
 
-                public IMethodRef GetMethodRef (ITypeRef ret_type, PEAPI.CallConv call_conv,
-                                string name, ITypeRef[] param, int gen_param_count)
+                public override IMethodRef GetMethodRef (BaseTypeRef ret_type, PEAPI.CallConv call_conv,
+                                string name, BaseTypeRef[] param, int gen_param_count)
                 {
-                        return new TypeSpecMethodRef (this, ret_type, call_conv, name, param, gen_param_count);
+                        return new TypeSpecMethodRef (this, call_conv, ret_type, name, param, gen_param_count);
                 }
 
-                public IFieldRef GetFieldRef (ITypeRef ret_type, string name)
+                public override IFieldRef GetFieldRef (BaseTypeRef ret_type, string name)
                 {
                         return new TypeSpecFieldRef (this, ret_type, name);
                 }

@@ -17,7 +17,7 @@ namespace Mono.ILASM {
 
                 private FeatureAttr attr;
                 private string name;
-                private ITypeRef type;
+                private BaseTypeRef type;
                 private PEAPI.Event event_def;
                 private bool is_resolved;
                 private ArrayList customattr_list;
@@ -27,7 +27,7 @@ namespace Mono.ILASM {
                 private MethodRef other;
                 private MethodRef removeon;
 
-                public EventDef (FeatureAttr attr, ITypeRef type, string name)
+                public EventDef (FeatureAttr attr, BaseTypeRef type, string name)
                 {
                         this.attr = attr;
                         this.name = name;

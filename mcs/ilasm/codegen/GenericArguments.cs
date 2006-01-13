@@ -16,7 +16,7 @@ namespace Mono.ILASM {
 	public class GenericArguments {
 		ArrayList type_list;
 		string type_str;
-		ITypeRef [] type_arr;
+		BaseTypeRef [] type_arr;
 		bool is_resolved;
 		PEAPI.Type [] p_type_list;
 
@@ -33,7 +33,7 @@ namespace Mono.ILASM {
 			get { return type_list.Count; }
 		}
 
-		public void Add (ITypeRef type)
+		public void Add (BaseTypeRef type)
 		{
 			if (type == null)
 				throw new ArgumentException ("type");
@@ -45,12 +45,12 @@ namespace Mono.ILASM {
 			type_arr = null;
 		}
 		
-		public ITypeRef [] ToArray ()
+		public BaseTypeRef [] ToArray ()
 		{
 			if (type_list == null)
 				return null;
 			if (type_arr == null)
-				type_arr = (ITypeRef []) type_list.ToArray (typeof (ITypeRef));
+				type_arr = (BaseTypeRef []) type_list.ToArray (typeof (BaseTypeRef));
 
 			return type_arr;
 		}
@@ -62,7 +62,7 @@ namespace Mono.ILASM {
 
 			int i = 0;
 			p_type_list = new PEAPI.Type [type_list.Count];
-			foreach (ITypeRef type in type_list) {
+			foreach (BaseTypeRef type in type_list) {
 				type.Resolve (code_gen);
 				p_type_list [i ++] = type.PeapiType;
 			}
@@ -73,8 +73,8 @@ namespace Mono.ILASM {
 
 		public void Resolve (GenericParameters type_gen_params, GenericParameters method_gen_params)
 		{
-			foreach (ITypeRef type in type_list) {
-				IGenericTypeRef gtr = type as IGenericTypeRef;
+			foreach (BaseTypeRef type in type_list) {
+				BaseGenericTypeRef gtr = type as BaseGenericTypeRef;
 				if (gtr != null)
 					gtr.Resolve (type_gen_params, method_gen_params);
 			}
@@ -87,7 +87,7 @@ namespace Mono.ILASM {
 			//Build full_name (foo < , >)
 			StringBuilder sb = new StringBuilder ();
 			sb.Append ("<");
-			foreach (ITypeRef tr in type_list)
+			foreach (BaseTypeRef tr in type_list)
 				sb.AppendFormat ("{0}, ", tr.FullName);
 			//Remove the extra ', ' at the end
 			sb.Length -= 2;

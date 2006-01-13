@@ -36,7 +36,7 @@ namespace Mono.ILASM {
                         set { meth.CallConv = value; }
                 }
 
-		public ITypeRef Owner {
+		public BaseTypeRef Owner {
 			get { return null; }
 		}
 

@@ -1,3 +1,14 @@
+2006-01-13  Ankit Jain  <jankit@novell.com>
+
+	Create BaseClassRef, BaseGenericTypeRef from IClassRef & IGenTypeRef.
+	Replace usage of interfaces ITypeRef, IClassRef & IGenTypeRef with their
+	corresponding Base* types.
+	* BaseTypeRef.cs: New. Combine ITypeRef and ModifiableType into this.
+	* BaseClassRef.cs: New.
+	* BaseGenericTypeRef.cs: New.
+	* TypeSpecMethodRef.cs (TypeSpecMethodRef.ctor): Slight change in order
+	of params.
+
 2006-01-12  Ankit Jain  <jankit@novell.com>
 
 	* MethodDef.cs (MethodDef.CreateSignature): Use "`n" only for generic
