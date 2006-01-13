@@ -5,8 +5,10 @@
 //	Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 //
 // (C)2003 Atsushi Enomoto
+// (C)2005-2006 Novell, Inc.
 //
 using System;
+using System.IO;
 using System.Xml;
 using System.Xml.Schema;
 using NUnit.Framework;
@@ -288,6 +290,34 @@ namespace MonoTests.System.Xml
 			vr.Read (); // root
 			AssertEquals ("  ", vr.ReadTypedValue ());
 			AssertEquals (XmlNodeType.EndElement, vr.NodeType);
+		}
+
+		[Test] // bug #77241
+		public void EmptyContentAllowWhitespace ()
+		{
+			string doc = @"
+<root>
+        <!-- some comment -->
+        <child/>
+</root>
+";
+			string schema = @"
+<xsd:schema xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
+    <xsd:element name=""root"">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name=""child"" type=""xsd:string"" />
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>
+";
+			XmlValidatingReader reader = new XmlValidatingReader (
+				new XmlTextReader (new StringReader (doc)));
+			reader.Schemas.Add (null,
+				new XmlTextReader (new StringReader (schema)));
+			while (reader.Read ())
+				;
 		}
 	}
 }

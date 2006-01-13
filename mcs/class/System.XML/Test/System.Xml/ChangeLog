@@ -1,5 +1,9 @@
 2006-01-13  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XsdValidatingReaderTests.cs : test from bug #77241.
+
+2006-01-13  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlTextWriterTests.cs : added some tests for XMLdecl state check.
 
 2006-01-12  Atsushi Enomoto  <atsushi@ximian.com>
