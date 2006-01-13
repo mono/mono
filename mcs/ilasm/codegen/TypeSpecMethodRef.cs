@@ -13,50 +13,16 @@ using System;
 
 namespace Mono.ILASM {
 
-        public class TypeSpecMethodRef : IMethodRef {
-
-                private PEAPI.MethodRef peapi_method;
-                private BaseTypeRef owner;
-
-                private PEAPI.CallConv call_conv;
-                private BaseTypeRef ret_type;
-                private string name;
-                private BaseTypeRef[] param;
-                private int gen_param_count;
-
-                private bool is_resolved;
+        public class TypeSpecMethodRef : BaseMethodRef {
 
                 public TypeSpecMethodRef (BaseTypeRef owner,
                                 PEAPI.CallConv call_conv, BaseTypeRef ret_type,
                                 string name, BaseTypeRef[] param, int gen_param_count)
+                        : base (owner, call_conv, ret_type, name, param, gen_param_count)
                 {
-                        this.owner = owner;
-                        this.call_conv = call_conv;
-                        this.ret_type = ret_type;
-                        this.name = name;
-                        this.param = param;
-                        this.gen_param_count = gen_param_count;
-			if (gen_param_count > 0)
-				CallConv |= PEAPI.CallConv.Generic;
-                        is_resolved = false;
                 }
 
-                public PEAPI.Method PeapiMethod {
-                        get {
-                                return peapi_method;
-                        }
-                }
-
-		public PEAPI.CallConv CallConv {
-			get { return call_conv; }
-			set { call_conv = value; }
-		}
-
-		public BaseTypeRef Owner {
-			get { return owner; }
-		}
-
-                public void Resolve (CodeGen code_gen)
+                public override void Resolve (CodeGen code_gen)
                 {
                         if (is_resolved)
                                 return;

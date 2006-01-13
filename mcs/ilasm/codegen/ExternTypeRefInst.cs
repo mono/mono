@@ -117,7 +117,7 @@ namespace Mono.ILASM {
 			is_resolved = true;
 		}
 
-		public IMethodRef GetMethodRef (BaseTypeRef ret_type, PEAPI.CallConv call_conv,
+		public BaseMethodRef GetMethodRef (BaseTypeRef ret_type, PEAPI.CallConv call_conv,
 				string name, BaseTypeRef[] param, int gen_param_count)
 		{
 			string key = type_ref.FullName + MethodDef.CreateSignature (ret_type, name, param, gen_param_count) + type_ref.SigMod;

@@ -1,5 +1,12 @@
 2006-01-13  Ankit Jain  <jankit@novell.com>
 
+	Create BaseMethodRef from IMethodRef. Replace usage of IMethodRef
+	with BaseMethodRef in *all* files. 
+	Remove implementations of IMethodRef's methods from derived classes.
+	* BaseMethodRef.cs: New.
+
+2006-01-13  Ankit Jain  <jankit@novell.com>
+
 	Move caching of method-refs and field-refs to BaseTypeRef, and use
 	CreateMethodRef & CreateFieldRef for creating the actual object.
 	Override these in derived classes to return the right objects.

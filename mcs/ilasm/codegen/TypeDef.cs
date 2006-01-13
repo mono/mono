@@ -146,7 +146,7 @@ namespace Mono.ILASM {
                                            new DictionaryEntry (parent, name)));
                 }
 
-                public void AddOverride (string sig, IMethodRef decl)
+                public void AddOverride (string sig, BaseMethodRef decl)
                 {
                         if (override_long_list == null)
                                 override_long_list = new ArrayList ();
@@ -427,7 +427,7 @@ namespace Mono.ILASM {
                                         BaseTypeRef parent_type = (BaseTypeRef) decl.Key;
                                         parent_type.Resolve (code_gen);
                                         string over_name = (string) decl.Value;
-                                        IMethodRef over_meth = parent_type.GetMethodRef (body.RetType,
+                                        BaseMethodRef over_meth = parent_type.GetMethodRef (body.RetType,
                                                         body.CallConv, over_name, body.ParamTypeList (), body.GenParamCount);
                                         over_meth.Resolve (code_gen);
                                         classdef.AddMethodOverride (over_meth.PeapiMethod,
@@ -438,7 +438,7 @@ namespace Mono.ILASM {
                         if (override_long_list != null) {
                                 foreach (DictionaryEntry entry in override_long_list) {
                                         string sig = (string) entry.Key;
-                                        IMethodRef decl = (IMethodRef) entry.Value;
+                                        BaseMethodRef decl = (BaseMethodRef) entry.Value;
                                         MethodDef body = (MethodDef) method_table[sig];
                                         decl.Resolve (code_gen);
                                         classdef.AddMethodOverride (decl.PeapiMethod,

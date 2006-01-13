@@ -76,7 +76,7 @@ namespace Mono.ILASM {
                         is_resolved = true;
                 }
 
-                public override IMethodRef CreateMethodRef (BaseTypeRef ret_type, PEAPI.CallConv call_conv,
+                public override BaseMethodRef CreateMethodRef (BaseTypeRef ret_type, PEAPI.CallConv call_conv,
                                 string name, BaseTypeRef[] param, int gen_param_count)
                 {
                         return new ExternMethodRef (this, ret_type, call_conv, name, param, gen_param_count);

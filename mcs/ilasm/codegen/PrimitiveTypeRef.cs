@@ -60,7 +60,7 @@ namespace Mono.ILASM {
                         }
                 }
 
-                public override IMethodRef GetMethodRef (BaseTypeRef ret_type, PEAPI.CallConv call_conv,
+                public override BaseMethodRef GetMethodRef (BaseTypeRef ret_type, PEAPI.CallConv call_conv,
                                 string name, BaseTypeRef[] param, int gen_param_count)
                 {
                         /* Use FullName also here, as we are caching in a static hashtable */

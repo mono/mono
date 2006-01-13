@@ -13,45 +13,15 @@ using System.Collections;
 
 namespace Mono.ILASM {
 
-        public class GlobalMethodRef : IMethodRef {
-
-                private BaseTypeRef ret_type;
-                private string name;
-                private BaseTypeRef[] param;
-                private PEAPI.CallConv call_conv;
-
-                private PEAPI.Method peapi_method;
-		private bool is_resolved;
-		private int gen_param_count;
+        public class GlobalMethodRef : BaseMethodRef {
 
                 public GlobalMethodRef (BaseTypeRef ret_type, PEAPI.CallConv call_conv,
                                 string name, BaseTypeRef[] param, int gen_param_count)
+                        : base (null, call_conv, ret_type, name, param, gen_param_count)
                 {
-                        this.ret_type = ret_type;
-                        this.call_conv = call_conv;
-                        this.name = name;
-                        this.param = param;
-			this.gen_param_count = gen_param_count;
-			if (gen_param_count > 0)
-				CallConv |= PEAPI.CallConv.Generic;
-
-			is_resolved = false;
                 }
 
-                public PEAPI.Method PeapiMethod {
-                        get { return peapi_method; }
-                }
-
-		public PEAPI.CallConv CallConv {
-			get { return call_conv; }
-			set { call_conv = value; }
-		}
-
-		public BaseTypeRef Owner {
-			get { return null; }
-		}
-
-                public void Resolve (CodeGen code_gen)
+                public override void Resolve (CodeGen code_gen)
                 {
 			if (is_resolved)
 				return;

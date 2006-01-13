@@ -30,7 +30,7 @@ codegen/SwitchInstr.cs
 codegen/TypeInstr.cs
 codegen/MethodInstr.cs
 codegen/Local.cs
-codegen/IMethodRef.cs
+codegen/BaseMethodRef.cs
 codegen/ExternMethodRef.cs
 codegen/MethodRef.cs
 codegen/GlobalMethodRef.cs

@@ -19,10 +19,10 @@ namespace Mono.ILASM {
 
         public class CustomAttr {
 
-                private IMethodRef method_ref;
+                private BaseMethodRef method_ref;
                 private byte[] data;
 
-                public CustomAttr (IMethodRef method_ref, byte[] data)
+                public CustomAttr (BaseMethodRef method_ref, byte[] data)
                 {
                         this.method_ref = method_ref;
                         this.data = data;

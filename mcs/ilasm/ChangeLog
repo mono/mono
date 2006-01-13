@@ -1,3 +1,7 @@
+2006-01-13  Ankit Jain  <jankit@novell.com>
+
+	* ilasm.exe.sources: Replace IMethodRef.cs with BaseMethodRef.cs
+
 2006-01-09  Ankit Jain  <jankit@novell.com>
 
         * ilasm.exe.sources: Replace GenericTypeRef.cs with GenericParamRef.cs

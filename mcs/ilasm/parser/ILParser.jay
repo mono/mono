@@ -840,7 +840,7 @@ class_decl		: method_all
                                 BaseTypeRef owner = (BaseTypeRef) $2;
                                 ArrayList arg_list = (ArrayList) $11;
                                 BaseTypeRef[] param_list;
-                                IMethodRef decl;
+                                BaseMethodRef decl;
 
                                 if (arg_list != null)
                                         param_list = (BaseTypeRef[]) arg_list.ToArray (typeof (BaseTypeRef));
@@ -2331,7 +2331,7 @@ instr			: INSTR_NONE
 			| INSTR_METHOD method_ref
                           {
                                 codegen.CurrentMethodDef.AddInstr (new MethodInstr ((MethodOp) $1,
-                                        (IMethodRef) $2, tokenizer.Location));
+                                        (BaseMethodRef) $2, tokenizer.Location));
                           }
 			| INSTR_FIELD type type_spec DOUBLE_COLON id
                           {
@@ -2387,8 +2387,8 @@ instr			: INSTR_NONE
 			| INSTR_TOK owner_type
                           {
                                 if ((MiscInstr) $1 == MiscInstr.ldtoken) {
-                                        if ($2 is IMethodRef)
-                                                codegen.CurrentMethodDef.AddInstr (new LdtokenInstr ((IMethodRef) $2, tokenizer.Location));
+                                        if ($2 is BaseMethodRef)
+                                                codegen.CurrentMethodDef.AddInstr (new LdtokenInstr ((BaseMethodRef) $2, tokenizer.Location));
                                         else if ($2 is IFieldRef)
                                                 codegen.CurrentMethodDef.AddInstr (new LdtokenInstr ((IFieldRef) $2, tokenizer.Location));
                                         else
@@ -2408,7 +2408,7 @@ method_ref		: call_conv type type_spec DOUBLE_COLON method_name
                                 BaseTypeRef owner = (BaseTypeRef) $3;
                                 ArrayList arg_list = (ArrayList) $7;
                                 BaseTypeRef[] param_list;
-                                IMethodRef methref;
+                                BaseMethodRef methref;
 
                                 if (arg_list != null)
                                         param_list = (BaseTypeRef[]) arg_list.ToArray (typeof (BaseTypeRef));
@@ -2452,7 +2452,7 @@ method_ref		: call_conv type type_spec DOUBLE_COLON method_name
                                 else
                                         param_list = new BaseTypeRef[0];
 
-				IMethodRef methref = codegen.GetGlobalMethodRef ((BaseTypeRef) $2, (CallConv) $1,
+				BaseMethodRef methref = codegen.GetGlobalMethodRef ((BaseTypeRef) $2, (CallConv) $1,
                                         (string) $3, param_list, (ga != null ? ga.Count : 0));
 
                                 if (ga != null)
@@ -2467,7 +2467,7 @@ method_ref		: call_conv type type_spec DOUBLE_COLON method_name
                                 ArrayList arg_list = (ArrayList) $8;
                                 GenericArguments ga = (GenericArguments) $6;
                                 BaseTypeRef[] param_list;
-                                IMethodRef methref;
+                                BaseMethodRef methref;
 
                                 if (arg_list != null)
                                         param_list = (BaseTypeRef[]) arg_list.ToArray (typeof (BaseTypeRef));
@@ -2660,12 +2660,12 @@ prop_decl		: D_SET method_ref
 
 customattr_decl		: D_CUSTOM custom_type
                           {
-                                $$ = new CustomAttr ((IMethodRef) $2, null);
+                                $$ = new CustomAttr ((BaseMethodRef) $2, null);
                           }
 			| D_CUSTOM custom_type ASSIGN comp_qstring
 			| D_CUSTOM custom_type ASSIGN bytes_list
                           {
-                                $$ = new CustomAttr ((IMethodRef) $2,
+                                $$ = new CustomAttr ((BaseMethodRef) $2,
                                         (byte[]) $4);
                           }
 			| D_CUSTOM OPEN_PARENS owner_type CLOSE_PARENS custom_type

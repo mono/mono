@@ -56,23 +56,23 @@ namespace Mono.ILASM {
                         throw new Exception ("Should not be called");
                 }
 
-                public virtual IMethodRef CreateMethodRef (BaseTypeRef ret_type,
+                public virtual BaseMethodRef CreateMethodRef (BaseTypeRef ret_type,
                         PEAPI.CallConv call_conv, string name, BaseTypeRef[] param, int gen_param_count)
                 {
                         throw new Exception ("Should not be called");
                 }
 
-                public virtual IMethodRef GetMethodRef (BaseTypeRef ret_type,
+                public virtual BaseMethodRef GetMethodRef (BaseTypeRef ret_type,
                         PEAPI.CallConv call_conv, string name, BaseTypeRef[] param, int gen_param_count)
                 {
-                        IMethodRef mr = null;
+                        BaseMethodRef mr = null;
 
                         /* Note: FullName not reqd as this is cached per object */
                         string key = MethodDef.CreateSignature (ret_type, name, param, gen_param_count);
                         if (method_table == null)
                                 method_table = new Hashtable ();
                         else
-                                mr = (IMethodRef) method_table [key];
+                                mr = (BaseMethodRef) method_table [key];
 
                         if (mr == null) {
                                 mr = CreateMethodRef (ret_type, call_conv, name, param, gen_param_count);

@@ -90,7 +90,7 @@ namespace Mono.ILASM {
                                                          param.Name));
                 }
 
-                public override IMethodRef CreateMethodRef (BaseTypeRef ret_type, PEAPI.CallConv call_conv,
+                public override BaseMethodRef CreateMethodRef (BaseTypeRef ret_type, PEAPI.CallConv call_conv,
                                 string name, BaseTypeRef[] param, int gen_param_count)
                 {
                         return new TypeSpecMethodRef (this, call_conv, ret_type, name, param, gen_param_count);

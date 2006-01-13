@@ -88,7 +88,7 @@ namespace Mono.ILASM {
                         gen_args.Resolve (type_gen_params, method_gen_params);
                 }
 
-                public override IMethodRef GetMethodRef (BaseTypeRef ret_type, PEAPI.CallConv call_conv,
+                public override BaseMethodRef GetMethodRef (BaseTypeRef ret_type, PEAPI.CallConv call_conv,
                                 string meth_name, BaseTypeRef[] param, int gen_param_count)
                 {
 			/* Note: Using FullName here as we are caching in a static hashtable */
