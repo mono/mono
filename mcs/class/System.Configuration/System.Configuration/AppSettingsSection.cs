@@ -124,7 +124,8 @@ namespace System.Configuration {
 			KeyValueInternalCollection col = new KeyValueInternalCollection ();
 				
 			foreach (string key in Settings.AllKeys) {
-				col.Add (Settings[key].Key, Settings[key].Value);
+				KeyValueConfigurationElement ele = Settings[key];
+				col.Add (ele.Key, ele.Value);
 			}
 				
 			col.SetReadOnly ();
