@@ -1,3 +1,9 @@
+2006-01-13  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* GraphicsPathTest.cs: New. Added multiple test cases to check null
+	handling and how the points are generated for the Add* methods.
+	* PathDataTest.cs: New. Added clone test case.
+
 2006-01-12  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* GraphicsPathTest.cs: New. Basic test cases for empty path and 
