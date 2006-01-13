@@ -173,7 +173,7 @@ options:
 			return re;
 		}
 
-		RelaxngAttribute CreateAttribute (XmlSchemaAttribute attr)
+		RelaxngPattern CreateAttribute (XmlSchemaAttribute attr)
 		{
 			RelaxngAttribute ra = new RelaxngAttribute ();
 			RelaxngName name = new RelaxngName ();
@@ -182,7 +182,15 @@ options:
 			ra.Pattern = attr.SchemaType != null ?
 				CreatePatternFromType (attr.SchemaType) :
 				CreatePatternFromTypeName (attr.SchemaTypeName);
-			return ra;
+
+			RelaxngPattern ret = ra;
+
+			if (attr.Use == XmlSchemaUse.Optional) {
+				RelaxngOptional opt = new RelaxngOptional ();
+				opt.Patterns.Add (ra);
+				ret = opt;
+			}
+			return ret;
 		}
 
 		RelaxngPattern CreatePatternFromParticle (XmlSchemaParticle xsdp)
