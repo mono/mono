@@ -518,7 +518,11 @@ openElements [openElementCount - 1]).IndentingOverriden;
 			if (name == null || name.Trim (XmlChar.WhitespaceChars).Length == 0)
 				throw ArgumentError ("Invalid DOCTYPE name", "name");
 
-			if (ws == WriteState.Prolog && formatting == Formatting.Indented)
+			CheckState ();
+			if (ws != WriteState.Start && ws != WriteState.Prolog)
+				throw new InvalidOperationException (String.Format ("Doctype is not allowed at '{0}' state.", ws));
+
+			if (documentStarted && formatting == Formatting.Indented)
 				w.WriteLine ();
 
 			w.Write ("<!DOCTYPE ");
@@ -546,6 +550,8 @@ openElements [openElementCount - 1]).IndentingOverriden;
 			}
 			
 			w.Write('>');
+
+			ws = WriteState.Element;
 		}
 
 		public override void WriteEndAttribute ()
@@ -701,7 +707,7 @@ openElements [openElementCount - 1]).IndentingOverriden;
 			if ((text.IndexOf("?>") > 0))
 				throw ArgumentError ("Processing instruction cannot contain \"?>\" as its value.");
 
-			CheckState ();
+			CheckOutputState ();
 			CloseStartElement ();
 
 			WriteIndent ();
@@ -710,6 +716,9 @@ openElements [openElementCount - 1]).IndentingOverriden;
 			w.Write (' ');
 			w.Write (text);
 			w.Write ("?>");
+
+			if (ws == WriteState.Start)
+				ws = WriteState.Prolog;
 		}
 
 		public override void WriteQualifiedName (string localName, string ns)
@@ -1150,13 +1159,13 @@ openElements [openElementCount - 1]).IndentingOverriden;
 			w.Write (';');
 		}
 
-		public override void WriteWhitespace (string ws)
+		public override void WriteWhitespace (string value)
 		{
-			if (ws == null || ws.Length == 0) {
+			if (value == null || value.Length == 0) {
 				throw ArgumentError ("Only white space characters should be used.");
 			}
 
-			if (!XmlChar.IsWhitespace (ws))
+			if (!XmlChar.IsWhitespace (value))
 				throw ArgumentError ("Invalid Whitespace");
 
 			CheckState ();
@@ -1166,7 +1175,10 @@ openElements [openElementCount - 1]).IndentingOverriden;
 				CloseStartElement ();
 			}
 
-			w.Write (ws);
+			w.Write (value);
+
+			if (ws == WriteState.Start)
+				ws = WriteState.Prolog;
 		}
 
 		private Exception ArgumentError (string message)

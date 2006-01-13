@@ -963,7 +963,6 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 		}
 
 		[Test]
-		[Category ("NotWorking")] // bug #77082: mono does not output newline after xml declaration
 		public void Output_Indent_Xml_DocType ()
 		{
 			XsltArgumentList xsltArgs = new XsltArgumentList ();

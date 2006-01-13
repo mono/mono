@@ -1,3 +1,10 @@
+2006-01-13  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlTextWriter.cs : Fixed bug #77082.
+	  When the state was Start, after WriteProcessingInstruction() and
+	  WriteWhitespace() change it to Prolog.
+	  After WriteDocType() set state to WriteState.Element.
+
 2006-01-12  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlTextWriter.cs : Do not local duplicate of automatically-created

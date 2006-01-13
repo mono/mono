@@ -2096,6 +2096,51 @@ namespace MonoTests.System.Xml
 			NUnit.Framework.Assert.AreEqual (referent, ms.ToArray ());
 		}
 
+		[Test] // see also bug #77082
+		public void WriteDocTypeIndent ()
+		{
+			string expected = String.Format (@"<?xml version='1.0'?>{0}<!DOCTYPE root PUBLIC '' 'urn:foo'[]>{0}<root />", Environment.NewLine);
+			xtw.Formatting = Formatting.Indented;
+			xtw.WriteProcessingInstruction ("xml", "version='1.0'");
+			xtw.WriteDocType ("root", "", "urn:foo", "");
+			xtw.WriteStartElement ("root");
+			xtw.WriteEndElement ();
+			xtw.Close ();
+			Assert.AreEqual (expected, StringWriterText);
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void WriteDocTypeTwice ()
+		{
+			xtw.WriteDocType ("root", "", "urn:foo", "");
+			xtw.WriteDocType ("root", "", "urn:foo", "");
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void XmlDeclAfterDocType ()
+		{
+			xtw.WriteDocType ("root", "", "urn:foo", "");
+			xtw.WriteStartDocument ();
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void XmlDeclAfterWhitespace ()
+		{
+			xtw.WriteWhitespace ("   ");
+			xtw.WriteStartDocument ();
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void XmlDeclAfterPI ()
+		{
+			xtw.WriteProcessingInstruction ("pi", "");
+			xtw.WriteStartDocument ();
+		}
+
 #if NET_2_0
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
