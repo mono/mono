@@ -1,3 +1,9 @@
+2006-01-13  Alexander Olk  <alex.olk@googlemail.com>
+
+	* MimeIcon.cs: GnomeHandler: older gnome versions don't have
+	  ~/.gconf/%gconf-tree.xml, so use
+	  .gconf/desktop/gnome/interface/%gconf.xml
+
 2006-01-13  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* TreeView.cs: Draw the focus rectangle outside the highlight, to

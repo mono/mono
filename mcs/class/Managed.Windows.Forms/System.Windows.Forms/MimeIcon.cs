@@ -692,6 +692,11 @@ namespace System.Windows.Forms
 		{
 			icon_theme = String.Empty;
 			
+			if (!File.Exists (full_gnome_gconf_tree))
+				full_gnome_gconf_tree = Environment.GetFolderPath( Environment.SpecialFolder.Personal )
+					+ "/"
+					+ ".gconf/desktop/gnome/interface/%gconf.xml";
+			
 			GetIconThemeFromGConf ();
 			
 			if (!GetIconPaths ())
