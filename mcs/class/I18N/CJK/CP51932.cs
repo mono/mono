@@ -197,6 +197,7 @@ public class CP51932 : MonoEncoding
 					chars, ref charIndex, ref charCount,
 					bytes, ref posn, ref byteCount);
 #else
+throw new ArgumentException (String.Format ("ch = {0:X04}", (int) ch));
 				bytes [posn++] = (byte) '?';
 #endif
 			} else if (value < 0x0100) {

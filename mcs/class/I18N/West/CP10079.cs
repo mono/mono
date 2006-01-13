@@ -233,7 +233,8 @@ public class CP10079 : ByteEncoding
 #if NET_2_0
 					HandleFallback (ref buffer, chars, ref charIndex, ref charCount, bytes, ref byteIndex, ref byteCount);
 #else
-					ch = 0x3F;
+throw new Exception (String.Format ("Not expected character {0:X04}", (int) ch));
+//					ch = 0x3F;
 #endif
 					break;
 			}
