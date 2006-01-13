@@ -1,3 +1,10 @@
+2006-01-13  Atsushi Enomoto <atsushi@ximian.com>
+
+	* RdpObjects.cs, RdpPatterns.cs : introduced "IsContextDependent"
+	  optimization; when a pattern is (namespace) context independent
+	  (almost all cases except for QName validation), new TextDeriv()
+	  overload that takes MemoizationStore memoizes TextDeriv results.
+
 2006-01-12  Atsushi Enomoto <atsushi@ximian.com>
 
 	* RdpPattern.cs :

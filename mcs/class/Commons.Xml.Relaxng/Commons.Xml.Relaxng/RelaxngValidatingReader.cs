@@ -472,8 +472,8 @@ namespace Commons.Xml.Relaxng
 
 		RdpPattern TextDeriv (RdpPattern p, string value, XmlReader context)
 		{
-			if (p.IsTextValueDependent)
-				return p.TextDeriv (value, context);
+			if (value.Length > 0 && p.IsTextValueDependent)
+				return memo.TextDeriv (p, value, context);
 			else
 				return memo.EmptyTextDeriv (p);
 		}
@@ -548,6 +548,7 @@ namespace Commons.Xml.Relaxng
 		Hashtable textOnly = new Hashtable ();
 		Hashtable mixedText = new Hashtable ();
 		Hashtable emptyText = new Hashtable ();
+		Hashtable text = new Hashtable ();
 
 		enum DerivativeType {
 			StartTagOpen,
@@ -671,6 +672,25 @@ int nStartAttDeriv = 0;
 
 			m = p.TextOnlyDeriv (this);
 			textOnly [p] = m;
+			return m;
+		}
+
+		public RdpPattern TextDeriv (RdpPattern p, string value, XmlReader context)
+		{
+			if (p.IsContextDependent)
+				return p.TextDeriv (value, context);
+
+			Hashtable h = text [p] as Hashtable;
+			if (h == null) {
+				h = new Hashtable ();
+				text [p] = h;
+			}
+
+			RdpPattern m = h [value] as RdpPattern;
+			if (m != null)
+				return m;
+			m = p.TextDeriv (value, context, this);
+			h [value] = m;
 			return m;
 		}
 

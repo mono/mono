@@ -38,6 +38,11 @@ namespace Commons.Xml.Relaxng
 		public abstract string Name { get; }
 		public abstract string NamespaceURI { get; }
 
+		internal virtual bool IsContextDependent {
+			// safe default value
+			get { return true; }
+		}
+
 		public abstract object Parse (string text, XmlReader reader);
 
 		public virtual bool Compare (object o1, object o2)

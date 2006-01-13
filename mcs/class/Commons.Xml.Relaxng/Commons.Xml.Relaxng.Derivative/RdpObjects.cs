@@ -95,6 +95,10 @@ namespace Commons.Xml.Relaxng.Derivative
 			get { return localName; }
 		}
 
+		public bool IsContextDependent {
+			get { return datatype.IsContextDependent; }
+		}
+
 		public virtual bool IsAllowed (string value, XmlReader reader)
 		{
 			return datatype.IsValid (value, reader);

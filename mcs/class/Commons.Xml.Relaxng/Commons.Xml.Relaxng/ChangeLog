@@ -1,3 +1,11 @@
+2006-01-13  Atsushi Enomoto <atsushi@ximian.com>
+
+	* RelaxngDatatype.cs, RelaxngDefaultDatatypes.cs,
+	  XsdDatatypeProvider.cs, RelaxngValidatingReader.cs :
+	  Memoize TextDeriv() results for context independent inputs.
+
+	  Due to the API freeze they are kept as internal virtual for now.
+
 2006-01-12  Atsushi Enomoto <atsushi@ximian.com>
 
 	* RelaxngValidatingReader.cs : Use RdpPattern.EmptyTextDeriv(). It

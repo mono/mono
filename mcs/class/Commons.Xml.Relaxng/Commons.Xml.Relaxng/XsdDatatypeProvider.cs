@@ -197,6 +197,10 @@ namespace Commons.Xml.Relaxng.XmlSchema
 			get { return type.QualifiedName.Namespace; }
 		}
 
+		internal override bool IsContextDependent {
+			get { return type.Datatype != null && type.Datatype.TokenizedType == XmlTokenizedType.QName; }
+		}
+
 		public override object Parse (string value, XmlReader reader)
 		{
 			// Now we create XmlValidatingReader to handle
@@ -229,6 +233,10 @@ namespace Commons.Xml.Relaxng.XmlSchema
 			dt = xstype;
 		}
 
+		internal override bool IsContextDependent {
+			get { return dt.TokenizedType == XmlTokenizedType.QName; }
+		}
+
 		public override string Name {
 			get { return name; }
 		}
@@ -258,6 +266,10 @@ namespace Commons.Xml.Relaxng.XmlSchema
 
 		public override string NamespaceURI {
 			get { return "http://www.w3.org/2001/XMLSchema-datatypes"; }
+		}
+
+		internal override bool IsContextDependent {
+			get { return true; }
 		}
 
 		public override object Parse (string s, XmlReader reader) 

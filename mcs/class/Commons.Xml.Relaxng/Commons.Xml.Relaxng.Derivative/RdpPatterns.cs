@@ -294,6 +294,10 @@ namespace Commons.Xml.Relaxng.Derivative
 			get { return false; }
 		}
 
+		internal virtual bool IsContextDependent {
+			get { return false; }
+		}
+
 		// fills QName collection
 		public void GetLabels (LabelList elements, LabelList attributes)
 		{
@@ -326,9 +330,14 @@ namespace Commons.Xml.Relaxng.Derivative
 			return RdpNotAllowed.Instance;
 		}
 
+		internal virtual RdpPattern TextDeriv (string s, XmlReader reader, MemoizationStore memo)
+		{
+			return TextDeriv (s, reader);
+		}
+
 		internal virtual RdpPattern EmptyTextDeriv (MemoizationStore memo)
 		{
-			return TextDeriv (String.Empty, null);
+			return TextDeriv (String.Empty, null, memo);
 		}
 
 		internal virtual RdpPattern TextOnlyDeriv ()
@@ -511,6 +520,10 @@ namespace Commons.Xml.Relaxng.Derivative
 			get { return false; }
 		}
 
+		internal override bool IsContextDependent {
+			get { return false; }
+		}
+
 		static RdpEmpty instance;
 		public static RdpEmpty Instance {
 			get { return instance; }
@@ -568,6 +581,10 @@ namespace Commons.Xml.Relaxng.Derivative
 			get { return false; }
 		}
 
+		internal override bool IsContextDependent {
+			get { return false; }
+		}
+
 		public override RdpPattern ApplyAfter (RdpApplyAfterHandler h)
 		{
 			return RdpNotAllowed.Instance;
@@ -621,6 +638,10 @@ namespace Commons.Xml.Relaxng.Derivative
 		}
 
 		internal override bool IsTextValueDependent {
+			get { return false; }
+		}
+
+		internal override bool IsContextDependent {
 			get { return false; }
 		}
 
@@ -801,6 +822,19 @@ namespace Commons.Xml.Relaxng.Derivative
 			}
 		}
 
+		bool isContextDependentComputed;
+		bool isContextDependent;
+
+		internal override bool IsContextDependent {
+			get {
+				if (!isContextDependentComputed) {
+					isContextDependent = LValue.IsContextDependent || RValue.IsContextDependent;
+					isContextDependentComputed = true;
+				}
+				return isContextDependent;
+			}
+		}
+
 		public override RelaxngPatternType PatternType {
 			get { return RelaxngPatternType.Choice; }
 		}
@@ -861,6 +895,11 @@ namespace Commons.Xml.Relaxng.Derivative
 		public override RdpPattern TextDeriv (string s, XmlReader reader)
 		{
 			return LValue.TextDeriv (s, reader).Choice (RValue.TextDeriv (s, reader));
+		}
+
+		internal override RdpPattern TextDeriv (string s, XmlReader reader, MemoizationStore memo)
+		{
+			return memo.TextDeriv (LValue, s, reader).Choice (memo.TextDeriv (RValue, s, reader));
 		}
 
 		internal override RdpPattern EmptyTextDeriv (MemoizationStore memo)
@@ -1000,6 +1039,10 @@ namespace Commons.Xml.Relaxng.Derivative
 			get { return LValue.IsTextValueDependent || RValue.IsTextValueDependent; }
 		}
 
+		internal override bool IsContextDependent {
+			get { return LValue.IsContextDependent || RValue.IsContextDependent; }
+		}
+
 		public override void GetLabels (LabelList elements, LabelList attributes, bool collectNameClass)
 		{
 			LValue.GetLabels (elements, attributes, collectNameClass);
@@ -1027,6 +1070,12 @@ namespace Commons.Xml.Relaxng.Derivative
 		{
 			return LValue.TextDeriv (s, reader).Interleave (RValue)
 				.Choice (LValue.Interleave (RValue.TextDeriv (s, reader)));
+		}
+
+		internal override RdpPattern TextDeriv (string s, XmlReader reader, MemoizationStore memo)
+		{
+			return memo.TextDeriv (LValue, s, reader).Interleave (RValue)
+				.Choice (LValue.Interleave (memo.TextDeriv (RValue, s, reader)));
 		}
 
 		internal override RdpPattern EmptyTextDeriv (MemoizationStore memo)
@@ -1172,6 +1221,10 @@ namespace Commons.Xml.Relaxng.Derivative
 			get { return LValue.IsTextValueDependent || (LValue.Nullable ? RValue.IsTextValueDependent : false); }
 		}
 
+		internal override bool IsContextDependent {
+			get { return LValue.IsContextDependent || (LValue.Nullable ? RValue.IsContextDependent : false); }
+		}
+
 		public override void GetLabels (LabelList elements, LabelList attributes, bool collectNameClass)
 		{
 			LValue.GetLabels (elements, attributes, collectNameClass);
@@ -1186,6 +1239,13 @@ namespace Commons.Xml.Relaxng.Derivative
 			RdpPattern p = LValue.TextDeriv (s, reader).Group (RValue);
 			return LValue.Nullable ?
 				p.Choice (RValue.TextDeriv (s, reader)) : p;
+		}
+
+		internal override RdpPattern TextDeriv (string s, XmlReader reader, MemoizationStore memo)
+		{
+			RdpPattern p = memo.TextDeriv (LValue, s, reader).Group (RValue);
+			return LValue.Nullable ?
+				p.Choice (memo.TextDeriv (RValue, s, reader)) : p;
 		}
 
 		internal override RdpPattern EmptyTextDeriv (MemoizationStore memo)
@@ -1371,6 +1431,10 @@ namespace Commons.Xml.Relaxng.Derivative
 			get { return Child.IsTextValueDependent; }
 		}
 
+		internal override bool IsContextDependent {
+			get { return Child.IsContextDependent; }
+		}
+
 		public override void GetLabels (LabelList elements, LabelList attributes, bool collectNameClass)
 		{
 			Child.GetLabels (elements, attributes, collectNameClass);
@@ -1396,6 +1460,11 @@ namespace Commons.Xml.Relaxng.Derivative
 		public override RdpPattern TextDeriv (string s, XmlReader reader)
 		{
 			return Child.TextDeriv (s, reader).Group (this.Choice (RdpEmpty.Instance));
+		}
+
+		internal override RdpPattern TextDeriv (string s, XmlReader reader, MemoizationStore memo)
+		{
+			return memo.TextDeriv (Child, s, reader).Group (this.Choice (RdpEmpty.Instance));
 		}
 
 		internal virtual RdpPattern EmptyTextDeriv (MemoizationStore memo)
@@ -1529,6 +1598,10 @@ namespace Commons.Xml.Relaxng.Derivative
 			get { return true; }
 		}
 
+		internal override bool IsContextDependent {
+			get { return Child.IsContextDependent; }
+		}
+
 		public override RelaxngPatternType PatternType {
 			get { return RelaxngPatternType.List; }
 		}
@@ -1587,6 +1660,10 @@ namespace Commons.Xml.Relaxng.Derivative
 
 		internal override bool IsTextValueDependent {
 			get { return true; }
+		}
+
+		internal override bool IsContextDependent {
+			get { return dt.IsContextDependent; }
 		}
 
 		public override RelaxngPatternType PatternType {
@@ -1713,6 +1790,10 @@ namespace Commons.Xml.Relaxng.Derivative
 			get { return true; }
 		}
 
+		internal override bool IsContextDependent {
+			get { return dt.IsContextDependent; }
+		}
+
 		public override RelaxngPatternType PatternType {
 			get { return RelaxngPatternType.Value; }
 		}
@@ -1775,6 +1856,10 @@ namespace Commons.Xml.Relaxng.Derivative
 		}
 
 		internal override bool IsTextValueDependent {
+			get { return false; }
+		}
+
+		internal override bool IsContextDependent {
 			get { return false; }
 		}
 
@@ -1918,6 +2003,10 @@ namespace Commons.Xml.Relaxng.Derivative
 			get { return false; }
 		}
 
+		internal override bool IsContextDependent {
+			get { return false; }
+		}
+
 		public override RelaxngPatternType PatternType {
 			get { return RelaxngPatternType.Element; }
 		}
@@ -2038,6 +2127,10 @@ namespace Commons.Xml.Relaxng.Derivative
 			get { return LValue.IsTextValueDependent; }
 		}
 
+		internal override bool IsContextDependent {
+			get { return LValue.IsContextDependent; }
+		}
+
 		public override void GetLabels (LabelList elements, LabelList attributes, bool collectNameClass)
 		{
 			LValue.GetLabels (elements, attributes, collectNameClass);
@@ -2046,6 +2139,11 @@ namespace Commons.Xml.Relaxng.Derivative
 		public override RdpPattern TextDeriv (string s, XmlReader reader)
 		{
 			return LValue.TextDeriv (s, reader).After (RValue);
+		}
+
+		internal override RdpPattern TextDeriv (string s, XmlReader reader, MemoizationStore memo)
+		{
+			return memo.TextDeriv (LValue, s, reader).After (RValue);
 		}
 
 		internal override RdpPattern EmptyTextDeriv (MemoizationStore memo)

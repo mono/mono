@@ -48,6 +48,10 @@ namespace Commons.Xml.Relaxng
 		public override string Name { get { return "string"; } }
 		public override string NamespaceURI { get { return String.Empty; } }
 
+		internal override bool IsContextDependent {
+			get { return false; }
+		}
+
 		public override bool IsValid (string text, XmlReader reader)
 		{
 			return true;
@@ -78,6 +82,10 @@ namespace Commons.Xml.Relaxng
 
 		public override string Name { get { return "token"; } }
 		public override string NamespaceURI { get { return String.Empty; } }
+
+		internal override bool IsContextDependent {
+			get { return false; }
+		}
 
 		public override bool IsValid (string text, XmlReader reader)
 		{
