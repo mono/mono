@@ -774,7 +774,7 @@ slashed_name		: comp_name
 class_ref		: OPEN_BRACKET slashed_name CLOSE_BRACKET slashed_name
                           {
                                 if (codegen.IsThisAssembly ((string) $2)) {
-                                        $$ = new TypeRef ((string) $4, false, null);
+                                        $$ = codegen.GetTypeRef ((string) $4);
                                 } else {
                                         $$ = codegen.ExternTable.GetTypeRef ((string) $2, (string) $4, false);
                                 }
@@ -782,7 +782,7 @@ class_ref		: OPEN_BRACKET slashed_name CLOSE_BRACKET slashed_name
 			| OPEN_BRACKET D_MODULE slashed_name CLOSE_BRACKET slashed_name
                           {
                                 if (codegen.IsThisModule ((string) $3)) {
-                                        $$ = new TypeRef ((string) $5, false, null);
+                                        $$ = codegen.GetTypeRef ((string) $5);
                                 } else {
                                         $$ = codegen.ExternTable.GetModuleTypeRef ((string) $3, (string) $5, false);
                                 }
@@ -887,7 +887,7 @@ type			: generic_class_ref
                           }
                         | K_VALUETYPE slashed_name typars_clause
                           {
-                                TypeRef t_ref = new TypeRef ((string) $2, true, null);
+                                TypeRef t_ref = codegen.GetTypeRef ((string) $2);
                                 t_ref.MakeValueClass ();
                                 if ($3 != null)
                                         $$ = t_ref.GetGenericTypeInst ((GenericArguments) $3);
@@ -2418,7 +2418,7 @@ method_ref		: call_conv type type_spec DOUBLE_COLON method_name
                                 if (codegen.IsThisAssembly ("mscorlib")) {
                                         PrimitiveTypeRef prim = owner as PrimitiveTypeRef;
                                         if (prim != null && prim.SigMod == "")
-                                                owner = new TypeRef (prim.Name, false, null);
+                                                owner = codegen.GetTypeRef (prim.Name);
                                 }
 
                                 methref = owner.GetMethodRef ((BaseTypeRef) $2,
@@ -2456,7 +2456,7 @@ method_ref		: call_conv type type_spec DOUBLE_COLON method_name
                                         (string) $3, param_list, (ga != null ? ga.Count : 0));
 
                                 if (ga != null)
-                                        methref = new GenericMethodRef (methref, new GenericMethodSig (ga));
+                                        methref = methref.GetGenericMethodRef (ga);
 
                                 $$ = methref;
                           }
@@ -2483,7 +2483,7 @@ method_ref		: call_conv type type_spec DOUBLE_COLON method_name
                                 }
 
                                 if (ga != null)
-                                        methref = new GenericMethodRef (methref, new GenericMethodSig (ga));
+                                        methref = methref.GetGenericMethodRef (ga);
                                 
                                 $$ = methref;
                           }

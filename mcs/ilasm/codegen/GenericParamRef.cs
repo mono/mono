@@ -21,6 +21,7 @@ namespace Mono.ILASM {
                 /* Unmodified GenParam */
                 private PEAPI.GenParam param;
                 private bool is_added; /* Added to TypeSpec table ? */
+                private static Hashtable param_table = new Hashtable ();
 
                 public GenericParamRef (PEAPI.GenParam gen_param, string full_name)
                         : this (gen_param, full_name, null)
@@ -67,7 +68,12 @@ namespace Mono.ILASM {
                         if (is_added)
                                 return;
 
-                        code_gen.PEFile.AddGenericParam (param);
+                        string key = param.Type.ToString () + param.Index.ToString ();
+                        if (param_table [key] == null) {
+                                code_gen.PEFile.AddGenericParam (param);
+                                param_table [key] = param;
+                        }
+
                         is_added = true;
                 }
                 

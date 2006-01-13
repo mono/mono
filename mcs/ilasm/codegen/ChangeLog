@@ -1,5 +1,13 @@
 2006-01-13  Ankit Jain  <jankit@novell.com>
 
+	* GenericParamRef.cs (GenericParamRef.Resolve): Ensure no duplicate
+	GenParams get added to the TypeSpec table.
+	* GenericMethodSig.cs (GenericMethodSig.GetInstance): Cache sigs in a
+	static hashtable.
+	* BaseMethodRef.cs (BaseMethodRef.GetGenericMethodRef): Cache GenericMethodRefs.
+
+2006-01-13  Ankit Jain  <jankit@novell.com>
+
 	Create BaseMethodRef from IMethodRef. Replace usage of IMethodRef
 	with BaseMethodRef in *all* files. 
 	Remove implementations of IMethodRef's methods from derived classes.

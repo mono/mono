@@ -1,3 +1,7 @@
+2006-01-13  Ankit Jain  <jankit@novell.com>
+
+	* Metadata.cs (GenericMethodSig): Ensure sig is added to the blob only once.
+
 2006-01-10  Ankit Jain  <jankit@novell.com>
 
 	* Metadata.cs (GenParam): Don't use GetTypeSpec to create typespec for GenParam. 

@@ -8,6 +8,7 @@
 //
 
 using System;
+using System.Collections;
 
 namespace Mono.ILASM {
 
@@ -16,6 +17,8 @@ namespace Mono.ILASM {
                 private GenericArguments gen_args;
                 private bool is_resolved;
                 private PEAPI.GenericMethodSig sig;
+
+                private static Hashtable sig_table;
 
                 public GenericMethodSig (GenericArguments gen_args)
                 {
@@ -38,6 +41,22 @@ namespace Mono.ILASM {
                         return sig;
                 }
 
+                public static GenericMethodSig GetInstance (GenericArguments gen_args)
+                {
+                        GenericMethodSig sig = null;
+
+                        if (sig_table == null)
+                                sig_table = new Hashtable ();
+                        else
+                                sig = (GenericMethodSig) sig_table [gen_args.ToString ()];
+
+                        if (sig == null) {
+                                sig = new GenericMethodSig (gen_args);
+                                sig_table [gen_args.ToString ()] = sig;
+                        }
+                        
+                        return sig;
+                }
         }
 
 }

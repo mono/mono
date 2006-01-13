@@ -1983,7 +1983,6 @@ namespace PEAPI {
 		private int index;
 		private string param_name;
 		private uint sigIx = 0;
-		private bool done = false;
 
 		public GenParam (int index, string name, GenParamType ptype) : base ((byte) ptype) 
 		{
@@ -2115,10 +2114,13 @@ namespace PEAPI {
 	public class GenericMethodSig {
 
 		private Type[] gen_param;
+		private bool done;
+		private uint sigIx = 0;
 
 		public GenericMethodSig (Type[] gen_param)
 		{
 			this.gen_param = gen_param;
+			done = false;
 		}
 
 		internal void TypeSig (MemoryStream str)
@@ -2131,9 +2133,14 @@ namespace PEAPI {
 
 		internal uint GetSigIx (MetaData md)
 		{
+			if (done)
+				return sigIx;
+
 			MemoryStream sig = new MemoryStream();
 			TypeSig (sig);
-			return md.AddToBlobHeap (sig.ToArray());
+			sigIx = md.AddToBlobHeap (sig.ToArray());
+			done = true;
+			return sigIx;
 		}
 	}
 

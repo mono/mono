@@ -9,6 +9,7 @@
 
 
 using System;
+using System.Collections;
 
 namespace Mono.ILASM {
        public abstract class BaseMethodRef {
@@ -22,6 +23,8 @@ namespace Mono.ILASM {
                 protected PEAPI.Method peapi_method;
                 protected bool is_resolved;
                 protected int gen_param_count;
+
+                protected Hashtable gen_method_table;
 
                 public BaseMethodRef (BaseTypeRef owner, PEAPI.CallConv call_conv,
                         BaseTypeRef ret_type, string name, BaseTypeRef[] param, int gen_param_count)
@@ -51,6 +54,24 @@ namespace Mono.ILASM {
                 }
 
                 public abstract void Resolve (CodeGen code_gen);
+
+                public GenericMethodRef GetGenericMethodRef (GenericArguments gen_args)
+                {
+                        GenericMethodRef methref = null;
+
+                        if (gen_method_table == null)
+                                gen_method_table = new Hashtable ();
+                        else
+                                methref = (GenericMethodRef) gen_method_table [gen_args.ToString ()];
+
+                        if (methref == null) {
+                                methref = new GenericMethodRef (this, GenericMethodSig.GetInstance (gen_args));
+                                gen_method_table [gen_args.ToString ()] = methref;
+                        }
+
+                        return methref;
+                }
+
        }
 }
 
