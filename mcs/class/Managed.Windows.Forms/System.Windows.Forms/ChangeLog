@@ -1,3 +1,9 @@
+2006-01-13  Jackson Harper  <jackson@ximian.com>
+
+	* TreeView.cs: On MS GetNodeAt never actually factors in the X
+	value passed.  Also redraw the selected node when we recieve
+	focus, so tabbing between trees works correctly.
+
 2006-01-13  Alexander Olk  <alex.olk@googlemail.com>
 
 	* MimeIcon.cs: GnomeHandler: older gnome versions don't have

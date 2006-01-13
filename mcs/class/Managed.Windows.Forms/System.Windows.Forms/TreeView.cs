@@ -118,7 +118,8 @@ namespace System.Windows.Forms {
 			MouseMove += new MouseEventHandler(MouseMoveHandler);
 			SizeChanged += new EventHandler (SizeChangedHandler);
 			FontChanged += new EventHandler (FontChangedHandler);
-			LostFocus += new EventHandler (LostFocusHandler);
+			LostFocus += new EventHandler (FocusChangedHandler);
+			GotFocus += new EventHandler (FocusChangedHandler);
 			MouseWheel += new MouseEventHandler(MouseWheelHandler);
 
 			SetStyle (ControlStyles.UserPaint | ControlStyles.StandardClick, false);
@@ -473,10 +474,15 @@ namespace System.Windows.Forms {
 		}
 
 		public TreeNode GetNodeAt (Point pt) {
-			return GetNodeAt (pt.X, pt.Y);
+			return GetNodeAt (pt.Y);
 		}
 
-		public TreeNode GetNodeAt (int x, int y) {
+		public TreeNode GetNodeAt (int x, int y)
+		{
+			return GetNodeAt (y);
+		}
+
+		private TreeNode GetNodeAtUseX (int x, int y) {
 			TreeNode node = GetNodeAt (y);
 			if (node == null || !(IsTextArea (node, x) || full_row_select))
 				return null;
@@ -1371,7 +1377,7 @@ namespace System.Windows.Forms {
 			update_node_bounds = true;
 		}
 
-		private void LostFocusHandler (object sender, EventArgs e)
+		private void FocusChangedHandler (object sender, EventArgs e)
 		{
 			if (selected_node != null)
 				UpdateNode (selected_node);
@@ -1452,7 +1458,7 @@ namespace System.Windows.Forms {
 					double run = Math.Pow (drag_begin_y - e.Y, 2);
 					double move = Math.Sqrt (rise + run);
 					if (move > 3) {
-						TreeNode drag = GetNodeAt (e.X, e.Y);
+						TreeNode drag = GetNodeAtUseX (e.X, e.Y);
 						
 						if (drag != null) {
 							OnItemDrag (new ItemDragEventArgs (e.Button, drag));
@@ -1465,17 +1471,17 @@ namespace System.Windows.Forms {
 			}
 			if(!select_mmove)
 				return;
-			TreeNode node = GetNodeAt(e.X,e.Y);
+			TreeNode node = GetNodeAtUseX (e.X,e.Y);
 			if(node == selected_node)
 				return;
-			
+
 			selected_node = focused_node;
 			select_mmove = false;
 			Refresh();
 		}
 
 		private void DoubleClickHandler (object sender, MouseEventArgs e) {
-			TreeNode node = GetNodeAt(e.X,e.Y);
+			TreeNode node = GetNodeAtUseX (e.X,e.Y);
 			if(node != null) {
 				node.Toggle();
 			}
