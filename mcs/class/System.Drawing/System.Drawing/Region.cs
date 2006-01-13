@@ -524,8 +524,14 @@ namespace System.Drawing
 		
 		public IntPtr GetHrgn(Graphics g)
 		{
+#if false
+			//
+			// Our WindowsForms implementation uses null to avoid
+			// creating a Graphics context when not needed
+			//
 			if (g == null)
 				throw new ArgumentNullException ("g");
+#endif
 			return nativeRegion;
 		}
 		
