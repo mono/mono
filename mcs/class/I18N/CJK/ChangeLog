@@ -1,3 +1,8 @@
+2006-01-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CP51932.cs : oops, another extra debugging code was remaining.
+	  Fixed bug #77223.
+
 2005-12-06  Atsushi Enomoto  <atsushi@ximian.com>
 
 	Now I can rename new CP936_2.cs file to CP936.cs without svn diff mess.
