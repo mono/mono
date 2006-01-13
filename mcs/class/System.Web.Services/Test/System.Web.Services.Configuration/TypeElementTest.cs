@@ -33,12 +33,11 @@ using System;
 using System.Web.Services.Configuration;
 using NUnit.Framework;
 
-namespace MonoTests.System.Web.Services {
+namespace MonoTests.System.Web.Services.Configuration {
 	[TestFixture]
 	public class TypeElementTest
 	{
 		[Test]
-		[ExpectedException (typeof (NullReferenceException))]
 		public void Ctors1 ()
 		{
 			TypeElement el = new TypeElement ();
