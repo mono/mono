@@ -45,8 +45,9 @@ namespace System.Windows.Forms {
 
 		internal ToolTipWindow	tooltip_window;			// The actual tooltip window
 		internal Hashtable	tooltip_strings;		// List of strings for each control, indexed by control
+		internal ArrayList	controls;
 		internal Control	active_control;			// Control for which the tooltip is currently displayed
-		internal Control	last_control;			// last control the mouse was in; null if the last control did not have a tooltip
+		internal Control	last_control;			// last control the mouse was in
 		internal Size		display_size;			// Size of the screen
 		internal Timer		timer;				// Used for the various intervals
 		#endregion	// Local variables
@@ -156,6 +157,7 @@ namespace System.Windows.Forms {
 			show_always = false;
 
 			tooltip_strings = new Hashtable(5);
+			controls = new ArrayList(5);
 
 			tooltip_window = new ToolTipWindow(this);
 			tooltip_window.MouseLeave += new EventHandler(control_MouseLeave);
@@ -278,14 +280,28 @@ namespace System.Windows.Forms {
 
 		public void RemoveAll() {
 			tooltip_strings.Clear();
+			controls.Clear();
 		}
 
 		public void SetToolTip(Control control, string caption) {
 			tooltip_strings[control] = caption;
-
-			control.MouseEnter += new EventHandler(control_MouseEnter);
-			control.MouseMove += new MouseEventHandler(control_MouseMove);
-			control.MouseLeave += new EventHandler(control_MouseLeave);
+			
+			// no need for duplicates
+			if (!controls.Contains(control)) {
+				control.MouseEnter += new EventHandler(control_MouseEnter);
+				control.MouseMove += new MouseEventHandler(control_MouseMove);
+				control.MouseLeave += new EventHandler(control_MouseLeave);
+				controls.Add(control);
+			}
+			
+			// if SetToolTip is called from a control and the mouse is currently over that control,
+			// make sure that tooltip_window.Text gets updated
+			if (caption != null && last_control == control) {
+				Size size = ThemeEngine.Current.ToolTipSize(tooltip_window, caption);
+				tooltip_window.Width = size.Width;
+				tooltip_window.Height = size.Height;
+				tooltip_window.Text = caption;
+			}
 		}
 
 		public override string ToString() {
@@ -304,6 +320,8 @@ namespace System.Windows.Forms {
 				tooltip_window.Dispose();
 
 				tooltip_strings.Clear();
+				
+				controls.Clear();
 			}
 		}
 		#endregion	// Protected Instance Methods
@@ -311,6 +329,8 @@ namespace System.Windows.Forms {
 		#region Private Methods
 		private void control_MouseEnter(object sender, EventArgs e) {
 			string	text;
+			
+			last_control = (Control)sender;
 
 			// Whatever we're displaying right now, we don't want it anymore
 			tooltip_window.Visible = false;
@@ -417,6 +437,9 @@ namespace System.Windows.Forms {
 				active_control = null;
 				tooltip_window.Visible = false;
 			}
+			
+			if (last_control == (Control)sender)
+				last_control = null;
 		}
 
 		private void control_MouseMove(object sender, MouseEventArgs e) {
