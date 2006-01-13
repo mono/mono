@@ -1,3 +1,9 @@
+2006-01-13  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* Catalog.cs, UnixMarshal.cs: Throw `UnixIOException(Native.Errno.ENOMEM)`
+	  instead of System.OutOfMemoryException.  OOME should be reserved for use 
+	  by the CLR (according to FxDG).
+
 2006-01-12  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* UnixPath.cs: Add ReadLink() and TryReadLink() methods.

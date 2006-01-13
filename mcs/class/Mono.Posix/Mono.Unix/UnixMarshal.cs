@@ -321,7 +321,7 @@ namespace Mono.Unix {
 
 			IntPtr mem = AllocHeap (marshal.Length);
 			if (mem == IntPtr.Zero)
-				throw new OutOfMemoryException ();
+				throw new UnixIOException (Native.Errno.ENOMEM);
 
 			bool copied = false;
 			try {

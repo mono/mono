@@ -55,11 +55,11 @@ namespace Mono.Unix {
 					"UTF-8", out iutf8);
 			try {
 				if (bindtextdomain (ipackage, ilocaledir) == IntPtr.Zero)
-					throw new OutOfMemoryException ("bindtextdomain");
+					throw new UnixIOException (Native.Errno.ENOMEM);
 				if (bind_textdomain_codeset (ipackage, iutf8) == IntPtr.Zero)
-					throw new OutOfMemoryException ("bind_textdomain_codeset");
+					throw new UnixIOException (Native.Errno.ENOMEM);
 				if (textdomain (ipackage) == IntPtr.Zero)
-					throw new OutOfMemoryException ("textdomain");
+					throw new UnixIOException (Native.Errno.ENOMEM);
 			}
 			finally {
 				UnixMarshal.FreeHeap (ipackage);
