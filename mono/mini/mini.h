@@ -529,6 +529,8 @@ enum {
 
 #define MONO_BBLOCK_IS_IN_REGION(bblock, regtype) (((bblock)->region & (0xf << 4)) == (regtype))
 
+#define get_vreg_to_inst(cfg, regtype, vreg) ((vreg) < (cfg)->vreg_to_inst_len [(regtype)] ? (cfg)->vreg_to_inst [(regtype)][vreg] : NULL)
+
 /*
  * Control Flow Graph and compilation unit information
  */
@@ -940,6 +942,10 @@ gint32*           mono_allocate_stack_slots (MonoCompile *cfg, guint32 *stack_si
 void              mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb);
 MonoInst         *mono_branch_optimize_exception_target (MonoCompile *cfg, MonoBasicBlock *bb, const char * exname);		  
 void              mini_emit_memcpy2 (MonoCompile *cfg, int destreg, int doffset, int srcreg, int soffset, int size, int align);
+
+void              mono_decompose_long_opts (MonoCompile *cfg);
+void              mono_handle_global_vregs (MonoCompile *cfg);
+void              mono_spill_global_vars (MonoCompile *cfg);
 
 /* methods that must be provided by the arch-specific port */
 void      mono_arch_cpu_init                    (void);

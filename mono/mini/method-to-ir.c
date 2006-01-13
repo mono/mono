@@ -200,6 +200,12 @@ mono_alloc_preg (MonoCompile *cfg)
 	return alloc_preg (cfg);
 }
 
+guint32
+mono_alloc_dreg (MonoCompile *cfg, MonoStackType stack_type)
+{
+	return alloc_dreg (cfg, stack_type);
+}
+
 static guint
 mono_type_to_regstore (MonoType *type)
 {
@@ -8732,84 +8738,6 @@ stind_to_store_membase (int opcode)
 }
 
 /**
- * compute_vreg_to_inst:
- *
- *  Fill out cfg->vreg_to_inst
- */
-static void
-compute_vreg_to_inst (MonoCompile *cfg)
-{
-	int i;
-
-	/* FIXME: Do this in mono_create_var */
-
-	cfg->vreg_to_inst ['i'] = mono_mempool_alloc0 (cfg->mempool, sizeof (MonoInst*) * cfg->next_vireg);
-	cfg->vreg_to_inst_len ['i'] = cfg->next_vireg;
-	
-	cfg->vreg_to_inst ['f'] = mono_mempool_alloc0 (cfg->mempool, sizeof (MonoInst*) * cfg->next_vfreg);
-	cfg->vreg_to_inst_len ['f'] = cfg->next_vfreg;
-
-	cfg->vreg_to_inst ['l'] = mono_mempool_alloc0 (cfg->mempool, sizeof (MonoInst*) * cfg->next_vireg);
-	cfg->vreg_to_inst_len ['l'] = cfg->next_vireg;
-
-	for (i = 0; i < cfg->num_varinfo; i++) {
-		MonoInst *ins = cfg->varinfo [i];
-
-		switch (ins->type) {
-		case STACK_I4:
-		case STACK_PTR:
-		case STACK_MP:
-		case STACK_OBJ:
-			g_assert (ins->dreg != -1);
-			cfg->vreg_to_inst ['i'][ins->dreg] = ins;
-			break;
-		case STACK_R8:
-			g_assert (ins->dreg != -1);
-			cfg->vreg_to_inst ['f'][ins->dreg] = ins;
-			break;
-		case STACK_VTYPE:
-			break;
-		case STACK_I8: {
-#if SIZEOF_VOID_P == 8
-			g_assert (ins->dreg != -1);
-			cfg->vreg_to_inst ['i'][ins->dreg] = ins;
-#else
-			MonoInst *tree;
-
-			g_assert (ins->dreg != -1);
-			cfg->vreg_to_inst ['l'][ins->dreg] = ins;
-
-			g_assert (ins->dreg != -1);
-
-			/* FIXME: Clean this up */
-
-			/* Allocate a dummy MonoInst for the first vreg */
-			MONO_INST_NEW (cfg, tree, OP_LOCAL);
-			tree->dreg = ins->dreg;
-			tree->type = STACK_I4;
-			tree->inst_vtype = &mono_defaults.int32_class->byval_arg;
-			tree->klass = mono_class_from_mono_type (tree->inst_vtype);
-
-			cfg->vreg_to_inst ['i'][ins->dreg] = tree;
-
-			/* Allocate a dummy MonoInst for the second vreg */
-			MONO_INST_NEW (cfg, tree, OP_LOCAL);
-			tree->dreg = ins->dreg + 1;
-			tree->type = STACK_I4;
-			tree->inst_vtype = &mono_defaults.int32_class->byval_arg;
-			tree->klass = mono_class_from_mono_type (tree->inst_vtype);
-
-			cfg->vreg_to_inst ['i'][ins->dreg + 1] = tree;
-#endif
-			break;
-		}
-		default:
-			NOT_IMPLEMENTED;
-		}
-	}
-}
-
-/**
  * mono_handle_global_vregs:
  *
  *   Make vregs used in more than one bblock 'global', i.e. allocate a variable
@@ -8820,8 +8748,6 @@ mono_handle_global_vregs (MonoCompile *cfg)
 {
 	MonoBasicBlock ***vreg_to_bb;
 	MonoBasicBlock *bb;
-
-	compute_vreg_to_inst (cfg);
 
 	vreg_to_bb = g_new0 (MonoBasicBlock**, 256);
 	vreg_to_bb ['i'] = g_new0 (MonoBasicBlock*, cfg->next_vireg);
@@ -8876,10 +8802,12 @@ mono_handle_global_vregs (MonoCompile *cfg)
 					 * and some references the two component vregs, it is quite hard
 					 * to determine when it needs to be global. So be conservative.
 					 */
-					if (!cfg->vreg_to_inst ['l'][vreg]) {
+					if (!get_vreg_to_inst (cfg, 'l', vreg)) {
 						MonoInst *tree;
 
-						cfg->vreg_to_inst ['l'][vreg] = mono_compile_create_var_for_vreg (cfg, &mono_defaults.int64_class->byval_arg, OP_LOCAL, 'l', vreg);
+						NOT_IMPLEMENTED;
+
+						mono_compile_create_var_for_vreg (cfg, &mono_defaults.int64_class->byval_arg, OP_LOCAL, 'l', vreg);
 
 						if (cfg->verbose_level > 0)
 							printf ("LONG VREG R%d made global.\n", vreg);
@@ -8905,7 +8833,7 @@ mono_handle_global_vregs (MonoCompile *cfg)
 					}
 				}
 
-				if ((vreg != -1) && (vreg < cfg->vreg_to_inst_len [regtype]) && !cfg->vreg_to_inst [regtype][vreg]) {
+				if ((vreg != -1) && !get_vreg_to_inst (cfg, regtype, vreg)) {
 					if (vreg_to_bb [regtype][vreg] == NULL) {
 						vreg_to_bb [regtype][vreg] = bb;
 					} else if (vreg_to_bb [regtype][vreg] != bb) {
@@ -8916,10 +8844,10 @@ mono_handle_global_vregs (MonoCompile *cfg)
 						// FIXME:
 						switch (regtype) {
 						case 'i':
-							cfg->vreg_to_inst [regtype][vreg] = mono_compile_create_var_for_vreg (cfg, &mono_defaults.int_class->byval_arg, OP_LOCAL, 'i', vreg);
+							mono_compile_create_var_for_vreg (cfg, &mono_defaults.int_class->byval_arg, OP_LOCAL, 'i', vreg);
 							break;
 						case 'f':
-							cfg->vreg_to_inst [regtype][vreg] = mono_compile_create_var_for_vreg (cfg, &mono_defaults.double_class->byval_arg, OP_LOCAL, 'f', vreg);
+							mono_compile_create_var_for_vreg (cfg, &mono_defaults.double_class->byval_arg, OP_LOCAL, 'f', vreg);
 							break;
 						default:
 							NOT_IMPLEMENTED;

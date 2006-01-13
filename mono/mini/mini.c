@@ -90,10 +90,6 @@ int mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *st
 		   int locals_offset, MonoInst *return_var, GList *dont_inline, MonoInst **inline_args, 
 		   guint inline_offset, gboolean is_virtual_call);
 
-void mono_spill_global_vars (MonoCompile *cfg);
-void mono_decompose_long_opts (MonoCompile *cfg);
-void mono_handle_global_vregs (MonoCompile *cfg);
-
 static int mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_bblock, MonoBasicBlock *end_bblock, 
 		   int locals_offset, MonoInst *return_var, GList *dont_inline, MonoInst **inline_args, 
 		   guint inline_offset, gboolean is_virtual_call);
@@ -1676,6 +1672,44 @@ mono_get_got_var (MonoCompile *cfg)
 #endif
 }
 
+static void
+set_vreg_to_inst (MonoCompile *cfg, int regtype, int vreg, MonoInst *inst)
+{
+	if (vreg >= cfg->vreg_to_inst_len [regtype]) {
+		MonoInst **tmp = cfg->vreg_to_inst [regtype];
+		int size = cfg->vreg_to_inst_len [regtype];
+
+		while (vreg >= cfg->vreg_to_inst_len [regtype])
+			cfg->vreg_to_inst_len [regtype] = cfg->vreg_to_inst_len [regtype] ? cfg->vreg_to_inst_len [regtype] * 2 : 16;
+		cfg->vreg_to_inst [regtype] = g_malloc0 (sizeof (MonoInst*) * cfg->vreg_to_inst_len [regtype]);
+		if (size)
+			memcpy (cfg->vreg_to_inst [regtype], tmp, size * sizeof (MonoInst*));
+	}
+	cfg->vreg_to_inst [regtype][vreg] = inst;
+}
+
+static inline int
+stack_type_to_regtype (MonoStackType stack_type)
+{
+	switch (stack_type) {
+	case STACK_I4:
+	case STACK_OBJ:
+	case STACK_PTR:
+	case STACK_MP:
+		return 'i';
+	case STACK_R8:
+		return 'f';
+	case STACK_I8:
+#if SIZEOF_VOID_P == 8
+		return 'i';
+#else
+		return 'l';
+#endif
+	default:
+		return ' ';
+	}
+}
+
 MonoInst*
 mono_compile_create_var_for_vreg (MonoCompile *cfg, MonoType *type, int opcode, int regtype, int vreg)
 {
@@ -1705,6 +1739,12 @@ mono_compile_create_var_for_vreg (MonoCompile *cfg, MonoType *type, int opcode, 
 	cfg->vars [num] = mono_mempool_alloc0 (cfg->mempool, sizeof (MonoMethodVar));
 	MONO_INIT_VARINFO (cfg->vars [num], num);
 
+	if (vreg != -1)
+		set_vreg_to_inst (cfg, regtype, vreg, inst);
+
+	if (regtype == 'l')
+		NOT_IMPLEMENTED;
+
 	cfg->num_varinfo++;
 	//g_print ("created temp %d of type %s\n", num, mono_type_get_name (type));
 	return inst;
@@ -1719,34 +1759,8 @@ mono_compile_create_var (MonoCompile *cfg, MonoType *type, int opcode)
 
 	type_to_eval_stack_type (type, &dummy);
 
-	switch (dummy.type) {
-	case STACK_I4:
-	case STACK_OBJ:
-	case STACK_PTR:
-	case STACK_MP:
-		dreg = cfg->next_vireg ++;
-		regtype = 'i';
-		break;
-	case STACK_R8:
-		dreg = cfg->next_vfreg ++;
-		regtype = 'f';
-		break;
-	case STACK_I8:
-#if SIZEOF_VOID_P == 8
-		dreg = cfg->next_vireg ++;
-		regtype = 'i';
-#else
-		/* Use a pair of vregs */
-		dreg = cfg->next_vireg ++;
-		cfg->next_vireg ++;
-		regtype = 'l';
-#endif
-		break;
-	default:
-		dreg = -1;
-		regtype = ' ';
-		break;
-	}
+	dreg = mono_alloc_dreg (cfg, dummy.type);
+	regtype = stack_type_to_regtype (dummy.type);
 
 	return mono_compile_create_var_for_vreg (cfg, type, opcode, regtype, dreg);
 }
