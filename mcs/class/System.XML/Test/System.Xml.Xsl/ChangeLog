@@ -1,5 +1,9 @@
 2006-01-13  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XslTransformTests.cs : added DocTypeAfterText().
+
+2006-01-13  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XslTransformTests.cs : Output_Indent_Xml_DocType() is working now.
 
 2005-12-27  Gert Driesen  <drieseng@users.sourceforge.net>
