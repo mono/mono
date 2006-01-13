@@ -615,7 +615,7 @@ namespace Mono.CSharp {
 				throw new Exception ("This should be caught by Resolve");
 				
 			case Operator.UnaryNegation:
-				if (ec.CheckState) {
+				if (ec.CheckState && type != TypeManager.float_type && type != TypeManager.double_type) {
 					ig.Emit (OpCodes.Ldc_I4_0);
 					if (type == TypeManager.int64_type)
 						ig.Emit (OpCodes.Conv_U8);
@@ -4681,45 +4681,55 @@ namespace Mono.CSharp {
 
 			MethodBase[] methods = me.Methods;
 
+			int nmethods = methods.Length;
+
+			if (!me.IsBase) {
+				//
+				// Methods marked 'override' don't take part in 'applicable_type'
+				// computation, nor in the actual overload resolution.
+				// However, they still need to be emitted instead of a base virtual method.
+				// So, we salt them away into the 'candidate_overrides' array.
+				//
+				// In case of reflected methods, we replace each overriding method with
+				// its corresponding base virtual method.  This is to improve compatibility
+				// with non-C# libraries which change the visibility of overrides (#75636)
+				//
+				int j = 0;
+				for (int i = 0; i < methods.Length; ++i) {
+					MethodBase m = methods [i];
+					if (TypeManager.IsOverride (m)) {
+						if (candidate_overrides == null)
+							candidate_overrides = new ArrayList ();
+						candidate_overrides.Add (m);
+						m = TypeManager.TryGetBaseDefinition (m);
+					}
+					if (m != null)
+						methods [j++] = m;
+				}
+				nmethods = j;
+			}
+
 			//
 			// First we construct the set of applicable methods
 			//
  			bool is_sorted = true;
-			for (int i = 0; i < methods.Length; i++){
+			for (int i = 0; i < nmethods; i++){
 				Type decl_type = methods [i].DeclaringType;
 
 				//
 				// If we have already found an applicable method
 				// we eliminate all base types (Section 14.5.5.1)
 				//
-				if ((applicable_type != null) &&
-					IsAncestralType (decl_type, applicable_type))
+				if (applicable_type != null && IsAncestralType (decl_type, applicable_type))
 					continue;
-
-				//
-				// Methods marked 'override' don't take part in 'applicable_type'
-				// computation, nor in the actual overload resolution.
-				// However, they still need to be emitted instead of a base virtual method.
-				// We avoid doing the 'applicable' test here, since it'll anyway be applied
-				// to the base virtual function, and IsOverride is much faster than IsApplicable.
-				//
-				if (!me.IsBase && TypeManager.IsOverride (methods [i])) {
-					if (candidate_overrides == null)
-						candidate_overrides = new ArrayList ();
-					candidate_overrides.Add (methods [i]);
-					continue;
-				}
 
 				//
 				// Check if candidate is applicable (section 14.4.2.1)
 				//   Is candidate applicable in normal form?
 				//
-				bool is_applicable = IsApplicable (
-					ec, me, Arguments, arg_count, ref methods [i]);
+				bool is_applicable = IsApplicable (ec, me, Arguments, arg_count, ref methods [i]);
 
-				if (!is_applicable &&
-					(IsParamsMethodApplicable (
-					ec, me, Arguments, arg_count, ref methods [i]))) {
+				if (!is_applicable && IsParamsMethodApplicable (ec, me, Arguments, arg_count, ref methods [i])) {
 					MethodBase candidate = methods [i];
 					if (candidate_to_form == null)
 						candidate_to_form = new PtrHashtable ();
@@ -4750,7 +4760,7 @@ namespace Mono.CSharp {
 				// return by providing info about the closest match
 				//
 				int errors = Report.Errors;
-				for (int i = 0; i < methods.Length; ++i) {
+				for (int i = 0; i < nmethods; ++i) {
 					MethodBase c = (MethodBase) methods [i];
 					ParameterData pd = TypeManager.GetParameterData (c);
 
@@ -5070,8 +5080,13 @@ namespace Mono.CSharp {
 			return true;
 		}
 
+		private bool resolved = false;
 		public override Expression DoResolve (EmitContext ec)
 		{
+			if (resolved)
+				return this.method == null ? null : this;
+
+			resolved = true;
 			//
 			// First, resolve the expression that is used to
 			// trigger the invocation
@@ -5111,7 +5126,7 @@ namespace Mono.CSharp {
 			}
 
 			MethodGroupExpr mg = (MethodGroupExpr) expr;
-			method = OverloadResolve (ec, mg, Arguments, false, loc);
+			MethodBase method = OverloadResolve (ec, mg, Arguments, false, loc);
 
 			if (method == null)
 				return null;
@@ -5168,6 +5183,7 @@ namespace Mono.CSharp {
 				mg.InstanceExpression.CheckMarshallByRefAccess (ec.ContainerType);
 
 			eclass = ExprClass.Value;
+			this.method = method;
 			return this;
 		}
 
@@ -6839,11 +6855,20 @@ namespace Mono.CSharp {
 			ILGenerator ig = ec.ig;
 			
 			if (ec.TypeContainer is Struct){
-				ec.EmitThis ();
+				ec.EmitThis (false);
 				source.Emit (ec);
-				if (leave_copy)
+				
+				LocalTemporary t = null;
+				if (leave_copy) {
+					t = new LocalTemporary (ec, type);
 					ec.ig.Emit (OpCodes.Dup);
+					t.Store (ec);
+				}
+
 				ig.Emit (OpCodes.Stobj, type);
+				
+				if (leave_copy)
+					t.Emit (ec);
 			} else {
 				throw new Exception ("how did you get here");
 			}
@@ -6853,7 +6878,7 @@ namespace Mono.CSharp {
 		{
 			ILGenerator ig = ec.ig;
 
-			ec.EmitThis ();
+			ec.EmitThis (false);
 			if (ec.TypeContainer is Struct)
 				ig.Emit (OpCodes.Ldobj, type);
 		}
@@ -6874,7 +6899,7 @@ namespace Mono.CSharp {
 
 		public void AddressOf (EmitContext ec, AddressOp mode)
 		{
-			ec.EmitThis ();
+			ec.EmitThis (true);
 
 			// FIMXE
 			// FIGURE OUT WHY LDARG_S does not work
@@ -7262,6 +7287,11 @@ namespace Mono.CSharp {
 			if (expr_type.IsPointer){
 				Error (23, "The `.' operator can not be applied to pointer operands (" +
 				       TypeManager.CSharpName (expr_type) + ")");
+				return null;
+			}
+
+			if (expr_type == TypeManager.void_type) {
+				Error (23, "The `.' operator can not be applied to operands of type 'void'");
 				return null;
 			}
 
@@ -8688,15 +8718,16 @@ namespace Mono.CSharp {
 		}
 
 		public override string Name {
-			get {
-				return left + dim;
-			}
+			get { return left + dim; }
 		}
 
 		public override string FullName {
-			get {
-				return type.FullName;
-			}
+			get { return type.FullName; }
+		}
+
+		public override string GetSignatureForError ()
+		{
+			return left.GetSignatureForError () + dim;
 		}
 	}
 

@@ -1,3 +1,85 @@
+2006-01-12  Miguel de Icaza  <miguel@novell.com>
+
+	This fixes the problem where we used ldfld instead of ldflda to
+	load the "THIS" pointer on captured parameters, when THIS is a
+	value type.  See bug #77205.
+	
+	* iterators.cs (CapturedThisReference.Emit): Pass false to
+	EmitThis (we do not need the address).
+
+	* codegen.cs (EmitThis): it needs to know whether we need the
+	address of `this' or not.  This is used by value types.  
+
+	* expression.cs (This.AddressOf): Pass true to the EmitThis call,
+	every other call passes false.
+
+2006-01-12  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #77221.
+	* typemanager.cs (TryGetBaseDefinition): Rename from the mis-named
+	GetOverride.
+	* expression.cs (Invocation.OverloadResolve): Update.
+	(Invocation.DoResolve): Avoid double resolution of invocation.
+
+2006-01-11  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #77180.
+	* expression.cs (Unary.Emit): When in /checked+ mode, don't emit
+	unary negation of floating point types as 0-expr; negation cannot
+	overflow in floating point types.
+
+	Fix #77204.
+	* expression.cs (MemberAccess.DoResolve): Disallow the use of '.'
+	on operands of 'void' type.
+
+	Fix #77200.
+	* cfold.cs (BinaryFold): Implement folding of BinaryOr, BinaryAnd
+	and ExclusiveOr for boolean constants too.
+
+2006-01-12  Ben Maurer  <bmaurer@andrew.cmu.edu>
+
+	* expression.cs: Fix Console.WriteLine ((this = x).foo);
+
+2006-01-12  Miguel de Icaza  <miguel@novell.com>
+
+	* cs-tokenizer.cs (Position): New class used to save and restore
+	the position state in the tokenizer.  Before this patch the save
+	and restore was not complete enough so the line and columns would
+	start to drift and the debugger and stack traces will get the
+	wrong data.
+
+2006-01-10  Martin Baulig  <martin@ximian.com>
+
+	* generic.cs
+	(TypeParameter.InflateConstraints): New public method.
+
+	* iterators.cs (Iterator.DefineNestedTypes): Also inflate the
+	constraints; fixes #77042.
+
+2006-01-10  Martin Baulig  <martin@ximian.com>
+
+	* anonymous.cs (ScopeInfo.EmitScopeType): Use the `CurrentType'
+	instead of the `TypeBuilder' for this "<>THIS" variable; fixes
+	#77061.	
+
+2006-01-09  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #75636.
+	* expression.cs (Invocation.OverloadResolve): Replace reflected
+	override methods with their base virtual methods, rather than
+	skipping over them.
+	* typemanager.cs (TypeManager.GetOverride): New.
+
+2005-12-21  Miguel de Icaza  <miguel@novell.com>
+
+	* driver.cs: Report the case of no source files and no -out:
+	argument provided.
+
+2005-12-20  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #77035.
+	* expression.cs (ComposedCast.GetSignatureForError): Define.
+
 2006-01-10  Martin Baulig  <martin@ximian.com>
 
 	* generic.cs
@@ -43,6 +125,11 @@
 	method that take ref and out parameters. 
 
 	Fixes #77119 which was a late change in the spec.
+
+2005-12-23  Miguel de Icaza  <miguel@novell.com>
+
+	* anonymous.cs (ScopeInfo.LinkScope): Do not link the scope to its
+	parent if its the same scope.  Fixes #77060.
 
 2005-12-22  Marek Safar  <marek.safar@seznam.cz>
 
