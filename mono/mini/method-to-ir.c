@@ -1931,11 +1931,13 @@ handle_stack_args (MonoCompile *cfg, MonoInst **sp, int count) {
 	return 0;
 }
 
+#if 0
 static void
 mini_emit_aotconst (MonoCompile *cfg, int dreg, MonoJumpInfoType patch_type, gpointer cons)
 {
 	NOT_IMPLEMENTED;
 }
+#endif
 
 static void
 mini_emit_load_intf_reg (MonoCompile *cfg, int intf_reg, int ioffset_reg, MonoClass *klass)
@@ -3147,7 +3149,7 @@ handle_cisinst (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned char
 	MonoBasicBlock *true_bb, *false_bb, *false2_bb, *end_bb, *no_proxy_bb, *interface_fail_bb;
 	int obj_reg = src->dreg;
 	int dreg = alloc_ireg (cfg);
-	int tmp_reg = alloc_preg (cfg);
+	int tmp_reg;
 	int klass_reg = alloc_preg (cfg);
 
 	NEW_BBLOCK (cfg, true_bb);
@@ -3162,6 +3164,7 @@ handle_cisinst (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned char
 	if (klass->flags & TYPE_ATTRIBUTE_INTERFACE) {
 		NEW_BBLOCK (cfg, interface_fail_bb);
 
+		tmp_reg = alloc_preg (cfg);
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, tmp_reg, obj_reg, G_STRUCT_OFFSET (MonoObject, vtable));
 		mini_emit_iface_cast (cfg, tmp_reg, klass, interface_fail_bb, true_bb);
 		MONO_START_BB (cfg, interface_fail_bb);
@@ -3175,12 +3178,14 @@ handle_cisinst (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned char
 			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, klass_reg, mono_defaults.transparent_proxy_class);
 		}
 		MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BNE_UN, false_bb);
-		
+
+		tmp_reg = alloc_preg (cfg);
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, tmp_reg, obj_reg, G_STRUCT_OFFSET (MonoTransparentProxy, custom_type_info));
 		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, tmp_reg, 0);
 		MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BNE_UN, false2_bb);
 		
 	} else {
+		tmp_reg = alloc_preg (cfg);
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, tmp_reg, obj_reg, G_STRUCT_OFFSET (MonoObject, vtable));
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, klass_reg, tmp_reg, G_STRUCT_OFFSET (MonoVTable, klass));
 		
@@ -3192,9 +3197,11 @@ handle_cisinst (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned char
 			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, klass_reg, mono_defaults.transparent_proxy_class);
 		}
 		MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BNE_UN, no_proxy_bb);
+		tmp_reg = alloc_preg (cfg);
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, tmp_reg, obj_reg, G_STRUCT_OFFSET (MonoTransparentProxy, remote_class));
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, klass_reg, tmp_reg, G_STRUCT_OFFSET (MonoRemoteClass, proxy_class));
-		
+
+		tmp_reg = alloc_preg (cfg);		
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, tmp_reg, obj_reg, G_STRUCT_OFFSET (MonoTransparentProxy, custom_type_info));
 		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, tmp_reg, 0);
 		MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BEQ, no_proxy_bb);
@@ -3269,10 +3276,12 @@ handle_ccastclass (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned c
 		}
 		
 		MONO_EMIT_NEW_COND_EXC (cfg, NE_UN, "InvalidCastException");
-		
+
+		tmp_reg = alloc_preg (cfg);
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, tmp_reg, obj_reg, G_STRUCT_OFFSET (MonoTransparentProxy, remote_class));
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, klass_reg, tmp_reg, G_STRUCT_OFFSET (MonoRemoteClass, proxy_class));
-		
+
+		tmp_reg = alloc_preg (cfg);		
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, tmp_reg, obj_reg, G_STRUCT_OFFSET (MonoTransparentProxy, custom_type_info));
 		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, tmp_reg, 0);
 		MONO_EMIT_NEW_COND_EXC (cfg, EQ, "InvalidCastException");
@@ -3294,10 +3303,12 @@ handle_ccastclass (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned c
 			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, klass_reg, mono_defaults.transparent_proxy_class);
 		}
 		MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BNE_UN, no_proxy_bb);
-		
+
+		tmp_reg = alloc_preg (cfg);
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, tmp_reg, obj_reg, G_STRUCT_OFFSET (MonoTransparentProxy, remote_class));
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, klass_reg, tmp_reg, G_STRUCT_OFFSET (MonoRemoteClass, proxy_class));
-		
+
+		tmp_reg = alloc_preg (cfg);
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, tmp_reg, obj_reg, G_STRUCT_OFFSET (MonoTransparentProxy, custom_type_info));
 		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, tmp_reg, 0);
 		MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BEQ, no_proxy_bb);
@@ -4096,7 +4107,6 @@ decompose_opcode (MonoCompile *cfg, MonoInst *ins)
 		ins->opcode = CEE_NOP;
 		break;
 	case OP_LCONV_TO_I8:
-	case OP_ICONV_TO_U8:
 	case OP_LCONV_TO_I:
 		ins->opcode = OP_MOVE;
 		break;
@@ -9030,42 +9040,46 @@ mono_spill_global_vars (MonoCompile *cfg)
 			regtype = spec [MONO_INST_DEST];
 			g_assert (((ins->dreg == -1) && (regtype == ' ')) || ((ins->dreg != -1) && (regtype != ' ')));
 				
-			if ((ins->dreg != -1) && (ins->dreg < cfg->vreg_to_inst_len [regtype]) && cfg->vreg_to_inst [regtype][ins->dreg]) {
+			if ((ins->dreg != -1) && get_vreg_to_inst (cfg, regtype, ins->dreg)) {
 				MonoInst *var = cfg->vreg_to_inst [regtype][ins->dreg];
 				MonoInst *store_ins;
 				int store_opcode;
 
-				g_assert (var->opcode == OP_REGOFFSET);
+				if (var->opcode == OP_REGVAR) {
+					ins->dreg = var->dreg;
+				} else {
+					g_assert (var->opcode == OP_REGOFFSET);
 
-				ins->dreg = alloc_dreg (cfg, stacktypes [regtype]);
+					ins->dreg = alloc_dreg (cfg, stacktypes [regtype]);
 
-				if (regtype == 'l') {
-					NEW_STORE_MEMBASE (cfg, store_ins, OP_STOREI4_MEMBASE_REG, var->inst_basereg, var->inst_offset + MINI_LS_WORD_OFFSET, ins->dreg);
-					insert_after_ins (bb, ins, store_ins);
-					NEW_STORE_MEMBASE (cfg, store_ins, OP_STOREI4_MEMBASE_REG, var->inst_basereg, var->inst_offset + MINI_MS_WORD_OFFSET, ins->dreg + 1);
-					insert_after_ins (bb, ins, store_ins);
-				}
-				else {
-					store_opcode = mono_type_to_store_membase (var->inst_vtype);
-
-					/* Try to fuse the store into the instruction itself */
-					/* FIXME: Add more instructions */
-					if (ins->opcode == OP_ICONST) {
-						ins->opcode = store_membase_reg_to_store_membase_imm (store_opcode);
-						ins->inst_imm = ins->inst_c0;
-						ins->inst_destbasereg = var->inst_basereg;
-						ins->inst_offset = var->inst_offset;
-					} else if ((ins->opcode == OP_MOVE) || (ins->opcode == OP_FMOVE) || (ins->opcode == OP_LMOVE)) {
-						ins->opcode = store_opcode;
-						ins->inst_destbasereg = var->inst_basereg;
-						ins->inst_offset = var->inst_offset;
-					} else {
-						/* printf ("INS: "); mono_print_ins (ins); */
-						/* Create a store instruction */					
-						NEW_STORE_MEMBASE (cfg, store_ins, store_opcode, var->inst_basereg, var->inst_offset, ins->dreg);
-
-						/* Insert it after the instruction */
+					if (regtype == 'l') {
+						NEW_STORE_MEMBASE (cfg, store_ins, OP_STOREI4_MEMBASE_REG, var->inst_basereg, var->inst_offset + MINI_LS_WORD_OFFSET, ins->dreg);
 						insert_after_ins (bb, ins, store_ins);
+						NEW_STORE_MEMBASE (cfg, store_ins, OP_STOREI4_MEMBASE_REG, var->inst_basereg, var->inst_offset + MINI_MS_WORD_OFFSET, ins->dreg + 1);
+						insert_after_ins (bb, ins, store_ins);
+					}
+					else {
+						store_opcode = mono_type_to_store_membase (var->inst_vtype);
+
+						/* Try to fuse the store into the instruction itself */
+						/* FIXME: Add more instructions */
+						if (ins->opcode == OP_ICONST) {
+							ins->opcode = store_membase_reg_to_store_membase_imm (store_opcode);
+							ins->inst_imm = ins->inst_c0;
+							ins->inst_destbasereg = var->inst_basereg;
+							ins->inst_offset = var->inst_offset;
+						} else if ((ins->opcode == OP_MOVE) || (ins->opcode == OP_FMOVE) || (ins->opcode == OP_LMOVE)) {
+							ins->opcode = store_opcode;
+							ins->inst_destbasereg = var->inst_basereg;
+							ins->inst_offset = var->inst_offset;
+						} else {
+							/* printf ("INS: "); mono_print_ins (ins); */
+							/* Create a store instruction */
+							NEW_STORE_MEMBASE (cfg, store_ins, store_opcode, var->inst_basereg, var->inst_offset, ins->dreg);
+
+							/* Insert it after the instruction */
+							insert_after_ins (bb, ins, store_ins);
+						}
 					}
 				}
 			}
@@ -9076,28 +9090,35 @@ mono_spill_global_vars (MonoCompile *cfg)
 				sreg = srcindex == 0 ? ins->sreg1 : ins->sreg2;
 
 				g_assert (((sreg == -1) && (regtype == ' ')) || ((sreg != -1) && (regtype != ' ')));
-				if ((sreg != -1) && (sreg < cfg->vreg_to_inst_len [regtype]) && (cfg->vreg_to_inst [regtype][sreg])) {
+				if ((sreg != -1) && get_vreg_to_inst (cfg, regtype, sreg)) {
 					MonoInst *var = cfg->vreg_to_inst [regtype][sreg];
 					MonoInst *load_ins;
 
-					g_assert (var->opcode == OP_REGOFFSET);
+					if (var->opcode == OP_REGVAR) {
+						if (srcindex == 0)
+							ins->sreg1 = var->dreg;
+						else
+							ins->sreg2 = var->dreg;
+					} else {
+						g_assert (var->opcode == OP_REGOFFSET);
 
-					sreg = alloc_dreg (cfg, stacktypes [regtype]);
+						sreg = alloc_dreg (cfg, stacktypes [regtype]);
 
-					if (srcindex == 0)
-						ins->sreg1 = sreg;
-					else
-						ins->sreg2 = sreg;
+						if (srcindex == 0)
+							ins->sreg1 = sreg;
+						else
+							ins->sreg2 = sreg;
 
-					if (regtype == 'l') {
-						NEW_LOAD_MEMBASE (cfg, load_ins, OP_LOADI4_MEMBASE, sreg + 1, var->inst_basereg, var->inst_offset + MINI_MS_WORD_OFFSET);
-						insert_before_ins (bb, ins, load_ins, &prev);
-						NEW_LOAD_MEMBASE (cfg, load_ins, OP_LOADI4_MEMBASE, sreg, var->inst_basereg, var->inst_offset + MINI_LS_WORD_OFFSET);
-						insert_before_ins (bb, ins, load_ins, &prev);
-					}
-					else {
-						NEW_LOAD_MEMBASE (cfg, load_ins, mono_type_to_load_membase (var->inst_vtype), sreg, var->inst_basereg, var->inst_offset);
-						insert_before_ins (bb, ins, load_ins, &prev);
+						if (regtype == 'l') {
+							NEW_LOAD_MEMBASE (cfg, load_ins, OP_LOADI4_MEMBASE, sreg + 1, var->inst_basereg, var->inst_offset + MINI_MS_WORD_OFFSET);
+							insert_before_ins (bb, ins, load_ins, &prev);
+							NEW_LOAD_MEMBASE (cfg, load_ins, OP_LOADI4_MEMBASE, sreg, var->inst_basereg, var->inst_offset + MINI_LS_WORD_OFFSET);
+							insert_before_ins (bb, ins, load_ins, &prev);
+						}
+						else {
+							NEW_LOAD_MEMBASE (cfg, load_ins, mono_type_to_load_membase (var->inst_vtype), sreg, var->inst_basereg, var->inst_offset);
+							insert_before_ins (bb, ins, load_ins, &prev);
+						}
 					}
 				}
 			}

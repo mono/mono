@@ -2585,6 +2585,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case CEE_CONV_U8:
 		case CEE_CONV_U:
 		case OP_ICONV_TO_U:
+		case OP_ICONV_TO_U8:
 			/* Clean out the upper word */
 			amd64_mov_reg_reg_size (code, ins->dreg, ins->sreg1, 4);
 			break;

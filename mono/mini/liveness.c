@@ -64,7 +64,93 @@ update_gen_kill_set (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *inst, int i
 	int max_vars = cfg->num_varinfo;
 
 	if (cfg->new_ir) {
-		g_assert_not_reached ();
+		MonoInst *ins = inst;
+		const char *spec = ins_info [ins->opcode - OP_START - 1];
+		int regtype, srcindex, sreg;
+		gboolean store;
+
+#ifdef DEBUG_LIVENESS
+			printf ("\t"); mono_print_ins (ins);
+#endif
+
+		if (ins->opcode < MONO_CEE_LAST)
+			return;
+
+		switch (ins->opcode) {
+		case OP_STORE:       
+		case OP_STORE_MEMBASE_REG:
+		case OP_STOREI1_MEMBASE_REG: 
+		case OP_STOREI2_MEMBASE_REG: 
+		case OP_STOREI4_MEMBASE_REG: 
+		case OP_STOREI8_MEMBASE_REG:
+		case OP_STORER4_MEMBASE_REG: 
+		case OP_STORER8_MEMBASE_REG:
+		case OP_STORE_MEMBASE_IMM:
+		case OP_STOREI1_MEMBASE_IMM: 
+		case OP_STOREI2_MEMBASE_IMM: 
+		case OP_STOREI4_MEMBASE_IMM: 
+		case OP_STOREI8_MEMBASE_IMM: 
+			store = TRUE;
+			break;
+		case OP_STORE_MEMINDEX:
+		case OP_STOREI1_MEMINDEX:
+		case OP_STOREI2_MEMINDEX:
+		case OP_STOREI4_MEMINDEX:
+		case OP_STOREI8_MEMINDEX:
+		case OP_STORER4_MEMINDEX:
+		case OP_STORER8_MEMINDEX:
+			g_assert_not_reached ();
+		default:
+			store = FALSE;
+		}
+
+		/* SREGS */
+		/* These must come first, so MOVE r <- r is handled correctly */
+		for (srcindex = 0; srcindex < 2; ++srcindex) {
+			regtype = spec [(srcindex == 0) ? MONO_INST_SRC1 : MONO_INST_SRC2];
+			sreg = srcindex == 0 ? ins->sreg1 : ins->sreg2;
+
+			g_assert (((sreg == -1) && (regtype == ' ')) || ((sreg != -1) && (regtype != ' ')));
+			if ((sreg != -1) && get_vreg_to_inst (cfg, regtype, sreg)) {
+				MonoInst *var = cfg->vreg_to_inst [regtype][sreg];
+				int idx = var->inst_c0;
+				MonoMethodVar *vi = MONO_VARINFO (cfg, idx);
+
+#ifdef DEBUG_LIVENESS
+				printf ("\tGEN: R%d(%d)\n", sreg, idx);
+#endif
+				update_live_range (cfg, idx, bb->dfn, inst_num); 
+				if (!mono_bitset_test (bb->kill_set, idx))
+					mono_bitset_set (bb->gen_set, idx);
+				vi->spill_costs += 1 + (bb->nesting * 2);
+			}
+		}
+
+		/* DREG */
+		regtype = spec [MONO_INST_DEST];
+		g_assert (((ins->dreg == -1) && (regtype == ' ')) || ((ins->dreg != -1) && (regtype != ' ')));
+				
+		if ((ins->dreg != -1) && get_vreg_to_inst (cfg, regtype, ins->dreg)) {
+			MonoInst *var = cfg->vreg_to_inst [regtype][ins->dreg];
+			int idx = var->inst_c0;
+			MonoMethodVar *vi = MONO_VARINFO (cfg, idx);
+
+			if (store) {
+				update_live_range (cfg, idx, bb->dfn, inst_num); 
+				if (!mono_bitset_test (bb->kill_set, idx))
+					mono_bitset_set (bb->gen_set, idx);
+				vi->spill_costs += 1 + (bb->nesting * 2);
+			} else {
+#ifdef DEBUG_LIVENESS
+				printf ("\tKILL: R%d(%d)\n", ins->dreg, idx);
+#endif
+				update_live_range (cfg, idx, bb->dfn, inst_num); 
+				mono_bitset_set (bb->kill_set, idx);
+				vi->spill_costs += 1 + (bb->nesting * 2);
+			}
+		}
+
+		return;
 	}
 
 	if (arity)
@@ -146,16 +232,16 @@ update_gen_kill_set (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *inst, int i
 } 
 
 static void
-update_volatile (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *inst, int inst_num)
+update_volatile (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *inst)
 {
 	int arity = mono_burg_arity [inst->opcode];
 	int max_vars = cfg->num_varinfo;
 
 	if (arity)
-		update_volatile (cfg, bb, inst->inst_i0, inst_num);
+		update_volatile (cfg, bb, inst->inst_i0);
 
 	if (arity > 1)
-		update_volatile (cfg, bb, inst->inst_i1, inst_num);
+		update_volatile (cfg, bb, inst->inst_i1);
 
 	if (inst->ssa_op & MONO_SSA_LOAD_STORE) {
 		MonoLocalVariableList* affected_variables;
@@ -187,17 +273,57 @@ update_volatile (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *inst, int inst_
 static void
 visit_bb (MonoCompile *cfg, MonoBasicBlock *bb, GSList **visited)
 {
-	int i, tree_num;
-	MonoInst *inst;
+	int i;
+	MonoInst *ins;
 
 	if (g_slist_find (*visited, bb))
 		return;
 
+	if (cfg->new_ir) {
+		/* FIXME: Rewrite this using the aliasing framework */
+		for (ins = bb->code; ins; ins = ins->next) {
+			const char *spec = ins_info [ins->opcode - OP_START - 1];
+			int regtype, srcindex, sreg;
+
+			if (ins->opcode < MONO_CEE_LAST)
+				return;
+
+			/* DREG */
+			regtype = spec [MONO_INST_DEST];
+			g_assert (((ins->dreg == -1) && (regtype == ' ')) || ((ins->dreg != -1) && (regtype != ' ')));
+				
+			if ((ins->dreg != -1) && get_vreg_to_inst (cfg, regtype, ins->dreg)) {
+				MonoInst *var = cfg->vreg_to_inst [regtype][ins->dreg];
+				int idx = var->inst_c0;
+				MonoMethodVar *vi = MONO_VARINFO (cfg, idx);
+
+				cfg->varinfo [vi->idx]->flags |= MONO_INST_VOLATILE;
+			}
+			
+			/* SREGS */
+			for (srcindex = 0; srcindex < 2; ++srcindex) {
+				regtype = spec [(srcindex == 0) ? MONO_INST_SRC1 : MONO_INST_SRC2];
+				sreg = srcindex == 0 ? ins->sreg1 : ins->sreg2;
+
+				g_assert (((sreg == -1) && (regtype == ' ')) || ((sreg != -1) && (regtype != ' ')));
+				if ((sreg != -1) && get_vreg_to_inst (cfg, regtype, sreg)) {
+					MonoInst *var = cfg->vreg_to_inst [regtype][sreg];
+					int idx = var->inst_c0;
+					MonoMethodVar *vi = MONO_VARINFO (cfg, idx);
+
+					cfg->varinfo [vi->idx]->flags |= MONO_INST_VOLATILE;
+				}
+			}
+		}
+
+		return;
+	}
+
 	if (cfg->aliasing_info != NULL)
 		mono_aliasing_initialize_code_traversal (cfg->aliasing_info, bb);
-	
-	for (tree_num = 0, inst = bb->code; inst; inst = inst->next, tree_num++) {
-		update_volatile (cfg, bb, inst, tree_num);
+
+	for (ins = bb->code; ins; ins = ins->next) {
+		update_volatile (cfg, bb, ins);
 	}
 
 	*visited = g_slist_append (*visited, bb);

@@ -9474,7 +9474,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 	mono_compile_create_vars (cfg);
 
 	if (cfg->new_ir) {
-		cfg->opt &= MONO_OPT_PEEPHOLE | MONO_OPT_INTRINS | MONO_OPT_LOOP | MONO_OPT_EXCEPTION | MONO_OPT_AOT | MONO_OPT_BRANCH;
+		cfg->opt &= MONO_OPT_PEEPHOLE | MONO_OPT_INTRINS | MONO_OPT_LOOP | MONO_OPT_EXCEPTION | MONO_OPT_AOT | MONO_OPT_BRANCH | MONO_OPT_LINEARS;
 
 		i = mono_method_to_ir2 (cfg, method, NULL, NULL, cfg->locals_start, NULL, NULL, NULL, 0, FALSE);
 	}
@@ -9635,6 +9635,11 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 		g_list_free (regs);
 	}
 
+	if (cfg->new_ir) {
+		/* This must be done _before_ global reg alloc and _after_ decompose */
+		mono_handle_global_vregs (cfg);
+	}
+
 	if (cfg->opt & MONO_OPT_LINEARS) {
 		GList *vars, *regs;
 		
@@ -9669,11 +9674,6 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 	//mono_print_code (cfg);
 
     //print_dfn (cfg);
-
-	if (cfg->new_ir) {
-		/* FIXME: Move this call elsewhere, _before_ global reg alloc and _after_ decompose */
-		mono_handle_global_vregs (cfg);
-	}
 	
 	/* variables are allocated after decompose, since decompose could create temps */
 	mono_arch_allocate_vars (cfg);
