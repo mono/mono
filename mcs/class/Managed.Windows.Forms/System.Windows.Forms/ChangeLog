@@ -1,3 +1,16 @@
+2006-01-13  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* Form.cs: 
+	  - Added RecreateHandle call when changing taskbar visibility to 
+	    trigger reparenting in Win32 driver (Fixes #75719)
+	  - If a window has minimize or maximize buttons, it cannot have
+	    a help button
+	* XplatUIWin32.cs:
+	  - CreateWindow: When no WS_EX_APPWINDOW style is found we parent
+	    the toplevel form with FosterParent (A toolwindow not on the
+	    taskbar) (Fixes #75719)
+	  - Made FosterParent a toolwindow
+
 2006-01-13  Alexander Olk  <alex.olk@googlemail.com>
 
 	* FileDialog.cs: Don't crash if InitialDirectory doesn't exist

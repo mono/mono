@@ -660,7 +660,7 @@ namespace System.Windows.Forms {
 				Win32MessageBox(IntPtr.Zero, "Could not register the "+XplatUI.DefaultClassName+" window class, win32 error " + Win32GetLastError().ToString(), "Oops", 0);
 			}
 
-			FosterParent=Win32CreateWindow(0, "static", "Foster Parent Window", (int)WindowStyles.WS_OVERLAPPEDWINDOW, 0, 0, 0, 0, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
+			FosterParent=Win32CreateWindow(0, "static", "Foster Parent Window", (int)(WindowStyles.WS_OVERLAPPEDWINDOW | WindowStyles.WS_EX_TOOLWINDOW), 0, 0, 0, 0, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
 
 			if (FosterParent==IntPtr.Zero) {
 				Win32MessageBox(IntPtr.Zero, "Could not create foster window, win32 error " + Win32GetLastError().ToString(), "Oops", 0);
@@ -1030,7 +1030,13 @@ namespace System.Windows.Forms {
 
 			if ((ParentHandle==IntPtr.Zero) && (cp.Style & (int)(WindowStyles.WS_CHILD))!=0) {
 				// We need to use our foster parent window until this poor child gets it's parent assigned
-				ParentHandle=FosterParent;
+				ParentHandle = FosterParent;
+			}
+
+			if ( ((cp.Style & (int)(WindowStyles.WS_CHILD))==0) && ((cp.ExStyle & (int)WindowStyles.WS_EX_APPWINDOW) == 0)) {
+				// If we want to be hidden from the taskbar we need to be 'owned' by 
+				// something not on the taskbar. FosterParent is just that
+				ParentHandle = FosterParent;
 			}
 
 			lParam = IntPtr.Zero;

@@ -668,6 +668,9 @@ namespace System.Windows.Forms {
 			set {
 				if (show_in_taskbar != value) {
 					show_in_taskbar = value;
+					if (IsHandleCreated) {
+						RecreateHandle();
+					}
 					UpdateStyles();
 				}
 			}
@@ -806,6 +809,7 @@ namespace System.Windows.Forms {
 				cp.Caption = Text;
 				cp.ClassName = XplatUI.DefaultClassName;
 				cp.ClassStyle = 0;
+				cp.Style = 0;
 				cp.ExStyle = 0;
 				cp.Param = 0;
 				cp.Parent = IntPtr.Zero;
@@ -820,7 +824,7 @@ namespace System.Windows.Forms {
 				cp.Width = Width;
 				cp.Height = Height;
 
-				cp.Style |= (int)WindowStyles.WS_CLIPCHILDREN | (int)WindowStyles.WS_CLIPSIBLINGS;
+				cp.Style = (int)(WindowStyles.WS_CLIPCHILDREN | WindowStyles.WS_CLIPSIBLINGS | WindowStyles.WS_CAPTION);
 
 				if (IsMdiChild) {
 					cp.Style |= (int)WindowStyles.WS_CHILD;
@@ -840,12 +844,10 @@ namespace System.Windows.Forms {
 					}
 					
 				} else {
-
 					switch (FormBorderStyle) {
-
 					case FormBorderStyle.Fixed3D: {
 						cp.Style |= (int)WindowStyles.WS_CAPTION;
-						cp.ExStyle |= (int)WindowStyles.WS_EX_OVERLAPPEDWINDOW;
+						cp.ExStyle |= (int)WindowStyles.WS_EX_OVERLAPPEDWINDOW; 
 						break;
 					}
 
@@ -861,20 +863,20 @@ namespace System.Windows.Forms {
 						break;
 					}
 
-					case FormBorderStyle.FixedToolWindow: {
+					case FormBorderStyle.FixedToolWindow: { 
 						cp.Style |= (int)WindowStyles.WS_CAPTION;
 						cp.ExStyle |= (int)(WindowStyles.WS_EX_WINDOWEDGE | WindowStyles.WS_EX_TOOLWINDOW);
 						break;
 					}
 
 					case FormBorderStyle.Sizable: {
-						cp.Style |= (int)WindowStyles.WS_OVERLAPPEDWINDOW;
+						cp.Style |= (int)WindowStyles.WS_OVERLAPPEDWINDOW; 
 						cp.ExStyle |= (int)(WindowStyles.WS_EX_WINDOWEDGE);
 						break;
 					}
 
 					case FormBorderStyle.SizableToolWindow: {
-						cp.Style |= (int)WindowStyles.WS_OVERLAPPEDWINDOW;
+						cp.Style |= (int)WindowStyles.WS_OVERLAPPEDWINDOW; 
 						cp.ExStyle |= (int)(WindowStyles.WS_EX_WINDOWEDGE | WindowStyles.WS_EX_TOOLWINDOW);
 						break;
 					}
@@ -897,7 +899,7 @@ namespace System.Windows.Forms {
 					cp.Style |= (int)WindowStyles.WS_SYSMENU;
 				}
 
-				if (HelpButton) {
+				if (HelpButton && !MaximizeBox && !MinimizeBox) {
 					cp.ExStyle |= (int)WindowStyles.WS_EX_CONTEXTHELP;
 				}
 				
