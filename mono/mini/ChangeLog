@@ -1,3 +1,7 @@
+2006-01-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (mono_arch_compute_omit_fp): Fix a leak.
+
 2006-01-11 Neale Ferguson <neale@sinenomine.net>
 
 	* inssel-s390x.brg: Fix reg: OP_LDADDR(OP_S390_LOADARG) register setting.
