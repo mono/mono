@@ -91,57 +91,68 @@ namespace Microsoft.JScript {
 
 		internal override void Emit (EmitContext ec)
 		{
-			ILGenerator ig;
-			
-			if (lhs is VariableStatement) {
+			ILGenerator ig = ec.ig;
+			bool varStm = lhs is VariableStatement;
+			object var = null;
+
+			if (varStm) {
 				VariableStatement stm = (VariableStatement) lhs;
-				ig = ec.ig;
 				ig.Emit (OpCodes.Ldnull);
-				object var = TypeManager.Get (((VariableDeclaration) stm.var_decls [0]).id);
+				var = TypeManager.Get (((VariableDeclaration) stm.var_decls [0]).id);
 				set_builder (ig, var);
+			}
+			if (obj != null)
+				obj.Emit (ec);
 
-				if (obj != null)
-					obj.Emit (ec);
+			CodeGenerator.load_engine (InFunction, ig);
 
-				CodeGenerator.load_engine (InFunction, ig);
 
-				Type convert = typeof (Convert);
-				ig.Emit (OpCodes.Call, convert.GetMethod ("ToForInObject"));
-				ig.Emit (OpCodes.Call, typeof (ForIn).GetMethod ("JScriptGetEnumerator"));
-				Type ienumerator = typeof (IEnumerator);
-				LocalBuilder iter = ig.DeclareLocal (ienumerator);
-				LocalBuilder current = ig.DeclareLocal (typeof (object));
+			Type convert = typeof (Convert);
+			ig.Emit (OpCodes.Call, convert.GetMethod ("ToForInObject"));
+			ig.Emit (OpCodes.Call, typeof (ForIn).GetMethod ("JScriptGetEnumerator"));
+			Type ienumerator = typeof (IEnumerator);
+			LocalBuilder iter = ig.DeclareLocal (ienumerator);
+			LocalBuilder current = ig.DeclareLocal (typeof (object));
 
-				ig.Emit (OpCodes.Stloc, iter);
+			ig.Emit (OpCodes.Stloc, iter);
 				
-				Label init_loop = ig.DefineLabel ();
-				Label move_next = ig.DefineLabel ();
-				Label exit = ig.DefineLabel ();
+			Label init_loop = ig.DefineLabel ();
+			Label move_next = ig.DefineLabel ();
+			Label exit = ig.DefineLabel ();
 								
-				ig.Emit (OpCodes.Br, move_next);
-				ig.MarkLabel (init_loop);
+			ig.Emit (OpCodes.Br, move_next);
+			ig.MarkLabel (init_loop);
 
-				if (body != null)
-					body.Emit (ec);
+			if (body != null)
+				body.Emit (ec);
 
-				ig.MarkLabel (move_next);
+			ig.MarkLabel (move_next);
 
-				ig.Emit (OpCodes.Ldloc, iter);
-				ig.Emit (OpCodes.Callvirt, ienumerator.GetMethod ("MoveNext"));
+			ig.Emit (OpCodes.Ldloc, iter);
+			ig.Emit (OpCodes.Callvirt, ienumerator.GetMethod ("MoveNext"));
 				
-				ig.Emit (OpCodes.Brfalse, exit);
+			ig.Emit (OpCodes.Brfalse, exit);
 
-				ig.Emit (OpCodes.Ldloc, iter);
-				ig.Emit (OpCodes.Callvirt, ienumerator.GetProperty ("Current").GetGetMethod ());
-				ig.Emit (OpCodes.Stloc, current);
-				ig.Emit (OpCodes.Ldloc, current);
+			ig.Emit (OpCodes.Ldloc, iter);
+			ig.Emit (OpCodes.Callvirt, ienumerator.GetProperty ("Current").GetGetMethod ());
+			ig.Emit (OpCodes.Stloc, current);
+			ig.Emit (OpCodes.Ldloc, current);
 
+			if (varStm)
 				set_builder (ig, var);
+			else {
+				if (lhs is Expression) {
+					AST ast = ((Expression) lhs).Last;
+					if (ast is Identifier)
+						((Identifier) ast).EmitStore (ec);
+					else 
+						throw new NotImplementedException ();
+				} else
+ 					throw new NotImplementedException ();
+			}
 
-				ig.Emit (OpCodes.Br, init_loop);
-				ig.MarkLabel (exit);
-			} else
-				throw new NotImplementedException ();
+			ig.Emit (OpCodes.Br, init_loop);
+			ig.MarkLabel (exit);
 		}
 
 		void set_builder (ILGenerator ig, object builder)

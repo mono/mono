@@ -1,3 +1,7 @@
+2006-01-13  Cesar Lopez Nataren  <cnataren@novell.com>
+
+	* ForIn.cs: implement for (x in obj) logic.
+
 2006-01-11  Cesar Lopez Nataren  <cnataren@novell.com>
 
 	* Parser.cs (StatementHelper): Avoid null reference exception
