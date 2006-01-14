@@ -6671,6 +6671,8 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				sp [1] = sp [0];
 			}
 
+			iargs [0] = NULL;
+
 			if (mini_class_is_system_array (cmethod->klass)) {
 				EMIT_NEW_METHODCONST (cfg, *sp, cmethod);
 				alloc = handle_array_new (cfg, fsig->param_count, sp, ip);
