@@ -1,8 +1,15 @@
 2006-01-13  Cesar Lopez Nataren  <cnataren@novell.com>
 
+	* mjs-most.tests: Enable ecma/FunctionObjects/15.3.3.1-2.js,
+	ecma/Math/15.8.1.js, ecma/Number/15.7.3.1-3.js,
+	ecma/Number/15.7.3.2-4.js, ecma/Number/15.7.3.3-4.js,
+	ecma/Number/15.7.3.4-4.js, ecma/Number/15.7.3.5-4.js,
+	ecma/Number/15.7.3.6-4.js, ecma/Statements/12.6.3-1.js,
+	ecma/Statements/12.6.3-11.js, ecma/String/15.5.3.1-1.js,
+	ecma/String/15.5.4.8-3.js and js1_2/regress/regress-7703.js.
+
 	* mjs-most.fail: Delete ecma/Statements/12.6.3-10.js and
 	ecma/Statements/12.6.3-19.js as they no longer fail.
-
 
 2005-12-21  Cesar Lopez Nataren  <cnataren@novell.com>
 

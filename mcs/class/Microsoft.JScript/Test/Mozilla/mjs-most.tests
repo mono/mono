@@ -376,8 +376,7 @@ ecma/Expressions/11.6.3.js
 # syntax error
 #ecma/FunctionObjects/15.3.2.1-3.js
 ecma/FunctionObjects/15.3.3.1-1.js
-# Needs for in
-#ecma/FunctionObjects/15.3.3.1-2.js
+ecma/FunctionObjects/15.3.3.1-2.js
 ecma/FunctionObjects/15.3.3.1-3.js
 # invalid IL
 #ecma/FunctionObjects/15.3.3.1-4.js
@@ -523,8 +522,7 @@ ecma/Math/15.8-2-n.js
 #ecma/Math/15.8.1.8-1.js
 #ecma/Math/15.8.1.8-2.js
 ecma/Math/15.8.1.8-3.js
-# Needs for in
-#ecma/Math/15.8.1.js
+ecma/Math/15.8.1.js
 # NotImplementedException from Binary:emit_access
 #ecma/Math/15.8.2.1.js
 #ecma/Math/15.8.2.10.js
@@ -556,36 +554,30 @@ ecma/Number/15.7.2.js
 # Invalid IL
 #ecma/Number/15.7.3.1-1.js
 #ecma/Number/15.7.3.1-2.js
-# Needs for in
-#ecma/Number/15.7.3.1-3.js
+ecma/Number/15.7.3.1-3.js
 ecma/Number/15.7.3.2-1.js
 # Invalid IL
 #ecma/Number/15.7.3.2-2.js
 #ecma/Number/15.7.3.2-3.js
-# Needs for in
-#ecma/Number/15.7.3.2-4.js
+ecma/Number/15.7.3.2-4.js
 ecma/Number/15.7.3.3-1.js
 ecma/Number/15.7.3.3-2.js
 #ecma/Number/15.7.3.3-3.js
-# Needs for in
-#ecma/Number/15.7.3.3-4.js
+ecma/Number/15.7.3.3-4.js
 ecma/Number/15.7.3.4-1.js
 # Invalid IL
 #ecma/Number/15.7.3.4-2.js
 #ecma/Number/15.7.3.4-3.js
-# Needs for in
-#ecma/Number/15.7.3.4-4.js
+ecma/Number/15.7.3.4-4.js
 ecma/Number/15.7.3.5-1.js
 ecma/Number/15.7.3.5-2.js
 #ecma/Number/15.7.3.5-3.js
-# Needs for in
-#ecma/Number/15.7.3.5-4.js
+ecma/Number/15.7.3.5-4.js
 ecma/Number/15.7.3.6-1.js
 # Invalid IL
 #ecma/Number/15.7.3.6-2.js
 #ecma/Number/15.7.3.6-3.js
-# Needs for in
-#ecma/Number/15.7.3.6-4.js
+ecma/Number/15.7.3.6-4.js
 ecma/Number/15.7.3.js
 ecma/Number/15.7.4-1.js
 ecma/Number/15.7.4.1.js
@@ -643,11 +635,9 @@ ecma/Statements/12.5-2.js
 ecma/Statements/12.6.2-8.js
 # syntax error
 #ecma/Statements/12.6.2-9-n.js
-# Needs for in
-#ecma/Statements/12.6.3-1.js
+ecma/Statements/12.6.3-1.js
 ecma/Statements/12.6.3-10.js
-# Needs for in
-#ecma/Statements/12.6.3-11.js
+ecma/Statements/12.6.3-11.js
 #ecma/Statements/12.6.3-12.js
 ecma/Statements/12.6.3-19.js
 # syntax error
@@ -669,8 +659,7 @@ ecma/Statements/12.6.3-19.js
 #ecma/Statements/12.9-1-n.js
 ecma/String/15.5.1.js
 ecma/String/15.5.2.js
-# Needs for in
-#ecma/String/15.5.3.1-1.js
+ecma/String/15.5.3.1-1.js
 # Invalid IL
 #ecma/String/15.5.3.1-2.js
 ecma/String/15.5.3.1-3.js
@@ -733,8 +722,7 @@ ecma/String/15.5.4.7-3.js
 # Invalid IL
 #ecma/String/15.5.4.8-1.js
 ecma/String/15.5.4.8-2.js
-# Needs for in
-#ecma/String/15.5.4.8-3.js
+ecma/String/15.5.4.8-3.js
 # Invalid IL
 #ecma/String/15.5.4.9-1.js
 ecma/String/15.5.4.js
@@ -1048,8 +1036,7 @@ js1_2/regexp/toString.js
 js1_2/regexp/vertical_bar.js
 js1_2/regexp/whitespace.js
 js1_2/regexp/word_boundary.js
-# Need for in
-#js1_2/regress/regress-7703.js
+js1_2/regress/regress-7703.js
 js1_2/statements/break.js
 # infinite loop caused by bad generated IL.
 #js1_2/statements/continue.js
