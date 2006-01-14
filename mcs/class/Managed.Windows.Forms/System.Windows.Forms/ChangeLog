@@ -1,3 +1,8 @@
+2006-01-14  Alexander Olk  <alex.olk@googlemail.com>
+
+	* FileDialog.cs: When the file listview is focused hitting the
+	  backspace key moves the fileview to the parent directory
+
 2006-01-13  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* Form.cs: 

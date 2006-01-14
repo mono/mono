@@ -738,12 +738,8 @@ namespace System.Windows.Forms
 				
 				currentDirectoryInfo = new DirectoryInfo( currentDirectoryName );
 				
-				dirComboBox.CurrentPath = currentDirectoryName;
-				
 				if ( fileDialog.RestoreDirectory )
 					restoreDirectory = currentDirectoryName;
-				
-				mwfFileView.UpdateFileView( currentDirectoryInfo );
 				
 				openSaveButton.Click += new EventHandler( OnClickOpenSaveButton );
 				cancelButton.Click += new EventHandler( OnClickCancelButton );
@@ -757,10 +753,13 @@ namespace System.Windows.Forms
 				mwfFileView.DirectoryChanged += new EventHandler( OnDirectoryChangedFileView );
 				mwfFileView.ForceDialogEnd += new EventHandler( OnForceDialogEndFileView );
 				mwfFileView.SelectedFilesChanged += new EventHandler( OnSelectedFilesChangedFileView );
+				mwfFileView.OnDirectoryUp += new EventHandler( OnDirectoryUp );
 				
 				dirComboBox.DirectoryChanged += new EventHandler( OnDirectoryChangedDirComboBox );
 				
 				checkBox.CheckedChanged += new EventHandler( OnCheckCheckChanged );
+				
+				ChangeDirectory (null,currentDirectoryName);
 			}
 			
 			public bool MultiSelect
@@ -1100,6 +1099,12 @@ namespace System.Windows.Forms
 			void OnCheckCheckChanged( object sender, EventArgs e )
 			{
 				fileDialog.ReadOnlyChecked = checkBox.Checked;
+			}
+			
+			void OnDirectoryUp (Object sender, EventArgs e)
+			{
+				if (currentDirectoryInfo != null && currentDirectoryInfo.Parent != null) 
+					ChangeDirectory (null, currentDirectoryInfo.Parent.FullName);
 			}
 			
 			public void UpdateFilters( )
@@ -1740,6 +1745,7 @@ namespace System.Windows.Forms
 		private EventHandler on_selected_files_changed;
 		private EventHandler on_directory_changed;
 		private EventHandler on_force_dialog_end;
+		private EventHandler on_one_directory_up;
 		
 		private string fileName;
 		private string fullFileName;
@@ -1762,6 +1768,8 @@ namespace System.Windows.Forms
 			LargeImageList = MimeIconEngine.LargeIcons;
 			
 			View = View.List;
+			
+			KeyUp += new KeyEventHandler (MWF_KeyUp);
 		}
 		
 		public ArrayList FilterArrayList
@@ -1880,6 +1888,11 @@ namespace System.Windows.Forms
 				UpdateFileViewByDirectoryInfo( directoryInfo_or_string as DirectoryInfo);
 			else
 				UpdateFileViewByString( directoryInfo_or_string as string );
+			
+			if (Items.Count > 0) {
+				ListViewItem item = Items [0];
+				item.Selected = true;
+			}
 		}
 
 		private void UpdateFileViewByDirectoryInfo( DirectoryInfo inputDirectoryInfo ) 
@@ -2192,6 +2205,14 @@ namespace System.Windows.Forms
 			base.OnMouseMove (e);
 		}
 		
+		private void MWF_KeyUp (object sender, KeyEventArgs e)
+		{
+			if (e.KeyCode == Keys.Back) {
+				if (on_one_directory_up != null)
+					on_one_directory_up (this, EventArgs.Empty);
+			}
+		}
+		
 		public event EventHandler SelectedFileChanged
 		{
 			add { on_selected_file_changed += value; }
@@ -2214,6 +2235,12 @@ namespace System.Windows.Forms
 		{
 			add { on_force_dialog_end += value; }
 			remove { on_force_dialog_end -= value; }
+		}
+		
+		public event EventHandler OnDirectoryUp
+		{
+			add { on_one_directory_up += value; }
+			remove { on_one_directory_up -= value; }
 		}
 	}
 	
@@ -2295,7 +2322,7 @@ namespace System.Windows.Forms
 				this.imageIndex = imageIndex;
 				this.name = name;
 				this.path = path;
-				this.XPos = xPos;
+				this.xPos = xPos;
 			}
 			
 			public int ImageIndex
@@ -2426,9 +2453,8 @@ namespace System.Windows.Forms
 				if( currentPath == workplace_tmp )
 					selection = 3;
 			}
-			else
-				child_of = CheckChildOf();
 			
+			child_of = CheckChildOf();
 			
 			BeginUpdate( );
 			
