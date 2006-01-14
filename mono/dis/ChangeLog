@@ -1,3 +1,9 @@
+2006-01-15  Ankit Jain  <jankit@novell.com>
+
+	* get.c (get_method_override): Get full signature of the method.
+	* main.c (dis_code): Emit ".override method" for full signature
+	of the method.
+
 2006-01-06  Ankit Jain  <jankit@novell.com>
 
 	* get.c (get_generic_param): Generic param attributes can be any combination
