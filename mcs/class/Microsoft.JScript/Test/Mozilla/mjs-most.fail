@@ -48,10 +48,6 @@ js1_2/function/definition-1.js
 js1_3/Script/script-001.js
 js1_4/Functions/function-001.js
 
-# System.NotImplementedException: The requested feature is not implemented. (ForIn:Emit)
-ecma/Statements/12.6.3-10.js
-ecma/Statements/12.6.3-19.js
-
 # System.NotImplementedException: The requested feature is not implemented. (Convert:ToForInObject)
 ecma/String/15.5.5.1.js
 

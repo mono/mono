@@ -1,3 +1,9 @@
+2006-01-13  Cesar Lopez Nataren  <cnataren@novell.com>
+
+	* mjs-most.fail: Delete ecma/Statements/12.6.3-10.js and
+	ecma/Statements/12.6.3-19.js as they no longer fail.
+
+
 2005-12-21  Cesar Lopez Nataren  <cnataren@novell.com>
 
 	* mjs-most.tests: Enable js1_2/Array/tostring_1.js,
