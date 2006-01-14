@@ -1,3 +1,8 @@
+2006-01-13  Robert Jordan  <robertj@gmx.net>
+
+	* ResourceManagerTest.cs: New. Unit tests for ResourceManager.
+	See bug #77242.
+
 2005-03-31  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ResourceReaderCas.cs: New. CAS unit tests for ResourceReader.
