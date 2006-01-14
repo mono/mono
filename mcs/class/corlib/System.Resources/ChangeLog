@@ -1,3 +1,9 @@
+2006-01-13  Robert Jordan  <robertj@gmx.net>
+
+	* ResourceManager.cs: Fixed GetString/GetObject's recursion
+	which never fall back to the invariant or neutral culture if
+	the key was not found in a specific culture. Fixes bug #77242.
+
 2005-11-19  Zoltan Varga  <vargaz@gmail.com>
 
 	* Win32Resources.cs: Add a new 'FileVersion' property.
