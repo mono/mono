@@ -120,6 +120,7 @@ System.Reflection/ModuleTest.cs
 System.Reflection/StrongNameKeyPairTest.cs
 System/ResolveEventArgsTest.cs
 System.Resources/ResourceReaderTest.cs
+System.Resources/ResourceManagerTest.cs
 System.Runtime.CompilerServices/RuntimeHelpersTest.cs
 System.Runtime.InteropServices/GCHandleTest.cs
 System.Runtime.InteropServices/MarshalTest.cs
