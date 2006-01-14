@@ -1,3 +1,7 @@
+2006-01-15  Ankit Jain  <jankit@novell.com>
+
+	* ILParser.jay (method_decl): Add new "full" syntax specifying overrides.
+
 2006-01-13  Ankit Jain  <jankit@novell.com>
 
 	* ILParser.jay: Update to use codegen.GetTypeRef instead of creating

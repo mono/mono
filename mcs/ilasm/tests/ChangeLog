@@ -1,3 +1,9 @@
+2006-01-15  Ankit Jain  <jankit@novell.com>
+
+	* test-override-1.il:
+	* test-override-2.il: New. Test for 'full' syntax of specifying
+	overrides. (.override method ..full sig.. )
+
 2006-01-14  Ankit Jain  <jankit@novell.com>
 
 	* gen-instr1.il: New. Test for using GenericParams as operands to

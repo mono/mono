@@ -2019,6 +2019,11 @@ method_decl		: D_EMITBYTE int32
                                         (BaseTypeRef) $2, (string) $4);
                                 
                           }
+			| D_OVERRIDE K_METHOD method_ref
+                          {
+				codegen.CurrentTypeDef.AddOverride (codegen.CurrentMethodDef.Signature,
+					(BaseMethodRef) $3);
+                          }
 			| scope_block
 			| D_PARAM OPEN_BRACKET int32 CLOSE_BRACKET init_opt
                           {
