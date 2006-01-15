@@ -1,3 +1,7 @@
+2006-01-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* liveness.c: Update after monobitset changes.
+
 2006-01-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-amd64.c (mono_arch_compute_omit_fp): Fix a leak.
