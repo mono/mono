@@ -1,3 +1,7 @@
+2006-01-15 Jordi Mas i Hernandez <jordimash@gmail.com>
+
+	* PrintingServicesUnix.cs: Allow setting the dpy's for the surface
+
 2005-12-22 Jordi Mas i Hernandez <jordimash@gmail.com>
 
 	* PrintingServices.cs: Printing services abstration class

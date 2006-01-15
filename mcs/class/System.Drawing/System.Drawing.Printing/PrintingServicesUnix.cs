@@ -136,11 +136,12 @@ namespace System.Drawing.Printing
 			StringBuilder name = new StringBuilder (1024);
             		int length = name.Capacity;
 			cupsTempFile (name, length);
-			//Console.WriteLine ("CreateGraphicsContext filename {0}", name.ToString());
-
+		
 			GdipGetPostScriptGraphicsContext (name.ToString(),
-				settings.DefaultPageSettings.PaperSize.Width,
-				settings.DefaultPageSettings.PaperSize.Height, ref graphics);
+				settings.DefaultPageSettings.PaperSize.Width / 100 * 72,
+				settings.DefaultPageSettings.PaperSize.Height / 100 * 72, 
+				// Harcoded dpy's
+				300, 300, ref graphics);
 
 			DOCINFO doc = new DOCINFO ();
 			doc.filename = name.ToString();
@@ -249,7 +250,7 @@ namespace System.Drawing.Printing
 		static extern void ppdClose (IntPtr ppd);
 
 		[DllImport("libgdiplus", CharSet=CharSet.Ansi)]
-		static extern int GdipGetPostScriptGraphicsContext (string filename, int with, int height, ref IntPtr graphics);
+		static extern int GdipGetPostScriptGraphicsContext (string filename, int with, int height, double dpix, double dpiy, ref IntPtr graphics);
 
 		[DllImport("libgdiplus")]
 		static extern int GdipGetPostScriptSavePage (IntPtr graphics);
