@@ -57,7 +57,19 @@ namespace Mono.Unix {
 
 		public UnixGroupInfo (Native.Group group)
 		{
-			this.group = group;
+			this.group = CopyGroup (group);
+		}
+
+		private static Native.Group CopyGroup (Native.Group group)
+		{
+			Native.Group g = new Native.Group ();
+
+			g.gr_gid    = group.gr_gid;
+			g.gr_mem    = group.gr_mem;
+			g.gr_name   = group.gr_name;
+			g.gr_passwd = group.gr_passwd;
+
+			return g;
 		}
 
 		public string GroupName {
@@ -104,12 +116,7 @@ namespace Mono.Unix {
 
 		public Native.Group ToGroup ()
 		{
-			Native.Group g = new Native.Group ();
-			g.gr_gid    = group.gr_gid;
-			g.gr_mem    = group.gr_mem;
-			g.gr_name   = group.gr_name;
-			g.gr_passwd = group.gr_passwd;
-			return g;
+			return CopyGroup (group);
 		}
 
 		public static UnixGroupInfo[] GetLocalGroups ()

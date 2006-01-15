@@ -67,7 +67,22 @@ namespace Mono.Unix {
 
 		public UnixUserInfo (Native.Passwd passwd)
 		{
-			this.passwd = passwd;
+			this.passwd = CopyPasswd (passwd);
+		}
+
+		private static Native.Passwd CopyPasswd (Native.Passwd pw)
+		{
+			Native.Passwd p = new Native.Passwd ();
+
+			p.pw_name   = pw.pw_name;
+			p.pw_passwd = pw.pw_passwd;
+			p.pw_uid    = pw.pw_uid;
+			p.pw_gid    = pw.pw_gid;
+			p.pw_gecos  = pw.pw_gecos;
+			p.pw_dir    = pw.pw_dir;
+			p.pw_shell  = pw.pw_shell;
+
+			return p;
 		}
 
 		public string UserName {
@@ -149,7 +164,7 @@ namespace Mono.Unix {
 
 		public Native.Passwd ToPasswd ()
 		{
-			return passwd;
+			return CopyPasswd (passwd);
 		}
 
 		public static UnixUserInfo[] GetLocalUsers ()

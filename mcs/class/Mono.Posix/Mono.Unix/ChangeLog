@@ -1,3 +1,11 @@
+2006-01-15  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* UnixUserInfo.cs: The UnixUserInfo(Native.Passwd) constructor and 
+	  ToPasswd() should clone the underlying Native.Passwd, so
+	  that it doesn't get changed from underneath it.
+	* UnixGroupInfo.cs: The UnixGroupInfo(Native.Group) constructor should also
+	  clone the provided Native.Group instance.
+
 2006-01-14  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* UnixGroupInfo.cs: ToGroup() should clone the underlying Native.Group, so
