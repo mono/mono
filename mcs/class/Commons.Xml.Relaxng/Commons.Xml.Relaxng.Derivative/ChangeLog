@@ -1,3 +1,9 @@
+2006-01-15  Atsushi Enomoto <atsushi@ximian.com>
+
+	* RdpPatterns.cs : lazy evaluate Group branches. If left hand is
+	  notAllowed, the returned value is always NotAllowed, no need to
+	  compute another branch.
+
 2006-01-13  Atsushi Enomoto <atsushi@ximian.com>
 
 	* RdpObjects.cs, RdpPatterns.cs : introduced "IsContextDependent"

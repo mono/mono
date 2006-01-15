@@ -1236,35 +1236,43 @@ namespace Commons.Xml.Relaxng.Derivative
 
 		public override RdpPattern TextDeriv (string s, XmlReader reader)
 		{
-			RdpPattern p = LValue.TextDeriv (s, reader).Group (RValue);
+			RdpPattern p = LValue.TextDeriv (s, reader);
+			p = (p.PatternType == RelaxngPatternType.NotAllowed) ?
+				p : p.Group (RValue);
 			return LValue.Nullable ?
 				p.Choice (RValue.TextDeriv (s, reader)) : p;
 		}
 
 		internal override RdpPattern TextDeriv (string s, XmlReader reader, MemoizationStore memo)
 		{
-			RdpPattern p = memo.TextDeriv (LValue, s, reader).Group (RValue);
+			RdpPattern p = memo.TextDeriv (LValue, s, reader);
+			p = (p.PatternType == RelaxngPatternType.NotAllowed) ?
+				p : p.Group (RValue);
 			return LValue.Nullable ?
 				p.Choice (memo.TextDeriv (RValue, s, reader)) : p;
 		}
 
 		internal override RdpPattern EmptyTextDeriv (MemoizationStore memo)
 		{
-			RdpPattern p = memo.EmptyTextDeriv (LValue).Group (RValue);
+			RdpPattern p = memo.EmptyTextDeriv (LValue);
+			p = p.PatternType == RelaxngPatternType.NotAllowed ?
+				p : p.Group (RValue);
 			return LValue.Nullable ?
 				p.Choice (memo.EmptyTextDeriv (RValue)) : p;
 		}
 
 		internal override RdpPattern TextOnlyDeriv ()
 		{
-			return LValue.TextOnlyDeriv ().Group (
-				RValue.TextOnlyDeriv ());
+			RdpPattern p = LValue.TextOnlyDeriv ();
+			return p.PatternType == RelaxngPatternType.NotAllowed ?
+				p : p.Group (RValue.TextOnlyDeriv ());
 		}
 
 		internal override RdpPattern TextOnlyDeriv (MemoizationStore memo)
 		{
-			return memo.TextOnlyDeriv (LValue).Group (
-				memo.TextOnlyDeriv (RValue));
+			RdpPattern p = memo.TextOnlyDeriv (LValue);
+			return p.PatternType == RelaxngPatternType.NotAllowed ?
+				p : p.Group (memo.TextOnlyDeriv (RValue));
 		}
 
 		internal override RdpPattern MixedTextDeriv ()
@@ -1344,14 +1352,16 @@ namespace Commons.Xml.Relaxng.Derivative
 		//  group (startTagCloseDeriv p1) (startTagCloseDeriv p2)
 		public override RdpPattern StartTagCloseDeriv ()
 		{
-			return LValue.StartTagCloseDeriv ()
-				.Group (RValue.StartTagCloseDeriv ());
+			RdpPattern p = LValue.StartTagCloseDeriv ();
+			return p.PatternType == RelaxngPatternType.NotAllowed ?
+				p : p.Group (RValue.StartTagCloseDeriv ());
 		}
 
 		internal override RdpPattern StartTagCloseDeriv (MemoizationStore memo)
 		{
-			return memo.StartTagCloseDeriv (LValue)
-				.Group (memo.StartTagCloseDeriv (RValue));
+			RdpPattern p = memo.StartTagCloseDeriv (LValue);
+			return p.PatternType == RelaxngPatternType.NotAllowed ?
+				p : p.Group (memo.StartTagCloseDeriv (RValue));
 		}
 
 		public override RelaxngPatternType PatternType {
@@ -1459,17 +1469,23 @@ namespace Commons.Xml.Relaxng.Derivative
 
 		public override RdpPattern TextDeriv (string s, XmlReader reader)
 		{
-			return Child.TextDeriv (s, reader).Group (this.Choice (RdpEmpty.Instance));
+			RdpPattern p = Child.TextDeriv (s, reader);
+			return p.PatternType == RelaxngPatternType.NotAllowed ?
+				p : p.Group (this.Choice (RdpEmpty.Instance));
 		}
 
 		internal override RdpPattern TextDeriv (string s, XmlReader reader, MemoizationStore memo)
 		{
-			return memo.TextDeriv (Child, s, reader).Group (this.Choice (RdpEmpty.Instance));
+			RdpPattern p = memo.TextDeriv (Child, s, reader);
+			return p.PatternType == RelaxngPatternType.NotAllowed ?
+				p : p.Group (this.Choice (RdpEmpty.Instance));
 		}
 
 		internal virtual RdpPattern EmptyTextDeriv (MemoizationStore memo)
 		{
-			return memo.EmptyTextDeriv (Child).Group (this.Choice (RdpEmpty.Instance));
+			RdpPattern p = memo.EmptyTextDeriv (Child);
+			return p.PatternType == RelaxngPatternType.NotAllowed ?
+				p : p.Group (this.Choice (RdpEmpty.Instance));
 		}
 
 		internal override RdpPattern TextOnlyDeriv ()
@@ -1484,28 +1500,25 @@ namespace Commons.Xml.Relaxng.Derivative
 
 		internal override RdpPattern MixedTextDeriv ()
 		{
-			return Child.MixedTextDeriv ().Group (
-				this.Choice (RdpEmpty.Instance));
+			RdpPattern p = Child.MixedTextDeriv ();
+			return p.PatternType == RelaxngPatternType.NotAllowed ?
+				p : p.Group (this.Choice (RdpEmpty.Instance));
 		}
 
 		internal override RdpPattern MixedTextDeriv (MemoizationStore memo)
 		{
-			return memo.MixedTextDeriv (Child).Group (
-				this.Choice (RdpEmpty.Instance));
+			RdpPattern p = memo.MixedTextDeriv (Child);
+			return p.PatternType == RelaxngPatternType.NotAllowed ?
+				p : p.Group (this.Choice (RdpEmpty.Instance));
 		}
 
 		// attDeriv cx (OneOrMore p) att =
 		//  group (attDeriv cx p att) (choice (OneOrMore p) Empty)
 		public override RdpPattern AttDeriv (string name, string ns, string value, XmlReader reader)
 		{
-#if UseStatic
-			return RdpUtil.Group (
-				RdpUtil.AttDeriv (ctx, children, att),
-				RdpUtil.Choice (RdpUtil.OneOrMore (children), RdpEmpty.Instance));
-#else
-			return Child.AttDeriv (name, ns, value, reader)
-				.Group (Choice (RdpEmpty.Instance));
-#endif
+			RdpPattern p = Child.AttDeriv (name, ns, value, reader);
+			return p.PatternType == RelaxngPatternType.NotAllowed ?
+				p : p.Group (Choice (RdpEmpty.Instance));
 		}
 
 		// startTagOpenDeriv (OneOrMore p) qn =
@@ -1807,7 +1820,19 @@ namespace Commons.Xml.Relaxng.Derivative
 			// do nothing
 		}
 
+		string cachedValue;
+		RdpPattern cachedPattern;
+
 		public override RdpPattern TextDeriv (string s, XmlReader reader)
+		{
+			if (s == cachedValue && !IsContextDependent)
+				return cachedPattern;
+			cachedPattern = TextDerivCore (s, reader);
+			cachedValue = s;
+			return cachedPattern;
+		}
+
+		RdpPattern TextDerivCore (string s, XmlReader reader)
 		{
 			if (dt.IsTypeEqual (value, s, reader))
 				return RdpEmpty.Instance;
