@@ -1,3 +1,7 @@
+2006-01-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* monobitset.h monobitset.c: Use 64 bit chunks on 64 bit machines.
+
 2006-01-04  Zoltan Varga  <vargaz@gmail.com>
 
 	* mono-codeman.c (new_codechunk): Fix warnings.
