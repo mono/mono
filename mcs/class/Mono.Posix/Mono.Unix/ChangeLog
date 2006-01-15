@@ -1,3 +1,8 @@
+2006-01-14  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* UnixGroupInfo.cs: ToGroup() should clone the underlying Native.Group, so
+	  that it doesn't get changed from underneath it.
+
 2006-01-13  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* Catalog.cs, UnixMarshal.cs: Throw `UnixIOException(Native.Errno.ENOMEM)`

@@ -104,7 +104,12 @@ namespace Mono.Unix {
 
 		public Native.Group ToGroup ()
 		{
-			return group;
+			Native.Group g = new Native.Group ();
+			g.gr_gid    = group.gr_gid;
+			g.gr_mem    = group.gr_mem;
+			g.gr_name   = group.gr_name;
+			g.gr_passwd = group.gr_passwd;
+			return g;
 		}
 
 		public static UnixGroupInfo[] GetLocalGroups ()
