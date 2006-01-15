@@ -1,3 +1,10 @@
+2006-01-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CP932.cs : GetByteCount() returned insufficient count at PrivateUse
+	  area. Fixed bug #77724.
+
+	  (Additionally, reduced extraneous indentation in switch-cases).
+
 2006-01-12  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CP51932.cs : oops, another extra debugging code was remaining.
