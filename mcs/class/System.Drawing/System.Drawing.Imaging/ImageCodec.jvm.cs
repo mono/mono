@@ -220,7 +220,7 @@ namespace Mainsoft.Drawing.Imaging {
 					spi.ImageReaderWriterSpi rw = GetNext (iter);
 
 					ici.CodecName = rw.getDescription (java.util.Locale.getDefault ());
-					ici.DllName = null;
+					//ici.DllName = null;
 					foreach (string suffix in rw.getFileSuffixes ()) {
 						if (ici.FilenameExtension != null)
 							ici.FilenameExtension += ";";
