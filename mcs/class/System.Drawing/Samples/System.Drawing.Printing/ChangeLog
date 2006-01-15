@@ -1,3 +1,7 @@
+2006-01-15 Jordi Mas i Hernandez  <jordimash@gmail.com>
+
+	* Adds PrintingMargins.cs
+
 2005-12-22 Jordi Mas i Hernandez  <jordimash@gmail.com>
 
 	* EnumPrinters.cs: Printer enumerator
