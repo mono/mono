@@ -387,6 +387,21 @@ mono_print_bb (MonoBasicBlock *bb, const char *msg)
  * IR Emission Macros
  */
 
+static int the_count = 0;
+
+#undef MONO_INST_NEW
+/* 
+ * FIXME: alloc0 is not needed with the new IR, but the old JIT code still
+ * uses the left and right fields, so it has to stay.
+ */
+#define MONO_INST_NEW(cfg,dest,op) do {	\
+        the_count ++; \
+		(dest) = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoInst));	\
+		(dest)->opcode = (op);	\
+        (dest)->dreg = (dest)->sreg1 = (dest)->sreg2 = -1;  \
+        (dest)->next = NULL; \
+	} while (0)
+
 /*
  * Variants which take a dest argument and do not do an emit
  */
