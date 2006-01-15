@@ -76,8 +76,7 @@ using ValException = System.Xml.Schema.XmlSchemaValidationException;
 
 namespace Mono.Xml.Schema
 {
-	internal class XmlSchemaValidatingReader : XmlReader, IXmlLineInfo,
-		IXmlSchemaInfo
+	internal class XmlSchemaValidatingReader : XmlReader, IXmlLineInfo
 	{
 		static readonly XsAttr [] emptyAttributeArray =
 			new XsAttr [0];
@@ -92,6 +91,7 @@ namespace Mono.Xml.Schema
 		IXmlLineInfo readerLineInfo;
 		ValidationType validationType;
 		IXmlNamespaceResolver nsResolver;
+//		IHasXmlSchemaInfo sourceReaderSchemaInfo;
 		int startDepth;
 
 		StringBuilder tmpBuilder = new StringBuilder ();
@@ -100,13 +100,47 @@ namespace Mono.Xml.Schema
 		int currentDefaultAttribute = -1;
 		ArrayList defaultAttributesCache = new ArrayList ();
 		bool defaultAttributeConsumed;
-		XmlSchemaType currentAttrType;
+		object currentAttrType;
 
 		// Extra for XmlSchemaValidtingReader
 		// (not in XsdValidatingReader)
 		XsElement element; // ... xsinfo.Element?
+		object xsiType; // ... xsinfo.SchemaType?
 
 		#endregion
+
+		public XmlSchemaValidatingReader (XmlReader reader, XmlSchemaSet schemas)
+		{
+			nsResolver = reader as IXmlNamespaceResolver;
+			if (nsResolver == null)
+				throw new ArgumentException ("Argument XmlReader must implement IXmlNamespaceResolver.");
+			options = ValidationFlags.ReportValidationWarnings
+				| ValidationFlags.ProcessSchemaLocation
+				| ValidationFlags.ProcessInlineSchema;
+
+			this.reader = reader;
+			if (schemas == null)
+				schemas = new XmlSchemaSet ();
+			v = new XmlSchemaValidator (
+				reader.NameTable,
+				schemas,
+				nsResolver,
+				options);
+
+			readerLineInfo = reader as IXmlLineInfo;
+			startDepth = reader.Depth;
+			getter = delegate () { return Value; };
+			xsinfo = new XmlSchemaInfo (); // transition cache
+			v.LineInfoProvider = this;
+			v.ValidationEventSender = reader;
+#if !NON_MONO
+			v.XmlResolver = schemas.XmlResolver;
+#else
+			v.XmlResolver = new XmlUrlResolver ();
+#endif
+			v.SourceUri = new Uri (null, reader.BaseURI); // FIXME: it is in fact not in MS.NET.
+			v.Initialize ();
+		}
 
 		public XmlSchemaValidatingReader (XmlReader reader,
 			XmlReaderSettings settings)
@@ -130,7 +164,6 @@ namespace Mono.Xml.Schema
 			readerLineInfo = reader as IXmlLineInfo;
 			startDepth = reader.Depth;
 			getter = delegate () { return Value; };
-			xsinfo = new XmlSchemaInfo (); // transition cache
 			v.LineInfoProvider = this;
 			v.ValidationEventSender = reader;
 #if !NON_MONO
@@ -144,11 +177,48 @@ namespace Mono.Xml.Schema
 			v.Initialize ();
 		}
 
+		public XmlSchemaValidatingReader (
+			XPathNavigator navigator,
+			XmlSchemaSet schemas,
+			ValidationEventHandler handler)
+		{
+			this.reader = navigator.ReadSubtree ();
+			startDepth = reader.Depth;
+			IXmlSchemaInfo info = navigator.SchemaInfo;
+			SchemaType schemaType = info != null ?
+				info.SchemaType : null;
+
+			if (schemas == null && schemaType == null)
+				throw new ArgumentException ("Neither of XmlSchemaSet is specified, nor XPathNavigator does not provide schema type information on current node.");
+
+			if (schemas == null)
+				schemas = new XmlSchemaSet (reader.NameTable);
+
+			v = new XmlSchemaValidator (
+				navigator.NameTable,
+				schemas,
+				navigator,
+				ValidationFlags.ProcessIdentityConstraints);
+
+			readerLineInfo = navigator as IXmlLineInfo;
+			getter = delegate () { return Value; };
+			v.LineInfoProvider = this;
+			v.ValidationEventSender = navigator;
+#if !NON_MONO
+			v.XmlResolver = schemas.XmlResolver;
+#else
+			v.XmlResolver = new XmlUrlResolver ();
+#endif
+			v.Initialize (schemaType);
+		}
+
 		public ValidationEventHandler ValidationEventHandler;
 
-		public XmlSchemaType ElementSchemaType {
+		public object ActualType {
 			get {
-				return element != null ? element.ElementSchemaType : null;
+				return xsiType != null ?
+					xsiType :
+					element != null ? element.ElementType : null;
 			}
 		}
 
@@ -172,24 +242,24 @@ namespace Mono.Xml.Schema
 			get { return readerLineInfo != null ? readerLineInfo.LinePosition : 0; }
 		}
 
-		public XmlSchemaType SchemaType {
+		public object SchemaType {
 			get {
 				if (ReadState != ReadState.Interactive)
 					return null;
 
 				switch (NodeType) {
 				case XmlNodeType.Element:
-					if (ElementSchemaType != null)
-						return ElementSchemaType;
+					if (ActualType != null)
+						return ActualType;
 					else
 						return null;//SourceReaderSchemaType;
 				case XmlNodeType.Attribute:
 					if (currentAttrType == null) {
-						ComplexType ct = ElementSchemaType as ComplexType;
+						ComplexType ct = ActualType as ComplexType;
 						if (ct != null) {
 							XsAttr attdef = ct.AttributeUses [new XmlQualifiedName (LocalName, NamespaceURI)] as XsAttr;
 							if (attdef != null)
-								currentAttrType = attdef.AttributeSchemaType;
+								currentAttrType = attdef.AttributeType;
 							return currentAttrType;
 						}
 //						currentAttrType = SourceReaderSchemaType;
@@ -380,7 +450,7 @@ namespace Mono.Xml.Schema
 		}
 
 		public override IXmlSchemaInfo SchemaInfo {
-			get { return this; }
+			get { return xsinfo; }
 		}
 
 		public override string Value {
@@ -782,30 +852,6 @@ namespace Mono.Xml.Schema
 		public override void ResolveEntity ()
 		{
 			reader.ResolveEntity ();
-		}
-
-		#endregion
-
-		#region IXmlSchemaInfo
-
-		public bool IsNil {
-			get { return xsinfo.IsNil; }
-		}
-
-		public XmlSchemaSimpleType MemberType {
-			get { return xsinfo.MemberType; }
-		}
-
-		public XmlSchemaAttribute SchemaAttribute {
-			get { return xsinfo.SchemaAttribute; }
-		}
-
-		public XmlSchemaElement SchemaElement {
-			get { return xsinfo.SchemaElement; }
-		}
-
-		public XmlSchemaValidity Validity {
-			get { return xsinfo.Validity; }
 		}
 
 		#endregion

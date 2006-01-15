@@ -1,18 +1,3 @@
-2006-01-11  Atsushi Enomoto <atsushi@ximian.com>
-
-	* XmlSchemaAttribute.cs, XmlSchemaElement.cs : AttributeSchemaType
-	  and ElementSchemaType were not working fine for anySimpleType.
-	* XmlSchemaValidator.cs : When actual schema type was complex,
-	  schema types was not filled correctly. Modified some extra comments.
-	* XmlSchemaSet.cs, XmlSchemaType.cs : removed extra MonoTODOs.
-
-2006-01-10  Atsushi Enomoto <atsushi@ximian.com>
-
-	* XmlAtomicValue.cs : it won't be implemented since there is no way
-	  to test it inside sys.xml. Thus remarked MonoTODO.
-	* XmlSchemaDatatype.cs : implemented IsDerivedFrom(), which is however
-	  mostly useless.
-
 2006-01-06  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlSchemaSet.cs : Add() rollbacks IsCompiled to false.

@@ -1,9 +1,3 @@
-2006-01-11  Atsushi Enomoto <atsushi@ximian.com>
-
-	* XmlSchemaValidatingReader.cs : removed unused constructors.
-	  Now it implements IXmlSchemaInfo. Use XmlSchemaType instead of
-	  Object to represent schema types.
-
 2006-01-06  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XsdValidatingReader.cs :

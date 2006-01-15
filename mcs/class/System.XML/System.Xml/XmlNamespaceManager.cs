@@ -170,11 +170,9 @@ namespace System.Xml
 			decls [declPos].Uri = uri;
 		}
 
-		static string IsValidDeclaration (string prefix, string uri, bool throwException)
+		internal static string IsValidDeclaration (string prefix, string uri, bool throwException)
 		{
 			string message = null;
-			// It is funky, but it does not check whether prefix
-			// is equivalent to "xml" in case-insensitive means.
 			if (prefix == PrefixXml && uri != XmlnsXml)
 				message = String.Format ("Prefix \"xml\" can only be bound to the fixed namespace URI \"{0}\". \"{1}\" is invalid.", XmlnsXml, uri);
 			else if (message == null && prefix == "xmlns")

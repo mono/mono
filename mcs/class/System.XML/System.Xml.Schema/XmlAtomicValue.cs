@@ -36,7 +36,6 @@ using System.Xml.XPath;
 
 namespace System.Xml.Schema
 {
-	[MonoTODO ("This class is unused and thus won't be finished.")]
 	public sealed class XmlAtomicValue : XPathItem, ICloneable
 	{
 		bool booleanValue;
@@ -54,6 +53,7 @@ namespace System.Xml.Schema
 
 		#region Constructors
 
+		[MonoTODO]
 		internal XmlAtomicValue (bool value, XmlSchemaType xmlType)
 		{
 			Init (value, xmlType);
@@ -68,6 +68,7 @@ namespace System.Xml.Schema
 			schemaType = xmlType;
 		}
 
+		[MonoTODO]
 		internal XmlAtomicValue (DateTime value, XmlSchemaType xmlType)
 		{
 			Init (value, xmlType);
@@ -82,6 +83,7 @@ namespace System.Xml.Schema
 			schemaType = xmlType;
 		}
 
+		[MonoTODO]
 		internal XmlAtomicValue (decimal value, XmlSchemaType xmlType)
 		{
 			Init (value, xmlType);
@@ -96,6 +98,7 @@ namespace System.Xml.Schema
 			schemaType = xmlType;
 		}
 
+		[MonoTODO]
 		internal XmlAtomicValue (double value, XmlSchemaType xmlType)
 		{
 			Init (value, xmlType);
@@ -110,6 +113,7 @@ namespace System.Xml.Schema
 			schemaType = xmlType;
 		}
 
+		[MonoTODO]
 		internal XmlAtomicValue (int value, XmlSchemaType xmlType)
 		{
 			Init (value, xmlType);
@@ -124,6 +128,7 @@ namespace System.Xml.Schema
 			schemaType = xmlType;
 		}
 
+		[MonoTODO]
 		internal XmlAtomicValue (long value, XmlSchemaType xmlType)
 		{
 			Init (value, xmlType);
@@ -138,6 +143,7 @@ namespace System.Xml.Schema
 			schemaType = xmlType;
 		}
 
+		[MonoTODO]
 		internal XmlAtomicValue (float value, XmlSchemaType xmlType)
 		{
 			Init (value, xmlType);
@@ -152,6 +158,7 @@ namespace System.Xml.Schema
 			schemaType = xmlType;
 		}
 
+		[MonoTODO]
 		internal XmlAtomicValue (string value, XmlSchemaType xmlType)
 		{
 			Init (value, xmlType);
@@ -168,6 +175,7 @@ namespace System.Xml.Schema
 			schemaType = xmlType;
 		}
 
+		[MonoTODO]
 		internal XmlAtomicValue (object value, XmlSchemaType xmlType)
 		{
 			Init (value, xmlType);
@@ -273,11 +281,13 @@ namespace System.Xml.Schema
 			return this.Clone ();
 		}
 
+		[MonoTODO]
 		public XmlAtomicValue Clone ()
 		{
 			return new XmlAtomicValue (this, schemaType);
 		}
 
+		[MonoTODO]
 		public override object ValueAs (Type type, IXmlNamespaceResolver nsResolver)
 		{
 			switch (XmlTypeCodeFromRuntimeType (type, false)) {
@@ -328,6 +338,7 @@ namespace System.Xml.Schema
 			}
 		}
 
+		[MonoTODO]
 		public override object TypedValue {
 			get {
 				switch (ResolvedTypeCode) {
@@ -349,6 +360,7 @@ namespace System.Xml.Schema
 			}
 		}
 
+		[MonoTODO]
 		// This method works like ValueAsString.
 		public override string Value {
 			get {
@@ -413,6 +425,7 @@ namespace System.Xml.Schema
 			}
 		}
 
+		[MonoTODO]
 		public override bool ValueAsBoolean {
 			get {
 				switch (xmlTypeCode) {
@@ -444,6 +457,7 @@ namespace System.Xml.Schema
 			}
 		}
 
+		[MonoTODO]
 		public override DateTime ValueAsDateTime {
 			get {
 				switch (xmlTypeCode) {
@@ -464,6 +478,7 @@ namespace System.Xml.Schema
 			}
 		}
 
+		[MonoTODO]
 		public override double ValueAsDouble {
 			get {
 				switch (xmlTypeCode) {
@@ -494,6 +509,7 @@ namespace System.Xml.Schema
 			}
 		}
 
+		[MonoTODO]
 		public override int ValueAsInt {
 			get {
 				switch (xmlTypeCode) {
@@ -524,6 +540,7 @@ namespace System.Xml.Schema
 			}
 		}
 
+		[MonoTODO]
 		public override long ValueAsLong {
 			get {
 				switch (xmlTypeCode) {
@@ -554,10 +571,12 @@ namespace System.Xml.Schema
 			}
 		}
 
+		[MonoTODO]
 		public override Type ValueType {
 			get { return schemaType.Datatype.ValueType; }
 		}
 
+		[MonoTODO]
 		public override XmlSchemaType XmlType {
 			get { return schemaType; }
 		}

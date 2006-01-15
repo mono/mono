@@ -360,19 +360,16 @@ namespace System.Xml
 
 		internal virtual void WriteNmTokenInternal (string name)
 		{
-			bool valid = true;
 #if NET_2_0
 			switch (Settings.ConformanceLevel) {
 			case ConformanceLevel.Document:
 			case ConformanceLevel.Fragment:
-				valid = XmlChar.IsNmToken (name);
-					break;
+				XmlConvert.VerifyNMTOKEN (name);
+				break;
 			}
 #else
-			valid = XmlChar.IsNmToken (name);
+			XmlConvert.VerifyNMTOKEN (name);
 #endif
-			if (!valid)
-				throw new ArgumentException ("Argument name is not a valid NMTOKEN.");
 			WriteString (name);
 		}
 

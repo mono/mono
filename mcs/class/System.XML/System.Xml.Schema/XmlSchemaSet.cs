@@ -181,6 +181,7 @@ namespace System.Xml.Schema
 				Add (schema);
 		}
 
+		[MonoTODO ("We need to research more about the expected behavior")]
 		public XmlSchema Add (XmlSchema schema)
 		{
 			schemas.Add (schema);

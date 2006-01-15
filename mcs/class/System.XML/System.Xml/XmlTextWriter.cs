@@ -752,6 +752,8 @@ openElements [openElementCount - 1]).IndentingOverriden;
 		public override void WriteStartAttribute (string prefix, string localName, string ns)
 		{
 			if (prefix == "xml") {
+				// MS.NET looks to allow other names than 
+				// lang and space (e.g. xml:link, xml:hack).
 				ns = XmlNamespaceManager.XmlnsXml;
 				if (localName == "lang")
 					openXmlLang = true;
@@ -797,7 +799,7 @@ openElements [openElementCount - 1]).IndentingOverriden;
 			string formatPrefix = "";
 
 			if (ns != String.Empty && prefix != "xmlns") {
-				string existingPrefix = GetExistingPrefix (ns);
+				string existingPrefix = namespaceManager.LookupPrefix (ns, false);
 
 				if (existingPrefix == null || existingPrefix == "") {
 					bool createPrefix = false;
@@ -850,15 +852,6 @@ openElements [openElementCount - 1]).IndentingOverriden;
 				savedAttributePrefix = (prefix == "xmlns") ? localName : String.Empty;
 				savingAttributeValue = String.Empty;
 			}
-		}
-
-		string GetExistingPrefix (string ns)
-		{
-			if (newAttributeNamespaces.ContainsValue (ns))
-				foreach (DictionaryEntry de in newAttributeNamespaces)
-					if (de.Value as string == ns)
-						return (string) de.Key;
-			return namespaceManager.LookupPrefix (ns, false);
 		}
 
 		private string CheckNewPrefix (bool createPrefix, string prefix, string ns)
@@ -922,14 +915,6 @@ openElements [openElementCount - 1]).IndentingOverriden;
 				throw ArgumentError ("Cannot set the namespace if Namespaces is 'false'.");
 			if ((prefix != null && prefix.Length > 0) && ((ns == null)))
 				throw ArgumentError ("Cannot use a prefix with an empty namespace.");
-
-			// Considering the fact that WriteStartAttribute()
-			// automatically changes argument namespaceURI, this
-			// is kind of silly implementation. See bug #77094.
-			if (Namespaces &&
-			    ns != XmlNamespaceManager.XmlnsXml &&
-			    String.Compare (prefix, "xml", true) == 0)
-				throw new ArgumentException ("A prefix cannot be equivalent to \"xml\" in case-insensitive match.");
 
 			// ignore non-namespaced node's prefix.
 			if (ns == null || ns == String.Empty)

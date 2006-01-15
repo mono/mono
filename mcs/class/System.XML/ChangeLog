@@ -1,12 +1,3 @@
-2006-01-10  Atsushi Enomoto  <atsushi@ximian.com>
-
-	* System.Xml_test.dll.sources : added XmlSchemaTypeTests.cs.
-
-2006-01-10  Atsushi Enomoto  <atsushi@ximian.com>
-
-	* System.Xml_test.dll.sources : XmlSchemaDatatypeTests.cs was missing.
-	  collected sys.xml.schema lines.
-
 2005-12-28  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* System.Xml_test.dll.sources: Added XmlSchemaExporterTests.cs.
