@@ -1,3 +1,7 @@
+2006-01-15 Konstantin Triger <kostat@mainsoft.com>
+
+	* BaseValidator.cs: fixing visibility bahavior
+
 2006-01-13 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* RangeValidator.cs: allow empty data from the control. Patch from Marek
