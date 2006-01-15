@@ -1,3 +1,7 @@
+2006-01-15  Jordi Mas <jordimash@gmail.com>
+
+	* Adds GraphicsUnits.cs
+
 2005-09-06  Jordi Mas <jordi@ximian.com>
 
 	* clipping: Sample to test clipping
