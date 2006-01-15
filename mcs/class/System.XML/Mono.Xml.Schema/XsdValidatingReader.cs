@@ -1603,7 +1603,8 @@ namespace Mono.Xml.Schema
 					switch (ct.ContentType) {
 					case XmlSchemaContentType.ElementOnly:
 					case XmlSchemaContentType.Empty:
-						HandleError ("Not allowed character content was found.");
+						if (reader.NodeType != XmlNodeType.Whitespace)
+							HandleError ("Not allowed character content was found.");
 						break;
 					}
 				}

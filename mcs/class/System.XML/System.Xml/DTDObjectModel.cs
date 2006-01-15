@@ -833,6 +833,8 @@ namespace Mono.Xml
 			SetLineInfo (a);
 			a.Name = Name;
 			a.DefaultValue = resolvedNormalizedDefaultValue;
+			if (OccurenceType != DTDAttributeOccurenceType.Required)
+				a.Use = XmlSchemaUse.Optional;
 
 			XmlQualifiedName qname = XmlQualifiedName.Empty;
 			ArrayList enumeration = null;

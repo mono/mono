@@ -1,3 +1,35 @@
+2006-01-13  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlTextWriter.cs : Fixed bug #77082.
+	  When the state was Start, after WriteProcessingInstruction() and
+	  WriteWhitespace() change it to Prolog.
+	  After WriteDocType() set state to WriteState.Element.
+
+2006-01-12  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlTextWriter.cs : Do not local duplicate of automatically-created
+	  prefixes (i.e. check local autocreated prefixes other than
+	  namespaces from ancestors). Fixed bug #77086 and #77087.
+
+2006-01-12  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlWriter.cs : use XmlChar.IsNmToken() to check argument and throw
+	  ArgumentException in WriteNmTokenInternal().
+
+2006-01-12  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlTextWriter.cs : Fixed bug #77094. Only XmlTextWriter checks
+	  such invalid "xml" prefix which is being mapped to different
+	  namespace URI than the predefined one.
+	  Removed comment that does not make sense.
+	* XmlNamespaceManager.cs : IsValidDeclaration() could be private.
+	  Added some comments.
+
+2006-01-11  Atsushi Enomoto <atsushi@ximian.com>
+
+	* DTDObjectModel.cs : dtd2xsd fix; set use="optional" when an
+	  attribute is #IMPLIED.
+
 2006-01-06  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlWriter.cs : In WriteNode(XPathNavigator, bool), Avoid

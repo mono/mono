@@ -963,7 +963,6 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 		}
 
 		[Test]
-		[Category ("NotWorking")] // bug #77082: mono does not output newline after xml declaration
 		public void Output_Indent_Xml_DocType ()
 		{
 			XsltArgumentList xsltArgs = new XsltArgumentList ();
@@ -1848,6 +1847,32 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 				"<html>{0}" +
 				"  <body>44.442,70</body>{0}" +
 				"</html>", Environment.NewLine), sw.ToString ());
+		}
+
+		[Test]
+		[Category ("NotDotNet")]
+		// MS bug: the output must be well-formed XML general entity
+		// (doctype must not appear after text nodes).
+		public void DocTypeAfterText ()
+		{
+			string xsl = @"
+<xsl:stylesheet version='1.0' xmlns:xsl='http://www.w3.org/1999/XSL/Transform'>
+    <xsl:output doctype-system='system'/>
+    <xsl:template match='/'>
+        <xsl:text xml:space='preserve'> a </xsl:text>
+        <foo/>
+    </xsl:template>
+</xsl:stylesheet>";
+			XslTransform t = new XslTransform ();
+			t.Load (new XmlTextReader (xsl, XmlNodeType.Document, null));
+			XmlDocument doc = new XmlDocument ();
+			try {
+				t.Transform (new XPathDocument (
+					     new StringReader ("<root/>")),
+					     null, TextWriter.Null);
+				Assert.Fail ("should fail; doctype is not allowed after whitespace. See XSLT 1.0 section 16.1.");
+			} catch {
+			}
 		}
 	}
 }

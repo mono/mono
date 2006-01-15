@@ -56,15 +56,38 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-		[Ignore ("This behavior might be changed, since Add(XmlSchema) does not throw any exceptions, while this does.")]
+		public void AddSchemaThenReader ()
+		{
+			XmlSchemaSet ss = new XmlSchemaSet ();
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml ("<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema' />");
+			XmlSchema xs = new XmlSchema ();
+			xs.TargetNamespace = "ab";
+			ss.Add (xs);
+			ss.Add ("ab", new XmlNodeReader (doc));
+		}
+
+		[Test]
+		[Category ("NotWorking")] // How can we differentiate this
+		// case and the testcase above?
 		[ExpectedException (typeof (ArgumentException))]
-		public void AddTwice ()
+		public void AddReaderTwice ()
 		{
 			XmlSchemaSet ss = new XmlSchemaSet ();
 			XmlDocument doc = new XmlDocument ();
 			doc.LoadXml ("<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema' />");
 			ss.Add ("ab", new XmlNodeReader (doc));
 			ss.Add ("ab", new XmlNodeReader (doc));
+		}
+
+		[Test]
+		public void AddSchemaTwice ()
+		{
+			XmlSchemaSet ss = new XmlSchemaSet ();
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml ("<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema' targetNamespace='urn:ab' />");
+			ss.Add (XmlSchema.Read (new XmlNodeReader (doc), null));
+			ss.Add (XmlSchema.Read (new XmlNodeReader (doc), null));
 		}
 
 		[Test]

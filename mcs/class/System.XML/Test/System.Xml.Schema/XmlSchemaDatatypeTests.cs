@@ -11,7 +11,15 @@ using System;
 using System.IO;
 using System.Xml;
 using System.Xml.Schema;
+#if NET_2_0
+using System.Collections.Generic;
+#endif
 using NUnit.Framework;
+
+using QName = System.Xml.XmlQualifiedName;
+using SimpleType = System.Xml.Schema.XmlSchemaSimpleType;
+using SimpleRest = System.Xml.Schema.XmlSchemaSimpleTypeRestriction;
+using AssertType = NUnit.Framework.Assert;
 
 namespace MonoTests.System.Xml
 {
@@ -39,6 +47,7 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
+		[Category ("NotWorking")] // ContentTypeParticle impl. difference.
 		public void TestAnyType ()
 		{
 			XmlSchema schema = GetSchema ("Test/XmlFiles/xsd/datatypesTest.xsd");
@@ -71,5 +80,80 @@ namespace MonoTests.System.Xml
 //			AssertDatatype (schema, 6, XmlTokenizedType.NMTOKEN, typeof (string []), "f o o", new string [] {"f",  "o",  "o"});
 		}
 
+#if NET_2_0
+		string [] allTypes = new string [] {
+			"string", "boolean", "float", "double", "decimal", 
+			"duration", "dateTime", "time", "date", "gYearMonth", 
+			"gYear", "gMonthDay", "gDay", "gMonth", "hexBinary", 
+			"base64Binary", "anyURI", "QName", "NOTATION", 
+			"normalizedString", "token", "language", "IDREFS",
+			"ENTITIES", "NMTOKEN", "NMTOKENS", "Name", "NCName",
+			"ID", "IDREF", "ENTITY", "integer",
+			"nonPositiveInteger", "negativeInteger", "long",
+			"int", "short", "byte", "nonNegativeInteger",
+			"unsignedLong", "unsignedInt", "unsignedShort",
+			"unsignedByte", "positiveInteger"
+			};
+
+		XmlSchemaSet allWrappers;
+
+		void SetupSimpleTypeWrappers ()
+		{
+			XmlSchema schema = new XmlSchema ();
+			List<QName> qnames = new List<QName> ();
+			foreach (string name in allTypes) {
+				SimpleType st = new SimpleType ();
+				st.Name = "x-" + name;
+				SimpleRest r = new SimpleRest ();
+				st.Content = r;
+				QName qname = new QName (name, XmlSchema.Namespace);
+				r.BaseTypeName = qname;
+				qnames.Add (qname);
+				schema.Items.Add (st);
+			}
+			XmlSchemaSet sset = new XmlSchemaSet ();
+			sset.Add (schema);
+			sset.Compile ();
+			allWrappers = sset;
+		}
+
+		XmlSchemaDatatype GetDatatype (string name)
+		{
+			return (allWrappers.GlobalTypes [new QName ("x-" + name,
+				String.Empty)] as SimpleType).Datatype;
+		}
+
+		string [] GetDerived (string target)
+		{
+			XmlSchemaDatatype strType = GetDatatype (target);
+			List<string> results = new List<string> ();
+			foreach (string name in allTypes) {
+				if (name == target)
+					continue;
+				XmlSchemaDatatype deriv = GetDatatype (name);
+				if (deriv.IsDerivedFrom (strType))
+					results.Add (name);
+				else Console.Error.WriteLine (deriv.GetType () + " is not derived from " + strType.GetType ());
+			}
+			return results.ToArray ();
+		}
+
+		[Test]
+		public void IsDerivedFrom ()
+		{
+			SetupSimpleTypeWrappers ();
+
+			// Funky, but XmlSchemaDatatype.IsDerivedFrom() is
+			// documented to always return false, but actually
+			// matches the same type - which could be guessed that
+			// this method is used only to detect user-defined
+			// simpleType derivation.
+			foreach (string b in allTypes)
+				foreach (string d in allTypes)
+					AssertType.AreEqual (b == d, GetDatatype (d).IsDerivedFrom (GetDatatype (b)), b);
+
+			AssertType.IsFalse (GetDatatype ("string").IsDerivedFrom (null), "null arg");
+		}
+#endif
 	}
 }

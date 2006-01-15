@@ -1,3 +1,25 @@
+2006-01-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XsdValidatingReaderTests.cs : test from bug #77241.
+
+2006-01-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlTextWriterTests.cs : added some tests for XMLdecl state check.
+
+2006-01-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlTextWriterTests.cs : Split AutoCreatePrefixes() and marked as
+	  Ignore rather than NotWorking. Also it is not for bug #77086 and
+	  #77077 (they were fixed). See bug #77088.
+
+2006-01-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlTextWriterTests.cs : re-enabled WriteNmToken_InvalidChars().
+
+2006-01-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlTextWriterTests.cs : re-enabled bug #77094 related tests.
+
 2006-01-06  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlWriterTests.cs : added tests for WriteNode(XPathNavigator, bool)

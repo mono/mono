@@ -79,10 +79,12 @@ namespace System.Xml.Schema
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public virtual bool IsDerivedFrom (XmlSchemaDatatype datatype)
 		{
-			throw new NotImplementedException ();
+			// It is documented to return always false, but
+			// actually returns true when the argument is for
+			// the same type (and it does not check null argument).
+			return this == datatype;
 		}
 #endif
 

@@ -181,11 +181,8 @@ namespace System.Xml.Schema
 			set { xmlResolver = value; }
 		}
 
-		[MonoTODO]
 		public Uri SourceUri {
 			get { return sourceUri; }
-			// FIXME: actually there seems no setter, but then
-			// it will never make sense.
 			set { sourceUri = value; }
 		}
 		#endregion
@@ -791,7 +788,7 @@ namespace System.Xml.Schema
 				object parsedValue = null;
 				try {
 					parsedValue = getter ();
-				} catch (Exception ex) { // FIXME: (wishlist) It is bad manner ;-(
+				} catch (Exception ex) { // It is inevitable and bad manner.
 					HandleError ("Attribute value is invalid against its data type " + dt.TokenizedType, ex);
 				}
 				XmlSchemaType type = info != null ? info.SchemaType : null;
@@ -937,8 +934,8 @@ namespace System.Xml.Schema
 			if (info != null) {
 				info.IsNil = xsiNilDepth >= 0;
 				info.SchemaElement = null;
-				info.SchemaType = st;
-				if (st == null)
+				info.SchemaType = Context.ActualType as XmlSchemaType;
+				if (info.SchemaType == null)
 					info.SchemaType = XmlSchemaType.GetBuiltInSimpleType (dt.TypeCode);
 				info.SchemaAttribute = null;
 				info.IsDefault = false; // FIXME: might be true
@@ -981,7 +978,7 @@ namespace System.Xml.Schema
 						if (itemDatatype != null) {
 							try {
 								retValues [vi] = itemDatatype.ParseValue (each, nameTable, nsResolver);
-							} catch (Exception ex) { // FIXME: (wishlist) better exception handling ;-(
+							} catch (Exception ex) { // It is inevitable and bad manner.
 								HandleError ("List type value contains one or more invalid values.", ex);
 								break;
 							}
@@ -1003,7 +1000,7 @@ namespace System.Xml.Schema
 							if (itemDatatype != null) {
 								try {
 									ret = itemDatatype.ParseValue (each, nameTable, nsResolver);
-								} catch (Exception) { // FIXME: (wishlist) better exception handling ;-(
+								} catch (Exception) { // It is inevitable and bad manner.
 									continue;
 								}
 							}
@@ -1048,7 +1045,7 @@ namespace System.Xml.Schema
 			if (validatedDatatype != null) {
 				try {
 					ret = validatedDatatype.ParseValue (value, nameTable, nsResolver);
-				} catch (Exception ex) {	// FIXME: (wishlist) It is bad manner ;-(
+				} catch (Exception ex) { // It is inevitable and bad manner.
 					HandleError (String.Format ("Invalidly typed data was specified."), ex);
 				}
 			}
@@ -1232,7 +1229,7 @@ namespace System.Xml.Schema
 					if (dt != null) {
 						try {
 							identity = dt.ParseValue (value, nameTable, nsResolver);
-						} catch (Exception ex) { // FIXME: (wishlist) This is bad manner ;-(
+						} catch (Exception ex) { // It is inevitable and bad manner.
 							HandleError ("Identity value is invalid against its data type " + dt.TokenizedType, ex);
 						}
 					}
@@ -1394,7 +1391,7 @@ namespace System.Xml.Schema
 			for (int i = 0; i < tmp.Length; i += 2) {
 				try {
 					schema = ReadExternalSchema (tmp [i + 1]);
-				} catch (Exception ex) { // FIXME: (wishlist) It is bad manner ;-(
+				} catch (Exception ex) { // It is inevitable and bad manner.
 					HandleError ("Could not resolve schema location URI: " + schemaLocation, ex, true);
 					continue;
 				}
@@ -1423,7 +1420,7 @@ namespace System.Xml.Schema
 
 			try {
 				schema = ReadExternalSchema (noNsSchemaLocation);
-			} catch (Exception ex) { // FIXME: (wishlist) It is bad manner ;-(
+			} catch (Exception ex) { // It is inevitable and bad manner.
 				HandleError ("Could not resolve schema location URI: " + noNsSchemaLocation, ex, true);
 			}
 			if (schema != null && schema.TargetNamespace != null)

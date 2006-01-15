@@ -743,9 +743,13 @@ namespace System.Xml.Schema
 				ident.Validate (h, schema);
 
 #if NET_2_0
-			elementSchemaType = elementType as XmlSchemaType;
-			if (elementSchemaType == null && elementType != null)
-				elementSchemaType = XmlSchemaType.GetBuiltInType (((XmlSchemaDatatype) elementType).TypeCode);
+			if (elementType != null) {
+				elementSchemaType = elementType as XmlSchemaType;
+				if (elementType == XmlSchemaSimpleType.AnySimpleType)
+					elementSchemaType = XmlSchemaSimpleType.XsAnySimpleType;
+				if (elementSchemaType == null)
+					elementSchemaType = XmlSchemaType.GetBuiltInSimpleType (SchemaTypeName);
+			}
 #endif
 
 			ValidationId = schema.ValidationId;

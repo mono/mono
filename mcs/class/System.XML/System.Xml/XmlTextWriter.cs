@@ -518,7 +518,11 @@ openElements [openElementCount - 1]).IndentingOverriden;
 			if (name == null || name.Trim (XmlChar.WhitespaceChars).Length == 0)
 				throw ArgumentError ("Invalid DOCTYPE name", "name");
 
-			if (ws == WriteState.Prolog && formatting == Formatting.Indented)
+			CheckState ();
+			if (ws != WriteState.Start && ws != WriteState.Prolog)
+				throw new InvalidOperationException (String.Format ("Doctype is not allowed at '{0}' state.", ws));
+
+			if (documentStarted && formatting == Formatting.Indented)
 				w.WriteLine ();
 
 			w.Write ("<!DOCTYPE ");
@@ -546,6 +550,8 @@ openElements [openElementCount - 1]).IndentingOverriden;
 			}
 			
 			w.Write('>');
+
+			ws = WriteState.Element;
 		}
 
 		public override void WriteEndAttribute ()
@@ -701,7 +707,7 @@ openElements [openElementCount - 1]).IndentingOverriden;
 			if ((text.IndexOf("?>") > 0))
 				throw ArgumentError ("Processing instruction cannot contain \"?>\" as its value.");
 
-			CheckState ();
+			CheckOutputState ();
 			CloseStartElement ();
 
 			WriteIndent ();
@@ -710,6 +716,9 @@ openElements [openElementCount - 1]).IndentingOverriden;
 			w.Write (' ');
 			w.Write (text);
 			w.Write ("?>");
+
+			if (ws == WriteState.Start)
+				ws = WriteState.Prolog;
 		}
 
 		public override void WriteQualifiedName (string localName, string ns)
@@ -752,8 +761,6 @@ openElements [openElementCount - 1]).IndentingOverriden;
 		public override void WriteStartAttribute (string prefix, string localName, string ns)
 		{
 			if (prefix == "xml") {
-				// MS.NET looks to allow other names than 
-				// lang and space (e.g. xml:link, xml:hack).
 				ns = XmlNamespaceManager.XmlnsXml;
 				if (localName == "lang")
 					openXmlLang = true;
@@ -799,7 +806,7 @@ openElements [openElementCount - 1]).IndentingOverriden;
 			string formatPrefix = "";
 
 			if (ns != String.Empty && prefix != "xmlns") {
-				string existingPrefix = namespaceManager.LookupPrefix (ns, false);
+				string existingPrefix = GetExistingPrefix (ns);
 
 				if (existingPrefix == null || existingPrefix == "") {
 					bool createPrefix = false;
@@ -852,6 +859,15 @@ openElements [openElementCount - 1]).IndentingOverriden;
 				savedAttributePrefix = (prefix == "xmlns") ? localName : String.Empty;
 				savingAttributeValue = String.Empty;
 			}
+		}
+
+		string GetExistingPrefix (string ns)
+		{
+			if (newAttributeNamespaces.ContainsValue (ns))
+				foreach (DictionaryEntry de in newAttributeNamespaces)
+					if (de.Value as string == ns)
+						return (string) de.Key;
+			return namespaceManager.LookupPrefix (ns, false);
 		}
 
 		private string CheckNewPrefix (bool createPrefix, string prefix, string ns)
@@ -915,6 +931,14 @@ openElements [openElementCount - 1]).IndentingOverriden;
 				throw ArgumentError ("Cannot set the namespace if Namespaces is 'false'.");
 			if ((prefix != null && prefix.Length > 0) && ((ns == null)))
 				throw ArgumentError ("Cannot use a prefix with an empty namespace.");
+
+			// Considering the fact that WriteStartAttribute()
+			// automatically changes argument namespaceURI, this
+			// is kind of silly implementation. See bug #77094.
+			if (Namespaces &&
+			    ns != XmlNamespaceManager.XmlnsXml &&
+			    String.Compare (prefix, "xml", true) == 0)
+				throw new ArgumentException ("A prefix cannot be equivalent to \"xml\" in case-insensitive match.");
 
 			// ignore non-namespaced node's prefix.
 			if (ns == null || ns == String.Empty)
@@ -1135,13 +1159,13 @@ openElements [openElementCount - 1]).IndentingOverriden;
 			w.Write (';');
 		}
 
-		public override void WriteWhitespace (string ws)
+		public override void WriteWhitespace (string value)
 		{
-			if (ws == null || ws.Length == 0) {
+			if (value == null || value.Length == 0) {
 				throw ArgumentError ("Only white space characters should be used.");
 			}
 
-			if (!XmlChar.IsWhitespace (ws))
+			if (!XmlChar.IsWhitespace (value))
 				throw ArgumentError ("Invalid Whitespace");
 
 			CheckState ();
@@ -1151,7 +1175,10 @@ openElements [openElementCount - 1]).IndentingOverriden;
 				CloseStartElement ();
 			}
 
-			w.Write (ws);
+			w.Write (value);
+
+			if (ws == WriteState.Start)
+				ws = WriteState.Prolog;
 		}
 
 		private Exception ArgumentError (string message)

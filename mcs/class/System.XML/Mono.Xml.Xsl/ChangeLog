@@ -1,3 +1,10 @@
+2006-01-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* GenericOutputter.cs : When writing string, use WriteWhitespace()
+	  instead of WhiteString() when its state is not Content. This fixes
+	  BVTs_bvt066 case (broken after implementing strict state check in
+	  XmlTextWriter).
+
 2005-12-24  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* XslOutput.cs: Do not report error for unknown value for "standalone"

@@ -333,6 +333,14 @@ namespace Mono.Xml.Xsl
 			CheckState ();
 			if (_insideCData)
 				Emitter.WriteCDataSection (text);
+			// This weird check is required to reject Doctype
+			// after non-whitespace nodes but also to allow 
+			// Doctype after whitespace nodes. It especially
+			// happens when there is an xsl:text before the
+			// document element (e.g. BVTs_bvt066 testcase).
+			else if (_state != WriteState.Content &&
+				 text.Length > 0 && XmlChar.IsWhitespace (text))
+				Emitter.WriteWhitespace (text);
 			else
 				Emitter.WriteString (text);
 		}
