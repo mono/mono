@@ -60,7 +60,7 @@ update_live_range (MonoCompile *cfg, int idx, int block_dfn, int tree_pos)
 static void
 update_gen_kill_set (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *inst, int inst_num)
 {
-	int arity = mono_burg_arity [inst->opcode];
+	int arity;
 	int max_vars = cfg->num_varinfo;
 
 	if (cfg->new_ir) {
@@ -153,6 +153,7 @@ update_gen_kill_set (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *inst, int i
 		return;
 	}
 
+	arity = mono_burg_arity [inst->opcode];
 	if (arity)
 		update_gen_kill_set (cfg, bb, inst->inst_i0, inst_num);
 

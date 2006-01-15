@@ -35,22 +35,34 @@ void
 mono_regstate_assign (MonoRegState *rs) {
 	int i;
 	rs->max_ireg = -1;
-	g_free (rs->iassign);
-	rs->iassign = g_malloc (MAX (MONO_MAX_IREGS, rs->next_vireg) * sizeof (int));
+
+	if (rs->next_vireg != rs->iassign_size) {
+		g_free (rs->iassign);
+		rs->iassign = g_malloc (MAX (MONO_MAX_IREGS, rs->next_vireg) * sizeof (int));
+		rs->iassign_size = rs->next_vireg;
+	}
+
 	for (i = 0; i < MONO_MAX_IREGS; ++i) {
 		rs->iassign [i] = i;
 		rs->isymbolic [i] = 0;
 	}
-	memset (rs->iassign, -1, sizeof (rs->iassign [0]) * rs->next_vireg);
 
-	g_free (rs->fassign);
-	rs->fassign = g_malloc (MAX (MONO_MAX_FREGS, rs->next_vfreg) * sizeof (int));
+	/* iassign can be very large so it needs to be initialized by the caller */
+	memset (rs->iassign, -1, MONO_MAX_IREGS);
+
+	if (rs->next_vfreg != rs->fassign_size) {
+		g_free (rs->fassign);
+		rs->fassign = g_malloc (MAX (MONO_MAX_FREGS, rs->next_vfreg) * sizeof (int));
+		rs->fassign_size = rs->next_vfreg;
+	}
+
 	for (i = 0; i < MONO_MAX_FREGS; ++i) {
 		rs->fassign [i] = i;
 		rs->fsymbolic [i] = 0;
 	}
-	for (; i < rs->next_vfreg; ++i)
-		rs->fassign [i] = -1;
+
+	if (rs->next_vfreg)
+		memset (rs->fassign, -1, sizeof (rs->fassign [0]) * rs->next_vfreg);
 }
 
 int

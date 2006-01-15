@@ -9183,6 +9183,7 @@ mono_spill_global_vars (MonoCompile *cfg)
  * - fix #define MONO_ARCH_NO_EMULATE_LONG_SHIFT_OPS for x86
  * - same goes for lcall and other non-decomposable long opcodes
  * - make byref a 'normal' type.
+ * - use 8 bytes per chunk in monobitset on 64 bit platforms
  * - LAST MERGE: 55174
  */
 

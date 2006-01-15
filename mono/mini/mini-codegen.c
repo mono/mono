@@ -692,7 +692,7 @@ enum {
 	MONO_FP_NEEDS_LOAD			= regmask (2)
 };
 
-static int
+static inline int
 alloc_int_reg (MonoCompile *cfg, InstList *tmp, MonoInst *ins, regmask_t dest_mask, int sym_reg, RegTrack *info)
 {
 	int val;
@@ -712,7 +712,7 @@ alloc_int_reg (MonoCompile *cfg, InstList *tmp, MonoInst *ins, regmask_t dest_ma
 	return val;
 }
 
-static int
+static inline int
 alloc_float_reg (MonoCompile *cfg, InstList *tmp, MonoInst *ins, regmask_t dest_mask, int sym_reg)
 {
 	int val;
@@ -726,7 +726,7 @@ alloc_float_reg (MonoCompile *cfg, InstList *tmp, MonoInst *ins, regmask_t dest_
 	return val;
 }
 
-static int
+static inline int
 alloc_reg (MonoCompile *cfg, InstList *tmp, MonoInst *ins, regmask_t dest_mask, int sym_reg, RegTrack *info, gboolean fp)
 {
 	if (fp)
@@ -791,15 +791,33 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 	rs->next_vireg = bb->max_ireg;
 	rs->next_vfreg = bb->max_freg;
 	mono_regstate_assign (rs);
-	reginfo = g_malloc0 (sizeof (RegTrack) * rs->next_vireg);
-	reginfof = g_malloc0 (sizeof (RegTrack) * rs->next_vfreg);
 	rs->ifree_mask = MONO_ARCH_CALLEE_REGS;
 	rs->ffree_mask = MONO_ARCH_CALLEE_FREGS;
 
 	if (use_fpstack)
 		rs->ffree_mask = 0xff & ~(regmask (MONO_ARCH_FPSTACK_SIZE));
 
-	ins = bb->code;
+	/* 
+	 * For large methods, next_vireg can be very large, so g_malloc0 time can
+	 * be prohibitive. In those cases, manually init the reginfo entries used
+	 * by the bblock.
+	 */
+	if (rs->next_vireg > 256) {
+		int max = rs->next_vireg;
+
+		reginfo = g_malloc (sizeof (RegTrack) * max);
+		for (ins = bb->code; ins; ins = ins->next) {
+			if ((ins->dreg != -1) && (ins->dreg < max))
+				memset (&reginfo [ins->dreg], 0, sizeof (RegTrack));
+			if ((ins->sreg1 != -1) && (ins->sreg1 < max))
+				memset (&reginfo [ins->sreg1], 0, sizeof (RegTrack));
+			if ((ins->sreg2 != -1) && (ins->sreg2 < max))
+				memset (&reginfo [ins->sreg2], 0, sizeof (RegTrack));
+		}
+	}
+	else
+		reginfo = g_malloc0 (sizeof (RegTrack) * rs->next_vireg);
+	reginfof = g_malloc0 (sizeof (RegTrack) * rs->next_vfreg);
 
 	/*if (cfg->opt & MONO_OPT_COPYPROP)
 		local_copy_prop (cfg, ins);*/
@@ -807,7 +825,9 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 	i = 1;
 	fpcount = 0;
 	DEBUG (g_print ("\nLOCAL regalloc: basic block %d:\n", bb->block_num));
+
 	/* forward pass on the instructions to collect register liveness info */
+	ins = bb->code;
 	while (ins) {
 		spec = ins_spec [ins->opcode];
 
@@ -866,6 +886,8 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 			if (cfg->new_ir && is_soft_reg (ins->sreg1, fp))
 				/* This means the vreg is not local to this bb */
 				g_assert (reginfo1 [ins->sreg1].born_in > 0);
+			if (!fp)
+				rs->iassign [ins->sreg1] = -1;
 			reginfo1 [ins->sreg1].prev_use = reginfo1 [ins->sreg1].last_use;
 			reginfo1 [ins->sreg1].last_use = i;
 			if (MONO_ARCH_INST_IS_REGPAIR (spec [MONO_INST_SRC2])) {
@@ -885,6 +907,8 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 			if (cfg->new_ir && is_soft_reg (ins->sreg2, fp))
 				/* This means the vreg is not local to this bb */
 				g_assert (reginfo2 [ins->sreg2].born_in > 0);
+			if (!fp)
+				rs->iassign [ins->sreg2] = -1;
 			reginfo2 [ins->sreg2].prev_use = reginfo2 [ins->sreg2].last_use;
 			reginfo2 [ins->sreg2].last_use = i;
 			if (MONO_ARCH_INST_IS_REGPAIR (spec [MONO_INST_SRC2])) {
@@ -900,13 +924,13 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 		if (spec [MONO_INST_DEST]) {
 			int dest_dreg;
 
-			if (dreg_is_fp (ins))
-				reginfod = reginfof;
-			else
-				reginfod = reginfo;
+			fp = dreg_is_fp (ins);
+			reginfod = fp ? reginfof : reginfo;
 			if (spec [MONO_INST_DEST] != 'b') /* it's not just a base register */
 				reginfod [ins->dreg].killed_in = i;
 			g_assert (ins->dreg != -1);
+			if (!fp)
+				rs->iassign [ins->dreg] = -1;
 			reginfod [ins->dreg].prev_use = reginfod [ins->dreg].last_use;
 			reginfod [ins->dreg].last_use = i;
 			if (reginfod [ins->dreg].born_in == 0 || reginfod [ins->dreg].born_in > i)
