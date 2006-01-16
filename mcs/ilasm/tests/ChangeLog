@@ -1,3 +1,8 @@
+2006-01-16  Ankit Jain  <jankit@novell.com>
+
+	* test-array-2.il: New. Test for methodref to Array's methods.
+	eg. class test [,]::.ctor (int32, int32)
+
 2006-01-15  Ankit Jain  <jankit@novell.com>
 
 	* test-override-1.il:
