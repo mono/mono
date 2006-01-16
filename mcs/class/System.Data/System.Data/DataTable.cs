@@ -1588,6 +1588,16 @@ namespace System.Data {
 			}
 		}
 
+		internal void DropReferencedIndexes (DataColumn column)
+		{
+			if (_indexes != null)
+				for (int i = _indexes.Count - 1; i >= 0; i--) { 
+					Index indx = (Index)_indexes [i];
+					if (indx.Key.DependsOn (column))
+						_indexes.Remove (indx);
+				}
+		}
+
 		internal void AddRowToIndexes (DataRow row) {
 			if (_indexes != null) {
 				foreach (Index indx in _indexes) {
@@ -1768,8 +1778,8 @@ namespace System.Data {
 		/// <summary>
 		/// Notifies the DataTable that a DataColumn is being removed.
 		/// </summary>
-		[MonoTODO]
 		protected internal virtual void OnRemoveColumn (DataColumn column) {
+			DropReferencedIndexes (column);
 		}
 
 
