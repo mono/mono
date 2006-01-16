@@ -1,3 +1,8 @@
+2006-01-16  Alp Toker  <alp@atoker.com>
+
+	* TimeSpan.cs: Simple implementation of NET 2.0 TryParse() using
+	try/catch
+
 2006-01-05  Raja R Harinath  <rharinath@novell.com>
 
 	Fix regressions introduced by the fix to #71300.

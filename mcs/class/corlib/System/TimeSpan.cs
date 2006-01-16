@@ -331,6 +331,19 @@ namespace System
 			return p.Execute ();
 		}
 
+#if NET_2_0
+		public static bool TryParse (string s, out TimeSpan result)
+		{
+			try {
+				result = Parse (s);
+				return true;
+			} catch {
+				result = TimeSpan.Zero;
+				return false;
+			}
+		}
+#endif
+
 		public TimeSpan Subtract (TimeSpan ts)
 		{
 			try {
