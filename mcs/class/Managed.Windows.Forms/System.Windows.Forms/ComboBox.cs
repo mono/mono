@@ -1211,12 +1211,11 @@ namespace System.Windows.Forms
 		
 		private void UpdatedItems ()
 		{
-			if (dropdown_style != ComboBoxStyle.Simple)
-				return;				
-							
-			listbox_ctrl.UpdateLastVisibleItem ();
-			listbox_ctrl.CalcListBoxArea ();
-			listbox_ctrl.Refresh ();
+			if (listbox_ctrl != null) {
+				listbox_ctrl.UpdateLastVisibleItem ();
+				listbox_ctrl.CalcListBoxArea ();
+				listbox_ctrl.Refresh ();
+			}
 		}
 
 		#endregion Private Methods
@@ -1588,6 +1587,10 @@ namespace System.Windows.Forms
 										
 					vscrollbar_ctrl.Maximum = owner.Items.Count - (owner.DropDownStyle == ComboBoxStyle.Simple ? page_size : owner.maxdrop_items);
 					show_scrollbar = vscrollbar_ctrl.Visible = true;
+
+					int hli = GetHighLightedIndex ();
+					if (hli > 0)
+						vscrollbar_ctrl.Value = hli;
 				}
 				
 				Size = new Size (width, height);
@@ -1795,7 +1798,7 @@ namespace System.Windows.Forms
 					}
 				}
 			}
-			
+
 			private void OnKeyDownPUW (object sender, KeyEventArgs e) 			
 			{				
 				switch (e.KeyCode) {			
@@ -1822,27 +1825,29 @@ namespace System.Windows.Forms
 			
 			public void SetHighLightedItem (object item)
 			{
-				Rectangle invalidate;
+				Rectangle invalidate = Rectangle.Empty;
+				int hli;
 				
 				if (GetHighLightedItem () == item)
 					return;
 				
 				/* Previous item */
-    				if (GetHighLightedIndex () != -1) {    					
-					invalidate = GetItemDisplayRectangle (GetHighLightedIndex (), top_item);
-	    				if (ClientRectangle.IntersectsWith (invalidate))
-	    					Invalidate (invalidate);
+				hli = GetHighLightedIndex ();
+    				if (hli != -1) {    					
+					invalidate = GetItemDisplayRectangle (hli, top_item);
 	    			}
 				
     				highlighted_item = item;
     				
     				if (highlighted_item != null) {
 	    				 /* Current item */
-	    				invalidate = GetItemDisplayRectangle (GetHighLightedIndex (), top_item);
-	    				if (ClientRectangle.IntersectsWith (invalidate))
-	    					Invalidate (invalidate);
+	    				invalidate = Rectangle.Union (invalidate,
+							GetItemDisplayRectangle (GetHighLightedIndex (), top_item));
+	    				
 	    			}
-    				
+
+				if (ClientRectangle.IntersectsWith (invalidate))
+					Invalidate (invalidate);
 			}			
 
 			public void SetTopItem (int item)
@@ -1962,7 +1967,7 @@ namespace System.Windows.Forms
 					
 				SetHighLightedItem (owner.SelectedItem);
 				int index = GetHighLightedIndex ();
-				SetTopItem (index == -1 ? 0 : index );
+				top_item = (index == -1 ? 0 : index );
 				
 				CalcListBoxArea ();				
 				Show ();
@@ -1988,6 +1993,9 @@ namespace System.Windows.Forms
 			// Value Changed
 			private void VerticalScrollEvent (object sender, EventArgs e)
 			{				
+				if (top_item == vscrollbar_ctrl.Value)
+					return;
+
 				top_item =  vscrollbar_ctrl.Value;
 				UpdateLastVisibleItem ();
 				Refresh ();
