@@ -1481,7 +1481,7 @@ namespace Commons.Xml.Relaxng.Derivative
 				p : p.Group (this.Choice (RdpEmpty.Instance));
 		}
 
-		internal virtual RdpPattern EmptyTextDeriv (MemoizationStore memo)
+		internal override RdpPattern EmptyTextDeriv (MemoizationStore memo)
 		{
 			RdpPattern p = memo.EmptyTextDeriv (Child);
 			return p.PatternType == RelaxngPatternType.NotAllowed ?
@@ -1637,11 +1637,6 @@ namespace Commons.Xml.Relaxng.Derivative
 				return RdpEmpty.Instance;
 			else
 				return RdpNotAllowed.Instance;
-		}
-
-		internal virtual RdpPattern EmptyTextDeriv (MemoizationStore memo)
-		{
-			return RdpEmpty.Instance;
 		}
 
 		internal override void CheckConstraints (bool attribute, bool oneOrMore, bool oneOrMoreGroup, bool oneOrMoreInterleave, bool list, bool dataExcept)

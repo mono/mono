@@ -91,6 +91,22 @@ namespace Commons.Xml.Relaxng.Derivative
 				intl = DebugRdpPattern (b.LValue, visitedPattern) +
 					DebugRdpPattern (b.RValue, visitedPattern);
 
+			RdpData data = p as RdpData;
+			if (data != null)
+				intl = String.Format ("name={0},ns={1},type={2} {3}",
+					data.Datatype.LocalName,
+					data.Datatype.NamespaceURI,
+					data.Datatype.GetType (),
+					data is RdpDataExcept ? DebugRdpPattern (((RdpDataExcept) data).Except, visitedPattern) : String.Empty);
+
+			RdpValue value = p as RdpValue;
+			if (value != null)
+				intl = String.Format ("name={0},ns={1},value={2} type={3}",
+					value.Datatype.LocalName,
+					value.Datatype.NamespaceURI,
+					value.Value,
+					value.Datatype.GetType ());
+
 			RdpElement el = p as RdpElement;
 			if (el != null)
 				intl = DebugNameClass (el.NameClass) +

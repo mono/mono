@@ -1,3 +1,10 @@
+2006-01-16  Atsushi Enomoto <atsushi@ximian.com>
+
+	* RdpPatterns.cs : RdpOneOrMore.EmptyTextDeriv() should be "override".
+	  RdpList.EmptyTextDeriv() (which was also virtual incorrectly) was 
+	  removed since the code was in wrong assumption.
+	* Util.cs : debug string now contains data and dataExcept info.
+
 2006-01-15  Atsushi Enomoto <atsushi@ximian.com>
 
 	* RdpPatterns.cs : lazy evaluate Group branches. If left hand is

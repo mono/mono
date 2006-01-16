@@ -1,3 +1,9 @@
+2006-01-16  Atsushi Enomoto <atsushi@ximian.com>
+
+	* RelaxngValidatingReader.cs : just keep previous TextDeriv() result
+	  for each pattern; they are mostly not reused. It makes validator
+	  about 30% faster in certain validation and reduces memory use.
+
 2006-01-13  Atsushi Enomoto <atsushi@ximian.com>
 
 	* RelaxngValidatingReader.cs : actually using Hashtable of Hashtable

@@ -549,6 +549,7 @@ namespace Commons.Xml.Relaxng
 		Hashtable mixedText = new Hashtable ();
 		Hashtable emptyText = new Hashtable ();
 		Hashtable text = new Hashtable ();
+		Hashtable text_value = new Hashtable ();
 		Hashtable qnames = new Hashtable ();
 
 		enum DerivativeType {
@@ -669,17 +670,11 @@ int nStartAttDeriv = 0;
 			if (p.IsContextDependent)
 				return p.TextDeriv (value, context);
 
-			Hashtable h = text [p] as Hashtable;
-			if (h == null) {
-				h = new Hashtable ();
-				text [p] = h;
-			}
-
-			RdpPattern m = h [value] as RdpPattern;
-			if (m != null)
-				return m;
-			m = p.TextDeriv (value, context, this);
-			h [value] = m;
+			if (text_value [p] == value)
+				return text [p] as RdpPattern;
+			RdpPattern m = p.TextDeriv (value, context, this);
+			text_value [p] = value;
+			text [p] = m;
 			return m;
 		}
 
