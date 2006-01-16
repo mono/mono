@@ -139,7 +139,7 @@ namespace System.Configuration.Internal
 
 		public virtual bool IsInitDelayed (IInternalConfigRecord configRecord)
 		{
-			throw new NotImplementedException ();
+			return host.IsInitDelayed (configRecord);
 		}
 		
 		public virtual bool IsFile (string streamName)
@@ -149,7 +149,7 @@ namespace System.Configuration.Internal
 		
 		public bool IsFullTrustSectionWithoutAptcaAllowed (IInternalConfigRecord configRecord)
 		{
-			throw new NotImplementedException ();
+			return host.IsFullTrustSectionWithoutAptcaAllowed (configRecord);
 		}
 
 		public virtual bool IsLocationApplicable (string configPath)
@@ -158,19 +158,17 @@ namespace System.Configuration.Internal
 		}
 
 		public bool IsRemote {
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return host.IsRemote; }
 		}
 
 		public bool IsSecondaryRoot (string configPath)
 		{
-			throw new NotImplementedException ();
+			return host.IsSecondaryRoot (configPath);
 		}
 
 		public bool IsTrustedConfigPath (string configPath)
 		{
-			throw new NotImplementedException ();
+			return host.IsTrustedConfigPath (configPath);
 		}
 		
 		public virtual Stream OpenStreamForRead (string streamName)
@@ -180,7 +178,7 @@ namespace System.Configuration.Internal
 
 		public Stream OpenStreamForRead (string streamName, bool assertPermissions)
 		{
-			throw new NotImplementedException ();
+			return host.OpenStreamForRead (streamName, assertPermissions);
 		}
 		
 		public virtual Stream OpenStreamForWrite (string streamName, string templateStreamName, ref object writeContext)
@@ -190,7 +188,7 @@ namespace System.Configuration.Internal
 		
 		public Stream OpenStreamForWrite (string streamName, string templateStreamName, ref object writeContext, bool assertPermissions)
 		{
-			throw new NotImplementedException ();
+			return host.OpenStreamForWrite (streamName, templateStreamName, ref writeContext, assertPermissions);
 		}
 
 		public virtual bool PrefetchAll (string configPath, string streamName)
@@ -205,7 +203,7 @@ namespace System.Configuration.Internal
 
 		public virtual void RequireCompleteInit (IInternalConfigRecord configRecord)
 		{
-			throw new NotImplementedException ();
+			host.RequireCompleteInit (configRecord);
 		}
 		
 		public virtual object StartMonitoringStreamForChanges (string streamName, StreamChangeCallback callback)
@@ -230,7 +228,7 @@ namespace System.Configuration.Internal
 		
 		public void WriteCompleted (string streamName, bool success, object writeContext, bool assertPermissions)
 		{
-			throw new NotImplementedException ();
+			host.WriteCompleted (streamName, success, writeContext, assertPermissions);
 		}
 		
 		public virtual bool SupportsChangeNotifications {
