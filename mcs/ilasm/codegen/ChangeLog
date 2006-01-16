@@ -1,3 +1,14 @@
+2006-01-16  Ankit Jain  <jankit@novell.com>
+
+	* BaseTypeRef.cs (BaseTypeRef.Resolve): Make this abstract.
+	(BaseTypeRef.CreateMethodRef):
+	(BaseTypeRef.CreateFieldRef): Make protected and abstract.
+	* BaseClassRef.cs (BaseClassRef.Clone): Make this abstract.
+	Update all derived classes.
+	* PrimitiveTypeRef.cs (PrimitiveTypeRef.CreateMethodRef):
+	* GenericTypeInst.cs (GenericTypeInst.CreateMethodRef): Implement, but throw
+	exception as this method is not used.
+
 2006-01-14  Ankit Jain  <jankit@novell.com>
 
 	* GenericParamRef.cs (GenericParamRef.Resolve): Apply modifications to the

@@ -51,16 +51,10 @@ namespace Mono.ILASM {
                         get { return is_resolved; }
                 }
 
-                public virtual void Resolve (CodeGen code_gen)
-                {
-                        throw new Exception ("Should not be called");
-                }
+                public abstract void Resolve (CodeGen code_gen);
 
-                public virtual BaseMethodRef CreateMethodRef (BaseTypeRef ret_type,
-                        PEAPI.CallConv call_conv, string name, BaseTypeRef[] param, int gen_param_count)
-                {
-                        throw new Exception ("Should not be called");
-                }
+                protected abstract BaseMethodRef CreateMethodRef (BaseTypeRef ret_type,
+                        PEAPI.CallConv call_conv, string name, BaseTypeRef[] param, int gen_param_count);
 
                 public virtual BaseMethodRef GetMethodRef (BaseTypeRef ret_type,
                         PEAPI.CallConv call_conv, string name, BaseTypeRef[] param, int gen_param_count)
@@ -82,10 +76,7 @@ namespace Mono.ILASM {
                         return mr;
                 }
 
-                public virtual IFieldRef CreateFieldRef (BaseTypeRef ret_type, string name)
-                {
-                        throw new Exception ("Should not be called");
-                }
+                protected abstract IFieldRef CreateFieldRef (BaseTypeRef ret_type, string name);
 
                 public virtual IFieldRef GetFieldRef (BaseTypeRef ret_type, string name)
                 {

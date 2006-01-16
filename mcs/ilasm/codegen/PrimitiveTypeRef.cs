@@ -60,6 +60,12 @@ namespace Mono.ILASM {
                         }
                 }
 
+                protected override BaseMethodRef CreateMethodRef (BaseTypeRef ret_type,
+                        PEAPI.CallConv call_conv, string name, BaseTypeRef[] param, int gen_param_count)
+                {
+                        throw new Exception ("Should not be called");
+                }
+
                 public override BaseMethodRef GetMethodRef (BaseTypeRef ret_type, PEAPI.CallConv call_conv,
                                 string name, BaseTypeRef[] param, int gen_param_count)
                 {
@@ -75,7 +81,7 @@ namespace Mono.ILASM {
                         return mr;
                 }
 
-                public override IFieldRef CreateFieldRef (BaseTypeRef ret_type, string name)
+                protected override IFieldRef CreateFieldRef (BaseTypeRef ret_type, string name)
                 {
 			throw new Exception ("PrimitiveType's can't have fields!");
                 }

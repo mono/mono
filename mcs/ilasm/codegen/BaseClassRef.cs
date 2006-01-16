@@ -33,10 +33,8 @@ namespace Mono.ILASM {
                         get { return type as PEAPI.Class; }
                 }
 
-                public virtual BaseClassRef Clone ()
-                {
-                        throw new Exception ("Should not be called");
-                }
+                public abstract BaseClassRef Clone ();
+
                 public virtual void MakeValueClass ()
                 {
                         is_valuetype = true;

@@ -76,13 +76,13 @@ namespace Mono.ILASM {
                         is_resolved = true;
                 }
 
-                public override BaseMethodRef CreateMethodRef (BaseTypeRef ret_type, PEAPI.CallConv call_conv,
+                protected override BaseMethodRef CreateMethodRef (BaseTypeRef ret_type, PEAPI.CallConv call_conv,
                                 string name, BaseTypeRef[] param, int gen_param_count)
                 {
                         return new ExternMethodRef (this, ret_type, call_conv, name, param, gen_param_count);
                 }
 
-                public override IFieldRef CreateFieldRef (BaseTypeRef ret_type, string name)
+                protected override IFieldRef CreateFieldRef (BaseTypeRef ret_type, string name)
                 {
                         return new ExternFieldRef (this, ret_type, name);
                 }
