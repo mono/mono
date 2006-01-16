@@ -1355,7 +1355,8 @@ namespace System.Data
 		private CodeMemberProperty CreateRowParentRowProperty (DataTable dt, DataRelation rel)
 		{
 			CodeMemberProperty p = new CodeMemberProperty ();
-			p.Name = opts.TableMemberName (rel.ParentTable.TableName, gen) + "Row";
+			p.Name = opts.TableMemberName (rel.ParentTable.TableName, gen) + "Row" +
+				(rel.ParentTable.TableName == rel.ChildTable.TableName ? "Parent" : String.Empty);
 			p.Attributes = MemberAttributes.Public;
 			p.Type = TypeRef (opts.RowName (rel.ParentTable.TableName, gen));
 			p.GetStatements.Add (Return (Cast (p.Type, MethodInvoke (

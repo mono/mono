@@ -1,3 +1,7 @@
+2006-01-16  Atsushi Enomoto <atsushi@ximian.com>
+
+	* bug77248.xsd : added.
+
 2005-01-12  Atsushi Enomoto <atsushi@ximian.com>
 
 	* test103.xsd : added.

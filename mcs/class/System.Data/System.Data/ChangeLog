@@ -1,3 +1,9 @@
+2006-01-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CustomDataClassGenerator.cs :
+	  When a DataRelation connects the same table as parent and child,
+	  generate parent row property as BlahRowParent. Fixed bug #77248.
+
 2006-01-10  Senganal T <tsenganal@novell.com>
 	* DataRowCollection.cs
 		- Added ListChangedEvent to notify reset of the collection.
