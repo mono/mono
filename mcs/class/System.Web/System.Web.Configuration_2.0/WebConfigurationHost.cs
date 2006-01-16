@@ -233,12 +233,14 @@ namespace System.Web.Configuration
 
 		string GetWebConfigFileName (string dir)
 		{
-			string file = Path.Combine (dir, "Web.config");
-			if (File.Exists (file))
-				return file;
-			file = Path.Combine (dir, "web.config");
-			if (File.Exists (file))
-				return file;
+			string[] filenames = new string[] {"Web.Config", "Web.config", "web.config" };
+
+			foreach (string fn in filenames) {
+				string file = Path.Combine (dir, fn);
+				if (File.Exists (file))
+					return file;
+			}
+
 			return null;
 		}
 		

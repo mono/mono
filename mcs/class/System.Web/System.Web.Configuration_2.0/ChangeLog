@@ -1,3 +1,19 @@
+2006-01-16  Chris Toshok  <toshok@ximian.com>
+
+	* WebConfigurationManager.cs: implement a IConfigurationSystem for
+	use with WebConfigurationManager.
+	(GetSection): try to load the section
+	using GetWebApplicationSection before calling into
+	ConfigurationManager.GetSection.
+	(GetWebApplicationConfiguration): move common code to here.
+	(GetWebApplicationSection): use GetWebApplicationConfiguration.
+	(AppSettings): implement.
+
+	* WebConfigurationHost.cs (GetWebConfigFileName): add
+	"Web.Config", and move to an array/loop implementation.  maybe we
+	should scan the directory and check ToLower() instead of
+	explicitly enumerating?
+
 2006-01-10  Chris Toshok  <toshok@ximian.com>
 
 	* SystemWebSectionGroup.cs (HostingEnvironment): enable this property.

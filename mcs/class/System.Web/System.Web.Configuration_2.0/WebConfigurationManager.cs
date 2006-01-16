@@ -178,9 +178,12 @@ namespace System.Web.Configuration {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("this shouldn't call ConfigurationManager.GetSection")]
 		public static object GetSection (string sectionName)
 		{
+			object section = GetWebApplicationSection (sectionName);
+			if (section != null)
+				return section;
+
 			return ConfigurationManager.GetSection (sectionName);
 		}
 
@@ -190,8 +193,7 @@ namespace System.Web.Configuration {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
-		public static object GetWebApplicationSection (string sectionName)
+		static _Configuration GetWebApplicationConfiguration ()
 		{
 			_Configuration config;
 
@@ -202,15 +204,40 @@ namespace System.Web.Configuration {
 			else
 				config = OpenWebConfiguration (HttpContext.Current.Request.PhysicalApplicationPath);
 
+			return config;
+		}
+
+		[MonoTODO]
+		public static object GetWebApplicationSection (string sectionName)
+		{
+			_Configuration config = GetWebApplicationConfiguration ();
+
 			ConfigurationSection section = config.GetSection (sectionName);
 
 			return section;
 		}
 
+		static _Configuration webConfiguration;
+		static NameValueCollection appSettings;
 		[MonoTODO]
 		public static NameValueCollection AppSettings {
 			get {
-				throw new NotImplementedException ();
+				if (appSettings == null) {
+
+					if (webConfiguration == null)
+						webConfiguration = OpenWebConfiguration ("~");
+
+					AppSettingsSection section = (AppSettingsSection)webConfiguration.GetSection ("appSettings");
+
+					appSettings = new NameValueCollection ();
+				
+					foreach (string key in section.Settings.AllKeys) {
+						KeyValueConfigurationElement ele = section.Settings[key];
+						appSettings.Add (ele.Key, ele.Value);
+					}
+				}
+
+				return appSettings;
 			}
 		}
 
@@ -241,7 +268,99 @@ namespace System.Web.Configuration {
 				path = path.Substring (0, path.Length - 1);
 			return path;
 		}
+
+
+#region stuff copied from WebConfigurationSettings
+#if TARGET_J2EE
+		static private IConfigurationSystem oldConfig {
+			get {
+				return (IConfigurationSystem)AppDomain.CurrentDomain.GetData("WebConfigurationManager.oldConfig");
+			}
+			set {
+				AppDomain.CurrentDomain.SetData("WebConfigurationManager.oldConfig", value);
+			}
+		}
+
+		static private Web20DefaultConfig config {
+			get {
+				return (Web20DefaultConfig)AppDomain.CurrentDomain.GetData("WebConfigurationManager.config");
+			}
+			set {
+				AppDomain.CurrentDomain.SetData("WebConfigurationManager.config", value);
+			}
+		}
+#else
+		static IConfigurationSystem oldConfig;
+		static Web20DefaultConfig config;
+#endif
+		const BindingFlags privStatic = BindingFlags.NonPublic | BindingFlags.Static;
+		static readonly object lockobj = new object ();
+
+		public static void Init ()
+		{
+			lock (lockobj) {
+				if (config != null)
+					return;
+
+				Web20DefaultConfig settings = Web20DefaultConfig.GetInstance ();
+				Type t = typeof (ConfigurationSettings);
+				MethodInfo changeConfig = t.GetMethod ("ChangeConfigurationSystem",
+								      privStatic);
+
+				if (changeConfig == null)
+					throw new ConfigurationException ("Cannot find method CCS");
+
+				object [] args = new object [] {settings};
+				oldConfig = (IConfigurationSystem) changeConfig.Invoke (null, args);
+				config = settings;
+
+				config.Init ();
+			}
+		}
 	}
+
+	class Web20DefaultConfig : IConfigurationSystem
+	{
+#if TARGET_J2EE
+		static private Web20DefaultConfig instance {
+			get {
+				Web20DefaultConfig val = (Web20DefaultConfig)AppDomain.CurrentDomain.GetData("Web20DefaultConfig.instance");
+				if (val == null) {
+					val = new Web20DefaultConfig();
+					AppDomain.CurrentDomain.SetData("Web20DefaultConfig.instance", val);
+				}
+				return val;
+			}
+			set {
+				AppDomain.CurrentDomain.SetData("Web20DefaultConfig.instance", value);
+			}
+		}
+#else
+		static Web20DefaultConfig instance;
+#endif
+
+		static Web20DefaultConfig ()
+		{
+			instance = new Web20DefaultConfig ();
+		}
+
+		public static Web20DefaultConfig GetInstance ()
+		{
+			return instance;
+		}
+
+		public object GetConfig (string sectionName)
+		{
+			return WebConfigurationManager.GetSection (sectionName);
+		}
+
+		public void Init ()
+		{
+			// nothing. We need a context.
+		}
+	}
+
+#endregion
 }
 
 #endif
