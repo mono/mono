@@ -9,7 +9,7 @@
 //
 
 //
-// Copyright (C) 2004, 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -161,37 +161,44 @@ namespace System.Resources
 			return(GetObject(name, null));
 		}
 
-		public virtual object GetObject (string name, CultureInfo culture)
+		public virtual object GetObject(string name, CultureInfo culture)
 		{
-			if (name == null) {
-				throw new ArgumentNullException("name");
+			if(name==null) {
+				throw new ArgumentNullException("name is null");
 			}
 
-			if (culture == null) {
-				culture = CultureInfo.CurrentUICulture;
+			if(culture==null) {
+				culture=CultureInfo.CurrentUICulture;
 			}
 
-			lock (this) {
-				while (true) {
-
-					ResourceSet set = InternalGetResourceSet (culture, true, true);
+			lock(this) {
+				ResourceSet set=InternalGetResourceSet(culture, true, true);
+				object obj=null;
 				
-					if (set != null) {
-						object obj = set.GetObject(name, ignoreCase);
-						if (obj != null) {
-							return obj;
+				if(set != null) {
+					obj=set.GetObject(name, ignoreCase);
+					if(obj != null) {
+						return(obj);
+					}
+				}
+				
+				/* Try parent cultures */
+
+				do {
+					culture=culture.Parent;
+
+					set=InternalGetResourceSet(culture, true, true);
+					if(set!=null) {
+						obj=set.GetObject(name, ignoreCase);
+						if(obj != null) {
+							return(obj);
 						}
 					}
-
-					if (culture == neutral_culture ||
-					    culture == CultureInfo.InvariantCulture)
-						break;
-
-					culture = culture.Parent;
-				}
+				} while(!culture.Equals(neutral_culture) &&
+					!culture.Equals(CultureInfo.InvariantCulture));
 			}
 			
-			return null;
+			return(null);
 		}
 		
 		
@@ -216,33 +223,41 @@ namespace System.Resources
 		public virtual string GetString (string name, CultureInfo culture)
 		{
 			if (name == null) {
-				throw new ArgumentNullException ("name");
+				throw new ArgumentNullException ("Name is null.");
 			}
 
-			if(culture == null) {
-				culture = CultureInfo.CurrentUICulture;
+			if(culture==null) {
+				culture=CultureInfo.CurrentUICulture;
 			}
 
-			lock (this) {
-				while (true) {
-					ResourceSet set = InternalGetResourceSet (culture, true, true);
+			lock(this) {
+				ResourceSet set=InternalGetResourceSet(culture, true, true);
+				string str=null;
 
-					if (set != null) {
-						string str = set.GetString (name, ignoreCase);
-						if (str != null) {
-							return str;
+				if(set!=null) {
+					str=set.GetString(name, ignoreCase);
+					if(str!=null) {
+						return(str);
+					}
+				}
+
+				/* Try parent cultures */
+
+				do {
+					culture=culture.Parent;
+
+					set=InternalGetResourceSet(culture, true, true);
+					if(set!=null) {
+						str=set.GetString(name, ignoreCase);
+						if(str!=null) {
+							return(str);
 						}
 					}
-
-					if (culture == neutral_culture ||
-					    culture == CultureInfo.InvariantCulture)
-						break;
-
-					culture = culture.Parent;
-				}
+				} while(!culture.Equals(neutral_culture) &&
+					!culture.Equals(CultureInfo.InvariantCulture));
 			}
 			
-			return null;
+			return(null);
 		}
 
 		protected virtual string GetResourceFileName (CultureInfo culture)
