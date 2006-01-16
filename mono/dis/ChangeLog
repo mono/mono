@@ -1,3 +1,8 @@
+2006-01-16  Ankit Jain  <jankit@novell.com>
+
+	* get.c (get_method_core): Handle a MemberRef with a TypeSpec parent.
+	Inflate MonoMethod after getting it from mono_get_method_full.
+
 2006-01-15  Ankit Jain  <jankit@novell.com>
 
 	* get.c (get_method_override): Get full signature of the method.
