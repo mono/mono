@@ -1,6 +1,10 @@
 2006-01-16  Atsushi Enomoto  <atsushi@ximian.com>
 
-	* I18N.CJK.Test.cs : added test for bug #77223, #77224 and #77238.
+	* I18N.CJK.Test.cs : added test for bug #77238.
+
+2006-01-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* I18N.CJK.Test.cs : added test for bug #77223, #77224 and #77222.
 
 2005-12-06  Atsushi Enomoto  <atsushi@ximian.com>
 

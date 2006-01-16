@@ -1,5 +1,12 @@
 2006-01-16  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* CP936.cs :
+	  Implement GetCharCount(); it is too costy to use GetChars()
+	  in GetCharCount(). Removed extra code in GetChars(). Check table
+	  index range before accessing it by index.
+
+2006-01-16  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* CP51932.cs :
 	  In GetChars(), insufficient byte is not preserved.
 	  Under 1.x profile it is just discarded.
