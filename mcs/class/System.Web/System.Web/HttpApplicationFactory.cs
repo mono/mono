@@ -364,7 +364,9 @@ namespace System.Web {
 				if (!File.Exists (app_file))
 					app_file = Path.Combine (physical_app_path, "global.asax");
 			
-#if !CONFIGURATION_2_0
+#if CONFIGURATION_2_0
+				WebConfigurationManager.Init ();
+#else
 				WebConfigurationSettings.Init (context);
 #endif
 				

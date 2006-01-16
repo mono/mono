@@ -1,3 +1,8 @@
+2006-01-16  Chris Toshok  <toshok@ximian.com>
+
+	* HttpApplicationFactory.cs: call WebConfigurationManager.Init in
+	the CONFIGURATION_2_0 case.
+
 2006-01-13 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpWriter.cs: made Write (char) less memory hungry. Thanks to Mike
