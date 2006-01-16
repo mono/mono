@@ -1,5 +1,8 @@
 2006-01-16  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.h (mono_bitset_test_fast): Disable the 'fast' implementation which
+	depends on implementation details of monobitset.
+
 	* mini.c (mini_get_ldelema_ins): Fix handling of 1 dimensional arrays.
 	Fixes #77271.
 
