@@ -40,6 +40,8 @@ namespace MonoTests.System.Drawing.Drawing2D {
 	public class GraphicsPathTest {
 
 		private const float Pi4 = (float) (Math.PI / 4);
+		// let's tolerate a few differences
+		private const float Delta = 0.0003f;
 
 		private void CheckEmpty (string prefix, GraphicsPath gp)
 		{
@@ -187,6 +189,13 @@ namespace MonoTests.System.Drawing.Drawing2D {
 			Assert.AreEqual (4, path.PathTypes.Length, "PathPoints");
 			Assert.AreEqual (4, path.PathData.Points.Length, "PathData");
 
+			// GetBounds (well GdipGetPathWorldBounds) isn't implemented
+			RectangleF rect = path.GetBounds ();
+			Assert.AreEqual (2.999624f, rect.X, "Bounds.X");
+			Assert.AreEqual (2.013707f, rect.Y, "Bounds.Y");
+			Assert.AreEqual (0f, rect.Width, Delta, "Bounds.Width");
+			Assert.AreEqual (0.01370478f, rect.Height, "Bounds.Height");
+
 			Assert.AreEqual (2.999906f, path.PathData.Points[0].X, "Points[0].X");
 			Assert.AreEqual (2.013707f, path.PathPoints[0].Y, "Points[0].Y");
 			Assert.AreEqual (0, path.PathData.Types[0], "Types[0]");
@@ -239,6 +248,13 @@ namespace MonoTests.System.Drawing.Drawing2D {
 			Assert.AreEqual (4, path.PathPoints.Length, "PathPoints");
 			Assert.AreEqual (4, path.PathTypes.Length, "PathPoints");
 			Assert.AreEqual (4, path.PathData.Points.Length, "PathData");
+
+			// GetBounds (well GdipGetPathWorldBounds) isn't implemented
+			RectangleF rect = path.GetBounds ();
+			Assert.AreEqual (1f, rect.X, "Bounds.X");
+			Assert.AreEqual (1f, rect.Y, "Bounds.Y");
+			Assert.AreEqual (3f, rect.Width, "Bounds.Width");
+			Assert.AreEqual (3f, rect.Height, "Bounds.Height");
 
 			Assert.AreEqual (1f, path.PathData.Points[0].X, "Points[0].X");
 			Assert.AreEqual (1f, path.PathPoints[0].Y, "Points[0].Y");
@@ -337,14 +353,14 @@ namespace MonoTests.System.Drawing.Drawing2D {
 			Assert.AreEqual (13, path.PathPoints.Length, "PathPoints");
 			Assert.AreEqual (13, path.PathTypes.Length, "PathPoints");
 			Assert.AreEqual (13, path.PathData.Points.Length, "PathData");
-#if false
+
 			// GetBounds (well GdipGetPathWorldBounds) isn't implemented
 			RectangleF rect = path.GetBounds ();
 			Assert.AreEqual (1f, rect.X, "Bounds.X");
 			Assert.AreEqual (1f, rect.Y, "Bounds.Y");
 			Assert.AreEqual (2f, rect.Width, "Bounds.Width");
 			Assert.AreEqual (2f, rect.Height, "Bounds.Height");
-#endif
+
 			Assert.AreEqual (0, path.PathData.Types[0], "PathData.Types[0]");
 			for (int i = 1; i < 12; i++)
 				Assert.AreEqual (3, path.PathTypes[i], "PathTypes" + i.ToString ());
@@ -388,6 +404,13 @@ namespace MonoTests.System.Drawing.Drawing2D {
 			Assert.AreEqual (2, path.PathPoints.Length, "PathPoints");
 			Assert.AreEqual (2, path.PathTypes.Length, "PathPoints");
 			Assert.AreEqual (2, path.PathData.Points.Length, "PathData");
+
+			// GetBounds (well GdipGetPathWorldBounds) isn't implemented
+			RectangleF rect = path.GetBounds ();
+			Assert.AreEqual (1f, rect.X, "Bounds.X");
+			Assert.AreEqual (1f, rect.Y, "Bounds.Y");
+			Assert.AreEqual (1f, rect.Width, "Bounds.Width");
+			Assert.AreEqual (1f, rect.Height, "Bounds.Height");
 
 			Assert.AreEqual (1f, path.PathData.Points[0].X, "Points[0].X");
 			Assert.AreEqual (1f, path.PathPoints[0].Y, "Points[0].Y");
@@ -573,14 +596,14 @@ namespace MonoTests.System.Drawing.Drawing2D {
 			Assert.AreEqual (3, path.PathPoints.Length, "PathPoints");
 			Assert.AreEqual (3, path.PathTypes.Length, "PathPoints");
 			Assert.AreEqual (3, path.PathData.Points.Length, "PathData");
-
+#endif
 			// GetBounds (well GdipGetPathWorldBounds) isn't implemented
 			RectangleF rect = path.GetBounds ();
 			Assert.AreEqual (1f, rect.X, "Bounds.X");
 			Assert.AreEqual (1f, rect.Y, "Bounds.Y");
 			Assert.AreEqual (2f, rect.Width, "Bounds.Width");
 			Assert.AreEqual (2f, rect.Height, "Bounds.Height");
-#endif
+
 			Assert.AreEqual (1f, path.PathData.Points[0].X, "Points[0].X");
 			Assert.AreEqual (1f, path.PathPoints[0].Y, "Points[0].Y");
 			Assert.AreEqual (0, path.PathData.Types[0], "Types[0]");
@@ -671,12 +694,20 @@ namespace MonoTests.System.Drawing.Drawing2D {
 			CheckPolygon (gp);
 		}
 
-		private void CheckRectangle (GraphicsPath path)
+		private void CheckRectangle (GraphicsPath path, int count)
 		{
-			Assert.AreEqual (4, path.PathPoints.Length, "PathPoints");
-			Assert.AreEqual (4, path.PathTypes.Length, "PathPoints");
-			Assert.AreEqual (4, path.PathData.Points.Length, "PathData");
+			Assert.AreEqual (count, path.PathPoints.Length, "PathPoints");
+			Assert.AreEqual (count, path.PathTypes.Length, "PathPoints");
+			Assert.AreEqual (count, path.PathData.Points.Length, "PathData");
 
+			// GetBounds (well GdipGetPathWorldBounds) isn't implemented
+			RectangleF rect = path.GetBounds ();
+			Assert.AreEqual (1f, rect.X, "Bounds.X");
+			Assert.AreEqual (1f, rect.Y, "Bounds.Y");
+			Assert.AreEqual (2f, rect.Width, "Bounds.Width");
+			Assert.AreEqual (2f, rect.Height, "Bounds.Height");
+
+			// check first four points (first rectangle)
 			Assert.AreEqual (1f, path.PathData.Points[0].X, "Points[0].X");
 			Assert.AreEqual (1f, path.PathPoints[0].Y, "Points[0].Y");
 			Assert.AreEqual (0, path.PathData.Types[0], "Types[0]");
@@ -696,7 +727,7 @@ namespace MonoTests.System.Drawing.Drawing2D {
 		{
 			GraphicsPath gp = new GraphicsPath ();
 			gp.AddRectangle (new Rectangle (1, 1, 2, 2));
-			CheckRectangle (gp);
+			CheckRectangle (gp, 4);
 		}
 
 		[Test]
@@ -704,7 +735,7 @@ namespace MonoTests.System.Drawing.Drawing2D {
 		{
 			GraphicsPath gp = new GraphicsPath ();
 			gp.AddRectangle (new RectangleF (1f, 1f, 2f, 2f));
-			CheckRectangle (gp);
+			CheckRectangle (gp, 4);
 		}
 
 		[Test]
@@ -721,7 +752,7 @@ namespace MonoTests.System.Drawing.Drawing2D {
 		{
 			GraphicsPath gp = new GraphicsPath ();
 			gp.AddRectangles (new Rectangle[0]);
-			CheckRectangle (gp);
+			CheckRectangle (gp, 4);
 		}
 
 		[Test]
@@ -729,7 +760,7 @@ namespace MonoTests.System.Drawing.Drawing2D {
 		{
 			GraphicsPath gp = new GraphicsPath ();
 			gp.AddRectangles (new Rectangle[1] { new Rectangle (1, 1, 2, 2) });
-			CheckRectangle (gp);
+			CheckRectangle (gp, 4);
 		}
 
 		[Test]
@@ -746,7 +777,7 @@ namespace MonoTests.System.Drawing.Drawing2D {
 		{
 			GraphicsPath gp = new GraphicsPath ();
 			gp.AddRectangles ( new RectangleF[0]);
-			CheckRectangle (gp);
+			CheckRectangle (gp, 4);
 		}
 
 		[Test]
@@ -754,7 +785,23 @@ namespace MonoTests.System.Drawing.Drawing2D {
 		{
 			GraphicsPath gp = new GraphicsPath ();
 			gp.AddRectangles (new RectangleF [1] { new RectangleF (1f, 1f, 2f, 2f) });
-			CheckRectangle (gp);
+			CheckRectangle (gp, 4);
+		}
+
+		[Test]
+		public void AddRectangles_Two ()
+		{
+			GraphicsPath gp = new GraphicsPath ();
+			gp.AddRectangles (new RectangleF[2] {
+				new RectangleF (1f, 1f, 2f, 2f),
+				new RectangleF (2f, 2f, 1f, 1f) } );
+			RectangleF rect = gp.GetBounds ();
+			Assert.AreEqual (1f, rect.X, "Bounds.X");
+			Assert.AreEqual (1f, rect.Y, "Bounds.Y");
+			Assert.AreEqual (2f, rect.Width, "Bounds.Width");
+			Assert.AreEqual (2f, rect.Height, "Bounds.Height");
+			// second rectangle is completely within the first one
+			CheckRectangle (gp, 8);
 		}
 
 		[Test]
@@ -771,7 +818,7 @@ namespace MonoTests.System.Drawing.Drawing2D {
 			gpr.AddRectangle (new Rectangle (1, 1, 2, 2));
 			GraphicsPath gp = new GraphicsPath ();
 			gp.AddPath (gpr, true);
-			CheckRectangle (gp);
+			CheckRectangle (gp, 4);
 		}
 
 		private void CheckClosedCurve (GraphicsPath path)
@@ -779,14 +826,14 @@ namespace MonoTests.System.Drawing.Drawing2D {
 			Assert.AreEqual (10, path.PathPoints.Length, "PathPoints");
 			Assert.AreEqual (10, path.PathTypes.Length, "PathPoints");
 			Assert.AreEqual (10, path.PathData.Points.Length, "PathData");
-#if false
+
 			// GetBounds (well GdipGetPathWorldBounds) isn't implemented
 			RectangleF rect = path.GetBounds ();
 			Assert.AreEqual (0.8333333f, rect.X, "Bounds.X");
 			Assert.AreEqual (0.8333333f, rect.Y, "Bounds.Y");
 			Assert.AreEqual (2.33333278f, rect.Width, "Bounds.Width");
 			Assert.AreEqual (2.33333278f, rect.Height, "Bounds.Height");
-#endif
+
 			Assert.AreEqual (0, path.PathData.Types[0], "PathData.Types[0]");
 			for (int i = 1; i < 9; i++)
 				Assert.AreEqual (3, path.PathTypes[i], "PathTypes" + i.ToString ());
@@ -876,14 +923,14 @@ namespace MonoTests.System.Drawing.Drawing2D {
 			Assert.AreEqual (4, path.PathPoints.Length, "PathPoints");
 			Assert.AreEqual (4, path.PathTypes.Length, "PathPoints");
 			Assert.AreEqual (4, path.PathData.Points.Length, "PathData");
-#if false
+
 			// GetBounds (well GdipGetPathWorldBounds) isn't implemented
 			RectangleF rect = path.GetBounds ();
 			Assert.AreEqual (1.0f, rect.X, "Bounds.X");
 			Assert.AreEqual (1.0f, rect.Y, "Bounds.Y");
 			Assert.AreEqual (1.0f, rect.Width, "Bounds.Width");
 			Assert.AreEqual (1.0f, rect.Height, "Bounds.Height");
-#endif
+
 			Assert.AreEqual (1f, path.PathData.Points[0].X, "Points[0].X");
 			Assert.AreEqual (1f, path.PathPoints[0].Y, "Points[0].Y");
 			Assert.AreEqual (0, path.PathData.Types[0], "Types[0]");
@@ -964,6 +1011,96 @@ namespace MonoTests.System.Drawing.Drawing2D {
 			GraphicsPath gp = new GraphicsPath ();
 			gp.AddCurve (new PointF[2] { new PointF (1f, 1f), new PointF (2f, 2f) });
 			CheckCurve (gp);
+		}
+
+		[Test]
+		public void GetBounds_Empty_Empty ()
+		{
+			GraphicsPath gp = new GraphicsPath ();
+			RectangleF rect = gp.GetBounds ();
+			Assert.AreEqual (0.0f, rect.X, "Bounds.X");
+			Assert.AreEqual (0.0f, rect.Y, "Bounds.Y");
+			Assert.AreEqual (0.0f, rect.Width, "Bounds.Width");
+			Assert.AreEqual (0.0f, rect.Height, "Bounds.Height");
+		}
+
+		private void CheckRectangleBounds (RectangleF rect)
+		{
+			Assert.AreEqual (1.0f, rect.X, "Bounds.X");
+			Assert.AreEqual (1.0f, rect.Y, "Bounds.Y");
+			Assert.AreEqual (2.0f, rect.Width, "Bounds.Width");
+			Assert.AreEqual (2.0f, rect.Height, "Bounds.Height");
+		}
+
+		[Test]
+		public void GetBounds_Empty_Rectangle ()
+		{
+			GraphicsPath gp = new GraphicsPath ();
+			gp.AddRectangle (new Rectangle (1, 1, 2, 2));
+			CheckRectangleBounds (gp.GetBounds ());
+		}
+
+		[Test]
+		public void GetBounds_Null_Rectangle ()
+		{
+			GraphicsPath gp = new GraphicsPath ();
+			gp.AddRectangle (new Rectangle (1, 1, 2, 2));
+			CheckRectangleBounds (gp.GetBounds (null));
+		}
+
+		[Test]
+		public void GetBounds_MatrixEmpty_Rectangle ()
+		{
+			GraphicsPath gp = new GraphicsPath ();
+			gp.AddRectangle (new Rectangle (1, 1, 2, 2));
+			CheckRectangleBounds (gp.GetBounds (new Matrix ()));
+		}
+
+		[Test]
+		public void GetBounds_NullNull_Rectangle ()
+		{
+			GraphicsPath gp = new GraphicsPath ();
+			gp.AddRectangle (new Rectangle (1, 1, 2, 2));
+			CheckRectangleBounds (gp.GetBounds (null, null));
+		}
+
+		[Test]
+		[Category ("NotWorking")] // bounds+pen support is missing in libgdiplus
+		public void GetBounds_WithPen ()
+		{
+			Rectangle rect = new Rectangle (1, 1, 2, 2);
+			Pen p = new Pen (Color.Aqua, 0);
+			GraphicsPath gp = new GraphicsPath ();
+			gp.AddRectangle (rect);
+
+			RectangleF bounds = gp.GetBounds (null, p);
+			Assert.AreEqual (-6.09999943f, bounds.X, "NullMatrix.Bounds.X");
+			Assert.AreEqual (-6.09999943f, bounds.Y, "NullMatrix.Bounds.Y");
+			Assert.AreEqual (16.1999989f, bounds.Width, "NullMatrix.Bounds.Width");
+			Assert.AreEqual (16.1999989f, bounds.Height, "NullMatrix.Bounds.Height");
+
+			Matrix m = new Matrix ();
+			// an empty matrix is different than a null matrix
+			bounds = gp.GetBounds (m, p);
+			Assert.AreEqual (-0.419999957f, bounds.X, "EmptyMatrix.Bounds.X");
+			Assert.AreEqual (-0.419999957f, bounds.Y, "EmptyMatrix.Bounds.Y");
+			Assert.AreEqual (4.83999968f, bounds.Width, "EmptyMatrix.Bounds.Width");
+			Assert.AreEqual (4.83999968f, bounds.Height, "EmptyMatrix.Bounds.Height");
+
+			gp = new GraphicsPath ();
+			gp.AddRectangle (rect);
+			gp.Widen (p);
+			bounds = gp.GetBounds (null);
+			Assert.AreEqual (0.499999523f, bounds.X, "WidenNullMatrix.Bounds.X");
+			Assert.AreEqual (0.499999523f, bounds.Y, "WidenNullMatrix.Bounds.Y");
+			Assert.AreEqual (3.000001f, bounds.Width, "WidenNullMatrix.Bounds.Width");
+			Assert.AreEqual (3.000001f, bounds.Height, "WidenNullMatrix.Bounds.Height");
+
+			bounds = gp.GetBounds (m);
+			Assert.AreEqual (0.499999523f, bounds.X, "WidenEmptyMatrix.Bounds.X");
+			Assert.AreEqual (0.499999523f, bounds.Y, "WidenEmptyMatrix.Bounds.Y");
+			Assert.AreEqual (3.000001f, bounds.Width, "WidenEmptyMatrix.Bounds.Width");
+			Assert.AreEqual (3.000001f, bounds.Height, "WidenEmptyMatrix.Bounds.Height");
 		}
 
 		[Test]

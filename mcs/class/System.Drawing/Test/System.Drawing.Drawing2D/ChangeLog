@@ -1,3 +1,8 @@
+2006-01-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* GraphicsPathTest.cs: Added test cases for GetBounds and re-activated
+	some parts of the tests that checked bounds (Add* tests).
+
 2006-01-13  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* GraphicsPathTest.cs: New. Added multiple test cases to check null
