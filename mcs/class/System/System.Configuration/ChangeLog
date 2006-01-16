@@ -1,3 +1,11 @@
+2006-01-16  Chris Toshok  <toshok@ximian.com>
+
+	* ConfigurationSettings.cs (AppSettings): move back to a 1.x
+	strategy in the 2.0 case.  That is, don't hardcode the reference
+	to ConfigurationManager.AppSettings (yet).  Eventually we can move
+	back to this code, once ConfigurationManager supports reading
+	web.config for settings.
+
 2006-01-03  Chris Toshok  <toshok@ximian.com>
 
 	* ConfigurationSettings.cs (GetConfig): be nice to people using

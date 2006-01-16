@@ -65,12 +65,28 @@ namespace System.Configuration
 #if NET_2_0
 		[Obsolete ("This property is obsolete.  Please use System.Configuration.ConfigurationManager.AppSettings")]
 #endif
+#if NET_2_0 && CONFIGURATION_2_0
+		static NameValueCollection appSettingsCol;
+#endif
 		public static NameValueCollection AppSettings
 		{
 			get {
 #if NET_2_0 && CONFIGURATION_2_0
 #if CONFIGURATION_DEP
-				return ConfigurationManager.AppSettings;
+				lock (lockobj) {
+					if (appSettingsCol == null) {
+						AppSettingsSection appSettings = (AppSettingsSection)GetConfig ("appSettings");
+
+						appSettingsCol = new NameValueCollection ();
+				
+						foreach (string key in appSettings.Settings.AllKeys) {
+							KeyValueConfigurationElement ele = appSettings.Settings[key];
+							appSettingsCol.Add (ele.Key, ele.Value);
+						}
+					}
+				}
+
+				return appSettingsCol;
 #else
 				return null;
 #endif
@@ -93,6 +109,9 @@ namespace System.Configuration
 			lock (lockobj) {
 				IConfigurationSystem old = config;
 				config = newSystem;
+#if NET_2_0 && CONFIGURATION_2_0
+				appSettingsCol = null;
+#endif
 				return old;
 			}
 		}
