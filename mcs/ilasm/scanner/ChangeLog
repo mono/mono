@@ -1,3 +1,7 @@
+2006-01-16  Ankit Jain  <jankit@novell.com>
+
+	* ILTables.cs (keywords): Add 'uint', this is a native UIntPtr type.
+
 2006-01-03  Ankit Jain  <jankit@novell.com>
 
 	* ILTokenizer.cs (ILTokenizer.idchars): Add ` to the list.

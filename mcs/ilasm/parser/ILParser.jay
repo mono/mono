@@ -355,6 +355,7 @@ namespace Mono.ILASM {
 %token K_FLOAT64
 %token K_ERROR
 %token K_UNSIGNED
+%token K_UINT
 %token K_UINT8
 %token K_UINT16
 %token K_UINT32
@@ -1030,6 +1031,10 @@ type			: generic_class_ref
                           }
                         
 			| K_NATIVE K_UNSIGNED K_INT
+                          {
+                                $$ = new PrimitiveTypeRef (PrimitiveType.NativeUInt, "System.UIntPtr");
+                          }
+			| K_NATIVE K_UINT
                           {
                                 $$ = new PrimitiveTypeRef (PrimitiveType.NativeUInt, "System.UIntPtr");
                           }
