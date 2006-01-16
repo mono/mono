@@ -1,3 +1,8 @@
+2006-01-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* GraphicsPath.cs: Updated TODO description on GetBounds as it's now
+	only missing support for Pens (when used with libgidplus).
+
 2006-01-13  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* GraphicsPath.cs: Added more parameter checks to methods (to match

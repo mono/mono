@@ -685,7 +685,7 @@ namespace System.Drawing.Drawing2D
                 	return GetBounds (matrix, null);
                 }
 
-                [MonoTODO ("GdipGetPathWorldBounds isn't implemented in libgdiplus")]
+                [MonoTODO ("GdipGetPathWorldBounds doesn't support pens in libgdiplus (missing GdipWidenPath)")]
                 public RectangleF GetBounds (Matrix matrix, Pen pen)
                 {
                         RectangleF retval;
