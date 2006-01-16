@@ -1,3 +1,10 @@
+2006-01-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* typemanager.cs : added IsGenericParameter(). In mcs it always
+	  return false.
+	* doc.cs : for generic parameters, use GenericParameterPosition,
+	  not FullName.
+
 2006-01-12  Ben Maurer  <bmaurer@andrew.cmu.edu>
 
 	* expression.cs: Fix Console.WriteLine ((this = x).foo);

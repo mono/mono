@@ -1,3 +1,7 @@
+2006-01-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* gtest-xml-1-ref.xml, gtest-xml-1.cs : test for bug #77183.
+
 2006-01-12  Ben Maurer  <bmaurer@andrew.cmu.edu>
 
 	* test-437.cs: New test for Console.WriteLine ((this = x).foo)

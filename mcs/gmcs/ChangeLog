@@ -1,3 +1,9 @@
+2006-01-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* typemanager.cs : added IsGenericParameter(). In gmcs it returns
+	  Type.IsGenericParameter(). Fixed bug #77183.
+	* doc.cs : it is now identical to doc.cs in mcs.
+
 2006-01-16  Martin Baulig  <martin@ximian.com>
 
 	* generic.cs (ConstraintChecker.CheckConstraint): Fix #77167.

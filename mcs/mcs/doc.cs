@@ -9,7 +9,6 @@
 // (C) 2004 Novell, Inc.
 //
 //
-
 #if ! BOOTSTRAP_WITH_OLDLIB
 using System;
 using System.Collections;
@@ -31,7 +30,7 @@ namespace Mono.CSharp {
 	//
 	// Support class for XML documentation.
 	//
-	public class DocUtil
+	public static class DocUtil
 	{
 		// TypeContainer
 
@@ -699,7 +698,7 @@ namespace Mono.CSharp {
 				// delegate must not be referenced with args
 				&& (!type.IsSubclassOf (typeof (System.Delegate))
 				|| parameterTypes == null)) {
-				string result = type.FullName.Replace ("+", ".")
+				string result = GetSignatureForDoc (type)
 					+ (bracePos < 0 ? String.Empty : signature.Substring (bracePos));
 				xref.SetAttribute ("cref", "T:" + result);
 				return; // a type
@@ -722,7 +721,7 @@ namespace Mono.CSharp {
 						// to get its name, since mi
 						// could be from DeclaringType
 						// for nested types.
-						xref.SetAttribute ("cref", GetMemberDocHead (mi.MemberType) + fm.Type.FullName.Replace ("+", ".") + "." + memberName + GetParametersFormatted (mi));
+						xref.SetAttribute ("cref", GetMemberDocHead (mi.MemberType) + GetSignatureForDoc (fm.Type) + "." + memberName + GetParametersFormatted (mi));
 						return; // a member of a type
 					}
 				}
@@ -738,7 +737,7 @@ namespace Mono.CSharp {
 					// to get its name, since mi
 					// could be from DeclaringType
 					// for nested types.
-					xref.SetAttribute ("cref", GetMemberDocHead (mi.MemberType) + fm.Type.FullName.Replace ("+", ".") + "." + name + GetParametersFormatted (mi));
+					xref.SetAttribute ("cref", GetMemberDocHead (mi.MemberType) + GetSignatureForDoc (fm.Type) + "." + name + GetParametersFormatted (mi));
 					return; // local member name
 				}
 			}
@@ -787,7 +786,7 @@ namespace Mono.CSharp {
 				if (i > 0)
 					sb.Append (',');
 				Type t = parameters.ParameterType (i);
-				sb.Append (t.FullName.Replace ('+', '.').Replace ('&', '@'));
+				sb.Append (GetSignatureForDoc (t));
 			}
 			sb.Append (')');
 			return sb.ToString ();
@@ -853,7 +852,7 @@ namespace Mono.CSharp {
 				StringBuilder psb = new StringBuilder ();
 				foreach (Parameter p in plist) {
 					psb.Append (psb.Length != 0 ? "," : "(");
-					psb.Append (p.ExternalType ().FullName.Replace ("+", ".").Replace ('&', '@'));
+					psb.Append (GetSignatureForDoc (p.ExternalType ()));
 				}
 				paramSpec = psb.ToString ();
 			}
@@ -868,11 +867,18 @@ namespace Mono.CSharp {
 				switch (op.OperatorType) {
 				case Operator.OpType.Implicit:
 				case Operator.OpType.Explicit:
-					suffix = "~" + op.OperatorMethodBuilder.ReturnType.FullName.Replace ('+', '.');
+					suffix = "~" + GetSignatureForDoc (op.OperatorMethodBuilder.ReturnType);
 					break;
 				}
 			}
 			return String.Concat (mc.DocCommentHeader, ds.Name, ".", name, paramSpec, suffix);
+		}
+
+		static string GetSignatureForDoc (Type type)
+		{
+			return TypeManager.IsGenericParameter (type) ?
+				type.Name :
+				type.FullName.Replace ("+", ".").Replace ('&', '@');
 		}
 
 		//
@@ -1057,5 +1063,4 @@ namespace Mono.CSharp {
 		}
 	}
 }
-
 #endif
