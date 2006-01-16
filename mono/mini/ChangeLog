@@ -1,3 +1,8 @@
+2006-01-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mini_get_ldelema_ins): Fix handling of 1 dimensional arrays.
+	Fixes #77271.
+
 2006-01-15  Zoltan Varga  <vargaz@gmail.com>
 
 	* liveness.c: Update after monobitset changes.
