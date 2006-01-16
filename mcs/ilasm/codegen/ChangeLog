@@ -1,5 +1,10 @@
 2006-01-16  Ankit Jain  <jankit@novell.com>
 
+	* TypeDef.cs (TypeDef.IComparable): Implement IComparable interface.
+	* TypeManager.cs (TypeManager.DefineAll): Sort type_table before Define()'ing.
+
+2006-01-16  Ankit Jain  <jankit@novell.com>
+
 	* TypeRef.cs (TypeRef.CreateMethodRef): Return a TypeSpecMethodRef if
 	this is a modified (eg. []) type.	
 

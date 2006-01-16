@@ -14,7 +14,7 @@ using System.Security;
 
 namespace Mono.ILASM {
 
-        public class TypeDef : ICustomAttrTarget, IDeclSecurityTarget {
+        public class TypeDef : ICustomAttrTarget, IDeclSecurityTarget, IComparable {
 
                 protected class GenericInfo {
                         public string Id;
@@ -486,6 +486,13 @@ namespace Mono.ILASM {
                                 return name;
 
                         return name_space + "." + name;
+                }
+
+                public int CompareTo (object obj)
+                {
+                        TypeDef type_def = (TypeDef) obj; 
+
+                        return FullName.CompareTo (type_def.FullName);
                 }
         }
 
