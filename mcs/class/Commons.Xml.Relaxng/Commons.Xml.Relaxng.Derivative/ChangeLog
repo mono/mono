@@ -1,5 +1,9 @@
 2006-01-16  Atsushi Enomoto <atsushi@ximian.com>
 
+	* RdpObjects.cs : fixed warnings.
+
+2006-01-16  Atsushi Enomoto <atsushi@ximian.com>
+
 	* RdpPatterns.cs : RdpOneOrMore.EmptyTextDeriv() should be "override".
 	  RdpList.EmptyTextDeriv() (which was also virtual incorrectly) was 
 	  removed since the code was in wrong assumption.

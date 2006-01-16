@@ -1,5 +1,9 @@
 2006-01-16  Atsushi Enomoto <atsushi@ximian.com>
 
+	* RelaxngValidatingReader.cs : fixed warning.
+
+2006-01-16  Atsushi Enomoto <atsushi@ximian.com>
+
 	* RelaxngValidatingReader.cs : just keep previous TextDeriv() result
 	  for each pattern; they are mostly not reused. It makes validator
 	  about 30% faster in certain validation and reduces memory use.

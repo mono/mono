@@ -68,11 +68,8 @@ namespace Commons.Xml.Relaxng
 		RelaxngPattern pattern;
 		RdpPattern vState;
 		RdpPattern prevState;	// Mainly for debugging.
-		ArrayList PredefinedAttributes = new ArrayList ();
-		bool labelsComputed;
 		Hashtable elementLabels = new Hashtable ();
 		Hashtable attributeLabels = new Hashtable ();
-		bool isEmptiable;
 		bool roughLabelCheck;
 		ArrayList strictCheckCache;
 		bool reportDetails;
@@ -368,7 +365,6 @@ namespace Commons.Xml.Relaxng
 		{
 			PrepareState ();
 
-			labelsComputed = false;
 			elementLabels.Clear ();
 			attributeLabels.Clear ();
 
@@ -593,7 +589,6 @@ namespace Commons.Xml.Relaxng
 			return m;
 		}
 
-int nStartAttDeriv = 0;
 		public RdpPattern StartAttDeriv (RdpPattern p, string local, string ns)
 		{
 			Hashtable h = startAtt [p] as Hashtable;
@@ -670,7 +665,7 @@ int nStartAttDeriv = 0;
 			if (p.IsContextDependent)
 				return p.TextDeriv (value, context);
 
-			if (text_value [p] == value)
+			if (Object.ReferenceEquals (text_value [p], value))
 				return text [p] as RdpPattern;
 			RdpPattern m = p.TextDeriv (value, context, this);
 			text_value [p] = value;

@@ -69,7 +69,7 @@ namespace Commons.Xml.Relaxng.Derivative
 
 	public class RdpDatatype
 	{
-		RelaxngDatatypeProvider provider;
+		//RelaxngDatatypeProvider provider;
 		string localName;
 		string ns;
 		RelaxngDatatype datatype;
@@ -78,7 +78,7 @@ namespace Commons.Xml.Relaxng.Derivative
 		{
 			this.ns = ns;
 			this.localName = localName;
-			this.provider = provider;
+			//this.provider = provider;
 			if (provider == null)
 				provider = RelaxngMergedProvider.DefaultProvider;
 			datatype = provider.GetDatatype (localName, ns, parameters);
@@ -103,8 +103,6 @@ namespace Commons.Xml.Relaxng.Derivative
 		{
 			return datatype.IsValid (value, reader);
 		}
-
-		static char [] wsChars = new char [] {' ', '\n', '\r', '\t'};
 
 		public virtual bool IsTypeEqual (string s1, string s2, XmlReader reader)
 		{
