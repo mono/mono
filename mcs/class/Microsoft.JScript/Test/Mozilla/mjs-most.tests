@@ -57,7 +57,7 @@ ecma/Array/15.4.4.js
 # Eval::JScriptEvaluate throws NotImplementedException
 #ecma/Array/15.4.5.1-1.js
 ecma/Array/15.4.5.1-2.js
-# Needs ToForInObject
+# Needs eval
 #ecma/Array/15.4.5.2-1.js
 # Eval::JScriptEvaluate throws NotImplementedException
 #ecma/Array/15.4.5.2-2.js
