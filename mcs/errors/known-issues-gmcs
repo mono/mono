@@ -42,6 +42,8 @@ cs1540-3.cs NO ERROR # new in GMCS
 cs1540-5.cs NO ERROR # new in GMCS
 cs1586.cs
 cs1641.cs
+cs1654-2.cs NO ERROR
+cs1654.cs NO ERROR
 cs1667-3.cs
 cs1667-4.cs
 cs1667-5.cs

@@ -1,3 +1,7 @@
+2006-01-16  Raja R Harinath  <rharinath@novell.com>
+
+	* test-488.cs: New test based on #76874.
+
 2006-01-16  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* gtest-xml-1-ref.xml, gtest-xml-1.cs : test for bug #77183.
