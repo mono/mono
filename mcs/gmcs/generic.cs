@@ -1597,6 +1597,9 @@ namespace Mono.CSharp {
 				if (ct.ResolveAsTypeStep (ec) == null)
 					return false;
 				ctype = ct.Type;
+			} else if (ctype.IsGenericParameter) {
+				int pos = ctype.GenericParameterPosition;
+				ctype = atypes [pos];
 			}
 
 			return Convert.ImplicitStandardConversionExists (ec, expr, ctype);

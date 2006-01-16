@@ -1,5 +1,9 @@
 2006-01-16  Martin Baulig  <martin@ximian.com>
 
+	* generic.cs (ConstraintChecker.CheckConstraint): Fix #77167.
+
+2006-01-16  Martin Baulig  <martin@ximian.com>
+
 	* typemanager.cs (TypeManager.CSharpSignature): Make this work for
 	ctors; fixes #77250.
 
