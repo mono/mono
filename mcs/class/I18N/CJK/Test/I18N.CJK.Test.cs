@@ -148,7 +148,7 @@ namespace MonoTests.I18N.CJK
 			AssertDecode ("Test/texts/japanese-utf8.txt", "Test/texts/japanese-51932.txt", 51932);
 		}
 
-		// ISI-2022-JP
+		// ISO-2022-JP
 
 		[Test]
 		public void CP50220_Encode ()
@@ -190,6 +190,36 @@ namespace MonoTests.I18N.CJK
 		public void CP50222_Decode ()
 		{
 			AssertDecode ("Test/texts/japanese-utf8.txt", "Test/texts/japanese-50222.txt", 50222);
+		}
+
+		[Test]
+		public void Bug77723 ()
+		{
+			Encoding e = Encoding.GetEncoding (51932);
+			for (int i = 0; i < 0x10000; i++)
+				e.GetBytes (new char [] { (char)i });
+		}
+
+		[Test]
+		public void Bug77224 ()
+		{
+			Encoding e = Encoding.GetEncoding (932);
+			for (int i = 0; i < 0x10000; i++)
+				e.GetBytes (new char [] {(char) i});
+		}
+
+		[Test]
+		public void Bug77238 ()
+		{
+			Encoding e = Encoding.GetEncoding (51932);
+			byte [] bytes = new byte [2];
+			for (int i0 = 0; i0 < 0x100; i0++) {
+				bytes [0] = (byte) i0;
+				for (int i1 = 0; i1 < 0x100; i1++) {
+					bytes [1] = (byte) i1;
+					e.GetChars (bytes);
+				}
+			}
 		}
 
 		#endregion

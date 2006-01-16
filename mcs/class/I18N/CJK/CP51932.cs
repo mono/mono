@@ -66,9 +66,6 @@ public class CP51932 : MonoEncoding
 	// Internal state.
 	private JISConvert convert;
 
-	// Conversion cache (note that encoding is not thread safe)
-	int lastByte;
-
 	// Constructor.
 	public CP51932 () : base (EUC_JP_CODE_PAGE)
 	{
@@ -224,7 +221,6 @@ public class CP51932 : MonoEncoding
 	}
 
 	// Get the number of characters needed to decode a byte buffer.
-	// TODO: check
 	public override int GetCharCount (byte [] bytes, int index, int count)
 	{
 		// Validate the parameters.
@@ -239,50 +235,96 @@ public class CP51932 : MonoEncoding
 			throw new ArgumentOutOfRangeException
 				("count", Strings.GetString("ArgRange_Array"));
 
+
+
 		// Determine the total length of the converted string.
+		int value = 0;
+		byte[] table0208 = convert.jisx0208ToUnicode;
+		byte[] table0212 = convert.jisx0212ToUnicode;
 		int length = 0;
-		int byteval;
+		int byteval = 0;
 		int last = 0;
 
 		while (count > 0) {
 			byteval = bytes [index++];
 			--count;
-
 			if (last == 0) {
 				if (byteval == 0x8F) {
 					if (byteval != 0) {
-						// Invalid second byte of a 3-byte character
-						// FIXME: What should we do?
+						// Invalid second byte of a 3-byte character.
 						last = 0;
+						length++;
 					}
 					// First byte in a triple-byte sequence
 					else
 						last = byteval;
 				} else if (byteval <= 0x7F) {
 					// Ordinary ASCII/Latin1/Control character.
-					++length;
+					length++;
+				} else if (byteval == 0x8E) {
+					// First byte of half-width Katakana
+					last = byteval;
 				} else if (byteval >= 0xA1 && byteval <= 0xFE) {
 					// First byte in a double-byte sequence.
 					last = byteval;
-				} else if (byteval == 0x87) {
-					// First byte in half-width katakana
 				} else {
-					// Invalid first byte. Let '?'
-					++length;
+					// Invalid first byte.
+					length++;
 				}
-			} else if (last == 0x8F) {
+			}
+			else if (last == 0x8E) {
+				if (byteval >= 0xA1 && byteval <= 0xDF) {
+					value = ((byteval - 0x40) |
+						(last + 0x71) << 8);
+					length++;
+				} else {
+					// Invalid second byte.
+					length++;
+				}
+				last =0;
+			}
+			else if (last == 0x8F) {
 				// 3-byte character
 				// FIXME: currently not supported yet
-				last = 0;
-				++length;
-			} else {
+				last = byteval;
+			}
+			else
+			{
 				// Second byte in a double-byte sequence.
+				value = (last - 0xA1) * 0x5E;
 				last = 0;
-				++length;
+				if (byteval >= 0xA1 && byteval <= 0xFE)
+				{
+					value += (byteval - 0xA1);
+				}
+				else
+				{
+					// Invalid second byte.
+					last = 0;
+					length++;
+					continue;
+				}
+
+				value *= 2;
+				value = ((int) (table0208 [value]))
+					| (((int) (table0208 [value + 1])) << 8);
+				if (value == 0)
+					value = ((int) (table0212 [value]))
+						| (((int) (table0212 [value + 1])) << 8);
+				if (value != 0)
+					length++;
+				else
+					length++;
 			}
 		}
+#if NET_2_0
+		// seems like .NET 2.0 adds \u30FB for insufficient
+		// byte seuqence (for Japanese \u30FB makes sense).
+		if (last != 0)
+			length++;
+#endif
 
-		// Return the total length.
+		// Return the final length to the caller.
 		return length;
 	}
 
@@ -319,7 +361,7 @@ public class CP51932 : MonoEncoding
 		int posn = charIndex;
 		int charLength = chars.Length;
 		int byteval, value;
-		int last = lastByte;
+		int last = 0;
 		byte[] table0208 = convert.jisx0208ToUnicode;
 		byte[] table0212 = convert.jisx0212ToUnicode;
 
@@ -327,22 +369,21 @@ public class CP51932 : MonoEncoding
 			byteval = bytes [byteIndex++];
 			--byteCount;
 			if (last == 0) {
-				if (posn >= charLength)
-					throw new ArgumentException
-						(Strings.GetString
-							("Arg_InsufficientSpace"), "chars");
-
 				if (byteval == 0x8F) {
 					if (byteval != 0) {
-						// Invalid second byte of a 3-byte character
-						// FIXME: What should we do?
+						// Invalid second byte of a 3-byte character.
 						last = 0;
+						if (posn >= charLength)
+							throw Insufficient ();
+						chars [posn++] = '?';
 					}
 					// First byte in a triple-byte sequence
 					else
 						last = byteval;
 				} else if (byteval <= 0x7F) {
 					// Ordinary ASCII/Latin1/Control character.
+					if (posn >= charLength)
+						throw Insufficient ();
 					chars [posn++] = (char) byteval;
 				} else if (byteval == 0x8E) {
 					// First byte of half-width Katakana
@@ -352,6 +393,8 @@ public class CP51932 : MonoEncoding
 					last = byteval;
 				} else {
 					// Invalid first byte.
+					if (posn >= charLength)
+						throw Insufficient ();
 					chars [posn++] = '?';
 				}
 			}
@@ -359,9 +402,13 @@ public class CP51932 : MonoEncoding
 				if (byteval >= 0xA1 && byteval <= 0xDF) {
 					value = ((byteval - 0x40) |
 						(last + 0x71) << 8);
+					if (posn >= charLength)
+						throw Insufficient ();
 					chars [posn++] = (char) value;
 				} else {
 					// Invalid second byte.
+					if (posn >= charLength)
+						throw Insufficient ();
 					chars [posn++] = '?';
 				}
 				last =0;
@@ -383,7 +430,9 @@ public class CP51932 : MonoEncoding
 				else
 				{
 					// Invalid second byte.
-					lastByte = 0;
+					last = 0;
+					if (posn >= charLength)
+						throw Insufficient ();
 					chars [posn++] = '?';
 					continue;
 				}
@@ -394,16 +443,33 @@ public class CP51932 : MonoEncoding
 				if (value == 0)
 					value = ((int) (table0212 [value]))
 						| (((int) (table0212 [value + 1])) << 8);
+				if (posn >= charLength)
+					throw Insufficient ();
 				if (value != 0)
 					chars [posn++] = (char)value;
 				else
 					chars [posn++] = '?';
 			}
 		}
-		lastByte = last;
+#if NET_2_0
+		if (last != 0) {
+			// seems like .NET 2.0 adds \u30FB for insufficient
+			// byte seuqence (for Japanese \u30FB makes sense).
+			if (posn >= charLength)
+				throw Insufficient ();
+			chars [posn++] = '\u30FB';
+		}
+#endif
 
 		// Return the final length to the caller.
 		return posn - charIndex;
+	}
+
+	Exception Insufficient ()
+	{
+		throw new ArgumentException
+			(Strings.GetString
+				("Arg_InsufficientSpace"), "chars");
 	}
 
 	// Get the maximum number of bytes needed to encode a

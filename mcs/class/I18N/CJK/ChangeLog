@@ -1,3 +1,11 @@
+2006-01-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CP51932.cs :
+	  In GetChars(), insufficient byte is not preserved.
+	  Under 1.x profile it is just discarded.
+	  Under 2.0 profile it is converted to \u30FB.
+	  Fixed GetCharCount() to match GetChars().
+
 2006-01-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CP932.cs : GetByteCount() returned insufficient count at PrivateUse
