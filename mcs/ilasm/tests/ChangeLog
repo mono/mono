@@ -1,5 +1,9 @@
 2006-01-16  Ankit Jain  <jankit@novell.com>
 
+	* test-int64.il: New. Test for large numeric values.
+
+2006-01-16  Ankit Jain  <jankit@novell.com>
+
 	* test-array-2.il: New. Test for methodref to Array's methods.
 	eg. class test [,]::.ctor (int32, int32)
 

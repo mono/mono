@@ -1,5 +1,10 @@
 2006-01-16  Ankit Jain  <jankit@novell.com>
 
+	* NumberHelper.cs (NumberHelper.Build): Try parsing numeric value as UInt64 or 
+	double if Int64.Parse fails.
+
+2006-01-16  Ankit Jain  <jankit@novell.com>
+
 	* ILTables.cs (keywords): Add 'bestfit', 'charmaperror', 'on' & 'off'.
 
 2006-01-16  Ankit Jain  <jankit@novell.com>
