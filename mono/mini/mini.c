@@ -9303,6 +9303,96 @@ mono_local_cprop (MonoCompile *cfg)
 }
 
 static void
+mono_local_cprop_bb2 (MonoCompile *cfg, MonoBasicBlock *bb, int acp_size)
+{
+	MonoInst *ins;
+	int i;
+	GArray *acp;
+
+	/* FIXME: Speed this up */
+
+	acp = g_array_new (FALSE, FALSE, sizeof (int));
+
+	for (ins = bb->code; ins; ins = ins->next) {
+		const char *spec = ins_info [ins->opcode - OP_START - 1];
+		int regtype, srcindex, sreg;
+		gboolean store;
+
+		if (ins->opcode < MONO_CEE_LAST)
+			continue;
+
+		/* FIXME: Store opcodes */
+
+		if (acp->len > 0) {
+			for (srcindex = 0; srcindex < 2; ++srcindex) {
+				regtype = spec [(srcindex == 0) ? MONO_INST_SRC1 : MONO_INST_SRC2];
+				sreg = srcindex == 0 ? ins->sreg1 : ins->sreg2;
+
+				if ((regtype == 'i') && (sreg != -1)) {
+					for (i = 0; i < acp->len; i += 2)
+						if (g_array_index (acp, int, i) == sreg) {
+							int vreg = g_array_index (acp, int, i + 1);
+#if 0
+							{
+								static int count = 0;
+								count ++;
+								if (count == atoi (getenv ("COUNT2")))
+									printf ("FOO\n");
+								if (count > atoi (getenv ("COUNT2")))
+									vreg = sreg;
+							}
+#endif
+							//printf ("CCOPY: R%d -> R%d\n", sreg, vreg);
+							if (srcindex == 0)
+								ins->sreg1 = vreg;
+							else
+								ins->sreg2 = vreg;
+							break;
+						}
+				}
+			}
+		}		
+
+		if ((ins->dreg != -1) && (spec [MONO_INST_DEST] == 'i')) {
+			/* Invalidate values */
+			for (i = 0; i < acp->len; i += 2)
+				if ((g_array_index (acp, int, i) == ins->dreg) || (g_array_index (acp, int, i + 1) == ins->dreg))
+					g_array_index (acp, int, i) = -1;
+		}
+
+		if (ins->opcode == OP_LDADDR) {
+			return;
+		}
+
+		/* FIXME: Add support for long/float */
+		if (ins->opcode == OP_MOVE) {
+			for (i = 0; i < acp->len; i += 2)
+				if (g_array_index (acp, int, i) == ins->dreg)
+					break;
+
+			if (i < acp->len)
+				g_array_index (acp, int, i + 1) = ins->sreg1;
+			else {
+				g_array_append_val (acp, ins->dreg);
+				g_array_append_val (acp, ins->sreg1);
+			}
+		}
+	}
+
+	g_array_free (acp, TRUE);
+}
+
+static void
+mono_local_cprop2 (MonoCompile *cfg)
+{
+	MonoBasicBlock *bb;
+
+	for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
+		mono_local_cprop_bb2 (cfg, bb, cfg->num_varinfo);
+	}
+}
+
+static void
 remove_critical_edges (MonoCompile *cfg) {
 	MonoBasicBlock *bb;
 	MonoBasicBlock *previous_bb;
@@ -9608,6 +9698,8 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 		} else {
 			mono_local_cprop (cfg);
 		}
+	} else if (cfg->new_ir) {
+		mono_local_cprop2 (cfg);
 	}
 
 	if (cfg->comp_done & MONO_COMP_SSA) {			

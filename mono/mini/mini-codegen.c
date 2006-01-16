@@ -1195,8 +1195,9 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 		 * TRACK DREG
 		 */
 		fp = dreg_is_fp (ins);
-		if (spec [MONO_INST_DEST] && (!fp || (fp && !use_fpstack)) && is_soft_reg (ins->dreg, fp))
+		if (spec [MONO_INST_DEST] && (!fp || (fp && !use_fpstack)) && is_soft_reg (ins->dreg, fp)) {
 			prev_dreg = ins->dreg;
+		}
 
 		if (spec [MONO_INST_DEST] == 'b') {
 			/* 
@@ -1241,6 +1242,11 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 		if ((!fp || (fp && !use_fpstack)) && (is_soft_reg (ins->dreg, fp))) {
 			if (dest_dreg != -1)
 				dreg_mask = (regmask (dest_dreg));
+
+			/* FIXME: Do this earlier */
+			if ((ins->opcode == OP_MOVE) && !fp && (reginfo [ins->dreg].last_use == i) && (reginfo [ins->dreg].prev_use == 0)) {
+				ins->opcode = CEE_NOP;
+			}
 
 			val = rassign (cfg, ins->dreg, fp);
 
@@ -1534,7 +1540,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 					}
 				}
 				else if ((dest_sreg1 != -1) && (dest_sreg1 != val)) {
-					g_assert_not_reached ();
+					create_copy_ins (cfg, dest_sreg1, val, ins, ip, fp);
 				}
 				
 				ins->sreg1 = val;
