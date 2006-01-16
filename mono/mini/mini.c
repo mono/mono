@@ -1742,8 +1742,35 @@ mono_compile_create_var_for_vreg (MonoCompile *cfg, MonoType *type, int opcode, 
 	if (vreg != -1)
 		set_vreg_to_inst (cfg, regtype, vreg, inst);
 
-	if (regtype == 'l')
-		NOT_IMPLEMENTED;
+	if (regtype == 'l') {
+		MonoInst *tree;
+
+		/* 
+		 * These two cannot be allocated using create_var_for_vreg since that would
+		 * screw up the invariant that locals are allocated consecutively from 
+		 * locals_offset.
+		 */
+
+		/* Allocate a dummy MonoInst for the first vreg */
+		MONO_INST_NEW (cfg, tree, OP_LOCAL);
+		tree->dreg = inst->dreg;
+		tree->inst_c0 = num;
+		tree->type = STACK_I4;
+		tree->inst_vtype = &mono_defaults.int32_class->byval_arg;
+		tree->klass = mono_class_from_mono_type (tree->inst_vtype);
+
+		set_vreg_to_inst (cfg, 'i', inst->dreg, tree);
+
+		/* Allocate a dummy MonoInst for the second vreg */
+		MONO_INST_NEW (cfg, tree, OP_LOCAL);
+		tree->dreg = inst->dreg + 1;
+		tree->inst_c0 = num;
+		tree->type = STACK_I4;
+		tree->inst_vtype = &mono_defaults.int32_class->byval_arg;
+		tree->klass = mono_class_from_mono_type (tree->inst_vtype);
+
+		set_vreg_to_inst (cfg, 'i', inst->dreg + 1, tree);
+	}
 
 	cfg->num_varinfo++;
 	//g_print ("created temp %d of type %s\n", num, mono_type_get_name (type));

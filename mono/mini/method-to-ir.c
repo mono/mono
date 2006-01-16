@@ -1946,13 +1946,11 @@ handle_stack_args (MonoCompile *cfg, MonoInst **sp, int count) {
 	return 0;
 }
 
-#if 0
 static void
 mini_emit_aotconst (MonoCompile *cfg, int dreg, MonoJumpInfoType patch_type, gpointer cons)
 {
 	NOT_IMPLEMENTED;
 }
-#endif
 
 static void
 mini_emit_load_intf_reg (MonoCompile *cfg, int intf_reg, int ioffset_reg, MonoClass *klass)
@@ -8832,31 +8830,10 @@ mono_handle_global_vregs (MonoCompile *cfg)
 					if (!get_vreg_to_inst (cfg, 'l', vreg)) {
 						MonoInst *tree;
 
-						NOT_IMPLEMENTED;
-
 						mono_compile_create_var_for_vreg (cfg, &mono_defaults.int64_class->byval_arg, OP_LOCAL, 'l', vreg);
 
 						if (cfg->verbose_level > 0)
 							printf ("LONG VREG R%d made global.\n", vreg);
-
-						/* FIXME: Move this elsewhere */
-						/* Allocate a dummy MonoInst for the first vreg */
-						MONO_INST_NEW (cfg, tree, OP_LOCAL);
-						tree->dreg = vreg;
-						tree->type = STACK_I4;
-						tree->inst_vtype = &mono_defaults.int32_class->byval_arg;
-						tree->klass = mono_class_from_mono_type (tree->inst_vtype);
-
-						cfg->vreg_to_inst ['i'][vreg] = tree;
-
-						/* Allocate a dummy MonoInst for the second vreg */
-						MONO_INST_NEW (cfg, tree, OP_LOCAL);
-						tree->dreg = vreg + 1;
-						tree->type = STACK_I4;
-						tree->inst_vtype = &mono_defaults.int32_class->byval_arg;
-						tree->klass = mono_class_from_mono_type (tree->inst_vtype);
-
-						cfg->vreg_to_inst ['i'][vreg + 1] = tree;
 					}
 				}
 

@@ -849,6 +849,8 @@ mono_arch_create_vars (MonoCompile *cfg)
 		if (cfg->new_ir && ((MONO_TYPE_ISSTRUCT (sig->ret) && !mono_class_from_mono_type (sig->ret)->enumtype) || (sig->ret->type == MONO_TYPE_TYPEDBYREF))) {
 			/* cfg->ret will represent the implicit arg holding the vtype address */
 			cfg->ret = mono_compile_create_var (cfg, &mono_defaults.int_class->byval_arg, OP_LOCAL);
+			g_free (cinfo);
+			return;
 		}
 
 	if (cfg->ret)

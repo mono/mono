@@ -813,6 +813,15 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 				memset (&reginfo [ins->sreg1], 0, sizeof (RegTrack));
 			if ((ins->sreg2 != -1) && (ins->sreg2 < max))
 				memset (&reginfo [ins->sreg2], 0, sizeof (RegTrack));
+#if SIZEOF_VOID_P == 4
+			/* Regpairs */
+			if ((ins->dreg != -1) && (ins->dreg + 1 < max))
+				memset (&reginfo [ins->dreg + 1], 0, sizeof (RegTrack));
+			if ((ins->sreg1 != -1) && (ins->sreg1 + 1 < max))
+				memset (&reginfo [ins->sreg1 + 1], 0, sizeof (RegTrack));
+			if ((ins->sreg2 != -1) && (ins->sreg2 + 1 < max))
+				memset (&reginfo [ins->sreg2 + 1], 0, sizeof (RegTrack));
+#endif
 		}
 	}
 	else
@@ -892,6 +901,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 			reginfo1 [ins->sreg1].last_use = i;
 			if (MONO_ARCH_INST_IS_REGPAIR (spec [MONO_INST_SRC2])) {
 				/* The virtual register is allocated sequentially */
+				rs->iassign [ins->sreg1 + 1] = -1;
 				reginfo1 [ins->sreg1 + 1].prev_use = reginfo1 [ins->sreg1 + 1].last_use;
 				reginfo1 [ins->sreg1 + 1].last_use = i;
 				if (reginfo1 [ins->sreg1 + 1].born_in == 0 || reginfo1 [ins->sreg1 + 1].born_in > i)
@@ -913,6 +923,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 			reginfo2 [ins->sreg2].last_use = i;
 			if (MONO_ARCH_INST_IS_REGPAIR (spec [MONO_INST_SRC2])) {
 				/* The virtual register is allocated sequentially */
+				rs->iassign [ins->sreg2 + 1] = -1;
 				reginfo2 [ins->sreg2 + 1].prev_use = reginfo2 [ins->sreg2 + 1].last_use;
 				reginfo2 [ins->sreg2 + 1].last_use = i;
 				if (reginfo2 [ins->sreg2 + 1].born_in == 0 || reginfo2 [ins->sreg2 + 1].born_in > i)
@@ -942,6 +953,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 
 			if (MONO_ARCH_INST_IS_REGPAIR (spec [MONO_INST_DEST])) {
 				/* The virtual register is allocated sequentially */
+				rs->iassign [ins->dreg + 1] = -1;
 				reginfod [ins->dreg + 1].prev_use = reginfod [ins->dreg + 1].last_use;
 				reginfod [ins->dreg + 1].last_use = i;
 				if (reginfod [ins->dreg + 1].born_in == 0 || reginfod [ins->dreg + 1].born_in > i)
