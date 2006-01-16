@@ -78,8 +78,11 @@ namespace PEAPI {
 	/// Attributes for .pinvokeimpl method declarations
 	/// </summary>
 	public enum PInvokeAttr { nomangle = 1, ansi = 2, unicode = 4, autochar = 6,
+		bestfit_on = 0x0010, bestfit_off = 0x0020, bestfit_mask = 0x0030,
 		lasterr = 0x0040, winapi = 0x0100, cdecl = 0x0200,
-		stdcall = 0x0300, thiscall = 0x0400, fastcall = 0x0500 }
+		stdcall = 0x0300, thiscall = 0x0400, fastcall = 0x0500,
+		charmaperror_on = 0x1000, charmaperror_off = 0x2000
+	}
 
 	/// <summary>
 	/// Implementation attributes for a method

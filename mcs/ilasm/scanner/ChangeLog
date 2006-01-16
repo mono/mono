@@ -1,5 +1,9 @@
 2006-01-16  Ankit Jain  <jankit@novell.com>
 
+	* ILTables.cs (keywords): Add 'bestfit', 'charmaperror', 'on' & 'off'.
+
+2006-01-16  Ankit Jain  <jankit@novell.com>
+
 	* ILTables.cs (keywords): Add 'uint', this is a native UIntPtr type.
 
 2006-01-03  Ankit Jain  <jankit@novell.com>

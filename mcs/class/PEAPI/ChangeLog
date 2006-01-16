@@ -1,3 +1,8 @@
+2006-01-16  Ankit Jain  <jankit@novell.com>
+
+	* Metadata.cs (PInvokeAttr): Add 'bestfit_on', 'bestfit_off', 'bestfit_mask',
+	'charmaperror_on' & 'charmaperror_off'.
+
 2006-01-13  Ankit Jain  <jankit@novell.com>
 
 	* Metadata.cs (GenericMethodSig): Ensure sig is added to the blob only once.

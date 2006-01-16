@@ -1,5 +1,13 @@
 2006-01-16  Ankit Jain  <jankit@novell.com>
 
+	* ILParser.jay (K_BESTFIT):
+	(K_CHARMAPERROR):
+	(K_ON):
+	(K_OFF): New tokens.
+	(pinv_attr | ..): Add rules for the new tokens.
+
+2006-01-16  Ankit Jain  <jankit@novell.com>
+
 	* ILParser.jay (K_UINT): New token.
 	(type | K_NATIVE K_UINT): New.
 

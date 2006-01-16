@@ -312,6 +312,7 @@ namespace Mono.ILASM {
 %token K_ANSI
 %token K_UNICODE
 %token K_AUTOCHAR
+%token K_BESTFIT
 %token K_IMPORT
 %token K_SERIALIZABLE
 %token K_NESTED
@@ -452,6 +453,9 @@ namespace Mono.ILASM {
 %token K_TRUE
 %token K_FALSE
 %token K_IS
+%token K_ON
+%token K_OFF
+%token K_CHARMAPERROR
 
 /* end generated */
 
@@ -1872,6 +1876,10 @@ pinv_attr		: /* EMPTY */ { $$ = new PInvokeAttr (); }
 			| pinv_attr K_STDCALL { $$ = (PInvokeAttr) $1 | PInvokeAttr.stdcall; }
 			| pinv_attr K_THISCALL { $$ = (PInvokeAttr) $1 | PInvokeAttr.thiscall; }
 			| pinv_attr K_FASTCALL { $$ = (PInvokeAttr) $1 | PInvokeAttr.fastcall; }
+			| pinv_attr K_BESTFIT COLON K_ON { $$ = (PInvokeAttr) $1 | PInvokeAttr.bestfit_on; }
+			| pinv_attr K_BESTFIT COLON K_OFF { $$ = (PInvokeAttr) $1 | PInvokeAttr.bestfit_off; }
+			| pinv_attr K_CHARMAPERR COLON K_ON { $$ = (PInvokeAttr) $1 | PInvokeAttr.charmaperror_on; }
+			| pinv_attr K_CHARMAPERR COLON K_OFF { $$ = (PInvokeAttr) $1 | PInvokeAttr.charmaperror_off; }
 			;
 
 method_name		: D_CTOR

@@ -168,6 +168,8 @@ namespace Mono.ILASM {
                                 keywords ["ansi"] = new ILToken (Token.K_ANSI, "ansi");
                                 keywords ["unicode"] = new ILToken (Token.K_UNICODE, "unicode");
                                 keywords ["autochar"] = new ILToken (Token.K_AUTOCHAR, "autochar");
+                                keywords ["bestfit"] = new ILToken (Token.K_BESTFIT, "bestfit");
+                                keywords ["charmaperror"] = new ILToken (Token.K_BESTFIT, "bestfit");
                                 keywords ["import"] = new ILToken (Token.K_IMPORT, "import");
                                 keywords ["serializable"] = new ILToken (Token.K_SERIALIZABLE, "serializable");
                                 keywords ["nested"] = new ILToken (Token.K_NESTED, "nested");
@@ -309,6 +311,8 @@ namespace Mono.ILASM {
                                 keywords ["true"] = new ILToken (Token.K_TRUE, "true");
                                 keywords ["false"] = new ILToken (Token.K_FALSE, "false");
                                 keywords ["is"] = new ILToken (Token.K_IS, "is");
+                                keywords ["on"] = new ILToken (Token.K_ON, "on");
+                                keywords ["off"] = new ILToken (Token.K_OFF, "off");
 
                                 return keywords;
                         }
