@@ -118,21 +118,30 @@ namespace Mono.ILASM {
                                 num += '0';
                         }
 
-                        try {
-                                if (dec_found || is_real) {
-                                        double d = Double.Parse (num, nstyles, NumberFormatInfo.InvariantInfo);
-                                        result.token = Token.FLOAT64;
-                                        result.val = d;
-                                } else {
+                        if (!dec_found && !is_real) {        
+                                try { 
                                         long i = Int64.Parse (num, nstyles);
-                                        // if (i < Int32.MinValue || i > Int32.MaxValue) {
-                                                result.token = Token.INT64;
-                                                result.val = i;
-                                        // } else {
-                                        //        result.token = Token.INT32;
-                                        //        result.val = (int) i;
-                                        // }
+                                        result.token = Token.INT64;
+                                        result.val = i;
+
+                                        return num;
+                                } catch {
                                 }
+
+				try {
+					long i = (long) UInt64.Parse (num, nstyles);
+                                        result.token = Token.INT64;
+                                        result.val = i;
+
+					return num;
+				} catch {
+				}
+                        }
+
+                        try {
+                                double d = Double.Parse (num, nstyles, NumberFormatInfo.InvariantInfo);
+                                result.token = Token.FLOAT64;
+                                result.val = d;
                         } catch {
                                 reader.Unread (num.ToCharArray ());
                                 reader.RestoreLocation ();

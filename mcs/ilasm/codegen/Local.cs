@@ -17,13 +17,13 @@ namespace Mono.ILASM {
 
                 private int slot;
                 private string name;
-                private ITypeRef type;
+                private BaseTypeRef type;
 
-                public Local (int slot, ITypeRef type) : this (slot, null, type) {
+                public Local (int slot, BaseTypeRef type) : this (slot, null, type) {
 
                 }
 
-                public Local (int slot, string name, ITypeRef type) {
+                public Local (int slot, string name, BaseTypeRef type) {
                         this.slot = slot;
                         this.name = name;
                         this.type = type;
@@ -38,18 +38,18 @@ namespace Mono.ILASM {
                         get { return name; }
                 }
 
-                public ITypeRef Type {
+                public BaseTypeRef Type {
                         get { return type; }
                 }
 
                 public PEAPI.Local GetPeapiLocal (CodeGen code_gen)
                 {
                         int ec = code_gen.Report.ErrorCount;
-                        GenericTypeInst gti = type as GenericTypeInst;
-                        if (gti == null)
+                        BaseGenericTypeRef gtr = type as BaseGenericTypeRef;
+                        if (gtr == null)
                                 type.Resolve (code_gen);
                         else
-                                gti.ResolveOnly (code_gen);
+                                gtr.ResolveNoTypeSpec (code_gen);
 
                         if (code_gen.Report.ErrorCount > ec)
                                 return null;

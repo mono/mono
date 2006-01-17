@@ -16,7 +16,7 @@ namespace Mono.ILASM {
         public class FieldDef : ICustomAttrTarget {
 
                 private string name;
-                private ITypeRef type;
+                private BaseTypeRef type;
                 private PEAPI.FieldAttr attr;
                 private PEAPI.FieldDef field_def;
                 private ArrayList customattr_list;
@@ -33,7 +33,7 @@ namespace Mono.ILASM {
                 private string at_data_id;
 
                 public FieldDef (PEAPI.FieldAttr attr, string name,
-                                ITypeRef type)
+                                BaseTypeRef type)
                 {
                         this.attr = attr;
                         this.name = name;
@@ -65,7 +65,7 @@ namespace Mono.ILASM {
                         set { attr = value; }
                 }
 
-                public ITypeRef Type {
+                public BaseTypeRef Type {
                         get { return type; }
                 }
 

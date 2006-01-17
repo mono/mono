@@ -28,3 +28,9 @@
   	implements class [one]If1`1<!0>, class [one]If2`1<!1>, ISimple, [one]If3  {
 
   }
+
+  .class private auto ansi beforefieldinit badname`2<A,B>
+  	extends class [one]gen`1<!A>
+  	implements class [one]If1`1<!A>, class [one]If2`1<!B>, ISimple, [one]If3  {
+
+  }

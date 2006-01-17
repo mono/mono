@@ -15,19 +15,9 @@ namespace Mono.ILASM {
         /// <summary>
         /// Reference to a type in the module being compiled.
         /// </summary>
-        public class TypeRef : ModifiableType, IClassRef {
-
+        public class TypeRef : BaseClassRef {
 
                 private Location location;
-                private string full_name;
-                private string sig_mod;
-                private PEAPI.Type type;
-                private bool is_valuetype;
-                private Hashtable genericinst_table;
-                private Hashtable p_genericinst_table;
-
-                private bool is_resolved;
-
                 public static readonly TypeRef Ellipsis = new TypeRef ("ELLIPSIS", false, null);
                 public static readonly TypeRef Any = new TypeRef ("any", false, null);
 
@@ -37,98 +27,31 @@ namespace Mono.ILASM {
                 }
 
                 public TypeRef (string full_name, bool is_valuetype, Location location, ArrayList conv_list, string sig_mod)
+                        : base (full_name, is_valuetype, conv_list, sig_mod)
                 {
-                        this.full_name = full_name;
                         this.location = location;
-                        this.is_valuetype = is_valuetype;
-                        this.sig_mod = sig_mod;
-                        if (conv_list != null)
-                                ConversionList = conv_list;
-                        is_resolved = false;
                 }
                 
-                public string FullName {
-                        get { return full_name + sig_mod; }
-                }
-
-                public override string SigMod {
-                        get { return sig_mod; }
-                        set { sig_mod = value; }
-                }
-
-                public PEAPI.Type PeapiType {
-                        get { return type; }
-                }
-
-                public PEAPI.Class PeapiClass {
-                        get { return type as PEAPI.Class; }
-                }
-
-                public IClassRef Clone ()
+                public override BaseClassRef Clone ()
                 {
                         return new TypeRef (full_name, is_valuetype, location, (ArrayList) ConversionList.Clone (), sig_mod);
                 }
 
-                public bool IsResolved {
-                        get { return is_resolved; }
-                }
-
-                public void MakeValueClass ()
+                protected override BaseMethodRef CreateMethodRef (BaseTypeRef ret_type,
+                        PEAPI.CallConv call_conv, string name, BaseTypeRef[] param, int gen_param_count)
                 {
-                        is_valuetype = true;
-                }
-
-                public GenericTypeInst GetGenericTypeInst (GenericArguments gen_args)
-                {
-                        string sig = gen_args.ToString ();
-                        GenericTypeInst gtri = null;
-
-                        if (genericinst_table == null)
-                                genericinst_table = new Hashtable ();
+                        if (SigMod == null | SigMod == "")
+                                return new MethodRef (this, call_conv, ret_type, name, param, gen_param_count);
                         else
-                                gtri = genericinst_table [sig] as GenericTypeInst;
-
-                        if (gtri == null) {
-                                gtri = new GenericTypeInst (this, gen_args, is_valuetype);
-                                genericinst_table [sig] = gtri;
-                        }
-
-                        return gtri;
+                                return new TypeSpecMethodRef (this, call_conv, ret_type, name, param, gen_param_count);
                 }
 
-                public PEAPI.Type ResolveInstance (CodeGen code_gen, GenericArguments gen_args)
+                protected override IFieldRef CreateFieldRef (BaseTypeRef ret_type, string name)
                 {
-                        PEAPI.GenericTypeInst gtri = null;
-                        string sig = gen_args.ToString ();
-
-                        if (p_genericinst_table == null)
-                                p_genericinst_table = new Hashtable ();
-                        else
-                                gtri = p_genericinst_table [sig] as PEAPI.GenericTypeInst;
-
-                        if (gtri == null) {
-                                if (!IsResolved)
-                                        Resolve (code_gen);
-
-				gtri = new PEAPI.GenericTypeInst (PeapiType, gen_args.Resolve (code_gen));
-                                p_genericinst_table [sig] = gtri;
-                        }
-                        
-                        return gtri;
+                         return new FieldRef (this, ret_type, name);
                 }
 
-                public  IMethodRef GetMethodRef (ITypeRef ret_type,
-                        PEAPI.CallConv call_conv, string name, ITypeRef[] param, int gen_param_count)
-                {
-                        return new MethodRef (this, call_conv, ret_type, name, param, gen_param_count);
-                }
-
-                public IFieldRef GetFieldRef (ITypeRef ret_type, string name)
-                {
-                        return new FieldRef (this, ret_type, name);
-                }
-
-                public void Resolve (CodeGen code_gen)
+                public override void Resolve (CodeGen code_gen)
                 {
                         if (is_resolved)
                                 return;
@@ -147,7 +70,7 @@ namespace Mono.ILASM {
                         is_resolved = true;
                 }
 
-                public IClassRef AsClassRef (CodeGen code_gen)
+                public BaseClassRef AsClassRef (CodeGen code_gen)
                 {
                         return this;
                 }

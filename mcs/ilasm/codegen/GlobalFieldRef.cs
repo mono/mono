@@ -15,13 +15,13 @@ namespace Mono.ILASM {
 
         public class GlobalFieldRef : IFieldRef {
 
-                private ITypeRef ret_type;
+                private BaseTypeRef ret_type;
                 private string name;
 
                 private PEAPI.Field peapi_field;
 		private bool is_resolved;
 
-                public GlobalFieldRef (ITypeRef ret_type, string name)
+                public GlobalFieldRef (BaseTypeRef ret_type, string name)
                 {
                         this.ret_type = ret_type;
                         this.name = name;

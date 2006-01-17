@@ -13,7 +13,7 @@ using System;
 
 namespace Mono.ILASM {
 
-        public interface IClassRef : ITypeRef {
+        public interface BaseClassRef : BaseTypeRef {
 
                 PEAPI.Class PeapiClass { get; }
 
@@ -21,7 +21,7 @@ namespace Mono.ILASM {
 
                 IClassRef Clone ();
                 
-                /* Returns the Generic Instance for the IClassRef */
+                /* Returns the Generic Instance for the BaseClassRef */
                 GenericTypeInst GetGenericTypeInst (GenericArguments gen_args);
 
                 /* Resolves the Generic instance and returns the 

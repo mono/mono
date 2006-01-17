@@ -47,3 +47,11 @@
   	implements class IGen`1<!0>, class IFen`1<!1>, ISimple  {
 
    }
+
+  /* Inherits a generic base class and implements generic interfaces,
+     but uses !A (type param name) instead of index */
+  .class private auto ansi beforefieldinit badname`2<A,B>
+  	extends class cbase`1<!B>
+  	implements class IGen`1<!A>, class IFen`1<!B>, ISimple  {
+
+   }

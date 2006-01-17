@@ -16,41 +16,22 @@ namespace Mono.ILASM {
         /// <summary>
         /// Reference to a primitive type, ie string, object, char
         /// </summary>
-        public class PrimitiveTypeRef : ModifiableType, ITypeRef {
+        public class PrimitiveTypeRef : BaseTypeRef {
 
-                private string full_name;
-                private string sig_mod;
-                private PEAPI.Type type;
-
-                private bool is_resolved;
-                private static Hashtable method_table = new Hashtable ();
+                private static Hashtable s_method_table = new Hashtable ();
 
                 public PrimitiveTypeRef (PEAPI.PrimitiveType type, string full_name)
+                        : base (full_name)
                 {
                         this.type = type;
-                        this.full_name = full_name;
-                        sig_mod = String.Empty;
-                        is_resolved = false;
+                        SigMod = String.Empty;
                 }
 
 		public string Name {
 			get { return full_name; }
 		}
 
-                public string FullName {
-                        get { return full_name + sig_mod; }
-                }
-
-                public override string SigMod {
-                        get { return sig_mod; }
-                        set { sig_mod = value; }
-                }
-
-                public PEAPI.Type PeapiType {
-                        get { return type; }
-                }
-
-                public void Resolve (CodeGen code_gen)
+                public override void Resolve (CodeGen code_gen)
                 {
                         if (is_resolved)
                                 return;
@@ -79,26 +60,33 @@ namespace Mono.ILASM {
                         }
                 }
 
-                public IMethodRef GetMethodRef (ITypeRef ret_type, PEAPI.CallConv call_conv,
-                                string name, ITypeRef[] param, int gen_param_count)
+                protected override BaseMethodRef CreateMethodRef (BaseTypeRef ret_type,
+                        PEAPI.CallConv call_conv, string name, BaseTypeRef[] param, int gen_param_count)
                 {
-                        string key = full_name + MethodDef.CreateSignature (ret_type, name, param, gen_param_count) + sig_mod;
-                        TypeSpecMethodRef mr = method_table [key] as TypeSpecMethodRef;
+                        throw new Exception ("Should not be called");
+                }
+
+                public override BaseMethodRef GetMethodRef (BaseTypeRef ret_type, PEAPI.CallConv call_conv,
+                                string name, BaseTypeRef[] param, int gen_param_count)
+                {
+                        /* Use FullName also here, as we are caching in a static hashtable */
+                        string key = FullName + MethodDef.CreateSignature (ret_type, name, param, gen_param_count);
+                        TypeSpecMethodRef mr = s_method_table [key] as TypeSpecMethodRef;
                         if (mr != null)
                                 return mr;
 
 			//FIXME: generic methodref for primitive type?
-                        mr = new TypeSpecMethodRef (this, ret_type, call_conv, name, param, gen_param_count);
-                        method_table [key] = mr;
+                        mr = new TypeSpecMethodRef (this, call_conv, ret_type, name, param, gen_param_count);
+                        s_method_table [key] = mr;
                         return mr;
                 }
 
-                public IFieldRef GetFieldRef (ITypeRef ret_type, string name)
+                protected override IFieldRef CreateFieldRef (BaseTypeRef ret_type, string name)
                 {
-                        return new TypeSpecFieldRef (this, ret_type, name);
+			throw new Exception ("PrimitiveType's can't have fields!");
                 }
 
-                public IClassRef AsClassRef (CodeGen code_gen)
+                public BaseClassRef AsClassRef (CodeGen code_gen)
                 {
                         /*
                         PEAPI.ClassRef class_ref = code_gen.ExternTable.GetValueClass ("corlib", FullName);

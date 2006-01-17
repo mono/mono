@@ -15,14 +15,14 @@ namespace Mono.ILASM {
 
         public class TypeSpecFieldRef : IFieldRef {
 
-                private ITypeRef owner;
-                private ITypeRef type;
+                private BaseTypeRef owner;
+                private BaseTypeRef type;
                 private string name;
 
                 private PEAPI.FieldRef peapi_field;
 		private bool is_resolved;
 
-                public TypeSpecFieldRef (ITypeRef owner, ITypeRef type, string name)
+                public TypeSpecFieldRef (BaseTypeRef owner, BaseTypeRef type, string name)
                 {
                         this.owner = owner;
                         this.type = type;

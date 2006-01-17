@@ -5,14 +5,15 @@ codegen/CodeGen.cs
 codegen/DebuggingInfo.cs
 codegen/ExternTable.cs
 codegen/InstrTable.cs
-codegen/ITypeRef.cs
-codegen/IClassRef.cs
 codegen/FieldDef.cs
 codegen/ParamDef.cs
 codegen/MethodDef.cs
 codegen/LabelInfo.cs
 codegen/TypeDef.cs
 codegen/DataDef.cs
+codegen/BaseTypeRef.cs
+codegen/BaseClassRef.cs
+codegen/BaseGenericTypeRef.cs
 codegen/TypeRef.cs
 codegen/PeapiTypeRef.cs
 codegen/ExternTypeRef.cs
@@ -29,7 +30,7 @@ codegen/SwitchInstr.cs
 codegen/TypeInstr.cs
 codegen/MethodInstr.cs
 codegen/Local.cs
-codegen/IMethodRef.cs
+codegen/BaseMethodRef.cs
 codegen/ExternMethodRef.cs
 codegen/MethodRef.cs
 codegen/GlobalMethodRef.cs
@@ -54,7 +55,7 @@ codegen/FaultBlock.cs
 codegen/CatchBlock.cs
 codegen/CustomAttr.cs
 codegen/DeclSecurity.cs
-codegen/GenericTypeRef.cs
+codegen/GenericParamRef.cs
 codegen/GenericTypeInst.cs
 codegen/TypeSpecMethodRef.cs
 codegen/TypeSpecFieldRef.cs
@@ -63,6 +64,7 @@ codegen/Sentinel.cs
 codegen/FileRef.cs
 codegen/MethodPointerTypeRef.cs
 codegen/GenericArguments.cs
+codegen/GenericParameters.cs
 parser/ScannerAdapter.cs
 scanner/ILReader.cs
 scanner/ILTokenizingException.cs

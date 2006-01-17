@@ -13,47 +13,15 @@ using System.Collections;
 
 namespace Mono.ILASM {
 
-        public class ExternMethodRef : IMethodRef {
+        public class ExternMethodRef : BaseMethodRef {
 
-                private ExternTypeRef owner;
-                private ITypeRef ret_type;
-                private string name;
-                private ITypeRef[] param;
-                private PEAPI.CallConv call_conv;
-
-                private PEAPI.Method peapi_method;
-		private bool is_resolved;
-                private int gen_param_count;
-
-                public ExternMethodRef (ExternTypeRef owner, ITypeRef ret_type,
-                        PEAPI.CallConv call_conv, string name, ITypeRef[] param, int gen_param_count)
+                public ExternMethodRef (ExternTypeRef owner, BaseTypeRef ret_type,
+                        PEAPI.CallConv call_conv, string name, BaseTypeRef[] param, int gen_param_count)
+                        : base (owner, call_conv, ret_type, name, param, gen_param_count)
                 {
-                        this.owner = owner;
-                        this.ret_type = ret_type;
-                        this.name = name;
-                        this.param = param;
-                        this.call_conv = call_conv;
-                        this.gen_param_count = gen_param_count;
-			if (gen_param_count > 0)
-				CallConv |= PEAPI.CallConv.Generic;
-			
-			is_resolved = false;
                 }
 
-                public PEAPI.Method PeapiMethod {
-                        get { return peapi_method; }
-                }
-
-		public PEAPI.CallConv CallConv {
-			get { return call_conv; }
-			set { call_conv = value; }
-		}
-
-		public ITypeRef Owner {
-			get { return owner; }
-		}
-
-                public void Resolve (CodeGen code_gen)
+                public override void Resolve (CodeGen code_gen)
                 {
 			if (is_resolved)
 				return;
@@ -69,7 +37,7 @@ namespace Mono.ILASM {
                         ret_type.Resolve (code_gen);
 
                         int count = 0;
-                        foreach (ITypeRef typeref in param) {
+                        foreach (BaseTypeRef typeref in param) {
                                 typeref.Resolve (code_gen);
                                 param_list[count++] = typeref.PeapiType;
                         }
@@ -110,7 +78,7 @@ namespace Mono.ILASM {
                         ret_type.Resolve (code_gen);
 
                         int count = 0;
-                        foreach (ITypeRef typeref in param) {
+                        foreach (BaseTypeRef typeref in param) {
                                 if (in_opt) {
                                         typeref.Resolve (code_gen);
                                         opt_list.Add (typeref.PeapiType);

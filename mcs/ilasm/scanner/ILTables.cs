@@ -168,6 +168,8 @@ namespace Mono.ILASM {
                                 keywords ["ansi"] = new ILToken (Token.K_ANSI, "ansi");
                                 keywords ["unicode"] = new ILToken (Token.K_UNICODE, "unicode");
                                 keywords ["autochar"] = new ILToken (Token.K_AUTOCHAR, "autochar");
+                                keywords ["bestfit"] = new ILToken (Token.K_BESTFIT, "bestfit");
+                                keywords ["charmaperror"] = new ILToken (Token.K_BESTFIT, "bestfit");
                                 keywords ["import"] = new ILToken (Token.K_IMPORT, "import");
                                 keywords ["serializable"] = new ILToken (Token.K_SERIALIZABLE, "serializable");
                                 keywords ["nested"] = new ILToken (Token.K_NESTED, "nested");
@@ -211,6 +213,7 @@ namespace Mono.ILASM {
                                 keywords ["float64"] = new ILToken (Token.K_FLOAT64, "float64");
                                 keywords ["error"] = new ILToken (Token.K_ERROR, "error");
                                 keywords ["unsigned"] = new ILToken (Token.K_UNSIGNED, "unsigned");
+                                keywords ["uint"] = new ILToken (Token.K_UINT, "uint");
                                 keywords ["uint8"] = new ILToken (Token.K_UINT8, "uint8");
                                 keywords ["uint16"] = new ILToken (Token.K_UINT16, "uint16");
                                 keywords ["uint32"] = new ILToken (Token.K_UINT32, "uint32");
@@ -308,6 +311,8 @@ namespace Mono.ILASM {
                                 keywords ["true"] = new ILToken (Token.K_TRUE, "true");
                                 keywords ["false"] = new ILToken (Token.K_FALSE, "false");
                                 keywords ["is"] = new ILToken (Token.K_IS, "is");
+                                keywords ["on"] = new ILToken (Token.K_ON, "on");
+                                keywords ["off"] = new ILToken (Token.K_OFF, "off");
 
                                 return keywords;
                         }

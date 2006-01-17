@@ -78,8 +78,11 @@ namespace PEAPI {
 	/// Attributes for .pinvokeimpl method declarations
 	/// </summary>
 	public enum PInvokeAttr { nomangle = 1, ansi = 2, unicode = 4, autochar = 6,
+		bestfit_on = 0x0010, bestfit_off = 0x0020, bestfit_mask = 0x0030,
 		lasterr = 0x0040, winapi = 0x0100, cdecl = 0x0200,
-		stdcall = 0x0300, thiscall = 0x0400, fastcall = 0x0500 }
+		stdcall = 0x0300, thiscall = 0x0400, fastcall = 0x0500,
+		charmaperror_on = 0x1000, charmaperror_off = 0x2000
+	}
 
 	/// <summary>
 	/// Implementation attributes for a method
@@ -144,8 +147,8 @@ namespace PEAPI {
 	public enum TypeOp {cpobj = 0x70, ldobj, castclass = 0x74, isinst, 
 		unbox = 0x79, stobj = 0x81, box = 0x8C, newarr, 
 		ldelema = 0x8F, refanyval = 0xC2, mkrefany = 0xC6, 
-		ldtoken = 0xD0, initobj = 0xFE15, sizeOf = 0xFE1C,
-		ldelem = 0xA3, stelem = 0xA4, unbox_any }
+		ldtoken = 0xD0, initobj = 0xFE15, constrained = 0xFE16, 
+		sizeOf = 0xFE1C, ldelem = 0xA3, stelem = 0xA4, unbox_any }
 
 	/// <summary>
 	/// CIL branch instructions
@@ -187,6 +190,19 @@ namespace PEAPI {
 
 	public enum GenParamType : byte { 
 		Var = 0x13, MVar = 0x1E 
+	}
+
+	[Flags]
+	public enum GenericParamAttributes : ushort {
+		VarianceMask  = 0x0003,
+		NonVariant    = 0x0000,
+		Covariant     = 0x0001,
+		Contravariant = 0x0002,
+
+		SpecialConstraintMask = 0x001c,
+		ReferenceTypeConstraint = 0x0004,
+		NotNullableValueTypeConstraint = 0x0008,
+		DefaultConstructorConstrait = 0x0010
 	}
 
 	/* Taken from Mono.Cecil */
@@ -232,7 +248,7 @@ namespace PEAPI {
 				return row;
 			}
 			set {
-				if (row == 0) row = value;
+				row = value;
 			}
 		}
 
@@ -744,27 +760,29 @@ namespace PEAPI {
 
 		MetaDataElement owner;
 		MetaData metadata;
-		string name;
+		public string name;
 		uint nameIx;
 		short index;
+		GenericParamAttributes attr;
 
 		internal GenericParameter (ClassDef owner, MetaData metadata,
-				short index, string name) : this (owner, metadata, index, name, true)
+				short index, string name, GenericParamAttributes attr) : this (owner, metadata, index, name, attr, true)
 		{
 		}
 
 		internal GenericParameter (MethodDef owner, MetaData metadata,
-				short index, string name) : this (owner, metadata, index, name, true)
+				short index, string name, GenericParamAttributes attr) : this (owner, metadata, index, name, attr, true)
 		{
 		}
 
 		private GenericParameter (MetaDataElement owner, MetaData metadata,
-				short index, string name, bool nadda) {
+				short index, string name, GenericParamAttributes attr, bool nadda) {
 			this.owner = owner;
 			this.metadata = metadata;
 			this.index = index;
 			tabIx = MDTable.GenericParam;
 			this.name = name;
+			this.attr = attr;
 		}
 
 		internal override uint SortKey() 
@@ -801,7 +819,7 @@ namespace PEAPI {
 		internal sealed override void Write(FileImage output) 
 		{
 			output.Write ((short) index);
-			output.Write ((short) 0);
+			output.Write ((short) attr);
 			output.WriteCodedIndex(CIx.TypeOrMethodDef, owner);
 			output.StringsIndex (nameIx);
 		}
@@ -819,6 +837,11 @@ namespace PEAPI {
 			this.param = param;
 			this.type = type;
 			tabIx = MDTable.GenericParamConstraint;
+		}
+
+		internal override uint SortKey() 
+		{
+			return param.Row;
 		}
 
 		internal sealed override uint Size(MetaData md) 
@@ -1454,7 +1477,15 @@ namespace PEAPI {
 		/// </summary>
 		public GenericParameter AddGenericParameter (short index, string name) 
 		{
-			GenericParameter gp = new GenericParameter (this, metaData, index, name);
+			return AddGenericParameter (index, name, 0);
+		}
+
+		/// <summary>
+		///  Add a named generic type parameter with attributes
+		/// </summary>
+		public GenericParameter AddGenericParameter (short index, string name, GenericParamAttributes attr)
+		{
+			GenericParameter gp = new GenericParameter (this, metaData, index, name, attr);
 			metaData.AddToTable (MDTable.GenericParam, gp);
 			return gp;
 		}
@@ -1950,15 +1981,16 @@ namespace PEAPI {
 
 	}
 
-	public class GenParam : Type {
+	public class GenParam : Class {
 
 		private int index;
-		private string name;
+		private string param_name;
+		private uint sigIx = 0;
 
 		public GenParam (int index, string name, GenParamType ptype) : base ((byte) ptype) 
 		{
 			this.index = index;
-			this.name = name;
+			this.param_name = name;
 			tabIx = MDTable.TypeSpec;
 		}
 
@@ -1968,19 +2000,51 @@ namespace PEAPI {
 		}
 
 		public string Name {
-			get { return name; }
-			set { name = value; }
+			get { return param_name; }
+			set { param_name = value; }
 		}
 
 		public GenParamType Type {
 			get { return (GenParamType) GetTypeIndex (); }
 		}
+		
+		internal sealed override void BuildTables (MetaData md)
+		{
+			if (done)
+				return;
+			MemoryStream str = new MemoryStream ();
+			TypeSig (str);
+			sigIx = md.AddToBlobHeap (str.ToArray ());
+
+			done = true;
+		}
+
 		internal sealed override void TypeSig(MemoryStream str) 
 		{
 			if (index < 0)
-				throw new Exception (String.Format ("Unresolved {0} - {1}", (GenParamType) GetTypeIndex (), name));
+				throw new Exception (String.Format ("Unresolved {0} - {1}", (GenParamType) GetTypeIndex (), param_name));
 			str.WriteByte(typeIndex);
 			MetaData.CompressNum ((uint) index, str);
+		}
+		
+		internal override uint Size(MetaData md) 
+		{
+			return md.BlobIndexSize();
+		}
+
+		internal sealed override void Write (FileImage output)
+		{
+			output.BlobIndex (sigIx);	
+		}
+
+		internal sealed override uint GetCodedIx(CIx code) 
+		{
+			switch (code) {
+				case (CIx.TypeDefOrRef) : return 2; 
+				case (CIx.HasCustomAttr) : return 13; 
+				case (CIx.MemberRefParent) : return 4; 
+			}
+			return 0;
 		}
 	}
 
@@ -1988,7 +2052,6 @@ namespace PEAPI {
 
 		private Type gen_type;
 		private Type[] gen_param;
-		bool done = false;
 		bool inTable = false;
 		uint sigIx = 0;
 
@@ -2054,10 +2117,13 @@ namespace PEAPI {
 	public class GenericMethodSig {
 
 		private Type[] gen_param;
+		private bool done;
+		private uint sigIx = 0;
 
 		public GenericMethodSig (Type[] gen_param)
 		{
 			this.gen_param = gen_param;
+			done = false;
 		}
 
 		internal void TypeSig (MemoryStream str)
@@ -2070,9 +2136,14 @@ namespace PEAPI {
 
 		internal uint GetSigIx (MetaData md)
 		{
+			if (done)
+				return sigIx;
+
 			MemoryStream sig = new MemoryStream();
 			TypeSig (sig);
-			return md.AddToBlobHeap (sig.ToArray());
+			sigIx = md.AddToBlobHeap (sig.ToArray());
+			done = true;
+			return sigIx;
 		}
 	}
 
@@ -3598,7 +3669,15 @@ namespace PEAPI {
 		/// </summary>
 		public GenericParameter AddGenericParameter (short index, string name) 
 		{
-			GenericParameter gp = new GenericParameter (this, metaData, index, name);
+			return AddGenericParameter (index, name, 0);
+		}
+
+		/// <summary>
+		///  Add a named generic type parameter with attributes
+		/// </summary>
+		public GenericParameter AddGenericParameter (short index, string name, GenericParamAttributes attr) 
+		{
+			GenericParameter gp = new GenericParameter (this, metaData, index, name, attr);
 			metaData.AddToTable (MDTable.GenericParam, gp);
 			gen_param_count ++;
 			return gp;

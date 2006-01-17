@@ -52,6 +52,8 @@ namespace Mono.ILASM {
                 private ExternTable extern_table;
                 private Hashtable global_field_table;
                 private Hashtable global_method_table;
+                private Hashtable global_methodref_table;
+                private Hashtable global_fieldref_table;
                 private ArrayList data_list;
                 private FileRef file_ref;
                 private ArrayList manifestResources;
@@ -190,6 +192,45 @@ namespace Mono.ILASM {
                         return tr;
                 }
 
+                public GlobalMethodRef GetGlobalMethodRef (BaseTypeRef ret_type, PEAPI.CallConv call_conv,
+                                string name, BaseTypeRef[] param, int gen_param_count)
+                {
+                        string key = MethodDef.CreateSignature (ret_type, name, param, gen_param_count);
+
+                        GlobalMethodRef methref = null;
+
+                        if (global_methodref_table == null)
+                                global_methodref_table = new Hashtable ();
+                        else
+                                methref = (GlobalMethodRef) global_methodref_table [key];
+
+                        if (methref == null) {
+                                methref = new GlobalMethodRef (ret_type, call_conv, name, param, gen_param_count);
+                                global_methodref_table [key] = methref;
+                        }
+                        
+                        return methref;
+                }
+
+                public GlobalFieldRef GetGlobalFieldRef (BaseTypeRef ret_type, string name)
+                {
+                        string key = ret_type.FullName + name;
+
+                        GlobalFieldRef fieldref = null;
+
+                        if (global_fieldref_table == null)
+                                global_fieldref_table = new Hashtable ();
+                        else
+                                fieldref = (GlobalFieldRef) global_fieldref_table [key];
+
+                        if (fieldref == null) {
+                                fieldref = new GlobalFieldRef (ret_type, name);
+                                global_fieldref_table [key] = fieldref;
+                        }
+                        
+                        return fieldref;
+                }
+
                 public void SetSubSystem (int sub_system)
                 {
                         this.sub_system = sub_system;
@@ -252,22 +293,26 @@ namespace Mono.ILASM {
 				symwriter.EndSourceFile ();
 		}
 
-                public void BeginTypeDef (TypeAttr attr, string name, IClassRef parent,
-                                ArrayList impl_list, Location location)
+                public void BeginTypeDef (TypeAttr attr, string name, BaseClassRef parent,
+                                ArrayList impl_list, Location location, GenericParameters gen_params)
                 {
                         TypeDef outer = null;
                         string cache_name = CacheName (name);
-
                         if (typedef_stack_top > 0) {
 				StringBuilder sb = new StringBuilder ();
-				
+
 				for (int i = 0; i < typedef_stack_top; i++){
 					outer = (TypeDef) typedef_stack [i];
-					sb.Append (outer.Name);
+					if (i == 0)
+						/* Use FullName for outermost class to get the
+						   namespace also */
+						sb.Append (outer.FullName);
+					else
+						sb.Append (outer.Name);
 					sb.Append ("/");
 				}
 				sb.Append (name);
-                                cache_name = CacheName (sb.ToString ());
+				cache_name = sb.ToString ();
                         }
 
                         TypeDef typedef = type_manager[cache_name];
@@ -282,10 +327,7 @@ namespace Mono.ILASM {
                         }
 
                         typedef = new TypeDef (attr, current_namespace,
-                                        name, parent, impl_list, location);
-
-                        if (outer != null)
-                                typedef.OuterType = outer;
+                                        name, parent, impl_list, location, gen_params, outer);
 
                         type_manager[cache_name] = typedef;
                         current_customattrtarget = current_typedef = typedef;

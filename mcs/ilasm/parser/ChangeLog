@@ -1,3 +1,65 @@
+2006-01-16  Ankit Jain  <jankit@novell.com>
+
+	* ILParser.jay (K_BESTFIT):
+	(K_CHARMAPERROR):
+	(K_ON):
+	(K_OFF): New tokens.
+	(pinv_attr | ..): Add rules for the new tokens.
+
+2006-01-16  Ankit Jain  <jankit@novell.com>
+
+	* ILParser.jay (K_UINT): New token.
+	(type | K_NATIVE K_UINT): New.
+
+2006-01-15  Ankit Jain  <jankit@novell.com>
+
+	* ILParser.jay (method_decl): Add new "full" syntax specifying overrides.
+
+2006-01-13  Ankit Jain  <jankit@novell.com>
+
+	* ILParser.jay: Update to use codegen.GetTypeRef instead of creating
+	TypeRefs.
+	Update to use BaseMethodRef.GetGenericMethodRef instead of creating them.
+
+2006-01-13  Ankit Jain  <jankit@novell.com>
+
+	* ILParser.jay: Update to use CodeGen.GetGlobalMethodRef &
+	CodeGen.GetGlobalFieldRef instead of creating objects.
+
+2006-01-13  Ankit Jain  <jankit@novell.com>
+
+	* ILParser.jay: Update to use Base* instead of ITypeRef, IClassRef
+	& IGenTypeRef.
+
+2006-01-10  Ankit Jain  <jankit@novell.com>
+
+	* ILParser.jay (type | BANG ..): Move !* and !!* rules to ..
+	(generic_class_ref): ..this, to allow using VAR/MVARs as class refs.
+	Eg. "extends !0"
+
+2006-01-09  Ankit Jain  <jankit@novell.com>
+
+	* ILParser.jay (type_spec : class_ref): Remove.
+
+2006-01-09  Ankit Jain  <jankit@novell.com>
+
+        * ILParser.jay: Update to use GenericParamRef instead of GenericTypeRef.
+
+2006-01-08  Ankit Jain  <jankit@novell.com>
+
+	* ILParser.jay (constraint_decl): Remove. This syntax is no longer used.
+	(class_decl | constraint_decl): Remove.
+
+2006-01-07  Ankit Jain  <jankit@novell.com>
+
+	* ILParser.jay: Update to use new GenericParameters class.
+	(generic_class_ref| K_CLASS class_ref typars_clause): New.
+	Update rules to use generic_class_ref instead of 'K_CLASS class_ref..'
+	(constraints_clause): New.
+	(constraints): New. Rules for constraints on generic parameters.
+	(formal_typar_attr): New. Generic param attributes (.ctor, valuetype, class).
+	(formal_typars): Update to use new constraints stuff.
+
 2006-01-06  Ankit Jain  <jankit@novell.com>
 
 	* ILParser.jay (field_init): Add rules for UINT8/UINT16/etc

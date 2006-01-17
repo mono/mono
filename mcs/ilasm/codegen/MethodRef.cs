@@ -13,44 +13,15 @@ using System.Collections;
 
 namespace Mono.ILASM {
 
-        public class MethodRef : IMethodRef {
-
-                private TypeRef owner;
-                private PEAPI.CallConv call_conv;
-                private ITypeRef ret_type;
-                private string name;
-                private ITypeRef[] param;
-
-                private PEAPI.Method peapi_method;
-                private bool is_resolved;
-		private int gen_param_count;
+        public class MethodRef : BaseMethodRef {
 
                 public MethodRef (TypeRef owner, PEAPI.CallConv call_conv,
-                        ITypeRef ret_type, string name, ITypeRef[] param, int gen_param_count)
+                        BaseTypeRef ret_type, string name, BaseTypeRef[] param, int gen_param_count)
+                        : base (owner, call_conv, ret_type, name, param, gen_param_count)
                 {
-                        this.owner = owner;
-                        this.call_conv = call_conv;
-                        this.ret_type = ret_type;
-                        this.name = name;
-                        this.param = param;
-			this.gen_param_count = gen_param_count;
-                        is_resolved = false;
                 }
 
-                public PEAPI.Method PeapiMethod {
-                        get { return peapi_method; }
-                }
-
-		public PEAPI.CallConv CallConv {
-			get { return call_conv; }
-			set { call_conv = value; }
-		}
-
-		public ITypeRef Owner {
-			get { return owner; }
-		}
-
-                public void Resolve (CodeGen code_gen)
+                public override void Resolve (CodeGen code_gen)
                 {
                         if (is_resolved)
                                 return;
@@ -75,7 +46,7 @@ namespace Mono.ILASM {
                                 sig = MethodDef.CreateVarargSignature (ret_type, name, param);
                                 ArrayList opt_list = new ArrayList ();
                                 bool in_opt = false;
-                                foreach (ITypeRef type in param) {
+                                foreach (BaseTypeRef type in param) {
                                         if (type is SentinelTypeRef) {
                                                 in_opt = true;
                                         } else if (in_opt) {

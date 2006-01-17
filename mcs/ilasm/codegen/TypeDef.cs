@@ -14,7 +14,7 @@ using System.Security;
 
 namespace Mono.ILASM {
 
-        public class TypeDef : ICustomAttrTarget, IDeclSecurityTarget {
+        public class TypeDef : ICustomAttrTarget, IDeclSecurityTarget, IComparable {
 
                 protected class GenericInfo {
                         public string Id;
@@ -27,7 +27,7 @@ namespace Mono.ILASM {
                 private string name;
                 private bool is_defined;
                 private bool is_intransit;
-                private IClassRef parent;
+                private BaseClassRef parent;
                 private ArrayList impl_list;
                 private PEAPI.ClassDef classdef;
                 private Hashtable field_table;
@@ -37,7 +37,7 @@ namespace Mono.ILASM {
                 private DeclSecurity decl_sec;
                 private ArrayList event_list;
                 private ArrayList property_list;
-                private ArrayList typar_list;
+                private GenericParameters gen_params;
                 private ArrayList override_list;
                 private ArrayList override_long_list;
                 private TypeDef outer;
@@ -52,11 +52,13 @@ namespace Mono.ILASM {
                 private bool is_enum_class;
 
                 public TypeDef (PEAPI.TypeAttr attr, string name_space, string name,
-                                IClassRef parent, ArrayList impl_list, Location location)
+                                BaseClassRef parent, ArrayList impl_list, Location location, GenericParameters gen_params, TypeDef outer)
                 {
                         this.attr = attr;
                         this.parent = parent;
                         this.impl_list = impl_list;
+                        this.gen_params = gen_params;
+                        this.outer = outer;
 
                         field_table = new Hashtable ();
                         field_list = new ArrayList ();
@@ -72,9 +74,11 @@ namespace Mono.ILASM {
                         is_value_class = false;
                         is_enum_class = false;
 
+                        ResolveGenParams ();
 
                         int lastdot = name.LastIndexOf ('.');
-                        if (lastdot >= 0) {
+                        /* Namespace . name split should not be done for nested classes */
+                        if (lastdot >= 0 && outer == null) {
                                 if (name_space == null || name_space == "")
                                         this.name_space = name.Substring (0, lastdot);
                                 else
@@ -100,7 +104,6 @@ namespace Mono.ILASM {
 
                 public TypeDef OuterType {
                         get { return outer; }
-                        set { outer = value; }
                 }
 
                 public PEAPI.ClassDef PeapiType {
@@ -112,7 +115,7 @@ namespace Mono.ILASM {
                 }
 
                 public bool IsGenericType {
-                        get { return (typar_list == null); }
+                        get { return (gen_params == null); }
                 }
 
                 public bool IsDefined {
@@ -131,7 +134,11 @@ namespace Mono.ILASM {
                         get { return (attr & PEAPI.TypeAttr.Interface) != 0; }
                 }
 
-                public void AddOverride (MethodDef body, ITypeRef parent, string name)
+                public GenericParameters TypeParameters {
+                        get { return gen_params; }
+                }
+
+                public void AddOverride (MethodDef body, BaseTypeRef parent, string name)
                 {
                         if (override_list == null)
                                 override_list = new ArrayList ();
@@ -139,7 +146,7 @@ namespace Mono.ILASM {
                                            new DictionaryEntry (parent, name)));
                 }
 
-                public void AddOverride (string sig, IMethodRef decl)
+                public void AddOverride (string sig, BaseMethodRef decl)
                 {
                         if (override_long_list == null)
                                 override_long_list = new ArrayList ();
@@ -246,37 +253,34 @@ namespace Mono.ILASM {
                         decl_sec.AddPermission (sec_action, iper);
                 }
 
-                public void AddGenericParam (string id)
+                public int GetGenericParamNum (string id)
                 {
-                        if (typar_list == null)
-                                typar_list = new ArrayList ();
-
-                        GenericInfo gi = new GenericInfo ();
-                        gi.Id = id;
-                        gi.num = typar_list.Count;
-
-                        typar_list.Add (gi);
+                        if (gen_params == null)
+                                return -1;
+                        
+                        return gen_params.GetGenericParamNum (id);
                 }
 
-		public int GetGenericParamNum (string id)
-		{
-			if (typar_list == null)
-				// FIXME: Report error
-				throw new Exception (String.Format ("Invalid type parameter '{0}'", id));
-
-			foreach (GenericInfo gi in typar_list)
-				if (gi.Id == id)
-					return gi.num;
-			return -1;
-		}
-
-                public void AddGenericConstraint (int index, ITypeRef constraint)
+                /* Resolve any GenParams in constraints, parent & impl_list */
+                private void ResolveGenParams ()
                 {
-                        GenericInfo gi = (GenericInfo) typar_list[index];
+                        if (gen_params == null)
+                                return;
 
-                        if (gi.ConstraintList == null)
-                                gi.ConstraintList = new ArrayList ();
-                        gi.ConstraintList.Add (constraint);
+                        gen_params.ResolveConstraints (gen_params, null);
+
+                        BaseGenericTypeRef gtr = parent as BaseGenericTypeRef;
+                        if (gtr != null)
+                                gtr.Resolve (gen_params, null);
+                        
+                        if (impl_list == null)
+                                return;
+                                
+                        foreach (BaseClassRef impl in impl_list) {
+                                gtr = impl as BaseGenericTypeRef;
+                                if (gtr != null)
+                                        gtr.Resolve (gen_params, null);
+                        }
                 }
 
                 public void Define (CodeGen code_gen)
@@ -355,31 +359,22 @@ namespace Mono.ILASM {
                                         classdef.SpecialNoSuper ();
                         }
 
+                        is_defined = true;
+
                         if (size != -1 || pack != -1)
                                 classdef.AddLayoutInfo ( (pack == -1) ? 1 : pack, (size == -1) ? 0 : size);
 
                         if (impl_list != null) {
-                                foreach (IClassRef impl in impl_list) {
+                                foreach (BaseClassRef impl in impl_list) {
                                         impl.Resolve (code_gen);
                                         classdef.AddImplementedInterface (impl.PeapiClass);
                                 }
                         }
 
-                        if (typar_list != null) {
-                                short index = 0;
-                                foreach (GenericInfo gi in typar_list) {
-                                        PEAPI.GenericParameter gp = classdef.AddGenericParameter (index++, gi.Id);
-                                        if (gi.ConstraintList != null) {
-                                                foreach (ITypeRef cnst in gi.ConstraintList) {
-                                                        cnst.Resolve (code_gen);
-                                                        gp.AddConstraint (cnst.PeapiType);
-                                                }
-                                        }
-                                }
-                        }
+                        if (gen_params != null)
+                                gen_params.Resolve (code_gen, classdef);
 
                         is_intransit = false;
-                        is_defined = true;
 
                         code_gen.AddToDefineContentsList (this);
                 }
@@ -429,10 +424,10 @@ namespace Mono.ILASM {
                                 foreach (DictionaryEntry entry in override_list) {
                                         MethodDef body = (MethodDef) entry.Key;
                                         DictionaryEntry decl = (DictionaryEntry) entry.Value;
-                                        ITypeRef parent_type = (ITypeRef) decl.Key;
+                                        BaseTypeRef parent_type = (BaseTypeRef) decl.Key;
                                         parent_type.Resolve (code_gen);
                                         string over_name = (string) decl.Value;
-                                        IMethodRef over_meth = parent_type.GetMethodRef (body.RetType,
+                                        BaseMethodRef over_meth = parent_type.GetMethodRef (body.RetType,
                                                         body.CallConv, over_name, body.ParamTypeList (), body.GenParamCount);
                                         over_meth.Resolve (code_gen);
                                         classdef.AddMethodOverride (over_meth.PeapiMethod,
@@ -443,7 +438,7 @@ namespace Mono.ILASM {
                         if (override_long_list != null) {
                                 foreach (DictionaryEntry entry in override_long_list) {
                                         string sig = (string) entry.Key;
-                                        IMethodRef decl = (IMethodRef) entry.Value;
+                                        BaseMethodRef decl = (BaseMethodRef) entry.Value;
                                         MethodDef body = (MethodDef) method_table[sig];
                                         decl.Resolve (code_gen);
                                         classdef.AddMethodOverride (decl.PeapiMethod,
@@ -491,6 +486,13 @@ namespace Mono.ILASM {
                                 return name;
 
                         return name_space + "." + name;
+                }
+
+                public int CompareTo (object obj)
+                {
+                        TypeDef type_def = (TypeDef) obj; 
+
+                        return FullName.CompareTo (type_def.FullName);
                 }
         }
 

@@ -17,7 +17,7 @@ namespace Mono.ILASM {
 
                 private FeatureAttr attr;
                 private string name;
-                private ITypeRef type;
+                private BaseTypeRef type;
                 private ArrayList arg_list;
                 private PEAPI.Property prop_def;
                 private bool is_resolved;
@@ -28,7 +28,7 @@ namespace Mono.ILASM {
                 private MethodRef other;
                 private PEAPI.Constant init_value;
 
-                public PropertyDef (FeatureAttr attr, ITypeRef type, string name, ArrayList arg_list)
+                public PropertyDef (FeatureAttr attr, BaseTypeRef type, string name, ArrayList arg_list)
                 {
                         this.attr = attr;
                         this.name = name;
@@ -53,7 +53,7 @@ namespace Mono.ILASM {
                         PEAPI.Type[] type_list = new PEAPI.Type[arg_list.Count];
 
                         for (int i=0; i<type_list.Length; i++) {
-                                ITypeRef arg_type = (ITypeRef) arg_list[i];
+                                BaseTypeRef arg_type = (BaseTypeRef) arg_list[i];
                                 arg_type.Resolve (code_gen);
                                 type_list[i] = arg_type.PeapiType;
                         }

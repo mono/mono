@@ -16,13 +16,13 @@ namespace Mono.ILASM {
         public class FieldRef : IFieldRef {
 
                 private TypeRef owner;
-                private ITypeRef ret_type;
+                private BaseTypeRef ret_type;
                 private string name;
 
 		private bool is_resolved;
                 private PEAPI.Field peapi_field;
 
-                public FieldRef (TypeRef owner, ITypeRef ret_type, string name)
+                public FieldRef (TypeRef owner, BaseTypeRef ret_type, string name)
                 {
                         this.owner = owner;
                         this.ret_type = ret_type;

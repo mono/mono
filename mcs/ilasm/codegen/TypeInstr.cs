@@ -15,9 +15,9 @@ namespace Mono.ILASM {
         public class TypeInstr : IInstr {
 
                 private PEAPI.TypeOp op;
-                private ITypeRef operand;
+                private BaseTypeRef operand;
 
-                public TypeInstr (PEAPI.TypeOp op, ITypeRef operand, Location loc)
+                public TypeInstr (PEAPI.TypeOp op, BaseTypeRef operand, Location loc)
 			: base (loc)
                 {
                         this.op = op;

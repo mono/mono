@@ -16,9 +16,9 @@ namespace Mono.ILASM {
         public class MethodInstr : IInstr {
 
                 private PEAPI.MethodOp op;
-                private IMethodRef operand;
+                private BaseMethodRef operand;
 
-                public MethodInstr (PEAPI.MethodOp op, IMethodRef operand, Location loc)
+                public MethodInstr (PEAPI.MethodOp op, BaseMethodRef operand, Location loc)
 			: base (loc)
                 {
                         this.op = op;

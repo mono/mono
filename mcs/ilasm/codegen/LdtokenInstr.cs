@@ -15,8 +15,8 @@ namespace Mono.ILASM {
         public class LdtokenInstr : IInstr {
 
                 private IFieldRef field_ref;
-                private IMethodRef method_ref;
-                private ITypeRef type_ref;
+                private BaseMethodRef method_ref;
+                private BaseTypeRef type_ref;
 
                 public LdtokenInstr (IFieldRef field_ref, Location loc)
 			: base (loc)
@@ -24,13 +24,13 @@ namespace Mono.ILASM {
                         this.field_ref = field_ref;
                 }
 
-                public LdtokenInstr (IMethodRef method_ref, Location loc)
+                public LdtokenInstr (BaseMethodRef method_ref, Location loc)
 			: base (loc)
                 {
                         this.method_ref = method_ref;
                 }
 
-                public LdtokenInstr (ITypeRef type_ref, Location loc)
+                public LdtokenInstr (BaseTypeRef type_ref, Location loc)
 			: base (loc)
                 {
                         this.type_ref = type_ref;

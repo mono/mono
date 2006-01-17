@@ -1,3 +1,39 @@
+2006-01-16  Ankit Jain  <jankit@novell.com>
+
+	* Metadata.cs (PInvokeAttr): Add 'bestfit_on', 'bestfit_off', 'bestfit_mask',
+	'charmaperror_on' & 'charmaperror_off'.
+
+2006-01-13  Ankit Jain  <jankit@novell.com>
+
+	* Metadata.cs (GenericMethodSig): Ensure sig is added to the blob only once.
+
+2006-01-10  Ankit Jain  <jankit@novell.com>
+
+	* Metadata.cs (GenParam): Don't use GetTypeSpec to create typespec for GenParam. 
+	Adding required methods directly to GenParam.
+	* PEAPI.cs (PEFile.AddGenericParam): Add it to the TypeSpec table directly.
+
+2006-01-09  Ankit Jain  <jankit@novell.com>
+
+	* PEAPI.cs (PEFile.AddGenricParam): New. Adds a GenParam to the TypeSpec
+	table.
+	* Metadata.cs (GenParam): Inherit from 'Class' instead of 'Type'.
+	(GenParam.name): Rename to param_name as it hides Class.name .
+	(GenParam.GetTypeSpec): Override to create TypeSpec for genparam.
+
+2006-01-08  Ankit Jain  <jankit@novell.com>
+
+	* Metadata.cs (TypeOp): Add 'constrained' op.
+
+2006-01-07  Ankit Jain  <jankit@novell.com>
+
+	* Metadata.cs (GenericParamAttributes): New.
+	(MetaDataElement.Row): Always set value.
+	(GenericParameter): Update to use GenericParameterAttributes.
+	(GenericParameterConstraint.SortKey): New. override to support sorting.
+	(ClassDef.AddGenericParameter):
+	(MethodDef.AddGenericParameter): New overloads for accepting attributes also.
+
 2006-01-06  Ankit Jain  <jankit@novell.com>
 
 	* Metadata.cs (UIntConst): Change constructor param from signed int/sbyte/etc to

@@ -1,3 +1,52 @@
+2006-01-16  Ankit Jain  <jankit@novell.com>
+
+	* test-int64.il: New. Test for large numeric values.
+
+2006-01-16  Ankit Jain  <jankit@novell.com>
+
+	* test-array-2.il: New. Test for methodref to Array's methods.
+	eg. class test [,]::.ctor (int32, int32)
+
+2006-01-15  Ankit Jain  <jankit@novell.com>
+
+	* test-override-1.il:
+	* test-override-2.il: New. Test for 'full' syntax of specifying
+	overrides. (.override method ..full sig.. )
+
+2006-01-14  Ankit Jain  <jankit@novell.com>
+
+	* gen-instr1.il: New. Test for using GenericParams as operands to
+	type instructions.
+
+2006-01-11  Ankit Jain  <jankit@novell.com>
+
+	* gen-nested2.il: New.
+	* gen-nested3.il: New. Test for new syntax for specifying namespace ie.,
+	as part of the type name instead of using '.namespace' directive.
+
+2006-01-10  Ankit Jain  <jankit@novell.com>
+
+	* gen-nested.il: New. Test for a generic type nested in a non-generic
+	one.
+
+2006-01-10  Ankit Jain  <jankit@novell.com>
+
+	* gen-meth3.il: New. Test for abstract generic method.
+
+2006-01-10  Ankit Jain  <jankit@novell.com>
+
+	* gen-meth1.il: New. Test for use of VAR/MVAR by name (!!A)
+	* gen-meth2.il: New. Test for using VAR/MVAR as class ref.
+
+2006-01-09  Ankit Jain  <jankit@novell.com>
+
+	* gen-recur.il: New. Test for a class implementing a generic interface
+	with the class itself as the argument.
+
+2006-01-07  Ankit Jain  <jankit@novell.com>
+
+	* gen-constraints1.il: New. Test for constraints on generic parameters.
+
 2006-01-06  Ankit Jain  <jankit@novell.com>
 
 	* test-field-init.il: New. Test for field initialization (simple signed/unsigned

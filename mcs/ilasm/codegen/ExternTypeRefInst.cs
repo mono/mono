@@ -13,7 +13,7 @@ using System.Collections;
 
 namespace Mono.ILASM {
 
-	public class ExternTypeRefInst : ITypeRef {
+	public class ExternTypeRefInst : BaseTypeRef {
 
 		private ExternTypeRef type_ref;
 		private PEAPI.Type type;
@@ -90,7 +90,7 @@ namespace Mono.ILASM {
 		}
 
 		public void MakeCustomModified (CodeGen code_gen,
-				PEAPI.CustomModifier modifier, IClassRef klass)
+				PEAPI.CustomModifier modifier, BaseClassRef klass)
 		{
 			type_ref.MakeCustomModified (code_gen, modifier, klass);
 		}
@@ -117,8 +117,8 @@ namespace Mono.ILASM {
 			is_resolved = true;
 		}
 
-		public IMethodRef GetMethodRef (ITypeRef ret_type, PEAPI.CallConv call_conv,
-				string name, ITypeRef[] param, int gen_param_count)
+		public BaseMethodRef GetMethodRef (BaseTypeRef ret_type, PEAPI.CallConv call_conv,
+				string name, BaseTypeRef[] param, int gen_param_count)
 		{
 			string key = type_ref.FullName + MethodDef.CreateSignature (ret_type, name, param, gen_param_count) + type_ref.SigMod;
 			TypeSpecMethodRef mr = method_table [key] as TypeSpecMethodRef;
@@ -130,7 +130,7 @@ namespace Mono.ILASM {
 			return mr;
 		}
 
-		public IFieldRef GetFieldRef (ITypeRef ret_type, string name)
+		public IFieldRef GetFieldRef (BaseTypeRef ret_type, string name)
 		{
 			return new TypeSpecFieldRef (this, ret_type, name);
 		}

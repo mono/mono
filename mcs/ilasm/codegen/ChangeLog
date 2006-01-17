@@ -1,3 +1,165 @@
+2006-01-16  Ankit Jain  <jankit@novell.com>
+
+	* TypeDef.cs (TypeDef.IComparable): Implement IComparable interface.
+	* TypeManager.cs (TypeManager.DefineAll): Sort type_table before Define()'ing.
+
+2006-01-16  Ankit Jain  <jankit@novell.com>
+
+	* TypeRef.cs (TypeRef.CreateMethodRef): Return a TypeSpecMethodRef if
+	this is a modified (eg. []) type.	
+
+2006-01-16  Ankit Jain  <jankit@novell.com>
+
+	* BaseTypeRef.cs (BaseTypeRef.Resolve): Make this abstract.
+	(BaseTypeRef.CreateMethodRef):
+	(BaseTypeRef.CreateFieldRef): Make protected and abstract.
+	* BaseClassRef.cs (BaseClassRef.Clone): Make this abstract.
+	Update all derived classes.
+	* PrimitiveTypeRef.cs (PrimitiveTypeRef.CreateMethodRef):
+	* GenericTypeInst.cs (GenericTypeInst.CreateMethodRef): Implement, but throw
+	exception as this method is not used.
+
+2006-01-14  Ankit Jain  <jankit@novell.com>
+
+	* GenericParamRef.cs (GenericParamRef.Resolve): Apply modifications to the
+	cached type.
+
+2006-01-14  Ankit Jain  <jankit@novell.com>
+
+	* GenericParamRef.cs (GenericParamRef.Resolve): Set PeapiType of the instance
+	to the cached one.
+
+2006-01-13  Ankit Jain  <jankit@novell.com>
+
+	* GenericParamRef.cs (GenericParamRef.Resolve): Ensure no duplicate
+	GenParams get added to the TypeSpec table.
+	* GenericMethodSig.cs (GenericMethodSig.GetInstance): Cache sigs in a
+	static hashtable.
+	* BaseMethodRef.cs (BaseMethodRef.GetGenericMethodRef): Cache GenericMethodRefs.
+
+2006-01-13  Ankit Jain  <jankit@novell.com>
+
+	Create BaseMethodRef from IMethodRef. Replace usage of IMethodRef
+	with BaseMethodRef in *all* files. 
+	Remove implementations of IMethodRef's methods from derived classes.
+	* BaseMethodRef.cs: New.
+
+2006-01-13  Ankit Jain  <jankit@novell.com>
+
+	Move caching of method-refs and field-refs to BaseTypeRef, and use
+	CreateMethodRef & CreateFieldRef for creating the actual object.
+	Override these in derived classes to return the right objects.
+
+	* BaseTypeRef.cs (BaseTypeRef.CreateMethodRef): New.
+	(BaseTypeRef.CreateFieldRef): New.
+	(BaseTypeRef.GetMethodRef): Implement caching.
+	(BaseTypeRef.GetFieldRef): Likewise.
+	
+	GenericTypeInst and PrimitiveTypeRef are not cached, so static hashtables
+	are used here for caching their MethodRefs n FieldRefs.
+
+	* GenericTypeInst.cs (GenericTypeInst.GetMethodRef): Override and use
+	static hashtable to do caching.
+	(GenericTypeInst.GetFieldRef): Likewise.
+	* PrimitiveTypeRef.cs (PrimitiveTypeRef.GetMethodRef): Likewise.
+	(PrimitiveTypeRef.GetFieldRef): Likewise.
+
+	* CodeGen.cs (CodeGen.GetGlobalMethodRef): New. Cache global method refs.
+	(CodeGen.GetGlobalFieldRef): New. Cache global field refs.
+
+2006-01-13  Ankit Jain  <jankit@novell.com>
+
+	Create BaseClassRef, BaseGenericTypeRef from IClassRef & IGenTypeRef.
+	Replace usage of interfaces ITypeRef, IClassRef & IGenTypeRef with their
+	corresponding Base* types.
+	* BaseTypeRef.cs: New. Combine ITypeRef and ModifiableType into this.
+	* BaseClassRef.cs: New.
+	* BaseGenericTypeRef.cs: New.
+	* TypeSpecMethodRef.cs (TypeSpecMethodRef.ctor): Slight change in order
+	of params.
+
+2006-01-12  Ankit Jain  <jankit@novell.com>
+
+	* MethodDef.cs (MethodDef.CreateSignature): Use "`n" only for generic
+	methods.
+
+2006-01-11  Ankit Jain  <jankit@novell.com>
+
+	* InstrTable.cs (inst_table): Uncomment stelem and ldelem .
+
+2006-01-11  Ankit Jain  <jankit@novell.com>
+
+	Support new syntax of specifying namespace, ie., as
+	part of the type name. (gen-nested2.il)
+	* TypeDef.cs (TypeDef.ctor): Add outer as a param.
+	Don't split name on '.' for inner classes.
+	* CodeGen.cs (CodeGen.BeginTypeDef): Update to use only 'name'
+	for inner classes and FullName for outermost class.
+
+2006-01-10  Ankit Jain  <jankit@novell.com>
+
+	* TypeDef.cs (TypeDef.GetGenericParamNum): Return -1 if type has no
+	generic parameters.
+	* MethodDef.cs (MethodDef.GetGenericParamNum): Likewise.
+
+2006-01-10  Ankit Jain  <jankit@novell.com>
+
+	* MethodDef.cs (MethodDef.WriteCode): Resolve generic params for abstract
+	methods also.
+
+2006-01-10  Ankit Jain  <jankit@novell.com>
+
+	* TypeDef.cs (TypeDef.TypeParameters): New.
+	(TypeDef.ResolveGenParams): New. Resolve any gen param refs in
+	constraints, base class ref or implemented interfaces.
+	* MethodDef.cs (MethodDef.ResolveGenParams): Update to use new Resolve
+	overloads and ResolveConstraints for GenericParameters.
+
+	* GenericTypeInst.cs (GenericTypeInst.Resolve): Resolve generic args.
+	* GenericParamRef.cs (GenericParamRef.Resolve): Implement.
+	* GenericParameters.cs (GenericParameter.ResolveConstraints): New.
+	(GenericParameters.ResolveConstraints): New.
+	* GenericArguments.cs (GenericArguments.Resolve): New.
+
+	* TypeRef.cs (TypeRef.GetGenericTypeInst): Don't cache.
+	* ExternTypeRef.cs (ExternTypeRef.GetGenericTypeInst): Likewise.
+
+2006-01-09  Ankit Jain  <jankit@novell.com>
+
+	* GenericArguments.cs (GenericArguments.is_resolved): New.
+	(GenericArguments.p_type_list): New. Resolve only once and return this.
+
+2006-01-09  Ankit Jain  <jankit@novell.com>
+
+	* TypeDef.cs (TypeDef.Define): Set is_defined to true as soon as the
+	Peapi type gets created.
+
+2006-01-09  Ankit Jain  <jankit@novell.com>
+
+	* GenericTypeRef.cs: Rename to ..
+	* GenericParamRef.cs: .. this.
+	(IGenericTypeRef): New.
+	(GenericParamRef): Implement IGenericTypeRef.
+	* GenericTypeInst.cs (GenericTypeInst): Implement IGenericTypeRef instead
+	of IClassRef.
+	(GenericTypeInst.ResolveOnly): Rename to ResolveNoTypeSpec to implement
+	IGenericTypeRef.ResolveNoTypeSpec .
+	* MethodDef.cs (MethodDef.ResolveGenParams): Update to use GenericParamRef.
+	* Local.cs (Local.GetPeapiLocal): Use IGenericTypeRef.
+
+2006-01-08  Ankit Jain  <jankit@novell.com>
+
+	* InstrTable.cs (inst_table): Add stelem.any, ldelem.any and
+	constrained. instructions.
+
+2006-01-07  Ankit Jain  <jankit@novell.com>
+
+	* GenericParameters.cs (GenericParameter): New.
+	(GenericParameters): Collection of Generic parameters.
+	* TypeDef.cs:
+	* CodeGen.cs:
+	* MethodDef.cs: Update to use the new GenericParameters class.
+
 2006-01-06  Ankit Jain  <jankit@novell.com>
 
 	GenericTypeInst.Resolve should do the expected thing ie., resolve and add

@@ -192,7 +192,7 @@ namespace Mono.ILASM {
                 }
 
                 public void MakeCustomModified (CodeGen code_gen, PEAPI.CustomModifier modifier,
-                                IClassRef klass)
+                                BaseClassRef klass)
                 {
 			PEAPI.Type type;
 

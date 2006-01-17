@@ -12,41 +12,31 @@ using System;
 
 namespace Mono.ILASM {
 
-        public class GenericMethodRef : IMethodRef {
+        public class GenericMethodRef : BaseMethodRef {
 
-                private IMethodRef meth;
+                private BaseMethodRef meth;
                 private GenericMethodSig sig;
-                private bool is_resolved;
-                private PEAPI.Method ms;
 
-                public GenericMethodRef (IMethodRef meth, GenericMethodSig sig)
+                public GenericMethodRef (BaseMethodRef meth, GenericMethodSig sig)
+                        : base (null, meth.CallConv, null, "", null, 0)
                 {
                         this.meth = meth;
                         this.sig = sig;
-                        ms = null;
                         is_resolved = false;
                 }
 
-                public PEAPI.Method PeapiMethod {
-                        get { return ms; }
-                }
-
-                public PEAPI.CallConv CallConv {
+                public override PEAPI.CallConv CallConv {
                         get { return meth.CallConv; }
                         set { meth.CallConv = value; }
                 }
 
-		public ITypeRef Owner {
-			get { return null; }
-		}
-
-                public void Resolve (CodeGen code_gen)
+                public override void Resolve (CodeGen code_gen)
                 {
                         if (is_resolved)
                                 return;
 
                         meth.Resolve (code_gen);
-                        ms = code_gen.PEFile.AddMethodSpec (meth.PeapiMethod, sig.Resolve (code_gen));
+                        peapi_method = code_gen.PEFile.AddMethodSpec (meth.PeapiMethod, sig.Resolve (code_gen));
 
                         is_resolved = true;
                 }
