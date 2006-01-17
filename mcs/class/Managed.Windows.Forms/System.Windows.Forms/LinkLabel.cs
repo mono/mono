@@ -345,19 +345,17 @@ namespace System.Windows.Forms
 		protected override void OnMouseLeave(EventArgs e)
 		{
 			if (!Enabled) return;
-
 			base.OnMouseLeave (e);
+			UpdateHover(null);
 		}
 
-		protected override void OnMouseMove (MouseEventArgs e)
-		{
-			base.OnMouseMove (e);
-			
-			Link link = PointInLink (e.X, e.Y);
-			
+		private bool UpdateHover(Link link) {
+			bool changed;
+
+			changed = false;
 			if (link == null) {
 				Cursor = Cursors.Default;
-				bool changed = false;
+
 				if (link_behavior == LinkBehavior.HoverUnderline) {
 					for (int i = 0; i < Links.Count; i++) {
 						if (Links[i].Hoovered == true) 	{
@@ -365,21 +363,30 @@ namespace System.Windows.Forms
 							Links[i].Hoovered = false;
 						}
 					}
+				}
+			} else {
+				if (link_behavior == LinkBehavior.HoverUnderline) {
+					Cursor = Cursors.Hand;
 
-					if (changed == true)
-						Refresh ();
-				}
-				return;
-			}
-			
-			if (link_behavior == LinkBehavior.HoverUnderline) {
-				if (link.Hoovered != true) {
-					link.Hoovered = true;
-					Refresh ();
+					if (link.Hoovered != true) {
+						link.Hoovered = true;
+						changed = true;
+					}
 				}
 			}
+
+			if (changed == true) {
+				Refresh ();
+			}
 			
-			Cursor = Cursors.Hand;
+
+			return changed;
+		}
+
+		protected override void OnMouseMove (MouseEventArgs e)
+		{
+			base.OnMouseMove (e);
+			UpdateHover(PointInLink (e.X, e.Y));
 		}
 
 		protected override void OnMouseUp (MouseEventArgs e)
