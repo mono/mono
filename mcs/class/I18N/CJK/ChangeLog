@@ -1,3 +1,9 @@
+2006-01-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DbcsEncoding.cs ISO2022JP.cs GB18030Encoding.cs CP950.cs
+	  CP932.cs CP936.cs CP51932.cs CP949.cs (All) :
+	  Marked as [Serializable].
+
 2006-01-16  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CP936.cs :

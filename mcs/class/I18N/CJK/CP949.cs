@@ -11,6 +11,7 @@ using I18N.Common;
 
 namespace I18N.CJK
 {
+    [Serializable]
     internal class CP949 : KoreanEncoding
     {
         // Magic number used by Windows for the UHC code page.
@@ -54,6 +55,7 @@ namespace I18N.CJK
         */
     }
 
+    [Serializable]
     internal class CP51949 : KoreanEncoding
     {
         // Magic number used by Windows for the euc-kr code page.
@@ -98,6 +100,7 @@ namespace I18N.CJK
 
     }
 
+    [Serializable]
     internal class KoreanEncoding : DbcsEncoding
     {
         // Constructor.
@@ -303,11 +306,13 @@ namespace I18N.CJK
         }
     }
 
+    [Serializable]
     internal class ENCuhc : CP949
     {
         public ENCuhc() {}
     }
 
+    [Serializable]
     internal class ENCeuc_kr: CP51949
     {
         public ENCeuc_kr() {}

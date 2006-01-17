@@ -29,6 +29,7 @@ using System;
 using System.Text;
 using I18N.Common;
 
+[Serializable]
 public unsafe class CP932 : MonoEncoding
 {
 	// Magic number used by Windows for the Shift-JIS code page.
@@ -839,6 +840,7 @@ public unsafe class CP932 : MonoEncoding
 
 }; // class CP932
 
+[Serializable]
 public class ENCshift_jis : CP932
 {
 	public ENCshift_jis() : base() {}

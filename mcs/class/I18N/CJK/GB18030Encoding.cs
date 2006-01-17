@@ -11,13 +11,16 @@ using I18N.Common;
 
 namespace I18N.CJK
 {
+	[Serializable]
 	internal class ENCgb18030 : GB18030Encoding
 	{
 		public ENCgb18030 (): base () {}
 	}
 
+	[Serializable]
 	public class CP54936 : GB18030Encoding { }
 
+	[Serializable]
 	public class GB18030Encoding : MonoEncoding
 	{
 		// Constructor.

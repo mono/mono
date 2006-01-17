@@ -31,6 +31,7 @@ using System;
 using System.Text;
 using I18N.Common;
 
+[Serializable]
 public class CP20866 : ByteEncoding
 {
 	public CP20866()
@@ -433,6 +434,7 @@ public class CP20866 : ByteEncoding
 
 }; // class CP20866
 
+[Serializable]
 public class ENCkoi8_r : CP20866
 {
 	public ENCkoi8_r() : base() {}

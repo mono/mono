@@ -13,6 +13,7 @@ using I18N.Common;
 
 namespace I18N.CJK
 {
+	[Serializable]
 	internal class CP936 : DbcsEncoding
 	{
 		static DbcsConvert gb2312 = DbcsConvert.Gb2312;
@@ -217,6 +218,7 @@ namespace I18N.CJK
 		}
 	}
 	
+	[Serializable]
 	internal class ENCgb2312 : CP936
 	{
 		public ENCgb2312(): base () {}

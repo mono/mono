@@ -58,6 +58,7 @@ using System;
 using System.Text;
 using I18N.Common;
 
+[Serializable]
 public class CP51932 : MonoEncoding
 {
 	// Magic number used by Windows for the EUC-JP code page.
@@ -555,6 +556,7 @@ public class CP51932 : MonoEncoding
 #endif // !ECMA_COMPAT
 }; // class CP51932
 
+[Serializable]
 public class ENCeuc_jp : CP51932
 {
 	public ENCeuc_jp () : base() {}

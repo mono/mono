@@ -34,6 +34,7 @@ using System.Text;
 // subclasses providing implementations of the "ToBytes" methods to perform
 // the char->byte conversion.
 
+[Serializable]
 public abstract class ByteEncoding : MonoEncoding
 {
 	// Internal state.

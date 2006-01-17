@@ -12,7 +12,7 @@ using System.Text;
 
 namespace I18N.Common
 {
-
+	[Serializable]
 	public abstract class MonoEncoding : Encoding
 	{
 		public MonoEncoding (int codePage)

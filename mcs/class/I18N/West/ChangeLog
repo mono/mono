@@ -1,3 +1,10 @@
+2006-01-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CP1252.cs CP28592.cs CP437.cs CP861.cs CP10079.cs CP863.cs
+	  CP865.cs CP28593.cs CP1253.cs CP28597.cs CP10000.cs CP850.cs
+	  CP860.cs CP28605.cs CP1250.cs (All) :
+	  Marked as [Serializable].
+
 2006-01-12  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CP10079.cs : oops, silly debugging code was remaining.

@@ -31,6 +31,7 @@ using System;
 using System.Text;
 using I18N.Common;
 
+[Serializable]
 public class CP875 : ByteEncoding
 {
 	public CP875()
@@ -919,6 +920,7 @@ public class CP875 : ByteEncoding
 
 }; // class CP875
 
+[Serializable]
 public class ENCibm875 : CP875
 {
 	public ENCibm875() : base() {}

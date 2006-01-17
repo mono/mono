@@ -31,6 +31,7 @@ using System;
 using System.Text;
 using I18N.Common;
 
+[Serializable]
 public class CP1253 : ByteEncoding
 {
 	public CP1253()
@@ -409,6 +410,7 @@ public class CP1253 : ByteEncoding
 
 }; // class CP1253
 
+[Serializable]
 public class ENCwindows_1253 : CP1253
 {
 	public ENCwindows_1253() : base() {}

@@ -31,6 +31,7 @@ using System;
 using System.Text;
 using I18N.Common;
 
+[Serializable]
 public class CP28596 : ByteEncoding
 {
 	public CP28596()
@@ -549,6 +550,7 @@ public class CP28596 : ByteEncoding
 
 }; // class CP28596
 
+[Serializable]
 public class ENCiso_8859_6 : CP28596
 {
 	public ENCiso_8859_6() : base() {}

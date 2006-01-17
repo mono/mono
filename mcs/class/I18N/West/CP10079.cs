@@ -31,6 +31,7 @@ using System;
 using System.Text;
 using I18N.Common;
 
+[Serializable]
 public class CP10079 : ByteEncoding
 {
 	public CP10079()
@@ -390,6 +391,7 @@ public class CP10079 : ByteEncoding
 
 }; // class CP10079
 
+[Serializable]
 public class ENCx_mac_icelandic : CP10079
 {
 	public ENCx_mac_icelandic() : base() {}

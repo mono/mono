@@ -31,6 +31,7 @@ using System;
 using System.Text;
 using I18N.Common;
 
+[Serializable]
 public class CP708 : ByteEncoding
 {
 	public CP708()
@@ -549,6 +550,7 @@ public class CP708 : ByteEncoding
 
 }; // class CP708
 
+[Serializable]
 public class ENCasmo_708 : CP708
 {
 	public ENCasmo_708() : base() {}

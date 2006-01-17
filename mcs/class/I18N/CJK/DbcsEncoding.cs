@@ -11,6 +11,7 @@ using I18N.Common;
 
 namespace I18N.CJK
 {
+	[Serializable]
 	internal abstract class DbcsEncoding : MonoEncoding
 	{
 		internal DbcsConvert convert;

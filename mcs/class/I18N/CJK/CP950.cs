@@ -11,6 +11,7 @@ using I18N.Common;
 
 namespace I18N.CJK
 {
+	[Serializable]
 	internal class CP950 : DbcsEncoding
 	{
 		// Magic number used by Windows for the Big5 code page.
@@ -164,6 +165,7 @@ namespace I18N.CJK
 		}
 	}
 	
+	[Serializable]
 	internal class ENCbig5 : CP950
 	{
 		public ENCbig5() {}
