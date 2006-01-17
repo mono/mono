@@ -1297,6 +1297,7 @@ namespace System.Windows.Forms
 		protected override void OnLayout (LayoutEventArgs levent)
 		{
 			base.OnLayout (levent);
+			CalcAreasAndInvalidate ();			
 		}
 
 		protected override void OnLeave (EventArgs e)

@@ -1,5 +1,9 @@
 2006-01-17  Jordi Mas i Hernandez <jordimash@gmail.com>
 
+	* DataGrid.cs: Fixes 77260
+	
+2006-01-17  Jordi Mas i Hernandez <jordimash@gmail.com>
+
 	* DataGrid.cs: Clicking on a column on a empty grid was giving
 	  an exception
 
