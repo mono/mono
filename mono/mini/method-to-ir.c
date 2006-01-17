@@ -868,6 +868,7 @@ static int the_count = 0;
         ins->dreg = alloc_dreg ((cfg), (ins)->type); \
         MONO_ADD_INS ((cfg)->cbb, (ins)); \
 		*sp++ = ins;	\
+        decompose_opcode ((cfg), (ins)); \
 	} while (0)
 
 #define ADD_UNOP(op) do {	\
@@ -880,6 +881,7 @@ static int the_count = 0;
         (ins)->dreg = alloc_dreg ((cfg), (ins)->type); \
         MONO_ADD_INS ((cfg)->cbb, (ins)); \
 		*sp++ = ins;	\
+		decompose_opcode (cfg, ins); \
 	} while (0)
 
 #define ADD_BINCOND(next_block) do {	\
@@ -1495,29 +1497,6 @@ type_from_op (MonoInst *ins, MonoInst *src1, MonoInst *src2) {
 		ins->type = STACK_I4;
 		ins->opcode += ovf2ops_op_map [src1->type];
 		return;
-	case CEE_CONV_U:
-		/* FIXME: Merge this to some other case */
-		ins->type = STACK_PTR;
-		switch (src1->type) {
-		case STACK_I4:
-			ins->opcode = OP_ICONV_TO_U;
-			break;
-		case STACK_I8:
-			ins->opcode = OP_LCONV_TO_U;
-			break;
-		case STACK_R8:
-			ins->opcode = OP_FCONV_TO_U;
-			break;
-		case STACK_PTR:
-		case STACK_MP:
-#if SIZEOF_VOID_P == 8
-			ins->opcode = OP_LCONV_TO_U;
-#else
-			ins->opcode = OP_ICONV_TO_U;
-#endif
-			break;
-		}
-		return;
 	case CEE_CONV_I8:
 	case CEE_CONV_U8:
 		ins->type = STACK_I8;
@@ -1547,6 +1526,7 @@ type_from_op (MonoInst *ins, MonoInst *src1, MonoInst *src2) {
 		ins->opcode += ovfops_op_map [src1->type];
 		break;
 	case CEE_CONV_I:
+	case CEE_CONV_U:
 	case CEE_CONV_OVF_I:
 	case CEE_CONV_OVF_U:
 		ins->type = STACK_PTR;
@@ -2125,9 +2105,25 @@ mini_emit_castclass (MonoCompile *cfg, int klass_reg, MonoClass *klass)
 static void 
 mini_emit_memset (MonoCompile *cfg, int destreg, int offset, int size, int val, int align)
 {
-	int val_reg = alloc_preg (cfg);
+	int val_reg;
 
-	/* FIXME: Use STORE_MEMBASE_IMM */
+	if (size <= 4) {
+		/* FIXME: Handle size 8 on 64 bit machines as well */
+		switch (size) {
+		case 1:
+			MONO_EMIT_NEW_STORE_MEMBASE_IMM (cfg, OP_STOREI1_MEMBASE_IMM, destreg, offset, val);
+			break;
+		case 2:
+			MONO_EMIT_NEW_STORE_MEMBASE_IMM (cfg, OP_STOREI2_MEMBASE_IMM, destreg, offset, val);
+			break;
+		case 4:
+			MONO_EMIT_NEW_STORE_MEMBASE_IMM (cfg, OP_STOREI4_MEMBASE_IMM, destreg, offset, val);
+			break;
+		}
+		return;
+	}
+
+	val_reg = alloc_preg (cfg);
 
 	if (sizeof (gpointer) == 8)
 		MONO_EMIT_NEW_I8CONST (cfg, val_reg, val);
@@ -2771,28 +2767,15 @@ handle_initobj (MonoCompile *cfg, MonoInst *dest, const guchar *ip, MonoClass *k
 	mono_class_init (klass);
 	n = mono_class_value_size (klass, NULL);
 
-	switch (n) {
-	case 1:
-		MONO_EMIT_NEW_STORE_MEMBASE_IMM (cfg, OP_STOREI1_MEMBASE_IMM, dest->dreg, 0, 0);
-		break;
-	case 2:
-		MONO_EMIT_NEW_STORE_MEMBASE_IMM (cfg, OP_STOREI2_MEMBASE_IMM, dest->dreg, 0, 0);
-		break;
-	case 4:
-		MONO_EMIT_NEW_STORE_MEMBASE_IMM (cfg, OP_STOREI4_MEMBASE_IMM, dest->dreg, 0, 0);
-		break;
-	default:
-		if (n <= sizeof (gpointer) * 5) {
-			mini_emit_memset (cfg, dest->dreg, 0, n, 0, 0);			
-		}
-		else {
-			memset_method = get_memset_method ();
-			iargs [0] = dest;
-			EMIT_NEW_ICONST (cfg, iargs [1], 0);
-			EMIT_NEW_ICONST (cfg, iargs [2], n);
-			mono_emit_method_call (cfg, memset_method, memset_method->signature, iargs, ip, NULL);
-		}
-		break;
+	if (n <= sizeof (gpointer) * 5) {
+		mini_emit_memset (cfg, dest->dreg, 0, n, 0, 0);			
+	}
+	else {
+		memset_method = get_memset_method ();
+		iargs [0] = dest;
+		EMIT_NEW_ICONST (cfg, iargs [1], 0);
+		EMIT_NEW_ICONST (cfg, iargs [2], n);
+		mono_emit_method_call (cfg, memset_method, memset_method->signature, iargs, ip, NULL);
 	}
 }
 
@@ -3543,6 +3526,62 @@ mini_emit_ldelema_1_ins (MonoCompile *cfg, MonoClass *klass, MonoInst *arr, Mono
 }
 
 static MonoInst*
+mini_emit_ldelema_2_ins (MonoCompile *cfg, MonoClass *klass, MonoInst *arr, MonoInst *index_ins1, MonoInst *index_ins2)
+{
+	int bounds_reg = alloc_preg (cfg);
+	int add_reg = alloc_preg (cfg);
+	int mult_reg = alloc_preg (cfg);
+	int mult2_reg = alloc_preg (cfg);
+	int low1_reg = alloc_preg (cfg);
+	int low2_reg = alloc_preg (cfg);
+	int high1_reg = alloc_preg (cfg);
+	int high2_reg = alloc_preg (cfg);
+	int realidx1_reg = alloc_preg (cfg);
+	int realidx2_reg = alloc_preg (cfg);
+	int sum_reg = alloc_preg (cfg);
+	int index1, index2;
+	MonoInst *ins;
+	guint32 size;
+
+	mono_class_init (klass);
+	size = mono_class_array_element_size (klass);
+
+	index1 = index_ins1->dreg;
+	index2 = index_ins2->dreg;
+
+	/* range checking */
+	MONO_EMIT_NEW_LOAD_MEMBASE (cfg, bounds_reg, 
+				       arr->dreg, G_STRUCT_OFFSET (MonoArray, bounds));
+
+	MONO_EMIT_NEW_LOAD_MEMBASE_OP (cfg, OP_LOADI4_MEMBASE, low1_reg, 
+				       bounds_reg, G_STRUCT_OFFSET (MonoArrayBounds, lower_bound));
+	MONO_EMIT_NEW_BIALU (cfg, OP_PSUB, realidx1_reg, index1, low1_reg);
+	MONO_EMIT_NEW_LOAD_MEMBASE_OP (cfg, OP_LOADI4_MEMBASE, high1_reg, 
+				       bounds_reg, G_STRUCT_OFFSET (MonoArrayBounds, length));
+	MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, high1_reg, realidx1_reg);
+	MONO_EMIT_NEW_COND_EXC (cfg, LE_UN, "IndexOutOfRangeException");
+
+	MONO_EMIT_NEW_LOAD_MEMBASE_OP (cfg, OP_LOADI4_MEMBASE, low2_reg, 
+				       bounds_reg, sizeof (MonoArrayBounds) + G_STRUCT_OFFSET (MonoArrayBounds, lower_bound));
+	MONO_EMIT_NEW_BIALU (cfg, OP_PSUB, realidx2_reg, index2, low2_reg);
+	MONO_EMIT_NEW_LOAD_MEMBASE_OP (cfg, OP_LOADI4_MEMBASE, high2_reg, 
+				       bounds_reg, sizeof (MonoArrayBounds) + G_STRUCT_OFFSET (MonoArrayBounds, length));
+	MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, high2_reg, realidx2_reg);
+	MONO_EMIT_NEW_COND_EXC (cfg, LE_UN, "IndexOutOfRangeException");
+
+	MONO_EMIT_NEW_BIALU (cfg, OP_PMUL, mult_reg, high2_reg, realidx1_reg);
+	MONO_EMIT_NEW_BIALU (cfg, OP_PADD, sum_reg, mult_reg, realidx2_reg);
+	MONO_EMIT_NEW_BIALU_IMM (cfg, OP_PMUL_IMM, mult2_reg, sum_reg, size);
+	MONO_EMIT_NEW_BIALU (cfg, OP_PADD, add_reg, mult2_reg, arr->dreg);
+	NEW_BIALU_IMM (cfg, ins, OP_PADD_IMM, add_reg, add_reg, G_STRUCT_OFFSET (MonoArray, vector));
+
+	ins->type = STACK_PTR;
+	MONO_ADD_INS (cfg->cbb, ins);
+
+	return ins;
+}
+
+static MonoInst*
 mini_emit_ldelema_ins (MonoCompile *cfg, MonoMethod *cmethod, MonoInst **sp, unsigned char *ip, gboolean is_set)
 {
 	int rank;
@@ -3555,24 +3594,12 @@ mini_emit_ldelema_ins (MonoCompile *cfg, MonoMethod *cmethod, MonoInst **sp, uns
 	rank = mono_method_signature (cmethod)->param_count - (is_set? 1: 0);
 
 	if (rank == 1)
-		return mini_emit_ldelema_1_ins (cfg, cmethod->klass, sp [0], sp [1]);
+		return mini_emit_ldelema_1_ins (cfg, cmethod->klass->element_class, sp [0], sp [1]);
 
-	/* FIXME: Add this back */
-#if 0
+#ifndef MONO_ARCH_EMULATE_MUL_DIV
+	/* emit_ldelema_2 depends on OP_LMUL */
 	if (rank == 2 && (cfg->opt & MONO_OPT_INTRINS)) {
-#ifdef MONO_ARCH_EMULATE_MUL_DIV
-		/* OP_LDELEMA2D depends on OP_LMUL */
-#else
-		MonoInst *indexes;
-		NEW_GROUP (cfg, indexes, sp [1], sp [2]);
-		MONO_INST_NEW (cfg, addr, OP_LDELEMA2D);
-		addr->inst_left = sp [0];
-		addr->inst_right = indexes;
-		addr->cil_code = ip;
-		addr->type = STACK_MP;
-		addr->klass = cmethod->klass;
-		return addr;
-#endif
+		return mini_emit_ldelema_2_ins (cfg, cmethod->klass->element_class, sp [0], sp [1], sp [2]);
 	}
 #endif
 
@@ -6447,7 +6474,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			}
 			else {
 				ADD_UNOP (*ip);
-				decompose_opcode (cfg, ins);
 			}
 			ip++;
 			break;
@@ -6460,12 +6486,10 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 
 			if (sp [-1]->type == STACK_R8) {
 				ADD_UNOP (CEE_CONV_OVF_I8);
-				decompose_opcode (cfg, ins);
 				ADD_UNOP (*ip);
 			} else {
 				ADD_UNOP (*ip);
 			}
-			decompose_opcode (cfg, (ins));
 			ip++;
 			break;
 		case CEE_CONV_OVF_U1:
@@ -6475,12 +6499,10 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 
 			if (sp [-1]->type == STACK_R8) {
 				ADD_UNOP (CEE_CONV_OVF_U8);
-				decompose_opcode (cfg, ins);
 				ADD_UNOP (*ip);
 			} else {
 				ADD_UNOP (*ip);
 			}
-			decompose_opcode (cfg, (ins));
 			ip++;
 			break;
 		case CEE_CONV_OVF_I1_UN:
@@ -6499,7 +6521,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 		case CEE_CONV_U:
 			CHECK_STACK (1);
 			ADD_UNOP (*ip);
-			decompose_opcode (cfg, ins);
 			ip++;
 			break;
 		case CEE_ADD_OVF:
@@ -6510,7 +6531,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 		case CEE_SUB_OVF_UN:
 			CHECK_STACK (2);
 			ADD_BINOP (*ip);
-			decompose_opcode (cfg, ins);
 			ip++;
 			break;
 		case CEE_CPOBJ:
@@ -8828,8 +8848,6 @@ mono_handle_global_vregs (MonoCompile *cfg)
 					 * to determine when it needs to be global. So be conservative.
 					 */
 					if (!get_vreg_to_inst (cfg, 'l', vreg)) {
-						MonoInst *tree;
-
 						mono_compile_create_var_for_vreg (cfg, &mono_defaults.int64_class->byval_arg, OP_LOCAL, 'l', vreg);
 
 						if (cfg->verbose_level > 0)
@@ -8843,9 +8861,7 @@ mono_handle_global_vregs (MonoCompile *cfg)
 					} else if (vreg_to_bb [regtype][vreg] != bb) {
 						if (cfg->verbose_level > 0)
 							printf ("VREG R%d used in BB%d and BB%d made global.\n", vreg, vreg_to_bb [regtype][vreg]->block_num, bb->block_num);
-						//NOT_IMPLEMENTED;
 
-						// FIXME:
 						switch (regtype) {
 						case 'i':
 							mono_compile_create_var_for_vreg (cfg, &mono_defaults.int_class->byval_arg, OP_LOCAL, 'i', vreg);
@@ -8854,7 +8870,7 @@ mono_handle_global_vregs (MonoCompile *cfg)
 							mono_compile_create_var_for_vreg (cfg, &mono_defaults.double_class->byval_arg, OP_LOCAL, 'f', vreg);
 							break;
 						default:
-							NOT_IMPLEMENTED;
+							g_assert_not_reached ();
 						}
 					}
 				}
@@ -8904,13 +8920,12 @@ mono_spill_global_vars (MonoCompile *cfg)
 	memset (spec2, 0, sizeof (spec2));
 
 	/* FIXME: Move this function to mini.c */
-
-	stacktypes = g_new0 (guint32, 256);
+	stacktypes = g_new0 (guint32, 128);
 	stacktypes ['i'] = STACK_PTR;
 	stacktypes ['l'] = STACK_I8;
 	stacktypes ['f'] = STACK_R8;
 
-	/* FIXME: Clean this up */
+#if SIZEOF_VOID_P == 4
 	/* Create MonoInsts for longs */
 	for (i = 0; i < cfg->num_varinfo; i++) {
 		MonoInst *ins = cfg->varinfo [i];
@@ -8918,7 +8933,6 @@ mono_spill_global_vars (MonoCompile *cfg)
 		if (ins->opcode != OP_REGVAR) {
 			switch (ins->type) {
 			case STACK_I8: {
-#if SIZEOF_VOID_P == 4
 				MonoInst *tree;
 
 				g_assert (ins->opcode == OP_REGOFFSET);
@@ -8934,7 +8948,6 @@ mono_spill_global_vars (MonoCompile *cfg)
 				tree->opcode = OP_REGOFFSET;
 				tree->inst_basereg = ins->inst_basereg;
 				tree->inst_offset = ins->inst_offset + 4;
-#endif
 				break;
 			}
 			default:
@@ -8942,6 +8955,7 @@ mono_spill_global_vars (MonoCompile *cfg)
 			}
 		}
 	}
+#endif
 
 	/* FIXME: widening and truncation */
 
@@ -9028,7 +9042,7 @@ mono_spill_global_vars (MonoCompile *cfg)
 			}
 
 			if (cfg->verbose_level > 0)
-				printf ("A: %s %d %d %d\n", spec, ins->dreg, ins->sreg1, ins->sreg2);
+				printf ("\t %s %d %d %d\n", spec, ins->dreg, ins->sreg1, ins->sreg2);
 
 			/* DREG */
 			regtype = spec [MONO_INST_DEST];
@@ -9144,11 +9158,9 @@ mono_spill_global_vars (MonoCompile *cfg)
  * - make mono_print_ins use the arch-independent opcode metadata
  * - simplify the emitting of calls
  * - add OP_ICALL
- * - get rid of branches inside bblocks
  * - get rid of TEMPLOADs if possible and use vregs instead
  * - clean up/automatize setting of ins->cil_code
  * - clean up usage of OP_P/OP_ opcodes
- * - allocate dregs automatically in MONO_EMIT_NEW macros
  * - cleanup calls. especially the spill stuff
  * - handle the emit ins + need it/its dreg pattern
  * - cleanup usage of DUMMY_USE
@@ -9172,10 +9184,7 @@ mono_spill_global_vars (MonoCompile *cfg)
  *   - long shift ops have sreg1:L but they use ins->unused=eax
  * - handle long shift opts on 32 bit platforms somehow: they require 
  *   3 sregs (2 for arg1 and 1 for arg2)
- * - fix #define MONO_ARCH_NO_EMULATE_LONG_SHIFT_OPS for x86
- * - same goes for lcall and other non-decomposable long opcodes
  * - make byref a 'normal' type.
- * - use 8 bytes per chunk in monobitset on 64 bit platforms
  * - LAST MERGE: 55174
  */
 
