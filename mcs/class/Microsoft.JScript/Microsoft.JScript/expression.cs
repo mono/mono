@@ -381,7 +381,24 @@ namespace Microsoft.JScript {
 				ig.Emit (OpCodes.Call, decl_type.GetProperty (property.Name).GetGetMethod ());
 				break;
 			default:
-				throw new NotImplementedException ();
+				Type lb_type = typeof (LateBinding);
+				LocalBuilder lateBinder = ig.DeclareLocal (lb_type);
+				Identifier prop = (Identifier) prop_name;
+
+				ig.Emit (OpCodes.Ldstr, prop.name.Value);
+				ig.Emit (OpCodes.Newobj, lb_type.GetConstructor (new Type [] { typeof (string)} ));
+				ig.Emit (OpCodes.Stloc, lateBinder);
+				ig.Emit (OpCodes.Ldloc, lateBinder);
+				ig.Emit (OpCodes.Dup);
+
+				Identifier obj_name = (Identifier) obj;
+
+				ig.Emit (OpCodes.Call, typeof (GlobalObject).GetProperty (obj_name.name.Value).GetGetMethod ());
+				ig.Emit (OpCodes.Stfld, lb_type.GetField ("obj"));
+				ig.Emit (OpCodes.Call, lb_type.GetMethod ("GetNonMissingValue"));
+
+				break;
+
 			}
 			emit_box (ig, minfo);
 		}			

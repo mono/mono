@@ -1,3 +1,9 @@
+2006-01-17  Cesar Lopez Nataren  <cnataren@novell.com>
+
+	* expression.cs (Binary.emit_access): Emit late binding code for
+	member's access that maps to MemberTypes (like Math.pow). Fixes
+	#72440.
+
 2006-01-13  Cesar Lopez Nataren  <cnataren@novell.com>
 
 	* ForIn.cs: implement for (x in obj) logic.
