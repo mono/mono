@@ -420,7 +420,7 @@ namespace System.IO {
 				if (foundCR) // don't include the trailing CR if present
 					decoded_count--;
 
-				line_builder.Append (new string (decoded_buffer, begin, decoded_count - begin));
+				line_builder.Append (decoded_buffer, begin, decoded_count - begin);
 				if (ReadBuffer () == 0) {
 					if (line_builder.Capacity > 32768) {
 						StringBuilder sb = line_builder;
@@ -433,7 +433,7 @@ namespace System.IO {
 				begin = pos;
 				end = FindNextEOL ();
 				if (end < decoded_count && end >= begin) {
-					line_builder.Append (new string (decoded_buffer, begin, end - begin));
+					line_builder.Append (decoded_buffer, begin, end - begin);
 					if (line_builder.Capacity > 32768) {
 						StringBuilder sb = line_builder;
 						line_builder = null;
