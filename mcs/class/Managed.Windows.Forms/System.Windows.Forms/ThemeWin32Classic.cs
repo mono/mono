@@ -1365,7 +1365,7 @@ namespace System.Windows.Forms
 				else
 					dc.DrawString (label.pieces[i].text, label.GetPieceFont (label.pieces[i]), ResPool.GetSolidBrush (color),
 						label.pieces[i].rect.X, label.pieces[i].rect.Y);
-						
+
 				if (label.pieces[i].focused) {					
 					CPDrawFocusRectangle (dc, label.pieces[i].rect, label.ForeColor, label.BackColor);
 				}
@@ -1430,7 +1430,7 @@ namespace System.Windows.Forms
 			Rectangle client_area_nohdrs;			
 			DrawListViewHeader (dc, clip, control);
 			
-			if (details && control.Columns.Count > 0) {
+			if (details && control.HeaderStyle != ColumnHeaderStyle.None && control.Columns.Count > 0) {
 				client_area_nohdrs = control.client_area;
 				client_area_nohdrs.Y += control.Columns[0].Ht;
 				client_area_nohdrs.Height -= control.Columns[0].Ht;

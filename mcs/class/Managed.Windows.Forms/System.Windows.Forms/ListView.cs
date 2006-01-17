@@ -1347,7 +1347,7 @@ namespace System.Windows.Forms
 				int pixels =  v_marker - v_scroll.Value;
 				Rectangle area = client_area;
 				
-				if (View == View.Details && Columns.Count > 0) {
+				if (View == View.Details && header_style != ColumnHeaderStyle.None && Columns.Count > 0) {
 					area.Y += Columns[0].Ht;
 					area.Height -= Columns[0].Ht;
 				}
