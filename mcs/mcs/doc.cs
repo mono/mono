@@ -30,8 +30,16 @@ namespace Mono.CSharp {
 	//
 	// Support class for XML documentation.
 	//
-	public static class DocUtil
+#if NET_2_0
+	static
+#else
+	abstract
+#endif
+	public class DocUtil
 	{
+#if !NET_2_0
+		private DocUtil () {}
+#endif
 		// TypeContainer
 
 		//
