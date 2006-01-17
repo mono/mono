@@ -1,3 +1,8 @@
+2006-01-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* monobitset.h monobitset.c: Move the mono_bitset_test_fast macro here
+	 from mini.h. Also fix it after the 64 bit changes.
+
 2006-01-15  Zoltan Varga  <vargaz@gmail.com>
 
 	* monobitset.h monobitset.c: Use 64 bit chunks on 64 bit machines.
