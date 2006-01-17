@@ -1,3 +1,7 @@
+2006-01-17 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* threadpool.c: fix problem (Mac only) when more than one asynchronous
+	connect. Fixes bug #77020.
 
 Mon Jan 16 19:20:43 CET 2006 Paolo Molaro <lupus@ximian.com>
 
