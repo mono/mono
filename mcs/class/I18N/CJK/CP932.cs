@@ -35,15 +35,10 @@ public unsafe class CP932 : MonoEncoding
 	// Magic number used by Windows for the Shift-JIS code page.
 	private const int SHIFTJIS_CODE_PAGE = 932;
 
-	// Internal state.
-	private JISConvert convert;
-
 	// Constructor.
 	public CP932() : base(SHIFTJIS_CODE_PAGE)
-			{
-				// Load the JIS conversion tables.
-				convert = JISConvert.Convert;
-			}
+	{
+	}
 
 	// Get the number of bytes needed to encode a character buffer.
 	public override int GetByteCount(char[] chars, int index, int count)
@@ -68,11 +63,11 @@ public unsafe class CP932 : MonoEncoding
 				int length = 0;
 				int ch, value;
 #if __PNET__
-				byte *cjkToJis = convert.cjkToJis;
-				byte *extraToJis = convert.extraToJis;
+				byte *cjkToJis = JISConvert.Convert.cjkToJis;
+				byte *extraToJis = JISConvert.Convert.extraToJis;
 #else
-				byte[] cjkToJis = convert.cjkToJis;
-				byte[] extraToJis = convert.extraToJis;
+				byte[] cjkToJis = JISConvert.Convert.cjkToJis;
+				byte[] extraToJis = JISConvert.Convert.extraToJis;
 #endif
 				while(count > 0)
 				{
@@ -148,13 +143,13 @@ public unsafe class CP932 : MonoEncoding
 				int byteLength = byteCount;
 				int ch, value;
 #if __PNET__
-				byte *cjkToJis = convert.cjkToJis;
-				byte *greekToJis = convert.greekToJis;
-				byte *extraToJis = convert.extraToJis;
+				byte *cjkToJis = JISConvert.Convert.cjkToJis;
+				byte *greekToJis = JISConvert.Convert.greekToJis;
+				byte *extraToJis = JISConvert.Convert.extraToJis;
 #else
-				byte[] cjkToJis = convert.cjkToJis;
-				byte[] greekToJis = convert.greekToJis;
-				byte[] extraToJis = convert.extraToJis;
+				byte[] cjkToJis = JISConvert.Convert.cjkToJis;
+				byte[] greekToJis = JISConvert.Convert.greekToJis;
+				byte[] extraToJis = JISConvert.Convert.extraToJis;
 #endif
 				while(charCount > 0)
 				{
@@ -454,9 +449,9 @@ public unsafe class CP932 : MonoEncoding
 				int length = 0;
 				int byteval, value;
 #if __PNET__
-				byte *table = convert.jisx0208ToUnicode;
+				byte *table = JISConvert.Convert.jisx0208ToUnicode;
 #else
-				byte[] table = convert.jisx0208ToUnicode;
+				byte[] table = JISConvert.Convert.jisx0208ToUnicode;
 #endif
 				while(byteCount > 0)
 				{
@@ -563,7 +558,7 @@ public unsafe class CP932 : MonoEncoding
 	// Get a decoder that handles a rolling Shift-JIS state.
 	public override Decoder GetDecoder()
 			{
-				return new CP932Decoder(convert);
+				return new CP932Decoder(JISConvert.Convert);
 			}
 
 #if !ECMA_COMPAT

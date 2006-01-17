@@ -16,19 +16,23 @@ namespace I18N.CJK
 	[Serializable]
 	internal class CP936 : DbcsEncoding
 	{
-		static DbcsConvert gb2312 = DbcsConvert.Gb2312;
-
 		// Magic number used by Windows for the Gb2312 code page.
 		private const int GB2312_CODE_PAGE = 936;
 		
 		// Constructor.
 		public CP936() : base(GB2312_CODE_PAGE) {
 		}
-		
+
+		internal override DbcsConvert GetConvert ()
+		{
+			return DbcsConvert.Gb2312;
+		}
+
 		// Get the bytes that result from encoding a character buffer.
 		public unsafe override int GetBytesImpl (char* chars, int charCount,
 					     byte* bytes, int byteCount)
 		{
+			DbcsConvert gb2312 = GetConvert ();
 			int charIndex = 0;
 			int byteIndex = 0;
 #if NET_2_0
@@ -99,6 +103,7 @@ namespace I18N.CJK
 		public override int GetChars(byte[] bytes, int byteIndex, int byteCount,
 					     char[] chars, int charIndex)
 		{
+			DbcsConvert gb2312 = GetConvert ();
 			// A1 40 - FA FF
 			base.GetChars(bytes, byteIndex, byteCount, chars, charIndex);
 			int origIndex = charIndex;
@@ -129,7 +134,7 @@ namespace I18N.CJK
 		// Get a decoder that handles a rolling Gb2312 state.
 		public override Decoder GetDecoder()
 		{
-			return new CP936Decoder(gb2312);
+			return new CP936Decoder(GetConvert ());
 		}
 		
 		// Get the mail body name for this encoding.

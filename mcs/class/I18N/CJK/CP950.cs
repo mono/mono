@@ -19,13 +19,18 @@ namespace I18N.CJK
 		
 		// Constructor.
 		public CP950() : base(BIG5_CODE_PAGE) {
-			convert = Big5Convert.Convert;
 		}
-		
+
+		internal override DbcsConvert GetConvert ()
+		{
+			return Big5Convert.Convert;
+		}
+
 		// Get the bytes that result from encoding a character buffer.
 		public unsafe override int GetBytesImpl (char* chars, int charCount,
 					     byte* bytes, int byteCount)
 		{
+			DbcsConvert convert = GetConvert ();
 			int charIndex = 0;
 			int byteIndex = 0;
 #if NET_2_0
@@ -61,6 +66,7 @@ namespace I18N.CJK
 		public override int GetChars(byte[] bytes, int byteIndex, int byteCount,
 					     char[] chars, int charIndex)
 		{
+			DbcsConvert convert = GetConvert ();
 			// A1 40 - FA FF
 			base.GetChars(bytes, byteIndex, byteCount, chars, charIndex);
 			int origIndex = charIndex;
@@ -92,7 +98,7 @@ namespace I18N.CJK
 		// Get a decoder that handles a rolling Big5 state.
 		public override Decoder GetDecoder()
 		{
-			return new CP950Decoder(convert);
+			return new CP950Decoder(GetConvert ());
 		}
 		
 		// Get the mail body name for this encoding.

@@ -64,14 +64,9 @@ public class CP51932 : MonoEncoding
 	// Magic number used by Windows for the EUC-JP code page.
 	private const int EUC_JP_CODE_PAGE = 51932;
 
-	// Internal state.
-	private JISConvert convert;
-
 	// Constructor.
 	public CP51932 () : base (EUC_JP_CODE_PAGE)
 	{
-		// Load the JIS conversion tables.
-		convert = JISConvert.Convert;
 	}
 
 	// Get the number of bytes needed to encode a character buffer.
@@ -92,8 +87,8 @@ public class CP51932 : MonoEncoding
 		// Determine the length of the final output.
 		int length = 0;
 		int ch, value;
-		byte [] cjkToJis = convert.cjkToJis;
-		byte [] extraToJis = convert.extraToJis;
+		byte [] cjkToJis = JISConvert.Convert.cjkToJis;
+		byte [] extraToJis = JISConvert.Convert.extraToJis;
 
 		while (count > 0) {
 			ch = chars [index++];
@@ -152,9 +147,9 @@ public class CP51932 : MonoEncoding
 		int byteLength = byteCount;
 		int ch, value;
 
-		byte[] cjkToJis = convert.cjkToJis;
-		byte[] greekToJis = convert.greekToJis;
-		byte[] extraToJis = convert.extraToJis;
+		byte[] cjkToJis = JISConvert.Convert.cjkToJis;
+		byte[] greekToJis = JISConvert.Convert.greekToJis;
+		byte[] extraToJis = JISConvert.Convert.extraToJis;
 
 		for (; charCount > 0; charIndex++, --charCount) {
 			ch = chars [charIndex];
@@ -240,8 +235,8 @@ public class CP51932 : MonoEncoding
 
 		// Determine the total length of the converted string.
 		int value = 0;
-		byte[] table0208 = convert.jisx0208ToUnicode;
-		byte[] table0212 = convert.jisx0212ToUnicode;
+		byte[] table0208 = JISConvert.Convert.jisx0208ToUnicode;
+		byte[] table0212 = JISConvert.Convert.jisx0212ToUnicode;
 		int length = 0;
 		int byteval = 0;
 		int last = 0;
@@ -363,8 +358,8 @@ public class CP51932 : MonoEncoding
 		int charLength = chars.Length;
 		int byteval, value;
 		int last = 0;
-		byte[] table0208 = convert.jisx0208ToUnicode;
-		byte[] table0212 = convert.jisx0212ToUnicode;
+		byte[] table0208 = JISConvert.Convert.jisx0208ToUnicode;
+		byte[] table0212 = JISConvert.Convert.jisx0212ToUnicode;
 
 		while (byteCount > 0) {
 			byteval = bytes [byteIndex++];

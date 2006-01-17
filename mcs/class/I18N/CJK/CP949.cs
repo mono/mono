@@ -105,8 +105,12 @@ namespace I18N.CJK
     {
         // Constructor.
         public KoreanEncoding (int codepage, bool useUHC) : base (codepage) {
-            convert = KSConvert.Convert;
             this.useUHC = useUHC;
+        }
+
+        internal override DbcsConvert GetConvert ()
+        {
+                return KSConvert.Convert;
         }
 
         bool useUHC;
@@ -117,6 +121,7 @@ namespace I18N.CJK
         {
             int charIndex = 0;
             int byteIndex = 0;
+            DbcsConvert convert = GetConvert ();
 #if NET_2_0
             EncoderFallbackBuffer buffer = null;
 #endif
@@ -150,6 +155,7 @@ namespace I18N.CJK
         public override int GetChars(byte[] bytes, int byteIndex, int byteCount,
                          char[] chars, int charIndex)
         {
+            DbcsConvert convert = GetConvert ();
             base.GetChars(bytes, byteIndex, byteCount, chars, charIndex);
             int origIndex = charIndex;
             int lastByte = 0;
@@ -221,7 +227,7 @@ namespace I18N.CJK
         // Get a decoder that handles a rolling UHC state.
         public override Decoder GetDecoder()
         {
-            return new KoreanDecoder (convert, useUHC);
+            return new KoreanDecoder (GetConvert (), useUHC);
         }
 
         // Decoder that handles a rolling UHC state.
