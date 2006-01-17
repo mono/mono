@@ -1,3 +1,10 @@
+2006-01-17  Mike Kestner  <mkestner@novell.com>
+
+	* MainMenu.cs (OnMenuChanged): set Height=0 to cause relayout.
+	* ThemeWin32Classic.cs (CalcItemSize): clear Height/Width for 
+	invisible/previously-visible items.
+	[Fixes #76909]
+
 2006-01-17  Alexander Olk  <alex.olk@googlemail.com>
 
 	* ThemeClearlooks.cs:

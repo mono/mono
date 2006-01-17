@@ -1766,8 +1766,11 @@ namespace System.Windows.Forms
 			item.X = x;
 			item.Y = y;
 
-			if (item.Visible == false)
+			if (item.Visible == false) {
+				item.Width = 0;
+				item.Height = 0;
 				return;
+			}
 
 			if (item.Separator == true) {
 				item.Height = SEPARATOR_HEIGHT / 2;

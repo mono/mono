@@ -120,6 +120,7 @@ namespace System.Windows.Forms
 			if (form == null)
 				return;
 
+			Height = 0;
 			Draw ();
 		}
 
