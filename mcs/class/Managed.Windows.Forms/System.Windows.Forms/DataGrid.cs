@@ -1283,8 +1283,10 @@ namespace System.Windows.Forms
 				ke.Handled = true;
 			}
 
-			CurrentTableStyle.GridColumnStyles[current_cell.ColumnNumber].OnKeyDown
-				(ke, current_cell.RowNumber, current_cell.ColumnNumber);
+			if (CurrentTableStyle.GridColumnStyles.Count > 0) {
+				CurrentTableStyle.GridColumnStyles[current_cell.ColumnNumber].OnKeyDown
+					(ke, current_cell.RowNumber, current_cell.ColumnNumber);
+			}
 		}
 
 		protected override void OnKeyPress (KeyPressEventArgs kpe)
