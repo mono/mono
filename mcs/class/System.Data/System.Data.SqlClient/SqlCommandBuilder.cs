@@ -312,6 +312,7 @@ namespace System.Data.SqlClient {
 			}
 			command.CommandType = CommandType.Text;
 			command.UpdatedRowSource = UpdateRowSource.None;
+			command.Parameters.Clear ();
 		}
 
 		private SqlCommand CreateUpdateCommand (DataRow row, DataTableMapping tableMapping) 

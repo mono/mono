@@ -1,3 +1,7 @@
+2006-01-17  Senganal T  <tsenganal@novell.com>
+
+	* sqlserver.config : Modified the default login and password to 'monotester'
+
 2005-11-05  Kornél Pál  <kornelpal@hotmail.com>
 
 	* app-net_2_0.config: Updated assembly versions to 2.0.0.0 (2.0 RTM).
