@@ -126,6 +126,13 @@ namespace Microsoft.JScript {
 				false_stm.Emit (ec);			
 			ig.MarkLabel (merge_lbl);
 		}
+
+		internal override void PropagateParent (AST parent)
+		{
+			base.PropagateParent (parent);
+			true_stm.PropagateParent (this);
+			false_stm.PropagateParent (this);
+		}
  	}
 
 	abstract class Jump : AST {
@@ -148,6 +155,11 @@ namespace Microsoft.JScript {
 			if (binding == null || !IsLabel (binding))
 				throw new Exception ("error JS1026: Label not found");
                         return true;
+		}
+
+		internal override void PropagateParent (AST parent)
+		{
+			base.PropagateParent (parent);
 		}
 	}
 
@@ -201,6 +213,11 @@ namespace Microsoft.JScript {
 				return;
 			}
 			ec.ig.Emit (OpCodes.Br, (binding as Labelled).EndAddrs);
+		}
+
+		internal override void PropagateParent (AST parent)
+		{
+			base.PropagateParent (parent);
 		}
 	}
 

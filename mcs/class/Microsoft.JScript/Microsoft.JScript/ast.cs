@@ -104,6 +104,11 @@ namespace Microsoft.JScript {
 				
 			}
 		}
+
+		internal virtual void PropagateParent (AST parent)
+		{
+			this.parent = parent;
+		}
 	}
 
 	public abstract class Function : AST 

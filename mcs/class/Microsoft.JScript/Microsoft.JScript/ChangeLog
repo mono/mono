@@ -1,5 +1,12 @@
 2006-01-17  Cesar Lopez Nataren  <cnataren@novell.com>
 
+	* ast.cs: Added virtual method PropagateParent for recovering a
+	lost parent or set it up properly if previously set to null. Fixes
+	#75166.
+
+	* Statement.cs (If,Jump,Break.PropagateParent): recover
+	the proper parent.
+
 	* expression.cs (Binary.emit_access): Emit late binding code for
 	member's access that maps to MemberTypes (like Math.pow). Fixes
 	#72440.
