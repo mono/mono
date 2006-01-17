@@ -1347,6 +1347,9 @@ namespace System.Windows.Forms
 
 			case HitTestType.ColumnHeader:
 			{
+				if (CurrentTableStyle.GridColumnStyles.Count == 0)
+					break;
+
 				if (allow_sorting == false)
 					break;
 
