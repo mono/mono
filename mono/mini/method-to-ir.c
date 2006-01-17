@@ -797,7 +797,7 @@ static int the_count = 0;
         MONO_INST_NEW ((cfg), (inst), (op)); \
         inst->inst_destbasereg = base; \
         inst->inst_offset = offset; \
-        inst->inst_p1 = (gpointer)imm; \
+        inst->inst_p1 = (gpointer)(gssize)imm; \
         MONO_ADD_INS ((cfg)->cbb, inst); \
 	} while (0)
 
@@ -8659,6 +8659,8 @@ store_membase_reg_to_store_membase_imm (int opcode)
 		return OP_STOREI2_MEMBASE_IMM;
 	case OP_STOREI4_MEMBASE_REG:
 		return OP_STOREI4_MEMBASE_IMM;
+	case OP_STOREI8_MEMBASE_REG:
+		return OP_STOREI8_MEMBASE_IMM;
 	default:
 		g_assert_not_reached ();
 	}
@@ -8912,10 +8914,12 @@ insert_after_ins (MonoBasicBlock *bb, MonoInst *ins, MonoInst *ins_to_insert)
 void
 mono_spill_global_vars (MonoCompile *cfg)
 {
-	int i;
 	guint32 *stacktypes;
 	MonoBasicBlock *bb;
 	char spec2 [16];
+#if SIZEOF_VOID_P == 4
+	int i;
+#endif
 
 	memset (spec2, 0, sizeof (spec2));
 
@@ -9071,7 +9075,7 @@ mono_spill_global_vars (MonoCompile *cfg)
 
 						/* Try to fuse the store into the instruction itself */
 						/* FIXME: Add more instructions */
-						if (ins->opcode == OP_ICONST) {
+						if ((ins->opcode == OP_ICONST) || ((ins->opcode == OP_I8CONST) && (ins->inst_c0 == 0))) {
 							ins->opcode = store_membase_reg_to_store_membase_imm (store_opcode);
 							ins->inst_imm = ins->inst_c0;
 							ins->inst_destbasereg = var->inst_basereg;
@@ -9181,7 +9185,7 @@ mono_spill_global_vars (MonoCompile *cfg)
  * - get rid of the empty bblocks created by MONO_EMIT_NEW_BRACH_BLOCK2
  * - Things to backport to the old JIT:
  *   - op_atomic_exchange fix for amd64
- *   - long shift ops have sreg1:L but they use ins->unused=eax
+ *   - localloc fix for amd64
  * - handle long shift opts on 32 bit platforms somehow: they require 
  *   3 sregs (2 for arg1 and 1 for arg2)
  * - make byref a 'normal' type.
