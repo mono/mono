@@ -29,11 +29,9 @@
 // This theme tries to match clearlooks theme
 //
 // TODO:	
-//	- RadioButton !?!
-//	- TabControl: TabAlignment.Left and TabAlignment.Bottom
 //	- if an other control draws over a ScrollBar button you can see artefacts on the rounded edges 
 //	  (maybe use theme backcolor, but that looks ugly on a white background, need to find a way to get the backcolor of the parent control)
-//	- correct drawing of disabled controls (for example ComboBox... )
+//	- more correct drawing of disabled controls
 
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -44,7 +42,7 @@ namespace System.Windows.Forms {
 	internal class ThemeClearlooks : ThemeWin32Classic {
 		public override Version Version {
 			get {
-				return new Version( 0, 0, 0, 1 );
+				return new Version( 0, 0, 0, 2 );
 			}
 		}
 		
@@ -117,11 +115,18 @@ namespace System.Windows.Forms {
 		
 		static readonly Color disabled_color_foreground = Color.FromArgb( 182, 180, 173 );
 		
+		static readonly Color active_caption = Color.FromArgb( 85, 152, 215 );
+		
+		static readonly Color radio_button_border_circle_color = Color.FromArgb( 126, 118, 105 );
+		static readonly Color radio_button_dot_color = Color.FromArgb( 94, 160, 221 );
+		
 		const int SEPARATOR_HEIGHT = 7;
     		const int MENU_TAB_SPACE = 8;		// Pixels added to the width of an item because of a tab
     		const int MENU_BAR_ITEMS_SPACE = 8;	// Space between menu bar items
 		
 		int platform = (int) Environment.OSVersion.Platform;
+		
+		static Color control_parent_backcolor;
 		
 		#region	Principal Theme Methods
 		public ThemeClearlooks( ) {
@@ -143,6 +148,10 @@ namespace System.Windows.Forms {
 		
 		public override Color ColorHighlight {
 			get { return menuitem_gradient_first_color; }
+		}
+		
+		public override Color ColorActiveCaption {
+			get { return active_caption; }
 		}
 		
 		public override Size Border3DSize {
@@ -200,36 +209,22 @@ namespace System.Windows.Forms {
 		#endregion	// Internal Methods
 		
 		#region ButtonBase
-		// FIXME: button style flat ?
 		protected override void ButtonBase_DrawButton( ButtonBase button, Graphics dc ) {
-			Rectangle buttonRectangle;
-			
-			int width = button.ClientSize.Width;
-			int height = button.ClientSize.Height;
-			
 			dc.FillRectangle( ResPool.GetSolidBrush( button.BackColor ), button.ClientRectangle );
 			
-			// set up the button rectangle
-			buttonRectangle = button.ClientRectangle;
+			Color first_gradient_color = gradient_first_color;
+			Color second_gradient_color = gradient_second_color;
 			
-			Color first_gradient_color = button.has_focus ? Color.LightYellow : Color.White;
-			Color second_gradient_color = Color.White;
-			
-			if ( ( ( button is CheckBox ) && ( ( (CheckBox)button ).check_state == CheckState.Checked ) ) ||
-			    ( ( button is RadioButton ) && ( ( (RadioButton)button ).check_state == CheckState.Checked ) ) ) {
+			if (((button is CheckBox) && (((CheckBox)button).check_state == CheckState.Checked)) ||
+			    ((button is RadioButton) && (((RadioButton)button).check_state == CheckState.Checked))) {
 				first_gradient_color = button.is_entered ? gradient_second_color : pressed_gradient_first_color;
 				second_gradient_color = button.is_entered  ? gradient_second_color : pressed_gradient_second_color;
 			} else
-			if ( !button.is_enabled ) {
-				first_gradient_color = gradient_first_color;
-				second_gradient_color = gradient_second_color;
+			if (!button.is_enabled) {
 				button.is_entered = false;
 			} else
-			if ( !button.is_entered ) {
-				first_gradient_color = gradient_first_color;
-				second_gradient_color = gradient_second_color;
-			} else {
-				if ( !button.is_pressed ) {
+			if (button.is_entered) {
+				if (!button.is_pressed) {
 					first_gradient_color = Color.White;
 					second_gradient_color = button_mouse_entered_second_gradient_color;
 				} else {
@@ -238,126 +233,147 @@ namespace System.Windows.Forms {
 				}
 			}
 			
-			Rectangle lgbRectangle = new Rectangle( buttonRectangle.X + 3, buttonRectangle.Y + 3, button.is_pressed ? buttonRectangle.Width - 5 : buttonRectangle.Width - 6, buttonRectangle.Height - 6 );
+			bool paint_acceptbutton_black_border = false;
+			Form form = button.TopLevelControl as Form;
 			
-			if ( button.flat_style != FlatStyle.Popup || ( ( button.flat_style == FlatStyle.Popup ) && button.is_entered ) ) {
+			if (form != null && (form.AcceptButton == button as IButtonControl))
+				paint_acceptbutton_black_border = true;
+			
+			CL_Draw_Button(dc, button.ClientRectangle, button.flat_style,
+					  button.is_entered, button.is_enabled, button.is_pressed,
+					  first_gradient_color, second_gradient_color,
+					  paint_acceptbutton_black_border);
+		}
+
+		private void CL_Draw_Button(Graphics dc, Rectangle buttonRectangle, FlatStyle flat_style,
+					       bool is_entered, bool is_enabled, bool is_pressed,
+					       Color first_gradient_color, Color second_gradient_color,
+					       bool paint_acceptbutton_black_border)
+		{
+			Rectangle lgbRectangle = new Rectangle (buttonRectangle.X + 3, buttonRectangle.Y + 3,
+								is_pressed ? buttonRectangle.Width - 5 : buttonRectangle.Width - 6,
+								buttonRectangle.Height - 6);
+			
+			if (flat_style != FlatStyle.Popup || ((flat_style == FlatStyle.Popup) && is_entered)) {
 				LinearGradientBrush lgbr;
-				if ( button.flat_style == FlatStyle.Flat )
-					lgbr = new LinearGradientBrush( new Point( 0, 3 ), new Point( 0, height - 3 ), second_gradient_color, first_gradient_color );
+				if (flat_style == FlatStyle.Flat)
+					lgbr = new LinearGradientBrush (new Point (buttonRectangle.X, buttonRectangle.Y + 3),
+									new Point (buttonRectangle.X, buttonRectangle.Bottom - 3),
+									second_gradient_color, first_gradient_color);
 				else
-					lgbr = new LinearGradientBrush( new Point( 0, 3 ), new Point( 0, height - 3 ), first_gradient_color, second_gradient_color );
-				dc.FillRectangle( lgbr, lgbRectangle );
-				lgbr.Dispose( );
+					lgbr = new LinearGradientBrush (new Point (buttonRectangle.X, buttonRectangle.Y + 3),
+									new Point (buttonRectangle.X, buttonRectangle.Bottom - 3),
+									first_gradient_color, second_gradient_color);
+				dc.FillRectangle (lgbr, lgbRectangle);
+				lgbr.Dispose ();
 				
 				Point[] points_top = {
-					new Point( 2, 2 ),
-					new Point( 3, 1 ),
-					new Point( width - 4, 1 ),
-					new Point( width - 3 , 2 )
+					new Point (buttonRectangle.X + 2, buttonRectangle.Y + 2),
+					new Point (buttonRectangle.X + 3, buttonRectangle.Y + 1),
+					new Point (buttonRectangle.Right - 4, buttonRectangle.Y + 1),
+					new Point (buttonRectangle.Right - 3 , buttonRectangle.Y + 2)
 				};
 				
 				Point[] points_bottom = {
-					new Point( 2, height - 3 ),
-					new Point( 3, height - 2 ),
-					new Point( width - 4, height - 2 ),
-					new Point( width - 3, height - 3 )
+					new Point (buttonRectangle.X + 2, buttonRectangle.Bottom - 3),
+					new Point (buttonRectangle.X + 3, buttonRectangle.Bottom - 2),
+					new Point (buttonRectangle.Right - 4, buttonRectangle.Bottom - 2),
+					new Point (buttonRectangle.Right - 3, buttonRectangle.Bottom - 3)
 				};
 				
 				Point[] points_top_outer = {
-					new Point( 1, 1 ),
-					new Point( 2, 0 ),
-					new Point( width - 3, 0 ),
-					new Point( width - 2 , 1 )
+					new Point (buttonRectangle.X + 1, buttonRectangle.Y + 1),
+					new Point (buttonRectangle.X + 2, buttonRectangle.Y),
+					new Point (buttonRectangle.Right - 3, buttonRectangle.Y),
+					new Point (buttonRectangle.Right - 2 , buttonRectangle.Y + 1)
 				};
 				
 				Point[] points_bottom_outer = {
-					new Point( 1, height - 2 ),
-					new Point( 2, height - 1 ),
-					new Point( width - 3, height - 1 ),
-					new Point( width - 2, height - 2 )
+					new Point (buttonRectangle.X + 1, buttonRectangle.Bottom - 2),
+					new Point (buttonRectangle.X + 2, buttonRectangle.Bottom - 1),
+					new Point (buttonRectangle.Right - 3, buttonRectangle.Bottom - 1),
+					new Point (buttonRectangle.Right - 2, buttonRectangle.Bottom - 2)
 				};
 				
 				Pen pen = null; 
 				
 				// normal border
-				if ( button.is_enabled ) { 
-					bool paint_acceptbutton_black_border = false;
-					Form form = button.TopLevelControl as Form;
-					
-					if ( form != null && ( form.AcceptButton == button as IButtonControl ) )
-						paint_acceptbutton_black_border = true;
-					
+				if (is_enabled) { 
 					Color top_color = Color.Black;
 					Color bottom_color = Color.Black;
 					
-					if ( !paint_acceptbutton_black_border ) {
-						top_color = button.is_pressed ? border_pressed_dark_color : border_normal_dark_color;
-						bottom_color = button.is_pressed ? border_pressed_light_color : border_normal_light_color;
+					if (!paint_acceptbutton_black_border) {
+						top_color = is_pressed ? border_pressed_dark_color : border_normal_dark_color;
+						bottom_color = is_pressed ? border_pressed_light_color : border_normal_light_color;
 					}
 					
-					pen = ResPool.GetPen( top_color );
-					dc.DrawLines( pen, points_top );
-					pen = ResPool.GetPen( bottom_color );
-					dc.DrawLines( pen, points_bottom );
+					pen = ResPool.GetPen (top_color);
+					dc.DrawLines (pen, points_top);
+					pen = ResPool.GetPen (bottom_color);
+					dc.DrawLines (pen, points_bottom);
 					
-					using ( LinearGradientBrush lgbr2 = new LinearGradientBrush( new Point( 0, 3 ), new Point( 0, height - 3 ), top_color, bottom_color ) ) {
-						dc.FillRectangle( lgbr2, 1, 3, 1, height - 6 );
-						dc.FillRectangle( lgbr2, width - 2, 3, 1, height - 6 );
+					using (LinearGradientBrush lgbr2 = new LinearGradientBrush (new Point (buttonRectangle.X, buttonRectangle.Y + 3),
+												    new Point (buttonRectangle.X, buttonRectangle.Bottom - 3),
+												    top_color, bottom_color)) {
+						dc.FillRectangle (lgbr2, buttonRectangle.X + 1, buttonRectangle.Y + 3, 1, buttonRectangle.Height - 6);
+						dc.FillRectangle (lgbr2, buttonRectangle.Right - 2, buttonRectangle.Y + 3, 1, buttonRectangle.Height - 6);
 					}
 				} else {
 					Point[] points_button_complete = {
-						new Point( 1, 3 ),
-						new Point( 3, 1 ),
-						new Point( width - 4, 1 ),
-						new Point( width - 2, 3 ),
-						new Point( width - 2, height - 4 ),
-						new Point( width - 4, height - 2 ),
-						new Point( 3, height - 2 ),
-						new Point( 1, height - 4 ),
-						new Point( 1, 3 )
+						new Point (buttonRectangle.X + 1, buttonRectangle.Y + 3),
+						new Point (buttonRectangle.X + 3, buttonRectangle.Y + 1),
+						new Point (buttonRectangle.Right - 4, buttonRectangle.Y + 1),
+						new Point (buttonRectangle.Right - 2, buttonRectangle.Y + 3),
+						new Point (buttonRectangle.Right - 2, buttonRectangle.Bottom - 4),
+						new Point (buttonRectangle.Right - 4, buttonRectangle.Bottom - 2),
+						new Point (buttonRectangle.X + 3, buttonRectangle.Bottom - 2),
+						new Point (buttonRectangle.X + 1, buttonRectangle.Bottom - 4),
+						new Point (buttonRectangle.X + 1, buttonRectangle.Y + 3)
 					};
 					
-					pen = ResPool.GetPen( pressed_inner_border_dark_color );
-					dc.DrawLines( pen, points_button_complete );
+					pen = ResPool.GetPen (pressed_inner_border_dark_color);
+					dc.DrawLines (pen, points_button_complete);
 				}
 				
 				// outer border
-				pen = ResPool.GetPen( button_outer_border_dark_color );
-				dc.DrawLines( pen, points_top_outer );
-				pen = ResPool.GetPen( button_outer_border_light_color );
-				dc.DrawLines( pen, points_bottom_outer );
+				pen = ResPool.GetPen (button_outer_border_dark_color);
+				dc.DrawLines (pen, points_top_outer);
+				pen = ResPool.GetPen (button_outer_border_light_color);
+				dc.DrawLines (pen, points_bottom_outer);
 				
-				using ( LinearGradientBrush lgbr2 = new LinearGradientBrush( new Point( 0, 2 ), new Point( 0, height - 1 ), button_outer_border_dark_color, button_outer_border_light_color ) ) {
-					dc.FillRectangle( lgbr2, 0, 2, 1, height - 4 );
-					dc.FillRectangle( lgbr2, width - 1, 2, 1, height - 4 );
+				using (LinearGradientBrush lgbr2 = new LinearGradientBrush (new Point (buttonRectangle.X, buttonRectangle.Y + 2),
+											    new Point (buttonRectangle.X, buttonRectangle.Bottom - 1),
+											    button_outer_border_dark_color, button_outer_border_light_color)) {
+					dc.FillRectangle (lgbr2, buttonRectangle.X, buttonRectangle.Y + 2, 1, buttonRectangle.Height - 4);
+					dc.FillRectangle (lgbr2, buttonRectangle.Right - 1, buttonRectangle.Y + 2, 1, buttonRectangle.Height - 4);
 				}
 				
 				// inner border
-				pen = ResPool.GetPen( button.is_pressed ? pressed_inner_border_dark_color : inner_border_dark_color );
-				if ( !button.is_pressed ) {
-					dc.DrawLine( pen, width - 3, 3, width - 3, height - 4 );
+				pen = ResPool.GetPen (is_pressed ? pressed_inner_border_dark_color : inner_border_dark_color);
+				if (!is_pressed) {
+					dc.DrawLine (pen, buttonRectangle.Right - 3, buttonRectangle.Y + 3, buttonRectangle.Right - 3, buttonRectangle.Bottom - 4);
 				}
-				dc.DrawLine( pen, 3, height - 3, width - 4, height - 3 );
-				pen = ResPool.GetPen( button.is_pressed ? pressed_inner_border_dark_color : Color.White );
-				dc.DrawLine( pen, 2, 3, 2, height - 4 );
-				dc.DrawLine( pen, 3 , 2, width - 4, 2 );
+				dc.DrawLine (pen, buttonRectangle.X + 3, buttonRectangle.Bottom - 3, buttonRectangle.Right - 4, buttonRectangle.Bottom - 3);
+				pen = ResPool.GetPen (is_pressed ? pressed_inner_border_dark_color : Color.White);
+				dc.DrawLine (pen, buttonRectangle.X + 2, buttonRectangle.Y + 3, buttonRectangle.X + 2, buttonRectangle.Bottom - 4);
+				dc.DrawLine (pen, buttonRectangle.X + 3 , buttonRectangle.Y + 2, buttonRectangle.Right - 4, buttonRectangle.Y + 2);
 				
 				// edges
-				pen = ResPool.GetPen( edge_top_inner_color );
-				dc.DrawLine( pen, 1, 2, 2, 1 );
-				dc.DrawLine( pen, width - 3, 1, width - 2, 2 );
+				pen = ResPool.GetPen (edge_top_inner_color);
+				dc.DrawLine (pen, buttonRectangle.X + 1, buttonRectangle.Y + 2, buttonRectangle.X + 2, buttonRectangle.Y + 1);
+				dc.DrawLine (pen, buttonRectangle.Right - 3, buttonRectangle.Y + 1, buttonRectangle.Right - 2, buttonRectangle.Y + 2);
 				
-				pen = ResPool.GetPen( button_edge_top_outer_color );
-				dc.DrawLine( pen, 0, 1, 1, 0 );
-				dc.DrawLine( pen, width - 2, 0, width - 1, 1 );
+				pen = ResPool.GetPen (button_edge_top_outer_color);
+				dc.DrawLine (pen, buttonRectangle.X, buttonRectangle.Y + 1, buttonRectangle.X + 1, buttonRectangle.Y);
+				dc.DrawLine (pen, buttonRectangle.Right - 2, buttonRectangle.Y, buttonRectangle.Right - 1, buttonRectangle.Y + 1);
 				
-				pen = ResPool.GetPen( edge_bottom_inner_color );
-				dc.DrawLine( pen, 1, height - 3, 2, height - 2 );
-				dc.DrawLine( pen, width - 2, height - 3, width - 3, height - 2 );
+				pen = ResPool.GetPen (edge_bottom_inner_color);
+				dc.DrawLine (pen, buttonRectangle.X + 1, buttonRectangle.Bottom - 3, buttonRectangle.X + 2, buttonRectangle.Bottom - 2);
+				dc.DrawLine (pen, buttonRectangle.Right - 2, buttonRectangle.Bottom - 3, buttonRectangle.Right - 3, buttonRectangle.Bottom - 2);
 				
-				pen = ResPool.GetPen( button_edge_bottom_outer_color );
-				dc.DrawLine( pen, 0, height - 2, 1, height - 1 );
-				dc.DrawLine( pen, width - 1, height - 2, width - 2, height - 1 );
+				pen = ResPool.GetPen (button_edge_bottom_outer_color);
+				dc.DrawLine (pen, buttonRectangle.X, buttonRectangle.Bottom - 2, buttonRectangle.X + 1, buttonRectangle.Bottom - 1);
+				dc.DrawLine (pen, buttonRectangle.Right - 1, buttonRectangle.Bottom - 2, buttonRectangle.Right - 2, buttonRectangle.Bottom - 1);
 			}
 		}
 		
@@ -377,6 +393,7 @@ namespace System.Windows.Forms {
 			pen.DashStyle = old_dash_style;
 		}
 		
+		// FIXME: remove if libgdiplus DrawOrMeasureString is fixed
 		protected override void ButtonBase_DrawText( ButtonBase button, Graphics dc ) {
 			if ( !( button is CheckBox ) && !( button is RadioButton ) ) {
 				Rectangle buttonRectangle = button.ClientRectangle;
@@ -437,94 +454,78 @@ namespace System.Windows.Forms {
 		#region ComboBox
 		
 		// Drawing
-		// FIXME: sometimes there are some artefacts left...
 		public override void DrawComboBoxEditDecorations( Graphics dc, ComboBox ctrl, Rectangle cl ) {
 			
-			if ( !ctrl.Focused ) {
-				Pen tmp_pen = ResPool.GetPen( theme_back_color );
-				dc.DrawLine( tmp_pen, cl.X + 1, cl.Y + 1, cl.X + 1, cl.Bottom - 3 );
+			Color inner_border = (ctrl.Focused && !ctrl.DroppedDown) ? combobox_focus_inner_border_color : Color.White; // Color.White should be the backcolor of the textctrl
+			Color border_color = (ctrl.Focused && !ctrl.DroppedDown) ? combobox_focus_border_color : combobox_border_color;
+			
+			Point[] border_points = null;
+			
+			Pen tmp_pen = ResPool.GetPen( inner_border );
+			
+			dc.DrawLine( tmp_pen, cl.X + 1, cl.Y + 1, cl.X + 1, cl.Bottom - 2 );
+			
+			if (!ctrl.Focused || (ctrl.Focused && ctrl.DropDownStyle == ComboBoxStyle.Simple))
+			{
 				dc.DrawLine( tmp_pen, cl.X + 2, cl.Y + 1, cl.Right - 2, cl.Y + 1 );
-				
-				tmp_pen = ResPool.GetPen( ctrl.Parent.BackColor );
-				dc.DrawLine( tmp_pen, cl.X, cl.Y, cl.X, cl.Y + 1 );
-				dc.DrawLine( tmp_pen, cl.X, cl.Bottom - 2, cl.X, cl.Bottom - 3 );
-				dc.DrawLine( tmp_pen, cl.Right - 1, cl.Y, cl.Right - 1, cl.Y + 1 );
-				dc.DrawLine( tmp_pen, cl.Right - 1, cl.Bottom - 2, cl.Right - 1, cl.Bottom - 3 );
-				
-				dc.DrawLine( tmp_pen, cl.X, cl.Bottom, cl.Right, cl.Bottom );
-				
-				dc.DrawLine( tmp_pen, cl.X, cl.Y + cl.Height - 1, cl.X + cl.Width, cl.Y + cl.Height - 1 );
-				
-				Point[] points = {
+				dc.DrawLine( tmp_pen, cl.X + 2, cl.Bottom - 2, cl.Right - 2, cl.Bottom - 2 );
+				dc.DrawLine( tmp_pen, cl.Right - 2, cl.Y + 1, cl.Right - 2, cl.Bottom - 2 );
+			} else {
+				dc.DrawLine( tmp_pen, cl.X + 2, cl.Y + 1, cl.Right - ctrl.combobox_info.button_rect.Width - 3, cl.Y + 1 );
+				dc.DrawLine( tmp_pen, cl.X + 2, cl.Bottom - 2, cl.Right - ctrl.combobox_info.button_rect.Width - 3, cl.Bottom - 2 );
+			}
+			if (ctrl.combobox_info.show_button) {
+				border_points = new Point[6] {
+					new Point( cl.Right - ctrl.combobox_info.button_rect.Width - 3, cl.Y ),
+					new Point( cl.X + 2, cl.Y ),
+					new Point( cl.X, cl.Y + 2 ),
+					new Point( cl.X, cl.Bottom - 3 ),
+					new Point( cl.X + 2, cl.Bottom - 1 ),
+					new Point( cl.Right - ctrl.combobox_info.button_rect.Width - 3, cl.Bottom - 1 )
+				};
+			} else {
+				border_points = new Point[9] {
 					new Point( cl.X + 2, cl.Y ),
 					new Point( cl.Right - 3, cl.Y ),
 					new Point( cl.Right - 1, cl.Y + 2 ),
-					new Point( cl.Right - 1, cl.Bottom - 4 ),
-					new Point( cl.Right - 3, cl.Bottom - 2 ),
-					new Point( cl.X + 2, cl.Bottom - 2 ),
-					new Point( cl.X, cl.Bottom - 4 ),
+					new Point( cl.Right - 1, cl.Bottom - 3 ),
+					new Point( cl.Right - 3, cl.Bottom - 1 ),
+					new Point( cl.X + 2, cl.Bottom - 1 ),
+					new Point( cl.X, cl.Bottom - 3 ),
 					new Point( cl.X, cl.Y + 2 ),
 					new Point( cl.X + 2, cl.Y )
 				};
-				
-				dc.DrawLines( ResPool.GetPen( combobox_border_color ), points );
-				
-				tmp_pen = ResPool.GetPen( edge_bottom_inner_color );
-				dc.DrawLine( tmp_pen, cl.X, cl.Y + 1, cl.X + 1, cl.Y );
-				dc.DrawLine( tmp_pen, cl.X, cl.Bottom - 3, cl.X + 1, cl.Bottom - 2 );
-				dc.DrawLine( tmp_pen, cl.Right - 2, cl.Y, cl.Right - 1, cl.Y + 1 );
-				dc.DrawLine( tmp_pen, cl.Right - 2, cl.Bottom - 2, cl.Right - 1, cl.Bottom - 3 );
-			} else { 
-				Pen tmp_pen = ResPool.GetPen( combobox_focus_inner_border_color );
-				
-				dc.DrawLine( tmp_pen, cl.X + 1, cl.Y + 1, cl.X + 1, cl.Bottom - 3 );
-				dc.DrawLine( tmp_pen, cl.X + 2, cl.Y + 1, cl.Right - 2, cl.Y + 1 );
-				dc.DrawLine( tmp_pen, cl.X + 2, cl.Bottom - 3, cl.Right - 2, cl.Bottom - 3 );
-				dc.DrawLine( tmp_pen, cl.Right - 2, cl.Y + 1, cl.Right - 2, cl.Bottom - 3 );
-				
-				tmp_pen = ResPool.GetPen( ctrl.Parent.BackColor );
-				dc.DrawLine( tmp_pen, cl.X, cl.Y, cl.X, cl.Y + 1 );
-				dc.DrawLine( tmp_pen, cl.X, cl.Bottom - 2, cl.X, cl.Bottom - 3 );
-				dc.DrawLine( tmp_pen, cl.Right - 1, cl.Y, cl.Right - 1, cl.Y + 1 );
-				dc.DrawLine( tmp_pen, cl.Right - 1, cl.Bottom - 2, cl.Right - 1, cl.Bottom - 3 );
-				
-				dc.DrawLine( tmp_pen, cl.X, cl.Bottom, cl.Right, cl.Bottom );
-				
-				dc.DrawLine( tmp_pen, cl.X, cl.Y + cl.Height - 1, cl.X + cl.Width, cl.Y + cl.Height - 1 );
-				
-				Point[] points = {
-					new Point( cl.X + 2, cl.Y ),
-					new Point( cl.Right - 3, cl.Y ),
-					new Point( cl.Right - 1, cl.Y + 2 ),
-					new Point( cl.Right - 1, cl.Bottom - 4 ),
-					new Point( cl.Right - 3, cl.Bottom - 2 ),
-					new Point( cl.X + 2, cl.Bottom - 2 ),
-					new Point( cl.X, cl.Bottom - 4 ),
-					new Point( cl.X, cl.Y + 2 ),
-					new Point( cl.X + 2, cl.Y )
-				};
-				
-				dc.DrawLines( ResPool.GetPen( combobox_focus_border_color ), points );
-				
-				tmp_pen = ResPool.GetPen( edge_bottom_inner_color );
-				dc.DrawLine( tmp_pen, cl.X, cl.Y + 1, cl.X + 1, cl.Y );
-				dc.DrawLine( tmp_pen, cl.X, cl.Bottom - 3, cl.X + 1, cl.Bottom - 2 );
-				dc.DrawLine( tmp_pen, cl.Right - 2, cl.Y, cl.Right - 1, cl.Y + 1 );
-				dc.DrawLine( tmp_pen, cl.Right - 2, cl.Bottom - 2, cl.Right - 1, cl.Bottom - 3 );
 			}
 			
+			tmp_pen = ResPool.GetPen( ctrl.Parent.BackColor );
+			dc.DrawLine( tmp_pen, cl.X, cl.Y, cl.X, cl.Y + 1 );
+			dc.DrawLine( tmp_pen, cl.X, cl.Bottom - 1, cl.X, cl.Bottom - 2 );
+			dc.DrawLine( tmp_pen, cl.Right - 1, cl.Y, cl.Right - 1, cl.Y + 1 );
+			dc.DrawLine( tmp_pen, cl.Right - 1, cl.Bottom - 1, cl.Right - 1, cl.Bottom - 2 );
+			
+			dc.DrawLines( ResPool.GetPen( border_color ), border_points );
+			
+			tmp_pen = ResPool.GetPen( edge_bottom_inner_color );
+			dc.DrawLine( tmp_pen, cl.X, cl.Y + 1, cl.X + 1, cl.Y );
+			dc.DrawLine( tmp_pen, cl.X, cl.Bottom - 2, cl.X + 1, cl.Bottom - 1 );
+			dc.DrawLine( tmp_pen, cl.Right - 2, cl.Y, cl.Right - 1, cl.Y + 1 );
+			dc.DrawLine( tmp_pen, cl.Right - 2, cl.Bottom - 1, cl.Right - 1, cl.Bottom - 2 );
+
 			// FIXME:
 			// here we need to draw the combobox button again,
-			// as DrawComboBoxEditDecorations paints over a fullsize combox button
+			// as DrawComboBoxEditDecorations paints over a fullsize combox button.
 			// ComboBox code calls CPDrawComboButton first then DrawComboBoxEditDecorations
-			// a fix should go to ComboBox
+			// It would be better to move that code out of ComboBox
 			
-			if ( ctrl.combobox_info.show_button )
-				CPDrawComboButton( dc, ctrl.combobox_info.button_rect, ctrl.combobox_info.button_status );
-			else {
-				// quick and ugly fix for combobox artefacts on the inner border of the right side if no button gets drawn
-				Pen tmp_pen = ResPool.GetPen( Color.White );
-				dc.DrawLine( tmp_pen, cl.Right - 2, cl.Y + 2, cl.Right - 2, cl.Bottom - 4 );
+			if ( ctrl.combobox_info.show_button ) 
+			{
+				control_parent_backcolor = ctrl.Parent.BackColor;
+				
+				ButtonState bs = ctrl.Enabled ? ctrl.combobox_info.button_status : ButtonState.Inactive;
+				
+				Rectangle crect = new Rectangle( ctrl.combobox_info.button_rect.X, ctrl.combobox_info.button_rect.Y - 2,
+								ctrl.combobox_info.button_rect.Width + 2, ctrl.combobox_info.button_rect.Height + 4 );
+				CPDrawComboButton( dc, crect, bs );
 			}
 		}
 		
@@ -532,7 +533,7 @@ namespace System.Windows.Forms {
 			if ( ctrl.DropDownStyle == ComboBoxStyle.Simple ) {
 				DrawComboBoxEditDecorations( dc, ctrl, cl );
 			} else {
-				dc.DrawRectangle( ResPool.GetPen( ThemeEngine.Current.ColorWindowFrame ), cl.X, cl.Y, cl.Width - 1, cl.Height - 1 );
+				dc.DrawRectangle( ResPool.GetPen( combobox_border_color ), cl.X, cl.Y, cl.Width - 1, cl.Height - 1 );
 			}
 		}		
 		#endregion ComboBox
@@ -838,6 +839,56 @@ namespace System.Windows.Forms {
 				} 
 			}
 		}
+		
+		// renders a radio button with the Flat and Popup FlatStyle
+		protected void DrawFlatStyleRadioButton (Graphics dc, Rectangle rectangle, RadioButton radio_button)
+		{
+			if (radio_button.Enabled) {
+				// draw the outer flatstyle arcs
+				if (radio_button.FlatStyle == FlatStyle.Flat) {
+					dc.DrawArc (ResPool.GetPen (radio_button.ForeColor), rectangle, 0, 359);
+					
+					// fill in the area depending on whether or not the mouse is hovering
+					if (radio_button.is_entered && radio_button.Capture) {
+						dc.FillPie (ResPool.GetSolidBrush (ControlPaint.Light (radio_button.BackColor)), rectangle.X + 1, rectangle.Y + 1, rectangle.Width - 2, rectangle.Height - 2, 0, 359);
+					} else {
+						dc.FillPie (ResPool.GetSolidBrush (ControlPaint.LightLight (radio_button.BackColor)), rectangle.X + 1, rectangle.Y + 1, rectangle.Width - 2, rectangle.Height - 2, 0, 359);
+					}
+				} else {
+					// must be a popup radio button
+					// fill the control
+					dc.FillPie (ResPool.GetSolidBrush (ControlPaint.LightLight (radio_button.BackColor)), rectangle, 0, 359);
+					
+					if (radio_button.is_entered || radio_button.Capture) {
+						// draw the popup 3d button knob
+						dc.DrawArc (ResPool.GetPen (ControlPaint.Light (radio_button.BackColor)), rectangle.X+1, rectangle.Y+1, rectangle.Width-2, rectangle.Height-2, 0, 359);
+						
+						dc.DrawArc (ResPool.GetPen (ControlPaint.Dark (radio_button.BackColor)), rectangle, 135, 180);
+						dc.DrawArc (ResPool.GetPen (ControlPaint.LightLight (radio_button.BackColor)), rectangle, 315, 180);
+						
+					} else {
+						// just draw lighter flatstyle outer circle
+						dc.DrawArc (ResPool.GetPen (ControlPaint.Dark (this.ColorControl)), rectangle, 0, 359);						
+					}										
+				}
+			} else {
+				// disabled
+				// fill control background color regardless of actual backcolor
+				dc.FillPie (ResPool.GetSolidBrush (this.ColorControl), rectangle.X + 1, rectangle.Y + 1, rectangle.Width - 2, rectangle.Height - 2, 0, 359);
+				// draw the ark as control dark
+				dc.DrawArc (ResPool.GetPen (ControlPaint.Dark(this.ColorControl)), rectangle, 0, 359);
+			}
+			
+			// draw the check
+			if (radio_button.Checked) {
+				SmoothingMode old_smoothing_mode = dc.SmoothingMode;
+				dc.SmoothingMode = SmoothingMode.AntiAlias;
+				
+				CL_Draw_RadioButton_Dot (dc, rectangle, true, false);
+				
+				dc.SmoothingMode = old_smoothing_mode;
+			}
+		}
 		#endregion	// RadioButton
 		
 		#region ScrollBar
@@ -1112,7 +1163,7 @@ namespace System.Windows.Forms {
 		}
 		#endregion	// StatusBar
 		
-		// FIXME: regions near the borders don't get filles with the correct backcolor
+		// FIXME: regions near the borders don't get filled with the correct backcolor
 		// TODO: TabAlignment.Left and TabAlignment.Bottom
 		public override void DrawTabControl( Graphics dc, Rectangle area, TabControl tab ) {
 			if (tab.Parent != null)
@@ -1171,282 +1222,318 @@ namespace System.Windows.Forms {
 				}
 			}
 			
-			if ( tab.Alignment == TabAlignment.Top ) {
-				for ( int r = tab.TabPages.Count; r > 0; r-- ) {
-					for ( int i = tab.SliderPos; i < tab.TabPages.Count; i++ ) {
-						if ( i == tab.SelectedIndex )
+			if (tab.Alignment == TabAlignment.Top) {
+				for (int r = tab.TabPages.Count; r > 0; r--) {
+					for (int i = tab.SliderPos; i < tab.TabPages.Count; i++) {
+						if (i == tab.SelectedIndex)
 							continue;
-						if ( r != tab.TabPages[ i ].Row )
+						if (r != tab.TabPages [i].Row)
 							continue;
-						Rectangle rect = tab.GetTabRect( i );
-						if ( !rect.IntersectsWith( area ) )
+						Rectangle rect = tab.GetTabRect (i);
+						if (!rect.IntersectsWith (area))
 							continue;
-						DrawTab( dc, tab.TabPages[ i ], tab, rect, false );
+						DrawTab (dc, tab.TabPages [i], tab, rect, false);
 					}
 				}
 			} else {
-				for ( int r = 0; r < tab.TabPages.Count; r++ ) {
-					for ( int i = tab.SliderPos; i < tab.TabPages.Count; i++ ) {
-						if ( i == tab.SelectedIndex )
+				for (int r = 0; r < tab.TabPages.Count; r++) {
+					for (int i = tab.SliderPos; i < tab.TabPages.Count; i++) {
+						if (i == tab.SelectedIndex)
 							continue;
-						if ( r != tab.TabPages[ i ].Row )
+						if (r != tab.TabPages [i].Row)
 							continue;
-						Rectangle rect = tab.GetTabRect( i );
-						if ( !rect.IntersectsWith( area ) )
+						Rectangle rect = tab.GetTabRect (i);
+						if (!rect.IntersectsWith (area))
 							continue;
-						DrawTab( dc, tab.TabPages[ i ], tab, rect, false );
+						DrawTab (dc, tab.TabPages [i], tab, rect, false);
 					}
 				}
 			}
 			
-			if ( tab.SelectedIndex != -1 && tab.SelectedIndex >= tab.SliderPos ) {
-				Rectangle rect = tab.GetTabRect( tab.SelectedIndex );
-				if ( rect.IntersectsWith( area ) )
-					DrawTab( dc, tab.TabPages[ tab.SelectedIndex ], tab, rect, true );
+			if (tab.SelectedIndex != -1 && tab.SelectedIndex >= tab.SliderPos) {
+				Rectangle rect = tab.GetTabRect (tab.SelectedIndex);
+				if (rect.IntersectsWith (area))
+					DrawTab (dc, tab.TabPages [tab.SelectedIndex], tab, rect, true);
 			}
 			
-			if ( tab.ShowSlider ) {
-				Rectangle right = GetTabControlRightScrollRect( tab );
-				Rectangle left = GetTabControlLeftScrollRect( tab );
-				CPDrawScrollButton( dc, right, ScrollButton.Right, tab.RightSliderState );
-				CPDrawScrollButton( dc, left, ScrollButton.Left, tab.LeftSliderState );
+			if (tab.ShowSlider) {
+				Rectangle right = GetTabControlRightScrollRect (tab);
+				Rectangle left = GetTabControlLeftScrollRect (tab);
+				CPDrawScrollButton (dc, right, ScrollButton.Right, tab.RightSliderState);
+				CPDrawScrollButton (dc, left, ScrollButton.Left, tab.LeftSliderState);
 			}
 		}
 		
-		protected override int DrawTab( Graphics dc, TabPage page, TabControl tab, Rectangle bounds, bool is_selected ) {
+		protected override int DrawTab (Graphics dc, TabPage page, TabControl tab, Rectangle bounds, bool is_selected)
+		{
 			int FlatButtonSpacing = 8;
 			Rectangle interior;
 			int res = bounds.Width;
 			
-			if ( page.BackColor != tab_selected_gradient_second_color )
+			if (page.BackColor != tab_selected_gradient_second_color)
 				page.BackColor = tab_selected_gradient_second_color;
 			
 			// we can't fill the background right away because the bounds might be adjusted if the tab is selected
 			
-			if ( tab.Appearance == TabAppearance.Buttons || tab.Appearance == TabAppearance.FlatButtons ) {
-				dc.FillRectangle( ResPool.GetSolidBrush( tab_selected_gradient_second_color ), bounds );
+			StringFormat string_format = new StringFormat ();
+			
+			if (tab.Appearance == TabAppearance.Buttons || tab.Appearance == TabAppearance.FlatButtons) {
+				dc.FillRectangle (ResPool.GetSolidBrush (tab_selected_gradient_second_color), bounds);
 				
 				// Separators
-				if ( tab.Appearance == TabAppearance.FlatButtons ) {
+				if (tab.Appearance == TabAppearance.FlatButtons) {
 					int width = bounds.Width;
-					bounds.Width += ( FlatButtonSpacing - 2 );
+					bounds.Width += (FlatButtonSpacing - 2);
 					res = bounds.Width;
-					CPDrawBorder3D( dc, bounds, Border3DStyle.Etched, Border3DSide.Right );
+					CPDrawBorder3D (dc, bounds, Border3DStyle.Etched, Border3DSide.Right);
 					bounds.Width = width;
 				}
 				
-				if ( is_selected ) {
-					CPDrawBorder3D( dc, bounds, Border3DStyle.Sunken, Border3DSide.All );
-				} else if ( tab.Appearance != TabAppearance.FlatButtons ) {
-					CPDrawBorder3D( dc, bounds, Border3DStyle.Raised, Border3DSide.All );
+				if (is_selected) {
+					CPDrawBorder3D (dc, bounds, Border3DStyle.Sunken, Border3DSide.All);
+				} else if (tab.Appearance != TabAppearance.FlatButtons) {
+					CPDrawBorder3D (dc, bounds, Border3DStyle.Raised, Border3DSide.All);
 				}
 				
-				interior = new Rectangle( bounds.Left + 2, bounds.Top + 2, bounds.Width - 4, bounds.Height - 4 );
+				interior = new Rectangle (bounds.Left + 2, bounds.Top + 2, bounds.Width - 4, bounds.Height - 4);
 				
-                                
-				StringFormat string_format = new StringFormat( );
 				string_format.Alignment = StringAlignment.Center;
 				string_format.LineAlignment = StringAlignment.Center;
 				string_format.FormatFlags = StringFormatFlags.NoWrap;
-				
-				interior.Y++;
-				dc.DrawString( page.Text, page.Font, ThemeEngine.Current.ResPool.GetSolidBrush( SystemColors.ControlText ), interior, string_format );
-				interior.Y--;
 			} else {
-				Pen border_pen = ResPool.GetPen( tab_border_color );
-				
 				Color tab_first_color = is_selected ? tab_selected_gradient_first_color : tab_not_selected_gradient_first_color;
 				Color tab_second_color = is_selected ? tab_selected_gradient_second_color : tab_not_selected_gradient_second_color;
 				
-				switch ( tab.Alignment ) {
-					case TabAlignment.Top:
+				switch (tab.Alignment) {
+				case TabAlignment.Top:
+					
+					Rectangle tab_interior = new Rectangle (bounds.Left + 2, bounds.Top + 2, bounds.Width - 2, bounds.Height - 3);
+					
+					using (LinearGradientBrush lgbr = new LinearGradientBrush (new Point (bounds.Left + 2, bounds.Top + 2), new Point (bounds.Left + 2, bounds.Bottom), tab_first_color, tab_second_color)) {
+						dc.FillRectangle (lgbr, tab_interior);
+					}
+					
+					// edges
+					Pen tmp_pen = ResPool.GetPen (tab_edge_color);
+					dc.DrawLine (tmp_pen, bounds.Left, bounds.Top + 1, bounds.Left + 1, bounds.Top);
+					dc.DrawLine (tmp_pen, bounds.Right - 1, bounds.Top, bounds.Right, bounds.Top + 1);
+					
+					// inner border
+					tmp_pen = ResPool.GetPen (Color.White);
+					dc.DrawLine (tmp_pen, bounds.Left + 1, bounds.Bottom - 2, bounds.Left + 1, bounds.Top + 1);
+					dc.DrawLine (tmp_pen, bounds.Left + 2, bounds.Top + 1, bounds.Right - 1, bounds.Top + 1);
+					
+					// border
+					tmp_pen = ResPool.GetPen (border_pressed_dark_color);
+					dc.DrawLine (tmp_pen, bounds.Left, bounds.Top + 2, bounds.Left + 2, bounds.Top);
+					dc.DrawLine (tmp_pen, bounds.Left + 2, bounds.Top, bounds.Right - 2, bounds.Top);
+					dc.DrawLine (tmp_pen, bounds.Right - 2, bounds.Top, bounds.Right, bounds.Top + 2);
+					
+					using (LinearGradientBrush lgbr = new LinearGradientBrush (new Point (bounds.Left, bounds.Top + 2), new Point (bounds.Left, bounds.Bottom - 1), border_pressed_dark_color, border_pressed_light_color)) {
+						int diff = is_selected ? 4 : 3;
+						dc.FillRectangle (lgbr, bounds.Left, bounds.Top + 2, 1, bounds.Height - diff);
+						dc.FillRectangle (lgbr, bounds.Right, bounds.Top + 2, 1, bounds.Height - diff);
+					}
+					
+					if (page.Focused) {
+						tmp_pen = ResPool.GetPen (tab_focus_color);
+						dc.DrawLine (tmp_pen, bounds.Left + 1, bounds.Top  + 2, bounds.Right - 1, bounds.Top + 2);
+						dc.DrawLine (tmp_pen, bounds.Left + 2, bounds.Top + 1, bounds.Right - 2, bounds.Top + 1);
 						
-						interior = new Rectangle( bounds.Left + 2, bounds.Top + 2, bounds.Width - 2, bounds.Height - 3 );
+						tmp_pen = ResPool.GetPen (tab_top_border_focus_color);
+						dc.DrawLine (tmp_pen, bounds.Left, bounds.Top + 2, bounds.Left + 2, bounds.Top);
+						dc.DrawLine (tmp_pen, bounds.Left + 2, bounds.Top, bounds.Right - 2, bounds.Top);
+						dc.DrawLine (tmp_pen, bounds.Right - 2, bounds.Top, bounds.Right, bounds.Top + 2);
+					}
+					
+					interior = new Rectangle (bounds.Left + 4, bounds.Top + 4, bounds.Width - 8, bounds.Height - 8);
+					
+					string_format.Alignment = StringAlignment.Center;
+					string_format.LineAlignment = StringAlignment.Center;
+					string_format.FormatFlags = StringFormatFlags.NoWrap;
+					
+					break;
+					
+				case TabAlignment.Bottom:
+					
+					tab_interior = new Rectangle (bounds.Left + 2, bounds.Top + 2, bounds.Width - 2, bounds.Height - 3);
+					
+					using (LinearGradientBrush lgbr = new LinearGradientBrush (new Point (bounds.Left + 2, bounds.Top + 2), new Point (bounds.Left + 2, bounds.Bottom - 1), tab_second_color, tab_first_color)) {
+						dc.FillRectangle (lgbr, tab_interior);
+					}
+					
+					// edges
+					tmp_pen = ResPool.GetPen (tab_edge_color);
+					dc.DrawLine (tmp_pen, bounds.Left, bounds.Bottom - 1, bounds.Left + 1, bounds.Bottom);
+					dc.DrawLine (tmp_pen, bounds.Right - 1, bounds.Bottom, bounds.Right, bounds.Bottom - 1);
+					
+					// inner border
+					tmp_pen = ResPool.GetPen (Color.White);
+					dc.DrawLine (tmp_pen, bounds.Left + 1, bounds.Bottom - 2, bounds.Left + 1, bounds.Top + 2);
+					dc.DrawLine (tmp_pen, bounds.Left + 2, bounds.Bottom - 1, bounds.Right - 1, bounds.Bottom - 1);
+					
+					// border
+					tmp_pen = ResPool.GetPen (border_pressed_dark_color);
+					dc.DrawLine (tmp_pen, bounds.Left, bounds.Bottom - 2, bounds.Left + 2, bounds.Bottom);
+					dc.DrawLine (tmp_pen, bounds.Left + 2, bounds.Bottom, bounds.Right - 2, bounds.Bottom);
+					dc.DrawLine (tmp_pen, bounds.Right - 2, bounds.Bottom, bounds.Right, bounds.Bottom - 2);
+					
+					using (LinearGradientBrush lgbr = new LinearGradientBrush (new Point (bounds.Left, bounds.Top + 2), new Point (bounds.Left, bounds.Bottom - 1), border_pressed_light_color, border_pressed_dark_color)) {
+						int diff = is_selected ? 4 : 3;
+						dc.FillRectangle (lgbr, bounds.Left, bounds.Top + 2, 1, bounds.Height - diff);
+						dc.FillRectangle (lgbr, bounds.Right, bounds.Top + 2, 1, bounds.Height - diff);
+					}
+					
+					if (page.Focused) {
+						tmp_pen = ResPool.GetPen (tab_focus_color);
+						dc.DrawLine (tmp_pen, bounds.Left + 1, bounds.Bottom - 2, bounds.Right - 1, bounds.Bottom - 2);
+						dc.DrawLine (tmp_pen, bounds.Left + 2, bounds.Bottom - 1, bounds.Right - 2, bounds.Bottom - 1);
 						
-						using ( LinearGradientBrush lgbr = new LinearGradientBrush( new Point( bounds.Left + 2, bounds.Top + 2 ), new Point( bounds.Left + 2, bounds.Bottom ), tab_first_color, tab_second_color ) ) {
-							dc.FillRectangle( lgbr, interior );
-						}
+						tmp_pen = ResPool.GetPen (tab_top_border_focus_color);
+						dc.DrawLine (tmp_pen, bounds.Left, bounds.Bottom - 2, bounds.Left + 2, bounds.Bottom);
+						dc.DrawLine (tmp_pen, bounds.Left + 2, bounds.Bottom, bounds.Right - 2, bounds.Bottom);
+						dc.DrawLine (tmp_pen, bounds.Right - 2, bounds.Bottom, bounds.Right, bounds.Bottom - 2);
+					}
+					
+					interior = new Rectangle (bounds.Left + 4, bounds.Top + 4, bounds.Width - 8, bounds.Height - 8);
+					
+					string_format.Alignment = StringAlignment.Center;
+					string_format.LineAlignment = StringAlignment.Center;
+					string_format.FormatFlags = StringFormatFlags.NoWrap;
+					
+					break;
+					
+				case TabAlignment.Left:
+					
+					int w_diff = is_selected ? 2 : 0;
+					
+					tab_interior = new Rectangle (bounds.Left + 2, bounds.Top + 2, bounds.Width - 2 - w_diff, bounds.Height - 2);
+					
+					using (LinearGradientBrush lgbr = new LinearGradientBrush (new Point (bounds.Left + 2, bounds.Top + 2), new Point (bounds.Right - w_diff, bounds.Top + 2), tab_first_color, tab_second_color)) {
+						dc.FillRectangle (lgbr, tab_interior);
+					}
+					
+					// edges
+					tmp_pen = ResPool.GetPen (tab_edge_color);
+					dc.DrawLine (tmp_pen, bounds.Left + 1, bounds.Top, bounds.Left, bounds.Top + 1);
+					dc.DrawLine (tmp_pen, bounds.Left, bounds.Bottom - 1, bounds.Left + 1, bounds.Bottom);
+					
+					// inner border
+					tmp_pen = ResPool.GetPen (Color.White);
+					dc.DrawLine (tmp_pen, bounds.Left + 2, bounds.Top + 1, bounds.Right - 3, bounds.Top + 1);
+					dc.DrawLine (tmp_pen, bounds.Left + 1, bounds.Top + 2, bounds.Left + 1, bounds.Bottom - 2);
+					
+					// border
+					tmp_pen = ResPool.GetPen (border_pressed_dark_color);
+					dc.DrawLine (tmp_pen, bounds.Left + 2, bounds.Top, bounds.Left, bounds.Top + 2);
+					dc.DrawLine (tmp_pen, bounds.Left, bounds.Top + 2, bounds.Left, bounds.Bottom - 2);
+					dc.DrawLine (tmp_pen, bounds.Left, bounds.Bottom - 2, bounds.Left + 2, bounds.Bottom);
+					
+					using (LinearGradientBrush lgbr = new LinearGradientBrush (new Point (bounds.Left, bounds.Top + 2), new Point (bounds.Right - 2, bounds.Top + 2), border_pressed_dark_color, border_pressed_light_color)) {
+						int diff = is_selected ? 4 : 2;
 						
-						// edges
-						Pen tmp_pen = ResPool.GetPen( tab_edge_color );
-						dc.DrawLine( tmp_pen, bounds.Left, bounds.Top + 1, bounds.Left + 1, bounds.Top );
-						dc.DrawLine( tmp_pen, bounds.Right - 1, bounds.Top, bounds.Right, bounds.Top + 1 );
+						dc.FillRectangle (lgbr, bounds.Left + 2, bounds.Top, bounds.Width - diff, 1);
+						dc.FillRectangle (lgbr, bounds.Left + 2, bounds.Bottom, bounds.Width - diff, 1);
+					}
+					
+					if (page.Focused) {
+						tmp_pen = ResPool.GetPen (tab_focus_color);
+						dc.DrawLine (tmp_pen, bounds.Left + 3, bounds.Top + 1, bounds.Left + 3, bounds.Bottom - 1);
+						dc.DrawLine (tmp_pen, bounds.Left + 2, bounds.Top + 2, bounds.Left + 2, bounds.Bottom - 2);
 						
-						// inner border
-						tmp_pen = ResPool.GetPen( Color.White );
-						dc.DrawLine( tmp_pen, bounds.Left + 1, bounds.Bottom - 2, bounds.Left + 1, bounds.Top + 1 );
-						dc.DrawLine( tmp_pen, bounds.Left + 2, bounds.Top + 1, bounds.Right - 1, bounds.Top + 1 );
+						tmp_pen = ResPool.GetPen (tab_top_border_focus_color);
+						dc.DrawLine (tmp_pen, bounds.Left + 3, bounds.Top, bounds.Left + 1, bounds.Top + 2);
+						dc.DrawLine (tmp_pen, bounds.Left + 1, bounds.Top + 2, bounds.Left + 1, bounds.Bottom - 2);
+						dc.DrawLine (tmp_pen, bounds.Left + 1, bounds.Bottom - 2, bounds.Left + 3, bounds.Bottom);
+					}
+					
+					interior = new Rectangle (bounds.Left + 2, bounds.Top + 4, bounds.Width - 8, bounds.Height - 8);
+					
+					string_format.Alignment = StringAlignment.Center;
+					string_format.LineAlignment = StringAlignment.Center;
+					string_format.FormatFlags = StringFormatFlags.NoWrap;
+					string_format.FormatFlags = StringFormatFlags.DirectionVertical;
+					
+					break;
+					
+				default:
+					// TabAlignment.Right
+					
+					tab_interior = new Rectangle (bounds.Left, bounds.Top + 2, bounds.Width - 2, bounds.Height - 2);
+					
+					using (LinearGradientBrush lgbr = new LinearGradientBrush (new Point (bounds.Left, bounds.Top + 2), new Point (bounds.Right, bounds.Top + 2), tab_second_color, tab_first_color)) {
+						dc.FillRectangle (lgbr, tab_interior);
+					}
+					
+					int l_diff = is_selected ? 2 : 0;
+					
+					// edges
+					tmp_pen = ResPool.GetPen (tab_edge_color);
+					dc.DrawLine (tmp_pen, bounds.Right - 2, bounds.Top, bounds.Right - 1, bounds.Top + 1);
+					dc.DrawLine (tmp_pen, bounds.Right - 1, bounds.Bottom - 1, bounds.Right - 2, bounds.Bottom);
+					
+					// inner border
+					tmp_pen = ResPool.GetPen (Color.White);
+					dc.DrawLine (tmp_pen, bounds.Left + l_diff, bounds.Top + 1, bounds.Right - 2, bounds.Top + 1);
+					dc.DrawLine (tmp_pen, bounds.Right - 2, bounds.Top + 2, bounds.Right - 2, bounds.Bottom - 2);
+					
+					// border
+					tmp_pen = ResPool.GetPen (border_pressed_dark_color);
+					dc.DrawLine (tmp_pen, bounds.Right - 3, bounds.Top, bounds.Right - 1, bounds.Top + 2);
+					dc.DrawLine (tmp_pen, bounds.Right - 1, bounds.Top + 2, bounds.Right - 1, bounds.Bottom - 2);
+					dc.DrawLine (tmp_pen, bounds.Right - 1, bounds.Bottom - 2, bounds.Right - 3, bounds.Bottom);
+					
+					using (LinearGradientBrush lgbr = new LinearGradientBrush (new Point (bounds.Left, bounds.Top + 2), new Point (bounds.Right - 2, bounds.Top + 2), border_pressed_light_color, border_pressed_dark_color)) {
+						int diff = is_selected ? 4 : 2;
 						
-						// border
-						tmp_pen = ResPool.GetPen( border_pressed_dark_color );
-						dc.DrawLine( tmp_pen, bounds.Left, bounds.Top + 2, bounds.Left + 2, bounds.Top );
-						dc.DrawLine( tmp_pen, bounds.Left + 2, bounds.Top, bounds.Right - 2, bounds.Top );
-						dc.DrawLine( tmp_pen, bounds.Right - 2, bounds.Top, bounds.Right, bounds.Top + 2 );
+						dc.FillRectangle (lgbr, bounds.Left + l_diff, bounds.Top, bounds.Width - diff, 1);
+						dc.FillRectangle (lgbr, bounds.Left + l_diff, bounds.Bottom, bounds.Width - diff, 1);
+					}
+					
+					if (page.Focused) {
+						tmp_pen = ResPool.GetPen (tab_focus_color);
+						dc.DrawLine (tmp_pen, bounds.Right - 3, bounds.Top + 1, bounds.Right - 3, bounds.Bottom - 1);
+						dc.DrawLine (tmp_pen, bounds.Right - 2, bounds.Top + 2, bounds.Right - 2, bounds.Bottom - 2);
 						
-						using ( LinearGradientBrush lgbr = new LinearGradientBrush( new Point( bounds.Left, bounds.Top + 2 ), new Point( bounds.Left, bounds.Bottom - 1 ), border_pressed_dark_color, border_pressed_light_color ) ) {
-							int diff = is_selected ? 4 : 3;
-							dc.FillRectangle( lgbr, bounds.Left, bounds.Top + 2, 1, bounds.Height - diff );
-							dc.FillRectangle( lgbr, bounds.Right, bounds.Top + 2, 1, bounds.Height - diff );
-						}
-						
-						if ( page.Focused ) {
-							tmp_pen = ResPool.GetPen( tab_focus_color );
-							dc.DrawLine( tmp_pen, bounds.Left + 1, bounds.Top  + 2, bounds.Right - 1, bounds.Top + 2 );
-							dc.DrawLine( tmp_pen, bounds.Left + 2, bounds.Top + 1, bounds.Right - 2, bounds.Top + 1 );
-							
-							tmp_pen = ResPool.GetPen( tab_top_border_focus_color );
-							dc.DrawLine( tmp_pen, bounds.Left, bounds.Top + 2, bounds.Left + 2, bounds.Top );
-							dc.DrawLine( tmp_pen, bounds.Left + 2, bounds.Top, bounds.Right - 2, bounds.Top );
-							dc.DrawLine( tmp_pen, bounds.Right - 2, bounds.Top, bounds.Right, bounds.Top + 2 );
-						}
-						
-						interior = new Rectangle( bounds.Left + 4, bounds.Top + 4, bounds.Width - 8, bounds.Height - 8 );
-						
-						if ( page.Text != String.Empty ) {
-							StringFormat string_format = new StringFormat( );
-							string_format.Alignment = StringAlignment.Center;
-							string_format.LineAlignment = StringAlignment.Center;
-							string_format.FormatFlags = StringFormatFlags.NoWrap;
-							interior.Y++;
-							dc.DrawString( page.Text, page.Font, ThemeEngine.Current.ResPool.GetSolidBrush( SystemColors.ControlText ), interior, string_format );
-							interior.Y--;
-						}
-						
-						break;
-						
-					case TabAlignment.Bottom:
-						
-						interior = new Rectangle( bounds.Left + 3, bounds.Top, bounds.Width - 3, bounds.Height );
-						
-						using ( LinearGradientBrush lgbr = new LinearGradientBrush( new Point( bounds.Left + 3, bounds.Top ), new Point( bounds.Left + 3, bounds.Bottom ), tab_first_color, tab_second_color ) ) {
-							dc.FillRectangle( lgbr, interior );
-						}
-						
-						dc.DrawLine( border_pen, bounds.Left, bounds.Top, bounds.Left, bounds.Bottom - 3 );
-						dc.DrawLine( border_pen, bounds.Left, bounds.Bottom - 3, bounds.Left + 3, bounds.Bottom );
-						dc.DrawLine( border_pen, bounds.Left + 3, bounds.Bottom, bounds.Right - 3, bounds.Bottom );
-						dc.DrawLine( border_pen, bounds.Right - 3, bounds.Bottom, bounds.Right, bounds.Bottom - 3 );
-						dc.DrawLine( border_pen, bounds.Right, bounds.Bottom - 3, bounds.Right, bounds.Top );
-						
-						if ( page.Focused ) {
-							dc.DrawLine( ResPool.GetPen( Color.DarkOrange ), bounds.Left - 1 , bounds.Bottom, bounds.Right - 1, bounds.Bottom );
-							dc.DrawLine( ResPool.GetPen( Color.Orange ), bounds.Left , bounds.Bottom - 1, bounds.Right , bounds.Bottom - 1 );
-							dc.DrawLine( ResPool.GetPen( Color.Orange ), bounds.Left , bounds.Bottom - 2, bounds.Right , bounds.Bottom - 2 );
-						}
-						
-						interior = new Rectangle( bounds.Left + 4, bounds.Top + 4, bounds.Width - 8, bounds.Height - 8 );
-						
-						if ( page.Text != String.Empty ) {
-							StringFormat string_format = new StringFormat( );
-							string_format.Alignment = StringAlignment.Center;
-							string_format.LineAlignment = StringAlignment.Center;
-							string_format.FormatFlags = StringFormatFlags.NoWrap;
-							interior.Y++;
-							dc.DrawString( page.Text, page.Font, ThemeEngine.Current.ResPool.GetSolidBrush( SystemColors.ControlText ), interior, string_format );
-							interior.Y--;
-						}
-						
-						break;
-						
-					case TabAlignment.Left:
-						
-						interior = new Rectangle( bounds.Left + 2, bounds.Top + 2, bounds.Width - 2, bounds.Height - 2 );
-						
-						using ( LinearGradientBrush lgbr = new LinearGradientBrush( new Point( bounds.Left + 2, bounds.Top + 2 ), new Point( bounds.Right, bounds.Top + 2 ), tab_first_color, tab_second_color ) ) {
-							dc.FillRectangle( lgbr, interior );
-						}
-						
-						dc.DrawLine( border_pen, bounds.Right, bounds.Top, bounds.Left + 3, bounds.Top );
-						dc.DrawLine( border_pen, bounds.Left + 3, bounds.Top, bounds.Left, bounds.Top + 3 );
-						dc.DrawLine( border_pen, bounds.Left, bounds.Top + 3, bounds.Left, bounds.Bottom - 3 );
-						dc.DrawLine( border_pen, bounds.Left, bounds.Bottom - 3, bounds.Left + 3, bounds.Bottom );
-						dc.DrawLine( border_pen, bounds.Left + 3, bounds.Bottom, bounds.Right, bounds.Bottom );
-						
-						if ( page.Focused ) {
-							dc.DrawLine( ResPool.GetPen( Color.DarkOrange ), bounds.Left , bounds.Top + 1, bounds.Left , bounds.Bottom - 1 );
-							dc.DrawLine( ResPool.GetPen( Color.Orange ), bounds.Left + 1 , bounds.Top, bounds.Left + 1 , bounds.Bottom );
-							dc.DrawLine( ResPool.GetPen( Color.Orange ), bounds.Left + 2 , bounds.Top, bounds.Left + 2 , bounds.Bottom );
-						}
-						
-						interior = new Rectangle( bounds.Left + 4, bounds.Top + 4, bounds.Width - 8, bounds.Height - 8 );
-						
-						if ( page.Text != String.Empty ) {
-							StringFormat string_format = new StringFormat( );
-							// Flip the text around
-							string_format.Alignment = StringAlignment.Center;
-							string_format.LineAlignment = StringAlignment.Center;
-							string_format.FormatFlags = StringFormatFlags.NoWrap;
-							string_format.FormatFlags = StringFormatFlags.DirectionVertical;
-							int wo = interior.Width / 2;
-							int ho = interior.Height / 2;
-							dc.TranslateTransform( interior.X + wo, interior.Y + ho );
-							dc.RotateTransform( 180 );
-							dc.DrawString( page.Text, page.Font, ThemeEngine.Current.ResPool.GetSolidBrush( SystemColors.ControlText ), 0, 0, string_format );
-							dc.ResetTransform( );
-						}
-						
-						break;
-						
-					default:
-						// TabAlignment.Right
-						
-						interior = new Rectangle( bounds.Left, bounds.Top + 2, bounds.Width - 2, bounds.Height - 2 );
-						
-						using ( LinearGradientBrush lgbr = new LinearGradientBrush( new Point( bounds.Left, bounds.Top + 2 ), new Point( bounds.Right, bounds.Top + 2 ), tab_second_color, tab_first_color ) ) {
-							dc.FillRectangle( lgbr, interior );
-						}
-						
-						int l_diff = is_selected ? 2 : 0;
-						
-						// edges
-						tmp_pen = ResPool.GetPen( tab_edge_color );
-						dc.DrawLine( tmp_pen, bounds.Right - 2, bounds.Top, bounds.Right - 1, bounds.Top + 1 );
-						dc.DrawLine( tmp_pen, bounds.Right - 1, bounds.Bottom - 1, bounds.Right - 2, bounds.Bottom );
-						
-						// inner border
-						tmp_pen = ResPool.GetPen( Color.White );
-						dc.DrawLine( tmp_pen, bounds.Left + l_diff, bounds.Top + 1, bounds.Right - 2, bounds.Top + 1 );
-						dc.DrawLine( tmp_pen, bounds.Right - 2, bounds.Top + 2, bounds.Right - 2, bounds.Bottom - 2 );
-						
-						// border
-						tmp_pen = ResPool.GetPen( border_pressed_dark_color );
-						dc.DrawLine( tmp_pen, bounds.Right - 3, bounds.Top, bounds.Right - 1, bounds.Top + 2 );
-						dc.DrawLine( tmp_pen, bounds.Right - 1, bounds.Top + 2, bounds.Right - 1, bounds.Bottom - 2 );
-						dc.DrawLine( tmp_pen, bounds.Right - 1, bounds.Bottom - 2, bounds.Right - 3, bounds.Bottom );
-						
-						using ( LinearGradientBrush lgbr = new LinearGradientBrush( new Point( bounds.Left, bounds.Top + 2 ), new Point( bounds.Right - 2, bounds.Top + 2 ), border_pressed_light_color, border_pressed_dark_color ) ) {
-							int diff = is_selected ? 4 : 2;
-							
-							dc.FillRectangle( lgbr, bounds.Left + l_diff, bounds.Top, bounds.Width - diff, 1 );
-							dc.FillRectangle( lgbr, bounds.Left + l_diff, bounds.Bottom, bounds.Width - diff, 1 );
-						}
-						
-						if ( page.Focused ) {
-							tmp_pen = ResPool.GetPen( tab_focus_color );
-							dc.DrawLine( tmp_pen, bounds.Right - 3, bounds.Top + 1, bounds.Right - 3, bounds.Bottom - 1 );
-							dc.DrawLine( tmp_pen, bounds.Right - 2, bounds.Top + 2, bounds.Right - 2, bounds.Bottom - 2 );
-							
-							tmp_pen = ResPool.GetPen( tab_top_border_focus_color );
-							dc.DrawLine( tmp_pen, bounds.Right - 3, bounds.Top, bounds.Right - 1, bounds.Top + 2 );
-							dc.DrawLine( tmp_pen, bounds.Right - 1, bounds.Top + 2, bounds.Right - 1, bounds.Bottom - 2 );
-							dc.DrawLine( tmp_pen, bounds.Right - 1, bounds.Bottom - 2, bounds.Right - 3, bounds.Bottom );
-						}
-						
-						interior = new Rectangle( bounds.Left + 4, bounds.Top + 4, bounds.Width - 8, bounds.Height - 8 );
-						
-						if ( page.Text != String.Empty ) {
-							StringFormat string_format = new StringFormat( );
-							string_format.Alignment = StringAlignment.Center;
-							string_format.LineAlignment = StringAlignment.Center;
-							string_format.FormatFlags = StringFormatFlags.NoWrap;
-							string_format.FormatFlags = StringFormatFlags.DirectionVertical;
-							interior.X++;
-							dc.DrawString( page.Text, page.Font, ThemeEngine.Current.ResPool.GetSolidBrush( SystemColors.ControlText ), interior, string_format );
-							interior.X--;
-						}
-						
-						break;
+						tmp_pen = ResPool.GetPen (tab_top_border_focus_color);
+						dc.DrawLine (tmp_pen, bounds.Right - 3, bounds.Top, bounds.Right - 1, bounds.Top + 2);
+						dc.DrawLine (tmp_pen, bounds.Right - 1, bounds.Top + 2, bounds.Right - 1, bounds.Bottom - 2);
+						dc.DrawLine (tmp_pen, bounds.Right - 1, bounds.Bottom - 2, bounds.Right - 3, bounds.Bottom);
+					}
+					
+					interior = new Rectangle (bounds.Left + 4, bounds.Top + 4, bounds.Width - 8, bounds.Height - 8);
+					
+					string_format.Alignment = StringAlignment.Center;
+					string_format.LineAlignment = StringAlignment.Center;
+					string_format.FormatFlags = StringFormatFlags.NoWrap;
+					string_format.FormatFlags = StringFormatFlags.DirectionVertical;
+					
+					break;
 				}
+			}
+			
+			if (tab.DrawMode == TabDrawMode.Normal && page.Text != null) {
+				if (tab.Alignment == TabAlignment.Left) {
+					int wo = interior.Width / 2;
+					int ho = interior.Height / 2;
+					dc.TranslateTransform (interior.X + wo, interior.Y + ho);
+					dc.RotateTransform (180);
+					dc.DrawString (page.Text, page.Font, ThemeEngine.Current.ResPool.GetSolidBrush (SystemColors.ControlText), 0, 0, string_format);
+					dc.ResetTransform ();
+				} else {
+					dc.DrawString (page.Text, page.Font,
+						       ThemeEngine.Current.ResPool.GetSolidBrush (SystemColors.ControlText),
+						       interior, string_format);
+				}
+			} else if (page.Text != null) {
+				DrawItemState state = DrawItemState.None;
+				if (page == tab.SelectedTab)
+					state |= DrawItemState.Selected;
+				DrawItemEventArgs e = new DrawItemEventArgs (dc,
+									     tab.Font, bounds, tab.IndexForTabPage (page),
+									     state, page.ForeColor, page.BackColor);
+				tab.OnDrawItemInternal (e);
+				return res;
 			}
 			
 			return res;
@@ -1468,49 +1555,50 @@ namespace System.Windows.Forms {
 			Color first_color = Color.White;
 			Color second_color = combobox_button_second_gradient_color;
 			
-			if ( ( state & ButtonState.Checked ) != 0 ) {
-				dc.FillRectangle( ResPool.GetHatchBrush( HatchStyle.Percent50, ColorControlLightLight, ColorControlLight ), rectangle );
-			} else
-				dc.FillRectangle( ResPool.GetSolidBrush( Color.White ), rectangle );
+			dc.FillRectangle( ResPool.GetSolidBrush( Color.White ), rectangle );
 			
-			if ( ( state & ButtonState.Flat ) != 0 ) {
-				first_color = gradient_first_color;
-				second_color = combobox_button_second_gradient_color;
-			} else {
-				if ( ( state & ( ButtonState.Pushed | ButtonState.Checked ) ) != 0 ) {
-					first_color = pressed_gradient_first_color;
-					second_color = pressed_gradient_second_color;
-					pushed = true;
-				}
+			if ( state == ButtonState.Pushed ) {
+				first_color = pressed_gradient_first_color;
+				second_color = pressed_gradient_second_color;
+				pushed = true;
 			}
 			
-			using ( LinearGradientBrush lgbr = new LinearGradientBrush( new Point( rectangle.X, rectangle.Y ), new Point( rectangle.X, rectangle.Bottom ), first_color, second_color ) ) {
-				dc.FillRectangle( lgbr, rectangle.X + 2, rectangle.Y, rectangle.Width - 2, rectangle.Height - 1 );
+			using ( LinearGradientBrush lgbr = new LinearGradientBrush( new Point( rectangle.X, rectangle.Y + 2 ), new Point( rectangle.X, rectangle.Bottom - 2 ), first_color, second_color ) ) {
+				dc.FillRectangle( lgbr, rectangle.X + 2, rectangle.Y + 2, rectangle.Width - 4, rectangle.Height - 4 );
 			}
 			
-			// inner border
-			Pen tmp_pen = ResPool.GetPen( pushed ? pressed_inner_border_dark_color : Color.White );
-			dc.DrawLine( tmp_pen, rectangle.X + 1, rectangle.Y - 1, rectangle.Right, rectangle.Y - 1 );
-			dc.DrawLine( tmp_pen, rectangle.X + 1, rectangle.Y - 1, rectangle.X + 1, rectangle.Bottom - 1 );
+			// inner borders
+			Pen tmp_pen = ResPool.GetPen( !pushed ? Color.White : pressed_inner_border_dark_color );
+			dc.DrawLine( tmp_pen, rectangle.X + 1, rectangle.Y + 1, rectangle.Right - 2, rectangle.Y + 1 );
+			dc.DrawLine( tmp_pen, rectangle.X + 1, rectangle.Y + 1, rectangle.X + 1, rectangle.Bottom - 2 );
 			
-			tmp_pen = ResPool.GetPen( pushed ? pressed_inner_border_dark_color : inner_border_dark_color );
-			dc.DrawLine( tmp_pen, rectangle.Right, rectangle.Y, rectangle.Right, rectangle.Bottom - 1 );
-			dc.DrawLine( tmp_pen, rectangle.X + 2, rectangle.Bottom - 1, rectangle.Right, rectangle.Bottom - 1 );
+			tmp_pen = ResPool.GetPen( !pushed ? inner_border_dark_color : pressed_inner_border_dark_color  );
+			dc.DrawLine( tmp_pen, rectangle.Right - 2, rectangle.Y + 2, rectangle.Right - 2, rectangle.Bottom - 2 );
+			dc.DrawLine( tmp_pen, rectangle.X + 2, rectangle.Bottom - 2, rectangle.Right - 2, rectangle.Bottom - 2 );
 			
 			// border
 			Point[] points = new Point[] {
-				new Point( rectangle.X, rectangle.Y - 2 ),
-				new Point( rectangle.Right - 1, rectangle.Y - 2 ),
-				new Point( rectangle.Right + 1, rectangle.Y ),
-				new Point( rectangle.Right + 1, rectangle.Bottom - 2 ),
-				new Point( rectangle.Right - 1, rectangle.Bottom ),
-				new Point( rectangle.X, rectangle.Bottom ),
-				new Point( rectangle.X, rectangle.Y - 2 )
+				new Point( rectangle.X, rectangle.Y ),
+				new Point( rectangle.Right - 3, rectangle.Y ),
+				new Point( rectangle.Right - 1, rectangle.Y + 2 ),
+				new Point( rectangle.Right - 1, rectangle.Bottom - 3 ),
+				new Point( rectangle.Right - 3, rectangle.Bottom - 1 ),
+				new Point( rectangle.X, rectangle.Bottom - 1 ),
+				new Point( rectangle.X, rectangle.Y )
 			};
 			
 			dc.DrawPolygon( ResPool.GetPen( pushed ? border_pressed_dark_color : border_normal_dark_color ), points );
 			
-			rect = new Rectangle( rectangle.X + rectangle.Width / 4, rectangle.Y + rectangle.Height / 4, rectangle.Width / 2, rectangle.Height / 2 );
+			// edges on right side
+			tmp_pen = ResPool.GetPen( control_parent_backcolor );
+			dc.DrawLine( tmp_pen, rectangle.Right - 1, rectangle.Y, rectangle.Right - 1, rectangle.Y + 1 );
+			dc.DrawLine( tmp_pen, rectangle.Right - 1, rectangle.Bottom - 1, rectangle.Right - 1, rectangle.Bottom - 2 );
+			
+			tmp_pen = ResPool.GetPen( edge_bottom_inner_color );
+			dc.DrawLine( tmp_pen, rectangle.Right - 2, rectangle.Y, rectangle.Right - 1, rectangle.Y + 1 );
+			dc.DrawLine( tmp_pen, rectangle.Right - 2, rectangle.Bottom - 1, rectangle.Right - 1, rectangle.Bottom - 2 );
+			
+			rect = new Rectangle( rectangle.X + 1 + rectangle.Width / 4, rectangle.Y + rectangle.Height / 4, rectangle.Width / 2 - 1, rectangle.Height / 2 );
 			centerX = rect.Left + rect.Width / 2;
 			centerY = rect.Top + rect.Height / 2;
 			shiftX = Math.Max( 1, rect.Width / 8 );
@@ -1536,15 +1624,23 @@ namespace System.Windows.Forms {
 			dc.SmoothingMode = SmoothingMode.AntiAlias;
 			
 			/* Draw the arrow */
-			if ( ( state & ButtonState.Inactive ) != 0 ) {
+			if ( state == ButtonState.Inactive ) {
+				/* Move away from the shadow */
+				P1.X += 1;		P1.Y += 1;
+				P2.X += 1;		P2.Y += 1;
+				P3.X += 1;		P3.Y += 1;
+				
+				arrow[ 0 ] = P1;
+				arrow[ 1 ] = P2;
+				arrow[ 2 ] = P3;
+				
 				using ( Pen pen = new Pen( SystemColors.ControlLightLight, 2 ) ) {
 					dc.DrawLines( pen, arrow );
 				}
 				
-				/* Move away from the shadow */
-				P1.X -= 1;		P1.Y -= 1;
-				P2.X -= 1;		P2.Y -= 1;
-				P3.X -= 1;		P3.Y -= 1;
+				P1 = new Point( rect.Left, centerY );
+				P2 = new Point( centerX, rect.Bottom );
+				P3 = new Point( rect.Right, centerY );
 				
 				arrow[ 0 ] = P1;
 				arrow[ 1 ] = P2;
@@ -1560,7 +1656,6 @@ namespace System.Windows.Forms {
 			}
 			
 			dc.SmoothingMode = old_smoothing_mode;
-			
 		}
 		
 		/* Scroll button: regular button + direction arrow */
@@ -2588,6 +2683,554 @@ namespace System.Windows.Forms {
 		}
 		#endregion ListView
 		
+		#region DateTimePicker
+		public override void DrawDateTimePicker (Graphics dc,  Rectangle clip_rectangle, DateTimePicker dtp) {
+			// if not showing the numeric updown control then render border
+			if (!dtp.ShowUpDown && clip_rectangle.IntersectsWith (dtp.ClientRectangle)) {
+				// draw the outer border
+				Rectangle button_bounds = dtp.ClientRectangle;
+				CPDrawBorder3D (dc, button_bounds, Border3DStyle.Sunken, Border3DSide.All, dtp.BackColor);
+				
+				// deflate by the border width
+				if (clip_rectangle.IntersectsWith (dtp.drop_down_arrow_rect)) {
+					button_bounds.Inflate (-2,-2);
+					ButtonState state = dtp.is_drop_down_visible ? ButtonState.Pushed : ButtonState.Normal;
+					Rectangle button_rect = new Rectangle(dtp.drop_down_arrow_rect.X, dtp.drop_down_arrow_rect.Y + 1,
+									      dtp.drop_down_arrow_rect.Width - 1, dtp.drop_down_arrow_rect.Height - 2);
+					this.CPDrawComboButton ( 
+						dc, 
+						button_rect, 
+						state);
+				}
+			}
+			
+			// render the date part
+			if (clip_rectangle.IntersectsWith (dtp.date_area_rect)) {
+				// fill the background
+				Rectangle date_area_rect = new Rectangle( dtp.date_area_rect.X + 1, dtp.date_area_rect.Y + 1,
+									 dtp.date_area_rect.Width - 2,  dtp.date_area_rect.Height - 2);
+				dc.FillRectangle (ResPool.GetSolidBrush (ThemeEngine.Current.ColorWindow), date_area_rect);
+				
+				// fill the currently highlighted area
+				if (dtp.hilight_date_area != Rectangle.Empty) {
+					dc.FillRectangle (ResPool.GetSolidBrush (ThemeEngine.Current.ColorHighlight), dtp.hilight_date_area);
+				}
+				
+				// draw the text part
+				// TODO: if date format is CUstom then we need to draw the dates as separate parts
+				StringFormat text_format = new StringFormat();
+				text_format.LineAlignment = StringAlignment.Center;
+				text_format.Alignment = StringAlignment.Near;					
+				dc.DrawString (dtp.Text, dtp.Font, ResPool.GetSolidBrush (dtp.ForeColor), Rectangle.Inflate(dtp.date_area_rect, -1, -1), text_format);
+				text_format.Dispose ();
+			}
+		}
+		#endregion // DateTimePicker
+		
+		#region MonthCalendar
+		// draw the month calendar
+		public override void DrawMonthCalendar(Graphics dc, Rectangle clip_rectangle, MonthCalendar mc) 
+		{
+			Rectangle client_rectangle = mc.ClientRectangle;
+			Size month_size = mc.SingleMonthSize;
+			// cache local copies of Marshal-by-ref internal members (gets around error CS0197)
+			Size calendar_spacing = (Size)((object)mc.calendar_spacing);
+			Size date_cell_size = (Size)((object)mc.date_cell_size);
+			
+			// draw the singlecalendars
+			int x_offset = 1;
+			int y_offset = 1;
+			// adjust for the position of the specific month
+			for (int i=0; i < mc.CalendarDimensions.Height; i++) 
+			{
+				if (i > 0) 
+				{
+					y_offset += month_size.Height + calendar_spacing.Height;
+				}
+				// now adjust for x position	
+				for (int j=0; j < mc.CalendarDimensions.Width; j++) 
+				{
+					if (j > 0) 
+					{
+						x_offset += month_size.Width + calendar_spacing.Width;
+					} 
+					else 
+					{
+						x_offset = 1;
+					}
+					
+					Rectangle month_rect = new Rectangle (x_offset, y_offset, month_size.Width, month_size.Height);
+					if (month_rect.IntersectsWith (clip_rectangle)) {
+						DrawSingleMonth (
+							dc,
+							clip_rectangle,
+							month_rect,
+							mc,
+							i,
+							j);
+					}
+				}
+			}
+			
+			Rectangle bottom_rect = new Rectangle (
+				client_rectangle.X,
+				Math.Max(client_rectangle.Bottom - date_cell_size.Height - 3, 0),
+				client_rectangle.Width,
+				date_cell_size.Height + 2);
+			// draw the today date if it's set
+			if (mc.ShowToday && bottom_rect.IntersectsWith (clip_rectangle)) 
+			{
+				dc.FillRectangle (ResPool.GetSolidBrush (mc.BackColor), bottom_rect);
+				if (mc.ShowToday) {
+					int today_offset = 5;
+					if (mc.ShowTodayCircle) 
+					{
+						Rectangle today_circle_rect = new Rectangle (
+							client_rectangle.X + 5,
+							Math.Max(client_rectangle.Bottom - date_cell_size.Height - 2, 0),
+							date_cell_size.Width,
+							date_cell_size.Height);
+						DrawTodayCircle (dc, today_circle_rect);
+						today_offset += date_cell_size.Width + 5;
+					}
+					// draw today's date
+					StringFormat text_format = new StringFormat();
+					text_format.LineAlignment = StringAlignment.Center;
+					text_format.Alignment = StringAlignment.Near;
+					Font bold_font = new Font (mc.Font.FontFamily, mc.Font.Size, mc.Font.Style | FontStyle.Bold);
+					Rectangle today_rect = new Rectangle (
+						today_offset + client_rectangle.X,
+						Math.Max(client_rectangle.Bottom - date_cell_size.Height, 0),
+						Math.Max(client_rectangle.Width - today_offset, 0),
+						date_cell_size.Height);
+					dc.DrawString ("Today: " + DateTime.Now.ToShortDateString(), bold_font, ResPool.GetSolidBrush (mc.ForeColor), today_rect, text_format);
+					text_format.Dispose ();
+					bold_font.Dispose ();
+				}				
+			}
+			
+			// finally paint the borders of the calendars as required
+			for (int i = 0; i <= mc.CalendarDimensions.Width; i++) {
+				if (i == 0 && clip_rectangle.X == client_rectangle.X) {
+					dc.FillRectangle (ResPool.GetSolidBrush (mc.BackColor), new Rectangle (client_rectangle.X, client_rectangle.Y, 1, client_rectangle.Height));
+				} else if (i == mc.CalendarDimensions.Width && clip_rectangle.Right == client_rectangle.Right) {
+					dc.FillRectangle (ResPool.GetSolidBrush (mc.BackColor), new Rectangle (client_rectangle.Right-1, client_rectangle.Y, 1, client_rectangle.Height));
+				} else { 
+					Rectangle rect = new Rectangle (
+						client_rectangle.X + (month_size.Width*i) + (calendar_spacing.Width * (i-1)) + 1,
+						client_rectangle.Y,
+						calendar_spacing.Width,
+						client_rectangle.Height);
+					if (i < mc.CalendarDimensions.Width && i > 0 && clip_rectangle.IntersectsWith (rect)) {
+						dc.FillRectangle (ResPool.GetSolidBrush (mc.BackColor), rect);
+					}
+				}
+			}
+			for (int i = 0; i <= mc.CalendarDimensions.Height; i++) {
+				if (i == 0 && clip_rectangle.Y == client_rectangle.Y) {
+					dc.FillRectangle (ResPool.GetSolidBrush (mc.BackColor), new Rectangle (client_rectangle.X, client_rectangle.Y, client_rectangle.Width, 1));
+				} else if (i == mc.CalendarDimensions.Height && clip_rectangle.Bottom == client_rectangle.Bottom) {
+					dc.FillRectangle (ResPool.GetSolidBrush (mc.BackColor), new Rectangle (client_rectangle.X, client_rectangle.Bottom-1, client_rectangle.Width, 1));
+				} else { 
+					Rectangle rect = new Rectangle (
+						client_rectangle.X,
+						client_rectangle.Y + (month_size.Height*i) + (calendar_spacing.Height*(i-1)) + 1,
+						client_rectangle.Width,
+						calendar_spacing.Height);
+					if (i < mc.CalendarDimensions.Height && i > 0 && clip_rectangle.IntersectsWith (rect)) {
+						dc.FillRectangle (ResPool.GetSolidBrush (mc.BackColor), rect);
+					}
+				}
+			}
+			
+			// draw the drop down border if need
+			if (mc.owner != null) {
+				Rectangle bounds = mc.ClientRectangle;
+				if (clip_rectangle.Contains (mc.Location)) {
+					// find out if top or left line to draw
+					if(clip_rectangle.Contains (new Point (bounds.Left, bounds.Bottom))) {
+						
+						dc.DrawLine (SystemPens.ControlText, bounds.X, bounds.Y, bounds.X, bounds.Bottom-1);
+					}
+					if(clip_rectangle.Contains (new Point (bounds.Right, bounds.Y))) {
+						dc.DrawLine (SystemPens.ControlText, bounds.X, bounds.Y, bounds.Right-1, bounds.Y);
+					}
+				}
+				if (clip_rectangle.Contains (new Point(bounds.Right, bounds.Bottom))) {
+					// find out if bottom or right line to draw
+					if(clip_rectangle.Contains (new Point (bounds.Left, bounds.Bottom))) {
+						dc.DrawLine (SystemPens.ControlText, bounds.X, bounds.Bottom-1, bounds.Right-1, bounds.Bottom-1);
+					}
+					if(clip_rectangle.Contains (new Point (bounds.Right, bounds.Y))) {
+						dc.DrawLine (SystemPens.ControlText, bounds.Right-1, bounds.Y, bounds.Right-1, bounds.Bottom-1);
+					}
+				}
+			}
+		}
+		
+		// darws a single part of the month calendar (with one month)
+		private void DrawSingleMonth(Graphics dc, Rectangle clip_rectangle, Rectangle rectangle, MonthCalendar mc, int row, int col) 
+		{
+			// cache local copies of Marshal-by-ref internal members (gets around error CS0197)
+			Size title_size = (Size)((object)mc.title_size);
+			Size date_cell_size = (Size)((object)mc.date_cell_size);
+			DateTime current_month = (DateTime)((object)mc.current_month);
+			
+			// set up some standard string formating variables
+			StringFormat text_format = new StringFormat();
+			text_format.LineAlignment = StringAlignment.Center;
+			text_format.Alignment = StringAlignment.Center;
+			
+			
+			// draw the title back ground
+			DateTime this_month = current_month.AddMonths (row*mc.CalendarDimensions.Width+col);
+			Rectangle title_rect = new Rectangle(rectangle.X, rectangle.Y, title_size.Width, title_size.Height);
+			if (title_rect.IntersectsWith (clip_rectangle)) {
+				dc.FillRectangle (ResPool.GetSolidBrush (mc.TitleBackColor), title_rect);
+				// draw the title				
+				string title_text = this_month.ToString ("MMMM yyyy");
+				dc.DrawString (title_text, mc.Font, ResPool.GetSolidBrush (mc.TitleForeColor), title_rect, text_format);
+				
+				// draw previous and next buttons if it's time
+				if (row == 0 && col == 0) 
+				{
+					// draw previous button
+					DrawMonthCalendarButton (
+						dc,
+						rectangle,
+						mc,
+						title_size,
+						mc.button_x_offset,
+						(System.Drawing.Size)((object)mc.button_size),
+						true);
+				}
+				if (row == 0 && col == mc.CalendarDimensions.Width-1) 
+				{
+					// draw next button
+					DrawMonthCalendarButton (
+						dc,
+						rectangle,
+						mc,
+						title_size,
+						mc.button_x_offset,
+						(System.Drawing.Size)((object)mc.button_size),
+						false);
+				}
+			}
+			
+			// set the week offset and draw week nums if needed
+			int col_offset = (mc.ShowWeekNumbers) ? 1 : 0;
+			Rectangle day_name_rect = new Rectangle(
+				rectangle.X,
+				rectangle.Y + title_size.Height,
+				(7 + col_offset) * date_cell_size.Width,
+				date_cell_size.Height);
+			if (day_name_rect.IntersectsWith (clip_rectangle)) {
+				dc.FillRectangle (ResPool.GetSolidBrush (mc.BackColor), day_name_rect);
+				// draw the day names 
+				DayOfWeek first_day_of_week = mc.GetDayOfWeek(mc.FirstDayOfWeek);
+				for (int i=0; i < 7; i++) 
+				{
+					int position = i - (int) first_day_of_week;
+					if (position < 0) 
+					{
+						position = 7 + position;
+					}
+					// draw it
+					Rectangle day_rect = new Rectangle(
+						day_name_rect.X + ((i + col_offset)* date_cell_size.Width),
+						day_name_rect.Y,
+						date_cell_size.Width,
+						date_cell_size.Height);
+					dc.DrawString (((DayOfWeek)i).ToString().Substring(0, 3), mc.Font, ResPool.GetSolidBrush (mc.TitleBackColor), day_rect, text_format);
+				}
+				
+				// draw the vertical divider
+				int vert_divider_y = Math.Max(title_size.Height+ date_cell_size.Height-1, 0);
+				dc.DrawLine (
+					ResPool.GetPen (mc.ForeColor),
+					rectangle.X + (col_offset * date_cell_size.Width) + mc.divider_line_offset,
+					rectangle.Y + vert_divider_y,
+					rectangle.Right - mc.divider_line_offset,
+					rectangle.Y + vert_divider_y);
+			}
+			
+			
+			// draw the actual date items in the grid (including the week numbers)
+			Rectangle date_rect = new Rectangle (
+				rectangle.X,
+				rectangle.Y + title_size.Height + date_cell_size.Height,
+				date_cell_size.Width,
+				date_cell_size.Height);
+			int month_row_count = 0;
+			bool draw_week_num_divider = false;
+			DateTime current_date = mc.GetFirstDateInMonthGrid ( new DateTime (this_month.Year, this_month.Month, 1));
+			for (int i=0; i < 6; i++) 
+			{
+				// establish if this row is in our clip_area
+				Rectangle row_rect = new Rectangle (
+					rectangle.X,
+					rectangle.Y + title_size.Height + (date_cell_size.Height * (i+1)),
+					date_cell_size.Width * 7,
+					date_cell_size.Height);
+				if (mc.ShowWeekNumbers) {
+					row_rect.Width += date_cell_size.Width;
+				}
+				
+				bool draw_row = row_rect.IntersectsWith (clip_rectangle);
+				if (draw_row) {
+					dc.FillRectangle (ResPool.GetSolidBrush (mc.BackColor), row_rect);
+				}
+				// establish if this is a valid week to draw
+				if (mc.IsValidWeekToDraw (this_month, current_date, row, col)) {
+					month_row_count = i;
+				}
+				
+				// draw the week number if required
+				if (mc.ShowWeekNumbers && month_row_count == i) {
+					if (!draw_week_num_divider) {
+						draw_week_num_divider = draw_row;
+					}
+					// get the week for this row
+					int week = mc.GetWeekOfYear (current_date);	
+					
+					if (draw_row) {
+						dc.DrawString (
+							week.ToString(),
+							mc.Font,
+							ResPool.GetSolidBrush (mc.TitleBackColor),
+							date_rect,
+							text_format);
+					}
+					date_rect.Offset(date_cell_size.Width, 0);
+				}
+				
+				// only draw the days if we have to
+				if(month_row_count == i) {
+					for (int j=0; j < 7; j++) 
+					{
+						if (draw_row) {
+							DrawMonthCalendarDate (
+								dc,
+								date_rect,
+								mc,
+								current_date,
+								this_month,
+								row,
+								col);
+						}
+						
+						// move the day on
+						current_date = current_date.AddDays(1);
+						date_rect.Offset(date_cell_size.Width, 0);
+					}
+					
+					// shift the rectangle down one row
+					int offset = (mc.ShowWeekNumbers) ? -8 : -7;
+					date_rect.Offset(offset*date_cell_size.Width, date_cell_size.Height);
+				}
+			}
+			
+			// month_row_count is zero based, so add one
+			month_row_count++;
+			
+			// draw week numbers if required
+			if (draw_week_num_divider) {
+				col_offset = 1;
+				dc.DrawLine (
+					ResPool.GetPen (mc.ForeColor),
+					rectangle.X + date_cell_size.Width - 1,
+					rectangle.Y + title_size.Height + date_cell_size.Height + mc.divider_line_offset,
+					rectangle.X + date_cell_size.Width - 1,
+					rectangle.Y + title_size.Height + date_cell_size.Height + (month_row_count * date_cell_size.Height) - mc.divider_line_offset);
+			}
+			text_format.Dispose ();
+		}
+		
+		// draws the pervious or next button
+		private void DrawMonthCalendarButton (Graphics dc, Rectangle rectangle, MonthCalendar mc, Size title_size, int x_offset, Size button_size, bool is_previous) 
+		{
+			bool is_clicked = false;
+			Rectangle button_rect;
+			Rectangle arrow_rect = new Rectangle (rectangle.X, rectangle.Y, 4, 7);
+			Point[] arrow_path = new Point[3];
+			// prepare the button
+			if (is_previous) 
+			{
+				is_clicked = mc.is_previous_clicked;
+				button_rect = new Rectangle (
+					rectangle.X + 1 + x_offset,
+					rectangle.Y + 1 + ((title_size.Height - button_size.Height)/2),
+					Math.Max(button_size.Width - 1, 0),
+					Math.Max(button_size.Height - 1, 0));
+				arrow_rect.X = button_rect.X + ((button_rect.Width - arrow_rect.Width)/2);
+				arrow_rect.Y = button_rect.Y + ((button_rect.Height - arrow_rect.Height)/2);
+				if (is_clicked) {
+					arrow_rect.Offset(1,1);
+				}
+				arrow_path[0] = new Point (arrow_rect.Right, arrow_rect.Y);
+				arrow_path[1] = new Point (arrow_rect.X, arrow_rect.Y + arrow_rect.Height/2);
+				arrow_path[2] = new Point (arrow_rect.Right, arrow_rect.Bottom);
+			}
+			else
+			{
+				is_clicked = mc.is_next_clicked;
+				button_rect = new Rectangle (
+					rectangle.Right - 1 - x_offset - button_size.Width,
+					rectangle.Y + 1 + ((title_size.Height - button_size.Height)/2),
+					Math.Max(button_size.Width - 1, 0),
+					Math.Max(button_size.Height - 1, 0));
+				arrow_rect.X = button_rect.X + ((button_rect.Width - arrow_rect.Width)/2);
+				arrow_rect.Y = button_rect.Y + ((button_rect.Height - arrow_rect.Height)/2);
+				if (is_clicked) {
+					arrow_rect.Offset(1,1);
+				}
+				arrow_path[0] = new Point (arrow_rect.X, arrow_rect.Y);
+				arrow_path[1] = new Point (arrow_rect.Right, arrow_rect.Y + arrow_rect.Height/2);
+				arrow_path[2] = new Point (arrow_rect.X, arrow_rect.Bottom);				
+			}
+			
+			// fill the background
+			dc.FillRectangle (ResPool.GetSolidBrush(mc.TitleBackColor), button_rect);
+			
+			// draw the button
+			Color first_gradient_color = is_clicked ? pressed_gradient_first_color : gradient_first_color;
+			Color second_gradient_color = is_clicked ? pressed_gradient_second_color : gradient_second_color;
+			
+			CL_Draw_Button (dc, button_rect, FlatStyle.Standard,
+					   false, true, is_clicked, 
+					   first_gradient_color, second_gradient_color,
+					   false);
+				
+			// draw the arrow
+			SmoothingMode old_smooting_mode = dc.SmoothingMode;
+			dc.SmoothingMode = SmoothingMode.AntiAlias;
+			dc.FillPolygon (SystemBrushes.ControlText, arrow_path);
+			dc.SmoothingMode = old_smooting_mode;
+		}
+		
+		
+		// draws one day in the calendar grid
+		private void DrawMonthCalendarDate (Graphics dc, Rectangle rectangle, MonthCalendar mc,	DateTime date, DateTime month, int row, int col) {
+			Color date_color = mc.ForeColor;
+			Rectangle interior = new Rectangle (rectangle.X, rectangle.Y, Math.Max(rectangle.Width - 1, 0), Math.Max(rectangle.Height - 1, 0));
+			
+			// find out if we are the lead of the first calendar or the trail of the last calendar						
+			if (date.Year != month.Year || date.Month != month.Month) {
+				DateTime check_date = month.AddMonths (-1);
+				// check if it's the month before 
+				if (check_date.Year == date.Year && check_date.Month == date.Month && row == 0 && col == 0) {
+					date_color = mc.TrailingForeColor;
+				} else {
+					// check if it's the month after
+					check_date = month.AddMonths (1);
+					if (check_date.Year == date.Year && check_date.Month == date.Month && row == mc.CalendarDimensions.Height-1 && col == mc.CalendarDimensions.Width-1) {
+						date_color = mc.TrailingForeColor;
+					} else {
+						return;
+					}
+				}
+			} else {
+				date_color = mc.ForeColor;
+			}
+			
+			
+			if (date == mc.SelectionStart && date == mc.SelectionEnd) {
+				// see if the date is in the start of selection
+				date_color = mc.BackColor;
+				// draw the left hand of the back ground
+				Rectangle selection_rect = Rectangle.Inflate(rectangle, -3, -3);				
+				dc.FillPie (ResPool.GetSolidBrush (mc.TitleBackColor), selection_rect, 0, 359);
+			} else if (date == mc.SelectionStart) {
+				// see if the date is in the start of selection
+				date_color = mc.BackColor;
+				// draw the left hand of the back ground
+				Rectangle selection_rect = Rectangle.Inflate(rectangle, -3, -3);				
+				dc.FillPie (ResPool.GetSolidBrush (mc.TitleBackColor), selection_rect, 90, 180);
+				// fill the other side as a straight rect
+				if (date < mc.SelectionEnd) 
+				{
+					// use rectangle instead of rectangle to go all the way to edge of rect
+					selection_rect.X = (int) Math.Floor((double)(rectangle.X + rectangle.Width / 2));
+					selection_rect.Width = Math.Max(rectangle.Right - selection_rect.X, 0);
+					dc.FillRectangle (ResPool.GetSolidBrush (mc.TitleBackColor), selection_rect);
+				}
+			} else if (date == mc.SelectionEnd) {
+				// see if it is the end of selection
+				date_color = mc.BackColor;
+				// draw the left hand of the back ground
+				Rectangle selection_rect = Rectangle.Inflate(rectangle, -3, -3);
+				dc.FillPie (ResPool.GetSolidBrush (mc.TitleBackColor), selection_rect, 270, 180);
+				// fill the other side as a straight rect
+				if (date > mc.SelectionStart) {
+					selection_rect.X = rectangle.X;
+					selection_rect.Width = rectangle.Width - (rectangle.Width / 2);
+					dc.FillRectangle (ResPool.GetSolidBrush (mc.TitleBackColor), selection_rect);
+				}
+			} else if (date > mc.SelectionStart && date < mc.SelectionEnd) {
+				// now see if it's in the middle
+				date_color = mc.BackColor;
+				// draw the left hand of the back ground
+				Rectangle selection_rect = Rectangle.Inflate(rectangle, 0, -3);
+				dc.FillRectangle (ResPool.GetSolidBrush (mc.TitleBackColor), selection_rect);
+			}
+			
+			// set up some standard string formating variables
+			StringFormat text_format = new StringFormat();
+			text_format.LineAlignment = StringAlignment.Center;
+			text_format.Alignment = StringAlignment.Center;
+			
+			
+			// establish if it's a bolded font
+			Font font;
+			if (mc.IsBoldedDate (date)) {
+				font = new Font (mc.Font.FontFamily, mc.Font.Size, mc.Font.Style | FontStyle.Bold);
+			} else {
+				font = mc.Font;
+			}
+			
+			// just draw the date now
+			dc.DrawString (date.Day.ToString(), font, ResPool.GetSolidBrush (date_color), rectangle, text_format);
+			
+			// today circle if needed
+			if (mc.ShowTodayCircle && date == DateTime.Now.Date) {
+				DrawTodayCircle (dc, interior);
+			}
+			
+			// draw the selection grid
+			if (mc.is_date_clicked && mc.clicked_date == date) {				
+				using (Pen pen = new Pen (Color.Black, 1) ) {
+					pen.DashStyle = DashStyle.Dot;
+					dc.DrawRectangle (pen, interior);
+				}
+			}
+			text_format.Dispose ();
+		}
+		
+		private void DrawTodayCircle (Graphics dc, Rectangle rectangle) {
+			Color circle_color = Color.FromArgb (248, 0, 0);
+			// draw the left hand of the circle 
+			Rectangle lhs_circle_rect = new Rectangle (rectangle.X + 1, rectangle.Y + 4, Math.Max(rectangle.Width - 2, 0), Math.Max(rectangle.Height - 5, 0));
+			Rectangle rhs_circle_rect = new Rectangle (rectangle.X + 1, rectangle.Y + 1, Math.Max(rectangle.Width - 2, 0), Math.Max(rectangle.Height - 2, 0));
+			Point [] curve_points = new Point [3];
+			curve_points [0] = new Point (lhs_circle_rect.X, rhs_circle_rect.Y + rhs_circle_rect.Height/12);
+			curve_points [1] = new Point (lhs_circle_rect.X + lhs_circle_rect.Width/9, rhs_circle_rect.Y);
+			curve_points [2] = new Point (lhs_circle_rect.X + lhs_circle_rect.Width/2 + 1, rhs_circle_rect.Y);
+			
+			SmoothingMode old_smoothing_mode = dc.SmoothingMode;
+			dc.SmoothingMode = SmoothingMode.AntiAlias;
+			
+			using (Pen pen = new Pen (circle_color, 2)) {
+				dc.DrawArc (pen, lhs_circle_rect, 90, 180);
+				dc.DrawArc (pen, rhs_circle_rect, 270, 180);					
+				dc.DrawCurve (pen, curve_points);
+				dc.DrawLine (ResPool.GetPen (circle_color), curve_points [2], new Point (curve_points [2].X, lhs_circle_rect.Y));
+			}
+			
+			dc.SmoothingMode = old_smoothing_mode;
+		}
+		#endregion 	// MonthCalendar
+		
 		public override void CPDrawBorder3D( Graphics graphics, Rectangle rectangle, Border3DStyle style, Border3DSide sides ) {
 			CPDrawBorder3D( graphics, rectangle, style, sides, ColorControl );
 		}
@@ -2715,6 +3358,87 @@ namespace System.Windows.Forms {
 			
 			graphics.DrawString( s, font, ResPool.GetSolidBrush( ThemeEngine.Current.ColorGrayText), layoutRectangle, format );			
 			
+		}
+		
+		public override void CPDrawButton (Graphics dc, Rectangle buttonRectangle, ButtonState state)
+		{
+			bool is_enabled = true;
+			FlatStyle flat_style = FlatStyle.Standard;
+			bool is_pressed = false;
+			
+			if ((state & ButtonState.Pushed) != 0) {
+				is_pressed = true;
+			}
+			
+//			if ((state & ButtonState.Checked)!=0) {
+//				dfcs |= DrawFrameControlStates.Checked;
+//			}
+			
+			if ((state & ButtonState.Flat) != 0) {
+				flat_style = FlatStyle.Flat;
+			}
+			
+			if ((state & ButtonState.Inactive) != 0) {
+				is_enabled = false;
+			}
+			
+			Color first_gradient_color = gradient_first_color;
+			Color second_gradient_color = gradient_second_color;
+			
+			if (is_pressed) {
+				first_gradient_color = pressed_gradient_first_color;
+				second_gradient_color = pressed_gradient_second_color;
+			}
+			
+			CL_Draw_Button (dc, buttonRectangle, flat_style,
+					false, is_enabled, is_pressed,
+					first_gradient_color, second_gradient_color,
+					false);
+		}
+		
+		public override void CPDrawRadioButton (Graphics dc, Rectangle rectangle, ButtonState state)
+		{
+			bool is_checked = false;
+			bool is_inactive = false;
+			
+			if ((state & ButtonState.Checked) != 0) {
+				is_checked = true;
+			}
+			
+			if ((state & ButtonState.Inactive) != 0) {
+				is_inactive = true;
+			}
+			
+			SmoothingMode old_smooting_mode = dc.SmoothingMode;
+			dc.SmoothingMode = SmoothingMode.AntiAlias;
+			
+			dc.FillPie (ResPool.GetSolidBrush (this.ColorWindow), rectangle.X + 1, rectangle.Y + 1, rectangle.Width - 2, rectangle.Height - 2, 0, 359);
+			
+			dc.DrawArc (ResPool.GetPen (radio_button_border_circle_color), rectangle.X + 1, rectangle.Y + 1, rectangle.Width - 2, rectangle.Height - 2, 0, 359);
+			
+			CL_Draw_RadioButton_Dot (dc, rectangle, is_checked, is_inactive);
+			
+			dc.SmoothingMode = old_smooting_mode;
+		}
+
+		private void CL_Draw_RadioButton_Dot (Graphics dc,  Rectangle rectangle, bool is_checked, bool is_inactive)
+		{
+			if (is_checked) {
+				int lineWidth = Math.Max (1, Math.Min (rectangle.Width, rectangle.Height) / 4);
+				
+				SolidBrush buttonBrush;
+				
+				if (is_inactive) {
+					buttonBrush = SystemBrushes.ControlDark as SolidBrush;
+				} else {
+					buttonBrush = ResPool.GetSolidBrush (radio_button_dot_color);
+				}
+				dc.FillPie (buttonBrush, rectangle.X + lineWidth, rectangle.Y + lineWidth, rectangle.Width - lineWidth * 2, rectangle.Height - lineWidth * 2, 0, 359);
+				
+				// the white shiny dott
+				buttonBrush = ResPool.GetSolidBrush (ColorWindow);
+				dc.FillPie (buttonBrush, rectangle.X + lineWidth + lineWidth / 2, rectangle.Y + lineWidth + lineWidth / 2, (rectangle.Width - lineWidth * 2) / 3, (rectangle.Height - lineWidth * 2) / 3, 0, 359);
+			}
 		}
 	} //class
 }

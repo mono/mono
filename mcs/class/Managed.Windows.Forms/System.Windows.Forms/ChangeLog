@@ -1,3 +1,15 @@
+2006-01-17  Alexander Olk  <alex.olk@googlemail.com>
+
+	* ThemeClearlooks.cs:
+	- Added CL_Draw_Button method; now other theme controls that are 
+	  not derived from button or do not have a button can draw buttons
+	  too
+	- Updated ComboBox drawing
+	- Beautified RadioButton drawing
+	- Corrected drawing of bottom and left tabs
+	- Beautified DateTimePicker and MonthCalendar
+	- Added CPDrawButton and CPDrawRadioButton
+
 2006-01-16  Jackson Harper  <jackson@ximian.com>
 
 	* ComboBox.cs: Set the initial value of the scrollbar to the
