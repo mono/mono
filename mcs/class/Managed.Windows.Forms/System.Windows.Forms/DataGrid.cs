@@ -1315,6 +1315,9 @@ namespace System.Windows.Forms
 			switch (testinfo.type) {
 			case HitTestType.Cell:
 			{
+				if (testinfo.Row < 0 || testinfo.Column < 0)
+					break;
+					
 				DataGridCell new_cell = new DataGridCell (testinfo.Row, testinfo.Column);
 
 				if (new_cell.Equals (current_cell) == false) {
