@@ -178,6 +178,32 @@ namespace MonoTests.System.Data
 
 		// FIXME:  Add tests for examining RowError
 		// FIXME: Add test for ContinueUpdateOnError property
+		
+		[Test]
+		public void CheckParameters_BuiltCommand ()
+		{
+			using (IDbConnection conn = ConnectionManager.Singleton.Connection) {
+				SqlDataAdapter adapter = new SqlDataAdapter ("select id,type_varchar from string_family", (SqlConnection)conn);
+				SqlCommandBuilder cb = new SqlCommandBuilder(adapter);
+				DataSet ds = new DataSet ();
+				adapter.Fill(ds);
 
+				Assert.AreEqual (2, cb.GetInsertCommand().Parameters.Count, "#1");
+
+				DataRow row_rsInput = ds.Tables[0].NewRow();
+				row_rsInput["id"] = 100;
+				row_rsInput["type_varchar"] = "ttt";
+				ds.Tables[0].Rows.Add(row_rsInput);
+
+				Assert.AreEqual (2, cb.GetInsertCommand().Parameters.Count, "#2");
+
+				row_rsInput = ds.Tables[0].NewRow();
+				row_rsInput["id"] = 101;
+				row_rsInput["type_varchar"] = "ttt";
+				ds.Tables[0].Rows.Add(row_rsInput);
+
+				Assert.AreEqual (2, cb.GetInsertCommand().Parameters.Count, "#3");
+			}
+		}
 	}
 }
