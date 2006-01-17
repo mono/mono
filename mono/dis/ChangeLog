@@ -1,3 +1,7 @@
+2006-01-17  Ankit Jain  <jankit@novell.com>
+
+	* get.c (init_key_table): Add keywords 'bestfit', 'charmaperror', 'off' & 'on'.
+
 2006-01-16  Ankit Jain  <jankit@novell.com>
 
 	* get.c (get_method_core): Handle a MemberRef with a TypeSpec parent.
