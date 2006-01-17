@@ -1,3 +1,7 @@
+2006-01-17  Alp Toker  <alp@atoker.com>
+
+	* Samples/x11/compile.sh: Remove unused gtk-sharp reference
+
 2005-12-19  Wade Berrier <wberrier@novell.com>
 
 	* Mono.Cairo/Makefile: Fix EXTRA_DIST to include samples
