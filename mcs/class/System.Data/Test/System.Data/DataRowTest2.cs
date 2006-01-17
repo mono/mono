@@ -1487,6 +1487,24 @@ namespace MonoTests.System.Data
 			}
 		}
 
+		[Test]
+		public void ItemArray_NewTable ()
+		{
+			DataTable dt = new DataTable("Customers");
+
+			dt.Columns.Add("name", typeof (string));
+			dt.Columns.Add("address", typeof (string));
+			dt.Columns.Add("phone", typeof (string));
+
+			DataRow dr = dt.NewRow();
+			dr["name"] = "myName";
+			dr["address"] = "myAddress";
+			dr["phone"] = "myPhone";
+
+			// Should not throw RowNotInTableException
+			object[] obj = dr.ItemArray;
+		}
+
 		private DataTable GetDataTable()
 		{
 			DataTable dt = new DataTable("myTable"); 

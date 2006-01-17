@@ -180,7 +180,6 @@ namespace System.Data {
 				}
 				
 				CheckValue (value, column);
-
 				bool orginalEditing = Proposed >= 0;
 				if (!orginalEditing) {
 					BeginEdit ();
@@ -274,17 +273,26 @@ namespace System.Data {
 		/// </summary>
 		public object[] ItemArray {
 			get { 
-				// row not in table
-				if (RowState == DataRowState.Detached)
-					throw new RowNotInTableException("This row has been removed from a table and does not have any data.  BeginEdit() will allow creation of new data in this row.");
 				// Accessing deleted rows
 				if (RowState == DataRowState.Deleted)
 					throw new DeletedRowInaccessibleException ("Deleted row information cannot be accessed through the row.");
+
+				int index = 0;
+				if (RowState == DataRowState.Detached)
+					// Check if datarow is removed from the table.
+					if (Proposed < 0)
+						throw new RowNotInTableException(
+								"This row has been removed from a table and does not have any data."
+								+"  BeginEdit() will allow creation of new data in this row.");	
+					else
+						index = Proposed;
+				else
+					index = Current;
 				
 				object[] items = new object[_table.Columns.Count];
-				foreach(DataColumn column in _table.Columns) {
-					items[column.Ordinal] = column[Current];
-				}
+
+				foreach(DataColumn column in _table.Columns)
+					items[column.Ordinal] = column[index];
 				return items;
 			}
 			set {
