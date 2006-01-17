@@ -1,3 +1,8 @@
+2006-01-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (emit_struct_conv): Allow fields with the same offset when
+	marshalling from native to managed code. Fixes #77230.
+
 2006-01-17 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* threadpool.c: fix problem (Mac only) when more than one asynchronous
