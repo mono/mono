@@ -1,3 +1,10 @@
+2006-01-17  Chris Toshok  <toshok@ximian.com>
+
+	* CapabilitiesLoader.cs (Init): use WebConfigurationManager in the
+	CONFIGURATION_2_0 case.
+
+	* HttpRuntime.cs (MachineConfigurationDirectory): same.
+
 2006-01-16  Chris Toshok  <toshok@ximian.com>
 
 	* HttpApplicationFactory.cs: call WebConfigurationManager.Init in

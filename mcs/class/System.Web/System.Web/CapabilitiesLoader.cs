@@ -184,7 +184,11 @@ namespace System.Web
 #if TARGET_J2EE
 				string filepath = "browscap.ini";
 #else
+#if CONFIGURATION_2_0
+				string dir = Path.GetDirectoryName (WebConfigurationManager.OpenMachineConfiguration().FilePath);
+#else
 				string dir = Path.GetDirectoryName (WebConfigurationSettings.MachineConfigPath);
+#endif
 				string filepath = Path.Combine (dir, "browscap.ini");
 				if (!File.Exists (filepath)) {
 					// try removing the trailing version directory

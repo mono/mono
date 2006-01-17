@@ -205,7 +205,11 @@ namespace System.Web {
 
 		public static string MachineConfigurationDirectory {
 			get {
+#if CONFIGURATION_2_0
+				string dirname = Path.GetDirectoryName (WebConfigurationManager.OpenMachineConfiguration().FilePath);
+#else
 				string dirname = Path.GetDirectoryName (WebConfigurationSettings.MachineConfigPath);
+#endif
 				if ((dirname != null) && (dirname.Length > 0) && SecurityManager.SecurityEnabled) {
 					new FileIOPermission (FileIOPermissionAccess.PathDiscovery, dirname).Demand ();
 				}
