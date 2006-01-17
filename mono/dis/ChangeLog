@@ -1,5 +1,11 @@
 2006-01-17  Ankit Jain  <jankit@novell.com>
 
+	* get.c (get_method_override): Use '.override method' syntax if the class or
+	or the method itself is generic.
+	* main.c (dis_code): Emit '.override' only, 'method' gets handled by get_method_override.
+
+2006-01-17  Ankit Jain  <jankit@novell.com>
+
 	* get.c (init_key_table): Add keywords 'bestfit', 'charmaperror', 'off' & 'on'.
 
 2006-01-16  Ankit Jain  <jankit@novell.com>
