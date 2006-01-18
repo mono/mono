@@ -55,9 +55,7 @@ public sealed class HttpSessionState : ICollection, IEnumerable, java.io.Externa
 	internal bool _abandoned;
 
 	private object _app;
-	private bool _readFirstTime = true;
 	private bool _needSessionPersistence = false;
-	private const bool HAS_CONTENT_TO_SERIALIZE = true;
 
 	internal HttpSessionState (string id,
 				   SessionDictionary dict,
@@ -112,13 +110,9 @@ public sealed class HttpSessionState : ICollection, IEnumerable, java.io.Externa
 		{
 			output.writeBoolean(_needSessionPersistence);
 			if (!_needSessionPersistence)
-			{
 				//indicates that there is nothing to serialize for this object
-				output.writeBoolean(!HAS_CONTENT_TO_SERIALIZE);
 				return;
-			}
-			//indicates that there is a content for serialization
-			output.writeBoolean(HAS_CONTENT_TO_SERIALIZE);
+
 			System.Web.J2EE.ObjectOutputStream ms = new System.Web.J2EE.ObjectOutputStream(output);
 			System.IO.BinaryWriter bw = new System.IO.BinaryWriter(ms);
 			bw.Write(_id);
@@ -143,14 +137,10 @@ public sealed class HttpSessionState : ICollection, IEnumerable, java.io.Externa
 	{
 		lock(this)
 		{
-			if(input.readBoolean() != HAS_CONTENT_TO_SERIALIZE) //noting has been written 
+			_needSessionPersistence = input.readBoolean();
+			if(!_needSessionPersistence) //noting has been written 
 				return;
 
-			if (!_readFirstTime) {
-				return;
-			}
-
-			_readFirstTime = false;
 			System.Web.J2EE.ObjectInputStream ms = new System.Web.J2EE.ObjectInputStream( input );
 			System.IO.BinaryReader br = new System.IO.BinaryReader(ms);
 			_id = br.ReadString();
