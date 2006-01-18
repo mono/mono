@@ -129,6 +129,13 @@ namespace Microsoft.Win32
 				string valueName, IntPtr reserved, ref RegistryType type,
 				ref int data, ref int dataSize);
 
+		// Returns our handle from the RegistryKey
+		static IntPtr GetHandle (RegistryKey key)
+		{
+			return key.IsRoot ? new IntPtr ((int) key.Data)
+				: (IntPtr) key.Data;
+		}
+
 		/// <summary>
 		///	Acctually read a registry value. Requires knoledge of the
 		///	value's type and size.
@@ -138,7 +145,7 @@ namespace Microsoft.Win32
 			RegistryType type = 0;
 			int size = 0;
 			object obj = null;
-			IntPtr handle = (IntPtr)rkey.Data;
+			IntPtr handle = GetHandle (rkey);
 			int result = RegQueryValueEx (handle, name, IntPtr.Zero, ref type, IntPtr.Zero, ref size);
 
 			if (result == Win32ResultCode.FileNotFound) {
@@ -190,7 +197,7 @@ namespace Microsoft.Win32
 		{
 			Type type = value.GetType ();
 			int result;
-			IntPtr handle = (IntPtr)rkey.Data;
+			IntPtr handle = GetHandle (rkey);
 
 			if (type == typeof (int)) {
 				int rawValue = (int)value;
@@ -232,7 +239,7 @@ namespace Microsoft.Win32
 		private int GetBinaryValue (RegistryKey rkey, string name, RegistryType type, out byte[] data, int size)
 		{
 			byte[] internalData = new byte [size];
-			IntPtr handle = (IntPtr)rkey.Data;
+			IntPtr handle = GetHandle (rkey);
 			int result = RegQueryValueEx (handle, name, IntPtr.Zero, ref type, internalData, ref size);
 			data = internalData;
 			return result;
@@ -248,7 +255,7 @@ namespace Microsoft.Win32
 		{
 			int index, result;
 			byte[] stringBuffer = new byte [BufferMaxLength];
-			IntPtr handle = (IntPtr)rkey.Data;
+			IntPtr handle = GetHandle (rkey);
 			
 			for (index = 0; true; index ++) {
 				result = RegEnumKey (handle, index, stringBuffer, BufferMaxLength);
@@ -271,7 +278,7 @@ namespace Microsoft.Win32
 			RegistryType type;
 			StringBuilder buffer = new StringBuilder (BufferMaxLength);
 			
-			IntPtr handle = (IntPtr)rkey.Data;
+			IntPtr handle = GetHandle (rkey);
 			for (index = 0; true; index ++) {
 				type = 0;
 				bufferCapacity = buffer.Capacity;
@@ -296,7 +303,7 @@ namespace Microsoft.Win32
 		{
 			int access = OpenRegKeyRead;
 			if (writtable) access |= OpenRegKeyWrite;
-			IntPtr handle = new IntPtr ((int) rkey.Data);
+			IntPtr handle = GetHandle (rkey);
 			
 			IntPtr subKeyHandle;
 			int result = RegOpenKeyEx (handle, keyName, IntPtr.Zero, access, out subKeyHandle);
@@ -312,19 +319,19 @@ namespace Microsoft.Win32
 
 		public void Flush (RegistryKey rkey)
 		{
-			IntPtr handle = (IntPtr)rkey.Data;
+			IntPtr handle = GetHandle (rkey);
 			RegFlushKey (handle);
 		}
 
 		public void Close (RegistryKey rkey)
 		{
-			IntPtr handle = (IntPtr)rkey.Data;
+			IntPtr handle = GetHandle (rkey);
 			RegCloseKey (handle);
 		}
 
 		public RegistryKey CreateSubKey (RegistryKey rkey, string keyName)
 		{
-			IntPtr handle = (IntPtr)rkey.Data;
+			IntPtr handle = GetHandle (rkey);
 			IntPtr subKeyHandle;
 			int result = RegCreateKey (handle , keyName, out subKeyHandle);
 
@@ -339,7 +346,7 @@ namespace Microsoft.Win32
 
 		public void DeleteKey (RegistryKey rkey, string keyName, bool shouldThrowWhenKeyMissing)
 		{
-			IntPtr handle = (IntPtr)rkey.Data;
+			IntPtr handle = GetHandle (rkey);
 			int result = RegDeleteKey (handle, keyName);
 
 			if (result == Win32ResultCode.FileNotFound) {
@@ -354,7 +361,7 @@ namespace Microsoft.Win32
 
 		public void DeleteValue (RegistryKey rkey, string value, bool shouldThrowWhenKeyMissing)
 		{
-			IntPtr handle = (IntPtr)rkey.Data;
+			IntPtr handle = GetHandle (rkey);
 			int result = RegDeleteValue (handle, value);
 			
 			if (result == Win32ResultCode.FileNotFound){
@@ -369,7 +376,7 @@ namespace Microsoft.Win32
 
 		public string [] GetSubKeyNames (RegistryKey rkey)
 		{
-			IntPtr handle = (IntPtr)rkey.Data;
+			IntPtr handle = GetHandle (rkey);
 			byte[] buffer = new byte [BufferMaxLength];
 			int bufferCapacity = BufferMaxLength;
 			ArrayList keys = new ArrayList ();
@@ -394,7 +401,7 @@ namespace Microsoft.Win32
 
 		public string [] GetValueNames (RegistryKey rkey)
 		{
-			IntPtr handle = (IntPtr)rkey.Data;
+			IntPtr handle = GetHandle (rkey);
 			ArrayList values = new ArrayList ();
 			
 			for (int index = 0; true; index ++)
@@ -441,7 +448,7 @@ namespace Microsoft.Win32
 
 		public string ToString (RegistryKey rkey)
 		{
-			IntPtr handle = (IntPtr)rkey.Data;
+			IntPtr handle = GetHandle (rkey);
 			
 			return String.Format ("{0} [0x{1:X}]", rkey.Name, handle.ToInt32 ());
 		}
