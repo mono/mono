@@ -4240,10 +4240,7 @@ local_constant_declaration
 	;
 
 expression_statement
-	: statement_expression SEMICOLON
-	  {
-		$$ = $1;
-	  }
+	: statement_expression SEMICOLON { $$ = $1; }
 	;
 
 	//
@@ -4251,14 +4248,18 @@ expression_statement
 	// because statement_expression is used for example in for_statement
 	//
 statement_expression
-	: invocation_expression		{ $$ = new StatementExpression ((ExpressionStatement) $1); }
-	| object_creation_expression	{ $$ = new StatementExpression ((ExpressionStatement) $1); }
-	| assignment_expression		{ $$ = new StatementExpression ((ExpressionStatement) $1); }
-	| post_increment_expression	{ $$ = new StatementExpression ((ExpressionStatement) $1); }
-	| post_decrement_expression	{ $$ = new StatementExpression ((ExpressionStatement) $1); }
-	| pre_increment_expression	{ $$ = new StatementExpression ((ExpressionStatement) $1); }
-	| pre_decrement_expression	{ $$ = new StatementExpression ((ExpressionStatement) $1); }
-	| error {
+	: expression
+	  {
+		Expression expr = (Expression) $1;
+		ExpressionStatement s = expr as ExpressionStatement;
+		if (s == null) {
+			Report.Error (201, expr.Location, "Only assignment, call, increment, decrement, and new object expressions can be used as a statement");
+			$$ = null;
+		}
+		$$ = new StatementExpression (s);
+	  }
+	| error
+	  {
 		Report.Error (1002, GetLocation ($1), "Expecting `;'");
 		$$ = null;
 	  }
@@ -5273,6 +5274,7 @@ public CSharpParser (SeekableStreamReader reader, SourceFile file, ArrayList def
 
 public void parse ()
 {
+	int errors = Report.Errors;
 	try {
 		if (yacc_verbose_flag > 1)
 			yyparse (lexer, new yydebug.yyDebugSimple ());
@@ -5285,7 +5287,8 @@ public void parse ()
 		// Removed for production use, use parser verbose to get the output.
 		//
 		// Console.WriteLine (e);
-		Report.Error (-25, lexer.Location, "Parsing error");
+		if (Report.Errors == errors)
+			Report.Error (-25, lexer.Location, "Parsing error");
 		if (yacc_verbose_flag > 0)
 			Console.WriteLine (e);
 	}

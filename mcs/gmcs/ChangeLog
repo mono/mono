@@ -1,3 +1,40 @@
+2006-01-17  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #76824.
+	* cs-parser.jay (statement_expression): Don't list out the
+	individual statement-expressions.  Convert syntax error into
+	CS0201 check.
+
+2006-01-16  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #76874.
+	* ecore.cs (MemberAccess.CheckIntermediateModification): Remove.
+	(UnboxCast.DoResolveLValue): New.  Move CS0445 check from
+	CheckIntermediateModification.
+	(FieldExpr.DoResolve): Add new two-argument version that
+	allows us to resolve the InstanceExpression as an lvalue.
+	The one-argument variant is now just a wrapper.
+	(FieldExpr.DoResolveLValue): Use two-argument DoResolve.
+	Resolve the lhs as an lvalue if the it has a value type.
+	(FieldExpr.AssignToReadonly): Move CS1648 and CS1650 checks
+	from Assign.DoResolve.
+	(PropertyExpr.InstanceResolve): Allow InstanceExpression to be
+	resolved as an lvalue.
+	(PropertyExpr.DoResolve): Update.
+	(PropertyExpr.DoResolveLValue): Resolve the lhs as an lvalue if it
+	has a value type.  Move CS1612 check here from
+	CheckIntermediateModification.
+	* assign.cs (Assign.DoResolve): Remove CS1648 and CS1650 checks.
+	* expression.cs (EmptyExpression.OutAccess): New.  Used as the
+	'right_side' of a ResolveLValue on an 'out' argument.
+	(EmptyExpression.LValueMemberAccess): New.  Used as the
+	'right_side' of a propagated ResolveLValue on a value type.
+	(LocalVariableReference.DoResolveBase): Recognize
+	EmptyExpression.OutAccess and EmptyExpression.LValueMemberAccess.
+	Add CS1654 check.
+	(Argument.Resolve): Use EmptyExpression.OutAccess rather than
+	EmptyExpression.Null.
+
 2006-01-16  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* typemanager.cs : added IsGenericParameter(). In gmcs it returns

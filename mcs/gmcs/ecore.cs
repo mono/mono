@@ -1523,6 +1523,13 @@ namespace Mono.CSharp {
 			return this;
 		}
 
+		public override Expression DoResolveLValue (EmitContext ec, Expression right_side)
+		{
+			if (right_side == EmptyExpression.LValueMemberAccess)
+				Report.Error (445, loc, "Cannot modify the result of an unboxing conversion");
+			return base.DoResolveLValue (ec, right_side);
+		}
+
 		public override void Emit (EmitContext ec)
 		{
 			Type t = type;
@@ -2629,25 +2636,6 @@ namespace Mono.CSharp {
 				      "with an instance reference, qualify it with a type name instead", name);
 		}
 
-		protected bool CheckIntermediateModification ()
-		{
-			if (!InstanceExpression.Type.IsValueType)
-				return true;
-
-			if (InstanceExpression is UnboxCast) {
-				Report.Error (445, loc, "Cannot modify the result of an unboxing conversion");
-				return false;
-			}
-
-			if (!(InstanceExpression is IMemoryLocation)) {
-				Report.Error (1612, loc, "Cannot modify the return value of `{0}' because it is not a variable",
-					InstanceExpression.GetSignatureForError ());
-				return false;
-			}
-
-			return true;
-		}
-
 		// TODO: possible optimalization
 		// Cache resolved constant result in FieldBuilder <-> expression map
 		public virtual Expression ResolveMemberAccess (EmitContext ec, Expression left, Location loc,
@@ -3045,6 +3033,11 @@ namespace Mono.CSharp {
 
 		override public Expression DoResolve (EmitContext ec)
 		{
+			return DoResolve (ec, false);
+		}
+
+		Expression DoResolve (EmitContext ec, bool lvalue_instance)
+		{
 			if (ec.InRefOutArgumentResolving && FieldInfo.IsInitOnly && !ec.IsConstructor && FieldInfo.FieldType.IsValueType) {
 				if (FieldInfo.FieldType is TypeBuilder) {
 					if (FieldInfo.IsStatic)
@@ -3077,8 +3070,17 @@ namespace Mono.CSharp {
 				// Resolve the field's instance expression while flow analysis is turned
 				// off: when accessing a field "a.b", we must check whether the field
 				// "a.b" is initialized, not whether the whole struct "a" is initialized.
-				InstanceExpression = InstanceExpression.Resolve (
-					ec, ResolveFlags.VariableOrValue | ResolveFlags.DisableFlowAnalysis);
+
+				if (lvalue_instance) {
+					bool old_do_flow_analysis = ec.DoFlowAnalysis;
+					ec.DoFlowAnalysis = false;
+					InstanceExpression = InstanceExpression.ResolveLValue (ec, EmptyExpression.LValueMemberAccess, loc);
+					ec.DoFlowAnalysis = old_do_flow_analysis;
+				} else {
+					ResolveFlags rf = ResolveFlags.VariableOrValue | ResolveFlags.DisableFlowAnalysis;
+					InstanceExpression = InstanceExpression.Resolve (ec, rf);
+				}
+
 				if (InstanceExpression == null)
 					return null;
 			}
@@ -3124,16 +3126,32 @@ namespace Mono.CSharp {
 			return this;
 		}
 
-		void Report_AssignToReadonly (bool is_instance)
+		void Report_AssignToReadonly (Expression right_side)
 		{
+			int code;
 			string msg;
-			
-			if (is_instance)
-				msg = "A readonly field cannot be assigned to (except in a constructor or a variable initializer)";
-			else
+			bool need_error_sig = false;
+			if (right_side == EmptyExpression.LValueMemberAccess) {
+				if (IsStatic) {
+					code = 1650;
+					msg = "Fields of static readonly field `{0}' cannot be assigned to (except in a static constructor or a variable initializer)";
+				} else {
+					code = 1648;
+					msg = "Members of readonly field `{0}' cannot be modified (except in a constructor or a variable initializer)";
+				}
+				need_error_sig = true;
+			} else if (IsStatic) {
+				code = 198;
 				msg = "A static readonly field cannot be assigned to (except in a static constructor or a variable initializer)";
+			} else {
+				code = 191;
+				msg = "A readonly field cannot be assigned to (except in a constructor or a variable initializer)";
+			}
 
-			Report.Error (is_instance ? 191 : 198, loc, msg);
+			if (need_error_sig)
+				Report.Error (code, loc, msg, GetSignatureForError ());
+			else
+				Report.Error (code, loc, msg);
 		}
 		
 		override public Expression DoResolveLValue (EmitContext ec, Expression right_side)
@@ -3142,12 +3160,11 @@ namespace Mono.CSharp {
 			if ((var != null) && (var.VariableInfo != null))
 				var.VariableInfo.SetFieldAssigned (ec, FieldInfo.Name);
 
-			Expression e = DoResolve (ec);
+			bool lvalue_instance = !FieldInfo.IsStatic && FieldInfo.DeclaringType.IsValueType;
+
+			Expression e = DoResolve (ec, lvalue_instance);
 
 			if (e == null)
-				return null;
-
-			if (!FieldInfo.IsStatic && !CheckIntermediateModification ())
 				return null;
 
 			FieldBase fb = TypeManager.GetField (FieldInfo);
@@ -3163,7 +3180,7 @@ namespace Mono.CSharp {
 
 			if (ec.IsConstructor){
 				if (IsStatic && !ec.IsStatic)
-					Report_AssignToReadonly (false);
+					Report_AssignToReadonly (right_side);
 
 				Type ctype;
 				if (ec.TypeContainer.CurrentType != null)
@@ -3175,7 +3192,7 @@ namespace Mono.CSharp {
 					return this;
 			}
 
-			Report_AssignToReadonly (!IsStatic);
+			Report_AssignToReadonly (right_side);
 			
 			return null;
 		}
@@ -3275,7 +3292,7 @@ namespace Mono.CSharp {
 			prepared = prepare_for_load;
 
 			if (is_readonly && !ec.IsConstructor){
-				Report_AssignToReadonly (!is_static);
+				Report_AssignToReadonly (source);
 				return;
 			}
 
@@ -3516,7 +3533,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		bool InstanceResolve (EmitContext ec, bool must_do_cs1540_check)
+		bool InstanceResolve (EmitContext ec, bool lvalue_instance, bool must_do_cs1540_check)
 		{
 			if (is_static) {
 				InstanceExpression = null;
@@ -3528,7 +3545,10 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			InstanceExpression = InstanceExpression.DoResolve (ec);
+			if (lvalue_instance)
+				InstanceExpression = InstanceExpression.ResolveLValue (ec, EmptyExpression.LValueMemberAccess, loc);
+			else
+				InstanceExpression = InstanceExpression.DoResolve (ec);
 			if (InstanceExpression == null)
 				return false;
 			
@@ -3608,7 +3628,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			if (!InstanceResolve (ec, must_do_cs1540_check))
+			if (!InstanceResolve (ec, false, must_do_cs1540_check))
 				return null;
 
 			//
@@ -3640,9 +3660,13 @@ namespace Mono.CSharp {
 				//
 				if (getter == null)
 					return null;
-				
-				Report.Error (200, loc, " Property or indexer `{0}' cannot be assigned to (it is read only)",
-					      TypeManager.GetFullNameSignature (PropertyInfo));
+
+				if (right_side == EmptyExpression.LValueMemberAccess)
+					Report.Error (1612, loc, "Cannot modify the return value of `{0}' because it is not a variable",
+						GetSignatureForError ());
+				else
+					Report.Error (200, loc, "Property or indexer `{0}' cannot be assigned to (it is read only)",
+						GetSignatureForError ());
 				return null;
 			}
 
@@ -3664,7 +3688,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			if (!InstanceResolve (ec, must_do_cs1540_check))
+			if (!InstanceResolve (ec, PropertyInfo.DeclaringType.IsValueType, must_do_cs1540_check))
 				return null;
 			
 			//
@@ -3674,12 +3698,6 @@ namespace Mono.CSharp {
 				Error_CannotCallAbstractBase (TypeManager.GetFullNameSignature (PropertyInfo));
 				return null;
 			}
-
-			//
-			// Check that we are not making changes to a temporary memory location
-			//
-			if (InstanceExpression != null && !CheckIntermediateModification ())
-				return null;
 
 			return this;
 		}

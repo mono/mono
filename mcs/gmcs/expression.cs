@@ -3489,7 +3489,7 @@ namespace Mono.CSharp {
 				local_info = Block.GetLocalInfo (Name);
 
 				// is out param
-				if (lvalue_right_side == EmptyExpression.Null)
+				if (lvalue_right_side == EmptyExpression.OutAccess)
 					local_info.Used = true;
 
 				is_readonly = local_info.ReadOnly;
@@ -3500,8 +3500,11 @@ namespace Mono.CSharp {
 			VariableInfo variable_info = local_info.VariableInfo;
 			if (lvalue_right_side != null){
 				if (is_readonly){
-					if (lvalue_right_side is LocalVariableReference || lvalue_right_side == EmptyExpression.Null)
+					if (lvalue_right_side is LocalVariableReference || lvalue_right_side == EmptyExpression.OutAccess)
 						Report.Error (1657, loc, "Cannot pass `{0}' as a ref or out argument because it is a `{1}'",
+							Name, local_info.GetReadOnlyContext ());
+					else if (lvalue_right_side == EmptyExpression.LValueMemberAccess)
+						Report.Error (1654, loc, "Cannot assign to members of `{0}' because it is a `{1}'",
 							Name, local_info.GetReadOnlyContext ());
 					else
 						Report.Error (1656, loc, "Cannot assign to `{0}' because it is a `{1}'",
@@ -4072,7 +4075,7 @@ namespace Mono.CSharp {
 					Error_LValueRequired (loc);
 			} else if (ArgType == AType.Out) {
 				ec.InRefOutArgumentResolving = true;
-				Expr = Expr.DoResolveLValue (ec, EmptyExpression.Null);
+				Expr = Expr.DoResolveLValue (ec, EmptyExpression.OutAccess);
 				ec.InRefOutArgumentResolving = false;
 
 				if (Expr == null)
@@ -8537,6 +8540,9 @@ namespace Mono.CSharp {
 	/// </summary>
 	public class EmptyExpression : Expression {
 		public static readonly EmptyExpression Null = new EmptyExpression ();
+
+		public static readonly EmptyExpression OutAccess = new EmptyExpression ();
+		public static readonly EmptyExpression LValueMemberAccess = new EmptyExpression ();
 
 		static EmptyExpression temp = new EmptyExpression ();
 		public static EmptyExpression Grab ()
