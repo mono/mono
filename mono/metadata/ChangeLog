@@ -1,3 +1,9 @@
+2006-01-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* metadata.c (mono_metadata_signature_dup): Applied patch from
+	Aras Pranckevicius (aras@otee.dk). Fix crash when compiled with MSVC.
+	Fixes #77288.
+
 2006-01-17  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c (emit_struct_conv): Allow fields with the same offset when
