@@ -1,0 +1,3 @@
+2006-01-14  Robert Jordan  <robertj@gmx.net>
+
+	* RegistryKeyTest.cs: Added unit test for bug #77212.
