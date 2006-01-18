@@ -1,3 +1,7 @@
+2006-01-18  Alexander Olk  <alex.olk@googlemail.com>
+
+	* ThemeGtk.cs: Simplify ScrollBar drawing
+
 2006-01-18  Jackson Harper  <jackson@ximian.com>
 
 	* Splitter.cs: Set the default dock style for the splitter control
