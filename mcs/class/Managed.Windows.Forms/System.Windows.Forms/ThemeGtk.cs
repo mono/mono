@@ -291,7 +291,7 @@ namespace System.Windows.Forms
 			style = gtk_style_attach (style, gdkwindow);  // need it
 			
 			StateType state_type = StateType.Normal;
-			ShadowType shadow_type = ShadowType.In;
+			ShadowType shadow_type = button.flat_style == FlatStyle.Flat ? ShadowType.In : ShadowType.Out;
 			string detail = "buttondefault";
 			
 			if (!button.is_enabled) {
@@ -299,7 +299,7 @@ namespace System.Windows.Forms
 			} else
 			if (button.is_pressed) {
 				state_type = StateType.Active;
-				shadow_type = ShadowType.Out;
+				shadow_type = ShadowType.In;
 				detail = "button";
 			} else
 			if (button.is_entered) {
@@ -486,8 +486,8 @@ namespace System.Windows.Forms
 				
 				gtk_paint_box (style, 
 					       current_gdk_window, 
-					       (int) StateType.Active,
-					       (int) ShadowType.Out,
+					       (int) StateType.Normal,
+					       (int) ShadowType.In,
 					       IntPtr.Zero,
 					       global_gtk_vscrollbar,
 					       "vscrollbar",
@@ -506,7 +506,7 @@ namespace System.Windows.Forms
 				gtk_paint_box (style, 
 					       current_gdk_window, 
 					       (int) StateType.Active,
-					       (int) ShadowType.Out,
+					       (int) ShadowType.In,
 					       IntPtr.Zero,
 					       global_gtk_vscrollbar,
 					       "vscrollbar",
@@ -525,7 +525,7 @@ namespace System.Windows.Forms
 				gtk_paint_box (style, 
 					       current_gdk_window, 
 					       (int) StateType.Active,
-					       (int) ShadowType.Out,
+					       (int) ShadowType.In,
 					       IntPtr.Zero,
 					       global_gtk_vscrollbar,
 					       "vscrollbar",
@@ -544,7 +544,7 @@ namespace System.Windows.Forms
 				gtk_paint_box (style, 
 					       current_gdk_window, 
 					       (int) StateType.Active,
-					       (int) ShadowType.Out,
+					       (int) ShadowType.In,
 					       IntPtr.Zero,
 					       global_gtk_vscrollbar,
 					       "vscrollbar",
@@ -563,7 +563,7 @@ namespace System.Windows.Forms
 				gtk_paint_box (style, 
 					       current_gdk_window, 
 					       (int) StateType.Active,
-					       (int) ShadowType.Out,
+					       (int) ShadowType.In,
 					       IntPtr.Zero,
 					       global_gtk_vscrollbar,
 					       "vscrollbar",
@@ -582,7 +582,7 @@ namespace System.Windows.Forms
 				gtk_paint_box (style, 
 					       current_gdk_window, 
 					       (int) StateType.Active,
-					       (int) ShadowType.Out,
+					       (int) ShadowType.In,
 					       IntPtr.Zero,
 					       global_gtk_hscrollbar,
 					       "hscrollbar",
@@ -601,7 +601,7 @@ namespace System.Windows.Forms
 				gtk_paint_box (style, 
 					       current_gdk_window, 
 					       (int) StateType.Active,
-					       (int) ShadowType.Out,
+					       (int) ShadowType.In,
 					       IntPtr.Zero,
 					       global_gtk_hscrollbar,
 					       "hscrollbar",
@@ -639,7 +639,7 @@ namespace System.Windows.Forms
 				gtk_paint_box (style, 
 					       current_gdk_window, 
 					       (int) StateType.Active,
-					       (int) ShadowType.Out,
+					       (int) ShadowType.In,
 					       IntPtr.Zero,
 					       global_gtk_hscrollbar,
 					       "hscrollbar",
@@ -658,7 +658,7 @@ namespace System.Windows.Forms
 				gtk_paint_box (style, 
 					       current_gdk_window, 
 					       (int) StateType.Active,
-					       (int) ShadowType.Out,
+					       (int) ShadowType.In,
 					       IntPtr.Zero,
 					       global_gtk_hscrollbar,
 					       "hscrollbar",
@@ -678,7 +678,7 @@ namespace System.Windows.Forms
 			gtk_paint_box (style, 
 				       current_gdk_window, 
 				       (int) StateType.Active,
-				       (int) ShadowType.In,
+				       (int) ShadowType.Out,
 				       IntPtr.Zero,
 				       gtk_scrollbar,
 				       "slider",
@@ -725,21 +725,21 @@ namespace System.Windows.Forms
 		public override void CPDrawButton (Graphics graphics, Rectangle rectangle, ButtonState state)
 		{
 			bool is_pushed = false;
-			bool is_checked = false;
-			bool is_flat = false;
+//			bool is_checked = false;
+//			bool is_flat = false;
 			bool is_inactive = false;
 			
 			if ((state & ButtonState.Pushed) != 0) {
 				is_pushed = true;
 			}
 			
-			if ((state & ButtonState.Checked) != 0) {
-				is_checked = true;
-			}
-			
-			if ((state & ButtonState.Flat) != 0) {
-				is_flat = true;
-			}
+//			if ((state & ButtonState.Checked) != 0) {
+//				is_checked = true;
+//			}
+//			
+//			if ((state & ButtonState.Flat) != 0) {
+//				is_flat = true;
+//			}
 			
 			if ((state & ButtonState.Inactive) != 0) {
 				is_inactive = true;
@@ -751,7 +751,7 @@ namespace System.Windows.Forms
 			style = gtk_style_attach (style, current_gdk_window);  // need it
 			
 			StateType state_type = StateType.Normal;
-			ShadowType shadow_type = ShadowType.In;
+			ShadowType shadow_type = ShadowType.Out;
 			string detail = "buttondefault";
 			
 			if (is_inactive) {
@@ -759,7 +759,7 @@ namespace System.Windows.Forms
 			} else
 			if (is_pushed) {
 				state_type = StateType.Active;
-				shadow_type = ShadowType.Out;
+				shadow_type = ShadowType.In;
 				detail = "button";
 			}
 			
@@ -830,7 +830,7 @@ namespace System.Windows.Forms
 			gtk_paint_arrow (style, 
 					 current_gdk_window, 
 					 (int) state_type,
-					 (int) ShadowType.In,
+					 (int) ShadowType.Out,
 					 IntPtr.Zero,
 					 IntPtr.Zero,
 					 "",		
@@ -843,11 +843,11 @@ namespace System.Windows.Forms
 		public void DrawScrollButtonPrimitive (Graphics dc, Rectangle area, ButtonState state, ScrollButton scroll_button_type)
 		{
 			StateType state_type = StateType.Normal;
-			ShadowType shadow_type = ShadowType.In;
+			ShadowType shadow_type = ShadowType.Out;
 			
 			if ((state & ButtonState.Pushed) == ButtonState.Pushed) {
 				state_type = StateType.Active;
-				shadow_type = ShadowType.Out;
+				shadow_type = ShadowType.In;
 			}
 			
 			switch (scroll_button_type) {

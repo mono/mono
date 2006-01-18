@@ -1,5 +1,10 @@
 2006-01-18  Alexander Olk  <alex.olk@googlemail.com>
 
+	* ThemeGtk.cs: Corrected StateType and ShadowType for
+	  gtk_paint_box
+
+2006-01-18  Alexander Olk  <alex.olk@googlemail.com>
+
 	* Control.cs: Make use of Theme.DoubleBufferingSupported
 	* ThemeGtk.cs:
 	  - Added drawing for flat style buttons
