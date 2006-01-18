@@ -1,3 +1,8 @@
+2006-01-18 Konstantin Triger <kostat@mainsoft.com>
+
+	* HtmlTextWriter.cs: perform case insensitive compare;
+	  return correct key in default case.
+
 2006-01-11  Chris Toshok  <toshok@ximian.com>
 
 	* ClientScriptManager.cs (RegisterClientScriptResource):

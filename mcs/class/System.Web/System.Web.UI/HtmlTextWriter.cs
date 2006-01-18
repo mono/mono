@@ -204,11 +204,11 @@ namespace System.Web.UI {
 			// faster than a linear search?
 			
 			foreach (HtmlAttribute t in htmlattrs) {
-				if (t.name == attrName)
+				if (String.Compare(t.name, attrName, true, CultureInfo.InvariantCulture) == 0)
 					return t.key;
 			}
 
-			return 0;		
+			return (HtmlTextWriterAttribute)(-1);		
 		}
 
 		[MonoTODO]
@@ -229,11 +229,11 @@ namespace System.Web.UI {
 			// faster than a linear search?
 			
 			foreach (HtmlStyle t in htmlstyles) {
-				if (t.name == styleName)
+				if (String.Compare(t.name, styleName, true, CultureInfo.InvariantCulture) == 0)
 					return t.key;
 			}
 
-			return 0;			
+			return (HtmlTextWriterStyle)(-1);			
 		}
 		
 		[MonoTODO]
@@ -251,7 +251,7 @@ namespace System.Web.UI {
 			// faster than a linear search?
 			
 			foreach (HtmlTag t in tags) {
-				if (t.name == tagName)
+				if (String.Compare(t.name, tagName, true, CultureInfo.InvariantCulture) == 0)
 					return t.key;
 			}
 

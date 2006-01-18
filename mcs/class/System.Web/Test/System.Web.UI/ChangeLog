@@ -1,3 +1,8 @@
+2006-01-18 Konstantin Triger <kostat@mainsoft.com>
+
+	* HtmlTextWriterTest.cs: Added tests enduring case insensitivity of
+	  attributes and correctness of HtmlTextWriterAttribute
+
 2005-12-05 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ControlTest.cs: new tests to prove that Control uses its own

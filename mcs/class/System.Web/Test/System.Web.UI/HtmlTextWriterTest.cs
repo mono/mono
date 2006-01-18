@@ -352,5 +352,34 @@ namespace MonoTests.System.Web.UI {
 
 			Assert.AreEqual ("<div>\n\n</div>", sw.ToString ());
 		}
+		
+		class MyHttpTextWriter : HtmlTextWriter {
+			int i = 0;
+			public MyHttpTextWriter(TextWriter tw) : base(tw) {
+	
+			}
+			protected override bool OnAttributeRender(string name, string value, HtmlTextWriterAttribute key) {
+				switch (i++) {
+				case 0:
+				case 1: Assert.AreEqual(HtmlTextWriterAttribute.Border, key);
+					break;
+				case 2: Assert.AreEqual((HtmlTextWriterAttribute)(-1), key);
+					break;
+				}
+				return base.OnAttributeRender (name, value, key);
+			}
+	
+		}
+		
+		[Test]
+		public void TestOnAttributeRender() {
+			MyHttpTextWriter myw = new MyHttpTextWriter (sw);
+			
+			myw.AddAttribute ("border", "0");
+			myw.AddAttribute ("BoRDeR", "0");
+			myw.AddAttribute ("error", "0");
+			myw.RenderBeginTag ("div");
+			myw.RenderEndTag ();
+		}
 	}
 }
