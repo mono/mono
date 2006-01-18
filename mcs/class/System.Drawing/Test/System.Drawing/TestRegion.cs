@@ -51,6 +51,16 @@ namespace MonoTests.System.Drawing
 				Console.WriteLine ( rects[i]);
 		}
 
+		private Bitmap bitmap;
+		private Graphics graphic;
+
+		[TestFixtureSetUp]
+		public void FixtureSetUp ()
+		{
+			bitmap = new Bitmap (10, 10);
+			graphic = Graphics.FromImage (bitmap);
+		}
+
 		[Test]
 		public void TestBounds()
 		{
@@ -1230,6 +1240,55 @@ namespace MonoTests.System.Drawing
 		public void Transform_Null ()
 		{
 			new Region ().Transform (null);
+		}
+
+		// an "empty ctor" Region is infinite
+		private void CheckEmpty (string prefix, Region region)
+		{
+			Assert.IsFalse (region.IsEmpty (graphic), prefix + "IsEmpty");
+			Assert.IsTrue (region.IsInfinite (graphic), prefix + "graphic");
+
+			RectangleF rect = region.GetBounds (graphic);
+			Assert.AreEqual (-4194304f, rect.X, prefix + "GetBounds.X");
+			Assert.AreEqual (-4194304f, rect.Y, prefix + "GetBounds.Y");
+			Assert.AreEqual (8388608f, rect.Width, prefix + "GetBounds.Width");
+			Assert.AreEqual (8388608f, rect.Height, prefix + "GetBounds.Height");
+		}
+
+		[Test]
+		public void Region_Empty ()
+		{
+			Region region = new Region ();
+			CheckEmpty ("Empty.", region);
+
+			Region clone = region.Clone ();
+			CheckEmpty ("Clone.", region);
+
+			RegionData data = region.GetRegionData ();
+			Region r2 = new Region (data);
+			CheckEmpty ("RegionData.", region);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Region_Infinite_MultipleRectangles ()
+		{
+			Region region = new Region ();
+			Assert.IsTrue (region.IsInfinite (graphic), "Empty.IsInfinite");
+
+			GraphicsPath gp = new GraphicsPath ();
+			gp.AddRectangle (new Rectangle (-4194304, -4194304, 8388608, 8388608));
+			region = new Region (gp);
+			Assert.IsTrue (region.IsInfinite (graphic), "OneRectangle.IsInfinite");
+
+			gp.AddRectangle (new Rectangle (1, 1, 2, 2));
+			region = new Region (gp);
+			Assert.IsFalse (region.IsInfinite (graphic), "TwoOverlappingRectangle.IsInfinite");
+
+			gp = new GraphicsPath ();
+			gp.AddRectangle (new Rectangle (-4194304, -4194304, 4194304, 8388608));
+			gp.AddRectangle (new Rectangle (0, -4194304, 4194304, 8388608));
+			Assert.IsFalse (region.IsInfinite (graphic), "TwoSideBySideRectangle.IsInfinite");
 		}
 	}
 }

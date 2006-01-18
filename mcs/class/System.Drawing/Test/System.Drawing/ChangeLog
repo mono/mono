@@ -1,3 +1,10 @@
+2006-01-18  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* RegionDataTest.cs: New. Unit tests for RegionData.
+	* RegionNonRectTest.cs: New. Unit tests for non-rectangular regions.
+	* TestRegion.cs: Added new test cases for empty region and IsInfinite
+	behaviour with multiple rectangles / path-rectangle regions.
+
 2006-01-16  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TestRegion.cs: Mark a test case as NotWorking as it caused a 
