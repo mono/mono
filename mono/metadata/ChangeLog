@@ -1,3 +1,10 @@
+2006-01-18  Martin Baulig  <martin@ximian.com>
+
+	* loader.c (find_method_in_class): Added `gboolean is_inflated'
+	argument; if false, we compare the uninstantiated signatures.
+	(method_from_memberref): Compare the uninstantiated signatures;
+	fixes #76417.
+
 2006-01-18  Robert Jordan  <robertj@gmx.net>
 
 	* boehm-gc.c, null-gc.c (mono_gc_weak_link_remove):
