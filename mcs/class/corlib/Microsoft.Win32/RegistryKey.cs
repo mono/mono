@@ -52,6 +52,10 @@ namespace Microsoft.Win32
 		
 		string qname;	// the fully qualified registry key name
 		bool isRoot;	// is the an instance of a root key?
+
+		internal bool IsRoot {
+			get { return isRoot; }
+		}
 		
 		static readonly IRegistryApi RegistryApi;
 

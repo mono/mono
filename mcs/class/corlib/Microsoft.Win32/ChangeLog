@@ -1,3 +1,10 @@
+2006-01-14  Robert Jordan  <robertj@gmx.net>
+
+	* RegistryKey.cs: Added internal IsRoot accessor.
+	* Win32RegistryApi.cs: Fixed access to RegistryKey.Data.
+	Fixes bug #77212. Thanks to Don Edvalson (don@edvalson.net)
+	for spotting this out.
+
 2005-12-02  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Win32RegistryApi.cs : fixed invalid cast. Now mono is not to blame
