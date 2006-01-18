@@ -1,3 +1,10 @@
+2006-01-18  Martin Baulig  <martin@ximian.com>
+
+	* loader.c (find_method_in_class): Added `gboolean is_inflated'
+	argument; if false, we compare the uninstantiated signatures.
+	(method_from_memberref): Compare the uninstantiated signatures;
+	fixes #76417.
+
 2006-01-18  Zoltan Varga  <vargaz@gmail.com>
 
 	* metadata.c (mono_metadata_signature_dup): Applied patch from
