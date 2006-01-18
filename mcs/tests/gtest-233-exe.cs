@@ -1,4 +1,5 @@
 // Compiler options: /r:gtest-233-lib.dll
+// Dependencies: gtest-233-lib.cs
 using System;
 using System.Collections.Generic;
 using System.Text;

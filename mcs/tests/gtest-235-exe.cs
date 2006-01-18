@@ -1,4 +1,5 @@
 // Compiler options: /r:gtest-235-lib.dll
+// Dependencies: gtest-235-lib.cs
 using System;
 
 class GettingStarted
