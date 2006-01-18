@@ -1,5 +1,7 @@
 System.Drawing/ColorTranslator.cs
 System.Drawing/ColorConverter.cs
+System.Drawing/RegionDataTest.cs
+System.Drawing/RegionNonRectTest.cs
 System.Drawing/TestBitmap.cs
 System.Drawing/TestBrushes.cs
 System.Drawing/TestColor.cs
