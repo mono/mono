@@ -65,7 +65,7 @@ namespace System.IO {
 				parent = null;
 			} else {
 				current = FullPath.Substring (last + 1, len - last);
-				if (last == 0)
+				if (last == 0 && !Environment.IsRunningOnWindows)
 					parent = Path.DirectorySeparatorStr;
 				else
 					parent = FullPath.Substring (0, last);

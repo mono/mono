@@ -766,7 +766,11 @@ namespace MonoTests.System.IO
 		public void Parent_Bug77090 ()
 		{
 			DirectoryInfo di = new DirectoryInfo ("/home");
-			AssertEquals ("/home parent", "/", di.Parent.Name);
+			if (Path.DirectorySeparatorChar == '\\') {
+				Assert ("/home parent (Windows path)", di.Parent.Name.EndsWith (":\\"));
+			}
+			else
+				AssertEquals ("/home parent", "/", di.Parent.Name);
 			AssertNull ("/home parent parent", di.Parent.Parent);
 		}
 	}

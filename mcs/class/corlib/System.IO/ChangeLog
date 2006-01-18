@@ -1,3 +1,7 @@
+2006-01-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DirectoryInfo.cs : on Windows top directory is something like c:\.
+
 2006-01-17  Joshua Tauberer  <tauberer@for.net>
 
 	* StreamReader.cs: Avoid two totally unnecessary string creations.
