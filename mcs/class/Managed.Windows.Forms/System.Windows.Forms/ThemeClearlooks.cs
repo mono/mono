@@ -539,49 +539,6 @@ namespace System.Windows.Forms {
 		#endregion ComboBox
 		
 		#region Menus
-		public override void CalcItemSize( Graphics dc, MenuItem item, int y, int x, bool menuBar ) {
-			item.X = x;
-			item.Y = y;
-			
-			if ( item.Visible == false )
-				return;
-			
-			if ( item.Separator == true ) {
-				item.Height = SEPARATOR_HEIGHT / 2;
-				item.Width = -1;
-				return;
-			}
-			
-			if ( item.MeasureEventDefined ) {
-				MeasureItemEventArgs mi = new MeasureItemEventArgs( dc, item.Index );
-				item.PerformMeasureItem( mi );
-				item.Height = mi.ItemHeight;
-				item.Width = mi.ItemWidth;
-				return;
-			} else {		
-				SizeF size;
-				size =  dc.MeasureString( item.Text, ThemeEngine.Current.MenuFont );
-				item.Width = (int) size.Width;
-				item.Height = (int) size.Height;
-				
-				if ( !menuBar ) {
-					if ( item.Shortcut != Shortcut.None && item.ShowShortcut ) {
-						item.XTab = ThemeEngine.Current.MenuCheckSize.Width + MENU_TAB_SPACE + (int) size.Width;
-						size =  dc.MeasureString( " " + item.GetShortCutText( ), ThemeEngine.Current.MenuFont );
-						item.Width += MENU_TAB_SPACE + (int) size.Width;
-					}
-					
-					item.Width += 4 + ( ThemeEngine.Current.MenuCheckSize.Width * 2 );
-				} else {
-					item.Width += MENU_BAR_ITEMS_SPACE;
-					x += item.Width;
-				}
-				
-				if ( item.Height < ThemeEngine.Current.MenuHeight )
-					item.Height = ThemeEngine.Current.MenuHeight;
-			}
-		}
-		
 		public override void DrawMenuItem( MenuItem item, DrawItemEventArgs e ) {
 			StringFormat string_format;
 			Rectangle rect_text = e.Bounds;
@@ -1358,7 +1315,7 @@ namespace System.Windows.Forms {
 					
 					tab_interior = new Rectangle (bounds.Left + 2, bounds.Top + 2, bounds.Width - 2, bounds.Height - 3);
 					
-					using (LinearGradientBrush lgbr = new LinearGradientBrush (new Point (bounds.Left + 2, bounds.Top + 2), new Point (bounds.Left + 2, bounds.Bottom - 1), tab_second_color, tab_first_color)) {
+					using (LinearGradientBrush lgbr = new LinearGradientBrush (new Point (bounds.Left + 2, bounds.Top + 2), new Point (bounds.Left + 2, bounds.Bottom - 1), tab_first_color, tab_second_color)) {
 						dc.FillRectangle (lgbr, tab_interior);
 					}
 					

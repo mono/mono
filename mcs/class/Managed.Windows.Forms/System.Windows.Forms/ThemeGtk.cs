@@ -17,10 +17,11 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004 Novell, Inc.
+// Copyright (c) 2004-2006 Novell, Inc.
 //
 // Authors:
 //	Jordi Mas i Hernandez, jordi@ximian.com
+//	Alexander Olk, alex.olk@googlemail.com
 //
 //	This is an experimental GTK theme. 
 //
@@ -37,6 +38,9 @@
 //		- GTK paints controls into a window no a device context. We should inverstigate if we 
 //		we can encapsulate a dc in a gtkwindow.
 //
+//	Hint:	Currently ThemeGtk doesn't work without a modified Control class, it doesn't like
+//		double buffering. As soon as DoubleBufferingSupported is implemented it should run
+//		out of the box. Alex.
 
 
 // NOT COMPLETE
@@ -167,6 +171,9 @@ namespace System.Windows.Forms
 
 		[DllImport("libgtk-x11-2.0.so")]
 		static extern void gtk_style_detach (IntPtr raw);
+		
+		[DllImport("libgtk-x11-2.0.so")]
+		static extern IntPtr  gtk_button_new ();
 
 		/* GTK Drawing */
 		[DllImport("libgtk-x11-2.0.so")]
@@ -174,15 +181,24 @@ namespace System.Windows.Forms
 
 		[DllImport("libgtk-x11-2.0.so")]
 		static extern void gtk_paint_arrow (IntPtr style, IntPtr window, int state_type, int shadow_type, 
-			IntPtr area, IntPtr widget, string detail, int arrow_type, bool fill, int x, int y, int width, int height);
+						    IntPtr area, IntPtr widget, string detail, int arrow_type, bool fill, int x, int y, int width, int height);
 
 		[DllImport("libgtk-x11-2.0.so")]
-		static extern void gtk_paint_slider(IntPtr style, IntPtr window, int state_type, int shadow_type, 
-			IntPtr area, IntPtr widget, string detail, int x, int y, int width, int height, int orientation);
+		static extern void gtk_paint_slider (IntPtr style, IntPtr window, int state_type, int shadow_type, 
+						     IntPtr area, IntPtr widget, string detail, int x, int y, int width, int height, int orientation);
 
 		[DllImport("libgtk-x11-2.0.so")]
-		static extern void gtk_paint_box(IntPtr style, IntPtr window, int state_type, int shadow_type, 
-			IntPtr area, IntPtr widget, string detail, int x, int y, int width, int height);
+		static extern void gtk_paint_box (IntPtr style, IntPtr window, int state_type, int shadow_type, 
+						  IntPtr area, IntPtr widget, string detail, int x, int y, int width, int height);
+		
+		[DllImport("libgtk-x11-2.0.so")]
+		static extern void gtk_paint_hline(IntPtr style, IntPtr window, int state_type, IntPtr area, IntPtr widget, string detail, int x1, int x2, int y);
+		
+		[DllImport("libgtk-x11-2.0.so")]
+		static extern void gtk_paint_check(IntPtr style, IntPtr window, int state_type, int shadow_type, IntPtr area, IntPtr widget, string detail, int x, int y, int width, int height);
+		
+		[DllImport("libgtk-x11-2.0.so")]
+		static extern void gtk_paint_focus(IntPtr style, IntPtr window, int state_type, IntPtr area, IntPtr widget, string detail, int x, int y, int width, int height);
 
 		/* Data */
 		static protected IntPtr dispmgr;
@@ -191,6 +207,8 @@ namespace System.Windows.Forms
 		static protected IntPtr style;
 		static protected SolidBrush br_buttonface;
 		static protected SolidBrush br_buttontext;
+		
+		IntPtr global_gtk_button = gtk_button_new();
 
 		public static void InitGtk ()
 		{	
@@ -235,9 +253,77 @@ namespace System.Windows.Forms
 
 		public override bool DoubleBufferingSupported {
 			get {return false; }
-		}	
-
-
+		}
+		
+//		public override Color ColorControl {
+//			get { return Color.Blue;}
+//		}
+		
+		protected override void ButtonBase_DrawButton(ButtonBase button, Graphics dc)
+		{
+			Rectangle buttonRectangle = button.ClientRectangle;
+			
+			IntPtr gdkwindow = gdk_window_foreign_new_for_display (gdkdisplay, (uint) button.Handle);
+			
+			IntPtr style;
+			
+                        style = gtk_rc_get_style (global_gtk_button);		
+			style = gtk_style_attach (style, gdkwindow);  // need it
+			
+			StateType state_type = StateType.Normal;
+			ShadowType shadow_type = ShadowType.In;
+			string detail = "buttondefault";
+			
+			if (!button.is_enabled) {
+				state_type = StateType.Insensitive;
+			} else
+			if (button.is_pressed) {
+				state_type = StateType.Active;
+				shadow_type = ShadowType.Out;
+				detail = "button";
+			} else
+			if (button.is_entered) {
+				state_type = StateType.Prelight;
+			}
+			
+			if (button.flat_style != FlatStyle.Popup || (button.flat_style == FlatStyle.Popup && button.is_entered))
+			gtk_paint_box (style, gdkwindow,
+				       (int) state_type,
+				       (int) shadow_type,
+				       IntPtr.Zero,
+				       IntPtr.Zero,
+				       detail,
+				       buttonRectangle.X, buttonRectangle.Y,
+				       buttonRectangle.Width, buttonRectangle.Height);
+		}
+		
+		protected override void ButtonBase_DrawFocus( ButtonBase button, Graphics dc ) {
+			
+			if ( !button.is_enabled || button.flat_style == FlatStyle.Popup )
+				return;
+			
+			Rectangle focus_rect = new Rectangle( button.ClientRectangle.X + 5, button.ClientRectangle.Y + 5, button.ClientRectangle.Width - 10, button.ClientRectangle.Height - 10 );
+			
+			IntPtr gdkwindow = gdk_window_foreign_new_for_display (gdkdisplay, (uint) button.Handle);
+			
+			IntPtr style;
+			
+                        style = gtk_rc_get_style (global_gtk_button);		
+			style = gtk_style_attach (style, gdkwindow);  // need it
+			
+			gtk_paint_focus (style,
+					 gdkwindow,
+					 (int) StateType.Active,
+					 IntPtr.Zero,
+					 IntPtr.Zero,
+					 "button",
+					 focus_rect.X,
+					 focus_rect.Y,
+					 focus_rect.Width,
+					 focus_rect.Height);
+		}
+		
+#if updated		
 		public void DrawScrollButton (Graphics dc, Rectangle area, ScrollButton type, ButtonState state,
 			IntPtr gdkwindow, IntPtr style)
 		{
@@ -285,7 +371,7 @@ namespace System.Windows.Forms
 					area.Width / 2, area.Height / 2);			
 		
 		}
-#if updated		
+
 		public override void DrawScrollBar (Graphics dc, Rectangle area, ScrollBar bar,
 			ref Rectangle thumb_pos, ref Rectangle first_arrow_area, ref Rectangle second_arrow_area, 
 			ButtonState first_arrow, ButtonState second_arrow, ref int scrollbutton_width, 
