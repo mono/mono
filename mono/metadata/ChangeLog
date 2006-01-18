@@ -1,3 +1,11 @@
+2006-01-18  Robert Jordan  <robertj@gmx.net>
+
+	* boehm-gc.c, null-gc.c (mono_gc_weak_link_remove):
+	Clear the weak link. Fixes bug #77170.
+
+	* gc.c (mono_gchandle_free):
+	Reflect *-gc.c changes (tiny optimization).
+
 2006-01-18  Zoltan Varga  <vargaz@gmail.com>
 
 	* metadata.c (mono_metadata_signature_dup): Applied patch from
