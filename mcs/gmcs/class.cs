@@ -486,7 +486,7 @@ namespace Mono.CSharp {
 
 		public bool AddToMemberContainer (MemberCore symbol)
 		{
-			return AddToContainer (symbol, symbol.Name);
+			return AddToContainer (symbol, symbol.MemberName.MethodName);
 		}
 
 		protected virtual bool AddToTypeContainer (DeclSpace ds)
