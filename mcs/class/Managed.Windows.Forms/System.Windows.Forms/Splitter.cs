@@ -95,6 +95,7 @@ namespace System.Windows.Forms {
 
 			SetStyle(ControlStyles.Selectable, false);
 			Anchor = AnchorStyles.None;
+			Dock = DockStyle.Left;
 
 			Paint += new PaintEventHandler(PaintSplitter);
 			Layout += new LayoutEventHandler(LayoutSplitter);
