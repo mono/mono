@@ -9843,7 +9843,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 	if (cfg->new_ir) {
 		/* This must be done _before_ global reg alloc and _after_ decompose */
 		mono_handle_global_vregs (cfg);
-		//mono_local_deadce (cfg);
+		mono_local_deadce (cfg);
 	}
 
 	if (cfg->opt & MONO_OPT_LINEARS) {
