@@ -1,3 +1,8 @@
+2006-01-18  Martin Baulig  <martin@ximian.com>
+
+	* compiler-tester.cs: Added a new "// Dependencies: " magical
+	comment to provide real dependency tracking.
+
 2005-11-11  Marek Safar  <marek.safar@seznam.cz>
 
 	* compiler-tester.cs: Implemented compiler warning map checking.
