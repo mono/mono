@@ -1,3 +1,8 @@
+2006-01-18  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* gdipFunctions.cs: Added declaration for GdipCreateRegionRgnData.
+	* Region.cs: Implemented .ctor(RegionData)
+
 2006-01-13  Miguel de Icaza  <miguel@novell.com>
 
 	* Region.cs: Revert the Region.cs check in GetHrgn as it was used

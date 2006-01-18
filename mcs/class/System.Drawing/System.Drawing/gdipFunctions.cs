@@ -224,6 +224,9 @@ namespace System.Drawing
                 [DllImport("gdiplus.dll")]
 		static internal extern Status GdipCreateRegion (out IntPtr region);
 
+		[DllImport("gdiplus.dll")]
+		static internal extern Status GdipCreateRegionRgnData (byte[] data, int size, out IntPtr region);
+
                 [DllImport("gdiplus.dll")]
 		static internal extern Status GdipDeleteRegion (IntPtr region);
 

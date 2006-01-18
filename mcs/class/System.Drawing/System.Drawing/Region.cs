@@ -78,9 +78,9 @@ namespace System.Drawing
 		{
 			if (rgnData == null)
 				throw new ArgumentNullException ("rgnData");
-			//Status status = GDIPlus.GdipCreateRegionRgnData (rgnData.Data, out nativeRegion);
-			//GDIPlus.CheckStatus (status);
-			throw new NotImplementedException ();
+			// a NullReferenceException can be throw for rgnData.Data.Length (if rgnData.Data is null) just like MS
+			Status status = GDIPlus.GdipCreateRegionRgnData (rgnData.Data, rgnData.Data.Length, out nativeRegion);
+			GDIPlus.CheckStatus (status);
 		}
 		
 		//                                                                                                     
