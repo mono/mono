@@ -1,5 +1,9 @@
 2006-01-18 Konstantin Triger <kostat@mainsoft.com>
 
+	* ObjectStateFormatter.cs: preserve emptiness in ColorFormatter.
+
+2006-01-18 Konstantin Triger <kostat@mainsoft.com>
+
 	* HtmlTextWriter.cs: perform case insensitive compare;
 	  return correct key in default case.
 
