@@ -1,3 +1,7 @@
+2006-01-18 Boris Kirzner <borisk@mainsoft.com>
+	* ColumnReference.cs: added column and relation lazy evaluation 
+	and caching.
+
 2006-01-09 Senganal T <tsenganal@novell.com>
 	* Aggregation.cs
 	* Expression.cs
