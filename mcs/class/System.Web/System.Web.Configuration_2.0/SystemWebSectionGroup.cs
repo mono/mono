@@ -32,7 +32,7 @@
 
 using System;
 using System.Configuration;
-#if notyet
+#if WEBSERVICES_DEP
 using System.Web.Services.Configuration;
 #endif
 
@@ -205,7 +205,7 @@ namespace System.Web.Configuration
 			get { return (WebPartsSection)Sections ["webParts"]; }
 		}
 
-#if notyet
+#if WEBSERVICES_DEP
 		[ConfigurationProperty ("webServices")]
 		public WebServicesSection WebServices {
 			get { return (WebServicesSection)Sections ["webServices"]; }

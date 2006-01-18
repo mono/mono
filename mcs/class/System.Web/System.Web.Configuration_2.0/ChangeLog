@@ -1,3 +1,8 @@
+2006-01-18  Chris Toshok  <toshok@ximian.com>
+
+	* SystemWebSectionGroup.cs: wrap System.Web.Services references in
+	WEBSERVICES_DEP.
+
 2006-01-16  Chris Toshok  <toshok@ximian.com>
 
 	* WebConfigurationManager.cs: implement a IConfigurationSystem for
