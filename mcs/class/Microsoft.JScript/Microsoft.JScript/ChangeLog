@@ -1,3 +1,13 @@
+2006-01-18 Evan Briones <evan@evanbriones.com>
+
+	* GlobalObject.cs: parsefloat in ms.net version returns NaN for text strings.
+	  If a match is found the regular expression returns its value. Otherwise the
+	  value of the object is retained. Previously it would return an empty string if 
+	  nothing matched making. Double.TryParse would then return 0.
+	  Example of this returning NaN : var isnan = 'hello'; print (parseFloat(e));
+	  Example of it returning 0 : var iszero = 'string'; print (parseFloat (iszero));
+	  We behave like Rhino.
+
 2006-01-17  Cesar Lopez Nataren  <cnataren@novell.com>
 
 	* Parser.cs: Propagate the proper parent.  Fixes #75166.

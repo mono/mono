@@ -455,7 +455,9 @@ namespace Microsoft.JScript {
 
 			if (string_obj.Trim () == "")
 				return 0;
-			string_obj = float_re.Match (string_obj).Value;
+			// Would return an empty string if regular expression match returned 0.
+			object o = float_re.Match (string_obj).Value;
+			string_obj = (o == "") ? string_obj : (string) o;
 
 			double result;
 			if (Double.TryParse (string_obj, NumberStyles.Float, CultureInfo.InvariantCulture, out result))
