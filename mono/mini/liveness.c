@@ -287,7 +287,7 @@ visit_bb (MonoCompile *cfg, MonoBasicBlock *bb, GSList **visited)
 			int regtype, srcindex, sreg;
 
 			if (ins->opcode < MONO_CEE_LAST)
-				return;
+				continue;
 
 			/* DREG */
 			regtype = spec [MONO_INST_DEST];
