@@ -98,6 +98,20 @@ namespace TestRunner {
 		}
 	}
 
+	class TestCase
+	{
+		public readonly string FileName;
+		public readonly string[] CompilerOptions;
+		public readonly string[] Dependencies;
+
+		public TestCase (string filename, string[] options, string[] deps)
+		{
+			this.FileName = filename;
+			this.CompilerOptions = options;
+			this.Dependencies = deps;
+		}
+	}
+
 	class Checker: IDisposable
 	{
 		protected ITester tester;
@@ -106,8 +120,11 @@ namespace TestRunner {
 		protected int ignored;
 		string issue_file;
 		StreamWriter log_file;
-		protected string[] compiler_options;
+		// protected string[] compiler_options;
+		// protected string[] dependencies;
 
+		protected ArrayList tests = new ArrayList ();
+		protected Hashtable test_hash = new Hashtable ();
 		protected ArrayList regression = new ArrayList ();
 		protected ArrayList know_issues = new ArrayList ();
 		protected ArrayList ignore_list = new ArrayList ();
@@ -121,25 +138,38 @@ namespace TestRunner {
 			this.log_file = new StreamWriter (log_file, false);
 		}
 
-		protected virtual bool GetExtraOptions (string file)
+		protected virtual bool GetExtraOptions (string file, out string[] compiler_options,
+							out string[] dependencies)
 		{
 			int row = 0;
-			using (StreamReader sr = new StreamReader (file)) {
-				String line;
-				while (row++ < 3 && (line = sr.ReadLine()) != null) {
-					if (!AnalyzeTestFile (row, line))
-						return false;
+			compiler_options = null;
+			dependencies = null;
+			try {
+				using (StreamReader sr = new StreamReader (file)) {
+					String line;
+					while (row++ < 3 && (line = sr.ReadLine()) != null) {
+						if (!AnalyzeTestFile (row, line, ref compiler_options,
+								      ref dependencies))
+							return false;
+					}
 				}
+			} catch {
+				return false;
 			}
 			return true;
 		}
 
-		protected virtual bool AnalyzeTestFile (int row, string line)
+		protected virtual bool AnalyzeTestFile (int row, string line,
+							ref string[] compiler_options,
+							ref string[] dependencies)
 		{
 			const string options = "// Compiler options:";
+			const string depends = "// Dependencies:";
 
-			if (row == 1)
+			if (row == 1) {
 				compiler_options = null;
+				dependencies = null;
+			}
 
 			int index = line.IndexOf (options);
 			if (index != -1) {
@@ -147,39 +177,65 @@ namespace TestRunner {
 				for (int i = 0; i < compiler_options.Length; i++)
 					compiler_options[i] = compiler_options[i].TrimStart ();
 			}
+			index = line.IndexOf (depends);
+			if (index != -1) {
+				dependencies = line.Substring (index + depends.Length).Trim().Split (' ');
+				for (int i = 0; i < dependencies.Length; i++)
+					dependencies[i] = dependencies[i].TrimStart ();
+			}
+
 			return true;
 		}
 
-		public void Do (string filename)
+		public bool Do (string filename)
 		{
-			Log (filename);
-			Log ("...\t");
+			if (test_hash.Contains (filename))
+				return true;
 
 			if (ignore_list.Contains (filename)) {
 				++ignored;
-				LogLine ("NOT TESTED");
-				return;
+				LogLine (filename + "...\tNOT TESTED");
+				return false;
 			}
 
-			if (!GetExtraOptions (filename)) {
-				return;
+			string[] compiler_options, dependencies;
+			if (!GetExtraOptions (filename, out compiler_options, out dependencies)) {
+				LogLine (filename + "...\tERROR");
+				return false;
 			}
+
+			TestCase test = new TestCase (filename, compiler_options, dependencies);
+			test_hash.Add (filename, test);
 
 			++total;
-			Check (filename);
+			if (dependencies != null) {
+				foreach (string dependency in dependencies) {
+					if (!Do (dependency)) {
+						LogLine (filename + "...\tDEPENDENCY FAILED");
+						return false;
+					}
+				}
+			}
+
+			tests.Add (test);
+
+			Log (filename);
+			Log ("...\t");
+
+			return Check (test);
 		}
 
-		protected virtual bool Check (string filename)
+		protected virtual bool Check (TestCase test)
 		{
 			string[] test_args;
 
-			if (compiler_options != null) {
-				test_args = new string [1 + compiler_options.Length];
-				compiler_options.CopyTo (test_args, 0);
+			if (test.CompilerOptions != null) {
+				test_args = new string [1 + test.CompilerOptions.Length];
+				test.CompilerOptions.CopyTo (test_args, 0);
 			} else {
 				test_args = new string [1];
 			}
-			test_args [test_args.Length - 1] = filename;
+			test_args [test_args.Length - 1] = test.FileName;
 
 			return tester.Invoke (test_args);
 		}
@@ -307,8 +363,9 @@ namespace TestRunner {
 			}
 		}
 
-		protected override bool GetExtraOptions(string file) {
-			if (!base.GetExtraOptions (file))
+		protected override bool GetExtraOptions(string file, out string[] compiler_options,
+							out string[] dependencies) {
+			if (!base.GetExtraOptions (file, out compiler_options, out dependencies))
 				return false;
 
 			doc_output = null;
@@ -323,9 +380,11 @@ namespace TestRunner {
 			return true;
 		}
 
-		protected override bool Check(string filename) {
+		protected override bool Check(TestCase test)
+		{
+			string filename = test.FileName;
 			try {
-				if (!base.Check (filename)) {
+				if (!base.Check (test)) {
 					HandleFailure (filename, TestResult.CompileError, tester.Output);
 					return false;
 				}
@@ -518,7 +577,9 @@ namespace TestRunner {
 			wrong_warning = new Hashtable ();
 		}
 
-		protected override bool AnalyzeTestFile(int row, string line)
+		protected override bool AnalyzeTestFile(int row, string line,
+							ref string[] compiler_options,
+							ref string[] dependencies)
 		{
 			if (row == 1) {
 				expected_message = null;
@@ -527,7 +588,8 @@ namespace TestRunner {
 				if (index == -1 || index > 15) {
 					LogLine ("IGNORING: Wrong test file syntax (missing error mesage text)");
 					++ignored;
-					base.AnalyzeTestFile (row, line);
+					base.AnalyzeTestFile (row, line, ref compiler_options,
+							      ref dependencies);
 					return false;
 				}
 
@@ -545,7 +607,7 @@ namespace TestRunner {
 				}
 			}
 
-			if (!base.AnalyzeTestFile (row, line))
+			if (!base.AnalyzeTestFile (row, line, ref compiler_options, ref dependencies))
 				return false;
 
 			is_warning = false;
@@ -559,8 +621,10 @@ namespace TestRunner {
 		}
 
 
-		protected override bool Check (string filename)
+		protected override bool Check (TestCase test)
 		{
+			string filename = test.FileName;
+
 			int start_char = 0;
 			while (Char.IsLetter (filename, start_char))
 				++start_char;
@@ -569,7 +633,7 @@ namespace TestRunner {
 			string expected = filename.Substring (start_char, end_char - start_char);
 
 			try {
-				if (base.Check (filename)) {
+				if (base.Check (test)) {
 					HandleFailure (filename, CompilerError.Missing);
 					return false;
 				}
