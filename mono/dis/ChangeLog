@@ -1,3 +1,7 @@
+2006-01-18  Ankit Jain  <jankit@novell.com>
+
+	* main.c (typedef_flags): Change 'special-name' to 'specialname'.
+
 2006-01-17  Ankit Jain  <jankit@novell.com>
 
 	* get.c (get_method_override): Use '.override method' syntax if the class or
