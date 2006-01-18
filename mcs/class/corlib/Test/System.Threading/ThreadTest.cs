@@ -476,6 +476,7 @@ namespace MonoTests.System.Threading {
 		} 
 
 		[Test]
+		[Ignore ("see comment below.")]
 		public void CurrentPrincipal_PrincipalPolicy_NoPrincipal () 
 		{
 			// note: switching from PrincipalPolicy won't work inside the same thread
@@ -491,6 +492,7 @@ namespace MonoTests.System.Threading {
 		}
 
 		[Test]
+		[Ignore ("see comment below.")]
 		public void CurrentPrincipal_PrincipalPolicy_UnauthenticatedPrincipal () 
 		{
 			// note: switching from PrincipalPolicy won't work inside the same thread

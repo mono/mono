@@ -1,5 +1,10 @@
 2006-01-18  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ThreadTest.cs : mark not-working tests as [Ignore] since it blocks
+	  run-test-ondotnet under 2.0 profile.
+
+2006-01-18  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* MutexTest.cs : Marked TestWaitAndFoget1 as [Ignore]. Under
 	  .NET 2.0 it breaks nunit-console (breaks its own AppDomain).
 
