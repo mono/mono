@@ -79,6 +79,8 @@ static gpointer mono_jit_compile_method_with_opt (MonoMethod *method, guint32 op
 static gpointer mono_jit_compile_method (MonoMethod *method);
 static gpointer mono_jit_find_compiled_method (MonoDomain *domain, MonoMethod *method);
 
+int op_to_op_imm (int opcode);
+
 static void handle_stobj (MonoCompile *cfg, MonoBasicBlock *bblock, MonoInst *dest, MonoInst *src, 
 			  const unsigned char *ip, MonoClass *klass, gboolean to_end, gboolean native);
 
@@ -9306,80 +9308,85 @@ static void
 mono_local_cprop_bb2 (MonoCompile *cfg, MonoBasicBlock *bb, int acp_size)
 {
 	MonoInst *ins;
-	int i;
-	GArray *acp;
+	int ins_index;
+	MonoInst **defs;
+	guint32 *def_index;
 
 	/* FIXME: Speed this up */
 
-	acp = g_array_new (FALSE, FALSE, sizeof (int));
+	defs = g_new0 (MonoInst*, cfg->next_vireg);
+	def_index = g_new (guint32, cfg->next_vireg);
 
+	ins_index = 0;
 	for (ins = bb->code; ins; ins = ins->next) {
 		const char *spec = ins_info [ins->opcode - OP_START - 1];
 		int regtype, srcindex, sreg;
-		gboolean store;
 
 		if (ins->opcode < MONO_CEE_LAST)
 			continue;
 
+		/* FIXME: Optimize this */
+		if (ins->opcode == OP_LDADDR)
+			return;
+
 		/* FIXME: Store opcodes */
+		for (srcindex = 0; srcindex < 2; ++srcindex) {
+			regtype = spec [(srcindex == 0) ? MONO_INST_SRC1 : MONO_INST_SRC2];
+			sreg = srcindex == 0 ? ins->sreg1 : ins->sreg2;
 
-		if (acp->len > 0) {
-			for (srcindex = 0; srcindex < 2; ++srcindex) {
-				regtype = spec [(srcindex == 0) ? MONO_INST_SRC1 : MONO_INST_SRC2];
-				sreg = srcindex == 0 ? ins->sreg1 : ins->sreg2;
+			/* FIXME: Add support for floats/longs */
+			if ((regtype == 'i') && (sreg != -1) && defs [sreg]) {
+				MonoInst *def = defs [sreg];
 
-				if ((regtype == 'i') && (sreg != -1)) {
-					for (i = 0; i < acp->len; i += 2)
-						if (g_array_index (acp, int, i) == sreg) {
-							int vreg = g_array_index (acp, int, i + 1);
+				if ((def->opcode == OP_MOVE) && (!defs [def->sreg1] || (def_index [def->sreg1] < def_index [sreg]))) {
+					int vreg = def->sreg1;
 #if 0
-							{
-								static int count = 0;
-								count ++;
-								if (count == atoi (getenv ("COUNT2")))
-									printf ("FOO\n");
-								if (count > atoi (getenv ("COUNT2")))
-									vreg = sreg;
-							}
+					{
+						static int count = 0;
+						count ++;
+						if (count == atoi (getenv ("COUNT2")))
+							printf ("FOO\n");
+						if (count > atoi (getenv ("COUNT2")))
+							vreg = sreg;
+					}
 #endif
-							//printf ("CCOPY: R%d -> R%d\n", sreg, vreg);
-							if (srcindex == 0)
-								ins->sreg1 = vreg;
-							else
-								ins->sreg2 = vreg;
-							break;
-						}
+					//printf ("CCOPY: R%d -> R%d\n", sreg, vreg);
+					if (srcindex == 0)
+						ins->sreg1 = vreg;
+					else
+						ins->sreg2 = vreg;
+					break;
+				}
+				else if (def->opcode == OP_ICONST) {
+					guint32 opcode2 = op_to_op_imm (ins->opcode);
+
+					/* srcindex == 1 -> binop, ins->sreg2 == -1 -> unop */
+					if ((opcode2 != -1) && ((srcindex == 1) || (ins->sreg2 == -1))) {
+						//printf ("CONST FOLD: %s -> %s!\n", mono_inst_name (ins->opcode), mono_inst_name (opcode2));
+						ins->opcode = opcode2;
+						ins->inst_imm = def->inst_c0;
+						if (srcindex == 0)
+							ins->sreg1 = -1;
+						else
+							ins->sreg2 = -1;
+					}
 				}
 			}
-		}		
-
+		}
+	
 		if ((ins->dreg != -1) && (spec [MONO_INST_DEST] == 'i')) {
-			/* Invalidate values */
-			for (i = 0; i < acp->len; i += 2)
-				if ((g_array_index (acp, int, i) == ins->dreg) || (g_array_index (acp, int, i + 1) == ins->dreg))
-					g_array_index (acp, int, i) = -1;
-		}
-
-		if (ins->opcode == OP_LDADDR) {
-			return;
-		}
-
-		/* FIXME: Add support for long/float */
-		if (ins->opcode == OP_MOVE) {
-			for (i = 0; i < acp->len; i += 2)
-				if (g_array_index (acp, int, i) == ins->dreg)
-					break;
-
-			if (i < acp->len)
-				g_array_index (acp, int, i + 1) = ins->sreg1;
-			else {
-				g_array_append_val (acp, ins->dreg);
-				g_array_append_val (acp, ins->sreg1);
-			}
+			defs [ins->dreg] = ins;
+			def_index [ins->dreg] = ins_index;
 		}
 	}
 
-	g_array_free (acp, TRUE);
+	/* 
+	 * FIXME: Get rid of dead code created by this pass early so
+	 * the spill pass doesn't create loads/stores for it.
+	 */
+
+	g_free (defs);
+	g_free (def_index);
 }
 
 static void
@@ -9390,6 +9397,85 @@ mono_local_cprop2 (MonoCompile *cfg)
 	for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
 		mono_local_cprop_bb2 (cfg, bb, cfg->num_varinfo);
 	}
+}
+
+/**
+ * mono_local_deadce:
+ *
+ *   Get rid of the dead assignments to local vregs left by the copyprop pass.
+ */
+static void
+mono_local_deadce (MonoCompile *cfg)
+{
+	MonoBasicBlock *bb;
+	MonoInst *ins;
+	gboolean *used;
+
+	/* FIXME: speed this up */
+
+	used = g_new (gboolean, cfg->next_vireg);
+
+	/* First pass: collect liveness info */
+	for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
+		memset (used, 0, sizeof (gboolean) * cfg->next_vireg);
+		for (ins = bb->code; ins; ins = ins->next) {
+			const char *spec = ins_info [ins->opcode - OP_START - 1];
+			int regtype, srcindex, sreg;
+
+			if (ins->opcode < MONO_CEE_LAST)
+				continue;
+
+			/* FIXME: Optimize this */
+			if (ins->opcode == OP_LDADDR)
+				break;
+
+			/* FIXME: Store opcodes */
+			for (srcindex = 0; srcindex < 2; ++srcindex) {
+				regtype = spec [(srcindex == 0) ? MONO_INST_SRC1 : MONO_INST_SRC2];
+				sreg = srcindex == 0 ? ins->sreg1 : ins->sreg2;
+
+				if (regtype == 'i')
+					used [sreg] = TRUE;
+
+				switch (ins->opcode) {
+				case OP_STORE:       
+				case OP_STORE_MEMBASE_REG:
+				case OP_STOREI1_MEMBASE_REG: 
+				case OP_STOREI2_MEMBASE_REG: 
+				case OP_STOREI4_MEMBASE_REG: 
+				case OP_STOREI8_MEMBASE_REG:
+				case OP_STORER4_MEMBASE_REG: 
+				case OP_STORER8_MEMBASE_REG:
+				case OP_STORE_MEMBASE_IMM:
+				case OP_STOREI1_MEMBASE_IMM: 
+				case OP_STOREI2_MEMBASE_IMM: 
+				case OP_STOREI4_MEMBASE_IMM: 
+				case OP_STOREI8_MEMBASE_IMM: 
+					used [ins->dreg] = TRUE;
+				}
+			}
+		}
+
+		if (ins && ins->opcode == OP_LDADDR)
+			continue;
+
+		/* Second pass: deadce */
+		for (ins = bb->code; ins; ins = ins->next) {
+			const char *spec = ins_info [ins->opcode - OP_START - 1];
+
+			if (ins->opcode < MONO_CEE_LAST)
+				continue;
+
+			if ((spec [MONO_INST_DEST] == 'i') && (ins->dreg >= MONO_MAX_IREGS) && !used [ins->dreg] && !get_vreg_to_inst (cfg, 'i', ins->dreg)) {
+				if ((ins->opcode == OP_MOVE) || (ins->opcode == OP_ICONST)) {
+					//printf ("DEADCE: "); mono_print_ins (ins);
+					ins->opcode = CEE_NOP;
+				}
+			}
+		}
+	}
+
+	g_free (used);
 }
 
 static void
@@ -9757,6 +9843,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 	if (cfg->new_ir) {
 		/* This must be done _before_ global reg alloc and _after_ decompose */
 		mono_handle_global_vregs (cfg);
+		//mono_local_deadce (cfg);
 	}
 
 	if (cfg->opt & MONO_OPT_LINEARS) {

@@ -1426,7 +1426,7 @@ emit_call (MonoCompile *cfg, guint8 *code, guint32 patch_type, gconstpointer dat
 }
 
 /* FIXME: Add more instructions */
-#define INST_IGNORES_CFLAGS(ins) (((ins)->opcode == CEE_BR) || ((ins)->opcode == OP_STORE_MEMBASE_IMM) || ((ins)->opcode == OP_STOREI4_MEMBASE_REG) || ((ins)->opcode == OP_IXOR))
+#define INST_IGNORES_CFLAGS(ins) (((ins)->opcode == CEE_BR) || ((ins)->opcode == OP_STORE_MEMBASE_IMM) || ((ins)->opcode == OP_STOREI4_MEMBASE_IMM) || ((ins)->opcode == OP_STOREI4_MEMBASE_REG) || ((ins)->opcode == OP_IXOR) || ((ins)->opcode == OP_MOVE))
 
 static void
 peephole_pass (MonoCompile *cfg, MonoBasicBlock *bb)

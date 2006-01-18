@@ -79,7 +79,8 @@
 
 static int ldind_to_load_membase (int opcode);
 static int stind_to_store_membase (int opcode);
-static int alu_to_alu_imm (int opcode);
+
+int op_to_op_imm (int opcode);
 
 gboolean  mono_arch_print_tree(MonoInst *tree, int arity);
 
@@ -6355,7 +6356,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 
 			/* Use the immediate opcodes if possible */
 			if ((sp [1]->opcode == OP_ICONST) && mono_arch_is_inst_imm (sp [1]->inst_c0)) {
-				int imm_opcode = alu_to_alu_imm (ins->opcode);
+				int imm_opcode = op_to_op_imm (ins->opcode);
 				if (imm_opcode != -1) {
 					ins->opcode = imm_opcode;
 					ins->inst_p1 = (gpointer)(gssize)(sp [1]->inst_c0);
@@ -6398,7 +6399,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 
 			/* Use the immediate opcodes if possible */
 			if (((sp [1]->opcode == OP_ICONST) || (sp [1]->opcode == OP_I8CONST)) && mono_arch_is_inst_imm (sp [1]->opcode == OP_ICONST ? sp [1]->inst_c0 : sp [1]->inst_l)) {
-				int imm_opcode = alu_to_alu_imm (ins->opcode);
+				int imm_opcode = op_to_op_imm (ins->opcode);
 				if (imm_opcode != -1) {
 					ins->opcode = imm_opcode;
 					if (sp [1]->opcode == OP_I8CONST) {
@@ -8668,8 +8669,8 @@ store_membase_reg_to_store_membase_imm (int opcode)
 	return -1;
 }		
 
-static int
-alu_to_alu_imm (int opcode)
+int
+op_to_op_imm (int opcode)
 {
 	switch (opcode) {
 	case OP_IADD:
@@ -8718,6 +8719,16 @@ alu_to_alu_imm (int opcode)
 	case OP_LSHR_UN:
 		return OP_LSHR_UN_IMM;		
 
+	case OP_STORE_MEMBASE_REG:
+		return OP_STORE_MEMBASE_IMM;
+	case OP_STOREI1_MEMBASE_REG:
+		return OP_STOREI1_MEMBASE_IMM;
+	case OP_STOREI2_MEMBASE_REG:
+		return OP_STOREI2_MEMBASE_IMM;
+	case OP_STOREI4_MEMBASE_REG:
+		return OP_STOREI4_MEMBASE_IMM;
+	case OP_X86_PUSH:
+		return OP_X86_PUSH_IMM;
 	default:
 		return -1;
 	}
@@ -9114,22 +9125,29 @@ mono_spill_global_vars (MonoCompile *cfg)
 					} else {
 						g_assert (var->opcode == OP_REGOFFSET);
 
-						sreg = alloc_dreg (cfg, stacktypes [regtype]);
+						/* FIXME: Generalize this */
+						if (ins->opcode == OP_X86_PUSH) {
+							ins->opcode = OP_X86_PUSH_MEMBASE;
+							ins->inst_basereg = var->inst_basereg;
+							ins->inst_offset = var->inst_offset;
+						} else {
+							sreg = alloc_dreg (cfg, stacktypes [regtype]);
 
-						if (srcindex == 0)
-							ins->sreg1 = sreg;
-						else
-							ins->sreg2 = sreg;
+							if (srcindex == 0)
+								ins->sreg1 = sreg;
+							else
+								ins->sreg2 = sreg;
 
-						if (regtype == 'l') {
-							NEW_LOAD_MEMBASE (cfg, load_ins, OP_LOADI4_MEMBASE, sreg + 1, var->inst_basereg, var->inst_offset + MINI_MS_WORD_OFFSET);
-							insert_before_ins (bb, ins, load_ins, &prev);
-							NEW_LOAD_MEMBASE (cfg, load_ins, OP_LOADI4_MEMBASE, sreg, var->inst_basereg, var->inst_offset + MINI_LS_WORD_OFFSET);
-							insert_before_ins (bb, ins, load_ins, &prev);
-						}
-						else {
-							NEW_LOAD_MEMBASE (cfg, load_ins, mono_type_to_load_membase (var->inst_vtype), sreg, var->inst_basereg, var->inst_offset);
-							insert_before_ins (bb, ins, load_ins, &prev);
+							if (regtype == 'l') {
+								NEW_LOAD_MEMBASE (cfg, load_ins, OP_LOADI4_MEMBASE, sreg + 1, var->inst_basereg, var->inst_offset + MINI_MS_WORD_OFFSET);
+								insert_before_ins (bb, ins, load_ins, &prev);
+								NEW_LOAD_MEMBASE (cfg, load_ins, OP_LOADI4_MEMBASE, sreg, var->inst_basereg, var->inst_offset + MINI_LS_WORD_OFFSET);
+								insert_before_ins (bb, ins, load_ins, &prev);
+							}
+							else {
+								NEW_LOAD_MEMBASE (cfg, load_ins, mono_type_to_load_membase (var->inst_vtype), sreg, var->inst_basereg, var->inst_offset);
+								insert_before_ins (bb, ins, load_ins, &prev);
+							}
 						}
 					}
 				}

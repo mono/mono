@@ -311,6 +311,9 @@ mono_print_ins_index (int i, MonoInst *ins)
 	case OP_COMPARE_IMM:
 		g_print (" [%d]", (int)ins->inst_c0);
 		break;
+	case OP_X86_PUSH_IMM:
+		g_print (" [%d]", (int)ins->inst_imm);
+		break;
 	case OP_ADD_IMM:
 		g_print (" [%d]", (int)(gssize)ins->inst_p1);
 		break;
@@ -833,7 +836,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 
 	i = 1;
 	fpcount = 0;
-	DEBUG (g_print ("\nLOCAL regalloc: basic block %d:\n", bb->block_num));
+	DEBUG (g_print ("\nLOCAL REGALLOC: BASIC BLOCK %d:\n", bb->block_num));
 
 	/* forward pass on the instructions to collect register liveness info */
 	ins = bb->code;
@@ -1210,7 +1213,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 				dreg_mask &= ~ (regmask (dest_sreg2));
 
 			val = rassign (cfg, ins->dreg, fp);
-			if (is_soft_reg (ins->dreg, fp) && (val >= 0) && (!(val & dreg_mask))) {
+			if (is_soft_reg (ins->dreg, fp) && (val >= 0) && (!(regmask (val) & dreg_mask))) {
 				/* DREG is already allocated to a register needed for sreg1 */
 				get_register_force_spilling (cfg, tmp, ins, ins->dreg, FALSE);
 				mono_regstate_free_int (rs, val);
@@ -1244,7 +1247,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 				dreg_mask = (regmask (dest_dreg));
 
 			/* FIXME: Do this earlier */
-			if ((ins->opcode == OP_MOVE) && !fp && (reginfo [ins->dreg].last_use == i) && (reginfo [ins->dreg].prev_use == 0)) {
+			if (((ins->opcode == OP_MOVE) || (ins->opcode == OP_ICONST)) && !fp && (reginfo [ins->dreg].last_use == i) && (reginfo [ins->dreg].prev_use == 0)) {
 				ins->opcode = CEE_NOP;
 			}
 
