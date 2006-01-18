@@ -639,7 +639,7 @@ namespace Microsoft.JScript {
 					pn = new ForIn (parent, init, cond, body, new Location (ts.SourceName, ts.LineNumber));
 				else
 					pn = new For (parent, init, cond, incr, body, new Location (ts.SourceName, ts.LineNumber));
-				body.parent = pn;
+				body.PropagateParent (pn);
 			} else if (tt == Token.TRY) {
 				int line_number = ts.LineNumber;
 				AST try_block;
