@@ -1,3 +1,8 @@
+2006-01-18  Chris Toshok  <toshok@ximian.com>
+
+	* Makefile: Add build foo to handle the System.Web.dll <->
+	System.Web.Services.dll cyclic dependencies.
+
 2006-01-09  Chris Toshok  <toshok@ximian.com>
 
 	* Makefile (OTHER_LIB_MCS_FLAGS): if we're building net_2_0,

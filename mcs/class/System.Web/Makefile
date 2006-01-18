@@ -2,6 +2,17 @@ thisdir = class/System.Web
 SUBDIRS = Test
 include ../../build/rules.make
 
+ifeq (net_2_0, $(PROFILE))
+# Because System.Web.dll and System.Web.Services.dll have a cyclic dependency, we need a two-pass build.
+# 1st pass - build System.Web.dll without System.Web.Services.dll reference
+# 2nd pass - build System.Web.dll with System.Web.Services.dll reference
+
+WEBSERVICES_DEP := System.Web.Services.dll
+WEBSERVICES_DEP_FILE := $(wildcard ../lib/$(PROFILE)/$(WEBSERVICES_DEP))
+CYCLIC_DEPS := $(WEBSERVICES_DEP)
+CYCLIC_DEP_FILES := $(WEBSERVICES_DEP_FILE)
+endif
+
 RESOURCE_FILES_1= \
 	resources/WebUIValidation.js
 
@@ -66,8 +77,25 @@ LIB_MCS_FLAGS = \
 	$(OTHER_LIB_MCS_FLAGS) \
 	$(OTHER_RES:%=/resource:%)
 
+ifneq ($(CYCLIC_DEPS:%=../lib/$(PROFILE)/%), $(CYCLIC_DEP_FILES))
+NO_SIGN_ASSEMBLY = yes
+NO_INSTALL = yes
+all-local: echo-warning
+.PHONY: echo-warning
+
+ifeq   (, $(strip $(CYCLIC_DEP_FILES)))
+echo-warning:
+	@echo "** Warning: System.Web.dll built without parts that depend on: $(CYCLIC_DEPS)"
+endif
+endif
+
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -nowarn:219 -nowarn:169
 
 EXTRA_DISTFILES = $(RESOURCE_FILES_2) $(RESOURCE_FILES_1)
 
 include ../../build/library.make
+
+ifdef WEBSERVICES_DEP_FILE
+LIB_MCS_FLAGS += /define:WEBSERVICES_DEP /r:$(WEBSERVICES_DEP)
+$(the_lib): $(WEBSERVICES_DEP_FILE)
+endif
