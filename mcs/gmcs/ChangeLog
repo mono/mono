@@ -1,3 +1,18 @@
+2006-01-18  Martin Baulig  <martin@ximian.com>
+
+	Fix #76417: a generic class may now have methods which may unify
+	for some type parameter substitutions.
+
+	* class.cs (Method.IsDuplicateImplementation): Don't report CS0408
+	for methods which may unify anymore.
+
+	* expression.cs (Invocation.MoreSpecific): New private static
+	method; checks whether one method is more specific than another
+	according to 14.4.2.2 of the spec.
+	(Invocation.BetterFunction): Implement the tie-breaking rules from
+	14.4.2.2 of the spec: if two methods unify for some type parameter
+	substitution, we need to pick the more specific one.
+
 2006-01-18  Raja R Harinath  <rharinath@novell.com>
 
 	Fix #76656, cs0231-2.cs.

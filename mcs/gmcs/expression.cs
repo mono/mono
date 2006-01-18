@@ -4295,6 +4295,27 @@ namespace Mono.CSharp {
 
 			return null;
 		}
+
+		static int MoreSpecific (EmitContext ec, Type p, Type q, Location loc)
+		{
+			if (p.IsGenericParameter && !q.IsGenericParameter)
+				return -1;
+			if (!p.IsGenericParameter && q.IsGenericParameter)
+				return 1;
+
+			if (p.IsGenericInstance) {
+				Type[] pargs = TypeManager.GetTypeArguments (p);
+				Type[] qargs = TypeManager.GetTypeArguments (q);
+
+				for (int i = 0; i < pargs.Length; i++) {
+					int better = MoreSpecific (ec, pargs [i], qargs [i], loc);
+					if (better != 0)
+						return better;
+				}
+			}
+
+			return 0;
+		}
 		
 		/// <summary>
 		///   Determines "Better function" between candidate
@@ -4306,12 +4327,12 @@ namespace Mono.CSharp {
 		///     true  if candidate is better than the current best match
 		/// </remarks>
 		static bool BetterFunction (EmitContext ec, ArrayList args, int argument_count,
-					   MethodBase candidate, bool candidate_params,
-					   MethodBase best, bool best_params, Location loc)
+					    MethodBase candidate, bool candidate_params,
+					    MethodBase best, bool best_params, Location loc)
 		{
 			ParameterData candidate_pd = TypeManager.GetParameterData (candidate);
 			ParameterData best_pd = TypeManager.GetParameterData (best);
-		
+
 			bool better_at_least_one = false;
 			bool same = true;
 			for (int j = 0; j < argument_count; ++j) {
@@ -4358,6 +4379,25 @@ namespace Mono.CSharp {
 				return true;
 			else if (!TypeManager.IsGenericMethod (best) && TypeManager.IsGenericMethod (candidate))
 				return false;
+
+			MethodBase orig_candidate = candidate.Mono_IsInflatedMethod ?
+				candidate.GetGenericMethodDefinition () : candidate;
+			MethodBase orig_best = best.Mono_IsInflatedMethod ?
+				best.GetGenericMethodDefinition () : best;
+
+			ParameterData orig_candidate_pd = TypeManager.GetParameterData (orig_candidate);
+			ParameterData orig_best_pd = TypeManager.GetParameterData (orig_best);
+
+			for (int j = 0; j < argument_count; ++j) {
+				Type ct = TypeManager.TypeToCoreType (orig_candidate_pd.ParameterType (j));
+				Type bt = TypeManager.TypeToCoreType (orig_best_pd.ParameterType (j));
+
+				int more_specific = MoreSpecific (ec, ct, bt, loc);
+				if (more_specific > 0)
+					return true;
+				else if (more_specific < 0)
+					return false;
+			}
 
 			//
 			// Note that this is not just an optimization.  This handles the case
