@@ -9311,11 +9311,13 @@ mono_local_cprop_bb2 (MonoCompile *cfg, MonoBasicBlock *bb, int acp_size)
 	int ins_index;
 	MonoInst **defs;
 	guint32 *def_index;
+	gboolean *addr_taken;
 
 	/* FIXME: Speed this up */
 
 	defs = g_new0 (MonoInst*, cfg->next_vireg);
 	def_index = g_new (guint32, cfg->next_vireg);
+	addr_taken = g_new0 (gboolean, cfg->next_vireg);
 
 	ins_index = 0;
 	for (ins = bb->code; ins; ins = ins->next) {
@@ -9326,8 +9328,12 @@ mono_local_cprop_bb2 (MonoCompile *cfg, MonoBasicBlock *bb, int acp_size)
 			continue;
 
 		/* FIXME: Optimize this */
-		if (ins->opcode == OP_LDADDR)
-			return;
+		if (ins->opcode == OP_LDADDR) {
+			MonoInst *var = ins->inst_p0;
+
+			if (!MONO_TYPE_ISSTRUCT (var->inst_vtype))
+				return;
+		}
 
 		/* FIXME: Store opcodes */
 		for (srcindex = 0; srcindex < 2; ++srcindex) {
@@ -9456,8 +9462,12 @@ mono_local_deadce (MonoCompile *cfg)
 				continue;
 
 			/* FIXME: Optimize this */
-			if (ins->opcode == OP_LDADDR)
-				break;
+			if (ins->opcode == OP_LDADDR) {
+				MonoInst *var = ins->inst_p0;
+
+				if (!MONO_TYPE_ISSTRUCT (var->inst_vtype))
+					return;
+			}
 
 			/* FIXME: Store opcodes */
 			for (srcindex = 0; srcindex < 2; ++srcindex) {
