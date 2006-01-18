@@ -1,5 +1,12 @@
 2006-01-18  Alexander Olk  <alex.olk@googlemail.com>
 
+	* Control.cs: Make use of Theme.DoubleBufferingSupported
+	* ThemeGtk.cs:
+	  - Added drawing for flat style buttons
+	  - Added ScrollBar drawing
+
+2006-01-18  Alexander Olk  <alex.olk@googlemail.com>
+
 	* ThemeClearlooks.cs: Removed some unneeded code.
 	* ThemeGtk.cs: First part of ThemeGtk enhancements.
 

@@ -3656,20 +3656,22 @@ namespace System.Windows.Forms
 					}
 
 					Graphics dc = null;
-					if ((control_style & ControlStyles.DoubleBuffer) != 0) {
-						dc = paint_event.SetGraphics (DeviceContext);
-					}
+					if (ThemeEngine.Current.DoubleBufferingSupported)
+						if ((control_style & ControlStyles.DoubleBuffer) != 0) {
+							dc = paint_event.SetGraphics (DeviceContext);
+						}
 
 					OnPaintBackground(paint_event);
 					// Leave out for now, our controls can do Paint += ... as well
 					//OnPaintInternal(paint_event);
 					OnPaint(paint_event);
 
-					if ((control_style & ControlStyles.DoubleBuffer) != 0) {
-						dc.DrawImage (ImageBuffer, paint_event.ClipRectangle, paint_event.ClipRectangle, GraphicsUnit.Pixel);
-						paint_event.SetGraphics (dc);
-						needs_redraw = false;
-					}
+					if (ThemeEngine.Current.DoubleBufferingSupported)
+						if ((control_style & ControlStyles.DoubleBuffer) != 0) {
+							dc.DrawImage (ImageBuffer, paint_event.ClipRectangle, paint_event.ClipRectangle, GraphicsUnit.Pixel);
+							paint_event.SetGraphics (dc);
+							needs_redraw = false;
+						}
 
 					XplatUI.PaintEventEnd(Handle, true);
 

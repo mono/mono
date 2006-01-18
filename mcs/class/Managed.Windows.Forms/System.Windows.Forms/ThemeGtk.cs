@@ -37,10 +37,6 @@
 //		- You can activate this Theme in Linux doing export MONO_THEME=gtk
 //		- GTK paints controls into a window no a device context. We should inverstigate if we 
 //		we can encapsulate a dc in a gtkwindow.
-//
-//	Hint:	Currently ThemeGtk doesn't work without a modified Control class, it doesn't like
-//		double buffering. As soon as DoubleBufferingSupported is implemented it should run
-//		out of the box. Alex.
 
 
 // NOT COMPLETE
@@ -120,8 +116,7 @@ namespace System.Windows.Forms
 
 		 	/* TODO: There is more stuff that we will add when we need it*/
 		}
-
-			
+		
 		/* GDK imports */
 		[DllImport("libgdk-x11-2.0.so")]
 		internal static extern IntPtr gdk_display_manager_get ();
@@ -153,6 +148,9 @@ namespace System.Windows.Forms
 
 		[DllImport("libgtk-x11-2.0.so")]
 		static extern IntPtr gtk_vscrollbar_new(IntPtr adjustment);
+		
+		[DllImport("libgtk-x11-2.0.so")]
+		static extern IntPtr gtk_hscrollbar_new(IntPtr adjustment);
 
 		[DllImport("libgtk-x11-2.0.so")]
 		static extern IntPtr gtk_style_attach (IntPtr raw, IntPtr window);
@@ -192,13 +190,26 @@ namespace System.Windows.Forms
 						  IntPtr area, IntPtr widget, string detail, int x, int y, int width, int height);
 		
 		[DllImport("libgtk-x11-2.0.so")]
+		static extern void gtk_paint_flat_box (IntPtr style, IntPtr window, int state_type, int shadow_type,
+						       IntPtr area, IntPtr widget, string detail, int x, int y, int width, int height);
+		
+		[DllImport("libgtk-x11-2.0.so")]
 		static extern void gtk_paint_hline(IntPtr style, IntPtr window, int state_type, IntPtr area, IntPtr widget, string detail, int x1, int x2, int y);
+		
+		[DllImport("libgtk-x11-2.0.so")]
+		static extern void gtk_paint_vline(IntPtr style, IntPtr window, int state_type, IntPtr area, IntPtr widget, string detail, int y1, int y2, int x);
 		
 		[DllImport("libgtk-x11-2.0.so")]
 		static extern void gtk_paint_check(IntPtr style, IntPtr window, int state_type, int shadow_type, IntPtr area, IntPtr widget, string detail, int x, int y, int width, int height);
 		
 		[DllImport("libgtk-x11-2.0.so")]
 		static extern void gtk_paint_focus(IntPtr style, IntPtr window, int state_type, IntPtr area, IntPtr widget, string detail, int x, int y, int width, int height);
+		
+		[DllImport("libgtk-x11-2.0.so")]
+		static extern void gtk_widget_size_allocate (IntPtr widget, ref Rectangle allocation);
+		
+		[DllImport("libgtk-x11-2.0.so")]
+		static extern void gtk_widget_set_size_request (IntPtr widget, int width, int height);
 
 		/* Data */
 		static protected IntPtr dispmgr;
@@ -209,6 +220,11 @@ namespace System.Windows.Forms
 		static protected SolidBrush br_buttontext;
 		
 		IntPtr global_gtk_button = gtk_button_new();
+		IntPtr global_gtk_vscrollbar = IntPtr.Zero;
+		IntPtr global_gtk_hscrollbar = IntPtr.Zero;
+		
+		IntPtr current_gdk_window = IntPtr.Zero;
+		IntPtr current_style = IntPtr.Zero;
 
 		public static void InitGtk ()
 		{	
@@ -249,6 +265,10 @@ namespace System.Windows.Forms
 			br_buttonface = new SolidBrush (defaultWindowBackColor);		
 			br_buttontext = new SolidBrush (defaultWindowForeColor);			
 			always_draw_hotkeys = true;
+			
+			IntPtr adj = gtk_adjustment_new (0, 0, 0, 0, 0, 0);
+                        global_gtk_vscrollbar = gtk_vscrollbar_new (adj);
+			global_gtk_hscrollbar = gtk_hscrollbar_new (adj);
 		}	
 
 		public override bool DoubleBufferingSupported {
@@ -267,7 +287,7 @@ namespace System.Windows.Forms
 			
 			IntPtr style;
 			
-                        style = gtk_rc_get_style (global_gtk_button);		
+			style = gtk_rc_get_style (global_gtk_button);		
 			style = gtk_style_attach (style, gdkwindow);  // need it
 			
 			StateType state_type = StateType.Normal;
@@ -286,23 +306,33 @@ namespace System.Windows.Forms
 				state_type = StateType.Prelight;
 			}
 			
+			if (button.flat_style == FlatStyle.Flat)
+				gtk_paint_flat_box (style, gdkwindow,
+						    (int) state_type,
+						    (int) shadow_type,
+						    IntPtr.Zero,
+						    IntPtr.Zero,
+						    detail,
+						    buttonRectangle.X, buttonRectangle.Y,
+						    buttonRectangle.Width, buttonRectangle.Height);
+			else
 			if (button.flat_style != FlatStyle.Popup || (button.flat_style == FlatStyle.Popup && button.is_entered))
-			gtk_paint_box (style, gdkwindow,
-				       (int) state_type,
-				       (int) shadow_type,
-				       IntPtr.Zero,
-				       IntPtr.Zero,
-				       detail,
-				       buttonRectangle.X, buttonRectangle.Y,
-				       buttonRectangle.Width, buttonRectangle.Height);
+				gtk_paint_box (style, gdkwindow,
+					       (int) state_type,
+					       (int) shadow_type,
+					       IntPtr.Zero,
+					       IntPtr.Zero,
+					       detail,
+					       buttonRectangle.X, buttonRectangle.Y,
+					       buttonRectangle.Width, buttonRectangle.Height);
 		}
 		
 		protected override void ButtonBase_DrawFocus( ButtonBase button, Graphics dc ) {
 			
-			if ( !button.is_enabled || button.flat_style == FlatStyle.Popup )
+			if ( !button.is_enabled)
 				return;
 			
-			Rectangle focus_rect = new Rectangle( button.ClientRectangle.X + 5, button.ClientRectangle.Y + 5, button.ClientRectangle.Width - 10, button.ClientRectangle.Height - 10 );
+			Rectangle focus_rect = new Rectangle( button.ClientRectangle.X + 4, button.ClientRectangle.Y + 4, button.ClientRectangle.Width - 9, button.ClientRectangle.Height - 9 );
 			
 			IntPtr gdkwindow = gdk_window_foreign_new_for_display (gdkdisplay, (uint) button.Handle);
 			
@@ -323,24 +353,441 @@ namespace System.Windows.Forms
 					 focus_rect.Height);
 		}
 		
-#if updated		
-		public void DrawScrollButton (Graphics dc, Rectangle area, ScrollButton type, ButtonState state,
-			IntPtr gdkwindow, IntPtr style)
-		{
-			ArrowType arrow_type = 0;
-
-			gtk_paint_box (style, 
-					gdkwindow, 
-					(int) StateType.Normal,
-					(int) ShadowType.Out,
-					IntPtr.Zero,
-					IntPtr.Zero,
-					"trough",					
-					area.X, area.Y,
-					area.Width, area.Height);
+		#region ScrollBar
+		public override void DrawScrollBar( Graphics dc, Rectangle clip, ScrollBar bar ) {
+			int		scrollbutton_width = bar.scrollbutton_width;
+			int		scrollbutton_height = bar.scrollbutton_height;
+			Rectangle	first_arrow_area;
+			Rectangle	second_arrow_area;			
+			Rectangle	thumb_pos;
 			
-			/* Calc arrows coordinates */
-			switch (type) {
+			IntPtr gdkwindow = gdk_window_foreign_new_for_display (gdkdisplay, (uint) bar.Handle);
+			
+			IntPtr style;
+			
+			Rectangle allocation = new Rectangle (bar.ClientRectangle.X, bar.ClientRectangle.Y, bar.ClientRectangle.Width, bar.ClientRectangle.Height);
+			
+			// fix for artefacts
+			Color fix_color = bar.Parent != null ? bar.Parent.BackColor : ColorControl;
+			
+			if (bar.vert) {
+				style = gtk_rc_get_style (global_gtk_vscrollbar);
+				
+				gtk_widget_size_allocate (global_gtk_vscrollbar, ref allocation);
+				
+				dc.FillRectangle (ResPool.GetSolidBrush (fix_color), 
+						  bar.ClientRectangle.X, bar.ClientRectangle.Y, bar.ClientRectangle.Width, 3);
+				dc.FillRectangle (ResPool.GetSolidBrush (fix_color), 
+						  bar.ClientRectangle.X, bar.ClientRectangle.Bottom - 4, bar.ClientRectangle.Width, 3);
+			} else {
+				style = gtk_rc_get_style (global_gtk_hscrollbar);
+				
+				gtk_widget_size_allocate (global_gtk_hscrollbar, ref allocation);
+				
+				dc.FillRectangle (ResPool.GetSolidBrush (fix_color), 
+						  bar.ClientRectangle.X, bar.ClientRectangle.Y, 3, bar.ClientRectangle.Height);
+				dc.FillRectangle (ResPool.GetSolidBrush (fix_color), 
+						  bar.ClientRectangle.Right - 4, bar.ClientRectangle.Y, 3, bar.ClientRectangle.Height);
+			}
+			
+			style = gtk_style_attach (style, gdkwindow);  // need it
+			
+			current_gdk_window = gdkwindow;
+			current_style = style;
+			
+			thumb_pos = bar.ThumbPos;
+			
+			if ( bar.vert ) {
+				first_arrow_area = new Rectangle( 0, 0, bar.Width, scrollbutton_height + 1 );
+				bar.FirstArrowArea = first_arrow_area;
+				
+				second_arrow_area = new Rectangle( 0, bar.ClientRectangle.Height - scrollbutton_height - 1, bar.Width, scrollbutton_height + 1 );
+				bar.SecondArrowArea = second_arrow_area;
+				
+				thumb_pos.Width = bar.Width;
+				bar.ThumbPos = thumb_pos;
+				
+				/* Background */
+				switch ( bar.thumb_moving ) {
+				case ScrollBar.ThumbMoving.None: {
+						ScrollBar_Vertical_Draw_ThumbMoving_None( scrollbutton_height, bar, clip, dc );
+						break;
+					}
+				case ScrollBar.ThumbMoving.Forward: {
+						ScrollBar_Vertical_Draw_ThumbMoving_Forward( scrollbutton_height, bar, thumb_pos, clip, dc );
+						break;
+					}
+					
+				case ScrollBar.ThumbMoving.Backwards: {
+						ScrollBar_Vertical_Draw_ThumbMoving_Backwards( scrollbutton_height, bar, thumb_pos, clip, dc );
+						break;
+					}
+					
+				default:
+					break;
+				}
+				
+				/* Buttons */
+				if ( clip.IntersectsWith( first_arrow_area ) )
+					CPDrawScrollButton( dc, first_arrow_area, ScrollButton.Up, bar.firstbutton_state );
+				if ( clip.IntersectsWith( second_arrow_area ) )
+					CPDrawScrollButton( dc, second_arrow_area, ScrollButton.Down, bar.secondbutton_state );
+			} else {
+				first_arrow_area = new Rectangle( 0, 0, scrollbutton_width + 1, bar.Height );
+				bar.FirstArrowArea = first_arrow_area;
+				
+				second_arrow_area = new Rectangle( bar.ClientRectangle.Width - scrollbutton_width - 1, 0, scrollbutton_width + 1, bar.Height );
+				bar.SecondArrowArea = second_arrow_area;
+				
+				thumb_pos.Height = bar.Height;
+				bar.ThumbPos = thumb_pos;
+				
+				/* Background */					
+				switch ( bar.thumb_moving ) {
+				case ScrollBar.ThumbMoving.None: {
+						ScrollBar_Horizontal_Draw_ThumbMoving_None( scrollbutton_width, bar, clip, dc );
+						break;
+					}
+					
+				case ScrollBar.ThumbMoving.Forward: {
+						ScrollBar_Horizontal_Draw_ThumbMoving_Forward( scrollbutton_width, thumb_pos, bar, clip, dc );
+						break;
+					}
+					
+				case ScrollBar.ThumbMoving.Backwards: {
+						ScrollBar_Horizontal_Draw_ThumbMoving_Backwards( scrollbutton_width, thumb_pos, bar, clip, dc );
+						break;
+					}
+				}
+				
+				/* Buttons */
+				if ( clip.IntersectsWith( first_arrow_area ) )
+					CPDrawScrollButton( dc, first_arrow_area, ScrollButton.Left, bar.firstbutton_state );
+				if ( clip.IntersectsWith( second_arrow_area ) )
+					CPDrawScrollButton( dc, second_arrow_area, ScrollButton.Right, bar.secondbutton_state );
+			}
+			
+			/* Thumb */
+			ScrollBar_DrawThumb( bar, thumb_pos, clip, dc );				
+		}
+		
+		protected override void ScrollBar_DrawThumb( ScrollBar bar, Rectangle thumb_pos, Rectangle clip, Graphics dc ) {
+			if ( bar.Enabled && thumb_pos.Width > 0 && thumb_pos.Height > 0 && clip.IntersectsWith( thumb_pos ) )
+				DrawScrollBarThumb( dc, thumb_pos, bar );
+		}
+		
+		protected override void ScrollBar_Vertical_Draw_ThumbMoving_None (int scrollbutton_height, ScrollBar bar, Rectangle clip, Graphics dc)
+		{
+			Rectangle r = new Rectangle (0,
+						     scrollbutton_height, bar.ClientRectangle.Width, bar.ClientRectangle.Height - (scrollbutton_height * 2));
+			Rectangle intersect = Rectangle.Intersect (clip, r);
+			
+			if (intersect != Rectangle.Empty) {
+				
+				gtk_paint_box (style, 
+					       current_gdk_window, 
+					       (int) StateType.Active,
+					       (int) ShadowType.Out,
+					       IntPtr.Zero,
+					       global_gtk_vscrollbar,
+					       "vscrollbar",
+					       intersect.X, intersect.Y,
+					       intersect.Width, intersect.Height);
+			}
+		}
+		
+		protected override void ScrollBar_Vertical_Draw_ThumbMoving_Forward( int scrollbutton_height, ScrollBar bar, Rectangle thumb_pos, Rectangle clip, Graphics dc ) {
+			Rectangle r = new Rectangle( 0,	 scrollbutton_height,
+						    bar.ClientRectangle.Width, thumb_pos.Y  - scrollbutton_height );
+			Rectangle intersect = Rectangle.Intersect( clip, r );
+			
+			if ( intersect != Rectangle.Empty ) {
+				
+				gtk_paint_box (style, 
+					       current_gdk_window, 
+					       (int) StateType.Active,
+					       (int) ShadowType.Out,
+					       IntPtr.Zero,
+					       global_gtk_vscrollbar,
+					       "vscrollbar",
+					       intersect.X, intersect.Y,
+					       intersect.Width, intersect.Height);
+			}
+			
+			r.X = 0;
+			r.Y = thumb_pos.Y + thumb_pos.Height;
+			r.Width = bar.ClientRectangle.Width;
+			r.Height = bar.ClientRectangle.Height -	 ( thumb_pos.Y + thumb_pos.Height ) - scrollbutton_height;
+			
+			intersect = Rectangle.Intersect( clip, r );
+			if ( intersect != Rectangle.Empty ) {
+				
+				gtk_paint_box (style, 
+					       current_gdk_window, 
+					       (int) StateType.Active,
+					       (int) ShadowType.Out,
+					       IntPtr.Zero,
+					       global_gtk_vscrollbar,
+					       "vscrollbar",
+					       intersect.X, intersect.Y,
+					       intersect.Width, intersect.Height);
+			}
+		}
+		
+		protected override void ScrollBar_Vertical_Draw_ThumbMoving_Backwards( int scrollbutton_height, ScrollBar bar, Rectangle thumb_pos, Rectangle clip, Graphics dc ) {
+			Rectangle r = new Rectangle( 0,	 scrollbutton_height,
+						    bar.ClientRectangle.Width, thumb_pos.Y - scrollbutton_height );
+			Rectangle intersect = Rectangle.Intersect( clip, r );
+			
+			if ( intersect != Rectangle.Empty ) {
+				
+				gtk_paint_box (style, 
+					       current_gdk_window, 
+					       (int) StateType.Active,
+					       (int) ShadowType.Out,
+					       IntPtr.Zero,
+					       global_gtk_vscrollbar,
+					       "vscrollbar",
+					       intersect.X, intersect.Y,
+					       intersect.Width, intersect.Height);
+			}
+			
+			r.X = 0;
+			r.Y = thumb_pos.Y + thumb_pos.Height;
+			r.Width = bar.ClientRectangle.Width;
+			r.Height = bar.ClientRectangle.Height -	 ( thumb_pos.Y + thumb_pos.Height ) - scrollbutton_height;
+			
+			intersect = Rectangle.Intersect( clip, r );
+			if ( intersect != Rectangle.Empty ) {
+				
+				gtk_paint_box (style, 
+					       current_gdk_window, 
+					       (int) StateType.Active,
+					       (int) ShadowType.Out,
+					       IntPtr.Zero,
+					       global_gtk_vscrollbar,
+					       "vscrollbar",
+					       intersect.X, intersect.Y,
+					       intersect.Width, intersect.Height);
+			}
+		}
+		
+		protected override void ScrollBar_Horizontal_Draw_ThumbMoving_None( int scrollbutton_width, ScrollBar bar, Rectangle clip, Graphics dc ) {
+			Rectangle r = new Rectangle( scrollbutton_width,
+						    0, bar.ClientRectangle.Width - ( scrollbutton_width * 2 ), bar.ClientRectangle.Height );
+			Rectangle intersect = Rectangle.Intersect( clip, r );
+			
+			if ( intersect != Rectangle.Empty ) {
+				
+				gtk_paint_box (style, 
+					       current_gdk_window, 
+					       (int) StateType.Active,
+					       (int) ShadowType.Out,
+					       IntPtr.Zero,
+					       global_gtk_hscrollbar,
+					       "hscrollbar",
+					       intersect.X, intersect.Y,
+					       intersect.Width, intersect.Height);
+			}
+		}
+		
+		protected override void ScrollBar_Horizontal_Draw_ThumbMoving_Forward( int scrollbutton_width, Rectangle thumb_pos, ScrollBar bar, Rectangle clip, Graphics dc ) {
+			Rectangle r = new Rectangle( scrollbutton_width,  0,
+						    thumb_pos.X - scrollbutton_width, bar.ClientRectangle.Height );
+			Rectangle intersect = Rectangle.Intersect( clip, r );
+			
+			if ( intersect != Rectangle.Empty ) {
+				
+				gtk_paint_box (style, 
+					       current_gdk_window, 
+					       (int) StateType.Active,
+					       (int) ShadowType.Out,
+					       IntPtr.Zero,
+					       global_gtk_hscrollbar,
+					       "hscrollbar",
+					       intersect.X, intersect.Y,
+					       intersect.Width, intersect.Height);
+			}
+			
+			r.X = thumb_pos.X + thumb_pos.Width;
+			r.Y = 0;
+			r.Width = bar.ClientRectangle.Width -  ( thumb_pos.X + thumb_pos.Width ) - scrollbutton_width;
+			r.Height = bar.ClientRectangle.Height;
+			
+			intersect = Rectangle.Intersect( clip, r );
+			if ( intersect != Rectangle.Empty ) {
+				
+				gtk_paint_box (style, 
+					       current_gdk_window, 
+					       (int) StateType.Active,
+					       (int) ShadowType.Out,
+					       IntPtr.Zero,
+					       global_gtk_hscrollbar,
+					       "hscrollbar",
+					       intersect.X, intersect.Y,
+					       intersect.Width, intersect.Height);
+			}
+		}
+		
+		protected override void ScrollBar_Horizontal_Draw_ThumbMoving_Backwards( int scrollbutton_width, Rectangle thumb_pos, ScrollBar bar, Rectangle clip, Graphics dc ) {
+			Rectangle r = new Rectangle( scrollbutton_width,  0,
+						    thumb_pos.X - scrollbutton_width, bar.ClientRectangle.Height );
+			Rectangle intersect = Rectangle.Intersect( clip, r );
+			
+			if ( intersect != Rectangle.Empty ) {
+				
+				gtk_paint_box (style, 
+					       current_gdk_window, 
+					       (int) StateType.Active,
+					       (int) ShadowType.Out,
+					       IntPtr.Zero,
+					       global_gtk_hscrollbar,
+					       "hscrollbar",
+					       intersect.X, intersect.Y,
+					       intersect.Width, intersect.Height);
+			}
+			
+			r.X = thumb_pos.X + thumb_pos.Width;
+			r.Y = 0;
+			r.Width = bar.ClientRectangle.Width -  ( thumb_pos.X + thumb_pos.Width ) - scrollbutton_width;
+			r.Height = bar.ClientRectangle.Height;
+			
+			intersect = Rectangle.Intersect( clip, r );
+			if ( intersect != Rectangle.Empty ) {
+				
+				gtk_paint_box (style, 
+					       current_gdk_window, 
+					       (int) StateType.Active,
+					       (int) ShadowType.Out,
+					       IntPtr.Zero,
+					       global_gtk_hscrollbar,
+					       "hscrollbar",
+					       intersect.X, intersect.Y,
+					       intersect.Width, intersect.Height);
+			}
+		}
+		
+		private void DrawScrollBarThumb( Graphics dc, Rectangle area, ScrollBar bar ) {
+			IntPtr gtk_scrollbar = IntPtr.Zero;
+			
+			if (bar.vert)
+				gtk_scrollbar = global_gtk_vscrollbar;
+			else
+				gtk_scrollbar = global_gtk_hscrollbar;
+			
+			gtk_paint_box (style, 
+				       current_gdk_window, 
+				       (int) StateType.Active,
+				       (int) ShadowType.In,
+				       IntPtr.Zero,
+				       gtk_scrollbar,
+				       "slider",
+				       area.X, area.Y,
+				       area.Width, area.Height);
+			
+//			if ( bar.vert ) {
+//				if ( area.Height > 12 ) {
+//					int mid_y = area.Y + ( area.Height / 2 );
+//					int mid_x = area.X + ( area.Width / 2 );
+//					
+//					// TODO: add 2 lines
+//					gtk_paint_hline(current_style,
+//							current_gdk_window,
+//							(int) StateType.Normal,
+//							IntPtr.Zero,
+//							IntPtr.Zero,
+//							"through",
+//							mid_x - 4,
+//							mid_x + 4,
+//							mid_y);
+//				}
+//			} else {
+//				// draw grip lines only if there is enough space
+//				if ( area.Width > 12 ) {
+//					int mid_x = area.X +  ( area.Width / 2 );
+//					int mid_y = area.Y +  ( area.Height / 2 );
+//					
+//					// TODO: add 2 lines
+//					gtk_paint_vline(current_style,
+//							current_gdk_window,
+//							(int) StateType.Normal,
+//							IntPtr.Zero,
+//							IntPtr.Zero,
+//							"through",
+//							mid_y - 4,
+//							mid_y + 4,
+//							mid_x);
+//				}
+//			}
+		}
+		#endregion	// ScrollBar
+		
+		public override void CPDrawButton (Graphics graphics, Rectangle rectangle, ButtonState state)
+		{
+			bool is_pushed = false;
+			bool is_checked = false;
+			bool is_flat = false;
+			bool is_inactive = false;
+			
+			if ((state & ButtonState.Pushed) != 0) {
+				is_pushed = true;
+			}
+			
+			if ((state & ButtonState.Checked) != 0) {
+				is_checked = true;
+			}
+			
+			if ((state & ButtonState.Flat) != 0) {
+				is_flat = true;
+			}
+			
+			if ((state & ButtonState.Inactive) != 0) {
+				is_inactive = true;
+			}
+			
+			IntPtr style;
+			
+			style = gtk_rc_get_style (global_gtk_button);		
+			style = gtk_style_attach (style, current_gdk_window);  // need it
+			
+			StateType state_type = StateType.Normal;
+			ShadowType shadow_type = ShadowType.In;
+			string detail = "buttondefault";
+			
+			if (is_inactive) {
+				state_type = StateType.Insensitive;
+			} else
+			if (is_pushed) {
+				state_type = StateType.Active;
+				shadow_type = ShadowType.Out;
+				detail = "button";
+			}
+			
+			gtk_paint_box (style, current_gdk_window,
+				       (int) state_type,
+				       (int) shadow_type,
+				       IntPtr.Zero,
+				       IntPtr.Zero,
+				       detail,
+				       rectangle.X, rectangle.Y,
+				       rectangle.Width, rectangle.Height);
+		}
+		
+		/* Scroll button: regular button + direction arrow */
+		public override void CPDrawScrollButton (Graphics dc, Rectangle area, ScrollButton scroll_button_type, ButtonState state)
+		{
+			bool enabled = (state == ButtonState.Inactive) ? false: true;
+			
+			StateType state_type = enabled ? StateType.Normal : StateType.Insensitive;
+			
+			DrawScrollButtonPrimitive (dc, area, state, scroll_button_type);
+			
+			if (area.Width < 12 || area.Height < 12) /* Cannot see a thing at smaller sizes */
+				return;
+			
+			ArrowType arrow_type = 0;
+			
+			switch (scroll_button_type) {
 			case ScrollButton.Up:
 				arrow_type = ArrowType.Up;
 				break;
@@ -356,98 +803,80 @@ namespace System.Windows.Forms
 			default:
 				break;
 			}
-				
-
-			gtk_paint_arrow (style, 
-					gdkwindow, 
-					(int) StateType.Normal,
-					(int) ShadowType.In,
-					IntPtr.Zero,
-					IntPtr.Zero,
-					"",		
-					(int) arrow_type, true, 
-					area.X + ((area.Width - (area.Width/2) ) / 2), 
-					area.Y + ((area.Height - (area.Height/2) ) / 2),
-					area.Width / 2, area.Height / 2);			
-		
-		}
-
-		public override void DrawScrollBar (Graphics dc, Rectangle area, ScrollBar bar,
-			ref Rectangle thumb_pos, ref Rectangle first_arrow_area, ref Rectangle second_arrow_area, 
-			ButtonState first_arrow, ButtonState second_arrow, ref int scrollbutton_width, 
-			ref int scrollbutton_height, bool vert)
-		{
-			IntPtr gdkwindow = gdk_window_foreign_new_for_display (gdkdisplay, (uint) bar.Handle);			
-			IntPtr adj = gtk_adjustment_new (0, 0, 0, 0, 0, 0);
-                        IntPtr scrollbar = gtk_vscrollbar_new (adj);
-			IntPtr style;
-                                       
-                        style = gtk_rc_get_style (scrollbar);		
-			style = gtk_style_attach (style, gdkwindow);  // need it			
 			
-			/* Background */
-			gtk_paint_box (style, 
-				gdkwindow, 
-                     		(int) StateType.Active,
-                     		(int) ShadowType.In,
-                     		IntPtr.Zero,
-				IntPtr.Zero,
-				"trough",
-                 		area.X, area.Y,
-				area.Width, area.Height);
-
-			/* See gtk_range_expose */
-			first_arrow_area.X = first_arrow_area. Y = 0;
-			first_arrow_area.Width = scrollbutton_width;
-			first_arrow_area.Height = scrollbutton_height;
-
-			if (vert) {		
-
-				second_arrow_area.X = 0;
-				second_arrow_area.Y = area.Height - scrollbutton_height;
-				second_arrow_area.Width = scrollbutton_width;
-				second_arrow_area.Height = scrollbutton_height;
-
-				/* First button*/
-			 	DrawScrollButton (dc, first_arrow_area, ScrollButton.Up, first_arrow,
-					gdkwindow, style);
-
-				/* Second button*/
-			 	DrawScrollButton (dc, second_arrow_area, ScrollButton.Down, second_arrow,
-					gdkwindow, style);
-
-			} else {
-
-				second_arrow_area.Y = 0;
-				second_arrow_area.X = area.Width - scrollbutton_width;
-				second_arrow_area.Width = scrollbutton_width;
-				second_arrow_area.Height = scrollbutton_height;
-
-				/* First button*/
-			 	DrawScrollButton (dc, first_arrow_area, ScrollButton.Left, first_arrow,
-					gdkwindow, style);
-
-				/* Second button*/
-			 	DrawScrollButton (dc, second_arrow_area, ScrollButton.Right, second_arrow,
-					gdkwindow, style);
-
+			int centerX = area.Left + area.Width / 2;
+			int centerY = area.Top + area.Height / 2;
+			int arrow_x = 0, arrow_y = 0, arrow_height = 0, arrow_width = 0;
+			
+			switch (scroll_button_type) {
+			case ScrollButton.Down:
+			case ScrollButton.Up:
+				arrow_x = centerX - 4;
+				arrow_y = centerY - 2;
+				arrow_width = 8;
+				arrow_height = 4;
+				break;
+			case ScrollButton.Left:
+			case ScrollButton.Right:
+				arrow_x = centerX - 2;
+				arrow_y = centerY - 4;
+				arrow_width = 4;
+				arrow_height = 8;
+				break;
+			default:
+				break;
 			}
-
-			/* Slider */
-			gtk_paint_slider (style, 
-				gdkwindow, 
-				(int) StateType.Normal,
-				(int) ShadowType.Out,
-				IntPtr.Zero,
-				IntPtr.Zero,
-				"",		
-				thumb_pos.X, thumb_pos.Y,
-				thumb_pos.Width, thumb_pos.Height,
-				(int) Orientation.Vertical);
-
-			//gtk_style_detach (style);
+			
+			gtk_paint_arrow (style, 
+					 current_gdk_window, 
+					 (int) state_type,
+					 (int) ShadowType.In,
+					 IntPtr.Zero,
+					 IntPtr.Zero,
+					 "",		
+					 (int) arrow_type, true, 
+					 arrow_x, 
+					 arrow_y,
+					 arrow_width, arrow_height);
 		}
-#endif
+		
+		public void DrawScrollButtonPrimitive (Graphics dc, Rectangle area, ButtonState state, ScrollButton scroll_button_type)
+		{
+			StateType state_type = StateType.Normal;
+			ShadowType shadow_type = ShadowType.In;
+			
+			if ((state & ButtonState.Pushed) == ButtonState.Pushed) {
+				state_type = StateType.Active;
+				shadow_type = ShadowType.Out;
+			}
+			
+			switch (scroll_button_type) {
+			case ScrollButton.Left:
+			case ScrollButton.Right:
+				gtk_paint_box (style, 
+					       current_gdk_window, 
+					       (int) state_type,
+					       (int) shadow_type,
+					       IntPtr.Zero,
+					       global_gtk_hscrollbar,
+					       "stepper",
+					       area.X, area.Y,
+					       area.Width, area.Height);
+				break;
+			case ScrollButton.Up:
+			case ScrollButton.Down:
+				gtk_paint_box (style, 
+					       current_gdk_window, 
+					       (int) state_type,
+					       (int) shadow_type,
+					       IntPtr.Zero,
+					       global_gtk_vscrollbar,
+					       "stepper",
+					       area.X, area.Y,
+					       area.Width, area.Height);
+				break;
+			}
+		}
 		
 		private static Color ColorFromGdkColor (GdkColorStruct gtkcolor)
 		{
