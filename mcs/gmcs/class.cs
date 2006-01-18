@@ -3776,34 +3776,6 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		bool MayUnify (MethodCore first, MethodCore second)
-		{
-			int a_type_params = 0;
-			if (first.GenericMethod != null)
-				a_type_params = first.GenericMethod.CountTypeParameters;
-
-			int b_type_params = 0;
-			if (second.GenericMethod != null)
-				b_type_params = second.GenericMethod.CountTypeParameters;
-
-			if (a_type_params != b_type_params)
-				return false;
-
-			Type[] class_infered, method_infered;
-			if (Parent.CountTypeParameters > 0)
-				class_infered = new Type [Parent.CountTypeParameters];
-			else
-				class_infered = null;
-
-			if (a_type_params > 0)
-				method_infered = new Type [a_type_params];
-			else
-				method_infered = null;
-
-			return TypeManager.MayBecomeEqualGenericInstances (
-				first.ParameterTypes, second.ParameterTypes, class_infered, method_infered);
-		}
-
 		protected bool IsDuplicateImplementation (MethodCore method)
 		{
 			if (method == this || !(method.MemberName.Equals (MemberName)))
@@ -3823,7 +3795,6 @@ namespace Mono.CSharp {
 				return false;
 			
 			bool equal = true;
-			bool may_unify = MayUnify (this, method);
 
 			for (int i = 0; i < param_types.Length; i++) {
 				if (param_types [i] != ParameterTypes [i])
@@ -3831,12 +3802,12 @@ namespace Mono.CSharp {
 			}
 
 			if (IsExplicitImpl && (method.InterfaceType != InterfaceType))
-				equal = may_unify = false;
+				equal = false;
 
 			// TODO: make operator compatible with MethodCore to avoid this
 			if (this is Operator && method is Operator) {
 				if (MemberType != method.MemberType)
-					equal = may_unify = false;
+					equal = false;
 			}
 
 			if (equal) {
@@ -3864,12 +3835,6 @@ namespace Mono.CSharp {
 				else
 					Report.Error (111, Location, TypeContainer.Error111, GetSignatureForError ());
 
-				return true;
-			} else if (may_unify) {
-				Report.Error (408, Location,
-					      "`{0}' cannot define overload members that " +
-					      "may unify for some type parameter substitutions",
-					      Parent.MemberName.ToString ());
 				return true;
 			}
 
