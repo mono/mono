@@ -1,3 +1,8 @@
+2006-01-18  Chris Toshok  <toshok@ximian.com>
+
+	* Makefile (common_dirs): add System.Web again after
+	System.Web.Services.
+
 2006-01-05  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile: Build FirebirdSql.Data.Firebird only in the "default"

@@ -48,6 +48,7 @@ common_dirs := \
 	Mono.GetOptions			\
 	System.Web			\
 	System.Web.Services		\
+	System.Web			\
 	System.Runtime.Serialization.Formatters.Soap \
 	System.Runtime.Remoting		\
 	System.Configuration.Install 	\
