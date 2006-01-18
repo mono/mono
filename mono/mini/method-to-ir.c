@@ -9201,6 +9201,7 @@ mono_spill_global_vars (MonoCompile *cfg)
  * - use sreg2 for destbasereg since it is not really a dreg
  * - cleanup creation of branches+bblocks in opcode decomposition
  * - get rid of the empty bblocks created by MONO_EMIT_NEW_BRACH_BLOCK2
+ * - get rid of CEE_ opcodes.
  * - Things to backport to the old JIT:
  *   - op_atomic_exchange fix for amd64
  *   - localloc fix for amd64

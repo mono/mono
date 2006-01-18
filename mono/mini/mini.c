@@ -9355,7 +9355,10 @@ mono_local_cprop_bb2 (MonoCompile *cfg, MonoBasicBlock *bb, int acp_size)
 						ins->sreg1 = vreg;
 					else
 						ins->sreg2 = vreg;
-					break;
+
+					/* Allow further iterations */
+					srcindex = -1;
+					continue;
 				}
 				else if (def->opcode == OP_ICONST) {
 					guint32 opcode2 = op_to_op_imm (ins->opcode);
@@ -9369,21 +9372,48 @@ mono_local_cprop_bb2 (MonoCompile *cfg, MonoBasicBlock *bb, int acp_size)
 							ins->sreg1 = -1;
 						else
 							ins->sreg2 = -1;
+
+						/* Allow further iterations */
+						srcindex = -1;
+						continue;
 					}
 				}
 			}
 		}
-	
+			
+		if (spec [MONO_INST_DEST] == 'i') {
+			MonoInst *def = defs [ins->dreg];
+
+			if (def && (def->opcode == OP_ADD_IMM) && (def->sreg1 == cfg->frame_reg)) {
+				/* ADD_IMM is created by spill_global_vars */
+				/* FIXME: Generalize this */
+				switch (ins->opcode) {
+				case OP_STORE_MEMBASE_REG:
+				case OP_STOREI1_MEMBASE_REG: 
+				case OP_STOREI2_MEMBASE_REG: 
+				case OP_STOREI4_MEMBASE_REG: 
+				case OP_STOREI8_MEMBASE_REG:
+				case OP_STORER4_MEMBASE_REG: 
+				case OP_STORER8_MEMBASE_REG:
+				case OP_STORE_MEMBASE_IMM:
+				case OP_STOREI1_MEMBASE_IMM: 
+				case OP_STOREI2_MEMBASE_IMM: 
+				case OP_STOREI4_MEMBASE_IMM: 
+				case OP_STOREI8_MEMBASE_IMM: 
+					ins->inst_destbasereg = def->sreg1;
+					ins->inst_offset += def->inst_imm;
+					break;
+				}
+			}
+		}
+			
 		if ((ins->dreg != -1) && (spec [MONO_INST_DEST] == 'i')) {
 			defs [ins->dreg] = ins;
 			def_index [ins->dreg] = ins_index;
 		}
-	}
 
-	/* 
-	 * FIXME: Get rid of dead code created by this pass early so
-	 * the spill pass doesn't create loads/stores for it.
-	 */
+		ins_index ++;
+	}	
 
 	g_free (defs);
 	g_free (def_index);
@@ -9467,7 +9497,7 @@ mono_local_deadce (MonoCompile *cfg)
 				continue;
 
 			if ((spec [MONO_INST_DEST] == 'i') && (ins->dreg >= MONO_MAX_IREGS) && !used [ins->dreg] && !get_vreg_to_inst (cfg, 'i', ins->dreg)) {
-				if ((ins->opcode == OP_MOVE) || (ins->opcode == OP_ICONST)) {
+				if ((ins->opcode == OP_MOVE) || (ins->opcode == OP_ICONST) || (ins->opcode == OP_ADD_IMM)) {
 					//printf ("DEADCE: "); mono_print_ins (ins);
 					ins->opcode = CEE_NOP;
 				}
@@ -9891,6 +9921,10 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 		MonoBasicBlock *bb;
 
 		mono_spill_global_vars (cfg);
+
+		/* To optimize code created by spill_global_vars */
+		mono_local_cprop2 (cfg);
+		mono_local_deadce (cfg);
 
 		/* Add branches between non-consecutive bblocks */
 		for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
