@@ -151,6 +151,9 @@ namespace MonoTests.System.Text
                 }
         
                 [Test]
+#if NET_2_0
+		[Category ("NotWorking")]
+#endif
                 public void TestMaxByteCount()
                 {
                         UnicodeEncoding UnicodeEnc = new UnicodeEncoding ();

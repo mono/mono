@@ -1,5 +1,11 @@
 2006-01-19  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* UnicodeEncodingTest.cs, DecoderReplacementFallbackBufferTest.cs,
+	  EncoderReplacementFallbackBufferTest.cs : tests were fixed but
+	  "NotWorking" were not marked correctly.
+
+2006-01-19  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* UTF7EncodingTest.cs UTF8EncodingTest.cs UnicodeEncodingTest.cs :
 	  due to the introduction of fallback, some of their internals have
 	  changed. Thus marked some tests as NotWorking.

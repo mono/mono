@@ -69,6 +69,7 @@ namespace MonoTests.System.Text
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void Iterate ()
 		{
 			Assert.AreEqual ('\0', Encoding.UTF8.EncoderFallback
