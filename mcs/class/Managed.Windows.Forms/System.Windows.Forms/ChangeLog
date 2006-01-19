@@ -1,3 +1,9 @@
+2006-01-19  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* XplatUIWin32.cs, Cursor.cs: Fixed code that wrongly assumed
+	  that the stride for the GDI bitmap would match the stride of
+	  a DIB or a Cursor.
+
 2006-01-19  Alexander Olk  <alex.olk@googlemail.com>
 
 	* ThemeGtk.cs: Added ProgressBar, RadioButton, CheckBox

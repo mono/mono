@@ -632,6 +632,7 @@ namespace System.Windows.Forms {
 			BitmapData		bits;
 			ColorPalette		pal;
 			int			biHeight;
+			int			bytesPerLine;
 
 			if (cursor_data == null) {
 				return new Bitmap(32, 32);
@@ -697,10 +698,11 @@ namespace System.Windows.Forms {
 					}
 				}
 
+				bytesPerLine = (int)((((cih.biWidth * cih.biBitCount) + 31) & ~31) >> 3);
 				bits = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.WriteOnly, bmp.PixelFormat);
 
 				for (int y = 0; y < biHeight; y++) {
-					Marshal.Copy(ci.cursorXOR, bits.Stride * y, (IntPtr)((int)bits.Scan0 + bits.Stride * (biHeight - 1 - y)), bits.Stride);
+					Marshal.Copy(ci.cursorXOR, bytesPerLine * y, (IntPtr)((int)bits.Scan0 + bits.Stride * (biHeight - 1 - y)), bytesPerLine);
 				}
 				
 				bmp.UnlockBits(bits);

@@ -724,6 +724,7 @@ namespace System.Windows.Forms {
 			ColorPalette		pal;
 			int[]			palette;
 			byte[]			imagebits;
+			int			bytesPerLine;
 
 			bmi = (BITMAPINFOHEADER)Marshal.PtrToStructure(dib_data, typeof(BITMAPINFOHEADER));
 
@@ -780,13 +781,14 @@ namespace System.Windows.Forms {
 				}
 			}
 
+			bytesPerLine = (int)((((bmi.biWidth * bmi.biBitCount) + 31) & ~31) >> 3);
 			bits = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.WriteOnly, bmp.PixelFormat);
 
-			imagebits = new byte[bits.Stride];
+			imagebits = new byte[bytesPerLine];
 
 			for (int y = 0; y < bmi.biHeight; y++) {
 				// Copy from source to managed
-				Marshal.Copy((IntPtr)((int)dib_data + Marshal.SizeOf(typeof(BITMAPINFOHEADER)) + palette.Length * 4 + bits.Stride * y), imagebits, 0, bits.Stride);
+				Marshal.Copy((IntPtr)((int)dib_data + Marshal.SizeOf(typeof(BITMAPINFOHEADER)) + palette.Length * 4 + bytesPerLine * y), imagebits, 0, bytesPerLine);
 
 				// Copy from managed to dest
 				Marshal.Copy(imagebits, 0, (IntPtr)((int)bits.Scan0 + bits.Stride * (bmi.biHeight - 1 - y)), imagebits.Length);
