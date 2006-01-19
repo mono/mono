@@ -1,3 +1,9 @@
+2006-01-19  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* Icon.cs: The code wrongly assumed that the stride for the icon
+	  would be the same as the stride for the bitmap. This was causing
+	  memory corruption.
+
 2006-01-18  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* Icon.cs: Reworked ToBitmap() method to not use Bitmap(Stream)
