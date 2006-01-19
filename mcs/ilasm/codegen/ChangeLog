@@ -1,3 +1,7 @@
+2006-01-19  Ankit Jain  <jankit@novell.com>
+
+	* MethodRef.cs (MethodRef.Resolve): Resolve owner.
+
 2006-01-16  Ankit Jain  <jankit@novell.com>
 
 	* TypeDef.cs (TypeDef.IComparable): Implement IComparable interface.
