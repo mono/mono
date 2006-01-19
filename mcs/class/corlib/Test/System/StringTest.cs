@@ -544,20 +544,20 @@ public class StringTest : Assertion
 		Assert("null string error", errorThrown);
 
 		AssertEquals("basic char index", 1, s1.IndexOf('r'));
-		AssertEquals("basic char index", 2, s1.IndexOf('i'));
+		AssertEquals("basic char index 2", 2, s1.IndexOf('i'));
 		AssertEquals("basic char index - no", -1, s1.IndexOf('q'));
 		
 		AssertEquals("basic string index", 1, s1.IndexOf("rig"));
-		AssertEquals("basic string index", 2, s1.IndexOf("i"));
-		AssertEquals("basic string index", 0, "".IndexOf(""));
-		AssertEquals("basic string index", 0, "ABC".IndexOf(""));
+		AssertEquals("basic string index 2", 2, s1.IndexOf("i"));
+		AssertEquals("basic string index 3", 0, "".IndexOf(""));
+		AssertEquals("basic string index 4", 0, "ABC".IndexOf(""));
 		AssertEquals("basic string index - no", -1, s1.IndexOf("rag"));
 
 		AssertEquals("stepped char index", 1, s1.IndexOf('r', 1));
-		AssertEquals("stepped char index", 2, s1.IndexOf('i', 1));
-		AssertEquals("stepped char index", 4, s1.IndexOf('i', 3));
-		AssertEquals("stepped char index", -1, s1.IndexOf('i', 5));
-		AssertEquals("stepped char index", -1, s1.IndexOf('l', s1.Length));
+		AssertEquals("stepped char index 2", 2, s1.IndexOf('i', 1));
+		AssertEquals("stepped char index 3", 4, s1.IndexOf('i', 3));
+		AssertEquals("stepped char index 4", -1, s1.IndexOf('i', 5));
+		AssertEquals("stepped char index 5", -1, s1.IndexOf('l', s1.Length));
 
 		AssertEquals("stepped limited char index", 
 			     1, s1.IndexOf('r', 1, 1));

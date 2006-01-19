@@ -1,5 +1,9 @@
 2006-01-19  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* StringTest.cs : numbered some assertions.
+
+2006-01-19  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ModuleHandleTest.cs : GetPEKind() is not public in 2.0 RTM.
 
 2006-01-03  Zoltan Varga  <vargaz@gmail.com>
