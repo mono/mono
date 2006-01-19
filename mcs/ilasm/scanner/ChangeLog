@@ -1,3 +1,7 @@
+2006-01-19  Ankit Jain  <jankit@novell.com>
+
+	* ILTables.cs (keywords): Add 'type' keyword.
+
 2006-01-16  Ankit Jain  <jankit@novell.com>
 
 	* NumberHelper.cs (NumberHelper.Build): Try parsing numeric value as UInt64 or 

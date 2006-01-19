@@ -1,3 +1,11 @@
+2006-01-19  Ankit Jain  <jankit@novell.com>
+
+	* ILParser.jay (K_TYPE): New.
+	(param_type_decl): New. Rule for '.param type ..', for specifying custom attibutes
+	for type parameters.
+	(class_decl | param_type_decl):
+	(method_decl | param_type_decl): New.
+
 2006-01-16  Ankit Jain  <jankit@novell.com>
 
 	* ILParser.jay (K_BESTFIT):

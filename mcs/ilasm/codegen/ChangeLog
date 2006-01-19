@@ -1,5 +1,15 @@
 2006-01-19  Ankit Jain  <jankit@novell.com>
 
+	* GenericParameters.cs (GenericParameter): Implement ICustomAttrTarget.
+	(GenericParameter.Resolve): New overload, reduce code duplication.
+	(GenericParameters.GetGenericParam): New. Returns a GenericParameter.
+	(GenericParameters.GetGenericParamNum): Update to use new GetGenericParam.
+
+	* TypeDef.cs (TypeDef.GetGenericParam): New. Two overloads for id and index.
+	* MethodDef.cs (MethodDef.GetGenericParam): Likewise.
+
+2006-01-19  Ankit Jain  <jankit@novell.com>
+
 	* MethodRef.cs (MethodRef.Resolve): Resolve owner.
 
 2006-01-16  Ankit Jain  <jankit@novell.com>

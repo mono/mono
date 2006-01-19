@@ -401,6 +401,7 @@ namespace Mono.ILASM {
 %token K_MODREQ
 %token K_MODOPT
 %token K_TYPEDREF
+%token K_TYPE
 %token K_WCHAR
 %token K_CHAR
 %token K_FROMUNMANAGED
@@ -755,6 +756,27 @@ formal_typar            : id
                                 $$ = $1;
                           }
                         ;
+
+param_type_decl         : D_PARAM K_TYPE id
+			  {
+				  if (codegen.CurrentMethodDef != null)
+					  codegen.CurrentCustomAttrTarget = codegen.CurrentMethodDef.GetGenericParam ((string) $3);
+				  else
+					  codegen.CurrentCustomAttrTarget = codegen.CurrentTypeDef.GetGenericParam ((string) $3);
+				  if (codegen.CurrentCustomAttrTarget == null)
+					  throw new Exception (String.Format ("Type parameter '{0}' undefined.", (string) $3));
+			  }
+			| D_PARAM K_TYPE OPEN_BRACKET int32 CLOSE_BRACKET
+			  {
+				  int index = ((int) $4);
+				  if (codegen.CurrentMethodDef != null)
+					  codegen.CurrentCustomAttrTarget = codegen.CurrentMethodDef.GetGenericParam (index - 1);
+				  else
+					  codegen.CurrentCustomAttrTarget = codegen.CurrentTypeDef.GetGenericParam (index - 1);
+				  if (codegen.CurrentCustomAttrTarget == null)
+					  throw new Exception (String.Format ("Type parameter '{0}' index out of range.", index));
+			  }
+			;
                         
 class_refs		: class_ref
                           {
@@ -827,6 +849,7 @@ class_decl		: method_all
                           {
                                 codegen.CurrentCustomAttrTarget.AddCustomAttribute ((CustomAttr) $1);
                           }
+			| param_type_decl
 			| D_SIZE int32
                           {
                                 codegen.CurrentTypeDef.SetSize ((int) $2);
@@ -2043,6 +2066,7 @@ method_decl		: D_EMITBYTE int32
                                 codegen.CurrentMethodDef.AddParamDefaultValue ((int)$3 - 1, (Constant)$5);
                                 codegen.CurrentCustomAttrTarget = codegen.CurrentMethodDef.GetParam ((int)$3 - 1);
                           }
+			| param_type_decl
 			| id COLON
                           {
                                 codegen.CurrentMethodDef.AddLabel ((string) $1);

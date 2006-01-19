@@ -258,6 +258,7 @@ namespace Mono.ILASM {
                                 keywords ["modreq"] = new ILToken (Token.K_MODREQ, "modreq");
                                 keywords ["modopt"] = new ILToken (Token.K_MODOPT, "modopt");
                                 keywords ["typedref"] = new ILToken (Token.K_TYPEDREF, "typedref");
+                                keywords ["type"] = new ILToken (Token.K_TYPE, "type");
                                 keywords ["refany"] = new ILToken (Token.K_TYPEDREF, "typedref");
                                 keywords ["wchar"] = new ILToken (Token.K_WCHAR, "wchar");
                                 keywords ["char"] = new ILToken (Token.K_CHAR, "char");
