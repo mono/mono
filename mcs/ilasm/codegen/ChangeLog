@@ -1,5 +1,11 @@
 2006-01-19  Ankit Jain  <jankit@novell.com>
 
+	* Module.cs (Module): New. Class for representing this module.
+	* CodeGen.cs (CodeGen): Update to use the new Module class.
+	(CodeGen.Write): Resolve this_module.
+
+2006-01-19  Ankit Jain  <jankit@novell.com>
+
 	* GenericParameters.cs (GenericParameter): Implement ICustomAttrTarget.
 	(GenericParameter.Resolve): New overload, reduce code duplication.
 	(GenericParameters.GetGenericParam): New. Returns a GenericParameter.

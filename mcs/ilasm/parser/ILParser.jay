@@ -489,6 +489,10 @@ decl			: class_all
 			| module_head
 			| sec_decl
 			| customattr_decl
+			  {
+				if (codegen.CurrentCustomAttrTarget != null)
+					codegen.CurrentCustomAttrTarget.AddCustomAttribute ((CustomAttr) $1);
+			  }
 			| D_SUBSYSTEM int32
                           {
                                 codegen.SetSubSystem ((int) $2);
@@ -2922,6 +2926,9 @@ file_entry		: /* EMPTY */
 			;
 
 assembly_all		: assembly_head OPEN_BRACE assembly_decls CLOSE_BRACE
+			  {
+				codegen.CurrentCustomAttrTarget = null;
+			  }
 			;
 
 assembly_head		: D_ASSEMBLY asm_attr slashed_name

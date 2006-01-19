@@ -1,3 +1,7 @@
+2006-01-19  Ankit Jain  <jankit@novell.com>
+
+	* ilasm.exe.sources: Add Module.cs to the build.
+
 2006-01-13  Ankit Jain  <jankit@novell.com>
 
 	* ilasm.exe.sources: Replace IMethodRef.cs with BaseMethodRef.cs

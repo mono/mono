@@ -4,6 +4,7 @@
 .assembly extern mscorlib
 {
   .ver 1:0:5000:0
+}
 .assembly 'test-array'
 {
   .ver  0:0:0:0

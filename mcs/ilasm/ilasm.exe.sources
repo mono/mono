@@ -2,6 +2,7 @@ Driver.cs
 Report.cs
 AssemblyInfo.cs
 codegen/CodeGen.cs
+codegen/Module.cs
 codegen/DebuggingInfo.cs
 codegen/ExternTable.cs
 codegen/InstrTable.cs
