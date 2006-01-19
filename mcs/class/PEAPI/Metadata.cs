@@ -824,6 +824,13 @@ namespace PEAPI {
 			output.StringsIndex (nameIx);
 		}
 
+		internal sealed override uint GetCodedIx(CIx code) 
+		{
+			switch (code) {
+				case (CIx.HasCustomAttr) : return 19; 
+			}
+			return 0;
+		}
 
 	}
 
@@ -5204,7 +5211,6 @@ namespace PEAPI {
 			// will _ALWAYS_ be in the correct order as embedded in BuildMDTables
 
 			SortTable(metaDataTables[(int)MDTable.Constant]);
-			SortTable(metaDataTables[(int)MDTable.CustomAttribute]);
 			SortTable(metaDataTables[(int)MDTable.FieldMarshal]);
 			SortTable(metaDataTables[(int)MDTable.DeclSecurity]);
 			SortTable(metaDataTables[(int)MDTable.MethodSemantics]);
@@ -5220,6 +5226,7 @@ namespace PEAPI {
 			SortTable(metaDataTables[(int)MDTable.GenericParamConstraint]);
 #endif	
 			SortTable(metaDataTables[(int)MDTable.InterfaceImpl]);
+			SortTable(metaDataTables[(int)MDTable.CustomAttribute]);
 
 		}
 

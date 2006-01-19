@@ -13,11 +13,12 @@ using System.Text;
 
 namespace Mono.ILASM {
 
-	public class GenericParameter {
+	public class GenericParameter : ICustomAttrTarget {
 		string id;
 		int num;
                 PEAPI.GenericParamAttributes attr;
 		ArrayList constraintsList;
+		ArrayList customattrList;
 		
 		public GenericParameter (string id) 
 			: this (id, 0, null)
@@ -30,6 +31,7 @@ namespace Mono.ILASM {
 			this.attr = attr;
 			num = -1;
 			constraintsList = null;
+			customattrList = null;
 				
 			if (constraints != null)
 				foreach (BaseTypeRef typeref in constraints)
@@ -61,16 +63,34 @@ namespace Mono.ILASM {
 			return Id;
 		}
 
+		public void AddCustomAttribute (CustomAttr customattr)
+		{
+			if (customattrList == null)
+				customattrList = new ArrayList ();
+
+			customattrList.Add (customattr);
+		}
+
 		public void Resolve (CodeGen code_gen, PEAPI.MethodDef methoddef)
 		{
 			PEAPI.GenericParameter gp = methoddef.AddGenericParameter ((short) num, id, attr);
-			ResolveConstraints (code_gen, gp);
+			Resolve (code_gen, gp);
 		}
 
 		public void Resolve (CodeGen code_gen, PEAPI.ClassDef classdef)
 		{
 			PEAPI.GenericParameter gp = classdef.AddGenericParameter ((short) num, id, attr);
+			Resolve (code_gen, gp);
+		}
+
+		private void Resolve (CodeGen code_gen, PEAPI.GenericParameter gp)
+		{
 			ResolveConstraints (code_gen, gp);
+			if (customattrList == null)
+				return;
+
+			foreach (CustomAttr customattr in customattrList)
+				customattr.AddTo (code_gen, gp);
 		}
 
 		public void ResolveConstraints (GenericParameters type_gen_params, GenericParameters method_gen_params)
@@ -85,7 +105,7 @@ namespace Mono.ILASM {
 			}
 		}
 
-		public void ResolveConstraints (CodeGen code_gen, PEAPI.GenericParameter gp)
+		private void ResolveConstraints (CodeGen code_gen, PEAPI.GenericParameter gp)
 		{
 			if (constraintsList == null)
 				return;
@@ -129,7 +149,7 @@ namespace Mono.ILASM {
 			param_str = null;
 		}
 		
-		public int GetGenericParamNum (string id)
+		public GenericParameter GetGenericParam (string id)
 		{
 			if (param_list == null)
 				//FIXME: Report error
@@ -137,7 +157,16 @@ namespace Mono.ILASM {
 
 			foreach (GenericParameter param in param_list)
 				if (param.Id == id)
-					return param.Num;
+					return param;
+			return null;
+		}
+	
+		public int GetGenericParamNum (string id)
+		{
+			GenericParameter param = GetGenericParam (id);
+			if (param != null)
+				return param.Num;
+
 			return -1;
 		}
 

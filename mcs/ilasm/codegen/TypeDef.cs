@@ -253,6 +253,22 @@ namespace Mono.ILASM {
                         decl_sec.AddPermission (sec_action, iper);
                 }
 
+                public GenericParameter GetGenericParam (string id)
+                {
+                        if (gen_params == null)
+                                return null;
+                        
+                        return gen_params.GetGenericParam (id);
+                }
+
+                public GenericParameter GetGenericParam (int index)
+                {
+                        if (gen_params == null || index < 0 || index >= gen_params.Count)
+                                return null;
+                        
+                        return gen_params [index];
+                }
+
                 public int GetGenericParamNum (string id)
                 {
                         if (gen_params == null)

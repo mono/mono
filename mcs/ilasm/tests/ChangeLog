@@ -1,3 +1,10 @@
+2006-01-19  Ankit Jain  <jankit@novell.com>
+
+	* err-gen-cattr-1.il: New.
+	* err-gen-cattr-2.il: New.
+	* err-gen-cattr-3.il: New.
+	* err-gen-cattr-4.il: New.
+
 2006-01-16  Ankit Jain  <jankit@novell.com>
 
 	* test-int64.il: New. Test for large numeric values.
