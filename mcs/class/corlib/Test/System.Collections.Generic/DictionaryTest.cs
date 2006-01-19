@@ -332,6 +332,7 @@ namespace MonoTests.System.Collections.Generic {
 		}
 	
 		[Test]
+		[Category ("NotWorking")] // our code is based on 2.0 beta.
 		public void IEnumeratorTest ()
 		{
 			_dictionary.Add ("key1", "value1");
@@ -341,10 +342,8 @@ namespace MonoTests.System.Collections.Generic {
 			IEnumerator itr = ((IEnumerable)_dictionary).GetEnumerator ();
 			while (itr.MoveNext ())	{
 				object o = itr.Current;
-				Assert.AreEqual (typeof (DictionaryEntry), o.GetType (), "Current should return a type of DictionaryEntry");
-				DictionaryEntry entry = (DictionaryEntry)itr.Current;
-				if (entry.Key.ToString () == "key4")
-					entry.Value = "value33";
+				Assert.AreEqual (typeof (KeyValuePair<string,object>), o.GetType (), "Current should return a type of KeyValuePair");
+				KeyValuePair<string,object> entry = (KeyValuePair<string,object>) itr.Current;
 			}
 			Assert.AreEqual ("value4", _dictionary ["key4"].ToString (), "");
 		}
@@ -360,7 +359,7 @@ namespace MonoTests.System.Collections.Generic {
 			IEnumerator <KeyValuePair <string, object>> itr = ((IEnumerable <KeyValuePair <string, object>>)_dictionary).GetEnumerator ();
 			while (itr.MoveNext ())	{
 				object o = itr.Current;
-				Assert.AreEqual (typeof (KeyValuePair <string, object>), o.GetType (), "Current should return a type of DictionaryEntry");
+				Assert.AreEqual (typeof (KeyValuePair <string, object>), o.GetType (), "Current should return a type of KeyValuePair<object,string>");
 				KeyValuePair <string, object> entry = (KeyValuePair <string, object>)itr.Current;
 			}
 			Assert.AreEqual ("value4", _dictionary ["key4"].ToString (), "");
@@ -378,15 +377,14 @@ namespace MonoTests.System.Collections.Generic {
 			while (itr.MoveNext ()) {
 				object o = itr.Current;
 				Assert.AreEqual (typeof (DictionaryEntry), o.GetType (), "Current should return a type of DictionaryEntry");
-				DictionaryEntry entry = (DictionaryEntry)itr.Current;
-				if (entry.Key.ToString () == "key4")
-					entry.Value = "value33";
+				DictionaryEntry entry = (DictionaryEntry) itr.Current;
 			}
 			Assert.AreEqual ("value4", _dictionary ["key4"].ToString (), "");
 	
 		}
 	
 		[Test]
+		[Category ("NotWorking")] // our code is based on 2.0 beta.
 		public void ForEachTest ()
 		{
 			_dictionary.Add ("key1", "value1");
@@ -402,7 +400,7 @@ namespace MonoTests.System.Collections.Generic {
 			Assert.AreEqual(4, i, "fail1: foreach entry failed!");
 	
 			i = 0;
-			foreach (DictionaryEntry entry in ((IEnumerable)_dictionary))
+			foreach (KeyValuePair <string, object> entry in ((IEnumerable)_dictionary))
 			{
 				i++;
 			}
@@ -498,15 +496,16 @@ namespace MonoTests.System.Collections.Generic {
 		}
 
 		[Test]
+		[Category ("NotWorking")] // our code is based on 2.0 beta.
 		public void PlainEnumeratorReturnTest ()
 		{
-			// Test that we return a DictionaryEntry for non-generic dictionary iteration
+			// Test that we return a KeyValuePair even for non-generic dictionary iteration
 			_dictionary["foo"] = "bar";
 			IEnumerator<KeyValuePair<string, object>> enumerator = _dictionary.GetEnumerator();
-			Assert.IsTrue(enumerator.MoveNext());
-			Assert.IsTrue(((IEnumerator)enumerator).Current is DictionaryEntry);
-			Assert.IsTrue(((IDictionaryEnumerator)enumerator).Current is DictionaryEntry);
-			Assert.IsFalse(((object) enumerator.Current) is DictionaryEntry);
+			Assert.IsTrue(enumerator.MoveNext(), "#1");
+			Assert.AreEqual (typeof (KeyValuePair<string,object>), ((IEnumerator)enumerator).Current.GetType (), "#2");
+			Assert.AreEqual (typeof (KeyValuePair<string,object>), ((IDictionaryEnumerator)enumerator).Current.GetType (), "#3");
+			Assert.AreEqual (typeof (KeyValuePair<string,object>), ((object) enumerator.Current).GetType (), "#4");
 		}
 
 		[Test, ExpectedException (typeof (InvalidOperationException))]
@@ -627,7 +626,7 @@ namespace MonoTests.System.Collections.Generic {
 		{
 			Dictionary<int, int> d = new Dictionary<int, int> ();
 			ICollection c = (ICollection) d;
-			DictionaryEntry[] array = new DictionaryEntry[1];
+			DictionaryEntry [] array = new DictionaryEntry [1];
 			c.CopyTo (array, 0);
 		}
 	}
