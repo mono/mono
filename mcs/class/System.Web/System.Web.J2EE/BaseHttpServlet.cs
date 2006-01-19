@@ -96,7 +96,7 @@ namespace System.Web.J2EE
 //				PageMapper.LoadFileList();
 
 				resp.setContentType("text/html");
-				HttpWorkerRequest gwr = new ServletWorkerRequest(this, req, resp, resp.getOutputStream());
+				HttpWorkerRequest gwr = new ServletWorkerRequest(this, req, resp);
 				HttpRuntime.ProcessRequest(gwr);
 			}
 			finally 

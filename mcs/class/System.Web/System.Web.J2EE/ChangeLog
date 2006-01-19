@@ -1,3 +1,7 @@
+2006-01-19  Konstantin Triger <kostat@mainsoft.com>
+
+	* BaseHttpServlet.cs: call correct ServletWorkerRequest ctor
+
 2006-01-09  Konstantin Triger <kostat@mainsoft.com>
 
 	* BaseHttpServlet.cs: merging main/32, main/33

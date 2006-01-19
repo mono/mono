@@ -1,3 +1,7 @@
+2006-01-19  Konstantin Triger <kostat@mainsoft.com>
+
+	* ServletWorkerRequest.jvm.cs: refactoring.
+
 2005-11-28  Robert Jordan  <robertj@gmx.net>
 
 	* SimpleWorkerRequest.cs: fixed MapPath () for the case
