@@ -1,3 +1,9 @@
+2006-01-18  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* Icon.cs: Reworked ToBitmap() method to not use Bitmap(Stream)
+	  which when calling down to MS GDI+ will create an image
+	  where neither GetPixel or Save can be used on.
+
 2006-01-18  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* gdipFunctions.cs: Added declaration for GdipCreateRegionRgnData.

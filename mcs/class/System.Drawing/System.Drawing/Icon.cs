@@ -5,13 +5,10 @@
 //   Dennis Hayes (dennish@Raytek.com)
 //   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //   Sanjay Gupta (gsanjay@novell.com)
+//   Peter Dennis Bartok (pbartok@novell.com)
 //
 // Copyright (C) 2002 Ximian, Inc. http://www.ximian.com
-// Copyright (C) 2004 Novell, Inc. http://www.novell.com
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -34,6 +31,7 @@
 //
 
 using System;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.InteropServices;
@@ -319,97 +317,83 @@ namespace System.Drawing
 			}
 		}
 
-		public Bitmap ToBitmap ()
-		{
-			Bitmap bmp;
+		public Bitmap ToBitmap() {
+			IconImage		ii;
+			BitmapInfoHeader	bih;
+			int			ncolors;
+			Bitmap			bmp;
+			BitmapData		bits;
+			ColorPalette		pal;
+			int			biHeight;
 
-			if (imageData != null) {
+			if (imageData == null) {
+				return new Bitmap(32, 32);
+			}
 
-				// select active icon from the iconDirEntry
-				IconImage ii = imageData [this.id];
-				MemoryStream stream = new MemoryStream ();
+			ii = imageData[this.id];
+			bih = ii.iconHeader;
+			biHeight = bih.biHeight / 2;
 
-				BinaryWriter writer = new BinaryWriter (stream);
+			ncolors = (int)bih.biClrUsed;
+			if (ncolors == 0) {
+				if (bih.biBitCount < 24) {
+					ncolors = (int)(1 << bih.biBitCount);
+				}
+			}
 
-				try {
-					// write bitmap file header
-					// start with writing signature
-					writer.Write ('B');
-					writer.Write ('M');
+			switch(bih.biBitCount) {
+				case 1: {	// Monochrome
+					bmp = new Bitmap(bih.biWidth, biHeight, PixelFormat.Format1bppIndexed);
+					break;
+				}
 
-					// write the file size
-					// file size = bitmapfileheader + bitmapinfo +
-					//		 colorpalette + image bits
-					// sizeof bitmapfileheader = 14 bytes
-					// sizeof bitmapinfo = 40 bytes
-					uint offSet = (uint) (14 + 40 + ii.iconColors.Length * 4);
-					uint fileSize = (uint) (offSet + ii.iconXOR.Length);
-					writer.Write (fileSize);
-					
-					// write reserved words
-					ushort reserved12 = 0;
-					writer.Write (reserved12);
-					writer.Write (reserved12);
+				case 4: {	// 4bpp
+					bmp = new Bitmap(bih.biWidth, biHeight, PixelFormat.Format4bppIndexed);
+					break;
+				}
 
-					// write offset
-					writer.Write (offSet);
+				case 8: {	// 8bpp
+					bmp = new Bitmap(bih.biWidth, biHeight, PixelFormat.Format8bppIndexed);
+					break;
+				}
 
-					// write bitmapfile header
-					BitmapInfoHeader bih = ii.iconHeader;
-					writer.Write (bih.biSize);
-					writer.Write (bih.biWidth);
-					writer.Write (bih.biHeight/2);
-					writer.Write (bih.biPlanes);
-					writer.Write (bih.biBitCount);
-					writer.Write (bih.biCompression);
-					writer.Write (bih.biSizeImage);
-					writer.Write (bih.biXPelsPerMeter);
-					writer.Write (bih.biYPelsPerMeter);
-					writer.Write (bih.biClrUsed);
-					writer.Write (bih.biClrImportant);
+				case 24:
+				case 32: {	// 32bpp
+					bmp = new Bitmap(bih.biWidth, biHeight, PixelFormat.Format32bppArgb);
+					break;
+				}
 
-					// write color table
-					int colCount = ii.iconColors.Length;
-					for (int j = 0; j < colCount; j++)
-						writer.Write (ii.iconColors [j]);
+				default: {
+					throw new Exception("Unexpected number of bits:" + bih.biBitCount.ToString());
+				}
+			}
 
-					// write image bits
-					writer.Write (ii.iconXOR);
+			if (bih.biBitCount < 24) {
+				pal = bmp.Palette;				// Managed palette
 
-					writer.Flush ();
+				for (int i = 0; i < ii.iconColors.Length; i++) {
+					pal.Entries[i] = Color.FromArgb((int)ii.iconColors[i] & unchecked((int)0xff000000));
+				}
+			}
 
-					stream.Position = 0;
+			bits = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.WriteOnly, bmp.PixelFormat);
 
-					// create bitmap from stream and return
-					if (colCount > 0) {
-						Bitmap new_bmp;
+			for (int y = 0; y < biHeight; y++) {
+				Marshal.Copy(ii.iconXOR, bits.Stride * y, (IntPtr)((int)bits.Scan0 + bits.Stride * (biHeight - 1 - y)), bits.Stride);
+			}
+			
+			bmp.UnlockBits(bits);
 
-						new_bmp = new Bitmap(stream);
-						bmp = new Bitmap(new_bmp, bih.biWidth, bih.biHeight/2);
-						new_bmp.Dispose();
-					} else {
-						bmp = new Bitmap(stream);
-					}
-
-					// This hack is so ugly, it's embarassing. 
-					// But icons are small, so it should be ok for now
-					for (int y = 0; y < bih.biHeight/2; y++) {
-						for (int x = 0; x < bih.biWidth / 8; x++) {
-							for (int bit = 7; bit >= 0; bit--) {
-								if (((ii.iconAND[y * bih.biWidth / 8 +x] >> bit) & 1) != 0) {
-									bmp.SetPixel(x*8 + 7-bit, bih.biHeight/2 - y - 1, Color.Transparent);
-								}
-							}
+			bmp = new Bitmap(bmp);	// This makes a 32bpp image out of an indexed one
+			// Apply the mask to make properly transparent
+			for (int y = 0; y < biHeight; y++) {
+				for (int x = 0; x < bih.biWidth / 8; x++) {
+					for (int bit = 7; bit >= 0; bit--) {
+						if (((ii.iconAND[y * bih.biWidth / 8 +x] >> bit) & 1) != 0) {
+							bmp.SetPixel(x*8 + 7-bit, biHeight - y - 1, Color.Transparent);
 						}
 					}
-
-				} catch (Exception e) {
-					throw e;
-				} finally {
-					writer.Close (); // closes the underlying stream as well
 				}
-			} else {
-				bmp = new Bitmap (32, 32);
 			}
 
 			return bmp;
