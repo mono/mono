@@ -211,7 +211,7 @@ public class ModuleTest : Assertion
 		}
 	}
 
-	[Category ("NotWorking")]
+	[Ignore ("it breaks nunit-console.exe execution under .NET 2.0")]
 	[Test]
 	public void ResolveString () {
 		Type t = typeof (ModuleTest);
