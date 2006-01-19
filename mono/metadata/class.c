@@ -1246,6 +1246,40 @@ mono_class_setup_properties (MonoClass *class)
 }
 
 static void
+inflate_event (MonoClass *class, MonoEvent *event, MonoInflatedGenericClass *gclass)
+{
+	event->parent = class;
+
+	if (event->add) {
+		MonoMethod *inflated = mono_class_inflate_generic_method (
+			event->add, gclass->generic_class.context);
+
+		event->add = mono_get_inflated_method (inflated);
+	}
+
+	if (event->remove) {
+		MonoMethod *inflated = mono_class_inflate_generic_method (
+			event->remove, gclass->generic_class.context);
+
+		event->remove = mono_get_inflated_method (inflated);
+	}
+
+	if (event->raise) {
+		MonoMethod *inflated = mono_class_inflate_generic_method (
+			event->raise, gclass->generic_class.context);
+
+		event->raise = mono_get_inflated_method (inflated);
+	}
+
+	if (event->other) {
+		MonoMethod *inflated = mono_class_inflate_generic_method (
+			event->other, gclass->generic_class.context);
+
+		event->other = mono_get_inflated_method (inflated);
+	}
+}
+
+static void
 mono_class_setup_events (MonoClass *class)
 {
 	guint startm, endm, i, j;
@@ -1264,6 +1298,28 @@ mono_class_setup_events (MonoClass *class)
 		mono_loader_unlock ();
 		return;
 	}
+
+	if (class->generic_class) {
+		MonoInflatedGenericClass *gclass;
+		MonoClass *gklass;
+
+		gclass = mono_get_inflated_generic_class (class->generic_class);
+		gklass = gclass->generic_class.container_class;
+
+		mono_class_setup_events (gklass);
+		class->event = gklass->event;
+
+		class->events = g_new0 (MonoEvent, class->event.count);
+
+		for (i = 0; i < class->event.count; i++) {
+			class->events [i] = gklass->events [i];
+			inflate_event (class, &class->events [i], gclass);
+		}
+
+		mono_loader_unlock ();
+		return;
+	}
+
 	class->event.first = mono_metadata_events_from_typedef (class->image, mono_metadata_token_index (class->type_token) - 1, &last);
 	class->event.count = last - class->event.first;
 
@@ -1321,8 +1377,7 @@ mono_get_unique_iid (MonoClass *class)
 {
 	static GHashTable *iid_hash = NULL;
 	static guint iid = 0;
-
-	char *str;
+	char *str, *type_name;
 	gpointer value;
 	int generic_id;
 	
@@ -1339,14 +1394,19 @@ mono_get_unique_iid (MonoClass *class)
 	} else
 		generic_id = 0;
 
-	str = g_strdup_printf ("%s|%s.%s|%d", class->image->name, class->name_space, class->name,
-			       generic_id);
+	type_name = mono_type_full_name (&class->byval_arg);
+	str = g_strdup_printf ("%s|%s|%d", class->image->name, type_name, generic_id);
+	g_free (type_name);
 
 	if (g_hash_table_lookup_extended (iid_hash, str, NULL, &value)) {
 		mono_loader_unlock ();
+		if (mono_print_vtable)
+			printf ("Interface: reusing id %d for %s\n", iid, str);
 		g_free (str);
 		return GPOINTER_TO_INT (value);
 	} else {
+		if (mono_print_vtable)
+			printf ("Interface: assigned id %d to %s\n", iid, str);
 		g_hash_table_insert (iid_hash, str, GINT_TO_POINTER (iid));
 		++iid;
 	}
@@ -1980,17 +2040,16 @@ mono_class_setup_vtable_general (MonoClass *class, MonoMethod **overrides, int o
 			if (class->interface_offsets [i] != -1)
 				icount++;
 
-		printf ("VTable %s.%s (size = %d, interfaces = %d)\n", class->name_space, 
-			class->name, class->vtable_size, icount); 
+		printf ("VTable %s (vtable entries = %d, interfaces = %d)\n", mono_type_full_name (&class->byval_arg), 
+			class->vtable_size, icount); 
 
 		for (i = 0; i < class->vtable_size; ++i) {
 			MonoMethod *cm;
 	       
 			cm = vtable [i];
 			if (cm) {
-				printf ("  slot %03d(%03d) %s.%s:%s\n", i, cm->slot,
-					cm->klass->name_space, cm->klass->name,
-					cm->name);
+				printf ("  slot assigned: %03d, slot index: %03d %s\n", i, cm->slot,
+					mono_method_full_name (cm, TRUE));
 			}
 		}
 
@@ -2001,17 +2060,17 @@ mono_class_setup_vtable_general (MonoClass *class, MonoMethod **overrides, int o
 	
 			for (i = 0; i < class->interface_count; i++) {
 				ic = class->interfaces [i];
-				printf ("  slot %03d(%03d) %s.%s\n",  
+				printf ("  slot offset: %03d, method count: %03d, iid: %03d %s\n",  
 					class->interface_offsets [ic->interface_id],
-					ic->method.count, ic->name_space, ic->name);
+					ic->method.count, ic->interface_id, mono_type_full_name (&ic->byval_arg));
 			}
 
 			for (k = class->parent; k ; k = k->parent) {
 				for (i = 0; i < k->interface_count; i++) {
 					ic = k->interfaces [i]; 
-					printf ("  slot %03d(%03d) %s.%s\n", 
+					printf ("  slot offset: %03d, method count: %03d, iid: %03d %s\n",  
 						class->interface_offsets [ic->interface_id],
-						ic->method.count, ic->name_space, ic->name);
+						ic->method.count, ic->interface_id, mono_type_full_name (&ic->byval_arg));
 				}
 			}
 		}
@@ -2311,9 +2370,6 @@ mono_class_setup_mono_type (MonoClass *class)
 	const char *name = class->name;
 	const char *nspace = class->name_space;
 
-	if (MONO_CLASS_IS_INTERFACE (class))
-		class->interface_id = mono_get_unique_iid (class);
-
 	class->this_arg.byref = 1;
 	class->this_arg.data.klass = class;
 	class->this_arg.type = MONO_TYPE_CLASS;
@@ -2422,6 +2478,10 @@ mono_class_setup_mono_type (MonoClass *class)
 		}
 		class->this_arg.type = class->byval_arg.type = t;
 	}
+
+	if (MONO_CLASS_IS_INTERFACE (class))
+		class->interface_id = mono_get_unique_iid (class);
+
 }
 
 /*
@@ -2599,6 +2659,7 @@ mono_class_create_from_typedef (MonoImage *image, guint32 type_token)
 	guint icount = 0; 
 	MonoClass **interfaces;
 	guint32 field_last, method_last;
+	guint32 nesting_tokeen;
 
 	mono_loader_lock ();
 
@@ -2640,6 +2701,10 @@ mono_class_create_from_typedef (MonoImage *image, guint32 type_token)
 		parent = mono_class_get_full (
 			image, mono_metadata_token_from_dor (cols [MONO_TYPEDEF_EXTENDS]), context);
 	}
+
+	/* do this early so it's available for interfaces in setup_mono_type () */
+	if ((nesting_tokeen = mono_metadata_nested_in_typedef (image, type_token)))
+		class->nested_in = mono_class_create_from_typedef (image, nesting_tokeen);
 
 	mono_class_setup_parent (class, parent);
 
@@ -2708,9 +2773,6 @@ mono_class_create_from_typedef (MonoImage *image, guint32 type_token)
 	if (class->generic_container)
 		mono_metadata_load_generic_param_constraints (
 			image, type_token, class->generic_container);
-
-	if ((type_token = mono_metadata_nested_in_typedef (image, type_token)))
-		class->nested_in = mono_class_create_from_typedef (image, type_token);
 
 	mono_loader_unlock ();
 

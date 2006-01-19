@@ -1,3 +1,33 @@
+2006-01-19  Ankit Jain  <jankit@novell.com>
+
+	* main.c (dis_type): Dump custom attributes for a type before doing the same
+	for its type parameters.
+
+2006-01-18  Ankit Jain  <jankit@novell.com>
+
+	* main.c (typedef_flags): Change 'special-name' to 'specialname'.
+
+2006-01-17  Ankit Jain  <jankit@novell.com>
+
+	* get.c (get_method_override): Use '.override method' syntax if the class or
+	or the method itself is generic.
+	* main.c (dis_code): Emit '.override' only, 'method' gets handled by get_method_override.
+
+2006-01-17  Ankit Jain  <jankit@novell.com>
+
+	* get.c (init_key_table): Add keywords 'bestfit', 'charmaperror', 'off' & 'on'.
+
+2006-01-16  Ankit Jain  <jankit@novell.com>
+
+	* get.c (get_method_core): Handle a MemberRef with a TypeSpec parent.
+	Inflate MonoMethod after getting it from mono_get_method_full.
+
+2006-01-15  Ankit Jain  <jankit@novell.com>
+
+	* get.c (get_method_override): Get full signature of the method.
+	* main.c (dis_code): Emit ".override method" for full signature
+	of the method.
+
 2006-01-06  Ankit Jain  <jankit@novell.com>
 
 	* get.c (get_generic_param): Generic param attributes can be any combination

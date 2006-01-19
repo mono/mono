@@ -1,3 +1,7 @@
+2006-01-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* include/private/gcconfig.h: Undef _FILE_OFFSET_BITS on sparc.
+
 2006-01-03  Geoff Norton  <gnorton@customerdna.com>
 
 	* darwin_stop_world.c:  Merge a patch from Bruce Mitchener that fixes a small

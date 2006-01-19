@@ -1,3 +1,51 @@
+2006-01-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.h: Move mono_bitset_test_fast macro to monobitset.h where it belongs.
+
+2006-01-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.h (mono_bitset_test_fast): Disable the 'fast' implementation which
+	depends on implementation details of monobitset.
+
+	* mini.c (mini_get_ldelema_ins): Fix handling of 1 dimensional arrays.
+	Fixes #77271.
+
+2006-01-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* liveness.c: Update after monobitset changes.
+
+2006-01-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (mono_arch_compute_omit_fp): Fix a leak.
+
+2006-01-11 Neale Ferguson <neale@sinenomine.net>
+
+	* inssel-s390x.brg: Fix reg: OP_LDADDR(OP_S390_LOADARG) register setting.
+
+	* mini-s390x.c: Remove warning messages.
+
+2006-01-11  Ben Maurer  <bmaurer@andrew.cmu.edu>
+
+	* mini.c: pass the jitinfo to mono_profiler_method_end_jit.
+
+2006-01-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* generics.2.cs: Add ldelem/stelem_any test.
+
+2006-01-10 Neale Ferguson <neale@sinenomine.net>
+
+	* mini-s390.c: Fix ATOMIC_ADD_I4 operation.
+
+2006-01-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* inssel-long.brg: Fix int->long ovf conversion rules. Fixes #77172.
+	
+2006-01-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* generics.2.cs: Reenable vtype tests.
+
+	* inssel-x86.brg: Remove an icorrect valuetype rule.
+
 2006-01-06 Neale Ferguson <neale@sinenomine.net>
 
 	* mini-s390x.c, inssel-s390x.brg, cpu-s390x.md: Fix ATOMIC_I8 operations. Provide

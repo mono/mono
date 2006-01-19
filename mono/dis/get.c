@@ -1831,6 +1831,7 @@ get_method_core (MonoImage *m, guint32 token, gboolean fullsig, MonoGenericConte
 
 	mh = mono_get_method_full (m, token, NULL, context);
 	if (mh) {
+		mh = mono_get_inflated_method (mh);
 		if (mono_method_signature (mh)->is_inflated)
 			context = ((MonoMethodInflated *) mh)->context;
 		esname = get_escaped_name (mh->name);
@@ -2543,6 +2544,7 @@ init_key_table (void)
 	g_hash_table_insert (key_table, (char *) "autochar", GINT_TO_POINTER (TRUE));
 	g_hash_table_insert (key_table, (char *) "auto", GINT_TO_POINTER (TRUE));
 	g_hash_table_insert (key_table, (char *) "beforefieldinit", GINT_TO_POINTER (TRUE));
+	g_hash_table_insert (key_table, (char *) "bestfit", GINT_TO_POINTER (TRUE));
 	g_hash_table_insert (key_table, (char *) "beq", GINT_TO_POINTER (TRUE));
 	g_hash_table_insert (key_table, (char *) "beq.s", GINT_TO_POINTER (TRUE));
 	g_hash_table_insert (key_table, (char *) "bge", GINT_TO_POINTER (TRUE));
@@ -2597,6 +2599,7 @@ init_key_table (void)
 	g_hash_table_insert (key_table, (char *) "cgt", GINT_TO_POINTER (TRUE));
 	g_hash_table_insert (key_table, (char *) "cgt.un", GINT_TO_POINTER (TRUE));
 	g_hash_table_insert (key_table, (char *) "char", GINT_TO_POINTER (TRUE));
+	g_hash_table_insert (key_table, (char *) "charmaperror", GINT_TO_POINTER (TRUE));
 	g_hash_table_insert (key_table, (char *) "cil", GINT_TO_POINTER (TRUE));
 	g_hash_table_insert (key_table, (char *) "ckfinite", GINT_TO_POINTER (TRUE));
 	g_hash_table_insert (key_table, (char *) "class", GINT_TO_POINTER (TRUE));
@@ -2818,6 +2821,8 @@ init_key_table (void)
 	g_hash_table_insert (key_table, (char *) "nullref", GINT_TO_POINTER (TRUE));
 	g_hash_table_insert (key_table, (char *) "object", GINT_TO_POINTER (TRUE));
 	g_hash_table_insert (key_table, (char *) "objectref", GINT_TO_POINTER (TRUE));
+	g_hash_table_insert (key_table, (char *) "off", GINT_TO_POINTER (TRUE));
+	g_hash_table_insert (key_table, (char *) "on", GINT_TO_POINTER (TRUE));
 	g_hash_table_insert (key_table, (char *) "opt", GINT_TO_POINTER (TRUE));
 	g_hash_table_insert (key_table, (char *) "optil", GINT_TO_POINTER (TRUE));
 	g_hash_table_insert (key_table, (char *) "or", GINT_TO_POINTER (TRUE));
@@ -2962,8 +2967,24 @@ get_method_override (MonoImage *m, guint32 token, MonoGenericContext *context)
 		impl = method_dor_to_token (cols [MONO_METHODIMPL_BODY]);
 		decl = method_dor_to_token (cols [MONO_METHODIMPL_DECLARATION]);
 
-		if (token == impl)
-			return get_method_core (m, decl, FALSE, context);
+		if (token == impl) {
+			MonoMethod *mh = NULL;
+			mh = mono_get_method_full (m, decl, NULL, context);
+			mh = mono_get_inflated_method (mh);
+
+			if ((mh && (mh->is_inflated || mh->generic_container)) || 
+			    (mh->klass && (mh->klass->generic_class || mh->klass->generic_container))) {
+				char *meth_str;
+				char *ret;
+				
+				meth_str = get_method_core (m, decl, TRUE, context);
+				ret = g_strdup_printf ("method %s", meth_str);
+				g_free (meth_str);
+				return ret;
+			} else {
+				return get_method_core (m, decl, FALSE, context);
+			}
+		}
 	}
 
 	return NULL;

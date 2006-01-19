@@ -39,12 +39,6 @@
 /* Version number of the AOT file format */
 #define MONO_AOT_FILE_VERSION "25"
 
-#if 1
-#define mono_bitset_test_fast(set,n) (((guint32*)set)[2+(n)/32] & (1 << ((n) % 32)))
-#else
-#define mono_bitset_test_fast(set,n) mono_bitset_test(set,n)
-#endif
-
 #if 0
 #define mono_bitset_foreach_bit(set,b,n) \
 	for (b = 0; b < n; b++)\

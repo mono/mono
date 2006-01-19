@@ -1,3 +1,77 @@
+2006-01-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (emit_struct_conv): Relax the fields with same offset
+	check even more. Fixes #77230.
+
+2006-01-18  Martin Baulig  <martin@ximian.com>
+
+	* loader.c (find_method_in_class): Added `gboolean is_inflated'
+	argument; if false, we compare the uninstantiated signatures.
+	(method_from_memberref): Compare the uninstantiated signatures;
+	fixes #76417.
+
+2006-01-18  Robert Jordan  <robertj@gmx.net>
+
+	* boehm-gc.c, null-gc.c (mono_gc_weak_link_remove):
+	Clear the weak link. Fixes bug #77170.
+
+	* gc.c (mono_gchandle_free):
+	Reflect *-gc.c changes (tiny optimization).
+
+2006-01-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* metadata.c (mono_metadata_signature_dup): Applied patch from
+	Aras Pranckevicius (aras@otee.dk). Fix crash when compiled with MSVC.
+	Fixes #77288.
+
+2006-01-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (emit_struct_conv): Allow fields with the same offset when
+	marshalling from native to managed code. Fixes #77230.
+
+2006-01-17 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* threadpool.c: fix problem (Mac only) when more than one asynchronous
+	connect. Fixes bug #77020.
+
+Mon Jan 16 19:20:43 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* class.c: fixed id assignement for nested interfaces (bug #77275).
+	Added also better info for --print-vtable debugging.
+
+2006-01-12  Martin Baulig  <martin@ximian.com>
+
+	* icall.c (ves_icall_MonoGenericClass_GetInterfaces): Inflate the
+	interfaces on-the-fly; fixes #76625.
+
+	* class-internals.h
+	(MonoDynamicGenericClass): Removed `ifaces' and `count_ifaces'; we
+	don't need that anymore.
+
+2006-01-12  Miguel de Icaza  <miguel@novell.com>
+
+	* socket-io.c
+	(ves_icall_System_Net_Sockets_Socket_GetSocketOption_obj_internal):
+	To avoid initing the nested_classes when not needed I turned the
+	PeerCredData as a toplevel internal class, as it has to be shared
+	anyways. 
+
+	Fixes the CASA issue.
+
+2006-01-11  Ben Maurer  <bmaurer@andrew.cmu.edu>
+
+	* domain.c: Accessors for MonoJitInfo
+
+	* profiler-private.h: Add jitinfo to the end jit hook
+
+	* profiler.[ch]: Define new hooks, called after jitting which give
+	the MonoJitInfo that was compiled
+
+2006-01-10  Martin Baulig  <martin@ximian.com>
+
+	* class.c (mono_class_setup_events): Add support for generic
+	classes; fixes #76440.
+
 2006-01-06  Raja R Harinath  <rharinath@novell.com>
 
 	Fix #77160.
