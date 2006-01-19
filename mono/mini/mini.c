@@ -9386,6 +9386,11 @@ mono_local_cprop_bb2 (MonoCompile *cfg, MonoBasicBlock *bb, int acp_size)
 						srcindex = -1;
 						continue;
 					}
+				} else if ((def->opcode == OP_ADD_IMM) && (def->sreg1 == cfg->frame_reg) && MONO_IS_LOAD_MEMBASE (ins)) {
+					/* ADD_IM is created by spill_global_vars */
+					/* cfg->frame_reg is assumed to remain constant */
+					ins->inst_basereg = def->sreg1;
+					ins->inst_offset += def->inst_imm;					
 				}
 			}
 		}
@@ -9393,26 +9398,12 @@ mono_local_cprop_bb2 (MonoCompile *cfg, MonoBasicBlock *bb, int acp_size)
 		if (spec [MONO_INST_DEST] == 'i') {
 			MonoInst *def = defs [ins->dreg];
 
-			if (def && (def->opcode == OP_ADD_IMM) && (def->sreg1 == cfg->frame_reg)) {
+			/* FIXME: Generalize this */
+			if (def && (def->opcode == OP_ADD_IMM) && (def->sreg1 == cfg->frame_reg) && (MONO_IS_STORE_MEMBASE (ins))) {
 				/* ADD_IMM is created by spill_global_vars */
-				/* FIXME: Generalize this */
-				switch (ins->opcode) {
-				case OP_STORE_MEMBASE_REG:
-				case OP_STOREI1_MEMBASE_REG: 
-				case OP_STOREI2_MEMBASE_REG: 
-				case OP_STOREI4_MEMBASE_REG: 
-				case OP_STOREI8_MEMBASE_REG:
-				case OP_STORER4_MEMBASE_REG: 
-				case OP_STORER8_MEMBASE_REG:
-				case OP_STORE_MEMBASE_IMM:
-				case OP_STOREI1_MEMBASE_IMM: 
-				case OP_STOREI2_MEMBASE_IMM: 
-				case OP_STOREI4_MEMBASE_IMM: 
-				case OP_STOREI8_MEMBASE_IMM: 
-					ins->inst_destbasereg = def->sreg1;
-					ins->inst_offset += def->inst_imm;
-					break;
-				}
+				/* cfg->frame_reg is assumed to remain constant */
+				ins->inst_destbasereg = def->sreg1;
+				ins->inst_offset += def->inst_imm;
 			}
 		}
 			
@@ -9472,7 +9463,6 @@ mono_local_deadce (MonoCompile *cfg)
 					return;
 			}
 
-			/* FIXME: Store opcodes */
 			for (srcindex = 0; srcindex < 2; ++srcindex) {
 				regtype = spec [(srcindex == 0) ? MONO_INST_SRC1 : MONO_INST_SRC2];
 				sreg = srcindex == 0 ? ins->sreg1 : ins->sreg2;
@@ -9480,22 +9470,8 @@ mono_local_deadce (MonoCompile *cfg)
 				if (regtype == 'i')
 					used [sreg] = TRUE;
 
-				switch (ins->opcode) {
-				case OP_STORE:       
-				case OP_STORE_MEMBASE_REG:
-				case OP_STOREI1_MEMBASE_REG: 
-				case OP_STOREI2_MEMBASE_REG: 
-				case OP_STOREI4_MEMBASE_REG: 
-				case OP_STOREI8_MEMBASE_REG:
-				case OP_STORER4_MEMBASE_REG: 
-				case OP_STORER8_MEMBASE_REG:
-				case OP_STORE_MEMBASE_IMM:
-				case OP_STOREI1_MEMBASE_IMM: 
-				case OP_STOREI2_MEMBASE_IMM: 
-				case OP_STOREI4_MEMBASE_IMM: 
-				case OP_STOREI8_MEMBASE_IMM: 
+				if (MONO_IS_STORE_MEMBASE (ins))
 					used [ins->dreg] = TRUE;
-				}
 			}
 		}
 
@@ -9886,7 +9862,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 	if (cfg->new_ir) {
 		/* This must be done _before_ global reg alloc and _after_ decompose */
 		mono_handle_global_vregs (cfg);
-		//mono_local_deadce (cfg);
+		mono_local_deadce (cfg);
 	}
 
 	if (cfg->opt & MONO_OPT_LINEARS) {

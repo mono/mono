@@ -210,15 +210,20 @@ mono_linear_scan (MonoCompile *cfg, GList *vars, GList *regs, regmask_t *used_ma
 				/*
 				 * This variables is only used in a single basic block so
 				 * convert it into a virtual register.
-				 * FIXME: This increases register pressure in the local
-				 * allocator, leading to the well known 'branches inside
-				 * basic blocks screw up the allocator' problem.
 				 */
-#if 0
-				//#ifdef MONO_ARCH_HAS_XP_LOCAL_REGALLOC
-				cfg->varinfo [vmv->idx]->opcode = OP_REGVAR;
-				cfg->varinfo [vmv->idx]->dreg = mono_regstate_next_int (cfg->rs);
-#endif
+				if (cfg->new_ir) {
+					MonoInst *var = cfg->varinfo [vmv->idx];
+
+					/* FIXME: Do this more elegantly */
+					switch (var->type) {
+					case STACK_I4:
+					case STACK_OBJ:
+					case STACK_PTR:
+					case STACK_MP:
+						cfg->vreg_to_inst ['i'][var->dreg] = NULL;
+						break;
+					}
+				}
 			}
 			else {
 				if (cfg->verbose_level > 2)

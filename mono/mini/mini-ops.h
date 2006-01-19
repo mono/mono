@@ -73,6 +73,7 @@ MINI_OP(OP_RETHROW,	"op_rethrow", NONE, IREG, NONE)
 MINI_OP(OP_REFANYTYPE,	"refanytype", NONE, NONE, NONE)
 MINI_OP(OP_NEWOBJ, "op_newobj", NONE, NONE, NONE)
 
+/* MONO_IS_STORE_MEMBASE depends on the order here */
 MINI_OP(OP_STORE_MEMBASE_REG,"store_membase_reg", IREG, IREG, NONE)
 MINI_OP(OP_STOREI1_MEMBASE_REG, "storei1_membase_reg", IREG, IREG, NONE)
 MINI_OP(OP_STOREI2_MEMBASE_REG, "storei2_membase_reg", IREG, IREG, NONE)
@@ -87,6 +88,7 @@ MINI_OP(OP_STOREI2_MEMBASE_IMM, "storei2_membase_imm", IREG, NONE, NONE)
 MINI_OP(OP_STOREI4_MEMBASE_IMM, "storei4_membase_imm", IREG, NONE, NONE)
 MINI_OP(OP_STOREI8_MEMBASE_IMM, "storei8_membase_imm", IREG, NONE, NONE)
 
+/* MONO_IS_LOAD_MEMBASE depends on the order here */
 MINI_OP(OP_LOAD_MEMBASE,	"load_membase", IREG, IREG, NONE)
 MINI_OP(OP_LOADI1_MEMBASE,"loadi1_membase", IREG, IREG, NONE)
 MINI_OP(OP_LOADU1_MEMBASE,"loadu1_membase", IREG, IREG, NONE)
@@ -109,6 +111,7 @@ MINI_OP(OP_LOADI8_MEMINDEX,"loadi8_memindex", NONE, NONE, NONE)
 MINI_OP(OP_LOADR4_MEMINDEX,"loadr4_memindex", NONE, NONE, NONE)
 MINI_OP(OP_LOADR8_MEMINDEX,"loadr8_memindex", NONE, NONE, NONE)
 /* indexed stores: store sreg1 at (destbasereg + sreg2) */
+/* MONO_IS_STORE_MEMINDEX depends on the order here */
 MINI_OP(OP_STORE_MEMINDEX,"store_memindex", NONE, NONE, NONE)
 MINI_OP(OP_STOREI1_MEMINDEX,"storei1_memindex", NONE, NONE, NONE)
 MINI_OP(OP_STOREI2_MEMINDEX,"storei2_memindex", NONE, NONE, NONE)

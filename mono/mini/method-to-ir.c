@@ -8719,6 +8719,11 @@ op_to_op_imm (int opcode)
 	case OP_LSHR_UN:
 		return OP_LSHR_UN_IMM;		
 
+	case OP_COMPARE:
+		return OP_COMPARE_IMM;
+	case OP_ICOMPARE:
+		return OP_ICOMPARE_IMM;
+
 	case OP_STORE_MEMBASE_REG:
 		return OP_STORE_MEMBASE_IMM;
 	case OP_STOREI1_MEMBASE_REG:
@@ -9030,20 +9035,7 @@ mono_spill_global_vars (MonoCompile *cfg)
 			 * src register.
 			 * FIXME:
 			 */
-			switch (ins->opcode) {
-			case OP_STORE:       
-			case OP_STORE_MEMBASE_REG:
-			case OP_STOREI1_MEMBASE_REG: 
-			case OP_STOREI2_MEMBASE_REG: 
-			case OP_STOREI4_MEMBASE_REG: 
-			case OP_STOREI8_MEMBASE_REG:
-			case OP_STORER4_MEMBASE_REG: 
-			case OP_STORER8_MEMBASE_REG:
-			case OP_STORE_MEMBASE_IMM:
-			case OP_STOREI1_MEMBASE_IMM: 
-			case OP_STOREI2_MEMBASE_IMM: 
-			case OP_STOREI4_MEMBASE_IMM: 
-			case OP_STOREI8_MEMBASE_IMM: 
+			if (MONO_IS_STORE_MEMBASE (ins)) {
 				tmp_reg = ins->dreg;
 				ins->dreg = ins->sreg2;
 				ins->sreg2 = tmp_reg;
@@ -9053,18 +9045,10 @@ mono_spill_global_vars (MonoCompile *cfg)
 				spec2 [MONO_INST_SRC1] = spec [MONO_INST_SRC1];
 				spec2 [MONO_INST_SRC2] = spec [MONO_INST_DEST];
 				spec = spec2;
-				break;
-			case OP_STORE_MEMINDEX:
-			case OP_STOREI1_MEMINDEX:
-			case OP_STOREI2_MEMINDEX:
-			case OP_STOREI4_MEMINDEX:
-			case OP_STOREI8_MEMINDEX:
-			case OP_STORER4_MEMINDEX:
-			case OP_STORER8_MEMINDEX:
+			} else if (MONO_IS_STORE_MEMINDEX (ins))
 				NOT_IMPLEMENTED;
-			default:
+			else
 				store = FALSE;
-			}
 
 			if (cfg->verbose_level > 0)
 				printf ("\t %s %d %d %d\n", spec, ins->dreg, ins->sreg1, ins->sreg2);
@@ -9139,7 +9123,7 @@ mono_spill_global_vars (MonoCompile *cfg)
 						load_opcode = mono_type_to_load_membase (var->inst_vtype);
 
 						/* FIXME: Generalize this */
-						if ((ins->opcode == OP_X86_PUSH) && ((load_opcode == OP_LOADI4_MEMBASE) || (load_opcode == OP_LOADU4_MEMBASE))) {
+						if ((ins->opcode == OP_X86_PUSH) && ((load_opcode == OP_LOADI4_MEMBASE) || (load_opcode == OP_LOADU4_MEMBASE) || (load_opcode == OP_LOAD_MEMBASE))) {
 							ins->opcode = OP_X86_PUSH_MEMBASE;
 							ins->inst_basereg = var->inst_basereg;
 							ins->inst_offset = var->inst_offset;

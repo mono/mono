@@ -76,33 +76,12 @@ update_gen_kill_set (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *inst, int i
 		if (ins->opcode < MONO_CEE_LAST)
 			return;
 
-		switch (ins->opcode) {
-		case OP_STORE:       
-		case OP_STORE_MEMBASE_REG:
-		case OP_STOREI1_MEMBASE_REG: 
-		case OP_STOREI2_MEMBASE_REG: 
-		case OP_STOREI4_MEMBASE_REG: 
-		case OP_STOREI8_MEMBASE_REG:
-		case OP_STORER4_MEMBASE_REG: 
-		case OP_STORER8_MEMBASE_REG:
-		case OP_STORE_MEMBASE_IMM:
-		case OP_STOREI1_MEMBASE_IMM: 
-		case OP_STOREI2_MEMBASE_IMM: 
-		case OP_STOREI4_MEMBASE_IMM: 
-		case OP_STOREI8_MEMBASE_IMM: 
+		if (MONO_IS_STORE_MEMBASE (ins))
 			store = TRUE;
-			break;
-		case OP_STORE_MEMINDEX:
-		case OP_STOREI1_MEMINDEX:
-		case OP_STOREI2_MEMINDEX:
-		case OP_STOREI4_MEMINDEX:
-		case OP_STOREI8_MEMINDEX:
-		case OP_STORER4_MEMINDEX:
-		case OP_STORER8_MEMINDEX:
+		else if (MONO_IS_STORE_MEMINDEX (ins))
 			g_assert_not_reached ();
-		default:
+		else
 			store = FALSE;
-		}
 
 		/* SREGS */
 		/* These must come first, so MOVE r <- r is handled correctly */
