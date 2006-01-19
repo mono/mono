@@ -143,19 +143,33 @@ namespace System.Web {
 				if (modcoll != null)
 					return;
 
+#if CONFIGURATION_2_0
+				HttpModulesSection modules;
+				modules = (HttpModulesSection) WebConfigurationManager.GetWebApplicationSection ("system.web/httpModules");
+#else
 				ModulesConfiguration modules;
+
 				modules = (ModulesConfiguration) HttpContext.GetAppConfig ("system.web/httpModules");
+#endif
 
 				modcoll = modules.LoadModules (this);
 
 				if (full_init)
 					HttpApplicationFactory.AttachEvents (this);
 
-				GlobalizationConfiguration cfg = GlobalizationConfiguration.GetInstance (null);
+#if CONFIGURATION_2_0
+				GlobalizationSection cfg;
+				cfg = (GlobalizationSection) WebConfigurationManager.GetWebApplicationSection ("system.web/globalization");
+				app_culture = cfg.GetCulture();
+				appui_culture = cfg.GetUICulture();
+#else
+				GlobalizationConfiguration cfg;
+				cfg = GlobalizationConfiguration.GetInstance (null);
 				if (cfg != null) {
 					app_culture = cfg.Culture;
 					appui_culture = cfg.UICulture;
 				}
+#endif
 			}
 		}
 
@@ -210,6 +224,10 @@ namespace System.Web {
 			get {
 				if (context == null)
 					throw new HttpException (Locale.GetText ("No context is available."));
+
+				if (false == HttpApplicationFactory.ContextAvailable)
+					throw new HttpException (Locale.GetText ("Request is not available in this context."));
+
 				return context.Request;
 			}
 		}
@@ -220,6 +238,10 @@ namespace System.Web {
 			get {
 				if (context == null)
 					throw new HttpException (Locale.GetText ("No context is available."));
+
+				if (false == HttpApplicationFactory.ContextAvailable)
+					throw new HttpException (Locale.GetText ("Response is not available in this context."));
+
 				return context.Response;
 			}
 		}
@@ -524,6 +546,10 @@ namespace System.Web {
 			stop_processing = true;
 		}
 
+		internal bool RequestCompleted {
+			set { stop_processing = value; }
+		}
+
 		public virtual void Dispose ()
 		{
 			if (modcoll != null) {
@@ -563,6 +589,9 @@ namespace System.Web {
 				if (Error != null){
 					try {
 						Error (this, EventArgs.Empty);
+					} catch (ThreadAbortException ee){
+						// This happens on Redirect() or End()
+						Thread.ResetAbort ();
 					} catch (Exception ee){
 						context.AddError (ee);
 					}
@@ -577,15 +606,12 @@ namespace System.Web {
 		void Tick ()
 		{
 			try {
-				// FIXME: We should use 'if' instead of 'while'!!
-				while (pipeline.MoveNext ()){
-					if ((bool)pipeline.Current) {
+				if (pipeline.MoveNext ()){
+					if ((bool)pipeline.Current)
 						PipelineDone ();
-						break;
-					}
 				}
 			} catch (Exception e) {
-				Console.WriteLine ("Tick caught an exception that has not been propagated:\n" + e.GetType().FullName + e.Message + e.StackTrace);
+				Console.WriteLine ("Tick caught an exception that has not been propagated:\n" + e);
 			}
 		}
 
@@ -626,13 +652,14 @@ namespace System.Web {
 			
 			Resume ();
 		}
-
+		
 		//
 		// This enumerator yields whether processing must be stopped:
 		//    true:  processing of the pipeline must be stopped
 		//    false: processing of the pipeline must not be stopped
 		//
-		internal class RunHooksEnumerator : IEnumerable, IEnumerator
+#if TARGET_JVM && !NET_2_0
+		class RunHooksEnumerator : IEnumerable, IEnumerator
 		{
 			Delegate [] delegates;
 			int currentStep = 0;
@@ -722,6 +749,62 @@ namespace System.Web {
 		{
 			return new RunHooksEnumerator(this, list);
 		}
+#else
+		IEnumerable RunHooks (Delegate list)
+		{
+			Delegate [] delegates = list.GetInvocationList ();
+
+			foreach (EventHandler d in delegates){
+				if (d.Target != null && (d.Target is AsyncInvoker)){
+					current_ai = (AsyncInvoker) d.Target;
+
+					try {
+						must_yield = true;
+						in_begin = true;
+						context.BeginTimeoutPossible ();
+						current_ai.begin (this, EventArgs.Empty, async_callback_completed_cb, current_ai.data);
+					} catch (ThreadAbortException taex){
+						object obj = taex.ExceptionState;
+						Thread.ResetAbort ();
+						stop_processing = true;
+						if (obj is StepTimeout)
+							ProcessError (new HttpException ("The request timed out."));
+					} catch (Exception e){
+						ProcessError (e);
+					} finally {
+						in_begin = false;
+						context.EndTimeoutPossible ();
+					}
+
+					//
+					// If things are still moving forward, yield this
+					// thread now
+					//
+					if (must_yield)
+						yield return stop_processing;
+					else if (stop_processing)
+						yield return true;
+				} else {
+					try {
+						context.BeginTimeoutPossible ();
+						d (this, EventArgs.Empty);
+					} catch (ThreadAbortException taex){
+						object obj = taex.ExceptionState;
+						Thread.ResetAbort ();
+						stop_processing = true;
+						if (obj is StepTimeout)
+							ProcessError (new HttpException ("The request timed out."));
+					} catch (Exception e){
+						ProcessError (e);
+					} finally {
+						context.EndTimeoutPossible ();
+					}
+					if (stop_processing)
+						yield return true;
+				}
+			}
+		}
+#endif
 
 		static void FinalErrorWrite (HttpResponse response, string error)
 		{
@@ -816,8 +899,12 @@ namespace System.Web {
 			PostDone ();
 		}
 
-		class PipeLineEnumerator : IEnumerator
-		{
+		//
+		// Events fired as described in `Http Runtime Support, HttpModules,
+		// Handling Public Events'
+		//
+#if TARGET_JVM && !NET_2_0
+		class PipeLineEnumerator : IEnumerator {
 			HttpApplication app;
 			IEnumerator currentEnumerator = null;
 			int currentStep = 0;
@@ -1023,6 +1110,164 @@ namespace System.Web {
 		{
 			return new PipeLineEnumerator(this);
 		}
+#else
+		IEnumerator Pipeline ()
+		{
+			if (stop_processing)
+				yield return true;
+
+			if (BeginRequest != null)
+				foreach (bool stop in RunHooks (BeginRequest))
+					yield return stop;
+
+			if (AuthenticateRequest != null)
+				foreach (bool stop in RunHooks (AuthenticateRequest))
+					yield return stop;
+
+			if (DefaultAuthentication != null)
+				foreach (bool stop in RunHooks (DefaultAuthentication))
+					yield return stop;
+
+#if NET_2_0
+			if (PostAuthenticateRequest != null)
+				foreach (bool stop in RunHooks (AuthenticateRequest))
+					yield return stop;
+#endif
+			if (AuthorizeRequest != null)
+				foreach (bool stop in RunHooks (AuthorizeRequest))
+					yield return stop;
+#if NET_2_0
+			if (PostAuthorizeRequest != null)
+				foreach (bool stop in RunHooks (PostAuthorizeRequest))
+					yield return stop;
+#endif
+
+			if (ResolveRequestCache != null)
+				foreach (bool stop in RunHooks (ResolveRequestCache))
+					yield return stop;
+
+			// Obtain the handler for the request.
+			IHttpHandler handler = null;
+			try {
+				handler = GetHandler (context);
+			} catch (FileNotFoundException fnf){
+				if (context.Request.IsLocal)
+					ProcessError (new HttpException (404, String.Format ("File not found {0}", fnf.FileName), fnf));
+				else
+					ProcessError (new HttpException (404, "File not found", fnf));
+			} catch (DirectoryNotFoundException dnf){
+				ProcessError (new HttpException (404, "Directory not found", dnf));
+			} catch (Exception e) {
+				ProcessError (e);
+			}
+
+			if (stop_processing)
+				yield return true;
+
+#if NET_2_0
+			if (PostResolveRequestCache != null)
+				foreach (bool stop in RunHooks (PostResolveRequestCache))
+					yield return stop;
+
+			if (PostMapRequestHandler != null)
+				foreach (bool stop in RunHooks (PostMapRequestHandler))
+					yield return stop;
+			
+#endif
+			if (AcquireRequestState != null){
+				foreach (bool stop in RunHooks (AcquireRequestState))
+					yield return stop;
+			}
+
+#if NET_2_0
+			if (PostAcquireRequestState != null){
+				foreach (bool stop in RunHooks (PostAcquireRequestState))
+					yield return stop;
+			}
+#endif
+			
+			//
+			// From this point on, we need to ensure that we call
+			// ReleaseRequestState, so the code below jumps to
+			// `release:' to guarantee it rather than yielding.
+			//
+			if (PreRequestHandlerExecute != null)
+				foreach (bool stop in RunHooks (PreRequestHandlerExecute))
+					if (stop)
+						goto release;
+				
+			try {
+				context.BeginTimeoutPossible ();
+				if (handler != null){
+					IHttpAsyncHandler async_handler = handler as IHttpAsyncHandler;
+					
+					if (async_handler != null){
+						must_yield = true;
+						in_begin = true;
+						async_handler.BeginProcessRequest (context, async_handler_complete_cb, handler);
+					} else {
+						must_yield = false;
+						handler.ProcessRequest (context);
+					}
+				}
+			} catch (ThreadAbortException taex){
+				object obj = taex.ExceptionState;
+				Thread.ResetAbort ();
+				stop_processing = true;
+				if (obj is StepTimeout)
+					ProcessError (new HttpException ("The request timed out."));
+			} catch (Exception e){
+				ProcessError (e);
+			} finally {
+				in_begin = false;
+				context.EndTimeoutPossible ();
+			}
+			if (must_yield)
+				yield return stop_processing;
+			else if (stop_processing)
+				goto release;
+			
+			// These are executed after the application has returned
+			
+			if (PostRequestHandlerExecute != null)
+				foreach (bool stop in RunHooks (PostRequestHandlerExecute))
+					if (stop)
+						goto release;
+			
+		release:
+			if (ReleaseRequestState != null){
+				foreach (bool stop in RunHooks (ReleaseRequestState)){
+					//
+					// Ignore the stop signal while release the state
+					//
+					
+				}
+			}
+			
+			if (stop_processing)
+				yield return true;
+
+#if NET_2_0
+			if (PostReleaseRequestState != null)
+				foreach (bool stop in RunHooks (PostReleaseRequestState))
+					yield return stop;
+#endif
+
+			if (context.Error == null)
+				context.Response.DoFilter (true);
+
+			if (UpdateRequestCache != null)
+				foreach (bool stop in RunHooks (UpdateRequestCache))
+					yield return stop;
+
+#if NET_2_0
+			if (PostUpdateRequestCache != null)
+				foreach (bool stop in RunHooks (PostUpdateRequestCache))
+					yield return stop;
+#endif
+			PipelineDone ();
+		}
+#endif
 
 		void PreStart ()
 		{
@@ -1069,7 +1314,6 @@ namespace System.Web {
 		{
 			InitOnce (true);
 			PreStart ();
-			stop_processing = false;
 			pipeline = Pipeline ();
 			Tick ();
 		}
@@ -1081,10 +1325,16 @@ namespace System.Web {
 			string verb = request.RequestType;
 			string url = request.FilePath;
 			
+			IHttpHandler handler = null;
+#if CONFIGURATION_2_0
+			HttpHandlersSection section = (HttpHandlersSection) WebConfigurationManager.GetWebApplicationSection ("system.web/httpHandlers");
+			object o = section.LocateHandler (verb, url);
+#else
 			HandlerFactoryConfiguration factory_config = (HandlerFactoryConfiguration) HttpContext.GetAppConfig ("system.web/httpHandlers");
 			object o = factory_config.LocateHandler (verb, url);
+#endif
+
 			factory = o as IHttpHandlerFactory;
-			IHttpHandler handler;
 			
 			if (factory == null) {
 				handler = (IHttpHandler) o;
@@ -1127,7 +1377,15 @@ namespace System.Web {
 			done.Reset ();
 			
 			begin_iar = new AsyncRequestState (done, cb, extraData);
-			Start (null);
+#if TARGET_JVM
+			if (true)
+#else
+			if (Thread.CurrentThread.IsThreadPoolThread)
+#endif
+				Start (null);
+			else
+				ThreadPool.QueueUserWorkItem (new WaitCallback (Start), null);
+			
 			return begin_iar;
 		}
 
@@ -1168,10 +1426,14 @@ namespace System.Web {
 			if (!context.IsCustomErrorEnabled)
 				return false;
 			
+#if CONFIGURATION_2_0
+			CustomErrorsSection config = (CustomErrorsSection)WebConfigurationManager.GetWebApplicationSection ("system.web/customErrors");
+#else
 			CustomErrorsConfig config = null;
 			try {
 				config = (CustomErrorsConfig) context.GetConfig ("system.web/customErrors");
 			} catch { }
+#endif
 			
 			if (config == null) {
 				if (context.ErrorPage != null)
@@ -1180,7 +1442,12 @@ namespace System.Web {
 				return false;
 			}
 			
+#if CONFIGURATION_2_0
+			CustomError err = config.Errors [context.Response.StatusCode.ToString()];
+			string redirect = err == null ? null : err.Redirect;
+#else
 			string redirect =  config [context.Response.StatusCode];
+#endif
 			if (redirect == null) {
 				redirect = context.ErrorPage;
 				if (redirect == null)
