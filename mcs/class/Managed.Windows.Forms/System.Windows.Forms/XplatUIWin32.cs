@@ -715,31 +715,21 @@ namespace System.Windows.Forms {
 		}
 
 		internal static Image DIBtoImage(IntPtr dib_data) {
-			MemoryStream		ms;
-			byte[]			header;
-			byte[]			buffer;
-			Bitmap			bmp;
 			BITMAPINFOHEADER	bmi;
 			int			ncolors;
-			int			palettesize;
 			int			imagesize;
-			int			size;
-			int			offset;
+			int			palettesize;
+			Bitmap			bmp;
+			BitmapData		bits;
+			ColorPalette		pal;
+			int[]			palette;
+			byte[]			imagebits;
 
-			header = new byte[54];	// Size of a BMP file header, without palette
-			// Grab the header
-			header[0] = (byte)'B';
-			header[1] = (byte)'M';
-			// 2, 3, 4 and 5 = unsigned int size
-			// 6, 7, 8 and 9 = reserved
-			// 10, 11, 12 and 13 = offset to image data
-
-			// Create a fake BMP header
 			bmi = (BITMAPINFOHEADER)Marshal.PtrToStructure(dib_data, typeof(BITMAPINFOHEADER));
 
 			ncolors = (int)bmi.biClrUsed;
 			if (ncolors == 0) {
-				if (bmi.biBitCount != 24) {
+				if (bmi.biBitCount < 24) {
 					ncolors = (int)(1 << bmi.biBitCount);
 				}
 			}
@@ -750,30 +740,60 @@ namespace System.Windows.Forms {
 				imagesize = (int)(((((bmi.biWidth * bmi.biBitCount) + 31) & ~31) >> 3) * bmi.biHeight);
 			}
 
-			size = 54 + palettesize + imagesize;
-			offset = 54 + palettesize;
-			buffer = new byte[size];
+			switch(bmi.biBitCount) {
+				case 1: {	// Monochrome
+					bmp = new Bitmap(bmi.biWidth, bmi.biHeight, PixelFormat.Format1bppIndexed);
+					palette = new int[2];
+					break;
+				}
 
-			// Copy the fake BMP file header
-			header[2] = (byte)size;
-			header[3] = (byte)(size >> 8);
-			header[4] = (byte)(size >> 16);
-			header[5] = (byte)(size >> 24);
+				case 4: {	// 4bpp
+					bmp = new Bitmap(bmi.biWidth, bmi.biHeight, PixelFormat.Format4bppIndexed);
+					palette = new int[16];
+					break;
+				}
 
-			header[10] = (byte)offset;
-			header[11] = (byte)(offset >> 8);
-			header[12] = (byte)(offset >> 16);
-			header[13] = (byte)(offset >> 24);
+				case 8: {	// 8bpp
+					bmp = new Bitmap(bmi.biWidth, bmi.biHeight, PixelFormat.Format8bppIndexed);
+					palette = new int[256];
+					break;
+				}
 
-			Array.Copy(header, 0, buffer, 0, 14);
+				case 24:
+				case 32: {	// 32bpp
+					bmp = new Bitmap(bmi.biWidth, bmi.biHeight, PixelFormat.Format32bppArgb);
+					palette = new int[0];
+					break;
+				}
 
-			for (int i = 14; i < size; i++) {
-				buffer[i] = Marshal.ReadByte(dib_data, i - 14);
+				default: {
+					throw new Exception("Unexpected number of bits:" + bmi.biBitCount.ToString());
+				}
 			}
 
-			ms = new MemoryStream(buffer, 0, size, false);
-			bmp = new Bitmap(ms);
-			ms.Close();
+			if (bmi.biBitCount < 24) {
+				pal = bmp.Palette;				// Managed palette
+				Marshal.Copy((IntPtr)((int)dib_data + Marshal.SizeOf(typeof(BITMAPINFOHEADER))), palette, 0, palette.Length);
+
+				for (int i = 0; i < ncolors; i++) {
+					pal.Entries[i] = Color.FromArgb(palette[i] & unchecked((int)0xff000000));
+				}
+			}
+
+			bits = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.WriteOnly, bmp.PixelFormat);
+
+			imagebits = new byte[bits.Stride];
+
+			for (int y = 0; y < bmi.biHeight; y++) {
+				// Copy from source to managed
+				Marshal.Copy((IntPtr)((int)dib_data + Marshal.SizeOf(typeof(BITMAPINFOHEADER)) + palette.Length * 4 + bits.Stride * y), imagebits, 0, bits.Stride);
+
+				// Copy from managed to dest
+				Marshal.Copy(imagebits, 0, (IntPtr)((int)bits.Scan0 + bits.Stride * (bmi.biHeight - 1 - y)), imagebits.Length);
+			}
+
+			bmp.UnlockBits(bits);
+
 			return bmp;
 		}
 
@@ -1022,7 +1042,6 @@ namespace System.Windows.Forms {
 			IntPtr	WindowHandle;
 			IntPtr	ParentHandle;
 			Hwnd	hwnd;
-			IntPtr	lParam;
 
 			hwnd = new Hwnd();
 
@@ -1039,17 +1058,7 @@ namespace System.Windows.Forms {
 				ParentHandle = FosterParent;
 			}
 
-			lParam = IntPtr.Zero;
-			if (cp.Param != null && cp.Param is CLIENTCREATESTRUCT) {
-				lParam = Marshal.AllocHGlobal(Marshal.SizeOf(cp.Param));
-				Marshal.StructureToPtr(cp.Param, lParam, false);
-			}
-
-			WindowHandle = Win32CreateWindow((uint)cp.ExStyle, cp.ClassName, cp.Caption, (uint)cp.Style, cp.X, cp.Y, cp.Width, cp.Height, ParentHandle, IntPtr.Zero, IntPtr.Zero, lParam);
-
-			if (lParam != IntPtr.Zero) {
-				Marshal.FreeHGlobal(lParam);
-			}
+			WindowHandle = Win32CreateWindow((uint)cp.ExStyle, cp.ClassName, cp.Caption, (uint)cp.Style, cp.X, cp.Y, cp.Width, cp.Height, ParentHandle, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
 
 			if (WindowHandle==IntPtr.Zero) {
 				uint error = Win32GetLastError();
@@ -1106,17 +1115,17 @@ namespace System.Windows.Forms {
 		internal override void SetWindowState(IntPtr hwnd, FormWindowState state) {
 			switch(state) {
 				case FormWindowState.Normal: {
-					Win32ShowWindow(hwnd, WindowPlacementFlags.SW_SHOWNORMAL);
+					Win32ShowWindow(hwnd, WindowPlacementFlags.SW_RESTORE);
 					return;
 				}
 
 				case FormWindowState.Minimized: {
-					Win32ShowWindow(hwnd, WindowPlacementFlags.SW_SHOWMINIMIZED);
+					Win32ShowWindow(hwnd, WindowPlacementFlags.SW_MINIMIZE);
 					return;
 				}
 
 				case FormWindowState.Maximized: {
-					Win32ShowWindow(hwnd, WindowPlacementFlags.SW_SHOWMAXIMIZED);
+					Win32ShowWindow(hwnd, WindowPlacementFlags.SW_MAXIMIZE);
 					return;
 				}
 			}
@@ -2047,6 +2056,7 @@ namespace System.Windows.Forms {
 					return;
 				}
 
+				case ClipboardFormats.CF_BITMAP:
 				case ClipboardFormats.CF_DIB: {
 					data = ImageToDIB((Image)obj);
 
@@ -2054,7 +2064,7 @@ namespace System.Windows.Forms {
 					hmem_ptr = Win32GlobalLock(hmem);
 					Marshal.Copy(data, 0, hmem_ptr, data.Length);
 					Win32GlobalUnlock(hmem);
-					Win32SetClipboardData((uint)type, hmem);
+					Win32SetClipboardData((uint)ClipboardFormats.CF_DIB, hmem);
 					return;
 				}
 

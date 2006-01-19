@@ -1,3 +1,16 @@
+2006-01-18  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* Cursor.cs: Reimplemented creating cursor bitmaps without using
+	  the Bitmap(Stream) constructor which is semi-broken on MS GDI+.
+	  This fixes #77218
+	* XplatUIWin32.cs: 
+	  - Reimplemented creating Bitmaps from DIBs since the Bitmap(Stream) 
+	    constructor creates images that can't be saved. Part of the fix
+	    for #76103
+	  - Added handling of CF_BITMAP as CF_DIB to clipboard code (Fixes #76103)
+	  - SetWindowState: Switched ShowWindow flags (part of an upcoming 
+	    bug fix for handling window state in forms properly)
+
 2006-01-18  Alexander Olk  <alex.olk@googlemail.com>
 
 	* ThemeGtk.cs: Simplify ScrollBar drawing

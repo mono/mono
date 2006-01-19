@@ -28,6 +28,7 @@
 
 using System;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
@@ -506,7 +507,7 @@ namespace System.Windows.Forms {
 			reader.Close();
 		}
 
-		private Bitmap ToBitmap (bool xor, bool transparent) {
+		private Bitmap ToBitmapOld(bool xor, bool transparent) {
 			Bitmap bmp;
 
 			if (cursor_data != null) {
@@ -623,6 +624,104 @@ namespace System.Windows.Forms {
 			return bmp;
 		}
 
+		private Bitmap ToBitmap(bool xor, bool transparent) {
+			CursorImage		ci;
+			CursorInfoHeader	cih;
+			int			ncolors;
+			Bitmap			bmp;
+			BitmapData		bits;
+			ColorPalette		pal;
+			int			biHeight;
+
+			if (cursor_data == null) {
+				return new Bitmap(32, 32);
+			}
+
+			ci = cursor_data[this.id];
+			cih = ci.cursorHeader;
+			biHeight = cih.biHeight / 2;
+
+			if (!xor) {
+				// The AND mask is 1bit - very straightforward
+				bmp = new Bitmap(cih.biWidth, biHeight, PixelFormat.Format1bppIndexed);
+				pal = bmp.Palette;
+				pal.Entries[0] = Color.FromArgb(0, 0, 0);
+				pal.Entries[1] = Color.FromArgb(unchecked((int)0xffffffffff));
+				bits = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.WriteOnly, bmp.PixelFormat);
+
+				for (int y = 0; y < biHeight; y++) {
+					Marshal.Copy(ci.cursorAND, bits.Stride * y, (IntPtr)((int)bits.Scan0 + bits.Stride * (biHeight - 1 - y)), bits.Stride);
+				}
+
+				bmp.UnlockBits(bits);
+			} else {
+				ncolors = (int)cih.biClrUsed;
+				if (ncolors == 0) {
+					if (cih.biBitCount < 24) {
+						ncolors = (int)(1 << cih.biBitCount);
+					}
+				}
+
+				switch(cih.biBitCount) {
+					case 1: {	// Monochrome
+						bmp = new Bitmap(cih.biWidth, biHeight, PixelFormat.Format1bppIndexed);
+						break;
+					}
+
+					case 4: {	// 4bpp
+						bmp = new Bitmap(cih.biWidth, biHeight, PixelFormat.Format4bppIndexed);
+						break;
+					}
+
+					case 8: {	// 8bpp
+						bmp = new Bitmap(cih.biWidth, biHeight, PixelFormat.Format8bppIndexed);
+						break;
+					}
+
+					case 24:
+					case 32: {	// 32bpp
+						bmp = new Bitmap(cih.biWidth, biHeight, PixelFormat.Format32bppArgb);
+						break;
+					}
+
+					default: {
+						throw new Exception("Unexpected number of bits:" + cih.biBitCount.ToString());
+					}
+				}
+
+				if (cih.biBitCount < 24) {
+					pal = bmp.Palette;				// Managed palette
+
+					for (int i = 0; i < ci.cursorColors.Length; i++) {
+						pal.Entries[i] = Color.FromArgb((int)ci.cursorColors[i] & unchecked((int)0xff000000));
+					}
+				}
+
+				bits = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.WriteOnly, bmp.PixelFormat);
+
+				for (int y = 0; y < biHeight; y++) {
+					Marshal.Copy(ci.cursorXOR, bits.Stride * y, (IntPtr)((int)bits.Scan0 + bits.Stride * (biHeight - 1 - y)), bits.Stride);
+				}
+				
+				bmp.UnlockBits(bits);
+			}
+
+			if (transparent) {
+				bmp = new Bitmap(bmp);	// This makes a 32bpp image out of an indexed one
+				// Apply the mask to make properly transparent
+				for (int y = 0; y < biHeight; y++) {
+					for (int x = 0; x < cih.biWidth / 8; x++) {
+						for (int bit = 7; bit >= 0; bit--) {
+							if (((ci.cursorAND[y * cih.biWidth / 8 +x] >> bit) & 1) != 0) {
+								bmp.SetPixel(x*8 + 7-bit, biHeight - y - 1, Color.Transparent);
+							}
+						}
+					}
+				}
+			}
+
+			return bmp;
+		}
 		#endregion	// Private Methods
 	}
 }
