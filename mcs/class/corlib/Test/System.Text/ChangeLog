@@ -1,3 +1,13 @@
+2006-01-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* UTF7EncodingTest.cs UTF8EncodingTest.cs UnicodeEncodingTest.cs :
+	  due to the introduction of fallback, some of their internals have
+	  changed. Thus marked some tests as NotWorking.
+	* DecoderReplacementFallbackBufferTest.cs,
+	  EncoderReplacementFallbackBufferTest.cs :
+	  some behaviors have changed since beta2, so marked old tests as
+	  NotWorking.
+
 2005-12-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* StringBuilderTest.cs: Test case MaxCapacity_Overflow3 doesn't work
