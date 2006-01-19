@@ -9379,6 +9379,9 @@ mono_local_cprop_bb2 (MonoCompile *cfg, MonoBasicBlock *bb, int acp_size)
 						else
 							ins->sreg2 = -1;
 
+						if ((opcode2 == OP_VOIDCALL) || (opcode2 == OP_CALL) || (opcode2 == OP_LCALL) || (opcode2 == OP_FCALL))
+							((MonoCallInst*)ins)->fptr = (gpointer)ins->inst_imm;
+
 						/* Allow further iterations */
 						srcindex = -1;
 						continue;
@@ -9883,7 +9886,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 	if (cfg->new_ir) {
 		/* This must be done _before_ global reg alloc and _after_ decompose */
 		mono_handle_global_vregs (cfg);
-		mono_local_deadce (cfg);
+		//mono_local_deadce (cfg);
 	}
 
 	if (cfg->opt & MONO_OPT_LINEARS) {

@@ -1246,11 +1246,6 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 			if (dest_dreg != -1)
 				dreg_mask = (regmask (dest_dreg));
 
-			/* FIXME: Do this earlier */
-			if (((ins->opcode == OP_MOVE) || (ins->opcode == OP_ICONST)) && !fp && (reginfo [ins->dreg].last_use == i) && (reginfo [ins->dreg].prev_use == 0)) {
-				ins->opcode = CEE_NOP;
-			}
-
 			val = rassign (cfg, ins->dreg, fp);
 
 			if (val < 0) {

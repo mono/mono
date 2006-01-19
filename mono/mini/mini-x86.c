@@ -853,7 +853,7 @@ mono_arch_create_vars (MonoCompile *cfg)
 			return;
 		}
 
-	if (cfg->ret)
+	if (cfg->new_ir && cfg->ret)
 		cfg->ret->dreg = cinfo->ret.reg;
 
 	g_free (cinfo);

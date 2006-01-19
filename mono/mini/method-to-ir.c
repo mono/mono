@@ -8729,6 +8729,16 @@ op_to_op_imm (int opcode)
 		return OP_STOREI4_MEMBASE_IMM;
 	case OP_X86_PUSH:
 		return OP_X86_PUSH_IMM;
+
+	case OP_VOIDCALL_REG:
+		return OP_VOIDCALL;
+	case OP_CALL_REG:
+		return OP_CALL;
+	case OP_LCALL_REG:
+		return OP_LCALL;
+	case OP_FCALL_REG:
+		return OP_FCALL;
+
 	default:
 		return -1;
 	}
@@ -9116,6 +9126,7 @@ mono_spill_global_vars (MonoCompile *cfg)
 				if ((sreg != -1) && get_vreg_to_inst (cfg, regtype, sreg)) {
 					MonoInst *var = cfg->vreg_to_inst [regtype][sreg];
 					MonoInst *load_ins;
+					guint32 load_opcode;
 
 					if (var->opcode == OP_REGVAR) {
 						if (srcindex == 0)
@@ -9125,8 +9136,10 @@ mono_spill_global_vars (MonoCompile *cfg)
 					} else {
 						g_assert (var->opcode == OP_REGOFFSET);
 
+						load_opcode = mono_type_to_load_membase (var->inst_vtype);
+
 						/* FIXME: Generalize this */
-						if (ins->opcode == OP_X86_PUSH) {
+						if ((ins->opcode == OP_X86_PUSH) && ((load_opcode == OP_LOADI4_MEMBASE) || (load_opcode == OP_LOADU4_MEMBASE))) {
 							ins->opcode = OP_X86_PUSH_MEMBASE;
 							ins->inst_basereg = var->inst_basereg;
 							ins->inst_offset = var->inst_offset;
@@ -9145,7 +9158,7 @@ mono_spill_global_vars (MonoCompile *cfg)
 								insert_before_ins (bb, ins, load_ins, &prev);
 							}
 							else {
-								NEW_LOAD_MEMBASE (cfg, load_ins, mono_type_to_load_membase (var->inst_vtype), sreg, var->inst_basereg, var->inst_offset);
+								NEW_LOAD_MEMBASE (cfg, load_ins, load_opcode, sreg, var->inst_basereg, var->inst_offset);
 								insert_before_ins (bb, ins, load_ins, &prev);
 							}
 						}
