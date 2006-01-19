@@ -1,3 +1,8 @@
+2006-01-18  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* Label.cs: A label by default is not a tabstop (Fixes one of our
+	  failing nunit tests)
+
 2006-01-18  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* XplatUIWin32.cs: Fixed wrong DoEvents logic. Fixes #77282

@@ -88,6 +88,7 @@ namespace System.Windows.Forms
     		{
 			// Defaults in the Spec
 			autosize = false;
+			tab_stop = false;
 			string_format = new StringFormat();
 			TextAlign = ContentAlignment.TopLeft;
 			image = null;
