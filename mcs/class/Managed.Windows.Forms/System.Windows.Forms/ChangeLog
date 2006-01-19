@@ -1,3 +1,8 @@
+2006-01-19  Jackson Harper  <jackson@ximian.com>
+
+	* ComboBox.cs: Hookup the text controls keydown event so we get
+	those when the text control has the focus.
+
 2006-01-18  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* Label.cs: Now using the base events instead of defining new ones;

@@ -144,7 +144,7 @@ namespace System.Windows.Forms
 			MouseDown += new MouseEventHandler (OnMouseDownCB);
 			MouseUp += new MouseEventHandler (OnMouseUpCB);
 			MouseMove += new MouseEventHandler (OnMouseMoveCB);
-			KeyDown +=new KeyEventHandler(OnKeyDownCB);
+			KeyDown +=new KeyEventHandler(OnKeyDownCB);			
 		}
 
 		#region events
@@ -273,6 +273,7 @@ namespace System.Windows.Forms
 					textbox_ctrl.BorderStyle = BorderStyle.None;
 					textbox_ctrl.TextChanged += new EventHandler (OnTextChangedEdit);
 					textbox_ctrl.KeyPress += new KeyPressEventHandler(textbox_ctrl_KeyPress);
+					textbox_ctrl.KeyDown += new KeyEventHandler (OnKeyDownCB);
 					textbox_ctrl.GotFocus += new EventHandler(textbox_ctrl_GotFocus);
 					textbox_ctrl.LostFocus += new EventHandler(textbox_ctrl_LostFocus);
 
