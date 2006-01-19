@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004-2005 Novell, Inc.
+// Copyright (c) 2004-2006 Novell, Inc.
 //
 // Authors:
 //	Jordi Mas i Hernandez, jordi@ximian.com
@@ -59,27 +59,72 @@ namespace System.Windows.Forms
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public new event EventHandler BackgroundImageChanged;
+		public new event EventHandler BackgroundImageChanged {
+			add {
+				base.BackgroundImageChanged += value;
+			}
+			remove {
+				base.BackgroundImageChanged -= value;
+			}
+		}
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public new event EventHandler ImeModeChanged;    		
+		public new event EventHandler ImeModeChanged {
+			add {
+				base.ImeModeChanged += value;
+			}
+			remove {
+				base.ImeModeChanged -= value;
+			}
+		}
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public new event KeyEventHandler KeyDown;		
+		public new event KeyEventHandler KeyDown {
+			add {
+				base.KeyDown += value;
+			}
+			remove {
+				base.KeyDown -= value;
+			}
+		}
+
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public new event KeyPressEventHandler KeyPress;		
+		public new event KeyPressEventHandler KeyPress {
+			add {
+				base.KeyPress += value;
+			}
+			remove {
+				base.KeyPress -= value;
+			}
+		}
+
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public new event KeyEventHandler KeyUp;
+		public new event KeyEventHandler KeyUp {
+			add {
+				base.KeyUp += value;
+			}
+			remove {
+				base.KeyUp -= value;
+			}
+		}
+
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public new event EventHandler TabStopChanged;
+		public new event EventHandler TabStopChanged {
+			add {
+				base.TabStopChanged += value;
+			}
+			remove {
+				base.TabStopChanged -= value;
+			}
+		}
 
 		public event EventHandler TextAlignChanged;
 		#endregion
@@ -128,7 +173,7 @@ namespace System.Windows.Forms
     				CalcAutoSize ();
 				Refresh ();
 
-				OnAutoSizeChanged (new EventArgs ());    				
+				OnAutoSizeChanged (EventArgs.Empty);    				
     			}
     		}
 
@@ -140,12 +185,6 @@ namespace System.Windows.Forms
     				return base.BackgroundImage;
     			}
     			set {
-    				if (base.BackgroundImage == value)
-					return;
-
-				if (BackgroundImageChanged != null)
-					BackgroundImageChanged (this, EventArgs.Empty);
-
 				base.BackgroundImage = value;
 				Refresh ();
     			}
@@ -280,13 +319,7 @@ namespace System.Windows.Forms
 		[EditorBrowsable(EditorBrowsableState.Never)]
     		public new ImeMode ImeMode {
 			get { return base.ImeMode; }
-			set {
-				if (value == ImeMode)
-					return;
-				base.ImeMode = value;
-				if (ImeModeChanged != null)
-					ImeModeChanged (this, EventArgs.Empty);
-			}
+			set { base.ImeMode = value; }
 		}
 
 		[Browsable(false)]
@@ -313,14 +346,7 @@ namespace System.Windows.Forms
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public new bool TabStop  {
     			get { return base.TabStop; }
-    			set {
-				if (value == base.TabStop)
-					return;
-
-				base.TabStop = value;
-				if (TabStopChanged != null)
-					TabStopChanged (this, EventArgs.Empty);
-			}
+    			set { base.TabStop = value; }
     		}
 
 		[DefaultValue(ContentAlignment.TopLeft)]
@@ -378,7 +404,7 @@ namespace System.Windows.Forms
 						break;
 					}
 
-					OnTextAlignChanged (new EventArgs ());
+					OnTextAlignChanged (EventArgs.Empty);
     					Refresh();
 				}
 			}

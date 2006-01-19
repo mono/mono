@@ -1,3 +1,9 @@
+2006-01-18  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* Label.cs: Now using the base events instead of defining new ones;
+	  this allows us to just call the base properties without having to
+	  duplicate all base property logic 
+
 2006-01-18  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* Label.cs: A label by default is not a tabstop (Fixes one of our
