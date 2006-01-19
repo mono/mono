@@ -35,11 +35,14 @@
 //		- When GDK is initialised it opens its own display. There is not way of changing it,
 //		then we use that display as SWF display
 //		- You can activate this Theme in Linux doing export MONO_THEME=gtk
-//		- GTK paints controls into a window no a device context. We should inverstigate if we 
+//		- GTK paints controls into a window not a device context. We should inverstigate if we 
 //		we can encapsulate a dc in a gtkwindow.
 
 
 // NOT COMPLETE
+
+// TODO: fix position of button focus rectangle
+//
 
 using System;
 using System.Drawing;
@@ -171,7 +174,16 @@ namespace System.Windows.Forms
 		static extern void gtk_style_detach (IntPtr raw);
 		
 		[DllImport("libgtk-x11-2.0.so")]
-		static extern IntPtr  gtk_button_new ();
+		static extern IntPtr gtk_button_new ();
+		
+		[DllImport("libgtk-x11-2.0.so")]
+		static extern IntPtr gtk_progress_bar_new ();
+		
+		[DllImport("libgtk-x11-2.0.so")]
+		static extern IntPtr gtk_radio_button_new (IntPtr group);
+		
+		[DllImport("libgtk-x11-2.0.so")]
+		static extern IntPtr gtk_check_button_new ();
 
 		/* GTK Drawing */
 		[DllImport("libgtk-x11-2.0.so")]
@@ -209,19 +221,31 @@ namespace System.Windows.Forms
 		static extern void gtk_widget_size_allocate (IntPtr widget, ref Rectangle allocation);
 		
 		[DllImport("libgtk-x11-2.0.so")]
-		static extern void gtk_widget_set_size_request (IntPtr widget, int width, int height);
-
+		static extern void gtk_paint_option (IntPtr style, IntPtr window, int state_type, int shadow_type, IntPtr area, IntPtr widget, string detail, int x, int y, int width, int height);
+		
 		/* Data */
 		static protected IntPtr dispmgr;
 		static protected IntPtr gdkdisplay;
 		static protected IntPtr widget;
 		static protected IntPtr style;
-		static protected SolidBrush br_buttonface;
-		static protected SolidBrush br_buttontext;
 		
-		IntPtr global_gtk_button = gtk_button_new();
+		IntPtr global_gtk_button = IntPtr.Zero;
+		IntPtr global_gtk_button_style = IntPtr.Zero;
+		
 		IntPtr global_gtk_vscrollbar = IntPtr.Zero;
+		IntPtr global_gtk_vscrollbar_style = IntPtr.Zero;
+		
 		IntPtr global_gtk_hscrollbar = IntPtr.Zero;
+		IntPtr global_gtk_hscrollbar_style = IntPtr.Zero;
+		
+		IntPtr global_gtk_progress_bar = IntPtr.Zero;
+		IntPtr global_gtk_progress_bar_style = IntPtr.Zero;
+		
+		IntPtr global_gtk_radio_button = IntPtr.Zero;
+		IntPtr global_gtk_radio_button_style = IntPtr.Zero;
+		
+		IntPtr global_gtk_check_button = IntPtr.Zero;
+		IntPtr global_gtk_check_button_style = IntPtr.Zero;
 		
 		IntPtr current_gdk_window = IntPtr.Zero;
 		IntPtr current_style = IntPtr.Zero;
@@ -262,22 +286,37 @@ namespace System.Windows.Forms
 			
 			LoadSysDefaultColors ();	
 
-			br_buttonface = new SolidBrush (defaultWindowBackColor);		
-			br_buttontext = new SolidBrush (defaultWindowForeColor);			
 			always_draw_hotkeys = true;
+			
+			global_gtk_button = gtk_button_new();
+			gtk_widget_ensure_style (global_gtk_button);
+			global_gtk_button_style = gtk_rc_get_style (global_gtk_button);
 			
 			IntPtr adj = gtk_adjustment_new (0, 0, 0, 0, 0, 0);
                         global_gtk_vscrollbar = gtk_vscrollbar_new (adj);
+			gtk_widget_ensure_style (global_gtk_vscrollbar);
+			global_gtk_vscrollbar_style = gtk_rc_get_style (global_gtk_vscrollbar);
+			
 			global_gtk_hscrollbar = gtk_hscrollbar_new (adj);
+			gtk_widget_ensure_style (global_gtk_hscrollbar);
+			global_gtk_hscrollbar_style = gtk_rc_get_style (global_gtk_hscrollbar);
+			
+			global_gtk_progress_bar = gtk_progress_bar_new ();
+			gtk_widget_ensure_style (global_gtk_progress_bar);
+			global_gtk_progress_bar_style = gtk_rc_get_style (global_gtk_progress_bar);
+			
+			global_gtk_radio_button = gtk_radio_button_new (IntPtr.Zero);
+			gtk_widget_ensure_style (global_gtk_radio_button);
+			global_gtk_radio_button_style = gtk_rc_get_style (global_gtk_radio_button);
+			
+			global_gtk_check_button = gtk_check_button_new ();
+			gtk_widget_ensure_style (global_gtk_check_button);
+			global_gtk_check_button_style = gtk_rc_get_style (global_gtk_check_button);
 		}	
 
 		public override bool DoubleBufferingSupported {
 			get {return false; }
 		}
-		
-//		public override Color ColorControl {
-//			get { return Color.Blue;}
-//		}
 		
 		protected override void ButtonBase_DrawButton(ButtonBase button, Graphics dc)
 		{
@@ -285,15 +324,18 @@ namespace System.Windows.Forms
 			
 			IntPtr gdkwindow = gdk_window_foreign_new_for_display (gdkdisplay, (uint) button.Handle);
 			
-			IntPtr style;
-			
-			style = gtk_rc_get_style (global_gtk_button);		
-			style = gtk_style_attach (style, gdkwindow);  // need it
+			IntPtr button_style = gtk_style_attach (global_gtk_button_style, gdkwindow);  // need it
 			
 			StateType state_type = StateType.Normal;
 			ShadowType shadow_type = button.flat_style == FlatStyle.Flat ? ShadowType.In : ShadowType.Out;
 			string detail = "buttondefault";
 			
+			if (((button is CheckBox) && (((CheckBox)button).check_state == CheckState.Checked)) ||
+			    ((button is RadioButton) && (((RadioButton)button).check_state == CheckState.Checked))) {
+				state_type = StateType.Active;
+				shadow_type = ShadowType.In;
+				detail = "button";
+			} else
 			if (!button.is_enabled) {
 				state_type = StateType.Insensitive;
 			} else
@@ -307,7 +349,7 @@ namespace System.Windows.Forms
 			}
 			
 			if (button.flat_style == FlatStyle.Flat)
-				gtk_paint_flat_box (style, gdkwindow,
+				gtk_paint_flat_box (button_style, gdkwindow,
 						    (int) state_type,
 						    (int) shadow_type,
 						    IntPtr.Zero,
@@ -317,7 +359,7 @@ namespace System.Windows.Forms
 						    buttonRectangle.Width, buttonRectangle.Height);
 			else
 			if (button.flat_style != FlatStyle.Popup || (button.flat_style == FlatStyle.Popup && button.is_entered))
-				gtk_paint_box (style, gdkwindow,
+				gtk_paint_box (button_style, gdkwindow,
 					       (int) state_type,
 					       (int) shadow_type,
 					       IntPtr.Zero,
@@ -336,12 +378,9 @@ namespace System.Windows.Forms
 			
 			IntPtr gdkwindow = gdk_window_foreign_new_for_display (gdkdisplay, (uint) button.Handle);
 			
-			IntPtr style;
+			IntPtr button_style = gtk_style_attach (global_gtk_button_style, gdkwindow);  // need it
 			
-                        style = gtk_rc_get_style (global_gtk_button);		
-			style = gtk_style_attach (style, gdkwindow);  // need it
-			
-			gtk_paint_focus (style,
+			gtk_paint_focus (button_style,
 					 gdkwindow,
 					 (int) StateType.Active,
 					 IntPtr.Zero,
@@ -363,7 +402,7 @@ namespace System.Windows.Forms
 			
 			IntPtr gdkwindow = gdk_window_foreign_new_for_display (gdkdisplay, (uint) bar.Handle);
 			
-			IntPtr style;
+			IntPtr scrollbar_style;
 			
 			Rectangle allocation = new Rectangle (bar.ClientRectangle.X, bar.ClientRectangle.Y, bar.ClientRectangle.Width, bar.ClientRectangle.Height);
 			
@@ -371,7 +410,7 @@ namespace System.Windows.Forms
 			Color fix_color = bar.Parent != null ? bar.Parent.BackColor : ColorControl;
 			
 			if (bar.vert) {
-				style = gtk_rc_get_style (global_gtk_vscrollbar);
+				scrollbar_style = global_gtk_vscrollbar_style;
 				
 				gtk_widget_size_allocate (global_gtk_vscrollbar, ref allocation);
 				
@@ -381,7 +420,7 @@ namespace System.Windows.Forms
 				dc.FillRectangle (ResPool.GetSolidBrush (fix_color), 
 						  bar.ClientRectangle.X, bar.ClientRectangle.Bottom - 4, bar.ClientRectangle.Width, 3);
 			} else {
-				style = gtk_rc_get_style (global_gtk_hscrollbar);
+				scrollbar_style = global_gtk_hscrollbar_style;
 				
 				gtk_widget_size_allocate (global_gtk_hscrollbar, ref allocation);
 				
@@ -392,10 +431,10 @@ namespace System.Windows.Forms
 						  bar.ClientRectangle.Right - 4, bar.ClientRectangle.Y, 3, bar.ClientRectangle.Height);
 			}
 			
-			style = gtk_style_attach (style, gdkwindow);  // need it
+			scrollbar_style = gtk_style_attach (scrollbar_style, gdkwindow);  // need it
 			
 			current_gdk_window = gdkwindow;
-			current_style = style;
+			current_style = scrollbar_style;
 			
 			thumb_pos = bar.ThumbPos;
 			
@@ -449,7 +488,7 @@ namespace System.Windows.Forms
 		{
 			Rectangle r = new Rectangle (0,
 						     scrollbutton_height, bar.ClientRectangle.Width, bar.ClientRectangle.Height - (scrollbutton_height * 2));
-			gtk_paint_box (style, 
+			gtk_paint_box (current_style, 
 				       current_gdk_window, 
 				       (int) StateType.Active,
 				       (int) ShadowType.In,
@@ -465,7 +504,7 @@ namespace System.Windows.Forms
 			Rectangle r = new Rectangle (scrollbutton_width,
 						     0, bar.ClientRectangle.Width - (scrollbutton_width * 2), bar.ClientRectangle.Height);
 			
-			gtk_paint_box (style, 
+			gtk_paint_box (current_style, 
 				       current_gdk_window, 
 				       (int) StateType.Active,
 				       (int) ShadowType.In,
@@ -479,7 +518,7 @@ namespace System.Windows.Forms
 		private void DrawScrollBarThumb( Graphics dc, Rectangle area, ScrollBar bar ) {
 			IntPtr gtk_scrollbar = bar.vert ? global_gtk_vscrollbar : global_gtk_hscrollbar;
 			
-			gtk_paint_box (style, 
+			gtk_paint_box (current_style, 
 				       current_gdk_window, 
 				       (int) StateType.Active,
 				       (int) ShadowType.Out,
@@ -488,43 +527,200 @@ namespace System.Windows.Forms
 				       "slider",
 				       area.X, area.Y,
 				       area.Width, area.Height);
-			
-//			if ( bar.vert ) {
-//				if ( area.Height > 12 ) {
-//					int mid_y = area.Y + ( area.Height / 2 );
-//					int mid_x = area.X + ( area.Width / 2 );
-//					
-//					// TODO: add 2 lines
-//					gtk_paint_hline(current_style,
-//							current_gdk_window,
-//							(int) StateType.Normal,
-//							IntPtr.Zero,
-//							IntPtr.Zero,
-//							"through",
-//							mid_x - 4,
-//							mid_x + 4,
-//							mid_y);
-//				}
-//			} else {
-//				// draw grip lines only if there is enough space
-//				if ( area.Width > 12 ) {
-//					int mid_x = area.X +  ( area.Width / 2 );
-//					int mid_y = area.Y +  ( area.Height / 2 );
-//					
-//					// TODO: add 2 lines
-//					gtk_paint_vline(current_style,
-//							current_gdk_window,
-//							(int) StateType.Normal,
-//							IntPtr.Zero,
-//							IntPtr.Zero,
-//							"through",
-//							mid_y - 4,
-//							mid_y + 4,
-//							mid_x);
-//				}
-//			}
 		}
 		#endregion	// ScrollBar
+		
+		#region ProgressBar
+		public override void DrawProgressBar (Graphics dc, Rectangle clip_rect, ProgressBar ctrl)
+		{
+			Rectangle	client_area = ctrl.client_area;
+			int		barpos_pixels;
+			
+			IntPtr gdkwindow = gdk_window_foreign_new_for_display (gdkdisplay, (uint) ctrl.Handle);
+			
+			IntPtr progressbar_style = gtk_style_attach (global_gtk_progress_bar_style, gdkwindow);  // need it
+			
+			// draw background
+			gtk_paint_box (progressbar_style,
+				       gdkwindow,
+				       (int) StateType.Normal,
+				       (int) ShadowType.In, 
+				       IntPtr.Zero,
+				       global_gtk_progress_bar,
+				       "trough",
+				       ctrl.ClientRectangle.X, 
+				       ctrl.ClientRectangle.Y,
+				       ctrl.ClientRectangle.Width,
+				       ctrl.ClientRectangle.Height);
+			
+			// don't draw the bar if Value is = 0
+			if (ctrl.Value == 0)
+				return;
+			
+			if (ctrl.Value == ctrl.Maximum)
+				barpos_pixels = client_area.Width + 2;
+			else
+				barpos_pixels = (((ctrl.Value - ctrl.Minimum) * client_area.Width) / (ctrl.Maximum - ctrl.Minimum)) + 1;
+			
+			gtk_paint_box (progressbar_style, 
+				       gdkwindow, 
+				       (int) StateType.Prelight,
+				       (int) ShadowType.Out,
+				       IntPtr.Zero,
+				       global_gtk_vscrollbar,
+				       "bar",
+				       client_area.X - 1, client_area.Y - 1,
+				       barpos_pixels, client_area.Height + 2);
+		}
+		#endregion	// ProgressBar
+		
+		#region RadioButton
+		protected override void RadioButton_DrawButton (RadioButton radio_button, Graphics dc, ButtonState state, Rectangle radiobutton_rectangle)
+		{
+			// we currently don't care for flat or popup radio buttons
+			if (radio_button.appearance == Appearance.Button) {
+				DrawButtonBase (dc, radio_button.ClientRectangle, radio_button);
+			} else {
+				DrawRadioButton (dc, radio_button, state, radiobutton_rectangle);
+			}
+		}
+		
+		private void DrawRadioButton (Graphics dc, RadioButton radio_button, ButtonState state, Rectangle radiobutton_rectangle)
+		{
+			IntPtr gdkwindow = gdk_window_foreign_new_for_display (gdkdisplay, (uint) radio_button.Handle);
+			
+			IntPtr radiobutton_style = gtk_style_attach (global_gtk_radio_button_style, gdkwindow);
+			
+			current_gdk_window = gdkwindow;
+			current_style = radiobutton_style;
+			
+			ShadowType shadow_type;
+			
+			if (!radio_button.Enabled)
+				shadow_type = ShadowType.Out;
+			else
+				shadow_type = radio_button.Checked ? ShadowType.In : ShadowType.EtchedIn;
+			
+			StateType state_type = StateType.Normal;
+			
+			if (!radio_button.Enabled)
+				state_type = StateType.Insensitive;
+			else
+			if (radio_button.is_pressed)
+				state_type = StateType.Active;
+			else
+			if (radio_button.is_entered)
+				state_type = StateType.Prelight;
+			
+			gtk_paint_option (radiobutton_style,
+					  gdkwindow,
+					  (int) state_type,
+					  (int) shadow_type,
+					  IntPtr.Zero,
+					  global_gtk_radio_button,
+					  "radiobutton",
+					  radiobutton_rectangle.X,
+					  radiobutton_rectangle.Y,
+					  radiobutton_rectangle.Width,
+					  radiobutton_rectangle.Height);
+		}
+		
+		protected override void RadioButton_DrawText (RadioButton radio_button, Rectangle text_rectangle, Graphics dc, StringFormat text_format)
+		{
+			if (radio_button.Appearance != Appearance.Button)
+				base.RadioButton_DrawText (radio_button, text_rectangle, dc, text_format);
+		}
+	
+		protected override void RadioButton_DrawFocus (RadioButton radio_button, Graphics dc, Rectangle text_rectangle)
+		{
+			if (radio_button.Focused && radio_button.appearance != Appearance.Button) {
+				gtk_paint_focus (current_style,
+						 current_gdk_window,
+						 (int) StateType.Active,
+						 IntPtr.Zero,
+						 IntPtr.Zero,
+						 "radiobutton",
+						 text_rectangle.X,
+						 text_rectangle.Y,
+						 text_rectangle.Width,
+						 text_rectangle.Height);
+			}
+		}
+		#endregion	// RadioButton
+		
+		#region CheckBox
+		protected override void CheckBox_DrawCheckBox (Graphics dc, CheckBox checkbox, ButtonState state, Rectangle checkbox_rectangle)
+		{
+			// render as per normal button
+			if (checkbox.appearance == Appearance.Button) {
+				DrawButtonBase (dc, checkbox.ClientRectangle, checkbox);
+			} else {
+				InternalDrawCheckBox (dc, checkbox, state, checkbox_rectangle);
+			}
+		}
+		
+		private void InternalDrawCheckBox (Graphics dc, CheckBox checkbox, ButtonState state, Rectangle checkbox_rectangle)
+		{
+			IntPtr gdkwindow = gdk_window_foreign_new_for_display (gdkdisplay, (uint) checkbox.Handle);
+			
+			IntPtr checkbox_style = gtk_style_attach (global_gtk_check_button_style, gdkwindow);
+			
+			current_gdk_window = gdkwindow;
+			current_style = checkbox_style;
+			
+			ShadowType shadow_type;
+			
+			if (!checkbox.Enabled)
+				shadow_type = ShadowType.Out;
+			else
+				shadow_type = checkbox.Checked ? ShadowType.In : ShadowType.EtchedIn;
+			
+			StateType state_type = StateType.Normal;
+			
+			if (!checkbox.Enabled)
+				state_type = StateType.Insensitive;
+			else
+			if (checkbox.is_pressed)
+				state_type = StateType.Active;
+			else
+			if (checkbox.is_entered)
+				state_type = StateType.Prelight;
+			
+			gtk_paint_check (checkbox_style,
+					 gdkwindow,
+					 (int) state_type,
+					 (int) shadow_type,
+					 IntPtr.Zero,
+					 global_gtk_radio_button,
+					 "checkbutton",
+					 checkbox_rectangle.X,
+					 checkbox_rectangle.Y,
+					 checkbox_rectangle.Width,
+					 checkbox_rectangle.Height);
+		}
+		
+		protected override void CheckBox_DrawText (CheckBox checkbox, Rectangle text_rectangle, Graphics dc, StringFormat text_format)
+		{
+			if (checkbox.Appearance != Appearance.Button)
+				base.CheckBox_DrawText (checkbox, text_rectangle, dc, text_format);
+		}
+		
+		protected override void CheckBox_DrawFocus( CheckBox checkbox, Graphics dc, Rectangle text_rectangle )
+		{
+			if (checkbox.Focused && checkbox.appearance != Appearance.Button) {
+				gtk_paint_focus (current_style,
+						 current_gdk_window,
+						 (int) StateType.Active,
+						 IntPtr.Zero,
+						 IntPtr.Zero,
+						 "checkbutton",
+						 text_rectangle.X,
+						 text_rectangle.Y,
+						 text_rectangle.Width,
+						 text_rectangle.Height);
+			}
+		}
+		#endregion	// CheckBox
 		
 		public override void CPDrawButton (Graphics graphics, Rectangle rectangle, ButtonState state)
 		{
@@ -549,10 +745,7 @@ namespace System.Windows.Forms
 				is_inactive = true;
 			}
 			
-			IntPtr style;
-			
-			style = gtk_rc_get_style (global_gtk_button);		
-			style = gtk_style_attach (style, current_gdk_window);  // need it
+			IntPtr drawbutton_style = gtk_style_attach (global_gtk_button_style, current_gdk_window);  // need it
 			
 			StateType state_type = StateType.Normal;
 			ShadowType shadow_type = ShadowType.Out;
@@ -567,7 +760,7 @@ namespace System.Windows.Forms
 				detail = "button";
 			}
 			
-			gtk_paint_box (style, current_gdk_window,
+			gtk_paint_box (drawbutton_style, current_gdk_window,
 				       (int) state_type,
 				       (int) shadow_type,
 				       IntPtr.Zero,
@@ -631,7 +824,7 @@ namespace System.Windows.Forms
 				break;
 			}
 			
-			gtk_paint_arrow (style, 
+			gtk_paint_arrow (current_style, 
 					 current_gdk_window, 
 					 (int) state_type,
 					 (int) ShadowType.Out,
@@ -657,7 +850,7 @@ namespace System.Windows.Forms
 			switch (scroll_button_type) {
 			case ScrollButton.Left:
 			case ScrollButton.Right:
-				gtk_paint_box (style, 
+				gtk_paint_box (current_style, 
 					       current_gdk_window, 
 					       (int) state_type,
 					       (int) shadow_type,
@@ -669,7 +862,7 @@ namespace System.Windows.Forms
 				break;
 			case ScrollButton.Up:
 			case ScrollButton.Down:
-				gtk_paint_box (style, 
+				gtk_paint_box (current_style, 
 					       current_gdk_window, 
 					       (int) state_type,
 					       (int) shadow_type,

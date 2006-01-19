@@ -1,3 +1,7 @@
+2006-01-19  Alexander Olk  <alex.olk@googlemail.com>
+
+	* ThemeGtk.cs: Added ProgressBar, RadioButton, CheckBox
+
 2006-01-19  Jackson Harper  <jackson@ximian.com>
 
 	* ComboBox.cs: Hookup the text controls keydown event so we get
