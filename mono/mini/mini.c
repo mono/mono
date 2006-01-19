@@ -9305,19 +9305,37 @@ mono_local_cprop (MonoCompile *cfg)
 }
 
 static void
-mono_local_cprop_bb2 (MonoCompile *cfg, MonoBasicBlock *bb, int acp_size)
+mono_local_cprop_bb2 (MonoCompile *cfg, MonoBasicBlock *bb, 
+					  MonoInst **defs, guint32 *def_index)
+
 {
 	MonoInst *ins;
 	int ins_index;
-	MonoInst **defs;
-	guint32 *def_index;
-	gboolean *addr_taken;
 
-	/* FIXME: Speed this up */
+	if (cfg->next_vireg > 256) {
+		int max = cfg->next_vireg;
 
-	defs = g_new0 (MonoInst*, cfg->next_vireg);
-	def_index = g_new (guint32, cfg->next_vireg);
-	addr_taken = g_new0 (gboolean, cfg->next_vireg);
+		/* Manually init the defs entries used by the bblock */
+		for (ins = bb->code; ins; ins = ins->next) {
+			if ((ins->dreg != -1) && (ins->dreg < max))
+				defs [ins->dreg] = NULL;
+			if ((ins->sreg1 != -1) && (ins->sreg1 < max))
+				defs [ins->sreg1] = NULL;
+			if ((ins->sreg2 != -1) && (ins->sreg2 < max))
+				defs [ins->sreg2] = NULL;
+#if SIZEOF_VOID_P == 4
+			/* Regpairs */
+			if ((ins->dreg != -1) && (ins->dreg + 1 < max))
+				defs [ins->dreg + 1] = NULL;
+			if ((ins->sreg1 != -1) && (ins->sreg1 + 1 < max))
+				defs [ins->sreg1 + 1] = NULL;
+			if ((ins->sreg2 != -1) && (ins->sreg2 + 1 < max))
+				defs [ins->sreg2 + 1] = NULL;
+#endif
+		}
+	}
+	else
+		memset (defs, 0, sizeof (MonoInst*) * cfg->next_vireg);
 
 	ins_index = 0;
 	for (ins = bb->code; ins; ins = ins->next) {
@@ -9414,19 +9432,24 @@ mono_local_cprop_bb2 (MonoCompile *cfg, MonoBasicBlock *bb, int acp_size)
 
 		ins_index ++;
 	}	
-
-	g_free (defs);
-	g_free (def_index);
 }
 
 static void
 mono_local_cprop2 (MonoCompile *cfg)
 {
 	MonoBasicBlock *bb;
+	MonoInst **defs;
+	guint32 *def_index;
+
+	defs = g_new (MonoInst*, cfg->next_vireg);
+	def_index = g_new (guint32, cfg->next_vireg);
 
 	for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
-		mono_local_cprop_bb2 (cfg, bb, cfg->num_varinfo);
+		mono_local_cprop_bb2 (cfg, bb, defs, def_index);
 	}
+
+	g_free (defs);
+	g_free (def_index);
 }
 
 /**
@@ -9439,15 +9462,15 @@ mono_local_deadce (MonoCompile *cfg)
 {
 	MonoBasicBlock *bb;
 	MonoInst *ins;
-	gboolean *used;
+	MonoBitSet *used;
 
 	/* FIXME: speed this up */
 
-	used = g_new (gboolean, cfg->next_vireg);
+	used = mono_bitset_new (cfg->next_vireg, 0);
 
 	/* First pass: collect liveness info */
 	for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
-		memset (used, 0, sizeof (gboolean) * cfg->next_vireg);
+		mono_bitset_clear_all (used);
 		for (ins = bb->code; ins; ins = ins->next) {
 			const char *spec = ins_info [ins->opcode - OP_START - 1];
 			int regtype, srcindex, sreg;
@@ -9468,10 +9491,10 @@ mono_local_deadce (MonoCompile *cfg)
 				sreg = srcindex == 0 ? ins->sreg1 : ins->sreg2;
 
 				if (regtype == 'i')
-					used [sreg] = TRUE;
+					mono_bitset_set (used, sreg);
 
 				if (MONO_IS_STORE_MEMBASE (ins))
-					used [ins->dreg] = TRUE;
+					mono_bitset_set (used, ins->dreg);
 			}
 		}
 
@@ -9485,7 +9508,7 @@ mono_local_deadce (MonoCompile *cfg)
 			if (ins->opcode < MONO_CEE_LAST)
 				continue;
 
-			if ((spec [MONO_INST_DEST] == 'i') && (ins->dreg >= MONO_MAX_IREGS) && !used [ins->dreg] && !get_vreg_to_inst (cfg, 'i', ins->dreg)) {
+			if ((spec [MONO_INST_DEST] == 'i') && (ins->dreg >= MONO_MAX_IREGS) && !mono_bitset_test_fast (used, ins->dreg) && !get_vreg_to_inst (cfg, 'i', ins->dreg)) {
 				if ((ins->opcode == OP_MOVE) || (ins->opcode == OP_ICONST) || (ins->opcode == OP_ADD_IMM)) {
 					//printf ("DEADCE: "); mono_print_ins (ins);
 					ins->opcode = CEE_NOP;
@@ -9494,7 +9517,7 @@ mono_local_deadce (MonoCompile *cfg)
 		}
 	}
 
-	g_free (used);
+	mono_bitset_free (used);
 }
 
 static void
