@@ -63,33 +63,20 @@ test_nunit_dep = $(test_nunit_lib:%=$(topdir)/class/lib/$(PROFILE)/%)
 test_nunit_ref = $(test_nunit_dep:%=-r:%)
 library_CLEAN_FILES += TestResult*.xml
 
-ifndef test_against
-test_against = $(the_lib)
-test_dep = $(the_lib)
-endif
-
-ifndef test_lib
 test_lib = $(LIBRARY:.dll=_test_$(PROFILE).dll)
 test_sourcefile = $(LIBRARY:.dll=_test.dll.sources)
-else
-test_sourcefile = $(test_lib).sources
-endif
 test_pdb = $(test_lib:.dll=.pdb)
 test_response = $(depsdir)/$(test_lib).response
 test_makefrag = $(depsdir)/$(test_lib).makefrag
-test_flags = -r:$(test_against) $(test_nunit_ref) $(TEST_MCS_FLAGS)
+test_flags = -r:$(the_lib) $(test_nunit_ref) $(TEST_MCS_FLAGS)
 library_CLEAN_FILES += $(LIBRARY:.dll=_test*.dll) $(LIBRARY:.dll=_test*.pdb) $(test_response) $(test_makefrag)
 
-ifndef btest_lib
 btest_lib = $(LIBRARY:.dll=_btest_$(PROFILE).dll)
 btest_sourcefile = $(LIBRARY:.dll=_btest.dll.sources)
-else
-btest_sourcefile = $(btest_lib).sources
-endif
 btest_pdb = $(btest_lib:.dll=.pdb)
 btest_response = $(depsdir)/$(btest_lib).response
 btest_makefrag = $(depsdir)/$(btest_lib).makefrag
-btest_flags = -r:$(test_against) $(test_nunit_ref) $(TEST_MBAS_FLAGS)
+btest_flags = -r:$(the_lib) $(test_nunit_ref) $(TEST_MBAS_FLAGS)
 library_CLEAN_FILES += $(LIBRARY:.dll=_btest*.dll) $(LIBRARY:.dll=_btest*.pdb) $(btest_response) $(btest_makefrag)
 
 ifndef HAVE_CS_TESTS
@@ -319,7 +306,7 @@ endif
 
 ifdef HAVE_CS_TESTS
 
-$(test_lib): $(test_dep) $(test_response) $(test_nunit_dep)
+$(test_lib): $(the_lib) $(test_response) $(test_nunit_dep)
 	$(TEST_COMPILE) -target:library -out:$@ $(test_flags) @$(test_response)
 
 $(test_response): $(test_sourcefile)
@@ -336,7 +323,7 @@ endif
 
 ifdef HAVE_VB_TESTS
 
-$(btest_lib): $(test_dep) $(btest_response) $(test_nunit_dep)
+$(btest_lib): $(the_lib) $(btest_response) $(test_nunit_dep)
 	$(BTEST_COMPILE) -target:library -out:$@ $(btest_flags) @$(btest_response)
 
 $(btest_response): $(btest_sourcefile)

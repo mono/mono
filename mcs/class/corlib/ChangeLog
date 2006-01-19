@@ -1,3 +1,8 @@
+2006-01-19  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile: Simplify.  Remove support for corlib_plattest and reslib.
+	* corlib_plattest.dll.excludes, corlib_res.dll.excludes: remove.
+
 2006-01-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Makefile : corlib_plattest dll is now profile-aware.

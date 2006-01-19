@@ -1,3 +1,8 @@
+2006-01-19  Raja R Harinath  <rharinath@novell.com>
+
+	* library.make (test_lib): Don't allow to be overridden.
+	(test_against, test_dep): Remove.
+
 2006-01-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* executable.make: allow installing a different .config file for
