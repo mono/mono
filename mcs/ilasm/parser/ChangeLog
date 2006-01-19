@@ -1,5 +1,10 @@
 2006-01-19  Ankit Jain  <jankit@novell.com>
 
+	* ILParser.jay (decl | customattr_decl): Add custom attributes.
+	(assembly_all | ..): Set CurrentCustomAttrTarget to null.
+
+2006-01-19  Ankit Jain  <jankit@novell.com>
+
 	* ILParser.jay (K_TYPE): New.
 	(param_type_decl): New. Rule for '.param type ..', for specifying custom attibutes
 	for type parameters.

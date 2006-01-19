@@ -1,5 +1,10 @@
 2006-01-19  Ankit Jain  <jankit@novell.com>
 
+	* test-module-cattr.il: New. Test for custom attributes on .module
+	* test-array-2.i: Add the missing closing brace.
+
+2006-01-19  Ankit Jain  <jankit@novell.com>
+
 	* err-gen-cattr-1.il: New.
 	* err-gen-cattr-2.il: New.
 	* err-gen-cattr-3.il: New.

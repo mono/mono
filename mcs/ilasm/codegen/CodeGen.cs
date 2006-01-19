@@ -72,7 +72,7 @@ namespace Mono.ILASM {
                 private bool is_assembly;
                 private bool entry_point;
 
-                private string module_name;
+                private Module this_module;
 
                 public CodeGen (string output_file, bool is_dll, bool is_assembly,
 				bool debugging_info, Report report)
@@ -101,6 +101,7 @@ namespace Mono.ILASM {
                         image_base = -1;
                         stack_reserve = -1;
                         entry_point = false;
+                        this_module = null;
                 }
 
 		private string CreateDebugFile (string output_file)
@@ -263,7 +264,8 @@ namespace Mono.ILASM {
 
                 public void SetModuleName (string module_name)
                 {
-                        this.module_name = module_name;
+                        this_module = new Module (module_name);
+                        CurrentCustomAttrTarget = this_module;
                 }
 
                 public void SetFileRef (FileRef file_ref)
@@ -278,7 +280,7 @@ namespace Mono.ILASM {
 
                 public bool IsThisModule (string name)
                 {
-                        return (name == module_name);
+                        return (this_module != null && name == this_module.Name);
                 }
 
 		public void BeginSourceFile (string name)
@@ -493,7 +495,7 @@ namespace Mono.ILASM {
                                         throw new Exception ("No EntryPoint found.");
 
                                 out_stream = new FileStream (output_file, FileMode.Create, FileAccess.Write);
-                                pefile = new PEFile (assembly_name, module_name, is_dll, is_assembly, null, out_stream);
+                                pefile = new PEFile (assembly_name, (this_module != null ? this_module.Name : ""), is_dll, is_assembly, null, out_stream);
                                 PEAPI.Assembly asmb = pefile.GetThisAssembly ();
 
                                 if (file_ref != null)
@@ -523,7 +525,10 @@ namespace Mono.ILASM {
                                         foreach (CustomAttr cattr in assembly_custom_attributes)
                                                 cattr.AddTo (this, asmb);
                                 }
-                                
+
+                                if (this_module != null)
+                                        this_module.Resolve (this, pefile.GetThisModule ());
+
                                 if (assembly_declsec != null)
                                         assembly_declsec.AddTo (this, asmb);        
 
