@@ -1,3 +1,22 @@
+2006-01-19  Raja R Harinath  <rharinath@novell.com>
+
+	Fix to pass new nunit tests.
+	* Dictionary.cs (ShimEnumerator): New class.  Implement the
+	requirement that ((IDictionary) foo).GetEnumerator ().Current has
+	type DictionaryEntry.
+	(IDictionary.GetEnumerator): Use ShimEnumerator.
+	(Enumerator.Current): Now has type KeyValuePair<TKey, TValue>.
+	(Enumerator.MoveNext): Use VerifyState.
+	(Enumerator.VerifyState): Move validation of 'current' field to ...
+	(Enumerator.CurrentSlot): ... this.
+	(Enumerator.Current, Enumerator.IDictionaryEnumerator.Entry):
+	Use CurrentSlot.
+	(CopyTo, ICollection.CopyTo): Use subtle reasoning to replace a
+	'>=' with a '>'.  Don't throw an ArgumentException when
+	index==array.Length && Count==0.
+	(KeyCollection.CopyTo, ValueCollection.CopyTo): Likewise, and thus
+	obviate the need to check (dictionary.Count == 0).
+
 2005-12-20  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* List.cs: Applied Atsushi's patch for Sort (bug 76361) now that the

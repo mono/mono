@@ -171,7 +171,8 @@ namespace System.Collections.Generic {
 				throw new ArgumentNullException ("array");
 			if (index < 0)
 				throw new ArgumentOutOfRangeException ("index");
-			if (index >= array.Length)
+			// we want no exception for index==array.Length && Count == 0
+			if (index > array.Length)
 				throw new ArgumentException ("index larger than largest valid index of array");
 			if (array.Length - index < Count)
 				throw new ArgumentException ("Destination array cannot hold the requested elements!");
@@ -446,7 +447,8 @@ namespace System.Collections.Generic {
 				throw new ArgumentNullException ("array");
 			if (index < 0)
 				throw new ArgumentOutOfRangeException ("index");
-			if (index >= array.Length)
+			// we want no exception for index==array.Length && Count == 0
+			if (index > array.Length)
 				throw new ArgumentException ("index larger than largest valid index of array");
 			if (array.Length - index < Count)
 				throw new ArgumentException ("Destination array cannot hold the requested elements!");
@@ -469,12 +471,55 @@ namespace System.Collections.Generic {
 
 		IDictionaryEnumerator IDictionary.GetEnumerator ()
 		{
-			return new Enumerator (this);
+			return new ShimEnumerator (this);
 		}
 
 		public Enumerator GetEnumerator ()
 		{
 			return new Enumerator (this);
+		}
+
+		[Serializable]
+		private struct ShimEnumerator : IDictionaryEnumerator, IEnumerator
+		{
+			Enumerator host_enumerator;
+			public ShimEnumerator (Dictionary<TKey, TValue> host)
+			{
+				host_enumerator = host.GetEnumerator ();
+			}
+
+			public void Dispose ()
+			{
+				host_enumerator.Dispose ();
+			}
+
+			public bool MoveNext ()
+			{
+				return host_enumerator.MoveNext ();
+			}
+
+			public DictionaryEntry Entry {
+				get { return ((IDictionaryEnumerator) host_enumerator).Entry; }
+			}
+
+			public object Key {
+				get { return host_enumerator.Current.Key; }
+			}
+
+			public object Value {
+				get { return host_enumerator.Current.Value; }
+			}
+
+			// This is the raison d' etre of this $%!@$%@^@ class.
+			// We want: IDictionary.GetEnumerator ().Current is DictionaryEntry
+			public object Current {
+				get { return Entry; }
+			}
+
+			public void Reset ()
+			{
+				((IEnumerator)host_enumerator).Reset ();
+			}
 		}
 
 		[Serializable]
@@ -500,33 +545,25 @@ namespace System.Collections.Generic {
 
 			public bool MoveNext ()
 			{
-				if (dictionary == null)
-					throw new ObjectDisposedException (null);
-				if (dictionary.generation != stamp)
-					throw new InvalidOperationException ("out of sync");
+				VerifyState ();
 
-				// Pre-condition: current == null => this is the first call
-				// to MoveNext ()
+				// Pre-condition: current == null => this is the first call to MoveNext ()
 				if (current != null)
 					current = current.Next;
 
 				while (current == null && next_index < dictionary.table.Length)
 					current = dictionary.table [next_index++];
 
-				// Post-condition: current == null => this is the last call
-				// to MoveNext()
+				// Post-condition: current == null => this is the last call to MoveNext()
 				return current != null;
 			}
 
 			public KeyValuePair<TKey, TValue> Current {
-				get {
-					VerifyState ();
-					return current.Data;
-				}
+				get { return CurrentSlot ().Data; }
 			}
 
 			object IEnumerator.Current {
-				get { return ((IDictionaryEnumerator) this).Entry; }
+				get { return Current; }
 			}
 
 			void IEnumerator.Reset ()
@@ -537,8 +574,8 @@ namespace System.Collections.Generic {
 
 			DictionaryEntry IDictionaryEnumerator.Entry {
 				get {
-					VerifyState ();
-					return new DictionaryEntry (current.Data.Key, current.Data.Value);
+					Slot s = CurrentSlot ();
+					return new DictionaryEntry (s.Data.Key, s.Data.Value);
 				}
 			}
 
@@ -556,9 +593,16 @@ namespace System.Collections.Generic {
 					throw new ObjectDisposedException (null);
 				if (dictionary.generation != stamp)
 					throw new InvalidOperationException ("out of sync");
-				if (current == null)
-					throw new InvalidOperationException ();
 			}
+
+			Slot CurrentSlot ()
+			{
+				VerifyState ();
+				if (current == null)
+					throw new InvalidOperationException ("Current is not valid");
+				return current;
+			}
+
 			public void Dispose ()
 			{
 				current = null;
@@ -584,10 +628,8 @@ namespace System.Collections.Generic {
 					throw new ArgumentNullException ("array");
 				if (index < 0)
 					throw new ArgumentOutOfRangeException ("index");
-				// no exception for index==array.Length in this case
-				if (dictionary.Count == 0)
-					return;
-				if (index >= array.Length)
+				// we want no exception for index==array.Length && dictionary.Count == 0
+				if (index > array.Length)
 					throw new ArgumentException ("index larger than largest valid index of array");
 				if (array.Length - index < dictionary.Count)
 					throw new ArgumentException ("Destination array cannot hold the requested elements!");
@@ -704,10 +746,8 @@ namespace System.Collections.Generic {
 					throw new ArgumentNullException ("array");
 				if (index < 0)
 					throw new ArgumentOutOfRangeException ("index");
-				// no exception for index==array.Length in this case
-				if (dictionary.Count == 0)
-					return;
-				if (index >= array.Length)
+				// we want no exception for index==array.Length && dictionary.Count == 0
+				if (index > array.Length)
 					throw new ArgumentException ("index larger than largest valid index of array");
 				if (array.Length - index < dictionary.Count)
 					throw new ArgumentException ("Destination array cannot hold the requested elements!");

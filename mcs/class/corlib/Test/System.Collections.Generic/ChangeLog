@@ -1,3 +1,11 @@
+2006-01-19  Raja R Harinath  <rharinath@novell.com>
+
+	* DictionaryTest.cs: Remove NotWorking annotations.
+	(Empty_CopyTo, Empty_Values_CopyTo): Fix tests to check that
+	CopyTo from an empty dictionary does not throw an exception when
+	'index==array.Length'.
+	(PlainEnumeratorReturnTest): Check the type of 'Entry' property too.
+
 2006-01-19  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DictionaryTest.cs : fixed several tests to not fail under .NET 2.0

@@ -332,7 +332,6 @@ namespace MonoTests.System.Collections.Generic {
 		}
 	
 		[Test]
-		[Category ("NotWorking")] // our code is based on 2.0 beta.
 		public void IEnumeratorTest ()
 		{
 			_dictionary.Add ("key1", "value1");
@@ -384,7 +383,6 @@ namespace MonoTests.System.Collections.Generic {
 		}
 	
 		[Test]
-		[Category ("NotWorking")] // our code is based on 2.0 beta.
 		public void ForEachTest ()
 		{
 			_dictionary.Add ("key1", "value1");
@@ -394,23 +392,17 @@ namespace MonoTests.System.Collections.Generic {
 	
 			int i = 0;
 			foreach (KeyValuePair <string, object> entry in _dictionary)
-			{
 				i++;
-			}
 			Assert.AreEqual(4, i, "fail1: foreach entry failed!");
 	
 			i = 0;
 			foreach (KeyValuePair <string, object> entry in ((IEnumerable)_dictionary))
-			{
 				i++;
-			}
 			Assert.AreEqual(4, i, "fail2: foreach entry failed!");
 	
 			i = 0;
 			foreach (DictionaryEntry entry in ((IDictionary)_dictionary))
-			{
 				i++;
-			}
 			Assert.AreEqual (4, i, "fail3: foreach entry failed!");
 		}
 	
@@ -496,7 +488,6 @@ namespace MonoTests.System.Collections.Generic {
 		}
 
 		[Test]
-		[Category ("NotWorking")] // our code is based on 2.0 beta.
 		public void PlainEnumeratorReturnTest ()
 		{
 			// Test that we return a KeyValuePair even for non-generic dictionary iteration
@@ -504,8 +495,9 @@ namespace MonoTests.System.Collections.Generic {
 			IEnumerator<KeyValuePair<string, object>> enumerator = _dictionary.GetEnumerator();
 			Assert.IsTrue(enumerator.MoveNext(), "#1");
 			Assert.AreEqual (typeof (KeyValuePair<string,object>), ((IEnumerator)enumerator).Current.GetType (), "#2");
-			Assert.AreEqual (typeof (KeyValuePair<string,object>), ((IDictionaryEnumerator)enumerator).Current.GetType (), "#3");
-			Assert.AreEqual (typeof (KeyValuePair<string,object>), ((object) enumerator.Current).GetType (), "#4");
+			Assert.AreEqual (typeof (DictionaryEntry), ((IDictionaryEnumerator)enumerator).Entry.GetType (), "#3");
+			Assert.AreEqual (typeof (KeyValuePair<string,object>), ((IDictionaryEnumerator)enumerator).Current.GetType (), "#4");
+			Assert.AreEqual (typeof (KeyValuePair<string,object>), ((object) enumerator.Current).GetType (), "#5");
 		}
 
 		[Test, ExpectedException (typeof (InvalidOperationException))]
@@ -614,11 +606,12 @@ namespace MonoTests.System.Collections.Generic {
 		}
 
 		[Test]
-		public void Empty_Values_CopyTo ()
+		public void Empty_KeysValues_CopyTo ()
 		{
 			Dictionary<int, int> d = new Dictionary<int, int> ();
-			int[] array = new int[10];
-			d.Values.CopyTo (array, 0);
+			int[] array = new int[1];
+			d.Keys.CopyTo (array, array.Length);
+			d.Values.CopyTo (array, array.Length);
 		}
 
 		[Test]
@@ -627,7 +620,11 @@ namespace MonoTests.System.Collections.Generic {
 			Dictionary<int, int> d = new Dictionary<int, int> ();
 			ICollection c = (ICollection) d;
 			DictionaryEntry [] array = new DictionaryEntry [1];
-			c.CopyTo (array, 0);
+			c.CopyTo (array, array.Length);
+
+			ICollection<KeyValuePair<int,int>> c2 = d;
+			KeyValuePair<int,int> [] array2 = new KeyValuePair<int,int> [1];
+			c2.CopyTo (array2, array2.Length);
 		}
 	}
 }
