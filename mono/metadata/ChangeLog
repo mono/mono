@@ -1,3 +1,8 @@
+2006-01-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (emit_struct_conv): Relax the fields with same offset
+	check even more. Fixes #77230.
+
 2006-01-18  Martin Baulig  <martin@ximian.com>
 
 	* loader.c (find_method_in_class): Added `gboolean is_inflated'
