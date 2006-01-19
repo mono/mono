@@ -59,7 +59,7 @@ namespace System
 			}
 		}
 
-		public void GetPEKind (out PortableExecutableKinds peKind, out ImageFileMachine machine)
+		internal void GetPEKind (out PortableExecutableKinds peKind, out ImageFileMachine machine)
 		{
 			if (value == IntPtr.Zero)
 				throw new ArgumentNullException (String.Empty, "Invalid handle");

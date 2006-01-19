@@ -159,6 +159,7 @@ public class ModuleHandleTest : Assertion
 		module.ResolveMethodHandle (0x60f0001);
 	}
 
+/* it is not public in 2.0 RTM.
 	[Test]
 	public void GetPEKind () {
 		PortableExecutableKinds pe_kind;
@@ -177,6 +178,7 @@ public class ModuleHandleTest : Assertion
 
 		ModuleHandle.EmptyHandle.GetPEKind (out pe_kind, out machine);
 	}
+*/
 }
 }
 
