@@ -2,7 +2,12 @@ thisdir = class/System.Web
 SUBDIRS = Test
 include ../../build/rules.make
 
+LIBRARY = System.Web.dll
+
 ifeq (net_2_0, $(PROFILE))
+
+LIBRARY_USE_INTERMEDIATE_FILE = yes
+
 # Because System.Web.dll and System.Web.Services.dll have a cyclic dependency, we need a two-pass build.
 # 1st pass - build System.Web.dll without System.Web.Services.dll reference
 # 2nd pass - build System.Web.dll with System.Web.Services.dll reference
@@ -64,7 +69,6 @@ OTHER_LIB_MCS_FLAGS = -r:System.Configuration.dll -d:CONFIGURATION_2_0
 endif
 
 
-LIBRARY = System.Web.dll
 LIB_MCS_FLAGS = \
 	-unsafe \
 	-nowarn:612,649	\
@@ -96,6 +100,6 @@ EXTRA_DISTFILES = $(RESOURCE_FILES_2) $(RESOURCE_FILES_1)
 include ../../build/library.make
 
 ifdef WEBSERVICES_DEP_FILE
-LIB_MCS_FLAGS += /define:WEBSERVICES_DEP /r:$(WEBSERVICES_DEP)
+LIB_MCS_FLAGS += -define:WEBSERVICES_DEP -r:$(WEBSERVICES_DEP)
 $(the_lib): $(WEBSERVICES_DEP_FILE)
 endif

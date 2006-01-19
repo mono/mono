@@ -1,3 +1,8 @@
+2006-01-19  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (LIBRARY_USE_INTERMEDIATE_FILE) [net_2_0]: Set, so as
+	to avoid sharing violations on Windows.
+
 2006-01-18  Chris Toshok  <toshok@ximian.com>
 
 	* Makefile: Add build foo to handle the System.Web.dll <->
