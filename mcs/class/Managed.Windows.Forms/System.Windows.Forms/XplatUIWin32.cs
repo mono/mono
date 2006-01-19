@@ -1266,11 +1266,9 @@ namespace System.Windows.Forms {
 				Cursor.Current = null;
 			}
 
-			while (Win32PeekMessage(ref msg, IntPtr.Zero, 0, 0, (uint)PeekMessageFlags.PM_REMOVE)!=true) {
-				if (msg.message==Msg.WM_PAINT) {
-					XplatUI.TranslateMessage(ref msg);
-					XplatUI.DispatchMessage(ref msg);
-				}
+			while (Win32PeekMessage(ref msg, IntPtr.Zero, 0, 0, (uint)PeekMessageFlags.PM_REMOVE)==true) {
+				XplatUI.TranslateMessage(ref msg);
+				XplatUI.DispatchMessage(ref msg);
 			}
 		}
 

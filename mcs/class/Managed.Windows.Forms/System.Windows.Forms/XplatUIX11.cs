@@ -2292,10 +2292,8 @@ namespace System.Windows.Forms {
 			}
 
 			while (PeekMessage(ref msg, IntPtr.Zero, 0, 0, (uint)PeekMessageFlags.PM_REMOVE)) {
-				if (msg.message == Msg.WM_PAINT) {
-					TranslateMessage (ref msg);
-					DispatchMessage (ref msg);
-				}
+				TranslateMessage (ref msg);
+				DispatchMessage (ref msg);
 			}
 		}
 

@@ -1,3 +1,8 @@
+2006-01-18  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* XplatUIWin32.cs: Fixed wrong DoEvents logic. Fixes #77282
+	* XplatUIX11.cs: Removed WM_PAINT check from DoEvents. Fixes #77282
+
 2006-01-18  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* Cursor.cs: Reimplemented creating cursor bitmaps without using
