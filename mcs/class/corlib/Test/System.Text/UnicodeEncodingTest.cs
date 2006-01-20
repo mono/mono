@@ -161,7 +161,6 @@ namespace MonoTests.System.Text
                         // is this extra 2 BOM?
                         Assertion.AssertEquals ("UTF #1", 102, UnicodeEnc.GetMaxByteCount(50));
 #else
-                        UnicodeEncoding UnicodeEnc = new UnicodeEncoding ();
                         Assertion.AssertEquals ("UTF #1", 100, UnicodeEnc.GetMaxByteCount(50));
 #endif
                 }

@@ -1,3 +1,7 @@
+2006-01-20  Raja R Harinath  <rharinath@novell.com>
+
+	* UnicodeEncodingTest.cs (TestMaxByteCount): Remove extra declaration.
+
 2006-01-20  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* UTF8EncodingTest.cs : added CloneNotReadOnly().
