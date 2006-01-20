@@ -234,6 +234,12 @@ namespace MonoTests.I18N.CJK
 		}
 
 		[Test]
+		public void Bug77306 ()
+		{
+			GetCharsAllBytePairs (54936);
+		}
+
+		[Test]
 		public void Bug77298 ()
 		{
 			GetCharsAllBytePairs (949);

@@ -230,7 +230,8 @@ namespace I18N.CJK
 				} else {
 					byte first = bytes [byteIndex];
 					int ord = ((first - 0x81) * 191 + second - 0x40) * 2;
-					char c1 = (char) (gb2312.n2u [ord] + gb2312.n2u [ord + 1] * 256);
+					char c1 = ord < 0 || ord >= gb2312.n2u.Length ?
+						'\0' : (char) (gb2312.n2u [ord] + gb2312.n2u [ord + 1] * 256);
 					if (c1 == 0)
 						chars [charIndex++] = '?';
 					else
