@@ -1,5 +1,14 @@
 2006-01-20  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* CP932.cs :
+	  Implemented Decoder to handle incomplete bytes correctly. Hold
+	  different incomplete bytes for GetChars() and GetCharCount().
+	  "reflesh" parameter in 2.0 is now handled correctly.
+	  Now GetChars()/GetCharCount() in Encoding are implemented
+	  correctly to use Decoder.
+
+2006-01-20  Atsushi Enomoto  <atsushi@ximian.com>
+
 	Fixed bug #77307.
 	* GB18030Encoding.cs : GetEncoder() and GetDecoder() should be
 	  overriden. in the Encoder, refresh parameter should handle

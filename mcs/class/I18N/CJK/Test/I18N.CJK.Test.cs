@@ -289,6 +289,28 @@ namespace MonoTests.I18N.CJK
 				bytes, "#6");
 		}
 
+#if NET_2_0
+		[Test]
+		public void Decoder932Refresh ()
+		{
+			Encoding e = Encoding.GetEncoding (932);
+			Decoder d = e.GetDecoder ();
+			char [] chars;
+
+			chars = new char [1];
+			Assert.AreEqual (0, d.GetChars (new byte [] {0x81}, 0, 1, chars, 0, false), "#1");
+			Assert.AreEqual (new char [] {'\0'}, chars, "#2");
+
+			chars = new char [1];
+			Assert.AreEqual (1, d.GetChars (new byte [] {0x81}, 0, 1, chars, 0, true), "#3");
+			Assert.AreEqual (new char [] {'\uFF1D'}, chars, "#4");
+
+			chars = new char [1];
+			Assert.AreEqual (1, d.GetChars (new byte [] {0x81}, 0, 1, chars, 0, true), "#5");
+			Assert.AreEqual (new char [] {'\u30FB'}, chars, "#6");
+		}
+#endif
+
 		#endregion
 
 		#region Korean
