@@ -36,7 +36,7 @@ public abstract class Decoder
 	protected Decoder () {}
 
 #if NET_2_0
-	DecoderFallback fallback;
+	DecoderFallback fallback = new DecoderReplacementFallback ();
 	DecoderFallbackBuffer fallback_buffer;
 
 	public DecoderFallback Fallback {
