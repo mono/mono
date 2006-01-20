@@ -69,8 +69,136 @@ public class CP51932 : MonoEncoding
 	{
 	}
 
+
+	public override int GetByteCount (char [] chars, int index, int length)
+	{
+		return new CP51932Encoder (this).GetByteCount (chars, index, length, true);
+	}
+
+	public unsafe override int GetBytesImpl (char* chars, int charCount, byte* bytes, int byteCount)
+	{
+		return new CP51932Encoder (this).GetBytesImpl (chars, charCount, bytes, byteCount, true);
+	}
+
+	public override int GetCharCount (byte [] bytes, int index, int count)
+	{
+#if NET_2_0
+		return new CP51932Decoder ().GetCharCount (
+			bytes, index, count, true);
+#else
+		return new CP51932Decoder ().GetCharCount (
+			bytes, index, count);
+#endif
+	}
+
+	public override int GetChars (
+		byte [] bytes, int byteIndex, int byteCount,
+		char [] chars, int charIndex)
+	{
+#if NET_2_0
+		return new CP51932Decoder ().GetChars (bytes,
+			byteIndex, byteCount, chars, charIndex, true);
+#else
+		return new CP51932Decoder ().GetChars (bytes,
+			byteIndex, byteCount, chars, charIndex);
+#endif
+	}
+
+	// Get the maximum number of bytes needed to encode a
+	// specified number of characters.
+	public override int GetMaxByteCount(int charCount)
+	{
+		if(charCount < 0)
+		{
+			throw new ArgumentOutOfRangeException
+				("charCount",
+				 Strings.GetString("ArgRange_NonNegative"));
+		}
+		return charCount * 3;
+	}
+
+	// Get the maximum number of characters needed to decode a
+	// specified number of bytes.
+	public override int GetMaxCharCount(int byteCount)
+	{
+		if(byteCount < 0)
+		{
+			throw new ArgumentOutOfRangeException
+				("byteCount",
+				 Strings.GetString ("ArgRange_NonNegative"));
+		}
+		return byteCount;
+	}
+
+	public override Encoder GetEncoder ()
+	{
+		return new CP51932Encoder (this);
+	}
+
+	public override Decoder GetDecoder ()
+	{
+		return new CP51932Decoder ();
+	}
+
+#if !ECMA_COMPAT
+
+	// Get the mail body name for this encoding.
+	public override String BodyName {
+		get { return "euc-jp"; }
+	}
+
+	// Get the human-readable name for this encoding.
+	public override String EncodingName {
+		get { return "Japanese (EUC)"; }
+	}
+
+	// Get the mail agent header name for this encoding.
+	public override String HeaderName {
+		get { return "euc-jp"; }
+	}
+
+	// Determine if this encoding can be displayed in a Web browser.
+	public override bool IsBrowserDisplay {
+		get { return true; }
+	}
+
+	// Determine if this encoding can be saved from a Web browser.
+	public override bool IsBrowserSave {
+		get { return true; }
+	}
+
+	// Determine if this encoding can be displayed in a mail/news agent.
+	public override bool IsMailNewsDisplay {
+		get { return true; }
+	}
+
+	// Determine if this encoding can be saved from a mail/news agent.
+	public override bool IsMailNewsSave {
+		get { return true; }
+	}
+
+	// Get the IANA-preferred Web name for this encoding.
+	public override String WebName {
+		get { return "euc-jp"; }
+	}
+
+	// Get the Windows code page represented by this object.
+	public override int WindowsCodePage {
+		get { return EUC_JP_CODE_PAGE; }
+	}
+} // CP51932
+#endif // !ECMA_COMPAT
+
+public class CP51932Encoder : MonoEncoding.MonoEncoder
+{
+	public CP51932Encoder (MonoEncoding encoding)
+		: base (encoding)
+	{
+	}
+
 	// Get the number of bytes needed to encode a character buffer.
-	public override int GetByteCount (char [] chars, int index, int count)
+	public override int GetByteCount (
+		char [] chars, int index, int count, bool refresh)
 	{
 		// Validate the parameters.
 		if (chars == null)
@@ -134,7 +262,7 @@ public class CP51932 : MonoEncoding
 
 	// Get the bytes that result from encoding a character buffer.
 	public unsafe override int GetBytesImpl (
-		char* chars, int charCount, byte* bytes, int byteCount)
+		char* chars, int charCount, byte* bytes, int byteCount, bool refresh)
 	{
 		int charIndex = 0;
 		int byteIndex = 0;
@@ -186,7 +314,7 @@ public class CP51932 : MonoEncoding
 
 			if (value == 0) {
 #if NET_2_0
-				HandleFallback (ref buffer,
+				HandleFallback (
 					chars, ref charIndex, ref charCount,
 					bytes, ref posn, ref byteCount);
 #else
@@ -215,9 +343,24 @@ public class CP51932 : MonoEncoding
 		// Return the final length to the caller.
 		return posn - byteIndex;
 	}
+} // CP51932Encoder
+
+public class CP51932Decoder : Decoder
+{
+	int last_count, last_bytes;
 
 	// Get the number of characters needed to decode a byte buffer.
 	public override int GetCharCount (byte [] bytes, int index, int count)
+	{
+		return GetCharCount (bytes, index, count, false);
+	}
+
+#if NET_2_0
+	public override
+#else
+	internal
+#endif
+	int GetCharCount (byte [] bytes, int index, int count, bool refresh)
 	{
 		// Validate the parameters.
 		if (bytes == null)
@@ -239,7 +382,7 @@ public class CP51932 : MonoEncoding
 		byte[] table0212 = JISConvert.Convert.jisx0212ToUnicode;
 		int length = 0;
 		int byteval = 0;
-		int last = 0;
+		int last = last_count;
 
 		while (count > 0) {
 			byteval = bytes [index++];
@@ -313,12 +456,13 @@ public class CP51932 : MonoEncoding
 					length++;
 			}
 		}
-#if NET_2_0
+
 		// seems like .NET 2.0 adds \u30FB for insufficient
 		// byte seuqence (for Japanese \u30FB makes sense).
-		if (last != 0)
+		if (refresh && last != 0)
 			length++;
-#endif
+		else
+			last_count = last;
 
 		// Return the final length to the caller.
 		return length;
@@ -327,6 +471,18 @@ public class CP51932 : MonoEncoding
 	public override int GetChars (byte[] bytes, int byteIndex,
 						 int byteCount, char[] chars,
 						 int charIndex)
+	{
+		return GetChars (bytes, byteIndex, byteCount, chars, charIndex, false);
+	}
+
+#if NET_2_0
+	public override
+#else
+	internal
+#endif
+	int GetChars (byte[] bytes, int byteIndex,
+						 int byteCount, char[] chars,
+						 int charIndex, bool refresh)
 	{
 		// Validate the parameters.
 		if(bytes == null)
@@ -357,7 +513,7 @@ public class CP51932 : MonoEncoding
 		int posn = charIndex;
 		int charLength = chars.Length;
 		int byteval, value;
-		int last = 0;
+		int last = last_bytes;
 		byte[] table0208 = JISConvert.Convert.jisx0208ToUnicode;
 		byte[] table0212 = JISConvert.Convert.jisx0212ToUnicode;
 
@@ -371,7 +527,7 @@ public class CP51932 : MonoEncoding
 						last = 0;
 						if (posn >= charLength)
 							throw Insufficient ();
-						chars [posn++] = '?';
+						chars [posn++] = '\u30FB';
 					}
 					// First byte in a triple-byte sequence
 					else
@@ -391,7 +547,7 @@ public class CP51932 : MonoEncoding
 					// Invalid first byte.
 					if (posn >= charLength)
 						throw Insufficient ();
-					chars [posn++] = '?';
+					chars [posn++] = '\u30FB';
 				}
 			}
 			else if (last == 0x8E) {
@@ -405,7 +561,7 @@ public class CP51932 : MonoEncoding
 					// Invalid second byte.
 					if (posn >= charLength)
 						throw Insufficient ();
-					chars [posn++] = '?';
+					chars [posn++] = '\u30FB';
 				}
 				last =0;
 			}
@@ -429,7 +585,7 @@ public class CP51932 : MonoEncoding
 					last = 0;
 					if (posn >= charLength)
 						throw Insufficient ();
-					chars [posn++] = '?';
+					chars [posn++] = '\u30FB';
 					continue;
 				}
 
@@ -444,18 +600,19 @@ public class CP51932 : MonoEncoding
 				if (value != 0)
 					chars [posn++] = (char)value;
 				else
-					chars [posn++] = '?';
+					chars [posn++] = '\u30FB';
 			}
 		}
-#if NET_2_0
-		if (last != 0) {
+
+		if (refresh && last != 0) {
 			// seems like .NET 2.0 adds \u30FB for insufficient
 			// byte seuqence (for Japanese \u30FB makes sense).
 			if (posn >= charLength)
 				throw Insufficient ();
 			chars [posn++] = '\u30FB';
 		}
-#endif
+		else
+			last_bytes = last;
 
 		// Return the final length to the caller.
 		return posn - charIndex;
@@ -467,89 +624,7 @@ public class CP51932 : MonoEncoding
 			(Strings.GetString
 				("Arg_InsufficientSpace"), "chars");
 	}
-
-	// Get the maximum number of bytes needed to encode a
-	// specified number of characters.
-	public override int GetMaxByteCount(int charCount)
-	{
-		if(charCount < 0)
-		{
-			throw new ArgumentOutOfRangeException
-				("charCount",
-				 Strings.GetString("ArgRange_NonNegative"));
-		}
-		return charCount * 3;
-	}
-
-	// Get the maximum number of characters needed to decode a
-	// specified number of bytes.
-	public override int GetMaxCharCount(int byteCount)
-	{
-		if(byteCount < 0)
-		{
-			throw new ArgumentOutOfRangeException
-				("byteCount",
-				 Strings.GetString ("ArgRange_NonNegative"));
-		}
-		return byteCount;
-	}
-
-/* Use default implementation
-	public override Decoder GetDecoder()
-	{
-		return new CP51932Decoder(convert);
-	}
-*/
-
-#if !ECMA_COMPAT
-
-	// Get the mail body name for this encoding.
-	public override String BodyName {
-		get { return "euc-jp"; }
-	}
-
-	// Get the human-readable name for this encoding.
-	public override String EncodingName {
-		get { return "Japanese (EUC)"; }
-	}
-
-	// Get the mail agent header name for this encoding.
-	public override String HeaderName {
-		get { return "euc-jp"; }
-	}
-
-	// Determine if this encoding can be displayed in a Web browser.
-	public override bool IsBrowserDisplay {
-		get { return true; }
-	}
-
-	// Determine if this encoding can be saved from a Web browser.
-	public override bool IsBrowserSave {
-		get { return true; }
-	}
-
-	// Determine if this encoding can be displayed in a mail/news agent.
-	public override bool IsMailNewsDisplay {
-		get { return true; }
-	}
-
-	// Determine if this encoding can be saved from a mail/news agent.
-	public override bool IsMailNewsSave {
-		get { return true; }
-	}
-
-	// Get the IANA-preferred Web name for this encoding.
-	public override String WebName {
-		get { return "euc-jp"; }
-	}
-
-	// Get the Windows code page represented by this object.
-	public override int WindowsCodePage {
-		get { return EUC_JP_CODE_PAGE; }
-	}
-
-#endif // !ECMA_COMPAT
-}; // class CP51932
+}; // class CP51932Decoder
 
 [Serializable]
 public class ENCeuc_jp : CP51932

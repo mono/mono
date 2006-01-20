@@ -309,8 +309,59 @@ namespace MonoTests.I18N.CJK
 			Assert.AreEqual (1, d.GetChars (new byte [] {0x81}, 0, 1, chars, 0, true), "#5");
 			Assert.AreEqual (new char [] {'\u30FB'}, chars, "#6");
 		}
+
+		[Test]
+		public void Decoder51932Refresh ()
+		{
+			Encoding e = Encoding.GetEncoding (51932);
+			Decoder d = e.GetDecoder ();
+			char [] chars;
+
+			// invalid one
+			chars = new char [1];
+			Assert.AreEqual (1, d.GetChars (new byte [] {0x81}, 0, 1, chars, 0, false), "#0.1");
+			Assert.AreEqual (new char [] {'\u30FB'}, chars, "#0.2");
+
+			// incomplete
+			chars = new char [1];
+			Assert.AreEqual (0, d.GetChars (new byte [] {0xA1}, 0, 1, chars, 0, false), "#1");
+			Assert.AreEqual (new char [] {'\0'}, chars, "#2");
+
+			// became complete
+			chars = new char [1];
+			Assert.AreEqual (1, d.GetChars (new byte [] {0xA1}, 0, 1, chars, 0, true), "#3");
+			Assert.AreEqual (new char [] {'\u3000'}, chars, "#4");
+
+			// incomplete but refreshed
+			chars = new char [1];
+			Assert.AreEqual (1, d.GetChars (new byte [] {0xA1}, 0, 1, chars, 0, true), "#5");
+			Assert.AreEqual (new char [] {'\u30FB'}, chars, "#6");
+		}
 #endif
 
+
+		[Test]
+		public void Decoder51932NoRefresh ()
+		{
+			Encoding e = Encoding.GetEncoding (51932);
+			Decoder d = e.GetDecoder ();
+			char [] chars;
+
+			// incomplete
+			chars = new char [1];
+			Assert.AreEqual (0, d.GetChars (new byte [] {0xA1}, 0, 1, chars, 0), "#1");
+			Assert.AreEqual (new char [] {'\0'}, chars, "#2");
+
+			// became complete
+			chars = new char [1];
+			Assert.AreEqual (1, d.GetChars (new byte [] {0xA1}, 0, 1, chars, 0), "#3");
+			Assert.AreEqual (new char [] {'\u3000'}, chars, "#4");
+
+			// incomplete but refreshed
+			chars = new char [1];
+			Assert.AreEqual (0, d.GetChars (new byte [] {0xA1}, 0, 1, chars, 0), "#5");
+			Assert.AreEqual (new char [] {'\0'}, chars, "#6");
+		}
 		#endregion
 
 		#region Korean

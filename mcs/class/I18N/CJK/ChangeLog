@@ -1,5 +1,13 @@
 2006-01-20  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* CP51932.cs :
+	  Encoding.GetChars() does not handle incomplete bytes but
+	  Decoder.GetChars() should do it (which was has vanished
+	  when I fixed CP51932 4 days ago). Now it uses Decoder which
+	  preserves incomplete byte like CP932 and CP54936.
+
+2006-01-20  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* CP932.cs :
 	  Implemented Decoder to handle incomplete bytes correctly. Hold
 	  different incomplete bytes for GetChars() and GetCharCount().

@@ -1,5 +1,10 @@
 2006-01-20  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* I18N.CJK.Test.cs :
+	  added Decoder51932Refresh() and Decoder51932NoRefresh().
+
+2006-01-20  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* I18N.CJK.Test.cs : added Decoder932Refresh().
 
 2006-01-20  Atsushi Enomoto  <atsushi@ximian.com>
