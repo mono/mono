@@ -208,10 +208,9 @@ namespace MonoTests.I18N.CJK
 				e.GetBytes (new char [] {(char) i});
 		}
 
-		[Test]
-		public void Bug77222 ()
+		GetCharsAllBytePairs (int enc)
 		{
-			Encoding e = Encoding.GetEncoding (51932);
+			Encoding e = Encoding.GetEncoding (enc);
 			byte [] bytes = new byte [2];
 			for (int i0 = 0; i0 < 0x100; i0++) {
 				bytes [0] = (byte) i0;
@@ -223,17 +222,21 @@ namespace MonoTests.I18N.CJK
 		}
 
 		[Test]
+		public void Bug77222 ()
+		{
+			GetCharsAllBytePairs (51932);
+		}
+
+		[Test]
 		public void Bug77238 ()
 		{
-			Encoding e = Encoding.GetEncoding(936);
-			byte [] bytes = new byte [2];
-			for (int i0 = 0; i0 < 0x100; i0++) {
-				bytes [0] = (byte) i0;
-				for (int i1 = 0; i1 < 0x100; i1++) {
-					bytes [1] = (byte) i1;
-					e.GetChars (bytes);
-				}
-			}
+			GetCharsAllBytePairs (936);
+		}
+
+		[Test]
+		public void Bug7774 ()
+		{
+			GetCharsAllBytePairs (950);
 		}
 
 		#endregion

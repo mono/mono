@@ -76,22 +76,28 @@ namespace I18N.CJK
 				if (lastByte == 0) {
 					if (b <= 0x80 || b == 0xFF) { // ASCII
 						chars[charIndex++] = (char)b;
-						continue;
 					} else if (b < 0xA1 || b >= 0xFA) {
-						continue;
+						// incorrect first byte.
+						chars[charIndex++] = '?';
+						byteCount--; // cut one more byte.
 					} else {
 						lastByte = b;
-						continue;
 					}
+					continue;
 				}
 				int ord = ((lastByte - 0xA1) * 191 + b - 0x40) * 2;
-				char c1 = (char)(convert.n2u[ord] + convert.n2u[ord + 1] * 256);
+				char c1 = ord < 0 || ord > convert.n2u.Length ?
+					'\0' :
+					(char)(convert.n2u[ord] + convert.n2u[ord + 1] * 256);
 				if (c1 == 0)
 					chars[charIndex++] = '?';
 				else
 					chars[charIndex++] = c1;
 				lastByte = 0;
 			}
+			if (lastByte != 0)
+				chars[charIndex++] = '?';
+
 			return charIndex - origIndex;
 		}
 		
