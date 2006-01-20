@@ -3,7 +3,7 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = Mono.Data.SqliteClient.dll
-LIB_MCS_FLAGS = /unsafe /r:System.dll /r:System.Data.dll /r:Mono.Posix.dll
+LIB_MCS_FLAGS = /unsafe /r:System.dll /r:System.Data.dll
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) /nowarn:618
 
