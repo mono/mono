@@ -1,3 +1,7 @@
+2006-01-20 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* StreamReader.cs: (ReadToEnd) if Read returns -1 or 0, we're done.
+
 2006-01-13  Ben Maurer  <bmaurer@andrew.cmu.edu>
 
 	* TextWriter.cs: Call char[],int,int from the Write(char[]) method
