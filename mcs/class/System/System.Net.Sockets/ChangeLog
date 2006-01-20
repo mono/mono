@@ -1,3 +1,8 @@
+2006-01-19 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Socket.cs: use the 2.0 configuration classes when checking for IPv6
+	support.
+
 2006-01-04  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TcpClient.cs: The Client property is public in 2.0 while it was
