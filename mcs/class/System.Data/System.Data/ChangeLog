@@ -1,14 +1,25 @@
+2006-01-18 Boris Kirzner <borisk@mainsoft.com>
+	* DataColumn.cs: added PropertyCchangedEvent handling.
+
 2006-01-17  Senganal T  <tsenganal@novell.com>
+	
 	* DataRow.cs:
-		ItemArray : Modified to raise RowNotInTableException only if
-		the concerned row has been removed from the table.Fixes
+		ItemArray : Modified to raise RowInTableException only if
+		the concerned row has been removed from the table.Fixes 
 		bug #77267
+
+2006-01-16 Boris Kirzner <borisk@mainsoft.com>
+	* DataTable.cs: Drop dependend indexes on column removal.
+
+2006-01-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CustomDataClassGenerator.cs :
+	  When a DataRelation connects the same table as parent and child,
+	  generate parent row property as BlahRowParent. Fixed bug #77248.
 
 2006-01-10  Senganal T <tsenganal@novell.com>
 	* DataRowCollection.cs
-		- Added ListChangedEvent to signal reset of the collection.
-		Ideally, all the row collection changes should be notified 
-		thru this event. 
+		- Added ListChangedEvent to notify reset of the collection.
 	* DataView.cs
 		- Subscribes to the ListChangedEvent of DataRowCollection
 		Fixes bug #77188
