@@ -819,7 +819,7 @@ static int the_count = 0;
         MonoBasicBlock *falsebb; \
 	    NEW_BBLOCK ((cfg), falsebb); \
         MONO_INST_NEW ((cfg), (ins), (op)); \
-        if ((op) == CEE_BR) { \
+        if ((op) == OP_BR) { \
             ins->inst_target_bb = (truebb); \
         } else { \
 		    ins->inst_many_bb = mono_mempool_alloc (cfg->mempool, sizeof(gpointer)*2);	\
@@ -3041,7 +3041,7 @@ handle_isinst (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned char 
 					MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, eclass_reg, mono_defaults.enum_class);
 				}
 				MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_PBEQ, is_null_bb);
-				MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BR, false_bb);
+				MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_BR, false_bb);
 			} else if (klass->cast_class == mono_defaults.enum_class->parent) {
 				int const_reg = -1;
 				
@@ -3060,7 +3060,7 @@ handle_isinst (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned char 
 					MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, eclass_reg, mono_defaults.enum_class);
 				}
 				MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_PBEQ, is_null_bb);
-				MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BR, false_bb);
+				MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_BR, false_bb);
 			} else if (klass->cast_class == mono_defaults.enum_class) {
 				if (cfg->compile_aot) {
 					int const_reg = alloc_preg (cfg);
@@ -3070,7 +3070,7 @@ handle_isinst (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned char 
 					MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, eclass_reg, mono_defaults.enum_class);
 				}
 				MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_PBEQ, is_null_bb);
-				MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BR, false_bb);
+				MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_BR, false_bb);
 			} else if (klass->cast_class->flags & TYPE_ATTRIBUTE_INTERFACE) {
 				mini_emit_iface_class_cast (cfg, eclass_reg, klass->cast_class, false_bb, is_null_bb);
 			} else {
@@ -3100,7 +3100,7 @@ handle_isinst (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned char 
 					MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, klass_reg, klass);
 				}
 				MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_PBNE_UN, false_bb);
-				MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BR, is_null_bb);
+				MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_BR, is_null_bb);
 			} else {
 				MONO_EMIT_NEW_LOAD_MEMBASE (cfg, klass_reg, vtable_reg, G_STRUCT_OFFSET (MonoVTable, klass));
 				/* the is_null_bb target simply copies the input register to the output */
@@ -3112,7 +3112,7 @@ handle_isinst (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned char 
 	MONO_START_BB (cfg, false_bb);
 
 	MONO_EMIT_NEW_ICONST (cfg, res_reg, 0);
-	MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BR, end_bb);
+	MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_BR, end_bb);
 
 	MONO_START_BB (cfg, is_null_bb);
 
@@ -3194,7 +3194,7 @@ handle_cisinst (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned char
 		MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_PBEQ, no_proxy_bb);
 		
 		mini_emit_isninst_cast (cfg, klass_reg, klass, NULL, true_bb);
-		MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BR, false2_bb);
+		MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_BR, false2_bb);
 
 		MONO_START_BB (cfg, no_proxy_bb);
 
@@ -3204,12 +3204,12 @@ handle_cisinst (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned char
 	MONO_START_BB (cfg, false_bb);
 
 	MONO_EMIT_NEW_ICONST (cfg, dreg, 1);
-	MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BR, end_bb);
+	MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_BR, end_bb);
 
 	MONO_START_BB (cfg, false2_bb);
 
 	MONO_EMIT_NEW_ICONST (cfg, dreg, 2);
-	MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BR, end_bb);
+	MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_BR, end_bb);
 
 	MONO_START_BB (cfg, true_bb);
 
@@ -3274,7 +3274,7 @@ handle_ccastclass (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned c
 		MONO_EMIT_NEW_COND_EXC (cfg, EQ, "InvalidCastException");
 		
 		MONO_EMIT_NEW_ICONST (cfg, dreg, 1);
-		MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BR, end_bb);
+		MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_BR, end_bb);
 		
 	} else {
 		NEW_BBLOCK (cfg, no_proxy_bb);
@@ -3303,7 +3303,7 @@ handle_ccastclass (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned c
 		mini_emit_isninst_cast (cfg, klass_reg, klass, NULL, ok_result_bb);
 
 		MONO_EMIT_NEW_ICONST (cfg, dreg, 1);
-		MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BR, end_bb);
+		MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_BR, end_bb);
 
 		MONO_START_BB (cfg, no_proxy_bb);
 
@@ -4459,7 +4459,7 @@ mono_decompose_long_opts (MonoCompile *cfg)
 				/* Positive */
 				MONO_EMIT_NEW_COMPARE_IMM (cfg, tree->sreg1, 127);
 				MONO_EMIT_NEW_COND_EXC (cfg, GT_UN, "OverflowException");
-				MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BR, end_label);
+				MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_BR, end_label);
 
 				/* Negative */
 				MONO_START_BB (cfg, is_negative);
@@ -4508,7 +4508,7 @@ mono_decompose_long_opts (MonoCompile *cfg)
 				/* Positive */
 				MONO_EMIT_NEW_COMPARE_IMM (cfg, tree->sreg1, 32767);
 				MONO_EMIT_NEW_COND_EXC (cfg, GT_UN, "OverflowException");
-				MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BR, end_label);
+				MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_BR, end_label);
 
 				/* Negative */
 				MONO_START_BB (cfg, is_negative);
@@ -5925,7 +5925,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 						ins->cil_code = ip;
 						MONO_ADD_INS (bblock, ins);
 					}
-					MONO_INST_NEW (cfg, ins, CEE_BR);
+					MONO_INST_NEW (cfg, ins, OP_BR);
 					ins->cil_code = ip;
 					MONO_ADD_INS (bblock, ins);
 					tblock = start_bblock->out_bb [0];
@@ -6047,7 +6047,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			}
 			if (sp != stack_start)
 				goto unverified;
-			MONO_INST_NEW (cfg, ins, CEE_BR);
+			MONO_INST_NEW (cfg, ins, OP_BR);
 			ins->cil_code = ip++;
 			ins->inst_target_bb = end_bblock;
 			MONO_ADD_INS (bblock, ins);
@@ -6056,7 +6056,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			break;
 		case CEE_BR_S:
 			CHECK_OPSIZE (2);
-			MONO_INST_NEW (cfg, ins, CEE_BR);
+			MONO_INST_NEW (cfg, ins, OP_BR);
 			ins->cil_code = ip++;
 			target = ip + 1 + (signed char)(*ip);
 			++ip;
@@ -6096,7 +6096,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			break;
 		case CEE_BR:
 			CHECK_OPSIZE (5);
-			MONO_INST_NEW (cfg, ins, CEE_BR);
+			MONO_INST_NEW (cfg, ins, OP_BR);
 			ins->cil_code = ip++;
 
 			target = ip + 4 + (gint32)read32(ip);
@@ -7873,7 +7873,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				g_list_free (handlers);
 			} 
 
-			MONO_INST_NEW (cfg, ins, CEE_BR);
+			MONO_INST_NEW (cfg, ins, OP_BR);
 			ins->cil_code = ip;
 			MONO_ADD_INS (bblock, ins);
 			GET_BBLOCK (cfg, bbhash, tblock, target);
@@ -8017,7 +8017,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				if (sp != stack_start)
 					goto unverified;
 				
-				MONO_INST_NEW (cfg, ins, CEE_BR);
+				MONO_INST_NEW (cfg, ins, OP_BR);
 				ins->cil_code = ip;
 				ins->inst_target_bb = end_bblock;
 				MONO_ADD_INS (bblock, ins);
@@ -8988,6 +8988,8 @@ mono_spill_global_vars (MonoCompile *cfg)
 			}
 
 			if (ins->opcode < MONO_CEE_LAST) {
+				mono_print_ins (ins);
+				g_assert_not_reached ();
 				spec = "   ";
 			}
 
