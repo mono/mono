@@ -93,17 +93,33 @@ namespace MonoTests.System.Text {
                 }
                 
                 [Test]
+#if NET_2_0
+                [Category ("NotWorking")]
+#endif
                 public void TestMaxCharCount()
                 {
                         UTF8Encoding UTF8enc = new UTF8Encoding ();
+#if NET_2_0
+                        // hmm, where is this extra 1 coming from?
+                        Assertion.AssertEquals ("UTF #1", 51, UTF8enc.GetMaxCharCount(50));
+#else
                         Assertion.AssertEquals ("UTF #1", 50, UTF8enc.GetMaxCharCount(50));
+#endif
                 }
         
                 [Test]
+#if NET_2_0
+                [Category ("NotWorking")]
+#endif
                 public void TestMaxByteCount()
                 {
                         UTF8Encoding UTF8enc = new UTF8Encoding ();
+#if NET_2_0
+                        // maybe under .NET 2.0 insufficient surrogate pair is just not handled, and 3 is Preamble size.
+                        Assertion.AssertEquals ("UTF #1", 153, UTF8enc.GetMaxByteCount(50));
+#else
                         Assertion.AssertEquals ("UTF #1", 200, UTF8enc.GetMaxByteCount(50));
+#endif
                 }
 
 		// regression for bug #59648
@@ -690,6 +706,10 @@ namespace MonoTests.System.Text {
 		}
 
 		[Test]
+#if NET_2_0
+		[ExpectedException (typeof (DecoderFallbackException))]
+		[Category ("NotWorking")]
+#endif
 // MS Fx 1.1 accept this
 //		[ExpectedException (typeof (DecoderException))]
 			public void T5_IllegalCodePosition_1_UTF16Surrogates_511 () 
@@ -701,6 +721,10 @@ namespace MonoTests.System.Text {
 		}
 
 		[Test]
+#if NET_2_0
+		[ExpectedException (typeof (DecoderFallbackException))]
+		[Category ("NotWorking")]
+#endif
 // MS Fx 1.1 accept this
 //		[ExpectedException (typeof (DecoderException))]
 		public void T5_IllegalCodePosition_1_UTF16Surrogates_512 () 
@@ -712,6 +736,10 @@ namespace MonoTests.System.Text {
 		}
 
 		[Test]
+#if NET_2_0
+		[ExpectedException (typeof (DecoderFallbackException))]
+		[Category ("NotWorking")]
+#endif
 // MS Fx 1.1 accept this
 //		[ExpectedException (typeof (DecoderException))]
 		public void T5_IllegalCodePosition_1_UTF16Surrogates_513 ()
@@ -723,6 +751,10 @@ namespace MonoTests.System.Text {
 		}
 
 		[Test]
+#if NET_2_0
+		[ExpectedException (typeof (DecoderFallbackException))]
+		[Category ("NotWorking")]
+#endif
 // MS Fx 1.1 accept this
 //		[ExpectedException (typeof (DecoderException))]
 		public void T5_IllegalCodePosition_1_UTF16Surrogates_514 () 
@@ -734,6 +766,10 @@ namespace MonoTests.System.Text {
 		}
 
 		[Test]
+#if NET_2_0
+		[ExpectedException (typeof (DecoderFallbackException))]
+		[Category ("NotWorking")]
+#endif
 // MS Fx 1.1 accept this
 //		[ExpectedException (typeof (DecoderException))]
 		public void T5_IllegalCodePosition_1_UTF16Surrogates_515 ()
@@ -745,6 +781,10 @@ namespace MonoTests.System.Text {
 		}
 
 		[Test]
+#if NET_2_0
+		[ExpectedException (typeof (DecoderFallbackException))]
+		[Category ("NotWorking")]
+#endif
 // MS Fx 1.1 accept this
 //		[ExpectedException (typeof (DecoderException))]
 		public void T5_IllegalCodePosition_1_UTF16Surrogates_516 () 
@@ -756,6 +796,10 @@ namespace MonoTests.System.Text {
 		}
 
 		[Test]
+#if NET_2_0
+		[ExpectedException (typeof (DecoderFallbackException))]
+		[Category ("NotWorking")]
+#endif
 // MS Fx 1.1 accept this
 //		[ExpectedException (typeof (DecoderException))]
 		public void T5_IllegalCodePosition_1_UTF16Surrogates_517 () 
@@ -767,6 +811,10 @@ namespace MonoTests.System.Text {
 		}
 
 		[Test]
+#if NET_2_0
+		[ExpectedException (typeof (DecoderFallbackException))]
+		[Category ("NotWorking")]
+#endif
 // MS Fx 1.1 accept this
 //		[ExpectedException (typeof (DecoderException))]
 		public void T5_IllegalCodePosition_2_PairedUTF16Surrogates_521 () 
@@ -779,6 +827,10 @@ namespace MonoTests.System.Text {
 		}
 
 		[Test]
+#if NET_2_0
+		[ExpectedException (typeof (DecoderFallbackException))]
+		[Category ("NotWorking")]
+#endif
 // MS Fx 1.1 accept this
 //		[ExpectedException (typeof (DecoderException))]
 		public void T5_IllegalCodePosition_2_PairedUTF16Surrogates_522 () 
@@ -791,6 +843,10 @@ namespace MonoTests.System.Text {
 		}
 
 		[Test]
+#if NET_2_0
+		[ExpectedException (typeof (DecoderFallbackException))]
+		[Category ("NotWorking")]
+#endif
 // MS Fx 1.1 accept this
 //		[ExpectedException (typeof (DecoderException))]
 		public void T5_IllegalCodePosition_2_PairedUTF16Surrogates_523 () 
@@ -803,6 +859,10 @@ namespace MonoTests.System.Text {
 		}
 
 		[Test]
+#if NET_2_0
+		[ExpectedException (typeof (DecoderFallbackException))]
+		[Category ("NotWorking")]
+#endif
 // MS Fx 1.1 accept this
 //		[ExpectedException (typeof (DecoderException))]
 		public void T5_IllegalCodePosition_2_PairedUTF16Surrogates_524 () 
@@ -815,6 +875,10 @@ namespace MonoTests.System.Text {
 		}
 
 		[Test]
+#if NET_2_0
+		[ExpectedException (typeof (DecoderFallbackException))]
+		[Category ("NotWorking")]
+#endif
 // MS Fx 1.1 accept this
 //		[ExpectedException (typeof (DecoderException))]
 		public void T5_IllegalCodePosition_2_PairedUTF16Surrogates_525 () 
@@ -827,6 +891,10 @@ namespace MonoTests.System.Text {
 		}
 
 		[Test]
+#if NET_2_0
+		[ExpectedException (typeof (DecoderFallbackException))]
+		[Category ("NotWorking")]
+#endif
 // MS Fx 1.1 accept this
 //		[ExpectedException (typeof (DecoderException))]
 		public void T5_IllegalCodePosition_2_PairedUTF16Surrogates_526 () 
@@ -839,6 +907,10 @@ namespace MonoTests.System.Text {
 		}
 
 		[Test]
+#if NET_2_0
+		[ExpectedException (typeof (DecoderFallbackException))]
+		[Category ("NotWorking")]
+#endif
 // MS Fx 1.1 accept this
 //		[ExpectedException (typeof (DecoderException))]
 		public void T5_IllegalCodePosition_2_PairedUTF16Surrogates_527 () 
@@ -851,6 +923,10 @@ namespace MonoTests.System.Text {
 		}
 
 		[Test]
+#if NET_2_0
+		[ExpectedException (typeof (DecoderFallbackException))]
+		[Category ("NotWorking")]
+#endif
 // MS Fx 1.1 accept this
 //		[ExpectedException (typeof (DecoderException))]
 		public void T5_IllegalCodePosition_2_PairedUTF16Surrogates_528 () 
@@ -901,5 +977,16 @@ namespace MonoTests.System.Text {
 			AssertEquals ("#1", '\uFEFF', chars [0]);
 			AssertEquals ("#2", 'A', chars [1]);
 		}
+
+#if NET_2_0
+		[Test]
+		public void CloneNotReadOnly ()
+		{
+			Encoding e = Encoding.GetEncoding (65001).Clone ()
+				as Encoding;
+			AssertEquals (false, e.IsReadOnly);
+			e.EncoderFallback = new EncoderExceptionFallback ();
+		}
+#endif
 	}
 }

@@ -230,10 +230,17 @@ namespace MonoTests.System.Text
                 }
         
                 [Test]
+#if NET_2_0
+                [Category ("NotWorking")]
+#endif
                 public void TestMaxByteCount()
                 {
                         UTF7Encoding UTF7enc = new UTF7Encoding ();
+#if NET_2_0
+                        Assertion.AssertEquals ("UTF #1", 152, UTF7enc.GetMaxByteCount(50));
+#else
                         Assertion.AssertEquals ("UTF #1", 136, UTF7enc.GetMaxByteCount(50));
+#endif
                 }
         }
 }

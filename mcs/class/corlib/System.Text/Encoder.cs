@@ -36,7 +36,7 @@ public abstract class Encoder
 	protected Encoder() {}
 
 #if NET_2_0
-	EncoderFallback fallback;
+	EncoderFallback fallback = new EncoderReplacementFallback ();
 	EncoderFallbackBuffer fallback_buffer;
 
 	public EncoderFallback Fallback {
@@ -52,7 +52,7 @@ public abstract class Encoder
 	public EncoderFallbackBuffer FallbackBuffer {
 		get {
 			if (fallback_buffer == null)
-				fallback_buffer = fallback.CreateFallbackBuffer ();
+				fallback_buffer = Fallback.CreateFallbackBuffer ();
 			return fallback_buffer;
 		}
 	}
