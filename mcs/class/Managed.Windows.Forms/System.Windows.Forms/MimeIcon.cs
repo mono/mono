@@ -77,8 +77,77 @@ namespace System.Windows.Forms
 		
 		private static EPlatformHandler platform = EPlatformHandler.Default;
 		
-		private static Hashtable MimeTypeIconIndexHash = new Hashtable();
+		private static IconIndexHash MimeTypeIconIndexHash = new IconIndexHash();
 		
+		struct IconPath { 
+			public string Fullname; 
+			public IconPath (string path)
+			{
+				Fullname = path;
+			}
+		}
+
+		struct SvgIconPath { 
+			public string Fullname; 
+			public SvgIconPath (string path)
+			{
+				Fullname = path;
+			}
+		}
+
+		private class IconIndexHash {
+
+			Hashtable hash = new Hashtable ();
+
+			private int LoadIcon (IconPath path)
+			{
+				Bitmap bmp = new Bitmap (path.Fullname);
+			
+				int index = SmallIcons.Images.Add (bmp, Color.Transparent);
+				LargeIcons.Images.Add (bmp, Color.Transparent);
+				return index;
+			}
+
+			private int LoadSvgIcon (SvgIconPath path)
+			{
+				Image image = SVGUtil.GetSVGasImage (path.Fullname, 48, 48);
+			
+				int index = SmallIcons.Images.Add (image, Color.Transparent);
+				LargeIcons.Images.Add (image, Color.Transparent);
+				return index;
+			}
+
+			private int LoadIcon (object path)
+			{
+				if (path is SvgIconPath)
+					return LoadSvgIcon ((SvgIconPath) path);
+				else
+					return LoadIcon ((IconPath) path);
+			}
+
+			public object this [object key] {
+				get {
+					if (hash [key] == null)
+						return null;
+					else if (hash [key] is int)
+						return hash [key];
+
+					hash [key] = LoadIcon (hash [key]);
+					return hash [key];
+				}
+			}
+
+			public void Add (string name, object path)
+			{
+				hash [name] = path;
+			}
+
+			public bool ContainsKey (string s)
+			{
+				return hash.ContainsKey (s);
+			}
+		}
+
 		private static NameValueCollection IconNameMimeTypeNameValueCollection = new NameValueCollection();
 		
 		private static StringCollection added_icons = new StringCollection();
@@ -134,7 +203,6 @@ namespace System.Windows.Forms
 				platformMimeHandler = new KdeHandler( );
 				if ( platformMimeHandler.Start( ) == MimeExtensionHandlerStatus.OK )
 				{
-					Console.WriteLine( "Kde icons ready..." );
 					platform = EPlatformHandler.KDE;
 				}
 				else // fallback to default
@@ -154,7 +222,6 @@ namespace System.Windows.Forms
 				platformMimeHandler = new GnomeHandler( );
 				if ( platformMimeHandler.Start( ) == MimeExtensionHandlerStatus.OK )
 				{
-					Console.WriteLine( "Gnome icons ready..." );
 					platform = EPlatformHandler.GNOME;
 				}
 				else // fallback to default
@@ -255,12 +322,7 @@ namespace System.Windows.Forms
 			
 			added_icons.Add( name );
 			
-			Bitmap bmp = new Bitmap( fullname );
-			
-			int index = SmallIcons.Images.Add( bmp, Color.Transparent );
-			LargeIcons.Images.Add( bmp, Color.Transparent );
-			
-			AddMimeTypeIconIndexHash( name, index );
+			AddMimeTypeIconIndexHash( name, new IconPath (fullname) );
 		}
 		
 		internal static void AddSVGIcon( string name, string fullname )
@@ -273,12 +335,7 @@ namespace System.Windows.Forms
 			
 			added_icons.Add( name );
 			
-			Image image = SVGUtil.GetSVGasImage (fullname, 48, 48);
-			
-			int index = SmallIcons.Images.Add( image, Color.Transparent );
-			LargeIcons.Images.Add( image, Color.Transparent );
-			
-			AddMimeTypeIconIndexHash( name, index );
+			AddMimeTypeIconIndexHash( name, new SvgIconPath (fullname) );
 		}
 		
 		private static bool CheckIfIconIsNeeded( string name )
@@ -291,7 +348,7 @@ namespace System.Windows.Forms
 			return false;
 		}
 		
-		internal static void AddMimeTypeIconIndexHash( string name, int index )
+		internal static void AddMimeTypeIconIndexHash( string name, object path_or_index )
 		{
 			string mime_type = IconNameMimeTypeNameValueCollection[ name ];
 			
@@ -305,7 +362,7 @@ namespace System.Windows.Forms
 				if ( MimeTypeIconIndexHash.ContainsKey( s ) )
 					continue;
 				
-				MimeTypeIconIndexHash.Add( s, index );
+				MimeTypeIconIndexHash.Add( s, path_or_index );
 			}
 		}
 		

@@ -1,3 +1,8 @@
+2006-01-20  Mike Kestner  <mkestner@novell.com>
+
+	* MimeIcon.cs: delay Image creation until the icons are accessed
+	instead of creating 190 scaled images on GnomeHandler startup.
+
 2006-01-19  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* TextBoxBase.cs (WndProc): When handling WM_KEYDOWN we need to
