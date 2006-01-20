@@ -9475,23 +9475,23 @@ mono_local_deadce (MonoCompile *cfg)
 
 	/* First pass: collect liveness info */
 	for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
-		int max = cfg->next_vireg;
-
 		/* Manually init the defs entries used by the bblock */
 		for (ins = bb->code; ins; ins = ins->next) {
-			if ((ins->dreg != -1) && (ins->dreg < max))
+			const char *spec = ins_info [ins->opcode - OP_START - 1];
+
+			if (spec [MONO_INST_DEST] == 'i')
 				mono_bitset_clear_fast (used, ins->dreg);
-			if ((ins->sreg1 != -1) && (ins->sreg1 < max))
+			if (spec [MONO_INST_SRC1] == 'i')
 				mono_bitset_clear_fast (used, ins->sreg1);
-			if ((ins->sreg2 != -1) && (ins->sreg2 < max))
+			if (spec [MONO_INST_SRC2] == 'i')
 				mono_bitset_clear_fast (used, ins->sreg2);
 #if SIZEOF_VOID_P == 4
 			/* Regpairs */
-			if ((ins->dreg != -1) && (ins->dreg + 1 < max))
+			if (spec [MONO_INST_DEST] == 'l')
 				mono_bitset_clear_fast (used, ins->dreg + 1);
-			if ((ins->sreg1 != -1) && (ins->sreg1 + 1 < max))
+			if (spec [MONO_INST_SRC1] == 'l')
 				mono_bitset_clear_fast (used, ins->sreg1 + 1);
-			if ((ins->sreg2 != -1) && (ins->sreg2 + 1 < max))
+			if (spec [MONO_INST_SRC2] == 'l')
 				mono_bitset_clear_fast (used, ins->sreg2 + 1);
 #endif
 		}

@@ -14,70 +14,115 @@
 
 //#define DEBUG_DOMINATORS
 
-/* the simpler, dumber algorithm */
 static void
-compute_dominators (MonoCompile *m) {
-	int change = TRUE;
-	int i, j, bitsize;
-	MonoBasicBlock *bb;
+compute_dominators (MonoCompile *cfg) {
+	int j, bitsize, iterations;
 	MonoBitSet *T;
 	char* mem;
+	gboolean changes = TRUE;
+	gboolean *in_worklist;
+	MonoBasicBlock **worklist;
+	guint32 l_begin, l_end;
 
-	g_assert (!(m->comp_done & MONO_COMP_DOM));
+	g_assert (!(cfg->comp_done & MONO_COMP_DOM));
 
-	bitsize = mono_bitset_alloc_size (m->num_bblocks, 0);
+	bitsize = mono_bitset_alloc_size (cfg->num_bblocks, 0);
+	in_worklist = g_new0 (gboolean, cfg->num_bblocks);
+	worklist = g_new0 (MonoBasicBlock*, cfg->num_bblocks + 1);
+	l_begin = 0;
+	l_end = 0;
+
+	mem = mono_mempool_alloc0 (cfg->mempool, bitsize * (cfg->num_bblocks + 1));
+
 	/* the first is always the entry */
-	bb = m->bblocks [0];
-	mem = mono_mempool_alloc0 (m->mempool, bitsize * (m->num_bblocks + 1));
-	bb->dominators = mono_bitset_mem_new (mem, m->num_bblocks, 0);
+	worklist [l_end ++] = cfg->bblocks [0];
 
+	T = mono_bitset_mem_new (mem, cfg->num_bblocks, 0);
 	mem += bitsize;
-	mono_bitset_set (bb->dominators, 0);
-
-	T = mono_bitset_mem_new (mem, m->num_bblocks, 0);
-	mem += bitsize;
-
-
-	for (i = 1; i < m->num_bblocks; ++i) {
-		bb = m->bblocks [i];
-		bb->dominators = mono_bitset_mem_new (mem, m->num_bblocks, 0);
-		mem += bitsize;
-		mono_bitset_invert (bb->dominators);
 
 #ifdef DEBUG_DOMINATORS
+	for (i = 0; i < cfg->num_bblocks; ++i) {
+		bb = cfg->bblocks [i];
+
 		printf ("BB%d IN: ", bb->block_num);
 		for (j = 0; j < bb->in_count; ++j) 
 			printf ("%d ", bb->in_bb [j]->block_num);
 		printf ("\n");
-#endif
 	}
+#endif
 
 	do {
-		change = FALSE;
-		for (i = 1; i < m->num_bblocks; ++i) {
-			bb = m->bblocks [i];
-			mono_bitset_set_all (T);
-			for (j = 0; j < bb->in_count; ++j) {
-				if (bb->in_bb [j]->dominators)
-					mono_bitset_intersection (T, bb->in_bb [j]->dominators);
-			}
-			mono_bitset_set (T, i);
-			if (!mono_bitset_equal (T, bb->dominators)) {
-				change = TRUE;
-				mono_bitset_copyto (T, bb->dominators);
-			}
-		}
-	} while (change);
+		changes = FALSE;
+		iterations ++;
 
-	m->comp_done |= MONO_COMP_DOM;
+		while (l_begin != l_end) {
+			MonoBasicBlock *bb = worklist [l_begin ++];
+
+			in_worklist [bb->dfn] = FALSE;
+
+			if (l_begin == cfg->num_bblocks + 1)
+				l_begin = 0;
 
 #ifdef DEBUG_DOMINATORS
-	printf ("DTREE %s %d\n", mono_method_full_name (m->method, TRUE), 
-		mono_method_get_header (m->method)->num_clauses);
-	for (i = 0; i < m->num_bblocks; ++i) {
-		bb = m->bblocks [i];
+			printf ("Processing: %d (%d %d) ", bb->dfn, bb->in_count, cfg->num_bblocks);
+			if (bb->dominators)
+				mono_blockset_print (cfg, bb->dominators, NULL, -1);
+			else
+				printf ("\n");
+#endif
+
+			if (bb->in_count == 0) {
+				mono_bitset_clear_all (T);
+			} else {
+				if ((bb->in_count > 0) && (bb->in_bb [0]->dominators))
+					mono_bitset_copyto (bb->in_bb [0]->dominators, T);
+				else
+					mono_bitset_set_all (T);
+				for (j = 1; j < bb->in_count; ++j) {
+					if (bb->in_bb [j]->dominators)
+						mono_bitset_intersection (T, bb->in_bb [j]->dominators);
+				}
+			}
+
+			mono_bitset_set (T, bb->dfn);
+			if (!bb->dominators || !mono_bitset_equal (T, bb->dominators)) {
+				changes = TRUE;
+
+				if (!bb->dominators) {
+					bb->dominators = mono_bitset_mem_new (mem, cfg->num_bblocks, 0);
+					mem += bitsize;
+					mono_bitset_set_all (bb->dominators);
+				}
+				mono_bitset_copyto (T, bb->dominators);
+
+				for (j = 0; j < bb->out_count; ++j) {
+					MonoBasicBlock *out_bb = bb->out_bb [j];
+					if (!in_worklist [out_bb->dfn]) {
+#ifdef DEBUG_DOMINATORS
+						printf ("\tADD %d to worklist.\n", out_bb->dfn);
+#endif
+						worklist [l_end ++] = out_bb;
+						if (l_end == cfg->num_bblocks + 1)
+							l_end = 0;
+						in_worklist [out_bb->dfn] = TRUE;
+					}
+				}
+			}
+		}
+	} while (changes);
+
+	cfg->comp_done |= MONO_COMP_DOM;
+
+	g_free (worklist);
+	g_free (in_worklist);
+
+#ifdef DEBUG_DOMINATORS
+	printf ("DTREE %s %d\n", mono_method_full_name (cfg->method, TRUE), 
+		mono_method_get_header (cfg->method)->num_clauses);
+	for (i = 0; i < cfg->num_bblocks; ++i) {
+		bb = cfg->bblocks [i];
 		printf ("BB%d: ", bb->block_num);
-		mono_blockset_print (m, bb->dominators, NULL, -1);
+		mono_blockset_print (cfg, bb->dominators, NULL, -1);
 	}
 #endif
 }

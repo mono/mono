@@ -360,6 +360,7 @@ mono_print_ins_index (int i, MonoInst *ins)
 		break;
 	}
 	case CEE_BR:
+	case OP_BR:
 	case OP_CALL_HANDLER:
 		g_print (" [B%d]", ins->inst_target_bb->block_num);
 		break;
@@ -805,11 +806,13 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 	 * be prohibitive. In those cases, manually init the reginfo entries used
 	 * by the bblock.
 	 */
-	if (rs->next_vireg > 256) {
+	if (rs->next_vireg > 16) {
 		int max = rs->next_vireg;
 
 		reginfo = g_malloc (sizeof (RegTrack) * max);
 		for (ins = bb->code; ins; ins = ins->next) {
+			spec = ins_spec [ins->opcode];
+
 			if ((ins->dreg != -1) && (ins->dreg < max))
 				memset (&reginfo [ins->dreg], 0, sizeof (RegTrack));
 			if ((ins->sreg1 != -1) && (ins->sreg1 < max))
@@ -818,18 +821,20 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 				memset (&reginfo [ins->sreg2], 0, sizeof (RegTrack));
 #if SIZEOF_VOID_P == 4
 			/* Regpairs */
-			if ((ins->dreg != -1) && (ins->dreg + 1 < max))
+			if ((MONO_ARCH_INST_IS_REGPAIR (spec [MONO_INST_DEST])) && (ins->dreg != -1) && (ins->dreg + 1 < max))
 				memset (&reginfo [ins->dreg + 1], 0, sizeof (RegTrack));
-			if ((ins->sreg1 != -1) && (ins->sreg1 + 1 < max))
+			if ((MONO_ARCH_INST_IS_REGPAIR (spec [MONO_INST_SRC1])) && (ins->sreg1 != -1) && (ins->sreg1 + 1 < max))
 				memset (&reginfo [ins->sreg1 + 1], 0, sizeof (RegTrack));
-			if ((ins->sreg2 != -1) && (ins->sreg2 + 1 < max))
+			if ((MONO_ARCH_INST_IS_REGPAIR (spec [MONO_INST_SRC2])) && (ins->sreg2 != -1) && (ins->sreg2 + 1 < max))
 				memset (&reginfo [ins->sreg2 + 1], 0, sizeof (RegTrack));
 #endif
 		}
 	}
 	else
 		reginfo = g_malloc0 (sizeof (RegTrack) * rs->next_vireg);
-	reginfof = g_malloc0 (sizeof (RegTrack) * rs->next_vfreg);
+
+	/* Initialized on demand */
+	reginfof = NULL;
 
 	/*if (cfg->opt & MONO_OPT_COPYPROP)
 		local_copy_prop (cfg, ins);*/
@@ -856,6 +861,8 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 			GList *spill;
 
 			if (spec [MONO_INST_SRC1] == 'f') {
+				if (!reginfof)
+					reginfof = g_malloc0 (sizeof (RegTrack) * rs->next_vfreg);
 				spill = g_list_first (fspill_list);
 				if (spill && fpcount < MONO_ARCH_FPSTACK_SIZE) {
 					reginfof [ins->sreg1].flags |= MONO_FP_NEEDS_LOAD;
@@ -865,6 +872,8 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 			}
 
 			if (spec [MONO_INST_SRC2] == 'f') {
+				if (!reginfof)
+					reginfof = g_malloc0 (sizeof (RegTrack) * rs->next_vfreg);
 				spill = g_list_first (fspill_list);
 				if (spill) {
 					reginfof [ins->sreg2].flags |= MONO_FP_NEEDS_LOAD;
@@ -879,6 +888,8 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 			}
 
 			if (dreg_is_fp (ins)) {
+				if (!reginfof)
+					reginfof = g_malloc0 (sizeof (RegTrack) * rs->next_vfreg);
 				if (use_fpstack && (spec [MONO_INST_CLOB] != 'm')) {
 					if (fpcount >= MONO_ARCH_FPSTACK_SIZE) {
 						reginfof [ins->dreg].flags |= MONO_FP_NEEDS_SPILL;
