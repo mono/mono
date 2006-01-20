@@ -1,3 +1,9 @@
+2006-01-20  Raja R Harinath  <rharinath@novell.com>
+
+	* main.c (monodis_assembly_load_hook): New.
+	(monodis_assembly_search_hook): New.
+	(main): Install them as hooks into the assembly loading core.
+
 2006-01-19  Ankit Jain  <jankit@novell.com>
 
 	* main.c (dis_type): Dump custom attributes for a type before doing the same
