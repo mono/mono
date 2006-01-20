@@ -1,6 +1,17 @@
 2006-01-20  Atsushi Enomoto  <atsushi@ximian.com>
 
-	* GB18030.cs : GetChars() ditto. Fixed bug #77306.
+	Fixed bug #77307.
+	* GB18030Encoding.cs : GetEncoder() and GetDecoder() should be
+	  overriden. in the Encoder, refresh parameter should handle
+	  incomplete field at its end of processing. Also it should
+	  differentiate GetByteCount() and GetChars() for its internal
+	  state.
+	* GB18030Source.cs : handle end index of GB18030Map as inclusive,
+	  not exclusive. Reject out-of-range GBX conversion.
+
+2006-01-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* GB18030Encoding.cs : GetChars() ditto. Fixed bug #77306.
 
 2006-01-20  Atsushi Enomoto  <atsushi@ximian.com>
 

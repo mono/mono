@@ -195,17 +195,26 @@ namespace MonoTests.I18N.CJK
 		[Test]
 		public void Bug77723 ()
 		{
-			Encoding e = Encoding.GetEncoding (51932);
-			for (int i = 0; i < 0x10000; i++)
-				e.GetBytes (new char [] { (char)i });
+			GetBytesAllSingleChars (51932);
 		}
 
 		[Test]
-		public void Bug77224 ()
+		public void Bug77724 ()
 		{
-			Encoding e = Encoding.GetEncoding (932);
+			GetBytesAllSingleChars (932);
+		}
+
+		[Test]
+		public void Bug77307 ()
+		{
+			GetBytesAllSingleChars (54936);
+		}
+
+		void GetBytesAllSingleChars (int enc)
+		{
+			Encoding e = Encoding.GetEncoding (enc);
 			for (int i = 0; i < 0x10000; i++)
-				e.GetBytes (new char [] {(char) i});
+				e.GetBytes (new char [] { (char)i });
 		}
 
 		void GetCharsAllBytePairs (int enc)

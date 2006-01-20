@@ -1,5 +1,10 @@
 2006-01-20  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* I18N.CJK.Test.cs : Added test for #77307. Unify those "get bytes
+	  for all of chars" tests.
+
+2006-01-20  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* I18N.CJK.Test.cs : Added test for #77306.
 
 2006-01-20  Atsushi Enomoto  <atsushi@ximian.com>
