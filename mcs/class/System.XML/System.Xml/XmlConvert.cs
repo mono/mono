@@ -439,8 +439,12 @@ namespace System.Xml {
 					builder.Append (value.Minutes).Append ('M');
 				if (value.Seconds > 0 || value.Milliseconds > 0) {
 					builder.Append (value.Seconds);
-					if (value.Milliseconds > 0)
+					long ticks = value.Ticks % TimeSpan.TicksPerMillisecond;
+					if (ticks > 0)
+						builder.Append ('.').AppendFormat ("{0:0000000}", value.Ticks % TimeSpan.TicksPerSecond);
+					else if (value.Milliseconds > 0)
 						builder.Append ('.').AppendFormat ("{0:000}", value.Milliseconds);
+
 					builder.Append ('S');
 				}
 			}
@@ -542,7 +546,7 @@ namespace System.Xml {
 			int hours = 0;
 			int minutes = 0;
 			int seconds = 0;
-			int milliseconds = 0;
+			long ticks = 0;
 			int parsedDigits = 0;
 
 			bool error = false;
@@ -563,10 +567,10 @@ namespace System.Xml {
 					parsedDigits = i - start;
 				int value = int.Parse (s.Substring (start, i - start), CultureInfo.InvariantCulture);
 				if (parseStep == 7) {
-					// adjust to 3 digits so that it makes sense as millisecond digits
-					for (; parsedDigits > 3; parsedDigits--)
+					// adjust to 7 digits so that it makes sense as millisecond digits
+					for (; parsedDigits > 7; parsedDigits--)
 						value /= 10;
-					for (; parsedDigits < 3; parsedDigits++)
+					for (; parsedDigits < 7; parsedDigits++)
 						value *= 10;
 				}
 				switch (s [i]) {
@@ -604,7 +608,7 @@ namespace System.Xml {
 					break;
 				case 'S':
 					if (parseStep == 7)
-						milliseconds = value;
+						ticks = value;
 					else
 						seconds = value;
 					if (!isTime || parseStep > 7)
@@ -629,7 +633,8 @@ namespace System.Xml {
 			}
 			if (error)
 				throw new ArgumentException ("Invalid format string for duration schema datatype.");
-			TimeSpan ts = new TimeSpan (days, hours, minutes, seconds, milliseconds);
+			TimeSpan ts = new TimeSpan (days, hours, minutes, seconds);
+			ts = ts.Add (TimeSpan.FromTicks (ticks));
 			return minusValue ? -ts : ts;
 		}
 

@@ -342,7 +342,16 @@ namespace MonoTests.System.Xml
 			AssertEquals (33, dateString.Length);
 			AssertEquals ("2003-05-05T00:00:00.0000000", dateString.Substring (0, 27));
 		}
-		
+
+		[Test]
+		public void FromTimeSpan ()
+		{
+			// bug #77252
+			TimeSpan t1 = TimeSpan.FromTicks (
+				TimeSpan.TicksPerSecond + 1);
+			AssertEquals ("PT1.0000001S", XmlConvert.ToString (t1));
+		}
+
 		[Test]
 		public void ToTimeSpan ()//not done
 		{
@@ -357,6 +366,11 @@ namespace MonoTests.System.Xml
 				XmlConvert.ToTimeSpan ("PT0.010S"));
 			AssertEquals ("#5", new TimeSpan (0, 0, 0, 0, 10),
 				XmlConvert.ToTimeSpan ("PT0.01S"));
+
+			// bug #77252
+			AssertEquals ("#6",
+				TimeSpan.FromTicks (TimeSpan.TicksPerSecond + 1),
+				XmlConvert.ToTimeSpan ("PT1.0000001S"));
 		}
 		
 		[Test]

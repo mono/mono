@@ -1,3 +1,7 @@
+2006-01-16  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlConvert.cs : handle Ticks. Fixed bug #77252.
+
 2006-01-13  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlTextWriter.cs : Fixed bug #77082.
