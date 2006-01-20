@@ -36,7 +36,6 @@
 using System;
 using System.Collections;
 using System.Text;
-using Mono.Unix;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Data;
@@ -215,7 +214,7 @@ namespace Mono.Data.SqliteClient
 				if (ptype.Equals (typeof (String))) 
 				{
 					String s = (String)param.Value;
-					err = Sqlite.sqlite3_bind_text (pStmt, i, s, s.Length, (IntPtr)(-1));
+					err = Sqlite.sqlite3_bind_text16 (pStmt, i, s, s.Length, (IntPtr)(-1));
 				} 
 				else if (ptype.Equals (typeof (DBNull))) 
 				{
@@ -285,7 +284,7 @@ namespace Mono.Data.SqliteClient
 		{
 			if (parent_conn.Version == 3)
 			{
-				SqliteError err = Sqlite.sqlite3_prepare (parent_conn.Handle, pzStart, -1, out pStmt, out pzTail);
+				SqliteError err = Sqlite.sqlite3_prepare16 (parent_conn.Handle, pzStart, -1, out pStmt, out pzTail);
 				if (err != SqliteError.OK)
 					throw new SqliteSyntaxException (GetError3());
 			}
@@ -442,7 +441,27 @@ namespace Mono.Data.SqliteClient
 			// DataReader.  Otherwise, no command is returned as a
 			// DataReader.
 		
-			IntPtr psql = UnixMarshal.StringToHeap(sql);
+			IntPtr psql; // pointer to SQL command
+			
+			// Sqlite 2 docs say this: By default, SQLite assumes that all data uses a fixed-size 8-bit 
+			// character (iso8859).  But if you give the --enable-utf8 option to the configure script, then the 
+			// library assumes UTF-8 variable sized characters. This makes a difference for the LIKE and GLOB 
+			// operators and the LENGTH() and SUBSTR() functions. The static string sqlite_encoding will be set 
+			// to either "UTF-8" or "iso8859" to indicate how the library was compiled. In addition, the sqlite.h 
+			// header file will define one of the macros SQLITE_UTF8 or SQLITE_ISO8859, as appropriate.
+			// 
+			// We have no way of knowing whether Sqlite 2 expects ISO8859 or UTF-8, but ISO8859 seems to be the
+			// default.  Therefore, we need to use an ISO8859(-1) compatible encoding, like ANSI.
+			// OTOH, the user may want to specify the encoding of the bytes stored in the database, regardless
+			// of what Sqlite is treating them as, 
+			
+			// For Sqlite 3, we use the UTF-16 prepare function, so we need a UTF-16 string.
+			
+			if (parent_conn.Version == 2)
+				psql = Sqlite.StringToHeap (sql, parent_conn.Encoding);
+			else
+				psql = Marshal.StringToCoTaskMemUni (sql);
+
 			IntPtr pzTail = psql;
 			IntPtr errMsgPtr;
 			
@@ -489,7 +508,7 @@ namespace Mono.Data.SqliteClient
 				return null;
 			} finally {
 				parent_conn.EndExec ();
-				UnixMarshal.FreeHeap (psql);
+				Marshal.FreeCoTaskMem (psql);
 			}
 		}
 
@@ -502,7 +521,7 @@ namespace Mono.Data.SqliteClient
 		}
 		
 		private string GetError3() {
-			return Marshal.PtrToStringAnsi (Sqlite.sqlite3_errmsg (parent_conn.Handle));
+			return Marshal.PtrToStringUni (Sqlite.sqlite3_errmsg16 (parent_conn.Handle));
 		}
 	#endregion
 	}

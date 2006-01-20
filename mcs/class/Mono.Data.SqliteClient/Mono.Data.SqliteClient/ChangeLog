@@ -1,3 +1,18 @@
+2006-01-20  Joshua Tauberer  <tauberer@for.net>
+
+	* Sqlite3 calls now use unicode encoding.  Sqlite2
+	  calls use ANSI encoding (a superset of the default
+	  expected encoding ISO8859-1), unless the new
+	  encoding= connection string argument is used,
+	  in which case that encoding is used.  But that encoding
+	  must use a single-byte null terminator, so only
+	  UTF-8 is recommended.  This removes the dependency
+	  on Mono.Posix.  If UTF-8 encoding is used, Sqlite2's
+	  LIKE, GLOB, LENGTH, and SUBSTR aren't going to respect
+	  multibyte chars unless Sqlite was specifically compiled
+	  to do so.
+	* SqliteDataReader.this[] is fixed to wrap GetValue.
+
 2006-01-06  Joshua Tauberer  <tauberer@for.net>
 
 	* SqliteDataReader.cs: GetFieldType can be called
