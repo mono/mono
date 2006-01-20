@@ -57,6 +57,7 @@
 # See the code in mini-x86.c for more details on how the specifiers are used.
 #
 nop: len:0
+op_nop: len:0
 dummy_use: len:0
 dummy_store: len:0
 not_reached: len:0

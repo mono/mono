@@ -79,7 +79,7 @@ update_gen_kill_set (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *inst, int i
 			printf ("\t"); mono_print_ins (ins);
 #endif
 
-		if (ins->opcode < MONO_CEE_LAST)
+		if (ins->opcode == OP_NOP)
 			return;
 
 		if (MONO_IS_STORE_MEMBASE (ins))
@@ -271,7 +271,7 @@ visit_bb (MonoCompile *cfg, MonoBasicBlock *bb, GSList **visited)
 			const char *spec = ins_info [ins->opcode - OP_START - 1];
 			int regtype, srcindex, sreg;
 
-			if (ins->opcode < MONO_CEE_LAST)
+			if (ins->opcode == OP_NOP)
 				continue;
 
 			/* DREG */

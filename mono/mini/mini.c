@@ -8383,6 +8383,7 @@ remove_block_if_useless (MonoCompile *cfg, MonoBasicBlock *bb, MonoBasicBlock *p
 	for (inst = bb->code; inst != NULL; inst = inst->next) {
 		switch (inst->opcode) {
 		case CEE_NOP:
+		case OP_NOP:
 			break;
 		case CEE_BR:
 		case OP_BR:
@@ -8587,7 +8588,7 @@ optimize_branches (MonoCompile *cfg)
 
 					/* branches to the following block can be removed */
 					if (bb->last_ins && bb->last_ins->opcode == (cfg->new_ir ? OP_BR : CEE_BR)) {
-						bb->last_ins->opcode = CEE_NOP;
+						bb->last_ins->opcode = cfg->new_ir ? OP_NOP : CEE_NOP;
 						changed = TRUE;
 						if (cfg->verbose_level > 2)
 							g_print ("br removal triggered %d -> %d\n", bb->block_num, bbn->block_num);
@@ -9344,7 +9345,10 @@ mono_local_cprop_bb2 (MonoCompile *cfg, MonoBasicBlock *bb,
 		const char *spec = ins_info [ins->opcode - OP_START - 1];
 		int regtype, srcindex, sreg;
 
-		g_assert (ins->opcode < MONO_CEE_LAST);
+		if (ins->opcode == OP_NOP)
+			continue;
+
+		g_assert (ins->opcode > MONO_CEE_LAST);
 
 		/* FIXME: Optimize this */
 		if (ins->opcode == OP_LDADDR) {
@@ -9496,7 +9500,10 @@ mono_local_deadce (MonoCompile *cfg)
 			const char *spec = ins_info [ins->opcode - OP_START - 1];
 			int regtype, srcindex, sreg;
 
-			g_assert (ins->opcode < MONO_CEE_LAST);
+			if (ins->opcode == OP_NOP)
+				continue;
+
+			g_assert (ins->opcode > MONO_CEE_LAST);
 
 			/* FIXME: Optimize this */
 			if (ins->opcode == OP_LDADDR) {
@@ -9528,7 +9535,7 @@ mono_local_deadce (MonoCompile *cfg)
 			if ((spec [MONO_INST_DEST] == 'i') && (ins->dreg >= MONO_MAX_IREGS) && !mono_bitset_test_fast (used, ins->dreg) && !get_vreg_to_inst (cfg, 'i', ins->dreg)) {
 				if ((ins->opcode == OP_MOVE) || (ins->opcode == OP_ICONST) || (ins->opcode == OP_ADD_IMM)) {
 					//printf ("DEADCE: "); mono_print_ins (ins);
-					ins->opcode = CEE_NOP;
+					ins->opcode = OP_NOP;
 				}
 			}
 		}
