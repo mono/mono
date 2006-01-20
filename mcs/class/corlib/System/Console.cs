@@ -63,7 +63,8 @@ namespace System
 				// On Unix systems (128), do not output the
 				// UTF-8 ZWNBSP (zero-width non-breaking space).
 				//
-				if (code_page == UTF8Encoding.UTF8_CODE_PAGE || ((code_page & 0x10000000) != 0))
+				if (code_page != -1 && ((code_page & 0x0fffffff) == 3 // UTF8Encoding.UTF8_CODE_PAGE
+					|| ((code_page & 0x10000000) != 0)))
 					encoding = Encoding.UTF8Unmarked;
 				else
 					encoding = Encoding.Default;
