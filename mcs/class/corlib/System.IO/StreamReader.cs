@@ -455,7 +455,7 @@ namespace System.IO {
 			char [] buffer = new char [size];
 			int len;
 			
-			while ((len = Read (buffer, 0, size)) != 0)
+			while ((len = Read (buffer, 0, size)) > 0)
 				text.Append (buffer, 0, len);
 
 			return text.ToString ();
