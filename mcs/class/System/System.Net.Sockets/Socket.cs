@@ -39,6 +39,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Reflection;
 using System.IO;
+using System.Net.Configuration;
 
 namespace System.Net.Sockets 
 {
@@ -686,7 +687,6 @@ namespace System.Net.Sockets
 			}
 		}
 
-#if NET_1_1
 		public static bool SupportsIPv4 {
 			get {
 				CheckProtocolSupport();
@@ -700,23 +700,6 @@ namespace System.Net.Sockets
 				return ipv6Supported == 1;
 			}
 		}
-#else
-		internal static bool SupportsIPv4 
-		{
-			get 
-			{
-				return true;
-			}
-		}
-
-		internal static bool SupportsIPv6 
-		{
-			get 
-			{
-				return false;
-			}
-		}
-#endif
 
 		internal static void CheckProtocolSupport()
 		{
@@ -733,11 +716,16 @@ namespace System.Net.Sockets
 			}
 
 			if(ipv6Supported == -1) {
+#if NET_2_0 && CONFIGURATION_DEP
+				SettingsSection config;
+				config = (SettingsSection) System.Configuration.ConfigurationSettings.GetConfig("system.net/settings");
+				ipv6Supported = config.Ipv6.Enabled ? -1 : 0;
+#else
 				NetConfig config = (NetConfig)System.Configuration.ConfigurationSettings.GetConfig("system.net/settings");
 
 				if(config != null)
 					ipv6Supported = config.ipv6Enabled?-1:0;
-
+#endif
 				if(ipv6Supported != 0) {
 					try {
 						Socket tmp = new Socket(AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp);
