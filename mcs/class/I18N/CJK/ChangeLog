@@ -1,5 +1,10 @@
 2006-01-20  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* CP949.cs : GetChars() exactly the same fix as CP950.
+	  Fixed bug #77298.
+
+2006-01-20  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* CP950.cs : GetChars() should filter out invalid index to internal
 	  conversion array. Fixed bug #77274.
 

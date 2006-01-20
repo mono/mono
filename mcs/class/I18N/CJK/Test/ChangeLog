@@ -1,5 +1,10 @@
 2006-01-20  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* I18N.CJK.Test.cs : fixed broken method extraction. Added test for
+	  #77298.
+
+2006-01-20  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* I18N.CJK.Test.cs : added test for bug #77274. Unify those
 	  "all pair of bytes" tests code.
 

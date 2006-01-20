@@ -208,7 +208,7 @@ namespace MonoTests.I18N.CJK
 				e.GetBytes (new char [] {(char) i});
 		}
 
-		GetCharsAllBytePairs (int enc)
+		void GetCharsAllBytePairs (int enc)
 		{
 			Encoding e = Encoding.GetEncoding (enc);
 			byte [] bytes = new byte [2];
@@ -234,7 +234,13 @@ namespace MonoTests.I18N.CJK
 		}
 
 		[Test]
-		public void Bug7774 ()
+		public void Bug77298 ()
+		{
+			GetCharsAllBytePairs (949);
+		}
+
+		[Test]
+		public void Bug77274 ()
 		{
 			GetCharsAllBytePairs (950);
 		}

@@ -185,7 +185,7 @@ namespace I18N.CJK
                     else
                         ord = -1;
 
-                    if (ord >= 0)
+                      if (ord >= 0 && ord * 2 <= convert.n2u.Length)
                         c1 = (char)(convert.n2u[ord*2] +
                                     convert.n2u[ord*2 + 1] * 256);
                     else
@@ -202,7 +202,7 @@ namespace I18N.CJK
                     else
                         ord = -1;
 
-                    if (ord >= 0)
+                    if (ord >= 0 && ord * 2 < convert.n2u.Length)
                         c1 = (char)(convert.n2u[ord*2] +
                                     convert.n2u[ord*2 + 1] * 256);
                     else
@@ -210,7 +210,8 @@ namespace I18N.CJK
                 } else if (b >= 0xA1 && b <= 0xFE) { // KS X 1001
                     int ord = ((lastByte - 0xA1) * 94 + b - 0xA1) * 2;
 
-                    c1 = (char)(convert.n2u[ord] +
+                    c1 = ord < 0 || ord >= convert.n2u.Length ?
+                        '\0' : (char)(convert.n2u[ord] +
                                 convert.n2u[ord + 1] * 256);
                 } else
                     c1 = (char)0;
@@ -271,7 +272,7 @@ namespace I18N.CJK
                         else
                             ord = -1;
 
-                        if (ord >= 0)
+                        if (ord >= 0 && ord * 2 <= convert.n2u.Length)
                             c1 = (char)(convert.n2u[ord*2] +
                                         convert.n2u[ord*2 + 1] * 256);
                         else
@@ -288,7 +289,7 @@ namespace I18N.CJK
                         else
                             ord = -1;
 
-                        if (ord >= 0)
+                        if (ord >= 0 && ord * 2 <= convert.n2u.Length)
                             c1 = (char)(convert.n2u[ord*2] +
                                         convert.n2u[ord*2 + 1] * 256);
                         else
@@ -296,7 +297,8 @@ namespace I18N.CJK
                     } else if (b >= 0xA1 && b <= 0xFE) { // KS X 1001
                         int ord = ((lastByte - 0xA1) * 94 + b - 0xA1) * 2;
 
-                        c1 = (char)(convert.n2u[ord] +
+                        c1 = ord < 0 || ord >= convert.n2u.Length ?
+                            '\0' : (char)(convert.n2u[ord] +
                                     convert.n2u[ord + 1] * 256);
                     } else
                         c1 = (char)0;
