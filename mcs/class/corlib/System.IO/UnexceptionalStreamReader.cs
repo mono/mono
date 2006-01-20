@@ -129,9 +129,6 @@ namespace System.IO {
 
 			int chars_read = 0;
 			int c = Read ();
-			if (c == -1)
-				return -1;
-
 			while ((c != -1) && (count > 0)) {
 				chars_read++;
 				count--;
