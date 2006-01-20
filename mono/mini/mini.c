@@ -9470,7 +9470,27 @@ mono_local_deadce (MonoCompile *cfg)
 
 	/* First pass: collect liveness info */
 	for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
-		mono_bitset_clear_all (used);
+		int max = cfg->next_vireg;
+
+		/* Manually init the defs entries used by the bblock */
+		for (ins = bb->code; ins; ins = ins->next) {
+			if ((ins->dreg != -1) && (ins->dreg < max))
+				mono_bitset_clear_fast (used, ins->dreg);
+			if ((ins->sreg1 != -1) && (ins->sreg1 < max))
+				mono_bitset_clear_fast (used, ins->sreg1);
+			if ((ins->sreg2 != -1) && (ins->sreg2 < max))
+				mono_bitset_clear_fast (used, ins->sreg2);
+#if SIZEOF_VOID_P == 4
+			/* Regpairs */
+			if ((ins->dreg != -1) && (ins->dreg + 1 < max))
+				mono_bitset_clear_fast (used, ins->dreg + 1);
+			if ((ins->sreg1 != -1) && (ins->sreg1 + 1 < max))
+				mono_bitset_clear_fast (used, ins->sreg1 + 1);
+			if ((ins->sreg2 != -1) && (ins->sreg2 + 1 < max))
+				mono_bitset_clear_fast (used, ins->sreg2 + 1);
+#endif
+		}
+
 		for (ins = bb->code; ins; ins = ins->next) {
 			const char *spec = ins_info [ins->opcode - OP_START - 1];
 			int regtype, srcindex, sreg;
@@ -9491,10 +9511,10 @@ mono_local_deadce (MonoCompile *cfg)
 				sreg = srcindex == 0 ? ins->sreg1 : ins->sreg2;
 
 				if (regtype == 'i')
-					mono_bitset_set (used, sreg);
+					mono_bitset_set_fast (used, sreg);
 
 				if (MONO_IS_STORE_MEMBASE (ins))
-					mono_bitset_set (used, ins->dreg);
+					mono_bitset_set_fast (used, ins->dreg);
 			}
 		}
 
