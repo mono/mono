@@ -56,6 +56,7 @@ MINI_OP(OP_VCALL_MEMBASE,	"vcall_membase", NONE, IREG, NONE)
 MINI_OP(OP_CALL,        "call", IREG, NONE, NONE)
 MINI_OP(OP_CALL_REG,	"call_reg", IREG, IREG, NONE)
 MINI_OP(OP_CALL_MEMBASE,	"call_membase", IREG, IREG, NONE)
+MINI_OP(OP_CALLVIRT, "callvirt", IREG, NONE, NONE)
 MINI_OP(OP_TRAP,	"trap", NONE, NONE, NONE)
 MINI_OP(OP_ICONST,	"iconst", IREG, NONE, NONE)
 MINI_OP(OP_I8CONST,	"i8const", LREG, NONE, NONE)
@@ -139,6 +140,10 @@ MINI_OP(OP_XOR_IMM,    "xor_imm", IREG, IREG, NONE)
 MINI_OP(OP_SHL_IMM,    "shl_imm", IREG, IREG, NONE)
 MINI_OP(OP_SHR_IMM,    "shr_imm", IREG, IREG, NONE)
 MINI_OP(OP_SHR_UN_IMM, "shr_un_imm", IREG, IREG, NONE)
+
+MINI_OP(OP_BR,         "op_br", NONE, NONE, NONE)
+MINI_OP(OP_JMP,        "op_jmp", NONE, NONE, NONE)
+MINI_OP(OP_BREAK,      "op_break", NONE, NONE, NONE)
 
 /* exceptions: must be in the same order as the matching CEE_ branch opcodes */
 MINI_OP(OP_COND_EXC_EQ, "cond_exc_eq", NONE, NONE, NONE)
@@ -470,6 +475,7 @@ MINI_OP(OP_UNBOXCAST  , "unboxcast", NONE, NONE, NONE)
 MINI_OP(OP_CALL_HANDLER  , "call_handler", NONE, NONE, NONE)
 MINI_OP(OP_START_HANDLER  , "start_handler", NONE, NONE, NONE)
 MINI_OP(OP_ENDFILTER,  "op_endfilter", NONE, IREG, NONE)
+MINI_OP(OP_ENDFINALLY,  "op_endfinally", NONE, NONE, NONE)
 
 /* inline (long)int * (long)int */
 MINI_OP(OP_BIGMUL, "op_bigmul", NONE, NONE, NONE)

@@ -62,6 +62,7 @@ dummy_store: len:0
 not_reached: len:0
 break: len:1
 jmp: len:32
+op_jmp: len:32
 call: dest:a clob:c len:17
 ret: len:1
 br: len:5
@@ -75,6 +76,8 @@ bge.un: len:6
 bgt.un: len:6
 ble.un: len:6
 blt.un: len:6
+
+op_br: len:5
 
 int_beq: len:6
 int_bge: len:6
@@ -163,6 +166,7 @@ op_rethrow: src1:i len:13
 start_handler: len:16
 endfinally: len:16
 op_endfilter: src1:a len:16
+op_endfinally: len:16
 
 ckfinite: dest:f src1:f len:22
 op_ckfinite: dest:f src1:f len:22

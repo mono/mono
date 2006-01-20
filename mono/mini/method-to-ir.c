@@ -916,16 +916,6 @@ static int the_count = 0;
 		MONO_ADD_INS (bblock, ins);	\
 	} while (0)
 
-#define NEW_LDELEMA(cfg,dest,sp,k) do {	\
-        NOT_IMPLEMENTED; \
-        MONO_INST_NEW ((cfg), (dest), CEE_LDELEMA); \
-		(dest)->inst_left = (sp) [0];	\
-		(dest)->inst_right = (sp) [1];	\
-		(dest)->type = STACK_MP;	\
-		(dest)->klass = (k);	\
-		(cfg)->flags |= MONO_CFG_HAS_LDELEMA; \
-	} while (0)
-
 /* *
  * link_bblock: Links two basic blocks
  *
@@ -1362,7 +1352,7 @@ ovf3ops_op_map [STACK_MAX] = {
 /* handles from CEE_BEQ to CEE_BLT_UN */
 static const guint16
 beqops_op_map [STACK_MAX] = {
-	0, OP_IBEQ-CEE_BEQ, OP_LBEQ-CEE_BEQ, OP_PBEQ-CEE_BEQ, OP_FBEQ-CEE_BEQ, OP_PBEQ-CEE_BEQ
+	0, OP_IBEQ-CEE_BEQ, OP_LBEQ-CEE_BEQ, OP_PBEQ-CEE_BEQ, OP_FBEQ-CEE_BEQ, OP_PBEQ-CEE_BEQ, OP_PBEQ-CEE_BEQ
 };
 
 /* handles from CEE_CEQ to CEE_CLT_UN */
@@ -1944,7 +1934,7 @@ mini_emit_load_intf_reg (MonoCompile *cfg, int intf_reg, int ioffset_reg, MonoCl
 #else
 		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_SHL_IMM, iid_reg, iid_reg, 2);
 #endif
-		MONO_EMIT_NEW_BIALU (cfg, CEE_ADD, ioffset_reg, ioffset_reg, iid_reg);
+		MONO_EMIT_NEW_BIALU (cfg, OP_PADD, ioffset_reg, ioffset_reg, iid_reg);
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, intf_reg, ioffset_reg, 0);
 	}
 	else
@@ -1973,7 +1963,7 @@ mini_emit_load_intf_reg_class (MonoCompile *cfg, int intf_reg, int klass_reg, Mo
 		int iid_reg = alloc_preg (cfg);
 		MONO_EMIT_NEW_AOTCONST (cfg, iid_reg, klass, MONO_PATCH_INFO_IID);
 		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_SHL_IMM, iid_reg, iid_reg, 2);
-		MONO_EMIT_NEW_BIALU (cfg, CEE_ADD, ioffset_reg, ioffset_reg, iid_reg);
+		MONO_EMIT_NEW_BIALU (cfg, OP_PADD, ioffset_reg, ioffset_reg, iid_reg);
 		MONO_EMIT_NEW_LOAD_MEMBASE_OP (cfg, OP_LOADI4_MEMBASE, intf_reg, ioffset_reg, 0);
 	}
 	else
@@ -1996,7 +1986,7 @@ mini_emit_max_iid_check (MonoCompile *cfg, int max_iid_reg, MonoClass *klass,
 	else
 		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, max_iid_reg, klass->interface_id);
 	if (false_target)
-		MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BLT_UN, false_target);
+		MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_PBLT_UN, false_target);
 	else
 		MONO_EMIT_NEW_COND_EXC (cfg, LT_UN, "InvalidCastException");
 }
@@ -2033,7 +2023,7 @@ mini_emit_isninst_cast (MonoCompile *cfg, int klass_reg, MonoClass *klass, MonoB
 	if (klass->idepth > MONO_DEFAULT_SUPERTABLE_SIZE) {
 		MONO_EMIT_NEW_LOAD_MEMBASE_OP (cfg, OP_LOADU2_MEMBASE, idepth_reg, klass_reg, G_STRUCT_OFFSET (MonoClass, idepth));
 		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, idepth_reg, klass->idepth);
-		MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BLT_UN, false_target);
+		MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_PBLT_UN, false_target);
 	}
 	MONO_EMIT_NEW_LOAD_MEMBASE (cfg, stypes_reg, klass_reg, G_STRUCT_OFFSET (MonoClass, supertypes));
 	MONO_EMIT_NEW_LOAD_MEMBASE (cfg, stype, stypes_reg, ((klass->idepth - 1) * SIZEOF_VOID_P));
@@ -2044,7 +2034,7 @@ mini_emit_isninst_cast (MonoCompile *cfg, int klass_reg, MonoClass *klass, MonoB
 	} else {
 		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, stype, klass);
 	}
-	MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BEQ, true_target);
+	MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_PBEQ, true_target);
 }
 
 static void 
@@ -2056,7 +2046,7 @@ mini_emit_iface_cast (MonoCompile *cfg, int vtable_reg, MonoClass *klass, MonoBa
 	mini_emit_load_intf_reg_vtable (cfg, intf_reg, vtable_reg, klass);
 	MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, intf_reg, 0);
 	if (true_target)
-		MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BNE_UN, true_target);
+		MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_PBNE_UN, true_target);
 	else
 		MONO_EMIT_NEW_COND_EXC (cfg, EQ, "InvalidCastException");		
 }
@@ -2074,7 +2064,7 @@ mini_emit_iface_class_cast (MonoCompile *cfg, int klass_reg, MonoClass *klass, M
 	mini_emit_load_intf_reg_class (cfg, intf_reg, klass_reg, klass);
 	MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, intf_reg, -1);
 	if (true_target)
-		MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BGE, true_target);
+		MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_PBGE, true_target);
 	else
 		MONO_EMIT_NEW_COND_EXC (cfg, EQ, "InvalidCastException");
 }
@@ -2213,7 +2203,7 @@ static int
 ret_type_to_call_opcode (MonoType *type, int calli, int virt)
 {
 	if (type->byref)
-		return calli? OP_CALL_REG: virt? CEE_CALLVIRT: OP_CALL;
+		return calli? OP_CALL_REG: virt? OP_CALLVIRT: OP_CALL;
 
 handle_enum:
 	switch (type->type) {
@@ -2227,18 +2217,18 @@ handle_enum:
 	case MONO_TYPE_CHAR:
 	case MONO_TYPE_I4:
 	case MONO_TYPE_U4:
-		return calli? OP_CALL_REG: virt? CEE_CALLVIRT: OP_CALL;
+		return calli? OP_CALL_REG: virt? OP_CALLVIRT: OP_CALL;
 	case MONO_TYPE_I:
 	case MONO_TYPE_U:
 	case MONO_TYPE_PTR:
 	case MONO_TYPE_FNPTR:
-		return calli? OP_CALL_REG: virt? CEE_CALLVIRT: OP_CALL;
+		return calli? OP_CALL_REG: virt? OP_CALLVIRT: OP_CALL;
 	case MONO_TYPE_CLASS:
 	case MONO_TYPE_STRING:
 	case MONO_TYPE_OBJECT:
 	case MONO_TYPE_SZARRAY:
 	case MONO_TYPE_ARRAY:    
-		return calli? OP_CALL_REG: virt? CEE_CALLVIRT: OP_CALL;
+		return calli? OP_CALL_REG: virt? OP_CALLVIRT: OP_CALL;
 	case MONO_TYPE_I8:
 	case MONO_TYPE_U8:
 		return calli? OP_LCALL_REG: virt? OP_LCALLVIRT: OP_LCALL;
@@ -2356,7 +2346,7 @@ static int
 callvirt_to_call (int opcode)
 {
 	switch (opcode) {
-	case CEE_CALLVIRT:
+	case OP_CALLVIRT:
 		return OP_CALL;
 	case OP_VOIDCALLVIRT:
 		return OP_VOIDCALL;
@@ -2377,7 +2367,7 @@ static int
 callvirt_to_call_membase (int opcode)
 {
 	switch (opcode) {
-	case CEE_CALLVIRT:
+	case OP_CALLVIRT:
 		return OP_CALL_MEMBASE;
 	case OP_VOIDCALLVIRT:
 		return OP_VOIDCALL_MEMBASE;
@@ -2899,7 +2889,7 @@ handle_castclass (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned ch
 	NEW_BBLOCK (cfg, is_null_bb);
 
 	MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, obj_reg, 0);
-	MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BEQ, is_null_bb);
+	MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_PBEQ, is_null_bb);
 
 	if (klass->flags & TYPE_ATTRIBUTE_INTERFACE) {
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, vtable_reg, obj_reg, G_STRUCT_OFFSET (MonoObject, vtable));
@@ -2929,7 +2919,7 @@ handle_castclass (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned ch
 				} else {
 					MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, parent_reg, mono_defaults.enum_class->parent);
 				}
-				MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BNE_UN, is_null_bb);
+				MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_PBNE_UN, is_null_bb);
 				if (cfg->compile_aot) {
 					MONO_EMIT_NEW_CLASSCONST (cfg, const_reg, mono_defaults.enum_class);
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, eclass_reg, const_reg);
@@ -2945,7 +2935,7 @@ handle_castclass (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned ch
 				} else {
 					MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, eclass_reg, mono_defaults.enum_class->parent);
 				}
-				MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BEQ, is_null_bb);
+				MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_PBEQ, is_null_bb);
 				if (cfg->compile_aot) {
 					MONO_EMIT_NEW_CLASSCONST (cfg, const_reg, mono_defaults.enum_class);
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, eclass_reg, const_reg);
@@ -3012,7 +3002,7 @@ handle_isinst (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned char 
 	NEW_BBLOCK (cfg, end_bb);
 
 	MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, obj_reg, 0);
-	MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BEQ, is_null_bb);
+	MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBEQ, is_null_bb);
 
 	if (klass->flags & TYPE_ATTRIBUTE_INTERFACE) {
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, vtable_reg, obj_reg, G_STRUCT_OFFSET (MonoObject, vtable));
@@ -3029,7 +3019,7 @@ handle_isinst (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned char 
 
 			MONO_EMIT_NEW_LOAD_MEMBASE_OP (cfg, OP_LOADU1_MEMBASE, rank_reg, vtable_reg, G_STRUCT_OFFSET (MonoVTable, rank));
 			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, rank_reg, klass->rank);
-			MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BNE_UN, false_bb);
+			MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_PBNE_UN, false_bb);
 			MONO_EMIT_NEW_LOAD_MEMBASE (cfg, klass_reg, vtable_reg, G_STRUCT_OFFSET (MonoVTable, klass));
 			MONO_EMIT_NEW_LOAD_MEMBASE (cfg, eclass_reg, klass_reg, G_STRUCT_OFFSET (MonoClass, cast_class));
 			if (klass->cast_class == mono_defaults.object_class) {
@@ -3043,14 +3033,14 @@ handle_isinst (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned char 
 				} else {
 					MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, parent_reg, mono_defaults.enum_class->parent);
 				}
-				MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BNE_UN, is_null_bb);
+				MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_PBNE_UN, is_null_bb);
 				if (cfg->compile_aot) {
 					MONO_EMIT_NEW_CLASSCONST (cfg, const_reg, mono_defaults.enum_class);
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, eclass_reg, const_reg);
 				} else {
 					MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, eclass_reg, mono_defaults.enum_class);
 				}
-				MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BEQ, is_null_bb);
+				MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_PBEQ, is_null_bb);
 				MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BR, false_bb);
 			} else if (klass->cast_class == mono_defaults.enum_class->parent) {
 				int const_reg = -1;
@@ -3062,14 +3052,14 @@ handle_isinst (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned char 
 				} else {
 					MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, eclass_reg, mono_defaults.enum_class->parent);
 				}
-				MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BEQ, is_null_bb);
+				MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_PBEQ, is_null_bb);
 				if (cfg->compile_aot) {
 					MONO_EMIT_NEW_CLASSCONST (cfg, const_reg, mono_defaults.enum_class);
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, eclass_reg, const_reg);
 				} else {
 					MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, eclass_reg, mono_defaults.enum_class);
 				}
-				MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BEQ, is_null_bb);
+				MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_PBEQ, is_null_bb);
 				MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BR, false_bb);
 			} else if (klass->cast_class == mono_defaults.enum_class) {
 				if (cfg->compile_aot) {
@@ -3079,7 +3069,7 @@ handle_isinst (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned char 
 				} else {
 					MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, eclass_reg, mono_defaults.enum_class);
 				}
-				MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BEQ, is_null_bb);
+				MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_PBEQ, is_null_bb);
 				MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BR, false_bb);
 			} else if (klass->cast_class->flags & TYPE_ATTRIBUTE_INTERFACE) {
 				mini_emit_iface_class_cast (cfg, eclass_reg, klass->cast_class, false_bb, is_null_bb);
@@ -3089,7 +3079,7 @@ handle_isinst (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned char 
 					int bounds_reg = alloc_preg (cfg);
 					MONO_EMIT_NEW_LOAD_MEMBASE (cfg, bounds_reg, obj_reg, G_STRUCT_OFFSET (MonoArray, bounds));
 					MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, bounds_reg, 0);
-					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BNE_UN, false_bb);
+					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_PBNE_UN, false_bb);
 				}
 
 				/* the is_null_bb target simply copies the input register to the output */
@@ -3109,7 +3099,7 @@ handle_isinst (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned char 
 					MONO_EMIT_NEW_LOAD_MEMBASE (cfg, klass_reg, vtable_reg, G_STRUCT_OFFSET (MonoVTable, klass));
 					MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, klass_reg, klass);
 				}
-				MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BNE_UN, false_bb);
+				MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_PBNE_UN, false_bb);
 				MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BR, is_null_bb);
 			} else {
 				MONO_EMIT_NEW_LOAD_MEMBASE (cfg, klass_reg, vtable_reg, G_STRUCT_OFFSET (MonoVTable, klass));
@@ -3156,7 +3146,7 @@ handle_cisinst (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned char
 	NEW_BBLOCK (cfg, no_proxy_bb);
 
 	MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, obj_reg, 0);
-	MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BEQ, false_bb);
+	MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_PBEQ, false_bb);
 
 	if (klass->flags & TYPE_ATTRIBUTE_INTERFACE) {
 		NEW_BBLOCK (cfg, interface_fail_bb);
@@ -3174,12 +3164,12 @@ handle_cisinst (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned char
 		} else {
 			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, klass_reg, mono_defaults.transparent_proxy_class);
 		}
-		MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BNE_UN, false_bb);
+		MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_PBNE_UN, false_bb);
 
 		tmp_reg = alloc_preg (cfg);
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, tmp_reg, obj_reg, G_STRUCT_OFFSET (MonoTransparentProxy, custom_type_info));
 		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, tmp_reg, 0);
-		MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BNE_UN, false2_bb);
+		MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_PBNE_UN, false2_bb);
 		
 	} else {
 		tmp_reg = alloc_preg (cfg);
@@ -3193,7 +3183,7 @@ handle_cisinst (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned char
 		} else {
 			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, klass_reg, mono_defaults.transparent_proxy_class);
 		}
-		MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BNE_UN, no_proxy_bb);
+		MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_PBNE_UN, no_proxy_bb);
 		tmp_reg = alloc_preg (cfg);
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, tmp_reg, obj_reg, G_STRUCT_OFFSET (MonoTransparentProxy, remote_class));
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, klass_reg, tmp_reg, G_STRUCT_OFFSET (MonoRemoteClass, proxy_class));
@@ -3201,7 +3191,7 @@ handle_cisinst (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned char
 		tmp_reg = alloc_preg (cfg);		
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, tmp_reg, obj_reg, G_STRUCT_OFFSET (MonoTransparentProxy, custom_type_info));
 		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, tmp_reg, 0);
-		MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BEQ, no_proxy_bb);
+		MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_PBEQ, no_proxy_bb);
 		
 		mini_emit_isninst_cast (cfg, klass_reg, klass, NULL, true_bb);
 		MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BR, false2_bb);
@@ -3254,7 +3244,7 @@ handle_ccastclass (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned c
 	NEW_BBLOCK (cfg, ok_result_bb);
 
 	MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, obj_reg, 0);
-	MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BEQ, ok_result_bb);
+	MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_PBEQ, ok_result_bb);
 
 	if (klass->flags & TYPE_ATTRIBUTE_INTERFACE) {
 		NEW_BBLOCK (cfg, interface_fail_bb);
@@ -3299,7 +3289,7 @@ handle_ccastclass (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned c
 		} else {
 			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, klass_reg, mono_defaults.transparent_proxy_class);
 		}
-		MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BNE_UN, no_proxy_bb);
+		MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_PBNE_UN, no_proxy_bb);
 
 		tmp_reg = alloc_preg (cfg);
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, tmp_reg, obj_reg, G_STRUCT_OFFSET (MonoTransparentProxy, remote_class));
@@ -3308,7 +3298,7 @@ handle_ccastclass (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned c
 		tmp_reg = alloc_preg (cfg);
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, tmp_reg, obj_reg, G_STRUCT_OFFSET (MonoTransparentProxy, custom_type_info));
 		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, tmp_reg, 0);
-		MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BEQ, no_proxy_bb);
+		MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_PBEQ, no_proxy_bb);
 		
 		mini_emit_isninst_cast (cfg, klass_reg, klass, NULL, ok_result_bb);
 
@@ -4724,16 +4714,16 @@ mono_decompose_long_opts (MonoCompile *cfg)
 					break;
 				case OP_LBLT_UN:
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 1, tree->sreg2 + 1);
-					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BLT_UN, next->inst_true_bb);
-					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BNE_UN, next->inst_false_bb);
+					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBLT_UN, next->inst_true_bb);
+					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBNE_UN, next->inst_false_bb);
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1, tree->sreg2);
 					MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, OP_IBLT_UN, next->inst_true_bb, next->inst_false_bb);
 					next->opcode = CEE_NOP;
 					break;
 				case OP_LBGT_UN:
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 1, tree->sreg2 + 1);
-					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BGT_UN, next->inst_true_bb);
-					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BNE_UN, next->inst_false_bb);
+					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBGT_UN, next->inst_true_bb);
+					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBNE_UN, next->inst_false_bb);
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1, tree->sreg2);
 					MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, OP_IBGT_UN, next->inst_true_bb, next->inst_false_bb);
 					next->opcode = CEE_NOP;
@@ -5105,7 +5095,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 	if (cfg->method == method) {
 		breakpoint_id = mono_debugger_method_has_breakpoint (method);
 		if (breakpoint_id && (mono_debug_format != MONO_DEBUG_FORMAT_DEBUGGER)) {
-			MONO_INST_NEW (cfg, ins, CEE_BREAK);
+			MONO_INST_NEW (cfg, ins, OP_BREAK);
 			MONO_ADD_INS (bblock, ins);
 		}
 	}
@@ -5287,6 +5277,8 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			MonoInst *store, *one;
 			guint32 cil_offset = ip - header->code;
 			cfg->coverage_info->data [cil_offset].cil_code = ip;
+
+			NOT_IMPLEMENTED;
 
 			/* TODO: Use an increment here */
 			NEW_ICONST (cfg, one, 1);
@@ -5640,7 +5632,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			CHECK_OPSIZE (5);
 			if (stack_start != sp)
 				goto unverified;
-			MONO_INST_NEW (cfg, ins, CEE_JMP);
+			MONO_INST_NEW (cfg, ins, OP_JMP);
 			token = read32 (ip + 1);
 			/* FIXME: check the signature matches */
 			cmethod = mini_get_method (method, token, NULL, generic_context);
@@ -5848,7 +5840,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 					else
 						MONO_ADD_INS (bblock, ins);
 				}
-				MONO_INST_NEW (cfg, ins, CEE_JMP);
+				MONO_INST_NEW (cfg, ins, OP_JMP);
 				ins->cil_code = ip;
 				ins->inst_p0 = cmethod;
 				ins->inst_p1 = arg_array [0];
@@ -6252,7 +6244,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			}
 
 			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, src1->dreg, n);
-			MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BGE_UN, default_bblock);
+			MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_PBGE_UN, default_bblock);
 			bblock = cfg->cbb;
 
 			for (i = 0; i < n; ++i)
@@ -7573,26 +7565,39 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			else
 				klass = array_access_to_klass (*ip);
 
-			size = mono_class_array_element_size (klass);
+			if (MONO_TYPE_IS_REFERENCE (&klass->byval_arg)) {
+				MonoMethod* helper = mono_marshal_get_stelemref ();
+				MonoInst *iargs [3];
 
-			/* FIXME: Add back the LDELEMA(reg,OP_ICONST) optimization */
-			/* FIXME: Add arch specific optimizations */
-
-			mult_reg = alloc_preg (cfg);
-			add_reg = alloc_preg (cfg);
-			array_reg = sp [0]->dreg;
-			index_reg = sp [1]->dreg;
-			val_reg = sp [2]->dreg;
-
-			MONO_EMIT_BOUNDS_CHECK (cfg, array_reg, MonoArray, max_length, index_reg);
-			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_MUL_IMM, mult_reg, index_reg, size);
-			MONO_EMIT_NEW_BIALU (cfg, OP_PADD, add_reg, array_reg, mult_reg);
-
-			NEW_STORE_MEMBASE (cfg, ins, mono_type_to_store_membase (&klass->byval_arg), add_reg, G_STRUCT_OFFSET (MonoArray, vector), val_reg);
-			if (ins->opcode == CEE_STOBJ)
 				NOT_IMPLEMENTED;
-			else
-				MONO_ADD_INS (cfg->cbb, ins);
+
+				iargs [2] = sp [2];
+				iargs [1] = sp [1];
+				iargs [0] = sp [0];
+				
+				mono_emit_method_call (cfg, helper, mono_method_signature (helper), iargs, ip, NULL);
+			} else {
+				size = mono_class_array_element_size (klass);
+
+				/* FIXME: Add back the LDELEMA(reg,OP_ICONST) optimization */
+				/* FIXME: Add arch specific optimizations */
+
+				mult_reg = alloc_preg (cfg);
+				add_reg = alloc_preg (cfg);
+				array_reg = sp [0]->dreg;
+				index_reg = sp [1]->dreg;
+				val_reg = sp [2]->dreg;
+
+				MONO_EMIT_BOUNDS_CHECK (cfg, array_reg, MonoArray, max_length, index_reg);
+				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_MUL_IMM, mult_reg, index_reg, size);
+				MONO_EMIT_NEW_BIALU (cfg, OP_PADD, add_reg, array_reg, mult_reg);
+
+				NEW_STORE_MEMBASE (cfg, ins, mono_type_to_store_membase (&klass->byval_arg), add_reg, G_STRUCT_OFFSET (MonoArray, vector), val_reg);
+				if (ins->opcode == CEE_STOBJ)
+					NOT_IMPLEMENTED;
+				else
+					MONO_ADD_INS (cfg->cbb, ins);
+			}
 
 			if (*ip == CEE_STELEM_ANY)
 				ip += 5;
@@ -7601,51 +7606,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			inline_costs += 1;
 			break;
 		}
-#if 0
-		case CEE_STELEM_ANY: {
-			MonoInst *load;
-			/*
-			 * translate to:
-			 * stind.x (ldelema (array, index), val)
-			 * ldelema does the bounds check
-			 */
-			CHECK_STACK (3);
-			sp -= 3;
-			CHECK_OPSIZE (5);
-			token = read32 (ip + 1);
-			klass = mono_class_get_full (image, token, generic_context);
-			if (!klass)
-				goto load_error;
-			mono_class_init (klass);
-			if (MONO_TYPE_IS_REFERENCE (&klass->byval_arg)) {
-				MonoMethod* helper = mono_marshal_get_stelemref ();
-				MonoInst *iargs [3];
-
-				iargs [2] = sp [2];
-				iargs [1] = sp [1];
-				iargs [0] = sp [0];
-				
-				mono_emit_method_call (cfg, helper, mono_method_signature (helper), iargs, ip, NULL);
-			} else {
-				NEW_LDELEMA (cfg, load, sp, klass);
-				load->cil_code = ip;
-
-				n = mono_type_to_stind (&klass->byval_arg);
-				if (n == CEE_STOBJ)
-					emit_stobj (cfg, load, sp [2], ip, klass, FALSE);
-				else {
-					MONO_INST_NEW (cfg, ins, n);
-					ins->cil_code = ip;
-					ins->inst_left = load;
-					ins->inst_right = sp [2];
-					MONO_ADD_INS (bblock, ins);
-				}
-			}
-			ip += 5;
-			inline_costs += 1;
-			break;
-		}
-#endif
 		case CEE_STELEM_REF: {
 			MonoInst *iargs [3];
 			MonoMethod* helper = mono_marshal_get_stelemref ();
@@ -7835,7 +7795,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			mono_get_got_var (cfg);
 			break;
 		case CEE_ENDFINALLY:
-			MONO_INST_NEW (cfg, ins, *ip);
+			MONO_INST_NEW (cfg, ins, OP_ENDFINALLY);
 			MONO_ADD_INS (bblock, ins);
 			ins->cil_code = ip++;
 			start_new_bblock = 1;
@@ -7890,7 +7850,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 					 * getting the sematics right.
 					 */
 					MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, exc_ins->dreg, 0);
-					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, CEE_BEQ, dont_throw);
+					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_PBEQ, dont_throw);
 					MONO_EMIT_NEW_UNALU (cfg, OP_THROW, -1, exc_ins->dreg);
 
 					MONO_START_BB (cfg, dont_throw);
@@ -9027,8 +8987,9 @@ mono_spill_global_vars (MonoCompile *cfg)
 				spec = ins_info [ins->opcode - OP_START - 1];
 			}
 
-			if (ins->opcode < MONO_CEE_LAST)
+			if (ins->opcode < MONO_CEE_LAST) {
 				spec = "   ";
+			}
 
 			/*
 			 * Store opcodes have destbasereg in the dreg, but in reality, it is an

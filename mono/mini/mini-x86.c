@@ -1426,7 +1426,7 @@ emit_call (MonoCompile *cfg, guint8 *code, guint32 patch_type, gconstpointer dat
 }
 
 /* FIXME: Add more instructions */
-#define INST_IGNORES_CFLAGS(ins) (((ins)->opcode == CEE_BR) || ((ins)->opcode == OP_STORE_MEMBASE_IMM) || ((ins)->opcode == OP_STOREI4_MEMBASE_IMM) || ((ins)->opcode == OP_STOREI4_MEMBASE_REG) || ((ins)->opcode == OP_IXOR) || ((ins)->opcode == OP_MOVE))
+#define INST_IGNORES_CFLAGS(ins) (((ins)->opcode == CEE_BR) || ((ins)->opcode == OP_BR) || ((ins)->opcode == OP_STORE_MEMBASE_IMM) || ((ins)->opcode == OP_STOREI4_MEMBASE_IMM) || ((ins)->opcode == OP_STOREI4_MEMBASE_REG) || ((ins)->opcode == OP_IXOR) || ((ins)->opcode == OP_MOVE))
 
 static void
 peephole_pass (MonoCompile *cfg, MonoBasicBlock *bb)
@@ -2065,6 +2065,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			x86_imul_reg_membase (code, ins->sreg1, ins->sreg2, ins->inst_offset);
 			break;
 		case CEE_BREAK:
+		case OP_BREAK:
 			x86_breakpoint (code);
 			break;
 		case CEE_NOP:
@@ -2432,7 +2433,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 		case CEE_CONV_U4:
 			g_assert_not_reached ();
-		case CEE_JMP: {
+		case CEE_JMP:
+		case OP_JMP: {
 			/*
 			 * Note: this 'frame destruction' logic is useful for tail calls, too.
 			 * Keep in sync with the code in emit_epilog.
@@ -2619,7 +2621,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			x86_mov_membase_reg (code, spvar->inst_basereg, spvar->inst_offset, X86_ESP, 4);
 			break;
 		}
-		case CEE_ENDFINALLY: {
+		case CEE_ENDFINALLY:
+		case OP_ENDFINALLY: {
 			MonoInst *spvar = mono_find_spvar_for_region (cfg, bb->region);
 			x86_mov_reg_membase (code, X86_ESP, spvar->inst_basereg, spvar->inst_offset, 4);
 			x86_ret (code);
@@ -2636,6 +2639,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			ins->inst_c0 = code - cfg->native_code;
 			break;
 		case CEE_BR:
+		case OP_BR:
 			//g_print ("target: %p, next: %p, curr: %p, last: %p\n", ins->inst_target_bb, bb->next_bb, ins, bb->last_ins);
 			//if ((ins->inst_target_bb == bb->next_bb) && ins == bb->last_ins)
 			//break;

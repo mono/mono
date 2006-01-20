@@ -145,6 +145,20 @@ struct MonoSpillInfo {
 struct MonoBasicBlock {
 	MonoInst *last_ins;
 
+	/* the next basic block in the order it appears in IL */
+	MonoBasicBlock *next_bb;
+
+	/*
+	 * Before instruction selection it is the first tree in the
+	 * forest and the first item in the list of trees. After
+	 * instruction selection it is the first instruction and the
+	 * first item in the list of instructions.
+	 */
+	MonoInst *code;
+
+	/* unique block number identification */
+	gint32 block_num;
+
 	/* Points to the start of the CIL code that initiated this BB */
 	unsigned char* cil_code;
 
@@ -157,9 +171,6 @@ struct MonoBasicBlock {
 	
 	gint32 dfn;
 
-	/* unique block number identification */
-	gint32 block_num;
-
 	/* Visited and reachable flags */
 	guint32 flags;
 
@@ -167,17 +178,6 @@ struct MonoBasicBlock {
 	gint16 out_count, in_count;
 	MonoBasicBlock **in_bb;
 	MonoBasicBlock **out_bb;
-
-	/* the next basic block in the order it appears in IL */
-	MonoBasicBlock *next_bb;
-
-	/*
-	 * Before instruction selection it is the first tree in the
-	 * forest and the first item in the list of trees. After
-	 * instruction selection it is the first instruction and the
-	 * first item in the list of instructions.
-	 */
-	MonoInst *code;
 
 	/*
 	 * SSA and loop based flags
@@ -715,6 +715,10 @@ enum {
 #define OP_PCONV_TO_OVF_I1 OP_LCONV_TO_OVF_I1
 #define OP_PBEQ OP_LBEQ
 #define OP_PCEQ OP_LCEQ
+#define OP_PBNE_UN OP_LBNE_UN
+#define OP_PBGE_UN OP_LBGE_UN
+#define OP_PBLT_UN OP_LBLT_UN
+#define OP_PBGE OP_LBGE
 #define OP_STOREP_MEMBASE_REG OP_STOREI8_MEMBASE_REG
 #define OP_STOREP_MEMBASE_IMM OP_STOREI8_MEMBASE_IMM
 #else
@@ -730,6 +734,10 @@ enum {
 #define OP_PCONV_TO_OVF_I1 OP_ICONV_TO_OVF_I1
 #define OP_PBEQ OP_IBEQ
 #define OP_PCEQ OP_ICEQ
+#define OP_PBNE_UN OP_IBNE_UN
+#define OP_PBGE_UN OP_IBGE_UN
+#define OP_PBLT_UN OP_IBLT_UN
+#define OP_PBGE OP_IBGE
 #define OP_STOREP_MEMBASE_REG OP_STOREI4_MEMBASE_REG
 #define OP_STOREP_MEMBASE_IMM OP_STOREI4_MEMBASE_IMM
 #endif
