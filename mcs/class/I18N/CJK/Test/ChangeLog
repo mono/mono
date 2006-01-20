@@ -1,5 +1,11 @@
 2006-01-20  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* I18N.CJK.Test.cs : Actually some of new tests fail under .NET 1.x.
+	  Added Encoder54936Refresh() which tests Encoder.GetBytes() where
+	  refresh==true.
+
+2006-01-20  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* I18N.CJK.Test.cs : Added test for #77307. Unify those "get bytes
 	  for all of chars" tests.
 

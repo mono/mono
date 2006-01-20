@@ -193,6 +193,9 @@ namespace MonoTests.I18N.CJK
 		}
 
 		[Test]
+#if !NET_2_0
+		[Category ("NotDotNet")] // MS bug
+#endif
 		public void Bug77723 ()
 		{
 			GetBytesAllSingleChars (51932);
@@ -258,6 +261,32 @@ namespace MonoTests.I18N.CJK
 		public void Bug77274 ()
 		{
 			GetCharsAllBytePairs (950);
+		}
+
+		[Test]
+#if !NET_2_0
+		[Category ("NotDotNet")] // MS bug
+#endif
+		public void Encoder54936Refresh ()
+		{
+			Encoding e = Encoding.GetEncoding ("gb18030");
+			Encoder d = e.GetEncoder ();
+			byte [] bytes;
+
+			bytes = new byte [4];
+			Assert.AreEqual (0, d.GetBytes (new char [] {'\uD800'}, 0, 1, bytes, 0, false), "#1");
+			Assert.AreEqual (new byte [] {00, 00, 00, 00},
+				bytes, "#2");
+
+			bytes = new byte [4];
+			Assert.AreEqual (4, d.GetBytes (new char [] {'\uDC00'}, 0, 1, bytes, 0, true), "#3");
+			Assert.AreEqual (new byte [] {0x90, 0x30, 0x81, 0x30},
+				bytes, "#4");
+
+			bytes = new byte [4];
+			Assert.AreEqual (1, d.GetBytes (new char [] {'\uD800'}, 0, 1, bytes, 0, true), "#5");
+			Assert.AreEqual (new byte [] {0x3F, 00, 00, 00},
+				bytes, "#6");
 		}
 
 		#endregion
