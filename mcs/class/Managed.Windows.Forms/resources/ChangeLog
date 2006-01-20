@@ -1,0 +1,45 @@
+2005-11-01  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* DnDLink.cur: Added
+
+2005-10-31  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* DnDNo.cur: Added
+	* DnDCopy.cur: Added
+	* DnDMove.cur: Added
+
+2005-10-13  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* SplitterNS.cur: Added
+	* SplitterWE.cur: Added
+
+2005-10-06  Peter Bartok  <pbartok@novell.com>
+
+	* System.Windows.Forms.resx: Created and added mono default icon
+	* System.Windows.Forms.resources.prebuilt: Updated
+
+2005-09-07 Jonathan Chambers  <jonathan.chambers@ansys.com>
+
+	* System.Windows.Forms.resources.prebuilt: Update
+	* System.Windows.Forms.resx: Added images and strings for PropertyGrid
+	  toolbar buttons.
+
+2005-05-05  Peter Bartok  <pbartok@novell.com>
+
+	* System.Windows.Forms.resx, System.Windows.Forms.en.resx,
+	  System.Windows.Forms.de.resx: Added errorProvider icon
+	* System.Windows.Forms.resources.prebuilt, 
+	  System.Windows.Forms.en.resources.prebuilt,
+	  System.Windows.Forms.de.resources.prebuilt: Updated
+
+2005-03-16  Alexander Olk <xenomorph2@onlinehome.de>
+
+	* System.Windows.Forms.resx, System.Windows.Forms.en.resx,
+	  System.Windows.Forms.de.resx:
+	  - Corrected one FileDialog bitmap
+
+2005-02-13  Peter Bartok  <pbartok@novell.com>
+
+	* System.Windows.Forms.resx: Added
+	* System.Windows.Forms.en.resx: Added
+	* System.Windows.Forms.de.resx: Added
