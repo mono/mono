@@ -1119,8 +1119,8 @@ namespace System.Windows.Forms {
 				}
 
 				case Msg.WM_KEYDOWN: {
-					ProcessKey((Keys)m.WParam.ToInt32() | XplatUI.State.ModifierKeys);
 					base.WndProc(ref m);
+					ProcessKey((Keys)m.WParam.ToInt32() | XplatUI.State.ModifierKeys);
 					return;
 				}
 
