@@ -1,3 +1,7 @@
+2006-01-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* UTF8EncodingTest.cs : added CloneNotReadOnly().
+
 2006-01-19  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* UnicodeEncodingTest.cs, DecoderReplacementFallbackBufferTest.cs,

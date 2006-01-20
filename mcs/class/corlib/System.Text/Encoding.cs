@@ -504,7 +504,9 @@ public abstract class Encoding
 
 	public virtual object Clone ()
 	{
-		return MemberwiseClone ();
+		Encoding e = (Encoding) MemberwiseClone ();
+		e.is_readonly = false;
+		return e;
 	}
 
 	public static Encoding GetEncoding (int codePage,

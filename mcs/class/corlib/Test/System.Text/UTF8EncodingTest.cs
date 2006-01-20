@@ -977,5 +977,16 @@ namespace MonoTests.System.Text {
 			AssertEquals ("#1", '\uFEFF', chars [0]);
 			AssertEquals ("#2", 'A', chars [1]);
 		}
+
+#if NET_2_0
+		[Test]
+		public void CloneNotReadOnly ()
+		{
+			Encoding e = Encoding.GetEncoding (65001).Clone ()
+				as Encoding;
+			AssertEquals (false, e.IsReadOnly);
+			e.EncoderFallback = new EncoderExceptionFallback ();
+		}
+#endif
 	}
 }
