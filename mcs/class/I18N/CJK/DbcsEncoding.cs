@@ -11,12 +11,13 @@ using I18N.Common;
 
 namespace I18N.CJK
 {
+	[Serializable]
 	internal abstract class DbcsEncoding : MonoEncoding
 	{
-		internal DbcsConvert convert;
-		
 		public DbcsEncoding(int codePage) : base(codePage) {}
-		
+
+		internal abstract DbcsConvert GetConvert ();
+
 		// Get the number of bytes needed to encode a character buffer.
 		public override int GetByteCount(char[] chars, int index, int count)
 		{
@@ -101,7 +102,7 @@ namespace I18N.CJK
 		// Get a decoder that handles a rolling state.
 		public override Decoder GetDecoder()
 		{
-			return new DbcsDecoder(convert);
+			return new DbcsDecoder(GetConvert ());
 		}
 		
 		// Determine if this encoding can be displayed in a Web browser.

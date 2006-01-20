@@ -39,6 +39,7 @@ using I18N.Common;
 // are a shifted version of the Unicode character set, starting
 // at a fixed offset.
 
+[Serializable]
 public abstract class ISCIIEncoding : MonoEncoding
 {
 	// Internal state.
@@ -359,30 +360,35 @@ public abstract class ISCIIEncoding : MonoEncoding
 
 // Define the ISCII code pages as subclasses of "ISCIIEncoding".
 
+[Serializable]
 public class CP57002 : ISCIIEncoding
 {
 	public CP57002() : base(57002, 0x0900, "ISCII Devanagari", "x-iscii-de") {}
 
 }; // class CP57002
 
+[Serializable]
 public class CP57003 : ISCIIEncoding
 {
 	public CP57003() : base(57003, 0x0980, "ISCII Bengali", "x-iscii-be") {}
 
 }; // class CP57003
 
+[Serializable]
 public class CP57004 : ISCIIEncoding
 {
 	public CP57004() : base(57004, 0x0B80, "ISCII Tamil", "x-iscii-ta") {}
 
 }; // class CP57004
 
+[Serializable]
 public class CP57005 : ISCIIEncoding
 {
 	public CP57005() : base(57005, 0x0B80, "ISCII Telugu", "x-iscii-te") {}
 
 }; // class CP57005
 
+[Serializable]
 public class CP57006 : ISCIIEncoding
 {
 	// Note: Unicode has a "Sinhala" page, but no "Assamese" page.
@@ -392,30 +398,35 @@ public class CP57006 : ISCIIEncoding
 
 }; // class CP57006
 
+[Serializable]
 public class CP57007 : ISCIIEncoding
 {
 	public CP57007() : base(57007, 0x0B00, "ISCII Oriya", "x-iscii-or") {}
 
 }; // class CP57007
 
+[Serializable]
 public class CP57008 : ISCIIEncoding
 {
 	public CP57008() : base(57008, 0x0C80, "ISCII Kannada", "x-iscii-ka") {}
 
 }; // class CP57008
 
+[Serializable]
 public class CP57009 : ISCIIEncoding
 {
 	public CP57009() : base(57009, 0x0D00, "ISCII Malayalam", "x-iscii-ma") {}
 
 }; // class CP57009
 
+[Serializable]
 public class CP57010 : ISCIIEncoding
 {
 	public CP57010() : base(57010, 0x0A80, "ISCII Gujarati", "x-iscii-gu") {}
 
 }; // class CP57010
 
+[Serializable]
 public class CP57011 : ISCIIEncoding
 {
 	// Note: Unicode has a "Gurmukhi" page, but no "Punjabi" page.
@@ -429,60 +440,70 @@ public class CP57011 : ISCIIEncoding
 
 // Define the web encoding name aliases for the above code pages.
 
+[Serializable]
 public class ENCx_iscii_de : CP57002
 {
 	public ENCx_iscii_de() : base() {}
 
 }; // class ENCx_iscii_de
 
+[Serializable]
 public class ENCx_iscii_be : CP57003
 {
 	public ENCx_iscii_be() : base() {}
 
 }; // class ENCx_iscii_be
 
+[Serializable]
 public class ENCx_iscii_ta : CP57004
 {
 	public ENCx_iscii_ta() : base() {}
 
 }; // class ENCx_iscii_ta
 
+[Serializable]
 public class ENCx_iscii_te : CP57005
 {
 	public ENCx_iscii_te() : base() {}
 
 }; // class ENCx_iscii_te
 
+[Serializable]
 public class ENCx_iscii_as : CP57006
 {
 	public ENCx_iscii_as() : base() {}
 
 }; // class ENCx_iscii_as
 
+[Serializable]
 public class ENCx_iscii_or : CP57007
 {
 	public ENCx_iscii_or() : base() {}
 
 }; // class ENCx_iscii_or
 
+[Serializable]
 public class ENCx_iscii_ka : CP57008
 {
 	public ENCx_iscii_ka() : base() {}
 
 }; // class ENCx_iscii_ka
 
+[Serializable]
 public class ENCx_iscii_ma : CP57009
 {
 	public ENCx_iscii_ma() : base() {}
 
 }; // class ENCx_iscii_ma
 
+[Serializable]
 public class ENCx_iscii_gu : CP57010
 {
 	public ENCx_iscii_gu() : base() {}
 
 }; // class ENCx_iscii_gu
 
+[Serializable]
 public class ENCx_iscii_pa : CP57011
 {
 	public ENCx_iscii_pa() : base() {}

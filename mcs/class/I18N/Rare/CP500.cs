@@ -31,6 +31,7 @@ using System;
 using System.Text;
 using I18N.Common;
 
+[Serializable]
 public class CP500 : ByteEncoding
 {
 	public CP500()
@@ -903,6 +904,7 @@ public class CP500 : ByteEncoding
 
 }; // class CP500
 
+[Serializable]
 public class ENCibm500 : CP500
 {
 	public ENCibm500() : base() {}

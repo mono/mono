@@ -13,21 +13,26 @@ using I18N.Common;
 
 namespace I18N.CJK
 {
+	[Serializable]
 	internal class CP936 : DbcsEncoding
 	{
-		static DbcsConvert gb2312 = DbcsConvert.Gb2312;
-
 		// Magic number used by Windows for the Gb2312 code page.
 		private const int GB2312_CODE_PAGE = 936;
 		
 		// Constructor.
 		public CP936() : base(GB2312_CODE_PAGE) {
 		}
-		
+
+		internal override DbcsConvert GetConvert ()
+		{
+			return DbcsConvert.Gb2312;
+		}
+
 		// Get the bytes that result from encoding a character buffer.
 		public unsafe override int GetBytesImpl (char* chars, int charCount,
 					     byte* bytes, int byteCount)
 		{
+			DbcsConvert gb2312 = GetConvert ();
 			int charIndex = 0;
 			int byteIndex = 0;
 #if NET_2_0
@@ -60,9 +65,45 @@ namespace I18N.CJK
 		}
 		
 		// Get the characters that result from decoding a byte buffer.
+		public override int GetCharCount (byte [] bytes, int index, int count)
+		{
+			if (bytes == null)
+				throw new ArgumentNullException("bytes");
+			if (index < 0 || index > bytes.Length)
+				throw new ArgumentOutOfRangeException("index", Strings.GetString("ArgRange_Array"));
+			if (count < 0 || index + count > bytes.Length)
+				throw new ArgumentOutOfRangeException("count", Strings.GetString("ArgRange_Array"));
+
+			int lastByte = 0;
+			int length = 0;
+			while (count-- > 0) {
+				int b = bytes [index++];
+				if (lastByte == 0) {
+					if (b <= 0x80 || b == 0xFF) { // ASCII
+						length++;
+						continue;
+					} else {
+						lastByte = b;
+						continue;
+					}
+				}
+				length++;
+				lastByte = 0;
+			}
+
+#if NET_2_0
+			if (lastByte != 0)
+				length++;
+#endif
+
+			return length;
+		}
+
+		// Get the characters that result from decoding a byte buffer.
 		public override int GetChars(byte[] bytes, int byteIndex, int byteCount,
 					     char[] chars, int charIndex)
 		{
+			DbcsConvert gb2312 = GetConvert ();
 			// A1 40 - FA FF
 			base.GetChars(bytes, byteIndex, byteCount, chars, charIndex);
 			int origIndex = charIndex;
@@ -73,15 +114,14 @@ namespace I18N.CJK
 					if (b <= 0x80 || b == 0xFF) { // ASCII
 						chars[charIndex++] = (char)b;
 						continue;
-					} else if (b < 0x81 || b >= 0xFF) {
-						continue;
 					} else {
 						lastByte = b;
 						continue;
 					}
 				}
 				int ord = ((lastByte - 0x81) * 191 + b - 0x40) * 2;
-				char c1 = (char)(gb2312.n2u[ord] + gb2312.n2u[ord + 1] * 256);
+				char c1 = (ord < 0 || ord + 1 >= gb2312.n2u.Length) ?
+					'\0' : (char)(gb2312.n2u[ord] + gb2312.n2u[ord + 1] * 256);
 				if (c1 == 0)
 					chars[charIndex++] = '?';
 				else
@@ -94,7 +134,7 @@ namespace I18N.CJK
 		// Get a decoder that handles a rolling Gb2312 state.
 		public override Decoder GetDecoder()
 		{
-			return new CP936Decoder(gb2312);
+			return new CP936Decoder(GetConvert ());
 		}
 		
 		// Get the mail body name for this encoding.
@@ -183,6 +223,7 @@ namespace I18N.CJK
 		}
 	}
 	
+	[Serializable]
 	internal class ENCgb2312 : CP936
 	{
 		public ENCgb2312(): base () {}

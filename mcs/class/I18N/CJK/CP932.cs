@@ -22,6 +22,10 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
+//
+// Copyright (C) 2005-2006 Novell, Inc.
+//
+
 namespace I18N.CJK
 {
 
@@ -29,20 +33,16 @@ using System;
 using System.Text;
 using I18N.Common;
 
+[Serializable]
 public unsafe class CP932 : MonoEncoding
 {
 	// Magic number used by Windows for the Shift-JIS code page.
 	private const int SHIFTJIS_CODE_PAGE = 932;
 
-	// Internal state.
-	private JISConvert convert;
-
 	// Constructor.
 	public CP932() : base(SHIFTJIS_CODE_PAGE)
-			{
-				// Load the JIS conversion tables.
-				convert = JISConvert.Convert;
-			}
+	{
+	}
 
 	// Get the number of bytes needed to encode a character buffer.
 	public override int GetByteCount(char[] chars, int index, int count)
@@ -67,11 +67,11 @@ public unsafe class CP932 : MonoEncoding
 				int length = 0;
 				int ch, value;
 #if __PNET__
-				byte *cjkToJis = convert.cjkToJis;
-				byte *extraToJis = convert.extraToJis;
+				byte *cjkToJis = JISConvert.Convert.cjkToJis;
+				byte *extraToJis = JISConvert.Convert.extraToJis;
 #else
-				byte[] cjkToJis = convert.cjkToJis;
-				byte[] extraToJis = convert.extraToJis;
+				byte[] cjkToJis = JISConvert.Convert.cjkToJis;
+				byte[] extraToJis = JISConvert.Convert.extraToJis;
 #endif
 				while(count > 0)
 				{
@@ -147,13 +147,13 @@ public unsafe class CP932 : MonoEncoding
 				int byteLength = byteCount;
 				int ch, value;
 #if __PNET__
-				byte *cjkToJis = convert.cjkToJis;
-				byte *greekToJis = convert.greekToJis;
-				byte *extraToJis = convert.extraToJis;
+				byte *cjkToJis = JISConvert.Convert.cjkToJis;
+				byte *greekToJis = JISConvert.Convert.greekToJis;
+				byte *extraToJis = JISConvert.Convert.extraToJis;
 #else
-				byte[] cjkToJis = convert.cjkToJis;
-				byte[] greekToJis = convert.greekToJis;
-				byte[] extraToJis = convert.extraToJis;
+				byte[] cjkToJis = JISConvert.Convert.cjkToJis;
+				byte[] greekToJis = JISConvert.Convert.greekToJis;
+				byte[] extraToJis = JISConvert.Convert.extraToJis;
 #endif
 				while(charCount > 0)
 				{
@@ -360,177 +360,19 @@ public unsafe class CP932 : MonoEncoding
 				return posn - byteIndex;
 			}
 
-	// Get the number of characters needed to decode a byte buffer.
-	public override int GetCharCount(byte[] bytes, int index, int count)
+	public override int GetCharCount (byte [] bytes, int index, int count)
 			{
-				// Validate the parameters.
-				if(bytes == null)
-				{
-					throw new ArgumentNullException("bytes");
-				}
-				if(index < 0 || index > bytes.Length)
-				{
-					throw new ArgumentOutOfRangeException
-						("index", Strings.GetString("ArgRange_Array"));
-				}
-				if(count < 0 || count > (bytes.Length - index))
-				{
-					throw new ArgumentOutOfRangeException
-						("count", Strings.GetString("ArgRange_Array"));
-				}
-
-				// Determine the total length of the converted string.
-				int length = 0;
-				int byteval;
-				while(count > 0)
-				{
-					byteval = bytes[index++];
-					--count;
-					++length;
-					if(byteval < 0x80)
-					{
-						// Ordinary ASCII/Latin1 character, or the
-						// single-byte Yen or overline signs.
-						continue;
-					}
-					else if(byteval >= 0xA1 && byteval <= 0xDF)
-					{
-						// Half-width katakana.
-						continue;
-					}
-					else if(byteval < 0x81 ||
-					        (byteval > 0x9F && byteval < 0xE0) ||
-							byteval > 0xEF)
-					{
-						// Invalid first byte.
-						continue;
-					}
-					if(count == 0)
-					{
-						// Missing second byte.
-						continue;
-					}
-					++index;
-					--count;
-				}
-
-				// Return the total length.
-				return length;
+				return new CP932Decoder (JISConvert.Convert).GetCharCount (
+					bytes, index, count, true);
 			}
 
-	// Get the characters that result from decoding a byte buffer.
-	public override int GetChars(byte[] bytes, int byteIndex, int byteCount,
-								 char[] chars, int charIndex)
+	public override int GetChars (
+		byte [] bytes, int byteIndex, int byteCount,
+		char [] chars, int charIndex)
 			{
-				// Validate the parameters.
-				if(bytes == null)
-				{
-					throw new ArgumentNullException("bytes");
-				}
-				if(chars == null)
-				{
-					throw new ArgumentNullException("chars");
-				}
-				if(byteIndex < 0 || byteIndex > bytes.Length)
-				{
-					throw new ArgumentOutOfRangeException
-						("byteIndex", Strings.GetString("ArgRange_Array"));
-				}
-				if(byteCount < 0 || byteCount > (bytes.Length - byteIndex))
-				{
-					throw new ArgumentOutOfRangeException
-						("byteCount", Strings.GetString("ArgRange_Array"));
-				}
-				if(charIndex < 0 || charIndex > chars.Length)
-				{
-					throw new ArgumentOutOfRangeException
-						("charIndex", Strings.GetString("ArgRange_Array"));
-				}
-
-				// Determine the total length of the converted string.
-				int charLength = chars.Length;
-				int posn = charIndex;
-				int length = 0;
-				int byteval, value;
-#if __PNET__
-				byte *table = convert.jisx0208ToUnicode;
-#else
-				byte[] table = convert.jisx0208ToUnicode;
-#endif
-				while(byteCount > 0)
-				{
-					byteval = bytes[byteIndex++];
-					--byteCount;
-					++length;
-					if(posn >= charLength)
-					{
-						throw new ArgumentException
-							(Strings.GetString("Arg_InsufficientSpace"),
-							 "chars");
-					}
-					else if(byteval < 0x80)
-					{
-						// Ordinary ASCII/Latin1 character.
-						chars[posn++] = (char)byteval;
-						continue;
-					}
-					else if(byteval >= 0xA1 && byteval <= 0xDF)
-					{
-						// Half-width katakana.
-						chars[posn++] = (char)(byteval - 0xA1 + 0xFF61);
-						continue;
-					}
-					else if(byteval >= 0x81 && byteval <= 0x9F)
-					{
-						value = (byteval - 0x81) * 0xBC;
-					}
-					else if(byteval >= 0xE0 && byteval <= 0xEF)
-					{
-						value = (byteval - 0xE0 + (0xA0 - 0x81)) * 0xBC;
-					}
-					else
-					{
-						// Invalid first byte.
-						chars[posn++] = '?';
-						continue;
-					}
-					if(byteCount == 0)
-					{
-						// Missing second byte.
-						chars[posn++] = '?';
-						continue;
-					}
-					byteval = bytes[byteIndex++];
-					--byteCount;
-					if(byteval >= 0x40 && byteval <= 0x7E)
-					{
-						value += (byteval - 0x40);
-					}
-					else if(byteval >= 0x80 && byteval <= 0xFC)
-					{
-						value += (byteval - 0x80 + 0x3F);
-					}
-					else
-					{
-						// Invalid second byte.
-						chars[posn++] = '?';
-						continue;
-					}
-					value *= 2;
-					value = ((int)(table[value])) |
-							(((int)(table[value + 1])) << 8);
-					if(value != 0)
-					{
-						chars[posn++] = (char)value;
-					}
-					else
-					{
-						chars[posn++] = '?';
-					}
-				}
-
-				// Return the total length.
-				return posn - charIndex;
+				return new CP932Decoder (JISConvert.Convert).GetChars (bytes,
+					byteIndex, byteCount, chars, charIndex,
+					true);
 			}
 
 	// Get the maximum number of bytes needed to encode a
@@ -562,7 +404,7 @@ public unsafe class CP932 : MonoEncoding
 	// Get a decoder that handles a rolling Shift-JIS state.
 	public override Decoder GetDecoder()
 			{
-				return new CP932Decoder(convert);
+				return new CP932Decoder(JISConvert.Convert);
 			}
 
 #if !ECMA_COMPAT
@@ -654,17 +496,28 @@ public unsafe class CP932 : MonoEncoding
 	private sealed class CP932Decoder : Decoder
 	{
 		private JISConvert convert;
-		private int lastByte;
+		private int last_byte_count;
+		private int last_byte_chars;
 
 		// Constructor.
 		public CP932Decoder(JISConvert convert)
 				{
 					this.convert = convert;
-					this.lastByte = 0;
 				}
 
 		// Override inherited methods.
-		public override int GetCharCount(byte[] bytes, int index, int count)
+
+		public override int GetCharCount (
+			byte [] bytes, int index, int count)
+		{
+			return GetCharCount (bytes, index, count, false);
+		}
+
+		public
+#if NET_2_0
+		override
+#endif
+		int GetCharCount (byte [] bytes, int index, int count, bool refresh)
 				{
 					// Validate the parameters.
 					if(bytes == null)
@@ -685,7 +538,7 @@ public unsafe class CP932 : MonoEncoding
 					// Determine the total length of the converted string.
 					int length = 0;
 					int byteval;
-					int last = lastByte;
+					int last = last_byte_count;
 					while(count > 0)
 					{
 						byteval = bytes[index++];
@@ -706,13 +559,33 @@ public unsafe class CP932 : MonoEncoding
 							last = 0;
 						}
 					}
+					if (refresh) {
+						if (last != 0)
+							length++;
+						last_byte_count = '\0';
+					}
+					else
+						last_byte_count = last;
 	
 					// Return the total length.
 					return length;
 				}
-		public override int GetChars(byte[] bytes, int byteIndex,
-									 int byteCount, char[] chars,
-									 int charIndex)
+
+		public override int GetChars (
+			byte [] bytes, int byteIndex, int byteCount,
+			char [] chars, int charIndex)
+		{
+			return GetChars (bytes, byteIndex, byteCount,
+					 chars, charIndex, false);
+		}
+
+		public
+#if NET_2_0
+		override
+#endif
+		int GetChars (
+			byte [] bytes, int byteIndex, int byteCount,
+			char [] chars, int charIndex, bool refresh)
 				{
 					// Validate the parameters.
 					if(bytes == null)
@@ -743,7 +616,7 @@ public unsafe class CP932 : MonoEncoding
 					int posn = charIndex;
 					int charLength = chars.Length;
 					int byteval, value;
-					int last = lastByte;
+					int last = last_byte_chars;
 #if __PNET__
 					byte *table = convert.jisx0208ToUnicode;
 #else
@@ -829,7 +702,13 @@ public unsafe class CP932 : MonoEncoding
 							}
 						}
 					}
-					lastByte = last;
+					if (refresh) {
+						if (last != 0)
+							chars[posn++] = '\u30FB';
+						last_byte_chars = '\0';
+					}
+					else
+						last_byte_chars = last;
 
 					// Return the final length to the caller.
 					return posn - charIndex;
@@ -839,6 +718,7 @@ public unsafe class CP932 : MonoEncoding
 
 }; // class CP932
 
+[Serializable]
 public class ENCshift_jis : CP932
 {
 	public ENCshift_jis() : base() {}

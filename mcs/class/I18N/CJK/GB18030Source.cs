@@ -42,6 +42,7 @@ namespace I18N.CJK
 
 		static readonly byte *gbx2uni;
 		static readonly byte *uni2gbx;
+		static readonly int gbx2uniSize, uni2gbxSize;
 
 		static GB18030Source ()
 		{
@@ -55,11 +56,15 @@ namespace I18N.CJK
 				new object [] {"gb18030.table", size, mod});
 			if (ret != IntPtr.Zero) {
 				gbx2uni = (byte*) ((void*) ret);
-				int gbx2uniSize =
+				gbx2uniSize =
 					(gbx2uni [0] << 24) + (gbx2uni [1] << 16) +
 					(gbx2uni [2] << 8) + (gbx2uni [3]);
 				gbx2uni += 4;
 				uni2gbx = gbx2uni + gbx2uniSize;
+				uni2gbxSize =
+					(uni2gbx [0] << 24) + (uni2gbx [1] << 16) +
+					(uni2gbx [2] << 8) + (uni2gbx [3]);
+				uni2gbx += 4;
 			}
 		}
 
@@ -151,7 +156,7 @@ namespace I18N.CJK
 				if (linear < m.GStart)
 					return ToUcsRaw ((int) (linear
 						- startIgnore + rawOffset));
-				if (linear < m.GEnd)
+				if (linear <= m.GEnd)
 					return linear - gbxBase - m.GStart
 						+ m.UStart;
 				if (m.GStart != 0) {
@@ -177,7 +182,7 @@ namespace I18N.CJK
 				if (cp < m.UStart)
 					return ToGbxRaw ((int) (cp
 						- startIgnore + rawOffset));
-				if (cp < m.UEnd)
+				if (cp <= m.UEnd)
 					return cp - m.UStart + m.GStart;
 				if (m.GStart != 0) {
 					rawOffset += m.UStart - startIgnore;
@@ -205,6 +210,8 @@ namespace I18N.CJK
 
 		static long ToGbxRaw (int idx)
 		{
+			if (idx < 0 || idx * 2 + 1 >= uni2gbxSize)
+				return -1;
 			return gbxBase + uni2gbx [idx * 2] * 0x100 + uni2gbx [idx * 2 + 1];
 		}
 

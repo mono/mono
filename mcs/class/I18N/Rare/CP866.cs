@@ -31,6 +31,7 @@ using System;
 using System.Text;
 using I18N.Common;
 
+[Serializable]
 public class CP866 : ByteEncoding
 {
 	public CP866()
@@ -693,6 +694,7 @@ public class CP866 : ByteEncoding
 
 }; // class CP866
 
+[Serializable]
 public class ENCibm866 : CP866
 {
 	public ENCibm866() : base() {}

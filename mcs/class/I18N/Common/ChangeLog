@@ -1,3 +1,8 @@
+2006-01-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MonoEncoding.cs, ByteEncoding.cs :
+	  Marked as [Serializable].
+
 2005-12-01  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* MonoEncoding.cs : new file, which is going to be used as the

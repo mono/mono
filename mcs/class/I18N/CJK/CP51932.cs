@@ -58,352 +58,50 @@ using System;
 using System.Text;
 using I18N.Common;
 
+[Serializable]
 public class CP51932 : MonoEncoding
 {
 	// Magic number used by Windows for the EUC-JP code page.
 	private const int EUC_JP_CODE_PAGE = 51932;
 
-	// Internal state.
-	private JISConvert convert;
-
-	// Conversion cache (note that encoding is not thread safe)
-	int lastByte;
-
 	// Constructor.
 	public CP51932 () : base (EUC_JP_CODE_PAGE)
 	{
-		// Load the JIS conversion tables.
-		convert = JISConvert.Convert;
 	}
 
-	// Get the number of bytes needed to encode a character buffer.
-	public override int GetByteCount (char [] chars, int index, int count)
+
+	public override int GetByteCount (char [] chars, int index, int length)
 	{
-		// Validate the parameters.
-		if (chars == null)
-			throw new ArgumentNullException("chars");
-
-		if (index < 0 || index > chars.Length)
-			throw new ArgumentOutOfRangeException
-				("index", Strings.GetString ("ArgRange_Array"));
-
-		if (count < 0 || count > (chars.Length - index))
-			throw new ArgumentOutOfRangeException
-				("count", Strings.GetString ("ArgRange_Array"));
-
-		// Determine the length of the final output.
-		int length = 0;
-		int ch, value;
-		byte [] cjkToJis = convert.cjkToJis;
-		byte [] extraToJis = convert.extraToJis;
-
-		while (count > 0) {
-			ch = chars [index++];
-			--count;
-			++length;
-			if (ch < 0x0080) {
-				// Character maps to itself.
-				continue;
-			} else if (ch < 0x0100) {
-				// Check for special Latin 1 characters that
-				// can be mapped to double-byte code points.
-				if(ch == 0x00A2 || ch == 0x00A3 || ch == 0x00A7 ||
-				   ch == 0x00A8 || ch == 0x00AC || ch == 0x00B0 ||
-				   ch == 0x00B1 || ch == 0x00B4 || ch == 0x00B6 ||
-				   ch == 0x00D7 || ch == 0x00F7)
-				{
-					++length;
-				}
-			} else if (ch >= 0x0391 && ch <= 0x0451) {
-				// Greek subset characters.
-				++length;
-			} else if (ch >= 0x2010 && ch <= 0x9FA5) {
-				// This range contains the bulk of the CJK set.
-				value = (ch - 0x2010) * 2;
-				value = ((int) (cjkToJis[value])) | (((int)(cjkToJis[value + 1])) << 8);
-				if(value >= 0x0100)
-					++length;
-			} else if(ch >= 0xFF01 && ch < 0xFF60) {
-				// This range contains extra characters.
-				value = (ch - 0xFF01) * 2;
-				value = ((int)(extraToJis[value])) |
-						(((int)(extraToJis[value + 1])) << 8);
-				if(value >= 0x0100)
-					++length;
-			} else if(ch >= 0xFF60 && ch <= 0xFFA0) {
-				++length; // half-width kana
-			}
-		}
-
-		// Return the length to the caller.
-		return length;
+		return new CP51932Encoder (this).GetByteCount (chars, index, length, true);
 	}
 
-	// Get the bytes that result from encoding a character buffer.
-	public unsafe override int GetBytesImpl (
-		char* chars, int charCount, byte* bytes, int byteCount)
+	public unsafe override int GetBytesImpl (char* chars, int charCount, byte* bytes, int byteCount)
 	{
-		int charIndex = 0;
-		int byteIndex = 0;
-#if NET_2_0
-		EncoderFallbackBuffer buffer = null;
-#endif
-
-		// Convert the characters into their byte form.
-		int posn = byteIndex;
-		int byteLength = byteCount;
-		int ch, value;
-
-		byte[] cjkToJis = convert.cjkToJis;
-		byte[] greekToJis = convert.greekToJis;
-		byte[] extraToJis = convert.extraToJis;
-
-		for (; charCount > 0; charIndex++, --charCount) {
-			ch = chars [charIndex];
-			if (posn >= byteLength) {
-				throw new ArgumentException (Strings.GetString ("Arg_InsufficientSpace"), "bytes");
-			}
-
-			if (ch < 0x0080) {
-				// Character maps to itself.
-				bytes[posn++] = (byte)ch;
-				continue;
-			} else if (ch >= 0x0391 && ch <= 0x0451) {
-				// Greek subset characters.
-				value = (ch - 0x0391) * 2;
-				value = ((int)(greekToJis[value])) |
-						(((int)(greekToJis[value + 1])) << 8);
-			} else if (ch >= 0x2010 && ch <= 0x9FA5) {
-				// This range contains the bulk of the CJK set.
-				value = (ch - 0x2010) * 2;
-				value = ((int) (cjkToJis[value])) |
-						(((int)(cjkToJis[value + 1])) << 8);
-			} else if (ch >= 0xFF01 && ch <= 0xFF60) {
-				// This range contains extra characters,
-				// including half-width katakana.
-				value = (ch - 0xFF01) * 2;
-				value = ((int) (extraToJis [value])) |
-						(((int) (extraToJis [value + 1])) << 8);
-			} else if (ch >= 0xFF60 && ch <= 0xFFA0) {
-				value = ch - 0xFF60 + 0x8EA0;
-			} else {
-				// Invalid character.
-				value = 0;
-			}
-
-			if (value == 0) {
-#if NET_2_0
-				HandleFallback (ref buffer,
-					chars, ref charIndex, ref charCount,
-					bytes, ref posn, ref byteCount);
-#else
-				bytes [posn++] = (byte) '?';
-#endif
-			} else if (value < 0x0100) {
-				bytes [posn++] = (byte) value;
-			} else if ((posn + 1) >= byteLength) {
-				throw new ArgumentException (Strings.GetString ("Arg_InsufficientSpace"), "bytes");
-			} else if (value < 0x8000) {
-				// general 2byte glyph/kanji
-				value -= 0x0100;
-				bytes [posn++] = (byte) (value / 0x5E + 0xA1);
-				bytes [posn++] = (byte) (value % 0x5E + 0xA1);
-//Console.WriteLine ("{0:X04}", ch);
-				continue;
-			}
-			else
-			{
-				// half-width kana
-				bytes [posn++] = 0x8E;
-				bytes [posn++] = (byte) (value - 0x8E00);
-			}
-		}
-
-		// Return the final length to the caller.
-		return posn - byteIndex;
+		return new CP51932Encoder (this).GetBytesImpl (chars, charCount, bytes, byteCount, true);
 	}
 
-	// Get the number of characters needed to decode a byte buffer.
-	// TODO: check
 	public override int GetCharCount (byte [] bytes, int index, int count)
 	{
-		// Validate the parameters.
-		if (bytes == null)
-			throw new ArgumentNullException ("bytes");
-
-		if (index < 0 || index > bytes.Length)
-			throw new ArgumentOutOfRangeException
-				("index", Strings.GetString("ArgRange_Array"));
-
-		if (count < 0 || count > (bytes.Length - index))
-			throw new ArgumentOutOfRangeException
-				("count", Strings.GetString("ArgRange_Array"));
-
-		// Determine the total length of the converted string.
-		int length = 0;
-		int byteval;
-		int last = 0;
-
-		while (count > 0) {
-			byteval = bytes [index++];
-			--count;
-
-			if (last == 0) {
-				if (byteval == 0x8F) {
-					if (byteval != 0) {
-						// Invalid second byte of a 3-byte character
-						// FIXME: What should we do?
-						last = 0;
-					}
-					// First byte in a triple-byte sequence
-					else
-						last = byteval;
-				} else if (byteval <= 0x7F) {
-					// Ordinary ASCII/Latin1/Control character.
-					++length;
-				} else if (byteval >= 0xA1 && byteval <= 0xFE) {
-					// First byte in a double-byte sequence.
-					last = byteval;
-				} else if (byteval == 0x87) {
-					// First byte in half-width katakana
-				} else {
-					// Invalid first byte. Let '?'
-					++length;
-				}
-			} else if (last == 0x8F) {
-				// 3-byte character
-				// FIXME: currently not supported yet
-				last = 0;
-				++length;
-			} else {
-				// Second byte in a double-byte sequence.
-				last = 0;
-				++length;
-			}
-		}
-
-		// Return the total length.
-		return length;
+#if NET_2_0
+		return new CP51932Decoder ().GetCharCount (
+			bytes, index, count, true);
+#else
+		return new CP51932Decoder ().GetCharCount (
+			bytes, index, count);
+#endif
 	}
 
-	public override int GetChars (byte[] bytes, int byteIndex,
-						 int byteCount, char[] chars,
-						 int charIndex)
+	public override int GetChars (
+		byte [] bytes, int byteIndex, int byteCount,
+		char [] chars, int charIndex)
 	{
-		// Validate the parameters.
-		if(bytes == null)
-		{
-			throw new ArgumentNullException("bytes");
-		}
-		if(chars == null)
-		{
-			throw new ArgumentNullException("chars");
-		}
-		if(byteIndex < 0 || byteIndex > bytes.Length)
-		{
-			throw new ArgumentOutOfRangeException
-				("byteIndex", Strings.GetString("ArgRange_Array"));
-		}
-		if(byteCount < 0 || byteCount > (bytes.Length - byteIndex))
-		{
-			throw new ArgumentOutOfRangeException
-				("byteCount", Strings.GetString("ArgRange_Array"));
-		}
-		if(charIndex < 0 || charIndex > chars.Length)
-		{
-			throw new ArgumentOutOfRangeException
-				("charIndex", Strings.GetString("ArgRange_Array"));
-		}
-
-		// Decode the bytes in the buffer.
-		int posn = charIndex;
-		int charLength = chars.Length;
-		int byteval, value;
-		int last = lastByte;
-		byte[] table0208 = convert.jisx0208ToUnicode;
-		byte[] table0212 = convert.jisx0212ToUnicode;
-
-		while (byteCount > 0) {
-			byteval = bytes [byteIndex++];
-			--byteCount;
-			if (last == 0) {
-				if (posn >= charLength)
-					throw new ArgumentException
-						(Strings.GetString
-							("Arg_InsufficientSpace"), "chars");
-
-				if (byteval == 0x8F) {
-					if (byteval != 0) {
-						// Invalid second byte of a 3-byte character
-						// FIXME: What should we do?
-						last = 0;
-					}
-					// First byte in a triple-byte sequence
-					else
-						last = byteval;
-				} else if (byteval <= 0x7F) {
-					// Ordinary ASCII/Latin1/Control character.
-					chars [posn++] = (char) byteval;
-				} else if (byteval == 0x8E) {
-					// First byte of half-width Katakana
-					last = byteval;
-				} else if (byteval >= 0xA1 && byteval <= 0xFE) {
-					// First byte in a double-byte sequence.
-					last = byteval;
-				} else {
-					// Invalid first byte.
-					chars [posn++] = '?';
-				}
-			}
-			else if (last == 0x8E) {
-				if (byteval >= 0xA1 && byteval <= 0xDF) {
-					value = ((byteval - 0x40) |
-						(last + 0x71) << 8);
-					chars [posn++] = (char) value;
-				} else {
-					// Invalid second byte.
-					chars [posn++] = '?';
-				}
-				last =0;
-			}
-			else if (last == 0x8F) {
-				// 3-byte character
-				// FIXME: currently not supported yet
-				last = byteval;
-			}
-			else
-			{
-				// Second byte in a double-byte sequence.
-				value = (last - 0xA1) * 0x5E;
-				last = 0;
-				if (byteval >= 0xA1 && byteval <= 0xFE)
-				{
-					value += (byteval - 0xA1);
-				}
-				else
-				{
-					// Invalid second byte.
-					lastByte = 0;
-					chars [posn++] = '?';
-					continue;
-				}
-
-				value *= 2;
-				value = ((int) (table0208 [value]))
-					| (((int) (table0208 [value + 1])) << 8);
-				if (value == 0)
-					value = ((int) (table0212 [value]))
-						| (((int) (table0212 [value + 1])) << 8);
-				if (value != 0)
-					chars [posn++] = (char)value;
-				else
-					chars [posn++] = '?';
-			}
-		}
-		lastByte = last;
-
-		// Return the final length to the caller.
-		return posn - charIndex;
+#if NET_2_0
+		return new CP51932Decoder ().GetChars (bytes,
+			byteIndex, byteCount, chars, charIndex, true);
+#else
+		return new CP51932Decoder ().GetChars (bytes,
+			byteIndex, byteCount, chars, charIndex);
+#endif
 	}
 
 	// Get the maximum number of bytes needed to encode a
@@ -432,12 +130,15 @@ public class CP51932 : MonoEncoding
 		return byteCount;
 	}
 
-/* Use default implementation
-	public override Decoder GetDecoder()
+	public override Encoder GetEncoder ()
 	{
-		return new CP51932Decoder(convert);
+		return new CP51932Encoder (this);
 	}
-*/
+
+	public override Decoder GetDecoder ()
+	{
+		return new CP51932Decoder ();
+	}
 
 #if !ECMA_COMPAT
 
@@ -485,10 +186,447 @@ public class CP51932 : MonoEncoding
 	public override int WindowsCodePage {
 		get { return EUC_JP_CODE_PAGE; }
 	}
-
+} // CP51932
 #endif // !ECMA_COMPAT
-}; // class CP51932
 
+public class CP51932Encoder : MonoEncoding.MonoEncoder
+{
+	public CP51932Encoder (MonoEncoding encoding)
+		: base (encoding)
+	{
+	}
+
+	// Get the number of bytes needed to encode a character buffer.
+	public override int GetByteCount (
+		char [] chars, int index, int count, bool refresh)
+	{
+		// Validate the parameters.
+		if (chars == null)
+			throw new ArgumentNullException("chars");
+
+		if (index < 0 || index > chars.Length)
+			throw new ArgumentOutOfRangeException
+				("index", Strings.GetString ("ArgRange_Array"));
+
+		if (count < 0 || count > (chars.Length - index))
+			throw new ArgumentOutOfRangeException
+				("count", Strings.GetString ("ArgRange_Array"));
+
+		// Determine the length of the final output.
+		int length = 0;
+		int ch, value;
+		byte [] cjkToJis = JISConvert.Convert.cjkToJis;
+		byte [] extraToJis = JISConvert.Convert.extraToJis;
+
+		while (count > 0) {
+			ch = chars [index++];
+			--count;
+			++length;
+			if (ch < 0x0080) {
+				// Character maps to itself.
+				continue;
+			} else if (ch < 0x0100) {
+				// Check for special Latin 1 characters that
+				// can be mapped to double-byte code points.
+				if(ch == 0x00A2 || ch == 0x00A3 || ch == 0x00A7 ||
+				   ch == 0x00A8 || ch == 0x00AC || ch == 0x00B0 ||
+				   ch == 0x00B1 || ch == 0x00B4 || ch == 0x00B6 ||
+				   ch == 0x00D7 || ch == 0x00F7)
+				{
+					++length;
+				}
+			} else if (ch >= 0x0391 && ch <= 0x0451) {
+				// Greek subset characters.
+				++length;
+			} else if (ch >= 0x2010 && ch <= 0x9FA5) {
+				// This range contains the bulk of the CJK set.
+				value = (ch - 0x2010) * 2;
+				value = ((int) (cjkToJis[value])) | (((int)(cjkToJis[value + 1])) << 8);
+				if(value >= 0x0100)
+					++length;
+			} else if(ch >= 0xFF01 && ch < 0xFF60) {
+				// This range contains extra characters.
+				value = (ch - 0xFF01) * 2;
+				value = ((int)(extraToJis[value])) |
+						(((int)(extraToJis[value + 1])) << 8);
+				if(value >= 0x0100)
+					++length;
+			} else if(ch >= 0xFF60 && ch <= 0xFFA0) {
+				++length; // half-width kana
+			}
+		}
+
+		// Return the length to the caller.
+		return length;
+	}
+
+	// Get the bytes that result from encoding a character buffer.
+	public unsafe override int GetBytesImpl (
+		char* chars, int charCount, byte* bytes, int byteCount, bool refresh)
+	{
+		int charIndex = 0;
+		int byteIndex = 0;
+#if NET_2_0
+		EncoderFallbackBuffer buffer = null;
+#endif
+
+		// Convert the characters into their byte form.
+		int posn = byteIndex;
+		int byteLength = byteCount;
+		int ch, value;
+
+		byte[] cjkToJis = JISConvert.Convert.cjkToJis;
+		byte[] greekToJis = JISConvert.Convert.greekToJis;
+		byte[] extraToJis = JISConvert.Convert.extraToJis;
+
+		for (; charCount > 0; charIndex++, --charCount) {
+			ch = chars [charIndex];
+			if (posn >= byteLength) {
+				throw new ArgumentException (Strings.GetString ("Arg_InsufficientSpace"), "bytes");
+			}
+
+			if (ch < 0x0080) {
+				// Character maps to itself.
+				bytes[posn++] = (byte)ch;
+				continue;
+			} else if (ch >= 0x0391 && ch <= 0x0451) {
+				// Greek subset characters.
+				value = (ch - 0x0391) * 2;
+				value = ((int)(greekToJis[value])) |
+						(((int)(greekToJis[value + 1])) << 8);
+			} else if (ch >= 0x2010 && ch <= 0x9FA5) {
+				// This range contains the bulk of the CJK set.
+				value = (ch - 0x2010) * 2;
+				value = ((int) (cjkToJis[value])) |
+						(((int)(cjkToJis[value + 1])) << 8);
+			} else if (ch >= 0xFF01 && ch <= 0xFF60) {
+				// This range contains extra characters,
+				// including half-width katakana.
+				value = (ch - 0xFF01) * 2;
+				value = ((int) (extraToJis [value])) |
+						(((int) (extraToJis [value + 1])) << 8);
+			} else if (ch >= 0xFF60 && ch <= 0xFFA0) {
+				value = ch - 0xFF60 + 0x8EA0;
+			} else {
+				// Invalid character.
+				value = 0;
+			}
+
+			if (value == 0) {
+#if NET_2_0
+				HandleFallback (
+					chars, ref charIndex, ref charCount,
+					bytes, ref posn, ref byteCount);
+#else
+				bytes [posn++] = (byte) '?';
+#endif
+			} else if (value < 0x0100) {
+				bytes [posn++] = (byte) value;
+			} else if ((posn + 1) >= byteLength) {
+				throw new ArgumentException (Strings.GetString ("Arg_InsufficientSpace"), "bytes");
+			} else if (value < 0x8000) {
+				// general 2byte glyph/kanji
+				value -= 0x0100;
+				bytes [posn++] = (byte) (value / 0x5E + 0xA1);
+				bytes [posn++] = (byte) (value % 0x5E + 0xA1);
+//Console.WriteLine ("{0:X04}", ch);
+				continue;
+			}
+			else
+			{
+				// half-width kana
+				bytes [posn++] = 0x8E;
+				bytes [posn++] = (byte) (value - 0x8E00);
+			}
+		}
+
+		// Return the final length to the caller.
+		return posn - byteIndex;
+	}
+} // CP51932Encoder
+
+public class CP51932Decoder : Decoder
+{
+	int last_count, last_bytes;
+
+	// Get the number of characters needed to decode a byte buffer.
+	public override int GetCharCount (byte [] bytes, int index, int count)
+	{
+		return GetCharCount (bytes, index, count, false);
+	}
+
+#if NET_2_0
+	public override
+#else
+	internal
+#endif
+	int GetCharCount (byte [] bytes, int index, int count, bool refresh)
+	{
+		// Validate the parameters.
+		if (bytes == null)
+			throw new ArgumentNullException ("bytes");
+
+		if (index < 0 || index > bytes.Length)
+			throw new ArgumentOutOfRangeException
+				("index", Strings.GetString("ArgRange_Array"));
+
+		if (count < 0 || count > (bytes.Length - index))
+			throw new ArgumentOutOfRangeException
+				("count", Strings.GetString("ArgRange_Array"));
+
+
+
+		// Determine the total length of the converted string.
+		int value = 0;
+		byte[] table0208 = JISConvert.Convert.jisx0208ToUnicode;
+		byte[] table0212 = JISConvert.Convert.jisx0212ToUnicode;
+		int length = 0;
+		int byteval = 0;
+		int last = last_count;
+
+		while (count > 0) {
+			byteval = bytes [index++];
+			--count;
+			if (last == 0) {
+				if (byteval == 0x8F) {
+					if (byteval != 0) {
+						// Invalid second byte of a 3-byte character.
+						last = 0;
+						length++;
+					}
+					// First byte in a triple-byte sequence
+					else
+						last = byteval;
+				} else if (byteval <= 0x7F) {
+					// Ordinary ASCII/Latin1/Control character.
+					length++;
+				} else if (byteval == 0x8E) {
+					// First byte of half-width Katakana
+					last = byteval;
+				} else if (byteval >= 0xA1 && byteval <= 0xFE) {
+					// First byte in a double-byte sequence.
+					last = byteval;
+				} else {
+					// Invalid first byte.
+					length++;
+				}
+			}
+			else if (last == 0x8E) {
+				if (byteval >= 0xA1 && byteval <= 0xDF) {
+					value = ((byteval - 0x40) |
+						(last + 0x71) << 8);
+					length++;
+				} else {
+					// Invalid second byte.
+					length++;
+				}
+				last =0;
+			}
+			else if (last == 0x8F) {
+				// 3-byte character
+				// FIXME: currently not supported yet
+				last = byteval;
+			}
+			else
+			{
+				// Second byte in a double-byte sequence.
+				value = (last - 0xA1) * 0x5E;
+				last = 0;
+				if (byteval >= 0xA1 && byteval <= 0xFE)
+				{
+					value += (byteval - 0xA1);
+				}
+				else
+				{
+					// Invalid second byte.
+					last = 0;
+					length++;
+					continue;
+				}
+
+				value *= 2;
+				value = ((int) (table0208 [value]))
+					| (((int) (table0208 [value + 1])) << 8);
+				if (value == 0)
+					value = ((int) (table0212 [value]))
+						| (((int) (table0212 [value + 1])) << 8);
+				if (value != 0)
+					length++;
+				else
+					length++;
+			}
+		}
+
+		// seems like .NET 2.0 adds \u30FB for insufficient
+		// byte seuqence (for Japanese \u30FB makes sense).
+		if (refresh && last != 0)
+			length++;
+		else
+			last_count = last;
+
+		// Return the final length to the caller.
+		return length;
+	}
+
+	public override int GetChars (byte[] bytes, int byteIndex,
+						 int byteCount, char[] chars,
+						 int charIndex)
+	{
+		return GetChars (bytes, byteIndex, byteCount, chars, charIndex, false);
+	}
+
+#if NET_2_0
+	public override
+#else
+	internal
+#endif
+	int GetChars (byte[] bytes, int byteIndex,
+						 int byteCount, char[] chars,
+						 int charIndex, bool refresh)
+	{
+		// Validate the parameters.
+		if(bytes == null)
+		{
+			throw new ArgumentNullException("bytes");
+		}
+		if(chars == null)
+		{
+			throw new ArgumentNullException("chars");
+		}
+		if(byteIndex < 0 || byteIndex > bytes.Length)
+		{
+			throw new ArgumentOutOfRangeException
+				("byteIndex", Strings.GetString("ArgRange_Array"));
+		}
+		if(byteCount < 0 || byteCount > (bytes.Length - byteIndex))
+		{
+			throw new ArgumentOutOfRangeException
+				("byteCount", Strings.GetString("ArgRange_Array"));
+		}
+		if(charIndex < 0 || charIndex > chars.Length)
+		{
+			throw new ArgumentOutOfRangeException
+				("charIndex", Strings.GetString("ArgRange_Array"));
+		}
+
+		// Decode the bytes in the buffer.
+		int posn = charIndex;
+		int charLength = chars.Length;
+		int byteval, value;
+		int last = last_bytes;
+		byte[] table0208 = JISConvert.Convert.jisx0208ToUnicode;
+		byte[] table0212 = JISConvert.Convert.jisx0212ToUnicode;
+
+		while (byteCount > 0) {
+			byteval = bytes [byteIndex++];
+			--byteCount;
+			if (last == 0) {
+				if (byteval == 0x8F) {
+					if (byteval != 0) {
+						// Invalid second byte of a 3-byte character.
+						last = 0;
+						if (posn >= charLength)
+							throw Insufficient ();
+						chars [posn++] = '\u30FB';
+					}
+					// First byte in a triple-byte sequence
+					else
+						last = byteval;
+				} else if (byteval <= 0x7F) {
+					// Ordinary ASCII/Latin1/Control character.
+					if (posn >= charLength)
+						throw Insufficient ();
+					chars [posn++] = (char) byteval;
+				} else if (byteval == 0x8E) {
+					// First byte of half-width Katakana
+					last = byteval;
+				} else if (byteval >= 0xA1 && byteval <= 0xFE) {
+					// First byte in a double-byte sequence.
+					last = byteval;
+				} else {
+					// Invalid first byte.
+					if (posn >= charLength)
+						throw Insufficient ();
+					chars [posn++] = '\u30FB';
+				}
+			}
+			else if (last == 0x8E) {
+				if (byteval >= 0xA1 && byteval <= 0xDF) {
+					value = ((byteval - 0x40) |
+						(last + 0x71) << 8);
+					if (posn >= charLength)
+						throw Insufficient ();
+					chars [posn++] = (char) value;
+				} else {
+					// Invalid second byte.
+					if (posn >= charLength)
+						throw Insufficient ();
+					chars [posn++] = '\u30FB';
+				}
+				last =0;
+			}
+			else if (last == 0x8F) {
+				// 3-byte character
+				// FIXME: currently not supported yet
+				last = byteval;
+			}
+			else
+			{
+				// Second byte in a double-byte sequence.
+				value = (last - 0xA1) * 0x5E;
+				last = 0;
+				if (byteval >= 0xA1 && byteval <= 0xFE)
+				{
+					value += (byteval - 0xA1);
+				}
+				else
+				{
+					// Invalid second byte.
+					last = 0;
+					if (posn >= charLength)
+						throw Insufficient ();
+					chars [posn++] = '\u30FB';
+					continue;
+				}
+
+				value *= 2;
+				value = ((int) (table0208 [value]))
+					| (((int) (table0208 [value + 1])) << 8);
+				if (value == 0)
+					value = ((int) (table0212 [value]))
+						| (((int) (table0212 [value + 1])) << 8);
+				if (posn >= charLength)
+					throw Insufficient ();
+				if (value != 0)
+					chars [posn++] = (char)value;
+				else
+					chars [posn++] = '\u30FB';
+			}
+		}
+
+		if (refresh && last != 0) {
+			// seems like .NET 2.0 adds \u30FB for insufficient
+			// byte seuqence (for Japanese \u30FB makes sense).
+			if (posn >= charLength)
+				throw Insufficient ();
+			chars [posn++] = '\u30FB';
+		}
+		else
+			last_bytes = last;
+
+		// Return the final length to the caller.
+		return posn - charIndex;
+	}
+
+	Exception Insufficient ()
+	{
+		throw new ArgumentException
+			(Strings.GetString
+				("Arg_InsufficientSpace"), "chars");
+	}
+}; // class CP51932Decoder
+
+[Serializable]
 public class ENCeuc_jp : CP51932
 {
 	public ENCeuc_jp () : base() {}

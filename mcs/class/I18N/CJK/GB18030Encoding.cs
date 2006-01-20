@@ -11,13 +11,16 @@ using I18N.Common;
 
 namespace I18N.CJK
 {
+	[Serializable]
 	internal class ENCgb18030 : GB18030Encoding
 	{
 		public ENCgb18030 (): base () {}
 	}
 
+	[Serializable]
 	public class CP54936 : GB18030Encoding { }
 
+	[Serializable]
 	public class GB18030Encoding : MonoEncoding
 	{
 		// Constructor.
@@ -63,6 +66,16 @@ namespace I18N.CJK
 		public override int GetChars (byte [] bytes, int byteIdx, int srclen, char [] chars, int charIdx)
 		{
 			return new GB18030Decoder ().GetChars (bytes, byteIdx, srclen, chars, charIdx);
+		}
+
+		public override Encoder GetEncoder ()
+		{
+			return new GB18030Encoder (this);
+		}
+
+		public override Decoder GetDecoder ()
+		{
+			return new GB18030Decoder ();
 		}
 	}
 
@@ -227,7 +240,8 @@ namespace I18N.CJK
 				} else {
 					byte first = bytes [byteIndex];
 					int ord = ((first - 0x81) * 191 + second - 0x40) * 2;
-					char c1 = (char) (gb2312.n2u [ord] + gb2312.n2u [ord + 1] * 256);
+					char c1 = ord < 0 || ord >= gb2312.n2u.Length ?
+						'\0' : (char) (gb2312.n2u [ord] + gb2312.n2u [ord + 1] * 256);
 					if (c1 == 0)
 						chars [charIndex++] = '?';
 					else
@@ -249,13 +263,11 @@ namespace I18N.CJK
 		{
 		}
 
-		char incomplete;
+		char incomplete_byte_count;
+		char incomplete_bytes;
 
 		public override int GetByteCount (char [] chars, int start, int len, bool refresh)
 		{
-			if (refresh)
-				incomplete = char.MinValue;
-
 			if (chars == null)
 				throw new ArgumentNullException ("chars");
 			if (start < 0 || start > chars.Length)
@@ -274,10 +286,13 @@ namespace I18N.CJK
 					continue;
 				} else if (Char.IsSurrogate (ch)) {
 					// Surrogate
-					if (start + 1 == end)
-						break; // incomplete
-					ret += 4;
-					start += 2;
+					if (start + 1 == end) {
+						incomplete_byte_count = ch;
+						start++;
+					} else {
+						ret += 4;
+						start += 2;
+					}
 					continue;
 				}
 
@@ -298,13 +313,23 @@ namespace I18N.CJK
 				}
 
 				// non-GB2312
-				ret += 4;
+				long value = GB18030Source.FromUCS (ch);
+				if (value < 0)
+					ret++; // invalid(?)
+				else
+					ret += 4;
 				start++;
+			}
+
+			if (refresh) {
+				if (incomplete_byte_count != char.MinValue)
+					ret++;
+				incomplete_byte_count = char.MinValue;
 			}
 			return ret;
 		}
 
-		public unsafe override int GetBytesImpl (char* chars, int charCount, byte* bytes, int byteCount, bool flush)
+		public unsafe override int GetBytesImpl (char* chars, int charCount, byte* bytes, int byteCount, bool refresh)
 		{
 			int charIndex = 0;
 			int byteIndex = 0;
@@ -314,13 +339,13 @@ namespace I18N.CJK
 
 			int charEnd = charIndex + charCount;
 			int byteStart = byteIndex;
-			char ch = incomplete;
+			char ch = incomplete_bytes;
 
 			while (charIndex < charEnd) {
-				if (incomplete == char.MinValue)
+				if (incomplete_bytes == char.MinValue)
 					ch = chars [charIndex++];
 				else
-					incomplete = char.MinValue;
+					incomplete_bytes = char.MinValue;
 
 				if (ch < 0x80) {
 					// ASCII
@@ -329,7 +354,7 @@ namespace I18N.CJK
 				} else if (Char.IsSurrogate (ch)) {
 					// Surrogate
 					if (charIndex == charEnd) {
-						incomplete = ch;
+						incomplete_bytes = ch;
 						break; // incomplete
 					}
 					char ch2 = chars [charIndex++];
@@ -366,10 +391,21 @@ namespace I18N.CJK
 				}
 
 				long value = GB18030Source.FromUCS (ch);
-				// non-GB2312
-				GB18030Source.Unlinear (bytes + byteIndex, value);
-				byteIndex += 4;
+				if (value < 0)
+					bytes [byteIndex++] = 0x3F; // invalid(?)
+				else {
+					// non-GB2312
+					GB18030Source.Unlinear (bytes + byteIndex, value);
+					byteIndex += 4;
+				}
 			}
+
+			if (refresh) {
+				if (incomplete_bytes != char.MinValue)
+					bytes [byteIndex++] = 0x3F; // incomplete
+				incomplete_bytes = char.MinValue;
+			}
+
 			return byteIndex - byteStart;
 		}
 	}

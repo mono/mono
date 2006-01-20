@@ -7,6 +7,7 @@ namespace I18N.CJK
 	// FIXME:
 	// find out what is the difference between 50220, 50221 and 50222.
 
+	[Serializable]
 	public class CP50220 : ISO2022JPEncoding
 	{
 		public CP50220 ()
@@ -19,6 +20,7 @@ namespace I18N.CJK
 		}
 	}
 
+	[Serializable]
 	public class CP50221 : ISO2022JPEncoding
 	{
 		public CP50221 ()
@@ -31,6 +33,7 @@ namespace I18N.CJK
 		}
 	}
 
+	[Serializable]
 	public class CP50222 : ISO2022JPEncoding
 	{
 		public CP50222 ()
@@ -43,6 +46,7 @@ namespace I18N.CJK
 		}
 	}
 
+	[Serializable]
 	public class ISO2022JPEncoding : MonoEncoding
 	{
 		static JISConvert convert = JISConvert.Convert;
@@ -525,6 +529,7 @@ namespace I18N.CJK
 #endif
 	}
 
+	[Serializable]
 	public class ENCiso_2022_jp : CP50220
 	{
 		public ENCiso_2022_jp () : base() {}

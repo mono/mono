@@ -11,6 +11,7 @@ using I18N.Common;
 
 namespace I18N.CJK
 {
+    [Serializable]
     internal class CP949 : KoreanEncoding
     {
         // Magic number used by Windows for the UHC code page.
@@ -54,6 +55,7 @@ namespace I18N.CJK
         */
     }
 
+    [Serializable]
     internal class CP51949 : KoreanEncoding
     {
         // Magic number used by Windows for the euc-kr code page.
@@ -98,12 +100,17 @@ namespace I18N.CJK
 
     }
 
+    [Serializable]
     internal class KoreanEncoding : DbcsEncoding
     {
         // Constructor.
         public KoreanEncoding (int codepage, bool useUHC) : base (codepage) {
-            convert = KSConvert.Convert;
             this.useUHC = useUHC;
+        }
+
+        internal override DbcsConvert GetConvert ()
+        {
+                return KSConvert.Convert;
         }
 
         bool useUHC;
@@ -114,6 +121,7 @@ namespace I18N.CJK
         {
             int charIndex = 0;
             int byteIndex = 0;
+            DbcsConvert convert = GetConvert ();
 #if NET_2_0
             EncoderFallbackBuffer buffer = null;
 #endif
@@ -147,6 +155,7 @@ namespace I18N.CJK
         public override int GetChars(byte[] bytes, int byteIndex, int byteCount,
                          char[] chars, int charIndex)
         {
+            DbcsConvert convert = GetConvert ();
             base.GetChars(bytes, byteIndex, byteCount, chars, charIndex);
             int origIndex = charIndex;
             int lastByte = 0;
@@ -176,7 +185,7 @@ namespace I18N.CJK
                     else
                         ord = -1;
 
-                    if (ord >= 0)
+                      if (ord >= 0 && ord * 2 <= convert.n2u.Length)
                         c1 = (char)(convert.n2u[ord*2] +
                                     convert.n2u[ord*2 + 1] * 256);
                     else
@@ -193,7 +202,7 @@ namespace I18N.CJK
                     else
                         ord = -1;
 
-                    if (ord >= 0)
+                    if (ord >= 0 && ord * 2 < convert.n2u.Length)
                         c1 = (char)(convert.n2u[ord*2] +
                                     convert.n2u[ord*2 + 1] * 256);
                     else
@@ -201,7 +210,8 @@ namespace I18N.CJK
                 } else if (b >= 0xA1 && b <= 0xFE) { // KS X 1001
                     int ord = ((lastByte - 0xA1) * 94 + b - 0xA1) * 2;
 
-                    c1 = (char)(convert.n2u[ord] +
+                    c1 = ord < 0 || ord >= convert.n2u.Length ?
+                        '\0' : (char)(convert.n2u[ord] +
                                 convert.n2u[ord + 1] * 256);
                 } else
                     c1 = (char)0;
@@ -218,7 +228,7 @@ namespace I18N.CJK
         // Get a decoder that handles a rolling UHC state.
         public override Decoder GetDecoder()
         {
-            return new KoreanDecoder (convert, useUHC);
+            return new KoreanDecoder (GetConvert (), useUHC);
         }
 
         // Decoder that handles a rolling UHC state.
@@ -262,7 +272,7 @@ namespace I18N.CJK
                         else
                             ord = -1;
 
-                        if (ord >= 0)
+                        if (ord >= 0 && ord * 2 <= convert.n2u.Length)
                             c1 = (char)(convert.n2u[ord*2] +
                                         convert.n2u[ord*2 + 1] * 256);
                         else
@@ -279,7 +289,7 @@ namespace I18N.CJK
                         else
                             ord = -1;
 
-                        if (ord >= 0)
+                        if (ord >= 0 && ord * 2 <= convert.n2u.Length)
                             c1 = (char)(convert.n2u[ord*2] +
                                         convert.n2u[ord*2 + 1] * 256);
                         else
@@ -287,7 +297,8 @@ namespace I18N.CJK
                     } else if (b >= 0xA1 && b <= 0xFE) { // KS X 1001
                         int ord = ((lastByte - 0xA1) * 94 + b - 0xA1) * 2;
 
-                        c1 = (char)(convert.n2u[ord] +
+                        c1 = ord < 0 || ord >= convert.n2u.Length ?
+                            '\0' : (char)(convert.n2u[ord] +
                                     convert.n2u[ord + 1] * 256);
                     } else
                         c1 = (char)0;
@@ -303,11 +314,13 @@ namespace I18N.CJK
         }
     }
 
+    [Serializable]
     internal class ENCuhc : CP949
     {
         public ENCuhc() {}
     }
 
+    [Serializable]
     internal class ENCeuc_kr: CP51949
     {
         public ENCeuc_kr() {}

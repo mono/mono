@@ -11,6 +11,7 @@ using I18N.Common;
 
 namespace I18N.CJK
 {
+	[Serializable]
 	internal class CP950 : DbcsEncoding
 	{
 		// Magic number used by Windows for the Big5 code page.
@@ -18,13 +19,18 @@ namespace I18N.CJK
 		
 		// Constructor.
 		public CP950() : base(BIG5_CODE_PAGE) {
-			convert = Big5Convert.Convert;
 		}
-		
+
+		internal override DbcsConvert GetConvert ()
+		{
+			return Big5Convert.Convert;
+		}
+
 		// Get the bytes that result from encoding a character buffer.
 		public unsafe override int GetBytesImpl (char* chars, int charCount,
 					     byte* bytes, int byteCount)
 		{
+			DbcsConvert convert = GetConvert ();
 			int charIndex = 0;
 			int byteIndex = 0;
 #if NET_2_0
@@ -60,6 +66,7 @@ namespace I18N.CJK
 		public override int GetChars(byte[] bytes, int byteIndex, int byteCount,
 					     char[] chars, int charIndex)
 		{
+			DbcsConvert convert = GetConvert ();
 			// A1 40 - FA FF
 			base.GetChars(bytes, byteIndex, byteCount, chars, charIndex);
 			int origIndex = charIndex;
@@ -69,29 +76,35 @@ namespace I18N.CJK
 				if (lastByte == 0) {
 					if (b <= 0x80 || b == 0xFF) { // ASCII
 						chars[charIndex++] = (char)b;
-						continue;
 					} else if (b < 0xA1 || b >= 0xFA) {
-						continue;
+						// incorrect first byte.
+						chars[charIndex++] = '?';
+						byteCount--; // cut one more byte.
 					} else {
 						lastByte = b;
-						continue;
 					}
+					continue;
 				}
 				int ord = ((lastByte - 0xA1) * 191 + b - 0x40) * 2;
-				char c1 = (char)(convert.n2u[ord] + convert.n2u[ord + 1] * 256);
+				char c1 = ord < 0 || ord > convert.n2u.Length ?
+					'\0' :
+					(char)(convert.n2u[ord] + convert.n2u[ord + 1] * 256);
 				if (c1 == 0)
 					chars[charIndex++] = '?';
 				else
 					chars[charIndex++] = c1;
 				lastByte = 0;
 			}
+			if (lastByte != 0)
+				chars[charIndex++] = '?';
+
 			return charIndex - origIndex;
 		}
 		
 		// Get a decoder that handles a rolling Big5 state.
 		public override Decoder GetDecoder()
 		{
-			return new CP950Decoder(convert);
+			return new CP950Decoder(GetConvert ());
 		}
 		
 		// Get the mail body name for this encoding.
@@ -164,6 +177,7 @@ namespace I18N.CJK
 		}
 	}
 	
+	[Serializable]
 	internal class ENCbig5 : CP950
 	{
 		public ENCbig5() {}

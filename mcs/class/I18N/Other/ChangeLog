@@ -1,3 +1,9 @@
+2006-01-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CP1251.cs CP28594.cs CP28595.cs CP1257.cs CP1258.cs CP57002.cs
+	  CP874.cs CP20866.cs CP21866.cs (All) :
+	  Marked as [Serializable].
+
 2005-12-01  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CP57002.cs : Now its base class is MonoEncoding, and implemented 

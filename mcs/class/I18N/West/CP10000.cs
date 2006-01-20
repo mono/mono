@@ -31,6 +31,7 @@ using System;
 using System.Text;
 using I18N.Common;
 
+[Serializable]
 public class CP10000 : ByteEncoding
 {
 	public CP10000()
@@ -409,6 +410,7 @@ public class CP10000 : ByteEncoding
 
 }; // class CP10000
 
+[Serializable]
 public class ENCmacintosh : CP10000
 {
 	public ENCmacintosh() : base() {}
