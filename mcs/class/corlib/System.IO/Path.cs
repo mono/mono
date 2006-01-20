@@ -445,7 +445,7 @@ namespace System.IO {
 				int i = 0;
 				rng.GetNonZeroBytes (buffer);
 				while ((i < buffer.Length) && (sb.Length < 12)) {
-					char c = (char)i;
+					char c = (char) buffer [i];
 					if (Array.IndexOf (invalid, c) == -1)
 						sb.Append (c);
 					i++;

@@ -2,6 +2,15 @@
 
 	* StreamReader.cs: (ReadToEnd) if Read returns -1 or 0, we're done.
 
+2006-01-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Path.cs : (GetRandomFileName) use random buffer ;-) It somehow
+	  caused infinite loop on Windows.
+
+2006-01-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DirectoryInfo.cs : on Windows top directory is something like c:\.
+
 2006-01-13  Ben Maurer  <bmaurer@andrew.cmu.edu>
 
 	* TextWriter.cs: Call char[],int,int from the Write(char[]) method
