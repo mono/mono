@@ -651,10 +651,9 @@ namespace Mono.CSharp {
 				aliases = new Hashtable ();
 
 			if (aliases.Contains (name)) {
-				AliasEntry ae = (AliasEntry)aliases [name];
+				AliasEntry ae = (AliasEntry) aliases [name];
 				Report.SymbolRelatedToPreviousError (ae.Location, ae.Name);
-				Report.Error (1537, loc, "The using alias `" + name +
-					      "' appeared previously in this namespace");
+				Report.Error (1537, loc, "The using alias `{0}' appeared previously in this namespace", name);
 				return;
 			}
 
@@ -662,6 +661,14 @@ namespace Mono.CSharp {
 			    name == "global" && RootContext.WarningLevel >= 2)
 				Report.Warning (440, 2, loc, "An alias named `global' will not be used when resolving 'global::';" +
 					" the global namespace will be used instead");
+
+			// FIXME: get correct error number.  See if the above check can be merged
+			if (extern_aliases != null && extern_aliases.Contains (name)) {
+				AliasEntry ae = (AliasEntry) extern_aliases [name];
+				Report.SymbolRelatedToPreviousError (ae.Location, ae.Name);
+				Report.Error (1537, loc, "The using alias `{0}' appeared previously in this namespace", name);
+				return;
+			}
 
 			aliases [name] = new LocalAliasEntry (Doppelganger, name, alias, loc);
 		}
@@ -673,20 +680,16 @@ namespace Mono.CSharp {
 				return;
 			}
 			
-			if (aliases == null)
-				aliases = new Hashtable ();
-			
 			// Share the extern_aliases field with the Doppelganger
 			if (extern_aliases == null) {
 				extern_aliases = new ListDictionary ();
 				Doppelganger.extern_aliases = extern_aliases;
 			}
-			
-			if (aliases.Contains (name)) {
-				AliasEntry ae = (AliasEntry) aliases [name];
+
+			if (extern_aliases.Contains (name)) {
+				AliasEntry ae = (AliasEntry) extern_aliases [name];
 				Report.SymbolRelatedToPreviousError (ae.Location, ae.Name);
-				Report.Error (1537, loc, "The using alias `" + name +
-					      "' appeared previously in this namespace");
+				Report.Error (1537, loc, "The using alias `{0}' appeared previously in this namespace", name);
 				return;
 			}
 
@@ -698,7 +701,6 @@ namespace Mono.CSharp {
 			// Register the alias in aliases and extern_aliases, since we need both of them
 			// to keep things simple (different resolution scenarios)
 			ExternAliasEntry alias = new ExternAliasEntry (Doppelganger, name, loc);
-			aliases [name] = alias;
 			extern_aliases [name] = alias;
 		}
 
@@ -723,16 +725,13 @@ namespace Mono.CSharp {
 		public FullNamedExpression LookupAlias (string name)
 		{
 			AliasEntry entry = null;
-			// We use Parent rather than ImplicitParent since we know implicit namespace declarations
-			// cannot have using entries.
-			for (NamespaceEntry n = this; n != null; n = n.Parent) {
-				if (n.aliases == null)
-					continue;
-				entry = n.aliases [name] as AliasEntry;
-				if (entry != null)
-					return entry.Resolve ();
+			for (NamespaceEntry n = this; n != null; n = n.ImplicitParent) {
+				if (n.extern_aliases != null && (entry = n.extern_aliases [name] as AliasEntry) != null)
+					break;
+				if (n.aliases != null && (entry = n.aliases [name] as AliasEntry) != null)
+					break;
 			}
-			return null;
+			return entry == null ? null : entry.Resolve ();
 		}
 
 		private FullNamedExpression Lookup (DeclSpace ds, string name, Location loc, bool ignore_cs0104)
@@ -873,6 +872,11 @@ namespace Mono.CSharp {
 		/// </summary>
 		void VerifyUsing ()
 		{
+			if (extern_aliases != null) {
+				foreach (DictionaryEntry de in extern_aliases)
+					((AliasEntry) de.Value).Resolve ();
+			}		
+
 			if (using_clauses != null) {
 				foreach (UsingEntry ue in using_clauses)
 					ue.Resolve ();

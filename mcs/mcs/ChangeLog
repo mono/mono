@@ -1,3 +1,12 @@
+2006-01-21  Raja R Harinath  <harinath@gmail.com>
+	    Carlos Alberto Cortez  <calberto.cortez@gmail.com>
+
+	Fix rest of #76995.
+	* namespace.cs (NamespaceEntry.UsingExternalAliases): Don't add to
+	the 'aliases' hash.
+	(NamespaceEntry.LookupAlias): Lookup 'extern_aliases' hash too.
+	(NamespaceEntry.VerifyUsing): Resolve external aliases too.
+
 2006-01-18  Raja R Harinath  <rharinath@novell.com>
 
 	Fix #76656, cs0231-2.cs.
