@@ -1,3 +1,8 @@
+2006-01-21  Jordi Mas i Hernandez <jordimash@gmail.com>
+
+	* DataGrid.cs: Allows row number set internally higher than the last
+	when creating a new row. Restores the editing functionality.
+
 2006-01-20  Mike Kestner  <mkestner@novell.com>
 
 	* MimeIcon.cs: delay Image creation until the icons are accessed

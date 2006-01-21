@@ -442,35 +442,18 @@ namespace System.Windows.Forms
 			}
 
 			set {
-				if (!current_cell.Equals (value)) {
-					CancelEditing ();
+				if (current_cell.Equals (value)) 
+					return;
 					
-					int old_row = current_cell.RowNumber;
-					
-					if (value.RowNumber >= RowsCount) {
-						value.RowNumber = RowsCount == 0 ? 0 : RowsCount - 1;
-					}
-					
-					if (value.ColumnNumber >= CurrentTableStyle.GridColumnStyles.Count) {
-						value.ColumnNumber = CurrentTableStyle.GridColumnStyles.Count == 0 ? 0: CurrentTableStyle.GridColumnStyles.Count - 1;
-					}
-					
-					EnsureCellVisilibility (value);
-					current_cell = value;					
-					
-					if (current_cell.RowNumber != old_row) {
-						grid_drawing.InvalidateRowHeader (old_row);
-					}
-					
-					accept_listmgrevents = false;
-
-					if (cached_currencymgr_events !=  null) {
-						cached_currencymgr_events.Position = current_cell.RowNumber;
-					}
-					accept_listmgrevents = true;
-					InvalidateCurrentRowHeader ();
-					OnCurrentCellChanged (EventArgs.Empty);
+				if (value.RowNumber >= RowsCount) {
+					value.RowNumber = RowsCount == 0 ? 0 : RowsCount - 1;
 				}
+					
+				if (value.ColumnNumber >= CurrentTableStyle.GridColumnStyles.Count) {
+					value.ColumnNumber = CurrentTableStyle.GridColumnStyles.Count == 0 ? 0: CurrentTableStyle.GridColumnStyles.Count - 1;
+				}
+					
+				SetCurrentCell (value);
 			}
 		}
 
@@ -1322,7 +1305,7 @@ namespace System.Windows.Forms
 
 				if (new_cell.Equals (current_cell) == false) {
 					CancelEditing ();
-					CurrentCell = new_cell;
+					SetCurrentCell (new_cell);
 					EditCell (current_cell);
 
 				} else {
@@ -1888,6 +1871,32 @@ namespace System.Windows.Forms
 		internal void InvalidateCurrentRowHeader ()
 		{
 			grid_drawing.InvalidateRowHeader (current_cell.RowNumber);
+		}
+		
+		private void SetCurrentCell (DataGridCell value)
+		{		
+			if (current_cell.Equals (value))
+				return;
+				
+			CancelEditing ();
+					
+			int old_row = current_cell.RowNumber;
+						
+			EnsureCellVisilibility (value);
+			current_cell = value;					
+			
+			if (current_cell.RowNumber != old_row) {
+				grid_drawing.InvalidateRowHeader (old_row);
+			}
+			
+			accept_listmgrevents = false;
+
+			if (cached_currencymgr_events !=  null) {
+				cached_currencymgr_events.Position = current_cell.RowNumber;
+			}
+			accept_listmgrevents = true;
+			InvalidateCurrentRowHeader ();
+			OnCurrentCellChanged (EventArgs.Empty);
 		}
 
 		private bool SetDataMember (string member)
