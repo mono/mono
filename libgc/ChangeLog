@@ -1,3 +1,8 @@
+2006-01-21  Martin Baulig  <martin@ximian.com>
+
+	* include/libgc-mono-debugger.h: Call the conditional
+	`_IN_THE_MONO_DEBUGGER', not `IN_MONO_DEBUGGER'.
+
 2006-01-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* include/private/gcconfig.h: Undef _FILE_OFFSET_BITS on sparc.
