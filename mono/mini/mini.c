@@ -9523,6 +9523,27 @@ mono_local_deadce (MonoCompile *cfg)
 				if (MONO_IS_STORE_MEMBASE (ins))
 					mono_bitset_set_fast (used, ins->dreg);
 			}
+
+#ifdef __x86_64__
+			/* FIXME: Optimize this and clean it up */
+			if (((ins->opcode >= OP_VOIDCALL) && (ins->opcode <= OP_VOIDCALL_MEMBASE)) ||
+				((ins->opcode >= OP_FCALL) && (ins->opcode <= OP_FCALL_MEMBASE)) ||
+				((ins->opcode >= OP_LCALL) && (ins->opcode <= OP_LCALL_MEMBASE)) ||
+				((ins->opcode >= OP_VCALL) && (ins->opcode <= OP_VCALL_MEMBASE)) ||
+				((ins->opcode >= OP_CALL) && (ins->opcode <= OP_CALL_MEMBASE))) {
+				MonoCallInst *call = (MonoCallInst*)call;
+				GSList *l;
+
+				for (l = call->out_ireg_args; l; l = l->next) {
+					guint32 regpair, reg;
+
+					regpair = (guint32)(gssize)(l->data);
+					reg = regpair & 0xffffff;
+					
+					mono_bitset_set_fast (used, reg);
+				}
+			}
+#endif
 		}
 
 		if (ins && ins->opcode == OP_LDADDR)

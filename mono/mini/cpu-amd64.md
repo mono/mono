@@ -54,12 +54,14 @@
 # See the code in mini-x86.c for more details on how the specifiers are used.
 #
 nop: len:0
+op_nop: len:0
 dummy_use: len:0
 dummy_store: len:0
 not_reached: len:0
 break: len:2
 jmp: len:42
 br: len:6
+
 beq: len:8
 bge: len:8
 bgt: len:8
@@ -70,6 +72,11 @@ bge.un: len:8
 bgt.un: len:8
 ble.un: len:8
 blt.un: len:8
+
+op_br: len: 6
+op_jmp: len:42
+op_break: len:2
+
 label:
 ldind.i1: dest:i len:8
 ldind.u1: dest:i len:8
@@ -160,6 +167,7 @@ op_rethrow: src1:i len:18
 start_handler: len:32
 endfinally: len:32
 op_endfilter: src1:a len:32
+op_endfinally: len:32
 
 conv.ovf.i4.un: dest:i src1:i len:16
 conv.ovf.u4.un: 

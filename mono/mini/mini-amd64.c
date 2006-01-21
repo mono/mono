@@ -1745,7 +1745,7 @@ emit_call (MonoCompile *cfg, guint8 *code, guint32 patch_type, gconstpointer dat
 }
 
 /* FIXME: Add more instructions */
-#define INST_IGNORES_CFLAGS(ins) (((ins)->opcode == CEE_BR) || ((ins)->opcode == OP_STORE_MEMBASE_IMM) || ((ins)->opcode == OP_STOREI8_MEMBASE_REG) || ((ins)->opcode == OP_MOVE) || ((ins)->opcode == OP_ICONST) || ((ins)->opcode == OP_I8CONST) || ((ins)->opcode == OP_LOAD_MEMBASE))
+#define INST_IGNORES_CFLAGS(ins) (((ins)->opcode == CEE_BR) || ((ins)->opcode == OP_BR) || ((ins)->opcode == OP_STORE_MEMBASE_IMM) || ((ins)->opcode == OP_STOREI8_MEMBASE_REG) || ((ins)->opcode == OP_MOVE) || ((ins)->opcode == OP_ICONST) || ((ins)->opcode == OP_I8CONST) || ((ins)->opcode == OP_LOAD_MEMBASE))
 
 static void
 peephole_pass (MonoCompile *cfg, MonoBasicBlock *bb)
@@ -2652,9 +2652,11 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			amd64_alu_reg_membase_size (code, X86_CMP, ins->sreg1, ins->sreg2, ins->inst_offset, 4);
 			break;
 		case CEE_BREAK:
+		case OP_BREAK:
 			amd64_breakpoint (code);
 			break;
 		case CEE_NOP:
+		case OP_NOP:
 		case OP_DUMMY_USE:
 		case OP_DUMMY_STORE:
 		case OP_NOT_REACHED:
@@ -3082,7 +3084,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			}
 			break;
 		}
-		case CEE_JMP: {
+		case CEE_JMP:
+		case OP_JMP: {
 			/*
 			 * Note: this 'frame destruction' logic is useful for tail calls, too.
 			 * Keep in sync with the code in emit_epilog.
@@ -3301,7 +3304,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			amd64_mov_membase_reg (code, spvar->inst_basereg, spvar->inst_offset, AMD64_RSP, 8);
 			break;
 		}
-		case CEE_ENDFINALLY: {
+		case CEE_ENDFINALLY:
+		case OP_ENDFINALLY: {
 			MonoInst *spvar = mono_find_spvar_for_region (cfg, bb->region);
 			amd64_mov_reg_membase (code, AMD64_RSP, spvar->inst_basereg, spvar->inst_offset, 8);
 			amd64_ret (code);
@@ -3319,6 +3323,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			ins->inst_c0 = code - cfg->native_code;
 			break;
 		case CEE_BR:
+		case OP_BR:
 			//g_print ("target: %p, next: %p, curr: %p, last: %p\n", ins->inst_target_bb, bb->next_bb, ins, bb->last_ins);
 			//if ((ins->inst_target_bb == bb->next_bb) && ins == bb->last_ins)
 			//break;

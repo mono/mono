@@ -861,8 +861,6 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 			GList *spill;
 
 			if (spec [MONO_INST_SRC1] == 'f') {
-				if (!reginfof)
-					reginfof = g_malloc0 (sizeof (RegTrack) * rs->next_vfreg);
 				spill = g_list_first (fspill_list);
 				if (spill && fpcount < MONO_ARCH_FPSTACK_SIZE) {
 					reginfof [ins->sreg1].flags |= MONO_FP_NEEDS_LOAD;
@@ -872,8 +870,6 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 			}
 
 			if (spec [MONO_INST_SRC2] == 'f') {
-				if (!reginfof)
-					reginfof = g_malloc0 (sizeof (RegTrack) * rs->next_vfreg);
 				spill = g_list_first (fspill_list);
 				if (spill) {
 					reginfof [ins->sreg2].flags |= MONO_FP_NEEDS_LOAD;
@@ -888,8 +884,6 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 			}
 
 			if (dreg_is_fp (ins)) {
-				if (!reginfof)
-					reginfof = g_malloc0 (sizeof (RegTrack) * rs->next_vfreg);
 				if (use_fpstack && (spec [MONO_INST_CLOB] != 'm')) {
 					if (fpcount >= MONO_ARCH_FPSTACK_SIZE) {
 						reginfof [ins->dreg].flags |= MONO_FP_NEEDS_SPILL;
@@ -904,6 +898,8 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 
 		if (spec [MONO_INST_SRC1]) {
 			fp = spec [MONO_INST_SRC1] == 'f';
+			if (fp && !reginfof)
+				reginfof = g_malloc0 (sizeof (RegTrack) * rs->next_vfreg);
 			reginfo1 = fp ? reginfof : reginfo;
 			g_assert (ins->sreg1 != -1);
 			if (cfg->new_ir && is_soft_reg (ins->sreg1, fp))
@@ -926,6 +922,8 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 		}
 		if (spec [MONO_INST_SRC2]) {
 			fp = spec [MONO_INST_SRC2] == 'f';
+			if (fp && !reginfof)
+				reginfof = g_malloc0 (sizeof (RegTrack) * rs->next_vfreg);
 			reginfo2 = fp ? reginfof : reginfo;
 			g_assert (ins->sreg2 != -1);
 			if (cfg->new_ir && is_soft_reg (ins->sreg2, fp))
@@ -950,6 +948,8 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 			int dest_dreg;
 
 			fp = dreg_is_fp (ins);
+			if (fp && !reginfof)
+				reginfof = g_malloc0 (sizeof (RegTrack) * rs->next_vfreg);
 			reginfod = fp ? reginfof : reginfo;
 			if (spec [MONO_INST_DEST] != 'b') /* it's not just a base register */
 				reginfod [ins->dreg].killed_in = i;
@@ -1029,7 +1029,8 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 	fspill = 0;
 
 	DEBUG (print_regtrack (reginfo, rs->next_vireg));
-	DEBUG (print_regtrack (reginfof, rs->next_vfreg));
+	if (reginfof)
+		DEBUG (print_regtrack (reginfof, rs->next_vfreg));
 	tmp = reversed;
 	while (tmp) {
 		int prev_dreg, prev_sreg1, prev_sreg2, clob_dreg;
