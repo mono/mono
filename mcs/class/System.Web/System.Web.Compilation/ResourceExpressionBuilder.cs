@@ -61,10 +61,14 @@ namespace System.Web.Compilation {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public static ResourceExpressionFields ParseExpression (string expression)
 		{
-			throw new NotImplementedException ();
+			int comma = expression.IndexOf (',');
+			if (comma == -1)
+				return new ResourceExpressionFields (expression.Trim ());
+			else
+				return new ResourceExpressionFields (expression.Substring (0, comma).Trim (),
+								     expression.Substring (comma + 1).Trim ());
 		}
 
 		[MonoTODO]

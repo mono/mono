@@ -34,24 +34,26 @@ namespace System.Web.Compilation {
 
 	public sealed class ResourceExpressionFields {
 
-		internal ResourceExpressionFields ()
+		internal ResourceExpressionFields (string classKey, string resourceKey)
+		{
+			this.classKey = classKey;
+			this.resourceKey = resourceKey;
+		}
+
+		internal ResourceExpressionFields (string resourceKey) : this (null, resourceKey)
 		{
 		}
 
-		[MonoTODO]
 		public string ClassKey {
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return classKey; }
 		}
 
-
-		[MonoTODO]
 		public string ResourceKey {
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return resourceKey; }
 		}
+
+		string classKey;
+		string resourceKey;
 	}
 
 }

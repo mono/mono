@@ -1,5 +1,11 @@
 2006-01-20  Chris Toshok  <toshok@ximian.com>
 
+	* ResourceExpressionBuilder.cs (ParseExpression): implement.
+
+	* ResourceExpressionFields.cs: implement.
+
+2006-01-20  Chris Toshok  <toshok@ximian.com>
+
 	* ClientBuildManagerParameter.cs: implement.
 
 	* ClientBuildManagerCallback.cs: this class contains an empty
