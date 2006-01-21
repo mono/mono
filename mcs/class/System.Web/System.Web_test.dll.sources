@@ -8,6 +8,7 @@ System.Web/HttpRequestTest.cs
 System.Web/HttpResponseTest.cs
 System.Web/HttpServerUtilityTest.cs
 System.Web/HttpUtilityTest.cs
+System.Web.Compilation/ClientBuildManagerParameterTest.cs
 System.Web.Configuration/AnonymousIdentificationSectionTest.cs
 System.Web.Configuration/AssemblyCollectionTest.cs
 System.Web.Configuration/AssemblyInfoTest.cs
