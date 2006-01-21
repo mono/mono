@@ -1,0 +1,4 @@
+2006-01-20  Chris Toshok  <toshok@ximian.com>
+
+	* ClientBuildManagerParameterTest.cs: new test.
+
