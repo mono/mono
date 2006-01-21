@@ -57,6 +57,7 @@ compute_dominators (MonoCompile *cfg) {
 
 		while (l_begin != l_end) {
 			MonoBasicBlock *bb = worklist [l_begin ++];
+			gboolean bb_changed = FALSE;
 
 			in_worklist [bb->dfn] = FALSE;
 
@@ -71,30 +72,43 @@ compute_dominators (MonoCompile *cfg) {
 				printf ("\n");
 #endif
 
-			if (bb->in_count == 0) {
-				mono_bitset_clear_all (T);
-			} else {
-				if ((bb->in_count > 0) && (bb->in_bb [0]->dominators))
-					mono_bitset_copyto (bb->in_bb [0]->dominators, T);
-				else
-					mono_bitset_set_all (T);
-				for (j = 1; j < bb->in_count; ++j) {
-					if (bb->in_bb [j]->dominators)
-						mono_bitset_intersection (T, bb->in_bb [j]->dominators);
+			if (!bb->dominators && (bb->in_count == 1) && (bb->in_bb [0]->dominators)) {
+				/* Short circuit common case */
+				bb->dominators = mono_bitset_mem_new (mem, cfg->num_bblocks, 0);
+				mem += bitsize;
+
+				mono_bitset_copyto (bb->in_bb [0]->dominators, bb->dominators);
+				mono_bitset_set (bb->dominators, bb->dfn);
+				bb_changed = TRUE;
+			}
+			else {
+				if (bb->in_count == 0) {
+					mono_bitset_clear_all (T);
+				} else {
+					if ((bb->in_count > 0) && (bb->in_bb [0]->dominators))
+						mono_bitset_copyto (bb->in_bb [0]->dominators, T);
+					else
+						mono_bitset_set_all (T);
+					for (j = 1; j < bb->in_count; ++j) {
+						if (bb->in_bb [j]->dominators)
+							mono_bitset_intersection (T, bb->in_bb [j]->dominators);
+					}
+				}
+
+				mono_bitset_set (T, bb->dfn);
+				if (!bb->dominators || !mono_bitset_equal (T, bb->dominators)) {
+					if (!bb->dominators) {
+						bb->dominators = mono_bitset_mem_new (mem, cfg->num_bblocks, 0);
+						mem += bitsize;
+					}
+					mono_bitset_copyto (T, bb->dominators);
+					bb_changed = TRUE;
 				}
 			}
 
-			mono_bitset_set (T, bb->dfn);
-			if (!bb->dominators || !mono_bitset_equal (T, bb->dominators)) {
+			if (bb_changed) {
 				changes = TRUE;
-
-				if (!bb->dominators) {
-					bb->dominators = mono_bitset_mem_new (mem, cfg->num_bblocks, 0);
-					mem += bitsize;
-					mono_bitset_set_all (bb->dominators);
-				}
-				mono_bitset_copyto (T, bb->dominators);
-
+					
 				for (j = 0; j < bb->out_count; ++j) {
 					MonoBasicBlock *out_bb = bb->out_bb [j];
 					if (!in_worklist [out_bb->dfn]) {
