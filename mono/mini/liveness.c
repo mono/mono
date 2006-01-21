@@ -69,75 +69,6 @@ update_gen_kill_set (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *inst, int i
 	int arity;
 	int max_vars = cfg->num_varinfo;
 
-	if (cfg->new_ir) {
-		MonoInst *ins = inst;
-		const char *spec = ins_info [ins->opcode - OP_START - 1];
-		int regtype, srcindex, sreg;
-		gboolean store;
-
-#ifdef DEBUG_LIVENESS
-			printf ("\t"); mono_print_ins (ins);
-#endif
-
-		if (ins->opcode == OP_NOP)
-			return;
-
-		if (MONO_IS_STORE_MEMBASE (ins))
-			store = TRUE;
-		else if (MONO_IS_STORE_MEMINDEX (ins))
-			g_assert_not_reached ();
-		else
-			store = FALSE;
-
-		/* SREGS */
-		/* These must come first, so MOVE r <- r is handled correctly */
-		for (srcindex = 0; srcindex < 2; ++srcindex) {
-			regtype = spec [(srcindex == 0) ? MONO_INST_SRC1 : MONO_INST_SRC2];
-			sreg = srcindex == 0 ? ins->sreg1 : ins->sreg2;
-
-			g_assert (((sreg == -1) && (regtype == ' ')) || ((sreg != -1) && (regtype != ' ')));
-			if ((sreg != -1) && get_vreg_to_inst (cfg, regtype, sreg)) {
-				MonoInst *var = cfg->vreg_to_inst [regtype][sreg];
-				int idx = var->inst_c0;
-				MonoMethodVar *vi = MONO_VARINFO (cfg, idx);
-
-#ifdef DEBUG_LIVENESS
-				printf ("\tGEN: R%d(%d)\n", sreg, idx);
-#endif
-				update_live_range (cfg, idx, bb->dfn, inst_num); 
-				if (!mono_bitset_test (bb->kill_set, idx))
-					mono_bitset_set (bb->gen_set, idx);
-				vi->spill_costs += 1 + (bb->nesting * 2);
-			}
-		}
-
-		/* DREG */
-		regtype = spec [MONO_INST_DEST];
-		g_assert (((ins->dreg == -1) && (regtype == ' ')) || ((ins->dreg != -1) && (regtype != ' ')));
-				
-		if ((ins->dreg != -1) && get_vreg_to_inst (cfg, regtype, ins->dreg)) {
-			MonoInst *var = cfg->vreg_to_inst [regtype][ins->dreg];
-			int idx = var->inst_c0;
-			MonoMethodVar *vi = MONO_VARINFO (cfg, idx);
-
-			if (store) {
-				update_live_range (cfg, idx, bb->dfn, inst_num); 
-				if (!mono_bitset_test (bb->kill_set, idx))
-					mono_bitset_set (bb->gen_set, idx);
-				vi->spill_costs += 1 + (bb->nesting * 2);
-			} else {
-#ifdef DEBUG_LIVENESS
-				printf ("\tKILL: R%d(%d)\n", ins->dreg, idx);
-#endif
-				update_live_range (cfg, idx, bb->dfn, inst_num); 
-				mono_bitset_set (bb->kill_set, idx);
-				vi->spill_costs += 1 + (bb->nesting * 2);
-			}
-		}
-
-		return;
-	}
-
 	arity = mono_burg_arity [inst->opcode];
 	if (arity)
 		update_gen_kill_set (cfg, bb, inst->inst_i0, inst_num);
@@ -347,6 +278,78 @@ handle_exception_clauses (MonoCompile *cfg)
 	g_slist_free (visited);
 }
 
+static void
+analyze_liveness_bb (MonoCompile *cfg, MonoBasicBlock *bb)
+{
+	MonoInst *ins;
+	int regtype, srcindex, sreg, inst_num;
+	gboolean store;
+
+	for (inst_num = 0, ins = bb->code; ins; ins = ins->next, inst_num ++) {
+		const char *spec = ins_info [ins->opcode - OP_START - 1];
+
+#ifdef DEBUG_LIVENESS
+			printf ("\t"); mono_print_ins (ins);
+#endif
+
+		if (ins->opcode == OP_NOP)
+			continue;
+
+		if (MONO_IS_STORE_MEMBASE (ins))
+			store = TRUE;
+		else if (MONO_IS_STORE_MEMINDEX (ins))
+			g_assert_not_reached ();
+		else
+			store = FALSE;
+
+		/* SREGS */
+		/* These must come first, so MOVE r <- r is handled correctly */
+		for (srcindex = 0; srcindex < 2; ++srcindex) {
+			regtype = spec [(srcindex == 0) ? MONO_INST_SRC1 : MONO_INST_SRC2];
+			sreg = srcindex == 0 ? ins->sreg1 : ins->sreg2;
+
+			g_assert (((sreg == -1) && (regtype == ' ')) || ((sreg != -1) && (regtype != ' ')));
+			if ((sreg != -1) && get_vreg_to_inst (cfg, regtype, sreg)) {
+				MonoInst *var = cfg->vreg_to_inst [regtype][sreg];
+				int idx = var->inst_c0;
+				MonoMethodVar *vi = MONO_VARINFO (cfg, idx);
+
+#ifdef DEBUG_LIVENESS
+				printf ("\tGEN: R%d(%d)\n", sreg, idx);
+#endif
+				update_live_range (cfg, idx, bb->dfn, inst_num); 
+				if (!mono_bitset_test (bb->kill_set, idx))
+					mono_bitset_set (bb->gen_set, idx);
+				vi->spill_costs += 1 + (bb->nesting * 2);
+			}
+		}
+
+		/* DREG */
+		regtype = spec [MONO_INST_DEST];
+		g_assert (((ins->dreg == -1) && (regtype == ' ')) || ((ins->dreg != -1) && (regtype != ' ')));
+				
+		if ((ins->dreg != -1) && get_vreg_to_inst (cfg, regtype, ins->dreg)) {
+			MonoInst *var = cfg->vreg_to_inst [regtype][ins->dreg];
+			int idx = var->inst_c0;
+			MonoMethodVar *vi = MONO_VARINFO (cfg, idx);
+
+			if (store) {
+				update_live_range (cfg, idx, bb->dfn, inst_num); 
+				if (!mono_bitset_test (bb->kill_set, idx))
+					mono_bitset_set (bb->gen_set, idx);
+				vi->spill_costs += 1 + (bb->nesting * 2);
+			} else {
+#ifdef DEBUG_LIVENESS
+				printf ("\tKILL: R%d(%d)\n", ins->dreg, idx);
+#endif
+				update_live_range (cfg, idx, bb->dfn, inst_num); 
+				mono_bitset_set (bb->kill_set, idx);
+				vi->spill_costs += 1 + (bb->nesting * 2);
+			}
+		}
+	}
+}
+
 /* generic liveness analysis code. CFG specific parts are 
  * in update_gen_kill_set()
  */
@@ -394,12 +397,16 @@ mono_analyze_liveness (MonoCompile *cfg)
 
 		if (cfg->aliasing_info != NULL)
 			mono_aliasing_initialize_code_traversal (cfg->aliasing_info, bb);
-		
-		for (tree_num = 0, inst = bb->code; inst; inst = inst->next, tree_num++) {
+
+		if (cfg->new_ir) {
+			analyze_liveness_bb (cfg, bb);
+		} else {
+			for (tree_num = 0, inst = bb->code; inst; inst = inst->next, tree_num++) {
 #ifdef DEBUG_LIVENESS
-			mono_print_tree (inst); printf ("\n");
+				mono_print_tree (inst); printf ("\n");
 #endif
-			update_gen_kill_set (cfg, bb, inst, tree_num);
+				update_gen_kill_set (cfg, bb, inst, tree_num);
+			}
 		}
 
 #ifdef DEBUG_LIVENESS

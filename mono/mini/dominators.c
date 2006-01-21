@@ -23,6 +23,10 @@ compute_dominators (MonoCompile *cfg) {
 	gboolean *in_worklist;
 	MonoBasicBlock **worklist;
 	guint32 l_begin, l_end;
+#ifdef DEBUG_DOMINATORS	
+	MonoBasicBlock *bb;
+	int i;
+#endif
 
 	g_assert (!(cfg->comp_done & MONO_COMP_DOM));
 
@@ -32,7 +36,7 @@ compute_dominators (MonoCompile *cfg) {
 	l_begin = 0;
 	l_end = 0;
 
-	mem = mono_mempool_alloc0 (cfg->mempool, bitsize * (cfg->num_bblocks + 1));
+	mem = mono_mempool_alloc (cfg->mempool, bitsize * (cfg->num_bblocks + 1));
 
 	/* the first is always the entry */
 	worklist [l_end ++] = cfg->bblocks [0];
@@ -72,6 +76,12 @@ compute_dominators (MonoCompile *cfg) {
 				printf ("\n");
 #endif
 
+			/*
+			 * Compute T = intersect(in.dominator | in <- bb.in_bb).
+			 * 
+			 * This is performance critical so use various tricks to speed it
+			 * up for methods with lots of basic blocks.
+			 */
 			if (!bb->dominators && (bb->in_count == 1) && (bb->in_bb [0]->dominators)) {
 				/* Short circuit common case */
 				bb->dominators = mono_bitset_mem_new (mem, cfg->num_bblocks, 0);
@@ -84,6 +94,12 @@ compute_dominators (MonoCompile *cfg) {
 			else {
 				if (bb->in_count == 0) {
 					mono_bitset_clear_all (T);
+				} else if ((bb->in_count > 1) && bb->in_bb [0]->dominators && bb->in_bb [1]->dominators) {
+						mono_bitset_intersection_2 (T, bb->in_bb [0]->dominators, bb->in_bb [1]->dominators);
+						for (j = 2; j < bb->in_count; ++j) {
+							if (bb->in_bb [j]->dominators)
+								mono_bitset_intersection (T, bb->in_bb [j]->dominators);
+						}
 				} else {
 					if ((bb->in_count > 0) && (bb->in_bb [0]->dominators))
 						mono_bitset_copyto (bb->in_bb [0]->dominators, T);
@@ -143,65 +159,58 @@ compute_dominators (MonoCompile *cfg) {
 
 static void
 compute_idominators (MonoCompile* m) {
-	char *mem;
-	int bitsize, i, s, t;
-	MonoBitSet **T, *temp;
+	int i, s, t;
+	MonoBitSet *temp;
 	MonoBasicBlock *bb;
 
 	g_assert (!(m->comp_done & MONO_COMP_IDOM));
 
-	bitsize = mono_bitset_alloc_size (m->num_bblocks, 0);
-	mem = mono_mempool_alloc (m->mempool, bitsize * (m->num_bblocks + 1));
-	T = mono_mempool_alloc (m->mempool, sizeof (MonoBitSet*) * m->num_bblocks);
+	temp = mono_bitset_new (m->num_bblocks, 0);
 
-	for (i = 0; i < m->num_bblocks; ++i) {
+	for (i = 1; i < m->num_bblocks; ++i) {
 		bb = m->bblocks [i];
-		T [i] = mono_bitset_mem_new (mem, m->num_bblocks, 0);
-		mono_bitset_copyto (bb->dominators, T [i]);
-		mono_bitset_clear (T [i], i);
-		if (mono_bitset_count (bb->dominators) - 1 != mono_bitset_count (T [i])) {
+		if (!mono_bitset_test_fast (bb->dominators, i)) {
 			mono_blockset_print (m, bb->dominators, "dominators", -1);
-			mono_blockset_print (m, T [i], "T [i]", -1);
 			g_error ("problem at %d (%d)\n", i, bb->dfn);
 		}
-		mem += bitsize;
-	}
-	temp = mono_bitset_mem_new (mem, m->num_bblocks, 0);
+		if (bb->in_count == 1) {
+			/* An optimization, bb's immediate dominator is its predecessor */
+			s = bb->in_bb [0]->dfn;
+		} else {
+			int last;
 
-	for (i = 1; i < m->num_bblocks; ++i) {
+			mono_bitset_copyto (bb->dominators, temp);
+			mono_bitset_clear_fast (temp, i);
 
-		temp = T [i];
-			
-		mono_bitset_foreach_bit_rev (temp, s, m->num_bblocks) {
-
-			mono_bitset_foreach_bit_rev (temp, t, m->num_bblocks) {
+			/* Remove all our dominators which dominate another */
+			/*
+			mono_bitset_foreach_bit_rev (temp, s, m->num_bblocks) {
+				mono_bitset_foreach_bit_rev (temp, t, m->num_bblocks) {
+			*/
+			last = mono_bitset_find_last (temp, m->num_bblocks - 1);
+			for (s = last; s >= 0; s = s ? mono_bitset_find_last (temp, s) : -1) {
+				for (t = last; t >= 0; t = t ? mono_bitset_find_last (temp, t) : -1) {
 						
-				if (t == s)
-					continue;
-
-				//if (mono_bitset_test_fast (T [s], t))
-				if (mono_bitset_test_fast (m->bblocks [s]->dominators, t))
-					mono_bitset_clear (temp, t);
+					if (mono_bitset_test_fast (m->bblocks [s]->dominators, t) && (t != s))
+						mono_bitset_clear_fast (temp, t);
+				}
 			}
-		}
 
 #ifdef DEBUG_DOMINATORS
-		printf ("IDOMSET BB%d %d: ", m->bblocks [i]->block_num, m->num_bblocks);
-		mono_blockset_print (m, T [i], NULL, -1);
+			printf ("IDOMSET BB%d %d: ", m->bblocks [i]->block_num, m->num_bblocks);
+			mono_blockset_print (m, temp, NULL, -1);
 #endif
-	}
 
-	for (i = 1; i < m->num_bblocks; ++i) {
-		bb = m->bblocks [i];
-		s = mono_bitset_find_start (T [i]);
-		g_assert (s != -1);
-		/*fixme:mono_bitset_count does not really work */
-		//g_assert (mono_bitset_count (T [i]) == 1);
-		t = mono_bitset_find_first (T [i], s);
-		g_assert (t == -1 || t >=  m->num_bblocks);
+			s = mono_bitset_find_start (temp);
+			g_assert (s != -1);
+			t = mono_bitset_find_first (temp, s);
+			g_assert (t == -1 || t >=  m->num_bblocks);
+		}
 		bb->idom = m->bblocks [s];
 		bb->idom->dominated = g_list_prepend (bb->idom->dominated, bb);
 	}
+
+	mono_bitset_free (temp);
 
 	m->comp_done |= MONO_COMP_IDOM;
 }
