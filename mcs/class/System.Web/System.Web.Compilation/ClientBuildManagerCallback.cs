@@ -41,22 +41,16 @@ namespace System.Web.Compilation {
 		{
 		}
 
-		[MonoTODO]
 		public virtual void ReportCompilerError (CompilerError error)
 		{
-			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public virtual void ReportParseError (ParserError error)
 		{
-			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public virtual void ReportProgress (string message)
 		{
-			throw new NotImplementedException ();
 		}
 	}
 }
