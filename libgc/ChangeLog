@@ -1,3 +1,8 @@
+2006-01-21  Martin Baulig  <martin@ximian.com>
+
+	* include/libgc-mono-debugger.h: Call the conditional
+	`_IN_THE_MONO_DEBUGGER', not `IN_MONO_DEBUGGER'.
+
 2006-01-03  Geoff Norton  <gnorton@customerdna.com>
 
 	* darwin_stop_world.c:  Merge a patch from Bruce Mitchener that fixes a small
