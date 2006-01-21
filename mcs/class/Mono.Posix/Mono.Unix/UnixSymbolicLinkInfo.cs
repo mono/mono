@@ -72,7 +72,7 @@ namespace Mono.Unix {
 
 		public void CreateSymbolicLinkTo (string path)
 		{
-			int r = Native.Syscall.symlink (path, OriginalPath);
+			int r = Native.Syscall.symlink (path, FullName);
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 		}
 

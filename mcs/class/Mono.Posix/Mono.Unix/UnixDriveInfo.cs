@@ -158,8 +158,9 @@ namespace Mono.Unix {
 			int r = Native.Syscall.statvfs (fstab.fs_file, out stat);
 			if (r == -1 && throwException) {
 				Native.Errno e = Native.Syscall.GetLastError ();
-				throw new IOException (UnixMarshal.GetErrorDescription (e),
-					UnixMarshal.CreateExceptionForError (e));
+				throw new InvalidOperationException (
+						UnixMarshal.GetErrorDescription (e),
+						new UnixIOException (e));
 			}
 			else if (r == -1)
 				return false;

@@ -1,3 +1,13 @@
+2006-01-20  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* UnixDriveInfo.cs: Properties should generate an InvalidOperationException,
+	  not an IOException.  Users can use IsReady to avoid exception generation.
+	* UnixIOException.cs: Create a custom message that embeds the error name 
+	  within the text, e.g. "Permission denied [EACCES]."
+	* UnixSymbolicLinkInfo.cs: This really should create the file FullPath, not
+	  OriginalPath.  Created files shouldn't ever be relative to the current
+	  working directory, as this can change at any time.
+
 2006-01-15  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* UnixUserInfo.cs: The UnixUserInfo(Native.Passwd) constructor and 

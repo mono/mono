@@ -44,25 +44,25 @@ namespace Mono.Unix {
 		{}
 		
 		public UnixIOException (int errno)
-			: base (UnixMarshal.GetErrorDescription (Native.NativeConvert.ToErrno (errno)))
+			: base (GetMessage (Native.NativeConvert.ToErrno (errno)))
 		{
 			this.errno = errno;
 		}
 		
 		public UnixIOException (int errno, Exception inner)
-			: base (UnixMarshal.GetErrorDescription (Native.NativeConvert.ToErrno (errno)), inner)
+			: base (GetMessage (Native.NativeConvert.ToErrno (errno)), inner)
 		{
 			this.errno = errno;
 		}
 
 		public UnixIOException (Native.Errno errno)
-			: base (UnixMarshal.GetErrorDescription (errno))
+			: base (GetMessage (errno))
 		{
 			this.errno = Native.NativeConvert.FromErrno (errno);
 		}
 
 		public UnixIOException (Native.Errno errno, Exception inner)
-			: base (UnixMarshal.GetErrorDescription (errno), inner)
+			: base (GetMessage (errno), inner)
 		{
 			this.errno = Native.NativeConvert.FromErrno (errno);
 		}
@@ -90,6 +90,13 @@ namespace Mono.Unix {
 		
 		public Native.Errno ErrorCode {
 			get {return Native.NativeConvert.ToErrno (errno);}
+		}
+
+		private static string GetMessage (Native.Errno errno)
+		{
+			return string.Format ("{0} [{1}].",
+					UnixMarshal.GetErrorDescription (errno),
+					errno);
 		}
 	}
 }
