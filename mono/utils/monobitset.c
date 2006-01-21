@@ -99,7 +99,7 @@ mono_bitset_set (MonoBitSet *set, guint32 pos) {
 	int j = pos / BITS_PER_CHUNK;
 	int bit = pos % BITS_PER_CHUNK;
 
-	g_return_if_fail (pos < set->size);
+	g_assert (pos < set->size);
 
 	set->data [j] |= (gsize)1 << bit;
 }
@@ -152,7 +152,7 @@ mono_bitset_clear (MonoBitSet *set, guint32 pos) {
 	int j = pos / BITS_PER_CHUNK;
 	int bit = pos % BITS_PER_CHUNK;
 
-	g_return_if_fail (pos < set->size);
+	g_assert (pos < set->size);
 
 	set->data [j] &= ~((gsize)1 << bit);
 }
@@ -165,9 +165,7 @@ mono_bitset_clear (MonoBitSet *set, guint32 pos) {
  */
 void
 mono_bitset_clear_all (MonoBitSet *set) {
-	int i;
-	for (i = 0; i < set->size / BITS_PER_CHUNK; ++i)
-		set->data [i] = 0;
+	memset (set->data, 0, set->size / 8);
 }
 
 /*
@@ -178,9 +176,7 @@ mono_bitset_clear_all (MonoBitSet *set) {
  */
 void
 mono_bitset_set_all (MonoBitSet *set) {
-	int i;
-	for (i = 0; i < set->size / BITS_PER_CHUNK; ++i)
-		set->data [i] = (gsize)-1;
+	memset (set->data, -1, set->size / 8);
 }
 
 /*
@@ -314,28 +310,35 @@ my_g_bit_nth_lsf (gsize mask, gint nth_bit)
 #define my_g_bit_nth_lsf_nomask(m) (my_g_bit_nth_lsf((m),-1))
 #endif
 
-#if SIZEOF_VOID_P == 8 && GLIB_MAJOR_VERSION == 2 && GLIB_MINOR_VERSION < 4
-/*
- * There was a 64 bit bug in glib-2.2: g_bit_nth_msf (0, -1) would return 32,
- * causing infinite loops in dominator computation. So glib-2.4 is required.
- */
-my_g_bit_nth_msf (gulong mask,
+static inline int
+my_g_bit_nth_msf (gsize mask,
 	       gint   nth_bit)
 {
-  if (nth_bit < 0)
-    nth_bit = GLIB_SIZEOF_LONG * 8;
-  do
-    {
-      nth_bit--;
-      if (mask & (1UL << nth_bit))
-	return nth_bit;
+	int i;
+
+	if (nth_bit == 0)
+		return -1;
+
+	mask <<= BITS_PER_CHUNK - nth_bit;
+
+	i = BITS_PER_CHUNK;
+	while ((i > 0) && !(mask >> (BITS_PER_CHUNK - 8))) {
+		mask <<= 8;
+		i -= 8;
+	}
+	if (mask == 0)
+		return -1;
+
+	do {
+		i--;
+		if (mask & ((gsize)1 << (BITS_PER_CHUNK - 1)))
+			return i - (BITS_PER_CHUNK - nth_bit);
+		mask <<= 1;
     }
-  while (nth_bit > 0);
-  return -1;
+	while (mask);
+
+	return -1;
 }
-#else
-#define my_g_bit_nth_msf(mask,nth_bit) g_bit_nth_msf((mask),(nth_bit))
-#endif
 
 /*
  * mono_bitset_find_start:
@@ -418,7 +421,7 @@ mono_bitset_find_last (const MonoBitSet *set, gint pos) {
 	}
 	for (i = --j; i >= 0; --i) {
 		if (set->data [i])
-			return my_g_bit_nth_msf (set->data [i], -1) + i * BITS_PER_CHUNK;
+			return my_g_bit_nth_msf (set->data [i], BITS_PER_CHUNK) + i * BITS_PER_CHUNK;
 	}
 	return -1;
 }
@@ -453,12 +456,9 @@ mono_bitset_clone (const MonoBitSet *set, guint32 new_size) {
  */
 void
 mono_bitset_copyto (const MonoBitSet *src, MonoBitSet *dest) {
-	int i;
+	g_assert (dest->size <= src->size);
 
-	g_return_if_fail (dest->size <= src->size);
-
-	for (i = 0; i < dest->size / BITS_PER_CHUNK; ++i)
-		dest->data [i] = src->data [i];
+	memcpy (&dest->data, &src->data, dest->size / 8);
 }
 
 /*
@@ -472,7 +472,7 @@ void
 mono_bitset_union (MonoBitSet *dest, const MonoBitSet *src) {
 	int i;
 
-	g_return_if_fail (src->size <= dest->size);
+	g_assert (src->size <= dest->size);
 
 	for (i = 0; i < dest->size / BITS_PER_CHUNK; ++i)
 		dest->data [i] |= src->data [i];
@@ -489,10 +489,29 @@ void
 mono_bitset_intersection (MonoBitSet *dest, const MonoBitSet *src) {
 	int i;
 
-	g_return_if_fail (src->size <= dest->size);
+	g_assert (src->size <= dest->size);
 
 	for (i = 0; i < dest->size / BITS_PER_CHUNK; ++i)
 		dest->data [i] = dest->data [i] & src->data [i];
+}
+
+/*
+ * mono_bitset_intersection_2:
+ * @dest: bitset ptr to hold intersection
+ * @src1: first bitset
+ * @src2: second bitset
+ *
+ * Make intersection of two bitsets
+ */
+void
+mono_bitset_intersection_2 (MonoBitSet *dest, const MonoBitSet *src1, const MonoBitSet *src2) {
+	int i;
+
+	g_assert (src1->size <= dest->size);
+	g_assert (src2->size <= dest->size);
+
+	for (i = 0; i < dest->size / BITS_PER_CHUNK; ++i)
+		dest->data [i] = src1->data [i] & src2->data [i];
 }
 
 /*
@@ -506,7 +525,7 @@ void
 mono_bitset_sub (MonoBitSet *dest, const MonoBitSet *src) {
 	int i;
 
-	g_return_if_fail (src->size <= dest->size);
+	g_assert (src->size <= dest->size);
 
 	for (i = 0; i < dest->size / BITS_PER_CHUNK; ++i)
 		dest->data [i] &= ~src->data [i];
