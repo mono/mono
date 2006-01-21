@@ -43,36 +43,24 @@ namespace System.Web.Compilation {
 		{
 		}
 
-		[MonoTODO]
 		public PrecompilationFlags PrecompilationFlags {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+			get { return precompilationFlags; }
+			set { precompilationFlags = value; }
 		}
 
-		[MonoTODO]
 		public string StrongNameKeyContainer {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+			get { return strongNameKeyContainer; }
+			set { strongNameKeyContainer = value; }
 		}
 
-		[MonoTODO]
 		public string StrongNameKeyFile {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+			get { return strongNameKeyFile; }
+			set { strongNameKeyFile = value; }
 		}
 
+		PrecompilationFlags precompilationFlags;
+		string strongNameKeyContainer;
+		string strongNameKeyFile;
 	}
 }
 

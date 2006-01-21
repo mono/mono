@@ -1,5 +1,7 @@
 2006-01-20  Chris Toshok  <toshok@ximian.com>
 
+	* ClientBuildManagerParameter.cs: implement.
+
 	* ClientBuildManagerCallback.cs: this class contains an empty
 	default implementation.
 
