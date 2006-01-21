@@ -1,3 +1,16 @@
+2006-01-21  Martin Baulig  <martin@ximian.com>
+
+	The Mono Debugger is now using the normal `mono' instead of the
+	`mono-debugger-mini-wrapper' when executing managed code.
+
+	* debug-debugger.c: New file; previously known as
+	debugger/wrapper/wrapper.c.
+
+	* debug-mini.c (mono_init_debugger): Removed.
+
+	* driver.c (mono_main): Added new `--inside-mdb' command line
+	argument which is used when running inside the debugger.
+
 2006-01-20  Zoltan Varga  <vargaz@gmail.com>
 
 	* liveness.c (mono_analyze_liveness): Remove some unused data
