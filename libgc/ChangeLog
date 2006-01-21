@@ -1,5 +1,9 @@
 2006-01-21  Martin Baulig  <martin@ximian.com>
 
+	* include/Makefile.am: Don't install libgc-mono-debugger.h.
+
+2006-01-21  Martin Baulig  <martin@ximian.com>
+
 	* include/libgc-mono-debugger.h: Call the conditional
 	`_IN_THE_MONO_DEBUGGER', not `IN_MONO_DEBUGGER'.
 
