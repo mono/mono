@@ -167,7 +167,7 @@ namespace System.Web.UI.HtmlControls {
 				if (Page.AreValidatorsUplevel ()) {
 					oc = csm.GetClientValidationEvent ();
 				} else if (Events [ServerClickEvent] != null) {
-					oc = Attributes ["onclick"] + " " + csm.GetPostBackClientEvent (this, "");
+					oc = Attributes ["onclick"] + " " + csm.GetPostBackEventReference (this, "");
 				}
 				
 				if (oc != null) {
