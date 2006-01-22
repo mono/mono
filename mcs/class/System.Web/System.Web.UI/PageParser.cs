@@ -236,6 +236,16 @@ namespace System.Web.UI
 			validateRequest = GetBool (atts, "ValidateRequest", PagesConfig.ValidateRequest);
 			clientTarget = GetString (atts, "ClientTarget", null);
 			if (clientTarget != null) {
+#if CONFIGURATION_2_0
+				ClientTargetSection sec = (ClientTargetSection)WebConfigurationManager.GetSection ("system.web/clientTarget");
+				if (sec.ClientTargets[clientTarget] == null) {
+					ThrowParseException (String.Format (
+							"ClientTarget '{0}' is an invalid alias. See the " +
+							"documentation for <clientTarget> config. section.",
+							clientTarget));
+				}
+				clientTarget = sec.ClientTargets[clientTarget].UserAgent;
+#else
 				NameValueCollection coll;
 				coll = (NameValueCollection) Context.GetConfig ("system.web/clientTarget");
 				if (coll == null || coll [clientTarget] == null) {
@@ -245,6 +255,7 @@ namespace System.Web.UI
 							clientTarget));
 				}
 				clientTarget = (string) coll [clientTarget];
+#endif
 			}
 
 			notBuffer = !GetBool (atts, "Buffer", true);
