@@ -36,6 +36,10 @@ namespace System.Web.UI
 		bool generated;
 		bool useSetAttribute;
 
+		internal BoundPropertyEntry ()
+		{
+		}
+
 		public string Expression {
 			get { return expression; }
 			set { expression = value; }
