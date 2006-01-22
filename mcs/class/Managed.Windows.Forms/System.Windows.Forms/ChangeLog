@@ -1,3 +1,8 @@
+2006-01-22  Alexander Olk  <alex.olk@googlemail.com>
+
+	* ThemeGtk.cs: Added TrackBar and some experimental code to
+	  get double buffering back
+
 2006-01-21  Jordi Mas i Hernandez <jordimash@gmail.com>
 
 	* DataGrid.cs: Allows row number set internally higher than the last
