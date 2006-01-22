@@ -159,7 +159,7 @@ namespace DrawingTestHelper
 	/// <summary>
 	/// Summary description for DrawingTest.
 	/// </summary>
-	public abstract class DrawingTest {
+	public abstract class DrawingTest : IDisposable {
 
 		public const float DEFAULT_FLOAT_TOLERANCE = 1e-5f; 
 		public const int DEFAULT_IMAGE_TOLERANCE = 2; 
@@ -443,6 +443,18 @@ namespace DrawingTestHelper
 			test.OwnerClass = ownerClass;
 			return test;
 		}
+		#region IDisposable Members
+
+		public void Dispose()
+		{
+			// TODO:  Add DrawingTest.Dispose implementation
+			if (_graphics != null) {
+				_graphics.Dispose();
+				_graphics = null;
+			}
+		}
+
+		#endregion
 	}
 
 #if TARGET_JVM
@@ -477,7 +489,7 @@ namespace DrawingTestHelper
 
 		protected override Bitmap GetReferenceImage(string testName) {
 			try{
-				string dotNetResultsFolder = @"..\Debug\";
+				string dotNetResultsFolder = @"";
 				string fileName = dotNetResultsFolder + testName.Replace(":", "_") + ".png";
 				return new Bitmap(fileName);
 			}
@@ -597,6 +609,7 @@ namespace DrawingTestHelper
 			try{
 				string fileName = testName.Replace(":", "_") + ".png";
 				_bitmap.Save( fileName );
+				GC.Collect();
 				return null;
 			}
 			catch(System.Exception e) {

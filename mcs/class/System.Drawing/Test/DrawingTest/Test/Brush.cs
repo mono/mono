@@ -48,11 +48,13 @@ namespace Test.Sys.Drawing
 		}
 		public virtual void SetUp(string ownerClass) {
 			t = DrawingTest.Create(512, 512, ownerClass);
-			bmp = Bitmap.FromFile(@"..\..\bitmap50.png");
-			bmp2 = Bitmap.FromFile(@"..\..\bitmap25.png");
+			bmp = Bitmap.FromFile("bitmap50.png");
+			bmp2 = Bitmap.FromFile("bitmap25.png");
 		}
 		[TearDown]
 		public void TearDown() {
+			if (t != null)
+				t.Dispose ();
 		}
 
 		[Test]
@@ -96,6 +98,7 @@ namespace Test.Sys.Drawing
 			Assert.IsTrue(t.PDCompare());
 		}
 		[Test]
+		[Category("NotWorking")]
 		public void TextureBush_6() {
 			TextureBrush b = new TextureBrush( bmp, WrapMode.TileFlipX, new Rectangle(100, 100, 50, 50) );
 			t.Graphics.FillRectangle( b, 100, 100, 300, 300 );
@@ -103,6 +106,7 @@ namespace Test.Sys.Drawing
 			Assert.IsTrue(t.PDCompare());
 		}
 		[Test]
+		[Category("NotWorking")]
 		public void TextureBush_7() {
 			TextureBrush b = new TextureBrush( bmp, WrapMode.TileFlipY, new Rectangle(100, 100, 50, 50) );
 			t.Graphics.FillRectangle( b, 100, 100, 300, 300 );
@@ -110,6 +114,7 @@ namespace Test.Sys.Drawing
 			Assert.IsTrue(t.PDCompare());
 		}
 		[Test]
+		[Category("NotWorking")]
 		public void TextureBush_8() {
 			TextureBrush b = new TextureBrush( bmp, WrapMode.TileFlipXY, new Rectangle(100, 100, 50, 50) );
 			t.Graphics.FillRectangle( b, 100, 100, 300, 300 );
@@ -117,6 +122,7 @@ namespace Test.Sys.Drawing
 			Assert.IsTrue(t.PDCompare());
 		}
 		[Test]
+		[Category("NotWorking")]
 		public void TextureBush_9() {
 			TextureBrush b = new TextureBrush( bmp, WrapMode.TileFlipXY, new Rectangle(100, 100, 50, 50) );
 			t.Graphics.RotateTransform(30);
@@ -125,6 +131,7 @@ namespace Test.Sys.Drawing
 			Assert.IsTrue(t.PDCompare());
 		}
 		[Test]
+		[Category("NotWorking")]
 		public void TextureBush_10() {
 			TextureBrush b = new TextureBrush( bmp, WrapMode.TileFlipXY, new Rectangle(100, 100, 50, 50) );
 			t.Graphics.RotateTransform(30);

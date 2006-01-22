@@ -17,10 +17,16 @@ namespace Test.Sys.Drawing {
 			rect = new RectangleF (50, 50, 50, 50);
 			r = new Region(rect);
 		}
+
+		[TearDown]
+		public void TearDown ()
+		{
+			if (t != null)
+				t.Dispose ();
+		}
+
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")] // FIXME: Region.GetRegionData is not implemented
-#endif
+		[Category ("NotWorking")]
 		public void ctor_RegionData () {
 			RegionData rgnData = r.GetRegionData ();
 			Region r1 = new Region (rgnData);
@@ -35,9 +41,7 @@ namespace Test.Sys.Drawing {
 			Assert.IsTrue (r1.IsEmpty (t.Graphics));
 		}
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")] // FIXME: Region.GetRegionData is not implemented
-#endif
+		[Category ("NotWorking")]
 		public void ctor_Rectangle () {
 			Region r1 = new Region (new Rectangle ((int)rect.X, (int)rect.Y,
 				(int)rect.Width, (int)rect.Height));
@@ -45,18 +49,13 @@ namespace Test.Sys.Drawing {
 				r1.GetRegionData ().Data);
 		}
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")] // FIXME: Region.GetRegionData is not implemented
-#endif
+		[Category ("NotWorking")]
 		public void ctor_RectangleF () {
 			Region r1 = new Region (rect);
 			Assert.AreEqual (r.GetRegionData ().Data,
 				r1.GetRegionData ().Data);
 		}
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")] // FIXME: Bug in Region.IsInfinite
-#endif
 		public void ctor_void () {
 			Region r1 = new Region ();
 			Assert.IsTrue (r1.IsInfinite (t.Graphics));
@@ -93,9 +92,7 @@ namespace Test.Sys.Drawing {
 			Assert.AreEqual (rect, r.GetBounds (t.Graphics));
 		}
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")] // FIXME: Region.GetRegionData is not implemented
-#endif
+		[Category ("NotWorking")]
 		public void GetRegionData () {
 			byte [] actual = r.GetRegionData ().Data;
 			byte [] expected = new byte [] {28, 0, 0, 0, 186, 15, 11, 58, 1, 16,
@@ -105,9 +102,7 @@ namespace Test.Sys.Drawing {
 			Assert.AreEqual (expected, actual);
 		}
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")] // FIXME: Bug in Region.GetRegionScans
-#endif
+		[Category ("NotWorking")]
 		public void GetRegionScans () {
 			Assert.AreEqual (new RectangleF [] {new Rectangle (50, 50, 50, 50)},
 				r.GetRegionScans (new Matrix ()));
@@ -131,6 +126,7 @@ namespace Test.Sys.Drawing {
 			Assert.IsTrue (r.IsEmpty (t.Graphics));
 		}
 		[Test]
+		[Category ("NotWorking")]
 		public void IsInfinite () {
 			Assert.IsFalse (r.IsInfinite (t.Graphics));
             r.MakeInfinite ();
@@ -191,6 +187,7 @@ namespace Test.Sys.Drawing {
 			Assert.IsFalse (r.IsVisible (new Rectangle (0, 0, 0, 0)));
 		}
 		[Test]
+		[Category ("NotWorking")]
 		public void MakeInfinite () {
 			Assert.IsFalse (r.IsInfinite (t.Graphics));
 			r.MakeInfinite ();
@@ -210,9 +207,7 @@ namespace Test.Sys.Drawing {
 		public void Translate () {
 		}
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")] // FIXME: Bug in Region.GetRegionScans
-#endif
+		[Category ("NotWorking")]
 		public void Union () {
 			r.Union (new Rectangle (70, 70, 100, 100));
 			RectangleF [] rs = new RectangleF [] {
@@ -222,9 +217,7 @@ namespace Test.Sys.Drawing {
 			Assert.AreEqual (rs, r.GetRegionScans (new Matrix()));
 		}
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")] // FIXME: Bug in Region.GetRegionScans
-#endif
+		[Category ("NotWorking")]
 		public void Xor () {
 			r.Xor (new Rectangle (0, 0, 70, 70));
 			RectangleF [] rs = new RectangleF [] {

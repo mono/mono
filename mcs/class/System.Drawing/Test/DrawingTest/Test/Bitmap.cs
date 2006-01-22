@@ -16,10 +16,18 @@ namespace Test.Sys.Drawing
 		[SetUp]
 		public void SetUp () {
 			t = DrawingTest.Create (64, 64);
-			Bitmap b = new Bitmap (@"..\..\..\Test\Bitmap1.png");
+			Bitmap b = new Bitmap ("Bitmap1.png");
 			t.Graphics.DrawImageUnscaled (b, 0, 0);
 			DrawingTest.ShowForms = false;
 		}
+
+		[TearDown]
+		public void TearDown ()
+		{
+			if (t != null)
+				t.Dispose ();
+		}
+
 		[Test]
 		public void CloneTest () {
 			Bitmap b1 = (Bitmap) t.Bitmap.Clone ();
@@ -39,7 +47,6 @@ namespace Test.Sys.Drawing
 				t.Bitmap.GetPixel (31, 31));
 		}
 		[Test]
-		[Category ("GHNotWorking")] //FIXME: MakeTransparent method does not working as expected. Fix it.
 		public void MakeTransparent () {
 			t.Show ();
 			Bitmap b = (Bitmap) t.Bitmap.Clone ();

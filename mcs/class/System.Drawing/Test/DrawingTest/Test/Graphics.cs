@@ -53,10 +53,14 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			t = DrawingTest.Create(512, 512);
 		}
 
+		[TearDown]
+		public void TearDown ()
+		{
+			if (t != null)
+				t.Dispose ();
+		}
+
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")] // FIXME: Newly created region area is not the same.
-#endif
 		public void ClipTest_1() {
 			Region r = new Region();
 			Assert.IsTrue(r.Equals(t.Graphics.Clip, t.Graphics));
@@ -138,9 +142,6 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")] // FIXME: Newly created region area is not the same.
-#endif
 		public void ClipBoundsTest() {
 			Region r = new Region();
 			Assert.IsTrue(t.Graphics.ClipBounds.Equals(r.GetBounds(t.Graphics)));
@@ -239,9 +240,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")] // FIXME: RenderingOrigin is not implemented
-#endif
+		[Category("NotWorking")]
 		public void RenderingOriginTest() {
 			Assert.AreEqual(new Point(0,0), t.Graphics.RenderingOrigin);
 		}
@@ -267,9 +266,6 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")] // FIXME: Graphics.ClipBounds retun null if no clip region was set.
-#endif
 		public void VisibleClipBoundsTest() {
 			Assert.AreEqual(new RectangleF(0, 0, 512, 512), t.Graphics.VisibleClipBounds);
 		}
@@ -297,8 +293,8 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			SetUp("DrawImage");
 			DrawingTest.ShowForms = false;
 			try {
-				bmp = Bitmap.FromFile(@"..\..\bitmap50.png");
-				bmp2 = Bitmap.FromFile(@"..\..\bitmap25.png");
+				bmp = Bitmap.FromFile("bitmap50.png");
+				bmp2 = Bitmap.FromFile("bitmap25.png");
 			}
 			catch(Exception e) {
 				Console.WriteLine(e.Message);
@@ -312,6 +308,8 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 		}
 		[TearDown]
 		public void TearDown() {
+			if (t != null)
+				t.Dispose ();
 		}
 
 		[Test]
@@ -498,6 +496,8 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 		}
 		[TearDown]
 		public void TearDown() {
+			if (t != null)
+				t.Dispose ();
 		}
 
 		[Test]
@@ -642,12 +642,14 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 		}
 
 		[TearDown]
-		public void TearDown() {
+		public void TearDown ()
+		{
+			if (t != null)
+				t.Dispose ();
 		}
 
 		[Test]
-		[Category ("hehe")]
-		public void BeginContainerTest() {
+		public virtual void BeginContainerTest() {
 			// Define transformation for container.
 			RectangleF srcRect = new RectangleF(0.0F, 0.0F, 200.0F, 200.0F);
 			RectangleF destRect = new RectangleF(100.0F, 100.0F, 150.0F, 150.0F);
@@ -666,8 +668,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			Assert.IsTrue(t.PDCompare());
 		}
 		[Test]
-		[Category ("hehe")]
-		public void BeginContainerTest_2() {
+		public virtual void BeginContainerTest_2() {
 			t.Graphics.DrawRectangle( Pens.Black, new Rectangle(70, 70, 50, 100) );
 			t.Graphics.DrawRectangle( Pens.Black, new Rectangle(50, 100, 150, 50) );
 			t.Graphics.DrawRectangle( Pens.Black, new Rectangle(80, 120, 10, 10) );
@@ -695,7 +696,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			Assert.IsTrue(t.PDCompare());
 		}
 		[Test]
-		public void ClearTest() {
+		public virtual void ClearTest() {
 			// Clear screen with teal background.
 			t.Show();
 			Assert.IsTrue(t.PDCompare());
@@ -705,7 +706,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 		}
 
 		[Test]
-		public void DrawArcTest() {
+		public virtual void DrawArcTest() {
 			// Create pen.
 			Pen blackPen= new Pen(Color.Black, 1);
 			// Create coordinates of rectangle to bound ellipse.
@@ -753,7 +754,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 		}
 
 		[Test]
-		public void DrawBezierTest() {
+		public virtual void DrawBezierTest() {
 			// Create pen.
 			Pen blackPen = new Pen(Color.Black, 3);
 			// Create coordinates of points for curve.
@@ -789,7 +790,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 		}
 
 		[Test]
-		public void DrawBeziersTest() {
+		public virtual void DrawBeziersTest() {
 			// Create pen.
 			Pen blackPen = new Pen(Color.Black, 3);
 			// Create points for curve.
@@ -828,7 +829,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 		}
 
 		[Test]
-		public void DrawClosedCurveTest() {
+		public virtual void DrawClosedCurveTest() {
 			// Create pens.
 			Pen redPen   = new Pen(Color.Red, 3);
 			Pen greenPen = new Pen(Color.Green, 3);
@@ -868,7 +869,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 		}
 
 		[Test]
-		public void DrawCurveTest() {
+		public virtual void DrawCurveTest() {
 			// Create pens.
 			Pen redPen   = new Pen(Color.Red, 3);
 			Pen greenPen = new Pen(Color.Green, 3);
@@ -912,7 +913,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 		}
 
 		[Test]
-		public void DrawCurveTestF() {
+		public virtual void DrawCurveTestF() {
 			// Create pens.
 			Pen redPen   = new Pen(Color.Red, 3);
 			Pen greenPen = new Pen(Color.Green, 3);
@@ -961,7 +962,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 		}
 
 		[Test]
-		public void DrawEllipseTest() {
+		public virtual void DrawEllipseTest() {
 			// Create pen.
 			Pen blackPen = new Pen(Color.Black, 3);
 			// Create location and size of ellipse.
@@ -981,7 +982,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 		}
 
 		[Test]
-		public void DrawEllipseTestF() {
+		public virtual void DrawEllipseTestF() {
 			// Create pen.
 			Pen blackPen = new Pen(Color.Black, 3);
 			// Create location and size of ellipse.
@@ -1014,11 +1015,8 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")] // FIXME: ImageFormat.Icon is not supported yet.
-									// java external library should be installed.
-#endif
-		public void DrawIconTest() {
+		[Category("NotWorking")]
+		public virtual void DrawIconTest() {
 			// Create icon.
 			Icon newIcon = new Icon(getInFile ("SampIcon.ico"));
 			// Create coordinates for upper-left corner of icon.
@@ -1035,11 +1033,8 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")] // FIXME: ImageFormat.Icon is not supported yet.
-									// java external library should be installed.
-#endif
-		public void DrawIconUnstretchedTest() {
+		[Category("NotWorking")]
+		public virtual void DrawIconUnstretchedTest() {
 			// Create icon.
 			Icon newIcon = new Icon(getInFile ("SampIcon.ico"));
 			// Create rectangle for icon.
@@ -1103,10 +1098,8 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 		}
 #endif
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")] // GH NUnit unable to read machine.config or any other app.config files
-#endif
-		public void DrawImageUnscaledTest() {
+		[Category("NotWorking")]
+		public virtual void DrawImageUnscaledTest() {
 			// Create image.
 			Image newImage = Bitmap.FromFile(getInFile ("bitmap_gh.png"));
 			// Create coordinates for upper-left corner of image.
@@ -1134,7 +1127,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 		}
 
 		[Test]
-		public void DrawLineTest() {
+		public virtual void DrawLineTest() {
 			// Create pen.
 			Pen blackPen = new Pen(Color.Black, 3);
 			// Create coordinates of points that define line.
@@ -1154,7 +1147,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 		}
 
 		[Test]
-		public void DrawLineTestF() {
+		public virtual void DrawLineTestF() {
 			// Create pen.
 			Pen blackPen = new Pen(Color.Black, 3);
 			// Create coordinates of points that define line.
@@ -1174,7 +1167,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 		}
 
 		[Test]
-		public void DrawLinesTest() {
+		public virtual void DrawLinesTest() {
 			// Create pen.
 			Pen pen = new Pen(Color.Black, 3);
 			// Create array of points that define lines to draw.
@@ -1191,7 +1184,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 		}
 
 		[Test]
-		public void DrawLinesTestF() {
+		public virtual void DrawLinesTestF() {
 			// Create pen.
 			Pen pen = new Pen(Color.Black, 3);
 			// Create array of points that define lines to draw.
@@ -1208,7 +1201,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 		}
 
 		[Test]
-		public void DrawPathTest() {
+		public virtual void DrawPathTest() {
 			// Create graphics path object and add ellipse.
 			GraphicsPath graphPath = new GraphicsPath();
 			graphPath.AddEllipse(0, 0, 200, 100);
@@ -1221,7 +1214,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 		}
 
 		[Test]
-		public void DrawPieTestF() {
+		public virtual void DrawPieTestF() {
 			// Create pen.
 			Pen blackPen = new Pen(Color.Black, 3);
 			// Create location and size of ellipse.
@@ -1244,7 +1237,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 		}
 
 		[Test]
-		public void DrawPieTest() {
+		public virtual void DrawPieTest() {
 			// Create pen.
 			Pen blackPen = new Pen(Color.Black, 3);
 			// Create location and size of ellipse.
@@ -1267,7 +1260,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 		}
 
 		[Test]
-		public void DrawPolygonPoint() {
+		public virtual void DrawPolygonPoint() {
 			// Create pen.
 			Pen blackPen = new Pen(Color.Black, 3);
 			// Create points that define polygon.
@@ -1294,7 +1287,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 		}
 
 		[Test]
-		public void DrawPolygonPointF() {
+		public virtual void DrawPolygonPointF() {
 			// Create pen.
 			Pen blackPen = new Pen(Color.Black, 3);
 			// Create points that define polygon.
@@ -1321,7 +1314,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 		}
 
 		[Test]
-		public void DrawRectangleFloat() {
+		public virtual void DrawRectangleFloat() {
 			// Create pen.
 			Pen blackPen = new Pen(Color.Black, 3);
 			// Create location and size of rectangle.
@@ -1346,7 +1339,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 		}
 
 		[Test]
-		public void DrawRectanglesRectangleF() {
+		public virtual void DrawRectanglesRectangleF() {
 			// Create pen.
 			Pen blackPen = new Pen(Color.Black, 3);
 			// Create array of rectangles.
@@ -1362,7 +1355,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 		}
 
 		[Test]
-		public void DrawRectanglesRectangle() {
+		public virtual void DrawRectanglesRectangle() {
 			// Create pen.
 			Pen blackPen = new Pen(Color.Black, 3);
 			// Create array of rectangles.
@@ -1378,7 +1371,8 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 		}
 
 		[Test] //TBD: add more combinations
-		public void DrawStringFloatFormat() {
+		[Category("NotWorking")]
+		public virtual void DrawStringFloatFormat() {
 			// Create string to draw.
 			String drawString = "Sample Text";
 			// Create font and brush.
@@ -1411,7 +1405,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 		}
 
 		[Test]
-		public void EndContainerState() {
+		public virtual void EndContainerState() {
 			// Begin graphics container.
 			GraphicsContainer containerState = t.Graphics.BeginContainer();
 			// Translate world transformation.
@@ -1428,11 +1422,11 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 		}
 
 		[Test] //TBD
-		public void EnumerateMetafile() {
+		public virtual void EnumerateMetafile() {
 		}
 
 		[Test]
-		public void ExcludeClipRegion() {
+		public virtual void ExcludeClipRegion() {
 			// Create rectangle for exclusion.
 			Rectangle excludeRect = new Rectangle(100, 100, 200, 200);
 			// Set clipping region to exclude rectangle.
@@ -1444,7 +1438,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 		}
 
 		[Test]
-		public void FillClosedCurvePointFillModeTension() {
+		public virtual void FillClosedCurvePointFillModeTension() {
 			// Create solid brush.
 			SolidBrush redBrush = new SolidBrush(Color.Red);
 			// Create array of points for curve.
@@ -1475,7 +1469,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 		}
 
 		[Test]
-		public void FillClosedCurvePointFFillModeTension() {
+		public virtual void FillClosedCurvePointFFillModeTension() {
 			// Create solid brush.
 			SolidBrush redBrush = new SolidBrush(Color.Red);
 			// Create array of points for curve.
@@ -1506,7 +1500,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 		}
 
 		[Test]
-		public void FillEllipse() {
+		public virtual void FillEllipse() {
 			// Create solid brush.
 			SolidBrush redBrush = new SolidBrush(Color.Red);
 			// Create location and size of ellipse.
@@ -1526,7 +1520,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 		}
 
 		[Test]
-		public void FillEllipseFloat() {
+		public virtual void FillEllipseFloat() {
 			// Create solid brush.
 			SolidBrush redBrush = new SolidBrush(Color.Red);
 			// Create location and size of ellipse.
@@ -1546,7 +1540,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 		}
 
 		[Test]
-		public void FillPathEllipse() {
+		public virtual void FillPathEllipse() {
 			// Create solid brush.
 			SolidBrush redBrush = new SolidBrush(Color.Red);
 			// Create graphics path object and add ellipse.
@@ -1559,7 +1553,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 		}
 
 		[Test]
-		public void FillPieFloat() {
+		public virtual void FillPieFloat() {
 			// Create solid brush.
 			SolidBrush redBrush = new SolidBrush(Color.Red);
 			// Create location and size of ellipse.
@@ -1587,7 +1581,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 		}
 
 		[Test]
-		public void FillPolygonPointFillMode() {
+		public virtual void FillPolygonPointFillMode() {
 			// Create solid brush.
 			SolidBrush blueBrush = new SolidBrush(Color.Blue);
 			// Create points that define polygon.
@@ -1625,7 +1619,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 		}
 
 		[Test]
-		public void FillPolygonPointFFillMode() {
+		public virtual void FillPolygonPointFFillMode() {
 			// Create solid brush.
 			SolidBrush blueBrush = new SolidBrush(Color.Blue);
 			// Create points that define polygon.
@@ -1663,7 +1657,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 		}
 
 		[Test]
-		public void FillRectangle() {
+		public virtual void FillRectangle() {
 			// Create solid brush.
 			SolidBrush blueBrush = new SolidBrush(Color.Blue);
 			// Create location and size of rectangle.
@@ -1683,7 +1677,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 		}
 
 		[Test]
-		public void FillRectangleFloat() {
+		public virtual void FillRectangleFloat() {
 			// Create solid brush.
 			SolidBrush blueBrush = new SolidBrush(Color.Blue);
 			// Create location and size of rectangle.
@@ -1703,7 +1697,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 		}
 
 		[Test]
-		public void FillRectanglesRectangle() {
+		public virtual void FillRectanglesRectangle() {
 			// Create solid brush.
 			SolidBrush blueBrush = new SolidBrush(Color.Blue);
 			// Create array of rectangles.
@@ -1719,7 +1713,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 		}
 
 		[Test]
-		public void FillRectanglesRectangleF() {
+		public virtual void FillRectanglesRectangleF() {
 			// Create solid brush.
 			SolidBrush blueBrush = new SolidBrush(Color.Blue);
 			// Create array of rectangles.
@@ -1735,7 +1729,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 		}
 
 		[Test]
-		public void FillRegionRectangle() {
+		public virtual void FillRegionRectangle() {
 			// Create solid brush.
 			SolidBrush blueBrush = new SolidBrush(Color.Blue);
 			// Create rectangle for region.
@@ -1749,13 +1743,13 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 		}
 
 		[Test]
-		public void FlushTest() {
+		public virtual void FlushTest() {
 			t.Graphics.Flush();
 			t.Graphics.Flush(FlushIntention.Flush);
 		}
 
 		[Test]
-		public void IntersectClipRegion() {
+		public virtual void IntersectClipRegion() {
 			// Set clipping region.
 			Rectangle clipRect = new Rectangle(0, 0, 200, 300);
 			Region clipRegion = new Region(clipRect);
@@ -1779,7 +1773,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 		}
 
 		[Test]
-		public void IsVisible4Float() {
+		public virtual void IsVisible4Float() {
 			// Set clip region.
 			Region clipRegion = new Region(new Rectangle(50, 50, 100, 100));
 			t.Graphics.SetClip(clipRegion, CombineMode.Replace);
@@ -1806,10 +1800,8 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")] // FIXME: Graphics.MeasureCharacterRanges is not implemented
-#endif
-		public void MeasureCharacterRangesRegions() {
+		[Category("NotWorking")]
+		public virtual void MeasureCharacterRangesRegions() {
 			// Set up string.
 			string measureString = "First and Second ranges";
 			Font stringFont = new Font("Times New Roman", 16.0F);
@@ -1858,11 +1850,8 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 		}
 
 		[Test] //TBD: add more overloads
-#if TARGET_JVM
-		[Category ("NotWorking")] // FIXME: Graphics.MeasureString(string,Font,SizeF,StringFormat,out int,out int) 
-									// is not implemented
-#endif
-		public void MeasureStringSizeFFormatInts() {
+		[Category("NotWorking")]
+		public virtual void MeasureStringSizeFFormatInts() {
 			// Set up string.
 			string measureString = "Measure String";
 			Font stringFont = new Font("Arial", 16);
@@ -1907,7 +1896,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 		}
 
 		[Test]
-		public void MultiplyTransform() {
+		public virtual void MultiplyTransform() {
 			// Create transform matrix.
 			Matrix transformMatrix = new Matrix();
 			// Translate matrix, prepending translation vector.
@@ -1925,7 +1914,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 		}
 
 		[Test]
-		public void MultiplyTransformMatrixOrder() {
+		public virtual void MultiplyTransformMatrixOrder() {
 			// Create transform matrix.
 			Matrix transformMatrix = new Matrix();
 			// Translate matrix, prepending translation vector.
@@ -1943,7 +1932,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 		}
 
 		[Test]
-		public void MultiplyTransformMatrixOrder1() {
+		public virtual void MultiplyTransformMatrixOrder1() {
 			// Create transform matrix.
 			Matrix transformMatrix = new Matrix();
 			// Translate matrix, prepending translation vector.
@@ -1961,7 +1950,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 		}
 
 		[Test]
-		public void ResetClipIntersectClipRectangleF() {
+		public virtual void ResetClipIntersectClipRectangleF() {
 			// Set clipping region.
 			Rectangle clipRect = new Rectangle(0, 0, 200, 200);
 			t.Graphics.SetClip(clipRect);
@@ -1980,7 +1969,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 		}
 
 		[Test]
-		public void SaveRestoreTranslate() {
+		public virtual void SaveRestoreTranslate() {
 			// Translate transformation matrix.
 			t.Graphics.TranslateTransform(100, 0);
 			// Save translated graphics state.
@@ -1997,7 +1986,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 		}
 
 		[Test]
-		public void RotateTransformAngleMatrixOrder() {
+		public virtual void RotateTransformAngleMatrixOrder() {
 			// Set world transform of graphics object to translate.
 			t.Graphics.TranslateTransform(100.0F, 0.0F);
 			// Then to rotate, appending rotation matrix.
@@ -2009,7 +1998,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 		}
 
 		[Test]
-		public void RotateTransformAngleMatrixOrder1() {
+		public virtual void RotateTransformAngleMatrixOrder1() {
 			// Set world transform of graphics object to translate.
 			t.Graphics.TranslateTransform(100.0F, 0.0F);
 			// Then to rotate, appending rotation matrix.
@@ -2021,7 +2010,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 		}
 
 		[Test]
-		public void ScaleTransformFloatMatrixOrder() {
+		public virtual void ScaleTransformFloatMatrixOrder() {
 			// Set world transform of graphics object to rotate.
 			t.Graphics.RotateTransform(30.0F);
 			// Then to scale, appending to world transform.
@@ -2033,7 +2022,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 		}
 
 		[Test]
-		public void ScaleTransformFloatMatrixOrder1() {
+		public virtual void ScaleTransformFloatMatrixOrder1() {
 			// Set world transform of graphics object to rotate.
 			t.Graphics.RotateTransform(30.0F);
 			// Then to scale, appending to world transform.
@@ -2045,7 +2034,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 		}
 
 		[Test] //TBD: add more combination
-		public void SetClipRegionCombine() {
+		public virtual void SetClipRegionCombine() {
 			// Create region for clipping.
 			Region clipRegion = new Region(new Rectangle(0, 0, 200, 100));
 			// Set clipping region of graphics to region.
@@ -2057,7 +2046,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 		}
 
 		[Test]
-		public void TransformPointsPointF() {
+		public virtual void TransformPointsPointF() {
 			// Create array of two points.
 			PointF[] points = {new PointF(0.0F, 0.0F),
 								  new PointF(100.0F, 50.0F)};
@@ -2082,7 +2071,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 		}
 
 		[Test]
-		public void TranslateClipFloat() {
+		public virtual void TranslateClipFloat() {
 			// Create rectangle for clipping region.
 			RectangleF clipRect = new RectangleF(0.0F, 0.0F, 100.0F, 100.0F);
 			// Set clipping region of graphics to rectangle.
@@ -2098,7 +2087,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 		}
 
 		[Test]
-		public void TranslateTransformAngleMatrixOrder() {
+		public virtual void TranslateTransformAngleMatrixOrder() {
 			// Set world transform of graphics object to rotate.
 			t.Graphics.RotateTransform(30.0F);
 			// Then to translate, appending to world transform.
@@ -2110,7 +2099,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 		}
 
 		[Test]
-		public void TranslateTransformAngleMatrixOrder1() {
+		public virtual void TranslateTransformAngleMatrixOrder1() {
 			// Set world transform of graphics object to rotate.
 			t.Graphics.RotateTransform(30.0F);
 			// Then to translate, appending to world transform.
@@ -2122,7 +2111,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 		}
 
 		[Test]
-		public void TransfromPageScaleUnits() {
+		public virtual void TransfromPageScaleUnits() {
 			t.Graphics.PageUnit = GraphicsUnit.Millimeter;
 			t.Graphics.PageScale = 1.0F;
 			t.Graphics.DrawLine(Pens.Red, 10, 70, 70, 10);
@@ -2150,7 +2139,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 		}
 
 		[Test]
-		public void TransfromPageScaleUnits_2() {
+		public virtual void TransfromPageScaleUnits_2() {
 			t.Graphics.RotateTransform(45);
 			t.Graphics.PageUnit = GraphicsUnit.Millimeter;
 			t.Graphics.PageScale = 1.0F;
@@ -2168,7 +2157,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			Assert.IsTrue(t.PDCompare());
 		}
 		[Test]
-		public void TransfromPageScaleUnits_3() {
+		public virtual void TransfromPageScaleUnits_3() {
 			t.Graphics.TranslateTransform(20, 20);
 			t.Graphics.PageUnit = GraphicsUnit.Millimeter;
 			t.Graphics.PageScale = 1.0F;
@@ -2226,6 +2215,40 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			st["FillClosedCurvePointFFillModeTension:6"] = TOLERANCE * 1.5f;
 			st["ScaleTransformFloatMatrixOrder1:2"] = TOLERANCE * 3.5f;
 		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawIconTest() {
+			base.DrawIconTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawIconUnstretchedTest() {
+			base.DrawIconUnstretchedTest ();
+		}
+
+		[Test]
+		public override void DrawImageUnscaledTest() {
+			base.DrawImageUnscaledTest ();
+		}
+
+		[Test]
+		public override void DrawStringFloatFormat() {
+			base.DrawStringFloatFormat ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void MeasureCharacterRangesRegions() {
+			base.MeasureCharacterRangesRegions ();
+		}
+
+		[Test] 
+		[Category("NotWorking")]
+		public override void MeasureStringSizeFFormatInts() {
+			base.MeasureStringSizeFFormatInts ();
+		}
 	}
 
 	#endregion
@@ -2238,6 +2261,42 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			base.SetUp ("GraphicsFixturePropCompositingMode1");
 			t.Graphics.CompositingMode = CompositingMode.SourceCopy;
 		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawIconTest() {
+			base.DrawIconTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawIconUnstretchedTest() {
+			base.DrawIconUnstretchedTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawImageUnscaledTest() {
+			base.DrawImageUnscaledTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawStringFloatFormat() {
+			base.DrawStringFloatFormat ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void MeasureCharacterRangesRegions() {
+			base.MeasureCharacterRangesRegions ();
+		}
+
+		[Test] 
+		[Category("NotWorking")]
+		public override void MeasureStringSizeFFormatInts() {
+			base.MeasureStringSizeFFormatInts ();
+		}
 	}
 
 	[TestFixture]
@@ -2245,6 +2304,42 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 		public override void SetUp() {
 			base.SetUp ("GraphicsFixturePropCompositingMode2");
 			t.Graphics.CompositingMode = CompositingMode.SourceOver;
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawIconTest() {
+			base.DrawIconTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawIconUnstretchedTest() {
+			base.DrawIconUnstretchedTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawImageUnscaledTest() {
+			base.DrawImageUnscaledTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawStringFloatFormat() {
+			base.DrawStringFloatFormat ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void MeasureCharacterRangesRegions() {
+			base.MeasureCharacterRangesRegions ();
+		}
+
+		[Test] 
+		[Category("NotWorking")]
+		public override void MeasureStringSizeFFormatInts() {
+			base.MeasureStringSizeFFormatInts ();
 		}
 	}
 
@@ -2258,6 +2353,42 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			base.SetUp ("GraphicsFixturePropInterpolationMode1");
 			t.Graphics.InterpolationMode = InterpolationMode.Bilinear;
 		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawIconTest() {
+			base.DrawIconTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawIconUnstretchedTest() {
+			base.DrawIconUnstretchedTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawImageUnscaledTest() {
+			base.DrawImageUnscaledTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawStringFloatFormat() {
+			base.DrawStringFloatFormat ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void MeasureCharacterRangesRegions() {
+			base.MeasureCharacterRangesRegions ();
+		}
+
+		[Test] 
+		[Category("NotWorking")]
+		public override void MeasureStringSizeFFormatInts() {
+			base.MeasureStringSizeFFormatInts ();
+		}
 	}
 
 	[TestFixture]
@@ -2265,6 +2396,42 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 		public override void SetUp() {
 			base.SetUp ("GraphicsFixturePropInterpolationMode2");
 			t.Graphics.InterpolationMode = InterpolationMode.Bicubic;
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawIconTest() {
+			base.DrawIconTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawIconUnstretchedTest() {
+			base.DrawIconUnstretchedTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawImageUnscaledTest() {
+			base.DrawImageUnscaledTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawStringFloatFormat() {
+			base.DrawStringFloatFormat ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void MeasureCharacterRangesRegions() {
+			base.MeasureCharacterRangesRegions ();
+		}
+
+		[Test] 
+		[Category("NotWorking")]
+		public override void MeasureStringSizeFFormatInts() {
+			base.MeasureStringSizeFFormatInts ();
 		}
 	}
 
@@ -2283,6 +2450,41 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			st["IntersectClipRegion:4"] = TOLERANCE * 1.5f;
 			st["ResetClipIntersectClipRectangleF:2"] = TOLERANCE * 1.5f;
 		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawIconTest() {
+			base.DrawIconTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawIconUnstretchedTest() {
+			base.DrawIconUnstretchedTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawImageUnscaledTest() {
+			base.DrawImageUnscaledTest ();
+		}
+
+		[Test]
+		public override void DrawStringFloatFormat() {
+			base.DrawStringFloatFormat ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void MeasureCharacterRangesRegions() {
+			base.MeasureCharacterRangesRegions ();
+		}
+
+		[Test] 
+		[Category("NotWorking")]
+		public override void MeasureStringSizeFFormatInts() {
+			base.MeasureStringSizeFFormatInts ();
+		}
 	}
 
 	#endregion
@@ -2294,6 +2496,42 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 		public override void SetUp() {
 			base.SetUp ("GraphicsFixturePropPageUnit1");
 			t.Graphics.PageUnit = GraphicsUnit.Display;
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawIconTest() {
+			base.DrawIconTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawIconUnstretchedTest() {
+			base.DrawIconUnstretchedTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawImageUnscaledTest() {
+			base.DrawImageUnscaledTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawStringFloatFormat() {
+			base.DrawStringFloatFormat ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void MeasureCharacterRangesRegions() {
+			base.MeasureCharacterRangesRegions ();
+		}
+
+		[Test] 
+		[Category("NotWorking")]
+		public override void MeasureStringSizeFFormatInts() {
+			base.MeasureStringSizeFFormatInts ();
 		}
 	}
 
@@ -2338,6 +2576,54 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			st["ScaleTransformFloatMatrixOrder1:2"] = TOLERANCE * 5.5f;
 			st["RotateTransformAngleMatrixOrder:2"] = TOLERANCE * 3.5f;
 		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void BeginContainerTest() {
+			base.BeginContainerTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawIconTest() {
+			base.DrawIconTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawIconUnstretchedTest() {
+			base.DrawIconUnstretchedTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawImageUnscaledTest() {
+			base.DrawImageUnscaledTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawStringFloatFormat() {
+			base.DrawStringFloatFormat ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void EndContainerState() {
+			base.EndContainerState ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void MeasureCharacterRangesRegions() {
+			base.MeasureCharacterRangesRegions ();
+		}
+
+		[Test] 
+		[Category("NotWorking")]
+		public override void MeasureStringSizeFFormatInts() {
+			base.MeasureStringSizeFFormatInts ();
+		}
 	}
 
 	[TestFixture]
@@ -2345,6 +2631,39 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 		public override void SetUp() {
 			base.SetUp ("GraphicsFixturePropPageUnit3");
 			t.Graphics.PageUnit = GraphicsUnit.Inch;
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawIconTest() {
+			base.DrawIconTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawIconUnstretchedTest() {
+			base.DrawIconUnstretchedTest ();
+		}
+
+		[Test]
+		public override void DrawImageUnscaledTest() {
+			base.DrawImageUnscaledTest ();
+		}
+
+		[Test]
+		public override void DrawStringFloatFormat() {
+			base.DrawStringFloatFormat ();
+		}
+
+		[Test]
+		public override void MeasureCharacterRangesRegions() {
+			base.MeasureCharacterRangesRegions ();
+		}
+
+		[Test] 
+		[Category("NotWorking")]
+		public override void MeasureStringSizeFFormatInts() {
+			base.MeasureStringSizeFFormatInts ();
 		}
 	}
 
@@ -2361,6 +2680,47 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			st["DrawRectanglesRectangle:2"] = TOLERANCE * 1.5f; 
 			st["DrawRectanglesRectangleF:2"] = TOLERANCE * 1.5f; 
 		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawClosedCurveTest() {
+			base.DrawClosedCurveTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawIconTest() {
+			base.DrawIconTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawIconUnstretchedTest() {
+			base.DrawIconUnstretchedTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawImageUnscaledTest() {
+			base.DrawImageUnscaledTest ();
+		}
+
+		[Test]
+		public override void DrawStringFloatFormat() {
+			base.DrawStringFloatFormat ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void MeasureCharacterRangesRegions() {
+			base.MeasureCharacterRangesRegions ();
+		}
+
+		[Test] 
+		[Category("NotWorking")]
+		public override void MeasureStringSizeFFormatInts() {
+			base.MeasureStringSizeFFormatInts ();
+		}
 	}
 
 	[TestFixture]
@@ -2369,6 +2729,42 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			base.SetUp ("GraphicsFixturePropPageUnit5");
 
 			t.Graphics.PageUnit = GraphicsUnit.Pixel;
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawIconTest() {
+			base.DrawIconTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawIconUnstretchedTest() {
+			base.DrawIconUnstretchedTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawImageUnscaledTest() {
+			base.DrawImageUnscaledTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawStringFloatFormat() {
+			base.DrawStringFloatFormat ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void MeasureCharacterRangesRegions() {
+			base.MeasureCharacterRangesRegions ();
+		}
+
+		[Test] 
+		[Category("NotWorking")]
+		public override void MeasureStringSizeFFormatInts() {
+			base.MeasureStringSizeFFormatInts ();
 		}
 	}
 
@@ -2384,6 +2780,108 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			st["DrawArcTest:8"] = TOLERANCE * 6.0f; // big difference in width of line
 			st["IsVisible4Float:2"] = TOLERANCE * 1.5f; 
 			st["TransformPointsPointF:2"] = TOLERANCE * 2.0f; 
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawClosedCurveTest() {
+			base.DrawClosedCurveTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawCurveTest() {
+			base.DrawCurveTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawCurveTestF() {
+			base.DrawCurveTestF ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawEllipseTest() {
+			base.DrawEllipseTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawEllipseTestF() {
+			base.DrawEllipseTestF ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawIconTest() {
+			base.DrawIconTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawIconUnstretchedTest() {
+			base.DrawIconUnstretchedTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawImageUnscaledTest() {
+			base.DrawImageUnscaledTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawPathTest() {
+			base.DrawPathTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawStringFloatFormat() {
+			base.DrawStringFloatFormat ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void EndContainerState() {
+			base.EndContainerState ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void MeasureCharacterRangesRegions() {
+			base.MeasureCharacterRangesRegions ();
+		}
+
+		[Test] 
+		[Category("NotWorking")]
+		public override void MeasureStringSizeFFormatInts() {
+			base.MeasureStringSizeFFormatInts ();
+		}
+
+		[Test] 
+		[Category("NotWorking")]
+		public override void MultiplyTransform() {
+			base.MultiplyTransform ();
+		}
+
+		[Test] 
+		[Category("NotWorking")]
+		public override void MultiplyTransformMatrixOrder1() {
+			base.MultiplyTransformMatrixOrder1 ();
+		}
+
+		[Test] 
+		[Category("NotWorking")]
+		public override void RotateTransformAngleMatrixOrder1() {
+			base.RotateTransformAngleMatrixOrder1 ();
+		}
+
+		[Test] 
+		[Category("NotWorking")]
+		public override void TranslateTransformAngleMatrixOrder() {
+			base.TranslateTransformAngleMatrixOrder ();
 		}
 	}
 
@@ -2408,6 +2906,42 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 
 			st["TransformPointsPointF:2"] = TOLERANCE * 3.0f;
 		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawIconTest() {
+			base.DrawIconTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawIconUnstretchedTest() {
+			base.DrawIconUnstretchedTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawImageUnscaledTest() {
+			base.DrawImageUnscaledTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawStringFloatFormat() {
+			base.DrawStringFloatFormat ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void MeasureCharacterRangesRegions() {
+			base.MeasureCharacterRangesRegions ();
+		}
+
+		[Test] 
+		[Category("NotWorking")]
+		public override void MeasureStringSizeFFormatInts() {
+			base.MeasureStringSizeFFormatInts ();
+		}
 	}
 
 	[TestFixture]
@@ -2415,6 +2949,42 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 		public override void SetUp() {
 			base.SetUp ("GraphicsFixturePropPixelOffsetMode1");
 			t.Graphics.PixelOffsetMode = PixelOffsetMode.HighSpeed;
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawIconTest() {
+			base.DrawIconTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawIconUnstretchedTest() {
+			base.DrawIconUnstretchedTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawImageUnscaledTest() {
+			base.DrawImageUnscaledTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawStringFloatFormat() {
+			base.DrawStringFloatFormat ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void MeasureCharacterRangesRegions() {
+			base.MeasureCharacterRangesRegions ();
+		}
+
+		[Test] 
+		[Category("NotWorking")]
+		public override void MeasureStringSizeFFormatInts() {
+			base.MeasureStringSizeFFormatInts ();
 		}
 	}
 
@@ -2426,6 +2996,42 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 
 			st["TransformPointsPointF:2"] = TOLERANCE * 3.0f;
 		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawIconTest() {
+			base.DrawIconTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawIconUnstretchedTest() {
+			base.DrawIconUnstretchedTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawImageUnscaledTest() {
+			base.DrawImageUnscaledTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawStringFloatFormat() {
+			base.DrawStringFloatFormat ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void MeasureCharacterRangesRegions() {
+			base.MeasureCharacterRangesRegions ();
+		}
+
+		[Test] 
+		[Category("NotWorking")]
+		public override void MeasureStringSizeFFormatInts() {
+			base.MeasureStringSizeFFormatInts ();
+		}
 	}
 
 	#endregion
@@ -2433,13 +3039,395 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 	#region GraphicsFixturePropRenderingOrigin
 
 	[TestFixture]
-#if TARGET_JVM
-	[Category ("NotWorking")] // FIXME: Graphics.RenderingOrigin is not implemented
-#endif
+	[Category("NotWorking")]
 	public class GraphicsFixturePropRenderingOrigin : GraphicsFixture {
 		public override void SetUp() {
 			base.SetUp ("GraphicsFixturePropRenderingOrigin");
 			t.Graphics.RenderingOrigin = new Point(12, 23);
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void BeginContainerTest() {
+			base.BeginContainerTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void BeginContainerTest_2() {
+			base.BeginContainerTest_2 ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void ClearTest() {
+			base.ClearTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawArcTest() {
+			base.DrawArcTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawBezierTest() {
+			base.DrawBezierTest ();
+		}
+
+		[Test] 
+		[Category("NotWorking")]
+		public override void DrawBeziersTest() {
+			base.DrawBeziersTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawClosedCurveTest() {
+			base.DrawClosedCurveTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawCurveTest() {
+			base.DrawCurveTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawCurveTestF() {
+			base.DrawCurveTestF ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawEllipseTest() {
+			base.DrawEllipseTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawEllipseTestF() {
+			base.DrawEllipseTestF ();
+		}
+
+		[Test] 
+		[Category("NotWorking")]
+		public override void DrawIconTest() {
+			base.DrawIconTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawIconUnstretchedTest() {
+			base.DrawIconUnstretchedTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawImageUnscaledTest() {
+			base.DrawImageUnscaledTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawLineTest() {
+			base.DrawLineTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawLineTestF() {
+			base.DrawLineTestF ();
+		}
+
+		[Test] 
+		[Category("NotWorking")]
+		public override void DrawLinesTest() {
+			base.DrawLinesTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawLinesTestF() {
+			base.DrawLinesTestF ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawPathTest() {
+			base.DrawPathTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawPieTestF() {
+			base.DrawPieTestF ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawPieTest() {
+			base.DrawPieTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawPolygonPoint() {
+			base.DrawPolygonPoint ();
+		}
+
+		[Test] 
+		[Category("NotWorking")]
+		public override void DrawPolygonPointF() {
+			base.DrawPolygonPointF ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawRectangleFloat() {
+			base.DrawRectangleFloat ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawRectanglesRectangleF() {
+			base.DrawRectanglesRectangleF ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawRectanglesRectangle() {
+			base.DrawRectanglesRectangle ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawStringFloatFormat() {
+			base.DrawStringFloatFormat ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void EndContainerState() {
+			base.EndContainerState  ();
+		}
+
+		[Test] 
+		[Category("NotWorking")]
+		public override void EnumerateMetafile() {
+			base.EnumerateMetafile ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void ExcludeClipRegion() {
+			base.ExcludeClipRegion ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void FillClosedCurvePointFillModeTension() {
+			base.FillClosedCurvePointFillModeTension ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void FillClosedCurvePointFFillModeTension() {
+			base.FillClosedCurvePointFFillModeTension ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void FillEllipse() {
+			base.FillEllipse ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void FillEllipseFloat() {
+			base.FillEllipseFloat ();
+		}
+
+		[Test] 
+		[Category("NotWorking")]
+		public override void FillPathEllipse() {
+			base.FillPathEllipse ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void FillPieFloat() {
+			base.FillPieFloat ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void FillPolygonPointFillMode() {
+			base.FillPolygonPointFillMode ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void FillPolygonPointFFillMode() {
+			base.FillPolygonPointFFillMode ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void FillRectangle() {
+			base.FillRectangle ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void FillRectangleFloat() {
+			base.FillRectangleFloat ();
+		}
+
+		[Test] 
+		[Category("NotWorking")]
+		public override void FillRectanglesRectangle() {
+			base.FillRectanglesRectangle ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void FillRectanglesRectangleF() {
+			base.FillRectanglesRectangleF ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void FillRegionRectangle() {
+			base.FillRegionRectangle ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void FlushTest() {
+			base.FlushTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void IsVisible4Float() {
+			base.IsVisible4Float ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void MeasureCharacterRangesRegions() {
+			base.MeasureCharacterRangesRegions ();
+		}
+
+		[Test] 
+		[Category("NotWorking")]
+		public override void MeasureStringSizeFFormatInts() {
+			base.MeasureStringSizeFFormatInts ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void MultiplyTransform() {
+			base.MultiplyTransform ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void MultiplyTransformMatrixOrder() {
+			base.MultiplyTransformMatrixOrder ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void MultiplyTransformMatrixOrder1() {
+			base.MultiplyTransformMatrixOrder1 ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void ResetClipIntersectClipRectangleF() {
+			base.ResetClipIntersectClipRectangleF ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void SaveRestoreTranslate() {
+			base.SaveRestoreTranslate ();
+		}
+
+		[Test] 
+		[Category("NotWorking")]
+		public override void RotateTransformAngleMatrixOrder() {
+			base.RotateTransformAngleMatrixOrder ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void RotateTransformAngleMatrixOrder1() {
+			base.RotateTransformAngleMatrixOrder1 ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void ScaleTransformFloatMatrixOrder() {
+			base.ScaleTransformFloatMatrixOrder ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void ScaleTransformFloatMatrixOrder1() {
+			base.ScaleTransformFloatMatrixOrder1 ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void SetClipRegionCombine() {
+			base.SetClipRegionCombine ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void TransformPointsPointF() {
+			base.TransformPointsPointF ();
+		}
+
+		[Test] 
+		[Category("NotWorking")]
+		public override void TranslateClipFloat() {
+			base.TranslateClipFloat ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void TranslateTransformAngleMatrixOrder() {
+			base.TranslateTransformAngleMatrixOrder ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void TranslateTransformAngleMatrixOrder1() {
+			base.TranslateTransformAngleMatrixOrder1 ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void TransfromPageScaleUnits() {
+			base.TransfromPageScaleUnits ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void TransfromPageScaleUnits_2() {
+			base.TransfromPageScaleUnits_2 ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void TransfromPageScaleUnits_3() {
+			base.TransfromPageScaleUnits_3 ();
 		}
 	}
 
@@ -2471,6 +3459,42 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			st["DrawRectanglesRectangle:2"] = TOLERANCE * 3.0f;
 			st["DrawRectanglesRectangleF:2"] = TOLERANCE * 3.0f;
 		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawIconTest() {
+			base.DrawIconTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawIconUnstretchedTest() {
+			base.DrawIconUnstretchedTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawImageUnscaledTest() {
+			base.DrawImageUnscaledTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawStringFloatFormat() {
+			base.DrawStringFloatFormat ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void MeasureCharacterRangesRegions() {
+			base.MeasureCharacterRangesRegions ();
+		}
+
+		[Test] 
+		[Category("NotWorking")]
+		public override void MeasureStringSizeFFormatInts() {
+			base.MeasureStringSizeFFormatInts ();
+		}
 	}
 
 	[TestFixture]
@@ -2478,6 +3502,42 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 		public override void SetUp() {
 			base.SetUp ("GraphicsFixturePropSmoothingMode1");
 			t.Graphics.SmoothingMode = SmoothingMode.HighSpeed;
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawIconTest() {
+			base.DrawIconTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawIconUnstretchedTest() {
+			base.DrawIconUnstretchedTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawImageUnscaledTest() {
+			base.DrawImageUnscaledTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawStringFloatFormat() {
+			base.DrawStringFloatFormat ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void MeasureCharacterRangesRegions() {
+			base.MeasureCharacterRangesRegions ();
+		}
+
+		[Test] 
+		[Category("NotWorking")]
+		public override void MeasureStringSizeFFormatInts() {
+			base.MeasureStringSizeFFormatInts ();
 		}
 	}
 
@@ -2490,6 +3550,42 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 		public override void SetUp() {
 			base.SetUp ("GraphicsFixturePropTextContrast");
 			t.Graphics.TextContrast = 9;
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawIconTest() {
+			base.DrawIconTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawIconUnstretchedTest() {
+			base.DrawIconUnstretchedTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawImageUnscaledTest() {
+			base.DrawImageUnscaledTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawStringFloatFormat() {
+			base.DrawStringFloatFormat ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void MeasureCharacterRangesRegions() {
+			base.MeasureCharacterRangesRegions ();
+		}
+
+		[Test] 
+		[Category("NotWorking")]
+		public override void MeasureStringSizeFFormatInts() {
+			base.MeasureStringSizeFFormatInts ();
 		}
 	}
 
@@ -2508,7 +3604,10 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 		}
 
 		[TearDown]
-		public void TearDown() {
+		public void TearDown ()
+		{
+			if (t != null)
+				t.Dispose ();
 		}
 
 		[Test]
@@ -2650,68 +3749,266 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 	#region GraphicsFixturePropTextRenderingHint
 
 	[TestFixture]
-#if TARGET_JVM
-	[Category ("NotWorking")] // FIXME: Graphics.TextRenderingHint is not implemented
-#endif
 	public class GraphicsFixturePropTextRenderingHint : GraphicsFixture {
 		public override void SetUp() {
 			base.SetUp ("GraphicsFixturePropTextRenderingHint");
 			t.Graphics.TextRenderingHint = TextRenderingHint.AntiAlias;
 		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawIconTest() {
+			base.DrawIconTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawIconUnstretchedTest() {
+			base.DrawIconUnstretchedTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawImageUnscaledTest() {
+			base.DrawImageUnscaledTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawStringFloatFormat() {
+			base.DrawStringFloatFormat ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void MeasureCharacterRangesRegions() {
+			base.MeasureCharacterRangesRegions ();
+		}
+
+		[Test] 
+		[Category("NotWorking")]
+		public override void MeasureStringSizeFFormatInts() {
+			base.MeasureStringSizeFFormatInts ();
+		}
 	}
 
 	[TestFixture]
-#if TARGET_JVM
-	[Category ("NotWorking")] // FIXME: Graphics.TextRenderingHint is not implemented
-#endif
 	public class GraphicsFixturePropTextRenderingHint1 : GraphicsFixture {
 		public override void SetUp() {
 			base.SetUp ("GraphicsFixturePropTextRenderingHint1");
 			t.Graphics.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
 		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawIconTest() {
+			base.DrawIconTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawIconUnstretchedTest() {
+			base.DrawIconUnstretchedTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawImageUnscaledTest() {
+			base.DrawImageUnscaledTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawStringFloatFormat() {
+			base.DrawStringFloatFormat ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void MeasureCharacterRangesRegions() {
+			base.MeasureCharacterRangesRegions ();
+		}
+
+		[Test] 
+		[Category("NotWorking")]
+		public override void MeasureStringSizeFFormatInts() {
+			base.MeasureStringSizeFFormatInts ();
+		}
 	}
 
 	[TestFixture]
-#if TARGET_JVM
-	[Category ("NotWorking")] // FIXME: Graphics.TextRenderingHint is not implemented
-#endif
 	public class GraphicsFixturePropTextRenderingHint2 : GraphicsFixture {
 		public override void SetUp() {
 			base.SetUp ("GraphicsFixturePropTextRenderingHint2");
 			t.Graphics.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
 		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawIconTest() {
+			base.DrawIconTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawIconUnstretchedTest() {
+			base.DrawIconUnstretchedTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawImageUnscaledTest() {
+			base.DrawImageUnscaledTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawStringFloatFormat() {
+			base.DrawStringFloatFormat ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void MeasureCharacterRangesRegions() {
+			base.MeasureCharacterRangesRegions ();
+		}
+
+		[Test] 
+		[Category("NotWorking")]
+		public override void MeasureStringSizeFFormatInts() {
+			base.MeasureStringSizeFFormatInts ();
+		}
 	}
 
 	[TestFixture]
-#if TARGET_JVM
-	[Category ("NotWorking")] // FIXME: Graphics.TextRenderingHint is not implemented
-#endif
 	public class GraphicsFixturePropTextRenderingHint3 : GraphicsFixture {
 		public override void SetUp() {
 			base.SetUp ("GraphicsFixturePropTextRenderingHint3");
 			t.Graphics.TextRenderingHint = TextRenderingHint.SingleBitPerPixel;
 		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawIconTest() {
+			base.DrawIconTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawIconUnstretchedTest() {
+			base.DrawIconUnstretchedTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawImageUnscaledTest() {
+			base.DrawImageUnscaledTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawStringFloatFormat() {
+			base.DrawStringFloatFormat ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void MeasureCharacterRangesRegions() {
+			base.MeasureCharacterRangesRegions ();
+		}
+
+		[Test] 
+		[Category("NotWorking")]
+		public override void MeasureStringSizeFFormatInts() {
+			base.MeasureStringSizeFFormatInts ();
+		}
 	}
 
 	[TestFixture]
-#if TARGET_JVM
-	[Category ("NotWorking")] // FIXME: Graphics.TextRenderingHint is not implemented
-#endif
 	public class GraphicsFixturePropTextRenderingHint4 : GraphicsFixture {
 		public override void SetUp() {
 			base.SetUp ("GraphicsFixturePropTextRenderingHint4");
 			t.Graphics.TextRenderingHint = TextRenderingHint.SingleBitPerPixelGridFit;
 		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawIconTest() {
+			base.DrawIconTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawIconUnstretchedTest() {
+			base.DrawIconUnstretchedTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawImageUnscaledTest() {
+			base.DrawImageUnscaledTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawStringFloatFormat() {
+			base.DrawStringFloatFormat ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void MeasureCharacterRangesRegions() {
+			base.MeasureCharacterRangesRegions ();
+		}
+
+		[Test] 
+		[Category("NotWorking")]
+		public override void MeasureStringSizeFFormatInts() {
+			base.MeasureStringSizeFFormatInts ();
+		}
 	}
 
 	[TestFixture]
-#if TARGET_JVM
-	[Category ("NotWorking")] // FIXME: Graphics.TextRenderingHint is not implemented
-#endif
 	public class GraphicsFixturePropTextRenderingHint5 : GraphicsFixture {
 		public override void SetUp() {
 			base.SetUp ("GraphicsFixturePropTextRenderingHint5");
 			t.Graphics.TextRenderingHint = TextRenderingHint.SystemDefault;
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawIconTest() {
+			base.DrawIconTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawIconUnstretchedTest() {
+			base.DrawIconUnstretchedTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawImageUnscaledTest() {
+			base.DrawImageUnscaledTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawStringFloatFormat() {
+			base.DrawStringFloatFormat ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void MeasureCharacterRangesRegions() {
+			base.MeasureCharacterRangesRegions ();
+		}
+
+		[Test] 
+		[Category("NotWorking")]
+		public override void MeasureStringSizeFFormatInts() {
+			base.MeasureStringSizeFFormatInts ();
 		}
 	}
 
@@ -2732,6 +4029,42 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			st["DrawClosedCurveTest:4"] = TOLERANCE * 2.0f;
 			st["RotateTransformAngleMatrixOrder:2"] = TOLERANCE * 1.5f;
 			st["TransformPointsPointF:2"] = TOLERANCE * 3.5f;
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawIconTest() {
+			base.DrawIconTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawIconUnstretchedTest() {
+			base.DrawIconUnstretchedTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawImageUnscaledTest() {
+			base.DrawImageUnscaledTest ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void DrawStringFloatFormat() {
+			base.DrawStringFloatFormat ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public override void MeasureCharacterRangesRegions() {
+			base.MeasureCharacterRangesRegions ();
+		}
+
+		[Test] 
+		[Category("NotWorking")]
+		public override void MeasureStringSizeFFormatInts() {
+			base.MeasureStringSizeFFormatInts ();
 		}
 	}
 

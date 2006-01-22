@@ -21,6 +21,13 @@ namespace Test.Sys.Drawing
 			p.Width = 2;
 		}
 
+		[TearDown]
+		public void TearDown ()
+		{
+			if (t != null)
+				t.Dispose ();
+		}
+
 		[Test]
 		public void ctor_void()
 		{
@@ -176,9 +183,7 @@ namespace Test.Sys.Drawing
 		}
 
 		[Test]
-#if TARGET_JVM
 		[Category ("NotWorking")]
-#endif
 		public void AddArc_Rectangle_Float_Float()
 		{
 			path = new GraphicsPath ();
@@ -241,9 +246,7 @@ namespace Test.Sys.Drawing
 
 
 		[Test]
-#if TARGET_JVM
 		[Category ("NotWorking")]
-#endif
 		public void AddArc_RectangleF_Float_Float()
 		{
 			path = new GraphicsPath ();
@@ -306,9 +309,7 @@ namespace Test.Sys.Drawing
 		}
 
 		[Test]
-#if TARGET_JVM
 		[Category ("NotWorking")]
-#endif
 		public void AddArc_Int_Int_Int_Int_Float_Float()
 		{
 			path = new GraphicsPath ();
@@ -372,9 +373,7 @@ namespace Test.Sys.Drawing
 
 
 		[Test]
-#if TARGET_JVM
 		[Category ("NotWorking")]
-#endif
 		public void AddArc_Float_Float_Float_Float_Float_Float()
 		{
 			path = new GraphicsPath ();
@@ -1950,9 +1949,7 @@ namespace Test.Sys.Drawing
 		}
 
 		[Test]
-#if TARGET_JVM
 		[Category ("NotWorking")]
-#endif
 		public void AddPie_Rectangle_Float_Float()
 		{
 			path = new GraphicsPath ();
@@ -2019,9 +2016,7 @@ namespace Test.Sys.Drawing
 		}
 
 		[Test]
-#if TARGET_JVM
 		[Category ("NotWorking")]
-#endif
 		public void AddPie_Int_Int_Int_Int_Float_Float()
 		{
 			path = new GraphicsPath ();
@@ -2088,9 +2083,7 @@ namespace Test.Sys.Drawing
 		}
 
 		[Test]
-#if TARGET_JVM
 		[Category ("NotWorking")]
-#endif
 		public void AddPie_Float_Float_Float_Float_Float_Float()
 		{
 			path = new GraphicsPath ();
@@ -2427,9 +2420,7 @@ namespace Test.Sys.Drawing
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")]
-#endif
+		[Category ("NotWorking")] 
 		public void AddString_String_FontFamily_Int_Float_Point_StringFormat()
 		{
 			path = new GraphicsPath();
@@ -2451,9 +2442,7 @@ namespace Test.Sys.Drawing
 		}
 
 		[Test]
-#if TARGET_JVM
 		[Category ("NotWorking")]
-#endif
 		public void AddString_String_FontFamily_Int_Float_PointF_StringFormat()
 		{
 			path = new GraphicsPath();
@@ -2475,9 +2464,7 @@ namespace Test.Sys.Drawing
 		}
 
 		[Test]
-#if TARGET_JVM
 		[Category ("NotWorking")]
-#endif
 		public void AddString_String_FontFamily_Int_Float_Rectangle_StringFormat()
 		{
 			path = new GraphicsPath();
@@ -2499,9 +2486,7 @@ namespace Test.Sys.Drawing
 		}
 
 		[Test]
-#if TARGET_JVM
 		[Category ("NotWorking")]
-#endif
 		public void AddString_String_FontFamily_Int_Float_RectangleFF_StringFormat()
 		{
 			path = new GraphicsPath();
@@ -2785,9 +2770,7 @@ namespace Test.Sys.Drawing
 		}
 
 		[Test]
-#if TARGET_JVM
 		[Category ("NotWorking")]
-#endif
 		public void Flatten()
 		{
 			path = new GraphicsPath ();
@@ -2997,9 +2980,7 @@ namespace Test.Sys.Drawing
 		}
 
 		[Test]
-#if TARGET_JVM
 		[Category ("NotWorking")]
-#endif
 		public void Flatten_Matrix()
 		{
 			path = new GraphicsPath ();
@@ -3319,9 +3300,7 @@ namespace Test.Sys.Drawing
 		}
 
 		[Test]
-#if TARGET_JVM
 		[Category ("NotWorking")]
-#endif
 		public void Flatten_Matrix_Float()
 		{
 			path = new GraphicsPath ();
@@ -4602,9 +4581,7 @@ namespace Test.Sys.Drawing
 		}
 
 		[Test]
-#if TARGET_JVM
 		[Category ("NotWorking")]
-#endif
 		public void Warp_PointFArr_RectangleF()
 		{
 			path = new GraphicsPath ();
@@ -4681,9 +4658,7 @@ namespace Test.Sys.Drawing
 
 
 		[Test]
-#if TARGET_JVM
 		[Category ("NotWorking")]
-#endif
 		public void Warp_PointFArr_RectangleF_Matrix()
 		{
 			path = new GraphicsPath ();
@@ -4763,9 +4738,7 @@ namespace Test.Sys.Drawing
 
 
 		[Test]
-#if TARGET_JVM
 		[Category ("NotWorking")]
-#endif
 		public void Warp_PointFArr_RectangleF_Matrix_WarpMode()
 		{
 			path = new GraphicsPath ();
@@ -4915,9 +4888,7 @@ namespace Test.Sys.Drawing
 
 
 		[Test]
-#if TARGET_JVM
 		[Category ("NotWorking")]
-#endif
 		public void Warp_PointFArr_RectangleF_Matrix_WarpMode_Float()
 		{
 			path = new GraphicsPath ();
@@ -4996,9 +4967,7 @@ namespace Test.Sys.Drawing
 		}
 
 		[Test]
-#if TARGET_JVM
 		[Category ("NotWorking")]
-#endif
 		public void Widen_Pen()
 		{
 			path = new GraphicsPath ();
@@ -5221,9 +5190,7 @@ namespace Test.Sys.Drawing
 
 
 		[Test]
-#if TARGET_JVM
 		[Category ("NotWorking")]
-#endif
 		public void Widen_Pen_Matrix()
 		{
 			path = new GraphicsPath ();
@@ -5413,9 +5380,7 @@ namespace Test.Sys.Drawing
 
 
 		[Test]
-#if TARGET_JVM
 		[Category ("NotWorking")]
-#endif
 		public void Widen_Pen_Matrix_Float()
 		{
 			path = new GraphicsPath ();

@@ -1,3 +1,7 @@
+2006-01-22 Boris Kirzner <borisk@mainsoft.com>
+	* Bitmap.cs, Brush.cs, Graphics.cs, GraphicsPath.cs, Image.cs, Pen.cs,
+	Region.cs: tests refactoring.
+
 2005-10-27 Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* Brush.cs: added texture brush with transform tests

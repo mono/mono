@@ -13,9 +13,17 @@ namespace Test.Sys.Drawing {
 		[SetUp]
 		public void SetUp () {
 			t = DrawingTest.Create (256, 256);
-			Image im=new Bitmap (@"..\..\Bitmap1.png"); 
+			Image im=new Bitmap ("Bitmap1.png"); 
 			t.Graphics.DrawImageUnscaled (im, 0, 0);
 		}
+
+		[TearDown]
+		public void TearDown ()
+		{
+			if (t != null)
+				t.Dispose ();
+		}
+
 		[Test]
 		public void Clone () {
 			Image im1 = (Image) t.Bitmap.Clone ();
@@ -47,9 +55,7 @@ namespace Test.Sys.Drawing {
 			Assert.AreEqual (GraphicsUnit.Pixel, unit);
 		}
 		[Test]
-#if TARGET_JVM
 		[Category ("NotWorking")]
-#endif
 		public void GetEncoderParameterList () {
 			Assert.Fail ("Test not implemented - undocumented parameter");
 		}
@@ -76,16 +82,12 @@ namespace Test.Sys.Drawing {
 			}
 		}
 		[Test]
-#if TARGET_JVM
 		[Category ("NotWorking")]
-#endif
 		public void GetPropertyItem () {
 			Assert.Fail ("Test not implemented - undocumented parameter");
 		}
 		[Test]
-#if TARGET_JVM
 		[Category ("NotWorking")]
-#endif
 		public void RemovePropertyItem () {
 			Assert.Fail ("Test not implemented - undocumented parameter");
 		}
@@ -93,9 +95,7 @@ namespace Test.Sys.Drawing {
 			return false;
 		}
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")] // FIXME: IntPtr
-#endif
+		[Category ("NotWorking")]
 		public void GetThumbnailImage() {
 			t.Show ();
 			Image.GetThumbnailImageAbort myCallback =
@@ -106,9 +106,7 @@ namespace Test.Sys.Drawing {
 			t.Show ();
 		}
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")] // FIXME: Image.RotateFlip is not implemented for now.
-#endif
+		[Category ("NotWorking")]
 		public void RotateFlip () {
 			t.Show ();
 			t.Bitmap.RotateFlip (RotateFlipType.Rotate90FlipY);
@@ -148,13 +146,10 @@ namespace Test.Sys.Drawing {
 			File.Delete ("test.png");
 		}
 		[Test]
-#if TARGET_JVM
-		[Category("NotWorking")]
-#endif
 		public void Save_Stream_ImageCodecInfo_EncoderParameters () {
 			using (FileStream w = new FileStream ("test.png", FileMode.OpenOrCreate)) {
 				foreach (ImageCodecInfo i in ImageCodecInfo.GetImageEncoders()) {
-					if (i.FilenameExtension.IndexOf ("png") != -1) {
+					if (i.FilenameExtension.ToLower().IndexOf ("png") != -1) {
 						t.Bitmap.Save (w, i, new EncoderParameters ());
 						break;
 					}
@@ -168,12 +163,9 @@ namespace Test.Sys.Drawing {
 			File.Delete ("test.png");
 		}
 		[Test]
-#if TARGET_JVM
-		[Category("NotWorking")]
-#endif
 		public void Save_string_ImageCodecInfo_EncoderParameters () {
 			foreach (ImageCodecInfo i in ImageCodecInfo.GetImageEncoders()) {
-				if (i.FilenameExtension.IndexOf ("png") != -1) {
+				if (i.FilenameExtension.ToLower().IndexOf ("png") != -1) {
 					t.Bitmap.Save ("test.png", i, new EncoderParameters ());
 					break;
 				}
@@ -186,16 +178,12 @@ namespace Test.Sys.Drawing {
 			File.Delete ("test.png");
 		}
 		[Test]
-#if TARGET_JVM
 		[Category ("NotWorking")]
-#endif
 		public void SaveAdd () {
 			Assert.Fail ("Test not implemented");
 		}
 		[Test]
-#if TARGET_JVM
 		[Category ("NotWorking")]
-#endif
 		public void SelectActiveFrame () {
 			Assert.Fail ("Test not implemented");
 		}
@@ -217,16 +205,10 @@ namespace Test.Sys.Drawing {
 			Assert.AreEqual (256, t.Bitmap.Width);
 		}
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")] // FIXME: Image.HorizontalResolution is not implemented for now.
-#endif
 		public void HorizontalResolution () {
 			Assert.AreEqual (96, t.Bitmap.HorizontalResolution);
 		}
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")] // FIXME: Image.VerticalResolution is not implemented for now.
-#endif
 		public void VerticalResolution () {
 			Assert.AreEqual (96, t.Bitmap.VerticalResolution);
 		}
@@ -235,16 +217,12 @@ namespace Test.Sys.Drawing {
 			Assert.AreEqual (PixelFormat.Format32bppArgb, t.Bitmap.PixelFormat);
 		}
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")] // FIXME: Image.PropertyIdList is not implemented for now.
-#endif
+		[Category ("NotWorking")]
 		public void PropertyIdList () {
 			Assert.AreEqual (new int [0], t.Bitmap.PropertyIdList);
 		}
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")] // FIXME: Image.PropertyItems is not implemented for now.
-#endif
+		[Category ("NotWorking")]
 		public void PropertyItems () {
 			Assert.AreEqual (new PropertyItem [0], t.Bitmap.PropertyItems);
 		}
@@ -258,7 +236,7 @@ namespace Test.Sys.Drawing {
 		public void PNG_Interop()
 		{
 
-			string file_name = @"..\..\bitmap_gh.png";
+			string file_name = "bitmap_gh.png";
 			using (FileStream r = new FileStream (file_name, FileMode.Open)) 
 			{
 				Image im = new Bitmap (r);
@@ -266,7 +244,7 @@ namespace Test.Sys.Drawing {
 				Assert.IsTrue(t.Compare(2));
 			}
 
-			file_name = @"..\..\bitmap_net.png";
+			file_name = "bitmap_net.png";
 			using (FileStream r = new FileStream (file_name, FileMode.Open)) 
 			{
 				Image im = new Bitmap (r);

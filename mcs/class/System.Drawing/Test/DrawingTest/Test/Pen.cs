@@ -26,6 +26,13 @@ namespace Test.Sys.Drawing
 			DrawingTest.ShowForms = false;
 		}
 
+		[TearDown]
+		public void TearDown ()
+		{
+			if (t != null)
+				t.Dispose ();
+		}
+
 		#region InitAlignment
 		[Test]
 		public void InitAlignment () {
@@ -119,9 +126,7 @@ namespace Test.Sys.Drawing
 		#region DashCustomStyle
 		//The following tests DashOffset and DashPattern
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")] //FIXME: Bug in dashed line
-#endif
+		[Category ("NotWorking")]
 		public void DashCustomStyle_1 () {
 			p.DashStyle = DashStyle.Custom;
 			p.Width = 10;
@@ -144,9 +149,7 @@ namespace Test.Sys.Drawing
 			Assert.IsTrue (t.Compare (TOLERANCE));
 		}
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")] //FIXME: Bug in dashed line
-#endif
+		[Category ("NotWorking")]
 		public void DashCustomStyle_4 () {
 			p.DashPattern = new float [] {2, 3, 1.15F, 0.05F, 1.74321F};
 			p.DashOffset = 10.2F;
@@ -155,9 +158,7 @@ namespace Test.Sys.Drawing
 			Assert.IsTrue (t.Compare (TOLERANCE));
 		}
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")] //FIXME: Bug in dashed line
-#endif
+		[Category ("NotWorking")]
 		public void DashCustomStyle_5 () {
 			p.DashPattern = new float [] {2, 3, 1.15F, 0.05F, 1.74321F};
 			p.DashOffset = 10.2F;
@@ -169,9 +170,6 @@ namespace Test.Sys.Drawing
 
 		#region DashCapTest
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")] //FIXME: Bug in dashed line
-#endif
 		public void DashCapTest_Flat () {
 			p.Width = 15;
 			Assert.AreEqual (DashCap.Flat, p.DashCap);
@@ -181,9 +179,7 @@ namespace Test.Sys.Drawing
 			Assert.IsTrue (t.Compare (TOLERANCE));
 		}
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")] //FIXME: Bug in dashed line
-#endif
+		[Category ("NotWorking")]
 		public void DashCapTest_Round () {
 			p.Width = 15;
 			p.DashStyle = DashStyle.DashDot;
@@ -193,9 +189,7 @@ namespace Test.Sys.Drawing
 			Assert.IsTrue (t.Compare (TOLERANCE));
 		}
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")] // FIXME: DashCap.Triangle is not sopported by GH
-#endif
+		[Category ("NotWorking")]
 		public void DashCapTest_Triangle () {
 			p.Width = 15;
 			p.DashStyle = DashStyle.DashDot;
@@ -236,9 +230,6 @@ namespace Test.Sys.Drawing
 
 		#region LineJoin Miter
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")] // FIXME: Currently Only MiterClipper is sopported by GH
-#endif
 		public void LineJoinTest_Miter_1 () {
 			p.LineJoin = LineJoin.Miter;
 			Point [] points = new Point [] {
@@ -251,9 +242,7 @@ namespace Test.Sys.Drawing
 			Assert.IsTrue (t.Compare (TOLERANCE));
 		}
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")] // FIXME: Currently Only MiterClipper is sopported by GH
-#endif
+		[Category ("NotWorking")]
 		public void LineJoinTest_Miter_2 () {
 			p.LineJoin = LineJoin.Miter;
 			Point [] points = new Point [] {
@@ -266,9 +255,6 @@ namespace Test.Sys.Drawing
 			Assert.IsTrue (t.Compare (TOLERANCE));
 		}
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")] // FIXME: Currently Only MiterClipper is sopported by GH
-#endif
 		public void LineJoinTest_Miter_3 () {
 			p.LineJoin = LineJoin.Miter;
 			Point [] points = new Point [] {
@@ -417,9 +403,7 @@ namespace Test.Sys.Drawing
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")] //FIXME: Bug in pen aligment
-#endif
+		[Category ("NotWorking")]
 		public void PenAlignmentTest_3 () {
 			Point [] points = new Point [] {
 											   new Point (30, 30), new Point (100, 100), new Point (170, 30),
@@ -553,9 +537,6 @@ namespace Test.Sys.Drawing
 		
 		#region Line StartCap
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")] //FIXME: cannot apply start or end line caps separately
-#endif
 		public void StartCap_Flat() {
 			Assert.AreEqual(LineCap.Flat, p.StartCap);
 			p.StartCap = LineCap.Flat;
@@ -566,9 +547,7 @@ namespace Test.Sys.Drawing
 			Assert.IsTrue (t.Compare (TOLERANCE));
 		}
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")] //FIXME: cannot apply start or end line caps separately
-#endif
+		[Category ("NotWorking")]
 		public void StartCap_Round() {
 			p.StartCap = LineCap.Round;
 			p.Width = 25;
@@ -578,9 +557,7 @@ namespace Test.Sys.Drawing
 			Assert.IsTrue (t.Compare (TOLERANCE));
 		}
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")] //FIXME: cannot apply start or end line caps separately
-#endif
+		[Category ("NotWorking")]
 		public void StartCap_Square() {
 			p.StartCap = LineCap.Square;
 			p.Width = 25;
@@ -590,9 +567,6 @@ namespace Test.Sys.Drawing
 			Assert.IsTrue (t.Compare (TOLERANCE));
 		}
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")] //FIXME: cannot apply start or end line caps separately
-#endif
 		public void StartCap_AnchorMask() {
 			p.StartCap = LineCap.AnchorMask;
 			p.Width = 25;
@@ -602,9 +576,6 @@ namespace Test.Sys.Drawing
 			Assert.IsTrue (t.Compare (TOLERANCE));
 		}
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")] //FIXME: cannot apply start or end line caps separately
-#endif
 		public void StartCap_ArrowAnchor() {
 			p.StartCap = LineCap.ArrowAnchor;
 			p.Width = 25;
@@ -614,9 +585,7 @@ namespace Test.Sys.Drawing
 			Assert.IsTrue (t.Compare (TOLERANCE));
 		}
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")] //FIXME: cannot apply start or end line caps separately
-#endif
+		[Category ("NotWorking")]
 		public void StartCap_DiamondAnchor() {
 			p.StartCap = LineCap.DiamondAnchor;
 			p.Width = 25;
@@ -626,9 +595,6 @@ namespace Test.Sys.Drawing
 			Assert.IsTrue (t.Compare (TOLERANCE));
 		}
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")] //FIXME: cannot apply start or end line caps separately
-#endif
 		public void StartCap_NoAnchor() {
 			p.StartCap = LineCap.NoAnchor;
 			p.Width = 25;
@@ -638,9 +604,7 @@ namespace Test.Sys.Drawing
 			Assert.IsTrue (t.Compare (TOLERANCE));
 		}
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")] //FIXME: cannot apply start or end line caps separately
-#endif
+		[Category ("NotWorking")]
 		public void StartCap_RoundAnchor() {
 			p.StartCap = LineCap.RoundAnchor;
 			p.Width = 25;
@@ -650,9 +614,7 @@ namespace Test.Sys.Drawing
 			Assert.IsTrue (t.Compare (TOLERANCE));
 		}
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")] //FIXME: cannot apply start or end line caps separately
-#endif
+		[Category ("NotWorking")]
 		public void StartCap_SquareAnchor() {
 			p.StartCap = LineCap.SquareAnchor;
 			p.Width = 25;
@@ -662,9 +624,6 @@ namespace Test.Sys.Drawing
 			Assert.IsTrue (t.Compare (TOLERANCE));
 		}
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")] //FIXME: cannot apply start or end line caps separately
-#endif
 		public void StartCap_Triangle() {
 			p.StartCap = LineCap.Triangle;
 			p.Width = 25;
@@ -674,9 +633,6 @@ namespace Test.Sys.Drawing
 			Assert.IsTrue (t.Compare (TOLERANCE));
 		}
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")] //FIXME: cannot apply start or end line caps separately
-#endif
 		public void StartCap_Custom() {
 			p.StartCap = LineCap.Custom;
 			p.Width = 25;
@@ -689,9 +645,6 @@ namespace Test.Sys.Drawing
 
 		#region Line EndCap
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")] //FIXME: cannot apply start or end line caps separately
-#endif
 		public void EndCap_Flat() 
 		{
 			Assert.AreEqual(LineCap.Flat, p.EndCap);
@@ -703,9 +656,7 @@ namespace Test.Sys.Drawing
 			Assert.IsTrue (t.Compare (TOLERANCE));
 		}
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")] //FIXME: cannot apply start or end line caps separately
-#endif
+		[Category ("NotWorking")]
 		public void EndCap_Round() 
 		{
 			p.EndCap = LineCap.Round;
@@ -716,9 +667,7 @@ namespace Test.Sys.Drawing
 			Assert.IsTrue (t.Compare (TOLERANCE));
 		}
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")] //FIXME: cannot apply start or end line caps separately
-#endif
+		[Category ("NotWorking")]
 		public void EndCap_Square() {
 			p.EndCap = LineCap.Square;
 			p.Width = 25;
@@ -728,9 +677,7 @@ namespace Test.Sys.Drawing
 			Assert.IsTrue (t.Compare (TOLERANCE));
 		}
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")] //FIXME: cannot apply start or end line caps separately
-#endif
+		[Category ("NotWorking")]
 		public void EndCap_AnchorMask() {
 			p.EndCap = LineCap.AnchorMask;
 			p.Width = 25;
@@ -740,9 +687,7 @@ namespace Test.Sys.Drawing
 			Assert.IsTrue (t.Compare (TOLERANCE));
 		}
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")] //FIXME: cannot apply start or end line caps separately
-#endif
+		[Category ("NotWorking")]
 		public void EndCap_ArrowAnchor() {
 			p.EndCap = LineCap.ArrowAnchor;
 			p.Width = 25;
@@ -752,9 +697,6 @@ namespace Test.Sys.Drawing
 			Assert.IsTrue (t.Compare (TOLERANCE));
 		}
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")] //FIXME: cannot apply start or end line caps separately
-#endif
 		public void EndCap_DiamondAnchor() {
 			p.EndCap = LineCap.DiamondAnchor;
 			p.Width = 25;
@@ -764,9 +706,7 @@ namespace Test.Sys.Drawing
 			Assert.IsTrue (t.Compare (TOLERANCE));
 		}
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")] //FIXME: cannot apply start or end line caps separately
-#endif
+		[Category ("NotWorking")]
 		public void EndCap_NoAnchor() {
 			p.EndCap = LineCap.NoAnchor;
 			p.Width = 25;
@@ -776,9 +716,7 @@ namespace Test.Sys.Drawing
 			Assert.IsTrue (t.Compare (TOLERANCE));
 		}
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")] //FIXME: cannot apply start or end line caps separately
-#endif
+		[Category ("NotWorking")]
 		public void EndCap_RoundAnchor() {
 			p.EndCap = LineCap.RoundAnchor;
 			p.Width = 25;
@@ -788,9 +726,6 @@ namespace Test.Sys.Drawing
 			Assert.IsTrue (t.Compare (TOLERANCE));
 		}
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")] //FIXME: cannot apply start or end line caps separately
-#endif
 		public void EndCap_SquareAnchor() {
 			p.EndCap = LineCap.SquareAnchor;
 			p.Width = 25;
@@ -800,9 +735,7 @@ namespace Test.Sys.Drawing
 			Assert.IsTrue (t.Compare (TOLERANCE));
 		}
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")] //FIXME: cannot apply start or end line caps separately
-#endif
+		[Category ("NotWorking")]
 		public void EndCap_Triangle() {
 			p.EndCap = LineCap.Triangle;
 			p.Width = 25;
@@ -812,9 +745,7 @@ namespace Test.Sys.Drawing
 			Assert.IsTrue (t.Compare (TOLERANCE));
 		}
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")] //FIXME: cannot apply start or end line caps separately
-#endif
+		[Category ("NotWorking")]
 		public void EndCap_Custom() {
 			p.EndCap = LineCap.Custom;
 			p.Width = 25;

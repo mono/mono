@@ -1,3 +1,7 @@
+2006-01-22 Boris Kirzner <borisk@mainsoft.com>
+	* DrawingTestHelper.csproj: include PDComparer.cs.
+	* DrawingTest.cs: implement IDisposable.
+
 2005-09-20 Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* DrawingTest.cs: Added Pixel Distance comparer PDCompare()
