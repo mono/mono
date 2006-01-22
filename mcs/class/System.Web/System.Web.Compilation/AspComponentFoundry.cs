@@ -40,8 +40,12 @@ namespace System.Web.Compilation
 
 		public AspComponentFoundry ()
 		{
+#if NET_2_0
+			foundries = new Hashtable (StringComparer.InvariantCultureIgnoreCase);
+#else
 			foundries = new Hashtable (CaseInsensitiveHashCodeProvider.DefaultInvariant,
 						   CaseInsensitiveComparer.DefaultInvariant);
+#endif
 
 			Assembly sw = typeof (AspComponentFoundry).Assembly;
 			RegisterFoundry ("asp", sw, "System.Web.UI.WebControls");
@@ -150,8 +154,12 @@ namespace System.Web.Compilation
 			public CompoundFoundry (string tagPrefix)
 			{
 				this.tagPrefix = tagPrefix;
+#if NET_2_0
+				tagnames = new Hashtable (StringComparer.InvariantCultureIgnoreCase);
+#else
 				tagnames = new Hashtable (CaseInsensitiveHashCodeProvider.DefaultInvariant,
-							   CaseInsensitiveComparer.DefaultInvariant);
+							  CaseInsensitiveComparer.DefaultInvariant);
+#endif
 			}
 
 			public void Add (Foundry foundry)

@@ -1,5 +1,18 @@
 2006-01-22  Chris Toshok  <toshok@ximian.com>
 
+	* AspComponentFoundry.cs (.ctor): use a 2.0 friendly form of the
+	Hashtable ctor to silence a couple of warning.
+	(CompoundFoundry.ctor): same
+
+	* Directive.cs (InitHash): use a 2.0 friendly form of the
+	Hashtable ctor to silence a couple of warning.
+
+	* TagAttributes.cs (MakeHash): use a 2.0 friendly form of the
+	Hashtable ctor to silence a warning.
+	(GetDictionary): same.
+
+2006-01-22  Chris Toshok  <toshok@ximian.com>
+
 	* AppSettingsExpressionBuilder.cs: implement this, patterning it
 	after an example on msdn.  Also, enable the ExpressionEditor
 	attribute, but use the string rather than the Type overload so we

@@ -81,10 +81,14 @@ namespace System.Web.Compilation
 		
 		private static void InitHash ()
 		{
+#if NET_2_0
+			directivesHash = new Hashtable (StringComparer.InvariantCultureIgnoreCase);
+#else
 			CaseInsensitiveHashCodeProvider provider = new CaseInsensitiveHashCodeProvider (CultureInfo.InvariantCulture);
 			CaseInsensitiveComparer comparer =  new CaseInsensitiveComparer (CultureInfo.InvariantCulture);
 
 			directivesHash = new Hashtable (provider, comparer); 
+#endif
 
 			// Use Hashtable 'cause is O(1) in Contains (ArrayList is O(n))
 			Hashtable valid_attributes = new Hashtable (provider, comparer);
