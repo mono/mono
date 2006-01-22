@@ -53,8 +53,12 @@ namespace System.Web.UI {
 
 		static RootBuilder ()
 		{
+#if NET_2_0
+			htmlControls = new Hashtable (StringComparer.InvariantCultureIgnoreCase);
+#else
 			htmlControls = new Hashtable (CaseInsensitiveHashCodeProvider.DefaultInvariant,
 						      CaseInsensitiveComparer.DefaultInvariant); 
+#endif
 
 			htmlControls.Add ("A", typeof (HtmlAnchor));
 			htmlControls.Add ("BUTTON", typeof (HtmlButton));

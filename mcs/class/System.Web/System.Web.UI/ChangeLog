@@ -1,5 +1,8 @@
 2006-01-22  Chris Toshok  <toshok@ximian.com>
 
+	* RootBuilder.cs (.cctor): use a 2.0 friendly hashtable ctor to
+	quiet mcs.
+
 	* PageParser.cs (ProcessMainAttributes): i missed a
 	CONFIGURATION_2_0 block.
 
