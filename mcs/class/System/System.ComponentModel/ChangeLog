@@ -1,3 +1,8 @@
+2006-01-22  Chris Toshok  <toshok@ximian.com>
+
+	* DesignerSerializationVisibilityAttribute.cs: in the 2.0 case,
+	this attribute is valid on fields and events as well.
+
 2005-11-19  Zoltan Varga  <vargaz@gmail.com>
 
 	* TypeDescriptor.cs: Small changes to make this more compliant with
