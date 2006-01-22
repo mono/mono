@@ -33,15 +33,10 @@
 using System;
 using System.CodeDom;
 using System.Web.UI;
-#if notyet
-using System.Web.UI.Design;
-#endif
 
 namespace System.Web.Compilation {
 
-#if notyet
-	[ExpressionEditor(typeof (ResourceExpressionEditor))]
-#endif
+	[ExpressionEditor("System.Web.UI.Design.ResourceExpressionEditor, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
 	[ExpressionPrefix("Resources")]
 	public class ResourceExpressionBuilder : ExpressionBuilder {
 

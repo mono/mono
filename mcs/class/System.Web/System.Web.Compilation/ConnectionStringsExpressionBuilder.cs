@@ -32,45 +32,42 @@
 
 using System;
 using System.CodeDom;
+using System.Configuration;
+using System.Web.Configuration;
 using System.Web.UI;
-#if notyet
-using System.Web.UI.Design;
-#endif
 
 namespace System.Web.Compilation {
 
-#if notyet
-	[ExpressionEditor(typeof (ConnectionStringsExpressionEditor))]
-#endif
+	[ExpressionEditor("System.Web.UI.Design.ConnectionStringsExpressionEditor, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
 	[ExpressionPrefix("ConnectionStrings")]
 	public class ConnectionStringsExpressionBuilder : ExpressionBuilder {
 
-		public ConnectionStringsExpressionBuilder ()
-		{
-		}
-
-		[MonoTODO]
 		public override object EvaluateExpression (object target, BoundPropertyEntry entry, object parsedData, ExpressionBuilderContext context)
 		{
-			throw new NotImplementedException ();
+			return GetConnectionString (entry.Expression.Trim());
 		}
 
-		[MonoTODO]
 		public override CodeExpression GetCodeExpression (BoundPropertyEntry entry, object parsedData, ExpressionBuilderContext context)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public static string GetConnectionString (string connectionStringName)
 		{
-			throw new NotImplementedException ();
+			ConnectionStringSettings conn = WebConfigurationManager.ConnectionStrings [connectionStringName];
+			if (conn == null)
+				return "";
+			else
+				return conn.ConnectionString;
 		}
 
-		[MonoTODO]
 		public static string GetConnectionStringProviderName (string connectionStringName)
 		{
-			throw new NotImplementedException ();
+			ConnectionStringSettings conn = WebConfigurationManager.ConnectionStrings [connectionStringName];
+			if (conn == null)
+				return "";
+			else
+				return conn.ProviderName;
 		}
 
 		[MonoTODO]

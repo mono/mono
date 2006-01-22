@@ -32,45 +32,53 @@
 
 using System;
 using System.CodeDom;
+using System.ComponentModel;
+using System.Configuration;
+using System.Web.Configuration;
 using System.Web.UI;
-#if notyet
-using System.Web.UI.Design;
-#endif
 
 namespace System.Web.Compilation {
 
-#if notyet
-	[ExpressionEditor(typeof (AppSettingsExpressionEditor))]
-#endif
+	[ExpressionEditor("System.Web.UI.Design.AppSettingsExpressionEditor, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
 	[ExpressionPrefix("AppSettings")]
 	public class AppSettingsExpressionBuilder : ExpressionBuilder {
 
-		public AppSettingsExpressionBuilder ()
-		{
-		}
-
-		[MonoTODO]
 		public override object EvaluateExpression (object target, BoundPropertyEntry entry, object parsedData, ExpressionBuilderContext context)
 		{
-			throw new NotImplementedException ();
+			return GetAppSetting (entry.Expression.Trim ());
 		}
 
-		[MonoTODO]
 		public static object GetAppSetting (string key)
 		{
-			throw new NotImplementedException ();
+			string value = WebConfigurationManager.AppSettings [key];
+
+			if (value == null)
+				throw new InvalidOperationException (String.Format ("App setting {0} not found", key));
+			return value;
 		}
 
-		[MonoTODO]
 		public static object GetAppSetting (string key, Type targetType, string propertyName)
 		{
-			throw new NotImplementedException ();
+			try {
+				TypeConverter converter = TypeDescriptor.GetConverter (targetType);
+				return converter.ConvertFrom (GetAppSetting (key));
+			}
+			catch (NotSupportedException e) {
+				throw new InvalidOperationException (String.Format ("Could not convert app setting {0} to type {1}", key, targetType));
+			}
 		}
 
-		[MonoTODO]
+
 		public override CodeExpression GetCodeExpression (BoundPropertyEntry entry, object parsedData, ExpressionBuilderContext context)
 		{
-			throw new NotImplementedException ();
+			Type type = entry.DeclaringType;
+			PropertyDescriptor descriptor = TypeDescriptor.GetProperties(type)[entry.PropertyInfo.Name];
+			CodeExpression[] expressionArray = new CodeExpression[3];
+			expressionArray[0] = new CodePrimitiveExpression(entry.Expression.Trim());
+			expressionArray[1] = new CodeTypeOfExpression(type);
+			expressionArray[2] = new CodePrimitiveExpression(entry.Name);
+			return new CodeCastExpression(descriptor.PropertyType, new CodeMethodInvokeExpression(new 
+								       CodeTypeReferenceExpression(base.GetType()), "GetAppSetting", expressionArray));
 		}
 
 		public override bool SupportsEvaluate {
