@@ -82,7 +82,8 @@ namespace System.Web.Compilation
 		private static void InitHash ()
 		{
 #if NET_2_0
-			directivesHash = new Hashtable (StringComparer.InvariantCultureIgnoreCase);
+			StringComparer comparer = StringComparer.InvariantCultureIgnoreCase;
+			directivesHash = new Hashtable (comparer);
 #else
 			CaseInsensitiveHashCodeProvider provider = new CaseInsensitiveHashCodeProvider (CultureInfo.InvariantCulture);
 			CaseInsensitiveComparer comparer =  new CaseInsensitiveComparer (CultureInfo.InvariantCulture);
@@ -91,57 +92,101 @@ namespace System.Web.Compilation
 #endif
 
 			// Use Hashtable 'cause is O(1) in Contains (ArrayList is O(n))
+#if NET_2_0
+			Hashtable valid_attributes = new Hashtable (comparer);
+#else
 			Hashtable valid_attributes = new Hashtable (provider, comparer);
+#endif
 			foreach (string att in page_atts) valid_attributes.Add (att, null);
 			directivesHash.Add ("PAGE", valid_attributes);
 
+#if NET_2_0
+			valid_attributes = new Hashtable (comparer);
+#else
 			valid_attributes = new Hashtable (provider, comparer);
+#endif
 			foreach (string att in control_atts) valid_attributes.Add (att, null);
 			directivesHash.Add ("CONTROL", valid_attributes);
 
+#if NET_2_0
+			valid_attributes = new Hashtable (comparer);
+#else
 			valid_attributes = new Hashtable (provider, comparer);
+#endif
 			foreach (string att in import_atts) valid_attributes.Add (att, null);
 			directivesHash.Add ("IMPORT", valid_attributes);
 
+#if NET_2_0
+			valid_attributes = new Hashtable (comparer);
+#else
 			valid_attributes = new Hashtable (provider, comparer);
+#endif
 			foreach (string att in implements_atts) valid_attributes.Add (att, null);
 			directivesHash.Add ("IMPLEMENTS", valid_attributes);
 
+#if NET_2_0
+			valid_attributes = new Hashtable (comparer);
+#else
 			valid_attributes = new Hashtable (provider, comparer);
+#endif
 			foreach (string att in register_atts) valid_attributes.Add (att, null);
 			directivesHash.Add ("REGISTER", valid_attributes);
 
+#if NET_2_0
+			valid_attributes = new Hashtable (comparer);
+#else
 			valid_attributes = new Hashtable (provider, comparer);
+#endif
 			foreach (string att in assembly_atts) valid_attributes.Add (att, null);
 			directivesHash.Add ("ASSEMBLY", valid_attributes);
 
+#if NET_2_0
+			valid_attributes = new Hashtable (comparer);
+#else
 			valid_attributes = new Hashtable (provider, comparer);
+#endif
 			foreach (string att in outputcache_atts) valid_attributes.Add (att, null);
 			directivesHash.Add ("OUTPUTCACHE", valid_attributes);
 
+#if NET_2_0
+			valid_attributes = new Hashtable (comparer);
+#else
 			valid_attributes = new Hashtable (provider, comparer);
+#endif
 			foreach (string att in reference_atts) valid_attributes.Add (att, null);
 			directivesHash.Add ("REFERENCE", valid_attributes);
 
+#if NET_2_0
+			valid_attributes = new Hashtable (comparer);
+#else
 			valid_attributes = new Hashtable (provider, comparer);
+#endif
 			foreach (string att in webservice_atts) valid_attributes.Add (att, null);
 			directivesHash.Add ("WEBSERVICE", valid_attributes);
 
+#if NET_2_0
+			valid_attributes = new Hashtable (comparer);
+#else
 			valid_attributes = new Hashtable (provider, comparer);
+#endif
 			// same attributes as webservice
 			foreach (string att in webservice_atts) valid_attributes.Add (att, null);
 			directivesHash.Add ("WEBHANDLER", valid_attributes);
 
+#if NET_2_0
+			valid_attributes = new Hashtable (comparer);
+#else
 			valid_attributes = new Hashtable (provider, comparer);
+#endif
 			foreach (string att in application_atts) valid_attributes.Add (att, null);
 			directivesHash.Add ("APPLICATION", valid_attributes);
 
 #if NET_2_0
-			valid_attributes = new Hashtable (provider, comparer);
+			valid_attributes = new Hashtable (comparer);
 			foreach (string att in mastertype_atts) valid_attributes.Add (att, null);
 			directivesHash.Add ("MASTERTYPE", valid_attributes);
 			
-			valid_attributes = new Hashtable (provider, comparer);
+			valid_attributes = new Hashtable (comparer);
 			foreach (string att in control_atts) valid_attributes.Add (att, null);
 			directivesHash.Add ("MASTER", valid_attributes);
 #endif
