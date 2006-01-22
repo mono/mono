@@ -190,8 +190,11 @@ namespace System.Web.UI.WebControls {
 
 			if (CausesValidation && Page != null && Page.AreValidatorsUplevel ()) {
 				string onclick = Attributes["onclick"];
-				if (onclick != null)
+				if (onclick != null) {
 					Attributes.Remove("onclick");
+					if (!onclick.Trim().EndsWith(";"))
+						onclick += ";";
+				}
 				ClientScriptManager csm = new ClientScriptManager (Page);
 				writer.AddAttribute (HtmlTextWriterAttribute.Onclick, onclick + csm.GetClientValidationEvent ());
 				writer.AddAttribute ("language", "javascript");

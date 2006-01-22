@@ -1,5 +1,9 @@
 2006-01-15 Konstantin Triger <kostat@mainsoft.com>
 
+	* Button.cs: Add semicolon after client script if does not exist.
+
+2006-01-15 Konstantin Triger <kostat@mainsoft.com>
+
 	* Button.cs: preserve user logic when adding client validation.
 
 2006-01-15 Konstantin Triger <kostat@mainsoft.com>
