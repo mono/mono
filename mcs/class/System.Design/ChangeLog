@@ -1,3 +1,11 @@
+2006-01-22  Chris Toshok  <toshok@ximian.com>
+
+	* System.Design.dll.sources: add in all the stubbed/partially
+	implemented stuff.
+
+	* Makefile (LIB_MCS_FLAGS): in the 2.0 case include a reference to
+	System.Configuration.dll.
+
 2005-06-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.Design.dll.sources :
