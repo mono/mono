@@ -1,3 +1,7 @@
+2006-01-22  Chris Toshok  <toshok@ximian.com>
+
+	* GlobalizationSection.cs (VerifyData): quiet mcs.
+
 2006-01-18  Chris Toshok  <toshok@ximian.com>
 
 	* SystemWebSectionGroup.cs: wrap System.Web.Services references in

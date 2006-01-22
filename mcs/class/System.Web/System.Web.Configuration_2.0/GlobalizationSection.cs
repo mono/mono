@@ -83,17 +83,15 @@ namespace System.Web.Configuration {
 
 		void VerifyData ()
 		{
-			CultureInfo culture;
-
 			try {
-				culture = new CultureInfo (Culture);
+				new CultureInfo (Culture);
 			}
 			catch {
 				throw new ConfigurationErrorsException ("the <globalization> tag contains an invalid value for the 'culture' attribute");
 			}
 
 			try {
-				culture = new CultureInfo (UICulture);
+				new CultureInfo (UICulture);
 			}
 			catch {
 				throw new ConfigurationErrorsException ("the <globalization> tag contains an invalid value for the 'uiCulture' attribute");
