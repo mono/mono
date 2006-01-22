@@ -44,8 +44,12 @@ namespace System.Web {
 		internal HttpCacheVaryByParams ()
 		{
 			/* the parameter names are meant to be case insensitive */
+#if NET_2_0
+			parms = new Hashtable (StringComparer.InvariantCultureIgnoreCase);
+#else
 			parms = new Hashtable(CaseInsensitiveHashCodeProvider.Default,
 					      CaseInsensitiveComparer.Default);
+#endif
 		}
 
 		internal string[] GetParamNames ()

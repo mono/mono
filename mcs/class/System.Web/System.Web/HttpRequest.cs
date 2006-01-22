@@ -1389,8 +1389,6 @@ namespace System.Web {
 				string line = ReadLine ();
 				while (line == "")
 					line = ReadLine ();
-				int ll = line.Length;
-				int bl = boundary.Length;
 				if (line [0] != '-' || line [1] != '-')
 					return false;
 
@@ -1400,25 +1398,6 @@ namespace System.Web {
 			}
 
 			return false;
-		}
-
-		bool IsBoundary (string line)
-		{
-			if (line.Length < 2)
-				return false;
-
-			int ll = line.Length;
-			int bl = boundary.Length;
-			if (line [0] != '-' || line [1] != '-')
-				return false;
-
-			if (line.IndexOf (boundary) != 2)
-				return false;
-
-			if (ll == bl + 4 && line [ll -1] == '-' && line [ll - 2] == '-')
-				at_eof = true;
-
-			return  (at_eof || ll == bl + 2);
 		}
 
 		string ReadHeaders ()

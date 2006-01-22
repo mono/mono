@@ -1,3 +1,18 @@
+2006-01-22  Chris Toshok  <toshok@ximian.com>
+
+	* HttpRequest.cs (ReadBoundary): remove two unused variables to
+	quiet mcs.
+	(IsBoundary): remove unused method.
+
+	* MimeTypes.cs (.cctor): use a 2.0 friendly form of the Hashtable
+	ctor to silence a warning.
+
+	* HttpCacheVaryByHeaders.cs (.ctor): same.
+
+	* HttpCacheVaryByParams.cs (.ctor): same.
+
+	* StaticSiteMapProvider.cs (UrlToNode): same.
+
 2006-01-22  Konstantin Triger <kostat@mainsoft.com>
 
 	* HttpWorkerRequest.cs: ensure case insensitivity in header search.

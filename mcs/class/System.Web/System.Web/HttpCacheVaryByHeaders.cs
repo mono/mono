@@ -69,8 +69,12 @@ namespace System.Web {
 		internal HttpCacheVaryByHeaders ()
 		{
 			/* the field names are meant to be case insensitive */
+#if NET_2_0
+			fields = new Hashtable (StringComparer.InvariantCultureIgnoreCase);
+#else
 			fields = new Hashtable(CaseInsensitiveHashCodeProvider.Default,
 					       CaseInsensitiveComparer.Default);
+#endif
 		}
 
 		internal string[] GetHeaderNames ()
