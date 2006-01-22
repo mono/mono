@@ -1,3 +1,10 @@
+2006-01-22  Chris Toshok  <toshok@ximian.com>
+
+	* CheckBox.cs: s/GetPostBackClientEvent/GetPostBackEventReference.
+
+	* MultiView.cs (OnBubbleEvent): case the rhs to a string to get
+	the intended comparison right and quiet mcs.
+
 2006-01-15 Konstantin Triger <kostat@mainsoft.com>
 
 	* Button.cs: Add semicolon after client script if does not exist.

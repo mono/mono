@@ -354,7 +354,7 @@ namespace System.Web.UI.WebControls {
 
 				if (AutoPostBack){
 					w.AddAttribute (HtmlTextWriterAttribute.Onclick,
-							     Page.ClientScript.GetPostBackClientEvent (this, String.Empty));
+							Page.ClientScript.GetPostBackEventReference (this, String.Empty));
 					w.AddAttribute ("language", "javascript");
 				}
 
@@ -403,7 +403,7 @@ namespace System.Web.UI.WebControls {
 
 				if (AutoPostBack){
 					w.AddAttribute (HtmlTextWriterAttribute.Onclick,
-							     Page.ClientScript.GetPostBackClientEvent (this, String.Empty));
+							Page.ClientScript.GetPostBackEventReference (this, String.Empty));
 					w.AddAttribute ("language", "javascript");
 				}
 

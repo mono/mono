@@ -147,7 +147,7 @@ namespace System.Web.UI.WebControls
 						
 					case "SwitchViewByID":
 						foreach (View v in Controls)
-							if (v.ID == ca.CommandArgument) {
+							if (v.ID == (string)ca.CommandArgument) {
 								SetActiveView (v);
 								break;
 							}
