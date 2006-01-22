@@ -1,3 +1,13 @@
+2006-01-22  Chris Toshok  <toshok@ximian.com>
+
+	* IProjectItem.cs: new interface.
+	* IWebApplication.cs: new interface.
+	
+	* ExpressionEditorSheet.cs: stubbed.
+	* ExpressionEditor.cs: stubbed.
+	* AppSettingsExpressionEditor.cs: stubbed.
+	* ResourceExpressionEditor.cs: stubbed.
+
 2004-06-11  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* CalendarDataBindingHandler.cs: stubbed
