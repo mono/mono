@@ -32,6 +32,7 @@ using System.Collections;
 using System.Runtime.InteropServices;
 using System.Security.Permissions;
 using System.Web.UI;
+using System.Globalization;
 
 namespace System.Web {
 
@@ -331,47 +332,47 @@ namespace System.Web {
 		
 		public static int GetKnownRequestHeaderIndex (string header)
 		{
-			switch (header){
-			case "Cache-Control": return HeaderCacheControl;
-			case "Connection": return HeaderConnection;
-			case "Date": return HeaderDate;
-			case "Keep-Alive": return HeaderKeepAlive;
-			case "Pragma": return HeaderPragma;
-			case "Trailer": return HeaderTrailer;
-			case "Transfer-Encoding": return HeaderTransferEncoding;
-			case "Upgrade": return HeaderUpgrade;
-			case "Via": return HeaderVia;
-			case "Warning": return HeaderWarning;
-			case "Allow": return HeaderAllow;
-			case "Content-Length": return HeaderContentLength;
-			case "Content-Type": return HeaderContentType;
-			case "Content-Encoding": return HeaderContentEncoding;
-			case "Content-Language": return HeaderContentLanguage;
-			case "Content-Location": return HeaderContentLocation;
-			case "Content-MD5": return HeaderContentMd5;
-			case "Content-Range": return HeaderContentRange;
-			case "Expires": return HeaderExpires;
-			case "Last-Modified": return HeaderLastModified;
-			case "Accept": return HeaderAccept;
-			case "Accept-Charset": return HeaderAcceptCharset;
-			case "Accept-Encoding": return HeaderAcceptEncoding;
-			case "Accept-Language": return HeaderAcceptLanguage;
-			case "Authorization": return HeaderAuthorization;
-			case "Cookie": return HeaderCookie;
-			case "Expect": return HeaderExpect;
-			case "From": return HeaderFrom;
-			case "Host": return HeaderHost;
-			case "If-Match": return HeaderIfMatch;
-			case "If-Modified-Since": return HeaderIfModifiedSince;
-			case "If-None-Match": return HeaderIfNoneMatch;
-			case "If-Range": return HeaderIfRange;
-			case "If-Unmodified-Since": return HeaderIfUnmodifiedSince;
-			case "Max-Forwards": return HeaderMaxForwards;
-			case "Proxy-Authorization": return HeaderProxyAuthorization;
-			case "Referer": return HeaderReferer;
-			case "Range": return HeaderRange;
-			case "TE": return HeaderTe;
-			case "User-Agent": return HeaderUserAgent;
+			switch (header.ToLower(CultureInfo.InvariantCulture)){
+			case "cache-control": return HeaderCacheControl;
+			case "connection": return HeaderConnection;
+			case "date": return HeaderDate;
+			case "keep-alive": return HeaderKeepAlive;
+			case "pragma": return HeaderPragma;
+			case "trailer": return HeaderTrailer;
+			case "transfer-encoding": return HeaderTransferEncoding;
+			case "upgrade": return HeaderUpgrade;
+			case "via": return HeaderVia;
+			case "warning": return HeaderWarning;
+			case "allow": return HeaderAllow;
+			case "content-length": return HeaderContentLength;
+			case "content-type": return HeaderContentType;
+			case "content-encoding": return HeaderContentEncoding;
+			case "content-language": return HeaderContentLanguage;
+			case "content-location": return HeaderContentLocation;
+			case "content-md5": return HeaderContentMd5;
+			case "content-range": return HeaderContentRange;
+			case "expires": return HeaderExpires;
+			case "last-modified": return HeaderLastModified;
+			case "accept": return HeaderAccept;
+			case "accept-charset": return HeaderAcceptCharset;
+			case "accept-encoding": return HeaderAcceptEncoding;
+			case "accept-language": return HeaderAcceptLanguage;
+			case "authorization": return HeaderAuthorization;
+			case "cookie": return HeaderCookie;
+			case "expect": return HeaderExpect;
+			case "from": return HeaderFrom;
+			case "host": return HeaderHost;
+			case "if-match": return HeaderIfMatch;
+			case "if-modified-since": return HeaderIfModifiedSince;
+			case "if-none-match": return HeaderIfNoneMatch;
+			case "if-range": return HeaderIfRange;
+			case "if-unmodified-since": return HeaderIfUnmodifiedSince;
+			case "max-forwards": return HeaderMaxForwards;
+			case "proxy-authorization": return HeaderProxyAuthorization;
+			case "referer": return HeaderReferer;
+			case "range": return HeaderRange;
+			case "te": return HeaderTe;
+			case "user-agent": return HeaderUserAgent;
 			}
 			return -1;
 		}
@@ -426,37 +427,37 @@ namespace System.Web {
 
 		public static int GetKnownResponseHeaderIndex (string header)
 		{
-			switch (header){
-			case "Cache-Control": return HeaderCacheControl;
-			case "Connection": return HeaderConnection;
-			case "Date": return HeaderDate;
-			case "Keep-Alive": return HeaderKeepAlive;
-			case "Pragma": return HeaderPragma;
-			case "Trailer": return HeaderTrailer;
-			case "Transfer-Encoding": return HeaderTransferEncoding;
-			case "Upgrade": return HeaderUpgrade;
-			case "Via": return HeaderVia;
-			case "Warning": return HeaderWarning;
-			case "Allow": return HeaderAllow;
-			case "Content-Length": return HeaderContentLength;
-			case "Content-Type": return HeaderContentType;
-			case "Content-Encoding": return HeaderContentEncoding;
-			case "Content-Language": return HeaderContentLanguage;
-			case "Content-Location": return HeaderContentLocation;
-			case "Content-MD5": return HeaderContentMd5;
-			case "Content-Range": return HeaderContentRange;
-			case "Expires": return HeaderExpires;
-			case "Last-Modified": return HeaderLastModified;
-			case "Accept-Ranges": return HeaderAcceptRanges;
-			case "Age": return HeaderAge;
-			case "ETag": return HeaderEtag;
-			case "Location": return HeaderLocation;
-			case "Proxy-Authenticate":return HeaderProxyAuthenticate;
-			case "Retry-After": return HeaderRetryAfter;
-			case "Server": return HeaderServer;
-			case "Set-Cookie": return HeaderSetCookie;
-			case "Vary": return HeaderVary;
-			case "WWW-Authenticate": return HeaderWwwAuthenticate;
+			switch (header.ToLower(CultureInfo.InvariantCulture)){
+			case "cache-control": return HeaderCacheControl;
+			case "connection": return HeaderConnection;
+			case "date": return HeaderDate;
+			case "keep-alive": return HeaderKeepAlive;
+			case "pragma": return HeaderPragma;
+			case "trailer": return HeaderTrailer;
+			case "transfer-encoding": return HeaderTransferEncoding;
+			case "upgrade": return HeaderUpgrade;
+			case "via": return HeaderVia;
+			case "warning": return HeaderWarning;
+			case "allow": return HeaderAllow;
+			case "content-length": return HeaderContentLength;
+			case "content-type": return HeaderContentType;
+			case "content-encoding": return HeaderContentEncoding;
+			case "content-language": return HeaderContentLanguage;
+			case "content-location": return HeaderContentLocation;
+			case "content-md5": return HeaderContentMd5;
+			case "content-range": return HeaderContentRange;
+			case "expires": return HeaderExpires;
+			case "last-modified": return HeaderLastModified;
+			case "accept-ranges": return HeaderAcceptRanges;
+			case "age": return HeaderAge;
+			case "etag": return HeaderEtag;
+			case "location": return HeaderLocation;
+			case "proxy-authenticate":return HeaderProxyAuthenticate;
+			case "retry-after": return HeaderRetryAfter;
+			case "server": return HeaderServer;
+			case "set-cookie": return HeaderSetCookie;
+			case "vary": return HeaderVary;
+			case "www-authenticate": return HeaderWwwAuthenticate;
 			}
 
 			return -1;

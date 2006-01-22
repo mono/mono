@@ -1,3 +1,7 @@
+2006-01-22  Konstantin Triger <kostat@mainsoft.com>
+
+	* HttpWorkerRequest.cs: ensure case insensitivity in header search.
+
 2006-01-19  Konstantin Triger <kostat@mainsoft.com>
 
 	* HttpApplication.jvm.cs: merge HttpApplication.cs changes.
