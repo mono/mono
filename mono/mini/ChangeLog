@@ -1,3 +1,8 @@
+2006-01-23  Martin Baulig  <martin@ximian.com>
+
+	* debug-debugger.c: Only enable this on platforms where the Mono
+	Debugger is working (x86 and x86_64).
+
 2006-01-21  Martin Baulig  <martin@ximian.com>
 
 	The Mono Debugger is now using the normal `mono' instead of the
