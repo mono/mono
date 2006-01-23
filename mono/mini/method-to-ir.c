@@ -326,18 +326,6 @@ handle_enum:
 }
 
 G_GNUC_UNUSED
-void
-mono_print_bb_code_new (MonoBasicBlock *bb) {
-	if (bb->code) {
-		MonoInst *c = bb->code;
-		while (c) {
-			mono_print_ins (c);
-			c = c->next;
-		}
-	}
-}
-
-G_GNUC_UNUSED
 static void
 mono_print_bb (MonoBasicBlock *bb, const char *msg)
 {
@@ -392,13 +380,15 @@ static int the_count = 0;
 
 #undef MONO_INST_NEW
 /* 
- * FIXME: alloc0 is not needed with the new IR, but the old JIT code still
- * uses the left and right fields, so it has to stay.
+ * FIXME: zeroing out some fields is not needed with the new IR, but the old 
+ * JIT code still uses the left and right fields, so it has to stay.
  */
 #define MONO_INST_NEW(cfg,dest,op) do {	\
         the_count ++; \
-		(dest) = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoInst));	\
+		(dest) = mono_mempool_alloc ((cfg)->mempool, sizeof (MonoInst));	\
+        (dest)->inst_p0 = (dest)->inst_p1 = (dest)->next = NULL; \
 		(dest)->opcode = (op);	\
+        (dest)->flags = 0; \
         (dest)->dreg = (dest)->sreg1 = (dest)->sreg2 = -1;  \
         (dest)->next = NULL; \
 	} while (0)

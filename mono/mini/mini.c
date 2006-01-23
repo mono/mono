@@ -7810,6 +7810,10 @@ mono_destroy_compile (MonoCompile *cfg)
 	mono_mempool_destroy (cfg->mempool);
 	g_list_free (cfg->ldstr_list);
 
+	g_free (cfg->reginfo);
+	g_free (cfg->reginfof);
+	g_free (cfg->reverse_inst_list);
+
 	g_free (cfg->varinfo);
 	g_free (cfg->vars);
 	g_free (cfg);
@@ -9312,7 +9316,7 @@ mono_local_cprop_bb2 (MonoCompile *cfg, MonoBasicBlock *bb,
 					  MonoInst **defs, guint32 *def_index)
 
 {
-	MonoInst *ins;
+	MonoInst *ins, *prev;
 	int ins_index;
 
 	if (cfg->next_vireg > 256) {
@@ -9341,12 +9345,26 @@ mono_local_cprop_bb2 (MonoCompile *cfg, MonoBasicBlock *bb,
 		memset (defs, 0, sizeof (MonoInst*) * cfg->next_vireg);
 
 	ins_index = 0;
+	prev = NULL;
 	for (ins = bb->code; ins; ins = ins->next) {
 		const char *spec = ins_info [ins->opcode - OP_START - 1];
 		int regtype, srcindex, sreg;
 
-		if (ins->opcode == OP_NOP)
+		if (ins->opcode == OP_NOP) {
+			/*
+			 * Many passes generate NOPs, we get rid of them here so later
+			 * passes won't have to deal with them.
+			 */
+			if (prev)
+				prev->next = ins->next;
+			else
+				bb->code = ins->next;
+			if (bb->last_ins == ins)
+				bb->last_ins = prev;
 			continue;
+		}
+		else
+			prev = ins;
 
 		g_assert (ins->opcode > MONO_CEE_LAST);
 
@@ -9466,7 +9484,7 @@ static void
 mono_local_deadce (MonoCompile *cfg)
 {
 	MonoBasicBlock *bb;
-	MonoInst *ins;
+	MonoInst *ins, *prev;
 	MonoBitSet *used;
 
 	/* FIXME: speed this up */
@@ -9550,15 +9568,27 @@ mono_local_deadce (MonoCompile *cfg)
 			continue;
 
 		/* Second pass: deadce */
+		prev = NULL;
 		for (ins = bb->code; ins; ins = ins->next) {
 			const char *spec = ins_info [ins->opcode - OP_START - 1];
 
 			if ((spec [MONO_INST_DEST] == 'i') && (ins->dreg >= MONO_MAX_IREGS) && !mono_bitset_test_fast (used, ins->dreg) && !get_vreg_to_inst (cfg, 'i', ins->dreg)) {
 				if ((ins->opcode == OP_MOVE) || (ins->opcode == OP_ICONST) || (ins->opcode == OP_ADD_IMM)) {
 					//printf ("DEADCE: "); mono_print_ins (ins);
-					ins->opcode = OP_NOP;
+					/* 
+					 * Get rid of the instruction entirely so later passed 
+					 * won't have to deal with it.
+					 */
+					if (prev)
+						prev->next = ins->next;
+					else
+						bb->code = ins->next;
+					if (bb->last_ins == ins)
+						bb->last_ins = prev;
 				}
 			}
+
+			prev = ins;
 		}
 	}
 
