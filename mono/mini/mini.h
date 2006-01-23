@@ -158,6 +158,8 @@ struct MonoBasicBlock {
 
 	/* unique block number identification */
 	gint32 block_num;
+	
+	gint32 dfn;
 
 	/* Points to the start of the CIL code that initiated this BB */
 	unsigned char* cil_code;
@@ -168,8 +170,6 @@ struct MonoBasicBlock {
 	/* The address of the generated code, used for fixups */
 	int native_offset;
 	int max_offset;
-	
-	gint32 dfn;
 
 	/* Visited and reachable flags */
 	guint32 flags;

@@ -326,7 +326,7 @@ handle_enum:
 }
 
 G_GNUC_UNUSED
-static void
+void
 mono_print_bb_code_new (MonoBasicBlock *bb) {
 	if (bb->code) {
 		MonoInst *c = bb->code;
