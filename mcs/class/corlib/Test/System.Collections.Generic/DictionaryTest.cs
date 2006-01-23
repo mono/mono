@@ -626,6 +626,61 @@ namespace MonoTests.System.Collections.Generic {
 			KeyValuePair<int,int> [] array2 = new KeyValuePair<int,int> [1];
 			c2.CopyTo (array2, array2.Length);
 		}
+
+		[Test]
+		public void IDictionary_Contains ()
+		{
+			IDictionary d = new Dictionary<int, int> ();
+			d.Add (1, 2);
+			Assert.IsTrue (d.Contains (1));
+			Assert.IsFalse (d.Contains (2));
+			Assert.IsFalse (d.Contains ("x"));
+		}
+
+		[Test, ExpectedException (typeof (ArgumentNullException))]
+		public void IDictionary_Contains2 ()
+		{
+			IDictionary d = new Dictionary<int, int> ();
+			d.Contains (null);
+		}
+
+		[Test, ExpectedException (typeof (ArgumentNullException))]
+		public void IDictionary_Add1 ()
+		{
+			IDictionary d = new Dictionary<int, int> ();
+			d.Add (null, 1);
+		}
+
+		[Test, ExpectedException (typeof (ArgumentException))]
+		public void IDictionary_Add2 ()
+		{
+			IDictionary d = new Dictionary<int, int> ();
+			d.Add ("bar", 1);
+		}
+
+		[Test, ExpectedException (typeof (ArgumentException))]
+		public void IDictionary_Add3 ()
+		{
+			IDictionary d = new Dictionary<int, int> ();
+			d.Add (1, "bar");
+		}
+
+		[Test]
+		public void IDictionary_Remove1 ()
+		{
+			IDictionary d = new Dictionary<int, int> ();
+			d.Add (1, 2);
+			d.Remove (1);
+			d.Remove (5);
+			d.Remove ("foo");
+		}
+
+		[Test, ExpectedException (typeof (ArgumentNullException))]
+		public void IDictionary_Remove2 ()
+		{
+			IDictionary d = new Dictionary<int, int> ();
+			d.Remove (null);
+		}
 	}
 }
 

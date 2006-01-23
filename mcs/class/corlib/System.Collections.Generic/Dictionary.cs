@@ -95,13 +95,20 @@ namespace System.Collections.Generic {
 
 			set {
 				int index;
-				Slot slot = GetSlot (key, out index);
+				Slot prev = GetPrev (key, out index);
+				Slot slot = prev == null ? table [index] : prev.Next;
 				if (slot == null) {
 					DoAdd (index, key, value);
-				} else {
-					++generation;
-					slot.Data = new KeyValuePair<TKey, TValue> (key, value);
+					return;
 				}
+				++generation;
+				if (prev != null) {
+					// move-to-front on update
+					prev.Next = slot.Next;
+					slot.Next = table [index];
+					table [index] = slot;
+				}
+				slot.Data = new KeyValuePair<TKey, TValue> (key, value);
 			}
 		}
 
@@ -309,35 +316,36 @@ namespace System.Collections.Generic {
 		public bool Remove (TKey key)
 		{
 			int index;
-			Slot slot = GetSlot (key, out index);
+			Slot prev = GetPrev (key, out index);
+			Slot slot = prev == null ? table [index] : prev.Next;
 			if (slot == null)
 				return false;
-
 			--Count;
-			if (slot == table [index]) {
-				table [index] = table [index].Next;
-			} else {
-				Slot prev = table [index];
-				while (prev.Next != slot)
-					prev = prev.Next;
+			if (prev == null)
+				table [index] = slot.Next;
+			else
 				prev.Next = slot.Next;
-			}
 			return true;
 		}
 
-		//
-		// Return the slot containing key, and set 'index' to the chain the key was found in.
-		// If the key is not found, return null and set 'index' to the chain that would've contained the key.
-		//
-		private Slot GetSlot (TKey key, out int index)
+		private Slot GetPrev (TKey key, out int index)
 		{
 			if (key == null)
 				throw new ArgumentNullException ("key");
 			index = DoHash (key);
-			Slot slot = table [index];
-			while (slot != null && !hcp.Equals (key, slot.Data.Key))
-				slot = slot.Next;
-			return slot;
+			Slot prev = null;
+			for (Slot slot = table [index]; slot != null; slot = slot.Next) {
+				if (hcp.Equals (key, slot.Data.Key))
+					break;
+				prev = slot;
+			}
+			return prev;
+		}
+
+		private Slot GetSlot (TKey key, out int index)
+		{
+			Slot prev = GetPrev (key, out index);
+			return prev == null ? table [index] : prev.Next;
 		}
 
 		public bool TryGetValue (TKey key, out TValue value)
@@ -381,32 +389,47 @@ namespace System.Collections.Generic {
 			get { return false; }
 		}
 
+		TKey ToTKey (object key)
+		{
+			if (key == null)
+				throw new ArgumentNullException ("key");
+			if (!(key is TKey))
+				throw new ArgumentException ("not of type: " + typeof (TKey).ToString (), "key");
+			return (TKey) key;
+		}
+
+		TValue ToTValue (object value)
+		{
+			if (!(value is TValue))
+				throw new ArgumentException ("not of type: " + typeof (TValue).ToString (), "value");
+			return (TValue) value;
+		}
+
 		object IDictionary.this [object key] {
-			get {
-				if (!(key is TKey))
-					throw new ArgumentException ("key is of not '" + typeof (TKey).ToString () + "'!");
-				return this [(TKey) key];
-			}
-			set { this [(TKey) key] = (TValue) value; }
+			get { return this [ToTKey (key)]; }
+			set { this [ToTKey (key)] = ToTValue (value); }
 		}
 
 		void IDictionary.Add (object key, object value)
 		{
-			if (!(key is TKey))
-				throw new ArgumentException ("key is of not '" + typeof (TKey).ToString () + "'!");
-			if (!(value is TValue))
-				throw new ArgumentException ("value is of not '" + typeof (TValue).ToString () + "'!");
-			this.Add ((TKey) key, (TValue) value);
+			this.Add (ToTKey (key), ToTValue (value));
 		}
 
 		bool IDictionary.Contains (object key)
 		{
-			return ContainsKey ((TKey) key);
+			if (key == null)
+				throw new ArgumentNullException ("key");
+			if (key is TKey)
+				return ContainsKey ((TKey) key);
+			return false;
 		}
 
 		void IDictionary.Remove (object key)
 		{
-			Remove ((TKey) key);
+			if (key == null)
+				throw new ArgumentNullException ("key");
+			if (key is TKey)
+				Remove ((TKey) key);
 		}
 
 		bool ICollection.IsSynchronized {
@@ -480,7 +503,7 @@ namespace System.Collections.Generic {
 		}
 
 		[Serializable]
-		private struct ShimEnumerator : IDictionaryEnumerator, IEnumerator
+		private class ShimEnumerator : IDictionaryEnumerator, IEnumerator
 		{
 			Enumerator host_enumerator;
 			public ShimEnumerator (Dictionary<TKey, TValue> host)

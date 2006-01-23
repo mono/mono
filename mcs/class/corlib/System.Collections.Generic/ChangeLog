@@ -1,3 +1,18 @@
+2006-01-23  Raja R Harinath  <rharinath@novell.com>
+
+	Speed up remove.  Use 'dict[k]=v' as a self-tuning hint.
+	* Dictionary.cs (GetSlot): Move data-structure traversal to ...
+	(GetPrev): ... this.  Returns the slot prior to the place we're
+	looking for, or null if that place is the head of the chain.
+	(Remove): Use it.
+	(this.set): Use it.  Implement move-to-front on set.
+
+	* Dictionary.cs (ToTKey, ToTValue): New helpers to convert from
+	type 'object'.
+	(IDictionary.this, IDictionary.Add): Use them.
+	(IDictionary.Contains, IDictionary.Remove): If the types don't
+	match, do nothing.
+
 2006-01-19  Raja R Harinath  <rharinath@novell.com>
 
 	Fix to pass new nunit tests.
