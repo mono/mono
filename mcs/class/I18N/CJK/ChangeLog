@@ -1,3 +1,9 @@
+2006-01-23  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CP936.cs :
+	  handle incomplete byte (thus conversion implementation went into
+	  CP936Decoder like other DBCS encodings).
+
 2006-01-20  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CP51932.cs :

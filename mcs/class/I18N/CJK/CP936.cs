@@ -67,68 +67,15 @@ namespace I18N.CJK
 		// Get the characters that result from decoding a byte buffer.
 		public override int GetCharCount (byte [] bytes, int index, int count)
 		{
-			if (bytes == null)
-				throw new ArgumentNullException("bytes");
-			if (index < 0 || index > bytes.Length)
-				throw new ArgumentOutOfRangeException("index", Strings.GetString("ArgRange_Array"));
-			if (count < 0 || index + count > bytes.Length)
-				throw new ArgumentOutOfRangeException("count", Strings.GetString("ArgRange_Array"));
-
-			int lastByte = 0;
-			int length = 0;
-			while (count-- > 0) {
-				int b = bytes [index++];
-				if (lastByte == 0) {
-					if (b <= 0x80 || b == 0xFF) { // ASCII
-						length++;
-						continue;
-					} else {
-						lastByte = b;
-						continue;
-					}
-				}
-				length++;
-				lastByte = 0;
-			}
-
-#if NET_2_0
-			if (lastByte != 0)
-				length++;
-#endif
-
-			return length;
+			return GetDecoder ().GetCharCount (bytes, index, count);
 		}
 
 		// Get the characters that result from decoding a byte buffer.
 		public override int GetChars(byte[] bytes, int byteIndex, int byteCount,
 					     char[] chars, int charIndex)
 		{
-			DbcsConvert gb2312 = GetConvert ();
-			// A1 40 - FA FF
-			base.GetChars(bytes, byteIndex, byteCount, chars, charIndex);
-			int origIndex = charIndex;
-			int lastByte = 0;
-			while (byteCount-- > 0) {
-				int b = bytes[byteIndex++];
-				if (lastByte == 0) {
-					if (b <= 0x80 || b == 0xFF) { // ASCII
-						chars[charIndex++] = (char)b;
-						continue;
-					} else {
-						lastByte = b;
-						continue;
-					}
-				}
-				int ord = ((lastByte - 0x81) * 191 + b - 0x40) * 2;
-				char c1 = (ord < 0 || ord + 1 >= gb2312.n2u.Length) ?
-					'\0' : (char)(gb2312.n2u[ord] + gb2312.n2u[ord + 1] * 256);
-				if (c1 == 0)
-					chars[charIndex++] = '?';
-				else
-					chars[charIndex++] = c1;
-				lastByte = 0;
-			}
-			return charIndex - origIndex;
+			return GetDecoder ().GetChars (
+				bytes, byteIndex, byteCount, chars, charIndex);
 		}
 		
 		// Get a decoder that handles a rolling Gb2312 state.
@@ -184,42 +131,129 @@ namespace I18N.CJK
 		{
 			get { return("gb2312"); }
 		}
-		
-		// Decoder that handles a rolling Gb2312 state.
-		private sealed class CP936Decoder : DbcsDecoder
+	}
+
+	// Decoder that handles a rolling Gb2312 state.
+	sealed class CP936Decoder : DbcsEncoding.DbcsDecoder
+	{
+		// Constructor.
+		public CP936Decoder (DbcsConvert convert)
+			: base (convert)
 		{
-			// Constructor.
-			public CP936Decoder(DbcsConvert convert) : base(convert) {}
-			
-			public override int GetChars(byte[] bytes, int byteIndex, int byteCount,
-						     char[] chars, int charIndex)
-			{
-				base.GetChars(bytes, byteIndex, byteCount, chars, charIndex);
-				int origIndex = charIndex;
-				while (byteCount-- > 0) {
-					int b = bytes[byteIndex++];
-					if (lastByte == 0) {
-						if (b <= 0x80 || b == 0xFF) { // ASCII
-							chars[charIndex++] = (char)b;
-							continue;
-						} else if (b < 0x81 || b >= 0xFF) {
-							continue;
-						} else {
-							lastByte = b;
-							continue;
-						}
-					}
-					int ord = ((lastByte - 0x81) * 191 + b - 0x40) * 2;
-					char c1 = (char)(convert.n2u[ord] + convert.n2u[ord + 1] * 256);
-					if (c1 == 0) {
-						chars[charIndex++] = '?';
+			this.convert = convert;
+		}
+
+		int last_byte_count, last_byte_bytes;
+		DbcsConvert convert;
+
+		// Get the characters that result from decoding a byte buffer.
+		public override int GetCharCount (byte [] bytes, int index, int count)
+		{
+			return GetCharCount (bytes, index, count, false);
+		}
+
+#if NET_2_0
+		public override
+#endif
+		int GetCharCount (byte [] bytes, int index, int count, bool refresh)
+		{
+			if (bytes == null)
+				throw new ArgumentNullException("bytes");
+			if (index < 0 || index > bytes.Length)
+				throw new ArgumentOutOfRangeException("index", Strings.GetString("ArgRange_Array"));
+			if (count < 0 || index + count > bytes.Length)
+				throw new ArgumentOutOfRangeException("count", Strings.GetString("ArgRange_Array"));
+
+			int lastByte = last_byte_count;
+			last_byte_count = 0;
+			int length = 0;
+			while (count-- > 0) {
+				int b = bytes [index++];
+				if (lastByte == 0) {
+					if (b <= 0x80 || b == 0xFF) { // ASCII
+						length++;
+						continue;
 					} else {
-						chars[charIndex++] = c1;
+						lastByte = b;
+						continue;
 					}
-					lastByte = 0;
 				}
-				return charIndex - origIndex;
+				length++;
+				lastByte = 0;
 			}
+
+			if (lastByte != 0) {
+				if (refresh) {
+					length++;
+					last_byte_count = 0;
+				}
+				else
+					last_byte_count = lastByte;
+			}
+
+			return length;
+		}
+
+		public override int GetChars (byte[] bytes, int byteIndex, int byteCount,
+					     char[] chars, int charIndex)
+		{
+			return GetChars (bytes, byteIndex, byteCount, chars, charIndex, false);
+		}
+
+#if NET_2_0
+		public override
+#endif
+		int GetChars (byte [] bytes, int byteIndex, int byteCount,
+			      char [] chars, int charIndex, bool refresh)
+		{
+			if (bytes == null)
+				throw new ArgumentNullException("bytes");
+			if (chars == null)
+				throw new ArgumentNullException("chars");
+			if (byteIndex < 0 || byteIndex > bytes.Length)
+				throw new ArgumentOutOfRangeException("byteIndex", Strings.GetString("ArgRange_Array"));
+			if (byteCount < 0 || byteIndex + byteCount > bytes.Length)
+				throw new ArgumentOutOfRangeException("byteCount", Strings.GetString("ArgRange_Array"));
+			if (charIndex < 0 || charIndex > chars.Length)
+				throw new ArgumentOutOfRangeException("charIndex", Strings.GetString("ArgRange_Array"));
+
+			int origIndex = charIndex;
+			int lastByte = last_byte_bytes;
+			last_byte_bytes = 0;
+			while (byteCount-- > 0) {
+				int b = bytes[byteIndex++];
+				if (lastByte == 0) {
+					if (b <= 0x80 || b == 0xFF) { // ASCII
+						chars[charIndex++] = (char)b;
+						continue;
+					} else if (b < 0x81 || b >= 0xFF) {
+						continue;
+					} else {
+						lastByte = b;
+						continue;
+					}
+				}
+				int ord = ((lastByte - 0x81) * 191 + b - 0x40) * 2;
+				char c1 = ord < 0 || ord >= convert.n2u.Length ?
+					'\0' : (char) (convert.n2u[ord] + convert.n2u[ord + 1] * 256);
+				if (c1 == 0)
+					chars[charIndex++] = '?';
+				else
+					chars[charIndex++] = c1;
+				lastByte = 0;
+			}
+
+			if (lastByte != 0) {
+				if (refresh) {
+					// FIXME: handle fallback
+					chars [charIndex++] = '?';
+					last_byte_bytes = 0;
+				}
+				else
+					last_byte_bytes = lastByte;
+			}
+
+			return charIndex - origIndex;
 		}
 	}
 	

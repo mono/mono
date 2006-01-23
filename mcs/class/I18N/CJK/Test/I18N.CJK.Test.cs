@@ -337,6 +337,29 @@ namespace MonoTests.I18N.CJK
 			Assert.AreEqual (1, d.GetChars (new byte [] {0xA1}, 0, 1, chars, 0, true), "#5");
 			Assert.AreEqual (new char [] {'\u30FB'}, chars, "#6");
 		}
+
+		[Test]
+		public void Decoder936Refresh ()
+		{
+			Encoding e = Encoding.GetEncoding (936);
+			Decoder d = e.GetDecoder ();
+			char [] chars;
+
+			// incomplete
+			chars = new char [1];
+			Assert.AreEqual (0, d.GetChars (new byte [] {0xB0}, 0, 1, chars, 0, false), "#1");
+			Assert.AreEqual (new char [] {'\0'}, chars, "#2");
+
+			// became complete
+			chars = new char [1];
+			Assert.AreEqual (1, d.GetChars (new byte [] {0xA1}, 0, 1, chars, 0, false), "#3");
+			Assert.AreEqual (new char [] {'\u554A'}, chars, "#4");
+
+			// incomplete but refreshed
+			chars = new char [1];
+			Assert.AreEqual (1, d.GetChars (new byte [] {0xB0}, 0, 1, chars, 0, true), "#5");
+			Assert.AreEqual (new char [] {'?'}, chars, "#6");
+		}
 #endif
 
 
@@ -360,6 +383,29 @@ namespace MonoTests.I18N.CJK
 			// incomplete but refreshed
 			chars = new char [1];
 			Assert.AreEqual (0, d.GetChars (new byte [] {0xA1}, 0, 1, chars, 0), "#5");
+			Assert.AreEqual (new char [] {'\0'}, chars, "#6");
+		}
+
+		[Test]
+		public void Decoder936NoRefresh ()
+		{
+			Encoding e = Encoding.GetEncoding (936);
+			Decoder d = e.GetDecoder ();
+			char [] chars;
+
+			// incomplete
+			chars = new char [1];
+			Assert.AreEqual (0, d.GetChars (new byte [] {0xB0}, 0, 1, chars, 0), "#1");
+			Assert.AreEqual (new char [] {'\0'}, chars, "#2");
+
+			// became complete
+			chars = new char [1];
+			Assert.AreEqual (1, d.GetChars (new byte [] {0xA1}, 0, 1, chars, 0), "#3");
+			Assert.AreEqual (new char [] {'\u554A'}, chars, "#4");
+
+			// incomplete but refreshed
+			chars = new char [1];
+			Assert.AreEqual (0, d.GetChars (new byte [] {0xB0}, 0, 1, chars, 0), "#5");
 			Assert.AreEqual (new char [] {'\0'}, chars, "#6");
 		}
 		#endregion
