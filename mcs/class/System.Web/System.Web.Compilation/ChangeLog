@@ -1,3 +1,7 @@
+2006-01-23 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AspGenerator.cs: ignore 'thead'. Fixes bug #77326.
+
 2006-01-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AspGenerator.cs: add support for 'src' in <script runat="server">.

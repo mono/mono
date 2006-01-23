@@ -315,6 +315,13 @@ namespace System.Web.Compilation
 			if (tparser != null)
 				tparser.Location = location;
 
+			// MS ignores tbody/thead
+			if ((attributes == null || !attributes.IsRunAtServer ())) {
+				if (String.Compare (tagid, "tbody", true) == 0 ||
+				    String.Compare (tagid, "thead", true) == 0)
+				return;
+			}
+
 			if (text.Length != 0)
 				FlushText ();
 
@@ -456,14 +463,6 @@ namespace System.Web.Compilation
 
 		bool ProcessTag (string tagid, TagAttributes atts, TagType tagtype)
 		{
-			if ((atts == null || !atts.IsRunAtServer ()) && String.Compare (tagid, "tbody", true) == 0) {
-				// MS completely ignores tbody or, if runat="server", fails when compiling
-				if (stack.Count > 0)
-					return stack.Builder.ChildrenAsProperties;
-
-				return false;
-			}
-
 			if (isApplication) {
 				if (String.Compare (tagid, "object", true) != 0)
 					throw new ParseException (location, "Invalid tag for application file.");
