@@ -289,10 +289,8 @@ struct MonoCallInst {
 	gboolean virtual;
 	regmask_t used_iregs;
 	regmask_t used_fregs;
-#if defined(MONO_ARCH_HAS_XP_LOCAL_REGALLOC)
 	GSList *out_ireg_args;
 	GSList *out_freg_args;
-#endif
 };
 
 struct MonoCallArgParm {

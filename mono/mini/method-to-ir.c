@@ -530,7 +530,7 @@ static int the_count = 0;
 
 #define NEW_VARLOAD(cfg,dest,var,vartype) do { \
         MONO_INST_NEW ((cfg), (dest), OP_MOVE); \
-		(dest)->opcode = mono_type_to_regload ((var)->inst_vtype);  \
+		(dest)->opcode = mono_type_to_regload ((vartype));  \
 		(dest)->ssa_op = MONO_SSA_LOAD;	\
 		type_to_eval_stack_type ((vartype), (dest));	\
 		(dest)->klass = var->klass;	\
@@ -5865,8 +5865,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				MonoBasicBlock *ebblock;
 				gboolean allways = FALSE;
 
-				NOT_IMPLEMENTED;
-
 				if ((cmethod->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL) ||
 					(cmethod->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL)) {
 					cmethod = mono_marshal_get_native_wrapper (cmethod);
@@ -5882,6 +5880,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 					link_bblock (cfg, ebblock, bblock);
 
  					if (!MONO_TYPE_IS_VOID (fsig->ret))
+						/* *sp is already set by inline_method */
  						sp++;
 
 					/* indicates start of a new block, and triggers a load of all 
@@ -6733,18 +6732,17 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				    !g_list_find (dont_inline, cmethod)) {
 					int costs;
 					MonoBasicBlock *ebblock;
-					NOT_IMPLEMENTED;
+
 					if ((costs = inline_method (cfg, cmethod, fsig, bblock, sp, ip, cfg->real_offset, dont_inline, &ebblock, FALSE))) {
 
 						ip += 5;
 						cfg->real_offset += 5;
 						
+						*sp++ = alloc;
+
 						GET_BBLOCK (cfg, bbhash, bblock, ip);
 						ebblock->next_bb = bblock;
 						link_bblock (cfg, ebblock, bblock);
-
-						NEW_TEMPLOAD (cfg, *sp, temp);
-						sp++;
 
 						/* indicates start of a new block, and triggers a load 
 						   of all stack arguments at bb boundarie */
@@ -6752,7 +6750,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 
 						inline_costs += costs;
 						break;
-						
 					} else {
 						mono_emit_method_call (cfg, cmethod, fsig, sp, ip, callvirt_this_arg);
 					}

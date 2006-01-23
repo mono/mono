@@ -9548,7 +9548,7 @@ mono_local_deadce (MonoCompile *cfg)
 				((ins->opcode >= OP_LCALL) && (ins->opcode <= OP_LCALL_MEMBASE)) ||
 				((ins->opcode >= OP_VCALL) && (ins->opcode <= OP_VCALL_MEMBASE)) ||
 				((ins->opcode >= OP_CALL) && (ins->opcode <= OP_CALL_MEMBASE))) {
-				MonoCallInst *call = (MonoCallInst*)call;
+				MonoCallInst *call = (MonoCallInst*)ins;
 				GSList *l;
 
 				for (l = call->out_ireg_args; l; l = l->next) {
