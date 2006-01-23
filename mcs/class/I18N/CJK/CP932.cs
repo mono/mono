@@ -45,23 +45,9 @@ public unsafe class CP932 : MonoEncoding
 	}
 
 	// Get the number of bytes needed to encode a character buffer.
-	public override int GetByteCount(char[] chars, int index, int count)
+	public unsafe override int GetByteCountImpl (char* chars, int count)
 			{
-				// Validate the parameters.
-				if(chars == null)
-				{
-					throw new ArgumentNullException("chars");
-				}
-				if(index < 0 || index > chars.Length)
-				{
-					throw new ArgumentOutOfRangeException
-						("index", Strings.GetString("ArgRange_Array"));
-				}
-				if(count < 0 || count > (chars.Length - index))
-				{
-					throw new ArgumentOutOfRangeException
-						("count", Strings.GetString("ArgRange_Array"));
-				}
+				int index = 0;
 
 				// Determine the length of the final output.
 				int length = 0;

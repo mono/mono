@@ -1,5 +1,15 @@
 2006-01-23  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* CP936.cs, CP949.cs, CP950.cs :
+	  Added GetByteCountImpl() (there weren't GetByteCount() override
+	  in those classes, so they also save extra byte[] allocation).
+	* CP932.cs, CP51932.cs, GB18030Encoding.cs, ISO2022JP.cs :
+	  GetByteCount() -> GetByteCountImpl().
+	  Fixed ISO2022JPEncoder/Decoder to hold different "shifted_in" flags
+	  for GetByteCountImpl() and GetBytesImpl().
+
+2006-01-23  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ISO2022JP.cs GB18030Encoding.cs CP936.cs CP51932.cs:
 	  fix warnings.
 

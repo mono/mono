@@ -1,3 +1,11 @@
+2006-01-23  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MonoEncoding.cs :
+	  Added abstract GetByteCountImpl() in MonoEncoding and MonoEncoder.
+	  GetByteCount() is now based on the method above.
+	* ByteEncoding.cs : so GetByteCount() became GetByteCountImpl() and
+	  is based on char*.
+
 2006-01-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* MonoEncoding.cs, ByteEncoding.cs :

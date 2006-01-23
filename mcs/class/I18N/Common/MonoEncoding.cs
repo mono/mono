@@ -47,6 +47,30 @@ namespace I18N.Common
 #endif
 
 		// Get the bytes that result from encoding a character buffer.
+		public override int GetByteCount (
+			char [] chars, int index, int count)
+		{
+			if (chars == null)
+				throw new ArgumentNullException ("chars");
+			if (index < 0 || index > chars.Length)
+				throw new ArgumentOutOfRangeException
+					("index", Strings.GetString ("ArgRange_Array"));
+			if (count < 0 || count > (chars.Length - index))
+				throw new ArgumentOutOfRangeException
+					("count", Strings.GetString ("ArgRange_Array"));
+
+			if (count == 0)
+				return 0;
+
+			unsafe {
+				fixed (char* cptr = chars) {
+					return GetByteCountImpl (
+						cptr + index, count);
+				}
+			}
+		}
+
+		// Get the bytes that result from encoding a character buffer.
 		public override int GetBytes (
 			char [] chars, int charIndex, int charCount,
 			byte [] bytes, int byteIndex)
@@ -124,6 +148,12 @@ namespace I18N.Common
 		}
 
 #if NET_2_0
+		public unsafe override int GetByteCount (char* chars, int count)
+
+		{
+			return GetByteCountImpl (chars, count);
+		}
+
 		public unsafe override int GetBytes (char* chars, int charCount,
 			byte* bytes, int byteCount)
 
@@ -133,8 +163,12 @@ namespace I18N.Common
 #endif
 
 		[CLSCompliant (false)]
+		public unsafe abstract int GetByteCountImpl (char* chars, int charCount);
+
+		[CLSCompliant (false)]
 		public unsafe abstract int GetBytesImpl (char* chars, int charCount,
 			byte* bytes, int byteCount);
+	}
 
 		public abstract class MonoEncoder : Encoder
 		{
@@ -145,8 +179,47 @@ namespace I18N.Common
 				this.encoding = encoding;
 			}
 
+			public override int GetByteCount (
+				char [] chars, int index, int count, bool refresh)
+			{
+				if (chars == null)
+					throw new ArgumentNullException ("chars");
+				if (index < 0 || index > chars.Length)
+					throw new ArgumentOutOfRangeException
+						("index", Strings.GetString ("ArgRange_Array"));
+				if (count < 0 || count > (chars.Length - index))
+					throw new ArgumentOutOfRangeException
+						("count", Strings.GetString ("ArgRange_Array"));
+
+				if (count == 0)
+					return 0;
+
+				unsafe {
+					fixed (char* cptr = chars) {
+						return GetByteCountImpl (
+							cptr + index, count, refresh);
+					}
+				}
+			}
+
 			public override int GetBytes (char [] chars, int charIndex, int charCount, byte [] bytes, int byteIndex, bool flush)
 			{
+				if (chars == null)
+					throw new ArgumentNullException ("chars");
+				if (bytes == null)
+					throw new ArgumentNullException ("bytes");
+				if (charIndex < 0 || charIndex > chars.Length)
+					throw new ArgumentOutOfRangeException
+						("charIndex", Strings.GetString ("ArgRange_Array"));
+				if (charCount < 0 || charCount > (chars.Length - charIndex))
+					throw new ArgumentOutOfRangeException
+						("charCount", Strings.GetString ("ArgRange_Array"));
+				if (byteIndex < 0 || byteIndex > bytes.Length)
+					throw new ArgumentOutOfRangeException
+						("byteIndex", Strings.GetString ("ArgRange_Array"));
+				if (bytes.Length - byteIndex < charCount)
+					throw new ArgumentException (Strings.GetString ("Arg_InsufficientSpace"), "bytes");
+
 				if (charCount == 0)
 					return 0;
 				unsafe {
@@ -162,7 +235,9 @@ namespace I18N.Common
 				}
 			}
 
-			public unsafe abstract int GetBytesImpl (char* chars, int charCount, byte* bytes, int byteCount, bool flush);
+			public unsafe abstract int GetByteCountImpl (char* chars, int charCount, bool refresh);
+
+			public unsafe abstract int GetBytesImpl (char* chars, int charCount, byte* bytes, int byteCount, bool refresh);
 
 		#if NET_2_0
 			public unsafe override int GetBytes (char* chars, int charCount, byte* bytes, int byteCount, bool flush)
@@ -182,5 +257,4 @@ namespace I18N.Common
 			}
 		#endif
 		}
-	}
 }

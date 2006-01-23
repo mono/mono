@@ -43,9 +43,9 @@ using I18N.Common;
 public abstract class ISCIIEncoding : MonoEncoding
 {
 	// Internal state.
-	protected int shift;
-	protected String encodingName;
-	protected String webName;
+	int shift;
+	string encodingName;
+	string webName;
 
 	// Constructor.
 	protected ISCIIEncoding(int codePage, int shift,
@@ -85,6 +85,51 @@ public abstract class ISCIIEncoding : MonoEncoding
 					throw new ArgumentNullException("s");
 				}
 				return s.Length;
+			}
+
+	public unsafe override int GetByteCountImpl (char* chars, int count)
+			{
+#if NET_2_0
+				EncoderFallbackBuffer buffer = null;
+				int index = 0;
+				int charIndex = 0;
+				int byteIndex = 0;
+
+				int length = 0;
+				char ch;
+				char first = (char)shift;
+				char last = (char)(shift + 0x7F);
+				while(count-- > 0)
+				{
+					ch = chars[index++];
+					if(ch < (char)0x0080)
+					{
+						// Regular ASCII subset.
+						length++;
+					}
+					else if(ch >= first && ch <= last)
+					{
+						// ISCII range that we need to shift.
+						length++;
+					}
+					else if(ch >= '\uFF01' && ch <= '\uFF5E')
+					{
+						// ASCII full-width characters.
+						length++;
+					}
+					else
+					{
+						// FIXME: implement fallback support for GetByteCountImpl().
+						length++;
+					}
+					count--;
+				}
+
+				// Return the final length of the output.
+				return length;
+#else
+				return count;
+#endif
 			}
 
 	public unsafe override int GetBytesImpl (char* chars, int charCount, byte* bytes, int byteCount)

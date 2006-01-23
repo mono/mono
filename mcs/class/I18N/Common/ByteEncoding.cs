@@ -76,27 +76,6 @@ public abstract class ByteEncoding : MonoEncoding
 	}
 #endif
 
-	// Get the number of bytes needed to encode a character buffer.
-	public override int GetByteCount(char[] chars, int index, int count)
-			{
-				if(chars == null)
-				{
-					throw new ArgumentNullException("chars");
-				}
-				if(index < 0 || index > chars.Length)
-				{
-					throw new ArgumentOutOfRangeException
-						("index", Strings.GetString("ArgRange_Array"));
-				}
-				if(count < 0 || count > (chars.Length - index))
-				{
-					throw new ArgumentOutOfRangeException
-						("count", Strings.GetString("ArgRange_Array"));
-				}
-				return count;
-			}
-
-	// Convenience wrappers for "GetByteCount".
 	public override int GetByteCount(String s)
 			{
 				if(s == null)
@@ -104,6 +83,12 @@ public abstract class ByteEncoding : MonoEncoding
 					throw new ArgumentNullException("s");
 				}
 				return s.Length;
+			}
+
+	// Get the number of bytes needed to encode a character buffer.
+	public unsafe override int GetByteCountImpl (char* chars, int count)
+			{
+				return count;
 			}
 
 	// Convert an array of characters into a byte buffer,

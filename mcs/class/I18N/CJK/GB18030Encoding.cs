@@ -53,6 +53,11 @@ namespace I18N.CJK
 			return new GB18030Encoder (this).GetByteCount (chars, index, length, true);
 		}
 
+		public unsafe override int GetByteCountImpl (char* chars, int count)
+		{
+			return new GB18030Encoder (this).GetByteCountImpl (chars, count, true);
+		}
+
 		public unsafe override int GetBytesImpl (char* chars, int charCount, byte* bytes, int byteCount)
 		{
 			return new GB18030Encoder (this).GetBytesImpl (chars, charCount, bytes, byteCount, true);
@@ -245,7 +250,7 @@ namespace I18N.CJK
 		}
 	}
 
-	class GB18030Encoder : MonoEncoding.MonoEncoder
+	class GB18030Encoder : MonoEncoder
 	{
 		static DbcsConvert gb2312 = DbcsConvert.Gb2312;
 
@@ -257,16 +262,10 @@ namespace I18N.CJK
 		char incomplete_byte_count;
 		char incomplete_bytes;
 
-		public override int GetByteCount (char [] chars, int start, int len, bool refresh)
+		public unsafe override int GetByteCountImpl (char* chars, int count, bool refresh)
 		{
-			if (chars == null)
-				throw new ArgumentNullException ("chars");
-			if (start < 0 || start > chars.Length)
-				throw new ArgumentOutOfRangeException ("index");
-			if (len < 0 || start + len > chars.Length)
-				throw new ArgumentOutOfRangeException ("count");
-
-			int end = start + len;
+			int start = 0;
+			int end = count;
 			int ret = 0;
 			while (start < end) {
 				char ch = chars [start];

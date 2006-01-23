@@ -27,6 +27,38 @@ namespace I18N.CJK
 		}
 
 		// Get the bytes that result from encoding a character buffer.
+		public unsafe override int GetByteCountImpl (char* chars, int count)
+		{
+			DbcsConvert convert = GetConvert ();
+			int index = 0;
+			int length = 0;
+#if NET_2_0
+			EncoderFallbackBuffer buffer = null;
+#endif
+
+			while (count-- > 0) {
+				char c = chars[index++];
+				if (c <= 0x80 || c == 0xFF) { // ASCII
+					length++;
+					continue;
+				}
+				byte b1 = convert.u2n[((int)c) * 2 + 1];
+				byte b2 = convert.u2n[((int)c) * 2];
+				if (b1 == 0 && b2 == 0) {
+#if NET_2_0
+					// FIXME: handle fallback for GetByteCountImpl().
+					length++;
+#else
+					length++;
+#endif
+				}
+				else
+					length += 2;
+			}
+			return length;
+		}
+
+		// Get the bytes that result from encoding a character buffer.
 		public unsafe override int GetBytesImpl (char* chars, int charCount,
 					     byte* bytes, int byteCount)
 		{

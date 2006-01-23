@@ -75,6 +75,11 @@ public class CP51932 : MonoEncoding
 		return new CP51932Encoder (this).GetByteCount (chars, index, length, true);
 	}
 
+	public unsafe override int GetByteCountImpl (char* chars, int count)
+	{
+		return new CP51932Encoder (this).GetByteCountImpl (chars, count, true);
+	}
+
 	public unsafe override int GetBytesImpl (char* chars, int charCount, byte* bytes, int byteCount)
 	{
 		return new CP51932Encoder (this).GetBytesImpl (chars, charCount, bytes, byteCount, true);
@@ -189,7 +194,7 @@ public class CP51932 : MonoEncoding
 } // CP51932
 #endif // !ECMA_COMPAT
 
-public class CP51932Encoder : MonoEncoding.MonoEncoder
+public class CP51932Encoder : MonoEncoder
 {
 	public CP51932Encoder (MonoEncoding encoding)
 		: base (encoding)
@@ -197,22 +202,11 @@ public class CP51932Encoder : MonoEncoding.MonoEncoder
 	}
 
 	// Get the number of bytes needed to encode a character buffer.
-	public override int GetByteCount (
-		char [] chars, int index, int count, bool refresh)
+	public unsafe override int GetByteCountImpl (
+		char* chars, int count, bool refresh)
 	{
-		// Validate the parameters.
-		if (chars == null)
-			throw new ArgumentNullException("chars");
-
-		if (index < 0 || index > chars.Length)
-			throw new ArgumentOutOfRangeException
-				("index", Strings.GetString ("ArgRange_Array"));
-
-		if (count < 0 || count > (chars.Length - index))
-			throw new ArgumentOutOfRangeException
-				("count", Strings.GetString ("ArgRange_Array"));
-
 		// Determine the length of the final output.
+		int index = 0;
 		int length = 0;
 		int ch, value;
 		byte [] cjkToJis = JISConvert.Convert.cjkToJis;
