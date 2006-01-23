@@ -1,5 +1,15 @@
 2006-01-23  Martin Baulig  <martin@ximian.com>
 
+	* Makefile.am: Only compile debug-debugger.c on supported platforms.
+
+	* debug-debugger.c: Kill the IO_LAYER() hack and use the io-layer
+	functions directly.
+
+	* driver.c: debug-debugger.c is only available if
+	`MONO_DEBUGGER_SUPPORTED' is defined.	
+
+2006-01-23  Martin Baulig  <martin@ximian.com>
+
 	* debug-debugger.c: Only enable this on platforms where the Mono
 	Debugger is working (x86 and x86_64).
 
