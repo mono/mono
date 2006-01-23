@@ -111,7 +111,7 @@ namespace I18N.CJK
 
         internal override DbcsConvert GetConvert ()
         {
-                return KSConvert.Convert;
+                return DbcsConvert.KS;
         }
 
         bool useUHC;

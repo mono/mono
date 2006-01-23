@@ -1,5 +1,13 @@
 2006-01-23  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* KSConvert.cs Big5Convert.cs Gb2312Convert.cs: removed. They could
+	  just be DbcsConvert instances.
+	* I18N.CJK.dll.sources : removed above.
+	* DbcsConvert.cs : added static fields: Big5 and KS.
+	* CP949.cs CP950.cs : use DbcsConvert class directly.
+
+2006-01-23  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* CP936.cs, CP949.cs, CP950.cs :
 	  Added GetByteCountImpl() (there weren't GetByteCount() override
 	  in those classes, so they also save extra byte[] allocation).

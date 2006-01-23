@@ -1,6 +1,5 @@
 ../Assembly/AssemblyInfo.cs
 ../../../build/common/Consts.cs
-Big5Convert.cs
 CP932.cs
 ISO2022JP.cs
 CP51932.cs
@@ -10,8 +9,6 @@ CP950.cs
 CodeTable.cs
 DbcsEncoding.cs
 DbcsConvert.cs
-Gb2312Convert.cs
 GB18030Encoding.cs
 GB18030Source.cs
 JISConvert.cs
-KSConvert.cs

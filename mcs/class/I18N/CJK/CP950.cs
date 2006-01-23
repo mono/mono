@@ -23,7 +23,7 @@ namespace I18N.CJK
 
 		internal override DbcsConvert GetConvert ()
 		{
-			return Big5Convert.Convert;
+			return DbcsConvert.Big5;
 		}
 
 		// Get the bytes that result from encoding a character buffer.

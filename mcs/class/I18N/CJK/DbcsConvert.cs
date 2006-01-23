@@ -27,6 +27,11 @@ namespace I18N.CJK
 			}
 		}
 
-		internal static DbcsConvert Gb2312 = new DbcsConvert ("gb2312.table");
+		internal static readonly DbcsConvert Gb2312 =
+			new DbcsConvert ("gb2312.table");
+		internal static readonly DbcsConvert Big5 =
+			new DbcsConvert ("big5.table");
+		internal static readonly DbcsConvert KS =
+			new DbcsConvert ("ks.table");
 	}
 }
