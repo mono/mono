@@ -1,3 +1,14 @@
+2006-01-23  Raja R Harinath  <rharinath@novell.com>
+
+	Improve implementation of section 14.4.2.2 (Better function member).
+	* expression.cs (Invocation.MoreSpecific): Compare all type
+	arguments before deciding if one type is more specific than
+	another.  Handle array types too.  Return the more specific type.
+	(Invocation.BetterFunction): Add more tie-breaking rules from
+	section 14.4.2.2.  Perform "more specific" check after
+	other tie-breaking rules.  Compare all parameter types before
+	choosing the "more specific" method.
+
 2006-01-21  Raja R Harinath  <harinath@gmail.com>
 	    Carlos Alberto Cortez  <calberto.cortez@gmail.com>
 

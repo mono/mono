@@ -4296,25 +4296,43 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		static int MoreSpecific (EmitContext ec, Type p, Type q, Location loc)
+		static Type MoreSpecific (Type p, Type q)
 		{
 			if (p.IsGenericParameter && !q.IsGenericParameter)
-				return -1;
+				return q;
 			if (!p.IsGenericParameter && q.IsGenericParameter)
-				return 1;
+				return p;
 
-			if (p.IsGenericInstance) {
+			if (p.IsGenericType) {
 				Type[] pargs = TypeManager.GetTypeArguments (p);
 				Type[] qargs = TypeManager.GetTypeArguments (q);
 
+				bool p_specific_at_least_once = false;
+				bool q_specific_at_least_once = false;
+
 				for (int i = 0; i < pargs.Length; i++) {
-					int better = MoreSpecific (ec, pargs [i], qargs [i], loc);
-					if (better != 0)
-						return better;
+					Type specific = MoreSpecific (pargs [i], qargs [i]);
+					if (specific == pargs [i])
+						p_specific_at_least_once = true;
+					if (specific == qargs [i])
+						q_specific_at_least_once = true;
 				}
+
+				if (p_specific_at_least_once && !q_specific_at_least_once)
+					return p;
+				if (!p_specific_at_least_once && q_specific_at_least_once)
+					return q;
+			} else if (TypeManager.HasElementType (p)) {
+				Type pe = TypeManager.GetElementType (p);
+				Type qe = TypeManager.GetElementType (q);
+				Type specific = MoreSpecific (pe, qe);
+				if (specific == pe)
+					return p;
+				if (specific == qe)
+					return q;
 			}
 
-			return 0;
+			return null;
 		}
 		
 		/// <summary>
@@ -4368,17 +4386,50 @@ namespace Mono.CSharp {
 			if (better_at_least_one)
 				return true;
 
+			//
+			// This handles the case
+			//
+			//   Add (float f1, float f2, float f3);
+			//   Add (params decimal [] foo);
+			//
+			// The call Add (3, 4, 5) should be ambiguous.  Without this check, the
+			// first candidate would've chosen as better.
+			//
 			if (!same)
 				return false;
 
 			//
-			// If two methods have equal parameter types, but
-			// only one of them is generic, the non-generic one wins.
+			// The two methods have equal parameter types.  Now apply tie-breaking rules
 			//
 			if (TypeManager.IsGenericMethod (best) && !TypeManager.IsGenericMethod (candidate))
 				return true;
-			else if (!TypeManager.IsGenericMethod (best) && TypeManager.IsGenericMethod (candidate))
+			if (!TypeManager.IsGenericMethod (best) && TypeManager.IsGenericMethod (candidate))
 				return false;
+
+			//
+			// This handles the following cases:
+			//
+			//   Trim () is better than Trim (params char[] chars)
+			//   Concat (string s1, string s2, string s3) is better than
+			//     Concat (string s1, params string [] srest)
+			//   Foo (int, params int [] rest) is better than Foo (params int [] rest)
+			//
+			if (!candidate_params && best_params)
+				return true;
+			if (candidate_params && !best_params)
+				return false;
+
+			int candidate_param_count = candidate_pd.Count;
+			int best_param_count = best_pd.Count;
+
+			if (candidate_param_count != best_param_count)
+				// can only happen if (candidate_params && best_params)
+				return candidate_param_count > best_param_count;
+
+			//
+			// now, both methods have the same number of parameters, and the parameters have the same types
+			// Pick the "more specific" signature
+			//
 
 			MethodBase orig_candidate = candidate.Mono_IsInflatedMethod ?
 				candidate.GetGenericMethodDefinition () : candidate;
@@ -4388,35 +4439,26 @@ namespace Mono.CSharp {
 			ParameterData orig_candidate_pd = TypeManager.GetParameterData (orig_candidate);
 			ParameterData orig_best_pd = TypeManager.GetParameterData (orig_best);
 
-			for (int j = 0; j < argument_count; ++j) {
+			bool specific_at_least_once = false;
+			for (int j = 0; j < candidate_param_count; ++j) {
 				Type ct = TypeManager.TypeToCoreType (orig_candidate_pd.ParameterType (j));
 				Type bt = TypeManager.TypeToCoreType (orig_best_pd.ParameterType (j));
-
-				int more_specific = MoreSpecific (ec, ct, bt, loc);
-				if (more_specific > 0)
-					return true;
-				else if (more_specific < 0)
+				if (ct.Equals (bt))
+					continue;
+				Type specific = MoreSpecific (ct, bt);
+				if (specific == bt)
 					return false;
+				if (specific == ct)
+					specific_at_least_once = true;
 			}
 
-			//
-			// Note that this is not just an optimization.  This handles the case
-			// This handles the case
-			//
-			//   Add (float f1, float f2, float f3);
-			//   Add (params decimal [] foo);
-			//
-			// The call Add (3, 4, 5) should be ambiguous.  Without this check, the
-			// first candidate would've chosen as better.
-			//
-			//
-			// This handles the following cases:
-			//
-			//   Trim () is better than Trim (params char[] chars)
-			//   Concat (string s1, string s2, string s3) is better than
-			//     Concat (string s1, params string [] srest)
-			//
-                        return !candidate_params && best_params;
+			if (specific_at_least_once)
+				return true;
+
+			// FIXME: handle lifted operators
+			// ...
+
+			return false;
 		}
 
 		internal static bool IsOverride (MethodBase cand_method, MethodBase base_method)
