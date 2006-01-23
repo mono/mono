@@ -1,3 +1,8 @@
+2006-01-23  Ankit Jain  <jankit@novell.com>
+
+	* TypeDef.cs (TypeDef.AddFieldDef): Throw exception if duplicate field being
+	added.
+
 2006-01-19  Ankit Jain  <jankit@novell.com>
 
 	* Module.cs (Module): New. Class for representing this module.

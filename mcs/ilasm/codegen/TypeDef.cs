@@ -181,7 +181,10 @@ namespace Mono.ILASM {
                                 fielddef.Attributes |= PEAPI.FieldAttr.Static;
                         }
 
-                        field_table.Add (new DictionaryEntry (fielddef.Name, fielddef.Type.FullName), fielddef);
+                        DictionaryEntry entry = new DictionaryEntry (fielddef.Name, fielddef.Type.FullName);
+                        if (field_table [entry] != null)
+                                throw new Exception (String.Format ("Duplicate field declaration: {0} {1}", fielddef.Type.FullName, fielddef.Name));
+                        field_table.Add (entry, fielddef);
                         field_list.Add (fielddef);
                 }
 
