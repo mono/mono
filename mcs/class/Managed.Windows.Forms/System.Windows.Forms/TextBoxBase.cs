@@ -908,7 +908,7 @@ namespace System.Windows.Forms {
 
 				case Keys.Enter: {
 					// ignoring accepts_return, fixes bug #76355
-					if (!read_only && multiline && (accepts_return || (FindForm().AcceptButton == null) || ((Control.ModifierKeys & Keys.Control) != 0))) {
+					if (!read_only && multiline && (accepts_return || (FindForm() != null && FindForm().AcceptButton == null) || ((Control.ModifierKeys & Keys.Control) != 0))) {
 						Line	line;
 
 						if (document.selection_visible) {

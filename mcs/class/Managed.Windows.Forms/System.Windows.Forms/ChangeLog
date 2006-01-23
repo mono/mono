@@ -1,3 +1,7 @@
+2006-01-24  Jordi Mas i Hernandez <jordimash@gmail.com>
+
+	* TextBoxBase.cs: fixes exception thown the object was null
+
 2006-01-23  Jackson Harper  <jackson@ximian.com>
 
 	* ButtonBase.cs: Just use the base CreateParams. They set
