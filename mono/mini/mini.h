@@ -200,7 +200,8 @@ struct MonoBasicBlock {
 	 * Whenever the bblock is rarely executed so it should be emitted after
 	 * the function epilog.
 	 */
-	gboolean out_of_line;
+	gboolean out_of_line : 1;
+	gboolean not_useless : 1;
 
 	/* use for liveness analysis */
 	MonoBitSet *gen_set;

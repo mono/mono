@@ -8382,7 +8382,10 @@ remove_block_if_useless (MonoCompile *cfg, MonoBasicBlock *bb, MonoBasicBlock *p
 	MonoInst *inst;
 
 	/* Do not touch handlers */
-	if (bb->region != -1) return FALSE;
+	if (bb->region != -1) {
+		bb->not_useless = TRUE;
+		return FALSE;
+	}
 	
 	for (inst = bb->code; inst != NULL; inst = inst->next) {
 		switch (inst->opcode) {
@@ -8394,6 +8397,7 @@ remove_block_if_useless (MonoCompile *cfg, MonoBasicBlock *bb, MonoBasicBlock *p
 			target_bb = inst->inst_target_bb;
 			break;
 		default:
+			bb->not_useless = TRUE;
 			return FALSE;
 		}
 	}
@@ -8548,7 +8552,7 @@ optimize_branches (MonoCompile *cfg)
 			if (bb->region != -1)
 				continue;
 
-			if (remove_block_if_useless (cfg, bb, previous_bb)) {
+			if (!bb->not_useless && remove_block_if_useless (cfg, bb, previous_bb)) {
 				changed = TRUE;
 				continue;
 			}
