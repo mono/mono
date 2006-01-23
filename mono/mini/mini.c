@@ -9322,31 +9322,26 @@ mono_local_cprop_bb2 (MonoCompile *cfg, MonoBasicBlock *bb,
 {
 	MonoInst *ins, *prev;
 	int ins_index;
+	int max = cfg->next_vireg;
 
-	if (cfg->next_vireg > 256) {
-		int max = cfg->next_vireg;
-
-		/* Manually init the defs entries used by the bblock */
-		for (ins = bb->code; ins; ins = ins->next) {
-			if ((ins->dreg != -1) && (ins->dreg < max))
-				defs [ins->dreg] = NULL;
-			if ((ins->sreg1 != -1) && (ins->sreg1 < max))
-				defs [ins->sreg1] = NULL;
-			if ((ins->sreg2 != -1) && (ins->sreg2 < max))
-				defs [ins->sreg2] = NULL;
+	/* Manually init the defs entries used by the bblock */
+	for (ins = bb->code; ins; ins = ins->next) {
+		if ((ins->dreg != -1) && (ins->dreg < max))
+			defs [ins->dreg] = NULL;
+		if ((ins->sreg1 != -1) && (ins->sreg1 < max))
+			defs [ins->sreg1] = NULL;
+		if ((ins->sreg2 != -1) && (ins->sreg2 < max))
+			defs [ins->sreg2] = NULL;
 #if SIZEOF_VOID_P == 4
-			/* Regpairs */
-			if ((ins->dreg != -1) && (ins->dreg + 1 < max))
-				defs [ins->dreg + 1] = NULL;
-			if ((ins->sreg1 != -1) && (ins->sreg1 + 1 < max))
-				defs [ins->sreg1 + 1] = NULL;
-			if ((ins->sreg2 != -1) && (ins->sreg2 + 1 < max))
-				defs [ins->sreg2 + 1] = NULL;
+		/* Regpairs */
+		if ((ins->dreg != -1) && (ins->dreg + 1 < max))
+			defs [ins->dreg + 1] = NULL;
+		if ((ins->sreg1 != -1) && (ins->sreg1 + 1 < max))
+			defs [ins->sreg1 + 1] = NULL;
+		if ((ins->sreg2 != -1) && (ins->sreg2 + 1 < max))
+			defs [ins->sreg2 + 1] = NULL;
 #endif
-		}
 	}
-	else
-		memset (defs, 0, sizeof (MonoInst*) * cfg->next_vireg);
 
 	ins_index = 0;
 	prev = NULL;
@@ -9382,7 +9377,7 @@ mono_local_cprop_bb2 (MonoCompile *cfg, MonoBasicBlock *bb,
 
 		/* FIXME: Store opcodes */
 		for (srcindex = 0; srcindex < 2; ++srcindex) {
-			regtype = spec [(srcindex == 0) ? MONO_INST_SRC1 : MONO_INST_SRC2];
+			regtype = srcindex == 0 ? spec [MONO_INST_SRC1] : spec [MONO_INST_SRC2];
 			sreg = srcindex == 0 ? ins->sreg1 : ins->sreg2;
 
 			/* FIXME: Add support for floats/longs */

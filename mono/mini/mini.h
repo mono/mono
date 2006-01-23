@@ -623,6 +623,7 @@ typedef struct {
 	void*            reginfo;
 	void*            reginfof;
 	void*            reverse_inst_list;
+	int              reginfo_len;
 	int              reverse_inst_list_len;
 
 	/* Maps vregs to their associated MonoInst's */
@@ -886,6 +887,7 @@ void      mono_print_tree                   (MonoInst *tree);
 void      mono_print_tree_nl                (MonoInst *tree);
 void      mono_print_ins_index              (int i, MonoInst *ins);
 void      mono_print_ins                    (MonoInst *ins);
+void      mono_print_bb                     (MonoBasicBlock *bb, const char *msg);
 void      mono_print_code                   (MonoCompile *cfg);
 void      mono_print_method_from_ip         (void *ip);
 char     *mono_pmip                         (void *ip);

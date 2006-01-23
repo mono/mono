@@ -813,8 +813,11 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 
 	reginfo = cfg->reginfo;
 	if (!reginfo) {
-		reginfo = cfg->reginfo = g_malloc (sizeof (RegTrack) * max);
-	}
+		cfg->reginfo_len = MAX (1024, cfg->next_vireg);
+		reginfo = cfg->reginfo = g_malloc (sizeof (RegTrack) * cfg->reginfo_len);
+	} 
+	else
+		g_assert (cfg->reginfo_len >= cfg->next_vireg);
 
 	for (ins = bb->code; ins; ins = ins->next) {
 		spec = ins_spec [ins->opcode];

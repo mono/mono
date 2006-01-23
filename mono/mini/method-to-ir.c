@@ -325,8 +325,7 @@ handle_enum:
 	return -1;
 }
 
-G_GNUC_UNUSED
-static void
+void
 mono_print_bb (MonoBasicBlock *bb, const char *msg)
 {
 	int i;
