@@ -1,3 +1,14 @@
+2006-01-23  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* EncoderFallbackException.cs EncoderExceptionFallback.cs
+	  DecoderFallbackBuffer.cs EncoderReplacementFallback.cs
+	  EncoderFallbackBuffer.cs DecoderExceptionFallbackBuffer.cs
+	  EncoderFallback.cs DecoderReplacementFallbackBuffer.cs
+	  DecoderFallbackException.cs DecoderExceptionFallback.cs
+	  DecoderReplacementFallback.cs EncoderExceptionFallbackBuffer.cs
+	  EncoderReplacementFallbackBuffer.cs :
+	  include them in net_2_0bootstrap build.
+
 2006-01-20  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Decoder.cs : ditto.
