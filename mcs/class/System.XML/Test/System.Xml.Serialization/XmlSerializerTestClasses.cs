@@ -12,8 +12,9 @@
 using System;
 using System.ComponentModel;
 using System.Collections;
-using System.Xml.Serialization;
 using System.Xml;
+using System.Xml.Schema;
+using System.Xml.Serialization;
 
 namespace MonoTests.System.Xml.TestClasses
 {
@@ -80,6 +81,23 @@ namespace MonoTests.System.Xml.TestClasses
 	{
 		[XmlAttribute("modifiers")]
 		public MapModifiers Modifiers;
+
+		[XmlAttribute ("modifiers2", Form=XmlSchemaForm.Unqualified)]
+		public MapModifiers Modifiers2;
+
+		[XmlAttribute ("modifiers3")]
+		[DefaultValue (0)]
+		public MapModifiers Modifiers3;
+
+		[XmlAttribute ("modifiers4", Form=XmlSchemaForm.Unqualified)]
+		[DefaultValue (0)]
+		public MapModifiers Modifiers4;
+
+		[XmlAttribute ("names")]
+		public string[] Names;
+
+		[XmlAttribute ("street")]
+		public string Street;
 	}
 
 	[Flags]
@@ -90,7 +108,7 @@ namespace MonoTests.System.Xml.TestClasses
 		[XmlEnum("protected")]
 		Protected = 1,
 	}
-	
+
 	public class MyList : ArrayList
 	{
 		object container;

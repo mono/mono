@@ -1,11 +1,18 @@
-2006-01-07  Gert Driesen  <drieseng@users.sourceforge.net>
+2006-01-23  Gert Driesen  <drieseng@users.sourceforge.net>
 
-	* XmlReflectionImporterTests.cs: Added numerous tests. No longer
-	derive from Assertion.
+	* XmlReflectionImporterTests.cs: Marked tests NotWorking until fixes
+	have landed in svn.
 	* SoapReflectionImporterTests.cs: Added numerous tests.
 	* XmlSchemaImporterTests.cs: Added numerous tests.
 	* XmlSchemaExporterTests.cs: Added numerous tests.
 	* SoapSchemaExporterTests.cs: Added numerous tests.
+ 	* XmlSerializerTestClasses.cs: Added test classes for 
+	XmlSchemaExporter. Fixed line endings (to CRLF).
+
+2006-01-07  Gert Driesen  <drieseng@users.souceforge.net>
+
+	* XmlReflectionImporterTests.cs: Added numerous tests. No longer
+	derive from Assertion.
 
 2005-12-29  Gert Driesen  <drieseng@users.sourceforge.net>
 

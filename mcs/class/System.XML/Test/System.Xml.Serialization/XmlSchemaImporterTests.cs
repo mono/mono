@@ -24,6 +24,8 @@ namespace MonoTests.System.XmlSerialization
 	[TestFixture]
 	public class XmlSchemaImporterTests
 	{
+		private const string WsdlTypesNamespace = "http://microsoft.com/wsdl/types/";
+
 		[Test]
 		[Category ("NotWorking")]
 		public void ImportTypeMapping_Struct ()
@@ -43,7 +45,7 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
 		public void ImportTypeMapping_XsdPrimitive_AnyType ()
 		{
 			XmlSchemas schemas = ExportType (typeof (object));
@@ -283,20 +285,11 @@ namespace MonoTests.System.XmlSerialization
 
 		[Test]
 		[Category ("NotWorking")]
+		[ExpectedException (typeof (XmlSchemaException))] // Type 'http://microsoft.com/wsdl/types/:guid' is not declared
 		public void ImportTypeMapping_XsdPrimitive_Guid ()
 		{
 			XmlSchemas schemas = ExportType (typeof (Guid));
-			ArrayList qnames = GetXmlQualifiedNames (schemas);
-			Assert.AreEqual (1, qnames.Count, "#1");
-
-			XmlSchemaImporter importer = new XmlSchemaImporter (schemas);
-			XmlTypeMapping map = importer.ImportTypeMapping ((XmlQualifiedName) qnames[0]);
-
-			Assert.IsNotNull (map, "#2");
-			Assert.AreEqual ("int", map.ElementName, "#3");
-			Assert.AreEqual ("NSInt32", map.Namespace, "#4");
-			Assert.AreEqual ("System.Int32", map.TypeFullName, "#5");
-			Assert.AreEqual ("Int32", map.TypeName, "#6");
+			GetXmlQualifiedNames (schemas);
 		}
 
 		[Test]
@@ -335,20 +328,11 @@ namespace MonoTests.System.XmlSerialization
 
 		[Test]
 		[Category ("NotWorking")]
+		[ExpectedException (typeof (XmlSchemaException))] // Type 'http://microsoft.com/wsdl/types/:char' is not declared
 		public void ImportTypeMapping_XsdPrimitive_Char ()
 		{
 			XmlSchemas schemas = ExportType (typeof (char));
-			ArrayList qnames = GetXmlQualifiedNames (schemas);
-			Assert.AreEqual (1, qnames.Count, "#1");
-
-			XmlSchemaImporter importer = new XmlSchemaImporter (schemas);
-			XmlTypeMapping map = importer.ImportTypeMapping ((XmlQualifiedName) qnames[0]);
-
-			Assert.IsNotNull (map, "#2");
-			Assert.AreEqual ("int", map.ElementName, "#3");
-			Assert.AreEqual ("NSChar", map.Namespace, "#4");
-			Assert.AreEqual ("System.Int32", map.TypeFullName, "#5");
-			Assert.AreEqual ("Int32", map.TypeName, "#6");
+			GetXmlQualifiedNames (schemas);
 		}
 
 		[Test]

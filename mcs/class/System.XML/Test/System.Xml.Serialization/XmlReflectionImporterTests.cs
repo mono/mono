@@ -52,6 +52,7 @@ namespace MonoTests.System.XmlSerialization
 	{
 		private const string SomeNamespace = "some:urn";
 		private const string AnotherNamespace = "another:urn";
+		private const string XmlSchemaNamespace = "http://www.w3.org/2001/XMLSchema";
 
 		// these Map methods re-create the XmlReflectionImporter at every call.
 
@@ -118,7 +119,9 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+#if NET_2_0
+		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
+#endif
 		public void TestIntTypeMapping_Array ()
 		{
 			XmlTypeMapping tm = Map(typeof(int[]));
@@ -163,7 +166,9 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+#if NET_2_0
+		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
+#endif
 		public void TestStringTypeMapping_Array ()
 		{
 			XmlTypeMapping tm = Map (typeof (string[]));
@@ -208,7 +213,9 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+#if NET_2_0
+		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
+#endif
 		public void TestObjectTypeMapping_Array ()
 		{
 			XmlTypeMapping tm = Map (typeof (object[]));
@@ -253,7 +260,9 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+#if NET_2_0
+		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
+#endif
 		public void TestByteTypeMapping_Array ()
 		{
 			XmlTypeMapping tm = Map(typeof(byte[]));
@@ -374,7 +383,9 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+#if NET_2_0
+		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
+#endif
 		public void TestDateTimeTypeMapping_Array ()
 		{
 			XmlTypeMapping tm = Map (typeof (DateTime[]));
@@ -419,7 +430,9 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+#if NET_2_0
+		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
+#endif
 		public void TestGuidTypeMapping_Array ()
 		{
 			XmlTypeMapping tm = Map (typeof (Guid[]));
@@ -495,7 +508,9 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+#if NET_2_0
+		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
+#endif
 		public void TestCharTypeMapping_Array ()
 		{
 			XmlTypeMapping tm = Map (typeof (char[]));
@@ -530,7 +545,7 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
 		public void TestXmlNodeTypeMapping ()
 		{
 			Type type = typeof (XmlNode);
@@ -576,7 +591,7 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
 		public void TestXmlElementTypeMapping ()
 		{
 			Type type = typeof (XmlElement);
@@ -622,7 +637,7 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
 		public void TestXmlNotationTypeMapping ()
 		{
 			Type type = typeof (XmlNotation);
@@ -668,7 +683,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestXmlSerializableTypeMapping ()
 		{
 			XmlTypeMapping tm = Map (typeof (Employee));
@@ -679,7 +693,9 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+#if NET_2_0
+		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
+#endif
 		public void TestXmlSerializableTypeMapping_Array ()
 		{
 			XmlTypeMapping tm = Map (typeof (Employee[]));
@@ -714,7 +730,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestClassTypeMapping_NestedStruct ()
 		{
 			XmlTypeMapping tm = Map (typeof (NestedStruct));
@@ -742,7 +757,7 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
 		public void TestStructTypeMapping ()
 		{
 			XmlTypeMapping tm = Map (typeof (TimeSpan));
@@ -753,7 +768,7 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
 		public void TestStructTypeMapping_Array ()
 		{
 			XmlTypeMapping tm = Map (typeof (TimeSpan[]));
@@ -788,7 +803,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestEnumTypeMapping ()
 		{
 			XmlTypeMapping tm = Map (typeof (AttributeTargets));
@@ -799,7 +813,9 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+#if NET_2_0
+		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
+#endif
 		public void TestEnumTypeMapping_Array ()
 		{
 			XmlTypeMapping tm = Map (typeof (AttributeTargets[]));
@@ -844,7 +860,9 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+#if NET_2_0
+		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
+#endif
 		public void TestClassTypeMapping_Array ()
 		{
 			XmlTypeMapping tm = Map (typeof (SimpleClass[]));
@@ -879,7 +897,7 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
 		public void TypeMapping_IEnumerable_SimpleClass ()
 		{
 			XmlTypeMapping tm = Map (typeof (SimpleClassEnumerable));
@@ -920,7 +938,7 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
 		public void TypeMapping_IEnumerable_Object ()
 		{
 			XmlTypeMapping tm = Map (typeof (ObjectEnumerable));
@@ -961,23 +979,25 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
 		[ExpectedException (typeof (InvalidOperationException))]
-		public void TypeMapping_IEnumarable_Object_NoMatchingAddMethod ()
+		public void TypeMapping_IEnumerable_Object_NoMatchingAddMethod ()
 		{
 			Map (typeof (ObjectEnumerableNoMatchingAddMethod));
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
 		[ExpectedException (typeof (InvalidOperationException))]
-		public void TypeMapping_IEnumarable_Object_NoMatchingAddMethod_Array ()
+		public void TypeMapping_IEnumerable_Object_NoMatchingAddMethod_Array ()
 		{
 			Map (typeof (ObjectEnumerableNoMatchingAddMethod[]));
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+#if NET_2_0
+		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
+#endif
 		public void TypeMapping_IEnumerable_SimpleClass_PrivateCurrent ()
 		{
 			XmlTypeMapping tm = Map (typeof (SimpleClassEnumerablePrivateCurrent));
@@ -1018,10 +1038,12 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
+#if NET_2_0
+		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
+#endif
 #if ONLY_1_1
 		[Category ("NotDotNet")] // results in NullReferenceException in .NET 1.1 (SP1)
 #endif
-		[Category ("NotWorking")]
 		public void TypeMapping_IEnumerable_SimpleClass_PrivateGetEnumerator ()
 		{
 			XmlTypeMapping tm = Map (typeof (SimpleClassEnumerablePrivateGetEnumerator));
@@ -1062,7 +1084,7 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void TypeMapping_ICollection_Object_NoMatchingAddMethod ()
 		{
@@ -1070,7 +1092,7 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void TypeMapping_ICollection_Object_NoMatchingAddMethod_Array ()
 		{
@@ -1078,7 +1100,7 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void TypeMapping_ICollection_SimpleClass_NoMatchingAddMethod ()
 		{
@@ -1086,7 +1108,7 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void TypeMapping_ICollection_SimpleClass_NoMatchingAddMethod_Array ()
 		{
@@ -1094,7 +1116,9 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+#if NET_2_0
+		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
+#endif
 		public void TypeMapping_ICollection_SimpleClass ()
 		{
 			XmlTypeMapping tm = Map (typeof (SimpleClassCollection));
@@ -1135,7 +1159,9 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+#if NET_2_0
+		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
+#endif
 		public void TypeMapping_ICollection_Object ()
 		{
 			XmlTypeMapping tm = Map (typeof (ObjectCollection));
@@ -1176,7 +1202,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void TypeMapping_ICollection_Object_NoIntIndexer ()
 		{
@@ -1184,7 +1209,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void TypeMapping_ICollection_Object_NoIntIndexer_Array ()
 		{
@@ -1192,7 +1216,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void TypeMapping_ICollection_SimpleClass_NoIntIndexer ()
 		{
@@ -1200,7 +1223,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void TypeMapping_ICollection_SimpleClass_NoIntIndexer_Array ()
 		{
@@ -1208,7 +1230,17 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+		[ExpectedException (typeof (InvalidOperationException))] 
+		public void TypeMapping_WrongChoices ()
+		{
+			// Type MonoTests.System.Xml.TestClasses.ItemChoiceType is missing 
+			// enumeration value 'StrangeOne' for element 'StrangeOne' from
+			// namespace ''.
+			Map (typeof (WrongChoices));
+		}
+
+		[Test]
+		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
 		public void TestImportMembersMapping()
 		{
 			Type type = typeof(SimpleClass);
@@ -1245,9 +1277,12 @@ namespace MonoTests.System.XmlSerialization
 			Assert.IsNull (smm.Namespace, "#4");
 			Assert.AreEqual ("System.String", smm.TypeFullName, "#5");
 			Assert.AreEqual ("string", smm.TypeName, "#6");
+#if NET_2_0
+			Assert.AreEqual (XmlSchemaNamespace, smm.TypeNamespace, "#7");
+#else
 			Assert.IsNull (smm.TypeNamespace, "#7");
+#endif
 
-			
 			rm = new XmlReflectionMember();
 			rm.IsReturnValue = false;
 			rm.MemberName = "nothing";
