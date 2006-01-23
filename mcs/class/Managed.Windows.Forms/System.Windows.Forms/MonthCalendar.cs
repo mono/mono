@@ -703,12 +703,10 @@ namespace System.Windows.Forms {
 					return base.CreateParams;					
 				} else {
 					CreateParams cp = base.CreateParams;					
-					cp.Style = unchecked ((int)(WindowStyles.WS_POPUP | WindowStyles.WS_VISIBLE | WindowStyles.WS_CLIPSIBLINGS | WindowStyles.WS_CLIPCHILDREN));
+					cp.Style ^= (int) WindowStyles.WS_CHILD;
+					cp.Style |= (int) WindowStyles.WS_POPUP;
 					cp.ExStyle |= (int)(WindowStyles.WS_EX_TOOLWINDOW | WindowStyles.WS_EX_TOPMOST);
 
-					if (!is_enabled) {
-						cp.Style |= (int)(WindowStyles.WS_DISABLED);
-					}
 					return cp;
 				}
 			}

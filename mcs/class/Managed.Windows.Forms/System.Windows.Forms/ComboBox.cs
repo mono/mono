@@ -1510,7 +1510,8 @@ namespace System.Windows.Forms
 				get {
 					CreateParams cp = base.CreateParams;					
 					if (owner != null && owner.DropDownStyle != ComboBoxStyle.Simple) {
-						cp.Style = unchecked ((int)(WindowStyles.WS_POPUP | WindowStyles.WS_VISIBLE | WindowStyles.WS_CLIPSIBLINGS | WindowStyles.WS_CLIPCHILDREN));
+						cp.Style ^= (int) WindowStyles.WS_CHILD;
+						cp.Style |= (int) WindowStyles.WS_POPUP;
 						cp.ExStyle |= (int)(WindowStyles.WS_EX_TOOLWINDOW | WindowStyles.WS_EX_TOPMOST);
 					}					
 					return cp;
