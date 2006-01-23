@@ -328,17 +328,7 @@ namespace System.Windows.Forms {
 		#region Protected Instance Properties
 		protected override CreateParams CreateParams {
 			get {
-				CreateParams	cp;
-
-				cp=base.CreateParams;
-
-				cp.Style=(int)(WindowStyles.WS_VISIBLE | WindowStyles.WS_CHILD | WindowStyles.WS_CLIPSIBLINGS | WindowStyles.WS_CLIPCHILDREN);
-
-				if (!is_enabled) {
-					cp.Style |= (int)(WindowStyles.WS_DISABLED);
-				}
-
-				return cp;
+				return base.CreateParams;
 			}
 		}
 
