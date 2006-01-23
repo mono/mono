@@ -3,6 +3,7 @@
 //
 // Author:
 //   Alan Tam Siu Lung (Tam@SiuLung.com)
+//   Atsushi Enomoto  <atsushi@ximian.com>
 //
 
 using System;

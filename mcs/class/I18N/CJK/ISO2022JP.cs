@@ -1,12 +1,15 @@
+//
+// ISO2022JP.cs
+//
+// Author:
+//	Atsushi Enomoto  <atsushi@ximian.com>
+//
 using System;
 using System.Text;
 using I18N.Common;
 
 namespace I18N.CJK
 {
-	// FIXME:
-	// find out what is the difference between 50220, 50221 and 50222.
-
 	[Serializable]
 	public class CP50220 : ISO2022JPEncoding
 	{

@@ -1,5 +1,11 @@
 2006-01-23  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DbcsConvert.cs ISO2022JP.cs CP950.cs CP932.cs: author lines.
+	  Monoized CP932.cs which is too deeply indented to read (and
+	  anyways no one other than myself is taking care of it).
+
+2006-01-23  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* KSConvert.cs Big5Convert.cs Gb2312Convert.cs: removed. They could
 	  just be DbcsConvert instances.
 	* I18N.CJK.dll.sources : removed above.
