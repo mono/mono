@@ -3,6 +3,7 @@
 //
 // Author:
 //   Hye-Shik Chang (perky@FreeBSD.org)
+//   Atsushi Enomoto  <atsushi@ximian.com>
 //
 
 using System;
@@ -152,77 +153,16 @@ namespace I18N.CJK
         }
 
         // Get the characters that result from decoding a byte buffer.
+        public override int GetCharCount (byte[] bytes, int index, int count)
+        {
+            return GetDecoder ().GetCharCount (bytes, index, count);
+        }
+
+        // Get the characters that result from decoding a byte buffer.
         public override int GetChars(byte[] bytes, int byteIndex, int byteCount,
                          char[] chars, int charIndex)
         {
-            DbcsConvert convert = GetConvert ();
-            base.GetChars(bytes, byteIndex, byteCount, chars, charIndex);
-            int origIndex = charIndex;
-            int lastByte = 0;
-
-            while (byteCount-- > 0) {
-                int b = bytes[byteIndex++];
-                if (lastByte == 0) {
-                    if (b <= 0x80 || b == 0xFF) { // ASCII
-                        chars[charIndex++] = (char)b;
-                        continue;
-                    } else {
-                        lastByte = b;
-                        continue;
-                    }
-                }
-
-                char c1;
-                if (useUHC && lastByte < 0xa1) { // UHC Level 1
-                    int ord = 8836 + (lastByte - 0x81) * 178;
-
-                    if (b >= 0x41 && b <= 0x5A)
-                        ord += b - 0x41;
-                    else if (b >= 0x61 && b <= 0x7A)
-                        ord += b - 0x61 + 26;
-                    else if (b >= 0x81 && b <= 0xFE)
-                        ord += b - 0x81 + 52;
-                    else
-                        ord = -1;
-
-                      if (ord >= 0 && ord * 2 <= convert.n2u.Length)
-                        c1 = (char)(convert.n2u[ord*2] +
-                                    convert.n2u[ord*2 + 1] * 256);
-                    else
-                        c1 = (char)0;
-                } else if (useUHC && lastByte <= 0xC6 && b < 0xa1) { // UHC Level 2
-                    int ord = 14532 + (lastByte - 0xA1) * 84;
-
-                    if (b >= 0x41 && b <= 0x5A)
-                        ord += b - 0x41;
-                    else if (b >= 0x61 && b <= 0x7A)
-                        ord += b - 0x61 + 26;
-                    else if (b >= 0x81 && b <= 0xA0)
-                        ord += b - 0x81 + 52;
-                    else
-                        ord = -1;
-
-                    if (ord >= 0 && ord * 2 < convert.n2u.Length)
-                        c1 = (char)(convert.n2u[ord*2] +
-                                    convert.n2u[ord*2 + 1] * 256);
-                    else
-                        c1 = (char)0;
-                } else if (b >= 0xA1 && b <= 0xFE) { // KS X 1001
-                    int ord = ((lastByte - 0xA1) * 94 + b - 0xA1) * 2;
-
-                    c1 = ord < 0 || ord >= convert.n2u.Length ?
-                        '\0' : (char)(convert.n2u[ord] +
-                                convert.n2u[ord + 1] * 256);
-                } else
-                    c1 = (char)0;
-
-                if (c1 == 0)
-                    chars[charIndex++] = '?';
-                else
-                    chars[charIndex++] = c1;
-                lastByte = 0;
-            }
-            return charIndex - origIndex;
+            return GetDecoder ().GetChars (bytes, byteIndex, byteCount, chars, charIndex);
         }
 
         // Get a decoder that handles a rolling UHC state.
@@ -241,12 +181,120 @@ namespace I18N.CJK
                 this.useUHC = useUHC;
             }
             bool useUHC;
+            int last_byte_count, last_byte_conv;
+
+            public override int GetCharCount (byte[] bytes, int index, int count)
+            {
+                return GetCharCount (bytes, index, count, false);
+            }
+
+#if NET_2_0
+            public override
+#endif
+            int GetCharCount (byte [] bytes, int index, int count, bool refresh)
+            {
+                if (bytes == null)
+                    throw new ArgumentNullException("bytes");
+                if (index < 0 || index > bytes.Length)
+                    throw new ArgumentOutOfRangeException("index", Strings.GetString("ArgRange_Array"));
+                if (count < 0 || index + count > bytes.Length)
+                    throw new ArgumentOutOfRangeException("count", Strings.GetString("ArgRange_Array"));
+
+                int lastByte = last_byte_count;
+                last_byte_count = 0;
+                int length = 0;
+                while (count-- > 0) {
+                    int b = bytes[index++];
+                    if (lastByte == 0) {
+                        if (b <= 0x80 || b == 0xFF) { // ASCII
+                            length++;
+                            continue;
+                        } else {
+                            lastByte = b;
+                            continue;
+                        }
+                    }
+
+                    char c1;
+                    if (useUHC && lastByte < 0xa1) { // UHC Level 1
+                        int ord = 8836 + (lastByte - 0x81) * 178;
+
+                        if (b >= 0x41 && b <= 0x5A)
+                            ord += b - 0x41;
+                        else if (b >= 0x61 && b <= 0x7A)
+                            ord += b - 0x61 + 26;
+                        else if (b >= 0x81 && b <= 0xFE)
+                            ord += b - 0x81 + 52;
+                        else
+                            ord = -1;
+
+                        if (ord >= 0 && ord * 2 <= convert.n2u.Length)
+                            c1 = (char)(convert.n2u[ord*2] +
+                                        convert.n2u[ord*2 + 1] * 256);
+                        else
+                            c1 = (char)0;
+                    } else if (useUHC && lastByte <= 0xC6 && b < 0xA1) { // UHC Level 2
+                        int ord = 14532 + (lastByte - 0xA1) * 84;
+
+                        if (b >= 0x41 && b <= 0x5A)
+                            ord += b - 0x41;
+                        else if (b >= 0x61 && b <= 0x7A)
+                            ord += b - 0x61 + 26;
+                        else if (b >= 0x81 && b <= 0xA0)
+                            ord += b - 0x81 + 52;
+                        else
+                            ord = -1;
+
+                        if (ord >= 0 && ord * 2 <= convert.n2u.Length)
+                            c1 = (char)(convert.n2u[ord*2] +
+                                        convert.n2u[ord*2 + 1] * 256);
+                        else
+                            c1 = (char)0;
+                    } else if (b >= 0xA1 && b <= 0xFE) { // KS X 1001
+                        int ord = ((lastByte - 0xA1) * 94 + b - 0xA1) * 2;
+
+                        c1 = ord < 0 || ord >= convert.n2u.Length ?
+                            '\0' : (char)(convert.n2u[ord] +
+                                    convert.n2u[ord + 1] * 256);
+                    } else
+                        c1 = (char)0;
+
+                    if (c1 == 0)
+                        // FIXME: fallback
+                        length++;
+                    else
+                        length++;
+                    lastByte = 0;
+                }
+
+                if (lastByte != 0) {
+                    if (refresh) {
+                        // FIXME: fallback
+                        length++;
+                        last_byte_count = 0;
+                    }
+                    else
+                        last_byte_count = lastByte;
+                }
+                return length;
+            }
 
             public override int GetChars(byte[] bytes, int byteIndex,
                                 int byteCount, char[] chars, int charIndex)
             {
+                return GetChars (bytes, byteIndex, byteCount, chars, charIndex, false);
+            }
+
+#if NET_2_0
+            public override
+#endif
+            int GetChars(byte[] bytes, int byteIndex,
+                                int byteCount, char[] chars, int charIndex, bool refresh)
+            {
                 base.GetChars(bytes, byteIndex, byteCount, chars, charIndex);
                 int origIndex = charIndex;
+                int lastByte = last_byte_conv;
+                last_byte_conv = 0;
                 while (byteCount-- > 0) {
                     int b = bytes[byteIndex++];
                     if (lastByte == 0) {
@@ -308,6 +356,15 @@ namespace I18N.CJK
                     else
                         chars[charIndex++] = c1;
                     lastByte = 0;
+                }
+
+                if (lastByte != 0) {
+                    if (refresh) {
+                        chars[charIndex++] = '?';
+                        last_byte_conv = 0;
+                    }
+                    else
+                        last_byte_conv = lastByte;
                 }
                 return charIndex - origIndex;
             }
