@@ -266,9 +266,6 @@ public class CP51932Encoder : MonoEncoding.MonoEncoder
 	{
 		int charIndex = 0;
 		int byteIndex = 0;
-#if NET_2_0
-		EncoderFallbackBuffer buffer = null;
-#endif
 
 		// Convert the characters into their byte form.
 		int posn = byteIndex;

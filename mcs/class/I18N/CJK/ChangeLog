@@ -1,5 +1,10 @@
 2006-01-23  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ISO2022JP.cs GB18030Encoding.cs CP936.cs CP51932.cs:
+	  fix warnings.
+
+2006-01-23  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* CP950.cs :
 	  This was the last one encoding which needed incomplete byte
 	  handling.

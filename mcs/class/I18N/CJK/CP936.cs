@@ -140,11 +140,9 @@ namespace I18N.CJK
 		public CP936Decoder (DbcsConvert convert)
 			: base (convert)
 		{
-			this.convert = convert;
 		}
 
 		int last_byte_count, last_byte_bytes;
-		DbcsConvert convert;
 
 		// Get the characters that result from decoding a byte buffer.
 		public override int GetCharCount (byte [] bytes, int index, int count)

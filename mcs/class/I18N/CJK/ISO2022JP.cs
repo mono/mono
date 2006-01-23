@@ -49,8 +49,6 @@ namespace I18N.CJK
 	[Serializable]
 	public class ISO2022JPEncoding : MonoEncoding
 	{
-		static JISConvert convert = JISConvert.Convert;
-
 		public ISO2022JPEncoding (int codePage, bool allow1ByteKana, bool allowShiftIO)
 			: base (codePage)
 		{
@@ -246,9 +244,6 @@ namespace I18N.CJK
 		{
 			int charIndex = 0;
 			int byteIndex = 0;
-#if NET_2_0
-			EncoderFallbackBuffer buffer = null;
-#endif
 
 			int start = byteIndex;
 			int end = charIndex + charCount;

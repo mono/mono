@@ -324,9 +324,6 @@ namespace I18N.CJK
 		{
 			int charIndex = 0;
 			int byteIndex = 0;
-#if NET_2_0
-			EncoderFallbackBuffer buffer = null;
-#endif
 
 			int charEnd = charIndex + charCount;
 			int byteStart = byteIndex;
