@@ -79,8 +79,12 @@ namespace System.Web.UI {
 			htmlControls.Add ("TR", typeof (HtmlTableRow));
 			htmlControls.Add ("TEXTAREA", typeof (HtmlTextArea));
 
+#if NET_2_0
+			htmlInputControls = new Hashtable (StringComparer.InvariantCultureIgnoreCase);
+#else
 			htmlInputControls = new Hashtable (CaseInsensitiveHashCodeProvider.DefaultInvariant,
-						      CaseInsensitiveComparer.DefaultInvariant); 
+							   CaseInsensitiveComparer.DefaultInvariant);
+#endif
 
 			htmlInputControls.Add ("BUTTON", typeof (HtmlInputButton));
 #if NET_2_0
