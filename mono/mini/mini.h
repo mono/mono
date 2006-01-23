@@ -618,6 +618,12 @@ typedef struct {
 	guint32          exception_data;
 	char*            exception_message;
 
+	/* Fields used by the local reg allocator */
+	void*            reginfo;
+	void*            reginfof;
+	void*            reverse_inst_list;
+	int              reverse_inst_list_len;
+
 	/* Maps vregs to their associated MonoInst's */
 	/* vregs with an associated MonoInst are 'global' while others are 'local' */
 	/* Indexed first by vreg type ('i' etc), then by the vreg itself */

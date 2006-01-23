@@ -441,9 +441,9 @@ struct InstList {
 };
 
 static inline InstList*
-inst_list_prepend (MonoMemPool *pool, InstList *list, MonoInst *data)
+inst_list_prepend (guint8 *mem, InstList *list, MonoInst *data)
 {
-	InstList *item = mono_mempool_alloc (pool, sizeof (InstList));
+	InstList *item = (InstList*)mem;
 	item->data = data;
 	item->prev = NULL;
 	item->next = list;
@@ -780,7 +780,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 {
 	MonoInst *ins;
 	MonoRegState *rs = cfg->rs;
-	int i, val, fpcount;
+	int i, val, fpcount, max, ins_count;
 	RegTrack *reginfo, *reginfof;
 	RegTrack *reginfo1, *reginfo2, *reginfod;
 	InstList *tmp, *reversed = NULL;
@@ -788,6 +788,8 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 	GList *fspill_list = NULL;
 	gboolean fp;
 	int fspill = 0;
+	guint8 *inst_list, *mem;
+	gboolean need_fpstack = (use_fpstack && cfg->next_vfreg > MONO_MAX_FREGS);
 
 	if (!bb->code)
 		return;
@@ -806,35 +808,50 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 	 * be prohibitive. In those cases, manually init the reginfo entries used
 	 * by the bblock.
 	 */
-	if (rs->next_vireg > 16) {
-		int max = rs->next_vireg;
+	max = rs->next_vireg;
+	ins_count = 0;
 
-		reginfo = g_malloc (sizeof (RegTrack) * max);
-		for (ins = bb->code; ins; ins = ins->next) {
-			spec = ins_spec [ins->opcode];
-
-			if ((ins->dreg != -1) && (ins->dreg < max))
-				memset (&reginfo [ins->dreg], 0, sizeof (RegTrack));
-			if ((ins->sreg1 != -1) && (ins->sreg1 < max))
-				memset (&reginfo [ins->sreg1], 0, sizeof (RegTrack));
-			if ((ins->sreg2 != -1) && (ins->sreg2 < max))
-				memset (&reginfo [ins->sreg2], 0, sizeof (RegTrack));
-#if SIZEOF_VOID_P == 4
-			/* Regpairs */
-			if ((MONO_ARCH_INST_IS_REGPAIR (spec [MONO_INST_DEST])) && (ins->dreg != -1) && (ins->dreg + 1 < max))
-				memset (&reginfo [ins->dreg + 1], 0, sizeof (RegTrack));
-			if ((MONO_ARCH_INST_IS_REGPAIR (spec [MONO_INST_SRC1])) && (ins->sreg1 != -1) && (ins->sreg1 + 1 < max))
-				memset (&reginfo [ins->sreg1 + 1], 0, sizeof (RegTrack));
-			if ((MONO_ARCH_INST_IS_REGPAIR (spec [MONO_INST_SRC2])) && (ins->sreg2 != -1) && (ins->sreg2 + 1 < max))
-				memset (&reginfo [ins->sreg2 + 1], 0, sizeof (RegTrack));
-#endif
-		}
+	reginfo = cfg->reginfo;
+	if (!reginfo) {
+		reginfo = cfg->reginfo = g_malloc (sizeof (RegTrack) * max);
 	}
-	else
-		reginfo = g_malloc0 (sizeof (RegTrack) * rs->next_vireg);
+
+	for (ins = bb->code; ins; ins = ins->next) {
+		spec = ins_spec [ins->opcode];
+
+		ins_count ++;
+
+		if ((ins->dreg != -1) && (ins->dreg < max))
+			memset (&reginfo [ins->dreg], 0, sizeof (RegTrack));
+		if ((ins->sreg1 != -1) && (ins->sreg1 < max))
+			memset (&reginfo [ins->sreg1], 0, sizeof (RegTrack));
+		if ((ins->sreg2 != -1) && (ins->sreg2 < max))
+			memset (&reginfo [ins->sreg2], 0, sizeof (RegTrack));
+#if SIZEOF_VOID_P == 4
+		/* Regpairs */
+		if ((MONO_ARCH_INST_IS_REGPAIR (spec [MONO_INST_DEST])) && (ins->dreg != -1) && (ins->dreg + 1 < max))
+			memset (&reginfo [ins->dreg + 1], 0, sizeof (RegTrack));
+		if ((MONO_ARCH_INST_IS_REGPAIR (spec [MONO_INST_SRC1])) && (ins->sreg1 != -1) && (ins->sreg1 + 1 < max))
+			memset (&reginfo [ins->sreg1 + 1], 0, sizeof (RegTrack));
+		if ((MONO_ARCH_INST_IS_REGPAIR (spec [MONO_INST_SRC2])) && (ins->sreg2 != -1) && (ins->sreg2 + 1 < max))
+			memset (&reginfo [ins->sreg2 + 1], 0, sizeof (RegTrack));
+#endif
+	}
 
 	/* Initialized on demand */
 	reginfof = NULL;
+
+	if (cfg->reverse_inst_list && (cfg->reverse_inst_list_len < ins_count)) {
+		g_free (cfg->reverse_inst_list);
+		cfg->reverse_inst_list = NULL;
+	}
+
+	inst_list = cfg->reverse_inst_list;
+	if (!inst_list) {
+		cfg->reverse_inst_list_len = MAX (ins_count, 1024);
+		inst_list = cfg->reverse_inst_list = g_malloc (cfg->reverse_inst_list_len * sizeof (InstList));
+	}
+	mem = inst_list;
 
 	/*if (cfg->opt & MONO_OPT_COPYPROP)
 		local_copy_prop (cfg, ins);*/
@@ -844,8 +861,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 	DEBUG (g_print ("\nLOCAL REGALLOC: BASIC BLOCK %d:\n", bb->block_num));
 
 	/* forward pass on the instructions to collect register liveness info */
-	ins = bb->code;
-	while (ins) {
+	for (ins = bb->code; ins; ins = ins->next) {
 		spec = ins_spec [ins->opcode];
 
 		if (!spec) {
@@ -857,7 +873,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 		/*
 		 * TRACK FP STACK
 		 */
-		if (use_fpstack) {
+		if (need_fpstack) {
 			GList *spill;
 
 			if (spec [MONO_INST_SRC1] == 'f') {
@@ -1020,9 +1036,9 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 			}
 		}
 
-		reversed = inst_list_prepend (cfg->mempool, reversed, ins);
+		reversed = inst_list_prepend (mem, reversed, ins);
+		mem += sizeof (InstList);
 		++i;
-		ins = ins->next;
 	}
 
 	// todo: check if we have anything left on fp stack, in verify mode?
@@ -1069,7 +1085,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 		/*
 		 * TRACK FP STACK
 		 */
-		if (use_fpstack && (spec [MONO_INST_CLOB] != 'm')) {
+		if (need_fpstack && (spec [MONO_INST_CLOB] != 'm')) {
 			if (dreg_is_fp (ins)) {
 				if (reginfof [ins->dreg].flags & MONO_FP_NEEDS_SPILL) {
 					GList *spill_node;
@@ -1702,7 +1718,6 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 		tmp = tmp->next;
 	}
 
-	g_free (reginfo);
 	g_free (reginfof);
 	g_list_free (fspill_list);
 }
