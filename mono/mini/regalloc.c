@@ -61,7 +61,7 @@ mono_regstate_assign (MonoRegState *rs) {
 		rs->fsymbolic [i] = 0;
 	}
 
-	if (rs->next_vfreg)
+	if (rs->next_vfreg > MONO_MAX_FREGS)
 		memset (rs->fassign, -1, sizeof (rs->fassign [0]) * rs->next_vfreg);
 }
 
