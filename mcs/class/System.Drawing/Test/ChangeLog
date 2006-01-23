@@ -1,3 +1,6 @@
+2006-01-23 Boris Kirzner <borisk@mainsoft.com>
+	* Test.vmwcsproj: perform java output validation.
+
 2005-09-06 Boris Kirzner <borisk@mainsoft.com>
 
 	* Test.dotnet.csproj, Test.vmwcsproj: Added GraphicsPathIterator.cs.

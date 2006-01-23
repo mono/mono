@@ -94,7 +94,7 @@ namespace MonoTests.System.Drawing{
 			[ MarshalAs(UnmanagedType.ByValTStr, SizeConst=32) ]
 			public string lfFaceName = null;
 		}
-
+#if !TARGET_JVM
 		[Test]
 		public void TestToLogFont() {
 			Font f;
@@ -109,5 +109,6 @@ namespace MonoTests.System.Drawing{
 			AssertEquals("lf3", 1, lf.lfCharSet);
 			AssertEquals("lf4", f.Name, lf.lfFaceName);
 		}
+#endif
 	}
 }
