@@ -157,12 +157,7 @@ namespace I18N.CJK
 #endif
 		int GetCharCount (byte [] bytes, int index, int count, bool refresh)
 		{
-			if (bytes == null)
-				throw new ArgumentNullException("bytes");
-			if (index < 0 || index > bytes.Length)
-				throw new ArgumentOutOfRangeException("index", Strings.GetString("ArgRange_Array"));
-			if (count < 0 || index + count > bytes.Length)
-				throw new ArgumentOutOfRangeException("count", Strings.GetString("ArgRange_Array"));
+			CheckRange (bytes, index, count);
 
 			int lastByte = last_byte_count;
 			last_byte_count = 0;
@@ -206,16 +201,7 @@ namespace I18N.CJK
 		int GetChars (byte [] bytes, int byteIndex, int byteCount,
 			      char [] chars, int charIndex, bool refresh)
 		{
-			if (bytes == null)
-				throw new ArgumentNullException("bytes");
-			if (chars == null)
-				throw new ArgumentNullException("chars");
-			if (byteIndex < 0 || byteIndex > bytes.Length)
-				throw new ArgumentOutOfRangeException("byteIndex", Strings.GetString("ArgRange_Array"));
-			if (byteCount < 0 || byteIndex + byteCount > bytes.Length)
-				throw new ArgumentOutOfRangeException("byteCount", Strings.GetString("ArgRange_Array"));
-			if (charIndex < 0 || charIndex > chars.Length)
-				throw new ArgumentOutOfRangeException("charIndex", Strings.GetString("ArgRange_Array"));
+			CheckRange (bytes, byteIndex, byteCount, chars, charIndex);
 
 			int origIndex = charIndex;
 			int lastByte = last_byte_bytes;

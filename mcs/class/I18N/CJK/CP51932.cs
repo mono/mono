@@ -345,8 +345,13 @@ public class CP51932Encoder : MonoEncoding.MonoEncoder
 	}
 } // CP51932Encoder
 
-public class CP51932Decoder : Decoder
+internal class CP51932Decoder : DbcsEncoding.DbcsDecoder
 {
+	public CP51932Decoder ()
+		: base (null)
+	{
+	}
+
 	int last_count, last_bytes;
 
 	// Get the number of characters needed to decode a byte buffer.
@@ -362,19 +367,7 @@ public class CP51932Decoder : Decoder
 #endif
 	int GetCharCount (byte [] bytes, int index, int count, bool refresh)
 	{
-		// Validate the parameters.
-		if (bytes == null)
-			throw new ArgumentNullException ("bytes");
-
-		if (index < 0 || index > bytes.Length)
-			throw new ArgumentOutOfRangeException
-				("index", Strings.GetString("ArgRange_Array"));
-
-		if (count < 0 || count > (bytes.Length - index))
-			throw new ArgumentOutOfRangeException
-				("count", Strings.GetString("ArgRange_Array"));
-
-
+		CheckRange (bytes, index, count);
 
 		// Determine the total length of the converted string.
 		int value = 0;
@@ -484,30 +477,7 @@ public class CP51932Decoder : Decoder
 						 int byteCount, char[] chars,
 						 int charIndex, bool refresh)
 	{
-		// Validate the parameters.
-		if(bytes == null)
-		{
-			throw new ArgumentNullException("bytes");
-		}
-		if(chars == null)
-		{
-			throw new ArgumentNullException("chars");
-		}
-		if(byteIndex < 0 || byteIndex > bytes.Length)
-		{
-			throw new ArgumentOutOfRangeException
-				("byteIndex", Strings.GetString("ArgRange_Array"));
-		}
-		if(byteCount < 0 || byteCount > (bytes.Length - byteIndex))
-		{
-			throw new ArgumentOutOfRangeException
-				("byteCount", Strings.GetString("ArgRange_Array"));
-		}
-		if(charIndex < 0 || charIndex > chars.Length)
-		{
-			throw new ArgumentOutOfRangeException
-				("charIndex", Strings.GetString("ArgRange_Array"));
-		}
+		CheckRange (bytes, byteIndex, byteCount, chars, charIndex);
 
 		// Decode the bytes in the buffer.
 		int posn = charIndex;

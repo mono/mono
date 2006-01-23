@@ -99,12 +99,6 @@ namespace I18N.CJK
 			return byteCount;
 		}
 		
-		// Get a decoder that handles a rolling state.
-		public override Decoder GetDecoder()
-		{
-			return new DbcsDecoder(GetConvert ());
-		}
-		
 		// Determine if this encoding can be displayed in a Web browser.
 		public override bool IsBrowserDisplay
 		{
@@ -130,20 +124,17 @@ namespace I18N.CJK
 		}
 		
 		// Decoder that handles a rolling state.
-		internal class DbcsDecoder : Decoder
+		internal abstract class DbcsDecoder : Decoder
 		{
 			protected DbcsConvert convert;
-			protected int lastByte;
 			
 			// Constructor.
 			public DbcsDecoder(DbcsConvert convert)
 			{
 				this.convert = convert;
-				this.lastByte = 0;
 			}
 			
-			// Override inherited methods.
-			public override int GetCharCount(byte[] bytes, int index, int count)
+			internal void CheckRange (byte[] bytes, int index, int count)
 			{
 				if (bytes == null)
 					throw new ArgumentNullException("bytes");
@@ -151,11 +142,9 @@ namespace I18N.CJK
 					throw new ArgumentOutOfRangeException("index", Strings.GetString("ArgRange_Array"));
 				if (count < 0 || count > (bytes.Length - index))
 					throw new ArgumentOutOfRangeException("count", Strings.GetString("ArgRange_Array"));
-				char[] buffer = new char[count * 2];
-				return GetChars(bytes, index, count, buffer, 0);
 			}
-			
-			public override int GetChars(byte[] bytes, int byteIndex, int byteCount,
+
+			internal void CheckRange (byte[] bytes, int byteIndex, int byteCount,
 						     char[] chars, int charIndex)
 			{
 				if (bytes == null)
@@ -168,7 +157,6 @@ namespace I18N.CJK
 					throw new ArgumentOutOfRangeException("byteCount", Strings.GetString("ArgRange_Array"));
 				if (charIndex < 0 || charIndex > chars.Length)
 					throw new ArgumentOutOfRangeException("charIndex", Strings.GetString("ArgRange_Array"));
-				return 0; // For subclasses to implement
 			}
 		}
 	}

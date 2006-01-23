@@ -1,6 +1,11 @@
 2006-01-23  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* I18N.CJK.Test.cs :
+	  added Decoder950Refresh() and Decoder950NoRefresh().
+
+2006-01-23  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* I18N.CJK.Test.cs :
 	  added Decoder949Refresh() and Decoder949NoRefresh().
 
 2006-01-23  Atsushi Enomoto  <atsushi@ximian.com>

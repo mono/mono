@@ -493,7 +493,7 @@ public unsafe class CP932 : MonoEncoding
 #endif // !ECMA_COMPAT
 
 	// Decoder that handles a rolling Shift-JIS state.
-	private sealed class CP932Decoder : Decoder
+	private sealed class CP932Decoder : DbcsEncoding.DbcsDecoder
 	{
 		private JISConvert convert;
 		private int last_byte_count;
@@ -501,9 +501,10 @@ public unsafe class CP932 : MonoEncoding
 
 		// Constructor.
 		public CP932Decoder(JISConvert convert)
-				{
-					this.convert = convert;
-				}
+			: base (null)
+		{
+			this.convert = convert;
+		}
 
 		// Override inherited methods.
 
@@ -519,21 +520,7 @@ public unsafe class CP932 : MonoEncoding
 #endif
 		int GetCharCount (byte [] bytes, int index, int count, bool refresh)
 				{
-					// Validate the parameters.
-					if(bytes == null)
-					{
-						throw new ArgumentNullException("bytes");
-					}
-					if(index < 0 || index > bytes.Length)
-					{
-						throw new ArgumentOutOfRangeException
-							("index", Strings.GetString("ArgRange_Array"));
-					}
-					if(count < 0 || count > (bytes.Length - index))
-					{
-						throw new ArgumentOutOfRangeException
-							("count", Strings.GetString("ArgRange_Array"));
-					}
+					CheckRange (bytes, index, count);
 
 					// Determine the total length of the converted string.
 					int length = 0;
@@ -587,30 +574,8 @@ public unsafe class CP932 : MonoEncoding
 			byte [] bytes, int byteIndex, int byteCount,
 			char [] chars, int charIndex, bool refresh)
 				{
-					// Validate the parameters.
-					if(bytes == null)
-					{
-						throw new ArgumentNullException("bytes");
-					}
-					if(chars == null)
-					{
-						throw new ArgumentNullException("chars");
-					}
-					if(byteIndex < 0 || byteIndex > bytes.Length)
-					{
-						throw new ArgumentOutOfRangeException
-							("byteIndex", Strings.GetString("ArgRange_Array"));
-					}
-					if(byteCount < 0 || byteCount > (bytes.Length - byteIndex))
-					{
-						throw new ArgumentOutOfRangeException
-							("byteCount", Strings.GetString("ArgRange_Array"));
-					}
-					if(charIndex < 0 || charIndex > chars.Length)
-					{
-						throw new ArgumentOutOfRangeException
-							("charIndex", Strings.GetString("ArgRange_Array"));
-					}
+					CheckRange (bytes, byteIndex, byteCount,
+						chars, charIndex);
 
 					// Decode the bytes in the buffer.
 					int posn = charIndex;

@@ -79,20 +79,20 @@ namespace I18N.CJK
 		}
 	}
 
-	class GB18030Decoder : Decoder
+	class GB18030Decoder : DbcsEncoding.DbcsDecoder
 	{
 		static DbcsConvert gb2312 = DbcsConvert.Gb2312;
 		// for now incomplete block is not supported - should we?
 		// int incomplete1 = -1, incomplete2 = -1, incomplete3 = -1;
 
+		public GB18030Decoder ()
+			: base (null)
+		{
+		}
+
 		public override int GetCharCount (byte [] bytes, int start, int len)
 		{
-			if (bytes == null)
-				throw new ArgumentNullException ("bytes");
-			if (start < 0 || start > bytes.Length)
-				throw new ArgumentOutOfRangeException ("start");
-			if (len < 0 || start + len > bytes.Length)
-				throw new ArgumentOutOfRangeException ("len");
+			CheckRange (bytes, start, len);
 
 			int end = start + len;
 			int ret = 0;
@@ -166,16 +166,7 @@ namespace I18N.CJK
 
 		public override int GetChars (byte [] bytes, int byteIndex, int byteCount, char [] chars, int charIndex)
 		{
-			if (bytes == null)
-				throw new ArgumentNullException ("bytes");
-			if (chars == null)
-				throw new ArgumentNullException ("chars");
-			if (byteIndex < 0 || byteIndex > bytes.Length)
-				throw new ArgumentOutOfRangeException ("byteIndex");
-			if (byteCount < 0 || byteIndex + byteCount > bytes.Length)
-				throw new ArgumentOutOfRangeException ("byteCount");
-			if (charIndex < 0 || charIndex > chars.Length)
-				throw new ArgumentOutOfRangeException ("charIndex");
+			CheckRange (bytes, byteIndex, byteCount, chars, charIndex);
 
 			int byteEnd = byteIndex + byteCount;
 			int charStart = charIndex;

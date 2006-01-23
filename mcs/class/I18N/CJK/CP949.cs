@@ -193,12 +193,7 @@ namespace I18N.CJK
 #endif
             int GetCharCount (byte [] bytes, int index, int count, bool refresh)
             {
-                if (bytes == null)
-                    throw new ArgumentNullException("bytes");
-                if (index < 0 || index > bytes.Length)
-                    throw new ArgumentOutOfRangeException("index", Strings.GetString("ArgRange_Array"));
-                if (count < 0 || index + count > bytes.Length)
-                    throw new ArgumentOutOfRangeException("count", Strings.GetString("ArgRange_Array"));
+                CheckRange (bytes, index, count);
 
                 int lastByte = last_byte_count;
                 last_byte_count = 0;
@@ -291,7 +286,7 @@ namespace I18N.CJK
             int GetChars(byte[] bytes, int byteIndex,
                                 int byteCount, char[] chars, int charIndex, bool refresh)
             {
-                base.GetChars(bytes, byteIndex, byteCount, chars, charIndex);
+                CheckRange (bytes, byteIndex, byteCount, chars, charIndex);
                 int origIndex = charIndex;
                 int lastByte = last_byte_conv;
                 last_byte_conv = 0;

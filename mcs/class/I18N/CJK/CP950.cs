@@ -66,6 +66,7 @@ namespace I18N.CJK
 		public override int GetChars(byte[] bytes, int byteIndex, int byteCount,
 					     char[] chars, int charIndex)
 		{
+			/*
 			DbcsConvert convert = GetConvert ();
 			// A1 40 - FA FF
 			base.GetChars(bytes, byteIndex, byteCount, chars, charIndex);
@@ -99,6 +100,9 @@ namespace I18N.CJK
 				chars[charIndex++] = '?';
 
 			return charIndex - origIndex;
+			*/
+
+			return GetDecoder ().GetChars (bytes, byteIndex, byteCount, chars, charIndex);
 		}
 		
 		// Get a decoder that handles a rolling Big5 state.
@@ -144,33 +148,106 @@ namespace I18N.CJK
 		{
 			// Constructor.
 			public CP950Decoder(DbcsConvert convert) : base(convert) {}
-			
+			int last_byte_count, last_byte_conv;
+
+			public override int GetCharCount (byte[] bytes, int index, int count)
+			{
+				return GetCharCount (bytes, index, count, false);
+			}
+
+#if NET_2_0
+			public override
+#endif
+			int GetCharCount (byte[] bytes, int index, int count, bool refresh)
+			{
+				CheckRange (bytes, index, count);
+
+				int lastByte = last_byte_count;
+				last_byte_count = 0;
+				int length = 0;
+				while (count-- > 0) {
+					int b = bytes[index++];
+					if (lastByte == 0) {
+						if (b <= 0x80 || b == 0xFF) { // ASCII
+							length++;
+						} else if (b < 0xA1 || b >= 0xFA) {
+							// incorrect first byte.
+							length++;
+							count--; // cut one more byte.
+						} else {
+							lastByte = b;
+						}
+						continue;
+					}
+					int ord = ((lastByte - 0xA1) * 191 + b - 0x40) * 2;
+					char c1 = ord < 0 || ord > convert.n2u.Length ?
+						'\0' :
+						(char)(convert.n2u[ord] + convert.n2u[ord + 1] * 256);
+					if (c1 == 0)
+						// FIXME: fallback
+						length++;
+					else
+						length++;
+					lastByte = 0;
+				}
+
+				if (lastByte != 0) {
+					if (refresh)
+						// FIXME: fallback
+						length++;
+					else
+						last_byte_count = lastByte;
+				}
+				return length;
+			}
+
 			public override int GetChars(byte[] bytes, int byteIndex, int byteCount,
 						     char[] chars, int charIndex)
 			{
-				base.GetChars(bytes, byteIndex, byteCount, chars, charIndex);
+				return GetChars (bytes, byteIndex, byteCount, chars, charIndex, false);
+			}
+
+#if NET_2_0
+			public override
+#endif
+			int GetChars(byte[] bytes, int byteIndex, int byteCount,
+						     char[] chars, int charIndex, bool refresh)
+			{
+				CheckRange (bytes, byteIndex, byteCount, chars, charIndex);
+
 				int origIndex = charIndex;
+				int lastByte = last_byte_conv;
+				last_byte_conv = 0;
 				while (byteCount-- > 0) {
 					int b = bytes[byteIndex++];
 					if (lastByte == 0) {
 						if (b <= 0x80 || b == 0xFF) { // ASCII
 							chars[charIndex++] = (char)b;
-							continue;
 						} else if (b < 0xA1 || b >= 0xFA) {
-							continue;
+							// incorrect first byte.
+							chars[charIndex++] = '?';
+							byteCount--; // cut one more byte.
 						} else {
 							lastByte = b;
-							continue;
 						}
+						continue;
 					}
 					int ord = ((lastByte - 0xA1) * 191 + b - 0x40) * 2;
-					char c1 = (char)(convert.n2u[ord] + convert.n2u[ord + 1] * 256);
-					if (c1 == 0) {
+					char c1 = ord < 0 || ord > convert.n2u.Length ?
+						'\0' :
+						(char)(convert.n2u[ord] + convert.n2u[ord + 1] * 256);
+					if (c1 == 0)
 						chars[charIndex++] = '?';
-					} else {
+					else
 						chars[charIndex++] = c1;
-					}
 					lastByte = 0;
+				}
+
+				if (lastByte != 0) {
+					if (refresh)
+						chars [charIndex++] = '?';
+					else
+						last_byte_conv = lastByte;
 				}
 				return charIndex - origIndex;
 			}
