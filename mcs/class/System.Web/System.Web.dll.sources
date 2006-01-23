@@ -45,6 +45,7 @@ System.Web.Compilation/ExpressionEditorAttribute.cs
 System.Web.Compilation/ExpressionPrefixAttribute.cs
 System.Web.Compilation/GlobalAsaxCompiler.cs
 System.Web.Compilation/IAssemblyPostProcessor.cs
+System.Web.Compilation/IgnoreFileBuildProvider.cs
 System.Web.Compilation/IImplicitResourceProvider.cs
 System.Web.Compilation/ILocation.cs
 System.Web.Compilation/ImplicitResourceKey.cs
@@ -214,6 +215,7 @@ System.Web.Configuration_2.0/WebPartsPersonalizationAuthorization.cs
 System.Web.Configuration_2.0/WebPartsSection.cs
 System.Web.Configuration_2.0/XhtmlConformanceMode.cs
 System.Web.Configuration_2.0/XhtmlConformanceSection.cs
+System.Web.Configuration.Internal/IInternalConfigWebHost.cs
 System.Web/EndEventHandler.cs
 System.Web.Handlers/AssemblyResourceLoader.cs
 System.Web.Handlers/TraceHandler.cs
