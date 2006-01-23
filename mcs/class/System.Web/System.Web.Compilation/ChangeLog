@@ -1,5 +1,9 @@
 2006-01-22  Chris Toshok  <toshok@ximian.com>
 
+	* IgnoreFileBuildProvider.cs: build provider which does nothing.
+
+2006-01-22  Chris Toshok  <toshok@ximian.com>
+
 	* AspComponentFoundry.cs (.ctor): use a 2.0 friendly form of the
 	Hashtable ctor to silence a couple of warning.
 	(CompoundFoundry.ctor): same
