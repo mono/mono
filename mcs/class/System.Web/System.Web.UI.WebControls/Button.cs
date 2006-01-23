@@ -192,7 +192,8 @@ namespace System.Web.UI.WebControls {
 				string onclick = Attributes["onclick"];
 				if (onclick != null) {
 					Attributes.Remove("onclick");
-					if (!onclick.Trim().EndsWith(";"))
+					int len = onclick.Length;
+					if (len > 0 && onclick[len - 1] != ';')
 						onclick += ";";
 				}
 				ClientScriptManager csm = new ClientScriptManager (Page);
