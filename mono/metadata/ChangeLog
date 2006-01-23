@@ -1,3 +1,8 @@
+2006-01-23  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug.h: Moved the prototypes of some functions which are
+	used by the JIT here from mono-debug-debugger.h.
+
 2006-01-21  Martin Baulig  <martin@ximian.com>
 
 	* Makefile.am: Don't install mono-debug-debugger.h.
