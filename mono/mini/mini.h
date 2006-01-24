@@ -966,6 +966,7 @@ void              mini_emit_memcpy2 (MonoCompile *cfg, int destreg, int doffset,
 
 void              mono_decompose_long_opts (MonoCompile *cfg);
 void              mono_handle_global_vregs (MonoCompile *cfg);
+void              mono_handle_local_vregs (MonoCompile *cfg);
 void              mono_spill_global_vars (MonoCompile *cfg);
 
 /* methods that must be provided by the arch-specific port */

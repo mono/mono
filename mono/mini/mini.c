@@ -8984,7 +8984,8 @@ mono_codegen (MonoCompile *cfg)
 		cfg->spill_count = 0;
 		/* we reuse dfn here */
 		/* bb->dfn = bb_count++; */
-		mono_arch_local_regalloc (cfg, bb);
+		//if ((bb == cfg->bb_entry) || !(bb->region == -1 && !bb->dfn))
+			mono_arch_local_regalloc (cfg, bb);
 	}
 
 	if (cfg->prof_options & MONO_PROFILE_COVERAGE)
@@ -9003,7 +9004,8 @@ mono_codegen (MonoCompile *cfg)
 	/* emit code all basic blocks */
 	for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
 		bb->native_offset = cfg->code_len;
-		mono_arch_output_basic_block (cfg, bb);
+		//if ((bb == cfg->bb_entry) || !(bb->region == -1 && !bb->dfn))
+			mono_arch_output_basic_block (cfg, bb);
 
 		if (bb == cfg->bb_exit) {
 			cfg->epilog_begin = cfg->code_len;
@@ -9584,6 +9586,9 @@ mono_local_deadce (MonoCompile *cfg)
 						bb->code = ins->next;
 					if (bb->last_ins == ins)
 						bb->last_ins = prev;
+
+					/* Don't change prev */
+					continue;
 				}
 			}
 
@@ -9766,7 +9771,6 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 		if (getenv ("COUNT")) {
 			if (count == atoi (getenv ("COUNT"))) {
 				printf ("LAST: %s\n", mono_method_full_name (method, TRUE));
-				//cfg->opt &= ~MONO_OPT_BRANCH;
 				//cfg->verbose_level = 5;
 			}
 			if (count <= atoi (getenv ("COUNT")))
@@ -9793,7 +9797,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 	mono_compile_create_vars (cfg);
 
 	if (cfg->new_ir) {
-		cfg->opt &= MONO_OPT_PEEPHOLE | MONO_OPT_INTRINS | MONO_OPT_LOOP | MONO_OPT_EXCEPTION | MONO_OPT_AOT | MONO_OPT_BRANCH | MONO_OPT_LINEARS;
+		cfg->opt &= MONO_OPT_PEEPHOLE | MONO_OPT_INTRINS | MONO_OPT_LOOP | MONO_OPT_EXCEPTION | MONO_OPT_AOT | MONO_OPT_BRANCH | MONO_OPT_LINEARS | MONO_OPT_INLINE;
 
 		i = mono_method_to_ir2 (cfg, method, NULL, NULL, cfg->locals_start, NULL, NULL, NULL, 0, FALSE);
 	}
@@ -9842,6 +9846,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 
 		cfg->num_bblocks = dfn + 1;
 
+		/* FIXME: This is needed for methods with clauses too */
 		if (!header->clauses) {
 			/* remove unreachable code, because the code in them may be 
 			 * inconsistent  (access to dead variables for example) */
@@ -9850,7 +9855,8 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 
 				if (bbn && bbn->region == -1 && !bbn->dfn) {
 					if (cfg->verbose_level > 1)
-						g_print ("found unreachabel code in BB%d\n", bbn->block_num);
+						g_print ("found unreachable code in BB%d\n", bbn->block_num);
+					/* There may exist unreachable branches to this bb */
 					bb->next_bb = bbn->next_bb;
 					nullify_basic_block (bbn);			
 				} else {
@@ -9976,6 +9982,8 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 		cfg->comp_done &= ~MONO_COMP_LIVENESS;
 		if (!(cfg->comp_done & MONO_COMP_LIVENESS))
 			mono_analyze_liveness (cfg);
+
+		mono_handle_local_vregs (cfg);
 
 		if (cfg->aliasing_info != NULL) {
 			mono_aliasing_deadce (cfg->aliasing_info);

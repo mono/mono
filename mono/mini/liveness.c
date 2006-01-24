@@ -242,15 +242,13 @@ visit_bb (MonoCompile *cfg, MonoBasicBlock *bb, GSList **visited)
 				}
 			}
 		}
+	} else {
+		if (cfg->aliasing_info != NULL)
+			mono_aliasing_initialize_code_traversal (cfg->aliasing_info, bb);
 
-		return;
-	}
-
-	if (cfg->aliasing_info != NULL)
-		mono_aliasing_initialize_code_traversal (cfg->aliasing_info, bb);
-
-	for (ins = bb->code; ins; ins = ins->next) {
-		update_volatile (cfg, bb, ins);
+		for (ins = bb->code; ins; ins = ins->next) {
+			update_volatile (cfg, bb, ins);
+		}
 	}
 
 	*visited = g_slist_append (*visited, bb);
@@ -457,7 +455,7 @@ mono_analyze_liveness (MonoCompile *cfg)
 
 		in_worklist [bb->dfn] = FALSE;
 
-#if DEBUG_LIVENESS
+#ifdef DEBUG_LIVENESS
 		printf ("P: %d(%d): IN: ", bb->block_num, bb->dfn);
 		for (j = 0; j < bb->in_count; ++j) 
 			printf ("BB%d ", bb->in_bb [j]->block_num);

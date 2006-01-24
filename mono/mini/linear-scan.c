@@ -206,29 +206,8 @@ mono_linear_scan (MonoCompile *cfg, GList *vars, GList *regs, regmask_t *used_ma
 		}
 
 		if (vmv->reg == -1) {
-			if ((vmv->range.first_use.abs_pos >> 16) == (vmv->range.last_use.abs_pos >> 16)) {
-				/*
-				 * This variables is only used in a single basic block so
-				 * convert it into a virtual register.
-				 */
-				if (cfg->new_ir) {
-					MonoInst *var = cfg->varinfo [vmv->idx];
-
-					/* FIXME: Do this more elegantly */
-					switch (var->type) {
-					case STACK_I4:
-					case STACK_OBJ:
-					case STACK_PTR:
-					case STACK_MP:
-						cfg->vreg_to_inst ['i'][var->dreg] = NULL;
-						break;
-					}
-				}
-			}
-			else {
-				if (cfg->verbose_level > 2)
-					printf ("NOT REGVAR: %d\n", vmv->idx);
-			}
+			if (cfg->verbose_level > 2)
+				printf ("NOT REGVAR: %d\n", vmv->idx);
 		}
 	}
 
