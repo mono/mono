@@ -1,3 +1,8 @@
+
+Tue Jan 24 09:56:16 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* object.c: fix deadlock related to string interning.
+
 2006-01-23  Martin Baulig  <martin@ximian.com>
 
 	* mono-debug-debugger.h (MonoDebuggerIOLayer): Removed.
