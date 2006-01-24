@@ -44,9 +44,10 @@ namespace System.Drawing {
 		static readonly FontFamily _genericSansSerif;
 		static readonly FontFamily _genericSerif;
 		static readonly FontCollection _installedFonts;
-		static readonly awt.Container _container = new awt.Container();
+		internal static readonly awt.Container Container;
 
 		static FontFamily() {
+			Container = new awt.Container();
 			_installedFonts = new InstalledFontCollection();
 			_genericMonospace = new FontFamily(GenericFontFamilies.Monospace);
 			_genericSansSerif = new FontFamily(GenericFontFamilies.SansSerif);
@@ -120,7 +121,7 @@ namespace System.Drawing {
 			if ((_lastStyle != style) || (_fontMetrics == null)) {	
 				java.util.Map attrib = Font.DeriveStyle( FamilyFont.getAttributes(), style, true);
 				attrib.put(TextAttribute.SIZE, new java.lang.Float((float)(UnitsPerEm<<1)));
-				_fontMetrics = _container.getFontMetrics( FamilyFont.deriveFont( attrib ) );
+				_fontMetrics = Container.getFontMetrics( FamilyFont.deriveFont( attrib ) );
 			}
 			return _fontMetrics;
 		}

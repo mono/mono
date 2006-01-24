@@ -1,3 +1,7 @@
+2006-01-24  Konstantin Triger <kostat@mainsoft.com>
+
+        * Font.jvm.cs, FontFamily.jvm.cs: use static container.
+
 2006-01-19  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* Icon.cs: The code wrongly assumed that the stride for the icon

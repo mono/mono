@@ -51,6 +51,7 @@ namespace System.Drawing {
 			_jFont = original.NativeObject.deriveFont( DeriveStyle(original.NativeObject.getAttributes(), style, true) );
 			_gUnit = original._gUnit;
 			_fontFamily = original._fontFamily;
+			_charset = original._charset;
 		}
 
 		public Font(FontFamily family, float emSize)
@@ -170,8 +171,7 @@ namespace System.Drawing {
 		
 		public int Height {
 			get {
-				awt.Container c = new awt.Container();
-				return c.getFontMetrics(NativeObject).getHeight();
+				return FontFamily.Container.getFontMetrics(NativeObject).getHeight();
 			}
 		}
 
