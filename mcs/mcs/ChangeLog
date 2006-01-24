@@ -1,3 +1,51 @@
+2006-01-23  Miguel de Icaza  <miguel@novell.com>
+
+	A fix for bug: #76597
+	
+	* iterators.cs (MoveNextMethod.CreateMethodHost): call
+	ComputeMethodHost before creating the method, this is a new
+	requirement. 
+
+	* anonymous.cs (AnonymousContainer): Now we track all the scopes
+	that this method references (RegisterScope).  The actual scope
+	where the method is hosted is computed with the ComputeMethodHost
+	before we create the method.
+
+	Moved the Deepest routine here.
+
+	(AnonymousContainer.ComputeMethodHost): New routine used to
+	compute the proper ScopeInfo that will host the anonymous method.
+
+	(ScopeInfo): Deal with multiple roots.  The problem was that we
+	did not have a unique root where all ScopeInfos could be hanged
+	from.   Remove `topmost' ScopeInfo, and instead keep an arraylist
+	of roots.  
+
+	Remove AdjustMethodScope which is now computed at the end.  Remove
+	LinkScope which did a partial link, instead link all ScopeInfos
+	before code generation from the new "LinkScopes" routine. 
+
+	Simplify all the Add* routines as they no longer need to maintain
+	the tree, they just need to record that they are using variables
+	from a ScopeInfo.
+
+	(IsAncestor, GetAncestorScopes, GetParentScope, LinkScope): New
+	routines to produce the forest of ScopeInfo trees.
+
+	* class.cs (TypeContainer.AppendMethod): This is just like
+	AddMethod, but ensures that an interface implementation method
+	(IEnumerable.XXX) is not inserted at the beginning of the queue of
+	methods, but at the end.
+
+	We use this functionality to ensure that the generated MoveNext
+	method in the iterator class is resolved/emitted before the
+	enumerator methods created.   
+
+	This is required because the MoveNext method computes the right
+	ScopeInfo for the method.  And the other methods will eventually
+	need to resolve and fetch information computed from the anonymous
+	method. 
+
 2006-01-21  Raja R Harinath  <harinath@gmail.com>
 	    Carlos Alberto Cortez  <calberto.cortez@gmail.com>
 

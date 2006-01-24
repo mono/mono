@@ -2105,7 +2105,7 @@ namespace Mono.CSharp {
 				return;
 
 			foreach (CaptureContext cc in capture_contexts.Keys){
-				cc.AdjustScopes ();
+				cc.LinkScopes ();
 			}
 		}
 
