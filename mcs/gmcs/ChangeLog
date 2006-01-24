@@ -1,6 +1,6 @@
 2006-01-23  Miguel de Icaza  <miguel@novell.com>
 
-	A fix for bug: #76597
+	A fix for bug: #76957
 	
 	* iterators.cs (MoveNextMethod.CreateMethodHost): call
 	ComputeMethodHost before creating the method, this is a new
