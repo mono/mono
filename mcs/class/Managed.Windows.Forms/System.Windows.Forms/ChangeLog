@@ -6,6 +6,11 @@
 
 	* ButtonBase.cs: Just use the base CreateParams. They set
 	visibility and enabled correctly.
+	* ComboBox.cs:
+	* TrackBar.cs:
+	* MonthCalendar.cs: Lets let the base set as much of the
+	createparams as possible so we don't have duplicate code all over
+	the place.
 
 2006-01-22  Alexander Olk  <alex.olk@googlemail.com>
 
