@@ -236,9 +236,9 @@ namespace System.Collections.Generic {
 
 		private int DoHash (TKey key)
 		{
-			int size = this.table.Length;
-			int h = hcp.GetHashCode (key) & Int32.MaxValue;
-			int spot = (int) ((uint) h % size);
+			uint size = (uint)this.table.Length;
+			uint h = (uint)hcp.GetHashCode (key) & Int32.MaxValue;
+			int spot = (int) (h % size);
 			return spot;
 		}
 
