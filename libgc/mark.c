@@ -858,9 +858,9 @@ mse * GC_steal_mark_stack(mse * low, mse * high, mse * local,
 	    ++top;
 	    top -> mse_descr = descr;
 	    top -> mse_start = p -> mse_start;
-	    GC_ASSERT(  top -> mse_descr & GC_DS_TAGS != GC_DS_LENGTH || 
-			top -> mse_descr < GC_greatest_plausible_heap_addr
-			                   - GC_least_plausible_heap_addr);
+	    GC_ASSERT(  (top -> mse_descr & GC_DS_TAGS) != GC_DS_LENGTH || 
+			top -> mse_descr < (ptr_t)GC_greatest_plausible_heap_addr
+			                   - (ptr_t)GC_least_plausible_heap_addr);
 	    /* If this is a big object, count it as			*/
 	    /* size/256 + 1 objects.					*/
 	    ++i;
@@ -1450,8 +1450,8 @@ void GC_push_all_eager(bottom, top)
 ptr_t bottom;
 ptr_t top;
 {
-    word * b = (word *)(((long) bottom + ALIGNMENT-1) & ~(ALIGNMENT-1));
-    word * t = (word *)(((long) top) & ~(ALIGNMENT-1));
+    word * b = (word *)(((word) bottom + ALIGNMENT-1) & ~(ALIGNMENT-1));
+    word * t = (word *)(((word) top) & ~(ALIGNMENT-1));
     register word *p;
     register word q;
     register word *lim;
@@ -1739,7 +1739,7 @@ register hdr * hhdr;
 {
     register int sz = hhdr -> hb_sz;
     
-    if (sz < MAXOBJSZ) {
+    if (sz <= MAXOBJSZ) {
          return(GC_page_was_dirty(h));
     } else {
     	 register ptr_t p = (ptr_t)h;

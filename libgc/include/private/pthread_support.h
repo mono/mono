@@ -4,7 +4,7 @@
 # include "private/gc_priv.h"
 
 # if defined(GC_PTHREADS) && !defined(GC_SOLARIS_THREADS) \
-     && !defined(GC_IRIX_THREADS) && !defined(GC_WIN32_THREADS)
+     && !defined(GC_WIN32_THREADS)
      
 #if defined(GC_DARWIN_THREADS)
 # include "private/darwin_stop_world.h"

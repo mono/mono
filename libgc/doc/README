@@ -28,7 +28,7 @@ are GPL'ed, but with an exception that should cover all uses in the
 collector.  (If you are concerned about such things, I recommend you look
 at the notice in config.guess or ltmain.sh.)
 
-This is version 6.3alpha6 of a conservative garbage collector for C and C++.
+This is version 6.6 of a conservative garbage collector for C and C++.
 
 You might find a more recent version of this at
 

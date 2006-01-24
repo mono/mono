@@ -1,3 +1,8 @@
+
+Tue Jan 24 12:34:06 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* *: update from upstream changes.
+
 2006-01-21  Martin Baulig  <martin@ximian.com>
 
 	* include/Makefile.am: Don't install libgc-mono-debugger.h.

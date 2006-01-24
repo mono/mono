@@ -108,7 +108,7 @@ extern hdr * GC_invalid_header; /* header for an imaginary block 	*/
 
 /* Analogous to GET_HDR, except that in the case of large objects, it	*/
 /* Returns the header for the object beginning, and updates p.		*/
-/* Returns &GC_bad_header instead of 0.  All of this saves a branch	*/
+/* Returns GC_invalid_header instead of 0.  All of this saves a branch	*/
 /* in the fast path.							*/
 # define HC_GET_HDR(p, hhdr, source) \
 	{ \

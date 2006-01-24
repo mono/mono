@@ -115,6 +115,7 @@ GC_IGNORE_FB[=<n>] -  (Win32 only.) Try to avoid treating a mapped
 		are never honored, eliminating this risk for most,
 		but not all, applications.  This feature is likely to disappear
 		if/when we find a less disgusting "solution".
+		IN VERSION 6.4 AND LATER, THIS SHOULD BE UNNECESSARY.
 
 The following turn on runtime flags that are also program settable.  Checked
 only during initialization.  We expect that they will usually be set through

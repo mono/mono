@@ -155,6 +155,25 @@
 #      define GC_TEST_AND_SET_DEFINED
 #    endif
 #    if defined(POWERPC)
+#     if CPP_WORDSZ == 64
+        inline static int GC_test_and_set(volatile unsigned int *addr) {
+          unsigned long oldval;
+          unsigned long temp = 1; /* locked value */
+
+          __asm__ __volatile__(
+               "1:\tldarx %0,0,%3\n"   /* load and reserve               */
+               "\tcmpdi %0, 0\n"       /* if load is                     */
+               "\tbne 2f\n"            /*   non-zero, return already set */
+               "\tstdcx. %2,0,%1\n"    /* else store conditional         */
+               "\tbne- 1b\n"           /* retry if lost reservation      */
+               "\tsync\n"              /* import barrier                 */
+               "2:\t\n"                /* oldval is zero if we set       */
+              : "=&r"(oldval), "=p"(addr)
+              : "r"(temp), "1"(addr)
+              : "cr0","memory");
+          return (int)oldval;
+        }
+#     else
         inline static int GC_test_and_set(volatile unsigned int *addr) {
           int oldval;
           int temp = 1; /* locked value */
@@ -172,12 +191,13 @@
               : "cr0","memory");
           return oldval;
         }
-#       define GC_TEST_AND_SET_DEFINED
-        inline static void GC_clear(volatile unsigned int *addr) {
-	  __asm__ __volatile__("eieio" : : : "memory");
-          *(addr) = 0;
-        }
-#       define GC_CLEAR_DEFINED
+#     endif
+#     define GC_TEST_AND_SET_DEFINED
+      inline static void GC_clear(volatile unsigned int *addr) {
+	__asm__ __volatile__("lwsync" : : : "memory");
+        *(addr) = 0;
+      }
+#     define GC_CLEAR_DEFINED
 #    endif
 #    if defined(ALPHA) 
         inline static int GC_test_and_set(volatile unsigned int * addr)
@@ -231,6 +251,30 @@
         }
 #       define GC_TEST_AND_SET_DEFINED
 #    endif /* ARM32 */
+#    ifdef CRIS
+        inline static int GC_test_and_set(volatile unsigned int *addr) {
+	  /* Ripped from linuxthreads/sysdeps/cris/pt-machine.h.	*/
+	  /* Included with Hans-Peter Nilsson's permission.		*/
+	  register unsigned long int ret;
+
+	  /* Note the use of a dummy output of *addr to expose the write.
+	   * The memory barrier is to stop *other* writes being moved past
+	   * this code.
+	   */
+	    __asm__ __volatile__("clearf\n"
+        		         "0:\n\t"
+                    		 "movu.b [%2],%0\n\t"
+                    		 "ax\n\t"
+                    		 "move.b %3,[%2]\n\t"
+                    		 "bwf 0b\n\t"
+                    		 "clearf"
+                    		 : "=&r" (ret), "=m" (*addr)
+                    		 : "r" (addr), "r" ((int) 1), "m" (*addr)
+                    		 : "memory");
+	    return ret;
+        }
+#       define GC_TEST_AND_SET_DEFINED
+#    endif /* CRIS */
 #    ifdef S390
        inline static int GC_test_and_set(volatile unsigned int *addr) {
          int ret;
@@ -274,6 +318,8 @@
 #          define GC_test_and_set(addr) test_and_set((void *)addr,1)
 #	 endif
 #    else
+#	 include <sgidefs.h>
+#	 include <mutex.h>
 #	 define GC_test_and_set(addr) __test_and_set32((void *)addr,1)
 #	 define GC_clear(addr) __lock_release(addr);
 #	 define GC_CLEAR_DEFINED
@@ -346,7 +392,7 @@
 #  endif
 
 #  if defined(GC_PTHREADS) && !defined(GC_SOLARIS_THREADS) \
-      && !defined(GC_IRIX_THREADS) && !defined(GC_WIN32_THREADS)
+      && !defined(GC_WIN32_THREADS)
 #    define NO_THREAD (pthread_t)(-1)
 #    include <pthread.h>
 #    if defined(PARALLEL_MARK) 
@@ -393,6 +439,29 @@
 
 #     if defined(POWERPC)
 #      if !defined(GENERIC_COMPARE_AND_SWAP)
+#       if CPP_WORDSZ == 64
+        /* Returns TRUE if the comparison succeeded. */
+        inline static GC_bool GC_compare_and_exchange(volatile GC_word *addr,
+            GC_word old, GC_word new_val) 
+        {
+            unsigned long result, dummy;
+            __asm__ __volatile__(
+                "1:\tldarx %0,0,%5\n"
+                  "\tcmpd %0,%4\n"
+                  "\tbne  2f\n"
+                  "\tstdcx. %3,0,%2\n"
+                  "\tbne- 1b\n"
+                  "\tsync\n"
+                  "\tli %1, 1\n"
+                  "\tb 3f\n"
+                "2:\tli %1, 0\n"
+                "3:\t\n"
+                :  "=&r" (dummy), "=r" (result), "=p" (addr)
+                :  "r" (new_val), "r" (old), "2"(addr)
+                : "cr0","memory");
+            return (GC_bool) result;
+        }
+#       else
         /* Returns TRUE if the comparison succeeded. */
         inline static GC_bool GC_compare_and_exchange(volatile GC_word *addr,
             GC_word old, GC_word new_val) 
@@ -414,6 +483,7 @@
                 : "cr0","memory");
             return (GC_bool) result;
         }
+#       endif
 #      endif /* !GENERIC_COMPARE_AND_SWAP */
         inline static void GC_memory_barrier()
         {
@@ -427,9 +497,18 @@
 						       GC_word old, GC_word new_val) 
 	 {
 	  unsigned long oldval;
-	  __asm__ __volatile__("mov ar.ccv=%4 ;; cmpxchg8.rel %0=%1,%2,ar.ccv"
-		: "=r"(oldval), "=m"(*addr)
-		: "r"(new_val), "1"(*addr), "r"(old) : "memory");
+#	  if CPP_WORDSZ == 32
+            __asm__ __volatile__(
+	          "addp4 %0=0,%1\n"
+	          "mov ar.ccv=%3 ;; cmpxchg4.rel %0=[%0],%2,ar.ccv"
+	          : "=&r"(oldval)
+	          : "r"(addr), "r"(new_val), "r"(old) : "memory");
+#	  else
+	    __asm__ __volatile__(
+		  "mov ar.ccv=%3 ;; cmpxchg8.rel %0=[%1],%2,ar.ccv"
+		  : "=r"(oldval)
+		  : "r"(addr), "r"(new_val), "r"(old) : "memory");
+#	  endif
 	  return (oldval == old);
          }
 #      endif /* !GENERIC_COMPARE_AND_SWAP */
@@ -593,33 +672,6 @@
       extern pthread_t GC_mark_lock_holder;
 #   endif
 #  endif /* GC_PTHREADS with linux_threads.c implementation */
-#  if defined(GC_IRIX_THREADS)
-#    include <pthread.h>
-     /* This probably should never be included, but I can't test	*/
-     /* on Irix anymore.						*/
-#    include <mutex.h>
-
-     extern volatile unsigned int GC_allocate_lock;
-	/* This is not a mutex because mutexes that obey the (optional) 	*/
-	/* POSIX scheduling rules are subject to convoys in high contention	*/
-	/* applications.  This is basically a spin lock.			*/
-     extern pthread_t GC_lock_holder;
-     extern void GC_lock(void);
-	/* Allocation lock holder.  Only set if acquired by client through */
-	/* GC_call_with_alloc_lock.					   */
-#    define SET_LOCK_HOLDER() GC_lock_holder = pthread_self()
-#    define NO_THREAD (pthread_t)(-1)
-#    define UNSET_LOCK_HOLDER() GC_lock_holder = NO_THREAD
-#    define I_HOLD_LOCK() (pthread_equal(GC_lock_holder, pthread_self()))
-#    define LOCK() { if (GC_test_and_set(&GC_allocate_lock)) GC_lock(); }
-#    define UNLOCK() GC_clear(&GC_allocate_lock);
-     extern VOLATILE GC_bool GC_collecting;
-#    define ENTER_GC() \
-		{ \
-		    GC_collecting = 1; \
-		}
-#    define EXIT_GC() GC_collecting = 0;
-#  endif /* GC_IRIX_THREADS */
 #  if defined(GC_WIN32_THREADS)
 #    if defined(GC_PTHREADS)
 #      include <pthread.h>

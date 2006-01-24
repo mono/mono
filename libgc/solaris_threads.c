@@ -16,9 +16,9 @@
  */
 /* Boehm, September 14, 1994 4:44 pm PDT */
 
-# if defined(GC_SOLARIS_THREADS) || defined(GC_SOLARIS_PTHREADS)
-
 # include "private/gc_priv.h"
+
+# if defined(GC_SOLARIS_THREADS) || defined(GC_SOLARIS_PTHREADS)
 # include "private/solaris_threads.h"
 # include <thread.h>
 # include <synch.h>
@@ -248,8 +248,8 @@ static void stop_all_lwps()
     for (i = 0; i < max_lwps; i++)
 	last_ids[i] = 0;
     for (;;) {
-    if (syscall(SYS_ioctl, GC_main_proc_fd, PIOCSTATUS, &status) < 0)
-    	ABORT("Main PIOCSTATUS failed");
+        if (syscall(SYS_ioctl, GC_main_proc_fd, PIOCSTATUS, &status) < 0)
+    	    ABORT("Main PIOCSTATUS failed");
     	if (status.pr_nlwp < 1)
     		ABORT("Invalid number of lwps returned by PIOCSTATUS");
     	if (status.pr_nlwp >= max_lwps) {
@@ -262,7 +262,7 @@ static void stop_all_lwps()
         	for (i = 0; i < max_lwps; i++)
 			last_ids[i] = 0;
 		continue;
-    }
+    	}
         if (syscall(SYS_ioctl, GC_main_proc_fd, PIOCLWPIDS, GC_current_ids) < 0)
             ABORT("PIOCLWPIDS failed");
         changed = FALSE;
@@ -803,6 +803,7 @@ void GC_thr_init(void)
 {
     GC_thread t;
     thread_t tid;
+    int ret;
 
     if (GC_thr_initialized)
 	    return;
@@ -820,9 +821,11 @@ void GC_thr_init(void)
       t = GC_new_thread(thr_self());
       t -> stack_size = 0;
       t -> flags = DETACHED | CLIENT_OWNS_STACK;
-    if (thr_create(0 /* stack */, 0 /* stack_size */, GC_thr_daemon,
-    		   0 /* arg */, THR_DETACHED | THR_DAEMON,
-    		   &tid /* thread_id */) != 0) {
+    ret = thr_create(0 /* stack */, 0 /* stack_size */, GC_thr_daemon,
+    		     0 /* arg */, THR_DETACHED | THR_DAEMON,
+    		     &tid /* thread_id */);
+    if (ret != 0) {
+	GC_err_printf1("Thr_create returned %ld\n", ret);
     	ABORT("Cant fork daemon");
     }
     thr_setprio(tid, 126);

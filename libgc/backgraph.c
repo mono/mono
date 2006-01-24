@@ -85,7 +85,7 @@ static back_edges * new_back_edges(void)
 {
   if (0 == back_edge_space) {
     back_edge_space = (back_edges *)
-	    		sbrk(MAX_BACK_EDGE_STRUCTS*sizeof(back_edges));
+	    		GET_MEM(MAX_BACK_EDGE_STRUCTS*sizeof(back_edges));
   }
   if (0 != avail_back_edges) {
     back_edges * result = avail_back_edges;
@@ -113,17 +113,31 @@ static void deallocate_back_edges(back_edges *p)
 /* Table of objects that are currently on the depth-first search	*/
 /* stack.  Only objects with in-degree one are in this table.		*/
 /* Other objects are identified using HEIGHT_IN_PROGRESS.		*/
-/* This data structure NEEDS IMPROVEMENT.				*/
-#define MAX_IN_PROGRESS 10000
+/* FIXME: This data structure NEEDS IMPROVEMENT.			*/
+#define INITIAL_IN_PROGRESS 10000
 static ptr_t * in_progress_space = 0;
-static int n_in_progress = 0;
+static size_t in_progress_size = 0;
+static size_t n_in_progress = 0;
 
 static void push_in_progress(ptr_t p)
 {
+  if (n_in_progress >= in_progress_size) 
+    if (in_progress_size == 0) {
+      in_progress_size = INITIAL_IN_PROGRESS;
+      in_progress_space = (ptr_t *)GET_MEM(in_progress_size * sizeof(ptr_t));
+    } else {
+      ptr_t * new_in_progress_space;
+      in_progress_size *= 2;
+      new_in_progress_space = (ptr_t *)
+	      			GET_MEM(in_progress_size * sizeof(ptr_t));
+      BCOPY(in_progress_space, new_in_progress_space,
+	    n_in_progress * sizeof(ptr_t));
+      in_progress_space = new_in_progress_space;
+      /* FIXME: This just drops the old space.	*/
+    }
   if (in_progress_space == 0)
-      in_progress_space = sbrk(MAX_IN_PROGRESS * sizeof(ptr_t));
-  if (n_in_progress == MAX_IN_PROGRESS)
-      ABORT("Exceeded MAX_IN_PROGRESS");
+      ABORT("MAKE_BACK_GRAPH: Out of in-progress space: "
+	    "Huge linear data structure?");
   in_progress_space[n_in_progress++] = p;
 }
 
@@ -318,8 +332,8 @@ static void add_back_edges(ptr_t p, word n_words, word gc_descr)
   }
 }
 
-/* Rebuild the reprentation of the backward reachability graph.	*/
-/* Does not examine mark bits.  Can be called before GC.	*/
+/* Rebuild the representation of the backward reachability graph.	*/
+/* Does not examine mark bits.  Can be called before GC.		*/
 void GC_build_back_graph(void)
 {
   GC_apply_to_each_object(add_back_edges);
@@ -424,15 +438,20 @@ static void update_max_height(ptr_t p, word n_words, word gc_descr)
   }
 }
 
+word GC_max_max_height = 0;
+
 void GC_traverse_back_graph(void)
 {
-  static word max_max_height = 0;
   GC_max_height = 0;
   GC_apply_to_each_object(update_max_height);
+}
+
+void GC_print_back_graph_stats(void)
+{
   GC_printf2("Maximum backwards height of reachable objects at GC %lu is %ld\n",
 	     (unsigned long) GC_gc_no, GC_max_height);
-  if (GC_max_height > max_max_height) {
-    max_max_height = GC_max_height;
+  if (GC_max_height > GC_max_max_height) {
+    GC_max_max_height = GC_max_height;
     GC_printf0("The following unreachable object is last in a longest chain "
 	       "of unreachable objects:\n");
     GC_print_heap_obj(GC_deepest_obj);

@@ -109,7 +109,7 @@ enum { GC_byte_alignment = 8 };
 enum { GC_word_alignment = GC_byte_alignment/GC_bytes_per_word };
 
 inline void * &GC_obj_link(void * p)
-{   return *(void **)p;  }
+{   return *reinterpret_cast<void **>(p);  }
 
 // Compute a number of words >= n+1 bytes.
 // The +1 allows for pointers one past the end.
@@ -228,7 +228,7 @@ class single_client_gc_alloc_template {
 	    } else {
 	        flh = GC_objfreelist_ptr + nwords;
 	        GC_obj_link(p) = *flh;
-		memset((char *)p + GC_bytes_per_word, 0,
+		memset(reinterpret_cast<char *>(p) + GC_bytes_per_word, 0,
 		       GC_bytes_per_word * (nwords - 1));
 	        *flh = p;
 	        GC_aux::GC_mem_recently_freed += nwords;
@@ -352,9 +352,9 @@ class simple_alloc<T, alloc> { \
 public: \
     static T *allocate(size_t n) \
 	{ return 0 == n? 0 : \
-			 (T*) alloc::ptr_free_allocate(n * sizeof (T)); } \
+			 reinterpret_cast<T*>(alloc::ptr_free_allocate(n * sizeof (T))); } \
     static T *allocate(void) \
-	{ return (T*) alloc::ptr_free_allocate(sizeof (T)); } \
+	{ return reinterpret_cast<T*>(alloc::ptr_free_allocate(sizeof (T))); } \
     static void deallocate(T *p, size_t n) \
 	{ if (0 != n) alloc::ptr_free_deallocate(p, n * sizeof (T)); } \
     static void deallocate(T *p) \

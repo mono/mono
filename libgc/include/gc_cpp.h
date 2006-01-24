@@ -74,7 +74,7 @@ cycle, then that's considered a storage leak, and neither will be
 collectable.  See the interface gc.h for low-level facilities for
 handling such cycles of objects with clean-up.
 
-The collector cannot guarrantee that it will find all inaccessible
+The collector cannot guarantee that it will find all inaccessible
 objects.  In practice, it finds almost all of them.
 
 
