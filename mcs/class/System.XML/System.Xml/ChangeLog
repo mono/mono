@@ -1,3 +1,10 @@
+2006-01-24  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlNameEntryCache.cs XmlNameEntry.cs XmlDocument.cs :
+	  Add Hash field to find name entry quickly.
+	  In XmlNameEntryCache make use of name table (it is totally
+	  unused there though).
+
 2006-01-16  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlConvert.cs : handle Ticks. Fixed bug #77252.

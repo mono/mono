@@ -37,9 +37,11 @@ namespace System.Xml
 	{
 		ArrayList list = new ArrayList ();
 		int insertAt = 0;
+		XmlNameTable nameTable;
 
-		public XmlNameEntryCache ()
+		public XmlNameEntryCache (XmlNameTable nameTable)
 		{
+			this.nameTable = nameTable;
 		}
 
 		public XmlNameEntry Add (string prefix, string local, string ns,
@@ -47,15 +49,17 @@ namespace System.Xml
 		{
 			XmlNameEntry e = GetInternal (prefix, local, ns, atomic);
 			if (e == null) {
+				if (!atomic) {
+					prefix = nameTable.Add (prefix);
+					local = nameTable.Add (local);
+					ns = nameTable.Add (ns);
+				}
 				e = new XmlNameEntry (prefix, local, ns);
-				// Let's just limit the maximum pool size.
 				if (list.Count < 1000)
 					list.Add (e);
-				else {
-					if (insertAt == 1000)
-						insertAt = 0;
-					list [insertAt++] = e;
-				}
+				if (insertAt == 1000)
+					insertAt = 0;
+				list [insertAt++] = e;
 			}
 			return e;
 		}
@@ -70,22 +74,21 @@ namespace System.Xml
 		private XmlNameEntry GetInternal (string prefix, string local,
 			string ns, bool atomic)
 		{
-			if (atomic) {
-				for (int i = 0; i < list.Count; i++) {
-					XmlNameEntry e = (XmlNameEntry) list [i];
-					if (Object.ReferenceEquals (e.Prefix, prefix) &&
-						Object.ReferenceEquals (e.LocalName, local) &&
-						Object.ReferenceEquals (e.NS, ns))
-						return e;
-				}
-			} else {
-				for (int i = 0; i < list.Count; i++) {
-					XmlNameEntry e = (XmlNameEntry) list [i];
-					if (e.Prefix == prefix &&
-						e.LocalName == local &&
-						e.NS == ns)
-						return e;
-				}
+			if (!atomic) {
+				if (nameTable.Get (prefix) == null ||
+				    nameTable.Get (local) == null ||
+				    nameTable.Get (ns) == null)
+					return null;
+			}
+			int hash = prefix.GetHashCode () + local.GetHashCode () + ns.GetHashCode ();
+
+			for (int i = 0; i < list.Count; i++) {
+				XmlNameEntry e = (XmlNameEntry) list [i];
+				if (e.Hash == hash &&
+					Object.ReferenceEquals (e.Prefix, prefix) &&
+					Object.ReferenceEquals (e.LocalName, local) &&
+					Object.ReferenceEquals (e.NS, ns))
+					return e;
 			}
 			return null;
 		}

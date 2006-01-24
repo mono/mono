@@ -59,7 +59,7 @@ namespace System.Xml
 		bool preserveWhitespace = false;
 		XmlResolver resolver;
 		Hashtable idTable = new Hashtable ();
-		XmlNameEntryCache nameCache = new XmlNameEntryCache ();
+		XmlNameEntryCache nameCache;
 #if NET_2_0
 		XmlSchemaSet schemas;
 		IXmlSchemaInfo schemaInfo;
@@ -95,6 +95,7 @@ namespace System.Xml
 				implementation = impl;
 
 			nameTable = (nt != null) ? nt : implementation.InternalNameTable;
+			nameCache = new XmlNameEntryCache (nameTable);
 			AddDefaultNameTableKeys ();
 			resolver = new XmlUrlResolver ();
 		}

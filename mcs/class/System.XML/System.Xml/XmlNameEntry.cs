@@ -40,10 +40,12 @@ namespace System.Xml
 			Prefix = prefix;
 			LocalName = local;
 			NS = ns;
+			Hash = prefix.GetHashCode () + local.GetHashCode () + ns.GetHashCode ();
 		}
 
 		public readonly string Prefix;
 		public readonly string LocalName;
 		public readonly string NS;
+		public readonly int Hash;
 	}
 }
