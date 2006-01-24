@@ -659,7 +659,7 @@ namespace System.Web {
 		//    false: processing of the pipeline must not be stopped
 		//
 #if TARGET_JVM && !NET_2_0
-		class RunHooksEnumerator : IEnumerable, IEnumerator
+		sealed class RunHooksEnumerator : IEnumerable, IEnumerator
 		{
 			Delegate [] delegates;
 			int currentStep = 0;
@@ -671,13 +671,13 @@ namespace System.Web {
 				delegates = list.GetInvocationList ();
 			}
 
-			public virtual IEnumerator GetEnumerator() { return this; }
-			public virtual object Current { get{ return app.stop_processing; } }
-			public virtual void Reset()
+			public IEnumerator GetEnumerator() { return this; }
+			public object Current { get{ return app.stop_processing; } }
+			public void Reset()
 			{
 				throw new NotImplementedException("HttpApplication.RunHooksEnumerator.Reset called.");
 			}
-			public virtual bool MoveNext ()
+			public bool MoveNext ()
 			{
 				while (currentStep < delegates.Length) {
 					if (ProcessDelegate((EventHandler)delegates[currentStep++]))
@@ -904,205 +904,374 @@ namespace System.Web {
 		// Handling Public Events'
 		//
 #if TARGET_JVM && !NET_2_0
-		class PipeLineEnumerator : IEnumerator {
-			HttpApplication app;
-			IEnumerator currentEnumerator = null;
-			int currentStep = 0;
-			bool pipelineFinished = false;
+		sealed class PipeLineEnumerator : IEnumerator
+		{
+			readonly HttpApplication _this;
+
+			object current;
+			int currentYield;
+			IEnumerator currentEnumerator;
+
 			IHttpHandler handler = null;
-			bool currentVal;
-			InternalStepDelegate AllocateHandlerDel;
-			InternalStepDelegate ProcessHandlerDel;
-			InternalStepDelegate ReleaseHandlerDel;
 
-			// true means that we need to yield and return the current value;
-			// false means that we need to go on to the next delegate and return
-			// values from there.
-			delegate bool InternalStepDelegate();
-
-			internal PipeLineEnumerator(HttpApplication app)
-			{
-				this.app = app;
-				AllocateHandlerDel = new InternalStepDelegate(AllocateHandler);
-				ProcessHandlerDel = new InternalStepDelegate(ProcessHandler);
-				ReleaseHandlerDel = new InternalStepDelegate(ReleaseHandler);
+			internal PipeLineEnumerator(HttpApplication app) {
+				_this = app;
 			}
 
-			public virtual object Current
-			{
-				get
-				{
-					if (currentEnumerator != null)
-						return currentEnumerator.Current;
-					return currentVal;
+			public object Current { get{ return currentEnumerator != null ? currentEnumerator.Current : current; } }
+			public void Reset() {
+				currentEnumerator = null;
+				currentYield = 0;
+			}
+
+			void ResetEnumerator() {
+				if (currentEnumerator != null) {
+					current = currentEnumerator.Current;
+					currentEnumerator = null;
 				}
 			}
 
-			// See InternalStepDelegate for meaning of true/false return value
-			bool AllocateHandler()
-			{
-				// Obtain the handler for the request.
-				try {
-					handler = app.GetHandler (app.context);
-				}
-				catch (FileNotFoundException fnf){
-					if (app.context.Request.IsLocal)
-						app.ProcessError (new HttpException (404, String.Format ("File not found {0}", fnf.FileName), fnf));
-					else
-						app.ProcessError (new HttpException (404, "File not found", fnf));
-				} catch (DirectoryNotFoundException dnf){
-					app.ProcessError (new HttpException (404, "Directory not found", dnf));
-				} catch (Exception e) {
-					app.ProcessError (e);
+			public bool MoveNext () {
+				switch (currentYield) {
+					case 0: break;
+					case 1: goto yield_1;
+					case 2: goto yield_2;
+					case 3: goto yield_3;
+					case 4: goto yield_4;
+#if NET_2_0
+					case 5: goto yield_5;
+#endif
+					case 6: goto yield_6;
+#if NET_2_0
+					case 7: goto yield_7;
+#endif
+					case 8: goto yield_8;
+					case 9: goto yield_9;
+#if NET_2_0
+					case 10: goto yield_10;
+					case 11: goto yield_11;
+#endif
+					case 12: goto yield_12;
+#if NET_2_0
+					case 13: goto yield_13;
+#endif
+					case 14: goto yield_14;
+					case 15: goto yield_15;
+#if NET_2_0
+					case 16: goto yield_16;
+#endif
+					case 17: goto yield_17;
+#if NET_2_0
+					case 18: goto yield_18;
+#endif
+					default: goto yield_19;
 				}
 
-				if (app.stop_processing) {
-					currentVal = false;
+				if (_this.stop_processing) {
+					//yield return true;
+					current = true;
+					currentYield = 1;
 					return true;
 				}
-				return false;
-			}
+yield_1:
+yield_2:
+				if (_this.BeginRequest != null) {
+					//foreach (bool stop in RunHooks (BeginRequest))
+					//	yield return stop;
+					if (currentEnumerator == null) {
+						currentYield = 2;
+						currentEnumerator = _this.RunHooks(_this.BeginRequest).GetEnumerator();
+					}
+					while (currentEnumerator.MoveNext())
+						return true;
 
-			// See InternalStepDelegate for meaning of true/false return value
-			bool ProcessHandler()
-			{
+					ResetEnumerator();
+				}
+yield_3:
+				if (_this.AuthenticateRequest != null) {
+					//foreach (bool stop in RunHooks (AuthenticateRequest))
+					//	yield return stop;
+					if (currentEnumerator == null) {
+						currentYield = 3;
+						currentEnumerator = _this.RunHooks(_this.AuthenticateRequest).GetEnumerator();
+					}
+					while (currentEnumerator.MoveNext())
+						return true;
+
+					ResetEnumerator();
+				}
+yield_4:
+				if (_this.DefaultAuthentication != null) {
+					//foreach (bool stop in RunHooks (DefaultAuthentication))
+					//	yield return stop;
+					if (currentEnumerator == null) {
+						currentYield = 4;
+						currentEnumerator = _this.RunHooks(_this.DefaultAuthentication).GetEnumerator();
+					}
+					while (currentEnumerator.MoveNext())
+						return true;
+
+					ResetEnumerator();
+				}
+
+#if NET_2_0
+yield_5:
+				if (_this.PostAuthenticateRequest != null) {
+					//foreach (bool stop in RunHooks (AuthenticateRequest))
+					//	yield return stop;
+					if (currentEnumerator == null) {
+						currentYield = 5;
+						currentEnumerator = _this.RunHooks(_this.PostAuthenticateRequest).GetEnumerator();
+					}
+					while (currentEnumerator.MoveNext())
+						return true;
+
+					ResetEnumerator();
+				}
+#endif
+yield_6:
+				if (_this.AuthorizeRequest != null) {
+					//foreach (bool stop in RunHooks (AuthorizeRequest))
+					//	yield return stop;
+					if (currentEnumerator == null) {
+						currentYield = 6;
+						currentEnumerator = _this.RunHooks(_this.AuthorizeRequest).GetEnumerator();
+					}
+					while (currentEnumerator.MoveNext())
+						return true;
+
+					ResetEnumerator();
+				}
+#if NET_2_0
+yield_7:
+				if (_this.PostAuthorizeRequest != null) {
+					//foreach (bool stop in RunHooks (PostAuthorizeRequest))
+					//	yield return stop;
+					if (currentEnumerator == null) {
+						currentYield = 7;
+						currentEnumerator = _this.RunHooks(_this.PostAuthorizeRequest).GetEnumerator();
+					}
+					while (currentEnumerator.MoveNext())
+						return true;
+
+					ResetEnumerator();
+				}
+#endif
+yield_8:
+				if (_this.ResolveRequestCache != null) {
+					//foreach (bool stop in RunHooks (ResolveRequestCache))
+					//	yield return stop;
+					if (currentEnumerator == null) {
+						currentYield = 8;
+						currentEnumerator = _this.RunHooks(_this.ResolveRequestCache).GetEnumerator();
+					}
+					while (currentEnumerator.MoveNext())
+						return true;
+
+					ResetEnumerator();
+				}
+
+				// Obtain the handler for the request.
+				//IHttpHandler handler = null;
+				try {
+					handler = _this.GetHandler (_this.context);
+				} catch (FileNotFoundException fnf){
+					if (_this.context.Request.IsLocal)
+						_this.ProcessError (new HttpException (404, String.Format ("File not found {0}", fnf.FileName), fnf));
+					else
+						_this.ProcessError (new HttpException (404, "File not found", fnf));
+				} catch (DirectoryNotFoundException dnf){
+					_this.ProcessError (new HttpException (404, "Directory not found", dnf));
+				} catch (Exception e) {
+					_this.ProcessError (e);
+				}
+
+				if (_this.stop_processing) {
+					//yield return true;
+					current = true;
+					currentYield = 9;
+					return true;
+				}
+yield_9:
+#if NET_2_0
+yield_10:
+				if (_this.PostResolveRequestCache != null) {
+					//foreach (bool stop in RunHooks (PostResolveRequestCache))
+					//	yield return stop;
+					if (currentEnumerator == null) {
+						currentYield = 10;
+						currentEnumerator = _this.RunHooks(_this.PostResolveRequestCache).GetEnumerator();
+					}
+					while (currentEnumerator.MoveNext())
+						return true;
+
+					ResetEnumerator();
+				}
+yield_11:
+				if (_this.PostMapRequestHandler != null) {
+					//foreach (bool stop in RunHooks (PostMapRequestHandler))
+					//	yield return stop;
+					if (currentEnumerator == null) {
+						currentYield = 11;
+						currentEnumerator = _this.RunHooks(_this.PostMapRequestHandler).GetEnumerator();
+					}
+					while (currentEnumerator.MoveNext())
+						return true;
+
+					ResetEnumerator();
+				}
+			
+#endif
+yield_12:
+				if (_this.AcquireRequestState != null){
+					//foreach (bool stop in RunHooks (AcquireRequestState))
+					//	yield return stop;
+					if (currentEnumerator == null) {
+						currentYield = 12;
+						currentEnumerator = _this.RunHooks(_this.AcquireRequestState).GetEnumerator();
+					}
+					while (currentEnumerator.MoveNext())
+						return true;
+
+					ResetEnumerator();
+				}
+
+#if NET_2_0
+yield_13:
+				if (_this.PostAcquireRequestState != null){
+					//foreach (bool stop in RunHooks (PostAcquireRequestState))
+					//	yield return stop;
+					if (currentEnumerator == null) {
+						currentYield = 13;
+						currentEnumerator = _this.RunHooks(_this.PostAcquireRequestState).GetEnumerator();
+					}
+					while (currentEnumerator.MoveNext())
+						return true;
+
+					ResetEnumerator();
+				}
+#endif
+			
 				//
 				// From this point on, we need to ensure that we call
 				// ReleaseRequestState, so the code below jumps to
 				// `release:' to guarantee it rather than yielding.
 				//
-				if (app.PreRequestHandlerExecute != null)
-					foreach (bool stop in app.RunHooks (app.PreRequestHandlerExecute))
+				if (_this.PreRequestHandlerExecute != null)
+					foreach (bool stop in _this.RunHooks (_this.PreRequestHandlerExecute))
 						if (stop)
-							return false;
-
+							goto release;
+				
 				try {
-					app.context.BeginTimeoutPossible ();
+					_this.context.BeginTimeoutPossible ();
 					if (handler != null){
 						IHttpAsyncHandler async_handler = handler as IHttpAsyncHandler;
 					
 						if (async_handler != null){
-							app.must_yield = true;
-							app.in_begin = true;
-							async_handler.BeginProcessRequest (app.context, new AsyncCallback(app.async_handler_complete_cb), handler);
+							_this.must_yield = true;
+							_this.in_begin = true;
+							async_handler.BeginProcessRequest (_this.context, new AsyncCallback(_this.async_handler_complete_cb), handler);
 						} else {
-							app.must_yield = false;
-							handler.ProcessRequest (app.context);
+							_this.must_yield = false;
+							handler.ProcessRequest (_this.context);
 						}
 					}
-				}
-				catch (ThreadAbortException taex){
+				} catch (ThreadAbortException taex){
 					object obj = taex.ExceptionState;
 					Thread.ResetAbort ();
-					app.stop_processing = true;
+					_this.stop_processing = true;
 					if (obj is StepTimeout)
-						app.ProcessError (new HttpException ("The request timed out."));
+						_this.ProcessError (new HttpException ("The request timed out."));
+				} catch (Exception e){
+					_this.ProcessError (e);
+				} finally {
+					_this.in_begin = false;
+					_this.context.EndTimeoutPossible ();
 				}
-				catch (Exception e){
-					app.ProcessError (e);
-				}
-				finally {
-					app.in_begin = false;
-					app.context.EndTimeoutPossible ();
-				}
-				if (app.must_yield) {
-					currentVal = app.stop_processing;
+				if (_this.must_yield) {
+					//yield return stop_processing;
+					current = _this.stop_processing;
+					currentYield = 14;
 					return true;
 				}
-				else if (app.stop_processing)
-					return false;
-			
+				else if (_this.stop_processing)
+					goto release;
+yield_14:	
 				// These are executed after the application has returned
-				if (app.PostRequestHandlerExecute != null)
-					foreach (bool stop in app.RunHooks (app.PostRequestHandlerExecute))
+			
+				if (_this.PostRequestHandlerExecute != null)
+					foreach (bool stop in _this.RunHooks (_this.PostRequestHandlerExecute))
 						if (stop)
-							return false;
-
-				return false;
-			}
-
-			// See InternalStepDelegate for meaning of true/false return value
-			bool ReleaseHandler()
-			{
-				if (app.ReleaseRequestState != null){
-					foreach (bool stop in app.RunHooks (app.ReleaseRequestState)){
-						//
-						// Ignore the stop signal while release the state
-						//
+							goto release;
+			
+				release:
+					if (_this.ReleaseRequestState != null){
+						foreach (bool stop in _this.RunHooks (_this.ReleaseRequestState)){
+							//
+							// Ignore the stop signal while release the state
+							//
+					
+						}
 					}
-				}
-
-				if (app.stop_processing) {
-					currentVal = true;
+			
+				if (_this.stop_processing) {
+					//yield return true;
+					current = true;
+					currentYield = 15;
 					return true;
 				}
-				return false;
-			}
-
-			Delegate FindNextDelegate ()
-			{
-				switch(currentStep++) {
-					case  1: return app.BeginRequest;
-					case  2: return app.AuthenticateRequest;
-					case  3: return app.DefaultAuthentication;
+yield_15:
 #if NET_2_0
-					case  4: return app.PostAuthenticateRequest;
-#endif
-					case  5: return app.AuthorizeRequest;
-#if NET_2_0
-					case  6: return app.PostAuthorizeRequest;
-#endif
-					case  7: return app.ResolveRequestCache;
-					case  8: return AllocateHandlerDel;
-#if NET_2_0
-					case  9: return app.PostResolveRequestCache;
-#endif
-#if NET_2_0
-					case 10: return app.PostMapRequestHandler;
-#endif
-					case 11: return app.AcquireRequestState;
-#if NET_2_0
-					case 12: return app.PostAcquireRequestState;
-#endif
-					case 13: return app.ResolveRequestCache;
-					case 14: return ProcessHandlerDel;
-					case 15: return ReleaseHandlerDel;
-#if NET_2_0
-					case 16: return app.PostReleaseRequestState;
-#endif
-					case 17: return app.UpdateRequestCache;
-#if NET_2_0
-					case 18: return app.PostUpdateRequestCache;
-#endif
-					case 19: pipelineFinished = true; return null;
-				}
-				return null;
-			}
-
-			public virtual bool MoveNext ()
-			{
-				while (!pipelineFinished) {
-					if (currentEnumerator != null && currentEnumerator.MoveNext())
-						return true;
-					currentEnumerator = null;
-
-					Delegate d = FindNextDelegate();
-					InternalStepDelegate d1 = d as InternalStepDelegate;
-					if (d1 != null) {
-						if (d1())
-							return true;
+yield_16:
+				if (_this.PostReleaseRequestState != null) {
+					//foreach (bool stop in RunHooks (PostReleaseRequestState))
+					//	yield return stop;
+					if (currentEnumerator == null) {
+						currentYield = 16;
+						currentEnumerator = _this.RunHooks(_this.PostReleaseRequestState).GetEnumerator();
 					}
-					else if (d != null)
-						currentEnumerator = app.RunHooks(d).GetEnumerator();
+					while (currentEnumerator.MoveNext())
+						return true;
+
+					ResetEnumerator();
+				}
+#endif
+
+				if (_this.context.Error == null)
+					_this.context.Response.DoFilter (true);
+yield_17:
+				if (_this.UpdateRequestCache != null) {
+					//foreach (bool stop in RunHooks (UpdateRequestCache))
+					//	yield return stop;
+					if (currentEnumerator == null) {
+						currentYield = 17;
+						currentEnumerator = _this.RunHooks(_this.UpdateRequestCache).GetEnumerator();
+					}
+					while (currentEnumerator.MoveNext())
+						return true;
+
+					ResetEnumerator();
 				}
 
-				app.PipelineDone ();
-				return false;
-			}
+#if NET_2_0
+yield_18:
+				if (_this.PostUpdateRequestCache != null) {
+					//foreach (bool stop in RunHooks (PostUpdateRequestCache))
+					//	yield return stop;
+					if (currentEnumerator == null) {
+						currentYield = 18;
+						currentEnumerator = _this.RunHooks(_this.PostUpdateRequestCache).GetEnumerator();
+					}
+					while (currentEnumerator.MoveNext())
+						return true;
 
-			public virtual void Reset()
-			{
-				throw new NotImplementedException("HttpApplication.PipelineEnumerator.Reset called.");
+					ResetEnumerator();
+				}
+#endif
+				_this.PipelineDone ();
+				currentYield = 19;
+yield_19:
+				return false;
 			}
 		}
 
