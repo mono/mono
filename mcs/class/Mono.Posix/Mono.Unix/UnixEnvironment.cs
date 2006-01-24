@@ -61,7 +61,8 @@ namespace Mono.Unix {
 				return buf.ToString ();
 			}
 			set {
-				Native.Syscall.sethostname (value);
+				int r = Native.Syscall.sethostname (value);
+				UnixMarshal.ThrowExceptionForLastErrorIf (r);
 			}
 		}
 
@@ -141,7 +142,9 @@ namespace Mono.Unix {
 
 		public static int CreateSession ()
 		{
-			return Native.Syscall.setsid ();
+			int s = Native.Syscall.setsid ();
+			UnixMarshal.ThrowExceptionForLastErrorIf (s);
+			return s;
 		}
 
 		public static void SetProcessGroup ()

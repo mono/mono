@@ -310,6 +310,11 @@ namespace Mono.Unix {
 
 		public static IntPtr StringToHeap (string s, int index, int count, Encoding encoding)
 		{
+			if (s == null)
+				throw new ArgumentNullException ("s");
+			if (encoding == null)
+				throw new ArgumentNullException ("encoding");
+
 			int min_byte_count = encoding.GetMaxByteCount(1);
 			char[] copy = s.ToCharArray (index, count);
 			byte[] marshal = new byte [encoding.GetByteCount (copy) + min_byte_count];
