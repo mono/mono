@@ -17,13 +17,13 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004-2005 Novell, Inc.
+// Copyright (c) 2004-2006 Novell, Inc.
 //
 // Authors:
 //	Jordi Mas i Hernandez, jordi@ximian.com
 //	Peter Bartok, pbartok@novell.com
 //	John BouAntoun, jba-mono@optusnet.com.au
-//  Marek Safar, marek.safar@seznam.cz
+//	Marek Safar, marek.safar@seznam.cz
 //
 
 
@@ -974,17 +974,12 @@ namespace System.Windows.Forms
 
 			current_clip.Dispose ();
 			g.ResetClip ();
-			
-			// This fills with background colour the unused part in the row headers
-			if (rect_columnhdr.X + rect_columnhdr.Height < grid.ClientRectangle.X + grid.ClientRectangle.Width) {
 				
-				Rectangle not_usedarea = columnshdrs_area_complete;				
-				not_usedarea.X = rect_columnhdr.X + rect_columnhdr.Width;
-				not_usedarea.Width = grid.ClientRectangle.X + grid.ClientRectangle.Width - rect_columnhdr.X - rect_columnhdr.Height;
+			Rectangle not_usedarea = columnshdrs_area_complete;				
+			not_usedarea.X = rect_columnhdr.X + rect_columnhdr.Width;
+			not_usedarea.Width = grid.ClientRectangle.X + grid.ClientRectangle.Width - rect_columnhdr.X - rect_columnhdr.Height;		
+			g.FillRectangle (ResPool.GetSolidBrush (grid.BackgroundColor), not_usedarea);
 			
-				g.FillRectangle (ResPool.GetSolidBrush (grid.BackgroundColor),
-					not_usedarea);
-			}
 		}
 
 		public override void DataGridPaintRowsHeaders (Graphics g, Rectangle clip, DataGrid grid)
@@ -992,9 +987,9 @@ namespace System.Windows.Forms
 			Rectangle rowshdrs_area_complete = grid.grid_drawing.rowshdrs_area;
 			rowshdrs_area_complete.Height = grid.grid_drawing.rowshdrs_maxheight;
 			Rectangle rect_row = new Rectangle ();
-			rect_row.X = grid.grid_drawing.rowshdrs_area.X;
-			int last_y = 0;
+			rect_row.X = grid.grid_drawing.rowshdrs_area.X;			
 			int rowcnt = grid.FirstVisibleRow + grid.VisibleRowCount;
+			Rectangle not_usedarea = rowshdrs_area_complete;			
 
 			if (rowcnt < grid.RowsCount) { // Paint one row more for partial rows
 				rowcnt++;
@@ -1008,25 +1003,14 @@ namespace System.Windows.Forms
 				rect_row.Y = grid.grid_drawing.rowshdrs_area.Y + ((row - grid.FirstVisibleRow) * grid.RowHeight);
 
 				if (clip.IntersectsWith (rect_row)) {
-					DataGridPaintRowHeader (g, rect_row, row, grid);
-					last_y = rect_row.Y;
+					DataGridPaintRowHeader (g, rect_row, row, grid);					
 				}
 			}
 			
 			g.ResetClip ();
-
-			// This fills with background colour the unused part in the row headers
-			if (last_y > 0 && rect_row.Y + rect_row.Height < grid.grid_drawing.cells_area.Y + grid.grid_drawing.cells_area.Height) {
-				Rectangle not_usedarea = clip;
-				not_usedarea.Intersect (rowshdrs_area_complete);
-				
-				not_usedarea.Y = rect_row.Y + rect_row.Height;
-				not_usedarea.Height = rowshdrs_area_complete.Y + rowshdrs_area_complete.Height - rect_row.Height - rect_row.Y;
-				g.FillRectangle (ResPool.GetSolidBrush (grid.BackgroundColor),
-					not_usedarea);
-			}			
-
-			
+			not_usedarea.Height = grid.grid_drawing.rowshdrs_maxheight - grid.grid_drawing.rowshdrs_area.Height;
+			not_usedarea.Y = grid.grid_drawing.rowshdrs_area.Y + grid.grid_drawing.rowshdrs_area.Height;
+			g.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (grid.BackgroundColor), not_usedarea);
 		}
 		
 		public override void DataGridPaintRowHeaderArrow (Graphics g, Rectangle bounds, DataGrid grid) 
@@ -1077,7 +1061,7 @@ namespace System.Windows.Forms
 					bounds.X, bounds.Y + bounds.Height -1, bounds.X + bounds.Width, bounds.Y  + bounds.Height -1);
 			}
 
-			if (grid.ShowEditRow && row == grid.RowsCount  && !(row == grid.CurrentCell.RowNumber && grid.is_changing == true)) {
+			if (grid.ShowEditRow && grid.RowsCount > 0 && row == grid.RowsCount  && !(row == grid.CurrentCell.RowNumber && grid.is_changing == true)) {
 				
 				g.DrawString ("*", grid.grid_drawing.font_newrow, ResPool.GetSolidBrush (grid.CurrentTableStyle.CurrentHeaderForeColor),
 					bounds);
@@ -1108,7 +1092,7 @@ namespace System.Windows.Forms
 
 			int rowcnt = grid.FirstVisibleRow + grid.VisibleRowCount;
 			
-			if (grid.ShowEditRow) {
+			if (grid.ShowEditRow && grid.RowsCount > 0) {
 				rowcnt--;
 			}			
 
@@ -1125,20 +1109,19 @@ namespace System.Windows.Forms
 				}
 			}
 			
-			if (grid.ShowEditRow && grid.FirstVisibleRow + grid.VisibleRowCount == grid.RowsCount + 1) {
+			if (grid.ShowEditRow && grid.RowsCount > 0 && grid.FirstVisibleRow + grid.VisibleRowCount == grid.RowsCount + 1) {
 				rect_row.Y = cells.Y + ((rowcnt - grid.FirstVisibleRow) * grid.RowHeight);
 				if (clip.IntersectsWith (rect_row)) {
 					DataGridPaintRow (g, rowcnt, rect_row, true, grid);
 				}
-			}
-			
+			}			
+
 			not_usedarea.Height = cells.Y + cells.Height - rect_row.Y - rect_row.Height;
 			not_usedarea.Y = rect_row.Y + rect_row.Height;
 			not_usedarea.Width = rect_row.Width = cells.Width;
-			not_usedarea.X = cells.X;			
-
-			g.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (grid.BackgroundColor),
-				not_usedarea);			
+			not_usedarea.X = cells.X;
+			
+			g.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (grid.BackgroundColor), not_usedarea);
 		}
 		
 		public override void DataGridPaintRow (Graphics g, int row, Rectangle row_rect, bool is_newrow, DataGrid grid)

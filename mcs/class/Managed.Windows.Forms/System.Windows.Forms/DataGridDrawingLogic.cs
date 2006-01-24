@@ -149,7 +149,7 @@ namespace System.Windows.Forms
 					parent_rows.Width -= grid.vert_scrollbar.Width;
 				}
 
-				if (grid.columnheaders_visible) {
+				if (grid.columnheaders_visible == false || grid.CurrentTableStyle.GridColumnStyles.Count == 0) {
 					if (columnshdrs_area.X + columnshdrs_area.Width > grid.vert_scrollbar.Location.X) {
 						columnshdrs_area.Width -= grid.vert_scrollbar.Width;
 					}
@@ -178,6 +178,10 @@ namespace System.Windows.Forms
 			UpdateVisibleColumn ();
 			UpdateVisibleRowCount ();
 
+			//Console.WriteLine ("DataGridDrawing.CalcGridAreas caption_area:{0}", caption_area);
+			//Console.WriteLine ("DataGridDrawing.CalcGridAreas parent_rows:{0}", parent_rows);
+			//Console.WriteLine ("DataGridDrawing.CalcGridAreas rowshdrs_area:{0}", rowshdrs_area);
+			//Console.WriteLine ("DataGridDrawing.CalcGridAreas columnshdrs_area:{0}", columnshdrs_area);
 			//Console.WriteLine ("DataGridDrawing.CalcGridAreas cells:{0}", cells_area);
 		}
 
@@ -208,7 +212,7 @@ namespace System.Windows.Forms
 				cells_area.Y += parent_rows.Height;
 			}
 
-			if (grid.columnheaders_visible) {
+			if (!(grid.columnheaders_visible == false || grid.CurrentTableStyle.GridColumnStyles.Count == 0)) {
 				cells_area.Y += columnshdrs_area.Height;
 			}
 
@@ -222,9 +226,9 @@ namespace System.Windows.Forms
 		public void CalcColumnsHeader ()
 		{
 			int width_all_cols, max_width_cols;
-
-			if (grid.columnheaders_visible == false) {
-				columnshdrs_area = Rectangle.Empty;
+			
+			if (grid.columnheaders_visible == false || grid.CurrentTableStyle.GridColumnStyles.Count == 0) {
+				columnshdrs_area = Rectangle.Empty;				
 				return;
 			}
 
@@ -301,7 +305,7 @@ namespace System.Windows.Forms
 				rowshdrs_area.Y += parent_rows.Height;
 			}
 
-			if (grid.columnheaders_visible) { // first block is painted by ColumnHeader
+			if (!(grid.columnheaders_visible == false || grid.CurrentTableStyle.GridColumnStyles.Count == 0)) { // first block is painted by ColumnHeader
 				rowshdrs_area.Y += ColumnsHeaderHeight;
 			}
 
@@ -339,16 +343,13 @@ namespace System.Windows.Forms
 			int max_height = cells_area.Height;
 			int total_rows = grid.RowsCount;
 			
-			if (grid.ShowEditRow) {
+			if (grid.ShowEditRow && grid.RowsCount > 0) {
 				total_rows++;
 			}
 
 			int rows_height = (total_rows - grid.first_visiblerow) * grid.RowHeight;
 			int max_rows = max_height / grid.RowHeight;
-
-			//Console.WriteLine ("UpdateVisibleRowCount {0} {1}/{2} (row h) {3}",
-			//	max_rows, max_height, grid.RowHeight, cells_area.Height);
-
+						
 			if (max_rows > total_rows) {
 				max_rows = total_rows;
 			}
@@ -368,7 +369,7 @@ namespace System.Windows.Forms
 				grid.visiblerow_count = max_rows;
 				grid.first_visiblerow = total_rows - max_rows;
 				grid.Invalidate ();
-			}		
+			}
 			
 		}
 
@@ -534,7 +535,7 @@ namespace System.Windows.Forms
 			int y, height;
 			int allrows = grid.RowsCount;
 
-			if (grid.ShowEditRow) {
+			if (grid.ShowEditRow && grid.RowsCount > 0) {
 				allrows++;
 			}
 			
@@ -560,7 +561,7 @@ namespace System.Windows.Forms
 
 			grid.vert_scrollbar.Maximum = grid.RowsCount;
 			
-			if (grid.ShowEditRow) {
+			if (grid.ShowEditRow && grid.RowsCount > 0) {
 				grid.vert_scrollbar.Maximum++;	
 			}
 			
