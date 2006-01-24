@@ -106,6 +106,10 @@ namespace System.Collections.ObjectModel
 			get { return list.Count; }
 		}
 
+		protected IList<T> Items {
+			get { return list; }
+		}
+
 		public T this [int index] {
 			get { return list [index]; }
 		}

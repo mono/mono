@@ -1,3 +1,7 @@
+2006-01-24  Raja R Harinath  <rharinath@novell.com>
+
+	* ReadOnlyCollection.cs (Items): Return underlying list.
+
 2005-12-19  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Collection.cs: IsReadOnly property isn't public in 2.0 final.
