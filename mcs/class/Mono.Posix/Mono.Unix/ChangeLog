@@ -1,5 +1,9 @@
 2006-01-24  Jonathan Pryor  <jonpryor@vt.edu>
 
+	* UnixMarshal.cs (StringToHeap): Return IntPtr.Zero if `s' is null.
+
+2006-01-24  Jonathan Pryor  <jonpryor@vt.edu>
+
 	* UnixMarshal.cs (StringToHeap): Check for null arguments.
 
 2006-01-20  Jonathan Pryor  <jonpryor@vt.edu>

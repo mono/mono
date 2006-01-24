@@ -311,7 +311,8 @@ namespace Mono.Unix {
 		public static IntPtr StringToHeap (string s, int index, int count, Encoding encoding)
 		{
 			if (s == null)
-				throw new ArgumentNullException ("s");
+				return IntPtr.Zero;
+
 			if (encoding == null)
 				throw new ArgumentNullException ("encoding");
 
