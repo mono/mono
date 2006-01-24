@@ -1,5 +1,10 @@
 2006-01-24  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* UTF8Encoding.cs : InternalGetCharCount() optimization: fast path
+	  for ASCII range.
+
+2006-01-24  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* UTF7Encoding.cs UTF8Encoding.cs :
 	  Fixed bug #77315 (Patch by pawel.sakowski@mind-breeze.com).
 	  Make strict check for invalid surrogate.
