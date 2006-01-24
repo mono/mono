@@ -1,3 +1,8 @@
+2006-01-24 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpRequest.cs: fixed the file path when RewritePath is used. Also
+	add the PathInfo to the Url. Fixes bug #77291.
+
 2006-01-13 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpWriter.cs: made Write (char) less memory hungry. Thanks to Mike

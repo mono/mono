@@ -84,6 +84,7 @@ namespace System.Web {
 		string request_type;
 		string [] accept_types;
 		string [] user_languages;
+		Uri cached_url;
 		
 		// Validations
 		bool validate_cookies, validate_query_string, validate_form;
@@ -937,7 +938,12 @@ namespace System.Web {
 				if (uri_builder == null)
 					InitUriBuilder ();
 				
-				return uri_builder.Uri;
+				if (cached_url == null) {
+					UriBuilder builder = new UriBuilder (uri_builder.Uri);
+					builder.Path += path_info;
+					cached_url = builder.Uri;
+				}
+				return cached_url;
 			}
 		}
 
@@ -1166,12 +1172,13 @@ namespace System.Web {
 
                 internal void SetCurrentExePath (string path)
                 {
+			cached_url = null;
 			current_exe_path = path;
-			//if (uri_builder == null)
-			//	InitUriBuilder ();
-
-			//uri_builder.Path = path;
-			 // recreated on demand
+			file_path = path;
+			if (uri_builder == null)
+				InitUriBuilder ();
+			uri_builder.Path = path;
+			// recreated on demand
 			root_virtual_dir = null;
 			base_virtual_dir = null;
 			physical_path = null;
@@ -1179,6 +1186,7 @@ namespace System.Web {
 
 		internal void SetPathInfo (string pi)
 		{
+			cached_url = null;
 			path_info = pi;
 		}
 
