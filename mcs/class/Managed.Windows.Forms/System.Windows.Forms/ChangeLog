@@ -1,3 +1,8 @@
+2006-01-23  Jackson Harper  <jackson@ximian.com>
+
+	* UpDownBase.cs: Make the textbox handle all the selection and
+	tabbing. This fixes tabing to updown controls.
+
 2006-01-24  Jordi Mas i Hernandez <jordimash@gmail.com>
 
 	* TextBoxBase.cs: fixes exception thown the object was null

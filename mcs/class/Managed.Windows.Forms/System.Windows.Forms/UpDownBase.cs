@@ -253,7 +253,7 @@ namespace System.Windows.Forms
 			txtView.AutoSize = false;
 			txtView.BorderStyle = BorderStyle.None;
 			txtView.Location = new System.Drawing.Point(17, 17);
-			txtView.TabIndex = 0;
+			txtView.TabIndex = TabIndex;
 
 			SuspendLayout ();
 			Controls.AddImplicit (txtView);
@@ -265,8 +265,10 @@ namespace System.Windows.Forms
 			Height = PreferredHeight;
 			base.BackColor = txtView.BackColor;
 
+			GotFocus += new EventHandler (GotFocusHandler);
+			TabIndexChanged += new EventHandler (TabIndexChangedHandler);
+			
 			txtView.MouseWheel += new MouseEventHandler(txtView_MouseWheel);
-
 			txtView.KeyDown += new KeyEventHandler(OnTextBoxKeyDown);
 			txtView.KeyPress += new KeyPressEventHandler(OnTextBoxKeyPress);
 			txtView.LostFocus += new EventHandler(OnTextBoxLostFocus);
@@ -311,6 +313,15 @@ namespace System.Windows.Forms
 			}
 		}
 
+		private void GotFocusHandler (object sender, EventArgs e)
+		{
+			txtView.Focus ();
+		}
+
+		private void TabIndexChangedHandler (object sender, EventArgs e)
+		{
+			txtView.TabIndex = TabIndex;
+		}
 
 		private void UpDownBase_Paint(object sender, PaintEventArgs e) {
 			e.Graphics.FillRectangle(ThemeEngine.Current.ResPool.GetSolidBrush(BackColor), ClientRectangle);
