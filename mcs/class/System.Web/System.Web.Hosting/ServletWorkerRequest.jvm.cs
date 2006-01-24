@@ -73,7 +73,7 @@ namespace System.Web.Hosting {
 			PATH_INFO
 		};
 
-		static readonly string[] KnownServerVariableNames = Enum.GetNames(typeof(KnownServerVariable));
+		static readonly Hashtable KnownServerVariableMap;
 
 		static ServletWorkerRequest() {
 			_srvVarsToHeaderMap = new StringDictionary();
@@ -85,6 +85,11 @@ namespace System.Web.Hosting {
 			_srvVarsToHeaderMap.Add("HTTP_HOST", "Host");
 			_srvVarsToHeaderMap.Add("HTTP_USER_AGENT", "User-Agent");
 			_srvVarsToHeaderMap.Add("HTTP_SOAPACTION", "SOAPAction");
+
+			string[] knownServerVariableNames = Enum.GetNames(typeof(KnownServerVariable));
+			KnownServerVariableMap = CollectionsUtil.CreateCaseInsensitiveHashtable(knownServerVariableNames.Length);
+			for (int i = 0; i < knownServerVariableNames.Length; i++)
+				KnownServerVariableMap[knownServerVariableNames[i]] = (KnownServerVariable)i;
 		}
 
 		public ServletWorkerRequest (HttpServlet servlet, HttpServletRequest req, HttpServletResponse resp) {
@@ -259,10 +264,9 @@ namespace System.Web.Hosting {
 			if (headerName != null)
 				return _HttpServletRequest.getHeader( headerName );
 
-			for (int i = 0, max = KnownServerVariableNames.Length; i < max; i++)
-				if (string.Compare(name, KnownServerVariableNames[i],
-					true, CultureInfo.InvariantCulture) == 0)
-					return GetKnownServerVariable((KnownServerVariable)i);
+			object knownVariable = KnownServerVariableMap[name];
+			if (knownVariable != null)
+				return GetKnownServerVariable((KnownServerVariable)knownVariable);
 
 			return _HttpServletRequest.getHeader( name );
 		}
