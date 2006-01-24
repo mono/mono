@@ -1,3 +1,9 @@
+2006-01-24  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* UTF7Encoding.cs UTF8Encoding.cs :
+	  Fixed bug #77315 (Patch by pawel.sakowski@mind-breeze.com).
+	  Make strict check for invalid surrogate.
+
 2006-01-23  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* EncoderFallbackException.cs EncoderExceptionFallback.cs
