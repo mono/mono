@@ -1,3 +1,11 @@
+2006-01-24  Atsushi Enomoto  <atsushi@ximian.com>
+
+	Fixed bug #77325.
+	* windows-28596-2000.ucm : new file. Copied IBM ICU data from
+	  http://dev.icu-project.org/cgi-bin/viewcvs.cgi/charset/data/ucm/windows-28596-2000.ucm (revision 1.2)
+	* CP28596.cs : regenerated source file (and made some manual
+	  changes) to replace mapping source from old ibm-1089.ucm to above.
+
 2006-01-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CP1254.cs CP1255.cs CP28596.cs CP1256.cs CP28598.cs CP38598.cs
