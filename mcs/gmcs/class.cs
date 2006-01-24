@@ -550,6 +550,22 @@ namespace Mono.CSharp {
 				methods.Add (method);
 		}
 
+		//
+		// Do not use this method: use AddMethod.
+		//
+		// This is only used by iterators.
+		//
+		public void AppendMethod (Method method)
+		{
+			if (!AddToMemberContainer (method))
+				return;
+
+			if (methods == null)
+				methods = new MethodArrayList (this);
+
+			methods.Add (method);
+		}
+
 		public void AddConstructor (Constructor c)
 		{
 			if (c.Name != MemberName.Name) {
@@ -2296,9 +2312,10 @@ namespace Mono.CSharp {
 			if (default_static_constructor != null)
 				default_static_constructor.Emit ();
 			
-			if (methods != null)
+			if (methods != null){
 				foreach (Method m in methods)
 					m.Emit ();
+			}
 
 			if (operators != null)
 				foreach (Operator o in operators)

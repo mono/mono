@@ -1,3 +1,25 @@
+Iterators
+=========
+
+
+	Ok, solved part of the problem, but not the second.
+
+	Apparently there are 2 scopes in test-iter-05.cs that
+	are referenced, but when we call "ComputeMethodHost" in
+	iterators.cs:854 this information is not yet available.
+
+* Anonymous Methods
+===================
+
+In EmitAnonymousHelperClasses we set the "NeedThis" parameter of all
+the roots, but this is not necessary.  We should track the
+"HaveCapturedFields" on a per-ScopeInfo basis, and only set the
+HaveCapturedFields on the proper roots, instead of all the roots.
+
+
+
+===========================================
+
 * Value Parameter
 
 	I believe that `Value Parameter' might have been introduced
@@ -56,12 +78,6 @@ Null Type
 
 	This is what must be used to test for Null literals, instead of `is NullLiteral',
 	and this will introduce a couple of fixes to the rules.
-
-	Revert Martin's patch to Conditional expression that worked around this bug:
-
-		Reference r = xx ? null : null
-
-	The right fix is to introduce NullType
 
 ****************************************************************************************
 * 

@@ -808,7 +808,14 @@ namespace Mono.CSharp {
 			Method get_enumerator = new Method (
 				this, null, type, 0, false, name,
 				Parameters.EmptyReadOnlyParameters, null);
-			AddMethod (get_enumerator);
+
+			//
+			// We call append instead of add, as we need to make sure that
+			// this method is resolved after the MoveNext method, as that one
+			// triggers the computation of the AnonymousMethod Scope, which is
+			// required during the code generation of the enumerator
+			//
+			AppendMethod (get_enumerator);
 
 			get_enumerator.Block = new ToplevelBlock (
 				block, parameters, Location);
@@ -1023,6 +1030,11 @@ namespace Mono.CSharp {
 				get { return iterator; }
 			}
 
+			public void ComputeHost ()
+			{
+				ComputeMethodHost ();
+			}
+			
 			public override bool IsIterator {
 				get { return true; }
 			}
@@ -1055,6 +1067,7 @@ namespace Mono.CSharp {
 
 			protected override void DoEmit (EmitContext ec)
 			{
+				iterator.move_next_method.ComputeHost ();
 				ec.CurrentAnonymousMethod = iterator.move_next_method;
 				ec.InIterator = true;
 

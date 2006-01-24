@@ -1176,13 +1176,13 @@ formal_parameter_list
 
 		$$ = new Parameters (pars, true);
 	  }
-	| parameter_array COMMA fixed_parameters
+	| parameter_array COMMA error
 	  {
 		if ($1 != null)
 			Report.Error (231, ((Parameter) $1).Location, "A params parameter must be the last parameter in a formal parameter list");
 		$$ = null;
 	  }
-	| ARGLIST COMMA fixed_parameters
+	| ARGLIST COMMA error
 	  {
 		Report.Error (257, (Location) $1, "An __arglist parameter must be the last parameter in a formal parameter list");
 		$$ = null;
@@ -2743,6 +2743,7 @@ parenthesized_expression_0
 		// CLOSE_PARENS_CAST, CLOSE_PARENS_NO_CAST, CLOSE_PARENS_OPEN_PARENS
 		// or CLOSE_PARENS_MINUS.
 	  }
+	| OPEN_PARENS expression error { CheckToken (1026, yyToken, "Expecting ')'", lexer.Location); }
 	;
 
 parenthesized_expression
@@ -2757,7 +2758,7 @@ parenthesized_expression
 		// in Binary.DoResolve().
 		$$ = new ParenthesizedExpression ((Expression) $1);
 	  }
-	;;
+	;
 
 member_access
 	: primary_expression DOT IDENTIFIER
@@ -2777,15 +2778,12 @@ predefined_type
 	;
 
 invocation_expression
-	: primary_expression {
-		$$ = lexer.Location;
-	  } OPEN_PARENS opt_argument_list CLOSE_PARENS
+	: primary_expression OPEN_PARENS opt_argument_list CLOSE_PARENS
 	  {
-		if ($1 == null) {
-			Location l = (Location) $3;
-			Report.Error (1, l, "Parse error");
-		}
-		$$ = new Invocation ((Expression) $1, (ArrayList) $4);
+		if ($1 == null)
+			Report.Error (1, (Location) $2, "Parse error");
+	        else
+			$$ = new Invocation ((Expression) $1, (ArrayList) $3);
 	  }
 	| parenthesized_expression_0 CLOSE_PARENS_OPEN_PARENS OPEN_PARENS CLOSE_PARENS
 	  {
@@ -3853,10 +3851,7 @@ local_constant_declaration
 	;
 
 expression_statement
-	: statement_expression SEMICOLON
-	  {
-		$$ = $1;
-	  }
+	: statement_expression SEMICOLON { $$ = $1; }
 	;
 
 	//
@@ -3864,14 +3859,18 @@ expression_statement
 	// because statement_expression is used for example in for_statement
 	//
 statement_expression
-	: invocation_expression		{ $$ = new StatementExpression ((ExpressionStatement) $1); }
-	| object_creation_expression	{ $$ = new StatementExpression ((ExpressionStatement) $1); }
-	| assignment_expression		{ $$ = new StatementExpression ((ExpressionStatement) $1); }
-	| post_increment_expression	{ $$ = new StatementExpression ((ExpressionStatement) $1); }
-	| post_decrement_expression	{ $$ = new StatementExpression ((ExpressionStatement) $1); }
-	| pre_increment_expression	{ $$ = new StatementExpression ((ExpressionStatement) $1); }
-	| pre_decrement_expression	{ $$ = new StatementExpression ((ExpressionStatement) $1); }
-	| error {
+	: expression
+	  {
+		Expression expr = (Expression) $1;
+		ExpressionStatement s = expr as ExpressionStatement;
+		if (s == null) {
+			Report.Error (201, expr.Location, "Only assignment, call, increment, decrement, and new object expressions can be used as a statement");
+			$$ = null;
+		}
+		$$ = new StatementExpression (s);
+	  }
+	| error
+	  {
 		Report.Error (1002, GetLocation ($1), "Expecting `;'");
 		$$ = null;
 	  }
@@ -4886,6 +4885,7 @@ public CSharpParser (SeekableStreamReader reader, SourceFile file, ArrayList def
 
 public void parse ()
 {
+	int errors = Report.Errors;
 	try {
 		if (yacc_verbose_flag > 1)
 			yyparse (lexer, new yydebug.yyDebugSimple ());
@@ -4898,7 +4898,8 @@ public void parse ()
 		// Removed for production use, use parser verbose to get the output.
 		//
 		// Console.WriteLine (e);
-		Report.Error (-25, lexer.Location, "Parsing error");
+		if (Report.Errors == errors)
+			Report.Error (-25, lexer.Location, "Parsing error");
 		if (yacc_verbose_flag > 0)
 			Console.WriteLine (e);
 	}
@@ -4908,11 +4909,10 @@ public void parse ()
 
 void CheckToken (int error, int yyToken, string msg, Location loc)
 {
-	if (yyToken >= Token.FIRST_KEYWORD && yyToken <= Token.LAST_KEYWORD){
-		Report.Error (error, loc, String.Format ("{0}: `{1}' is a keyword", msg, yyNames [yyToken].ToLower ()));
-		return;
-	}		
-	Report.Error (error, loc, msg);
+	if (yyToken >= Token.FIRST_KEYWORD && yyToken <= Token.LAST_KEYWORD)
+		Report.Error (error, loc, "{0}: `{1}' is a keyword", msg, yyNames [yyToken].ToLower ());
+	else
+		Report.Error (error, loc, msg);
 }
 
 void CheckIdentifierToken (int yyToken, Location loc)

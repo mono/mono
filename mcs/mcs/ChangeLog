@@ -1,3 +1,131 @@
+2006-01-23  Miguel de Icaza  <miguel@novell.com>
+
+	A fix for bug: #76957
+	
+	* iterators.cs (MoveNextMethod.CreateMethodHost): call
+	ComputeMethodHost before creating the method, this is a new
+	requirement. 
+
+	* anonymous.cs (AnonymousContainer): Now we track all the scopes
+	that this method references (RegisterScope).  The actual scope
+	where the method is hosted is computed with the ComputeMethodHost
+	before we create the method.
+
+	Moved the Deepest routine here.
+
+	(AnonymousContainer.ComputeMethodHost): New routine used to
+	compute the proper ScopeInfo that will host the anonymous method.
+
+	(ScopeInfo): Deal with multiple roots.  The problem was that we
+	did not have a unique root where all ScopeInfos could be hanged
+	from.   Remove `topmost' ScopeInfo, and instead keep an arraylist
+	of roots.  
+
+	Remove AdjustMethodScope which is now computed at the end.  Remove
+	LinkScope which did a partial link, instead link all ScopeInfos
+	before code generation from the new "LinkScopes" routine. 
+
+	Simplify all the Add* routines as they no longer need to maintain
+	the tree, they just need to record that they are using variables
+	from a ScopeInfo.
+
+	(IsAncestor, GetAncestorScopes, GetParentScope, LinkScope): New
+	routines to produce the forest of ScopeInfo trees.
+
+	* class.cs (TypeContainer.AppendMethod): This is just like
+	AddMethod, but ensures that an interface implementation method
+	(IEnumerable.XXX) is not inserted at the beginning of the queue of
+	methods, but at the end.
+
+	We use this functionality to ensure that the generated MoveNext
+	method in the iterator class is resolved/emitted before the
+	enumerator methods created.   
+
+	This is required because the MoveNext method computes the right
+	ScopeInfo for the method.  And the other methods will eventually
+	need to resolve and fetch information computed from the anonymous
+	method. 
+
+2006-01-21  Raja R Harinath  <harinath@gmail.com>
+	    Carlos Alberto Cortez  <calberto.cortez@gmail.com>
+
+	Fix rest of #76995.
+	* namespace.cs (NamespaceEntry.UsingExternalAliases): Don't add to
+	the 'aliases' hash.
+	(NamespaceEntry.LookupAlias): Lookup 'extern_aliases' hash too.
+	(NamespaceEntry.VerifyUsing): Resolve external aliases too.
+
+2006-01-18  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #76656, cs0231-2.cs.
+	* cs-parser.jay (formal_parameter_list): Make error case catch
+	more issues.
+	(parenthesized_expression_0): Add CS1026 check.
+	(invocation_expression): Remove unused { $$ = lexer.Location }.
+
+2006-01-17  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #76824.
+	* cs-parser.jay (statement_expression): Don't list out the
+	individual statement-expressions.  Convert syntax error into
+	CS0201 check.
+
+2006-01-16  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #76874.
+	* ecore.cs (MemberAccess.CheckIntermediateModification): Remove.
+	(UnboxCast.DoResolveLValue): New.  Move CS0445 check from
+	CheckIntermediateModification.
+	(FieldExpr.DoResolve): Add new two-argument version that
+	allows us to resolve the InstanceExpression as an lvalue.
+	The one-argument variant is now just a wrapper.
+	(FieldExpr.DoResolveLValue): Use two-argument DoResolve.
+	Resolve the lhs as an lvalue if the it has a value type.
+	(FieldExpr.AssignToReadonly): Move CS1648 and CS1650 checks
+	from Assign.DoResolve.
+	(PropertyExpr.InstanceResolve): Allow InstanceExpression to be
+	resolved as an lvalue.
+	(PropertyExpr.DoResolve): Update.
+	(PropertyExpr.DoResolveLValue): Resolve the lhs as an lvalue if it
+	has a value type.  Move CS1612 check here from
+	CheckIntermediateModification.
+	* assign.cs (Assign.DoResolve): Remove CS1648 and CS1650 checks.
+	* expression.cs (EmptyExpression.OutAccess): New.  Used as the
+	'right_side' of a ResolveLValue on an 'out' argument.
+	(EmptyExpression.LValueMemberAccess): New.  Used as the
+	'right_side' of a propagated ResolveLValue on a value type.
+	(LocalVariableReference.DoResolveBase): Recognize
+	EmptyExpression.OutAccess and EmptyExpression.LValueMemberAccess.
+	Add CS1654 check.
+	(Argument.Resolve): Use EmptyExpression.OutAccess rather than
+	EmptyExpression.Null.
+
+2006-01-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* typemanager.cs : added IsGenericParameter(). In mcs it always
+	  return false.
+	* doc.cs : for generic parameters, use GenericParameterPosition,
+	  not FullName.
+
+2006-01-12  Ben Maurer  <bmaurer@andrew.cmu.edu>
+
+	* expression.cs: Fix Console.WriteLine ((this = x).foo);
+
+2006-01-12  Miguel de Icaza  <miguel@novell.com>
+
+	This fixes the problem where we used ldfld instead of ldflda to
+	load the "THIS" pointer on captured parameters, when THIS is a
+	value type.  See bug #77205.
+	
+	* iterators.cs (CapturedThisReference.Emit): Pass false to
+	EmitThis (we do not need the address).
+
+	* codegen.cs (EmitThis): it needs to know whether we need the
+	address of `this' or not.  This is used by value types.  
+
+	* expression.cs (This.AddressOf): Pass true to the EmitThis call,
+	every other call passes false.
+
 2006-01-12  Raja R Harinath  <rharinath@novell.com>
 
 	Fix #77221.

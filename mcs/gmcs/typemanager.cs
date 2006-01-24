@@ -2436,6 +2436,13 @@ public partial class TypeManager {
 		return target_list;
 	}
 
+	// This method always return false for non-generic compiler,
+	// while Type.IsGenericParameter is returned if it is supported.
+	public static bool IsGenericParameter (Type type)
+	{
+		return type.IsGenericParameter;
+	}
+
 #region MemberLookup implementation
 	
 	//

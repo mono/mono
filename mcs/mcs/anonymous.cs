@@ -50,18 +50,22 @@ namespace Mono.CSharp {
 		public Parameters amp;
 		protected bool unreachable;
 
+		// The method scope
+		ScopeInfo method_scope;
+		bool computed_method_scope = false;
+		
 		//
 		// The modifiers applied to the method, we aggregate them
 		//
 		protected int method_modifiers = Modifiers.PRIVATE;
 		
 		//
-		// During the resolve stage of the anonymous method body,
-		// we discover the actual scope where we are hosted, or
-		// null to host the method in the same class
+		// Track the scopes that this method has used.  At the
+		// end this is used to determine the ScopeInfo that will
+		// host the method
 		//
-		public ScopeInfo Scope;
-
+		ArrayList scopes_used = new ArrayList ();
+		
 		//
 		// Points to our container anonymous method if its present
 		//
@@ -109,6 +113,89 @@ namespace Mono.CSharp {
 			return this;
 		}
 
+		public void RegisterScope (ScopeInfo scope)
+		{
+			if (scopes_used.Contains (scope))
+				return;
+			scopes_used.Add (scope);
+		}
+
+		// Returns the deepest of two scopes
+		ScopeInfo Deepest (ScopeInfo a, ScopeInfo b)
+		{
+			ScopeInfo p;
+
+			if (a == null)
+				return b;
+			if (b == null)
+				return a;
+			if (a == b)
+				return a;
+
+			//
+			// If they Scopes are on the same CaptureContext, we do the double
+			// checks just so if there is an invariant change in the future,
+			// we get the exception at the end
+			//
+			for (p = a; p != null; p = p.ParentScope)
+				if (p == b)
+					return a;
+			
+			for (p = b; p != null; p = p.ParentScope)
+				if (p == a)
+					return b;
+
+			CaptureContext ca = a.CaptureContext;
+			CaptureContext cb = b.CaptureContext;
+
+			for (CaptureContext c = ca; c != null; c = c.ParentCaptureContext)
+				if (c == cb)
+					return a;
+
+			for (CaptureContext c = cb; c != null; c = c.ParentCaptureContext)
+				if (c == ca)
+					return b;
+			throw new Exception ("Should never be reached");
+		}
+
+		//
+		// Determines the proper host for a method considering the
+		// scopes it references
+		//
+		public void ComputeMethodHost ()
+		{
+			if (computed_method_scope)
+				return;
+			
+			method_scope = null;
+			int top = scopes_used.Count;
+			computed_method_scope = true;
+
+			if (top == 0)
+				return;
+			
+			method_scope = (ScopeInfo) scopes_used [0];
+			if (top == 1)
+				return;
+			
+			for (int i = 1; i < top; i++)
+				method_scope = Deepest (method_scope, (ScopeInfo) scopes_used [i]);
+		}
+
+		public ScopeInfo Scope {
+			get {
+				if (computed_method_scope)
+					return method_scope;
+
+				//
+				// This means that ComputeMethodHost is not being called, most
+				// likely by someone who overwrote the CreateMethodHost method
+				//
+				throw new Exception ("Internal error, AnonymousContainer.Scope is being used before its container is computed");
+			}
+		}
+		
+		
 		protected abstract bool CreateMethodHost (EmitContext ec);
 
 		public abstract void CreateScopeType (EmitContext ec, ScopeInfo scope);
@@ -140,20 +227,20 @@ namespace Mono.CSharp {
 		//
 		protected override bool CreateMethodHost (EmitContext ec)
 		{
+			ComputeMethodHost ();
+
 			//
 			// Crude hack follows: we replace the TypeBuilder during the
 			// definition to get the method hosted in the right class
 			//
-			
 			TypeBuilder current_type = ec.TypeContainer.TypeBuilder;
-			TypeBuilder type_host = (Scope == null ) // || Scope.ScopeTypeBuilder == null)
-				? current_type : Scope.ScopeTypeBuilder;
+			TypeBuilder type_host = (Scope == null ) ? current_type : Scope.ScopeTypeBuilder;
 
 			if (current_type == null)
 				throw new Exception ("The current_type is null");
 			
 			if (type_host == null)
-				throw new Exception (String.Format ("Type host is null, Scope is {0}", Scope == null ? "null" : "Not null"));
+				throw new Exception (String.Format ("Type host is null, method_host is {0}", Scope == null ? "null" : "Not null"));
 
 			if (current_type != type_host)
 				method_modifiers = Modifiers.INTERNAL;
@@ -468,7 +555,7 @@ namespace Mono.CSharp {
 			ScopeBlock = b;
 			id = count++;
 
-			cc.AddScope (this);
+			cc.RegisterCaptureContext ();
 		}
 
 		public void AddLocal (LocalInfo li)
@@ -742,10 +829,19 @@ namespace Mono.CSharp {
 		// Points to the toplevel block that owns this CaptureContext
 		//
 		ToplevelBlock toplevel_owner;
+
+		//
+		// All the scopes we capture
+		//
 		Hashtable scopes = new Hashtable ();
+
+		//
+		// All the root scopes
+		//
+		ArrayList roots = new ArrayList ();
+		
 		bool have_captured_vars = false;
 		bool referenced_this = false;
-		ScopeInfo topmost = null;
 
 		//
 		// Captured fields
@@ -809,60 +905,14 @@ namespace Mono.CSharp {
 			}
 		}
 
-		// Returns the deepest of two scopes
-		public ScopeInfo Deepest (ScopeInfo a, ScopeInfo b)
+		ScopeInfo GetScopeForBlock (Block block)
 		{
-			ScopeInfo p;
-
-			if (a == null)
-				return b;
-			if (b == null)
-				return a;
-			if (a == b)
-				return a;
-
-			//
-			// If they Scopes are on the same CaptureContext, we do the double
-			// checks just so if there is an invariant change in the future,
-			// we get the exception at the end
-			//
-			for (p = a; p != null; p = p.ParentScope)
-				if (p == b)
-					return a;
-			
-			for (p = b; p != null; p = p.ParentScope)
-				if (p == a)
-					return b;
-
-			CaptureContext ca = a.CaptureContext;
-			CaptureContext cb = b.CaptureContext;
-
-			for (CaptureContext c = ca; c != null; c = c.ParentCaptureContext)
-				if (c == cb)
-					return a;
-
-			for (CaptureContext c = cb; c != null; c = c.ParentCaptureContext)
-				if (c == ca)
-					return b;
-			throw new Exception ("Should never be reached");
-		}
-
-		void AdjustMethodScope (AnonymousContainer am, ScopeInfo scope)
-		{
-			am.Scope = Deepest (am.Scope, scope);
-		}
-
-		void LinkScope (ScopeInfo scope, int id)
-		{
-			ScopeInfo parent = (ScopeInfo) scopes [id];
-			if (parent == scope)
-				return;
-			
-			scope.ParentScope = parent;
-			parent.AddChild (scope);
-
-			if (scope == topmost)
-				topmost = parent;
+			ScopeInfo si = (ScopeInfo) scopes [block.ID];
+			if (si != null)
+				return si;
+			si = new ScopeInfo (this, block);
+			scopes [block.ID] = si;
+			return si;
 		}
 		
 		public void AddLocal (AnonymousContainer am, LocalInfo li)
@@ -871,48 +921,18 @@ namespace Mono.CSharp {
 				ParentCaptureContext.AddLocal (am, li);
 				return;
 			}
-			int block_id = li.Block.ID;
-			ScopeInfo scope;
-			if (scopes [block_id] == null){
-				scope = new ScopeInfo (this, li.Block);
-				scopes [block_id] = scope;
-			} else
-				scope = (ScopeInfo) scopes [block_id];
-
-			if (topmost == null){
-				topmost = scope;
-			} else {
-				// Link to parent
-
-				for (Block b = scope.ScopeBlock.Parent; b != null; b = b.Parent){
-					if (scopes [b.ID] != null){
-						LinkScope (scope, b.ID);
-						break;
-					}
-				}
-
-				if (scope.ParentScope == null && ParentCaptureContext != null){
-					CaptureContext pcc = ParentCaptureContext;
-					
-					for (Block b = am.ContainingBlock; b != null; b = b.Parent){
-						if (pcc.scopes [b.ID] != null){
-							pcc.LinkScope (scope, b.ID);
- 							break;
-						}
-					}
-				}
-			}
+			ScopeInfo scope = GetScopeForBlock (li.Block);
 
 			//
 			// Adjust the owner
 			//
 			if (Host != null)
-				AdjustMethodScope (Host, topmost);
+				Host.RegisterScope (scope);
 
 			//
 			// Adjust the user
 			//
-			AdjustMethodScope (am, scope);
+			am.RegisterScope (scope);
 			
 			if (captured_variables [li] != null)
 				return;
@@ -967,32 +987,9 @@ namespace Mono.CSharp {
 			if (captured_parameters [name] == null)
 				captured_parameters [name] = new CapturedParameter (t, idx);
 
-			if (topmost == null){
-				//
-				// Create one ScopeInfo, if there are none.
-				//
-				topmost = new ScopeInfo (this, toplevel_owner);
-				scopes [toplevel_owner.ID] = topmost;
-			} else {
-				//
-				// If the topmost ScopeInfo is not at the topblock level, insert
-				// a new ScopeInfo there.
-				//
-				// FIXME: This code probably should be evolved to be like the code
-				// in AddLocal
-				//
-				if (topmost.ScopeBlock != toplevel_owner){
-					ScopeInfo par_si = new ScopeInfo (this, toplevel_owner);
-					ScopeInfo old_top = topmost;
-					scopes [toplevel_owner.ID] = topmost;
-					topmost.ParentScope = par_si;
-					topmost = par_si;
-					topmost.AddChild (old_top);
-				}
-			}
-			
-			topmost.HostsParameters = true;
-			AdjustMethodScope (am, topmost);
+			ScopeInfo scope = GetScopeForBlock (toplevel_owner);
+			scope.HostsParameters = true;
+			am.RegisterScope (scope);
 		}
 
 		//
@@ -1009,19 +1006,14 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			if (topmost == null){
-				//
-				// Create one ScopeInfo, if there are none.
-				//
-				topmost = new ScopeInfo (this, toplevel_owner);
-				scopes [toplevel_owner.ID] = topmost;
-			}
-			
-			AdjustMethodScope (am, topmost);
+			ScopeInfo scope = GetScopeForBlock (toplevel_owner);
+			am.RegisterScope (scope);
 		}
 
 		public void CaptureThis (AnonymousContainer am)
 		{
+			if (am == null)
+				throw new Exception ("Internal Compiler error: Capturethis called with a null method");
 			CaptureContext parent = ParentCaptureContext;
 			if (parent != null) {
 				parent.CaptureThis (am);
@@ -1029,15 +1021,8 @@ namespace Mono.CSharp {
 			}
 			referenced_this = true;
 
-			if (topmost == null){
-				//
-				// Create one ScopeInfo, if there are none.
-				//
-				topmost = new ScopeInfo (this, toplevel_owner);
-				scopes [toplevel_owner.ID] = topmost;
-			
-				AdjustMethodScope (am, topmost);
-			}
+			ScopeInfo scope = GetScopeForBlock (toplevel_owner);
+			am.RegisterScope (scope);
 		}
 
 		public bool HaveCapturedVariables {
@@ -1079,26 +1064,36 @@ namespace Mono.CSharp {
 
 		public void EmitAnonymousHelperClasses (EmitContext ec)
 		{
-			if (topmost != null){
-				topmost.NeedThis = HaveCapturedFields || referenced_this;
-				topmost.EmitScopeType (ec);
+			if (roots.Count != 0){
+				foreach (ScopeInfo root in roots){
+					//
+					// FIXME: We really should do this in a per-ScopeInfo
+					// basis, instead of having the NeedThis applied to
+					// all of the roots.
+					//
+					root.NeedThis = HaveCapturedFields || referenced_this;
+					
+					root.EmitScopeType (ec);
+				}
 			} 
 		}
 
 		public void CloseAnonymousHelperClasses ()
 		{
-			if (topmost != null)
-				topmost.CloseTypes ();
+			if (roots.Count != 0)
+				foreach (ScopeInfo root in roots)
+					root.CloseTypes ();
 		}
 
 		public void EmitInitScope (EmitContext ec)
 		{
 			EmitAnonymousHelperClasses (ec);
-			if (topmost != null)
-				topmost.EmitInitScope (ec);
+			if (roots.Count != 0)
+				foreach (ScopeInfo root in roots)
+					root.EmitInitScope (ec);
 		}
 
-		ScopeInfo GetScopeFromBlock (EmitContext ec, Block b)
+		ScopeInfo EmitGetScopeFromBlock (EmitContext ec, Block b)
 		{
 			ScopeInfo si;
 			
@@ -1121,7 +1116,7 @@ namespace Mono.CSharp {
 			ScopeInfo si;
 
 			if (li.Block.Toplevel == toplevel_owner){
-				si = GetScopeFromBlock (ec, li.Block);
+				si = EmitGetScopeFromBlock (ec, li.Block);
 				si.EmitScopeInstance (ig);
 				return;
 			}
@@ -1175,7 +1170,7 @@ namespace Mono.CSharp {
 			ScopeInfo si;
 
 			if (ec.CurrentBlock.Toplevel == toplevel_owner) {
-				si = GetScopeFromBlock (ec, toplevel_owner);
+				si = EmitGetScopeFromBlock (ec, toplevel_owner);
 				si.EmitScopeInstance (ig);
 			} else {
 				si = ec.CurrentAnonymousMethod.Scope;
@@ -1282,39 +1277,136 @@ namespace Mono.CSharp {
 			si.EmitScopeInstance (ig);
 		}
 
-		ArrayList all_scopes = new ArrayList ();
-		
-		public void AddScope (ScopeInfo si)
+		public void RegisterCaptureContext ()
 		{
-			all_scopes.Add (si);
 			toplevel_owner.RegisterCaptureContext (this);
 		}
 
 		//
-		// Links any scopes that were not linked previously
+		// Returs true if `probe' is an ancestor of `scope' in the 
+		// scope chain
 		//
-		public void AdjustScopes ()
+		bool IsAncestor (ScopeInfo probe, ScopeInfo scope)
 		{
-			foreach (ScopeInfo scope in all_scopes){
-				if (scope.ParentScope != null)
-					continue;
+			for (Block b = scope.ScopeBlock.Parent; b != null; b = b.Parent){
+				if (probe.ScopeBlock == b)
+					return true;
+			}
+			return false;
+		}
 
-				for (Block b = scope.ScopeBlock.Parent; b != null; b = b.Parent){
-					if (scopes [b.ID] != null){
-						LinkScope (scope, b.ID);
-						break;
+		//
+		// Returns an ArrayList of ScopeInfos that enumerates all the ancestors
+		// of `scope' found in `scope_list'.
+		//
+		// The value returned is either a ScopeInfo or an Arraylist of ScopeInfos
+		//
+		object GetAncestorScopes (ScopeInfo scope, ScopeInfo [] scope_list)
+		{
+			object ancestors = null;
+			
+			for (int i = 0; i < scope_list.Length; i++){
+				// Ignore the same scope
+				if (scope_list [i] == scope)
+					continue;
+				
+				if (IsAncestor (scope_list [i], scope)){
+					if (ancestors == null){
+						ancestors = scope_list [i];
+						continue;
 					}
+					
+					if (ancestors is ScopeInfo){
+						object old = ancestors;
+						ancestors = new ArrayList (4);
+						((ArrayList)ancestors).Add (old);
+					} 
+					
+					((ArrayList)ancestors).Add (scope_list [i]);
+				}
+			}
+			return ancestors;
+		}
+
+		//
+		// Returns the immediate parent of `scope' from all the captured
+		// scopes found in `scope_list', or null if this is a toplevel scope.
+		//
+		ScopeInfo GetParentScope (ScopeInfo scope, ScopeInfo [] scope_list)
+		{
+			object ancestors = GetAncestorScopes (scope, scope_list);
+			if (ancestors == null)
+				return null;
+
+			// Single match, thats the parent.
+			if (ancestors is ScopeInfo)
+				return (ScopeInfo) ancestors;
+
+			ArrayList candidates = (ArrayList) ancestors;
+			ScopeInfo parent = (ScopeInfo) candidates [0];
+			for (int i = 1; i < candidates.Count; i++){
+				if (IsAncestor (parent, (ScopeInfo) candidates [i]))
+					parent = (ScopeInfo) candidates [i];
+			}
+			return parent;
+		}
+		
+		//
+		// Links all the scopes
+		//
+		bool linked;
+		public void LinkScopes ()
+		{
+			if (linked)
+				return;
+			
+			linked = true;
+			if (ParentCaptureContext != null)
+				ParentCaptureContext.LinkScopes ();
+
+			int scope_count = scopes.Keys.Count;
+			ScopeInfo [] scope_list = new ScopeInfo [scope_count];
+			scopes.Values.CopyTo (scope_list, 0);
+
+			for (int i = 0; i < scope_count; i++){
+				ScopeInfo parent = GetParentScope (scope_list [i], scope_list);
+
+				if (parent == null){
+					roots.Add (scope_list [i]);
+					continue;
 				}
 
-				if (scope.ParentScope == null && ParentCaptureContext != null){
-					CaptureContext pcc = ParentCaptureContext;
+				scope_list [i].ParentScope = parent;
+				parent.AddChild (scope_list [i]);
+			}
+
+			//
+			// Link the roots to their parent containers if any.
+			//
+			if (ParentCaptureContext != null && roots.Count != 0){
+				ScopeInfo one_root = (ScopeInfo) roots [0];
+				bool found = false;
+				
+				foreach (ScopeInfo a_parent_root in ParentCaptureContext.roots){
+					if (!IsAncestor (a_parent_root, one_root))
+						continue;
+
+					found = true;
 					
-					for (Block b = Host.ContainingBlock; b != null; b = b.Parent){
-						if (pcc.scopes [b.ID] != null){
-							pcc.LinkScope (scope, b.ID);
- 							break;
-						}
+					// Found, link all the roots to this root
+					foreach (ScopeInfo root in roots){
+						root.ParentScope = a_parent_root;
+						a_parent_root.AddChild (root);
 					}
+					break;
+				}
+				if (!found){
+					//
+					// This is to catch a condition in which it is
+					// not possible to determine the containing ScopeInfo
+					// from an encapsulating CaptureContext
+					//
+					throw new Exception ("Internal compiler error: Did not find the parent for the root in the chain");
 				}
 			}
 		}
