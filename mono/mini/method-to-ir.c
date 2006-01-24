@@ -3716,27 +3716,13 @@ mono_save_args (MonoCompile *cfg, MonoMethodSignature *sig, MonoInst **sp, MonoI
 
 	g_assert (!MONO_TYPE_ISSTRUCT (sig->ret));
 
-	if (!sig->hasthis && sig->param_count == 0) 
-		return;
+	for (i = 0; i < sig->param_count + sig->hasthis; ++i) {
+		MonoType *argtype = (sig->hasthis && (i == 0)) ? type_from_stack_type (*sp) : sig->params [i - sig->hasthis];
 
-	if (sig->hasthis) {
 		if (sp [0]->opcode == OP_ICONST) {
 			*args++ = sp [0];
 		} else {
-			temp = mono_compile_create_var (cfg, type_from_stack_type (*sp), OP_LOCAL);
-			*args++ = temp;
-			NEW_TEMPSTORE (cfg, store, temp->inst_c0, *sp);
-			store->cil_code = sp [0]->cil_code;
-			MONO_ADD_INS (cfg->cbb, store);
-		}
-		sp++;
-	}
-
-	for (i = 0; i < sig->param_count; ++i) {
-		if (sp [0]->opcode == OP_ICONST) {
-			*args++ = sp [0];
-		} else {
-			temp = mono_compile_create_var (cfg, sig->params [i], OP_LOCAL);
+			temp = mono_compile_create_var (cfg, argtype, OP_LOCAL);
 			*args++ = temp;
 			NEW_TEMPSTORE (cfg, store, temp->inst_c0, *sp);
 			store->cil_code = sp [0]->cil_code;
@@ -3752,8 +3738,8 @@ mono_save_args (MonoCompile *cfg, MonoMethodSignature *sig, MonoInst **sp, MonoI
 }
 
 static int
-inline_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoBasicBlock *bblock, MonoInst **sp,
-		guchar *ip, guint real_offset, GList *dont_inline, MonoBasicBlock **last_b, gboolean inline_allways)
+inline_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **sp,
+		guchar *ip, guint real_offset, GList *dont_inline, gboolean inline_allways)
 {
 	MonoInst *ins, *rvar = NULL;
 	MonoMethodHeader *cheader;
@@ -3811,11 +3797,11 @@ inline_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig,
 
 		/* always add some code to avoid block split failures */
 		MONO_INST_NEW (cfg, ins, OP_NOP);
-		MONO_ADD_INS (bblock, ins);
+		MONO_ADD_INS (prev_cbb, ins);
 		ins->cil_code = ip;
 
-		bblock->next_bb = sbblock;
-		link_bblock (cfg, bblock, sbblock);
+		prev_cbb->next_bb = sbblock;
+		link_bblock (cfg, prev_cbb, sbblock);
 
 		cfg->cbb = ebblock;
 
@@ -3827,7 +3813,6 @@ inline_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig,
 				MONO_ADD_INS (cfg->cbb, ins);
 			*sp++ = ins;
 		}
-		*last_b = ebblock;
 		return costs + 1;
 	} else {
 		if (cfg->verbose_level > 2)
@@ -5870,7 +5855,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			    mono_method_check_inlining (cfg, cmethod) &&
 				 !g_list_find (dont_inline, cmethod)) {
 				int costs;
-				MonoBasicBlock *ebblock;
 				gboolean allways = FALSE;
 
 				if ((cmethod->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL) ||
@@ -5879,21 +5863,14 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 					allways = TRUE;
 				}
 
- 				if ((costs = inline_method (cfg, cmethod, fsig, bblock, sp, ip, cfg->real_offset, dont_inline, &ebblock, allways))) {
+ 				if ((costs = inline_method (cfg, cmethod, fsig, sp, ip, cfg->real_offset, dont_inline, allways))) {
 					ip += 5;
 					cfg->real_offset += 5;
-
-					GET_BBLOCK (cfg, bbhash, bblock, ip);
-					ebblock->next_bb = bblock;
-					link_bblock (cfg, ebblock, bblock);
+					bblock = cfg->cbb;
 
  					if (!MONO_TYPE_IS_VOID (fsig->ret))
 						/* *sp is already set by inline_method */
  						sp++;
-
-					/* indicates start of a new block, and triggers a load of all 
-					   stack arguments at bb boundarie */
-					bblock = ebblock;
 
 					inline_costs += costs;
 					break;
@@ -6739,18 +6716,10 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				    !mono_class_is_subclass_of (cmethod->klass, mono_defaults.exception_class, FALSE) &&
 				    !g_list_find (dont_inline, cmethod)) {
 					int costs;
-					MonoBasicBlock *ebblock;
 
-					if ((costs = inline_method (cfg, cmethod, fsig, bblock, sp, ip, cfg->real_offset, dont_inline, &ebblock, FALSE))) {
+					if ((costs = inline_method (cfg, cmethod, fsig, sp, ip, cfg->real_offset, dont_inline, FALSE))) {
 						cfg->real_offset += 5;
-
-						GET_BBLOCK (cfg, bbhash, bblock, ip);
-						ebblock->next_bb = bblock;
-						link_bblock (cfg, ebblock, bblock);
-
-						/* indicates start of a new block, and triggers a load 
-						   of all stack arguments at bb boundarie */
-						bblock = ebblock;
+						bblock = cfg->cbb;
 
 						inline_costs += costs - 5;
 					} else {
@@ -6792,29 +6761,21 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				
 				MonoMethod *mono_castclass;
 				MonoInst *iargs [1];
-				MonoBasicBlock *ebblock;
 				int costs;
 
-				handle_stack_args (cfg, stack_start, (sp + 1) - stack_start);
-				
 				mono_castclass = mono_marshal_get_castclass (klass); 
 				iargs [0] = sp [0];
 				
-				costs = inline_method (cfg, mono_castclass, mono_method_signature (mono_castclass), bblock, 
-							   iargs, ip, cfg->real_offset, dont_inline, &ebblock, TRUE);
-			
+				costs = inline_method (cfg, mono_castclass, mono_method_signature (mono_castclass), 
+							   iargs, ip, cfg->real_offset, dont_inline, TRUE);			
 				g_assert (costs > 0);
 				
 				ip += 5;
 				cfg->real_offset += 5;
-			
-				GET_BBLOCK (cfg, bbhash, bblock, ip);
-				ebblock->next_bb = bblock;
-				link_bblock (cfg, ebblock, bblock);
+				bblock = cfg->cbb;
 
  				*sp++ = iargs [0];
-				bblock = ebblock;
-				cfg->cbb = bblock;
+
 				inline_costs += costs;
 			}
 			else {
@@ -6840,30 +6801,20 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			
 				MonoMethod *mono_isinst;
 				MonoInst *iargs [1];
-				MonoBasicBlock *ebblock;
 				int costs;
-
-				handle_stack_args (cfg, stack_start, (sp + 1) - stack_start);
 
 				mono_isinst = mono_marshal_get_isinst (klass); 
 				iargs [0] = sp [0];
 
-				costs = inline_method (cfg, mono_isinst, mono_method_signature (mono_isinst), bblock, 
-							   iargs, ip, cfg->real_offset, dont_inline, &ebblock, TRUE);
-			
+				costs = inline_method (cfg, mono_isinst, mono_method_signature (mono_isinst), 
+							   iargs, ip, cfg->real_offset, dont_inline, TRUE);			
 				g_assert (costs > 0);
 				
 				ip += 5;
 				cfg->real_offset += 5;
-			
-				GET_BBLOCK (cfg, bbhash, bblock, ip);
-				ebblock->next_bb = bblock;
-				link_bblock (cfg, ebblock, bblock);
+				bblock = cfg->cbb;
 
 				*sp++= iargs [0];
-
-				bblock = ebblock;
-				cfg->cbb = bblock;
 
 				inline_costs += costs;
 			}
@@ -6889,29 +6840,21 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				
 					MonoMethod *mono_castclass;
 					MonoInst *iargs [1];
-					MonoBasicBlock *ebblock;
 					int costs;
 
-					handle_stack_args (cfg, stack_start, (sp + 1) - stack_start);
-				
 					mono_castclass = mono_marshal_get_castclass (klass); 
 					iargs [0] = sp [0];
 
-					costs = inline_method (cfg, mono_castclass, mono_method_signature (mono_castclass), bblock, 
-										   iargs, ip, cfg->real_offset, dont_inline, &ebblock, TRUE);
+					costs = inline_method (cfg, mono_castclass, mono_method_signature (mono_castclass), 
+										   iargs, ip, cfg->real_offset, dont_inline, TRUE);
 			
 					g_assert (costs > 0);
 				
 					ip += 5;
 					cfg->real_offset += 5;
-			
-					GET_BBLOCK (cfg, bbhash, bblock, ip);
-					ebblock->next_bb = bblock;
-					link_bblock (cfg, ebblock, bblock);
+					bblock = cfg->cbb;
 
 					*sp++ = iargs [0];
-					bblock = ebblock;
-					cfg->cbb = bblock;
 					inline_costs += costs;
 				}
 				else {
@@ -7003,7 +6946,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 		case CEE_LDFLDA:
 		case CEE_STFLD: {
 			MonoClassField *field;
-			MonoBasicBlock *ebblock;
 			int costs;
 			guint foffset;
 
@@ -7045,24 +6987,13 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 
 					/* FIXME: Remove the restriction */
 					if ((cfg->opt & MONO_OPT_INLINE) && !MONO_TYPE_ISSTRUCT (field->type)) {
-						handle_stack_args (cfg, stack_start, (sp + 2) - stack_start);
-						iargs [0] = sp [0];
-						iargs [4] = sp [1];
-
-						costs = inline_method (cfg, stfld_wrapper, mono_method_signature (stfld_wrapper), bblock, 
-								       iargs, ip, cfg->real_offset, dont_inline, &ebblock, TRUE);
+						costs = inline_method (cfg, stfld_wrapper, mono_method_signature (stfld_wrapper), 
+								       iargs, ip, cfg->real_offset, dont_inline, TRUE);
 						g_assert (costs > 0);
 						      
 						ip += 5;
 						cfg->real_offset += 5;
-
-						GET_BBLOCK (cfg, bbhash, bblock, ip);
-						ebblock->next_bb = bblock;
-						link_bblock (cfg, ebblock, bblock);
-
-						/* indicates start of a new block, and triggers a load 
-						   of all stack arguments at bb boundarie */
-						bblock = ebblock;
+						bblock = cfg->cbb;
 
 						inline_costs += costs;
 						break;
@@ -7098,26 +7029,16 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				EMIT_NEW_FIELDCONST (cfg, iargs [2], field);
 				EMIT_NEW_ICONST (cfg, iargs [3], klass->valuetype ? field->offset - sizeof (MonoObject) : field->offset);
 				if ((cfg->opt & MONO_OPT_INLINE) && !MONO_TYPE_ISSTRUCT (mono_method_signature (wrapper)->ret)) {
-					handle_stack_args (cfg, stack_start, (sp + 1) - stack_start);
-					iargs [0] = sp [0];
-
-					costs = inline_method (cfg, wrapper, mono_method_signature (wrapper), bblock, 
-										   iargs, ip, cfg->real_offset, dont_inline, &ebblock, TRUE);
+					costs = inline_method (cfg, wrapper, mono_method_signature (wrapper), 
+										   iargs, ip, cfg->real_offset, dont_inline, TRUE);
+					bblock = cfg->cbb;
 					g_assert (costs > 0);
 						      
 					ip += 5;
 					cfg->real_offset += 5;
 
-					GET_BBLOCK (cfg, bbhash, bblock, ip);
-					ebblock->next_bb = bblock;
-					link_bblock (cfg, ebblock, bblock);
-
 					*sp++ = iargs [0];
 
-					/* indicates start of a new block, and triggers a load of
-					   all stack arguments at bb boundarie */
-					bblock = ebblock;
-						
 					inline_costs += costs;
 					break;
 				} else {
@@ -9186,7 +9107,10 @@ mono_spill_global_vars (MonoCompile *cfg)
  *   deadce can eliminate a lot of code, decreasing costs.
  * - use vregs for bb->out_stacks if possible, handle_global_vreg will make them a
  *   variable if needed.
- * - cleanup inlining code and uses of it.
+ * - do not start a new IL level bblock when cfg->cbb is changed by a function call
+ *   like inline_method.
+ * - remove inlining restrictions
+ * - remove mono_save_args.
  * - spill_global_vars does not play nicely with the fp stack (loads are inserted at
  *   the wrong place).
  * - LAST MERGE: 55797
