@@ -1,3 +1,9 @@
+2006-01-24 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ListControl.cs: bound checking for Items when loading the control
+	state, as the number might have been changed on the fly. Patch by
+	Elliott Draper.
+
 2006-01-22  Chris Toshok  <toshok@ximian.com>
 
 	* CheckBox.cs: s/GetPostBackClientEvent/GetPostBackEventReference.
