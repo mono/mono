@@ -322,7 +322,7 @@ namespace System.Text {
 				InternalEnsureCapacity (needed_cap);
 			
 			String.InternalStrcpy (_str, _length, value);
-			_length += value.Length;
+			_length = needed_cap;
 
 			return this;
 		} 
@@ -343,7 +343,7 @@ namespace System.Text {
 				InternalEnsureCapacity (needed_cap);
 
 			String.InternalStrcpy (_str, _length, value);
-			_length += value.Length;
+			_length = needed_cap;
 			return this;
 		}
 
@@ -413,7 +413,7 @@ namespace System.Text {
 				InternalEnsureCapacity (needed_cap);
 
 			_str.InternalSetChar(_length, value);
-			_length++;
+			_length = needed_cap;
 
 			return this;
 		}
@@ -443,11 +443,11 @@ namespace System.Text {
 			if ((charCount < 0 || startIndex < 0) || (startIndex > value.Length - charCount)) 
 				throw new ArgumentOutOfRangeException();
 			
-			
-			InternalEnsureCapacity (_length + charCount);
+			int needed_cap = _length + charCount;
+			InternalEnsureCapacity (needed_cap);
 
 			String.InternalStrcpy (_str, _length, value, startIndex, charCount);
-			_length += charCount;
+			_length = needed_cap;
 
 			return this;
 		}
@@ -470,7 +470,7 @@ namespace System.Text {
 
 			String.InternalStrcpy (_str, _length, value, startIndex, count);
 			
-			_length += count;
+			_length = needed_cap;
 
 			return this;
 		}
