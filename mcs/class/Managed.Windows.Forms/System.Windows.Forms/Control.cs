@@ -1480,11 +1480,11 @@ namespace System.Windows.Forms
 			get {
 				Control	parent;
 
-				if (!GetStyle(ControlStyles.Selectable) || this.parent == null) {
+				if (!GetStyle(ControlStyles.Selectable)) {
 					return false;
 				}
 
-				parent = this.parent;
+				parent = this;
 				while (parent != null) {
 					if (!parent.is_visible || !parent.is_enabled) {
 						return false;
