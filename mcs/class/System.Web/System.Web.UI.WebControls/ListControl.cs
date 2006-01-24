@@ -331,8 +331,11 @@ namespace System.Web.UI.WebControls {
 			base.LoadControlState (first);
 
 			if (indices != null) {
-				foreach (int index in indices)
-					Items [index].Selected = true;
+				int count = Items.Count;
+				foreach (int index in indices) {
+					if (index >= 0 && index < count)
+						Items [index].Selected = true;
+				}
 			}
 		}
 #endif		
