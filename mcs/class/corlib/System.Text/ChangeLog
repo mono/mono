@@ -1,5 +1,10 @@
 2006-01-24  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* UTF8Encoding.cs : reverted the previous change. Looks like it broke
+	  the build.
+
+2006-01-24  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* UTF8Encoding.cs : InternalGetCharCount() optimization: fast path
 	  for ASCII range.
 

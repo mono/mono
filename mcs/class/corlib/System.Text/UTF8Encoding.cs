@@ -394,14 +394,6 @@ public class UTF8Encoding : Encoding
 			throw new ArgumentOutOfRangeException ("count", _("ArgRange_Array"));
 		}
 
-		// fast path for ASCII range
-		for (int end = index + count; index < end; count--) {
-			if (bytes [index] < 0x80)
-				index++;
-			else
-				break;
-		}
-
 		// Determine the number of characters that we have.
 		uint ch;
 		int length = 0;
