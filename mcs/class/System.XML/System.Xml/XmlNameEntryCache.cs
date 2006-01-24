@@ -35,9 +35,9 @@ namespace System.Xml
 {
 	internal class XmlNameEntryCache
 	{
-		ArrayList list = new ArrayList ();
-		int insertAt = 0;
+		Hashtable table = new Hashtable ();
 		XmlNameTable nameTable;
+		XmlNameEntry dummy = new XmlNameEntry (String.Empty, String.Empty, String.Empty);
 
 		public XmlNameEntryCache (XmlNameTable nameTable)
 		{
@@ -47,19 +47,15 @@ namespace System.Xml
 		public XmlNameEntry Add (string prefix, string local, string ns,
 			bool atomic)
 		{
-			XmlNameEntry e = GetInternal (prefix, local, ns, atomic);
+			if (!atomic) {
+				prefix = nameTable.Add (prefix);
+				local = nameTable.Add (local);
+				ns = nameTable.Add (ns);
+			}
+			XmlNameEntry e = GetInternal (prefix, local, ns, true);
 			if (e == null) {
-				if (!atomic) {
-					prefix = nameTable.Add (prefix);
-					local = nameTable.Add (local);
-					ns = nameTable.Add (ns);
-				}
 				e = new XmlNameEntry (prefix, local, ns);
-				if (list.Count < 1000)
-					list.Add (e);
-				if (insertAt == 1000)
-					insertAt = 0;
-				list [insertAt++] = e;
+				table [e] = e;
 			}
 			return e;
 		}
@@ -80,17 +76,9 @@ namespace System.Xml
 				    nameTable.Get (ns) == null)
 					return null;
 			}
-			int hash = prefix.GetHashCode () + local.GetHashCode () + ns.GetHashCode ();
+			dummy.Update (prefix, local, ns);
 
-			for (int i = 0; i < list.Count; i++) {
-				XmlNameEntry e = (XmlNameEntry) list [i];
-				if (e.Hash == hash &&
-					Object.ReferenceEquals (e.Prefix, prefix) &&
-					Object.ReferenceEquals (e.LocalName, local) &&
-					Object.ReferenceEquals (e.NS, ns))
-					return e;
-			}
-			return null;
+			return table [dummy] as XmlNameEntry;
 		}
 	}
 }

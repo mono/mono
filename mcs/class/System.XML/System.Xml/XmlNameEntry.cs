@@ -37,15 +37,34 @@ namespace System.Xml
 	{
 		public XmlNameEntry (string prefix, string local, string ns)
 		{
+			Update (prefix, local, ns);
+		}
+
+		public void Update (string prefix, string local, string ns)
+		{
 			Prefix = prefix;
 			LocalName = local;
 			NS = ns;
 			Hash = prefix.GetHashCode () + local.GetHashCode () + ns.GetHashCode ();
 		}
 
-		public readonly string Prefix;
-		public readonly string LocalName;
-		public readonly string NS;
-		public readonly int Hash;
+		public string Prefix;
+		public string LocalName;
+		public string NS;
+		public int Hash;
+
+		public override bool Equals (object other)
+		{
+			XmlNameEntry e = other as XmlNameEntry;
+			return e != null && e.Hash == Hash &&
+				Object.ReferenceEquals (e.LocalName, LocalName) &&
+				Object.ReferenceEquals (e.NS, NS) &&
+				Object.ReferenceEquals (e.Prefix, Prefix);
+		}
+
+		public override int GetHashCode ()
+		{
+			return Hash;
+		}
 	}
 }

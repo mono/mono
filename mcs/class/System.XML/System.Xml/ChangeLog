@@ -1,5 +1,13 @@
 2006-01-24  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlNameEntryCache.cs XmlNameEntry.cs :
+	  Made name entry fields as not read-only. Added Update() to reset
+	  members. Its semantics of Equals() is changed.
+	  Now entry cache is based on Hashtable rather than ArrayList.
+	  It saves heavy iteration in ArrayList.
+
+2006-01-24  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlNameEntryCache.cs XmlNameEntry.cs XmlDocument.cs :
 	  Add Hash field to find name entry quickly.
 	  In XmlNameEntryCache make use of name table (it is totally
