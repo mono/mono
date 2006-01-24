@@ -44,12 +44,36 @@ namespace System.Web.Hosting {
 		readonly HttpServletRequest _HttpServletRequest;
 		readonly HttpServletResponse _HttpServletResponse;
 
+		readonly string _requestUri;
+		readonly string _pathInfo;
+
 		static readonly StringDictionary _srvVarsToHeaderMap;
 
 		private string [][] unknownHeaders;
+		string _rawUrl;
 
 		private HttpWorkerRequest.EndOfSendNotification _endOfSendCallback;
 		private object _endOfSendArgs;
+
+		enum KnownServerVariable {
+			AUTH_TYPE,
+			CONTENT_LENGTH,
+			CONTENT_TYPE,
+			QUERY_STRING,
+			REMOTE_ADDR,
+			REMOTE_HOST,
+			REMOTE_USER,
+			REQUEST_METHOD,
+			REQUEST_URI,
+			SCRIPT_NAME,
+			SERVER_NAME,
+			SERVER_PORT,
+			SERVER_PROTOCOL,
+			SERVER_SOFTWARE,
+			PATH_INFO
+		};
+
+		static readonly string[] KnownServerVariableNames = Enum.GetNames(typeof(KnownServerVariable));
 
 		static ServletWorkerRequest() {
 			_srvVarsToHeaderMap = new StringDictionary();
@@ -67,6 +91,19 @@ namespace System.Web.Hosting {
 			_HttpServlet = servlet;
 			_HttpServletRequest = req;
 			_HttpServletResponse = resp;
+
+			string requestUri = req.getRequestURI();
+			const int dotInvokeLength = 7; //".invoke".Length
+			if (requestUri.Length > dotInvokeLength &&
+				String.CompareOrdinal(".invoke", 0, requestUri, 
+				requestUri.Length - dotInvokeLength, dotInvokeLength) == 0) {
+				
+				_requestUri = requestUri.Substring(0, requestUri.Length - dotInvokeLength);
+
+				int paramNameStart = requestUri.LastIndexOf('/');
+				_pathInfo = requestUri.Substring(paramNameStart,
+					requestUri.Length - paramNameStart - dotInvokeLength);
+			}
 		}
 
 		public HttpServlet Servlet {
@@ -156,7 +193,7 @@ namespace System.Web.Hosting {
 		}
 
 		public override string GetPathInfo () {
-			return _HttpServletRequest.getPathInfo();
+			return _pathInfo != null ? _pathInfo : _HttpServletRequest.getPathInfo();
 		}
 
 		public override string GetQueryString () {
@@ -164,7 +201,30 @@ namespace System.Web.Hosting {
 		}
 
 		public override string GetRawUrl () {
-			return _HttpServletRequest.getRequestURL().ToString();
+			if (_rawUrl == null) {
+				StringBuilder builder = new StringBuilder();
+				builder.Append(GetProtocol());
+				builder.Append("://");
+				builder.Append(GetServerName());
+				int port = _HttpServletRequest.getServerPort();
+				if (port != 80) {
+					builder.Append(':');
+					builder.Append(port);
+				}
+				builder.Append(GetUriPath());
+				string pathInfo = GetPathInfo();
+				if (pathInfo != null)
+					builder.Append(pathInfo);
+				string query = GetQueryString();
+				if (query != null && query.Length > 0) {
+					builder.Append('?');
+					builder.Append(query);
+				}
+
+				_rawUrl = builder.ToString();
+			}
+
+			return _rawUrl;
 		}
 
 		public override string GetRemoteAddress() {
@@ -194,35 +254,42 @@ namespace System.Web.Hosting {
 			// which associates between the two. Pay a special attention on GetUnknownRequestHeader/s
 			// while implementing. Ensure that system web "common" code correctly calls each method.
 
-			
-			string upperName = name.ToUpper();
 			string headerName = _srvVarsToHeaderMap[name];
 
 			if (headerName != null)
 				return _HttpServletRequest.getHeader( headerName );
 
-			switch (name.ToUpper(CultureInfo.InvariantCulture)) {
-				case "AUTH_TYPE" : return _HttpServletRequest.getAuthType();
-				case "CONTENT_LENGTH" : return Convert.ToString(_HttpServletRequest.getContentLength());
-				case "CONTENT_TYPE" : return _HttpServletRequest.getContentType();
-				case "QUERY_STRING" : return _HttpServletRequest.getQueryString();
-				case "REMOTE_ADDR" : return _HttpServletRequest.getRemoteAddr();
-				case "REMOTE_HOST" : return _HttpServletRequest.getRemoteHost();
-				case "REMOTE_USER" : return _HttpServletRequest.getRemoteUser();
-				case "REQUEST_METHOD" : return _HttpServletRequest.getMethod();
-				case "REQUEST_URI" : return _HttpServletRequest.getRequestURI();
-				case "SCRIPT_NAME" : return GetFilePath ();
-				case "SERVER_NAME" : return _HttpServletRequest.getServerName();
-				case "SERVER_PORT" : return Convert.ToString(_HttpServletRequest.getServerPort());
-				case "SERVER_PROTOCOL" : return _HttpServletRequest.getProtocol();
-				case "SERVER_SOFTWARE" : return Servlet.getServletContext().getServerInfo();
-				case "PATH_INFO" : return _HttpServletRequest.getPathInfo();
-				default : return _HttpServletRequest.getHeader( name );
+			for (int i = 0, max = KnownServerVariableNames.Length; i < max; i++)
+				if (string.Compare(name, KnownServerVariableNames[i],
+					true, CultureInfo.InvariantCulture) == 0)
+					return GetKnownServerVariable((KnownServerVariable)i);
+
+			return _HttpServletRequest.getHeader( name );
+		}
+
+		string GetKnownServerVariable(KnownServerVariable index) {
+			switch (index) {
+				case KnownServerVariable.AUTH_TYPE : return _HttpServletRequest.getAuthType();
+				case KnownServerVariable.CONTENT_LENGTH : return Convert.ToString(_HttpServletRequest.getContentLength());
+				case KnownServerVariable.CONTENT_TYPE : return _HttpServletRequest.getContentType();
+				case KnownServerVariable.QUERY_STRING : return GetQueryString();
+				case KnownServerVariable.REMOTE_ADDR : return GetRemoteAddress();
+				case KnownServerVariable.REMOTE_HOST : return GetRemoteName();
+				case KnownServerVariable.REMOTE_USER : return _HttpServletRequest.getRemoteUser();
+				case KnownServerVariable.REQUEST_METHOD : return GetHttpVerbName ();
+				case KnownServerVariable.REQUEST_URI : return GetUriPath();
+				case KnownServerVariable.SCRIPT_NAME : return GetFilePath ();
+				case KnownServerVariable.SERVER_NAME : return GetServerName();
+				case KnownServerVariable.SERVER_PORT : return Convert.ToString(_HttpServletRequest.getServerPort());
+				case KnownServerVariable.SERVER_PROTOCOL : return GetHttpVersion ();
+				case KnownServerVariable.SERVER_SOFTWARE : return Servlet.getServletContext().getServerInfo();
+				case KnownServerVariable.PATH_INFO : return GetPathInfo();
+				default: throw new IndexOutOfRangeException("index");
 			}
 		}
 
 		public override string GetUriPath() {
-			return _HttpServletRequest.getRequestURI();
+			return _requestUri != null ? _requestUri : _HttpServletRequest.getRequestURI();
 		}
 
 		public override IntPtr GetUserToken() {

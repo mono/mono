@@ -1,3 +1,8 @@
+2006-01-24  Konstantin Triger <kostat@mainsoft.com>
+
+	* ServletWorkerRequest.jvm.cs: convert .invoke requests to PathInfo,
+		remove ToUpper usage.
+
 2006-01-19  Konstantin Triger <kostat@mainsoft.com>
 
 	* ServletWorkerRequest.jvm.cs: refactoring.
