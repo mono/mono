@@ -1,3 +1,7 @@
+2006-01-25  Massimiliano Mantione  <massi@ximian.com>
+
+        * aliasing.c: Fixed aliasing issue on 64 bit archs.
+
 2006-01-25  Martin Baulig  <martin@ximian.com>
 
 	* debug-debugger.c: Moved the `MonoDebuggerManager' and
