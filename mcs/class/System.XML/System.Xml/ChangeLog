@@ -1,3 +1,8 @@
+2006-01-25  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlConvert.cs : ToString(TimeSpan) should return valid duration
+	  for TimeSpan.Zero, rather than "P". Fixed bug #77350
+
 2006-01-24  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlNameEntryCache.cs XmlNameEntry.cs :
