@@ -34,43 +34,28 @@ namespace System.Configuration
 {
 	internal class KeyValueInternalCollection: NameValueCollection
 	{
-		KeyValueConfigurationCollection col;
-
-		public KeyValueInternalCollection ()
-		{
-			col = new KeyValueConfigurationCollection ();
-		}
-
-		
 		public void SetReadOnly ()
 		{
-			col.SetReadOnly ();
+			base.IsReadOnly  = true;
 		}
 
 		public override void Add (string name, string val)
 		{
-			col.Add (new KeyValueConfigurationElement (name, val));
+			BaseAdd (name, val);
 		}
 
 		public override void Remove (string name)
 		{
-			col.Remove (name);
+			BaseRemove (name);
 		}
 
-		public override string[] AllKeys
-		{
-			get {
-				return col.AllKeys;
-			}
+		public override string[] AllKeys {
+			get { return BaseGetAllKeys (); }
 		}
 
 		public override string Get (string name)
 		{
-			KeyValueConfigurationElement ele = col[name];
-			if (ele != null)
-				return ele.Value;
-
-			return null;
+			return (string)BaseGet (name);
 		}
 
 			/*

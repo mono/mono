@@ -1,3 +1,9 @@
+2006-01-25  Chris Toshok  <toshok@ximian.com>
+
+	* KeyValueInternalCollection.cs: don't use a nested collection,
+	just defer to our base class.  This fixes usage of
+	ConfigurationManager.AppSettings.Keys.
+
 2006-01-13  Chris Toshok  <toshok@ximian.com>
 
 	* AppSettingsSection.cs (GetRuntimeObject): only access
