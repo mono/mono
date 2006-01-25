@@ -1,3 +1,8 @@
+2006-01-25  Miguel de Icaza  <miguel@novell.com>
+
+	* expression.cs: Introduce an error report that we were not
+	catching before.   Gonzalo ran into it.
+
 2006-01-23  Miguel de Icaza  <miguel@novell.com>
 
 	A fix for bug: #76957

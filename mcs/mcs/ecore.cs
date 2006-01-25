@@ -234,8 +234,11 @@ namespace Mono.CSharp {
 
 			FullNamedExpression fne = ResolveAsTypeStep (ec, silent);
 
-			if (fne == null)
+			if (fne == null){
+				if (!silent && errors == Report.Errors)
+					Report.Error (118, loc, "Expecting a type.");
 				return null;
+			}
 
 			if (fne.eclass != ExprClass.Type) {
 				if (!silent && errors == Report.Errors)
