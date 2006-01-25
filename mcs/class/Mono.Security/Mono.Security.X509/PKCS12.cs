@@ -5,7 +5,7 @@
 //	Sebastien Pouliot <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004-2005 Novell Inc. (http://www.novell.com)
+// Copyright (C) 2004,2005,2006 Novell Inc. (http://www.novell.com)
 //
 // Key derivation translated from Bouncy Castle JCE (http://www.bouncycastle.org/)
 // See bouncycastle.txt for license.
@@ -425,7 +425,7 @@ namespace Mono.Security.X509 {
 
 		public string Password {
 			set {
-				if (value != null) {
+				if ((value != null) && (value.Length > 0)) {
 					int size = value.Length;
 					int nul = 0;
 					if (size < MaximumPasswordLength) {
