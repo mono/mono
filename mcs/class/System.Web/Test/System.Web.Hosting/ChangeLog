@@ -1,3 +1,7 @@
+2006-01-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* VirtualPathProviderTest.cs: new tests.
+
 2005-11-23  Robert Jordan  <robertj@gmx.net>
 
 	* SimpleWorkerRequestTest.cs: added a test case for #76794.
