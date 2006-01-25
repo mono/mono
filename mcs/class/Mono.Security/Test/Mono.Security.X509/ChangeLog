@@ -1,3 +1,8 @@
+2006-01-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PKCS12Test.cs: Add a test case where the password is String.Empty 
+	when no password is required to decrypt the structures.
+
 2005-11-04  Sebastien Pouliot  <sebastien@ximian.com> 
  
 	* PKCS12Test.cs: Added tests for adding multiple keys with the same 

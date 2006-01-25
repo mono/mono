@@ -5,7 +5,7 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005,2006 Novell, Inc (http://www.novell.com)
 //
 
 using NUnit.Framework;
@@ -181,10 +181,20 @@ namespace MonoTests.Mono.Security.X509 {
 		}
 
 		[Test]
-		public void Farscape_NoPassword_Explicit () 
+		public void Farscape_NoPassword_Explicit_Null () 
 		{
 			// exported from MS certificate manager WITHOUT password
 			PKCS12 p12 = new PKCS12 (farscape_nopwd_pfx, (string)null);
+			RSA rsa = (RSA) p12.Keys [0];
+			X509Certificate x509 = p12.Certificates [0];
+			AssertEquals (rsa.ToXmlString (false), x509.RSA.ToXmlString (false));
+		}
+
+		[Test]
+		public void Farscape_NoPassword_Explicit_Empty () 
+		{
+			// exported from MS certificate manager WITHOUT password
+			PKCS12 p12 = new PKCS12 (farscape_nopwd_pfx, String.Empty);
 			RSA rsa = (RSA) p12.Keys [0];
 			X509Certificate x509 = p12.Certificates [0];
 			AssertEquals (rsa.ToXmlString (false), x509.RSA.ToXmlString (false));
