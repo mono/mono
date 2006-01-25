@@ -51,13 +51,6 @@ namespace Microsoft.JScript {
 			: this (parent, name, null, String.Empty, null, location)
 		{
 		}
-
-		internal void Init (AST parent, string name, FormalParameterList p, string return_type, Block body)
-		{
-			this.parent = parent;
-			set_prefix ();
-			func_obj = new FunctionObject (name, p, return_type, body, location);
-		}
 		
 		internal FunctionDeclaration (AST parent, string name, 
 					      FormalParameterList p,

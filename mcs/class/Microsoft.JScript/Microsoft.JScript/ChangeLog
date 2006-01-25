@@ -1,3 +1,7 @@
+2006-01-24  Cesar Lopez Nataren  <cnataren@novell.com>
+
+	* FunctionDeclaration.cs: Erase unused method Init.
+
 2006-01-18 Evan Briones <evan@evanbriones.com>
 
 	* GlobalObject.cs: parsefloat in ms.net version returns NaN for text strings.
