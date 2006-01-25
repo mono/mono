@@ -1,3 +1,10 @@
+2006-01-25  Ankit Jain  <jankit@novell.com>
+	    Raja R Harinath  <rharinath@novell.com>
+
+	* metadata-internals.h (mono_generic_params_with_ambiguous_names): New.
+	* metadata.c (mono_metadata_load_generic_params): Fill mono_generic_params_with_ambiguous_names
+	as necessary.
+
 2006-01-25  Martin Baulig  <martin@ximian.com>
 
 	* mono-debug-debugger.h: Moved `MonoDebuggerManager' and

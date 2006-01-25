@@ -1,3 +1,9 @@
+2006-01-25  Ankit Jain  <jankit@novell.com>
+	    Raja R Harinath  <rharinath@novell.com>
+
+	* get.c (dis_stringify_type): For MVAR/VAR, print number if the generic param
+	is in the mono_generic_params_with_ambiguous_names table.
+
 2006-01-20  Raja R Harinath  <rharinath@novell.com>
 
 	* main.c (monodis_assembly_load_hook): New.
