@@ -3727,19 +3727,15 @@ mono_save_args (MonoCompile *cfg, MonoMethodSignature *sig, MonoInst **sp, MonoI
 		 * it, emit ldelema on that var, and emit the saving code below in
 		 * inline_method () if needed.
 		 */
-		if (sp [0]->opcode == OP_ICONST) {
-			*args++ = sp [0];
+		temp = mono_compile_create_var (cfg, argtype, OP_LOCAL);
+		*args++ = temp;
+		NEW_TEMPSTORE (cfg, store, temp->inst_c0, *sp);
+		store->cil_code = sp [0]->cil_code;
+		if (store->opcode == CEE_STOBJ) {
+			EMIT_NEW_TEMPLOADA (cfg, store, temp->inst_c0);
+			emit_stobj (cfg, store, *sp, sp [0]->cil_code, temp->klass, FALSE);
 		} else {
-			temp = mono_compile_create_var (cfg, argtype, OP_LOCAL);
-			*args++ = temp;
-			NEW_TEMPSTORE (cfg, store, temp->inst_c0, *sp);
-			store->cil_code = sp [0]->cil_code;
-			if (store->opcode == CEE_STOBJ) {
-				EMIT_NEW_TEMPLOADA (cfg, store, temp->inst_c0);
-				emit_stobj (cfg, store, *sp, sp [0]->cil_code, temp->klass, FALSE);
-			} else {
-				MONO_ADD_INS (cfg->cbb, store);
-			}
+			MONO_ADD_INS (cfg->cbb, store);
 		}
 		sp++;
 	}
