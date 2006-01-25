@@ -177,7 +177,7 @@ namespace System.Xml
 			return Create (xtw, settings);
 		}
 
-		public virtual void Dispose (bool disposing)
+		protected virtual void Dispose (bool disposing)
 		{
 			Close ();
 		}

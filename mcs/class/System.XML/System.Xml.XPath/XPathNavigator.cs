@@ -900,7 +900,7 @@ namespace System.Xml.XPath
 			}
 		}
 
-		public override bool IsNode {
+		public override sealed bool IsNode {
 			get { return true; }
 		}
 

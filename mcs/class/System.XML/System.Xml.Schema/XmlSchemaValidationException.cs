@@ -42,12 +42,12 @@ namespace System.Xml.Schema
 	{
 		object source_object;
 
-		protected XmlSchemaValidationException ()
+		public XmlSchemaValidationException ()
 			: base ()
 		{
 		}
 
-		protected XmlSchemaValidationException (string message)
+		public XmlSchemaValidationException (string message)
 			: base (message)
 		{
 		}

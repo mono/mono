@@ -1,3 +1,7 @@
+2006-01-25  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlSchemaValidationException.cs : fixed .ctor() signatures.
+
 2006-01-11  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlSchemaAttribute.cs, XmlSchemaElement.cs : AttributeSchemaType
