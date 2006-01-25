@@ -1,5 +1,14 @@
 2006-01-25  Chris Toshok  <toshok@ximian.com>
 
+	* ConfigInfo.cs (ThrowException): throw a
+	ConfigurationErrorsException, not a ConfigurationException.
+
+	* SectionGroupInfo.cs (ReadContent): throw an exception
+	unconditionally if we see a <location>.  they aren't valid in
+	section groups.
+
+2006-01-25  Chris Toshok  <toshok@ximian.com>
+
 	* KeyValueInternalCollection.cs: don't use a nested collection,
 	just defer to our base class.  This fixes usage of
 	ConfigurationManager.AppSettings.Keys.

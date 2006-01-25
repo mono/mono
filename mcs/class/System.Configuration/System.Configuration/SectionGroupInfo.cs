@@ -287,25 +287,7 @@ namespace System.Configuration
 				}
 				
 				if (reader.LocalName == "location")
-				{
-					if (!config.HasFile)
-						ThrowException ("<location> elements are only allowed in <configuration> elements.", reader);
-						 
-					string allowOverrideAttr = reader.GetAttribute ("allowOverride");
-					bool allowOverride = allowOverrideAttr == null || allowOverrideAttr.Length == 0 || bool.Parse (allowOverrideAttr);
-					string path = reader.GetAttribute ("path");
-					if (path != null && path.Length > 0) {
-						string xml = reader.ReadOuterXml ();
-						string[] pathList = path.Split (',');
-						foreach (string p in pathList) {
-							ConfigurationLocation loc = new ConfigurationLocation (p.Trim (), xml, config, allowOverride);
-							config.Locations.Add (loc);
-						}
-					} else {
-						ReadData (config, reader, allowOverride);
-					}
-					continue;
-				}
+					ThrowException ("<location> elements are only allowed in <configuration> elements.", reader);
 				
 				ConfigInfo data = (sections != null) ? (ConfigInfo) sections [reader.LocalName] : (ConfigInfo) null;
 				if (data == null) data = (groups != null) ? (ConfigInfo) groups [reader.LocalName] : (ConfigInfo) null;
