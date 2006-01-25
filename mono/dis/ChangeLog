@@ -1,3 +1,7 @@
+2006-01-26  Ankit Jain  <jankit@novell.com>
+
+	* get.c (stringify_double): Remove trailing '.' if it has 'e'.
+
 2006-01-25  Ankit Jain  <jankit@novell.com>
 
 	* get.c (stringify_double): New. Fix printing of float/doubles to enable
