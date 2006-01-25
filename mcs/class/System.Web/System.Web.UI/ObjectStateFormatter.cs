@@ -661,26 +661,29 @@ namespace System.Web.UI {
 			{
 				Color c = (Color) o;
 				
-				if (!c.IsKnownColor) {
-					w.Write (PrimaryId);
-					w.Write(c.IsEmpty);
-					if (!c.IsEmpty)
-						w.Write (c.ToArgb ());
-				} else {
+				if (c.IsEmpty || c.IsKnownColor) {
 					w.Write (SecondaryId);
-					w.Write(c.IsEmpty);
-					if (!c.IsEmpty)
+					if (c.IsEmpty)
+						w.Write (-1); //isempty marker
+					else
 						w.Write ((int) c.ToKnownColor ());
+				}
+				else {
+					w.Write (PrimaryId);
+					w.Write (c.ToArgb ());
 				}
 			}
 			
 			protected override object Read (byte token, BinaryReader r, ReaderContext ctx)
 			{
-				bool isEmpty = r.ReadBoolean();
+				int value = r.ReadInt32 ();
 				if (token == PrimaryId)
-					return isEmpty ? Color.Empty : Color.FromArgb (r.ReadInt32 ());
-				else
-					return isEmpty ? Color.Empty : Color.FromKnownColor ((KnownColor) r.ReadInt32 ());
+					return Color.FromArgb (value);
+				else {
+					if (value == -1) //isempty marker
+						return Color.Empty;
+					return Color.FromKnownColor ((KnownColor)value);
+				}
 			}
 			
 			protected override Type Type {
