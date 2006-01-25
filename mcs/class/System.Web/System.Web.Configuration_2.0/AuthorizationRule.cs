@@ -223,7 +223,7 @@ namespace System.Web.Configuration {
 		internal bool CheckVerb (string verb)
 		{
 			foreach (string v in Verbs) {
-				if (verb == v)
+				if (String.Compare (v, verb, true) == 0)
 					return true;
 			}
 			return false;
@@ -232,7 +232,9 @@ namespace System.Web.Configuration {
 		internal bool CheckUser (string user)
 		{
 			foreach (string u in Users) {
-				if (u == user)
+				if (String.Compare (u, user, true) == 0 ||
+				    u == "*" ||
+				    (u == "?" && user == ""))
 					return true;
 			}
 			return false;

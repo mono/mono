@@ -1,3 +1,12 @@
+2006-01-25  Chris Toshok  <toshok@ximian.com>
+
+	* AuthorizationRule.cs (CheckUser): handle * and ?, and use
+	String.Compare instead of ==.
+	(CheckVerb): use String.Compare instead of ==.
+
+	* AuthorizationSection.cs (IsValidUser): return false for a null
+	user.
+
 2006-01-22  Chris Toshok  <toshok@ximian.com>
 
 	* GlobalizationSection.cs (VerifyData): quiet mcs.

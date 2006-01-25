@@ -69,6 +69,9 @@ namespace System.Web.Configuration {
 
 		internal bool IsValidUser (IPrincipal user, string verb)
 		{
+			if (user == null)
+				return false;
+
 			foreach (AuthorizationRule rule in Rules) {
 				if (!rule.CheckVerb (verb))
 					continue;
