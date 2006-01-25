@@ -1,5 +1,10 @@
 2006-01-25  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlNamedNodeMap.cs : lazily create internal ArrayList. Thanks to
+	  Joshua Tauberer for the hint.
+
+2006-01-25  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlConvert.cs : ToString(TimeSpan) should return valid duration
 	  for TimeSpan.Zero, rather than "P". Fixed bug #77350
 

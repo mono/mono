@@ -37,6 +37,8 @@ namespace System.Xml
 {
 	public class XmlNamedNodeMap : IEnumerable
 	{
+		static readonly IEnumerator emptyEnumerator = new XmlNode [0].GetEnumerator ();
+
 		XmlNode parent;
 		ArrayList nodeList;
 		bool readOnly = false;
@@ -44,20 +46,32 @@ namespace System.Xml
 		internal XmlNamedNodeMap (XmlNode parent)
 		{
 			this.parent = parent;
-			nodeList = new ArrayList ();
+		}
+
+		private ArrayList NodeList {
+			get {
+				if (nodeList == null)
+					nodeList = new ArrayList ();
+				return nodeList;
+			}
 		}
 
 		public virtual int Count {
-			get { return nodeList.Count; }
+			get { return nodeList == null ? 0 : nodeList.Count; }
 		}
 
 		public virtual IEnumerator GetEnumerator () 
 		{
+			if (nodeList == null)
+				return emptyEnumerator;
 			return nodeList.GetEnumerator ();
 		}
 
 		public virtual XmlNode GetNamedItem (string name)
 		{
+			if (nodeList == null)
+				return null;
+
 			for (int i = 0; i < nodeList.Count; i++) {
 				XmlNode node = (XmlNode) nodeList [i];
 				if (node.Name == name)
@@ -68,6 +82,9 @@ namespace System.Xml
 
 		public virtual XmlNode GetNamedItem (string localName, string namespaceURI)
 		{
+			if (nodeList == null)
+				return null;
+
 			for (int i = 0; i < nodeList.Count; i++) {
 				XmlNode node = (XmlNode) nodeList [i];
 				if ((node.LocalName == localName)
@@ -80,7 +97,7 @@ namespace System.Xml
 		
 		public virtual XmlNode Item (int index)
 		{
-			if (index < 0 || index >= nodeList.Count)
+			if (nodeList == null || index < 0 || index >= nodeList.Count)
 				return null;
 			else
 				return (XmlNode) nodeList [index];
@@ -88,6 +105,9 @@ namespace System.Xml
 
 		public virtual XmlNode RemoveNamedItem (string name)
 		{
+			if (nodeList == null)
+				return null;
+
 			for (int i = 0; i < nodeList.Count; i++) {
 				XmlNode node = (XmlNode) nodeList [i];
 				if (node.Name == name) {
@@ -115,6 +135,9 @@ namespace System.Xml
 
 		public virtual XmlNode RemoveNamedItem (string localName, string namespaceURI)
 		{
+			if (nodeList == null)
+				return null;
+
 			for (int i = 0; i < nodeList.Count; i++) {
 				XmlNode node = (XmlNode) nodeList [i];
 				if ((node.LocalName == localName)
@@ -145,7 +168,7 @@ namespace System.Xml
 				parent.OwnerDocument.onNodeInserting (node, parent);
 
 			try {
-				for (int i = 0; i < nodeList.Count; i++) {
+				for (int i = 0; i < NodeList.Count; i++) {
 					XmlNode x = (XmlNode) nodeList [i];
 					if(x.LocalName == node.LocalName && x.NamespaceURI == node.NamespaceURI) {
 						nodeList.Remove (x);
@@ -170,6 +193,6 @@ namespace System.Xml
 
 		}
 
-		internal ArrayList Nodes { get { return nodeList; } }
+		internal ArrayList Nodes { get { return NodeList; } }
 	}
 }
