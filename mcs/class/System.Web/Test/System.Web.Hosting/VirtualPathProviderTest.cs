@@ -70,7 +70,7 @@ namespace MonoTests.System.Web.Hosting {
 	}
 
 	[TestFixture]
-	public class ApplicationHostTest {
+	public class VirtualPathProviderTest {
 		// Unhosted tests: not running inside an ASP.NET appdomain.
 		// Some tests may yield different results when hosted. I'll add those later.
 		[Test]
@@ -109,13 +109,6 @@ namespace MonoTests.System.Web.Hosting {
 		}
 
 		[Test]
-		public void GetCacheDependency1 ()
-		{
-			DummyVPP dummy = new DummyVPP ();
-			Assert.IsNull (dummy.GetCacheDependency (null, null, DateTime.UtcNow));
-		}
-
-		[Test]
 		public void GetCacheKey1 ()
 		{
 			DummyVPP dummy = new DummyVPP ();
@@ -133,28 +126,28 @@ namespace MonoTests.System.Web.Hosting {
 		public void CombineVirtualPaths1 ()
 		{
 			DummyVPP dummy = new DummyVPP ();
-			Assert.AreEquals ("/otherroot", vpp.CombineVirtualPaths ("/root", "/otherroot"));
+			Assert.AreEqual ("/otherroot", dummy.CombineVirtualPaths ("/root", "/otherroot"));
 		}
 
 		[Test]
 		public void CombineVirtualPaths2 ()
 		{
 			DummyVPP dummy = new DummyVPP ();
-			Assert.AreEquals ("/otherleaf", vpp.CombineVirtualPaths ("/root", "otherleaf"));
+			Assert.AreEqual ("/otherleaf", dummy.CombineVirtualPaths ("/root", "otherleaf"));
 		}
 
 		[Test]
 		public void CombineVirtualPaths3 ()
 		{
 			DummyVPP dummy = new DummyVPP ();
-			Assert.AreEquals ("/otherleaf/index.aspx", vpp.CombineVirtualPaths ("/root", "otherleaf/index.aspx"));
+			Assert.AreEqual ("/otherleaf/index.aspx", dummy.CombineVirtualPaths ("/root", "otherleaf/index.aspx"));
 		}
 
 		[Test]
 		public void CombineVirtualPaths4 ()
 		{
 			DummyVPP dummy = new DummyVPP ();
-			Assert.AreEquals ("/otherleaf/index.aspx", vpp.CombineVirtualPaths ("/root", "./otherleaf/index.aspx"));
+			Assert.AreEqual ("/otherleaf/index.aspx", dummy.CombineVirtualPaths ("/root", "./otherleaf/index.aspx"));
 		}
 
 		[Test]
@@ -162,7 +155,7 @@ namespace MonoTests.System.Web.Hosting {
 		public void CombineVirtualPaths5 ()
 		{
 			DummyVPP dummy = new DummyVPP ();
-			vpp.CombineVirtualPaths ("root", "./otherleaf/index.aspx");
+			dummy.CombineVirtualPaths ("root", "./otherleaf/index.aspx");
 		}
 	}
 	

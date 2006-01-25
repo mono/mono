@@ -30,8 +30,9 @@ System.Web.Configuration/GlobalizationSectionTest.cs
 System.Web.Configuration/HostingEnvironmentSectionTest.cs
 System.Web.Configuration/MachineKeyValidationConverterTest.cs
 System.Web.Configuration/ProfilePropertySettingsTest.cs
-System.Web.Hosting/SimpleWorkerRequestTest.cs
 System.Web.Hosting/ApplicationHostTest.cs
+System.Web.Hosting/SimpleWorkerRequestTest.cs
+System.Web.Hosting/VirtualPathProviderTest.cs
 System.Web.Profile/ProfileInfoTest.cs
 System.Web.Security/FormsAuthenticationTest.cs
 System.Web.Security/FormsIdentityTest.cs
