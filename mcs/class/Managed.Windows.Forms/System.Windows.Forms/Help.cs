@@ -47,7 +47,10 @@ namespace System.Windows.Forms {
 
 		[MonoTODO("Create glue code to tie into libCHM")]
 		public static void ShowHelp(Control parent, string url, HelpNavigator command, object param) {
-			MessageBox.Show(parent, (string)Locale.GetText("Help (" + command + "(" + param.ToString() + ")) not yet implemented"), (string)Locale.GetText("Popup Help"), MessageBoxButtons.OK, MessageBoxIcon.Stop);
+			MessageBox.Show(parent, (string)Locale.GetText("Help (" + command +
+					(param != null ? "(" + param + ")" : String.Empty) +
+					") not yet implemented"), (string)Locale.GetText("Popup Help"),
+					MessageBoxButtons.OK, MessageBoxIcon.Stop);
 		}
 
 		public static void ShowHelp(Control parent, string url, string keyword) {

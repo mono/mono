@@ -1,3 +1,7 @@
+2006-01-25  Jackson Harper  <jackson@ximian.com>
+
+	* Help.cs: Allow param to be null. Patch by Don Edvalson.
+
 2006-01-24  Jackson Harper  <jackson@ximian.com>
 
 	* ComboBox.cs: Clamp the max value set for the vertical scrollbar
