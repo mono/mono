@@ -3719,6 +3719,14 @@ mono_save_args (MonoCompile *cfg, MonoMethodSignature *sig, MonoInst **sp, MonoI
 	for (i = 0; i < sig->param_count + sig->hasthis; ++i) {
 		MonoType *argtype = (sig->hasthis && (i == 0)) ? type_from_stack_type (*sp) : sig->params [i - sig->hasthis];
 
+		/*
+		 * FIXME: We should use *args++ = sp [0], but that would mean the arg
+		 * would be different than the MonoInst's used to represent arguments, and
+		 * the ldelema implementation can't deal with that.
+		 * Solution: When ldelema is used on an inline argument, create a var for 
+		 * it, emit ldelema on that var, and emit the saving code below in
+		 * inline_method () if needed.
+		 */
 		if (sp [0]->opcode == OP_ICONST) {
 			*args++ = sp [0];
 		} else {
@@ -3731,7 +3739,7 @@ mono_save_args (MonoCompile *cfg, MonoMethodSignature *sig, MonoInst **sp, MonoI
 				emit_stobj (cfg, store, *sp, sp [0]->cil_code, temp->klass, FALSE);
 			} else {
 				MONO_ADD_INS (cfg->cbb, store);
-			} 
+			}
 		}
 		sp++;
 	}
@@ -5398,8 +5406,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			NEW_ARGSTORE (cfg, ins, n, *sp);
 			ins->cil_code = ip;
 			if (ins->opcode == CEE_STOBJ) {
-				NEW_ARGLOADA (cfg, ins, n);
-				MONO_ADD_INS (cfg->cbb, ins);
+				EMIT_NEW_ARGLOADA (cfg, ins, n);
 				emit_stobj (cfg, ins, *sp, ip, ins->klass, FALSE);
 			} else
 				MONO_ADD_INS (cfg->cbb, ins);
