@@ -1,3 +1,8 @@
+2006-01-25  Martin Baulig  <martin@ximian.com>
+
+	* debug-debugger.c: Moved the `MonoDebuggerManager' and
+	`MonoDebuggerThread' typedefs here from mono-debug-debugger.h and
+	started to cleanup this file a little bit.
 
 Tue Jan 24 18:20:48 CET 2006 Paolo Molaro <lupus@ximian.com>
 

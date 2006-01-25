@@ -1,3 +1,7 @@
+2006-01-25  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug-debugger.h: Moved `MonoDebuggerManager' and
+	`MonoDebuggerThread' into debug-debugger.c.
 
 Tue Jan 24 18:53:35 CET 2006 Paolo Molaro <lupus@ximian.com>
 
