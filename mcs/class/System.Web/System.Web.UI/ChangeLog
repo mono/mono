@@ -1,5 +1,10 @@
 2006-01-25  Chris Toshok  <toshok@ximian.com>
 
+	* ClientScriptManager.cs (RegisterClientScriptResource): last
+	patch, I swear.  How can 1 line of code have 3 bugs?
+
+2006-01-25  Chris Toshok  <toshok@ximian.com>
+
 	* ClientScriptManager.cs (RegisterClientScriptResource): gah, fix
 	problem with last commit - unquote "resourceName" so it uses the
 	parameter instead of the string constant.
