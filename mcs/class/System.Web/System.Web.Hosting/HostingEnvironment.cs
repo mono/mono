@@ -3,6 +3,7 @@
 //
 // Author:
 //	Chris Toshok (toshok@ximian.com)
+//	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 
 //
@@ -37,29 +38,24 @@ namespace System.Web.Hosting {
 
 	public sealed class HostingEnvironment : MarshalByRefObject
 	{
-		[MonoTODO]
 		public HostingEnvironment ()
 		{
 		}
 
-		[MonoTODO]
 		public static string ApplicationID {
-			get { throw new NotImplementedException (); }
+			get { return HttpRuntime.AppDomainAppId; }
 		}
 
-		[MonoTODO]
 		public static string ApplicationPhysicalPath {
-			get { throw new NotImplementedException (); }
+			get { return HttpRuntime.AppDomainAppPath; }
 		}
 
-		[MonoTODO]
 		public static string ApplicationVirtualPath {
-			get { throw new NotImplementedException (); }
+			get { return HttpRuntime.AppDomainAppVirtualPath; }
 		}
 
-		[MonoTODO]
 		public static Cache Cache {
-			get { throw new NotImplementedException (); }
+			get { return HttpRuntime.Cache; }
 		}
 
 		[MonoTODO]
@@ -67,7 +63,7 @@ namespace System.Web.Hosting {
 			get { throw new NotImplementedException (); }
 		}
 
-		[MonoTODO]
+		[MonoTODO] // 'true' if this is inside an ApplicationManager
 		public static bool IsHosted {
 			get { throw new NotImplementedException (); }
 		}

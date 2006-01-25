@@ -1,3 +1,13 @@
+2006-01-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* VirtualDirectory.cs:
+	* VirtualPathProvider.cs:
+	* VirtualFileBase.cs:
+	* VirtualFile.cs: implemented this base classes.
+
+	* HostingEnvironment.cs: implemented a few properties by using the ones
+	in HttpRuntime.
+
 2006-01-24  Konstantin Triger <kostat@mainsoft.com>
 
 	* ServletWorkerRequest.jvm.cs: convert .invoke requests to PathInfo,
