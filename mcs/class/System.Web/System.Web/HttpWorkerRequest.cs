@@ -32,6 +32,7 @@ using System.Collections;
 using System.Runtime.InteropServices;
 using System.Security.Permissions;
 using System.Web.UI;
+using System.Collections.Specialized;
 
 namespace System.Web {
 
@@ -104,6 +105,19 @@ namespace System.Web {
 		public const int ReasonCacheSecurity = 3;
 		public const int ReasonClientDisconnect = 4;
 		public const int ReasonDefault = 0;
+
+		static readonly Hashtable RequestHeaderIndexer;
+		static readonly Hashtable ResponseHeaderIndexer;
+
+		static HttpWorkerRequest() {
+			RequestHeaderIndexer = CollectionsUtil.CreateCaseInsensitiveHashtable(RequestHeaderMaximum);
+			for (int i = 0; i < RequestHeaderMaximum; i++)
+				RequestHeaderIndexer[GetKnownRequestHeaderName(i)] = i;
+
+			ResponseHeaderIndexer = CollectionsUtil.CreateCaseInsensitiveHashtable(ResponseHeaderMaximum);
+			for (int i = 0; i < ResponseHeaderMaximum; i++)
+				ResponseHeaderIndexer[GetKnownResponseHeaderName(i)] = i;
+		}
 
 		public virtual string MachineConfigPath {
 			get {
@@ -373,6 +387,11 @@ namespace System.Web {
 			case "TE": return HeaderTe;
 			case "User-Agent": return HeaderUserAgent;
 			}
+
+			object index = RequestHeaderIndexer[header];
+			if (index != null)
+				return (int)index;
+
 			return -1;
 		}
 
@@ -458,6 +477,10 @@ namespace System.Web {
 			case "Vary": return HeaderVary;
 			case "WWW-Authenticate": return HeaderWwwAuthenticate;
 			}
+
+			object index = ResponseHeaderIndexer[header];
+			if (index != null)
+				return (int)index;
 
 			return -1;
 		}
