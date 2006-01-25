@@ -69,14 +69,13 @@ namespace System.Web.Configuration {
 
 		internal bool IsValidUser (IPrincipal user, string verb)
 		{
-			if (user == null)
-				return false;
+			string username = (user == null) ? "" : user.Identity.Name;
 
 			foreach (AuthorizationRule rule in Rules) {
 				if (!rule.CheckVerb (verb))
 					continue;
 
-				if (rule.CheckUser (user.Identity.Name) || rule.CheckRole(user))
+				if (rule.CheckUser (username) || (user != null && rule.CheckRole(user)))
 					return (rule.Action == AuthorizationRuleAction.Allow);
 			}
 

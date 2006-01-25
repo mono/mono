@@ -1,5 +1,11 @@
 2006-01-25  Chris Toshok  <toshok@ximian.com>
 
+	* AuthorizationSection.cs (IsValidUser): instead of a blanket
+	false for a null user, just set the username to "" and short
+	circuit out the check for roles.
+
+2006-01-25  Chris Toshok  <toshok@ximian.com>
+
 	* AuthorizationRule.cs (CheckUser): handle * and ?, and use
 	String.Compare instead of ==.
 	(CheckVerb): use String.Compare instead of ==.
