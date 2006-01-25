@@ -1,3 +1,27 @@
+2006-01-26  Ankit Jain  <jankit@novell.com>
+
+	* get.c (stringify_double): Remove trailing '.' if it has 'e'.
+
+2006-01-25  Ankit Jain  <jankit@novell.com>
+
+	* get.c (stringify_double): New. Fix printing of float/doubles to enable
+	roundtripping.
+	* get.h (stringify_double): Add new function.
+	(get_constant): Use stringify_double.
+	* dis-cil.c (disassemble_cil): Likewise.
+	
+2006-01-25  Ankit Jain  <jankit@novell.com>
+	    Raja R Harinath  <rharinath@novell.com>
+
+	* get.c (dis_stringify_type): For MVAR/VAR, print number if the generic param
+	is in the mono_generic_params_with_ambiguous_names table.
+
+2006-01-20  Raja R Harinath  <rharinath@novell.com>
+
+	* main.c (monodis_assembly_load_hook): New.
+	(monodis_assembly_search_hook): New.
+	(main): Install them as hooks into the assembly loading core.
+
 2006-01-19  Ankit Jain  <jankit@novell.com>
 
 	* main.c (dis_type): Dump custom attributes for a type before doing the same
