@@ -168,15 +168,15 @@ namespace Microsoft.JScript {
 
 		internal void set_prefix ()
 		{
-			if (parent != null && parent is Function) {
+			if (parent != null && InFunction) {
 				Function tmp;
-				tmp = (Function) parent;
+				tmp = GetContainerFunction;
 				if (tmp.prefix != String.Empty)
 					prefix = tmp.prefix + "." + tmp.func_obj.name;
 				else
 					prefix = tmp.func_obj.name;
 			} else
-				prefix = String.Empty;			
+				prefix = String.Empty;
 		}
 
 		internal void set_function_type ()

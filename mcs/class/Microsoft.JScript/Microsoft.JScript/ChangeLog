@@ -1,4 +1,16 @@
+2006-01-25  Cesar Lopez Nataren  <cnataren@novell.com>
+
+	* FunctionExpression.cs: Set the prefix at resolve time not at
+	constructor time. Solves a bug related to the use of nested
+	FunctionExpression's.
+
 2006-01-24  Cesar Lopez Nataren  <cnataren@novell.com>
+
+	* ast.cs (Function.set_prefix): use InFunction and
+	GetContainerFunction for retrieving the container function.
+
+	* Statement.cs (Return): Implement ICanModifyContext as can return
+	a FunctionExpression.
 
 	* FunctionDeclaration.cs: Erase unused method Init.
 

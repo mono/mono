@@ -226,7 +226,7 @@ namespace Microsoft.JScript {
 		
 	internal delegate void NotVoidReturnEventHandler (object sender, NotVoidReturnEventArgs args);
 	
-	internal class Return : AST {
+	internal class Return : AST, ICanModifyContext {
 
 		internal AST expression;
 		private bool exp_returns_void = false;
@@ -257,6 +257,18 @@ namespace Microsoft.JScript {
 				return expression.ToString ();
 			else 
 				return String.Empty;
+		}
+
+		void ICanModifyContext.PopulateContext (Environment env, string ns)
+		{
+			if (expression is ICanModifyContext)
+				((ICanModifyContext) expression).PopulateContext (env, ns);
+		}
+
+		void ICanModifyContext.EmitDecls (EmitContext ec)
+		{
+			if (expression is ICanModifyContext)
+				((ICanModifyContext) expression).EmitDecls (ec);
 		}
 
 		internal override bool Resolve (Environment env)

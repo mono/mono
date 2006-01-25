@@ -51,7 +51,6 @@ namespace Microsoft.JScript {
 					     string return_type, Block body, Location location)
 			: base (parent, location)
 		{
-			set_prefix ();
 			func_obj = new FunctionObject (name, p, return_type, body, location);
 		}
 						
@@ -100,6 +99,7 @@ namespace Microsoft.JScript {
 		
 		internal override bool Resolve (Environment env)
 		{
+			set_prefix ();
 			set_function_type ();
 
 			if (func_obj.name != null && func_obj.name != String.Empty)
