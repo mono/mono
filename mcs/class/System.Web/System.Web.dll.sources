@@ -235,6 +235,10 @@ System.Web.Hosting/IQueueHost.cs
 System.Web.Hosting/IRegisteredObject.cs
 System.Web.Hosting/ISAPIRuntime.cs
 System.Web.Hosting/SimpleWorkerRequest.cs
+System.Web.Hosting/VirtualDirectory.cs
+System.Web.Hosting/VirtualFileBase.cs
+System.Web.Hosting/VirtualFile.cs
+System.Web.Hosting/VirtualPathProvider.cs
 System.Web/HtmlizedException.cs
 System.Web/HttpApplication.cs
 System.Web/HttpApplicationFactory.cs
