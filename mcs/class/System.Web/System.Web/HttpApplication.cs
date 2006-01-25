@@ -65,6 +65,7 @@
 using System.IO;
 using System.Collections;
 using System.ComponentModel;
+using System.Configuration;
 using System.Globalization;
 using System.Security.Permissions;
 using System.Security.Principal;
@@ -1012,7 +1013,13 @@ namespace System.Web {
 
 		void Start (object x)
 		{
-			InitOnce (true);
+			try {
+				InitOnce (true);
+			} catch (ConfigurationErrorsException e) {
+				FinalErrorWrite (context.Response, new HttpException ("", e).GetHtmlErrorMessage ());
+				return;
+			}
+
 			PreStart ();
 			pipeline = Pipeline ();
 			Tick ();

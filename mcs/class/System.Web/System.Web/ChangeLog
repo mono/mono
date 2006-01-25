@@ -1,3 +1,9 @@
+2006-01-25  Chris Toshok  <toshok@ximian.com>
+
+	* HttpApplication.cs (Start): wrap InitOnce in a try/catch block,
+	and if there's a configuration error, output it and end things
+	immediately.
+
 2006-01-24 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpRequest.cs: fixed the file path when RewritePath is used. Also
