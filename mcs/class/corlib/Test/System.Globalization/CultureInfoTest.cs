@@ -47,6 +47,14 @@ namespace MonoTests.System.Globalization
 				AssertNotNull (String.Format ("{0} {1}",
 					ci.LCID, ci.Name), ci.OptionalCalendars);
 		}
+
+		[Test]
+		public void CloneNeutral () // bug #77347
+		{
+			CultureInfo culture = new CultureInfo ("en");
+			CultureInfo cultureClone = culture.Clone () as CultureInfo;
+			Assert (culture.Equals (cultureClone));
+		}
 	}
 }
 

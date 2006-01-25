@@ -264,8 +264,10 @@ namespace System.Globalization
 			if (!constructed) Construct ();
 			CultureInfo ci=(CultureInfo)MemberwiseClone ();
 			ci.m_isReadOnly=false;
-			ci.NumberFormat = (NumberFormatInfo)NumberFormat.Clone ();
-			ci.DateTimeFormat = (DateTimeFormatInfo)DateTimeFormat.Clone ();
+			if (!IsNeutralCulture) {
+				ci.NumberFormat = (NumberFormatInfo)NumberFormat.Clone ();
+				ci.DateTimeFormat = (DateTimeFormatInfo)DateTimeFormat.Clone ();
+			}
 			return(ci);
 		}
 

@@ -1,3 +1,8 @@
+2006-01-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CultureInfo.cs : Clone() attempted to clone number and date time
+	  formats, thus failed. Fixed bug #77347.
+
 2005-12-08  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* DaylightTime.cs: Fixed serialization to be compatible with MS FX.
