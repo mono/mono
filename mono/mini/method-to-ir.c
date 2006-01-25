@@ -538,7 +538,7 @@ static int the_count = 0;
         (dest)->dreg = alloc_dreg ((cfg), (dest)->type); \
 	} while (0)
 
-#define NEW_VARLOADA(cfg,dest,var) do {	\
+#define NEW_VARLOADA(cfg,dest,var,vartype) do {	\
         MONO_INST_NEW ((cfg), (dest), OP_LDADDR); \
 		(dest)->ssa_op = MONO_SSA_ADDRESS_TAKEN;	\
 		(dest)->inst_p0 = (var); \
@@ -546,7 +546,7 @@ static int the_count = 0;
 		(dest)->type = STACK_MP;	\
 		(dest)->klass = (var)->klass;	\
         (dest)->dreg = alloc_dreg ((cfg), STACK_MP); \
-        if (!MONO_TYPE_ISSTRUCT ((var)->inst_vtype)) \
+        if (!MONO_TYPE_ISSTRUCT (vartype)) \
            (cfg)->disable_ssa = TRUE; \
 	} while (0)
 
@@ -559,15 +559,23 @@ static int the_count = 0;
 		(dest)->dreg = (var)->dreg;   \
 	} while (0)
 
+#define NEW_TEMPLOAD(cfg,dest,num) NEW_VARLOAD ((cfg), (dest), (cfg)->varinfo [(num)], (cfg)->varinfo [(num)]->inst_vtype)
+
+#define NEW_TEMPLOADA(cfg,dest,num) NEW_VARLOADA ((cfg), (dest), cfg->varinfo [(num)], cfg->varinfo [(num)]->inst_vtype)
+
+#define NEW_TEMPSTORE(cfg,dest,num,inst) NEW_VARSTORE ((cfg), (dest), (cfg)->varinfo [(num)], (cfg)->varinfo [(num)]->inst_vtype, (inst))
+
+#define NEW_LOCSTORE(cfg,dest,num,inst) NEW_TEMPSTORE ((cfg), (dest), locals_offset + (num), (inst))
+
 #define NEW_ARGLOAD(cfg,dest,num) NEW_VARLOAD ((cfg), (dest), arg_array [(num)], param_types [(num)])
 
 #define NEW_LOCLOAD(cfg,dest,num) NEW_VARLOAD ((cfg), (dest), cfg->varinfo [locals_offset + (num)], header->locals [(num)])
 
-#define NEW_LOCLOADA(cfg,dest,num) NEW_VARLOADA ((cfg), (dest), (cfg)->varinfo [locals_offset + (num)])
+#define NEW_LOCLOADA(cfg,dest,num) NEW_VARLOADA ((cfg), (dest), (cfg)->varinfo [locals_offset + (num)], (cfg)->varinfo [locals_offset + (num)]->inst_vtype)
 
 #define NEW_RETLOADA(cfg,dest) do {	\
         if (cfg->ret_var_is_local) { \
-			NEW_VARLOADA ((cfg), (dest), (cfg)->ret); \
+			NEW_VARLOADA ((cfg), (dest), (cfg)->ret, (cfg)->ret->inst_vtype); \
         } else { \
             MONO_INST_NEW ((cfg), (dest), OP_MOVE); \
 		    (dest)->ssa_op = MONO_SSA_LOAD;	\
@@ -578,15 +586,7 @@ static int the_count = 0;
         } \
 	} while (0)
 
-#define NEW_ARGLOADA(cfg,dest,num) NEW_VARLOADA ((cfg), (dest), arg_array [(num)])
-
-#define NEW_TEMPLOAD(cfg,dest,num) NEW_VARLOAD ((cfg), (dest), (cfg)->varinfo [(num)], (cfg)->varinfo [(num)]->inst_vtype)
-
-#define NEW_TEMPLOADA(cfg,dest,num) NEW_VARLOADA ((cfg), (dest), cfg->varinfo [(num)])
-
-#define NEW_TEMPSTORE(cfg,dest,num,inst) NEW_VARSTORE ((cfg), (dest), (cfg)->varinfo [(num)], (cfg)->varinfo [(num)]->inst_vtype, (inst))
-
-#define NEW_LOCSTORE(cfg,dest,num,inst) NEW_TEMPSTORE ((cfg), (dest), locals_offset + (num), (inst))
+#define NEW_ARGLOADA(cfg,dest,num) NEW_VARLOADA ((cfg), (dest), arg_array [(num)], param_types [(num)])
 
 #define NEW_ARGSTORE(cfg,dest,num,inst) NEW_VARSTORE ((cfg), (dest), arg_array [(num)], param_types [(num)], (inst))
 
@@ -2718,7 +2718,7 @@ emit_ldobj_var (MonoCompile *cfg, MonoInst *var, const unsigned char*ip)
 {
 	MonoInst *src;
 
-	NEW_VARLOADA (cfg, src, var);
+	NEW_VARLOADA (cfg, src, var, var->inst_vtype);
 	MONO_ADD_INS (cfg->cbb, src);
 
 	return emit_ldobj (cfg, src, ip, var->klass);
@@ -3727,7 +3727,7 @@ mono_save_args (MonoCompile *cfg, MonoMethodSignature *sig, MonoInst **sp, MonoI
 			NEW_TEMPSTORE (cfg, store, temp->inst_c0, *sp);
 			store->cil_code = sp [0]->cil_code;
 			if (store->opcode == CEE_STOBJ) {
-				NEW_TEMPLOADA (cfg, store, temp->inst_c0);
+				EMIT_NEW_TEMPLOADA (cfg, store, temp->inst_c0);
 				emit_stobj (cfg, store, *sp, sp [0]->cil_code, temp->klass, FALSE);
 			} else {
 				MONO_ADD_INS (cfg->cbb, store);
@@ -6985,8 +6985,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 						    field->offset);
 					iargs [4] = sp [1];
 
-					/* FIXME: Remove the restriction */
-					if ((cfg->opt & MONO_OPT_INLINE) && !MONO_TYPE_ISSTRUCT (field->type)) {
+					if (cfg->opt & MONO_OPT_INLINE) {
 						costs = inline_method (cfg, stfld_wrapper, mono_method_signature (stfld_wrapper), 
 								       iargs, ip, cfg->real_offset, dont_inline, TRUE);
 						g_assert (costs > 0);
