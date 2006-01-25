@@ -1586,13 +1586,15 @@ namespace System.Windows.Forms
 							
 					vscrollbar_ctrl.Location = new Point (width - vscrollbar_ctrl.Width - ThemeEngine.Current.DrawComboListBoxDecorationRight (owner.DropDownStyle), 
 							ThemeEngine.Current.DrawComboListBoxDecorationTop (owner.DropDownStyle));
-										
+
 					vscrollbar_ctrl.Maximum = owner.Items.Count - (owner.DropDownStyle == ComboBoxStyle.Simple ? page_size : owner.maxdrop_items);
 					show_scrollbar = vscrollbar_ctrl.Visible = true;
 
 					int hli = GetHighLightedIndex ();
-					if (hli > 0)
+					if (hli > 0) {
+						hli = Math.Min (hli, vscrollbar_ctrl.Maximum);
 						vscrollbar_ctrl.Value = hli;
+					}
 				}
 				
 				Size = new Size (width, height);

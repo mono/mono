@@ -1,5 +1,10 @@
 2006-01-24  Jackson Harper  <jackson@ximian.com>
 
+	* ComboBox.cs: Clamp the max value set for the vertical scrollbar
+	when we have a MaxDropItems lower then the selected index.
+
+2006-01-24  Jackson Harper  <jackson@ximian.com>
+
 	* Control.cs: Don't allow selection of non visible controls, allow
 	selection of controls without parents.
 
