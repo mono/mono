@@ -33,12 +33,12 @@ namespace System.Xml.Xsl
 	public abstract class XsltContext : XmlNamespaceManager
 	{
 		#region Constructors
-		public XsltContext ()
+		protected XsltContext ()
 			: base (new NameTable ())
 		{
 		}
 
-		public XsltContext (NameTable table)
+		protected XsltContext (NameTable table)
 			: base (table)
 		{
 		}
