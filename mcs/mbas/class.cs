@@ -83,7 +83,7 @@ namespace Mono.MonoBASIC {
 		// Holds the events
 		ArrayList events;
 
-		// Holds AddHandlers stements for events
+		// Holds AddHandlers statements for events
 		ArrayList handlers;
 
 		// The emit context for toplevel objects.

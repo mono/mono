@@ -1,3 +1,9 @@
+2006-01-23 Jelmer Vernooij <jelmer@samba.org>
+	* Test/tests/typemembers/EventP.vb: Add tests that check for 
+	more complex constructions in AddHandler / RemoveHandler.
+	* Test/tests/typemembers/EventO.vb: Test for parsing a WITHEVENTS 
+	variable declaration after it is being used in a 'Handles ...' clause.
+
 2005-12-21 Maverson Eduardo Schulze Rosa <maverson@gmail.com>
  	* ecore.cs, cfold.cs: Changed for reflecting correct Error Number/Message with
 	Implict Convertions when Option Strict is On.
