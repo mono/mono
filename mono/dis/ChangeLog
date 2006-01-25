@@ -1,4 +1,12 @@
 2006-01-25  Ankit Jain  <jankit@novell.com>
+
+	* get.c (stringify_double): New. Fix printing of float/doubles to enable
+	roundtripping.
+	* get.h (stringify_double): Add new function.
+	(get_constant): Use stringify_double.
+	* dis-cil.c (disassemble_cil): Likewise.
+	
+2006-01-25  Ankit Jain  <jankit@novell.com>
 	    Raja R Harinath  <rharinath@novell.com>
 
 	* get.c (dis_stringify_type): For MVAR/VAR, print number if the generic param
