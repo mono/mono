@@ -297,7 +297,7 @@ namespace System.Web.UI
 #if NET_2_0
 		public void RegisterClientScriptResource (Type type, string resourceName)
 		{
-			RegisterScript (ref scriptIncludes, type, "resource-" + resourceName, GetWebResourceUrl (typeof(Page), "resourceName"), false);
+			RegisterScript (ref scriptIncludes, type, "resource-" + resourceName, GetWebResourceUrl (typeof(Page), resourceName), false);
 		}
 
 		[MonoTODO]
