@@ -1,5 +1,11 @@
 2006-01-25  Chris Toshok  <toshok@ximian.com>
 
+	* ClientScriptManager.cs (RegisterClientScriptResource): gah, fix
+	problem with last commit - unquote "resourceName" so it uses the
+	parameter instead of the string constant.
+
+2006-01-25  Chris Toshok  <toshok@ximian.com>
+
 	* ClientScriptManager.cs (RegisterClientScriptResource):
 	implement.  backported fix from HEAD.
 
