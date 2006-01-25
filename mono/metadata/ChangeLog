@@ -1,3 +1,7 @@
+2006-01-25  Raja R Harinath  <rharinath@novell.com>
+
+	* metadata.c (mono_type_create_from_typespec_full): Fix caching of types.
+
 2006-01-25  Ankit Jain  <jankit@novell.com>
 
 	* metadata-internals.h (mono_generic_params_with_ambiguous_names): Add declaration and
