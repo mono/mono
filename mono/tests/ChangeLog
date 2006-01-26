@@ -1,3 +1,7 @@
+2006-01-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* thread-dump.cs: New file.
+
 2005-12-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* interlocked.cs: Add "test" for Thread.MemoryBarrier ().
