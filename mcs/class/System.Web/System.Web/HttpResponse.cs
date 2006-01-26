@@ -427,7 +427,7 @@ namespace System.Web {
 				throw new HttpException ("headers have been already sent");
 			
 			if (String.Compare (name, "content-length", true, CultureInfo.InvariantCulture) == 0){
-				content_length = Int64.Parse (value);
+				content_length = (long) UInt64.Parse (value);
 				use_chunked = false;
 				return;
 			}
@@ -444,7 +444,7 @@ namespace System.Web {
 			}
 
 			if (String.Compare (name, "cache-control", true, CultureInfo.InvariantCulture) == 0){
-				cache_control = value;
+				CacheControl = value;
 				return;
 			}
 
@@ -549,23 +549,8 @@ namespace System.Web {
 		//   Content-Type
 		//   Transfer-Encoding (chunked)
 		//   Cache-Control
-		internal void WriteHeaders (bool final_flush)
+		void AddHeadersNoCache (ArrayList write_headers, bool final_flush)
 		{
-			if (headers_sent)
-				return;
-
-			if (WorkerRequest != null)
-				WorkerRequest.SendStatus (status_code, StatusDescription);
-
-			if (cached_response != null)
-				cached_response.SetHeaders (headers);
-
-			// If this page is cached use the cached headers
-			// instead of the standard headers	
-			ArrayList write_headers = headers;
-			if (cached_headers != null)
-				write_headers = cached_headers;
-
 			//
 			// Transfer-Encoding
 			//
@@ -651,6 +636,27 @@ namespace System.Web {
 					write_headers.Add (cookies.Get (i).GetCookieHeader ());
 			}
 			
+		}
+
+		internal void WriteHeaders (bool final_flush)
+		{
+			if (headers_sent)
+				return;
+
+			if (WorkerRequest != null)
+				WorkerRequest.SendStatus (status_code, StatusDescription);
+
+			if (cached_response != null)
+				cached_response.SetHeaders (headers);
+
+			// If this page is cached use the cached headers
+			// instead of the standard headers	
+			ArrayList write_headers = headers;
+			if (cached_headers != null)
+				write_headers = cached_headers;
+			else
+				AddHeadersNoCache (write_headers, final_flush);
+
 			//
 			// Flush
 			//
