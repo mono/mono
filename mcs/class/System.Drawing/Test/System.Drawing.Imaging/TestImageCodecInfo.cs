@@ -132,6 +132,9 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
+#if TARGET_JVM
+		[Category ("NotWorking")]
+#endif
 		public void BMPCodec()
 		{
 			Guid g = new Guid ("557cf400-1a04-11d3-9a73-0000f81ef32e");
@@ -142,6 +145,9 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
+#if TARGET_JVM
+		[Category ("NotWorking")]
+#endif
 		public void GifCodec()
 		{
 			Guid g = new Guid ("557cf402-1a04-11d3-9a73-0000f81ef32e");
@@ -152,6 +158,9 @@ namespace MonoTests.System.Drawing
 		}
 		
 		[Test]
+#if TARGET_JVM
+		[Category ("NotWorking")]
+#endif
 		public void JpegCodec()
 		{
 			Guid g = new Guid ("557cf401-1a04-11d3-9a73-0000f81ef32e");
@@ -162,6 +171,9 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
+#if TARGET_JVM
+		[Category ("NotWorking")]
+#endif
 		public void PngCodec()
 		{
 			Guid g = new Guid ("557cf406-1a04-11d3-9a73-0000f81ef32e");

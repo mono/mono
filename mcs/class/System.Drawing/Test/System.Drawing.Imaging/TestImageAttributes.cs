@@ -67,6 +67,9 @@ namespace MonoTests.System.Drawing
 
 		// Text Color Matrix processing
 		[Test]
+#if TARGET_JVM
+		[Category ("NotWorking")]
+#endif
 		public void ColorMatrix ()
 		{			
 			Color clr_src, clr_rslt;

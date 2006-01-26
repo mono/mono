@@ -2656,6 +2656,12 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 		}
 
 		[Test]
+		[Category("NotWorking")]
+		public override void IsVisible4Float() {
+			base.IsVisible4Float ();
+		}
+
+		[Test]
 		public override void MeasureCharacterRangesRegions() {
 			base.MeasureCharacterRangesRegions ();
 		}

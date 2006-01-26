@@ -1,3 +1,6 @@
+2006-01-25 Boris Kirzner <borisk@mainsoft.com>
+	* Test.vmwcsproj,Test.dotnet.csproj: added reference to NUnit projects.
+
 2006-01-23 Boris Kirzner <borisk@mainsoft.com>
 	* Test.vmwcsproj: perform java output validation.
 

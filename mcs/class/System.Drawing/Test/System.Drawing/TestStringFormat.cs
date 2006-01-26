@@ -93,6 +93,9 @@ namespace MonoTests.System.Drawing{
 		}		
 		
 		[Test]
+#if TARGET_JVM
+		[Category ("NotWorking")]
+#endif
 		public void TabsStops() 
 		{				
 			StringFormat	smf = new StringFormat ();

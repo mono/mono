@@ -81,6 +81,9 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
+#if TARGET_JVM
+		[NUnit.Framework.Category ("NotWorking")]
+#endif
 		public void TestCanConvertFrom ()
 		{
 			Assert.IsTrue (imgConv.CanConvertFrom (typeof (byte [])), "CCF#1");
@@ -112,6 +115,9 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
+#if TARGET_JVM
+		[NUnit.Framework.Category ("NotWorking")]
+#endif
 		public void TestCanConvertTo ()
 		{
 			Assert.IsTrue (imgConv.CanConvertTo (typeof (String)), "CCT#1");
@@ -145,6 +151,9 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
+#if TARGET_JVM
+		[NUnit.Framework.Category ("NotWorking")]
+#endif
 		public void TestConvertFrom ()
 		{
 			Image newImage = (Image) imgConv.ConvertFrom (null, CultureInfo.InvariantCulture, imageBytes);
@@ -256,6 +265,9 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
+#if TARGET_JVM
+		[NUnit.Framework.Category ("NotWorking")]
+#endif
 		public void TestConvertTo ()
 		{
 			Assert.AreEqual (imageStr, (String) imgConv.ConvertTo (null,
@@ -422,6 +434,9 @@ namespace MonoTests.System.Drawing
 
 		
 		[Test]
+#if TARGET_JVM
+		[NUnit.Framework.Category ("NotWorking")]
+#endif
 		public void TestGetPropertiesSupported ()
 		{
 			Assert.IsTrue (imgConv.GetPropertiesSupported (), "GPS#1");
@@ -429,6 +444,9 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
+#if TARGET_JVM
+		[NUnit.Framework.Category ("NotWorking")]
+#endif
 		public void TestGetProperties ()
 		{
 			PropertyDescriptorCollection propsColl;

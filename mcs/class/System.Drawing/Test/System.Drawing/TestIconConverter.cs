@@ -81,6 +81,9 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
+#if TARGET_JVM
+		[NUnit.Framework.Category ("NotWorking")]
+#endif
 		public void TestCanConvertFrom ()
 		{
 			Assert.IsTrue (icoConv.CanConvertFrom (typeof (byte [])), "CCF#1");
@@ -112,6 +115,9 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
+#if TARGET_JVM
+		[NUnit.Framework.Category ("NotWorking")]
+#endif
 		public void TestCanConvertTo ()
 		{
 			Assert.IsTrue (icoConv.CanConvertTo (typeof (String)), "CCT#1");
@@ -145,6 +151,9 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
+#if TARGET_JVM
+		[NUnit.Framework.Category ("NotWorking")]
+#endif
 		public void TestConvertFrom ()
 		{
 			Icon newIcon = (Icon) icoConv.ConvertFrom (null, CultureInfo.InvariantCulture, iconBytes);
@@ -255,6 +264,9 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
+#if TARGET_JVM
+		[NUnit.Framework.Category ("NotWorking")]
+#endif
 		public void TestConvertTo ()
 		{
 			Assert.AreEqual (iconStr, (String) icoConv.ConvertTo (null,

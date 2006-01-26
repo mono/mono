@@ -171,6 +171,9 @@ namespace MonoTests.System.Drawing{
 		
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
+#if TARGET_JVM
+		[Category ("NotWorking")]
+#endif
 		public void FileDoesNotExists ()
 		{			
 			Bitmap	bmp = new Bitmap ("FileDoesNotExists.jpg");			
@@ -451,7 +454,7 @@ namespace MonoTests.System.Drawing{
 			Assert.AreEqual ("FFE86628478591D1A1EB30E894C34F", hash);			
 			Assert.AreEqual ("8C2C04B361E1D5875EE8ACF5073F4E", hashchg);				
 						
-		}	
+		}
 
 		/*
 			Tests the LockBitmap and UnlockBitmap functions, specifically the copying
@@ -549,6 +552,6 @@ namespace MonoTests.System.Drawing{
 				Assert.AreEqual (blue, bmp.GetPixel (0, 0));
 			}
 		}
-#endif
+#endif		
 	}
 }

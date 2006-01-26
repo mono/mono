@@ -36,7 +36,7 @@
                     NoStdLib = "false"
                     NoWarn = ""
                     Optimize = "false"
-                    OutputPath = "bin\Debug\"
+                    OutputPath = "DrawingTest\Test\"
                     RegisterForComInterop = "false"
                     RemoveIntegerChecks = "false"
                     TreatWarningsAsErrors = "false"
@@ -85,27 +85,24 @@
                     HintPath = "..\..\..\..\..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.XML.dll"
                 />
                 <Reference
-                    Name = "nunit.core"
-                    AssemblyName = "nunit.core"
-                    HintPath = "..\..\..\..\..\..\..\..\Program Files\NUnit 2.2\bin\nunit.core.dll"
-                    AssemblyFolderKey = "hklm\dn\nunit.framework"
-                />
-                <Reference
-                    Name = "nunit.framework"
-                    AssemblyName = "nunit.framework"
-                    HintPath = "..\..\..\..\..\..\..\..\Program Files\NUnit 2.2\bin\nunit.framework.dll"
-                    AssemblyFolderKey = "hklm\dn\nunit.framework"
-                />
-                <Reference
-                    Name = "nunit.util"
-                    AssemblyName = "nunit.util"
-                    HintPath = "..\..\..\..\..\..\..\..\Program Files\NUnit 2.2\bin\nunit.util.dll"
-                    AssemblyFolderKey = "hklm\dn\nunit.framework"
-                />
-                <Reference
                     Name = "DrawingTestHelper"
                     Project = "{8EF9FC71-4D70-4F89-BF4D-B83EF37D4A0C}"
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
+                />
+                <Reference
+                    Name = "nunit.core.dll.J2EE"
+                    Project = "{7C52A6A5-71ED-4468-9564-2FF5CD6E6E6C}"
+                    Package = "{83B010C7-76FC-4FAD-A26C-00D7EFE60256}"
+                />
+                <Reference
+                    Name = "nunit.framework.dll.J2EE"
+                    Project = "{39CC8FF7-EF1A-41A1-B727-42684211ECD1}"
+                    Package = "{83B010C7-76FC-4FAD-A26C-00D7EFE60256}"
+                />
+                <Reference
+                    Name = "nunit.util.dll.J2EE"
+                    Project = "{36BE0465-4DE4-44CE-AF8D-6E50D0C40BC6}"
+                    Package = "{83B010C7-76FC-4FAD-A26C-00D7EFE60256}"
                 />
             </References>
         </Build>
@@ -113,6 +110,7 @@
             <Include>
                 <File
                     RelPath = "DrawingTest\Test\AssemblyInfo.cs"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File

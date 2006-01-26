@@ -1,3 +1,6 @@
+2006-01-25 Boris Kirzner <borisk@maonsoft.com>
+	* Graphics.cs: added #ifdef for TARGET_JVM.
+
 2006-01-22 Boris Kirzner <borisk@mainsoft.com>
 	* Bitmap.cs, Brush.cs, Graphics.cs, GraphicsPath.cs, Image.cs, Pen.cs,
 	Region.cs: tests refactoring.

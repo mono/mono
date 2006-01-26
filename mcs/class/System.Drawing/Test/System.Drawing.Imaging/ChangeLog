@@ -1,3 +1,7 @@
+2006-01-25 Boris Kirzner <borisk@mainsoft.com>
+	*TestBmpCodec.cs, TestImageAttributes.cs, TestImageCodecInfo.cs:
+	added #ifdef for TARGET_JVM.
+
 2005-11-13  Kornél Pál  <kornelpal@hotmail.com>
 
 	* TestImageFormat.cs: Added ToStringTest.

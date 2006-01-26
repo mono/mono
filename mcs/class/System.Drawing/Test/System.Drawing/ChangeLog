@@ -1,3 +1,9 @@
+2006-01-26 Boris Kirzner <borisk@mainsoft.com>
+	* ColorConverter.cs, TestBitmap.cs, TestIcon.cs, TestIconConverter.cs,
+	TestImageConverter.cs, TestPointConverter.cs, TestRectangleConverter.cs,
+	TestRegion.cs, TestSizeConverter.cs, TestStringFormat.cs: 
+	added #ifdef for TARGET_JVM.
+
 2006-01-23 Boris Kirzner <borisk@mainsoft.com>
 	* TestBitmap.cs, TestFont.cs: #ifdef fot TARGET_JVM.	
 

@@ -55,6 +55,9 @@ namespace MonoTests.System.Drawing{
 		}
 
 		[Test]
+#if TARGET_JVM
+		[Category ("NotWorking")]
+#endif
 		public void TestConstructors ()
 		{
 			newIcon = new Icon (fs1, 48, 48);
@@ -67,6 +70,9 @@ namespace MonoTests.System.Drawing{
 		}				
 
 		[Test]
+#if TARGET_JVM
+		[Category ("NotWorking")]
+#endif
 		public void TestProperties ()
 		{
 			Assert.AreEqual (32, icon.Height, "P#1");
@@ -77,6 +83,9 @@ namespace MonoTests.System.Drawing{
 		}
 
 		[Test]
+#if TARGET_JVM
+		[Category ("NotWorking")]
+#endif
 		public void TestMethods ()
 		{
 			/*
