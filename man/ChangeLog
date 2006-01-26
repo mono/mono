@@ -1,0 +1,6 @@
+2006-01-26  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* ChangeLog: Started
+	* mono-shlib-cop.1: Document another BUG/design issue that it doesn't check
+	  for; formatting/style changes.
+
