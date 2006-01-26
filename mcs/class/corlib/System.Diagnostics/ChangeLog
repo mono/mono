@@ -1,3 +1,7 @@
+2006-01-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* DebuggerNonUserCodeAttribute.cs: New file.
+
 2005-12-16  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* StackTrace.cs: Added, if avilable, the filename/lineno debug 
