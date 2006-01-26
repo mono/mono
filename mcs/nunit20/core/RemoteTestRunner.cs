@@ -373,12 +373,12 @@ namespace NUnit.Core
 			// This is exactly what happens when we are testing NUnit itself.
 			saveOut = Console.Out;
 			saveError = Console.Error;
-
+#if !TARGET_JVM
 			// Set Console to go to our buffers. Note that any changes made by
 			// the user in the test code or the code it calls will defeat this.
 			Console.SetOut( outBuffer );
 			Console.SetError( errorBuffer ); 
-
+#endif
 			// Save the current directory so we can run each test in
 			// the same directory as its assembly
 			currentDirectory = Environment.CurrentDirectory;

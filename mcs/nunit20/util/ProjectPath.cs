@@ -31,7 +31,9 @@ using System;
 using System.IO;
 using System.Text;
 using System.Runtime.InteropServices;
-
+#if TARGET_JVM
+using System.Collections;
+#endif
 namespace NUnit.Util
 {
 	/// <summary>
@@ -52,6 +54,7 @@ namespace NUnit.Util
 			return extension == ".dll" || extension == ".exe";
 		}
 
+#if !TARGET_JVM
 		/// <summary>
 		/// Returns the relative path from a base directory to another
 		/// directory or file.
@@ -80,16 +83,69 @@ namespace NUnit.Util
 
 			return sb.ToString();
 		}
+#else
+		/// <summary>
+		/// Returns the relative path from a base directory to another
+		/// directory or file.
+		/// </summary>
+		public static string RelativePath( string from, string to )
+		{
+			char dirSeperator = System.IO.Path.DirectorySeparatorChar;
+			string upDirStr = @"..\";
 
+			//Start by normalizing paths
+			NormalizePath (ref from);
+			NormalizePath (ref to);
+
+			if ( !IsPathValid (from) || !IsPathValid (to) )
+				return string.Empty;
+
+			if (!System.IO.Path.IsPathRooted (to))
+				return to;
+
+			//First check if FullPath begins with the BasePath
+			if ( to.StartsWith (from)) 
+				return  to.Replace (from,".");
+
+			//Now parse backwards
+			StringBuilder backDirs = new StringBuilder ();
+			string partialPath = from;
+			int index = partialPath.LastIndexOf (dirSeperator);
+			while (index > 0) {
+				//Strip path step string to last backslash and add another step backwards to our pass replacement
+				partialPath = partialPath.Substring(0,index);
+				backDirs.Append(upDirStr);
+
+				//check if FullPath begins with the current partialPath
+				if ( to.StartsWith(partialPath) )
+					if ( to == partialPath ) {
+						//Full Directory match and need to replace it all
+						backDirs.Remove (backDirs.Length-1, 1);
+						return backDirs.ToString ();
+					}
+					else //We're dealing with a file or a start path
+						return to.Replace (partialPath + dirSeperator, backDirs.ToString ());
+
+				index = partialPath.LastIndexOf (dirSeperator, partialPath.Length-1);
+			}			
+			//No common root found, return null.
+			return null;
+		}
+#endif
 		/// <summary>
 		/// Return the canonical form of a path.
 		public static string Canonicalize( string path )
 		{
+#if !TARGET_JVM
 			StringBuilder sb = new StringBuilder( MAX_PATH );
 			if ( !PathCanonicalize( sb, path ) )
 				throw new ArgumentException( string.Format( "Invalid path passed to PathCanonicalize: {0}", path ) );
 
 			return sb.ToString();
+#else
+			java.io.File pathObject = new java.io.File (path);
+			return pathObject.getCanonicalPath ();
+#endif
 		}
 
 		/// <summary>
@@ -136,6 +192,7 @@ namespace NUnit.Util
 
 		#endregion
 
+#if !TARGET_JVM
 		#region Shlwapi functions used internally
 
 		[DllImport("shlwapi.dll")]
@@ -158,5 +215,21 @@ namespace NUnit.Util
 			StringBuilder result );
 			
 		#endregion
+#else
+		private static bool IsPathValid(string path)
+		{
+			return (path!=string.Empty) && (path[0] != System.IO.Path.DirectorySeparatorChar);
+		}
+
+		private static void NormalizePath (ref string path)
+		{
+			string dirSeperator = new string (new char [] {System.IO.Path.DirectorySeparatorChar});
+
+			path = path.ToLower ();
+			if (path.EndsWith (dirSeperator))
+				path = path.Substring (0, path.Length - 1);
+		}
+
+#endif
 	}
 }

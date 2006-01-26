@@ -151,8 +151,10 @@ namespace NUnit.Console
 			Console.WriteLine();
 
 			string clrPlatform = Type.GetType("Mono.Runtime", false) == null ? ".NET" : "Mono";
+#if !TARGET_JVM			
 			Console.WriteLine( string.Format("OS Version: {0}    {1} Version: {2}",
 				Environment.OSVersion, clrPlatform, Environment.Version ) );
+#endif
 			Console.WriteLine();
 		}
 

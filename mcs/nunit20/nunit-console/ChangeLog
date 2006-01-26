@@ -1,3 +1,7 @@
+2006-01-25 Boris Kirzner <borisk@mainsoft.com>
+	* ConsoleUi.cs: added #ifdef for features not supported in TARGET_JVM.
+	* nunit-console.J2EE.vmwcsproj: added project file for TARGET_JVM.
+
 2006-01-12  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile: Revert my '2006-01-10' commit.  Prefer the more

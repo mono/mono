@@ -83,5 +83,9 @@ using System.Runtime.CompilerServices;
 //   (*) Delay Signing is an advanced option - see the Microsoft .NET Framework
 //       documentation for more information on this.
 //
+#if TARGET_JVM
+[assembly: AssemblyDelaySign(false)]
+#else
 [assembly: AssemblyKeyFile("../../../nunit.key")]
 [assembly: AssemblyKeyName("")]
+#endif

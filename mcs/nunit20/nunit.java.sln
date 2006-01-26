@@ -1,0 +1,89 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{83B010C7-76FC-4FAD-A26C-00D7EFE60256}") = "nunit.framework.dll.J2EE", "framework\nunit.framework.dll.J2EE.vmwcsproj", "{39CC8FF7-EF1A-41A1-B727-42684211ECD1}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{83B010C7-76FC-4FAD-A26C-00D7EFE60256}") = "nunit.core.dll.J2EE", "core\nunit.core.dll.J2EE.vmwcsproj", "{7C52A6A5-71ED-4468-9564-2FF5CD6E6E6C}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{83B010C7-76FC-4FAD-A26C-00D7EFE60256}") = "nunit.util.dll.J2EE", "util\nunit.util.dll.J2EE.vmwcsproj", "{36BE0465-4DE4-44CE-AF8D-6E50D0C40BC6}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{83B010C7-76FC-4FAD-A26C-00D7EFE60256}") = "nunit-console.J2EE", "nunit-console\nunit-console.J2EE.vmwcsproj", "{EE901CF2-A263-471C-AEE2-2400A7105ABE}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SourceCodeControl) = preSolution
+		SccNumberOfProjects = 1
+		SccProjectUniqueName0 = nunit-console\\nunit-console.J2EE.vmwcsproj
+		SccProjectName0 = nunit.java
+		SccLocalPath0 = .
+		SccProvider0 = MSSCCI:ClearCase
+		SccProjectFilePathRelativizedFromConnection0 = nunit-console\\
+	EndGlobalSection
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Debug_Java = Debug_Java
+		Debug_Net = Debug_Net
+		Debug_NetRef = Debug_NetRef
+		Debug-Strong = Debug-Strong
+		Release = Release
+		Release_Java = Release_Java
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{39CC8FF7-EF1A-41A1-B727-42684211ECD1}.Debug.ActiveCfg = Debug_Java|.NET
+		{39CC8FF7-EF1A-41A1-B727-42684211ECD1}.Debug.Build.0 = Debug_Java|.NET
+		{39CC8FF7-EF1A-41A1-B727-42684211ECD1}.Debug_Java.ActiveCfg = Debug_Java|.NET
+		{39CC8FF7-EF1A-41A1-B727-42684211ECD1}.Debug_Java.Build.0 = Debug_Java|.NET
+		{39CC8FF7-EF1A-41A1-B727-42684211ECD1}.Debug_Net.ActiveCfg = Release_Java|.NET
+		{39CC8FF7-EF1A-41A1-B727-42684211ECD1}.Debug_NetRef.ActiveCfg = Debug_Java|.NET
+		{39CC8FF7-EF1A-41A1-B727-42684211ECD1}.Debug-Strong.ActiveCfg = Debug_Java|.NET
+		{39CC8FF7-EF1A-41A1-B727-42684211ECD1}.Debug-Strong.Build.0 = Debug_Java|.NET
+		{39CC8FF7-EF1A-41A1-B727-42684211ECD1}.Release.ActiveCfg = Release_Java|.NET
+		{39CC8FF7-EF1A-41A1-B727-42684211ECD1}.Release_Java.ActiveCfg = Release_Java|.NET
+		{39CC8FF7-EF1A-41A1-B727-42684211ECD1}.Release_Java.Build.0 = Release_Java|.NET
+		{7C52A6A5-71ED-4468-9564-2FF5CD6E6E6C}.Debug.ActiveCfg = Debug_Java|.NET
+		{7C52A6A5-71ED-4468-9564-2FF5CD6E6E6C}.Debug.Build.0 = Debug_Java|.NET
+		{7C52A6A5-71ED-4468-9564-2FF5CD6E6E6C}.Debug_Java.ActiveCfg = Debug_Java|.NET
+		{7C52A6A5-71ED-4468-9564-2FF5CD6E6E6C}.Debug_Java.Build.0 = Debug_Java|.NET
+		{7C52A6A5-71ED-4468-9564-2FF5CD6E6E6C}.Debug_Net.ActiveCfg = Release_Java|.NET
+		{7C52A6A5-71ED-4468-9564-2FF5CD6E6E6C}.Debug_NetRef.ActiveCfg = Debug_Java|.NET
+		{7C52A6A5-71ED-4468-9564-2FF5CD6E6E6C}.Debug-Strong.ActiveCfg = Debug_Java|.NET
+		{7C52A6A5-71ED-4468-9564-2FF5CD6E6E6C}.Debug-Strong.Build.0 = Debug_Java|.NET
+		{7C52A6A5-71ED-4468-9564-2FF5CD6E6E6C}.Release.ActiveCfg = Release_Java|.NET
+		{7C52A6A5-71ED-4468-9564-2FF5CD6E6E6C}.Release_Java.ActiveCfg = Release_Java|.NET
+		{7C52A6A5-71ED-4468-9564-2FF5CD6E6E6C}.Release_Java.Build.0 = Release_Java|.NET
+		{36BE0465-4DE4-44CE-AF8D-6E50D0C40BC6}.Debug.ActiveCfg = Debug_Java|.NET
+		{36BE0465-4DE4-44CE-AF8D-6E50D0C40BC6}.Debug.Build.0 = Debug_Java|.NET
+		{36BE0465-4DE4-44CE-AF8D-6E50D0C40BC6}.Debug_Java.ActiveCfg = Debug_Java|.NET
+		{36BE0465-4DE4-44CE-AF8D-6E50D0C40BC6}.Debug_Java.Build.0 = Debug_Java|.NET
+		{36BE0465-4DE4-44CE-AF8D-6E50D0C40BC6}.Debug_Net.ActiveCfg = Release_Java|.NET
+		{36BE0465-4DE4-44CE-AF8D-6E50D0C40BC6}.Debug_NetRef.ActiveCfg = Debug_Java|.NET
+		{36BE0465-4DE4-44CE-AF8D-6E50D0C40BC6}.Debug-Strong.ActiveCfg = Debug_Java|.NET
+		{36BE0465-4DE4-44CE-AF8D-6E50D0C40BC6}.Debug-Strong.Build.0 = Debug_Java|.NET
+		{36BE0465-4DE4-44CE-AF8D-6E50D0C40BC6}.Release.ActiveCfg = Release_Java|.NET
+		{36BE0465-4DE4-44CE-AF8D-6E50D0C40BC6}.Release_Java.ActiveCfg = Release_Java|.NET
+		{36BE0465-4DE4-44CE-AF8D-6E50D0C40BC6}.Release_Java.Build.0 = Release_Java|.NET
+		{EE901CF2-A263-471C-AEE2-2400A7105ABE}.Debug.ActiveCfg = Debug_Java|.NET
+		{EE901CF2-A263-471C-AEE2-2400A7105ABE}.Debug.Build.0 = Debug_Java|.NET
+		{EE901CF2-A263-471C-AEE2-2400A7105ABE}.Debug_Java.ActiveCfg = Debug_Java|.NET
+		{EE901CF2-A263-471C-AEE2-2400A7105ABE}.Debug_Java.Build.0 = Debug_Java|.NET
+		{EE901CF2-A263-471C-AEE2-2400A7105ABE}.Debug_Net.ActiveCfg = Debug_Java|.NET
+		{EE901CF2-A263-471C-AEE2-2400A7105ABE}.Debug_Net.Build.0 = Debug_Java|.NET
+		{EE901CF2-A263-471C-AEE2-2400A7105ABE}.Debug_NetRef.ActiveCfg = Debug_Java|.NET
+		{EE901CF2-A263-471C-AEE2-2400A7105ABE}.Debug_NetRef.Build.0 = Debug_Java|.NET
+		{EE901CF2-A263-471C-AEE2-2400A7105ABE}.Debug-Strong.ActiveCfg = Debug_Java|.NET
+		{EE901CF2-A263-471C-AEE2-2400A7105ABE}.Debug-Strong.Build.0 = Debug_Java|.NET
+		{EE901CF2-A263-471C-AEE2-2400A7105ABE}.Release.ActiveCfg = Release_Java|.NET
+		{EE901CF2-A263-471C-AEE2-2400A7105ABE}.Release.Build.0 = Release_Java|.NET
+		{EE901CF2-A263-471C-AEE2-2400A7105ABE}.Release_Java.ActiveCfg = Release_Java|.NET
+		{EE901CF2-A263-471C-AEE2-2400A7105ABE}.Release_Java.Build.0 = Release_Java|.NET
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal

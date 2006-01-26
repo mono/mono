@@ -84,7 +84,11 @@ namespace NUnit.Core
 				if ( swap )
 					Environment.CurrentDirectory = assemblyDirectory;
 
+#if !TARGET_JVM
 				Assembly assembly = AppDomain.CurrentDomain.Load(Path.GetFileNameWithoutExtension(assemblyName));
+#else
+				Assembly assembly = Assembly.Load(Path.GetFileNameWithoutExtension(assemblyName));
+#endif
 
 				foreach( AssemblyName refAssembly in assembly.GetReferencedAssemblies() )
 				{
@@ -135,7 +139,11 @@ namespace NUnit.Core
 				// Assume that testName is a namespace
 				string prefix = testName + '.';
 
+#if !TARGET_JVM
 				Type[] testTypes = assembly.GetExportedTypes();
+#else
+				Type[] testTypes = GetAssemblyExportedTypes(assembly);
+#endif
 				int testFixtureCount = 0;
 
 				foreach(Type type in testTypes)
@@ -258,7 +266,11 @@ namespace NUnit.Core
 
 			builder.rootSuite = new AssemblyTestSuite( assemblyName, assemblyKey );
 			int testFixtureCount = 0;
+#if !TARGET_JVM
 			Type[] testTypes = assembly.GetExportedTypes();
+#else
+			Type[] testTypes = GetAssemblyExportedTypes(assembly);
+#endif
 			foreach(Type testType in testTypes)
 			{
 				if( CanMakeSuite( testType ) )
@@ -281,6 +293,29 @@ namespace NUnit.Core
 			return builder.rootSuite;
 		}
 
+#if TARGET_JVM
+		private Type[] GetAssemblyExportedTypes(Assembly assembly)
+		{
+			Type[] allTypes = null;
+			try
+			{
+				allTypes = assembly.GetTypes();
+			}
+			catch (Exception e) 
+			{
+			    System.Console.WriteLine("ReflectionTypeLoadException error");
+			}
+			ArrayList tmpTestTypes = new ArrayList(allTypes.Length);
+			foreach(Type current in allTypes)
+			{
+				if (current.IsPublic || current.IsNestedPublic)
+				{
+					tmpTestTypes.Add(current);
+				}
+			}
+			return (Type[])tmpTestTypes.ToArray(typeof(Type));
+		}
+#endif
 		/// <summary>
 		/// Helper routine that makes a suite from either a TestFixture or
 		/// a legacy Suite property.

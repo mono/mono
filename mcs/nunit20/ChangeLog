@@ -1,3 +1,6 @@
+2006-01-25 Boris Kirzner <borisl@mainsoft.com>
+	* nunit.java.sln: added solution file for TARGET_JVM.
+
 Wed Apr 20 18:05:41 CEST 2005 Paolo Molaro <lupus@ximian.com>
 
 	* */AssemblyInfo.cs: fixed path to key file.
