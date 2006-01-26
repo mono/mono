@@ -6,8 +6,7 @@
 //   Alexandre Pigolkine (pigolkine@gmx.de)
 //
 // Copyright (C) 2002/2004 Ximian, Inc http://www.ximian.com
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004, 2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,7 +27,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-using System;
+
 using System.Drawing.Text;
 using System.Text;
 using System.Runtime.InteropServices;
@@ -52,14 +51,20 @@ namespace System.Drawing {
 		
 		internal void refreshName()
 		{
-			if (nativeFontFamily != IntPtr.Zero) {
-				int language = 0;			
-				IntPtr buffer;
+			if (nativeFontFamily == IntPtr.Zero)
+				return;
 
+			int language = 0;			
+			IntPtr buffer = IntPtr.Zero;
+			try {
 				buffer = Marshal.AllocHGlobal(GDIPlus.FACESIZE * UnicodeEncoding.CharSize);
 				Status status = GDIPlus.GdipGetFamilyName (nativeFontFamily, buffer, language);
 				GDIPlus.CheckStatus (status);
 				name = Marshal.PtrToStringUni(buffer);
+			}
+			finally {
+				if (buffer != IntPtr.Zero)
+					Marshal.FreeHGlobal (buffer);
 			}
 		}
 		

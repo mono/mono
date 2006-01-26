@@ -37,6 +37,7 @@ namespace System.Drawing
 #if !NET_2_0
 	[ComVisible (false)]
 #endif
+	[MonoTODO ("Region are limited to rectangles when using libgdiplus")]
 	public sealed class Region : MarshalByRefObject, IDisposable
 	{
                 private IntPtr nativeRegion = IntPtr.Zero;
@@ -52,7 +53,6 @@ namespace System.Drawing
                         nativeRegion = native; 
                 }
                 
-		[MonoTODO ("GdipCreateRegionPath is not implemented in libgdiplus")]
 		public Region (GraphicsPath path)
 		{
 			if (path == null)
@@ -73,7 +73,6 @@ namespace System.Drawing
 			GDIPlus.CheckStatus (status);
 		}
 
-		[MonoTODO ("GdipCreateRegionRgnData is not implemented in libgdiplus")]
 		public Region (RegionData rgnData)
 		{
 			if (rgnData == null)
@@ -87,6 +86,7 @@ namespace System.Drawing
 		// Union
 		//
 
+		[MonoTODO ("GdipCombineRegionPath isn't implemented in libgdiplus")]
 		public void Union (GraphicsPath path)
 		{
 			if (path == null)
@@ -579,7 +579,8 @@ namespace System.Drawing
 			GDIPlus.FromUnManagedMemoryToRectangles (dest, rects);			
 			return rects;			
 		}		
-		
+
+		[MonoTODO ("GdipTransformRegion isn't implemented in libgdiplus")]		
 		public void Transform(Matrix matrix)
 		{
 			if (matrix == null)
