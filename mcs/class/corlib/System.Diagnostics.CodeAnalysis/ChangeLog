@@ -1,0 +1,4 @@
+2006-01-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* SuppressMessageAttribute.cs: New file.
+
