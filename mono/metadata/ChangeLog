@@ -1,3 +1,9 @@
+2006-01-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* object-internals.h (MonoThread): Add 'thread_dump_requested' field.
+
+	* threads.c (mono_threads_request_thread_dump): New helper function.
+
 2006-01-25  Raja R Harinath  <rharinath@novell.com>
 
 	* metadata.c (mono_type_create_from_typespec_full): Fix caching of types.
