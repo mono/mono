@@ -824,6 +824,11 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 	else
 		g_assert (cfg->reginfo_len >= rs->next_vireg);
 
+	if (cfg->verbose_level > 1) {
+		/* pint_regtrack reads the info of all variables */
+		memset (cfg->reginfo, 0, cfg->reginfo_len * sizeof (RegTrack));
+	}
+
 	for (ins = bb->code; ins; ins = ins->next) {
 		spec = ins_spec [ins->opcode];
 
