@@ -1,3 +1,9 @@
+2006-01-26 Konstantin Triger <kostat@mainsoft.com>
+
+        * Connection.cs: TARGET_JVM: catch ObjectDisposedException in addition 
+        	to ThreadAbortException
+        * SupportClass.cs: TARGET_JVM: optimizing byte[] <-> sbyte[] conversion
+
 2005-11-06 Konstantin Triger <kostat@mainsoft.com>
 
         * LdapConnection.cs: TARGET_JVM: create GSSCredential only once, cleanup

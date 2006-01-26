@@ -1508,6 +1508,15 @@ namespace Novell.Directory.Ldap
 					// before closing sockets, from shutdown
 					return;
 				}
+#if TARGET_JVM
+				catch (ObjectDisposedException)
+				{
+					// we do not support Thread.Abort under java
+					// so we close the stream and the working thread
+					// catches ObjectDisposedException exception
+					return;
+				}
+#endif
 				catch (System.IO.IOException ioe)
 				{
 					
