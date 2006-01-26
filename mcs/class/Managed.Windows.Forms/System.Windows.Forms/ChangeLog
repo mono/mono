@@ -1,3 +1,8 @@
+2006-01-26  Jackson Harper  <jackson@ximian.com>
+
+	* Control.cs (BeginInvoke): Automagically handle EventHandlers the
+	same way we handle them with Invoke.
+
 2006-01-25  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* Form.cs:

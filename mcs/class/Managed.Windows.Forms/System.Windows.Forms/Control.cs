@@ -2432,7 +2432,10 @@ namespace System.Windows.Forms
 		#region	Public Instance Methods
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public IAsyncResult BeginInvoke(Delegate method) {
-			return BeginInvokeInternal(method, null, false);
+			object [] prms = null;
+			if (method is EventHandler)
+				prms = new object [] { this, EventArgs.Empty };
+			return BeginInvokeInternal(method, prms, false);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
