@@ -59,7 +59,6 @@ namespace System.Windows.Forms {
 		internal bool		zero_sized;
 		internal Rectangle	invalid;
 		internal bool		expose_pending;
-		internal bool		destroy_pending;
 		internal bool		nc_expose_pending;
 		internal bool		configure_pending;
 		internal bool		reparented;
@@ -86,7 +85,6 @@ namespace System.Windows.Forms {
 			parent = null;
 			invalid = Rectangle.Empty;
 			expose_pending = false;
-			destroy_pending = false;
 			nc_expose_pending = false;
 			enabled = true;
 			reparented = false;
@@ -279,16 +277,6 @@ namespace System.Windows.Forms {
 				// not computed this is done via an WM_NCCALC
 				return GetClientRectangle (border_style, null, title_style,
 						caption_height, tool_caption_height, width, height);
-			}
-		}
-
-		public bool DestroyPending {
-			get {
-				return destroy_pending;
-			}
-
-			set {
-				destroy_pending = value;
 			}
 		}
 

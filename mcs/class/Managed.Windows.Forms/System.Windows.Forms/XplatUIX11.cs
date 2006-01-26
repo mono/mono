@@ -774,14 +774,12 @@ namespace System.Windows.Forms {
 			hwnd = Hwnd.GetObjectFromWindow(xevent.AnyEvent.window);
 
 			// Don't waste time
-			//if (hwnd == null || !hwnd.visible) {	// Can'd check visible; we might loose expose for whole_windows
 			if (hwnd == null) {	
 				return;
 			}
 
 			if (xevent.AnyEvent.window == hwnd.client_window) {
 				hwnd.AddInvalidArea(xevent.ExposeEvent.x, xevent.ExposeEvent.y, xevent.ExposeEvent.width, xevent.ExposeEvent.height);
-
 				if (!hwnd.expose_pending) {
 					MessageQueue.Enqueue(xevent);
 					hwnd.expose_pending = true;
@@ -1239,10 +1237,10 @@ namespace System.Windows.Forms {
 				controls = c.child_controls.GetAllControls ();
 
 				for (i = 0; i < controls.Length; i++) {
-					hwnd = Hwnd.ObjectFromHandle(controls[i].Handle);
-
-					if (hwnd != null) {
-						hwnd.destroy_pending = true;
+					if (controls[i].IsHandleCreated) {
+						hwnd = Hwnd.ObjectFromHandle(controls[i].Handle);
+						SendMessage(controls[i].Handle, Msg.WM_DESTROY, IntPtr.Zero, IntPtr.Zero);
+						hwnd.Dispose();
 					}
 					DestroyChildWindow(controls[i]);
 				}
@@ -2202,11 +2200,11 @@ namespace System.Windows.Forms {
 				DestroyCaret(handle);
 			}
 
-			// The window is a goner, don't send it stuff like WM_PAINT anymore
-			hwnd.destroy_pending = true;
-
 			// Mark our children as gone as well
 			DestroyChildWindow(Control.ControlNativeWindow.ControlFromHandle(handle));
+
+			// Send destroy message
+			SendMessage(handle, Msg.WM_DESTROY, IntPtr.Zero, IntPtr.Zero);
 
 			lock (XlibLock) {
 				if (hwnd.client_window != IntPtr.Zero) {
@@ -2217,6 +2215,7 @@ namespace System.Windows.Forms {
 					XDestroyWindow(DisplayHandle, hwnd.whole_window);
 				}
 			}
+			hwnd.Dispose();
 		}
 
 		internal override IntPtr DispatchMessage(ref MSG msg) {
@@ -2460,14 +2459,11 @@ namespace System.Windows.Forms {
 			hwnd = Hwnd.GetObjectFromWindow(xevent.AnyEvent.window);
 
 			// Handle messages for windows that are already or are about to be destroyed
-			if (hwnd == null || hwnd.destroy_pending) {
-				// We need to let the DestroyNotify go through so that the owning control can learn about it, too
-				if (hwnd == null || xevent.type != XEventName.DestroyNotify) {
-					#if DriverDebug
-						Console.WriteLine("GetMessage(): Got message {0} for non-existent or already destroyed window {1:X}", xevent.type, xevent.AnyEvent.window.ToInt32());
-					#endif
-					goto ProcessNextMessage;
-				}
+			if (hwnd == null) {
+				#if DriverDebug
+					Console.WriteLine("GetMessage(): Got message {0} for non-existent or already destroyed window {1:X}", xevent.type, xevent.AnyEvent.window.ToInt32());
+				#endif
+				goto ProcessNextMessage;
 			}
 
 			if (hwnd.client_window == xevent.AnyEvent.window) {
@@ -2912,7 +2908,7 @@ namespace System.Windows.Forms {
 					hwnd = Hwnd.ObjectFromHandle(xevent.DestroyWindowEvent.window);
 
 					// We may get multiple for the same window, act only one the first (when Hwnd still knows about it)
-					if ((hwnd != null) && (hwnd.client_window == xevent.DestroyWindowEvent.window)) {
+					if (hwnd.client_window == xevent.DestroyWindowEvent.window) {
 						msg.hwnd = hwnd.client_window;
 						msg.message=Msg.WM_DESTROY;
 						hwnd.Dispose();
@@ -3895,19 +3891,18 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void UpdateWindow(IntPtr handle) {
-//			XEvent	xevent;
+			XEvent	xevent;
 			Hwnd	hwnd;
 
 			hwnd = Hwnd.ObjectFromHandle(handle);
 
-//			if (!hwnd.visible || hwnd.expose_pending) {
-			if (!hwnd.visible || hwnd.destroy_pending) {
+			if (!hwnd.visible || hwnd.expose_pending) {
 				return;
 			}
 
-			SendMessage(handle, Msg.WM_PAINT, IntPtr.Zero, IntPtr.Zero);
 #if not
-#if true
+			SendMessage(handle, Msg.WM_PAINT, IntPtr.Zero, IntPtr.Zero);
+#else
 			xevent = new XEvent();
 			xevent.type = XEventName.Expose;
 			xevent.ExposeEvent.display = DisplayHandle;
@@ -3915,23 +3910,6 @@ namespace System.Windows.Forms {
 
 			MessageQueue.Enqueue(xevent);
 			hwnd.expose_pending = true;
-#else
-			// This would force an immediate paint (SendMessage, instead of PostMessage)
-			if (!hwnd.visible) {
-				return;
-			}
-
-			if (!hwnd.expose_pending) {
-				xevent = new XEvent();
-				xevent.type = XEventName.Expose;
-				xevent.ExposeEvent.display = DisplayHandle;
-				xevent.ExposeEvent.window = hwnd.client_window;
-
-				MessageQueue.Enqueue(xevent);
-				hwnd.expose_pending = true;
-			}
-			NativeWindow.WndProc(hwnd.client_window, Msg.WM_PAINT, IntPtr.Zero, IntPtr.Zero);
-#endif
 #endif
 		}
 		#endregion	// Public Static Methods

@@ -1,3 +1,39 @@
+2006-01-25  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* Form.cs:
+	  - Added tracking of window state so CreateParams can return
+	    the appropriate style
+	  - Moved setting of WS_CAPTION style in CreateParams to allow
+	    styles without caption
+	* DataGridTextBoxColumn.cs: We are now also creating the TextBox 
+	  control if the TextBox property is accessed. Fixes #77345
+	* Control.cs:
+	  - get_Created: now uses is_disposed and is_created to determine
+	    return value (suggested by Jackson)
+	  - CreateHandle: No longer exits if the handle is being recreated
+	  - RecreateHandle: If the handle is not yet created call the 
+	    appropriate method to create either control or handle. If the
+	    control is already created CreateHandle will simply exit instead
+	    of just creating the handle
+	* Hwnd.cs: Removed expose_pending tracking, no longer needed since we
+	  now SendMessage WM_DESTROY directly to the control when DestroyWindow
+	  is called.
+	* XplatUIX11.cs: 
+	  - When DestroyWindow is called, instead of waiting for the 
+	    DestroyNotification from X11, we directly post it to the WndProc
+	    and immediately dispose the hwnd object.
+	    Same applies to DestroyChildWindows, and this obsoletes the
+	    expose_pending tracking. Contrary to Win32 behaviour we destroy our
+	    child windows before our own, to avoid X11 errors.
+	  - Removed the direct sending of WM_PAINT on UpdateWindow
+	* XplatUIWin32.cs:
+	  - Reworked DoEvents and GetMessage to allow access to internal queue
+	    even when trying non-blocking access to the queue.  Fixes #77335. 
+	    Based on a patch suggestion by Don Edvalson. The new private
+	    GetMessage can now also be used as a backend for a PeekMessage
+	    frontend version.
+	* XplatUI.cs: Improved debug output for CreateWindow
+
 2006-01-25  Jackson Harper  <jackson@ximian.com>
 
 	* Help.cs: Allow param to be null. Patch by Don Edvalson.

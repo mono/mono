@@ -1616,10 +1616,7 @@ namespace System.Windows.Forms
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public bool Created {
 			get {
-				if (!this.is_disposed && (this.window.Handle != IntPtr.Zero)) {
-					return true;
-				}
-				return false;
+				return (!is_disposed && is_created);
 			}
 		}
 
@@ -1909,7 +1906,7 @@ namespace System.Windows.Forms
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public bool IsHandleCreated {
 			get {
-				if ((window!=null) && (window.Handle!=IntPtr.Zero)) {
+				if ((window != null) && (window.Handle != IntPtr.Zero)) {
 					return true;
 				}
 
@@ -1944,11 +1941,11 @@ namespace System.Windows.Forms
 		[Browsable(false)]
 		public string Name {
 			get {
-				return this.name;
+				return name;
 			}
 
 			set {
-				this.name=value;
+				name = value;
 			}
 		}
 
@@ -3023,7 +3020,7 @@ namespace System.Windows.Forms
 				throw new ObjectDisposedException(Name);
 			}
 
-			if (IsHandleCreated) {
+			if (IsHandleCreated && !is_recreating) {
 				return;
 			}
 
@@ -3252,7 +3249,11 @@ namespace System.Windows.Forms
 					((Control)child.Current).RecreateHandle();
 				}
 			} else {
-				CreateControl();
+				if (!is_created) {
+					CreateControl();
+				} else {
+					CreateHandle();
+				}
 			}
 
 			is_recreating = false;

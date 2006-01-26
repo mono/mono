@@ -39,7 +39,6 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading;
 
-/// X11 Version
 namespace System.Windows.Forms {
 	internal class XplatUI {
 		#region Local Variables
@@ -278,9 +277,15 @@ namespace System.Windows.Forms {
 
 		internal static IntPtr CreateWindow(CreateParams cp) {
 			#if DriverDebug || DriverDebugCreate
-				Console.WriteLine("CreateWindow(): Called");
+				IntPtr handle;
+
+				handle = driver.CreateWindow(cp);
+
+				Console.WriteLine("CreateWindow(): Called, returning {0:X}", handle.ToInt32());
+				return handle;
+			#else
+				return driver.CreateWindow(cp);
 			#endif
-			return driver.CreateWindow(cp);
 		}
 
 		internal static IntPtr CreateWindow(IntPtr Parent, int X, int Y, int Width, int Height) {

@@ -119,6 +119,7 @@ namespace System.Windows.Forms
 		[Browsable(false)]
 		public virtual TextBox TextBox {
 			get {
+				EnsureTextBox();
 				return textbox;
 			}
 		}
@@ -165,18 +166,10 @@ namespace System.Windows.Forms
 		protected internal override void Edit (CurrencyManager source, int rowNum,  Rectangle bounds,  bool _ro, string instantText, bool cellIsVisible)
 		{
 			object obj;
-			bool newctrl = false;
 			
-			if (textbox == null) {
-				textbox = new DataGridTextBox ();
-				textbox.SetDataGrid (DataGridTableStyle.DataGrid);
-				newctrl = true;				
-				textbox.Multiline = true;
-				textbox.BorderStyle = BorderStyle.None;
-			}			
-			
+			EnsureTextBox();
+
 			textbox.TextAlign = alignment;
-			textbox.Visible = cellIsVisible;
 			
 			if ((ParentReadOnly == true)  || 
 				(ParentReadOnly == false && ReadOnly == true) || 
@@ -192,9 +185,7 @@ namespace System.Windows.Forms
 			obj = GetColumnValueAtRow (source, rowNum);
 			textbox.Text = GetFormattedString (obj);
 
-			if (newctrl == true)
-				DataGridTableStyle.DataGrid.Controls.Add (textbox);
-
+			textbox.Visible = cellIsVisible;
 			textbox.Focus ();
 			textbox.SelectAll ();			
 		}
@@ -333,6 +324,18 @@ namespace System.Windows.Forms
 
 			return obj.ToString ();
 
+		}
+
+		private void EnsureTextBox() {
+			if (textbox == null) {
+				textbox = new DataGridTextBox ();
+				textbox.SetDataGrid (DataGridTableStyle.DataGrid);
+				textbox.Multiline = true;
+				textbox.BorderStyle = BorderStyle.None;
+				textbox.Visible = false;
+
+				DataGridTableStyle.DataGrid.Controls.Add (textbox);
+			}			
 		}
 		#endregion Private Instance Methods
 	}

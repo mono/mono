@@ -50,6 +50,7 @@ namespace System.Windows.Forms {
 		private bool			allow_transparency;
 		private static Icon		default_icon;
 		internal bool			is_modal;
+		private FormWindowState		window_state;
 		private bool			control_box;
 		private bool			minimize_box;
 		private bool			maximize_box;
@@ -121,6 +122,7 @@ namespace System.Windows.Forms {
 			dialog_result = DialogResult.None;
 			start_position = FormStartPosition.WindowsDefaultLocation;
 			form_border_style = FormBorderStyle.Sizable;
+			window_state = FormWindowState.Normal;
 			key_preview = false;
 			opacity = 1D;
 			menu = null;
@@ -790,11 +792,18 @@ namespace System.Windows.Forms {
 		[DefaultValue(FormWindowState.Normal)]
 		public FormWindowState WindowState {
 			get {
-				return XplatUI.GetWindowState(Handle);
+				if (IsHandleCreated) {
+					window_state = XplatUI.GetWindowState(Handle);
+				}
+				return window_state;
 			}
 
 			set {
-				XplatUI.SetWindowState(Handle, value);
+Console.WriteLine("Setting window state to {0}", value);
+				window_state = value;
+				if (IsHandleCreated) {
+					XplatUI.SetWindowState(Handle, value);
+				}
 			}
 		}
 
@@ -824,10 +833,10 @@ namespace System.Windows.Forms {
 				cp.Width = Width;
 				cp.Height = Height;
 
-				cp.Style = (int)(WindowStyles.WS_CLIPCHILDREN | WindowStyles.WS_CLIPSIBLINGS | WindowStyles.WS_CAPTION);
+				cp.Style = (int)(WindowStyles.WS_CLIPCHILDREN | WindowStyles.WS_CLIPSIBLINGS);
 
 				if (IsMdiChild) {
-					cp.Style |= (int)WindowStyles.WS_CHILD;
+					cp.Style |= (int)(WindowStyles.WS_CHILD | WindowStyles.WS_CAPTION);
 					cp.Parent = Parent.Handle;
 
 					cp.ExStyle |= (int) (WindowStyles.WS_EX_WINDOWEDGE | WindowStyles.WS_EX_MDICHILD);
@@ -880,6 +889,18 @@ namespace System.Windows.Forms {
 						cp.ExStyle |= (int)(WindowStyles.WS_EX_WINDOWEDGE | WindowStyles.WS_EX_TOOLWINDOW);
 						break;
 					}
+					}
+				}
+
+				switch(window_state) {
+					case FormWindowState.Maximized: {
+						cp.Style |= (int)WindowStyles.WS_MAXIMIZE;
+						break;
+					}
+
+					case FormWindowState.Minimized: {
+						cp.Style |= (int)WindowStyles.WS_MINIMIZE;
+						break;
 					}
 				}
 

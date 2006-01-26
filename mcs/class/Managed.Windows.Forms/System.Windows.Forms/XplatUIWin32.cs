@@ -1268,7 +1268,7 @@ namespace System.Windows.Forms {
 				Cursor.Current = null;
 			}
 
-			while (Win32PeekMessage(ref msg, IntPtr.Zero, 0, 0, (uint)PeekMessageFlags.PM_REMOVE)==true) {
+			while (GetMessage(ref msg, IntPtr.Zero, 0, 0, false)) {
 				XplatUI.TranslateMessage(ref msg);
 				XplatUI.DispatchMessage(ref msg);
 			}
@@ -1283,13 +1283,24 @@ namespace System.Windows.Forms {
 		}
 
 		internal override bool GetMessage(ref MSG msg, IntPtr hWnd, int wFilterMin, int wFilterMax) {
+			return GetMessage(ref msg, hWnd, wFilterMin, wFilterMax, true);
+		}
+
+		private bool GetMessage(ref MSG msg, IntPtr hWnd, int wFilterMin, int wFilterMax, bool blocking) {
 			bool		result;
 
 			if (RetrieveMessage(ref msg)) {
 				return true;
 			}
 
-			result = Win32GetMessage(ref msg, hWnd, wFilterMin, wFilterMax);
+			if (blocking) {
+				result = Win32GetMessage(ref msg, hWnd, wFilterMin, wFilterMax);
+			} else {
+				result = Win32PeekMessage(ref msg, hWnd, wFilterMin, wFilterMax, (uint)PeekMessageFlags.PM_REMOVE);
+				if (!result) {
+					return false;
+				}
+			}
 
 			// We need to fake WM_MOUSE_ENTER/WM_MOUSE_LEAVE
 			switch (msg.message) {
