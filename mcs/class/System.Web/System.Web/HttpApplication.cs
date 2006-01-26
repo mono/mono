@@ -1015,7 +1015,7 @@ namespace System.Web {
 		{
 			try {
 				InitOnce (true);
-			} catch (ConfigurationErrorsException e) {
+			} catch (Exception e) {
 				FinalErrorWrite (context.Response, new HttpException ("", e).GetHtmlErrorMessage ());
 				return;
 			}
