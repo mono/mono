@@ -9875,6 +9875,14 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 	if (parts == 1)
 		return cfg;
 
+	if (cfg->new_ir) {
+		mono_local_cprop2 (cfg);
+
+		/* This must be done _before_ global reg alloc and _after_ decompose */
+		mono_handle_global_vregs (cfg);
+		mono_local_deadce (cfg);
+	}
+
 //#define DEBUGSSA "logic_run"
 #define DEBUGSSA_CLASS "Tests"
 #ifdef DEBUGSSA
@@ -9908,8 +9916,6 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 		} else {
 			mono_local_cprop (cfg);
 		}
-	} else if (cfg->new_ir) {
-		mono_local_cprop2 (cfg);
 	}
 
 	if (cfg->comp_done & MONO_COMP_SSA) {			
@@ -9962,12 +9968,6 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 		cfg->used_int_regs |= 1LL << cfg->got_var->dreg;
 		
 		g_list_free (regs);
-	}
-
-	if (cfg->new_ir) {
-		/* This must be done _before_ global reg alloc and _after_ decompose */
-		mono_handle_global_vregs (cfg);
-		mono_local_deadce (cfg);
 	}
 
 	if (cfg->opt & MONO_OPT_LINEARS) {
