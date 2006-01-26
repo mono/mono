@@ -1,3 +1,10 @@
+2006-01-15  Robert Jordan  <robertj@gmx.net>
+
+	* WebUIValidation.js (CustomValidatorEvaluateIsValid):
+	  Allow empty/missing ControlToValidate attributes.
+	* WebUIValidation.js (ValidatorSucceeded):
+  	  Hide validator's view. Fixes bug #77261.
+
 2005-10-18  Chris Toshok  <toshok@ximian.com>
 
 	* WebUIValidation.js: fix handling for validation_result so that
