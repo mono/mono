@@ -1,3 +1,6 @@
+2006-01-26  Svetlana Zholkovsky  <svetlanaz@mainsoft.com>
+    * BinaryCore.cs: TARGET_JVM related changes
+
 2005-12-05  Robert Jordan  <robertj@gmx.net>
 
 	* BinaryServerFormatterSink.cs, SoapServerFormatterSink.cs:
