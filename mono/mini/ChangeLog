@@ -1,3 +1,8 @@
+2006-01-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.h mini.c mini-exceptions.c: Add thread dump support. Fixes
+	#75145.
+
 2006-01-25  Massimiliano Mantione  <massi@ximian.com>
 
         * aliasing.c: Fixed aliasing issue on 64 bit archs.
