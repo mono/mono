@@ -1,3 +1,9 @@
+2006-01-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* mono-api-info.cs
+	  mono-api-diff.cs : show MethodAttributes difference (as long as
+	  they make sense).
+
 2005-12-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* mono-api.xsl : tiny checked="checked" sanitization.

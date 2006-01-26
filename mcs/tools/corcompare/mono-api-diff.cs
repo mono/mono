@@ -1280,9 +1280,6 @@ namespace Mono.AssemblyCompare
 				}
 			}
 
-			if (!CheckAttributes)
-				return;
-
 			XMLMember member = (XMLMember) other;
 			string acc = access [name] as string;
 			if (acc == null)
@@ -1304,12 +1301,6 @@ namespace Mono.AssemblyCompare
 		protected virtual string ConvertToString (int att)
 		{
 			return null;
-		}
-
-		protected virtual bool CheckAttributes {
-			get {
-				return true;
-			}
 		}
 	}
 	
@@ -1367,14 +1358,6 @@ namespace Mono.AssemblyCompare
 		{
 			FieldAttributes fa = (FieldAttributes) att;
 			return fa.ToString ();
-		}
-
-		protected override bool CheckAttributes {
-			get {
-				// FIXME: set this to true once bugs #60086 and 
-				// #60090 are fixed
-				return false;
-			}
 		}
 
 		public override string GroupName {
@@ -1715,6 +1698,12 @@ namespace Mono.AssemblyCompare
 		protected override string ConvertToString (int att)
 		{
 			MethodAttributes ma = (MethodAttributes) att;
+			// ignore ReservedMasks
+			ma &= ~ MethodAttributes.ReservedMask;
+			ma &= ~ MethodAttributes.VtableLayoutMask;
+			if ((ma & MethodAttributes.FamORAssem) != 0)
+				ma = (ma & ~ MethodAttributes.FamORAssem) | MethodAttributes.Family;
+
 			// ignore the HasSecurity attribute for now
 			if ((ma & MethodAttributes.HasSecurity) != 0)
 				ma = (MethodAttributes) (att - (int) MethodAttributes.HasSecurity);
@@ -1728,14 +1717,6 @@ namespace Mono.AssemblyCompare
 				ma = (MethodAttributes) (att - (int) MethodAttributes.PinvokeImpl);
 
 			return ma.ToString ();
-		}
-
-		protected override  bool CheckAttributes {
-			get {
-				// FIXME: set this to true once bugs #60086 and 
-				// #60090 are fixed
-				return false;
-			}
 		}
 
 		public override string GroupName {

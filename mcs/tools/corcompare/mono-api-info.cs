@@ -633,7 +633,7 @@ namespace Mono.AssemblyInfo
 			AddAttribute (p, "params", parms);
 
 			MethodData data = new MethodData (document, p, methods);
-			data.NoMemberAttributes = true;
+			//data.NoMemberAttributes = true;
 			data.DoOutput ();
 		}
 
