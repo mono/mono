@@ -68,6 +68,9 @@ namespace System.Web {
 				builder.Append ("; ");
 			}
 
+			if (builder.Length == 0)
+				return null;
+
 			return new UnknownResponseHeader ("Vary", builder.ToString());
 		}
 
