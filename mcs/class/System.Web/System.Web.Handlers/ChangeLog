@@ -1,3 +1,11 @@
+2006-01-26  Chris Toshok  <toshok@ximian.com>
+
+	* AssemblyResourceLoader.cs (GetResourceUrl): if the assembly
+	corresponds to an on-disk file, append the last write time to the
+	url so we can enable client side caching.
+	(ProcessRequest): tell the client to cache the url for 1 year, and
+	have it vary by 'r' (resource name) and 't' (assembly timestamp).
+
 2006-01-03 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TraceHandler.cs: when clearing trace data, remove 'clear=1' from the

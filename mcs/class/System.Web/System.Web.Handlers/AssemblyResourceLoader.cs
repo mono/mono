@@ -44,10 +44,18 @@ namespace System.Web.Handlers {
 		internal static string GetResourceUrl (Type type, string resourceName)
 		{
 			string aname = type.Assembly == typeof(AssemblyResourceLoader).Assembly ? "s" : HttpUtility.UrlEncode (type.Assembly.GetName ().FullName);
+			string apath = type.Assembly.Location;
+			string atime = String.Empty;
+
+			if (apath != String.Empty) {
+				atime = "&t=" + File.GetLastWriteTimeUtc (apath).Ticks;
+			}
+
 			return "WebResource.axd?a=" 
 				+ aname 
 				+ "&r=" 
-				+ HttpUtility.UrlEncode (resourceName);
+				+ HttpUtility.UrlEncode (resourceName)
+				+ atime;
 		}
 
 	
@@ -65,7 +73,13 @@ namespace System.Web.Handlers {
 			foreach (WebResourceAttribute wra in assembly.GetCustomAttributes (typeof (WebResourceAttribute), false)) {
 				if (wra.WebResource == resourceName) {
 					context.Response.ContentType = wra.ContentType;
-					
+
+					/* tell the client they can cache resources for 1 year */
+					context.Response.ExpiresAbsolute = DateTime.Now.AddYears(1); 
+					context.Response.CacheControl = "public";
+					context.Response.Cache.VaryByParams ["r"] = true;
+					context.Response.Cache.VaryByParams ["t"] = true;
+
 					if (wra.PerformSubstitution)
 						throw new NotImplementedException ("Substitution not implemented");
 					
