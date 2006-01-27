@@ -35,7 +35,7 @@
 	    information is in response to the WM_GETMINMAXINFO message, which
 	    is handled in Form.cs)
 	  - Added logic to SetVisible to set the proper window state when a 
-	    form is made visible
+	    form is made visible (fixes #75720)
 
 2006-01-26  Jackson Harper  <jackson@ximian.com>
 
