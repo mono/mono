@@ -91,9 +91,9 @@ System.Xml/NewLineHandling.cs
 System.Xml/ReadState.cs
 ../../build/common/MonoTODOAttribute.cs
 System.Xml/ValidationType.cs
-System.Xml/XmlEntity.cs
 System.Xml/WhitespaceHandling.cs
 System.Xml/WriteState.cs
+System.Xml/XmlEntity.cs
 System.Xml/XmlTextWriter.cs
 System.Xml/XmlAttribute.cs
 System.Xml/XmlAttributeCollection.cs
@@ -127,6 +127,8 @@ System.Xml/XmlNodeChangedEventArgs.cs
 System.Xml/XmlNodeChangedEventHandler.cs
 System.Xml/XmlNodeList.cs
 System.Xml/XmlNodeListChildren.cs
+System.Xml/XmlNodeArrayList.cs
+System.Xml/XmlIteratorNodeList.cs
 System.Xml/XmlNodeOrder.cs
 System.Xml/XmlNodeReader2.cs
 System.Xml/XmlNodeReaderImpl.cs
@@ -152,7 +154,6 @@ System.Xml/XmlWhitespace.cs
 System.Xml/XmlWriter.cs
 System.Xml/XmlWriterSettings.cs
 System.Xml/XmlTextWriterOpenElement.cs
-System.Xml/XmlNodeArrayList.cs
 System.Xml/XmlInputStream.cs
 System.Xml/XmlParserInput.cs
 System.Xml.XPath/IXPathNavigable.cs

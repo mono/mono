@@ -1,3 +1,7 @@
+2006-01-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.Xml.dll.sources : added XmlIteratorNodeList.cs.
+
 2006-01-10  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.Xml_test.dll.sources : added XmlSchemaTypeTests.cs.
