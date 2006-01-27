@@ -1,3 +1,15 @@
+2006-01-26  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* XplatUIWin32.cs(SetBorderStyle): Fixed3D needs a border
+	* XplatUIX11.cs(DeriveWindowStyles): Updated to match fixed Form
+	  styles
+	* Form.cs: 
+	  - MaximizeBox, MinimizeBox: Recreate the handle when setting
+	    the style
+	  - CreateParams: Reworked the styles to match MS look'n'feel,
+	    removed automatic setting of MinimizeBox, MaximizeBox, etc. via
+	    the WS_OVERLAPPEDWINDOW style. This fixes #76823.
+
 2006-01-26  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* XplatUIX11.cs(GetWindowState): Now throwing an exception when the 

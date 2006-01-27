@@ -1863,7 +1863,7 @@ namespace System.Windows.Forms {
 				}
 
 				case FormBorderStyle.Fixed3D: {
-					style &= ~(uint)WindowStyles.WS_BORDER;
+					style |= (uint)WindowStyles.WS_BORDER;
 					exstyle |= (uint)WindowStyles.WS_EX_CLIENTEDGE;
 					break;
 				}

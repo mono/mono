@@ -444,6 +444,9 @@ namespace System.Windows.Forms {
 			set {
 				if (maximize_box != value) {
 					maximize_box = value;
+					if (IsHandleCreated) {
+						RecreateHandle();
+					}
 					UpdateStyles();
 				}
 			}
@@ -580,6 +583,9 @@ namespace System.Windows.Forms {
 			set {
 				if (minimize_box != value) {
 					minimize_box = value;
+					if (IsHandleCreated) {
+						RecreateHandle();
+					}
 					UpdateStyles();
 				}
 			}
@@ -869,41 +875,43 @@ namespace System.Windows.Forms {
 					
 				} else {
 					switch (FormBorderStyle) {
-					case FormBorderStyle.Fixed3D: {
-						cp.Style |= (int)WindowStyles.WS_CAPTION;
-						cp.ExStyle |= (int)WindowStyles.WS_EX_OVERLAPPEDWINDOW; 
-						break;
-					}
+						case FormBorderStyle.Fixed3D: {
+							cp.Style |= (int)(WindowStyles.WS_CAPTION | WindowStyles.WS_BORDER);
+							cp.ExStyle |= (int)WindowStyles.WS_EX_CLIENTEDGE; 
+							break;
+						}
 
-					case FormBorderStyle.FixedDialog: {
-						cp.Style |= (int)WindowStyles.WS_CAPTION;
-						cp.ExStyle |= (int)(WindowStyles.WS_EX_DLGMODALFRAME | WindowStyles.WS_EX_WINDOWEDGE);
-						break;
-					}
+						case FormBorderStyle.FixedDialog: {
+							cp.Style |= (int)(WindowStyles.WS_CAPTION | WindowStyles.WS_BORDER);
+							cp.ExStyle |= (int)(WindowStyles.WS_EX_DLGMODALFRAME);
+							break;
+						}
 
-					case FormBorderStyle.FixedSingle: {
-						cp.Style |= (int)WindowStyles.WS_CAPTION;
-						cp.ExStyle |= (int)(WindowStyles.WS_EX_WINDOWEDGE);
-						break;
-					}
+						case FormBorderStyle.FixedSingle: {
+							cp.Style |= (int)(WindowStyles.WS_CAPTION | WindowStyles.WS_BORDER);
+							break;
+						}
 
-					case FormBorderStyle.FixedToolWindow: { 
-						cp.Style |= (int)WindowStyles.WS_CAPTION;
-						cp.ExStyle |= (int)(WindowStyles.WS_EX_WINDOWEDGE | WindowStyles.WS_EX_TOOLWINDOW);
-						break;
-					}
+						case FormBorderStyle.FixedToolWindow: { 
+							cp.Style |= (int)(WindowStyles.WS_CAPTION | WindowStyles.WS_BORDER);
+							cp.ExStyle |= (int)(WindowStyles.WS_EX_TOOLWINDOW);
+							break;
+						}
 
-					case FormBorderStyle.Sizable: {
-						cp.Style |= (int)WindowStyles.WS_OVERLAPPEDWINDOW; 
-						cp.ExStyle |= (int)(WindowStyles.WS_EX_WINDOWEDGE);
-						break;
-					}
+						case FormBorderStyle.Sizable: {
+							cp.Style |= (int)(WindowStyles.WS_BORDER | WindowStyles.WS_THICKFRAME | WindowStyles.WS_CAPTION); 
+							break;
+						}
 
-					case FormBorderStyle.SizableToolWindow: {
-						cp.Style |= (int)WindowStyles.WS_OVERLAPPEDWINDOW; 
-						cp.ExStyle |= (int)(WindowStyles.WS_EX_WINDOWEDGE | WindowStyles.WS_EX_TOOLWINDOW);
-						break;
-					}
+						case FormBorderStyle.SizableToolWindow: {
+							cp.Style |= (int)(WindowStyles.WS_BORDER | WindowStyles.WS_THICKFRAME | WindowStyles.WS_CAPTION);
+							cp.ExStyle |= (int)(WindowStyles.WS_EX_TOOLWINDOW);
+							break;
+						}
+
+						case FormBorderStyle.None: {
+							break;
+						}
 					}
 				}
 
