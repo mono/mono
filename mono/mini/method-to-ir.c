@@ -9029,7 +9029,11 @@ mono_spill_global_vars (MonoCompile *cfg)
 							ins->inst_basereg = var->inst_basereg;
 							ins->inst_offset = var->inst_offset;
 						} else {
-							sreg = alloc_dreg (cfg, stacktypes [regtype]);
+							if (ins->opcode == OP_MOVE) {
+								ins->opcode = OP_NOP;
+								sreg = ins->dreg;
+							} else
+								sreg = alloc_dreg (cfg, stacktypes [regtype]);
 
 							if (srcindex == 0)
 								ins->sreg1 = sreg;
@@ -9115,6 +9119,7 @@ mono_spill_global_vars (MonoCompile *cfg)
  * - remove mono_save_args.
  * - spill_global_vars does not play nicely with the fp stack (loads are inserted at
  *   the wrong place).
+ * - add OP_STR_CHAR_ADDR
  * - LAST MERGE: 55797
  */
 
