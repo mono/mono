@@ -2074,6 +2074,31 @@ method_decl		: D_EMITBYTE int32
 				codegen.CurrentTypeDef.AddOverride (codegen.CurrentMethodDef.Signature,
 					(BaseMethodRef) $3);
                           }
+			| D_OVERRIDE K_METHOD call_conv type type_spec DOUBLE_COLON method_name
+			  OPEN_ANGLE_BRACKET OPEN_BRACKET int32 CLOSE_BRACKET CLOSE_ANGLE_BRACKET
+			  OPEN_PARENS type_list CLOSE_PARENS 
+                          {
+                                BaseTypeRef owner = (BaseTypeRef) $5;
+                                ArrayList arg_list = (ArrayList) $14;
+                                BaseTypeRef[] param_list;
+                                BaseMethodRef methref;
+
+                                if (arg_list != null)
+                                        param_list = (BaseTypeRef[]) arg_list.ToArray (typeof (BaseTypeRef));
+                                else
+                                        param_list = new BaseTypeRef[0];
+
+                                if (owner.UseTypeSpec) {
+                                        methref = new TypeSpecMethodRef (owner, (CallConv) $3, (BaseTypeRef) $4,
+                                                (string) $7, param_list, (int) $10);
+                                } else {
+                                        methref = owner.GetMethodRef ((BaseTypeRef) $4,
+                                                (CallConv) $3, (string) $7, param_list, (int) $10);
+                                }
+
+				codegen.CurrentTypeDef.AddOverride (codegen.CurrentMethodDef.Signature,
+					methref);
+			  }
 			| scope_block
 			| D_PARAM OPEN_BRACKET int32 CLOSE_BRACKET init_opt
                           {
@@ -2458,45 +2483,7 @@ instr			: INSTR_NONE
                           }
 			;
 
-method_ref		: call_conv type type_spec DOUBLE_COLON method_name
-                          OPEN_PARENS type_list CLOSE_PARENS 
-                          {
-                                BaseTypeRef owner = (BaseTypeRef) $3;
-                                ArrayList arg_list = (ArrayList) $7;
-                                BaseTypeRef[] param_list;
-                                BaseMethodRef methref;
-
-                                if (arg_list != null)
-                                        param_list = (BaseTypeRef[]) arg_list.ToArray (typeof (BaseTypeRef));
-                                else
-                                        param_list = new BaseTypeRef[0];
-
-                                if (codegen.IsThisAssembly ("mscorlib")) {
-                                        PrimitiveTypeRef prim = owner as PrimitiveTypeRef;
-                                        if (prim != null && prim.SigMod == "")
-                                                owner = codegen.GetTypeRef (prim.Name);
-                                }
-
-                                methref = owner.GetMethodRef ((BaseTypeRef) $2,
-                                        (CallConv) $1, (string) $5, param_list, 0);
-
-                                $$ = methref;
-                          }
-			| call_conv type method_name 
-			  OPEN_PARENS type_list CLOSE_PARENS
-                          {
-                                ArrayList arg_list = (ArrayList) $5;
-                                BaseTypeRef[] param_list;
-  
-                                if (arg_list != null)
-                                        param_list = (BaseTypeRef[]) arg_list.ToArray (typeof (BaseTypeRef));
-                                else
-                                        param_list = new BaseTypeRef[0];
-
-                                $$ = codegen.GetGlobalMethodRef ((BaseTypeRef) $2, (CallConv) $1,
-                                        (string) $3, param_list, 0);
-                          }
-			| call_conv type method_name typars_clause
+method_ref		: call_conv type method_name typars_clause
 			  OPEN_PARENS type_list CLOSE_PARENS
                           {
                                 ArrayList arg_list = (ArrayList) $6;
@@ -2529,6 +2516,12 @@ method_ref		: call_conv type type_spec DOUBLE_COLON method_name
                                         param_list = (BaseTypeRef[]) arg_list.ToArray (typeof (BaseTypeRef));
                                 else
                                         param_list = new BaseTypeRef[0];
+
+                                if (codegen.IsThisAssembly ("mscorlib")) {
+                                        PrimitiveTypeRef prim = owner as PrimitiveTypeRef;
+                                        if (prim != null && prim.SigMod == "")
+                                                owner = codegen.GetTypeRef (prim.Name);
+                                }
 
                                 if (owner.UseTypeSpec) {
                                         methref = new TypeSpecMethodRef (owner, (CallConv) $1, (BaseTypeRef) $2,

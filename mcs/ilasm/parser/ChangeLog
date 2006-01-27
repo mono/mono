@@ -1,3 +1,9 @@
+2006-01-28  Ankit Jain  <jankit@novell.com>
+
+	* ILParser.jay (method_ref): Remove 2 redundant productions.
+	(method_decl | D_OVERRIDE K_METHOD ..): New production for overriding
+	generic methods.
+
 2006-01-27  Ankit Jain  <jankit@novell.com>
 
 	* ILParser.jay (formal_typars_clause): Allow generics only for NET_2_0 profile.
