@@ -78,10 +78,16 @@ namespace System.IO {
                 }
 
                 protected virtual void Dispose (bool disposing) { }
-                
+#if NET_2_0
+		public void Dispose ()
+		{
+			Dispose (true);
+		}
+#else
 		void System.IDisposable.Dispose () {
 			Dispose (true);
 		}
+#endif
 
 
                 public virtual void Flush()

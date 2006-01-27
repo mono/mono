@@ -1,3 +1,7 @@
+2006-01-27 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TextWriter.cs: Dispose () is public in 2.0.
+
 2006-01-20 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* UnexceptionalStreamReader.cs: Read (char,int,int) should not
