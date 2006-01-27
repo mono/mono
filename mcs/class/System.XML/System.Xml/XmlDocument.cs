@@ -770,15 +770,13 @@ namespace System.Xml
 			if (reader.SchemaInfo != null)
 				SchemaInfo = new XmlSchemaInfo (reader.SchemaInfo);
 #endif
+			bool isDefault = reader.IsDefault;
+
 			ReadAttributeNodeValue (reader, attribute);
 
-			// Keep the current reader position on attribute.
-			if (attribute.NamespaceURI == null)
-				reader.MoveToAttribute (attribute.Name);
-			else 
-				reader.MoveToAttribute (attribute.LocalName, attribute.NamespaceURI);
-			if (reader.IsDefault)
+			if (isDefault)
 				attribute.SetDefault ();
+
 			return attribute;
 		}
 
@@ -815,7 +813,12 @@ namespace System.Xml
 			switch (reader.NodeType) {
 
 			case XmlNodeType.Attribute:
-				return ReadAttributeNode (reader);
+				string localName = reader.LocalName;
+				string ns = reader.NamespaceURI;
+				n = ReadAttributeNode (reader);
+				// Keep the current reader position on attribute.
+				reader.MoveToAttribute (localName, ns);
+				return n;
 
 			case XmlNodeType.CDATA:
 				n = CreateCDataSection (reader.Value);
