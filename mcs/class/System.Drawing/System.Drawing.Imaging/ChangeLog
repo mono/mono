@@ -1,3 +1,10 @@
+2006-01-27  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ImageAttributes.cs: Ensure Marshal.FreeHGlobal is called for all 
+	unmanaged memory allocated with AllocHGlobal.
+	* ImageCodecInfo.cs: Ensure Marshal.FreeHGlobal is called for all 
+	unmanaged memory allocated with AllocHGlobal.
+
 2005-11-23 Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* ImageCodec.jvm.cs: fixed ProcessOneCodec, sometime it was failed

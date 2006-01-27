@@ -260,22 +260,22 @@ namespace System.Drawing.Imaging
 			int mapsize = Marshal.SizeOf (gdiclr); 
 			int size =  mapsize * map.Length;			
 			clrmap = lpPointer =  Marshal.AllocHGlobal (size);	
-			
-			for (int i=0; i < map.Length; i++)
-			{
-				gdiclr.from = map[i].OldColor.ToArgb();
-				gdiclr.to = map[i].NewColor.ToArgb();
+			try {
+				for (int i=0; i < map.Length; i++) {
+					gdiclr.from = map[i].OldColor.ToArgb();
+					gdiclr.to = map[i].NewColor.ToArgb();
 				
-				Marshal.StructureToPtr (gdiclr, lpPointer, false);				
-				lpPointer = (IntPtr) (lpPointer.ToInt32() + mapsize);								
+					Marshal.StructureToPtr (gdiclr, lpPointer, false);
+					lpPointer = (IntPtr) (lpPointer.ToInt32() + mapsize);						
+				}
+			
+				Status status = GDIPlus.GdipSetImageAttributesRemapTable (nativeImageAttr, 
+					ColorAdjustType.Brush, true, (uint) map.Length, clrmap);
+				GDIPlus.CheckStatus (status);
 			}
-			
-			Status status = GDIPlus.GdipSetImageAttributesRemapTable (nativeImageAttr, 
-				ColorAdjustType.Brush, true, (uint) map.Length, clrmap);
-				
-			Marshal.FreeHGlobal (clrmap);   
-			
-			GDIPlus.CheckStatus (status);								        					
+			finally {		
+				Marshal.FreeHGlobal (clrmap);   
+			}
 		}
 		
 		
@@ -377,23 +377,22 @@ namespace System.Drawing.Imaging
 			int mapsize = Marshal.SizeOf (gdiclr); 
 			int size =  mapsize * map.Length;			
 			clrmap = lpPointer =  Marshal.AllocHGlobal (size);	
-			
-			for (int i=0; i < map.Length; i++)
-			{
-				gdiclr.from = map[i].OldColor.ToArgb();
-				gdiclr.to = map[i].NewColor.ToArgb();
+			try {
+				for (int i=0; i < map.Length; i++) {
+					gdiclr.from = map[i].OldColor.ToArgb();
+					gdiclr.to = map[i].NewColor.ToArgb();
 				
-				Marshal.StructureToPtr (gdiclr, lpPointer, false);				
-				lpPointer = (IntPtr) (lpPointer.ToInt32() + mapsize);								
+					Marshal.StructureToPtr (gdiclr, lpPointer, false);
+					lpPointer = (IntPtr) (lpPointer.ToInt32() + mapsize);						
+				}
+			
+				Status status = GDIPlus.GdipSetImageAttributesRemapTable (nativeImageAttr, 
+					type, true, (uint) map.Length, clrmap);
+				GDIPlus.CheckStatus (status);
 			}
-			
-			Status status = GDIPlus.GdipSetImageAttributesRemapTable (nativeImageAttr, 
-				type, true, (uint) map.Length, clrmap);
-				
-			Marshal.FreeHGlobal (clrmap);   
-			
-			GDIPlus.CheckStatus (status);								        					
-			
+			finally {
+				Marshal.FreeHGlobal (clrmap);
+			}
 		}		
 		
 		public void SetThreshold(float threshold)

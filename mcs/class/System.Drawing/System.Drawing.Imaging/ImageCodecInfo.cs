@@ -80,21 +80,23 @@ namespace System.Drawing.Imaging {
 				return result;			
 			
 			/* Get decoders list*/
-			decoders = Marshal.AllocHGlobal (arraySize);						
-			status = GDIPlus.GdipGetImageDecoders (decoderNums,  arraySize, decoders);
-			GDIPlus.CheckStatus (status);
+			decoders = Marshal.AllocHGlobal (arraySize);
+			try {
+				status = GDIPlus.GdipGetImageDecoders (decoderNums,  arraySize, decoders);
+				GDIPlus.CheckStatus (status);
 			
-			decoder_size = Marshal.SizeOf (gdipdecoder);			
-			decoder_ptr = decoders;
+				decoder_size = Marshal.SizeOf (gdipdecoder);
+				decoder_ptr = decoders;
 			
-			for (int i = 0; i < decoderNums; i++, decoder_ptr = new IntPtr (decoder_ptr.ToInt64 () + decoder_size))
-			{
-				gdipdecoder = (GdipImageCodecInfo) Marshal.PtrToStructure (decoder_ptr, typeof (GdipImageCodecInfo));	
-				result[i] = new ImageCodecInfo ();
-				GdipImageCodecInfo.MarshalTo (gdipdecoder, result[i]);				
+				for (int i = 0; i < decoderNums; i++, decoder_ptr = new IntPtr (decoder_ptr.ToInt64 () + decoder_size)) {
+					gdipdecoder = (GdipImageCodecInfo) Marshal.PtrToStructure (decoder_ptr, typeof (GdipImageCodecInfo));
+					result[i] = new ImageCodecInfo ();
+					GdipImageCodecInfo.MarshalTo (gdipdecoder, result[i]);
+				}
 			}
-			
-			Marshal.FreeHGlobal (decoders);
+			finally {
+				Marshal.FreeHGlobal (decoders);
+			}
 			return result;
 		}
 		
@@ -117,21 +119,22 @@ namespace System.Drawing.Imaging {
 			
 			/* Get encoders list*/
 			encoders = Marshal.AllocHGlobal (arraySize);
+			try {
+				status = GDIPlus.GdipGetImageEncoders (encoderNums,  arraySize, encoders);
+				GDIPlus.CheckStatus (status);
 			
-			status = GDIPlus.GdipGetImageEncoders (encoderNums,  arraySize, encoders);
-			GDIPlus.CheckStatus (status);
+				encoder_size = Marshal.SizeOf (gdipencoder);
+				encoder_ptr = encoders;
 			
-			encoder_size = Marshal.SizeOf (gdipencoder);			
-			encoder_ptr = encoders;
-			
-			for (int i = 0; i < encoderNums; i++, encoder_ptr = new IntPtr (encoder_ptr.ToInt64 () + encoder_size))
-			{
-				gdipencoder = (GdipImageCodecInfo) Marshal.PtrToStructure (encoder_ptr, typeof (GdipImageCodecInfo));						
-				result[i] = new ImageCodecInfo ();
-				GdipImageCodecInfo.MarshalTo (gdipencoder, result[i]);				
+				for (int i = 0; i < encoderNums; i++, encoder_ptr = new IntPtr (encoder_ptr.ToInt64 () + encoder_size)) {
+					gdipencoder = (GdipImageCodecInfo) Marshal.PtrToStructure (encoder_ptr, typeof (GdipImageCodecInfo));
+					result[i] = new ImageCodecInfo ();
+					GdipImageCodecInfo.MarshalTo (gdipencoder, result[i]);
+				}
 			}
-			
-			Marshal.FreeHGlobal (encoders);
+			finally {
+				Marshal.FreeHGlobal (encoders);
+			}
 			return result;
 		}
 
