@@ -466,7 +466,6 @@ namespace Mono.ILASM {
                         if (local_list.Count > 0) {
                                 int ec = code_gen.Report.ErrorCount;
                                 PEAPI.Local[] local_array = new PEAPI.Local[local_list.Count];
-                                int i = 0;
 
                                 foreach (Local local in local_list)
                                         local_array[local.Slot]  = local.GetPeapiLocal (code_gen);
@@ -589,7 +588,6 @@ namespace Mono.ILASM {
 
                 public LabelInfo AddLabel ()
                 {
-                        int pos = inst_list.Count;
                         LabelInfo label_info = new LabelInfo (null, inst_list.Count);
                         label_list.Add (label_info);
                         return label_info;

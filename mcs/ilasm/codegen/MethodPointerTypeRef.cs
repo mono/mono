@@ -43,7 +43,6 @@ namespace Mono.ILASM {
                         if (param_list != null) {
                                 ArrayList opt_list = new ArrayList ();
                                 ArrayList arg_list = new ArrayList ();
-                                ParamDef last = null;
                                 bool in_opt = false;
                                 int max = param_list.Count;
 

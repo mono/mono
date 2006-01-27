@@ -1,5 +1,12 @@
 2006-01-28  Ankit Jain  <jankit@novell.com>
 
+	* MethodDef.cs:
+	* TypeManager.cs:
+	* MethodPointerTypeRef.cs:
+	* ExternMethodRef.cs: Remove unused variables to fix warnings.
+
+2006-01-28  Ankit Jain  <jankit@novell.com>
+
 	* TypeDef.cs (GenericInfo):
 	* MethodDef.cs (GenericInfo): Remove (unused).
 

@@ -77,7 +77,6 @@ namespace Mono.ILASM {
 
                         ret_type.Resolve (code_gen);
 
-                        int count = 0;
                         foreach (BaseTypeRef typeref in param) {
                                 if (in_opt) {
                                         typeref.Resolve (code_gen);
