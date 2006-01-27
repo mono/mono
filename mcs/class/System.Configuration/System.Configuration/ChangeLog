@@ -1,3 +1,41 @@
+2006-01-26  Chris Toshok  <toshok@ximian.com>
+
+	* SectionGroupInfo.cs (ReadContent): handle "location" (seemingly)
+	correctly.
+
+	* InternalConfigurationRoot.cs: misc logical additions.  still
+	isn't useful.
+
+	* ConfigurationManager.cs (OpenExeConfigurationInternal): throw an
+	exception if both calling_assembly and exePath are null.  Allow
+	the exePath to be a path to a config file as well, checking to see
+	if it ends in .config before appending.
+	(OpenExeConfiguration): stop blindly passing
+	Assembly.GetCallingAssembly.  I'm assuming this will likely break
+	.dll.config usage.  need to investigate that (and write more unit
+	tests.)
+	(GetSection): call configSystem.GetSection.
+	(RefreshSection): call configSystem.RefreshSection.
+	(ChangeConfigurationSystem): modeled after the
+	ConfigurationSettings System.Web hack - allow
+	WebConfigurationManager to replace the current
+	IInternalConfigSystem.
+
+	* InternalConfigurationHost.cs (InternalConfigurationHost): make
+	abstract, and remove all the NotImplenmentedException's.
+
+	* ConfigurationElement.cs (DeserializeElement): store off the xml
+	namespace if there is one.
+	(SerializeElement): write out the namespace if there was one.
+
+	* ClientConfigurationSystem.cs: new class, based on some stack
+	traces I've seen in tests.  Kinda (well, not *kinda*..) hacky.
+
+	* Configuration.cs (NamespaceDeclared): implement.
+	(Load): don't swallow all exceptions, just the ones raised when we
+	open the stream for reading.
+	(ReadConfigFile): handle xmlns.
+
 2006-01-25  Chris Toshok  <toshok@ximian.com>
 
 	* ConfigInfo.cs (ThrowException): throw a

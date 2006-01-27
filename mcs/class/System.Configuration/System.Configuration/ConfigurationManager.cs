@@ -44,6 +44,8 @@ namespace System.Configuration {
 	public static class ConfigurationManager
 	{
 		static InternalConfigurationFactory configFactory = new InternalConfigurationFactory ();
+		static IInternalConfigSystem configSystem = new ClientConfigurationSystem ();
+		static object lockobj = new object ();
 
 		[MonoTODO ("Evidence and version still needs work")]
 		static string GetAssemblyInfo (Assembly a)
@@ -77,8 +79,11 @@ namespace System.Configuration {
 			return Path.Combine (String.Format ("{0}_{1}", app_name, evidence_str), version);
 		}
 
-		static Configuration OpenExeConfigurationInternal (ConfigurationUserLevel userLevel, Assembly calling_assembly, string exePath)
+		internal static Configuration OpenExeConfigurationInternal (ConfigurationUserLevel userLevel, Assembly calling_assembly, string exePath)
 		{
+			if (calling_assembly == null && exePath == null)
+				throw new ArgumentException ("exePath must be specified when not running inside a stand alone exe.");
+
 			ExeConfigurationFileMap map = new ExeConfigurationFileMap ();
 
 			/* Roaming and RoamingAndLocal should be different
@@ -91,13 +96,16 @@ namespace System.Configuration {
 			switch (userLevel) {
 			case ConfigurationUserLevel.None:
 				if (exePath == null)
-					exePath = Assembly.GetCallingAssembly ().Location;
+					exePath = calling_assembly.Location;
 				else if (!File.Exists (exePath))
 					exePath = "";
 
-				if (exePath != "")
-					map.ExeConfigFilename = exePath + ".config";
-
+				if (exePath != "") {
+					if (!exePath.EndsWith (".config"))
+						map.ExeConfigFilename = exePath + ".config";
+					else
+						map.ExeConfigFilename = exePath;
+				}
 				break;
 			case ConfigurationUserLevel.PerUserRoaming:
 				map.RoamingUserConfigFilename = Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData), GetAssemblyInfo(calling_assembly));
@@ -115,12 +123,12 @@ namespace System.Configuration {
 
 		public static Configuration OpenExeConfiguration (ConfigurationUserLevel userLevel)
 		{
-			return OpenExeConfigurationInternal (userLevel, Assembly.GetCallingAssembly (), Assembly.GetCallingAssembly ().Location);
+			return OpenExeConfigurationInternal (userLevel, Assembly.GetEntryAssembly (), null);
 		}
 		
 		public static Configuration OpenExeConfiguration (string exePath)
 		{
-			return OpenExeConfigurationInternal (ConfigurationUserLevel.None, Assembly.GetCallingAssembly (), exePath);
+			return OpenExeConfigurationInternal (ConfigurationUserLevel.None, null, exePath);
 		}
 
 		[MonoTODO ("userLevel")]
@@ -144,24 +152,14 @@ namespace System.Configuration {
 			get { return configFactory; }
 		}
 
-		[MonoTODO ("this assembly stuff is probably wrong")]
 		public static object GetSection (string sectionName)
 		{
-			Assembly a = Assembly.GetEntryAssembly ();
-			if (a == null)
-				a = Assembly.GetCallingAssembly ();
-			Configuration cfg = OpenExeConfigurationInternal (ConfigurationUserLevel.None,
-									  a, a.Location);
-
-			if (cfg == null)
-				return null;
-
-			return cfg.GetSection (sectionName);
+			return configSystem.GetSection (sectionName);
 		}
 
-		[MonoTODO]
 		public static void RefreshSection (string sectionName)
 		{
+			configSystem.RefreshConfig (sectionName);
 		}
 
 		public static NameValueCollection AppSettings {
@@ -175,8 +173,20 @@ namespace System.Configuration {
 		public static ConnectionStringSettingsCollection ConnectionStrings {
 			get {
 				ConnectionStringsSection connectionStrings = (ConnectionStringsSection) GetSection ("connectionStrings");
-
 				return connectionStrings.ConnectionStrings;
+			}
+		}
+
+		/* invoked from System.Web */
+		static IInternalConfigSystem ChangeConfigurationSystem (IInternalConfigSystem newSystem)
+		{
+			if (newSystem == null)
+				throw new ArgumentNullException ("newSystem");
+
+			lock (lockobj) {
+				IInternalConfigSystem old = configSystem;
+				configSystem = newSystem;
+				return old;
 			}
 		}
 	}

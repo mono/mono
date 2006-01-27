@@ -35,7 +35,7 @@ using System.Configuration.Internal;
 
 namespace System.Configuration
 {
-	class InternalConfigurationHost: IInternalConfigHost
+	abstract class InternalConfigurationHost: IInternalConfigHost
 	{
 		public virtual object CreateConfigurationContext (string configPath, string locationSubPath)
 		{
@@ -85,14 +85,14 @@ namespace System.Configuration
 			throw new NotImplementedException ();
 		}
 		
-		public virtual string GetStreamName (string configPath)
-		{
-			throw new NotImplementedException ();
-		}
+		public abstract string GetStreamName (string configPath);
+		public abstract void Init (IInternalConfigRoot root, params object[] hostInitParams);
+		public abstract void InitForConfiguration (ref string locationSubPath, out string configPath, out string locationConfigPath, IInternalConfigRoot root, params object[] hostInitConfigurationParams);
 		
+		[MonoTODO ("remote config")]
 		public virtual string GetStreamNameForConfigSource (string streamName, string configSource)
 		{
-			throw new NotImplementedException ();
+			throw new NotSupportedException ("mono does not support remote configuration");
 		}
 		
 		public virtual object GetStreamVersion (string streamName)
@@ -101,15 +101,6 @@ namespace System.Configuration
 		}
 		
 		public virtual IDisposable Impersonate ()
-		{
-			throw new NotImplementedException ();
-		}
-		
-		public virtual void Init (IInternalConfigRoot root, params object[] hostInitParams)
-		{
-		}
-		
-		public virtual void InitForConfiguration (ref string locationSubPath, out string configPath, out string locationConfigPath, IInternalConfigRoot root, params object[] hostInitConfigurationParams)
 		{
 			throw new NotImplementedException ();
 		}

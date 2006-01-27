@@ -36,6 +36,14 @@ namespace System.Configuration
 {
 	class InternalConfigurationRoot: IInternalConfigRoot
 	{
+		IInternalConfigHost host;
+		bool isDesignTime;
+
+		public InternalConfigurationRoot ()
+		{
+		}
+
+		[MonoTODO]
 		public IInternalConfigRecord GetConfigRecord (string configPath)
 		{
 			throw new NotImplementedException ();
@@ -43,35 +51,39 @@ namespace System.Configuration
 		
 		public object GetSection (string section, string configPath)
 		{
-			throw new NotImplementedException ();
+			IInternalConfigRecord rec = GetConfigRecord (configPath);
+			return rec.GetSection (section);
 		}
-		
+
+		[MonoTODO]
 		public string GetUniqueConfigPath (string configPath)
 		{
-			throw new NotImplementedException ();
+			return configPath;
 		}
-		
+
+		[MonoTODO]
 		public IInternalConfigRecord GetUniqueConfigRecord (string configPath)
 		{
-			throw new NotImplementedException ();
+			return GetConfigRecord (GetUniqueConfigPath (configPath));
 		}
 		
 		public void Init (IInternalConfigHost host, bool isDesignTime)
 		{
+			this.host = host;
+			this.isDesignTime = isDesignTime;
 		}
-		
+
+		[MonoTODO]
 		public void RemoveConfig (string configPath)
 		{
+			host.DeleteStream (configPath);
+
 			if (ConfigRemoved != null)
 				ConfigRemoved (this, new InternalConfigEventArgs (configPath));
-				
-			throw new NotImplementedException ();
 		}
 		
 		public bool IsDesignTime {
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return isDesignTime; }
 		}
 
 		public event InternalConfigEventHandler ConfigChanged;

@@ -263,19 +263,19 @@ namespace System.Configuration
 		public void ReadRootData (XmlTextReader reader, Configuration config, bool overrideAllowed)
 		{
 			reader.MoveToContent ();
-			ReadContent (reader, config, overrideAllowed);
+			ReadContent (reader, config, overrideAllowed, true);
 		}
 		
 		public override void ReadData (Configuration config, XmlTextReader reader, bool overrideAllowed)
 		{
 			reader.MoveToContent ();
 			reader.ReadStartElement ();
-			ReadContent (reader, config, overrideAllowed);
+			ReadContent (reader, config, overrideAllowed, false);
 			reader.MoveToContent ();
 			reader.ReadEndElement ();
 		}
 		
-		void ReadContent (XmlTextReader reader, Configuration config, bool overrideAllowed)
+		void ReadContent (XmlTextReader reader, Configuration config, bool overrideAllowed, bool root)
 		{
 			StringBuilder spacing = new StringBuilder ();
 			while (reader.NodeType != XmlNodeType.EndElement) {
@@ -286,8 +286,26 @@ namespace System.Configuration
 					continue;
 				}
 				
-				if (reader.LocalName == "location")
-					ThrowException ("<location> elements are only allowed in <configuration> elements.", reader);
+				if (reader.LocalName == "location") {
+					if (!root)
+						ThrowException ("<location> elements are only allowed in <configuration> elements.", reader);
+
+					string allowOverrideAttr = reader.GetAttribute ("allowOverride");
+					bool allowOverride = allowOverrideAttr == null || allowOverrideAttr.Length == 0 || bool.Parse (allowOverrideAttr);
+					string path = reader.GetAttribute ("path");
+					if (path != null && path.Length > 0) {
+						string xml = reader.ReadOuterXml ();
+						string[] pathList = path.Split (',');
+						foreach (string p in pathList) {
+							ConfigurationLocation loc = new ConfigurationLocation (p.Trim (), xml, config, allowOverride);
+							config.Locations.Add (loc);
+						}
+					} else {
+						ReadData (config, reader, allowOverride);
+					}
+					continue;
+				}
+
 				
 				ConfigInfo data = (sections != null) ? (ConfigInfo) sections [reader.LocalName] : (ConfigInfo) null;
 				if (data == null) data = (groups != null) ? (ConfigInfo) groups [reader.LocalName] : (ConfigInfo) null;

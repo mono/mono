@@ -47,6 +47,7 @@ namespace System.Configuration {
 		SectionGroupInfo rootGroup;
 		IConfigSystem system;
 		bool hasFile;
+		string rootNamespace;
 		
 		string configPath;
 		string locationConfigPath;
@@ -176,14 +177,9 @@ namespace System.Configuration {
 			}
 		}
 
-		[MonoTODO]
 		public bool NamespaceDeclared {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+			get { return rootNamespace != null; }
+			set { rootNamespace = value ? "http://schemas.microsoft.com/.NetConfiguration/v2.0" : null; }
 		}
 
 		public ConfigurationSectionGroup RootSectionGroup {
@@ -365,7 +361,10 @@ namespace System.Configuration {
 			tw.Formatting = Formatting.Indented;
 			try {
 				tw.WriteStartDocument ();
-				tw.WriteStartElement ("configuration");
+				if (rootNamespace != null)
+					tw.WriteStartElement ("configuration", rootNamespace);
+				else
+					tw.WriteStartElement ("configuration");
 				if (rootGroup.HasConfigContent (this)) {
 					rootGroup.WriteConfig (this, tw, mode);
 				}
@@ -400,16 +399,21 @@ namespace System.Configuration {
 		
 		bool Load ()
 		{
-			if (streamName == null)
+			if (streamName == null || streamName == "")
 				return true;
 
 			XmlTextReader reader = null;
+			Stream stream = null;
+			
 			try {
-				Stream stream = system.Host.OpenStreamForRead (streamName);
-				reader = new XmlTextReader (stream);
-				ReadConfigFile (reader, streamName);
+				stream = system.Host.OpenStreamForRead (streamName);
 			} catch (Exception e) {
 				return false;
+			}
+
+			try {
+				reader = new XmlTextReader (stream);
+				ReadConfigFile (reader, streamName);
 			} finally {
 				if (reader != null)
 					reader.Close();
@@ -421,11 +425,21 @@ namespace System.Configuration {
 		internal void ReadConfigFile (XmlTextReader reader, string fileName)
 		{
 			reader.MoveToContent ();
+
 			if (reader.NodeType != XmlNodeType.Element || reader.Name != "configuration")
 				ThrowException ("Configuration file does not have a valid root element", reader);
 
-			if (reader.HasAttributes)
-				ThrowException ("Unrecognized attribute in root element", reader);
+			if (reader.HasAttributes) {
+				while (reader.MoveToNextAttribute ()) {
+					if (reader.LocalName == "xmlns") {
+						rootNamespace = reader.Value;
+						continue;
+					}
+					ThrowException (String.Format ("Unrecognized attribute '{0}' in root element", reader.LocalName), reader);
+				}
+			}
+
+			reader.MoveToElement ();
 
 			if (reader.IsEmptyElement) {
 				reader.Skip ();

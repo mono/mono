@@ -39,6 +39,7 @@ namespace System.Configuration
 	public abstract class ConfigurationElement
 	{
 		string rawXml;
+		string elementNamespace;
 		bool modified;
 		ElementMap map;
 		ConfigurationPropertyCollection keyProps;
@@ -294,6 +295,9 @@ namespace System.Configuration
 					else if (reader.LocalName == "lockItem") {
 						LockItem = (reader.Value.ToLower() == "true");
 					}
+					else if (reader.LocalName == "xmlns") {
+						elementNamespace = reader.Value;
+					}
 					else if (!OnDeserializeUnrecognizedAttribute (reader.LocalName, reader.Value))
 						throw new ConfigurationException ("Unrecognized attribute '" + reader.LocalName + "'.");
 
@@ -440,6 +444,11 @@ namespace System.Configuration
 			
 			bool wroteData = false;
 			
+			if (elementNamespace != null) {
+				writer.WriteAttributeString ("xmlns", elementNamespace);
+				wroteData = true;
+			}
+
 			foreach (PropertyInformation prop in ElementInformation.Properties)
 			{
 				if (prop.IsElement || prop.ValueOrigin == PropertyValueOrigin.Default)
