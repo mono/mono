@@ -481,53 +481,69 @@ void
 mono_compute_natural_loops (MonoCompile *cfg)
 {
 	int i, j, k;
+	MonoBitSet *in_loop_blocks;
 
 	g_assert (!(cfg->comp_done & MONO_COMP_LOOPS));
 
+	in_loop_blocks = mono_bitset_new (cfg->num_bblocks + 1, 0);
 	for (i = 0; i < cfg->num_bblocks; ++i) {
 		MonoBasicBlock *n = cfg->bblocks [i];
 
 		for (j = 0; j < n->out_count; j++) {
 			MonoBasicBlock *h = n->out_bb [j];
 			/* check for back-edge from n to h */
-			if (n != h && mono_bitset_test (n->dominators, h->dfn)) {
-				GList *todo;
+			if (n != h && mono_bitset_test_fast (n->dominators, h->dfn)) {
+				GSList *todo;
 
 				n->loop_body_start = 1;
 
 				/* already in loop_blocks? */
-				if (h->loop_blocks && g_list_find (h->loop_blocks, n))
+				if (h->loop_blocks && g_list_find (h->loop_blocks, n)) {
 					continue;
-				
-				todo = g_list_prepend (NULL, n);
+				}
 
+				mono_bitset_clear_all (in_loop_blocks);
+				if (h->loop_blocks) {
+					GList *l;
+
+					for (l = h->loop_blocks; l; l = l->next) {
+						MonoBasicBlock *b = l->data;
+						if (b->dfn)
+							mono_bitset_set_fast (in_loop_blocks, b->dfn);
+					}
+				}
+				todo = g_slist_prepend (NULL, n);	
+			
 				while (todo) {
 					MonoBasicBlock *cb = (MonoBasicBlock *)todo->data;
-					todo = g_list_delete_link (todo, todo);
+					todo = g_slist_delete_link (todo, todo);
 
-					if (g_list_find (h->loop_blocks, cb))
+					if ((cb->dfn && mono_bitset_test_fast (in_loop_blocks, cb->dfn)) || (!cb->dfn && g_list_find (h->loop_blocks, cb)))
 						continue;
 
 					h->loop_blocks = g_list_prepend (h->loop_blocks, cb);
 					cb->nesting++;
+					if (cb->dfn)
+						mono_bitset_set_fast (in_loop_blocks, cb->dfn);
 
 					for (k = 0; k < cb->in_count; k++) {
 						MonoBasicBlock *prev = cb->in_bb [k];
 						/* add all previous blocks */
-						if (prev != h && !g_list_find (h->loop_blocks, prev)) {
-							todo = g_list_prepend (todo, prev);
+						if (prev != h && !((prev->dfn && mono_bitset_test_fast (in_loop_blocks, prev->dfn)) || (!prev->dfn && g_list_find (h->loop_blocks, prev)))) {
+							todo = g_slist_prepend (todo, prev);
 						}
 					}
 				}
 
 				/* add the header if not already there */
-				if (!g_list_find (h->loop_blocks, h)) {
+				if (!((h->dfn && mono_bitset_test_fast (in_loop_blocks, h->dfn)) || (!h->dfn && g_list_find (h->loop_blocks, h)))) {
 					h->loop_blocks = g_list_prepend (h->loop_blocks, h);
 					h->nesting++;
 				}
 			}
 		}
 	}
+	mono_bitset_free (in_loop_blocks);
 
 	cfg->comp_done |= MONO_COMP_LOOPS;
 	
