@@ -127,7 +127,7 @@ namespace System.Xml
 					while (FirstChild != null)
 						this.RemoveChild (FirstChild);
 					// creates new Text node
-					AppendChild (OwnerDocument.CreateTextNode (value));
+					AppendChild (OwnerDocument.CreateTextNode (value), false);
 				}
 			}
 		}
@@ -258,7 +258,7 @@ namespace System.Xml
 
 			if (deep) {
 				for (int i = 0; i < ChildNodes.Count; i++)
-					node.AppendChild (ChildNodes [i].CloneNode (true));
+					node.AppendChild (ChildNodes [i].CloneNode (true), false);
 			}
 
 			return node;

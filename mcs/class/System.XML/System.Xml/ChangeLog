@@ -1,5 +1,14 @@
 2006-01-27  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlNode.cs,
+	  XmlDocument.cs,
+	  XmlAttribute.cs,
+	  XmlElement.cs :
+	  Added internal AppendChild() override that omites node type
+	  checking, and used it in many places.
+
+2006-01-27  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlDocument.cs : optimized ReadAttributeNode() to not call
 	  MoveToAttribute() unneccesarily (call it only when ReadNode() is
 	  called on an attribute node).

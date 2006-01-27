@@ -270,7 +270,7 @@ namespace System.Xml
 			if(deep)
 			{
 				for (XmlNode n = FirstChild; n != null; n = n.NextSibling)
-					doc.AppendChild (doc.ImportNode (n, deep));
+					doc.AppendChild (doc.ImportNode (n, deep), false);
 			}
 			return doc;
 		}
@@ -676,7 +676,7 @@ namespace System.Xml
 					if (n == null)
 						break;
 					if (preserveWhitespace || n.NodeType != XmlNodeType.Whitespace)
-						AppendChild (n);
+						AppendChild (n, false);
 				} while (true);
 #if NET_2_0
 				if (xmlReader.Settings != null)
@@ -785,10 +785,10 @@ namespace System.Xml
 		{
 			while (reader.ReadAttributeValue ()) {
 				if (reader.NodeType == XmlNodeType.EntityReference)
-					attribute.AppendChild (CreateEntityReference (reader.Name));
+					attribute.AppendChild (CreateEntityReference (reader.Name), false); // omit node type check
 				else
 					// Children of Attribute is restricted to CharacterData and EntityReference (Comment is not allowed).
-					attribute.AppendChild (CreateTextNode (reader.Value));
+					attribute.AppendChild (CreateTextNode (reader.Value), false); // omit node type check
 			}
 		}
 
@@ -855,7 +855,7 @@ namespace System.Xml
 				while (reader.Depth > depth) {
 					n = ReadNode (reader);
 					if (preserveWhitespace || n.NodeType != XmlNodeType.Whitespace)
-						element.AppendChild (n);
+						element.AppendChild (n, false);
 				}
 				n = element;
 				break;

@@ -234,11 +234,11 @@ namespace System.Xml
 				XmlNode textChild = FirstChild as XmlCharacterData;
 				if (textChild == null) {
 					this.RemoveAll ();
-					AppendChild (OwnerDocument.CreateTextNode (value));
+					AppendChild (OwnerDocument.CreateTextNode (value), false);
 				}
 				else if (FirstChild.NextSibling != null) {
 					this.RemoveAll ();
-					AppendChild (OwnerDocument.CreateTextNode (value));
+					AppendChild (OwnerDocument.CreateTextNode (value), false);
 				}
 				else
 					textChild.Value = value;
@@ -296,7 +296,7 @@ namespace System.Xml
 							 OwnerDocument, true, false);
 			if (deep) {
 				for (int i = 0; i < ChildNodes.Count; i++)
-					node.AppendChild (ChildNodes [i].CloneNode (deep));
+					node.AppendChild (ChildNodes [i].CloneNode (deep), false);
 			}
 
 			return node;

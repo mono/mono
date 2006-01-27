@@ -325,8 +325,13 @@ namespace System.Xml
 
 		public virtual XmlNode AppendChild (XmlNode newChild)
 		{
-			// I assume that AppendChild(n) equals to InsertAfter(n, this.LastChild) or InsertBefore(n, null)
+			// AppendChild(n) is equivalent to InsertBefore(n, null)
 			return InsertBefore (newChild, null);
+		}
+
+		internal XmlNode AppendChild (XmlNode newChild, bool checkNodeType)
+		{
+			return InsertBefore (newChild, null, checkNodeType, true);
 		}
 
 		public virtual XmlNode Clone ()
