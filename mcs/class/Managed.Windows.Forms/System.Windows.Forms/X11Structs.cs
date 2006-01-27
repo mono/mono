@@ -349,9 +349,16 @@ namespace System.Windows.Forms {
 		internal IntPtr		serial;
 		internal bool		send_event;
 		internal IntPtr		display;
+		internal IntPtr		parent;
 		internal IntPtr		window;
+		internal int		x;
+		internal int		y;
 		internal int		width;
 		internal int		height;
+		internal int		border_width;
+		internal IntPtr		above;
+		internal int		detail;
+		internal IntPtr		value_mask;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
@@ -1393,6 +1400,7 @@ namespace System.Windows.Forms {
 		_NET_WM_STATE_NO_TASKBAR,
 		_NET_WM_STATE_ABOVE,
 		_NET_WM_STATE_MODAL,
+		_NET_WM_STATE_HIDDEN,
 		_NET_WM_CONTEXT_HELP,
 
 		_NET_WM_WINDOW_OPACITY,
