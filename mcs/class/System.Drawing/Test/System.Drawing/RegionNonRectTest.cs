@@ -76,7 +76,7 @@ namespace MonoTests.System.Drawing {
 		}
 
 		[Test]
-		[Category ("NotDotNet")] // MS.NET (atleast 2.0) throws an ExternalException in this case
+		[Category ("NotDotNet")] // MS.NET throws an ExternalException in this case
 		public void Region_Ctor_RegionData ()
 		{
 			Region region = new Region (new GraphicsPath ());

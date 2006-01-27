@@ -7,11 +7,7 @@
 // 	 Peter Dennis Bartok, pbartok@novell.com
 //
 // (C) 2003 Ximian, Inc.  http://www.ximian.com
-// (C) 2004-2005 Novell, Inc.  http://www.novell.com
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -43,17 +39,9 @@ namespace MonoTests.System.Drawing{
 
 	[TestFixture]
 	[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
-	public class FontTest : Assertion {
+	public class FontTest {
 		
-		[TearDown]
-		public void Clean() {}
 		
-		[SetUp]
-		public void GetReady()		
-		{
-		
-		}
-			
 		// Test basic Font clone, properties and contructor
 		[Test]
 		public void TestClone()
@@ -61,19 +49,19 @@ namespace MonoTests.System.Drawing{
 			Font f = new Font("Arial",12);	
 			Font f2 = (Font) f.Clone();
 			
-			AssertEquals (f.Bold, f2.Bold);
-			AssertEquals (f.FontFamily, f2.FontFamily);
-			AssertEquals (f.GdiCharSet, f2.GdiCharSet);
-			AssertEquals (f.GdiVerticalFont, f2.GdiVerticalFont);
-			AssertEquals (f.Height, f2.Height);
-			AssertEquals (f.Italic, f2.Italic);
-			AssertEquals (f.Name, f2.Name);
-			AssertEquals (f.Size, f2.Size);
-			AssertEquals (f.SizeInPoints, f2.SizeInPoints);
-			AssertEquals (f.Strikeout, f2.Strikeout);
-			AssertEquals (f.Style, f2.Style);
-			AssertEquals (f.Underline, f2.Underline);
-			AssertEquals (f.Unit, f2.Unit);
+			Assert.AreEqual (f.Bold, f2.Bold, "Bold");
+			Assert.AreEqual (f.FontFamily, f2.FontFamily, "FontFamily");
+			Assert.AreEqual (f.GdiCharSet, f2.GdiCharSet, "GdiCharSet");
+			Assert.AreEqual (f.GdiVerticalFont, f2.GdiVerticalFont, "GdiVerticalFont");
+			Assert.AreEqual (f.Height, f2.Height, "Height");
+			Assert.AreEqual (f.Italic, f2.Italic, "Italic");
+			Assert.AreEqual (f.Name, f2.Name, "Name");
+			Assert.AreEqual (f.Size, f2.Size, "Size");
+			Assert.AreEqual (f.SizeInPoints, f2.SizeInPoints, "SizeInPoints");
+			Assert.AreEqual (f.Strikeout, f2.Strikeout, "Strikeout");
+			Assert.AreEqual (f.Style, f2.Style, "Style");
+			Assert.AreEqual (f.Underline, f2.Underline, "Underline");
+			Assert.AreEqual (f.Unit, f2.Unit, "Unit");
 		}
 
 		[ StructLayout(LayoutKind.Sequential, CharSet=CharSet.Unicode) ]
@@ -104,10 +92,10 @@ namespace MonoTests.System.Drawing{
 			f = new Font("Arial", 10);
 
 			f.ToLogFont(lf);
-			AssertEquals("lf1", -13, lf.lfHeight);
-			AssertEquals("lf2", 400, lf.lfWeight);
-			AssertEquals("lf3", 1, lf.lfCharSet);
-			AssertEquals("lf4", f.Name, lf.lfFaceName);
+			Assert.AreEqual (-13, lf.lfHeight, "lfHeight");
+			Assert.AreEqual (400, lf.lfWeight, "lfWeight");
+			Assert.AreEqual (1, lf.lfCharSet, "lfCharSet");
+			Assert.AreEqual (f.Name, lf.lfFaceName, "lfFaceName");
 		}
 #endif
 	}

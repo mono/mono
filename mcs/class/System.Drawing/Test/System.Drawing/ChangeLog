@@ -1,3 +1,10 @@
+2006-01-27  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* RegionNonRectTest.cs: Updated comments on a test that fails on both
+	1.x and 2.0 MS runtime.
+	* TestFont.cs: Converted tests to NUnit 2.2 and added descriptions to
+	each asserts.
+
 2006-01-26 Boris Kirzner <borisk@mainsoft.com>
 	* ColorConverter.cs, TestBitmap.cs, TestIcon.cs, TestIconConverter.cs,
 	TestImageConverter.cs, TestPointConverter.cs, TestRectangleConverter.cs,
