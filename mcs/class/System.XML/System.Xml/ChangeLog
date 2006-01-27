@@ -1,3 +1,8 @@
+
+Fri Jan 27 20:39:48 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* XmlTextReader.cs, XmlChar.cs: more tweaks and speedups.
+
 2006-01-27  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlTextReader.cs : optimization patch by Paolo.

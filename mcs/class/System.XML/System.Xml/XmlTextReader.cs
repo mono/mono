@@ -2572,8 +2572,7 @@ namespace System.Xml
 			Advance (ch);
 			// AppendNameChar (ch);
 			{
-				if (nameLength == nameCapacity)
-					ExpandNameCapacity ();
+				// nameBuffer.Length is always non-0 so no need to ExpandNameCapacity () here
 				if (ch < Char.MaxValue)
 					nameBuffer [nameLength++] = (char) ch;
 				else
@@ -2585,7 +2584,7 @@ namespace System.Xml
 			while (XmlChar.IsNameChar ((ch = PeekChar ()))) {
 				Advance (ch);
 
-				if (namespaces && colonAt < 0 && ch == ':')
+				if (ch == ':' && namespaces && colonAt < 0)
 					colonAt = nameLength;
 				// AppendNameChar (ch);
 				{
@@ -2600,11 +2599,10 @@ namespace System.Xml
 
 			string name = parserContext.NameTable.Add (nameBuffer, 0, nameLength);
 
-			if (namespaces && colonAt > 0) {
+			if (colonAt > 0) {
 				prefix = parserContext.NameTable.Add (nameBuffer, 0, colonAt);
 				localName = parserContext.NameTable.Add (nameBuffer, colonAt + 1, nameLength - colonAt - 1);
-			}
-			else {
+			} else {
 				prefix = String.Empty;
 				localName = name;
 			}

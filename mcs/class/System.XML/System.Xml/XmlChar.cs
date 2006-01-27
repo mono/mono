@@ -50,14 +50,13 @@ namespace System.Xml
 
 		public static bool IsFirstNameChar (int ch)
 		{
-			bool result = false;
-
-			if (ch >= 0 && ch <= 0xFFFF)
-			{
-				result = (nameBitmap[(firstNamePages[ch >> 8] << 3) + ((ch & 0xFF) >> 5)] & (1 << (ch & 0x1F))) != 0;
+			if ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z')) {
+				return true;
+			} else if ((uint) ch <= 0xFFFF) {
+				return (nameBitmap[(firstNamePages[ch >> 8] << 3) + ((ch & 0xFF) >> 5)] & (1 << (ch & 0x1F))) != 0;
 			}
 
-			return result;
+			return false;
 		}
 
 		public static bool IsValid (int ch)
@@ -91,14 +90,13 @@ namespace System.Xml
 
 		public static bool IsNameChar (int ch)
 		{
-			bool result = false;
-
-			if (ch >= 0 && ch <= 0xFFFF)
-			{
-				result = (nameBitmap[(namePages[ch >> 8] << 3) + ((ch & 0xFF) >> 5)] & (1 << (ch & 0x1F))) != 0;
+			if ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z')) {
+				return true;
+			} else if ((uint) ch <= 0xFFFF) {
+				return (nameBitmap[(namePages[ch >> 8] << 3) + ((ch & 0xFF) >> 5)] & (1 << (ch & 0x1F))) != 0;
+			} else {
+				return false;
 			}
-
-			return result;
 		}
 
 		public static bool IsNCNameChar (int ch)
