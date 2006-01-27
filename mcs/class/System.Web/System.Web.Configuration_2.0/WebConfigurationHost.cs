@@ -35,6 +35,16 @@ using System.Configuration;
 using System.Configuration.Internal;
 using System.Web.Util;
 
+/*
+ * this class needs to be rewritten to support usage of the
+ * IRemoteWebConfigurationHostServer interface.  Once that's done, we
+ * need an implementation of that interface that talks (through a web
+ * service?) to a remote site..
+ *
+ * for now, though, just implement it as we do
+ * System.Configuration.InternalConfigurationHost, i.e. the local
+ * case.
+ */
 namespace System.Web.Configuration
 {
 	class WebConfigurationHost: IInternalConfigHost
@@ -45,7 +55,11 @@ namespace System.Web.Configuration
 		
 		public virtual object CreateConfigurationContext (string configPath, string locationSubPath)
 		{
-			return null;
+			return new WebContext (WebApplicationLevel.AtApplication /* XXX */,
+					       "" /* site XXX */,
+					       "" /* application path XXX */,
+					       configPath,
+					       locationSubPath);
 		}
 		
 		public virtual object CreateDeprecatedConfigContext (string configPath)

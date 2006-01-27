@@ -1,3 +1,22 @@
+2006-01-26  Chris Toshok  <toshok@ximian.com>
+
+	* HttpConfigurationSystem.cs: new class that gets sections from
+	web.config files.
+
+	* WebConfigurationManager.cs: change a lot of the
+	NotImplementedExceptions to NotSupportedExceptions.
+	(AppSettings): implement by just returning
+	ConfigurationManager.AppSettings (note this is broken because
+	ConfigurationManager.AppSettings are read-only, but it works for
+	reading.)
+	(ConnectionStrings): same (and probably broken in the same way..)
+	(Init): replace the 2.0 IInternalConfigSystem with our
+	HttpConfigurationSystem.
+
+	* WebConfigurationHost.cs: add a comment about how things are
+	likely to work in the face of IRemoteWebConfigurationHostServer.
+	(CreateConfigurationContext): return a WebContext instance.
+
 2006-01-25  Chris Toshok  <toshok@ximian.com>
 
 	* AuthorizationSection.cs (IsValidUser): instead of a blanket

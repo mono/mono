@@ -79,6 +79,12 @@ namespace System.Web.Configuration {
 			set { base[typeProp] = value; }
 		}
 
+		internal Type TypeInternal {
+			get {
+				return System.Type.GetType (this.Type, true);
+			}
+		}
+
 		protected override ConfigurationPropertyCollection Properties {
 			get { return properties; }
 		}

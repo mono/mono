@@ -68,7 +68,7 @@ namespace System.Web.Configuration {
 		public static _Configuration OpenMachineConfiguration (string locationSubPath,
 								       string server)
 		{
-			throw new NotImplementedException ();
+			throw new NotSupportedException ("Mono doesn't support remote configuration");
 		}
 
 		[MonoTODO]
@@ -76,7 +76,7 @@ namespace System.Web.Configuration {
 								       string server,
 								       IntPtr userToken)
 		{
-			throw new NotImplementedException ();
+			throw new NotSupportedException ("Mono doesn't support remote configuration");
 		}
 
 		[MonoTODO]
@@ -85,7 +85,7 @@ namespace System.Web.Configuration {
 								       string userName,
 								       string password)
 		{
-			throw new NotImplementedException ();
+			throw new NotSupportedException ("Mono doesn't support remote configuration");
 		}
 
 		public static _Configuration OpenWebConfiguration (string path)
@@ -201,7 +201,7 @@ namespace System.Web.Configuration {
 			    || HttpContext.Current.Request == null
 			    || HttpContext.Current.Request.PhysicalApplicationPath == null)
 				config = OpenMachineConfiguration ();
-			else
+			else 
 				config = OpenWebConfiguration (HttpContext.Current.Request.PhysicalApplicationPath);
 
 			return config;
@@ -217,35 +217,12 @@ namespace System.Web.Configuration {
 			return section;
 		}
 
-		static _Configuration webConfiguration;
-		static NameValueCollection appSettings;
-		[MonoTODO]
 		public static NameValueCollection AppSettings {
-			get {
-				if (appSettings == null) {
-
-					if (webConfiguration == null)
-						webConfiguration = OpenWebConfiguration ("~");
-
-					AppSettingsSection section = (AppSettingsSection)webConfiguration.GetSection ("appSettings");
-
-					appSettings = new NameValueCollection ();
-				
-					foreach (string key in section.Settings.AllKeys) {
-						KeyValueConfigurationElement ele = section.Settings[key];
-						appSettings.Add (ele.Key, ele.Value);
-					}
-				}
-
-				return appSettings;
-			}
+			get { return ConfigurationManager.AppSettings; }
 		}
 
-		[MonoTODO]
 		public static ConnectionStringSettingsCollection ConnectionStrings {
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return ConfigurationManager.ConnectionStrings; }
 		}
 
 		internal static IInternalConfigConfigurationFactory ConfigurationFactory {
@@ -290,8 +267,10 @@ namespace System.Web.Configuration {
 			}
 		}
 #else
-		static IConfigurationSystem oldConfig;
 		static Web20DefaultConfig config;
+#if NET_2_0
+		static IInternalConfigSystem configSystem;
+#endif
 #endif
 		const BindingFlags privStatic = BindingFlags.NonPublic | BindingFlags.Static;
 		static readonly object lockobj = new object ();
@@ -302,19 +281,39 @@ namespace System.Web.Configuration {
 				if (config != null)
 					return;
 
-				Web20DefaultConfig settings = Web20DefaultConfig.GetInstance ();
-				Type t = typeof (ConfigurationSettings);
-				MethodInfo changeConfig = t.GetMethod ("ChangeConfigurationSystem",
-								      privStatic);
+				/* deal with the ConfigurationSettings stuff */
+				{
+					Web20DefaultConfig settings = Web20DefaultConfig.GetInstance ();
+					Type t = typeof (ConfigurationSettings);
+					MethodInfo changeConfig = t.GetMethod ("ChangeConfigurationSystem",
+									       privStatic);
 
-				if (changeConfig == null)
-					throw new ConfigurationException ("Cannot find method CCS");
+					if (changeConfig == null)
+						throw new ConfigurationException ("Cannot find method CCS");
 
-				object [] args = new object [] {settings};
-				oldConfig = (IConfigurationSystem) changeConfig.Invoke (null, args);
-				config = settings;
+					object [] args = new object [] {settings};
+					changeConfig.Invoke (null, args);
+					config = settings;
 
-				config.Init ();
+					config.Init ();
+				}
+
+#if NET_2_0
+				/* deal with the ConfigurationManager stuff */
+				{
+					HttpConfigurationSystem system = new HttpConfigurationSystem ();
+					Type t = typeof (ConfigurationManager);
+					MethodInfo changeConfig = t.GetMethod ("ChangeConfigurationSystem",
+									       privStatic);
+
+					if (changeConfig == null)
+						throw new ConfigurationException ("Cannot find method CCS");
+
+					object [] args = new object [] {system};
+					changeConfig.Invoke (null, args);
+					configSystem = system;
+				}
+#endif
 			}
 		}
 	}
