@@ -1,5 +1,10 @@
 2006-01-27  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlNode.cs : disabled XmlIteratorNodeList optimization. It caused
+	  some kind of regression under mcs/tests/xml-025.cs.
+
+2006-01-27  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlAttributeCollection.cs :
 	  Replaced all Nodes.Count with Count (it could avoid extraneous
 	  ArrayList creation in XmlNamedNodeMap). ID attribute adjustment
