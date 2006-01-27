@@ -55,6 +55,11 @@ namespace System.Web.UI
 			get { return templates; }
 		}
 		
+		internal Hashtable ContentTemplatesInternal {
+			get { return templates; }
+			set { templates = value; }
+		}
+
 		internal void FillPlaceHolders ()
 		{
 			foreach (ContentPlaceHolder place in placeholders) {

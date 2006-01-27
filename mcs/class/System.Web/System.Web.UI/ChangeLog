@@ -1,3 +1,18 @@
+2006-01-27  Chris Toshok  <toshok@ximian.com>
+
+	* MasterPage.cs (ContentTemplatesInternal): add get/set for the
+	actual Hashtable.
+
+	* Page.cs (SaveExistingContentTemplates): store off the existing
+	MasterPage content templates so they can be reapplied when setting
+	MasterPageFile to something else.
+	(ReapplyExistingContentTemplates): set masterPage's
+	ContentTemplates to our saved copy.
+	(set_MasterPageFile): save off the current content templates
+	before clearing masterPage.
+	(get_Master): reapply the saved content templates after we create
+	the new MasterPage.
+	
 2006-01-25  Chris Toshok  <toshok@ximian.com>
 
 	* ClientScriptManager.cs (RegisterClientScriptResource): last

@@ -1497,18 +1497,38 @@ public class Page : TemplateControl, IHttpHandler
 		htmlHeader = header;
 	}
 	
+	Hashtable existingTemplates;
+	void SaveExistingContentTemplates ()
+	{
+		existingTemplates = null;
+		if (masterPage != null)
+			existingTemplates = masterPage.ContentTemplatesInternal;
+	}
+	void ReapplyExistingContentTemplates ()
+	{
+		if (existingTemplates != null)
+			masterPage.ContentTemplatesInternal = existingTemplates;
+	}
+
 	[DefaultValueAttribute ("")]
 	public string MasterPageFile {
 		get { return masterPageFile; }
-		set { masterPageFile = value; masterPage = null; }
+		set {
+			masterPageFile = value;
+			SaveExistingContentTemplates ();
+			masterPage = null;
+		}
 	}
 	
 	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	[BrowsableAttribute (false)]
 	public MasterPage Master {
 		get {
-			if (masterPage == null)
+			if (masterPage == null) {
 				masterPage = MasterPageParser.GetCompiledMasterInstance (masterPageFile, Server.MapPath (masterPageFile), Context);
+				ReapplyExistingContentTemplates ();
+			}
+			
 			return masterPage;
 		}
 	}
