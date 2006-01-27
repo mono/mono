@@ -143,7 +143,11 @@ namespace System.Windows.Forms {
 				break;
 
 			case Msg.WM_NCPAINT:
-				PaintWindowDecorations ();
+				PaintEventArgs pe;
+
+				pe = XplatUI.PaintEventStart(m.HWnd, false);
+				PaintWindowDecorations (pe);
+				XplatUI.PaintEventEnd(m.HWnd, false);
 				break;
 			}
 			return false;
@@ -470,9 +474,9 @@ namespace System.Windows.Forms {
 			return true;
 		}
 
-		private void PaintWindowDecorations ()
+		private void PaintWindowDecorations (PaintEventArgs pe)
 		{
-			Graphics dc = XplatUI.GetMenuDC (form.Handle, IntPtr.Zero);
+			Graphics dc = pe.Graphics;
 
 			if (HasBorders) {
 				Rectangle borders = new Rectangle (0, 0, form.Width, form.Height);

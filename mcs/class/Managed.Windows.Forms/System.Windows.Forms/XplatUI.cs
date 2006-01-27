@@ -455,13 +455,6 @@ namespace System.Windows.Forms {
 			return driver.GetFontMetrics(g, font, out ascent, out descent);
 		}
 			
-		internal static Graphics GetMenuDC(IntPtr handle, IntPtr ncpaint_region) {
-			#if DriverDebug
-				Console.WriteLine("GetMenuDC({0}): Called", Window(handle));
-			#endif
-			return driver.GetMenuDC(handle, ncpaint_region);
-		}
-
 		internal static Point GetMenuOrigin(IntPtr handle) {
 			#if DriverDebug
 				Console.WriteLine("GetMenuOrigin({0}): Called", Window(handle));
@@ -599,13 +592,6 @@ namespace System.Windows.Forms {
 				Console.WriteLine("PostQuitMessage({0}): Called", exitCode);
 			#endif
 			driver.PostQuitMessage(exitCode);
-		}
-
-		internal static void ReleaseMenuDC(IntPtr handle, Graphics dc) {
-			#if DriverDebug
-				Console.WriteLine("ReleaseMenuDC({0:X}): Called", handle.ToInt32());
-			#endif
-			driver.ReleaseMenuDC(handle, dc);
 		}
 
 		internal static void ScreenToClient(IntPtr handle, ref int x, ref int y) {

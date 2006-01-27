@@ -49,6 +49,7 @@ namespace System.Windows.Forms {
 			public GrabControl (MenuTracker owner) : base ()
 			{
 				tracker = owner;
+				is_visible = false;
 			}
 
 			protected override void OnMouseDown (MouseEventArgs args)

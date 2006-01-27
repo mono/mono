@@ -84,25 +84,31 @@ namespace System.Windows.Forms
 		
 		#region Private Methods
 
-		internal void Draw () 		
-		{
-			Draw (Rect);
+		internal void Draw () {
+			PaintEventArgs pe;
+
+			if (Wnd.IsHandleCreated) {
+				pe = XplatUI.PaintEventStart(Wnd.window.Handle, false);
+				Draw (pe, Rect);
+				XplatUI.PaintEventEnd(Wnd.window.Handle, false);
+			}
 		}
 
-		internal void Draw (Rectangle rect)
+		internal void Draw (PaintEventArgs pe) 		
 		{
-			Graphics g;
+			Draw (pe, Rect);
+		}
 
-			if (Wnd.window.Handle == IntPtr.Zero)
+		internal void Draw (PaintEventArgs pe, Rectangle rect)
+		{
+			if (!Wnd.IsHandleCreated)
 				return;
 
 			X = rect.X;
 			Y = rect.Y;
 			Height = Rect.Height;
 
-			g = XplatUI.GetMenuDC(Wnd.window.Handle, IntPtr.Zero);
-			ThemeEngine.Current.DrawMenuBar (g, this, rect);
-			XplatUI.ReleaseMenuDC(Wnd.window.Handle, g);
+			ThemeEngine.Current.DrawMenuBar (pe.Graphics, this, rect);
 		}
 		
 		internal void SetForm (Form form)
@@ -121,6 +127,7 @@ namespace System.Windows.Forms
 				return;
 
 			Height = 0;
+
 			Draw ();
 		}
 

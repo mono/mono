@@ -170,12 +170,16 @@ namespace System.Windows.Forms {
 				FormMouseLeave (ref m);
 				break;
 
-			case Msg.WM_NCPAINT:
+			case Msg.WM_NCPAINT: {
+				PaintEventArgs	pe;
+
+				pe = XplatUI.PaintEventStart(m.HWnd, false);
 //				form.UpdateStyles ();
-				PaintWindowDecorations ();
-				// Graphics g = XplatUI.GetMenuDC (form.Handle, IntPtr.Zero);
+				PaintWindowDecorations (pe);
 				// g.Clear (Color.Red);
+				XplatUI.PaintEventEnd(m.HWnd, false);
 				break;
+			}
 			}
 			return false;
 		}
@@ -494,9 +498,9 @@ namespace System.Windows.Forms {
 			return true;
 		}
 
-		private void PaintWindowDecorations ()
+		private void PaintWindowDecorations (PaintEventArgs pe)
 		{
-			Graphics dc = XplatUI.GetMenuDC (form.Handle, IntPtr.Zero);
+			Graphics dc = pe.Graphics;
 
 			if (HasBorders) {
 				Rectangle borders = new Rectangle (0, 0, form.Width, form.Height);

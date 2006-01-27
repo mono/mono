@@ -1187,11 +1187,6 @@ namespace System.Windows.Forms {
 		}
 		
 		[MonoTODO]
-		internal override Graphics GetMenuDC(IntPtr hwnd, IntPtr ncpaint_region) {
-			throw new NotImplementedException();
-		}
-		
-		[MonoTODO]
 		internal override Point GetMenuOrigin(IntPtr hwnd) {
 			throw new NotImplementedException();
 		}
@@ -1388,11 +1383,6 @@ namespace System.Windows.Forms {
 
 		[MonoTODO]
 		internal override void PostQuitMessage(int exitCode) {
-			throw new NotImplementedException();
-		}
-		
-		[MonoTODO]
-		internal override void ReleaseMenuDC(IntPtr hwnd, Graphics dc) {
 			throw new NotImplementedException();
 		}
 		

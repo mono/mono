@@ -1590,9 +1590,15 @@ namespace System.Windows.Forms {
 
 				case Msg.WM_NCPAINT: {
 					if (ActiveMenu != null) {
-						Point pnt = XplatUI.GetMenuOrigin(window.Handle);
+						PaintEventArgs	pe;
+						Point		pnt;
 
-						ActiveMenu.Draw (new Rectangle (pnt.X, pnt.Y, ClientSize.Width, 0));
+						pe = XplatUI.PaintEventStart(Handle, false);
+						pnt = XplatUI.GetMenuOrigin(window.Handle);
+						
+						ActiveMenu.Draw (pe, new Rectangle (pnt.X, pnt.Y, ClientSize.Width, 0));
+
+						XplatUI.PaintEventEnd(Handle, false);
 					}
 
 					base.WndProc(ref m);

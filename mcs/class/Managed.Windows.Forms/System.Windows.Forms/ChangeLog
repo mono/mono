@@ -1,3 +1,20 @@
+2006-01-26  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* XplatUI.cs, XplatUIDriver.cs, XplatUIX11.cs, XplatUIOSX.cs: 
+	  Removed GetMenuDC and ReleaseMenuDC methods; replaced
+	  by PaintEventStart(handle, false) and PaintEventEnd(handle, false)
+	* Form.cs: Changed WM_NCPAINT handler to use PaintEventStart and End
+	* InternalWindowManager.cs: Added use of PaintEventStart/End to
+	  handling of WM_NCPAINT message, now passing the PaintEventArgs to
+	  the PaintWindowDecorations method
+	* MainMenu.cs: Switched logic from GetMenuDC to PaintEventStart
+	* MdiChildContext.cs: Switched logic from GetMenuDC to PaintEventStart
+	* MenuAPI.cs: Made tracker window invisible
+	* XplatUIWin32.cs:
+	  - Removed GetMenuDC and ReleaseMenuDC methods
+	  - Implemented the client=false path for PaintEventStart and
+	    PaintEventEnd
+
 2006-01-26  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* XplatUIWin32.cs(SetBorderStyle): Fixed3D needs a border

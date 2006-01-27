@@ -2417,14 +2417,6 @@ namespace System.Windows.Forms {
 			return GetFontMetrics(g.GetHdc(), font.ToHfont(), out ascent, out descent);
 		}
 
-		internal override Graphics GetMenuDC(IntPtr handle, IntPtr ncpaint_region) {
-			Hwnd		hwnd;
-
-			hwnd = Hwnd.ObjectFromHandle(handle);
-
-			return Graphics.FromHwnd(hwnd.whole_window);
-		}
-
 		internal override Point GetMenuOrigin(IntPtr handle) {
 			Hwnd	hwnd;
 
@@ -3311,10 +3303,6 @@ namespace System.Windows.Forms {
 
 			// Remove our display handle from S.D
 			Graphics.FromHdcInternal (IntPtr.Zero);
-		}
-
-		internal override void ReleaseMenuDC(IntPtr handle, Graphics dc) {
-			dc.Dispose();
 		}
 
 		internal override void ScreenToClient(IntPtr handle, ref int x, ref int y) {

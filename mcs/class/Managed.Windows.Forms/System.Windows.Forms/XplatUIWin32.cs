@@ -1175,16 +1175,23 @@ namespace System.Windows.Forms {
 
 			hwnd = Hwnd.ObjectFromHandle(handle);
 
-			if (Win32GetUpdateRect(handle, ref rect, false)) {
-				hdc = Win32BeginPaint(handle, ref ps);
+			if (client) {
+				if (Win32GetUpdateRect(handle, ref rect, false)) {
+					hdc = Win32BeginPaint(handle, ref ps);
 
-				hwnd.user_data = (object)ps;
+					hwnd.user_data = (object)ps;
 
-				clip_rect = new Rectangle(ps.rcPaint.left, ps.rcPaint.top, ps.rcPaint.right-ps.rcPaint.left, ps.rcPaint.bottom-ps.rcPaint.top);
+					clip_rect = new Rectangle(ps.rcPaint.left, ps.rcPaint.top, ps.rcPaint.right-ps.rcPaint.left, ps.rcPaint.bottom-ps.rcPaint.top);
+				} else {
+					hdc = Win32GetDC(handle);
+					// FIXME: Add the DC to internal list
+					clip_rect = new Rectangle(rect.top, rect.left, rect.right-rect.left, rect.bottom-rect.top);
+				}
 			} else {
-				hdc = Win32GetDC(handle);
-				// FIXME: Add the DC to internal list
-				clip_rect = new Rectangle(rect.top, rect.left, rect.right-rect.left, rect.bottom-rect.top);
+				// GDI+ Broken:
+				// hdc = Win32GetDCEx(hwnd, ncpaint_region, DCExFlags.DCX_WINDOW | DCExFlags.DCX_INTERSECTRGN | DCExFlags.DCX_USESTYLE);
+				hdc = Win32GetWindowDC(handle);
+				hwnd.user_data = (object)hdc;
 			}
 
 			hwnd.client_dc = Graphics.FromHdc(hdc);
@@ -1200,9 +1207,17 @@ namespace System.Windows.Forms {
 			hwnd = Hwnd.ObjectFromHandle(handle);
 			hwnd.client_dc.Dispose();
 
-			if (hwnd.user_data != null) {
-				ps = (PAINTSTRUCT)hwnd.user_data;
-				Win32EndPaint(handle, ref ps);
+			if (client) {
+				if (hwnd.user_data != null) {
+					ps = (PAINTSTRUCT)hwnd.user_data;
+					Win32EndPaint(handle, ref ps);
+					hwnd.user_data = null;
+				}
+			} else {
+				if (hwnd.user_data != null) {
+					Win32ReleaseDC(handle, (IntPtr)hwnd.user_data);
+					hwnd.user_data = null;
+				}
 			}
 		}
 
@@ -1882,28 +1897,8 @@ namespace System.Windows.Forms {
 		}
 
 
-		internal override Graphics GetMenuDC(IntPtr hwnd, IntPtr ncpaint_region) {
-			IntPtr		hdc;
-			Graphics	g;
-
-			// GDI+ Broken:
-			// hdc = Win32GetDCEx(hwnd, ncpaint_region, DCExFlags.DCX_WINDOW | DCExFlags.DCX_INTERSECTRGN | DCExFlags.DCX_USESTYLE);
-			hdc = Win32GetDCEx(hwnd, ncpaint_region, DCExFlags.DCX_WINDOW);
-
-			g = Graphics.FromHdc(hdc);
-
-			Win32ReleaseDC(hwnd, hdc);
-
-			return g;
-		}
-
 		internal override Point GetMenuOrigin(IntPtr handle) {
 			return new Point(SystemInformation.FrameBorderSize.Width, SystemInformation.FrameBorderSize.Height + ThemeEngine.Current.CaptionHeight);
-		}
-
-
-		internal override void ReleaseMenuDC(IntPtr hwnd, Graphics dc) {
-			dc.Dispose();
 		}
 
 		internal override void SetIcon(IntPtr hwnd, Icon icon) {
@@ -2285,6 +2280,9 @@ namespace System.Windows.Forms {
 
 		[DllImport ("user32.dll", EntryPoint="GetDC", CallingConvention=CallingConvention.StdCall)]
 		private extern static IntPtr Win32GetDC(IntPtr hWnd);
+
+		[DllImport ("user32.dll", EntryPoint="GetWindowDC", CallingConvention=CallingConvention.StdCall)]
+		private extern static IntPtr Win32GetWindowDC(IntPtr hWnd);
 
 		[DllImport ("user32.dll", EntryPoint="GetDCEx", CallingConvention=CallingConvention.StdCall)]
 		private extern static IntPtr Win32GetDCEx(IntPtr hWnd, IntPtr hRgn, DCExFlags flags);

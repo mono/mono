@@ -210,9 +210,7 @@ namespace System.Windows.Forms {
 		internal abstract bool SystrayChange(IntPtr hwnd, string tip, Icon icon, ref ToolTip tt);
 		internal abstract void SystrayRemove(IntPtr hwnd, ref ToolTip tt);
 
-		internal abstract Graphics GetMenuDC(IntPtr hwnd, IntPtr ncpaint_region);
 		internal abstract Point GetMenuOrigin(IntPtr hwnd);
-		internal abstract void ReleaseMenuDC(IntPtr hwnd, Graphics dc);
 		internal abstract void MenuToScreen(IntPtr hwnd, ref int x, ref int y);
 		internal abstract void ScreenToMenu(IntPtr hwnd, ref int x, ref int y);
 
