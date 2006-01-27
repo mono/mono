@@ -1,5 +1,9 @@
 2006-01-28  Ankit Jain  <jankit@novell.com>
 
+	* ILParser.jay (pinv_attr | ..): Fix typo.
+
+2006-01-28  Ankit Jain  <jankit@novell.com>
+
 	* ILParser.jay (method_ref): Remove 2 redundant productions.
 	(method_decl | D_OVERRIDE K_METHOD ..): New production for overriding
 	generic methods.

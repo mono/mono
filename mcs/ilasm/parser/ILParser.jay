@@ -1915,8 +1915,8 @@ pinv_attr		: /* EMPTY */ { $$ = new PInvokeAttr (); }
 			| pinv_attr K_FASTCALL { $$ = (PInvokeAttr) $1 | PInvokeAttr.fastcall; }
 			| pinv_attr K_BESTFIT COLON K_ON { $$ = (PInvokeAttr) $1 | PInvokeAttr.bestfit_on; }
 			| pinv_attr K_BESTFIT COLON K_OFF { $$ = (PInvokeAttr) $1 | PInvokeAttr.bestfit_off; }
-			| pinv_attr K_CHARMAPERR COLON K_ON { $$ = (PInvokeAttr) $1 | PInvokeAttr.charmaperror_on; }
-			| pinv_attr K_CHARMAPERR COLON K_OFF { $$ = (PInvokeAttr) $1 | PInvokeAttr.charmaperror_off; }
+			| pinv_attr K_CHARMAPERROR COLON K_ON { $$ = (PInvokeAttr) $1 | PInvokeAttr.charmaperror_on; }
+			| pinv_attr K_CHARMAPERROR COLON K_OFF { $$ = (PInvokeAttr) $1 | PInvokeAttr.charmaperror_off; }
 			;
 
 method_name		: D_CTOR
