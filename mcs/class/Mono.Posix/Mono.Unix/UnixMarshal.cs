@@ -140,6 +140,9 @@ namespace Mono.Unix {
 			if (p == IntPtr.Zero)
 				return null;
 
+			if (encoding == null)
+				throw new ArgumentNullException ("encoding");
+
 			int len = GetStringByteLength (p, encoding);
 
 			// Due to variable-length encoding schemes, GetStringByteLength() may
@@ -281,6 +284,8 @@ namespace Mono.Unix {
 		{
 			if (count < 0)
 				throw new ArgumentOutOfRangeException ("count", "< 0");
+			if (encoding == null)
+				throw new ArgumentNullException ("encoding");
 			if (stringArray == IntPtr.Zero)
 				return new string[count];
 
