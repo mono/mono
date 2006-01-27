@@ -3,6 +3,7 @@
 	* Form.cs: Add ActiveTracker property to do Captures and perform mouse
 	event forwarding when menus are active.
 	* MenuAPI.cs: kill the GrabControl hack.  Use Form.ActiveTracker.
+	Most of the patch is pdb's with a little rework.
 
 2006-01-26  Peter Dennis Bartok  <pbartok@novell.com> 
 
