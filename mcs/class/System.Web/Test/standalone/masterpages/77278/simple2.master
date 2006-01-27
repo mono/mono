@@ -1,0 +1,20 @@
+<%@ Master Language="C#"%>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head runat="server">
+    <title>Simple Master Page</title>
+</head>
+<body>
+    <form id="form1" runat="server">
+    <h3>Simple2</h3>
+    <div>
+		What's inside the following box is a placeholder:
+		<div style='border:solid 2px red; padding:10px'>
+        <asp:contentplaceholder id="ContentPlaceHolder1" runat="server"></asp:contentplaceholder>
+		</div>
+		That's all!
+    </form>
+</body>
+</html>

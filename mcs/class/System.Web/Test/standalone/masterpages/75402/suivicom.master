@@ -1,0 +1,10 @@
+<%@ Master Language="C#" %>
+<script runat="server">
+<html>
+<head />
+<body>
+<form runat="server">
+    <asp:contentplaceholder id="body" runat="server"></asp:contentplaceholder>
+</form>
+</body>
+</html>
