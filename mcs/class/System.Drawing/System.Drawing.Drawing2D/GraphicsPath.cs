@@ -32,13 +32,15 @@
 //
 
 using System.ComponentModel;
-using System.Drawing;
 using System.Runtime.InteropServices;
 
 namespace System.Drawing.Drawing2D
 {
 	public sealed class GraphicsPath : MarshalByRefObject, ICloneable, IDisposable
 	{
+		// 1/4 is the FlatnessDefault as defined in GdiPlusEnums.h
+		private const float FlatnessDefault = 1.0f / 4.0f;
+
 		internal IntPtr nativePath = IntPtr.Zero;
 
 		GraphicsPath (IntPtr ptr)
@@ -653,20 +655,16 @@ namespace System.Drawing.Drawing2D
                         GDIPlus.CheckStatus (s);
                 } 
 
-                [MonoTODO ("GdipFlattenPath isn't implemented in libgdiplus")]
                 public void Flatten ()
                 {
-                        // 1/4 is the FlatnessDefault as defined in GdiPlusEnums.h
-                	Flatten (null, 1.0f / 4.0f); 
+                	Flatten (null, FlatnessDefault); 
                 }  	
   
-                [MonoTODO ("GdipFlattenPath isn't implemented in libgdiplus")]
 		public void Flatten (Matrix matrix)
 		{
-                	Flatten (matrix, 1.0f / 4.0f);
+                	Flatten (matrix, FlatnessDefault);
                 }
 		
-                [MonoTODO ("GdipFlattenPath isn't implemented in libgdiplus")]
 		public void Flatten (Matrix matrix, float flatness)
 		{
                         IntPtr m = (matrix == null) ? IntPtr.Zero : matrix.nativeMatrix;
@@ -699,37 +697,43 @@ namespace System.Drawing.Drawing2D
                         return retval;
                 }
 
+                [MonoTODO ("GdipIsOutlineVisiblePathPoint[I] isn't implemented in libgdiplus")]
 		public bool IsOutlineVisible (Point point, Pen pen)
 		{
                         return IsOutlineVisible (point.X, point.Y, pen, null);
                 }  		
 		
+                [MonoTODO ("GdipIsOutlineVisiblePathPoint[I] isn't implemented in libgdiplus")]
 		public bool IsOutlineVisible (PointF point, Pen pen)
 		{
                 	return IsOutlineVisible (point.X, point.Y, pen, null);
                 } 
 		
+                [MonoTODO ("GdipIsOutlineVisiblePathPoint[I] isn't implemented in libgdiplus")]
 		public bool IsOutlineVisible (int x, int y, Pen pen)
 		{
                         return IsOutlineVisible (x, y, pen, null);
                 }
 
+                [MonoTODO ("GdipIsOutlineVisiblePathPoint[I] isn't implemented in libgdiplus")]
 		public bool IsOutlineVisible (float x, float y, Pen pen)
 		{
                 	return IsOutlineVisible (x, y, pen, null);
                 }  		
 		
+                [MonoTODO ("GdipIsOutlineVisiblePathPoint[I] isn't implemented in libgdiplus")]
 		public bool IsOutlineVisible (Point pt, Pen pen, Graphics graphics)
 		{
                 	return IsOutlineVisible (pt.X, pt.Y, pen, graphics);
                 }  		
 		
+                [MonoTODO ("GdipIsOutlineVisiblePathPoint[I] isn't implemented in libgdiplus")]
 		public bool IsOutlineVisible (PointF pt, Pen pen, Graphics graphics)
 		{
                 	return IsOutlineVisible (pt.X, pt.Y, pen, graphics);
                 }  		
 				
-		[MonoTODO]
+                [MonoTODO ("GdipIsOutlineVisiblePathPoint[I] isn't implemented in libgdiplus")]
 		public bool IsOutlineVisible (int x, int y, Pen pen, Graphics graphics)
 		{
                         bool result;
@@ -741,7 +745,7 @@ namespace System.Drawing.Drawing2D
                         return result;
                 }  		
 
-		[MonoTODO]
+                [MonoTODO ("GdipIsOutlineVisiblePathPoint[I] isn't implemented in libgdiplus")]
 		public bool IsOutlineVisible (float x, float y, Pen pen, Graphics graphics)
 		{
                         bool result;
@@ -753,37 +757,43 @@ namespace System.Drawing.Drawing2D
                         return result;
                 }  		
                 
+                [MonoTODO ("GdipIsVisiblePathPoint[I] isn't implemented in libgdiplus")]
                 public bool IsVisible (Point point)
                 {
                 	return IsVisible (point.X, point.Y, null);
                 }  		
                 
+                [MonoTODO ("GdipIsVisiblePathPoint[I] isn't implemented in libgdiplus")]
                 public bool IsVisible (PointF point)
                 {
                 	return IsVisible (point.X, point.Y, null);
                 }  		
                 
+                [MonoTODO ("GdipIsVisiblePathPoint[I] isn't implemented in libgdiplus")]
                 public bool IsVisible (int x, int y)
                 {
                 	return IsVisible (x, y, null);
                 }
 
+                [MonoTODO ("GdipIsVisiblePathPoint[I] isn't implemented in libgdiplus")]
                 public bool IsVisible (float x, float y)
                 {
                 	return IsVisible (x, y, null);
                 }  		                
                 
+                [MonoTODO ("GdipIsVisiblePathPoint[I] isn't implemented in libgdiplus")]
                 public bool IsVisible (Point pt, Graphics graphics)
                 {
                 	return IsVisible (pt.X, pt.Y, graphics);
                 }  		
                 
+                [MonoTODO ("GdipIsVisiblePathPoint[I] isn't implemented in libgdiplus")]
                 public bool IsVisible (PointF pt, Graphics graphics)
                 {
                 	return IsVisible (pt.X, pt.Y, graphics);
                 }  		
                                 
-                [MonoTODO]
+                [MonoTODO ("GdipIsVisiblePathPoint[I] isn't implemented in libgdiplus")]
                 public bool IsVisible (int x, int y, Graphics graphics)
                 {
                         bool retval;
@@ -797,7 +807,7 @@ namespace System.Drawing.Drawing2D
                         return retval;
                 }  		
                 
-                [MonoTODO]
+                [MonoTODO ("GdipIsVisiblePathPoint[I] isn't implemented in libgdiplus")]
                 public bool IsVisible (float x, float y, Graphics graphics)
                 {
                         bool retval;
@@ -828,19 +838,19 @@ namespace System.Drawing.Drawing2D
 		[MonoTODO ("GdipWarpPath isn't implemented in libgdiplus")]
                 public void Warp (PointF[] destPoints, RectangleF srcRect)
                 {
-                	Warp (destPoints, srcRect, null, WarpMode.Perspective, 1.0f / 4.0f);
+                	Warp (destPoints, srcRect, null, WarpMode.Perspective, FlatnessDefault);
                 }  		
 
 		[MonoTODO ("GdipWarpPath isn't implemented in libgdiplus")]
 		public void Warp (PointF[] destPoints, RectangleF srcRect, Matrix matrix)
 		{
-                	Warp (destPoints, srcRect, matrix, WarpMode.Perspective, 1.0f / 4.0f);
+                	Warp (destPoints, srcRect, matrix, WarpMode.Perspective, FlatnessDefault);
                 }  		
 
 		[MonoTODO ("GdipWarpPath isn't implemented in libgdiplus")]
 		public void Warp (PointF[] destPoints, RectangleF srcRect, Matrix matrix, WarpMode warpMode)
 		{
-                	Warp (destPoints, srcRect, matrix, warpMode, 1.0f / 4.0f);
+                	Warp (destPoints, srcRect, matrix, warpMode, FlatnessDefault);
                 }  		
 
 		[MonoTODO ("GdipWarpPath isn't implemented in libgdiplus")]
@@ -860,13 +870,13 @@ namespace System.Drawing.Drawing2D
 		[MonoTODO ("GdipWidenPath isn't implemented in libgdiplus")]
                 public void Widen (Pen pen)
 		{
-                	Widen (pen, null, 1.0f / 4.0f);
+                	Widen (pen, null, FlatnessDefault);
                 }  		
                 
 		[MonoTODO ("GdipWidenPath isn't implemented in libgdiplus")]
 		public void Widen (Pen pen, Matrix matrix)
 		{	
-                	Widen (pen, matrix, 1.0f / 4.0f);
+                	Widen (pen, matrix, FlatnessDefault);
                 }  		
                 
 		[MonoTODO ("GdipWidenPath isn't implemented in libgdiplus")]
