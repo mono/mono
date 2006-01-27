@@ -1,3 +1,7 @@
+2006-01-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* DateTime.cs: Add some 2.0 methods and properties.
+
 2006-01-19 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Console.cs: if InternalCodePage returns -1, use the default encoding.

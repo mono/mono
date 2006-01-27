@@ -51,6 +51,10 @@ namespace System
 	{
 		private TimeSpan ticks;
 
+#if NET_2_0
+		DateTimeKind kind;
+#endif
+
 		private const int dp400 = 146097;
 		private const int dp100 = 36524;
 		private const int dp4 = 1461;
@@ -168,10 +172,6 @@ namespace System
 		{
 			int[] days;
 			int temp = 0, m=1 ;
-
-
-
-
 		
 			days = (IsLeapYear(year) ? daysmonthleap  : daysmonth);
 			
@@ -237,6 +237,9 @@ namespace System
 					ticks, MinValue.Ticks, MaxValue.Ticks);
 				throw new ArgumentOutOfRangeException ("ticks", msg);
 			}
+#if NET_2_0
+			kind = DateTimeKind.Unspecified;
+#endif
 		}
 
 		public DateTime (int year, int month, int day)
@@ -258,6 +261,10 @@ namespace System
 									"unrepresentable DateTime.");
 
 			ticks = new TimeSpan (AbsoluteDays(year,month,day), hour, minute, second, millisecond);
+
+#if NET_2_0
+			kind = DateTimeKind.Unspecified;
+#endif
 		}
 
 		[MonoTODO ("Calendar is unused")]
@@ -287,7 +294,40 @@ namespace System
 			    throw new ArgumentOutOfRangeException ();
 
 			ticks = value;
+
+#if NET_2_0
+			kind = DateTimeKind.Unspecified;
+#endif
 		}
+
+#if NET_2_0
+		public DateTime (long ticks, DateTimeKind kind) : this (ticks)
+		{
+			CheckDateTimeKind (kind);
+			this.kind = kind;
+		}
+
+		public DateTime (int year, int month, int day, int hour, int minute, int second, DateTimeKind kind)
+			: this (year, month, day, hour, minute, second)
+		{
+			CheckDateTimeKind (kind);
+			this.kind = kind;
+		}
+
+		public DateTime (int year, int month, int day, int hour, int minute, int second, int millisecond, DateTimeKind kind)
+			: this (year, month, day, hour, minute, second, millisecond)
+		{
+			CheckDateTimeKind (kind);
+			this.kind = kind;
+		}
+
+		public DateTime (int year, int month, int day, int hour, int minute, int second, int millisecond, Calendar calendar, DateTimeKind kind)
+			: this (year, month, day, hour, minute, second, millisecond, calendar)
+		{
+			CheckDateTimeKind (kind);
+			this.kind = kind;
+		}			
+#endif
 
 		/* Properties  */
 
@@ -415,6 +455,14 @@ namespace System
 			}
 		}
 
+#if NET_2_0
+		public DateTimeKind Kind {
+			get {
+				return kind;
+			}
+		}
+#endif
+
 		/* methods */
 
 		public DateTime Add (TimeSpan ts)
@@ -528,6 +576,13 @@ namespace System
 		}
 
 #if NET_2_0
+		[MonoTODO]
+		public bool IsDaylightSavingTime () {
+			if (kind == DateTimeKind.Utc)
+				return false;
+			throw new NotImplementedException ();
+		}
+
 		public int CompareTo (DateTime value)
 		{
 			return Compare (this, value);
@@ -661,6 +716,13 @@ namespace System
 				results [i] = val._ToString (patterns [i], dfi);
 			return results;
 		}
+
+#if NET_2_0
+		private void CheckDateTimeKind (DateTimeKind kind) {
+			if ((kind != DateTimeKind.Unspecified) && (kind != DateTimeKind.Utc) && (kind != DateTimeKind.Local))
+				throw new ArgumentException ("Invalid DateTimeKind value.", "kind");
+		}
+#endif
 
 		public override int GetHashCode ()
 		{
