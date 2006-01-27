@@ -37,44 +37,23 @@ namespace System.Windows.Forms {
 	*/
 	internal class MenuTracker {
 
-		bool active;
+		internal bool active;
 		public Menu CurrentMenu;
 		public Menu TopMenu;
-		GrabControl grab_control;
-
-		class GrabControl : Control {
-
-			MenuTracker tracker;
-
-			public GrabControl (MenuTracker owner) : base ()
-			{
-				tracker = owner;
-				is_visible = false;
-			}
-
-			protected override void OnMouseDown (MouseEventArgs args)
-			{
-				tracker.OnClick (new MouseEventArgs (args.Button, args.Clicks, Control.MousePosition.X, Control.MousePosition.Y, args.Delta));
-			}
-
-			protected override void OnMouseMove (MouseEventArgs args)
-			{
-				tracker.OnMotion (new MouseEventArgs (args.Button, args.Clicks, Control.MousePosition.X, Control.MousePosition.Y, args.Delta));
-			}
-		}
+		Form grab_control;
 
 	    	public MenuTracker (Menu top_menu)
 		{
 			TopMenu = CurrentMenu = top_menu;
 			foreach (MenuItem item in TopMenu.MenuItems)
 				AddShortcuts (item);
-			grab_control = new GrabControl (this);
+
 			if (top_menu is ContextMenu) {
-				(top_menu as ContextMenu).SourceControl.FindForm ().Controls.AddImplicit (grab_control);
+				grab_control = (top_menu as ContextMenu).SourceControl.FindForm ();
+				grab_control.ActiveTracker = this;
 				active = true;
-				grab_control.Capture = true;
 			} else
-				top_menu.Wnd.FindForm ().Controls.AddImplicit (grab_control);
+				grab_control = top_menu.Wnd.FindForm ();
 		}
 
 		enum KeyNavState {
@@ -90,11 +69,6 @@ namespace System.Windows.Forms {
 			get { return keynav_state != KeyNavState.Idle; }
 		}
 
-		public void Dispose ()
-		{
-			grab_control.Parent.Controls.RemoveImplicit (grab_control);
-		}
-
 		Point ScreenToMenu (Menu menu, Point pnt)		
 		{
 			int x = pnt.X;
@@ -106,7 +80,7 @@ namespace System.Windows.Forms {
 		void Deactivate ()
 		{
 			active = false;
-			grab_control.Capture = false;
+			grab_control.ActiveTracker = null;
 			keynav_state = KeyNavState.Idle;
 			if (TopMenu is ContextMenu) {
 				PopUpWindow puw = TopMenu.Wnd as PopUpWindow;
@@ -154,7 +128,7 @@ namespace System.Windows.Forms {
 			SelectItem (item.Parent, item, item.IsPopup);
 			if (item.IsPopup) {
 				active = true;
-				grab_control.Capture = true;
+				grab_control.ActiveTracker = this;
 			} else if (item.Parent is MainMenu)
 				active = false;
 			else
@@ -169,7 +143,7 @@ namespace System.Windows.Forms {
 			if (CurrentMenu.SelectedItem == item)
 				return;
 
-			grab_control.Capture = active || item != null;
+			grab_control.ActiveTracker = (active || item != null) ? this : null;
 
 			Rectangle top_bounds = new Rectangle(0, 0, TopMenu.Rect.Width, TopMenu.Rect.Height);
 			if (item == null && (!active || top_bounds.Contains (ScreenToMenu (TopMenu, new Point (args.X, args.Y)))))
@@ -218,8 +192,6 @@ namespace System.Windows.Forms {
 
 			if (!no_quit)
 				XplatUI.PostQuitMessage(0);
-
-			tracker.Dispose ();
 
 			if (menu.Wnd != null) {
 				menu.Wnd.Dispose ();

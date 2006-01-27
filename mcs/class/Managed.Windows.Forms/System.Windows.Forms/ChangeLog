@@ -1,3 +1,9 @@
+2006-01-20  Mike Kestner  <mkestner@novell.com>
+
+	* Form.cs: Add ActiveTracker property to do Captures and perform mouse
+	event forwarding when menus are active.
+	* MenuAPI.cs: kill the GrabControl hack.  Use Form.ActiveTracker.
+
 2006-01-26  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* XplatUI.cs, XplatUIDriver.cs, XplatUIX11.cs, XplatUIOSX.cs: 

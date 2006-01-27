@@ -77,6 +77,7 @@ namespace System.Windows.Forms {
 		private double			opacity;
 		internal ApplicationContext	context;
 		Color				transparency_key;
+		internal MenuTracker		active_tracker;
 
 		#endregion	// Local Variables
 
@@ -517,6 +518,17 @@ namespace System.Windows.Forms {
 				}
 
 				ResumeLayout ();
+			}
+		}
+
+		internal MenuTracker ActiveTracker {
+			get { return active_tracker; }
+			set {
+				if (value == active_tracker)
+					return;
+
+				Capture = value != null;
+				active_tracker = value;
 			}
 		}
 
@@ -1617,6 +1629,34 @@ namespace System.Windows.Forms {
 					}
 					DefWndProc(ref m);
 					break;
+				}
+
+				case Msg.WM_MOUSEMOVE: {
+					if (active_tracker != null) {
+						MouseEventArgs args;
+
+						args = new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
+							mouse_clicks,  LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()),  0);
+						active_tracker.OnMotion(new MouseEventArgs (args.Button, args.Clicks, Control.MousePosition.X, Control.MousePosition.Y, args.Delta));
+						break;
+					}
+					base.WndProc(ref m);
+					break;
+				}
+
+				case Msg.WM_LBUTTONDOWN:
+				case Msg.WM_MBUTTONDOWN:
+				case Msg.WM_RBUTTONDOWN: {					
+					if (active_tracker != null) {
+						MouseEventArgs args;
+
+						args = new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
+							mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 0);
+						active_tracker.OnClick(new MouseEventArgs (args.Button, args.Clicks, Control.MousePosition.X, Control.MousePosition.Y, args.Delta));
+						return;
+					}
+					base.WndProc(ref m);
+					return;
 				}
 
 				case Msg.WM_GETMINMAXINFO: {
