@@ -111,7 +111,7 @@ namespace System.Xml
 		public void CopyTo (XmlAttribute[] array, int index)
 		{
 			// assuming that Nodes is a correct collection.
-			for(int i=0; i<Nodes.Count; i++)
+			for(int i=0; i<Count; i++)
 				array [index + i] = Nodes [i] as XmlAttribute;
 		}
 
@@ -128,14 +128,14 @@ namespace System.Xml
 #endif
 		{
 			if (refNode == null) {
-				if (Nodes.Count == 0)
+				if (Count == 0)
 					return InsertBefore (newNode, null);
 				else
 					return InsertBefore (newNode, this [0]);
 			}
-			for (int i = 0; i < Nodes.Count; i++)
+			for (int i = 0; i < Count; i++)
 				if (refNode == Nodes [i])
-					return InsertBefore (newNode, Nodes.Count == i + 1 ? null : this [i + 1]);
+					return InsertBefore (newNode, Count == i + 1 ? null : this [i + 1]);
 
 			throw new ArgumentException ("refNode not found in this collection.");
 		}
@@ -151,16 +151,16 @@ namespace System.Xml
 
 			ownerDocument.onNodeInserting (newNode, null);
 
-			int pos = Nodes.Count;
+			int pos = Count;
 			if (refNode != null) {
-				for (int i = 0; i < Nodes.Count; i++) {
+				for (int i = 0; i < Count; i++) {
 					XmlNode n = Nodes [i] as XmlNode;
 					if (n == refNode) {
 						pos = i;
 						break;
 					}
 				}
-				if (pos == Nodes.Count)
+				if (pos == Count)
 					throw new ArgumentException ("refNode not found in this collection.");
 			}
 			SetNamedItem (newNode, pos, false);
@@ -195,7 +195,7 @@ namespace System.Xml
 				throw new ArgumentException ("The specified attribute is not contained in the element.");
 
 			XmlAttribute retAttr = null;
-			for (int i = 0; i < Nodes.Count; i++) {
+			for (int i = 0; i < Count; i++) {
 				XmlAttribute attr = (XmlAttribute) Nodes [i];
 				if (attr == node) {
 					retAttr = attr;
@@ -244,7 +244,7 @@ namespace System.Xml
 		public virtual XmlAttribute RemoveAt (int i) 
 #endif
 		{
-			if(Nodes.Count <= i)
+			if(Count <= i)
 				return null;
 			return Remove ((XmlAttribute)Nodes [i]);
 		}
@@ -261,7 +261,8 @@ namespace System.Xml
 			ownerElement.OwnerDocument.onNodeInserting (node, ownerElement);
 
 			attr.AttributeOwnerElement = ownerElement;
-			XmlNode n = AdjustIdenticalAttributes (node as XmlAttribute, base.SetNamedItem (node, -1, false));
+			XmlNode n = base.SetNamedItem (node, -1, false);
+			AdjustIdenticalAttributes (node as XmlAttribute, n == node ? null : n);
 
 			ownerElement.OwnerDocument.onNodeInserted (node, ownerElement);
 
@@ -288,7 +289,7 @@ namespace System.Xml
 			if (doctype == null || doctype.DTD == null)
 				return;
 			DTDElementDeclaration elem = doctype.DTD.ElementDecls [ownerElement.Name];
-			for (int i = 0; i < Nodes.Count; i++) {
+			for (int i = 0; i < Count; i++) {
 				XmlAttribute node = (XmlAttribute) Nodes [i];
 				DTDAttributeDefinition attdef = elem == null ? null : elem.Attributes [node.Name];
 				if (attdef == null || attdef.Datatype.TokenizedType != XmlTokenizedType.ID)
@@ -312,23 +313,24 @@ namespace System.Xml
 
 		}
 
-		private XmlNode AdjustIdenticalAttributes (XmlAttribute node, XmlNode existing)
+		private void AdjustIdenticalAttributes (XmlAttribute node, XmlNode existing)
 		{
 			// If owner element is not appended to the document,
 			// ID table should not be filled.
 			if (ownerElement == null)
-				return existing;
+				return;
 
-			RemoveIdenticalAttribute (existing);
+			if (existing != null)
+				RemoveIdenticalAttribute (existing);
 
 			// Check if new attribute's datatype is ID.
 			XmlDocumentType doctype = node.OwnerDocument.DocumentType;
 			if (doctype == null || doctype.DTD == null)
-				return existing;
+				return;
 			DTDAttListDeclaration attList = doctype.DTD.AttListDecls [ownerElement.Name];
 			DTDAttributeDefinition attdef = attList == null ? null : attList.Get (node.Name);
 			if (attdef == null || attdef.Datatype.TokenizedType != XmlTokenizedType.ID)
-				return existing;
+				return;
 
 			// adding new identical attribute, but 
 			// MS.NET is pity for ID support, so I'm wondering how to correct it...
@@ -336,8 +338,6 @@ namespace System.Xml
 				throw new XmlException (String.Format (
 					"ID value {0} already exists in this document.", node.Value));
 			ownerDocument.AddIdenticalAttribute (node);
-
-			return existing;
 		}
 
 		private XmlNode RemoveIdenticalAttribute (XmlNode existing)

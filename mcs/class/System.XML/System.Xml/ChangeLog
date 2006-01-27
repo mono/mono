@@ -1,5 +1,15 @@
 2006-01-27  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlAttributeCollection.cs :
+	  Replaced all Nodes.Count with Count (it could avoid extraneous
+	  ArrayList creation in XmlNamedNodeMap). ID attribute adjustment
+	  was extraneously done against all attribute nodes and thus there
+	  was a plenty of call to Value.
+	* XmlNamedNodeMap.cs : added comment on SetNamedItem() W3C spec
+	  violation.
+
+2006-01-27  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlNode.cs,
 	  XmlDocument.cs,
 	  XmlAttribute.cs,

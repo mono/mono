@@ -185,6 +185,8 @@ namespace System.Xml
 				else
 					nodeList.Insert (pos, node);
 
+				// LAMESPEC: It should return null here, but
+				// it just returns the input node.
 				return node;
 			} finally {
 				if (raiseEvent)
