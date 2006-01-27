@@ -17,6 +17,11 @@ namespace System.Data.Common
 			return new ArgumentException  (GetExceptionMessage ("Invalid parameter Size value '{0}'. The value must be greater than or equal to 0.",args));
 		}
 
+		internal static ArgumentException InvalidEnumValueException (String enumeration, object value)
+		{
+			return new ArgumentException (String.Format ("The {0} enumeration value, {1}, is invalid", enumeration, value));
+		}
+
 		internal static ArgumentOutOfRangeException InvalidDataRowVersion (DataRowVersion value)
 		{			
 			object [] args = new object [] { "DataRowVersion", value.ToString () } ;

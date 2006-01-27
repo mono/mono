@@ -126,7 +126,11 @@ namespace System.Data.Common
 		[DefaultValue (MissingMappingAction.Passthrough)]
 		public MissingMappingAction MissingMappingAction {
 			get { return missingMappingAction; }
-			set { missingMappingAction = value; }
+			set {
+				if (!Enum.IsDefined (typeof (MissingMappingAction), value))
+					throw ExceptionHelper.InvalidEnumValueException ("MissingMappingAction", value);
+				missingMappingAction = value;
+			}
 		}
 
 		[DataCategory ("Mapping")]
@@ -134,7 +138,11 @@ namespace System.Data.Common
 		[DefaultValue (MissingSchemaAction.Add)]
 		public MissingSchemaAction MissingSchemaAction {
 			get { return missingSchemaAction; }
-			set { missingSchemaAction = value; }
+			set { 
+				if (!Enum.IsDefined (typeof (MissingSchemaAction), value))
+					throw ExceptionHelper.InvalidEnumValueException ("MissingSchemaAction", value);
+				missingSchemaAction = value; 
+			}
 		}
 
 #if NET_2_0

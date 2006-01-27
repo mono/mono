@@ -252,7 +252,7 @@ namespace System.Data.Common {
 		public int Fill (DataTable dataTable) 
 		{
 			if (dataTable == null)
-				throw new NullReferenceException ();
+				throw new ArgumentNullException ("DataTable");
 
 			return Fill (dataTable, ((IDbDataAdapter) this).SelectCommand, CommandBehavior.Default);
 		}
@@ -291,6 +291,7 @@ namespace System.Data.Common {
 		protected virtual int Fill (DataTable dataTable, IDbCommand command, CommandBehavior behavior) 
 		{
 			CommandBehavior commandBehavior = behavior;
+
 			// first see that the connection is not close.
 			if (command.Connection.State == ConnectionState.Closed) 
 			{
@@ -324,15 +325,18 @@ namespace System.Data.Common {
 #if NET_2_0
 		protected override int Fill (DataSet dataSet, string srcTable, IDataReader dataReader, int startRecord, int maxRecords) 
 #else
-			protected virtual int Fill (DataSet dataSet, string srcTable, IDataReader dataReader, int startRecord, int maxRecords) 
+		protected virtual int Fill (DataSet dataSet, string srcTable, IDataReader dataReader, int startRecord, int maxRecords) 
 #endif
 		{
+			if (dataSet == null)
+				throw new ArgumentNullException ("DataSet");
+
 			if (startRecord < 0)
 				throw new ArgumentException ("The startRecord parameter was less than 0.");
 			if (maxRecords < 0)
 				throw new ArgumentException ("The maxRecords parameter was less than 0.");
 
-			DataTable dataTable;
+			DataTable dataTable = null;
 			int resultIndex = 0;
 			int count = 0;
 			
@@ -344,14 +348,16 @@ namespace System.Data.Common {
 					{
 						tableName = SetupSchema (SchemaType.Mapped, tableName);
 						if (tableName != null) {
-						
+							
 							// check if the table exists in the dataset
 							if (dataSet.Tables.Contains (tableName)) 
 								// get the table from the dataset
 								dataTable = dataSet.Tables [tableName];
 							else {
-								dataTable = new DataTable(tableName);
-								dataSet.Tables.Add (dataTable);
+								// Do not create schema if MissingSchemAction is set to Ignore
+								if (this.MissingSchemaAction == MissingSchemaAction.Ignore)
+									continue;
+								dataTable = dataSet.Tables.Add (tableName);
 							}
 	
 							if (!FillTable (dataTable, dataReader, startRecord, maxRecords, ref count)) {
@@ -378,6 +384,7 @@ namespace System.Data.Common {
 			if (MissingSchemaAction == MissingSchemaAction.AddWithKey)
 				behavior |= CommandBehavior.KeyInfo;
 			CommandBehavior commandBehavior = behavior;
+
 			if (command.Connection.State == ConnectionState.Closed) {
 				command.Connection.Open ();
 				commandBehavior |= CommandBehavior.CloseConnection;
@@ -393,7 +400,7 @@ namespace System.Data.Common {
 			int counterStart = counter;
 
 			int[] mapping = BuildSchema (dataReader, dataTable, SchemaType.Mapped);
-
+			
 			int[] sortedMapping = new int[mapping.Length];
 			int length = sortedMapping.Length;
 			for(int i=0; i < sortedMapping.Length; i++) {
@@ -491,6 +498,9 @@ namespace System.Data.Common {
 		[MonoTODO ("Verify")]
 		protected virtual DataTable FillSchema (DataTable dataTable, SchemaType schemaType, IDbCommand command, CommandBehavior behavior) 
 		{
+			if (dataTable == null)
+				throw new ArgumentNullException ("DataTable");
+
 			behavior |= CommandBehavior.SchemaOnly | CommandBehavior.KeyInfo;
 			if (command.Connection.State == ConnectionState.Closed) {
 				command.Connection.Open ();
@@ -516,6 +526,9 @@ namespace System.Data.Common {
 		[MonoTODO ("Verify")]
 		protected virtual DataTable[] FillSchema (DataSet dataSet, SchemaType schemaType, IDbCommand command, string srcTable, CommandBehavior behavior) 
 		{
+			if (dataSet == null)
+				throw new ArgumentNullException ("DataSet");
+
 			behavior |= CommandBehavior.SchemaOnly | CommandBehavior.KeyInfo;
 			if (command.Connection.State == ConnectionState.Closed) {
 				command.Connection.Open ();
@@ -529,20 +542,22 @@ namespace System.Data.Common {
 			DataTable table;
 			try
 			{
-				tableName = SetupSchema (schemaType, tableName);
-				if (tableName != null)
-				{
-					if (dataSet.Tables.Contains (tableName))
-						table = dataSet.Tables [tableName];	
-					else
+				do {
+					tableName = SetupSchema (schemaType, tableName);
+					if (tableName != null)
 					{
-						table = new DataTable(tableName);
-						dataSet.Tables.Add (table);
+						if (dataSet.Tables.Contains (tableName))
+							table = dataSet.Tables [tableName];	
+						else
+						{
+							table = new DataTable(tableName);
+							dataSet.Tables.Add (table);
+						}
+						BuildSchema (reader, table, schemaType);
+						output.Add (table);
+						tableName = String.Format ("{0}{1}", srcTable, ++index);
 					}
-					BuildSchema (reader, table, schemaType);
-					output.Add (table);
-					tableName = String.Format ("{0}{1}", srcTable, ++index);
-				}
+				}while (reader.NextResult ());
 			}
 			finally
 			{
@@ -572,7 +587,6 @@ namespace System.Data.Common {
 			if (schemaType == SchemaType.Mapped) 
 			{
 				tableMapping = DataTableMappingCollection.GetTableMappingBySchemaAction (TableMappings, sourceTableName, sourceTableName, MissingMappingAction);
-
 				if (tableMapping != null)
 					return tableMapping.DataSetTable;
 				return null;
@@ -625,25 +639,28 @@ namespace System.Data.Common {
 			bool createPrimaryKey = true;
 			
 			DataTable schemaTable = reader.GetSchemaTable ();
-			int colIndex;
-			DataColumn ColumnNameCol		= ((colIndex = schemaTable.Columns.IndexOf("ColumnName")) >= 0) ? schemaTable.Columns[colIndex] : null;
-			DataColumn DataTypeCol			= ((colIndex = schemaTable.Columns.IndexOf("DataType")) >= 0) ? schemaTable.Columns[colIndex] : null;
-			DataColumn IsAutoIncrementCol	= ((colIndex = schemaTable.Columns.IndexOf("IsAutoIncrement")) >= 0) ? schemaTable.Columns[colIndex] : null;
-			DataColumn AllowDBNullCol		= ((colIndex = schemaTable.Columns.IndexOf("AllowDBNull")) >= 0) ? schemaTable.Columns[colIndex] : null;
-			DataColumn IsReadOnlyCol		= ((colIndex = schemaTable.Columns.IndexOf("IsReadOnly")) >= 0) ? schemaTable.Columns[colIndex] : null;
-			DataColumn IsKeyCol				= ((colIndex = schemaTable.Columns.IndexOf("IsKey")) >= 0) ? schemaTable.Columns[colIndex] : null;
-			DataColumn IsUniqueCol			= ((colIndex = schemaTable.Columns.IndexOf("IsUnique")) >= 0) ? schemaTable.Columns[colIndex] : null;
-			DataColumn ColumnSizeCol		= ((colIndex = schemaTable.Columns.IndexOf("ColumnSize")) >= 0) ? schemaTable.Columns[colIndex] : null;
+
+			DataColumn ColumnNameCol =  schemaTable.Columns["ColumnName"];
+			DataColumn DataTypeCol = schemaTable.Columns["DataType"];
+			DataColumn IsAutoIncrementCol = schemaTable.Columns["IsAutoIncrement"];
+			DataColumn AllowDBNullCol = schemaTable.Columns["AllowDBNull"];
+			DataColumn IsReadOnlyCol = schemaTable.Columns["IsReadOnly"];
+			DataColumn IsKeyCol = schemaTable.Columns["IsKey"];
+			DataColumn IsUniqueCol = schemaTable.Columns["IsUnique"];
+			DataColumn ColumnSizeCol = schemaTable.Columns["ColumnSize"];
 
 			foreach (DataRow schemaRow in schemaTable.Rows) {
 				// generate a unique column name in the source table.
 				string sourceColumnName;
-				if (ColumnNameCol == null || schemaRow.IsNull(ColumnNameCol))
+				string realSourceColumnName ;
+				if (ColumnNameCol == null || schemaRow.IsNull(ColumnNameCol) || (string)schemaRow [ColumnNameCol] == String.Empty) {
 					sourceColumnName = DefaultSourceColumnName;
-				else 
+					realSourceColumnName = DefaultSourceColumnName + "1";
+				}
+				else {
 					sourceColumnName = (string) schemaRow [ColumnNameCol];
-
-				string realSourceColumnName = sourceColumnName;
+					realSourceColumnName = sourceColumnName;
+				}
 
 				for (int i = 1; sourceColumns.Contains (realSourceColumnName); i += 1) 
 					realSourceColumnName = String.Format ("{0}{1}", sourceColumnName, i);
@@ -652,10 +669,13 @@ namespace System.Data.Common {
 				// generate DataSetColumnName from DataTableMapping, if any
 				string dsColumnName = realSourceColumnName;
 				DataTableMapping tableMapping = null;
-				tableMapping = DataTableMappingCollection.GetTableMappingBySchemaAction (dtMapping, table.TableName, table.TableName, missingMapAction); 
-				if (tableMapping != null) 
+
+				//FIXME : The sourcetable name shud get passed as a parameter.. 
+				int index = dtMapping.IndexOfDataSetTable (table.TableName);
+				string srcTable = (index != -1 ? dtMapping[index].SourceTable : table.TableName);
+				tableMapping = DataTableMappingCollection.GetTableMappingBySchemaAction (dtMapping, srcTable, table.TableName, missingMapAction); 
+				if (tableMapping != null)
 				{
-					
 					table.TableName = tableMapping.DataSetTable;
 					// check to see if the column mapping exists
 					DataColumnMapping columnMapping = DataColumnMappingCollection.GetColumnMappingBySchemaAction(tableMapping.ColumnMappings, realSourceColumnName, missingMapAction);
@@ -721,7 +741,8 @@ namespace System.Data.Common {
 								}
 							}
 
-							if (isKey) {
+							bool isHidden = (bool) schemaRow ["IsHidden"];
+							if (isKey && !isHidden) {
 								primaryKey.Add (col);
 								if (allowDBNull)
 									createPrimaryKey = false;
@@ -750,9 +771,7 @@ namespace System.Data.Common {
 						table.Constraints.Add(uConstraint);
 				}
 			}
-
 			return mapping;
-                        
                 }
 
 		[MonoTODO]

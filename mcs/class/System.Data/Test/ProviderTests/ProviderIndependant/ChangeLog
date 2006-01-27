@@ -1,3 +1,7 @@
+2006-01-27  Senganal T  <tsenganal@novell.com>
+	
+	* DataReaderTest : Corrected a failing testcase.
+ 
 2005-09-01  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* IDbCommandTest.cs: Added. Provider independent Command tests.

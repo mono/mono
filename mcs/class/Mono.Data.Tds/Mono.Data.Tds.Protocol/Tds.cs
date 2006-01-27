@@ -783,31 +783,16 @@ namespace Mono.Data.Tds.Protocol {
 				return DBNull.Value;
 			}
 
-			long rawValue = 0;
-
 			switch (len) {
 			case 4:
-				rawValue = comm.GetTdsInt ();
-				break;
+				return new Decimal (Comm.GetTdsInt (), 0, 0, false, 4);
 			case 8:
-				byte[] bits = new byte[8];
-				bits[4] = comm.GetByte ();
-				bits[5] = comm.GetByte ();
-				bits[6] = comm.GetByte ();
-				bits[7] = comm.GetByte ();
-				bits[0] = comm.GetByte ();
-				bits[1] = comm.GetByte ();
-				bits[2] = comm.GetByte ();
-				bits[3] = comm.GetByte ();
-				rawValue = BitConverter.ToInt64 (bits, 0);
-				break;
+				int hi = Comm.GetTdsInt ();
+				int lo = Comm.GetTdsInt ();
+				return new Decimal (lo, hi, 0, false, 4);
 			default:
 				return DBNull.Value;
 			}
-
-			result = new Decimal (rawValue);
-
-			return (((decimal) result) / 10000);
 		}
 
 		private object GetStringValue (bool wideChars, bool outputParam)
@@ -1010,31 +995,30 @@ namespace Mono.Data.Tds.Protocol {
 					values[j] = comm.GetByte ();
 				position += 3;
 
-				if ((values[2] & (byte) TdsColumnStatus.Rename) != 0) {
+				bool isAlias = ((values[2] & (byte) TdsColumnStatus.Rename) != 0);
+				if (isAlias) {
 					if (tdsVersion == TdsVersion.tds70) {
 						columnNameLength = comm.GetByte ();
-						position += 2 * len + 1;
+						position += 2 * columnNameLength + 1;
 					}
 					else {
 						columnNameLength = comm.GetByte ();
-						position += len + 1;
+						position += columnNameLength + 1;
 					}
 					baseColumnName = comm.GetString (columnNameLength);
 				}
 
-				if ((values[2] & (byte) TdsColumnStatus.Hidden) == 0) {
-					byte index = (byte) (values[0] - (byte) 1);
-					byte tableIndex = (byte) (values[1] - (byte) 1);
-					bool isExpression = ((values[2] & (byte) TdsColumnStatus.IsExpression) != 0);
+				byte index = (byte) (values[0] - (byte) 1);
+				byte tableIndex = (byte) (values[1] - (byte) 1);
+				bool isExpression = ((values[2] & (byte) TdsColumnStatus.IsExpression) != 0);
 
-					columns [index]["IsExpression"] = isExpression;
-					columns [index]["IsKey"] = ((values[2] & (byte) TdsColumnStatus.IsKey) != 0);
+				columns [index]["IsExpression"] = isExpression;
+				columns [index]["IsKey"] = ((values[2] & (byte) TdsColumnStatus.IsKey) != 0);
+				columns [index]["IsHidden"] = ((values[2] & (byte) TdsColumnStatus.Hidden) != 0);
+				columns [index]["IsAliased"] = isAlias;
 
-					if ((values[2] & (byte) TdsColumnStatus.Rename) != 0)
-						columns [index]["BaseColumnName"] = baseColumnName;
-					if (! isExpression)
-						columns [index]["BaseTableName"] = tableNames [tableIndex];
-				}
+				columns [index]["BaseColumnName"] = ((isAlias) ? baseColumnName : null);
+				columns [index]["BaseTableName"] = ((!isExpression) ? tableNames [tableIndex] : null);
 			}
 		}
 

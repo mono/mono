@@ -1,3 +1,19 @@
+2006-01-27  Senganal T  <tsenganal@novell.com>
+
+	* SqlCommandBuilder.cs :
+		- Modified  CreateUpdateCommand,CreateDeleteCommand , to not include
+		column name in the query if its a expression col.
+		Also, modified the queries to match the generated queries in ms.net
+	* SqlCommand.cs :
+		- Modifed Prepare, to check if Parameter is explicitly initialized
+	* SqlParameter.cs :
+		- Added CheckIfInitialized : Checks if datatype is explicitly set and
+		non-zero size is set for variable datatypes.
+	* SqlDataReader.cs :
+		- Added code for GetSqlBinary ()
+		- Fixed GetFieldCount ()
+		- Added more checks and exceptions. 
+
 2006-01-17  Senganal T  <tsenganal@novell.com>
 
 	* SqlCommandBuilder.cs
