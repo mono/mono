@@ -160,8 +160,7 @@ namespace System.Drawing
 		internal void setProperties (FontFamily family, float emSize, FontStyle style, GraphicsUnit unit, byte charSet, bool isVertical)
 		{
 			_name = family.Name;
-			_fontFamily = family;
-			_size = emSize;
+			_fontFamily = family;			
 
 			// MS throws ArgumentException, if unit is set to GraphicsUnit.Display
 			_unit = unit;
@@ -451,11 +450,12 @@ namespace System.Drawing
 				return _name;
 			}
 		}
-
-		private float _size;
+		
 		public float Size {
 			get {
-				return _size;
+				float size;				
+				GDIPlus.GdipGetFontSize (fontObject, out size);
+				return size;
 			}
 		}
 
@@ -647,71 +647,22 @@ namespace System.Drawing
 
 		public float GetHeight (Graphics graphics)
 		{
-			float height = GetHeight (graphics.DpiY);
-
-			switch (graphics.PageUnit) {
-				case GraphicsUnit.Document:
-					height *= (300f / graphics.DpiY);
-					break;
-				case GraphicsUnit.Display:
-					height *= (75f / graphics.DpiY);
-					break;
-				case GraphicsUnit.Inch:
-					height /=  graphics.DpiY;
-					break;
-				case GraphicsUnit.Millimeter:
-					height *= (25.4f / graphics.DpiY);
-					break;
-				case GraphicsUnit.Point:
-					height *= (72f / graphics.DpiY);
-					break;
-
-				case GraphicsUnit.Pixel:
-				case GraphicsUnit.World:
-				default:
-					break;
-			}
-
-			return height;
+			float size;
+			
+			GDIPlus.GdipGetFontHeight (fontObject, graphics.NativeObject, out size);
+			return size;
 		}
 
 		public float GetHeight (float dpi)
 		{
-			float height;
-			int emHeight = _fontFamily.GetEmHeight (_style);
-			int lineSpacing = _fontFamily.GetLineSpacing (_style);
-
-			height = lineSpacing * (_size / emHeight);
-
-			switch (_unit) {
-				case GraphicsUnit.Document:
-					height *= (dpi / 300f);
-					break;
-				case GraphicsUnit.Display:
-					height *= (dpi / 75f);
-					break;
-				case GraphicsUnit.Inch:
-					height *= dpi;
-					break;
-				case GraphicsUnit.Millimeter:
-					height *= (dpi / 25.4f);
-					break;
-				case GraphicsUnit.Point:
-					height *= (dpi / 72f);
-					break;
-
-				case GraphicsUnit.Pixel:
-				case GraphicsUnit.World:
-				default:
-					break;
-			}
-
-			return height;
+			float size;
+			GDIPlus.GdipGetFontHeightGivenDPI (fontObject, dpi, out size);
+			return size;
 		}
 
 		public override String ToString ()
 		{
-			return String.Format ("[Font: Name={0}, Size={1}, Units={2}, GdiCharSet={3}, GdiVerticalFont={4}]", _name, _size, (int)_unit, _gdiCharSet, _gdiVerticalFont);
+			return String.Format ("[Font: Name={0}, Size={1}, Units={2}, GdiCharSet={3}, GdiVerticalFont={4}]", _name, Size, (int)_unit, _gdiCharSet, _gdiVerticalFont);
 		}
 	}
 }

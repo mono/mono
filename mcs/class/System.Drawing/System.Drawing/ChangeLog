@@ -1,3 +1,8 @@
+2006-01-27 Jordi Mas i Hernandez <jordimash@gmail.com>
+
+	* gdipFunctions.cs: New gdiplus imports
+	* Font.cs: Use gdiplus calls to get font height and size
+
 2006-01-26  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* FontFamily.cs: Free the memory allocated with Marshal.AllocHGlobal.
