@@ -1,3 +1,7 @@
+2006-01-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-exceptions.c (mono_print_thread_dump): Fix non x86 builds.
+
 2006-01-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.h mini.c mini-exceptions.c: Add thread dump support. Fixes
