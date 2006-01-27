@@ -295,12 +295,10 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 			status = GDIPlus.GdipGetEncoderParameterList (nativeObject, ref format, sz, rawEPList);
 			eps = EncoderParameters.FromNativePtr (rawEPList);
 			GDIPlus.CheckStatus (status);
-		} catch {
-			Marshal.FreeHGlobal (rawEPList);
-			throw;
 		}
-
-		Marshal.FreeHGlobal (rawEPList);
+		finally {
+			Marshal.FreeHGlobal (rawEPList);
+		}
 
 		return eps;
 	}
@@ -331,14 +329,16 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 
 		/* Get PropertyItem */
 		property = Marshal.AllocHGlobal (propSize);
-		status = GDIPlus.GdipGetPropertyItem (nativeObject, propid, propSize,  
-										property);
-		GDIPlus.CheckStatus (status);
-		gdipProperty = (GdipPropertyItem) Marshal.PtrToStructure ((IntPtr)property, 
+		try {
+			status = GDIPlus.GdipGetPropertyItem (nativeObject, propid, propSize, property);
+			GDIPlus.CheckStatus (status);
+			gdipProperty = (GdipPropertyItem) Marshal.PtrToStructure ((IntPtr)property, 
 								typeof (GdipPropertyItem));						
-		GdipPropertyItem.MarshalTo (gdipProperty, item);								
-		
-		Marshal.FreeHGlobal (property);
+			GdipPropertyItem.MarshalTo (gdipProperty, item);
+		}
+		finally {
+			Marshal.FreeHGlobal (property);
+		}
 		return item;
 	}
 	
@@ -504,6 +504,8 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		Marshal.StructureToPtr (propitem, property, true);
 		Status status = GDIPlus.GdipSetPropertyItem (nativeObject, property);
 		GDIPlus.CheckStatus (status);
+		// FIXME: GdipSetPropertyItem isn't implemented in libgdiplus (but returns Ok)
+		// so who's freeing "property" ? GDI+ ?
 	}
 
 	// properties	
@@ -667,23 +669,24 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 					
 			/* Get PropertyItem list*/
 			properties = Marshal.AllocHGlobal (propsSize * propNums);
-			
-			status = GDIPlus.GdipGetAllPropertyItems (nativeObject, propsSize, 
+			try {
+				status = GDIPlus.GdipGetAllPropertyItems (nativeObject, propsSize, 
 								propNums, properties);
-			GDIPlus.CheckStatus (status);
+				GDIPlus.CheckStatus (status);
 
-			propSize = Marshal.SizeOf (gdipProperty);			
-			propPtr = properties;
+				propSize = Marshal.SizeOf (gdipProperty);			
+				propPtr = properties;
 			
-			for (int i = 0; i < propNums; i++, propPtr = new IntPtr (propPtr.ToInt64 () + propSize))
-			{
-				gdipProperty = (GdipPropertyItem) Marshal.PtrToStructure 
+				for (int i = 0; i < propNums; i++, propPtr = new IntPtr (propPtr.ToInt64 () + propSize)) {
+					gdipProperty = (GdipPropertyItem) Marshal.PtrToStructure 
 						(propPtr, typeof (GdipPropertyItem));						
-				items [i] = new PropertyItem ();
-				GdipPropertyItem.MarshalTo (gdipProperty, items [i]);								
+					items [i] = new PropertyItem ();
+					GdipPropertyItem.MarshalTo (gdipProperty, items [i]);								
+				}
 			}
-			
-			Marshal.FreeHGlobal (properties);
+			finally {
+				Marshal.FreeHGlobal (properties);
+			}
 			return items;
 		}
 	}

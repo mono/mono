@@ -1,3 +1,13 @@
+2006-01-27  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Font.cs: Ensure unmanaged memory is free correctly in ToLogFont
+	even if GDIPlus.CheckStatus throws an exception;
+	* Image.cs: Ensure unmanaged memory is free correctly even if 
+	GDIPlus.CheckStatus throws an exception. Note: the SetPropertyItem use
+	case is unclear to me (and unimplemented in libgdiplus);
+	* Region.cs: Ensure unmanaged memory is free correctly in 
+	GetRegionScans even if GDIPlus.CheckStatus throws an exception;
+
 2006-01-27 Jordi Mas i Hernandez <jordimash@gmail.com>
 
 	* gdipFunctions.cs: New gdiplus imports

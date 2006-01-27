@@ -572,11 +572,14 @@ namespace System.Drawing
                         int size = Marshal.SizeOf (rects[0]);                  
                         
                         IntPtr dest = Marshal.AllocHGlobal (size * cnt);			
-                        
-			status = GDIPlus.GdipGetRegionScans (nativeRegion, dest, out cnt, matrix.NativeObject);
-			GDIPlus.CheckStatus (status);                	
-			
-			GDIPlus.FromUnManagedMemoryToRectangles (dest, rects);			
+			try {
+				status = GDIPlus.GdipGetRegionScans (nativeRegion, dest, out cnt, matrix.NativeObject);
+				GDIPlus.CheckStatus (status);
+			}
+			finally {
+				// note: Marshal.FreeHGlobal is called from GDIPlus.FromUnManagedMemoryToRectangles
+				GDIPlus.FromUnManagedMemoryToRectangles (dest, rects);
+			}
 			return rects;			
 		}		
 
