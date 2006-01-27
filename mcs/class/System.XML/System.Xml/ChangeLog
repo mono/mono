@@ -1,5 +1,12 @@
 2006-01-27  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlTextReader.cs : optimization patch by Paolo.
+	  Fast path optimization in PeekChar().
+	  Avoid double-evaluation of PeekChar() and ReadChar() by new
+	  Advance() method.
+
+2006-01-27  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlNode.cs : disabled XmlIteratorNodeList optimization. It caused
 	  some kind of regression under mcs/tests/xml-025.cs.
 

@@ -1101,27 +1101,16 @@ namespace System.Xml
 			currentAttributeValue = -1;
 		}
 
-		private int PeekChar ()
+		private int PeekSurrogate (int c)
 		{
-			if (peekCharsLength == peekCharsIndex) {
-				if (!ReadTextReader (-1))
-					return -1;
-				return PeekChar ();
-			}
-
-			char c = peekChars [peekCharsIndex];
-			if (c == 0)
-				return -1;
-			if (c < 0xD800 || 0xDFFF < c)
-				return c;
 			if (peekCharsLength == peekCharsIndex + 1) {
 				if (!ReadTextReader (c))
 					//FIXME: copy MS.NET behaviour when unpaired surrogate found
 					return c;
 			}
 
-			char highhalfChar = peekChars [peekCharsIndex];
-			char lowhalfChar = peekChars [peekCharsIndex+1];
+			int highhalfChar = peekChars [peekCharsIndex];
+			int lowhalfChar = peekChars [peekCharsIndex+1];
 
 			if (((highhalfChar & 0xFC00) != 0xD800) || ((lowhalfChar & 0xFC00) != 0xDC00))
 				//FIXME: copy MS.NET behaviour when unpaired surrogate found
@@ -1129,10 +1118,25 @@ namespace System.Xml
 			return 0x10000 + (highhalfChar-0xD800)*0x400 + (lowhalfChar-0xDC00);
 		}
 
+		private int PeekChar ()
+		{
+			if (peekCharsIndex < peekCharsLength) {
+				int c = peekChars [peekCharsIndex];
+				if (c == 0)
+					return -1;
+				if (c < 0xD800 || c >= 0xDFFF)
+					return c;
+				return PeekSurrogate (c);
+			} else {
+				if (!ReadTextReader (-1))
+					return -1;
+				return PeekChar ();
+			}
+		}
+
 		private int ReadChar ()
 		{
 			int ch = PeekChar ();
-
 			peekCharsIndex++;
 
 			if (ch >= 0x10000)
@@ -1149,6 +1153,24 @@ namespace System.Xml
 			if (currentState != XmlNodeType.Element)
 				AppendCurrentTagChar (ch);
 			return ch;
+		}
+
+		private void Advance (int ch) {
+			peekCharsIndex++;
+
+			if (ch >= 0x10000)
+				peekCharsIndex++; //Increment by 2 when a compound UCS-4 character was found
+
+			if (ch == '\n') {
+				line++;
+				column = 1;
+			} else if (ch == -1) {
+				return;
+			} else {
+				column++;
+			}
+			if (currentState != XmlNodeType.Element)
+				AppendCurrentTagChar (ch);
 		}
 
 		private bool ReadTextReader (int remained)
@@ -1194,19 +1216,19 @@ namespace System.Xml
 				} else {
  	   				switch (c) {
 					case '<':
-						ReadChar ();
+						Advance (c);
 						switch (PeekChar ())
 						{
 						case '/':
-							ReadChar ();
+							Advance ('/');
 							ReadEndTag ();
 							break;
 						case '?':
-							ReadChar ();
+							Advance ('?');
 							ReadProcessingInstruction ();
 							break;
 						case '!':
-							ReadChar ();
+							Advance ('!');
 							ReadDeclaration ();
 							break;
 						default:
@@ -1307,7 +1329,7 @@ namespace System.Xml
 			}
 
 			if (PeekChar () == '/') {
-				ReadChar ();
+				Advance ('/');
 				isEmptyElement = true;
 				popScope = true;
 			}
@@ -1590,7 +1612,7 @@ namespace System.Xml
 		private int ReadReference (bool ignoreEntityReferences)
 		{
 			if (PeekChar () == '#') {
-				ReadChar ();
+				Advance ('#');
 				return ReadCharacterReference ();
 			} else
 				return ReadEntityReference (ignoreEntityReferences);
@@ -1599,12 +1621,13 @@ namespace System.Xml
 		private int ReadCharacterReference ()
 		{
 			int value = 0;
+			int ch;
 
 			if (PeekChar () == 'x') {
-				ReadChar ();
+				Advance ('x');
 
-				while (PeekChar () != ';' && PeekChar () != -1) {
-					int ch = ReadChar ();
+				while ((ch = PeekChar ()) != ';' && ch != -1) {
+					Advance (ch);
 
 					if (ch >= '0' && ch <= '9')
 						value = (value << 4) + ch - '0';
@@ -1619,8 +1642,8 @@ namespace System.Xml
 								ch));
 				}
 			} else {
-				while (PeekChar () != ';' && PeekChar () != -1) {
-					int ch = ReadChar ();
+				while ((ch = PeekChar ()) != ';' && ch != -1) {
+					Advance (ch);
 
 					if (ch >= '0' && ch <= '9')
 						value = value * 10 + ch - '0';
@@ -1828,7 +1851,7 @@ namespace System.Xml
 					goto default;
 				case '&':
 					if (PeekChar () == '#') {
-						ReadChar ();
+						Advance ('#');
 						ch = ReadCharacterReference ();
 						AppendValueChar (ch);
 						break;
@@ -1926,11 +1949,12 @@ namespace System.Xml
 
 			ClearValueBuffer ();
 
-			while (PeekChar () != -1) {
-				int ch = ReadChar ();
+			int ch;
+			while ((ch = PeekChar ()) != -1) {
+				Advance (ch);
 
 				if (ch == '?' && PeekChar () == '>') {
-					ReadChar ();
+					Advance ('>');
 					break;
 				}
 
@@ -2130,16 +2154,17 @@ namespace System.Xml
 
 			ClearValueBuffer ();
 
-			while (PeekChar () != -1) {
-				int ch = ReadChar ();
+			int ch;
+			while ((ch = PeekChar ()) != -1) {
+				Advance (ch);
 
 				if (ch == '-' && PeekChar () == '-') {
-					ReadChar ();
+					Advance ('-');
 
 					if (PeekChar () != '>')
 						throw NotWFError ("comments cannot contain '--'");
 
-					ReadChar ();
+					Advance ('>');
 					break;
 				}
 
@@ -2544,7 +2569,7 @@ namespace System.Xml
 
 			nameLength = 0;
 
-			ch = ReadChar ();
+			Advance (ch);
 			// AppendNameChar (ch);
 			{
 				if (nameLength == nameCapacity)
@@ -2557,8 +2582,8 @@ namespace System.Xml
 
 			int colonAt = -1;
 
-			while (XmlChar.IsNameChar (PeekChar ())) {
-				ch = ReadChar ();
+			while (XmlChar.IsNameChar ((ch = PeekChar ()))) {
+				Advance (ch);
 
 				if (namespaces && colonAt < 0 && ch == ':')
 					colonAt = nameLength;
@@ -2631,12 +2656,12 @@ namespace System.Xml
 			bool skipped = (ch == 0x20 || ch == 0x9 || ch == 0xA || ch == 0xD);
 			if (!skipped)
 				return false;
-			ReadChar ();
+			Advance (ch);
 			// FIXME: It should be inlined by the JIT.
 //			while (XmlChar.IsWhitespace (PeekChar ()))
 //				ReadChar ();
 			while ((ch = PeekChar ()) == 0x20 || ch == 0x9 || ch == 0xA || ch == 0xD)
-				ReadChar ();
+				Advance (ch);
 			return skipped;
 		}
 
@@ -2691,7 +2716,7 @@ namespace System.Xml
 				case -1:
 					throw NotWFError ("Unexpected end of xml.");
 				case '<':
-					ReadChar ();
+					Advance (c);
 					if (PeekChar () != '/') {
 						buffer [bufIndex++] = '<';
 						continue;
@@ -2707,7 +2732,7 @@ namespace System.Xml
 					Read (); // move to the next node
 					return i;
 				default:
-					ReadChar ();
+					Advance (c);
 					if (c < Char.MaxValue)
 						buffer [bufIndex++] = (char) c;
 					else {
