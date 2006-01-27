@@ -1,3 +1,7 @@
+2006-01-26 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* WebClient.cs: (2.0) UploadString() returns string, not void.
+
 2006-01-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpWebResponse.cs: ignore non-integer values for max-age and version.

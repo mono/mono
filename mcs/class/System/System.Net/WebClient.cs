@@ -409,24 +409,28 @@ namespace System.Net
 			return encoding.GetString (DownloadData (address, method));
 		}
 
-		public void UploadString (string address, string data)
+		public string UploadString (string address, string data)
 		{
-			UploadData (address, encoding.GetBytes (data));
+			byte [] resp = UploadData (address, encoding.GetBytes (data));
+			return encoding.GetString (resp);
 		}
 
-		public void UploadString (string address, string method, string data)
+		public string UploadString (string address, string method, string data)
 		{
-			UploadData (address, method, encoding.GetBytes (data));
+			byte [] resp = UploadData (address, method, encoding.GetBytes (data));
+			return encoding.GetString (resp);
 		}
 
-		public void UploadString (Uri address, string data)
+		public string UploadString (Uri address, string data)
 		{
-			UploadData (address, encoding.GetBytes (data));
+			byte [] resp = UploadData (address, encoding.GetBytes (data));
+			return encoding.GetString (resp);
 		}
 
-		public void UploadString (Uri address, string method, string data)
+		public string UploadString (Uri address, string method, string data)
 		{
-			UploadData (address, method, encoding.GetBytes (data));
+			byte [] resp = UploadData (address, method, encoding.GetBytes (data));
+			return encoding.GetString (resp);
 		}
 #endif
 
