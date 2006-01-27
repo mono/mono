@@ -1,3 +1,8 @@
+2006-01-27  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PrintingServicesWin32.cs: Ensure Marshal.FreeHGlobal is called for 
+	all unmanaged memory allocated with AllocHGlobal.
+
 2006-01-15 Jordi Mas i Hernandez <jordimash@gmail.com>
 
 	* PrintingServicesUnix.cs: Allow setting the dpy's for the surface

@@ -99,45 +99,54 @@ namespace System.Drawing.Printing
 			if (items == -1)
 				return;
 
-			ptr_sizes = buff_sizes = Marshal.AllocHGlobal (items * 2 * 4);
-			ptr_names = buff_names = Marshal.AllocHGlobal (items * 64 * 2);
-			ptr_sizes_enum = buff_sizes_enum = Marshal.AllocHGlobal (items * 2);
-			ret = Win32DeviceCapabilities (printer, null, DCCapabilities.DC_PAPERSIZE, buff_sizes, IntPtr.Zero);
+			try {
+				ptr_sizes = buff_sizes = Marshal.AllocHGlobal (items * 2 * 4);
+				ptr_names = buff_names = Marshal.AllocHGlobal (items * 64 * 2);
+				ptr_sizes_enum = buff_sizes_enum = Marshal.AllocHGlobal (items * 2);
+				ret = Win32DeviceCapabilities (printer, null, DCCapabilities.DC_PAPERSIZE, buff_sizes, IntPtr.Zero);
 
-			if (ret == -1)
-				return;
+				if (ret == -1) {
+					// the finally clause will free the unmanaged memory before returning
+					return;
+				}
 
-			ret = Win32DeviceCapabilities (printer, null, DCCapabilities.DC_PAPERS, buff_sizes_enum, IntPtr.Zero);
-			ret = Win32DeviceCapabilities (printer, null, DCCapabilities.DC_PAPERNAMES, buff_names, IntPtr.Zero);
+				ret = Win32DeviceCapabilities (printer, null, DCCapabilities.DC_PAPERS, buff_sizes_enum, IntPtr.Zero);
+				ret = Win32DeviceCapabilities (printer, null, DCCapabilities.DC_PAPERNAMES, buff_names, IntPtr.Zero);
 
-			int x, y;
-			PaperSize ps;
-			PaperKind kind;
-			for (int i = 0; i < ret; i++) {
-				x = Marshal.ReadInt32 (ptr_sizes);
-				ptr_sizes = new IntPtr (ptr_sizes.ToInt64 () + 4);
-				y = Marshal.ReadInt32 (ptr_sizes);
-				ptr_sizes = new IntPtr (ptr_sizes.ToInt64 () + 4);
+				int x, y;
+				PaperSize ps;
+				PaperKind kind;
+				for (int i = 0; i < ret; i++) {
+					x = Marshal.ReadInt32 (ptr_sizes);
+					ptr_sizes = new IntPtr (ptr_sizes.ToInt64 () + 4);
+					y = Marshal.ReadInt32 (ptr_sizes);
+					ptr_sizes = new IntPtr (ptr_sizes.ToInt64 () + 4);
 
-				x = PrinterUnitConvert.Convert (x, PrinterUnit.TenthsOfAMillimeter,
+					x = PrinterUnitConvert.Convert (x, PrinterUnit.TenthsOfAMillimeter,
 					      PrinterUnit.Display);
 
-				y = PrinterUnitConvert.Convert (y, PrinterUnit.TenthsOfAMillimeter,
+					y = PrinterUnitConvert.Convert (y, PrinterUnit.TenthsOfAMillimeter,
 					      PrinterUnit.Display);
 
-				name  = Marshal.PtrToStringUni (ptr_names);
-				ptr_names = new IntPtr (ptr_names.ToInt64 () + 64 * 2);
+					name  = Marshal.PtrToStringUni (ptr_names);
+					ptr_names = new IntPtr (ptr_names.ToInt64 () + 64 * 2);
 
-				kind = (PaperKind) Marshal.ReadInt16 (ptr_sizes_enum);
-				ptr_sizes_enum = new IntPtr (ptr_sizes_enum.ToInt64 () + 2);
+					kind = (PaperKind) Marshal.ReadInt16 (ptr_sizes_enum);
+					ptr_sizes_enum = new IntPtr (ptr_sizes_enum.ToInt64 () + 2);
 
-				ps = new PaperSize (name, x,y);
-				ps.SetKind (kind);
-				settings.PaperSizes.Add (ps);
+					ps = new PaperSize (name, x,y);
+					ps.SetKind (kind);
+					settings.PaperSizes.Add (ps);
+				}
 			}
-			Marshal.FreeHGlobal (buff_names);
-			Marshal.FreeHGlobal (buff_sizes);
-			Marshal.FreeHGlobal (buff_sizes_enum);
+			finally {
+				if (buff_names != IntPtr.Zero)
+					Marshal.FreeHGlobal (buff_names);
+				if (buff_sizes != IntPtr.Zero)
+					Marshal.FreeHGlobal (buff_sizes);
+				if (buff_sizes_enum != IntPtr.Zero)
+					Marshal.FreeHGlobal (buff_sizes_enum);
+			}
 		}
 
 		internal override bool StartDoc (GraphicsPrinter gr, string doc_name, string output_file)
@@ -207,19 +216,21 @@ namespace System.Drawing.Printing
             				null, 2, IntPtr.Zero, 0, ref cbNeeded, ref printers);
 
             			ptr = buff = Marshal.AllocHGlobal ((int) cbNeeded);
+				try {
+					// Give us the printer list
+					Win32EnumPrinters (2 /* PRINTER_ENUM_LOCAL */,
+						null, 2, buff, (uint)cbNeeded, ref cbNeeded, ref printers);
 
-				// Give us the printer list
-				Win32EnumPrinters (2 /* PRINTER_ENUM_LOCAL */,
-					null, 2, buff, (uint)cbNeeded, ref cbNeeded, ref printers);
-
-				for (int i = 0; i < printers; i++) {
-		            		printer_info = (PRINTER_INFO) Marshal.PtrToStructure (ptr, typeof (PRINTER_INFO));
-            				s  = Marshal.PtrToStringUni (printer_info.pPrinterName);
-		            		col.Add (s);
-		            		ptr = new IntPtr (ptr.ToInt64 () + Marshal.SizeOf (printer_info));
+					for (int i = 0; i < printers; i++) {
+			            		printer_info = (PRINTER_INFO) Marshal.PtrToStructure (ptr, typeof (PRINTER_INFO));
+	            				s  = Marshal.PtrToStringUni (printer_info.pPrinterName);
+			            		col.Add (s);
+			            		ptr = new IntPtr (ptr.ToInt64 () + Marshal.SizeOf (printer_info));
+					}
 				}
-
-				Marshal.FreeHGlobal (buff);
+				finally {
+					Marshal.FreeHGlobal (buff);
+				}
 				return col;
 			}
 		}
