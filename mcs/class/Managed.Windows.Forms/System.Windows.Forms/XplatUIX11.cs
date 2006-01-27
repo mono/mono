@@ -3078,7 +3078,7 @@ namespace System.Windows.Forms {
 			attributes = new XWindowAttributes();
 			XGetWindowAttributes(DisplayHandle, handle, ref attributes);
 			if (attributes.map_state == MapState.IsUnmapped) {
-				return FormWindowState.Minimized;
+				throw new NotSupportedException("Cannot retrieve the state of an unmapped window");
 			}
 
 

@@ -1,3 +1,11 @@
+2006-01-26  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* XplatUIX11.cs(GetWindowState): Now throwing an exception when the 
+	  window is not mapped, since otherwise every form that's being 
+	  created is considered minimized, which is wrong.
+	* Form.cs: Catching the exception and returning our internal value
+	  instead
+
 2006-01-26  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* XplatUI.cs, XplatUIDriver.cs, XplatUIOSX.cs: Added new driver method

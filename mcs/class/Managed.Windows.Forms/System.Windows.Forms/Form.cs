@@ -799,7 +799,12 @@ namespace System.Windows.Forms {
 		public FormWindowState WindowState {
 			get {
 				if (IsHandleCreated) {
-					window_state = XplatUI.GetWindowState(Handle);
+					try {
+						window_state = XplatUI.GetWindowState(Handle);
+					}
+
+					catch(NotSupportedException) {
+					}
 				}
 				return window_state;
 			}
@@ -807,7 +812,12 @@ namespace System.Windows.Forms {
 			set {
 				window_state = value;
 				if (IsHandleCreated) {
-					XplatUI.SetWindowState(Handle, value);
+					try {
+						XplatUI.SetWindowState(Handle, value);
+					}
+
+					catch(NotSupportedException) {
+					}
 				}
 			}
 		}
