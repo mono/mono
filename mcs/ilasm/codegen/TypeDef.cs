@@ -16,12 +16,6 @@ namespace Mono.ILASM {
 
         public class TypeDef : ICustomAttrTarget, IDeclSecurityTarget, IComparable {
 
-                protected class GenericInfo {
-                        public string Id;
-                        public int num;
-                        public ArrayList ConstraintList;
-                }
-
                 private PEAPI.TypeAttr attr;
                 private string name_space;
                 private string name;

@@ -17,12 +17,6 @@ namespace Mono.ILASM {
 
         public class MethodDef : ICustomAttrTarget, IDeclSecurityTarget {
 
-                protected class GenericInfo {
-                        public string Id;
-                        public int num;
-                        public ArrayList ConstraintList;
-                }
-
                 private PEAPI.MethAttr meth_attr;
                 private PEAPI.CallConv call_conv;
                 private PEAPI.ImplAttr impl_attr;

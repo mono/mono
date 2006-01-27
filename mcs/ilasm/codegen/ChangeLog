@@ -1,3 +1,8 @@
+2006-01-28  Ankit Jain  <jankit@novell.com>
+
+	* TypeDef.cs (GenericInfo):
+	* MethodDef.cs (GenericInfo): Remove (unused).
+
 2006-01-23  Ankit Jain  <jankit@novell.com>
 
 	* TypeDef.cs (TypeDef.AddFieldDef): Throw exception if duplicate field being
