@@ -1,3 +1,8 @@
+2006-01-26  Chris Toshok  <toshok@ximian.com>
+
+	* WebEncoding.cs: rework this so we cache the section, and so we
+	swallow exceptions based on a broken configuration.
+
 2006-01-09  Konstantin Triger <kostat@mainsoft.com>
 
 	AltSerialization.cs: under TARGET_JVM: merging /main/4

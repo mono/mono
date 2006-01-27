@@ -36,44 +36,44 @@ namespace System.Web.Util
 {
 	internal class WebEncoding
 	{
-		static public Encoding FileEncoding {
-			get {
 #if CONFIGURATION_2_0
-				GlobalizationSection gc = (GlobalizationSection) WebConfigurationManager.GetWebApplicationSection ("system.web/globalization");
+		static bool cached;
+		static GlobalizationSection sect;
+		static GlobalizationSection GlobalizationConfig {
+			get {
+				if (!cached) {
+					try {
+						sect = (GlobalizationSection) WebConfigurationManager.GetWebApplicationSection ("system.web/globalization");
+					}
+					catch { }
+					cached = true;
+				}
+				return sect;
+			}
+		}
 #else
-				GlobalizationConfiguration gc = GlobalizationConfiguration.GetInstance (null);
-				if (gc == null)
-					return Encoding.Default;
+		static GlobalizationConfiguration GlobalizationConfig {
+			get {
+				return GlobalizationConfiguration.GetInstance (null);
+			}
+		}
 #endif
 
-				return gc.FileEncoding;
+		static public Encoding FileEncoding {
+			get {
+				return GlobalizationConfig != null ? GlobalizationConfig.FileEncoding : Encoding.Default;
 			}
 		}
 
 		static public Encoding ResponseEncoding {
 			get {
-#if CONFIGURATION_2_0
-				GlobalizationSection gc = (GlobalizationSection) WebConfigurationManager.GetWebApplicationSection ("system.web/globalization");
-#else
-				GlobalizationConfiguration gc = GlobalizationConfiguration.GetInstance (null);
-				if (gc == null)
-					return Encoding.Default;
-#endif
-
-				return gc.ResponseEncoding;
+				return GlobalizationConfig != null ? GlobalizationConfig.ResponseEncoding : Encoding.Default;
 			}
 		}
 
 		static public Encoding RequestEncoding {
 			get {
-#if CONFIGURATION_2_0
-				GlobalizationSection gc = (GlobalizationSection) WebConfigurationManager.GetWebApplicationSection ("system.web/globalization");
-#else
-				GlobalizationConfiguration gc = GlobalizationConfiguration.GetInstance (null);
-				if (gc == null)
-					return Encoding.Default;
-#endif
-				return gc.RequestEncoding;
+				return GlobalizationConfig != null ? GlobalizationConfig.RequestEncoding : Encoding.Default;
 			}
 		}
 	}
