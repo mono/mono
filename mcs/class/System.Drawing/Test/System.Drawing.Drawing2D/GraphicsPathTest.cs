@@ -1110,20 +1110,152 @@ namespace MonoTests.System.Drawing.Drawing2D {
 			new GraphicsPath ().Transform (null);
 		}
 
-		[Test]
-		[Category ("NotWorking")]
-		public void Flatten_Null ()
+		private void ComparePaths (GraphicsPath expected, GraphicsPath actual)
 		{
-			new GraphicsPath ().Flatten (null);
-			// no ArgumentNullException or NullReferenceException
+			Assert.AreEqual (expected.PointCount, actual.PointCount, "PointCount");
+			for (int i = 0; i < expected.PointCount; i++) {
+				Assert.AreEqual (expected.PathPoints[i], actual.PathPoints[i], "PathPoints-" + i.ToString ());
+				Assert.AreEqual (expected.PathTypes[i], actual.PathTypes[i], "PathTypes-" + i.ToString ());
+			}
+		}
+
+		private void CompareFlats (GraphicsPath flat, GraphicsPath original)
+		{
+			Assert.IsTrue (flat.PointCount >= original.PointCount, "PointCount");
+			for (int i = 0; i < flat.PointCount; i++) {
+				Assert.IsTrue (flat.PathTypes[i] != 3, "PathTypes-" + i.ToString ());
+			}
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+		public void Flatten_Empty ()
+		{
+			GraphicsPath path = new GraphicsPath ();
+			GraphicsPath clone = (GraphicsPath) path.Clone ();
+			// this is a no-op as there's nothing in the path
+			path.Flatten ();
+			ComparePaths (path, clone);
+		}
+
+		[Test]
+		public void Flatten_Null ()
+		{
+			GraphicsPath path = new GraphicsPath ();
+			GraphicsPath clone = (GraphicsPath) path.Clone ();
+			// this is a no-op as there's nothing in the path
+			// an no matrix to apply
+			path.Flatten (null);
+			ComparePaths (path, clone);
+		}
+
+		[Test]
 		public void Flatten_NullFloat ()
 		{
-			new GraphicsPath ().Flatten (null, 1f);
-			// no ArgumentNullException or NullReferenceException
+			GraphicsPath path = new GraphicsPath ();
+			GraphicsPath clone = (GraphicsPath) path.Clone ();
+			// this is a no-op as there's nothing in the path
+			// an no matrix to apply
+			path.Flatten (null, 1f);
+			ComparePaths (path, clone);
+		}
+
+		[Test]
+		public void Flatten_Arc ()
+		{
+			GraphicsPath path = new GraphicsPath ();
+			path.AddArc (0f, 0f, 100f, 100f, 30, 30);
+			GraphicsPath clone = (GraphicsPath) path.Clone ();
+			path.Flatten ();
+			CompareFlats (path, clone);
+		}
+
+		[Test]
+		public void Flatten_Bezier ()
+		{
+			GraphicsPath path = new GraphicsPath ();
+			path.AddBezier (0, 0, 100, 100, 30, 30, 60, 60);
+			GraphicsPath clone = (GraphicsPath) path.Clone ();
+			path.Flatten ();
+			CompareFlats (path, clone);
+		}
+
+		[Test]
+		public void Flatten_ClosedCurve ()
+		{
+			GraphicsPath path = new GraphicsPath ();
+			path.AddClosedCurve (new Point[4] { 
+				new Point (0, 0), new Point (40, 20),
+				new Point (20, 40), new Point (40, 40)
+				});
+			GraphicsPath clone = (GraphicsPath) path.Clone ();
+			path.Flatten ();
+			CompareFlats (path, clone);
+		}
+
+		[Test]
+		public void Flatten_Curve ()
+		{
+			GraphicsPath path = new GraphicsPath ();
+			path.AddCurve (new Point[4] { 
+				new Point (0, 0), new Point (40, 20),
+				new Point (20, 40), new Point (40, 40)
+				});
+			GraphicsPath clone = (GraphicsPath) path.Clone ();
+			path.Flatten ();
+			CompareFlats (path, clone);
+		}
+
+		[Test]
+		public void Flatten_Ellipse ()
+		{
+			GraphicsPath path = new GraphicsPath ();
+			path.AddEllipse (10f, 10f, 100f, 100f);
+			GraphicsPath clone = (GraphicsPath) path.Clone ();
+			path.Flatten ();
+			CompareFlats (path, clone);
+		}
+
+		[Test]
+		public void Flatten_Line ()
+		{
+			GraphicsPath path = new GraphicsPath ();
+			path.AddLine (10f, 10f, 100f, 100f);
+			GraphicsPath clone = (GraphicsPath) path.Clone ();
+			path.Flatten ();
+			ComparePaths (path, clone);
+		}
+
+		[Test]
+		public void Flatten_Pie ()
+		{
+			GraphicsPath path = new GraphicsPath ();
+			path.AddPie (0, 0, 100, 100, 30, 30);
+			GraphicsPath clone = (GraphicsPath) path.Clone ();
+			path.Flatten ();
+			CompareFlats (path, clone);
+		}
+
+		[Test]
+		public void Flatten_Polygon ()
+		{
+			GraphicsPath path = new GraphicsPath ();
+			path.AddPolygon (new Point[4] { 
+				new Point (0, 0), new Point (10, 10),
+				new Point (20, 20), new Point (40, 40)
+				});
+			GraphicsPath clone = (GraphicsPath) path.Clone ();
+			path.Flatten ();
+			ComparePaths (path, clone);
+		}
+
+		[Test]
+		public void Flatten_Rectangle ()
+		{
+			GraphicsPath path = new GraphicsPath ();
+			path.AddRectangle (new Rectangle (0, 0, 100, 100));
+			GraphicsPath clone = (GraphicsPath) path.Clone ();
+			path.Flatten ();
+			ComparePaths (path, clone);
 		}
 
 		[Test]
