@@ -243,7 +243,7 @@ namespace System.Configuration.Internal
 			get { return host.SupportsPath; }
 		}
 		
-		public virtual bool SupportsRefresh	{
+		public virtual bool SupportsRefresh {
 			get { return host.SupportsRefresh; }
 		}
 	}
