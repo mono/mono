@@ -1,3 +1,10 @@
+2006-01-27  Ankit Jain  <jankit@novell.com>
+
+	* get.c (get_methodref_signature): Remove 'context' parameter.
+	Update call sites.
+	* get.h (get_methodref_signature): Update.
+	* dump.c (dump_table_memberref): Update.
+
 2006-01-26  Raja R Harinath  <harinath@gmail.com>
 
 	* get.c (stringify_double): Simplify, and avoid 'E' too.
