@@ -1,3 +1,13 @@
+2006-01-27  Raja R Harinath  <rharinath@novell.com>
+
+	Fix tests/find-method.2.il
+	* loader.c (find_method, find_method_in_class): Remove is_inflated
+	argument.  Revert 2006-01-18 change.
+	(method_from_memberref) [MONO_MEMBERREF_PARENT_TYPESPEC]: If type
+	is generic, search for method in its generic definition.
+	* class.c (mono_class_setup_vtable_general): Print generic
+	arguments of generic types in debugging printf.
+
 2006-01-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* object-internals.h (MonoThread): Add 'thread_dump_requested' field.
