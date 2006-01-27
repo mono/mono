@@ -108,6 +108,19 @@ namespace System.Xml
 
 		public virtual string InnerText {
 			get {
+				switch (NodeType) {
+				case XmlNodeType.Text:
+				case XmlNodeType.CDATA:
+				case XmlNodeType.SignificantWhitespace:
+				case XmlNodeType.Whitespace:
+ 					return Value;
+					break;
+				}
+				if (FirstChild == null)
+					return String.Empty;
+				if (FirstChild == LastChild)
+					return FirstChild.InnerText;
+
 				StringBuilder builder = new StringBuilder ();
 				AppendChildValues (builder);
 				return builder.ToString ();

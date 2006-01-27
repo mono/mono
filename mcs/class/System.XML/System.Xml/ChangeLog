@@ -1,5 +1,10 @@
 2006-01-27  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlNode.cs :
+	  in get_InnerText(), avoid extraneous StringBuilder creation.
+
+2006-01-27  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlIteratorNodeList.cs : new file for XmlNodeList implementation.
 	  It does not iterate all nodes in advance.
 	* XmlNode.cs : use XmlIteratorNodeList in SelectNodes().
