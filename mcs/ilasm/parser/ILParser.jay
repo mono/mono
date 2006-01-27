@@ -634,14 +634,24 @@ impl_class_refs		: K_IMPLEMENTS generic_class_ref
 formal_typars_clause           : /* EMPTY */
                         | OPEN_ANGLE_BRACKET formal_typars CLOSE_ANGLE_BRACKET
                           {
+#if NET_2_0 || BOOTSTRAP_NET_2_0
                                 $$ = $2;
+#else
+				Console.Error.WriteLine ("ERROR: Use ilasm2 for generics support.");
+				Environment.Exit (1);
+#endif
                           }
                         ;
 
 typars_clause           : /* EMPTY */
                         | OPEN_ANGLE_BRACKET typars CLOSE_ANGLE_BRACKET
                           {
+#if NET_2_0 || BOOTSTRAP_NET_2_0
                                 $$ = $2;
+#else
+				Console.Error.WriteLine ("ERROR: Use ilasm2 for generics support.");
+				Environment.Exit (1);
+#endif
                           }
                         ;
 
