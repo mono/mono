@@ -8,11 +8,7 @@
 //   Ravindra (rkumar@novell.com)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
-// (C) Novell, Inc.  http://www.novell.com
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004, 2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -34,8 +30,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-using System.Drawing;
 using System.Runtime.InteropServices;
 
 namespace System.Drawing.Drawing2D
@@ -77,16 +71,17 @@ namespace System.Drawing.Drawing2D
                 // properties
                 public float[] Elements {
                         get {
-                                IntPtr tmp = Marshal.AllocHGlobal (Marshal.SizeOf (typeof (float)) * 6);
-                                float [] retval = new float [6];
-
-				Status status = GDIPlus.GdipGetMatrixElements (nativeMatrix, tmp);
-				GDIPlus.CheckStatus (status);
-
-                                Marshal.Copy (tmp, retval, 0, 6);
-
-                                Marshal.FreeHGlobal (tmp);
-                                return retval;
+				float [] retval = new float [6];
+				IntPtr tmp = Marshal.AllocHGlobal (Marshal.SizeOf (typeof (float)) * 6);
+				try {
+					Status status = GDIPlus.GdipGetMatrixElements (nativeMatrix, tmp);
+					GDIPlus.CheckStatus (status);
+					Marshal.Copy (tmp, retval, 0, 6);
+				}
+				finally {
+					Marshal.FreeHGlobal (tmp);
+				}
+				return retval;
                         }
                 }
         

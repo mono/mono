@@ -1,8 +1,10 @@
-2006-01-27  Sebastien Pouliot  <sebastien@ximian.com>
-
+2006-01-27  Sebastien Pouliot  <sebastien@ximian.com> 
+ 
 	* GraphicsPath.cs: Removed TODO on Flatten methods (now supported in
 	libgdiplus). Added a private constant for FlatnessDefault (0.25). 
 	Added MonoTODO on IsVisible* methods (not supported in libgdiplus).
+	* Matrix.cs: Ensure we call Marshal.FreeHGlobal even if CheckStatus
+	throws an exception.
 
 2006-01-16  Sebastien Pouliot  <sebastien@ximian.com>
 
