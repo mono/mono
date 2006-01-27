@@ -136,6 +136,7 @@ System.Web.Configuration_2.0/HealthMonitoringSection.cs
 System.Web.Configuration_2.0/HostingEnvironmentSection.cs
 System.Web.Configuration_2.0/HttpCapabilitiesBase.cs
 System.Web.Configuration_2.0/HttpCookiesSection.cs
+System.Web.Configuration_2.0/HttpConfigurationSystem.cs
 System.Web.Configuration_2.0/HttpHandlerAction.cs
 System.Web.Configuration_2.0/HttpHandlerActionCollection.cs
 System.Web.Configuration_2.0/HttpHandlersSection.cs
