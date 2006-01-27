@@ -127,8 +127,8 @@ namespace System.Windows.Forms {
 			opacity = 1D;
 			menu = null;
 			icon = default_icon;
-			minimum_size = new Size(0, 0);
-			maximum_size = new Size(0, 0);
+			minimum_size = Size.Empty;
+			maximum_size = Size.Empty;
 			control_box = true;
 			minimize_box = true;
 			maximize_box = true;
@@ -461,6 +461,9 @@ namespace System.Windows.Forms {
 				if (maximum_size != value) {
 					maximum_size = value;
 					OnMaximumSizeChanged(EventArgs.Empty);
+					if (IsHandleCreated) {
+						XplatUI.SetWindowMinMax(Handle, maximized_bounds, minimum_size, maximum_size);
+					}
 				}
 			}
 		}
@@ -594,6 +597,9 @@ namespace System.Windows.Forms {
 				if (minimum_size != value) {
 					minimum_size = value;
 					OnMinimumSizeChanged(EventArgs.Empty);
+					if (IsHandleCreated) {
+						XplatUI.SetWindowMinMax(Handle, maximized_bounds, minimum_size, maximum_size);
+					}
 				}
 			}
 		}
@@ -799,7 +805,6 @@ namespace System.Windows.Forms {
 			}
 
 			set {
-Console.WriteLine("Setting window state to {0}", value);
 				window_state = value;
 				if (IsHandleCreated) {
 					XplatUI.SetWindowState(Handle, value);
@@ -962,6 +967,9 @@ Console.WriteLine("Setting window state to {0}", value);
 			set {
 				maximized_bounds = value;
 				OnMaximizedBoundsChanged(EventArgs.Empty);
+				if (IsHandleCreated) {
+					XplatUI.SetWindowMinMax(Handle, maximized_bounds, minimum_size, maximum_size);
+				}
 			}
 		}
 		#endregion	// Protected Instance Properties
@@ -1184,6 +1192,8 @@ Console.WriteLine("Setting window state to {0}", value);
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected override void CreateHandle() {
 			base.CreateHandle ();
+
+			XplatUI.SetWindowMinMax(window.Handle, maximized_bounds, minimum_size, maximum_size);
 			if (icon != null) {
 				XplatUI.SetIcon(window.Handle, icon);
 			}
@@ -1513,6 +1523,13 @@ Console.WriteLine("Setting window state to {0}", value);
 					return;
 				}
 
+				case Msg.WM_WINDOWPOSCHANGED: {
+					if (WindowState != FormWindowState.Minimized) {
+						base.WndProc(ref m);
+					}
+					return;
+				}
+
 				case Msg.WM_ACTIVATE: {
 					if (m.WParam != (IntPtr)WindowActiveFlags.WA_INACTIVE) {
 						OnActivated(EventArgs.Empty);
@@ -1579,16 +1596,28 @@ Console.WriteLine("Setting window state to {0}", value);
 				}
 
 				case Msg.WM_GETMINMAXINFO: {
-					XplatUIWin32.MINMAXINFO	mmi;
+					MINMAXINFO	mmi;
 
 					if (m.LParam != IntPtr.Zero) {
-						mmi = (XplatUIWin32.MINMAXINFO)Marshal.PtrToStructure(m.LParam, typeof(XplatUIWin32.MINMAXINFO));
+						mmi = (MINMAXINFO)Marshal.PtrToStructure(m.LParam, typeof(MINMAXINFO));
+
 						default_maximized_bounds = new Rectangle(mmi.ptMaxPosition.x, mmi.ptMaxPosition.y, mmi.ptMaxSize.x, mmi.ptMaxSize.y);
 						if (maximized_bounds != Rectangle.Empty) {
+							mmi.ptMaxPosition.x = maximized_bounds.Left;
+							mmi.ptMaxPosition.y = maximized_bounds.Top;
 							mmi.ptMaxSize.x = maximized_bounds.Width;
 							mmi.ptMaxSize.y = maximized_bounds.Height;
 						}
 
+						if (minimum_size != Size.Empty) {
+							mmi.ptMinTrackSize.x = minimum_size.Width;
+							mmi.ptMinTrackSize.y = minimum_size.Height;
+						}
+
+						if (minimum_size != Size.Empty) {
+							mmi.ptMaxTrackSize.x = maximum_size.Width;
+							mmi.ptMaxTrackSize.y = maximum_size.Height;
+						}
 						Marshal.StructureToPtr(mmi, m.LParam, false);
 					}
 					break;

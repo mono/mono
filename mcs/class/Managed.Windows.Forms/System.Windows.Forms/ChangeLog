@@ -1,3 +1,42 @@
+2006-01-26  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* XplatUI.cs, XplatUIDriver.cs, XplatUIOSX.cs: Added new driver method
+	  SetWindowMinMax() to have means to tell the driver about the minimum,
+	  maximum and maximized state window sizes. (Part of the fix for #76485)
+	* Form.cs:
+	  - Implemented tracking of minimum and maximum window size, now calling
+	    new SetWindowMinMax() driver method to tell the driver (Part of the
+	    fix for #76485)
+	  - Finished handling of WM_GETMINMAXINFO method, now setting all values
+	    (Completes fix for #76485)
+	  - Calling new SetWindowMinMax driver method when the handle for a 
+	    form is created, to make sure the driver knows about it even if
+	    the values have been set before the window was created
+	  - Now eating the WM_WINDOWPOSCHANGED message if the form is minimized
+	    to avoid messing up our anchoring calculations (partial fix
+	    for #77355)
+	* XplatUIStructs.cs: Added MINMAXINFO struct (moved from Win32 driver)
+	* XplatUIX11.cs:
+	  - Added _NET_WM_STATE_HIDDEN property for detecting minimized state
+	  - Improved GetWindowState() to detect 'Minimized' state on Metacity 
+	    (and presumably other freedesktop.org compliant WMs). Left the
+	    assumption unmapped=minimized, needed for SetVisible to work.
+	  - Now setting the window state when creating windows
+	  - Fixed SetVisible to consider/set the window state when mapping
+	    a Form. We cannot set the state before it's mapped, and we cannot
+	    use Form.WindowState once it's mapped (since it would ask the
+	    driver and get 'normal'. Therefore, we grab the state before
+	    mapping, map, and then set state.
+	  - Implmemented SetWindowMinMax method; Metacity does not seem to
+	    honor the ZoomHints, though.
+	* XplatUIWin32.cs:
+	  - Removed MINMAXINFO (moved to XplatUIStructs)
+	  - Added SetWindowMinMax stub (on Win32 the only way to set that
+	    information is in response to the WM_GETMINMAXINFO message, which
+	    is handled in Form.cs)
+	  - Added logic to SetVisible to set the proper window state when a 
+	    form is made visible
+
 2006-01-26  Jackson Harper  <jackson@ximian.com>
 
 	* Control.cs (BeginInvoke): Automagically handle EventHandlers the

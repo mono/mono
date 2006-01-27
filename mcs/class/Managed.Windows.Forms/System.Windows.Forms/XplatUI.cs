@@ -750,6 +750,13 @@ namespace System.Windows.Forms {
 			return driver.SetVisible(handle, visible);
 		}
 
+		internal static void SetWindowMinMax(IntPtr handle, Rectangle maximized, Size min, Size max) {
+			#if DriverDebug || DriverDebugState
+				Console.WriteLine("SetWindowMinMax({0}, {1}, {2}, {3}): Called", Window(handle), maximized, min, max);
+			#endif
+			driver.SetWindowMinMax(handle, maximized, min, max);
+		}
+
 		internal static void SetWindowPos(IntPtr handle, int x, int y, int width, int height) {
 			#if DriverDebug
 				Console.WriteLine("SetWindowPos({0}, {1}, {2}, {3}, {4}): Called", Window(handle), x, y, width, height);

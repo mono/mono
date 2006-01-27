@@ -795,5 +795,14 @@ namespace System.Windows.Forms {
 		CF_LOCALE           		= 16,
 		CF_DIBV5            		= 17
 	}
+
+	[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Unicode)]
+	internal struct MINMAXINFO {
+		internal POINT			ptReserved;
+		internal POINT			ptMaxSize;
+		internal POINT			ptMaxPosition;
+		internal POINT			ptMinTrackSize;
+		internal POINT			ptMaxTrackSize;
+	}
 }
 

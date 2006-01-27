@@ -1602,6 +1602,10 @@ namespace System.Windows.Forms {
 			// FIXME - do we need to trigger some resize?
 		}
 		
+		internal override void SetWindowMinMax(IntPtr handle, Rectangle maximized, Size min, Size max) {
+			throw new NotImplementedException();
+		}
+
 		internal override void SetWindowPos(IntPtr handle, int x, int y, int width, int height) {
 			Hwnd hwnd = Hwnd.ObjectFromHandle (handle);
 			Rectangle client_rect = Hwnd.GetClientRectangle(hwnd.border_style, hwnd.menu,

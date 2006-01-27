@@ -117,6 +117,7 @@ namespace System.Windows.Forms {
 
 		internal abstract FormWindowState GetWindowState(IntPtr handle);
 		internal abstract void SetWindowState(IntPtr handle, FormWindowState state);
+		internal abstract void SetWindowMinMax(IntPtr handle, Rectangle maximized, Size min, Size max);
 
 		internal abstract void SetWindowStyle(IntPtr handle, CreateParams cp);
 

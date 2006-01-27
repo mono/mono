@@ -495,6 +495,7 @@ namespace System.Windows.Forms {
 
 			NetAtoms[(int)NA._NET_WM_STATE_MAXIMIZED_HORZ] = XInternAtom(DisplayHandle, "_NET_WM_STATE_MAXIMIZED_HORZ", false);
 			NetAtoms[(int)NA._NET_WM_STATE_MAXIMIZED_VERT] = XInternAtom(DisplayHandle, "_NET_WM_STATE_MAXIMIZED_VERT", false);
+			NetAtoms[(int)NA._NET_WM_STATE_HIDDEN] = XInternAtom(DisplayHandle, "_NET_WM_STATE_HIDDEN", false);
 
 			NetAtoms[(int)NA._XEMBED] = XInternAtom(DisplayHandle, "_XEMBED", false);
 			NetAtoms[(int)NA._XEMBED_INFO] = XInternAtom(DisplayHandle, "_XEMBED_INFO", false);
@@ -1883,6 +1884,12 @@ namespace System.Windows.Forms {
 
 			SetWMStyles(hwnd, cp);
 
+			if ((cp.Style & (int)WindowStyles.WS_MINIMIZE) != 0) {
+				SetWindowState(hwnd.Handle, FormWindowState.Minimized);
+			} else if ((cp.Style & (int)WindowStyles.WS_MAXIMIZE) != 0) {
+				SetWindowState(hwnd.Handle, FormWindowState.Maximized);
+			}
+
 			// for now make all windows dnd enabled
 			Dnd.SetAllowDrop (hwnd, true);
 
@@ -3041,33 +3048,39 @@ namespace System.Windows.Forms {
 			IntPtr			prop = IntPtr.Zero;
 			IntPtr			atom;
 			int			maximized;
+			bool			minimized;
 			XWindowAttributes	attributes;
 			Hwnd			hwnd;
 
 			hwnd = Hwnd.ObjectFromHandle(handle);
 
 			maximized = 0;
+			minimized = false;
 			XGetWindowProperty(DisplayHandle, hwnd.whole_window, NetAtoms[(int)NA._NET_WM_STATE], 0, 256, false, Atom.XA_ATOM, out actual_atom, out actual_format, out nitems, out bytes_after, ref prop);
 			if ((nitems > 0) && (prop != IntPtr.Zero)) {
 				for (int i = 0; i < nitems; i++) {
 					atom = (IntPtr)Marshal.ReadInt32(prop, i * 4);
 					if ((atom == (IntPtr)NetAtoms[(int)NA._NET_WM_STATE_MAXIMIZED_HORZ]) || (atom == (IntPtr)NetAtoms[(int)NA._NET_WM_STATE_MAXIMIZED_VERT])) {
 						maximized++;
+					} else if (atom == (IntPtr)NetAtoms[(int)NA._NET_WM_STATE_HIDDEN]) {
+						minimized = true;
 					}
 				}
 				XFree(prop);
 			}
 
-			if (maximized == 2) {
+			if (minimized) {
+				return FormWindowState.Minimized;
+			} else if (maximized == 2) {
 				return FormWindowState.Maximized;
 			}
-
 
 			attributes = new XWindowAttributes();
 			XGetWindowAttributes(DisplayHandle, handle, ref attributes);
 			if (attributes.map_state == MapState.IsUnmapped) {
 				return FormWindowState.Minimized;
 			}
+
 
 			return FormWindowState.Normal;
 		}
@@ -3606,14 +3619,66 @@ namespace System.Windows.Forms {
 
 			lock (XlibLock) {
 				if (visible) {
-					XMapWindow(DisplayHandle, hwnd.whole_window);
-					XMapWindow(DisplayHandle, hwnd.client_window);
+					if (Control.FromHandle(handle) is Form) {
+						FormWindowState	s;
+
+						s = ((Form)Control.FromHandle(handle)).WindowState;
+
+						XMapWindow(DisplayHandle, hwnd.whole_window);
+						XMapWindow(DisplayHandle, hwnd.client_window);
+
+						switch(s) {
+							case FormWindowState.Minimized:	SetWindowState(handle, FormWindowState.Minimized); break;
+							case FormWindowState.Maximized:	SetWindowState(handle, FormWindowState.Maximized); break;
+						}
+					} else {
+						XMapWindow(DisplayHandle, hwnd.whole_window);
+						XMapWindow(DisplayHandle, hwnd.client_window);
+					}
 				} else {
 					XUnmapWindow(DisplayHandle, hwnd.whole_window);
 				}
 			}
 			return true;
 		}
+
+		internal override void SetWindowMinMax(IntPtr handle, Rectangle maximized, Size min, Size max) {
+			Hwnd		hwnd;
+			XSizeHints	hints;
+
+			hwnd = Hwnd.ObjectFromHandle(handle);
+			if (hwnd == null) {
+				return;
+			}
+
+			hints = new XSizeHints();
+
+			if (min != Size.Empty) {
+				hints.flags = (IntPtr)((int)hints.flags | (int)XSizeHintsFlags.PMinSize);
+				hints.min_width = min.Width;
+				hints.min_height = min.Height;
+			}
+
+			if (max != Size.Empty) {
+				hints.flags = (IntPtr)((int)hints.flags | (int)XSizeHintsFlags.PMaxSize);
+				hints.max_width = max.Width;
+				hints.max_height = max.Height;
+			}
+
+			XSetWMNormalHints(DisplayHandle, hwnd.whole_window, ref hints);
+
+			if (maximized != Rectangle.Empty) {
+				hints.flags = (IntPtr)XSizeHintsFlags.PPosition;
+				hints.x = maximized.X;
+				hints.y = maximized.Y;
+				hints.width = maximized.Width;
+				hints.height = maximized.Height;
+
+				// Metacity does not seem to follow this constraint for maximized (zoomed) windows
+				XSetZoomHints(DisplayHandle, hwnd.whole_window, ref hints);
+			}
+		}
+
 
 		internal override void SetWindowPos(IntPtr handle, int x, int y, int width, int height) {
 			Hwnd		hwnd;
@@ -4160,6 +4225,9 @@ namespace System.Windows.Forms {
 
 		[DllImport ("libX11", EntryPoint="XSetWMNormalHints")]
 		internal extern static void XSetWMNormalHints(IntPtr display, IntPtr window, ref XSizeHints hints);
+
+		[DllImport ("libX11", EntryPoint="XSetZoomHints")]
+		internal extern static void XSetZoomHints(IntPtr display, IntPtr window, ref XSizeHints hints);
 
 		[DllImport ("libX11", EntryPoint="XSetWMHints")]
 		internal extern static void XSetWMHints(IntPtr display, IntPtr window, ref XWMHints wmhints);

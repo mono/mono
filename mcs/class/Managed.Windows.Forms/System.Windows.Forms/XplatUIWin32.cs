@@ -509,15 +509,6 @@ namespace System.Windows.Forms {
 			GCL_HICONSM			= -34
 		}
 
-		[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Unicode)]
-		internal struct MINMAXINFO {
-			internal POINT			ptReserved;
-			internal POINT			ptMaxSize;
-			internal POINT			ptMaxPosition;
-			internal POINT			ptMinTrackSize;
-			internal POINT			ptMaxTrackSize;
-		}
-
 		[Flags]
 		internal enum GAllocFlags : uint {
 			GMEM_FIXED			= 0x0000,
@@ -1102,6 +1093,11 @@ namespace System.Windows.Forms {
 			return;
 		}
 
+		internal override void SetWindowMinMax(IntPtr handle, Rectangle maximized, Size min, Size max) {
+			// We do nothing, Form has to handle WM_GETMINMAXINFO
+		}
+
+
 		internal override FormWindowState GetWindowState(IntPtr handle) {
 			uint style;
 
@@ -1431,7 +1427,18 @@ namespace System.Windows.Forms {
 
 		internal override bool SetVisible(IntPtr handle, bool visible) {
 			if (visible) {
-				Win32ShowWindow(handle, WindowPlacementFlags.SW_SHOWNORMAL);
+				if (Control.FromHandle(handle) is Form) {
+					Form f;
+
+					f = (Form)Control.FromHandle(handle);
+					switch (f.WindowState) {
+						case FormWindowState.Normal:	Win32ShowWindow(handle, WindowPlacementFlags.SW_SHOWNORMAL); break;
+						case FormWindowState.Minimized:	Win32ShowWindow(handle, WindowPlacementFlags.SW_MINIMIZE); break;
+						case FormWindowState.Maximized:	Win32ShowWindow(handle, WindowPlacementFlags.SW_MAXIMIZE); break;
+					}
+				} else {
+					Win32ShowWindow(handle, WindowPlacementFlags.SW_SHOWNORMAL);
+				}
 			} else {
 				Win32ShowWindow(handle, WindowPlacementFlags.SW_HIDE);
 			}
