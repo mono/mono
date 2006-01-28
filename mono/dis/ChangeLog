@@ -1,3 +1,19 @@
+2006-01-28  Ankit Jain  <jankit@novell.com>
+
+	* get.c (get_method_core): Emit generic arity for a MemberRef.
+	(get_method_override): Emit full sig only if its a generic type.
+
+2006-01-27  Ankit Jain  <jankit@novell.com>
+
+	* get.c (get_methodref_signature): Remove 'context' parameter.
+	Update call sites.
+	* get.h (get_methodref_signature): Update.
+	* dump.c (dump_table_memberref): Update.
+
+2006-01-26  Raja R Harinath  <harinath@gmail.com>
+
+	* get.c (stringify_double): Simplify, and avoid 'E' too.
+
 2006-01-26  Ankit Jain  <jankit@novell.com>
 
 	* get.c (stringify_double): Remove trailing '.' if it has 'e'.
