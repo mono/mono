@@ -1,5 +1,10 @@
 2006-01-28  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlElement.cs, XmlAttribute.cs :
+	  Avoid ChildNodes.Count and use FirstChild/NextSibling.
+
+2006-01-28  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlNode.cs, XmlIteratorNodeList.cs :
 	  Now we can enable XmlIteratorNodeList again (mcs, incorrectly
 	  removing nodes in the node list, was fixed).

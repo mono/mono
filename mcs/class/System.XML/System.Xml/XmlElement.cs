@@ -407,9 +407,8 @@ namespace System.Xml
 
 		public override void WriteContentTo (XmlWriter w)
 		{
-			int count = ChildNodes.Count;
-			for (int i = 0; i < count; i++)
-				ChildNodes [i].WriteTo (w);
+			for (XmlNode n = FirstChild; n != null; n = n.NextSibling)
+				n.WriteTo (w);
 		}
 
 		public override void WriteTo (XmlWriter w)
