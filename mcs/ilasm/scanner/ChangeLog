@@ -1,3 +1,7 @@
+2006-01-28  Ankit Jain  <jankit@novell.com>
+
+	* ILTables.cs (keywords): Fix typos in entry for 'charmaperror'.
+
 2006-01-19  Ankit Jain  <jankit@novell.com>
 
 	* ILTables.cs (keywords): Add 'type' keyword.

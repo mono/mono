@@ -169,7 +169,7 @@ namespace Mono.ILASM {
                                 keywords ["unicode"] = new ILToken (Token.K_UNICODE, "unicode");
                                 keywords ["autochar"] = new ILToken (Token.K_AUTOCHAR, "autochar");
                                 keywords ["bestfit"] = new ILToken (Token.K_BESTFIT, "bestfit");
-                                keywords ["charmaperror"] = new ILToken (Token.K_BESTFIT, "bestfit");
+                                keywords ["charmaperror"] = new ILToken (Token.K_CHARMAPERROR, "charmaperror");
                                 keywords ["import"] = new ILToken (Token.K_IMPORT, "import");
                                 keywords ["serializable"] = new ILToken (Token.K_SERIALIZABLE, "serializable");
                                 keywords ["nested"] = new ILToken (Token.K_NESTED, "nested");
