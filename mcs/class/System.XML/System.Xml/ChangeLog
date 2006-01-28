@@ -1,5 +1,10 @@
 2006-01-28  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlTextWriter.cs : avoid case-insensitive String.Compare().
+	  Use array for openElements rather than ArrayList.
+
+2006-01-28  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlElement.cs, XmlAttribute.cs :
 	  Avoid ChildNodes.Count and use FirstChild/NextSibling.
 

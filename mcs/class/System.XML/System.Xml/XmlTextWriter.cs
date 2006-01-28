@@ -51,7 +51,8 @@ namespace System.Xml
 		bool namespaces = true;
 		bool openAttribute = false;
 		bool attributeWrittenForElement = false;
-		ArrayList openElements = new ArrayList ();
+		XmlTextWriterOpenElement [] openElements =
+			new XmlTextWriterOpenElement [20];
 		int openElementCount;
 		Formatting formatting = Formatting.None;
 		int indentation = 2;
@@ -141,12 +142,11 @@ namespace System.Xml
 				if (openElementCount == 0)
 					return false;
 				else
-					return ((XmlTextWriterOpenElement)
-openElements [openElementCount - 1]).IndentingOverriden;
+					return openElements [openElementCount - 1].IndentingOverriden;
 			}
 			set {
 				if (openElementCount > 0)
-					((XmlTextWriterOpenElement) openElements [openElementCount - 1]).IndentingOverriden = value;
+					openElements [openElementCount - 1].IndentingOverriden = value;
 			}
 		}
 
@@ -154,7 +154,7 @@ openElements [openElementCount - 1]).IndentingOverriden;
 			get {
 				if (openElementCount < 2)
 					return false;
-				return ((XmlTextWriterOpenElement) openElements [openElementCount - 2]).IndentingOverriden;
+				return openElements [openElementCount - 2].IndentingOverriden;
 			}
 		}
 
@@ -251,7 +251,7 @@ openElements [openElementCount - 1]).IndentingOverriden;
 				int i;
 
 				for (i = openElementCount - 1; i >= 0; i--) {
-					xmlLang = ((XmlTextWriterOpenElement) openElements [i]).XmlLang;
+					xmlLang = openElements [i].XmlLang;
 					if (xmlLang != null)
 						break;
 				}
@@ -266,7 +266,7 @@ openElements [openElementCount - 1]).IndentingOverriden;
 				int i;
 
 				for (i = openElementCount - 1; i >= 0; i--) {
-					xmlSpace = ((XmlTextWriterOpenElement)openElements [i]).XmlSpace;
+					xmlSpace = openElements [i].XmlSpace;
 					if (xmlSpace != XmlSpace.None)
 						break;
 				}
@@ -354,7 +354,7 @@ openElements [openElementCount - 1]).IndentingOverriden;
 		{
 #if NET_2_0
 			if (ws == WriteState.Error)
-				throw new InvalidOperationException ("Writing at state Error would result in a wrong result.");
+				throw new InvalidOperationException ("Writing at state Error would result in wrong output.");
 #endif
 			if (!openWriter) {
 				throw new InvalidOperationException ("The Writer is closed.");
@@ -565,7 +565,7 @@ openElements [openElementCount - 1]).IndentingOverriden;
 				w.Write (xmlLang);
 				openXmlLang = false;
 				if (openElementCount > 0)
-					((XmlTextWriterOpenElement) openElements [openElementCount - 1]).XmlLang = xmlLang;
+					openElements [openElementCount - 1].XmlLang = xmlLang;
 			}
 
 			if (openXmlSpace) 
@@ -576,7 +576,7 @@ openElements [openElementCount - 1]).IndentingOverriden;
 					w.Write ("default");
 				openXmlSpace = false;
 				if (openElementCount > 0)
-					((XmlTextWriterOpenElement) openElements [openElementCount - 1]).XmlSpace = xmlSpace;
+					openElements [openElementCount - 1].XmlSpace = xmlSpace;
 			}
 
 			w.Write (quoteChar);
@@ -642,7 +642,7 @@ openElements [openElementCount - 1]).IndentingOverriden;
 					if (!ParentIndentingOverriden)
 						WriteIndent ();
 					w.Write ("</");
-					XmlTextWriterOpenElement el = (XmlTextWriterOpenElement) openElements [openElementCount - 1];
+					XmlTextWriterOpenElement el = openElements [openElementCount - 1];
 					if (el.Prefix != String.Empty) {
 						w.Write (el.Prefix);
 						w.Write (':');
@@ -657,7 +657,7 @@ openElements [openElementCount - 1]).IndentingOverriden;
 			} else {
 				WriteIndent ();
 				w.Write ("</");
-				XmlTextWriterOpenElement el = (XmlTextWriterOpenElement) openElements [openElementCount - 1];
+				XmlTextWriterOpenElement el = openElements [openElementCount - 1];
 				openElementCount--;
 				if (el.Prefix != String.Empty) {
 					w.Write (el.Prefix);
@@ -760,15 +760,15 @@ openElements [openElementCount - 1]).IndentingOverriden;
 
 		public override void WriteStartAttribute (string prefix, string localName, string ns)
 		{
-			if (prefix == "xml") {
+			if (prefix == null)
+				prefix = String.Empty;
+			else if (prefix == "xml") {
 				ns = XmlNamespaceManager.XmlnsXml;
 				if (localName == "lang")
 					openXmlLang = true;
 				else if (localName == "space")
 					openXmlSpace = true;
 			}
-			if (prefix == null)
-				prefix = String.Empty;
 
 			if (prefix.Length > 0 && (ns == null || ns.Length == 0))
 				if (prefix != "xmlns")
@@ -937,7 +937,10 @@ openElements [openElementCount - 1]).IndentingOverriden;
 			// is kind of silly implementation. See bug #77094.
 			if (Namespaces &&
 			    ns != XmlNamespaceManager.XmlnsXml &&
-			    String.Compare (prefix, "xml", true) == 0)
+			    prefix != null && prefix.Length == 3 &&
+			    (prefix [0] == 'x' || prefix [0] == 'X') &&
+			    (prefix [1] == 'm' || prefix [1] == 'M') &&
+			    (prefix [2] == 'l' || prefix [2] == 'L'))
 				throw new ArgumentException ("A prefix cannot be equivalent to \"xml\" in case-insensitive match.");
 
 			// ignore non-namespaced node's prefix.
@@ -970,10 +973,18 @@ openElements [openElementCount - 1]).IndentingOverriden;
 			}
 			w.Write (localName);
 
-			if (openElements.Count == openElementCount)
-				openElements.Add (new XmlTextWriterOpenElement (prefix, localName));
+			if (openElements.Length == openElementCount) {
+				XmlTextWriterOpenElement [] tmp =
+					new XmlTextWriterOpenElement [openElementCount * 2];
+				Array.Copy (openElements, tmp, openElementCount);
+				openElements = tmp;
+			}
+			if (openElements [openElementCount] == null)
+				openElements [openElementCount] =
+					new XmlTextWriterOpenElement (prefix, localName);
 			else
-				((XmlTextWriterOpenElement) openElements [openElementCount]).Reset (prefix, localName);
+				openElements [openElementCount].Reset (prefix, localName);
+
 			openElementCount++;
 			ws = WriteState.Element;
 			openStartElement = true;
