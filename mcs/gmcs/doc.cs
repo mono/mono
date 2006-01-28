@@ -894,7 +894,7 @@ namespace Mono.CSharp {
 		static string GetSignatureForDoc (Type type)
 		{
 			return TypeManager.IsGenericParameter (type) ?
-				"`" + type.GenericParameterPosition :
+				"`" + TypeManager.GenericParameterPosition (type) :
 				type.FullName.Replace ("+", ".").Replace ('&', '@');
 		}
 

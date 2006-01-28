@@ -2443,6 +2443,11 @@ public partial class TypeManager {
 		return type.IsGenericParameter;
 	}
 
+	public static int GenericParameterPosition (Type type)
+	{
+		return type.GenericParameterPosition;
+	}
+
 #region MemberLookup implementation
 	
 	//
