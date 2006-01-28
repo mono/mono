@@ -810,13 +810,15 @@ namespace System.Xml
 			if (nsmgr != null)
 				expr.SetContext (nsmgr);
 			XPathNodeIterator iter = nav.Select (expr);
+			/*
 			ArrayList rgNodes = new ArrayList ();
 			while (iter.MoveNext ())
 			{
 				rgNodes.Add (((IHasXmlNode) iter.Current).GetNode ());
 			}
 			return new XmlNodeArrayList (rgNodes);
-			//return new XmlIteratorNodeList (iter);
+			*/
+			return new XmlIteratorNodeList (iter);
 		}
 
 		public XmlNode SelectSingleNode (string xpath)

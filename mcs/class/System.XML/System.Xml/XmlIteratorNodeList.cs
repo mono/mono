@@ -88,8 +88,8 @@ namespace System.Xml
 */
 				// anyways such code that uses
 				// XmlNodeList.Count already gives up 
-				// performance, and the effort above makes
-				// little difference.
+				// performance. Also, storing things in the
+				// list causes extra memory consumption.
 				return iterator.Count;
 			}
 		}
