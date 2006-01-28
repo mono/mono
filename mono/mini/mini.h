@@ -128,7 +128,6 @@ struct MonoEdge {
 };
 
 struct MonoSpillInfo {
-	MonoSpillInfo *next;
 	int offset;
 };
 
@@ -560,6 +559,7 @@ typedef struct {
 	MonoSpillInfo   *spill_info; /* machine register spills */
 	MonoSpillInfo   *spill_info_float; /* fp register spills */
 	gint             spill_count;
+	gint             spill_info_len, spill_info_float_len;
 	/* unsigned char   *cil_code; */
 	MonoMethod      *inlined_method; /* the method which is currently inlined */
 	MonoInst        *domainvar; /* a cache for the current domain */
