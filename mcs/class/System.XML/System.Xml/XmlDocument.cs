@@ -837,12 +837,23 @@ namespace System.Xml
 				element.IsEmpty = reader.IsEmptyElement;
 
 				// set the element's attributes.
+				for (int i = 0; i < reader.AttributeCount; i++) {
+					reader.MoveToAttribute (i);
+					element.SetAttributeNode (
+						ReadAttributeNode (reader));
+				}
+				// FIXME: the code below should be fine and
+				// in some XmlReaders it is much faster, but
+				// caused some breakage in sys.data test.
+				/*
 				if (reader.MoveToFirstAttribute ()) {
 					do {
 						element.SetAttributeNode (ReadAttributeNode (reader));
 					} while (reader.MoveToNextAttribute ());
 					reader.MoveToElement ();
 				}
+				*/
+				reader.MoveToElement ();
 
 				int depth = reader.Depth;
 

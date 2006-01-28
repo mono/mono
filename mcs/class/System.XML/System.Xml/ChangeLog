@@ -1,3 +1,9 @@
+2006-01-28  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlDocument.cs : in ReadNode() to consume element node, switched
+	  to MoveToAttribute(int) since MoveToNextAttribute() was somehow
+	  not working fine. It is needed to avoid Sys.Data test breakage
+	  and anything else should be fixed indeed.
 
 Fri Jan 27 20:39:48 CET 2006 Paolo Molaro <lupus@ximian.com>
 
