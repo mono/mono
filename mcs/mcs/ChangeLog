@@ -1,3 +1,23 @@
+2006-01-28  Raja R Harinath  <harinath@gmail.com>
+
+	* typemanager.cs (GenericParameterPosition): New.
+	* doc.cs: Use it.
+
+2006-01-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* doc.cs : To process "include" elements, first we should create
+	  another list than XmlNodeList, because it could result in node
+	  removal, which could result in that the XmlNodeList gives up
+	  yielding next node.
+
+	  (Also made code identical to gmcs again.)
+
+2006-01-25  Miguel de Icaza  <miguel@novell.com>
+
+	* ecore.cs: Introduce an error report that we were not catching
+	before, if not silent, we must report the error.  Gonzalo ran into
+	it.
+
 2006-01-23  Miguel de Icaza  <miguel@novell.com>
 
 	A fix for bug: #76957

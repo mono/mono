@@ -2838,6 +2838,13 @@ namespace Mono.CSharp {
 			else
 				accmods = Modifiers.PRIVATE;
 
+			// FIXME: remove this nasty fix for bug #77370 when
+			// we get good AllowModifiersProp implementation.
+			if ((mod & Modifiers.STATIC) != 0) {
+				AllowedModifiers |= Modifiers.STATIC;
+				AllowedModifiers &= ~ (Modifiers.ABSTRACT | Modifiers.SEALED);
+			}
+
 			this.ModFlags = Modifiers.Check (AllowedModifiers, mod, accmods, Location);
 			this.OriginalModFlags = mod;
 		}

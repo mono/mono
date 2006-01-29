@@ -161,8 +161,16 @@ namespace Mono.CSharp {
 					mc.OnGenerateDocComment (ds, el);
 
 					// FIXME: it could be done with XmlReader
-					foreach (XmlElement inc in n.SelectNodes (".//include"))
-						HandleInclude (mc, inc);
+					XmlNodeList nl = n.SelectNodes (".//include");
+					if (nl.Count > 0) {
+						// It could result in current node removal, so prepare another list to iterate.
+						ArrayList al = new ArrayList (nl.Count);
+						foreach (XmlNode inc in nl)
+							al.Add (inc);
+						foreach (XmlElement inc in al)
+							if (!HandleInclude (mc, inc))
+								inc.ParentNode.RemoveChild (inc);
+					}
 
 					// FIXME: it could be done with XmlReader
 					DeclSpace dsTarget = mc as DeclSpace;
@@ -191,17 +199,20 @@ namespace Mono.CSharp {
 		// Processes "include" element. Check included file and
 		// embed the document content inside this documentation node.
 		//
-		private static void HandleInclude (MemberCore mc, XmlElement el)
+		private static bool HandleInclude (MemberCore mc, XmlElement el)
 		{
+			bool keepIncludeNode = false;
 			string file = el.GetAttribute ("file");
 			string path = el.GetAttribute ("path");
 			if (file == "") {
 				Report.Warning (1590, 1, mc.Location, "Invalid XML `include' element. Missing `file' attribute");
 				el.ParentNode.InsertBefore (el.OwnerDocument.CreateComment (" Include tag is invalid "), el);
+				keepIncludeNode = true;
 			}
 			else if (path == "") {
 				Report.Warning (1590, 1, mc.Location, "Invalid XML `include' element. Missing `path' attribute");
 				el.ParentNode.InsertBefore (el.OwnerDocument.CreateComment (" Include tag is invalid "), el);
+				keepIncludeNode = true;
 			}
 			else {
 				XmlDocument doc = RootContext.Documentation.StoredDocuments [file] as XmlDocument;
@@ -215,7 +226,6 @@ namespace Mono.CSharp {
 						Report.Warning (1592, 1, mc.Location, "Badly formed XML in included comments file -- `{0}'", file);
 					}
 				}
-				bool keepIncludeNode = false;
 				if (doc != null) {
 					try {
 						XmlNodeList nl = doc.SelectNodes (path);
@@ -231,9 +241,8 @@ namespace Mono.CSharp {
 						Report.Warning (1589, 1, mc.Location, "Unable to include XML fragment `{0}' of file `{1}' ({2})", path, file, ex.Message);
 					}
 				}
-				if (!keepIncludeNode)
-					el.ParentNode.RemoveChild (el);
 			}
+			return keepIncludeNode;
 		}
 
 		//
@@ -885,7 +894,7 @@ namespace Mono.CSharp {
 		static string GetSignatureForDoc (Type type)
 		{
 			return TypeManager.IsGenericParameter (type) ?
-				"`" + type.GenericParameterPosition :
+				"`" + TypeManager.GenericParameterPosition (type) :
 				type.FullName.Replace ("+", ".").Replace ('&', '@');
 		}
 

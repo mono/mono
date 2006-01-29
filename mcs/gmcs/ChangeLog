@@ -1,3 +1,25 @@
+2006-01-29  Raja R Harinath  <harinath@gmail.com>
+
+	Fix part of #77397
+	* generic.cs (TypeManager.IsByRef): Handle pass-by-ref types.
+
+2006-01-28  Raja R Harinath  <harinath@gmail.com>
+
+	* typemanager.cs (GenericParameterPosition): New.
+	* doc.cs: Use it.
+
+2006-01-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* doc.cs : To process "include" elements, first we should create
+	  another list than XmlNodeList, because it could result in node
+	  removal, which could result in that the XmlNodeList gives up
+	  yielding next node.
+
+2006-01-25  Miguel de Icaza  <miguel@novell.com>
+
+	* expression.cs: Introduce an error report that we were not
+	catching before.   Gonzalo ran into it.
+
 2006-01-23  Miguel de Icaza  <miguel@novell.com>
 
 	A fix for bug: #76957

@@ -2117,6 +2117,11 @@ public class TypeManager {
 		return false;
 	}
 
+	public static int GenericParameterPosition (Type type)
+	{
+		throw new InternalErrorException ("should not be called");
+	}
+
 #region MemberLookup implementation
 	
 	//

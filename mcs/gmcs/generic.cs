@@ -2075,6 +2075,9 @@ namespace Mono.CSharp {
 				return IsEqual (a.GetElementType (), b.GetElementType ());
 			}
 
+			if (a.IsByRef && b.IsByRef)
+				return IsEqual (a.GetElementType (), b.GetElementType ());
+
 			if (a.IsGenericType && b.IsGenericType) {
 				if (a.GetGenericTypeDefinition () != b.GetGenericTypeDefinition ())
 					return false;
