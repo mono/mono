@@ -1,3 +1,8 @@
+2006-01-29 Boris Kirzner <borisk@mainsoft.com>
+	* run-tests.bat, run-tests.test.bat, runtestfixture.bat, 
+	runmonotestfixture.bat : added batch files for automatic 
+	testing for TARGET_JVM.
+
 2006-01-18  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* System.Drawing_test.dll.sources: Added unit tests for RegionData and
