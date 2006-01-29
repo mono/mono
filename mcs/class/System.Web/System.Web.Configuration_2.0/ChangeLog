@@ -1,3 +1,11 @@
+2006-01-29  Chris Toshok  <toshok@ximian.com>
+
+	* HttpModulesSection.cs (LoadModules): I'm not sure we want to
+	solve this problem in this way, but the 1.x code forces
+	DefaultAuthenticationModule to be in the list of modules..
+	Without this fix (or something else) HttpContext.User is null when
+	it shouldn't be.
+
 2006-01-26  Chris Toshok  <toshok@ximian.com>
 
 	* HttpConfigurationSystem.cs: new class that gets sections from

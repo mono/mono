@@ -32,6 +32,7 @@
 
 using System;
 using System.Configuration;
+using System.Web.Security;
 
 namespace System.Web.Configuration
 {
@@ -77,6 +78,16 @@ namespace System.Web.Configuration
 				IHttpModule module = (IHttpModule) Activator.CreateInstance (type);
 				module.Init (app);
 				coll.AddModule (item.Name, module);
+			}
+
+			/* XXX the 1.x config stuff does this
+			 * indirectly..  I'm not sure we want to do it
+			 * here, but this keeps things working in much
+			 * the same fashion in 2.0-land. */
+			{
+				IHttpModule module = new DefaultAuthenticationModule ();
+				module.Init (app);
+				coll.AddModule ("DefaultAuthentication", module);
 			}
 
 			return coll;
