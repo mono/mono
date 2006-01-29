@@ -727,7 +727,10 @@ namespace System.Windows.Forms {
 			dc.DrawLine( tmp_pen, ctrl.ClientRectangle.X + 1, ctrl.ClientRectangle.Bottom - 1, ctrl.ClientRectangle.Right - 2, ctrl.ClientRectangle.Bottom - 1 );
 			dc.DrawLine( tmp_pen, ctrl.ClientRectangle.X, ctrl.ClientRectangle.Y + 1, ctrl.ClientRectangle.X, ctrl.ClientRectangle.Bottom - 2 );
 			
-			if ( barpos_pixels == 0 )
+			if ( barpos_pixels <= 0 )
+				return;
+			
+			if ((bar.Width - 2) <= 0 || (bar.Height - 1) <= 0)
 				return;
 			
 			// Draw bar

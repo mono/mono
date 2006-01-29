@@ -1,3 +1,7 @@
+2006-01-29  Alexander Olk  <alex.olk@googlemail.com>
+
+	* ThemeClearlooks.cs: Fixed a crash in ProgressBar drawing.
+
 2006-01-20  Mike Kestner  <mkestner@novell.com>
 
 	* Form.cs: Add ActiveTracker property to do Captures and perform mouse
