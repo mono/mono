@@ -193,7 +193,7 @@ namespace Mono.Data.SqliteClient
 		internal static extern int sqlite3_bind_parameter_count (IntPtr pStmt);
 
 		[DllImport ("sqlite3")]
-		internal static extern String sqlite3_bind_parameter_name (IntPtr pStmt, int n);
+		internal static extern IntPtr sqlite3_bind_parameter_name (IntPtr pStmt, int n); // UTF-8 encoded return
 
 		[DllImport ("sqlite3")]
 		internal static extern SqliteError sqlite3_bind_blob (IntPtr pStmt, int n, byte[] blob, int length, IntPtr freetype);
@@ -205,7 +205,7 @@ namespace Mono.Data.SqliteClient
 		internal static extern SqliteError sqlite3_bind_int (IntPtr pStmt, int n, int value);
 
 		[DllImport ("sqlite3")]
-		internal static extern SqliteError sqlite3_bind_int64 (IntPtr pStmt, Int64 n, long value);
+		internal static extern SqliteError sqlite3_bind_int64 (IntPtr pStmt, int n, long value);
 
 		[DllImport ("sqlite3")]
 		internal static extern SqliteError sqlite3_bind_null (IntPtr pStmt, int n);

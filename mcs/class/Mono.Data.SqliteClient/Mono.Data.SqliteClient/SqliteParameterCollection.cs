@@ -112,12 +112,19 @@ namespace Mono.Data.SqliteClient
 			}
 		}
 		
+		private bool isPrefixed (string parameterName)
+		{
+			return parameterName.Length > 1 && (parameterName[0] == ':' || parameterName[0] == '$');
+		}
+		
 		public SqliteParameter this[string parameterName] 
 		{
 			get 
 			{
 				if (this.Contains(parameterName))
 					return this[(int) named_param_hash[parameterName]];
+				else if (isPrefixed(parameterName) && this.Contains(parameterName.Substring(1)))
+					return this[(int) named_param_hash[parameterName.Substring(1)]];
 				else
 					throw new IndexOutOfRangeException("The specified name does not exist: " + parameterName);
 			}
@@ -125,6 +132,8 @@ namespace Mono.Data.SqliteClient
 			{
 				if (this.Contains(parameterName))
 					numeric_param_list[(int) named_param_hash[parameterName]] = value;
+				else if (parameterName.Length > 1 && this.Contains(parameterName.Substring(1)))
+					numeric_param_list[(int) named_param_hash[parameterName.Substring(1)]] = value;
 				else
 					throw new IndexOutOfRangeException("The specified name does not exist: " + parameterName);
 			}

@@ -46,7 +46,7 @@ namespace Mono.Data.SqliteClient
 		private SqliteCommand command;
 		private ArrayList rows;
 		private string[] columns;
-		private Hashtable column_names;
+		private Hashtable column_names_sens, column_names_insens;
 		private int current_row;
 		private bool closed;
 		private bool reading;
@@ -61,7 +61,8 @@ namespace Mono.Data.SqliteClient
 		{
 			command = cmd;
 			rows = new ArrayList ();
-			column_names = new Hashtable ();
+			column_names_sens = new Hashtable ();
+			column_names_insens = new Hashtable (CaseInsensitiveHashCodeProvider.DefaultInvariant, CaseInsensitiveComparer.DefaultInvariant);
 			closed = false;
 			current_row = -1;
 			reading = true;
@@ -82,7 +83,9 @@ namespace Mono.Data.SqliteClient
 		}
 		
 		public object this[string name] {
-			get { return GetValue ((int) column_names[name]); }
+			get {
+				return GetValue (GetOrdinal (name));
+			}
 		}
 		
 		public object this[int i] {
@@ -124,7 +127,7 @@ namespace Mono.Data.SqliteClient
 						for (int i = 0; i < pN; i++) {
 							IntPtr decl = Sqlite.sqlite3_column_decltype16 (pVm, i);
 							if (decl != IntPtr.Zero) {
-								decltypes[i] = Marshal.PtrToStringUni (decl).ToLower();
+								decltypes[i] = Marshal.PtrToStringUni (decl).ToLower(System.Globalization.CultureInfo.InvariantCulture);
 								if (decltypes[i] == "int" || decltypes[i] == "integer")
 									declmode[i] = 1;
 								else if (decltypes[i] == "date" || decltypes[i] == "datetime")
@@ -143,7 +146,8 @@ namespace Mono.Data.SqliteClient
 							colName = Marshal.PtrToStringUni (Sqlite.sqlite3_column_name16 (pVm, i));
 						}
 						columns[i] = colName;
-						column_names [colName] = i;
+						column_names_sens [colName] = i;
+						column_names_insens [colName] = i;
 					}
 				}
 
@@ -157,12 +161,21 @@ namespace Mono.Data.SqliteClient
 					} else {
 						switch (Sqlite.sqlite3_column_type (pVm, i)) {
 							case 1:
+								long val = Sqlite.sqlite3_column_int64 (pVm, i);
+							
 								// If the column was declared as an 'int' or 'integer', let's play
 								// nice and return an int (version 3 only).
-								if (declmode[i] == 1)
-									data_row[i] = (int)Sqlite.sqlite3_column_int64 (pVm, i);
+								if (declmode[i] == 1 && val >= int.MinValue && val <= int.MaxValue)
+									data_row[i] = (int)val;
+								
+								// Or if it was declared a date or datetime, do the reverse of what we
+								// do for DateTime parameters.
+								else if (declmode[i] == 2)
+									data_row[i] = DateTime.FromFileTime(val);
+								
 								else
-									data_row[i] = Sqlite.sqlite3_column_int64 (pVm, i);
+									data_row[i] = val;
+									
 								break;
 							case 2:
 								data_row[i] = Sqlite.sqlite3_column_double (pVm, i);
@@ -393,7 +406,12 @@ namespace Mono.Data.SqliteClient
 		
 		public int GetOrdinal (string name)
 		{
-			return (int) column_names[name];
+			object v = column_names_sens[name];
+			if (v == null)
+				v = column_names_insens[name];
+			if (v == null)
+				throw new ArgumentException("Column does not exist.");
+			return (int) v;
 		}
 		
 		public string GetString (int i)

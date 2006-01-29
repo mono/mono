@@ -1,3 +1,7 @@
+2006-01-29  Joshua Tauberer  <tauberer@for.net>
+
+	* Added new test sources.
+
 2006-01-20  Joshua Tauberer  <tauberer@for.net>
 
 	* Removed dependency on Mono.Posix.

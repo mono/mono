@@ -59,26 +59,26 @@ namespace Mono.Data.SqliteClient
 			direction = ParameterDirection.Input;
 		}
 		
-		public SqliteParameter (string name_in, DbType type_in)
+		public SqliteParameter (string name, DbType type)
 		{
-			name = name_in;
-			type = type_in;
+			this.name = name;
+			this.type = type;
 		}
 		
-		public SqliteParameter (string name_in, object param_value_in)
+		public SqliteParameter (string name, object value)
 		{
-			name = name_in;
+			this.name = name;
 			type = DbType.String;
-			param_value = param_value_in;
+			param_value = value;
 			direction = ParameterDirection.Input;
 		}
 		
-		public SqliteParameter (string name_in, DbType type_in, int size_in) : this (name_in, type_in)
+		public SqliteParameter (string name, DbType type, int size) : this (name, type)
 		{
-			size = size_in;
+			this.size = size;
 		}
 		
-		public SqliteParameter (string name_in, DbType type_in, int size, string src_column) : this (name_in ,type_in)
+		public SqliteParameter (string name, DbType type, int size, string src_column) : this (name ,type, size)
 		{
 			source_column = src_column;
 		}

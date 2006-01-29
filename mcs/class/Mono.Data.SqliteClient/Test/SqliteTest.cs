@@ -69,20 +69,23 @@ namespace Test.Mono.Data.SqliteClient
 				"NDESC TEXT, " +
 				"NTIME DATETIME); " +
 				"INSERT INTO MONO_TEST  " +
-				"(NID, NDESC, NTIME )"+
+				"(NID, NDESC, NTIME) " +
 				"VALUES(1,'One" + ((v3 || utf8) ? " (unicode test: \u05D0)" : "") + "', '2006-01-01')";
 			Console.WriteLine("Create & insert modified rows = 1: " + dbcmd.ExecuteNonQuery());
 
 			dbcmd.CommandText =
 				"INSERT INTO MONO_TEST  " +
-				"(NID, NDESC, NTIME )"+
-				"VALUES(2,'Two', '2006-01-02')";
-			Console.WriteLine("Insert modified rows and ID = 1, 2: " + dbcmd.ExecuteNonQuery() + " , " + dbcmd.LastInsertRowID());
+				"(NID, NDESC, NTIME) " +
+				"VALUES(:NID,:NDESC,:NTIME)";
+			dbcmd.Parameters.Add( new SqliteParameter("NID", 2) );
+			dbcmd.Parameters.Add( new SqliteParameter(":NDESC", "Two" + ((v3 || utf8) ? " (unicode test: \u05D1)" : "")) );
+			dbcmd.Parameters.Add( new SqliteParameter(":NTIME", DateTime.Now) );
+			Console.WriteLine("Insert modified rows with parameters = 1, 2: " + dbcmd.ExecuteNonQuery() + " , " + dbcmd.LastInsertRowID());
 
 			dbcmd.CommandText =
 				"INSERT INTO MONO_TEST  " +
-				"(NID, NDESC, NTIME )"+
-				"VALUES(3,'Three-followed-by-null', NULL)";
+				"(NID, NDESC, NTIME) " +
+				"VALUES(3,'Three, quoted parameter test, and next is null; :NTIME', NULL)";
 			Console.WriteLine("Insert with null modified rows and ID = 1, 3: " + dbcmd.ExecuteNonQuery() + " , " + dbcmd.LastInsertRowID());
 
 			dbcmd.CommandText =
@@ -100,7 +103,7 @@ namespace Test.Mono.Data.SqliteClient
 			Console.WriteLine("read and display a scalar = 'Two': " + dbcmd.ExecuteScalar());
 
 			dbcmd.CommandText = "SELECT count(*) FROM MONO_TEST";
-			Console.WriteLine("read and display a non-column scalar = 2: " + dbcmd.ExecuteScalar());
+			Console.WriteLine("read and display a non-column scalar = 3: " + dbcmd.ExecuteScalar());
 
 			Console.WriteLine("read and display data using DataAdapter/DataSet...");
 			SqliteDataAdapter adapter = new SqliteDataAdapter("SELECT * FROM MONO_TEST", connectionString);

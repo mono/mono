@@ -1,3 +1,34 @@
+2006-01-22  Joshua Tauberer  <tauberer@for.net>
+
+	Most of the below fixes (in previous changes too) are thanks
+	to Thomas Zoechling and Tom Surace, and the byte[]->blob
+	parameter binding is thanks to <pablosantosluac@terra.es>.
+	
+	* SqliteCommand.cs:
+	  - Don't use a regex for finding parameters in v2.
+	  It didn't work when there were no parameters in
+	  the query (infinite loop of some sort -- should be filed
+	  as a Mono bug I guess).  Just scan for parameters names
+	  that aren't within quotes.
+	  - That wasn't even being called.  Now it is.
+	  - Marshaling for sqlite3_bind_parameter_name was wrong, as
+	  was the unicode call to bind_text16 which was looking for
+	  byte length of string while we were providing char length.
+	  - Bind byte[] parameters as blobs.
+	  - Trim the SQL string.  Trailing spaces makes it think
+	  another statement is coming along.
+	* SqliteDataReader.cs: When DATE/DATETIME columns come
+	  back as Int64s, return them using DateTime.FromFileTime.
+	  And don't return Int64s as ints if they aren't in the
+	  range of an int.
+	  - Check column names case-insensitively (bug 77272).
+	* SqliteParameter.cs: Public parameter names made nicer.
+	* SqliteParameterCollection.cs: Allow users to set parameter
+	  names with or without the : prefix that Sqlite wants.
+	* Sqlite.cs: Supporting changes.
+	* SqliteDataReader, SqliteConnection: ToLower with the
+	  invariant culture (bug 77372).
+
 2006-01-20  Joshua Tauberer  <tauberer@for.net>
 
 	* Sqlite3 calls now use unicode encoding.  Sqlite2

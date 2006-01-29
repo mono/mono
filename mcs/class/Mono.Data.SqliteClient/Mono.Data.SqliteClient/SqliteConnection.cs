@@ -143,9 +143,9 @@ namespace Mono.Data.SqliteClient
 					if (arg_pieces.Length != 2) {
 						throw new InvalidOperationException ("Invalid connection string");
 					}
-					string token = arg_pieces[0].ToLower ().Trim ();
+					string token = arg_pieces[0].ToLower (System.Globalization.CultureInfo.InvariantCulture).Trim ();
 					string tvalue = arg_pieces[1].Trim ();
-					string tvalue_lc = arg_pieces[1].ToLower ().Trim ();
+					string tvalue_lc = arg_pieces[1].ToLower (System.Globalization.CultureInfo.InvariantCulture).Trim ();
 					if (token == "uri") {
 						if (tvalue_lc.StartsWith ("file://")) {
 							db_file = tvalue.Substring (7);
