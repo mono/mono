@@ -185,7 +185,6 @@
 				<File RelPath="System.Data.Common\DbCommandSet.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.Common\DbConnection.cs" SubType="Component" BuildAction="Compile"/>
 				<File RelPath="System.Data.Common\DbConnectionString.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Data.Common\DbConvert.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.Common\DbDataAdapter.cs" SubType="Component" BuildAction="Compile"/>
 				<File RelPath="System.Data.Common\DbDataPermission.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.Common\DbDataPermissionAttribute.cs" SubType="Code" BuildAction="Compile"/>
@@ -270,6 +269,7 @@
 				<File RelPath="System.Data.ProviderBase.jvm\AbstractTransaction.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.ProviderBase.jvm\DbPortResolver.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.ProviderBase.jvm\DbStringManager.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Data.ProviderBase.jvm\DbConvert.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.ProviderBase.jvm\OleDbStrings.resx" BuildAction="EmbeddedResource"/>
 				<File RelPath="System.Data.ProviderBase.jvm\ParameterMetadataWrapper.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.ProviderBase.jvm\ReaderCache.cs" SubType="Code" BuildAction="Compile"/>
