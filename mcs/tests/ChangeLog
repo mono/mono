@@ -1,3 +1,7 @@
+2006-01-29  Raja R Harinath  <harinath@gmail.com>
+
+	* gtest-241.cs: New test from #77397.
+
 2006-01-21  Raja R Harinath  <harinath@gmail.com>
 
 	* test-489.cs: New test based on #76995.
