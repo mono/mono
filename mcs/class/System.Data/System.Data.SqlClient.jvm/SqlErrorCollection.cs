@@ -60,7 +60,7 @@ namespace System.Data.SqlClient
             }
         }
 
-		protected override AbstractDbError CreateDbError(java.sql.SQLException e, System.Data.Common.AbstractDBConnection connection) {
+		protected override AbstractDbError CreateDbError(java.sql.SQLException e, AbstractDBConnection connection) {
 			return new SqlError(e, connection);
 		}
 

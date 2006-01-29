@@ -35,9 +35,10 @@ using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
 using System.Text;
+using System.Data.ProviderBase;
 
 namespace System.Data.SqlClient {
-	public sealed class SqlCommandBuilder : Component
+	public sealed class SqlCommandBuilder : AbstractDbCommandBuilder
 	{
 		#region Fields
 
@@ -364,10 +365,7 @@ namespace System.Data.SqlClient {
 
 		public static void DeriveParameters (SqlCommand command)
 		{
-			if (command.Connection.State != ConnectionState.Open) {
-				throw new InvalidOperationException("DeriveParameters requires an open and available Connection. The connection's current state is Closed.");
-			}
-			command.DeriveParameters ();
+			DeriveParameters((AbstractDbCommand)command);
 		}
 
 		protected override void Dispose (bool disposing)

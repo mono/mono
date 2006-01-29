@@ -32,6 +32,7 @@
 
 using System;
 using System.Data.Common;
+using System.Data.ProviderBase;
 
 using java.sql;
 

@@ -137,7 +137,7 @@ namespace System.Data.SqlClient
 			return (SqlParameter)CreateParameterInternal();
 		}
 
-		protected override void CheckParameters()
+		protected sealed override void CheckParameters()
 		{
 			// do nothing
 		}
@@ -171,17 +171,17 @@ namespace System.Data.SqlClient
 			return null; 
 		}
 
-		protected override DbParameter CreateParameterInternal()
+		protected sealed override DbParameter CreateParameterInternal()
 		{
 			return new SqlParameter();
 		}
 
-		protected override DbDataReader CreateReader()
+		protected sealed override DbDataReader CreateReader()
 		{
 			return new SqlDataReader(this);
 		}
 
-		protected override DbParameterCollection CreateParameterCollection(AbstractDbCommand parent)
+		protected sealed override DbParameterCollection CreateParameterCollection(AbstractDbCommand parent)
 		{
 			return new SqlParameterCollection((SqlCommand)parent);
 		}
@@ -193,7 +193,7 @@ namespace System.Data.SqlClient
 			return clone;
 		}
 
-		protected override SystemException CreateException(SQLException e)
+		protected internal sealed override SystemException CreateException(SQLException e)
 		{
 			return new SqlException(e, Connection);		
 		}

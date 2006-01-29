@@ -32,6 +32,7 @@
 using System.Data;
 using System.Data.Common;
 using System.Collections;
+using System.Data.ProviderBase;
 
 using java.sql;
 
@@ -203,7 +204,7 @@ namespace System.Data.SqlClient
 			return CreateCommand();
 		}
 
-		internal override void OnSqlWarning(SQLWarning warning)
+		protected internal sealed override void OnSqlWarning(SQLWarning warning)
 		{
 			SqlErrorCollection col = new SqlErrorCollection(warning, this);
 			OnSqlInfoMessage(new SqlInfoMessageEventArgs(col));
@@ -221,12 +222,12 @@ namespace System.Data.SqlClient
 			return clone;
 		}
 
-		protected override SystemException CreateException(SQLException e)
+		protected sealed override SystemException CreateException(SQLException e)
 		{
 			return new SqlException(e, this);		
 		}
 
-		protected override SystemException CreateException(string message)
+		protected sealed override SystemException CreateException(string message)
 		{
 			return new SqlException(message, null, this);		
 		}
@@ -238,7 +239,7 @@ namespace System.Data.SqlClient
 			}
 		}
 
-		internal override void OnStateChanged(ConnectionState orig, ConnectionState current)
+		protected internal sealed override void OnStateChanged(ConnectionState orig, ConnectionState current)
 		{
 			if(StateChange != null) {
 				StateChange(this, new StateChangeEventArgs(orig, current));

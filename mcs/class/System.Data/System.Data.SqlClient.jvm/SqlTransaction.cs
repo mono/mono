@@ -32,13 +32,14 @@
 namespace System.Data.SqlClient
 {
     using System.Data;
+	using System.Data.ProviderBase;
     /*
     * Current Limitations:
     * 1. Rollback(String savePoint) - not implemented.
     * 2. Save(String) - not implemented.
     */
 
-    public sealed class SqlTransaction : System.Data.Common.AbstractTransaction
+    public sealed class SqlTransaction : AbstractTransaction
     {
     
 
