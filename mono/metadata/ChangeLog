@@ -1,3 +1,12 @@
+2006-01-29  Raja R Harinath  <harinath@gmail.com>
+
+	Fix #77397
+	* icall.c (ves_icall_MonoType_get_IsGenericParameter): Don't
+	return true if is byref.
+	(ves_icall_TypeBuilder_get_IsGenericParameter): Likewise.
+	(ves_icall_MonoType_get_DeclaringType): Return NULL on byref classes.
+	(ves_icall_MonoType_get_DeclaringMethod): Likewise.
+	
 2006-01-25  Ankit Jain  <jankit@novell.com>
 
 	* metadata-internals.h (mono_generic_params_with_ambiguous_names): Add declaration and
