@@ -289,13 +289,11 @@ namespace System.Reflection.Emit
 		}
 
 		public override Type DeclaringType {
-			get { return mbuilder != null ? null : tbuilder; }
+			get { return mbuilder != null ? mbuilder.DeclaringType : tbuilder; }
 		}
 
 		public override Type ReflectedType {
-			get {
-				return DeclaringType;
-			}
+			get { return DeclaringType; }
 		}
 
 		public override RuntimeTypeHandle TypeHandle {
@@ -354,9 +352,7 @@ namespace System.Reflection.Emit
 		}
 
 		public override MethodBase DeclaringMethod {
-			get { 
-				return mbuilder;
-			}
+			get { return mbuilder; }
 		}
 
 		public void SetCustomAttribute (CustomAttributeBuilder customBuilder)
