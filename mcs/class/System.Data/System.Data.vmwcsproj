@@ -260,6 +260,7 @@
 				<File RelPath="System.Data.ProviderBase\DbReferenceCollection.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.ProviderBase.jvm\AbstractDataReader.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.ProviderBase.jvm\AbstractDBCommand.cs" SubType="Component" BuildAction="Compile"/>
+				<File RelPath="System.Data.ProviderBase.jvm\AbstractDBCommandBuilder.cs" SubType="Component" BuildAction="Compile"/>
 				<File RelPath="System.Data.ProviderBase.jvm\AbstractDBConnection.cs" SubType="Component" BuildAction="Compile"/>
 				<File RelPath="System.Data.ProviderBase.jvm\AbstractDbError.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.ProviderBase.jvm\AbstractDbErrorCollection.cs" SubType="Code" BuildAction="Compile"/>
