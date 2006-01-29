@@ -6,13 +6,14 @@
 //
 
 using System;
+using System.Data.Common;
 
 using java.io;
 using java.sql;
 
-namespace System.Data.Common
+namespace System.Data.ProviderBase
 {
-	internal class DbConvert
+	public abstract class DbConvert
 	{
 		#region Fields
 
