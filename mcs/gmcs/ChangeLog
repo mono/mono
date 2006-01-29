@@ -1,3 +1,8 @@
+2006-01-29  Raja R Harinath  <harinath@gmail.com>
+
+	Fix part of #77397
+	* generic.cs (TypeManager.IsByRef): Handle pass-by-ref types.
+
 2006-01-28  Raja R Harinath  <harinath@gmail.com>
 
 	* typemanager.cs (GenericParameterPosition): New.
