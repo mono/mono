@@ -81,7 +81,7 @@ namespace System.Data.ProviderBase
 			set { _sourceVersion = value; }
 		}
 
-		internal DbTypes.JavaSqlTypes JdbcType
+		protected internal DbTypes.JavaSqlTypes JdbcType
 		{
 			get { 
 				if (!_isJdbcTypeSet) {
@@ -95,7 +95,7 @@ namespace System.Data.ProviderBase
 			}
 		}
 		
-		internal bool IsJdbcTypeSet
+		protected internal bool IsJdbcTypeSet
 		{
 			get { 
 				return _isJdbcTypeSet; 
@@ -111,7 +111,7 @@ namespace System.Data.ProviderBase
 			get { return _isDbTypeSet; }
 		}
 
-		internal virtual bool IsSpecial {
+		protected internal virtual bool IsSpecial {
 			get {
 				return false;
 			}
@@ -154,17 +154,17 @@ namespace System.Data.ProviderBase
 
 		#region Methods
 
-		internal abstract void SetParameterName(ResultSet res);
+		protected internal abstract void SetParameterName(ResultSet res);
 
-		internal abstract void SetParameterDbType(ResultSet res);
+		protected internal abstract void SetParameterDbType(ResultSet res);
 
-		internal abstract void SetSpecialFeatures(ResultSet res);
+		protected internal abstract void SetSpecialFeatures(ResultSet res);
 		
 		public abstract object Clone();
 
-		internal abstract DbTypes.JavaSqlTypes JdbcTypeFromProviderType();
+		protected internal abstract DbTypes.JavaSqlTypes JdbcTypeFromProviderType();
 
-		internal abstract object ConvertValue(object value);
+		protected internal abstract object ConvertValue(object value);
 
 		internal void SetParameterPrecisionAndScale(ResultSet res)
 		{

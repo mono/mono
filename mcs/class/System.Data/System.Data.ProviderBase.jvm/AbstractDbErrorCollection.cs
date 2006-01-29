@@ -41,7 +41,7 @@ namespace System.Data.ProviderBase {
 	public abstract class AbstractDbErrorCollection : ICollection, IEnumerable {
 		private ArrayList _list;
 
-		internal AbstractDbErrorCollection(SQLException e, AbstractDBConnection connection) {
+		protected AbstractDbErrorCollection(SQLException e, AbstractDBConnection connection) {
 			_list = new ArrayList();
 
 			while(e != null) {

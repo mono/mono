@@ -33,12 +33,12 @@
 using System;
 using System.Data;
 using System.Collections;
-using System.Data.ProviderBase;
+using System.Data.Common;
 
 using java.io;
 using java.sql;
 
-namespace System.Data.Common
+namespace System.Data.ProviderBase
 {
 	public abstract class AbstractDataReader : DbDataReaderBase, ISafeDataRecord {
 

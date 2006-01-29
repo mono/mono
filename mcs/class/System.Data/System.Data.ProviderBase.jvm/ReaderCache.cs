@@ -32,7 +32,7 @@
 using System;
 using java.sql;
 
-namespace System.Data.Common
+namespace System.Data.ProviderBase
 {
 	public interface IReaderCacheContainer
 	{

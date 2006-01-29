@@ -38,13 +38,14 @@ using System.Collections;
 using System.Collections.Specialized;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Data.Common;
 
 using java.sql;
 using javax.sql;
 using javax.naming;
 // can not use java.util here - it manes ArrayList an ambiguous reference
 
-namespace System.Data.Common
+namespace System.Data.ProviderBase
 {
 	public abstract class AbstractDBConnection : DbConnection
 	{
@@ -106,9 +107,9 @@ namespace System.Data.Common
 
 		#region ConnectionStringHelper
 
-		internal sealed class ConnectionStringHelper
+		public sealed class ConnectionStringHelper
 		{
-			internal static string FindValue(NameValueCollection collection, string[] keys)
+			public static string FindValue(NameValueCollection collection, string[] keys)
 			{
 				if (collection == null || keys == null || keys.Length == 0) {
 					return String.Empty;
@@ -123,7 +124,7 @@ namespace System.Data.Common
 				return String.Empty;
 			}
 
-			internal static string FindValue(NameValueCollection collection, string key)
+			public static string FindValue(NameValueCollection collection, string key)
 			{
 				if (collection == null) {
 					return String.Empty;
@@ -133,7 +134,7 @@ namespace System.Data.Common
 				return (value != null) ? value : String.Empty;
 			}
 
-			internal static void UpdateValue(NameValueCollection collection,string[] keys,string value)
+			public static void UpdateValue(NameValueCollection collection,string[] keys,string value)
 			{
 				for(int i=0; i < keys.Length; i++) {
 					if (collection[keys[i]] != null) {
@@ -142,7 +143,7 @@ namespace System.Data.Common
 				}
 			}
 
-			internal static void AddValue(NameValueCollection collection,string[] keys,string value)
+			public static void AddValue(NameValueCollection collection,string[] keys,string value)
 			{
 				for(int i=0; i < keys.Length; i++) {
 					collection[keys[i]] = value;
@@ -153,7 +154,7 @@ namespace System.Data.Common
 			* Parses connection string and builds NameValueCollection 
 			* for all keys.
 			*/ 
-			internal static NameValueCollection BuildUserParameters (string connectionString)
+			public static NameValueCollection BuildUserParameters (string connectionString)
 			{
 				NameValueCollection userParameters = new NameValueCollection();
 
@@ -694,9 +695,9 @@ namespace System.Data.Common
 			// since WS also does not permits dynamically change of login timeout and tomcat does no implements - do not do it at all
 			//ds.setLoginTimeout(ConnectionTimeout);
 
-		internal abstract void OnSqlWarning(SQLWarning warning);
+		protected internal abstract void OnSqlWarning(SQLWarning warning);
 
-		internal abstract void OnStateChanged(ConnectionState orig, ConnectionState current);
+		protected internal abstract void OnStateChanged(ConnectionState orig, ConnectionState current);
 
 		protected abstract SystemException CreateException(SQLException e);
 
@@ -979,7 +980,7 @@ namespace System.Data.Common
 			}
 		}
 
-		internal virtual Connection GetConnectionFromProvider()
+		protected internal virtual Connection GetConnectionFromProvider()
 		{
 			ActivateJdbcDriver(JdbcDriverName);
 			DriverManager.setLoginTimeout(ConnectionTimeout);

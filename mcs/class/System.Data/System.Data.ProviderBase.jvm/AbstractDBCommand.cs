@@ -116,7 +116,7 @@ namespace System.Data.ProviderBase
 		private bool _hasResultSet;
 		private bool _explicitPrepare;
 
-		internal static ProcedureColumnCache _procedureColumnCache = new ProcedureColumnCache();
+		static ProcedureColumnCache _procedureColumnCache = new ProcedureColumnCache();
 
 		#endregion // Fields
 
@@ -230,7 +230,7 @@ namespace System.Data.ProviderBase
 
 		// AbstractDbCommand acts as IEnumerator over JDBC statement
 		// AbstractDbCommand.CurrentResultSet corresponds to IEnumerator.Current
-		internal virtual ResultSet CurrentResultSet
+		protected internal virtual ResultSet CurrentResultSet
 		{
 			get { 
 				try {
@@ -275,7 +275,7 @@ namespace System.Data.ProviderBase
 
 		protected abstract DbParameterCollection CreateParameterCollection(AbstractDbCommand parent);
 
-		protected abstract SystemException CreateException(SQLException e);
+		protected internal abstract SystemException CreateException(SQLException e);
 
 		protected internal void CopyTo(AbstractDbCommand target)
 		{
@@ -313,25 +313,12 @@ namespace System.Data.ProviderBase
 			return false;
 		}
 
-		protected override DbParameter CreateDbParameter()
+		protected sealed override DbParameter CreateDbParameter()
 		{
 			return CreateParameterInternal();
 		}
 
-		internal void DeriveParameters ()
-		{
-			if(CommandType != CommandType.StoredProcedure) {
-				throw ExceptionHelper.DeriveParametersNotSupported(this.GetType(),CommandType);
-			}
-
-			ArrayList parameters = DeriveParameters(CommandText, true);
-			Parameters.Clear();
-			foreach (AbstractDbParameter param in parameters) {
-				Parameters.Add(param.Clone());
-			}
-		}
-
-		protected ArrayList DeriveParameters(string procedureName, bool throwIfNotExist)
+		internal ArrayList DeriveParameters(string procedureName, bool throwIfNotExist)
 		{
 			try {
 				ArrayList col = _procedureColumnCache.GetProcedureColumns((AbstractDBConnection)Connection, procedureName, this);
@@ -1105,7 +1092,7 @@ namespace System.Data.ProviderBase
 
 		// AbstractDbCommand acts as IEnumerator over JDBC statement
 		// AbstractDbCommand.NextResultSet corresponds to IEnumerator.MoveNext
-		internal virtual bool NextResultSet()
+		protected internal virtual bool NextResultSet()
 		{
 			if (!_hasResultSet)
 				return false;
