@@ -34,6 +34,7 @@
 using System;
 using System.Data;
 using System.Data.Common;
+using System.Data.ProviderBase;
 using System.Reflection;
 using System.Collections;
 

@@ -52,12 +52,12 @@ namespace System.Data.OleDb
 
 		#region Methods
 
-		protected override SystemException CreateException(string message, SQLException e)
+		protected sealed override SystemException CreateException(string message, SQLException e)
 		{
 			return new OleDbException(message,e, (OleDbConnection)_command.Connection);		
 		}
 
-		protected override SystemException CreateException(java.io.IOException e)
+		protected sealed override SystemException CreateException(java.io.IOException e)
 		{
 			return new OleDbException(e, (OleDbConnection)_command.Connection);		
 		}

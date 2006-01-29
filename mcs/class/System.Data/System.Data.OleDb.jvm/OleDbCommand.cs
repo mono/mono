@@ -139,7 +139,7 @@ namespace System.Data.OleDb
 			set { base.Transaction = (DbTransaction)value; }
 		}
 
-		internal override ResultSet CurrentResultSet
+		protected internal sealed override ResultSet CurrentResultSet
 		{
 			get { 
 				try {
@@ -188,7 +188,7 @@ namespace System.Data.OleDb
 			return (OleDbParameter)CreateParameterInternal();
 		} 
 
-		protected override void CheckParameters()
+		protected sealed override void CheckParameters()
 		{
 			for(int i = 0; i < Parameters.Count; i++) {
 				OleDbParameter parameter = (OleDbParameter)Parameters[i];
@@ -204,12 +204,12 @@ namespace System.Data.OleDb
 			}
 		}
 
-		protected override DbParameter CreateParameterInternal()
+		protected sealed override DbParameter CreateParameterInternal()
 		{
 			return new OleDbParameter();
 		}
 
-		protected override DbParameterCollection CreateParameterCollection(AbstractDbCommand parent)
+		protected sealed override DbParameterCollection CreateParameterCollection(AbstractDbCommand parent)
 		{
 			return new OleDbParameterCollection((OleDbCommand)parent);
 		}
@@ -243,7 +243,7 @@ namespace System.Data.OleDb
 			return ((OleDbParameter)parameter).IsOracleRefCursor;
 		}
 
-		internal override bool NextResultSet()
+		protected internal override bool NextResultSet()
 		{
 			try { 
 				bool hasMoreResults = base.NextResultSet();
@@ -272,12 +272,12 @@ namespace System.Data.OleDb
 			return false;
 		}
 
-		protected override DbDataReader CreateReader()
+		protected sealed override DbDataReader CreateReader()
 		{
 			return new OleDbDataReader(this);
 		}
 
-		protected override SystemException CreateException(SQLException e)
+		protected internal sealed override SystemException CreateException(SQLException e)
 		{
 			return new OleDbException(e,Connection);		
 		}

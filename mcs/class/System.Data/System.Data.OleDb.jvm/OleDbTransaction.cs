@@ -34,6 +34,7 @@ namespace System.Data.OleDb
 {
 
     using System.Data.Common;
+	using System.Data.ProviderBase;
     using System.Data;
 
     public class OleDbTransaction : AbstractTransaction

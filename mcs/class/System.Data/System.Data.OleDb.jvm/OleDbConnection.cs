@@ -34,6 +34,7 @@
 using System.Data;
 using System.Data.Common;
 using System.Collections;
+using System.Data.ProviderBase;
 
 using java.sql;
 
@@ -242,12 +243,12 @@ namespace System.Data.OleDb
 			return clone;
 		}
 
-		protected override SystemException CreateException(SQLException e)
+		protected sealed override SystemException CreateException(SQLException e)
 		{
 			return new OleDbException(e,this);		
 		}
 
-		protected override SystemException CreateException(string message)
+		protected sealed override SystemException CreateException(string message)
 		{
 			return new OleDbException(message, null, this);	
 		}
@@ -294,7 +295,7 @@ namespace System.Data.OleDb
 			return schemaTable;
 		}
 
-		protected internal override void ValidateConnectionString(string connectionString)
+		protected internal sealed override void ValidateConnectionString(string connectionString)
 		{
 			base.ValidateConnectionString(connectionString);
 
@@ -332,13 +333,13 @@ namespace System.Data.OleDb
 			//throw new NotImplementedException();
 		}
 
-		internal override void OnSqlWarning(SQLWarning warning)
+		protected internal sealed override void OnSqlWarning(SQLWarning warning)
 		{
 			OleDbErrorCollection col = new OleDbErrorCollection(warning, this);
 			OnOleDbInfoMessage(new OleDbInfoMessageEventArgs(col));
 		}
 
-		internal override Connection GetConnectionFromProvider()
+		protected internal sealed override Connection GetConnectionFromProvider()
 		{
 			if ((ProviderType == PROVIDER_TYPE.MSDAORA) && 
 				("true").Equals(StringManager.GetString("ORA_CONNECTION_POOLING_ENABLED","false"))) {
@@ -362,7 +363,7 @@ namespace System.Data.OleDb
 				+ ServerName + ":" + Port + ":" + CatalogName;
 		}
         
-		internal override void OnStateChanged(ConnectionState orig, ConnectionState current)
+		protected internal sealed override void OnStateChanged(ConnectionState orig, ConnectionState current)
 		{
 			if(StateChange != null) {
 				StateChange(this, new StateChangeEventArgs(orig, current));
