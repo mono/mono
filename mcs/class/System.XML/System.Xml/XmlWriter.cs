@@ -254,11 +254,6 @@ namespace System.Xml
 			// In MS.NET (1.0), this check is done *here*, not at WriteStartAttribute.
 			// (XmlTextWriter.WriteStartAttribute("xmlns", "anyname", null) throws an exception.
 
-#if NET_1_0
-			if ((prefix == "xmlns" || (prefix == "" && localName == "xmlns")) && ns == null)
-				ns = "http://www.w3.org/2000/xmlns/";
-#endif
-
 			WriteStartAttribute (prefix, localName, ns);
 			WriteString (value);
 			WriteEndAttribute ();

@@ -1,3 +1,10 @@
+2006-01-30  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlNodeReader2.cs XmlException.cs XmlReader.cs XmlTextReader.cs
+	  XmlWriter.cs XmlTextWriter.cs XmlValidatingReader.cs
+	  XmlNodeReaderImpl.cs DTDValidatingReader.cs XmlSecureResolver.cs:
+	  cleaning up obsolete NET_1_0 code.
+
 2006-01-28  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlTextWriter.cs : avoid case-insensitive String.Compare().

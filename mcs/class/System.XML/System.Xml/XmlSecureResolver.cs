@@ -1,3 +1,11 @@
+//
+// System.Xml.XmlSecureResolver.cs
+//
+// Author: Atsushi Enomoto (ginga@kit.hi-ho.ne.jp)
+//
+// (C) 2003 Atsushi Enomoto
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+//
 
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -18,17 +26,6 @@
 // LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-//
-#if NET_1_0
-#endif
-#if NET_1_1
-//
-// System.Xml.XmlSecureResolver.cs
-//
-// Author: Atsushi Enomoto (ginga@kit.hi-ho.ne.jp)
-//
-// (C) 2003 Atsushi Enomoto
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 
 using System.Net;
@@ -135,4 +132,3 @@ namespace System.Xml
 
 	}
 }
-#endif

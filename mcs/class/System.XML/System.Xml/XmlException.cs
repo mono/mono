@@ -47,13 +47,11 @@ namespace System.Xml
 
 		#region Constructors
 
-#if NET_1_0
-#else
 		public XmlException () 
 			: base ()
 		{
 		}
-#endif
+
 		public XmlException (string message, Exception innerException) 
 			: base (message, innerException)
 		{
@@ -67,11 +65,7 @@ namespace System.Xml
 			this.sourceUri = info.GetString ("sourceUri");
 		}
 
-#if NET_1_0
-		internal XmlException (string message)
-#else
 		public XmlException (string message)
-#endif
 			: base (message)
 		{
 		}
@@ -95,12 +89,8 @@ namespace System.Xml
 			}
 			this.sourceUri = sourceUri;
 		}
-		
-#if NET_1_0
-		internal XmlException (string message, Exception innerException, int lineNumber, int linePosition)
-#else
+
 		public XmlException (string message, Exception innerException, int lineNumber, int linePosition)
-#endif
 			: base (message, innerException)
 		{
 			this.lineNumber = lineNumber;

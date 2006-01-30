@@ -655,23 +655,6 @@ namespace System.Xml
 			return ReadCharsInternal (buffer, offset, length);
 		}
 
-#if NET_1_0
-		public override string ReadInnerXml ()
-		{
-			return ReadInnerXmlInternal ();
-		}
-
-		public override string ReadOuterXml ()
-		{
-			return ReadOuterXmlInternal ();
-		}
-
-		public override string ReadString ()
-		{
-			return ReadStringInternal ();
-		}
-#endif
-
 		public void ResetState ()
 		{
 			throw new InvalidOperationException ("Cannot call ResetState when parsing an XML fragment.");

@@ -647,24 +647,7 @@ namespace System.Xml
 			Read ();
 		}
 
-#if NET_1_0
-		public abstract string ReadInnerXml ();
-
-		public abstract string ReadOuterXml ();
-
-#else
 		public virtual string ReadInnerXml ()
-		{
-			return ReadInnerXmlInternal ();
-		}
-
-		public virtual string ReadOuterXml ()
-		{
-			return ReadOuterXmlInternal ();
-		}
-#endif
-
-		internal string ReadInnerXmlInternal ()
 		{
 			if (ReadState != ReadState.Interactive || NodeType == XmlNodeType.EndElement)
 				return String.Empty;
@@ -692,7 +675,7 @@ namespace System.Xml
 			return sw.ToString ();
 		}
 
-		internal string ReadOuterXmlInternal ()
+		public virtual string ReadOuterXml ()
 		{
 			if (ReadState != ReadState.Interactive || NodeType == XmlNodeType.EndElement)
 				return String.Empty;
@@ -749,16 +732,7 @@ namespace System.Xml
 			Read ();
 		}
 
-#if NET_1_0
-		public abstract string ReadString ();
-#else
 		public virtual string ReadString ()
-		{
-			return ReadStringInternal ();
-		}
-#endif
-
-		internal string ReadStringInternal ()
 		{
 			if (readStringBuffer == null)
 				readStringBuffer = new StringBuilder ();

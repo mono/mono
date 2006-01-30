@@ -949,26 +949,6 @@ namespace Mono.Xml
 				return reader.ReadAttributeValue ();
 		}
 
-#if NET_1_0
-		public override string ReadInnerXml ()
-		{
-			// MS.NET 1.0 has a serious bug here. It skips validation.
-			return reader.ReadInnerXml ();
-		}
-
-		public override string ReadOuterXml ()
-		{
-			// MS.NET 1.0 has a serious bug here. It skips validation.
-			return reader.ReadOuterXml ();
-		}
-#endif
-
-		public override string ReadString ()
-		{
-			// It seems to be the same as ReadInnerXml(). 
-			return base.ReadStringInternal ();
-		}
-
 		public override void ResolveEntity ()
 		{
 			if (resolver == null)

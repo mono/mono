@@ -512,35 +512,10 @@ namespace System.Xml
 			return validatingReader.ReadAttributeValue ();
 		}
 
-#if NET_1_0
-		// LAMESPEC: MS.NET 1.0 has critical bug here.
-		// After calling these methods, validation does not work anymore!
-		public override string ReadInnerXml ()
-		{
-			if (validatingReader == null)
-				return "";
-			return validatingReader.ReadInnerXml ();
-		}
-
-		public override string ReadOuterXml ()
-		{
-			if (validatingReader == null)
-				return "";
-			return validatingReader.ReadOuterXml ();
-		}
-#endif
-
-#if NET_1_0
-		public override string ReadString ()
-		{
-			return base.ReadStringInternal ();
-		}
-#else
 		public override string ReadString ()
 		{
 			return base.ReadString ();
 		}
-#endif
 
 		public object ReadTypedValue ()
 		{

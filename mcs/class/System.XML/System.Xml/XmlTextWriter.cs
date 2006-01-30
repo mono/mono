@@ -782,11 +782,7 @@ namespace System.Xml
 			}
 
 			// Note that null namespace with "xmlns" are allowed.
-#if NET_1_0
-			if ((prefix == "xmlns" || localName == "xmlns" && prefix == String.Empty) && ns != XmlnsNamespace)
-#else
 			if ((prefix == "xmlns" || localName == "xmlns" && prefix == String.Empty) && ns != null && ns != XmlnsNamespace)
-#endif
 				throw ArgumentError (String.Format ("The 'xmlns' attribute is bound to the reserved namespace '{0}'", XmlnsNamespace));
 
 			if (ns == XmlnsNamespace) // see bug #77083

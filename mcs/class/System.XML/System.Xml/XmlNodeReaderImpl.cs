@@ -821,21 +821,9 @@ namespace System.Xml
 				return false;
 		}
 
-#if NET_1_0
-		public override string ReadInnerXml ()
-		{
-			return ReadInnerXmlInternal ();
-		}
-
-		public override string ReadOuterXml ()
-		{
-			return ReadOuterXmlInternal ();
-		}
-#endif
-
 		public override string ReadString ()
 		{
-			return ReadStringInternal ();
+			return base.ReadString ();
 		}
 
 		public override void ResolveEntity ()
