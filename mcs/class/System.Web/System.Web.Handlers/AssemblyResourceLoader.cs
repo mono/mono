@@ -33,7 +33,6 @@ using System.Reflection;
 using System.IO;
 
 namespace System.Web.Handlers {
-	[MonoTODO ("Should we cache stuff?")]
 	#if NET_2_0
 	public sealed
 	#else
