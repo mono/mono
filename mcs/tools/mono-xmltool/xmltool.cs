@@ -118,7 +118,8 @@ environment variable that affects on the behavior:
 			XmlTextReader xtr = new XmlTextReader (args [2]);
 			RelaxngValidatingReader vr = 
 				new RelaxngValidatingReader (xtr, p);
-			vr.ReportDetails = true;
+			if (Environment.GetEnvironmentVariable ("MONO_XMLTOOL_ERROR_DETAILS") == "yes")
+				vr.ReportDetails = true;
 
 			while (!vr.EOF)
 				vr.Read ();
