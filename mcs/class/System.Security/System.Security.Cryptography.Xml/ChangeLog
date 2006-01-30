@@ -1,3 +1,10 @@
+2006-01-30  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlDsigEnvelopedSignatureTransform.cs :
+	  It should not remove nodes in another XmlNodeList while its
+	  iterator is in active use. This is exposed by the recent
+	  XmlNodeList change.
+
 2005-09-27  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* KeyInfoX509Data.cs: Remove old 2.0 specific check.
