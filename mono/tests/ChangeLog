@@ -1,3 +1,8 @@
+2006-01-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile.am (patch-libtool): New utility target for those using a
+	static build.
+
 2006-01-27  Raja R Harinath  <rharinath@novell.com>
 
 	Add support for net_2_0 test cases.
