@@ -14,7 +14,14 @@ namespace I18N.CJK
 	[Serializable]
 	internal abstract class DbcsEncoding : MonoEncoding
 	{
-		public DbcsEncoding(int codePage) : base(codePage) {}
+		public DbcsEncoding (int codePage) : this (codePage, 0)
+		{
+		}
+
+		public DbcsEncoding (int codePage, int windowsCodePage)
+			: base (codePage, windowsCodePage)
+		{
+		}
 
 		internal abstract DbcsConvert GetConvert ();
 

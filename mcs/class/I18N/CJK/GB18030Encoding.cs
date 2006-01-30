@@ -25,7 +25,7 @@ namespace I18N.CJK
 	{
 		// Constructor.
 		public GB18030Encoding ()
-			: base (54936)
+			: base (54936, 936)
 		{
 		}
 
@@ -33,8 +33,32 @@ namespace I18N.CJK
 			get { return "Chinese Simplified (GB18030)"; }
 		}
 
+		public override string HeaderName {
+			get { return "GB18030"; }
+		}
+
+		public override string BodyName {
+			get { return "GB18030"; }
+		}
+
 		public override string WebName {
 			get { return "GB18030"; }
+		}
+
+		public override bool IsMailNewsDisplay {
+			get { return true; }
+		}
+
+		public override bool IsMailNewsSave {
+			get { return true; }
+		}
+
+		public override bool IsBrowserDisplay {
+			get { return true; }
+		}
+
+		public override bool IsBrowserSave {
+			get { return true; }
 		}
 
 		public override int GetMaxByteCount (int len)

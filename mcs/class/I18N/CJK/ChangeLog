@@ -1,3 +1,8 @@
+2006-01-30  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DbcsEncoding.cs ISO2022JP.cs GB18030Encoding.cs CP51932.cs
+	  CP949.cs : Fixed windows code page and some minor properties.
+
 2006-01-23  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DbcsConvert.cs ISO2022JP.cs CP950.cs CP932.cs: author lines.

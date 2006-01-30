@@ -65,7 +65,7 @@ public class CP51932 : MonoEncoding
 	private const int EUC_JP_CODE_PAGE = 51932;
 
 	// Constructor.
-	public CP51932 () : base (EUC_JP_CODE_PAGE)
+	public CP51932 () : base (EUC_JP_CODE_PAGE, 932)
 	{
 	}
 
@@ -185,11 +185,6 @@ public class CP51932 : MonoEncoding
 	// Get the IANA-preferred Web name for this encoding.
 	public override String WebName {
 		get { return "euc-jp"; }
-	}
-
-	// Get the Windows code page represented by this object.
-	public override int WindowsCodePage {
-		get { return EUC_JP_CODE_PAGE; }
 	}
 } // CP51932
 #endif // !ECMA_COMPAT

@@ -53,7 +53,7 @@ namespace I18N.CJK
 	public class ISO2022JPEncoding : MonoEncoding
 	{
 		public ISO2022JPEncoding (int codePage, bool allow1ByteKana, bool allowShiftIO)
-			: base (codePage)
+			: base (codePage, 932)
 		{
 			this.allow_1byte_kana = allow1ByteKana;
 			this.allow_shift_io = allowShiftIO;

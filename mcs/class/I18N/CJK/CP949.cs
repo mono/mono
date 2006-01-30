@@ -105,7 +105,8 @@ namespace I18N.CJK
     internal class KoreanEncoding : DbcsEncoding
     {
         // Constructor.
-        public KoreanEncoding (int codepage, bool useUHC) : base (codepage) {
+        public KoreanEncoding (int codepage, bool useUHC)
+            : base (codepage, 949) {
             this.useUHC = useUHC;
         }
 
