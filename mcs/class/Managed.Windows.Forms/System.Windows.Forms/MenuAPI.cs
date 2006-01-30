@@ -267,7 +267,7 @@ namespace System.Windows.Forms {
 			
 			Point pnt;
 			if (menu is MainMenu)
-				pnt = new Point (item.X, item.Y + 1);
+				pnt = new Point (item.X, 0);
 			else
 				pnt = new Point (item.X + item.Width, item.Y + 1);
 			pnt = menu.Wnd.PointToScreen (pnt);

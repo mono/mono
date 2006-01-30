@@ -1,3 +1,7 @@
+2006-01-30  Mike Kestner  <mkestner@novell.com>
+
+	* MenuAPI.cs: adjust MainMenu item popup location to y=0.
+
 2006-01-30  Jackson Harper  <jackson@ximian.com>
 
 	* TreeView.cs:
