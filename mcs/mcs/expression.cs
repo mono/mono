@@ -7055,12 +7055,13 @@ namespace Mono.CSharp {
 				Error (23, "The `.' operator can not be applied to pointer operands (" +
 				       TypeManager.CSharpName (expr_type) + ")");
 				return null;
-			}
-
-			if (expr_type == TypeManager.void_type) {
+			} else if (expr_type == TypeManager.void_type) {
 				Error (23, "The `.' operator can not be applied to operands of type 'void'");
 				return null;
+			} else if (expr_type == TypeManager.anonymous_method_type){
+				Error (23, "The `.' operator can not be applied to anonymous methods");
 			}
+			
 
 			Expression member_lookup;
 			member_lookup = MemberLookupFinal (ec, expr_type, expr_type, Identifier, loc);

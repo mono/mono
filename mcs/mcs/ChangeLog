@@ -1,3 +1,8 @@
+2006-01-30  Miguel de Icaza  <miguel@novell.com>
+
+	* expression.cs: Member access is not allowed on anonymous
+	methods.  Fixes #77402.
+
 2006-01-30  Raja R Harinath  <rharinath@novell.com>
 
 	Fix #77401
