@@ -9,6 +9,7 @@ scripts_1_0 = \
 	cilc			\
 	disco			\
 	dtd2xsd			\
+	dtd2rng			\
 	gacutil			\
 	genxs			\
 	ilasm			\
@@ -19,6 +20,7 @@ scripts_1_0 = \
 	mkbundle		\
 	monop			\
 	mono-shlib-cop 		\
+	mono-xmltool		\
 	mozroots		\
 	nunit-console		\
 	permview		\
