@@ -1,0 +1,14 @@
+<%@ Master Language="C#" MasterPageFile="otc.master" %>
+
+<asp:Content ID="Content1" ContentPlaceHolderID="mainContent" runat="Server">
+  <div>
+    <asp:ContentPlaceHolder ID="mainContent" runat="server" />
+  </div>
+  <div>
+    <asp:ContentPlaceHolder ID="main2" runat="server" />
+  </div>
+</asp:Content>
+
+<asp:Content ID="Content2" ContentPlaceHolderID="sideContent" runat="Server">
+  <asp:ContentPlaceHolder ID="side1" runat="server" />
+</asp:Content>
