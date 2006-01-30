@@ -1,3 +1,7 @@
+2006-01-30  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile : added mono-xmltool.
+
 2005-12-12  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (DIST_ONLY_SUBDIRS): Add 'xbuild'.
