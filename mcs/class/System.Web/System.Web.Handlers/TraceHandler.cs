@@ -75,7 +75,12 @@ namespace System.Web.Handlers
 		}
 
 #if NET_2_0
-		public void ProcessRequest (HttpContext context)
+		void IHttpHandler.ProcessRequest (HttpContext context)
+		{
+			ProcessRequest (context);
+		}
+
+		protected void ProcessRequest (HttpContext context)
 #else
 		void IHttpHandler.ProcessRequest (HttpContext context)
 #endif
@@ -107,7 +112,11 @@ namespace System.Web.Handlers
 		}
 
 #if NET_2_0
-		public bool IsReusable {
+		bool IHttpHandler.IsReusable {
+			get { return IsReusable; }
+		}
+
+		protected bool IsReusable {
 #else
 		bool IHttpHandler.IsReusable {
 #endif

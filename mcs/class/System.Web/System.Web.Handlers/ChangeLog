@@ -1,3 +1,7 @@
+2006-01-30 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TraceHandler.cs: class status fixes.
+
 2006-01-26  Chris Toshok  <toshok@ximian.com>
 
 	* AssemblyResourceLoader.cs (GetResourceUrl): if the assembly
