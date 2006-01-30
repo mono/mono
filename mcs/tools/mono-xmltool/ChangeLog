@@ -1,0 +1,3 @@
+2006-01-30  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* xmltool.cs, Makefile, mono-xmltool.exe.sources : new files.
