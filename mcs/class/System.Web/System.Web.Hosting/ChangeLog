@@ -1,3 +1,14 @@
+2006-01-30 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* IProcessHostFactoryHelper.cs:
+	* IProcessPingCallback.cs:
+	* IProcessHost.cs:
+	* IProcessHostSupportFunction.cs:
+	* IHttpWorkerRequestHandler.cs:
+	* IQueueHost.cs:
+	* IApplicationHost.cs: removed all this. They are not longer part of the
+	public API.
+
 2006-01-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* VirtualDirectory.cs:
