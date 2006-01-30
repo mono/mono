@@ -631,15 +631,10 @@ namespace System.Windows.Forms {
 			base.OnKeyDown (e);
 
 			if (!e.Handled && checkboxes &&
-					selected_node != null &&
-					(e.KeyData & Keys.KeyCode) == Keys.Space) {
-				TreeViewCancelEventArgs args = new TreeViewCancelEventArgs (
-					selected_node, false, TreeViewAction.ByKeyboard);
-				OnBeforeCheck (args);
-				if (!args.Cancel) {
-					selected_node.Checked = !selected_node.Checked;
-					OnAfterCheck (new TreeViewEventArgs (selected_node, TreeViewAction.ByKeyboard));
-				}
+           		     selected_node != null &&
+			    (e.KeyData & Keys.KeyCode) == Keys.Space) {
+				selected_node.check_reason = TreeViewAction.ByKeyboard;
+				selected_node.Checked = !selected_node.Checked;		
 				e.Handled = true;
 			}
 		}
@@ -664,7 +659,7 @@ namespace System.Windows.Forms {
 				ItemDrag (this, e);
 		}
 
-		protected virtual void OnAfterCheck (TreeViewEventArgs e) {
+		protected internal virtual void OnAfterCheck (TreeViewEventArgs e) {
 			if (on_after_check != null)
 				on_after_check (this, e);
 		}
@@ -689,7 +684,7 @@ namespace System.Windows.Forms {
 				on_after_select (this, e);
 		}
 
-		protected virtual void OnBeforeCheck (TreeViewCancelEventArgs e) {
+		protected internal virtual void OnBeforeCheck (TreeViewCancelEventArgs e) {
 			if (on_before_check != null)
 				on_before_check (this, e);
 		}
@@ -1393,6 +1388,7 @@ namespace System.Windows.Forms {
 				node.Toggle ();
 				return;
 			} else if (checkboxes && IsCheckboxArea (node, e.X)) {
+				node.check_reason = TreeViewAction.ByMouse;
 				node.Checked = !node.Checked;
 				UpdateNode(node);
 				return;

@@ -1,5 +1,11 @@
 2006-01-30  Jackson Harper  <jackson@ximian.com>
 
+	* TreeView.cs:
+	* TreeNode.cs: Raise events no matter how the treenode is
+	checked. Patch by Don Edvalson.
+
+2006-01-30  Jackson Harper  <jackson@ximian.com>
+
 	* TreeNode.cs: Signature fix.
 
 2006-01-29  Alexander Olk  <alex.olk@googlemail.com>

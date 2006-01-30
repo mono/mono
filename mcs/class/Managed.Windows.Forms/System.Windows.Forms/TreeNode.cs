@@ -41,6 +41,7 @@ namespace System.Windows.Forms {
 		private int image_index = -1;
 		private int selected_image_index = -1;
 		internal TreeNodeCollection nodes;
+		internal TreeViewAction check_reason = TreeViewAction.Unknown;
 		
 		private bool is_expanded = false;
 		private Rectangle bounds = Rectangle.Empty;
@@ -121,7 +122,7 @@ namespace System.Windows.Forms {
 			tn.Checked = Checked;
 			if (prop_bag != null)
 				tn.prop_bag = OwnerDrawPropertyBag.Copy (prop_bag);
-			return tn;
+			return tn;	
 		}
 
 		#endregion	// ICloneable Members
@@ -171,10 +172,17 @@ namespace System.Windows.Forms {
 			set {
 				if (check == value)
 					return;
-				check = value;
-
+			        TreeViewCancelEventArgs args = new TreeViewCancelEventArgs (this, false, check_reason);
 				if (TreeView != null)
-					TreeView.UpdateNode (this);
+					TreeView.OnBeforeCheck (args);
+				if (!args.Cancel) {
+					check = value;
+					if (TreeView != null) {
+						TreeView.OnAfterCheck (new TreeViewEventArgs (this, check_reason));
+						TreeView.UpdateNode (this);
+					}
+				}
+				check_reason = TreeViewAction.Unknown;
 			}
 		}
 
