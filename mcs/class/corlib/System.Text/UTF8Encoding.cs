@@ -394,9 +394,19 @@ public class UTF8Encoding : Encoding
 			throw new ArgumentOutOfRangeException ("count", _("ArgRange_Array"));
 		}
 
+		int length = 0;
+
+		if (leftOverCount == 0) {
+			for (; index < count; index++, count--) {
+				if (bytes [index] < 0x80)
+					length++;
+				else
+					break;
+			}
+		}
+
 		// Determine the number of characters that we have.
 		uint ch;
-		int length = 0;
 		uint leftBits = leftOverBits;
 		uint leftSoFar = (leftOverCount & (uint)0x0F);
 		uint leftSize = ((leftOverCount >> 4) & (uint)0x0F);
@@ -596,10 +606,20 @@ public class UTF8Encoding : Encoding
 		if (charIndex == chars.Length)
 			return 0;
 
+		int posn = charIndex;
+
+		if (leftOverCount == 0) {
+			for (; byteIndex < byteCount; posn++, byteIndex++, byteCount--) {
+				if (bytes [byteIndex] < 0x80)
+					chars [posn] = (char) bytes [byteIndex];
+				else
+					break;
+			}
+		}
+
 		// Convert the bytes into the output buffer.
 		uint ch;
 		int length = chars.Length;
-		int posn = charIndex;
 		uint leftBits = leftOverBits;
 		uint leftSoFar = (leftOverCount & (uint)0x0F);
 		uint leftSize = ((leftOverCount >> 4) & (uint)0x0F);
