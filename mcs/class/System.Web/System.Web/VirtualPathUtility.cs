@@ -3,6 +3,7 @@
 //
 // Author:
 //	Chris Toshok (toshok@ximian.com)
+//	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 
 //
@@ -38,93 +39,167 @@ namespace System.Web {
 	{
 		public static string AppendTrailingSlash (string virtualPath)
 		{
-			if (virtualPath == null || virtualPath == "" || virtualPath.EndsWith ("/"))
+			if (virtualPath == null)
+				return virtualPath;
+
+			int length = virtualPath.Length;
+			if (length == 0 || virtualPath [length - 1] == '/')
 				return virtualPath;
 
 			return virtualPath + "/";
 		}
 
-		[MonoTODO ("more work here")]
 		public static string Combine (string basePath, string relativePath)
 		{
-			if (!IsAbsolute (basePath))
-				throw new ArgumentException ();
+			if (basePath == null || basePath == "")
+				throw new ArgumentNullException ("basePath");
 
-			if (basePath.EndsWith ("/"))
-				return basePath + relativePath;
+			if (relativePath == null || relativePath == "")
+				throw new ArgumentNullException ("relativePath");
+
+			if (basePath [0] != '/')
+				throw new ArgumentException ("basePath is not an absolute path", "basePath");
+
+			if (relativePath [0] != '/')
+				return "/" + relativePath;
 
 			return UrlUtils.Combine (basePath, relativePath);
 		}
 
-		[MonoTODO]
 		public static string GetDirectory (string virtualPath)
 		{
-			throw new NotImplementedException ();
+			if (virtualPath == null || virtualPath == "") // Yes, "" throws an ArgumentNullException
+				throw new ArgumentNullException ("virtualPath");
+
+			if (virtualPath [0] != '/')
+				throw new ArgumentException ("The virtual path is not rooted", "virtualPath");
+
+			string result = UrlUtils.GetDirectory (virtualPath);
+			return AppendTrailingSlash (result);
 		}
 
-		[MonoTODO]
 		public static string GetExtension (string virtualPath)
 		{
-			throw new NotImplementedException ();
+			string filename = GetFileName (virtualPath);
+			int dot = filename.LastIndexOf ('.');
+			if (dot == -1 || dot == filename.Length + 1)
+				return "";
+
+			return filename.Substring (dot);
 		}
 
-		[MonoTODO]
 		public static string GetFileName (string virtualPath)
 		{
-			throw new NotImplementedException ();
+			if (virtualPath == null || virtualPath == "") // Yes, "" throws an ArgumentNullException
+				throw new ArgumentNullException ("virtualPath");
+			
+			return UrlUtils.GetFile (RemoveTrailingSlash (virtualPath));
 		}
 
 		public static bool IsAbsolute (string virtualPath)
 		{
 			if (virtualPath == "" || virtualPath == null)
-				throw new ArgumentNullException ();
+				throw new ArgumentNullException ("virtualPath");
 
-			return virtualPath.StartsWith ("/");
+			return (virtualPath [0] == '/');
 		}
 
-		[MonoTODO]
 		public static bool IsAppRelative (string virtualPath)
 		{
-			throw new NotImplementedException ();
+			if (virtualPath == null || virtualPath == "")
+				throw new ArgumentNullException ("virtualPath");
+
+			string vpath = HttpRuntime.AppDomainAppVirtualPath;
+			if (vpath == null)
+				return false;
+
+			return virtualPath.StartsWith (AppendTrailingSlash (vpath));
 		}
 
-		[MonoTODO]
 		public static string MakeRelative (string fromPath, string toPath)
 		{
-			throw new NotImplementedException ();
+			if (fromPath == null || toPath == null)
+				throw new NullReferenceException (); // yeah!
+
+			if (toPath == "")
+				return toPath;
+
+			if (toPath [0] != '/')
+				throw new ArgumentOutOfRangeException (); // This is what MS does.
+
+			if (fromPath.Length > 0 && fromPath [0] != '/')
+				throw new ArgumentOutOfRangeException (); // This is what MS does.
+
+			Uri from = new Uri ("http://nothing" + fromPath);
+			return from.MakeRelativeUri (new Uri ("http://nothing" + toPath)).AbsolutePath;
 		}
 
-		[MonoTODO]
 		public static string RemoveTrailingSlash (string virtualPath)
 		{
-			throw new NotImplementedException ();
+			if (virtualPath == null || virtualPath == "")
+				return null;
+
+			int last = virtualPath.Length - 1;
+			if (last == 0 || virtualPath [last] != '/')
+				return virtualPath;
+
+			return virtualPath.Substring (0, last);
 		}
 
-		[MonoTODO]
 		public static string ToAbsolute (string virtualPath)
 		{
-			throw new NotImplementedException ();
+			string apppath = HttpRuntime.AppDomainAppVirtualPath;
+			if (apppath == null)
+				throw new HttpException ("The path to the application is not known");
+
+			return ToAbsolute (apppath, virtualPath);
 		}
 
-		[MonoTODO]
 		public static string ToAbsolute (string virtualPath, string applicationPath)
 		{
-			throw new NotImplementedException ();
+			if (applicationPath == null || applicationPath == "")
+				throw new ArgumentNullException ("applicationPath");
+
+			if (virtualPath == null || virtualPath == "")
+				throw new ArgumentNullException ("virtualPath");
+
+			if (virtualPath.StartsWith (".."))
+				throw new ArgumentException (String.Format ("Relative path not allowed: '{0}'", virtualPath));
+
+			if (applicationPath [0] != '/')
+				throw new ArgumentOutOfRangeException ("appPath is not rooted", "applicationPath");
+
+			return UrlUtils.Combine (applicationPath, virtualPath);
+
 		}
 
-		[MonoTODO]
 		public static string ToAppRelative (string virtualPath)
 		{
-			throw new NotImplementedException ();
+			string apppath = HttpRuntime.AppDomainAppVirtualPath;
+			if (apppath == null)
+				throw new HttpException ("The path to the application is not known");
+
+			return ToAppRelative (apppath, virtualPath);
 		}
 
-		[MonoTODO]
 		public static string ToAppRelative (string virtualPath, string applicationPath)
 		{
-			throw new NotImplementedException ();
+			if (applicationPath == null || applicationPath == "")
+				throw new ArgumentNullException ("applicationPath");
+
+			if (virtualPath == null || virtualPath == "")
+				throw new ArgumentNullException ("virtualPath");
+
+			if (virtualPath.StartsWith (".."))
+				throw new ArgumentException (String.Format ("Relative path not allowed: '{0}'", virtualPath));
+
+			if (applicationPath [0] != '/')
+				throw new ArgumentOutOfRangeException ("appPath is not rooted", "applicationPath");
+
+			return MakeRelative (applicationPath, virtualPath);
 		}
 	}
-
 }
 
 #endif
+
