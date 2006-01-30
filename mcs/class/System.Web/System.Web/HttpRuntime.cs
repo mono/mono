@@ -391,36 +391,5 @@ namespace System.Web {
 			}
 		}
 #endif
-
-#if NET_2_0
-		static ApplicationShutdownReason shutdown_reason = ApplicationShutdownReason.None;
-
-		[MonoTODO]
-		public static ApplicationShutdownReason ShutdownReason {
-			get {
-				//
-				// Unlike previously believed by Gonzalo and
-				// myself HttpRuntime.UnloadAppDomain is not
-				// something that happens right away, UnloadAppDomain
-				// mereley "queues" the domain for destruction, but
-				// the application continues to execute until it
-				// is time to terminate.  Only at that point is
-				// the domain unloaded.
-				//
-				// This means that we should probably not use the
-				// QueueUserWorkItem above to shutdown the appdomain
-				// in a separate thread, but rather just flag this
-				// app for termination, and then unload the domain
-				//
-				// The user can continue executing for a long time
-				//
-				// See the sample in the docs for ShutdownReason.
-				//
-				
-				return shutdown_reason;
-			}
-		}
-#endif
-
 	}
 }

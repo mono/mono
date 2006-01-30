@@ -29,7 +29,6 @@
 #if NET_2_0
 namespace System.Web
 {
-        [Serializable]
         public enum ApplicationShutdownReason
         {
                 None = 0,
@@ -50,3 +49,4 @@ namespace System.Web
         }
 }
 #endif
+

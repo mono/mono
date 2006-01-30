@@ -278,7 +278,11 @@ namespace System.Web {
 
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+#if NET_2_0
+		public ISite Site {
+#else
 		public virtual ISite Site {
+#endif
 			get {
 				return isite;
 			}

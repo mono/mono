@@ -1,5 +1,14 @@
 2006-01-30 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* HttpDataTransferMode.cs: Removed file.
+	* HttpRequestPriority.cs: Removed file.
+	* ApplicationShutdownReason.cs:
+	* SiteMap.cs:
+	* HttpRuntime.cs:
+	* HttpApplication.cs: minor class status fixes.
+
+2006-01-30 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* VirtualPathUtility.cs: done with all the not implemented methods.
 
 2006-01-26 Gonzalo Paniagua Javier <gonzalo@ximian.com>

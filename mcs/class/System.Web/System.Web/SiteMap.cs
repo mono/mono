@@ -37,12 +37,8 @@ using System.Configuration;
 using System.Web.Configuration;
 
 namespace System.Web {
-	public abstract class SiteMap {
+	public static class SiteMap {
 	
-		internal SiteMap ()
-		{
-		}
-		
 		private static void Init ()
 		{
 			lock (locker) {
@@ -99,11 +95,16 @@ namespace System.Web {
 			}
 		}
 		
-		public event SiteMapResolveEventHandler SiteMapResolve {
+		public static event SiteMapResolveEventHandler SiteMapResolve {
 			add { Provider.SiteMapResolve += value; }
 			remove { Provider.SiteMapResolve -= value; }
 		}
-		
+
+		[MonoTODO ("By now it always return 'true'")]
+		public static bool Enabled {
+			get { return true; }
+		}
+
 		static SiteMapProvider provider;
 		static SiteMapProviderCollection providers;
 		static object locker = new object ();
