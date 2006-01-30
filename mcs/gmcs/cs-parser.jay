@@ -945,6 +945,8 @@ field_declaration
 		Expression type = (Expression) $3;
 		int mod = (int) $2;
 
+		current_array_type = null;
+
 		foreach (VariableDeclaration var in (ArrayList) $4){
 			Field field = new Field (current_class, type, mod, var.identifier, 
 						 (Attributes) $1, var.Location);
@@ -969,6 +971,8 @@ field_declaration
 			Expression type = (Expression) $4;
 			int mod = (int) $2;
 
+			current_array_type = null;
+
 			foreach (VariableDeclaration var in (ArrayList) $5) {
 				FixedField field = new FixedField (current_class, type, mod, var.identifier,
 					(Expression)var.expression_or_array_initializer, (Attributes) $1, var.Location);
@@ -986,6 +990,7 @@ field_declaration
 	  VOID  
 	  variable_declarators
 	  SEMICOLON {
+		current_array_type = null;
 		Report.Error (670, (Location) $3, "Fields cannot have void type");
 	  }
 	;
@@ -2277,6 +2282,7 @@ event_declaration
 	  opt_modifiers
 	  EVENT type variable_declarators SEMICOLON
 	  {
+		current_array_type = null;
 		foreach (VariableDeclaration var in (ArrayList) $5) {
 
 			MemberName name = new MemberName (var.identifier,
@@ -4110,6 +4116,7 @@ labeled_statement
 declaration_statement
 	: local_variable_declaration SEMICOLON
 	  {
+		current_array_type = null;
 		if ($1 != null){
 			DictionaryEntry de = (DictionaryEntry) $1;
 			Expression e = (Expression) de.Key;
@@ -4120,6 +4127,7 @@ declaration_statement
 
 	| local_constant_declaration SEMICOLON
 	  {
+		current_array_type = null;
 		if ($1 != null){
 			DictionaryEntry de = (DictionaryEntry) $1;
 
@@ -4986,7 +4994,6 @@ public class VariableDeclaration {
 		} else {
 			this.expression_or_array_initializer = (Expression)eoai;
 		}
-		CSharpParser.current_array_type = null;
 		this.Location = lt.Location;
 		this.OptAttributes = opt_attrs;
 	}
