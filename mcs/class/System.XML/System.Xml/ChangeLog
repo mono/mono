@@ -1,5 +1,11 @@
 2006-01-30  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlReader.cs : ReadOuterXml() returns meaingful value only for
+	  element and attribute. ReadInnerXml() does not have to create
+	  XmlTextWriter for empty elements.
+
+2006-01-30  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlNodeReader2.cs XmlException.cs XmlReader.cs XmlTextReader.cs
 	  XmlWriter.cs XmlTextWriter.cs XmlValidatingReader.cs
 	  XmlNodeReaderImpl.cs DTDValidatingReader.cs XmlSecureResolver.cs:

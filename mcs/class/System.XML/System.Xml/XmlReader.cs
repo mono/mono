@@ -652,13 +652,13 @@ namespace System.Xml
 			if (ReadState != ReadState.Interactive || NodeType == XmlNodeType.EndElement)
 				return String.Empty;
 
+			if (IsEmptyElement) {
+				Read ();
+				return String.Empty;
+			}
 			StringWriter sw = new StringWriter ();
 			XmlTextWriter xtw = new XmlTextWriter (sw);
 			if (NodeType == XmlNodeType.Element) {
-				if (IsEmptyElement) {
-					Read ();
-					return String.Empty;
-				}
 				int startDepth = Depth;
 				Read ();
 				while (startDepth < Depth) {
@@ -680,10 +680,17 @@ namespace System.Xml
 			if (ReadState != ReadState.Interactive || NodeType == XmlNodeType.EndElement)
 				return String.Empty;
 
-			StringWriter sw = new StringWriter ();
-			XmlTextWriter xtw = new XmlTextWriter (sw);
-			xtw.WriteNode (this, false);
-			return sw.ToString ();
+			switch (NodeType) {
+			case XmlNodeType.Element:
+			case XmlNodeType.Attribute:
+				StringWriter sw = new StringWriter ();
+				XmlTextWriter xtw = new XmlTextWriter (sw);
+				xtw.WriteNode (this, false);
+				return sw.ToString ();
+			default:
+				Skip ();
+				return String.Empty;
+			}
 		}
 
 		public virtual void ReadStartElement ()
