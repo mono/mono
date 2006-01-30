@@ -94,8 +94,8 @@ namespace System.Windows.Forms {
 		}
 
 		public void Dispose() {
-			windows[client_window] = null;
-			windows[whole_window] = null;
+			windows.Remove(client_window);
+			windows.Remove(whole_window);
 			for (int i = 0; i < marshal_free_list.Count; i++) {
 				Marshal.FreeHGlobal((IntPtr)marshal_free_list[i]);
 			}

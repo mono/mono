@@ -1045,7 +1045,7 @@ namespace System.Windows.Forms {
 				ParentHandle = FosterParent;
 			}
 
-			if ( ((cp.Style & (int)(WindowStyles.WS_CHILD))==0) && ((cp.ExStyle & (int)WindowStyles.WS_EX_APPWINDOW) == 0)) {
+			if ( ((cp.Style & (int)(WindowStyles.WS_CHILD | WindowStyles.WS_POPUP))==0) && ((cp.ExStyle & (int)WindowStyles.WS_EX_APPWINDOW) == 0)) {
 				// If we want to be hidden from the taskbar we need to be 'owned' by 
 				// something not on the taskbar. FosterParent is just that
 				ParentHandle = FosterParent;
@@ -1228,6 +1228,7 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void GetWindowPos(IntPtr handle, bool is_toplevel, out int x, out int y, out int width, out int height, out int client_width, out int client_height) {
+			IntPtr	parent;
 			RECT	rect;
 			POINT	pt;
 
@@ -1237,7 +1238,14 @@ namespace System.Windows.Forms {
 
 			pt.x=rect.left;
 			pt.y=rect.top;
-			Win32ScreenToClient(Win32GetParent(handle), ref pt);
+
+			parent = Win32GetParent(handle);
+			if (parent == FosterParent) {
+				Win32ScreenToClient(IntPtr.Zero, ref pt);
+			} else {
+				Win32ScreenToClient(parent, ref pt);
+			}
+
 			x = pt.x;
 			y = pt.y;
 

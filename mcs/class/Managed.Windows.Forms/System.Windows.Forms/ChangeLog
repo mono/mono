@@ -1,3 +1,13 @@
+2006-01-30  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* XplatUIWin32.cs: 
+	  - GetWindowPos: When a window is parented by FosterParent, use 
+	    the desktop instead of FosterParent as the base to get coordinates
+	  - CreateWindow: Don't make FosterParent the parent window for Popups
+	    if we don't want a taskbar entry, Popups automatically don't get one
+	* Hwnd.cs: Need to call remove to actually remove the key from the
+	  hash table
+
 2006-01-30  Mike Kestner  <mkestner@novell.com>
 
 	* MenuAPI.cs: adjust MainMenu item popup location to y=0.
