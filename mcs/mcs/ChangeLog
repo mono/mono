@@ -1,3 +1,11 @@
+2006-01-30  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #77401
+	* cs-parser.jay (VariableDeclaration): Don't set
+	current_array_type to null.
+	(field_declaration, event_declaration, declaration_statement):
+	Set it to null here.
+
 2006-01-28  Raja R Harinath  <harinath@gmail.com>
 
 	* typemanager.cs (GenericParameterPosition): New.

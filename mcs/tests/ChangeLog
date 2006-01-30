@@ -1,3 +1,7 @@
+2006-01-30  Raja R Harinath  <rharinath@novell.com>
+
+	* test-490.cs: New test from #77401.
+
 2005-12-21  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* gtest-friend-00-lib.cs: Include the public key in 
