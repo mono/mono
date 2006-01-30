@@ -103,10 +103,12 @@ namespace System.Web.Hosting {
 			return null; // forever young
 		}
 
-		[MonoTODO ("This thing throws a nullref when we're not inside an ASP.NET appdomain")]
 		public static Stream OpenFile (string virtualPath)
 		{
-			return null;
+			// This thing throws a nullref when we're not inside an ASP.NET appdomain, which is what MS does.
+			VirtualPathProvider provider = HostingEnvironment.VirtualPathProvider;
+			VirtualFile file = provider.GetFile (virtualPath);
+			return file.Open ();
 		}
 	}
 }

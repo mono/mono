@@ -113,6 +113,12 @@ namespace System.Web.Hosting {
 				return null;
 			}
 		}
+#if NET_2_0
+		[MonoTODO ("Gets the virtual path to the root web.config")]
+		public override string RootWebConfigPath {
+			get { return null; }
+		}
+#endif
 
 		public override void EndOfRequest ()
 		{

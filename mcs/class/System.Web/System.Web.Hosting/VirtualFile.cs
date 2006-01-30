@@ -6,7 +6,7 @@
 //
 
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -42,12 +42,6 @@ namespace System.Web.Hosting {
 		{
 			SetVirtualPath (virtualPath);
 		}
-
-		public abstract IEnumerable Children { get; }
-
-		public abstract IEnumerable Directories { get; }
-		
-		public abstract IEnumerable Files { get; }
 
 		public override bool IsDirectory {
 			get { return false; }

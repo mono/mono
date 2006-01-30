@@ -1,5 +1,13 @@
 2006-01-30 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* VirtualPathProvider.cs: implemented OpenFile.
+	* VirtualFile.cs: removed stuff cut&pasted from VirtualDirectory.
+
+	* SimpleWorkerRequest.cs: 
+	* HostingEnvironment.cs: class status fixes.
+
+2006-01-30 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* IProcessHostFactoryHelper.cs:
 	* IProcessPingCallback.cs:
 	* IProcessHost.cs:

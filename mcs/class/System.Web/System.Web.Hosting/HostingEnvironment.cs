@@ -78,12 +78,10 @@ namespace System.Web.Hosting {
 			get { throw new NotImplementedException (); }
 		}
 
-#if notyet
 		[MonoTODO]
 		public static VirtualPathProvider VirtualPathProvider {
 			get { throw new NotImplementedException (); }
 		}
-#endif
 
 		[MonoTODO]
 		public static void DecrementBusyCount ()
@@ -139,13 +137,11 @@ namespace System.Web.Hosting {
 			throw new NotImplementedException ();
 		}
 
-#if notyet
 		[MonoTODO]
 		public static void RegisterVirtualPathProvider (VirtualPathProvider virtualPathProvider)
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 		
 		[MonoTODO]
 		public static IDisposable SetCultures (string virtualPath)
