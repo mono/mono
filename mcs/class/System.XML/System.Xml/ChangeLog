@@ -1,5 +1,16 @@
 2006-01-30  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlDocument.cs, XmlAttribute.cs, XmlElement.cs : Avoid unnecessary
+	  name checks in CreateElement() and CreateAttribute().
+	  get_DocumentType() could be stopped when the iterated child node
+	  is the document element.
+	* XmlNode.cs : removed commented lines.
+	* XmlNameEntry.cs : hash code for a name entry is mostly identical by
+	  its local name, so avoid extraneous GetHashCode() especially on
+	  namespaces.
+
+2006-01-30  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlReader.cs : ReadOuterXml() returns meaingful value only for
 	  element and attribute. ReadInnerXml() does not have to create
 	  XmlTextWriter for empty elements.

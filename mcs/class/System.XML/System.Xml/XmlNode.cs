@@ -506,12 +506,6 @@ namespace System.Xml
 				// This recursively invokes events. (It is compatible with MS implementation.)
 				while (newChild.FirstChild != null)
 					this.InsertBefore (newChild.FirstChild, refChild);
-				/*
-				int x = newChild.ChildNodes.Count;
-				for (int i = 0; i < x; i++) {
-					XmlNode n = newChild.ChildNodes [0];
-					this.InsertBefore (n, refChild);					}
-				*/
 			}
 			else {
 				XmlLinkedNode newLinkedChild = (XmlLinkedNode) newChild;

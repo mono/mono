@@ -45,7 +45,7 @@ namespace System.Xml
 			Prefix = prefix;
 			LocalName = local;
 			NS = ns;
-			Hash = prefix.GetHashCode () + local.GetHashCode () + ns.GetHashCode ();
+			Hash = local.GetHashCode () + (prefix.Length > 0 ? prefix.GetHashCode () : 0);
 		}
 
 		public string Prefix;

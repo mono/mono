@@ -73,16 +73,14 @@ namespace System.Xml
 			XmlDocument doc,
 			bool atomizedNames) : base (doc)
 		{
-			XmlConvert.VerifyName (localName);
-
 			if (!atomizedNames) {
+				XmlConvert.VerifyName (localName);
+
 				prefix = doc.NameTable.Add (prefix);
 				localName = doc.NameTable.Add (localName);
 				namespaceURI = doc.NameTable.Add (namespaceURI);
 			}
 			name = doc.NameCache.Add (prefix, localName, namespaceURI, true);
-
-//			attributes = new XmlAttributeCollection (this);
 
 			if(doc.DocumentType != null)
 			{

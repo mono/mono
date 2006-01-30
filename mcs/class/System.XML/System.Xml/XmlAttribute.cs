@@ -69,10 +69,12 @@ namespace System.Xml
 			XmlDocument doc,
 			bool atomizedNames, bool checkNamespace) : base (doc)
 		{
-			if (prefix == null)
-				prefix = String.Empty;
-			if (namespaceURI == null)
-				namespaceURI = String.Empty;
+			if (!atomizedNames) {
+				if (prefix == null)
+					prefix = String.Empty;
+				if (namespaceURI == null)
+					namespaceURI = String.Empty;
+			}
 
 			// Prefix "xml" should be also checked (http://www.w3.org/XML/xml-names-19990114-errata#NE05)
 			// but MS.NET ignores such case
@@ -84,14 +86,15 @@ namespace System.Xml
 					throw new ArgumentException ("Invalid attribute namespace for namespace declaration.");
 			}
 
-			// There are no means to identify the DOM is namespace-
-			// aware or not, so we can only check Name validity.
-			if (prefix != "" && !XmlChar.IsName (prefix))
-				throw new ArgumentException ("Invalid attribute prefix.");
-			else if (!XmlChar.IsName (localName))
-				throw new ArgumentException ("Invalid attribute local name.");
-
 			if (!atomizedNames) {
+				// There are no means to identify the DOM is
+				// namespace-aware or not, so we can only 
+				// check Name validity.
+				if (prefix != "" && !XmlChar.IsName (prefix))
+					throw new ArgumentException ("Invalid attribute prefix.");
+				else if (!XmlChar.IsName (localName))
+					throw new ArgumentException ("Invalid attribute local name.");
+
 				prefix = doc.NameTable.Add (prefix);
 				localName = doc.NameTable.Add (localName);
 				namespaceURI = doc.NameTable.Add (namespaceURI);
