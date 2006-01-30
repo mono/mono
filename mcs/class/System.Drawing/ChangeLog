@@ -1,3 +1,6 @@
+2006-01-30 Boris Kirzner <borisk@mainsoft.com>
+	* run-tests.test.bat: changed location of xmltool.
+
 2006-01-29 Boris Kirzner <borisk@mainsoft.com>
 	* run-tests.bat, run-tests.test.bat, runtestfixture.bat, 
 	runmonotestfixture.bat : added batch files for automatic 

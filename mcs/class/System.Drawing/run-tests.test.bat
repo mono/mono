@@ -123,7 +123,7 @@ if "%RUNNING_DIR%" NEQ "" (
 REM ********************************************************
 @echo Build XmlTool
 REM ********************************************************
-set XML_TOOL_PATH=..\..\tools\xmltool
+set XML_TOOL_PATH=..\..\tools\mono-xmltool
 devenv %XML_TOOL_PATH%\XmlTool.sln /%BUILD_OPTION% Debug_Java >>%RUNNING_FIXTURE%_build.log.txt 2<&1
 
 IF %ERRORLEVEL% NEQ 0 GOTO BUILD_EXCEPTION
