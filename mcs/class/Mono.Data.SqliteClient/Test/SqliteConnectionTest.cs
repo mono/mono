@@ -65,7 +65,8 @@ namespace MonoTests.Mono.Data.SqliteClient
                         Assert.AreEqual ("xyz", _conn.Database, "#1 file path is wrong");
                 }
 
-                [Test]
+				// behavior has changed, I guess
+                //[Test]
                 [Ignore ("opening a connection should not create db! though, leave for now")]
                 public void OpenTest ()
                 {

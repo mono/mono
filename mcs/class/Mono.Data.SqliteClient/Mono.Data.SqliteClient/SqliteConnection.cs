@@ -31,6 +31,7 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Data;
+using System.Text;
 
 namespace Mono.Data.SqliteClient
 {
@@ -45,7 +46,8 @@ namespace Mono.Data.SqliteClient
 		private int db_version;
 		private IntPtr sqlite_handle;
 		private ConnectionState state;
-		
+		private Encoding encoding;
+
 		#endregion
 
 		#region Constructors and destructors
@@ -57,6 +59,7 @@ namespace Mono.Data.SqliteClient
 			db_version = 2;
 			state = ConnectionState.Closed;
 			sqlite_handle = IntPtr.Zero;
+			encoding = null;
 		}
 		
 		public SqliteConnection (string connstring) : this ()
@@ -90,6 +93,10 @@ namespace Mono.Data.SqliteClient
 			get { return state; }
 		}
 		
+		public Encoding Encoding {
+			get { return encoding; }
+		}
+
 		internal int Version {
 			get { return db_version; }
 		}
@@ -136,9 +143,9 @@ namespace Mono.Data.SqliteClient
 					if (arg_pieces.Length != 2) {
 						throw new InvalidOperationException ("Invalid connection string");
 					}
-					string token = arg_pieces[0].ToLower ().Trim ();
+					string token = arg_pieces[0].ToLower (System.Globalization.CultureInfo.InvariantCulture).Trim ();
 					string tvalue = arg_pieces[1].Trim ();
-					string tvalue_lc = arg_pieces[1].ToLower ().Trim ();
+					string tvalue_lc = arg_pieces[1].ToLower (System.Globalization.CultureInfo.InvariantCulture).Trim ();
 					if (token == "uri") {
 						if (tvalue_lc.StartsWith ("file://")) {
 							db_file = tvalue.Substring (7);
@@ -153,6 +160,8 @@ namespace Mono.Data.SqliteClient
 						db_mode = Convert.ToInt32 (tvalue);
 					} else if (token == "version") {
 						db_version = Convert.ToInt32 (tvalue);
+					} else if (token == "encoding") { // only for sqlite2
+						encoding = Encoding.GetEncoding (tvalue);
 					}
 				}
 				
@@ -254,9 +263,9 @@ namespace Mono.Data.SqliteClient
 				}
 			}
 			if (Version == 3) {
-				int err = Sqlite.sqlite3_open(db_file, out sqlite_handle);
+				int err = Sqlite.sqlite3_open16(db_file, out sqlite_handle);
 				if (err == (int)SqliteError.ERROR)
-					throw new ApplicationException (Marshal.PtrToStringAnsi( Sqlite.sqlite3_errmsg (sqlite_handle)));
+					throw new ApplicationException (Marshal.PtrToStringUni( Sqlite.sqlite3_errmsg16 (sqlite_handle)));
 			} else {
 			}
 			state = ConnectionState.Open;

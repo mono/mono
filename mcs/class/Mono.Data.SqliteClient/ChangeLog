@@ -1,4 +1,12 @@
-2006-01-02  Joshua Tauberer  <tauberer@for.net
+2006-01-29  Joshua Tauberer  <tauberer@for.net>
+
+	* Added new test sources.
+
+2006-01-20  Joshua Tauberer  <tauberer@for.net>
+
+	* Removed dependency on Mono.Posix.
+
+2006-01-02  Joshua Tauberer  <tauberer@for.net>
 
 	* Added Mono.Data.SqliteClient/SqliteExceptions.cs to
 	  the sources files.

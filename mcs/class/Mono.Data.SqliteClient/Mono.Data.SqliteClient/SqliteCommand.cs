@@ -36,7 +36,6 @@
 using System;
 using System.Collections;
 using System.Text;
-using Mono.Unix;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Data;
@@ -58,8 +57,6 @@ namespace Mono.Data.SqliteClient
 		private UpdateRowSource upd_row_source;
 		private SqliteParameterCollection sql_params;
 		private bool prepared = false;
-
-		static Regex v2Parameters = new Regex(@"(('[^']*?\:[^']*')*[^':]*?)*(?<param>:\w+)+([^':]*?('[^']*?\:[^']*'))*", RegexOptions.ExplicitCapture);
 
 		#endregion
 
@@ -99,7 +96,7 @@ namespace Mono.Data.SqliteClient
 		public string CommandText 
 		{
 			get { return sql; }
-			set { sql = value; }
+			set { sql = value; prepared = false; }
 		}
 		
 		public int CommandTimeout
@@ -174,29 +171,6 @@ namespace Mono.Data.SqliteClient
 				return Sqlite.sqlite_changes(parent_conn.Handle);
 		}
 		
-		private string ReplaceParams(Match m)
-		{
-			string input = m.Value;                                                                                                                
-			if (m.Groups["param"].Success)
-			{
-				Group g = m.Groups["param"];
-				string find = g.Value;
-				//FIXME: sqlite works internally only with strings, so this assumtion is mostly legit, but what about date formatting, etc?
-				//Need to fix SqlLiteDataReader first to acurately describe the tables
-				SqliteParameter sqlp = Parameters[find];
-				string replace = Convert.ToString(sqlp.Value);
-				if(sqlp.DbType == DbType.String)
-				{
-					replace =  "\"" + replace + "\"";
-				}
-				
-				input = Regex.Replace(input,find,replace);
-				return input;
-			}
-			else
-			return m.Value;
-		}
-		
 		private void BindParameters3 (IntPtr pStmt)
 		{
 			if (sql_params == null) return;
@@ -206,8 +180,16 @@ namespace Mono.Data.SqliteClient
 
 			for (int i = 1; i <= pcount; i++) 
 			{
-				String name = Sqlite.sqlite3_bind_parameter_name (pStmt, i);
+				String name = Sqlite.HeapToString (Sqlite.sqlite3_bind_parameter_name (pStmt, i), Encoding.UTF8);
+				if (name == null) continue;
+				
 				SqliteParameter param = sql_params[name];
+				
+				if (param.Value == null) {
+					Sqlite.sqlite3_bind_null (pStmt, i);
+					continue;
+				}
+					
 				Type ptype = param.Value.GetType ();
 				
 				SqliteError err;
@@ -215,7 +197,7 @@ namespace Mono.Data.SqliteClient
 				if (ptype.Equals (typeof (String))) 
 				{
 					String s = (String)param.Value;
-					err = Sqlite.sqlite3_bind_text (pStmt, i, s, s.Length, (IntPtr)(-1));
+					err = Sqlite.sqlite3_bind_text16 (pStmt, i, s, -1, (IntPtr)(-1));
 				} 
 				else if (ptype.Equals (typeof (DBNull))) 
 				{
@@ -270,6 +252,10 @@ namespace Mono.Data.SqliteClient
 				{
 					err = Sqlite.sqlite3_bind_int64 (pStmt, i, (Int64)param.Value);
 				} 
+				else if (ptype.Equals (typeof (Byte[]))) 
+				{
+					err = Sqlite.sqlite3_bind_blob (pStmt, i, (Byte[])param.Value, ((Byte[])param.Value).Length, (IntPtr)(-1));
+				} 
 				else 
 				{
 					throw new ApplicationException("Unkown Parameter Type");
@@ -285,7 +271,7 @@ namespace Mono.Data.SqliteClient
 		{
 			if (parent_conn.Version == 3)
 			{
-				SqliteError err = Sqlite.sqlite3_prepare (parent_conn.Handle, pzStart, -1, out pStmt, out pzTail);
+				SqliteError err = Sqlite.sqlite3_prepare16 (parent_conn.Handle, pzStart, -1, out pStmt, out pzTail);
 				if (err != SqliteError.OK)
 					throw new SqliteSyntaxException (GetError3());
 			}
@@ -351,21 +337,35 @@ namespace Mono.Data.SqliteClient
 		{
 		}
 		
-		public string ProcessParameters()
+		public string BindParameters2()
 		{
-			string processedText = sql;
-
-			//Regex looks odd perhaps, but it works - same impl. as in the firebird db provider
-			//the named parameters are using the ADO.NET standard @-prefix but sqlite is considering ":" as a prefix for v.3...
-			//ref: http://www.mail-archive.com/sqlite-users@sqlite.org/msg01851.html
-			//Regex r = new Regex(@"(('[^']*?\@[^']*')*[^'@]*?)*(?<param>@\w+)+([^'@]*?('[^']*?\@[^']*'))*",RegexOptions.ExplicitCapture);
+			string text = sql;
 			
-			//The above statement is true for the commented regEx, but I changed it to use the :-prefix, because now (12.05.2005 sqlite3) 
-			//sqlite is using : as Standard Parameterprefix
+			// There used to be a crazy regular expression here, but it caused Mono
+			// to go into an infinite loop of some sort when there were no parameters
+			// in the SQL string.  That was too complicated anyway.
 			
-			MatchEvaluator me = new MatchEvaluator(ReplaceParams);
-			processedText = v2Parameters.Replace(sql, me);
-			return processedText;
+			// Here we search for substrings of the form :wwwww where w is a letter or digit
+			// (not sure what a legitimate Sqlite3 identifier is), except those within quotes.
+			
+			char inquote = (char)0;
+			for (int i = 0; i < text.Length; i++) {
+				char c = text[i];
+				if (c == inquote) {
+					inquote = (char)0;
+				} else if (inquote == (char)0 && (c == '\'' || c == '"')) {
+					inquote = c;
+				} else if (inquote == (char)0 && c == ':') {
+					int start = i;
+					while (++i < text.Length && char.IsLetterOrDigit(text[i])) { } // scan to end
+					string name = text.Substring(start, i-start);
+					string value = "'" + Convert.ToString(Parameters[name].Value).Replace("'", "''") + "'";
+					text = text.Replace(name, value);
+					i += value.Length - name.Length - 1;
+				}
+			}
+			
+			return text;
 		}
 		
 		public void Prepare ()
@@ -379,7 +379,7 @@ namespace Mono.Data.SqliteClient
 		
 			if (Parameters.Count > 0 && parent_conn.Version == 2)
 			{
-				sql = ProcessParameters();
+				sql = BindParameters2();
 			}
 			
 			prepared = true;
@@ -436,13 +436,35 @@ namespace Mono.Data.SqliteClient
 		
 		public SqliteDataReader ExecuteReader (CommandBehavior behavior, bool want_results, out int rows_affected)
 		{
+			Prepare ();
+			
 			// The SQL string may contain multiple sql commands, so the main
 			// thing to do is have Sqlite iterate through the commands.
 			// If want_results, only the last command is returned as a
 			// DataReader.  Otherwise, no command is returned as a
 			// DataReader.
 		
-			IntPtr psql = UnixMarshal.StringToHeap(sql);
+			IntPtr psql; // pointer to SQL command
+			
+			// Sqlite 2 docs say this: By default, SQLite assumes that all data uses a fixed-size 8-bit 
+			// character (iso8859).  But if you give the --enable-utf8 option to the configure script, then the 
+			// library assumes UTF-8 variable sized characters. This makes a difference for the LIKE and GLOB 
+			// operators and the LENGTH() and SUBSTR() functions. The static string sqlite_encoding will be set 
+			// to either "UTF-8" or "iso8859" to indicate how the library was compiled. In addition, the sqlite.h 
+			// header file will define one of the macros SQLITE_UTF8 or SQLITE_ISO8859, as appropriate.
+			// 
+			// We have no way of knowing whether Sqlite 2 expects ISO8859 or UTF-8, but ISO8859 seems to be the
+			// default.  Therefore, we need to use an ISO8859(-1) compatible encoding, like ANSI.
+			// OTOH, the user may want to specify the encoding of the bytes stored in the database, regardless
+			// of what Sqlite is treating them as, 
+			
+			// For Sqlite 3, we use the UTF-16 prepare function, so we need a UTF-16 string.
+			
+			if (parent_conn.Version == 2)
+				psql = Sqlite.StringToHeap (sql.Trim(), parent_conn.Encoding);
+			else
+				psql = Marshal.StringToCoTaskMemUni (sql.Trim());
+
 			IntPtr pzTail = psql;
 			IntPtr errMsgPtr;
 			
@@ -489,7 +511,7 @@ namespace Mono.Data.SqliteClient
 				return null;
 			} finally {
 				parent_conn.EndExec ();
-				UnixMarshal.FreeHeap (psql);
+				Marshal.FreeCoTaskMem (psql);
 			}
 		}
 
@@ -502,7 +524,7 @@ namespace Mono.Data.SqliteClient
 		}
 		
 		private string GetError3() {
-			return Marshal.PtrToStringAnsi (Sqlite.sqlite3_errmsg (parent_conn.Handle));
+			return Marshal.PtrToStringUni (Sqlite.sqlite3_errmsg16 (parent_conn.Handle));
 		}
 	#endregion
 	}

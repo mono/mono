@@ -33,6 +33,7 @@
 using System;
 using System.Security;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace Mono.Data.SqliteClient
 {
@@ -134,14 +135,14 @@ namespace Mono.Data.SqliteClient
 		[DllImport ("sqlite")]
 		internal static extern SqliteError sqlite_exec (IntPtr handle, string sql, IntPtr callback, IntPtr user_data, out IntPtr errstr_ptr);
 		
-		[DllImport("sqlite3")]
-		internal static extern int sqlite3_open (string dbname, out IntPtr handle);
+		[DllImport("sqlite3", CharSet = CharSet.Unicode)]
+		internal static extern int sqlite3_open16 (string dbname, out IntPtr handle);
 
 		[DllImport("sqlite3")]
 		internal static extern void sqlite3_close (IntPtr sqlite_handle);
 
 		[DllImport("sqlite3")]
-		internal static extern IntPtr sqlite3_errmsg (IntPtr sqlite_handle);
+		internal static extern IntPtr sqlite3_errmsg16 (IntPtr sqlite_handle);
 
 		[DllImport("sqlite3")]
 		internal static extern int sqlite3_changes (IntPtr handle);
@@ -150,7 +151,7 @@ namespace Mono.Data.SqliteClient
 		internal static extern int sqlite3_last_insert_rowid (IntPtr sqlite_handle);
 
 		[DllImport ("sqlite3")]
-		internal static extern SqliteError sqlite3_prepare (IntPtr sqlite_handle, IntPtr zSql, int zSqllen, out IntPtr pVm, out IntPtr pzTail);
+		internal static extern SqliteError sqlite3_prepare16 (IntPtr sqlite_handle, IntPtr zSql, int zSqllen, out IntPtr pVm, out IntPtr pzTail);
 
 		[DllImport ("sqlite3")]
 		internal static extern SqliteError sqlite3_step (IntPtr pVm);
@@ -162,16 +163,16 @@ namespace Mono.Data.SqliteClient
 		internal static extern SqliteError sqlite3_exec (IntPtr handle, string sql, IntPtr callback, IntPtr user_data, out IntPtr errstr_ptr);
 	
 		[DllImport ("sqlite3")]
-		internal static extern IntPtr sqlite3_column_name (IntPtr pVm, int col);
+		internal static extern IntPtr sqlite3_column_name16 (IntPtr pVm, int col);
 		
 		[DllImport ("sqlite3")]
-		internal static extern IntPtr sqlite3_column_text (IntPtr pVm, int col);
+		internal static extern IntPtr sqlite3_column_text16 (IntPtr pVm, int col);
 		
 		[DllImport ("sqlite3")]
 		internal static extern IntPtr sqlite3_column_blob (IntPtr pVm, int col);
 		
 		[DllImport ("sqlite3")]
-		internal static extern int sqlite3_column_bytes (IntPtr pVm, int col);
+		internal static extern int sqlite3_column_bytes16 (IntPtr pVm, int col);
 		
 		[DllImport ("sqlite3")]
 		internal static extern int sqlite3_column_count (IntPtr pVm);
@@ -186,13 +187,13 @@ namespace Mono.Data.SqliteClient
 		internal static extern double sqlite3_column_double (IntPtr pVm, int col);
 		
 		[DllImport ("sqlite3")]
-		internal static extern IntPtr sqlite3_column_decltype (IntPtr pVm, int col);
+		internal static extern IntPtr sqlite3_column_decltype16 (IntPtr pVm, int col);
 
  		[DllImport ("sqlite3")]
 		internal static extern int sqlite3_bind_parameter_count (IntPtr pStmt);
 
 		[DllImport ("sqlite3")]
-		internal static extern String sqlite3_bind_parameter_name (IntPtr pStmt, int n);
+		internal static extern IntPtr sqlite3_bind_parameter_name (IntPtr pStmt, int n); // UTF-8 encoded return
 
 		[DllImport ("sqlite3")]
 		internal static extern SqliteError sqlite3_bind_blob (IntPtr pStmt, int n, byte[] blob, int length, IntPtr freetype);
@@ -204,18 +205,75 @@ namespace Mono.Data.SqliteClient
 		internal static extern SqliteError sqlite3_bind_int (IntPtr pStmt, int n, int value);
 
 		[DllImport ("sqlite3")]
-		internal static extern SqliteError sqlite3_bind_int64 (IntPtr pStmt, Int64 n, long value);
+		internal static extern SqliteError sqlite3_bind_int64 (IntPtr pStmt, int n, long value);
 
 		[DllImport ("sqlite3")]
 		internal static extern SqliteError sqlite3_bind_null (IntPtr pStmt, int n);
 
-		[DllImport ("sqlite3")]
-		internal static extern SqliteError sqlite3_bind_text (IntPtr pStmt, int n, string value, int length, IntPtr freetype);
-
-		[DllImport ("sqlite3")]
-		internal static extern SqliteError sqlite3_bind_text16 (IntPtr pStmt, int n, byte[] value, int length, IntPtr freetype);
+		[DllImport ("sqlite3", CharSet = CharSet.Unicode)]
+		internal static extern SqliteError sqlite3_bind_text16 (IntPtr pStmt, int n, string value, int length, IntPtr freetype);
 		
 		#endregion
+		
+		// These are adapted from Mono.Unix.  When encoding is null,
+		// use Ansi encoding, which is a superset of the default
+		// expected encoding (ISO-8859-1).
+
+		public static IntPtr StringToHeap (string s, Encoding encoding)
+		{
+			if (encoding == null)
+				return Marshal.StringToCoTaskMemAnsi (s);
+				
+			int min_byte_count = encoding.GetMaxByteCount(1);
+			char[] copy = s.ToCharArray ();
+			byte[] marshal = new byte [encoding.GetByteCount (copy) + min_byte_count];
+
+			int bytes_copied = encoding.GetBytes (copy, 0, copy.Length, marshal, 0);
+
+			if (bytes_copied != (marshal.Length-min_byte_count))
+				throw new NotSupportedException ("encoding.GetBytes() doesn't equal encoding.GetByteCount()!");
+
+			IntPtr mem = Marshal.AllocCoTaskMem (marshal.Length);
+			if (mem == IntPtr.Zero)
+				throw new OutOfMemoryException ();
+
+			bool copied = false;
+			try {
+				Marshal.Copy (marshal, 0, mem, marshal.Length);
+				copied = true;
+			}
+			finally {
+				if (!copied)
+					Marshal.FreeCoTaskMem (mem);
+			}
+
+			return mem;
+		}
+
+		public static unsafe string HeapToString (IntPtr p, Encoding encoding)
+		{
+			if (encoding == null)
+				return Marshal.PtrToStringAnsi (p);
+		
+			if (p == IntPtr.Zero)
+				return null;
+				
+			// This assumes a single byte terminates the string.
+
+			int len = 0;
+			while (Marshal.ReadByte (p, len) != 0)
+				checked {++len;}
+
+			string s = new string ((sbyte*) p, 0, len, encoding);
+			len = s.Length;
+			while (len > 0 && s [len-1] == 0)
+				--len;
+			if (len == s.Length) 
+				return s;
+			return s.Substring (0, len);
+		}
+
+
 
 	}
 }
