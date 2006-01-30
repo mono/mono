@@ -1,3 +1,12 @@
+2006-01-30  Raja R Harinath  <rharinath@novell.com>
+
+	* metadata.c (mono_metadata_parse_method_signature_full): Don't
+	allocate memory for parameter attributes when parsing memberref
+	signatures.
+	* loader.c (mono_loader_set_error_method_load): Don't warn.
+	(method_from_memberref): Ensure MissingMethodException gets thrown
+	if method is not found.  Make warning more informative.
+
 2006-01-29  Raja R Harinath  <harinath@gmail.com>
 
 	Fix #77397
