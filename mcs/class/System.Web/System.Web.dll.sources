@@ -531,9 +531,6 @@ System.Web.UI/IHierarchyData.cs
 System.Web.UI/IItemPaginationInfo.cs
 System.Web.UI/ImageClickEventArgs.cs
 System.Web.UI/ImageClickEventHandler.cs
-System.Web.UI.Imaging/ImageScaleMode.cs
-System.Web.UI.Imaging/ImageType.cs
-System.Web.UI.Imaging/StorageType.cs
 System.Web.UI/IMobileTextWriter.cs
 System.Web.UI/INamingContainer.cs
 System.Web.UI/INavigateUIData.cs
