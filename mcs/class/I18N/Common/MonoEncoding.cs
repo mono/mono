@@ -15,9 +15,21 @@ namespace I18N.Common
 	[Serializable]
 	public abstract class MonoEncoding : Encoding
 	{
+		readonly int win_code_page;
+
 		public MonoEncoding (int codePage)
+			: this (codePage, 0)
+		{
+		}
+
+		public MonoEncoding (int codePage, int windowsCodePage)
 			: base (codePage)
 		{
+			win_code_page = windowsCodePage;
+		}
+
+		public override int WindowsCodePage {
+			get { return win_code_page != 0 ? win_code_page : base.WindowsCodePage; }
 		}
 
 #if NET_2_0
