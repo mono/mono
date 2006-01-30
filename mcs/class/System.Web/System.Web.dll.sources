@@ -224,15 +224,8 @@ System.Web.Hosting/AppDomainFactory.cs
 System.Web.Hosting/ApplicationHost.cs
 System.Web.Hosting/HostingEnvironment.cs
 System.Web.Hosting/IAppDomainFactory.cs
-System.Web.Hosting/IApplicationHost.cs
 System.Web.Hosting/IAppManagerAppDomainFactory.cs
-System.Web.Hosting/IHttpWorkerRequestHandler.cs
 System.Web.Hosting/IISAPIRuntime.cs
-System.Web.Hosting/IProcessHost.cs
-System.Web.Hosting/IProcessHostFactoryHelper.cs
-System.Web.Hosting/IProcessHostSupportFunction.cs
-System.Web.Hosting/IProcessPingCallback.cs
-System.Web.Hosting/IQueueHost.cs
 System.Web.Hosting/IRegisteredObject.cs
 System.Web.Hosting/ISAPIRuntime.cs
 System.Web.Hosting/SimpleWorkerRequest.cs
@@ -257,7 +250,6 @@ System.Web/HttpContext.cs
 System.Web/HttpCookieCollection.cs
 System.Web/HttpCookie.cs
 System.Web/HttpCookieMode.cs
-System.Web/HttpDataTransferMode.cs
 System.Web/HttpException.cs
 System.Web/HttpFileCollection.cs
 System.Web/HttpForbiddenHandler.cs
@@ -266,7 +258,6 @@ System.Web/HttpModuleCollection.cs
 System.Web/HttpParseException.cs
 System.Web/HttpPostedFile.cs
 System.Web/HttpRequest.cs
-System.Web/HttpRequestPriority.cs
 System.Web/HttpRequestValidationException.cs
 System.Web/HttpResponseHeader.cs
 System.Web/HttpResponseStream.cs
