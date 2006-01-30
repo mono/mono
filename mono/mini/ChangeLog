@@ -1,4 +1,9 @@
 
+Mon Jan 30 12:51:10 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* cpu-pentium.md, mini-x86.c, inssel.brg, inssel-x86.brg,
+	mini-ops.h: alu membase optimizations.
+
 Fri Jan 27 21:11:08 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* mini-ops.h, mini.c, inssel.brg, inssel-x86.brg: opcode
