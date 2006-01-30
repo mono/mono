@@ -1,3 +1,9 @@
+2006-01-30 Boris Kirzner <borisk@mainsoft.com>
+	* xmltool.cs: added #ifdef for features not supported in TARGET_JVM.
+	* XmlTool.sln, XmlTool.vmwcsproj: added project and solution files 
+	for TARGET_JVM. 
+	* nunit_transform.xslt: added xsl transformation for nunit tests.
+
 2006-01-30  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* xmltool.cs : actually environment variable was not handled.

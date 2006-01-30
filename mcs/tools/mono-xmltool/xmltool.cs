@@ -5,10 +5,11 @@ using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Xsl;
 using System.Xml.XPath;
+#if !TARGET_JVM
 using Commons.Xml.Nvdl;
 using Commons.Xml.Relaxng;
 using Commons.Xml.Relaxng.Rnc;
-
+#endif
 using XSchema = System.Xml.Schema.XmlSchema;
 
 namespace Commons.Xml.Relaxng
@@ -59,6 +60,7 @@ environment variable that affects on the behavior:
 			case "--help":
 				Usage ();
 				return;
+#if !TARGET_JVM
 			case "--validate-rnc":
 				ValidateRelaxngCompact (args);
 				return;
@@ -68,18 +70,22 @@ environment variable that affects on the behavior:
 			case "--validate-nvdl":
 				ValidateNvdl (args);
 				return;
+#endif
 			case "--validate-xsd":
 				ValidateXsd (args);
 				return;
+#if !TARGET_JVM
 			case "--validate":
 				ValidateAuto (args);
 				return;
+#endif
 			case "--transform":
 				Transform (args);
 				return;
 			}
 		}
 
+#if !TARGET_JVM
 		static void ValidateAuto (string [] args)
 		{
 			if (args.Length < 1) {
@@ -137,6 +143,7 @@ environment variable that affects on the behavior:
 				nvr.Read ();
 			xtr.Close ();
 		}
+#endif
 
 		static void ValidateXsd (string [] args)
 		{
