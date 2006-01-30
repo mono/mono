@@ -1,3 +1,7 @@
+2006-01-30  Jackson Harper  <jackson@ximian.com>
+
+	* TreeNode.cs: Signature fix.
+
 2006-01-29  Alexander Olk  <alex.olk@googlemail.com>
 
 	* ThemeClearlooks.cs: Fixed a crash in ProgressBar drawing.

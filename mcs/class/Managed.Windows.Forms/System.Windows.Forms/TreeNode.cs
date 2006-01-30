@@ -110,7 +110,7 @@ namespace System.Windows.Forms {
 		#endregion	// Public Constructors
 
 		#region ICloneable Members
-		public object Clone()
+		public virtual object Clone()
 		{
 			TreeNode tn = new TreeNode (text, image_index, selected_image_index);
 			if (nodes != null) {
