@@ -278,9 +278,7 @@ namespace System.Web.Configuration {
 		}
 #else
 		static Web20DefaultConfig config;
-#if NET_2_0
 		static IInternalConfigSystem configSystem;
-#endif
 #endif
 		const BindingFlags privStatic = BindingFlags.NonPublic | BindingFlags.Static;
 		static readonly object lockobj = new object ();
@@ -308,7 +306,6 @@ namespace System.Web.Configuration {
 					config.Init ();
 				}
 
-#if NET_2_0
 				/* deal with the ConfigurationManager stuff */
 				{
 					HttpConfigurationSystem system = new HttpConfigurationSystem ();
@@ -323,7 +320,6 @@ namespace System.Web.Configuration {
 					changeConfig.Invoke (null, args);
 					configSystem = system;
 				}
-#endif
 			}
 		}
 	}
