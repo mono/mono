@@ -269,7 +269,7 @@ namespace System.Windows.Forms
 				}				
 	
 				if (dropdown_style != ComboBoxStyle.DropDownList && textbox_ctrl == null) {
-					textbox_ctrl = new TextBox ();
+					textbox_ctrl = new FixedSizeTextBox ();
 					textbox_ctrl.BorderStyle = BorderStyle.None;
 					textbox_ctrl.TextChanged += new EventHandler (OnTextChangedEdit);
 					textbox_ctrl.KeyPress += new KeyPressEventHandler(textbox_ctrl_KeyPress);

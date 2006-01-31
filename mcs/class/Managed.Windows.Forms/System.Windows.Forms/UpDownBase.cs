@@ -247,7 +247,7 @@ namespace System.Windows.Forms
 
 			spnSpinner = new UpDownSpinner(this);
 
-			txtView = new TextBox();
+			txtView = new FixedSizeTextBox();
 			txtView.ModifiedChanged += new EventHandler(OnChanged);
 			txtView.AcceptsReturn = true;
 			txtView.AutoSize = false;

@@ -1,3 +1,12 @@
+2006-01-30  Jackson Harper  <jackson@ximian.com>
+
+	* FixedSizeTextBox.cs: New internal class that represents a
+	textBox that will not be scaled.
+	* TreeView.cs:
+	* ComboBox.cs:
+	* UpDownBase.cs: Use the new FixedSizeTextBox instead of a
+	standard TextBox.
+		
 2006-01-30  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* XplatUIX11.cs: Retrieve default screen number instead of

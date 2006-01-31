@@ -1091,7 +1091,7 @@ namespace System.Windows.Forms {
 			SuspendLayout ();
 
 			if (edit_text_box == null) {
-				edit_text_box = new TextBox ();
+				edit_text_box = new FixedSizeTextBox ();
 				edit_text_box.BorderStyle = BorderStyle.FixedSingle;
 				edit_text_box.KeyUp += new KeyEventHandler (EditTextBoxKeyDown);
 				edit_text_box.Leave += new EventHandler (EditTextBoxLeave);
