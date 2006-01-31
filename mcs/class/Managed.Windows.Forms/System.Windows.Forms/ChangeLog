@@ -1,3 +1,8 @@
+2006-01-31  Jackson Harper  <jackson@ximian.com>
+
+	* Control.cs: When a new Site is set on the component attempt to
+	pull the AmbientProperties from it.
+
 2006-01-31  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* ThemeWin32Classic.cs: Menu background is drawn in ColorMenu, not
