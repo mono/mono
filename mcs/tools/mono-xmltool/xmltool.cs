@@ -20,17 +20,18 @@ namespace Commons.Xml.Relaxng
 		{
 			try {
 				Run (args);
+				Console.Error.WriteLine ("done.");
 			} catch (Exception ex) {
 				if (Environment.GetEnvironmentVariable ("MONO_XMLTOOL_ERROR_DETAILS") == "yes")
-					Console.WriteLine (ex);
+					Console.Error.WriteLine (ex);
 				else
-					Console.WriteLine (ex.Message);
+					Console.Error.WriteLine (ex.Message);
 			}
 		}
 
 		static void Usage ()
 		{
-			Console.WriteLine (@"
+			Console.Error.WriteLine (@"
 Usage: mono-xmltool [options]
 
 options:
@@ -41,6 +42,7 @@ options:
 	--validate-nvdl nvdl-script-xml instance-xml
 	--validate-xsd xml-schema instance-xml
 	--transform stylesheet instance-xml
+	--prettyprint [source] [result]
 
 environment variable that affects on the behavior:
 
@@ -61,6 +63,9 @@ environment variable that affects on the behavior:
 				Usage ();
 				return;
 #if !TARGET_JVM
+			case "--validate":
+				ValidateAuto (args);
+				return;
 			case "--validate-rnc":
 				ValidateRelaxngCompact (args);
 				return;
@@ -74,13 +79,11 @@ environment variable that affects on the behavior:
 			case "--validate-xsd":
 				ValidateXsd (args);
 				return;
-#if !TARGET_JVM
-			case "--validate":
-				ValidateAuto (args);
-				return;
-#endif
 			case "--transform":
 				Transform (args);
+				return;
+			case "--prettyprint":
+				PrettyPrint (args);
 				return;
 			}
 		}
@@ -121,6 +124,9 @@ environment variable that affects on the behavior:
 
 		static void ValidateRelaxng (RelaxngPattern p, string [] args)
 		{
+			if (args.Length < 2)
+				return;
+
 			XmlTextReader xtr = new XmlTextReader (args [2]);
 			RelaxngValidatingReader vr = 
 				new RelaxngValidatingReader (xtr, p);
@@ -164,6 +170,28 @@ environment variable that affects on the behavior:
 			t.Load (args [1]);
 			XmlTextWriter xw = new XmlTextWriter (Console.Out);
 			t.Transform (new XPathDocument (args [2], XmlSpace.Preserve), null, xw, null);
+		}
+
+		static void PrettyPrint (string [] args)
+		{
+			XmlTextReader r = null;
+			if (args.Length > 0)
+				r = new XmlTextReader (args [1]);
+			else
+				r = new XmlTextReader (Console.In);
+			r.WhitespaceHandling = WhitespaceHandling.Significant;
+			XmlTextWriter w = null;
+			if (args.Length > 1)
+				w = new XmlTextWriter (args [2], Encoding.UTF8);
+			else
+				w = new XmlTextWriter (Console.Out);
+			w.Formatting = Formatting.Indented;
+
+			r.Read ();
+			while (!r.EOF)
+				w.WriteNode (r, false);
+			r.Close ();
+			w.Close ();
 		}
 	}
 }

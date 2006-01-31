@@ -1,3 +1,9 @@
+2006-01-31  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* xmltool.cs :
+	  Added --prettyprint support.
+	  All warning/error messages are now written on stderr.
+
 2006-01-30 Boris Kirzner <borisk@mainsoft.com>
 	* xmltool.cs: added #ifdef for features not supported in TARGET_JVM.
 	* XmlTool.sln, XmlTool.vmwcsproj: added project and solution files 
