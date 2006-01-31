@@ -30,7 +30,7 @@
 
 namespace System.Windows.Forms {
 
-	public class FixedSizeTextBox : TextBox {
+	internal class FixedSizeTextBox : TextBox {
 
 		public FixedSizeTextBox ()
 		{
