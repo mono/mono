@@ -1,3 +1,8 @@
+2006-01-30  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* XplatUIX11.cs: Retrieve default screen number instead of
+	  assuming 0. Attempted fix for #77318
+
 2006-01-30  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* XplatUIWin32.cs: 

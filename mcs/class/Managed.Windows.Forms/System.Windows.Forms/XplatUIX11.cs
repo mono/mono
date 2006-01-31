@@ -324,7 +324,7 @@ namespace System.Windows.Forms {
 				}
 
 				// Generic X11 setup
-				ScreenNo = 0;
+				ScreenNo = XDefaultScreen(DisplayHandle);
 				RootWindow = XRootWindow(DisplayHandle, ScreenNo);
 				DefaultColormap = XDefaultColormap(DisplayHandle, ScreenNo);
 
@@ -3746,7 +3746,7 @@ namespace System.Windows.Forms {
 						if (current_state == FormWindowState.Maximized) {
 							SendNetWMMessage(hwnd.whole_window, (IntPtr)NetAtoms[(int)NA._NET_WM_STATE], (IntPtr)2 /* toggle */, (IntPtr)NetAtoms[(int)NA._NET_WM_STATE_MAXIMIZED_HORZ], (IntPtr)NetAtoms[(int)NA._NET_WM_STATE_MAXIMIZED_VERT]);
 						}
-						XIconifyWindow(DisplayHandle, hwnd.whole_window, 0);
+						XIconifyWindow(DisplayHandle, hwnd.whole_window, ScreenNo);
 					}
 					return;
 				}
@@ -4103,6 +4103,9 @@ namespace System.Windows.Forms {
 
 		[DllImport ("libX11", EntryPoint="XDefaultDepth")]
 		internal extern static uint XDefaultDepth(IntPtr display, int screen_number);
+
+		[DllImport ("libX11", EntryPoint="XDefaultScreen")]
+		internal extern static int XDefaultScreen(IntPtr display);
 
 		[DllImport ("libX11", EntryPoint="XDefaultColormap")]
 		internal extern static IntPtr XDefaultColormap(IntPtr display, int screen_number);
