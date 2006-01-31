@@ -1285,6 +1285,78 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
+		public void CloneCopy_TestForeignKeyConstraints ()
+		{
+			DataTable dirTable = new DataTable("Directories");
+
+			DataColumn dir_UID = new DataColumn("UID", typeof(int));
+			dir_UID.Unique = true;
+			dir_UID.AllowDBNull = false;
+
+			dirTable.Columns.Add(dir_UID);
+
+			// Build a simple Files table
+			DataTable fileTable = new DataTable("Files");
+
+			DataColumn file_DirID = new DataColumn("DirectoryID", typeof(int));
+			file_DirID.Unique = false;
+			file_DirID.AllowDBNull = false;
+
+			fileTable.Columns.Add(file_DirID);
+
+			// Build the DataSet
+			DataSet ds = new DataSet("TestDataset");
+			ds.Tables.Add(dirTable);
+			ds.Tables.Add(fileTable);
+
+			// Add a foreign key constraint
+			DataColumn[] parentColumns = new DataColumn[1];
+			parentColumns[0] = ds.Tables["Directories"].Columns["UID"];
+
+			DataColumn[] childColumns = new DataColumn[1];
+			childColumns[0] = ds.Tables["Files"].Columns["DirectoryID"];
+
+			ForeignKeyConstraint fk = new ForeignKeyConstraint("FK_Test", parentColumns, childColumns);
+			ds.Tables["Files"].Constraints.Add(fk);		
+			ds.EnforceConstraints = true;
+
+			AssertEquals ("#1", 1, ds.Tables["Directories"].Constraints.Count);
+			AssertEquals ("#2", 1, ds.Tables["Files"].Constraints.Count);
+
+			// check clone works fine
+			DataSet cloned_ds = ds.Clone ();
+			AssertEquals ("#3", 1, cloned_ds.Tables["Directories"].Constraints.Count);
+			AssertEquals ("#4", 1, cloned_ds.Tables["Files"].Constraints.Count);
+
+			ForeignKeyConstraint clonedFk =  (ForeignKeyConstraint)cloned_ds.Tables["Files"].Constraints[0];
+			AssertEquals ("#5", "FK_Test", clonedFk.ConstraintName);
+			AssertEquals ("#6", 1, clonedFk.Columns.Length);
+			AssertEquals ("#7", "DirectoryID", clonedFk.Columns[0].ColumnName);
+
+			UniqueConstraint clonedUc = (UniqueConstraint)cloned_ds.Tables ["Directories"].Constraints[0];
+			UniqueConstraint origUc = (UniqueConstraint)ds.Tables ["Directories"].Constraints[0];
+			AssertEquals ("#8", origUc.ConstraintName, clonedUc.ConstraintName);
+			AssertEquals ("#9", 1, clonedUc.Columns.Length);
+			AssertEquals ("#10", "UID", clonedUc.Columns[0].ColumnName);
+
+			// check copy works fine
+			DataSet copy_ds = ds.Copy ();
+			AssertEquals ("#11", 1, copy_ds.Tables["Directories"].Constraints.Count);
+			AssertEquals ("#12", 1, copy_ds.Tables["Files"].Constraints.Count);
+
+			ForeignKeyConstraint copyFk =  (ForeignKeyConstraint)copy_ds.Tables["Files"].Constraints[0];
+			AssertEquals ("#13", "FK_Test", copyFk.ConstraintName);
+			AssertEquals ("#14", 1, copyFk.Columns.Length);
+			AssertEquals ("#15", "DirectoryID", copyFk.Columns[0].ColumnName);
+
+			UniqueConstraint copyUc = (UniqueConstraint)copy_ds.Tables ["Directories"].Constraints[0];
+			origUc = (UniqueConstraint)ds.Tables ["Directories"].Constraints[0];
+			AssertEquals ("#16", origUc.ConstraintName, copyUc.ConstraintName);
+			AssertEquals ("#17", 1, copyUc.Columns.Length);
+			AssertEquals ("#18", "UID", copyUc.Columns[0].ColumnName);
+		}
+
+		[Test]
 		public void WriteNestedTableXml ()
 		{
 			string xml = @"<NewDataSet>

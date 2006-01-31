@@ -479,19 +479,29 @@ namespace System.Data {
 				}
 				
 				DataRelation cRel = new DataRelation (MyRelation.RelationName, P_DC, C_DC);
-				//cRel.ChildColumns = MyRelation.ChildColumns;
-				//cRel.ChildTable = MyRelation.ChildTable;
-				//cRel.ExtendedProperties = cRel.ExtendedProperties; 
-				//cRel.Nested = MyRelation.Nested;
-				//cRel.ParentColumns = MyRelation.ParentColumns;
-				//cRel.ParentTable = MyRelation.ParentTable;
-								
 				Copy.Relations.Add (cRel);
 			}
+			
+			// Foreign Key constraints are not cloned in DataTable.Clone
+			// so, these constraints should be cloned when copying the relations.
+			foreach (DataTable table in this.Tables) {
+				foreach (Constraint c in table.Constraints) {
+					if (!(c is ForeignKeyConstraint) 
+						|| Copy.Tables[table.TableName].Constraints.Contains (c.ConstraintName))
+						continue;
+					ForeignKeyConstraint fc = (ForeignKeyConstraint)c;
+					DataTable parentTable = Copy.Tables [fc.RelatedTable.TableName];
+					DataTable currTable = Copy.Tables [table.TableName];
+					DataColumn[] parentCols = new DataColumn [fc.RelatedColumns.Length];
+					DataColumn[] childCols = new DataColumn [fc.Columns.Length];
+					for (int j=0; j < parentCols.Length; ++j)
+						parentCols [j] = parentTable.Columns[fc.RelatedColumns[j].ColumnName];
+					for (int j=0; j < childCols.Length; ++j)
+						childCols [j] = currTable.Columns[fc.Columns[j].ColumnName];
+					currTable.Constraints.Add (fc.ConstraintName, parentCols, childCols);
+				}
+			}
 		}
-
-		
-
 
 		public DataSet GetChanges ()
 		{

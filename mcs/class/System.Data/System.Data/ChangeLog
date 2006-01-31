@@ -1,3 +1,8 @@
+2006-01-31  Senganal T  <tsenganal@novell.com>
+
+	* DataSet.cs : Modified CopyRelations ()
+		- Added code to copy ForeignKeyConstraints. Fixes #77411.
+	
 2006-01-18 Boris Kirzner <borisk@mainsoft.com>
 	* DataColumn.cs: added PropertyCchangedEvent handling.
 
