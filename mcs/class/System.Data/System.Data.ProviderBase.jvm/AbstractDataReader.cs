@@ -200,8 +200,8 @@ namespace System.Data.ProviderBase
 							if (resultSet.next()) {
 								_readerState = (ReaderState.HasRows | ReaderState.FirstRed);
 								ResultSetMetaData rsMetaData = ResultsMetaData;
-								DbTypes.JavaSqlTypes javaSqlType = (DbTypes.JavaSqlTypes)rsMetaData.getColumnType(1);
-								if (javaSqlType == DbTypes.JavaSqlTypes.OTHER) {
+								DbConvert.JavaSqlTypes javaSqlType = (DbConvert.JavaSqlTypes)rsMetaData.getColumnType(1);
+								if (javaSqlType == DbConvert.JavaSqlTypes.OTHER) {
 									object value = GetValue(0);
 									if (value != null && value is ResultSet) {
 										_resultsMetaData = null;
@@ -708,26 +708,26 @@ namespace System.Data.ProviderBase
 			try {
 				IReaderCacheContainer[] readerCache = new IReaderCacheContainer[FieldCount];
 				for(int i=0; i < readerCache.Length; i++) {
-					DbTypes.JavaSqlTypes javaSqlType = (DbTypes.JavaSqlTypes) ResultsMetaData.getColumnType(i + 1);
+					DbConvert.JavaSqlTypes javaSqlType = (DbConvert.JavaSqlTypes) ResultsMetaData.getColumnType(i + 1);
 					switch (javaSqlType) {
-						case DbTypes.JavaSqlTypes.ARRAY :
+						case DbConvert.JavaSqlTypes.ARRAY :
 							readerCache[i] = new ArrayReaderCacheContainer();
 							break;
-						case DbTypes.JavaSqlTypes.BIGINT :
+						case DbConvert.JavaSqlTypes.BIGINT :
 							readerCache[i] = new Int64ReaderCacheContainer();
 							break;
-						case DbTypes.JavaSqlTypes.BINARY :
-						case DbTypes.JavaSqlTypes.VARBINARY :
-						case DbTypes.JavaSqlTypes.LONGVARBINARY :
+						case DbConvert.JavaSqlTypes.BINARY :
+						case DbConvert.JavaSqlTypes.VARBINARY :
+						case DbConvert.JavaSqlTypes.LONGVARBINARY :
 							readerCache[i] = new BytesReaderCacheContainer();
 							break;
-						case DbTypes.JavaSqlTypes.BIT :
+						case DbConvert.JavaSqlTypes.BIT :
 							readerCache[i] = new BooleanReaderCacheContainer();
 							break;
-						case DbTypes.JavaSqlTypes.BLOB :
+						case DbConvert.JavaSqlTypes.BLOB :
 							readerCache[i] = new BlobReaderCacheContainer();
 							break;	
-						case DbTypes.JavaSqlTypes.CHAR :						
+						case DbConvert.JavaSqlTypes.CHAR :						
 							if ("uniqueidentifier".Equals(ResultsMetaData.getColumnTypeName(i + 1))) {
 								readerCache[i] = new GuidReaderCacheContainer();
 							}
@@ -735,13 +735,13 @@ namespace System.Data.ProviderBase
 								readerCache[i] = new StringReaderCacheContainer();
 							}
 							break;
-						case DbTypes.JavaSqlTypes.CLOB :
+						case DbConvert.JavaSqlTypes.CLOB :
 							readerCache[i] = new ClobReaderCacheContainer();
 							break;		
-						case DbTypes.JavaSqlTypes.TIME :
+						case DbConvert.JavaSqlTypes.TIME :
 							readerCache[i] = new TimeSpanReaderCacheContainer();
 							break;	
-						case DbTypes.JavaSqlTypes.DATE :
+						case DbConvert.JavaSqlTypes.DATE :
 							AbstractDBConnection conn = (AbstractDBConnection)((ICloneable)_command.Connection);
 							string driverName = conn.JdbcConnection.getMetaData().getDriverName();
 
@@ -750,12 +750,12 @@ namespace System.Data.ProviderBase
 								break;
 							}
 							else
-								goto case DbTypes.JavaSqlTypes.TIMESTAMP;
-						case DbTypes.JavaSqlTypes.TIMESTAMP :				
+								goto case DbConvert.JavaSqlTypes.TIMESTAMP;
+						case DbConvert.JavaSqlTypes.TIMESTAMP :				
 							readerCache[i] = new TimestampReaderCacheContainer();
 							break;		
-						case DbTypes.JavaSqlTypes.DECIMAL :
-						case DbTypes.JavaSqlTypes.NUMERIC :
+						case DbConvert.JavaSqlTypes.DECIMAL :
+						case DbConvert.JavaSqlTypes.NUMERIC :
 							// jdbc driver for oracle identitfies both FLOAT and NUMBEr columns as 
 							// java.sql.Types.NUMERIC (2), columnTypeName NUMBER, columnClassName java.math.BigDecimal 
 							// therefore we relay on scale
@@ -768,36 +768,36 @@ namespace System.Data.ProviderBase
 								readerCache[i] = new DecimalReaderCacheContainer();
 							}
 							break;		
-						case DbTypes.JavaSqlTypes.DOUBLE :
-						case DbTypes.JavaSqlTypes.FLOAT :
+						case DbConvert.JavaSqlTypes.DOUBLE :
+						case DbConvert.JavaSqlTypes.FLOAT :
 							readerCache[i] = new DoubleReaderCacheContainer();
 							break;
-						case DbTypes.JavaSqlTypes.INTEGER :
+						case DbConvert.JavaSqlTypes.INTEGER :
 							readerCache[i] = new Int32ReaderCacheContainer();
 							break;
-						case DbTypes.JavaSqlTypes.LONGVARCHAR :
-						case DbTypes.JavaSqlTypes.VARCHAR :
+						case DbConvert.JavaSqlTypes.LONGVARCHAR :
+						case DbConvert.JavaSqlTypes.VARCHAR :
 							readerCache[i] = new StringReaderCacheContainer();
 							break;
-						case DbTypes.JavaSqlTypes.NULL :
+						case DbConvert.JavaSqlTypes.NULL :
 							readerCache[i] = new NullReaderCacheContainer();
 							break;
-						case DbTypes.JavaSqlTypes.REAL :
+						case DbConvert.JavaSqlTypes.REAL :
 							readerCache[i] = new FloatReaderCacheContainer();
 							break;
-						case DbTypes.JavaSqlTypes.REF :
+						case DbConvert.JavaSqlTypes.REF :
 							readerCache[i] = new RefReaderCacheContainer();
 							break;
-						case DbTypes.JavaSqlTypes.SMALLINT :
+						case DbConvert.JavaSqlTypes.SMALLINT :
 							readerCache[i] = new Int16ReaderCacheContainer();
 							break;
-						case DbTypes.JavaSqlTypes.TINYINT :
+						case DbConvert.JavaSqlTypes.TINYINT :
 							readerCache[i] = new ByteReaderCacheContainer();
 							break;
-						case DbTypes.JavaSqlTypes.DISTINCT :
-						case DbTypes.JavaSqlTypes.JAVA_OBJECT :
-						case DbTypes.JavaSqlTypes.OTHER :
-						case DbTypes.JavaSqlTypes.STRUCT :
+						case DbConvert.JavaSqlTypes.DISTINCT :
+						case DbConvert.JavaSqlTypes.JAVA_OBJECT :
+						case DbConvert.JavaSqlTypes.OTHER :
+						case DbConvert.JavaSqlTypes.STRUCT :
 						default :
 							readerCache[i] = new ObjectReaderCacheContainer();
 							break;

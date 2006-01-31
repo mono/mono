@@ -26,6 +26,45 @@ namespace System.Data.ProviderBase
 
 		#endregion // Fields
 
+		#region java.sql.Types constants
+
+		internal enum JavaSqlTypes {
+			ARRAY = 2003 ,
+			BIGINT = -5, 
+			BINARY = -2 ,
+			BIT = -7 ,
+			BLOB = 2004, 
+			BOOLEAN = 16, 
+			CHAR = 1, 
+			CLOB = 2005, 
+			DATALINK = 70, 
+			DATE = 91, 
+			DECIMAL = 3, 
+			DISTINCT = 2001, 
+			DOUBLE = 8, 
+			FLOAT = 6, 
+			INTEGER = 4, 
+			JAVA_OBJECT = 2000, 
+			LONGVARBINARY = -4,
+			LONGVARCHAR = -1, 
+			NULL = 0, 
+			NUMERIC = 2 ,
+			OTHER = 1111 ,
+			REAL = 7 ,
+			REF = 2006 ,
+			SMALLINT = 5,
+			STRUCT = 2002, 
+			TIME = 92, 
+			TIMESTAMP = 93, 
+			TINYINT = -6, 
+			VARBINARY = -3, 
+			VARCHAR = 12,
+			//			NOTSET = int.MinValue
+		}
+
+
+		#endregion // java.sql.Types constants
+
 		#region Methods
 
 		static DbConvert()
@@ -121,48 +160,48 @@ namespace System.Data.ProviderBase
 				* TimeSpan.TicksPerMillisecond;
 		}
 
-		internal protected static Type JavaSqlTypeToClrType(int sqlTypeValue)
+		internal static Type JavaSqlTypeToClrType(int sqlTypeValue)
 		{
-			DbTypes.JavaSqlTypes sqlType = (DbTypes.JavaSqlTypes)sqlTypeValue;
+			JavaSqlTypes sqlType = (JavaSqlTypes)sqlTypeValue;
 
 			switch (sqlType) {
-				case DbTypes.JavaSqlTypes.ARRAY : return typeof (java.sql.Array);
-				case DbTypes.JavaSqlTypes.BIGINT : return DbTypes.TypeOfInt64;
-				case DbTypes.JavaSqlTypes.BINARY : return DbTypes.TypeOfByteArray;
-				case DbTypes.JavaSqlTypes.BIT : return DbTypes.TypeOfBoolean;
-				case DbTypes.JavaSqlTypes.BLOB : return DbTypes.TypeOfByteArray;
-				case DbTypes.JavaSqlTypes.BOOLEAN : return DbTypes.TypeOfBoolean;
-				case DbTypes.JavaSqlTypes.CHAR : return DbTypes.TypeOfString;
-				case DbTypes.JavaSqlTypes.CLOB : return DbTypes.TypeOfString;
-//				case DbTypes.JavaSqlTypes.DATALINK :
-				case DbTypes.JavaSqlTypes.DATE : return DbTypes.TypeOfDateTime;
-				case DbTypes.JavaSqlTypes.DECIMAL : return DbTypes.TypeOfDecimal;
-//				case DbTypes.JavaSqlTypes.DISTINCT :
-				case DbTypes.JavaSqlTypes.DOUBLE : return DbTypes.TypeOfDouble;
-				case DbTypes.JavaSqlTypes.FLOAT : return DbTypes.TypeOfDouble;
-				case DbTypes.JavaSqlTypes.INTEGER : return DbTypes.TypeOfInt32;
-//				case DbTypes.JavaSqlTypes.JAVA_OBJECT :
-				case DbTypes.JavaSqlTypes.LONGVARBINARY : return DbTypes.TypeOfByteArray;
-				case DbTypes.JavaSqlTypes.LONGVARCHAR : return DbTypes.TypeOfString;
-				case DbTypes.JavaSqlTypes.NULL : return null;
-				case DbTypes.JavaSqlTypes.NUMERIC : return DbTypes.TypeOfDecimal;
-//				case DbTypes.JavaSqlTypes.OTHER :
-				case DbTypes.JavaSqlTypes.REAL : return DbTypes.TypeOfSingle;
-				case DbTypes.JavaSqlTypes.REF : return typeof (java.sql.Ref);
-				case DbTypes.JavaSqlTypes.SMALLINT : return DbTypes.TypeOfInt16;
-				case DbTypes.JavaSqlTypes.STRUCT : return typeof (java.sql.Struct);
-				case DbTypes.JavaSqlTypes.TIME : return DbTypes.TypeOfTimespan;
-				case DbTypes.JavaSqlTypes.TIMESTAMP : return DbTypes.TypeOfDateTime;
-				case DbTypes.JavaSqlTypes.TINYINT : return DbTypes.TypeOfByte;
-				case DbTypes.JavaSqlTypes.VARBINARY : return DbTypes.TypeOfByteArray;
-				case DbTypes.JavaSqlTypes.VARCHAR : return DbTypes.TypeOfString;
+				case JavaSqlTypes.ARRAY : return typeof (java.sql.Array);
+				case JavaSqlTypes.BIGINT : return DbTypes.TypeOfInt64;
+				case JavaSqlTypes.BINARY : return DbTypes.TypeOfByteArray;
+				case JavaSqlTypes.BIT : return DbTypes.TypeOfBoolean;
+				case JavaSqlTypes.BLOB : return DbTypes.TypeOfByteArray;
+				case JavaSqlTypes.BOOLEAN : return DbTypes.TypeOfBoolean;
+				case JavaSqlTypes.CHAR : return DbTypes.TypeOfString;
+				case JavaSqlTypes.CLOB : return DbTypes.TypeOfString;
+//				case JavaSqlTypes.DATALINK :
+				case JavaSqlTypes.DATE : return DbTypes.TypeOfDateTime;
+				case JavaSqlTypes.DECIMAL : return DbTypes.TypeOfDecimal;
+//				case JavaSqlTypes.DISTINCT :
+				case JavaSqlTypes.DOUBLE : return DbTypes.TypeOfDouble;
+				case JavaSqlTypes.FLOAT : return DbTypes.TypeOfDouble;
+				case JavaSqlTypes.INTEGER : return DbTypes.TypeOfInt32;
+//				case JavaSqlTypes.JAVA_OBJECT :
+				case JavaSqlTypes.LONGVARBINARY : return DbTypes.TypeOfByteArray;
+				case JavaSqlTypes.LONGVARCHAR : return DbTypes.TypeOfString;
+				case JavaSqlTypes.NULL : return null;
+				case JavaSqlTypes.NUMERIC : return DbTypes.TypeOfDecimal;
+//				case JavaSqlTypes.OTHER :
+				case JavaSqlTypes.REAL : return DbTypes.TypeOfSingle;
+				case JavaSqlTypes.REF : return typeof (java.sql.Ref);
+				case JavaSqlTypes.SMALLINT : return DbTypes.TypeOfInt16;
+				case JavaSqlTypes.STRUCT : return typeof (java.sql.Struct);
+				case JavaSqlTypes.TIME : return DbTypes.TypeOfTimespan;
+				case JavaSqlTypes.TIMESTAMP : return DbTypes.TypeOfDateTime;
+				case JavaSqlTypes.TINYINT : return DbTypes.TypeOfByte;
+				case JavaSqlTypes.VARBINARY : return DbTypes.TypeOfByteArray;
+				case JavaSqlTypes.VARCHAR : return DbTypes.TypeOfString;
 				default : return DbTypes.TypeOfObject;
 			}
 
 		}
 
 
-		internal protected static object JavaResultSetToClrWrapper(CallableStatement results,int columnIndex,DbTypes.JavaSqlTypes javaSqlType,int maxLength ,ResultSetMetaData resultsMetaData)
+		internal static object JavaResultSetToClrWrapper(CallableStatement results,int columnIndex,JavaSqlTypes javaSqlType,int maxLength ,ResultSetMetaData resultsMetaData)
 		{
 			object returnValue = null;	
 			sbyte[] sbyteArray;
@@ -171,25 +210,25 @@ namespace System.Data.ProviderBase
 			string s;
 			columnIndex++; //jdbc style
 			switch (javaSqlType) {
-				case DbTypes.JavaSqlTypes.ARRAY :
+				case JavaSqlTypes.ARRAY :
 					returnValue = results.getArray(columnIndex);
 					break;
-				case DbTypes.JavaSqlTypes.BIGINT :
+				case JavaSqlTypes.BIGINT :
 					returnValue = results.getLong(columnIndex);
 					break;
-				case DbTypes.JavaSqlTypes.BINARY :
-				case DbTypes.JavaSqlTypes.VARBINARY :
-				case DbTypes.JavaSqlTypes.LONGVARBINARY :
+				case JavaSqlTypes.BINARY :
+				case JavaSqlTypes.VARBINARY :
+				case JavaSqlTypes.LONGVARBINARY :
 					// FIXME : comsider using maxLength
 					sbyteArray = results.getBytes(columnIndex);
 					if (sbyteArray != null) {
 						returnValue = vmw.common.TypeUtils.ToByteArray(sbyteArray);
 					}
 					break;
-				case DbTypes.JavaSqlTypes.BIT :
+				case JavaSqlTypes.BIT :
 					returnValue = results.getBoolean(columnIndex);
 					break;
-				case DbTypes.JavaSqlTypes.BLOB :
+				case JavaSqlTypes.BLOB :
 					// FIXME : comsider using maxLength
 					java.sql.Blob blob = results.getBlob(columnIndex);
 					if (blob != null) {
@@ -206,7 +245,7 @@ namespace System.Data.ProviderBase
 						}
 					}
 					break;	
-				case DbTypes.JavaSqlTypes.CHAR :						
+				case JavaSqlTypes.CHAR :						
 					if (resultsMetaData != null && "uniqueidentifier".Equals(resultsMetaData.getColumnTypeName(columnIndex))) {
 						returnValue = new Guid(results.getString(columnIndex));
 					}
@@ -219,7 +258,7 @@ namespace System.Data.ProviderBase
 						returnValue = s;
 					}
 					break;
-				case DbTypes.JavaSqlTypes.CLOB :
+				case JavaSqlTypes.CLOB :
 					// FIXME : comsider using maxLength
 					java.sql.Clob clob = results.getClob(columnIndex);
 					if (clob != null) {
@@ -235,26 +274,26 @@ namespace System.Data.ProviderBase
 						}
 					}
 					break;		
-				case DbTypes.JavaSqlTypes.TIME :
+				case JavaSqlTypes.TIME :
 					Time t = results.getTime(columnIndex);
 					if (t != null) {
 						returnValue = new TimeSpan(JavaTimeToClrTicks(t));
 					}
 					break;	
-				case DbTypes.JavaSqlTypes.DATE :
+				case JavaSqlTypes.DATE :
 					Date d = results.getDate(columnIndex);
 					if (d != null) {
 						returnValue = new DateTime(JavaDateToClrTicks(d));
 					}
 					break;
-				case DbTypes.JavaSqlTypes.TIMESTAMP :				
+				case JavaSqlTypes.TIMESTAMP :				
 					Timestamp ts = results.getTimestamp(columnIndex);
 					if (ts != null) {
 						returnValue = new DateTime(JavaTimestampToClrTicks(ts));
 					}
 					break;		
-				case DbTypes.JavaSqlTypes.DECIMAL :
-				case DbTypes.JavaSqlTypes.NUMERIC :
+				case JavaSqlTypes.DECIMAL :
+				case JavaSqlTypes.NUMERIC :
 					// java.sql.Types.NUMERIC (2), columnTypeName NUMBER, columnClassName java.math.BigDecimal 
 					// therefore we rely on scale
 					if (resultsMetaData != null &&  resultsMetaData.getScale(columnIndex) == -127) {
@@ -268,47 +307,47 @@ namespace System.Data.ProviderBase
 						}
 					}
 					break;		
-				case DbTypes.JavaSqlTypes.DISTINCT :
+				case JavaSqlTypes.DISTINCT :
 					returnValue = results.getObject(columnIndex);
 					break;
-				case DbTypes.JavaSqlTypes.DOUBLE :
+				case JavaSqlTypes.DOUBLE :
 					returnValue = results.getDouble(columnIndex);
 					break;
-				case DbTypes.JavaSqlTypes.FLOAT :
+				case JavaSqlTypes.FLOAT :
 					//float f = results.getFloat(columnIndex);
 					returnValue = results.getDouble(columnIndex);
 					break;
-				case DbTypes.JavaSqlTypes.INTEGER :
+				case JavaSqlTypes.INTEGER :
 					returnValue = results.getInt(columnIndex);
 					break;
-				case DbTypes.JavaSqlTypes.JAVA_OBJECT :
+				case JavaSqlTypes.JAVA_OBJECT :
 					returnValue = results.getObject(columnIndex);
 					break;
-				case DbTypes.JavaSqlTypes.LONGVARCHAR :
+				case JavaSqlTypes.LONGVARCHAR :
 					returnValue = results.getString(columnIndex);
 					break;
-				case DbTypes.JavaSqlTypes.NULL :
+				case JavaSqlTypes.NULL :
 					returnValue = DBNull.Value;
 					break;
-				case DbTypes.JavaSqlTypes.OTHER :
+				case JavaSqlTypes.OTHER :
 					returnValue = results.getObject(columnIndex);
 					break;
-				case DbTypes.JavaSqlTypes.REAL :
+				case JavaSqlTypes.REAL :
 					returnValue = results.getFloat(columnIndex);
 					break;
-				case DbTypes.JavaSqlTypes.REF :
+				case JavaSqlTypes.REF :
 					returnValue = results.getRef(columnIndex);
 					break;
-				case DbTypes.JavaSqlTypes.SMALLINT :
+				case JavaSqlTypes.SMALLINT :
 					returnValue = results.getShort(columnIndex);
 					break;
-				case DbTypes.JavaSqlTypes.STRUCT :
+				case JavaSqlTypes.STRUCT :
 					returnValue = results.getObject(columnIndex);
 					break;
-				case DbTypes.JavaSqlTypes.TINYINT :
+				case JavaSqlTypes.TINYINT :
 					returnValue = Convert.ToByte(results.getByte(columnIndex));
 					break;
-				case DbTypes.JavaSqlTypes.VARCHAR :
+				case JavaSqlTypes.VARCHAR :
 					s = results.getString(columnIndex);
 					if ((s != null) && (maxLength < s.Length)) {
 						s = s.Substring(0,maxLength);

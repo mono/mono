@@ -222,7 +222,7 @@ namespace System.Data.SqlClient
 		{
 			int dataType = res.getInt("DATA_TYPE");
 			SqlDbType = SqlConvert.JdbcTypeToSqlDbType(dataType);
-			JdbcType = (DbTypes.JavaSqlTypes) dataType;
+			JdbcType = dataType;
 		}
 
 		protected internal sealed override void SetSpecialFeatures(ResultSet res)
@@ -230,9 +230,9 @@ namespace System.Data.SqlClient
 			// do nothing
 		}
 
-		protected internal sealed override DbTypes.JavaSqlTypes JdbcTypeFromProviderType()
+		protected internal sealed override int JdbcTypeFromProviderType()
 		{
-			return (DbTypes.JavaSqlTypes)SqlConvert.SqlDbTypeToJdbcType(SqlDbType);
+			return SqlConvert.SqlDbTypeToJdbcType(SqlDbType);
 		}
 
 		#endregion // Methods  

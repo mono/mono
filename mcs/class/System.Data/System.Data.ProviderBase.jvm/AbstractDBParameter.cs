@@ -45,7 +45,7 @@ namespace System.Data.ProviderBase
 		protected byte _precision;
 		protected byte _scale;
 		protected DataRowVersion _sourceVersion;
-		private DbTypes.JavaSqlTypes _jdbcType;
+		private int _jdbcType;
 		protected bool _isDbTypeSet = false;
 		protected bool _isJdbcTypeSet = false;
 		object _convertedValue;
@@ -81,7 +81,7 @@ namespace System.Data.ProviderBase
 			set { _sourceVersion = value; }
 		}
 
-		protected internal DbTypes.JavaSqlTypes JdbcType
+		protected internal int JdbcType
 		{
 			get { 
 				if (!_isJdbcTypeSet) {
@@ -162,7 +162,7 @@ namespace System.Data.ProviderBase
 		
 		public abstract object Clone();
 
-		protected internal abstract DbTypes.JavaSqlTypes JdbcTypeFromProviderType();
+		protected internal abstract int JdbcTypeFromProviderType();
 
 		protected internal abstract object ConvertValue(object value);
 

@@ -226,7 +226,7 @@ namespace System.Data.OleDb
 				}
 			}
 			OleDbType = OleDbConvert.JdbcTypeToOleDbType(jdbcType);
-			JdbcType = (DbTypes.JavaSqlTypes)jdbcType;
+			JdbcType = jdbcType;
 		}
 
 		protected internal sealed override void SetSpecialFeatures(ResultSet res)
@@ -234,9 +234,9 @@ namespace System.Data.OleDb
 			IsOracleRefCursor = (res.getString("TYPE_NAME") == "REF CURSOR");
 		}
 
-		protected internal sealed override DbTypes.JavaSqlTypes JdbcTypeFromProviderType()
+		protected internal sealed override int JdbcTypeFromProviderType()
 		{
-			return (DbTypes.JavaSqlTypes)OleDbConvert.OleDbTypeToJdbcType(OleDbType);
+			return OleDbConvert.OleDbTypeToJdbcType(OleDbType);
 		}
 
 		#endregion // Methods

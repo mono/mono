@@ -941,13 +941,13 @@ namespace System.Data.ProviderBase
 			parameterIndex++; 
 			PreparedStatement preparedStatement = ((PreparedStatement)_statement);
 
-			switch (parameter.JdbcType) {
-				case DbTypes.JavaSqlTypes.DATALINK:
-				case DbTypes.JavaSqlTypes.DISTINCT:
-				case DbTypes.JavaSqlTypes.JAVA_OBJECT:
-				case DbTypes.JavaSqlTypes.OTHER:
-				case DbTypes.JavaSqlTypes.REF:
-				case DbTypes.JavaSqlTypes.STRUCT: {
+			switch ((DbConvert.JavaSqlTypes)parameter.JdbcType) {
+				case DbConvert.JavaSqlTypes.DATALINK:
+				case DbConvert.JavaSqlTypes.DISTINCT:
+				case DbConvert.JavaSqlTypes.JAVA_OBJECT:
+				case DbConvert.JavaSqlTypes.OTHER:
+				case DbConvert.JavaSqlTypes.REF:
+				case DbConvert.JavaSqlTypes.STRUCT: {
 					preparedStatement.setObject(parameterIndex, value, (int)parameter.JdbcType);
 					return;
 				}
@@ -982,21 +982,21 @@ namespace System.Data.ProviderBase
 				preparedStatement.setString(parameterIndex, ((char)value).ToString());
 			}
 			else if (value is DateTime) {
-				switch (parameter.JdbcType) {
+				switch ((DbConvert.JavaSqlTypes)parameter.JdbcType) {
 					default:
-					case DbTypes.JavaSqlTypes.TIMESTAMP:
+					case DbConvert.JavaSqlTypes.TIMESTAMP:
 						preparedStatement.setTimestamp(parameterIndex,DbConvert.ClrTicksToJavaTimestamp(((DateTime)value).Ticks));
 						break;
-					case DbTypes.JavaSqlTypes.TIME:
+					case DbConvert.JavaSqlTypes.TIME:
 						preparedStatement.setTime(parameterIndex,DbConvert.ClrTicksToJavaTime(((DateTime)value).Ticks));
 						break;
-					case DbTypes.JavaSqlTypes.DATE:
+					case DbConvert.JavaSqlTypes.DATE:
 						preparedStatement.setDate(parameterIndex,DbConvert.ClrTicksToJavaDate(((DateTime)value).Ticks));
 						break;
 				}
 			}
 			else if (value is TimeSpan) {
-				if (parameter.JdbcType == DbTypes.JavaSqlTypes.TIMESTAMP)
+				if (parameter.JdbcType == (int)DbConvert.JavaSqlTypes.TIMESTAMP)
 					preparedStatement.setTimestamp(parameterIndex,DbConvert.ClrTicksToJavaTimestamp(((TimeSpan)value).Ticks));
 				else
 					preparedStatement.setTime(parameterIndex,DbConvert.ClrTicksToJavaTime(((TimeSpan)value).Ticks));
@@ -1081,7 +1081,7 @@ namespace System.Data.ProviderBase
 //				// suppress error : ms driver for sql server does not implement getParameterMetaData
 //				// suppress exception : ms driver for sql server does not implement getParameterMetaData
 //			}
-			DbTypes.JavaSqlTypes javaSqlType = (DbTypes.JavaSqlTypes)((AbstractDbParameter)parameter).JdbcType;
+			DbConvert.JavaSqlTypes javaSqlType = (DbConvert.JavaSqlTypes)((AbstractDbParameter)parameter).JdbcType;
 			try {
 				parameter.Value = DbConvert.JavaResultSetToClrWrapper(callableStatement,index,javaSqlType,parameter.Size,parameterMetadataWrapper);
 			}

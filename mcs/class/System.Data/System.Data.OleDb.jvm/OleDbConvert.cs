@@ -105,38 +105,38 @@ namespace System.Data.OleDb
 
 		internal static OleDbType JdbcTypeToOleDbType(int jdbcType)
 		{
-			switch ((DbTypes.JavaSqlTypes)jdbcType) {
-				case DbTypes.JavaSqlTypes.ARRAY: return OleDbType.Binary;
-				case DbTypes.JavaSqlTypes.BIGINT: return OleDbType.BigInt;
-				case DbTypes.JavaSqlTypes.BINARY: return OleDbType.Binary;
-				case DbTypes.JavaSqlTypes.BIT: return OleDbType.Boolean;
-				case DbTypes.JavaSqlTypes.BLOB: return OleDbType.Binary;
-				case DbTypes.JavaSqlTypes.BOOLEAN: return OleDbType.Boolean;
-				case DbTypes.JavaSqlTypes.CHAR: return OleDbType.Char;
-				case DbTypes.JavaSqlTypes.CLOB: return OleDbType.LongVarWChar;
-				case DbTypes.JavaSqlTypes.DATALINK: return OleDbType.IUnknown;
-				case DbTypes.JavaSqlTypes.DATE: return OleDbType.DBDate;
-				case DbTypes.JavaSqlTypes.DECIMAL: return OleDbType.Decimal;
-				case DbTypes.JavaSqlTypes.DISTINCT: return OleDbType.IUnknown; 
-				case DbTypes.JavaSqlTypes.DOUBLE: return OleDbType.Double;
-				case DbTypes.JavaSqlTypes.FLOAT: return OleDbType.Double;
-				case DbTypes.JavaSqlTypes.INTEGER: return OleDbType.Integer;
-				case DbTypes.JavaSqlTypes.JAVA_OBJECT: return OleDbType.IUnknown;
-				case DbTypes.JavaSqlTypes.LONGVARBINARY: return OleDbType.LongVarBinary;
-				case DbTypes.JavaSqlTypes.LONGVARCHAR: return OleDbType.LongVarWChar;
-				case DbTypes.JavaSqlTypes.NULL: return OleDbType.Empty;
-				case DbTypes.JavaSqlTypes.NUMERIC: return OleDbType.Numeric;
+			switch ((JavaSqlTypes)jdbcType) {
+				case JavaSqlTypes.ARRAY: return OleDbType.Binary;
+				case JavaSqlTypes.BIGINT: return OleDbType.BigInt;
+				case JavaSqlTypes.BINARY: return OleDbType.Binary;
+				case JavaSqlTypes.BIT: return OleDbType.Boolean;
+				case JavaSqlTypes.BLOB: return OleDbType.Binary;
+				case JavaSqlTypes.BOOLEAN: return OleDbType.Boolean;
+				case JavaSqlTypes.CHAR: return OleDbType.Char;
+				case JavaSqlTypes.CLOB: return OleDbType.LongVarWChar;
+				case JavaSqlTypes.DATALINK: return OleDbType.IUnknown;
+				case JavaSqlTypes.DATE: return OleDbType.DBDate;
+				case JavaSqlTypes.DECIMAL: return OleDbType.Decimal;
+				case JavaSqlTypes.DISTINCT: return OleDbType.IUnknown; 
+				case JavaSqlTypes.DOUBLE: return OleDbType.Double;
+				case JavaSqlTypes.FLOAT: return OleDbType.Double;
+				case JavaSqlTypes.INTEGER: return OleDbType.Integer;
+				case JavaSqlTypes.JAVA_OBJECT: return OleDbType.IUnknown;
+				case JavaSqlTypes.LONGVARBINARY: return OleDbType.LongVarBinary;
+				case JavaSqlTypes.LONGVARCHAR: return OleDbType.LongVarWChar;
+				case JavaSqlTypes.NULL: return OleDbType.Empty;
+				case JavaSqlTypes.NUMERIC: return OleDbType.Numeric;
 				default:
-				case DbTypes.JavaSqlTypes.OTHER: return OleDbType.IUnknown;
-				case DbTypes.JavaSqlTypes.REAL: return OleDbType.Single;
-				case DbTypes.JavaSqlTypes.REF: return OleDbType.IUnknown;
-				case DbTypes.JavaSqlTypes.SMALLINT: return OleDbType.SmallInt;
-				case DbTypes.JavaSqlTypes.STRUCT: return OleDbType.IUnknown;
-				case DbTypes.JavaSqlTypes.TIME: return OleDbType.DBTime;
-				case DbTypes.JavaSqlTypes.TIMESTAMP: return OleDbType.DBTimeStamp;
-				case DbTypes.JavaSqlTypes.TINYINT: return OleDbType.TinyInt;
-				case DbTypes.JavaSqlTypes.VARBINARY: return OleDbType.VarBinary;
-				case DbTypes.JavaSqlTypes.VARCHAR: return OleDbType.VarChar;
+				case JavaSqlTypes.OTHER: return OleDbType.IUnknown;
+				case JavaSqlTypes.REAL: return OleDbType.Single;
+				case JavaSqlTypes.REF: return OleDbType.IUnknown;
+				case JavaSqlTypes.SMALLINT: return OleDbType.SmallInt;
+				case JavaSqlTypes.STRUCT: return OleDbType.IUnknown;
+				case JavaSqlTypes.TIME: return OleDbType.DBTime;
+				case JavaSqlTypes.TIMESTAMP: return OleDbType.DBTimeStamp;
+				case JavaSqlTypes.TINYINT: return OleDbType.TinyInt;
+				case JavaSqlTypes.VARBINARY: return OleDbType.VarBinary;
+				case JavaSqlTypes.VARCHAR: return OleDbType.VarChar;
 			}
 		}
 
