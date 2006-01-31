@@ -58,16 +58,19 @@ namespace System.Web.Configuration {
 			return ConfigurationManager.OpenMachineConfiguration ();
 		}
 		
-		[MonoTODO]
+		[MonoTODO ("need to handle locationSubPath")]
 		public static _Configuration OpenMachineConfiguration (string locationSubPath)
 		{
-			throw new NotImplementedException ();
+			return OpenMachineConfiguration ();
 		}
 
 		[MonoTODO]
 		public static _Configuration OpenMachineConfiguration (string locationSubPath,
 								       string server)
 		{
+			if (server == null)
+				return OpenMachineConfiguration (locationSubPath);
+
 			throw new NotSupportedException ("Mono doesn't support remote configuration");
 		}
 
@@ -76,6 +79,8 @@ namespace System.Web.Configuration {
 								       string server,
 								       IntPtr userToken)
 		{
+			if (server == null)
+				return OpenMachineConfiguration (locationSubPath);
 			throw new NotSupportedException ("Mono doesn't support remote configuration");
 		}
 
@@ -85,6 +90,8 @@ namespace System.Web.Configuration {
 								       string userName,
 								       string password)
 		{
+			if (server == null)
+				return OpenMachineConfiguration (locationSubPath);
 			throw new NotSupportedException ("Mono doesn't support remote configuration");
 		}
 
@@ -117,6 +124,9 @@ namespace System.Web.Configuration {
 		[MonoTODO]
 		public static _Configuration OpenWebConfiguration (string path, string site, string locationSubPath, string server, string userName, string password)
 		{
+			if (path == null)
+				path = "";
+
 			string basePath = GetBasePath (path);
 			_Configuration conf;
 			
@@ -171,20 +181,17 @@ namespace System.Web.Configuration {
 			return ConfigurationFactory.Create (typeof(WebConfigurationHost), fileMap);
 		}
 
-		[MonoTODO]
+		[MonoTODO ("need to handle locationSubPath")]
 		public static _Configuration OpenMappedMachineConfiguration (ConfigurationFileMap fileMap,
 									     string locationSubPath)
 		{
-			throw new NotImplementedException ();
+			return OpenMappedMachineConfiguration (fileMap);
 		}
 
+		[MonoTODO ("apparently this bad boy can return null, but GetWebApplicationSection doesn't")]
 		public static object GetSection (string sectionName)
 		{
-			object section = GetWebApplicationSection (sectionName);
-			if (section != null)
-				return section;
-
-			return ConfigurationManager.GetSection (sectionName);
+			return GetWebApplicationSection (sectionName);
 		}
 
 		[MonoTODO]
@@ -199,10 +206,13 @@ namespace System.Web.Configuration {
 
 			if (HttpContext.Current == null
 			    || HttpContext.Current.Request == null
-			    || HttpContext.Current.Request.PhysicalApplicationPath == null)
-				config = OpenMachineConfiguration ();
-			else 
+			    || HttpContext.Current.Request.PhysicalApplicationPath == null
+			    || HttpContext.Current.Request.PhysicalApplicationPath == "") {
+				config = OpenWebConfiguration ("");
+			}
+			else {
 				config = OpenWebConfiguration (HttpContext.Current.Request.PhysicalApplicationPath);
+			}
 
 			return config;
 		}
@@ -231,7 +241,7 @@ namespace System.Web.Configuration {
 		
 		static string GetBasePath (string path)
 		{
- 			if (path == "/")
+ 			if (path == "/" || path == "")
 				return path;
 			
 			string pd = HttpContext.Current.Request.MapPath (path);
@@ -350,7 +360,7 @@ namespace System.Web.Configuration {
 
 		public object GetConfig (string sectionName)
 		{
-			return WebConfigurationManager.GetSection (sectionName);
+			return WebConfigurationManager.GetWebApplicationSection (sectionName);
 		}
 
 		public void Init ()

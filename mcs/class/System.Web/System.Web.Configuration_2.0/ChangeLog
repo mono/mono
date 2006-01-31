@@ -1,3 +1,14 @@
+2006-01-30  Chris Toshok  <toshok@ximian.com>
+
+	* WebConfigurationManager.cs: lots of little changes.  hopefully
+	this doesn't break anyone.  it fixes all the nunit problems
+	gonzalo was having.
+
+	* WebConfigurationHost.cs (GetStreamName): in the MachineWebPath
+	case, handle the case where we have a WebConfigurationFileMap.
+	(MapPath): this is likely wrong, but in the case where we don't
+	have a file map or current HttpContext, just return the path.
+
 2006-01-29  Chris Toshok  <toshok@ximian.com>
 
 	* HttpModulesSection.cs (LoadModules): I'm not sure we want to

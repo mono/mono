@@ -113,12 +113,14 @@ namespace System.Web.Configuration
 				else
 					return map.MachineConfigFilename;
 			} else if (configPath == MachineWebPath) {
-				if (map == null) {
-					string mdir = Path.GetDirectoryName (System.Runtime.InteropServices.RuntimeEnvironment.SystemConfigurationFile);
-					return GetWebConfigFileName (mdir);
-				}
+				string mdir;
+
+				if (map == null)
+					mdir = Path.GetDirectoryName (System.Runtime.InteropServices.RuntimeEnvironment.SystemConfigurationFile);
 				else
-					return null;
+					mdir = Path.GetDirectoryName (map.MachineConfigFilename);
+
+				return GetWebConfigFileName (mdir);
 			}
 			
 			string dir = MapPath (configPath);
@@ -197,8 +199,11 @@ namespace System.Web.Configuration
 		{
 			if (map != null)
 				return MapPathFromMapper (virtualPath);
-			else
+			else if (HttpContext.Current != null
+				 && HttpContext.Current.Request != null)
 				return HttpContext.Current.Request.MapPath (virtualPath);
+			else
+				return virtualPath;
 		}
 		
 		public string NormalizeVirtualPath (string virtualPath)
