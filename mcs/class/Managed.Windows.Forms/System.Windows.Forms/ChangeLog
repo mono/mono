@@ -1,3 +1,8 @@
+2006-01-31  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* ThemeWin32Classic.cs: Menu background is drawn in ColorMenu, not
+	  in the background of the owning form. Fixes #77332
+
 2006-01-31  Alexander Olk  <alex.olk@googlemail.com>
 
 	* MimeIcon.cs: Fix for #77409

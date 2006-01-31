@@ -1876,7 +1876,7 @@ namespace System.Windows.Forms
 			string_format_menu_text.HotkeyPrefix = hp;
 
 			rect.Height = menu.Height;
-			dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (menu.Wnd.BackColor), rect);
+			dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush(ThemeEngine.Current.ColorMenu), rect);
 						
 			for (int i = 0; i < menu.MenuItems.Count; i++) {
 				MenuItem item = menu.MenuItems [i];
