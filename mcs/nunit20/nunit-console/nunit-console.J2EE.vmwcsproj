@@ -1,5 +1,5 @@
 <VisualStudioProject>
-	<CSHARP ProjectType="Local" ProductVersion="7.10.3077" SchemaVersion="2.0" ProjectGuid="{EE901CF2-A263-471C-AEE2-2400A7105ABE}" SccProjectName="nunit.java" SccLocalPath=".." SccProvider="MSSCCI:ClearCase">
+	<CSHARP ProjectType="Local" ProductVersion="7.10.3077" SchemaVersion="2.0" ProjectGuid="{EE901CF2-A263-471C-AEE2-2400A7105ABE}">
 		<Build>
 			<Settings ApplicationIcon="" AssemblyKeyContainerName="" AssemblyName="nunit-console" AssemblyOriginatorKeyFile="" DefaultClientScript="JScript" DefaultHTMLPageLayout="Grid" DefaultTargetSchema="IE50" DelaySign="false" OutputType="Exe" PreBuildEvent="" PostBuildEvent="" RootNamespace="nunit_console" RunPostBuildEvent="OnBuildSuccess" StartupObject="">
 				<Config Name="Debug_Java" AllowUnsafeBlocks="false" BaseAddress="285212672" CheckForOverflowUnderflow="false" ConfigurationOverrideFile="" DefineConstants="DEBUG;TRACE;JAVA;TARGET_JVM;GHT_MARSHAL_BY_REF_OBJECT;GHT_THREAD_ABORT;GHT_ENVIRONMENT_OSVERSION;GHT_ASSEMBLYNAME_VERSION;ASSEMBLY_GETASSEMBLY" DocumentationFile="" DebugSymbols="true" FileAlignment="4096" IncrementalBuild="false" NoStdLib="false" NoWarn="618" Optimize="false" OutputPath="bin\Debug_Java\" RegisterForComInterop="false" RemoveIntegerChecks="false" TreatWarningsAsErrors="false" WarningLevel="4"/>
