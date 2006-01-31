@@ -159,7 +159,7 @@ namespace System.Data.OracleClient {
 			if (value is IConvertible && (_isDbTypeSet || IsJdbcTypeSet)) {
 				OracleType oleDbType = (_isDbTypeSet) ? OracleType : OracleConvert.JdbcTypeToOracleType((int)JdbcType);
 				Type to = OracleConvert.OracleTypeToValueType(oleDbType);
-				if (!(value is DateTime && to == DbTypes.TypeOfTimespan)) //anyway will go by jdbc type
+				if (!(value is DateTime && to == OracleConvert.TypeOfTimespan)) //anyway will go by jdbc type
 					convertedValue = Convert.ChangeType(value,to);
 			}
 			return convertedValue;
@@ -195,15 +195,15 @@ namespace System.Data.OracleClient {
 				}
 			}
 			OracleType = OracleConvert.JdbcTypeToOracleType(jdbcType);
-			JdbcType = (DbTypes.JavaSqlTypes)jdbcType;
+			JdbcType = jdbcType;
 		}
 
 		protected sealed override void SetSpecialFeatures(ResultSet res) {
 			// do nothing
 		}
 
-		protected sealed override DbTypes.JavaSqlTypes JdbcTypeFromProviderType() {
-			return (DbTypes.JavaSqlTypes)OracleConvert.OracleTypeToJdbcType(OracleType);
+		protected sealed override int JdbcTypeFromProviderType() {
+			return OracleConvert.OracleTypeToJdbcType(OracleType);
 		}
 
 		#endregion // Methods

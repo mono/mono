@@ -37,7 +37,7 @@ using System.Data.ProviderBase;
 using java.sql;
 
 namespace System.Data.OracleClient {
-	internal sealed class OracleConvert : DbConvert {
+	sealed class OracleConvert : DbConvert {
 		#region Fields
 
 		private static Hashtable _typeNamesMap;
@@ -89,6 +89,72 @@ namespace System.Data.OracleClient {
 
 		#endregion //Constructors
 
+		#region oracle.sql.Types constants
+
+		internal enum JavaSqlTypes {
+			ARRAY = 2003 ,
+			BIGINT = -5, 
+			BINARY = -2 ,
+			BIT = -7 ,
+			BLOB = 2004, 
+			BOOLEAN = 16, 
+			CHAR = 1, 
+			CLOB = 2005, 
+			DATALINK = 70, 
+			DATE = 91, 
+			DECIMAL = 3, 
+			DISTINCT = 2001, 
+			DOUBLE = 8, 
+			FLOAT = 6, 
+			INTEGER = 4, 
+			JAVA_OBJECT = 2000, 
+			LONGVARBINARY = -4,
+			LONGVARCHAR = -1, 
+			NULL = 0, 
+			NUMERIC = 2 ,
+			OTHER = 1111 ,
+			REAL = 7 ,
+			REF = 2006 ,
+			SMALLINT = 5,
+			STRUCT = 2002, 
+			TIME = 92, 
+			TIMESTAMP = 93, 
+			TINYINT = -6, 
+			VARBINARY = -3, 
+			VARCHAR = 12,
+			//			NOTSET = int.MinValue
+		}
+
+		#endregion
+
+		#region .Net types constants
+
+		internal static readonly Type TypeOfBoolean = typeof(Boolean);
+		internal static readonly Type TypeOfSByte = typeof(SByte);
+		internal static readonly Type TypeOfChar = typeof(Char);
+		internal static readonly Type TypeOfInt16 = typeof(Int16);
+		internal static readonly Type TypeOfInt32 = typeof(Int32);
+		internal static readonly Type TypeOfInt64 = typeof(Int64);
+		internal static readonly Type TypeOfByte = typeof(Byte);
+		internal static readonly Type TypeOfUInt16 = typeof(UInt16);
+		internal static readonly Type TypeOfUInt32 = typeof(UInt32);
+		internal static readonly Type TypeOfUInt64 = typeof(UInt64);
+		internal static readonly Type TypeOfDouble = typeof(Double);
+		internal static readonly Type TypeOfSingle = typeof(Single);
+		internal static readonly Type TypeOfDecimal = typeof(Decimal);
+		internal static readonly Type TypeOfString = typeof(String);
+		internal static readonly Type TypeOfDateTime = typeof(DateTime);		
+		internal static readonly Type TypeOfObject = typeof(object);
+		internal static readonly Type TypeOfGuid = typeof(Guid);
+		internal static readonly Type TypeOfType = typeof(Type);
+
+		// additional types
+		internal static readonly Type TypeOfByteArray = typeof(Byte[]);
+		internal static readonly Type TypeOfFloat = typeof (float);
+		internal static readonly Type TypeOfTimespan = typeof (TimeSpan);
+
+		#endregion
+
 		#region Methods
 
 		internal static String JdbcTypeNameToDbTypeName(string jdbcTypeName) {
@@ -100,38 +166,38 @@ namespace System.Data.OracleClient {
 
 		//TBD
 		internal static OracleType JdbcTypeToOracleType(int jdbcType) {
-			switch ((DbTypes.JavaSqlTypes)jdbcType) {
-				case DbTypes.JavaSqlTypes.ARRAY: return OracleType.Blob;
-				case DbTypes.JavaSqlTypes.BIGINT: return OracleType.Number;
-				case DbTypes.JavaSqlTypes.BINARY: return OracleType.Blob;
-				//case DbTypes.JavaSqlTypes.BIT: return OracleType.Boolean;
-				case DbTypes.JavaSqlTypes.BLOB: return OracleType.Blob;
-				//case DbTypes.JavaSqlTypes.BOOLEAN: return OracleType.Boolean;
-				case DbTypes.JavaSqlTypes.CHAR: return OracleType.Char;
-				//case DbTypes.JavaSqlTypes.CLOB: return OracleType.Clob;
-//				case DbTypes.JavaSqlTypes.DATALINK: return OracleType.IUnknown;
-//				case DbTypes.JavaSqlTypes.DATE: return OracleType.DBDate;
-//				case DbTypes.JavaSqlTypes.DECIMAL: return OracleType.Decimal;
-//				case DbTypes.JavaSqlTypes.DISTINCT: return OracleType.IUnknown; 
-				case DbTypes.JavaSqlTypes.DOUBLE: return OracleType.Double;
-				case DbTypes.JavaSqlTypes.FLOAT: return OracleType.Double;
-//				case DbTypes.JavaSqlTypes.INTEGER: return OracleType.Integer;
-//				case DbTypes.JavaSqlTypes.JAVA_OBJECT: return OracleType.IUnknown;
-//				case DbTypes.JavaSqlTypes.LONGVARBINARY: return OracleType.LongVarBinary;
-//				case DbTypes.JavaSqlTypes.LONGVARCHAR: return OracleType.LongVarWChar;
-//				case DbTypes.JavaSqlTypes.NULL: return OracleType.Empty;
-//				case DbTypes.JavaSqlTypes.NUMERIC: return OracleType.Numeric;
+			switch ((JavaSqlTypes)jdbcType) {
+				case JavaSqlTypes.ARRAY: return OracleType.Blob;
+				case JavaSqlTypes.BIGINT: return OracleType.Number;
+				case JavaSqlTypes.BINARY: return OracleType.Blob;
+				//case JavaSqlTypes.BIT: return OracleType.Boolean;
+				case JavaSqlTypes.BLOB: return OracleType.Blob;
+				//case JavaSqlTypes.BOOLEAN: return OracleType.Boolean;
+				case JavaSqlTypes.CHAR: return OracleType.Char;
+				//case JavaSqlTypes.CLOB: return OracleType.Clob;
+//				case JavaSqlTypes.DATALINK: return OracleType.IUnknown;
+//				case JavaSqlTypes.DATE: return OracleType.DBDate;
+//				case JavaSqlTypes.DECIMAL: return OracleType.Decimal;
+//				case JavaSqlTypes.DISTINCT: return OracleType.IUnknown; 
+				case JavaSqlTypes.DOUBLE: return OracleType.Double;
+				case JavaSqlTypes.FLOAT: return OracleType.Double;
+//				case JavaSqlTypes.INTEGER: return OracleType.Integer;
+//				case JavaSqlTypes.JAVA_OBJECT: return OracleType.IUnknown;
+//				case JavaSqlTypes.LONGVARBINARY: return OracleType.LongVarBinary;
+//				case JavaSqlTypes.LONGVARCHAR: return OracleType.LongVarWChar;
+//				case JavaSqlTypes.NULL: return OracleType.Empty;
+//				case JavaSqlTypes.NUMERIC: return OracleType.Numeric;
 				default:
-//				case DbTypes.JavaSqlTypes.OTHER: return OracleType.IUnknown;
-//				case DbTypes.JavaSqlTypes.REAL: return OracleType.Single;
-//				case DbTypes.JavaSqlTypes.REF: return OracleType.IUnknown;
-//				case DbTypes.JavaSqlTypes.SMALLINT: return OracleType.SmallInt;
-//				case DbTypes.JavaSqlTypes.STRUCT: return OracleType.IUnknown;
-//				case DbTypes.JavaSqlTypes.TIME: return OracleType.DBTime;
-//				case DbTypes.JavaSqlTypes.TIMESTAMP: return OracleType.DBTimeStamp;
-//				case DbTypes.JavaSqlTypes.TINYINT: return OracleType.TinyInt;
-//				case DbTypes.JavaSqlTypes.VARBINARY: return OracleType.VarBinary;
-				case DbTypes.JavaSqlTypes.VARCHAR: return OracleType.VarChar;
+//				case JavaSqlTypes.OTHER: return OracleType.IUnknown;
+//				case JavaSqlTypes.REAL: return OracleType.Single;
+//				case JavaSqlTypes.REF: return OracleType.IUnknown;
+//				case JavaSqlTypes.SMALLINT: return OracleType.SmallInt;
+//				case JavaSqlTypes.STRUCT: return OracleType.IUnknown;
+//				case JavaSqlTypes.TIME: return OracleType.DBTime;
+//				case JavaSqlTypes.TIMESTAMP: return OracleType.DBTimeStamp;
+//				case JavaSqlTypes.TINYINT: return OracleType.TinyInt;
+//				case JavaSqlTypes.VARBINARY: return OracleType.VarBinary;
+				case JavaSqlTypes.VARCHAR: return OracleType.VarChar;
 			}
 		}
 
@@ -175,40 +241,40 @@ namespace System.Data.OracleClient {
 //				case OracleType.Binary : return DbTypes.TypeOfByteArray;
 //				case OracleType.Boolean : return DbTypes.TypeOfBoolean;
 //				case OracleType.BSTR : return DbTypes.TypeOfString;
-				case OracleType.Char : return DbTypes.TypeOfString;
-//				case OracleType.Currency : return DbTypes.TypeOfDecimal;
-//				case OracleType.Date : return DbTypes.TypeOfDateTime;
-//				case OracleType.DBDate : return DbTypes.TypeOfDateTime;
-//				case OracleType.DBTime : return DbTypes.TypeOfTimespan;
-//				case OracleType.DBTimeStamp : return DbTypes.TypeOfDateTime;
-//				case OracleType.Decimal : return DbTypes.TypeOfDecimal;
-				case OracleType.Double : return DbTypes.TypeOfDouble;
+				case OracleType.Char : return TypeOfString;
+//				case OracleType.Currency : return TypeOfDecimal;
+//				case OracleType.Date : return TypeOfDateTime;
+//				case OracleType.DBDate : return TypeOfDateTime;
+//				case OracleType.DBTime : return TypeOfTimespan;
+//				case OracleType.DBTimeStamp : return TypeOfDateTime;
+//				case OracleType.Decimal : return TypeOfDecimal;
+				case OracleType.Double : return TypeOfDouble;
 //				case OracleType.Empty : return null; //typeof(DBNull);
 //				case OracleType.Error : return typeof(Exception);
-//				case OracleType.Filetime : return DbTypes.TypeOfDateTime;
-//				case OracleType.Guid : return DbTypes.TypeOfGuid;
-//				case OracleType.IDispatch : return DbTypes.TypeOfObject;
-//				case OracleType.Integer : return DbTypes.TypeOfInt32;
-//				case OracleType.IUnknown : return DbTypes.TypeOfObject;
-//				case OracleType.LongVarBinary : return DbTypes.TypeOfByteArray;
-				case OracleType.LongVarChar : return DbTypes.TypeOfString;
-//				case OracleType.LongVarWChar : return DbTypes.TypeOfString;
-//				case OracleType.Numeric : return DbTypes.TypeOfDecimal;
-//				case OracleType.PropVariant : return DbTypes.TypeOfObject;
-//				case OracleType.Single : return DbTypes.TypeOfFloat;
-//				case OracleType.SmallInt : return DbTypes.TypeOfInt16;
-//				case OracleType.TinyInt : return DbTypes.TypeOfSByte;
-//				case OracleType.UnsignedBigInt : return DbTypes.TypeOfUInt64;
-//				case OracleType.UnsignedInt : return DbTypes.TypeOfUInt32;
-//				case OracleType.UnsignedSmallInt : return DbTypes.TypeOfUInt16;
-//				case OracleType.UnsignedTinyInt : return DbTypes.TypeOfByte;
-//				case OracleType.VarBinary : return DbTypes.TypeOfByteArray;
-//				case OracleType.VarChar : return DbTypes.TypeOfString;
-//				case OracleType.Variant : return DbTypes.TypeOfObject;
-//				case OracleType.VarNumeric : return DbTypes.TypeOfDecimal;
-//				case OracleType.VarWChar : return DbTypes.TypeOfString;
-//				case OracleType.WChar : return DbTypes.TypeOfString;
-				default : return DbTypes.TypeOfObject;
+//				case OracleType.Filetime : return TypeOfDateTime;
+//				case OracleType.Guid : return TypeOfGuid;
+//				case OracleType.IDispatch : return TypeOfObject;
+//				case OracleType.Integer : return TypeOfInt32;
+//				case OracleType.IUnknown : return TypeOfObject;
+//				case OracleType.LongVarBinary : return TypeOfByteArray;
+				case OracleType.LongVarChar : return TypeOfString;
+//				case OracleType.LongVarWChar : return TypeOfString;
+//				case OracleType.Numeric : return TypeOfDecimal;
+//				case OracleType.PropVariant : return TypeOfObject;
+//				case OracleType.Single : return TypeOfFloat;
+//				case OracleType.SmallInt : return TypeOfInt16;
+//				case OracleType.TinyInt : return TypeOfSByte;
+//				case OracleType.UnsignedBigInt : return TypeOfUInt64;
+//				case OracleType.UnsignedInt : return TypeOfUInt32;
+//				case OracleType.UnsignedSmallInt : return TypeOfUInt16;
+//				case OracleType.UnsignedTinyInt : return TypeOfByte;
+//				case OracleType.VarBinary : return TypeOfByteArray;
+//				case OracleType.VarChar : return TypeOfString;
+//				case OracleType.Variant : return TypeOfObject;
+//				case OracleType.VarNumeric : return TypeOfDecimal;
+//				case OracleType.VarWChar : return TypeOfString;
+//				case OracleType.WChar : return TypeOfString;
+				default : return TypeOfObject;
 			}
 		}
 
