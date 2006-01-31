@@ -177,17 +177,41 @@ namespace System.Web.Util {
 		{
 			url = url.Replace('\\','/');
 			int last = url.LastIndexOf ('/');
-			if (last > 0)
+
+			if (last > 0) {
+#if NET_2_0
+				return RemoveDoubleSlashes (url.Substring (0, last));
+#else
 				return url.Substring (0, last);
+#endif
+			}
+
 			return "/";
 		}
+
+#if NET_2_0
+		internal static string RemoveDoubleSlashes (string input)
+		{
+			// MS VirtualPathUtility removes duplicate '/'
+			string str = input;
+			string x;
+			while ((x = str.Replace ("//", "/")) != str) {
+				str = x;
+			}
+
+			return str;
+		}
+#endif
 
 		internal static string GetFile (string url)
 		{
 			url = url.Replace('\\','/');
 			int last = url.LastIndexOf ('/');
-			if (last >= 0)
+			if (last >= 0) {
+				if (url.Length == 1) // Empty file name instead of ArgumentOutOfRange
+					return "";
 				return url.Substring (last+1);
+			}
 
 			throw new Exception (String.Format ("GetFile: `{0}' does not contain a /", url));
 		}
