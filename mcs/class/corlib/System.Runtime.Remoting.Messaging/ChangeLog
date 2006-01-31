@@ -1,3 +1,13 @@
+2006-01-31  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* LogicalCallContext.cs: Added shared empty call context.
+	* MethodCall.cs: Added better error checking and reporting in
+	the code that resolves methods.
+	
+	* ReturnMessage.cs, MethodResponse.cs, MethodCall.cs: Never return null in 
+	LogicalCallContext. If it's null, return an empty context. Based
+	on a patch by Dominic Ullmann that fixes bug #77364.
+
 2005-06-22  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* MethodReturnMessageWrapper.cs: ArgCount now returns the count

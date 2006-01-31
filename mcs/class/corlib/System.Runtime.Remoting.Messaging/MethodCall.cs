@@ -192,7 +192,12 @@ namespace System.Runtime.Remoting.Messaging {
 		}
 		
 		public LogicalCallContext LogicalCallContext {
-			get { return _callContext; }
+			get {
+				if (_callContext == null)
+					return LogicalCallContext.Empty;
+				else
+					return _callContext;
+			}
 		}
 		
 		public MethodBase MethodBase {
@@ -293,30 +298,35 @@ namespace System.Runtime.Remoting.Messaging {
 			if (_uri != null)
 			{
 				Type type = RemotingServices.GetServerTypeForUri (_uri);
-				if (type == null) throw new RemotingException ("Requested service not found. No receiver for uri " + _uri);
+				if (type == null) {
+					string sname = _typeName != null ? " (" + _typeName + ")" : "";
+					throw new RemotingException ("Requested service not found" + sname + ". No receiver for uri " + _uri);
+				}
 
-				if (CanCastTo (_typeName, type)) {
+				if (CastTo (_typeName, type) != null) {
 					_methodBase = RemotingServices.GetMethodBaseFromName (type, _methodName, _methodSignature);
+					if (_methodBase == null) throw new RemotingException ("Method " + _methodName + " not found in " + type);
 					return;
 				}
 				else
 					throw new RemotingException ("Cannot cast from client type '" + _typeName + "' to server type '" + type.FullName + "'");
 			}
 			_methodBase = RemotingServices.GetMethodBaseFromMethodMessage (this);
+			if (_methodBase == null) throw new RemotingException ("Method " + _methodName + " not found in " + TypeName);
 		}
 
-		bool CanCastTo (string clientType, Type serverType)
+		Type CastTo (string clientType, Type serverType)
 		{
 			int i = clientType.IndexOf(',');
 			if (i != -1) clientType = clientType.Substring (0,i).Trim();
 
-			if (clientType == serverType.FullName) return true;
+			if (clientType == serverType.FullName) return serverType;
 
  			// base class hierarchy
 
  			Type baseType = serverType.BaseType;
  			while (baseType != null) {
-    			if (clientType == baseType.FullName) return true;
+    			if (clientType == baseType.FullName) return baseType;
        			baseType = baseType.BaseType;
     		}
 
@@ -324,9 +334,9 @@ namespace System.Runtime.Remoting.Messaging {
 
  			Type[] interfaces = serverType.GetInterfaces();
  			foreach (Type itype in interfaces)
- 				if (clientType == itype.FullName) return true;
+ 				if (clientType == itype.FullName) return itype;
      
-     		return false;
+     		return null;
 		}
 		
 		[MonoTODO]
