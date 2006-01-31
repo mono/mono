@@ -219,8 +219,24 @@ namespace System
 
 			if (!removeEmpty)
 				return Split (separator, count);
-			else
-				throw new NotImplementedException ();
+			else {
+				/* FIXME: Optimize this */
+				String[] res = Split (separator, count);
+				int n = 0;
+				for (int i = 0; i < res.Length; ++i)
+					if (res [i] == String.Empty)
+						n ++;
+				if (n > 0) {
+					String[] arr = new String [res.Length - n];
+					int pos = 0;
+					for (int i = 0; i < res.Length; ++i)
+						if (res [i] != String.Empty)
+							arr [pos ++] = res [i];
+					return arr;
+				}
+				else
+					return res;
+			}
 		}
 
 		[ComVisible (false)]
