@@ -1,5 +1,9 @@
 2006-01-31  Ankit Jain  <jankit@novell.com>
 
+	* InstrTable.cs (inst_table): Add 'readonly.' .
+
+2006-01-31  Ankit Jain  <jankit@novell.com>
+
 	* ExternTable.cs (ExternTable.GetTypeRef): If type is from an 
 	undeclared assembly, then add reference to the assembly.
 

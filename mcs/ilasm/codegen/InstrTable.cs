@@ -187,6 +187,7 @@ namespace Mono.ILASM {
                         inst_table["initblk"] = new ILToken (Token.INSTR_NONE, Op.initblk);
                         inst_table["rethrow"] = new ILToken (Token.INSTR_NONE, Op.rethrow);
                         inst_table["refanytype"] = new ILToken (Token.INSTR_NONE, Op.refanytype);
+                        inst_table["readonly."] = new ILToken (Token.INSTR_NONE, Op.readonly_);
 
                         //
                         // Int operations
