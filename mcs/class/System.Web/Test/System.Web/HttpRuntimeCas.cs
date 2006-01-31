@@ -78,10 +78,6 @@ namespace MonoCasTests.System.Web {
 		{
 			Assert.IsNull (HttpRuntime.AppDomainAppVirtualPath, "AppDomainAppVirtualPath");
 			Assert.IsNotNull (HttpRuntime.Cache, "Cache");
-#if NET_2_0
-			ApplicationShutdownReason asr = HttpRuntime.ShutdownReason;
-			Assert.AreEqual (asr, asr, "ShutdownReason"); // value depends on execution order
-#endif
 		}
 
 		[Test]
