@@ -369,10 +369,10 @@ namespace System.Runtime.Remoting.Contexts {
 		public static object GetData (LocalDataStoreSlot slot)
 		{
 			Context ctx = Thread.CurrentContext;
-			if (ctx.datastore == null) return null;
 			
-			lock (ctx.datastore.SyncRoot)
+			lock (ctx)
 			{
+				if (ctx.datastore == null) return null;
 				return ctx.datastore [slot];
 			}
 		}
@@ -390,17 +390,10 @@ namespace System.Runtime.Remoting.Contexts {
 		public static void SetData (LocalDataStoreSlot slot, object data)
 		{
 			Context ctx = Thread.CurrentContext;
-			if (ctx.datastore == null)
+			lock (ctx)
 			{
-				lock (ctx)
-				{
-					if (ctx.datastore == null)
-						ctx.datastore = new Hashtable ();
-				}
-			}
-			
-			lock (ctx.datastore.SyncRoot)
-			{
+				if (ctx.datastore == null)
+					ctx.datastore = new Hashtable ();
 				ctx.datastore [slot] = data;
 			}
 		}
