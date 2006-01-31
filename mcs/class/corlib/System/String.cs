@@ -841,9 +841,6 @@ namespace System
 			if (this.length == 0 && value.length > 0)
 				return -1;
 
-			if (value.length > startIndex)
-				return -1;
-
 			if (count == 0)
 				return -1;
 

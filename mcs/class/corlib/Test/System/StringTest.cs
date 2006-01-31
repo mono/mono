@@ -981,6 +981,9 @@ public class StringTest : Assertion
 			     
 		string s2 = "QBitArray::bitarr_data"; 
 		AssertEquals ("bug #62160", 9, s2.LastIndexOf ("::"));    
+
+		string s3 = "test123";
+		AssertEquals ("bug #77412", 0, s3.LastIndexOf ("test123"));
 	}
 
 	[Test]
