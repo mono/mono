@@ -1,5 +1,7 @@
 2006-01-30 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* AppManagerAppDomainFactory.cs: stubbed out.
+
 	* ApplicationInfo.cs:
 	* ApplicationManager.cs: add 2 new classes.
 

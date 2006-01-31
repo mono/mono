@@ -1,5 +1,5 @@
 //
-// System.Web.Hosting.ApplicationInfo
+// System.Web.Hosting.AppManagerAppDomainFactory
 // 
 // Author:
 //	Gonzalo Paniagua Javier (gonzalo@novell.com)
@@ -30,29 +30,20 @@
 using System;
 
 namespace System.Web.Hosting {
-	[Serializable]
-	public sealed class ApplicationInfo {
-		string id;
-		string physical_path;
-		string virtual_path;
-
-		internal ApplicationInfo (string id, string phys, string virt)
+	public sealed class AppManagerAppDomainFactory : IAppManagerAppDomainFactory {
+		public AppManagerAppDomainFactory ()
 		{
-			this.id = id;
-			this.physical_path = phys;
-			this.virtual_path = virt;
 		}
 
-		public string ID {
-			get { return id; }
+		[MonoTODO]
+		public object Create (string appId, string appPath)
+		{
+			throw new NotImplementedException ();
 		}
 
-		public string PhysicalPath {
-			get { return physical_path; }
-		}
-
-		public string VirtualPath {
-			get { return virtual_path; }
+		public void Stop ()
+		{
+			// Stop all the stuff that we Create'd here
 		}
 	}
 }
