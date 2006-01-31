@@ -1,3 +1,9 @@
+2006-01-31  Zoltan Varga  <vargaz@gmail.com>
+
+	* icall.c (ves_icall_Type_GetInterfaceMapData): Make sure 
+	max_interface_id is initialized before using it. Fixes #77398.
+	(ves_icall_Type_GetInterfaces): Ditto.
+
 2006-01-30  Raja R Harinath  <rharinath@novell.com>
 
 	* metadata.c (mono_metadata_parse_method_signature_full): Don't
