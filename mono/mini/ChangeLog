@@ -1,5 +1,8 @@
 2006-01-31  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-amd64.c (mono_arch_compute_omit_fp): Avoid hitting an assertion
+	on very large methods.
+
 	* aot.c (load_patch_info): Fix a warning.
 
 Mon Jan 30 12:51:10 CET 2006 Paolo Molaro <lupus@ximian.com>
