@@ -2320,9 +2320,14 @@ namespace System.Query
                         if (source == null || predicate == null)
                                 throw new ArgumentNullException ();
                         
+                        int counter = 0;
                         bool yield = false;
                         
+                        
                         foreach (T element in source) {
+                                if (counter == 0)
+                                        yield = !predicate (element);
+                                
                                 if (yield)
                                         yield return element;
                                 else
@@ -2343,6 +2348,9 @@ namespace System.Query
                         bool yield = false;
                         
                         foreach (T element in source) {
+                                if (counter == 0)
+                                        yield = !predicate (element, 0);
+                        
                                 if (yield)
                                         yield return element;
                                 else
