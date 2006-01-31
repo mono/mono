@@ -149,7 +149,10 @@ namespace System.Security.Cryptography.Xml {
 		{
 			if (remove) {
 				XmlNodeList nl = input.SelectNodes ("descendant-or-self::dsig:Signature", nsmgr);
+				ArrayList al = new ArrayList ();
 				foreach (XmlNode n in nl)
+					al.Add (n);
+				foreach (XmlNode n in al)
 					n.ParentNode.RemoveChild (n);
 			}
 			return input;
