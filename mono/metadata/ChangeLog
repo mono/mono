@@ -28,6 +28,11 @@ Tue Jan 24 18:53:35 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* profiler.c: fix printing of data.
 
+2006-01-24  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* object.c, marshal.c : Fixed runtime part of bug #77315. Reject
+	  invalid surrogate in UTF7/UTF8 bytes and don't return NULL.
+
 Tue Jan 24 09:56:16 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* object.c: fix deadlock related to string interning.
