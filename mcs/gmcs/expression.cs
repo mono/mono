@@ -4794,6 +4794,8 @@ namespace Mono.CSharp {
 				nmethods = j;
 			}
 
+			int applicable_errors = Report.Errors;
+			
 			//
 			// First we construct the set of applicable methods
 			//
@@ -4837,6 +4839,9 @@ namespace Mono.CSharp {
 				}
 			}
 
+			if (applicable_errors != Report.Errors)
+				return null;
+			
 			int candidate_top = candidates.Count;
 
 			if (applicable_type == null) {

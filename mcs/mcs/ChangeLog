@@ -1,3 +1,9 @@
+2006-01-31  Miguel de Icaza  <miguel@novell.com>
+
+	* expression.cs: There might be errors reported during the
+	selection of applicable methods.  If there are errors, do not
+	continue execution as it will lead the compiler to crash.
+
 2006-01-30  Miguel de Icaza  <miguel@novell.com>
 
 	* expression.cs: Member access is not allowed on anonymous
