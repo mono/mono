@@ -1,3 +1,7 @@
+2006-01-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CultureInfoTest.cs : added test for bug #77347.
+
 2005-12-08  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* DaylightTimeTest.cs: New. Serialization interop test cases.
