@@ -45,6 +45,7 @@ namespace System.Drawing
 	{
 		private IntPtr	fontObject = IntPtr.Zero;
 		private string  systemFontName;
+		private float _size;
 
 		private void CreateFont(string familyName, float emSize, FontStyle style, GraphicsUnit unit, byte charSet, bool isVertical) {
                         Status		status;                  
@@ -159,6 +160,7 @@ namespace System.Drawing
 		{
 			_name = family.Name;
 			_fontFamily = family;			
+			_size = emSize;
 
 			// MS throws ArgumentException, if unit is set to GraphicsUnit.Display
 			_unit = unit;
@@ -451,9 +453,7 @@ namespace System.Drawing
 		
 		public float Size {
 			get {
-				float size;				
-				GDIPlus.GdipGetFontSize (fontObject, out size);
-				return size;
+				return _size;			
 			}
 		}
 

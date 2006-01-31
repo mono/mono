@@ -1,3 +1,7 @@
+2006-01-31 Jordi Mas i Hernandez <jordimash@gmail.com>
+
+	* Font.cs: Fixes 77407
+
 2006-01-27  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Font.cs: Ensure unmanaged memory is free correctly in ToLogFont
