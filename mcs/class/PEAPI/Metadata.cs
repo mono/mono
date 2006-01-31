@@ -120,7 +120,7 @@ namespace PEAPI {
 		add_ovf_un, mul_ovf, mul_ovf_un, sub_ovf, sub_ovf_un, endfinally, 
 		stind_i = 0xDF, conv_u, arglist = 0xFE00, ceq, cgt, cgt_un, clt, clt_un, 
 		localloc = 0xFE0F, endfilter = 0xFE11, volatile_ = 0xFE13, tail_, 
-		cpblk = 0xFE17, initblk, rethrow = 0xFE1A, refanytype = 0xFE1D}
+		cpblk = 0xFE17, initblk, rethrow = 0xFE1A, refanytype = 0xFE1D, readonly_ = 0xFE1E }
 
 	/// <summary>
 	/// CIL instructions requiring an integer parameter

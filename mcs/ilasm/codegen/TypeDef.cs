@@ -189,6 +189,9 @@ namespace Mono.ILASM {
                                 methoddef.Attributes |= PEAPI.MethAttr.Abstract | PEAPI.MethAttr.Virtual;
                         }
 
+                        if (method_table [methoddef.Signature] != null)
+                                throw new Exception (String.Format ("Duplicate method declaration: {0}", methoddef.Signature));
+
                         method_table.Add (methoddef.Signature, methoddef);
                 }
 
