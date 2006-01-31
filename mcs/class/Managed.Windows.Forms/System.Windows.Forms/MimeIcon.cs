@@ -898,6 +898,15 @@ namespace System.Windows.Forms
 		{
 			string resolv_path = ResolvePath (main_icon_theme_path);
 			
+			// use default gnome icon theme if there isn't a "/48x48" or "/scalable" dir
+			// for the current theme
+			if (resolv_path == String.Empty)
+				foreach (string path in icon_paths)
+					if (Directory.Exists (path + "/gnome")) {
+						resolv_path = path + "/gnome/48x48/";
+						break;
+					}
+			
 			string[] dirs = Directory.GetDirectories (resolv_path);
 			
 			Hashtable name_mime_hash = new Hashtable ();
