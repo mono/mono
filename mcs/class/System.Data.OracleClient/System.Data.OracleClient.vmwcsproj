@@ -34,6 +34,7 @@
 				<File RelPath="System.Data.OracleClient\OracleString.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.OracleClient\OracleTimeSpan.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.OracleClient\OracleType.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Data.OracleClient.jvm\ExceptionHelper.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.OracleClient.jvm\OracleBFile.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.OracleClient.jvm\OracleBinary.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.OracleClient.jvm\OracleCommand.cs" SubType="Component" BuildAction="Compile"/>
