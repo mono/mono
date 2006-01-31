@@ -1,3 +1,14 @@
+2006-01-24  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* UTF7EncodingTest.cs : added test for bug #77315.
+	* UTF8EncodingTest.cs : added test for bug #77315. Also, now a
+	  bunch of tests are working (while they are marked as NotDotNet
+	  under 1.1 profile).
+
+2006-01-20  Raja R Harinath  <rharinath@novell.com>
+
+	* UnicodeEncodingTest.cs (TestMaxByteCount): Remove extra declaration.
+
 2006-01-20  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* UTF8EncodingTest.cs : added CloneNotReadOnly().

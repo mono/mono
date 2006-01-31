@@ -457,6 +457,7 @@ class UTF7Encoding : Encoding
 		int byteval, b64value;
 		bool normal = ((leftOver & 0x01000000) == 0);
 		bool prevIsPlus = ((leftOver & 0x02000000) != 0);
+		bool afterHighSurrogate = ((leftOver & 0x04000000) != 0);
 		int leftOverSize = ((leftOver >> 16) & 0xFF);
 		int leftOverBits = (leftOver & 0xFFFF);
 		sbyte[] base64 = base64Values;
@@ -468,6 +469,9 @@ class UTF7Encoding : Encoding
 					// Directly-encoded character.
 					if (posn >= charLength) {
 						throw new ArgumentException (_("Arg_InsufficientSpace"), "chars");
+					}
+					if (afterHighSurrogate) {
+						throw new ArgumentException (_("Arg_InvalidUTF7"), "chars");
 					}
 					chars[posn++] = (char)byteval;
 				} else {
@@ -482,6 +486,9 @@ class UTF7Encoding : Encoding
 					if (prevIsPlus) {
 						if (posn >= charLength) {
 							throw new ArgumentException (_("Arg_InsufficientSpace"), "chars");
+						}
+						if (afterHighSurrogate) {
+							throw new ArgumentException (_("Arg_InvalidUTF7"), "chars");
 						}
 						chars[posn++] = '+';
 					}
@@ -503,12 +510,25 @@ class UTF7Encoding : Encoding
 							throw new ArgumentException (_("Arg_InsufficientSpace"), "chars");
 						}
 						leftOverSize -= 16;
-						chars[posn++] = (char)(leftOverBits >> leftOverSize);
+						char nextChar = (char)(leftOverBits >> leftOverSize);
+						if ((nextChar & 0xFC00) == 0xD800) {
+						  afterHighSurrogate = true;
+						}
+						else if ((nextChar & 0xFC00) == 0xDC00) {
+							if (!afterHighSurrogate) {
+								throw new ArgumentException (_("Arg_InvalidUTF7"), "chars");
+							}
+							afterHighSurrogate = false;
+						}
+						chars[posn++] = nextChar;
 						leftOverBits &= ((1 << leftOverSize) - 1);
 					}
 				} else {
 					if (posn >= charLength) {
 						throw new ArgumentException (_("Arg_InsufficientSpace"), "chars");
+					}
+					if (afterHighSurrogate) {
+						throw new ArgumentException (_("Arg_InvalidUTF7"), "chars");
 					}
 					chars[posn++] = (char)byteval;
 					normal = true;
@@ -520,7 +540,8 @@ class UTF7Encoding : Encoding
 		}
 		leftOver = (leftOverBits | (leftOverSize << 16) |
 				    (normal ? 0 : 0x01000000) |
-				    (prevIsPlus ? 0x02000000 : 0));
+				    (prevIsPlus ? 0x02000000 : 0) |
+				    (afterHighSurrogate ? 0x04000000 : 0));
 
 		// Return the final length to the caller.
 		return posn - charIndex;
@@ -531,7 +552,11 @@ class UTF7Encoding : Encoding
 								 char[] chars, int charIndex)
 	{
 		int leftOver = 0;
-		return InternalGetChars (bytes, byteIndex, byteCount, chars, charIndex, ref leftOver);
+		int amount = InternalGetChars (bytes, byteIndex, byteCount, chars, charIndex, ref leftOver);
+		if ((leftOver & 0x04000000) != 0) {
+			throw new ArgumentException (_("Arg_InvalidUTF7"), "chars");
+		}
+		return amount;
 	}
 
 	// Get the maximum number of bytes needed to encode a

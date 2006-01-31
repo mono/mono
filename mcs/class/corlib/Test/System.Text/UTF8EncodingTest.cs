@@ -708,10 +708,11 @@ namespace MonoTests.System.Text {
 		[Test]
 #if NET_2_0
 		[ExpectedException (typeof (DecoderFallbackException))]
-		[Category ("NotWorking")]
-#endif
+#else
 // MS Fx 1.1 accept this
-//		[ExpectedException (typeof (DecoderException))]
+		[Category ("NotDotNet")]
+		[ExpectedException (typeof (DecoderException))]
+#endif
 			public void T5_IllegalCodePosition_1_UTF16Surrogates_511 () 
 		{
 			byte[] data = { 0xED, 0xA0, 0x80 };
@@ -723,10 +724,11 @@ namespace MonoTests.System.Text {
 		[Test]
 #if NET_2_0
 		[ExpectedException (typeof (DecoderFallbackException))]
-		[Category ("NotWorking")]
-#endif
+#else
 // MS Fx 1.1 accept this
-//		[ExpectedException (typeof (DecoderException))]
+		[Category ("NotDotNet")]
+		[ExpectedException (typeof (DecoderException))]
+#endif
 		public void T5_IllegalCodePosition_1_UTF16Surrogates_512 () 
 		{
 			byte[] data = { 0xED, 0xAD, 0xBF };
@@ -738,10 +740,11 @@ namespace MonoTests.System.Text {
 		[Test]
 #if NET_2_0
 		[ExpectedException (typeof (DecoderFallbackException))]
-		[Category ("NotWorking")]
-#endif
+#else
 // MS Fx 1.1 accept this
-//		[ExpectedException (typeof (DecoderException))]
+		[Category ("NotDotNet")]
+		[ExpectedException (typeof (DecoderException))]
+#endif
 		public void T5_IllegalCodePosition_1_UTF16Surrogates_513 ()
 		{
 			byte[] data = { 0xED, 0xAE, 0x80 };
@@ -753,10 +756,11 @@ namespace MonoTests.System.Text {
 		[Test]
 #if NET_2_0
 		[ExpectedException (typeof (DecoderFallbackException))]
-		[Category ("NotWorking")]
-#endif
+#else
 // MS Fx 1.1 accept this
-//		[ExpectedException (typeof (DecoderException))]
+		[Category ("NotDotNet")]
+		[ExpectedException (typeof (DecoderException))]
+#endif
 		public void T5_IllegalCodePosition_1_UTF16Surrogates_514 () 
 		{
 			byte[] data = { 0xED, 0xAF, 0xBF };
@@ -768,10 +772,11 @@ namespace MonoTests.System.Text {
 		[Test]
 #if NET_2_0
 		[ExpectedException (typeof (DecoderFallbackException))]
-		[Category ("NotWorking")]
-#endif
+#else
 // MS Fx 1.1 accept this
-//		[ExpectedException (typeof (DecoderException))]
+		[Category ("NotDotNet")]
+		[ExpectedException (typeof (DecoderException))]
+#endif
 		public void T5_IllegalCodePosition_1_UTF16Surrogates_515 ()
 		{
 			byte[] data = { 0xED, 0xB0, 0x80 };
@@ -783,10 +788,11 @@ namespace MonoTests.System.Text {
 		[Test]
 #if NET_2_0
 		[ExpectedException (typeof (DecoderFallbackException))]
-		[Category ("NotWorking")]
-#endif
+#else
 // MS Fx 1.1 accept this
-//		[ExpectedException (typeof (DecoderException))]
+		[Category ("NotDotNet")]
+		[ExpectedException (typeof (DecoderException))]
+#endif
 		public void T5_IllegalCodePosition_1_UTF16Surrogates_516 () 
 		{
 			byte[] data = { 0xED, 0xBE, 0x80 };
@@ -798,10 +804,11 @@ namespace MonoTests.System.Text {
 		[Test]
 #if NET_2_0
 		[ExpectedException (typeof (DecoderFallbackException))]
-		[Category ("NotWorking")]
-#endif
+#else
 // MS Fx 1.1 accept this
-//		[ExpectedException (typeof (DecoderException))]
+		[Category ("NotDotNet")]
+		[ExpectedException (typeof (DecoderException))]
+#endif
 		public void T5_IllegalCodePosition_1_UTF16Surrogates_517 () 
 		{
 			byte[] data = { 0xED, 0xBF, 0xBF };
@@ -813,10 +820,11 @@ namespace MonoTests.System.Text {
 		[Test]
 #if NET_2_0
 		[ExpectedException (typeof (DecoderFallbackException))]
-		[Category ("NotWorking")]
-#endif
+#else
 // MS Fx 1.1 accept this
-//		[ExpectedException (typeof (DecoderException))]
+		[Category ("NotDotNet")]
+		[ExpectedException (typeof (DecoderException))]
+#endif
 		public void T5_IllegalCodePosition_2_PairedUTF16Surrogates_521 () 
 		{
 			byte[] data = { 0xED, 0xA0, 0x80, 0xED, 0xB0, 0x80 };
@@ -829,10 +837,11 @@ namespace MonoTests.System.Text {
 		[Test]
 #if NET_2_0
 		[ExpectedException (typeof (DecoderFallbackException))]
-		[Category ("NotWorking")]
-#endif
+#else
 // MS Fx 1.1 accept this
-//		[ExpectedException (typeof (DecoderException))]
+		[Category ("NotDotNet")]
+		[ExpectedException (typeof (DecoderException))]
+#endif
 		public void T5_IllegalCodePosition_2_PairedUTF16Surrogates_522 () 
 		{
 			byte[] data = { 0xED, 0xA0, 0x80, 0xED, 0xBF, 0xBF };
@@ -845,10 +854,11 @@ namespace MonoTests.System.Text {
 		[Test]
 #if NET_2_0
 		[ExpectedException (typeof (DecoderFallbackException))]
-		[Category ("NotWorking")]
-#endif
+#else
 // MS Fx 1.1 accept this
-//		[ExpectedException (typeof (DecoderException))]
+		[Category ("NotDotNet")]
+		[ExpectedException (typeof (DecoderException))]
+#endif
 		public void T5_IllegalCodePosition_2_PairedUTF16Surrogates_523 () 
 		{
 			byte[] data = { 0xED, 0xAD, 0xBF, 0xED, 0xB0, 0x80 };
@@ -861,10 +871,11 @@ namespace MonoTests.System.Text {
 		[Test]
 #if NET_2_0
 		[ExpectedException (typeof (DecoderFallbackException))]
-		[Category ("NotWorking")]
-#endif
+#else
 // MS Fx 1.1 accept this
-//		[ExpectedException (typeof (DecoderException))]
+		[Category ("NotDotNet")]
+		[ExpectedException (typeof (DecoderException))]
+#endif
 		public void T5_IllegalCodePosition_2_PairedUTF16Surrogates_524 () 
 		{
 			byte[] data = { 0xED, 0xAD, 0xBF, 0xED, 0xBF, 0xBF };
@@ -877,10 +888,11 @@ namespace MonoTests.System.Text {
 		[Test]
 #if NET_2_0
 		[ExpectedException (typeof (DecoderFallbackException))]
-		[Category ("NotWorking")]
-#endif
+#else
 // MS Fx 1.1 accept this
-//		[ExpectedException (typeof (DecoderException))]
+		[Category ("NotDotNet")]
+		[ExpectedException (typeof (DecoderException))]
+#endif
 		public void T5_IllegalCodePosition_2_PairedUTF16Surrogates_525 () 
 		{
 			byte[] data = { 0xED, 0xAE, 0x80, 0xED, 0xB0, 0x80 };
@@ -893,10 +905,11 @@ namespace MonoTests.System.Text {
 		[Test]
 #if NET_2_0
 		[ExpectedException (typeof (DecoderFallbackException))]
-		[Category ("NotWorking")]
-#endif
+#else
 // MS Fx 1.1 accept this
-//		[ExpectedException (typeof (DecoderException))]
+		[Category ("NotDotNet")]
+		[ExpectedException (typeof (DecoderException))]
+#endif
 		public void T5_IllegalCodePosition_2_PairedUTF16Surrogates_526 () 
 		{
 			byte[] data = { 0xED, 0xAE, 0x80, 0xED, 0xBF, 0x8F };
@@ -909,10 +922,11 @@ namespace MonoTests.System.Text {
 		[Test]
 #if NET_2_0
 		[ExpectedException (typeof (DecoderFallbackException))]
-		[Category ("NotWorking")]
-#endif
+#else
 // MS Fx 1.1 accept this
-//		[ExpectedException (typeof (DecoderException))]
+		[Category ("NotDotNet")]
+		[ExpectedException (typeof (DecoderException))]
+#endif
 		public void T5_IllegalCodePosition_2_PairedUTF16Surrogates_527 () 
 		{
 			byte[] data = { 0xED, 0xAF, 0xBF, 0xED, 0xB0, 0x80 };
@@ -925,10 +939,11 @@ namespace MonoTests.System.Text {
 		[Test]
 #if NET_2_0
 		[ExpectedException (typeof (DecoderFallbackException))]
-		[Category ("NotWorking")]
-#endif
+#else
 // MS Fx 1.1 accept this
-//		[ExpectedException (typeof (DecoderException))]
+		[Category ("NotDotNet")]
+		[ExpectedException (typeof (DecoderException))]
+#endif
 		public void T5_IllegalCodePosition_2_PairedUTF16Surrogates_528 () 
 		{
 			byte[] data = { 0xED, 0xAF, 0xBF, 0xED, 0xBF, 0xBF };
@@ -988,5 +1003,18 @@ namespace MonoTests.System.Text {
 			e.EncoderFallback = new EncoderExceptionFallback ();
 		}
 #endif
+
+		[Test]
+#if NET_2_0
+		[ExpectedException (typeof (DecoderFallbackException))]
+#else
+		[ExpectedException (typeof (ArgumentException))]
+		[Category ("NotDotNet")] // MS Bug
+#endif
+		public void Bug77315 ()
+		{
+			new UTF8Encoding (false, true).GetString (
+				new byte [] {0xED, 0xA2, 0x8C});
+		}
 	}
 }

@@ -687,6 +687,15 @@ public class UTF8Encoding : Encoding
 									throw new ArgumentException (_("Overlong"), leftBits.ToString ());
 #endif
 							}
+							else if ((leftBits & 0xF800) == 0xD800) {
+								// UTF-8 doesn't use surrogate characters
+#if NET_2_0
+								Fallback (provider, ref fallbackBuffer, bytes, byteIndex, chars, ref posn);
+#else
+								if (throwOnInvalid)
+									throw new ArgumentException (_("Arg_InvalidUTF8"), "bytes");
+#endif
+							}
 							else {
 								if (posn >= length) {
 									throw new ArgumentException

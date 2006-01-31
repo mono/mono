@@ -242,6 +242,15 @@ namespace MonoTests.System.Text
                         Assertion.AssertEquals ("UTF #1", 136, UTF7enc.GetMaxByteCount(50));
 #endif
                 }
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		[Category ("NotDotNet")] // MS bug
+		public void Bug77315 ()
+		{
+			string s = new UTF7Encoding ().GetString (
+				Encoding.ASCII.GetBytes ("+2AA-"));
+		}
         }
 }
 
