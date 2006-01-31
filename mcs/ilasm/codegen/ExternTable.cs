@@ -323,8 +323,13 @@ namespace Mono.ILASM {
                         if (assembly_table != null)
                                 ext_asmb = assembly_table[asmb_name] as ExternAssembly;
 
-                        if (ext_asmb == null)
-                                throw new Exception (String.Format ("Assembly {0} not defined.", asmb_name));
+                        if (ext_asmb == null) {
+                                System.Reflection.AssemblyName asmname = new System.Reflection.AssemblyName ();
+                                asmname.Name = asmb_name;
+
+                                Console.Error.WriteLine ("Warning -- Reference to undeclared extern assembly '{0}', adding.", asmb_name);
+                                ext_asmb = AddAssembly (asmb_name, asmname);
+                        }
 
                         return ext_asmb.GetTypeRef (full_name, is_valuetype);
                 }
