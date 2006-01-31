@@ -423,6 +423,9 @@ namespace System.Xml {
 
 		public static string ToString (TimeSpan value)
 		{
+			if (value == TimeSpan.Zero)
+				return "PT0S";
+
 			StringBuilder builder = new StringBuilder ();
 			if (value.Ticks < 0) {
 				builder.Append ('-');

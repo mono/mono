@@ -549,6 +549,12 @@ namespace MonoTests.System.Xml
 			XmlConvert.VerifyNCName ("");
 		}
 
+		[Test]
+		public void DurationZero () // bug #77350
+		{
+			AssertEquals ("PT0S", XmlConvert.ToString (TimeSpan.FromSeconds (0)));
+		}
+
 #if NET_2_0
 		[Test]
 		public void VerifyTOKEN ()
