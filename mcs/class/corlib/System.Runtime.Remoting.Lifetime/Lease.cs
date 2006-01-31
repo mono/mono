@@ -118,15 +118,9 @@ namespace System.Runtime.Remoting.Lifetime
 
 		public void Register (ISponsor obj, TimeSpan renewalTime)
 		{
-			if (_sponsors == null) 
-			{
-				lock (this) {
-					if (_sponsors == null)
-						_sponsors = new ArrayList();
-				}
-			}
-
-			lock (_sponsors.SyncRoot) {
+			lock (this) {
+				if (_sponsors == null)
+					_sponsors = new ArrayList();
 				_sponsors.Add (obj);
 			}
 
@@ -143,9 +137,8 @@ namespace System.Runtime.Remoting.Lifetime
 
 		public void Unregister (ISponsor obj)
 		{
-			if (_sponsors == null) return;
-			
-			lock (_sponsors.SyncRoot) {
+			lock (this) {
+				if (_sponsors == null) return;
 				_sponsors.Remove (obj);
 			}
 		}
@@ -163,7 +156,7 @@ namespace System.Runtime.Remoting.Lifetime
 			if (_sponsors != null)
 			{
 				_currentState = LeaseState.Renewing;
-				lock (_sponsors.SyncRoot) {
+				lock (this) {
 					_renewingSponsors = new Queue (_sponsors);
 				}
 				CheckNextSponsor ();
