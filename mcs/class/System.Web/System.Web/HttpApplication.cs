@@ -124,6 +124,9 @@ namespace System.Web {
 		CultureInfo prev_app_culture;
 		CultureInfo prev_appui_culture;
 		IPrincipal prev_user;
+#if NET_2_0
+		static Exception initialization_exception;
+#endif
 
 		//
 		// These are used to detect the case where the EndXXX method is invoked
@@ -181,6 +184,12 @@ namespace System.Web {
 				return assemblyLocation;
 			}
 		}
+
+#if NET_2_0
+		internal static Exception InitializationException {
+			get { return initialization_exception; }
+		}
+#endif
 
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
@@ -1020,6 +1029,9 @@ namespace System.Web {
 			try {
 				InitOnce (true);
 			} catch (Exception e) {
+#if NET_2_0
+				initialization_exception = e;
+#endif
 				FinalErrorWrite (context.Response, new HttpException ("", e).GetHtmlErrorMessage ());
 				return;
 			}
