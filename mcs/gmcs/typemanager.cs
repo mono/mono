@@ -113,13 +113,6 @@ public partial class TypeManager {
 	static internal Type default_charset_type;
 	static internal Type internals_visible_attr_type;
 
-	//
-	// An empty array of types
-	//
-	static public Type [] NoTypes;
-	static public TypeExpr [] NoTypeExprs;
-
-
 	// 
 	// Expressions representing the internal types.  Used during declaration
 	// definition.
@@ -369,9 +362,6 @@ public partial class TypeManager {
 		indexer_arguments = new PtrHashtable ();
 		builder_to_ifaces = new PtrHashtable ();
 		
-		NoTypes = new Type [0];
-		NoTypeExprs = new TypeExpr [0];
-
 		fieldbuilders_to_fields = new Hashtable ();
 		fields = new Hashtable ();
 		type_hash = new DoubleHash ();
@@ -1032,13 +1022,12 @@ public partial class TypeManager {
 			system_type_type = typeof (System.Type);
 			system_assemblybuilder_type = typeof (System.Reflection.Emit.AssemblyBuilder);
 
-			Type [] void_arg = {  };
 			system_int_array_get_length = GetMethod (
-				system_array_type, "get_Length", void_arg);
+				system_array_type, "get_Length", Type.EmptyTypes);
 			system_int_array_get_rank = GetMethod (
-				system_array_type, "get_Rank", void_arg);
+				system_array_type, "get_Rank", Type.EmptyTypes);
 			system_object_array_clone = GetMethod (
-				system_array_type, "Clone", void_arg);
+				system_array_type, "Clone", Type.EmptyTypes);
 
 			Type [] system_int_arg = { system_int32_type };
 			system_int_array_get_length_int = GetMethod (
@@ -1165,23 +1154,22 @@ public partial class TypeManager {
 		//
 		// Void arguments
 		//
-		Type [] void_arg = {  };
 		ienumerator_getcurrent = GetProperty (
 			ienumerator_type, "Current");
 		bool_movenext_void = GetMethod (
-			ienumerator_type, "MoveNext", void_arg);
+			ienumerator_type, "MoveNext", Type.EmptyTypes);
 		void_reset_void = GetMethod (
-			ienumerator_type, "Reset", void_arg);
+			ienumerator_type, "Reset", Type.EmptyTypes);
 		void_dispose_void = GetMethod (
-			idisposable_type, "Dispose", void_arg);
+			idisposable_type, "Dispose", Type.EmptyTypes);
 		int_get_offset_to_string_data = GetMethod (
-			runtime_helpers_type, "get_OffsetToStringData", void_arg);
+			runtime_helpers_type, "get_OffsetToStringData", Type.EmptyTypes);
 		int_array_get_length = GetMethod (
-			array_type, "get_Length", void_arg);
+			array_type, "get_Length", Type.EmptyTypes);
 		int_array_get_rank = GetMethod (
-			array_type, "get_Rank", void_arg);
+			array_type, "get_Rank", Type.EmptyTypes);
 		ienumerable_getenumerator_void = GetMethod (
-			ienumerable_type, "GetEnumerator", void_arg);
+			ienumerable_type, "GetEnumerator", Type.EmptyTypes);
 		
 		//
 		// Int32 arguments
@@ -1198,7 +1186,7 @@ public partial class TypeManager {
 		// System.Array methods
 		//
 		object_array_clone = GetMethod (
-			array_type, "Clone", void_arg);
+			array_type, "Clone", Type.EmptyTypes);
 		Type [] array_int_arg = { array_type, int32_type };
 		void_array_copyto_array_int = GetMethod (
 			array_type, "CopyTo", array_int_arg);
@@ -1235,7 +1223,7 @@ public partial class TypeManager {
 		//
 		// Attributes
 		//
-		unverifiable_code_ctor = GetConstructor (unverifiable_code_type, void_arg);
+		unverifiable_code_ctor = GetConstructor (unverifiable_code_type, Type.EmptyTypes);
 		default_member_ctor = GetConstructor (default_member_type, string_);
 
 		Type[] short_arg = { short_type };
@@ -1251,13 +1239,13 @@ public partial class TypeManager {
 		// .NET 2.0 types
 		//
 		compiler_generated_attr = new CustomAttributeBuilder (
-			GetConstructor (compiler_generated_attr_type, void_arg), new object[0]);
+			GetConstructor (compiler_generated_attr_type, Type.EmptyTypes), new object[0]);
 
 		Type[] type_int_arg = { type_type, int32_type };
 		fixed_buffer_attr_ctor = GetConstructor (fixed_buffer_attr_type, type_int_arg);
 
 		// Object
-		object_ctor = GetConstructor (object_type, void_arg);
+		object_ctor = GetConstructor (object_type, Type.EmptyTypes);
 
 		InitGenericCodeHelpers ();
 	}
@@ -1821,12 +1809,12 @@ public partial class TypeManager {
 			// If we're a PropertyBuilder and not in the
 			// `indexer_arguments' hash, then we're a property and
 			// not an indexer.
-			return NoTypes;
+			return Type.EmptyTypes;
 		else {
 			ParameterInfo [] pi = indexer.GetIndexParameters ();
 			// Property, not an indexer.
 			if (pi == null)
-				return NoTypes;
+				return Type.EmptyTypes;
 			int c = pi.Length;
 			Type [] types = new Type [c];
 			
@@ -2082,7 +2070,7 @@ public partial class TypeManager {
 			Type [] base_ifaces;
 			
 			if (t.BaseType == null)
-				base_ifaces = NoTypes;
+				base_ifaces = Type.EmptyTypes;
 			else
 				base_ifaces = GetInterfaces (t.BaseType);
 			Type[] type_ifaces;
@@ -2091,7 +2079,7 @@ public partial class TypeManager {
 			else
 				type_ifaces = (Type []) builder_to_ifaces [t];
 			if (type_ifaces == null)
-				type_ifaces = NoTypes;
+				type_ifaces = Type.EmptyTypes;
 
 			int base_count = base_ifaces.Length;
 			Type [] result = new Type [base_count + type_ifaces.Length];
@@ -2103,7 +2091,7 @@ public partial class TypeManager {
 		} else if (t is GenericTypeParameterBuilder){
 			Type[] type_ifaces = (Type []) builder_to_ifaces [t];
 			if (type_ifaces == null)
-				type_ifaces = NoTypes;
+				type_ifaces = Type.EmptyTypes;
 
 			iface_cache [t] = type_ifaces;
 			return type_ifaces;

@@ -1,5 +1,9 @@
 2006-02-01  Raja R Harinath  <rharinath@novell.com>
 
+	* typemanager.cs (NoTypes, NoTypeExprs): Remove.
+	(Reset): Update.
+	* *.cs: Use Type.EmptyTypes instead of TypeManager.NoTypes.
+
 	* typemanager.cs (cons_param_array_attribute): Make private.
 	(Reset): Set it to null.
 	(InitCoreHelpers): Don't initialize it.

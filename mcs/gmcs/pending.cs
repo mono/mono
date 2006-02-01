@@ -179,7 +179,7 @@ namespace Mono.CSharp {
 				
 				int j = 0;
 				foreach (MethodInfo m in mi){
-  					pending_implementations [i].args [j] = TypeManager.NoTypes;
+  					pending_implementations [i].args [j] = Type.EmptyTypes;
 					pending_implementations [i].mods [j] = null;
 
 					// If there is a previous error, just ignore

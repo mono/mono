@@ -7617,7 +7617,7 @@ namespace Mono.CSharp {
 			RetType = ret_type;
 
 			if (parameters == null)
-				Parameters = TypeManager.NoTypes;
+				Parameters = Type.EmptyTypes;
 			else
 				Parameters = parameters;
 		}

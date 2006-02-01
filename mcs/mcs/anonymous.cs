@@ -424,7 +424,7 @@ namespace Mono.CSharp {
 				name, TypeAttributes.AutoLayout | TypeAttributes.Class |
 				TypeAttributes.NestedAssembly, TypeManager.object_type, null);
 
-			Type [] constructor_types = TypeManager.NoTypes;
+			Type [] constructor_types = Type.EmptyTypes;
 			scope.ScopeConstructor = scope.ScopeTypeBuilder.DefineConstructor (
 				MethodAttributes.Public | MethodAttributes.HideBySig |
 				MethodAttributes.SpecialName | MethodAttributes.RTSpecialName,
