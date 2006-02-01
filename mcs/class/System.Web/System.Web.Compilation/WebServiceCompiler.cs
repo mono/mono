@@ -70,8 +70,8 @@ namespace System.Web.Compilation
 			}
 
 			string lang = parser.Language;
-#if CONFIGURATION_2_0
-			CompilationSection config = (CompilationSection)WebConfigurationManager.GetWebApplicationSection ("system.web/compilation");
+#if NET_2_0
+			CompilationSection config = (CompilationSection)WebConfigurationManager.GetSection ("system.web/compilation");
 			Compiler c = config.Compilers[lang];
 			provider = (c == null) ? null : c.Provider;
 #else
@@ -87,7 +87,7 @@ namespace System.Web.Compilation
 
 			compilerParameters = CachingCompiler.GetOptions (parser.Assemblies);
 			compilerParameters.IncludeDebugInformation = parser.Debug;
-#if CONFIGURATION_2_0
+#if NET_2_0
 			compilerParameters.CompilerOptions = c.CompilerOptions;
 			compilerParameters.WarningLevel = c.WarningLevel;
 #else

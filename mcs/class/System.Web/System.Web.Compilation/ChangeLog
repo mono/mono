@@ -1,3 +1,14 @@
+2006-02-01  Chris Toshok  <toshok@ximian.com>
+
+	* WebServiceCompiler.cs: CONFIGURATION_2_0 => NET_2_0, and use
+	GetSection instead of GetWebApplicationSection.
+
+	* CachingCompiler.cs: same.
+
+	* AspGenerator.cs: same.
+
+	* BaseCompiler.cs: same.
+	
 2006-01-23 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AspGenerator.cs: ignore 'thead'. Fixes bug #77326.

@@ -324,7 +324,7 @@ namespace System.Web.Compilation
 
 			Init ();
 			string lang = parser.Language;
-#if CONFIGURATION_2_0
+#if NET_2_0
 			CompilationSection config = (CompilationSection) WebConfigurationManager.GetSection ("system.web/compilation");
 			Compiler comp = config.Compilers[lang];
 			provider = comp.Provider;

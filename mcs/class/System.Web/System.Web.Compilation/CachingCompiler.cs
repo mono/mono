@@ -146,7 +146,7 @@ namespace System.Web.Compilation
 				if (results != null)
 					return results;
  
-#if CONFIGURATION_2_0
+#if NET_2_0
 				CompilationSection config = (CompilationSection) WebConfigurationManager.GetSection ("system.web/compilation");
 				Compiler c = config.Compilers[language];
 				CodeDomProvider provider = c.Provider;
