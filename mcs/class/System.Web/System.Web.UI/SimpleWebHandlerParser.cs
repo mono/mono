@@ -58,7 +58,7 @@ namespace System.Web.UI
 		string privateBinPath;
 		string baseDir;
 		string baseVDir;
-#if !CONFIGURATION_2_0
+#if !NET_2_0
 		CompilationConfiguration compilationConfig;
 #endif
 		int appAssemblyIndex = -1;
@@ -80,7 +80,7 @@ namespace System.Web.UI
 			if (location != typeof (TemplateParser).Assembly.Location)
 				appAssemblyIndex = assemblies.Add (location);
 
-#if CONFIGURATION_2_0
+#if NET_2_0
 			bool addAssembliesInBin = false;
 			foreach (AssemblyInfo info in CompilationConfig.Assemblies) {
 				if (info.Assembly == "*")
@@ -94,9 +94,6 @@ namespace System.Web.UI
 			assemblies.AddRange (CompilationConfig.Assemblies);
 			if (CompilationConfig.AssembliesInBin)
 				AddAssembliesInBin ();
-#endif
-
-#if !CONFIGURATION_2_0
 #endif
 
 			language = CompilationConfig.DefaultLanguage;
@@ -465,10 +462,10 @@ namespace System.Web.UI
 			}
 		}
 
-#if CONFIGURATION_2_0
+#if NET_2_0
 		CompilationSection CompilationConfig {
 			get {
-				return (CompilationSection)WebConfigurationManager.GetWebApplicationSection ("system.web/compilation");
+				return (CompilationSection)WebConfigurationManager.GetSection ("system.web/compilation");
 			}
 		}
 #else

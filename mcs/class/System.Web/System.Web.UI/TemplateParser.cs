@@ -92,7 +92,7 @@ namespace System.Web.UI {
 			imports.Add ("System.Web.UI.HtmlControls");
 
 			assemblies = new ArrayList ();
-#if CONFIGURATION_2_0
+#if NET_2_0
 			bool addAssembliesInBin = false;
 			foreach (AssemblyInfo info in CompilationConfig.Assemblies) {
 				if (info.Assembly == "*")
@@ -690,7 +690,7 @@ namespace System.Web.UI {
 			get { return oc_param; }
 		}
 
-#if CONFIGURATION_2_0
+#if NET_2_0
 		internal PagesSection PagesConfig {
 			get {
 				return WebConfigurationManager.GetSection ("system.web/pages") as PagesSection;

@@ -89,7 +89,7 @@ namespace System.Web.UI
 		internal override void ProcessMainAttributes (Hashtable atts)
 		{
 			string enabless = GetString (atts, "EnableSessionState",
-#if CONFIGURATION_2_0
+#if NET_2_0
 						     PagesConfig.EnableSessionState.ToString()
 #else
 						     PagesConfig.EnableSessionState
@@ -236,7 +236,7 @@ namespace System.Web.UI
 			validateRequest = GetBool (atts, "ValidateRequest", PagesConfig.ValidateRequest);
 			clientTarget = GetString (atts, "ClientTarget", null);
 			if (clientTarget != null) {
-#if CONFIGURATION_2_0
+#if NET_2_0
 				ClientTargetSection sec = (ClientTargetSection)WebConfigurationManager.GetSection ("system.web/clientTarget");
 				if (sec.ClientTargets[clientTarget] == null) {
 					ThrowParseException (String.Format (

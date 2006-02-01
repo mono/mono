@@ -46,7 +46,7 @@ namespace System.Web.UI
 		string baseDir;
 		string baseVDir;
 		ILocation location;
-#if !CONFIGURATION_2_0
+#if !NET_2_0
 		CompilationConfiguration compilationConfig;
 #endif
 
@@ -138,7 +138,7 @@ namespace System.Web.UI
 			set { baseVDir = value; }
 		}
 
-#if CONFIGURATION_2_0
+#if NET_2_0
 		internal CompilationSection CompilationConfig {
 			get {
 				return WebConfigurationManager.GetSection ("system.web/compilation") as CompilationSection;
