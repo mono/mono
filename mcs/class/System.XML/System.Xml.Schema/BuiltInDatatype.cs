@@ -1631,10 +1631,30 @@ namespace Mono.Xml.Schema
 	{
 		public string value;
 
-		// LAMESPEC: In this way, some strings that contain ':' might
-		// result in exception (MS.NET looks implemented as such).
+		static bool HasValidScheme (string src)
+		{
+			int idx = src.IndexOf (':');
+			if (idx < 0)
+				return false;
+			for (int i = 0; i < idx; i++) {
+				switch (src [i]) {
+				case '+':
+				case '-':
+				case '.':
+					continue;
+				default:
+					if (Char.IsLetterOrDigit (src [i]))
+						continue;
+					return false;
+				}
+			}
+			return true;
+		}
+
+		// MS BUG: Some strings that contain ':' might result in 
+		// exception (MS.NET looks implemented as such).
 		public XmlSchemaUri (string src)
-			: this (src, src.IndexOf (':') > 0)
+			: this (src, HasValidScheme (src))
 		{
 		}
 

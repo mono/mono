@@ -1,3 +1,7 @@
+2006-02-01  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlSchemaDatatypeTests.cs : added two more anyURI tests.
+
 2006-01-10  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlSchemaTypeTests.cs : new file. Test for TypeCode.

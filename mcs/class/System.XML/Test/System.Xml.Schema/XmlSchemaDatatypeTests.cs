@@ -80,6 +80,45 @@ namespace MonoTests.System.Xml
 //			AssertDatatype (schema, 6, XmlTokenizedType.NMTOKEN, typeof (string []), "f o o", new string [] {"f",  "o",  "o"});
 		}
 
+		[Test]
+		public void AnyUriRelativePath ()
+		{
+			XmlValidatingReader vr = new XmlValidatingReader (
+				new XmlTextReader (
+					// relative path value that contains ':' should be still valid.
+					"<root>../copy/myserver/</root>", 
+					XmlNodeType.Document, null));
+			vr.Schemas.Add (XmlSchema.Read (
+				new XmlTextReader ("<xs:schema xmlns:xs='"
+					+ XmlSchema.Namespace +
+					"'><xs:element name='root' type='xs:anyURI' /></xs:schema>",
+					XmlNodeType.Document, null), null));
+			vr.Read ();
+			vr.Read ();
+			vr.Read ();
+		}
+
+		[Test]
+#if !NET_2_0
+		[Category ("NotDotNet")]
+#endif
+		public void AnyUriRelativePathContainsColon ()
+		{
+			XmlValidatingReader vr = new XmlValidatingReader (
+				new XmlTextReader (
+					// relative path value that contains ':' should be still valid.
+					"<root>../copy/myserver/c:/foo</root>", 
+					XmlNodeType.Document, null));
+			vr.Schemas.Add (XmlSchema.Read (
+				new XmlTextReader ("<xs:schema xmlns:xs='"
+					+ XmlSchema.Namespace +
+					"'><xs:element name='root' type='xs:anyURI' /></xs:schema>",
+					XmlNodeType.Document, null), null));
+			vr.Read ();
+			vr.Read ();
+			vr.Read ();
+		}
+
 #if NET_2_0
 		string [] allTypes = new string [] {
 			"string", "boolean", "float", "double", "decimal", 
