@@ -2990,7 +2990,7 @@ namespace System.Windows.Forms
 		}
 
 		public void Show() {
-			if (!IsHandleCreated) {
+			if (!is_created) {
 				this.CreateControl();
 			}
 
