@@ -1,3 +1,8 @@
+2006-02-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (emit_struct_conv): Fix marshalling of embedded structs
+	with explicit layout. Fixes #77433.
+
 2006-01-31  Zoltan Varga  <vargaz@gmail.com>
 
 	* icall.c (ves_icall_Type_GetInterfaceMapData): Make sure 
