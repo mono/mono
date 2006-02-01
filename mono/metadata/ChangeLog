@@ -1,5 +1,9 @@
 2006-02-01  Zoltan Varga  <vargaz@gmail.com>
 
+	* loader.c (method_from_memberref): Fix a warning.
+
+	* metadata.c (mono_metadata_load_generic_params): Fix a warning.
+
 	* mono-debug.h (mono_debugger_create_notification_function): Move
 	prototype to mono-debug.h since it is used by the JIT.
 
