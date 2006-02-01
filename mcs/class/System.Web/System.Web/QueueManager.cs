@@ -45,7 +45,7 @@ namespace System.Web
 
 		public QueueManager ()
 		{
-#if CONFIGURATION_2_0
+#if NET_2_0
 			HttpRuntimeSection config;
 
 			config = (HttpRuntimeSection) WebConfigurationManager.GetSection ("system.web/httpRuntime");

@@ -554,8 +554,8 @@ namespace System.Web {
 			if (content_length == 0 && HttpMethod == "POST")
 				throw new HttpException (411, "Length expected");
 			
-#if CONFIGURATION_2_0
-			HttpRuntimeSection config = (HttpRuntimeSection) WebConfigurationManager.GetWebApplicationSection ("system.web/httpRuntime");
+#if NET_2_0
+			HttpRuntimeSection config = (HttpRuntimeSection) WebConfigurationManager.GetSection ("system.web/httpRuntime");
 #else
 			HttpRuntimeConfig config = (HttpRuntimeConfig) HttpContext.GetAppConfig ("system.web/httpRuntime");
 #endif
@@ -632,8 +632,8 @@ namespace System.Web {
 			//
 			int content_length = ContentLength;
 
-#if CONFIGURATION_2_0
-			HttpRuntimeSection config = (HttpRuntimeSection) WebConfigurationManager.GetWebApplicationSection ("system.web/httpRuntime");
+#if NET_2_0
+			HttpRuntimeSection config = (HttpRuntimeSection) WebConfigurationManager.GetSection ("system.web/httpRuntime");
 #else
 			HttpRuntimeConfig config = (HttpRuntimeConfig) HttpContext.GetAppConfig ("system.web/httpRuntime");
 #endif

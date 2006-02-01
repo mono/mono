@@ -184,7 +184,7 @@ namespace System.Web
 #if TARGET_J2EE
 				string filepath = "browscap.ini";
 #else
-#if CONFIGURATION_2_0
+#if NET_2_0
 				string dir = Path.GetDirectoryName (WebConfigurationManager.OpenMachineConfiguration().FilePath);
 #else
 				string dir = Path.GetDirectoryName (WebConfigurationSettings.MachineConfigPath);

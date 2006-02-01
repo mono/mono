@@ -49,7 +49,7 @@ namespace System.Web {
 		
 		public TraceManager ()
 		{
-#if CONFIGURATION_2_0
+#if NET_2_0
 			TraceSection config = WebConfigurationManager.GetSection ("system.web/trace") as TraceSection;
 			if (config == null)
 				config = new TraceSection ();
@@ -63,7 +63,7 @@ namespace System.Web {
 			enabled = config.Enabled;
 			local_only = config.LocalOnly;
 			page_output = config.PageOutput;
-#if CONFIGURATION_2_0
+#if NET_2_0
 			if (config.TraceMode == TraceDisplayMode.SortByTime)
 				mode = TraceMode.SortByTime;
 			else

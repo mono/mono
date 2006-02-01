@@ -1,3 +1,24 @@
+2006-02-01  Chris Toshok  <toshok@ximian.com>
+
+	* HttpApplication.cs: CONFIGURATION_2_0 => NET_2_0, and use
+	GetSection instead of GetWebApplicationSection.
+
+	* HttpApplication.jvm.cs: same.
+	
+	* HttpApplicationFactory.cs: same.
+
+	* HttpContext.cs: same.
+
+	* CapabilitiesLoader.cs: same.
+
+	* QueueManager.cs: same.
+
+	* HttpRuntime.cs: same.
+
+	* TraceManager.cs: same.
+
+	* HttpRequest.cs: same.
+	
 2006-01-31 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpApplication.cs: keep any exception that happens during

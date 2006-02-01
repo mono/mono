@@ -205,7 +205,7 @@ namespace System.Web {
 
 		public static string MachineConfigurationDirectory {
 			get {
-#if CONFIGURATION_2_0
+#if NET_2_0
 				string dirname = Path.GetDirectoryName (WebConfigurationManager.OpenMachineConfiguration().FilePath);
 #else
 				string dirname = Path.GetDirectoryName (WebConfigurationSettings.MachineConfigPath);

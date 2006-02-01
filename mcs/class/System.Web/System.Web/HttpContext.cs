@@ -43,8 +43,6 @@ using System.Web.UI;
 using System.Web.Util;
 #if NET_2_0
 using System.Web.Profile;
-#endif
-#if CONFIGURATION_2_0
 using CustomErrorMode = System.Web.Configuration.CustomErrorsMode;
 #endif
 
@@ -167,8 +165,8 @@ namespace System.Web {
 
 		public bool IsCustomErrorEnabled {
 			get {
-#if CONFIGURATION_2_0
-				CustomErrorsSection cfg = (CustomErrorsSection) WebConfigurationManager.GetWebApplicationSection ("system.web/customErrors");
+#if NET_2_0
+				CustomErrorsSection cfg = (CustomErrorsSection) WebConfigurationManager.GetSection ("system.web/customErrors");
 #else
 				CustomErrorsConfig cfg = null;
 				try {
@@ -192,8 +190,8 @@ namespace System.Web {
 #else
 		public bool IsDebuggingEnabled {
 			get {
-#if CONFIGURATION_2_0
-				CompilationSection section = (CompilationSection) WebConfigurationManager.GetWebApplicationSection ("system.web/compilation");
+#if NET_2_0
+				CompilationSection section = (CompilationSection) WebConfigurationManager.GetSection ("system.web/compilation");
 				return section.Debug;
 #else
 				try {
@@ -334,7 +332,7 @@ namespace System.Web {
 #endif
 		public object GetConfig (string name)
 		{
-#if CONFIGURATION_2_0
+#if NET_2_0
 			return GetSection (name);
 #else
 			return WebConfigurationSettings.GetConfig (name, this);
@@ -369,7 +367,7 @@ namespace System.Web {
 		[MonoTODO]
 		public object GetSection (string name)
 		{
-#if CONFIGURATION_2_0
+#if NET_2_0
 			return WebConfigurationManager.GetSection (name);
 #else
 			throw new NotImplementedException ();
@@ -475,8 +473,8 @@ namespace System.Web {
 		internal TimeSpan ConfigTimeout {
 			get {
 				if (config_timeout == null) {
-#if CONFIGURATION_2_0
-					HttpRuntimeSection section = (HttpRuntimeSection)WebConfigurationManager.GetWebApplicationSection ("system.web/httpRuntime");
+#if NET_2_0
+					HttpRuntimeSection section = (HttpRuntimeSection)WebConfigurationManager.GetSection ("system.web/httpRuntime");
 					config_timeout = section.ExecutionTimeout;
 #else
 					HttpRuntimeConfig config = (HttpRuntimeConfig)

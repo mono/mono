@@ -147,9 +147,9 @@ namespace System.Web {
 				if (modcoll != null)
 					return;
 
-#if CONFIGURATION_2_0
+#if NET_2_0
 				HttpModulesSection modules;
-				modules = (HttpModulesSection) WebConfigurationManager.GetWebApplicationSection ("system.web/httpModules");
+				modules = (HttpModulesSection) WebConfigurationManager.GetSection ("system.web/httpModules");
 #else
 				ModulesConfiguration modules;
 
@@ -161,9 +161,9 @@ namespace System.Web {
 				if (full_init)
 					HttpApplicationFactory.AttachEvents (this);
 
-#if CONFIGURATION_2_0
+#if NET_2_0
 				GlobalizationSection cfg;
-				cfg = (GlobalizationSection) WebConfigurationManager.GetWebApplicationSection ("system.web/globalization");
+				cfg = (GlobalizationSection) WebConfigurationManager.GetSection ("system.web/globalization");
 				app_culture = cfg.GetCulture();
 				appui_culture = cfg.GetUICulture();
 #else
@@ -1049,8 +1049,8 @@ namespace System.Web {
 			string url = request.FilePath;
 			
 			IHttpHandler handler = null;
-#if CONFIGURATION_2_0
-			HttpHandlersSection section = (HttpHandlersSection) WebConfigurationManager.GetWebApplicationSection ("system.web/httpHandlers");
+#if NET_2_0
+			HttpHandlersSection section = (HttpHandlersSection) WebConfigurationManager.GetSection ("system.web/httpHandlers");
 			object o = section.LocateHandler (verb, url);
 #else
 			HandlerFactoryConfiguration factory_config = (HandlerFactoryConfiguration) HttpContext.GetAppConfig ("system.web/httpHandlers");
@@ -1146,8 +1146,8 @@ namespace System.Web {
 			if (!context.IsCustomErrorEnabled)
 				return false;
 			
-#if CONFIGURATION_2_0
-			CustomErrorsSection config = (CustomErrorsSection)WebConfigurationManager.GetWebApplicationSection ("system.web/customErrors");
+#if NET_2_0
+			CustomErrorsSection config = (CustomErrorsSection)WebConfigurationManager.GetSection ("system.web/customErrors");
 #else
 			CustomErrorsConfig config = null;
 			try {
@@ -1162,7 +1162,7 @@ namespace System.Web {
 				return false;
 			}
 			
-#if CONFIGURATION_2_0
+#if NET_2_0
 			CustomError err = config.Errors [context.Response.StatusCode.ToString()];
 			string redirect = err == null ? null : err.Redirect;
 #else
