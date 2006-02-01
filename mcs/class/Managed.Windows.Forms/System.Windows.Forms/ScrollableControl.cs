@@ -536,59 +536,63 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		private void Recalculate(object sender, EventArgs e) {
-			Size	canvas;
-			Size	client;
-
-			// FIXME - this whole function begs for optimizations, all the math
-			// shouldn't have to be done over and over
-
-			// Check if we need scrollbars
+		private void Recalculate (object sender, EventArgs e)
+		{
 			if (!this.auto_scroll && !force_hscroll_visible && !force_vscroll_visible) {
 				return;
 			}
 
-			canvas = Canvas;
-			client = ClientRectangle.Size;
+			Size canvas = Canvas;
+			Size client = ClientRectangle.Size;
 
 			canvas.Width += auto_scroll_margin.Width;
 			canvas.Height += auto_scroll_margin.Height;
 
-			//  || (scroll_position.X == 0 && scroll_position.Y == 0)
+			int right_edge = client.Width;
+			int bottom_edge = client.Height;
+			int prev_right_edge;
+			int prev_bottom_edge;
 
-			if ((canvas.Width > client.Width) ||							// Regular decision
-			    ((canvas.Height > client.Height) && ((canvas.Width + SystemInformation.HorizontalScrollBarHeight) > client.Width)) ||
-			    (auto_scroll_min_size.Width > client.Width) ||
-			    force_hscroll_visible) {
-				// Need horz
+			do {
+				prev_right_edge = right_edge;
+				prev_bottom_edge = bottom_edge;
 
+				if ((force_hscroll_visible || canvas.Width > right_edge) && client.Width != 0) {
+					hscroll_visible = true;
+					bottom_edge = client.Height - SystemInformation.HorizontalScrollBarHeight;
+				} else {
+					hscroll_visible = false;
+					bottom_edge = client.Height;
+				}
+
+				if ((force_vscroll_visible || canvas.Height > bottom_edge) && client.Height != 0) {
+					vscroll_visible = true;
+					right_edge = client.Width - SystemInformation.VerticalScrollBarWidth;
+				} else {
+					vscroll_visible = false;
+					right_edge = client.Width;
+				}
+
+			} while (right_edge != prev_right_edge || bottom_edge != prev_bottom_edge);
+
+			if (hscroll_visible) {
 				hscrollbar.Left = 0;
 				hscrollbar.Top = client.Height - SystemInformation.HorizontalScrollBarHeight;
 				hscrollbar.LargeChange = DisplayRectangle.Width;
 				hscrollbar.SmallChange = DisplayRectangle.Width / 10;
 				hscrollbar.Maximum = canvas.Width - 1;
-
-				hscroll_visible = true;
 			} else {
-				hscroll_visible = false;
 				scroll_position.X = 0;
 			}
 
-			if ((canvas.Height > client.Height) || 
-			    ((canvas.Width > client.Width) && ((canvas.Height + SystemInformation.VerticalScrollBarWidth) > client.Height)) ||
-			    (auto_scroll_min_size.Height > client.Height) || 
-			    force_vscroll_visible) {
-				// Need vert
+			if (vscroll_visible) {
 				vscrollbar.Left = client.Width - SystemInformation.VerticalScrollBarWidth;
 				vscrollbar.Top = 0;
 
-				// FIXME - Working around some scrollbar bugs here; shouldn't have to add the height again (see canvas+= above)
 				vscrollbar.LargeChange = DisplayRectangle.Height;
 				vscrollbar.SmallChange = DisplayRectangle.Height / 10;
 				vscrollbar.Maximum = canvas.Height - 1;
-				vscroll_visible = true;
 			} else {
-				vscroll_visible = false;
 				scroll_position.Y = 0;
 			}
 

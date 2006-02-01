@@ -1,3 +1,12 @@
+2006-02-01  Jackson Harper  <jackson@ximian.com>
+
+	* ScrollableControl.cs: Refactored the Recalculate method a
+	little, this wasn't handling all the variants of bottom and right
+	bars needed to be added and added/removed based on their
+	counterparts being added/removed (which changes the drawable
+	size). Also we special case client widths and heights of 0 and
+	don't add the scrollbar for those.
+
 2006-02-01  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* Hwnd.cs: 
