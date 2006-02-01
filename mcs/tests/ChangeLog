@@ -1,6 +1,6 @@
 2006-02-01  Raja R Harinath  <rharinath@novell.com>
 
-	* support-test-*.cs: Rename from test-*-p2.cs.
+	* support-*.cs: Rename from test-*-p2.cs.
 
 2006-01-30  Raja R Harinath  <rharinath@novell.com>
 
