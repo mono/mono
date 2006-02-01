@@ -1,3 +1,12 @@
+
+Wed Feb 1 18:23:55 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* pthread_support.c, *: back out Zoltan's patch since it's
+	incorrect.
+	The correct fix it to execute the cleanup from inside
+	the thread also when using the __thread var to access the
+	current GC_thread.
+
 2006-02-01  Zoltan Varga  <vargaz@gmail.com>
 
 	* pthread_support.c (GC_thread_deregister_foreign): New public API

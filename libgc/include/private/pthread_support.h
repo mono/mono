@@ -92,7 +92,7 @@ extern GC_bool GC_thr_initialized;
 
 GC_thread GC_lookup_thread(pthread_t id);
 
-void GC_thread_deregister_foreign (void);
+void GC_thread_deregister_foreign (void *data);
 
 void GC_stop_init();
 
