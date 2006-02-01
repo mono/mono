@@ -1,5 +1,9 @@
 2006-02-01  Chris Toshok  <toshok@ximian.com>
 
+	* SiteMap.cs: use GetSection instead of GetWebApplicationSection.
+
+2006-02-01  Chris Toshok  <toshok@ximian.com>
+
 	* HttpApplication.cs: CONFIGURATION_2_0 => NET_2_0, and use
 	GetSection instead of GetWebApplicationSection.
 
