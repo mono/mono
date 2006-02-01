@@ -29,7 +29,6 @@
 //
 
 #if NET_2_0
-#if CONFIGURATION_2_0
 
 using System;
 using System.Configuration;
@@ -124,5 +123,4 @@ namespace System.Web.Configuration
 #endregion
 	}
 }
-#endif
 #endif

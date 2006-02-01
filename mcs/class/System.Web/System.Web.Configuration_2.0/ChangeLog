@@ -1,5 +1,11 @@
 2006-02-01  Chris Toshok  <toshok@ximian.com>
 
+	* CompilerCollection.cs: CONFIGURATION_2_0 => NET_2_0
+
+	* Compiler.cs: same.
+
+2006-02-01  Chris Toshok  <toshok@ximian.com>
+
 	* HttpConfigurationSystem.cs: SupportsUserConfig == true.  let's
 	use this to determine if ConfigurationManager.AppSettings should
 	be read-only or not.
