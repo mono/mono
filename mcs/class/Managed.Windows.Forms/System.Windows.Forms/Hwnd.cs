@@ -68,6 +68,7 @@ namespace System.Windows.Forms {
 		internal ArrayList	marshal_free_list;
 		internal int		caption_height;
 		internal int		tool_caption_height;
+		internal bool		whacky_wm;
 		#endregion	// Local Variables
 
 		#region Constructors and destructors
@@ -146,6 +147,10 @@ namespace System.Windows.Forms {
 
 			if (menu != null) {
 				int menu_height = menu.Rect.Height;
+				if (menu_height == 0) {
+					menu_height = ThemeEngine.Current.MenuFont.Height;
+				}
+
 				rect.Y -= menu_height;
 				rect.Height += menu_height;
 			}

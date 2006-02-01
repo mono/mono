@@ -46,6 +46,7 @@ namespace System.Windows.Forms {
 		internal bool			closing;
 		FormBorderStyle			form_border_style;
 		private bool		        autoscale;
+		private bool			clientsize_set;
 		private Size		        autoscale_base_size;
 		private bool			allow_transparency;
 		private static Icon		default_icon;
@@ -557,8 +558,12 @@ namespace System.Windows.Forms {
 							XplatUI.SetMenu (window.Handle, menu);
 						}
 
-						UpdateBounds (bounds.X, bounds.Y, bounds.Width, bounds.Height, ClientSize.Width, ClientSize.Height - 
-							ThemeEngine.Current.CalcMenuBarSize (DeviceContext, menu, ClientSize.Width));
+						if (clientsize_set) {
+							SetClientSizeCore(client_size.Width, client_size.Height);
+						} else {
+							UpdateBounds (bounds.X, bounds.Y, bounds.Width, bounds.Height, ClientSize.Width, ClientSize.Height - 
+								ThemeEngine.Current.CalcMenuBarSize (DeviceContext, menu, ClientSize.Width));
+						}
 					} else
 						UpdateBounds ();
 				}
@@ -1505,8 +1510,11 @@ namespace System.Windows.Forms {
 			Rectangle WindowRect;
 			CreateParams cp = this.CreateParams;
 
-			if (XplatUI.CalculateWindowRect(Handle, ref ClientRect, cp.Style, cp.ExStyle, ActiveMenu, out WindowRect) )
+			clientsize_set = true;
+
+			if (XplatUI.CalculateWindowRect(Handle, ref ClientRect, cp.Style, cp.ExStyle, ActiveMenu, out WindowRect)) {
 				SetBoundsCore(bounds.X, bounds.Y, WindowRect.Width, WindowRect.Height, BoundsSpecified.Size);
+			}
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
