@@ -32,6 +32,7 @@ System.Web.Configuration/MachineKeyValidationConverterTest.cs
 System.Web.Configuration/ProfilePropertySettingsTest.cs
 System.Web.Configuration/WebConfigurationManagerTest.cs
 System.Web.Hosting/ApplicationHostTest.cs
+System.Web.Hosting/HostingEnvironmentTest.cs
 System.Web.Hosting/SimpleWorkerRequestTest.cs
 System.Web.Hosting/VirtualPathProviderTest.cs
 System.Web.Profile/ProfileInfoTest.cs
