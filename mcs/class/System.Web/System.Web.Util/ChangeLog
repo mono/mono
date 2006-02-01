@@ -1,3 +1,8 @@
+2006-02-01  Chris Toshok  <toshok@ximian.com>
+
+	* WebEncoding.cs: CONFIGURATION_2_0 => NET_2_0, and use GetSection
+	instead of GetWebApplicationSection.
+
 2006-01-31 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* UrlUtils.cs: more than one consecutive slash are turned into one.

@@ -36,14 +36,14 @@ namespace System.Web.Util
 {
 	internal class WebEncoding
 	{
-#if CONFIGURATION_2_0
+#if NET_2_0
 		static bool cached;
 		static GlobalizationSection sect;
 		static GlobalizationSection GlobalizationConfig {
 			get {
 				if (!cached) {
 					try {
-						sect = (GlobalizationSection) WebConfigurationManager.GetWebApplicationSection ("system.web/globalization");
+						sect = (GlobalizationSection) WebConfigurationManager.GetSection ("system.web/globalization");
 					}
 					catch { }
 					cached = true;
