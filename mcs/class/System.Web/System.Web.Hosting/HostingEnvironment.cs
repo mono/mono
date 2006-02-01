@@ -7,7 +7,7 @@
 //
 
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005,2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -32,12 +32,20 @@
 #if NET_2_0
 
 using System;
+using System.Security.Permissions;
 using System.Web.Caching;
 
 namespace System.Web.Hosting {
 
+	[AspNetHostingPermission (SecurityAction.Demand, Level = AspNetHostingPermissionLevel.Medium)]
+	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.High)]
 	public sealed class HostingEnvironment : MarshalByRefObject
 	{
+		static bool is_hosted;
+		static string site_name;
+		static ApplicationShutdownReason shutdown_reason;
+		static VirtualPathProvider vpath_provider; // This should get a default
+
 		public HostingEnvironment ()
 		{
 		}
@@ -58,29 +66,25 @@ namespace System.Web.Hosting {
 			get { return HttpRuntime.Cache; }
 		}
 
-		[MonoTODO]
 		public static Exception InitializationException {
-			get { throw new NotImplementedException (); }
+			get { return HttpApplication.InitializationException; }
 		}
 
-		[MonoTODO] // 'true' if this is inside an ApplicationManager
 		public static bool IsHosted {
-			get { throw new NotImplementedException (); }
+			get { return is_hosted; }
 		}
 
-		[MonoTODO]
 		public static ApplicationShutdownReason ShutdownReason {
-			get { throw new NotImplementedException (); }
+			get { return shutdown_reason; }
 		}
 
 		[MonoTODO]
 		public static string SiteName {
-			get { throw new NotImplementedException (); }
+			get { return site_name; }
 		}
 
-		[MonoTODO]
 		public static VirtualPathProvider VirtualPathProvider {
-			get { throw new NotImplementedException (); }
+			get { return vpath_provider; }
 		}
 
 		[MonoTODO]
@@ -113,10 +117,9 @@ namespace System.Web.Hosting {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public override object InitializeLifetimeService ()
 		{
-			throw new NotImplementedException ();
+			return null;
 		}
 
 		[MonoTODO]
@@ -137,10 +140,16 @@ namespace System.Web.Hosting {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public static void RegisterVirtualPathProvider (VirtualPathProvider virtualPathProvider)
 		{
-			throw new NotImplementedException ();
+			if (HttpRuntime.AppDomainAppVirtualPath == null)
+				throw new InvalidOperationException ();
+
+			if (virtualPathProvider == null)
+				throw new ArgumentNullException ("virtualPathProvider");
+
+			virtualPathProvider.SetPrevious (vpath_provider);
+			vpath_provider = virtualPathProvider;
 		}
 		
 		[MonoTODO]
@@ -161,7 +170,6 @@ namespace System.Web.Hosting {
 			throw new NotImplementedException ();
 		}
 	}
-
 }
 
 #endif

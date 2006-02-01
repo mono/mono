@@ -33,6 +33,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Security.Permissions;
+using System.Web.Configuration;
 using System.Web.UI;
 using System.Web.Util;
 
@@ -114,9 +115,8 @@ namespace System.Web.Hosting {
 			}
 		}
 #if NET_2_0
-		[MonoTODO ("Gets the virtual path to the root web.config")]
 		public override string RootWebConfigPath {
-			get { return null; }
+			get { return WebConfigurationManager.OpenWebConfiguration ("~").FilePath; }
 		}
 #endif
 
