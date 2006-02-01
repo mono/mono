@@ -839,6 +839,76 @@ namespace System.Windows.Forms {
 			y = dest_y_return;
 		}
 
+		private void AbsoluteGeometry(IntPtr window, out int ret_x, out int ret_y, out int width, out int height) {
+			IntPtr	root;
+			IntPtr	win;
+			IntPtr	parent;
+			IntPtr	children;
+			int	x;
+			int	y;
+			int	w;
+			int	h;
+			int	absX;
+			int	absY;
+			int	b;
+			int	d;
+			int	nchildren;
+
+			absX = 0;
+			absY = 0;
+			win = window;
+			width = 0;
+			height = 0;
+			do {
+				XGetGeometry(DisplayHandle, win, out root, out x, out y, out w, out h, out b, out d);
+				if (win == window) {
+					width = w;
+					height = h;
+				}
+				absX += x;
+				absY += y;
+				if (XQueryTree(DisplayHandle, win, out root, out parent,  out children, out nchildren) == 0) {
+					break;
+				}
+
+				if (children != IntPtr.Zero) {
+					XFree(children);
+				}
+				win = parent;
+			} while (win != root);
+
+			ret_x = absX;
+			ret_y = absY;
+
+//Console.WriteLine("Absolute pos for window {0} = {1},{2} {3}x{4}", XplatUI.Window(window), ret_x, ret_y, width, height);
+		}
+
+		private void FrameExtents(IntPtr window, out int left, out int top) {
+			Atom			actual_atom;
+			int			actual_format;
+			int			nitems;
+			int			bytes_after;
+			IntPtr			prop = IntPtr.Zero;
+			int			width;
+			int			height;
+
+			XGetWindowProperty(DisplayHandle, window, NetAtoms[(int)NA._NET_FRAME_EXTENTS], 0, 16, false, Atom.XA_CARDINAL, out actual_atom, out actual_format, out nitems, out bytes_after, ref prop);
+			if ((nitems == 4) && (prop != IntPtr.Zero)) {
+				left = Marshal.ReadInt32(prop, 0);
+				//right = Marshal.ReadInt32(prop, 4);
+				top = Marshal.ReadInt32(prop, 8);
+				//bottom = Marshal.ReadInt32(prop, 12);
+			} else {
+				left = 0;
+				top = 0;
+			}
+
+			if (prop != IntPtr.Zero) {
+				XFree(prop);
+			}
+			return;
+		}
+
 		private void AddConfigureNotify (XEvent xevent) {
 			Hwnd	hwnd;
 
@@ -854,12 +924,33 @@ namespace System.Windows.Forms {
 					hwnd.x = xevent.ConfigureEvent.x;
 					hwnd.y = xevent.ConfigureEvent.y;
 				} else {
-					int	dummy_int;
-					IntPtr	dummy_ptr;
+					// This sucks ass, part 1
+					// Every WM does the ConfigureEvents of toplevel windows different, so there's
+					// no standard way of getting our adjustment. 
+					// The code below is needed for KDE and FVWM, the 'whacky_wm' part is for metacity
+					// Several other WMs do their decorations different yet again and we fail to deal 
+					// with that, since I couldn't find any frigging commonality between them.
+					// The only sane WM seems to be KDE
 
-					XGetGeometry(DisplayHandle, XGetParent(hwnd.whole_window), out dummy_ptr, out hwnd.x, out hwnd.y, out dummy_int, out dummy_int, out dummy_int, out dummy_int);
+					if (!xevent.ConfigureEvent.send_event) {
+						int	dummy_int;
+						IntPtr	dummy_ptr;
+
+						XTranslateCoordinates(DisplayHandle, hwnd.whole_window, RootWindow, -xevent.ConfigureEvent.x, -xevent.ConfigureEvent.y, out hwnd.x, out hwnd.y, out dummy_ptr);
+					} else {
+						// This is a synthetic event, coordinates are in root space
+						hwnd.x = xevent.ConfigureEvent.x;
+						hwnd.y = xevent.ConfigureEvent.y;
+						if (hwnd.whacky_wm) {
+							int frame_left;
+							int frame_top;
+
+							FrameExtents(hwnd.whole_window, out frame_left, out frame_top);
+							hwnd.x -= frame_left;
+							hwnd.y -= frame_top;
+						}
+					}
 				}
-
 				hwnd.width = xevent.ConfigureEvent.width;
 				hwnd.height = xevent.ConfigureEvent.height;
 
@@ -2759,14 +2850,29 @@ namespace System.Windows.Forms {
 
 				case XEventName.ReparentNotify: {
 					if (hwnd.parent == null) {	// Toplevel
-						if (xevent.ReparentEvent.parent != IntPtr.Zero) {
+						if ((xevent.ReparentEvent.parent != IntPtr.Zero) && (xevent.ReparentEvent.window == hwnd.whole_window)) {
 							// We need to adjust x/y
+							// This sucks ass, part 2
+							// Every WM does the reparenting of toplevel windows different, so there's
+							// no standard way of getting our adjustment considering frames/decorations
+							// The code below is needed for metacity. KDE doesn't works just fine without this
 							int	dummy_int;
 							IntPtr	dummy_ptr;
+							int	new_x;
+							int	new_y;
+							int	frame_left;
+							int	frame_top;
 
 							hwnd.Reparented = true;
 
-							XGetGeometry(DisplayHandle, XGetParent(hwnd.whole_window), out dummy_ptr, out hwnd.x, out hwnd.y, out dummy_int, out dummy_int, out dummy_int, out dummy_int);
+							XGetGeometry(DisplayHandle, XGetParent(hwnd.whole_window), out dummy_ptr, out new_x, out new_y, out dummy_int, out dummy_int, out dummy_int, out dummy_int);
+							FrameExtents(hwnd.whole_window, out frame_left, out frame_top);
+							if ((frame_left != 0) && (frame_top != 0) && (new_x != frame_left) && (new_y != frame_top)) {
+								hwnd.x = new_x;
+								hwnd.y = new_y;
+								hwnd.whacky_wm = true;
+							}
+
 							msg.message = Msg.WM_WINDOWPOSCHANGED;
 							if (hwnd.opacity != 0xffffffff) {
 								uint opacity;

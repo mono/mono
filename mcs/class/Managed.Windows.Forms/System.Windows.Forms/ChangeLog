@@ -1,3 +1,14 @@
+2006-02-01  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* XplatUIX11.cs: 
+	  - Added method to get AbsoluteGeometry(); currently unused, but might
+	    be used in the future, if we try again to figure out toplevel
+	    coordinates with some more crappy window managers
+	  - Added FrameExtents() method to retrieve the WM set decoration size
+	  - Tried to fix up AddConfigureNotify and handling of ReparentNotify 
+	    to deal with at least KDE, FVWM and metacity (Fixes #77092)
+	* Hwnd.cs: Added whacky_wm tracking var for metacity
+
 2006-01-31  Jackson Harper  <jackson@ximian.com>
 
 	* Control.cs: When a new Site is set on the component attempt to
