@@ -1,4 +1,4 @@
-// Compiler options: test-361-p2.cs /out:test-361.exe
+// Compiler options: support-test-361.cs -out:test-361.exe
 
 [X]
 class Test {

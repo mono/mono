@@ -1,6 +1,6 @@
 // This is used to debug an ordering dependent bug.
 //
-// Compiler options: test-388-p2.cs /out:test-388.exe
+// Compiler options: support-test-388.cs -out:test-388.exe
 
 namespace Schemas {
     [System.Xml.Serialization.XmlType("base-field-type"),
