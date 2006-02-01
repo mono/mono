@@ -811,7 +811,7 @@ namespace System.Web.Configuration
 				ThrowException ("sectionGroup must have a 'name' attribute.", reader);
 
 			string value = null;
-#if CONFIGURATION_2_0
+#if NET_2_0
 			do {
 				if (reader.Name == "name") {
 					if (value != null)

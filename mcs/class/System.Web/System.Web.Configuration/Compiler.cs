@@ -28,7 +28,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if !CONFIGURATION_2_0
+#if !NET_2_0
+/* when NET_2_0 is defined, this class is found in System.Web.Configuration_2.0/ */
 
 using System;
 using System.CodeDom.Compiler;
@@ -37,9 +38,6 @@ using System.Configuration;
 
 namespace System.Web.Configuration
 {
-#if NET_2_0
-	public
-#endif
 	class Compiler
 	{
 		public string Language;

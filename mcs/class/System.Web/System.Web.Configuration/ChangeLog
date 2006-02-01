@@ -1,3 +1,13 @@
+2006-02-01  Chris Toshok  <toshok@ximian.com>
+
+	* CompilerCollection.cs: CONFIGURATION_2_0 => NET_2_0.
+
+	* CompilationConfigurationHandler.cs: same.
+
+	* Compiler.cs: same.
+
+	* CompilationConfiguration.cs: same.
+
 2006-01-08  Konstantin Triger <kostat@mainsoft.com>
 
         * HttpCapabilitiesBase.cs: TARGET_JVM changes to let the compilation

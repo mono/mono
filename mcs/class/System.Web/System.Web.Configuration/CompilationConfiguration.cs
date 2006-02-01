@@ -133,7 +133,7 @@ namespace System.Web.Configuration
 			num_recompiles_before_app_restart = parent.num_recompiles_before_app_restart;
 			strict = parent.strict;
 			temp_directory = parent.temp_directory;
-#if CONFIGURATION_2_0
+#if NET_2_0
 			compilers = new CompilerCollection ();
 #else
 			compilers = new CompilerCollection (parent.compilers);
