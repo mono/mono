@@ -428,6 +428,11 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public void EmitScopeInitFromBlock (Block b)
+		{
+			capture_context.EmitScopeInitFromBlock (this, b);
+		}
+
 		// <summary>
 		//   Starts a new code branching.  This inherits the state of all local
 		//   variables and parameters from the current branching.

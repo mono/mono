@@ -1088,23 +1088,21 @@ namespace Mono.CSharp {
 		public void EmitInitScope (EmitContext ec)
 		{
 			EmitAnonymousHelperClasses (ec);
-			if (roots.Count != 0)
-				foreach (ScopeInfo root in roots)
-					root.EmitInitScope (ec);
 		}
 
-		ScopeInfo EmitGetScopeFromBlock (EmitContext ec, Block b)
+		//
+		// This is called externally when we start emitting code for a block
+		// if the block has a ScopeInfo associated, emit the init code
+		//
+		public void EmitScopeInitFromBlock (EmitContext ec, Block b)
 		{
-			ScopeInfo si;
-			
-			si = (ScopeInfo) scopes [b.ID];
+			ScopeInfo si = (ScopeInfo) scopes [b.ID];
 			if (si == null)
-				throw new Exception ("Si is null for block " + b.ID);
+				return;
+
 			si.EmitInitScope (ec);
-
-			return si;
 		}
-
+		
 		//
 		// Emits the opcodes necessary to load the instance of the captured
 		// variable in `li'
@@ -1116,7 +1114,7 @@ namespace Mono.CSharp {
 			ScopeInfo si;
 
 			if (li.Block.Toplevel == toplevel_owner){
-				si = EmitGetScopeFromBlock (ec, li.Block);
+				si = (ScopeInfo) scopes [li.Block.ID];
 				si.EmitScopeInstance (ig);
 				return;
 			}
@@ -1170,7 +1168,7 @@ namespace Mono.CSharp {
 			ScopeInfo si;
 
 			if (ec.CurrentBlock.Toplevel == toplevel_owner) {
-				si = EmitGetScopeFromBlock (ec, toplevel_owner);
+				si = (ScopeInfo) scopes [toplevel_owner.ID];
 				si.EmitScopeInstance (ig);
 			} else {
 				si = ec.CurrentAnonymousMethod.Scope;

@@ -1,3 +1,20 @@
+2006-02-01  Miguel de Icaza  <miguel@novell.com>
+
+	* anonymous.cs (CaptureContext.EmitInitScope): Do not emit the
+	scopes for all the roots, the scopes will now be emitted when the
+	Blocks are entered.
+
+	(CaptureContext.EmitScopeInitFromBlock): Simply emit the ScopeInfo
+	code.  This reduces a lot of existing cruft.
+	
+	* statement.cs (Block.Emit): Call EmitScopeInitFromBlock here, so
+	that the ScopeInfo is generated as we enter the scope, not at the
+	time of use, which is what we used to do before.
+
+	* codegen.cs (EmitScopeInitFromBlock): New routine, this is called
+	every time a Block is about to be emitted if we have a
+	CaptureContext. 
+
 2006-02-01  Raja R Harinath  <rharinath@novell.com>
 
 	* typemanager.cs (NoTypes, NoTypeExprs): Remove.

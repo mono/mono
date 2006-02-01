@@ -2027,6 +2027,9 @@ namespace Mono.CSharp {
 					}
 				}
 			}
+			if (ec.HaveCaptureInfo){
+				ec.EmitScopeInitFromBlock (this);
+			}
 
 			ec.Mark (StartLocation, true);
 			DoEmit (ec);
