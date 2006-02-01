@@ -42,7 +42,7 @@ namespace System.Web.SessionState {
 	{
 		private static Type cncType = null;
 		private IDbConnection cnc = null;
-#if CONFIGURATION_2_0
+#if NET_2_0
 		private SessionStateSection config;
 #else
 		private SessionConfig config;
@@ -57,7 +57,7 @@ namespace System.Web.SessionState {
 		}
 
 		public void Init (SessionStateModule module, HttpApplication context,
-#if CONFIGURATION_2_0
+#if NET_2_0
 				  SessionStateSection config
 #else
 				  SessionConfig config
@@ -123,7 +123,7 @@ namespace System.Web.SessionState {
 			id = SessionId.Create (module.Rng);
 			session = new HttpSessionState (id, new SessionDictionary (),
 					HttpApplicationFactory.ApplicationState.SessionObjects,
-#if CONFIGURATION_2_0
+#if NET_2_0
 					(int)config.Timeout.TotalMinutes,
 #else
 					config.Timeout,
@@ -131,7 +131,7 @@ namespace System.Web.SessionState {
 					true, config.CookieLess, SessionStateMode.SQLServer, read_only);
 
 			InsertSession (session,
-#if CONFIGURATION_2_0
+#if NET_2_0
 				       (int)config.Timeout.TotalMinutes
 #else
 				       config.Timeout

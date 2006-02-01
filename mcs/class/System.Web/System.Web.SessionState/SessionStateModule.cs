@@ -64,7 +64,7 @@ namespace System.Web.SessionState
 			}
 		}
 #else
-#if CONFIGURATION_2_0
+#if NET_2_0
 		static SessionStateSection config;
 #else
 		static SessionConfig config;
@@ -91,7 +91,7 @@ namespace System.Web.SessionState
 			handler.Dispose();
 		}
 
-#if CONFIGURATION_2_0
+#if NET_2_0
 		SessionStateSection GetConfig ()
 #else
 		SessionConfig GetConfig ()
@@ -101,7 +101,7 @@ namespace System.Web.SessionState
 				if (config != null)
 					return config;
 
-#if CONFIGURATION_2_0
+#if NET_2_0
 				config = (SessionStateSection) WebConfigurationManager.GetSection ("system.web/sessionState");
 #else
 				config = (SessionConfig) HttpContext.GetAppConfig ("system.web/sessionState");
@@ -130,7 +130,7 @@ namespace System.Web.SessionState
 		public void Init (HttpApplication app)
 		{
 			sessionForStaticFiles = (Environment.GetEnvironmentVariable ("MONO_XSP_STATIC_SESSION") != null);
-#if CONFIGURATION_2_0
+#if NET_2_0
 			SessionStateSection cfg = GetConfig ();
 #else
 			SessionConfig cfg = GetConfig ();
@@ -239,7 +239,7 @@ namespace System.Web.SessionState
 
 		internal void OnSessionRemoved (string key, object value, CacheItemRemovedReason reason)
 		{
-#if CONFIGURATION_2_0
+#if NET_2_0
 			SessionStateSection cfg = GetConfig ();
 #else
 			SessionConfig cfg = GetConfig ();

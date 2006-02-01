@@ -1,3 +1,15 @@
+2006-02-01  Chris Toshok  <toshok@ximian.com>
+
+	* SessionStateServerHandler.cs: CONFIGURATION_2_0 => NET_2_0.
+
+	* SessionSQLServerHandler.cs: same.
+
+	* SessionStateModule.cs: same.
+
+	* ISessionHandler.cs: same.
+
+	* SessionInProcHandler.cs: same.
+
 2006-01-18 Konstantin Triger <kostat@mainsoft.com>
 
 	* HttpSessionState.jvm.cs: correcting serialization conditions.

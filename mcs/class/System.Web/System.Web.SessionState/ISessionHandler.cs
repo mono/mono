@@ -38,7 +38,7 @@ namespace System.Web.SessionState
 	{
 		void Dispose ();
 		void Init (SessionStateModule module, HttpApplication context,
-#if CONFIGURATION_2_0
+#if NET_2_0
 			   SessionStateSection config
 #else
 			   SessionConfig config

@@ -40,7 +40,7 @@ namespace System.Web.SessionState
 {
 	class SessionInProcHandler : ISessionHandler
 	{
-#if CONFIGURATION_2_0
+#if NET_2_0
 		SessionStateSection config;
 #else
 		SessionConfig config;
@@ -50,7 +50,7 @@ namespace System.Web.SessionState
 		public void Dispose () { }
 
 		public void Init (SessionStateModule module, HttpApplication context,
-#if CONFIGURATION_2_0
+#if NET_2_0
 				  SessionStateSection config
 #else
 				  SessionConfig config
@@ -91,7 +91,7 @@ namespace System.Web.SessionState
 			state = new HttpSessionState (sessionID, // unique identifier
 						new SessionDictionary(), // dictionary
 						HttpApplicationFactory.ApplicationState.SessionObjects,
-#if CONFIGURATION_2_0
+#if NET_2_0
 						(int)config.Timeout.TotalMinutes, // XXX is this right?  we lose some precision here, but since the timeout is in minutes *anyway*...
 #else
 						config.Timeout, //lifetime before death.
@@ -101,7 +101,7 @@ namespace System.Web.SessionState
 						SessionStateMode.InProc,
 						read_only); //readonly
 
-#if CONFIGURATION_2_0
+#if NET_2_0
 			TimeSpan timeout = TimeSpan.FromMinutes ((int)config.Timeout.TotalMinutes);
 #else
 			TimeSpan timeout = new TimeSpan (0, config.Timeout, 0);

@@ -43,7 +43,7 @@ namespace System.Web.SessionState {
 		const string CookieName = "ASPSESSION";
 
 		private RemoteStateServer state_server;
-#if CONFIGURATION_2_0
+#if NET_2_0
 		private SessionStateSection config;
 #else
 		private SessionConfig config;
@@ -54,7 +54,7 @@ namespace System.Web.SessionState {
 		}
 
 		public void Init (SessionStateModule module, HttpApplication context,
-#if CONFIGURATION_2_0
+#if NET_2_0
 				  SessionStateSection config
 #else
 				  SessionConfig config
@@ -104,7 +104,7 @@ namespace System.Web.SessionState {
 					sobjs = HttpStaticObjectsCollection.FromByteArray (item.StaticObjectsData);
 					session = new HttpSessionState (id, dict,
 							HttpApplicationFactory.ApplicationState.SessionObjects,
-#if CONFIGURATION_2_0
+#if NET_2_0
 							(int)config.Timeout.TotalMinutes, // XXX is this right?  we lose some precision here, but since the timeout is in minutes *anyway*...
 #else
 							config.Timeout,
@@ -120,7 +120,7 @@ namespace System.Web.SessionState {
 			dict = new SessionDictionary ();
 			sobjs = HttpApplicationFactory.ApplicationState.SessionObjects;
 			item = new StateServerItem (dict.ToByteArray (), sobjs.ToByteArray (),
-#if CONFIGURATION_2_0
+#if NET_2_0
 						    (int)config.Timeout.TotalMinutes
 #else
 						    config.Timeout
@@ -130,7 +130,7 @@ namespace System.Web.SessionState {
 			state_server.Insert (id, item);
 
 			session = new HttpSessionState (id, dict, sobjs,
-#if CONFIGURATION_2_0
+#if NET_2_0
 							(int)config.Timeout.TotalMinutes,
 #else
 							config.Timeout,
