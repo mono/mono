@@ -1,5 +1,17 @@
 2006-02-01  Chris Toshok  <toshok@ximian.com>
 
+	* WebConfigurationManager.cs: In the normal case, get the current
+	request's web.config, not the application's.  If there is no
+	current request, get the application's.
+	(GetWebApplicationConfiguration): use Request.ApplicationPath, not
+	Request.PhysicalApplicationPath.  OpenWebConfiguration takes
+	virtual paths.
+
+	* HttpConfigurationSystem.cs: GetWebApplicationSection =>
+	GetSection.
+
+2006-02-01  Chris Toshok  <toshok@ximian.com>
+
 	* CompilerCollection.cs: CONFIGURATION_2_0 => NET_2_0
 
 	* Compiler.cs: same.

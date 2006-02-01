@@ -38,7 +38,7 @@ namespace System.Web.Configuration {
 	{
 		object IInternalConfigSystem.GetSection (string configKey)
 		{
-			return WebConfigurationManager.GetWebApplicationSection (configKey);
+			return WebConfigurationManager.GetSection (configKey);
 		}
 
 		void IInternalConfigSystem.RefreshConfig (string sectionName)

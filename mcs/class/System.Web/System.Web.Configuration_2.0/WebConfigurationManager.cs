@@ -133,7 +133,7 @@ namespace System.Web.Configuration {
 			lock (configurations) {
 				conf = (_Configuration) configurations [basePath];
 				if (conf == null) {
-					conf = ConfigurationFactory.Create (typeof(WebConfigurationHost), null, path, site, locationSubPath, server, userName, password);
+					conf = ConfigurationFactory.Create (typeof(WebConfigurationHost), null, basePath, site, locationSubPath, server, userName, password);
 					configurations [basePath] = conf;
 				}
 			}
@@ -191,7 +191,13 @@ namespace System.Web.Configuration {
 		[MonoTODO ("apparently this bad boy can return null, but GetWebApplicationSection doesn't")]
 		public static object GetSection (string sectionName)
 		{
-			return GetWebApplicationSection (sectionName);
+			try {
+				_Configuration c = OpenWebConfiguration (HttpContext.Current.Request.Path);
+				return c.GetSection (sectionName);
+			}
+			catch {
+				return GetWebApplicationSection (sectionName);
+			}
 		}
 
 		[MonoTODO]
@@ -206,12 +212,12 @@ namespace System.Web.Configuration {
 
 			if (HttpContext.Current == null
 			    || HttpContext.Current.Request == null
-			    || HttpContext.Current.Request.PhysicalApplicationPath == null
-			    || HttpContext.Current.Request.PhysicalApplicationPath == "") {
+			    || HttpContext.Current.Request.ApplicationPath == null
+			    || HttpContext.Current.Request.ApplicationPath == "") {
 				config = OpenWebConfiguration ("");
 			}
 			else {
-				config = OpenWebConfiguration (HttpContext.Current.Request.PhysicalApplicationPath);
+				config = OpenWebConfiguration (HttpContext.Current.Request.ApplicationPath);
 			}
 
 			return config;
