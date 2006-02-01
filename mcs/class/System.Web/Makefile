@@ -65,7 +65,7 @@ RESOURCE_FILES_2 = \
 OTHER_RES = $(RESOURCE_FILES_1)
 ifeq (net_2_0, $(PROFILE))
 OTHER_RES += $(RESOURCE_FILES_2)
-OTHER_LIB_MCS_FLAGS = -nowarn:618 -r:System.Configuration.dll -d:CONFIGURATION_2_0
+OTHER_LIB_MCS_FLAGS = -nowarn:618 -r:System.Configuration.dll
 endif
 
 
