@@ -92,7 +92,7 @@ namespace System.Web.Security
 			if (context == null)
 				throw new HttpException ("Context is null!");
 
-#if CONFIGURATION_2_0
+#if NET_2_0
 			AuthenticationSection section = (AuthenticationSection) WebConfigurationManager.GetWebApplicationSection (authConfigPath);
 			FormsAuthenticationCredentials config = section.Forms.Credentials;
 			FormsAuthenticationUser user = config.Users[name];
@@ -128,7 +128,7 @@ namespace System.Web.Security
 			if (protection == FormsProtectionEnum.None)
 				return FormsAuthenticationTicket.FromByteArray (bytes);
 
-#if CONFIGURATION_2_0
+#if NET_2_0
 			MachineKeySection config = (MachineKeySection) WebConfigurationManager.GetWebApplicationSection (machineKeyConfigPath);
 #else
 			MachineKeyConfig config = HttpContext.GetAppConfig (machineKeyConfigPath) as MachineKeyConfig;
@@ -147,7 +147,7 @@ namespace System.Web.Security
 				int count;
 				MachineKeyValidation validationType;
 
-#if CONFIGURATION_2_0
+#if NET_2_0
 				validationType = config.Validation;
 #else
 				validationType = config.ValidationType;
@@ -157,7 +157,7 @@ namespace System.Web.Security
 				else
 					count = SHA1_hash_size; // 3DES and SHA1
 
-#if CONFIGURATION_2_0
+#if NET_2_0
 				byte [] vk = config.ValidationKeyBytes;
 #else
 				byte [] vk = config.ValidationKey;
@@ -199,7 +199,7 @@ namespace System.Web.Security
 			Initialize ();
 
 			FormsAuthenticationTicket ticket;
-#if CONFIGURATION_2_0
+#if NET_2_0
 			byte [] bytes = MachineKeySection.GetBytes (encryptedTicket, encryptedTicket.Length);
 #else
 			byte [] bytes = MachineKeyConfig.GetBytes (encryptedTicket, encryptedTicket.Length);
@@ -224,7 +224,7 @@ namespace System.Web.Security
 				return GetHexString (ticket_bytes);
 
 			byte [] result = ticket_bytes;
-#if CONFIGURATION_2_0
+#if NET_2_0
 			MachineKeySection config = (MachineKeySection) WebConfigurationManager.GetWebApplicationSection (machineKeyConfigPath);
 #else
 			MachineKeyConfig config = HttpContext.GetAppConfig (machineKeyConfigPath) as MachineKeyConfig;
@@ -232,7 +232,7 @@ namespace System.Web.Security
 			bool all = (protection == FormsProtectionEnum.All);
 			if (all || protection == FormsProtectionEnum.Validation) {
 				byte [] valid_bytes = null;
-#if CONFIGURATION_2_0
+#if NET_2_0
 				byte [] vk = config.ValidationKeyBytes;
 #else
 				byte [] vk = config.ValidationKey;
@@ -242,7 +242,7 @@ namespace System.Web.Security
 				Buffer.BlockCopy (vk, 0, mix, result.Length, vk.Length);
 
 				switch (
-#if CONFIGURATION_2_0
+#if NET_2_0
 					config.Validation
 #else
 					config.ValidationType
@@ -378,7 +378,7 @@ namespace System.Web.Security
 				if (initialized)
 					return;
 
-#if CONFIGURATION_2_0
+#if NET_2_0
 				AuthenticationSection section = (AuthenticationSection)WebConfigurationManager.GetWebApplicationSection (authConfigPath);
 				FormsAuthenticationConfiguration config = section.Forms;
 
@@ -396,13 +396,7 @@ namespace System.Web.Security
 				login_url = config.LoginUrl;
 #else
 				HttpContext context = HttpContext.Current;
-#if NET_2_0
-				AuthConfig authConfig = null;
-				if (context != null)
-					authConfig = context.GetConfig (authConfigPath) as AuthConfig;
-#else
 				AuthConfig authConfig = context.GetConfig (authConfigPath) as AuthConfig;
-#endif
 				if (authConfig != null) {
 					cookieName = authConfig.CookieName;
 					timeout = authConfig.Timeout;
@@ -412,14 +406,6 @@ namespace System.Web.Security
 					requireSSL = authConfig.RequireSSL;
 					slidingExpiration = authConfig.SlidingExpiration;
 #endif
-#if NET_2_0
-					cookie_domain = authConfig.CookieDomain;
-					cookie_mode = authConfig.CookieMode;
-					cookies_supported = authConfig.CookiesSupported;
-					default_url = authConfig.DefaultUrl;
-					enable_crossapp_redirects = authConfig.EnableCrossAppRedirects;
-					login_url = authConfig.LoginUrl;
-#endif
 				} else {
 					cookieName = ".MONOAUTH";
 					timeout = 30;
@@ -427,13 +413,6 @@ namespace System.Web.Security
 					protection = FormsProtectionEnum.All;
 #if NET_1_1
 					slidingExpiration = true;
-#endif
-#if NET_2_0
-					cookie_domain = String.Empty;
-					cookie_mode = HttpCookieMode.UseDeviceProfile;
-					cookies_supported = true;
-					default_url = "/default.aspx";
-					login_url = "/login.aspx";
 #endif
 				}
 #endif

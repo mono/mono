@@ -1,3 +1,14 @@
+2006-02-01  Chris Toshok  <toshok@ximian.com>
+
+	* FormsAuthentication.cs: CONFIGURATION_2_0 => NET_2_0.
+	simplifies the ifdef mess quite a bit.
+
+	* Membership.cs: same.
+
+	* FormsAuthenticationModule.cs: same.
+
+	* UrlAuthorizationModule.cs: same.
+
 2006-01-04  Chris Toshok  <toshok@ximian.com>
 
 	* FormsAuthentication.cs (Authenticate): add CONFIGURATION_2_0

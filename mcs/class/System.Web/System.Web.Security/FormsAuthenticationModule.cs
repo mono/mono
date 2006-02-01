@@ -64,7 +64,7 @@ namespace System.Web.Security
 			string loginPage;
 			bool slidingExpiration;
 
-#if CONFIGURATION_2_0
+#if NET_2_0
 			AuthenticationSection config = (AuthenticationSection) WebConfigurationManager.GetWebApplicationSection ("system.web/authentication");
 #else
 			AuthConfig config = (AuthConfig) context.GetConfig ("system.web/authentication");
@@ -74,7 +74,7 @@ namespace System.Web.Security
 				return;
 			}
 
-#if CONFIGURATION_2_0
+#if NET_2_0
 			cookieName = config.Forms.Name;
 			cookiePath = config.Forms.Path;
 			loginPage = config.Forms.LoginUrl;
@@ -139,7 +139,7 @@ namespace System.Web.Security
 				return;
 
 			string loginPage;
-#if CONFIGURATION_2_0
+#if NET_2_0
 			AuthenticationSection config = (AuthenticationSection) WebConfigurationManager.GetWebApplicationSection ("system.web/authentication");
 			loginPage = config.Forms.LoginUrl;
 #else

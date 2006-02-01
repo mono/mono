@@ -58,7 +58,7 @@ namespace System.Web.Security
 			if (context.SkipAuthorization)
 				return;
 
-#if CONFIGURATION_2_0
+#if NET_2_0
 			AuthorizationSection config = (AuthorizationSection) WebConfigurationManager.GetWebApplicationSection ("system.web/authorization");
 #else
 			AuthorizationConfig config = (AuthorizationConfig) context.GetConfig ("system.web/authorization");

@@ -47,12 +47,12 @@ namespace System.Web.Security
 		
 		static Membership ()
 		{
-#if CONFIGURATION_2_0
+#if NET_2_0
 			MembershipSection section = (MembershipSection) WebConfigurationManager.GetWebApplicationSection ("system.web/membership");
 #endif
 			providers = new MembershipProviderCollection ();
 
-#if CONFIGURATION_2_0
+#if NET_2_0
 			foreach (ProviderSettings prov in section.Providers) {
 				Type t = Type.GetType (prov.Type);
 				if (t == null)
@@ -76,7 +76,7 @@ namespace System.Web.Security
 				provider.Initialize ("AspNetSqlMembershipProvider", attributes);
 				providers.Add (provider);
 			}
-#if CONFIGURATION_2_0
+#if NET_2_0
 			onlineTimeWindow = (int) section.UserIsOnlineTimeWindow.TotalMinutes;
 #endif
 		}
