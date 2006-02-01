@@ -1,5 +1,8 @@
 2006-02-01  Zoltan Varga  <vargaz@gmail.com>
 
+	* mono-debug.h (mono_debugger_create_notification_function): Move
+	prototype to mono-debug.h since it is used by the JIT.
+
 	* marshal.c (emit_struct_conv): Fix marshalling of embedded structs
 	with explicit layout. Fixes #77433.
 
