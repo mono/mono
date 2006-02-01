@@ -223,7 +223,8 @@ static ptr_t size_zero_object = (ptr_t)(&size_zero_object);
 
 void GC_delete_thread(pthread_t id);
 
-void GC_thread_deregister_foreign (void *data)
+/* Called by pthreads when the TLS entry is destroyed */
+static void GC_thread_deregister_foreign_internal (void *data)
 {
     GC_thread me = (GC_thread)data;
  /*   GC_fprintf1( "\n\n\n\n --- Deregister %x ---\n\n\n\n\n", me->flags ); */
@@ -243,7 +244,7 @@ void GC_init_thread_local(GC_thread p)
     int i;
 
     if (!keys_initialized) {
-	if (0 != GC_key_create(&GC_thread_key, GC_thread_deregister_foreign)) {
+	if (0 != GC_key_create(&GC_thread_key, GC_thread_deregister_foreign_internal)) {
 	    ABORT("Failed to create key for local allocator");
         }
 	keys_initialized = TRUE;
@@ -283,6 +284,7 @@ void GC_destroy_thread_local(GC_thread p)
 #   ifdef GC_GCJ_SUPPORT
    	return_freelists(p -> gcj_freelists, GC_gcjobjfreelist);
 #   endif
+    GC_setspecific(GC_thread_key, NULL);
 }
 
 extern GC_PTR GC_generic_malloc_many();
@@ -671,7 +673,7 @@ void GC_delete_thread(pthread_t id)
     int hv = ((word)id) % THREAD_TABLE_SZ;
     register GC_thread p = GC_threads[hv];
     register GC_thread prev = 0;
-    
+
     while (!pthread_equal(p -> id, id)) {
         prev = p;
         p = p -> next;
@@ -1299,6 +1301,21 @@ int GC_thread_register_foreign (void *base_addr)
     me = GC_start_routine_head(&si, base_addr, NULL, NULL);
 
     return me != NULL;
+}
+
+void GC_thread_deregister_foreign (void)
+{
+	GC_thread me;
+
+	LOCK ();
+	me = GC_lookup_thread (pthread_self ());
+	if (me->flags & FOREIGN_THREAD) {
+		GC_delete_thread (me->id);
+#if defined(THREAD_LOCAL_ALLOC) && !defined(DBG_HDRS_ALL)
+		GC_destroy_thread_local (me);
+#endif
+	}
+	UNLOCK ();
 }
 
 void * GC_start_routine(void * arg)

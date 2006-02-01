@@ -1,4 +1,9 @@
+2006-02-01  Zoltan Varga  <vargaz@gmail.com>
 
+	* pthread_support.c (GC_thread_deregister_foreign): New public API
+	function to deregister a foreign thread from the GC.
+	(GC_destroy_thread_local): Clean up the TLS key too.
+	
 Tue Jan 24 12:34:06 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* *: update from upstream changes.

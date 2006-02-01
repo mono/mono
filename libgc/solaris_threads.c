@@ -641,6 +641,10 @@ int GC_thread_register_foreign (void *base_addr)
 	return 0;
 }
 
+void GC_thread_deregister_foreign (void)
+{
+}
+
 /* Solaris 2/Intel uses an initial stack size limit slightly bigger than the
    SPARC default of 8 MB.  Account for this to warn only if the user has
    raised the limit beyond the default.
