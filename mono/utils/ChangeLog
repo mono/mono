@@ -1,3 +1,8 @@
+2006-02-01  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* mono-compiler.h: Added a macro for isnormal(x) as it's not available
+	in VS.NET.
+
 2006-01-20  Zoltan Varga  <vargaz@gmail.com>
 
 	* monobitset.h (mono_bitset_set_fast): Add more fast accessors. 
