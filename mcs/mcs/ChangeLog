@@ -1,3 +1,11 @@
+2006-02-01  Raja R Harinath  <rharinath@novell.com>
+
+	* typemanager.cs (cons_param_array_attribute): Make private.
+	(Reset): Set it to null.
+	(InitCoreHelpers): Don't initialize it.
+	(ConsParamArrayAttribute): New.  Initialize it as needed.
+	* parameter.cs (ParamsParameter.ApplyAttribute): Update to change.
+
 2006-01-31  Miguel de Icaza  <miguel@novell.com>
 
 	* expression.cs: There might be errors reported during the

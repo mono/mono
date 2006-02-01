@@ -152,7 +152,7 @@ namespace Mono.CSharp {
 			base.ApplyAttributes (ec, mb, cb, index);
 
 			CustomAttributeBuilder a = new CustomAttributeBuilder (
-				TypeManager.cons_param_array_attribute, new object [0]);
+				TypeManager.ConsParamArrayAttribute, new object [0]);
 				
 			builder.SetCustomAttribute (a);
 		}

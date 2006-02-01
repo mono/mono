@@ -194,7 +194,7 @@ public partial class TypeManager {
 	// The attribute constructors.
 	//
 	static public ConstructorInfo object_ctor;
-	static public ConstructorInfo cons_param_array_attribute;
+	static private ConstructorInfo cons_param_array_attribute;
 	static public ConstructorInfo void_decimal_ctor_five_args;
 	static public ConstructorInfo void_decimal_ctor_int_arg;
 	static public ConstructorInfo unverifiable_code_ctor;
@@ -379,6 +379,9 @@ public partial class TypeManager {
 		assembly_internals_vis_attrs = new PtrHashtable ();
 		
 		InitGenerics ();
+
+		// to uncover regressions
+		cons_param_array_attribute = null;
 	}
 
 	public static void AddUserType (DeclSpace ds)
@@ -888,13 +891,16 @@ public partial class TypeManager {
 	/// <summary>
 	///    Returns the ConstructorInfo for "args"
 	/// </summary>
-	public static ConstructorInfo GetConstructor (Type t, Type [] args)
+	private static ConstructorInfo GetConstructor (Type t, Type [] args)
 	{
 		MemberList list;
 		Signature sig;
 
 		sig.name = ".ctor";
 		sig.args = args;
+
+		if (t == null)
+			throw new InternalErrorException ("Core types haven't been initialized yet?");
 		
 		list = FindMembers (t, MemberTypes.Constructor,
 				    instance_and_static | BindingFlags.Public | BindingFlags.DeclaredOnly,
@@ -1229,7 +1235,6 @@ public partial class TypeManager {
 		//
 		// Attributes
 		//
-		cons_param_array_attribute = GetConstructor (param_array_type, void_arg);
 		unverifiable_code_ctor = GetConstructor (unverifiable_code_type, void_arg);
 		default_member_ctor = GetConstructor (default_member_type, string_);
 
@@ -1255,6 +1260,14 @@ public partial class TypeManager {
 		object_ctor = GetConstructor (object_type, void_arg);
 
 		InitGenericCodeHelpers ();
+	}
+
+	static public ConstructorInfo ConsParamArrayAttribute {
+		get {
+			if (cons_param_array_attribute == null)
+				cons_param_array_attribute = GetConstructor (param_array_type, Type.EmptyTypes);
+			return cons_param_array_attribute;
+		}
 	}
 
 	const BindingFlags instance_and_static = BindingFlags.Static | BindingFlags.Instance;
