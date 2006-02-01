@@ -1,3 +1,6 @@
+2006-02-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* OpCodes.cs: Readonly is a net 2.0 only field.
 
 Tue Jan 31 13:37:02 CET 2006 Paolo Molaro <lupus@ximian.com>
 

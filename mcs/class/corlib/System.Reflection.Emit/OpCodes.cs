@@ -925,9 +925,11 @@ namespace System.Reflection.Emit {
 			0xFE << 0 | 0x1D << 8 | (byte) StackBehaviour.Pushi << 16 | (byte) StackBehaviour.Pop1 << 24,
 			2 << 0 | (byte) OpCodeType.Primitive << 8 | (byte) OperandType.InlineNone << 16 | (byte) FlowControl.Next << 24);
 
+#if NET_2_0 || BOOTSTRAP_NET_2_0
 		public static readonly OpCode Readonly = new OpCode (
 			0xFE << 0 | 0x1E << 8 | (byte) StackBehaviour.Push0 << 16 | (byte) StackBehaviour.Pop0 << 24,
 			2 << 0 | (byte) OpCodeType.Primitive << 8 | (byte) OperandType.InlineNone << 16 | (byte) FlowControl.Next << 24);
+#endif
 
                 public static bool TakesSingleByteArgument (OpCode inst)
                 {
