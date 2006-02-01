@@ -1,5 +1,10 @@
 2006-02-01  Zoltan Varga  <vargaz@gmail.com>
 
+	* gc-internal.h boehm-gc.c null-gc.c (mono_gc_unregister_thread): New
+	helper function.
+
+	* threads.c (mono_thread_detach): Call mono_gc_unregister_thread ().
+
 	* loader.c (method_from_memberref): Fix a warning.
 
 	* metadata.c (mono_metadata_load_generic_params): Fix a warning.
