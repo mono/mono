@@ -3,6 +3,7 @@
 //
 // Authors:
 //	Ben Maurer (bmaurer@users.sourceforge.net)
+//	Chris Toshok (toshok@ximian.com)
 //
 // (C) 2003 Ben Maurer
 // Copyright (c) 2005 Novell, Inc (http://www.novell.com)
@@ -29,36 +30,70 @@
 
 #if NET_2_0
 
+using System.Web;
+using System.Web.Configuration;
+
 namespace System.Web.Security {
 
-	[MonoTODO ("that's only a stub")]
 	public sealed class AnonymousIdentificationModule : IHttpModule {
+
+		bool use_cookie;
 
 		public event AnonymousIdentificationEventHandler Creating;
 		
-		
-		[MonoTODO]
 		public void ClearAnonymousIdentifier ()
 		{
-			throw new NotImplementedException ();
+			HttpContext c = HttpContext.Current;
+			SystemWebSectionGroup g = (SystemWebSectionGroup)WebConfigurationManager.GetSection ("system.web");
+
+			if (!g.AnonymousIdentification.Enabled
+			    || false /* XXX The user for the current request is anonymous */)
+				throw new NotSupportedException ();
+
+			if (use_cookie) {
+			}
 		}
 
-		[MonoTODO]
 		public void Dispose ()
 		{
-			throw new NotImplementedException ();
+			app.PostAuthenticateRequest -= OnEnter;
+			app = null;
 		}
 		
-		[MonoTODO]
 		public void Init (HttpApplication app)
 		{
-			throw new NotImplementedException ();
+			this.app = app;
+			app.PostAuthenticateRequest += OnEnter;
 		}
-		
-		[MonoTODO]
+
+		void OnEnter (object source, EventArgs eventArgs)
+		{
+			if (!Enabled)
+				return;
+
+			string anonymousID = null;
+
+			if (Creating != null) {
+				AnonymousIdentificationEventArgs e = new AnonymousIdentificationEventArgs (HttpContext.Current);
+				Creating (this, e);
+
+				anonymousID = e.AnonymousID;
+			}
+
+			if (anonymousID == null)
+				anonymousID = Guid.NewGuid().ToString();
+
+			app.Request.AnonymousID = anonymousID;
+		}
+
 		public static bool Enabled {
-			get { throw new NotImplementedException (); }
+			get {
+				SystemWebSectionGroup g = (SystemWebSectionGroup)WebConfigurationManager.GetSection ("system.web");
+				return g.AnonymousIdentification.Enabled;
+			}
 		}
+
+		HttpApplication app;
 	}
 }
 #endif

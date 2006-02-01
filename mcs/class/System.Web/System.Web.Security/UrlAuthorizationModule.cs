@@ -59,7 +59,7 @@ namespace System.Web.Security
 				return;
 
 #if NET_2_0
-			AuthorizationSection config = (AuthorizationSection) WebConfigurationManager.GetWebApplicationSection ("system.web/authorization");
+			AuthorizationSection config = (AuthorizationSection) WebConfigurationManager.GetSection ("system.web/authorization");
 #else
 			AuthorizationConfig config = (AuthorizationConfig) context.GetConfig ("system.web/authorization");
 			if (config == null)

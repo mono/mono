@@ -48,7 +48,7 @@ namespace System.Web.Security
 		static Membership ()
 		{
 #if NET_2_0
-			MembershipSection section = (MembershipSection) WebConfigurationManager.GetWebApplicationSection ("system.web/membership");
+			MembershipSection section = (MembershipSection) WebConfigurationManager.GetSection ("system.web/membership");
 #endif
 			providers = new MembershipProviderCollection ();
 

@@ -1,5 +1,11 @@
 2006-02-01  Chris Toshok  <toshok@ximian.com>
 
+	* FormsAuthentication.cs, Membership.cs,
+	FormsAuthenticationModule.cs, UrlAuthorizationModule.cs: oops,
+	replace GetWebApplicationSection with GetSection.
+	
+2006-02-01  Chris Toshok  <toshok@ximian.com>
+
 	* FormsAuthentication.cs: CONFIGURATION_2_0 => NET_2_0.
 	simplifies the ifdef mess quite a bit.
 

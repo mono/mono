@@ -93,7 +93,7 @@ namespace System.Web.Security
 				throw new HttpException ("Context is null!");
 
 #if NET_2_0
-			AuthenticationSection section = (AuthenticationSection) WebConfigurationManager.GetWebApplicationSection (authConfigPath);
+			AuthenticationSection section = (AuthenticationSection) WebConfigurationManager.GetSection (authConfigPath);
 			FormsAuthenticationCredentials config = section.Forms.Credentials;
 			FormsAuthenticationUser user = config.Users[name];
 			string stored = null;
@@ -129,7 +129,7 @@ namespace System.Web.Security
 				return FormsAuthenticationTicket.FromByteArray (bytes);
 
 #if NET_2_0
-			MachineKeySection config = (MachineKeySection) WebConfigurationManager.GetWebApplicationSection (machineKeyConfigPath);
+			MachineKeySection config = (MachineKeySection) WebConfigurationManager.GetSection (machineKeyConfigPath);
 #else
 			MachineKeyConfig config = HttpContext.GetAppConfig (machineKeyConfigPath) as MachineKeyConfig;
 #endif
@@ -225,7 +225,7 @@ namespace System.Web.Security
 
 			byte [] result = ticket_bytes;
 #if NET_2_0
-			MachineKeySection config = (MachineKeySection) WebConfigurationManager.GetWebApplicationSection (machineKeyConfigPath);
+			MachineKeySection config = (MachineKeySection) WebConfigurationManager.GetSection (machineKeyConfigPath);
 #else
 			MachineKeyConfig config = HttpContext.GetAppConfig (machineKeyConfigPath) as MachineKeyConfig;
 #endif
@@ -379,7 +379,7 @@ namespace System.Web.Security
 					return;
 
 #if NET_2_0
-				AuthenticationSection section = (AuthenticationSection)WebConfigurationManager.GetWebApplicationSection (authConfigPath);
+				AuthenticationSection section = (AuthenticationSection)WebConfigurationManager.GetSection (authConfigPath);
 				FormsAuthenticationConfiguration config = section.Forms;
 
 				cookieName = config.Name;

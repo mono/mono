@@ -65,7 +65,7 @@ namespace System.Web.Security
 			bool slidingExpiration;
 
 #if NET_2_0
-			AuthenticationSection config = (AuthenticationSection) WebConfigurationManager.GetWebApplicationSection ("system.web/authentication");
+			AuthenticationSection config = (AuthenticationSection) WebConfigurationManager.GetSection ("system.web/authentication");
 #else
 			AuthConfig config = (AuthConfig) context.GetConfig ("system.web/authentication");
 #endif
@@ -140,7 +140,7 @@ namespace System.Web.Security
 
 			string loginPage;
 #if NET_2_0
-			AuthenticationSection config = (AuthenticationSection) WebConfigurationManager.GetWebApplicationSection ("system.web/authentication");
+			AuthenticationSection config = (AuthenticationSection) WebConfigurationManager.GetSection ("system.web/authentication");
 			loginPage = config.Forms.LoginUrl;
 #else
 			AuthConfig config = (AuthConfig) context.GetConfig ("system.web/authentication");
