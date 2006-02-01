@@ -1,3 +1,8 @@
+2006-02-01  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* assembly.c: the VS.NET build doesn't supply default values for
+	MONO_ASSEMBLIES and MONO_CFG_DIR.
+
 2006-02-01  Zoltan Varga  <vargaz@gmail.com>
 
 	* gc-internal.h boehm-gc.c null-gc.c (mono_gc_unregister_thread): New
