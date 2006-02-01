@@ -881,7 +881,7 @@ public partial class TypeManager {
 	/// <summary>
 	///    Returns the ConstructorInfo for "args"
 	/// </summary>
-	private static ConstructorInfo GetConstructor (Type t, Type [] args)
+	public static ConstructorInfo GetConstructor (Type t, Type [] args)
 	{
 		MemberList list;
 		Signature sig;

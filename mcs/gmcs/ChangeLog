@@ -1,5 +1,8 @@
 2006-02-01  Raja R Harinath  <rharinath@novell.com>
 
+	* codegen.cs (AssemblyClass.Emit): Emit RuntimeCompatibility
+	attribute for mscorlib too.
+
 	* typemanager.cs (NoTypes, NoTypeExprs): Remove.
 	(Reset): Update.
 	* *.cs: Use Type.EmptyTypes instead of TypeManager.NoTypes.

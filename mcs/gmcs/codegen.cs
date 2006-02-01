@@ -1285,6 +1285,18 @@ namespace Mono.CSharp {
 		{
 			base.Emit (tc);
 
+			// FIXME: Does this belong inside SRE.AssemblyBuilder instead?
+			if (OptAttributes == null || !OptAttributes.Contains (TypeManager.runtime_compatibility_attr_type, null)) {
+				ConstructorInfo ci = TypeManager.GetConstructor (
+					TypeManager.runtime_compatibility_attr_type, Type.EmptyTypes);
+				PropertyInfo [] pis = new PropertyInfo [1];
+				pis [0] = TypeManager.GetProperty (
+					TypeManager.runtime_compatibility_attr_type, "WrapNonExceptionThrows");
+				object [] pargs = new object [1];
+				pargs [0] = true;
+				Builder.SetCustomAttribute (new CustomAttributeBuilder (ci, new object [0], pis, pargs));
+			}
+
 			if (declarative_security != null) {
 
 				MethodInfo add_permission = typeof (AssemblyBuilder).GetMethod ("AddPermissionRequests", BindingFlags.Instance | BindingFlags.NonPublic);
@@ -1307,19 +1319,6 @@ namespace Mono.CSharp {
 				}
 				catch {
 					Report.RuntimeMissingSupport (Location.Null, "assembly permission setting");
-				}
-			}
-
-			// FIXME: Does this belong inside SRE.AssemblyBuilder instead?
-			if (OptAttributes == null || !OptAttributes.Contains (TypeManager.runtime_compatibility_attr_type, null)) {
-				if (RootContext.StdLib) {
-					ConstructorInfo ci = TypeManager.runtime_compatibility_attr_type.GetConstructor (Type.EmptyTypes);
-					PropertyInfo pi = TypeManager.runtime_compatibility_attr_type.GetProperty ("WrapNonExceptionThrows");
-					Builder.SetCustomAttribute (new CustomAttributeBuilder (ci, new object [0], 
-						new PropertyInfo [] { pi }, new object[] { true } ));
-				} else {
-					// FIXME: Do something appropriate for 'mscorlib'
-					Report.Warning (-31, 1, "FIXME: Did not emit 'RuntimeComatibilityAttribute' for mscorlib");
 				}
 			}
 		}
