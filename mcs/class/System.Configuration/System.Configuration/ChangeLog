@@ -1,3 +1,17 @@
+2006-02-01  Chris Toshok  <toshok@ximian.com>
+
+	* ConfigurationElement.cs: revert the patch that stores and writes
+	out xmlns attributes for all elements.
+
+	* ClientConfigurationSystem.cs: SupportsUserConfig == false.
+
+	* AppSettingsSection.cs (GetRuntimeObject): call col.SetReadOnly()
+	only if SupportsUserConfig != true.
+
+	* ConfigurationManager.cs (ConfigurationSystem): add a property
+	like ConfigurationFactory, and use it instead of the private field
+	throughout.
+
 2006-01-26  Chris Toshok  <toshok@ximian.com>
 
 	* SectionGroupInfo.cs (ReadContent): handle "location" (seemingly)

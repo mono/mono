@@ -128,7 +128,8 @@ namespace System.Configuration {
 				col.Add (ele.Key, ele.Value);
 			}
 				
-			col.SetReadOnly ();
+			if (!ConfigurationManager.ConfigurationSystem.SupportsUserConfig)
+				col.SetReadOnly ();
 
 			return col;
 		}

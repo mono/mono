@@ -152,14 +152,18 @@ namespace System.Configuration {
 			get { return configFactory; }
 		}
 
+		internal static IInternalConfigSystem ConfigurationSystem {
+			get { return configSystem; }
+		}
+
 		public static object GetSection (string sectionName)
 		{
-			return configSystem.GetSection (sectionName);
+			return ConfigurationSystem.GetSection (sectionName);
 		}
 
 		public static void RefreshSection (string sectionName)
 		{
-			configSystem.RefreshConfig (sectionName);
+			ConfigurationSystem.RefreshConfig (sectionName);
 		}
 
 		public static NameValueCollection AppSettings {
