@@ -1,3 +1,12 @@
+2006-02-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TrustLevelCollection.cs, CodeSubDirectoriesCollection.cs,
+	  CustomErrorCollection.cs, CompilerCollection.cs,
+	  HttpHandlerActionCollection.cs,
+	  FormsAuthenticationUserCollection.cs,
+	  AuthorizationRuleCollection.cs, TagPrefixCollection.cs :
+	  CollectionType is public.
+
 2006-02-01  Chris Toshok  <toshok@ximian.com>
 
 	* WebConfigurationManager.cs: In the normal case, get the current

@@ -77,7 +77,7 @@ namespace System.Web.Configuration
 		}
 
 		[MonoTODO ("why override this?")]
-		protected override ConfigurationElementCollectionType CollectionType {
+		public override ConfigurationElementCollectionType CollectionType {
 			get { return ConfigurationElementCollectionType.BasicMap; }
 		}
 

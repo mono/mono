@@ -83,7 +83,7 @@ namespace System.Web.Configuration
 			}
 		}
 
-		protected override ConfigurationElementCollectionType CollectionType {
+		public override ConfigurationElementCollectionType CollectionType {
 			get { return ConfigurationElementCollectionType.BasicMap; }
 		}
 

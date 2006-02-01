@@ -42,7 +42,7 @@ namespace System.Configuration
 			collection = new List <ConfigurationProperty> ();
 		}
 
-		public virtual int Count {
+		public int Count {
 			get { return collection.Count; }
 		}
 

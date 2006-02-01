@@ -1,3 +1,12 @@
+2006-02-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ConfigurationElement.cs : ListErrors() and SetPropertyValue()
+	  are protected.
+	* ConfigurationSection.cs : the .ctor() is protected.
+	* ConfigurationElementCollection.cs : CollectionType is public.
+	  Count and BaseAdd() are not virtual.
+	* ConfigurationPropertyCollection.cs : Count is not virtual.
+
 2006-02-01  Chris Toshok  <toshok@ximian.com>
 
 	* ConfigurationElement.cs: revert the patch that stores and writes

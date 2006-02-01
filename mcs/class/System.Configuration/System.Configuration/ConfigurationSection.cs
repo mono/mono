@@ -39,7 +39,7 @@ namespace System.Configuration
 	{
 		SectionInformation sectionInformation;
 		
-		public ConfigurationSection ()
+		protected ConfigurationSection ()
 		{
 		}
 		

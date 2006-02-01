@@ -54,7 +54,7 @@ namespace System.Web.Configuration
 			set { if (BaseGet (index) != null) BaseRemoveAt (index); BaseAdd (index, value); }
 		}
 
-		protected override ConfigurationElementCollectionType CollectionType {
+		public override ConfigurationElementCollectionType CollectionType {
 			get { return ConfigurationElementCollectionType.BasicMap; }
 		}
 

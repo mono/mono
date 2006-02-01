@@ -78,7 +78,7 @@ namespace System.Configuration
 		}
 
 		[MonoTODO]
-		protected override ConfigurationElementCollectionType CollectionType {
+		public override ConfigurationElementCollectionType CollectionType {
 			get {
 				throw new NotImplementedException ();
 			}

@@ -104,7 +104,7 @@ namespace System.Web.Configuration {
 			BaseAdd(index, rule);
 		}
 
-		protected override ConfigurationElementCollectionType CollectionType {
+		public override ConfigurationElementCollectionType CollectionType {
 			get { return ConfigurationElementCollectionType.BasicMapAlternate; }
 		}
 

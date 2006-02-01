@@ -140,13 +140,13 @@ namespace System.Configuration
 		}
 
 		[MonoTODO]
-		public void ListErrors (IList list)
+		protected void ListErrors (IList list)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public void SetPropertyValue (ConfigurationProperty prop, object value, bool ignoreLocks)
+		protected void SetPropertyValue (ConfigurationProperty prop, object value, bool ignoreLocks)
 		{
 			try {
 				/* XXX all i know for certain is that Validation happens here */

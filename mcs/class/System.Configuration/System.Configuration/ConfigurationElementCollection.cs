@@ -80,7 +80,7 @@ namespace System.Configuration
 
 		#region Properties
 		
-		protected virtual ConfigurationElementCollectionType CollectionType {
+		public virtual ConfigurationElementCollectionType CollectionType {
 			get { return ConfigurationElementCollectionType.AddRemoveClearMap; }
 		}
 		
@@ -98,7 +98,7 @@ namespace System.Configuration
 			}
 		}
 
-		public virtual int Count {
+		public int Count {
 			get { return list.Count; }
 		}
 
@@ -147,7 +147,7 @@ namespace System.Configuration
 			BaseAdd (element, ThrowOnDuplicate);
 		}
 
-		protected virtual void BaseAdd (ConfigurationElement element, bool throwIfExists)
+		protected void BaseAdd (ConfigurationElement element, bool throwIfExists)
 		{
 			if (throwIfExists && BaseIndexOf (element) != -1)
 				throw new ConfigurationException ("Duplicate element in collection");

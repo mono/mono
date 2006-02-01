@@ -92,7 +92,7 @@ namespace System.Web.Configuration {
 			return elementname == "trustlevel";
 		}
 
-		protected override ConfigurationElementCollectionType CollectionType {
+		public override ConfigurationElementCollectionType CollectionType {
 			get { return ConfigurationElementCollectionType.BasicMap; }
 		}
 

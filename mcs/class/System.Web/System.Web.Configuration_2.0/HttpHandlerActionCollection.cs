@@ -89,7 +89,7 @@ namespace System.Web.Configuration
 			BaseRemoveAt (index);
 		}
 
-		protected override ConfigurationElementCollectionType CollectionType {
+		public override ConfigurationElementCollectionType CollectionType {
 			get { return ConfigurationElementCollectionType.AddRemoveClearMapAlternate; }
 		}
 

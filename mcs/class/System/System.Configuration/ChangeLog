@@ -1,3 +1,7 @@
+2006-02-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SettingElementCollection.cs : CollectionType is protected.
+
 2006-01-16  Chris Toshok  <toshok@ximian.com>
 
 	* ConfigurationSettings.cs (AppSettings): move back to a 1.x
