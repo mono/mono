@@ -1,3 +1,9 @@
+2006-02-01  Chris Toshok  <toshok@ximian.com>
+
+	* HttpConfigurationSystem.cs: SupportsUserConfig == true.  let's
+	use this to determine if ConfigurationManager.AppSettings should
+	be read-only or not.
+
 2006-01-31  Chris Toshok  <toshok@ximian.com>
 
 	* WebConfigurationManager.cs: err, why did i ifdef stuff NET_2_0

@@ -45,9 +45,8 @@ namespace System.Web.Configuration {
 		{
 		}
 
-		/* I'm guessing this means "we support ConfigurationUserLevel.PerUser* files" */
 		bool IInternalConfigSystem.SupportsUserConfig {
-			get { return false; }
+			get { return true; }
 		}
 	}
 }
