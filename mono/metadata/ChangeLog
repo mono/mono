@@ -1,3 +1,9 @@
+
+Wed Feb 1 18:22:34 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* gc-internal.h, boehm-gc.c, null-gc.c: back out the patch, since it
+	breaks on several platforms.
+
 2006-02-01  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* assembly.c: the VS.NET build doesn't supply default values for
