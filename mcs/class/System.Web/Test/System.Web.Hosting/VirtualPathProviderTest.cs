@@ -55,6 +55,11 @@ namespace MonoTests.System.Web.Hosting {
 			return vf;
 		}
 
+		public override string GetFileHash (string virtualPath, IEnumerable dependencies)
+		{
+			return base.GetFileHash (virtualPath, dependencies);
+		}
+
 		public override VirtualDirectory GetDirectory (string virtualDir)
 		{
 			VirtualDirectory vd = base.GetDirectory (virtualDir);
@@ -92,6 +97,20 @@ namespace MonoTests.System.Web.Hosting {
 		{
 			DummyVPP dummy = new DummyVPP ();
 			Assert.IsNull (dummy.GetFile ("index.aspx"));
+		}
+
+		[Test]
+		public void GetFileHash1 ()
+		{
+			DummyVPP = new DummyVPP ();
+			Assert.IsNull (dummy.GetFileHash (null, null));
+		}
+
+		[Test]
+		public void GetFileHash2 ()
+		{
+			DummyVPP = new DummyVPP ();
+			Assert.IsNull (dummy.GetFileHash ("something", null));
 		}
 
 		[Test]

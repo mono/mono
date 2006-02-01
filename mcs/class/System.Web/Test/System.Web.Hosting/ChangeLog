@@ -1,5 +1,9 @@
 2006-02-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* VirtualPathProviderTest.cs: tests for GetFileHash.
+
+2006-02-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* HostingEnvironmentTest.cs: new tests.
 
 2006-01-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
