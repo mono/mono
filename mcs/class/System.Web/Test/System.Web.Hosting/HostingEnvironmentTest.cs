@@ -48,6 +48,26 @@ namespace MonoTests.System.Web.Hosting {
 			Assert.AreEqual (ApplicationShutdownReason.None, HostingEnvironment.ShutdownReason);
 			Assert.IsNull (HostingEnvironment.VirtualPathProvider);
 		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void MapPath1 ()
+		{
+			HostingEnvironment.MapPath (null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void MapPath2 ()
+		{
+			HostingEnvironment.MapPath ("");
+		}
+
+		[Test]
+		public void MapPath3 ()
+		{
+			Assert.IsNull (HostingEnvironment.MapPath ("hola"));
+		}
 	}
 }
 #endif
