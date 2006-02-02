@@ -1,5 +1,7 @@
 2006-02-02  Zoltan Varga  <vargaz@gmail.com>
 
+	* class.c (mono_class_create_generic): Set type_token as well.
+
 	* object.c (mono_runtime_invoke_array): Fix handling of byref vtypes to be
 	compatible with MS.
 
