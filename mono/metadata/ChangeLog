@@ -1,3 +1,8 @@
+2006-02-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* object.c (mono_runtime_invoke_array): Fix handling of byref vtypes to be
+	compatible with MS.
+
 2006-02-02  Martin Baulig  <martin@ximian.com>
 
 	* threads.c, gc.c: Removed the `WITH_INCLUDED_LIBGC' section; it
