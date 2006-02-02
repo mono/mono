@@ -1,3 +1,8 @@
+2006-02-02 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpWebRequest.cs: dummy implementation of UnsafeAuthenticationBlah
+	property.
+
 2006-01-26 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* WebClient.cs: (2.0) UploadString() returns string, not void.
