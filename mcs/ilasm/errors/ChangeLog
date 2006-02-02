@@ -1,3 +1,7 @@
+2006-02-02  Ankit Jain  <jankit@novell.com>
+
+	* err-invalid-array-bounds.il: New. Test for 'lower bound <= upper bound'
+
 2006-01-23  Ankit Jain  <jankit@novell.com>
 
 	* err-*.il, test-perm_fail*.il: Move negative tests from tests/ to here.
