@@ -1,3 +1,10 @@
+2006-02-02  Martin Baulig  <martin@ximian.com>
+
+	* debug-debugger.h: New header file for debug-debugger.c.
+
+	* debug-debugger.c: Big API cleanup; don't run the managed Main()
+	function is a separate thread anymore; add support for attaching.
+
 2006-02-01  Zoltan Varga  <vargaz@gmail.com>
 
 	* tramp-x86.c: Fix a warning.
