@@ -85,7 +85,7 @@ public class UTF8Encoding : Encoding
 			throw new ArgumentOutOfRangeException ("count", _("ArgRange_Array"));
 		}
 
-		if (count == 0) {
+		if (index == chars.Length) {
 			if (flush && leftOver != 0) {
 				// Flush the left-over surrogate pair start.
 				leftOver = 0;
@@ -222,7 +222,7 @@ public class UTF8Encoding : Encoding
 			throw new ArgumentOutOfRangeException ("byteIndex", _("ArgRange_Array"));
 		}
 
-		if (charCount == 0) {
+		if (charIndex == chars.Length) {
 			if (flush && leftOver != 0) {
 				// Flush the left-over surrogate pair start.
 				bytes [byteIndex++] = 0xEF;

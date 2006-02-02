@@ -1,5 +1,10 @@
 2006-02-02  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* UTF8Encoding.cs : zero-length check was wrong. Check it by
+	  "charIndex == chars.Length" instead of "charCount == 0".
+
+2006-02-02  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* UTF8Encoding.cs : switched GetBytes() to pointer-based code.
 	  Implemented 2.0 pointer-based GetBytes(). 10% perf. improvement.
 
