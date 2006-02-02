@@ -102,9 +102,9 @@ namespace System.ComponentModel {
 
 			public virtual object GetService (Type t)
 			{
-				if (typeof(ISite) != t) {
-					return null; 
-				}
+				if (typeof (ISite) == t)
+					return this; 
+
 				return container.GetService (t);
 			}
 		}
