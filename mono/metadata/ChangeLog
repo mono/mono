@@ -20,9 +20,6 @@ Wed Feb 1 18:22:34 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* metadata.c (mono_metadata_load_generic_params): Fix a warning.
 
-	* mono-debug.h (mono_debugger_create_notification_function): Move
-	prototype to mono-debug.h since it is used by the JIT.
-
 	* marshal.c (emit_struct_conv): Fix marshalling of embedded structs
 	with explicit layout. Fixes #77433.
 
