@@ -452,7 +452,8 @@ public class UTF8Encoding : Encoding
 		int length = 0;
 
 		if (leftOverCount == 0) {
-			for (; index < count; index++, count--) {
+			int end = index + count;
+			for (; index < end; index++, count--) {
 				if (bytes [index] < 0x80)
 					length++;
 				else
@@ -664,7 +665,8 @@ public class UTF8Encoding : Encoding
 		int posn = charIndex;
 
 		if (leftOverCount == 0) {
-			for (; byteIndex < byteCount; posn++, byteIndex++, byteCount--) {
+			int end = byteIndex + byteCount;
+			for (; byteIndex < end; posn++, byteIndex++, byteCount--) {
 				if (bytes [byteIndex] < 0x80)
 					chars [posn] = (char) bytes [byteIndex];
 				else

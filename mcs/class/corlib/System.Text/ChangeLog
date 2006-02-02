@@ -1,5 +1,10 @@
 2006-02-02  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* UTF8Encoding.cs : fast path optimization was pretty insufficient.
+	  Now it handles the entire bytes, not just half of them.
+
+2006-02-02  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* UTF8Encoding.cs : zero-length check was wrong. Check it by
 	  "charIndex == chars.Length" instead of "charCount == 0".
 
