@@ -1,5 +1,10 @@
 2006-02-02  Martin Baulig  <martin@ximian.com>
 
+	* threads.c, gc.c: Removed the `WITH_INCLUDED_LIBGC' section; it
+	has never been used so far.
+
+2006-02-02  Martin Baulig  <martin@ximian.com>
+
 	* mono-debug-debugger.h: Changed comment at the top of this file;
 	the header is not installed, but it's safe to #include it from
 	within the JIT.
