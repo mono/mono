@@ -104,6 +104,7 @@ System.Collections.Specialized/OrderedDictionaryTest.cs
 System.Collections.Specialized/StringCollectionTest.cs
 System.Collections.Specialized/StringDictionaryTest.cs
 System.ComponentModel/ByteConverterTests.cs
+System.ComponentModel/ContainerTest.cs
 System.ComponentModel/DateTimeConverterTests.cs
 System.ComponentModel/DecimalConverterTests.cs
 System.ComponentModel/DoubleConverterTests.cs
