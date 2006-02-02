@@ -1975,6 +1975,10 @@ namespace System.Windows.Forms {
 				}
 			}
 
+			if ((cp.ExStyle & (int) WindowStyles.WS_EX_TOPMOST) != 0) {
+				XSetTransientForHint (DisplayHandle, hwnd.whole_window, FosterParent);
+			}
+
 			SetWMStyles(hwnd, cp);
 
 			if ((cp.Style & (int)WindowStyles.WS_MINIMIZE) != 0) {

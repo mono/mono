@@ -799,7 +799,8 @@ namespace System.Windows.Forms {
 			set {
 				if (topmost != value) {
 					topmost = value;
-					XplatUI.SetTopmost(window.Handle, owner != null ? owner.window.Handle : IntPtr.Zero, value);
+					if (IsHandleCreated)
+						XplatUI.SetTopmost(window.Handle, owner != null ? owner.window.Handle : IntPtr.Zero, value);
 				}
 			}
 		}
@@ -942,6 +943,10 @@ namespace System.Windows.Forms {
 						cp.Style |= (int)WindowStyles.WS_MINIMIZE;
 						break;
 					}
+				}
+
+				if (TopMost) {
+					cp.ExStyle |= (int) WindowStyles.WS_EX_TOPMOST;
 				}
 
 				if (ShowInTaskbar) {
