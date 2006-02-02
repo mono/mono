@@ -3337,6 +3337,18 @@ namespace Mono.CSharp {
 
 		override public Expression DoResolveLValue (EmitContext ec, Expression right_side)
 		{
+			if (right_side == EmptyExpression.OutAccess) {
+				Report.Error (206, loc, "A property or indexer `{0}' may not be passed as an out or ref parameter",
+					      GetSignatureForError ());
+				return null;
+			}
+
+			if (right_side == EmptyExpression.LValueMemberAccess) {
+				Report.Error (1612, loc, "Cannot modify the return value of `{0}' because it is not a variable",
+					      GetSignatureForError ());
+				return null;
+			}
+
 			if (setter == null){
 				//
 				// The following condition happens if the PropertyExpr was
@@ -3346,13 +3358,8 @@ namespace Mono.CSharp {
 				//
 				if (getter == null)
 					return null;
-
-				if (right_side == EmptyExpression.LValueMemberAccess)
-					Report.Error (1612, loc, "Cannot modify the return value of `{0}' because it is not a variable",
-						GetSignatureForError ());
-				else
-					Report.Error (200, loc, "Property or indexer `{0}' cannot be assigned to (it is read only)",
-						GetSignatureForError ());
+				Report.Error (200, loc, "Property or indexer `{0}' cannot be assigned to (it is read only)",
+					      GetSignatureForError ());
 				return null;
 			}
 

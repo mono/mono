@@ -3987,15 +3987,17 @@ namespace Mono.CSharp {
 					return false;
 				}
 
+				int errors = Report.Errors;
 				Expr = Expr.DoResolveLValue (ec, Expr);
-				if (Expr == null)
+				if (Expr == null && errors == Report.Errors)
 					Error_LValueRequired (loc);
 			} else if (ArgType == AType.Out) {
+				int errors = Report.Errors;
 				ec.InRefOutArgumentResolving = true;
 				Expr = Expr.DoResolveLValue (ec, EmptyExpression.OutAccess);
 				ec.InRefOutArgumentResolving = false;
 
-				if (Expr == null)
+				if (Expr == null && errors == Report.Errors)
 					Error_LValueRequired (loc);
 			}
 			else
@@ -4027,20 +4029,6 @@ namespace Mono.CSharp {
 						}
 					}
 				}
-			}
-
-			if (Expr.eclass != ExprClass.Variable){
-				//
-				// We just probe to match the CSC output
-				//
-				if (Expr.eclass == ExprClass.PropertyAccess ||
-				    Expr.eclass == ExprClass.IndexerAccess){
-					Report.Error (206, loc, "A property or indexer `{0}' may not be passed as an out or ref parameter",
-						Expr.GetSignatureForError ());
-				} else {
-					Error_LValueRequired (loc);
-				}
-				return false;
 			}
 				
 			return true;
@@ -7970,6 +7958,19 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolveLValue (EmitContext ec, Expression right_side)
 		{
+			if (right_side == EmptyExpression.OutAccess) {
+				Report.Error (206, loc, "A property or indexer `{0}' may not be passed as an out or ref parameter",
+					      GetSignatureForError ());
+				return null;
+			}
+
+			// if the indexer returns a value type, and we try to set a field in it
+			if (right_side == EmptyExpression.LValueMemberAccess) {
+				Report.Error (1612, loc, "Cannot modify the return value of `{0}' because it is not a variable",
+					      GetSignatureForError ());
+				return null;
+			}
+
 			ArrayList AllSetters = new ArrayList();
 			if (!CommonResolve (ec))
 				return null;
@@ -8082,6 +8083,12 @@ namespace Mono.CSharp {
 		public override void Emit (EmitContext ec)
 		{
 			Emit (ec, false);
+		}
+
+		public override string GetSignatureForError ()
+		{
+			// FIXME: print the argument list of the indexer
+			return instance_expr.GetSignatureForError () + ".this[...]";
 		}
 	}
 
