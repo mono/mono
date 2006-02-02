@@ -1,3 +1,9 @@
+2006-02-02  Miguel de Icaza  <miguel@novell.com>
+
+	* anonymous.cs (CaptureContext.EmitInitScope): I was wrong in the
+	commit yesterday, the initialization for the roots is necessary.
+	What is not necessary is the scope activation.
+
 2006-02-02  Raja R Harinath  <rharinath@novell.com>
 
 	* ecore.cs (PropertyExpr.DoResolveLValue): Add CS0206 check.
@@ -9,7 +15,7 @@
 
 	* anonymous.cs (CaptureContext.EmitInitScope): Do not emit the
 	scopes for all the roots, the scopes will now be emitted when the
-	Blocks are entered.
+	Blocks are entered.   [This change was wrong, fixed on 2006-02-02]
 
 	(CaptureContext.EmitScopeInitFromBlock): Simply emit the ScopeInfo
 	code.  This reduces a lot of existing cruft.

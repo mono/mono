@@ -1088,7 +1088,9 @@ namespace Mono.CSharp {
 		public void EmitInitScope (EmitContext ec)
 		{
 			EmitAnonymousHelperClasses (ec);
-		}
+			if (roots.Count != 0)
+				foreach (ScopeInfo root in roots)
+					root.EmitInitScope (ec);		}
 
 		//
 		// This is called externally when we start emitting code for a block
