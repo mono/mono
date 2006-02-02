@@ -91,12 +91,28 @@ namespace System.Web.Hosting {
 
 		public override VirtualDirectory GetDirectory (string virtualDir)
 		{
-			return null;
+			if (virtualDir == null || virtualDir == "")
+				throw new ArgumentNullException ("virtualDir");
+
+			if (UrlUtils.IsRelativeUrl (virtualDir)) {
+				string msg = String.Format ("The relative virtual path '{0}', is not allowed here.", virtualDir);
+				throw new ArgumentException (msg);
+			}
+
+			return new DefaultVirtualDirectory (virtualDir);
 		}
 
 		public override VirtualFile GetFile (string virtualPath)
 		{
-			return null;
+			if (virtualPath == null || virtualPath == "")
+				throw new ArgumentNullException ("virtualPath");
+
+			if (UrlUtils.IsRelativeUrl (virtualPath)) {
+				string msg = String.Format ("The relative virtual path '{0}', is not allowed here.", virtualPath);
+				throw new ArgumentException (msg);
+			}
+
+			return new DefaultVirtualFile (virtualPath);
 		}
 
 		public override string GetFileHash (string virtualPath, IEnumerable virtualPathDependencies)

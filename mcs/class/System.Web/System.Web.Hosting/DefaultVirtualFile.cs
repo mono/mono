@@ -37,7 +37,7 @@ namespace System.Web.Hosting {
 
 	class DefaultVirtualFile : VirtualFile
 	{
-		protected DefaultVirtualFile (string virtualPath)
+		internal DefaultVirtualFile (string virtualPath)
 			: base (virtualPath)
 		{
 		}

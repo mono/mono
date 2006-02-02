@@ -38,38 +38,63 @@ namespace System.Web.Hosting {
 
 	class DefaultVirtualDirectory : VirtualDirectory
 	{
-		string phys_path;
+		string phys_dir;
+		string virtual_dir;
 
-		protected DefaultVirtualDirectory (string virtualPath)
+		internal DefaultVirtualDirectory (string virtualPath)
 			: base (virtualPath)
 		{
 		}
 
-		void SetPhysicalPath ()
+		void Init ()
 		{
-			if (phys_path == null)
-				phys_path = HostingEnvironment.MapPath (VirtualPath);
+			if (phys_dir == null) {
+				string vpath = VirtualPath;
+				phys_dir = HostingEnvironment.MapPath (vpath);
+				virtual_dir = VirtualPathUtility.GetDirectory (vpath);
+			}
 		}
 
-		// FIXME: we want VirtualFile and VirtualDirectory here, not strings.
+		ArrayList AddDirectories (ArrayList list, string dir)
+		{
+			foreach (string name in Directory.GetDirectories (phys_dir)) {
+				string vdir = VirtualPathUtility.Combine (virtual_dir, name);
+				list.Add (new DefaultVirtualDirectory (vdir));
+			}
+			return list;
+		}
+
+		ArrayList AddFiles (ArrayList list, string dir)
+		{
+			foreach (string name in Directory.GetFiles (phys_dir)) {
+				string vdir = VirtualPathUtility.Combine (virtual_dir, name);
+				list.Add (new DefaultVirtualFile (vdir));
+			}
+			return list;
+		}
+
 		public override IEnumerable Children {
 			get {
-				SetPhysicalPath ();
-				return Directory.GetFileSystemEntries (phys_path);
+				Init ();
+				ArrayList list = new ArrayList ();
+				AddDirectories (list, phys_dir);
+				return AddFiles (list, phys_dir);
 			}
 		}
 
 		public override IEnumerable Directories {
 			get {
-				SetPhysicalPath ();
-				return Directory.GetDirectories (phys_path);
+				Init ();
+				ArrayList list = new ArrayList ();
+				return AddDirectories (list, phys_dir);
 			}
 		}
 		
 		public override IEnumerable Files {
 			get {
-				SetPhysicalPath ();
-				return Directory.GetFiles (phys_path);
+				Init ();
+				ArrayList list = new ArrayList ();
+				return AddFiles (list, phys_dir);
 			}
 		}
 	}
