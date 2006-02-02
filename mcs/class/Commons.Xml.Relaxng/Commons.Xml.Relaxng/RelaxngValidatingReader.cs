@@ -68,8 +68,6 @@ namespace Commons.Xml.Relaxng
 		RelaxngPattern pattern;
 		RdpPattern vState;
 		RdpPattern prevState;	// Mainly for debugging.
-		Hashtable elementLabels = new Hashtable ();
-		Hashtable attributeLabels = new Hashtable ();
 		bool roughLabelCheck;
 		ArrayList strictCheckCache;
 		bool reportDetails;
@@ -364,9 +362,6 @@ namespace Commons.Xml.Relaxng
 		public override bool Read ()
 		{
 			PrepareState ();
-
-			elementLabels.Clear ();
-			attributeLabels.Clear ();
 
 			bool ret = reader.Read ();
 
