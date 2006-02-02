@@ -100,7 +100,7 @@
 #     define GC_getspecific(x) (GC_thread_tls)
 #     define GC_setspecific(key, v) (GC_thread_tls = (v), pthread_setspecific ((key), (v)))
 #     define GC_key_create pthread_key_create
-      typedef void * GC_key_t;
+      typedef pthread_key_t GC_key_t;
 #   endif
 # endif
 # include <stdlib.h>
@@ -229,6 +229,7 @@ static void return_freelists(ptr_t *fl, ptr_t *gfl)
 static ptr_t size_zero_object = (ptr_t)(&size_zero_object);
 
 void GC_delete_gc_thread(pthread_t id, GC_thread gct);
+void GC_destroy_thread_local(GC_thread p);
 
 void GC_thread_deregister_foreign (void *data)
 {
