@@ -49,7 +49,7 @@ namespace System.Net
 		ClosingData = 226,
 		EnteringPassive = 227,
 		LoggedInProceed = 230,
-		ServerWantSecureSession = 234,
+		ServerWantsSecureSession = 234,
 		FileActionOK = 250,
 		PathnameCreated = 257,
 		SendPasswordCommand = 331,
