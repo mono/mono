@@ -1,5 +1,23 @@
 2006-02-02  Martin Baulig  <martin@ximian.com>
 
+	* mono-debug.h
+	(MonoSymbolTable): Removed the `metadata_info' field.
+
+	* mono-debug.c
+	(mono_debug_init_1): Always set `mono_symbol_table->corlib'.
+
+	* mono-debug-debugger.h (MonoDebuggerIOLayer): Removed.
+	(mono_debugger_add_builtin_types): Removed.
+	(MonoDebuggerInfo): Moved into ../mini/debug-debugger.h.
+	(mono_debugger_create_notification_function): We now operate on a
+	pre-allocated area; take a `gpointer' and return `void'.
+
+	* mono-debug-debugger.c
+	(MonoDebuggerMetadataInfo): Moved into ../mini/debug-debugger.h.
+	(mono_debugger_add_builtin_types): Removed.
+
+2006-02-02  Martin Baulig  <martin@ximian.com>
+
 	* threads.c (mono_debugger_create_all_threads): New public method.
 
 Wed Feb 1 18:22:34 CET 2006 Paolo Molaro <lupus@ximian.com>
