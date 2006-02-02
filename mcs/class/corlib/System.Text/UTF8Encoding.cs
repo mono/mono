@@ -72,7 +72,7 @@ public class UTF8Encoding : Encoding
 
 	// Internal version of "GetByteCount" which can handle a rolling
 	// state between multiple calls to this method.
-	private static int InternalGetByteCount (char[] chars, int index, int count, uint leftOver, bool flush)
+	private static int InternalGetByteCount (char[] chars, int index, int count, ref uint leftOver, bool flush)
 	{
 		// Validate the parameters.
 		if (chars == null) {
@@ -84,6 +84,27 @@ public class UTF8Encoding : Encoding
 		if (count < 0 || count > (chars.Length - index)) {
 			throw new ArgumentOutOfRangeException ("count", _("ArgRange_Array"));
 		}
+
+		if (count == 0) {
+			if (flush && leftOver != 0) {
+				// Flush the left-over surrogate pair start.
+				leftOver = 0;
+				return 3;
+			}
+			return 0;
+		}
+
+		unsafe {
+			fixed (char* cptr = chars) {
+				return InternalGetByteCount (cptr + index, count, ref leftOver, flush);
+			}
+		}
+	}
+
+
+	private unsafe static int InternalGetByteCount (char* chars, int count, ref uint leftOver, bool flush)
+	{
+		int index = 0;
 
 		// Determine the lengths of all characters.
 		char ch;
@@ -124,6 +145,8 @@ public class UTF8Encoding : Encoding
 			length += 3;
 		}
 
+		leftOver = pair;
+
 		// Return the final length to the caller.
 		return length;
 	}
@@ -131,7 +154,8 @@ public class UTF8Encoding : Encoding
 	// Get the number of bytes needed to encode a character buffer.
 	public override int GetByteCount (char[] chars, int index, int count)
 	{
-		return InternalGetByteCount (chars, index, count, 0, true);
+		uint dummy = 0;
+		return InternalGetByteCount (chars, index, count, ref dummy, true);
 	}
 
 	// Convenience wrappers for "GetByteCount".
@@ -198,9 +222,40 @@ public class UTF8Encoding : Encoding
 			throw new ArgumentOutOfRangeException ("byteIndex", _("ArgRange_Array"));
 		}
 
+		if (charCount == 0) {
+			if (flush && leftOver != 0) {
+				// Flush the left-over surrogate pair start.
+				bytes [byteIndex++] = 0xEF;
+				bytes [byteIndex++] = 0xBB;
+				bytes [byteIndex++] = 0xBF;
+				leftOver = 0;
+				return 3;
+			}
+			return 0;
+		}
+
+		unsafe {
+			fixed (char* cptr = chars) {
+				fixed (byte *bptr = bytes) {
+					return InternalGetBytes (
+						cptr + charIndex, charCount,
+						bptr + byteIndex, bytes.Length - byteIndex,
+						ref leftOver, flush);
+				}
+			}
+		}
+	}
+
+	private unsafe static int InternalGetBytes (char* chars, int charCount,
+					     byte* bytes, int byteCount,
+					     ref uint leftOver, bool flush)
+	{
+		int charIndex = 0;
+		int byteIndex = 0;
+
 		// Convert the characters into bytes.
 		char ch;
-		int length = bytes.Length;
+		int length = byteCount;
 		uint pair;
 		uint left = leftOver;
 		int posn = byteIndex;
@@ -934,29 +989,47 @@ public class UTF8Encoding : Encoding
 	private class UTF8Encoder : Encoder
 	{
 		private bool emitIdentifier;
-		private uint leftOver;
+		private uint leftOverForCount;
+		private uint leftOverForConv;
 
 		// Constructor.
 		public UTF8Encoder (bool emitIdentifier)
 		{
 			this.emitIdentifier = emitIdentifier;
-			leftOver = 0;
+			leftOverForCount = 0;
+			leftOverForConv = 0;
 		}
 
 		// Override inherited methods.
 		public override int GetByteCount (char[] chars, int index,
 					 int count, bool flush)
 		{
-			return InternalGetByteCount (chars, index, count, leftOver, flush);
+			return InternalGetByteCount (chars, index, count, ref leftOverForCount, flush);
 		}
 		public override int GetBytes (char[] chars, int charIndex,
-					 int charCount, byte[] bytes, int byteCount, bool flush)
+					 int charCount, byte[] bytes, int byteIndex, bool flush)
 		{
 			int result;
-			result = InternalGetBytes (chars, charIndex, charCount, bytes, byteCount, ref leftOver, flush);
+			result = InternalGetBytes (chars, charIndex, charCount, bytes, byteIndex, ref leftOverForConv, flush);
 			emitIdentifier = false;
 			return result;
 		}
+
+#if NET_2_0
+		public unsafe override int GetByteCount (char* chars, int count, bool flush)
+		{
+			return InternalGetByteCount (chars, count, ref leftOverForCount, flush);
+		}
+
+		public unsafe override int GetBytes (char* chars, int charCount,
+			byte* bytes, int byteCount, bool flush)
+		{
+			int result;
+			result = InternalGetBytes (chars, charCount, bytes, byteCount, ref leftOverForConv, flush);
+			emitIdentifier = false;
+			return result;
+		}
+#endif
 
 	} // class UTF8Encoder
 

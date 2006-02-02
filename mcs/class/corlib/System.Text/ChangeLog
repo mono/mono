@@ -1,3 +1,8 @@
+2006-02-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* UTF8Encoding.cs : switched GetBytes() to pointer-based code.
+	  Implemented 2.0 pointer-based GetBytes(). 10% perf. improvement.
+
 2006-01-30  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* UTF8Encoding.cs : InternalGetCharCount() optimization again, and
