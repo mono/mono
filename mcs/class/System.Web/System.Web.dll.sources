@@ -224,6 +224,9 @@ System.Web.Hosting/AppManagerAppDomainFactory.cs
 System.Web.Hosting/ApplicationInfo.cs
 System.Web.Hosting/ApplicationHost.cs
 System.Web.Hosting/ApplicationManager.cs
+System.Web.Hosting/DefaultVirtualDirectory.cs
+System.Web.Hosting/DefaultVirtualFile.cs
+System.Web.Hosting/DefaultVirtualPathProvider.cs
 System.Web.Hosting/HostingEnvironment.cs
 System.Web.Hosting/IAppDomainFactory.cs
 System.Web.Hosting/IAppManagerAppDomainFactory.cs
