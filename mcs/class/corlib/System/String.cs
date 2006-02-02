@@ -925,6 +925,63 @@ namespace System
 		}
 
 #if NET_2_0
+		CompareOptions GetCompareOptions (StringComparison comp)
+		{
+			switch (comp) {
+			case StringComparison.InvariantCulture:
+			case StringComparison.CurrentCulture:
+				return CompareOptions.None;
+			case StringComparison.CurrentCultureIgnoreCase:
+			case StringComparison.InvariantCultureIgnoreCase:
+				return CompareOptions.IgnoreCase;
+			case StringComparison.Ordinal:
+				return CompareOptions.Ordinal;
+			case StringComparison.OrdinalIgnoreCase:
+				return CompareOptions.OrdinalIgnoreCase;
+			default:
+				return 0; // If GetCultureForOption returns null, we never call this one.
+			}
+		}
+
+		CultureInfo GetCultureForOption (StringComparison comp)
+		{
+			switch (comp) {
+			case StringComparison.InvariantCulture:
+			case StringComparison.InvariantCultureIgnoreCase:
+				return CultureInfo.InvariantCulture;
+			case StringComparison.CurrentCulture:
+			case StringComparison.CurrentCultureIgnoreCase:
+			case StringComparison.Ordinal:
+			case StringComparison.OrdinalIgnoreCase:
+				return CultureInfo.CurrentCulture;
+			default:
+				return null;
+			}
+		}
+
+		public bool StartsWith (string value, StringComparison comparisonType)
+		{
+			CultureInfo culture = GetCultureForOption (comparisonType);
+			if (culture == null)
+				return false;
+
+			CompareOptions options = GetCompareOptions (comparisonType);
+			return culture.CompareInfo.IsPrefix (this, value, options);
+		}
+
+		public bool EndsWith (string value, StringComparison comparisonType)
+		{
+			CultureInfo culture = GetCultureForOption (comparisonType);
+			if (culture == null)
+				return false;
+
+			CompareOptions options = GetCompareOptions (comparisonType);
+			return culture.CompareInfo.IsSuffix (this, value, options);
+		}
+
+#endif
+
+#if NET_2_0
 		public
 #else
 		internal

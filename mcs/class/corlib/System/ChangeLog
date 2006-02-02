@@ -1,3 +1,8 @@
+2006-02-02 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* String.cs: implement 2.0 StartsWith and EndsWith new overloads. Based
+	on a patch by Thong Nguyen.
+
 2006-01-31  Zoltan Varga  <vargaz@gmail.com>
 
 	* String.cs: Implement one of the new net 2.0 Split methods.
