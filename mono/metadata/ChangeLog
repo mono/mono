@@ -1,3 +1,6 @@
+2006-02-02  Martin Baulig  <martin@ximian.com>
+
+	* threads.c (mono_debugger_create_all_threads): New public method.
 
 Wed Feb 1 18:22:34 CET 2006 Paolo Molaro <lupus@ximian.com>
 
