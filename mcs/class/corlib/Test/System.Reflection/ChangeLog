@@ -1,3 +1,7 @@
+2006-02-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* MethodInfoTest.cs: Add test for Invoke and byref valuetypes.
+
 2006-01-19  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ModuleTest.cs : ResolveString() does not work under .NET 2.0 either.

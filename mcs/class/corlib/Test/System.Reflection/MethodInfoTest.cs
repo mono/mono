@@ -107,6 +107,31 @@ namespace MonoTests.System.Reflection
 		{
 			if (a1 == 1)
 				a1 = 2;
+		}	   
+
+		static int byref_arg;
+
+		public static void ByrefVtype (ref int i) {
+			byref_arg = i;
+			i = 5;
+		}
+
+		[Test]
+		public void ByrefVtypeInvoke ()
+		{
+			MethodInfo mi = typeof (MethodInfoTest).GetMethod ("ByrefVtype");
+
+			object o = 1;
+			object[] args = new object [] { o };
+			mi.Invoke (null, args);
+			AssertEquals (1, byref_arg);
+			AssertEquals (1, o);
+			AssertEquals (5, args [0]);
+
+			args [0] = null;
+			mi.Invoke (null, args);
+			AssertEquals (0, byref_arg);
+			AssertEquals (5, args [0]);
 		}
 
 		public void HeyHey (out string out1, ref string ref1)
