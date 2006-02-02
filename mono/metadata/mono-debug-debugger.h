@@ -13,8 +13,6 @@
 #include <mono/io-layer/io-layer.h>
 
 typedef struct _MonoDebuggerBreakpointInfo	MonoDebuggerBreakpointInfo;
-typedef struct _MonoDebuggerThread		MonoDebuggerThread;
-typedef struct _MonoDebuggerManager             MonoDebuggerManager;
 
 typedef enum {
 	MONO_DEBUGGER_EVENT_INITIALIZE_MANAGED_CODE	= 1,
@@ -38,23 +36,6 @@ typedef enum {
 struct _MonoDebuggerBreakpointInfo {
 	guint32 index;
 	MonoMethodDesc *desc;
-};
-
-struct _MonoDebuggerThread {
-	gpointer end_stack;
-	guint32 tid;
-	guint32 locked;
-	gpointer func;
-	gpointer start_stack;
-};
-
-struct _MonoDebuggerManager {
-	guint32 size;
-	guint32 thread_size;
-	gpointer main_function;
-	gpointer notification_address;
-	MonoDebuggerThread *main_thread;
-	guint32 main_tid;
 };
 
 extern void (*mono_debugger_event_handler) (MonoDebuggerEvent event, guint64 data, guint64 arg);
