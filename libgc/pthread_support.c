@@ -84,6 +84,12 @@
 #   if !defined(USE_PTHREAD_SPECIFIC) && !defined(USE_COMPILER_TLS)
 #     include "private/specific.h"
 #   endif
+
+/* Note that these macros should be used only to get/set the GC_thread pointer.
+ * We need to use both tls and pthread because we use the pthread_create function hook to
+ * free the data for foreign threads. When that doesn't happen, libgc could have old
+ * pthread_t that get reused...
+ */
 #   if defined(USE_PTHREAD_SPECIFIC)
 #     define GC_getspecific pthread_getspecific
 #     define GC_setspecific pthread_setspecific
@@ -91,10 +97,10 @@
       typedef pthread_key_t GC_key_t;
 #   endif
 #   if defined(USE_COMPILER_TLS)
-#     define GC_getspecific(x) (x)
-#     define GC_setspecific(key, v) ((key) = (v), 0)
-#     define GC_key_create(key, d) 0
-      typedef void * GC_key_t;
+#     define GC_getspecific(x) (GC_thread_tls)
+#     define GC_setspecific(key, v) (GC_thread_tls = (v), pthread_setspecific ((key), (v)))
+#     define GC_key_create pthread_key_create
+      typedef pthread_key_t GC_key_t;
 #   endif
 # endif
 # include <stdlib.h>
@@ -177,10 +183,11 @@ void GC_init_parallel();
 #include "mono/utils/mono-compiler.h"
 
 static
-#ifdef USE_COMPILER_TLS
-  __thread MONO_TLS_FAST
-#endif
 GC_key_t GC_thread_key;
+
+#ifdef USE_COMPILER_TLS
+static __thread MONO_TLS_FAST void* GC_thread_tls;
+#endif
 
 static GC_bool keys_initialized;
 
@@ -221,7 +228,8 @@ static void return_freelists(ptr_t *fl, ptr_t *gfl)
 /* we arrange for those to fault asap.)					*/
 static ptr_t size_zero_object = (ptr_t)(&size_zero_object);
 
-void GC_delete_thread(pthread_t id);
+void GC_delete_gc_thread(pthread_t id, GC_thread gct);
+void GC_destroy_thread_local(GC_thread p);
 
 void GC_thread_deregister_foreign (void *data)
 {
@@ -230,7 +238,10 @@ void GC_thread_deregister_foreign (void *data)
     if (me -> flags & FOREIGN_THREAD) {
 	LOCK();
  /*	GC_fprintf0( "\n\n\n\n --- FOO ---\n\n\n\n\n" ); */
-	GC_delete_thread(me->id);
+#if defined(THREAD_LOCAL_ALLOC) && !defined(DBG_HDRS_ALL)
+	GC_destroy_thread_local (me);
+#endif
+	GC_delete_gc_thread(me->id, me);
 	UNLOCK();
     }
 }

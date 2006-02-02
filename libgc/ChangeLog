@@ -1,3 +1,9 @@
+
+Thu Feb 2 10:38:53 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* pthread_support.c: make sure the proper cleanup also happens
+	when using __thread vars.
+
 2006-01-21  Martin Baulig  <martin@ximian.com>
 
 	* include/Makefile.am: Don't install libgc-mono-debugger.h.
