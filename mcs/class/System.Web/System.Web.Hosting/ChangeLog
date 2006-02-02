@@ -1,5 +1,13 @@
 2006-02-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* DefaultVirtualDirectory.cs:
+	* DefaultVirtualPathProvider.cs:
+	* VirtualFile.cs:
+	* DefaultVirtualFile.cs: almost done with the default
+	VirtualPathProvider which just maps to on-disk directories/files.
+
+2006-02-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* SimpleWorkerRequest.cs: implemented RootWebConfigPath.
 	* HostingEnvironment.cs: implemented RegisterVirtualPathProvider and
 	a few other defaults.

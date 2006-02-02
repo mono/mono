@@ -1,12 +1,12 @@
 //
-// System.Web.Hosting.VirtualFile
+// System.Web.Hosting.DefaultVirtualDirectory
 //
 // Author:
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 
 //
-// Copyright (C) 2006 Novell, Inc (http://www.novell.com)
+// Copyright (c) 2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -31,22 +31,47 @@
 #if NET_2_0
 
 using System;
+using System.Collections;
 using System.IO;
 
 namespace System.Web.Hosting {
 
-	public abstract class VirtualFile : VirtualFileBase
+	class DefaultVirtualDirectory : VirtualDirectory
 	{
-		protected VirtualFile (string virtualPath)
+		string phys_path;
+
+		protected DefaultVirtualDirectory (string virtualPath)
+			: base (virtualPath)
 		{
-			SetVirtualPath (virtualPath);
 		}
 
-		public override bool IsDirectory {
-			get { return false; }
+		void SetPhysicalPath ()
+		{
+			if (phys_path == null)
+				phys_path = HostingEnvironment.MapPath (VirtualPath);
 		}
 
-		public abstract Stream Open ();
+		// FIXME: we want VirtualFile and VirtualDirectory here, not strings.
+		public override IEnumerable Children {
+			get {
+				SetPhysicalPath ();
+				return Directory.GetFileSystemEntries (phys_path);
+			}
+		}
+
+		public override IEnumerable Directories {
+			get {
+				SetPhysicalPath ();
+				return Directory.GetDirectories (phys_path);
+			}
+		}
+		
+		public override IEnumerable Files {
+			get {
+				SetPhysicalPath ();
+				return Directory.GetFiles (phys_path);
+			}
+		}
 	}
 }
 #endif

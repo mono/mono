@@ -1,5 +1,5 @@
 //
-// System.Web.Hosting.VirtualFile
+// System.Web.Hosting.DefaultVirtualFile
 //
 // Author:
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
@@ -35,18 +35,17 @@ using System.IO;
 
 namespace System.Web.Hosting {
 
-	public abstract class VirtualFile : VirtualFileBase
+	class DefaultVirtualFile : VirtualFile
 	{
-		protected VirtualFile (string virtualPath)
+		protected DefaultVirtualFile (string virtualPath)
+			: base (virtualPath)
 		{
-			SetVirtualPath (virtualPath);
 		}
 
-		public override bool IsDirectory {
-			get { return false; }
+		public override Stream Open ()
+		{
+			return File.OpenRead (HostingEnvironment.MapPath (VirtualPath));
 		}
-
-		public abstract Stream Open ();
 	}
 }
 #endif
