@@ -203,7 +203,13 @@ namespace System.Web.Configuration {
 		[MonoTODO]
 		public static object GetSection (string sectionName, string path)
 		{
-			throw new NotImplementedException ();
+			try {
+				_Configuration c = OpenWebConfiguration (path);
+				return c.GetSection (sectionName);
+			}
+			catch {
+				return null;
+			}
 		}
 
 		static _Configuration GetWebApplicationConfiguration ()
