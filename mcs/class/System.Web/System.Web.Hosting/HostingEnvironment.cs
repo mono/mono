@@ -34,6 +34,7 @@
 using System;
 using System.Security.Permissions;
 using System.Web.Caching;
+using System.Web.Util;
 
 namespace System.Web.Hosting {
 
@@ -128,10 +129,21 @@ namespace System.Web.Hosting {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public static string MapPath (string virtualPath)
 		{
-			throw new NotImplementedException ();
+			if (virtualPath == null || virtualPath == "")
+				throw new ArgumentNullException ("virtualPath");
+
+			if (UrlUtils.IsRelativeUrl (virtualPath)) {
+				string msg = String.Format ("The relative virtual path '{0}', is not allowed here.", virtualPath);
+				throw new ArgumentException (msg);
+			}
+
+			HttpContext context = HttpContext.Current;
+			if (context == null)
+				return null;
+
+			return context.Request.MapPath (virtualPath);
 		}
 
 		[MonoTODO]

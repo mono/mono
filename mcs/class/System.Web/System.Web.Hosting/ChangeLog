@@ -1,5 +1,9 @@
 2006-02-02 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* HostingEnvironment.cs: MapPath is done.
+
+2006-02-02 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* DefaultVirtualDirectory.cs: implemented missing bits.
 	* DefaultVirtualFile.cs: fix ctor scope.
 	* DefaultVirtualPathProvider.cs: implemented GetFile and GetDirectory.
