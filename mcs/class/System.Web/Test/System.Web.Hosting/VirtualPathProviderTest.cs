@@ -102,14 +102,14 @@ namespace MonoTests.System.Web.Hosting {
 		[Test]
 		public void GetFileHash1 ()
 		{
-			DummyVPP = new DummyVPP ();
+			DummyVPP dummy = new DummyVPP ();
 			Assert.IsNull (dummy.GetFileHash (null, null));
 		}
 
 		[Test]
 		public void GetFileHash2 ()
 		{
-			DummyVPP = new DummyVPP ();
+			DummyVPP dummy = new DummyVPP ();
 			Assert.IsNull (dummy.GetFileHash ("something", null));
 		}
 
