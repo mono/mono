@@ -1,3 +1,7 @@
+2006-02-02  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* RegionsRectangle.cs: Add test case for bug #77408.
+
 2006-01-15  Jordi Mas <jordimash@gmail.com>
 
 	* Adds GraphicsUnits.cs

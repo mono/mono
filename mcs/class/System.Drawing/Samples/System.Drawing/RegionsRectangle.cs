@@ -415,6 +415,23 @@ public class Regions
 			DumpRegion (rgn1);
 		}
 		x += 110;
+
+		dc.DrawString ("Special cases (old bugs)", fnttitle, whiteBrush, 5, 610);
+		
+		x = 0;
+
+		if (xor) {
+			rect1 = new Rectangle (20+x, 330+300, 40, 50);
+			rect2 = new Rectangle (40+x, 360+300, 20, 20);
+			dc.DrawRectangle (Pens.Red, rect1);
+			dc.DrawRectangle (Pens.Green, rect2);
+			rgn1 = new Region (rect1);
+			rgn1.Xor (rect2);
+			dc.FillRegion (Brushes.Blue, rgn1);
+			dc.DrawString ("Xor (" + rgn1.GetRegionScans (matrix).Length +") #77408", fnt, whiteBrush, 10, 430+300);
+			dc.DrawRectangles (Pens.Yellow, rgn1.GetRegionScans (matrix));
+			DumpRegion (rgn1);
+		}
 		
 		rect1 = new Rectangle (1, 1, 4, 1);		
 		dc.DrawRectangle (Pens.Pink, rect1);				
