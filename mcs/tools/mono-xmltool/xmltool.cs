@@ -36,11 +36,11 @@ Usage: mono-xmltool [options]
 
 options:
 
-	--validate [*.rng | *.rnc | *.nvdl | *.xsd] [instance]
-	--validate-rng relax-ng-grammar-xml instance-xml
-	--validate-rnc relax-ng-compact-grammar-file instance-xml
-	--validate-nvdl nvdl-script-xml instance-xml
-	--validate-xsd xml-schema instance-xml
+	--validate [*.rng | *.rnc | *.nvdl | *.xsd] [instances]
+	--validate-rng relax-ng-grammar-xml [instances]
+	--validate-rnc relax-ng-compact-grammar-file [instances]
+	--validate-nvdl nvdl-script-xml [instances]
+	--validate-xsd xml-schema [instances]
 	--transform stylesheet instance-xml
 	--prettyprint [source] [result]
 
@@ -127,14 +127,16 @@ environment variable that affects on the behavior:
 			if (args.Length < 2)
 				return;
 
-			XmlTextReader xtr = new XmlTextReader (args [2]);
-			RelaxngValidatingReader vr = 
-				new RelaxngValidatingReader (xtr, p);
-			if (Environment.GetEnvironmentVariable ("MONO_XMLTOOL_ERROR_DETAILS") == "yes")
-				vr.ReportDetails = true;
+			for (int i = 2; i < args.Length; i++) {
+				XmlTextReader xtr = new XmlTextReader (args [i]);
+				RelaxngValidatingReader vr = 
+					new RelaxngValidatingReader (xtr, p);
+				if (Environment.GetEnvironmentVariable ("MONO_XMLTOOL_ERROR_DETAILS") == "yes")
+					vr.ReportDetails = true;
 
-			while (!vr.EOF)
-				vr.Read ();
+				while (!vr.EOF)
+					vr.Read ();
+			}
 		}
 
 		static void ValidateNvdl (string [] args)
@@ -142,12 +144,13 @@ environment variable that affects on the behavior:
 			XmlTextReader nvdlxtr = new XmlTextReader (args [1]);
 			NvdlRules nvdl = NvdlReader.Read (nvdlxtr);
 			nvdlxtr.Close ();
-			XmlTextReader xtr = new XmlTextReader (args [2]);
-			NvdlValidatingReader nvr = new NvdlValidatingReader (
-				xtr, nvdl);
-			while (!nvr.EOF)
-				nvr.Read ();
-			xtr.Close ();
+			for (int i = 2; i < args.Length; i++) {
+				XmlTextReader xtr = new XmlTextReader (args [i]);
+				NvdlValidatingReader nvr = new NvdlValidatingReader (xtr, nvdl);
+				while (!nvr.EOF)
+					nvr.Read ();
+				xtr.Close ();
+			}
 		}
 #endif
 
@@ -156,12 +159,14 @@ environment variable that affects on the behavior:
 			XmlTextReader schemaxml = new XmlTextReader (args [1]);
 			XSchema xsd = XSchema.Read (schemaxml, null);
 			schemaxml.Close ();
-			XmlTextReader xtr = new XmlTextReader (args [2]);
-			XmlValidatingReader xvr = new XmlValidatingReader (xtr);
-			xvr.Schemas.Add (xsd);
-			while (!xvr.EOF)
-				xvr.Read ();
-			xvr.Close ();
+			for (int i = 2; i < args.Length; i++) {
+				XmlTextReader xtr = new XmlTextReader (args [i]);
+				XmlValidatingReader xvr = new XmlValidatingReader (xtr);
+				xvr.Schemas.Add (xsd);
+				while (!xvr.EOF)
+					xvr.Read ();
+				xvr.Close ();
+			}
 		}
 
 		static void Transform (string [] args)

@@ -1,3 +1,7 @@
+2006-02-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* xmltool.cs : handle multiple input files. Thanks to Alp for the hint.
+
 2006-01-31  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* xmltool.cs :
