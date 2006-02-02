@@ -1,5 +1,13 @@
 2006-02-01  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* FtpRequestCreator.cs: 
+	* FtpAsyncResult.cs:
+	* FtpDataStream.cs:
+	* FtpWebRequest.cs:
+	* FtpWebResponse.cs: Initial implementation of FtpWebRequest (2.0)
+	
+2006-02-01  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* FtpStatusCode.cs: Fix a typo.
 	
 2006-01-26 Gonzalo Paniagua Javier <gonzalo@ximian.com>
