@@ -7,28 +7,38 @@ void Page_Load ()
 {
 	string value = "";
 	System.Configuration.Configuration c = WebConfigurationManager.OpenWebConfiguration("/toshok/configuration/twolevel");
-	if (c == null)
-		value = "c == null";
-	else if (c.AppSettings == null)
-		value = "c.AppSettings == null";
-	else if (c.AppSettings.Settings == null)
-		value = "c.AppSettings.Settings == null";
-	else if (c.AppSettings.Settings["testSetting"] == null)
-		value = "c.AppSettings.Settings[testSetting] == null";
-	else if (c.AppSettings.Settings["testSetting"].Value == null)
-		value = "c.AppSettings.Settings[testSetting].Value == null";
-	else
-		value = c.AppSettings.Settings["testSetting"].Value;
-	lbl.Text = value + String.Format (" (c.FilePath = {0})", c.FilePath);
+	lbl.Text = String.Format ("{0} (c.FilePath = {1}", c.AppSettings.Settings["testSetting"].Value, c.FilePath);
 	lbl2.Text = WebConfigurationManager.AppSettings["testSetting"];
 
-//	NameValueCollection col = (NameValueCollection)WebConfigurationManager.GetSection ("appSettings");
-//	lbl3.Text = col["testSetting"];
+	object s = WebConfigurationManager.GetSection ("appSettings");
+	if (s is NameValueCollection) {
+		NameValueCollection col = (NameValueCollection)s;
+		value = String.Format ("{0} (section type = NameValueCollection)", col["testSetting"]);
+	}
+	else if (s is AppSettingsSection) {
+		AppSettingsSection sect = (AppSettingsSection)s;
+		value = String.Format ("{0} (section type = AppSettingsSection)", sect.Settings["testSetting"].Value);
+	}
+	lbl3.Text = value;
+
+	s = WebConfigurationManager.GetSection ("appSettings", "/toshok/configuration/twolevel");
+	if (s is NameValueCollection) {
+		NameValueCollection col = (NameValueCollection)s;
+		value = String.Format ("{0} (section type = NameValueCollection)", col["testSetting"]);
+	}
+	else if (s is AppSettingsSection) {
+		AppSettingsSection sect = (AppSettingsSection)s;
+		value = String.Format ("{0} (section type = AppSettingsSection)", sect.Settings["testSetting"].Value);
+	}
+	lbl4.Text = value;
 }
 
 </script>
 
-<asp:Label id="lbl" runat="server" /> <br />
-<asp:Label id="lbl2" runat="server" /> <br />
-<asp:Label id="lbl3" runat="server" /> <br />
+<table>
+<tr><td>WebConfigurationManager.OpenWebConfiguration <td><asp:Label id="lbl" runat="server" /></tr>
+<tr><td>WebConfigurationManager.AppSettings <td><asp:Label id="lbl2" runat="server" /> </tr>
+<tr><td>WebConfigurationManager.GetSection(string) <td><asp:Label id="lbl3" runat="server" /> </tr>
+<tr><td>WebConfigurationManager.GetSection(string,string) <td><asp:Label id="lbl4" runat="server" /> </tr>
+</table>
 
