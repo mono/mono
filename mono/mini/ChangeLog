@@ -1,5 +1,12 @@
 2006-02-02  Martin Baulig  <martin@ximian.com>
 
+	* tramp-x86.c, tramp-amd64.c: It's now safe to #include
+	<mono/metadata/mono-debug-debugger.h>	
+
+	* debug-mini.c: Don't #define _IN_THE_MONO_DEBUGGER.
+
+2006-02-02  Martin Baulig  <martin@ximian.com>
+
 	* debug-debugger.h: New header file for debug-debugger.c.
 
 	* debug-debugger.c: Big API cleanup; don't run the managed Main()

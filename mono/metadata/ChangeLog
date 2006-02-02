@@ -1,5 +1,14 @@
 2006-02-02  Martin Baulig  <martin@ximian.com>
 
+	* mono-debug-debugger.h: Changed comment at the top of this file;
+	the header is not installed, but it's safe to #include it from
+	within the JIT.
+
+	* mono-debug.c: Don't #define _IN_THE_MONO_DEBUGGER.
+	* mono-debug-debugger.c, debug-mono-symfile.c: Likewise.
+
+2006-02-02  Martin Baulig  <martin@ximian.com>
+
 	* mono-debug.h
 	(MonoSymbolTable): Removed the `metadata_info' field.
 
