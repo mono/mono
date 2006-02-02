@@ -125,6 +125,8 @@ namespace Commons.Xml.Relaxng.Derivative
 				return p2;
 			if (p2.PatternType == RelaxngPatternType.NotAllowed)
 				return p1;
+			if (p1 == p2)
+				return p1;
 			// choice-leaves support
 			if (p1.PatternType == RelaxngPatternType.Empty)
 				return MakeChoiceLeaf (p2);

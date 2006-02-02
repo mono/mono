@@ -1,3 +1,11 @@
+2006-02-02  Atsushi Enomoto <atsushi@ximian.com>
+
+	* RdpPatterns.cs : After profiling in depth, finally I found the
+	  source of the worst perf. problem in the code - return x for 
+	  (choice x x).
+	  It now validates 5MB of OpenDocument specification content.xml,
+	  which only Jing could do.
+
 2006-01-16  Atsushi Enomoto <atsushi@ximian.com>
 
 	* RdpObjects.cs : fixed warnings.
