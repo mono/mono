@@ -589,6 +589,16 @@ PublicKeyToken=b77a5c561934e089"));
 		{
 			Assert.IsTrue (typeof (Nullable<int>).IsInstanceOfType (5));
 		}
+
+		[ComVisible (true)]
+		public class Foo<T> {
+		}
+
+		[Test]
+		public void GetCustomAttributesGenericInstance ()
+		{
+			Assert.AreEqual (1, typeof (Foo<int>).GetCustomAttributes (typeof (ComVisibleAttribute), true).Length);
+		}
 #endif
 
 		public class NemerleAttribute : Attribute
