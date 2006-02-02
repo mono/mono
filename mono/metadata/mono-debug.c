@@ -5,7 +5,6 @@
 #include <mono/metadata/appdomain.h>
 #include <mono/metadata/class-internals.h>
 #include <mono/metadata/mono-debug.h>
-#define _IN_THE_MONO_DEBUGGER
 #include <mono/metadata/mono-debug-debugger.h>
 #include <mono/metadata/mono-endian.h>
 #include <string.h>
@@ -119,8 +118,7 @@ mono_debug_init_1 (MonoDomain *domain)
 {
 	MonoDebugHandle *handle = mono_debug_open_image (mono_get_corlib ());
 
-	if (in_the_mono_debugger)
-		mono_debugger_add_builtin_types (handle);
+	mono_symbol_table->corlib = handle;
 }
 
 /*
