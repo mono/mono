@@ -474,11 +474,12 @@ namespace System.Net
 		}
 
 #if NET_1_1
+		bool unsafe_auth_blah;
 		[MonoTODO]
 		public bool UnsafeAuthenticatedConnectionSharing
 		{
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return unsafe_auth_blah; }
+			set { unsafe_auth_blah = value; }
 		}
 #endif
 
