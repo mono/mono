@@ -1077,8 +1077,8 @@ namespace System.Xml
 
 		private void ClearAttributes ()
 		{
-			for (int i = 0; i < attributeCount; i++)
-				attributeTokens [i].Clear ();
+			//for (int i = 0; i < attributeCount; i++)
+			//	attributeTokens [i].Clear ();
 			attributeCount = 0;
 			currentAttribute = -1;
 			currentAttributeValue = -1;

@@ -1,5 +1,9 @@
 2006-02-03  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlTextReader.cs : no need to call Clear() for each attribute value.
+
+2006-02-03  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlDocument.cs : reverted most of the previous changes. It somehow
 	  broke System.Data tests.
 
