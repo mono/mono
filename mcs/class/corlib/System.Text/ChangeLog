@@ -1,5 +1,11 @@
 2006-02-03  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* UTF8Encoding.cs : In zero-charbuffer case, byte buffer count should
+	  be checked. Also it should not ignore leftOver characters even if
+	  byte buffer length is 0.
+
+2006-02-03  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* UTF8Encoding.cs : Fast path optimization for InternalGetByteCount()
 	  and InternalGetBytes().
 

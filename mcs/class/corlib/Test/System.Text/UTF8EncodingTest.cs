@@ -1016,5 +1016,35 @@ namespace MonoTests.System.Text {
 			new UTF8Encoding (false, true).GetString (
 				new byte [] {0xED, 0xA2, 0x8C});
 		}
+
+		[Test]
+		public void SufficientByteArray ()
+		{
+			Encoder e = Encoding.UTF8.GetEncoder ();
+			byte [] bytes = new byte [0];
+
+			char [] chars = new char [] {'\uD800'};
+			e.GetBytes (chars, 0, 1, bytes, 0, false);
+			try {
+				int ret = e.GetBytes (chars, 1, 0, bytes, 0, true);
+#if NET_2_0
+				AssertEquals ("drop insufficient char in 2.0: char[]", 0, ret);
+#else
+				Fail ("ArgumentException is expected: char[]");
+#endif
+			} catch (ArgumentException) {
+			}
+
+			string s = "\uD800";
+			try {
+				int ret = Encoding.UTF8.GetBytes (s, 0, 1, bytes, 0);
+#if NET_2_0
+				AssertEquals ("drop insufficient char in 2.0: string", 0, ret);
+#else
+				Fail ("ArgumentException is expected: string");
+#endif
+			} catch (ArgumentException) {
+			}
+		}
 	}
 }

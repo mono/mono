@@ -225,19 +225,32 @@ public class UTF8Encoding : Encoding
 		}
 
 		if (charIndex == chars.Length) {
-			if (flush && leftOver != 0) {
+			if (flush && leftOver != '\0') {
+#if NET_2_0
+				// FIXME: use EncoderFallback.
+				//
+				// By default it is empty, so I do nothing for now.
+				leftOver = '\0';
+#else
 				// Flush the left-over surrogate pair start.
+				if (byteIndex + 3 >= bytes.Length)
+					throw new ArgumentException (_("Arg_InsufficientSpace"), "bytes");
 				bytes [byteIndex++] = 0xEF;
 				bytes [byteIndex++] = 0xBB;
 				bytes [byteIndex++] = 0xBF;
 				leftOver = '\0';
 				return 3;
+#endif
 			}
 			return 0;
 		}
 
 		unsafe {
 			fixed (char* cptr = chars) {
+				if (bytes.Length == byteIndex)
+					return InternalGetBytes (
+						cptr + charIndex, charCount, 
+						null, 0, ref leftOver, flush);
 				fixed (byte *bptr = bytes) {
 					return InternalGetBytes (
 						cptr + charIndex, charCount,
@@ -362,6 +375,9 @@ public class UTF8Encoding : Encoding
 			}
 			leftOver = '\0';
 		}
+		else
+			leftOver = pair;
+Char.IsLetterOrDigit (pair);
 
 		// Return the final count to the caller.
 		return posn - byteIndex;
@@ -406,8 +422,12 @@ public class UTF8Encoding : Encoding
 
 		unsafe {
 			fixed (char* cptr = s) {
+				char dummy = '\0';
+				if (bytes.Length == byteIndex)
+					return InternalGetBytes (
+						cptr + charIndex, charCount,
+						null, 0, ref dummy, true);
 				fixed (byte *bptr = bytes) {
-					char dummy = '\0';
 					return InternalGetBytes (
 						cptr + charIndex, charCount,
 						bptr + byteIndex, bytes.Length - byteIndex,
