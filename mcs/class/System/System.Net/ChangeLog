@@ -1,3 +1,7 @@
+2006-02-01  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* FtpWebRequest.cs: Fixed some typos and small issues.
+	
 2006-02-02 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpWebRequest.cs: dummy implementation of UnsafeAuthenticationBlah

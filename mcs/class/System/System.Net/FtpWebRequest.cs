@@ -35,7 +35,7 @@ namespace System.Net
 		int timeout = 100000;
 		int rwTimeout = 300000;
 		long offset;
-		bool binary;
+		bool binary = true;
 		bool enableSsl;
 		bool requestInProgress;
 		bool usePassive = true;
@@ -64,6 +64,8 @@ namespace System.Net
 		const string AbortCommand = "ABOR";
 		const string AuthCommand = "AUTH";
 		const string RestCommand = "REST";
+		const string RenameFromCommand = "RNFR";
+		const string RenameToCommand = "RNTO";
 		const string EOL = "\r\n"; // Special end of line
 
 		internal FtpWebRequest (Uri uri) 
@@ -96,7 +98,7 @@ namespace System.Net
 			}
 			set {
 				CheckRequestStarted ();
-				if (offset < 0)
+				if (value < 0)
 					throw new ArgumentOutOfRangeException ();
 
 				offset = value;
@@ -194,8 +196,8 @@ namespace System.Net
 			}
 			set {
 				CheckRequestStarted ();
-				if (value == null)
-					throw new ArgumentNullException ("RenameTo");
+				if (value == null || value.Length == 0)
+					throw new ArgumentException ("RenameTo value can't be null or empty", "RenameTo");
 
 				renameTo = value;
 			}
