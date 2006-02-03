@@ -233,7 +233,7 @@ public class UTF8Encoding : Encoding
 				leftOver = '\0';
 #else
 				// Flush the left-over surrogate pair start.
-				if (byteIndex + 3 >= bytes.Length)
+				if (byteIndex >= bytes.Length - 3)
 					throw new ArgumentException (_("Arg_InsufficientSpace"), "bytes");
 				bytes [byteIndex++] = 0xEF;
 				bytes [byteIndex++] = 0xBB;
@@ -303,7 +303,7 @@ public class UTF8Encoding : Encoding
 					// We have a surrogate tail without leading 
 					// surrogate. In NET_2_0 it uses fallback.
 					// In NET_1_1 we output wrong surrogate.
-					if ((posn + 3) > length) {
+					if (posn > length - 3) {
 						throw new ArgumentException (_("Arg_InsufficientSpace"), "bytes");
 					}
 					bytes [posn++] = (byte) (0xE0 | (ch >> 12));
@@ -323,7 +323,7 @@ public class UTF8Encoding : Encoding
 					// invalid, but we have to do something.
 					// We write out the surrogate start and then
 					// re-visit the current character again.
-					if ((posn + 3) > length) {
+					if (posn > length - 3) {
 						throw new ArgumentException (_("Arg_InsufficientSpace"), "bytes");
 					}
 					bytes [posn++] = (byte) (0xE0 | (pair >> 12));
@@ -348,13 +348,13 @@ public class UTF8Encoding : Encoding
 				bytes [posn++] = (byte) (0xC0 | (code >> 6));
 				bytes [posn++] = (byte) (0x80 | (code & 0x3F));
 			} else if (code < 0x10000) {
-				if ((posn + 3) > length)
+				if (posn > length - 3)
 					throw new ArgumentException (_("Arg_InsufficientSpace"), "bytes");
 				bytes [posn++] = (byte) (0xE0 | (code >> 12));
 				bytes [posn++] = (byte) (0x80 | ((code >> 6) & 0x3F));
 				bytes [posn++] = (byte) (0x80 | (code & 0x3F));
 			} else {
-				if ((posn + 4) > length)
+				if (posn > length - 4)
 					throw new ArgumentException (_("Arg_InsufficientSpace"), "bytes");
 				bytes [posn++] = (byte) (0xF0 | (code >> 18));
 				bytes [posn++] = (byte) (0x80 | ((code >> 12) & 0x3F));
@@ -366,7 +366,7 @@ public class UTF8Encoding : Encoding
 		if (flush) {
 			if (pair != '\0') {
 				// Flush the left-over incomplete surrogate.
-				if ((posn + 3) > length) {
+				if (posn > length - 3) {
 					throw new ArgumentException (_("Arg_InsufficientSpace"), "bytes");
 				}
 				bytes [posn++] = (byte) (0xE0 | (pair >> 12));
