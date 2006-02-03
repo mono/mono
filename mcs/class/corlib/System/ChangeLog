@@ -1,3 +1,8 @@
+
+Fri Feb 3 11:01:46 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* String.cs: changed StartsWith/EndsWith to faster versions.
+
 2006-02-02 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* String.cs: implement 2.0 StartsWith and EndsWith new overloads. Based
