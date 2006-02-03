@@ -704,6 +704,9 @@ namespace System.Reflection.Emit {
 				}
 			}
 
+			if ((parent != null) && parent.IsSealed)
+				throw new TypeLoadException ("Could not load type '" + FullName + "' from assembly '" + Assembly + "' because the parent type is sealed.");
+
 			if (methods != null) {
 				for (int i = 0; i < num_methods; ++i)
 					((MethodBuilder)(methods[i])).fixup ();
