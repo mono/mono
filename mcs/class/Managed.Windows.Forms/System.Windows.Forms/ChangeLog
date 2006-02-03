@@ -1,3 +1,8 @@
+2006-02-02  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* FileDialog.cs: Suspend/Resume layouting when changing sizes of
+	  controls to avoid unwanted side effects
+
 2006-02-02  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* Control.cs: 

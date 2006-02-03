@@ -1216,6 +1216,7 @@ namespace System.Windows.Forms
 			
 			public void ResizeAndRelocateForHelpOrReadOnly( )
 			{
+				SuspendLayout();
 				if ( fileDialog.ShowHelp || fileDialog.ShowReadOnly )
 				{
 					mwfFileView.Size = new Size( 449, 250 ); 
@@ -1246,6 +1247,7 @@ namespace System.Windows.Forms
 					Controls.Add( checkBox );
 				else
 					Controls.Remove( checkBox );
+				ResumeLayout();
 			}
 			
 			private void WriteRecentlyUsed( )
