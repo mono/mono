@@ -197,33 +197,35 @@ namespace MonoTests.System.Net {
 		Assertion.Assert ("#2", req is HttpWebRequest);
 		req = WebRequest.Create ("file://www.contoso.com");
 		Assertion.Assert ("#3", req is FileWebRequest);
+		req = WebRequest.Create ("ftp://www.contoso.com");
+		Assertion.Assert ("#4", req is FtpWebRequest);
 		
 		WebRequest.RegisterPrefix ("http://www.contoso.com", new TestWebRequestCreator ());
 		bool ret = WebRequest.RegisterPrefix ("http://WWW.contoso.com", new TestWebRequestCreator ());
-		Assertion.AssertEquals ("#4a", false, ret);
+		Assertion.AssertEquals ("#5a", false, ret);
 		ret = WebRequest.RegisterPrefix ("http://www.contoso.com/foo/bar", new TestWebRequestCreator2 ());
-		Assertion.AssertEquals ("#4b", true, ret);
+		Assertion.AssertEquals ("#5b", true, ret);
 		ret = WebRequest.RegisterPrefix ("http://www", new TestWebRequestCreator3 ());
-		Assertion.AssertEquals ("#4c", true, ret);
+		Assertion.AssertEquals ("#5c", true, ret);
 
 		req = WebRequest.Create ("http://WWW.contoso.com");
-		Assertion.Assert ("#5", req is TestWebRequest); 
+		Assertion.Assert ("#6", req is TestWebRequest); 
 
 		req = WebRequest.Create ("http://WWW.contoso.com/foo/bar/index.html");
-		Assertion.Assert ("#6", req is TestWebRequest2); 
+		Assertion.Assert ("#7", req is TestWebRequest2); 
 		
 		req = WebRequest.Create ("http://WWW.x.com");
-		Assertion.Assert ("#7", req is TestWebRequest3); 
-
-		req = WebRequest.Create ("http://WWW.c");
 		Assertion.Assert ("#8", req is TestWebRequest3); 
 
+		req = WebRequest.Create ("http://WWW.c");
+		Assertion.Assert ("#9", req is TestWebRequest3); 
+
 		req = WebRequest.CreateDefault (new Uri("http://WWW.contoso.com"));
-		Assertion.Assert ("#9", req is HttpWebRequest);
+		Assertion.Assert ("#10", req is HttpWebRequest);
 
 		try {
 			req = WebRequest.Create ("tcp://www.contoso.com");
-			Assertion.Fail ("#10 should have failed with NotSupportedException");			
+			Assertion.Fail ("#11 should have failed with NotSupportedException");			
 		} catch (NotSupportedException) {			
 		}		
 	}
