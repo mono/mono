@@ -1,3 +1,10 @@
+2006-02-03  Martin Baulig  <martin@ximian.com>
+
+	* debug-debugger.c (debugger_thread_manager_thread_created): Removed
+	and merged with debugger_thread_manager_add_thread().
+	(mono_debugger_main): Call debugger_thread_manager_add_thread() to
+	inform the debugger about the main thread.
+
 2006-02-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* basic.cs: Add test for div.un/rem.un constant folding.
