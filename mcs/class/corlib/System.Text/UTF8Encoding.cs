@@ -70,6 +70,8 @@ public class UTF8Encoding : Encoding
 		windows_code_page = UnicodeEncoding.UNICODE_CODE_PAGE;
 	}
 
+	#region GetByteCount()
+
 	// Internal version of "GetByteCount" which can handle a rolling
 	// state between multiple calls to this method.
 	private static int InternalGetByteCount (char[] chars, int index, int count, ref uint leftOver, bool flush)
@@ -166,37 +168,17 @@ public class UTF8Encoding : Encoding
 			throw new ArgumentNullException ("s");
 		}
 
-		// Determine the lengths of all characters.
-		char ch;
-		int index = 0;
-		int count = s.Length;
-		int length = 0;
-		uint pair;
-		while (count > 0) {
-			ch = s[index++];
-			if (ch < '\u0080') {
-				++length;
-			} else if (ch < '\u0800') {
-				length += 2;
-			} else if (ch >= '\uD800' && ch <= '\uDBFF' && count > 1) {
-				// This may be the start of a surrogate pair.
-				pair = (uint)(s[index]);
-				if (pair >= (uint)0xDC00 && pair <= (uint)0xDFFF) {
-					length += 4;
-					++index;
-					--count;
-				} else {
-					length += 3;
-				}
-			} else {
-				length += 3;
+		unsafe {
+			fixed (char* cptr = s) {
+				uint dummy = 0;
+				return InternalGetByteCount (cptr, s.Length, ref dummy, true);
 			}
-			--count;
 		}
-
-		// Return the final length to the caller.
-		return length;
 	}
+
+	#endregion
+
+	#region GetBytes()
 
 	// Internal version of "GetBytes" which can handle a rolling
 	// state between multiple calls to this method.
@@ -254,82 +236,70 @@ public class UTF8Encoding : Encoding
 		int byteIndex = 0;
 
 		// Convert the characters into bytes.
+		// Convert the characters into bytes.
 		char ch;
 		int length = byteCount;
-		uint pair;
-		uint left = leftOver;
+		uint pair = leftOver;
 		int posn = byteIndex;
+
 		while (charCount > 0) {
 			// Fetch the next UTF-16 character pair value.
-			ch = chars[charIndex++];
-			--charCount;
-			if (left == 0) {
-				if (ch >= '\uD800' && ch <= '\uDBFF') {
-					// This is the start of a surrogate pair.
-					left = (uint)ch;
-					continue;
+			ch = chars [charIndex++];
+			if (ch >= '\uD800' && ch <= '\uDBFF' && charCount > 1) {
+				// This may be the start of a surrogate pair.
+				pair = (uint) chars [charIndex];
+				if (pair >= 0xDC00 && pair <= 0xDFFF) {
+					pair = pair - 0xDC00 +
+						(((uint) ch - 0xD800) << 10) +
+						0x10000;
+					++charIndex;
+					--charCount;
 				} else {
-					// This is a regular character.
-					pair = (uint)ch;
+					pair = (uint) ch;
 				}
-			} else if (ch >= '\uDC00' && ch <= '\uDFFF') {
-				// We have a surrogate pair.
-				pair = ((left - (uint)0xD800) << 10) +
-					   (((uint)ch) - (uint)0xDC00) +
-					   (uint)0x10000;
-				left = 0;
 			} else {
-				// We have a surrogate start followed by a
-				// regular character.  Technically, this is
-				// invalid, but we have to do something.
-				// We write out the surrogate start and then
-				// re-visit the current character again.
-				pair = (uint)left;
-				left = 0;
-				--charIndex;
-				++charCount;
+				pair = (uint) ch;
 			}
+			--charCount;
 
 			// Encode the character pair value.
-			if (pair < (uint)0x0080) {
-				if (posn >= length) {
+			if (pair < 0x0080) {
+				if (posn >= length)
 					throw new ArgumentException (_("Arg_InsufficientSpace"), "bytes");
-				}
-				bytes[posn++] = (byte)pair;
-			} else if (pair < (uint)0x0800) {
-				if ((posn + 2) > length) {
+				bytes [posn++] = (byte)pair;
+			} else if (pair < 0x0800) {
+				if ((posn + 2) > length)
 					throw new ArgumentException (_("Arg_InsufficientSpace"), "bytes");
-				}
-				bytes[posn++] = (byte)(0xC0 | (pair >> 6));
-				bytes[posn++] = (byte)(0x80 | (pair & 0x3F));
-			} else if (pair < (uint)0x10000) {
-				if ((posn + 3) > length) {
+				bytes [posn++] = (byte) (0xC0 | (pair >> 6));
+				bytes [posn++] = (byte) (0x80 | (pair & 0x3F));
+			} else if (pair < 0x10000) {
+				if ((posn + 3) > length)
 					throw new ArgumentException (_("Arg_InsufficientSpace"), "bytes");
-				}
-				bytes[posn++] = (byte)(0xE0 | (pair >> 12));
-				bytes[posn++] = (byte)(0x80 | ((pair >> 6) & 0x3F));
-				bytes[posn++] = (byte)(0x80 | (pair & 0x3F));
+				bytes [posn++] = (byte) (0xE0 | (pair >> 12));
+				bytes [posn++] = (byte) (0x80 | ((pair >> 6) & 0x3F));
+				bytes [posn++] = (byte) (0x80 | (pair & 0x3F));
 			} else {
-				if ((posn + 4) > length) {
+				if ((posn + 4) > length)
 					throw new ArgumentException (_("Arg_InsufficientSpace"), "bytes");
-				}
-				bytes[posn++] = (byte)(0xF0 | (pair >> 18));
-				bytes[posn++] = (byte)(0x80 | ((pair >> 12) & 0x3F));
-				bytes[posn++] = (byte)(0x80 | ((pair >> 6) & 0x3F));
-				bytes[posn++] = (byte)(0x80 | (pair & 0x3F));
+				bytes [posn++] = (byte) (0xF0 | (pair >> 18));
+				bytes [posn++] = (byte) (0x80 | ((pair >> 12) & 0x3F));
+				bytes [posn++] = (byte) (0x80 | ((pair >> 6) & 0x3F));
+				bytes [posn++] = (byte) (0x80 | (pair & 0x3F));
 			}
 		}
-		if (flush && left != 0) {
+
+		if (flush && pair >= 0xD800 && pair < 0xDC00) {
 			// Flush the left-over surrogate pair start.
 			if ((posn + 3) > length) {
 				throw new ArgumentException (_("Arg_InsufficientSpace"), "bytes");
 			}
-			bytes[posn++] = (byte)(0xE0 | (left >> 12));
-			bytes[posn++] = (byte)(0x80 | ((left >> 6) & 0x3F));
-			bytes[posn++] = (byte)(0x80 | (left & 0x3F));
-			left = 0;
+			bytes [posn++] = (byte) (0xE0 | (pair >> 12));
+			bytes [posn++] = (byte) (0x80 | ((pair >> 6) & 0x3F));
+			bytes [posn++] = (byte) (0x80 | (pair & 0x3F));
+			leftOver = 0;
 		}
-		leftOver = left;
+		else
+			leftOver = pair;
 
 		// Return the final count to the caller.
 		return posn - byteIndex;
@@ -364,64 +334,23 @@ public class UTF8Encoding : Encoding
 			throw new ArgumentOutOfRangeException ("byteIndex", _("ArgRange_Array"));
 		}
 
-		// Convert the characters into bytes.
-		char ch;
-		int length = bytes.Length;
-		uint pair;
-		int posn = byteIndex;
-		while (charCount > 0) {
-			// Fetch the next UTF-16 character pair value.
-			ch = s[charIndex++];
-			if (ch >= '\uD800' && ch <= '\uDBFF' && charCount > 1) {
-				// This may be the start of a surrogate pair.
-				pair = (uint)(s[charIndex]);
-				if (pair >= (uint)0xDC00 && pair <= (uint)0xDFFF) {
-					pair = (pair - (uint)0xDC00) +
-						   ((((uint)ch) - (uint)0xD800) << 10) +
-						   (uint)0x10000;
-					++charIndex;
-					--charCount;
-				} else {
-					pair = (uint)ch;
-				}
-			} else {
-				pair = (uint)ch;
-			}
-			--charCount;
+		if (charIndex == s.Length)
+			return 0;
 
-			// Encode the character pair value.
-			if (pair < (uint)0x0080) {
-				if (posn >= length) {
-					throw new ArgumentException (_("Arg_InsufficientSpace"), "bytes");
+		unsafe {
+			fixed (char* cptr = s) {
+				fixed (byte *bptr = bytes) {
+					uint dummy = 0;
+					return InternalGetBytes (
+						cptr + charIndex, charCount,
+						bptr + byteIndex, bytes.Length - byteIndex,
+						ref dummy, true);
 				}
-				bytes[posn++] = (byte)pair;
-			} else if (pair < (uint)0x0800) {
-				if ((posn + 2) > length) {
-					throw new ArgumentException (_("Arg_InsufficientSpace"), "bytes");
-				}
-				bytes[posn++] = (byte)(0xC0 | (pair >> 6));
-				bytes[posn++] = (byte)(0x80 | (pair & 0x3F));
-			} else if (pair < (uint)0x10000) {
-				if ((posn + 3) > length) {
-					throw new ArgumentException (_("Arg_InsufficientSpace"), "bytes");
-				}
-				bytes[posn++] = (byte)(0xE0 | (pair >> 12));
-				bytes[posn++] = (byte)(0x80 | ((pair >> 6) & 0x3F));
-				bytes[posn++] = (byte)(0x80 | (pair & 0x3F));
-			} else {
-				if ((posn + 4) > length) {
-					throw new ArgumentException (_("Arg_InsufficientSpace"), "bytes");
-				}
-				bytes[posn++] = (byte)(0xF0 | (pair >> 18));
-				bytes[posn++] = (byte)(0x80 | ((pair >> 12) & 0x3F));
-				bytes[posn++] = (byte)(0x80 | ((pair >> 6) & 0x3F));
-				bytes[posn++] = (byte)(0x80 | (pair & 0x3F));
 			}
 		}
-
-		// Return the final count to the caller.
-		return posn - byteIndex;
 	}
+
+	#endregion
 
 	// Internal version of "GetCharCount" which can handle a rolling
 	// state between multiple calls to this method.

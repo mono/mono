@@ -1,5 +1,15 @@
 2006-02-02  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* UTF8Encoding.cs :
+	  GetBytes(string, ...) could reuse InternalGetBytes() using fixed
+	  pointers. However, InternalGetBytes() was slower than
+	  GetBytes(string, ...), so first replaced existing InternalGetBytes()
+	  with GetBytes() internals, and GetBytes(string, ...) switched to 
+	  InternalGetBytes(). Now GetBytes() implementation code is reduced
+	  to one method.
+
+2006-02-02  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* UTF8Encoding.cs : fast path optimization was pretty insufficient.
 	  Now it handles the entire bytes, not just half of them.
 
