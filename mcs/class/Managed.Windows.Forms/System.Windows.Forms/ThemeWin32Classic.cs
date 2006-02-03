@@ -150,7 +150,7 @@ namespace System.Windows.Forms
 			
 			// set up the button rectangle
 			buttonRectangle = button.ClientRectangle;
-			if (button.has_focus) {
+			if (button.has_focus || button.paint_as_acceptbutton) {
 				// shrink the rectangle for the normal button drawing inside the focus rectangle
 				borderRectangle = Rectangle.Inflate(buttonRectangle, -1, -1);
 			} else {
@@ -161,7 +161,7 @@ namespace System.Windows.Forms
 				DrawFlatStyleButton (dc, borderRectangle, button);
 			} else {
 				CPDrawButton(dc, borderRectangle, button.ButtonState);
-				if (button.has_focus) {
+				if (button.has_focus || button.paint_as_acceptbutton) {
 					dc.DrawRectangle(ResPool.GetPen(button.ForeColor), borderRectangle);
 				}
 			}

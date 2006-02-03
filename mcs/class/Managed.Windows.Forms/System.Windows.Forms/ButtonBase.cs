@@ -44,6 +44,7 @@ namespace System.Windows.Forms {
 		internal bool			is_pressed;
 		internal bool			enter_state;
 		internal StringFormat		text_format;
+		internal bool 			paint_as_acceptbutton;
 		#endregion	// Local Variables
 
 		#region ButtonBaseAccessibleObject sub-class

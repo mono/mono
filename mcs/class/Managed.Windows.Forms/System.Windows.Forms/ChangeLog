@@ -1,3 +1,9 @@
+2006-02-03  Alexander Olk  <alex.olk@googlemail.com>
+
+	* ButtonBase.cs, ContainerControl.cs, Forms.cs,
+	  ThemeWin32Classic.cs: Fix for #77458. Correct handling of
+	  AcceptButton border drawing.
+
 2006-02-03  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* Form.cs: Moved positioning of form after auto scaling is applied,

@@ -1716,7 +1716,26 @@ namespace System.Windows.Forms {
 		{
 			window_manager = null;
 		}
-
+		
+		internal override void CheckAcceptButton()
+		{
+			if (accept_button != null) {
+				Button a_button = accept_button as Button;
+				
+				if (ActiveControl == a_button)
+					return;
+				
+				if (ActiveControl is Button) {
+					a_button.paint_as_acceptbutton = false;
+					a_button.Redraw();
+					return;
+				} else {
+					a_button.paint_as_acceptbutton = true;
+					a_button.Redraw();
+				}
+			}
+		}
+		
 		#region Events
 		public event EventHandler Activated;
 		public event EventHandler Closed;

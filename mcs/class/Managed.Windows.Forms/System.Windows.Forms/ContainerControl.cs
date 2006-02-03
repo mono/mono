@@ -64,6 +64,9 @@ namespace System.Windows.Forms {
 					throw new ArgumentException("Not a child control");
 				}
 
+				if (this is Form)
+					CheckAcceptButton();
+				
 				// Scroll control into view
 
 				// Let the control know it's selected
@@ -255,5 +258,10 @@ namespace System.Windows.Forms {
 			base.WndProc(ref m);
 		}
 		#endregion	// Protected Instance Methods
+		
+		internal virtual void CheckAcceptButton()
+		{
+			// do nothing here, only called if it is a Form
+		}
 	}
 }
