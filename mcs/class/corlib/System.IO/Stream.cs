@@ -84,6 +84,18 @@ namespace System.IO
 			Close ();
 		}
 
+#if NET_2_0
+		public void Dispose ()
+		{
+			Dispose (true);
+		}
+
+		protected virtual void Dispose (bool disposing)
+		{
+			Close ();
+		}
+#endif
+
 		protected virtual WaitHandle CreateWaitHandle()
 		{
 			return new ManualResetEvent (false);
