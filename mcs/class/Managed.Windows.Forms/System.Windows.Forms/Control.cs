@@ -1231,9 +1231,9 @@ namespace System.Windows.Forms
 		}
 
 		private void UpdateDistances() {
-			dist_left = bounds.X;
-			dist_top = bounds.Y;
 			if ((parent != null) && (parent.layout_suspended == 0)) {
+				dist_left = bounds.X;
+				dist_top = bounds.Y;
 				dist_right = parent.ClientSize.Width - bounds.X - bounds.Width;
 				dist_bottom = parent.ClientSize.Height - bounds.Y - bounds.Height;
 			}
@@ -2079,7 +2079,6 @@ namespace System.Windows.Forms
 					Cursor = ap.Cursor;
 					Font = ap.Font;
 				}
-				
 			}
 		}
 
@@ -2917,19 +2916,19 @@ namespace System.Windows.Forms
 		}
 
 		public void ResumeLayout(bool performLayout) {
-			layout_suspended--;
-			
 			if (layout_suspended > 0) {
-				return;
+				layout_suspended--;
 			}
 
-			Control [] controls = child_controls.GetAllControls ();
-			for (int i=0; i<controls.Length; i++) {
-				controls [i].UpdateDistances ();
-			}
+			if (layout_suspended == 0) {
+				Control [] controls = child_controls.GetAllControls ();
+				for (int i=0; i<controls.Length; i++) {
+					controls [i].UpdateDistances ();
+				}
 
-			if (performLayout || layout_pending) {
-				PerformLayout();
+				if (performLayout && layout_pending) {
+					PerformLayout();
+				}
 			}
 		}
 
@@ -3449,6 +3448,8 @@ namespace System.Windows.Forms
 			}
 
 			UpdateBounds(x, y, width, height);
+
+			UpdateDistances();
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -3589,8 +3590,6 @@ namespace System.Windows.Forms
 			// Update client rectangle as well
 			client_size.Width=width-client_x_diff;
 			client_size.Height=height-client_y_diff;
-
-			UpdateDistances();
 
 			if (moved) {
 				OnLocationChanged(EventArgs.Empty);
@@ -4304,7 +4303,12 @@ namespace System.Windows.Forms
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnVisibleChanged(EventArgs e) {
-			if (!is_visible) {
+			if ((parent != null) && !Created && Visible) {
+				if (!is_disposed) {
+					CreateControl();
+					PerformLayout();
+				}
+			} else {
 				if (dc_mem!=null) {
 					dc_mem.Dispose ();
 					dc_mem=null;
@@ -4313,13 +4317,6 @@ namespace System.Windows.Forms
 				if (bmp_mem!=null) {
 					bmp_mem.Dispose();
 					bmp_mem=null;
-				}
-			} else {
-				if (!is_disposed) {
-					if (!this.IsHandleCreated) {
-						this.CreateControl();
-					}
-					PerformLayout();
 				}
 			}
 			

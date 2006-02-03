@@ -1,3 +1,23 @@
+2006-02-02  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* Control.cs:
+	  - ResumeLayout: Fixed logic when to call PerformLayout, we may not
+	    call unless both performLayout is true *and* we have a pending
+	    layout change
+	  - ResumeLayout: MS does not completely nest Suspend and Resume,
+	    they bottom out at 0, fixed our code to match that.
+	  - UpdateBounds/SetBoundsCore: Moved calling of UpdateDistances() to
+	    SetBoundsCore, we were updating even when we shouldn't. This fixes
+	    swf-anchors mis-anchoring when resizing the app fast and lots.
+	  - UpdateDistances: Now only setting the left and top distance if 
+	    we have a parent and are not suspended, this is based on
+	    a suggestion by Don Edvaldson in bug #77355.
+	  - OnVisibleChanged: Fixed logic when to create the control. We may
+	    not create the control if we have no parent or if it's not visible;
+	    switched to using Visible property instead of is_visible field 
+	    since the property also considers parent states. This fixes a bug
+	    when starting Paint.Net
+
 2006-02-02  Jackson Harper  <jackson@ximian.com>
 
 	* Form.cs: If the forms handle hasn't been created yet don't call
