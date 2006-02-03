@@ -328,6 +328,16 @@ mono_eval_cond_branch (MonoInst *ins)
 	    ins->inst_c0 = (cast)arg1->inst_c0 op (cast)arg2->inst_c0;	\
         break;
 
+#define FOLD_BINOP2_IMM(name, op) \
+	case name:	\
+	    ins->inst_c0 = arg1->inst_c0 op ins->inst_imm;	\
+        break;
+
+#define FOLD_BINOPC2_IMM(name, op, cast) \
+	case name:	\
+	    ins->inst_c0 = (cast)arg1->inst_c0 op (cast)ins->inst_imm;	\
+        break;
+
 #define FOLD_BINOPCXX2(name,op,cast)	\
 	case name:	\
 	    res = (cast)arg1->inst_c0 op (cast)arg2->inst_c0;	\
@@ -366,14 +376,41 @@ mono_constant_fold_ins2 (MonoInst *ins, MonoInst *arg1, MonoInst *arg2)
 			}
 		}
 		break;
+	case OP_IMUL_IMM:
+	case OP_IADD_IMM:
+	case OP_IAND_IMM:
+	case OP_IOR_IMM:
+	case OP_IXOR_IMM:
+	case OP_ISUB_IMM:
+	case OP_ISHL_IMM:
+	case OP_ISHR_IMM:
+	case OP_ISHR_UN_IMM:
+		if (arg1->opcode == OP_ICONST) {
+			switch (ins->opcode) {
+				FOLD_BINOP2_IMM (OP_IMUL_IMM, *);
+				FOLD_BINOP2_IMM (OP_IADD_IMM, +);
+				FOLD_BINOP2_IMM (OP_IAND_IMM, &);
+				FOLD_BINOP2_IMM (OP_IOR_IMM, |);
+				FOLD_BINOP2_IMM (OP_IXOR_IMM, ^);
+				FOLD_BINOP2_IMM (OP_ISUB_IMM, -);
+				FOLD_BINOP2_IMM (OP_ISHL_IMM, <<);
+				FOLD_BINOP2_IMM (OP_ISHR_IMM, >>);
+				FOLD_BINOPC2_IMM (OP_ISHR_UN_IMM, >>, guint32);
+			}
+			ins->opcode = OP_ICONST;
+			ins->sreg1 = ins->sreg2 = -1;
+		}
+		break;
 	case OP_ISUB:
 	case OP_ISHL:
 	case OP_ISHR:
+	case OP_ISHR_UN:
 		if ((arg1->opcode == OP_ICONST) && (arg2->opcode == OP_ICONST)) {
 			switch (ins->opcode) {
-				FOLD_BINOP2 (OP_ISUB,-);
-				FOLD_BINOP2 (OP_ISHL,<<);
-				FOLD_BINOP2 (OP_ISHR,>>);
+				FOLD_BINOP2 (OP_ISUB, -);
+				FOLD_BINOP2 (OP_ISHL, <<);
+				FOLD_BINOP2 (OP_ISHR, >>);
+				FOLD_BINOPC2 (OP_ISHR_UN, >>, guint32);
 			}
 			ins->opcode = OP_ICONST;
 			ins->sreg1 = ins->sreg2 = -1;
@@ -387,19 +424,12 @@ mono_constant_fold_ins2 (MonoInst *ins, MonoInst *arg1, MonoInst *arg2)
 			if ((arg2->inst_c0 == 0) || ((arg1->inst_c0 == G_MININT32) && (arg2->inst_c0 == -1)))
 				return;
 			switch (ins->opcode) {
-				FOLD_BINOPC2 (OP_IDIV,/,gint32);
-				FOLD_BINOPC2 (OP_IDIV_UN,/,guint32);
-				FOLD_BINOPC2 (OP_IREM,%,gint32);
-				FOLD_BINOPC2 (OP_IREM_UN,%,guint32);
+				FOLD_BINOPC2 (OP_IDIV, /, gint32);
+				FOLD_BINOPC2 (OP_IDIV_UN, /, guint32);
+				FOLD_BINOPC2 (OP_IREM, %, gint32);
+				FOLD_BINOPC2 (OP_IREM_UN, %, guint32);
 			}
 			ins->opcode = OP_ICONST;
-			ins->sreg1 = ins->sreg2 = -1;
-		}
-		break;
-	case OP_ISHR_UN:
-		if ((arg1->opcode == OP_ICONST) && (arg2->opcode == OP_ICONST)) {
-			ins->opcode = OP_ICONST;
-			ins->inst_c0 = (guint32)arg1->inst_c0 >> (guint32)arg2->inst_c0;
 			ins->sreg1 = ins->sreg2 = -1;
 		}
 		break;
@@ -502,8 +532,6 @@ mono_constant_fold_ins2 (MonoInst *ins, MonoInst *arg1, MonoInst *arg2)
 		}
 		break;
 	}
-
-		/* FIXME: Add back the OP_C optimizations */
 
 		/*
 		 * TODO: 

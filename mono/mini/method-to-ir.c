@@ -6385,7 +6385,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 					sp [1]->opcode = OP_NOP;
 				}
 			}
-
 			MONO_ADD_INS ((cfg)->cbb, (ins));
 			*sp++ = ins;
 
@@ -8804,8 +8803,7 @@ mono_handle_local_vregs (MonoCompile *cfg)
 				if (cfg->verbose_level > 2)
 					printf ("CONVERTED R%d(%d) TO VREG.\n", var->dreg, vmv->idx);
 
-				/* Avoid allocation to registers */
-				var->flags |= MONO_INST_VOLATILE;
+				var->flags |= MONO_INST_IS_DEAD;
 				cfg->vreg_to_inst ['i'][var->dreg] = NULL;
 				break;
 			}
