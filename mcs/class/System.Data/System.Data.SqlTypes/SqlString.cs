@@ -35,6 +35,7 @@
 //
 
 using System;
+using System.Text;
 using System.Globalization;
 using System.Threading;
 
@@ -116,26 +117,8 @@ namespace System.Data.SqlTypes
 		// and whether unicode is encoded or not
 		public SqlString (int lcid, SqlCompareOptions compareOptions, byte[] data, bool fUnicode) 
 		{
-			char [] chars;
-
-			if (fUnicode)
-				chars = new char [data.Length/2];
-			else
-				chars = new char [data.Length];
-			
-			int j = 0;
-			for (int i = 0; i < chars.Length; i++) {
-
-				if (fUnicode) {
-					chars [i] = (char)(data [j] << 16);
-					chars [i] += (char)data [j + 1];
-					j += 2;
-				} else {
-					chars [i] = (char)data[i];
-				}
-			}
-				
-			this.value = new String (chars);
+			Encoding encoding = (fUnicode ? Encoding.Unicode : Encoding.ASCII);
+			this.value = encoding.GetString (data);
 			this.lcid = lcid;
 			this.compareOptions = compareOptions;
 			notNull = true;
@@ -153,33 +136,8 @@ namespace System.Data.SqlTypes
 		// and whether unicode is encoded or not
 		public SqlString (int lcid, SqlCompareOptions compareOptions, byte[] data, int index, int count, bool fUnicode) 
 		{		       
-			char [] chars;
-
-			if (fUnicode)
-				chars = new char [(count - index) / 2];
-			else
-				chars = new char [count - index];
-
-			if (index >= data.Length)
-				throw new ArgumentOutOfRangeException ("index");
-
-			if ((index + count) > data.Length)
-				throw new ArgumentOutOfRangeException ("count");
-
-			int j = 0;
-			for (int i = index; i < chars.Length; i++) {
-				
-				if (fUnicode) {
-					chars [i] = (char)(data[j] << 16);
-					chars [i] += (char)data[j+1];
-					j += 2;
-				} else {
-					chars [i] = (char)data [j];
-					j++;
-				}
-			}
-
-			this.value = new String (chars);
+			Encoding encoding = (fUnicode ? Encoding.Unicode : Encoding.ASCII);
+			this.value = encoding.GetString (data, index, count);
 			this.lcid = lcid;
 			this.compareOptions = compareOptions;
 			notNull = true;
@@ -333,26 +291,12 @@ namespace System.Data.SqlTypes
 
 		public byte[] GetNonUnicodeBytes() 
 		{
-			byte [] bytes = new byte [value.Length];
-
-			for (int i = 0; i < bytes.Length; i++) 
-				bytes [i] = (byte)value [i];
-
-			return bytes;
+			return Encoding.ASCII.GetBytes (value);
 		}
 
 		public byte[] GetUnicodeBytes() 
 		{
-			byte [] bytes = new byte [value.Length * 2];
-			
-			int j = 0;
-			for (int i = 0; i < value.Length; i++) {				
-				bytes [j] = (byte)(value [i] & 0x0000FFFF);
-				bytes [j + 1] = (byte)((value [i] & 0xFFFF0000) >> 16);
-				j += 2;
-			}
-			
-			return bytes;
+			return Encoding.Unicode.GetBytes (value);
 		}
 
 		public static SqlBoolean GreaterThan(SqlString x, SqlString y) 

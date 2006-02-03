@@ -1,3 +1,12 @@
+2006-02-03  Senganal T  <tsenganal@novell.com>
+
+	* DataTableCollectionTest2.cs,EvaluateExceptionTest.cs,
+	DataColumnTest.cs,DataRowViewTest.cs,DataRowCollectionTest2.cs,
+	DataTableTest2.cs,DataTableTest.cs,DataColumnCollectionTest2.cs,
+	DataColumnCollectionTest.cs,DataViewTest.cs,DataColumnTest2.cs
+		- Removed 'NotWorking' attributes for the testcases fixed
+		- Added few new testcases
+
 2006-01-17  Senganal T  <tsenganal@novell.com>
 
 	* DataRowTest2.cs : added testcase for bug #77267

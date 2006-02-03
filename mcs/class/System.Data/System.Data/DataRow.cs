@@ -245,9 +245,6 @@ namespace System.Data {
 			get {
 				if (columnIndex < 0 || columnIndex > _table.Columns.Count)
 					throw new IndexOutOfRangeException ();
-				// Accessing deleted rows
-				if (!_inExpressionEvaluation && RowState == DataRowState.Deleted && version != DataRowVersion.Original)
-					throw new DeletedRowInaccessibleException ("Deleted row information cannot be accessed through the row.");
 				
 				DataColumn column = _table.Columns[columnIndex];
 				int recordIndex = IndexFromVersion(version);
@@ -261,9 +258,6 @@ namespace System.Data {
 					return column[recordIndex];
 				}
 
-				if (RowState == DataRowState.Detached && version == DataRowVersion.Default && Proposed < 0)
-					throw new RowNotInTableException("This row has been removed from a table and does not have any data.  BeginEdit() will allow creation of new data in this row.");
-				
 				return column[recordIndex];
 			}
 		}
@@ -330,23 +324,15 @@ namespace System.Data {
 		public DataRowState RowState {
 			get { 
 				//return rowState; 
-				  if ((Original == -1) && (Current == -1))
-					{
-						return DataRowState.Detached;
-					}
-					if (Original == Current)
-					{
-						return DataRowState.Unchanged;
-					}
-					if (Original == -1)
-					{
-						return DataRowState.Added;
-					}
-					if (Current == -1)
-					{
-						return DataRowState.Deleted;
-					}
-					return DataRowState.Modified;
+				if ((Original == -1) && (Current == -1))
+					return DataRowState.Detached;
+				if (Original == Current)
+					return DataRowState.Unchanged;
+				if (Original == -1)
+					return DataRowState.Added;
+				if (Current == -1)
+					return DataRowState.Deleted;
+				return DataRowState.Modified;
 			}
 		}
 
@@ -781,7 +767,6 @@ namespace System.Data {
 								case DataRowAction.Rollback: {
 									if (childRows[j].RowState != DataRowState.Unchanged)
 										childRows[j].RejectChanges ();
-
 									break;
 								}
 							}
@@ -1322,46 +1307,28 @@ namespace System.Data {
 				throw new RowNotInTableException("This row has been removed from a table and does not have any data.  BeginEdit() will allow creation of new data in this row.");
 			// If original is null, then nothing has happened since AcceptChanges
 			// was last called.  We have no "original" to go back to.
-			if (HasVersion(DataRowVersion.Original)) {
-				if (Current >= 0 && Current != Original) {
-					Table.RecordCache.DisposeRecord(Current);
-				}
-				CheckChildRows(DataRowAction.Rollback);
+			
+			_table.ChangedDataRow (this, DataRowAction.Rollback);
+			CancelEdit ();
 
-				if (Current != Original) {
-					Table.DeleteRowFromIndexes(this);
-					Current = Original;
-				}
-			       
-				_table.ChangedDataRow (this, DataRowAction.Rollback);
-				CancelEdit ();
-				switch (RowState)
-				{
-					case DataRowState.Added:
-						_table.DeleteRowFromIndexes (this);
-						_table.Rows.RemoveInternal (this);
-						break;
-					case DataRowState.Modified:
-					case DataRowState.Deleted:
-						Table.AddRowToIndexes(this);
-						AssertConstraints();
-						break;
-				} 
-				
-			} 			
-			else {
-				// If rows are just loaded via Xml the original values are null.
-				// So in this case we have to remove all columns.
-				// FIXME: I'm not realy sure, does this break something else, but
-				// if so: FIXME ;)
-				
-				if ((RowState & DataRowState.Added) > 0)
-				{
-					_table.DeleteRowFromIndexes (this);
-					_table.Rows.RemoveInternal (this);
-					// if row was in Added state we move it to Detached.
-					DetachRow();
-				}
+			//TODO : Need to Verify the constraints.. 
+			switch (RowState) {
+			case DataRowState.Added:
+				_table.DeleteRowFromIndexes (this);
+				_table.Rows.RemoveInternal (this);
+				DetachRow ();
+				break;
+			case DataRowState.Modified:
+				Table.RecordCache.DisposeRecord (Current);
+				CheckChildRows (DataRowAction.Rollback);
+				Table.DeleteRowFromIndexes(this);
+				Current = Original;
+				break;
+			case DataRowState.Deleted:
+				CheckChildRows (DataRowAction.Rollback);
+				Table.DeleteRowFromIndexes(this);
+				Current = Original;
+				break;
 			}
 		}
 
@@ -1654,7 +1621,6 @@ namespace System.Data {
 				
 			if (Table.DataSet != null && !Table.DataSet.EnforceConstraints)
 				return;
-
 			foreach(DataColumn column in Table.Columns) {
 				if (!column.AllowDBNull && IsNull(column)) {
 					throw new NoNullAllowedException(_nullConstraintMessage);

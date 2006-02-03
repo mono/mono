@@ -308,9 +308,6 @@ namespace MonoTests_System.Data
 
 		[Test]
 		[ExpectedException(typeof(ArgumentException))]
-#if !TARGET_JVM
-		[Category ("NotWorking")]
-#endif
 		public void DataTableCollection_Add_D3()
 		{
 			DataSet ds = new DataSet();
@@ -425,9 +422,6 @@ namespace MonoTests_System.Data
 
 		[Test]
 		[ExpectedException(typeof(ArgumentException))]
-#if !TARGET_JVM
-		[Category ("NotWorking")]
-#endif
 		public void DataTableCollection_Remove_S2()
 		{
 			DataSet ds = new DataSet();
@@ -437,9 +431,6 @@ namespace MonoTests_System.Data
 
 		[Test]
 		[ExpectedException(typeof(ArgumentException))]
-#if !TARGET_JVM
-		[Category ("NotWorking")]
-#endif
 		public void DataTableCollection_Remove_S3()
 		{
 			DataSet ds = new DataSet();

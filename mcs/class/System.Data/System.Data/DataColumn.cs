@@ -506,16 +506,19 @@ namespace System.Data {
 					{
 						if (compiledExpression.DependsOn(this))
 							throw new ArgumentException("Cannot set Expression property due to circular reference in the expression.");
+						// Check if expression is ok 
+						if (Table.Rows.Count == 0)
+							compiledExpression.Eval (Table.NewRow());
+						else
+							compiledExpression.Eval (Table.Rows[0]);
 					}
-					
 					ReadOnly = true;
 					_compiledExpression = compiledExpression;
 				}
 				else
 				{
 					_compiledExpression = null;
-					if (Table != null)
-					{
+					if (Table != null) {
 						int defaultValuesRowIndex = Table.DefaultValuesRowIndex;
 						if ( defaultValuesRowIndex != -1) 
 							DataContainer.FillValues(defaultValuesRowIndex);
@@ -679,7 +682,6 @@ namespace System.Data {
 									{
 										cc.Remove(c);
 									}
-									
 								}
 							}
 						}
@@ -896,7 +898,7 @@ namespace System.Data {
                         return null;
                 }
                
-		internal void ResetCollectionInfo ()
+		internal void ResetColumnInfo ()
 		{
 			_ordinal = -1;
 			_table = null;

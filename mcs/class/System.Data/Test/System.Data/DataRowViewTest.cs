@@ -132,7 +132,6 @@ namespace MonoTests.System.Data
 
 		[Test]
 		[ExpectedException (typeof (RowNotInTableException))]
-//		[NUnit.Framework.Category ("NotWorking")]
 		public void ItemException ()
 		{
 			DataTable dt = new DataTable ("table");

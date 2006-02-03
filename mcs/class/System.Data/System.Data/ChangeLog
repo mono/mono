@@ -1,3 +1,33 @@
+2006-02-03  Senganal T  <tsenganal@novell.com>
+
+	* DataTableCollection.cs : 
+		- Remove () : Check for invalid TableName
+		- Add () : Verify the table doesn't belong to another dataset
+	* DataView.cs :
+		- CompleteLastAdded () : Do not raise ItemAdded Event as it is
+			already raised in AddNew().
+	* DataColumn.cs :
+		- Expression : Verify that the Column names in the expression are valid 
+		- ResetCollectionInfo : Renamed to ResetColumnInfo
+	* DataRow.cs :
+		- RejectChanges () : Reorganized the code to do the Right thing.
+		- Item  : Dont check for detached and deleted rows as these are
+			done elsewhere.
+	* DataRowCollection.cs :
+		- Add () : Check for null value
+	* DataTable.cs :
+		- PrimaryKey : Set AllowDBNull=false for all the key columns
+		- ImportRow : Import the row only if it is not in Detached state. if in Deleted
+			state, perform the validation when AcceptChanges/RejectChanges is called.
+	* DataColumnCollection.cs :
+		- Add : Validate the column expression before adding it to the collection.
+		- GetColumnDependency () : New. Get the dependencies on the column 
+		- CanRemove : Move checks to GetColumnDependency
+		- Clear () : Simplified code. Remove unncessary checks.Also, dont check Expression col.
+		- IndexOf - Check argument.
+		Overall , appropriate error msg's are thrown if Remove/Clear fails. Removed a few
+		redundant checks performed and moved the common code to GetColumnDependency.
+
 2006-01-31  Senganal T  <tsenganal@novell.com>
 
 	* DataSet.cs : Modified CopyRelations ()

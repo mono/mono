@@ -1,3 +1,13 @@
+2006-02-03  Senganal T  <tsenganal@novell.com>
+	
+	* ColumnReference.cs : 
+		- GetReferencedRow () 
+		- GetReferencedRows() : Verify the column before getting the values.
+		 	Validate the ColumnReference even when the table has no rows.
+	* Function.cs : Modified Eval()
+		- A tmp fix to check for null. Expression.Eval needs to be modified all
+		around to return DBNull.Value.
+
 2006-01-18 Boris Kirzner <borisk@mainsoft.com>
 	* ColumnReference.cs: added column and relation lazy evaluation 
 	and caching.

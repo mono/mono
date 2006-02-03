@@ -177,9 +177,6 @@ namespace MonoTests.System.Data
 
 		[Test]
 		[ExpectedException(typeof(NullReferenceException))]
-#if !TARGET_JVM
-		[NUnit.Framework.Category ("NotWorking")]
-#endif
 		public void DataRowCollection_Add_O4()
 		{
 			DataTable dt = DataProvider.CreateParentDataTable();
