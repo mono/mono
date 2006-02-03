@@ -1,5 +1,9 @@
 2006-02-03  Alexander Olk  <alex.olk@googlemail.com>
 
+	* FileDialog.cs: First part of fix for #77464
+
+2006-02-03  Alexander Olk  <alex.olk@googlemail.com>
+
 	* ButtonBase.cs, ContainerControl.cs, Forms.cs,
 	  ThemeWin32Classic.cs: Fix for #77458. Correct handling of
 	  AcceptButton border drawing.

@@ -173,8 +173,12 @@ namespace System.Windows.Forms
 		public string[] FileNames
 		{
 			get {
-				if ( multiSelect )
-					return fileNames;
+				if ( multiSelect ) {
+				
+					string[] new_filenames = new string[fileNames.Length];
+					fileNames.CopyTo(new_filenames, 0);
+					return new_filenames;
+				}
 				
 				return null;
 			}
@@ -923,7 +927,13 @@ namespace System.Windows.Forms
 						}
 					}
 					
+					string[] filenames = new string[ 1 ];
+					
+					filenames[0] = currentFileName;
+					
 					fileDialog.FileName = currentFileName;
+					
+					fileDialog.SetFilenames( filenames );
 					
 					WriteRecentlyUsed();
 				}
