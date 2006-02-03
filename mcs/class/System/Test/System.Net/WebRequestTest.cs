@@ -197,9 +197,10 @@ namespace MonoTests.System.Net {
 		Assertion.Assert ("#2", req is HttpWebRequest);
 		req = WebRequest.Create ("file://www.contoso.com");
 		Assertion.Assert ("#3", req is FileWebRequest);
+#if NET_2_0
 		req = WebRequest.Create ("ftp://www.contoso.com");
 		Assertion.Assert ("#4", req is FtpWebRequest);
-		
+#endif
 		WebRequest.RegisterPrefix ("http://www.contoso.com", new TestWebRequestCreator ());
 		bool ret = WebRequest.RegisterPrefix ("http://WWW.contoso.com", new TestWebRequestCreator ());
 		Assertion.AssertEquals ("#5a", false, ret);
