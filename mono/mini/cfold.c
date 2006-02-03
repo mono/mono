@@ -110,16 +110,6 @@ mono_is_power_of_two (guint32 val)
 		} \
                 return;
 	
-#define FOLD_BINOPA(name,op,cast)	\
-	case name:	\
-		if (inst->inst_i0->opcode != OP_ICONST)	\
-			return;	\
-		if (inst->inst_i1->opcode == OP_ICONST) {	\
-			inst->opcode = OP_ICONST;	\
-			inst->inst_c0 = (cast)inst->inst_i0->inst_c0 op (cast)inst->inst_i1->inst_c0;	\
-		} \
-                return;
-	
 #define FOLD_CXX(name,op,cast)	\
 	case name:	\
 		if (inst->inst_i0->opcode != OP_COMPARE)	\
@@ -318,3 +308,210 @@ mono_eval_cond_branch (MonoInst *ins)
 	return BRANCH_UNDEF;
 }
 
+#ifndef G_MININT32
+#define MYGINT32_MAX 2147483647
+#define G_MININT32 (-MYGINT32_MAX -1)
+#endif
+
+#define FOLD_UNOP2(name,op)	\
+	case name:	\
+	    ins->inst_c0 = op arg1->inst_c0; \
+        break;
+
+#define FOLD_BINOP2(name, op) \
+	case name:	\
+	    ins->inst_c0 = arg1->inst_c0 op arg2->inst_c0;	\
+        break;
+
+#define FOLD_BINOPC2(name,op,cast)	\
+	case name:	\
+	    ins->inst_c0 = (cast)arg1->inst_c0 op (cast)arg2->inst_c0;	\
+        break;
+
+#define FOLD_BINOPCXX2(name,op,cast)	\
+	case name:	\
+	    res = (cast)arg1->inst_c0 op (cast)arg2->inst_c0;	\
+        break; \
+
+void
+mono_constant_fold_ins2 (MonoInst *ins, MonoInst *arg1, MonoInst *arg2)
+{
+	switch (ins->opcode) {
+	case OP_IMUL:
+	case OP_IADD:
+	case OP_IAND:
+	case OP_IOR:
+	case OP_IXOR:
+		if (arg2->opcode == OP_ICONST) {
+			if (arg1->opcode == OP_ICONST) {
+				switch (ins->opcode) {
+					FOLD_BINOP2 (OP_IMUL, *);
+					FOLD_BINOP2 (OP_IADD, +);
+					FOLD_BINOP2 (OP_IAND, &);
+					FOLD_BINOP2 (OP_IOR, |);
+					FOLD_BINOP2 (OP_IXOR, ^);
+				}
+				ins->opcode = OP_ICONST;
+				ins->sreg1 = ins->sreg2 = -1;
+			}
+			else {
+				/* 
+				 * This is commutative so swap the arguments, allowing the _imm variant
+				 * to be used.
+				 */
+				ins->opcode = mono_op_to_op_imm (ins->opcode);
+				ins->sreg1 = ins->sreg2;
+				ins->sreg2 = -1;
+				ins->inst_c0 = arg2->inst_c0;
+			}
+		}
+		break;
+	case OP_ISUB:
+	case OP_ISHL:
+	case OP_ISHR:
+		if ((arg1->opcode == OP_ICONST) && (arg2->opcode == OP_ICONST)) {
+			switch (ins->opcode) {
+				FOLD_BINOP2 (OP_ISUB,-);
+				FOLD_BINOP2 (OP_ISHL,<<);
+				FOLD_BINOP2 (OP_ISHR,>>);
+			}
+			ins->opcode = OP_ICONST;
+			ins->sreg1 = ins->sreg2 = -1;
+		}
+		break;
+	case OP_IDIV:
+	case OP_IDIV_UN:
+	case OP_IREM:
+	case OP_IREM_UN:
+		if ((arg1->opcode == OP_ICONST) && (arg2->opcode == OP_ICONST)) {
+			if ((arg2->inst_c0 == 0) || ((arg1->inst_c0 == G_MININT32) && (arg2->inst_c0 == -1)))
+				return;
+			switch (ins->opcode) {
+				FOLD_BINOPC2 (OP_IDIV,/,gint32);
+				FOLD_BINOPC2 (OP_IDIV_UN,/,guint32);
+				FOLD_BINOPC2 (OP_IREM,%,gint32);
+				FOLD_BINOPC2 (OP_IREM_UN,%,guint32);
+			}
+			ins->opcode = OP_ICONST;
+			ins->sreg1 = ins->sreg2 = -1;
+		}
+		break;
+	case OP_ISHR_UN:
+		if ((arg1->opcode == OP_ICONST) && (arg2->opcode == OP_ICONST)) {
+			ins->opcode = OP_ICONST;
+			ins->inst_c0 = (guint32)arg1->inst_c0 >> (guint32)arg2->inst_c0;
+			ins->sreg1 = ins->sreg2 = -1;
+		}
+		break;
+		/* case OP_INEG: */
+	case OP_INOT:
+		/* FIXME: Can't fold INEG, since it sets cflags on x86, and LNEG depends on that */
+		if (arg1->opcode == OP_ICONST) {
+			switch (ins->opcode) {
+				FOLD_UNOP2 (OP_INEG,-);
+				FOLD_UNOP2 (OP_INOT,~);
+			}
+			ins->opcode = OP_ICONST;
+			ins->sreg1 = ins->sreg2 = -1;
+		}
+		break;
+
+	case OP_COMPARE:
+	case OP_ICOMPARE:
+	case OP_COMPARE_IMM:
+	case OP_ICOMPARE_IMM: {
+		MonoInst dummy_arg2;
+		if (ins->sreg2 == -1) {
+			arg2 = &dummy_arg2;
+			arg2->opcode = OP_ICONST;
+			arg2->inst_c0 = ins->inst_imm;
+		}
+
+		if ((arg1->opcode == OP_ICONST) && (arg2->opcode == OP_ICONST)) {
+			MonoInst *next = ins->next;
+			gboolean res;
+
+			switch (next->opcode) {
+			case OP_CEQ:
+			case OP_ICEQ:
+			case OP_CGT:
+			case OP_ICGT:
+			case OP_CGT_UN:
+			case OP_ICGT_UN:
+			case OP_CLT:
+			case OP_ICLT:
+			case OP_CLT_UN:
+			case OP_ICLT_UN:
+				switch (next->opcode) {
+					FOLD_BINOPCXX2 (OP_CEQ,==,gint32);
+					FOLD_BINOPCXX2 (OP_ICEQ,==,gint32);
+					FOLD_BINOPCXX2 (OP_CGT,>,gint32);
+					FOLD_BINOPCXX2 (OP_ICGT,>,gint32);
+					FOLD_BINOPCXX2 (OP_CGT_UN,>,guint32);
+					FOLD_BINOPCXX2 (OP_ICGT_UN,>,guint32);
+					FOLD_BINOPCXX2 (OP_CLT,<,gint32);
+					FOLD_BINOPCXX2 (OP_ICLT,<,gint32);
+					FOLD_BINOPCXX2 (OP_CLT_UN,<,guint32);
+					FOLD_BINOPCXX2 (OP_ICLT_UN,<,guint32);
+				}
+
+				ins->opcode = OP_NOP;
+				ins->sreg1 = ins->sreg2 = -1;
+				next->opcode = OP_ICONST;
+				next->inst_c0 = res;
+				next->sreg1 = next->sreg2 = -1;
+				break;
+			case OP_IBEQ:
+			case OP_IBNE_UN:
+			case OP_IBGT:
+			case OP_IBGT_UN:
+			case OP_IBGE:
+			case OP_IBGE_UN:
+			case OP_IBLT:
+			case OP_IBLT_UN:
+			case OP_IBLE:
+			case OP_IBLE_UN:
+				switch (next->opcode) {
+					FOLD_BINOPCXX2 (OP_IBEQ,==,gint32);
+					FOLD_BINOPCXX2 (OP_IBNE_UN,!=,guint32);
+					FOLD_BINOPCXX2 (OP_IBGT,>,gint32);
+					FOLD_BINOPCXX2 (OP_IBGT_UN,>,guint32);
+					FOLD_BINOPCXX2 (OP_IBGE,>=,gint32);
+					FOLD_BINOPCXX2 (OP_IBGE_UN,>=,guint32);
+					FOLD_BINOPCXX2 (OP_IBLT,<,gint32);
+					FOLD_BINOPCXX2 (OP_IBLT_UN,<,guint32);
+					FOLD_BINOPCXX2 (OP_IBLE,<=,gint32);
+					FOLD_BINOPCXX2 (OP_IBLE_UN,<=,guint32);
+				}
+
+				/* 
+				 * FIXME: Can't nullify OP_COMPARE since the decompose long branch 
+				 * opcodes depend on it being executed. Also, the branch might not
+				 * be eliminated after all if loop opts is disabled, for example.
+				 */
+				//ins->opcode = OP_NULL;
+				//ins->sreg1 = ins->sreg2 = -1;
+				if (res)
+					next->flags |= MONO_INST_CFOLD_TAKEN;
+				else
+					next->flags |= MONO_INST_CFOLD_NOT_TAKEN;
+				break;
+			default:
+				return;
+			}
+		}
+		break;
+	}
+
+		/* FIXME: Add back the OP_C optimizations */
+
+		/*
+		 * TODO: 
+		 * 	conv.* opcodes.
+		 * 	*ovf* opcodes? I'ts slow and hard to do in C.
+		 *      switch can be replaced by a simple jump 
+		 */
+	default:
+		return;
+	}
+}	

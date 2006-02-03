@@ -80,7 +80,7 @@
 static int ldind_to_load_membase (int opcode);
 static int stind_to_store_membase (int opcode);
 
-int op_to_op_imm (int opcode);
+int mono_op_to_op_imm (int opcode);
 
 gboolean  mono_arch_print_tree(MonoInst *tree, int arity);
 
@@ -6324,7 +6324,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 
 			/* Use the immediate opcodes if possible */
 			if ((sp [1]->opcode == OP_ICONST) && mono_arch_is_inst_imm (sp [1]->inst_c0)) {
-				int imm_opcode = op_to_op_imm (ins->opcode);
+				int imm_opcode = mono_op_to_op_imm (ins->opcode);
 				if (imm_opcode != -1) {
 					ins->opcode = imm_opcode;
 					ins->inst_p1 = (gpointer)(gssize)(sp [1]->inst_c0);
@@ -6367,7 +6367,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 
 			/* Use the immediate opcodes if possible */
 			if (((sp [1]->opcode == OP_ICONST) || (sp [1]->opcode == OP_I8CONST)) && mono_arch_is_inst_imm (sp [1]->opcode == OP_ICONST ? sp [1]->inst_c0 : sp [1]->inst_l)) {
-				int imm_opcode = op_to_op_imm (ins->opcode);
+				int imm_opcode = mono_op_to_op_imm (ins->opcode);
 				if (imm_opcode != -1) {
 					ins->opcode = imm_opcode;
 					if (sp [1]->opcode == OP_I8CONST) {
@@ -8538,7 +8538,7 @@ store_membase_reg_to_store_membase_imm (int opcode)
 }		
 
 int
-op_to_op_imm (int opcode)
+mono_op_to_op_imm (int opcode)
 {
 	switch (opcode) {
 	case OP_IADD:
@@ -8803,6 +8803,9 @@ mono_handle_local_vregs (MonoCompile *cfg)
 			case STACK_MP:
 				if (cfg->verbose_level > 2)
 					printf ("CONVERTED R%d(%d) TO VREG.\n", var->dreg, vmv->idx);
+
+				/* Avoid allocation to registers */
+				var->flags |= MONO_INST_VOLATILE;
 				cfg->vreg_to_inst ['i'][var->dreg] = NULL;
 				break;
 			}
@@ -9120,6 +9123,8 @@ mono_spill_global_vars (MonoCompile *cfg)
  * - spill_global_vars does not play nicely with the fp stack (loads are inserted at
  *   the wrong place).
  * - add OP_STR_CHAR_ADDR
+ * - add 'frequent check in generic code: box (struct), brtrue'
+ * - fix LNEG and enable cfold of INEG
  * - LAST MERGE: 55797
  */
 

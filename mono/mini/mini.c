@@ -64,13 +64,6 @@
 
 #include "aliasing.h"
 
-/* 
- * this is used to determine when some branch optimizations are possible: we exclude FP compares
- * because they have weird semantics with NaNs.
- */
-#define MONO_IS_COND_BRANCH_OP(ins) (((ins)->opcode >= CEE_BEQ && (ins)->opcode <= CEE_BLT_UN) || ((ins)->opcode >= OP_LBEQ && (ins)->opcode <= OP_LBLT_UN) || ((ins)->opcode >= OP_FBEQ && (ins)->opcode <= OP_FBLT_UN) || ((ins)->opcode >= OP_IBEQ && (ins)->opcode <= OP_IBLT_UN))
-#define MONO_IS_COND_BRANCH_NOFP(ins) (MONO_IS_COND_BRANCH_OP(ins) && !(((ins)->opcode >= OP_FBEQ) && ((ins)->opcode <= OP_FBLT_UN)) && (!(ins)->inst_left || (ins)->inst_left->inst_left->type != STACK_R8))
-
 #define MONO_CHECK_THIS(ins) (mono_method_signature (cfg->method)->hasthis && (ins)->ssa_op == MONO_SSA_LOAD && (ins)->inst_left->inst_c0 == 0)
 
 static void setup_stat_profiler (void);
@@ -78,8 +71,6 @@ gboolean  mono_arch_print_tree(MonoInst *tree, int arity);
 static gpointer mono_jit_compile_method_with_opt (MonoMethod *method, guint32 opt);
 static gpointer mono_jit_compile_method (MonoMethod *method);
 static gpointer mono_jit_find_compiled_method (MonoDomain *domain, MonoMethod *method);
-
-int op_to_op_imm (int opcode);
 
 static void handle_stobj (MonoCompile *cfg, MonoBasicBlock *bblock, MonoInst *dest, MonoInst *src, 
 			  const unsigned char *ip, MonoClass *klass, gboolean to_end, gboolean native);
@@ -8613,7 +8604,7 @@ optimize_branches (MonoCompile *cfg)
 
 						//mono_print_bb_code (bb);
 					}
-				}				
+				}
 			}
 		}
 	} while (changed && (niterations > 0));
@@ -8648,6 +8639,30 @@ optimize_branches (MonoCompile *cfg)
 			if (bb->out_count == 1) {
 				bbn = bb->out_bb [0];
 
+				if (bb->region == bbn->region && bb->next_bb == bbn) {
+					/* the blocks are in sequence anyway ... */
+
+					/* branches to the following block can be removed */
+					if (bb->last_ins && bb->last_ins->opcode == (cfg->new_ir ? OP_BR : CEE_BR)) {
+						bb->last_ins->opcode = cfg->new_ir ? OP_NOP : CEE_NOP;
+						changed = TRUE;
+						if (cfg->verbose_level > 2)
+							g_print ("br removal triggered %d -> %d\n", bb->block_num, bbn->block_num);
+					}
+
+					if (bbn->in_count == 1) {
+						if (bbn != cfg->bb_exit) {
+							if (cfg->verbose_level > 2)
+								g_print ("block merge triggered %d -> %d\n", bb->block_num, bbn->block_num);
+							merge_basic_blocks (bb, bbn);
+							changed = TRUE;
+						}
+
+						//mono_print_bb_code (bb);
+					}
+					break;
+				}
+
 				if (bb->last_ins && bb->last_ins->opcode == (cfg->new_ir ? OP_BR : CEE_BR)) {
 					bbn = bb->last_ins->inst_target_bb;
 					if (bb->region == bbn->region && bbn->code && bbn->code->opcode == (cfg->new_ir ? OP_BR : CEE_BR) &&
@@ -8667,8 +8682,20 @@ optimize_branches (MonoCompile *cfg)
 				}
 			} else if (bb->out_count == 2) {
 				if (bb->last_ins && MONO_IS_COND_BRANCH_NOFP (bb->last_ins)) {
-					int branch_result = cfg->new_ir ? BRANCH_UNDEF : mono_eval_cond_branch (bb->last_ins);
+					int branch_result;
 					MonoBasicBlock *taken_branch_target = NULL, *untaken_branch_target = NULL;
+
+					if (cfg->new_ir) {
+						if (bb->last_ins->flags & MONO_INST_CFOLD_TAKEN)
+							branch_result = BRANCH_TAKEN;
+						else if (bb->last_ins->flags & MONO_INST_CFOLD_NOT_TAKEN)
+							branch_result = BRANCH_NOT_TAKEN;
+						else
+							branch_result = BRANCH_UNDEF;
+					}
+					else
+						branch_result = mono_eval_cond_branch (bb->last_ins);
+
 					if (branch_result == BRANCH_TAKEN) {
 						taken_branch_target = bb->last_ins->inst_true_bb;
 						untaken_branch_target = bb->last_ins->inst_false_bb;
@@ -9422,17 +9449,26 @@ mono_local_cprop_bb2 (MonoCompile *cfg, MonoBasicBlock *bb,
 					srcindex = -1;
 					continue;
 				}
-#if SIZEOF_VOID_P
+#if SIZEOF_VOID_P == 8
 				/* FIXME: Make is_inst_imm a macro */
-				else if (((def->opcode == OP_ICONST) || (def->opcode == OP_I8CONST)) && mono_arch_is_inst_imm (def->inst_c0)) {
+				else if (((def->opcode == OP_ICONST) || (def->opcode == OP_I8CONST)) && mono_arch_is_inst_imm (def->inst_c0))
 #else
-				else if (def->opcode == OP_ICONST) {
+				else if (def->opcode == OP_ICONST)
 #endif
-					guint32 opcode2 = op_to_op_imm (ins->opcode);
+				{
+					guint32 opcode2 = mono_op_to_op_imm (ins->opcode);
 
 					/* srcindex == 1 -> binop, ins->sreg2 == -1 -> unop */
-					if ((opcode2 != -1) && ((srcindex == 1) || (ins->sreg2 == -1))) {
-						//printf ("CONST FOLD: %s -> %s!\n", mono_inst_name (ins->opcode), mono_inst_name (opcode2));
+					if ((srcindex == 1) && (ins->sreg1 != -1) && defs [ins->sreg1] && (defs [ins->sreg1]->opcode == OP_ICONST) && defs [ins->sreg2]) {
+						/* Both arguments are constants, perform cfold */
+						mono_constant_fold_ins2 (ins, defs [ins->sreg1], defs [ins->sreg2]);
+					} else if ((srcindex == 0) && (ins->sreg2 != -1) && defs [ins->sreg2]) {
+						/* Arg 1 is constant, swap arguments if possible */
+						mono_constant_fold_ins2 (ins, defs [ins->sreg1], defs [ins->sreg2]);						
+					} else if ((srcindex == 0) && (ins->sreg2 == -1)) {
+						/* Constant unop, perform cfold */
+						mono_constant_fold_ins2 (ins, defs [ins->sreg1], NULL);
+					} else if ((opcode2 != -1) && ((srcindex == 1) || (ins->sreg2 == -1))) {
 						ins->opcode = opcode2;
 						ins->inst_imm = def->inst_c0;
 						if (srcindex == 0)
@@ -9455,6 +9491,61 @@ mono_local_cprop_bb2 (MonoCompile *cfg, MonoBasicBlock *bb,
 					ins->inst_offset += def->inst_imm;					
 				}
 			}
+		}
+
+		/* Do strength reduction here */
+		/* FIXME: Add long/float */
+		switch (ins->opcode) {
+		case OP_ADD_IMM:
+		case OP_IADD_IMM:
+		case OP_SUB_IMM:
+		case OP_ISUB_IMM:
+			if (ins->inst_imm == 0) {
+				ins->opcode = OP_MOVE;
+				spec = ins_info [ins->opcode - OP_START - 1];
+			}
+			break;
+		case OP_MUL_IMM:
+		case OP_IMUL_IMM:
+            if (ins->inst_imm == 0) {
+				ins->opcode = OP_NOP;
+				ins->sreg1 = -1;
+			} else if (ins->inst_imm == 1) {
+				ins->opcode = OP_MOVE;
+			}
+			else if ((ins->inst_imm == OP_IMUL_IMM) && (ins->inst_imm == -1)) {
+				ins->opcode = OP_INEG;
+			}
+			else {
+ 		        int power2 = mono_is_power_of_two (ins->inst_imm);
+				if (power2 >= 0) {
+					ins->opcode = (ins->opcode == OP_MUL_IMM) ? OP_SHL_IMM : OP_ISHL_IMM;
+					ins->inst_imm = power2;
+				}
+			}
+			spec = ins_info [ins->opcode - OP_START - 1];
+			break;
+		case OP_IREM_UN:
+		case OP_IDIV_UN:
+			/* There is no _IMM version of these opcodes, so do the consprop as well */
+			if (defs [ins->sreg2] && defs [ins->sreg2]->opcode == OP_ICONST) {
+				int c = defs [ins->sreg2]->inst_c0;
+				int power2 = mono_is_power_of_two (c);
+
+				if (power2 >= 0) {
+					if (ins->opcode == OP_IREM_UN) {
+						ins->opcode = OP_IAND_IMM;
+						ins->sreg2 = -1;
+						ins->inst_imm = (1 << power2) - 1;
+					} else if (ins->opcode == OP_IDIV_UN) {
+						ins->opcode = OP_ISHR_UN_IMM;
+						ins->sreg2 = -1;
+						ins->inst_imm = power2;
+					}
+				}
+				spec = ins_info [ins->opcode - OP_START - 1];
+			}
+			break;
 		}
 			
 		if (spec [MONO_INST_DEST] == 'i') {
@@ -9852,6 +9943,10 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 	if (cfg->new_ir)
 		mono_decompose_long_opts (cfg);
 
+	if (cfg->new_ir)
+		/* Should be done before branch opts */
+		mono_local_cprop2 (cfg);
+
 	if (cfg->opt & MONO_OPT_BRANCH)
 		optimize_branches (cfg);
 
@@ -9893,17 +9988,17 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 		mono_compute_natural_loops (cfg);
 	}
 
-	/* after method_to_ir */
-	if (parts == 1)
-		return cfg;
 
 	if (cfg->new_ir) {
-		mono_local_cprop2 (cfg);
-
 		/* This must be done _before_ global reg alloc and _after_ decompose */
 		mono_handle_global_vregs (cfg);
 		mono_local_deadce (cfg);
 	}
+
+
+	/* after method_to_ir */
+	if (parts == 1)
+		return cfg;
 
 //#define DEBUGSSA "logic_run"
 #define DEBUGSSA_CLASS "Tests"

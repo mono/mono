@@ -94,6 +94,14 @@ enum {
 		}	\
 	} while (0)
 
+
+/* 
+ * this is used to determine when some branch optimizations are possible: we exclude FP compares
+ * because they have weird semantics with NaNs.
+ */
+#define MONO_IS_COND_BRANCH_OP(ins) (((ins)->opcode >= CEE_BEQ && (ins)->opcode <= CEE_BLT_UN) || ((ins)->opcode >= OP_LBEQ && (ins)->opcode <= OP_LBLT_UN) || ((ins)->opcode >= OP_FBEQ && (ins)->opcode <= OP_FBLT_UN) || ((ins)->opcode >= OP_IBEQ && (ins)->opcode <= OP_IBLT_UN))
+#define MONO_IS_COND_BRANCH_NOFP(ins) (MONO_IS_COND_BRANCH_OP(ins) && !(((ins)->opcode >= OP_FBEQ) && ((ins)->opcode <= OP_FBLT_UN)) && (!(ins)->inst_left || (ins)->inst_left->inst_left->type != STACK_R8))
+
 #define MONO_IS_LOAD_MEMBASE(ins) (((ins)->opcode >= OP_LOAD_MEMBASE) && ((ins)->opcode <= OP_LOADR8_MEMBASE))
 #define MONO_IS_STORE_MEMBASE(ins) (((ins)->opcode >= OP_STORE_MEMBASE_REG) && ((ins)->opcode <= OP_STOREI8_MEMBASE_IMM))
 #define MONO_IS_STORE_MEMINDEX(ins) (((ins)->opcode >= OP_STORE_MEMINDEX) && ((ins)->opcode <= OP_STORER8_MEMINDEX))
@@ -315,6 +323,8 @@ enum {
 	MONO_INST_BRLABEL    = 4,
 	MONO_INST_NOTYPECHECK    = 4,
 	MONO_INST_UNALIGNED  = 8,
+    MONO_INST_CFOLD_TAKEN = 8, /* On branches */
+    MONO_INST_CFOLD_NOT_TAKEN = 16, /* On branches */
 	/* the address of the variable has been taken */
 	MONO_INST_INDIRECT   = 16,
 	MONO_INST_NORANGECHECK   = 16
@@ -867,6 +877,7 @@ int       mono_parse_default_optimizations  (const char* p);
 void      mono_bblock_add_inst              (MonoBasicBlock *bb, MonoInst *inst);
 void      mono_constant_fold                (MonoCompile *cfg);
 void      mono_constant_fold_inst           (MonoInst *inst, gpointer data);
+void      mono_constant_fold_ins2           (MonoInst *ins, MonoInst *arg1, MonoInst *arg2);
 int       mono_eval_cond_branch             (MonoInst *branch);
 int       mono_is_power_of_two              (guint32 val);
 void      mono_cprop_local                  (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst **acp, int acp_size);
@@ -891,6 +902,7 @@ void      mono_print_method_from_ip         (void *ip);
 char     *mono_pmip                         (void *ip);
 void      mono_select_instructions          (MonoCompile *cfg);
 const char* mono_inst_name                  (int op);
+int       mono_op_to_op_imm                 (int opcode);
 void      mono_inst_foreach                 (MonoInst *tree, MonoInstFunc func, gpointer data);
 void      mono_disassemble_code             (MonoCompile *cfg, guint8 *code, int size, char *id);
 guint     mono_type_to_ldind                (MonoType *t);
