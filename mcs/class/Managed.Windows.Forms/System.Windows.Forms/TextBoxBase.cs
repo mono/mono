@@ -562,7 +562,7 @@ namespace System.Windows.Forms {
 
 		protected override System.Drawing.Size DefaultSize {
 			get {
-				return base.DefaultSize;
+				return new Size(100, 20);
 			}
 		}
 		#endregion	// Protected Instance Properties
@@ -1075,7 +1075,7 @@ namespace System.Windows.Forms {
 			// Make sure we don't get sized bigger than we want to be
 			if (!richtext) {
 				if (!multiline) {
-					if (height > PreferredHeight) {
+					if (height != PreferredHeight) {
 						requested_height = height;
 						height = PreferredHeight;
 						specified |= BoundsSpecified.Height;

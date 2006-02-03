@@ -1168,8 +1168,8 @@ namespace System.Windows.Forms {
 			// http://blogs.msdn.com/mharsh/archive/2004/01/25/62621.aspx
 			// but it makes things larger without looking better.
 			//
-			Scale (current_size_f.Width / AutoScaleBaseSize.Width,
-			       current_size_f.Height / AutoScaleBaseSize.Height);
+			Scale (current_size_f.Width / AutoScaleBaseSize.Width + 0.08f,
+			       current_size_f.Height / AutoScaleBaseSize.Height + 0.08f);
 			
 			AutoScaleBaseSize = current_size;
 		}

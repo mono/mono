@@ -1,3 +1,16 @@
+2006-02-02  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* Control.cs: 
+	  - ScaleCore needs to scale the bounds, not the ClientSize of the 
+	    control. Fixes #77416.
+	  - DefaultSize is 0,0 for control
+	* TextBoxBase.cs: 
+	  - DefaultSize is 100, 20
+	  - SetBoundsCore: Now enforcing the height, no matter if the provided
+	    height is more or less than the preferred one, as long as AutoSize
+	    is on
+	* Form.cs: Apply documented fudge factor. Part of item 3 fix for #77416
+
 2006-02-02  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* Control.cs:

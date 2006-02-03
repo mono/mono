@@ -2321,7 +2321,7 @@ namespace System.Windows.Forms
 
 		protected virtual Size DefaultSize {
 			get {
-				return new Size(100, 23);
+				return new Size(0, 0);
 			}
 		}
 
@@ -3365,7 +3365,6 @@ namespace System.Windows.Forms
 
 			location = new Point((int)(Left * dx), (int)(Top * dy));
 			size = this.ClientSize;
-			
 
 			if (!GetStyle(ControlStyles.FixedWidth)) {
 				size.Width = (int)(size.Width * dx);
@@ -3375,8 +3374,7 @@ namespace System.Windows.Forms
 				size.Height = (int)(size.Height * dy);
 			}
 
-			Location = location;
-			ClientSize = size;
+			SetBoundsCore(location.X, location.Y, size.Width, size.Height, BoundsSpecified.All);
 
 			/* Now scale our children */
 			Control [] controls = child_controls.GetAllControls ();
