@@ -3253,12 +3253,6 @@ namespace System.Windows.Forms
 			if (IsHandleCreated) {
 				DestroyHandle();
 				CreateHandle();
-
-				// FIXME ZOrder?
-
-				while (child.MoveNext()) {
-					((Control)child.Current).RecreateHandle();
-				}
 			} else {
 				if (!is_created) {
 					CreateControl();

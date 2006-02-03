@@ -1,3 +1,13 @@
+2006-02-03  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* Control.cs (RecreateHandle): No need to re-create any child
+	  controls, the child windows will get destroyed automatically by
+	  the windowing system or driver, and re-created when the handle
+	  is being accessed the first time. Fixes #77456
+	* Form.cs: No longer setting the form to closing if the handle is 
+	  being recreated. This seems like the right thing to do, don't
+	  have a bug or testcase for this, though.
+
 2006-02-02  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* FileDialog.cs: Suspend/Resume layouting when changing sizes of
