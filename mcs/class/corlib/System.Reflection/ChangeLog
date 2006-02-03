@@ -1,3 +1,8 @@
+2006-02-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* MethodBase.cs MonoMethod.cs: Implement IsGenericMethod property.
+	Fixes #77460.
+
 2005-12-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Assembly.cs: Fixed #75950. The icall has been changed to accept a 
