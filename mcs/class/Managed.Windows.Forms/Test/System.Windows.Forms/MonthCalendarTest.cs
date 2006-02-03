@@ -13,7 +13,7 @@ using System.Drawing;
 using System.Reflection;
 using NUnit.Framework;
 
-namespace MonoTests.Syetem.Windows.Forms
+namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
 	[Ignore ("This test has to be completly reviewed")]	

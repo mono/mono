@@ -17,7 +17,6 @@ using NUnit.Framework;
 namespace MWF.MonoTest
 {
 	[TestFixture]
-	[Ignore ("This test has to be completly reviewed")]
 	public class ControlTest
 	{
 		internal static void TestAccessibility(Control c, string Default, string Description, string Name, AccessibleRole Role) {
@@ -741,6 +740,51 @@ namespace MWF.MonoTest
 				if (d != null)
 					d.Dispose ();
 			}
+		}
+
+		
+		public class LayoutTestControl : Control {
+			public int LayoutCount;
+
+			public LayoutTestControl () : base() {
+				LayoutCount = 0;
+			}
+
+			protected override void OnLayout(LayoutEventArgs levent) {
+				LayoutCount++;
+				base.OnLayout (levent);
+			}
+		}
+
+		[Test]
+		public void LayoutTest() {
+			LayoutTestControl c;
+
+			c = new LayoutTestControl();
+
+			c.SuspendLayout();
+			c.SuspendLayout();
+			c.SuspendLayout();
+			c.SuspendLayout();
+
+			c.ResumeLayout(true);
+			c.PerformLayout();
+			c.ResumeLayout(true);
+			c.PerformLayout();
+			c.ResumeLayout(true);
+			c.PerformLayout();
+			c.ResumeLayout(true);
+			c.PerformLayout();
+			c.ResumeLayout(true);
+			c.PerformLayout();
+			c.ResumeLayout(true);
+			c.PerformLayout();
+			c.ResumeLayout(true);
+			c.PerformLayout();
+			c.SuspendLayout();
+			c.PerformLayout();
+
+			Assert.AreEqual(5, c.LayoutCount, "Layout Suspend/Resume locking does not bottom out at 0");
 		}
 	}
 }
