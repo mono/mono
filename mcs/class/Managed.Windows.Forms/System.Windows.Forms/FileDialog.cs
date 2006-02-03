@@ -173,14 +173,12 @@ namespace System.Windows.Forms
 		public string[] FileNames
 		{
 			get {
-				if ( multiSelect ) {
+					if (fileNames == null || fileNames.Length == 0)
+						return null;
 				
 					string[] new_filenames = new string[fileNames.Length];
 					fileNames.CopyTo(new_filenames, 0);
 					return new_filenames;
-				}
-				
-				return null;
 			}
 		}
 		
