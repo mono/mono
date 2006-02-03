@@ -210,6 +210,12 @@ namespace System.Reflection {
 				throw new NotSupportedException ();
 			}
 		}
+
+		public virtual bool IsGenericMethod {
+			get {
+				return false;
+			}
+		}
 #endif
 
 #if NET_2_0

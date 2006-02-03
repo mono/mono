@@ -296,6 +296,12 @@ namespace System.Reflection {
 			[MethodImplAttribute(MethodImplOptions.InternalCall)]
 			get;
 		}
+
+		public override bool IsGenericMethod {
+			get {
+				return IsGenericMethodDefinition || Mono_IsInflatedMethod;
+			}
+		}
 #endif
 
 #if NET_2_0
