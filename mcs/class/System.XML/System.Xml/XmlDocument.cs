@@ -306,13 +306,14 @@ namespace System.Xml
 
 		public virtual XmlAttribute CreateAttribute (string prefix, string localName, string namespaceURI)
 		{
-			if ((localName == null) || (localName == String.Empty))
-				throw new ArgumentException ("The attribute local name cannot be empty.");
 			return CreateAttribute (prefix, localName, namespaceURI, false, true);
 		}
 
 		internal XmlAttribute CreateAttribute (string prefix, string localName, string namespaceURI, bool atomizedNames, bool checkNamespace)
 		{
+			if ((localName == null) || (localName == String.Empty))
+				throw new ArgumentException ("The attribute local name cannot be empty.");
+
 			return new XmlAttribute (prefix, localName, namespaceURI, this, atomizedNames, checkNamespace);
 		}
 
@@ -374,23 +375,10 @@ namespace System.Xml
 		{
 			if ((localName == null) || (localName == String.Empty))
 				throw new ArgumentException ("The local name for elements or attributes cannot be null or an empty string.");
-			if (prefix == null)
-				prefix = String.Empty;
-			if (namespaceURI == null)
-				namespaceURI = String.Empty;
-			return CreateElement (prefix, localName, namespaceURI, false);
-		}
-
-		internal XmlElement CreateElement (
-			string prefix,
-			string localName,
-			string namespaceURI,
-			bool atomizedNames)
-		{
 			// LAMESPEC: MS.NET has a weird behavior that they can Load() from XmlTextReader 
 			// whose Namespaces = false, but their CreateElement() never allows qualified name.
 			// I leave it as it is.
-			return new XmlElement (prefix, localName, namespaceURI, this, atomizedNames);
+			return new XmlElement (prefix != null ? prefix : String.Empty, localName, namespaceURI != null ? namespaceURI : String.Empty, this, false);
 		}
 
 		public virtual XmlEntityReference CreateEntityReference (string name)
@@ -780,7 +768,7 @@ namespace System.Xml
 				reader.MoveToFirstAttribute ();
 			else if (reader.NodeType != XmlNodeType.Attribute)
 				throw new InvalidOperationException (MakeReaderErrorMessage ("bad position to read attribute.", reader));
-			XmlAttribute attribute = CreateAttribute (reader.Prefix, reader.LocalName, reader.NamespaceURI, reader.NameTable == NameTable, false); // different NameTable
+			XmlAttribute attribute = CreateAttribute (reader.Prefix, reader.LocalName, reader.NamespaceURI, false, false); // different NameTable
 #if NET_2_0
 			if (reader.SchemaInfo != null)
 				SchemaInfo = new XmlSchemaInfo (reader.SchemaInfo);
@@ -844,7 +832,7 @@ namespace System.Xml
 				break;
 
 			case XmlNodeType.Element:
-				XmlElement element = CreateElement (reader.Prefix, reader.LocalName, reader.NamespaceURI, reader.NameTable == NameTable);
+				XmlElement element = CreateElement (reader.Prefix, reader.LocalName, reader.NamespaceURI);
 #if NET_2_0
 				if (reader.SchemaInfo != null)
 					SchemaInfo = new XmlSchemaInfo (reader.SchemaInfo);
