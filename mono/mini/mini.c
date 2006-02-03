@@ -10292,13 +10292,11 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 				/* we are careful when inverting, since bugs like #59580
 				 * could show up when dealing with NaNs.
 				 */
-				/* FIXME: */
 				if (MONO_IS_COND_BRANCH_NOFP(bb->last_ins) && bb->next_bb == bb->last_ins->inst_true_bb) {
 					MonoBasicBlock *tmp =  bb->last_ins->inst_true_bb;
 					bb->last_ins->inst_true_bb = bb->last_ins->inst_false_bb;
 					bb->last_ins->inst_false_bb = tmp;
 
-					printf ("HIT!\n");
 					bb->last_ins->opcode = reverse_branch_op (bb->last_ins->opcode);
 				} else {			
 					MonoInst *inst = mono_mempool_alloc0 (cfg->mempool, sizeof (MonoInst));
