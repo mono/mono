@@ -1747,6 +1747,19 @@ namespace System.Net.Sockets
 				throw new SocketException (error);
 		}
 
+#if NET_2_0
+		public void SetSocketOption (SocketOptionLevel level, SocketOptionName name, bool optionValue)
+		{
+			if (disposed && closed)
+				throw new ObjectDisposedException (GetType ().ToString ());
+
+			int error;
+			int int_val = (optionValue) ? 1 : 0;
+			SetSocketOption_internal (socket, level, name, null, null, int_val, out error);
+			if (error != 0)
+				throw new SocketException (error);
+		}
+#endif
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static void Shutdown_internal(IntPtr socket, SocketShutdown how, out int error);
 		
