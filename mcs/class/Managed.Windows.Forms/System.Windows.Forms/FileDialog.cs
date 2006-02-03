@@ -173,8 +173,10 @@ namespace System.Windows.Forms
 		public string[] FileNames
 		{
 			get {
-					if (fileNames == null || fileNames.Length == 0)
-						return null;
+					if (fileNames == null || fileNames.Length == 0) {
+						string[] null_nada_nothing_filenames = new string[0];
+						return null_nada_nothing_filenames;
+					}
 				
 					string[] new_filenames = new string[fileNames.Length];
 					fileNames.CopyTo(new_filenames, 0);
