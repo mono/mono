@@ -1287,21 +1287,6 @@ namespace System.Windows.Forms {
 				this.is_visible = visible;
 			}
 
-			if (!IsMdiChild) {
-				switch (StartPosition) {
-				case FormStartPosition.CenterScreen:
-					this.CenterToScreen();
-					break;
-				case FormStartPosition.CenterParent:
-					this.CenterToParent ();
-					break;
-				}
-			} else {
-				Left = 25 * MdiParent.MdiContainer.ChildrenCreated + 1;
-				Top = 25 * MdiParent.MdiContainer.ChildrenCreated + 1;
-				MdiParent.MdiContainer.ChildrenCreated++;
-			}
-
 			if (menu != null) {
 				XplatUI.SetMenu(window.Handle, menu);
 			}
@@ -1354,10 +1339,27 @@ namespace System.Windows.Forms {
 			if (Load != null) {
 				Load(this, e);
 			}
+
 			if (AutoScale){
 				ApplyAutoScaling ();
 				AutoScale = false;
 			}
+
+			if (!IsMdiChild) {
+				switch (StartPosition) {
+					case FormStartPosition.CenterScreen:
+						this.CenterToScreen();
+						break;
+					case FormStartPosition.CenterParent:
+						this.CenterToParent ();
+						break;
+				}
+			} else {
+				Left = 25 * MdiParent.MdiContainer.ChildrenCreated + 1;
+				Top = 25 * MdiParent.MdiContainer.ChildrenCreated + 1;
+				MdiParent.MdiContainer.ChildrenCreated++;
+			}
+
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
