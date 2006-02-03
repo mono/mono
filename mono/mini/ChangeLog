@@ -1,3 +1,9 @@
+
+Fri Feb 3 18:51:35 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: change optimize_branches () to use a single loop
+	and introduce a new optimization to simplify some range checks.
+
 2006-02-03  Martin Baulig  <martin@ximian.com>
 
 	* debug-debugger.c (debugger_thread_manager_thread_created): Removed
