@@ -116,7 +116,16 @@ public class UTF8Encoding : Encoding
 			ch = chars[index];
 			if (pair == 0) {
 				if (ch < '\u0080') {
-					++length;
+					// fast path optimization
+					int end = index + count;
+					for (; index < end; index++, count--) {
+						if (chars [index] < '\x80')
+							++length;
+						else
+							break;
+					}
+					continue;
+					//length++;
 				} else if (ch < '\u0800') {
 					length += 2;
 				} else if (ch >= '\uD800' && ch <= '\uDBFF') {
@@ -258,8 +267,19 @@ public class UTF8Encoding : Encoding
 			// Fetch the next UTF-16 character pair value.
 			ch = chars [charIndex];
 			if (pair == '\0') {
-				if (ch < '\uD800' || ch >= '\uE000')
+				if (ch < '\uD800' || ch >= '\uE000') {
+					if (ch < '\x80') { // fast path optimization
+						int end = charIndex + charCount;
+						for (; charIndex < end; posn++, charIndex++, charCount--) {
+							if (chars [charIndex] < '\x80')
+								bytes [posn] = (byte) chars [charIndex];
+							else
+								break;
+						}
+						continue;
+					}
 					code = ch;
+				}
 				else if (ch < '\uDC00') {
 					// surrogate start
 					pair = ch;

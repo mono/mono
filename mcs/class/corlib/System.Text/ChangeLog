@@ -1,4 +1,9 @@
-2006-02-02  Atsushi Enomoto  <atsushi@ximian.com>
+2006-02-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* UTF8Encoding.cs : Fast path optimization for InternalGetByteCount()
+	  and InternalGetBytes().
+
+2006-02-03  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* UTF8Encoding.cs :
 	  actually leftover bits needs more careful handleding. So it's
@@ -6,7 +11,7 @@
 	  Also changed leftOver handling so that it will be able to support
 	  fallback.
 
-2006-02-02  Atsushi Enomoto  <atsushi@ximian.com>
+2006-02-03  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* UTF8Encoding.cs :
 	  GetBytes(string, ...) could reuse InternalGetBytes() using fixed
