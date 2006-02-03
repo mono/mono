@@ -1,6 +1,14 @@
 2006-02-02  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* UTF8Encoding.cs :
+	  actually leftover bits needs more careful handleding. So it's
+	  better to be rather close to the original GetBytes().
+	  Also changed leftOver handling so that it will be able to support
+	  fallback.
+
+2006-02-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* UTF8Encoding.cs :
 	  GetBytes(string, ...) could reuse InternalGetBytes() using fixed
 	  pointers. However, InternalGetBytes() was slower than
 	  GetBytes(string, ...), so first replaced existing InternalGetBytes()

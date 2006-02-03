@@ -74,7 +74,7 @@ public class UTF8Encoding : Encoding
 
 	// Internal version of "GetByteCount" which can handle a rolling
 	// state between multiple calls to this method.
-	private static int InternalGetByteCount (char[] chars, int index, int count, ref uint leftOver, bool flush)
+	private static int InternalGetByteCount (char[] chars, int index, int count, ref char leftOver, bool flush)
 	{
 		// Validate the parameters.
 		if (chars == null) {
@@ -88,9 +88,9 @@ public class UTF8Encoding : Encoding
 		}
 
 		if (index == chars.Length) {
-			if (flush && leftOver != 0) {
+			if (flush && leftOver != '\0') {
 				// Flush the left-over surrogate pair start.
-				leftOver = 0;
+				leftOver = '\0';
 				return 3;
 			}
 			return 0;
@@ -104,14 +104,14 @@ public class UTF8Encoding : Encoding
 	}
 
 
-	private unsafe static int InternalGetByteCount (char* chars, int count, ref uint leftOver, bool flush)
+	private unsafe static int InternalGetByteCount (char* chars, int count, ref char leftOver, bool flush)
 	{
 		int index = 0;
 
 		// Determine the lengths of all characters.
 		char ch;
 		int length = 0;
-		uint pair = leftOver;
+		char pair = leftOver;
 		while (count > 0) {
 			ch = chars[index];
 			if (pair == 0) {
@@ -121,14 +121,23 @@ public class UTF8Encoding : Encoding
 					length += 2;
 				} else if (ch >= '\uD800' && ch <= '\uDBFF') {
 					// This is the start of a surrogate pair.
-					pair = (uint)ch;
+					pair = ch;
 				} else {
 					length += 3;
 				}
 			} else if (ch >= '\uDC00' && ch <= '\uDFFF') {
-				// We have a surrogate pair.
-				length += 4;
-				pair = 0;
+				if (pair != 0) {
+					// We have a surrogate pair.
+					length += 4;
+					pair = '\0';
+				} else {
+					// We have a surrogate tail without 
+					// leading surrogate. In NET_2_0 it
+					// uses fallback. In NET_1_1 we output
+					// wrong surrogate.
+					length += 3;
+					pair = '\0';
+				}
 			} else {
 				// We have a surrogate start followed by a
 				// regular character.  Technically, this is
@@ -136,18 +145,20 @@ public class UTF8Encoding : Encoding
 				// We write out the surrogate start and then
 				// re-visit the current character again.
 				length += 3;
-				pair = 0;
+				pair = '\0';
 				continue;
 			}
 			++index;
 			--count;
 		}
-		if (flush && pair != 0) {
-			// Flush the left-over surrogate pair start.
-			length += 3;
+		if (flush) {
+			if (pair != '\0')
+				// Flush the left-over surrogate pair start.
+				length += 3;
+			leftOver = '\0';
 		}
-
-		leftOver = pair;
+		else
+			leftOver = pair;
 
 		// Return the final length to the caller.
 		return length;
@@ -156,7 +167,7 @@ public class UTF8Encoding : Encoding
 	// Get the number of bytes needed to encode a character buffer.
 	public override int GetByteCount (char[] chars, int index, int count)
 	{
-		uint dummy = 0;
+		char dummy = '\0';
 		return InternalGetByteCount (chars, index, count, ref dummy, true);
 	}
 
@@ -170,7 +181,7 @@ public class UTF8Encoding : Encoding
 
 		unsafe {
 			fixed (char* cptr = s) {
-				uint dummy = 0;
+				char dummy = '\0';
 				return InternalGetByteCount (cptr, s.Length, ref dummy, true);
 			}
 		}
@@ -184,7 +195,7 @@ public class UTF8Encoding : Encoding
 	// state between multiple calls to this method.
 	private static int InternalGetBytes (char[] chars, int charIndex,
 					     int charCount, byte[] bytes,
-					     int byteIndex, ref uint leftOver,
+					     int byteIndex, ref char leftOver,
 					     bool flush)
 	{
 		// Validate the parameters.
@@ -210,7 +221,7 @@ public class UTF8Encoding : Encoding
 				bytes [byteIndex++] = 0xEF;
 				bytes [byteIndex++] = 0xBB;
 				bytes [byteIndex++] = 0xBF;
-				leftOver = 0;
+				leftOver = '\0';
 				return 3;
 			}
 			return 0;
@@ -230,7 +241,7 @@ public class UTF8Encoding : Encoding
 
 	private unsafe static int InternalGetBytes (char* chars, int charCount,
 					     byte* bytes, int byteCount,
-					     ref uint leftOver, bool flush)
+					     ref char leftOver, bool flush)
 	{
 		int charIndex = 0;
 		int byteIndex = 0;
@@ -239,77 +250,113 @@ public class UTF8Encoding : Encoding
 		// Convert the characters into bytes.
 		char ch;
 		int length = byteCount;
-		uint pair = leftOver;
+		char pair = leftOver;
 		int posn = byteIndex;
+		int code = 0;
 
 		while (charCount > 0) {
 			// Fetch the next UTF-16 character pair value.
-			ch = chars [charIndex++];
-			if (ch >= '\uD800' && ch <= '\uDBFF' && charCount > 1) {
-				// This may be the start of a surrogate pair.
-				pair = (uint) chars [charIndex];
-				if (pair >= 0xDC00 && pair <= 0xDFFF) {
-					pair = pair - 0xDC00 +
-						(((uint) ch - 0xD800) << 10) +
-						0x10000;
+			ch = chars [charIndex];
+			if (pair == '\0') {
+				if (ch < '\uD800' || ch >= '\uE000')
+					code = ch;
+				else if (ch < '\uDC00') {
+					// surrogate start
+					pair = ch;
 					++charIndex;
 					--charCount;
-				} else {
-					pair = (uint) ch;
+					continue;
+				} else { // ch <= '\uDFFF'
+					// We have a surrogate tail without leading 
+					// surrogate. In NET_2_0 it uses fallback.
+					// In NET_1_1 we output wrong surrogate.
+					if ((posn + 3) > length) {
+						throw new ArgumentException (_("Arg_InsufficientSpace"), "bytes");
+					}
+					bytes [posn++] = (byte) (0xE0 | (ch >> 12));
+					bytes [posn++] = (byte) (0x80 | ((ch >> 6) & 0x3F));
+					bytes [posn++] = (byte) (0x80 | (ch & 0x3F));
+					++charIndex;
+					--charCount;
+					continue;
 				}
 			} else {
-				pair = (uint) ch;
+				if ('\uDC00' <= ch && ch <= '\uDFFF')
+					code =  0x10000 + (int) ch - 0xDC00 +
+						(((int) pair - 0xD800) << 10);
+				else {
+					// We have a surrogate start followed by a
+					// regular character.  Technically, this is
+					// invalid, but we have to do something.
+					// We write out the surrogate start and then
+					// re-visit the current character again.
+					if ((posn + 3) > length) {
+						throw new ArgumentException (_("Arg_InsufficientSpace"), "bytes");
+					}
+					bytes [posn++] = (byte) (0xE0 | (pair >> 12));
+					bytes [posn++] = (byte) (0x80 | ((pair >> 6) & 0x3F));
+					bytes [posn++] = (byte) (0x80 | (pair & 0x3F));
+					pair = '\0';
+					continue;
+				}
+				pair = '\0';
 			}
+			++charIndex;
 			--charCount;
 
 			// Encode the character pair value.
-			if (pair < 0x0080) {
+			if (code < 0x0080) {
 				if (posn >= length)
 					throw new ArgumentException (_("Arg_InsufficientSpace"), "bytes");
-				bytes [posn++] = (byte)pair;
-			} else if (pair < 0x0800) {
+				bytes [posn++] = (byte)code;
+			} else if (code < 0x0800) {
 				if ((posn + 2) > length)
 					throw new ArgumentException (_("Arg_InsufficientSpace"), "bytes");
-				bytes [posn++] = (byte) (0xC0 | (pair >> 6));
-				bytes [posn++] = (byte) (0x80 | (pair & 0x3F));
-			} else if (pair < 0x10000) {
+				bytes [posn++] = (byte) (0xC0 | (code >> 6));
+				bytes [posn++] = (byte) (0x80 | (code & 0x3F));
+			} else if (code < 0x10000) {
 				if ((posn + 3) > length)
 					throw new ArgumentException (_("Arg_InsufficientSpace"), "bytes");
-				bytes [posn++] = (byte) (0xE0 | (pair >> 12));
-				bytes [posn++] = (byte) (0x80 | ((pair >> 6) & 0x3F));
-				bytes [posn++] = (byte) (0x80 | (pair & 0x3F));
+				bytes [posn++] = (byte) (0xE0 | (code >> 12));
+				bytes [posn++] = (byte) (0x80 | ((code >> 6) & 0x3F));
+				bytes [posn++] = (byte) (0x80 | (code & 0x3F));
 			} else {
 				if ((posn + 4) > length)
 					throw new ArgumentException (_("Arg_InsufficientSpace"), "bytes");
-				bytes [posn++] = (byte) (0xF0 | (pair >> 18));
-				bytes [posn++] = (byte) (0x80 | ((pair >> 12) & 0x3F));
+				bytes [posn++] = (byte) (0xF0 | (code >> 18));
+				bytes [posn++] = (byte) (0x80 | ((code >> 12) & 0x3F));
+				bytes [posn++] = (byte) (0x80 | ((code >> 6) & 0x3F));
+				bytes [posn++] = (byte) (0x80 | (code & 0x3F));
+			}
+		}
+
+		if (flush) {
+			if (pair != '\0') {
+				// Flush the left-over incomplete surrogate.
+				if ((posn + 3) > length) {
+					throw new ArgumentException (_("Arg_InsufficientSpace"), "bytes");
+				}
+				bytes [posn++] = (byte) (0xE0 | (pair >> 12));
 				bytes [posn++] = (byte) (0x80 | ((pair >> 6) & 0x3F));
 				bytes [posn++] = (byte) (0x80 | (pair & 0x3F));
 			}
+			leftOver = '\0';
 		}
-
-		if (flush && pair >= 0xD800 && pair < 0xDC00) {
-			// Flush the left-over surrogate pair start.
-			if ((posn + 3) > length) {
-				throw new ArgumentException (_("Arg_InsufficientSpace"), "bytes");
-			}
-			bytes [posn++] = (byte) (0xE0 | (pair >> 12));
-			bytes [posn++] = (byte) (0x80 | ((pair >> 6) & 0x3F));
-			bytes [posn++] = (byte) (0x80 | (pair & 0x3F));
-			leftOver = 0;
-		}
-		else
-			leftOver = pair;
 
 		// Return the final count to the caller.
 		return posn - byteIndex;
+	}
+
+	private unsafe int Fallback (byte* bytes, int byteCount, char lead, char tail)
+	{
+		throw new NotImplementedException ();
 	}
 
 	// Get the bytes that result from encoding a character buffer.
 	public override int GetBytes (char[] chars, int charIndex, int charCount,
 								 byte[] bytes, int byteIndex)
 	{
-		uint leftOver = 0;
+		char leftOver = '\0';
 		return InternalGetBytes (chars, charIndex, charCount, bytes, byteIndex, ref leftOver, true);
 	}
 
@@ -340,7 +387,7 @@ public class UTF8Encoding : Encoding
 		unsafe {
 			fixed (char* cptr = s) {
 				fixed (byte *bptr = bytes) {
-					uint dummy = 0;
+					char dummy = '\0';
 					return InternalGetBytes (
 						cptr + charIndex, charCount,
 						bptr + byteIndex, bytes.Length - byteIndex,
@@ -920,15 +967,15 @@ public class UTF8Encoding : Encoding
 	private class UTF8Encoder : Encoder
 	{
 		private bool emitIdentifier;
-		private uint leftOverForCount;
-		private uint leftOverForConv;
+		private char leftOverForCount;
+		private char leftOverForConv;
 
 		// Constructor.
 		public UTF8Encoder (bool emitIdentifier)
 		{
 			this.emitIdentifier = emitIdentifier;
-			leftOverForCount = 0;
-			leftOverForConv = 0;
+			leftOverForCount = '\0';
+			leftOverForConv = '\0';
 		}
 
 		// Override inherited methods.
