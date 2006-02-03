@@ -1,3 +1,7 @@
+2006-02-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* CryptoStream.cs: Add 'override' keyword to Dispose (bool) method in 2.0.
+
 2005-12-15  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SymmetricAlgorithm.cs: Changing (not setting) BlockSize must 

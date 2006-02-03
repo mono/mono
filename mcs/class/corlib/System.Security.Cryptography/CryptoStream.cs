@@ -345,7 +345,11 @@ namespace System.Security.Cryptography {
 			throw new NotSupportedException ("SetLength");
 		}
 
+#if NET_2_0
+		protected override void Dispose (bool disposing) 
+#else
 		protected virtual void Dispose (bool disposing) 
+#endif
 		{
 			if (!_disposed) {
 				_disposed = true;
