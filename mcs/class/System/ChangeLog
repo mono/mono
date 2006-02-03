@@ -1,3 +1,9 @@
+2005-02-02  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* System.dll.sources: Add the recently added System.Net 2.0 
+	clases (FtpWebRequest, FtpWebResponse, FtpDataStream, FtpAsyncResult,
+	and also FtpStatusCode and WebRequestMethods).
+	
 2005-01-13  John Luke  <john.luke@gmail.com>
 
 	* System_test.dll.sources: add System.Net.Mail.SmtpClient tests

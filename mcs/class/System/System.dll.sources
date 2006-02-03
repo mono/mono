@@ -556,6 +556,12 @@ System.Net/EndpointPermission.cs
 System.Net/FileWebRequestCreator.cs
 System.Net/FileWebRequest.cs
 System.Net/FileWebResponse.cs
+System.Net/FtpAsyncResult.cs
+System.Net/FtpDataStream.cs
+System.Net/FtpRequestCreator.cs
+System.Net/FtpStatusCode.cs
+System.Net/FtpWebRequest.cs
+System.Net/FtpWebResponse.cs
 System.Net/GlobalProxySelection.cs
 System.Net/HttpConnection.cs
 System.Net/HttpContinueDelegate.cs
@@ -669,6 +675,7 @@ System.Net/WebPermissionAttribute.cs
 System.Net/WebPermission.cs
 System.Net/WebProxy.cs
 System.Net/WebRequest.cs
+System.Net/WebRequestMethods.cs
 System.Net/WebResponse.cs
 System/NewsStyleUriParser.cs
 System.Security.AccessControl/SemaphoreRights.cs
