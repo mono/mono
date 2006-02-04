@@ -1,3 +1,7 @@
+2006-02-03 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Socket.cs: added a missing overload for SetSocketOption.
+
 2006-01-19 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Socket.cs: use the 2.0 configuration classes when checking for IPv6
