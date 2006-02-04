@@ -1,5 +1,10 @@
 2006-02-04  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* ServiceDescriptionReflectorTest.cs: Use only one include as otherwise
+	the order of elements is not consistent on MS.NET.
+
+2006-02-04  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* ServiceDescriptionReflectorTest.cs: New test, currently marked
 	NotWorking.
 

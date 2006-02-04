@@ -98,11 +98,6 @@ namespace MonoTests.System.Web.Services.Description
 				"          <s:extension base=\"tns:Vehicle\" />{0}" +
 				"        </s:complexContent>{0}" +
 				"      </s:complexType>{0}" +
-				"      <s:complexType name=\"Bike\">{0}" +
-				"        <s:complexContent mixed=\"false\">{0}" +
-				"          <s:extension base=\"tns:Vehicle\" />{0}" +
-				"        </s:complexContent>{0}" +
-				"      </s:complexType>{0}" +
 				"    </s:schema>{0}" +
 				"  </wsdl:types>{0}" +
 				"  <wsdl:message name=\"EchoStringSoapIn\">{0}" +
@@ -201,15 +196,11 @@ namespace MonoTests.System.Web.Services.Description
 			}
 
 			[WebMethod ()]
-			[XmlInclude (typeof (Car)), XmlInclude (typeof (Bike))]
+			[XmlInclude (typeof (Car))]
 			public Vehicle Vehicle (string licenseNumber)
 			{
 				if (licenseNumber == "0") {
 					Vehicle v = new Car ();
-					v.licenseNumber = licenseNumber;
-					return v;
-				} else if (licenseNumber == "1") {
-					Vehicle v = new Bike ();
 					v.licenseNumber = licenseNumber;
 					return v;
 				} else {
@@ -226,10 +217,6 @@ namespace MonoTests.System.Web.Services.Description
 		}
 
 		public class Car : Vehicle
-		{
-		}
-
-		public class Bike : Vehicle
 		{
 		}
 	}
