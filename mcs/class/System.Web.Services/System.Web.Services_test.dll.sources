@@ -20,5 +20,6 @@ System.Web.Services.Description/PortTypeTest.cs
 System.Web.Services.Description/ServiceCollectionTest.cs
 System.Web.Services.Description/ServiceDescriptionTest.cs
 System.Web.Services.Description/ServiceDescriptionCollectionTest.cs
+System.Web.Services.Description/ServiceDescriptionReflectorTest.cs
 System.Web.Services.Description/SoapBodyBindingTest.cs
 System.Web.Services.Description/SoapOperationBindingTest.cs
