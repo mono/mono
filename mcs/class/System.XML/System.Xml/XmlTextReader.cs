@@ -845,7 +845,21 @@ namespace System.Xml
 
 		private bool popScope;
 
-		private string [] elementNames;
+		struct TagName
+		{
+			public TagName (string n, string l, string p)
+			{
+				Name = n;
+				LocalName = l;
+				Prefix = p;
+			}
+
+			public readonly string Name;
+			public readonly string LocalName;
+			public readonly string Prefix;
+		}
+
+		private TagName [] elementNames;
 		int elementNameStackPos;
 
 		private bool allowMultipleRoot;
@@ -924,7 +938,7 @@ namespace System.Xml
 			depthUp = false;
 
 			popScope = allowMultipleRoot = false;
-			elementNames = new string [10];
+			elementNames = new TagName [10];
 			elementNameStackPos = 0;
 
 			isStandalone = false;
@@ -1277,7 +1291,7 @@ namespace System.Xml
 			currentLinkedNodeLinePosition = column;
 
 			string prefix, localName;
-			string name = ReadName (out prefix, out localName);
+			string name = ReadName (out prefix, out localName, null);
 			if (currentState == XmlNodeType.EndElement)
 				throw NotWFError ("document has terminated, cannot open new element");
 
@@ -1318,7 +1332,7 @@ namespace System.Xml
 			}
 			else {
 				depthUp = true;
-				PushElementName (name);
+				PushElementName (name, localName, prefix);
 			}
 			parserContext.PushScope ();
 
@@ -1395,14 +1409,15 @@ namespace System.Xml
 				CheckCurrentStateUpdate ();
 		}
 
-		private void PushElementName (string name)
+		private void PushElementName (string name, string local, string prefix)
 		{
 			if (elementNames.Length == elementNameStackPos) {
-				string [] newArray = new string [elementNames.Length * 2];
+				TagName [] newArray = new TagName [elementNames.Length * 2];
 				Array.Copy (elementNames, 0, newArray, 0, elementNameStackPos);
 				elementNames = newArray;
 			}
-			elementNames [elementNameStackPos++] = name;
+			elementNames [elementNameStackPos++] =
+				new TagName (name, local, prefix);
 		}
 
 		// The reader is positioned on the first character
@@ -1415,12 +1430,11 @@ namespace System.Xml
 			currentLinkedNodeLineNumber = line;
 			currentLinkedNodeLinePosition = column;
 
-			string prefix, localName;
-			string name = ReadName (out prefix, out localName);
 			if (elementNameStackPos == 0)
 				throw NotWFError ("closing element without matching opening element");
-			string expected = elementNames [--elementNameStackPos];
-			if (expected != name)
+			TagName expected = elementNames [--elementNameStackPos];
+			string name = ReadName (expected.Name);
+			if (!Object.ReferenceEquals (expected.Name, name))
 				throw NotWFError (String.Format ("unmatched closing element: expected {0} but found {1}", expected, name));
 
 			ExpectAfterWhitespace ('>');
@@ -1430,14 +1444,14 @@ namespace System.Xml
 			SetProperties (
 				XmlNodeType.EndElement, // nodeType
 				name, // name
-				prefix, // prefix
-				localName, // localName
+				expected.Prefix, // prefix
+				expected.LocalName, // localName
 				false, // isEmptyElement
 				null, // value
 				true // clearAttributes
 			);
-			if (prefix.Length > 0)
-				currentToken.NamespaceURI = LookupNamespace (prefix, true);
+			if (expected.Prefix.Length > 0)
+				currentToken.NamespaceURI = LookupNamespace (expected.Prefix, true);
 			else if (namespaces)
 				currentToken.NamespaceURI = parserContext.NamespaceManager.DefaultNamespace;
 
@@ -1689,7 +1703,7 @@ namespace System.Xml
 				currentAttributeToken.LinePosition = column;
 
 				string prefix, localName;
-				currentAttributeToken.Name = ReadName (out prefix, out localName);
+				currentAttributeToken.Name = ReadName (out prefix, out localName, null);
 				currentAttributeToken.Prefix = prefix;
 				currentAttributeToken.LocalName = localName;
 				ExpectAfterWhitespace ('=');
@@ -2539,13 +2553,18 @@ namespace System.Xml
 		private string ReadName ()
 		{
 			string prefix, local;
-			return ReadName (out prefix, out local);
+			return ReadName (out prefix, out local, null);
 		}
 
-		private string ReadName (out string prefix, out string localName)
+		private string ReadName (string expectedName)
 		{
-			// FIXME: need to reject non-QName names?
+			string prefix, local;
+			return ReadName (out prefix, out local, expectedName);
+		}
 
+		// expectedName is not null only when called from ReadEndTag()
+		private string ReadName (out string prefix, out string localName, string expectedName)
+		{
 			int ch = PeekChar ();
 			if (!XmlChar.IsFirstNameChar (ch))
 				throw NotWFError (String.Format (CultureInfo.InvariantCulture, "a name did not start with a legal character {0} ({1})", ch, (char) ch));
@@ -2578,6 +2597,17 @@ namespace System.Xml
 					else
 						AppendSurrogatePairNameChar (ch);
 				}
+			}
+
+			if (expectedName != null) {
+				prefix = localName = String.Empty;
+				if (expectedName.Length != nameLength)
+					// it's an error, so we anyways don't case the perf.
+					return new string (nameBuffer, 0, nameLength);
+				for (int i = 0; i < expectedName.Length; i++)
+					if (expectedName [i] != nameBuffer [i])
+						return new string (nameBuffer, 0, nameLength);
+				return expectedName;
 			}
 
 			string name = parserContext.NameTable.Add (nameBuffer, 0, nameLength);
@@ -2741,11 +2771,10 @@ namespace System.Xml
 						continue;
 					ReadChar ();
 					string name = ReadName ();
-					if (name != elementNames [elementNameStackPos - 1])
+					if (name != elementNames [elementNameStackPos - 1].Name)
 						continue;
 					Expect ('>');
 					depth--;
-					elementNames [--elementNameStackPos] = null;
 					return Read ();
 				}
 			} while (true);

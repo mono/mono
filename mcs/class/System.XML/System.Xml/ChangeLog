@@ -1,5 +1,11 @@
 2006-02-04  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlTextReader.cs : on ReadEndTag() we can avoid NameTable.Add().
+	  Store name, local name and prefix in the stack instead of just name
+	  and reuse them for EndElement.
+
+2006-02-04  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlDocumentNavigator.cs : make use of HasAttributes (avoid possible
 	  XmlAttributeCollection creation).
 
