@@ -435,7 +435,7 @@ mono_constant_fold_ins2 (MonoInst *ins, MonoInst *arg1, MonoInst *arg2)
 		break;
 		/* case OP_INEG: */
 	case OP_INOT:
-		/* FIXME: Can't fold INEG, since it sets cflags on x86, and LNEG depends on that */
+		/* Can't fold INEG, since it sets cflags on x86, and LNEG depends on that */
 		if (arg1->opcode == OP_ICONST) {
 			switch (ins->opcode) {
 				FOLD_UNOP2 (OP_INEG,-);
@@ -515,16 +515,19 @@ mono_constant_fold_ins2 (MonoInst *ins, MonoInst *arg1, MonoInst *arg2)
 				}
 
 				/* 
-				 * FIXME: Can't nullify OP_COMPARE since the decompose long branch 
+				 * Can't nullify OP_COMPARE here since the decompose long branch 
 				 * opcodes depend on it being executed. Also, the branch might not
 				 * be eliminated after all if loop opts is disabled, for example.
 				 */
-				//ins->opcode = OP_NULL;
-				//ins->sreg1 = ins->sreg2 = -1;
 				if (res)
 					next->flags |= MONO_INST_CFOLD_TAKEN;
 				else
 					next->flags |= MONO_INST_CFOLD_NOT_TAKEN;
+				break;
+			case OP_NOP:
+				/* This happens when a conditional branch is eliminated */
+				ins->opcode = OP_NOP;
+				ins->sreg1 = ins->sreg2 = -1;
 				break;
 			default:
 				return;
