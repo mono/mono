@@ -1,3 +1,9 @@
+2006-02-04  Gert Driesen  <drieseng@users.sourceforge.net>
+	
+	* XmlSchemaExporterTests.cs: Reworked tests that fail on Mono
+	due to bug #77117 to pass on Mono (until that bug is fixed) and 
+	mark these tests NotDotNet.
+
 2006-01-23  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* XmlReflectionImporterTests.cs: Marked tests NotWorking until fixes
