@@ -68,6 +68,23 @@ namespace System.Net
 		const string RenameToCommand = "RNTO";
 		const string EOL = "\r\n"; // Special end of line
 
+		// sorted commands
+		static readonly string [] supportedCommands = new string [] {
+			WebRequestMethods.Ftp.AppendFile, // APPE
+			WebRequestMethods.Ftp.DeleteFile, // DELE
+			WebRequestMethods.Ftp.ListDirectoryDetails, // LIST
+			WebRequestMethods.Ftp.GetDateTimestamps, // MDTM
+			WebRequestMethods.Ftp.MakeDirectory, // MKD
+			WebRequestMethods.Ftp.ListDirectory, // NLST
+			WebRequestMethods.Ftp.PrintWorkingDirectory, // PWD
+			WebRequestMethods.Ftp.Rename, // RENAME
+			WebRequestMethods.Ftp.DownloadFile, // RETR
+			WebRequestMethods.Ftp.RemoveDirectory, // RMD
+			WebRequestMethods.Ftp.GetFileSize, // SIZE
+			WebRequestMethods.Ftp.UploadFile, // STOR
+			WebRequestMethods.Ftp.UploadFileWithUniqueName // STUR
+			};
+
 		internal FtpWebRequest (Uri uri) 
 		{
 			this.requestUri = uri;
@@ -149,7 +166,9 @@ namespace System.Net
 				if (value == null)
 					throw new ArgumentNullException ("method");
 
-				CheckMethod (method);
+				if (value.Length == 0 || Array.BinarySearch (supportedCommands, value) < 0)
+					throw new ArgumentException ("Method not supported", "value");
+				
 				method = value;
 			}
 		}
@@ -260,28 +279,6 @@ namespace System.Net
 				servicePoint = ServicePointManager.FindServicePoint (requestUri, proxy);
 
 			return servicePoint;
-		}
-
-		void CheckMethod (string method)
-		{
-			// This is not sane, try to organize the data
-			// and do a smarter search
-			if (method == WebRequestMethods.Ftp.DownloadFile ||
-					method == WebRequestMethods.Ftp.AppendFile ||
-					method == WebRequestMethods.Ftp.DeleteFile ||
-					method == WebRequestMethods.Ftp.GetFileSize ||
-					method == WebRequestMethods.Ftp.GetDateTimestamps ||
-					method == WebRequestMethods.Ftp.ListDirectory ||
-					method == WebRequestMethods.Ftp.ListDirectoryDetails ||
-					method == WebRequestMethods.Ftp.MakeDirectory ||
-					method == WebRequestMethods.Ftp.PrintWorkingDirectory ||
-					method == WebRequestMethods.Ftp.RemoveDirectory ||
-					method == WebRequestMethods.Ftp.Rename ||
-					method == WebRequestMethods.Ftp.UploadFile ||
-					method == WebRequestMethods.Ftp.UploadFileWithUniqueName)
-				return;
-
-			throw new ArgumentException ("Method not supported");
 		}
 
 		// Probably move some code of command connection here
