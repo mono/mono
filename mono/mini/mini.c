@@ -10107,22 +10107,24 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 
 		cfg->num_bblocks = dfn + 1;
 
-		/* FIXME: This is needed for methods with clauses too */
-		if (!header->clauses) {
-			/* remove unreachable code, because the code in them may be 
-			 * inconsistent  (access to dead variables for example) */
-			for (bb = cfg->bb_entry; bb;) {
-				MonoBasicBlock *bbn = bb->next_bb;
+		/* remove unreachable code, because the code in them may be 
+		 * inconsistent  (access to dead variables for example) */
+		for (bb = cfg->bb_entry; bb;) {
+			MonoBasicBlock *bbn = bb->next_bb;
 
-				if (bbn && bbn->region == -1 && !bbn->dfn) {
-					if (cfg->verbose_level > 1)
-						g_print ("found unreachable code in BB%d\n", bbn->block_num);
-					/* There may exist unreachable branches to this bb */
-					bb->next_bb = bbn->next_bb;
-					nullify_basic_block (bbn);			
-				} else {
-					bb = bb->next_bb;
-				}
+			/* 
+			 * FIXME: Can't use the second case in methods with clauses, since the 
+			 * bblocks inside the clauses are not processed during dfn computation.
+			 */
+			if ((header->clauses && (bbn && bbn->region == -1 && bbn->in_count == 0)) ||
+				(!header->clauses && (bbn && bbn->region == -1 && !bbn->dfn))) {
+				if (cfg->verbose_level > 1)
+					g_print ("found unreachable code in BB%d\n", bbn->block_num);
+				/* There may exist unreachable branches to this bb */
+				bb->next_bb = bbn->next_bb;
+				nullify_basic_block (bbn);			
+			} else {
+				bb = bb->next_bb;
 			}
 		}
 	}
@@ -10243,9 +10245,6 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 		cfg->comp_done &= ~MONO_COMP_LIVENESS;
 		if (!(cfg->comp_done & MONO_COMP_LIVENESS))
 			mono_analyze_liveness (cfg);
-
-		/* FIXME: Do this earlier so deadce can work on more variables */
-		mono_handle_local_vregs (cfg);
 
 		if (cfg->aliasing_info != NULL) {
 			mono_aliasing_deadce (cfg->aliasing_info);

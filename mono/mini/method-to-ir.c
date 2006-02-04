@@ -8688,6 +8688,7 @@ mono_handle_global_vregs (MonoCompile *cfg)
 {
 	MonoBasicBlock ***vreg_to_bb;
 	MonoBasicBlock *bb;
+	int i;
 
 	vreg_to_bb = g_new0 (MonoBasicBlock**, 256);
 	vreg_to_bb ['i'] = g_new0 (MonoBasicBlock*, cfg->next_vireg);
@@ -8750,65 +8751,62 @@ mono_handle_global_vregs (MonoCompile *cfg)
 					}
 				}
 
-				if ((vreg != -1) && !get_vreg_to_inst (cfg, regtype, vreg)) {
+				if (vreg != -1) {
 					if (vreg_to_bb [regtype][vreg] == NULL) {
 						vreg_to_bb [regtype][vreg] = bb;
 					} else if (vreg_to_bb [regtype][vreg] != bb) {
-						if (cfg->verbose_level > 0)
-							printf ("VREG R%d used in BB%d and BB%d made global.\n", vreg, vreg_to_bb [regtype][vreg]->block_num, bb->block_num);
+						if (!get_vreg_to_inst (cfg, regtype, vreg)) {
+							if (cfg->verbose_level > 0)
+								printf ("VREG R%d used in BB%d and BB%d made global.\n", vreg, vreg_to_bb [regtype][vreg]->block_num, bb->block_num);
 
-						switch (regtype) {
-						case 'i':
-							mono_compile_create_var_for_vreg (cfg, &mono_defaults.int_class->byval_arg, OP_LOCAL, 'i', vreg);
-							break;
-						case 'f':
-							mono_compile_create_var_for_vreg (cfg, &mono_defaults.double_class->byval_arg, OP_LOCAL, 'f', vreg);
-							break;
-						default:
-							g_assert_not_reached ();
+							switch (regtype) {
+							case 'i':
+								mono_compile_create_var_for_vreg (cfg, &mono_defaults.int_class->byval_arg, OP_LOCAL, 'i', vreg);
+								break;
+							case 'f':
+								mono_compile_create_var_for_vreg (cfg, &mono_defaults.double_class->byval_arg, OP_LOCAL, 'f', vreg);
+								break;
+							default:
+								g_assert_not_reached ();
+							}
 						}
+
+						/* Flag as having been used in more than one bb */
+						if (vreg_to_bb [regtype][vreg] != (gpointer)(gssize)-1)
+							vreg_to_bb [regtype][vreg] = (gpointer)(gssize)-1;
 					}
 				}
 			}
 		}
 	}
 
-	g_free (vreg_to_bb ['i']);
-	g_free (vreg_to_bb ['f']);
-	g_free (vreg_to_bb);
-}
-
-/**
- * mono_handle_local_vregs:
- *
- *  Opposite of mono_handle_global_vregs: If a variable is only used in one
- * bblock, convert it into a local vreg.
- */
-void
-mono_handle_local_vregs (MonoCompile *cfg)
-{
-	int i;
-
+	/* If a variable is used in only one bblock, convert it into a local vreg */
 	for (i = 0; i < cfg->num_varinfo; i++) {
 		MonoInst *var = cfg->varinfo [i];
 		MonoMethodVar *vmv = MONO_VARINFO (cfg, i);
-		
-		if (((vmv->range.first_use.abs_pos >> 16) == (vmv->range.last_use.abs_pos >> 16)) && !(var->flags & (MONO_INST_VOLATILE|MONO_INST_INDIRECT))) {
-			/* FIXME: Do this more elegantly */
-			switch (var->type) {
-			case STACK_I4:
-			case STACK_OBJ:
-			case STACK_PTR:
-			case STACK_MP:
+
+		/* Generalize to other types */
+		switch (var->type) {
+		case STACK_I4:
+		case STACK_OBJ:
+		case STACK_PTR:
+		case STACK_MP:
+			/* FIXME: Add I8 on 64 bit */			
+			/* Arguments are implicitly global */
+			if ((var->opcode != OP_ARG) && (var != cfg->ret) && !(var->flags & (MONO_INST_VOLATILE|MONO_INST_INDIRECT)) && (vreg_to_bb ['i'][var->dreg] != (gpointer)(gssize)-1)) {
 				if (cfg->verbose_level > 2)
 					printf ("CONVERTED R%d(%d) TO VREG.\n", var->dreg, vmv->idx);
-
 				var->flags |= MONO_INST_IS_DEAD;
 				cfg->vreg_to_inst ['i'][var->dreg] = NULL;
-				break;
 			}
+			break;
 		}
 	}
+
+	g_free (vreg_to_bb ['i']);
+	g_free (vreg_to_bb ['l']);
+	g_free (vreg_to_bb ['f']);
+	g_free (vreg_to_bb);
 }
 
 static void
