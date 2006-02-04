@@ -1,3 +1,8 @@
+2006-02-04  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlDocumentNavigator.cs : make use of HasAttributes (avoid possible
+	  XmlAttributeCollection creation).
+
 2006-02-03  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlTextReader.cs : no need to call Clear() for each attribute value.

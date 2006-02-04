@@ -88,10 +88,13 @@ namespace System.Xml
 				if (NsNode != null)
 					return false;
 
-				if (node.Attributes != null)
-					for (int i = 0; i < node.Attributes.Count; i++)
-						if (node.Attributes [i].NamespaceURI != Xmlns)
-							return true;
+				XmlElement el = node as XmlElement;
+				if (el == null || !el.HasAttributes)
+					return false;
+
+				for (int i = 0; i < node.Attributes.Count; i++)
+					if (node.Attributes [i].NamespaceURI != Xmlns)
+						return true;
 				return false;
 			}
 		}
@@ -354,15 +357,12 @@ namespace System.Xml
 
 		public override bool MoveToAttribute (string localName, string namespaceURI)
 		{
-			if (node.Attributes != null) {
-				for (int i = 0; i < node.Attributes.Count; i++) {
-					XmlAttribute attr = node.Attributes [i];
-					if (attr.LocalName == localName
-						&& attr.NamespaceURI == namespaceURI) {
-						node = attr;
-						NsNode = null;
-						return true;
-					}
+			if (HasAttributes) {
+				XmlAttribute attr = node.Attributes [localName, namespaceURI];
+				if (attr != null) {
+					node = attr;
+					NsNode = null;
+					return true;
 				}
 			}
 			return false;
@@ -378,9 +378,10 @@ namespace System.Xml
 
 		public override bool MoveToFirstAttribute ()
 		{
-			if (node.Attributes == null)
-				return false;
 			if (NodeType == XPathNodeType.Element) {
+				XmlElement el = node as XmlElement;
+				if (!el.HasAttributes)
+					return false;
 				for (int i = 0; i < node.Attributes.Count; i++) {
 					XmlAttribute attr = node.Attributes [i];
 					if (attr.NamespaceURI != Xmlns) {
@@ -410,8 +411,8 @@ namespace System.Xml
 			if (NodeType != XPathNodeType.Element)
 				return false;
 			XmlElement el = node as XmlElement;
-			if (node.Attributes != null) {
-				do {
+			do {
+				if (el.HasAttributes) {
 					for (int i = 0; i < el.Attributes.Count; i++) {
 						XmlAttribute attr = el.Attributes [i];
 						if (attr.NamespaceURI == Xmlns) {
@@ -421,11 +422,11 @@ namespace System.Xml
 							return true;
 						}
 					}
-					if (namespaceScope == XPathNamespaceScope.Local)
-						return false;
-					el = GetParentNode (el) as XmlElement;
-				} while (el != null);
-			}
+				}
+				if (namespaceScope == XPathNamespaceScope.Local)
+					return false;
+				el = GetParentNode (el) as XmlElement;
+			} while (el != null);
 
 			if (namespaceScope == XPathNamespaceScope.All) {
 				if (CheckNsNameAppearance (nsNodeXml.Name, nsNodeXml.Value))
@@ -458,8 +459,8 @@ namespace System.Xml
 				return false;
 
 			XmlElement el = node as XmlElement;
-			if (node.Attributes != null) {
-				do {
+			do {
+				if (el.HasAttributes) {
 					for (int i = 0; i < el.Attributes.Count; i++) {
 						XmlAttribute attr = el.Attributes [i];
 						if (attr.NamespaceURI == Xmlns && attr.Name == name) {
@@ -467,9 +468,9 @@ namespace System.Xml
 							return true;
 						}
 					}
-					el = GetParentNode (node) as XmlElement;
-				} while (el != null);
-			}
+				}
+				el = GetParentNode (node) as XmlElement;
+			} while (el != null);
 			return false;
 		}
 
@@ -574,13 +575,15 @@ namespace System.Xml
 				return false;
 			owner = GetParentNode (owner) as XmlElement;
 			while (owner != null) {
-				for (int i = 0; i < owner.Attributes.Count; i++) {
-					XmlAttribute attr = owner.Attributes [i];
-					if (attr.NamespaceURI == Xmlns) {
-						if (CheckNsNameAppearance (attr.Name, attr.Value))
-							continue;
-						NsNode = attr;
-						return true;
+				if (owner.HasAttributes) {
+					for (int i = 0; i < owner.Attributes.Count; i++) {
+						XmlAttribute attr = owner.Attributes [i];
+						if (attr.NamespaceURI == Xmlns) {
+							if (CheckNsNameAppearance (attr.Name, attr.Value))
+								continue;
+							NsNode = attr;
+							return true;
+						}
 					}
 				}
 				owner = GetParentNode (owner) as XmlElement;
@@ -696,19 +699,20 @@ namespace System.Xml
 
 		private XmlNode GetPreviousSibling (XmlNode n)
 		{
-			if (n.PreviousSibling != null) {
-				switch (n.PreviousSibling.NodeType) {
+			XmlNode p = n.PreviousSibling;
+			if (p != null) {
+				switch (p.NodeType) {
 				case XmlNodeType.EntityReference:
-					XmlNode c = GetLastChild (n.PreviousSibling);
+					XmlNode c = GetLastChild (p);
 					if (c != null)
 						return c;
 					else // empty entity reference etc.
-						return GetPreviousSibling (n.PreviousSibling);
+						return GetPreviousSibling (p);
 				case XmlNodeType.XmlDeclaration:
 				case XmlNodeType.DocumentType:
-					return GetPreviousSibling (n.PreviousSibling);
+					return GetPreviousSibling (p);
 				default:
-					return n.PreviousSibling;
+					return p;
 				}
 			} else {
 				if (n.ParentNode == null || n.ParentNode.NodeType != XmlNodeType.EntityReference)
@@ -719,17 +723,18 @@ namespace System.Xml
 
 		private XmlNode GetNextSibling (XmlNode n)
 		{
-			if (n.NextSibling != null) {
-				switch (n.NextSibling.NodeType) {
+			XmlNode nx = n.NextSibling;
+			if (nx != null) {
+				switch (nx.NodeType) {
 				case XmlNodeType.EntityReference:
-					XmlNode c = GetFirstChild (n.NextSibling);
+					XmlNode c = GetFirstChild (nx);
 					if (c != null)
 						return c;
 					else // empty entity reference etc.
-						return GetNextSibling (n.NextSibling);
+						return GetNextSibling (nx);
 				case XmlNodeType.XmlDeclaration:
 				case XmlNodeType.DocumentType:
-					return GetNextSibling (n.NextSibling);
+					return GetNextSibling (nx);
 				default:
 					return n.NextSibling;
 				}
