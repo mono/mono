@@ -79,6 +79,28 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+		public void Method ()
+		{
+			try {
+				defaultRequest.Method = null;
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException) {
+			}
+
+			try {
+				defaultRequest.Method = String.Empty;
+				Assert.Fail ("#2");
+			} catch (ArgumentException) {
+			}
+
+			try {
+				defaultRequest.Method = "WrongValue";
+				Assert.Fail ("#3");
+			} catch (ArgumentException) {
+			}
+		}
+
+		[Test]
 		public void PreAuthenticate ()
 		{
 			try {
