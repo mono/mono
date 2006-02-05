@@ -1,3 +1,7 @@
+2006-02-05 Konstantin Triger <kostat@mainsoft.com>
+
+	* ExtendedGeneralPath.jvm.cs: use correct properties.
+
 2006-01-27  Sebastien Pouliot  <sebastien@ximian.com> 
  
 	* GraphicsPath.cs: Removed TODO on Flatten methods (now supported in
