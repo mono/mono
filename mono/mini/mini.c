@@ -9346,234 +9346,6 @@ mono_local_cprop (MonoCompile *cfg)
 	}
 }
 
-static void
-mono_local_cprop_bb2 (MonoCompile *cfg, MonoBasicBlock *bb, 
-					  MonoInst **defs, guint32 *def_index)
-
-{
-	MonoInst *ins, *prev;
-	int ins_index;
-	int max = cfg->next_vireg;
-
-	/* Manually init the defs entries used by the bblock */
-	for (ins = bb->code; ins; ins = ins->next) {
-		if ((ins->dreg != -1) && (ins->dreg < max))
-			defs [ins->dreg] = NULL;
-		if ((ins->sreg1 != -1) && (ins->sreg1 < max))
-			defs [ins->sreg1] = NULL;
-		if ((ins->sreg2 != -1) && (ins->sreg2 < max))
-			defs [ins->sreg2] = NULL;
-#if SIZEOF_VOID_P == 4
-		/* Regpairs */
-		if ((ins->dreg != -1) && (ins->dreg + 1 < max))
-			defs [ins->dreg + 1] = NULL;
-		if ((ins->sreg1 != -1) && (ins->sreg1 + 1 < max))
-			defs [ins->sreg1 + 1] = NULL;
-		if ((ins->sreg2 != -1) && (ins->sreg2 + 1 < max))
-			defs [ins->sreg2 + 1] = NULL;
-#endif
-	}
-
-	ins_index = 0;
-	prev = NULL;
-	for (ins = bb->code; ins; ins = ins->next) {
-		const char *spec = ins_info [ins->opcode - OP_START - 1];
-		int regtype, srcindex, sreg;
-
-		if (ins->opcode == OP_NOP) {
-			/*
-			 * Many passes generate NOPs, we get rid of them here so later
-			 * passes won't have to deal with them.
-			 */
-			if (prev)
-				prev->next = ins->next;
-			else
-				bb->code = ins->next;
-			if (bb->last_ins == ins)
-				bb->last_ins = prev;
-			continue;
-		}
-		else
-			prev = ins;
-
-		g_assert (ins->opcode > MONO_CEE_LAST);
-
-		/* FIXME: Optimize this */
-		if (ins->opcode == OP_LDADDR) {
-			MonoInst *var = ins->inst_p0;
-
-			if (!MONO_TYPE_ISSTRUCT (var->inst_vtype))
-				return;
-		}
-
-		if (MONO_IS_STORE_MEMBASE (ins)) {
-			sreg = ins->dreg;
-			regtype = 'i';
-
-			if ((regtype == 'i') && (sreg != -1) && defs [sreg]) {
-				MonoInst *def = defs [sreg];
-
-				if ((def->opcode == OP_MOVE) && (!defs [def->sreg1] || (def_index [def->sreg1] < def_index [sreg]))) {
-					int vreg = def->sreg1;
-					//printf ("CCOPY: R%d -> R%d\n", sreg, vreg);
-					ins->dreg = vreg;
-				}
-			}
-		}
-
-		for (srcindex = 0; srcindex < 2; ++srcindex) {
-			regtype = srcindex == 0 ? spec [MONO_INST_SRC1] : spec [MONO_INST_SRC2];
-			sreg = srcindex == 0 ? ins->sreg1 : ins->sreg2;
-
-			/* FIXME: Add support for floats/longs */
-			if ((regtype == 'i') && (sreg != -1) && defs [sreg]) {
-				MonoInst *def = defs [sreg];
-
-				if ((def->opcode == OP_MOVE) && (!defs [def->sreg1] || (def_index [def->sreg1] < def_index [sreg]))) {
-					int vreg = def->sreg1;
-#if 0
-					{
-						static int count = 0;
-						count ++;
-						if (count == atoi (getenv ("COUNT2")))
-							printf ("FOO\n");
-						if (count > atoi (getenv ("COUNT2")))
-							vreg = sreg;
-					}
-#endif
-					//printf ("CCOPY: R%d -> R%d\n", sreg, vreg);
-					if (srcindex == 0)
-						ins->sreg1 = vreg;
-					else
-						ins->sreg2 = vreg;
-
-					/* Allow further iterations */
-					srcindex = -1;
-					continue;
-				}
-#if SIZEOF_VOID_P == 8
-				/* FIXME: Make is_inst_imm a macro */
-				else if (((def->opcode == OP_ICONST) || (def->opcode == OP_I8CONST)) && mono_arch_is_inst_imm (def->inst_c0))
-#else
-				else if (def->opcode == OP_ICONST)
-#endif
-				{
-					guint32 opcode2;
-
-					/* srcindex == 1 -> binop, ins->sreg2 == -1 -> unop */
-					if ((srcindex == 1) && (ins->sreg1 != -1) && defs [ins->sreg1] && (defs [ins->sreg1]->opcode == OP_ICONST) && defs [ins->sreg2]) {
-						/* Both arguments are constants, perform cfold */
-						mono_constant_fold_ins2 (ins, defs [ins->sreg1], defs [ins->sreg2]);
-					} else if ((srcindex == 0) && (ins->sreg2 != -1) && defs [ins->sreg2]) {
-						/* Arg 1 is constant, swap arguments if possible */
-						mono_constant_fold_ins2 (ins, defs [ins->sreg1], defs [ins->sreg2]);						
-					} else if ((srcindex == 0) && (ins->sreg2 == -1)) {
-						/* Constant unop, perform cfold */
-						mono_constant_fold_ins2 (ins, defs [ins->sreg1], NULL);
-					}
-
-					opcode2 = mono_op_to_op_imm (ins->opcode);
-					if ((opcode2 != -1) && ((srcindex == 1) || (ins->sreg2 == -1))) {
-						ins->opcode = opcode2;
-						ins->inst_imm = def->inst_c0;
-						if (srcindex == 0)
-							ins->sreg1 = -1;
-						else
-							ins->sreg2 = -1;
-
-						if ((opcode2 == OP_VOIDCALL) || (opcode2 == OP_CALL) || (opcode2 == OP_LCALL) || (opcode2 == OP_FCALL))
-							((MonoCallInst*)ins)->fptr = (gpointer)ins->inst_imm;
-
-						/* Allow further iterations */
-						srcindex = -1;
-						continue;
-					}
-				}
-				else if ((def->opcode == OP_ADD_IMM) && (def->sreg1 == cfg->frame_reg) && MONO_IS_LOAD_MEMBASE (ins)) {
-					/* ADD_IM is created by spill_global_vars */
-					/* cfg->frame_reg is assumed to remain constant */
-					ins->inst_basereg = def->sreg1;
-					ins->inst_offset += def->inst_imm;					
-				}
-			}
-		}
-
-		/* Do strength reduction here */
-		/* FIXME: Add long/float */
-		switch (ins->opcode) {
-		case OP_ADD_IMM:
-		case OP_IADD_IMM:
-		case OP_SUB_IMM:
-		case OP_ISUB_IMM:
-			if (ins->inst_imm == 0) {
-				ins->opcode = OP_MOVE;
-				spec = ins_info [ins->opcode - OP_START - 1];
-			}
-			break;
-		case OP_MUL_IMM:
-		case OP_IMUL_IMM:
-            if (ins->inst_imm == 0) {
-				ins->opcode = OP_NOP;
-				ins->sreg1 = -1;
-			} else if (ins->inst_imm == 1) {
-				ins->opcode = OP_MOVE;
-			}
-			else if ((ins->inst_imm == OP_IMUL_IMM) && (ins->inst_imm == -1)) {
-				ins->opcode = OP_INEG;
-			}
-			else {
- 		        int power2 = mono_is_power_of_two (ins->inst_imm);
-				if (power2 >= 0) {
-					ins->opcode = (ins->opcode == OP_MUL_IMM) ? OP_SHL_IMM : OP_ISHL_IMM;
-					ins->inst_imm = power2;
-				}
-			}
-			spec = ins_info [ins->opcode - OP_START - 1];
-			break;
-		case OP_IREM_UN:
-		case OP_IDIV_UN:
-			/* There is no _IMM version of these opcodes, so do the consprop as well */
-			if (defs [ins->sreg2] && defs [ins->sreg2]->opcode == OP_ICONST) {
-				int c = defs [ins->sreg2]->inst_c0;
-				int power2 = mono_is_power_of_two (c);
-
-				if (power2 >= 0) {
-					if (ins->opcode == OP_IREM_UN) {
-						ins->opcode = OP_IAND_IMM;
-						ins->sreg2 = -1;
-						ins->inst_imm = (1 << power2) - 1;
-					} else if (ins->opcode == OP_IDIV_UN) {
-						ins->opcode = OP_ISHR_UN_IMM;
-						ins->sreg2 = -1;
-						ins->inst_imm = power2;
-					}
-				}
-				spec = ins_info [ins->opcode - OP_START - 1];
-			}
-			break;
-		}
-			
-		if (spec [MONO_INST_DEST] == 'i') {
-			MonoInst *def = defs [ins->dreg];
-
-			/* FIXME: Generalize this */
-			if (def && (def->opcode == OP_ADD_IMM) && (def->sreg1 == cfg->frame_reg) && (MONO_IS_STORE_MEMBASE (ins))) {
-				/* ADD_IMM is created by spill_global_vars */
-				/* cfg->frame_reg is assumed to remain constant */
-				ins->inst_destbasereg = def->sreg1;
-				ins->inst_offset += def->inst_imm;
-			}
-		}
-			
-		if ((ins->dreg != -1) && (spec [MONO_INST_DEST] == 'i')) {
-			defs [ins->dreg] = ins;
-			def_index [ins->dreg] = ins_index;
-		}
-
-		ins_index ++;
-	}	
-}
-
 /*
  * mono_local_cprop2:
  *
@@ -9585,12 +9357,237 @@ mono_local_cprop2 (MonoCompile *cfg)
 	MonoBasicBlock *bb;
 	MonoInst **defs;
 	guint32 *def_index;
+	int max = cfg->next_vireg;
 
-	defs = g_new (MonoInst*, cfg->next_vireg);
-	def_index = g_new (guint32, cfg->next_vireg);
+	defs = g_new (MonoInst*, cfg->next_vireg + 1);
+	def_index = g_new (guint32, cfg->next_vireg + 1);
 
 	for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
-		mono_local_cprop_bb2 (cfg, bb, defs, def_index);
+		MonoInst *ins, *prev;
+		int ins_index;
+
+		/* Manually init the defs entries used by the bblock */
+		for (ins = bb->code; ins; ins = ins->next) {
+			if ((ins->dreg != -1) && (ins->dreg < max)) {
+				defs [ins->dreg] = NULL;
+#if SIZEOF_VOID_P == 4
+				defs [ins->dreg + 1] = NULL;
+#endif
+			}
+			if ((ins->sreg1 != -1) && (ins->sreg1 < max)) {
+				defs [ins->sreg1] = NULL;
+#if SIZEOF_VOID_P == 4
+				defs [ins->sreg1 + 1] = NULL;
+#endif
+			}
+			if ((ins->sreg2 != -1) && (ins->sreg2 < max)) {
+				defs [ins->sreg2] = NULL;
+#if SIZEOF_VOID_P == 4
+				defs [ins->sreg2 + 1] = NULL;
+#endif
+			}
+		}
+
+		ins_index = 0;
+		prev = NULL;
+		for (ins = bb->code; ins; ins = ins->next) {
+			const char *spec = ins_info [ins->opcode - OP_START - 1];
+			int regtype, srcindex, sreg;
+
+			if (ins->opcode == OP_NOP) {
+				/*
+				 * Many passes generate NOPs, we get rid of them here so later
+				 * passes won't have to deal with them.
+				 */
+				if (prev)
+					prev->next = ins->next;
+				else
+					bb->code = ins->next;
+				if (bb->last_ins == ins)
+					bb->last_ins = prev;
+				continue;
+			}
+			else
+				prev = ins;
+
+			g_assert (ins->opcode > MONO_CEE_LAST);
+
+			/* FIXME: Optimize this */
+			if (ins->opcode == OP_LDADDR) {
+				MonoInst *var = ins->inst_p0;
+
+				if (!MONO_TYPE_ISSTRUCT (var->inst_vtype))
+					return;
+			}
+
+			if (MONO_IS_STORE_MEMBASE (ins)) {
+				sreg = ins->dreg;
+				regtype = 'i';
+
+				if ((regtype == 'i') && (sreg != -1) && defs [sreg]) {
+					MonoInst *def = defs [sreg];
+
+					if ((def->opcode == OP_MOVE) && (!defs [def->sreg1] || (def_index [def->sreg1] < def_index [sreg]))) {
+						int vreg = def->sreg1;
+						//printf ("CCOPY: R%d -> R%d\n", sreg, vreg);
+						ins->dreg = vreg;
+					}
+				}
+			}
+
+			for (srcindex = 0; srcindex < 2; ++srcindex) {
+				regtype = srcindex == 0 ? spec [MONO_INST_SRC1] : spec [MONO_INST_SRC2];
+				sreg = srcindex == 0 ? ins->sreg1 : ins->sreg2;
+
+				/* FIXME: Add support for floats/longs */
+				if ((regtype == 'i') && (sreg != -1) && defs [sreg]) {
+					MonoInst *def = defs [sreg];
+
+					/* Copy propagation */
+					if ((def->opcode == OP_MOVE) && (!defs [def->sreg1] || (def_index [def->sreg1] < def_index [sreg]))) {
+						int vreg = def->sreg1;
+#if 0
+						{
+							static int count = 0;
+							count ++;
+							if (count == atoi (getenv ("COUNT2")))
+								printf ("FOO\n");
+							if (count > atoi (getenv ("COUNT2")))
+								vreg = sreg;
+						}
+#endif
+						//printf ("CCOPY: R%d -> R%d\n", sreg, vreg);
+						if (srcindex == 0)
+							ins->sreg1 = vreg;
+						else
+							ins->sreg2 = vreg;
+
+						/* Allow further iterations */
+						srcindex = -1;
+						continue;
+					}
+					/* Constant propagation */
+#if SIZEOF_VOID_P == 8
+					/* FIXME: Make is_inst_imm a macro */
+					else if (((def->opcode == OP_ICONST) || (def->opcode == OP_I8CONST)) && mono_arch_is_inst_imm (def->inst_c0))
+#else
+					else if (def->opcode == OP_ICONST)
+#endif
+					{
+						guint32 opcode2;
+
+						/* srcindex == 1 -> binop, ins->sreg2 == -1 -> unop */
+						if ((srcindex == 1) && (ins->sreg1 != -1) && defs [ins->sreg1] && (defs [ins->sreg1]->opcode == OP_ICONST) && defs [ins->sreg2]) {
+							/* Both arguments are constants, perform cfold */
+							mono_constant_fold_ins2 (ins, defs [ins->sreg1], defs [ins->sreg2]);
+						} else if ((srcindex == 0) && (ins->sreg2 != -1) && defs [ins->sreg2]) {
+							/* Arg 1 is constant, swap arguments if possible */
+							mono_constant_fold_ins2 (ins, defs [ins->sreg1], defs [ins->sreg2]);						
+						} else if ((srcindex == 0) && (ins->sreg2 == -1)) {
+							/* Constant unop, perform cfold */
+							mono_constant_fold_ins2 (ins, defs [ins->sreg1], NULL);
+						}
+
+						opcode2 = mono_op_to_op_imm (ins->opcode);
+						if ((opcode2 != -1) && ((srcindex == 1) || (ins->sreg2 == -1))) {
+							ins->opcode = opcode2;
+							ins->inst_imm = def->inst_c0;
+							if (srcindex == 0)
+								ins->sreg1 = -1;
+							else
+								ins->sreg2 = -1;
+
+							if ((opcode2 == OP_VOIDCALL) || (opcode2 == OP_CALL) || (opcode2 == OP_LCALL) || (opcode2 == OP_FCALL))
+								((MonoCallInst*)ins)->fptr = (gpointer)ins->inst_imm;
+
+							/* Allow further iterations */
+							srcindex = -1;
+							continue;
+						}
+					}
+					else if ((def->opcode == OP_ADD_IMM) && (def->sreg1 == cfg->frame_reg) && MONO_IS_LOAD_MEMBASE (ins)) {
+						/* ADD_IM is created by spill_global_vars */
+						/* cfg->frame_reg is assumed to remain constant */
+						ins->inst_basereg = def->sreg1;
+						ins->inst_offset += def->inst_imm;					
+					}
+				}
+			}
+
+			/* Do strength reduction here */
+			/* FIXME: Add long/float */
+			switch (ins->opcode) {
+			case OP_ADD_IMM:
+			case OP_IADD_IMM:
+			case OP_SUB_IMM:
+			case OP_ISUB_IMM:
+				if (ins->inst_imm == 0) {
+					ins->opcode = OP_MOVE;
+					spec = ins_info [ins->opcode - OP_START - 1];
+				}
+				break;
+			case OP_MUL_IMM:
+			case OP_IMUL_IMM:
+				if (ins->inst_imm == 0) {
+					ins->opcode = OP_NOP;
+					ins->sreg1 = -1;
+				} else if (ins->inst_imm == 1) {
+					ins->opcode = OP_MOVE;
+				}
+				else if ((ins->inst_imm == OP_IMUL_IMM) && (ins->inst_imm == -1)) {
+					ins->opcode = OP_INEG;
+				}
+				else {
+					int power2 = mono_is_power_of_two (ins->inst_imm);
+					if (power2 >= 0) {
+						ins->opcode = (ins->opcode == OP_MUL_IMM) ? OP_SHL_IMM : OP_ISHL_IMM;
+						ins->inst_imm = power2;
+					}
+				}
+				spec = ins_info [ins->opcode - OP_START - 1];
+				break;
+			case OP_IREM_UN:
+			case OP_IDIV_UN:
+				/* There is no _IMM version of these opcodes, so do the consprop as well */
+				if (defs [ins->sreg2] && defs [ins->sreg2]->opcode == OP_ICONST) {
+					int c = defs [ins->sreg2]->inst_c0;
+					int power2 = mono_is_power_of_two (c);
+
+					if (power2 >= 0) {
+						if (ins->opcode == OP_IREM_UN) {
+							ins->opcode = OP_IAND_IMM;
+							ins->sreg2 = -1;
+							ins->inst_imm = (1 << power2) - 1;
+						} else if (ins->opcode == OP_IDIV_UN) {
+							ins->opcode = OP_ISHR_UN_IMM;
+							ins->sreg2 = -1;
+							ins->inst_imm = power2;
+						}
+					}
+					spec = ins_info [ins->opcode - OP_START - 1];
+				}
+				break;
+			}
+			
+			if (spec [MONO_INST_DEST] == 'i') {
+				MonoInst *def = defs [ins->dreg];
+
+				/* FIXME: Generalize this */
+				if (def && (def->opcode == OP_ADD_IMM) && (def->sreg1 == cfg->frame_reg) && (MONO_IS_STORE_MEMBASE (ins))) {
+					/* ADD_IMM is created by spill_global_vars */
+					/* cfg->frame_reg is assumed to remain constant */
+					ins->inst_destbasereg = def->sreg1;
+					ins->inst_offset += def->inst_imm;
+				}
+			}
+			
+			if ((ins->dreg != -1) && (spec [MONO_INST_DEST] == 'i')) {
+				defs [ins->dreg] = ins;
+				def_index [ins->dreg] = ins_index;
+			}
+
+			ins_index ++;
+		}
 	}
 
 	g_free (defs);
