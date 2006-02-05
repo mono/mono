@@ -200,15 +200,15 @@ namespace System.Drawing.Drawing2D
 				
 				switch (segmentType) {
 					case SEG_CLOSE:
-						pathData.InternalTypes [tpos - 1] = (byte) (pathData.InternalTypes [tpos - 1] | (byte) PathPointType.CloseSubpath | marker);
+						pathData.Types [tpos - 1] = (byte) (pathData.Types [tpos - 1] | (byte) PathPointType.CloseSubpath | marker);
 						break;
 					case SEG_MOVETO:
-						pathData.InternalTypes [tpos++] = (byte)((byte) PathPointType.Start | marker);
-						pathData.InternalPoints [ppos++] = new PointF (Coords [cpos++], Coords [cpos++]);
+						pathData.Types [tpos++] = (byte)((byte) PathPointType.Start | marker);
+						pathData.Points [ppos++] = new PointF (Coords [cpos++], Coords [cpos++]);
 						break;
 					case SEG_LINETO:
-						pathData.InternalTypes [tpos++] = (byte) ((byte) PathPointType.Line | marker);
-						pathData.InternalPoints [ppos++] = new PointF (Coords [cpos++], Coords [cpos++]);
+						pathData.Types [tpos++] = (byte) ((byte) PathPointType.Line | marker);
+						pathData.Points [ppos++] = new PointF (Coords [cpos++], Coords [cpos++]);
 						break;
 					case SEG_QUADTO:
 						/*
@@ -236,20 +236,20 @@ namespace System.Drawing.Drawing2D
 						float x2 = x1 + (1/3 * (x3-x0));
 						float y2 = y1 + (1/3 * (y3-y0));
 
-						pathData.InternalTypes [tpos++] = (byte)(byte) PathPointType.Bezier;
-						pathData.InternalPoints [ppos++] = new PointF (x1, y1);
-						pathData.InternalTypes [tpos++] = (byte)(byte) PathPointType.Bezier;
-						pathData.InternalPoints [ppos++] = new PointF (x2, y2);
-						pathData.InternalTypes [tpos++] = (byte) ((byte)PathPointType.Bezier | marker);
-						pathData.InternalPoints [ppos++] = new PointF (x3, y3);
+						pathData.Types [tpos++] = (byte)(byte) PathPointType.Bezier;
+						pathData.Points [ppos++] = new PointF (x1, y1);
+						pathData.Types [tpos++] = (byte)(byte) PathPointType.Bezier;
+						pathData.Points [ppos++] = new PointF (x2, y2);
+						pathData.Types [tpos++] = (byte) ((byte)PathPointType.Bezier | marker);
+						pathData.Points [ppos++] = new PointF (x3, y3);
 						break;
 					case SEG_CUBICTO:
-						pathData.InternalTypes [tpos++] = (byte)(byte) PathPointType.Bezier3;
-						pathData.InternalPoints [ppos++] = new PointF (Coords [cpos++], Coords [cpos++]);
-						pathData.InternalTypes [tpos++] = (byte) PathPointType.Bezier3;
-						pathData.InternalPoints [ppos++] = new PointF (Coords [cpos++], Coords [cpos++]);
-						pathData.InternalTypes [tpos++] = (byte) ((byte)PathPointType.Bezier3 | marker);
-						pathData.InternalPoints [ppos++] = new PointF (Coords [cpos++], Coords [cpos++]);
+						pathData.Types [tpos++] = (byte)(byte) PathPointType.Bezier3;
+						pathData.Points [ppos++] = new PointF (Coords [cpos++], Coords [cpos++]);
+						pathData.Types [tpos++] = (byte) PathPointType.Bezier3;
+						pathData.Points [ppos++] = new PointF (Coords [cpos++], Coords [cpos++]);
+						pathData.Types [tpos++] = (byte) ((byte)PathPointType.Bezier3 | marker);
+						pathData.Points [ppos++] = new PointF (Coords [cpos++], Coords [cpos++]);
 						break;
 				}
 			}
