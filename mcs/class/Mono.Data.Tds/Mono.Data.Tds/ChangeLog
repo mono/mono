@@ -1,3 +1,10 @@
+2006-01-05  Senganal T  <tsenganal@novell.com>
+
+	* TdsMetaParameter.cs: Test for DbNull when updating the scale 
+	of decimal or numeric value. Fixes #77410
+
+	Patch By Sebastien Robitaille <sebastien.robitaille@croesus.com>
+
 2005-10-20  Senganal T <tsenganal@novell.com>
 	
 	* TdsMetaParameter.cs: Set default values of Precision

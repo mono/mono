@@ -107,7 +107,7 @@ namespace Mono.Data.Tds {
 		public byte Scale {
 			get { 
 				if (TypeName == "decimal" || TypeName == "numeric") {
-					if (scale == 0) { 
+					if (scale == 0 && !Convert.IsDBNull(Value)) {
 						int[] arr = Decimal.GetBits (
 								Convert.ToDecimal(Value));
 						scale = (byte)((arr[3]>>16) & (int)0xFF);
