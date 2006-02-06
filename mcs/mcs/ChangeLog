@@ -1,3 +1,7 @@
+2006-02-06  Marek Safar  <marek.safar@seznam.cz>
+
+	* ecore.cs (PropertyExpr.FindAccessors): Just made flags const.
+
 2006-02-02  Miguel de Icaza  <miguel@novell.com>
 
 	* anonymous.cs (CaptureContext.EmitInitScope): I was wrong in the
