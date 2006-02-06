@@ -68,7 +68,7 @@ namespace Novell.Directory.Ldap.Utilclass
 		{
 			get
 			{
-				return new ArrayEnumeration(qualifiers.ToArray());
+				return qualifiers.GetEnumerator();
 			}
 			
 		}

@@ -102,7 +102,7 @@ namespace Novell.Directory.Ldap.Utilclass
 				{
 					
 					/* Get next registered control */
-					if ((ctl = (RegisteredControl) ToArray()[i]) == null)
+					if ((ctl = (RegisteredControl) this[i]) == null)
 					{
 						throw new System.FieldAccessException();
 					}
