@@ -1,3 +1,7 @@
+2006-02-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* DefaultHttpHandler.cs: New file.
+
 2006-02-01  Chris Toshok  <toshok@ximian.com>
 
 	* SiteMap.cs: use GetSection instead of GetWebApplicationSection.
