@@ -2089,7 +2089,6 @@ mini_emit_memset (MonoCompile *cfg, int destreg, int offset, int size, int val, 
 	int val_reg;
 
 	if (size <= 4) {
-		/* FIXME: Handle size 8 on 64 bit machines as well */
 		switch (size) {
 		case 1:
 			MONO_EMIT_NEW_STORE_MEMBASE_IMM (cfg, OP_STOREI1_MEMBASE_IMM, destreg, offset, val);
@@ -2100,6 +2099,10 @@ mini_emit_memset (MonoCompile *cfg, int destreg, int offset, int size, int val, 
 		case 4:
 			MONO_EMIT_NEW_STORE_MEMBASE_IMM (cfg, OP_STOREI4_MEMBASE_IMM, destreg, offset, val);
 			break;
+#if SIZEOF_VOID_P == 8
+		case 8:
+			MONO_EMIT_NEW_STORE_MEMBASE_IMM (cfg, OP_STOREI8_MEMBASE_IMM, destreg, offset, val);
+#endif
 		}
 		return;
 	}

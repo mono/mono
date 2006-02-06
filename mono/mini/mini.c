@@ -9521,6 +9521,10 @@ mono_local_cprop2 (MonoCompile *cfg)
 			case OP_IADD_IMM:
 			case OP_SUB_IMM:
 			case OP_ISUB_IMM:
+#if SIZEOF_VOID_P == 8
+			case OP_LADD_IMM:
+			case OP_LSUB_IMM:
+#endif
 				if (ins->inst_imm == 0) {
 					ins->opcode = OP_MOVE;
 					spec = ins_info [ins->opcode - OP_START - 1];
@@ -9528,19 +9532,22 @@ mono_local_cprop2 (MonoCompile *cfg)
 				break;
 			case OP_MUL_IMM:
 			case OP_IMUL_IMM:
+#if SIZEOF_VOID_P == 8
+			case OP_LMUL_IMM:
+#endif
 				if (ins->inst_imm == 0) {
 					ins->opcode = OP_NOP;
 					ins->sreg1 = -1;
 				} else if (ins->inst_imm == 1) {
 					ins->opcode = OP_MOVE;
-				}
-				else if ((ins->inst_imm == OP_IMUL_IMM) && (ins->inst_imm == -1)) {
+				} else if ((ins->opcode == OP_IMUL_IMM) && (ins->inst_imm == -1)) {
 					ins->opcode = OP_INEG;
-				}
-				else {
+				} else if ((ins->opcode == OP_LMUL_IMM) && (ins->inst_imm == -1)) {
+					ins->opcode = OP_LNEG;
+				} else {
 					int power2 = mono_is_power_of_two (ins->inst_imm);
 					if (power2 >= 0) {
-						ins->opcode = (ins->opcode == OP_MUL_IMM) ? OP_SHL_IMM : OP_ISHL_IMM;
+						ins->opcode = (ins->opcode == OP_MUL_IMM) ? OP_SHL_IMM : ((ins->opcode == OP_LMUL_IMM) ? OP_LSHL_IMM : OP_ISHL_IMM);
 						ins->inst_imm = power2;
 					}
 				}
@@ -9847,10 +9854,11 @@ mono_local_deadce_alt (MonoCompile *cfg)
 			}
 #endif
 		}
+
+		g_free (reverse);
 	}
 
 	mono_bitset_free (used);
-	g_free (reverse);
 }
 
 static void

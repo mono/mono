@@ -1744,8 +1744,24 @@ emit_call (MonoCompile *cfg, guint8 *code, guint32 patch_type, gconstpointer dat
 	return code;
 }
 
-/* FIXME: Add more instructions */
-#define INST_IGNORES_CFLAGS(ins) (((ins)->opcode == CEE_BR) || ((ins)->opcode == OP_BR) || ((ins)->opcode == OP_STORE_MEMBASE_IMM) || ((ins)->opcode == OP_STOREI8_MEMBASE_REG) || ((ins)->opcode == OP_MOVE) || ((ins)->opcode == OP_ICONST) || ((ins)->opcode == OP_I8CONST) || ((ins)->opcode == OP_LOAD_MEMBASE))
+static inline int
+store_membase_imm_to_store_membase_reg (int opcode)
+{
+	switch (opcode) {
+	case OP_STORE_MEMBASE_IMM:
+		return OP_STORE_MEMBASE_REG;
+	case OP_STOREI4_MEMBASE_IMM:
+		return OP_STOREI4_MEMBASE_REG;
+	case OP_STOREI8_MEMBASE_IMM:
+		return OP_STOREI8_MEMBASE_REG;
+	}
+
+	return -1;
+}
+
+#define INST_IGNORES_CFLAGS(opcode) (!(((opcode) == OP_ADC) || ((opcode) == OP_ADC_IMM) || ((opcode) == OP_IADC) || ((opcode) == OP_IADC_IMM) || ((opcode) == OP_SBB) || ((opcode) == OP_SBB_IMM) || ((opcode) == OP_ISBB) || ((opcode) == OP_ISBB_IMM)))
+
+//#define INST_IGNORES_CFLAGS(ins) (((ins)->opcode == CEE_BR) || ((ins)->opcode == OP_BR) || ((ins)->opcode == OP_STORE_MEMBASE_IMM) || ((ins)->opcode == OP_STOREI8_MEMBASE_REG) || ((ins)->opcode == OP_MOVE) || ((ins)->opcode == OP_ICONST) || ((ins)->opcode == OP_I8CONST) || ((ins)->opcode == OP_LOAD_MEMBASE))
 
 static void
 peephole_pass (MonoCompile *cfg, MonoBasicBlock *bb)
@@ -1760,10 +1776,29 @@ peephole_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_I8CONST:
 			/* reg = 0 -> XOR (reg, reg) */
 			/* XOR sets cflags on x86, so we cant do it always */
-			if (ins->inst_c0 == 0 && (ins->next && INST_IGNORES_CFLAGS (ins->next))) {
+			if (ins->inst_c0 == 0 && (!ins->next || (ins->next && INST_IGNORES_CFLAGS (ins->next->opcode)))) {
+				MonoInst *ins2;
+
 				ins->opcode = CEE_XOR;
 				ins->sreg1 = ins->dreg;
 				ins->sreg2 = ins->dreg;
+
+				/* 
+				 * Replace STORE_MEMBASE_IMM 0 with STORE_MEMBASE_REG since 
+				 * the latter has length 2-3 instead of 6 (reverse constant
+				 * propagation). These instruction sequences are very common
+				 * in the initlocals bblock.
+				 */
+				for (ins2 = ins->next; ins2; ins2 = ins2->next) {
+					if (((ins2->opcode == OP_STORE_MEMBASE_IMM) || (ins2->opcode == OP_STOREI4_MEMBASE_IMM) || (ins2->opcode == OP_STOREI8_MEMBASE_IMM)) && (ins2->inst_imm == 0)) {
+						ins2->opcode = store_membase_imm_to_store_membase_reg (ins2->opcode);
+						ins2->sreg1 = ins->dreg;
+					} else if ((ins2->opcode == OP_STOREI1_MEMBASE_IMM) || (ins2->opcode == OP_STOREI2_MEMBASE_IMM)) {
+						/* Continue */
+					} else {
+						break;
+					}
+				}
 			}
 			break;
 		case OP_MUL_IMM: 
