@@ -1210,8 +1210,11 @@ namespace Mono.CSharp {
 					}
 
 					ModuleBuilder builder = CodeGen.Module.Builder;
+					Type default_parent = null;
+					if (Kind == Kind.Struct)
+						default_parent = TypeManager.value_type;
 					TypeBuilder = builder.DefineType (
-						Name, type_attributes, null, null);
+						Name, type_attributes, default_parent, null);
 				} else {
 					TypeBuilder builder = Parent.TypeBuilder;
 					if (builder == null) {

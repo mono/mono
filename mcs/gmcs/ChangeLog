@@ -1,3 +1,9 @@
+2006-02-06  Martin Baulig  <martin@ximian.com>
+
+	* class.cs (TypeContainer.DefineType): If we're a struct, pass
+	`TypeManager.value_type' as parent type to
+	ModuleBuilder.DefineType().  Fixes #77358.	
+
 2006-02-02  Miguel de Icaza  <miguel@novell.com>
 
 	* anonymous.cs (CaptureContext.EmitInitScope): I was wrong in the
