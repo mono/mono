@@ -61,34 +61,34 @@ namespace MonoTests.System.XmlSerialization
 		public void SimpleDeserialize ()
 		{
 			Deserialize (typeof (Sample), "<Sample><Text>Test.</Text></Sample>");
-			Assertion.AssertEquals (typeof (Sample), result.GetType ());
+			Assert.AreEqual (typeof (Sample), result.GetType ());
 			Sample sample = result as Sample;
-			Assertion.AssertEquals ("Test.", sample.Text);
+			Assert.AreEqual ("Test.", sample.Text);
 		}
 
 		[Test]
 		public void DeserializeInt ()
 		{
 			Deserialize (typeof (int), "<int>10</int>");
-			Assertion.AssertEquals (typeof (int), result.GetType ());
-			Assertion.AssertEquals (10, result);
+			Assert.AreEqual (typeof (int), result.GetType ());
+			Assert.AreEqual (10, result);
 		}
 
 		[Test]
 		public void DeserializeSimpleArray ()
 		{
 			Deserialize (typeof (Sample), "<Sample><ArrayText><string>Test1</string><string>Test2</string></ArrayText></Sample>");
-			Assertion.AssertEquals (typeof (Sample), result.GetType ());
+			Assert.AreEqual (typeof (Sample), result.GetType ());
 			Sample sample = result as Sample;
-			Assertion.AssertEquals ("Test1", sample.ArrayText [0]);
-			Assertion.AssertEquals ("Test2", sample.ArrayText [1]);
+			Assert.AreEqual ("Test1", sample.ArrayText[0]);
+			Assert.AreEqual ("Test2", sample.ArrayText[1]);
 		}
 
 		[Test]
 		public void DeserializeEmptyEnum ()
 		{
 			Field f = Deserialize (typeof (Field), "<field modifiers=\"\" />") as Field;
-			Assertion.AssertEquals (MapModifiers.Public, f.Modifiers);
+			Assert.AreEqual (MapModifiers.Public, f.Modifiers);
 		}
 		
 		[Test]
@@ -103,7 +103,7 @@ namespace MonoTests.System.XmlSerialization
 			
 			ms.Position = 0;
 			c = (Container) serializer.Deserialize (ms);
-			Assertion.AssertEquals (1, c.Items[0]);
+			Assert.AreEqual (1, c.Items[0]);
 		}
 		
 		[Test]
@@ -141,101 +141,101 @@ namespace MonoTests.System.XmlSerialization
 		public void TestDeserializeXmlNodeArray ()
 		{
 			object ob = Deserialize (typeof(object), "<anyType at=\"1\"><elem1/><elem2/></anyType>");
-			Assertion.Assert ("Is node array", ob is XmlNode[]);
+			Assert.IsTrue (ob is XmlNode[], "Is node array");
 			
-			XmlNode[] nods = (XmlNode[]) ob; 
-			Assertion.AssertEquals ("lengh", 3, nods.Length);
-			Assertion.Assert ("#1", nods[0] is XmlAttribute);
-			Assertion.AssertEquals ("#2", "at", ((XmlAttribute)nods[0]).LocalName);
-			Assertion.AssertEquals ("#3", "1", ((XmlAttribute)nods[0]).Value);
-			Assertion.Assert ("#4", nods[1] is XmlElement);
-			Assertion.AssertEquals ("#5", "elem1", ((XmlElement)nods[1]).LocalName);
-			Assertion.Assert ("#6", nods[2] is XmlElement);
-			Assertion.AssertEquals ("#7", "elem2", ((XmlElement)nods[2]).LocalName);
+			XmlNode[] nods = (XmlNode[]) ob;
+			Assert.AreEqual (3, nods.Length, "lengh");
+			Assert.IsTrue (nods[0] is XmlAttribute, "#1");
+			Assert.AreEqual ("at", ((XmlAttribute) nods[0]).LocalName, "#2");
+			Assert.AreEqual ("1", ((XmlAttribute) nods[0]).Value, "#3");
+			Assert.IsTrue (nods[1] is XmlElement, "#4");
+			Assert.AreEqual ("elem1", ((XmlElement) nods[1]).LocalName, "#5");
+			Assert.IsTrue (nods[2] is XmlElement, "#6");
+			Assert.AreEqual ("elem2", ((XmlElement) nods[2]).LocalName, "#7");
 		}
 		
 		[Test]
 		public void TestDeserializeXmlElement ()
 		{
 			object ob = Deserialize (typeof(XmlElement), "<elem/>");
-			Assertion.Assert ("#1", ob is XmlElement);
-			Assertion.AssertEquals ("#2", "elem", ((XmlElement)ob).LocalName);
+			Assert.IsTrue (ob is XmlElement, "#1");
+			Assert.AreEqual ("elem", ((XmlElement) ob).LocalName, "#2");
 		}
 		
 		[Test]
 		public void TestDeserializeXmlCDataSection ()
 		{
 			CDataContainer c = (CDataContainer) Deserialize (typeof(CDataContainer), "<CDataContainer xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><cdata><![CDATA[data section contents]]></cdata></CDataContainer>");
-			Assertion.AssertNotNull ("#1", c.cdata);
-			Assertion.AssertEquals ("#2", "data section contents", c.cdata.Value);
+			Assert.IsNotNull (c.cdata, "#1");
+			Assert.AreEqual ("data section contents", c.cdata.Value, "#2");
 		}
 		
 		[Test]
 		public void TestDeserializeXmlNode ()
 		{
 			NodeContainer c = (NodeContainer) Deserialize (typeof(NodeContainer), "<NodeContainer xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><node>text</node></NodeContainer>");
-			Assertion.Assert ("#1", c.node is XmlText);
-			Assertion.AssertEquals ("#2", "text", c.node.Value);
+			Assert.IsTrue (c.node is XmlText, "#1");
+			Assert.AreEqual ("text", c.node.Value, "#2");
 		}
 		
 		[Test]
 		public void TestDeserializeChoices ()
 		{
 			Choices ch = (Choices) Deserialize (typeof(Choices), "<Choices><ChoiceZero>choice text</ChoiceZero></Choices>");
-			Assertion.AssertEquals ("#1", "choice text", ch.MyChoice);
-			Assertion.AssertEquals ("#2", ItemChoiceType.ChoiceZero, ch.ItemType);
+			Assert.AreEqual ("choice text", ch.MyChoice, "#A1");
+			Assert.AreEqual (ItemChoiceType.ChoiceZero, ch.ItemType, "#A2");
 			
 			ch = (Choices) Deserialize (typeof(Choices), "<Choices><ChoiceOne>choice text</ChoiceOne></Choices>");
-			Assertion.AssertEquals ("#1", "choice text", ch.MyChoice);
-			Assertion.AssertEquals ("#2", ItemChoiceType.StrangeOne, ch.ItemType);
+			Assert.AreEqual ("choice text", ch.MyChoice, "#B1");
+			Assert.AreEqual (ItemChoiceType.StrangeOne, ch.ItemType, "#B2");
 			
 			ch = (Choices) Deserialize (typeof(Choices), "<Choices><ChoiceTwo>choice text</ChoiceTwo></Choices>");
-			Assertion.AssertEquals ("#1", "choice text", ch.MyChoice);
-			Assertion.AssertEquals ("#2", ItemChoiceType.ChoiceTwo, ch.ItemType);
+			Assert.AreEqual ("choice text", ch.MyChoice, "#C1");
+			Assert.AreEqual (ItemChoiceType.ChoiceTwo, ch.ItemType, "#C2");
 		}
 		
 		[Test]
 		public void TestDeserializeNamesWithSpaces ()
 		{
 			TestSpace ts = (TestSpace) Deserialize (typeof(TestSpace), "<Type_x0020_with_x0020_space xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' Attribute_x0020_with_x0020_space='5'><Element_x0020_with_x0020_space>4</Element_x0020_with_x0020_space></Type_x0020_with_x0020_space>");
-			Assertion.AssertEquals ("#1", 4, ts.elem);
-			Assertion.AssertEquals ("#2", 5, ts.attr);
+			Assert.AreEqual (4, ts.elem, "#1");
+			Assert.AreEqual (5, ts.attr, "#2");
 		}
 		
 		[Test]
 		public void TestDeserializeDefaults ()
 		{
 			ListDefaults d2 = (ListDefaults) Deserialize (typeof(ListDefaults), "<root/>");
-	        
-	        Assertion.AssertNotNull ("list2", d2.list2);
-	        Assertion.AssertNull ("list3", d2.list3);
-	        Assertion.AssertNull ("list4", d2.list4);
-	        Assertion.AssertNotNull ("list5", d2.list5);
-	        Assertion.AssertNotNull ("ed", d2.ed);
-	        Assertion.AssertNotNull ("str", d2.str);
-	        
+
+			Assert.IsNotNull (d2.list2, "#A1");
+			Assert.IsNull (d2.list3, "#A2");
+			Assert.IsNull (d2.list4, "#A3");
+			Assert.IsNotNull (d2.list5, "#A4");
+			Assert.IsNotNull (d2.ed, "#A5");
+			Assert.IsNotNull (d2.str, "#A6");
+
 			d2 = (ListDefaults) Deserialize (typeof(ListDefaults), "<root></root>");
-	        
-	        Assertion.AssertNotNull ("2 list2", d2.list2);
-	        Assertion.AssertNull ("2 list3", d2.list3);
-	        Assertion.AssertNull ("2 list4", d2.list4);
-	        Assertion.AssertNotNull ("2 list5", d2.list5);
-	        Assertion.AssertNotNull ("2 ed", d2.ed);
-	        Assertion.AssertNotNull ("2 str", d2.str);
+
+			Assert.IsNotNull (d2.list2, "#B1");
+			Assert.IsNull (d2.list3, "#B2");
+			Assert.IsNull (d2.list4, "#B3");
+			Assert.IsNotNull (d2.list5, "#B4");
+			Assert.IsNotNull (d2.ed, "#B5");
+			Assert.IsNotNull (d2.str, "#B6");
 		}
 		
 		[Test]
 		public void TestDeserializeChoiceArray ()
 		{
 			CompositeValueType v = (CompositeValueType) Deserialize (typeof(CompositeValueType), "<?xml version=\"1.0\" encoding=\"utf-16\"?><CompositeValueType xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"><In>1</In><Es>2</Es></CompositeValueType>");
-	        Assertion.AssertNotNull ("v.Items", v.Items);
-	        Assertion.AssertNotNull ("v.ItemsElementName", v.ItemsElementName);
-			Assertion.AssertEquals ("v.Items.Length", 2, v.Items.Length);
-			Assertion.AssertEquals ("v.ItemsElementName.Length", 2, v.ItemsElementName.Length);
-			Assertion.AssertEquals ("v.Items[0]", 1, v.Items[0]);
-			Assertion.AssertEquals ("v.Items[1]", 2, v.Items[1]);
-			Assertion.AssertEquals ("v.ItemsElementName[0]", ItemsChoiceType.In, v.ItemsElementName[0]);
-			Assertion.AssertEquals ("v.ItemsElementName[1]", ItemsChoiceType.Es, v.ItemsElementName[1]);
+			Assert.IsNotNull (v.Items, "#1");
+			Assert.IsNotNull (v.ItemsElementName, "#2");
+			Assert.AreEqual (2, v.Items.Length, "#3");
+			Assert.AreEqual (2, v.ItemsElementName.Length, "#4");
+			Assert.AreEqual (1, v.Items[0], "#5");
+			Assert.AreEqual (2, v.Items[1], "#6");
+			Assert.AreEqual (ItemsChoiceType.In, v.ItemsElementName[0], "#7");
+			Assert.AreEqual (ItemsChoiceType.Es, v.ItemsElementName[1], "#8");
 		}
 		
 		[Test]
@@ -248,10 +248,10 @@ namespace MonoTests.System.XmlSerialization
 			s0+="	</ArrayOfEntity>";
 			
 			EntityCollection col = (EntityCollection) Deserialize (typeof(EntityCollection), s0);
-	        Assertion.AssertNotNull ("col", col);
-			Assertion.AssertEquals ("col.Count", 2, col.Count);
-	        Assertion.AssertNull ("col[0]", col[0].Parent);
-	        Assertion.AssertNull ("col[1]", col[1].Parent);
+			Assert.IsNotNull (col, "#1");
+			Assert.AreEqual (2, col.Count, "#2");
+			Assert.IsNull (col[0].Parent, "#3");
+			Assert.IsNull (col[1].Parent, "#4");
 		}
 		
 		[Test]
@@ -261,16 +261,16 @@ namespace MonoTests.System.XmlSerialization
 			s1+="	<ArrayOfEntity xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' />";
 			
 			EntityCollection col = (EntityCollection) Deserialize (typeof(EntityCollection), s1);
-	        Assertion.AssertNotNull ("col", col);
-			Assertion.AssertEquals ("col.Count", 0, col.Count);
+			Assert.IsNotNull (col, "#A1");
+			Assert.AreEqual (0, col.Count, "#A2");
 			
 			string s1_1 = "";
 			s1_1+="	<ArrayOfEntity xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>";
 			s1_1+="	</ArrayOfEntity>";
 			
 			col = (EntityCollection) Deserialize (typeof(EntityCollection), s1_1);
-	        Assertion.AssertNotNull ("col", col);
-			Assertion.AssertEquals ("col.Count", 0, col.Count);
+			Assert.IsNotNull (col, "#B1");
+			Assert.AreEqual (0, col.Count, "#B2");
 		}
 		
 		[Test]
@@ -280,8 +280,8 @@ namespace MonoTests.System.XmlSerialization
 			s2+="	<ArrayOfEntity xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:nil='true'/>";
 			
 			EntityCollection col = (EntityCollection) Deserialize (typeof(EntityCollection), s2);
-	        Assertion.AssertNotNull ("col", col);
-			Assertion.AssertEquals ("col.Count", 0, col.Count);
+			Assert.IsNotNull (col, "#1");
+			Assert.AreEqual (0, col.Count, "#2");
 		}
 		
 		[Test]
@@ -308,31 +308,31 @@ namespace MonoTests.System.XmlSerialization
 			s3+="</Container>";
 			
 			EntityContainer cont = (EntityContainer) Deserialize (typeof(EntityContainer), s3);
-	        Assertion.AssertNotNull ("cont", cont);
-	        
-	        Assertion.AssertNotNull ("cont.Collection1", cont.Collection1);
-			Assertion.AssertEquals ("cont.Collection1", 2, cont.Collection1.Count);
-			Assertion.AssertEquals ("cont.Collection1.Container", "assigned", cont.Collection1.Container);
-			Assertion.AssertEquals ("cont.Collection1[0].Parent", "assigned", cont.Collection1[0].Parent);
-			Assertion.AssertEquals ("cont.Collection1[1].Parent", "assigned", cont.Collection1[1].Parent);
-			
-	        Assertion.AssertNotNull ("cont.Collection2", cont.Collection2);
-			Assertion.AssertEquals ("cont.Collection2", 2, cont.Collection2.Count);
-			Assertion.AssertEquals ("cont.Collection2.Container", "assigned", cont.Collection2.Container);
-			Assertion.AssertEquals ("cont.Collection2[0].Parent", "assigned", cont.Collection2[0].Parent);
-			Assertion.AssertEquals ("cont.Collection2[1].Parent", "assigned", cont.Collection2[1].Parent);
-			
-	        Assertion.AssertNotNull ("cont.Collection3", cont.Collection3);
-			Assertion.AssertEquals ("cont.Collection3", 2, cont.Collection3.Count);
-			Assertion.AssertEquals ("cont.Collection3.Container", "root", cont.Collection3.Container);
-			Assertion.AssertEquals ("cont.Collection3[0].Parent", "root", cont.Collection3[0].Parent);
-			Assertion.AssertEquals ("cont.Collection3[1].Parent", "root", cont.Collection3[1].Parent);
-			
-	        Assertion.AssertNotNull ("cont.Collection4", cont.Collection4);
-			Assertion.AssertEquals ("cont.Collection4", 2, cont.Collection4.Count);
-			Assertion.AssertEquals ("cont.Collection4.Container", "root", cont.Collection4.Container);
-			Assertion.AssertEquals ("cont.Collection4[0].Parent", "root", cont.Collection4[0].Parent);
-			Assertion.AssertEquals ("cont.Collection4[1].Parent", "root", cont.Collection4[1].Parent);
+			Assert.IsNotNull (cont, "#A1");
+
+			Assert.IsNotNull (cont.Collection1, "#B1");
+			Assert.AreEqual (2, cont.Collection1.Count, "#B2");
+			Assert.AreEqual ("assigned", cont.Collection1.Container, "#B3");
+			Assert.AreEqual ("assigned", cont.Collection1[0].Parent, "#B4");
+			Assert.AreEqual ("assigned", cont.Collection1[1].Parent, "#B5");
+
+			Assert.IsNotNull (cont.Collection2, "#C1");
+			Assert.AreEqual (2, cont.Collection2.Count, "#C2");
+			Assert.AreEqual ("assigned", cont.Collection2.Container, "#C3");
+			Assert.AreEqual ("assigned", cont.Collection2[0].Parent, "#C4");
+			Assert.AreEqual ("assigned", cont.Collection2[1].Parent, "#C5");
+
+			Assert.IsNotNull (cont.Collection3, "#D1");
+			Assert.AreEqual (2, cont.Collection3.Count, "#D2");
+			Assert.AreEqual ("root", cont.Collection3.Container, "#D3");
+			Assert.AreEqual ("root", cont.Collection3[0].Parent, "#D4");
+			Assert.AreEqual ("root", cont.Collection3[1].Parent, "#D5");
+
+			Assert.IsNotNull (cont.Collection4, "#E1");
+			Assert.AreEqual (2, cont.Collection4.Count, "#E2");
+			Assert.AreEqual ("root", cont.Collection4.Container, "#E3");
+			Assert.AreEqual ("root", cont.Collection4[0].Parent, "#E4");
+			Assert.AreEqual ("root", cont.Collection4[1].Parent, "#E5");
 		}
 		
 		[Test]
@@ -343,23 +343,23 @@ namespace MonoTests.System.XmlSerialization
 			s4+="</Container>";
 			
 			EntityContainer cont = (EntityContainer) Deserialize (typeof(EntityContainer), s4);
-	        Assertion.AssertNotNull ("cont", cont);
-	        
-	        Assertion.AssertNotNull ("cont.Collection1", cont.Collection1);
-			Assertion.AssertEquals ("cont.Collection1", 0, cont.Collection1.Count);
-			Assertion.AssertEquals ("cont.Collection1.Container", "assigned", cont.Collection1.Container);
-			
-	        Assertion.AssertNotNull ("cont.Collection2", cont.Collection2);
-			Assertion.AssertEquals ("cont.Collection2", 0, cont.Collection2.Count);
-			Assertion.AssertEquals ("cont.Collection2.Container", "assigned", cont.Collection2.Container);
-			
-	        Assertion.AssertNotNull ("cont.Collection3", cont.Collection3);
-			Assertion.AssertEquals ("cont.Collection3", 0, cont.Collection3.Count);
-			Assertion.AssertEquals ("cont.Collection3.Container", "root", cont.Collection3.Container);
-			
-	        Assertion.AssertNotNull ("cont.Collection4", cont.Collection4);
-			Assertion.AssertEquals ("cont.Collection4", 0, cont.Collection4.Count);
-			Assertion.AssertEquals ("cont.Collection4.Container", "root", cont.Collection4.Container);
+			Assert.IsNotNull (cont, "#A1");
+
+			Assert.IsNotNull (cont.Collection1, "#B1");
+			Assert.AreEqual (0, cont.Collection1.Count, "#B2");
+			Assert.AreEqual ("assigned", cont.Collection1.Container, "#B3");
+
+			Assert.IsNotNull (cont.Collection2, "#C1");
+			Assert.AreEqual (0, cont.Collection2.Count, "#C2");
+			Assert.AreEqual ("assigned", cont.Collection2.Container, "#C3");
+
+			Assert.IsNotNull (cont.Collection3, "#D1");
+			Assert.AreEqual (0, cont.Collection3.Count, "#D2");
+			Assert.AreEqual ("root", cont.Collection3.Container, "#D3");
+
+			Assert.IsNotNull (cont.Collection4, "#E1");
+			Assert.AreEqual (0, cont.Collection4.Count, "#E2");
+			Assert.AreEqual ("root", cont.Collection4.Container, "#E3");
 		}
 		
 		[Test]
@@ -374,23 +374,23 @@ namespace MonoTests.System.XmlSerialization
 			s5+="</Container>";
 			
 			EntityContainer cont = (EntityContainer) Deserialize (typeof(EntityContainer), s5);
-	        Assertion.AssertNotNull ("cont", cont);
-	        
-	        Assertion.AssertNotNull ("cont.Collection1", cont.Collection1);
-			Assertion.AssertEquals ("cont.Collection1", 0, cont.Collection1.Count);
-			Assertion.AssertEquals ("cont.Collection1.Container", "assigned", cont.Collection1.Container);
-			
-	        Assertion.AssertNotNull ("cont.Collection2", cont.Collection2);
-			Assertion.AssertEquals ("cont.Collection2", 0, cont.Collection2.Count);
-			Assertion.AssertEquals ("cont.Collection2.Container", "assigned", cont.Collection2.Container);
-			
-	        Assertion.AssertNotNull ("cont.Collection3", cont.Collection3);
-			Assertion.AssertEquals ("cont.Collection3", 0, cont.Collection3.Count);
-			Assertion.AssertEquals ("cont.Collection3.Container", "root", cont.Collection3.Container);
-			
-	        Assertion.AssertNotNull ("cont.Collection4", cont.Collection4);
-			Assertion.AssertEquals ("cont.Collection4", 0, cont.Collection4.Count);
-			Assertion.AssertEquals ("cont.Collection4.Container", "root", cont.Collection4.Container);
+			Assert.IsNotNull (cont, "#A1");
+
+			Assert.IsNotNull (cont.Collection1, "#B1");
+			Assert.AreEqual (0, cont.Collection1.Count, "#B2");
+			Assert.AreEqual ("assigned", cont.Collection1.Container, "#B3");
+
+			Assert.IsNotNull (cont.Collection2, "#C1");
+			Assert.AreEqual (0, cont.Collection2.Count, "#C2");
+			Assert.AreEqual ("assigned", cont.Collection2.Container, "#C3");
+
+			Assert.IsNotNull (cont.Collection3, "#D1");
+			Assert.AreEqual (0, cont.Collection3.Count, "#D2");
+			Assert.AreEqual ("root", cont.Collection3.Container, "#D3");
+
+			Assert.IsNotNull (cont.Collection4, "#E1");
+			Assert.AreEqual (0, cont.Collection4.Count, "#E2");
+			Assert.AreEqual ("root", cont.Collection4.Container, "#E3");
 		}
 		
 		[Test]
@@ -405,23 +405,23 @@ namespace MonoTests.System.XmlSerialization
 			s6+="</Container>";
 			
 			EntityContainer cont = (EntityContainer) Deserialize (typeof(EntityContainer), s6);
-	        Assertion.AssertNotNull ("cont", cont);
-	        
-	        Assertion.AssertNotNull ("cont.Collection1", cont.Collection1);
-			Assertion.AssertEquals ("cont.Collection1", 0, cont.Collection1.Count);
-			Assertion.AssertEquals ("cont.Collection1.Container", "assigned", cont.Collection1.Container);
-			
-	        Assertion.AssertNotNull ("cont.Collection2", cont.Collection2);
-			Assertion.AssertEquals ("cont.Collection2", 0, cont.Collection2.Count);
-			Assertion.AssertEquals ("cont.Collection2.Container", "assigned", cont.Collection2.Container);
-			
-	        Assertion.AssertNotNull ("cont.Collection3", cont.Collection3);
-			Assertion.AssertEquals ("cont.Collection3", 0, cont.Collection3.Count);
-			Assertion.AssertEquals ("cont.Collection3.Container", "root", cont.Collection3.Container);
-			
-	        Assertion.AssertNotNull ("cont.Collection4", cont.Collection4);
-			Assertion.AssertEquals ("cont.Collection4", 0, cont.Collection4.Count);
-			Assertion.AssertEquals ("cont.Collection4.Container", "root", cont.Collection4.Container);
+			Assert.IsNotNull (cont, "#A1");
+
+			Assert.IsNotNull (cont.Collection1, "#B1");
+			Assert.AreEqual (0, cont.Collection1.Count, "#B2");
+			Assert.AreEqual ("assigned", cont.Collection1.Container, "#B3");
+
+			Assert.IsNotNull (cont.Collection2, "#C1");
+			Assert.AreEqual (0, cont.Collection2.Count, "#C2");
+			Assert.AreEqual ("assigned", cont.Collection2.Container, "#C3");
+
+			Assert.IsNotNull (cont.Collection3, "#D1");
+			Assert.AreEqual (0, cont.Collection3.Count, "#D2");
+			Assert.AreEqual ("root", cont.Collection3.Container, "#D3");
+
+			Assert.IsNotNull (cont.Collection4, "#E1");
+			Assert.AreEqual (0, cont.Collection4.Count, "#E2");
+			Assert.AreEqual ("root", cont.Collection4.Container, "#E3");
 		}
 		
 		[Test]
@@ -436,19 +436,19 @@ namespace MonoTests.System.XmlSerialization
 			s6+="</Container>";
 			
 			ArrayEntityContainer cont = (ArrayEntityContainer) Deserialize (typeof(ArrayEntityContainer), s6);
-	        Assertion.AssertNotNull ("cont", cont);
-	        
-	        Assertion.AssertNotNull ("cont.Collection1", cont.Collection1);
-			Assertion.AssertEquals ("cont.Collection1.Length", 0, cont.Collection1.Length);
-			
-	        Assertion.AssertNotNull ("cont.Collection2", cont.Collection2);
-			Assertion.AssertEquals ("cont.Collection2.Length", 0, cont.Collection2.Length);
-			
-	        Assertion.AssertNotNull ("cont.Collection3", cont.Collection3);
-			Assertion.AssertEquals ("cont.Collection3.Length", 0, cont.Collection3.Length);
-			
-	        Assertion.AssertNotNull ("cont.Collection4", cont.Collection4);
-			Assertion.AssertEquals ("cont.Collection4.Length", 0, cont.Collection4.Length);
+			Assert.IsNotNull (cont, "#A1");
+
+			Assert.IsNotNull (cont.Collection1, "#B1");
+			Assert.AreEqual (0, cont.Collection1.Length, "#B2");
+
+			Assert.IsNotNull (cont.Collection2, "#C1");
+			Assert.AreEqual (0, cont.Collection2.Length, "#C2");
+
+			Assert.IsNotNull (cont.Collection3, "#D1");
+			Assert.AreEqual (0, cont.Collection3.Length, "#D2");
+
+			Assert.IsNotNull (cont.Collection4, "#E1");
+			Assert.AreEqual (0, cont.Collection4.Length, "#E2");
 		}
 		
 		[Test]
@@ -459,16 +459,16 @@ namespace MonoTests.System.XmlSerialization
 			s4+="</Container>";
 			
 			ArrayEntityContainer cont = (ArrayEntityContainer) Deserialize (typeof(ArrayEntityContainer), s4);
-	        Assertion.AssertNotNull ("cont", cont);
-	        
-	        Assertion.AssertNull ("cont.Collection1", cont.Collection1);
-	        Assertion.AssertNull ("cont.Collection2", cont.Collection2);
-			
-	        Assertion.AssertNotNull ("cont.Collection3", cont.Collection3);
-			Assertion.AssertEquals ("cont.Collection3.Length", 0, cont.Collection3.Length);
-			
-	        Assertion.AssertNotNull ("cont.Collection4", cont.Collection4);
-			Assertion.AssertEquals ("cont.Collection4.Length", 0, cont.Collection4.Length);
+			Assert.IsNotNull (cont, "#A1");
+
+			Assert.IsNull (cont.Collection1, "#B1");
+			Assert.IsNull (cont.Collection2, "#B2");
+
+			Assert.IsNotNull (cont.Collection3, "#C1");
+			Assert.AreEqual (0, cont.Collection3.Length, "#C2");
+
+			Assert.IsNotNull (cont.Collection4, "#D1");
+			Assert.AreEqual (0, cont.Collection4.Length, "#D2");
 		}
 		
 		[Test]
@@ -483,14 +483,14 @@ namespace MonoTests.System.XmlSerialization
 			s5+="</Container>";
 			
 			ArrayEntityContainer cont = (ArrayEntityContainer) Deserialize (typeof(ArrayEntityContainer), s5);
-	        Assertion.AssertNotNull ("cont", cont);
-	        
-	        Assertion.AssertNull ("cont.Collection1", cont.Collection1);
-	        Assertion.AssertNull ("cont.Collection2", cont.Collection2);
-	        Assertion.AssertNull ("cont.Collection3", cont.Collection3);
-			
-	        Assertion.AssertNotNull ("cont.Collection4", cont.Collection4);
-			Assertion.AssertEquals ("cont.Collection4.Length", 0, cont.Collection4.Length);
+			Assert.IsNotNull (cont, "#A1");
+
+			Assert.IsNull (cont.Collection1, "#B1");
+			Assert.IsNull (cont.Collection2, "#B2");
+			Assert.IsNull (cont.Collection3, "#B3");
+
+			Assert.IsNotNull (cont.Collection4, "#C1");
+			Assert.AreEqual (0, cont.Collection4.Length, "#C2");
 		}
 		
 		[Test]
@@ -500,16 +500,16 @@ namespace MonoTests.System.XmlSerialization
 			s1+="<ArrayOfEntity xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' />";
 			
 			Entity[] col = (Entity[]) Deserialize (typeof(Entity[]), s1);
-	        Assertion.AssertNotNull ("col", col);
-			Assertion.AssertEquals ("col.Length", 0, col.Length);
+			Assert.IsNotNull (col, "#A1");
+			Assert.AreEqual (0, col.Length, "#A2");
 			
 			string s1_1 = "";
 			s1_1+="	<ArrayOfEntity xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>";
 			s1_1+="	</ArrayOfEntity>";
 			
 			col = (Entity[]) Deserialize (typeof(Entity[]), s1_1);
-	        Assertion.AssertNotNull ("col", col);
-			Assertion.AssertEquals ("col.Length", 0, col.Length);
+			Assert.IsNotNull (col, "#B1");
+			Assert.AreEqual (0, col.Length, "#B2");
 		}
 		
 		[Test]
@@ -519,7 +519,7 @@ namespace MonoTests.System.XmlSerialization
 			s2 += "<ArrayOfEntity xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:nil='true'/>";
 			
 			Entity[] col = (Entity[]) Deserialize (typeof(Entity[]), s2);
-	        Assertion.AssertNull ("col", col);
+			Assert.IsNull (col, "#1");
 		}
 		
 		[Test]
@@ -534,12 +534,12 @@ namespace MonoTests.System.XmlSerialization
 			s3+="</Container>";
 			
 			ObjectWithReadonlyCollection cont = (ObjectWithReadonlyCollection) Deserialize (typeof(ObjectWithReadonlyCollection), s3);
-	        Assertion.AssertNotNull ("cont", cont);
-	        Assertion.AssertNotNull ("cont.Collection1", cont.Collection1);
-			Assertion.AssertEquals ("cont.Collection1.Count", 2, cont.Collection1.Count);
-			Assertion.AssertEquals ("cont.Collection1.Container", "root", cont.Collection1.Container);
-			Assertion.AssertEquals ("cont.Collection1[0].Parent", "root", cont.Collection1[0].Parent);
-			Assertion.AssertEquals ("cont.Collection1[1].Parent", "root", cont.Collection1[1].Parent);
+			Assert.IsNotNull (cont, "#1");
+			Assert.IsNotNull (cont.Collection1, "#2");
+			Assert.AreEqual (2, cont.Collection1.Count, "#3");
+			Assert.AreEqual ("root", cont.Collection1.Container, "#4");
+			Assert.AreEqual ("root", cont.Collection1[0].Parent, "#5");
+			Assert.AreEqual ("root", cont.Collection1[1].Parent, "#6");
 		}
 		
 		[Test]
@@ -569,9 +569,9 @@ namespace MonoTests.System.XmlSerialization
 			s3+="</Container>";
 			
 			ObjectWithReadonlyArray cont = (ObjectWithReadonlyArray) Deserialize (typeof(ObjectWithReadonlyArray), s3);
-	        Assertion.AssertNotNull ("cont", cont);
-	        Assertion.AssertNotNull ("cont.Collection1", cont.Collection1);
-			Assertion.AssertEquals ("cont.Collection1.Length", 0, cont.Collection1.Length);
+			Assert.IsNotNull (cont, "#1");
+			Assert.IsNotNull (cont.Collection1, "#2");
+			Assert.AreEqual (0, cont.Collection1.Length, "#3");
 		}
 	}
 }
