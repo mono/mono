@@ -24,7 +24,7 @@ using AssertType = NUnit.Framework.Assert;
 namespace MonoTests.System.Xml
 {
 	[TestFixture]
-	public class XmlSchemaDatatypeTests : Assertion
+	public class XmlSchemaDatatypeTests
 	{
 		private XmlSchema GetSchema (string path)
 		{
@@ -41,25 +41,26 @@ namespace MonoTests.System.Xml
 		{
 			XmlSchemaElement element = schema.Items [index] as XmlSchemaElement;
 			XmlSchemaDatatype dataType = element.ElementType as XmlSchemaDatatype;
-			AssertEquals (tokenizedType, dataType.TokenizedType);
-			AssertEquals (type, dataType.ValueType);
-			AssertEquals (parsedValue, dataType.ParseValue (rawValue, null, null));
+			Assert.AreEqual (tokenizedType, dataType.TokenizedType, "#1");
+			Assert.AreEqual (type, dataType.ValueType, "#2");
+			Assert.AreEqual (parsedValue, dataType.ParseValue (rawValue, null, null), "#3");
 		}
 
 		[Test]
-		[Category ("NotWorking")] // ContentTypeParticle impl. difference.
+#if NET_2_0
+		[Category ("NotDotNet")] // BaseSchemaType impl. difference.
+#endif
 		public void TestAnyType ()
 		{
 			XmlSchema schema = GetSchema ("Test/XmlFiles/xsd/datatypesTest.xsd");
 			schema.Compile (null);
 			XmlSchemaElement any = schema.Elements [QName ("e00", "urn:bar")] as XmlSchemaElement;
 			XmlSchemaComplexType cType = any.ElementType as XmlSchemaComplexType;
-			AssertEquals (typeof (XmlSchemaComplexType), cType.GetType ());
-			AssertNotNull (cType);
-			AssertEquals (XmlQualifiedName.Empty, cType.QualifiedName);
-			AssertNull (cType.BaseSchemaType);
-			// In MS.NET its type is "XmlSchemaParticle.EmptyParticle"
-			AssertNotNull (cType.ContentTypeParticle);
+			Assert.AreEqual (typeof (XmlSchemaComplexType), cType.GetType (), "#1");
+			Assert.IsNotNull (cType, "#2");
+			Assert.AreEqual (XmlQualifiedName.Empty, cType.QualifiedName, "#3");
+			Assert.IsNotNull (cType.BaseSchemaType, "#4");  // In MS.NET 2.0 its null
+			Assert.IsNotNull (cType.ContentTypeParticle, "#5");
 		}
 
 		[Test]
