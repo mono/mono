@@ -1433,9 +1433,7 @@ namespace System.Xml
 			if (elementNameStackPos == 0)
 				throw NotWFError ("closing element without matching opening element");
 			TagName expected = elementNames [--elementNameStackPos];
-			string name = ReadName (expected.Name);
-			if (!Object.ReferenceEquals (expected.Name, name))
-				throw NotWFError (String.Format ("unmatched closing element: expected {0} but found {1}", expected, name));
+			Expect (expected.Name);
 
 			ExpectAfterWhitespace ('>');
 
@@ -1443,7 +1441,7 @@ namespace System.Xml
 
 			SetProperties (
 				XmlNodeType.EndElement, // nodeType
-				name, // name
+				expected.Name, // name
 				expected.Prefix, // prefix
 				expected.LocalName, // localName
 				false, // isEmptyElement
@@ -2641,9 +2639,10 @@ namespace System.Xml
 
 		private void Expect (string expected)
 		{
-			int len = expected.Length;
-			for(int i=0; i< len; i++)
-				Expect (expected[i]);
+			for (int i = 0; i < expected.Length; i++)
+				if (ReadChar () != expected [i])
+					throw NotWFError (String.Format (CultureInfo.InvariantCulture, 
+						"'{0}' is expected", expected));
 		}
 
 		private void ExpectAfterWhitespace (char c)

@@ -1,3 +1,9 @@
+2006-02-06  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlTextReader.cs : Expect() could be written inline and it could
+	  provide better information. ReadEndTag() could use Expect() instead
+	  of costy ReadName().
+
 2006-02-04  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlTextReader.cs : on ReadEndTag() we can avoid NameTable.Add().
