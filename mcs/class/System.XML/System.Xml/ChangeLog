@@ -1,5 +1,11 @@
 2006-02-06  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlTextReader.cs : ReadTextReader() is now assured to have current
+	  node content, except for Text, CDATA and Comment. ReadName() does
+	  not use nameBuffer and reuse peekChars.
+
+2006-02-06  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlTextReader.cs : eliminated currentTagBuffer. XmlDeclaration is
 	  now once read as PI and then re-parsed from Value. DTD internal
 	  subset is now parsed as usual "value".

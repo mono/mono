@@ -7,7 +7,7 @@
 //   Atsushi Enomoto  (ginga@kit.hi-ho.ne.jp)
 //
 // (C) 2001, 2002 Jason Diamond  http://injektilo.org/
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,6 +27,16 @@
 // LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//
+//#define USE_NAME_BUFFER
+
+//
+// Optimization TODOs:
+//
+//	- support PushbackChar() which reverts one character read.
+//		- ReadTextReader() should always keep one pushback buffer
+//		  as pushback safety net.
+//	- Replace (peek,read) * n -> read * n + pushback
 //
 
 using System;
@@ -434,7 +444,7 @@ namespace System.Xml
 
 		public TextReader GetRemainder ()
 		{
-			if (peekCharsIndex == peekCharsLength)
+			if (peekCharsLength < 0)
 				return reader;
 			return new StringReader (new string (peekChars, peekCharsIndex, peekCharsLength - peekCharsIndex) + reader.ReadToEnd ());
 		}
@@ -545,6 +555,9 @@ namespace System.Xml
 
 		public override bool Read ()
 		{
+			curNodePeekIndex = peekCharsIndex;
+			preserveCurrentTag = true;
+
 			if (startNodeType == XmlNodeType.Attribute) {
 				if (currentAttribute == 0)
 					return false;	// already read.
@@ -869,10 +882,12 @@ namespace System.Xml
 		private bool returnEntityReference;
 		private string entityReferenceName;
 
+#if USE_NAME_BUFFER
 		private char [] nameBuffer;
 		private int nameLength;
 		private int nameCapacity;
 		private const int initialNameCapacity = 32;
+#endif
 
 		private StringBuilder valueBuffer;
 
@@ -880,6 +895,8 @@ namespace System.Xml
 		private char [] peekChars;
 		private int peekCharsIndex;
 		private int peekCharsLength;
+		private int curNodePeekIndex;
+		private bool preserveCurrentTag;
 		private const int peekCharCapacity = 1024;
 
 		private int line;
@@ -940,16 +957,19 @@ namespace System.Xml
 			returnEntityReference = false;
 			entityReferenceName = String.Empty;
 
+#if USE_NAME_BUFFER
 			nameBuffer = new char [initialNameCapacity];
 			nameLength = 0;
 			nameCapacity = initialNameCapacity;
+#endif
 
 			valueBuffer = new StringBuilder ();
 
 			peekCharsIndex = 0;
-			peekCharsLength = 0;
 			if (peekChars == null)
 				peekChars = new char [peekCharCapacity];
+			peekCharsLength = -1;
+			curNodePeekIndex = -1; // read from start
 
 			line = 1;
 			column = 1;
@@ -1091,7 +1111,7 @@ namespace System.Xml
 
 		private int PeekSurrogate (int c)
 		{
-			if (peekCharsLength == peekCharsIndex + 1) {
+			if (peekCharsLength <= peekCharsIndex + 1) {
 				if (!ReadTextReader (c))
 					//FIXME: copy MS.NET behaviour when unpaired surrogate found
 					return c;
@@ -1155,13 +1175,48 @@ namespace System.Xml
 
 		private bool ReadTextReader (int remained)
 		{
-			peekCharsIndex = 0;
-			if (remained >= 0)
-				peekChars [0] = (char) remained;
+			if (peekCharsLength < 0) {	// initialized buffer
+				peekCharsLength = reader.Read (peekChars, 0, peekChars.Length);
+				return peekCharsLength > 0;
+			}
 			int offset = remained >= 0 ? 1 : 0;
-			peekCharsLength = reader.Read (peekChars, offset,
-				peekCharCapacity - offset) + offset;
-			return (peekCharsLength != 0);
+			int copysize = peekCharsLength - curNodePeekIndex;
+
+			// It must assure that current tag content always exists
+			// in peekChars.
+			if (!preserveCurrentTag) {
+				curNodePeekIndex = 0;
+				peekCharsIndex = 0;
+				//copysize = 0;
+			} else if (peekCharsLength < peekChars.Length) {
+				// NonBlockingStreamReader returned less bytes
+				// than the size of the buffer. In that case,
+				// just refill the buffer.
+			} else if (curNodePeekIndex <= (peekCharsLength >> 1)) {
+				// extend the buffer
+				char [] tmp = new char [peekChars.Length * 2];
+				Array.Copy (peekChars, curNodePeekIndex,
+					tmp, 0, copysize);
+				peekChars = tmp;
+				curNodePeekIndex = 0;
+				peekCharsIndex = copysize;
+			} else {
+				Array.Copy (peekChars, curNodePeekIndex,
+					peekChars, 0, copysize);
+				curNodePeekIndex = 0;
+				peekCharsIndex = copysize;
+			}
+			if (remained >= 0)
+				peekChars [peekCharsIndex] = (char) remained;
+			int count = peekChars.Length - peekCharsIndex - offset;
+			if (count > peekCharCapacity)
+				count = peekCharCapacity;
+			int read = reader.Read (
+				peekChars, peekCharsIndex + offset, count);
+			int remainingSize = offset + read;
+			peekCharsLength = peekCharsIndex + remainingSize;
+
+			return (remainingSize != 0);
 		}
 
 		private bool ReadContent ()
@@ -1273,7 +1328,7 @@ namespace System.Xml
 			currentLinkedNodeLinePosition = column;
 
 			string prefix, localName;
-			string name = ReadName (out prefix, out localName, null);
+			string name = ReadName (out prefix, out localName);
 			if (currentState == XmlNodeType.EndElement)
 				throw NotWFError ("document has terminated, cannot open new element");
 
@@ -1446,6 +1501,7 @@ namespace System.Xml
 				currentState = XmlNodeType.EndElement;
 		}
 
+#if USE_NAME_BUFFER
 		private void AppendSurrogatePairNameChar (int ch)
 		{
 			nameBuffer [nameLength++] = (char) ((ch - 0x10000) / 0x400 + 0xD800);
@@ -1461,6 +1517,7 @@ namespace System.Xml
 			nameBuffer = new char [nameCapacity];
 			Array.Copy (oldNameBuffer, nameBuffer, nameLength);
 		}
+#endif
 
 		private void AppendValueChar (int ch)
 		{
@@ -1494,6 +1551,7 @@ namespace System.Xml
 		{
 			if (currentState != XmlNodeType.Element)
 				throw NotWFError ("Text node cannot appear in this state.");
+			preserveCurrentTag = false;
 
 			if (notWhitespace)
 				ClearValueBuffer ();
@@ -1661,7 +1719,7 @@ namespace System.Xml
 				currentAttributeToken.LinePosition = column;
 
 				string prefix, localName;
-				currentAttributeToken.Name = ReadName (out prefix, out localName, null);
+				currentAttributeToken.Name = ReadName (out prefix, out localName);
 				currentAttributeToken.Prefix = prefix;
 				currentAttributeToken.LocalName = localName;
 				ExpectAfterWhitespace ('=');
@@ -2159,6 +2217,8 @@ namespace System.Xml
 			if (currentState == XmlNodeType.None)
 				currentState = XmlNodeType.XmlDeclaration;
 
+			preserveCurrentTag = false;
+
 			ClearValueBuffer ();
 
 			int ch;
@@ -2198,6 +2258,7 @@ namespace System.Xml
 		{
 			if (currentState != XmlNodeType.Element)
 				throw NotWFError ("CDATA section cannot appear in this state.");
+			preserveCurrentTag = false;
 
 			ClearValueBuffer ();
 
@@ -2577,18 +2638,49 @@ namespace System.Xml
 		private string ReadName ()
 		{
 			string prefix, local;
-			return ReadName (out prefix, out local, null);
+			return ReadName (out prefix, out local);
 		}
 
-		private string ReadName (string expectedName)
+		private string ReadName (out string prefix, out string localName)
 		{
-			string prefix, local;
-			return ReadName (out prefix, out local, expectedName);
-		}
+#if !USE_NAME_BUFFER
+			bool savePreserve = preserveCurrentTag;
+			preserveCurrentTag = true;
 
-		// expectedName is not null only when called from ReadEndTag()
-		private string ReadName (out string prefix, out string localName, string expectedName)
-		{
+			int startOffset = peekCharsIndex - curNodePeekIndex;
+			int ch = PeekChar ();
+			if (!XmlChar.IsFirstNameChar (ch))
+				throw NotWFError (String.Format (CultureInfo.InvariantCulture, "a name did not start with a legal character {0} ({1})", ch, (char) ch));
+			Advance (ch);
+			int length = 1;
+			int colonAt = -1;
+
+			while (XmlChar.IsNameChar ((ch = PeekChar ()))) {
+				Advance (ch);
+				if (ch == ':' && namespaces && colonAt < 0)
+					colonAt = length;
+				length++;
+			}
+
+			int start = curNodePeekIndex + startOffset;
+
+			string name = parserContext.NameTable.Add (
+				peekChars, start, length);
+
+			if (colonAt > 0) {
+				prefix = parserContext.NameTable.Add (
+					peekChars, start, colonAt);
+				localName = parserContext.NameTable.Add (
+					peekChars, start + colonAt + 1, length - colonAt - 1);
+			} else {
+				prefix = String.Empty;
+				localName = name;
+			}
+
+			preserveCurrentTag = savePreserve;
+
+			return name;
+#else
 			int ch = PeekChar ();
 			if (!XmlChar.IsFirstNameChar (ch))
 				throw NotWFError (String.Format (CultureInfo.InvariantCulture, "a name did not start with a legal character {0} ({1})", ch, (char) ch));
@@ -2623,17 +2715,6 @@ namespace System.Xml
 				}
 			}
 
-			if (expectedName != null) {
-				prefix = localName = String.Empty;
-				if (expectedName.Length != nameLength)
-					// it's an error, so we anyways don't case the perf.
-					return new string (nameBuffer, 0, nameLength);
-				for (int i = 0; i < expectedName.Length; i++)
-					if (expectedName [i] != nameBuffer [i])
-						return new string (nameBuffer, 0, nameLength);
-				return expectedName;
-			}
-
 			string name = parserContext.NameTable.Add (nameBuffer, 0, nameLength);
 
 			if (colonAt > 0) {
@@ -2645,6 +2726,7 @@ namespace System.Xml
 			}
 
 			return name;
+#endif
 		}
 
 		// Read the next character and compare it against the
