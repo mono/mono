@@ -1,3 +1,8 @@
+2006-02-06  Jackson Harper  <jackson@ximian.com>
+
+	* ComboBox.cs: Dont manually set the top_item, this is computed
+	when the scrollbar position is set.
+
 2006-02-06  Mike Kestner  <mkestner@novell.com>
 
 	* XplatUIX11.cs : 64 bit changes to XGetWindowProperty usage. Fixes

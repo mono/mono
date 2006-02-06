@@ -1566,7 +1566,7 @@ namespace System.Windows.Forms
 					/* Does not need vertical scrollbar*/
 					if (vscrollbar_ctrl != null) {						
 						vscrollbar_ctrl.Visible = false;						
-					}					
+					}
 				}
 				else {					
 					/* Need vertical scrollbar */
@@ -1971,8 +1971,7 @@ namespace System.Windows.Forms
 					
 				SetHighLightedItem (owner.SelectedItem);
 				int index = GetHighLightedIndex ();
-				top_item = (index == -1 ? 0 : index );
-				
+
 				CalcListBoxArea ();				
 				Show ();
 				
