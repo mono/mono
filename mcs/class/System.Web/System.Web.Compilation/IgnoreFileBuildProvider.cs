@@ -32,7 +32,7 @@
 
 namespace System.Web.Compilation {
 
-	public class IgnoreFileBuildProvider : BuildProvider
+	class IgnoreFileBuildProvider : BuildProvider
 	{
 		public override void GenerateCode (AssemblyBuilder assemblyBuilder)
 		{

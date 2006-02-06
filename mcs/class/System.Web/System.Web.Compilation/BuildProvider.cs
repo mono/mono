@@ -3,6 +3,7 @@
 //
 // Authors:
 //	Chris Toshok (toshok@ximian.com)
+//	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // (C) 2006 Novell, Inc (http://www.novell.com)
 //
@@ -34,18 +35,27 @@ using System;
 using System.CodeDom.Compiler;
 using System.Collections;
 using System.IO;
+using System.Reflection;
+using System.Web.Configuration;
+using System.Web.Hosting;
+using System.Web.Util;
 
 namespace System.Web.Compilation {
 
 	public abstract class BuildProvider {
+		CompilerParameters parameters;
+		CompilerType code_compiler_type;
+		string virtual_path;
+		ArrayList ref_assemblies;
+		ICollection vpath_deps;
+
 		protected BuildProvider()
 		{
+			parameters = new CompilerParameters ();
 		}
 
-		[MonoTODO]
 		public virtual void GenerateCode (AssemblyBuilder assemblyBuilder)
 		{
-			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
@@ -54,82 +64,114 @@ namespace System.Web.Compilation {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		protected CompilerType GetDefaultCompilerType ()
 		{
-			throw new NotImplementedException ();
+			CompilationSection config;
+			config = (CompilationSection) WebConfigurationManager.GetSection ("system.web/compilation");
+			return config.BuildProviders.GetProviderForLanguage (config.DefaultLanguage);
 		}
 
-		[MonoTODO]
 		protected CompilerType GetDefaultCompilerTypeForLanguage (string language)
 		{
-			throw new NotImplementedException ();
+			// MS throws when accesing a Hashtable, we do here.
+			if (language == null || language == "")
+				throw new ArgumentNullException ("language");
+
+			CompilationSection config;
+			config = (CompilationSection) WebConfigurationManager.GetSection ("system.web/compilation");
+			return config.BuildProviders.GetProviderForLanguage (language);
 		}
 
-		[MonoTODO]
 		public virtual Type GetGeneratedType (CompilerResults results)
 		{
-			throw new NotImplementedException ();
+			return null;
 		}
 
-		[MonoTODO]
 		public virtual BuildProviderResultFlags GetResultFlags (CompilerResults results)
 		{
-			throw new NotImplementedException ();
+			return BuildProviderResultFlags.Default;
 		}
 
-		[MonoTODO]
 		protected TextReader OpenReader ()
 		{
-			throw new NotImplementedException ();
+			return OpenReader (VirtualPath);
 		}
 
-		[MonoTODO]
 		protected TextReader OpenReader (string virtualPath)
 		{
-			throw new NotImplementedException ();
+			Stream st = OpenStream (virtualPath);
+			return new StreamReader (st, WebEncoding.FileEncoding);
 		}
 
-		[MonoTODO]
 		protected Stream OpenStream ()
 		{
-			throw new NotImplementedException ();
+			return OpenStream (VirtualPath);
 		}
 
-		[MonoTODO]
 		protected Stream OpenStream (string virtualPath)
 		{
-			throw new NotImplementedException ();
+			// MS also throws a NullReferenceException here when not hosted.
+			return VirtualPathProvider.OpenFile (virtualPath);
 		}
 
-		[MonoTODO]
 		public virtual CompilerType CodeCompilerType {
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return code_compiler_type; }
 		}
 
-		[MonoTODO]
 		protected ICollection ReferencedAssemblies {
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return ref_assemblies; }
 		}
 
-		[MonoTODO]
 		protected internal string VirtualPath {
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return virtual_path; }
 		}
 
-		[MonoTODO]
 		public virtual ICollection VirtualPathDependencies {
 			get {
-				throw new NotImplementedException ();
+				if (vpath_deps == null)
+					vpath_deps = new OneNullCollection ();
+
+				return vpath_deps;
 			}
 		}
 	}
-}
 
+	class OneNullCollection : ICollection {
+		public int Count {
+			get { return 1; }
+		}
+
+		public bool IsSynchronized {
+			get { return false; }
+		}
+
+		public object SyncRoot {
+			get { return this; }
+		}
+
+		public void CopyTo (Array array, int index)
+		{
+			if (array == null)
+				throw new ArgumentNullException ();
+
+			if (index < 0)
+				throw new ArgumentOutOfRangeException ();
+
+			if (array.Rank > 1)
+				throw new ArgumentException ();
+
+			int length = array.Length;
+			if (index >= length || index > length - 1)
+				throw new ArgumentException ();
+
+			array.SetValue (null, index);
+		}
+
+		public IEnumerator GetEnumerator ()
+		{
+			yield return null;
+		}
+	}
+}
 #endif
+
