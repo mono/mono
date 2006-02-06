@@ -1,4 +1,8 @@
 
+Mon Feb 6 09:01:24 EST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c: fix handling of exceptions in large methods (bug #74932).
+
 Fri Feb 3 18:51:35 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* mini.c: change optimize_branches () to use a single loop
