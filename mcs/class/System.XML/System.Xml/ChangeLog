@@ -1,5 +1,11 @@
 2006-02-06  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlTextReader.cs : eliminated currentTagBuffer. XmlDeclaration is
+	  now once read as PI and then re-parsed from Value. DTD internal
+	  subset is now parsed as usual "value".
+
+2006-02-06  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlTextReader.cs : Expect() could be written inline and it could
 	  provide better information. ReadEndTag() could use Expect() instead
 	  of costy ReadName().

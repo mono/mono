@@ -876,11 +876,6 @@ namespace System.Xml
 
 		private StringBuilder valueBuffer;
 
-		private char [] currentTagBuffer;
-		private int currentTagLength;
-		private int currentTagCapacity;
-		private const int initialCurrentTagCapacity = 256;
-
 		private TextReader reader;
 		private char [] peekChars;
 		private int peekCharsIndex;
@@ -950,10 +945,6 @@ namespace System.Xml
 			nameCapacity = initialNameCapacity;
 
 			valueBuffer = new StringBuilder ();
-
-			currentTagBuffer = new char [initialCurrentTagCapacity];
-			currentTagLength = 0;
-			currentTagCapacity = initialCurrentTagCapacity;
 
 			peekCharsIndex = 0;
 			peekCharsLength = 0;
@@ -1142,13 +1133,9 @@ namespace System.Xml
 			if (ch == '\n') {
 				line++;
 				column = 1;
-			} else if (ch == -1) {
-				return -1;
-			} else {
+			} else if (ch != -1) {
 				column++;
 			}
-			if (currentState != XmlNodeType.Element)
-				AppendCurrentTagChar (ch);
 			return ch;
 		}
 
@@ -1161,13 +1148,9 @@ namespace System.Xml
 			if (ch == '\n') {
 				line++;
 				column = 1;
-			} else if (ch == -1) {
-				return;
-			} else {
+			} else if (ch != -1) {
 				column++;
 			}
-			if (currentState != XmlNodeType.Element)
-				AppendCurrentTagChar (ch);
 		}
 
 		private bool ReadTextReader (int remained)
@@ -1183,7 +1166,6 @@ namespace System.Xml
 
 		private bool ReadContent ()
 		{
-			currentTagLength = 0;
 			if (popScope) {
 				parserContext.NamespaceManager.PopScope ();
 				parserContext.PopScope ();
@@ -1506,28 +1488,6 @@ namespace System.Xml
 			valueBuffer.Length = 0;
 		}
 
-		private void AppendCurrentTagChar (int ch)
-		{
-			if (currentTagLength == currentTagCapacity)
-				ExpandCurrentTagCapacity ();
-			if (ch < Char.MaxValue)
-				currentTagBuffer [currentTagLength++] = (char) ch;
-			else {
-				currentTagBuffer [currentTagLength++] = (char) ((ch - 0x10000) / 0x400 + 0xD800);
-				if (currentTagLength == currentTagCapacity)
-					ExpandCurrentTagCapacity ();
-				currentTagBuffer [currentTagLength++] = (char) ((ch - 0x10000) % 0x400 + 0xDC00);
-			}
-		}
-
-		private void ExpandCurrentTagCapacity ()
-		{
-			currentTagCapacity = currentTagCapacity * 2;
-			char [] oldCurrentTagBuffer = currentTagBuffer;
-			currentTagBuffer = new char [currentTagCapacity];
-			Array.Copy (oldCurrentTagBuffer, currentTagBuffer, currentTagLength);
-		}
-
 		// The reader is positioned on the first character
 		// of the text.
 		private void ReadText (bool notWhitespace)
@@ -1730,7 +1690,7 @@ namespace System.Xml
 			currentAttributeValue = -1;
 		}
 
-		private void AddDtdAttribute (string name, string value)
+		private void AddAttributeWithValue (string name, string value)
 		{
 			IncrementAttributeToken ();
 			XmlAttributeTokenInfo ati = attributeTokens [currentAttribute];
@@ -1739,7 +1699,6 @@ namespace System.Xml
 			ati.NamespaceURI = String.Empty;
 			IncrementAttributeValueToken ();
 			XmlTokenInfo vti = attributeValueTokens [currentAttributeValue];
-			vti.Value = value;
 			SetTokenProperties (vti,
 				XmlNodeType.Text,
 				String.Empty,
@@ -1748,6 +1707,7 @@ namespace System.Xml
 				false,
 				value,
 				false);
+			ati.Value = value;
 			attributeCount++;
 		}
 
@@ -1929,14 +1889,8 @@ namespace System.Xml
 		private void ReadProcessingInstruction ()
 		{
 			string target = ReadName ();
-			if (target == "xml") {
-				ReadXmlDeclaration ();
-				return;
-			} else if (target.ToLower (CultureInfo.InvariantCulture) == "xml")
+			if (target != "xml" && target.ToLower (CultureInfo.InvariantCulture) == "xml")
 				throw NotWFError ("Not allowed processing instruction name which starts with 'X', 'M', 'L' was found.");
-
-			if (currentState == XmlNodeType.None)
-				currentState = XmlNodeType.XmlDeclaration;
 
 			if (!SkipWhitespace ())
 				if (PeekChar () != '?')
@@ -1958,58 +1912,76 @@ namespace System.Xml
 				AppendValueChar (ch);
 			}
 
-			SetProperties (
-				XmlNodeType.ProcessingInstruction, // nodeType
-				target, // name
-				String.Empty, // prefix
-				target, // localName
-				false, // isEmptyElement
-				null, // value: create only when required
-				true // clearAttributes
-			);
+			if (Object.ReferenceEquals (target, XmlNamespaceManager.PrefixXml))
+				VerifyXmlDeclaration ();
+			else {
+				if (currentState == XmlNodeType.None)
+					currentState = XmlNodeType.XmlDeclaration;
+
+				SetProperties (
+					XmlNodeType.ProcessingInstruction, // nodeType
+					target, // name
+					String.Empty, // prefix
+					target, // localName
+					false, // isEmptyElement
+					null, // value: create only when required
+					true // clearAttributes
+				);
+			}
 		}
 
-		// The reader is positioned after "<?xml "
-		private void ReadXmlDeclaration ()
+		void VerifyXmlDeclaration ()
 		{
-			if (!allowMultipleRoot && currentState != XmlNodeType.None) {
+			if (!allowMultipleRoot && currentState != XmlNodeType.None)
 				throw NotWFError ("XML declaration cannot appear in this state.");
-			}
+
 			currentState = XmlNodeType.XmlDeclaration;
+
+			string text = CreateValueString ();
 
 			ClearAttributes ();
 
-			ReadAttributes (true);	// They must have "version."
-			string version = GetAttribute ("version");
+			int idx = 0;
 
-			string message = null;
-
-			if (attributeTokens [0].Name != "version" || version != "1.0")
-				message = "Version 1.0 declaration is required in XML Declaration.";
-			else if (attributeCount > 1 &&
-					(attributeTokens [1].Name != "encoding" &&
-					attributeTokens [1].Name != "standalone"))
-				message = "Invalid Xml Declaration markup was found.";
-			else if (attributeCount > 2 && attributeTokens [2].Name != "standalone")
-				message = "Invalid Xml Declaration markup was found.";
-			string sa = GetAttribute ("standalone");
-			if (sa != null && sa != "yes" && sa != "no")
-				message = String.Format ("Only 'yes' or 'no' is allowed for standalone. Value was '{0}'", sa);
-
-			this.isStandalone = (sa == "yes");
-
-			if (message != null)
-				throw NotWFError (message);
-
-			string encoding = GetAttribute ("encoding");
-			if (encoding != null) {
-				if (!XmlChar.IsValidIANAEncoding (encoding))
-					throw new XmlException (String.Format ("Encoding name must be a valid IANA name: {0}", encoding));
+			string encoding = null, standalone = null;
+			string name, value;
+			ParseAttributeFromString (text, ref idx, out name, out value);
+			if (name != "version" || value != "1.0")
+				throw NotWFError ("'version' is expected.");
+			name = String.Empty;
+			if (SkipWhitespaceInString (text, ref idx) && idx < text.Length)
+				ParseAttributeFromString (text, ref idx, out name, out value);
+			if (name == "encoding") {
+				if (!XmlChar.IsValidIANAEncoding (value))
+					throw NotWFError ("'encoding' must be a valid IANA encoding name.");
 				if (reader is XmlStreamReader)
 					parserContext.Encoding = ((XmlStreamReader) reader).Encoding;
 				else
 					parserContext.Encoding = Encoding.Unicode;
+				encoding = value;
+				name = String.Empty;
+				if (SkipWhitespaceInString (text, ref idx) && idx < text.Length)
+					ParseAttributeFromString (text, ref idx, out name, out value);
 			}
+			if (name == "standalone") {
+				this.isStandalone = value == "yes";
+				if (value != "yes" && value != "no")
+					throw NotWFError ("Only 'yes' or 'no' is allow for 'standalone'");
+				standalone = value;
+				SkipWhitespaceInString (text, ref idx);
+			}
+			else if (name.Length != 0)
+				throw NotWFError (String.Format ("Unexpected token: '{0}'", name));
+
+			if (idx < text.Length)
+				throw NotWFError ("'?' is expected.");
+
+			AddAttributeWithValue ("version", "1.0");
+			if (encoding != null)
+				AddAttributeWithValue ("encoding", encoding);
+			if (standalone != null)
+				AddAttributeWithValue ("standalone", standalone);
+			currentAttribute = currentAttributeValue = -1;
 
 			SetProperties (
 				XmlNodeType.XmlDeclaration, // nodeType
@@ -2017,11 +1989,51 @@ namespace System.Xml
 				String.Empty, // prefix
 				"xml", // localName
 				false, // isEmptyElement
-				new string (currentTagBuffer, 6, currentTagLength - 6), // value
+				text, // value
 				false // clearAttributes
 			);
+		}
 
-			Expect ("?>");
+		bool SkipWhitespaceInString (string text, ref int idx)
+		{
+			int start = idx;
+			while (idx < text.Length && XmlChar.IsWhitespace (text [idx]))
+				idx++;
+			return idx - start > 0;
+		}
+
+		private void ParseAttributeFromString (string src,
+			ref int idx, out string name, out string value)
+		{
+			while (idx < src.Length && XmlChar.IsWhitespace (src [idx]))
+				idx++;
+
+			int start = idx;
+			while (idx < src.Length && XmlChar.IsNameChar (src [idx]))
+				idx++;
+			name = src.Substring (start, idx - start);
+
+			while (idx < src.Length && XmlChar.IsWhitespace (src [idx]))
+				idx++;
+			if (idx == src.Length || src [idx] != '=')
+				throw NotWFError (String.Format ("'=' is expected after {0}", name));
+			idx++;
+
+			while (idx < src.Length && XmlChar.IsWhitespace (src [idx]))
+				idx++;
+
+			if (idx == src.Length || src [idx] != '"' && src [idx] != '\'')
+				throw NotWFError ("'\"' or '\'' is expected.");
+
+			char quote = src [idx];
+			idx++;
+			start = idx;
+
+			while (idx < src.Length && src [idx] != quote)
+				idx++;
+			idx++;
+
+			value = src.Substring (start, idx - start - 1);
 		}
 
 		private void SkipTextDeclaration ()
@@ -2282,10 +2294,9 @@ namespace System.Xml
 				ReadChar ();
 				intSubsetStartLine = this.LineNumber;
 				intSubsetStartColumn = this.LinePosition;
-				int startPos = currentTagLength;
+				ClearValueBuffer ();
 				ReadInternalSubset ();
-				int endPos = currentTagLength - 1;
-				parserContext.InternalSubset = new string (currentTagBuffer, startPos, endPos - startPos);
+				parserContext.InternalSubset = CreateValueString ();
 			}
 			// end of DOCTYPE decl.
 			ExpectAfterWhitespace ('>');
@@ -2306,9 +2317,9 @@ namespace System.Xml
 				);
 
 			if (publicId != null)
-				AddDtdAttribute ("PUBLIC", publicId);
+				AddAttributeWithValue ("PUBLIC", publicId);
 			if (systemId != null)
-				AddDtdAttribute ("SYSTEM", systemId);
+				AddAttributeWithValue ("SYSTEM", systemId);
 			currentAttribute = currentAttributeValue = -1;
 		}
 
@@ -2381,16 +2392,31 @@ namespace System.Xml
 			get { return stateStack.Peek (); }
 		}
 
+		private int ReadValueChar ()
+		{
+			int ret = ReadChar ();
+			AppendValueChar (ret);
+			return ret;
+		}
+
+		private void ExpectAndAppend (string s)
+		{
+			Expect (s);
+			valueBuffer.Append (s);
+		}
+
 		// Simply read but not generate any result.
 		private void ReadInternalSubset ()
 		{
 			bool continueParse = true;
 
 			while (continueParse) {
-				switch (ReadChar ()) {
+				switch (ReadValueChar ()) {
 				case ']':
 					switch (State) {
 					case DtdInputState.Free:
+						// chop extra ']'
+						valueBuffer.Remove (valueBuffer.Length - 1, 1);
 						continueParse = false;
 						break;
 					case DtdInputState.InsideDoubleQuoted:
@@ -2410,21 +2436,21 @@ namespace System.Xml
 					case DtdInputState.Comment:
 						continue;	// well-formed
 					}
-					int c = ReadChar ();
+					int c = ReadValueChar ();
 					switch (c) {
 					case '?':
 						stateStack.Push (DtdInputState.PI);
 						break;
 					case '!':
-						switch (ReadChar ()) {
+						switch (ReadValueChar ()) {
 						case 'E':
-							switch (ReadChar ()) {
+							switch (ReadValueChar ()) {
 							case 'L':
-								Expect ("EMENT");
+								ExpectAndAppend ("EMENT");
 								stateStack.Push (DtdInputState.ElementDecl);
 								break;
 							case 'N':
-								Expect ("TITY");
+								ExpectAndAppend ("TITY");
 								stateStack.Push (DtdInputState.EntityDecl);
 								break;
 							default:
@@ -2432,15 +2458,15 @@ namespace System.Xml
 							}
 							break;
 						case 'A':
-							Expect ("TTLIST");
+							ExpectAndAppend ("TTLIST");
 							stateStack.Push (DtdInputState.AttlistDecl);
 							break;
 						case 'N':
-							Expect ("OTATION");
+							ExpectAndAppend ("OTATION");
 							stateStack.Push (DtdInputState.NotationDecl);
 							break;
 						case '-':
-							Expect ('-');
+							ExpectAndAppend ("-");
 							stateStack.Push (DtdInputState.Comment);
 							break;
 						}
@@ -2482,15 +2508,15 @@ namespace System.Xml
 					break;
 				case '?':
 					if (State == DtdInputState.PI) {
-						if (ReadChar () == '>')
+						if (ReadValueChar () == '>')
 							stateStack.Pop ();
 					}
 					break;
 				case '-':
 					if (State == DtdInputState.Comment) {
 						if (PeekChar () == '-') {
-							ReadChar ();
-							Expect ('>');
+							ReadValueChar ();
+							ExpectAndAppend (">");
 							stateStack.Pop ();
 						}
 					}
