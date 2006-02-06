@@ -767,8 +767,27 @@ namespace Mono.CSharp {
 		{
 			if (CaptureContext.Host.IsIterator)
 				ig.Emit (OpCodes.Ldarg_0);
-			else
+			else {
+				if (scope_instance == null){
+					//
+					// This is needed if someone overwrites the Emit method
+					// of Statement and manually calls Block.Emit without
+					// this snippet first:
+					// 
+					//   ec.EmitScopeInitFromBlock (The_Block);
+					//   The_Block.Emit (ec);
+					// 
+
+					Console.WriteLine (
+				        	"The scope_instance has not been emitted, this typically means\n" +
+						"that inside the compiler someone is calling Block.Emit without\n" +
+						"first calling EmitScopeInitFromBlock for the block.  See compiler" +
+						"source code for an explanation");
+					throw new Exception ("Internal compiler error");
+					
+				}
 				ig.Emit (OpCodes.Ldloc, scope_instance);
+			}
 		}
 
 		public static void CheckCycles (string msg, ScopeInfo s)

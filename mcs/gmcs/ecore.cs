@@ -3471,7 +3471,7 @@ namespace Mono.CSharp {
 
 		void FindAccessors (Type invocation_type)
 		{
-			BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic |
+			const BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic |
 				BindingFlags.Static | BindingFlags.Instance |
 				BindingFlags.DeclaredOnly;
 

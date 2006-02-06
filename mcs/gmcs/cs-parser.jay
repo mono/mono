@@ -4771,6 +4771,7 @@ catch_clause
 	  } block {
 		Expression type = null;
 		string id = null;
+		Block var_block = null;
 
 		if ($2 != null){
 			DictionaryEntry cc = (DictionaryEntry) $2;
@@ -4781,11 +4782,12 @@ catch_clause
 				id = lt.Value;
 				while (current_block.Implicit)
 					current_block = current_block.Parent;
+				var_block = current_block;
 				current_block = current_block.Parent;
 			}
 		}
 
-		$$ = new Catch (type, id, (Block) $4, ((Block) $4).loc);
+		$$ = new Catch (type, id, (Block) $4, var_block, ((Block) $4).loc);
 	  }
         ;
 

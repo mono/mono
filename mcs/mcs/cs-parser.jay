@@ -3637,7 +3637,7 @@ block
 			current_block = new ToplevelBlock ((ToplevelBlock) top_current_block, current_local_parameters, (Location) $1);
 			top_current_block = current_block;
 		} else {
-		current_block = new Block (current_block, (Location) $1, Location.Null);
+			current_block = new Block (current_block, (Location) $1, Location.Null);
 		}
 	  } 
 	  opt_statement_list CLOSE_BRACE 
@@ -4384,6 +4384,7 @@ catch_clause
 	  } block {
 		Expression type = null;
 		string id = null;
+		Block var_block = null;
 
 		if ($2 != null){
 			DictionaryEntry cc = (DictionaryEntry) $2;
@@ -4394,11 +4395,12 @@ catch_clause
 				id = lt.Value;
 				while (current_block.Implicit)
 					current_block = current_block.Parent;
+				var_block = current_block;
 				current_block = current_block.Parent;
 			}
 		}
 
-		$$ = new Catch (type, id, (Block) $4, ((Block) $4).loc);
+		$$ = new Catch (type, id, (Block) $4, var_block, ((Block) $4).loc);
 	  }
         ;
 

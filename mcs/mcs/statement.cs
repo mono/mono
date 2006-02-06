@@ -1295,7 +1295,6 @@ namespace Mono.CSharp {
 				// share with parent
 				known_variables = parent.known_variables;
 			}
-				
 		}
 
 		public Block CreateSwitchBlock (Location start)
@@ -2032,11 +2031,8 @@ namespace Mono.CSharp {
 					}
 				}
 			}
-			if (ec.HaveCaptureInfo){
-				ec.EmitScopeInitFromBlock (this);
-			}
-
 			ec.Mark (StartLocation, true);
+			ec.EmitScopeInitFromBlock (this);
 			DoEmit (ec);
 			ec.Mark (EndLocation, true); 
 
@@ -3553,15 +3549,17 @@ namespace Mono.CSharp {
 	public class Catch : Statement {
 		public readonly string Name;
 		public readonly Block  Block;
+		public readonly Block  VarBlock;
 
 		Expression type_expr;
 		Type type;
 		
-		public Catch (Expression type, string name, Block block, Location l)
+		public Catch (Expression type, string name, Block block, Block var_block, Location l)
 		{
 			type_expr = type;
 			Name = name;
 			Block = block;
+			VarBlock = var_block;
 			loc = l;
 		}
 
@@ -3754,6 +3752,8 @@ namespace Mono.CSharp {
 				
 				ig.BeginCatchBlock (c.CatchType);
 
+				if (c.VarBlock != null)
+					ec.EmitScopeInitFromBlock (c.VarBlock);
 				if (c.Name != null){
 					vi = c.Block.GetLocalInfo (c.Name);
 					if (vi == null)
@@ -3770,7 +3770,7 @@ namespace Mono.CSharp {
 						ig.Emit (OpCodes.Stloc, vi.LocalBuilder);
 				} else
 					ig.Emit (OpCodes.Pop);
-				
+
 				c.Block.Emit (ec);
 			}
 

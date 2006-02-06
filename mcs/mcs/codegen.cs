@@ -430,7 +430,8 @@ namespace Mono.CSharp {
 
 		public void EmitScopeInitFromBlock (Block b)
 		{
-			capture_context.EmitScopeInitFromBlock (this, b);
+			if (capture_context != null)
+				capture_context.EmitScopeInitFromBlock (this, b);
 		}
 
 		// <summary>
