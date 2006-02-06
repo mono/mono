@@ -109,7 +109,7 @@ namespace Novell.Directory.Ldap.Asn1
 		[CLSCompliantAttribute(false)]
 		public override System.String ToString()
 		{
-			System.String[] classTypes = new System.String[]{"[UNIVERSAL ", "[APPLICATION ", "[", "[PRIVATE "};
+			System.String[] classTypes = new System.String[]{"[UNIVERSAL ", "[APPLICATION ", "[CONTEXT ", "[PRIVATE "};
 			
 			System.Text.StringBuilder sb = new System.Text.StringBuilder();
 			Asn1Identifier id = getIdentifier(); // could be overridden.
