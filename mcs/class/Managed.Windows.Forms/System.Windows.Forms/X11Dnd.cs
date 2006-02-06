@@ -282,7 +282,7 @@ namespace System.Windows.Forms {
 		}
 
 		// This version seems to be the most common
-		private static readonly uint [] XdndVersion = new uint [] { 4 }; 
+		private static readonly IntPtr [] XdndVersion = new IntPtr [] { new IntPtr (4) }; 
 
 		private IntPtr display;
 		private DragData drag_data;
@@ -387,7 +387,7 @@ namespace System.Windows.Forms {
 							xevent.ButtonEvent.time);
 				}
 
-				XplatUIX11.XUngrabPointer (display, 0);
+				XplatUIX11.XUngrabPointer (display, IntPtr.Zero);
 				drag_data.State = DragState.None;
 				// WE can't reset the drag data yet as it is still
 				// most likely going to be used by the SelectionRequest
@@ -405,7 +405,7 @@ namespace System.Windows.Forms {
 
 				drag_data.State = DragState.Dragging;
 
-				suc = XplatUIX11.XSetSelectionOwner (display, (int) XdndSelection,
+				suc = XplatUIX11.XSetSelectionOwner (display, XdndSelection,
 						drag_data.Window,
 						xevent.ButtonEvent.time);
 
@@ -579,8 +579,8 @@ namespace System.Windows.Forms {
 			sel.SelectionEvent.property = 0;
 
 			XplatUIX11.XChangeProperty (display, xevent.SelectionRequestEvent.requestor,
-					xevent.SelectionRequestEvent.property,
-					xevent.SelectionRequestEvent.target,
+					(IntPtr)xevent.SelectionRequestEvent.property,
+					(IntPtr)xevent.SelectionRequestEvent.target,
 					8, PropertyMode.Replace, data, length);
 			sel.SelectionEvent.property = xevent.SelectionRequestEvent.property;
 
@@ -779,7 +779,7 @@ namespace System.Windows.Forms {
 		{
 			bool match = false;
 
-			if (source != XplatUIX11.XGetSelectionOwner (display, (int) XdndSelection)) {
+			if (source != XplatUIX11.XGetSelectionOwner (display, XdndSelection)) {
 				return false;
 			}
 
@@ -871,7 +871,7 @@ namespace System.Windows.Forms {
 			// int ptr2 = 0x1;
 			// xevent.ClientMessageEvent.ptr2 = (IntPtr) ptr2;
 			// (e)->xclient.data.l[1] = ((e)->xclient.data.l[1] & ~(0xFF << 24)) | ((v) << 24)
-			xevent.ClientMessageEvent.ptr2 = (IntPtr) (XdndVersion [0] << 24);
+			xevent.ClientMessageEvent.ptr2 = (IntPtr) ((long)XdndVersion [0] << 24);
 			
 			if (supported.Length > 0)
 				xevent.ClientMessageEvent.ptr3 = supported [0];
@@ -1164,7 +1164,7 @@ namespace System.Windows.Forms {
 
 		[DllImport ("libX11")]
 		private extern static int XChangeProperty (IntPtr display, IntPtr window, IntPtr property,
-				IntPtr format, int type, PropertyMode  mode, uint [] atoms, int nelements);
+				IntPtr format, int type, PropertyMode  mode, IntPtr [] atoms, int nelements);
 
 		[DllImport ("libX11")]
 		private extern static int XGetWindowProperty (IntPtr display, IntPtr window,
