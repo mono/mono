@@ -1,3 +1,10 @@
+2006-02-06  Mike Kestner  <mkestner@novell.com>
+
+	* XplatUIX11.cs : 64 bit changes to XGetWindowProperty usage. Fixes
+	startup crashes on amd64.  There's other fixes needed.  All pinvoke
+	usage of Atom needs to be mapped to IntPtr for example.  And there are
+	likely other int/long issues to be addressed.
+
 2006-02-04  Alexander Olk  <alex.olk@googlemail.com>
 
 	* FileDialog.cs: One more...

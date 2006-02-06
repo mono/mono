@@ -744,17 +744,17 @@ namespace System.Windows.Forms {
 		}
 
 		private void TranslatePropertyToClipboard(int property) {
-			Atom			actual_atom;
+			IntPtr			actual_atom;
 			int			actual_format;
-			int			nitems;
-			int			bytes_after;
+			IntPtr			nitems;
+			IntPtr			bytes_after;
 			IntPtr			prop = IntPtr.Zero;
 
 			Clipboard.Item = null;
 
-			XGetWindowProperty(DisplayHandle, FosterParent, property, 0, 0x7fffffff, true, Atom.AnyPropertyType, out actual_atom, out actual_format, out nitems, out bytes_after, ref prop);
+			XGetWindowProperty(DisplayHandle, FosterParent, new IntPtr (property), IntPtr.Zero, new IntPtr (0x7fffffff), true, new IntPtr ((int)Atom.AnyPropertyType), out actual_atom, out actual_format, out nitems, out bytes_after, ref prop);
 
-			if (nitems > 0) {
+			if ((long)nitems > 0) {
 				if (property == (int)Atom.XA_STRING) {
 					Clipboard.Item = Marshal.PtrToStringAnsi(prop);
 				} else if (property == (int)Atom.XA_BITMAP) {
@@ -884,16 +884,14 @@ namespace System.Windows.Forms {
 		}
 
 		private void FrameExtents(IntPtr window, out int left, out int top) {
-			Atom			actual_atom;
+			IntPtr			actual_atom;
 			int			actual_format;
-			int			nitems;
-			int			bytes_after;
+			IntPtr			nitems;
+			IntPtr			bytes_after;
 			IntPtr			prop = IntPtr.Zero;
-			int			width;
-			int			height;
 
-			XGetWindowProperty(DisplayHandle, window, NetAtoms[(int)NA._NET_FRAME_EXTENTS], 0, 16, false, Atom.XA_CARDINAL, out actual_atom, out actual_format, out nitems, out bytes_after, ref prop);
-			if ((nitems == 4) && (prop != IntPtr.Zero)) {
+			XGetWindowProperty(DisplayHandle, window, (IntPtr)NetAtoms[(int)NA._NET_FRAME_EXTENTS], IntPtr.Zero, new IntPtr (16), false, new IntPtr ((int)Atom.XA_CARDINAL), out actual_atom, out actual_format, out nitems, out bytes_after, ref prop);
+			if (((long)nitems == 4) && (prop != IntPtr.Zero)) {
 				left = Marshal.ReadInt32(prop, 0);
 				//right = Marshal.ReadInt32(prop, 4);
 				top = Marshal.ReadInt32(prop, 8);
@@ -1221,16 +1219,16 @@ namespace System.Windows.Forms {
 
 					case XEventName.PropertyNotify:
 						if (xevent.PropertyEvent.atom == NetAtoms[(int)NA._NET_ACTIVE_WINDOW]) {
-							Atom	actual_atom;
+							IntPtr	actual_atom;
 							int	actual_format;
-							int	nitems;
-							int	bytes_after;
+							IntPtr	nitems;
+							IntPtr	bytes_after;
 							IntPtr	prop = IntPtr.Zero;
 							IntPtr	prev_active;;
 
 							prev_active = ActiveWindow;
-							XGetWindowProperty(DisplayHandle, RootWindow, NetAtoms[(int)NA._NET_ACTIVE_WINDOW], 0, 1, false, Atom.XA_WINDOW, out actual_atom, out actual_format, out nitems, out bytes_after, ref prop);
-							if ((nitems > 0) && (prop != IntPtr.Zero)) {
+							XGetWindowProperty(DisplayHandle, RootWindow, (IntPtr)NetAtoms[(int)NA._NET_ACTIVE_WINDOW], IntPtr.Zero, new IntPtr (1), false, new IntPtr ((int)Atom.XA_WINDOW), out actual_atom, out actual_format, out nitems, out bytes_after, ref prop);
+							if (((long)nitems > 0) && (prop != IntPtr.Zero)) {
 								ActiveWindow = Hwnd.GetHandleFromWindow((IntPtr)Marshal.ReadInt32(prop));
 								XFree(prop);
 
@@ -1621,16 +1619,16 @@ namespace System.Windows.Forms {
 
 		internal override  Rectangle WorkingArea {
 			get {
-				Atom			actual_atom;
+				IntPtr			actual_atom;
 				int			actual_format;
-				int			nitems;
-				int			bytes_after;
+				IntPtr			nitems;
+				IntPtr			bytes_after;
 				IntPtr			prop = IntPtr.Zero;
 				int			width;
 				int			height;
 
-				XGetWindowProperty(DisplayHandle, RootWindow, NetAtoms[(int)NA._NET_DESKTOP_GEOMETRY], 0, 256, false, Atom.XA_CARDINAL, out actual_atom, out actual_format, out nitems, out bytes_after, ref prop);
-				if ((nitems == 2) && (prop != IntPtr.Zero)) {
+				XGetWindowProperty(DisplayHandle, RootWindow, (IntPtr)NetAtoms[(int)NA._NET_DESKTOP_GEOMETRY], IntPtr.Zero, new IntPtr (256), false, new IntPtr ((int)Atom.XA_CARDINAL), out actual_atom, out actual_format, out nitems, out bytes_after, ref prop);
+				if (((long)nitems == 2) && (prop != IntPtr.Zero)) {
 					width = Marshal.ReadInt32(prop, 0);
 					height = Marshal.ReadInt32(prop, 4);
 
@@ -2415,15 +2413,15 @@ namespace System.Windows.Forms {
 
 
 		internal override IntPtr GetActive() {
-			Atom	actual_atom;
+			IntPtr	actual_atom;
 			int	actual_format;
-			int	nitems;
-			int	bytes_after;
+			IntPtr	nitems;
+			IntPtr	bytes_after;
 			IntPtr	prop = IntPtr.Zero;
 			IntPtr	active = IntPtr.Zero;
 
-			XGetWindowProperty(DisplayHandle, RootWindow, NetAtoms[(int)NA._NET_ACTIVE_WINDOW], 0, 1, false, Atom.XA_WINDOW, out actual_atom, out actual_format, out nitems, out bytes_after, ref prop);
-			if ((nitems > 0) && (prop != IntPtr.Zero)) {
+			XGetWindowProperty(DisplayHandle, RootWindow, (IntPtr)NetAtoms[(int)NA._NET_ACTIVE_WINDOW], IntPtr.Zero, new IntPtr (1), false, new IntPtr ((int)Atom.XA_WINDOW), out actual_atom, out actual_format, out nitems, out bytes_after, ref prop);
+			if (((long)nitems > 0) && (prop != IntPtr.Zero)) {
 				active = (IntPtr)Marshal.ReadInt32(prop);
 				XFree(prop);
 			}
@@ -3145,10 +3143,10 @@ namespace System.Windows.Forms {
 		}
 
 		internal override FormWindowState GetWindowState(IntPtr handle) {
-			Atom			actual_atom;
+			IntPtr			actual_atom;
 			int			actual_format;
-			int			nitems;
-			int			bytes_after;
+			IntPtr			nitems;
+			IntPtr			bytes_after;
 			IntPtr			prop = IntPtr.Zero;
 			IntPtr			atom;
 			int			maximized;
@@ -3160,10 +3158,10 @@ namespace System.Windows.Forms {
 
 			maximized = 0;
 			minimized = false;
-			XGetWindowProperty(DisplayHandle, hwnd.whole_window, NetAtoms[(int)NA._NET_WM_STATE], 0, 256, false, Atom.XA_ATOM, out actual_atom, out actual_format, out nitems, out bytes_after, ref prop);
-			if ((nitems > 0) && (prop != IntPtr.Zero)) {
-				for (int i = 0; i < nitems; i++) {
-					atom = (IntPtr)Marshal.ReadInt32(prop, i * 4);
+			XGetWindowProperty(DisplayHandle, hwnd.whole_window, (IntPtr)NetAtoms[(int)NA._NET_WM_STATE], IntPtr.Zero, new IntPtr (256), false, new IntPtr ((int)Atom.XA_ATOM), out actual_atom, out actual_format, out nitems, out bytes_after, ref prop);
+			if (((long)nitems > 0) && (prop != IntPtr.Zero)) {
+				for (int i = 0; i < (long)nitems; i++) {
+					atom = Marshal.ReadIntPtr(prop, i * IntPtr.Size);
 					if ((atom == (IntPtr)NetAtoms[(int)NA._NET_WM_STATE_MAXIMIZED_HORZ]) || (atom == (IntPtr)NetAtoms[(int)NA._NET_WM_STATE_MAXIMIZED_VERT])) {
 						maximized++;
 					} else if (atom == (IntPtr)NetAtoms[(int)NA._NET_WM_STATE_HIDDEN]) {
@@ -4282,7 +4280,7 @@ namespace System.Windows.Forms {
 		internal extern static string XGetAtomName(IntPtr display, int atom);
 
 		[DllImport ("libX11", EntryPoint="XGetWindowProperty")]
-		internal extern static int XGetWindowProperty(IntPtr display, IntPtr window, int atom, int long_offset, int long_length, bool delete, Atom req_type, out Atom actual_type, out int actual_format, out int nitems, out int bytes_after, ref IntPtr prop);
+		internal extern static int XGetWindowProperty(IntPtr display, IntPtr window, IntPtr atom, IntPtr long_offset, IntPtr long_length, bool delete, IntPtr req_type, out IntPtr actual_type, out int actual_format, out IntPtr nitems, out IntPtr bytes_after, ref IntPtr prop);
 
 		[DllImport ("libX11", EntryPoint="XSetInputFocus")]
 		internal extern static int XSetInputFocus(IntPtr display, IntPtr window, RevertTo revert_to, IntPtr time);
