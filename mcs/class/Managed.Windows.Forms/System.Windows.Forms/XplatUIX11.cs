@@ -329,7 +329,7 @@ namespace System.Windows.Forms {
 				DefaultColormap = XDefaultColormap(DisplayHandle, ScreenNo);
 
 				// Create the foster parent
-				FosterParent=XCreateSimpleWindow(DisplayHandle, RootWindow, 0, 0, 1, 1, 4, 0, 0);
+				FosterParent=XCreateSimpleWindow(DisplayHandle, RootWindow, 0, 0, 1, 1, 4, UIntPtr.Zero, UIntPtr.Zero);
 				if (FosterParent==IntPtr.Zero) {
 					Console.WriteLine("XplatUIX11 Constructor failed to create FosterParent");
 				}
@@ -391,7 +391,7 @@ namespace System.Windows.Forms {
 				SetupAtoms();
 
 				// Grab atom changes off the root window to catch certain WM events
-				XSelectInput(DisplayHandle, RootWindow, EventMask.PropertyChangeMask);
+				XSelectInput(DisplayHandle, RootWindow, new IntPtr ((int)EventMask.PropertyChangeMask));
 
 				// Handle any upcoming errors
 				ErrorHandler = new XErrorHandler(HandleError);
@@ -522,7 +522,7 @@ namespace System.Windows.Forms {
 
 		private void GetSystrayManagerWindow() {
 			XGrabServer(DisplayHandle);
-			SystrayMgrWindow = XGetSelectionOwner(DisplayHandle, NetAtoms[(int)NA._NET_SYSTEM_TRAY_S]);
+			SystrayMgrWindow = XGetSelectionOwner(DisplayHandle, (IntPtr)NetAtoms[(int)NA._NET_SYSTEM_TRAY_S]);
 			XUngrabServer(DisplayHandle);
 			XFlush(DisplayHandle);
 		}
@@ -539,7 +539,7 @@ namespace System.Windows.Forms {
 			xev.ClientMessageEvent.ptr1 = l0;
 			xev.ClientMessageEvent.ptr2 = l1;
 			xev.ClientMessageEvent.ptr3 = l2;
-			XSendEvent(DisplayHandle, RootWindow, false, EventMask.SubstructureRedirectMask | EventMask.SubstructureNotifyMask, ref xev);
+			XSendEvent(DisplayHandle, RootWindow, false, new IntPtr ((int) (EventMask.SubstructureRedirectMask | EventMask.SubstructureNotifyMask)), ref xev);
 		}
 
 		private void SendNetClientMessage(IntPtr window, IntPtr message_type, IntPtr l0, IntPtr l1, IntPtr l2) {
@@ -554,7 +554,7 @@ namespace System.Windows.Forms {
 			xev.ClientMessageEvent.ptr1 = l0;
 			xev.ClientMessageEvent.ptr2 = l1;
 			xev.ClientMessageEvent.ptr3 = l2;
-			XSendEvent(DisplayHandle, window, false, EventMask.NoEventMask, ref xev);
+			XSendEvent(DisplayHandle, window, false, new IntPtr ((int)EventMask.NoEventMask), ref xev);
 		}
 
 		private void DeriveStyles(IntPtr handle, int Style, int ExStyle, out FormBorderStyle border_style, out TitleStyle title_style, out int caption_height, out int tool_caption_height) {
@@ -630,7 +630,6 @@ namespace System.Windows.Forms {
 			MotifWmHints		mwmHints;
 			MotifFunctions		functions;
 			MotifDecorations	decorations;
-			uint[]			atoms;
 			int			atom_count;
 			Rectangle		client_rect;
 
@@ -687,26 +686,26 @@ namespace System.Windows.Forms {
 
 			client_rect = hwnd.ClientRect;
 			lock (XlibLock) {
-				XChangeProperty(DisplayHandle, hwnd.whole_window, NetAtoms[(int)NA._MOTIF_WM_HINTS], NetAtoms[(int)NA._MOTIF_WM_HINTS], 32, PropertyMode.Replace, ref mwmHints, 5);
+				XChangeProperty(DisplayHandle, hwnd.whole_window, new IntPtr ((int)NetAtoms[(int)NA._MOTIF_WM_HINTS]), new IntPtr ((int)NetAtoms[(int)NA._MOTIF_WM_HINTS]), 32, PropertyMode.Replace, ref mwmHints, 5);
 
 				if (((cp.Style & (int)WindowStyles.WS_POPUP) != 0)  && (hwnd.parent != null) && (hwnd.parent.whole_window != IntPtr.Zero)) {
 					XSetTransientForHint(DisplayHandle, hwnd.whole_window, hwnd.parent.whole_window);
 				}
 				XMoveResizeWindow(DisplayHandle, hwnd.client_window, client_rect.X, client_rect.Y, client_rect.Width, client_rect.Height);
 
-				atoms = new uint[8];
+				IntPtr[] atoms = new IntPtr[8];
 				atom_count = 0;
 
 				if ((cp.ExStyle & ((int)WindowStyles.WS_EX_TOOLWINDOW)) != 0) {
-					atoms[atom_count++] = (uint)NetAtoms[(int)NA._NET_WM_STATE_NO_TASKBAR];
+					atoms[atom_count++] = (IntPtr)NetAtoms[(int)NA._NET_WM_STATE_NO_TASKBAR];
 				}
 
-				XChangeProperty(DisplayHandle, hwnd.whole_window, NetAtoms[(int)NA._NET_WM_STATE], Atom.XA_ATOM, 32, PropertyMode.Replace, atoms, atom_count);
+				XChangeProperty(DisplayHandle, hwnd.whole_window, new IntPtr ((int)NetAtoms[(int)NA._NET_WM_STATE]), new IntPtr ((int)Atom.XA_ATOM), IntPtr.Size, PropertyMode.Replace, atoms, atom_count);
 
 				atom_count = 0;
-				atoms[atom_count++] = (uint)NetAtoms[(int)NA.WM_DELETE_WINDOW];
+				atoms[atom_count++] = (IntPtr)NetAtoms[(int)NA.WM_DELETE_WINDOW];
 				if ((cp.ExStyle & (int)WindowStyles.WS_EX_CONTEXTHELP) != 0) {
-					atoms[atom_count++] = (uint)NetAtoms[(int)NA._NET_WM_CONTEXT_HELP];
+					atoms[atom_count++] = (IntPtr)NetAtoms[(int)NA._NET_WM_CONTEXT_HELP];
 				}
 
 				XSetWMProtocols(DisplayHandle, hwnd.whole_window, atoms, atom_count);
@@ -732,7 +731,7 @@ namespace System.Windows.Forms {
 					data[index++] = (uint)bitmap.GetPixel(x, y).ToArgb();
 				}
 			}
-			XChangeProperty(DisplayHandle, hwnd.whole_window, NetAtoms[(int)NA._NET_WM_ICON], Atom.XA_CARDINAL, 32, PropertyMode.Replace, data, size);
+			XChangeProperty(DisplayHandle, hwnd.whole_window, new IntPtr ((int)NetAtoms[(int)NA._NET_WM_ICON]), new IntPtr ((int)Atom.XA_CARDINAL), 32, PropertyMode.Replace, data, size);
 		}
 
 		private IntPtr ImageToPixmap(Image image) {
@@ -1106,24 +1105,24 @@ namespace System.Windows.Forms {
 
 						// Seems that some apps support asking for supported types
 						if (xevent.SelectionEvent.target == NetAtoms[(int)NA.TARGETS]) {
-							uint[]	atoms;
+							IntPtr[]	atoms;
 							int	atom_count;
 
-							atoms = new uint[5];
+							atoms = new IntPtr[5];
 							atom_count = 0;
 
 							if (Clipboard.Item is String) {
-								atoms[atom_count++] = (uint)Atom.XA_STRING;
-								atoms[atom_count++] = (uint)NetAtoms[(int)NA.OEMTEXT];
-								atoms[atom_count++] = (uint)NetAtoms[(int)NA.UNICODETEXT];
+								atoms[atom_count++] = (IntPtr)Atom.XA_STRING;
+								atoms[atom_count++] = (IntPtr)NetAtoms[(int)NA.OEMTEXT];
+								atoms[atom_count++] = (IntPtr)NetAtoms[(int)NA.UNICODETEXT];
 							} else if (Clipboard.Item is Image) {
-								atoms[atom_count++] = (uint)Atom.XA_PIXMAP;
-								atoms[atom_count++] = (uint)Atom.XA_BITMAP;
+								atoms[atom_count++] = (IntPtr)Atom.XA_PIXMAP;
+								atoms[atom_count++] = (IntPtr)Atom.XA_BITMAP;
 							} else {
 								// FIXME - handle other types
 							}
 
-							XChangeProperty(DisplayHandle, xevent.SelectionEvent.requestor, xevent.SelectionRequestEvent.property, xevent.SelectionRequestEvent.target, 32, PropertyMode.Replace, atoms, atom_count);
+							XChangeProperty(DisplayHandle, xevent.SelectionEvent.requestor, (IntPtr)xevent.SelectionRequestEvent.property, (IntPtr)xevent.SelectionRequestEvent.target, IntPtr.Size, PropertyMode.Replace, atoms, atom_count);
 						} else if (Clipboard.Item is string) {
 							IntPtr	buffer;
 							int	buflen;
@@ -1156,7 +1155,7 @@ namespace System.Windows.Forms {
 							}
 
 							if (buffer != IntPtr.Zero) {
-								XChangeProperty(DisplayHandle, xevent.SelectionRequestEvent.requestor, xevent.SelectionRequestEvent.property, xevent.SelectionRequestEvent.target, 8, PropertyMode.Replace, buffer, buflen);
+								XChangeProperty(DisplayHandle, xevent.SelectionRequestEvent.requestor, (IntPtr)xevent.SelectionRequestEvent.property, (IntPtr)xevent.SelectionRequestEvent.target, 8, PropertyMode.Replace, buffer, buflen);
 								sel_event.SelectionEvent.property = xevent.SelectionRequestEvent.property;
 								Marshal.FreeHGlobal(buffer);
 							}
@@ -1168,7 +1167,7 @@ namespace System.Windows.Forms {
 							}
 						}
 
-						XSendEvent(DisplayHandle, xevent.SelectionRequestEvent.requestor, false, EventMask.NoEventMask, ref sel_event);
+						XSendEvent(DisplayHandle, xevent.SelectionRequestEvent.requestor, false, new IntPtr ((int)EventMask.NoEventMask), ref sel_event);
 						break;
 					}
 
@@ -1176,7 +1175,7 @@ namespace System.Windows.Forms {
 						if (Clipboard.Enumerating) {
 							Clipboard.Enumerating = false;
 							if (xevent.SelectionEvent.property != 0) {
-								XDeleteProperty(DisplayHandle, FosterParent, xevent.SelectionEvent.property);
+								XDeleteProperty(DisplayHandle, FosterParent, (IntPtr)xevent.SelectionEvent.property);
 								if (!Clipboard.Formats.Contains(xevent.SelectionEvent.property)) {
 									Clipboard.Formats.Add(xevent.SelectionEvent.property);
 									#if DriverDebugExtra
@@ -1749,14 +1748,14 @@ namespace System.Windows.Forms {
 
 			f = DataFormats.Format.List;
 
-			if (XGetSelectionOwner(DisplayHandle, NetAtoms[(int)NA.CLIPBOARD]) == IntPtr.Zero) {
+			if (XGetSelectionOwner(DisplayHandle, (IntPtr)NetAtoms[(int)NA.CLIPBOARD]) == IntPtr.Zero) {
 				return null;
 			}
 
 			Clipboard.Formats = new ArrayList();
 
 			while (f != null) {
-				XConvertSelection(DisplayHandle, NetAtoms[(int)NA.CLIPBOARD], f.Id, f.Id, FosterParent, IntPtr.Zero);
+				XConvertSelection(DisplayHandle, (IntPtr)NetAtoms[(int)NA.CLIPBOARD], (IntPtr)f.Id, (IntPtr)f.Id, FosterParent, IntPtr.Zero);
 
 				Clipboard.Enumerating = true;
 				while (Clipboard.Enumerating) {
@@ -1812,7 +1811,7 @@ namespace System.Windows.Forms {
 		}
 
 		internal override object ClipboardRetrieve(IntPtr handle, int type, XplatUI.ClipboardToObject converter) {
-			XConvertSelection(DisplayHandle, NetAtoms[(int)NA.CLIPBOARD], type, type, FosterParent, IntPtr.Zero);
+			XConvertSelection(DisplayHandle, (IntPtr)NetAtoms[(int)NA.CLIPBOARD], (IntPtr)type, (IntPtr)type, FosterParent, IntPtr.Zero);
 
 			Clipboard.Retrieving = true;
 			while (Clipboard.Retrieving) {
@@ -1828,10 +1827,10 @@ namespace System.Windows.Forms {
 			Clipboard.Converter = converter;
 
 			if (obj != null) {
-				XSetSelectionOwner(DisplayHandle, NetAtoms[(int)NA.CLIPBOARD], FosterParent, IntPtr.Zero);
+				XSetSelectionOwner(DisplayHandle, (IntPtr)NetAtoms[(int)NA.CLIPBOARD], FosterParent, IntPtr.Zero);
 			} else {
 				// Clearing the selection
-				XSetSelectionOwner(DisplayHandle, NetAtoms[(int)NA.CLIPBOARD], IntPtr.Zero, IntPtr.Zero);
+				XSetSelectionOwner(DisplayHandle, (IntPtr)NetAtoms[(int)NA.CLIPBOARD], IntPtr.Zero, IntPtr.Zero);
 			}
 		}
 
@@ -1855,7 +1854,7 @@ namespace System.Windows.Forms {
 			gc_values = new XGCValues();
 			gc_values.line_width = width;
 
-			Caret.gc = XCreateGC(DisplayHandle, Caret.Window, GCFunction.GCLineWidth, ref gc_values);
+			Caret.gc = XCreateGC(DisplayHandle, Caret.Window, new IntPtr ((int)GCFunction.GCLineWidth), ref gc_values);
 			if (Caret.gc == IntPtr.Zero) {
 				Caret.Hwnd = IntPtr.Zero;
 				return;
@@ -1939,7 +1938,7 @@ namespace System.Windows.Forms {
 			ClientWindow = IntPtr.Zero;
 
 			lock (XlibLock) {
-				WholeWindow = XCreateWindow(DisplayHandle, ParentHandle, X, Y, Width, Height, 0, (int)CreateWindowArgs.CopyFromParent, (int)CreateWindowArgs.InputOutput, IntPtr.Zero, ValueMask, ref Attributes);
+				WholeWindow = XCreateWindow(DisplayHandle, ParentHandle, X, Y, Width, Height, 0, (int)CreateWindowArgs.CopyFromParent, (int)CreateWindowArgs.InputOutput, IntPtr.Zero, new UIntPtr ((uint)ValueMask), ref Attributes);
 				if (WholeWindow != IntPtr.Zero) {
 					ValueMask &= ~(SetWindowValuemask.OverrideRedirect | SetWindowValuemask.SaveUnder);
 
@@ -1947,7 +1946,7 @@ namespace System.Windows.Forms {
 						ValueMask = SetWindowValuemask.ColorMap;
 						Attributes.colormap = CustomColormap;
 					}
-					ClientWindow = XCreateWindow(DisplayHandle, WholeWindow, ClientRect.X, ClientRect.Y, ClientRect.Width, ClientRect.Height, 0, (int)CreateWindowArgs.CopyFromParent, (int)CreateWindowArgs.InputOutput, CustomVisual, ValueMask, ref Attributes);
+					ClientWindow = XCreateWindow(DisplayHandle, WholeWindow, ClientRect.X, ClientRect.Y, ClientRect.Width, ClientRect.Height, 0, (int)CreateWindowArgs.CopyFromParent, (int)CreateWindowArgs.InputOutput, CustomVisual, new UIntPtr ((uint)ValueMask), ref Attributes);
 				}
 			}
 
@@ -1963,8 +1962,8 @@ namespace System.Windows.Forms {
 			#endif
 				       
 			lock (XlibLock) {
-				XSelectInput(DisplayHandle, hwnd.whole_window, SelectInputMask);
-				XSelectInput(DisplayHandle, hwnd.client_window, SelectInputMask);
+				XSelectInput(DisplayHandle, hwnd.whole_window, new IntPtr ((int)SelectInputMask));
+				XSelectInput(DisplayHandle, hwnd.client_window, new IntPtr ((int)SelectInputMask));
 
 				if ((cp.Style & (int)WindowStyles.WS_VISIBLE) != 0) {
 					XMapWindow(DisplayHandle, hwnd.whole_window);
@@ -2345,7 +2344,7 @@ namespace System.Windows.Forms {
 			//XSetPlaneMask(DisplayHandle,  gc, mask);
 
 
-			gc = XCreateGC(DisplayHandle, hwnd.client_window, GCFunction.GCSubwindowMode | GCFunction.GCLineWidth | GCFunction.GCForeground, ref gc_values);
+			gc = XCreateGC(DisplayHandle, hwnd.client_window, new IntPtr ((int) (GCFunction.GCSubwindowMode | GCFunction.GCLineWidth | GCFunction.GCForeground)), ref gc_values);
 			uint foreground;
 			uint background;
 
@@ -2368,10 +2367,10 @@ namespace System.Windows.Forms {
 
 			uint mask = foreground ^ background; 
 
-			XSetForeground(DisplayHandle, gc, 0xffffffff);
-			XSetBackground(DisplayHandle, gc, background);
+			XSetForeground(DisplayHandle, gc, (IntPtr)0xffffffff);
+			XSetBackground(DisplayHandle, gc, (IntPtr)background);
 			XSetFunction(DisplayHandle,   gc, GXFunction.GXxor);
-			XSetPlaneMask(DisplayHandle,  gc, mask);
+			XSetPlaneMask(DisplayHandle,  gc, (IntPtr)mask);
 
 			if ((rect.Width > 0) && (rect.Height > 0)) {
 				XDrawRectangle(DisplayHandle, hwnd.client_window, gc, rect.Left, rect.Top, rect.Width, rect.Height);
@@ -2880,7 +2879,7 @@ namespace System.Windows.Forms {
 								uint opacity;
 
 								opacity = hwnd.opacity;
-								XChangeProperty(DisplayHandle, XGetParent(hwnd.whole_window), NetAtoms[(int)NA._NET_WM_WINDOW_OPACITY], Atom.XA_CARDINAL, 32, PropertyMode.Replace, ref opacity, 1);
+								XChangeProperty(DisplayHandle, XGetParent(hwnd.whole_window), (IntPtr)NetAtoms[(int)NA._NET_WM_WINDOW_OPACITY], new IntPtr ((int)Atom.XA_CARDINAL), 32, PropertyMode.Replace, ref opacity, 1);
 							}
 						} else {
 							hwnd.Reparented = false;
@@ -3223,13 +3222,13 @@ namespace System.Windows.Forms {
 				XGrabPointer(DisplayHandle, hwnd.client_window, false, 
 					EventMask.ButtonPressMask | EventMask.ButtonMotionMask |
 					EventMask.ButtonReleaseMask | EventMask.PointerMotionMask,
-					GrabMode.GrabModeAsync, GrabMode.GrabModeAsync, confine_to_window, 0, 0);
+					GrabMode.GrabModeAsync, GrabMode.GrabModeAsync, confine_to_window, 0, IntPtr.Zero);
 			}
 		}
 
 		internal override void UngrabWindow(IntPtr hwnd) {
 			lock (XlibLock) {
-				XUngrabPointer(DisplayHandle, 0);
+				XUngrabPointer(DisplayHandle, IntPtr.Zero);
 				XFlush(DisplayHandle);
 			}
 			Grab.Hwnd = IntPtr.Zero;
@@ -3476,7 +3475,7 @@ namespace System.Windows.Forms {
 				gc_values.subwindow_mode = GCSubwindowMode.IncludeInferiors;
 			}
 
-			gc = XCreateGC(DisplayHandle, hwnd.client_window, 0, ref gc_values);
+			gc = XCreateGC(DisplayHandle, hwnd.client_window, IntPtr.Zero, ref gc_values);
 
 			XCopyArea(DisplayHandle, hwnd.client_window, hwnd.client_window, gc, area.X - XAmount, area.Y - YAmount, area.Width, area.Height, area.X, area.Y);
 
@@ -3703,7 +3702,7 @@ namespace System.Windows.Forms {
 				}
 			} else {
 				lock (XlibLock) {
-					XDeleteProperty(DisplayHandle, hwnd.whole_window, (int)Atom.XA_WM_TRANSIENT_FOR);
+					XDeleteProperty(DisplayHandle, hwnd.whole_window, new IntPtr ((int)Atom.XA_WM_TRANSIENT_FOR));
 				}
 			}
 			return true;
@@ -3896,7 +3895,7 @@ namespace System.Windows.Forms {
 			opacity = hwnd.opacity;
 
 			if (hwnd.reparented) {
-				XChangeProperty(DisplayHandle, XGetParent(hwnd.whole_window), NetAtoms[(int)NA._NET_WM_WINDOW_OPACITY], Atom.XA_CARDINAL, 32, PropertyMode.Replace, ref opacity, 1);
+				XChangeProperty(DisplayHandle, XGetParent(hwnd.whole_window), (IntPtr)NetAtoms[(int)NA._NET_WM_WINDOW_OPACITY], new IntPtr ((int)Atom.XA_CARDINAL), 32, PropertyMode.Replace, ref opacity, 1);
 			}
 		}
 
@@ -3953,7 +3952,6 @@ namespace System.Windows.Forms {
 			GetSystrayManagerWindow();
 
 			if (SystrayMgrWindow != IntPtr.Zero) {
-				uint[]		atoms;
 				XSizeHints	size_hints;
 				Hwnd		hwnd;
 
@@ -3982,12 +3980,12 @@ namespace System.Windows.Forms {
 				size_hints.base_height = icon.Height;
 				XSetWMNormalHints(DisplayHandle, hwnd.whole_window, ref size_hints);
 
-				atoms = new uint[2];
-				atoms[0] = 1;	// Version 1
-				atoms[1] = 0;	// We're not mapped
+				IntPtr[] atoms = new IntPtr [2];
+				atoms [0] = new IntPtr (1);	// Version 1
+				atoms [1] = IntPtr.Zero;	// We're not mapped
 
 				// This line cost me 3 days...
-				XChangeProperty(DisplayHandle, hwnd.whole_window, NetAtoms[(int)NA._XEMBED_INFO], NetAtoms[(int)NA._XEMBED_INFO], 32, PropertyMode.Replace, atoms, 2);
+				XChangeProperty(DisplayHandle, hwnd.whole_window, (IntPtr)NetAtoms[(int)NA._XEMBED_INFO], (IntPtr)NetAtoms[(int)NA._XEMBED_INFO], IntPtr.Size, PropertyMode.Replace, atoms, 2);
 
 				// Need to pick some reasonable defaults
 				tt = new ToolTip();
@@ -4090,9 +4088,9 @@ namespace System.Windows.Forms {
 		internal extern static IntPtr XSynchronize(IntPtr display, bool onoff);
 
 		[DllImport ("libX11", EntryPoint="XCreateWindow")]
-		internal extern static IntPtr XCreateWindow(IntPtr display, IntPtr parent, int x, int y, int width, int height, int border_width, int depth, int xclass, IntPtr visual, SetWindowValuemask valuemask, ref XSetWindowAttributes attributes);
+		internal extern static IntPtr XCreateWindow(IntPtr display, IntPtr parent, int x, int y, int width, int height, int border_width, int depth, int xclass, IntPtr visual, UIntPtr valuemask, ref XSetWindowAttributes attributes);
 		[DllImport ("libX11", EntryPoint="XCreateSimpleWindow")]
-		internal extern static IntPtr XCreateSimpleWindow(IntPtr display, IntPtr parent, int x, int y, int width, int height, int border_width, int border, int background);
+		internal extern static IntPtr XCreateSimpleWindow(IntPtr display, IntPtr parent, int x, int y, int width, int height, int border_width, UIntPtr border, UIntPtr background);
 		[DllImport ("libX11", EntryPoint="XMapWindow")]
 		internal extern static int XMapWindow(IntPtr display, IntPtr window);
 		[DllImport ("libX11", EntryPoint="XUnmapWindow")]
@@ -4109,12 +4107,8 @@ namespace System.Windows.Forms {
 		internal extern static int XConnectionNumber (IntPtr diplay);
 		[DllImport ("libX11")]
 		internal extern static int XPending (IntPtr diplay);
-		[DllImport ("libX11")]
-		internal extern static bool XCheckWindowEvent (IntPtr display, IntPtr window, EventMask mask, ref XEvent xevent);
-		[DllImport ("libX11")]
-		internal extern static bool XCheckMaskEvent (IntPtr display, EventMask mask, ref XEvent xevent);
 		[DllImport ("libX11", EntryPoint="XSelectInput")]
-		internal extern static IntPtr XSelectInput(IntPtr display, IntPtr window, EventMask mask);
+		internal extern static IntPtr XSelectInput(IntPtr display, IntPtr window, IntPtr mask);
 
 		[DllImport ("libX11", EntryPoint="XDestroyWindow")]
 		internal extern static int XDestroyWindow(IntPtr display, IntPtr window);
@@ -4143,7 +4137,7 @@ namespace System.Windows.Forms {
 		internal extern static int XFetchName(IntPtr display, IntPtr window, ref IntPtr window_name);
 
 		[DllImport ("libX11", EntryPoint="XSendEvent")]
-		internal extern static int XSendEvent(IntPtr display, IntPtr window, bool propagate, EventMask event_mask, ref XEvent send_event);
+		internal extern static int XSendEvent(IntPtr display, IntPtr window, bool propagate, IntPtr event_mask, ref XEvent send_event);
 
 		[DllImport ("libX11", EntryPoint="XQueryTree")]
 		internal extern static int XQueryTree(IntPtr display, IntPtr window, out IntPtr root_return, out IntPtr parent_return, out IntPtr children_return, out int nchildren_return);
@@ -4164,13 +4158,13 @@ namespace System.Windows.Forms {
 		internal extern static int XInternAtom(IntPtr display, string atom_name, bool only_if_exists);
 
 		[DllImport ("libX11", EntryPoint="XSetWMProtocols")]
-		internal extern static int XSetWMProtocols(IntPtr display, IntPtr window, uint[] protocols, int count);
+		internal extern static int XSetWMProtocols(IntPtr display, IntPtr window, IntPtr[] protocols, int count);
 
 		[DllImport ("libX11", EntryPoint="XGrabPointer")]
-		internal extern static int XGrabPointer(IntPtr display, IntPtr window, bool owner_events, EventMask event_mask, GrabMode pointer_mode, GrabMode keyboard_mode, IntPtr confine_to, uint cursor, uint timestamp);
+		internal extern static int XGrabPointer(IntPtr display, IntPtr window, bool owner_events, EventMask event_mask, GrabMode pointer_mode, GrabMode keyboard_mode, IntPtr confine_to, uint cursor, IntPtr timestamp);
 
 		[DllImport ("libX11", EntryPoint="XUngrabPointer")]
-		internal extern static int XUngrabPointer(IntPtr display, uint timestamp);
+		internal extern static int XUngrabPointer(IntPtr display, IntPtr timestamp);
 
 		[DllImport ("libX11", EntryPoint="XQueryPointer")]
 		internal extern static bool XQueryPointer(IntPtr display, IntPtr window, out IntPtr root, out IntPtr child, out int root_x, out int root_y, out int win_x, out int win_y, out int keys_buttons);
@@ -4228,35 +4222,32 @@ namespace System.Windows.Forms {
 		internal extern static int XSetTransientForHint(IntPtr display, IntPtr window, IntPtr prop_window);
 
 		[DllImport ("libX11", EntryPoint="XChangeProperty")]
-		internal extern static int XChangeProperty(IntPtr display, IntPtr window, int property, int type, int format, PropertyMode  mode, ref MotifWmHints data, int nelements);
+		internal extern static int XChangeProperty(IntPtr display, IntPtr window, IntPtr property, IntPtr type, int format, PropertyMode  mode, ref MotifWmHints data, int nelements);
 
 		[DllImport ("libX11", EntryPoint="XChangeProperty")]
-		internal extern static int XChangeProperty(IntPtr display, IntPtr window, int property, Atom format, int type, PropertyMode  mode, uint[] atoms, int nelements);
+		internal extern static int XChangeProperty(IntPtr display, IntPtr window, IntPtr property, IntPtr type, int format, PropertyMode  mode, ref uint value, int nelements);
 
 		[DllImport ("libX11", EntryPoint="XChangeProperty")]
-		internal extern static int XChangeProperty(IntPtr display, IntPtr window, int property, Atom format, int type, PropertyMode  mode, ref uint value, int nelements);
+		internal extern static int XChangeProperty(IntPtr display, IntPtr window, IntPtr property, IntPtr type, int format, PropertyMode  mode, uint[] data, int nelements);
 
 		[DllImport ("libX11", EntryPoint="XChangeProperty")]
-		internal extern static int XChangeProperty(IntPtr display, IntPtr window, int property, int format, int type, PropertyMode  mode, uint[] atoms, int nelements);
+		internal extern static int XChangeProperty(IntPtr display, IntPtr window, IntPtr property, IntPtr type, int format, PropertyMode  mode, IntPtr[] atoms, int nelements);
 
 		[DllImport ("libX11", EntryPoint="XChangeProperty")]
-		internal extern static int XChangeProperty(IntPtr display, IntPtr window, int property, int format, int type, PropertyMode  mode, IntPtr atoms, int nelements);
-
-		[DllImport ("libX11", EntryPoint="XChangeProperty")]
-		internal extern static int XChangeProperty(IntPtr display, IntPtr window, int property, Atom format, int type, PropertyMode  mode, IntPtr atoms, int nelements);
+		internal extern static int XChangeProperty(IntPtr display, IntPtr window, IntPtr property, IntPtr type, int format, PropertyMode  mode, IntPtr atoms, int nelements);
 
 		[DllImport ("libX11", EntryPoint="XChangeProperty", CharSet=CharSet.Ansi)]
-		internal extern static int XChangeProperty(IntPtr display, IntPtr window, int property, int type, int format, PropertyMode  mode, string text, int text_length);
+		internal extern static int XChangeProperty(IntPtr display, IntPtr window, IntPtr property, IntPtr type, int format, PropertyMode  mode, string text, int text_length);
 
 		[DllImport ("libX11", EntryPoint="XDeleteProperty")]
-		internal extern static int XDeleteProperty(IntPtr display, IntPtr window, int property);
+		internal extern static int XDeleteProperty(IntPtr display, IntPtr window, IntPtr property);
 
 		[DllImport ("gdiplus", EntryPoint="GetFontMetrics")]
 		internal extern static bool GetFontMetrics(IntPtr graphicsObject, IntPtr nativeObject, out int ascent, out int descent);
 
 		// Drawing
 		[DllImport ("libX11", EntryPoint="XCreateGC")]
-		internal extern static IntPtr XCreateGC(IntPtr display, IntPtr window, GCFunction valuemask, ref XGCValues values);
+		internal extern static IntPtr XCreateGC(IntPtr display, IntPtr window, IntPtr valuemask, ref XGCValues values);
 
 		[DllImport ("libX11", EntryPoint="XFreeGC")]
 		internal extern static int XFreeGC(IntPtr display, IntPtr gc);
@@ -4275,9 +4266,6 @@ namespace System.Windows.Forms {
 
 		[DllImport ("libX11", EntryPoint="XCopyArea")]
 		internal extern static int XCopyArea(IntPtr display, IntPtr src, IntPtr dest, IntPtr gc, int src_x, int src_y, int width, int height, int dest_x, int dest_y);
-
-		[DllImport ("libX11", EntryPoint="XGetAtomName")]
-		internal extern static string XGetAtomName(IntPtr display, int atom);
 
 		[DllImport ("libX11", EntryPoint="XGetWindowProperty")]
 		internal extern static int XGetWindowProperty(IntPtr display, IntPtr window, IntPtr atom, IntPtr long_offset, IntPtr long_length, bool delete, IntPtr req_type, out IntPtr actual_type, out int actual_format, out IntPtr nitems, out IntPtr bytes_after, ref IntPtr prop);
@@ -4349,22 +4337,22 @@ namespace System.Windows.Forms {
 		internal extern static int XInitThreads();
 
 		[DllImport ("libX11", EntryPoint="XConvertSelection")]
-		internal extern static int XConvertSelection(IntPtr display, int selection, int target, int property, IntPtr requestor, IntPtr time);
+		internal extern static int XConvertSelection(IntPtr display, IntPtr selection, IntPtr target, IntPtr property, IntPtr requestor, IntPtr time);
 
 		[DllImport ("libX11", EntryPoint="XGetSelectionOwner")]
-		internal extern static IntPtr XGetSelectionOwner(IntPtr display, int selection);
+		internal extern static IntPtr XGetSelectionOwner(IntPtr display, IntPtr selection);
 
 		[DllImport ("libX11", EntryPoint="XSetSelectionOwner")]
-		internal extern static int XSetSelectionOwner(IntPtr display, int selection, IntPtr owner, IntPtr time);
+		internal extern static int XSetSelectionOwner(IntPtr display, IntPtr selection, IntPtr owner, IntPtr time);
 
 		[DllImport ("libX11", EntryPoint="XSetPlaneMask")]
-		internal extern static int XSetPlaneMask(IntPtr display, IntPtr gc, uint mask);
+		internal extern static int XSetPlaneMask(IntPtr display, IntPtr gc, IntPtr mask);
 
 		[DllImport ("libX11", EntryPoint="XSetForeground")]
-		internal extern static int XSetForeground(IntPtr display, IntPtr gc, uint foreground);
+		internal extern static int XSetForeground(IntPtr display, IntPtr gc, IntPtr foreground);
 
 		[DllImport ("libX11", EntryPoint="XSetBackground")]
-		internal extern static int XSetBackground(IntPtr display, IntPtr gc, uint background);
+		internal extern static int XSetBackground(IntPtr display, IntPtr gc, IntPtr background);
 
 		[DllImport ("libX11", EntryPoint="XBell")]
 		internal extern static int XBell(IntPtr display, int percent);

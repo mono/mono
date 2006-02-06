@@ -1,3 +1,10 @@
+2006-02-06  Mike Kestner  <mkestner@novell.com>
+
+	* XplatUIX11.cs : many more 64 bit pinvoke changes.  I've audited all the 
+	method signatures in the import region.  There may still be some
+	lingering struct marshaling issues, as I didn't drill down into those.
+	Yet.
+
 2006-02-06  Jackson Harper  <jackson@ximian.com>
 
 	* ComboBox.cs: Dont manually set the top_item, this is computed
