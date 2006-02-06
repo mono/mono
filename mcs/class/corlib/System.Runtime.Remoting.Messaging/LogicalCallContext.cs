@@ -42,8 +42,6 @@ namespace System.Runtime.Remoting.Messaging
 		Hashtable _data;
 		CallContextRemotingData _remotingData = new CallContextRemotingData();
 		
-		internal static LogicalCallContext Empty = new LogicalCallContext ();
-
 		internal LogicalCallContext ()
 		{
 		}

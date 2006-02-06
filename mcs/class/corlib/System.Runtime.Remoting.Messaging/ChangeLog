@@ -1,3 +1,9 @@
+2006-02-06  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* LogicalCallContext.cs, MethodCall.cs, ReturnMessage.cs,
+	  MethodResponse.cs: Create a new LogicalCallContext for
+	  every message. Fixes #77364 again.
+
 2006-01-31  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* LogicalCallContext.cs: Added shared empty call context.

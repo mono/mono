@@ -194,9 +194,8 @@ namespace System.Runtime.Remoting.Messaging {
 		public LogicalCallContext LogicalCallContext {
 			get {
 				if (_callContext == null)
-					return LogicalCallContext.Empty;
-				else
-					return _callContext;
+					_callContext = new LogicalCallContext ();
+				return _callContext;
 			}
 		}
 		
