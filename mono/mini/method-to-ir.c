@@ -3500,6 +3500,23 @@ mini_emit_ldelema_1_ins (MonoCompile *cfg, MonoClass *klass, MonoInst *arr, Mono
 	index_reg = index->dreg;
 
 	MONO_EMIT_BOUNDS_CHECK (cfg, array_reg, MonoArray, max_length, index_reg);
+
+#ifdef __i386__
+	if (size == 1 || size == 2 || size == 4 || size == 8) {
+		static const int fast_log2 [] = { 1, 0, 1, -1, 2, -1, -1, -1, 3 };
+		MONO_INST_NEW (cfg, ins, OP_X86_LEA);
+		ins->dreg = add_reg;
+		ins->sreg1 = array_reg;
+		ins->sreg2 = index_reg;
+		ins->inst_imm = G_STRUCT_OFFSET (MonoArray, vector);
+		ins->unused = fast_log2 [size];
+		ins->type = STACK_PTR;
+		MONO_ADD_INS (cfg->cbb, ins);
+
+		return ins;
+	}
+#endif		
+
 	MONO_EMIT_NEW_BIALU_IMM (cfg, OP_MUL_IMM, mult_reg, index_reg, size);
 	MONO_EMIT_NEW_BIALU (cfg, OP_PADD, add_reg, array_reg, mult_reg);
 	NEW_BIALU_IMM (cfg, ins, OP_PADD_IMM, add_reg, add_reg, G_STRUCT_OFFSET (MonoArray, vector));
@@ -8914,7 +8931,8 @@ insert_after_ins (MonoBasicBlock *bb, MonoInst *ins, MonoInst *ins_to_insert)
 /**
  * mono_spill_global_vars:
  *
- *   Generate spill code for variables which are not allocated to registers.
+ *   Generate spill code for variables which are not allocated to registers, 
+ * and replace vregs with their allocated hregs.
  */
 void
 mono_spill_global_vars (MonoCompile *cfg)
@@ -9201,6 +9219,7 @@ mono_spill_global_vars (MonoCompile *cfg)
  * - Things to backport to the old JIT:
  *   - op_atomic_exchange fix for amd64
  *   - localloc fix for amd64
+ *   - x86 type_token change
  * - handle long shift opts on 32 bit platforms somehow: they require 
  *   3 sregs (2 for arg1 and 1 for arg2)
  * - make byref a 'normal' type.
@@ -9217,6 +9236,7 @@ mono_spill_global_vars (MonoCompile *cfg)
  * - add OP_STR_CHAR_ADDR
  * - add 'frequent check in generic code: box (struct), brtrue'
  * - fix LNEG and enable cfold of INEG
+ * - generalize i386 optimizations like ldelema as a peephole optimization
  * - LAST MERGE: 55797
  */
 
