@@ -565,7 +565,7 @@ COND:   ldloc.0
 		ret
 	}		
 
-	.method public static int32 test_1234_conv_u4 () il managed {
+	.method public static int32 test_1234_conv_u4 () cil managed {
 		.maxstack 16
 
 		ldc.i4 1234
@@ -573,6 +573,103 @@ COND:   ldloc.0
 		conv.i4
 		ret
 	}
+
+	.method public static int32 test_1_lconv_to_ovf_i_un () cil managed {
+		.maxstack 16
+		.locals init (int32 res)
+
+		ldc.i4 0x7fffffff
+		conv.u8
+		conv.ovf.i.un
+		conv.i4
+		pop
+
+        .try {
+			ldc.i4 0x80000000
+			conv.u8
+			conv.ovf.i.un
+			conv.i4
+			pop
+			leave IL_0
+		} catch [mscorlib]System.OverflowException {
+			pop
+			ldloc res
+			ldc.i4.1
+			add
+			stloc res
+			leave IL_0
+		}
+
+	IL_0:
+		ldloc res
+		ret
+	}
+
+	.method public static int32 test_2_lconv_to_ovf_i4_un () cil managed {
+		.maxstack 16
+		.locals init (int32 res)
+
+		ldc.i4 0x7fffffff
+		conv.u8
+		conv.ovf.i4.un
+		pop
+
+        .try {
+			ldc.i8 0x80000000
+			conv.ovf.i4.un
+			pop
+			leave IL_0
+		} catch [mscorlib]System.OverflowException {
+			pop
+			ldloc res
+			ldc.i4.1
+			add
+			stloc res
+			leave IL_0
+		}
+
+	IL_0:
+
+        .try {
+			ldc.i8 0xffffffff80000000
+			conv.ovf.i4.un
+			pop
+			leave IL_1
+		} catch [mscorlib]System.OverflowException {
+			pop
+			ldloc res
+			ldc.i4.1
+			add
+			stloc res
+			leave IL_1
+		}
+
+	IL_1:
+		ldloc res
+		ret
+	}
+
+	.method public static int32 test_32_lconv_to_u8 () cil managed
+	{
+		.maxstack 16
+
+		ldc.i4 32
+		conv.i8
+		conv.u8
+		conv.i4
+		ret
+	}				
+
+	.method public static int32 test_32_lconv_to_i8 () cil managed
+	{
+		.maxstack 16
+
+		ldc.i4 32
+		conv.i8
+		conv.i8
+		conv.i4
+		ret
+	}				
 
 	.method public static int32 test_0_get_type_from_handle_on_bblock_boundary () cil managed 
 	{

@@ -375,15 +375,12 @@ mono_print_bb (MonoBasicBlock *bb, const char *msg)
  * IR Emission Macros
  */
 
-static int the_count = 0;
-
 #undef MONO_INST_NEW
 /* 
  * FIXME: zeroing out some fields is not needed with the new IR, but the old 
  * JIT code still uses the left and right fields, so it has to stay.
  */
 #define MONO_INST_NEW(cfg,dest,op) do {	\
-        the_count ++; \
 		(dest) = mono_mempool_alloc ((cfg)->mempool, sizeof (MonoInst));	\
         (dest)->inst_p0 = (dest)->inst_p1 = (dest)->next = NULL; \
 		(dest)->opcode = (op);	\
@@ -2114,7 +2111,6 @@ mini_emit_memset (MonoCompile *cfg, int destreg, int offset, int size, int val, 
 	else
 		MONO_EMIT_NEW_ICONST (cfg, val_reg, val);
 
-	/* FIXME: consider alignment for archs that need it. */
 #if !NO_UNALIGNED_ACCESS
 	if (sizeof (gpointer) == 8) {
 		if (offset % 8) {
@@ -2152,7 +2148,6 @@ mini_emit_memcpy2 (MonoCompile *cfg, int destreg, int doffset, int srcreg, int s
 {
 	int cur_reg;
 
-	/* FIXME: consider alignment for archs that need it. */
 #if !NO_UNALIGNED_ACCESS
 	if (sizeof (gpointer) == 8) {
 		while (size >= 8) {
@@ -3718,11 +3713,12 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 		} else
 			return NULL;
 	} else if (cmethod->klass == mono_defaults.thread_class) {
-		/* FIXME: */
-		/*
-		if (strcmp (cmethod->name, "get_CurrentThread") == 0 && (ins = mono_arch_get_thread_intrinsic (cfg)))
+		if (strcmp (cmethod->name, "get_CurrentThread") == 0 && (ins = mono_arch_get_thread_intrinsic (cfg))) {
+			ins->dreg = alloc_preg (cfg);
+			ins->type = STACK_OBJ;
+			MONO_ADD_INS (cfg->cbb, ins);
 			return ins;
-		*/
+		}
 	}
 
 	return mono_arch_emit_inst_for_method (cfg, cmethod, fsig, args);
@@ -4376,6 +4372,8 @@ mono_decompose_long_opts (MonoCompile *cfg)
 				MONO_EMIT_NEW_ICONST (cfg, tree->dreg + 1, tree->inst_ms_word);
 				break;
 			case OP_LMOVE:
+			case OP_LCONV_TO_U8:
+			case OP_LCONV_TO_I8:
 				MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, tree->dreg, tree->sreg1);
 				MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, tree->dreg + 1, tree->sreg1 + 1);
 				break;
@@ -4547,11 +4545,8 @@ mono_decompose_long_opts (MonoCompile *cfg)
 				break;
 			case OP_LCONV_TO_OVF_I4:
 			case OP_LCONV_TO_OVF_I:
-			case OP_LCONV_TO_OVF_I4_UN:
-				/* FIXME: Is the I4_UN variant correct ? */
 				MONO_EMIT_NEW_BIALU (cfg, OP_LCONV_TO_OVF_I4_2, tree->dreg, tree->sreg1, tree->sreg1 + 1);
 				break;
-
 			case OP_LCONV_TO_OVF_U4:
 			case OP_LCONV_TO_OVF_U4_UN:
 				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, tree->sreg1 + 1, 0);
@@ -4559,9 +4554,11 @@ mono_decompose_long_opts (MonoCompile *cfg)
 				MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, tree->dreg, tree->sreg1);
 				break;
 			case OP_LCONV_TO_OVF_I_UN:
-				/* FIXME: Need check for > 0x7fffff too */
+			case OP_LCONV_TO_OVF_I4_UN:
 				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, tree->sreg1 + 1, 0);
 				MONO_EMIT_NEW_COND_EXC (cfg, NE_UN, "OverflowException");
+				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, tree->sreg1, 0);
+				MONO_EMIT_NEW_COND_EXC (cfg, LT, "OverflowException");
 				MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, tree->dreg, tree->sreg1);
 				break;
 			case OP_LCONV_TO_OVF_U8:
@@ -4837,7 +4834,7 @@ mono_decompose_long_opts (MonoCompile *cfg)
 					break;
 				}
 				default:
-					NOT_IMPLEMENTED;
+					g_assert_not_reached ();
 				}
 			}
 			default:
@@ -5301,8 +5298,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			MONO_ADD_INS (bblock, store);
 		}
 
-		/* FIXME: */
-		if (cfg->verbose_level > 0)
+		if (cfg->verbose_level > 3)
 			g_print ("converting (in B%d: stack: %d) %s", bblock->block_num, (int)(sp - stack_start), mono_disasm_code_one (NULL, method, ip, NULL));
 
 		switch (*ip) {
@@ -5794,22 +5790,20 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				MonoInst *this_temp, *store;
 				MonoInst *iargs [3];
 
-				NOT_IMPLEMENTED;
-
 				g_assert (mono_method_signature (cmethod)->is_inflated);
 
+				/* FIXME: Get rid of this */
 				this_temp = mono_compile_create_var (cfg, type_from_stack_type (sp [0]), OP_LOCAL);
-				this_temp->cil_code = ip;
 				NEW_TEMPSTORE (cfg, store, this_temp->inst_c0, sp [0]);
-
-				store->cil_code = ip;
 				MONO_ADD_INS (bblock, store);
 
 				NEW_TEMPLOAD (cfg, iargs [0], this_temp->inst_c0);
-				NEW_PCONST (cfg, iargs [1], cmethod);
-				NEW_PCONST (cfg, iargs [2], ((MonoMethodInflated *) cmethod)->context);
+				MONO_ADD_INS (cfg->cbb, iargs [0]);
+				EMIT_NEW_PCONST (cfg, iargs [1], cmethod);
+				EMIT_NEW_PCONST (cfg, iargs [2], ((MonoMethodInflated *) cmethod)->context);
 				addr = mono_emit_jit_icall (cfg, helper_compile_generic_method, iargs, ip);
 				NEW_TEMPLOAD (cfg, sp [0], this_temp->inst_c0);
+				MONO_ADD_INS (cfg->cbb, sp [0]);
 
 				ins = (MonoInst*)mono_emit_calli (cfg, fsig, sp, addr, ip);
 				if (!MONO_TYPE_IS_VOID (fsig->ret))
@@ -6549,6 +6543,8 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 		case CEE_LDOBJ: {
 			int loc_index = -1;
 			int stloc_len = 0;
+			int stack_type;
+			int dreg;
 
 			CHECK_OPSIZE (5);
 			CHECK_STACK (1);
@@ -6557,16 +6553,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			klass = mini_get_class (method, token, generic_context);
 			if (!klass)
 				goto load_error;
-			if (MONO_TYPE_IS_REFERENCE (&klass->byval_arg)) {
-				int dreg = alloc_preg (cfg);
-				EMIT_NEW_LOAD_MEMBASE (cfg, ins, OP_LOAD_MEMBASE, dreg, sp [0]->dreg, 0);
-				ins->type = STACK_OBJ;
-				ins->flags |= ins_flag;
-				ins_flag = 0;
-				*sp++ = ins;
-				ip += 5;
-				break;
-			}
 
 			/* Optimize the common ldobj+stloc combination */
 			switch (ip [5]) {
@@ -6595,8 +6581,15 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				break;
 			}
 
-			ins = emit_ldobj (cfg, sp [0], ip, klass);
+			stack_type = type_to_stack_type (&klass->byval_arg);
+			dreg = alloc_dreg (cfg, stack_type);
+			NEW_LOAD_MEMBASE (cfg, ins, mono_type_to_load_membase (&klass->byval_arg), dreg, sp[0]->dreg, 0);
+			if (ins->opcode == CEE_LDOBJ)
+				ins = emit_ldobj (cfg, sp [0], ip, klass);
+			else
+				MONO_ADD_INS (cfg->cbb, ins);
 			*sp++ = ins;
+
 			ip += 5;
 			ins_flag = 0;
 			inline_costs += 1;
@@ -6902,7 +6895,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			ip += 5;
 
 			/* LDOBJ */
-			/* FIXME: Put this into LDOBJ as well */
 			{
 				MonoInst *dest;
 				int stack_type;
@@ -9220,6 +9212,7 @@ mono_spill_global_vars (MonoCompile *cfg)
  *   - op_atomic_exchange fix for amd64
  *   - localloc fix for amd64
  *   - x86 type_token change
+ *   - lconv fixes
  * - handle long shift opts on 32 bit platforms somehow: they require 
  *   3 sregs (2 for arg1 and 1 for arg2)
  * - make byref a 'normal' type.
@@ -9238,7 +9231,9 @@ mono_spill_global_vars (MonoCompile *cfg)
  * - add 'frequent check in generic code: box (struct), brtrue'
  * - add 'introduce a new optimization to simplify some range checks'
  * - fix LNEG and enable cfold of INEG
- * - generalize i386 optimizations like ldelema as a peephole optimization
+ * - generalize x86 optimizations like ldelema as a peephole optimization
+ * - port the x86 optimizations to amd64 as well
+ * - generics.2.cs
  * - LAST MERGE: 56617.
  */
 

@@ -100,6 +100,13 @@ class Tests {
 		return 1;
 	}
 
+	public static int test_18_ldobj_stobj_generics () {
+		GenericClass<int> t = new GenericClass <int> ();
+		int i = 5;
+		int j = 6;
+		return t.ldobj_stobj (ref i, ref j) + i + j;
+	}
+
 	static object Box<T> (T t)
 	{
 		return t;
@@ -107,5 +114,15 @@ class Tests {
 	
 	static T Unbox <T> (object o) {
 		return (T) o;
+	}
+
+	class GenericClass <T> {
+		public T ldobj_stobj (ref T t1, ref T t2) {
+			t1 = t2;
+			T t = t1;
+
+			return t;
+		}
+
 	}
 }

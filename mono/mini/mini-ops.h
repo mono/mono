@@ -531,7 +531,7 @@ MINI_OP(OP_SAVE_LMF, "save_lmf", NONE, NONE, NONE)
 MINI_OP(OP_RESTORE_LMF, "restore_lmf", NONE, NONE, NONE)
 
 /* arch-dep tls access */
-MINI_OP(OP_TLS_GET,            "tls_get", NONE, NONE, NONE)
+MINI_OP(OP_TLS_GET,            "tls_get", IREG, NONE, NONE)
 
 MINI_OP(OP_LOAD_GOTADDR, "load_gotaddr", NONE, NONE, NONE)
 MINI_OP(OP_DUMMY_USE, "dummy_use", NONE, NONE, NONE)
