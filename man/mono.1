@@ -612,6 +612,10 @@ Uses the string value of this variable as a replacement for the host name when
 creating file names in the ".wapi" directory. This helps if the host name of
 your machine is likely to be changed when a mono application is running or if
 you have a .wapi directory shared among several different computers.
+.Sp
+Mono typically uses the hostname to create the files that are used to
+share state across multiple Mono processes.  This is done to support
+home directories that might be shared over the network.
 .TP
 .I "MONO_THEME"
 The name of the theme to be used by Windows.Forms.   Available themes today
