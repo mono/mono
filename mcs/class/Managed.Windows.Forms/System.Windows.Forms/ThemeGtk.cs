@@ -97,10 +97,17 @@ namespace System.Windows.Forms
 		}
 
 		[StructLayout(LayoutKind.Sequential)]	
+		internal struct GObjectStruct {
+			IntPtr	Instance;
+			IntPtr	ref_count;
+			IntPtr	data;
+		}
+
+
+		[StructLayout(LayoutKind.Sequential)]	
 		internal struct GtkStyleStruct
 		{
-			[MarshalAs(System.Runtime.InteropServices.UnmanagedType.ByValArray, SizeConst=12)]
-		 	internal byte[] obj; /* GObject is 12 bytes*/
+			internal GObjectStruct obj;
 			[MarshalAs(System.Runtime.InteropServices.UnmanagedType.ByValArray, SizeConst=5)]
 			internal GdkColorStruct[] fg;
 			[MarshalAs(System.Runtime.InteropServices.UnmanagedType.ByValArray, SizeConst=5)]		

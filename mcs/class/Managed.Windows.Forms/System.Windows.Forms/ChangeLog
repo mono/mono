@@ -1,3 +1,9 @@
+2006-02-07  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* X11DesktopColors.cs, ThemeGtk.cs: The GObject structure is based
+	  on ulongs and pointers, the size differs between 32bit and 64bit
+	  systems. 
+
 2006-02-07  Mike Kestner  <mkestner@novell.com>
 
 	* XplatUIX11.cs : force the WorkingArea away from XGetWindowProperty
