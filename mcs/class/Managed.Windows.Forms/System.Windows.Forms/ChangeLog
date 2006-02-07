@@ -1,3 +1,7 @@
+2006-02-07  Jackson Harper  <jackson@ximian.com>
+
+	* TrackBar.cs: The increment/decrements were backwards.
+
 2006-02-07  Mike Kestner  <mkestner@novell.com>
 
 	* Theme*.cs : remove ThemeEngine.Current usage as it just points back

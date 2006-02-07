@@ -626,30 +626,30 @@ namespace System.Windows.Forms
 			
 			case Keys.Down:
 			case Keys.Right:
-				SmallIncrement ();
-				break;
-			
-			case Keys.Up:
-			case Keys.Left:
 				SmallDecrement ();
 				break;
-				
-			case Keys.PageUp:
-				LargeDecrement ();
+
+			case Keys.Up:
+			case Keys.Left:
+				SmallIncrement ();
 				break;
-				
-			case Keys.PageDown:
+
+			case Keys.PageUp:
 				LargeIncrement ();
 				break;
-				
-			case Keys.Home:
-				Value = Minimum;
+
+			case Keys.PageDown:
+				LargeDecrement ();
 				break;
-			
-			case Keys.End:
+
+			case Keys.Home:
 				Value = Maximum;
 				break;
-			
+
+			case Keys.End:
+				Value = Minimum;
+				break;
+
 			default:
 				break;
 			}
