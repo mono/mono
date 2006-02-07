@@ -123,7 +123,9 @@ MINI_OP(OP_STORER4_MEMINDEX,"storer4_memindex", NONE, NONE, NONE)
 MINI_OP(OP_STORER8_MEMINDEX,"storer8_memindex", NONE, NONE, NONE)
 
 MINI_OP(OP_LOADR8_SPILL_MEMBASE,"loadr8_spill_membase", NONE, NONE, NONE)
-MINI_OP(OP_LOADU4_MEM,"loadu4_mem", NONE, NONE, NONE)
+MINI_OP(OP_LOADU4_MEM,"loadu4_mem", IREG, NONE, NONE)
+MINI_OP(OP_STORE_MEM_IMM, "store_mem_imm", NONE, NONE, NONE)
+
 MINI_OP(OP_MOVE,	"move", IREG, IREG, NONE)
 MINI_OP(OP_LMOVE,	"lmove", IREG, IREG, NONE)
 MINI_OP(OP_FMOVE,	"fmove", FREG, FREG, NONE)
@@ -562,7 +564,8 @@ MINI_OP(OP_ATOMIC_ADD_IMM_NEW_I8, "atomic_add_imm_new_i8", NONE, NONE, NONE)
 MINI_OP(OP_ATOMIC_EXCHANGE_I8, "atomic_exchange_i8", NONE, NONE, NONE)
 MINI_OP(OP_MEMORY_BARRIER, "memory_barrier", NONE, NONE, NONE)
 
-/* x86 specific */
+/* Arch specific opcodes */
+#if defined(__i386__) || defined(__x86_64__)
 MINI_OP(OP_X86_TEST_NULL,          "x86_test_null", NONE, NONE, NONE)
 MINI_OP(OP_X86_COMPARE_MEMBASE_REG,"x86_compare_membase_reg", NONE, IREG, IREG)
 MINI_OP(OP_X86_COMPARE_MEMBASE_IMM,"x86_compare_membase_imm", NONE, IREG, NONE)
@@ -602,7 +605,9 @@ MINI_OP(OP_X86_ADD_MEMBASE,        "x86_add_membase", NONE, IREG, IREG)
 MINI_OP(OP_X86_SUB_MEMBASE,        "x86_sub_membase", NONE, IREG, IREG)
 MINI_OP(OP_X86_MUL_MEMBASE,        "x86_mul_membase", NONE, IREG, IREG)
 MINI_OP(OP_X86_SHRD,               "x86_shrd", IREG, IREG, IREG)
+#endif
 
+#if defined(__x86_64__)
 MINI_OP(OP_AMD64_TEST_NULL,              "amd64_test_null", NONE, NONE, NONE)
 MINI_OP(OP_AMD64_SET_XMMREG_R4,          "amd64_set_xmmreg_r4", FREG, FREG, NONE)
 MINI_OP(OP_AMD64_SET_XMMREG_R8,          "amd64_set_xmmreg_r8", FREG, FREG, NONE)
@@ -613,13 +618,19 @@ MINI_OP(OP_AMD64_ICOMPARE_MEMBASE_IMM,   "amd64_icompare_membase_imm", NONE, NON
 MINI_OP(OP_AMD64_ICOMPARE_REG_MEMBASE,   "amd64_icompare_reg_membase", NONE, NONE, NONE)
 MINI_OP(OP_AMD64_OUTARG_ALIGN_STACK,     "amd64_outarg_align_stack", NONE, NONE, NONE)
 MINI_OP(OP_AMD64_LOADI8_MEMINDEX,        "amd64_loadi8_memindex", NONE, NONE, NONE)
-	
+#endif
+
+#if  defined(__ppc__) || defined(__powerpc__)	
 MINI_OP(OP_PPC_SUBFIC,             "ppc_subfic", NONE, NONE, NONE)
 MINI_OP(OP_PPC_SUBFZE,             "ppc_subfze", NONE, NONE, NONE)
+#endif
 
+#if defined(__arm__)
 MINI_OP(OP_ARM_RSBS_IMM,            "arm_rsbs_imm", NONE, NONE, NONE)
 MINI_OP(OP_ARM_RSC_IMM,             "arm_rsc_imm", NONE, NONE, NONE)
+#endif
 
+#if defined(__sparc__) || defined(sparc)
 MINI_OP(OP_SPARC_OUTARG_REGPAIR,   "sparc_outarg_regpair", NONE, NONE, NONE)
 MINI_OP(OP_SPARC_OUTARG_MEM,       "sparc_outarg_mem", NONE, NONE, NONE)
 MINI_OP(OP_SPARC_OUTARG_MEMPAIR,   "sparc_outarg_mempair", NONE, NONE, NONE)
@@ -643,7 +654,9 @@ MINI_OP(OP_SPARC_COND_EXC_GTZ,     "sparc_cond_exc_gtz", NONE, NONE, NONE)
 MINI_OP(OP_SPARC_COND_EXC_LEZ,     "sparc_cond_exc_lez", NONE, NONE, NONE)
 MINI_OP(OP_SPARC_COND_EXC_LTZ,     "sparc_cond_exc_ltz", NONE, NONE, NONE)
 MINI_OP(OP_SPARC_COND_EXC_NEZ,     "sparc_cond_exc_nez", NONE, NONE, NONE)
+#endif
 
+#if defined(__s390__) || defined(s390)
 MINI_OP(OP_S390_LOADARG,	   "s390_loadarg", NONE, NONE, NONE)
 MINI_OP(OP_S390_ARGREG, 	   "s390_argreg", NONE, NONE, NONE)
 MINI_OP(OP_S390_ARGPTR, 	   "s390_argptr", NONE, NONE, NONE)
@@ -651,7 +664,9 @@ MINI_OP(OP_S390_STKARG, 	   "s390_stkarg", NONE, NONE, NONE)
 MINI_OP(OP_S390_MOVE,	 	   "s390_move", NONE, NONE, NONE)
 MINI_OP(OP_S390_SETF4RET,	   "s390_setf4ret", NONE, NONE, NONE)
 MINI_OP(OP_S390_BKCHAIN, 	   "s390_bkchain", NONE, NONE, NONE)
+#endif
 
+#if defined(__ia64__)
 MINI_OP(OP_IA64_LOAD,          "ia64_load", NONE, NONE, NONE)
 MINI_OP(OP_IA64_LOADI1,        "ia64_loadi1", NONE, NONE, NONE)
 MINI_OP(OP_IA64_LOADU1,        "ia64_loadu1", NONE, NONE, NONE)
@@ -750,3 +765,4 @@ MINI_OP(OP_IA64_LOADR4_MEMBASE_INC,"ia64_loadr4_membase_inc", NONE, NONE, NONE)
 MINI_OP(OP_IA64_LOADR8_MEMBASE_INC,"ia64_loadr8_membase_inc", NONE, NONE, NONE)
 MINI_OP(OP_IA64_FETCHADD4_IMM,   "ia64_fetchadd4_imm", NONE, NONE, NONE)
 MINI_OP(OP_IA64_FETCHADD8_IMM,   "ia64_fetchadd8_imm", NONE, NONE, NONE)
+#endif

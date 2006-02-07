@@ -79,6 +79,7 @@
 
 static int ldind_to_load_membase (int opcode);
 static int stind_to_store_membase (int opcode);
+static int ldind_to_load_mem (int opcode);
 
 int mono_op_to_op_imm (int opcode);
 
@@ -418,6 +419,13 @@ mono_print_bb (MonoBasicBlock *bb, const char *msg)
         (dest)->dreg = (dr); \
         (dest)->inst_basereg = (base); \
         (dest)->inst_offset = (offset); \
+        (dest)->type = STACK_I4; \
+	} while (0)
+
+#define NEW_LOAD_MEM(cfg,dest,op,dr,mem) do { \
+        MONO_INST_NEW ((cfg), (dest), (op)); \
+        (dest)->dreg = (dr); \
+        (dest)->inst_p0 = (gpointer)(gssize)(mem); \
         (dest)->type = STACK_I4; \
 	} while (0)
 
@@ -5277,25 +5285,19 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 		bblock->real_offset = cfg->real_offset;
 
 		if ((cfg->method == method) && cfg->coverage_info) {
-			MonoInst *store, *one;
 			guint32 cil_offset = ip - header->code;
 			cfg->coverage_info->data [cil_offset].cil_code = ip;
 
-			NOT_IMPLEMENTED;
-
 			/* TODO: Use an increment here */
-			NEW_ICONST (cfg, one, 1);
-			one->cil_code = ip;
-
-			NEW_PCONST (cfg, ins, &(cfg->coverage_info->data [cil_offset].count));
-			ins->cil_code = ip;
-
-			MONO_INST_NEW (cfg, store, CEE_STIND_I);
-			store->cil_code = ip;
-			store->inst_left = ins;
-			store->inst_right = one;
-
-			MONO_ADD_INS (bblock, store);
+#if defined(__i386__)
+			MONO_INST_NEW (cfg, ins, OP_STORE_MEM_IMM);
+			ins->inst_p0 = &(cfg->coverage_info->data [cil_offset].count);
+			ins->inst_imm = 1;
+			MONO_ADD_INS (cfg->cbb, ins);
+#else
+			EMIT_NEW_PCONST (cfg, ins, &(cfg->coverage_info->data [cil_offset].count));
+			MONO_EMIT_NEW_STORE_MEMBASE_IMM (cfg, OP_STORE_MEMBASE_IMM, ins->dreg, 0, 1);
+#endif
 		}
 
 		if (cfg->verbose_level > 3)
@@ -6296,7 +6298,10 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				dreg = alloc_preg (cfg);
 			}
 
-			NEW_LOAD_MEMBASE (cfg, ins, ldind_to_load_membase (*ip), dreg, sp [0]->dreg, 0);
+			if (sp [0]->opcode == OP_ICONST)
+				NEW_LOAD_MEM (cfg, ins, ldind_to_load_mem (*ip), dreg, sp [0]->inst_c0);
+			else
+				NEW_LOAD_MEMBASE (cfg, ins, ldind_to_load_membase (*ip), dreg, sp [0]->dreg, 0);
 			ins->type = ldind_type [*ip - CEE_LDIND_I1];
 			ins->flags |= ins_flag;
 			ins_flag = 0;
@@ -7447,8 +7452,12 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			dreg = alloc_dreg (cfg, stack_type);
 			NEW_LOAD_MEMBASE (cfg, ins, mono_type_to_load_membase (&klass->byval_arg), dreg, add_reg, G_STRUCT_OFFSET (MonoArray, vector));
 			ins->type = stack_type;
-			if (ins->opcode == CEE_LDOBJ)
-				NOT_IMPLEMENTED;
+			if (ins->opcode == CEE_LDOBJ) {
+				int addr_reg = alloc_preg (cfg);
+				
+				EMIT_NEW_BIALU_IMM (cfg, ins, OP_PADD_IMM, addr_reg, add_reg, G_STRUCT_OFFSET (MonoArray, vector));
+				ins = emit_ldobj (cfg, ins, ip, klass);
+			}
 			else
 				MONO_ADD_INS (cfg->cbb, ins);
 
@@ -7466,6 +7475,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 		case CEE_STELEM_I8:
 		case CEE_STELEM_R4:
 		case CEE_STELEM_R8:
+		case CEE_STELEM_REF:
 		case CEE_STELEM_ANY: {
 			guint32 size;
 			int mult_reg, add_reg, array_reg, index_reg, val_reg;
@@ -7487,8 +7497,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			if (MONO_TYPE_IS_REFERENCE (&klass->byval_arg)) {
 				MonoMethod* helper = mono_marshal_get_stelemref ();
 				MonoInst *iargs [3];
-
-				NOT_IMPLEMENTED;
 
 				iargs [2] = sp [2];
 				iargs [1] = sp [1];
@@ -7512,8 +7520,12 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				MONO_EMIT_NEW_BIALU (cfg, OP_PADD, add_reg, array_reg, mult_reg);
 
 				NEW_STORE_MEMBASE (cfg, ins, mono_type_to_store_membase (&klass->byval_arg), add_reg, G_STRUCT_OFFSET (MonoArray, vector), val_reg);
-				if (ins->opcode == CEE_STOBJ)
-					NOT_IMPLEMENTED;
+				if (ins->opcode == CEE_STOBJ) {
+					int addr_reg = alloc_preg (cfg);
+				
+					EMIT_NEW_BIALU_IMM (cfg, ins, OP_PADD_IMM, addr_reg, add_reg, G_STRUCT_OFFSET (MonoArray, vector));
+					emit_stobj (cfg, ins, sp [2], ip, klass, FALSE);
+				}
 				else
 					MONO_ADD_INS (cfg->cbb, ins);
 			}
@@ -7522,23 +7534,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				ip += 5;
 			else
 				++ip;
-			inline_costs += 1;
-			break;
-		}
-		case CEE_STELEM_REF: {
-			MonoInst *iargs [3];
-			MonoMethod* helper = mono_marshal_get_stelemref ();
-
-			CHECK_STACK (3);
-			sp -= 3;
-
-			iargs [2] = sp [2];
-			iargs [1] = sp [1];
-			iargs [0] = sp [0];
-			
-			mono_emit_method_call (cfg, helper, mono_method_signature (helper), iargs, ip, NULL);
-
-			++ip;
 			inline_costs += 1;
 			break;
 		}
@@ -8689,6 +8684,20 @@ stind_to_store_membase (int opcode)
 	return -1;
 }
 
+static int
+ldind_to_load_mem (int opcode)
+{
+	switch (opcode) {
+	case CEE_LDIND_U4:
+		/* Used in managed->native wrappers */
+		return OP_LOADU4_MEM;
+	default:
+		g_assert_not_reached ();
+	}
+
+	return -1;
+}
+
 static inline int
 op_to_op_dest_membase (int opcode)
 {
@@ -9216,8 +9225,6 @@ mono_spill_global_vars (MonoCompile *cfg)
  * - handle long shift opts on 32 bit platforms somehow: they require 
  *   3 sregs (2 for arg1 and 1 for arg2)
  * - make byref a 'normal' type.
- * - spill costs are calculated during liveness, but deadce can eliminate a lot of code, 
- *   decreasing costs.
  * - use vregs for bb->out_stacks if possible, handle_global_vreg will make them a
  *   variable if needed.
  * - do not start a new IL level bblock when cfg->cbb is changed by a function call
@@ -9233,7 +9240,9 @@ mono_spill_global_vars (MonoCompile *cfg)
  * - fix LNEG and enable cfold of INEG
  * - generalize x86 optimizations like ldelema as a peephole optimization
  * - port the x86 optimizations to amd64 as well
- * - generics.2.cs
+ * - lazily compile wrappers
+ * - add store_mem_imm for amd64
+ * - optimize the loading of the interruption flag in the managed->native wrappers
  * - LAST MERGE: 56617.
  */
 

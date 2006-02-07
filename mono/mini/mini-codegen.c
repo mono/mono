@@ -586,6 +586,46 @@ inst_list_prepend (guint8 *mem, InstList *list, MonoInst *data)
 	return item;
 }
 
+static inline void
+insert_before_ins (MonoInst *ins, InstList *item, MonoInst* to_insert)
+{
+	MonoInst *prev;
+
+	/*
+	 * If this function is called multiple times, the new instructions are inserted
+	 * in the proper order.
+	 */
+
+	if (item->next) {
+		prev = item->next->data;
+
+		while (prev->next != ins)
+			prev = prev->next;
+		to_insert->next = ins;
+		prev->next = to_insert;
+	} else {
+		to_insert->next = ins;
+	}
+
+	/*
+	 * insert_after_ins insert the new instruction before item->data, so
+	 * we have to modify it to point to the first of the prepended instructions.
+	 */
+	if (item->data == ins)
+		item->data = to_insert; 
+}
+
+static inline void
+insert_after_ins (MonoInst *ins, InstList *item, MonoInst* to_insert)
+{
+	if (item->prev) {
+		while (ins->next != item->prev->data)
+			ins = ins->next;
+	}
+	to_insert->next = ins->next;
+	ins->next = to_insert;
+}
+
 /*
  * Force the spilling of the variable in the symbolic register 'reg'.
  */
@@ -604,8 +644,9 @@ get_register_force_spilling (MonoCompile *cfg, InstList *item, MonoInst *ins, in
 		assign = cfg->rs->iassign;
 		symbolic = cfg->rs->isymbolic;
 	}	
-	
+
 	sel = assign [reg];
+
 	/*i = cfg->rs->isymbolic [sel];
 	g_assert (i == reg);*/
 	i = reg;
@@ -623,12 +664,7 @@ get_register_force_spilling (MonoCompile *cfg, InstList *item, MonoInst *ins, in
 	load->dreg = sel;
 	load->inst_basereg = cfg->frame_reg;
 	load->inst_offset = mono_spillvar_offset (cfg, spill);
-	if (item->prev) {
-		while (ins->next != item->prev->data)
-			ins = ins->next;
-	}
-	load->next = ins->next;
-	ins->next = load;
+	insert_after_ins (ins, item, load);
 	DEBUG (g_print ("SPILLED LOAD (%d at 0x%08lx(%%ebp)) R%d (freed %s)\n", spill, (long)load->inst_offset, i, mono_regname_full (sel, fp)));
 	if (fp)
 		i = mono_regstate2_alloc_float (cfg->rs, regmask (sel));
@@ -719,12 +755,7 @@ get_register_spilling (MonoCompile *cfg, InstList *item, MonoInst *ins, regmask_
 	load->dreg = sel;
 	load->inst_basereg = cfg->frame_reg;
 	load->inst_offset = mono_spillvar_offset (cfg, spill);
-	if (item->prev) {
-		while (ins->next != item->prev->data)
-			ins = ins->next;
-	}
-	load->next = ins->next;
-	ins->next = load;
+	insert_after_ins (ins, item, load);
 	DEBUG (g_print ("\tSPILLED LOAD (%d at 0x%08lx(%%ebp)) R%d (freed %s)\n", spill, (long)load->inst_offset, i, mono_regname_full (sel, fp)));
 	if (fp)
 		i = mono_regstate2_alloc_float (cfg->rs, regmask (sel));
@@ -800,27 +831,6 @@ create_spilled_store (MonoCompile *cfg, int spill, int reg, int prev_reg, MonoIn
 	}
 	DEBUG (g_print ("\tSPILLED STORE (%d at 0x%08lx(%%ebp)) R%d (from %s)\n", spill, (long)store->inst_offset, prev_reg, mono_regname_full (reg, fp)));
 	return store;
-}
-
-static void
-insert_before_ins (MonoInst *ins, InstList *item, MonoInst* to_insert)
-{
-	MonoInst *prev;
-	if (item->next) {
-		prev = item->next->data;
-
-		while (prev->next != ins)
-			prev = prev->next;
-		to_insert->next = ins;
-		prev->next = to_insert;
-	} else {
-		to_insert->next = ins;
-	}
-	/* 
-	 * needed otherwise in the next instruction we can add an ins to the 
-	 * end and that would get past this instruction.
-	 */
-	item->data = to_insert; 
 }
 
 /* flags used in reginfo->flags */

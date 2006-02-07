@@ -107,6 +107,13 @@ class Tests {
 		return t.ldobj_stobj (ref i, ref j) + i + j;
 	}
 
+	public static int test_5_ldelem_stelem_generics () {
+		GenericClass<TestStruct> t = new GenericClass<TestStruct> ();
+
+		TestStruct s = new TestStruct (5);
+		return t.ldelem_stelem (s).i;
+	}
+
 	static object Box<T> (T t)
 	{
 		return t;
@@ -124,5 +131,11 @@ class Tests {
 			return t;
 		}
 
+		public T ldelem_stelem (T t) {
+			T[] arr = new T [10];
+			arr [0] = t;
+
+			return arr [0];
+		}
 	}
 }

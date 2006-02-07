@@ -435,8 +435,11 @@ mono_constant_fold_ins2 (MonoInst *ins, MonoInst *arg1, MonoInst *arg2)
 		break;
 		/* case OP_INEG: */
 	case OP_INOT:
-		/* Can't fold INEG, since it sets cflags on x86, and LNEG depends on that */
+	case OP_INEG:
 		if (arg1->opcode == OP_ICONST) {
+			/* INEG sets cflags on x86, and the LNEG decomposition depends on that */
+			if ((ins->opcode == OP_INEG) && ins->next && (ins->next->opcode == OP_ADC_IMM))
+				return;
 			switch (ins->opcode) {
 				FOLD_UNOP2 (OP_INEG,-);
 				FOLD_UNOP2 (OP_INOT,~);
