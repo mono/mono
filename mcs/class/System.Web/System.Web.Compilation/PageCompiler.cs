@@ -85,24 +85,29 @@ namespace System.Web.Compilation
 			mainClass.Members.Add (method);
 		}
 
-		static CodeAssignStatement CreatePropertyAssign (string name, object value)
+		static CodeAssignStatement CreatePropertyAssign (CodeExpression expr, string name, object value)
 		{
 			CodePropertyReferenceExpression prop;
-			prop = new CodePropertyReferenceExpression (thisRef, name);
+			prop = new CodePropertyReferenceExpression (expr, name);
 			CodePrimitiveExpression prim;
 			prim = new CodePrimitiveExpression (value);
 			return new CodeAssignStatement (prop, prim);
 		}
 
+		static CodeAssignStatement CreatePropertyAssign (string name, object value)
+		{
+			return CreatePropertyAssign (thisRef, name, value);
+		}
+
 		protected override void AddStatementsToInitMethod (CodeMemberMethod method)
 		{
 #if NET_2_0
-			if (pageParser.MasterPageFile != null) {
-				CodeExpression prop;
-				prop = new CodePropertyReferenceExpression (new CodeArgumentReferenceExpression("__ctrl"), "MasterPageFile");
-				CodeExpression ct = new CodePrimitiveExpression (pageParser.MasterPageFile);
-				method.Statements.Add (new CodeAssignStatement (prop, ct));
-			}
+			CodeArgumentReferenceExpression ctrlVar = new CodeArgumentReferenceExpression("__ctrl");
+			if (pageParser.Title != null)
+				method.Statements.Add (CreatePropertyAssign (ctrlVar, "Title", pageParser.Title));
+
+			if (pageParser.MasterPageFile != null)
+				method.Statements.Add (CreatePropertyAssign (ctrlVar, "MasterPageFile", pageParser.MasterPageFile));
 #endif
 		}
 

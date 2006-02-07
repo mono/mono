@@ -127,14 +127,14 @@ namespace System.Web.Compilation
 				p.Name = "__parser";
 				p.Type = new CodeTypeReference (typeof (IParserAccessor));
 				p.InitExpression = new CodeCastExpression (typeof (IParserAccessor), ctrlVar);
-				builder.method.Statements.Add (p);
+				builder.flushOutputStatements.Add (p);
 				builder.haveParserVariable = true;
 			}
 
 			CodeVariableReferenceExpression var = new CodeVariableReferenceExpression ("__parser");
 			CodeMethodInvokeExpression invoke = new CodeMethodInvokeExpression (var, "AddParsedSubObject");
 			invoke.Parameters.Add (expr);
-			builder.method.Statements.Add (invoke);
+			builder.flushOutputStatements.Add (invoke);
 		}
 
 		void InitMethod (ControlBuilder builder, bool isTemplate, bool childrenAsProperties)
@@ -142,6 +142,8 @@ namespace System.Web.Compilation
 			string tailname = ((builder is RootBuilder) ? "Tree" : ("_" + builder.ID));
 			CodeMemberMethod method = new CodeMemberMethod ();
 			builder.method = method;
+			builder.flushOutputStatements = method.Statements;
+
 			method.Name = "__BuildControl" + tailname;
 			method.Attributes = MemberAttributes.Private | MemberAttributes.Final;
 			Type type = builder.ControlType;
@@ -227,6 +229,7 @@ namespace System.Web.Compilation
 					addPlaceholder.Parameters.Add (ctrlVar);
 					method.Statements.Add (addPlaceholder);
 
+
 					CodeConditionStatement condStatement;
 
 					// Add the __Template_* field
@@ -264,6 +267,10 @@ namespace System.Web.Compilation
 					// if ((this.__Template_mainContent != null)) {
 					// 	this.__Template_mainContent.InstantiateIn(__ctrl);
 					// }
+					// and also set things up such that any additional code ends up in:
+					// else {
+					// 	...
+					// }
 					//
 					CodeMethodReferenceExpression methodRef = new CodeMethodReferenceExpression ();
 					methodRef.TargetObject = templateID;
@@ -277,6 +284,9 @@ namespace System.Web.Compilation
 														      new CodePrimitiveExpression (null)),
 										    new CodeExpressionStatement (instantiateInInvoke));
 					method.Statements.Add (condStatement);
+
+					// this is the bit that causes the following stuff to end up in the else { }
+					builder.flushOutputStatements = condStatement.FalseStatements;
 
 					// __ctrl.TemplateControl = this;
 					assign = new CodeAssignStatement ();

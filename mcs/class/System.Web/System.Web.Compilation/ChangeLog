@@ -1,5 +1,25 @@
 2006-02-07  Chris Toshok  <toshok@ximian.com>
 
+	* TemplateControlCompiler.cs (AddParsedSubObjectStmt): append the
+	calls to AddParsedSubObject to a special statement collection --
+	builder.flushOutputStatements -- not to builder.method.Statements.
+	(InitMethod): initially, set flushOutputStatements to
+	method.Statements.  If we're dealing with a ContentPlaceHolder,
+	set flushOutputStatements to be the else block of a conditional we
+	create.  This causes the compiled control to fall back to the
+	ContentPlaceHolder's child controls in case there's no
+	corresponding Content template.
+
+	* PageCompiler.cs (CreatePropertyAssign): factor out the
+	string,string implementation and add one that also takes a
+	CodeExpression; make the string,string implementation call the
+	three arg one with thisRef.
+	(AddStatementsToInitMethod): make use of the 3-arg form of
+	CreatePropertyAssign to reduce code.  Also, add support for
+	setting the page's Title from the parser's Title.
+
+2006-02-07  Chris Toshok  <toshok@ximian.com>
+
 	* UserControlCompiler.cs (AddStatementsToInitMethod): emit code to
 	assign __ctrl.MasterPageFile to our master page, if we have one.
 
