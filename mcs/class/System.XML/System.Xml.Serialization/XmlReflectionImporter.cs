@@ -558,7 +558,7 @@ namespace System.Xml.Serialization {
 				atts = mem[0].GetCustomAttributes (typeof(XmlEnumAttribute), false);
 				if (atts.Length > 0) xmlName = ((XmlEnumAttribute)atts[0]).Name;
 				if (xmlName == null) xmlName = name;
-				members.Add (new EnumMap.EnumMapMember (XmlConvert.EncodeLocalName (xmlName), name));
+				members.Add (new EnumMap.EnumMapMember (xmlName, name));
 			}
 
 			bool isFlags = type.GetCustomAttributes (typeof(FlagsAttribute),false).Length > 0;

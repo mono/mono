@@ -1,3 +1,7 @@
+2006-02-07  Konstantin Triger <kostat@mainsoft.com>
+
+	* XmlReflectionImporter.cs: remove local name encoding for enums.
+
 2006-01-08  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* XmlSchemaImporter.cs: Fixed line endings (to CRLF).
