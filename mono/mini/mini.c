@@ -9517,6 +9517,13 @@ mono_local_cprop2 (MonoCompile *cfg)
 			/* Do strength reduction here */
 			/* FIXME: Add long/float */
 			switch (ins->opcode) {
+			case OP_MOVE:
+				if (ins->dreg == ins->sreg1) {
+					ins->opcode = OP_NOP;
+					ins->dreg = ins->sreg1 = -1;
+					spec = ins_info [ins->opcode - OP_START - 1];
+				}
+				break;
 			case OP_ADD_IMM:
 			case OP_IADD_IMM:
 			case OP_SUB_IMM:
@@ -9740,7 +9747,10 @@ mono_local_deadce_alt (MonoCompile *cfg)
 	int ins_index, nins;
 	MonoInst **reverse;
 
-	/* FIXME: speed this up */
+	/*
+	 * Assignments to global vregs can't be eliminated so this pass must come
+	 * after the handle_global_vregs () pass.
+	 */
 
 	used = mono_bitset_new (cfg->next_vireg, 0);
 
@@ -9794,6 +9804,29 @@ mono_local_deadce_alt (MonoCompile *cfg)
 
 				if (!MONO_TYPE_ISSTRUCT (var->inst_vtype))
 					return;
+			}
+
+			if ((ins->opcode == OP_MOVE) && get_vreg_to_inst (cfg, 'i', ins->dreg)) {
+				if (ins_index + 1 < nins) {
+					MonoInst *def = reverse [ins_index + 1];
+					const char *spec2 = ins_info [ins->opcode - OP_START - 1];
+
+					/* 
+					 * Perform a limited kind of reverse copy propagation, i.e.
+					 * transform B <- FOO; A <- B into A <- FOO
+					 */
+					if (!get_vreg_to_inst (cfg, 'i', ins->sreg1) && (spec2 [MONO_INST_DEST] == 'i') && (def->dreg == ins->sreg1) && !mono_bitset_test_fast (used, ins->sreg1) && !MONO_IS_STORE_MEMBASE (def)) {
+						if (cfg->verbose_level > 2) {
+							printf ("\tReverse copyprop in BB%d on ", bb->block_num);
+							mono_print_ins (ins);
+						}
+
+						def->dreg = ins->dreg;
+						ins->opcode = OP_NOP;
+						ins->dreg = ins->sreg1 = -1;
+						spec = ins_info [ins->opcode - OP_START - 1];
+					}
+				}
 			}
 
 			if ((spec [MONO_INST_DEST] == 'i') && (ins->dreg >= MONO_MAX_IREGS)) {

@@ -1425,8 +1425,13 @@ emit_call (MonoCompile *cfg, guint8 *code, guint32 patch_type, gconstpointer dat
 	return code;
 }
 
-/* FIXME: Add more instructions */
-#define INST_IGNORES_CFLAGS(ins) (((ins)->opcode == CEE_BR) || ((ins)->opcode == OP_BR) || ((ins)->opcode == OP_STORE_MEMBASE_IMM) || ((ins)->opcode == OP_STOREI4_MEMBASE_IMM) || ((ins)->opcode == OP_STOREI4_MEMBASE_REG) || ((ins)->opcode == OP_IXOR) || ((ins)->opcode == OP_MOVE))
+#define INST_IGNORES_CFLAGS(opcode) (!(((opcode) == OP_ADC) || ((opcode) == OP_IADC) || ((opcode) == OP_ADC_IMM) || ((opcode) == OP_IADC_IMM) || ((opcode) == OP_SBB) || ((opcode) == OP_ISBB) || ((opcode) == OP_SBB_IMM) || ((opcode) == OP_ISBB_IMM)))
+
+//#define INST_IGNORES_CFLAGS(opcode) FALSE
+
+/*
+#define INST_IGNORES_CFLAGS(opcode) (((opcode) == CEE_BR) || ((opcode) == OP_BR) || ((opcode) == OP_STORE_MEMBASE_IMM) || ((opcode) == OP_STOREI4_MEMBASE_IMM) || ((opcode) == OP_STOREI4_MEMBASE_REG) || ((opcode) == OP_STOREI1_MEMBASE_REG) || ((opcode) == OP_STOREI1_MEMBASE_IMM) || ((opcode) == OP_STOREI2_MEMBASE_REG) || ((opcode) == OP_STOREI2_MEMBASE_IMM) || ((opcode) == OP_IXOR) || ((opcode) == OP_MOVE) || ((opcode) == OP_ICONST) || ((opcode) == OP_IADD) || ((opcode) == OP_X86_PUSH) || ((opcode) == OP_X86_PUSH_IMM) || ((opcode) == OP_X86_PUSH_MEMBASE) || ((opcode) == OP_COMPARE_IMM) || ((opcode) == OP_ICOMPARE_IMM) || ((opcode) == OP_LOAD_MEMBASE) || ((opcode) == OP_LOADI4_MEMBASE))
+*/
 
 static void
 peephole_pass (MonoCompile *cfg, MonoBasicBlock *bb)
@@ -1440,10 +1445,32 @@ peephole_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_ICONST:
 			/* reg = 0 -> XOR (reg, reg) */
 			/* XOR sets cflags on x86, so we cant do it always */
-			if (ins->inst_c0 == 0 && ins->next && INST_IGNORES_CFLAGS (ins->next)) {
-				ins->opcode = CEE_XOR;
+			if (ins->inst_c0 == 0 && ins->next && INST_IGNORES_CFLAGS (ins->next->opcode)) {
+				MonoInst *ins2;
+
+				ins->opcode = OP_IXOR;
 				ins->sreg1 = ins->dreg;
 				ins->sreg2 = ins->dreg;
+
+				/* 
+				 * Convert succeeding STORE_MEMBASE_IMM 0 ins to STORE_MEMBASE_REG 
+				 * since it takes 3 bytes instead of 7.
+				 */
+				for (ins2 = ins->next; ins2; ins2 = ins2->next) {
+					if ((ins2->opcode == OP_STORE_MEMBASE_IMM) && (ins2->inst_imm == 0)) {
+						ins2->opcode = OP_STORE_MEMBASE_REG;
+						ins2->sreg1 = ins->dreg;
+					}
+					else if ((ins2->opcode == OP_STOREI4_MEMBASE_IMM) && (ins2->inst_imm == 0)) {
+						ins2->opcode = OP_STOREI4_MEMBASE_REG;
+						ins2->sreg1 = ins->dreg;
+					}
+					else if ((ins2->opcode == OP_STOREI1_MEMBASE_IMM) || (ins2->opcode == OP_STOREI2_MEMBASE_IMM)) {
+						/* Continue iteration */
+					}
+					else
+						break;
+				}
 			}
 			break;
 		case OP_MUL_IMM: 
@@ -1458,6 +1485,16 @@ peephole_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 					continue;
 				}
 			}
+			break;
+		case OP_IADD_IMM:
+		case OP_ADD_IMM:
+			if ((ins->inst_imm == 1) && (ins->dreg == ins->sreg1))
+				ins->opcode = OP_X86_INC_REG;
+			break;
+		case OP_ISUB_IMM:
+		case OP_SUB_IMM:
+			if ((ins->inst_imm == 1) && (ins->dreg == ins->sreg1))
+				ins->opcode = OP_X86_DEC_REG;
 			break;
 		case OP_COMPARE_IMM:
 		case OP_ICOMPARE_IMM:
@@ -2040,11 +2077,35 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_X86_ADD_MEMBASE_IMM:
 			x86_alu_membase_imm (code, X86_ADD, ins->inst_basereg, ins->inst_offset, ins->inst_imm);
 			break;
-		case OP_X86_ADD_MEMBASE:
-			x86_alu_reg_membase (code, X86_ADD, ins->sreg1, ins->sreg2, ins->inst_offset);
-			break;
 		case OP_X86_SUB_MEMBASE_IMM:
 			x86_alu_membase_imm (code, X86_SUB, ins->inst_basereg, ins->inst_offset, ins->inst_imm);
+			break;
+		case OP_X86_AND_MEMBASE_IMM:
+			x86_alu_membase_imm (code, X86_AND, ins->inst_basereg, ins->inst_offset, ins->inst_imm);
+			break;
+		case OP_X86_OR_MEMBASE_IMM:
+			x86_alu_membase_imm (code, X86_OR, ins->inst_basereg, ins->inst_offset, ins->inst_imm);
+			break;
+		case OP_X86_XOR_MEMBASE_IMM:
+			x86_alu_membase_imm (code, X86_XOR, ins->inst_basereg, ins->inst_offset, ins->inst_imm);
+			break;
+		case OP_X86_ADD_MEMBASE_REG:
+			x86_alu_membase_reg (code, X86_ADD, ins->inst_basereg, ins->inst_offset, ins->sreg2);
+			break;
+		case OP_X86_SUB_MEMBASE_REG:
+			x86_alu_membase_reg (code, X86_SUB, ins->inst_basereg, ins->inst_offset, ins->sreg2);
+			break;
+		case OP_X86_AND_MEMBASE_REG:
+			x86_alu_membase_reg (code, X86_AND, ins->inst_basereg, ins->inst_offset, ins->sreg2);
+			break;
+		case OP_X86_OR_MEMBASE_REG:
+			x86_alu_membase_reg (code, X86_OR, ins->inst_basereg, ins->inst_offset, ins->sreg2);
+			break;
+		case OP_X86_XOR_MEMBASE_REG:
+			x86_alu_membase_reg (code, X86_XOR, ins->inst_basereg, ins->inst_offset, ins->sreg2);
+			break;
+		case OP_X86_ADD_MEMBASE:
+			x86_alu_reg_membase (code, X86_ADD, ins->sreg1, ins->sreg2, ins->inst_offset);
 			break;
 		case OP_X86_SUB_MEMBASE:
 			x86_alu_reg_membase (code, X86_SUB, ins->sreg1, ins->sreg2, ins->inst_offset);

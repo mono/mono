@@ -8680,6 +8680,84 @@ stind_to_store_membase (int opcode)
 	return -1;
 }
 
+static inline int
+op_to_op_dest_membase (int opcode)
+{
+#ifdef __i386__
+	switch (opcode) {
+	case OP_IADD:
+		return OP_X86_ADD_MEMBASE_REG;
+	case OP_ISUB:
+		return OP_X86_SUB_MEMBASE_REG;
+	case OP_IAND:
+		return OP_X86_AND_MEMBASE_REG;
+	case OP_IOR:
+		return OP_X86_OR_MEMBASE_REG;
+	case OP_IXOR:
+		return OP_X86_XOR_MEMBASE_REG;
+	case OP_ADD_IMM:
+	case OP_IADD_IMM:
+		return OP_X86_ADD_MEMBASE_IMM;
+	case OP_SUB_IMM:
+	case OP_ISUB_IMM:
+		return OP_X86_SUB_MEMBASE_IMM;
+	case OP_AND_IMM:
+	case OP_IAND_IMM:
+		return OP_X86_AND_MEMBASE_IMM;
+	case OP_OR_IMM:
+	case OP_IOR_IMM:
+		return OP_X86_OR_MEMBASE_IMM;
+	case OP_XOR_IMM:
+	case OP_IXOR_IMM:
+		return OP_X86_XOR_MEMBASE_IMM;
+	}
+#endif
+
+	return -1;
+}
+
+static inline int
+op_to_op_src1_membase (int load_opcode, int opcode)
+{
+#ifdef __i386__
+	if ((opcode == OP_ICOMPARE_IMM) && (load_opcode == OP_LOADU1_MEMBASE))
+		return OP_X86_COMPARE_MEMBASE8_IMM;
+
+	if (!((load_opcode == OP_LOAD_MEMBASE) || (load_opcode == OP_LOADI4_MEMBASE) || (load_opcode == OP_LOADU4_MEMBASE)))
+		return -1;
+
+	switch (opcode) {
+	case OP_X86_PUSH:
+		return OP_X86_PUSH_MEMBASE;
+	case OP_COMPARE_IMM:
+	case OP_ICOMPARE_IMM:
+		return OP_X86_COMPARE_MEMBASE_IMM;
+	case OP_COMPARE:
+	case OP_ICOMPARE:
+		return OP_X86_COMPARE_MEMBASE_REG;
+	}
+#endif
+
+	return -1;
+}
+
+static inline int
+op_to_op_src2_membase (int load_opcode, int opcode)
+{
+#ifdef __i386__
+	if (!((load_opcode == OP_LOAD_MEMBASE) || (load_opcode == OP_LOADI4_MEMBASE) || (load_opcode == OP_LOADU4_MEMBASE)))
+		return -1;
+	
+	switch (opcode) {
+	case OP_COMPARE:
+	case OP_ICOMPARE:
+		return OP_X86_COMPARE_REG_MEMBASE;
+	}
+#endif
+
+	return -1;
+}
+
 /**
  * mono_handle_global_vregs:
  *
@@ -8959,7 +9037,7 @@ mono_spill_global_vars (MonoCompile *cfg)
 			/* DREG */
 			regtype = spec [MONO_INST_DEST];
 			g_assert (((ins->dreg == -1) && (regtype == ' ')) || ((ins->dreg != -1) && (regtype != ' ')));
-				
+
 			if ((ins->dreg != -1) && get_vreg_to_inst (cfg, regtype, ins->dreg)) {
 				MonoInst *var = cfg->vreg_to_inst [regtype][ins->dreg];
 				MonoInst *store_ins;
@@ -8967,6 +9045,16 @@ mono_spill_global_vars (MonoCompile *cfg)
 
 				if (var->opcode == OP_REGVAR) {
 					ins->dreg = var->dreg;
+				} else if ((ins->dreg == ins->sreg1) && (spec [MONO_INST_DEST] == 'i') && (spec [MONO_INST_SRC1] == 'i') && (op_to_op_dest_membase (ins->opcode) != -1)) {
+					/* 
+					 * Instead of emitting a load+store, use a _membase opcode.
+					 */
+					g_assert (var->opcode == OP_REGOFFSET);
+					ins->opcode = op_to_op_dest_membase (ins->opcode);
+					ins->inst_basereg = var->inst_basereg;
+					ins->inst_offset = var->inst_offset;
+					ins->dreg = -1;
+					spec = ins_info [ins->opcode - OP_START - 1];
 				} else {
 					g_assert (var->opcode == OP_REGOFFSET);
 
@@ -8980,7 +9068,6 @@ mono_spill_global_vars (MonoCompile *cfg)
 					}
 					else {
 						store_opcode = mono_type_to_store_membase (var->inst_vtype);
-
 						/* Try to fuse the store into the instruction itself */
 						/* FIXME: Add more instructions */
 						if ((ins->opcode == OP_ICONST) || ((ins->opcode == OP_I8CONST) && (ins->inst_c0 == 0))) {
@@ -9025,17 +9112,23 @@ mono_spill_global_vars (MonoCompile *cfg)
 
 						load_opcode = mono_type_to_load_membase (var->inst_vtype);
 
-						/* FIXME: Generalize this */
-						if ((ins->opcode == OP_X86_PUSH) && ((load_opcode == OP_LOADI4_MEMBASE) || (load_opcode == OP_LOADU4_MEMBASE) || (load_opcode == OP_LOAD_MEMBASE))) {
-							ins->opcode = OP_X86_PUSH_MEMBASE;
+						/* Try to fuse the load into the instruction */
+						/* FIXME: Generalize this to 64 bit */
+						if ((srcindex == 0) && (op_to_op_src1_membase (load_opcode, ins->opcode) != -1)) {
+							ins->opcode = op_to_op_src1_membase (load_opcode, ins->opcode);
 							ins->inst_basereg = var->inst_basereg;
+							ins->inst_offset = var->inst_offset;
+						} else if ((srcindex == 1) && (op_to_op_src2_membase (load_opcode, ins->opcode) != -1)) {
+							ins->opcode = op_to_op_src2_membase (load_opcode, ins->opcode);
+							ins->sreg2 = var->inst_basereg;
 							ins->inst_offset = var->inst_offset;
 						} else {
 							if (ins->opcode == OP_MOVE) {
 								ins->opcode = OP_NOP;
 								sreg = ins->dreg;
-							} else
+							} else {
 								sreg = alloc_dreg (cfg, stacktypes [regtype]);
+							}
 
 							if (srcindex == 0)
 								ins->sreg1 = sreg;
