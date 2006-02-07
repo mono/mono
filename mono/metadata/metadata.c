@@ -30,6 +30,8 @@ static gboolean mono_metadata_class_equal (MonoClass *c1, MonoClass *c2, gboolea
 static gboolean _mono_metadata_generic_class_equal (const MonoGenericClass *g1, const MonoGenericClass *g2,
 						    gboolean signature_only);
 
+GHashTable *mono_generic_params_with_ambiguous_names;
+
 /*
  * This enumeration is used to describe the data types in the metadata
  * tables
@@ -1540,7 +1542,7 @@ mono_metadata_parse_method_signature_full (MonoImage *m, MonoGenericContainer *c
 					   int def, const char *ptr, const char **rptr)
 {
 	MonoMethodSignature *method;
-	int i, ret_attrs = 0, *pattrs = NULL;
+	int i, *pattrs = NULL;
 	guint32 hasthis = 0, explicit_this = 0, call_convention, param_count;
 	guint32 gen_param_count = 0;
 	gboolean is_open = FALSE;
@@ -1556,7 +1558,6 @@ mono_metadata_parse_method_signature_full (MonoImage *m, MonoGenericContainer *c
 	if (gen_param_count)
 		gen_param_count = mono_metadata_decode_value (ptr, &ptr);
 	param_count = mono_metadata_decode_value (ptr, &ptr);
-	pattrs = g_new0 (int, param_count);
 
 	if (def) {
 		MonoTableInfo *paramt = &m->tables [MONO_TABLE_PARAM];
@@ -1568,12 +1569,11 @@ mono_metadata_parse_method_signature_full (MonoImage *m, MonoGenericContainer *c
 			lastp = mono_metadata_decode_row_col (methodt, def, MONO_METHOD_PARAMLIST);
 		else
 			lastp = paramt->rows + 1;
+
+		pattrs = g_new0 (int, 1 + param_count);
 		for (i = param_index; i < lastp; ++i) {
 			mono_metadata_decode_row (paramt, i - 1, cols, MONO_PARAM_SIZE);
-			if (!cols [MONO_PARAM_SEQUENCE])
-				ret_attrs = cols [MONO_PARAM_FLAGS];
-			else
-				pattrs [cols [MONO_PARAM_SEQUENCE] - 1] = cols [MONO_PARAM_FLAGS];
+			pattrs [cols [MONO_PARAM_SEQUENCE]] = cols [MONO_PARAM_FLAGS];
 		}
 	}
 	method = mono_metadata_signature_alloc (m, param_count);
@@ -1583,26 +1583,24 @@ mono_metadata_parse_method_signature_full (MonoImage *m, MonoGenericContainer *c
 	method->generic_param_count = gen_param_count;
 
 	if (call_convention != 0xa) {
-		method->ret = mono_metadata_parse_type_full (m, (MonoGenericContext *) container, MONO_PARSE_RET, ret_attrs, ptr, &ptr);
+		method->ret = mono_metadata_parse_type_full (
+			m, (MonoGenericContext *) container, MONO_PARSE_RET,
+			pattrs ? pattrs [0] : 0, ptr, &ptr);
 		is_open = mono_class_is_open_constructed_type (method->ret);
 	}
 
-	if (method->param_count) {
-		method->sentinelpos = -1;
-		
-		for (i = 0; i < method->param_count; ++i) {
-			if (*ptr == MONO_TYPE_SENTINEL) {
-				if (method->call_convention != MONO_CALL_VARARG || def)
-					g_error ("found sentinel for methoddef or no vararg method");
-				method->sentinelpos = i;
-				ptr++;
-			}
-			method->params [i] = mono_metadata_parse_type_full (
-				m, (MonoGenericContext *) container, MONO_PARSE_PARAM,
-				pattrs [i], ptr, &ptr);
-			if (!is_open)
-				is_open = mono_class_is_open_constructed_type (method->params [i]);
+	for (i = 0; i < method->param_count; ++i) {
+		if (*ptr == MONO_TYPE_SENTINEL) {
+			if (method->call_convention != MONO_CALL_VARARG || def)
+				g_error ("found sentinel for methoddef or no vararg method");
+			method->sentinelpos = i;
+			ptr++;
 		}
+		method->params [i] = mono_metadata_parse_type_full (
+			m, (MonoGenericContext *) container, MONO_PARSE_PARAM,
+			pattrs ? pattrs [i+1] : 0, ptr, &ptr);
+		if (!is_open)
+			is_open = mono_class_is_open_constructed_type (method->params [i]);
 	}
 
 	method->has_type_parameters = is_open;
@@ -1851,10 +1849,13 @@ do_mono_metadata_parse_generic_class (MonoType *type, MonoImage *m, MonoGenericC
 static MonoGenericContainer *
 select_container (MonoGenericContainer *gc, MonoTypeEnum type)
 {
+	gboolean is_var = (type == MONO_TYPE_VAR);
 	if (!gc)
 		return NULL;
 
-	if (type == MONO_TYPE_VAR && gc->parent)
+	g_assert (is_var || type == MONO_TYPE_MVAR);
+
+	if (is_var && gc->parent)
 		/*
 		 * The current MonoGenericContainer is a generic method -> its `parent'
 		 * points to the containing class'es container.
@@ -1864,7 +1865,7 @@ select_container (MonoGenericContainer *gc, MonoTypeEnum type)
 	/*
 	 * Ensure that we have the correct type of GenericContainer.
 	 */
-	g_assert ((type == MONO_TYPE_VAR) == !gc->is_method);
+	g_assert (is_var == !gc->is_method);
 
 	return gc;
 }
@@ -3693,13 +3694,13 @@ mono_type_create_from_typespec_full (MonoImage *image, MonoGenericContext *gener
 
 	if (type && type->type == MONO_TYPE_GENERICINST && type->data.generic_class->inst->is_open) {
 		MonoType *gtype = find_generic_param (type->data.generic_class, gc ? gc->is_method : FALSE);
-		gc = select_container (gc, gtype->type == MONO_TYPE_MVAR);
+		gc = select_container (gc, gtype->type);
 		if (gtype->data.generic_param->owner != gc)
 			type = NULL;
 	}
 
 	if (type && (type->type == MONO_TYPE_VAR || type->type == MONO_TYPE_MVAR)) {
-		gc = select_container (gc, type->type == MONO_TYPE_MVAR);
+		gc = select_container (gc, type->type);
 		if (gc) {
 			/* Use the one already cached in the container, if it exists. Otherwise, ensure that it's created */
 			type = gc->types ? gc->types [type->data.generic_param->num] : NULL;
@@ -3733,7 +3734,7 @@ mono_type_create_from_typespec_full (MonoImage *image, MonoGenericContext *gener
 
 	type = g_new0 (MonoType, 1);
 
-	if (!cache_type)
+	if (cache_type)
 		g_hash_table_insert (image->typespec_cache, GUINT_TO_POINTER (type_spec), type);
 
 	if (*ptr == MONO_TYPE_BYREF) {
@@ -4245,12 +4246,16 @@ mono_metadata_load_generic_params (MonoImage *image, guint32 token, MonoGenericC
 	guint32 i, owner = 0, n;
 	MonoGenericContainer *container;
 	MonoGenericParam *params;
+	gpointer *p;
+	GSList *dup_list = NULL, *l;
+	GHashTable *table = NULL;
 
 	if (!(i = mono_metadata_get_generic_param_row (image, token, &owner)))
 		return NULL;
 	mono_metadata_decode_row (tdef, i - 1, cols, MONO_GENERICPARAM_SIZE);
 	params = NULL;
 	n = 0;
+	table = g_hash_table_new (g_str_hash, g_str_equal);
 	container = g_new0 (MonoGenericContainer, 1);
 	do {
 		n++;
@@ -4261,11 +4266,27 @@ mono_metadata_load_generic_params (MonoImage *image, guint32 token, MonoGenericC
 		params [n - 1].flags = cols [MONO_GENERICPARAM_FLAGS];
 		params [n - 1].num = cols [MONO_GENERICPARAM_NUMBER];
 		params [n - 1].name = mono_metadata_string_heap (image, cols [MONO_GENERICPARAM_NAME]);
+		if ((p = g_hash_table_lookup (table, params [n - 1].name)))
+			dup_list = g_slist_prepend (g_slist_prepend (dup_list, GUINT_TO_POINTER (n)), p);
+		else
+			g_hash_table_insert (table, (char*)params [n - 1].name, GUINT_TO_POINTER (n));
 		params [n - 1].constraints = NULL;
 		if (++i > tdef->rows)
 			break;
 		mono_metadata_decode_row (tdef, i - 1, cols, MONO_GENERICPARAM_SIZE);
 	} while (cols [MONO_GENERICPARAM_OWNER] == owner);
+
+	if (dup_list) {
+		if (!mono_generic_params_with_ambiguous_names)
+			mono_generic_params_with_ambiguous_names = g_hash_table_new (NULL, NULL);
+		for (l = dup_list; l; l = l->next) {
+			int param = GPOINTER_TO_UINT (l->data);
+			g_hash_table_insert (mono_generic_params_with_ambiguous_names, &params [param-1], &params [param-1]);
+		}
+		g_slist_free (dup_list);
+	}
+	g_hash_table_destroy (table);
+	table = NULL;
 
 	container->type_argc = n;
 	container->type_params = params;

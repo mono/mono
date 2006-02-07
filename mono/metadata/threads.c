@@ -2199,6 +2199,41 @@ void mono_thread_suspend_all_other_threads (void)
 	g_free (wait);
 }
 
+/**
+ * mono_threads_request_thread_dump:
+ *
+ *   Ask all threads except the current to print their stacktrace to stdout.
+ */
+void
+mono_threads_request_thread_dump (void)
+{
+	struct wait_data *wait = g_new0 (struct wait_data, 1);
+	int i, waitnum;
+	gsize self = GetCurrentThreadId ();
+	gpointer *events;
+	guint32 eventidx = 0;
+
+	/* 
+	 * Make a copy of the hashtable since we can't do anything with
+	 * threads while threads_mutex is held.
+	 */
+	mono_threads_lock ();
+	mono_g_hash_table_foreach (threads, collect_threads, wait);
+	mono_threads_unlock ();
+
+	for (i = 0; i < wait->num; ++i) {
+		MonoThread *thread = wait->threads [i];
+
+		if (!mono_gc_is_finalizer_thread (thread) && (thread != mono_thread_current ()) && !thread->thread_dump_requested) {
+			thread->thread_dump_requested = TRUE;
+
+			signal_thread_state_change (thread);
+		}
+
+		CloseHandle (wait->handles [i]);
+	}
+}
+
 /*
  * mono_thread_push_appdomain_ref:
  *
@@ -2773,40 +2808,16 @@ gint32* mono_thread_interruption_request_flag ()
 	return &thread_interruption_requested;
 }
 
-#ifdef WITH_INCLUDED_LIBGC
-
-static void gc_push_all_stacks (gpointer key, gpointer value, gpointer user)
+static void debugger_create_all_threads (gpointer key, gpointer value, gpointer user)
 {
-	MonoThread *thread=(MonoThread *)value;
-	gsize *selfp = (gsize *)user, self = *selfp;
-
-	LIBGC_DEBUG (g_message (G_GNUC_PRETTY_FUNCTION ": %"G_GSIZE_FORMAT" - %"G_GSIZE_FORMAT" - %p", self, (gsize)thread->tid, thread->stack_ptr));
-
-	if(thread->tid == self) {
-		LIBGC_DEBUG (g_message (G_GNUC_PRETTY_FUNCTION ": %p - %p", selfp, thread->stack_ptr));
-		GC_push_all_stack (selfp, thread->stack_ptr);
-		return;
-	}
-
-#ifdef PLATFORM_WIN32
-	GC_win32_push_thread_stack (thread->handle, thread->stack_ptr);
-#else
-	mono_wapi_push_thread_stack (thread->handle, thread->stack_ptr);
-#endif
+	MonoThread *thread = (MonoThread *)value;
+	(* mono_thread_callbacks->thread_created) (thread->tid, thread->stack_ptr, NULL);
 }
 
-void mono_gc_push_all_stacks (void)
+void
+mono_debugger_create_all_threads (void)
 {
-	gsize self = GetCurrentThreadId ();
-
-	LIBGC_DEBUG (g_message (G_GNUC_PRETTY_FUNCTION ": %"G_GSIZE_FORMAT" - %p", self, threads));
-
 	mono_threads_lock ();
-
-	if (threads != NULL)
-		mono_g_hash_table_foreach (threads, gc_push_all_stacks, &self);
-	
+	mono_g_hash_table_foreach (threads, debugger_create_all_threads, NULL);
 	mono_threads_unlock ();
 }
-
-#endif /* WITH_INCLUDED_LIBGC */

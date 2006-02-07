@@ -95,6 +95,10 @@
 #   define GC_DGUX386_THREADS
 #   define GC_PTHREADS
 # endif
+# if defined(_AIX)
+#   define GC_AIX_THREADS
+#   define GC_PTHREADS
+# endif
 #endif /* GC_THREADS */
 
 #if defined(GC_THREADS) && !defined(GC_PTHREADS) && \

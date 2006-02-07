@@ -259,17 +259,6 @@ typedef char * ptr_t;	/* A generic pointer to which we can add	*/
 /*                               */
 /*********************************/
 
-#ifdef SAVE_CALL_CHAIN
-
-/* Fill in the pc and argument information for up to NFRAMES of my	*/
-/* callers.  Ignore my frame and my callers frame.			*/
-struct callinfo;
-void GC_save_callers GC_PROTO((struct callinfo info[NFRAMES]));
-  
-void GC_print_callers GC_PROTO((struct callinfo info[NFRAMES]));
-
-#endif
-
 #ifdef NEED_CALLINFO
     struct callinfo {
 	word ci_pc;  	/* Caller, not callee, pc	*/
@@ -281,6 +270,16 @@ void GC_print_callers GC_PROTO((struct callinfo info[NFRAMES]));
 	    word ci_dummy;
 #	endif
     };
+#endif
+
+#ifdef SAVE_CALL_CHAIN
+
+/* Fill in the pc and argument information for up to NFRAMES of my	*/
+/* callers.  Ignore my frame and my callers frame.			*/
+void GC_save_callers GC_PROTO((struct callinfo info[NFRAMES]));
+  
+void GC_print_callers GC_PROTO((struct callinfo info[NFRAMES]));
+
 #endif
 
 
@@ -551,7 +550,7 @@ extern GC_warn_proc GC_current_warn_proc;
 
 #define CPP_MAXOBJBYTES (CPP_HBLKSIZE/2)
 #define MAXOBJBYTES ((word)CPP_MAXOBJBYTES)
-#define CPP_MAXOBJSZ    BYTES_TO_WORDS(CPP_HBLKSIZE/2)
+#define CPP_MAXOBJSZ    BYTES_TO_WORDS(CPP_MAXOBJBYTES)
 #define MAXOBJSZ ((word)CPP_MAXOBJSZ)
 		
 # define divHBLKSZ(n) ((n) >> LOG_HBLKSIZE)
@@ -939,11 +938,11 @@ struct _GC_arrays {
   	char _valid_offsets[VALID_OFFSET_SZ];
 				/* GC_valid_offsets[i] == TRUE ==> i 	*/
 				/* is registered as a displacement.	*/
-#	define OFFSET_VALID(displ) \
-	  (GC_all_interior_pointers || GC_valid_offsets[displ])
   	char _modws_valid_offsets[sizeof(word)];
 				/* GC_valid_offsets[i] ==>		  */
 				/* GC_modws_valid_offsets[i%sizeof(word)] */
+#   define OFFSET_VALID(displ) \
+	  (GC_all_interior_pointers || GC_valid_offsets[displ])
 # ifdef STUBBORN_ALLOC
     page_hash_table _changed_pages;
         /* Stubborn object pages that were changes since last call to	*/
@@ -1633,6 +1632,10 @@ ptr_t GC_generic_malloc_ignore_off_page GC_PROTO((size_t b, int k));
   				/* are ignored.				*/
 ptr_t GC_generic_malloc_inner GC_PROTO((word lb, int k));
   				/* Ditto, but I already hold lock, etc.	*/
+ptr_t GC_generic_malloc_words_small_inner GC_PROTO((word lw, int k));
+				/* Analogous to the above, but assumes	*/
+				/* a small object size, and bypasses	*/
+				/* MERGE_SIZES mechanism.		*/
 ptr_t GC_generic_malloc_words_small GC_PROTO((size_t lw, int k));
   				/* As above, but size in units of words */
   				/* Bypasses MERGE_SIZES.  Assumes	*/
@@ -1726,6 +1729,13 @@ extern GC_bool GC_print_stats;	/* Produce at least some logging output	*/
 
 #ifdef KEEP_BACK_PTRS
   extern long GC_backtraces;
+  void GC_generate_random_backtrace_no_gc(void);
+#endif
+
+extern GC_bool GC_print_back_height;
+
+#ifdef MAKE_BACK_GRAPH
+  void GC_print_back_graph_stats(void);
 #endif
 
 /* Macros used for collector internal allocation.	*/

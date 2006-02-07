@@ -1,6 +1,7 @@
 /*
- * This header is only installed for use by the debugger:
- * the structures and the API declared here are not supported.
+ * This is a private header file.
+ * The API in here is undocumented and may only be used by the JIT to
+ * communicate with the debugger.
  */
 
 #ifndef __MONO_DEBUG_DEBUGGER_H__
@@ -12,62 +13,30 @@
 #include <mono/io-layer/io-layer.h>
 
 typedef struct _MonoDebuggerBreakpointInfo	MonoDebuggerBreakpointInfo;
-typedef struct _MonoDebuggerIOLayer		MonoDebuggerIOLayer;
 
 typedef enum {
-	MONO_DEBUGGER_EVENT_BREAKPOINT,
+	MONO_DEBUGGER_EVENT_INITIALIZE_MANAGED_CODE	= 1,
 	MONO_DEBUGGER_EVENT_ADD_MODULE,
 	MONO_DEBUGGER_EVENT_RELOAD_SYMTABS,
+	MONO_DEBUGGER_EVENT_METHOD_COMPILED,
+	MONO_DEBUGGER_EVENT_JIT_BREAKPOINT,
+	MONO_DEBUGGER_EVENT_INITIALIZE_THREAD_MANAGER,
+	MONO_DEBUGGER_EVENT_ACQUIRE_GLOBAL_THREAD_LOCK,
+	MONO_DEBUGGER_EVENT_RELEASE_GLOBAL_THREAD_LOCK,
+	MONO_DEBUGGER_EVENT_WRAPPER_MAIN,
+	MONO_DEBUGGER_EVENT_MAIN_EXITED,
 	MONO_DEBUGGER_EVENT_UNHANDLED_EXCEPTION,
-	MONO_DEBUGGER_EVENT_EXCEPTION,
-	MONO_DEBUGGER_EVENT_THROW_EXCEPTION
+	MONO_DEBUGGER_EVENT_THREAD_CREATED,
+	MONO_DEBUGGER_EVENT_THREAD_ABORT,
+	MONO_DEBUGGER_EVENT_THROW_EXCEPTION,
+	MONO_DEBUGGER_EVENT_HANDLE_EXCEPTION,
+	MONO_DEBUGGER_EVENT_REACHED_MAIN
 } MonoDebuggerEvent;
 
 struct _MonoDebuggerBreakpointInfo {
 	guint32 index;
 	MonoMethodDesc *desc;
 };
-
-/*
- * Address of the x86 trampoline code.  This is used by the debugger to check
- * whether a method is a trampoline.
- */
-extern guint8 *mono_trampoline_code [];
-
-#ifndef PLATFORM_WIN32
-
-/*
- * Functions we export to the debugger.
- */
-struct _MonoDebuggerIOLayer
-{
-	void (*InitializeCriticalSection) (WapiCriticalSection *section);
-	void (*DeleteCriticalSection) (WapiCriticalSection *section);
-	gboolean (*TryEnterCriticalSection) (WapiCriticalSection *section);
-	void (*EnterCriticalSection) (WapiCriticalSection *section);
-	void (*LeaveCriticalSection) (WapiCriticalSection *section);
-
-	guint32 (*WaitForSingleObject) (gpointer handle, guint32 timeout, 
-					gboolean alertable);
-	guint32 (*SignalObjectAndWait) (gpointer signal_handle, gpointer wait,
-					guint32 timeout, gboolean alertable);
-	guint32 (*WaitForMultipleObjects) (guint32 numobjects, gpointer *handles,
-				      gboolean waitall, guint32 timeout, gboolean alertable);
-
-	gpointer (*CreateSemaphore) (WapiSecurityAttributes *security,
-				     gint32 initial, gint32 max,
-				     const gunichar2 *name);
-	gboolean (*ReleaseSemaphore) (gpointer handle, gint32 count, gint32 *prevcount);
-
-	gpointer (*CreateThread) (WapiSecurityAttributes *security,
-				  guint32 stacksize, WapiThreadStart start,
-				  gpointer param, guint32 create, guint32 *tid);
-	gsize (*GetCurrentThreadId) (void);
-};
-
-extern MonoDebuggerIOLayer mono_debugger_io_layer;
-
-#endif
 
 extern void (*mono_debugger_event_handler) (MonoDebuggerEvent event, guint64 data, guint64 arg);
 
@@ -80,26 +49,18 @@ void            mono_debugger_event                       (MonoDebuggerEvent eve
 
 void            mono_debugger_add_symbol_file             (MonoDebugHandle *handle);
 void            mono_debugger_start_add_type              (MonoDebugHandle *symfile, MonoClass *klass);
-void            mono_debugger_add_builtin_types           (MonoDebugHandle *symfile);
 
 int             mono_debugger_insert_breakpoint_full      (MonoMethodDesc *desc);
 int             mono_debugger_remove_breakpoint           (int breakpoint_id);
-int             mono_debugger_insert_breakpoint           (const gchar *method_name, gboolean include_namespace);
-int             mono_debugger_method_has_breakpoint       (MonoMethod *method);
 void            mono_debugger_breakpoint_callback         (MonoMethod *method, guint32 idx);
 
-gpointer        mono_debugger_create_notification_function (gpointer *notification_address);
+void            mono_debugger_create_notification_function(gpointer notification_address);
 
 MonoObject     *mono_debugger_runtime_invoke              (MonoMethod *method, void *obj,
 							   void **params, MonoObject **exc);
 
 gboolean        mono_debugger_lookup_type                 (const gchar *type_name);
 gint32          mono_debugger_lookup_assembly             (const gchar *name);
-gboolean        mono_debugger_unhandled_exception         (gpointer addr, gpointer stack, MonoObject *exc);
-void            mono_debugger_handle_exception            (gpointer addr, gpointer stack, MonoObject *exc);
-gboolean        mono_debugger_throw_exception             (gpointer addr, gpointer stack, MonoObject *exc);
-
-
 
 void *
 mono_vtable_get_static_field_data (MonoVTable *vt);

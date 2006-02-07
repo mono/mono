@@ -221,7 +221,7 @@ void test_printf()
     if (CORD_cmp(result, result2) != 0)ABORT("CORD_sprintf goofed 5");
 }
 
-main()
+int main()
 {
 #   ifdef THINK_C
         printf("cordtest:\n");

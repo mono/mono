@@ -1,7 +1,7 @@
 #ifndef LIBGC_MONO_DEBUGGER_H
 #define LIBGC_MONO_DEBUGGER_H
 
-#if defined(_IN_LIBGC_GC_H) || defined(IN_MONO_DEBUGGER)
+#if defined(_IN_LIBGC_GC_H) || defined(_IN_THE_MONO_DEBUGGER)
 
 typedef struct
 {

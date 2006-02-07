@@ -1,4 +1,4 @@
-# Makefile for Windows NT.  Assumes Microsoft compiler, and a single thread.
+# Makefile for Windows NT.  Assumes Microsoft compiler.
 # DLLs are included in the root set under NT, but not under win32S.
 # Use "nmake nodebug=1 all" for optimized versions of library, gctest and editor.
 

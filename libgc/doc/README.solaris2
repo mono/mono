@@ -43,9 +43,7 @@ can result in unpleasant heap growth.  But it seems better than the
 race/deadlock issues we had before.
 
 If solaris_threads are used on an X86 processor with malloc redirected to
-GC_malloc, it is necessary to call GC_thr_init explicitly before forking the
-first thread.  (This avoids a deadlock arising from calling GC_thr_init
-with the allocation lock held.)
+GC_malloc a deadlock is likely to result.
 
 It appears that there is a problem in using gc_cpp.h in conjunction with
 Solaris threads and Sun's C++ runtime.  Apparently the overloaded new operator

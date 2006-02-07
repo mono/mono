@@ -11,9 +11,10 @@
  * modified is included with the above copyright notice.
  */
 
+#include "private/gc_priv.h" /* For GC_compare_and_exchange, GC_memory_barrier */
+
 #if defined(GC_LINUX_THREADS)
 
-#include "private/gc_priv.h" /* For GC_compare_and_exchange, GC_memory_barrier */
 #include "private/specific.h"
 
 static tse invalid_tse = {INVALID_QTID, 0, 0, INVALID_THREADID};

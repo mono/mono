@@ -1,3 +1,24 @@
+2006-01-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile.am (patch-libtool): New utility target for those using a
+	static build.
+
+2006-01-27  Raja R Harinath  <rharinath@novell.com>
+
+	Add support for net_2_0 test cases.
+	* Makefile.am (TEST_PROG_RUN, JITTEST_PROG_RUN): Don't set MONO_PATH.
+	(with_mono_path2, RUNTIME2, GMCS, ILASM2): New.
+	(TEST_CS2_SRC, TEST_IL2_SRC): New.
+	(EXTRA_DIST): Add them.
+	(testjit-default, testjit-net_2_0): New.  Copies of old testjit,
+	updated to use appropriate runtimes.
+	(testjit): Depend on them.
+	* find-method.2.il: New test.
+
+2006-01-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* thread-dump.cs: New file.
+
 2005-12-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* interlocked.cs: Add "test" for Thread.MemoryBarrier ().

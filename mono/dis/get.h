@@ -16,8 +16,7 @@ char *decode_literal          (MonoImage *m, guint32 token);
 char *get_field               (MonoImage *m, guint32 token, MonoGenericContext *context);
 char *param_flags             (guint32 f);
 char *field_flags             (guint32 f);
-char *get_methodref_signature (MonoImage *m, guint32 blob_signature, const char *fancy,
-			       MonoGenericContext *context);
+char *get_methodref_signature (MonoImage *m, guint32 blob_signature, const char *fancy);
 char *get_methodspec          (MonoImage *m, int idx, guint32 token, const char *fancy,
 			       MonoGenericContext *context);
 char *get_constant            (MonoImage *m, MonoTypeEnum t, guint32 blob_index);
@@ -72,6 +71,8 @@ const char *get_param                  (MonoImage *m, const char *ptr,
 const char *get_blob_encoded_size      (const char *ptr, int *size);
 
 MonoTypeEnum get_field_literal_type (MonoImage *m, guint32 blob_signature);
+
+char *stringify_double (double r);
 
 /**
  * This is called to initialize the table containing keyword names

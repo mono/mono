@@ -15,9 +15,9 @@
 dnl Process this file with autoconf to produce configure.
 
 AC_PREREQ(2.53)
-AC_INIT(libgc-mono, 6.3alpha6, Hans_Boehm@hp.com)
+AC_INIT(libgc-mono, 6.6, Hans_Boehm@hp.com)
 
-AM_INIT_AUTOMAKE(libgc-mono, 6.2, no-define)
+AM_INIT_AUTOMAKE(libgc-mono, 6.6, no-define)
 
 AC_CONFIG_SRCDIR(gcj_mlc.c)
 AC_CANONICAL_HOST
@@ -67,14 +67,15 @@ AC_ARG_ENABLE(cplusplus,
 )
 
 INCLUDES=-I${srcdir}/include
-THREADLIBS=
+THREADDLLIBS=
+## Libraries needed to support dynamic loading and/or threads.
 case "$THREADS" in
  no | none | single)
     THREADS=none
     ;;
  posix | pthreads)
     THREADS=posix
-    THREADLIBS=-lpthread
+    THREADDLLIBS=-lpthread
     case "$host" in
      x86-*-linux* | ia64-*-linux* | i386-*-linux* | i486-*-linux* | i586-*-linux* | i686-*-linux* | x86_64-*-linux* | alpha-*-linux* | s390*-*-linux* | powerpc-*-linux*)
 	AC_DEFINE(GC_LINUX_THREADS)
@@ -100,7 +101,7 @@ case "$THREADS" in
 	  AC_DEFINE(PARALLEL_MARK)
 	fi
 	AC_DEFINE(THREAD_LOCAL_ALLOC)
-	THREADLIBS="-lpthread -lrt"
+	THREADDLLIBS="-lpthread -lrt"
 	;;
      *-*-freebsd4*)
 	AC_MSG_WARN("FreeBSD does not yet fully support threads with Boehm GC.")
@@ -111,22 +112,16 @@ case "$THREADS" in
 		INCLUDES="$INCLUDES $PTHREAD_CFLAGS"
 	fi
 	if test "x$PTHREAD_LIBS" = "x"; then
-		THREADLIBS=-pthread
+		THREADDLLIBS=-pthread
 	else
-		THREADLIBS=$PTHREAD_LIBS
+		THREADDLLIBS=$PTHREAD_LIBS
 	fi
       	;;
      *-*-freebsd5*)
 	AC_MSG_WARN("FreeBSD does not yet fully support threads with Boehm GC.")
 	AC_DEFINE(GC_FREEBSD_THREADS)
-	if test "x$PTHREAD_CFLAGS" != "x"; then
-		INCLUDES="$INCLUDES $PTHREAD_CFLAGS"
-	fi
-	if test "x$PTHREAD_LIBS" = "x"; then
-		THREADLIBS=-pthread
-	else
-		THREADLIBS="$PTHREAD_LIBS"
-	fi
+	INCLUDES="$INCLUDES -pthread"
+	THREADDLLIBS=-pthread
       	;;
 	 *-*-freebsd6*)
 	 AC_DEFINE(GC_FREEBSD_THREADS)
@@ -134,9 +129,9 @@ case "$THREADS" in
 		INCLUDES="$INCLUDES $PTHREAD_CFLAGS"
 	fi
 	if test "x$PTHREAD_LIBS" = "x"; then
-		THREADLIBS=-pthread
+		THREADDLLIBS=-pthread
 	else
-		THREADLIBS="$PTHREAD_LIBS"
+		THREADDLLIBS="$PTHREAD_LIBS"
 	fi
 	;;
      *-*-solaris*)
@@ -165,7 +160,10 @@ case "$THREADS" in
 	  # Measurements havent yet been done.
 	fi
 	INCLUDES="$INCLUDES -pthread"
-	THREADLIBS="-lpthread -lrt"
+	THREADDLLIBS="-lpthread -lrt"
+	;;
+      *)
+	AC_MSG_ERROR("Pthreads not supported by the GC on this platform.")
 	;;
     esac
     ;;
@@ -179,9 +177,9 @@ case "$THREADS" in
     ;;
  dgux386)
     THREADS=dgux386
-    AC_MSG_RESULT($THREADLIBS)
+    AC_MSG_RESULT($THREADDLLIBS)
     # Use pthread GCC  switch
-    THREADLIBS=-pthread
+    THREADDLLIBS=-pthread
     if test "${enable_parallel_mark}" = yes; then
         AC_DEFINE(PARALLEL_MARK)
     fi
@@ -193,7 +191,7 @@ case "$THREADS" in
     ;;
  aix)
     THREADS=posix
-    THREADLIBS=-lpthread
+    THREADDLLIBS=-lpthread
     AC_DEFINE(GC_AIX_THREADS)
     AC_DEFINE(_REENTRANT)
     ;;
@@ -204,7 +202,7 @@ case "$THREADS" in
     AC_MSG_ERROR($THREADS is an unknown thread package)
     ;;
 esac
-AC_SUBST(THREADLIBS)
+AC_SUBST(THREADDLLIBS)
 
 case "$host" in 
    powerpc-*-darwin*)
@@ -213,12 +211,25 @@ case "$host" in
 esac
 AM_CONDITIONAL(POWERPC_DARWIN,test x$powerpc_darwin = xtrue)
 
+AC_MSG_CHECKING(for xlc)
+AC_TRY_COMPILE([],[
+ #ifndef __xlC__
+ # error
+ #endif
+], [compiler_xlc=yes], [compiler_xlc=no])
+AC_MSG_RESULT($compiler_xlc)
+AM_CONDITIONAL(COMPILER_XLC,test $compiler_xlc = yes)
+if test $compiler_xlc = yes -a "$powerpc_darwin" = true; then
+  # the darwin stack-frame-walking code is completely broken on xlc
+  AC_DEFINE(DARWIN_DONT_PARSE_STACK)
+fi
+
 # We never want libdl on darwin. It is a fake libdl that just ends up making
 # dyld calls anyway
 case "$host" in
   *-*-darwin*) ;;
   *) 
-    AC_CHECK_LIB(dl, dlopen, EXTRA_TEST_LIBS="$EXTRA_TEST_LIBS -ldl")
+    AC_CHECK_LIB(dl, dlopen, THREADDLLIBS="$THREADDLLIBS -ldl")
     ;;
 esac
 
@@ -319,7 +330,7 @@ case "$host" in
     machdep="sparc_mach_dep.lo"
     AC_DEFINE(SUNOS53_SHARED_LIB)
     ;;
- sparc-sun-solaris2.*)
+ sparc*-sun-solaris2.*)
     machdep="sparc_mach_dep.lo"
     ;;
  ia64-*-*)
@@ -381,10 +392,10 @@ AC_MSG_RESULT($THREADS)
 
 dnl As of 4.13a2, the collector will not properly work on Solaris when
 dnl built with gcc and -O.  So we remove -O in the appropriate case.
-dnl
+dnl Not needed anymore on Solaris.
 AC_MSG_CHECKING(whether Solaris gcc optimization fix is necessary)
 case "$host" in
- sparc-sun-solaris2*|*aix*)
+ *aix*)
     if test "$GCC" = yes; then
        AC_MSG_RESULT(yes)
        new_CFLAGS=

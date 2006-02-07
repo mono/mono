@@ -9,12 +9,11 @@
 
 #include "mini.h"
 #include "jit.h"
+#include "config.h"
 #include <mono/metadata/verify.h>
 #include <mono/metadata/mono-config.h>
 #include <mono/metadata/mono-debug.h>
 #include <mono/metadata/appdomain.h>
-/* mono-debug-debugger.h needs config.h to work... */
-#include "config.h"
 #include <mono/metadata/mono-debug-debugger.h>
 
 #ifdef HAVE_VALGRIND_H
@@ -510,34 +509,6 @@ mono_debug_add_aot_method (MonoDomain *domain, MonoMethod *method, guint8 *code_
 	mono_debug_add_vg_method (method, jit);
 
 	mono_debug_free_method_jit_info (jit);
-}
-
-MonoDomain *
-mono_init_debugger (const char *file, const char *opt_flags)
-{
-	MonoDomain *domain;
-	const char *error;
-	int opt;
-
-	g_set_prgname (file);
-
-	opt = mono_parse_default_optimizations (opt_flags);
-	opt |= MONO_OPT_SHARED;
-
-	mono_set_defaults (0, opt);
-
-	domain = mono_jit_init (file);
-
-	mono_config_parse (NULL);
-
-	error = mono_check_corlib_version ();
-	if (error) {
-		fprintf (stderr, "Corlib not in sync with this runtime: %s\n", error);
-		fprintf (stderr, "Download a newer corlib or a newer runtime at http://www.go-mono.com/daily.\n");
-		exit (1);
-	}
-
-	return domain;
 }
 
 void

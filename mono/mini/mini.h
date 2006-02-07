@@ -1059,7 +1059,9 @@ gpointer mono_arch_create_specific_trampoline   (gpointer arg1, MonoTrampolineTy
 gboolean mono_handle_exception                  (MonoContext *ctx, gpointer obj,
 						 gpointer original_ip, gboolean test_only);
 void     mono_handle_native_sigsegv             (void *sigctx);
+void     mono_print_thread_dump                 (void *sigctx);
 void     mono_jit_walk_stack                    (MonoStackWalk func, gboolean do_il_offset, gpointer user_data);
+void     mono_jit_walk_stack_from_ctx           (MonoStackWalk func, MonoContext *ctx, gboolean do_il_offset, gpointer user_data);
 void     mono_setup_altstack                    (MonoJitTlsData *tls);
 void     mono_free_altstack                     (MonoJitTlsData *tls);
 
@@ -1094,10 +1096,15 @@ void      mono_debug_open_block                 (MonoCompile *cfg, MonoBasicBloc
 void      mono_debug_record_line_number         (MonoCompile *cfg, MonoInst *ins, guint32 address);
 void      mono_debug_serialize_debug_info       (MonoCompile *cfg, guint8 **out_buf, guint32 *buf_len);
 void      mono_debug_add_aot_method             (MonoDomain *domain,
-												MonoMethod *method, guint8 *code_start, 
-												guint8 *debug_info, guint32 debug_info_len);
+						 MonoMethod *method, guint8 *code_start, 
+						 guint8 *debug_info, guint32 debug_info_len);
 void      mono_debug_add_icall_wrapper          (MonoMethod *method, MonoJitICallInfo* info);
 void      mono_debugger_run_finally             (MonoContext *start_ctx);
+
+/* Mono Debugger support */
+void      mono_debugger_init                    (void);
+int       mono_debugger_main                    (MonoDomain *domain, MonoAssembly *assembly, int argc, char **argv);
+
 
 /* Tracing */
 MonoTraceSpec *mono_trace_parse_options         (char *options);

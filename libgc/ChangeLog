@@ -1,3 +1,31 @@
+
+Wed Feb 1 18:23:55 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* pthread_support.c, *: back out Zoltan's patch since it's
+	incorrect.
+	The correct fix it to execute the cleanup from inside
+	the thread also when using the __thread var to access the
+	current GC_thread.
+
+2006-02-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* pthread_support.c (GC_thread_deregister_foreign): New public API
+	function to deregister a foreign thread from the GC.
+	(GC_destroy_thread_local): Clean up the TLS key too.
+	
+Tue Jan 24 12:34:06 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* *: update from upstream changes.
+
+2006-01-21  Martin Baulig  <martin@ximian.com>
+
+	* include/Makefile.am: Don't install libgc-mono-debugger.h.
+
+2006-01-21  Martin Baulig  <martin@ximian.com>
+
+	* include/libgc-mono-debugger.h: Call the conditional
+	`_IN_THE_MONO_DEBUGGER', not `IN_MONO_DEBUGGER'.
+
 2006-01-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* include/private/gcconfig.h: Undef _FILE_OFFSET_BITS on sparc.

@@ -2,7 +2,7 @@
  * Copyright (c) 1994 by Xerox Corporation.  All rights reserved.
  * Copyright (c) 1996 by Silicon Graphics.  All rights reserved.
  * Copyright (c) 1998 by Fergus Henderson.  All rights reserved.
- * Copyright (c) 2000-2001 by Hewlett-Packard Company.  All rights reserved.
+ * Copyright (c) 2000-2004 by Hewlett-Packard Company.  All rights reserved.
  *
  * THIS MATERIAL IS PROVIDED AS IS, WITH ABSOLUTELY NO WARRANTY EXPRESSED
  * OR IMPLIED.  ANY USE IS AT YOUR OWN RISK.
@@ -50,8 +50,7 @@
 # include "private/pthread_support.h"
 
 # if defined(GC_PTHREADS) && !defined(GC_SOLARIS_THREADS) \
-     && !defined(GC_IRIX_THREADS) && !defined(GC_WIN32_THREADS) \
-     && !defined(GC_AIX_THREADS)
+     && !defined(GC_WIN32_THREADS)
 
 # if defined(GC_HPUX_THREADS) && !defined(USE_PTHREAD_SPECIFIC) \
      && !defined(USE_COMPILER_TLS)
@@ -68,7 +67,8 @@
 # endif
 
 # if (defined(GC_DGUX386_THREADS) || defined(GC_OSF1_THREADS) || \
-      defined(GC_DARWIN_THREADS)) && !defined(USE_PTHREAD_SPECIFIC)
+      defined(GC_DARWIN_THREADS) || defined(GC_AIX_THREADS)) \
+      && !defined(USE_PTHREAD_SPECIFIC)
 #   define USE_PTHREAD_SPECIFIC
 # endif
 
@@ -84,6 +84,12 @@
 #   if !defined(USE_PTHREAD_SPECIFIC) && !defined(USE_COMPILER_TLS)
 #     include "private/specific.h"
 #   endif
+
+/* Note that these macros should be used only to get/set the GC_thread pointer.
+ * We need to use both tls and pthread because we use the pthread_create function hook to
+ * free the data for foreign threads. When that doesn't happen, libgc could have old
+ * pthread_t that get reused...
+ */
 #   if defined(USE_PTHREAD_SPECIFIC)
 #     define GC_getspecific pthread_getspecific
 #     define GC_setspecific pthread_setspecific
@@ -91,10 +97,10 @@
       typedef pthread_key_t GC_key_t;
 #   endif
 #   if defined(USE_COMPILER_TLS)
-#     define GC_getspecific(x) (x)
-#     define GC_setspecific(key, v) ((key) = (v), 0)
-#     define GC_key_create(key, d) 0
-      typedef void * GC_key_t;
+#     define GC_getspecific(x) (GC_thread_tls)
+#     define GC_setspecific(key, v) (GC_thread_tls = (v), pthread_setspecific ((key), (v)))
+#     define GC_key_create pthread_key_create
+      typedef pthread_key_t GC_key_t;
 #   endif
 # endif
 # include <stdlib.h>
@@ -116,7 +122,7 @@
 # include <semaphore.h>
 #endif /* !GC_DARWIN_THREADS */
 
-#if defined(GC_DARWIN_THREADS)
+#if defined(GC_DARWIN_THREADS) || defined(GC_FREEBSD_THREADS)
 # include <sys/sysctl.h>
 #endif /* GC_DARWIN_THREADS */
 
@@ -177,10 +183,11 @@ void GC_init_parallel();
 #include "mono/utils/mono-compiler.h"
 
 static
-#ifdef USE_COMPILER_TLS
-  __thread MONO_TLS_FAST
-#endif
 GC_key_t GC_thread_key;
+
+#ifdef USE_COMPILER_TLS
+static __thread MONO_TLS_FAST void* GC_thread_tls;
+#endif
 
 static GC_bool keys_initialized;
 
@@ -221,7 +228,8 @@ static void return_freelists(ptr_t *fl, ptr_t *gfl)
 /* we arrange for those to fault asap.)					*/
 static ptr_t size_zero_object = (ptr_t)(&size_zero_object);
 
-void GC_delete_thread(pthread_t id);
+void GC_delete_gc_thread(pthread_t id, GC_thread gct);
+void GC_destroy_thread_local(GC_thread p);
 
 void GC_thread_deregister_foreign (void *data)
 {
@@ -230,7 +238,10 @@ void GC_thread_deregister_foreign (void *data)
     if (me -> flags & FOREIGN_THREAD) {
 	LOCK();
  /*	GC_fprintf0( "\n\n\n\n --- FOO ---\n\n\n\n\n" ); */
-	GC_delete_thread(me->id);
+#if defined(THREAD_LOCAL_ALLOC) && !defined(DBG_HDRS_ALL)
+	GC_destroy_thread_local (me);
+#endif
+	GC_delete_gc_thread(me->id, me);
 	UNLOCK();
     }
 }
@@ -937,9 +948,9 @@ int GC_get_nprocs()
 /* We hold the allocation lock.	*/
 void GC_thr_init()
 {
-#	ifndef GC_DARWIN_THREADS
-        int dummy;
-#	endif
+#   ifndef GC_DARWIN_THREADS
+      int dummy;
+#   endif
     GC_thread t;
 
     if (GC_thr_initialized) return;
@@ -971,14 +982,15 @@ void GC_thr_init()
 #       if defined(GC_HPUX_THREADS)
 	  GC_nprocs = pthread_num_processors_np();
 #       endif
-#	if defined(GC_OSF1_THREADS)
+#	if defined(GC_OSF1_THREADS) || defined(GC_AIX_THREADS)
 	  GC_nprocs = sysconf(_SC_NPROCESSORS_ONLN);
 	  if (GC_nprocs <= 0) GC_nprocs = 1;
 #	endif
-#       if defined(GC_FREEBSD_THREADS)
-          GC_nprocs = 1;
+#       if defined(GC_IRIX_THREADS)
+	  GC_nprocs = sysconf(_SC_NPROC_ONLN);
+	  if (GC_nprocs <= 0) GC_nprocs = 1;
 #       endif
-#       if defined(GC_DARWIN_THREADS)
+#       if defined(GC_DARWIN_THREADS) || defined(GC_FREEBSD_THREADS)
 	  int ncpus = 1;
 	  size_t len = sizeof(ncpus);
 	  sysctl((int[2]) {CTL_HW, HW_NCPU}, 2, &ncpus, &len, NULL, 0);
@@ -1025,6 +1037,8 @@ void GC_thr_init()
 	/* Disable true incremental collection, but generational is OK.	*/
 	GC_time_limit = GC_TIME_UNLIMITED;
       }
+      /* If we are using a parallel marker, actually start helper threads.  */
+        if (GC_parallel) start_mark_threads();
 #   endif
 }
 
@@ -1041,10 +1055,6 @@ void GC_init_parallel()
 
     /* GC_init() calls us back, so set flag first.	*/
     if (!GC_is_initialized) GC_init();
-    /* If we are using a parallel marker, start the helper threads.  */
-#     ifdef PARALLEL_MARK
-        if (GC_parallel) start_mark_threads();
-#     endif
     /* Initialize thread local free lists if used.	*/
 #   if defined(THREAD_LOCAL_ALLOC) && !defined(DBG_HDRS_ALL)
       LOCK();
@@ -1358,7 +1368,7 @@ WRAP_FUNC(pthread_create)(pthread_t *new_thread,
     if (!GC_thr_initialized) GC_thr_init();
 #   ifdef GC_ASSERTIONS
       {
-	int stack_size;
+	size_t stack_size;
 	if (NULL == attr) {
 	   pthread_attr_t my_attr;
 	   pthread_attr_init(&my_attr);
@@ -1366,7 +1376,13 @@ WRAP_FUNC(pthread_create)(pthread_t *new_thread,
 	} else {
 	   pthread_attr_getstacksize(attr, &stack_size);
 	}
-	GC_ASSERT(stack_size >= (8*HBLKSIZE*sizeof(word)));
+#       ifdef PARALLEL_MARK
+	  GC_ASSERT(stack_size >= (8*HBLKSIZE*sizeof(word)));
+#       else
+          /* FreeBSD-5.3/Alpha: default pthread stack is 64K, 	*/
+	  /* HBLKSIZE=8192, sizeof(word)=8			*/
+	  GC_ASSERT(stack_size >= 65536);
+#       endif
 	/* Our threads may need to do some work for the GC.	*/
 	/* Ridiculously small threads won't work, and they	*/
 	/* probably wouldn't work anyway.			*/

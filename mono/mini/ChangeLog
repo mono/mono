@@ -1,3 +1,129 @@
+
+Mon Feb 6 09:01:24 EST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c: fix handling of exceptions in large methods (bug #74932).
+
+Fri Feb 3 18:51:35 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: change optimize_branches () to use a single loop
+	and introduce a new optimization to simplify some range checks.
+
+2006-02-03  Martin Baulig  <martin@ximian.com>
+
+	* debug-debugger.c (debugger_thread_manager_thread_created): Removed
+	and merged with debugger_thread_manager_add_thread().
+	(mono_debugger_main): Call debugger_thread_manager_add_thread() to
+	inform the debugger about the main thread.
+
+2006-02-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* basic.cs: Add test for div.un/rem.un constant folding.
+
+2006-02-03  Neale Ferguson <neale@sinenomine.net>
+
+	* cpu-s390x.md: correct int_xor_imm length
+
+2006-02-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* generics.2.cs: New test for #77442.
+
+	* jit-icalls.c (helper_compile_generic_method): Check for null. Fixes
+	#77442.
+
+2006-02-02  Martin Baulig  <martin@ximian.com>
+
+	* tramp-x86.c, tramp-amd64.c: It's now safe to #include
+	<mono/metadata/mono-debug-debugger.h>	
+
+	* debug-mini.c: Don't #define _IN_THE_MONO_DEBUGGER.
+
+2006-02-02  Martin Baulig  <martin@ximian.com>
+
+	* debug-debugger.h: New header file for debug-debugger.c.
+
+	* debug-debugger.c: Big API cleanup; don't run the managed Main()
+	function is a separate thread anymore; add support for attaching.
+
+2006-02-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* tramp-x86.c: Fix a warning.
+
+2006-01-31  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (mono_arch_compute_omit_fp): Avoid hitting an assertion
+	on very large methods.
+
+	* aot.c (load_patch_info): Fix a warning.
+
+Mon Jan 30 12:51:10 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* cpu-pentium.md, mini-x86.c, inssel.brg, inssel-x86.brg,
+	mini-ops.h: alu membase optimizations.
+
+Fri Jan 27 21:11:08 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ops.h, mini.c, inssel.brg, inssel-x86.brg: opcode
+	to speedup StringBuilder.
+
+2006-01-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* dominators.c (mono_compute_natural_loops): Fix detection of
+	loop body start blocks.
+
+	* mini-exceptions.c (mono_print_thread_dump): Fix non x86 builds.
+
+2006-01-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.h mini.c mini-exceptions.c: Add thread dump support. Fixes
+	#75145.
+
+2006-01-25  Massimiliano Mantione  <massi@ximian.com>
+
+        * aliasing.c: Fixed aliasing issue on 64 bit archs.
+
+2006-01-25  Martin Baulig  <martin@ximian.com>
+
+	* debug-debugger.c: Moved the `MonoDebuggerManager' and
+	`MonoDebuggerThread' typedefs here from mono-debug-debugger.h and
+	started to cleanup this file a little bit.
+
+Tue Jan 24 18:20:48 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: optimize a codepath frequently happening in generics code.
+
+2006-01-23  Martin Baulig  <martin@ximian.com>
+
+	* Makefile.am: Only compile debug-debugger.c on supported platforms.
+
+	* debug-debugger.c: Kill the IO_LAYER() hack and use the io-layer
+	functions directly.
+
+	* driver.c: debug-debugger.c is only available if
+	`MONO_DEBUGGER_SUPPORTED' is defined.	
+
+2006-01-23  Martin Baulig  <martin@ximian.com>
+
+	* debug-debugger.c: Only enable this on platforms where the Mono
+	Debugger is working (x86 and x86_64).
+
+2006-01-21  Martin Baulig  <martin@ximian.com>
+
+	The Mono Debugger is now using the normal `mono' instead of the
+	`mono-debugger-mini-wrapper' when executing managed code.
+
+	* debug-debugger.c: New file; previously known as
+	debugger/wrapper/wrapper.c.
+
+	* debug-mini.c (mono_init_debugger): Removed.
+
+	* driver.c (mono_main): Added new `--inside-mdb' command line
+	argument which is used when running inside the debugger.
+
+2006-01-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* liveness.c (mono_analyze_liveness): Remove some unused data
+	structures.
+
 2006-01-17  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.h: Move mono_bitset_test_fast macro to monobitset.h where it belongs.

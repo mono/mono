@@ -27,6 +27,10 @@
 #   endif
 # endif
 
+#if defined(RS6000) || defined(POWERPC)
+# include <ucontext.h>
+#endif
+
 #if defined(__MWERKS__) && !defined(POWERPC)
 
 asm static void PushMacRegisters()
@@ -400,64 +404,87 @@ void GC_push_regs()
 }
 #endif /* !USE_GENERIC_PUSH_REGS && !USE_ASM_PUSH_REGS */
 
+void GC_with_callee_saves_pushed(fn, arg)
+void (*fn)();
+ptr_t arg;
+{
+    word dummy;
+
+#   if defined(USE_GENERIC_PUSH_REGS)
+#     ifdef HAVE_BUILTIN_UNWIND_INIT
+        /* This was suggested by Richard Henderson as the way to	*/
+        /* force callee-save registers and register windows onto	*/
+        /* the stack.						*/
+        __builtin_unwind_init();
+#     else /* !HAVE_BUILTIN_UNWIND_INIT */
+#      if defined(RS6000) || defined(POWERPC)
+	/* FIXME: RS6000 means AIX.				*/
+        /* This should probably be used in all Posix/non-gcc	*/
+        /* settings.  We defer that change to minimize risk.	*/
+        ucontext_t ctxt;
+        getcontext(&ctxt);
+#      else
+        /* Generic code                          */
+        /* The idea is due to Parag Patel at HP. */
+        /* We're not sure whether he would like  */
+        /* to be he acknowledged for it or not.  */
+        jmp_buf regs;
+        register word * i = (word *) regs;
+        register ptr_t lim = (ptr_t)(regs) + (sizeof regs);
+  
+        /* Setjmp doesn't always clear all of the buffer.		*/
+        /* That tends to preserve garbage.  Clear it.   		*/
+  	for (; (char *)i < lim; i++) {
+  	    *i = 0;
+  	}
+#       if defined(MSWIN32) || defined(MSWINCE) \
+                  || defined(UTS4) || defined(LINUX) || defined(EWS4800)
+  	  (void) setjmp(regs);
+#       else
+            (void) _setjmp(regs);
+  	  /* We don't want to mess with signals. According to	*/
+  	  /* SUSV3, setjmp() may or may not save signal mask.	*/
+  	  /* _setjmp won't, but is less portable.		*/
+#       endif
+#      endif /* !AIX ... */
+#     endif /* !HAVE_BUILTIN_UNWIND_INIT */
+#   else
+#     if defined(PTHREADS) && !defined(MSWIN32) /* !USE_GENERIC_PUSH_REGS */
+        /* We may still need this to save thread contexts.	*/
+        ucontext_t ctxt;
+        getcontext(&ctxt);
+#     else  /* Shouldn't be needed */
+        ABORT("Unexpected call to GC_with_callee_saves_pushed");
+#     endif
+#   endif
+#   if (defined(SPARC) && !defined(HAVE_BUILTIN_UNWIND_INIT)) \
+	|| defined(IA64)
+      /* On a register window machine, we need to save register	*/
+      /* contents on the stack for this to work.  The setjmp	*/
+      /* is probably not needed on SPARC, since pointers are	*/
+      /* only stored in windowed or scratch registers.  It is	*/
+      /* needed on IA64, since some non-windowed registers are	*/
+      /* preserved.						*/
+      {
+        GC_save_regs_ret_val = GC_save_regs_in_stack();
+	/* On IA64 gcc, could use __builtin_ia64_flushrs() and	*/
+	/* __builtin_ia64_flushrs().  The latter will be done	*/
+	/* implicitly by __builtin_unwind_init() for gcc3.0.1	*/
+	/* and later.						*/
+      }
+#   endif
+    fn(arg);
+    /* Strongly discourage the compiler from treating the above	*/
+    /* as a tail-call, since that would pop the register 	*/
+    /* contents before we get a chance to look at them.		*/
+    GC_noop1((word)(&dummy));
+}
+
 #if defined(USE_GENERIC_PUSH_REGS)
 void GC_generic_push_regs(cold_gc_frame)
 ptr_t cold_gc_frame;
 {
-	{
-	    word dummy;
-
-#	    ifdef HAVE_BUILTIN_UNWIND_INIT
-	      /* This was suggested by Richard Henderson as the way to	*/
-	      /* force callee-save registers and register windows onto	*/
-	      /* the stack.						*/
-	      __builtin_unwind_init();
-#	    else /* !HAVE_BUILTIN_UNWIND_INIT */
-	      /* Generic code                          */
-	      /* The idea is due to Parag Patel at HP. */
-	      /* We're not sure whether he would like  */
-	      /* to be he acknowledged for it or not.  */
-	      jmp_buf regs;
-	      register word * i = (word *) regs;
-	      register ptr_t lim = (ptr_t)(regs) + (sizeof regs);
-
-	      /* Setjmp doesn't always clear all of the buffer.		*/
-	      /* That tends to preserve garbage.  Clear it.   		*/
-		for (; (char *)i < lim; i++) {
-		    *i = 0;
-		}
-#	      if defined(POWERPC) || defined(MSWIN32) || defined(MSWINCE) \
-                || defined(UTS4) || defined(LINUX) || defined(EWS4800)
-		  (void) setjmp(regs);
-#	      else
-	          (void) _setjmp(regs);
-		  /* We don't want to mess with signals. According to	*/
-		  /* SUSV3, setjmp() may or may not save signal mask.	*/
-		  /* _setjmp won't, but is less portable.		*/
-#	      endif
-#	    endif /* !HAVE_BUILTIN_UNWIND_INIT */
-#           if (defined(SPARC) && !defined(HAVE_BUILTIN_UNWIND_INIT)) \
-		|| defined(IA64)
-	      /* On a register window machine, we need to save register	*/
-	      /* contents on the stack for this to work.  The setjmp	*/
-	      /* is probably not needed on SPARC, since pointers are	*/
-	      /* only stored in windowed or scratch registers.  It is	*/
-	      /* needed on IA64, since some non-windowed registers are	*/
-	      /* preserved.						*/
-	      {
-	        GC_save_regs_ret_val = GC_save_regs_in_stack();
-		/* On IA64 gcc, could use __builtin_ia64_flushrs() and	*/
-		/* __builtin_ia64_flushrs().  The latter will be done	*/
-		/* implicitly by __builtin_unwind_init() for gcc3.0.1	*/
-		/* and later.						*/
-	      }
-#           endif
-	    GC_push_current_stack(cold_gc_frame);
-	    /* Strongly discourage the compiler from treating the above	*/
-	    /* as a tail-call, since that would pop the register 	*/
-	    /* contents before we get a chance to look at them.		*/
-	    GC_noop1((word)(&dummy));
-	}
+    GC_with_callee_saves_pushed(GC_push_current_stack, cold_gc_frame);
 }
 #endif /* USE_GENERIC_PUSH_REGS */
 
@@ -465,7 +492,7 @@ ptr_t cold_gc_frame;
 /* the stack.	Return sp.						*/
 # ifdef SPARC
     asm("	.seg 	\"text\"");
-#   if defined(SVR4) || defined(NETBSD)
+#   if defined(SVR4) || defined(NETBSD) || defined(FREEBSD)
       asm("	.globl	GC_save_regs_in_stack");
       asm("GC_save_regs_in_stack:");
       asm("	.type GC_save_regs_in_stack,#function");

@@ -45,7 +45,6 @@
 #include <mono/metadata/mono-config.h>
 #include <mono/metadata/environment.h>
 #include <mono/metadata/mono-debug.h>
-#include <mono/metadata/mono-debug-debugger.h>
 #include <mono/metadata/monitor.h>
 #include <mono/metadata/security-manager.h>
 #include <mono/metadata/threads-types.h>
@@ -3094,9 +3093,6 @@ mini_get_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSigna
 			"System.Runtime.CompilerServices", "RuntimeHelpers");
 
 	if (cmethod->klass == mono_defaults.string_class) {
- 		if (cmethod->name [0] != 'g')
- 			return NULL;
- 
 		if (strcmp (cmethod->name, "get_Chars") == 0) {
  			MONO_INST_NEW (cfg, ins, OP_GETCHR);
 			ins->inst_i0 = args [0];
@@ -3105,6 +3101,15 @@ mini_get_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSigna
 		} else if (strcmp (cmethod->name, "get_Length") == 0) {
  			MONO_INST_NEW (cfg, ins, OP_STRLEN);
 			ins->inst_i0 = args [0];
+			return ins;
+		} else if (strcmp (cmethod->name, "InternalSetChar") == 0) {
+			MonoInst *get_addr;
+ 			MONO_INST_NEW (cfg, get_addr, OP_STR_CHAR_ADDR);
+			get_addr->inst_i0 = args [0];
+			get_addr->inst_i1 = args [1];
+ 			MONO_INST_NEW (cfg, ins, CEE_STIND_I2);
+			ins->inst_i0 = get_addr;
+			ins->inst_i1 = args [2];
 			return ins;
 		} else 
 			return NULL;
@@ -5797,6 +5802,39 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			if (MONO_TYPE_IS_REFERENCE (&klass->byval_arg)) {
 				*sp++ = val;
 				ip += 5;
+				break;
+			}
+			/* frequent check in generic code: box (struct), brtrue */
+			if (ip + 5 < end && ip_in_bb (cfg, bblock, ip + 5) && (ip [5] == CEE_BRTRUE || ip [5] == CEE_BRTRUE_S)) {
+				/*g_print ("box-brtrue opt at 0x%04x in %s\n", real_offset, method->name);*/
+				MONO_INST_NEW (cfg, ins, CEE_POP);
+				MONO_ADD_INS (bblock, ins);
+				ins->cil_code = ip;
+				ins->inst_i0 = *sp;
+				ip += 5;
+				MONO_INST_NEW (cfg, ins, CEE_BR);
+				ins->cil_code = ip;
+				MONO_ADD_INS (bblock, ins);
+				if (*ip == CEE_BRTRUE_S) {
+					CHECK_OPSIZE (2);
+					ip++;
+					target = ip + 1 + (signed char)(*ip);
+					ip++;
+				} else {
+					CHECK_OPSIZE (5);
+					ip++;
+					target = ip + 4 + (gint)(read32 (ip));
+					ip += 4;
+				}
+				GET_BBLOCK (cfg, bbhash, tblock, target);
+				link_bblock (cfg, bblock, tblock);
+				CHECK_BBLOCK (target, ip, tblock);
+				ins->inst_target_bb = tblock;
+				if (sp != stack_start) {
+					handle_stack_args (cfg, bblock, stack_start, sp - stack_start);
+					sp = stack_start;
+				}
+				start_new_bblock = 1;
 				break;
 			}
 			*sp++ = handle_box (cfg, bblock, val, ip, klass);
@@ -8513,6 +8551,109 @@ move_basic_block_to_end (MonoCompile *cfg, MonoBasicBlock *bb)
 	}		
 }
 
+/* checks that a and b represent the same instructions, conservatively,
+ * it can return FALSE also for two trees that are equal.
+ * FIXME: also make sure there are no side effects.
+ */
+static int
+same_trees (MonoInst *a, MonoInst *b)
+{
+	int arity;
+	if (a->opcode != b->opcode)
+		return FALSE;
+	arity = mono_burg_arity [a->opcode];
+	if (arity == 1) {
+		if (a->ssa_op == b->ssa_op && a->ssa_op == MONO_SSA_LOAD && a->inst_i0 == b->inst_i0)
+			return TRUE;
+		return same_trees (a->inst_left, b->inst_left);
+	} else if (arity == 2) {
+		return same_trees (a->inst_left, b->inst_left) && same_trees (a->inst_right, b->inst_right);
+	} else if (arity == 0) {
+		switch (a->opcode) {
+		case OP_ICONST:
+			return a->inst_c0 == b->inst_c0;
+		default:
+			return FALSE;
+		}
+	}
+	return FALSE;
+}
+
+static int
+get_unsigned_condbranch (int opcode)
+{
+	switch (opcode) {
+	case CEE_BLE: return CEE_BLE_UN;
+	case CEE_BLT: return CEE_BLT_UN;
+	case CEE_BGE: return CEE_BGE_UN;
+	case CEE_BGT: return CEE_BGT_UN;
+	}
+	g_assert_not_reached ();
+	return 0;
+}
+
+static int
+tree_is_unsigned (MonoInst* ins) {
+	switch (ins->opcode) {
+	case OP_ICONST:
+		return (int)ins->inst_c0 >= 0;
+	/* array lengths are positive as are string sizes */
+	case CEE_LDLEN:
+	case OP_STRLEN:
+		return TRUE;
+	case CEE_CONV_U1:
+	case CEE_CONV_U2:
+	case CEE_CONV_U4:
+	case CEE_CONV_OVF_U1:
+	case CEE_CONV_OVF_U2:
+	case CEE_CONV_OVF_U4:
+		return TRUE;
+	case CEE_LDIND_U1:
+	case CEE_LDIND_U2:
+	case CEE_LDIND_U4:
+		return TRUE;
+	default:
+		return FALSE;
+	}
+}
+
+/* check if an unsigned compare can be used instead of two signed compares
+ * for (val < 0 || val > limit) conditionals.
+ * Returns TRUE if the optimization has been applied.
+ * Note that this can't be applied if the second arg is not positive...
+ */
+static int
+try_unsigned_compare (MonoCompile *cfg, MonoBasicBlock *bb)
+{
+	MonoBasicBlock *truet, *falset;
+	MonoInst *cmp_inst = bb->last_ins->inst_left;
+	MonoInst *condb;
+	if (!cmp_inst->inst_right->inst_c0 == 0)
+		return FALSE;
+	truet = bb->last_ins->inst_true_bb;
+	falset = bb->last_ins->inst_false_bb;
+	if (falset->in_count != 1)
+		return FALSE;
+	condb = falset->last_ins;
+	/* target bb must have one instruction */
+	if (!condb || (condb != falset->code))
+		return FALSE;
+	if ((((condb->opcode == CEE_BLE || condb->opcode == CEE_BLT) && (condb->inst_false_bb == truet))
+			|| ((condb->opcode == CEE_BGE || condb->opcode == CEE_BGT) && (condb->inst_true_bb == truet)))
+			&& same_trees (cmp_inst->inst_left, condb->inst_left->inst_left)) {
+		if (!tree_is_unsigned (condb->inst_left->inst_right))
+			return FALSE;
+		condb->opcode = get_unsigned_condbranch (condb->opcode);
+		/* change the original condbranch to just point to the new unsigned check */
+		bb->last_ins->opcode = CEE_BR;
+		bb->last_ins->inst_target_bb = falset;
+		replace_out_block (bb, truet, NULL);
+		replace_in_block (truet, bb, NULL);
+		return TRUE;
+	}
+	return FALSE;
+}
+
 /*
  * Optimizes the branches on the Control Flow Graph
  *
@@ -8533,6 +8674,7 @@ optimize_branches (MonoCompile *cfg)
 		niterations = cfg->num_bblocks * 2;
 	else
 		niterations = 1000;
+
 	do {
 		MonoBasicBlock *previous_bb;
 		changed = FALSE;
@@ -8608,20 +8750,6 @@ optimize_branches (MonoCompile *cfg)
 					}
 				}
 			}
-		}
-	} while (changed && (niterations > 0));
-
-	niterations = 1000;
-	do {
-		changed = FALSE;
-		niterations --;
-
-		/* we skip the entry block (exit is handled specially instead ) */
-		for (bb = cfg->bb_entry->next_bb; bb; bb = bb->next_bb) {
-
-			/* dont touch code inside exception clauses */
-			if (bb->region != -1)
-				continue;
 
 			if ((bbn = bb->next_bb) && bbn->in_count == 0 && bb->region == bbn->region) {
 				if (cfg->verbose_level > 2) {
@@ -8637,33 +8765,8 @@ optimize_branches (MonoCompile *cfg)
 				break;
 			}
 
-
 			if (bb->out_count == 1) {
 				bbn = bb->out_bb [0];
-
-				if (bb->region == bbn->region && bb->next_bb == bbn) {
-					/* the blocks are in sequence anyway ... */
-
-					/* branches to the following block can be removed */
-					if (bb->last_ins && bb->last_ins->opcode == (cfg->new_ir ? OP_BR : CEE_BR)) {
-						bb->last_ins->opcode = cfg->new_ir ? OP_NOP : CEE_NOP;
-						changed = TRUE;
-						if (cfg->verbose_level > 2)
-							g_print ("br removal triggered %d -> %d\n", bb->block_num, bbn->block_num);
-					}
-
-					if (bbn->in_count == 1) {
-						if (bbn != cfg->bb_exit) {
-							if (cfg->verbose_level > 2)
-								g_print ("block merge triggered %d -> %d\n", bb->block_num, bbn->block_num);
-							merge_basic_blocks (bb, bbn);
-							changed = TRUE;
-						}
-
-						//mono_print_bb_code (bb);
-					}
-					break;
-				}
 
 				if (bb->last_ins && bb->last_ins->opcode == (cfg->new_ir ? OP_BR : CEE_BR)) {
 					bbn = bb->last_ins->inst_target_bb;
@@ -8754,6 +8857,15 @@ optimize_branches (MonoCompile *cfg)
 
 						link_bblock (cfg, bb, bbn->code->inst_target_bb);
 
+						changed = TRUE;
+						break;
+					}
+				}
+
+				/* detect and optimize to unsigned compares checks like: if (v < 0 || v > limit */
+				if (bb->last_ins && bb->last_ins->opcode == CEE_BLT && !cfg->new_ir && bb->last_ins->inst_left->inst_right->opcode == OP_ICONST) {
+					if (try_unsigned_compare (cfg, bb)) {
+						/*g_print ("applied in bb %d (->%d) %s\n", bb->block_num, bb->last_ins->inst_target_bb->block_num, mono_method_full_name (cfg->method, TRUE));*/
 						changed = TRUE;
 						break;
 					}
@@ -10881,9 +10993,16 @@ SIG_HANDLER_SIGNATURE (sigusr1_signal_handler)
 {
 	gboolean running_managed;
 	MonoException *exc;
+	MonoThread *thread = mono_thread_current ();
 	void *ji;
 	
 	GET_CONTEXT;
+
+	if (thread->thread_dump_requested) {
+		thread->thread_dump_requested = FALSE;
+
+		mono_print_thread_dump (ctx);
+	}
 
 	/*
 	 * FIXME:
@@ -10911,12 +11030,19 @@ SIG_HANDLER_SIGNATURE (sigprof_signal_handler)
 static void
 SIG_HANDLER_SIGNATURE (sigquit_signal_handler)
 {
-	MonoException *exc;
 	GET_CONTEXT;
 
-	exc = mono_get_exception_execution_engine ("Interrupted (SIGQUIT).");
-       
-	mono_arch_handle_exception (ctx, exc, FALSE);
+	printf ("Full thread dump:\n");
+
+	mono_threads_request_thread_dump ();
+
+	/*
+	 * print_thread_dump () skips the current thread, since sending a signal
+	 * to it would invoke the signal handler below the sigquit signal handler,
+	 * and signal handlers don't create an lmf, so the stack walk could not
+	 * be performed.
+	 */
+	mono_print_thread_dump (ctx);
 }
 
 static void

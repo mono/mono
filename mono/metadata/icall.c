@@ -43,7 +43,7 @@
 #include <mono/metadata/rand.h>
 #include <mono/metadata/sysmath.h>
 #include <mono/metadata/string-icalls.h>
-#include <mono/metadata/mono-debug-debugger.h>
+#include <mono/metadata/debug-helpers.h>
 #include <mono/metadata/process.h>
 #include <mono/metadata/environment.h>
 #include <mono/metadata/profiler-private.h>
@@ -1625,9 +1625,13 @@ ves_icall_Type_GetInterfaces (MonoReflectionType* type)
 	int i;
 	MonoClass *class = mono_class_from_mono_type (type->type);
 	MonoClass *parent;
-	MonoBitSet *slots = mono_bitset_new (class->max_interface_id + 1, 0);
+	MonoBitSet *slots;
 
 	MONO_ARCH_SAVE_REGS;
+
+	mono_class_setup_vtable (class);
+
+	slots = mono_bitset_new (class->max_interface_id + 1, 0);
 
 	if (class->rank) {
 		/* GetInterfaces() returns an empty array in MS.NET (this may be a bug) */
@@ -1681,6 +1685,8 @@ ves_icall_Type_GetInterfaceMapData (MonoReflectionType *type, MonoReflectionType
 	MonoDomain *domain;
 
 	MONO_ARCH_SAVE_REGS;
+
+	mono_class_setup_vtable (class);
 
 	/* type doesn't implement iface: the exception is thrown in managed code */
 	if ((iclass->interface_id > class->max_interface_id) || !class->interface_offsets [iclass->interface_id])
@@ -1797,6 +1803,8 @@ ves_icall_MonoType_get_DeclaringType (MonoReflectionType *type)
 
 	MONO_ARCH_SAVE_REGS;
 
+	if (type->type->byref)
+		return NULL;
 	if (type->type->type == MONO_TYPE_VAR)
 		class = type->type->data.generic_param->owner->klass;
 	else if (type->type->type == MONO_TYPE_MVAR)
@@ -2013,7 +2021,7 @@ ves_icall_MonoType_get_IsGenericParameter (MonoReflectionType *type)
 	MONO_ARCH_SAVE_REGS;
 
 	if (type->type->type == MONO_TYPE_VAR || type->type->type == MONO_TYPE_MVAR)
-		return TRUE;
+		return !type->type->byref;
 	return FALSE;
 }
 
@@ -2023,7 +2031,7 @@ ves_icall_TypeBuilder_get_IsGenericParameter (MonoReflectionTypeBuilder *tb)
 	MONO_ARCH_SAVE_REGS;
 
 	if (tb->type.type->type == MONO_TYPE_VAR || tb->type.type->type == MONO_TYPE_MVAR)
-		return TRUE;
+		return !tb->type.type->byref;
 	return FALSE;
 }
 
@@ -2387,7 +2395,7 @@ ves_icall_MonoType_get_DeclaringMethod (MonoReflectionType *type)
 
 	MONO_ARCH_SAVE_REGS;
 
-	if (type->type->type != MONO_TYPE_MVAR)
+	if (type->type->byref || type->type->type != MONO_TYPE_MVAR)
 		return NULL;
 
 	method = type->type->data.generic_param->method;

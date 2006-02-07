@@ -32,7 +32,6 @@
 #include <mono/metadata/mono-endian.h>
 #include <mono/metadata/debug-helpers.h>
 #include <mono/metadata/reflection.h>
-#include <mono/metadata/mono-debug-debugger.h>
 #include <mono/metadata/security-manager.h>
 #include <mono/os/gc_wrapper.h>
 
@@ -104,14 +103,15 @@ mono_class_from_typeref (MonoImage *image, guint32 type_token)
 	}
 
 	references = image->references;
-	if (!references [idx-1])
+	if (!references [idx - 1])
 		mono_assembly_load_reference (image, idx - 1);
+	/* If this assert fails, it probably means that you haven't installed an assembly load/search hook */
+	g_assert (references == image->references);
+	g_assert (references [idx - 1]);
 	if (references [idx - 1] == (gpointer)-1)
 		return NULL;
 
-	image = references [idx-1]->image;
-
-	return mono_class_from_name (image, nspace, name);
+	return mono_class_from_name (references [idx - 1]->image, nspace, name);
 }
 
 static inline MonoType*
@@ -1907,8 +1907,8 @@ mono_class_setup_vtable_general (MonoClass *class, MonoMethod **overrides, int o
 								 overrides [j*2+1]->slot, overrides [j*2]->name, overrides [j*2]->slot);
 						}
 						msig = mono_signature_get_desc (mono_method_signature (im), FALSE);
-						printf ("no implementation for interface method %s.%s::%s(%s) in class %s.%s\n",
-							ic->name_space, ic->name, im->name, msig, class->name_space, class->name);
+						printf ("no implementation for interface method %s::%s(%s) in class %s.%s\n",
+							mono_type_get_name (&ic->byval_arg), im->name, msig, class->name_space, class->name);
 						g_free (msig);
 						for (j = 0; j < class->method.count; ++j) {
 							MonoMethod *cm = class->methods [j];
@@ -2822,6 +2822,7 @@ mono_class_create_generic (MonoInflatedGenericClass *gclass)
 	klass->name_space = gklass->name_space;
 	klass->image = gklass->image;
 	klass->flags = gklass->flags;
+	klass->type_token = gklass->type_token;
 
 	klass->generic_class = &gclass->generic_class;
 

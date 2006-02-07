@@ -111,7 +111,7 @@ void GC_print_hblkfreelist()
     for (i = 0; i <= N_HBLK_FLS; ++i) {
       h = GC_hblkfreelist[i];
 #     ifdef USE_MUNMAP
-        if (0 != h) GC_printf1("Free list %ld (Total size %ld):\n",
+        if (0 != h) GC_printf1("Free list %ld:\n",
 		               (unsigned long)i);
 #     else
         if (0 != h) GC_printf2("Free list %ld (Total size %ld):\n",
@@ -133,10 +133,12 @@ void GC_print_hblkfreelist()
         h = hhdr -> hb_next;
       }
     }
-    if (total_free != GC_large_free_bytes) {
+#   ifndef USE_MUNMAP
+      if (total_free != GC_large_free_bytes) {
 	GC_printf1("GC_large_free_bytes = %lu (INCONSISTENT!!)\n",
 		   (unsigned long) GC_large_free_bytes);
-    }
+      }
+#   endif
     GC_printf1("Total of %lu bytes on free list\n", (unsigned long)total_free);
 }
 
@@ -181,7 +183,7 @@ void GC_dump_regions()
 	    hhdr = HDR(p);
 	    GC_printf1("\t0x%lx ", (unsigned long)p);
 	    if (IS_FORWARDING_ADDR_OR_NIL(hhdr)) {
-		GC_printf1("Missing header!!\n", hhdr);
+		GC_printf1("Missing header!!(%ld)\n", hhdr);
 		p += HBLKSIZE;
 		continue;
 	    }
@@ -283,8 +285,8 @@ int n;
 	GET_HDR(hhdr -> hb_prev, phdr);
 	phdr -> hb_next = hhdr -> hb_next;
     }
+    FREE_ASSERT(GC_free_bytes[index] >= hhdr -> hb_sz);
     INCR_FREE_BYTES(index, - (signed_word)(hhdr -> hb_sz));
-    FREE_ASSERT(GC_free_bytes[index] >= 0);
     if (0 != hhdr -> hb_next) {
 	hdr * nhdr;
 	GC_ASSERT(!IS_FORWARDING_ADDR_OR_NIL(NHDR(hhdr)));
@@ -468,7 +470,11 @@ int index;
     if (total_size == bytes) return h;
     rest = (struct hblk *)((word)h + bytes);
     rest_hdr = GC_install_header(rest);
-    if (0 == rest_hdr) return(0);
+    if (0 == rest_hdr) {
+	/* This may be very bad news ... */
+	WARN("Header allocation failed: Dropping block.\n", 0);
+	return(0);
+    }
     rest_hdr -> hb_sz = total_size - bytes;
     rest_hdr -> hb_flags = 0;
 #   ifdef GC_ASSERTIONS
@@ -584,8 +590,9 @@ int n;
 	    GET_HDR(hbp, hhdr);
 	    size_avail = hhdr->hb_sz;
 	    if (size_avail < size_needed) continue;
-	    if (!GC_use_entire_heap
-		&& size_avail != size_needed
+	    if (size_avail != size_needed
+		&& !GC_use_entire_heap
+		&& !GC_dont_gc
 		&& USED_HEAP_SIZE >= GC_requested_heapsize
 		&& !TRUE_INCREMENTAL && GC_should_collect()) {
 #		ifdef USE_MUNMAP
@@ -602,7 +609,8 @@ int n;
 		    /* If we are deallocating lots of memory from	*/
 		    /* finalizers, fail and collect sooner rather	*/
 		    /* than later.					*/
-		    if (GC_finalizer_mem_freed > (GC_heapsize >> 4))  {
+		    if (WORDS_TO_BYTES(GC_finalizer_mem_freed)
+			> (GC_heapsize >> 4))  {
 		      continue;
 		    }
 #		endif /* !USE_MUNMAP */
@@ -692,7 +700,7 @@ int n;
 	              struct hblk * h;
 		      struct hblk * prev = hhdr -> hb_prev;
 	              
-		      GC_words_wasted += total_size;
+		      GC_words_wasted += BYTES_TO_WORDS(total_size);
 		      GC_large_free_bytes -= total_size;
 		      GC_remove_from_fl(hhdr, n);
 	              for (h = hbp; h < limit; h++) {

@@ -9223,8 +9223,8 @@ mono_spill_global_vars (MonoCompile *cfg)
  * - handle long shift opts on 32 bit platforms somehow: they require 
  *   3 sregs (2 for arg1 and 1 for arg2)
  * - make byref a 'normal' type.
- * - spill costs are calculated during liveness, but the global->local vreg pass and
- *   deadce can eliminate a lot of code, decreasing costs.
+ * - spill costs are calculated during liveness, but deadce can eliminate a lot of code, 
+ *   decreasing costs.
  * - use vregs for bb->out_stacks if possible, handle_global_vreg will make them a
  *   variable if needed.
  * - do not start a new IL level bblock when cfg->cbb is changed by a function call
@@ -9233,11 +9233,13 @@ mono_spill_global_vars (MonoCompile *cfg)
  * - remove mono_save_args.
  * - spill_global_vars does not play nicely with the fp stack (loads are inserted at
  *   the wrong place).
+ * - get rid of redundant loads and stores inserted by spill_global_vars.
  * - add OP_STR_CHAR_ADDR
  * - add 'frequent check in generic code: box (struct), brtrue'
+ * - add 'introduce a new optimization to simplify some range checks'
  * - fix LNEG and enable cfold of INEG
  * - generalize i386 optimizations like ldelema as a peephole optimization
- * - LAST MERGE: 55797
+ * - LAST MERGE: 56617.
  */
 
 /*

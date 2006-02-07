@@ -1,4 +1,3 @@
- # $Id$
 	.arch ev6
 
         .text
@@ -12,13 +11,13 @@ GC_push_regs:
         .mask   0x04000000, 0
         .frame  $sp, 16, $26, 0
 
- # $0		integer result
- # $1-$8	temp regs - not preserved cross calls
- # $9-$15	call saved regs
- # $16-$21	argument regs - not preserved cross calls
- # $22-$28	temp regs - not preserved cross calls
- # $29		global pointer - not preserved cross calls
- # $30		stack pointer
+/* $0		integer result                                                */
+/* $1-$8	temp regs - not preserved cross calls                         */
+/* $9-$15	call saved regs                                               */
+/* $16-$21	argument regs - not preserved cross calls                     */
+/* $22-$28	temp regs - not preserved cross calls                         */
+/* $29		global pointer - not preserved cross calls                    */
+/* $30		stack pointer                                                 */
 
 # define call_push(x)			\
 	mov   x, $16;			\
@@ -33,12 +32,12 @@ GC_push_regs:
         call_push($14)
         call_push($15)
 
- # $f0-$f1	floating point results
- # $f2-$f9	call saved regs
- # $f10-$f30	temp regs - not preserved cross calls
+/* $f0-$f1	floating point results                                        */
+/* $f2-$f9	call saved regs                                               */
+/* $f10-$f30	temp regs - not preserved cross calls                         */
 
-	# Use the most efficient transfer method for this hardware.
-	# Bit 1 detects the FIX extension, which includes ftoit.
+	/* Use the most efficient transfer method for this hardware. */
+	/* Bit 1 detects the FIX extension, which includes ftoit. */
 	amask	2, $0
 	bne	$0, $use_stack
 

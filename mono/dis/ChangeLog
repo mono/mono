@@ -1,3 +1,48 @@
+2006-02-03  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* get.c: Added #include <mono/utils/mono-compiler.h> so VS.NET
+	can compile monodis.
+
+2006-01-28  Ankit Jain  <jankit@novell.com>
+
+	* get.c (get_method_core): Emit generic arity for a MemberRef.
+	(get_method_override): Emit full sig only if its a generic type.
+
+2006-01-27  Ankit Jain  <jankit@novell.com>
+
+	* get.c (get_methodref_signature): Remove 'context' parameter.
+	Update call sites.
+	* get.h (get_methodref_signature): Update.
+	* dump.c (dump_table_memberref): Update.
+
+2006-01-26  Raja R Harinath  <harinath@gmail.com>
+
+	* get.c (stringify_double): Simplify, and avoid 'E' too.
+
+2006-01-26  Ankit Jain  <jankit@novell.com>
+
+	* get.c (stringify_double): Remove trailing '.' if it has 'e'.
+
+2006-01-25  Ankit Jain  <jankit@novell.com>
+
+	* get.c (stringify_double): New. Fix printing of float/doubles to enable
+	roundtripping.
+	* get.h (stringify_double): Add new function.
+	(get_constant): Use stringify_double.
+	* dis-cil.c (disassemble_cil): Likewise.
+	
+2006-01-25  Ankit Jain  <jankit@novell.com>
+	    Raja R Harinath  <rharinath@novell.com>
+
+	* get.c (dis_stringify_type): For MVAR/VAR, print number if the generic param
+	is in the mono_generic_params_with_ambiguous_names table.
+
+2006-01-20  Raja R Harinath  <rharinath@novell.com>
+
+	* main.c (monodis_assembly_load_hook): New.
+	(monodis_assembly_search_hook): New.
+	(main): Install them as hooks into the assembly loading core.
+
 2006-01-19  Ankit Jain  <jankit@novell.com>
 
 	* main.c (dis_type): Dump custom attributes for a type before doing the same

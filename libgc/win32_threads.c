@@ -1,6 +1,7 @@
+#include "private/gc_priv.h"
+
 #if defined(GC_WIN32_THREADS) 
 
-#include "private/gc_priv.h"
 #include <windows.h>
 
 #ifdef CYGWIN32
@@ -10,6 +11,7 @@
 # undef pthread_create 
 # undef pthread_sigmask 
 # undef pthread_join 
+# undef pthread_detach
 # undef dlopen 
 
 # define DEBUG_CYGWIN_THREADS 0
@@ -195,7 +197,7 @@ static void GC_delete_thread(DWORD thread_id) {
        /* Must still be in_use, since nobody else can store our thread_id. */
        i++) {}
   if (i > my_max) {
-    WARN("Removing nonexisiting thread %ld\n", (GC_word)thread_id);
+    WARN("Removing nonexistent thread %ld\n", (GC_word)thread_id);
   } else {
     GC_delete_gc_thread(thread_table+i);
   }
@@ -242,6 +244,9 @@ void GC_push_thread_structures GC_PROTO((void))
 # endif
 }
 
+/* Defined in misc.c */
+extern CRITICAL_SECTION GC_write_cs;
+
 void GC_stop_world()
 {
   DWORD thread_id = GetCurrentThreadId();
@@ -250,6 +255,9 @@ void GC_stop_world()
   if (!GC_thr_initialized) ABORT("GC_stop_world() called before GC_thr_init()");
 
   GC_please_stop = TRUE;
+# ifndef CYGWIN32
+    EnterCriticalSection(&GC_write_cs);
+# endif /* !CYGWIN32 */
   for (i = 0; i <= GC_get_max_thread_index(); i++)
     if (thread_table[i].stack_base != 0
 	&& thread_table[i].id != thread_id) {
@@ -280,6 +288,9 @@ void GC_stop_world()
 #     endif
       thread_table[i].suspended = TRUE;
     }
+# ifndef CYGWIN32
+    LeaveCriticalSection(&GC_write_cs);
+# endif /* !CYGWIN32 */
 }
 
 void GC_start_world()

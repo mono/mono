@@ -1,3 +1,180 @@
+2006-02-07  Ankit Jain  <jankit@novell.com>
+
+	* socket-io.h (MonoSocketFlags): New. Copy of System.Net.Sockets.SocketFlags
+	* socket-io.c (convert_socketflags): New. Convert SocketFlags to native ones.
+	(ves_icall_System_Net_Sockets_Socket_Receive_internal): Convert flags using convert_socketflags.
+	(ves_icall_System_Net_Sockets_Socket_ReceiveFrom_internal): Likewise.
+	(ves_icall_System_Net_Sockets_Socket_Send_internal): Likewise.
+	(ves_icall_System_Net_Sockets_Socket_SendTo_internal): Likewise.
+
+2006-02-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_class_create_generic): Set type_token as well.
+
+	* object.c (mono_runtime_invoke_array): Fix handling of byref vtypes to be
+	compatible with MS.
+
+2006-02-02  Martin Baulig  <martin@ximian.com>
+
+	* threads.c, gc.c: Removed the `WITH_INCLUDED_LIBGC' section; it
+	has never been used so far.
+
+2006-02-02  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug-debugger.h: Changed comment at the top of this file;
+	the header is not installed, but it's safe to #include it from
+	within the JIT.
+
+	* mono-debug.c: Don't #define _IN_THE_MONO_DEBUGGER.
+	* mono-debug-debugger.c, debug-mono-symfile.c: Likewise.
+
+2006-02-02  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug.h
+	(MonoSymbolTable): Removed the `metadata_info' field.
+
+	* mono-debug.c
+	(mono_debug_init_1): Always set `mono_symbol_table->corlib'.
+
+	* mono-debug-debugger.h (MonoDebuggerIOLayer): Removed.
+	(mono_debugger_add_builtin_types): Removed.
+	(MonoDebuggerInfo): Moved into ../mini/debug-debugger.h.
+	(mono_debugger_create_notification_function): We now operate on a
+	pre-allocated area; take a `gpointer' and return `void'.
+
+	* mono-debug-debugger.c
+	(MonoDebuggerMetadataInfo): Moved into ../mini/debug-debugger.h.
+	(mono_debugger_add_builtin_types): Removed.
+
+2006-02-02  Martin Baulig  <martin@ximian.com>
+
+	* threads.c (mono_debugger_create_all_threads): New public method.
+
+Wed Feb 1 18:22:34 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* gc-internal.h, boehm-gc.c, null-gc.c: back out the patch, since it
+	breaks on several platforms.
+
+2006-02-01  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* assembly.c: the VS.NET build doesn't supply default values for
+	MONO_ASSEMBLIES and MONO_CFG_DIR.
+
+2006-02-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* gc-internal.h boehm-gc.c null-gc.c (mono_gc_unregister_thread): New
+	helper function.
+
+	* threads.c (mono_thread_detach): Call mono_gc_unregister_thread ().
+
+	* loader.c (method_from_memberref): Fix a warning.
+
+	* metadata.c (mono_metadata_load_generic_params): Fix a warning.
+
+	* marshal.c (emit_struct_conv): Fix marshalling of embedded structs
+	with explicit layout. Fixes #77433.
+
+2006-01-31  Zoltan Varga  <vargaz@gmail.com>
+
+	* icall.c (ves_icall_Type_GetInterfaceMapData): Make sure 
+	max_interface_id is initialized before using it. Fixes #77398.
+	(ves_icall_Type_GetInterfaces): Ditto.
+
+2006-01-30  Raja R Harinath  <rharinath@novell.com>
+
+	* metadata.c (mono_metadata_parse_method_signature_full): Don't
+	allocate memory for parameter attributes when parsing memberref
+	signatures.
+	* loader.c (mono_loader_set_error_method_load): Don't warn.
+	(method_from_memberref): Ensure MissingMethodException gets thrown
+	if method is not found.  Make warning more informative.
+
+2006-01-29  Raja R Harinath  <harinath@gmail.com>
+
+	Fix #77397
+	* icall.c (ves_icall_MonoType_get_IsGenericParameter): Don't
+	return true if is byref.
+	(ves_icall_TypeBuilder_get_IsGenericParameter): Likewise.
+	(ves_icall_MonoType_get_DeclaringType): Return NULL on byref classes.
+	(ves_icall_MonoType_get_DeclaringMethod): Likewise.
+
+2006-01-27  Raja R Harinath  <rharinath@novell.com>
+
+	Fix tests/find-method.2.il
+	* loader.c (find_method, find_method_in_class): Remove is_inflated
+	argument.  Revert 2006-01-18 change.
+	(method_from_memberref) [MONO_MEMBERREF_PARENT_TYPESPEC]: If type
+	is generic, search for method in its generic definition.
+	* class.c (mono_class_setup_vtable_general): Print generic
+	arguments of generic types in debugging printf.
+
+2006-01-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* object-internals.h (MonoThread): Add 'thread_dump_requested' field.
+
+	* threads.c (mono_threads_request_thread_dump): New helper function.
+
+2006-01-25  Raja R Harinath  <rharinath@novell.com>
+
+	* metadata.c (mono_type_create_from_typespec_full): Fix caching of types.
+
+2006-01-25  Ankit Jain  <jankit@novell.com>
+
+	* metadata-internals.h (mono_generic_params_with_ambiguous_names): Add declaration and
+	move definition to ..
+	* metadata.c (mono_generic_params_with_ambiguous_names): .. here.
+	
+2006-01-25  Ankit Jain  <jankit@novell.com>
+	    Raja R Harinath  <rharinath@novell.com>
+
+	* metadata-internals.h (mono_generic_params_with_ambiguous_names): New.
+	* metadata.c (mono_metadata_load_generic_params): Fill mono_generic_params_with_ambiguous_names
+	as necessary.
+
+2006-01-25  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug-debugger.h: Moved `MonoDebuggerManager' and
+	`MonoDebuggerThread' into debug-debugger.c.
+
+Tue Jan 24 18:53:35 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* profiler.c: fix printing of data.
+
+2006-01-24  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* object.c, marshal.c : Fixed runtime part of bug #77315. Reject
+	  invalid surrogate in UTF7/UTF8 bytes and don't return NULL.
+
+Tue Jan 24 09:56:16 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* object.c: fix deadlock related to string interning.
+
+2006-01-23  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug-debugger.h (MonoDebuggerIOLayer): Removed.
+
+	* mono-debug-debugger.c (mono_debugger_io_layer): Removed.
+
+2006-01-23  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug.h: Moved the prototypes of some functions which are
+	used by the JIT here from mono-debug-debugger.h.
+
+2006-01-21  Martin Baulig  <martin@ximian.com>
+
+	* Makefile.am: Don't install mono-debug-debugger.h.
+
+2006-01-21  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug-debugger.h: Enforce the private status of this header
+	file and removed unneccessary #include's in metadata/*.c and mini/*.c.
+	Moved some stuff from mono-debugger-jit-wrapper.h here.
+
+2006-01-20  Raja R Harinath  <rharinath@novell.com>
+
+	* class.c (mono_class_from_typeref): Add a sanity test to help
+	catch lack of assembly load/search hooks.
+
 2006-01-19  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c (emit_struct_conv): Relax the fields with same offset

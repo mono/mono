@@ -27,8 +27,6 @@ typedef struct _MonoDebugMethodAddress		MonoDebugMethodAddress;
 typedef struct _MonoDebugWrapperData		MonoDebugWrapperData;
 typedef struct _MonoDebugClassEntry		MonoDebugClassEntry;
 
-typedef struct _MonoDebuggerMetadataInfo	MonoDebuggerMetadataInfo;
-
 typedef enum {
 	MONO_DEBUG_FORMAT_NONE,
 	MONO_DEBUG_FORMAT_MONO,
@@ -59,7 +57,6 @@ struct _MonoSymbolTable {
 	 * Corlib and metadata info.
 	 */
 	MonoDebugHandle *corlib;
-	MonoDebuggerMetadataInfo *metadata_info;
 
 	/*
 	 * The symbol files.
@@ -180,7 +177,7 @@ struct _MonoDebugVarInfo {
 	guint32 end_scope;
 };
 
-#define MONO_DEBUGGER_VERSION				53
+#define MONO_DEBUGGER_VERSION				54
 #define MONO_DEBUGGER_MAGIC				0x7aff65af4253d427ULL
 
 extern MonoSymbolTable *mono_symbol_table;
@@ -204,5 +201,17 @@ gchar *mono_debug_source_location_from_il_offset (MonoMethod *method, guint32 of
 						  guint32 *line_number);
 gint32 mono_debug_il_offset_from_address (MonoMethod *method, gint32 address, MonoDomain *domain);
 gint32 mono_debug_address_from_il_offset (MonoMethod *method, gint32 il_offset, MonoDomain *domain);
+
+/*
+ * Mono Debugger support functions
+ *
+ * These methods are used by the JIT while running inside the Mono Debugger.
+ */
+
+int             mono_debugger_method_has_breakpoint       (MonoMethod *method);
+int             mono_debugger_insert_breakpoint           (const gchar *method_name, gboolean include_namespace);
+gboolean        mono_debugger_unhandled_exception         (gpointer addr, gpointer stack, MonoObject *exc);
+void            mono_debugger_handle_exception            (gpointer addr, gpointer stack, MonoObject *exc);
+gboolean        mono_debugger_throw_exception             (gpointer addr, gpointer stack, MonoObject *exc);
 
 #endif /* __MONO_DEBUG_H__ */

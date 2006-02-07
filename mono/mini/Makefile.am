@@ -83,7 +83,7 @@ noinst_PROGRAMS = genmdesc
 endif
 
 mono_SOURCES = \
-	$(common_sources) $(x86_sources) main.c inssel.c inssel.h
+	$(common_sources) $(x86_sources) $(mono_debugger_sources) main.c inssel.c inssel.h
 
 if STATIC_MONO
 # Link libmono into mono statically
@@ -224,13 +224,19 @@ test_sources = 		\
 
 test_sources2 = generics.2.cs
 
+if MONO_DEBUGGER_SUPPORTED
+mono_debugger_sources = debug-debugger.c debug-debugger.h
+else
+mono_debugger_sources =
+endif
+
 regtests=basic.exe arrays.exe basic-float.exe basic-math.exe basic-long.exe objects.exe basic-calls.exe iltests.exe exceptions.exe bench.exe
 regtests2=generics.exe
 common_BURGSRC= $(srcdir)/inssel.brg $(srcdir)/inssel-float.brg
 
 if X86
 libmono_la_SOURCES = \
-	$(common_sources) $(x86_sources)
+	$(common_sources) $(x86_sources) $(mono_debugger_sources)
 
 arch_BURGSRC= $(srcdir)/inssel-long32.brg $(srcdir)/inssel-x86.brg
 arch_built=cpu-pentium.h
@@ -238,7 +244,7 @@ endif
 
 if AMD64
 libmono_la_SOURCES = \
-	$(common_sources) $(amd64_sources)
+	$(common_sources) $(amd64_sources) $(mono_debugger_sources)
 arch_BURGSRC= $(srcdir)/inssel-long.brg $(srcdir)/inssel-amd64.brg
 arch_built=cpu-amd64.h
 endif

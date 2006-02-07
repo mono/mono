@@ -1,3 +1,16 @@
+2006-02-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* shared.c: use MONO_SHARED_HOSTNAME as a substitute for gethostname()
+	when creating the shared files in the .wapi directory. Fixes bug #77371.
+
+2006-02-02  Martin Baulig  <martin@ximian.com>
+
+	* threads.c: Removed the `WITH_INCLUDED_LIBGC' section; it has
+	never been used so far.	
+
+	* timed-thread.h (TimedThread): Removed the `stack_ptr' field; it
+	has only been used by the removed code.
+
 2006-01-03  Neale Ferguson <neale@sinenomine.net>
 
 	* atomic.h: Correct s390x definitions and eliminate compiler warnings.

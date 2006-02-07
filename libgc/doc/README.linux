@@ -19,10 +19,10 @@ Linux threads.  These should not be touched by the client program.
 
 To use threads, you need to abide by the following requirements:
 
-1) You need to use LinuxThreads (which are included in libc6).
+1) You need to use LinuxThreads or NPTL (which are included in libc6).
 
    The collector relies on some implementation details of the LinuxThreads
-   package.  It is unlikely that this code will work on other
+   package.  This code may not work on other
    pthread implementations (in particular it will *not* work with
    MIT pthreads).
 
