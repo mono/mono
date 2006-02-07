@@ -205,7 +205,8 @@ namespace System.Web.UI {
 				return;
 			initialized = true;
 			this.Page = page;
-			InitializeAsUserControlInternal ();
+			WireupAutomaticEvents ();
+			FrameworkInitialize ();
 		}
 
 		[MonoTODO]
