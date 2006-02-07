@@ -1,0 +1,13 @@
+<%@ Master Language="C#" %>
+<head runat="server">
+<title>This is the Master Page's title</title>
+</head>
+<body>
+
+<h1>
+<asp:contentplaceholder ID="TitlePlaceholder" runat="server">
+This is the master page's heading
+</asp:contentplaceholder>
+</h1>
+
+</body>
