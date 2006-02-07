@@ -58,6 +58,15 @@ namespace System.Web.UI
 			return mpp.CompileIntoType ();
 		}
 
+		internal override void HandleOptions (object obj)
+		{
+			base.HandleOptions (obj);
+
+			MasterPage mp = (MasterPage)obj;
+			mp.MasterPageFile = MasterPageFile;
+		}
+
+
 		internal override Type DefaultBaseType {
 			get { return typeof (MasterPage); }
 		}

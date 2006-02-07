@@ -1,3 +1,46 @@
+2006-02-07  Chris Toshok  <toshok@ximian.com>
+
+	* MasterPage.cs: rework this file, adding some static methods
+	gleaned from MS stack traces, and clear up the propogation of
+	content templates between nested master pages.
+
+	* Control.cs (TemplateControl): implement.
+
+	* TemplateControl.cs: re-indent some of the code.
+	(ReadStringRecource): according to msdn2, these throw
+	NotSupportedException.
+
+	* MasterPageParser.cs (HandleOption): implement.  assign our
+	master page's MasterPageFile from the UserControl property.
+
+	* UserControl.cs (InitializeAsUserControlInternal): new method
+	that allows initialization without a page.
+
+	* UserControlParser.cs (ProcessMainAttributes): for 2.0 handle
+	MasterPageFile attributes, so we can have nested master pages.
+	(MasterPageFile): add a 2.0 specific property.
+	
+	* TemplateControlParser.cs: in .net 2.0, our base class is
+	BaseTemplateParser.
+	(HandleOptions): be consistent and call base.HandleOptions.
+
+	* BaseTemplateParser.cs: new (stubbed) class.
+
+	* MasterPageControlBuilder.cs: new file, not filled in (and really
+	not used either.)
+
+	* Page.cs (InternalProcessRequest): call ApplyMasterPage.
+	(SaveExistingContentTemplates): nuke.
+	(ReapplyExistingContentTemplate): nuke.
+	(ApplyMasterPage): if we have a master page, call
+	MasterPage.ApplyMasterPageRecursive with it and add it to our
+	controls.
+	(set_MasterPageFile): remove call to SaveExistingContentTemplates.
+	(get_Master): call MasterPage.CreateMasterPage.
+	(AddContentTemplate): keep track of the page's content templates
+	in a local Hashtable - they aren't our master page's content
+	templates.
+
 2006-02-01  Chris Toshok  <toshok@ximian.com>
 
 	* TemplateParser.cs: CONFIGURATION_2_0 => NET_2_0, and replace

@@ -39,7 +39,13 @@ namespace System.Web.UI {
 	// CAS
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	public abstract class TemplateControlParser : TemplateParser {
+	public abstract class TemplateControlParser
+#if NET_2_0
+		: BaseTemplateParser 
+#else
+		: TemplateParser
+#endif
+	{
 
 		bool autoEventWireup = true;
 		bool enableViewState = true;
@@ -167,6 +173,8 @@ namespace System.Web.UI {
 
 		internal override void HandleOptions (object obj)
 		{
+			base.HandleOptions (obj);
+
 			Control ctrl = obj as Control;
 			ctrl.AutoEventWireup = autoEventWireup;
 			ctrl.EnableViewState = enableViewState;

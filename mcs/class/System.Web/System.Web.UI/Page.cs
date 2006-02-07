@@ -974,10 +974,7 @@ public class Page : TemplateControl, IHttpHandler
 #if NET_2_0
 		OnInitComplete (EventArgs.Empty);
 		
-		if (masterPageFile != null) {
-			Controls.Add (Master);
-			Master.FillPlaceHolders ();
-		}
+		ApplyMasterPage ();
 #endif
 			
 		renderingForm = false;	
@@ -1497,17 +1494,19 @@ public class Page : TemplateControl, IHttpHandler
 		htmlHeader = header;
 	}
 	
-	Hashtable existingTemplates;
-	void SaveExistingContentTemplates ()
+	void ApplyMasterPage ()
 	{
-		existingTemplates = null;
-		if (masterPage != null)
-			existingTemplates = masterPage.ContentTemplatesInternal;
-	}
-	void ReapplyExistingContentTemplates ()
-	{
-		if (existingTemplates != null)
-			masterPage.ContentTemplatesInternal = existingTemplates;
+		if (masterPageFile != null) {
+			ArrayList appliedMasterPageFiles = new ArrayList ();
+
+			if (Master != null) {
+				MasterPage.ApplyMasterPageRecursive (Master, appliedMasterPageFiles);
+
+				Master.Page = this;
+				Controls.Clear ();
+				Controls.Add (Master);
+			}
+		}
 	}
 
 	[DefaultValueAttribute ("")]
@@ -1515,7 +1514,6 @@ public class Page : TemplateControl, IHttpHandler
 		get { return masterPageFile; }
 		set {
 			masterPageFile = value;
-			SaveExistingContentTemplates ();
 			masterPage = null;
 		}
 	}
@@ -1524,11 +1522,9 @@ public class Page : TemplateControl, IHttpHandler
 	[BrowsableAttribute (false)]
 	public MasterPage Master {
 		get {
-			if (masterPage == null) {
-				masterPage = MasterPageParser.GetCompiledMasterInstance (masterPageFile, Server.MapPath (masterPageFile), Context);
-				ReapplyExistingContentTemplates ();
-			}
-			
+			if (masterPage == null)
+				masterPage = MasterPage.CreateMasterPage (this, Context, masterPageFile, contentTemplates);
+
 			return masterPage;
 		}
 	}
@@ -1619,9 +1615,12 @@ public class Page : TemplateControl, IHttpHandler
 
 
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
+	Hashtable contentTemplates;
 	protected internal void AddContentTemplate (string templateName, ITemplate template)
 	{
-		Master.AddContentTemplate (templateName, template);
+		if (contentTemplates == null)
+			contentTemplates = new Hashtable ();
+		contentTemplates [templateName] = template;
 	}
 		
 	#endif

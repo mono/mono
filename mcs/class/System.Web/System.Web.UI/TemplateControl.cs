@@ -230,14 +230,16 @@ namespace System.Web.UI {
 			return null;
 		}
 
-		[MonoTODO]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public static object ReadStringResource ()
+		{
+			throw new NotSupportedException ();
+		}
+
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public static object ReadStringResource (Type t)
 		{
-			if (t == null)
-				throw new ArgumentNullException ("t");
-
-			return null;
+			throw new NotSupportedException ();
 		}
 
 		[MonoTODO]
@@ -297,57 +299,57 @@ namespace System.Web.UI {
 
 #if NET_2_0
 
-	Stack dataItemCtx;
+		Stack dataItemCtx;
 	
-	internal void PushDataItemContext (object o)
-	{
-		if (dataItemCtx == null)
-			dataItemCtx = new Stack ();
+		internal void PushDataItemContext (object o)
+		{
+			if (dataItemCtx == null)
+				dataItemCtx = new Stack ();
 		
-		dataItemCtx.Push (o);
-	}
-	
-	internal void PopDataItemContext ()
-	{
-		if (dataItemCtx == null)
-			throw new InvalidOperationException ();
-		
-		dataItemCtx.Pop ();
-	}
-	
-	internal object CurrentDataItem {
-		get {
-			if (dataItemCtx == null || dataItemCtx.Count == 0)
-				throw new InvalidOperationException ("No data item");
-			
-			return dataItemCtx.Peek ();
+			dataItemCtx.Push (o);
 		}
-	}
+		
+		internal void PopDataItemContext ()
+		{
+			if (dataItemCtx == null)
+				throw new InvalidOperationException ();
+		
+			dataItemCtx.Pop ();
+		}
 	
-	protected object Eval (string expression)
-	{
-		return DataBinder.Eval (CurrentDataItem, expression);
-	}
+		internal object CurrentDataItem {
+			get {
+				if (dataItemCtx == null || dataItemCtx.Count == 0)
+					throw new InvalidOperationException ("No data item");
+			
+				return dataItemCtx.Peek ();
+			}
+		}
 	
-	protected object Eval (string expression, string format)
-	{
-		return DataBinder.Eval (CurrentDataItem, expression, format);
-	}
+		protected object Eval (string expression)
+		{
+			return DataBinder.Eval (CurrentDataItem, expression);
+		}
 	
-	protected object XPath (string xpathexpression)
-	{
-		return XPathBinder.Eval (CurrentDataItem, xpathexpression);
-	}
+		protected object Eval (string expression, string format)
+		{
+			return DataBinder.Eval (CurrentDataItem, expression, format);
+		}
 	
-	protected object XPath (string xpathexpression, string format)
-	{
-		return XPathBinder.Eval (CurrentDataItem, xpathexpression, format);
-	}
+		protected object XPath (string xpathexpression)
+		{
+			return XPathBinder.Eval (CurrentDataItem, xpathexpression);
+		}
 	
-	protected IEnumerable XPathSelect (string xpathexpression)
-	{
-		return XPathBinder.Select (CurrentDataItem, xpathexpression);
-	}
+		protected object XPath (string xpathexpression, string format)
+		{
+			return XPathBinder.Eval (CurrentDataItem, xpathexpression, format);
+		}
+	
+		protected IEnumerable XPathSelect (string xpathexpression)
+		{
+			return XPathBinder.Select (CurrentDataItem, xpathexpression);
+		}
 
 		// IFilterResolutionService
 

@@ -37,36 +37,80 @@ using System.Web.UI.WebControls;
 
 namespace System.Web.UI
 {
+	[ParseChildren (false)]
+#if notyet
+	[Designer (...)]
+#endif
+	[ControlBuilder (typeof (MasterPageControlBuilder))]
 	public class MasterPage: UserControl
 	{
+		Hashtable definedContentTemplates = new Hashtable ();
 		Hashtable templates = new Hashtable ();
 		ArrayList placeholders = new ArrayList ();
-		
+
+		string parentMasterPageFile = "";
+		MasterPage parentMasterPage;
+
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected internal void AddContentTemplate (string templateName, ITemplate template)
 		{
-			templates [templateName] = template;
+			definedContentTemplates [templateName] = template;
 		}
 		
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected internal IList ContentPlaceHolders {
 			get { return placeholders; }
 		}
 		
-		protected internal ICollection ContentTemplates {
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		protected internal IDictionary ContentTemplates {
 			get { return templates; }
 		}
 		
-		internal Hashtable ContentTemplatesInternal {
-			get { return templates; }
-			set { templates = value; }
+		[DefaultValueAttribute ("")]
+		public string MasterPageFile {
+			get { return parentMasterPageFile; }
+			set {
+				parentMasterPageFile = value;
+				parentMasterPage = null;
+			}
 		}
 
-		internal void FillPlaceHolders ()
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[BrowsableAttribute (false)]
+		public MasterPage Master {
+			get {
+				if (parentMasterPage == null && parentMasterPageFile != null)
+					parentMasterPage = MasterPage.CreateMasterPage (this, Context, parentMasterPageFile, definedContentTemplates);
+			
+				return parentMasterPage;
+			}
+		}
+
+		internal static MasterPage CreateMasterPage (TemplateControl owner, HttpContext context, string masterPageFile, IDictionary contentTemplateCollection)
 		{
-			foreach (ContentPlaceHolder place in placeholders) {
-				ITemplate template = templates [place.ID] as ITemplate;
-				if (template != null) {
-					place.Controls.Clear ();
-					template.InstantiateIn (place);
+			MasterPage masterPage = MasterPageParser.GetCompiledMasterInstance (masterPageFile, masterPageFile /* XXX virtualPath */, context);
+			foreach (string templateName in contentTemplateCollection.Keys) {
+				if (masterPage.ContentTemplates[templateName] == null)
+					masterPage.ContentTemplates [templateName] = contentTemplateCollection[templateName];
+			}
+			masterPage.InitializeAsUserControlInternal ();
+			return masterPage;
+		}
+
+		internal static void ApplyMasterPageRecursive (MasterPage master, IList appliedMasterPageFiles)
+		{
+			/* XXX need to use virtual paths here? */
+			if (master.MasterPageFile != null) {
+				if (appliedMasterPageFiles.Contains (master.MasterPageFile))
+					throw new HttpException ("circular dependency in master page files detected");
+				if (master.Master != null) {
+					master.Controls.Clear ();
+					master.Controls.Add (master.Master);
+					appliedMasterPageFiles.Add (master.MasterPageFile);
+					MasterPage.ApplyMasterPageRecursive (master.Master, appliedMasterPageFiles);
 				}
 			}
 		}

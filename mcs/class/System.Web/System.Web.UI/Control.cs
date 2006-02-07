@@ -90,6 +90,7 @@ namespace System.Web.UI
 
 		string uniqueID;
 		string _userId;
+		TemplateControl _templateControl;
 		ControlCollection _controls;
 		Control _namingContainer;
 		Page _page;
@@ -357,11 +358,11 @@ namespace System.Web.UI
 		public TemplateControl TemplateControl 
 		{
 			get {
-				throw new NotImplementedException ();
+				return _templateControl;
 			}
 			[EditorBrowsable (EditorBrowsableState.Never)]
 			set {
-				throw new NotImplementedException ();
+				_templateControl = value;
 			}
 		}
 #endif		

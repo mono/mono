@@ -38,6 +38,10 @@ namespace System.Web.UI
 {
 	internal class UserControlParser : TemplateControlParser
 	{
+#if NET_2_0
+		string masterPage;
+#endif
+
 		internal UserControlParser (string virtualPath, string inputFile, HttpContext context)
 			: this (virtualPath, inputFile, context, null)
 		{
@@ -79,9 +83,19 @@ namespace System.Web.UI
 
 		internal override void ProcessMainAttributes (Hashtable atts)
 		{
+#if NET_2_0
+			masterPage = GetString (atts, "MasterPageFile", null);
+			if (masterPage != null) {
+				// Make sure the page exists
+				if (masterPage != null) {
+					MasterPageParser.GetCompiledMasterType (masterPage, MapPath (masterPage), HttpContext.Current);
+				}
+			}
+#endif
+
 			base.ProcessMainAttributes (atts);
 		}
-		
+
 		internal override Type DefaultBaseType {
 			get { return typeof (UserControl); }
 		}
@@ -93,6 +107,13 @@ namespace System.Web.UI
 		internal override string DefaultDirectiveName {
 			get { return "control"; }
 		}
+
+#if NET_2_0
+		internal string MasterPageFile {
+			get { return masterPage; }
+		}
+#endif
+
 	}
 }
 
