@@ -1,6 +1,6 @@
 2006-02-07  Konstantin Triger <kostat@mainsoft.com>
 
-	* XmlReflectionImporter.cs: remove local name encoding for enums.
+	* XmlReflectionImporter.cs:  remove local name encoding for enums.
 
 2005-12-06  Konstantin Triger  <kostat@mainsoft.com>
 
