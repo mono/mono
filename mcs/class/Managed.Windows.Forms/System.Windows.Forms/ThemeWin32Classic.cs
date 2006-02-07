@@ -745,23 +745,23 @@ namespace System.Windows.Forms
 			
 			/* Draw text*/
 			if ((e.State & DrawItemState.Selected) == DrawItemState.Selected) {
-				back_color = ThemeEngine.Current.ColorHighlight;
-				fore_color = ThemeEngine.Current.ColorHighlightText;
+				back_color = ColorHighlight;
+				fore_color = ColorHighlightText;
 			}
 			else {
 				back_color = e.BackColor;
 				fore_color = e.ForeColor;
 			}
 			
-			e.Graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush
+			e.Graphics.FillRectangle (ResPool.GetSolidBrush
 				(back_color), item_rect);
 
 			e.Graphics.DrawString (ctrl.GetItemText (ctrl.Items[e.Index]), e.Font,
-				ThemeEngine.Current.ResPool.GetSolidBrush (fore_color),
+				ResPool.GetSolidBrush (fore_color),
 				item_rect, string_format);
 					
 			if ((e.State & DrawItemState.Focus) == DrawItemState.Focus) {
-				ThemeEngine.Current.CPDrawFocusRectangle (e.Graphics, item_rect,
+				CPDrawFocusRectangle (e.Graphics, item_rect,
 					fore_color, back_color);
 			}
 		}
@@ -824,7 +824,7 @@ namespace System.Windows.Forms
 				DrawComboBoxEditDecorations (dc, ctrl, cl);
 			}
 			else {			
-				dc.DrawRectangle (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorWindowFrame),
+				dc.DrawRectangle (ResPool.GetPen (ColorWindowFrame),
 					cl.X, cl.Y, cl.Width - 1, cl.Height - 1);
 			}			
 		}
@@ -837,24 +837,24 @@ namespace System.Windows.Forms
 			string_format.FormatFlags = StringFormatFlags.LineLimit;
 			
 			if ((e.State & DrawItemState.Selected) == DrawItemState.Selected) {
-				back_color = ThemeEngine.Current.ColorHighlight;
-				fore_color = ThemeEngine.Current.ColorHighlightText;
+				back_color = ColorHighlight;
+				fore_color = ColorHighlightText;
 			}
 			else {
 				back_color = e.BackColor;
 				fore_color = e.ForeColor;
 			}			
 							
-			e.Graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (back_color), e.Bounds);
+			e.Graphics.FillRectangle (ResPool.GetSolidBrush (back_color), e.Bounds);
 
 			if (e.Index != -1) {
 				e.Graphics.DrawString (ctrl.GetItemText (ctrl.Items[e.Index]), e.Font,
-					ThemeEngine.Current.ResPool.GetSolidBrush (fore_color),
+					ResPool.GetSolidBrush (fore_color),
 					text_draw, string_format);
 			}
 			
 			if ((e.State & DrawItemState.Focus) == DrawItemState.Focus) {
-				ThemeEngine.Current.CPDrawFocusRectangle (e.Graphics, e.Bounds, fore_color, back_color);
+				CPDrawFocusRectangle (e.Graphics, e.Bounds, fore_color, back_color);
 			}
 
 			string_format.Dispose ();
@@ -916,7 +916,7 @@ namespace System.Windows.Forms
 				modified_area);
 
 			g.DrawString (grid.CaptionText, grid.CaptionFont,
-				ThemeEngine.Current.ResPool.GetSolidBrush (grid.CaptionForeColor),
+				ResPool.GetSolidBrush (grid.CaptionForeColor),
 				grid.grid_drawing.caption_area);		
 		}
 
@@ -1010,7 +1010,7 @@ namespace System.Windows.Forms
 			g.ResetClip ();
 			not_usedarea.Height = grid.grid_drawing.rowshdrs_maxheight - grid.grid_drawing.rowshdrs_area.Height;
 			not_usedarea.Y = grid.grid_drawing.rowshdrs_area.Y + grid.grid_drawing.rowshdrs_area.Height;
-			g.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (grid.BackgroundColor), not_usedarea);
+			g.FillRectangle (ResPool.GetSolidBrush (grid.BackgroundColor), not_usedarea);
 		}
 		
 		public override void DataGridPaintRowHeaderArrow (Graphics g, Rectangle bounds, DataGrid grid) 
@@ -1035,29 +1035,29 @@ namespace System.Windows.Forms
 			arrow[1] = P2;
 			arrow[2] = P3;
 			
-			g.FillPolygon (ThemeEngine.Current.ResPool.GetSolidBrush 
+			g.FillPolygon (ResPool.GetSolidBrush 
 				(grid.CurrentTableStyle.CurrentHeaderForeColor), arrow, FillMode.Winding);
 		}
 
 		public override void DataGridPaintRowHeader (Graphics g, Rectangle bounds, int row, DataGrid grid)
 		{
 			// Background
-			g.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (grid.CurrentTableStyle.CurrentHeaderBackColor),
+			g.FillRectangle (ResPool.GetSolidBrush (grid.CurrentTableStyle.CurrentHeaderBackColor),
 				bounds);
 				
 			if (grid.FlatMode == false) {
 				
 				// Paint Borders
-				g.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorControlLight),
+				g.DrawLine (ResPool.GetPen (ColorControlLight),
 					bounds.X, bounds.Y, bounds.X + bounds.Width, bounds.Y);
 	
-				g.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorControlLight),
+				g.DrawLine (ResPool.GetPen (ColorControlLight),
 					bounds.X, bounds.Y + 1, bounds.X, bounds.Y + bounds.Height - 1);
 	
-				g.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorControlDark),
+				g.DrawLine (ResPool.GetPen (ColorControlDark),
 					bounds.X + bounds.Width - 1, bounds.Y + 1 , bounds.X + bounds.Width - 1, bounds.Y + bounds.Height - 1);
 	
-				g.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorControlDark),
+				g.DrawLine (ResPool.GetPen (ColorControlDark),
 					bounds.X, bounds.Y + bounds.Height -1, bounds.X + bounds.Width, bounds.Y  + bounds.Height -1);
 			}
 
@@ -1072,7 +1072,7 @@ namespace System.Windows.Forms
 	
 					if (grid.is_changing == true) {
 						g.DrawString ("...", grid.Font,
-							ThemeEngine.Current.ResPool.GetSolidBrush (grid.CurrentTableStyle.CurrentHeaderForeColor),
+							ResPool.GetSolidBrush (grid.CurrentTableStyle.CurrentHeaderForeColor),
 							bounds);
 	
 					} else {
@@ -1121,7 +1121,7 @@ namespace System.Windows.Forms
 			not_usedarea.Width = rect_row.Width = cells.Width;
 			not_usedarea.X = cells.X;
 			
-			g.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (grid.BackgroundColor), not_usedarea);
+			g.FillRectangle (ResPool.GetSolidBrush (grid.BackgroundColor), not_usedarea);
 		}
 		
 		public override void DataGridPaintRow (Graphics g, int row, Rectangle row_rect, bool is_newrow, DataGrid grid)
@@ -1163,13 +1163,13 @@ namespace System.Windows.Forms
 
 				if (is_newrow) {
 					grid.CurrentTableStyle.GridColumnStyles[column].PaintNewRow (g, rect_cell, 
-						ThemeEngine.Current.ResPool.GetSolidBrush (backcolor),
-						ThemeEngine.Current.ResPool.GetSolidBrush (forecolor));						
+						ResPool.GetSolidBrush (backcolor),
+						ResPool.GetSolidBrush (forecolor));						
 					
 				} else {
 					grid.CurrentTableStyle.GridColumnStyles[column].Paint (g, rect_cell, grid.ListManager, row,
-						ThemeEngine.Current.ResPool.GetSolidBrush (backcolor),
-						ThemeEngine.Current.ResPool.GetSolidBrush (forecolor),
+						ResPool.GetSolidBrush (backcolor),
+						ResPool.GetSolidBrush (forecolor),
 						grid.RightToLeft == RightToLeft.Yes);
 				}
 
@@ -1183,7 +1183,7 @@ namespace System.Windows.Forms
 				not_usedarea.Width = row_rect.X + row_rect.Width - rect_cell.X - rect_cell.Width;
 				not_usedarea.Y = row_rect.Y;
 				not_usedarea.Height = row_rect.Height;
-				g.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (grid.BackgroundColor),
+				g.FillRectangle (ResPool.GetSolidBrush (grid.BackgroundColor),
 					not_usedarea);
 			}
 		}
@@ -1213,11 +1213,11 @@ namespace System.Windows.Forms
 			// render the date part
 			if (clip_rectangle.IntersectsWith (dtp.date_area_rect)) {
 				// fill the background
-				dc.FillRectangle (ResPool.GetSolidBrush (ThemeEngine.Current.ColorWindow), dtp.date_area_rect);
+				dc.FillRectangle (ResPool.GetSolidBrush (ColorWindow), dtp.date_area_rect);
 				
 				// fill the currently highlighted area
 				if (dtp.hilight_date_area != Rectangle.Empty) {
-					dc.FillRectangle (ResPool.GetSolidBrush (ThemeEngine.Current.ColorHighlight), dtp.hilight_date_area);
+					dc.FillRectangle (ResPool.GetSolidBrush (ColorHighlight), dtp.hilight_date_area);
 				}
 				
 				// draw the text part
@@ -1382,23 +1382,23 @@ namespace System.Windows.Forms
 			StringFormat string_format = ctrl.GetFormatString ();
 			
 			if ((e.State & DrawItemState.Selected) == DrawItemState.Selected) {
-				back_color = ThemeEngine.Current.ColorHighlight;
-				fore_color = ThemeEngine.Current.ColorHighlightText;
+				back_color = ColorHighlight;
+				fore_color = ColorHighlightText;
 			}
 			else {
 				back_color = e.BackColor;
 				fore_color = e.ForeColor;
 			}
 			
-			e.Graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush
+			e.Graphics.FillRectangle (ResPool.GetSolidBrush
 				(back_color), e.Bounds);
 
 			e.Graphics.DrawString (ctrl.GetItemText (ctrl.Items[e.Index]), e.Font,
-				ThemeEngine.Current.ResPool.GetSolidBrush (fore_color),
+				ResPool.GetSolidBrush (fore_color),
 				e.Bounds.X, e.Bounds.Y, string_format);
 					
 			if ((e.State & DrawItemState.Focus) == DrawItemState.Focus) {
-				ThemeEngine.Current.CPDrawFocusRectangle (e.Graphics, e.Bounds,
+				CPDrawFocusRectangle (e.Graphics, e.Bounds,
 					fore_color, back_color);
 			}
 		}
@@ -1494,7 +1494,7 @@ namespace System.Windows.Forms
 									   (col.Pressed ?
 									    ButtonState.Pushed :
 									    ButtonState.Normal));
-							dc.DrawString (col.Text, ThemeEngine.Current.DefaultFont,
+							dc.DrawString (col.Text, DefaultFont,
 								       ResPool.GetSolidBrush
 								       (this.ColorControlText),
 									rect.X + 3,
@@ -1508,7 +1508,7 @@ namespace System.Windows.Forms
 							Rectangle rect = col.Rect;
 							rect.X -= control.h_marker;
 							this.CPDrawButton (dc, rect, ButtonState.Flat);
-							dc.DrawString (col.Text, ThemeEngine.Current.DefaultFont,
+							dc.DrawString (col.Text, DefaultFont,
 								       ResPool.GetSolidBrush
 								       (this.ColorControlText),
 									rect.X + 3,
@@ -1769,25 +1769,25 @@ namespace System.Windows.Forms
 				return;
 			} else {		
 				SizeF size;
-				size =  dc.MeasureString (item.Text, ThemeEngine.Current.MenuFont);
+				size =  dc.MeasureString (item.Text, MenuFont);
 				item.Width = (int) size.Width;
 				item.Height = (int) size.Height;
 	
 				if (!menuBar) {
 					if (item.Shortcut != Shortcut.None && item.ShowShortcut) {
-						item.XTab = ThemeEngine.Current.MenuCheckSize.Width + MENU_TAB_SPACE + (int) size.Width;
-						size =  dc.MeasureString (" " + item.GetShortCutText (), ThemeEngine.Current.MenuFont);
+						item.XTab = MenuCheckSize.Width + MENU_TAB_SPACE + (int) size.Width;
+						size =  dc.MeasureString (" " + item.GetShortCutText (), MenuFont);
 						item.Width += MENU_TAB_SPACE + (int) size.Width;
 					}
 	
-					item.Width += 4 + (ThemeEngine.Current.MenuCheckSize.Width * 2);
+					item.Width += 4 + (MenuCheckSize.Width * 2);
 				} else {
 					item.Width += MENU_BAR_ITEMS_SPACE;
 					x += item.Width;
 				}
 	
-				if (item.Height < ThemeEngine.Current.MenuHeight)
-					item.Height = ThemeEngine.Current.MenuHeight;
+				if (item.Height < MenuHeight)
+					item.Height = MenuHeight;
 			}
 		}
 		
@@ -1868,7 +1868,7 @@ namespace System.Windows.Forms
 		public override void DrawMenuBar (Graphics dc, Menu menu, Rectangle rect)
 		{
 			if (menu.Height == 0)
-				ThemeEngine.Current.CalcMenuBarSize (dc, menu, rect.Width);
+				CalcMenuBarSize (dc, menu, rect.Width);
 				
 			bool keynav = (menu as MainMenu).tracker.Navigating;
 			HotkeyPrefix hp = always_draw_hotkeys || keynav ? HotkeyPrefix.Show : HotkeyPrefix.Hide;
@@ -1876,7 +1876,7 @@ namespace System.Windows.Forms
 			string_format_menu_text.HotkeyPrefix = hp;
 
 			rect.Height = menu.Height;
-			dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush(ThemeEngine.Current.ColorMenu), rect);
+			dc.FillRectangle (ResPool.GetSolidBrush(ColorMenu), rect);
 						
 			for (int i = 0; i < menu.MenuItems.Count; i++) {
 				MenuItem item = menu.MenuItems [i];
@@ -1884,7 +1884,7 @@ namespace System.Windows.Forms
 				item_rect.X += rect.X;
 				item_rect.Y += rect.Y;
 				item.MenuHeight = menu.Height;
-				item.PerformDrawItem (new DrawItemEventArgs (dc, ThemeEngine.Current.MenuFont, item_rect, i, item.Status));			
+				item.PerformDrawItem (new DrawItemEventArgs (dc, MenuFont, item_rect, i, item.Status));			
 			}				
 		}		
 		
@@ -1902,17 +1902,17 @@ namespace System.Windows.Forms
 				string_format = string_format_menu_text;
 
 			if (item.Separator == true) {
-				e.Graphics.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorControlDark),
+				e.Graphics.DrawLine (ResPool.GetPen (ColorControlDark),
 					e.Bounds.X, e.Bounds.Y, e.Bounds.X + e.Bounds.Width, e.Bounds.Y);
 
-				e.Graphics.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorControlLight),
+				e.Graphics.DrawLine (ResPool.GetPen (ColorControlLight),
 					e.Bounds.X, e.Bounds.Y + 1, e.Bounds.X + e.Bounds.Width, e.Bounds.Y + 1);
 
 				return;
 			}
 
 			if (!item.MenuBar)
-				rect_text.X += ThemeEngine.Current.MenuCheckSize.Width;
+				rect_text.X += MenuCheckSize.Width;
 
 			if (item.BarBreak) { /* Draw vertical break bar*/
 				Rectangle rect = e.Bounds;
@@ -1920,10 +1920,10 @@ namespace System.Windows.Forms
 	        		rect.Width = 3;
 	        		rect.Height = item.MenuHeight - 6;
 
-				e.Graphics.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorControlDark),
+				e.Graphics.DrawLine (ResPool.GetPen (ColorControlDark),
 					rect.X, rect.Y , rect.X, rect.Y + rect.Height);
 
-				e.Graphics.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorControlLight),
+				e.Graphics.DrawLine (ResPool.GetPen (ColorControlLight),
 					rect.X + 1, rect.Y , rect.X +1, rect.Y + rect.Height);
 			}			
 			
@@ -1931,22 +1931,22 @@ namespace System.Windows.Forms
 			Color color_back;
 			
 			if ((e.State & DrawItemState.Selected) == DrawItemState.Selected) {
-				color_text = ThemeEngine.Current.ColorHighlightText;
-				color_back = ThemeEngine.Current.ColorHighlight;
+				color_text = ColorHighlightText;
+				color_back = ColorHighlight;
 			} else {
-				color_text = ThemeEngine.Current.ColorMenuText;
-				color_back = ThemeEngine.Current.ColorMenu;
+				color_text = ColorMenuText;
+				color_back = ColorMenu;
 			}
 
 			/* Draw background */
 			Rectangle rect_back = e.Bounds;
 			rect_back.X++;
 			rect_back.Width -=2;
-			e.Graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (color_back), rect_back);
+			e.Graphics.FillRectangle (ResPool.GetSolidBrush (color_back), rect_back);
 			
 			if (item.Enabled) {
 				e.Graphics.DrawString (item.Text, e.Font,
-					ThemeEngine.Current.ResPool.GetSolidBrush (color_text),
+					ResPool.GetSolidBrush (color_text),
 					rect_text, string_format);
 
 				if (!item.MenuBar && item.Shortcut != Shortcut.None && item.ShowShortcut) {
@@ -1955,7 +1955,7 @@ namespace System.Windows.Forms
 					rect.X = item.XTab;
 					rect.Width -= item.XTab;
 
-					e.Graphics.DrawString (str, e.Font, ThemeEngine.Current.ResPool.GetSolidBrush (color_text),
+					e.Graphics.DrawString (str, e.Font, ResPool.GetSolidBrush (color_text),
 						rect, string_format_menu_shortcut);
 				}
 			} else {
@@ -1966,8 +1966,8 @@ namespace System.Windows.Forms
 			/* Draw arrow */
 			if (item.MenuBar == false && item.IsPopup || item.MdiList) {
 
-				int cx = ThemeEngine.Current.MenuCheckSize.Width;
-				int cy = ThemeEngine.Current.MenuCheckSize.Height;
+				int cx = MenuCheckSize.Width;
+				int cy = MenuCheckSize.Height;
 				Bitmap	bmp = new Bitmap (cx, cy);
 				Graphics gr = Graphics.FromImage (bmp);
 				Rectangle rect_arrow = new Rectangle (0, 0, cx, cy);
@@ -1990,8 +1990,8 @@ namespace System.Windows.Forms
 			if (item.MenuBar == false && item.Checked) {
 
 				Rectangle area = e.Bounds;
-				int cx = ThemeEngine.Current.MenuCheckSize.Width;
-				int cy = ThemeEngine.Current.MenuCheckSize.Height;
+				int cx = MenuCheckSize.Width;
+				int cy = MenuCheckSize.Height;
 				Bitmap	bmp = new Bitmap (cx, cy);
 				Graphics gr = Graphics.FromImage (bmp);
 				Rectangle rect_arrow = new Rectangle (0, 0, cx, cy);
@@ -2012,33 +2012,33 @@ namespace System.Windows.Forms
 		public override void DrawPopupMenu (Graphics dc, Menu menu, Rectangle cliparea, Rectangle rect)
 		{
 
-			dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush
-				(ThemeEngine.Current.ColorMenu), cliparea);
+			dc.FillRectangle (ResPool.GetSolidBrush
+				(ColorMenu), cliparea);
 
 			/* Draw menu borders */
-			dc.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorHighlightText),
+			dc.DrawLine (ResPool.GetPen (ColorHighlightText),
 				rect.X, rect.Y, rect.X + rect.Width, rect.Y);
 
-			dc.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorHighlightText),
+			dc.DrawLine (ResPool.GetPen (ColorHighlightText),
 				rect.X, rect.Y, rect.X, rect.Y + rect.Height);
 
-			dc.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorControlDark),
+			dc.DrawLine (ResPool.GetPen (ColorControlDark),
 				rect.X + rect.Width - 1 , rect.Y , rect.X + rect.Width - 1, rect.Y + rect.Height);
 
-			dc.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorControlDarkDark),
+			dc.DrawLine (ResPool.GetPen (ColorControlDarkDark),
 				rect.X + rect.Width, rect.Y , rect.X + rect.Width, rect.Y + rect.Height);
 
-			dc.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorControlDark),
+			dc.DrawLine (ResPool.GetPen (ColorControlDark),
 				rect.X , rect.Y + rect.Height - 1 , rect.X + rect.Width - 1, rect.Y + rect.Height -1);
 
-			dc.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorControlDarkDark),
+			dc.DrawLine (ResPool.GetPen (ColorControlDarkDark),
 				rect.X , rect.Y + rect.Height, rect.X + rect.Width - 1, rect.Y + rect.Height);
 
 			for (int i = 0; i < menu.MenuItems.Count; i++)
 				if (cliparea.IntersectsWith (menu.MenuItems [i].bounds)) {
 					MenuItem item = menu.MenuItems [i];
 					item.MenuHeight = menu.Height;
-					item.PerformDrawItem (new DrawItemEventArgs (dc, ThemeEngine.Current.MenuFont,
+					item.PerformDrawItem (new DrawItemEventArgs (dc, MenuFont,
 						item.bounds, i, item.Status));
 			}
 		}
@@ -2828,7 +2828,7 @@ namespace System.Windows.Forms
 			} 
 			
 			/* Place the text; to be compatible with Windows place it after the radiobutton has been drawn */			
-			dc.DrawString (radio_button.Text, radio_button.Font, ThemeEngine.Current.ResPool.GetSolidBrush (radio_button.ForeColor), text_rectangle, text_format);
+			dc.DrawString (radio_button.Text, radio_button.Font, ResPool.GetSolidBrush (radio_button.ForeColor), text_rectangle, text_format);
 			
 			if (radio_button.Enabled) {
 				sb = ResPool.GetSolidBrush(radio_button.ForeColor);
@@ -3501,11 +3501,11 @@ namespace System.Windows.Forms
 					int ho = interior.Height / 2;
 					dc.TranslateTransform (interior.X + wo, interior.Y + ho);
 					dc.RotateTransform (180);
-					dc.DrawString (page.Text, page.Font, ThemeEngine.Current.ResPool.GetSolidBrush (SystemColors.ControlText), 0, 0, string_format);
+					dc.DrawString (page.Text, page.Font, ResPool.GetSolidBrush (SystemColors.ControlText), 0, 0, string_format);
 					dc.ResetTransform ();
 				} else {
 					dc.DrawString (page.Text, page.Font,
-							ThemeEngine.Current.ResPool.GetSolidBrush (SystemColors.ControlText),
+							ResPool.GetSolidBrush (SystemColors.ControlText),
 							interior, string_format);
 				}
 			} else if (page.Text != null) {
@@ -3674,7 +3674,7 @@ namespace System.Windows.Forms
 							button.Parent.ImageList.Draw (dc, imgRect.X, imgRect.Y, imgRect.Width, 
 								imgRect.Height, button.ImageIndex);
 						else {
-							dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (ColorGrayText), imgRect);
+							dc.FillRectangle (ResPool.GetSolidBrush (ColorGrayText), imgRect);
 							ControlPaint.DrawBorder3D (dc, imgRect, Border3DStyle.SunkenOuter,
 								Border3DSide.Right | Border3DSide.Bottom);
 						}
@@ -3692,7 +3692,7 @@ namespace System.Windows.Forms
 							button.Parent.ImageList.Draw (dc, imgRect.X, imgRect.Y, imgRect.Width,
 								imgRect.Height, button.ImageIndex);
 						else {
-							dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (ColorGrayText), imgRect);
+							dc.FillRectangle (ResPool.GetSolidBrush (ColorGrayText), imgRect);
 							ControlPaint.DrawBorder3D (dc, imgRect, Border3DStyle.SunkenOuter,
 								Border3DSide.Right | Border3DSide.Bottom);
 						}
@@ -3711,7 +3711,7 @@ namespace System.Windows.Forms
 							button.Parent.ImageList.Draw (dc, imgRect.X, imgRect.Y, imgRect.Width,
 								imgRect.Height, button.ImageIndex);
 						else {
-							dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (ColorGrayText), imgRect);
+							dc.FillRectangle (ResPool.GetSolidBrush (ColorGrayText), imgRect);
 							CPDrawBorder3D (dc, imgRect, Border3DStyle.SunkenOuter,
 								Border3DSide.Right | Border3DSide.Bottom, ColorControl);
 						}
@@ -3730,7 +3730,7 @@ namespace System.Windows.Forms
 							button.Parent.ImageList.Draw (dc, imgRect.X, imgRect.Y, imgRect.Width,
 								imgRect.Height, button.ImageIndex);
 						else {
-							dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (ColorGrayText), imgRect);
+							dc.FillRectangle (ResPool.GetSolidBrush (ColorGrayText), imgRect);
 							CPDrawBorder3D (dc, imgRect, Border3DStyle.SunkenOuter,
 								Border3DSide.Right | Border3DSide.Bottom, ColorControl);
 						}
@@ -3764,7 +3764,7 @@ namespace System.Windows.Forms
 						button.Parent.ImageList.Draw (dc, imgRect.X, imgRect.Y, imgRect.Width, imgRect.Height,
 							button.ImageIndex);
 					else {
-						dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (ColorGrayText), imgRect);
+						dc.FillRectangle (ResPool.GetSolidBrush (ColorGrayText), imgRect);
 						CPDrawBorder3D (dc, imgRect, Border3DStyle.SunkenOuter,
 							Border3DSide.Right | Border3DSide.Bottom, ColorControl);
 					}
@@ -4739,7 +4739,7 @@ namespace System.Windows.Forms
 			} else {
 				pen=new Pen(Color.White, 1);
 				if (enabled==true) {
-					sb=ThemeEngine.Current.ResPool.GetSolidBrush (Color.Black);
+					sb=ResPool.GetSolidBrush (Color.Black);
 				} else {
 					sb=ResPool.GetSolidBrush (ColorControl);
 				}
@@ -4960,8 +4960,6 @@ namespace System.Windows.Forms
 
 		/* Scroll button: regular button + direction arrow */
 		public override void CPDrawScrollButton (Graphics dc, Rectangle area, ScrollButton type, ButtonState state) {
-			bool enabled = (state == ButtonState.Inactive) ? false: true;			
-					
 			DrawScrollButtonPrimitive (dc, area, state);
 
 			// A lot of the following is adapted from the rewind project
@@ -5061,7 +5059,7 @@ namespace System.Windows.Forms
 		public  override void CPDrawStringDisabled (Graphics graphics, string s, Font font, Color color, RectangleF layoutRectangle,
 			StringFormat format) {			
 
-			graphics.DrawString(s, font, ResPool.GetSolidBrush (ThemeEngine.Current.ColorGrayText), layoutRectangle, format);
+			graphics.DrawString(s, font, ResPool.GetSolidBrush (ColorGrayText), layoutRectangle, format);
 			
 		}
 
@@ -5258,7 +5256,7 @@ namespace System.Windows.Forms
 			still look like MS's scaled caption buttons. (as opposed to scaling a bitmap)
 		*/
 
-		private static void DrawCaptionHelper(Graphics graphics, Color color, Pen pen, int lineWidth, int shift, Rectangle captionRect, CaptionButton button) {
+		private void DrawCaptionHelper(Graphics graphics, Color color, Pen pen, int lineWidth, int shift, Rectangle captionRect, CaptionButton button) {
 			switch(button) {
 			case CaptionButton.Close: {
 				pen.StartCap=LineCap.Triangle;
@@ -5281,7 +5279,7 @@ namespace System.Windows.Forms
 				sf.LineAlignment=StringAlignment.Center;
 
 
-				graphics.DrawString("?", font, ThemeEngine.Current.ResPool.GetSolidBrush (color), captionRect.X+captionRect.Width/2+shift, captionRect.Y+captionRect.Height/2+shift+lineWidth/2, sf);
+				graphics.DrawString("?", font, ResPool.GetSolidBrush (color), captionRect.X+captionRect.Width/2+shift, captionRect.Y+captionRect.Height/2+shift+lineWidth/2, sf);
 
 				sf.Dispose();				
 				font.Dispose();

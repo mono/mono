@@ -257,7 +257,7 @@ namespace System.Windows.Forms
 			}
 			else
 			{
-				dc.DrawRectangle( ResPool.GetPen( ThemeEngine.Current.ColorWindowFrame ), cl.X, cl.Y, cl.Width - 1, cl.Height - 1 );
+				dc.DrawRectangle( ResPool.GetPen( ColorWindowFrame ), cl.X, cl.Y, cl.Width - 1, cl.Height - 1 );
 			}
 		}		
 		#endregion ComboBox
@@ -282,17 +282,17 @@ namespace System.Windows.Forms
 			
 			if ( item.Separator )
 			{
-				e.Graphics.DrawLine( ThemeEngine.Current.ResPool.GetPen( BorderColor ),
+				e.Graphics.DrawLine( ResPool.GetPen( BorderColor ),
 						    e.Bounds.X, e.Bounds.Y, e.Bounds.X + e.Bounds.Width, e.Bounds.Y );
 				
-				e.Graphics.DrawLine( ThemeEngine.Current.ResPool.GetPen( Color.White ),
+				e.Graphics.DrawLine( ResPool.GetPen( Color.White ),
 						    e.Bounds.X + 1, e.Bounds.Y + 1, e.Bounds.X + e.Bounds.Width, e.Bounds.Y + 1 );
 				
 				return;
 			}
 			
 			if ( !item.MenuBar )
-				rect_text.X += ThemeEngine.Current.MenuCheckSize.Width;
+				rect_text.X += MenuCheckSize.Width;
 			
 			if ( item.BarBreak )
 			{ /* Draw vertical break bar*/
@@ -301,14 +301,14 @@ namespace System.Windows.Forms
 	        		rect.Width = 3;
 	        		rect.Height = item.MenuHeight - 6;
 				
-				e.Graphics.DrawLine( ThemeEngine.Current.ResPool.GetPen( LightColor ),
+				e.Graphics.DrawLine( ResPool.GetPen( LightColor ),
 						    rect.X, rect.Y , rect.X, rect.Y + rect.Height );
 				
-				e.Graphics.DrawLine( ThemeEngine.Current.ResPool.GetPen( ThemeEngine.Current.ColorControlLight ),
+				e.Graphics.DrawLine( ResPool.GetPen( ColorControlLight ),
 						    rect.X + 1, rect.Y , rect.X + 1, rect.Y + rect.Height );
 			}
 			
-			Color color_text = ThemeEngine.Current.ColorMenuText;
+			Color color_text = ColorMenuText;
 			Color color_back;
 			
 			/* Draw background */
@@ -318,7 +318,7 @@ namespace System.Windows.Forms
 			
 			if ( ( e.State & DrawItemState.Selected ) == DrawItemState.Selected )
 			{
-				color_text = ThemeEngine.Current.ColorMenuText;
+				color_text = ColorMenuText;
 				color_back = NormalColor;
 				
 				using ( LinearGradientBrush lgbr = new LinearGradientBrush( new Point( rect_back.X, rect_back.Y ), new Point( rect_back.Right, rect_back.Y ), Color.White, NormalColor ) )//NormalColor, Color.White ) )
@@ -331,16 +331,16 @@ namespace System.Windows.Forms
 			}
 			else
 			{
-				color_text = ThemeEngine.Current.ColorMenuText;
+				color_text = ColorMenuText;
 				color_back = NiceBackColor;
 				
-				e.Graphics.FillRectangle( ThemeEngine.Current.ResPool.GetSolidBrush( NiceBackColor ), rect_back );
+				e.Graphics.FillRectangle( ResPool.GetSolidBrush( NiceBackColor ), rect_back );
 			}
 			
 			if ( item.Enabled )
 			{
 				e.Graphics.DrawString( item.Text, e.Font,
-						      ThemeEngine.Current.ResPool.GetSolidBrush( color_text ),
+						      ResPool.GetSolidBrush( color_text ),
 						      rect_text, string_format );
 				
 				if ( !item.MenuBar && item.Shortcut != Shortcut.None && item.ShowShortcut )
@@ -350,7 +350,7 @@ namespace System.Windows.Forms
 					rect.X = item.XTab;
 					rect.Width -= item.XTab;
 					
-					e.Graphics.DrawString( str, e.Font, ThemeEngine.Current.ResPool.GetSolidBrush( color_text ),
+					e.Graphics.DrawString( str, e.Font, ResPool.GetSolidBrush( color_text ),
 							      rect, string_format_menu_shortcut );
 				}
 			}
@@ -363,8 +363,8 @@ namespace System.Windows.Forms
 			/* Draw arrow */
 			if ( item.MenuBar == false && item.IsPopup )
 			{
-				int cx = ThemeEngine.Current.MenuCheckSize.Width;
-				int cy = ThemeEngine.Current.MenuCheckSize.Height;
+				int cx = MenuCheckSize.Width;
+				int cy = MenuCheckSize.Height;
 				using ( Bitmap	bmp = new Bitmap( cx, cy ) )
 				{
 					using ( Graphics dc = Graphics.FromImage( bmp ) )
@@ -397,8 +397,8 @@ namespace System.Windows.Forms
 			{
 				
 				Rectangle area = e.Bounds;
-				int cx = ThemeEngine.Current.MenuCheckSize.Width;
-				int cy = ThemeEngine.Current.MenuCheckSize.Height;
+				int cx = MenuCheckSize.Width;
+				int cy = MenuCheckSize.Height;
 				using ( Bitmap bmp = new Bitmap( cx, cy ) )
 				{
 					using ( Graphics gr = Graphics.FromImage( bmp ) )
@@ -420,33 +420,33 @@ namespace System.Windows.Forms
 		public override void DrawPopupMenu (Graphics dc, Menu menu, Rectangle cliparea, Rectangle rect)
 		{
 			
-			dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush
+			dc.FillRectangle (ResPool.GetSolidBrush
 					  (NiceBackColor), cliparea);
 			
 			/* Draw menu borders */
-			dc.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorHighlightText),
+			dc.DrawLine (ResPool.GetPen (ColorHighlightText),
 				     rect.X, rect.Y, rect.X + rect.Width, rect.Y);
 			
-			dc.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorHighlightText),
+			dc.DrawLine (ResPool.GetPen (ColorHighlightText),
 				     rect.X, rect.Y, rect.X, rect.Y + rect.Height);
 			
-			dc.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorControlDark),
+			dc.DrawLine (ResPool.GetPen (ColorControlDark),
 				     rect.X + rect.Width - 1 , rect.Y , rect.X + rect.Width - 1, rect.Y + rect.Height);
 			
-			dc.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorControlDarkDark),
+			dc.DrawLine (ResPool.GetPen (ColorControlDarkDark),
 				     rect.X + rect.Width, rect.Y , rect.X + rect.Width, rect.Y + rect.Height);
 			
-			dc.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorControlDark),
+			dc.DrawLine (ResPool.GetPen (ColorControlDark),
 				     rect.X , rect.Y + rect.Height - 1 , rect.X + rect.Width - 1, rect.Y + rect.Height -1);
 			
-			dc.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorControlDarkDark),
+			dc.DrawLine (ResPool.GetPen (ColorControlDarkDark),
 				     rect.X , rect.Y + rect.Height, rect.X + rect.Width - 1, rect.Y + rect.Height);
 			
 			for (int i = 0; i < menu.MenuItems.Count; i++)
 				if (cliparea.IntersectsWith (menu.MenuItems [i].bounds)) {
 					MenuItem item = menu.MenuItems [i];
 					item.MenuHeight = menu.Height;
-					item.PerformDrawItem (new DrawItemEventArgs (dc, ThemeEngine.Current.MenuFont,
+					item.PerformDrawItem (new DrawItemEventArgs (dc, MenuFont,
 										     item.bounds, i, item.Status));
 				}
 		}
@@ -823,7 +823,7 @@ namespace System.Windows.Forms
 				string_format.FormatFlags = StringFormatFlags.NoWrap;
 				
 				interior.Y++;
-				dc.DrawString( page.Text, page.Font, ThemeEngine.Current.ResPool.GetSolidBrush( SystemColors.ControlText ), interior, string_format );
+				dc.DrawString( page.Text, page.Font, ResPool.GetSolidBrush( SystemColors.ControlText ), interior, string_format );
 				interior.Y--;
 			}
 			else
@@ -868,7 +868,7 @@ namespace System.Windows.Forms
 							string_format.LineAlignment = StringAlignment.Center;
 							string_format.FormatFlags = StringFormatFlags.NoWrap;
 							interior.Y++;
-							dc.DrawString( page.Text, page.Font, ThemeEngine.Current.ResPool.GetSolidBrush( SystemColors.ControlText ), interior, string_format );
+							dc.DrawString( page.Text, page.Font, ResPool.GetSolidBrush( SystemColors.ControlText ), interior, string_format );
 							interior.Y--;
 						}
 						
@@ -908,7 +908,7 @@ namespace System.Windows.Forms
 							string_format.LineAlignment = StringAlignment.Center;
 							string_format.FormatFlags = StringFormatFlags.NoWrap;
 							interior.Y++;
-							dc.DrawString( page.Text, page.Font, ThemeEngine.Current.ResPool.GetSolidBrush( SystemColors.ControlText ), interior, string_format );
+							dc.DrawString( page.Text, page.Font, ResPool.GetSolidBrush( SystemColors.ControlText ), interior, string_format );
 							interior.Y--;
 						}
 						
@@ -953,7 +953,7 @@ namespace System.Windows.Forms
 							int ho = interior.Height / 2;
 							dc.TranslateTransform( interior.X + wo, interior.Y + ho );
 							dc.RotateTransform( 180 );
-							dc.DrawString( page.Text, page.Font, ThemeEngine.Current.ResPool.GetSolidBrush( SystemColors.ControlText ), 0, 0, string_format );
+							dc.DrawString( page.Text, page.Font, ResPool.GetSolidBrush( SystemColors.ControlText ), 0, 0, string_format );
 							dc.ResetTransform( );
 						}
 						
@@ -995,7 +995,7 @@ namespace System.Windows.Forms
 							string_format.FormatFlags = StringFormatFlags.NoWrap;
 							string_format.FormatFlags = StringFormatFlags.DirectionVertical;
 							interior.X++;
-							dc.DrawString( page.Text, page.Font, ThemeEngine.Current.ResPool.GetSolidBrush( SystemColors.ControlText ), interior, string_format );
+							dc.DrawString( page.Text, page.Font, ResPool.GetSolidBrush( SystemColors.ControlText ), interior, string_format );
 							interior.X--;
 						}
 						

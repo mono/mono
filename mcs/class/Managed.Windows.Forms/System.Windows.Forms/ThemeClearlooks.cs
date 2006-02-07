@@ -553,17 +553,17 @@ namespace System.Windows.Forms {
 			}
 			
 			if ( item.Separator ) {
-				e.Graphics.DrawLine( ThemeEngine.Current.ResPool.GetPen( menu_separator_color ),
+				e.Graphics.DrawLine( ResPool.GetPen( menu_separator_color ),
 						    e.Bounds.X, e.Bounds.Y + 1, e.Bounds.X + e.Bounds.Right - 4, e.Bounds.Y + 1 );
 				
-				e.Graphics.DrawLine( ThemeEngine.Current.ResPool.GetPen( Color.White ),
+				e.Graphics.DrawLine( ResPool.GetPen( Color.White ),
 						    e.Bounds.X, e.Bounds.Y + 2, e.Bounds.X + e.Bounds.Right - 4, e.Bounds.Y + 2 );
 				
 				return;
 			}
 			
 			if ( !item.MenuBar )
-				rect_text.X += ThemeEngine.Current.MenuCheckSize.Width;
+				rect_text.X += MenuCheckSize.Width;
 			
 			if ( item.BarBreak ) { /* Draw vertical break bar*/
 				Rectangle rect = e.Bounds;
@@ -571,14 +571,14 @@ namespace System.Windows.Forms {
 	        		rect.Width = 3;
 	        		rect.Height = item.MenuHeight - 6;
 				
-				e.Graphics.DrawLine( ThemeEngine.Current.ResPool.GetPen( menu_separator_color ),
+				e.Graphics.DrawLine( ResPool.GetPen( menu_separator_color ),
 						    rect.X, rect.Y , rect.X, rect.Y + rect.Height );
 				
-				e.Graphics.DrawLine( ThemeEngine.Current.ResPool.GetPen( ThemeEngine.Current.ColorControlLight ),
+				e.Graphics.DrawLine( ResPool.GetPen( ColorControlLight ),
 						    rect.X + 1, rect.Y , rect.X + 1, rect.Y + rect.Height );
 			}
 			
-			Color color_text = ThemeEngine.Current.ColorMenuText;
+			Color color_text = ColorMenuText;
 			Color color_back;
 			
 			/* Draw background */
@@ -587,7 +587,7 @@ namespace System.Windows.Forms {
 			rect_back.Width -= 2;
 			
 			if ( ( e.State & DrawItemState.Selected ) == DrawItemState.Selected ) {
-				color_text = ThemeEngine.Current.ColorHighlightText;
+				color_text = ColorHighlightText;
 				color_back = item.MenuBar ? theme_back_color : menu_background_color;
 				
 				using ( LinearGradientBrush lgbr = new LinearGradientBrush( new Point( rect_back.X, rect_back.Y + 1 ), new Point( rect_back.X, rect_back.Bottom - 1 ), menuitem_gradient_first_color, menuitem_gradient_second_color ) ) {
@@ -601,15 +601,15 @@ namespace System.Windows.Forms {
 				e.Graphics.DrawLine( tmp_pen, rect_back.Right - 1, rect_back.Bottom, rect_back.X + 1, rect_back.Bottom );
 				e.Graphics.DrawLine( tmp_pen, rect_back.X, rect_back.Bottom - 1, rect_back.X, rect_back.Y + 1 );
 			} else {
-				color_text = ThemeEngine.Current.ColorMenuText;
+				color_text = ColorMenuText;
 				color_back = item.MenuBar ? theme_back_color : menu_background_color;
 				
-				e.Graphics.FillRectangle( ThemeEngine.Current.ResPool.GetSolidBrush( color_back ), rect_back );
+				e.Graphics.FillRectangle( ResPool.GetSolidBrush( color_back ), rect_back );
 			}
 			
 			if ( item.Enabled ) {
 				e.Graphics.DrawString( item.Text, e.Font,
-						      ThemeEngine.Current.ResPool.GetSolidBrush( color_text ),
+						      ResPool.GetSolidBrush( color_text ),
 						      rect_text, string_format );
 				
 				if ( !item.MenuBar && item.Shortcut != Shortcut.None && item.ShowShortcut ) {
@@ -618,7 +618,7 @@ namespace System.Windows.Forms {
 					rect.X = item.XTab;
 					rect.Width -= item.XTab;
 					
-					e.Graphics.DrawString( str, e.Font, ThemeEngine.Current.ResPool.GetSolidBrush( color_text ),
+					e.Graphics.DrawString( str, e.Font, ResPool.GetSolidBrush( color_text ),
 							      rect, string_format_menu_shortcut );
 				}
 			} else {
@@ -628,8 +628,8 @@ namespace System.Windows.Forms {
 			
 			/* Draw arrow */
 			if ( item.MenuBar == false && item.IsPopup ) {
-				int cx = ThemeEngine.Current.MenuCheckSize.Width;
-				int cy = ThemeEngine.Current.MenuCheckSize.Height;
+				int cx = MenuCheckSize.Width;
+				int cy = MenuCheckSize.Height;
 				using ( Bitmap	bmp = new Bitmap( cx, cy ) ) {
 					using ( Graphics dc = Graphics.FromImage( bmp ) ) {
 						SmoothingMode old_smoothing_mode = dc.SmoothingMode;
@@ -656,8 +656,8 @@ namespace System.Windows.Forms {
 			if ( item.MenuBar == false && item.Checked ) {
 				
 				Rectangle area = e.Bounds;
-				int cx = ThemeEngine.Current.MenuCheckSize.Width;
-				int cy = ThemeEngine.Current.MenuCheckSize.Height;
+				int cx = MenuCheckSize.Width;
+				int cy = MenuCheckSize.Height;
 				using ( Bitmap bmp = new Bitmap( cx, cy ) ) {
 					using ( Graphics gr = Graphics.FromImage( bmp ) ) {
 						Rectangle rect_arrow = new Rectangle( 0, 0, cx, cy );
@@ -676,7 +676,7 @@ namespace System.Windows.Forms {
 		
 		public override void DrawPopupMenu( Graphics dc, Menu menu, Rectangle cliparea, Rectangle rect ) {
 			
-			dc.FillRectangle( ThemeEngine.Current.ResPool.GetSolidBrush
+			dc.FillRectangle( ResPool.GetSolidBrush
 					 ( menu_background_color ), cliparea );
 			
 			/* Draw menu borders */
@@ -695,7 +695,7 @@ namespace System.Windows.Forms {
 				if ( cliparea.IntersectsWith( menu.MenuItems[ i ].bounds ) ) {
 					MenuItem item = menu.MenuItems[ i ];
 					item.MenuHeight = menu.Height;
-					item.PerformDrawItem( new DrawItemEventArgs( dc, ThemeEngine.Current.MenuFont,
+					item.PerformDrawItem( new DrawItemEventArgs( dc, MenuFont,
 										    item.bounds, i, item.Status ) );
 				}
 		}
@@ -1478,11 +1478,11 @@ namespace System.Windows.Forms {
 					int ho = interior.Height / 2;
 					dc.TranslateTransform (interior.X + wo, interior.Y + ho);
 					dc.RotateTransform (180);
-					dc.DrawString (page.Text, page.Font, ThemeEngine.Current.ResPool.GetSolidBrush (SystemColors.ControlText), 0, 0, string_format);
+					dc.DrawString (page.Text, page.Font, ResPool.GetSolidBrush (SystemColors.ControlText), 0, 0, string_format);
 					dc.ResetTransform ();
 				} else {
 					dc.DrawString (page.Text, page.Font,
-						       ThemeEngine.Current.ResPool.GetSolidBrush (SystemColors.ControlText),
+						       ResPool.GetSolidBrush (SystemColors.ControlText),
 						       interior, string_format);
 				}
 			} else if (page.Text != null) {
@@ -2669,11 +2669,11 @@ namespace System.Windows.Forms {
 				// fill the background
 				Rectangle date_area_rect = new Rectangle( dtp.date_area_rect.X + 1, dtp.date_area_rect.Y + 1,
 									 dtp.date_area_rect.Width - 2,  dtp.date_area_rect.Height - 2);
-				dc.FillRectangle (ResPool.GetSolidBrush (ThemeEngine.Current.ColorWindow), date_area_rect);
+				dc.FillRectangle (ResPool.GetSolidBrush (ColorWindow), date_area_rect);
 				
 				// fill the currently highlighted area
 				if (dtp.hilight_date_area != Rectangle.Empty) {
-					dc.FillRectangle (ResPool.GetSolidBrush (ThemeEngine.Current.ColorHighlight), dtp.hilight_date_area);
+					dc.FillRectangle (ResPool.GetSolidBrush (ColorHighlight), dtp.hilight_date_area);
 				}
 				
 				// draw the text part
@@ -3316,7 +3316,7 @@ namespace System.Windows.Forms {
 		public  override void CPDrawStringDisabled( Graphics graphics, string s, Font font, Color color, RectangleF layoutRectangle,
 							   StringFormat format ) {			
 			
-			graphics.DrawString( s, font, ResPool.GetSolidBrush( ThemeEngine.Current.ColorGrayText), layoutRectangle, format );			
+			graphics.DrawString( s, font, ResPool.GetSolidBrush( ColorGrayText), layoutRectangle, format );			
 			
 		}
 		

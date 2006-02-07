@@ -1,3 +1,8 @@
+2006-02-07  Mike Kestner  <mkestner@novell.com>
+
+	* Theme*.cs : remove ThemeEngine.Current usage as it just points back
+	to the instance itself.
+
 2006-02-07  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* X11DesktopColors.cs, ThemeGtk.cs: The GObject structure is based
