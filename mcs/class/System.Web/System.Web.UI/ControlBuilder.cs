@@ -63,7 +63,7 @@ namespace System.Web.UI {
 
 		internal bool haveParserVariable;
 		internal CodeMemberMethod method;
-		internal CodeStatementCollection flushOutputStatements;
+		internal CodeStatementCollection methodStatements;
 		internal CodeMemberMethod renderMethod;
 		internal int renderIndex;
 		internal bool isProperty;

@@ -1,5 +1,10 @@
 2006-02-07  Chris Toshok  <toshok@ximian.com>
 
+	* ControlBuilder.cs: rename flushOutputStatements to
+	methodStatements to at least reflect that they're in that method.
+
+2006-02-07  Chris Toshok  <toshok@ximian.com>
+
 	* MasterPage.cs (CreateMasterPage): don't nullref on null
 	contentTemplateCollection.
 
