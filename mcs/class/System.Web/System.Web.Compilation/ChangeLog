@@ -9,6 +9,8 @@
 	create.  This causes the compiled control to fall back to the
 	ContentPlaceHolder's child controls in case there's no
 	corresponding Content template.
+	(AddChildCall): use methodStatements instead of method.Statements.
+	(CreateControlTree): same.
 
 	* PageCompiler.cs (CreatePropertyAssign): factor out the
 	string,string implementation and add one that also takes a

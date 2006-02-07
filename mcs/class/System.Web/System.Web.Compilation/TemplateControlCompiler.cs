@@ -127,14 +127,14 @@ namespace System.Web.Compilation
 				p.Name = "__parser";
 				p.Type = new CodeTypeReference (typeof (IParserAccessor));
 				p.InitExpression = new CodeCastExpression (typeof (IParserAccessor), ctrlVar);
-				builder.flushOutputStatements.Add (p);
+				builder.methodStatements.Add (p);
 				builder.haveParserVariable = true;
 			}
 
 			CodeVariableReferenceExpression var = new CodeVariableReferenceExpression ("__parser");
 			CodeMethodInvokeExpression invoke = new CodeMethodInvokeExpression (var, "AddParsedSubObject");
 			invoke.Parameters.Add (expr);
-			builder.flushOutputStatements.Add (invoke);
+			builder.methodStatements.Add (invoke);
 		}
 
 		void InitMethod (ControlBuilder builder, bool isTemplate, bool childrenAsProperties)
@@ -142,7 +142,7 @@ namespace System.Web.Compilation
 			string tailname = ((builder is RootBuilder) ? "Tree" : ("_" + builder.ID));
 			CodeMemberMethod method = new CodeMemberMethod ();
 			builder.method = method;
-			builder.flushOutputStatements = method.Statements;
+			builder.methodStatements = method.Statements;
 
 			method.Name = "__BuildControl" + tailname;
 			method.Attributes = MemberAttributes.Private | MemberAttributes.Final;
@@ -286,7 +286,7 @@ namespace System.Web.Compilation
 					method.Statements.Add (condStatement);
 
 					// this is the bit that causes the following stuff to end up in the else { }
-					builder.flushOutputStatements = condStatement.FalseStatements;
+					builder.methodStatements = condStatement.FalseStatements;
 
 					// __ctrl.TemplateControl = this;
 					assign = new CodeAssignStatement ();
@@ -670,7 +670,7 @@ namespace System.Web.Compilation
 							      new CodeTypeReference (typeof (System.Web.UI.BuildMethod)),
 							      thisRef, child.method.Name));
 				
-				parent.method.Statements.Add (build);
+				parent.methodStatements.Add (build);
 				if (parent.HasAspCode)
 					AddRenderControl (parent);
 				return;
@@ -678,18 +678,18 @@ namespace System.Web.Compilation
                                 
 			if (child.isProperty || parent.ChildrenAsProperties) {
 				expr.Parameters.Add (new CodeFieldReferenceExpression (ctrlVar, child.TagName));
-				parent.method.Statements.Add (expr);
+				parent.methodStatements.Add (expr);
 				return;
 			}
 
-			parent.method.Statements.Add (expr);
+			parent.methodStatements.Add (expr);
 			CodeFieldReferenceExpression field = new CodeFieldReferenceExpression (thisRef, child.ID);
 			if (parent.ControlType == null || typeof (IParserAccessor).IsAssignableFrom (parent.ControlType)) {
 				AddParsedSubObjectStmt (parent, field);
 			} else {
 				CodeMethodInvokeExpression invoke = new CodeMethodInvokeExpression (ctrlVar, "Add");
 				invoke.Parameters.Add (field);
-				parent.method.Statements.Add (invoke);
+				parent.methodStatements.Add (invoke);
 			}
 				
 			if (parent.HasAspCode)
@@ -1022,7 +1022,7 @@ namespace System.Web.Compilation
 				invoke.Method = new CodeMethodReferenceExpression (ctrlVar, "SetRenderMethodDelegate");
 				invoke.Parameters.Add (create);
 
-				builder.method.Statements.Add (invoke);
+				builder.methodStatements.Add (invoke);
 			}
 			
 			if (!childrenAsProperties && typeof (Control).IsAssignableFrom (builder.ControlType))
