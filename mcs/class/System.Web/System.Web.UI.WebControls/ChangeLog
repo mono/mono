@@ -1,3 +1,13 @@
+2006-02-07  Chris Toshok  <toshok@ximian.com>
+
+	* ContentPlaceHolder.cs: fix ToolboxDataAttribute.
+
+	* Content.cs: use ContentControlBuilderInternal, and add a bunch
+	of unused (for now) EventHandler's here.
+
+	* ContentControlBuilderInternal.cs: rename ContentControlBuilder
+	to this.
+
 2006-01-24 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ListControl.cs: bound checking for Items when loading the control

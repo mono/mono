@@ -37,11 +37,7 @@ namespace System.Web.UI.WebControls
 {
 	[ToolboxItem (false)]
 	[DesignerAttribute ("System.Web.UI.Design.WebControls.ContentDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
-#if notyet
-	[ControlBuilder(typeof(ContentControlBuilderInternal))]  /* XXX ew, this is in beta2 - an internal builder? */
-#else
-	[ControlBuilder(typeof(ContentControlBuilder))] 
-#endif
+	[ControlBuilder(typeof(ContentControlBuilderInternal))]
 	public class Content: Control, INamingContainer
 	{
 		string placeHolderId;
@@ -53,6 +49,54 @@ namespace System.Web.UI.WebControls
 		public string ContentPlaceHolderID {
 			get { return placeHolderId; }
 			set { placeHolderId = value; }
+		}
+
+		static readonly object DataBindingEvent = new object ();
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Browsable (false)]
+		public new event EventHandler DataBinding {
+			add { Events.AddHandler (DataBindingEvent, value); }
+			remove { Events.RemoveHandler (DataBindingEvent, value); }
+		}
+
+		static readonly object DisposedEvent = new object ();
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Browsable (false)]
+		public new event EventHandler Disposed {
+			add { Events.AddHandler (DisposedEvent, value); }
+			remove { Events.RemoveHandler (DisposedEvent, value); }
+		}
+
+		static readonly object InitEvent = new object ();
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Browsable (false)]
+		public new event EventHandler Init {
+			add { Events.AddHandler (InitEvent, value); }
+			remove { Events.RemoveHandler (InitEvent, value); }
+		}
+
+		static readonly object LoadEvent = new object ();
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Browsable (false)]
+		public new event EventHandler Load {
+			add { Events.AddHandler (LoadEvent, value); }
+			remove { Events.RemoveHandler (LoadEvent, value); }
+		}
+
+		static readonly object PreRenderEvent = new object ();
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Browsable (false)]
+		public new event EventHandler PreRender {
+			add { Events.AddHandler (PreRenderEvent, value); }
+			remove { Events.RemoveHandler (PreRenderEvent, value); }
+		}
+
+		static readonly object UnloadEvent = new object ();
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Browsable (false)]
+		public new event EventHandler Unload {
+			add { Events.AddHandler (UnloadEvent, value); }
+			remove { Events.RemoveHandler (UnloadEvent, value); }
 		}
 	}
 }

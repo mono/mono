@@ -1,5 +1,5 @@
 //
-// System.Web.UI.WebControls.Content.cs
+// System.Web.UI.WebControls.ContentControlBuilderInternal.cs
 //
 // Authors:
 //   Lluis Sanchez Gual (lluis@novell.com)
@@ -36,7 +36,7 @@ using System.Web.UI.WebControls;
 
 namespace System.Web.UI
 {
-	internal class ContentControlBuilder: TemplateBuilder
+	internal class ContentControlBuilderInternal: TemplateBuilder
 	{
 		string placeHolderID;
 		
