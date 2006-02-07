@@ -143,8 +143,7 @@ namespace NUnit.Util
 
 			return sb.ToString();
 #else
-			java.io.File pathObject = new java.io.File (path);
-			return pathObject.getCanonicalPath ();
+			return Path.GetFullPath( path );
 #endif
 		}
 
