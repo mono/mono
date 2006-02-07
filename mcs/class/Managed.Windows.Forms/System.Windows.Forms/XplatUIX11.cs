@@ -931,7 +931,6 @@ namespace System.Windows.Forms {
 					// The only sane WM seems to be KDE
 
 					if (!xevent.ConfigureEvent.send_event) {
-						int	dummy_int;
 						IntPtr	dummy_ptr;
 
 						XTranslateCoordinates(DisplayHandle, hwnd.whole_window, RootWindow, -xevent.ConfigureEvent.x, -xevent.ConfigureEvent.y, out hwnd.x, out hwnd.y, out dummy_ptr);
@@ -1628,7 +1627,7 @@ namespace System.Windows.Forms {
 				int			height;
 
 				XGetWindowProperty(DisplayHandle, RootWindow, NetAtoms[(int)NA._NET_DESKTOP_GEOMETRY], IntPtr.Zero, new IntPtr (256), false, (IntPtr)Atom.XA_CARDINAL, out actual_atom, out actual_format, out nitems, out bytes_after, ref prop);
-				if (((long)nitems == 2) && (prop != IntPtr.Zero)) {
+				if (((long)nitems == 2) && (prop != IntPtr.Zero) && IntPtr.Size == 4) {
 					width = Marshal.ReadInt32(prop, 0);
 					height = Marshal.ReadInt32(prop, 4);
 

@@ -1,3 +1,8 @@
+2006-02-07  Mike Kestner  <mkestner@novell.com>
+
+	* XplatUIX11.cs : force the WorkingArea away from XGetWindowProperty
+	for 64 bit platforms to work around a metacity bug. 
+
 2006-02-07  Jackson Harper  <jackson@ximian.com>
 
 	* TrackBar.cs: Process the input keys we need, and hookup to
