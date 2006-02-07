@@ -247,7 +247,16 @@ namespace MonoTests.System.Reflection
 			AssertEquals (true, mi.IsGenericMethod);
 			MethodInfo mi2 = mi.MakeGenericMethod (new Type[] { typeof (int) });
 			AssertEquals (true, mi2.IsGenericMethod);
-		}			
+
+			MethodInfo mi3 = typeof (GenericHelper<int>).GetMethod ("Test");
+			AssertEquals (false, mi3.IsGenericMethod);
+		}
+
+		class GenericHelper<T>
+		{
+			public void Test (T t)
+			{ }
+		}
 #endif
 	}
 	
