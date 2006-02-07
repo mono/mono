@@ -334,12 +334,19 @@ namespace System.Windows.Forms {
 
 		public void SetAllowDrop (Hwnd hwnd, bool allow)
 		{
+			int[] atoms;
+
 			if (hwnd.allow_drop == allow)
 				return;
 
+			atoms = new int[XdndVersion.Length];
+			for (int i = 0; i < XdndVersion.Length; i++) {
+				atoms[i] = XdndVersion[i].ToInt32();
+			}
+
 			XplatUIX11.XChangeProperty (display, hwnd.whole_window, XdndAware,
 					(IntPtr) Atom.XA_ATOM, 32,
-					PropertyMode.Replace, XdndVersion, allow ? 1 : 0);
+					PropertyMode.Replace, atoms, allow ? 1 : 0);
 			hwnd.allow_drop = allow;
 		}
 

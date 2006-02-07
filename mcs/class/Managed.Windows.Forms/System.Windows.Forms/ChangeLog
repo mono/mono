@@ -2,6 +2,8 @@
 
 	* XplatUIX11.cs: Atoms are only 32bit on the wire, no matter what
 	  machine we're on. 
+	* X11Dnd.cs(SetAllowDrop): Since atoms are always 32bit on the wire
+	  we need to translate the XdndVersion atoms array before sending it
 
 2006-02-06  Peter Dennis Bartok  <pbartok@novell.com> 
 
