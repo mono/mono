@@ -4,10 +4,11 @@
 </head>
 <body>
 
-<h1>
 <asp:contentplaceholder ID="TitlePlaceholder" runat="server">
-This is the master page's heading
+<form runat="server">
+This is the master page's heading <br/>
+<asp:Button runat="server" id="foo" Text="Foo" />
+</form>
 </asp:contentplaceholder>
-</h1>
 
 </body>
