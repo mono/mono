@@ -92,6 +92,12 @@ namespace System.Web.Configuration
 			BuildProvider prov = (BuildProvider) element;
 			return prov.Extension;
 		}
+
+		[MonoTODO ("Implement me")]
+		internal System.Web.Compilation.CompilerType GetProviderForLanguage (string language)
+		{
+			return null;
+		}
 	}
 }
 #endif // NET_2_0
