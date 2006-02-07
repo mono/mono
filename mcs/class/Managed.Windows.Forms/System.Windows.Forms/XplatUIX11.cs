@@ -693,21 +693,23 @@ namespace System.Windows.Forms {
 				}
 				XMoveResizeWindow(DisplayHandle, hwnd.client_window, client_rect.X, client_rect.Y, client_rect.Width, client_rect.Height);
 
-				IntPtr[] atoms = new IntPtr[8];
+				int[] atoms = new int[8];
 				atom_count = 0;
 
 				if ((cp.ExStyle & ((int)WindowStyles.WS_EX_TOOLWINDOW)) != 0) {
-					atoms[atom_count++] = NetAtoms[(int)NA._NET_WM_STATE_NO_TASKBAR];
+					atoms[atom_count++] = NetAtoms[(int)NA._NET_WM_STATE_NO_TASKBAR].ToInt32();
 				}
-				XChangeProperty(DisplayHandle, hwnd.whole_window, NetAtoms[(int)NA._NET_WM_STATE], (IntPtr)Atom.XA_ATOM, IntPtr.Size * 8, PropertyMode.Replace, atoms, atom_count);
+				XChangeProperty(DisplayHandle, hwnd.whole_window, NetAtoms[(int)NA._NET_WM_STATE], (IntPtr)Atom.XA_ATOM, 32, PropertyMode.Replace, atoms, atom_count);
 
 				atom_count = 0;
-				atoms[atom_count++] = NetAtoms[(int)NA.WM_DELETE_WINDOW];
+				IntPtr[] atom_ptrs = new IntPtr[2];
+
+				atom_ptrs[atom_count++] = NetAtoms[(int)NA.WM_DELETE_WINDOW];
 				if ((cp.ExStyle & (int)WindowStyles.WS_EX_CONTEXTHELP) != 0) {
-					atoms[atom_count++] = NetAtoms[(int)NA._NET_WM_CONTEXT_HELP];
+					atom_ptrs[atom_count++] = NetAtoms[(int)NA._NET_WM_CONTEXT_HELP];
 				}
 
-				XSetWMProtocols(DisplayHandle, hwnd.whole_window, atoms, atom_count);
+				XSetWMProtocols(DisplayHandle, hwnd.whole_window, atom_ptrs, atom_count);
 			}
 		}
 
@@ -1104,24 +1106,24 @@ namespace System.Windows.Forms {
 
 						// Seems that some apps support asking for supported types
 						if (xevent.SelectionEvent.target == NetAtoms[(int)NA.TARGETS]) {
-							IntPtr[]	atoms;
+							int[]	atoms;
 							int	atom_count;
 
-							atoms = new IntPtr[5];
+							atoms = new int[5];
 							atom_count = 0;
 
 							if (Clipboard.Item is String) {
-								atoms[atom_count++] = (IntPtr)Atom.XA_STRING;
-								atoms[atom_count++] = NetAtoms[(int)NA.OEMTEXT];
-								atoms[atom_count++] = NetAtoms[(int)NA.UNICODETEXT];
+								atoms[atom_count++] = (int)Atom.XA_STRING;
+								atoms[atom_count++] = (int)NetAtoms[(int)NA.OEMTEXT];
+								atoms[atom_count++] = (int)NetAtoms[(int)NA.UNICODETEXT];
 							} else if (Clipboard.Item is Image) {
-								atoms[atom_count++] = (IntPtr)Atom.XA_PIXMAP;
-								atoms[atom_count++] = (IntPtr)Atom.XA_BITMAP;
+								atoms[atom_count++] = (int)Atom.XA_PIXMAP;
+								atoms[atom_count++] = (int)Atom.XA_BITMAP;
 							} else {
 								// FIXME - handle other types
 							}
 
-							XChangeProperty(DisplayHandle, xevent.SelectionEvent.requestor, (IntPtr)xevent.SelectionRequestEvent.property, (IntPtr)xevent.SelectionRequestEvent.target, IntPtr.Size * 8, PropertyMode.Replace, atoms, atom_count);
+							XChangeProperty(DisplayHandle, xevent.SelectionEvent.requestor, (IntPtr)xevent.SelectionRequestEvent.property, (IntPtr)xevent.SelectionRequestEvent.target, 32, PropertyMode.Replace, atoms, atom_count);
 						} else if (Clipboard.Item is string) {
 							IntPtr	buffer;
 							int	buflen;
@@ -3159,7 +3161,7 @@ namespace System.Windows.Forms {
 			XGetWindowProperty(DisplayHandle, hwnd.whole_window, NetAtoms[(int)NA._NET_WM_STATE], IntPtr.Zero, new IntPtr (256), false, (IntPtr)Atom.XA_ATOM, out actual_atom, out actual_format, out nitems, out bytes_after, ref prop);
 			if (((long)nitems > 0) && (prop != IntPtr.Zero)) {
 				for (int i = 0; i < (long)nitems; i++) {
-					atom = Marshal.ReadIntPtr(prop, i * IntPtr.Size);
+					atom = (IntPtr)Marshal.ReadInt32(prop, i * 4);
 					if ((atom == NetAtoms[(int)NA._NET_WM_STATE_MAXIMIZED_HORZ]) || (atom == NetAtoms[(int)NA._NET_WM_STATE_MAXIMIZED_VERT])) {
 						maximized++;
 					} else if (atom == NetAtoms[(int)NA._NET_WM_STATE_HIDDEN]) {
@@ -3979,12 +3981,12 @@ namespace System.Windows.Forms {
 				size_hints.base_height = icon.Height;
 				XSetWMNormalHints(DisplayHandle, hwnd.whole_window, ref size_hints);
 
-				IntPtr[] atoms = new IntPtr [2];
-				atoms [0] = new IntPtr (1);	// Version 1
-				atoms [1] = IntPtr.Zero;	// We're not mapped
+				int[] atoms = new int[2];
+				atoms [0] = 1;			// Version 1
+				atoms [1] = 0;			// We're not mapped
 
 				// This line cost me 3 days...
-				XChangeProperty(DisplayHandle, hwnd.whole_window, NetAtoms[(int)NA._XEMBED_INFO], NetAtoms[(int)NA._XEMBED_INFO], IntPtr.Size * 8, PropertyMode.Replace, atoms, 2);
+				XChangeProperty(DisplayHandle, hwnd.whole_window, NetAtoms[(int)NA._XEMBED_INFO], NetAtoms[(int)NA._XEMBED_INFO], 32, PropertyMode.Replace, atoms, 2);
 
 				// Need to pick some reasonable defaults
 				tt = new ToolTip();
@@ -4230,7 +4232,7 @@ namespace System.Windows.Forms {
 		internal extern static int XChangeProperty(IntPtr display, IntPtr window, IntPtr property, IntPtr type, int format, PropertyMode mode, uint[] data, int nelements);
 
 		[DllImport ("libX11", EntryPoint="XChangeProperty")]
-		internal extern static int XChangeProperty(IntPtr display, IntPtr window, IntPtr property, IntPtr type, int format, PropertyMode mode, IntPtr[] atoms, int nelements);
+		internal extern static int XChangeProperty(IntPtr display, IntPtr window, IntPtr property, IntPtr type, int format, PropertyMode mode, int[] data, int nelements);
 
 		[DllImport ("libX11", EntryPoint="XChangeProperty")]
 		internal extern static int XChangeProperty(IntPtr display, IntPtr window, IntPtr property, IntPtr type, int format, PropertyMode mode, IntPtr atoms, int nelements);
