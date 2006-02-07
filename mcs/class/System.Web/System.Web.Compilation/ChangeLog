@@ -1,3 +1,28 @@
+2006-02-07  Chris Toshok  <toshok@ximian.com>
+
+	* UserControlCompiler.cs (AddStatementsToInitMethod): emit code to
+	assign __ctrl.MasterPageFile to our master page, if we have one.
+
+	* PageCompiler.cs (CreateContructor): remove the MasterPageFile
+	assignment from here.
+	(AddStatementsToInitMethod): and move it here.
+	
+	* TemplateControlCompiler.cs (InitMethod): in the case where
+	builder is a RootBuilder (we're building the __BuildControlTree
+	method), call a virtual method so that subclasses can add their
+	own statements to the method (used by both Page and MasterPage);
+	Also, in the RootBuilder case, the argument should be the
+	parser.ClassName type (the class we're building); lastly, expand
+	the ContentPlaceHolder logic to include all the
+	ContentTemplates/InstantiateIn magic.
+	(AddStatementsToInitMethod): empty virtual method.
+	(AddContentTemplateInvocation): ContentControlBuilder ->
+	ContentControlBuilderInternal.
+	(CreateControlTree): same.
+	(CallBaseFrameworkInitialize): new function, create call to
+	base.FrameworkInitialize.
+	(CreateFrameworkInitializeMethod): call CallBaseFrameworkIniitialize.
+
 2006-02-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* IgnoreFileBuildProvider.cs: it's not public.

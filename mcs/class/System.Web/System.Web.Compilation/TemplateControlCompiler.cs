@@ -146,6 +146,12 @@ namespace System.Web.Compilation
 			method.Attributes = MemberAttributes.Private | MemberAttributes.Final;
 			Type type = builder.ControlType;
 
+			/* in the case this is the __BuildControlTree
+			 * method, allow subclasses to insert control
+			 * specific code. */
+			if (builder is RootBuilder)
+				AddStatementsToInitMethod (method);
+
 			if (builder.HasAspCode) {
 				CodeMemberMethod renderMethod = new CodeMemberMethod ();
 				builder.renderMethod = renderMethod;
@@ -164,11 +170,16 @@ namespace System.Web.Compilation
 			
 			if (childrenAsProperties || builder.ControlType == null) {
 				string typeString;
-				if (builder.ControlType != null && builder.isProperty &&
-				    !typeof (ITemplate).IsAssignableFrom (builder.ControlType))
-					typeString = builder.ControlType.FullName;
-				else 
-					typeString = "System.Web.UI.Control";
+				if (builder is RootBuilder) {
+					typeString = parser.ClassName;
+				}
+				else {
+					if (builder.ControlType != null && builder.isProperty &&
+					    !typeof (ITemplate).IsAssignableFrom (builder.ControlType))
+						typeString = builder.ControlType.FullName;
+					else 
+						typeString = "System.Web.UI.Control";
+				}
 
 				method.Parameters.Add (new CodeParameterDeclarationExpression (typeString, "__ctrl"));
 			} else {
@@ -215,11 +226,73 @@ namespace System.Web.Compilation
 					CodeMethodInvokeExpression addPlaceholder = new CodeMethodInvokeExpression (prop, "Add");
 					addPlaceholder.Parameters.Add (ctrlVar);
 					method.Statements.Add (addPlaceholder);
+
+					CodeConditionStatement condStatement;
+
+					// Add the __Template_* field
+					CodeMemberField fld = new CodeMemberField (typeof (ITemplate), "__Template_" + builder.ID);
+					fld.Attributes = MemberAttributes.Private;
+					mainClass.Members.Add (fld);
+
+					CodeFieldReferenceExpression templateID = new CodeFieldReferenceExpression ();
+					templateID.TargetObject = thisRef;
+					templateID.FieldName = "__Template_" + builder.ID;
+
+					// if ((this.ContentTemplates != null)) {
+					// 	this.__Template_$builder.ID = ((System.Web.UI.ITemplate)(this.ContentTemplates["$builder.ID"]));
+					// }
+					//
+					CodeFieldReferenceExpression contentTemplates = new CodeFieldReferenceExpression ();
+					contentTemplates.TargetObject = thisRef;
+					contentTemplates.FieldName = "ContentTemplates";
+
+					CodeIndexerExpression indexer = new CodeIndexerExpression ();
+					indexer.TargetObject = new CodePropertyReferenceExpression (thisRef, "ContentTemplates");
+					indexer.Indices.Add (new CodePrimitiveExpression (builder.ID));
+
+					assign = new CodeAssignStatement ();
+					assign.Left = templateID;
+					assign.Right = new CodeCastExpression (new CodeTypeReference (typeof (ITemplate)), indexer);
+
+					condStatement = new CodeConditionStatement (new CodeBinaryOperatorExpression (contentTemplates,
+														      CodeBinaryOperatorType.IdentityInequality,
+														      new CodePrimitiveExpression (null)),
+										    assign);
+
+					method.Statements.Add (condStatement);
+
+					// if ((this.__Template_mainContent != null)) {
+					// 	this.__Template_mainContent.InstantiateIn(__ctrl);
+					// }
+					//
+					CodeMethodReferenceExpression methodRef = new CodeMethodReferenceExpression ();
+					methodRef.TargetObject = templateID;
+					methodRef.MethodName = "InstantiateIn";
+
+					CodeMethodInvokeExpression instantiateInInvoke;
+					instantiateInInvoke = new CodeMethodInvokeExpression (methodRef, ctrlVar);
+
+					condStatement = new CodeConditionStatement (new CodeBinaryOperatorExpression (templateID,
+														      CodeBinaryOperatorType.IdentityInequality,
+														      new CodePrimitiveExpression (null)),
+										    new CodeExpressionStatement (instantiateInInvoke));
+					method.Statements.Add (condStatement);
+
+					// __ctrl.TemplateControl = this;
+					assign = new CodeAssignStatement ();
+					assign.Left = new CodePropertyReferenceExpression (ctrlVar, "TemplateControl");;
+					assign.Right = thisRef;
+
+					method.Statements.Add (assign);
 				}
 #endif
 			}
 
 			mainClass.Members.Add (method);
+		}
+
+		protected virtual void AddStatementsToInitMethod (CodeMemberMethod method)
+		{
 		}
 
 		void AddLiteralSubObject (ControlBuilder builder, string str)
@@ -693,7 +766,7 @@ namespace System.Web.Compilation
 			return method.Name;
 		}
 
-		void AddContentTemplateInvocation (ContentControlBuilder cbuilder, CodeMemberMethod method, string methodName)
+		void AddContentTemplateInvocation (ContentControlBuilderInternal cbuilder, CodeMemberMethod method, string methodName)
 		{
 			CodeObjectCreateExpression newBuild = new CodeObjectCreateExpression (typeof (BuildTemplateMethod));
 			newBuild.Parameters.Add (new CodeMethodReferenceExpression (thisRef, methodName));
@@ -865,8 +938,8 @@ namespace System.Web.Compilation
 					}
 
 #if NET_2_0
-					if (b is ContentControlBuilder) {
-						ContentControlBuilder cb = (ContentControlBuilder) b;
+					if (b is ContentControlBuilderInternal) {
+						ContentControlBuilderInternal cb = (ContentControlBuilderInternal) b;
 						CreateControlTree (cb, false, true);
 						AddContentTemplateInvocation (cb, builder.method, cb.method.Name);
 						continue;
@@ -955,11 +1028,19 @@ namespace System.Web.Compilation
 			CreateFrameworkInitializeMethod ();
 		}
 
+		void CallBaseFrameworkInitialize (CodeMemberMethod method)
+		{
+			CodeBaseReferenceExpression baseRef = new CodeBaseReferenceExpression ();
+			CodeMethodInvokeExpression invoke = new CodeMethodInvokeExpression (baseRef, "FrameworkInitialize");
+			method.Statements.Add (invoke);
+		}
+
 		void CreateFrameworkInitializeMethod ()
 		{
 			CodeMemberMethod method = new CodeMemberMethod ();
 			method.Name = "FrameworkInitialize";
 			method.Attributes = MemberAttributes.Family | MemberAttributes.Override;
+			CallBaseFrameworkInitialize (method);
 			AddStatementsToFrameworkInitialize (method);
 			mainClass.Members.Add (method);
 		}

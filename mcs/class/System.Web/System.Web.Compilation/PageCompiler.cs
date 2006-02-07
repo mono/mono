@@ -50,7 +50,7 @@ namespace System.Web.Compilation
 		}
 
 		protected override void CreateConstructor (CodeStatementCollection localVars,
-							CodeStatementCollection trueStmt)
+							   CodeStatementCollection trueStmt)
 		{
 			if (pageParser.ClientTarget != null) {
 				CodeExpression prop;
@@ -60,17 +60,6 @@ namespace System.Web.Compilation
 					localVars = new CodeStatementCollection ();
 				localVars.Add (new CodeAssignStatement (prop, ct));
 			}
-
-#if NET_2_0
-			if (pageParser.MasterPageFile != null) {
-				CodeExpression prop;
-				prop = new CodePropertyReferenceExpression (thisRef, "MasterPageFile");
-				CodeExpression ct = new CodePrimitiveExpression (pageParser.MasterPageFile);
-				if (localVars == null)
-					localVars = new CodeStatementCollection ();
-				localVars.Add (new CodeAssignStatement (prop, ct));
-			}
-#endif
 
 			base.CreateConstructor (localVars, trueStmt);
 		}
@@ -103,6 +92,18 @@ namespace System.Web.Compilation
 			CodePrimitiveExpression prim;
 			prim = new CodePrimitiveExpression (value);
 			return new CodeAssignStatement (prop, prim);
+		}
+
+		protected override void AddStatementsToInitMethod (CodeMemberMethod method)
+		{
+#if NET_2_0
+			if (pageParser.MasterPageFile != null) {
+				CodeExpression prop;
+				prop = new CodePropertyReferenceExpression (new CodeArgumentReferenceExpression("__ctrl"), "MasterPageFile");
+				CodeExpression ct = new CodePrimitiveExpression (pageParser.MasterPageFile);
+				method.Statements.Add (new CodeAssignStatement (prop, ct));
+			}
+#endif
 		}
 
 		protected override void AddStatementsToFrameworkInitialize (CodeMemberMethod method)

@@ -71,6 +71,18 @@ namespace System.Web.Compilation
 		{
 			cad.Arguments.Add (new CodeAttributeArgument (new CodePrimitiveExpression (obj)));
 		}
+
+		protected override void AddStatementsToInitMethod (CodeMemberMethod method)
+		{
+#if NET_2_0
+			if (parser.MasterPageFile != null) {
+				CodeExpression prop;
+				prop = new CodePropertyReferenceExpression (new CodeArgumentReferenceExpression("__ctrl"), "MasterPageFile");
+				CodeExpression ct = new CodePrimitiveExpression (parser.MasterPageFile);
+				method.Statements.Add (new CodeAssignStatement (prop, ct));
+			}
+#endif
+		}
 	}
 }
 
