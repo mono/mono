@@ -117,6 +117,7 @@ namespace System.Windows.Forms
 			MouseDown += new MouseEventHandler (OnMouseDownTB); 
 			MouseUp += new MouseEventHandler (OnMouseUpTB); 
 			MouseMove += new MouseEventHandler (OnMouseMoveTB);
+			KeyDown += new KeyEventHandler (OnKeyDownTB);
 			holdclick_timer.Elapsed += new ElapsedEventHandler (OnFirstClickTimer);
 
 			SetStyle (ControlStyles.UserPaint | ControlStyles.Opaque, false);
@@ -378,6 +379,19 @@ namespace System.Windows.Forms
 
 		protected override bool IsInputKey (Keys keyData)
 		{
+			if ((keyData & Keys.Alt) == 0) {
+				switch (keyData & Keys.KeyCode) {
+				case Keys.Down:
+				case Keys.Right:
+				case Keys.Up:
+				case Keys.Left:
+				case Keys.PageUp:
+				case Keys.PageDown:
+				case Keys.Home:
+				case Keys.End:
+					return true;
+				}
+			}
 			return base.IsInputKey (keyData);
 		}
 
@@ -449,10 +463,6 @@ namespace System.Windows.Forms
 				XplatUI.PaintEventEnd (Handle, true);
 				return;
 			}		
-
-			case Msg.WM_KEYDOWN: 
-				OnKeyDownTB (new KeyEventArgs ((Keys)m.WParam.ToInt32 ()));
-				return;			
 				
 			case Msg.WM_ERASEBKGND:
 				m.Result = (IntPtr) 1; /* Disable background painting to avoid flickering */
@@ -610,8 +620,8 @@ namespace System.Windows.Forms
 			ThemeEngine.Current.DrawTrackBar (pevent.Graphics, pevent.ClipRectangle, this);
 		}
 
-		private void OnKeyDownTB (KeyEventArgs e) 
-		{			
+		private void OnKeyDownTB (object sender, KeyEventArgs e) 
+		{
 			switch (e.KeyCode) {
 			
 			case Keys.Down:
