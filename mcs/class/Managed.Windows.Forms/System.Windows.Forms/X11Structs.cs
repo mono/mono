@@ -390,7 +390,7 @@ namespace System.Windows.Forms {
 		internal bool		send_event;
 		internal IntPtr		display;
 		internal IntPtr		window;
-		internal int		atom;
+		internal IntPtr		atom;
 		internal IntPtr		time;
 		internal int		state;
 	}
@@ -402,7 +402,7 @@ namespace System.Windows.Forms {
 		internal bool		send_event;
 		internal IntPtr		display;
 		internal IntPtr		window;
-		internal int		selection;
+		internal IntPtr		selection;
 		internal IntPtr		time;
 	}
 
@@ -414,9 +414,9 @@ namespace System.Windows.Forms {
 		internal IntPtr		display;
 		internal IntPtr		owner;
 		internal IntPtr		requestor;
-		internal int		selection;
-		internal int		target;
-		internal int		property;
+		internal IntPtr		selection;
+		internal IntPtr		target;
+		internal IntPtr		property;
 		internal IntPtr		time;
 	}
 
@@ -427,9 +427,9 @@ namespace System.Windows.Forms {
 		internal bool		send_event;
 		internal IntPtr		display;
 		internal IntPtr		requestor;
-		internal int		selection;
-		internal int		target;
-		internal int		property;
+		internal IntPtr		selection;
+		internal IntPtr		target;
+		internal IntPtr		property;
 		internal IntPtr		time;
 	}
 
@@ -1434,7 +1434,7 @@ namespace System.Windows.Forms {
 		internal int	X;				// Last MouseMove X coordinate; used to generate WM_MOUSEHOVER
 		internal int	Y;				// Last MouseMove Y coordinate; used to generate WM_MOUSEHOVER
 		internal int	Interval;			// in milliseconds, how long to hold before hover is generated
-		internal int	Atom;				// X Atom
+		internal IntPtr	Atom;				// X Atom
 	}
 
 	internal struct ClickStruct {

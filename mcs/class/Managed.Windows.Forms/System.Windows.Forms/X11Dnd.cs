@@ -145,7 +145,7 @@ namespace System.Windows.Forms {
 				if (str == null)
 					return;
 
-				if (xevent.SelectionRequestEvent.target == (int) Atom.XA_STRING) {
+				if (xevent.SelectionRequestEvent.target == (IntPtr)Atom.XA_STRING) {
 					byte [] bytes = Encoding.ASCII.GetBytes (str);
 					buffer = Marshal.AllocHGlobal (bytes.Length);
 					len = bytes.Length;
@@ -184,7 +184,7 @@ namespace System.Windows.Forms {
 				if (data == null)
 					return;
 				
-				if (xevent.SelectionRequestEvent.target == (int) Atom.XA_STRING) {
+				if (xevent.SelectionRequestEvent.target == (IntPtr)Atom.XA_STRING) {
 					byte [] bytes = Encoding.ASCII.GetBytes (str);
 					buffer = Marshal.AllocHGlobal (bytes.Length);
 					len = bytes.Length;
@@ -337,7 +337,7 @@ namespace System.Windows.Forms {
 			if (hwnd.allow_drop == allow)
 				return;
 
-			XChangeProperty (display, hwnd.whole_window, XdndAware,
+			XplatUIX11.XChangeProperty (display, hwnd.whole_window, XdndAware,
 					(IntPtr) Atom.XA_ATOM, 32,
 					PropertyMode.Replace, XdndVersion, allow ? 1 : 0);
 			hwnd.allow_drop = allow;
@@ -415,7 +415,7 @@ namespace System.Windows.Forms {
 					return false;
 				}
 
-				suc = XGrabPointer (display, xevent.AnyEvent.window,
+				suc = XplatUIX11.XGrabPointer (display, xevent.AnyEvent.window,
 						false,
 						EventMask.ButtonMotionMask |
 						EventMask.PointerMotionMask |
@@ -423,7 +423,7 @@ namespace System.Windows.Forms {
 						EventMask.ButtonReleaseMask,
 						GrabMode.GrabModeAsync,
 						GrabMode.GrabModeAsync,
-						IntPtr.Zero, IntPtr.Zero/*CursorCopy.Handle*/, 0);
+						IntPtr.Zero, IntPtr.Zero/*CursorCopy.Handle*/, IntPtr.Zero);
 
 				if (suc != 0) {
 					Console.Error.WriteLine ("Could not grab pointer aborting drag.");
@@ -441,7 +441,7 @@ namespace System.Windows.Forms {
 				int x_temp, y_temp;
 				int mask_return;
 
-				while (XQueryPointer (display,
+				while (XplatUIX11.XQueryPointer (display,
 						       window,
 						       out root, out child,
 						       out x_temp, out y_temp,
@@ -500,10 +500,10 @@ namespace System.Windows.Forms {
 
 			textptr = IntPtr.Zero;
 
-			XFetchName (display, handle, ref textptr);
+			XplatUIX11.XFetchName (display, handle, ref textptr);
 			if (textptr != IntPtr.Zero) {
 				text = Marshal.PtrToStringAnsi(textptr);
-				XFree (textptr);
+				XplatUIX11.XFree (textptr);
 			}
 
 			return text;
@@ -530,7 +530,7 @@ namespace System.Windows.Forms {
 
 		public bool HandleSelectionNotifyEvent (ref XEvent xevent)
 		{
-			if (source != XGetSelectionOwner (display, XdndSelection))
+			if (source != XplatUIX11.XGetSelectionOwner (display, XdndSelection))
 				return false;
 
 			MimeHandler handler = FindHandler ((IntPtr) xevent.SelectionEvent.target);
@@ -554,10 +554,10 @@ namespace System.Windows.Forms {
 
 		public bool HandleSelectionRequestEvent (ref XEvent xevent)
 		{
-			if (xevent.SelectionRequestEvent.selection != (int) XdndSelection)
+			if (xevent.SelectionRequestEvent.selection != XdndSelection)
 				return false;
 
-			MimeHandler handler = FindHandler ((IntPtr) xevent.SelectionRequestEvent.target);
+			MimeHandler handler = FindHandler (xevent.SelectionRequestEvent.target);
 			if (handler == null)
 				return false;
 
@@ -576,16 +576,16 @@ namespace System.Windows.Forms {
 			sel.SelectionEvent.target = xevent.SelectionRequestEvent.target;
 			sel.SelectionEvent.requestor = xevent.SelectionRequestEvent.requestor;
 			sel.SelectionEvent.time = xevent.SelectionRequestEvent.time;
-			sel.SelectionEvent.property = 0;
+			sel.SelectionEvent.property = IntPtr.Zero;
 
 			XplatUIX11.XChangeProperty (display, xevent.SelectionRequestEvent.requestor,
-					(IntPtr)xevent.SelectionRequestEvent.property,
-					(IntPtr)xevent.SelectionRequestEvent.target,
+					xevent.SelectionRequestEvent.property,
+					xevent.SelectionRequestEvent.target,
 					8, PropertyMode.Replace, data, length);
 			sel.SelectionEvent.property = xevent.SelectionRequestEvent.property;
 
-			XSendEvent (display, xevent.SelectionRequestEvent.requestor, false,
-					EventMask.NoEventMask, ref sel);
+			XplatUIX11.XSendEvent (display, xevent.SelectionRequestEvent.requestor, false,
+					(IntPtr)EventMask.NoEventMask, ref sel);
 			return;
 		}
 
@@ -735,7 +735,7 @@ namespace System.Windows.Forms {
 
 					// TODO: Try not to set the cursor so much
 				//if (cursor.Handle != CurrentCursorHandle) {
-					XChangeActivePointerGrab (display,
+					XplatUIX11.XChangeActivePointerGrab (display,
 							EventMask.ButtonMotionMask |
 							EventMask.PointerMotionMask |
 							EventMask.ButtonPressMask |
@@ -801,8 +801,8 @@ namespace System.Windows.Forms {
 				MimeHandler handler = FindHandler (atom);
 				if (handler == null)
 					continue;
-				XConvertSelection (display, XdndSelection, handler.Type,
-					handler.NonProtocol, toplevel, 0 /* CurrentTime */);
+				XplatUIX11.XConvertSelection (display, XdndSelection, handler.Type,
+					handler.NonProtocol, toplevel, IntPtr.Zero /* CurrentTime */);
 				converts_pending++;
 				match = true;
 			}
@@ -853,7 +853,7 @@ namespace System.Windows.Forms {
 				xevent.ClientMessageEvent.ptr2 = (IntPtr) 1;
 
 			xevent.ClientMessageEvent.ptr5 = ActionFromEffect (effect);
-			XSendEvent (display, source, false, 0, ref xevent);
+			XplatUIX11.XSendEvent (display, source, false, IntPtr.Zero, ref xevent);
 		}
 
 		private void SendEnter (IntPtr handle, IntPtr from, IntPtr [] supported)
@@ -880,7 +880,7 @@ namespace System.Windows.Forms {
 			if (supported.Length > 2)
 				xevent.ClientMessageEvent.ptr5 = supported [2];
 
-			XSendEvent (display, handle, false, 0, ref xevent);
+			XplatUIX11.XSendEvent (display, handle, false, IntPtr.Zero, ref xevent);
 		}
 
 		private void SendDrop (IntPtr handle, IntPtr from, IntPtr time)
@@ -895,7 +895,7 @@ namespace System.Windows.Forms {
 			xevent.ClientMessageEvent.ptr1 = from;
 			xevent.ClientMessageEvent.ptr3 = time;
 			
-			XSendEvent (display, handle, false, 0, ref xevent);
+			XplatUIX11.XSendEvent (display, handle, false, IntPtr.Zero, ref xevent);
 		}
 
 		private void SendPosition (IntPtr handle, IntPtr from, IntPtr action, int x, int y, IntPtr time)
@@ -912,7 +912,7 @@ namespace System.Windows.Forms {
 			xevent.ClientMessageEvent.ptr4 = time;
 			xevent.ClientMessageEvent.ptr5 = action;
 			
-			XSendEvent (display, handle, false, 0, ref xevent);
+			XplatUIX11.XSendEvent (display, handle, false, IntPtr.Zero, ref xevent);
 		}
 
 		private void SendLeave (IntPtr handle, IntPtr from)
@@ -926,7 +926,7 @@ namespace System.Windows.Forms {
 			xevent.ClientMessageEvent.format = 32;
 			xevent.ClientMessageEvent.ptr1 = from;
 
-			XSendEvent (display, handle, false, 0, ref xevent);
+			XplatUIX11.XSendEvent (display, handle, false, IntPtr.Zero, ref xevent);
 		}
 
 		private void SendFinished ()
@@ -940,7 +940,7 @@ namespace System.Windows.Forms {
 			xevent.ClientMessageEvent.format = 32;
 			xevent.ClientMessageEvent.ptr1 = toplevel;
 
-			XSendEvent (display, source, false, 0, ref xevent);
+			XplatUIX11.XSendEvent (display, source, false, IntPtr.Zero, ref xevent);
 		}
 
 		// There is a somewhat decent amount of overhead
@@ -948,26 +948,26 @@ namespace System.Windows.Forms {
 		// as a lot of applications do not even use it.
 		private void Init ()
 		{
-			XdndAware = XInternAtom (display, "XdndAware", false);
-			XdndEnter = XInternAtom (display, "XdndEnter", false);
-			XdndLeave = XInternAtom (display, "XdndLeave", false);
-			XdndPosition = XInternAtom (display, "XdndPosition", false);
-			XdndStatus = XInternAtom (display, "XdndStatus", false);
-			XdndDrop = XInternAtom (display, "XdndDrop", false);
-			XdndSelection = XInternAtom (display, "XdndSelection", false);
-			XdndFinished = XInternAtom (display, "XdndFinished", false);
-			XdndTypeList = XInternAtom (display, "XdndTypeList", false);
-			XdndActionCopy = XInternAtom (display, "XdndActionCopy", false);
-			XdndActionMove = XInternAtom (display, "XdndActionMove", false);
-			XdndActionLink = XInternAtom (display, "XdndActionLink", false);
-			XdndActionPrivate = XInternAtom (display, "XdndActionPrivate", false);
-			XdndActionList = XInternAtom (display, "XdndActionList", false);
-			XdndActionDescription = XInternAtom (display, "XdndActionDescription", false);
-			XdndActionAsk = XInternAtom (display, "XdndActionAsk", false);
+			XdndAware = XplatUIX11.XInternAtom (display, "XdndAware", false);
+			XdndEnter = XplatUIX11.XInternAtom (display, "XdndEnter", false);
+			XdndLeave = XplatUIX11.XInternAtom (display, "XdndLeave", false);
+			XdndPosition = XplatUIX11.XInternAtom (display, "XdndPosition", false);
+			XdndStatus = XplatUIX11.XInternAtom (display, "XdndStatus", false);
+			XdndDrop = XplatUIX11.XInternAtom (display, "XdndDrop", false);
+			XdndSelection = XplatUIX11.XInternAtom (display, "XdndSelection", false);
+			XdndFinished = XplatUIX11.XInternAtom (display, "XdndFinished", false);
+			XdndTypeList = XplatUIX11.XInternAtom (display, "XdndTypeList", false);
+			XdndActionCopy = XplatUIX11.XInternAtom (display, "XdndActionCopy", false);
+			XdndActionMove = XplatUIX11.XInternAtom (display, "XdndActionMove", false);
+			XdndActionLink = XplatUIX11.XInternAtom (display, "XdndActionLink", false);
+			XdndActionPrivate = XplatUIX11.XInternAtom (display, "XdndActionPrivate", false);
+			XdndActionList = XplatUIX11.XInternAtom (display, "XdndActionList", false);
+			XdndActionDescription = XplatUIX11.XInternAtom (display, "XdndActionDescription", false);
+			XdndActionAsk = XplatUIX11.XInternAtom (display, "XdndActionAsk", false);
 
 			foreach (MimeHandler handler in MimeHandlers) {
-				handler.Type = XInternAtom (display, handler.Name, false);
-				handler.NonProtocol = XInternAtom (display,
+				handler.Type = XplatUIX11.XInternAtom (display, handler.Name, false);
+				handler.NonProtocol = XplatUIX11.XInternAtom (display,
 						String.Concat ("MWFNonP+", handler.Name), false);
 			}
 
@@ -985,21 +985,23 @@ namespace System.Windows.Forms {
 				res [2] = xevent.ClientMessageEvent.ptr5;
 			} else {
 				IntPtr type;
-				int format, count, remaining;
+				int format;
+				IntPtr count;
+				IntPtr remaining;
 				IntPtr data = IntPtr.Zero;
 
-				XGetWindowProperty (display, source, XdndTypeList,
-						0, 32, false, (IntPtr) Atom.XA_ATOM,
+				XplatUIX11.XGetWindowProperty (display, source, XdndTypeList,
+						IntPtr.Zero, new IntPtr(32), false, (IntPtr) Atom.XA_ATOM,
 						out type, out format, out count,
-						out remaining, out data);
+						out remaining, ref data);
 
-				res = new IntPtr [count];
-				for (int i = 0; i < count; i++) {
+				res = new IntPtr [count.ToInt32()];
+				for (int i = 0; i < count.ToInt32(); i++) {
 					res [i] = (IntPtr) Marshal.ReadInt32 (data, i *
 							Marshal.SizeOf (typeof (int)));
 				}
 
-				XFree (data);
+				XplatUIX11.XFree (data);
 			}
 
 			return res;
@@ -1008,8 +1010,8 @@ namespace System.Windows.Forms {
 		private string GetText (ref XEvent xevent, bool unicode)
 		{
 			int nread = 0;
-			int nitems;
-			int bytes_after;
+			IntPtr nitems;
+			IntPtr bytes_after;
 
 			StringBuilder builder = new StringBuilder ();
 			do {
@@ -1017,14 +1019,14 @@ namespace System.Windows.Forms {
 				int actual_fmt;
 				IntPtr data = IntPtr.Zero;
 
-				if (0 != XGetWindowProperty (display,
+				if (0 != XplatUIX11.XGetWindowProperty (display,
 						    xevent.AnyEvent.window,
 						    (IntPtr) xevent.SelectionEvent.property,
-						    0, 0xffffff, false,
+						    IntPtr.Zero, new IntPtr(0xffffff), false,
 						    (IntPtr) Atom.AnyPropertyType, out actual_type,
 						    out actual_fmt, out nitems, out bytes_after,
-						    out data)) {
-					XFree (data);
+						    ref data)) {
+					XplatUIX11.XFree (data);
 					break;
 				}
 
@@ -1032,10 +1034,10 @@ namespace System.Windows.Forms {
 					builder.Append (Marshal.PtrToStringUni (data));
 				else
 					builder.Append (Marshal.PtrToStringAnsi (data));
-				nread += nitems;
+				nread += nitems.ToInt32();
 
-				XFree (data);
-			} while (bytes_after > 0);
+				XplatUIX11.XFree (data);
+			} while (bytes_after.ToInt32() > 0);
 			if (nread == 0)
 				return null;
 			return builder.ToString ();
@@ -1044,8 +1046,8 @@ namespace System.Windows.Forms {
 		private MemoryStream GetData (ref XEvent xevent)
 		{
 			int nread = 0;
-			int nitems;
-			int bytes_after;
+			IntPtr nitems;
+			IntPtr bytes_after;
 
 			MemoryStream res = new MemoryStream ();
 			do {
@@ -1053,23 +1055,23 @@ namespace System.Windows.Forms {
 				int actual_fmt;
 				IntPtr data = IntPtr.Zero;
 
-				if (0 != XGetWindowProperty (display,
+				if (0 != XplatUIX11.XGetWindowProperty (display,
 						    xevent.AnyEvent.window,
 						    (IntPtr) xevent.SelectionEvent.property,
-						    0, 0xffffff, false,
+						    IntPtr.Zero, new IntPtr(0xffffff), false,
 						    (IntPtr) Atom.AnyPropertyType, out actual_type,
 						    out actual_fmt, out nitems, out bytes_after,
-						    out data)) {
-					XFree (data);
+						    ref data)) {
+					XplatUIX11.XFree (data);
 					break;
 				}
 
-				for (int i = 0; i < nitems; i++)
+				for (int i = 0; i < nitems.ToInt32(); i++)
 					res.WriteByte (Marshal.ReadByte (data, i));
-				nread += nitems;
+				nread += nitems.ToInt32();
 
-				XFree (data);
-			} while (bytes_after > 0);
+				XplatUIX11.XFree (data);
+			} while (bytes_after.ToInt32() > 0);
 			return res;
 		}
 
@@ -1088,17 +1090,19 @@ namespace System.Windows.Forms {
 			bool res = true;
 			// Check the version number, we need greater than 3
 			IntPtr actual;
-			int format, count, remaining;
+			int format;
+			IntPtr count;
+			IntPtr remaining;
 			IntPtr data = IntPtr.Zero;
 			
-			XGetWindowProperty (display, handle, XdndAware, 0, 0x8000000, false,
+			XplatUIX11.XGetWindowProperty (display, handle, XdndAware, IntPtr.Zero, new IntPtr(0x8000000), false,
 					(IntPtr) Atom.XA_ATOM, out actual, out format,
-					out count, out remaining, out data);
+					out count, out remaining, ref data);
 			
 			if (actual != (IntPtr) Atom.XA_ATOM || format != 32 ||
-					count == 0 || data == IntPtr.Zero) {
+					count.ToInt32() == 0 || data == IntPtr.Zero) {
 				if (data != IntPtr.Zero)
-					XFree (data);
+					XplatUIX11.XFree (data);
 				return false;
 			}
 
@@ -1106,14 +1110,14 @@ namespace System.Windows.Forms {
 
 			if (version < 3) {
 				Console.Error.WriteLine ("XDND Version too old (" + version + ").");
-				XFree (data);
+				XplatUIX11.XFree (data);
 				return false;
 			}
 
 			// First type is actually the XDND version
-			if (count > 1) {
+			if (count.ToInt32() > 1) {
 				res = false;
-				for (int i = 1; i < count; i++) {
+				for (int i = 1; i < count.ToInt32(); i++) {
 					IntPtr type = (IntPtr) Marshal.ReadInt32 (data, i *
 							Marshal.SizeOf (typeof (int)));
 					for (int j = 0; j < drag_data.SupportedTypes.Length; j++) {
@@ -1125,7 +1129,7 @@ namespace System.Windows.Forms {
 				}
 			}
 
-			XFree (data);
+			XplatUIX11.XFree (data);
 			return res;
 		}
 
@@ -1155,54 +1159,5 @@ namespace System.Windows.Forms {
 
 			return (IntPtr []) res.ToArray (typeof (IntPtr));
 		}
-
-		[DllImport ("libX11")]
-		private extern static string XGetAtomName (IntPtr display, IntPtr atom);
-
-		[DllImport ("libX11")]
-		private extern static IntPtr XInternAtom (IntPtr display, string atom_name, bool only_if_exists);
-
-		[DllImport ("libX11")]
-		private extern static int XChangeProperty (IntPtr display, IntPtr window, IntPtr property,
-				IntPtr format, int type, PropertyMode  mode, IntPtr [] atoms, int nelements);
-
-		[DllImport ("libX11")]
-		private extern static int XGetWindowProperty (IntPtr display, IntPtr window,
-				IntPtr atom, int long_offset, int long_length, bool delete,
-				IntPtr req_type, out IntPtr actual_type, out int actual_format,
-				out int nitems, out int bytes_after, out IntPtr prop);
-
-		[DllImport ("libX11")]
-		internal extern static int XSendEvent (IntPtr display, IntPtr window,
-				bool propagate, EventMask event_mask, ref XEvent send_event);
-
-		[DllImport ("libX11")]
-		internal extern static int XConvertSelection (IntPtr display, IntPtr selection,
-				IntPtr target, IntPtr property, IntPtr requestor, int time);
-
-		[DllImport ("libX11")]
-		internal extern static IntPtr XGetSelectionOwner (IntPtr display, IntPtr selection);
-
-		[DllImport ("libX11")]
-		internal extern static int XGrabPointer (IntPtr display, IntPtr window,
-				bool owner_events, EventMask event_mask, GrabMode pointer_mode,
-				GrabMode keyboard_mode, IntPtr confine_to, IntPtr cursor, uint timestamp);
-
-		[DllImport ("libX11")]
-		internal extern static bool XQueryPointer (IntPtr display, IntPtr window, out IntPtr root,
-				out IntPtr child, out int root_x, out int root_y, out int win_x,
-				out int win_y, out int keys_buttons);
-
-		[DllImport ("libX11")]
-		internal extern static int XAllowEvents (IntPtr display, int event_mode, IntPtr time);
-
-		[DllImport ("libX11")]
-		internal extern static int XFree(IntPtr data);
-
-		[DllImport ("libX11")]
-		internal extern static int XFetchName (IntPtr display, IntPtr window, ref IntPtr window_name);
-		[DllImport ("libX11")]
-		internal extern static int XChangeActivePointerGrab (IntPtr display, EventMask event_mask, IntPtr cursor, IntPtr time);
 	}
-
 }

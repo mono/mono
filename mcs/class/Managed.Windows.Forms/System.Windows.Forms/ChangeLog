@@ -1,3 +1,25 @@
+2006-02-06  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* XplatUIX11.cs: 
+	  - The preceeding 64bit fixes had a bug: ChangeProperty expects the
+	    number of bits for the property, not the number of bytes. The
+	    change to provide IntPtr.Size broke 32bit. (64bit was also wrong
+	    but would not crash since it specified 8 bits instead of 4 bits)
+	  - More 64bit fixes: Switched all atoms from int to IntPtr (they are
+	    defined as XID -> long in the C headers)
+	  - Removed 'new IntPtr((int))' and '(IntPtr)' casts from all NetAtoms 
+	    references since those are now IntPtr to begin with
+	  - Switched all Atom.XXX 'int' casts to IntPtr casts
+	  - Fixed XGrabPointer DllImport signature to work for 64bit (cursor arg)
+	  - Fixed XInternAtom signature for 64bit, now returns an IntPtr
+	  - Added XChangeActivePointerGrab DllImport (for X11DnD)
+	* X11Structs.cs:
+	  - Changed 'int' type for Atoms in XEvent structures to IntPtr
+	  - Changed atom in HoverStruct to be IntPtr
+	* X11DnD.cs:
+	  - Removed local DllImports, switched code to use those from XplatUIX11
+	  - Removed/fixed casts related to the switch of Atom to be a IntPtr
+
 2006-02-06  Mike Kestner  <mkestner@novell.com>
 
 	* XplatUIX11.cs : many more 64 bit pinvoke changes.  I've audited all the 
