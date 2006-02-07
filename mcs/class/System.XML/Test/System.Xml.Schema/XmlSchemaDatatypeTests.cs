@@ -47,9 +47,10 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-#if NET_2_0
-		[Category ("NotDotNet")] // BaseSchemaType impl. difference.
-#endif
+		[Ignore ("The behavior has been inconsistent between versions, so it is not worthy of testing.")]
+		// Note that it could also apply to BaseTypeName (since if 
+		// it is xs:anyType and BaseType is empty, BaseTypeName
+		// should be xs:anyType).
 		public void TestAnyType ()
 		{
 			XmlSchema schema = GetSchema ("Test/XmlFiles/xsd/datatypesTest.xsd");
@@ -59,7 +60,7 @@ namespace MonoTests.System.Xml
 			Assert.AreEqual (typeof (XmlSchemaComplexType), cType.GetType (), "#1");
 			Assert.IsNotNull (cType, "#2");
 			Assert.AreEqual (XmlQualifiedName.Empty, cType.QualifiedName, "#3");
-			Assert.IsNotNull (cType.BaseSchemaType, "#4");  // In MS.NET 2.0 its null
+			Assert.IsNull (cType.BaseSchemaType, "#4");  // In MS.NET 2.0 its null. In 1.1 it is not null.
 			Assert.IsNotNull (cType.ContentTypeParticle, "#5");
 		}
 

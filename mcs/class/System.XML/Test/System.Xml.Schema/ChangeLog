@@ -1,3 +1,7 @@
+2006-02-06  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlSchemaDatatypeTests.cs: (TestAnyType) NotDotNet -> Ignore.
+
 2006-02-06  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* XmlSchemaDatatypeTests.cs: Marked TestAnyType NotDotNet on 2.0
