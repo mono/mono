@@ -1,3 +1,12 @@
+2006-02-07  Ankit Jain  <jankit@novell.com>
+
+	* socket-io.h (MonoSocketFlags): New. Copy of System.Net.Sockets.SocketFlags
+	* socket-io.c (convert_socketflags): New. Convert SocketFlags to native ones.
+	(ves_icall_System_Net_Sockets_Socket_Receive_internal): Convert flags using convert_socketflags.
+	(ves_icall_System_Net_Sockets_Socket_ReceiveFrom_internal): Likewise.
+	(ves_icall_System_Net_Sockets_Socket_Send_internal): Likewise.
+	(ves_icall_System_Net_Sockets_Socket_SendTo_internal): Likewise.
+
 2006-02-02  Zoltan Varga  <vargaz@gmail.com>
 
 	* class.c (mono_class_create_generic): Set type_token as well.
