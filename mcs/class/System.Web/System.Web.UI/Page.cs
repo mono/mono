@@ -117,6 +117,8 @@ public class Page : TemplateControl, IHttpHandler
 	ArrayList requireStateControls;
 	Hashtable _validatorsByGroup;
 	HtmlForm _form;
+
+	string _title;
 #endif
 
 	#region Constructor
@@ -437,6 +439,16 @@ public class Page : TemplateControl, IHttpHandler
 		get { return _smartNavigation; }
 		set { _smartNavigation = value; }
 	}
+
+#if NET_2_0
+	[Localizable (true)] 
+	[Bindable (true)] 
+	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+	public string Title {
+		get { return _title; }
+		set { _title = value; }
+	}
+#endif
 
 	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	[Browsable (false)]
@@ -975,6 +987,9 @@ public class Page : TemplateControl, IHttpHandler
 		OnInitComplete (EventArgs.Empty);
 		
 		ApplyMasterPage ();
+
+		if (_title != null && htmlHeader != null)
+			htmlHeader.Title = _title;
 #endif
 			
 		renderingForm = false;	
@@ -1614,8 +1629,8 @@ public class Page : TemplateControl, IHttpHandler
 	}
 
 
-	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	Hashtable contentTemplates;
+	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	protected internal void AddContentTemplate (string templateName, ITemplate template)
 	{
 		if (contentTemplates == null)

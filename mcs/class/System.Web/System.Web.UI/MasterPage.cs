@@ -33,7 +33,6 @@
 using System;
 using System.Collections;
 using System.ComponentModel;
-using System.Web.UI.WebControls;
 
 namespace System.Web.UI
 {
@@ -92,9 +91,11 @@ namespace System.Web.UI
 		internal static MasterPage CreateMasterPage (TemplateControl owner, HttpContext context, string masterPageFile, IDictionary contentTemplateCollection)
 		{
 			MasterPage masterPage = MasterPageParser.GetCompiledMasterInstance (masterPageFile, masterPageFile /* XXX virtualPath */, context);
-			foreach (string templateName in contentTemplateCollection.Keys) {
-				if (masterPage.ContentTemplates[templateName] == null)
-					masterPage.ContentTemplates [templateName] = contentTemplateCollection[templateName];
+			if (contentTemplateCollection != null) {
+				foreach (string templateName in contentTemplateCollection.Keys) {
+					if (masterPage.ContentTemplates[templateName] == null)
+						masterPage.ContentTemplates [templateName] = contentTemplateCollection[templateName];
+				}
 			}
 			masterPage.InitializeAsUserControlInternal ();
 			return masterPage;

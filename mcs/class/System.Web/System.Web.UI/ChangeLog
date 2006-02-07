@@ -1,5 +1,21 @@
 2006-02-07  Chris Toshok  <toshok@ximian.com>
 
+	* MasterPage.cs (CreateMasterPage): don't nullref on null
+	contentTemplateCollection.
+
+	* ControlBuilder.cs: add a flushOutputStatements field.
+
+	* PageParser.cs (ProcessMainAttributes): handle Title attribute.
+	(Title): add getter.
+	
+	* Page.cs (Title): implement getter/setter.
+	(InternalProcessRequest): after calling ApplyMasterPage, apply the
+	page's Title directive if there is one.
+	(AddContentTemplate): make the EditorBrowsable attribute apply to
+	the method, not the field.
+	
+2006-02-07  Chris Toshok  <toshok@ximian.com>
+
 	* MasterPage.cs: rework this file, adding some static methods
 	gleaned from MS stack traces, and clear up the propogation of
 	content templates between nested master pages.

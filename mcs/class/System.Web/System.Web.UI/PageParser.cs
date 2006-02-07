@@ -62,6 +62,7 @@ namespace System.Web.UI
 #if NET_2_0
 		string masterPage;
 		Type masterType;
+		string title;
 #endif
 
 		public PageParser ()
@@ -266,6 +267,8 @@ namespace System.Web.UI
 			// Make sure the page exists
 			if (masterPage != null)
 				MasterPageParser.GetCompiledMasterType (masterPage, MapPath (masterPage), HttpContext.Current);
+
+			title = GetString(atts, "Title", null);
 #endif
 			// Ignored by now
 			GetString (atts, "EnableViewStateMac", null);
@@ -392,6 +395,10 @@ namespace System.Web.UI
 		
 		internal Type MasterType {
 			get { return masterType; }
+		}
+
+		internal string Title {
+			get { return title; }
 		}
 #endif
 	}
