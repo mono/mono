@@ -138,6 +138,16 @@ typedef enum {
 	SocketOptionName_PeerCred=10001
 } MonoSocketOptionName;
 
+/* This is a copy of System.Net.Sockets.SocketFlags */
+typedef enum {
+	SocketFlags_None = 0,
+	SocketFlags_OutOfBand = 1,
+	SocketFlags_MaxIOVectorLength = 0x10,
+	SocketFlags_Peek = 2,
+	SocketFlags_DontRoute = 4,
+	SocketFlags_Partial = 0x8000
+} MonoSocketFlags;
+
 typedef struct _MonoSocketAsyncResult {
 	MonoObject obj;
 	MonoObject *socket;
