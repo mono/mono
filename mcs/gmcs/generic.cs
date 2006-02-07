@@ -2264,7 +2264,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Whether `mb' is a generic method definition.
 		/// </summary>
-		public static bool IsGenericMethod (MethodBase mb)
+		public static bool IsGenericMethodDefinition (MethodBase mb)
 		{
 			if (mb.DeclaringType is TypeBuilder) {
 				IMethodData method = (IMethodData) builder_to_method [mb];
@@ -2275,6 +2275,22 @@ namespace Mono.CSharp {
 			}
 
 			return mb.IsGenericMethodDefinition;
+		}
+
+		/// <summary>
+		///   Whether `mb' is a generic method definition.
+		/// </summary>
+		public static bool IsGenericMethod (MethodBase mb)
+		{
+			if (mb.DeclaringType is TypeBuilder) {
+				IMethodData method = (IMethodData) builder_to_method [mb];
+				if (method == null)
+					return false;
+
+				return method.GenericMethod != null;
+			}
+
+			return mb.IsGenericMethod;
 		}
 
 		//

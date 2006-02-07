@@ -763,7 +763,7 @@ public partial class TypeManager {
 			else {
 				sig.Append (mb.Name);
 
-				if (mb.Mono_IsInflatedMethod || TypeManager.IsGenericMethod (mb)) {
+				if (TypeManager.IsGenericMethod (mb)) {
 					Type[] args = mb.GetGenericArguments ();
 					sig.Append ('<');
 					for (int i = 0; i < args.Length; i++) {
@@ -788,7 +788,7 @@ public partial class TypeManager {
 
 	public static string GetMethodName (MethodInfo m)
 	{
-		if (!IsGenericMethod (m))
+		if (!IsGenericMethodDefinition (m) && !IsGenericMethod (m))
 			return m.Name;
 
 		return MemberName.MakeName (m.Name, m.GetGenericArguments ().Length);

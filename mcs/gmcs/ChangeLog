@@ -1,3 +1,16 @@
+2006-02-07  Martin Baulig  <martin@ximian.com>
+
+	* generic.cs
+	(TypeManager.IsGenericMethod): We now return whether something is
+	an instantiated generic method (and not a generic method def).
+	(TypeManager.IsGenericMethodDefinition): New public method.
+
+	* typemanager.cs
+	(TypeManager.CSharpSignature): Only include type arguments for
+	"real" generic methods, not for any instantiated method.
+	(TypeManager.GetMethodName): Likewise, but also allow generic
+	method definitions here.
+
 2006-02-06  Miguel de Icaza  <miguel@novell.com>
 
 	* codegen.cs (EmitScopeInitFromBlock): check here the
