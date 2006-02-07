@@ -1,4 +1,4 @@
-// cs1570-4.cs: XML comment on `T:Testing.InterfaceTest2' has non-well-formed XML (unmatched closing element: expected summary but found incorrect  Line 3, position 12.)
+// cs1570-4.cs: XML comment on `T:Testing.InterfaceTest2' has non-well-formed XML ('summary' is expected  Line 3, position 4.)
 // Line: 19
 // Compiler options: -doc:dummy.xml -warn:1 -warnaserror
 

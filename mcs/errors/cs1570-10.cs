@@ -1,4 +1,4 @@
-// cs1570-10.cs: XML comment on `F:Testing.Test.PrivateField2' has non-well-formed XML (unmatched closing element: expected summary but found incorrect  Line 3, position 12.)
+// cs1570-10.cs: XML comment on `F:Testing.Test.PrivateField2' has non-well-formed XML ('summary' is expected  Line 3, position 4.)
 // Line: 23
 // Compiler options: -doc:dummy.xml -warn:1 -warnaserror
 
