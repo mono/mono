@@ -1497,7 +1497,7 @@ namespace Mono.CSharp {
 					is_class = is_struct = false;
 				}
 			} else {
-				is_class = atype.IsClass;
+				is_class = atype.IsClass || atype.IsInterface;
 				is_struct = atype.IsValueType;
 			}
 

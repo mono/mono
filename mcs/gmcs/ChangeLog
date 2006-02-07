@@ -1,5 +1,10 @@
 2006-02-07  Martin Baulig  <martin@ximian.com>
 
+	* generic.cs (ConstraintChecker.CheckConstraints): Interfaces are
+	also reference types; fixes #77483.
+
+2006-02-07  Martin Baulig  <martin@ximian.com>
+
 	* generic.cs
 	(TypeManager.IsGenericMethod): We now return whether something is
 	an instantiated generic method (and not a generic method def).
