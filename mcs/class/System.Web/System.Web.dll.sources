@@ -432,6 +432,7 @@ System.Web.UI/ApplicationFileParser.cs
 System.Web.UI/AttributeCollection.cs
 System.Web.UI/BaseParser.cs
 System.Web.UI/BasePartialCachingControl.cs
+System.Web.UI/BaseTemplateParser.cs
 System.Web.UI/BoundPropertyEntry.cs
 System.Web.UI/BuildMethod.cs
 System.Web.UI/BuildTemplateMethod.cs
@@ -557,6 +558,7 @@ System.Web.UI/ListSourceHelper.cs
 System.Web.UI/LiteralControl.cs
 System.Web.UI/LosFormatter.cs
 System.Web.UI/MasterPage.cs
+System.Web.UI/MasterPageControlBuilder.cs
 System.Web.UI/MasterPageParser.cs
 System.Web.UI/MinimizableAttributeTypeConverter.cs
 System.Web.UI/NonVisualControlAttribute.cs
@@ -659,7 +661,7 @@ System.Web.UI.WebControls/CommandField.cs
 System.Web.UI.WebControls/CompareValidator.cs
 System.Web.UI.WebControls/CompositeControl.cs
 System.Web.UI.WebControls/CompositeDataBoundControl.cs
-System.Web.UI.WebControls/ContentControlBuilder.cs
+System.Web.UI.WebControls/ContentControlBuilderInternal.cs
 System.Web.UI.WebControls/Content.cs
 System.Web.UI.WebControls/ContentDirection.cs
 System.Web.UI.WebControls/ContentPlaceHolderBuilder.cs
