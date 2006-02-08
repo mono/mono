@@ -1,3 +1,14 @@
+2006-02-07 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpWebRequest.cs: don't send the expect-100 if if there's no content.
+
+	* HttpListenerRequest.cs:
+	* HttpConnection.cs:
+	* RequestStream.cs: use the content length header to avoid reading past
+	the end of the stream.
+
+	Patch by Horst Reiterer.
+
 2006-02-02 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpWebRequest.cs: dummy implementation of UnsafeAuthenticationBlah

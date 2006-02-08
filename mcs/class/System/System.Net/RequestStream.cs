@@ -35,6 +35,7 @@ namespace System.Net {
 		byte [] buffer;
 		int offset;
 		int length;
+		long available;
 		bool disposed;
 
 		internal RequestStream (Socket sock, byte [] buffer, int offset, int length) :
@@ -43,6 +44,16 @@ namespace System.Net {
 			this.buffer = buffer;
 			this.offset = offset;
 			this.length = length;
+			this.available = -1;
+		}
+
+		internal RequestStream (Socket sock, byte [] buffer, int offset, int length, long contentlength) :
+					base (sock, false)
+		{
+			this.buffer = buffer;
+			this.offset = offset;
+			this.length = length;
+			this.available = contentlength;
 		}
 
 		public override bool CanRead {
@@ -106,11 +117,22 @@ namespace System.Net {
 			if (disposed)
 				throw new ObjectDisposedException (typeof (RequestStream).ToString ());
 
+			if (available == 0)
+				return 0;
+
 			int nread = FillFromBuffer (buffer, offset, count);
 			if (nread > 0)
 				return nread;
 
-			return base.Read (buffer, offset, count);
+			// Avoid reading past the end of the request to allow
+			// for HTTP pipelining
+			if (available != -1 && count > available)
+				count = (int) available;
+
+			nread = base.Read (buffer, offset, count);
+			if (available != -1)
+				available -= nread;
+			return nread;
 		}
 
 		public override IAsyncResult BeginRead (byte [] buffer, int offset, int count,
@@ -120,7 +142,7 @@ namespace System.Net {
 				throw new ObjectDisposedException (typeof (RequestStream).ToString ());
 
 			int nread = FillFromBuffer (buffer, offset, count);
-			if (nread > 0) {
+			if (nread > 0 || available == 0) {
 				HttpStreamAsyncResult ares = new HttpStreamAsyncResult ();
 				ares.Buffer = buffer;
 				ares.Offset = offset;
@@ -132,6 +154,10 @@ namespace System.Net {
 				return ares;
 			}
 
+			// Avoid reading past the end of the request to allow
+			// for HTTP pipelining
+			if (available != -1 && count > available)
+				count = (int) Math.Min (Int32.MaxValue, available);
 			return base.BeginRead (buffer, offset, count, cback, state);
 		}
 
@@ -151,7 +177,10 @@ namespace System.Net {
 			}
 
 			// Close on exception?
-			return base.EndRead (ares);
+			int nread = base.EndRead (ares);
+			if (available != -1)
+				available -= nread;
+			return nread;
 		}
 
 		public override long Seek (long offset, SeekOrigin origin)
