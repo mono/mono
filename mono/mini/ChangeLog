@@ -1,4 +1,10 @@
 
+Wed Feb 8 19:33:17 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: always handle the case when mono_jit_init()
+	is called in a thread different from the main thread,
+	confusing libgc (bug #77309).
+
 Mon Feb 6 09:01:24 EST 2006 Paolo Molaro <lupus@ximian.com>
 
 	* mini-ppc.c: fix handling of exceptions in large methods (bug #74932).
