@@ -1,3 +1,11 @@
+2006-02-07  Martin Baulig  <martin@ximian.com>
+
+	* MethodInfoTest.cs: Added test where IsGenericMethod must return false.
+
+2006-02-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* MethodInfoTest.cs: Add tests for IsGenericMethod.
+
 2006-02-02  Zoltan Varga  <vargaz@gmail.com>
 
 	* MethodInfoTest.cs: Add test for Invoke and byref valuetypes.

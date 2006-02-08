@@ -292,14 +292,15 @@ namespace System.Reflection {
 			get;
 		}
 
-		public override extern bool IsGenericMethodDefinition {
-			[MethodImplAttribute(MethodImplOptions.InternalCall)]
-			get;
+		public override bool IsGenericMethodDefinition {
+			get {
+				return HasGenericParameters && !Mono_IsInflatedMethod;
+			}
 		}
 
 		public override bool IsGenericMethod {
 			get {
-				return IsGenericMethodDefinition || Mono_IsInflatedMethod;
+				return HasGenericParameters;
 			}
 		}
 #endif

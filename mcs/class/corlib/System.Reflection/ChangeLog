@@ -1,3 +1,12 @@
+2006-02-07  Martin Baulig  <martin@ximian.com>
+
+	* MonoMethod.cs
+	(MonoMethod.IsGenericMethod): Only return true for "real" generic
+	methods and not for arbitrary instantiated methods.
+	(MonoMethod.IsGenericMethodDefinition): Only return true for
+	generic method definitions, but not for instantiated generic
+	methods.  This is no longer an interncall.  Fixes #77466.
+
 2006-02-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* MethodBase.cs MonoMethod.cs: Implement IsGenericMethod property.
