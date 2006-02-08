@@ -1,3 +1,13 @@
+2006-02-08  Chris Toshok  <toshok@ximian.com>
+
+	* ListControl.cs (OnDataBinding): in 2.0, only clear our items if
+	AppendDataBoundItems != false.  Also, split all the databinding
+	logic out to DoDataBinding, which we call from here only if
+	!NET_2_0.
+	(DoDataBinding): new function. actually perform the binding.
+	(PerformDataBinding): implement.
+	(PerformSelect): chain up to base class.
+
 2006-02-07  Chris Toshok  <toshok@ximian.com>
 
 	* ContentPlaceHolder.cs: fix ToolboxDataAttribute.

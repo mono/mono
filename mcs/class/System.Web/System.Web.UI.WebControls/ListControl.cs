@@ -348,40 +348,14 @@ namespace System.Web.UI.WebControls {
 			if (list == null)
 				return;
 
-			Items.Clear ();
+#if NET_2_0
+			if (!AppendDataBoundItems)
+#endif
+				Items.Clear();
 
-			string format = DataTextFormatString;
-			if (format == "")
-				format = null;
-
-			string text_field = DataTextField;
-			string value_field = DataValueField;
-			ListItemCollection coll = Items;
-			foreach (object container in list) {
-				string text;
-				string val;
-
-				text = val = null;
-				if (text_field != "") {
-					text = DataBinder.GetPropertyValue (container, text_field, format);
-				}
-
-				if (value_field != "") {
-					val = DataBinder.GetPropertyValue (container, value_field).ToString ();
-				} else if (text_field == "") {
-					text = val = container.ToString ();
-					if (format != null)
-						text = String.Format (format, container);
-				} else if (text != null) {
-					val = text;
-				}
-
-				if (text == null)
-					text = val;
-
-				coll.Add (new ListItem (text, val));
-			}
-
+#if !NET_2_0
+			DoDataBinding (list);
+#endif
 			if (saved_selected_value != null) {
 				SelectedValue = saved_selected_value;
 				if (saved_selected_index != -2 && saved_selected_index != SelectedIndex)
@@ -410,6 +384,43 @@ namespace System.Web.UI.WebControls {
 			base.OnPreRender (e);
 		}
 
+		void DoDataBinding (IEnumerable dataSource)
+		{
+			if (dataSource != null) {
+				string format = DataTextFormatString;
+				if (format == "")
+					format = null;
+
+				string text_field = DataTextField;
+				string value_field = DataValueField;
+				ListItemCollection coll = Items;
+				foreach (object container in dataSource) {
+					string text;
+					string val;
+
+					text = val = null;
+					if (text_field != "") {
+						text = DataBinder.GetPropertyValue (container, text_field, format);
+					}
+
+					if (value_field != "") {
+						val = DataBinder.GetPropertyValue (container, value_field).ToString ();
+					} else if (text_field == "") {
+						text = val = container.ToString ();
+						if (format != null)
+							text = String.Format (format, container);
+					} else if (text != null) {
+						val = text;
+					}
+
+					if (text == null)
+						text = val;
+
+					coll.Add (new ListItem (text, val));
+				}
+			}
+		}
+
 #if NET_2_0
 		protected virtual void OnTextChanged (EventArgs e)
 		{
@@ -418,16 +429,17 @@ namespace System.Web.UI.WebControls {
 				handler (this, e);
 		}
 
-		[MonoTODO]
 		protected internal override void PerformDataBinding (IEnumerable dataSource)
 		{
-			throw new NotImplementedException ();
+			base.PerformDataBinding (dataSource);
+
+			DoDataBinding (dataSource);
 		}
 
-		[MonoTODO]
+		[MonoTODO ("why override?")]
 		protected override void PerformSelect ()
 		{
-			throw new NotImplementedException ();
+			base.PerformSelect ();
 		}
 
 		[MonoTODO]
