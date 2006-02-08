@@ -8490,11 +8490,13 @@ namespace Mono.CSharp {
 	///   The base operator for method names
 	/// </summary>
 	public class BaseAccess : Expression {
-		string member;
+		public readonly string Identifier;
+		TypeArguments args;
 		
-		public BaseAccess (string member, Location l)
+		public BaseAccess (string member, TypeArguments args, Location l)
 		{
-			this.member = member;
+			this.Identifier = member;
+			this.args = args;
 			loc = l;
 		}
 
@@ -8546,10 +8548,10 @@ namespace Mono.CSharp {
 			}
 			
 			member_lookup = MemberLookup (ec, ec.ContainerType, null, base_type,
-						      member, AllMemberTypes, AllBindingFlags,
+						      Identifier, AllMemberTypes, AllBindingFlags,
 						      loc);
 			if (member_lookup == null) {
-				MemberLookupFailed (ec, base_type, base_type, member, null, true, loc);
+				MemberLookupFailed (ec, base_type, base_type, Identifier, null, true, loc);
 				return null;
 			}
 
@@ -8570,8 +8572,18 @@ namespace Mono.CSharp {
 				pe.IsBase = true;
 			}
 
-			if (e is MethodGroupExpr)
-				((MethodGroupExpr) e).IsBase = true;
+			MethodGroupExpr mg = e as MethodGroupExpr;
+			if (mg != null)
+				mg.IsBase = true;
+
+			if (args != null) {
+				if (mg != null)
+					return mg.ResolveGeneric (ec, args);
+
+				Report.Error (307, loc, "`{0}' cannot be used with type arguments",
+					      Identifier);
+				return null;
+			}
 
 			return e;
 		}
