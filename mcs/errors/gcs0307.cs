@@ -1,4 +1,4 @@
-// CS0307: `Get' cannot be used with type arguments.
+// CS0307: `Get' cannot be used with type arguments
 // Line: 14
 public class B
 {
