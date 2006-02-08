@@ -1,3 +1,30 @@
+2006-02-08  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* XmlTextAttributeTests.cs: Set eol-style to native.
+	* XmlTypeAttributeTests.cs: Same.
+	* XmlSerializerTestClasses.cs: Same.
+	* XmlSerializerTests.cs: Same.
+	* XmlSerializationWriterTests.cs: Same.
+	* XmlRootAttributeTests.cs: Same.
+	* XmlReflectionImporterTests.cs: Same.
+	* XmlIncludeAttributeTests.cs: Same.
+	* XmlEnumAttributeTests.cs: Same.
+	* XmlElementAttributeTests.cs: Same.
+	* XmlChoiceIdentifierAttributeTests.cs: Same.
+	* XmlAttributesTests.cs: Same.
+	* XmlAttributeAttributeTests.cs: Same.
+	* XmlArrayItemAttributeTests.cs: Same.
+	* XmlArrayAttributeTests.cs: Same.
+	* XmlAnyElementAttributeTests.cs: Same.
+	* SoapTypeAttributeTests.cs: Same.
+	* SoapSchemaMemberTests.cs: Same.
+	* SoapAttributeAttribute.cs: Same.
+	* SoapElementAttributeTests.cs: Same.
+	* SoapEnumAttributeTests.cs: Same.
+	* SoapIncludeAttributeTests.cs: Same.
+	* ComplexDataStructure.cs: Same.
+	* DeserializeTests.cs: Same.
+
 2006-02-06  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DeserializeTests.cs: Use Assert instead of deprecated Assertion.
