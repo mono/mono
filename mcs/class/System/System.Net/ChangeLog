@@ -1,5 +1,11 @@
 2006-02-07 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* ChunkedInputStream.cs:
+	* ChunkStream.cs: handle partial trailers and zero reads. Patch by Pawel
+	Sakowski.
+
+2006-02-07 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* HttpWebRequest.cs: don't send the expect-100 if if there's no content.
 
 	* HttpListenerRequest.cs:

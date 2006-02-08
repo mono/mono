@@ -70,6 +70,7 @@ namespace System.Net
 		StringBuilder saved;
 		bool sawCR;
 		bool gotit;
+		int trailerState;
 		ArrayList chunks;
 		
 		public ChunkStream (byte [] buffer, int offset, int size, WebHeaderCollection headers)
@@ -245,8 +246,10 @@ namespace System.Net
 				ThrowProtocolViolation ("Cannot parse chunk size.");
 			}
 			
-			if (chunkSize == 0)
+			if (chunkSize == 0) {
+				trailerState = 2;
 				return State.Trailer;
+			}
 
 			return State.Body;
 		}
@@ -273,7 +276,7 @@ namespace System.Net
 			char c = '\0';
 
 			// short path
-			if ((char) buffer [offset] == '\r') {
+			if (trailerState == 2 && (char) buffer [offset] == '\r' && saved.Length == 0) {
 				offset++;
 				if ((char) buffer [offset] == '\n') {
 					offset++;
@@ -282,7 +285,7 @@ namespace System.Net
 				offset--;
 			}
 			
-			int st = 0;
+			int st = trailerState;
 			string stString = "\r\n\r";
 			while (offset < size && st < 4) {
 				c = (char) buffer [offset++];
@@ -297,12 +300,13 @@ namespace System.Net
 				}
 
 				if (st > 0) {
-					saved.Append (stString.Substring (0, st));
+					saved.Append (stString.Substring (0, saved.Length == 0? st-2: st));
 					st = 0;
 				}
 			}
 
 			if (st < 4) {
+				trailerState = st;
 				if (offset <  size)
 					ThrowProtocolViolation ("Error reading trailer.");
 
