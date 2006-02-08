@@ -58,11 +58,13 @@ namespace System.Windows.Forms {
 		internal bool		enabled;
 		internal bool		zero_sized;
 		internal Rectangle	invalid;
+		internal Rectangle	nc_invalid;
 		internal bool		expose_pending;
 		internal bool		nc_expose_pending;
 		internal bool		configure_pending;
 		internal bool		reparented;
 		internal Graphics	client_dc;
+		internal Graphics	non_client_dc;
 		internal object		user_data;
 		internal Rectangle	client_rectangle;
 		internal ArrayList	marshal_free_list;
@@ -195,7 +197,7 @@ namespace System.Windows.Forms {
 				rect.Y += menu_height;
 				rect.Height -= menu_height;
 			}
-			
+
 			if (border_style == FormBorderStyle.Fixed3D) {
 				Size border_3D_size = ThemeEngine.Current.Border3DSize;
 
@@ -246,6 +248,11 @@ namespace System.Windows.Forms {
 			set {
 				client_dc = value;
 			}
+		}
+
+		public Graphics NonClientDC {
+			get { return non_client_dc; }
+			set { non_client_dc = value; }
 		}
 
 		public Rectangle ClientRect {
@@ -396,6 +403,7 @@ namespace System.Windows.Forms {
 				return pt;
 			}
 		}
+
 		public Rectangle Invalid {
 			get {
 				return invalid;
@@ -404,6 +412,12 @@ namespace System.Windows.Forms {
 			set {
 				invalid = value;
 			}
+		}
+
+		public Rectangle NCInvalid {
+			get { return nc_invalid; }
+			set { nc_invalid = value; }
+
 		}
 
 		public bool NCExposePending {
@@ -509,6 +523,7 @@ namespace System.Windows.Forms {
 				y = value;
 			}
 		}
+
 		#endregion	// Instance properties
 
 		#region Methods
@@ -538,6 +553,35 @@ namespace System.Windows.Forms {
 
 		public void ClearInvalidArea() {
 			invalid = Rectangle.Empty;
+			expose_pending = false;
+		}
+
+		public void AddNcInvalidArea(int x, int y, int width, int height) {
+			if (nc_invalid == Rectangle.Empty) {
+				nc_invalid = new Rectangle (x, y, width, height);
+				return;
+			}
+
+			int right, bottom;
+			right = Math.Max (nc_invalid.Right, x + width);
+			bottom = Math.Max (nc_invalid.Bottom, y + height);
+			nc_invalid.X = Math.Min (nc_invalid.X, x);
+			nc_invalid.Y = Math.Min (nc_invalid.Y, y);
+
+			nc_invalid.Width = right - nc_invalid.X;
+			nc_invalid.Height = bottom - nc_invalid.Y;
+		}
+
+		public void AddNcInvalidArea(Rectangle rect) {
+			if (nc_invalid == Rectangle.Empty) {
+				nc_invalid = rect;
+				return;
+			}
+			nc_invalid = Rectangle.Union (nc_invalid, rect);
+		}
+
+		public void ClearNcInvalidArea() {
+			nc_invalid = Rectangle.Empty;
 			expose_pending = false;
 		}
 

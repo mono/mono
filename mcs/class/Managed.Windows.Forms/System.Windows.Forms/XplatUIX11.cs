@@ -572,14 +572,27 @@ namespace System.Windows.Forms {
 					border_style = FormBorderStyle.FixedSingle;
 				}
 				title_style = TitleStyle.None;
-			} else {
-				bool is_mdi = false;
 
 				if ((ExStyle & (int) WindowStyles.WS_EX_MDICHILD) != 0) {
 					caption_height = 26;
-					is_mdi = true;
+
+					if ((Style & (int)WindowStyles.WS_CAPTION) != 0) {
+						if ((ExStyle & (int)WindowStyles.WS_EX_TOOLWINDOW) != 0) {
+							title_style = TitleStyle.Tool;
+						} else {
+							title_style = TitleStyle.Normal;
+						}
+					}
+
+					if ((Style & (int) WindowStyles.WS_OVERLAPPEDWINDOW) != 0 ||
+							(ExStyle & (int) WindowStyles.WS_EX_TOOLWINDOW) != 0) {
+						border_style = (FormBorderStyle) 0xFFFF;
+					} else {
+						border_style = FormBorderStyle.None;
+					}
 				}
 
+			} else {
 				title_style = TitleStyle.None;
 				if ((Style & (int)WindowStyles.WS_CAPTION) != 0) {
 					if ((ExStyle & (int)WindowStyles.WS_EX_TOOLWINDOW) != 0) {
@@ -589,32 +602,23 @@ namespace System.Windows.Forms {
 					}
 				}
 
-				if (!is_mdi) {
-					border_style = FormBorderStyle.None;
+				border_style = FormBorderStyle.None;
 
-					if ((Style & (int)WindowStyles.WS_THICKFRAME) != 0) {
-						if ((ExStyle & (int)WindowStyles.WS_EX_TOOLWINDOW) != 0) {
-							border_style = FormBorderStyle.SizableToolWindow;
-						} else {
-							border_style = FormBorderStyle.Sizable;
-						}
+				if ((Style & (int)WindowStyles.WS_THICKFRAME) != 0) {
+					if ((ExStyle & (int)WindowStyles.WS_EX_TOOLWINDOW) != 0) {
+						border_style = FormBorderStyle.SizableToolWindow;
 					} else {
-						if ((ExStyle & (int)WindowStyles.WS_EX_CLIENTEDGE) != 0) {
-							border_style = FormBorderStyle.Fixed3D;
-						} else if ((ExStyle & (int)WindowStyles.WS_EX_DLGMODALFRAME) != 0) {
-							border_style = FormBorderStyle.FixedDialog;
-						} else if ((ExStyle & (int)WindowStyles.WS_EX_TOOLWINDOW) != 0) {
-							border_style = FormBorderStyle.FixedToolWindow;
-						} else if ((Style & (int)WindowStyles.WS_BORDER) != 0) {
-							border_style = FormBorderStyle.Sizable;
-						} else {
-							border_style = FormBorderStyle.None;
-						}
+						border_style = FormBorderStyle.Sizable;
 					}
 				} else {
-					if ((Style & (int) WindowStyles.WS_OVERLAPPEDWINDOW) != 0 ||
-							(ExStyle & (int) WindowStyles.WS_EX_TOOLWINDOW) != 0) {
-						border_style = (FormBorderStyle) 0xFFFF;
+					if ((ExStyle & (int)WindowStyles.WS_EX_CLIENTEDGE) != 0) {
+						border_style = FormBorderStyle.Fixed3D;
+					} else if ((ExStyle & (int)WindowStyles.WS_EX_DLGMODALFRAME) != 0) {
+						border_style = FormBorderStyle.FixedDialog;
+					} else if ((ExStyle & (int)WindowStyles.WS_EX_TOOLWINDOW) != 0) {
+						border_style = FormBorderStyle.FixedToolWindow;
+					} else if ((Style & (int)WindowStyles.WS_BORDER) != 0) {
+						border_style = FormBorderStyle.Sizable;
 					} else {
 						border_style = FormBorderStyle.None;
 					}
@@ -788,6 +792,8 @@ namespace System.Windows.Forms {
 					hwnd.expose_pending = true;
 				}
 			} else {
+				hwnd.AddNcInvalidArea (xevent.ExposeEvent.x, xevent.ExposeEvent.y, xevent.ExposeEvent.width, xevent.ExposeEvent.height);
+				
 				if (!hwnd.nc_expose_pending) {
 					MessageQueue.Enqueue(xevent);
 					hwnd.nc_expose_pending = true;
@@ -1973,7 +1979,7 @@ namespace System.Windows.Forms {
 			}
 
 			if ((cp.ExStyle & (int) WindowStyles.WS_EX_TOPMOST) != 0) {
-				XSetTransientForHint (DisplayHandle, hwnd.whole_window, FosterParent);
+				Console.WriteLine ("Setting transient:  " + XSetTransientForHint (DisplayHandle, hwnd.whole_window, RootWindow));
 			}
 
 			SetWMStyles(hwnd, cp);
@@ -3321,8 +3327,9 @@ namespace System.Windows.Forms {
 
 				return paint_event;
 			} else {
-				hwnd.client_dc = Graphics.FromHwnd (hwnd.whole_window);
-				paint_event = new PaintEventArgs(hwnd.client_dc, new Rectangle(0, 0, hwnd.width, hwnd.height));
+				hwnd.non_client_dc = Graphics.FromHwnd (hwnd.whole_window);
+				hwnd.non_client_dc.SetClip (hwnd.nc_invalid);
+				paint_event = new PaintEventArgs(hwnd.non_client_dc, hwnd.nc_invalid);
 				hwnd.nc_expose_pending = false;
 
 				return paint_event;
@@ -3336,11 +3343,19 @@ namespace System.Windows.Forms {
 
 			if (client) {
 				hwnd.ClearInvalidArea();
+
+				hwnd.client_dc.Flush();
+				hwnd.client_dc.Dispose();
+				hwnd.client_dc = null;
+			} else {
+				hwnd.ClearNcInvalidArea ();
+
+				hwnd.non_client_dc.Flush ();
+				hwnd.non_client_dc.Dispose ();
+				hwnd.non_client_dc = null;
 			}
 
-			hwnd.client_dc.Flush();
-			hwnd.client_dc.Dispose();
-			hwnd.client_dc = null;
+			
 
 			if (Caret.Visible == 1) {
 				ShowCaret();

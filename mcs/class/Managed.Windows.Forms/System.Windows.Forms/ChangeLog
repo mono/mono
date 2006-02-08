@@ -1,3 +1,12 @@
+2006-02-08  Jackson Harper  <jackson@ximian.com>
+
+	* Hwnd.cs: Add bits to track non client expose events.
+	* XplatUIX11.cs: Track non client expose events on the hwnd. This
+	gives us a proper invalid rect and will allow for some nice
+	optimizations with NC client drawing
+	- MDI windows are children windows, so move their style handling
+	into the child window block.
+
 2006-02-07  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* TextControl.cs (Document.ctor): Now initializing 
