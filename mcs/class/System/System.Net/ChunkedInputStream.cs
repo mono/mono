@@ -94,10 +94,26 @@ namespace System.Net {
 				ares.Complete ();
 				return ares;
 			}
+			int nread = decoder.Read (buffer, offset, count);
+			offset += nread;
+			count -= nread;
+			if (count == 0) {
+				// got all we wanted, no need to bother the decoder yet
+				ares.Count = nread;
+				ares.Complete ();
+				return ares;
+			}
+			if (!decoder.WantMore) {
+				no_more_data = nread == 0;
+				ares.Count = nread;
+				ares.Complete ();
+				return ares;
+			}
 			ares.Buffer = new byte [8192];
 			ares.Offset = 0;
 			ares.Count = 8192;
 			ReadBufferState rb = new ReadBufferState (buffer, offset, count, ares);
+			rb.InitialCount += nread;
 			base.BeginRead (ares.Buffer, ares.Offset, ares.Count, OnRead, rb);
 			return ares;
 		}
@@ -112,8 +128,8 @@ namespace System.Net {
 				nread = decoder.Read (rb.Buffer, rb.Offset, rb.Count);
 				rb.Offset += nread;
 				rb.Count -= nread;
-				if (rb.Count == 0 || !decoder.WantMore) {
-					no_more_data = !decoder.WantMore;
+				if (rb.Count == 0 || !decoder.WantMore || nread == 0) {
+					no_more_data = !decoder.WantMore && nread == 0;
 					ares.Count = rb.InitialCount - rb.Count;
 					ares.Complete ();
 					return;
