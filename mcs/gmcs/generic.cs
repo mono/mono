@@ -1528,26 +1528,16 @@ namespace Mono.CSharp {
 			// The class constraint comes next.
 			//
 			if (gc.HasClassConstraint) {
-				if (!CheckConstraint (ec, ptype, aexpr, gc.ClassConstraint)) {
-					Error_TypeMustBeConvertible (atype, gc.ClassConstraint, ptype);
+				if (!CheckConstraint (ec, ptype, aexpr, gc.ClassConstraint))
 					return false;
-				}
 			}
 
 			//
 			// Now, check the interface constraints.
 			//
 			foreach (Type it in gc.InterfaceConstraints) {
-				Type itype;
-				if (it.IsGenericParameter)
-					itype = atypes [it.GenericParameterPosition];
-				else
-					itype = it;
-
-				if (!CheckConstraint (ec, ptype, aexpr, itype)) {
-					Error_TypeMustBeConvertible (atype, itype, ptype);
+				if (!CheckConstraint (ec, ptype, aexpr, it))
 					return false;
-				}
 			}
 
 			//
@@ -1602,7 +1592,11 @@ namespace Mono.CSharp {
 				ctype = atypes [pos];
 			}
 
-			return Convert.ImplicitStandardConversionExists (ec, expr, ctype);
+			if (Convert.ImplicitStandardConversionExists (ec, expr, ctype))
+				return true;
+
+			Error_TypeMustBeConvertible (expr.Type, ctype, ptype);
+			return false;
 		}
 
 		bool HasDefaultConstructor (EmitContext ec, Type atype)

@@ -1,5 +1,11 @@
 2006-02-08  Martin Baulig  <martin@ximian.com>
 
+	* generic.cs (ConstraintChecker.CheckConstraints): Move the error
+	reporting into CheckConstraint() so we can use the correctly
+	instantiated type.
+
+2006-02-08  Martin Baulig  <martin@ximian.com>
+
 	* expression.cs (BaseAccess): Add support for generic methods.
 
 	* ecore.cs (MethodGroupExpr.ResolveGeneric): Propagate `IsBase' to
