@@ -6,6 +6,9 @@
 	optimizations with NC client drawing
 	- MDI windows are children windows, so move their style handling
 	into the child window block.
+	* InternalWindowManager.cs: Remove a state reset that was
+	getting invoked at the wrong time. Fixes managed windows getting
+	into a 'stuck' captured state.
 
 2006-02-07  Peter Dennis Bartok  <pbartok@novell.com>
 

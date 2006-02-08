@@ -260,7 +260,7 @@ namespace System.Windows.Forms {
 			if (maximized)
 				return;
 
-			state = State.Moving;			     
+			state = State.Moving;
 			form.Capture = true;
 		}
 
@@ -299,9 +299,6 @@ namespace System.Windows.Forms {
 				FormPos pos = FormPosForCoords (x, y);
 
 				SetCursorForPos (pos);
-
-				ClearVirtualPosition ();
-				state = State.Idle;
 			}
 
 			return false;
