@@ -165,7 +165,10 @@ namespace System.Net {
 				return;
 			}
 
-			input_stream = context.Connection.GetRequestStream (is_chunked);
+			if (is_chunked || content_length > 0) {
+				input_stream = context.Connection.GetRequestStream (is_chunked, content_length);
+			}
+
 			if (Headers ["Expect"] == "100-continue") {
 				ResponseStream output = context.Connection.GetResponseStream ();
 				output.InternalWrite (_100continue, 0, _100continue.Length);

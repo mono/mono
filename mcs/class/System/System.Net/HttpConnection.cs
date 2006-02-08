@@ -99,7 +99,7 @@ namespace System.Net {
 			stream.BeginRead (buffer, 0, BufferSize, OnRead, this);
 		}
 
-		public RequestStream GetRequestStream (bool chunked)
+		public RequestStream GetRequestStream (bool chunked, long contentlength)
 		{
 			if (i_stream == null) {
 				byte [] buffer = ms.GetBuffer ();
@@ -110,7 +110,7 @@ namespace System.Net {
 					context.Response.SendChunked = true;
 					i_stream = new ChunkedInputStream (context, sock, buffer, position, length);
 				} else {
-					i_stream = new RequestStream (sock, buffer, position, length);
+					i_stream = new RequestStream (sock, buffer, position, length, contentlength);
 				}
 			}
 			return i_stream;

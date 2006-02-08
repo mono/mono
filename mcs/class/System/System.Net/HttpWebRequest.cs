@@ -854,7 +854,8 @@ namespace System.Net
 		{
 			bool continue100 = false;
 			if (contentLength != -1) {
-				continue100 = true;
+				if (contentLength > 0)
+					continue100 = true;
 				webHeaders.SetInternal ("Content-Length", contentLength.ToString ());
 				webHeaders.RemoveInternal ("Transfer-Encoding");
 			} else if (sendChunked) {
