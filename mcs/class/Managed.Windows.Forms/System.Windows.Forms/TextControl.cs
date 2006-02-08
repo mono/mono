@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004-2005 Novell, Inc. (http://www.novell.com)
+// Copyright (c) 2004-2006 Novell, Inc. (http://www.novell.com)
 //
 // Authors:
 //	Peter Bartok	pbartok@novell.com
@@ -756,6 +756,9 @@ namespace System.Windows.Forms {
 			selection_end.line = this.document;
 			selection_end.pos = 0;
 			selection_end.tag = selection_end.line.tags;
+			selection_anchor.line = this.document;
+			selection_anchor.pos = 0;
+			selection_anchor.tag = selection_anchor.line.tags;
 
 			viewport_x = 0;
 			viewport_y = 0;
