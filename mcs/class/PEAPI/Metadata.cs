@@ -2295,18 +2295,13 @@ namespace PEAPI {
 		/// <param name="elementType">the type of the elements</param>
 		/// <param name="dimensions">the number of dimensions</param>
 		/// <param name="loBounds">lower bounds of dimensions</param>
-		/// <param name="upBounds">upper bounds of dimensions</param>
+		/// <param name="sizes">sizes for the dimensions</param>
 		public BoundArray(Type elementType, uint dimensions, int[] loBounds, 
-				int[] upBounds) : base (elementType,0x14) 
+				int[] sizes) : base (elementType,0x14) 
 		{
 			numDims = dimensions;
 			lowerBounds = loBounds;
-			if (upBounds == null)
-				return;
-			sizes = new int[loBounds.Length];
-			for (int i=0; i < loBounds.Length; i++) {
-				sizes[i] = upBounds[i] - loBounds[i] + 1;
-			}
+			this.sizes = sizes;
 		}
 
 		/// <summary>
@@ -4959,9 +4954,9 @@ namespace PEAPI {
 
 		internal static void CompressNum(uint val, MemoryStream sig) 
 		{
-			if (val < 0x7F) {
+			if (val <= 0x7F) {
 				sig.WriteByte((byte)val);
-			} else if (val < 0x3FFF) {
+			} else if (val <= 0x3FFF) {
 				byte b1 = (byte)((val >> 8) | 0x80);
 				byte b2 = (byte)(val & FileImage.iByteMask[0]);
 				sig.WriteByte(b1);

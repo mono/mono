@@ -101,10 +101,9 @@ namespace Mono.ILASM {
                         int dimen = bound_list.Count;
                         int[] lower_array = new int[dimen];
                         int[] size_array = new int[dimen];
-                        bool lower_set = false;
-                        bool size_set = false;
-                        bool prev_lower_set = true;
-                        bool prev_size_set = true;
+                        int [] lobounds = null;
+                        int [] sizes = null;
+                        int num_lower, num_sizes;
                         string sigmod = "";
                         PEAPI.Type type;
                         Pair p;
@@ -129,36 +128,41 @@ namespace Mono.ILASM {
                                 return;
                         }
 
+                        num_sizes = num_lower = 0;
                         // TODO: There should probably be an error reported if
                         // something like [3...,3...5] is done
                         for (int i=0; i<dimen; i++) {
-                                if (bound_list [i] != null) {
-                                        DictionaryEntry bound = (DictionaryEntry) bound_list[i];
+                                if (bound_list [i] == null)
+                                        continue;
                                         
-                                        if (bound.Key != TypeRef.Ellipsis && prev_lower_set) {
-                                                lower_array[i] = (int) bound.Key;
-                                                lower_set = true;
-                                        } else {
-                                                prev_lower_set = false;
-                                        }
-                                        if (bound.Value != TypeRef.Ellipsis && prev_size_set) {
-                                                size_array[i] = (int) bound.Value;
-                                                size_set = true;
-                                        } else {
-                                                prev_size_set = false;
-                                        }
+                                DictionaryEntry bound = (DictionaryEntry) bound_list [i];
+                                
+                                if (bound.Key != TypeRef.Ellipsis) {
+                                        /* Lower bound specified */
+                                        lower_array [i] = (int) bound.Key;
+                                        num_lower = i + 1;
+                                }
+                                if (bound.Value != TypeRef.Ellipsis) {
+                                        size_array [i] = (int) bound.Value;
+                                        if (bound.Key != TypeRef.Ellipsis)
+                                                /* .Value is Upper bound eg [1...5] */
+                                                size_array [i] -= lower_array [i] - 1;
+                                        num_sizes = i + 1;
                                 }
                         }
-                        if (lower_set) {
-                                peapi_type = new PEAPI.BoundArray (peapi_type,
-                                                (uint) dimen, lower_array, (size_set ? size_array : null));
-                        } else if (size_set) {
-                                peapi_type = new PEAPI.BoundArray (peapi_type,
-                                                (uint) dimen, size_array);
-                        } else {
-                                peapi_type = new PEAPI.BoundArray (peapi_type, (uint) dimen);
+
+                        if (num_lower > 0) {
+                                lobounds = new int [num_lower];
+                                Array.Copy (lower_array, lobounds, num_lower);
                         }
-                        
+
+                        if (num_sizes > 0) {
+                                sizes = new int [num_sizes];
+                                Array.Copy (size_array, sizes, num_sizes);
+                        }
+
+                        peapi_type = new PEAPI.BoundArray (peapi_type,
+                                                (uint) dimen, lobounds, sizes);
                         type_table [p] = peapi_type;
                 }
 

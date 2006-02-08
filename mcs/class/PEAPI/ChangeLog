@@ -1,3 +1,8 @@
+2006-02-08  Ankit Jain  <jankit@novell.com>
+
+	* Metadata.cs (BoundArray.ctor): Change param 'upBounds' to sizes.
+	(MetaData.CompressNum): Fix range check.
+
 2006-01-31  Ankit Jain  <jankit@novell.com>
 
 	* Metadata.cs (Op.readonly_): New.
