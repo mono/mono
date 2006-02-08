@@ -2913,6 +2913,7 @@ namespace Mono.CSharp {
 				MethodGroupExpr new_mg = new MethodGroupExpr (list, Location);
 				new_mg.InstanceExpression = InstanceExpression;
 				new_mg.HasTypeArguments = true;
+				new_mg.IsBase = IsBase;
 				return new_mg;
 			}
 

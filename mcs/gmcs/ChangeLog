@@ -1,3 +1,10 @@
+2006-02-08  Martin Baulig  <martin@ximian.com>
+
+	* expression.cs (BaseAccess): Add support for generic methods.
+
+	* ecore.cs (MethodGroupExpr.ResolveGeneric): Propagate `IsBase' to
+	the new MethodGroupExpr.
+
 2006-02-07  Martin Baulig  <martin@ximian.com>
 
 	* generic.cs (ConstraintChecker.CheckConstraints): Interfaces are
