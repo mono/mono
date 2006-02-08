@@ -518,5 +518,28 @@ namespace System.Reflection
 		{
 			return generic_type.GetNestedTypes (bf);
 		}
+
+		public override bool IsAssignableFrom (Type c)
+		{
+			if (c == this)
+				return true;
+
+			MonoGenericClass[] interfaces = GetInterfaces_internal ();
+
+			if (c.IsInterface) {
+				if (interfaces == null)
+					return false;
+				foreach (Type t in interfaces)
+					if (c.IsAssignableFrom (t))
+						return true;
+				return false;
+			}
+
+			Type parent = GetParentType ();
+			if (parent == null)
+				return c == typeof (object);
+			else
+				return c.IsAssignableFrom (parent);
+		}
 	}
 }
