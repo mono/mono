@@ -3819,6 +3819,10 @@ catch_exception_raise(
         mach_msg_type_number_t exc_state_count = PPC_EXCEPTION_STATE64_COUNT;
         ppc_exception_state64_t exc_state;
 #     endif
+#   elif defined(I386)
+        thread_state_flavor_t flavor = i386_EXCEPTION_STATE;
+        mach_msg_type_number_t exc_state_count = i386_EXCEPTION_STATE_COUNT;
+        i386_exception_state_t exc_state;
 #   else
 #	error FIXME for non-ppc darwin
 #   endif
@@ -3850,7 +3854,13 @@ catch_exception_raise(
     }
     
     /* This is the address that caused the fault */
+#if defined(POWERPC)
     addr = (char*) exc_state.dar;
+#elif defined (I386)
+    addr = (char*) exc_state.faultvaddr;
+#else
+#   error FIXME for non POWERPC/I386
+#endif
         
     if((HDR(addr)) == 0) {
         /* Ugh... just like the SIGBUS problem above, it seems we get a bogus 
