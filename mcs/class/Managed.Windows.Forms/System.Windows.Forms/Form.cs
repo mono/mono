@@ -516,6 +516,7 @@ namespace System.Windows.Forms {
 					window_manager = new MdiWindowManager (this,
 							mdi_parent.MdiContainer);
 					mdi_parent.MdiContainer.Controls.Add (this);
+					UpdateStyles ();
 				}
 
 				ResumeLayout ();
