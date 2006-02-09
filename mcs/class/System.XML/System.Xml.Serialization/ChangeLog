@@ -1,3 +1,10 @@
+2006-02-09  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* System.Xml.Serialization/XmlTypeMapMemberElement.cs: When
+	looking for the correct element definition for a member,
+	based on the value type, take into account subypes of the
+	declared types. Fixes bug #77447.
+
 2006-02-07  Konstantin Triger <kostat@mainsoft.com>
 
 	* XmlReflectionImporter.cs: remove local name encoding for enums.

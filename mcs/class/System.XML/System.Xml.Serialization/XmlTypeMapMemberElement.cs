@@ -84,9 +84,8 @@ namespace System.Xml.Serialization
 			{
 				if (memberValue == null)
 					return (XmlTypeMapElementInfo) _elementInfo[0];
-				Type type = memberValue.GetType();
 				foreach (XmlTypeMapElementInfo elem in _elementInfo)
-					if (elem.TypeData.Type == type) return elem;
+					if (elem.TypeData.Type.IsInstanceOfType (memberValue)) return elem;
 			}
 			return null;
 		}
