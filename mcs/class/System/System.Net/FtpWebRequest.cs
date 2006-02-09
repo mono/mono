@@ -413,6 +413,20 @@ namespace System.Net
 
 		void RenameFile ()
 		{
+			FtpStatusCode status = SendCommand (RenameFromCommand, requestUri.LocalPath);
+			if (status == FtpStatusCode.FileCommandPending) {
+				// Pass an empty string if RenameTo wasn't specified
+				status = SendCommand (RenameToCommand, renameTo != null ? renameTo : String.Empty);
+				
+				if (status == FtpStatusCode.FileActionOK) {
+					ftpResponse.UpdateStatus (statusCode, statusDescription);
+					asyncRead.SetCompleted (true, ftpResponse);
+					return;
+				}
+			}
+
+			ftpResponse.UpdateStatus (statusCode, statusDescription);
+			asyncRead.SetCompleted (true, CreateExceptionFromResponse (0));
 		}
 
 		void UploadData ()

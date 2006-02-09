@@ -1,3 +1,8 @@
+2006-02-08  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* FtpWebRequest.cs: Add renaming support when using 
+	WebRequestMethods.Ftp.Rename method.
+	
 2006-02-07 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ChunkedInputStream.cs:
