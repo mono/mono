@@ -469,7 +469,7 @@ MINI_OP(OP_JUMP_TABLE, "op_jump_table", IREG, NONE, NONE)
 /* aot compiler */
 MINI_OP(OP_AOTCONST, "aot_const", NONE, NONE, NONE)
 MINI_OP(OP_PATCH_INFO, "patch_info", NONE, NONE, NONE)
-MINI_OP(OP_GOT_ENTRY, "got_entry", NONE, NONE, NONE)
+MINI_OP(OP_GOT_ENTRY, "got_entry", IREG, IREG, NONE)
 
 /* used to impl unbox */
 MINI_OP(OP_UNBOXCAST  , "unboxcast", NONE, NONE, NONE)
@@ -535,8 +535,8 @@ MINI_OP(OP_RESTORE_LMF, "restore_lmf", NONE, NONE, NONE)
 /* arch-dep tls access */
 MINI_OP(OP_TLS_GET,            "tls_get", IREG, NONE, NONE)
 
-MINI_OP(OP_LOAD_GOTADDR, "load_gotaddr", NONE, NONE, NONE)
-MINI_OP(OP_DUMMY_USE, "dummy_use", NONE, NONE, NONE)
+MINI_OP(OP_LOAD_GOTADDR, "load_gotaddr", IREG, NONE, NONE)
+MINI_OP(OP_DUMMY_USE, "dummy_use", NONE, IREG, NONE)
 MINI_OP(OP_DUMMY_STORE, "dummy_store", NONE, NONE, NONE)
 MINI_OP(OP_NOT_REACHED, "not_reached", NONE, NONE, NONE)
 
@@ -592,7 +592,7 @@ MINI_OP(OP_X86_PUSH_IMM,           "x86_push_imm", NONE, NONE, NONE)
 MINI_OP(OP_X86_PUSH,               "x86_push", NONE, IREG, NONE)
 MINI_OP(OP_X86_PUSH_FP,            "x86_push_fp", NONE, NONE, NONE)
 MINI_OP(OP_X86_PUSH_OBJ,           "x86_push_obj", NONE, IREG, NONE)
-MINI_OP(OP_X86_PUSH_GOT_ENTRY,     "x86_push_got_entry", NONE, NONE, NONE)
+MINI_OP(OP_X86_PUSH_GOT_ENTRY,     "x86_push_got_entry", NONE, IREG, NONE)
 MINI_OP(OP_X86_LEA,                "x86_lea", IREG, IREG, IREG)
 MINI_OP(OP_X86_LEA_MEMBASE,        "x86_lea_membase", NONE, NONE, NONE)
 MINI_OP(OP_X86_XCHG,               "x86_xchg", NONE, NONE, NONE)
