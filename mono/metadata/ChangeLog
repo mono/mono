@@ -1,3 +1,8 @@
+2006-02-09  Dick Porter  <dick@ximian.com>
+
+	* threads.c (mono_thread_detach): Drop a reference to the thread
+	we're detaching.
+
 2006-02-09  Zoltan Varga  <vargaz@gmail.com>
 
 	* object.c (mono_nullable_init): Handle nullable reference types.
