@@ -548,7 +548,7 @@ namespace System.Windows.Forms {
 		
 		private void DrawTitleButton (Graphics dc, TitleButton button, Rectangle clip)
 		{
-			if (button.Rectangle.IntersectsWith (clip))
+			if (!button.Rectangle.IntersectsWith (clip))
 				return;
 
 			dc.FillRectangle (SystemBrushes.Control, button.Rectangle);
