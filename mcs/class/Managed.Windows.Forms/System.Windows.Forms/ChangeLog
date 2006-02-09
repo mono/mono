@@ -2,6 +2,7 @@
 
 	* Form.cs: If a form is made into an MDI form update the styles so
 	all the props can get set correctly.
+	- Kill the mdi_container when we dont need it anymore.
 
 2006-02-08  Jackson Harper  <jackson@ximian.com>
 

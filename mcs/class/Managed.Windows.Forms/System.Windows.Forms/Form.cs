@@ -404,7 +404,7 @@ namespace System.Windows.Forms {
 					Controls.Add(mdi_container);
 				} else if (!value && mdi_container != null) {
 					Controls.Remove(mdi_container);
-					mdi_container.Dispose();
+					mdi_container = null;
 				}
 			}
 		}
