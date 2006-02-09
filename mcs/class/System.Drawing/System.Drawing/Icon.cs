@@ -381,7 +381,7 @@ namespace System.Drawing
 			bits = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.WriteOnly, bmp.PixelFormat);
 
 			for (int y = 0; y < biHeight; y++) {
-				Marshal.Copy(ii.iconXOR, bytesPerLine * y, (IntPtr)((int)bits.Scan0 + bits.Stride * (biHeight - 1 - y)), bytesPerLine);
+				Marshal.Copy(ii.iconXOR, bytesPerLine * y, (IntPtr)(bits.Scan0.ToInt64() + bits.Stride * (biHeight - 1 - y)), bytesPerLine);
 			}
 			
 			bmp.UnlockBits(bits);

@@ -117,10 +117,8 @@ namespace System.Drawing.Printing
 				PaperSize ps;
 				PaperKind kind;
 				for (int i = 0; i < ret; i++) {
-					x = Marshal.ReadInt32 (ptr_sizes);
-					ptr_sizes = new IntPtr (ptr_sizes.ToInt64 () + 4);
-					y = Marshal.ReadInt32 (ptr_sizes);
-					ptr_sizes = new IntPtr (ptr_sizes.ToInt64 () + 4);
+					x = Marshal.ReadInt32 (ptr_sizes, i * 4);
+					y = Marshal.ReadInt32 (ptr_sizes, (i + 1) * 4);
 
 					x = PrinterUnitConvert.Convert (x, PrinterUnit.TenthsOfAMillimeter,
 					      PrinterUnit.Display);

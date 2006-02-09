@@ -1,3 +1,8 @@
+2006-02-09  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* ColorPalette.cs, EncoderParameters.cs, EncoderParameter.cs,
+	  ImageAttributes.cs: 64bit cleanup and some simplifications
+
 2006-01-27  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ImageAttributes.cs: Ensure Marshal.FreeHGlobal is called for all 

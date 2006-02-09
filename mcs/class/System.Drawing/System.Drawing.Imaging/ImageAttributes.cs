@@ -266,7 +266,7 @@ namespace System.Drawing.Imaging
 					gdiclr.to = map[i].NewColor.ToArgb();
 				
 					Marshal.StructureToPtr (gdiclr, lpPointer, false);
-					lpPointer = (IntPtr) (lpPointer.ToInt32() + mapsize);						
+					lpPointer = (IntPtr) (lpPointer.ToInt64() + mapsize);						
 				}
 			
 				Status status = GDIPlus.GdipSetImageAttributesRemapTable (nativeImageAttr, 
@@ -383,7 +383,7 @@ namespace System.Drawing.Imaging
 					gdiclr.to = map[i].NewColor.ToArgb();
 				
 					Marshal.StructureToPtr (gdiclr, lpPointer, false);
-					lpPointer = (IntPtr) (lpPointer.ToInt32() + mapsize);						
+					lpPointer = (IntPtr) (lpPointer.ToInt64() + mapsize);						
 				}
 			
 				Status status = GDIPlus.GdipSetImageAttributesRemapTable (nativeImageAttr, 

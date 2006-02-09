@@ -73,7 +73,7 @@ namespace System.Drawing.Imaging
 			ptr = result;
 			Marshal.WriteInt32 (ptr, parameters.Length);
 
-			ptr = (IntPtr) ((int) ptr + 4);
+			ptr = (IntPtr) (ptr.ToInt64() + 4);
 			for (int i = 0; i < parameters.Length; i++) {
 				parameters[i].ToNativePtr (ptr);
 				ptr = (IntPtr) ((int) ptr + EncoderParameter.NativeSize());
@@ -96,7 +96,7 @@ namespace System.Drawing.Imaging
 			IntPtr ptr = epPtr;
 
 			int count = Marshal.ReadInt32 (ptr);
-			ptr = (IntPtr) ((int) ptr + 4);
+			ptr = (IntPtr) (ptr.ToInt64() + 4);
 
 			if (count == 0)
 				return null;

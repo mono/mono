@@ -90,7 +90,7 @@ namespace System.Drawing.Imaging
 			}			
 			
 			Marshal.StructureToPtr (palette, lfBuffer, false);	
-			Marshal.Copy (values, 0, (IntPtr) (lfBuffer.ToInt32() + Marshal.SizeOf (palette)), values.Length);
+			Marshal.Copy (values, 0, (IntPtr) (lfBuffer.ToInt64() + Marshal.SizeOf (palette)), values.Length);
 			
 			return lfBuffer;
 		}
@@ -98,17 +98,19 @@ namespace System.Drawing.Imaging
 		internal void setFromGDIPalette (IntPtr palette)
 		{
 			IntPtr ptr = palette;
-			int cnt, color;			
+			int cnt, color;
+			int offset;
 
-			flags = Marshal.ReadInt32 (ptr); ptr = (IntPtr) (ptr.ToInt32() + 4);
-			cnt = Marshal.ReadInt32 (ptr); ptr = (IntPtr) (ptr.ToInt32() + 4);
+			flags = Marshal.ReadInt32 (ptr); ptr = (IntPtr) (ptr.ToInt64() + 4);
+			cnt = Marshal.ReadInt32 (ptr); ptr = (IntPtr) (ptr.ToInt64() + 4);
 						
 			entries = new Color [cnt];			
 						
+			offset = 0;
 			for (int i = 0; i < cnt; i++) {
-				color = Marshal.ReadInt32 (ptr);				
+				color = Marshal.ReadInt32 (ptr, offset);
 				entries[i] = Color.FromArgb (color);
-				ptr = (IntPtr) (ptr.ToInt32() + 4);
+				offset += 4;
 			}
 		}
 #endif

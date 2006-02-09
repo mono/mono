@@ -1,3 +1,8 @@
+2006-02-09  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* PrintingServicesWin32.cs: Simplyfied the code, removing the need
+	  for pointer calculations (part of 64bit cleanup)
+
 2006-01-27  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PrintingServicesWin32.cs: Ensure Marshal.FreeHGlobal is called for 

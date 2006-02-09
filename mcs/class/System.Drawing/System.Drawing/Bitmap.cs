@@ -66,7 +66,7 @@ namespace System.Drawing
 			IntPtr bmp;
 			Status s = GDIPlus.GdipCreateBitmapFromGraphics (width, height, g.nativeObject, out bmp);
 			GDIPlus.CheckStatus (s);
-			nativeObject = (IntPtr)bmp;						
+			nativeObject = bmp;						
 		}
 
 		public Bitmap (int width, int height, PixelFormat format)
@@ -74,7 +74,7 @@ namespace System.Drawing
 			IntPtr bmp;
 			Status s = GDIPlus.GdipCreateBitmapFromScan0 (width, height, 0, format, IntPtr.Zero, out bmp);
 			GDIPlus.CheckStatus (s);
-			nativeObject = (IntPtr) bmp;
+			nativeObject = bmp;
 			
 		}
 
@@ -88,12 +88,12 @@ namespace System.Drawing
 		
 		internal Bitmap (int width, int height, PixelFormat pixel, IntPtr bmp)
 		{			
-			nativeObject = (IntPtr)bmp;						
+			nativeObject = bmp;						
 		}
 		
 		internal Bitmap (float width, float height, PixelFormat pixel, IntPtr bmp)
 		{			
-			nativeObject = (IntPtr)bmp;			
+			nativeObject = bmp;			
 			
 		}
 
@@ -143,7 +143,7 @@ namespace System.Drawing
 				
 			Status status = GDIPlus.GdipCreateBitmapFromScan0 (width, height, stride, format, scan0, out bmp);
 			GDIPlus.CheckStatus (status);	
-			nativeObject = (IntPtr) bmp;						 								
+			nativeObject = bmp;						 								
 		}
 
 		private Bitmap (SerializationInfo info, StreamingContext context)
@@ -191,7 +191,7 @@ namespace System.Drawing
                                
 			GDIPlus.CheckStatus (status);
 
-			Bitmap bmpnew = new Bitmap (rect.Width, rect.Height,  PixelFormat, (IntPtr) bmp);
+			Bitmap bmpnew = new Bitmap (rect.Width, rect.Height,  PixelFormat, bmp);
        			return bmpnew;
        		}
 		
@@ -202,7 +202,7 @@ namespace System.Drawing
                                PixelFormat, nativeObject,  out bmp);
 			GDIPlus.CheckStatus (status);
 
-			Bitmap bmpnew = new Bitmap (rect.Width, rect.Height,  PixelFormat, (IntPtr) bmp);
+			Bitmap bmpnew = new Bitmap (rect.Width, rect.Height,  PixelFormat, bmp);
 	       		return bmpnew;
 		}
 
@@ -261,7 +261,7 @@ namespace System.Drawing
 		{
 			BitmapData result = new BitmapData();
 
-			if (nativeObject == (IntPtr) 0)
+			if (nativeObject == IntPtr.Zero)
 				throw new Exception ("nativeObject is null");			
 			
 			Status status = GDIPlus.GdipBitmapLockBits (nativeObject, ref rect, flags, format,  result);

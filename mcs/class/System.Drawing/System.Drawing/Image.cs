@@ -332,7 +332,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		try {
 			status = GDIPlus.GdipGetPropertyItem (nativeObject, propid, propSize, property);
 			GDIPlus.CheckStatus (status);
-			gdipProperty = (GdipPropertyItem) Marshal.PtrToStructure ((IntPtr)property, 
+			gdipProperty = (GdipPropertyItem) Marshal.PtrToStructure (property, 
 								typeof (GdipPropertyItem));						
 			GdipPropertyItem.MarshalTo (gdipProperty, item);
 		}

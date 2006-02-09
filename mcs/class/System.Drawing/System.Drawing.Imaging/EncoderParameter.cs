@@ -165,12 +165,9 @@ namespace System.Drawing.Imaging {
 			this.valuesCount = numerator.Length;
 			this.type = EncoderParameterValueType.ValueTypeRational;
 			this.valuePtr = Marshal.AllocHGlobal (4 * valuesCount * 2);
-			IntPtr dest = this.valuePtr;
 			for (int i = 0; i < valuesCount; i++) {
-				Marshal.WriteInt32 (dest, (int) numerator[i]);
-				dest = (IntPtr) ((int) dest + 4);
-				Marshal.WriteInt32 (dest, (int) denominator[i]);
-				dest = (IntPtr) ((int) dest + 4);
+				Marshal.WriteInt32 (valuePtr, i * 4, (int) numerator[i]);
+				Marshal.WriteInt32 (valuePtr, (i + 1) * 4, (int) denominator[i]);
 			}
 		}
 
@@ -196,10 +193,8 @@ namespace System.Drawing.Imaging {
 			this.valuePtr = Marshal.AllocHGlobal (4 * valuesCount * 2);
 			IntPtr dest = this.valuePtr;
 			for (int i = 0; i < valuesCount; i++) {
-				Marshal.WriteInt32 (dest, (int) rangebegin[i]);
-				dest = (IntPtr) ((int) dest + 4);
-				Marshal.WriteInt32 (dest, (int) rangeend[i]);
-				dest = (IntPtr) ((int) dest + 4);
+				Marshal.WriteInt32 (dest, i * 4, (int) rangebegin[i]);
+				Marshal.WriteInt32 (dest, (i + 1) * 4, (int) rangeend[i]);
 			}
 		}
 
@@ -235,14 +230,10 @@ namespace System.Drawing.Imaging {
 			this.valuePtr = Marshal.AllocHGlobal (4 * valuesCount * 4);
 			IntPtr dest = this.valuePtr;
 			for (int i = 0; i < valuesCount; i++) {
-				Marshal.WriteInt32 (dest, numerator1[i]);
-				dest = (IntPtr) ((int) dest + 4);
-				Marshal.WriteInt32 (dest, denominator1[i]);
-				dest = (IntPtr) ((int) dest + 4);
-				Marshal.WriteInt32 (dest, numerator2[i]);
-				dest = (IntPtr) ((int) dest + 4);
-				Marshal.WriteInt32 (dest, denominator2[i]);
-				dest = (IntPtr) ((int) dest + 4);
+				Marshal.WriteInt32 (dest, i * 4, numerator1[i]);
+				Marshal.WriteInt32 (dest, (i + 1) * 4, denominator1[i]);
+				Marshal.WriteInt32 (dest, (i + 2) * 4, numerator2[i]);
+				Marshal.WriteInt32 (dest, (i + 3) * 4, denominator2[i]);
 			}
 		}
 
