@@ -134,6 +134,12 @@ namespace System.Net
 			}
 		}
 
+		internal void UpdateStatus (FtpStatusCode code, string desc)
+		{
+			statusCode = code;
+			statusDescription = desc;
+		}
+
 		~FtpWebResponse ()
 		{
 			((IDisposable) this).Dispose ();

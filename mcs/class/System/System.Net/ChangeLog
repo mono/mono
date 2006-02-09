@@ -1,3 +1,8 @@
+2006-02-09  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* FtpWebResponse.cs: Add UpdateStatus method, to update both
+	statusCode and statusDescription at the same time. 
+
 2006-02-08  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* FtpWebRequest.cs: Remove WebExceptionStatus argument
