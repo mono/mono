@@ -122,6 +122,8 @@ public class FieldInfoTest : Assertion
 
 	public static int? static_nullable_field;
 
+	public string? nullable_reference_field;
+
 	[Test]
 	public void NullableTests ()
 	{
@@ -140,6 +142,13 @@ public class FieldInfoTest : Assertion
 		AssertEquals (101, fi2.GetValue (t));
 		fi2.SetValue (t, null);
 		AssertEquals (null, fi2.GetValue (t));
+
+		FieldInfo fi3 = typeof (FieldInfoTest).GetField ("nullable_reference_field");
+
+		fi3.SetValue (t, "ABC");
+		AssertEquals ("ABC", fi3.GetValue (t));
+		fi3.SetValue (t, null);
+		AssertEquals (null, fi3.GetValue (t));
 	}
 #endif
 }		

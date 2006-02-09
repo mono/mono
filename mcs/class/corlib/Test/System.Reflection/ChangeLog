@@ -1,3 +1,7 @@
+2006-02-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* FieldInfoTest.cs: Add tests for nullable reference types.
+
 2006-02-07  Martin Baulig  <martin@ximian.com>
 
 	* MethodInfoTest.cs: Added test where IsGenericMethod must return false.
