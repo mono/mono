@@ -6949,14 +6949,15 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				goto load_error;
 
 			if (mono_class_is_nullable (klass)) {
-				NOT_IMPLEMENTED;
-			}
-
-			/* Needed by the code generated in inssel.brg */
-			mono_get_got_var (cfg);
+				ins = handle_unbox_nullable (cfg, *sp, ip, klass);
+				*sp++= ins;
+			} else {
+				/* Needed by the code generated in inssel.brg */
+				mono_get_got_var (cfg);
 			
-			ins = handle_unbox (cfg, klass, sp, ip);
-			*sp++ = ins;
+				ins = handle_unbox (cfg, klass, sp, ip);
+				*sp++ = ins;
+			}
 			ip += 5;
 			inline_costs += 2;
 			break;

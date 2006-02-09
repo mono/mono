@@ -67,6 +67,20 @@ class Tests {
 		return (o is TestStruct?) ? 1 : 0;
 	}
 
+	public static int test_0_nullable_normal_unbox ()
+	{
+		int? i = 5;
+
+		object o = i;
+		// This uses unbox instead of unbox_any
+		int? j = (int?)o;
+
+		if (j != 5)
+			return 1;
+
+		return 0;
+	}
+
 	public static void stelem_any<T> (T[] arr, T elem) {
 		arr [0] = elem;
 	}
