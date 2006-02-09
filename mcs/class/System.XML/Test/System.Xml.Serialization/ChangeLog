@@ -1,5 +1,9 @@
 2006-02-09  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* XmlSerializerTestClasses.cs: Added test classes.
+
+2006-02-09  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* XmlSerializationWriterTests.cs: Use Assert instead of deprecated
 	Assertion class. Added tests for FromEnum, WriteXsiType, 
 	WriteTypedPrimitive and WritePotentiallyReferencingElement. Changed

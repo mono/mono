@@ -23,6 +23,28 @@ namespace MonoTests.System.Xml.TestClasses
 	[Flags]
 	public enum EnumDefaultValue { e1 = 1, e2 = 2, e3 = 3 }
 	public enum EnumDefaultValueNF { e1 = 1, e2 = 2, e3 = 3 }
+
+	[Flags]
+	public enum FlagEnum { 
+		[XmlEnum ("one")]
+		e1 = 1,
+		[XmlEnum ("two")]
+		e2 = 2,
+		[XmlEnum ("four")]
+		e4 = 4 }
+
+	[Flags]
+	public enum ZeroFlagEnum {
+		[XmlEnum ("zero")]
+		e0 = 0,
+		[XmlEnum ("o<n>e")]
+		e1 = 1,
+		[XmlEnum ("tns:t<w>o")]
+		e2 = 2,
+		[XmlEnum ("four")]
+		[XmlIgnore]
+		e4 = 4
+	}
 	
 	public class SimpleClass
 	{
@@ -448,6 +470,37 @@ namespace MonoTests.System.Xml.TestClasses
 		public Entity[] Collection1 {
 			get { return collection1; }
 		}
+	}
+
+	public class DictionaryWithIndexer : DictionaryBase
+	{
+		public TimeSpan this[int index] {
+			get { return TimeSpan.MinValue; }
+		}
+
+		public void Add (TimeSpan value)
+		{
+		}
+	}
+
+	[XmlRoot(Namespace="some:urn")]
+	[SoapTypeAttribute (Namespace="another:urn")]
+	public class PrimitiveTypesContainer
+	{
+		public PrimitiveTypesContainer ()
+		{
+			Number = 2004;
+			Name = "some name";
+			Index = (byte) 56;
+			Password = new byte[] { 243, 15 };
+			PathSeparatorCharacter = '/';
+		}
+
+		public int Number;
+		public string Name;
+		public byte Index;
+		public byte[] Password;
+		public char PathSeparatorCharacter;
 	}
 }
 
