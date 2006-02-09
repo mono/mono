@@ -4070,15 +4070,17 @@ namespace Mono.CSharp {
 					return false;
 				}
 
+				int errors = Report.Errors;
 				Expr = Expr.DoResolveLValue (ec, Expr);
-				if (Expr == null)
+				if (Expr == null && errors == Report.Errors)
 					Error_LValueRequired (loc);
 			} else if (ArgType == AType.Out) {
+				int errors = Report.Errors;
 				ec.InRefOutArgumentResolving = true;
 				Expr = Expr.DoResolveLValue (ec, EmptyExpression.OutAccess);
 				ec.InRefOutArgumentResolving = false;
 
-				if (Expr == null)
+				if (Expr == null && errors == Report.Errors)
 					Error_LValueRequired (loc);
 			}
 			else
@@ -4110,20 +4112,6 @@ namespace Mono.CSharp {
 						}
 					}
 				}
-			}
-
-			if (Expr.eclass != ExprClass.Variable){
-				//
-				// We just probe to match the CSC output
-				//
-				if (Expr.eclass == ExprClass.PropertyAccess ||
-				    Expr.eclass == ExprClass.IndexerAccess){
-					Report.Error (206, loc, "A property or indexer `{0}' may not be passed as an out or ref parameter",
-						Expr.GetSignatureForError ());
-				} else {
-					Error_LValueRequired (loc);
-				}
-				return false;
 			}
 				
 			return true;
@@ -4794,6 +4782,8 @@ namespace Mono.CSharp {
 				nmethods = j;
 			}
 
+			int applicable_errors = Report.Errors;
+			
 			//
 			// First we construct the set of applicable methods
 			//
@@ -4837,6 +4827,9 @@ namespace Mono.CSharp {
 				}
 			}
 
+			if (applicable_errors != Report.Errors)
+				return null;
+			
 			int candidate_top = candidates.Count;
 
 			if (applicable_type == null) {
@@ -7373,12 +7366,13 @@ namespace Mono.CSharp {
 				Error (23, "The `.' operator can not be applied to pointer operands (" +
 				       TypeManager.CSharpName (expr_type) + ")");
 				return null;
-			}
-
-			if (expr_type == TypeManager.void_type) {
+			} else if (expr_type == TypeManager.void_type) {
 				Error (23, "The `.' operator can not be applied to operands of type 'void'");
 				return null;
+			} else if (expr_type == TypeManager.anonymous_method_type){
+				Error (23, "The `.' operator can not be applied to anonymous methods");
 			}
+			
 
 			Expression member_lookup;
 			member_lookup = MemberLookup (
@@ -8371,6 +8365,19 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolveLValue (EmitContext ec, Expression right_side)
 		{
+			if (right_side == EmptyExpression.OutAccess) {
+				Report.Error (206, loc, "A property or indexer `{0}' may not be passed as an out or ref parameter",
+					      GetSignatureForError ());
+				return null;
+			}
+
+			// if the indexer returns a value type, and we try to set a field in it
+			if (right_side == EmptyExpression.LValueMemberAccess) {
+				Report.Error (1612, loc, "Cannot modify the return value of `{0}' because it is not a variable",
+					      GetSignatureForError ());
+				return null;
+			}
+
 			ArrayList AllSetters = new ArrayList();
 			if (!CommonResolve (ec))
 				return null;
@@ -8484,19 +8491,23 @@ namespace Mono.CSharp {
 		{
 			Emit (ec, false);
 		}
+
+		public override string GetSignatureForError ()
+		{
+			// FIXME: print the argument list of the indexer
+			return instance_expr.GetSignatureForError () + ".this[...]";
+		}
 	}
 
 	/// <summary>
 	///   The base operator for method names
 	/// </summary>
 	public class BaseAccess : Expression {
-		public readonly string Identifier;
-		TypeArguments args;
+		string member;
 		
-		public BaseAccess (string member, TypeArguments args, Location l)
+		public BaseAccess (string member, Location l)
 		{
-			this.Identifier = member;
-			this.args = args;
+			this.member = member;
 			loc = l;
 		}
 
@@ -8548,10 +8559,10 @@ namespace Mono.CSharp {
 			}
 			
 			member_lookup = MemberLookup (ec, ec.ContainerType, null, base_type,
-						      Identifier, AllMemberTypes, AllBindingFlags,
+						      member, AllMemberTypes, AllBindingFlags,
 						      loc);
 			if (member_lookup == null) {
-				MemberLookupFailed (ec, base_type, base_type, Identifier, null, true, loc);
+				MemberLookupFailed (ec, base_type, base_type, member, null, true, loc);
 				return null;
 			}
 
@@ -8572,18 +8583,8 @@ namespace Mono.CSharp {
 				pe.IsBase = true;
 			}
 
-			MethodGroupExpr mg = e as MethodGroupExpr;
-			if (mg != null)
-				mg.IsBase = true;
-
-			if (args != null) {
-				if (mg != null)
-					return mg.ResolveGeneric (ec, args);
-
-				Report.Error (307, loc, "`{0}' cannot be used with type arguments",
-					      Identifier);
-				return null;
-			}
+			if (e is MethodGroupExpr)
+				((MethodGroupExpr) e).IsBase = true;
 
 			return e;
 		}

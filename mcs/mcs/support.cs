@@ -46,7 +46,7 @@ namespace Mono.CSharp {
 			int count = pi.Length-1;
 
 			if (pi.Length == 0) {
-				types = TypeManager.NoTypes;
+				types = Type.EmptyTypes;
 			} else {
 				types = new Type [pi.Length];
 				for (int i = 0; i < pi.Length; i++)

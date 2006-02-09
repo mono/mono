@@ -1497,7 +1497,7 @@ namespace Mono.CSharp {
 					is_class = is_struct = false;
 				}
 			} else {
-				is_class = atype.IsClass || atype.IsInterface;
+				is_class = atype.IsClass;
 				is_struct = atype.IsValueType;
 			}
 
@@ -1528,16 +1528,26 @@ namespace Mono.CSharp {
 			// The class constraint comes next.
 			//
 			if (gc.HasClassConstraint) {
-				if (!CheckConstraint (ec, ptype, aexpr, gc.ClassConstraint))
+				if (!CheckConstraint (ec, ptype, aexpr, gc.ClassConstraint)) {
+					Error_TypeMustBeConvertible (atype, gc.ClassConstraint, ptype);
 					return false;
+				}
 			}
 
 			//
 			// Now, check the interface constraints.
 			//
 			foreach (Type it in gc.InterfaceConstraints) {
-				if (!CheckConstraint (ec, ptype, aexpr, it))
+				Type itype;
+				if (it.IsGenericParameter)
+					itype = atypes [it.GenericParameterPosition];
+				else
+					itype = it;
+
+				if (!CheckConstraint (ec, ptype, aexpr, itype)) {
+					Error_TypeMustBeConvertible (atype, itype, ptype);
 					return false;
+				}
 			}
 
 			//
@@ -1592,11 +1602,7 @@ namespace Mono.CSharp {
 				ctype = atypes [pos];
 			}
 
-			if (Convert.ImplicitStandardConversionExists (ec, expr, ctype))
-				return true;
-
-			Error_TypeMustBeConvertible (expr.Type, ctype, ptype);
-			return false;
+			return Convert.ImplicitStandardConversionExists (ec, expr, ctype);
 		}
 
 		bool HasDefaultConstructor (EmitContext ec, Type atype)
@@ -2258,22 +2264,6 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Whether `mb' is a generic method definition.
 		/// </summary>
-		public static bool IsGenericMethodDefinition (MethodBase mb)
-		{
-			if (mb.DeclaringType is TypeBuilder) {
-				IMethodData method = (IMethodData) builder_to_method [mb];
-				if (method == null)
-					return false;
-
-				return method.GenericMethod != null;
-			}
-
-			return mb.IsGenericMethodDefinition;
-		}
-
-		/// <summary>
-		///   Whether `mb' is a generic method definition.
-		/// </summary>
 		public static bool IsGenericMethod (MethodBase mb)
 		{
 			if (mb.DeclaringType is TypeBuilder) {
@@ -2284,7 +2274,7 @@ namespace Mono.CSharp {
 				return method.GenericMethod != null;
 			}
 
-			return mb.IsGenericMethod;
+			return mb.IsGenericMethodDefinition;
 		}
 
 		//

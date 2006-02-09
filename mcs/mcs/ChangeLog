@@ -1,3 +1,80 @@
+2006-02-06  Miguel de Icaza  <miguel@novell.com>
+
+	* codegen.cs (EmitScopeInitFromBlock): check here the
+	capture_context, there is no need to make two calls to the
+	EmitContext. 
+
+	* anonymous.cs: Add some debugging messages that might help me
+	track other instances of this problem in the future (the
+	regression of test 467).
+
+	* cs-parser.jay: track the variable block, as we need to initalize
+	any captured variables declared in this block for the "catch"
+	portion of the "Try" statement.
+
+	* statement.cs (Try.Emit): If the "Catch" has a VarBlock, emit any
+	scope initialization for captured variables. 
+
+	Also, move the emit for the variables after the block location has
+	been marked.
+
+2006-02-06  Marek Safar  <marek.safar@seznam.cz>
+
+	* ecore.cs (PropertyExpr.FindAccessors): Just made flags const.
+
+2006-02-02  Miguel de Icaza  <miguel@novell.com>
+
+	* anonymous.cs (CaptureContext.EmitInitScope): I was wrong in the
+	commit yesterday, the initialization for the roots is necessary.
+	What is not necessary is the scope activation.
+
+2006-02-02  Raja R Harinath  <rharinath@novell.com>
+
+	* ecore.cs (PropertyExpr.DoResolveLValue): Add CS0206 check.
+	* expression.cs (IndexerAccess.DoResolveLValue): Add CS1612 and
+	CS0206 checks.
+	(Argument.Resolve): Remove CS0206 checks.
+
+2006-02-01  Miguel de Icaza  <miguel@novell.com>
+
+	* anonymous.cs (CaptureContext.EmitInitScope): Do not emit the
+	scopes for all the roots, the scopes will now be emitted when the
+	Blocks are entered.   [This change was wrong, fixed on 2006-02-02]
+
+	(CaptureContext.EmitScopeInitFromBlock): Simply emit the ScopeInfo
+	code.  This reduces a lot of existing cruft.
+	
+	* statement.cs (Block.Emit): Call EmitScopeInitFromBlock here, so
+	that the ScopeInfo is generated as we enter the scope, not at the
+	time of use, which is what we used to do before.
+
+	* codegen.cs (EmitScopeInitFromBlock): New routine, this is called
+	every time a Block is about to be emitted if we have a
+	CaptureContext. 
+
+2006-02-01  Raja R Harinath  <rharinath@novell.com>
+
+	* typemanager.cs (NoTypes, NoTypeExprs): Remove.
+	(Reset): Update.
+	* *.cs: Use Type.EmptyTypes instead of TypeManager.NoTypes.
+
+	* typemanager.cs (cons_param_array_attribute): Make private.
+	(Reset): Set it to null.
+	(InitCoreHelpers): Don't initialize it.
+	(ConsParamArrayAttribute): New.  Initialize it as needed.
+	* parameter.cs (ParamsParameter.ApplyAttribute): Update to change.
+
+2006-01-31  Miguel de Icaza  <miguel@novell.com>
+
+	* expression.cs: There might be errors reported during the
+	selection of applicable methods.  If there are errors, do not
+	continue execution as it will lead the compiler to crash.
+
+2006-01-30  Miguel de Icaza  <miguel@novell.com>
+
+	* expression.cs: Member access is not allowed on anonymous
+	methods.  Fixes #77402.
+
 2006-01-30  Raja R Harinath  <rharinath@novell.com>
 
 	Fix #77401

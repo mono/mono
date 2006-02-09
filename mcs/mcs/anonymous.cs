@@ -424,7 +424,7 @@ namespace Mono.CSharp {
 				name, TypeAttributes.AutoLayout | TypeAttributes.Class |
 				TypeAttributes.NestedAssembly, TypeManager.object_type, null);
 
-			Type [] constructor_types = TypeManager.NoTypes;
+			Type [] constructor_types = Type.EmptyTypes;
 			scope.ScopeConstructor = scope.ScopeTypeBuilder.DefineConstructor (
 				MethodAttributes.Public | MethodAttributes.HideBySig |
 				MethodAttributes.SpecialName | MethodAttributes.RTSpecialName,
@@ -767,8 +767,27 @@ namespace Mono.CSharp {
 		{
 			if (CaptureContext.Host.IsIterator)
 				ig.Emit (OpCodes.Ldarg_0);
-			else
+			else {
+				if (scope_instance == null){
+					//
+					// This is needed if someone overwrites the Emit method
+					// of Statement and manually calls Block.Emit without
+					// this snippet first:
+					// 
+					//   ec.EmitScopeInitFromBlock (The_Block);
+					//   The_Block.Emit (ec);
+					// 
+
+					Console.WriteLine (
+				        	"The scope_instance has not been emitted, this typically means\n" +
+						"that inside the compiler someone is calling Block.Emit without\n" +
+						"first calling EmitScopeInitFromBlock for the block.  See compiler" +
+						"source code for an explanation");
+					throw new Exception ("Internal compiler error");
+					
+				}
 				ig.Emit (OpCodes.Ldloc, scope_instance);
+			}
 		}
 
 		public static void CheckCycles (string msg, ScopeInfo s)
@@ -1090,21 +1109,21 @@ namespace Mono.CSharp {
 			EmitAnonymousHelperClasses (ec);
 			if (roots.Count != 0)
 				foreach (ScopeInfo root in roots)
-					root.EmitInitScope (ec);
-		}
+					root.EmitInitScope (ec);		}
 
-		ScopeInfo EmitGetScopeFromBlock (EmitContext ec, Block b)
+		//
+		// This is called externally when we start emitting code for a block
+		// if the block has a ScopeInfo associated, emit the init code
+		//
+		public void EmitScopeInitFromBlock (EmitContext ec, Block b)
 		{
-			ScopeInfo si;
-			
-			si = (ScopeInfo) scopes [b.ID];
+			ScopeInfo si = (ScopeInfo) scopes [b.ID];
 			if (si == null)
-				throw new Exception ("Si is null for block " + b.ID);
+				return;
+
 			si.EmitInitScope (ec);
-
-			return si;
 		}
-
+		
 		//
 		// Emits the opcodes necessary to load the instance of the captured
 		// variable in `li'
@@ -1116,7 +1135,7 @@ namespace Mono.CSharp {
 			ScopeInfo si;
 
 			if (li.Block.Toplevel == toplevel_owner){
-				si = EmitGetScopeFromBlock (ec, li.Block);
+				si = (ScopeInfo) scopes [li.Block.ID];
 				si.EmitScopeInstance (ig);
 				return;
 			}
@@ -1170,7 +1189,7 @@ namespace Mono.CSharp {
 			ScopeInfo si;
 
 			if (ec.CurrentBlock.Toplevel == toplevel_owner) {
-				si = EmitGetScopeFromBlock (ec, toplevel_owner);
+				si = (ScopeInfo) scopes [toplevel_owner.ID];
 				si.EmitScopeInstance (ig);
 			} else {
 				si = ec.CurrentAnonymousMethod.Scope;
