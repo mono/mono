@@ -1,3 +1,8 @@
+2006-02-09  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* ChangeLog: Created, contents from deleted 'changelog' file
+	* FontCollection.cs: Cleaned up marshalling and made 64bit safe
+
 2005-12-13 Konstantin Triger <kostat@mainsoft.com>
 
 	* TextLineIterator.jvm.cs: handle null string.

@@ -70,22 +70,15 @@ namespace System.Drawing.Text {
 				status = GDIPlus.GdipGetFontCollectionFamilyCount (nativeFontCollection, out found);
 				GDIPlus.CheckStatus (status);
 				
-				int nSize =  Marshal.SizeOf (IntPtr.Zero);
-				IntPtr dest = Marshal.AllocHGlobal (nSize * found);           
+				IntPtr dest = Marshal.AllocHGlobal (IntPtr.Size * found);           
                
 				status = GDIPlus.GdipGetFontCollectionFamilyList(nativeFontCollection, found, dest, out returned);
 				   
-				IntPtr[] ptrAr = new IntPtr [returned];
-				int pos = dest.ToInt32 ();
-				for ( int i = 0; i < returned ; i++, pos+=nSize)
-					ptrAr[i] = (IntPtr)Marshal.PtrToStructure ((IntPtr)pos, typeof(IntPtr));
+				families = new FontFamily [returned];
+				for ( int i = 0; i < returned ; i++)
+					families[i] = new FontFamily(Marshal.ReadIntPtr (dest, i * IntPtr.Size));
            
 				Marshal.FreeHGlobal (dest);           
-                   
-				families = new FontFamily [returned];
-				for ( int i = 0; i < returned; i++ )
-					families[i] = new FontFamily (ptrAr[i]);                     
-                           
 				return families;               
 			}
 		}
