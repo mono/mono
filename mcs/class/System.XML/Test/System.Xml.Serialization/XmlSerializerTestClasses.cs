@@ -471,6 +471,26 @@ namespace MonoTests.System.Xml.TestClasses
 			get { return collection1; }
 		}
 	}
+	
+	[XmlInclude (typeof(SubclassTestSub))]
+	public class SubclassTestBase
+	{
+	}
+	
+	public class SubclassTestSub: SubclassTestBase
+	{
+	}
+	
+	public class SubclassTestExtra
+	{
+	}
+	
+	public class SubclassTestContainer
+	{
+		[XmlElement ("a", typeof(SubclassTestBase))]
+		[XmlElement ("b", typeof(SubclassTestExtra))]
+		public object data;
+	}
 
 	public class DictionaryWithIndexer : DictionaryBase
 	{

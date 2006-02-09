@@ -1,3 +1,8 @@
+2006-02-09  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* XmlSerializerTests.cs, XmlSerializerTestClasses.cs: Added test
+	for bug #77447.
+
 2006-02-09  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* XmlSerializerTests.cs: Added constants for usage in new tests.
