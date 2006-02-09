@@ -106,6 +106,13 @@ namespace MonoTests.System.XmlSerialization
 			xs.Serialize(xtw, o);
 		}
 
+		private void Serialize (object o, XmlTypeMapping typeMapping)
+		{
+			SetUpWriter ();
+			xs = new XmlSerializer (typeMapping);
+			xs.Serialize (xtw, o);
+		}
+
 		private void SerializeEncoded (object o)
 		{
 			SerializeEncoded (o, o.GetType ());
@@ -118,7 +125,7 @@ namespace MonoTests.System.XmlSerialization
 			xs = new XmlSerializer (mapping);
 			xs.Serialize (xtw, o);
 		}
-		
+
 		// test constructors
 #if USE_VERSION_1_1	// It doesn't pass on MS.NET 1.1.
 		[Test]
@@ -217,27 +224,428 @@ namespace MonoTests.System.XmlSerialization
 			
 			// FIXME test INF and other boundary conditions that may exist with floats
 		}
-		
+
+		[Test]
+		[Category ("NotDotNet")] // bug #77501, will fail on .NET until we output name of constant
+		public void TestSerializeEnumeration_FromValue ()
+		{
+			Serialize ((int) SimpleEnumeration.SECOND, typeof (SimpleEnumeration));
+			Assert.AreEqual (
+				"<?xml version='1.0' encoding='utf-16'?>" +
+				"<SimpleEnumeration>1</SimpleEnumeration>",
+				sw.ToString ());
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void TestSerializeEnumeration_FromValue_Encoded ()
+		{
+			SerializeEncoded ((int) SimpleEnumeration.SECOND, typeof (SimpleEnumeration));
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"<?xml version='1.0' encoding='utf-16'?>" +
+				"<SimpleEnumeration d1p1:type='SimpleEnumeration' xmlns:d1p1='{0}'>SECOND</SimpleEnumeration>",
+				XmlSchemaInstanceNamespace), sw.ToString ());
+		}
+
 		[Test]
 		public void TestSerializeEnumeration()
 		{
 			Serialize(SimpleEnumeration.FIRST);
-			Assert.AreEqual (Infoset ("<SimpleEnumeration>FIRST</SimpleEnumeration>"), WriterText);
+			Assert.AreEqual (Infoset ("<SimpleEnumeration>FIRST</SimpleEnumeration>"), WriterText, "#1");
 			
 			Serialize(SimpleEnumeration.SECOND);
-			Assert.AreEqual (Infoset ("<SimpleEnumeration>SECOND</SimpleEnumeration>"), WriterText);
+			Assert.AreEqual (Infoset ("<SimpleEnumeration>SECOND</SimpleEnumeration>"), WriterText, "#2");
 		}
-		
-		[Test]
-		public void TestSerializeEnumDefaultValue() {
-			Serialize(new EnumDefaultValue());
-			Assert.AreEqual (Infoset ("<EnumDefaultValue />"), WriterText);
-			
-			Serialize(new EnumDefaultValueNF());
-			Assert.AreEqual (Infoset ("<EnumDefaultValueNF>0</EnumDefaultValueNF>"), WriterText);
 
-			Serialize(new SimpleEnumeration());
-			Assert.AreEqual (Infoset ("<SimpleEnumeration>FIRST</SimpleEnumeration>"), WriterText);
+		[Test]
+		public void TestSerializeEnumeration_Encoded()
+		{
+			SerializeEncoded (SimpleEnumeration.FIRST);
+			Assert.AreEqual (string.Format(CultureInfo.InvariantCulture,
+				"<?xml version='1.0' encoding='utf-16'?>" +
+				"<SimpleEnumeration d1p1:type='SimpleEnumeration' xmlns:d1p1='{0}'>FIRST</SimpleEnumeration>",
+				XmlSchemaInstanceNamespace), sw.ToString (), "#B1");
+
+			SerializeEncoded (SimpleEnumeration.SECOND);
+			Assert.AreEqual (string.Format(CultureInfo.InvariantCulture,
+				"<?xml version='1.0' encoding='utf-16'?>" +
+				"<SimpleEnumeration d1p1:type='SimpleEnumeration' xmlns:d1p1='{0}'>SECOND</SimpleEnumeration>",
+				XmlSchemaInstanceNamespace), sw.ToString (), "#B2");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void TestSerializeEnumDefaultValue ()
+		{
+			Serialize (new EnumDefaultValue ());
+			Assert.AreEqual (Infoset ("<EnumDefaultValue />"), WriterText, "#1");
+
+			Serialize (new SimpleEnumeration ());
+			Assert.AreEqual (Infoset ("<SimpleEnumeration>FIRST</SimpleEnumeration>"), WriterText, "#2");
+
+			Serialize (3, typeof (EnumDefaultValue));
+			Assert.AreEqual (Infoset ("<EnumDefaultValue>e3</EnumDefaultValue>"), WriterText, "#3");
+
+			Serialize (EnumDefaultValue.e3, typeof (EnumDefaultValue));
+			Assert.AreEqual (Infoset ("<EnumDefaultValue>e3</EnumDefaultValue>"), WriterText, "#4");
+
+			Serialize (EnumDefaultValue.e1 | EnumDefaultValue.e2, typeof (EnumDefaultValue));
+			Assert.AreEqual (Infoset ("<EnumDefaultValue>e3</EnumDefaultValue>"), WriterText, "#5");
+
+			Serialize (EnumDefaultValue.e1 | EnumDefaultValue.e2 | EnumDefaultValue.e3, typeof (EnumDefaultValue));
+			Assert.AreEqual (Infoset ("<EnumDefaultValue>e3</EnumDefaultValue>"), WriterText, "#6");
+
+			Serialize (EnumDefaultValue.e1 | EnumDefaultValue.e3, typeof (EnumDefaultValue));
+			Assert.AreEqual (Infoset ("<EnumDefaultValue>e3</EnumDefaultValue>"), WriterText, "#7");
+
+			Serialize (EnumDefaultValue.e2 | EnumDefaultValue.e3, typeof (EnumDefaultValue));
+			Assert.AreEqual (Infoset ("<EnumDefaultValue>e3</EnumDefaultValue>"), WriterText, "#8");
+
+			Serialize (3, typeof (FlagEnum));
+			Assert.AreEqual (Infoset ("<FlagEnum>one two</FlagEnum>"), WriterText, "#9");
+
+			Serialize (5, typeof (FlagEnum));
+			Assert.AreEqual (Infoset ("<FlagEnum>one four</FlagEnum>"), WriterText, "#10");
+
+			Serialize (FlagEnum.e4, typeof (FlagEnum));
+			Assert.AreEqual (Infoset ("<FlagEnum>four</FlagEnum>"), WriterText, "#11");
+
+			Serialize (FlagEnum.e1 | FlagEnum.e2, typeof (FlagEnum));
+			Assert.AreEqual (Infoset ("<FlagEnum>one two</FlagEnum>"), WriterText, "#12");
+
+			Serialize (FlagEnum.e1 | FlagEnum.e2 | FlagEnum.e4, typeof (FlagEnum));
+			Assert.AreEqual (Infoset ("<FlagEnum>one two four</FlagEnum>"), WriterText, "#13");
+
+			Serialize (FlagEnum.e1 | FlagEnum.e4, typeof (FlagEnum));
+			Assert.AreEqual (Infoset ("<FlagEnum>one four</FlagEnum>"), WriterText, "#14");
+
+			Serialize (FlagEnum.e2 | FlagEnum.e4, typeof (FlagEnum));
+			Assert.AreEqual (Infoset ("<FlagEnum>two four</FlagEnum>"), WriterText, "#15");
+
+			Serialize (3, typeof (EnumDefaultValueNF));
+			Assert.AreEqual (Infoset ("<EnumDefaultValueNF>e3</EnumDefaultValueNF>"), WriterText, "#16");
+
+			Serialize (EnumDefaultValueNF.e2, typeof (EnumDefaultValueNF));
+			Assert.AreEqual (Infoset ("<EnumDefaultValueNF>e2</EnumDefaultValueNF>"), WriterText, "#17");
+
+			Serialize (2, typeof (ZeroFlagEnum));
+			Assert.AreEqual (Infoset ("<ZeroFlagEnum>tns:t&lt;w&gt;o</ZeroFlagEnum>"), WriterText, "#18");
+
+			Serialize (new ZeroFlagEnum ()); // enum actually has a field with value 0
+			Assert.AreEqual (Infoset ("<ZeroFlagEnum>zero</ZeroFlagEnum>"), WriterText, "#19");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void TestSerializeEnumDefaultValue_Encoded ()
+		{
+			SerializeEncoded (new EnumDefaultValue ());
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"<?xml version='1.0' encoding='utf-16'?>" +
+				"<EnumDefaultValue d1p1:type='EnumDefaultValue' xmlns:d1p1='{0}' />",
+				XmlSchemaInstanceNamespace), sw.ToString (), "#1");
+
+			SerializeEncoded (new SimpleEnumeration ());
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"<?xml version='1.0' encoding='utf-16'?>" +
+				"<SimpleEnumeration d1p1:type='SimpleEnumeration' xmlns:d1p1='{0}'>FIRST</SimpleEnumeration>",
+				XmlSchemaInstanceNamespace), sw.ToString (), "#2");
+
+			SerializeEncoded (3, typeof (EnumDefaultValue));
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"<?xml version='1.0' encoding='utf-16'?>" +
+				"<EnumDefaultValue d1p1:type='EnumDefaultValue' xmlns:d1p1='{0}'>e3</EnumDefaultValue>",
+				XmlSchemaInstanceNamespace), sw.ToString (), "#3");
+
+			SerializeEncoded (EnumDefaultValue.e3, typeof (EnumDefaultValue));
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"<?xml version='1.0' encoding='utf-16'?>" +
+				"<EnumDefaultValue d1p1:type='EnumDefaultValue' xmlns:d1p1='{0}'>e3</EnumDefaultValue>",
+				XmlSchemaInstanceNamespace), sw.ToString (), "#4");
+
+			SerializeEncoded (EnumDefaultValue.e1 | EnumDefaultValue.e2, typeof (EnumDefaultValue));
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"<?xml version='1.0' encoding='utf-16'?>" +
+				"<EnumDefaultValue d1p1:type='EnumDefaultValue' xmlns:d1p1='{0}'>e3</EnumDefaultValue>",
+				XmlSchemaInstanceNamespace), sw.ToString (), "#5");
+
+			SerializeEncoded (EnumDefaultValue.e1 | EnumDefaultValue.e2 | EnumDefaultValue.e3, typeof (EnumDefaultValue));
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"<?xml version='1.0' encoding='utf-16'?>" +
+				"<EnumDefaultValue d1p1:type='EnumDefaultValue' xmlns:d1p1='{0}'>e3</EnumDefaultValue>",
+				XmlSchemaInstanceNamespace), sw.ToString (), "#6");
+
+			SerializeEncoded (EnumDefaultValue.e1 | EnumDefaultValue.e3, typeof (EnumDefaultValue));
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"<?xml version='1.0' encoding='utf-16'?>" +
+				"<EnumDefaultValue d1p1:type='EnumDefaultValue' xmlns:d1p1='{0}'>e3</EnumDefaultValue>",
+				XmlSchemaInstanceNamespace), sw.ToString (), "#7");
+
+			SerializeEncoded (EnumDefaultValue.e2 | EnumDefaultValue.e3, typeof (EnumDefaultValue));
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"<?xml version='1.0' encoding='utf-16'?>" +
+				"<EnumDefaultValue d1p1:type='EnumDefaultValue' xmlns:d1p1='{0}'>e3</EnumDefaultValue>",
+				XmlSchemaInstanceNamespace), sw.ToString (), "#8");
+
+			SerializeEncoded (3, typeof (FlagEnum));
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"<?xml version='1.0' encoding='utf-16'?>" +
+				"<FlagEnum d1p1:type='FlagEnum' xmlns:d1p1='{0}'>e1 e2</FlagEnum>",
+				XmlSchemaInstanceNamespace), sw.ToString (), "#9");
+
+			SerializeEncoded (5, typeof (FlagEnum));
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"<?xml version='1.0' encoding='utf-16'?>" +
+				"<FlagEnum d1p1:type='FlagEnum' xmlns:d1p1='{0}'>e1 e4</FlagEnum>",
+				XmlSchemaInstanceNamespace), sw.ToString (), "#10");
+
+			SerializeEncoded (FlagEnum.e4, typeof (FlagEnum));
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"<?xml version='1.0' encoding='utf-16'?>" +
+				"<FlagEnum d1p1:type='FlagEnum' xmlns:d1p1='{0}'>e4</FlagEnum>",
+				XmlSchemaInstanceNamespace), sw.ToString (), "#11");
+
+			SerializeEncoded (FlagEnum.e1 | FlagEnum.e2, typeof (FlagEnum));
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"<?xml version='1.0' encoding='utf-16'?>" +
+				"<FlagEnum d1p1:type='FlagEnum' xmlns:d1p1='{0}'>e1 e2</FlagEnum>",
+				XmlSchemaInstanceNamespace), sw.ToString (), "#12");
+
+			SerializeEncoded (FlagEnum.e1 | FlagEnum.e2 | FlagEnum.e4, typeof (FlagEnum));
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"<?xml version='1.0' encoding='utf-16'?>" +
+				"<FlagEnum d1p1:type='FlagEnum' xmlns:d1p1='{0}'>e1 e2 e4</FlagEnum>",
+				XmlSchemaInstanceNamespace), sw.ToString (), "#13");
+
+			SerializeEncoded (FlagEnum.e1 | FlagEnum.e4, typeof (FlagEnum));
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"<?xml version='1.0' encoding='utf-16'?>" +
+				"<FlagEnum d1p1:type='FlagEnum' xmlns:d1p1='{0}'>e1 e4</FlagEnum>",
+				XmlSchemaInstanceNamespace), sw.ToString (), "#14");
+
+			SerializeEncoded (FlagEnum.e2 | FlagEnum.e4, typeof (FlagEnum));
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"<?xml version='1.0' encoding='utf-16'?>" +
+				"<FlagEnum d1p1:type='FlagEnum' xmlns:d1p1='{0}'>e2 e4</FlagEnum>",
+				XmlSchemaInstanceNamespace), sw.ToString (), "#15");
+
+			SerializeEncoded (3, typeof (EnumDefaultValueNF));
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"<?xml version='1.0' encoding='utf-16'?>" +
+				"<EnumDefaultValueNF d1p1:type='EnumDefaultValueNF' xmlns:d1p1='{0}'>e3</EnumDefaultValueNF>",
+				XmlSchemaInstanceNamespace), sw.ToString (), "#16");
+
+			SerializeEncoded (EnumDefaultValueNF.e2, typeof (EnumDefaultValueNF));
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"<?xml version='1.0' encoding='utf-16'?>" +
+				"<EnumDefaultValueNF d1p1:type='EnumDefaultValueNF' xmlns:d1p1='{0}'>e2</EnumDefaultValueNF>",
+				XmlSchemaInstanceNamespace), sw.ToString (), "#17");
+
+			SerializeEncoded (2, typeof (ZeroFlagEnum));
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"<?xml version='1.0' encoding='utf-16'?>" +
+				"<ZeroFlagEnum d1p1:type='ZeroFlagEnum' xmlns:d1p1='{0}'>e2</ZeroFlagEnum>",
+				XmlSchemaInstanceNamespace), sw.ToString (), "#18");
+
+			SerializeEncoded (new ZeroFlagEnum ()); // enum actually has a field with value 0
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"<?xml version='1.0' encoding='utf-16'?>" +
+				"<ZeroFlagEnum d1p1:type='ZeroFlagEnum' xmlns:d1p1='{0}'>e0</ZeroFlagEnum>",
+				XmlSchemaInstanceNamespace), sw.ToString (), "#19");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void TestSerializeEnumDefaultValue_InvalidValue1 ()
+		{
+			try {
+				Serialize ("b", typeof (EnumDefaultValue));
+				Assert.Fail ("#A1");
+			} catch (InvalidOperationException ex) {
+				Assert.IsNotNull (ex.InnerException, "#A2");
+				Assert.AreEqual (typeof (InvalidCastException), ex.InnerException.GetType (), "#A3");
+			}
+
+			try {
+				Serialize ("e1", typeof (EnumDefaultValue));
+				Assert.Fail ("#B1");
+			} catch (InvalidOperationException ex) {
+				Assert.IsNotNull (ex.InnerException, "#B2");
+				Assert.AreEqual (typeof (InvalidCastException), ex.InnerException.GetType (), "#B3");
+			}
+
+			try {
+				Serialize ("e1,e2", typeof (EnumDefaultValue));
+				Assert.Fail ("#C1");
+			} catch (InvalidOperationException ex) {
+				Assert.IsNotNull (ex.InnerException, "#C2");
+				Assert.AreEqual (typeof (InvalidCastException), ex.InnerException.GetType (), "#C3");
+			}
+
+			try {
+				Serialize (string.Empty, typeof (EnumDefaultValue));
+				Assert.Fail ("#D1");
+			} catch (InvalidOperationException ex) {
+				Assert.IsNotNull (ex.InnerException, "#D2");
+				Assert.AreEqual (typeof (InvalidCastException), ex.InnerException.GetType (), "#D3");
+			}
+
+			try {
+				Serialize ("1", typeof (EnumDefaultValue));
+				Assert.Fail ("#E1");
+			} catch (InvalidOperationException ex) {
+				Assert.IsNotNull (ex.InnerException, "#E2");
+				Assert.AreEqual (typeof (InvalidCastException), ex.InnerException.GetType (), "#E3");
+			}
+
+			try {
+				Serialize ("0", typeof (EnumDefaultValue));
+				Assert.Fail ("#F1");
+			} catch (InvalidOperationException ex) {
+				Assert.IsNotNull (ex.InnerException, "#F2");
+				Assert.AreEqual (typeof (InvalidCastException), ex.InnerException.GetType (), "#F3");
+			}
+
+			try {
+				Serialize (new SimpleClass (), typeof (EnumDefaultValue));
+				Assert.Fail ("#G1");
+			} catch (InvalidOperationException ex) {
+				Assert.IsNotNull (ex.InnerException, "#G2");
+				Assert.AreEqual (typeof (InvalidCastException), ex.InnerException.GetType (), "#G3");
+			}
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void TestSerializeEnumDefaultValue_InvalidValue2 ()
+		{
+#if NET_2_0
+			try {
+				Serialize (5, typeof (EnumDefaultValue));
+				Assert.Fail ("#1");
+			} catch (InvalidOperationException ex) {
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
+				Assert.IsNotNull (ex.InnerException, "#3");
+				Assert.AreEqual (typeof (InvalidOperationException), ex.InnerException.GetType (), "#4");
+				Assert.IsNotNull (ex.InnerException.Message, "#5");
+				Assert.IsTrue (ex.InnerException.Message.IndexOf ("'5'") != -1, "#6");
+				Assert.IsTrue (ex.InnerException.Message.IndexOf (typeof (EnumDefaultValue).FullName) != -1, "#7");
+			}
+#else
+			Serialize (5, typeof (EnumDefaultValue));
+			Assert.AreEqual (Infoset ("<EnumDefaultValue>5</EnumDefaultValue>"), WriterText);
+#endif
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void TestSerializeEnumDefaultValueNF_InvalidValue1 ()
+		{
+#if NET_2_0
+			try {
+				Serialize (new EnumDefaultValueNF ());
+				Assert.Fail ("#1");
+			} catch (InvalidOperationException ex) {
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
+				Assert.IsNotNull (ex.InnerException, "#3");
+				Assert.AreEqual (typeof (InvalidOperationException), ex.InnerException.GetType (), "#4");
+				Assert.IsNotNull (ex.InnerException.Message, "#5");
+				Assert.IsTrue (ex.InnerException.Message.IndexOf ("'0'") != -1, "#6");
+				Assert.IsTrue (ex.InnerException.Message.IndexOf (typeof (EnumDefaultValueNF).FullName) != -1, "#7");
+			}
+#else
+			Serialize (new EnumDefaultValueNF ());
+			Assert.AreEqual (Infoset ("<EnumDefaultValueNF>0</EnumDefaultValueNF>"), WriterText);
+#endif
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void TestSerializeEnumDefaultValueNF_InvalidValue2 ()
+		{
+#if NET_2_0
+			try {
+				Serialize (15, typeof (EnumDefaultValueNF));
+				Assert.Fail ("#1");
+			} catch (InvalidOperationException ex) {
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
+				Assert.IsNotNull (ex.InnerException, "#3");
+				Assert.AreEqual (typeof (InvalidOperationException), ex.InnerException.GetType (), "#4");
+				Assert.IsNotNull (ex.InnerException.Message, "#5");
+				Assert.IsTrue (ex.InnerException.Message.IndexOf ("'15'") != -1, "#6");
+				Assert.IsTrue (ex.InnerException.Message.IndexOf (typeof (EnumDefaultValueNF).FullName) != -1, "#7");
+			}
+#else
+			Serialize (15, typeof (EnumDefaultValueNF));
+			Assert.AreEqual (Infoset ("<EnumDefaultValueNF>15</EnumDefaultValueNF>"), WriterText);
+#endif
+		}
+ 
+		[Test]
+		[Category ("NotWorking")]
+		public void TestSerializeEnumDefaultValueNF_InvalidValue3 ()
+		{
+			try {
+				Serialize ("b", typeof (EnumDefaultValueNF));
+				Assert.Fail ("#A1");
+			} catch (InvalidOperationException ex) {
+				Assert.IsNotNull (ex.InnerException, "#A2");
+				Assert.AreEqual (typeof (InvalidCastException), ex.InnerException.GetType (), "#A3");
+			}
+
+			try {
+				Serialize ("e2", typeof (EnumDefaultValueNF));
+				Assert.Fail ("#B1");
+			} catch (InvalidOperationException ex) {
+				Assert.IsNotNull (ex.InnerException, "#B2");
+				Assert.AreEqual (typeof (InvalidCastException), ex.InnerException.GetType (), "#B3");
+			}
+
+			try {
+				Serialize (string.Empty, typeof (EnumDefaultValueNF));
+				Assert.Fail ("#C1");
+			} catch (InvalidOperationException ex) {
+				Assert.IsNotNull (ex.InnerException, "#C2");
+				Assert.AreEqual (typeof (InvalidCastException), ex.InnerException.GetType (), "#C3");
+			}
+
+			try {
+				Serialize ("1", typeof (EnumDefaultValueNF));
+				Assert.Fail ("#D1");
+			} catch (InvalidOperationException ex) {
+				Assert.IsNotNull (ex.InnerException, "#D2");
+				Assert.AreEqual (typeof (InvalidCastException), ex.InnerException.GetType (), "#D3");
+			}
+
+			try {
+				Serialize ("0", typeof (EnumDefaultValueNF));
+				Assert.Fail ("#E1");
+			} catch (InvalidOperationException ex) {
+				Assert.IsNotNull (ex.InnerException, "#E2");
+				Assert.AreEqual (typeof (InvalidCastException), ex.InnerException.GetType (), "#E3");
+			}
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void TestSerializeZeroFlagEnum_InvalidValue ()
+		{
+#if NET_2_0
+			try {
+				Serialize (4, typeof (ZeroFlagEnum)); // corresponding enum field is marked XmlIgnore
+				Assert.Fail ("#1");
+			} catch (InvalidOperationException ex) {
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
+				Assert.IsNotNull (ex.InnerException, "#3");
+				Assert.AreEqual (typeof (InvalidOperationException), ex.InnerException.GetType (), "#4");
+				Assert.IsNotNull (ex.InnerException.Message, "#5");
+				Assert.IsTrue (ex.InnerException.Message.IndexOf ("'4'") != -1, "#6");
+				Assert.IsTrue (ex.InnerException.Message.IndexOf (typeof (ZeroFlagEnum).FullName) != -1, "#7");
+			}
+#else
+			Serialize (4, typeof (ZeroFlagEnum)); // corresponding enum field is marked XmlIgnore
+			Assert.AreEqual (Infoset ("<ZeroFlagEnum>4</ZeroFlagEnum>"), WriterText);
+#endif
 		}
 
 		[Test]
@@ -730,18 +1138,40 @@ namespace MonoTests.System.XmlSerialization
 		[Test]
 		public void TestSerializeXmlEnumAttribute()
 		{
-			// technically this has an XmlIgnore attribute, 
-			// but it is not being serialized as a member.
-			Serialize(XmlSchemaForm.None);
-			Assert.AreEqual (Infoset ("<XmlSchemaForm>0</XmlSchemaForm>"), WriterText);
-			
 			Serialize(XmlSchemaForm.Qualified);
-			Assert.AreEqual (Infoset ("<XmlSchemaForm>qualified</XmlSchemaForm>"), WriterText);
+			Assert.AreEqual (Infoset ("<XmlSchemaForm>qualified</XmlSchemaForm>"), WriterText, "#1");
 			
 			Serialize(XmlSchemaForm.Unqualified);
-			Assert.AreEqual (Infoset ("<XmlSchemaForm>unqualified</XmlSchemaForm>"), WriterText);
+			Assert.AreEqual (Infoset ("<XmlSchemaForm>unqualified</XmlSchemaForm>"), WriterText, "#2");
 		}
 		
+		[Test]
+#if NET_2_0
+		[Category ("NotWorking")]
+#endif
+		public void TestSerializeXmlEnumAttribute_IgnoredValue ()
+		{
+			// technically XmlSchemaForm.None has an XmlIgnore attribute,
+			// but it is not being serialized as a member.
+
+#if NET_2_0
+			try {
+				Serialize (XmlSchemaForm.None);
+				Assert.Fail ("#1");
+			} catch (InvalidOperationException ex) {
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
+				Assert.IsNotNull (ex.InnerException, "#3");
+				Assert.AreEqual (typeof (InvalidOperationException), ex.InnerException.GetType (), "#4");
+				Assert.IsNotNull (ex.InnerException.Message, "#5");
+				Assert.IsTrue (ex.InnerException.Message.IndexOf ("'0'") != -1, "#6");
+				Assert.IsTrue (ex.InnerException.Message.IndexOf (typeof (XmlSchemaForm).FullName) != -1, "#7");
+			}
+#else
+			Serialize (XmlSchemaForm.None);
+			Assert.AreEqual (Infoset ("<XmlSchemaForm>0</XmlSchemaForm>"), WriterText);
+#endif
+		}
+
 		[Test]
 		public void TestSerializeXmlNodeArray ()
 		{
@@ -913,26 +1343,34 @@ namespace MonoTests.System.XmlSerialization
 			Serialize (new PrimitiveTypesContainer ());
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version='1.0' encoding='utf-16'?>" +
+#if NET_2_0
+				"<PrimitiveTypesContainer xmlns:xsi='{1}' xmlns:xsd='{0}' xmlns='some:urn'>" +
+#else
 				"<PrimitiveTypesContainer xmlns:xsd='{0}' xmlns:xsi='{1}' xmlns='some:urn'>" +
+#endif
 				"<Number>2004</Number>" +
 				"<Name>some name</Name>" +
 				"<Index>56</Index>" +
 				"<Password>8w8=</Password>" +
 				"<PathSeparatorCharacter>47</PathSeparatorCharacter>" +
-				"</PrimitiveTypesContainer>", XmlSchemaNamespace,
+				"</PrimitiveTypesContainer>", XmlSchemaNamespace, 
 				XmlSchemaInstanceNamespace), sw.ToString (), "#1");
 
 			SerializeEncoded (new PrimitiveTypesContainer ());
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version='1.0' encoding='utf-16'?>" +
+#if NET_2_0
+				"<q1:PrimitiveTypesContainer xmlns:xsi='{1}' xmlns:xsd='{0}' id='id1' xmlns:q1='{2}'>" +
+#else
 				"<q1:PrimitiveTypesContainer xmlns:xsd='{0}' xmlns:xsi='{1}' id='id1' xmlns:q1='{2}'>" +
+#endif
 				"<Number xsi:type='xsd:int'>2004</Number>" +
 				"<Name xsi:type='xsd:string'>some name</Name>" +
 				"<Index xsi:type='xsd:unsignedByte'>56</Index>" +
 				"<Password xsi:type='xsd:base64Binary'>8w8=</Password>" +
 				"<PathSeparatorCharacter xmlns:q2='{3}' xsi:type='q2:char'>47</PathSeparatorCharacter>" +
-				"</q1:PrimitiveTypesContainer>", XmlSchemaNamespace,
-				XmlSchemaInstanceNamespace, AnotherNamespace, WsdlTypesNamespace),
+				"</q1:PrimitiveTypesContainer>", XmlSchemaNamespace, 
+				XmlSchemaInstanceNamespace, AnotherNamespace, WsdlTypesNamespace), 
 				sw.ToString (), "#2");
 		}
 

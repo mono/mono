@@ -140,8 +140,10 @@ namespace System.Xml.Serialization
 
 		internal XmlTypeMapping GetRealTypeMap (string objectFullTypeName)
 		{
-			// Returns the map for a subtype of this map's type
+			if (TypeData.SchemaType == SchemaTypes.Enum)
+				return this;
 
+			// Returns the map for a subtype of this map's type
 			objectFullTypeName = objectFullTypeName.Replace ('+','.');
 			if (TypeFullName == objectFullTypeName) return this;
 			for (int n=0; n<_derivedTypes.Count; n++) {

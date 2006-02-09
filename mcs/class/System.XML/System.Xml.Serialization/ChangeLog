@@ -1,5 +1,10 @@
 2006-02-09  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* XmlTypeMapping.cs: Modified GetRealTypeMap to return current map
+	if map represents enum. Fixes bug #77501.
+
+2006-02-09  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* XmlSerializationWriter.cs: Implemented 2.0 version of FromEnum, and
 	CreateInvalidEnumValueException. Set eol-style to native.
 	* XmlCustomerFormatter.cs: Added FromEnum overload that takes name of
