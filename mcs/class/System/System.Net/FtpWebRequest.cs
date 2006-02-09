@@ -295,7 +295,7 @@ namespace System.Net
 		{
 			FtpStatusCode status = SendCommand (AbortCommand);
 			if (status != FtpStatusCode.ClosingData)
-				throw CreateExceptionFromResponse (0); // Probably ignore it by now
+				throw CreateExceptionFromResponse (); // Probably ignore it by now
 
 			aborted = true;
 			if (asyncRead != null) {
@@ -362,7 +362,7 @@ namespace System.Net
 		void ProcessSimpleRequest ()
 		{
 			if (SendCommand (method, requestUri.LocalPath) != FtpStatusCode.PathnameCreated) {
-				asyncRead.SetCompleted (true, CreateExceptionFromResponse (0));
+				asyncRead.SetCompleted (true, CreateExceptionFromResponse ());
 				return;
 			}
 
@@ -375,7 +375,7 @@ namespace System.Net
 		{
 			FtpStatusCode status = SendCommand (method, requestUri.LocalPath);
 			if (status != FtpStatusCode.FileStatus) {
-				asyncRead.SetCompleted (true, CreateExceptionFromResponse (0));
+				asyncRead.SetCompleted (true, CreateExceptionFromResponse ());
 				return;
 			}
 
@@ -426,14 +426,14 @@ namespace System.Net
 			}
 
 			ftpResponse.UpdateStatus (statusCode, statusDescription);
-			asyncRead.SetCompleted (true, CreateExceptionFromResponse (0));
+			asyncRead.SetCompleted (true, CreateExceptionFromResponse ());
 		}
 
 		void UploadData ()
 		{
 			if (gotRequestStream) {
 				if (GetResponseCode () != FtpStatusCode.ClosingData)
-					asyncRead.SetCompleted (true, CreateExceptionFromResponse (0));
+					asyncRead.SetCompleted (true, CreateExceptionFromResponse ());
 				
 				return;
 			}
@@ -454,7 +454,7 @@ namespace System.Net
 			if (offset > 0) {
 				status = SendCommand (RestCommand, offset.ToString ());
 				if (status != FtpStatusCode.FileCommandPending) {
-					asyncRead.SetCompleted (true, CreateExceptionFromResponse (0));
+					asyncRead.SetCompleted (true, CreateExceptionFromResponse ());
 					return;
 				}
 			}
@@ -594,7 +594,7 @@ namespace System.Net
 			controlReader = new StreamReader (controlStream, Encoding.ASCII);
 
 			if (!Authenticate ()) {
-				SetResponseError (CreateExceptionFromResponse (0));
+				SetResponseError (CreateExceptionFromResponse ());
 				return false;
 			}
 
@@ -659,10 +659,10 @@ namespace System.Net
 			return sock;
 		}
 
-		Exception CreateExceptionFromResponse (WebExceptionStatus status)
+		Exception CreateExceptionFromResponse ()
 		{
-			WebException exc = new WebException ("Server returned an error: " + statusDescription, null, status,
-					ftpResponse);
+			WebException exc = new WebException ("Server returned an error: " + statusDescription, null, 
+					WebExceptionStatus.ProtocolError, ftpResponse);
 			return exc;
 		}
 		
@@ -696,7 +696,7 @@ namespace System.Net
 			if (usePassive) {
 				status = SendCommand (PassiveCommand);
 				if (status != FtpStatusCode.EnteringPassive) {
-					SetResponseError (CreateExceptionFromResponse (0));
+					SetResponseError (CreateExceptionFromResponse ());
 					return null;
 				}
 				
@@ -730,7 +730,7 @@ namespace System.Net
 			if (status != FtpStatusCode.CommandOK) {
 				sock.Close ();
 				
-				SetResponseError (CreateExceptionFromResponse (0));
+				SetResponseError (CreateExceptionFromResponse ());
 				return null;
 			}
 
@@ -749,14 +749,14 @@ namespace System.Net
 				status = SendCommand (TypeCommand, DataType);
 				
 				if (status != FtpStatusCode.CommandOK) {
-					SetResponseError (CreateExceptionFromResponse (0));
+					SetResponseError (CreateExceptionFromResponse ());
 					return false;
 				}
 			}
 
 			status = SendCommand (method, requestUri.LocalPath);
 			if (status != FtpStatusCode.OpeningData) {
-				SetResponseError (CreateExceptionFromResponse (0));
+				SetResponseError (CreateExceptionFromResponse ());
 				return false;
 			}
 			

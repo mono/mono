@@ -1,5 +1,12 @@
 2006-02-08  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* FtpWebRequest.cs: Remove WebExceptionStatus argument
+	from CreateExceptionFromResponse, since exceptions gotten
+	from server response always have a WebExceptionStatus.ProtocolError
+	value.
+	
+2006-02-08  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* FtpWebRequest.cs: Add renaming support when using 
 	WebRequestMethods.Ftp.Rename method.
 	
