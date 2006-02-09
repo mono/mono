@@ -1,5 +1,9 @@
 2006-02-09  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* XmlSerializerTests.cs: Fixed build after failed merge.
+
+2006-02-09  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* XmlSerializerTests.cs: Added test for bug #77501. Added tests for
 	XML and encoded serialization of enums.
 

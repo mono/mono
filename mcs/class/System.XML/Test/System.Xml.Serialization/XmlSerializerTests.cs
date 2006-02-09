@@ -1305,28 +1305,17 @@ namespace MonoTests.System.XmlSerialization
 			res += "at='a b' bin1='AQI= AQI=' bin2='AQI=' />";
 			Assert.AreEqual (Infoset (res), WriterText);
 		}
-		
-		[Test]
-		[ExpectedException (typeof(InvalidOperationException))]
-		public void TestArrayAttributeWithWrongDataType ()
-		{
-			Serialize (new ArrayAttributeWithWrongType ());
-		}
-		
+
 		[Test]
 		public void TestSubclassElementType ()
 		{
 			SubclassTestContainer c = new SubclassTestContainer ();
 			c.data = new SubclassTestSub ();
 			Serialize (c);
-			
+
 			string res = "<SubclassTestContainer xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>";
 			res += "<a xsi:type=\"SubclassTestSub\"/></SubclassTestContainer>";
 			Assert.AreEqual (Infoset (res), WriterText);
-		}
-		
-		// Helper methods
-				
 		}
 		
 		[Test]
@@ -1335,7 +1324,7 @@ namespace MonoTests.System.XmlSerialization
 		{
 			Serialize (new ArrayAttributeWithWrongType ());
 		}
-
+		
 		[Test]
 		[Category ("NotWorking")]
 		public void TestSerializePrimitiveTypesContainer ()
