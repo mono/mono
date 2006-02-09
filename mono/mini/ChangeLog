@@ -1,3 +1,9 @@
+
+Thu Feb 9 16:24:44 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: handle systems that sue a different way to
+	retrieve the stack address of the current thread.
+
 2006-02-09  Zoltan Varga  <vargaz@gmail.com>
 
 	* generics.2.cs: Add tests for nullable reference types.
