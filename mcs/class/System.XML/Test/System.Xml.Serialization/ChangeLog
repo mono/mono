@@ -1,3 +1,7 @@
+2006-02-09  Gert Driesen  <drieseng@users.sourceforge.net>
+	
+	* SoapReflectionImporterTests.cs: Marked test NotDotNet.
+
 2006-02-09  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* XmlSerializerTests.cs, XmlSerializerTestClasses.cs: Added test
