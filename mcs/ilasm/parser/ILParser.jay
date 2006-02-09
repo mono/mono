@@ -1106,10 +1106,14 @@ bound			: /* EMPTY */
                           }
 			| int32
                           {
-                                // ******** Not sure what this is?
-                                // For now I will say it is size because there
-                                // is allready a way to set lower
-                                $$ = new DictionaryEntry (TypeRef.Ellipsis, $1);
+                                /* Only size specified */ 
+                                int size = (int) $1;
+                                if (size < 0)
+                                        /* size cannot be < 0, so emit as (0, ...)
+                                           ilasm.net emits it like this */
+                                        $$ = new DictionaryEntry (0, TypeRef.Ellipsis);
+                                else
+                                        $$ = new DictionaryEntry (TypeRef.Ellipsis, size);
                           }
 			| int32 ELLIPSIS int32
                           {
