@@ -76,16 +76,49 @@ namespace System.Xml.Serialization {
 
 		internal static string FromEnum (long value, string[] values, long[] ids)
 		{
+			return FromEnum (value, values, ids, (string) null);
+		}
+
+		internal static string FromEnum (long value, string[] values, long[] ids, string typeName)
+		{
+			StringBuilder sb = new StringBuilder();
 			int length = ids.Length;
+			long valueToProcess = value;
+			int zeroValue = -1;
 
 			for (int i = 0; i < length; i ++) {
-				if (ids[i] == value) 
-					if (i >= values.Length)
-						return String.Empty;
-					else
-						return values[i].ToString ();
+				if (ids[i] == 0) {
+					zeroValue = i;
+				} else {
+					if (valueToProcess == 0) {
+						break;
+					}
+
+					if ((ids[i] & value) == ids[i]) {
+						if (sb.Length != 0)
+							sb.Append (' ');
+						sb.Append (values[i]);
+						valueToProcess &= ~ids[i];
+					}
+				}
 			}
-			return String.Empty;
+
+			if (valueToProcess != 0) {
+#if NET_2_0
+				if (typeName != null)
+					throw new InvalidOperationException (string.Format (CultureInfo.CurrentCulture,
+						"'{0}' is not a valid value for {1}.", value, typeName));
+				else
+					throw new InvalidOperationException (string.Format (CultureInfo.CurrentCulture,
+						"'{0}' is not a valid value.", value));
+#else
+				return value.ToString ();
+#endif
+			}
+			if (sb.Length == 0 && zeroValue != -1) {
+				sb.Append (values[zeroValue]);
+			}
+			return sb.ToString ();
 		}
 
 		internal static string FromXmlName (string name)
@@ -141,16 +174,27 @@ namespace System.Xml.Serialization {
 			// Assuming that h contains map from value to Enumerated Name
 /*
 			You can try : 
-				return ToEnum ("Element", h, "XmlNodeType");
+				return ToEnum ("One Two", h, "SomeType");
 			where:
 				(1) no keys and values for h.
-				(2) string keys and Enum, Type, long, string value.
+				(2) string keys and long values.
+			
+			according to MSDN docs (for .NET 2.0) the hashtable "consists of the
+			identifiers as keys and the constants as integral numbers"
 */
-			string memberName = (string) values [value];
-			if (memberName == null)
-				throw new InvalidOperationException (String.Format ("{0} is not a valid member of type {1}", value, typeName));
+			long enumValue = 0;
+			string[] names = value.Split (' ');
 
-			return (long) Enum.Parse (Type.GetType (typeName), memberName);
+			foreach (string name in names) {
+				object nameValue = values[name];
+				if (nameValue != null) {
+					enumValue |= (long) nameValue;
+				} else if (validate && name.Length != 0) {
+					throw new InvalidOperationException (String.Format ("'{0}' is not a valid member of type {1}.", name, typeName));
+				}
+			}
+
+			return enumValue;
 		}
 
 		internal static string ToXmlName (string value)

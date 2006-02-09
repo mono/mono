@@ -925,16 +925,15 @@ namespace System.Xml.Serialization
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		protected Exception CreateInvalidEnumValueException (object value, string typeName)
 		{
-			throw new NotImplementedException ();
+			return new InvalidOperationException (string.Format(CultureInfo.CurrentCulture,
+				"'{0}' is not a valid value for {1}.", value, typeName));
 		}
 
-		[MonoTODO]
 		protected static string FromEnum (long value, string[] values, long[] ids, string typeName)
 		{
-			throw new NotImplementedException ();
+			return XmlCustomFormatter.FromEnum (value, values, ids, typeName);
 		}
 
 		[MonoTODO]
@@ -962,7 +961,7 @@ namespace System.Xml.Serialization
 			set { throw new NotImplementedException(); }
 		}
 #endif
-		
+
 		#endregion
 
 		class WriteCallbackInfo

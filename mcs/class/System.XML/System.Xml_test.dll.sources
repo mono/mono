@@ -74,6 +74,7 @@ System.Xml.Serialization/XmlReflectionImporterTests.cs
 System.Xml.Serialization/XmlRootAttributeTests.cs
 System.Xml.Serialization/XmlSchemaExporterTests.cs
 System.Xml.Serialization/XmlSchemaImporterTests.cs
+System.Xml.Serialization/XmlSerializationReaderTests.cs
 System.Xml.Serialization/XmlSerializationWriterTests.cs
 System.Xml.Serialization/XmlTextAttributeTests.cs
 System.Xml.Serialization/XmlTypeAttributeTests.cs

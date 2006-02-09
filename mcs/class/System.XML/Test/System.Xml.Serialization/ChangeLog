@@ -1,3 +1,14 @@
+2006-02-09  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* XmlSerializationWriterTests.cs: Use Assert instead of deprecated
+	Assertion class. Added tests for FromEnum, WriteXsiType, 
+	WriteTypedPrimitive and WritePotentiallyReferencingElement. Changed
+	accessibility of Reset and Content on XmlSerializationWriterTester
+	and added public Execute methods for WritePotentiallyReferencingElement
+	and WriteTypedPrimitive, to allow this class to be useful for tests
+	that have effect on the prefix for other tests.
+	* XmlSerializationReaderTests.cs: Added tests for ToEnum.
+
 2006-02-08  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* XmlTypeAttributeTests.cs: Set eol-style to native.
