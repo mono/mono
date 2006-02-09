@@ -41,6 +41,13 @@ namespace MonoTests.System.XmlSerialization
 	[TestFixture]
 	public class XmlSerializerTests
 	{
+		const string XmlSchemaNamespace = "http://www.w3.org/2001/XMLSchema";
+		const string XmlSchemaInstanceNamespace = "http://www.w3.org/2001/XMLSchema-instance";
+		const string SoapEncodingNamespace = "http://schemas.xmlsoap.org/soap/encoding/";
+		const string WsdlTypesNamespace = "http://microsoft.com/wsdl/types/";
+		const string ANamespace = "some:urn";
+		const string AnotherNamespace = "another:urn";
+
 		StringWriter sw;
 		XmlTextWriter xtw;
 		XmlSerializer xs;
@@ -97,6 +104,19 @@ namespace MonoTests.System.XmlSerialization
 			SetUpWriter();
 			xs = new XmlSerializer(o.GetType(), root);
 			xs.Serialize(xtw, o);
+		}
+
+		private void SerializeEncoded (object o)
+		{
+			SerializeEncoded (o, o.GetType ());
+		}
+
+		private void SerializeEncoded (object o, Type type)
+		{
+			XmlTypeMapping mapping = CreateSoapMapping (type);
+			SetUpWriter ();
+			xs = new XmlSerializer (mapping);
+			xs.Serialize (xtw, o);
 		}
 		
 		// test constructors
@@ -197,7 +217,6 @@ namespace MonoTests.System.XmlSerialization
 			
 			// FIXME test INF and other boundary conditions that may exist with floats
 		}
-		
 		
 		[Test]
 		public void TestSerializeEnumeration()
@@ -863,7 +882,37 @@ namespace MonoTests.System.XmlSerialization
 		{
 			Serialize (new ArrayAttributeWithWrongType ());
 		}
-		
+
+		[Test]
+		[Category ("NotWorking")]
+		public void TestSerializePrimitiveTypesContainer ()
+		{
+			Serialize (new PrimitiveTypesContainer ());
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"<?xml version='1.0' encoding='utf-16'?>" +
+				"<PrimitiveTypesContainer xmlns:xsd='{0}' xmlns:xsi='{1}' xmlns='some:urn'>" +
+				"<Number>2004</Number>" +
+				"<Name>some name</Name>" +
+				"<Index>56</Index>" +
+				"<Password>8w8=</Password>" +
+				"<PathSeparatorCharacter>47</PathSeparatorCharacter>" +
+				"</PrimitiveTypesContainer>", XmlSchemaNamespace,
+				XmlSchemaInstanceNamespace), sw.ToString (), "#1");
+
+			SerializeEncoded (new PrimitiveTypesContainer ());
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"<?xml version='1.0' encoding='utf-16'?>" +
+				"<q1:PrimitiveTypesContainer xmlns:xsd='{0}' xmlns:xsi='{1}' id='id1' xmlns:q1='{2}'>" +
+				"<Number xsi:type='xsd:int'>2004</Number>" +
+				"<Name xsi:type='xsd:string'>some name</Name>" +
+				"<Index xsi:type='xsd:unsignedByte'>56</Index>" +
+				"<Password xsi:type='xsd:base64Binary'>8w8=</Password>" +
+				"<PathSeparatorCharacter xmlns:q2='{3}' xsi:type='q2:char'>47</PathSeparatorCharacter>" +
+				"</q1:PrimitiveTypesContainer>", XmlSchemaNamespace,
+				XmlSchemaInstanceNamespace, AnotherNamespace, WsdlTypesNamespace),
+				sw.ToString (), "#2");
+		}
+
 		// Helper methods
 				
 		public static string Infoset (string sx)
@@ -917,6 +966,12 @@ namespace MonoTests.System.XmlSerialization
 					sb.Append (nod.OuterXml);
 					break;
 			}
+		}
+
+		static XmlTypeMapping CreateSoapMapping (Type type)
+		{
+			SoapReflectionImporter importer = new SoapReflectionImporter ();
+			return importer.ImportTypeMapping (type);
 		}
 	}
 }

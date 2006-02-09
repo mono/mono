@@ -1,5 +1,10 @@
 2006-02-09  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* XmlSerializerTests.cs: Added constants for usage in new tests.
+	Added methods for encoded serialization. Fixed line endings.
+
+2006-02-09  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* XmlSerializerTestClasses.cs: Added test classes.
 
 2006-02-09  Gert Driesen  <drieseng@users.sourceforge.net>
