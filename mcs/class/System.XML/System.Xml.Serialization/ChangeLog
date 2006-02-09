@@ -1,3 +1,27 @@
+2006-02-09  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* XmlSerializationWriter.cs: Implemented 2.0 version of FromEnum, and
+	CreateInvalidEnumValueException. Set eol-style to native.
+	* XmlCustomerFormatter.cs: Added FromEnum overload that takes name of
+	enum for which string value must be created. Set eol-style to native.
+	Modified FromEnum to behave more like MSFT's implementation:
+	- treat value as bit field.
+	- no longer return empty string if the value matches an id for which there's no corresponding
+	name.
+	- if one of the ids has value 0 and there's a match for the enum value
+	(with a zero length XML name) or the enum value is 0, then return the 
+	corresponding XML for the id with value 0.
+	- in 2.0 profile, throw InvalidOperationException if no match is found
+	for (part of) the enum value.
+	Modifies ToEnum to match the MSFT implementation (as described in
+	.NET 2.0 SDK):
+	- Expect hashtable containing enum names as key, and corresponding
+	integral numbers as value.
+	- Do not report exception for whitespace-only value.
+	- Support space (MS docs are not clear about this) delimited list 
+	of names.
+	- typeName is only used to construct exception message.
+
 2006-02-09  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* System.Xml.Serialization/XmlTypeMapMemberElement.cs: When
