@@ -1839,7 +1839,8 @@ namespace MonoTests.System.Data.Utils {
 			finally	{EndCase(exp); exp = null;}
 
 			//DB2 don't return primary key
-			if (DBType != DataBaseServer.DB2) {
+			if (DBType != DataBaseServer.DB2 &&
+				DBType != DataBaseServer.Oracle) {
 				try {
 					BeginCase("MissingSchemaAction.AddWithKey, PrimaryKey");
 					Compare(ds.Tables[0].PrimaryKey.Length > 0 ,true );
