@@ -1,5 +1,10 @@
 2006-02-08  Jackson Harper  <jackson@ximian.com>
 
+	* InternalWindowManager.cs: Respek clipping when drawing MDi
+	decorations.
+
+2006-02-08  Jackson Harper  <jackson@ximian.com>
+
 	* Hwnd.cs: Add bits to track non client expose events.
 	* XplatUIX11.cs: Track non client expose events on the hwnd. This
 	gives us a proper invalid rect and will allow for some nice

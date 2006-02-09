@@ -480,7 +480,7 @@ namespace System.Windows.Forms {
 			
 				ControlPaint.DrawBorder3D (dc, borders,	Border3DStyle.Raised);
 
-				if (IsSizable) {
+				if (IsSizable && borders.IntersectsWith (pe.ClipRectangle)) {
 					borders.Inflate (-1, -1);
 					ControlPaint.DrawFocusRectangle (dc, borders);
 				}
@@ -494,7 +494,9 @@ namespace System.Windows.Forms {
 			Rectangle tb = new Rectangle (BorderWidth, BorderWidth,
 					form.Width - (BorderWidth * 2), TitleBarHeight - 1);
 
-			dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (color), tb);
+			Rectangle vis = Rectangle.Intersect (tb, pe.ClipRectangle);
+			if (vis != Rectangle.Empty)
+				dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (color), tb);
 
 			dc.DrawLine (new Pen (Color.White, 1), BorderWidth,
 					TitleBarHeight + BorderWidth, form.Width - BorderWidth,
@@ -510,15 +512,19 @@ namespace System.Windows.Forms {
 				format.FormatFlags = StringFormatFlags.NoWrap;
 				format.Trimming = StringTrimming.EllipsisCharacter;
 				format.LineAlignment = StringAlignment.Center;
-				dc.DrawString (form.Text, form.Font,
+
+				if (tb.IntersectsWith (pe.ClipRectangle))
+					dc.DrawString (form.Text, form.Font,
 						ThemeEngine.Current.ResPool.GetSolidBrush (Color.White),
 						tb, format);
 			}
 
 			if (!IsToolWindow && HasBorders) {
 				if (form.Icon != null) {
-					dc.DrawIcon (form.Icon, new Rectangle (BorderWidth + 3,
-								     BorderWidth + 3, 16, 16));
+					Rectangle icon = new Rectangle (BorderWidth + 3,
+							BorderWidth + 3, 16, 16);
+					if (icon.IntersectsWith (pe.ClipRectangle))
+						dc.DrawIcon (form.Icon, icon);
 				}
 					
 				minimize_button.Rectangle = new Rectangle (form.Width - 62,
@@ -530,18 +536,21 @@ namespace System.Windows.Forms {
 				close_button.Rectangle = new Rectangle (form.Width - 24,
 						BorderWidth + 2, 18, 22);
 
-				DrawTitleButton (dc, minimize_button);
-				DrawTitleButton (dc, maximize_button);
-				DrawTitleButton (dc, close_button);
+				DrawTitleButton (dc, minimize_button, pe.ClipRectangle);
+				DrawTitleButton (dc, maximize_button, pe.ClipRectangle);
+				DrawTitleButton (dc, close_button, pe.ClipRectangle);
 			} else if (IsToolWindow) {
 				close_button.Rectangle = new Rectangle (form.Width - BorderWidth - 2 - 13,
 						BorderWidth + 2, 13, 13);
-				DrawTitleButton (dc, close_button);
+				DrawTitleButton (dc, close_button, pe.ClipRectangle);
 			}
 		}
 		
-		private void DrawTitleButton (Graphics dc, TitleButton button)
+		private void DrawTitleButton (Graphics dc, TitleButton button, Rectangle clip)
 		{
+			if (button.Rectangle.IntersectsWith (clip))
+				return;
+
 			dc.FillRectangle (SystemBrushes.Control, button.Rectangle);
 
 			ControlPaint.DrawCaptionButton (dc, button.Rectangle,
