@@ -1,3 +1,10 @@
+2006-02-10  Alexander Olk  <alex.olk@googlemail.com>
+
+	* ColorDialog.cs:
+	  - Got rid of the panel. All controls are now directly added to
+	    the dialog form
+	  - Changed to mono coding style
+
 2006-02-10  Jackson Harper  <jackson@ximian.com>
 
 	* InternalWindowManager.cs: We don't need the set visibility to
