@@ -1,3 +1,9 @@
+2006-02-10  Zoltan Varga  <vargaz@gmail.com>
+	
+	* mini-exceptions.c (MONO_INIT_CONTEXT_FROM_CALLER): Avoid
+	using __builtin_frame_address (1) as it doesn't work in the presence
+	of optimizations. Hopefully fixes #77273.
+
 2006-02-07  Ankit Jain  <jankit@novell.com>
 
 	* debug-debugger.h: Add missing file, copied verbatim from
