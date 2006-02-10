@@ -140,7 +140,7 @@ namespace Mono.Data.SqliteClient
 					for (int i = 0; i < pN; i++) {
 						string colName;
 						if (version == 2) {
-							IntPtr fieldPtr = (IntPtr)Marshal.ReadInt32 (pazColName, i*IntPtr.Size);
+							IntPtr fieldPtr = Marshal.ReadIntPtr (pazColName, i*IntPtr.Size);
 							colName = Sqlite.HeapToString (fieldPtr, cmd.Connection.Encoding);
 						} else {
 							colName = Marshal.PtrToStringUni (Sqlite.sqlite3_column_name16 (pVm, i));
@@ -156,7 +156,7 @@ namespace Mono.Data.SqliteClient
 				object[] data_row = new object [pN];
 				for (int i = 0; i < pN; i++) {
 					if (version == 2) {
-						IntPtr fieldPtr = (IntPtr)Marshal.ReadInt32 (pazValue, i*IntPtr.Size);
+						IntPtr fieldPtr = Marshal.ReadIntPtr (pazValue, i*IntPtr.Size);
 						data_row[i] = Sqlite.HeapToString (fieldPtr, cmd.Connection.Encoding);
 					} else {
 						switch (Sqlite.sqlite3_column_type (pVm, i)) {
