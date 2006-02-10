@@ -87,7 +87,7 @@ namespace System.Collections.Generic {
 		}
 	}
 	
-	class IComparableOfTComparer <T> : Comparer <T> where T : IComparable {
+	class IComparableOfTComparer <T> : Comparer <T> where T : IComparable<T> {
 		public override int Compare (T x, T y)
 		{
 			// `null' is less than any other ref type
