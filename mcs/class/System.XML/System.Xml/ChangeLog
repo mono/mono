@@ -1,3 +1,8 @@
+2006-02-11  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlTextReader.cs :
+	  Avoid extra AppendValueChar() in ReadWhitespace().
+
 2006-02-06  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlTextReader.cs : ReadTextReader() is now assured to have current

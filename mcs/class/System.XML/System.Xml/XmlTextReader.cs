@@ -2788,26 +2788,25 @@ namespace System.Xml
 			if (currentState == XmlNodeType.None)
 				currentState = XmlNodeType.XmlDeclaration;
 
-			ClearValueBuffer ();
+			bool savePreserve = preserveCurrentTag;
+			preserveCurrentTag = true;
+			int startOffset = peekCharsIndex - curNodePeekIndex; // it should be 0 for now though.
+
 			int ch = PeekChar ();
 			do {
-				// FIXME: it might be optimized by the JIT later,
-//				AppendValueChar (ReadChar ());
-				{
-					ch = ReadChar ();
-					if (ch < Char.MaxValue)
-						valueBuffer.Append ((char) ch);
-					else
-						AppendSurrogatePairValueChar (ch);
-				}
+				Advance (ch);
+				ch = PeekChar ();
 			// FIXME: It should be inlined by the JIT.
 //			} while ((ch = PeekChar ()) != -1 && XmlChar.IsWhitespace (ch));
-				ch = PeekChar ();
 			} while (ch == 0x20 || ch == 0x9 || ch == 0xA || ch == 0xD);
 
-			if (currentState == XmlNodeType.Element && ch != -1 && ch != '<')
+			ClearValueBuffer ();
+			valueBuffer.Append (peekChars, curNodePeekIndex, peekCharsIndex - curNodePeekIndex - startOffset);
+			preserveCurrentTag = savePreserve;
+
+			if (currentState == XmlNodeType.Element && ch != -1 && ch != '<') {
 				ReadText (false);
-			else {
+			} else {
 				XmlNodeType nodeType = (this.XmlSpace == XmlSpace.Preserve) ?
 					XmlNodeType.SignificantWhitespace : XmlNodeType.Whitespace;
 				SetProperties (nodeType,
