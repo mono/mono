@@ -2011,7 +2011,21 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			x86_mov_reg_mem (code, ins->dreg, ins->inst_p0, 4);
 			break;
 		case OP_LOADU4_MEM:
-			x86_mov_reg_mem (code, ins->dreg, ins->inst_p0, 4);
+			if (cfg->new_ir)
+				x86_mov_reg_mem (code, ins->dreg, ins->inst_imm, 4);
+			else
+				x86_mov_reg_mem (code, ins->dreg, ins->inst_p0, 4);
+			break;
+		case OP_LOAD_MEM:
+		case OP_LOADI4_MEM:
+			/* These are created by the cprop pass so they use inst_imm as the source */
+			x86_mov_reg_mem (code, ins->dreg, ins->inst_imm, 4);
+			break;
+		case OP_LOADU1_MEM:
+			x86_widen_mem (code, ins->dreg, ins->inst_imm, FALSE, FALSE);
+			break;
+		case OP_LOADU2_MEM:
+			x86_widen_mem (code, ins->dreg, ins->inst_imm, FALSE, TRUE);
 			break;
 		case OP_LOAD_MEMBASE:
 		case OP_LOADI4_MEMBASE:

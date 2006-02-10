@@ -1122,4 +1122,25 @@ COND:   ldloc.0
 			add
 			ret
 	}
+
+	.method public static int32 test_0_pop_side_effects () {
+		.try {
+			ldc.r8 1
+			ldc.r8 0
+			div
+			ckfinite
+			pop
+			leave FAIL
+		}
+		catch [mscorlib]System.ArithmeticException {
+			pop
+			leave L_0
+		}
+		L_0:
+		ldc.i4.0
+		ret
+		FAIL:
+		ldc.i4.1
+		ret
+	}
 }

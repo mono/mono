@@ -902,6 +902,7 @@ char     *mono_pmip                         (void *ip);
 void      mono_select_instructions          (MonoCompile *cfg);
 const char* mono_inst_name                  (int op);
 int       mono_op_to_op_imm                 (int opcode);
+int       mono_load_membase_to_load_mem     (int opcode);
 void      mono_inst_foreach                 (MonoInst *tree, MonoInstFunc func, gpointer data);
 void      mono_disassemble_code             (MonoCompile *cfg, guint8 *code, int size, char *id);
 guint     mono_type_to_ldind                (MonoType *t);

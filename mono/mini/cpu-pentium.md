@@ -247,6 +247,10 @@ loadi8_membase: dest:i src1:b
 loadr4_membase: dest:f src1:b len:6
 loadr8_membase: dest:f src1:b len:6
 loadr8_spill_membase: src1:b len:8
+load_mem: dest:i len:9
+loadi4_mem: dest:i len:9
+loadu1_mem: dest:i len:9
+loadu2_mem: dest:i len:9
 loadu4_mem: dest:i len:9
 move: dest:i src1:i len:2
 fmove: dest:f src1:f

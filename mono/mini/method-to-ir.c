@@ -79,7 +79,6 @@
 
 static int ldind_to_load_membase (int opcode);
 static int stind_to_store_membase (int opcode);
-static int ldind_to_load_mem (int opcode);
 
 int mono_op_to_op_imm (int opcode);
 
@@ -2097,6 +2096,8 @@ static void
 mini_emit_memset (MonoCompile *cfg, int destreg, int offset, int size, int val, int align)
 {
 	int val_reg;
+
+	g_assert (val == 0);
 
 	if (size <= 4) {
 		switch (size) {
@@ -4153,7 +4154,6 @@ decompose_opcode (MonoCompile *cfg, MonoInst *ins)
 		ins->opcode = OP_MOVE;
 		break;
 	case OP_ICONV_TO_I8:
-		/* FIXME: Widen ? */
 		ins->opcode = OP_MOVE;
 		break;
 	case OP_LCONV_TO_U4:
@@ -4667,6 +4667,27 @@ mono_decompose_long_opts (MonoCompile *cfg)
 			case OP_LXOR_IMM:
 				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_XOR_IMM, tree->dreg, tree->sreg1, tree->inst_ls_word);
 				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_XOR_IMM, tree->dreg + 1, tree->sreg1 + 1, tree->inst_ms_word);
+				break;
+			case OP_LSHR_UN_IMM:
+				if (tree->inst_c1 == 32) {
+
+					/* The original code had this comment: */
+					/* special case that gives a nice speedup and happens to workaorund a ppc jit but (for the release)
+					 * later apply the speedup to the left shift as well
+					 * See BUG# 57957.
+					 */
+					/* FIXME: Move this to the strenght reduction pass */
+					/* just move the upper half to the lower and zero the high word */
+					MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, tree->dreg, tree->sreg1 + 1);
+					MONO_EMIT_NEW_ICONST (cfg, tree->dreg + 1, 0);
+				}
+				break;
+			case OP_LSHL_IMM:
+				if (tree->inst_c1 == 32) {
+					/* just move the lower half to the upper and zero the lower word */
+					MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, tree->dreg + 1, tree->sreg1);
+					MONO_EMIT_NEW_ICONST (cfg, tree->dreg, 0);
+				}
 				break;
 
 			case OP_LCOMPARE: {
@@ -5573,46 +5594,44 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			sp--;
 			ins = *sp;
 
-			/* FIXME: Optimize common cases */
-			{
-				temp = mono_compile_create_var (cfg, type_from_stack_type (ins), OP_LOCAL);
-				temp->flags |= MONO_INST_IS_TEMP;
-				temp->cil_code = ip;
-				NEW_TEMPSTORE (cfg, store, temp->inst_c0, ins);
-				store->cil_code = ip;
-				if (store->opcode == CEE_STOBJ) {
-					EMIT_NEW_TEMPLOADA (cfg, store, temp->inst_c0);
-					emit_stobj (cfg, store, sp [0], sp [0]->cil_code, store->klass, FALSE);
-				} else {
-					MONO_ADD_INS (bblock, store);
-				}
-
-				NEW_TEMPLOAD (cfg, ins, temp->inst_c0);
-				ins->cil_code = ip;
-				if (ins->opcode == CEE_LDOBJ) {
-					MonoInst *src;
-
-					EMIT_NEW_TEMPLOADA (cfg, src, temp->inst_c0);
-					*sp++ = emit_ldobj (cfg, src, ip, ins->klass);
-				}
-				else {
-					MONO_ADD_INS (bblock, ins);
-					*sp++ = ins;
-				}
-
-				NEW_TEMPLOAD (cfg, ins, temp->inst_c0);
-				ins->cil_code = ip;
-				if (ins->opcode == CEE_LDOBJ) {
-					MonoInst *src;
-
-					EMIT_NEW_TEMPLOADA (cfg, src, temp->inst_c0);
-					*sp++ = emit_ldobj (cfg, src, ip, ins->klass);
-				}
-				else {
-					MONO_ADD_INS (bblock, ins);
-					*sp++ = ins;
-				}
+			temp = mono_compile_create_var (cfg, type_from_stack_type (ins), OP_LOCAL);
+			temp->flags |= MONO_INST_IS_TEMP;
+			temp->cil_code = ip;
+			NEW_TEMPSTORE (cfg, store, temp->inst_c0, ins);
+			store->cil_code = ip;
+			if (store->opcode == CEE_STOBJ) {
+				EMIT_NEW_TEMPLOADA (cfg, store, temp->inst_c0);
+				emit_stobj (cfg, store, sp [0], sp [0]->cil_code, store->klass, FALSE);
+			} else {
+				MONO_ADD_INS (bblock, store);
 			}
+
+			NEW_TEMPLOAD (cfg, ins, temp->inst_c0);
+			ins->cil_code = ip;
+			if (ins->opcode == CEE_LDOBJ) {
+				MonoInst *src;
+
+				EMIT_NEW_TEMPLOADA (cfg, src, temp->inst_c0);
+				*sp++ = emit_ldobj (cfg, src, ip, ins->klass);
+			}
+			else {
+				MONO_ADD_INS (bblock, ins);
+				*sp++ = ins;
+			}
+
+			NEW_TEMPLOAD (cfg, ins, temp->inst_c0);
+			ins->cil_code = ip;
+			if (ins->opcode == CEE_LDOBJ) {
+				MonoInst *src;
+
+				EMIT_NEW_TEMPLOADA (cfg, src, temp->inst_c0);
+				*sp++ = emit_ldobj (cfg, src, ip, ins->klass);
+			}
+			else {
+				MONO_ADD_INS (bblock, ins);
+				*sp++ = ins;
+			}
+
 			++ip;
 			inline_costs += 2;
 			break;
@@ -5773,7 +5792,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 
 				g_assert (mono_method_signature (cmethod)->is_inflated);
 
-				/* FIXME: Get rid of this */
 				this_temp = mono_compile_create_var (cfg, type_from_stack_type (sp [0]), OP_LOCAL);
 				NEW_TEMPSTORE (cfg, store, this_temp->inst_c0, sp [0]);
 				MONO_ADD_INS (bblock, store);
@@ -5797,16 +5815,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				 (mono_metadata_signature_equal (mono_method_signature (method), mono_method_signature (cmethod)))) {
 				int i;
 
-				/* FIXME: This assumes the two methods has the same number and type of arguments */
 				for (i = 0; i < n; ++i) {
-					/* Check if argument is the same */
-					/* FIXME: */
-					/*
-					NEW_ARGLOAD (cfg, ins, i);
-					if ((ins->opcode == sp [i]->opcode) && (ins->inst_i0 == sp [i]->inst_i0))
-						continue;
-					*/
-
 					/* Prevent argument from being register allocated */
 					arg_array [i]->flags |= MONO_INST_VOLATILE;
 					NEW_ARGSTORE (cfg, ins, i, sp [i]);
@@ -6211,8 +6220,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				for (i = 0; i < n; ++i)
 					link_bblock (cfg, bblock, targets [i]);
 
-
-				/* FIXME: The out bblocks of this bblock are not set yet */
 				handle_stack_args (cfg, stack_start, sp - stack_start);
 				sp = stack_start;
 			}
@@ -6276,10 +6283,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				dreg = alloc_preg (cfg);
 			}
 
-			if (sp [0]->opcode == OP_ICONST)
-				NEW_LOAD_MEM (cfg, ins, ldind_to_load_mem (*ip), dreg, sp [0]->inst_c0);
-			else
-				NEW_LOAD_MEMBASE (cfg, ins, ldind_to_load_membase (*ip), dreg, sp [0]->dreg, 0);
+			NEW_LOAD_MEMBASE (cfg, ins, ldind_to_load_membase (*ip), dreg, sp [0]->dreg, 0);
 			ins->type = ldind_type [*ip - CEE_LDIND_I1];
 			ins->flags |= ins_flag;
 			ins_flag = 0;
@@ -6385,21 +6389,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			MONO_ADD_INS ((cfg)->cbb, (ins));
 			*sp++ = ins;
 
-			/* special case that gives a nice speedup and happens to workaorund a ppc jit but (for the release)
-			 * later apply the speedup to the left shift as well
-			 * See BUG# 57957.
-			 */
-
-			/* FIXME: Do something with this */
-#if 0
-			if ((ins->opcode == OP_LSHR_UN) && (ins->type == STACK_I8) 
-					&& (ins->inst_right->opcode == OP_ICONST) && (ins->inst_right->inst_c0 == 32)) {
-				ins->opcode = OP_LONG_SHRUN_32;
-				/*g_print ("applied long shr speedup to %s\n", cfg->method->name);*/
-				ip++;
-				break;
-			}
-#endif
 			decompose_opcode (cfg, ins);
 			ip++;
 			break;
@@ -7493,11 +7482,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			CHECK_STACK (1);
 			--sp;
 
-			/* 
-			 * FIXME: The old JIT always spilled this to a memory location, but
-			 * I think it is not needed with the new JIT, as pop(ckfinite) 
-			 * still executes ckfinite.
-			 */
 			MONO_INST_NEW (cfg, ins, OP_CKFINITE);
 			ins->cil_code = ip;
 			ins->sreg1 = sp [0]->dreg;
@@ -7701,11 +7685,14 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				MonoExceptionClause *clause = &header->clauses [i];
 
 				if (MONO_OFFSET_IN_HANDLER (clause, ip - header->code) && (clause->flags == MONO_EXCEPTION_CLAUSE_NONE) && (ip - header->code + ((*ip == CEE_LEAVE) ? 5 : 2)) == (clause->handler_offset + clause->handler_len)) {
-					MonoInst *load, *exc_ins;
+					MonoInst *exc_ins;
 					MonoBasicBlock *dont_throw;
 
-					/* FIXME: */
-					NEW_TEMPLOAD (cfg, load, mono_find_exvar_for_offset (cfg, clause->handler_offset)->inst_c0);
+					/*
+					  MonoInst *load;
+
+					  NEW_TEMPLOAD (cfg, load, mono_find_exvar_for_offset (cfg, clause->handler_offset)->inst_c0);
+					*/
 
 					exc_ins = mono_emit_jit_icall (cfg, mono_thread_get_pending_exception, NULL, ip);
 
@@ -8177,7 +8164,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 
 				*sp++ = ins;
 				ip += 2;
-				/* FIXME: set init flag if locals init is set in this method */
 				break;
 			case CEE_ENDFILTER: {
 				MonoExceptionClause *clause, *nearest;
@@ -8245,7 +8231,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				inline_costs += 1;
 				break;
 			case CEE_CONSTRAINED_:
-				/* FIXME: implement */
 				CHECK_OPSIZE (6);
 				token = read32 (ip + 2);
 				constrained_call = mono_class_get_full (image, token, generic_context);
@@ -8259,16 +8244,22 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				CHECK_STACK (3);
 				sp -= 3;
 
-				/* FIXME: Add back the constant size optimization */
-				iargs [0] = sp [0];
-				iargs [1] = sp [1];
-				iargs [2] = sp [2];
-				if (ip [1] == CEE_CPBLK) {
-					MonoMethod *memcpy_method = get_memcpy_method ();
-					mono_emit_method_call (cfg, memcpy_method, memcpy_method->signature, iargs, ip, NULL);
+				if ((ip [1] == CEE_CPBLK) && (cfg->opt & MONO_OPT_INTRINS) && (sp [2]->opcode == OP_ICONST) && ((n = sp [2]->inst_c0) <= sizeof (gpointer) * 5)) {
+					mini_emit_memcpy2 (cfg, sp [0]->dreg, 0, sp [1]->dreg, 0, sp [2]->inst_c0, 0);
+				} else if ((ip [1] == CEE_INITBLK) && (cfg->opt & MONO_OPT_INTRINS) && (sp [2]->opcode == OP_ICONST) && ((n = sp [2]->inst_c0) <= sizeof (gpointer) * 5) && (sp [1]->opcode == OP_ICONST) && (sp [1]->inst_c0 == 0)) {
+					/* emit_memset only works when val == 0 */
+					mini_emit_memset (cfg, sp [0]->dreg, 0, sp [2]->inst_c0, sp [1]->inst_c0, 0);
 				} else {
-					MonoMethod *memset_method = get_memset_method ();
-					mono_emit_method_call (cfg, memset_method, memset_method->signature, iargs, ip, NULL);
+					iargs [0] = sp [0];
+					iargs [1] = sp [1];
+					iargs [2] = sp [2];
+					if (ip [1] == CEE_CPBLK) {
+						MonoMethod *memcpy_method = get_memcpy_method ();
+						mono_emit_method_call (cfg, memcpy_method, memcpy_method->signature, iargs, ip, NULL);
+					} else {
+						MonoMethod *memset_method = get_memset_method ();
+						mono_emit_method_call (cfg, memset_method, memset_method->signature, iargs, ip, NULL);
+					}
 				}
 				ip += 2;
 				inline_costs += 1;
@@ -8576,12 +8567,9 @@ mono_op_to_op_imm (int opcode)
 		return OP_LCALL;
 	case OP_FCALL_REG:
 		return OP_FCALL;
-
-	default:
-		return -1;
 	}
 
-	/* FIXME: Add more opcodes */
+	return -1;
 }
 
 static int
@@ -8643,15 +8631,20 @@ stind_to_store_membase (int opcode)
 	return -1;
 }
 
-static int
-ldind_to_load_mem (int opcode)
+int
+mono_load_membase_to_load_mem (int opcode)
 {
 	switch (opcode) {
-	case CEE_LDIND_U4:
-		/* Used in managed->native wrappers */
+	case OP_LOAD_MEMBASE:
+		return OP_LOAD_MEM;
+	case OP_LOADU1_MEMBASE:
+		return OP_LOADU1_MEM;
+	case OP_LOADU2_MEMBASE:
+		return OP_LOADU2_MEM;
+	case OP_LOADI4_MEMBASE:
+		return OP_LOADI4_MEM;
+	case OP_LOADU4_MEMBASE:
 		return OP_LOADU4_MEM;
-	default:
-		g_assert_not_reached ();
 	}
 
 	return -1;

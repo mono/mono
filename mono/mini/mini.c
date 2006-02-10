@@ -9616,12 +9616,21 @@ mono_local_cprop2 (MonoCompile *cfg)
 							srcindex = -1;
 							continue;
 						}
+						else {
+							/* Special cases */
+							opcode2 = mono_load_membase_to_load_mem (ins->opcode);
+							if ((srcindex == 0) && (opcode2 != -1)) {
+								ins->opcode = opcode2;
+								ins->inst_imm = def->inst_c0 + ins->inst_offset;
+								ins->sreg1 = -1;
+							}
+						}
 					}
 					else if ((def->opcode == OP_ADD_IMM) && (def->sreg1 == cfg->frame_reg) && MONO_IS_LOAD_MEMBASE (ins)) {
 						/* ADD_IM is created by spill_global_vars */
 						/* cfg->frame_reg is assumed to remain constant */
 						ins->inst_basereg = def->sreg1;
-						ins->inst_offset += def->inst_imm;					
+						ins->inst_offset += def->inst_imm;
 					}
 				}
 			}
