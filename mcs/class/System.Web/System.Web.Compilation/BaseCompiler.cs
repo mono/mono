@@ -315,7 +315,7 @@ namespace System.Web.Compilation
 		{
 			return AppDomain.CurrentDomain.SetupInformation.DynamicBase;
 		}
-		
+
 		public virtual Type GetCompiledType () 
 		{
 			Type type = CachingCompiler.GetTypeFromCache (parser.InputFile);
@@ -327,7 +327,8 @@ namespace System.Web.Compilation
 #if NET_2_0
 			CompilationSection config = (CompilationSection) WebConfigurationManager.GetSection ("system.web/compilation");
 			Compiler comp = config.Compilers[lang];
-			provider = comp.Provider;
+			Type t = Type.GetType (comp.Type, true);
+			provider = Activator.CreateInstance (t) as CodeDomProvider;
 
 			string compilerOptions = comp.CompilerOptions;
 			int warningLevel = comp.WarningLevel;
@@ -366,9 +367,11 @@ namespace System.Web.Compilation
 			CheckCompilerErrors (results);
 			Assembly assembly = results.CompiledAssembly;
 			if (assembly == null) {
-				if (!File.Exists (compilerParameters.OutputAssembly))
+				if (!File.Exists (compilerParameters.OutputAssembly)) {
+					results.TempFiles.Delete ();
 					throw new CompilationException (parser.InputFile, results.Errors,
 						"No assembly returned after compilation!?");
+				}
 
 				assembly = Assembly.LoadFrom (compilerParameters.OutputAssembly);
 			}

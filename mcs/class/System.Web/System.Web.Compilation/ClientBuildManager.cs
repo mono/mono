@@ -3,6 +3,7 @@
 //
 // Authors:
 //	Chris Toshok (toshok@ximian.com)
+//	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // (C) 2006 Novell, Inc (http://www.novell.com)
 //
@@ -34,29 +35,68 @@ using System;
 using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.Collections;
+using System.IO;
 using System.Web;
 using System.Web.Hosting;
 
 namespace System.Web.Compilation {
+	public sealed class ClientBuildManager : MarshalByRefObject, IDisposable {
+		string virt_dir;
+		string phys_src_dir;
+		string phys_target_dir;
+		ClientBuildManagerParameter build_params;
 
-	public sealed class ClientBuildManager : MarshalByRefObject, IDisposable
-	{
-		[MonoTODO]
 		public ClientBuildManager (string appVirtualDir, string appPhysicalSourceDir)
 		{
-			throw new NotImplementedException ();
+			virt_dir = appVirtualDir; // TODO: adjust vpath (it allows 'blah' that turns into '/blah', '////blah', '\\blah'...
+			phys_src_dir = appPhysicalSourceDir;
 		}
 
-		[MonoTODO]
-		public ClientBuildManager (string appVirtualDir, string appPhysicalSourceDir, string appPhysicalTargetDir)
+		public ClientBuildManager (string appVirtualDir, string appPhysicalSourceDir,
+					string appPhysicalTargetDir)
+			: this (appVirtualDir, appPhysicalSourceDir)
 		{
-			throw new NotImplementedException ();
+			phys_target_dir = appPhysicalTargetDir;
 		}
 
-		[MonoTODO]
-		public ClientBuildManager (string appVirtualDir, string appPhysicalSourceDir, string appPhysicalTargetDir, ClientBuildManagerParameter parameter)
+		public ClientBuildManager (string appVirtualDir, string appPhysicalSourceDir,
+					string appPhysicalTargetDir, ClientBuildManagerParameter parameter)
+			: this (appVirtualDir, appPhysicalSourceDir, appPhysicalTargetDir)
 		{
-			throw new NotImplementedException ();
+			build_params = parameter;
+		}
+
+		string CreateCodeGenDir ()
+		{
+			return null;
+		/*
+			string appname = null;
+			if (virt_dir == "/") {
+				appname = "root";
+			} else {
+				appname = virt_dir.Subtring (1).Replace ('/', '_');
+			}
+
+			string dynamic_dir = null;
+			string user = Environment.UserName;
+			for (int i = 0; ; i++){
+				string d = Path.Combine (Path.GetTempPath (),
+					String.Format ("{0}-temp-aspnet-{1:x}", user, i));
+			
+				try {
+					Directory.CreateDirectory (d);
+					string stamp = Path.Combine (d, "stamp");
+					Directory.CreateDirectory (stamp);
+					dynamic_dir = d;
+					Directory.Delete (stamp);
+					break;
+				} catch (UnauthorizedAccessException){
+					continue;
+				}
+			}
+			setup.DynamicBase = dynamic_dir;
+			Directory.CreateDirectory (setup.DynamicBase);
+			*/
 		}
 
 		[MonoTODO]
@@ -65,10 +105,9 @@ namespace System.Web.Compilation {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public void CompileFile (string virtualPath)
 		{
-			throw new NotImplementedException ();
+			CompileFile (virtualPath, null);
 		}
 
 		[MonoTODO]
@@ -102,7 +141,7 @@ namespace System.Web.Compilation {
 		}
 
 		[MonoTODO]
-		public string[ ] GetAppDomainShutdownDirectories ()
+		public string [] GetAppDomainShutdownDirectories ()
 		{
 			throw new NotImplementedException ();
 		}

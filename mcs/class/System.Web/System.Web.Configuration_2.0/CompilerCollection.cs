@@ -108,19 +108,6 @@ namespace System.Web.Configuration
 				return null;
 			}
 		}
-
-#region CompatabilityCode
-		[MonoTODO ("we shouldn't need this..")]
-		internal bool CompareLanguages (string lang1, string lang2)
-		{
-			return (this [lang1] == this [lang2]);
-		}
-
-		internal void Add (Compiler compiler)
-		{
-			BaseAdd (compiler);
-		}
-#endregion
 	}
 }
 #endif

@@ -93,9 +93,16 @@ namespace System.Web.Configuration
 			return prov.Extension;
 		}
 
-		[MonoTODO ("Implement me")]
-		internal System.Web.Compilation.CompilerType GetProviderForLanguage (string language)
+		internal System.Web.Compilation.BuildProvider GetProviderForExtension (string extension)
 		{
+			foreach (BuildProvider provider in this) {
+				if (extension != provider.Extension)
+					continue;
+
+				Type type = Type.GetType (provider.Type);
+				return (System.Web.Compilation.BuildProvider) Activator.CreateInstance (type, null);
+			}
+
 			return null;
 		}
 	}

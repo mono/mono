@@ -73,7 +73,8 @@ namespace System.Web.Compilation
 #if NET_2_0
 			CompilationSection config = (CompilationSection)WebConfigurationManager.GetSection ("system.web/compilation");
 			Compiler c = config.Compilers[lang];
-			provider = (c == null) ? null : c.Provider;
+			Type t = Type.GetType (c.Type, true);
+			provider = Activator.CreateInstance (t) as CodeDomProvider;
 #else
 			CompilationConfiguration config;
 			config = CompilationConfiguration.GetInstance (parser.Context);

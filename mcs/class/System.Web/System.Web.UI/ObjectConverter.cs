@@ -35,9 +35,6 @@ namespace System.Web.UI {
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class ObjectConverter {
 
-#if NET_2_0
-		[Obsolete]
-#endif
 		public ObjectConverter ()
 		{
 		}

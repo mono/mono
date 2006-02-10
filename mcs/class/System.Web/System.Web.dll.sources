@@ -548,6 +548,7 @@ System.Web.UI/IStyleSheet.cs
 System.Web.UI/ITagNameToTypeMapper.cs
 System.Web.UI/ITemplate.cs
 System.Web.UI/ITextControl.cs
+System.Web.UI/IThemeResolutionService.cs
 System.Web.UI/IUrlResolutionService.cs
 System.Web.UI/IUserControlDesignerAccessor.cs
 System.Web.UI/IUserControlTypeResolutionService.cs

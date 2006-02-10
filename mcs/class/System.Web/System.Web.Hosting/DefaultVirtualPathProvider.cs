@@ -44,10 +44,13 @@ namespace System.Web.Hosting {
 		{
 		}
 
+		/*
+		 * No need to override this, it seems
 		public override string CombineVirtualPaths (string basePath, string relativePath)
 		{
 			return VirtualPathUtility.Combine (basePath, relativePath);
 		}
+		*/
 
 		public override bool DirectoryExists (string virtualDir)
 		{
@@ -86,7 +89,7 @@ namespace System.Web.Hosting {
 
 		public override string GetCacheKey (string virtualPath)
 		{
-			return null;
+			return null; // Always
 		}
 
 		public override VirtualDirectory GetDirectory (string virtualDir)
@@ -117,7 +120,15 @@ namespace System.Web.Hosting {
 
 		public override string GetFileHash (string virtualPath, IEnumerable virtualPathDependencies)
 		{
-			return null;
+			if (virtualPath == null || virtualPathDependencies == null)
+				throw new NullReferenceException ();
+
+			// No deps -> 1505
+			// Non-existing virtual deps -> 1505
+			// Relative virtual deps -> exception
+			// virtualPath does not matter at all (?)
+			// The number varies accross xsp executions
+			return virtualPath;
 		}
 	}
 }

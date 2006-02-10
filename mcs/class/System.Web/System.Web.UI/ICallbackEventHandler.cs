@@ -35,6 +35,8 @@ namespace System.Web.UI
 {
 	public interface ICallbackEventHandler
 	{
+		//string GetCallbackResult ();
+		//void RaiseCallbackEvent (string eventArgs);
 		string RaiseCallbackEvent (string eventArgs);
 	}
 }

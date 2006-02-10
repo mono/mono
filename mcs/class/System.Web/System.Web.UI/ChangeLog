@@ -1,3 +1,16 @@
+2006-02-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* IThemeResolutionService.cs: this is now added to the
+	sources file, but some other stuff does not compile yet as the
+	interface changed after the beta.
+
+	* ObjectConverter.cs: removed extra attribute.
+
+	* ObjectStateFormatter.cs: add IStateFormatter for 2.0.
+
+	* ICallbackEventHandler.cs: update the interface, but commented the
+	'good' stuff out, since other files need to be fixed too.
+
 2006-02-07  Chris Toshok  <toshok@ximian.com>
 
 	* ControlBuilder.cs: rename flushOutputStatements to

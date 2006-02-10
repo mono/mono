@@ -1,3 +1,21 @@
+2006-02-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CompilerType.cs: implemented.
+
+	* AssemblyBuilder.cs: implemented most of it.
+
+	* WebServiceCompiler.cs:
+	* CachingCompiler.cs: update 2.0 compiler instance creation code.
+
+	* ClientBuildManager.cs: implemented some of its methods. Not yet
+	ready.
+
+	* BuildManager.cs: the more interesting methods are implemented now.
+
+	* BaseCompiler.cs: delete the temporary files in case of error.
+
+	* BuildProvider.cs: implemented the Get*Compiler* protected methods.
+
 2006-02-07  Chris Toshok  <toshok@ximian.com>
 
 	* TemplateControlCompiler.cs (AddParsedSubObjectStmt): append the

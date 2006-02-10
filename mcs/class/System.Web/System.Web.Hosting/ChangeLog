@@ -1,3 +1,9 @@
+2006-02-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* DefaultVirtualPathProvider.cs: add some comments/TODO.
+	* HostingEnvironment.cs: initialize the default value for
+	VirtualPathProvider.
+
 2006-02-02 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HostingEnvironment.cs: MapPath is done.

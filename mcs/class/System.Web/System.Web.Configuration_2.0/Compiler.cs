@@ -112,23 +112,6 @@ namespace System.Web.Configuration
 		protected override ConfigurationPropertyCollection Properties {
 			get { return properties; }
 		}
-
-#region CompatabilityCode
-		[MonoTODO ("we shouldn't need this")]
-		CodeDomProvider provider;
-		internal CodeDomProvider Provider {
-			get { 
-				if (provider == null) {
-					Type t = System.Type.GetType (this.Type);
-					provider = Activator.CreateInstance (t) as CodeDomProvider;
-				}
-				return provider;
-			}
-			set {
-				provider = value;
-			}
-		}
-#endregion
 	}
 }
 #endif

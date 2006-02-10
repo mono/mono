@@ -34,6 +34,7 @@
 using System;
 using System.CodeDom.Compiler;
 using System.Collections;
+using System.Collections.Specialized;
 using System.IO;
 using System.Reflection;
 using System.Web.Configuration;
@@ -43,15 +44,21 @@ using System.Web.Util;
 namespace System.Web.Compilation {
 
 	public abstract class BuildProvider {
-		CompilerParameters parameters;
-		CompilerType code_compiler_type;
+		static object locker = new object ();
+		static string private_bin_path;
+
 		string virtual_path;
 		ArrayList ref_assemblies;
+
 		ICollection vpath_deps;
 
 		protected BuildProvider()
 		{
-			parameters = new CompilerParameters ();
+		}
+
+		internal void SetVirtualPath (string path)
+		{
+			virtual_path = path;
 		}
 
 		public virtual void GenerateCode (AssemblyBuilder assemblyBuilder)
@@ -68,7 +75,45 @@ namespace System.Web.Compilation {
 		{
 			CompilationSection config;
 			config = (CompilationSection) WebConfigurationManager.GetSection ("system.web/compilation");
-			return config.BuildProviders.GetProviderForLanguage (config.DefaultLanguage);
+			return GetDefaultCompilerTypeForLanguage (config.DefaultLanguage);
+		}
+
+		void SetCommonParameters (CompilationSection config, CompilerParameters p)
+		{
+			p.IncludeDebugInformation = config.Debug;
+			foreach (AssemblyInfo info in config.Assemblies) {
+				if (info.Assembly != "*") {
+					p.ReferencedAssemblies.Add (info.Assembly);
+				} else {
+					AddAssembliesInBin (p.ReferencedAssemblies);
+				}
+			}
+
+			// explicit, strict?
+			// embedded? linked?/resources
+		}
+
+		
+		static void InitPath ()
+		{
+			lock (locker) {
+				if (private_bin_path != null)
+					return;
+
+				AppDomainSetup setup = AppDomain.CurrentDomain.SetupInformation;
+				private_bin_path = Path.Combine (setup.ApplicationBase, setup.PrivateBinPath);
+			}
+		}
+
+		void AddAssembliesInBin (StringCollection coll)
+		{
+			InitPath ();
+			if (!Directory.Exists (private_bin_path))
+				return;
+
+			string [] binDlls = Directory.GetFiles (private_bin_path, "*.dll");
+			foreach (string s in binDlls)
+				coll.Add (s);
 		}
 
 		protected CompilerType GetDefaultCompilerTypeForLanguage (string language)
@@ -79,7 +124,24 @@ namespace System.Web.Compilation {
 
 			CompilationSection config;
 			config = (CompilationSection) WebConfigurationManager.GetSection ("system.web/compilation");
-			return config.BuildProviders.GetProviderForLanguage (language);
+			Compiler compiler = config.Compilers.Get (language);
+			CompilerParameters p;
+			if (compiler != null) {
+				Type type = Type.GetType (compiler.Type, true);
+				p = new CompilerParameters ();
+				p.CompilerOptions = compiler.CompilerOptions;
+				p.WarningLevel = compiler.WarningLevel;
+				SetCommonParameters (config, p);
+				return new CompilerType (type, p);
+			}
+
+			if (!CodeDomProvider.IsDefinedLanguage (language))
+				throw new HttpException (String.Format ("No compiler for language '{0}'.", language));
+
+			CompilerInfo info = CodeDomProvider.GetCompilerInfo (language);
+			CompilerParameters par = info.CreateDefaultCompilerParameters ();
+			SetCommonParameters (config, par);
+			return new CompilerType (info.CodeDomProviderType, par);
 		}
 
 		public virtual Type GetGeneratedType (CompilerResults results)
@@ -115,7 +177,7 @@ namespace System.Web.Compilation {
 		}
 
 		public virtual CompilerType CodeCompilerType {
-			get { return code_compiler_type; }
+			get { return null; } // Documented to return null
 		}
 
 		protected ICollection ReferencedAssemblies {

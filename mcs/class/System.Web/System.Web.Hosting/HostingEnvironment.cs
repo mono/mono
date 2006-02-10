@@ -45,7 +45,8 @@ namespace System.Web.Hosting {
 		static bool is_hosted;
 		static string site_name;
 		static ApplicationShutdownReason shutdown_reason;
-		static VirtualPathProvider vpath_provider; // This should get a default
+		static VirtualPathProvider vpath_provider = (HttpRuntime.AppDomainAppVirtualPath == null) ? null :
+								new DefaultVirtualPathProvider ();
 
 		public HostingEnvironment ()
 		{

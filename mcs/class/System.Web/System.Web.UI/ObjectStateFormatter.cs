@@ -46,12 +46,16 @@ using System.Web.Util;
 using System.Diagnostics;
 
 namespace System.Web.UI {
-	#if NET_2_0
-		public
-	#else
-		internal
-	#endif
-	sealed class ObjectStateFormatter : IFormatter {
+#if NET_2_0
+	public
+#else
+	internal
+#endif
+	sealed class ObjectStateFormatter : IFormatter
+#if NET_2_0
+		, IStateFormatter
+#endif
+	{
 		public object Deserialize (Stream inputStream)
 		{
 			if (inputStream == null)

@@ -3,6 +3,7 @@
 //
 // Authors:
 //	Chris Toshok (toshok@ximian.com)
+//	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // (C) 2006 Novell, Inc (http://www.novell.com)
 //
@@ -33,62 +34,136 @@
 using System;
 using System.CodeDom;
 using System.CodeDom.Compiler;
+using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.IO;
 using System.Reflection;
+using System.Web.Configuration;
+using System.Web.Util;
 
 namespace System.Web.Compilation {
 
 	public class AssemblyBuilder {
+		static bool KeepFiles = (Environment.GetEnvironmentVariable ("MONO_ASPNET_NODELETE") != null);
 
-		internal AssemblyBuilder ()
+		CodeDomProvider provider;
+		List <CodeCompileUnit> units;
+		List <string> source_files;
+		Dictionary <string, string> resource_files;
+		TempFileCollection temp_files;
+		string virtual_path;
+		
+		internal AssemblyBuilder (string virtualPath, CodeDomProvider provider)
 		{
+			this.provider = provider;
+			this.virtual_path = virtualPath;
+			units = new List <CodeCompileUnit> ();
+			units.Add (new CodeCompileUnit ());
+			temp_files = new TempFileCollection ();
+			CompilationSection section;
+			section = (CompilationSection) WebConfigurationManager.GetSection ("system.web/compilation", virtualPath);
+			string tempdir = section.TempDirectory;
+			if (tempdir == null || tempdir == "")
+				tempdir = AppDomain.CurrentDomain.SetupInformation.DynamicBase;
+				
+			temp_files = new TempFileCollection (tempdir, KeepFiles);
 		}
 
-		[MonoTODO]
+		internal TempFileCollection TempFiles {
+			get { return temp_files; }
+		}
+
+		internal CodeCompileUnit [] GetUnitsAsArray ()
+		{
+			CodeCompileUnit [] result = new CodeCompileUnit [units.Count];
+			units.CopyTo (result, 0);
+			return result;
+		}
+
+		List <string> SourceFiles {
+			get {
+				if (source_files == null)
+					source_files = new List <string> ();
+				return source_files;
+			}
+		}
+
+		Dictionary <string, string> ResourceFiles {
+			get {
+				if (resource_files == null)
+					resource_files = new Dictionary <string, string> ();
+				return resource_files;
+			}
+		}
+
 		public void AddAssemblyReference (Assembly a)
 		{
-			throw new NotImplementedException ();
+			if (a == null)
+				throw new ArgumentNullException ("a");
+
+			StringCollection coll = units [units.Count - 1].ReferencedAssemblies;
+			string location = a.Location;
+			if (coll.IndexOf (location) == -1)
+				coll.Add (location);
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Do something with the buildProvider argument")]
 		public void AddCodeCompileUnit (BuildProvider buildProvider, CodeCompileUnit compileUnit)
 		{
-			throw new NotImplementedException ();
+			if (buildProvider == null)
+				throw new ArgumentNullException ("buildProvider");
+
+			if (compileUnit == null)
+				throw new ArgumentNullException ("compileUnit");
+
+			units.Add (compileUnit);
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Anything to do with the buildProvider argument?")]
 		public TextWriter CreateCodeFile (BuildProvider buildProvider)
 		{
-			throw new NotImplementedException ();
+			if (buildProvider == null)
+				throw new ArgumentNullException ("buildProvider");
+
+			string filename = temp_files.AddExtension ("temp", true);
+			SourceFiles.Add (filename);
+			return new StreamWriter (File.OpenWrite (filename), WebEncoding.FileEncoding);
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Anything to do with the buildProvider argument?")]
 		public Stream CreateEmbeddedResource (BuildProvider buildProvider, string name)
 		{
-			throw new NotImplementedException ();
+			if (buildProvider == null)
+				throw new ArgumentNullException ("buildProvider");
+
+			if (name == null || name == "")
+				throw new ArgumentNullException ("name");
+
+			string filename = temp_files.AddExtension ("resource", true);
+			Stream stream = File.OpenWrite (filename);
+			ResourceFiles [name] = filename;
+			return stream;
 		}
 
 		[MonoTODO]
 		public void GenerateTypeFactory (string typeName)
 		{
-			throw new NotImplementedException ();
+			// Do nothing by now.
 		}
 
-		[MonoTODO]
 		public string GetTempFilePhysicalPath (string extension)
 		{
-			throw new NotImplementedException ();
+			if (extension == null)
+				throw new ArgumentNullException ("extension");
+
+			return temp_files.AddExtension (extension, true);
 		}
 
-		[MonoTODO]
 		public CodeDomProvider CodeDomProvider {
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return provider; }
 		}
 
 	}
-
 }
-
 #endif
+

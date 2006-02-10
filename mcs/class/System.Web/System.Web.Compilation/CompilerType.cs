@@ -3,6 +3,7 @@
 //
 // Authors:
 //	Chris Toshok (toshok@ximian.com)
+//	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // (C) 2006 Novell, Inc (http://www.novell.com)
 //
@@ -36,40 +37,38 @@ using System.CodeDom.Compiler;
 namespace System.Web.Compilation {
 
 	public sealed class CompilerType {
+		Type type;
+		CompilerParameters parameters;
 
-		internal CompilerType ()
+		internal CompilerType (Type type, CompilerParameters parameters)
 		{
+			this.type = type;
+			this.parameters = parameters;
 		}
 
-		[MonoTODO]
 		public override bool Equals(object o)
 		{
-			throw new NotImplementedException ();
+			if (!(o is CompilerType))
+				return false;
+
+			CompilerType other = (CompilerType) o;
+			//FIXME: parameters does NOT have an Equals override
+			return (other.type == type && other.parameters == parameters);
 		}
 
-		[MonoTODO]
 		public override int GetHashCode()
 		{
-			throw new NotImplementedException ();
+			return ((type.GetHashCode () << 6) ^ parameters.GetHashCode ());
 		}
 
-		[MonoTODO]
 		public Type CodeDomProviderType {
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return type; }
 		}
 
-		[MonoTODO]
 		public CompilerParameters CompilerParameters {
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return parameters; }
 		}
-
 	}
 }
-
 #endif
-
 
