@@ -2,6 +2,7 @@ using System;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
+using System.Text;
 
 /*
  * Regression tests for the mono JIT.
@@ -993,6 +994,14 @@ ncells ) {
 		int i = RuntimeHelpers.OffsetToStringData;
 		
 		return i - i;
+	}
+
+	static int test_0_intrins_string_setchar () {
+		StringBuilder sb = new StringBuilder ("ABC");
+
+		sb [1] = 'D';
+
+		return sb.ToString () == "ADC" ? 0 : 1;
 	}
 }
 
