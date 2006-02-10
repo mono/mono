@@ -630,6 +630,13 @@ namespace System.Windows.Forms
 			MimeIconEngine.AddMimeTypeAndIconName( "recently/recently", "folder_man" );
 			MimeIconEngine.AddMimeTypeAndIconName( "workplace/workplace", "system" );
 			
+			MimeIconEngine.AddMimeTypeAndIconName( "nfs/nfs", "nfs_mount" );
+			MimeIconEngine.AddMimeTypeAndIconName( "smb/smb", "server" );
+			
+			MimeIconEngine.AddMimeTypeAndIconName( "harddisk/harddisk", "hdd_mount" );
+			MimeIconEngine.AddMimeTypeAndIconName( "cdrom/cdrom", "cdrom_mount" );
+			MimeIconEngine.AddMimeTypeAndIconName( "removable/removable", "usbpendrive_mount" );
+			
 			foreach ( string mime_path in mime_paths )
 			{
 				string[] directories = Directory.GetDirectories( mime_path );
@@ -919,6 +926,13 @@ namespace System.Windows.Forms
 			name_mime_hash ["gnome-fs-directory-accept"] = "recently/recently";
 			name_mime_hash ["gnome-fs-client"] = "workplace/workplace";
 			
+			name_mime_hash ["gnome-fs-nfs"] = "nfs/nfs";
+			name_mime_hash ["gnome-fs-smb"] = "smb/smb";
+			
+			name_mime_hash ["gnome-dev-cdrom"] = "cdrom/cdrom";
+			name_mime_hash ["gnome-dev-harddisk"] = "harddisk/harddisk";
+			name_mime_hash ["gnome-dev-removable"] = "removable/removable";
+			
 			if (!CheckAndAddUIIcons (dirs, name_mime_hash)) {
 				//could be a kde icon theme, so we check kde icon names also
 				name_mime_hash.Clear ();
@@ -929,6 +943,13 @@ namespace System.Windows.Forms
 				name_mime_hash ["network"] = "network/network";
 				name_mime_hash ["folder_man"] = "recently/recently";
 				name_mime_hash ["system"] = "workplace/workplace";
+				
+				name_mime_hash ["nfs_mount"] = "nfs/nfs";
+				name_mime_hash ["server"] = "smb/smb";
+				
+				name_mime_hash ["cdrom_mount"] = "cdrom/cdrom";
+				name_mime_hash ["hdd_mount"] = "harddisk/harddisk";
+				name_mime_hash ["usbpendrive_mount"] = "removable/removable";
 				
 				CheckAndAddUIIcons (dirs, name_mime_hash);
 			}

@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004-2005 Novell, Inc. (http://www.novell.com)
+// Copyright (c) 2004-2006 Novell, Inc. (http://www.novell.com)
 //
 // Authors:
 //
@@ -31,83 +31,67 @@ using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 
-namespace System.Windows.Forms
-{
-	[Designer("System.Windows.Forms.Design.OpenFileDialogDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
-	public sealed class OpenFileDialog : FileDialog
-	{
+namespace System.Windows.Forms {
+	[Designer ("System.Windows.Forms.Design.OpenFileDialogDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
+	public sealed class OpenFileDialog : FileDialog {
 		#region Public Constructors
-		public OpenFileDialog( )
+		public OpenFileDialog ()
 		{
+			form.SuspendLayout ();
+			
 			form.Text = "Open";
 			
-			form.Size =  new Size( 554, 405 ); // 384
+			CheckFileExists = true;
 			
 			OpenSaveButtonText = "Open";
-			
-			SearchSaveLabelText = "Search in:";
-			
-			checkFileExists = true;
-			
+			SearchSaveLabel = "Search in:";
 			fileDialogType = FileDialogType.OpenFileDialog;
 			
-			fileDialogPanel = new FileDialogPanel( this );
+			form.ResumeLayout (false);
 		}
 		#endregion	// Public Constructors
 		
 		#region Public Instance Properties
 		[DefaultValue(true)]
-		public override bool CheckFileExists
-		{
-			get
-			{
-				return checkFileExists;
+		public override bool CheckFileExists {
+			get {
+				return base.CheckFileExists;
 			}
 			
-			set
-			{
-				checkFileExists = value;
+			set {
+				base.CheckFileExists = value;
 			}
 		}
 		
 		[DefaultValue(false)]
-		public new bool Multiselect
-		{
-			get
-			{
-				return multiSelect;
+		public bool Multiselect {
+			get {
+				return base.BMultiSelect;
 			}
 			
-			set
-			{
-				base.Multiselect = value;
+			set {
+				base.BMultiSelect = value;
 			}
 		}
 		
 		[DefaultValue(false)]
-		public new bool ReadOnlyChecked
-		{
-			get
-			{
-				return readOnlyChecked;
+		public new bool ReadOnlyChecked {
+			get {
+				return base.ReadOnlyChecked;
 			}
 			
-			set
-			{
+			set {
 				base.ReadOnlyChecked = value;
 			}
 		}
 		
 		[DefaultValue(false)]
-		public new bool ShowReadOnly
-		{
-			get
-			{
-				return showReadOnly;
+		public new bool ShowReadOnly {
+			get {
+				return base.ShowReadOnly;
 			}
 			
-			set
-			{
+			set {
 				base.ShowReadOnly = value;
 			}
 		}
@@ -115,24 +99,22 @@ namespace System.Windows.Forms
 		#endregion	// Public Instance Properties
 		
 		#region Public Instance Methods
-		public Stream OpenFile( )
+		public Stream OpenFile ()
 		{
-			if ( FileName == null )
-				throw new ArgumentNullException( "OpenFile", "FileName is null" );
+			if (FileName == null)
+				throw new ArgumentNullException ("OpenFile", "FileName is null");
 			
-			return new FileStream( FileName, FileMode.Open, FileAccess.Read );
+			return new FileStream (FileName, FileMode.Open, FileAccess.Read);
 		}
 		#endregion	// Public Instance Methods
 		
-		public override void Reset( )
+		public override void Reset ()
 		{
-			base.Reset( );
-			multiSelect = false;
-			checkFileExists = true;
-			readOnlyChecked = false;
-			ReadOnlyChecked = readOnlyChecked;
-			showReadOnly = false;
-			ShowReadOnly = showReadOnly;
+			base.Reset ();
+			base.BMultiSelect = false;
+			base.CheckFileExists = true;
+			base.ReadOnlyChecked = false;
+			base.ShowReadOnly = false;
 		}
 	}
 }

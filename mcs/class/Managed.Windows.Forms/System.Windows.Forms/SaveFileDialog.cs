@@ -31,72 +31,59 @@ using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 
-namespace System.Windows.Forms
-{
-	[Designer("System.Windows.Forms.Design.SaveFileDialogDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
-	public sealed class SaveFileDialog : FileDialog
-	{
+namespace System.Windows.Forms {
+	[Designer ("System.Windows.Forms.Design.SaveFileDialogDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
+	public sealed class SaveFileDialog : FileDialog {
 		#region Public Constructors
-		public SaveFileDialog( )
+		public SaveFileDialog ()
 		{
+			form.SuspendLayout ();
+			
 			form.Text = "Save";
 			
-			form.Size =  new Size( 554, 405 ); // 384
-			
 			OpenSaveButtonText = "Save";
-			
-			SearchSaveLabelText = "Save in:";
-			
+			SearchSaveLabel = "Save in:";
 			fileDialogType = FileDialogType.SaveFileDialog;
 			
-			fileDialogPanel = new FileDialogPanel( this );
+			form.ResumeLayout (false);
 		}
 		#endregion	// Public Constructors
 		
 		#region Public Instance Properties
 		[DefaultValue(false)]
-		public new bool CreatePrompt
-		{
-			set
-			{
-				base.CreatePrompt = value;
+		public new bool CreatePrompt {
+			set {
+				createPrompt = value;
 			}
 			
-			get
-			{
+			get {
 				return createPrompt;
 			}
 		}
 		
 		[DefaultValue(true)]
-		public new bool OverwritePrompt
-		{
-			set
-			{
-				base.OverwritePrompt = value;
+		public new bool OverwritePrompt {
+			set {
+				overwritePrompt = value;
 			}
 			
-			get
-			{
+			get {
 				return overwritePrompt;
 			}
 		}
 		#endregion	// Public Instance Properties
 		
 		#region Public Instance Methods
-		public Stream OpenFile( )
+		public Stream OpenFile ()
 		{
-			if ( FileName == null )
-				throw new ArgumentNullException( "OpenFile", "FileName is null" );
+			if (FileName == null)
+				throw new ArgumentNullException ("OpenFile", "FileName is null");
 			
 			Stream retValue;
 			
-			try
-			{
-				retValue = new FileStream( FileName, FileMode.Create, FileAccess.ReadWrite );
-			}
-			catch (Exception ex)
-			{
+			try {
+				retValue = new FileStream (FileName, FileMode.Create, FileAccess.ReadWrite);
+			} catch (Exception ex) {
 				retValue = null;
 			}
 			
@@ -104,13 +91,11 @@ namespace System.Windows.Forms
 		}
 		#endregion	// Public Instance Methods
 		
-		public override void Reset( )
+		public override void Reset ()
 		{
-			base.Reset( );
+			base.Reset ();
 			overwritePrompt = true;
 			createPrompt = false;
-			OverwritePrompt = overwritePrompt;
-			CreatePrompt = createPrompt;
 		}
 	}
 }

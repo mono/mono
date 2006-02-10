@@ -1,3 +1,22 @@
+2006-02-10  Alexander Olk  <alex.olk@googlemail.com>
+
+	* MimeIcon.cs: Added some icons
+	* FileDialog.cs:
+	  - Fixed bug #77477
+	  - Got rid of the panel. All controls are now directly added to
+	    the dialog form
+	  - Changed to mono coding style
+	  - On Linux "My Computer" and "My Network" will now show some
+	    more usefull information. A new class, MasterMount, gathers
+	    this information from /proc/mount. Updated MWFFileView to make
+	    use of this information
+	  - Fixed a bug that caused FileDialog to crash when
+	    ".recently_used" file had a zero size
+	  - FilterIndex does now what it should
+	  - Some Refactoring
+	* OpenFileDialog.cs, SaveFileDialog.cs: Updated to reflect latest
+	    FileDialog changes
+
 2006-02-09  Jackson Harper  <jackson@ximian.com>
 
 	* ComboBox.cs: Don't touch if null.
