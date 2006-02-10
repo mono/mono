@@ -3022,7 +3022,7 @@ namespace System.Windows.Forms {
 					hwnd = Hwnd.ObjectFromHandle(xevent.DestroyWindowEvent.window);
 
 					// We may get multiple for the same window, act only one the first (when Hwnd still knows about it)
-					if (hwnd.client_window == xevent.DestroyWindowEvent.window) {
+					if ((hwnd != null) && (hwnd.client_window == xevent.DestroyWindowEvent.window)) {
 						msg.hwnd = hwnd.client_window;
 						msg.message=Msg.WM_DESTROY;
 						hwnd.Dispose();
