@@ -168,6 +168,18 @@ namespace Mfconsulting.General.Prj2Make
 				}
 			}
 		}
+
+		private bool CheckReference(string referenceFilename)
+		{
+			foreach (CsprojInfo pi in projNameInfo.Values)
+			{
+				if (referenceFilename.ToLower() == pi.name.ToLower())
+				{
+					return true;
+				}
+			}
+			return false;
+		}
     
 		public string MsSlnHelper(bool isUnixMode, bool isMcsMode, bool isSln, string slnFile)
 		{
@@ -356,7 +368,19 @@ namespace Mfconsulting.General.Prj2Make
 							{
 								assemblyName = "System.Xml";
 							}
-							string thisref = "-r:" + assemblyName;
+
+							// Check if this assembly is actually one compiled earlier in the project.
+							// If so we must add the TARGET path to this line.
+							string thisref;
+							if (CheckReference(rf.AssemblyName) == true)
+							{
+								thisref = "-r:$(TARGET)" + Path.DirectorySeparatorChar + assemblyName;
+							}
+							else
+							{
+								thisref = "-r:" + assemblyName;
+							}
+							
 							if (!thisref.EndsWith(".dll"))
 								thisref += ".dll";
 							refs += thisref;
