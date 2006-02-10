@@ -1,5 +1,7 @@
 2006-02-10  Alexander Olk  <alex.olk@googlemail.com>
 
+	* FileDialog.cs: Added Refresh to RunDialog to fix some drawing
+	  errors
 	* ColorDialog.cs:
 	  - Got rid of the panel. All controls are now directly added to
 	    the dialog form
