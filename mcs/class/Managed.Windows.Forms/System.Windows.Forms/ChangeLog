@@ -1,3 +1,7 @@
+2006-02-09  Jackson Harper  <jackson@ximian.com>
+
+	* ComboBox.cs: Don't touch if null.
+
 2006-02-09  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* Cursor.cs: 64bit safeness fix

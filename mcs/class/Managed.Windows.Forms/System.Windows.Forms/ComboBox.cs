@@ -1198,9 +1198,11 @@ namespace System.Windows.Forms
 			
 			if (item == -1)
 				return;
-			
-			listbox_ctrl.SetTopItem (item);
-			listbox_ctrl.SetHighLightedItem (Items[item]);
+
+			if (listbox_ctrl != null) {
+				listbox_ctrl.SetTopItem (item);
+				listbox_ctrl.SetHighLightedItem (Items[item]);
+			}
 		}
 		
 		internal void SetControlText (string s)
