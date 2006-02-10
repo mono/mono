@@ -1,3 +1,7 @@
+2006-02-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile.am generics.cs generics.2.cs: Revert the generics.2.cs
+	-> generics.cs change as it doesn't work with some automake versions.
 
 Thu Feb 9 16:24:44 CET 2006 Paolo Molaro <lupus@ximian.com>
 
