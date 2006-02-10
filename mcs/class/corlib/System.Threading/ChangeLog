@@ -1,3 +1,14 @@
+2006-02-09  Miguel de Icaza  <miguel@novell.com>
+
+	* Monitor.cs: Patch from Thong Nguyen, Wait (.., Timeout) method
+	should allow a -1 (Timeout.Infinite) to mean indefinite wait (the
+	code already supported this.
+
+	Removed also a LAMESPEC for missing argument checking in Wait with
+	the int argument.
+	
+	Fixed the use of exceptions.
+
 2005-12-23  Dick Porter  <dick@ximian.com>
 
 	* EventWaitHandle.cs: 
