@@ -194,6 +194,7 @@ int_clt: dest:y len:6
 int_clt_un: dest:y len:6
 
 localloc: dest:i src1:i len:120
+localloc_imm: dest:i len:120
 compare: src1:i src2:i len:2
 compare_imm: src1:i len:6
 icompare: src1:i src2:i len:2

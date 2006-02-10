@@ -8157,14 +8157,19 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 					 * non-inlined case, thus disable inlining in this case.
 					 */
 					goto inline_failure;
-				MONO_INST_NEW (cfg, ins, OP_LOCALLOC);
-				ins->dreg = alloc_preg (cfg);
-				ins->sreg1 = sp [0]->dreg;
+
+				if (sp [0]->opcode == OP_ICONST) {
+					MONO_INST_NEW (cfg, ins, OP_LOCALLOC_IMM);
+					ins->dreg = alloc_preg (cfg);
+					ins->inst_imm = sp [0]->inst_c0;
+				} else {
+					MONO_INST_NEW (cfg, ins, OP_LOCALLOC);
+					ins->dreg = alloc_preg (cfg);
+					ins->sreg1 = sp [0]->dreg;
+				}
 				ins->cil_code = ip;
 				ins->type = STACK_MP;
 				MONO_ADD_INS (cfg->cbb, ins);
-
-				/* FIXME: Add OP_LOCALLOC_IMM */
 
 				cfg->flags |= MONO_CFG_HAS_ALLOCA;
 				if (header->init_locals)

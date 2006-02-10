@@ -2656,6 +2656,23 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			code = mono_emit_stack_alloc (code, ins);
 			x86_mov_reg_reg (code, ins->dreg, X86_ESP, 4);
 			break;
+		case OP_LOCALLOC_IMM: {
+			guint32 size = ins->inst_imm;
+			size = (size + (MONO_ARCH_FRAME_ALIGNMENT - 1)) & ~ (MONO_ARCH_FRAME_ALIGNMENT - 1);
+
+			if (ins->flags & MONO_INST_INIT) {
+				/* FIXME: Optimize this */
+				x86_mov_reg_imm (code, ins->dreg, size);
+				ins->sreg1 = ins->dreg;
+
+				code = mono_emit_stack_alloc (code, ins);
+				x86_mov_reg_reg (code, ins->dreg, X86_ESP, 4);
+			} else {
+				x86_alu_reg_imm (code, X86_SUB, X86_ESP, size);
+				x86_mov_reg_reg (code, ins->dreg, X86_ESP, 4);
+			}
+			break;
+		}
 		case CEE_RET:
 			x86_ret (code);
 			break;
