@@ -1,3 +1,8 @@
+2006-02-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* Array.cs: Fix some methods which previously returned Nullable<T>.
+
+	* Nullable.cs: Add T: struct constraint and fix constructor.
 
 Fri Feb 3 11:01:46 CET 2006 Paolo Molaro <lupus@ximian.com>
 

@@ -69,7 +69,7 @@ namespace System {
 		}
 	}
 
-	public struct Nullable<T> : IComparable, INullableValue
+	public struct Nullable<T> : IComparable, INullableValue where T: struct
 	{
 		#region Sync with runtime code
 		internal T value;
@@ -78,11 +78,7 @@ namespace System {
 
 		public Nullable (T value)
 		{
-			if (value == null)
-				this.has_value = false;
-			else
-				this.has_value = true;
-			
+			this.has_value = true;
 			this.value = value;
 		}
 
