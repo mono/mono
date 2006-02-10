@@ -239,10 +239,11 @@ public class ASCIIEncoding : Encoding
 
 		int count = byteCount;
 		while (count-- > 0) {
-			char c = (char)(bytes [byteIndex++]);
-			if (c > 127)
-				c = '?';
-			chars [charIndex++] = c;
+			char c = (char) bytes [byteIndex++];
+			if (c < '\x80')
+				chars [charIndex++] = c;
+			else
+				chars [charIndex++] = '?';
 		}
 		return byteCount;
 	}
