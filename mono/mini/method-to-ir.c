@@ -3641,9 +3641,6 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 			"System.Runtime.CompilerServices", "RuntimeHelpers");
 
 	if (cmethod->klass == mono_defaults.string_class) {
- 		if (cmethod->name [0] != 'g')
- 			return NULL;
-
 		if (strcmp (cmethod->name, "get_Chars") == 0) {
 			int dreg = alloc_ireg (cfg);
 			int mult_reg = alloc_preg (cfg);
@@ -3663,6 +3660,14 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 			type_from_op (ins, NULL, NULL);
 
 			return ins;
+		} else if (strcmp (cmethod->name, "InternalSetChar") == 0) {
+			int mult_reg = alloc_preg (cfg);
+			int add_reg = alloc_preg (cfg);
+
+			/* The corlib functions check for oob already. */
+			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_SHL_IMM, mult_reg, args [1]->dreg, 1);
+			MONO_EMIT_NEW_BIALU (cfg, OP_PADD, add_reg, mult_reg, args [0]->dreg);
+			MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STOREI2_MEMBASE_REG, add_reg, G_STRUCT_OFFSET (MonoString, chars), args [2]->dreg);
 		} else 
 			return NULL;
 	} else if (cmethod->klass == mono_defaults.object_class) {
@@ -9185,7 +9190,6 @@ mono_spill_global_vars (MonoCompile *cfg)
  * - spill_global_vars does not play nicely with the fp stack (loads are inserted at
  *   the wrong place).
  * - get rid of redundant loads and stores inserted by spill_global_vars.
- * - add OP_STR_CHAR_ADDR
  * - add 'frequent check in generic code: box (struct), brtrue'
  * - add 'introduce a new optimization to simplify some range checks'
  * - fix LNEG and enable cfold of INEG
