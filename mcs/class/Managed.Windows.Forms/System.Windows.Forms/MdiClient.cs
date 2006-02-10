@@ -153,6 +153,8 @@ namespace System.Windows.Forms {
 
 		internal void EnsureScrollBars (int right, int bottom)
 		{
+			Console.WriteLine ("Ensuring scrollbars");
+
 			int width = Width;
 			int height = Height;
 
@@ -211,12 +213,19 @@ namespace System.Windows.Forms {
 
 		private void SizeScrollBars ()
 		{
+			Console.WriteLine ("sizing the scrollbars");
+
+			bool hbar_required = false;
+			bool vbar_required = false;
+
 			int right = 0;
 			foreach (Form child in Controls) {
 				if (!child.Visible)
 					continue;
 				if (child.Right > right)
 					right = child.Right;
+				if (child.Left < 0)
+					hbar_required = true;
 			}
 
 			int bottom = 0;
@@ -225,6 +234,8 @@ namespace System.Windows.Forms {
 					continue;
 				if (child.Bottom > bottom)
 					bottom = child.Bottom;
+				if (child.Top < 0)
+					vbar_required = true;
 			}
 
 			int right_edge = Right;
@@ -239,7 +250,7 @@ namespace System.Windows.Forms {
 				prev_right_edge = right_edge;
 				prev_bottom_edge = bottom_edge;
 
-				if (right > right_edge) {
+				if (hbar_required || right > right_edge) {
 					need_hbar = true;
 					bottom_edge = Bottom - SystemInformation.HorizontalScrollBarHeight;
 				} else {
@@ -247,7 +258,7 @@ namespace System.Windows.Forms {
 					bottom_edge = Bottom;
 				}
 
-				if (bottom > bottom_edge) {
+				if (vbar_required || bottom > bottom_edge) {
 					need_vbar = true;
 					right_edge = Right - SystemInformation.VerticalScrollBarWidth;
 				} else {
