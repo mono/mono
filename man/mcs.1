@@ -144,6 +144,11 @@ is to omit the switch.
 ISO-1   - Restrict compiler to use only ISO standardized features.
 The usage of features such as generics, static classes, anonymous
 methods will lead to error.
+.Sp
+Notice that this flag only controls the language features available to
+the programmer, it does not control the kind of assemblies produced.
+Programs compiled with mcs will reference the 1.1 APIs, Programs
+compiled with gmcs reference the 2.0 APIs.
 .TP
 .I -lib:PATHLIST
 Each path specified in the comma-separated list will direct the
