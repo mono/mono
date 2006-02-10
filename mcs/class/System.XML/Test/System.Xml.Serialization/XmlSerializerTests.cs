@@ -1083,28 +1083,28 @@ namespace MonoTests.System.XmlSerialization
 			// empty collection & no type info in XmlElementAttribute
 			StringCollectionContainer container = new StringCollectionContainer();
 			Serialize(container, overrides);
-			Assert.AreEqual (Infoset ("<StringCollectionContainer xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' />"), WriterText);
+			Assert.AreEqual (Infoset ("<StringCollectionContainer xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' />"), WriterText, "#1");
 			
 			// non-empty collection & no type info in XmlElementAttribute
 			container.Messages.Add("hello");
 			Serialize(container, overrides);
-			Assert.AreEqual (Infoset ("<StringCollectionContainer xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><Messages>hello</Messages></StringCollectionContainer>"), WriterText);
+			Assert.AreEqual (Infoset ("<StringCollectionContainer xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><Messages>hello</Messages></StringCollectionContainer>"), WriterText, "#2");
 			
 			// non-empty collection & only type info in XmlElementAttribute
 			element.Type = typeof(StringCollection);
 			Serialize(container, overrides);
-			Assert.AreEqual (Infoset ("<StringCollectionContainer xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><Messages><string>hello</string></Messages></StringCollectionContainer>"), WriterText);
+			Assert.AreEqual (Infoset ("<StringCollectionContainer xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><Messages><string>hello</string></Messages></StringCollectionContainer>"), WriterText, "#3");
 			
 			// non-empty collection & only type info in XmlElementAttribute
 			element.Type = typeof(string);
 			Serialize(container, overrides);
-			Assert.AreEqual (Infoset ("<StringCollectionContainer xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><Messages>hello</Messages></StringCollectionContainer>"), WriterText);
+			Assert.AreEqual (Infoset ("<StringCollectionContainer xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><Messages>hello</Messages></StringCollectionContainer>"), WriterText, "#4");
 			
 			// two elements
 			container.Messages.Add("goodbye");
 			element.Type = null;
 			Serialize(container, overrides);
-			Assert.AreEqual (Infoset ("<StringCollectionContainer xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><Messages>hello</Messages><Messages>goodbye</Messages></StringCollectionContainer>"), WriterText);
+			Assert.AreEqual (Infoset ("<StringCollectionContainer xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><Messages>hello</Messages><Messages>goodbye</Messages></StringCollectionContainer>"), WriterText, "#5");
 		}
 		
 		// test DefaultValue /////////////////////////////////////////////////////
@@ -1121,17 +1121,17 @@ namespace MonoTests.System.XmlSerialization
 			// use the default
 			SimpleClass simple = new SimpleClass();
 			Serialize(simple, overrides);
-			Assert.AreEqual (Infoset ("<SimpleClass xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' />"), WriterText);
+			Assert.AreEqual (Infoset ("<SimpleClass xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' />"), WriterText, "#1");
 			
 			// same value as default
 			simple.something = defaultValueInstance;
 			Serialize(simple, overrides);
-			Assert.AreEqual (Infoset ("<SimpleClass xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' />"), WriterText);
+			Assert.AreEqual (Infoset ("<SimpleClass xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' />"), WriterText, "#2");
 			
 			// some other value
 			simple.something = "hello";
 			Serialize(simple, overrides);
-			Assert.AreEqual (Infoset ("<SimpleClass xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><something>hello</something></SimpleClass>"), WriterText);
+			Assert.AreEqual (Infoset ("<SimpleClass xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><something>hello</something></SimpleClass>"), WriterText, "#3");
 		}
 		
 		// test XmlEnum //////////////////////////////////////////////////////////
@@ -1193,10 +1193,10 @@ namespace MonoTests.System.XmlSerialization
 		{
 			XmlDocument doc = new XmlDocument ();
 			Serialize (new MyElem (doc), typeof(XmlElement));
-			Assert.AreEqual (Infoset ("<myelem aa=\"1\"/>"), WriterText);
+			Assert.AreEqual (Infoset ("<myelem aa=\"1\"/>"), WriterText, "#1");
 			
 			Serialize (new MyElem (doc), typeof(MyElem));
-			Assert.AreEqual (Infoset ("<myelem aa=\"1\"/>"), WriterText);
+			Assert.AreEqual (Infoset ("<myelem aa=\"1\"/>"), WriterText, "#2");
 		}
 		
 		[Test]
@@ -1226,13 +1226,13 @@ namespace MonoTests.System.XmlSerialization
 			ch.MyChoice = "choice text";
 			ch.ItemType = ItemChoiceType.ChoiceZero;
 			Serialize (ch);
-			Assert.AreEqual (Infoset ("<Choices xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><ChoiceZero>choice text</ChoiceZero></Choices>"), WriterText);
+			Assert.AreEqual (Infoset ("<Choices xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><ChoiceZero>choice text</ChoiceZero></Choices>"), WriterText, "#1");
 			ch.ItemType = ItemChoiceType.StrangeOne;
 			Serialize (ch);
-			Assert.AreEqual (Infoset ("<Choices xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><ChoiceOne>choice text</ChoiceOne></Choices>"), WriterText);
+			Assert.AreEqual (Infoset ("<Choices xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><ChoiceOne>choice text</ChoiceOne></Choices>"), WriterText, "#2");
 			ch.ItemType = ItemChoiceType.ChoiceTwo;
 			Serialize (ch);
-			Assert.AreEqual (Infoset ("<Choices xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><ChoiceTwo>choice text</ChoiceTwo></Choices>"), WriterText);
+			Assert.AreEqual (Infoset ("<Choices xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><ChoiceTwo>choice text</ChoiceTwo></Choices>"), WriterText, "#3");
 		}
 		
 		[Test]

@@ -1,3 +1,9 @@
+2006-02-10  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* DeserializeTests.cs: Added tests for deserialization of enums, and
+	primitive types container.
+	* XmlSerializerTests.cs: Numbered some tests.
+
 2006-02-09  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* XmlSerializerTests.cs: Fixed build after failed merge.

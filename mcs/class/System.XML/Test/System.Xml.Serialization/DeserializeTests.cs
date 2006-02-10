@@ -8,6 +8,7 @@
 //
 //
 using System;
+using System.Globalization;
 using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
@@ -25,6 +26,13 @@ namespace MonoTests.System.XmlSerialization
 	[TestFixture]
 	public class DeserializationTests
 	{
+		const string XmlSchemaNamespace = "http://www.w3.org/2001/XMLSchema";
+		const string XmlSchemaInstanceNamespace = "http://www.w3.org/2001/XMLSchema-instance";
+		const string SoapEncodingNamespace = "http://schemas.xmlsoap.org/soap/encoding/";
+		const string WsdlTypesNamespace = "http://microsoft.com/wsdl/types/";
+		const string ANamespace = "some:urn";
+		const string AnotherNamespace = "another:urn";
+
 		object result;
 
 		private object Deserialize (Type t, string xml)
@@ -572,6 +580,253 @@ namespace MonoTests.System.XmlSerialization
 			Assert.IsNotNull (cont, "#1");
 			Assert.IsNotNull (cont.Collection1, "#2");
 			Assert.AreEqual (0, cont.Collection1.Length, "#3");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void TestDeserialize_EnumDefaultValue ()
+		{
+			EnumDefaultValue e;
+
+			e = (EnumDefaultValue) Deserialize (typeof (EnumDefaultValue), "<EnumDefaultValue />");
+			Assert.AreEqual (0, (int) e, "#1");
+
+			e = (EnumDefaultValue) Deserialize (typeof (EnumDefaultValue), "<EnumDefaultValue>e3</EnumDefaultValue>");
+			Assert.AreEqual (EnumDefaultValue.e3, e, "#2");
+
+			e = (EnumDefaultValue) Deserialize (typeof (EnumDefaultValue), "<EnumDefaultValue>e1 e2</EnumDefaultValue>");
+			Assert.AreEqual (EnumDefaultValue.e3, e, "#3");
+
+			e = (EnumDefaultValue) Deserialize (typeof (EnumDefaultValue), "<EnumDefaultValue>e1 e2</EnumDefaultValue>");
+			Assert.AreEqual (EnumDefaultValue.e1 | EnumDefaultValue.e2, e, "#4");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void TestDeserialize_EnumDefaultValueNF ()
+		{
+			EnumDefaultValueNF e;
+
+			e = (EnumDefaultValueNF) Deserialize (typeof (EnumDefaultValueNF), "<EnumDefaultValueNF>e3</EnumDefaultValueNF>");
+			Assert.AreEqual (EnumDefaultValueNF.e3, e, "#A1");
+
+			try {
+				Deserialize (typeof (EnumDefaultValueNF), "<EnumDefaultValueNF />");
+				Assert.Fail ("#B1");
+			} catch (InvalidOperationException ex) {
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#B2");
+				Assert.IsNotNull (ex.InnerException, "#B3");
+				Assert.AreEqual (typeof (InvalidOperationException), ex.InnerException.GetType (), "#B4");
+				Assert.IsNotNull (ex.InnerException.Message, "#B5");
+				Assert.IsTrue (ex.InnerException.Message.IndexOf ("''") != -1, "#B6");
+				Assert.IsTrue (ex.InnerException.Message.IndexOf (typeof (EnumDefaultValueNF).Name) != -1, "#B7");
+			}
+
+			try {
+				Deserialize (typeof (EnumDefaultValueNF), "<EnumDefaultValueNF>e1 e3</EnumDefaultValueNF>");
+				Assert.Fail ("#C1");
+			} catch (InvalidOperationException ex) {
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#C2");
+				Assert.IsNotNull (ex.InnerException, "#C3");
+				Assert.AreEqual (typeof (InvalidOperationException), ex.InnerException.GetType (), "#C4");
+				Assert.IsNotNull (ex.InnerException.Message, "#C5");
+				Assert.IsTrue (ex.InnerException.Message.IndexOf ("'e1 e3'") != -1, "#C6");
+				Assert.IsTrue (ex.InnerException.Message.IndexOf (typeof (EnumDefaultValueNF).Name) != -1, "#C7");
+			}
+
+			try {
+				Deserialize (typeof (EnumDefaultValueNF), "<EnumDefaultValueNF> e3</EnumDefaultValueNF>");
+				Assert.Fail ("#D1");
+			} catch (InvalidOperationException ex) {
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#D2");
+				Assert.IsNotNull (ex.InnerException, "#D3");
+				Assert.AreEqual (typeof (InvalidOperationException), ex.InnerException.GetType (), "#D4");
+				Assert.IsNotNull (ex.InnerException.Message, "#D5");
+				Assert.IsTrue (ex.InnerException.Message.IndexOf ("' e3'") != -1, "#D6");
+				Assert.IsTrue (ex.InnerException.Message.IndexOf (typeof (EnumDefaultValueNF).Name) != -1, "#D7");
+			}
+
+			try {
+				Deserialize (typeof (EnumDefaultValueNF), "<EnumDefaultValueNF> </EnumDefaultValueNF>");
+				Assert.Fail ("#E1");
+			} catch (InvalidOperationException ex) {
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#E2");
+				Assert.IsNotNull (ex.InnerException, "#E3");
+				Assert.AreEqual (typeof (InvalidOperationException), ex.InnerException.GetType (), "#E4");
+				Assert.IsNotNull (ex.InnerException.Message, "#E5");
+				Assert.IsTrue (ex.InnerException.Message.IndexOf ("' '") != -1, "#E6");
+				Assert.IsTrue (ex.InnerException.Message.IndexOf (typeof (EnumDefaultValueNF).Name) != -1, "#E7");
+			}
+
+			try {
+				Deserialize (typeof (EnumDefaultValueNF), "<EnumDefaultValueNF>1</EnumDefaultValueNF>");
+				Assert.Fail ("#F1");
+			} catch (InvalidOperationException ex) {
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#F2");
+				Assert.IsNotNull (ex.InnerException, "#F3");
+				Assert.AreEqual (typeof (InvalidOperationException), ex.InnerException.GetType (), "#F4");
+				Assert.IsNotNull (ex.InnerException.Message, "#F5");
+				Assert.IsTrue (ex.InnerException.Message.IndexOf ("'1'") != -1, "#F6");
+				Assert.IsTrue (ex.InnerException.Message.IndexOf (typeof (EnumDefaultValueNF).Name) != -1, "#F7");
+			}
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void TestDeserialize_FlagEnum ()
+		{
+			FlagEnum e;
+
+			e = (FlagEnum) Deserialize (typeof (FlagEnum), "<FlagEnum />");
+			Assert.AreEqual (0, (int) e, "#A1");
+
+			e = (FlagEnum) Deserialize (typeof (FlagEnum), "<FlagEnum>one</FlagEnum>");
+			Assert.AreEqual (FlagEnum.e1, e, "#A2");
+
+			e = (FlagEnum) Deserialize (typeof (FlagEnum), "<FlagEnum>one two</FlagEnum>");
+			Assert.AreEqual (FlagEnum.e1 | FlagEnum.e2, e, "#A3");
+
+			e = (FlagEnum) Deserialize (typeof (FlagEnum), "<FlagEnum>one two four</FlagEnum>");
+			Assert.AreEqual (FlagEnum.e1 | FlagEnum.e2 | FlagEnum.e4, e, "#A4");
+
+			e = (FlagEnum) Deserialize (typeof (FlagEnum), "<FlagEnum> two  four </FlagEnum>");
+			Assert.AreEqual (FlagEnum.e2 | FlagEnum.e4, e, "#A5");
+
+			e = (FlagEnum) Deserialize (typeof (FlagEnum), "<FlagEnum>two four two</FlagEnum>");
+			Assert.AreEqual (FlagEnum.e2 | FlagEnum.e4, e, "#A6");
+
+			e = (FlagEnum) Deserialize (typeof (FlagEnum), "<FlagEnum>two four two one four two one</FlagEnum>");
+			Assert.AreEqual (FlagEnum.e1 | FlagEnum.e2 | FlagEnum.e4, e, "#A7");
+
+			e = (FlagEnum) Deserialize (typeof (FlagEnum), "<FlagEnum></FlagEnum>");
+			Assert.AreEqual (0, (int) e, "#A8");
+
+			try {
+				Deserialize (typeof (FlagEnum), "<FlagEnum>1</FlagEnum>");
+				Assert.Fail ("#B1");
+			} catch (InvalidOperationException ex) {
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#B2");
+				Assert.IsNotNull (ex.InnerException, "#B3");
+				Assert.AreEqual (typeof (InvalidOperationException), ex.InnerException.GetType (), "#B4");
+				Assert.IsNotNull (ex.InnerException.Message, "#B5");
+				Assert.IsTrue (ex.InnerException.Message.IndexOf ("'1'") != -1, "#B6");
+				Assert.IsTrue (ex.InnerException.Message.IndexOf (typeof (FlagEnum).FullName) != -1, "#B7");
+			}
+
+			try {
+				Deserialize (typeof (FlagEnum), "<FlagEnum>one,two</FlagEnum>");
+				Assert.Fail ("#C1");
+			} catch (InvalidOperationException ex) {
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#C2");
+				Assert.IsNotNull (ex.InnerException, "#C3");
+				Assert.AreEqual (typeof (InvalidOperationException), ex.InnerException.GetType (), "#C4");
+				Assert.IsNotNull (ex.InnerException.Message, "#C5");
+				Assert.IsTrue (ex.InnerException.Message.IndexOf ("'one,two'") != -1, "#C6");
+				Assert.IsTrue (ex.InnerException.Message.IndexOf (typeof (FlagEnum).FullName) != -1, "#C7");
+			}
+
+			try {
+				Deserialize (typeof (FlagEnum), "<FlagEnum>one something</FlagEnum>");
+				Assert.Fail ("#D1");
+			} catch (InvalidOperationException ex) {
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#D2");
+				Assert.IsNotNull (ex.InnerException, "#D3");
+				Assert.AreEqual (typeof (InvalidOperationException), ex.InnerException.GetType (), "#D4");
+				Assert.IsNotNull (ex.InnerException.Message, "#D5");
+				Assert.IsTrue (ex.InnerException.Message.IndexOf ("'something'") != -1, "#D6");
+				Assert.IsTrue (ex.InnerException.Message.IndexOf (typeof (FlagEnum).FullName) != -1, "#D7");
+			}
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void TestDeserialize_ZeroFlagEnum ()
+		{
+			ZeroFlagEnum e;
+
+			e = (ZeroFlagEnum) Deserialize (typeof (ZeroFlagEnum), "<ZeroFlagEnum />");
+			Assert.AreEqual (ZeroFlagEnum.e0, e, "#A1");
+			e = (ZeroFlagEnum) Deserialize (typeof (ZeroFlagEnum), "<ZeroFlagEnum></ZeroFlagEnum>");
+			Assert.AreEqual (ZeroFlagEnum.e0, e, "#A2");
+
+			try {
+				Deserialize (typeof (ZeroFlagEnum), "<ZeroFlagEnum>four</ZeroFlagEnum>");
+				Assert.Fail ("#B1");
+			} catch (InvalidOperationException ex) {
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#B2");
+				Assert.IsNotNull (ex.InnerException, "#B3");
+				Assert.AreEqual (typeof (InvalidOperationException), ex.InnerException.GetType (), "#B4");
+				Assert.IsNotNull (ex.InnerException.Message, "#B5");
+				Assert.IsTrue (ex.InnerException.Message.IndexOf ("'four'") != -1, "#B6");
+				Assert.IsTrue (ex.InnerException.Message.IndexOf (typeof (ZeroFlagEnum).FullName) != -1, "#B7");
+			}
+
+			try {
+				Deserialize (typeof (ZeroFlagEnum), "<ZeroFlagEnum> o&lt;n&gt;e  four </ZeroFlagEnum>");
+				Assert.Fail ("#C1");
+			} catch (InvalidOperationException ex) {
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#C2");
+				Assert.IsNotNull (ex.InnerException, "#C3");
+				Assert.AreEqual (typeof (InvalidOperationException), ex.InnerException.GetType (), "#C4");
+				Assert.IsNotNull (ex.InnerException.Message, "#C5");
+				Assert.IsTrue (ex.InnerException.Message.IndexOf ("'four'") != -1, "#C6");
+				Assert.IsTrue (ex.InnerException.Message.IndexOf (typeof (ZeroFlagEnum).FullName) != -1, "#C7");
+			}
+
+			try {
+				Deserialize (typeof (ZeroFlagEnum), "<ZeroFlagEnum>four o&lt;n&gt;e</ZeroFlagEnum>");
+				Assert.Fail ("#D1");
+			} catch (InvalidOperationException ex) {
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#D2");
+				Assert.IsNotNull (ex.InnerException, "#D3");
+				Assert.AreEqual (typeof (InvalidOperationException), ex.InnerException.GetType (), "#D4");
+				Assert.IsNotNull (ex.InnerException.Message, "#D5");
+				Assert.IsTrue (ex.InnerException.Message.IndexOf ("'four'") != -1, "#D6");
+				Assert.IsTrue (ex.InnerException.Message.IndexOf (typeof (ZeroFlagEnum).FullName) != -1, "#D7");
+			}
+		}
+
+		[Test]
+		public void TestDeserialize_PrimitiveTypesContainer ()
+		{
+			Deserialize (typeof (PrimitiveTypesContainer), string.Format (CultureInfo.InvariantCulture, 
+				"<?xml version='1.0' encoding='utf-16'?>" +
+				"<PrimitiveTypesContainer xmlns:xsd='{0}' xmlns:xsi='{1}' xmlns='{2}'>" +
+				"<Number xsi:type='xsd:int'>2004</Number>" +
+				"<Name xsi:type='xsd:string'>some name</Name>" +
+				"<Index xsi:type='xsd:unsignedByte'>56</Index>" +
+				"<Password xsi:type='xsd:base64Binary'>8w8=</Password>" +
+				"<PathSeparatorCharacter xmlns:q1='{3}' xsi:type='q1:char'>47</PathSeparatorCharacter>" +
+				"</PrimitiveTypesContainer>", XmlSchemaNamespace,
+				XmlSchemaInstanceNamespace, ANamespace, WsdlTypesNamespace));
+			Assert.AreEqual (typeof (PrimitiveTypesContainer), result.GetType (), "#A1");
+
+			PrimitiveTypesContainer deserialized = (PrimitiveTypesContainer) result;
+			Assert.AreEqual (2004, deserialized.Number, "#A2");
+			Assert.AreEqual ("some name", deserialized.Name, "#A3");
+			Assert.AreEqual ((byte) 56, deserialized.Index, "#A4");
+			Assert.AreEqual (new byte[] { 243, 15 }, deserialized.Password, "#A5");
+			Assert.AreEqual ('/', deserialized.PathSeparatorCharacter, "#A6");
+
+			DeserializeEncoded (typeof (PrimitiveTypesContainer), string.Format (CultureInfo.InvariantCulture,
+				"<?xml version='1.0' encoding='utf-16'?>" +
+				"<q1:PrimitiveTypesContainer xmlns:xsd='{0}' xmlns:xsi='{1}' id='id1' xmlns:q1='{2}'>" +
+				"<Number xsi:type='xsd:int'>2004</Number>" +
+				"<Name xsi:type='xsd:string'>some name</Name>" +
+				"<Index xsi:type='xsd:unsignedByte'>56</Index>" +
+				"<Password xsi:type='xsd:base64Binary'>8w8=</Password>" +
+				"<PathSeparatorCharacter xmlns:q1='{3}' xsi:type='q1:char'>47</PathSeparatorCharacter>" +
+				"</q1:PrimitiveTypesContainer>", XmlSchemaNamespace,
+				XmlSchemaInstanceNamespace, AnotherNamespace, WsdlTypesNamespace));
+			Assert.AreEqual (typeof (PrimitiveTypesContainer), result.GetType (), "#B1");
+
+			deserialized = (PrimitiveTypesContainer) result;
+			Assert.AreEqual (2004, deserialized.Number, "#B2");
+			Assert.AreEqual ("some name", deserialized.Name, "#B3");
+			Assert.AreEqual ((byte) 56, deserialized.Index, "#B4");
+			Assert.AreEqual (new byte[] { 243, 15 }, deserialized.Password, "#B5");
+			Assert.AreEqual ('/', deserialized.PathSeparatorCharacter, "#B6");
+
 		}
 	}
 }
