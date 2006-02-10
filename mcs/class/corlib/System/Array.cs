@@ -1915,7 +1915,7 @@ namespace System
 			return new ReadOnlyArray<T> (array);
 		}
 
-		public static Nullable<T> Find<T> (T [] array, Predicate<T> match)
+		public static T Find<T> (T [] array, Predicate<T> match)
 		{
 			if (array == null)
 				throw new ArgumentNullException ("array");
@@ -1925,12 +1925,12 @@ namespace System
 			
 			foreach (T t in array)
 				if (match (t))
-					return new Nullable <T> (t);
+					return t;
 				
-			return default (Nullable <T>);
+			return default (T);
 		}
 		
-		public static Nullable<T> FindLast<T> (T [] array, Predicate <T> match)
+		public static T FindLast<T> (T [] array, Predicate <T> match)
 		{
 			if (array == null)
 				throw new ArgumentNullException ("array");
@@ -1940,9 +1940,9 @@ namespace System
 			
 			for (int i = array.Length - 1; i >= 0; i--)
 				if (match (array [i]))
-					return new Nullable <T> (array [i]);
+					return array [i];
 				
-			return default (Nullable <T>);
+			return default (T);
 		}
 
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]		
