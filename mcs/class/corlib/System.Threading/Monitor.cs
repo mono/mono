@@ -51,7 +51,7 @@ namespace System.Threading
 
 		public static void Enter(object obj) {
 			if(obj==null) {
-				throw new ArgumentNullException("Object is null");
+				throw new ArgumentNullException("obj");
 			}
 			//if(obj.GetType().IsValueType==true) {
 			//	throw new ArgumentException("Value type");
@@ -69,7 +69,7 @@ namespace System.Threading
 #endif
 		public static void Exit(object obj) {
 			if(obj==null) {
-				throw new ArgumentNullException("Object is null");
+				throw new ArgumentNullException("obj");
 			}
 			//if(obj.GetType().IsValueType==true) {
 			//	throw new ArgumentException("Value type");
@@ -89,7 +89,7 @@ namespace System.Threading
 
 		public static void Pulse(object obj) {
 			if(obj==null) {
-				throw new ArgumentNullException("Object is null");
+				throw new ArgumentNullException("obj");
 			}
 			if(Monitor_test_synchronised(obj)==false) {
 				throw new SynchronizationLockException("Object is not synchronized");
@@ -105,7 +105,7 @@ namespace System.Threading
 
 		public static void PulseAll(object obj) {
 			if(obj==null) {
-				throw new ArgumentNullException("Object is null");
+				throw new ArgumentNullException("obj");
 			}
 			if(Monitor_test_synchronised(obj)==false) {
 				throw new SynchronizationLockException("Object is not synchronized");
@@ -116,7 +116,7 @@ namespace System.Threading
 
 		public static bool TryEnter(object obj) {
 			if(obj==null) {
-				throw new ArgumentNullException("Object is null");
+				throw new ArgumentNullException("obj");
 			}
 			//if(obj.GetType().IsValueType==true) {
 			//	throw new ArgumentException("Value type");
@@ -127,7 +127,7 @@ namespace System.Threading
 
 		public static bool TryEnter(object obj, int millisecondsTimeout) {
 			if(obj==null) {
-				throw new ArgumentNullException("Object is null");
+				throw new ArgumentNullException("obj");
 			}
 			//if(obj.GetType().IsValueType==true) {
 			//	throw new ArgumentException("Value type");
@@ -141,7 +141,7 @@ namespace System.Threading
 			}
 			
 			if(millisecondsTimeout<0) {
-				throw new ArgumentException("millisecondsTimeout negative");
+				throw new ArgumentException("millisecondsTimeout", "negative value for millisecondsTimeout");
 			}
 			
 			return(Monitor_try_enter(obj, millisecondsTimeout));
@@ -149,7 +149,7 @@ namespace System.Threading
 
 		public static bool TryEnter(object obj, TimeSpan timeout) {
 			if(obj==null) {
-				throw new ArgumentNullException("Object is null");
+				throw new ArgumentNullException("obj");
 			}
 			//if(obj.GetType().IsValueType==true) {
 			//	throw new ArgumentException("Value type");
@@ -165,7 +165,7 @@ namespace System.Threading
 			}
 
 			if(ms < 0 || ms > Int32.MaxValue) {
-				throw new ArgumentOutOfRangeException("timeout out of range");
+				throw new ArgumentOutOfRangeException("timeout", "timeout out of range");
 			}
 			
 			return(Monitor_try_enter(obj, ms));
@@ -179,7 +179,7 @@ namespace System.Threading
 
 		public static bool Wait(object obj) {
 			if(obj==null) {
-				throw new ArgumentNullException("Object is null");
+				throw new ArgumentNullException("obj");
 			}
 			if(Monitor_test_synchronised(obj)==false) {
 				throw new SynchronizationLockException("Object is not synchronized");
@@ -190,25 +190,26 @@ namespace System.Threading
 
 		public static bool Wait(object obj, int millisecondsTimeout) {
 			if(obj==null) {
-				throw new ArgumentNullException("Object is null");
+				throw new ArgumentNullException("obj");
 			}
 			if(Monitor_test_synchronised(obj)==false) {
 				throw new SynchronizationLockException("Object is not synchronized");
 			}
-			// LAMESPEC: no mention of timeout sanity checking
+			if (millisecondsTimeout < 0 && millisecondsTimeout != Timeout.Infinite)
+				throw new ArgumentOutOfRangeException ("millisecondsTimeout", "timeout out of range");
 
 			return(Monitor_wait(obj, millisecondsTimeout));
 		}
 
 		public static bool Wait(object obj, TimeSpan timeout) {
 			if(obj==null) {
-				throw new ArgumentNullException("Object is null");
+				throw new ArgumentNullException("obj");
 			}
 			// LAMESPEC: says to throw ArgumentException too
 			int ms=Convert.ToInt32(timeout.TotalMilliseconds);
 			
-			if(ms < 0 || ms > Int32.MaxValue) {
-				throw new ArgumentOutOfRangeException("timeout out of range");
+			if((ms < 0 && ms != Timeout.Infinite) || ms > Int32.MaxValue) {
+				throw new ArgumentOutOfRangeException("timeout", "timeout out of range");
 			}
 			if(Monitor_test_synchronised(obj)==false) {
 				throw new SynchronizationLockException("Object is not synchronized");

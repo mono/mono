@@ -1,3 +1,11 @@
+2006-02-09  Miguel de Icaza  <miguel@novell.com>
+
+	* Monitor.cs: Patch from Thong Nguyen, Wait methods should allow a
+	-1 (Timeout.Infinite) to mean indefinite wait (the code already
+	supported this. 
+
+	Fixed the use of exceptions.
+
 2005-12-23  Dick Porter  <dick@ximian.com>
 
 	* EventWaitHandle.cs: 
