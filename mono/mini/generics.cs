@@ -128,6 +128,24 @@ class Tests {
 		return t.ldelem_stelem (s).i;
 	}
 
+	public static int test_0_constrained_vtype_box () {
+		GenericClass<TestStruct> t = new GenericClass<TestStruct> ();
+
+		return t.toString (new TestStruct ()) == "Tests+TestStruct" ? 0 : 1;
+	}
+
+	public static int test_0_constrained_vtype () {
+		GenericClass<int> t = new GenericClass<int> ();
+
+		return t.toString (1234) == "1234" ? 0 : 1;
+	}
+
+	public static int test_0_constrained_reftype () {
+		GenericClass<String> t = new GenericClass<String> ();
+
+		return t.toString ("1234") == "1234" ? 0 : 1;
+	}
+
 	static object Box<T> (T t)
 	{
 		return t;
@@ -150,6 +168,10 @@ class Tests {
 			arr [0] = t;
 
 			return arr [0];
+		}
+
+		public String toString (T t) {
+			return t.ToString ();
 		}
 	}
 }

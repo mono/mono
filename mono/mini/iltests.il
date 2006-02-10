@@ -1073,6 +1073,30 @@ COND:   ldloc.0
 		ret
 	}
 
+	.method public static int32 test_5_different_in_stacks () cil managed {
+		.maxstack 16
+
+			ldc.i4.1
+		 	ldc.i4.1
+		 	beq L_0
+
+		 	ldc.i4.3
+		 	ldc.i4.3
+		 	br L_1
+		 	ldc.i4.3
+		 	ldc.i4.3
+		 	br L_2
+	 L_0: 	ldc.i4.2
+			ldc.i4.3
+			ldc.i4.1
+			ldc.i4.1
+			beq L_2
+	 L_1:	add
+			ret
+	 L_2:	add
+			ret
+	}
+
 	.method public static int32 test_3_larray_get_set () {
 		.locals init (
 			int32[2]	V_0)

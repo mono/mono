@@ -1898,15 +1898,20 @@ handle_stack_args (MonoCompile *cfg, MonoInst **sp, int count) {
 				continue;
 			}
 			if (outb->in_stack != locals) {
-				/* 
-				 * Instead of storing sp [i] to locals [i], we need to store
-				 * locals [i] to <new locals>[i], since the sp [i] tree can't
-				 * be shared between trees.
-				 */
-				NOT_IMPLEMENTED;
-				for (i = 0; i < count; ++i)
-					;
-					//mono_add_varcopy_to_end (cfg, bb, locals [i]->inst_c0, outb->in_stack [i]->inst_c0);
+				for (i = 0; i < count; ++i) {
+					NEW_TEMPSTORE (cfg, inst, outb->in_stack [i]->inst_c0, sp [i]);
+					if (inst->opcode == CEE_STOBJ) {
+						EMIT_NEW_TEMPLOADA (cfg, inst, outb->in_stack [i]->inst_c0);
+						emit_stobj (cfg, inst, sp [i], sp [i]->cil_code, inst->klass, FALSE);
+						sp [i] = inst;
+					} else {
+						inst->cil_code = sp [i]->cil_code;
+						MONO_ADD_INS (cfg->cbb, inst);
+						sp [i] = locals [i];
+					}
+					if (cfg->verbose_level > 3)
+						g_print ("storing %d to temp %d\n", i, (int)outb->in_stack [i]->inst_c0);
+				}
 				locals = outb->in_stack;
 				found = TRUE;
 				break;
@@ -5727,36 +5732,25 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			sp -= n;
 
 			if (constrained_call) {
-				NOT_IMPLEMENTED;
 				/*
 				 * We have the `constrained.' prefix opcode.
 				 */
 				if (constrained_call->valuetype && !cmethod->klass->valuetype) {
-					MonoInst *load;
 					/*
 					 * The type parameter is instantiated as a valuetype,
 					 * but that type doesn't override the method we're
 					 * calling, so we need to box `this'.
-					 * sp [0] is a pointer to the data: we need the value
-					 * in handle_box (), so load it here.
 					 */
-					MONO_INST_NEW (cfg, load, mono_type_to_ldind (&constrained_call->byval_arg));
-					type_to_eval_stack_type (&constrained_call->byval_arg, load);
-					load->cil_code = ip;
-					load->inst_left = sp [0];
-					sp [0] = handle_box (cfg, load, ip, constrained_call);
+					sp [0] = handle_box (cfg, sp [0], ip, constrained_call);
 				} else if (!constrained_call->valuetype) {
-					MonoInst *ins;
+					int dreg = alloc_preg (cfg);
 
 					/*
 					 * The type parameter is instantiated as a reference
 					 * type.  We have a managed pointer on the stack, so
 					 * we need to dereference it here.
 					 */
-
-					MONO_INST_NEW (cfg, ins, CEE_LDIND_REF);
-					ins->cil_code = ip;
-					ins->inst_i0 = sp [0];
+					EMIT_NEW_LOAD_MEMBASE (cfg, ins, OP_LOAD_MEMBASE, dreg, sp [0]->dreg, 0);
 					ins->type = STACK_OBJ;
 					sp [0] = ins;
 				} else if (cmethod->klass->valuetype)
@@ -5889,8 +5883,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			if ((cfg->opt & MONO_OPT_TAILC) && *ip == CEE_CALL && cmethod == method && ip [5] == CEE_RET) {
 				gboolean has_vtargs = FALSE;
 				int i;
-
-				NOT_IMPLEMENTED;
 
 				/* keep it simple */
 				for (i =  fsig->param_count - 1; i >= 0; i--) {
@@ -9008,7 +9000,7 @@ mono_spill_global_vars (MonoCompile *cfg)
 				spec2 [MONO_INST_SRC2] = spec [MONO_INST_DEST];
 				spec = spec2;
 			} else if (MONO_IS_STORE_MEMINDEX (ins))
-				NOT_IMPLEMENTED;
+				g_assert_not_reached ();
 			else
 				store = FALSE;
 
@@ -9168,7 +9160,6 @@ mono_spill_global_vars (MonoCompile *cfg)
  *   stack
  * - set the stack type and allocate a dreg in the EMIT_NEW macros
  * - get rid of all the <foo>2 stuff when the new JIT is ready.
- * - add tests for all NOT_IMPLEMENTED branches
  * - make sure handle_stack_args () is called before the branch is emitted
  * - when the new IR is done, get rid of all unused stuff
  * - COMPARE/BEQ as separate instructions or unify them ?
