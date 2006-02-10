@@ -1,3 +1,9 @@
+2006-02-10  Jackson Harper  <jackson@ximian.com>
+
+	* InternalWindowManager.cs: We don't need the set visibility to
+	false hack anymore now that peter has written beautiful shutdown
+	code.
+
 2006-02-10  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* XplatUIX11.cs: Ignore DestroyNotify messages for windows that

@@ -560,9 +560,6 @@ namespace System.Windows.Forms {
 		private void CloseClicked (object sender, EventArgs e)
 		{
 			form.Close ();
-			// form.Close should set visibility to false somewhere
-			// in it's closing chain but currently does not.
-			form.Visible = false;
 		}
 
 		private void MinimizeClicked (object sender, EventArgs e)
