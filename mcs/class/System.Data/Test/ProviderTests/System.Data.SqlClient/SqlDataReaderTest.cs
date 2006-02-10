@@ -455,6 +455,124 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+		public void GetBytes_Binary ()
+		{
+			cmd.CommandText = "Select type_binary,type_varbinary,type_blob ";
+			cmd.CommandText += "from binary_family where id=1";
+			reader = cmd.ExecuteReader ();
+			reader.Read ();
+			byte[] binary = (byte[])reader.GetValue (0);
+			byte[] varbinary = (byte[])reader.GetValue (1);
+			byte[] image = (byte[])reader.GetValue (2);
+			reader.Close ();
+
+			reader = cmd.ExecuteReader (CommandBehavior.SequentialAccess);
+			reader.Read ();
+			int len = 0;
+			byte[] arr ;
+			len = (int)reader.GetBytes (0,0,null,0,0);
+			Assert.AreEqual (binary.Length, len, "#1");
+			arr = new byte [len];
+			reader.GetBytes (0,0,arr,0,len);
+			for (int i=0; i<len; ++i)
+				Assert.AreEqual (binary[i], arr[i], "#2");
+
+
+			len = (int)reader.GetBytes (1,0,null,0,0);
+			Assert.AreEqual (varbinary.Length, len, "#1");
+			arr = new byte [len];
+			reader.GetBytes (1,0,arr,0,len);
+			for (int i=0; i<len; ++i)
+				Assert.AreEqual (varbinary[i], arr[i], "#2");
+
+			len = (int)reader.GetBytes (2,0,null,0,0);
+			Assert.AreEqual (image.Length, len, "#1");
+			arr = new byte [len];
+			reader.GetBytes (2,0,arr,0,len);
+			for (int i=0; i<len; ++i)
+				Assert.AreEqual (image[i], arr[i], "#2");
+
+			reader.Close ();
+
+			cmd.CommandText = "Select type_binary,type_varbinary,type_blob ";
+			cmd.CommandText += "from binary_family where id=1";
+		
+			reader = cmd.ExecuteReader (CommandBehavior.SequentialAccess);
+			reader.Read ();
+		
+			len  = (int)reader.GetBytes (0,0,null,0,0);	
+			arr = new byte [100];
+			for (int i=0; i<len; ++i) {
+				Assert.AreEqual (len-i, reader.GetBytes (0, i, null, 0, 0), "#1_"+i);
+				Assert.AreEqual (1, reader.GetBytes (0, i, arr, 0, 1), "#2_"+i);
+				Assert.AreEqual (binary [i], arr [0], "#3_"+i);
+			}
+			Assert.AreEqual (0, reader.GetBytes (0, len+10, null, 0, 0));
+			reader.Close ();
+		}
+
+		[Test]
+		public void GetChars ()
+		{
+			cmd.CommandText = "Select type_char, type_varchar,type_text, type_ntext ";
+			cmd.CommandText += "from string_family where id=1";
+			reader = cmd.ExecuteReader ();
+			reader.Read ();
+			string charstring = reader.GetString (0);
+			//string ncharstring = reader.GetString (1);
+			string varcharstring = reader.GetString (1);
+			//string nvarcharstring = reader.GetString (2);
+			string textstring = reader.GetString (2);
+			string ntextstring = reader.GetString (3);
+			reader.Close ();
+			
+			reader = cmd.ExecuteReader (CommandBehavior.SequentialAccess);
+			reader.Read ();
+			int len = 0;
+			char[] arr; 
+
+			len = (int)reader.GetChars (0,0,null,0,0);
+			Assert.AreEqual (charstring.Length, len, "#1");
+			arr = new char [len];
+			reader.GetChars (0,0,arr,0,len);
+			Assert.AreEqual (0, charstring.CompareTo (new String (arr)), "#2");
+
+			len = (int)reader.GetChars (1,0,null,0,0);
+			Assert.AreEqual (varcharstring.Length, len, "#3");
+			arr = new char [len];
+			reader.GetChars (1,0,arr,0,len);
+			Assert.AreEqual (0, varcharstring.CompareTo (new String (arr)), "#4");
+
+			len = (int)reader.GetChars (2,0,null,0,0);
+			Assert.AreEqual (textstring.Length, len, "#5");
+			arr = new char [len];
+			reader.GetChars (2,0,arr,0,len);
+			Assert.AreEqual (0, textstring.CompareTo (new String (arr)), "#6");
+
+			len = (int)reader.GetChars (3,0,null,0,0);
+			Assert.AreEqual (ntextstring.Length, len, "#7");
+			arr = new char [len];
+			reader.GetChars (3,0,arr,0,len);
+			Assert.AreEqual (0, ntextstring.CompareTo (new String (arr)), "#8");
+
+			reader.Close ();
+
+			reader = cmd.ExecuteReader (CommandBehavior.SequentialAccess);
+			reader.Read ();
+			
+			len  = (int)reader.GetChars (0,0,null,0,0);	
+			arr = new char [10];
+			for (int i=0; i<len; ++i) {
+				Assert.AreEqual (len-i, reader.GetChars (0, i, null, 0, 0), "#9_"+i);
+				Assert.AreEqual (1, reader.GetChars (0, i, arr, 0, 1), "#10_"+i);
+				Assert.AreEqual (charstring [i], arr [0], "#11_"+i);
+			}
+			Assert.AreEqual (0, reader.GetChars (0, len+10, null, 0, 0));
+
+			reader.Close ();
+		}
+
+		[Test]
 		public void GetStringTest ()
 		{
 			cmd.CommandText = "Select type_varchar,10,convert(varchar,null)";

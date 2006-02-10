@@ -291,6 +291,10 @@ namespace System.Data.SqlClient {
 
 			if ((behavior & CommandBehavior.CloseConnection) != 0)
 				Connection.Close ();
+
+			// Reset the behavior
+			behavior = CommandBehavior.Default;
+			Tds.SequentialAccess = false;
 		}
 
 		public new SqlParameter CreateParameter () 
@@ -395,6 +399,8 @@ namespace System.Data.SqlClient {
 			ValidateCommand ("ExecuteReader");
 			try {
                                 this.behavior = behavior;
+				if ((behavior & CommandBehavior.SequentialAccess) != 0)
+					Tds.SequentialAccess = true;
 				Execute (behavior, true);
                                 Connection.DataReader = new SqlDataReader (this);
 			}

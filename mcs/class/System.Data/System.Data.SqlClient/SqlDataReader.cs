@@ -36,6 +36,7 @@
 
 using Mono.Data.Tds.Protocol;
 using System;
+using System.Text;
 using System.Collections;
 using System.ComponentModel;
 using System.Data;
@@ -262,6 +263,15 @@ namespace System.Data.SqlClient {
 #endif // NET_2_0
                 long GetBytes (int i, long dataIndex, byte[] buffer, int bufferIndex, int length)
 		{
+			if ((command.CommandBehavior & CommandBehavior.SequentialAccess) != 0) {
+				long len = ((Tds)command.Tds).GetSequentialColumnValue (i, dataIndex, buffer, bufferIndex, length);
+				if (len == -1)
+					throw new InvalidCastException ("Invalid attempt to GetBytes on column "
+							+ "'" + command.Tds.Columns[i]["ColumnName"] + "'." + "The GetBytes function"
+							+ " can only be used on columns of type Text, NText, or Image");
+				return len;
+			}
+
 			object value = GetValue (i);
 			if (!(value is byte [])) {
 				if (value is DBNull) throw new SqlNullValueException ();
@@ -269,16 +279,16 @@ namespace System.Data.SqlClient {
 			}
 			
 			if ( buffer == null )
-                                return ((byte []) value).Length; // Return length of data
-                        
-                        // Copy data into buffer
-                        int availLen = (int) ( ( (byte []) value).Length - dataIndex);
-                        if (availLen < length)
-                                length = availLen;
-                        Array.Copy ((byte []) value, (int) dataIndex, buffer, bufferIndex, length);
-                        return length; // return actual read count
+				return ((byte []) value).Length; // Return length of data
+
+			// Copy data into buffer
+			int availLen = (int) ( ( (byte []) value).Length - dataIndex);
+			if (availLen < length)
+				length = availLen;
+			Array.Copy ((byte []) value, (int) dataIndex, buffer, bufferIndex, length);
+			return length; // return actual read count
 		}
-                                                                                                    
+
 		[EditorBrowsableAttribute (EditorBrowsableState.Never)]
 		public 
 #if NET_2_0
@@ -300,8 +310,46 @@ namespace System.Data.SqlClient {
 #endif // NET_2_0
                 long GetChars (int i, long dataIndex, char[] buffer, int bufferIndex, int length)
 		{
-			object value = GetValue (i);
+			if ((command.CommandBehavior & CommandBehavior.SequentialAccess) != 0) {
+				Encoding encoding = null;
+				byte mul = 1;
+				TdsColumnType colType = (TdsColumnType) command.Tds.Columns[i]["ColumnType"];
+				switch (colType) {
+					case TdsColumnType.Text :
+					case TdsColumnType.VarChar:
+					case TdsColumnType.Char:
+					case TdsColumnType.BigVarChar:
+						encoding = Encoding.ASCII;
+						break;
+					case TdsColumnType.NText :
+					case TdsColumnType.NVarChar:
+					case TdsColumnType.NChar:
+						encoding = Encoding.Unicode;
+						mul = 2 ;
+						break;
+					default :
+						return -1;
+				}
+
+				long count = 0;
+				if (buffer == null) {
+					count = GetBytes (i,0,(byte[]) null,0,0);
+					return (count/mul);
+				}
+
+				length *= mul;
+				byte[] arr = new byte [length];
+				count = GetBytes (i, dataIndex, arr, 0, length);
+				if (count == -1)
+					throw new InvalidCastException ("Specified cast is not valid");
+
+				Char[] val = encoding.GetChars (arr, 0, (int)count);
+				val.CopyTo (buffer, bufferIndex);
+				return val.Length;
+			}
+
 			char [] valueBuffer;
+			object value = GetValue (i);
 			
 			if (value is char[])
 				valueBuffer = (char[])value;
@@ -933,8 +981,13 @@ namespace System.Data.SqlClient {
 #endif // NET_2_0
                 object GetValue (int i)
 		{
-			if (i < 0 || i >= command.Tds.ColumnValues.Count)
+			if (i < 0 || i >= command.Tds.Columns.Count)
 				throw new IndexOutOfRangeException ();
+
+			if ((command.CommandBehavior & CommandBehavior.SequentialAccess) != 0) {
+				return ((Tds)command.Tds).GetSequentialColumnValue (i);
+			}
+
 			return command.Tds.ColumnValues [i];
 		}
 

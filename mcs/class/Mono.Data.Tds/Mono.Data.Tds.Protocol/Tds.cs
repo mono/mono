@@ -89,6 +89,15 @@ namespace Mono.Data.Tds.Protocol {
 
 		int recordsAffected = -1;
 
+		long StreamLength = 0;
+		long StreamIndex = 0;
+		int StreamColumnIndex = 0;
+
+		bool sequentialAccess = false;
+		bool isRowRead = false;
+		bool isResultRead = false;
+		bool LoadInProgress = false;
+
 		#endregion // Fields
 
 		#region Properties
@@ -164,6 +173,156 @@ namespace Mono.Data.Tds.Protocol {
 		protected TdsMetaParameterCollection Parameters {
 			get { return parameters; }
 			set { parameters = value; }
+		}
+
+		public bool SequentialAccess {
+			get { return sequentialAccess; }
+			set { sequentialAccess = value; }
+		}
+
+		private void SkipRow ()
+		{
+			SkipToColumnIndex (Columns.Count);
+
+			StreamLength = 0;
+			StreamColumnIndex = 0;
+			StreamIndex = 0;
+			LoadInProgress = false;
+		}
+
+		private void SkipToColumnIndex (int colIndex)
+		{
+			if (LoadInProgress)
+				EndLoad ();
+
+			if (colIndex < StreamColumnIndex)
+				throw new Exception ("Cannot Skip to a colindex less than the curr index");
+
+			while (colIndex != StreamColumnIndex) {
+				TdsColumnType colType = (TdsColumnType)Columns[StreamColumnIndex]["ColumnType"];
+				if (!(colType == TdsColumnType.Image ||
+					colType == TdsColumnType.Text ||
+					colType == TdsColumnType.NText)) {
+					GetColumnValue (colType, false, StreamColumnIndex);
+					StreamColumnIndex ++;
+				}
+				else {
+					BeginLoad (colType);
+					Comm.Skip (StreamLength);
+					StreamLength = 0;
+					EndLoad ();
+				}
+			}
+		}
+
+		public object GetSequentialColumnValue (int colIndex)
+		{
+			if (colIndex < StreamColumnIndex)
+				throw new InvalidOperationException ("Invalid attempt tp read from column ordinal" + colIndex); 
+
+			if (LoadInProgress)
+				EndLoad ();
+
+			if (colIndex != StreamColumnIndex)
+				SkipToColumnIndex (colIndex);
+
+			object o = GetColumnValue ((TdsColumnType)Columns[colIndex]["ColumnType"], false, colIndex);
+			StreamColumnIndex++;
+			return o;
+		}
+
+		public long GetSequentialColumnValue (int colIndex, long fieldIndex, byte[] buffer, int bufferIndex, int size) 
+		{
+			if (colIndex < StreamColumnIndex)
+				throw new InvalidOperationException ("Invalid attempt tp read from column ordinal" + colIndex); 
+
+			if (colIndex != StreamColumnIndex) 
+				SkipToColumnIndex (colIndex);
+
+			if (!LoadInProgress)
+				BeginLoad ((TdsColumnType)Columns[colIndex]["ColumnType"]);
+
+			if (buffer == null) {
+				return StreamLength;
+			}
+			return LoadData (fieldIndex, buffer, bufferIndex, size);
+		}
+
+		private void BeginLoad(TdsColumnType colType) 
+		{
+			if (LoadInProgress)
+				EndLoad ();
+
+			StreamLength = 0;
+		
+			switch (colType) {
+			case TdsColumnType.Text :
+			case TdsColumnType.NText:
+			case TdsColumnType.Image:
+				if (Comm.GetByte () != 0) {
+					Comm.Skip (24);
+					StreamLength = Comm.GetTdsInt ();
+				}
+				break;
+			case TdsColumnType.BigVarChar:
+			case TdsColumnType.BigChar:
+			case TdsColumnType.BigBinary:
+			case TdsColumnType.BigVarBinary:
+				Comm.GetTdsShort ();
+				StreamLength = Comm.GetTdsShort ();
+				break;
+			case TdsColumnType.VarChar :
+			case TdsColumnType.NVarChar :
+			case TdsColumnType.Char:
+			case TdsColumnType.NChar:
+			case TdsColumnType.Binary:
+			case TdsColumnType.VarBinary:
+				StreamLength = Comm.GetTdsShort ();
+				break;
+			default :
+				StreamLength = -1;
+				break;
+			}
+
+			StreamIndex = 0;
+			LoadInProgress = true;
+		}
+
+		private void EndLoad()
+		{
+			if (StreamLength > 0)
+				Comm.Skip (StreamLength);
+			StreamLength = 0;
+			StreamIndex = 0;
+			StreamColumnIndex++;
+			LoadInProgress = false;
+		}
+
+		private long LoadData (long fieldIndex, byte[] buffer, int bufferIndex, int size)
+		{
+			if (StreamLength <= 0)
+				return StreamLength;
+
+			if (fieldIndex < StreamIndex)
+				throw new InvalidOperationException ("field index less than stream pos");
+
+			if (fieldIndex >= (StreamLength + StreamIndex))
+				return 0;
+
+			// Skip to the index
+			Comm.Skip ((int) (fieldIndex - StreamIndex));
+			StreamIndex += (fieldIndex - StreamIndex);
+
+			// Load the reqd amt of bytes	
+			int loadlen = (int) ((size > StreamLength) ? StreamLength : size);
+			byte[] arr = Comm.GetBytes (loadlen, true);
+
+			// update the index and stream length
+			StreamIndex +=  loadlen + (fieldIndex - StreamIndex);
+			StreamLength -= loadlen;
+			arr.CopyTo (buffer, bufferIndex);
+
+			return arr.Length;
 		}
 
 		#endregion // Properties
@@ -300,6 +459,13 @@ namespace Mono.Data.Tds.Protocol {
 
 		public bool NextResult ()
 		{
+			if (SequentialAccess) {
+				if (isResultRead) {
+					while (NextRow ()) {}
+					isRowRead = false;
+					isResultRead = false;
+				}
+			}
 			if (!moreResults)
 				return false;
 
@@ -347,6 +513,13 @@ namespace Mono.Data.Tds.Protocol {
 
 		public bool NextRow ()
 		{
+			if (SequentialAccess) {
+				if (isRowRead) {
+					SkipRow ();
+					isRowRead = false;
+				}
+			}
+
 			TdsPacketSubType subType;
 			bool done = false;
 			bool result = false;
@@ -430,7 +603,7 @@ namespace Mono.Data.Tds.Protocol {
 				element = GetIntValue (colType);
 				break;
 			case TdsColumnType.Image :
-				if (outParam) 
+				if (outParam)
 					comm.Skip (1);
 				element = GetImageValue ();
 				break;
@@ -891,6 +1064,14 @@ namespace Mono.Data.Tds.Protocol {
 
 		protected void LoadRow ()
 		{
+			if (SequentialAccess) {
+				if (isRowRead)
+					SkipRow ();
+				isRowRead = true;
+				isResultRead = true;
+				return;
+			}
+
 			currentRow = new TdsDataRow ();
 
 			int i = 0;

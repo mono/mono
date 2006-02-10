@@ -511,7 +511,7 @@ namespace Mono.Data.Tds.Protocol {
 			}
 		}
 		
-		public void Skip (int i)
+		public void Skip (long i)
 		{
 			for ( ; i > 0; i--)
 				GetByte ();

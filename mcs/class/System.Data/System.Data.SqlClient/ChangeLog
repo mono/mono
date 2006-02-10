@@ -1,3 +1,13 @@
+2006-02-10  Senganal T  <tsenganal@novell.com>
+	* SqlDataReader.cs :
+		- GetBytes : Read binary/blob/clob data sequentially when
+		CommandBehavior is set to SequentialAcccess
+		- GetChars : Read String/clob data sequentially when CommandBehavior
+		is set to SequentialAccess
+	* SqlCommand.cs :
+		- ExecuteReader : set SequentialAccess property on TDS
+		- CloseDataReader : Reset the command behavior
+
 2006-01-27  Senganal T  <tsenganal@novell.com>
 
 	* SqlCommandBuilder.cs :

@@ -71,6 +71,11 @@ namespace Mono.Data.Tds.Protocol {
 			set;
 		}
 
+		bool SequentialAccess {
+			get;
+			set;
+		}
+
 		#endregion // Properties
 
 		#region Methods

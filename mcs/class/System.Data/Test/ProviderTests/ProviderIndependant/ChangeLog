@@ -1,3 +1,7 @@
+2006-02-10  Senganal T  <tsenganal@novell.com>
+	
+	* DataReaderTest : Corrected a failing testcase.
+
 2006-01-27  Senganal T  <tsenganal@novell.com>
 	
 	* DataReaderTest : Corrected a failing testcase.

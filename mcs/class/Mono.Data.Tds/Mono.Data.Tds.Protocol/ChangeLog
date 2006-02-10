@@ -1,3 +1,12 @@
+2006-02-10  Senganal T  <tsenganal@novell.com>
+
+	* Tds.cs :
+		- GetSequentialColumn,BeginLoad, EndLoad,
+		LoadData, SkipRow, SkipToColumnIndex
+		New Methods to Support sequential loading of row data
+	* TdsComm.cs :
+		- Skip : Changed arugment type from int to long.
+
 2006-01-27  Senganal T  <tsenganal@novell.com>
 
 	* Tds.cs :
