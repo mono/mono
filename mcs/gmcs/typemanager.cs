@@ -437,7 +437,7 @@ public partial class TypeManager {
 
 	public static MemberCache LookupBaseInterfacesCache (Type t)
 	{
-		Type [] ifaces = t.GetInterfaces ();
+		Type [] ifaces = GetInterfaces (t);
 
 		if (ifaces != null && ifaces.Length == 1)
 			return LookupMemberCache (ifaces [0]);
@@ -1784,6 +1784,9 @@ public partial class TypeManager {
 
 	static public bool IsOverride (MethodBase m)
 	{
+		if (m.Mono_IsInflatedMethod)
+			m = m.GetGenericMethodDefinition ();
+
 		return m.IsVirtual &&
 			(m.Attributes & MethodAttributes.NewSlot) == 0 &&
 			(m is MethodBuilder || method_overrides.Contains (m));
@@ -2007,7 +2010,7 @@ public partial class TypeManager {
 
 			new_ifaces.Add (itype);
 			
-			Type [] implementing = itype.GetInterfaces ();
+			Type [] implementing = GetInterfaces (itype);
 
 			foreach (Type imp in implementing){
 				if (!new_ifaces.Contains (imp))
@@ -2029,7 +2032,7 @@ public partial class TypeManager {
 
 			new_ifaces.Add (itype);
 			
-			Type [] implementing = itype.GetInterfaces ();
+			Type [] implementing = GetInterfaces (itype);
 
 			foreach (Type imp in implementing){
 				if (!new_ifaces.Contains (imp))

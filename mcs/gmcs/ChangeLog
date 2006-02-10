@@ -1,3 +1,11 @@
+2006-02-10  Martin Baulig  <martin@ximian.com>
+
+	* typemanager.cs
+	(TypeManager.IsOverride): Make this work for instantiated methods
+	in a generic class; fixes #77509.
+	(TypeManager.ExpandInterfaces): Use TypeManager.GetInterfaces()
+	rather than calling it directly; fixes #77488.	
+
 2006-02-08  Martin Baulig  <martin@ximian.com>
 
 	* generic.cs (ConstraintChecker.CheckConstraints): Move the error
