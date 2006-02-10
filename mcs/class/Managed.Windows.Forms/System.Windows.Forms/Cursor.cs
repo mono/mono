@@ -651,7 +651,7 @@ namespace System.Windows.Forms {
 				bits = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.WriteOnly, bmp.PixelFormat);
 
 				for (int y = 0; y < biHeight; y++) {
-					Marshal.Copy(ci.cursorAND, bits.Stride * y, (IntPtr)((int)bits.Scan0 + bits.Stride * (biHeight - 1 - y)), bits.Stride);
+					Marshal.Copy(ci.cursorAND, bits.Stride * y, (IntPtr)(bits.Scan0.ToInt64() + bits.Stride * (biHeight - 1 - y)), bits.Stride);
 				}
 
 				bmp.UnlockBits(bits);
@@ -702,7 +702,7 @@ namespace System.Windows.Forms {
 				bits = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.WriteOnly, bmp.PixelFormat);
 
 				for (int y = 0; y < biHeight; y++) {
-					Marshal.Copy(ci.cursorXOR, bytesPerLine * y, (IntPtr)((int)bits.Scan0 + bits.Stride * (biHeight - 1 - y)), bytesPerLine);
+					Marshal.Copy(ci.cursorXOR, bytesPerLine * y, (IntPtr)(bits.Scan0.ToInt64() + bits.Stride * (biHeight - 1 - y)), bytesPerLine);
 				}
 				
 				bmp.UnlockBits(bits);

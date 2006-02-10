@@ -1358,8 +1358,8 @@ namespace System.Windows.Forms {
 
 					xevent.type = XEventName.ClientMessage;
 					xevent.ClientMessageEvent.display = DisplayHandle;
-					xevent.ClientMessageEvent.window = (IntPtr)HoverState.Window;
-					xevent.ClientMessageEvent.message_type = (IntPtr)HoverState.Atom;
+					xevent.ClientMessageEvent.window = HoverState.Window;
+					xevent.ClientMessageEvent.message_type = HoverState.Atom;
 					xevent.ClientMessageEvent.format = 32;
 					xevent.ClientMessageEvent.ptr1 = (IntPtr) (HoverState.Y << 16 | HoverState.X);
 
@@ -3042,12 +3042,12 @@ namespace System.Windows.Forms {
 						goto ProcessNextMessage;
 					}
 
-					if (xevent.ClientMessageEvent.message_type == (IntPtr)AsyncAtom) {
+					if (xevent.ClientMessageEvent.message_type == AsyncAtom) {
 						XplatUIDriverSupport.ExecuteClientMessage((GCHandle)xevent.ClientMessageEvent.ptr1);
 						break;
 					}
 
-					if (xevent.ClientMessageEvent.message_type == (IntPtr)HoverState.Atom) {
+					if (xevent.ClientMessageEvent.message_type == HoverState.Atom) {
 						msg.message = Msg.WM_MOUSEHOVER;
 						msg.wParam = GetMousewParam(0);
 						msg.lParam = (IntPtr) (xevent.ClientMessageEvent.ptr1);
@@ -3856,7 +3856,7 @@ namespace System.Windows.Forms {
 							XMapWindow(DisplayHandle, hwnd.whole_window);
 							XMapWindow(DisplayHandle, hwnd.client_window);
 						} else if (current_state == FormWindowState.Maximized) {
-							SendNetWMMessage(hwnd.whole_window, (IntPtr)(uint)NetAtoms[(int)NA._NET_WM_STATE], (IntPtr)2 /* toggle */, NetAtoms[(int)NA._NET_WM_STATE_MAXIMIZED_HORZ], NetAtoms[(int)NA._NET_WM_STATE_MAXIMIZED_VERT]);
+							SendNetWMMessage(hwnd.whole_window, NetAtoms[(int)NA._NET_WM_STATE], (IntPtr)2 /* toggle */, NetAtoms[(int)NA._NET_WM_STATE_MAXIMIZED_HORZ], NetAtoms[(int)NA._NET_WM_STATE_MAXIMIZED_VERT]);
 						}
 					}
 					Activate(handle);

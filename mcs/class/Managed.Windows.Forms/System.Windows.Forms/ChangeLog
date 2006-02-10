@@ -1,3 +1,8 @@
+2006-02-09  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* Cursor.cs: 64bit safeness fix
+	* XplatUIX11.cs: Removed several unneeded and one moronic cast.
+
 2006-02-09  Jackson Harper  <jackson@ximian.com>
 
 	* Form.cs: If a form is made into an MDI form update the styles so
