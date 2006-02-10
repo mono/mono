@@ -1,5 +1,9 @@
 2006-02-10  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-exceptions.c (MONO_INIT_CONTEXT_FROM_CALLER): Avoid
+	using __builtin_frame_address (1) as it doesn't work in the presence
+	of optimizations. Hopefully fixes #77273.
+
 	* Makefile.am generics.cs generics.2.cs: Revert the generics.2.cs
 	-> generics.cs change as it doesn't work with some automake versions.
 
