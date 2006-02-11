@@ -1,3 +1,44 @@
+2006-02-11  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* SoapAttributeAttribute.cs: Set eol-style to CRLF.
+	* SoapElementAttribute.cs: Same.
+	* SoapEnumAttribute.cs: Same.
+	* SoapIncludeAttribute.cs: Same.
+	* SoapSchemaMember.cs: Same.
+	* SoapTypeAttribute.cs: Same.
+	* XmlArrayAttribute.cs: Same.
+	* XmlAttributeAttribute.cs: Same.
+	* XmlChoiceIdentifierAttribute.cs: Same.
+	* XmlElementAttribute.cs: Same.
+	* XmlEnumAttribute.cs: Same.
+	* XmlRootAttribute.cs: Same.
+	* XmlSchemaImporter.cs: Same.
+	* XmlTextAttribute.cs: Same.
+	* XmlTypeAttribute.cs: Same.
+	* XmlTypeMapping.cs: Same.
+	* SoapAttributeOverrides.cs: Fixed line endings. Set eol-style to CRLF.
+	* CodeIdentifiers.cs: Same.
+	* SoapCodeExporter.cs: Same.
+	* SoapAttributes.cs: Same.
+	* SoapIgnoreAttribute.cs: Same.
+	* SoapSchemaImporter.cs: Same.
+	* TypeMember.cs: Same.
+	* UnreferencedObjectEventArgs.cs: Same.
+	* XmlAnyAttributeAttribute.cs: Same.
+	* XmlAnyElementAttributes.cs: Same.
+	* XmlArrayItemAttributes.cs: Same.
+	* XmlAttributeEventArgs.cs: Same.
+	* XmlCodeExporter.cs: Same.
+	* XmlElementAttributes.cs: Same.
+	* XmlElementEventArgs.cs: Same.
+	* XmlIgnoreAttribute.cs: Same.
+	* XmlNamespaceDeclarationsAttribute.cs: Same.
+	* XmlNodeEventArgs.cs: Same.
+	* XmlReflectionMember.cs: Same.
+	* XmlSchemas.cs: Same.
+	* XmlSerializerNamespaces.cs: Same.
+	* XmlTypeMapMemberElement.cs: Set eol-style to native.
+
 2006-02-10  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* CodeExporter.cs: Set eol-style to native.
