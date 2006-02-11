@@ -1,3 +1,7 @@
+2006-02-11  Marek Safar <marek.safar@seznam.cz>
+
+	* test-491.cs: Test for bug #77485.
+
 2006-02-01  Raja R Harinath  <rharinath@novell.com>
 
 	* support-*.cs: Rename from test-*-p2.cs.
