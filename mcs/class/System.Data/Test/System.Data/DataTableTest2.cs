@@ -1866,6 +1866,89 @@ namespace MonoTests_System.Data
 			dt.RowDeleting -= new DataRowChangeEventHandler(OnRowDeleting_Handler);
 		}
 
+		[Test]
+		public void BeginInit_PrimaryKey_1 ()
+		{
+			DataTable table = new DataTable ();
+			DataColumn col = table.Columns.Add ("col", typeof (int));
+			table.PrimaryKey = new DataColumn[] {col};
+			table.AcceptChanges ();
+			Assert.AreEqual (1, table.PrimaryKey.Length, "#1");
+		
+			table.BeginInit ();
+			DataColumn col2 = new DataColumn ("col2", typeof (int));
+			table.Columns.AddRange (new DataColumn[] {col2});
+			table.PrimaryKey = new DataColumn[] {col2};
+			table.EndInit ();
+			Assert.AreEqual (1, table.PrimaryKey.Length, "#2");
+			Assert.AreEqual ("col2", table.PrimaryKey[0].ColumnName, "#3");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void BeginInit_PrimaryKey_2()
+		{
+			DataTable table = new DataTable ();
+			DataColumn col = table.Columns.Add ("col", typeof (int));
+			table.PrimaryKey = new DataColumn[] {col};
+			table.AcceptChanges ();
+	
+			// ms.net behavior.	
+			table.BeginInit ();
+			DataColumn col1 = new DataColumn ("col1", typeof (int));
+			table.Columns.AddRange (new DataColumn[] {col1});
+			UniqueConstraint uc = new UniqueConstraint ("", new String[] {"col1"}, true);
+			table.Constraints.AddRange (new Constraint[] {uc});
+			table.EndInit ();
+		}
+
+		[Test]
+		public void BeginInit_PrimaryKey_3 ()
+		{
+			DataTable table = new DataTable ();
+			DataColumn col1 = table.Columns.Add ("col1", typeof (int));
+			DataColumn col2 = table.Columns.Add ("col2", typeof (int));
+		
+			// ms.net behavior
+			table.BeginInit ();
+			UniqueConstraint uc = new UniqueConstraint ("", new String[] {"col1"}, true);
+			table.Constraints.AddRange (new Constraint[] {uc});
+			table.PrimaryKey = new DataColumn [] {col2};
+			table.EndInit ();
+
+			Assert.AreEqual ("col1", table.PrimaryKey[0].ColumnName, "#1");
+		}
+		
+		[Test]
+		public void PrimaryKey_OnFailing ()
+		{
+			DataTable table = new DataTable ();
+			DataColumn col1 = table.Columns.Add ("col1", typeof (int));
+			table.PrimaryKey = new DataColumn[] {col1};
+			try {
+				table.PrimaryKey  = new DataColumn[] { new DataColumn ("col2", typeof (int))};
+			} catch (Exception e) {}
+			Assert.AreEqual ("col1", table.PrimaryKey[0].ColumnName, "#1");
+		}
+
+		[Test]
+		public void BeginInit_Cols_Constraints ()
+		{
+			DataTable table = new DataTable ();
+
+			// if both cols and constraints are added after BeginInit, the cols
+			// should be added, before the constraints are added/validated
+			table.BeginInit ();
+			DataColumn col1 = new DataColumn ("col1", typeof (int));
+			table.Columns.AddRange (new DataColumn[] {col1});
+			UniqueConstraint uc = new UniqueConstraint ("", new String[] {"col1"}, false);
+			table.Constraints.AddRange (new Constraint[] {uc});
+			// no exception shud be thrown
+			table.EndInit ();
+
+			Assert.AreEqual (1, table.Constraints.Count, "#1");
+		}
+
 		private void OnRowDeleting_Handler(Object sender,DataRowChangeEventArgs e)
 		{
 			

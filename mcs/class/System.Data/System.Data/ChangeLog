@@ -1,3 +1,17 @@
+2006-02-11  Senganal T  <tsenganal@novell.com>
+	
+	* UniqueConstraint.cs :
+		- PostAddRange : Check PrimaryKey is not already set for the table
+	* DataTable.cs :
+		- PrimaryKey : follow ms.net behavior when BeginInit , EndInit is used.
+			- Add new priamry key only when EndInit is called.
+			- Incase of an error, retain old primarykey 
+		- EndInit :
+			- Add Constraints after columns are added.
+			- If both PrimaryKey Property and PrimaryKey Constraint are set,
+			then the Constraint takes precedence.
+		fixes bug #77404
+
 2006-02-03  Senganal T  <tsenganal@novell.com>
 
 	* DataTableCollection.cs : 
