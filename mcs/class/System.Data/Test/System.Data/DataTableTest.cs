@@ -1427,10 +1427,15 @@ namespace MonoTests.System.Data
 	
 			AssertEquals ("#1" , true, col1.AllowDBNull);
 			AssertEquals ("#2" , true, col2.AllowDBNull);
+			AssertEquals ("#3" , false, col2.Unique);
+			AssertEquals ("#4" , false, col2.Unique);
 
 			table.PrimaryKey = new DataColumn[] {col1,col2};
-			AssertEquals ("#1" , false, col1.AllowDBNull);
-			AssertEquals ("#2" , false, col2.AllowDBNull);
+			AssertEquals ("#5" , false, col1.AllowDBNull);
+			AssertEquals ("#6" , false, col2.AllowDBNull);
+			// LAMESPEC or bug ?? 
+			AssertEquals ("#7" , false, col1.Unique);
+			AssertEquals ("#8" , false, col2.Unique);
 		}
 
 		void RowChanging (object o, DataRowChangeEventArgs e)

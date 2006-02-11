@@ -109,6 +109,8 @@ namespace System.Data {
 		static Regex SortRegex = new Regex ( @"^((\[(?<ColName>.+)\])|(?<ColName>\S+))([ ]+(?<Order>ASC|DESC))?$",
 							RegexOptions.IgnoreCase|RegexOptions.ExplicitCapture);
 		
+
+		DataColumn[] _latestPrimaryKeyCols;
 		#endregion //Fields
 		
 		/// <summary>
@@ -459,45 +461,54 @@ namespace System.Data {
 				return _primaryKeyConstraint.Columns;
 			}
 			set {
-				UniqueConstraint oldPKConstraint = _primaryKeyConstraint;
-				
-				// first check if value is the same as current PK.
-				if (oldPKConstraint != null && DataColumn.AreColumnSetsTheSame(value, oldPKConstraint.Columns))
+				if (value == null || value.Length == 0) {
+					if (_primaryKeyConstraint != null) {
+						Constraints.Remove(_primaryKeyConstraint);
+						_primaryKeyConstraint = null;
+					}
 					return;
-
-				// remove PK Constraint
-				if(oldPKConstraint != null) {
-					_primaryKeyConstraint = null;
-					Constraints.Remove(oldPKConstraint);
 				}
 				
-				if (value != null) {
-					//Does constraint exist for these columns
-					UniqueConstraint uc = UniqueConstraint.GetUniqueConstraintForColumnSet(this.Constraints, (DataColumn[]) value);
-				
-					//if constraint doesn't exist for columns
-					//create new unique primary key constraint
-					if (null == uc) {
-						foreach (DataColumn Col in (DataColumn[]) value) {
-							if (Col.Table == null)
-								break;
+				if (fInitInProgress) {
+					_latestPrimaryKeyCols = value;
+					return;
+				}
 
-							if (Columns.IndexOf (Col) < 0)
-								throw new ArgumentException ("PrimaryKey columns do not belong to this table.");
-						}
-						// create constraint with primary key indication set to false
-						// to avoid recursion
-						uc = new UniqueConstraint( (DataColumn[]) value, false);		
-						Constraints.Add (uc);
+				// first check if value is the same as current PK.
+				if (_primaryKeyConstraint!= null && DataColumn.AreColumnSetsTheSame(value, _primaryKeyConstraint.Columns))
+					return;
+
+				//Does constraint exist for these columns
+				UniqueConstraint uc = UniqueConstraint.GetUniqueConstraintForColumnSet(this.Constraints, (DataColumn[]) value);
+
+				//if constraint doesn't exist for columns
+				//create new unique primary key constraint
+				if (null == uc) {
+					foreach (DataColumn Col in (DataColumn[]) value) {
+						if (Col.Table == null)
+							break;
+
+						if (Columns.IndexOf (Col) < 0)
+							throw new ArgumentException ("PrimaryKey columns do not belong to this table.");
 					}
+					// create constraint with primary key indication set to false
+					// to avoid recursion
+					uc = new UniqueConstraint( (DataColumn[]) value, false);		
+					Constraints.Add (uc);
+				}
 
-					//set the constraint as the new primary key
-					UniqueConstraint.SetAsPrimaryKey(this.Constraints, uc);
-					_primaryKeyConstraint = uc;
+				//Remove the existing primary key
+				if (_primaryKeyConstraint != null) {
+					Constraints.Remove(_primaryKeyConstraint);
+					_primaryKeyConstraint = null;
+				}
+				
+				//set the constraint as the new primary key
+				UniqueConstraint.SetAsPrimaryKey(this.Constraints, uc);
+				_primaryKeyConstraint = uc;
 
-					for (int j=0; j < uc.Columns.Length; ++j)
-						uc.Columns[j].AllowDBNull = false;
-				}				
+				for (int j=0; j < uc.Columns.Length; ++j)
+					uc.Columns[j].AllowDBNull = false;
 			}
 		}
 
@@ -881,9 +892,18 @@ namespace System.Data {
 		public virtual void EndInit () 
 		{
 			fInitInProgress = false;
+			UniqueConstraint oldPK = _primaryKeyConstraint;
+			
+			// Columns shud be added 'before' the constraints
+			Columns.PostEndInit();
+
 			// Add the constraints
 			_constraintCollection.PostEndInit();
-			Columns.PostEndInit();
+			
+			// ms.net behavior : If a PrimaryKey is added thru AddRange,
+			// then it takes precedence over an direct assignment of PrimaryKey
+			if (_primaryKeyConstraint == oldPK)
+				PrimaryKey = _latestPrimaryKeyCols;
 		}
 
 		/// <summary>

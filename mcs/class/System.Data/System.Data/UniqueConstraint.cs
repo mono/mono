@@ -271,26 +271,31 @@ namespace System.Data {
 		 }
 
 		// Helper Special Ctor
-        // Set the _dataTable property to the table to which this instance is bound when AddRange()
-        // is called with the special constructor.
-        // Validate whether the named columns exist in the _dataTable
-        internal void PostAddRange( DataTable _setTable ) 
+		// Set the _dataTable property to the table to which this instance is bound when AddRange()
+		// is called with the special constructor.
+		// Validate whether the named columns exist in the _dataTable
+		internal void PostAddRange(DataTable _setTable) 
 		{                
 			_dataTable = _setTable;
-            DataColumn []cols = new DataColumn [_dataColumnNames.Length];
-            int i = 0;
-            foreach ( string _columnName in _dataColumnNames ) {
-                if ( _setTable.Columns.Contains (_columnName) ) {
+			if (_isPrimaryKey == true && _setTable.PrimaryKey.Length != 0)
+				throw new ArgumentException ("Cannot add primary key constraint since primary key" +
+						"is already set for the table");
+
+			DataColumn[] cols = new DataColumn [_dataColumnNames.Length];
+			int i = 0;
+
+			foreach (string _columnName in _dataColumnNames) {
+				if (_setTable.Columns.Contains (_columnName)) {
 					cols [i] = _setTable.Columns [_columnName];
 					i++;
 					continue;
 				}
-				throw( new InvalidConstraintException ( "The named columns must exist in the table" ));
-            }
-            _dataColumns = cols;
-        }
+				throw(new InvalidConstraintException ("The named columns must exist in the table"));
+			}
+			_dataColumns = cols;
+		}
 
-			
+
 		#endregion //Helpers
 
 		#region Properties

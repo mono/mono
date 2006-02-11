@@ -1,3 +1,8 @@
+2006-02-11  Senganal T  <tsenganal@novell.com>
+
+	* DataTableTest.cs : Check AllowDBNull is set to false for PrimaryKey cols.
+	* DataTableTest2.cs : added testcases for bug #77404
+
 2006-02-03  Senganal T  <tsenganal@novell.com>
 
 	* DataTableCollectionTest2.cs,EvaluateExceptionTest.cs,
