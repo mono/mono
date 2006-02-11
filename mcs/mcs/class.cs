@@ -464,7 +464,6 @@ namespace Mono.CSharp {
 
 		// The interfaces we implement.
 		protected Type[] ifaces;
-		protected Type ptype;
 
 		// The base member cache and our member cache
 		MemberCache base_cache;
@@ -789,6 +788,12 @@ namespace Mono.CSharp {
 		public string Base {
 			get {
 				return base_class_name;
+			}
+		}
+
+		protected Type BaseType {
+			get {
+				return TypeBuilder.BaseType;
 			}
 		}
 		
@@ -1187,7 +1192,7 @@ namespace Mono.CSharp {
 					}
 
 					TypeBuilder = builder.DefineNestedType (
-						Basename, type_attributes, ptype, null);
+						Basename, type_attributes, null, null);
 				}
 			} catch (ArgumentException) {
 				Report.RuntimeMissingSupport (Location, "static classes");
@@ -1245,25 +1250,17 @@ namespace Mono.CSharp {
 				throw new Exception ();
 
 			if (base_type != null) {
-				ptype = base_type.ResolveType (this);
-				if (ptype == null) {
-					error = true;
+				base_type = base_type.ResolveAsTypeTerminal (this, false);
+				if (base_type == null)
 					return null;
-				}
+
+				TypeBuilder.SetParent (base_type.Type);
+				CheckObsoleteType (base_type);
 			}
 
 			if (!CheckRecursiveDefinition (this)) {
 				error = true;
 				return null;
-			}
-
-			if (ptype != null) {
-				TypeBuilder.SetParent (ptype);
-			}
-
-			// Attribute is undefined at the begining of corlib compilation
-			if (TypeManager.obsolete_attribute_type != null && ptype != null) {
-				CheckObsoleteType (base_type);
 			}
 
 			// add interfaces that were not added at type creation
@@ -1338,9 +1335,8 @@ namespace Mono.CSharp {
 
 			InTransit = tc;
 
-			Type parent = ptype;
-			if (parent != null) {
-				TypeContainer ptc = TypeManager.LookupTypeContainer (parent);
+			if (BaseType != null) {
+				TypeContainer ptc = TypeManager.LookupTypeContainer (BaseType);
 				if ((ptc != null) && !ptc.CheckRecursiveDefinition (this))
 					return false;
 			}
@@ -2894,8 +2890,9 @@ namespace Mono.CSharp {
 			if (tb == null)
 				return null;
 
-			if (ptype != TypeManager.object_type) {
-				Report.Error (713, Location, "Static class `{0}' cannot derive from type `{1}'. Static classes must derive from object", GetSignatureForError (), TypeManager.CSharpName (ptype));
+			if (BaseType != TypeManager.object_type) {
+				Report.Error (713, Location, "Static class `{0}' cannot derive from type `{1}'. Static classes must derive from object",
+					GetSignatureForError (), TypeManager.CSharpName (BaseType));
 				return null;
 			}
 
@@ -2942,15 +2939,15 @@ namespace Mono.CSharp {
 		public override void ApplyAttributeBuilder(Attribute a, CustomAttributeBuilder cb)
 		{
 			if (a.Type == TypeManager.attribute_usage_type) {
-				if (ptype != TypeManager.attribute_type && !ptype.IsSubclassOf (TypeManager.attribute_type) &&
+				if (BaseType != TypeManager.attribute_type && !BaseType.IsSubclassOf (TypeManager.attribute_type) &&
 					TypeBuilder.FullName != "System.Attribute") {
 					Report.Error (641, a.Location, "Attribute `{0}' is only valid on classes derived from System.Attribute", a.GetSignatureForError ());
 				}
 			}
 
 			if (a.Type == TypeManager.conditional_attribute_type &&
-				!(ptype == TypeManager.attribute_type || ptype.IsSubclassOf (TypeManager.attribute_type))) {
-				Report.Error (1689, a.Location, "Attribute 'System.Diagnostics.ConditionalAttribute' is only valid on methods or attribute classes");
+				!(BaseType == TypeManager.attribute_type || BaseType.IsSubclassOf (TypeManager.attribute_type))) {
+				Report.Error (1689, a.Location, "Attribute `System.Diagnostics.ConditionalAttribute' is only valid on methods or attribute classes");
 				return;
 			}
 

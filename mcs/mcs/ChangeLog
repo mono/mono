@@ -1,5 +1,16 @@
 2006-02-11  Marek Safar  <marek.safar@seznam.cz>
 
+	A fix for #76957
+
+	* class.cs (TypeContainer.DefineType): Cannot use ResolveType because it
+	contains obsolete attribute check which can in some cases look for base
+	type of current class which is not initialized yet.
+	(TypeContainer.BaseType): Replacement of ptype.
+
+	* decl.cs (MemberCore.CheckObsoleteType): Reuse existing code.
+
+2006-02-11  Marek Safar  <marek.safar@seznam.cz>
+
 	First of prerequisites for new partial classs implemention.
 	
 	* attribute.cs (Attributable): Extended by ResolveContext;
