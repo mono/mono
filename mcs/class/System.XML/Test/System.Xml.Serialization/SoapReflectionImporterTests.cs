@@ -1050,6 +1050,16 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
+		[Category ("NotWorking")]
+		[ExpectedException (typeof (NotSupportedException))]
+		public void TypeMapping_IDictionary ()
+		{
+			// The type MonoTests.System.Xml.TestClasses.DictionaryWithIndexer 
+			// is not supported because it implements IDictionary.
+			Map (typeof (DictionaryWithIndexer));
+		}
+
+		[Test]
 		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
 		public void TypeMapping_IEnumerable_SimpleClass ()
 		{
