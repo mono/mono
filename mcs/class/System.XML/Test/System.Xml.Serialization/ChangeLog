@@ -1,3 +1,7 @@
+2006-02-11  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* XmlSerializerTestClasses.cs: Fixed line endings (sigh).
+
 2006-02-10  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DeserializeTests.cs: Added tests for deserialization of enums, and
