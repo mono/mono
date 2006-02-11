@@ -1,3 +1,7 @@
+2006-02-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* generics.2.cs: Revert the nullable reftypes tests.
+
 2006-02-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-exceptions.c (MONO_INIT_CONTEXT_FROM_CALLER): Avoid
