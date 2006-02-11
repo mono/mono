@@ -42,7 +42,7 @@ namespace System.Data.SqlTypes
 		private DateTime value;
 		private bool notNull;
 
-		public static readonly SqlDateTime MaxValue = new SqlDateTime (9999,12,31,23,59,59);
+		public static readonly SqlDateTime MaxValue = new SqlDateTime (9999,12,31,23,59,59, (double)997);
 		public static readonly SqlDateTime MinValue = new SqlDateTime (1753,1,1);
 		public static readonly SqlDateTime Null;
 		public static readonly int SQLTicksPerHour = 1080000;

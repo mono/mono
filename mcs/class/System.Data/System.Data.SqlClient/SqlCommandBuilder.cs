@@ -60,7 +60,7 @@ namespace System.Data.SqlClient {
 		SqlCommand updateCommand;
 
 		// Used to construct WHERE clauses
-		static readonly string clause1 = "({0} IS NULL AND {1} IS NULL)";
+		static readonly string clause1 = "({0} = 1 AND {1} IS NULL)";
 		static readonly string clause2 = "({0} = {1})";
 
 		#endregion // Fields
@@ -196,10 +196,9 @@ namespace System.Data.SqlClient {
 			if (QuotedTableName == String.Empty)
 				return null;
 
-
 			CreateNewCommand (ref deleteCommand);
 
-			string command = String.Format ("DELETE FROM {0} ", QuotedTableName);
+			string command = String.Format ("DELETE FROM {0}", QuotedTableName);
 			StringBuilder columns = new StringBuilder ();
 			StringBuilder whereClause = new StringBuilder ();
 			string dsColumnName = String.Empty;
@@ -207,6 +206,8 @@ namespace System.Data.SqlClient {
 			int parmIndex = 1;
 
 			foreach (DataRow schemaRow in dbSchemaTable.Rows) {
+				if ((bool)schemaRow["IsExpression"] == true)
+					continue;
 				if (!IncludedInWhereClause (schemaRow)) 
 					continue;
 
@@ -228,7 +229,7 @@ namespace System.Data.SqlClient {
 					if (row != null)
 						parameter.Value = row [dsColumnName, DataRowVersion.Original];
 					whereClause.Append ("(");
-					whereClause.Append (String.Format (clause1, GetQuotedString (parameter.SourceColumn), parameter.ParameterName));
+					whereClause.Append (String.Format (clause1, parameter.ParameterName, GetQuotedString (parameter.SourceColumn)));
 					whereClause.Append (" OR ");
 				}
 				else
@@ -242,8 +243,12 @@ namespace System.Data.SqlClient {
 				    && tableMapping.ColumnMappings.Contains (parameter.SourceColumn))
 					dsColumnName = tableMapping.ColumnMappings [parameter.SourceColumn].DataSetColumn;
 
-				if (row != null)
-					parameter.Value = row [dsColumnName, DataRowVersion.Original];
+				if (row != null) {
+					if (row[dsColumnName, DataRowVersion.Original] == null || row[dsColumnName, DataRowVersion.Original] == DBNull.Value)
+						parameter.Value = 1;
+					else
+						parameter.Value = 0;
+				}
 
 				whereClause.Append (String.Format (clause2, GetQuotedString (parameter.SourceColumn), parameter.ParameterName));
 
@@ -254,7 +259,7 @@ namespace System.Data.SqlClient {
 				throw new InvalidOperationException ("Dynamic SQL generation for the DeleteCommand is not supported against a SelectCommand that does not return any key column information.");
 
 			// We're all done, so bring it on home
-			string sql = String.Format ("{0} WHERE ( {1} )", command, whereClause.ToString ());
+			string sql = String.Format ("{0} WHERE ({1})", command, whereClause.ToString ());
 			deleteCommand.CommandText = sql;
 			return deleteCommand;
 		}
@@ -278,8 +283,8 @@ namespace System.Data.SqlClient {
 					continue;
 
 				if (parmIndex > 1) {
-					columns.Append (" , ");
-					values.Append (" , ");
+					columns.Append (", ");
+					values.Append (", ");
 				}
 
 				SqlParameter parameter = insertCommand.Parameters.Add (CreateParameter (parmIndex++, schemaRow));
@@ -297,7 +302,7 @@ namespace System.Data.SqlClient {
 				values.Append (parameter.ParameterName);
 			}
 
-			sql = String.Format ("{0}( {1} ) VALUES ( {2} )", command, columns.ToString (), values.ToString ());
+			sql = String.Format ("{0} ({1}) VALUES ({2})", command, columns.ToString (), values.ToString ());
 			insertCommand.CommandText = sql;
 			return insertCommand;
 		}
@@ -332,8 +337,10 @@ namespace System.Data.SqlClient {
 
 			// First, create the X=Y list for UPDATE
 			foreach (DataRow schemaRow in dbSchemaTable.Rows) {
+				if ((bool)schemaRow["IsExpression"] == true)
+					continue;
 				if (columns.Length > 0) 
-					columns.Append (" , ");
+					columns.Append (", ");
 
 				SqlParameter parameter = updateCommand.Parameters.Add (CreateParameter (parmIndex++, schemaRow));
 				parameter.SourceVersion = DataRowVersion.Current;
@@ -352,6 +359,9 @@ namespace System.Data.SqlClient {
 			// Now, create the WHERE clause.  This may be optimizable, but it would be ugly to incorporate
 			// into the loop above.  "Premature optimization is the root of all evil." -- Knuth
 			foreach (DataRow schemaRow in dbSchemaTable.Rows) {
+				if ((bool)schemaRow["IsExpression"] == true)
+					continue;
+
 				if (!IncludedInWhereClause (schemaRow)) 
 					continue;
 
@@ -375,7 +385,7 @@ namespace System.Data.SqlClient {
 						parameter.Value = row [dsColumnName, DataRowVersion.Original];
 
 					whereClause.Append ("(");
-					whereClause.Append (String.Format (clause1, GetQuotedString (parameter.SourceColumn), parameter.ParameterName));
+					whereClause.Append (String.Format (clause1, parameter.ParameterName, GetQuotedString (parameter.SourceColumn)));
 					whereClause.Append (" OR ");
 				}
 				else
@@ -389,8 +399,12 @@ namespace System.Data.SqlClient {
 				    && tableMapping.ColumnMappings.Contains (parameter.SourceColumn))
 					dsColumnName = tableMapping.ColumnMappings [parameter.SourceColumn].DataSetColumn;
 
-				if (row != null)
-					parameter.Value = row [dsColumnName, DataRowVersion.Original];
+				if (row != null) {
+					if (row[dsColumnName, DataRowVersion.Original] == null || row[dsColumnName, DataRowVersion.Original] == DBNull.Value)
+						parameter.Value = 1;
+					else
+						parameter.Value = 0;
+				}
 
 				whereClause.Append (String.Format (clause2, GetQuotedString (parameter.SourceColumn), parameter.ParameterName));
 
@@ -401,7 +415,7 @@ namespace System.Data.SqlClient {
 				throw new InvalidOperationException ("Dynamic SQL generation for the UpdateCommand is not supported against a SelectCommand that does not return any key column information.");
 
 			// We're all done, so bring it on home
-			string sql = String.Format ("{0}{1} WHERE ( {2} )", command, columns.ToString (), whereClause.ToString ());
+			string sql = String.Format ("{0}{1} WHERE ({2})", command, columns.ToString (), whereClause.ToString ());
 			updateCommand.CommandText = sql;
 			return updateCommand;
 		}

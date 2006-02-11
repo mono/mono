@@ -168,6 +168,8 @@ namespace System.Data.SqlClient {
 #endif // NET_2_0
                 void Close ()
 		{
+			if (IsClosed)
+				return;
 			// skip to end & read output parameters.
 			while (NextResult ())
 				;
@@ -324,7 +326,7 @@ namespace System.Data.SqlClient {
 		[EditorBrowsableAttribute (EditorBrowsableState.Never)] 
 		public new IDataReader GetData (int i)
 		{
-			return ( (IDataReader) this [i]);
+			return ((IDataReader) this [i]);
 		}
 
 		public 
@@ -333,6 +335,8 @@ namespace System.Data.SqlClient {
 #endif // NET_2_0
                 string GetDataTypeName (int i)
 		{
+			if (i < 0 || i >= dataTypeNames.Count)
+				throw new IndexOutOfRangeException ();
 			return (string) dataTypeNames [i];
 		}
 
@@ -384,6 +388,8 @@ namespace System.Data.SqlClient {
 #endif // NET_2_0
                 Type GetFieldType (int i)
 		{
+			if (i < 0 || i >= schemaTable.Rows.Count)
+				throw new IndexOutOfRangeException ();
 			return (Type) schemaTable.Rows[i]["DataType"];
 		}
 
@@ -493,6 +499,8 @@ namespace System.Data.SqlClient {
 #endif // NET_2_0
                 DataTable GetSchemaTable ()
 		{
+			ValidateState ();
+
 			if (schemaTable.Rows != null && schemaTable.Rows.Count > 0)
 				return schemaTable;
 
@@ -705,7 +713,10 @@ namespace System.Data.SqlClient {
 
 		public SqlBinary GetSqlBinary (int i)
 		{
-			throw new NotImplementedException ();
+			object value = GetSqlValue (i);
+			if (!(value is SqlBinary))
+				throw new InvalidCastException ("Type is " + value.GetType ().ToString ());
+			return (SqlBinary) value;
 		}
 
 		public SqlBoolean GetSqlBoolean (int i) 
@@ -922,6 +933,8 @@ namespace System.Data.SqlClient {
 #endif // NET_2_0
                 object GetValue (int i)
 		{
+			if (i < 0 || i >= command.Tds.ColumnValues.Count)
+				throw new IndexOutOfRangeException ();
 			return command.Tds.ColumnValues [i];
 		}
 
@@ -940,7 +953,7 @@ namespace System.Data.SqlClient {
 				throw new OverflowException ();
 
 			command.Tds.ColumnValues.CopyTo (0, values, 0, len);
-			return (len > FieldCount ? len : FieldCount);
+			return (len < FieldCount ? len : FieldCount);
 		}
 
 		void IDisposable.Dispose ()
@@ -969,6 +982,8 @@ namespace System.Data.SqlClient {
 #endif // NET_2_0
                 bool NextResult ()
 		{
+			ValidateState ();
+
 			if ((command.CommandBehavior & CommandBehavior.SingleResult) != 0 && resultsRead > 0)
 				return false;
 
@@ -992,6 +1007,8 @@ namespace System.Data.SqlClient {
 #endif // NET_2_0
                 bool Read ()
 		{
+			ValidateState ();
+
 			if ((command.CommandBehavior & CommandBehavior.SingleRow) != 0 && rowsRead > 0)
 				return false;
 			if ((command.CommandBehavior & CommandBehavior.SchemaOnly) != 0)
@@ -1019,7 +1036,13 @@ namespace System.Data.SqlClient {
 			
 			return result;
 		}
-				
+		
+		void ValidateState ()
+		{
+			if (IsClosed)
+				throw new InvalidOperationException ("Invalid attempt to read data when reader is closed");
+		}
+		
 #if NET_2_0
                 [MonoTODO]
                 protected override bool IsValidRow 

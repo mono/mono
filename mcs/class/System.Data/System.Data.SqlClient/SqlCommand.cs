@@ -85,13 +85,11 @@ namespace System.Data.SqlClient {
 		public SqlCommand (string commandText) 
 			: this (commandText, null, null)
 		{
-			commandText = commandText;
 		}
 
 		public SqlCommand (string commandText, SqlConnection connection) 
 			: this (commandText, connection, null)
 		{
-			Connection = connection;
 		}
 
 		public SqlCommand (string commandText, SqlConnection connection, SqlTransaction transaction) 
@@ -155,7 +153,7 @@ namespace System.Data.SqlClient {
                 int CommandTimeout {
 			get { return commandTimeout;  }
 			set { 
-				if (commandTimeout < 0)
+				if (value < 0)
 					throw new ArgumentException ("The property value assigned is less than 0.");
 				commandTimeout = value; 
 			}
@@ -174,6 +172,9 @@ namespace System.Data.SqlClient {
 			set { 
 				if (value == CommandType.TableDirect)
 					throw new ArgumentException ("CommandType.TableDirect is not supported by the Mono SqlClient Data Provider.");
+
+				if (!Enum.IsDefined (typeof (CommandType), value))
+					throw ExceptionHelper.InvalidEnumValueException ("CommandType", value);
 				commandType = value; 
 			}
 		}
@@ -262,7 +263,11 @@ namespace System.Data.SqlClient {
 #endif // NET_2_0
                 UpdateRowSource UpdatedRowSource	{
 			get { return updatedRowSource; }
-			set { updatedRowSource = value; }
+			set { 
+				if (!Enum.IsDefined (typeof (UpdateRowSource), value))
+					throw ExceptionHelper.InvalidEnumValueException ("UpdateRowSource", value);
+				updatedRowSource = value;
+			}
 		}
 
 		#endregion // Fields
@@ -497,8 +502,18 @@ namespace System.Data.SqlClient {
                 void Prepare ()
 		{
 			ValidateCommand ("Prepare");
-			if (CommandType == CommandType.Text) 
-				preparedStatement = Connection.Tds.Prepare (CommandText, Parameters.MetaParameters);
+
+			if (CommandType == CommandType.StoredProcedure)
+				return;
+
+			try {
+				foreach (SqlParameter param in Parameters)
+					param.CheckIfInitialized ();
+			}catch (Exception e) {
+				throw new InvalidOperationException ("SqlCommand.Prepare requires " + e.Message);
+			}
+
+			preparedStatement = Connection.Tds.Prepare (CommandText, Parameters.MetaParameters);
 		}
 
 		public 

@@ -361,9 +361,6 @@ namespace MonoTests.System.Data.SqlClient
 			ex=null;
 			*/
 
-			// NOTE msdotnet contradicts documented behavior
-			// SystemException is expected when Dataset is invalid 
-			// but msdotnet throws ArgumentNullException
 			try {
 				adapter.Fill ( null , 0 , 0 , "numeric_family");
 				Assert.Fail ( "#7 Exception shud be thrown : Invalid Dataset");

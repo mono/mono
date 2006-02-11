@@ -4,6 +4,10 @@
 
 2006-01-17  Senganal T  <tsenganal@novell.com>
 
+	* SqlCommandBuilderTest.cs : corrected a failing testcase
+
+2006-01-17  Senganal T  <tsenganal@novell.com>
+
 	* SqlCommandBuilderTest.cs : Added testcase for bug #77225
 
 2005-12-03  Senganal T  <tsenganal@novell.com>

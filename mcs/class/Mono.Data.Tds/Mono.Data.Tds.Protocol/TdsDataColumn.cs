@@ -52,6 +52,8 @@ namespace Mono.Data.Tds.Protocol {
 			Add ("IsIdentity", false);
 			Add ("IsReadOnly", false);
 			Add ("IsRowVersion", false);
+			Add ("IsUnique", false);
+			Add ("IsHidden", false);
 		}
 
 		#endregion // Methods

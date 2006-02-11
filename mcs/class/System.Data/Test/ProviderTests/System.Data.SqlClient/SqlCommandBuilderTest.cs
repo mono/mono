@@ -97,7 +97,7 @@ namespace MonoTests.System.Data
 
 				SqlCommandBuilder cb = new SqlCommandBuilder (da);
 				SqlCommand cmd = cb.GetUpdateCommand ();
-				Assert.AreEqual ("UPDATE employee SET id = @p1, fname = @p2 WHERE ((id = @p3) AND ((@p4 = 1 AND age IS NULL) OR (fname = @p5)))",
+				Assert.AreEqual ("UPDATE employee SET id = @p1, fname = @p2 WHERE ((id = @p3) AND ((@p4 = 1 AND fname IS NULL) OR (fname = @p5)))",
 						cmd.CommandText, "#2");
 				Assert.AreEqual (5, cmd.Parameters.Count, "#3");
 			}

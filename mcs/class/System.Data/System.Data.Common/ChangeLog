@@ -1,3 +1,15 @@
+2006-01-27  Senganal T  <tsenganal@novell.com>
+
+	* DbDataAdapter.cs :
+		- Modified schema population to follow MissingSchemaAction and MissingMappingAction
+		- Add a column to the Primary Key only if its not a hidden key
+		- Added some argument checks
+		- Removed some redundant code
+	* DataAdapter :
+		- Added argument checks
+	* ExceptionHelper :
+		- Added InvalidEnumException , a helper function to print error msg
+		
 2006-01-11 Boris Kirzner <borisk@mainsoft.com>
 	* Index.cs: removed redundant call to RebuildIndex() in constructor.
 

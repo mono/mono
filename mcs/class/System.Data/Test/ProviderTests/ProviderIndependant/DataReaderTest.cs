@@ -49,7 +49,7 @@ namespace MonoTests.System.Data
 				ConnectionManager.Singleton.OpenConnection ();
 				IDbCommand cmd = conn.CreateCommand ();
 				cmd.CommandText = "select id, fname, id + 20 as plustwenty from employee";
-				IDataReader reader = cmd.ExecuteReader (CommandBehavior.SchemaOnly);
+				IDataReader reader = cmd.ExecuteReader (CommandBehavior.SchemaOnly | CommandBehavior.KeyInfo);
 				DataTable schema = reader.GetSchemaTable ();
 				reader.Close ();
 				Assert.AreEqual (3, schema.Rows.Count, "#1");

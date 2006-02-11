@@ -1,3 +1,7 @@
+2006-01-27  Senganal T <tsenganal@novell.com>
+
+	* SqlDateTime : Corrected the MaxValue for SqlDateTime
+	
 2005-09-15  Raja R Harinath  <rharinath@novell.com>
 
 	* SqlString.cs (MoneyFormat): Move to SqlMoney.cs.
