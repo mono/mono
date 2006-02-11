@@ -505,9 +505,6 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-#if !TARGET_JVM
-		[Category ("NotWorking")]
-#endif
 		public void Expression_Exceptions()
 		{
 			DataTable dt = DataProvider.CreateParentDataTable();
@@ -581,7 +578,6 @@ namespace MonoTests.System.Data
 			}
 
 
-#if !KNOWN_BUG //BUG_NUM:3697
 			try
 			{
 				DataTable dt1 = DataProvider.CreateParentDataTable();
@@ -595,7 +591,6 @@ namespace MonoTests.System.Data
 			{
 				Assert.Fail("dccee#12: Expression. Wrong exception type. Got:" + exc);
 			}
-#endif
 
 			try
 			{

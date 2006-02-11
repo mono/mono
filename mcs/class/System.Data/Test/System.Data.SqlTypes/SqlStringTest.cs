@@ -58,7 +58,6 @@ namespace MonoTests.System.Data.SqlTypes
 
                 // Test constructor
 		[Test]
-		[Category ("NotWorking")]
                 public void Create()
                 {
 
@@ -182,7 +181,6 @@ namespace MonoTests.System.Data.SqlTypes
 		}
 
 		[Test]
-		[Category ("NotWorking")]
                 public void CompareTo()
                 {
                         SqlByte Test = new SqlByte (1);

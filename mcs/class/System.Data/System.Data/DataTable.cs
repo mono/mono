@@ -492,8 +492,11 @@ namespace System.Data {
 					}
 
 					//set the constraint as the new primary key
-						UniqueConstraint.SetAsPrimaryKey(this.Constraints, uc);
+					UniqueConstraint.SetAsPrimaryKey(this.Constraints, uc);
 					_primaryKeyConstraint = uc;
+
+					for (int j=0; j < uc.Columns.Length; ++j)
+						uc.Columns[j].AllowDBNull = false;
 				}				
 			}
 		}
@@ -1006,6 +1009,9 @@ namespace System.Data {
 		/// </summary>
 		public void ImportRow (DataRow row) 
 		{
+			if (row.RowState == DataRowState.Detached)
+				return;
+
 			DataRow newRow = NewNotInitializedRow();
 
 			int original = -1;
@@ -1024,11 +1030,15 @@ namespace System.Data {
 					RecordCache.CopyRecord(row.Table,current,newRow.Current);
 				}
 			}
+			
+			//Import the row only if RowState is not detached
+			//Validation for Deleted Rows happens during Accept/RejectChanges
+			if (row.RowState != DataRowState.Deleted)
+				newRow.Validate();
+			else
+				AddRowToIndexes (newRow);
+			Rows.AddInternal(newRow);
 
-			newRow.Validate();
-
-			Rows.AddInternal(newRow);		
-	
 			if (row.HasErrors) {
 				row.CopyErrors(newRow);
 			}

@@ -109,7 +109,11 @@ namespace System.Data {
 			// check if the list already contains this tabe.
 			if(List.Contains(table))
 				throw new ArgumentException("DataTable already belongs to this DataSet.");
-            
+           		
+			// check if table is part of another DataSet 
+			if (table.DataSet != null && table.DataSet != this.dataSet)
+				throw new ArgumentException ("DataTable already belongs to another DataSet");
+
 			// if the table name is null or empty string.
 			// give her a name. 
 			if (table.TableName == null || table.TableName == string.Empty)
@@ -125,7 +129,7 @@ namespace System.Data {
 				if(table.TableName == this[tmp].TableName)
 					throw new DuplicateNameException("A DataTable named '" + table.TableName + "' already belongs to this DataSet.");
 			}
-	
+
 			List.Add (table);
 			table.dataSet = dataSet;
 			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Add, table));
@@ -196,6 +200,8 @@ namespace System.Data {
 
 		public void Remove (string name) 
 		{
+			if ( IndexOf (name, false) == -1)
+				throw new ArgumentException ("Table " + name + " does not belong to this DataSet"); 
 			Remove (this [name]);
 		}
 

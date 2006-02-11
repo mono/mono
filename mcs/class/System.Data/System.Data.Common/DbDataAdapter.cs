@@ -741,7 +741,12 @@ namespace System.Data.Common {
 								}
 							}
 
-							bool isHidden = (bool) schemaRow ["IsHidden"];
+							bool isHidden = false;
+							if (schemaTable.Columns.Contains ("IsHidden")) {
+								value = schemaRow["IsHidden"];
+								isHidden = ((value is bool) ? (bool)value : false);
+							}
+
 							if (isKey && !isHidden) {
 								primaryKey.Add (col);
 								if (allowDBNull)

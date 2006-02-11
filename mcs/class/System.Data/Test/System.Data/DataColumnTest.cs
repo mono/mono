@@ -314,7 +314,6 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		[Category ("NotWorking")]
                 public void ExpressionFunctions ()
                 {
                 	DataTable T = new DataTable ("test");
@@ -365,9 +364,11 @@ namespace MonoTests.System.Data
                 		C.Expression = "iff (age = 24, 'hurrey', 'boo')";
                 		                	
                 		// The expression contains undefined function call iff().
-							Fail ("DC34");
-						} catch (EvaluateException) {}
-						catch (SyntaxErrorException) {}
+				Fail ("DC34");
+			} catch (EvaluateException) {
+			} catch (SyntaxErrorException) {
+			}
+			
                 	
                 	//The following two cases fail on mono. MS.net evaluates the expression
                 	//immediatly upon assignment. We don't do this yet hence we don't throw
@@ -376,8 +377,8 @@ namespace MonoTests.System.Data
                 		C.Expression = "iif (nimi = 24, 'hurrey', 'boo')";
                 		Fail ("DC36");
                 	} catch (EvaluateException e) {                		               	
-//                		AssertEquals ("DC37", typeof (EvaluateException), e.GetType ());
-//                		AssertEquals ("DC38", "Cannot find column [nimi].", e.Message);
+                		AssertEquals ("DC37", typeof (EvaluateException), e.GetType ());
+                		AssertEquals ("DC38", "Cannot find column [nimi].", e.Message);
                 	}
                 	
                 	try {

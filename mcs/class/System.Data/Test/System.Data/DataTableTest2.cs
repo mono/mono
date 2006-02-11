@@ -1876,9 +1876,6 @@ namespace MonoTests_System.Data
 		}
 
 		[Test]
-#if !TARGET_JVM
-		[Category ("NotWorking")]
-#endif
 		public void Select_StringString()
 		{
         	DataTable dt = DataProvider.CreateChildDataTable();
@@ -1984,8 +1981,15 @@ namespace MonoTests_System.Data
 			al.Sort(new DataRowsComparer("ChildId", "Asc"));
 
 			drSelect = dt.Select("ChildId * ParentId > 5 ","ChildId Asc");
-			Assert.AreEqual(al.ToArray(),drSelect ,"DT199");
-			
+			// Cannot check this way as ArrayList.Sort uses unstable sort and 
+			// so the Order of the elements is not preserved when elements are equal
+			//Assert.AreEqual(al.ToArray(),drSelect ,"DT199");
+			Assert.AreEqual (al.Count, drSelect.Length, "#DT199");
+			for (int i=0; i<al.Count; ++i){
+				// check the datarow is present and that the sort order is correct
+				Assert.IsTrue (Array.IndexOf (drSelect, al[i]) != -1, "#DT_199_2_"+i);
+				Assert.AreEqual ( ((DataRow)al[i])["ChildId"], drSelect[i]["ChildId"], "#DT_199_1" +i);
+			}
 
 			//get excepted resault
 			al = new System.Collections.ArrayList();

@@ -122,6 +122,8 @@ namespace System.Data
 		public virtual DataRow Add (object[] values) 
 #endif
 		{
+			if (values == null)
+				throw new NullReferenceException ();
 			DataRow row = table.NewNotInitializedRow();
 			int newRecord = table.CreateRecord(values);
 			row.ImportRecord(newRecord);

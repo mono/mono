@@ -1,3 +1,7 @@
+2006-02-03  Senganal T  <tsenganal@novell.com>
+
+	* SqlStringTest.cs : Removed NotWorking attribute for testcases fixed
+
 2005-08-25  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* SqlDecimalTest.cs: use Assert rather than derive from Assertion.

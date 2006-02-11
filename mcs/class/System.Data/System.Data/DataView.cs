@@ -370,7 +370,7 @@ namespace System.Data
 			if (add) {
 				try {
 					dataTable.Rows.Add(_lastAdded);
-					OnListChanged(new ListChangedEventArgs(ListChangedType.ItemAdded, Count - 1, -1));
+					//OnListChanged(new ListChangedEventArgs(ListChangedType.ItemAdded, Count - 1, -1));
 					_lastAdded = null;
 				}
 				catch(Exception e) {

@@ -332,7 +332,6 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		[NUnit.Framework.Category ("NotWorking")] 
 		public void TestIndexOf_ByColumnName()
 		{
 			DataTable dt = DataProvider.CreateParentDataTable();

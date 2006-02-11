@@ -131,7 +131,6 @@ namespace Mono.Data.SqlExpressions {
 						table = GetRelation (row).ChildTable;
 						break;
 				}
-
 				_cachedColumn = table.Columns [columnName];
 				if (_cachedColumn == null)
 					throw new EvaluateException (String.Format ("Cannot find column [{0}].", columnName));
@@ -144,6 +143,9 @@ namespace Mono.Data.SqlExpressions {
 
 		public DataRow GetReferencedRow (DataRow row)
 		{
+			// Verify the column reference is valid 
+			GetColumn (row);
+
 			switch (refTable) {
 			case ReferencedTable.Self:
 			default:
@@ -159,6 +161,9 @@ namespace Mono.Data.SqlExpressions {
 		
 		public DataRow[] GetReferencedRows (DataRow row)
 		{
+			// Verify the column reference is valid 
+			GetColumn (row);
+
 			switch (refTable) {
 			case ReferencedTable.Self:
 			default:
