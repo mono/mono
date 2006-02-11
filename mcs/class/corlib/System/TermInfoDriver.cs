@@ -299,18 +299,24 @@ namespace System {
 				if (b != ';') {
 					row = b - '0';
 					b = stdin.ReadByte ();
-					if (b != ';')
+					while ((b >= '0') && (b <= '9')) {
 						row = row * 10 + b - '0';
+						b = stdin.ReadByte ();
+					}
+					// Row/col is 0 based
+					row --;
 				}
 
 				b = stdin.ReadByte ();
 				if (b != 'R') {
 					col = b - '0';
 					b = stdin.ReadByte ();
-					if (b != 'R') {
+					while ((b >= '0') && (b <= '9')) {
 						col = col * 10 + b - '0';
-						stdin.ReadByte (); // This should be the 'R'
+						b = stdin.ReadByte ();
 					}
+					// Row/col is 0 based
+					col --;
 				}
 			} finally {
 				Echo = prevEcho;
@@ -445,21 +451,25 @@ namespace System {
 		void GetWindowDimensions ()
 		{
 			//TODO: Handle SIGWINCH
-			windowWidth = reader.Get (TermInfoNumbers.Columns);
-			string env = Environment.GetEnvironmentVariable ("COLUMNS");
-			if (env != null) {
-				try {
-					windowWidth = (int) UInt32.Parse (env);
-				} catch {
-				}
-			}
 
-			windowHeight = reader.Get (TermInfoNumbers.Lines);
-			env = Environment.GetEnvironmentVariable ("LINES");
-			if (env != null) {
-				try {
-					windowHeight = (int) UInt32.Parse (env);
-				} catch {
+			/* Try the ioctl first */
+			if (!ConsoleDriver.GetTtySize (MonoIO.ConsoleOutput, out windowWidth, out windowHeight)) {
+				windowWidth = reader.Get (TermInfoNumbers.Columns);
+				string env = Environment.GetEnvironmentVariable ("COLUMNS");
+				if (env != null) {
+					try {
+						windowWidth = (int) UInt32.Parse (env);
+					} catch {
+					}
+				}
+
+				windowHeight = reader.Get (TermInfoNumbers.Lines);
+				env = Environment.GetEnvironmentVariable ("LINES");
+				if (env != null) {
+					try {
+						windowHeight = (int) UInt32.Parse (env);
+					} catch {
+					}
 				}
 			}
 
@@ -543,8 +553,11 @@ namespace System {
 			bool shift = false;
 			bool ctrl = false;
 			bool alt = false;
-			// For Ctrl-a to Ctrl-z. Exception: those values in ConsoleKey
-			if (n >= 1 && n <= 26 && !(n == 8 || n == 9 || n == 12 || n == 13 || n == 19)) {
+
+			if (n == 10) {
+				key = ConsoleKey.Enter;
+			} else if (n >= 1 && n <= 26 && !(n == 8 || n == 9 || n == 12 || n == 13 || n == 19)) {
+				// For Ctrl-a to Ctrl-z. Exception: those values in ConsoleKey
 				ctrl = true;
 				key = ConsoleKey.A + n - 1;
 			} else if (n == 27) {

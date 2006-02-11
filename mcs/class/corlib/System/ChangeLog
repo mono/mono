@@ -1,3 +1,13 @@
+2006-02-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* TermInfoDriver.cs (GetWindowDimensions): Obtain the exact terminal
+	size using an icall.
+	(GetCursorPosition): Convert the row and column to 0 based indexing. 
+	Also fix reading of large values.
+	(CreateKeyInfoFromInt): Convert LF to ConsoleKey.Enter.
+
+	* ConsoleDriver.cs (GetTtySize): New icall.
+
 2006-02-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* Array.cs: Fix some methods which previously returned Nullable<T>.
