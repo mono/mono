@@ -1,3 +1,6 @@
+2006-01-11 Boris Kirzner <borisk@mainsoft.com>
+	* Index.cs: removed redundant call to RebuildIndex() in constructor.
+
 2005-12-12  Konstantin Triger <kostat@mainsoft.com>
 
 	* Key.cs: Added ContainsVersion function, refactoring.

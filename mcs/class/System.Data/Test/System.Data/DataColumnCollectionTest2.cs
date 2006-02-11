@@ -763,6 +763,41 @@ namespace MonoTests.System.Data
 			}
 		}
 
+		[Test]
+		public void Test_Indexes ()
+		{
+			DataTable dt = new DataTable ();
+			DataColumn dc = new DataColumn("A");
+			dt.Columns.Add (dc);
+
+			dc = new DataColumn("B");
+			dt.Columns.Add (dc);
+
+			dc = new DataColumn("C");
+			dt.Columns.Add (dc);
+
+			for(int i=0; i < 10; i++) {
+				DataRow dr = dt.NewRow ();
+				dr ["A"] = i;
+				dr ["B"] = i + 1;
+				dr ["C"] = i + 2;
+				dt.Rows.Add (dr);
+			}
+
+			DataRow[] rows = dt.Select ("A=5");
+			Assert.AreEqual (1, rows.Length);
+
+			dt.Columns.Remove ("A");
+
+			dc = new DataColumn ("A");
+			dc.DefaultValue = 5;
+
+			dt.Columns.Add (dc);
+
+			rows = dt.Select ("A=5");
+			Assert.AreEqual (10, rows.Length);
+		}
+
 		private void Columns_CollectionChanged1(object sender, CollectionChangeEventArgs e)
 		{
 			eventOccured = true;

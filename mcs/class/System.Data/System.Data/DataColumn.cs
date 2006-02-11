@@ -68,6 +68,8 @@ namespace System.Data {
 
 		//used for FK Constraint Cascading rules
 		internal event DelegateColumnValueChange ColumnValueChanging;
+
+		internal event PropertyChangedEventHandler PropertyChanged;
 		#endregion //Events
 		
 		#region Fields
@@ -772,13 +774,15 @@ namespace System.Data {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		protected internal virtual void 
 		OnPropertyChanging (PropertyChangedEventArgs pcevent) {
+			if (PropertyChanged != null)
+				PropertyChanged (this, pcevent);
 		}
 
-		[MonoTODO]
 		protected internal void RaisePropertyChanging(string name) {
+			PropertyChangedEventArgs e = new PropertyChangedEventArgs (name);
+			OnPropertyChanging (e);
 		}
 
 		/// <summary>

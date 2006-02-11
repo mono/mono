@@ -1,7 +1,11 @@
 2006-01-17  Senganal T  <tsenganal@novell.com>
  
  	* DataRowTest2.cs : added testcase for bug #77267
- 
+
+2006-01-16 Boris Kirzner <borisk@mainsoft.com>
+	* DataColumnCollectionTest2.cs: added test case for index update on
+	column removal
+
 2006-01-10 Senganal T <tsenganal@novell.com>
 	* DataViewTest2.cs 
 		- Added testcase for bug #77188
