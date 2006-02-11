@@ -1,5 +1,31 @@
 2006-02-11  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* XmlRootAttributeTests.cs: Set eol-style to CRLF.
+	* SoapTypeAttributeTests.cs: Same.
+	* XmlIncludeAttributeTests.cs: Same.
+	* XmlTextAttributeTests.cs: Same.
+	* XmlSerializerTests.cs: Same.
+	* SoapIncludeAttributeTests.cs: Same.
+	* XmlSerializationWriterTests.cs: Same.
+	* XmlElementAttributeTests.cs: Same.
+	* ComplexDataStructure.cs: Same.
+	* DeserializerTests.cs: Same.
+	* SoapElementAttributeTests.cs: Same.
+	* XmlChoiceIdentifierAttributeTests.cs: Same.
+	* XmlArrayItemAttributeTests.cs: Same.
+	* XmlAnyElementAttributeTests.cs: Same.
+	* XmlAttributesTests.cs: Same.
+	* XmlAttributeAttributeTests.cs: Same.
+	* XmlEnumAttributeTests.cs: Same.
+	* SoapAttributeAttributeTests.cs: Same.
+	* SoapEnumAttributeTests.cs: Same.
+	* SoapSchemaMemberTests.cs: Same.
+	* XmlArrayAttributeTests.cs: Same.
+	* XmlSerializerTestClasses.cs: Same.
+	* XmlSchemaImporterTests.cs: Set eol-style to native.
+
+2006-02-11  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* XmlReflectionImporterTests.cs: Added test for IDictionary import.
 	Set eol style to CRLF.
 	* SoapReflectionImporterTests.cs: Added test for IDictionary import.
