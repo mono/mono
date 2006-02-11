@@ -1,3 +1,9 @@
+2006-02-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* object.c (mono_nullable_init): Revert this as nullable reference
+	types are not valid.
+	(mono_nullable_box): Ditto.
+
 2006-02-09  Dick Porter  <dick@ximian.com>
 
 	* threads.c (mono_thread_detach): Drop a reference to the thread
