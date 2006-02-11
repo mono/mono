@@ -1,4 +1,4 @@
-// bug76419.cs: The type or namespace name `Uri' could not be found. Are you missing a using directive or an assembly reference?
+// cs0246-14.cs: The type or namespace name `Uri' could not be found. Are you missing a using directive or an assembly reference?
 // Line: 7
 
 // This bug actual checks that the compiler doesn't crash

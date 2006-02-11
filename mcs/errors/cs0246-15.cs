@@ -1,3 +1,6 @@
+// cs0246-15.cs: The type or namespace name `InvalidTypeBlah' could not be found. Are you missing a using directive or an assembly reference?
+// Line: 17
+
 //
 // This test is here to test that the compiler does not crash after it
 // reports the error due to an invalid type being referenced in the 
