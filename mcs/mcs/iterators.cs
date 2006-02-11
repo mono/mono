@@ -147,6 +147,7 @@ namespace Mono.CSharp {
 		MoveNextMethod move_next_method;
 		Constructor ctor;
 		CaptureContext cc;
+		EmitContext ec;
 
 		protected enum State {
 			Uninitialized	= -2,
@@ -359,7 +360,7 @@ namespace Mono.CSharp {
 
 		public bool DefineIterator ()
 		{
-			ec = new EmitContext (this, Mono.CSharp.Location.Null, null, null, ModFlags);
+			ec = new EmitContext (this, this, Mono.CSharp.Location.Null, null, null, ModFlags);
 			ec.CurrentAnonymousMethod = move_next_method;
 			ec.CurrentIterator = this;
 			ec.InIterator = true;

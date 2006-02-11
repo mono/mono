@@ -187,12 +187,21 @@ namespace Mono.CSharp {
 		}
 	}
 
+
+	public interface IResolveContext
+	{
+		DeclSpace DeclContainer { get; }
+		bool IsInObsoleteScope { get; }
+		bool IsInUnsafeScope { get; }
+	}
+
 	/// <summary>
 	///   An Emit Context is created for each body of code (from methods,
 	///   properties bodies, indexer bodies or constructor bodies)
 	/// </summary>
-	public class EmitContext {
-		public DeclSpace DeclSpace;
+	public class EmitContext : IResolveContext {
+
+		DeclSpace declSpace;
 		public DeclSpace TypeContainer;
 		public ILGenerator   ig;
 
@@ -345,6 +354,8 @@ namespace Mono.CSharp {
 		/// </summary>
 		public bool TestObsoleteMethodUsage = true;
 
+		public readonly IResolveContext ResolveContext;
+
 		/// <summary>
 		///    The current iterator
 		/// </summary>
@@ -371,13 +382,14 @@ namespace Mono.CSharp {
 					      CurrentIterator, capture_context, loc);
 		}
 		
-		public EmitContext (DeclSpace parent, DeclSpace ds, Location l, ILGenerator ig,
+		public EmitContext (IResolveContext rc, DeclSpace parent, DeclSpace ds, Location l, ILGenerator ig,
 				    Type return_type, int code_flags, bool is_constructor)
 		{
+			this.ResolveContext = rc;
 			this.ig = ig;
 
 			TypeContainer = parent;
-			DeclSpace = ds;
+			this.declSpace = ds;
 			CheckState = RootContext.Checked;
 			ConstantCheckState = true;
 
@@ -393,10 +405,7 @@ namespace Mono.CSharp {
 			if (parent != null){
 				// Can only be null for the ResolveType contexts.
 				ContainerType = parent.TypeBuilder;
-				if (parent.UnsafeContext)
-					InUnsafe = true;
-				else
-					InUnsafe = (code_flags & Modifiers.UNSAFE) != 0;
+				InUnsafe = rc.IsInUnsafeScope;
 			}
 			loc = l;
 
@@ -404,17 +413,42 @@ namespace Mono.CSharp {
 				ReturnType = null;
 		}
 
-		public EmitContext (TypeContainer tc, Location l, ILGenerator ig,
+		public EmitContext (IResolveContext rc, TypeContainer tc, Location l, ILGenerator ig,
 				    Type return_type, int code_flags, bool is_constructor)
-			: this (tc, tc, l, ig, return_type, code_flags, is_constructor)
+			: this (rc, tc, tc, l, ig, return_type, code_flags, is_constructor)
 		{
 		}
 
-		public EmitContext (TypeContainer tc, Location l, ILGenerator ig,
+		public EmitContext (IResolveContext rc, TypeContainer tc, Location l, ILGenerator ig,
 				    Type return_type, int code_flags)
-			: this (tc, tc, l, ig, return_type, code_flags, false)
+			: this (rc, tc, tc, l, ig, return_type, code_flags, false)
 		{
 		}
+
+		public DeclSpace DeclContainer { 
+			get { 
+				return this.declSpace;
+			}
+			set {
+				declSpace = value;
+			}
+		}
+
+		public bool IsInObsoleteScope {
+			get {
+				return ResolveContext.IsInObsoleteScope;
+			}
+		}
+
+		public bool IsInUnsafeScope {
+			get {
+				if (InUnsafe)
+					return true;
+
+				return ResolveContext.IsInUnsafeScope;
+			}
+		}
+
 
 		public FlowBranching CurrentBranching {
 			get {
@@ -955,7 +989,8 @@ namespace Mono.CSharp {
 	}
 
 
-	public abstract class CommonAssemblyModulClass : Attributable {
+	public abstract class CommonAssemblyModulClass : Attributable, IResolveContext {
+
 		protected CommonAssemblyModulClass ():
 			base (null)
 		{
@@ -975,8 +1010,7 @@ namespace Mono.CSharp {
 			if (OptAttributes == null)
 				return;
 
-			EmitContext ec = new EmitContext (tc, Mono.CSharp.Location.Null, null, null, 0, false);
-			OptAttributes.Emit (ec, this);
+			OptAttributes.Emit ();
 		}
                 
 		protected Attribute ResolveAttribute (Type a_type)
@@ -985,16 +1019,43 @@ namespace Mono.CSharp {
 				return null;
 
 			// Ensure that we only have GlobalAttributes, since the Search below isn't safe with other types.
-			if (!OptAttributes.CheckTargets (this))
+			if (!OptAttributes.CheckTargets ())
 				return null;
 
-			EmitContext temp_ec = new EmitContext (RootContext.Tree.Types, Mono.CSharp.Location.Null, null, null, 0, false);
-			Attribute a = OptAttributes.Search (a_type, temp_ec);
+			Attribute a = OptAttributes.Search (a_type);
 			if (a != null) {
-				a.Resolve (temp_ec);
+				a.Resolve ();
 			}
 			return a;
 		}
+
+		public override IResolveContext ResolveContext {
+			get {
+				return this;
+			}
+		}
+
+		#region IResolveContext Members
+
+		public DeclSpace DeclContainer {
+			get {
+				return RootContext.Tree.Types;
+			}
+		}
+
+		public bool IsInObsoleteScope {
+			get {
+				return false;
+			}
+		}
+
+		public bool IsInUnsafeScope {
+			get {
+				return false;
+			}
+		}
+
+		#endregion
 	}
                 
 	public class AssemblyClass : CommonAssemblyModulClass {
@@ -1033,16 +1094,19 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override bool IsClsComplianceRequired(DeclSpace ds)
+		public override bool IsClsComplianceRequired()
 		{
 			return is_cls_compliant;
 		}
 
 		public void Resolve ()
 		{
+			if (OptAttributes != null)
+				OptAttributes.AttachTo (this);
+
 			ClsCompliantAttribute = ResolveAttribute (TypeManager.cls_compliant_attribute_type);
 			if (ClsCompliantAttribute != null) {
-				is_cls_compliant = ClsCompliantAttribute.GetClsCompliantAttributeValue (null);
+				is_cls_compliant = ClsCompliantAttribute.GetClsCompliantAttributeValue ();
 			}
 
 #if NET_2_0
@@ -1296,13 +1360,16 @@ namespace Mono.CSharp {
  			}
 		}
 
-		public override bool IsClsComplianceRequired(DeclSpace ds)
+		public override bool IsClsComplianceRequired()
 		{
 			return CodeGen.Assembly.IsClsCompliant;
 		}
 
 		public override void Emit (TypeContainer tc) 
 		{
+			if (OptAttributes != null)
+				OptAttributes.AttachTo (this);
+
 			base.Emit (tc);
 
 			if (!m_module_is_unsafe)

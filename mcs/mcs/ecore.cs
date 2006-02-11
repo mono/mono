@@ -218,7 +218,7 @@ namespace Mono.CSharp {
 		// This is used if the expression should be resolved as a type or namespace name.
 		// the default implementation fails.   
 		//
-		public virtual FullNamedExpression ResolveAsTypeStep (EmitContext ec,  bool silent)
+		public virtual FullNamedExpression ResolveAsTypeStep (IResolveContext ec,  bool silent)
 		{
 			return null;
 		}
@@ -228,7 +228,7 @@ namespace Mono.CSharp {
 		// value will be returned if the expression is not a type
 		// reference
 		//
-		public TypeExpr ResolveAsTypeTerminal (EmitContext ec, bool silent)
+		public TypeExpr ResolveAsTypeTerminal (IResolveContext ec, bool silent)
 		{
 			int errors = Report.Errors;
 
@@ -248,7 +248,7 @@ namespace Mono.CSharp {
 
 			TypeExpr te = fne as TypeExpr;
 
-			if (!te.CheckAccessLevel (ec.DeclSpace)) {
+			if (!te.CheckAccessLevel (ec.DeclContainer)) {
 				ErrorIsInaccesible (loc, TypeManager.CSharpName (te.Type));
 				return null;
 			}
@@ -553,14 +553,14 @@ namespace Mono.CSharp {
 		///   Returns a fully formed expression after a MemberLookup
 		/// </summary>
 		/// 
-		public static Expression ExprClassFromMemberInfo (EmitContext ec, MemberInfo mi, Location loc)
+		public static Expression ExprClassFromMemberInfo (Type containerType, MemberInfo mi, Location loc)
 		{
 			if (mi is EventInfo)
 				return new EventExpr ((EventInfo) mi, loc);
 			else if (mi is FieldInfo)
 				return new FieldExpr ((FieldInfo) mi, loc);
 			else if (mi is PropertyInfo)
-				return new PropertyExpr (ec, (PropertyInfo) mi, loc);
+				return new PropertyExpr (containerType, (PropertyInfo) mi, loc);
 		        else if (mi is Type){
 				return new TypeExpression ((System.Type) mi, loc);
 			}
@@ -598,10 +598,10 @@ namespace Mono.CSharp {
 		// FIXME: Potential optimization, have a static ArrayList
 		//
 
-		public static Expression MemberLookup (EmitContext ec, Type queried_type, string name,
+		public static Expression MemberLookup (Type container_type, Type queried_type, string name,
 						       MemberTypes mt, BindingFlags bf, Location loc)
 		{
-			return MemberLookup (ec, ec.ContainerType, null, queried_type, name, mt, bf, loc);
+			return MemberLookup (container_type, null, queried_type, name, mt, bf, loc);
 		}
 
 		//
@@ -609,7 +609,7 @@ namespace Mono.CSharp {
 		// `qualifier_type' or null to lookup members in the current class.
 		//
 
-		public static Expression MemberLookup (EmitContext ec, Type container_type,
+		public static Expression MemberLookup (Type container_type,
 						       Type qualifier_type, Type queried_type,
 						       string name, MemberTypes mt,
 						       BindingFlags bf, Location loc)
@@ -630,7 +630,7 @@ namespace Mono.CSharp {
 			if (count > 1)
 				return null;
 
-			return ExprClassFromMemberInfo (ec, mi [0], loc);
+			return ExprClassFromMemberInfo (container_type, mi [0], loc);
 		}
 
 		public const MemberTypes AllMemberTypes =
@@ -649,21 +649,21 @@ namespace Mono.CSharp {
 		public static Expression MemberLookup (EmitContext ec, Type queried_type,
 						       string name, Location loc)
 		{
-			return MemberLookup (ec, ec.ContainerType, null, queried_type, name,
+			return MemberLookup (ec.ContainerType, null, queried_type, name,
 					     AllMemberTypes, AllBindingFlags, loc);
 		}
 
-		public static Expression MemberLookup (EmitContext ec, Type qualifier_type,
+		public static Expression MemberLookup (Type container_type, Type qualifier_type,
 						       Type queried_type, string name, Location loc)
 		{
-			return MemberLookup (ec, ec.ContainerType, qualifier_type, queried_type,
+			return MemberLookup (container_type, qualifier_type, queried_type,
 					     name, AllMemberTypes, AllBindingFlags, loc);
 		}
 
 		public static Expression MethodLookup (EmitContext ec, Type queried_type,
 						       string name, Location loc)
 		{
-			return MemberLookup (ec, ec.ContainerType, null, queried_type, name,
+			return MemberLookup (ec.ContainerType, null, queried_type, name,
 					     MemberTypes.Method, AllBindingFlags, loc);
 		}
 
@@ -689,16 +689,16 @@ namespace Mono.CSharp {
 
 			int errors = Report.Errors;
 
-			e = MemberLookup (ec, ec.ContainerType, qualifier_type, queried_type, name, mt, bf, loc);
+			e = MemberLookup (ec.ContainerType, qualifier_type, queried_type, name, mt, bf, loc);
 
 			if (e == null && errors == Report.Errors)
 				// No errors were reported by MemberLookup, but there was an error.
-				MemberLookupFailed (ec, qualifier_type, queried_type, name, null, true, loc);
+				MemberLookupFailed (ec.ContainerType, qualifier_type, queried_type, name, null, true, loc);
 
 			return e;
 		}
 
-		public static void MemberLookupFailed (EmitContext ec, Type qualifier_type,
+		public static void MemberLookupFailed (Type container_type, Type qualifier_type,
 						       Type queried_type, string name,
 						       string class_name, bool complain_if_none_found, 
 						       Location loc)
@@ -721,16 +721,16 @@ namespace Mono.CSharp {
 					if (qualifier_type == null) {
 						Report.Error (38, loc, "Cannot access a nonstatic member of outer type `{0}' via nested type `{1}'",
 							      TypeManager.CSharpName (m.DeclaringType),
-							      TypeManager.CSharpName (ec.ContainerType));
+							      TypeManager.CSharpName (container_type));
 						
-					} else if (qualifier_type != ec.ContainerType &&
-						   TypeManager.IsNestedFamilyAccessible (ec.ContainerType, declaring_type)) {
+					} else if (qualifier_type != container_type &&
+						   TypeManager.IsNestedFamilyAccessible (container_type, declaring_type)) {
 						// Although a derived class can access protected members of
 						// its base class it cannot do so through an instance of the
 						// base class (CS1540).  If the qualifier_type is a base of the
 						// ec.ContainerType and the lookup succeeds with the latter one,
 						// then we are in this situation.
-						Error_CannotAccessProtected (loc, m, qualifier_type, ec.ContainerType);
+						Error_CannotAccessProtected (loc, m, qualifier_type, container_type);
 					} else {
 						ErrorIsInaccesible (loc, TypeManager.GetFullNameSignature (m));
 					}
@@ -865,16 +865,16 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Reports that we were expecting `expr' to be of class `expected'
 		/// </summary>
-		public void Error_UnexpectedKind (EmitContext ec, string expected, Location loc)
+		public void Error_UnexpectedKind (DeclSpace ds, string expected, Location loc)
 		{
-			Error_UnexpectedKind (ec, expected, ExprClassName, loc);
+			Error_UnexpectedKind (ds, expected, ExprClassName, loc);
 		}
 
-		public void Error_UnexpectedKind (EmitContext ec, string expected, string was, Location loc)
+		public void Error_UnexpectedKind (DeclSpace ds, string expected, string was, Location loc)
 		{
 			string name = GetSignatureForError ();
-			if (ec != null)
-				name = ec.DeclSpace.GetSignatureForError () + '.' + name;
+			if (ds != null)
+				name = ds.GetSignatureForError () + '.' + name;
 
 			Report.Error (118, loc, "`{0}' is a `{1}' but a `{2}' was expected",
 			      name, was, expected);
@@ -1822,7 +1822,7 @@ namespace Mono.CSharp {
 		{
 			return resolved_to != null && resolved_to.Type != null && 
 				resolved_to.Type.Name == Name &&
-				(ec.DeclSpace.LookupType (Name, loc, /* ignore_cs0104 = */ true) != null);
+				(ec.DeclContainer.LookupType (Name, loc, /* ignore_cs0104 = */ true) != null);
 		}
 
 		public override Expression DoResolve (EmitContext ec)
@@ -1841,19 +1841,19 @@ namespace Mono.CSharp {
 			return SimpleNameResolve (ec, null, intermediate);
 		}
 
-		public override FullNamedExpression ResolveAsTypeStep (EmitContext ec, bool silent)
+		public override FullNamedExpression ResolveAsTypeStep (IResolveContext ec, bool silent)
 		{
 			int errors = Report.Errors;
-			FullNamedExpression fne = ec.DeclSpace.LookupType (Name, loc, /*ignore_cs0104=*/ false);
+			FullNamedExpression fne = ec.DeclContainer.LookupType (Name, loc, /*ignore_cs0104=*/ false);
 			if (fne != null)
 				return fne;
 
 			if (silent || errors != Report.Errors)
 				return null;
 
-			MemberCore mc = ec.DeclSpace.GetDefinition (Name);
+			MemberCore mc = ec.DeclContainer.GetDefinition (Name);
 			if (mc != null) {
-				Error_UnexpectedKind (ec, "type", GetMemberType (mc), loc);
+				Error_UnexpectedKind (ec.DeclContainer, "type", GetMemberType (mc), loc);
 			} else {
 				NamespaceEntry.Error_NamespaceNotFound (loc, Name);
 			}
@@ -1947,7 +1947,7 @@ namespace Mono.CSharp {
 			// Stage 2: Lookup members 
 			//
 
-			DeclSpace lookup_ds = ec.DeclSpace;
+			DeclSpace lookup_ds = ec.DeclContainer;
 			Type almost_matched_type = null;
 			ArrayList almost_matched = null;
 			do {
@@ -1982,7 +1982,7 @@ namespace Mono.CSharp {
 					almostMatchedMembers = almost_matched;
 				if (almost_matched_type == null)
 					almost_matched_type = ec.ContainerType;
-				MemberLookupFailed (ec, null, almost_matched_type, ((SimpleName) this).Name, ec.DeclSpace.Name, true, loc);
+				MemberLookupFailed (ec.ContainerType, null, almost_matched_type, ((SimpleName) this).Name, ec.DeclContainer.Name, true, loc);
 				return null;
 			}
 
@@ -2054,7 +2054,7 @@ namespace Mono.CSharp {
 
 			Error (103, "The name `" + Name +
 			       "' does not exist in the class `" +
-			       ec.DeclSpace.Name + "'");
+			       ec.DeclContainer.Name + "'");
 		}
 
 		public override string ToString ()
@@ -2073,7 +2073,7 @@ namespace Mono.CSharp {
 	///   section 10.8.1 (Fully Qualified Names).
 	/// </summary>
 	public abstract class FullNamedExpression : Expression {
-		public override FullNamedExpression ResolveAsTypeStep (EmitContext ec, bool silent)
+		public override FullNamedExpression ResolveAsTypeStep (IResolveContext ec, bool silent)
 		{
 			return this;
 		}
@@ -2087,7 +2087,7 @@ namespace Mono.CSharp {
 	///   Expression that evaluates to a type
 	/// </summary>
 	public abstract class TypeExpr : FullNamedExpression {
-		override public FullNamedExpression ResolveAsTypeStep (EmitContext ec, bool silent)
+		override public FullNamedExpression ResolveAsTypeStep (IResolveContext ec, bool silent)
 		{
 			TypeExpr t = DoResolveAsTypeStep (ec);
 			if (t == null)
@@ -2145,19 +2145,17 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public abstract TypeExpr DoResolveAsTypeStep (EmitContext ec);
+		public abstract TypeExpr DoResolveAsTypeStep (IResolveContext ec);
 
-		public Type ResolveType (EmitContext ec)
+		public Type ResolveType (IResolveContext ec)
 		{
 			TypeExpr t = ResolveAsTypeTerminal (ec, false);
 			if (t == null)
 				return null;
 
-			if (ec.TestObsoleteMethodUsage) {
-				ObsoleteAttribute obsolete_attr = AttributeTester.GetObsoleteAttribute (t.Type);
-				if (obsolete_attr != null) {
-					AttributeTester.Report_ObsoleteMessage (obsolete_attr, Name, Location);
-				}
+			ObsoleteAttribute obsolete_attr = AttributeTester.GetObsoleteAttribute (t.Type);
+			if (obsolete_attr != null && !ec.IsInObsoleteScope) {
+				AttributeTester.Report_ObsoleteMessage (obsolete_attr, Name, Location);
 			}
 
 			return t.Type;
@@ -2198,7 +2196,7 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 
-		public override TypeExpr DoResolveAsTypeStep (EmitContext ec)
+		public override TypeExpr DoResolveAsTypeStep (IResolveContext ec)
 		{
 			return this;
 		}
@@ -2226,7 +2224,7 @@ namespace Mono.CSharp {
 		}
 
 		static readonly char [] dot_array = { '.' };
-		public override TypeExpr DoResolveAsTypeStep (EmitContext ec)
+		public override TypeExpr DoResolveAsTypeStep (IResolveContext ec)
 		{
 			if (type != null)
 				return this;
@@ -2240,7 +2238,7 @@ namespace Mono.CSharp {
 				lookup_name = name.Substring (0, pos);
 			}
 
-			FullNamedExpression resolved = RootNamespace.Global.Lookup (ec.DeclSpace, lookup_name, Location.Null);
+			FullNamedExpression resolved = RootNamespace.Global.Lookup (ec.DeclContainer, lookup_name, Location.Null);
 
 			if (resolved != null && rest != null) {
 				// Now handle the rest of the the name.
@@ -2252,13 +2250,13 @@ namespace Mono.CSharp {
 					Namespace ns = resolved as Namespace;
 					element = elements [i++];
 					lookup_name += "." + element;
-					resolved = ns.Lookup (ec.DeclSpace, element, Location.Null);
+					resolved = ns.Lookup (ec.DeclContainer, element, Location.Null);
 				}
 
 				if (resolved != null && resolved is TypeExpr) {
 					Type t = ((TypeExpr) resolved).Type;
 					while (t != null) {
-						if (!ec.DeclSpace.CheckAccessLevel (t)) {
+						if (!ec.DeclContainer.CheckAccessLevel (t)) {
 							resolved = null;
 							lookup_name = t.FullName;
 							break;
@@ -2278,7 +2276,7 @@ namespace Mono.CSharp {
 			}
 
 			if (!(resolved is TypeExpr)) {
-				resolved.Error_UnexpectedKind (ec, "type", loc);
+				resolved.Error_UnexpectedKind (ec.DeclContainer, "type", loc);
 				return null;
 			}
 
@@ -2314,7 +2312,7 @@ namespace Mono.CSharp {
 			get { return texpr.FullName; }
 		}
 
-		public override TypeExpr DoResolveAsTypeStep (EmitContext ec)
+		public override TypeExpr DoResolveAsTypeStep (IResolveContext ec)
 		{
 			Type type = texpr.ResolveType (ec);
 			if (type == null)
@@ -2714,7 +2712,7 @@ namespace Mono.CSharp {
 				}
 
 				if (ic.ResolveValue ()) {
-					if (ec.TestObsoleteMethodUsage)
+					if (!ec.IsInObsoleteScope)
 						ic.CheckObsoleteness (loc);
 				}
 
@@ -2787,7 +2785,7 @@ namespace Mono.CSharp {
 				ObsoleteAttribute oa;
 				FieldBase f = TypeManager.GetField (FieldInfo);
 				if (f != null) {
-					if (ec.TestObsoleteMethodUsage)
+					if (!ec.IsInObsoleteScope)
 						f.CheckObsoleteness (loc);
                                 
 					// To be sure that type is external because we do not register generated fields
@@ -3117,7 +3115,7 @@ namespace Mono.CSharp {
 
 		internal static PtrHashtable AccessorTable = new PtrHashtable (); 
 
-		public PropertyExpr (EmitContext ec, PropertyInfo pi, Location l)
+		public PropertyExpr (Type containerType, PropertyInfo pi, Location l)
 		{
 			PropertyInfo = pi;
 			eclass = ExprClass.PropertyAccess;
@@ -3126,7 +3124,7 @@ namespace Mono.CSharp {
 
 			type = TypeManager.TypeToCoreType (pi.PropertyType);
 
-			ResolveAccessors (ec);
+			ResolveAccessors (containerType);
 		}
 
 		public override string Name {
@@ -3196,9 +3194,9 @@ namespace Mono.CSharp {
 		// We also perform the permission checking here, as the PropertyInfo does not
 		// hold the information for the accessibility of its setter/getter
 		//
-		void ResolveAccessors (EmitContext ec)
+		void ResolveAccessors (Type containerType)
 		{
-			FindAccessors (ec.ContainerType);
+			FindAccessors (containerType);
 
 			if (getter != null) {
 				IMethodData md = TypeManager.GetMethod (getter);
@@ -3535,7 +3533,7 @@ namespace Mono.CSharp {
 				MemberInfo mi = TypeManager.GetPrivateFieldOfEvent (EventInfo);
 
 				if (mi != null) {
-					MemberExpr ml = (MemberExpr) ExprClassFromMemberInfo (ec, mi, loc);
+					MemberExpr ml = (MemberExpr) ExprClassFromMemberInfo (ec.ContainerType, mi, loc);
 
 					if (ml == null) {
 						Report.Error (-200, loc, "Internal error!!");

@@ -78,12 +78,10 @@ namespace Mono.CSharp {
 			if (TypeBuilder != null)
 				return TypeBuilder;
 
-			ec = new EmitContext (this, this, Location, null, null, ModFlags, false);
-
 			if (TypeManager.multicast_delegate_type == null && !RootContext.StdLib) {
 				Namespace system = RootNamespace.Global.GetNamespace ("System", true);
 				TypeExpr expr = system.Lookup (this, "MulticastDelegate", Location) as TypeExpr;
-				TypeManager.multicast_delegate_type = expr.ResolveType (ec);
+				TypeManager.multicast_delegate_type = expr.ResolveType (this);
 			}
 
 			if (TypeManager.multicast_delegate_type == null)
@@ -114,9 +112,6 @@ namespace Mono.CSharp {
 		{
 			MethodAttributes mattr;
 			int i;
-
-			if (ec == null)
-				throw new InternalErrorException ("Define called before DefineType?");
 
 			// FIXME: POSSIBLY make this static, as it is always constant
 			//
@@ -155,7 +150,7 @@ namespace Mono.CSharp {
 			// First, call the `out of band' special method for
 			// defining recursively any types we need:
 			
-			if (!Parameters.Resolve (ec))
+			if (!Parameters.Resolve (this))
 				return false;
 
 			//
@@ -171,11 +166,9 @@ namespace Mono.CSharp {
 						      "accessible than delegate `" + Name + "'");
 					return false;
 				}
-				if (partype.IsPointer && !UnsafeOK (Parent))
-					return false;
 			}
 			
-			ReturnType = ReturnType.ResolveAsTypeTerminal (ec, false);
+			ReturnType = ReturnType.ResolveAsTypeTerminal (this, false);
 			if (ReturnType == null)
 				return false;
                         
@@ -192,9 +185,6 @@ namespace Mono.CSharp {
 					      "accessible than delegate `" + Name + "'");
 				return false;
 			}
-
-			if (ret_type.IsPointer && !UnsafeOK (Parent))
-				return false;
 
 			if (RootContext.StdLib && (ret_type == TypeManager.arg_iterator_type || ret_type == TypeManager.typed_reference_type)) {
 				Method.Error1599 (Location, ret_type);
@@ -250,7 +240,7 @@ namespace Mono.CSharp {
 								       async_param_types);
 
 			i = Parameters.Count;
-			Parameters.ApplyAttributes (ec, BeginInvokeBuilder);
+			Parameters.ApplyAttributes (BeginInvokeBuilder);
 			BeginInvokeBuilder.DefineParameter (i + 1, ParameterAttributes.None, "callback");
 			BeginInvokeBuilder.DefineParameter (i + 2, ParameterAttributes.None, "object");
 			
@@ -267,8 +257,8 @@ namespace Mono.CSharp {
 								   Parameter.Modifier.NONE, null, Location);
 
 			Parameters async_parameters = new Parameters (async_params);
-			async_parameters.Resolve (ec);
-			async_parameters.ApplyAttributes (ec, BeginInvokeBuilder);
+			async_parameters.Resolve (this);
+			async_parameters.ApplyAttributes (BeginInvokeBuilder);
 
 			TypeManager.RegisterMethod (BeginInvokeBuilder, async_parameters);
 
@@ -310,7 +300,7 @@ namespace Mono.CSharp {
 			}
 
 			Parameters end_parameters = new Parameters (end_params);
-			end_parameters.Resolve (ec);
+			end_parameters.Resolve (this);
 
 			TypeManager.RegisterMethod (EndInvokeBuilder, end_parameters);
 
@@ -319,10 +309,10 @@ namespace Mono.CSharp {
 
 		public override void Emit ()
 		{
-			Parameters.ApplyAttributes (ec, InvokeBuilder);
+			Parameters.ApplyAttributes (InvokeBuilder);
 
 			if (OptAttributes != null) {
-				OptAttributes.Emit (ec, this);
+				OptAttributes.Emit ();
 			}
 
 			base.Emit ();
@@ -630,7 +620,7 @@ namespace Mono.CSharp {
 				method_desc = Invocation.FullMethodDesc (found_method);
 
 			Expression invoke_method = Expression.MemberLookup (
-				ec, type, "Invoke", MemberTypes.Method,
+				ec.ContainerType, type, "Invoke", MemberTypes.Method,
 				Expression.AllBindingFlags, loc);
 			MethodInfo method = ((MethodGroupExpr) invoke_method).Methods [0] as MethodInfo;
 
@@ -712,7 +702,7 @@ namespace Mono.CSharp {
 				}
 			} else {
 				md.SetMemberIsUsed ();
-				if (md.OptAttributes != null && md.OptAttributes.Search (TypeManager.conditional_attribute_type, ec) != null) {
+				if (md.OptAttributes != null && md.OptAttributes.Search (TypeManager.conditional_attribute_type) != null) {
 					Report.Error (1618, loc, "Cannot create delegate with `{0}' because it has a Conditional attribute", TypeManager.CSharpSignature (delegate_method));
 				}
 			}
@@ -815,7 +805,7 @@ namespace Mono.CSharp {
 			}
 
 			method_group = Expression.MemberLookup (
-				ec, type, "Invoke", MemberTypes.Method,
+				ec.ContainerType, type, "Invoke", MemberTypes.Method,
 				Expression.AllBindingFlags, loc) as MethodGroupExpr;
 
 			if (method_group == null) {
@@ -860,7 +850,7 @@ namespace Mono.CSharp {
 				EventInfo ei = ((EventExpr) InstanceExpr).EventInfo;
 				
 				Expression ml = MemberLookup (
-					ec, ec.ContainerType, ei.Name,
+					ec.ContainerType, ec.ContainerType, ei.Name,
 					MemberTypes.Event, AllBindingFlags | BindingFlags.DeclaredOnly, loc);
 
 				if (ml == null) {

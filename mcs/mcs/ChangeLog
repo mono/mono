@@ -1,3 +1,22 @@
+2006-02-11  Marek Safar  <marek.safar@seznam.cz>
+
+	First of prerequisites for new partial classs implemention.
+	
+	* attribute.cs (Attributable): Extended by ResolveContext;
+	Attributes finally have correct context for resolving in all cases.
+	(AttachTo): Attribute owner is assigned here.
+
+	* codegen.cs (IResolveContext): Introduce new interface to hold
+	all information needed in resolving phase.
+	(EmitContext): Implements IResolveContext; more clean-up needed here.
+	
+	* decl.cs (MemberCore): Implemented IResolveContext.
+
+	* anonymous.cs, attribute.cs, class.cs, codegen.cs, const.cs,
+	decl.cs, ecore.cs, enum.cs, expression.cs, iterators.cs, namespace.cs,
+	parameter.cs, statement.cs, tree.cs, typemanager.cs:
+	Refactored to use new IResolveContext instead of EmitContext; cleanup
+
 2006-02-06  Miguel de Icaza  <miguel@novell.com>
 
 	* codegen.cs (EmitScopeInitFromBlock): check here the

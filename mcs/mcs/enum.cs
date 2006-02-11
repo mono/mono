@@ -31,6 +31,9 @@ namespace Mono.CSharp {
 		Constant value;
 		bool in_transit;
 
+		// TODO: remove or simplify
+		EmitContext ec;
+
 		public EnumMember (Enum parent_enum, EnumMember prev_member, Expression expr,
 				MemberName name, Attributes attrs):
 			base (parent_enum, name, attrs)
@@ -39,6 +42,9 @@ namespace Mono.CSharp {
 			this.ModFlags = parent_enum.ModFlags;
 			this.ValueExpr = expr;
 			this.prev_member = prev_member;
+
+			ec = new EmitContext (this, parent_enum, parent_enum, Location, null, null, ModFlags, false);
+			ec.InEnumContext = true;
 		}
 
 		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
@@ -78,6 +84,7 @@ namespace Mono.CSharp {
 			const FieldAttributes attr = FieldAttributes.Public | FieldAttributes.Static | FieldAttributes.Literal;
 			TypeBuilder tb = parent_enum.TypeBuilder;
 			builder = tb.DefineField (Name, tb, attr);
+			ec.ContainerType = tb;
 
 			TypeManager.RegisterConstant (builder, this);
 			return true;
@@ -110,7 +117,7 @@ namespace Mono.CSharp {
 
 			if (ValueExpr != null) {
 				in_transit = true;
-				Constant c = ValueExpr.ResolveAsConstant (parent_enum.EmitContext, this);
+				Constant c = ValueExpr.ResolveAsConstant (ec, this);
 				in_transit = false;
 
 				if (c == null)
@@ -156,17 +163,16 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public bool Emit (EmitContext ec)
+		public override void Emit ()
 		{
 			if (OptAttributes != null)
-				OptAttributes.Emit (ec, this); 
+				OptAttributes.Emit (); 
 
 			if (!ResolveValue ())
-				return false;
+				return;
 
 			builder.SetConstant (value.GetValue ());
-			Emit ();
-			return true;
+			base.Emit ();
 		}
 
 		public override string GetSignatureForError()
@@ -243,16 +249,13 @@ namespace Mono.CSharp {
 			if (TypeBuilder != null)
 				return TypeBuilder;
 
-			ec = new EmitContext (this, this, Location, null, null, ModFlags, false);
-			ec.InEnumContext = true;
-
 			if (!(BaseType is TypeLookupExpression)) {
 				Report.Error (1008, Location,
 					"Type byte, sbyte, short, ushort, int, uint, long or ulong expected");
 				return null;
 			}
 
-			TypeExpr ute = ResolveBaseTypeExpr (BaseType, false, Location);
+			TypeExpr ute = ResolveBaseTypeExpr (BaseType);
 			UnderlyingType = ute.Type;
 
 			if (UnderlyingType != TypeManager.int32_type &&
@@ -282,8 +285,6 @@ namespace Mono.CSharp {
 					Basename, TypeAttr, TypeManager.enum_type);
 			}
 
-			ec.ContainerType = TypeBuilder;
-
 			//
 			// Call MapToInternalType for corlib
 			//
@@ -303,21 +304,17 @@ namespace Mono.CSharp {
 		
 		public override bool Define ()
 		{
-			if (GetObsoleteAttribute () != null || Parent.GetObsoleteAttribute () != null)
-				ec.TestObsoleteMethodUsage = false;
-
 			return true;
 		}
 
 		public override void Emit ()
 		{
 			if (OptAttributes != null) {
-				OptAttributes.Emit (ec, this);
+				OptAttributes.Emit ();
 			}
 
 			foreach (EnumMember em in defined_names.Values) {
-				if (!em.Emit (ec))
-					return;
+				em.Emit ();
 			}
 
 			base.Emit ();
@@ -344,7 +341,7 @@ namespace Mono.CSharp {
   		{
 			HybridDictionary dict = new HybridDictionary (defined_names.Count, true);
 			foreach (EnumMember em in defined_names.Values) {
-				if (!em.IsClsComplianceRequired (this))
+				if (!em.IsClsComplianceRequired ())
 					continue;
 
 				try {

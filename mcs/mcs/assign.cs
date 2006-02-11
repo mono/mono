@@ -378,7 +378,7 @@ namespace Mono.CSharp {
 				EventInfo ei = ((EventExpr) target).EventInfo;
 
 				Expression ml = MemberLookup (
-					ec, ec.ContainerType, ei.Name,
+					ec.ContainerType, ec.ContainerType, ei.Name,
 					MemberTypes.Event, AllBindingFlags | BindingFlags.DeclaredOnly, loc);
 
 				if (ml == null) {
@@ -408,7 +408,7 @@ namespace Mono.CSharp {
 			}
 
 			if ((source.eclass == ExprClass.Type) && (source is TypeExpr)) {
-				source.Error_UnexpectedKind (ec, "variable or value", loc);
+				source.Error_UnexpectedKind (ec.DeclContainer, "variable or value", loc);
 				return null;
 			} else if ((RootContext.Version == LanguageVersion.ISO_1) &&
 				   (source is MethodGroupExpr)){

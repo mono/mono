@@ -358,8 +358,8 @@ namespace Mono.CSharp {
 			//ILGenerator ig = builder.GetILGenerator ();
 
 			
-			aec = new EmitContext (
-				ec.TypeContainer, ec.DeclSpace, loc, null,
+			aec = new EmitContext (ec.ResolveContext,
+				ec.TypeContainer, ec.DeclContainer, loc, null,
 				invoke_mb.ReturnType,
 				/* REVIEW */ (ec.InIterator ? Modifiers.METHOD_YIELDS : 0) |
 				(ec.InUnsafe ? Modifiers.UNSAFE : 0) |
@@ -402,7 +402,7 @@ namespace Mono.CSharp {
 			ILGenerator ig = builder.GetILGenerator ();
 			aec.ig = ig;
 			
-			Parameters.ApplyAttributes (aec, builder);
+			Parameters.ApplyAttributes (builder);
 
 			//
 			// Adjust based on the computed state of the

@@ -210,7 +210,7 @@ namespace Mono.CSharp {
 	///   Base representation for members.  This is used to keep track
 	///   of Name, Location and Modifier flags, and handling Attributes.
 	/// </summary>
-	public abstract class MemberCore : Attributable {
+	public abstract class MemberCore : Attributable, IResolveContext {
 		/// <summary>
 		///   Public name
 		/// </summary>
@@ -318,14 +318,6 @@ namespace Mono.CSharp {
 			VerifyClsCompliance (Parent);
 		}
 
-		public virtual EmitContext EmitContext {
-			get { return Parent.EmitContext; }
-		}
-
-		public bool InUnsafe {
-			get { return ((ModFlags & Modifiers.UNSAFE) != 0) || Parent.UnsafeContext; }
-		}
-
 		public virtual bool IsUsed {
 			get { return (caching_flags & Flags.IsUsed) != 0; }
 		}
@@ -333,24 +325,6 @@ namespace Mono.CSharp {
 		public void SetMemberIsUsed ()
 		{
 			caching_flags |= Flags.IsUsed;
-		}
-
-		// 
-		// Whehter is it ok to use an unsafe pointer in this type container
-		//
-		public bool UnsafeOK (DeclSpace parent)
-		{
-			//
-			// First check if this MemberCore modifier flags has unsafe set
-			//
-			if ((ModFlags & Modifiers.UNSAFE) != 0)
-				return true;
-
-			if (parent.UnsafeContext)
-				return true;
-
-			Expression.UnsafeError (Location);
-			return false;
 		}
 
 		/// <summary>
@@ -369,11 +343,11 @@ namespace Mono.CSharp {
 				return null;
 
 			Attribute obsolete_attr = OptAttributes.Search (
-				TypeManager.obsolete_attribute_type, EmitContext);
+				TypeManager.obsolete_attribute_type);
 			if (obsolete_attr == null)
 				return null;
 
-			ObsoleteAttribute obsolete = obsolete_attr.GetObsoleteAttribute (EmitContext);
+			ObsoleteAttribute obsolete = obsolete_attr.GetObsoleteAttribute ();
 			if (obsolete == null)
 				return null;
 
@@ -412,12 +386,12 @@ namespace Mono.CSharp {
 		/// <summary>
 		/// Analyze whether CLS-Compliant verification must be execute for this MemberCore.
 		/// </summary>
-		public override bool IsClsComplianceRequired (DeclSpace container)
+		public override bool IsClsComplianceRequired ()
 		{
 			if ((caching_flags & Flags.ClsCompliance_Undetected) == 0)
 				return (caching_flags & Flags.ClsCompliant) != 0;
 
-			if (GetClsCompliantAttributeValue (container) && IsExposedFromAssembly (container)) {
+			if (GetClsCompliantAttributeValue (Parent) && IsExposedFromAssembly (Parent)) {
 				caching_flags &= ~Flags.ClsCompliance_Undetected;
 				caching_flags |= Flags.ClsCompliant;
 				return true;
@@ -451,10 +425,10 @@ namespace Mono.CSharp {
 		{
 			if (OptAttributes != null) {
 				Attribute cls_attribute = OptAttributes.Search (
-					TypeManager.cls_compliant_attribute_type, ds.EmitContext);
+					TypeManager.cls_compliant_attribute_type);
 				if (cls_attribute != null) {
 					caching_flags |= Flags.HasClsCompliantAttribute;
-					return cls_attribute.GetClsCompliantAttributeValue (ds.EmitContext);
+					return cls_attribute.GetClsCompliantAttributeValue ();
 				}
 			}
 			return ds.GetClsCompliantAttributeValue ();
@@ -485,7 +459,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		protected virtual bool VerifyClsCompliance (DeclSpace ds)
 		{
-			if (!IsClsComplianceRequired (ds)) {
+			if (!IsClsComplianceRequired ()) {
 				if (HasClsCompliantAttribute && RootContext.WarningLevel >= 2) {
 					if (!IsExposedFromAssembly (ds))
 						Report.Warning (3019, 2, Location, "CLS compliance checking will not be performed on `{0}' because it is not visible from outside this assembly", GetSignatureForError ());
@@ -538,6 +512,40 @@ namespace Mono.CSharp {
 		{
 			DocUtil.GenerateDocComment (this, ds);
 		}
+
+		public override IResolveContext ResolveContext {
+			get {
+				return this;
+			}
+		}
+
+		#region IResolveContext Members
+
+		public virtual DeclSpace DeclContainer {
+			get {
+				return Parent;
+			}
+		}
+
+		public bool IsInObsoleteScope {
+			get {
+				if (GetObsoleteAttribute () != null)
+					return true;
+
+				return Parent == null ? false : Parent.IsInObsoleteScope;
+			}
+		}
+
+		public bool IsInUnsafeScope {
+			get {
+				if ((ModFlags & Modifiers.UNSAFE) != 0)
+					return true;
+
+				return Parent == null ? false : Parent.IsInUnsafeScope;
+			}
+		}
+
+		#endregion
 	}
 
 	/// <summary>
@@ -549,6 +557,7 @@ namespace Mono.CSharp {
 	///   spaces.
 	/// </remarks>
 	public abstract class DeclSpace : MemberCore {
+
 		/// <summary>
 		///   This points to the actual definition that is being
 		///   created with System.Reflection.Emit
@@ -567,13 +576,6 @@ namespace Mono.CSharp {
 		
 		protected Hashtable defined_names;
 
-		// The emit context for toplevel objects.
-		protected EmitContext ec;
-		
-		public override EmitContext EmitContext {
-			get { return ec; }
-		}
-
 		static string[] attribute_targets = new string [] { "type" };
 
 		public DeclSpace (NamespaceEntry ns, DeclSpace parent, MemberName name,
@@ -583,6 +585,12 @@ namespace Mono.CSharp {
 			NamespaceEntry = ns;
 			Basename = name.Name;
 			defined_names = new Hashtable ();
+		}
+
+		public override DeclSpace DeclContainer {
+			get {
+				return this;
+			}
 		}
 
 		/// <summary>
@@ -693,44 +701,13 @@ namespace Mono.CSharp {
 			return Name;
 		}
 
-		//
-		// Whether this is an `unsafe context'
-		//
-		public bool UnsafeContext {
-			get {
-				if ((ModFlags & Modifiers.UNSAFE) != 0)
-					return true;
-				if (Parent != null)
-					return Parent.UnsafeContext;
-				return false;
-			}
-		}
-
-		EmitContext type_resolve_ec;
-		protected EmitContext TypeResolveEmitContext {
-			get {
-				if (type_resolve_ec == null) {
-					// FIXME: I think this should really be one of:
-					//
-					// a. type_resolve_ec = Parent.EmitContext;
-					// b. type_resolve_ec = new EmitContext (Parent, Parent, loc, null, null, ModFlags, false);
-					//
-					// However, if Parent == RootContext.Tree.Types, its NamespaceEntry will be null.
-					//
-					type_resolve_ec = new EmitContext (Parent, this, Location.Null, null, null, ModFlags, false);
-				}
-				return type_resolve_ec;
-			}
-		}
-
 		// <summary>
 		//    Resolves the expression `e' for a type, and will recursively define
 		//    types.  This should only be used for resolving base types.
 		// </summary>
-		public TypeExpr ResolveBaseTypeExpr (Expression e, bool silent, Location loc)
+		public TypeExpr ResolveBaseTypeExpr (Expression e)
 		{
-			TypeResolveEmitContext.loc = loc;
-			return e.ResolveAsTypeTerminal (TypeResolveEmitContext, silent);
+			return e.ResolveAsTypeTerminal (this, false);
 		}
 		
 		public bool CheckAccessLevel (Type check_type)
@@ -1006,10 +983,10 @@ namespace Mono.CSharp {
 			caching_flags &= ~Flags.HasCompliantAttribute_Undetected;
 
 			if (OptAttributes != null) {
-				Attribute cls_attribute = OptAttributes.Search (TypeManager.cls_compliant_attribute_type, ec);
+				Attribute cls_attribute = OptAttributes.Search (TypeManager.cls_compliant_attribute_type);
 				if (cls_attribute != null) {
 					caching_flags |= Flags.HasClsCompliantAttribute;
-					if (cls_attribute.GetClsCompliantAttributeValue (ec)) {
+					if (cls_attribute.GetClsCompliantAttributeValue ()) {
 						caching_flags |= Flags.ClsCompliantAttributeTrue;
 						return true;
 					}
@@ -2030,7 +2007,7 @@ namespace Mono.CSharp {
 
 				// TODO: now we are ignoring CLSCompliance(false) on method from other assembly which is buggy.
 				// However it is exactly what csc does.
-				if (md != null && !md.IsClsComplianceRequired (method.Parent))
+				if (md != null && !md.IsClsComplianceRequired ())
 					continue;
  		
  				Report.SymbolRelatedToPreviousError (entry.Member);
