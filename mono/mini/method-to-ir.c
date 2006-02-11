@@ -8650,6 +8650,10 @@ mono_load_membase_to_load_mem (int opcode)
 		return OP_LOADI4_MEM;
 	case OP_LOADU4_MEMBASE:
 		return OP_LOADU4_MEM;
+#if SIZEOF_VOID_P == 8
+	case OP_LOADI8_MEMBASE:
+		return OP_LOADI8_MEM;
+#endif
 	}
 
 	return -1;

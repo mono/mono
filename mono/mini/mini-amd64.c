@@ -2574,9 +2574,39 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case CEE_LDIND_U4:
 			amd64_mov_reg_mem (code, ins->dreg, (gssize)ins->inst_p0, 4);
 			break;
+		case OP_LOAD_MEM:
+		case OP_LOADI8_MEM:
+			if (amd64_is_imm32 (ins->inst_imm))
+				amd64_mov_reg_mem (code, ins->dreg, ins->inst_imm, sizeof (gpointer));
+			else {
+				amd64_mov_reg_imm (code, ins->dreg, ins->inst_imm);
+				amd64_mov_reg_membase (code, ins->dreg, ins->dreg, 0, 8);
+			}
+			break;
+		case OP_LOADI4_MEM:
+			amd64_mov_reg_imm (code, ins->dreg, ins->inst_imm);
+			amd64_movsxd_reg_membase (code, ins->dreg, ins->dreg, 0);
+			break;
 		case OP_LOADU4_MEM:
-			amd64_mov_reg_imm (code, ins->dreg, ins->inst_p0);
-			amd64_mov_reg_membase (code, ins->dreg, ins->dreg, 0, 4);
+			if (cfg->new_ir) {
+				if (amd64_is_imm32 (ins->inst_imm))
+					amd64_mov_reg_mem (code, ins->dreg, ins->inst_imm, 4);
+				else {
+					amd64_mov_reg_imm (code, ins->dreg, ins->inst_imm);
+					amd64_mov_reg_membase (code, ins->dreg, ins->dreg, 0, 4);
+				}
+			} else {
+				amd64_mov_reg_imm (code, ins->dreg, ins->inst_p0);
+				amd64_mov_reg_membase (code, ins->dreg, ins->dreg, 0, 4);
+			}
+			break;
+		case OP_LOADU1_MEM:
+			amd64_mov_reg_imm (code, ins->dreg, ins->inst_imm);
+			amd64_widen_membase (code, ins->dreg, ins->dreg, 0, FALSE, FALSE);
+			break;
+		case OP_LOADU2_MEM:
+			amd64_mov_reg_imm (code, ins->dreg, ins->inst_imm);
+			amd64_widen_membase (code, ins->dreg, ins->dreg, 0, FALSE, TRUE);
 			break;
 		case OP_LOAD_MEMBASE:
 		case OP_LOADI8_MEMBASE:
@@ -3315,6 +3345,23 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			code = mono_emit_stack_alloc (code, ins);
 			amd64_mov_reg_reg (code, ins->dreg, AMD64_RSP, 8);
 			break;
+		case OP_LOCALLOC_IMM: {
+			guint32 size = ins->inst_imm;
+			size = (size + (MONO_ARCH_FRAME_ALIGNMENT - 1)) & ~ (MONO_ARCH_FRAME_ALIGNMENT - 1);
+
+			if (ins->flags & MONO_INST_INIT) {
+				/* FIXME: Optimize this */
+				amd64_mov_reg_imm (code, ins->dreg, size);
+				ins->sreg1 = ins->dreg;
+
+				code = mono_emit_stack_alloc (code, ins);
+				amd64_mov_reg_reg (code, ins->dreg, AMD64_RSP, 8);
+			} else {
+				amd64_alu_reg_imm (code, X86_SUB, AMD64_RSP, size);
+				amd64_mov_reg_reg (code, ins->dreg, AMD64_RSP, 8);
+			}
+			break;
+		}
 		case CEE_RET:
 			amd64_ret (code);
 			break;

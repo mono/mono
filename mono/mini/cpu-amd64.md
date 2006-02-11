@@ -189,6 +189,7 @@ cgt.un: dest:c len:8
 clt: dest:c len:8
 clt.un: dest:c len:8
 localloc: dest:i src1:i len:84
+localloc_imm: dest:i len:84
 compare: src1:i src2:i len:3
 lcompare: src1:i src2:i len:3
 icompare: src1:i src2:i len:3
@@ -245,7 +246,12 @@ loadi8_membase: dest:i src1:b len:18
 loadr4_membase: dest:f src1:b len:16
 loadr8_membase: dest:f src1:b len:16
 loadr8_spill_membase: src1:b len:9
+load_mem: dest:i len:10
+loadi8_mem: dest:i len:10
+loadi4_mem: dest:i len:10
 loadu4_mem: dest:i len:10
+loadu1_mem: dest:i len:10
+loadu2_mem: dest:i len:10
 amd64_loadi8_memindex: dest:i src1:i src2:i len:10
 move: dest:i src1:i len:4
 add_imm: dest:i src1:i len:8 clob:1
