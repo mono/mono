@@ -1,5 +1,9 @@
 2006-02-11  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-exceptions.c mini-x86.h mini-x86.c: Get rid of 
+	MONO_INIT_CONTEXT_FROM_CALLER, and use MONO_INIT_CONTEXT_FROM_FUNC
+	instead.
+
 	* generics.2.cs: Revert the nullable reftypes tests.
 
 2006-02-10  Zoltan Varga  <vargaz@gmail.com>
