@@ -1,5 +1,8 @@
 2006-02-11  Zoltan Varga  <vargaz@gmail.com>
 
+	* console-io.c (ves_icall_System_ConsoleDriver_GetTtySize): New icall
+	to obtain the terminal size using an ioctl.
+
 	* object.c (mono_nullable_init): Revert this as nullable reference
 	types are not valid.
 	(mono_nullable_box): Ditto.
