@@ -8,6 +8,14 @@ public enum Error {
 	EANOTHER = ERANGE,
 }
 
+public enum Error_2 {
+	[Obsolete ("Use A", true)]
+	ERANGE,
+	[Obsolete ("Use B", true)]
+	EANOTHER = ERANGE,
+}
+
+
 [Obsolete ("Use Native.SignalHandler", true)]
 public delegate void SignalHandler (int signal);
 
