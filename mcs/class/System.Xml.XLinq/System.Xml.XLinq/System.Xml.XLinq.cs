@@ -607,8 +607,7 @@ namespace System.Xml.XLinq
 		public static XDocument Load (string uri, bool preserveWhitespaces)
 		{
 			XmlReaderSettings s = new XmlReaderSettings ();
-			// FIXME: finish System.Xml 2.0
-//			s.IgnoreWhitespaces = !preserveWhitespaces;
+			s.IgnoreWhitespace = !preserveWhitespaces;
 			using (XmlReader r = XmlReader.Create (uri, s)) {
 				return Load (r);
 			}
@@ -622,10 +621,8 @@ namespace System.Xml.XLinq
 		public static XDocument Load (TextReader reader, bool preserveWhitespaces)
 		{
 			XmlReaderSettings s = new XmlReaderSettings ();
-			// FIXME: finish System.Xml 2.0
-//			s.IgnoreWhitespaces = !preserveWhitespaces;
-//			using (XmlReader r = XmlReader.Create (reader, s)) {
-			using (XmlReader r = XmlReader.Create (reader)) {
+			s.IgnoreWhitespace = !preserveWhitespaces;
+			using (XmlReader r = XmlReader.Create (reader, s)) {
 				return Load (r);
 			}
 		}
@@ -888,8 +885,7 @@ namespace System.Xml.XLinq
 		public static XElement Load (string uri, bool preserveWhitespaces)
 		{
 			XmlReaderSettings s = new XmlReaderSettings ();
-			// FIXME: finish System.Xml 2.0
-//			s.IgnoreWhitespaces = !preserveWhitespaces;
+			s.IgnoreWhitespace = !preserveWhitespaces;
 			using (XmlReader r = XmlReader.Create (uri, s)) {
 				return Load (r);
 			}
@@ -903,10 +899,8 @@ namespace System.Xml.XLinq
 		public static XElement Load (TextReader tr, bool preserveWhitespaces)
 		{
 			XmlReaderSettings s = new XmlReaderSettings ();
-			// FIXME: finish System.Xml 2.0
-//			s.IgnoreWhitespaces = !preserveWhitespaces;
-//			using (XmlReader r = XmlReader.Create (tr, s)) {
-			using (XmlReader r = XmlReader.Create (tr)) {
+			s.IgnoreWhitespace = !preserveWhitespaces;
+			using (XmlReader r = XmlReader.Create (tr, s)) {
 				return Load (r);
 			}
 		}

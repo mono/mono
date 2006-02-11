@@ -29,9 +29,17 @@ namespace System.Xml.XLinq
 			foreach (object o in source) {
 				if (! (o is T))
 					continue;
-				if (name != null && (! (o is XElement) || ((XElement) o).Name != name))
-					continue;
-				yield return o as T;
+				if (name != null) {
+					if (o is XElement) {
+						if (((XElement) o).Name != name)
+							continue;
+					}
+					else if (o is XAttribute) {
+						if (((XAttribute) o).Name != name)
+							continue;
+					}
+				}
+				yield return (T) o;
 			}
 		}
 

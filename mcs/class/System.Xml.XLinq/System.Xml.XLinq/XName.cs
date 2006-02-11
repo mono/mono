@@ -89,14 +89,17 @@ namespace System.Xml.XLinq
 
 		public static bool operator == (XName n1, XName n2)
 		{
-			return (object) n1 == null && (object) n2 == null ||
-				object.ReferenceEquals (n1, n2) ||
+			if ((object) n1 == null)
+				return (object) n2 == null;
+			else if ((object) n2 == null)
+				return false;
+			return object.ReferenceEquals (n1, n2) ||
 				n1.local == n2.local && n1.ns == n2.ns;
 		}
 
 		public static implicit operator XName (string s)
 		{
-			return Get (s);
+			return s == null ? null : Get (s);
 		}
 
 		public static bool operator != (XName n1, XName n2)

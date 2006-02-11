@@ -3,34 +3,43 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace System.Xml.XLinq
 {
-	// [ExtensionAttribute]
+	[ExtensionAttribute]
 	public static class XElementSequence
 	{
-		// [ExtensionAttribute]
+		[ExtensionAttribute]
 		public static IEnumerable <XElement> Ancestors (IEnumerable <XElement> source)
 		{
-			throw new NotImplementedException ();
+			foreach (XElement item in source)
+				foreach (XElement elem in item.Ancestors ())
+					yield return elem;
 		}
 
-		// [ExtensionAttribute]
+		[ExtensionAttribute]
 		public static IEnumerable <XElement> Ancestors (IEnumerable <XElement> source, XName name)
 		{
-			throw new NotImplementedException ();
+			foreach (XElement item in source)
+				foreach (XElement elem in item.Ancestors (name))
+					yield return elem;
 		}
 
-		// [ExtensionAttribute]
-		public static IEnumerable <XAttribute> Attributes (IEnumerable <XAttribute> source)
+		[ExtensionAttribute]
+		public static IEnumerable <XAttribute> Attributes (IEnumerable <XElement> source)
 		{
-			throw new NotImplementedException ();
+			foreach (XElement item in source)
+				foreach (XAttribute attr in item.Attributes ())
+					yield return attr;
 		}
 
-		// [ExtensionAttribute]
-		public static IEnumerable <XAttribute> Attributes (IEnumerable <XAttribute> source, XName name)
+		[ExtensionAttribute]
+		public static IEnumerable <XAttribute> Attributes (IEnumerable <XElement> source, XName name)
 		{
-			throw new NotImplementedException ();
+			foreach (XElement item in source)
+				foreach (XAttribute attr in item.Attributes (name))
+					yield return attr;
 		}
 	}
 }

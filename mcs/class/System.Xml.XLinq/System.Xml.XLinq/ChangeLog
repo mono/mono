@@ -1,3 +1,10 @@
+2006-02-11  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XElementSequence.cs : implemented (not sure if it works).
+	* XName.cs : strict null comparison.
+	* XIterators.cs : (XFilterIterator) check attribute XName as well.
+	* System.Xml.XLinq.cs : solved FIXMEs.
+
 2005-09-20  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XAttribute.cs, XIterators.cs, XName.cs, XElementSequence.cs,
