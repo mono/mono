@@ -1,3 +1,58 @@
+2006-02-10  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* CodeExporter.cs: Set eol-style to native.
+	* CodeGenerationOptions.cs: Same.
+	* CodeIdentifier.cs: Same.
+	* ImportContext.cs: Same.
+	* IXmlSerializable.cs: Same.
+	* IXmlSerializerImplementation.cs: Same.
+	* IXmlTextParser.cs: Same.
+	* MapCodeGenerator.cs: Same.
+	* ReflectionHelper.cs: Same. Fixed line endings.
+	* SchemaImporter.cs: Same.
+	* SchemaImporterExtensionCollection.cs: Same.
+	* SchemaImporterExtension.cs: Same.
+	* SchemaTypes.cs: Same.
+	* SerializationCodeGeneratorConfiguration.cs: Same.
+	* SerializationCodeGenerator.cs: Same.
+	* SerializationSource.cs: Same.
+	* SoapReflectionImporter.cs: Same.
+	* SoapSchemaExporter.cs: Same.
+	* TypeData.cs: Same.
+	* TypeTranslator.cs: Same.
+	* UnreferencedObjectEventHandler.cs: Same.
+	* XmlAnyElementAttribute.cs: Same.
+	* XmlArrayItemAttribute.cs: Same.
+	* XmlAttributeEventHandler.cs: Same.
+	* XmlAttributeOverrides.cs: Same.
+	* XmlAttributes.cs: Same.
+	* XmlDeserializationEvents.cs: Same.
+	* XmlElementEventHandler.cs: Same.
+	* XmlIncludeAttribute.cs: Same.
+	* XmlMapping.cs: Same.
+	* XmlMemberMapping.cs: Same.
+	* XmlMembersMapping.cs: Same.
+	* XmlNodeEventHandler.cs: Same.
+	* XmlReflectionImporter.cs: Same.
+	* XmlSchemaExporter.cs: Same.
+	* XmlSchemaProviderAttribute.cs: Same.
+	* XmlSerializationCollectionFixupCallback.cs: Same.
+	* XmlSerialiationFixupCallback.cs: Same.
+	* XmlSerializationGeneratedCode.cs: Same.
+	* XmlSerializationReadCallback.cs: Same.
+	* XmlSerializationReader.cs: Same.
+	* XmlSerializationReaderInterpreter.cs: Same.
+	* XmlSerializationWriteCallback.cs: Same.
+	* XmlSerializationWriterInterpreter.cs: Same.
+	* XmlSerializerAssemblyAttribute.cs: Same.
+	* XmlSerializer.cs: Same.
+	* XmlSerializerFactory.cs: Same.
+	* XmlSerializerVersionAttribute.cs: Same.
+	* XmlTypeMapElementInfo.cs: Same.
+	* XmlTypeMapMemberAttribute.cs: Same.
+	* XmlTypeMapMember.cs: Same.
+	* XmlTypeMapMemberNamespaces.cs: Same.
+
 2006-02-09  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* XmlTypeMapping.cs: Modified GetRealTypeMap to return current map
