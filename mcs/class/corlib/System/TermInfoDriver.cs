@@ -549,15 +549,17 @@ namespace System {
 		ConsoleKeyInfo CreateKeyInfoFromInt (int n)
 		{
 			char c = (char) n;
-			ConsoleKey key = (ConsoleKey) n;
+			ConsoleKey key = (ConsoleKey)n;
 			bool shift = false;
 			bool ctrl = false;
 			bool alt = false;
 
 			if (n == 10) {
 				key = ConsoleKey.Enter;
-			} else if (n >= 1 && n <= 26 && !(n == 8 || n == 9 || n == 12 || n == 13 || n == 19)) {
-				// For Ctrl-a to Ctrl-z. Exception: those values in ConsoleKey
+			} else if (n == 8 || n == 9 || n == 12 || n == 13 || n == 19) {
+				/* Values in ConsoleKey */
+			} else if (n >= 1 && n <= 26) {
+				// For Ctrl-a to Ctrl-z.
 				ctrl = true;
 				key = ConsoleKey.A + n - 1;
 			} else if (n == 27) {

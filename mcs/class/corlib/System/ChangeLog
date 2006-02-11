@@ -1,5 +1,8 @@
 2006-02-11  Zoltan Varga  <vargaz@gmail.com>
 
+	* TermInfoDriver.cs (CreateKeyInfoFromInt): Fix handling of tab and its
+	friends.
+	
 	* TermInfoDriver.cs (GetWindowDimensions): Obtain the exact terminal
 	size using an icall.
 	(GetCursorPosition): Convert the row and column to 0 based indexing. 
