@@ -2373,8 +2373,8 @@ namespace System.Windows.Forms {
 
 			uint mask = foreground ^ background; 
 
-			XSetForeground(DisplayHandle, gc, (IntPtr)0xffffffff);
-			XSetBackground(DisplayHandle, gc, (IntPtr)background);
+			XSetForeground(DisplayHandle, gc, (UIntPtr)0xffffffff);
+			XSetBackground(DisplayHandle, gc, (UIntPtr)background);
 			XSetFunction(DisplayHandle,   gc, GXFunction.GXxor);
 			XSetPlaneMask(DisplayHandle,  gc, (IntPtr)mask);
 
@@ -4364,10 +4364,10 @@ namespace System.Windows.Forms {
 		internal extern static int XSetPlaneMask(IntPtr display, IntPtr gc, IntPtr mask);
 
 		[DllImport ("libX11", EntryPoint="XSetForeground")]
-		internal extern static int XSetForeground(IntPtr display, IntPtr gc, IntPtr foreground);
+		internal extern static int XSetForeground(IntPtr display, IntPtr gc, UIntPtr foreground);
 
 		[DllImport ("libX11", EntryPoint="XSetBackground")]
-		internal extern static int XSetBackground(IntPtr display, IntPtr gc, IntPtr background);
+		internal extern static int XSetBackground(IntPtr display, IntPtr gc, UIntPtr background);
 
 		[DllImport ("libX11", EntryPoint="XBell")]
 		internal extern static int XBell(IntPtr display, int percent);
