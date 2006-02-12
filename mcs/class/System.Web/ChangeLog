@@ -1,3 +1,7 @@
+2006-02-12 Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* System.Web.vmwcsproj: grasshopper project file fix
+
 2006-02-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* System.Web.dll.sources: add new files.
