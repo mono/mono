@@ -1,6 +1,6 @@
 2006-02-11  Marek Safar  <marek.safar@seznam.cz>
 
-	A fix for #76957
+	A fix for #77485
 
 	* class.cs (TypeContainer.DefineType): Cannot use ResolveType because it
 	contains obsolete attribute check which can in some cases look for base
