@@ -1,3 +1,8 @@
+2006-02-12  Cesar Lopez Nataren  <cnataren@novell.com>
+
+	* System.Web.dll.sources: Added XhtmlTextWriter.
+	* System.Web_test.dll.sources: Added System.Web.UI/XhtmlTextWriterTest.cs.
+
 2006-02-12 Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* System.Web.vmwcsproj: grasshopper project file fix

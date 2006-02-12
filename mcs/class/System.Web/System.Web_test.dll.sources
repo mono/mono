@@ -79,6 +79,7 @@ System.Web.UI/PropertyConverterTest.cs
 System.Web.UI/StateBagTest.cs
 System.Web.UI/TestUrlPropertyAttribute.cs
 System.Web.UI/ToolboxDataAttributeTest.cs
+System.Web.UI/XhtmlTextWriterTest.cs
 System.Web.UI.WebControls/AdCreatedEventArgsTest.cs
 System.Web.UI.WebControls/BaseCompareValidatorTest.cs
 System.Web.UI.WebControls/BaseDataBoundControlTest.cs

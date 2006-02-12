@@ -1040,6 +1040,7 @@ System.Web.UI/WebHandlerParser.cs
 System.Web.UI/WebResourceAttribute.cs
 System.Web.UI/WebServiceParser.cs
 System.Web.UI/XhtmlMobileDocType.cs
+System.Web.UI/XhtmlTextWriter.cs
 System.Web.UI/XPathBinder.cs
 System.Web.Util/AltSerialization.cs
 System.Web.Util/DataSourceHelper.cs
