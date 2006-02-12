@@ -1,3 +1,7 @@
+2006-02-12  Cesar Lopez Nataren  <cnataren@novell.com>
+
+	* HtmlTextWriterTest.cs: Added test for WriteBreak.
+
 2006-01-18 Konstantin Triger <kostat@mainsoft.com>
 
 	* HtmlTextWriterTest.cs: Added tests enduring case insensitivity of

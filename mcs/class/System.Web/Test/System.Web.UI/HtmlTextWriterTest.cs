@@ -352,6 +352,15 @@ namespace MonoTests.System.Web.UI {
 
 			Assert.AreEqual ("<div>\n\n</div>", sw.ToString ());
 		}
+
+#if NET_2_0
+		[Test]
+		public void WriteBreakTest ()
+		{
+			w.WriteBreak ();
+			Assertion.AssertEquals ("WriteBreakTest01", "<br />", sw.ToString ());
+		}
+#endif
 		
 		class MyHttpTextWriter : HtmlTextWriter {
 			int i = 0;
