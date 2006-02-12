@@ -333,7 +333,7 @@ namespace System.Web.UI {
 			if (! newline)
 				return;
 			newline = false;
-			
+
 			for (int i = 0; i < Indent; i ++)
 				b.Write (tab_string);
 		}
@@ -1113,5 +1113,20 @@ namespace System.Web.UI {
 			new HtmlStyle (HtmlTextWriterStyle.ZIndex,             "z-index"),
 #endif
 		};
+
+#if NET_2_0
+		public virtual bool IsValidFormAttribute (string attribute)
+		{
+			return true;
+		}
+
+		// writes <br />
+		public virtual void WriteBreak ()
+		{
+			string br = GetTagName (HtmlTextWriterTag.Br);
+			WriteBeginTag (br);
+			Write (SelfClosingTagEnd);
+		}
+#endif
 	}
 }
