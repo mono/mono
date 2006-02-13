@@ -6893,6 +6893,36 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				ip += 5;
 				break;
 			}
+
+			if (ip + 5 < end && ip_in_bb (cfg, bblock, ip + 5) && (ip [5] == CEE_BRTRUE || ip [5] == CEE_BRTRUE_S)) {
+				/*g_print ("box-brtrue opt at 0x%04x in %s\n", real_offset, method->name);*/
+				ip += 5;
+				MONO_INST_NEW (cfg, ins, OP_BR);
+				ins->cil_code = ip;
+				if (*ip == CEE_BRTRUE_S) {
+					CHECK_OPSIZE (2);
+					ip++;
+					target = ip + 1 + (signed char)(*ip);
+					ip++;
+				} else {
+					CHECK_OPSIZE (5);
+					ip++;
+					target = ip + 4 + (gint)(read32 (ip));
+					ip += 4;
+				}
+				GET_BBLOCK (cfg, bbhash, tblock, target);
+				link_bblock (cfg, bblock, tblock);
+				CHECK_BBLOCK (target, ip, tblock);
+				ins->inst_target_bb = tblock;
+				if (sp != stack_start) {
+					handle_stack_args (cfg, stack_start, sp - stack_start);
+					sp = stack_start;
+				}
+				MONO_ADD_INS (bblock, ins);
+				start_new_bblock = 1;
+				break;
+			}
+
 			*sp++ = handle_box (cfg, val, ip, klass);
 			ip += 5;
 			inline_costs += 1;
@@ -9194,7 +9224,6 @@ mono_spill_global_vars (MonoCompile *cfg)
  * - spill_global_vars does not play nicely with the fp stack (loads are inserted at
  *   the wrong place).
  * - get rid of redundant loads and stores inserted by spill_global_vars.
- * - add 'frequent check in generic code: box (struct), brtrue'
  * - add 'introduce a new optimization to simplify some range checks'
  * - fix LNEG and enable cfold of INEG
  * - generalize x86 optimizations like ldelema as a peephole optimization

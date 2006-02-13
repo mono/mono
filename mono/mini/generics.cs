@@ -146,6 +146,24 @@ class Tests {
 		return t.toString ("1234") == "1234" ? 0 : 1;
 	}
 
+	public static int test_0_box_brtrue_optimizations () {
+		if (IsNull<int>(5))
+			return 1;
+
+		if (!IsNull<object>(null))
+			return 1;
+
+		return 0;
+	}
+
+	static bool IsNull<T> (T t)
+	{
+		if (t == null)
+			return true;
+		else
+			return false;
+	}
+
 	static object Box<T> (T t)
 	{
 		return t;
