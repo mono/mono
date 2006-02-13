@@ -513,7 +513,15 @@ namespace System.Data.Common {
 				string tableName =  SetupSchema (schemaType, dataTable.TableName);
 				if (tableName != null)
 				{
-					BuildSchema (reader, dataTable, schemaType);
+					// FillSchema should add the KeyInfo unless MissingSchemaAction
+					// is set to Ignore or Error.
+					MissingSchemaAction schemaAction = MissingSchemaAction;
+					if (!(schemaAction == MissingSchemaAction.Ignore ||
+						schemaAction == MissingSchemaAction.Error))
+						schemaAction = MissingSchemaAction.AddWithKey;
+
+					BuildSchema (reader, dataTable, schemaType, schemaAction,
+						MissingMappingAction, TableMappings);
 				}
 			}
 			finally
@@ -542,6 +550,13 @@ namespace System.Data.Common {
 			DataTable table;
 			try
 			{
+				// FillSchema should add the KeyInfo unless MissingSchemaAction
+				// is set to Ignore or Error.
+				MissingSchemaAction schemaAction = MissingSchemaAction;
+				if (!(MissingSchemaAction == MissingSchemaAction.Ignore ||
+					MissingSchemaAction == MissingSchemaAction.Error))
+					schemaAction = MissingSchemaAction.AddWithKey;
+
 				do {
 					tableName = SetupSchema (schemaType, tableName);
 					if (tableName != null)
@@ -550,10 +565,14 @@ namespace System.Data.Common {
 							table = dataSet.Tables [tableName];	
 						else
 						{
-							table = new DataTable(tableName);
-							dataSet.Tables.Add (table);
+							// Do not create schema if MissingSchemAction is set to Ignore
+							if (this.MissingSchemaAction == MissingSchemaAction.Ignore)
+								continue;
+							table =  dataSet.Tables.Add (tableName);
 						}
-						BuildSchema (reader, table, schemaType);
+						
+						BuildSchema (reader, table, schemaType, schemaAction,
+							MissingMappingAction, TableMappings);
 						output.Add (table);
 						tableName = String.Format ("{0}{1}", srcTable, ++index);
 					}
@@ -703,21 +722,25 @@ namespace System.Data.Common {
 								mapping = tmp;
 							}				
 
-							object value = (AllowDBNullCol != null) ? schemaRow[AllowDBNullCol] : null;
-							bool allowDBNull = value is bool ? (bool)value : true;
-							col.AllowDBNull = allowDBNull; 
-							value = (IsKeyCol != null) ? schemaRow[IsKeyCol] : null;
-							bool isKey = value is bool ? (bool)value : false;
 
 							if (missingSchAction == MissingSchemaAction.AddWithKey) {
 	                            
+								object value = (AllowDBNullCol != null) ? schemaRow[AllowDBNullCol] : null;
+								bool allowDBNull = value is bool ? (bool)value : true;
+
+								value = (IsKeyCol != null) ? schemaRow[IsKeyCol] : null;
+								bool isKey = value is bool ? (bool)value : false;
+
 								value = (IsAutoIncrementCol != null) ? schemaRow[IsAutoIncrementCol] : null;
 								bool isAutoIncrement = value is bool ? (bool)value : false;
+
 								value = (IsReadOnlyCol != null) ? schemaRow[IsReadOnlyCol] : null;
 								bool isReadOnly = value is bool ? (bool)value : false;
+
 								value = (IsUniqueCol != null) ? schemaRow[IsUniqueCol] : null;
 								bool isUnique = value is bool ? (bool)value : false;
 								
+								col.AllowDBNull = allowDBNull;
 								// fill woth key info								
 								if (isAutoIncrement && DataColumn.CanAutoIncrement(columnType)) {
 									col.AutoIncrement = true;
@@ -739,20 +762,21 @@ namespace System.Data.Common {
 									if (!allowDBNull)
 										col.AllowDBNull = false;
 								}
-							}
 
-							bool isHidden = false;
-							if (schemaTable.Columns.Contains ("IsHidden")) {
-								value = schemaRow["IsHidden"];
-								isHidden = ((value is bool) ? (bool)value : false);
-							}
+								// This might not be set by all DataProviders
+								bool isHidden = false;
+								if (schemaTable.Columns.Contains ("IsHidden")) {
+									value = schemaRow["IsHidden"];
+									isHidden = ((value is bool) ? (bool)value : false);
+								}
 
-							if (isKey && !isHidden) {
-								primaryKey.Add (col);
-								if (allowDBNull)
-									createPrimaryKey = false;
+								if (isKey && !isHidden) {
+									primaryKey.Add (col);
+									if (allowDBNull)
+										createPrimaryKey = false;
+								}
+
 							}
-							
 							// add the ordinal of the column as a key and the index of the column in the datareader as a value.
 							mapping[col.Ordinal] = readerIndex++;
 						}

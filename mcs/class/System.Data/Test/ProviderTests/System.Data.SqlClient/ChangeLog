@@ -1,3 +1,7 @@
+2006-02-13  Senganal T  <tsenganal@novell.com>
+
+	* SqlAdapterTest.cs : Added testcases for #77480
+
 2006-02-05  Senganal T  <tsenganal@novell.com>
 
 	* SqlParameterTest.cs : New : Testcase for bug #77410

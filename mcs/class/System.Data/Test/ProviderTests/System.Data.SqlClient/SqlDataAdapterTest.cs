@@ -657,5 +657,81 @@ namespace MonoTests.System.Data.SqlClient
 				Assert.IsTrue (dataSet.Tables[0].Columns[1].AllowDBNull,"#3");
 			}
 		}
+
+		[Test]
+		public void Fill_CheckSchema ()
+		{
+			SqlConnection conn = new SqlConnection(connectionString);
+			using (conn) {
+				conn.Open();
+
+				IDbCommand command = conn.CreateCommand();
+
+				// Create Temp Table
+				String cmd = "Create Table #tmp_TestTable (" ;
+				cmd += "id int primary key,";
+				cmd += "field int not null)";
+				command.CommandText = cmd; 
+				command.ExecuteNonQuery();
+
+				DataSet dataSet = new DataSet();
+				string selectString = "SELECT * from #tmp_TestTable";
+				IDbDataAdapter dataAdapter = new SqlDataAdapter (
+									selectString,conn);
+				dataAdapter.Fill (dataSet);
+				Assert.IsTrue (dataSet.Tables[0].Columns[1].AllowDBNull, "#1");
+				Assert.AreEqual (0, dataSet.Tables[0].PrimaryKey.Length, "#2");
+
+				dataSet.Reset ();
+				dataAdapter.MissingSchemaAction = MissingSchemaAction.AddWithKey ;
+				dataAdapter.Fill (dataSet);
+				Assert.IsFalse (dataSet.Tables[0].Columns[1].AllowDBNull, "#3");
+				Assert.AreEqual (1, dataSet.Tables[0].PrimaryKey.Length, "#4");
+			}
+		}
+
+		[Test]
+		public void FillSchema_CheckSchema ()
+		{
+			SqlConnection conn = new SqlConnection(connectionString);
+			using (conn) {
+				conn.Open();
+
+				IDbCommand command = conn.CreateCommand();
+
+				// Create Temp Table
+				String cmd = "Create Table #tmp_TestTable (" ;
+				cmd += "id int primary key,";
+				cmd += "field int not null)";
+				command.CommandText = cmd; 
+				command.ExecuteNonQuery();
+
+				DataSet dataSet = new DataSet();
+				string selectString = "SELECT * from #tmp_TestTable";
+				IDbDataAdapter dataAdapter = new SqlDataAdapter (
+									selectString,conn);
+
+				dataAdapter.FillSchema (dataSet, SchemaType.Mapped);
+				Assert.IsFalse (dataSet.Tables[0].Columns[1].AllowDBNull, "#1");
+
+				dataSet.Reset ();
+				dataAdapter.MissingSchemaAction = MissingSchemaAction.Add;
+				dataAdapter.FillSchema (dataSet, SchemaType.Mapped);
+				Assert.IsFalse (dataSet.Tables[0].Columns[1].AllowDBNull, "#2");
+
+				dataSet.Reset ();
+				dataAdapter.MissingSchemaAction = MissingSchemaAction.Ignore;
+				dataAdapter.FillSchema (dataSet, SchemaType.Mapped);
+				Assert.AreEqual (0, dataSet.Tables.Count, "#3");
+
+				dataSet.Reset ();
+				dataAdapter.MissingSchemaAction = MissingSchemaAction.Error;
+				try {
+					dataAdapter.FillSchema (dataSet, SchemaType.Mapped);
+					Assert.Fail ("#4 Error should be thrown");
+				} catch (InvalidOperationException e) {
+				}
+			}
+		}
 	}
 }
