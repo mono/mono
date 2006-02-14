@@ -1778,13 +1778,14 @@ namespace Mono.CSharp {
 
 		public static bool IsConditionalMethodExcluded (MethodBase mb)
 		{
+			mb = TypeManager.DropGenericMethodArguments (mb);
+			if ((mb is MethodBuilder) || (mb is ConstructorBuilder))
+				return false;
+
 			object excluded = analyzed_method_excluded [mb];
 			if (excluded != null)
 				return excluded == TRUE ? true : false;
 
-			if (mb.Mono_IsInflatedMethod)
-				return false;
-			
 			ConditionalAttribute[] attrs = mb.GetCustomAttributes (TypeManager.conditional_attribute_type, true)
 				as ConditionalAttribute[];
 			if (attrs.Length == 0) {

@@ -2035,18 +2035,28 @@ namespace Mono.CSharp {
 
 		public static MethodBase DropGenericMethodArguments (MethodBase m)
 		{
-			if ((m is MethodBuilder) || (m is ConstructorInfo))
-				return m;
 			if (m.IsGenericMethodDefinition)
 				return m;
-			if (m.IsGenericMethod || m.DeclaringType.IsGenericType)
+			if (m.IsGenericMethod)
 				return m.GetGenericMethodDefinition ();
-			return m;
-		}
+			if (!m.DeclaringType.IsGenericType)
+				return m;
 
-		public static bool IsInstantiatedMethod (MethodBase m)
-		{
-			return m.IsGenericMethod || m.DeclaringType.IsGenericType;
+			Type t = m.DeclaringType.GetGenericTypeDefinition ();
+			BindingFlags bf = BindingFlags.Public | BindingFlags.NonPublic |
+				BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly;
+
+			if (m is ConstructorInfo) {
+				foreach (ConstructorInfo c in t.GetConstructors (bf))
+					if (c.MetadataToken == m.MetadataToken)
+						return c;
+			} else {
+				foreach (MethodBase mb in t.GetMethods (bf))
+					if (mb.MetadataToken == m.MetadataToken)
+						return mb;
+			}
+
+			return m;
 		}
 
 		//
