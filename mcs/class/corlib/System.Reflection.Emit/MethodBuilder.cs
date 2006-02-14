@@ -494,6 +494,26 @@ namespace System.Reflection.Emit {
 			}
 		}
 
+		public override bool IsGenericMethodDefinition {
+			get {
+				return HasGenericParameters;
+			}
+		}
+
+		public override bool IsGenericMethod {
+			get {
+				return HasGenericParameters;
+			}
+		}
+
+		public override MethodInfo GetGenericMethodDefinition ()
+		{
+			if (!IsGenericMethodDefinition)
+				throw new InvalidOperationException ();
+
+			return this;
+		}
+
 		public override Type[] GetGenericArguments ()
 		{
 			if (generic_params == null)

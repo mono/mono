@@ -282,6 +282,19 @@ namespace System.Reflection.Emit {
 			}
 		}
 
+		public override bool IsGenericMethodDefinition {
+			get {
+				return false;
+			}
+		}
+
+		public override bool IsGenericMethod {
+			get {
+				return false;
+			}
+		}
+
+
 		public override Module Module {
 			get {
 				return base.Module;
