@@ -255,7 +255,8 @@ namespace System.Xml
 			// (XmlTextWriter.WriteStartAttribute("xmlns", "anyname", null) throws an exception.
 
 			WriteStartAttribute (prefix, localName, ns);
-			WriteString (value);
+			if (value != null && value.Length > 0)
+				WriteString (value);
 			WriteEndAttribute ();
 		}
 
@@ -285,14 +286,16 @@ namespace System.Xml
 		public void WriteElementString (string localName, string value)
 		{
 			WriteStartElement(localName);
-			WriteString(value);
+			if (value != null && value.Length > 0)
+				WriteString(value);
 			WriteEndElement();
 		}
 
 		public void WriteElementString (string localName, string ns, string value)
 		{
 			WriteStartElement(localName, ns);
-			WriteString(value);
+			if (value != null && value.Length > 0)
+				WriteString(value);
 			WriteEndElement();
 		}
 
@@ -300,7 +303,8 @@ namespace System.Xml
 		public void WriteElementString (string prefix, string localName, string ns, string value)
 		{
 			WriteStartElement(prefix, localName, ns);
-			WriteString(value);
+			if (value != null && value.Length > 0)
+				WriteString(value);
 			WriteEndElement();
 		}
 #endif

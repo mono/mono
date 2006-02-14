@@ -1,5 +1,10 @@
 2006-02-14  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlWriter.cs : (WriteElementString and WriteAttributeString)
+	  Skip empty string output.
+
+2006-02-14  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlTextWriter.cs : WriteRaw("") is not simply ignored but process
 	  state check and closes open tag.
 
