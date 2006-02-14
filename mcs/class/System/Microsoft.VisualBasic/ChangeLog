@@ -1,3 +1,10 @@
+2006-02-14  Rafael Teixeira <rafaelteixeirabr@hotmail.com> 
+	* VBCodeCompiler.cs: 
+		use mbas.exe from 1.0 or 2.0, depending on NET_2_0
+		BuildArgs()
+			copy options.CompilerOptions to the resulting command line  (as pointed by Arnhoffer Károly)	
+			use Append instead of AppendFormat when possible
+			
 2005-12-07  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* VBCodeCompiler.cs: Set eol-style to native.

@@ -52,8 +52,6 @@ namespace Microsoft.VisualBasic
 		static VBCodeCompiler ()
 		{
 			if (Path.DirectorySeparatorChar == '\\') {
-				// FIXME: right now we use "fixed" version 1.0
-				// mcs at any time.
 				PropertyInfo gac = typeof (Environment).GetProperty ("GacPath", BindingFlags.Static | BindingFlags.NonPublic);
 				MethodInfo get_gac = gac.GetGetMethod (true);
 				string p = Path.GetDirectoryName (
@@ -67,8 +65,13 @@ namespace Microsoft.VisualBasic
 						Path.GetDirectoryName (
 							Path.GetDirectoryName (p)),
 						"bin\\mono.exe");
+#if NET_2_0
+				windowsMbasPath =
+					Path.Combine (p, "2.0\\mbas.exe");
+#else
 				windowsMbasPath =
 					Path.Combine (p, "1.0\\mbas.exe");
+#endif
 			}
 		}
 
@@ -129,11 +132,11 @@ namespace Microsoft.VisualBasic
 		static string BuildArgs (CompilerParameters options, string[] fileNames)
 		{
 			StringBuilder args = new StringBuilder ();
-			args.AppendFormat ("/quiet ");
+			args.Append ("/quiet ");
 			if (options.GenerateExecutable)
-				args.AppendFormat ("/target:exe ");
+				args.Append ("/target:exe ");
 			else
-				args.AppendFormat ("/target:library ");
+				args.Append ("/target:library ");
 
 			/* Disabled. It causes problems now. -- Gonzalo
 			if (options.IncludeDebugInformation)
@@ -141,7 +144,7 @@ namespace Microsoft.VisualBasic
 			*/
 
 			if (options.TreatWarningsAsErrors)
-				args.AppendFormat ("/warnaserror ");
+				args.Append ("/warnaserror ");
 
 			if (options.WarningLevel != -1)
 				args.AppendFormat ("/wlevel:{0} ", options.WarningLevel);
@@ -162,11 +165,16 @@ namespace Microsoft.VisualBasic
 					args.AppendFormat ("/r:\"{0}\" ", import);
 				}
 			}
+			
 			// add standard import to Microsoft.VisualBasic if missing
 			if (!Reference2MSVBFound)
-				args.AppendFormat ("/r:\"{0}\" ", "Microsoft.VisualBasic");
+				args.Append ("/r:\"Microsoft.VisualBasic\" ");
 
-			args.AppendFormat (" -- "); // makes mbas not try to process filenames as options
+			if (options.CompilerOptions != null) {
+				args.Append (options.CompilerOptions);
+			}
+			
+			args.Append (" -- "); // makes mbas not try to process filenames as options
 
 			foreach (string source in fileNames)
 				args.AppendFormat ("\"{0}\" ", source);
