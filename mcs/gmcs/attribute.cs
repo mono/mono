@@ -1693,7 +1693,7 @@ namespace Mono.CSharp {
 			ObsoleteAttribute result = null;
 			if (type.IsByRef || type.IsArray || type.IsPointer) {
 				result = GetObsoleteAttribute (TypeManager.GetElementType (type));
-			} else if (type.IsGenericParameter || type.IsGenericInstance)
+			} else if (type.IsGenericParameter || type.IsGenericType)
 				return null;
 			else {
 				DeclSpace type_ds = TypeManager.LookupDeclSpace (type);
@@ -1750,7 +1750,7 @@ namespace Mono.CSharp {
 			if (type_obsolete != null)
 				return (ObsoleteAttribute)type_obsolete;
 
-			if ((mi.DeclaringType is TypeBuilder) || mi.DeclaringType.IsGenericInstance)
+			if ((mi.DeclaringType is TypeBuilder) || mi.DeclaringType.IsGenericType)
 				return null;
 
 			ObsoleteAttribute oa = System.Attribute.GetCustomAttribute (mi, TypeManager.obsolete_attribute_type, false)

@@ -1640,8 +1640,8 @@ namespace Mono.CSharp {
 			// method cache with all declared and inherited methods.
 			Type type = container.Type;
 			if (!(type is TypeBuilder) && !type.IsInterface &&
-			    // !(type.IsGenericInstance && (type.GetGenericTypeDefinition () is TypeBuilder)) &&
-			    !type.IsGenericInstance &&
+			    // !(type.IsGenericType && (type.GetGenericTypeDefinition () is TypeBuilder)) &&
+			    !type.IsGenericType &&
 			    (Container.BaseCache == null || Container.BaseCache.method_hash != null)) {
 				method_hash = new Hashtable ();
 				AddMethods (type);

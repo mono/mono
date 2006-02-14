@@ -1,5 +1,9 @@
 2006-02-14  Martin Baulig  <martin@ximian.com>
 
+	* *.cs: Use `Type.IsGenericType' instead of `Type.IsGenericInstance'.
+
+2006-02-14  Martin Baulig  <martin@ximian.com>
+
 	* generic.cs
 	(TypeManager.DropGenericMethodArguments): New public method; don't
 	use GetGenericMethodDefinition() on something which is not a

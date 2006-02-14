@@ -979,7 +979,7 @@ namespace Mono.CSharp {
 					return null;
 				if (t.IsGenericParameter)
 					return dargs [t.GenericParameterPosition];
-				if (t.IsGenericInstance) {
+				if (t.IsGenericType) {
 					t = t.GetGenericTypeDefinition ();
 					t = t.MakeGenericType (dargs);
 				}
@@ -2065,7 +2065,7 @@ namespace Mono.CSharp {
 		//
 		public static bool IsIEnumerable (Type array, Type enumerator)
 		{
-			if (!array.IsArray || !enumerator.IsGenericInstance)
+			if (!array.IsArray || !enumerator.IsGenericType)
 				return false;
 
 			if (enumerator.GetGenericTypeDefinition () != generic_ienumerable_type)
@@ -2160,7 +2160,7 @@ namespace Mono.CSharp {
 				//    class X<T,U> : I<T>, I<U>
 				//    class X<T> : I<T>, I<float>
 				// 
-				if (b.IsGenericParameter || !b.IsGenericInstance) {
+				if (b.IsGenericParameter || !b.IsGenericType) {
 					int pos = a.GenericParameterPosition;
 					Type[] args = a.DeclaringMethod != null ? method_infered : class_infered;
 					if (args [pos] == null) {
@@ -2205,7 +2205,7 @@ namespace Mono.CSharp {
 			// become equal).
 			//
 
-			if (a.IsGenericInstance || b.IsGenericInstance)
+			if (a.IsGenericType || b.IsGenericType)
 				return MayBecomeEqualGenericInstances (a, b, class_infered, method_infered);
 
 			//
@@ -2237,7 +2237,7 @@ namespace Mono.CSharp {
 								   Type[] class_infered,
 								   Type[] method_infered)
 		{
-			if (!a.IsGenericInstance || !b.IsGenericInstance)
+			if (!a.IsGenericType || !b.IsGenericType)
 				return false;
 			if (a.GetGenericTypeDefinition () != b.GetGenericTypeDefinition ())
 				return false;
@@ -2364,7 +2364,7 @@ namespace Mono.CSharp {
 			if (pt.IsByRef && at.IsByRef)
 				return InferType (pt.GetElementType (), at.GetElementType (), infered);
 			ArrayList list = new ArrayList ();
-			if (at.IsGenericInstance)
+			if (at.IsGenericType)
 				list.Add (at);
 			for (Type bt = at.BaseType; bt != null; bt = bt.BaseType)
 				list.Add (bt);
@@ -2374,7 +2374,7 @@ namespace Mono.CSharp {
 			bool found_one = false;
 
 			foreach (Type type in list) {
-				if (!type.IsGenericInstance)
+				if (!type.IsGenericType)
 					continue;
 
 				Type[] infered_types = new Type [infered.Length];

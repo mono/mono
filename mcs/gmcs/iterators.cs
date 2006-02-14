@@ -504,7 +504,7 @@ namespace Mono.CSharp {
 			if (it.IsGenericParameter && (it.DeclaringMethod != null)) {
 				int pos = it.GenericParameterPosition;
 				it = CurrentTypeParameters [pos].Type;
-			} else if (it.IsGenericInstance) {
+			} else if (it.IsGenericType) {
 				Type[] args = it.GetGenericArguments ();
 
 				TypeArguments inflated = new TypeArguments (Location);
@@ -1251,7 +1251,7 @@ namespace Mono.CSharp {
 				return true;
 			}
 
-			if (!ret.IsGenericInstance)
+			if (!ret.IsGenericType)
 				return false;
 
 			Type[] args = TypeManager.GetTypeArguments (ret);
