@@ -1,3 +1,7 @@
+2006-02-14  Atsushi Enomoto <atsushi@ximian.com>
+
+	* Iterator.cs : tiny message fix (thanks to alp).
+
 2006-01-25  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XPathNavigator.cs : fixed IsNode signature found by updated

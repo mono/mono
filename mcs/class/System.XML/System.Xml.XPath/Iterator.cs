@@ -522,7 +522,7 @@ namespace System.Xml.XPath
 					return true;
 				}
 				if (!_nav.MoveToParent ())	// should NEVER fail!
-					throw new XPathException ("There seems some bugs on the XPathNavigator implementation class: " + _nav.GetType ());
+					throw new XPathException ("Current node is removed while it should not be, or there are some bugs in the XPathNavigator implementation class: " + _nav.GetType ());
 				_depth --;
 			}
 			_finished = true;
@@ -569,7 +569,7 @@ namespace System.Xml.XPath
 					return true;
 				}
 				if (!_nav.MoveToParent ())	// should NEVER fail!
-					throw new XPathException ("There seems some bugs on the XPathNavigator implementation class: " + _nav.GetType ());
+					throw new XPathException ("Current node is removed while it should not be, or there are some bugs in the XPathNavigator implementation class: " + _nav.GetType ());
 				_depth --;
 			}
 			_finished = true;
