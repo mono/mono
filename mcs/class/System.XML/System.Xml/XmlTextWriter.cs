@@ -1111,7 +1111,7 @@ namespace System.Xml
 
 		private void WriteStringInternal (string text, bool entitize)
 		{
-			if (text == null || text.Length == 0)
+			if (text == null || text.Length == 0 && entitize)
 				return;
 			
 			CheckState ();

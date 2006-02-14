@@ -2143,6 +2143,20 @@ namespace MonoTests.System.Xml
 			xtw.WriteStartDocument ();
 		}
 
+		[Test]
+		public void WriteStringEmptyCloseStartTag ()
+		{
+			xtw.WriteStartElement ("stream", "stream","http://etherx.jabber.org/streams");
+			xtw.WriteAttributeString ("version", "1.0");
+			xtw.WriteAttributeString ("to", "me@test.com");
+			xtw.WriteAttributeString ("from", "server");
+			xtw.WriteAttributeString ("xmlns", "jabber:client");
+			xtw.WriteRaw ("");// Ensure that the tag is closed
+			xtw.Flush ();
+
+			Assert.AreEqual ("<stream:stream version='1.0' to='me@test.com' from='server' xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams'>", StringWriterText);
+		}
+
 #if NET_2_0
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]

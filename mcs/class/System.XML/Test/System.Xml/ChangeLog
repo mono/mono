@@ -1,5 +1,9 @@
 2006-02-14  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlTextWriterTests.cs : added test WriteRaw("") closes open tag.
+
+2006-02-14  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlTextWriterTests.cs : numbered some tests and added some comments.
 
 2006-01-25  Atsushi Enomoto  <atsushi@ximian.com>
