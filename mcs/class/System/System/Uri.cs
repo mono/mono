@@ -77,6 +77,7 @@ namespace System {
 		private string userinfo = String.Empty;
 		private bool isUnc;
 		private bool isOpaquePart;
+		private bool isAbsoluteUri = true;
 
 		private string [] segments;
 		
@@ -125,11 +126,15 @@ namespace System {
 			switch (uriKind) {
 			case UriKind.Absolute:
 				if (!IsAbsoluteUri)
-					throw new InvalidOperationException (Locale.GetText ("This isn't an absolute URI."));
+					throw new UriFormatException("Invalid URI: The format of the URI could not be "
+						+ "determined.");
 				break;
 			case UriKind.Relative:
 				if (IsAbsoluteUri)
-					throw new InvalidOperationException (Locale.GetText ("This isn't an relative URI."));
+					throw new UriFormatException("Invalid URI: The format of the URI could not be "
+						+ "determined because the parameter 'uriString' represents an absolute URI.");
+				break;
+			case UriKind.RelativeOrAbsolute:
 				break;
 			default:
 				string msg = Locale.GetText ("Invalid UriKind value '{0}'.", uriKind);
@@ -150,6 +155,9 @@ namespace System {
 			userEscaped = dontEscape;
 			source = uriString;
 			ParseUri ();
+			if (!isAbsoluteUri)
+				throw new UriFormatException("Invalid URI: The format of the URI could not be "
+					+ "determined.");
 		}
 #else
 		public Uri (string uriString, bool dontEscape) 
@@ -157,6 +165,9 @@ namespace System {
 			userEscaped = dontEscape;
 			source = uriString;
 			Parse ();
+			if (!isAbsoluteUri)
+				throw new UriFormatException("Invalid URI: The format of the URI could not be "
+					+ "determined.");
 		}
 #endif
 
@@ -361,6 +372,7 @@ namespace System {
 
 		public string AbsoluteUri { 
 			get { 
+				EnsureAbsoluteUri ();
 				if (cachedAbsoluteUri == null) {
 					cachedAbsoluteUri = GetLeftPart (UriPartial.Path);
 					if (query.Length > 0)
@@ -374,22 +386,28 @@ namespace System {
 
 		public string Authority { 
 			get { 
-				return (GetDefaultPort (scheme) == port)
+				return (GetDefaultPort (Scheme) == port)
 				     ? host : host + ":" + port;
 			} 
 		}
 
 		public string Fragment { 
-			get { return fragment; } 
+			get { 
+				EnsureAbsoluteUri ();
+				return fragment; 
+			} 
 		}
 
 		public string Host { 
-			get { return host; } 
+			get { 
+				EnsureAbsoluteUri ();
+				return host; 
+			} 
 		}
 
 		public UriHostNameType HostNameType { 
 			get {
-				UriHostNameType ret = CheckHostName (host);
+				UriHostNameType ret = CheckHostName (Host);
 				if (ret != UriHostNameType.Unknown)
 					return ret;
 #if NET_2_0
@@ -407,16 +425,16 @@ namespace System {
 		}
 
 		public bool IsDefaultPort { 
-			get { return GetDefaultPort (scheme) == port; } 
+			get { return GetDefaultPort (Scheme) == port; }
 		}
 
 		public bool IsFile { 
-			get { return (scheme == UriSchemeFile); }
+			get { return (Scheme == UriSchemeFile); }
 		}
 
 		public bool IsLoopback { 
 			get {
-				if (host.Length == 0) {
+				if (Host.Length == 0) {
 #if NET_2_0
 					return IsFile;
 #else
@@ -444,11 +462,15 @@ namespace System {
 			// rule: This should be true only if
 			//   - uri string starts from "\\", or
 			//   - uri string starts from "//" (Samba way)
-			get { return isUnc; } 
+			get { 
+				EnsureAbsoluteUri ();
+				return isUnc; 
+			} 
 		}
 
 		public string LocalPath { 
 			get {
+				EnsureAbsoluteUri ();
 				if (cachedLocalPath != null)
 					return cachedLocalPath;
 				if (!IsFile)
@@ -498,23 +520,33 @@ namespace System {
 		}
 
 		public string PathAndQuery { 
-			get { return path + query; } 
+			get { return path + Query; } 
 		}
 
 		public int Port { 
-			get { return port; } 
+			get { 
+				EnsureAbsoluteUri ();
+				return port; 
+			} 
 		}
 
 		public string Query { 
-			get { return query; } 
+			get { 
+				EnsureAbsoluteUri ();
+				return query; 
+			}
 		}
 
 		public string Scheme { 
-			get { return scheme; } 
+			get { 
+				EnsureAbsoluteUri ();
+				return scheme; 
+			} 
 		}
 
 		public string [] Segments { 
 			get { 
+				EnsureAbsoluteUri ();
 				if (segments != null)
 					return segments;
 
@@ -557,34 +589,36 @@ namespace System {
 		}
 
 		public string UserInfo { 
-			get { return userinfo; }
+			get { 
+				EnsureAbsoluteUri ();
+				return userinfo; 
+			}
 		}
 		
 #if NET_2_0
 		[MonoTODO ("add support for IPv6 address")]
 		public string DnsSafeHost {
-			get {
-				if (!IsAbsoluteUri)
-					throw new InvalidOperationException (Locale.GetText ("This isn't an absolute URI."));
-				return Unescape (host);
-			}
+			get { return Unescape (Host); }
 		}
 
-		[MonoTODO]
 		public bool IsAbsoluteUri {
-			get { return true; }
+			get { return isAbsoluteUri; }
 		}
 
 		public string OriginalString {
-			get {
-				if (!IsAbsoluteUri)
-					throw new InvalidOperationException (Locale.GetText ("This isn't an absolute URI."));
-				return source;
-			}
+			get { return source; }
 		}
 #endif
 
 		// Methods		
+
+		private void EnsureAbsoluteUri ()
+		{
+#if NET_2_0
+			if (!IsAbsoluteUri)
+				throw new InvalidOperationException ("This operation is not supported for a relative URI.");
+#endif
+		}
 		
 		public static UriHostNameType CheckHostName (string name) 
 		{
@@ -1129,7 +1163,8 @@ namespace System {
 				else if (uriString.StartsWith ("\\\\"))
 					ParseAsWindowsUNC (uriString);
 				else
-					throw new UriFormatException ("URI scheme was not recognized, and input string was not recognized as an absolute file path.");
+					/* Relative path */
+					isAbsoluteUri = false;
 				return;
 			} 
 			else if (pos == 1) {

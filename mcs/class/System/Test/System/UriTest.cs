@@ -164,6 +164,15 @@ namespace MonoTests.System
 			AssertEquals ("#rel31", "http://www.xxx.com/?x=0", uri.ToString());
 			uri = new Uri (new Uri("http://www.xxx.com/index.htm"), "#here");
 			AssertEquals ("#rel32", "http://www.xxx.com/index.htm#here", uri.ToString());
+#if NET_2_0
+			uri = new Uri ("relative", UriKind.Relative);
+			uri = new Uri ("relative/abc", UriKind.Relative);
+			uri = new Uri ("relative", UriKind.RelativeOrAbsolute);
+
+			Assert ("#rel33", !uri.IsAbsoluteUri);
+			AssertEquals ("#rel34", uri.OriginalString, "relative");
+			Assert ("#rel35", !uri.UserEscaped);
+#endif
 		}
 
 		[Test]

@@ -50,7 +50,6 @@ namespace MonoTests.System {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Relative_UriKind_Relative ()
 		{
 			Uri uri = new Uri (relative, UriKind.Relative);
@@ -69,7 +68,6 @@ namespace MonoTests.System {
 
 		[Test]
 		[ExpectedException (typeof (UriFormatException))]
-		[Category ("NotWorking")]
 		public void Absolute_UriKind_Relative ()
 		{
 			new Uri (absolute, UriKind.Relative);
