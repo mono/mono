@@ -695,9 +695,7 @@ namespace Mono.CSharp {
 					return false;
 				}
 
-				MethodBase mb = implementing;
-				if (mb.Mono_IsInflatedMethod)
-					mb = mb.GetGenericMethodDefinition ();
+				MethodBase mb = TypeManager.DropGenericMethodArguments (implementing);
 
 				int pos = type.GenericParameterPosition;
 				Type mparam = mb.GetGenericArguments () [pos];
@@ -2033,6 +2031,22 @@ namespace Mono.CSharp {
 			if (t is TypeBuilder)
 				return t;
 			return t.GetGenericTypeDefinition ();
+		}
+
+		public static MethodBase DropGenericMethodArguments (MethodBase m)
+		{
+			if ((m is MethodBuilder) || (m is ConstructorInfo))
+				return m;
+			if (m.IsGenericMethodDefinition)
+				return m;
+			if (m.IsGenericMethod || m.DeclaringType.IsGenericType)
+				return m.GetGenericMethodDefinition ();
+			return m;
+		}
+
+		public static bool IsInstantiatedMethod (MethodBase m)
+		{
+			return m.IsGenericMethod || m.DeclaringType.IsGenericType;
 		}
 
 		//

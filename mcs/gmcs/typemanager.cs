@@ -591,7 +591,7 @@ public partial class TypeManager {
 	/// </summary>
 	static public string CSharpName (Type t)
 	{
-		if (IsNullableType (t)) {
+		if (IsNullableType (t) && !t.IsGenericTypeDefinition) {
 			t = GetTypeArguments (t) [0];
 			return CSharpName (t) + "?";
 		}
@@ -1789,8 +1789,7 @@ public partial class TypeManager {
 
 	static public bool IsOverride (MethodBase m)
 	{
-		if (m.Mono_IsInflatedMethod)
-			m = m.GetGenericMethodDefinition ();
+		m = DropGenericMethodArguments (m);
 
 		return m.IsVirtual &&
 			(m.Attributes & MethodAttributes.NewSlot) == 0 &&

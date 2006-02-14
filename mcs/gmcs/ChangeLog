@@ -1,6 +1,13 @@
 2006-02-14  Martin Baulig  <martin@ximian.com>
 
 	* generic.cs
+	(TypeManager.DropGenericMethodArguments): New public method.
+	(TypeManager.IsInstantiatedMethod): New public method. Use this
+	instead of `Mono_IsInflatedMethod'.
+
+2006-02-14  Martin Baulig  <martin@ximian.com>
+
+	* generic.cs
 	(ConstraintChecker.CheckConstraints): If a type parameter has the
 	`struct' constraint, the type must be a non-nullable valuetype.
 

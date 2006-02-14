@@ -4419,10 +4419,8 @@ namespace Mono.CSharp {
 			// Pick the "more specific" signature
 			//
 
-			MethodBase orig_candidate = candidate.Mono_IsInflatedMethod ?
-				candidate.GetGenericMethodDefinition () : candidate;
-			MethodBase orig_best = best.Mono_IsInflatedMethod ?
-				best.GetGenericMethodDefinition () : best;
+			MethodBase orig_candidate = TypeManager.DropGenericMethodArguments (candidate);
+			MethodBase orig_best = TypeManager.DropGenericMethodArguments (best);
 
 			ParameterData orig_candidate_pd = TypeManager.GetParameterData (orig_candidate);
 			ParameterData orig_best_pd = TypeManager.GetParameterData (orig_best);
@@ -5016,14 +5014,10 @@ namespace Mono.CSharp {
 			if (method == null)
 				return null;
 
-			MethodBase the_method = method;
-			if (the_method.Mono_IsInflatedMethod) {
-				the_method = the_method.GetGenericMethodDefinition ();
-
-				if ((method is MethodInfo) &&
-				    !ConstraintChecker.CheckConstraints (ec, the_method, method, loc))
-					return null;
-			}
+			MethodBase the_method = TypeManager.DropGenericMethodArguments (method);
+			if (the_method.IsGenericMethodDefinition &&
+			    !ConstraintChecker.CheckConstraints (ec, the_method, method, loc))
+				return null;
 
 			IMethodData data = TypeManager.GetMethod (the_method);
 			if (data != null)
