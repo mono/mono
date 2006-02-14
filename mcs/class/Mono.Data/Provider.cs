@@ -48,10 +48,13 @@ namespace Mono.Data
 		private Assembly providerAssembly;
 		private string assemblyName;
 		private string description;
-      
+		private string parameterprefix;
+		private string commandBuilderTypeName = String.Empty;
+		private Type commandBuilderType;
+
 		public Provider(string _name, string _connection, 
 			string _dataadapter, string _command, string _assembly,
-			string _description)
+			string _description) 
 		{
 			name = _name;
 			connectionTypeName = _connection;
@@ -59,6 +62,32 @@ namespace Mono.Data
 			assemblyName = _assembly;
 			commandTypeName = _command;
 			description = _description;
+		}
+
+		public Provider(string _name, string _connection, 
+			string _dataadapter, string _command, string _assembly,
+			string _description, string _parameterprefix, string _commandbuilder)
+		{
+			name = _name;
+			connectionTypeName = _connection;
+			adapterTypeName = _dataadapter;
+			assemblyName = _assembly;
+			commandTypeName = _command;
+			description = _description;
+
+			switch(_parameterprefix) {
+			case "colon":
+				parameterprefix = ":"; // named parameter prefixed by a semicolon
+				break;
+			case "at":
+				parameterprefix = "@"; // named parameter prefixed by an at symbol
+				break;
+			case "questionmark":
+				parameterprefix = "?"; // postional parameter noted by the question mark
+				break;
+			}
+
+			commandBuilderTypeName = _commandbuilder;
 		}
 
 		public Provider(string _name, Type _connection, Type _dataadapter, Type _command,
@@ -89,6 +118,11 @@ namespace Mono.Data
 		public string Description
 		{
 			get {return description;}
+		}
+
+		public string ParameterPrefix 
+		{
+			get {return parameterprefix;}
 		}
 
 		public Assembly ProviderAssembly {
@@ -145,6 +179,21 @@ namespace Mono.Data
 			}
 		}
 
+		public Type CommandBuilderType {
+			get {
+				if (commandBuilderType == null) {
+					if (commandBuilderTypeName.Equals(String.Empty))
+						throw new Exception("Provider does not have CommandBuilder type defined.");
+					commandBuilderType = ProviderAssembly.GetType (commandBuilderTypeName, false);
+					if (commandBuilderType == null) {
+						throw new Exception (String.Format ("Unable to load type of command class: {0} from assembly: {1}",
+							commandBuilderTypeName, assemblyName));
+					}
+				}
+				return commandBuilderType;
+			}
+		}
+
 		public IDbConnection CreateConnection()
 		{
 			object connObj = null;
@@ -190,5 +239,27 @@ namespace Mono.Data
 
 			return (IDbCommand) commandObj;
 		}
+
+		public object CreateCommandBuilder(IDbDataAdapter adapter) 
+		{
+			if (adapter == null) 
+				throw new System.ArgumentNullException ("adapter");
+
+			object obj = (object) adapter;
+			if (!DataAdapterType.ToString ().Equals (obj.ToString ()))
+				throw new System.ArgumentException ("adapter not part of this provider.");
+				
+			if (commandBuilderTypeName.Equals (String.Empty))
+				throw new Exception ("Provider does not have CommandBuilder type defined.");
+			
+			object[] parms = new object [] { obj };
+			object commandBuilderObj = Activator.CreateInstance (CommandBuilderType, parms);
+			if (commandBuilderObj == null)
+				throw new Exception (String.Format ("Unable to create instance of command builder class: {0} from assembly: {1}",
+					commandBuilderTypeName, assemblyName));
+
+			return commandBuilderObj;
+		}
 	}
 }
+

@@ -1,4 +1,14 @@
 2006-02-13  Daniel Morgan <danielmorgan@verizon.net>
+	
+	* ProviderSectionHandler.cs
+	* Provider.cs: add support 
+	for parameter prefix and command builder
+	
+	* app.config: updated the sample app.config file
+	to include parameterprefix and commandbuilder on
+	some providers
+
+2006-02-13  Daniel Morgan <danielmorgan@verizon.net>
 
 	Patches from Brad Langhorst <brad@langhorst.com>
 	
