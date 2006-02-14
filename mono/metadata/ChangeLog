@@ -1,3 +1,9 @@
+2006-02-14  Martin Baulig  <martin@ximian.com>
+
+	* reflection.c
+	(mono_reflection_get_token): Support "MonoGenericMethod" and
+	"MonoGenericCMethod" and allow generic instances / methods.
+
 2006-02-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* console-io.c (ves_icall_System_ConsoleDriver_GetTtySize): New icall
