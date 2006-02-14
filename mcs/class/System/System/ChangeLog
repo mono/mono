@@ -1,3 +1,7 @@
+2006-02-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Uri.cs : implemented op_Equality and op_Inequality.
+
 2006-02-14  Ankit Jain  <jankit@novell.com>
 
 	* Uri.cs (Uri.EnsureAbsoluteUri): New. Throws exception if its not an

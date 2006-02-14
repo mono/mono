@@ -747,7 +747,29 @@ namespace System {
 				(this.path == uri.path) &&
 				(this.query.ToLower (inv) == uri.query.ToLower (inv)));
 		}		
-		
+
+#if NET_2_0
+		public static bool operator == (Uri u1, Uri u2)
+		{
+			if ((object) u1 == null)
+				return (object) u2 == null;
+			else if ((object) u2 == null)
+				return false;
+
+			return u1.Equals (u2);
+		}
+
+		public static bool operator != (Uri u1, Uri u2)
+		{
+			if ((object) u1 != null)
+				return (object) u2 == null;
+			else if ((object) u2 == null)
+				return false;
+
+			return !u1.Equals (u2);
+		}
+#endif
+
 		public override int GetHashCode () 
 		{
 			if (cachedHashCode == 0)			
