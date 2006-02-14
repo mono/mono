@@ -5,6 +5,7 @@ System/AppDomainTest.cs
 System/ApplicationIdentityTest.cs
 System/ApplicationIdTest.cs
 System/ArrayTest.cs
+System/ArraySegmentTest.cs
 System/AttributeTest.cs
 System/BitConverterTest.cs
 System/BooleanTest.cs
