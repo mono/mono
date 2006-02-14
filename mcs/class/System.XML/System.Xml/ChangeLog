@@ -1,5 +1,10 @@
 2006-02-14  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlTextReader.cs : When "Significant" is assigned to
+	  WhitespaceHandling, it should ignore non-significant whitespaces.
+
+2006-02-14  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlWriter.cs : (WriteElementString and WriteAttributeString)
 	  Skip empty string output.
 

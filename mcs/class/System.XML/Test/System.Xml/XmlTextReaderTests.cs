@@ -1163,5 +1163,53 @@ namespace MonoTests.System.Xml
 			xr.Read ();
 			AssertEquals ("#2", Encoding.Unicode, xr.Encoding);
 		}
+
+		[Test]
+		public void WhitespaceHandlingSignificant ()
+		{
+			XmlTextReader xtr = new XmlTextReader ("<root>  <child xml:space='preserve'>    <descendant xml:space='default'>    </descendant>   </child><child xml:space='default'>   </child>  </root>",
+				XmlNodeType.Document, null);
+			xtr.WhitespaceHandling = WhitespaceHandling.Significant;
+
+			xtr.Read (); // root
+			xtr.Read (); // child. skip whitespaces
+			AssertEquals ("#1", XmlNodeType.Element, xtr.NodeType);
+			xtr.Read (); // significant whitespaces
+			AssertEquals ("#2", XmlNodeType.SignificantWhitespace, xtr.NodeType);
+			xtr.Read ();
+			AssertEquals ("#3", "descendant", xtr.LocalName);
+			xtr.Read (); // end of descendant. skip whitespaces
+			AssertEquals ("#4", XmlNodeType.EndElement, xtr.NodeType);
+			xtr.Read (); // significant whitespaces
+			AssertEquals ("#5", XmlNodeType.SignificantWhitespace, xtr.NodeType);
+			xtr.Read (); // end of child
+			xtr.Read (); // child
+			xtr.Read (); // end of child. skip whitespaces
+			AssertEquals ("#6", XmlNodeType.EndElement, xtr.NodeType);
+			xtr.Read (); // end of root. skip whitespaces
+			AssertEquals ("#7", XmlNodeType.EndElement, xtr.NodeType);
+		}
+
+		[Test]
+		public void WhitespaceHandlingNone ()
+		{
+			XmlTextReader xtr = new XmlTextReader ("<root>  <child xml:space='preserve'>    <descendant xml:space='default'>    </descendant>   </child><child xml:space='default'>   </child>  </root>",
+				XmlNodeType.Document, null);
+			xtr.WhitespaceHandling = WhitespaceHandling.None;
+
+			xtr.Read (); // root
+			xtr.Read (); // child. skip whitespaces
+			AssertEquals ("#1", XmlNodeType.Element, xtr.NodeType);
+			xtr.Read (); // descendant. skip significant whitespaces
+			AssertEquals ("#2", "descendant", xtr.LocalName);
+			xtr.Read (); // end of descendant. skip whitespaces
+			AssertEquals ("#3", XmlNodeType.EndElement, xtr.NodeType);
+			xtr.Read (); // end of child. skip significant whitespaces
+			xtr.Read (); // child
+			xtr.Read (); // end of child. skip whitespaces
+			AssertEquals ("#6", XmlNodeType.EndElement, xtr.NodeType);
+			xtr.Read (); // end of root. skip whitespaces
+			AssertEquals ("#7", XmlNodeType.EndElement, xtr.NodeType);
+		}
 	}
 }

@@ -1,5 +1,9 @@
 2006-02-14  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlTextReaderTests.cs : added WhitespaceHandling tests.
+
+2006-02-14  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlTextWriterTests.cs : tiny test name fix, as it does not actually
 	  test WriteString().
 

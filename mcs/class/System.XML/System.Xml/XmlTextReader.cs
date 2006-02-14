@@ -1275,7 +1275,7 @@ namespace System.Xml
 					case '\t':
 					case ' ':
 						if (whitespaceHandling == WhitespaceHandling.All ||
-							whitespaceHandling == WhitespaceHandling.Significant)
+						    whitespaceHandling == WhitespaceHandling.Significant && XmlSpace == XmlSpace.Preserve)
 							ReadWhitespace ();
 						else {
 							SkipWhitespace ();
