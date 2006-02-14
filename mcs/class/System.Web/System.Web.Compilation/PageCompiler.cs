@@ -196,7 +196,7 @@ namespace System.Web.Compilation
 				};
 		}
                 
-		protected override void CreateMethods ()
+		protected internal override void CreateMethods ()
 		{
 			base.CreateMethods ();
 

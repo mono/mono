@@ -54,6 +54,7 @@ namespace System.Web.Compilation {
 
 		protected BuildProvider()
 		{
+			ref_assemblies = new ArrayList ();
 		}
 
 		internal void SetVirtualPath (string path)
@@ -84,6 +85,7 @@ namespace System.Web.Compilation {
 			foreach (AssemblyInfo info in config.Assemblies) {
 				if (info.Assembly != "*") {
 					p.ReferencedAssemblies.Add (info.Assembly);
+					ref_assemblies.Add (info.Assembly);
 				} else {
 					AddAssembliesInBin (p.ReferencedAssemblies);
 				}
@@ -112,8 +114,10 @@ namespace System.Web.Compilation {
 				return;
 
 			string [] binDlls = Directory.GetFiles (private_bin_path, "*.dll");
-			foreach (string s in binDlls)
+			foreach (string s in binDlls) {
 				coll.Add (s);
+				ref_assemblies.Add (s);
+			}
 		}
 
 		protected CompilerType GetDefaultCompilerTypeForLanguage (string language)

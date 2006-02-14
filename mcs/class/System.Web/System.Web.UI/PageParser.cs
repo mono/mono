@@ -35,6 +35,7 @@ using System.Text;
 using System.Web.Compilation;
 using System.Web.Configuration;
 using System.Web.Util;
+using System.IO;
 
 namespace System.Web.UI
 {
@@ -77,6 +78,17 @@ namespace System.Web.UI
 			SetBaseType (PagesConfig.PageBaseType);
 			AddApplicationAssembly ();
 		}
+
+#if NET_2_0
+		internal PageParser (string virtualPath, TextReader reader, HttpContext context)
+		{
+			Context = context;
+			BaseVirtualDir = UrlUtils.GetDirectory (virtualPath);
+			Reader = reader;
+			SetBaseType (PagesConfig.PageBaseType);
+			AddApplicationAssembly ();
+		}
+#endif
 
 		public static IHttpHandler GetCompiledPageInstance (string virtualPath,
 								    string inputFile, 

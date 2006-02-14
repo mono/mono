@@ -30,6 +30,7 @@
 
 using System.Web;
 using System.Web.Compilation;
+using System.IO;
 
 namespace System.Web.UI
 {
@@ -39,6 +40,13 @@ namespace System.Web.UI
 			: base (context, virtualPath, physicalPath)
 		{
 		}
+
+#if NET_2_0
+		internal WebHandlerParser (HttpContext context, string virtualPath, TextReader reader)
+			: base (context, virtualPath, null, reader)
+		{
+		}
+#endif
 
 		public static Type GetCompiledType (HttpContext context, string virtualPath, string physicalPath)
 		{

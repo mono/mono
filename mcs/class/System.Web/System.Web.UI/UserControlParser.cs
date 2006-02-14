@@ -62,7 +62,18 @@ namespace System.Web.UI
 			SetBaseType (type);
 			AddApplicationAssembly ();
 		}
-		
+
+#if NET_2_0
+		internal UserControlParser (string virtualPath, TextReader reader, HttpContext context)
+		{
+			Context = context;
+			BaseVirtualDir = UrlUtils.GetDirectory (virtualPath);
+			Reader = reader;
+			SetBaseType (PagesConfig.UserControlBaseType);
+			AddApplicationAssembly ();
+		}
+#endif
+
 		internal static Type GetCompiledType (string virtualPath, string inputFile, ArrayList deps, HttpContext context)
 		{
 			UserControlParser ucp = new UserControlParser (virtualPath, inputFile, deps, context);

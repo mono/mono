@@ -27,6 +27,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.IO;
 using System.Security.Permissions;
 using System.Web.Compilation;
 
@@ -41,6 +42,13 @@ namespace System.Web.UI {
 			: base (context, virtualPath, physicalPath)
 		{
 		}
+
+#if NET_2_0
+		internal WebServiceParser (HttpContext context, string virtualPath, TextReader reader)
+			: base (context, virtualPath, null, reader)
+		{
+		}
+#endif
 
 		public static Type GetCompiledType (string inputFile, HttpContext context)
 		{

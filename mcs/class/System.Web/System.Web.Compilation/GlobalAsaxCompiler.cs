@@ -54,7 +54,7 @@ namespace System.Web.Compilation
 			return generator.GetCompiledType ();
 		}
 
-		protected override void CreateMethods ()
+		protected internal override void CreateMethods ()
 		{
 			base.CreateMethods ();
 

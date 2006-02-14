@@ -1,3 +1,13 @@
+2006-02-14 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* WebHandlerParser.cs:
+	* WebServiceParser.cs:
+	* UserControlParser.cs:
+	* PageParser.cs: added new ctor that uses a TextReader as input.
+
+	* TemplateControlParser.cs: new Reader property.
+	* SimpleWebHandlerParser.cs: new Reader property and ctor.
+
 2006-02-12  Cesar Lopez Nataren  <cnataren@novell.com>
 
 	* HtmlTextWriter.cs: Implemented IsValidFormAttribute and

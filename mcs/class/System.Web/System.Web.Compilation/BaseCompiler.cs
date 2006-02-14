@@ -113,6 +113,15 @@ namespace System.Web.Compilation
 			CreateConstructor (null, null);
 		}
 
+#if NET_2_0
+		internal CodeDomProvider Provider {
+			get { return provider; }
+		}
+
+		internal CodeCompileUnit CompileUnit {
+			get { return unit; }
+		}
+#endif
 		protected virtual void CreateStaticFields ()
 		{
 			CodeMemberField fld = new CodeMemberField (typeof (bool), "__intialized");
@@ -167,7 +176,7 @@ namespace System.Web.Compilation
 			}
 		}
 		
-		protected virtual void CreateMethods ()
+		protected internal virtual void CreateMethods ()
 		{
 		}
 

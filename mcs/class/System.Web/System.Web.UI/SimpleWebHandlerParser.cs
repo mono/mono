@@ -60,6 +60,8 @@ namespace System.Web.UI
 		string baseVDir;
 #if !NET_2_0
 		CompilationConfiguration compilationConfig;
+#else
+		TextReader reader;
 #endif
 		int appAssemblyIndex = -1;
 		Type cachedType;
@@ -100,6 +102,13 @@ namespace System.Web.UI
 
 			GetDirectivesAndContent ();
 		}
+#if NET_2_0
+		protected SimpleWebHandlerParser (HttpContext context, string virtualPath, string physicalPath, TextReader reader)
+			: this (context, virtualPath, physicalPath)
+		{
+			this.reader = reader;
+		}
+#endif
 
 		protected Type GetCompiledTypeFromCache ()
 		{
@@ -467,6 +476,11 @@ namespace System.Web.UI
 			get {
 				return (CompilationSection)WebConfigurationManager.GetSection ("system.web/compilation");
 			}
+		}
+
+		internal TextReader Reader {
+			get { return reader; }
+			set { reader = value; }
 		}
 #else
 		internal CompilationConfiguration CompilationConfig {

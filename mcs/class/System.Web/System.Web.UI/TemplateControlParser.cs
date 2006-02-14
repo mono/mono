@@ -49,6 +49,9 @@ namespace System.Web.UI {
 
 		bool autoEventWireup = true;
 		bool enableViewState = true;
+#if NET_2_0
+		TextReader reader;
+#endif
 
 		protected TemplateControlParser ()
 		{
@@ -187,6 +190,12 @@ namespace System.Web.UI {
 		internal bool EnableViewState {
 			get { return enableViewState; }
 		}
+#if NET_2_0
+		internal TextReader Reader {
+			get { return reader; }
+			set { reader = value; }
+		}
+#endif
 	}
 }
 

@@ -1,3 +1,19 @@
+2006-02-14 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* GlobalAsaxCompiler.cs:
+	* PageCompiler.cs:
+	* TemplateControlCompiler.cs: CreateMethods is now internal.
+
+	* WebServiceBuildProvider.cs:
+	* PageBuildProvider.cs:
+	* UserControlBuildProvider.cs:
+	* WebHandlerBuildProvider.cs: new build providers.
+
+	* BuildProvider.cs: add assemblies.
+
+	* BaseCompiler.cs: expose the provider and the compile unit through
+	properties.
+
 2006-02-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CompilerType.cs: implemented.

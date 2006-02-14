@@ -1029,7 +1029,7 @@ namespace System.Web.Compilation
 				builder.method.Statements.Add (new CodeMethodReturnStatement (ctrlVar));
 		}
 
-		protected override void CreateMethods ()
+		protected internal override void CreateMethods ()
 		{
 			base.CreateMethods ();
 
