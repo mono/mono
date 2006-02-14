@@ -1498,7 +1498,7 @@ namespace Mono.CSharp {
 				}
 			} else {
 				is_class = atype.IsClass || atype.IsInterface;
-				is_struct = atype.IsValueType;
+				is_struct = atype.IsValueType && !TypeManager.IsNullableType (atype);
 			}
 
 			//
@@ -1514,8 +1514,8 @@ namespace Mono.CSharp {
 					      GetSignatureForError ());
 				return false;
 			} else if (gc.HasValueTypeConstraint && !is_struct) {
-				Report.Error (453, loc, "The type `{0}' must be " +
-					      "a value type in order to use it " +
+				Report.Error (453, loc, "The type `{0}' must be a " +
+					      "non-nullable value type in order to use it " +
 					      "as type parameter `{1}' in the " +
 					      "generic type or method `{2}'.",
 					      TypeManager.CSharpName (atype),

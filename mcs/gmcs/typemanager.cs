@@ -591,6 +591,11 @@ public partial class TypeManager {
 	/// </summary>
 	static public string CSharpName (Type t)
 	{
+		if (IsNullableType (t)) {
+			t = GetTypeArguments (t) [0];
+			return CSharpName (t) + "?";
+		}
+
 		string name = GetFullName (t);
 
 		return Regex.Replace (name, 

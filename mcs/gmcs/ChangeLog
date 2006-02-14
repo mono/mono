@@ -1,3 +1,9 @@
+2006-02-14  Martin Baulig  <martin@ximian.com>
+
+	* generic.cs
+	(ConstraintChecker.CheckConstraints): If a type parameter has the
+	`struct' constraint, the type must be a non-nullable valuetype.
+
 2006-02-10  Martin Baulig  <martin@ximian.com>
 
 	* typemanager.cs
