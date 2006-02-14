@@ -43,90 +43,128 @@ namespace Mono.Data
 	{
 		private static ProviderCollection providers;
 
-		static ProviderFactory()
+		static ProviderFactory ()
 		{
-			providers=(ProviderCollection) ConfigurationSettings.GetConfig("mono.data/providers");
-			if (providers==null)
-				providers=new ProviderCollection();
+			providers = (ProviderCollection) ConfigurationSettings.GetConfig ("mono.data/providers");
+			if (providers == null) {
+				providers = new ProviderCollection ();
+				// warn the developer or administrator that the provider list is empty
+				System.Diagnostics.Debug.Listeners.Add (new System.Diagnostics.TextWriterTraceListener (Console.Out));
+				System.Diagnostics.Debug.WriteLine ("No providers found. Did you set up a mono.data/providers area in your app.config or in machine.config?");
+			}
+
 		}
 
 		static public ProviderCollection Providers
 		{
-			get
-			{
+			get {
 				return providers;
 			}
 		}
 
-		static public IDbConnection CreateConnectionFromConfig(string Setting)
+		static public IDbConnection CreateConnectionFromConfig (string Setting)
 		{
-			return CreateConnection(ConfigurationSettings.AppSettings[Setting]);
+			if (Setting == null) 
+				throw new System.ArgumentNullException ("Setting");
+
+			return CreateConnection (ConfigurationSettings.AppSettings [Setting]);
 		}
 
 		static public IDbConnection CreateConnection(string ConnectionString)
 		{
-			string[] ConnectionAttributes=ConnectionString.Split(new Char[1] { ';' }); 
-			string ProviderName=null;
-			string NewConnectionString="";
-			foreach (string s in ConnectionAttributes)
-			{
-				string[] AttributeParts=s.Split(new Char[1] { '=' });
-				if (AttributeParts[0].ToLower().Trim()=="factory")
-					ProviderName=AttributeParts[1].Trim();
+			if (ConnectionString == null) 
+				throw new System.ArgumentNullException ("ConnectionString");
+
+			string [] ConnectionAttributes = ConnectionString.Split (new Char [1] { ';' }); 
+			string ProviderName = null;
+			string NewConnectionString = "";
+			foreach (string s in ConnectionAttributes) {
+				string [] AttributeParts = s.Split (new Char [1] { '=' });
+				if (AttributeParts [0].ToLower ().Trim () == "factory")
+					ProviderName = AttributeParts [1].Trim ();
 				else 
-					NewConnectionString+=";"+s;
+					NewConnectionString += ";" + s;
 			}
-			NewConnectionString=NewConnectionString.Remove(0,1);
-			return CreateConnection(ProviderName, NewConnectionString);
+			NewConnectionString = NewConnectionString.Remove (0, 1); // remove the initial semicolon
+			if (ProviderName == null) 
+				throw new System.ArgumentException ("The connection string must contain a 'factory=Provider.Class' token", "ConnectionString");
+			return CreateConnection (ProviderName, NewConnectionString);
 		}
 
 		static public IDbConnection CreateConnection(string ProviderName, string ConnectionString)
 		{
-			Provider provider=providers[ProviderName];
-			IDbConnection conn=provider.CreateConnection();
-			conn.ConnectionString=ConnectionString;
+			if (ProviderName == null) 
+				throw new System.ArgumentNullException("ProviderName");
+			if (ConnectionString == null) 
+				throw new System.ArgumentNullException ("ConnectionString");
+
+			Provider provider = providers [ProviderName];
+			IDbConnection conn = provider.CreateConnection ();
+			conn.ConnectionString = ConnectionString;
 			return conn;
 		}
 
-		static public IDbCommand CreateStoredProc(IDbConnection Conn, string CommandName)
+		static public IDbCommand CreateStoredProc (IDbConnection Conn, string CommandName)
 		{
-			IDbCommand cmd=Conn.CreateCommand();
-			cmd.CommandText=CommandName;
-			cmd.CommandType=CommandType.StoredProcedure;
+			if (Conn == null) 
+				throw new System.ArgumentNullException ("Conn");
+			if (CommandName == null) 
+				throw new System.ArgumentNullException ("CommandName");
+
+			IDbCommand cmd = Conn.CreateCommand ();
+			cmd.CommandText = CommandName;
+			cmd.CommandType = CommandType.StoredProcedure;
 			return cmd;
 		}
 
-		static public IDbDataAdapter CreateDataAdapter(IDbCommand SelectCommand)
+		static public IDbDataAdapter CreateDataAdapter (IDbCommand SelectCommand)
 		{
-			Provider provider=providers.FindByCommandType(SelectCommand.GetType());
-			IDbDataAdapter adapter=provider.CreateDataAdapter();
-			adapter.SelectCommand=SelectCommand;
+			if (SelectCommand == null) 
+				throw new System.ArgumentNullException("SelectCommand");
+
+			Provider provider = providers.FindByCommandType (SelectCommand.GetType ());
+			IDbDataAdapter adapter = provider.CreateDataAdapter ();
+			adapter.SelectCommand = SelectCommand;
 			return adapter;
 		}
 
-		static public IDbDataAdapter CreateDataAdapter(string ProviderName)
+		static public IDbDataAdapter CreateDataAdapter (string ProviderName)
 		{
-			Provider provider=providers[ProviderName];
-			IDbDataAdapter adapter=provider.CreateDataAdapter();
+			if (ProviderName == null) 
+				throw new System.ArgumentNullException("ProviderName");
+
+			Provider provider = providers [ProviderName];
+			IDbDataAdapter adapter = provider.CreateDataAdapter ();
 			return adapter;
 		}
 
-		static public IDbDataAdapter CreateDataAdapter(IDbConnection Conn, string SelectCommand)
+		static public IDbDataAdapter CreateDataAdapter (IDbConnection Conn, string SelectCommand)
 		{
-			IDbCommand cmd=Conn.CreateCommand();
-			cmd.CommandText=SelectCommand;
-			return CreateDataAdapter(cmd);
+			if (Conn == null) 
+				throw new System.ArgumentNullException ("Conn");
+			if (SelectCommand == null) 
+				throw new System.ArgumentNullException("SelectCommand");
+
+			IDbCommand cmd = Conn.CreateCommand ();
+			cmd.CommandText = SelectCommand;
+			return CreateDataAdapter (cmd);
 		}
 
-		static public IDbCommand CreateCommand(string ProviderName)
+		static public IDbCommand CreateCommand (string ProviderName)
 		{
-			Provider provider=providers[ProviderName];
-			return provider.CreateCommand();
+			if (ProviderName == null) 
+				throw new System.ArgumentNullException("ProviderName");
+
+			Provider provider = providers [ProviderName];
+			return provider.CreateCommand ();
 		}
 
-		static public IDbCommand CreateCommand(IDbConnection Conn)
+		static public IDbCommand CreateCommand (IDbConnection Conn)
 		{
-			return Conn.CreateCommand();
+			if (Conn == null) 
+				throw new System.ArgumentNullException("Conn");
+
+			return Conn.CreateCommand ();
 		}
 
 	}

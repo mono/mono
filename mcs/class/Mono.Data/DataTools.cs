@@ -46,57 +46,80 @@ namespace Mono.Data
 		static public IDataParameter AddParameter(IDbCommand Cmd, string ParameterName, DbType DbType, 
 			ParameterDirection Direction)
 		{
-			IDataParameter param=Cmd.CreateParameter();
-			Cmd.Parameters.Add(param);
-			param.ParameterName=ParameterName;
-			param.Direction=Direction;
-			param.DbType=DbType;
+			if (Cmd == null) 
+				throw new System.ArgumentNullException ("Cmd");
+			if (ParameterName == null) 
+				throw new System.ArgumentNullException ("ParameterName");
+
+			IDataParameter param = Cmd.CreateParameter ();
+			Cmd.Parameters.Add (param);
+			param.ParameterName = ParameterName;
+			param.Direction = Direction;
+			param.DbType = DbType;
 			return param;
 		}
 
 		static public IDataParameter AddParameter(IDbCommand Cmd, string ParameterName, DbType DbType)
 		{
-			IDataParameter param=Cmd.CreateParameter();
-			Cmd.Parameters.Add(param);
-			param.ParameterName=ParameterName;
-			param.DbType=DbType;
+			if (Cmd == null) 
+				throw new System.ArgumentNullException ("Cmd");
+			if (ParameterName == null) 
+				throw new System.ArgumentNullException("ParameterName");
+
+			IDataParameter param = Cmd.CreateParameter ();
+			Cmd.Parameters.Add (param);
+			param.ParameterName = ParameterName;
+			param.DbType = DbType;
 			return param;
 		}
 
-		static public DataSet FillDataSet(IDbConnection conn, string SelectCommand)
+		static public DataSet FillDataSet (IDbConnection conn, string SelectCommand)
 		{
-			DataSet ds=new DataSet();
-			IDbDataAdapter adapter=ProviderFactory.CreateDataAdapter(conn, SelectCommand);
-			if (conn.State!=ConnectionState.Open)
-				conn.Open();
-			adapter.Fill(ds);
+			if (conn == null) 
+				throw new System.ArgumentNullException ("conn");
+			if (SelectCommand == null) 
+				throw new System.ArgumentNullException ("SelectCommand");
+
+			DataSet ds = new DataSet ();
+			IDbDataAdapter adapter = ProviderFactory.CreateDataAdapter (conn, SelectCommand);
+			if (conn.State != ConnectionState.Open)
+				conn.Open ();
+			adapter.Fill (ds);
 			return ds;
 		}
 
 		static public DataSet FillDataSet(IDbCommand SelectCommand)
 		{
-			DataSet ds=new DataSet();
-			IDbDataAdapter adapter=ProviderFactory.CreateDataAdapter(SelectCommand);
-			if (adapter.SelectCommand.Connection.State!=ConnectionState.Open)
-				adapter.SelectCommand.Connection.Open();
-			adapter.Fill(ds);
+			if (SelectCommand == null) 
+				throw new System.ArgumentNullException ("SelectCommand");
+
+			DataSet ds = new DataSet ();
+			IDbDataAdapter adapter = ProviderFactory.CreateDataAdapter (SelectCommand);
+			if (adapter.SelectCommand.Connection.State != ConnectionState.Open)
+				adapter.SelectCommand.Connection.Open ();
+			adapter.Fill (ds);
 			return ds;
 		}
 
 		static public DataSet FillDataSet(string ConfigSetting, string SelectCommand)
 		{
-			IDbConnection conn=ProviderFactory.CreateConnectionFromConfig(ConfigSetting);
-			conn.Open();
-			DataSet ds=null;
+			if (ConfigSetting == null) 
+				throw new System.ArgumentNullException ("ConfigSetting");
+			if (SelectCommand == null) 
+				throw new System.ArgumentNullException ("SelectCommand");
+
+			IDbConnection conn = ProviderFactory.CreateConnectionFromConfig (ConfigSetting);
+			conn.Open ();
+			DataSet ds = null;
 			try
 			{
-				ds=new DataSet();
-				IDbDataAdapter adapter=ProviderFactory.CreateDataAdapter(conn, SelectCommand);
-				adapter.Fill(ds);
+				ds = new DataSet ();
+				IDbDataAdapter adapter = ProviderFactory.CreateDataAdapter (conn, SelectCommand);
+				adapter.Fill (ds);
 			}
 			finally
 			{
-				conn.Close();
+				conn.Close ();
 			}
 			return ds;
 		}
@@ -104,3 +127,4 @@ namespace Mono.Data
 
 	}
 }
+

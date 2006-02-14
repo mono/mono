@@ -64,6 +64,13 @@ namespace Mono.Data
 		public Provider(string _name, Type _connection, Type _dataadapter, Type _command,
 			string _description)
 		{
+			if (_connection == null) 
+				throw new System.ArgumentNullException ("_connection");
+			if (_dataadapter == null) 
+				throw new System.ArgumentNullException ("_dataadapter");
+			if (_command == null) 
+				throw new System.ArgumentNullException ("_command");
+
 			name = _name;
 			connectionTypeName = _connection.FullName;
 			adapterTypeName = _dataadapter.FullName;
@@ -86,8 +93,12 @@ namespace Mono.Data
 
 		public Assembly ProviderAssembly {
 			get {
-				if (providerAssembly == null)
-					providerAssembly = Assembly.Load (assemblyName);
+				if (providerAssembly == null) {
+					if (assemblyName.IndexOf(',') == -1) //try to load with a partial name if that's all we have
+						providerAssembly = Assembly.LoadWithPartialName (assemblyName);
+					else 
+						providerAssembly = Assembly.Load (assemblyName);
+				}
 
 				return providerAssembly;
 			}

@@ -42,7 +42,7 @@ namespace Mono.Data
 	///    </para>
 	/// </summary>
 	/// <seealso cref='.ProviderCollection'/>
-	[Serializable()]
+	[Serializable ()]
 	public class ProviderCollection : DictionaryBase  
 	{
 		
@@ -51,7 +51,8 @@ namespace Mono.Data
 		///       Initializes a new instance of <see cref='.ProviderCollection'/>.
 		///    </para>
 		/// </summary>
-		public ProviderCollection() 
+		public ProviderCollection ()
+
 		{
 		}
 		
@@ -63,9 +64,12 @@ namespace Mono.Data
 		/// <param name='value'>
 		///       A <see cref='.ProviderCollection'/> from which the contents are copied
 		/// </param>
-		public ProviderCollection(ProviderCollection value) 
+		public ProviderCollection (ProviderCollection value) 
 		{
-			this.AddRange(value);
+			if (value == null) 
+				throw new System.ArgumentNullException ("value");
+
+			this.AddRange (value);
 		}
 		
 		/// <summary>
@@ -76,9 +80,12 @@ namespace Mono.Data
 		/// <param name='value'>
 		///       A array of <see cref='.Provider'/> objects with which to intialize the collection
 		/// </param>
-		public ProviderCollection(Provider[] value) 
+		public ProviderCollection (Provider[] value) 
 		{
-			this.AddRange(value);
+			if (value == null) 
+				throw new System.ArgumentNullException ("value");
+
+			this.AddRange (value);
 		}
 		
 		/// <summary>
@@ -89,46 +96,50 @@ namespace Mono.Data
 		///    <para> The entry at the specified index of the collection.</para>
 		/// </value>
 		/// <exception cref='System.ArgumentOutOfRangeException'><paramref name='index'/> is outside the valid range of indexes for the collection.</exception>
-		public Provider this[string Name] 
+		public Provider this [string Name] 
 		{
-			get 
-			{
-				return ((Provider)(Dictionary[Name]));
+			get {				
+				return ((Provider)(Dictionary [Name]));
 			}
-			set 
-			{
-				Dictionary[Name] = value;
+			set {
+				Dictionary [Name] = value;
 			}
 		}
 
 		public Provider FindByCommandType(Type CommandType)
 		{
-			foreach (Provider p in this)
-			{
-				if (p.CommandType==CommandType)
+			if (CommandType == null) 
+				throw new System.ArgumentNullException ("CommandType");
+
+			foreach (Provider p in this) {
+				if (p.CommandType == CommandType)
 					return p;
 			}
-			throw new IndexOutOfRangeException();
+			throw new IndexOutOfRangeException ();
 		}
 
 		public Provider FindByDataAdapterType(Type DataAdapterType)
 		{
-			foreach (Provider p in this)
-			{
-				if (p.DataAdapterType==DataAdapterType)
+			if (DataAdapterType == null) 
+				throw new System.ArgumentNullException ("DataAdapterType");
+
+			foreach (Provider p in this) {
+				if (p.DataAdapterType == DataAdapterType)
 					return p;
 			}
-			throw new IndexOutOfRangeException();
+			throw new IndexOutOfRangeException ();
 		}
 
 		public Provider FindByConnectionType(Type ConnectionType)
 		{
-			foreach (Provider p in this)
-			{
-				if (p.ConnectionType==ConnectionType)
+			if (ConnectionType == null) 
+				throw new System.ArgumentNullException("ConnectionType");
+
+			foreach (Provider p in this) {
+				if (p.ConnectionType == ConnectionType)
 					return p;
 			}
-			throw new IndexOutOfRangeException();
+			throw new IndexOutOfRangeException ();
 		}
 
 		/// <summary>
@@ -142,7 +153,10 @@ namespace Mono.Data
 		/// <seealso cref='.ProviderCollection.AddRange'/>
 		public void Add(Provider value) 
 		{
-			Dictionary.Add(value.Name, value);
+			if (value == null) 
+				throw new System.ArgumentNullException ("value");
+
+			Dictionary.Add (value.Name, value);
 		}
 		
 		/// <summary>
@@ -155,12 +169,13 @@ namespace Mono.Data
 		///   <para>None.</para>
 		/// </returns>
 		/// <seealso cref='.ProviderCollection.Add'/>
-		public void AddRange(Provider[] value) 
+		public void AddRange (Provider[] value) 
 		{
-			for (int i = 0; (i < value.Length); i = (i + 1)) 
-			{
-				this.Add(value[i]);
-			}
+			if (value == null) 
+				throw new System.ArgumentNullException ("value");
+
+			for (int i = 0; i < value.Length; i++) 
+				this.Add (value [i]);
 		}
 		
 		/// <summary>
@@ -177,10 +192,11 @@ namespace Mono.Data
 		/// <seealso cref='.ProviderCollection.Add'/>
 		public void AddRange(ProviderCollection value) 
 		{
+			if (value == null) 
+				throw new System.ArgumentNullException ("value");
+
 			foreach (Provider p in value)
-			{
-				this.Add(p);
-			}
+				this.Add (p);
 		}
 		
 		/// <summary>
@@ -193,9 +209,12 @@ namespace Mono.Data
 		///   otherwise, <see langword='false'/>.</para>
 		/// </returns>
 		/// <seealso cref='.ProviderCollection.IndexOf'/>
-		public bool Contains(Provider value) 
+		public bool Contains (Provider value) 
 		{
-			return Dictionary.Contains(value);
+			if (value == null) 
+				throw new System.ArgumentNullException("value");
+
+			return Dictionary.Contains (value);
 		}
 		
 		/// <summary>
@@ -213,6 +232,9 @@ namespace Mono.Data
 		/// <seealso cref='System.Array'/>
 		public void CopyTo(Provider[] array, int index) 
 		{
+			if (array == null) 
+				throw new System.ArgumentNullException ("array");
+
 			Dictionary.CopyTo(array, index);
 		}
 		
@@ -222,9 +244,9 @@ namespace Mono.Data
 		/// </summary>
 		/// <returns><para>None.</para></returns>
 		/// <seealso cref='System.Collections.IEnumerator'/>
-		public new ProviderEnumerator GetEnumerator() 
+		public new ProviderEnumerator GetEnumerator () 
 		{
-			return new ProviderEnumerator(this);
+			return new ProviderEnumerator (this);
 		}
 		
 		/// <summary>
@@ -236,6 +258,9 @@ namespace Mono.Data
 		/// <exception cref='System.ArgumentException'><paramref name='value'/> is not found in the Collection. </exception>
 		public void Remove(Provider value) 
 		{
+			if (value == null) 
+				throw new System.ArgumentNullException ("value");
+
 			Dictionary.Remove(value);
 		}
 		
@@ -248,6 +273,9 @@ namespace Mono.Data
 			
 			public ProviderEnumerator(ProviderCollection mappings) 
 			{
+				if (mappings == null) 
+					throw new System.ArgumentNullException ("mappings");
+
 				this.temp = ((IEnumerable)(mappings));
 				this.baseEnumerator = temp.GetEnumerator();
 			}

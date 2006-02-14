@@ -37,21 +37,24 @@ namespace Mono.Data
 {
 	public class ProviderSectionHandler : IConfigurationSectionHandler
 	{
-		public virtual object Create(object parent,object configContext,XmlNode section)
+		public virtual object Create (object parent, object configContext, XmlNode section)
 		{
-			ProviderCollection providers=new ProviderCollection();
+			if (section == null)
+				throw new System.ArgumentNullException ("section");
+
+			ProviderCollection providers = new ProviderCollection ();
 			
 			XmlNodeList ProviderList = section.SelectNodes ("./provider");
 
 			foreach (XmlNode ProviderNode in ProviderList) {
-				Provider provider=new Provider(
-					GetStringValue(ProviderNode,"name",true),
-					GetStringValue(ProviderNode,"connection",true),
-					GetStringValue(ProviderNode,"adapter",true),
-					GetStringValue(ProviderNode,"command",true),
-					GetStringValue(ProviderNode,"assembly",true),
-					GetStringValue(ProviderNode,"description",false));
-				providers.Add(provider);
+				Provider provider = new Provider(
+					GetStringValue (ProviderNode, "name", true),
+					GetStringValue (ProviderNode, "connection", true),
+					GetStringValue (ProviderNode, "adapter", true),
+					GetStringValue (ProviderNode, "command", true),
+					GetStringValue (ProviderNode, "assembly", true),
+					GetStringValue (ProviderNode, "description", false));
+				providers.Add (provider);
 			}
 			return providers;
 		}

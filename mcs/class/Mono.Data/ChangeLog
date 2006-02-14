@@ -1,3 +1,15 @@
+2006-02-13  Daniel Morgan <danielmorgan@verizon.net>
+
+	Patches from Brad Langhorst <brad@langhorst.com>
+	
+	* ProviderSectionHandler.cs
+	* ProviderFactory
+	* ProviderCollection.cs
+	* DataTools.cs
+	* Provider.cs: catch invalid args, 
+	allow non-qualified assembly loading, 
+	warn about empty providers
+	
 2005-12-31  Daniel Morgan <danielmorgan@verizon.net>
 
 	* test/test.exe.config	
