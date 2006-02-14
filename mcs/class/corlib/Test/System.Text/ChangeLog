@@ -1,3 +1,7 @@
+2006-02-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* UTF8EncodingTest.cs : test for bug #77550.
+
 2006-02-03  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* UTF8EncodingTest.cs : added test for insufficient bytes for

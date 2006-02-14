@@ -442,8 +442,6 @@ Char.IsLetterOrDigit (pair);
 	// Internal version of "GetCharCount" which can handle a rolling
 	// state between multiple calls to this method.
 #if NET_2_0
-	// Internal version of "GetCharCount" which can handle a rolling
-	// state between multiple calls to this method.
 	private static int InternalGetCharCount (
 		byte[] bytes, int index, int count, uint leftOverBits,
 		uint leftOverCount, object provider,
@@ -590,7 +588,7 @@ Char.IsLetterOrDigit (pair);
 			// We had left-over bytes that didn't make up
 			// a complete UTF-8 character sequence.
 #if NET_2_0
-			length += Fallback (provider, ref fallbackBuffer, bytes, index - 1);
+			length += Fallback (provider, ref fallbackBuffer, bytes, index);
 #else
 			if (throwOnInvalid)
 				throw new ArgumentException (_("Arg_InvalidUTF8"), "bytes");
@@ -612,7 +610,7 @@ Char.IsLetterOrDigit (pair);
 			else
 				buffer = ((Decoder) provider).FallbackBuffer;
 		}
-		buffer.Fallback (bytes, index - 1);
+		buffer.Fallback (bytes, index);
 		return buffer.Remaining;
 	}
 
@@ -627,7 +625,7 @@ Char.IsLetterOrDigit (pair);
 			else
 				buffer = ((Decoder) provider).FallbackBuffer;
 		}
-		buffer.Fallback (bytes, byteIndex - 1);
+		buffer.Fallback (bytes, byteIndex);
 		while (buffer.Remaining > 0)
 			chars [charIndex++] = buffer.GetNextChar ();
 	}

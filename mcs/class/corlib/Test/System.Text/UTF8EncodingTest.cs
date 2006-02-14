@@ -19,6 +19,8 @@ using DecoderException = System.Text.DecoderFallbackException;
 using DecoderException = System.ArgumentException;
 #endif
 
+using AssertType = NUnit.Framework.Assert;
+
 namespace MonoTests.System.Text {
 
 	[TestFixture]
@@ -1046,5 +1048,22 @@ namespace MonoTests.System.Text {
 			} catch (ArgumentException) {
 			}
 		}
+
+#if NET_2_0
+		[Test] // bug #77550
+		public void DecoderFallbackSimple ()
+		{
+			UTF8Encoding e = new UTF8Encoding (false, false);
+			AssertType.AreEqual (0, e.GetDecoder ().GetCharCount (
+					new byte [] {(byte) 183}, 0, 1),
+					"#1");
+			AssertType.AreEqual (0, e.GetDecoder().GetChars (
+					new byte [] {(byte) 183}, 0, 1,
+					new char [100], 0),
+					"#2");
+			AssertType.AreEqual (0, e.GetString (new byte [] {(byte) 183}).Length,
+					"#3");
+		}
+#endif
 	}
 }
