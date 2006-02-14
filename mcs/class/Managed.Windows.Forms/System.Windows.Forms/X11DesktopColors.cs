@@ -168,7 +168,7 @@ namespace System.Windows.Forms {
 					if ( helper != null )
 						desktop = Desktop.KDE;
 				} else
-				if ( session == "KDE" )
+				if ( session.StartsWith("KDE") )
 					desktop = Desktop.KDE;
 			}
 		}
