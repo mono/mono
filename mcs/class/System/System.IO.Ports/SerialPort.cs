@@ -55,6 +55,7 @@ namespace System.IO.Ports
 		int    dataBits   = 8;
 		bool   breakState = false;
 		Stream baseStream;
+		Encoding encoding = Encoding.ASCII;
 		string newLine    = "\n";
 		string portName;
 		int    unixFd;
@@ -306,13 +307,15 @@ namespace System.IO.Ports
 			}
 		}
 
-		public Encoding Encoding
-		{
+		public Encoding Encoding {
 			get {
-				throw new NotImplementedException ();
+				return encoding;
 			}
 			set {
-				throw new NotImplementedException ();
+				if (value == null)
+					throw new ArgumentNullException ("value");
+
+				encoding = value;
 			}
 		}
 
@@ -574,17 +577,48 @@ namespace System.IO.Ports
 
 		public void Write (string str)
 		{
-			throw new NotImplementedException ();
+			if (str == null)
+				throw new ArgumentNullException ("str");
+			if (!isOpen)
+				throw new InvalidOperationException ("Specified port is not open");
+			
+			byte [] buffer = encoding.GetBytes (str);
+			Write (buffer, 0, buffer.Length);
 		}
 
 		public void Write (byte[] buffer, int offset, int count)
 		{
+			if (buffer == null)
+				throw new ArgumentNullException ("buffer");
+			if (offset < 0 || offset >= buffer.Length)
+				throw new ArgumentOutOfRangeException ("offset");
+			if (count < 0 || count > buffer.Length)
+				throw new ArgumentOutOfRangeException ("count");
+			if (offset + count > buffer.Length)
+				throw new ArgumentException ("offset+count > buffer.Length");
+			
+			if (!isOpen)
+				throw new InvalidOperationException ("Specified port is not open");
+			
 			write_serial (unixFd, buffer, offset, count, writeTimeout);
 		}
 
 		public void Write (char[] buffer, int offset, int count)
 		{
-			throw new NotImplementedException ();
+			if (buffer == null)
+				throw new ArgumentNullException ("buffer");
+			if (offset < 0 || offset >= buffer.Length)
+				throw new ArgumentOutOfRangeException ("offset");
+			if (count < 0 || count > buffer.Length)
+				throw new ArgumentOutOfRangeException ("count");
+			if (offset + count > buffer.Length)
+				throw new ArgumentException ("offset+count > buffer.Length");
+
+			if (!isOpen)
+				throw new InvalidOperationException ("Specified port is not open");
+			
+			byte [] bytes = encoding.GetBytes (buffer, offset, count);
+			write_serial (unixFd, bytes, offset, count, writeTimeout);
 		}
 
 		public void WriteLine (string str)
