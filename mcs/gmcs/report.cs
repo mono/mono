@@ -316,8 +316,7 @@ namespace Mono.CSharp {
 			} else {
 				MethodBase mb = mi as MethodBase;
 				if (mb != null) {
-					while (mb.Mono_IsInflatedMethod)
-						mb = mb.GetGenericMethodDefinition ();
+					mb = TypeManager.DropGenericMethodArguments (mb);
 					IMethodData md = TypeManager.GetMethod (mb);
 					SymbolRelatedToPreviousError (md.Location, md.GetSignatureForError ());
 					return;
