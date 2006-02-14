@@ -10,8 +10,8 @@ class MyTest {
     Console.WriteLine("[{0}] [{1}] [{2}]", b4, b5, b6);
     bool? b7 = b1^b3, b8 = b1&b3, b9 = b1|b3;                     // null null true
     Console.WriteLine("[{0}] [{1}] [{2}]", b7, b8, b9);
-    Console.WriteLine(b1 ? "null is true" : "null is false");     // null is false
-    Console.WriteLine(!b1 ? "!null is true" : "!null is false");  // !null is false
+    Console.WriteLine(b1 != null ? "null is true" : "null is false");     // null is false
+    Console.WriteLine(b1 == null ? "!null is true" : "!null is false");  // !null is false
 
     Console.WriteLine();
     bool?[] bvals = new bool?[] { null, false, true };

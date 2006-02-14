@@ -1,7 +1,7 @@
 using System;
 
 namespace Martin {
-	public class A
+	public struct A
 	{
 		public readonly long Data;
 
@@ -16,7 +16,7 @@ namespace Martin {
 		}
 	}
 
-	public class B
+	public struct B
 	{
 		public readonly int Data;
 

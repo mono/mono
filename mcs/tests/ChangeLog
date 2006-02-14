@@ -1,3 +1,9 @@
+2006-02-14  Martin Baulig  <martin@ximian.com>
+
+	* known-issues-gmcs: Add test-473.cs.
+
+	* gtest-130.cs, gtest-136.cs: Make these tests actually work.
+
 2006-02-11  Marek Safar <marek.safar@seznam.cz>
 
 	* test-491.cs: Test for bug #77485.
