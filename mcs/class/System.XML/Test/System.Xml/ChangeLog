@@ -1,5 +1,10 @@
 2006-02-14  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlTextWriterTests.cs : tiny test name fix, as it does not actually
+	  test WriteString().
+
+2006-02-14  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlTextWriterTests.cs : added test WriteRaw("") closes open tag.
 
 2006-02-14  Atsushi Enomoto  <atsushi@ximian.com>

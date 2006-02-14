@@ -2144,7 +2144,7 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-		public void WriteStringEmptyCloseStartTag ()
+		public void WriteRawEmptyCloseStartTag ()
 		{
 			xtw.WriteStartElement ("stream", "stream","http://etherx.jabber.org/streams");
 			xtw.WriteAttributeString ("version", "1.0");
