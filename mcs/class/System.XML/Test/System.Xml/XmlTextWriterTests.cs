@@ -258,7 +258,7 @@ namespace MonoTests.System.Xml
 				xtw.WriteAttributeString ("xmlns", "xmlns", null, "http://abc.def");
 				// This should not be allowed, even though MS.NET doesn't treat as an error.
 				// See http://www.w3.org/TR/REC-xml-names/ Namespace Constraint: Prefix Declared
-				Assert.Fail ("any prefix which name starts from \"xml\" must not be allowed.");
+				Assert.Fail ("A prefix must not start with \"xml\".");
 			} catch (ArgumentException) {}
 			xtw.WriteAttributeString ("", "xmlns", null, "http://abc.def");
 		}
@@ -811,16 +811,16 @@ namespace MonoTests.System.Xml
 			Assert.AreEqual ("<foo>bar</foo>", StringWriterText, "WriteElementString has incorrect output.");
 
 			xtw.WriteElementString ("baz", "");
-			Assert.AreEqual ("<foo>bar</foo><baz />", StringWriterText);
+			Assert.AreEqual ("<foo>bar</foo><baz />", StringWriterText, "#2");
 
 			xtw.WriteElementString ("quux", null);
-			Assert.AreEqual ("<foo>bar</foo><baz /><quux />", StringWriterText);
+			Assert.AreEqual ("<foo>bar</foo><baz /><quux />", StringWriterText, "#3");
 
 			xtw.WriteElementString ("", "quuux");
-			Assert.AreEqual ("<foo>bar</foo><baz /><quux /><>quuux</>", StringWriterText);
+			Assert.AreEqual ("<foo>bar</foo><baz /><quux /><>quuux</>", StringWriterText, "#4");
 
 			xtw.WriteElementString (null, "quuuux");
-			Assert.AreEqual ("<foo>bar</foo><baz /><quux /><>quuux</><>quuuux</>", StringWriterText);
+			Assert.AreEqual ("<foo>bar</foo><baz /><quux /><>quuux</><>quuuux</>", StringWriterText, "#5");
 		}
 
 		[Test]
@@ -871,18 +871,18 @@ namespace MonoTests.System.Xml
 			xtw.WriteStartElement ("one");
 			xtw.WriteAttributeString ("xmlns", "foo", null, "http://abc.def");
 			xtw.WriteAttributeString ("xmlns", "bar", null, "http://ghi.jkl");
-			Assert.AreEqual ("foo", xtw.LookupPrefix ("http://abc.def"));
-			Assert.AreEqual ("bar", xtw.LookupPrefix ("http://ghi.jkl"));
+			Assert.AreEqual ("foo", xtw.LookupPrefix ("http://abc.def"), "#1");
+			Assert.AreEqual ("bar", xtw.LookupPrefix ("http://ghi.jkl"), "#2");
 			xtw.WriteEndElement ();
 
 			xtw.WriteStartElement ("two");
 			xtw.WriteAttributeString ("xmlns", "baz", null, "http://mno.pqr");
 			xtw.WriteString("quux");
-			Assert.AreEqual ("baz", xtw.LookupPrefix ("http://mno.pqr"));
-			Assert.IsNull (xtw.LookupPrefix ("http://abc.def"));
-			Assert.IsNull (xtw.LookupPrefix ("http://ghi.jkl"));
+			Assert.AreEqual ("baz", xtw.LookupPrefix ("http://mno.pqr"), "#3");
+			Assert.IsNull (xtw.LookupPrefix ("http://abc.def"), "#4");
+			Assert.IsNull (xtw.LookupPrefix ("http://ghi.jkl"), "#5");
 
-			Assert.IsNull (xtw.LookupPrefix ("http://bogus"));
+			Assert.IsNull (xtw.LookupPrefix ("http://bogus"), "#6");
 		}
 
 		[Test]
@@ -1422,22 +1422,22 @@ namespace MonoTests.System.Xml
 		public void XmlSpaceTest ()
 		{
 			xtw.WriteStartElement ("foo");
-			Assert.AreEqual (XmlSpace.None, xtw.XmlSpace);
+			Assert.AreEqual (XmlSpace.None, xtw.XmlSpace, "#1");
 
 			xtw.WriteStartElement ("bar");
 			xtw.WriteAttributeString ("xml", "space", null, "preserve");
-			Assert.AreEqual (XmlSpace.Preserve, xtw.XmlSpace);
-			Assert.AreEqual ("<foo><bar xml:space='preserve'", StringWriterText);
+			Assert.AreEqual (XmlSpace.Preserve, xtw.XmlSpace, "#2");
+			Assert.AreEqual ("<foo><bar xml:space='preserve'", StringWriterText, "#3");
 
 			xtw.WriteStartElement ("baz");
 			xtw.WriteAttributeString ("xml", "space", null, "preserve");
-			Assert.AreEqual (XmlSpace.Preserve, xtw.XmlSpace);
-			Assert.AreEqual ("<foo><bar xml:space='preserve'><baz xml:space='preserve'", StringWriterText);
+			Assert.AreEqual (XmlSpace.Preserve, xtw.XmlSpace, "#4");
+			Assert.AreEqual ("<foo><bar xml:space='preserve'><baz xml:space='preserve'", StringWriterText, "#5");
 
 			xtw.WriteStartElement ("quux");
 			xtw.WriteStartAttribute ("xml", "space", null);
-			Assert.AreEqual (XmlSpace.Preserve, xtw.XmlSpace);
-			Assert.AreEqual ("<foo><bar xml:space='preserve'><baz xml:space='preserve'><quux xml:space='", StringWriterText);
+			Assert.AreEqual (XmlSpace.Preserve, xtw.XmlSpace, "#6");
+			Assert.AreEqual ("<foo><bar xml:space='preserve'><baz xml:space='preserve'><quux xml:space='", StringWriterText, "#7");
 
 			// Commented out there: it is implementation-dependent
 			// and incompatible between .NET 1.0 and 1.1
@@ -1446,15 +1446,15 @@ namespace MonoTests.System.Xml
 			// Assert.AreEqual ("<foo><bar xml:space='preserve'><baz xml:space='preserve'><quux xml:space='", StringWriterText);
 			
 			xtw.WriteEndAttribute ();
-			Assert.AreEqual (XmlSpace.Default, xtw.XmlSpace);
-			Assert.AreEqual ("<foo><bar xml:space='preserve'><baz xml:space='preserve'><quux xml:space='default'", StringWriterText);
+			Assert.AreEqual (XmlSpace.Default, xtw.XmlSpace, "#8");
+			Assert.AreEqual ("<foo><bar xml:space='preserve'><baz xml:space='preserve'><quux xml:space='default'", StringWriterText, "#9");
 
 			xtw.WriteEndElement ();
-			Assert.AreEqual (XmlSpace.Preserve, xtw.XmlSpace);
+			Assert.AreEqual (XmlSpace.Preserve, xtw.XmlSpace, "#10");
 			xtw.WriteEndElement ();
-			Assert.AreEqual (XmlSpace.Preserve, xtw.XmlSpace);
+			Assert.AreEqual (XmlSpace.Preserve, xtw.XmlSpace, "#11");
 			xtw.WriteEndElement ();
-			Assert.AreEqual (XmlSpace.None, xtw.XmlSpace);
+			Assert.AreEqual (XmlSpace.None, xtw.XmlSpace, "#12");
 
 			xtw.WriteStartElement ("quux");
 		}
@@ -1666,9 +1666,9 @@ namespace MonoTests.System.Xml
 			xtw.WriteStartDocument ();
 			xtw.WriteStartElement ("foo");
 			xtw.WriteAttributeString ("xmlns", "probe");
-			Assert.AreEqual (String.Empty, xtw.LookupPrefix ("probe"));
+			Assert.AreEqual (String.Empty, xtw.LookupPrefix ("probe"), "#1");
 			xtw.WriteStartElement ("b");
-			Assert.AreEqual (String.Empty, xtw.LookupPrefix ("probe"));
+			Assert.AreEqual (String.Empty, xtw.LookupPrefix ("probe"), "#2");
 			xtw.WriteStartElement (null, "b2", null); // *Don't* output xmlns=""
 			xtw.WriteEndElement (); // b2
 			xtw.WriteStartElement (null, "b2", ""); // *Do* output xmlns=""
@@ -1678,7 +1678,7 @@ namespace MonoTests.System.Xml
 			xtw.WriteEndDocument ();
 			xtw.Close ();
 
-			Assert.AreEqual ("<?xml version='1.0' encoding='utf-16'?><foo xmlns='probe'><b><b2 /><b2 xmlns='' /></b></foo>", StringWriterText);
+			Assert.AreEqual ("<?xml version='1.0' encoding='utf-16'?><foo xmlns='probe'><b><b2 /><b2 xmlns='' /></b></foo>", StringWriterText, "#3");
 		}
 
 		[Test]
@@ -1688,19 +1688,19 @@ namespace MonoTests.System.Xml
 			// IMPORTANT DIFFERENCE!! ns = "", not null
 			xtw.WriteStartElement ("foo", "");
 			xtw.WriteAttributeString ("xmlns", "probe");
-			Assert.IsNull (xtw.LookupPrefix ("probe"));
+			Assert.IsNull (xtw.LookupPrefix ("probe"), "#1");
 			xtw.WriteStartElement ("b");
-			Assert.IsNull (xtw.LookupPrefix ("probe"));
+			Assert.IsNull (xtw.LookupPrefix ("probe"), "#2");
 			xtw.WriteStartElement (null, "b2", null); // *Don't* output xmlns=""
 			xtw.WriteEndElement (); // b2
-			xtw.WriteStartElement (null, "b2", ""); // *Do* output xmlns=""
+			xtw.WriteStartElement (null, "b2", ""); // *Don't* output xmlns=""
 			xtw.WriteEndElement (); // b2
 			xtw.WriteEndElement (); // b
 			xtw.WriteEndElement (); // foo
 			xtw.WriteEndDocument ();
 			xtw.Close ();
 
-			Assert.AreEqual ("<?xml version='1.0' encoding='utf-16'?><foo xmlns='probe'><b><b2 /><b2 /></b></foo>", StringWriterText);
+			Assert.AreEqual ("<?xml version='1.0' encoding='utf-16'?><foo xmlns='probe'><b><b2 /><b2 /></b></foo>", StringWriterText, "#3");
 		}
 
 		[Test]
@@ -1782,7 +1782,9 @@ namespace MonoTests.System.Xml
 		[ExpectedException (typeof (ArgumentException))]
 		public void AttributeWriteEndAttributeXmlnsNullNs ()
 		{
-			// Compare with the test AttributeWriteStartAttributeXmlnsNullNS().
+			// This test checks if the specified namespace URI is
+			// incorrectly empty or not. Compare it with
+			// AttributeWriteStartAttributeXmlnsNullNS().
 			xtw.WriteStartAttribute ("xmlns", "foo", null);
 			xtw.WriteEndAttribute ();
 		}
