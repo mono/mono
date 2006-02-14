@@ -30,19 +30,30 @@ namespace System {
 	[Serializable]
 	public struct ArraySegment <T> {
 		T [] array;
-		int offset, length;
+		int offset, count;
 		
-		public ArraySegment (T [] array, int offset, int length)
+		public ArraySegment (T [] array, int offset, int count)
 		{
 			if (array == null)
 				throw new ArgumentNullException ("array");
 			
-			if (offset >= array.Length || (offset + length) >= array.Length)
+			if (offset < 0)
+				throw new ArgumentOutOfRangeException ("offset", "Non-negative number required.");
+
+			if (count < 0)
+				throw new ArgumentOutOfRangeException ("count", "Non-negative number required.");
+
+			if (offset > array.Length)
 				throw new ArgumentException ("out of bounds");
+
+			// now offset is valid, or just beyond the end.
+			// Check count -- do it this way to avoid overflow on 'offset + count'
+			if (array.Length - offset < count)
+				throw new ArgumentException ("out of bounds", "offset");
 			
 			this.array = array;
 			this.offset = offset;
-			this.length = length;
+			this.count = count;
 		}
 		
 		public ArraySegment (T [] array)
@@ -52,7 +63,7 @@ namespace System {
 			
 			this.array = array;
 			this.offset = 0;
-			this.length = array.Length;
+			this.count = array.Length;
 		}
 		
 		public T [] Array {
@@ -64,7 +75,7 @@ namespace System {
 		}
 		
 		public int Count {
-			get { return length; }
+			get { return count; }
 		}
 	}
 }

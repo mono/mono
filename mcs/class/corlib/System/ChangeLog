@@ -1,3 +1,9 @@
+2006-02-14  Ankit Jain  <jankit@novell.com>
+	    Raja R Harinath  <rharinath@novell.com>
+ 
+	* ArraySegment.cs (.ctor): Fix bounds check. Rename param 'length' to
+	'count'.
+
 2006-02-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* TermInfoDriver.cs (CreateKeyInfoFromInt): Fix handling of tab and its
