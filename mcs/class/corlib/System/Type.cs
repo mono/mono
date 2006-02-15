@@ -1117,11 +1117,6 @@ namespace System {
 			return res;
 		}
 
-		public extern bool IsGenericInstance {
-			[MethodImplAttribute(MethodImplOptions.InternalCall)]
-			get;
-		}
-
 		public virtual extern bool IsGenericType {
 			[MethodImplAttribute(MethodImplOptions.InternalCall)]
 			get;

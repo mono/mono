@@ -315,7 +315,7 @@ namespace System
 
 			string generic = "";
 #if NET_2_0 || BOOTSTRAP_NET_2_0
-			if (mi.HasGenericParameters) {
+			if (mi.IsGenericMethod) {
 				Type[] gen_params = mi.GetGenericArguments ();
 				generic = "[";
 				for (int j = 0; j < gen_params.Length; j++) {

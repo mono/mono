@@ -1,3 +1,7 @@
+2006-02-15  Martin Baulig  <martin@ximian.com>
+
+	* Type.cs (Type.IsGenericInstance): Removed.
+
 2006-02-14  Ankit Jain  <jankit@novell.com>
 	    Raja R Harinath  <rharinath@novell.com>
  

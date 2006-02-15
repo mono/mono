@@ -62,7 +62,7 @@ namespace System {
 		{
 			if (nullableType == null)
 				throw new ArgumentNullException ("nullableType");
-			if (nullableType.IsGenericInstance && nullableType.GetGenericTypeDefinition () == typeof (Nullable<>))
+			if (nullableType.IsGenericType && nullableType.GetGenericTypeDefinition () == typeof (Nullable<>))
 				return nullableType.GetGenericArguments ()[0];
 			else
 				return null;
