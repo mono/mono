@@ -182,26 +182,9 @@ namespace System.Reflection {
 			throw new NotSupportedException ();
 		}
 
-		public virtual MethodInfo GetGenericMethodDefinition ()
-		{
-			throw new NotSupportedException ();
-		}
-
-		public virtual bool Mono_IsInflatedMethod {
-			get {
-				throw new NotSupportedException ();
-			}
-		}
-
 		public virtual bool ContainsGenericParameters {
 			get {
 				return false;
-			}
-		}
-
-		public virtual bool HasGenericParameters {
-			get {
-				throw new NotSupportedException ();
 			}
 		}
 
@@ -213,7 +196,7 @@ namespace System.Reflection {
 
 		public virtual bool IsGenericMethod {
 			get {
-				return false;
+				throw new NotSupportedException ();
 			}
 		}
 #endif
