@@ -1,3 +1,13 @@
+2006-02-14  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* SerialPort.cs: Little work on default values and
+	exception report.
+	
+	* Parity.cs:
+	* Handshake.cs:
+	* StopBits.cs: New enum files (taken outside SerialPort
+	and with the right values now).
+
 2006-02-13  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* SerialPort.cs: Work on Encoding property and use it

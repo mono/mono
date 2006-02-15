@@ -2,46 +2,12 @@
 
 #if NET_2_0
 
+using System;
 using System.Text;
 using System.Runtime.InteropServices;
 
 namespace System.IO.Ports
 {
-	public enum Handshake
-	{
-		None,                 /* No control is used for the handshake */
-		RequestToSend,        /* Request-to-Send (RTS) hardware flow
-				       * control is used. RTS is used to signal
-				       * that data is available for
-				       * transmission. */
-		RequestToSendXOnXOff, /* Both the Request-to-Send (RTS) hardware
-				       * control and the XON/XOFF software
-				       * controls are used. */
-		XOnXOff               /* The XON/XOFF software control protocol is
-				       * used.  XOFF is a software control sent to
-				       * stop the transmission of data and the XON
-				       * control is sent to resume the
-				       * transmission.  These controls are used
-				       * instead of the Request to Send (RTS) and
-				       * Clear to Send (CTS) hardware controls. */
-	}
-
-	public enum Parity
-	{
-		Even, /* Sets the parity bit so that the count of bits set is an even number */
-		Mark, /* Leaves the parity bit set to 1. */
-		None, /* No parity check occurs */
-		Odd,  /* Sets the parity bit so that the count of bits set is an odd number */
-		Space /* Leaves the parity bit set to 0 */
-	}
-
-	public enum StopBits
-	{
-		One,          /* One stop bit is used */
-		OnePointFive, /* Three stop bits are used. */
-		Two           /* Two stop bits are used. */
-	}
-
 	public class SerialPort /* : Component */
 	{
 
@@ -56,7 +22,7 @@ namespace System.IO.Ports
 		bool   breakState = false;
 		Stream baseStream;
 		Encoding encoding = Encoding.ASCII;
-		string newLine    = "\n";
+		string newLine    = Environment.NewLine;
 		string portName;
 		int    unixFd;
 		int    readTimeout = InfiniteTimeout;
@@ -196,27 +162,31 @@ namespace System.IO.Ports
 		[DllImport("MonoPosixHelper")]
 		private static extern bool set_attributes (int unix_fd, int baud_rate, Parity parity, int dataBits, StopBits stopBits, Handshake handshake);
 	  
-		public int BaudRate
-		{
+		public int BaudRate {
 			get {
 				return baudRate;
 			}
 			set {
-				this.baudRate = value;
+				if (value <= 0)
+					throw new ArgumentOutOfRangeException ("value");
+				
+				baudRate = value;
 				set_attributes (unixFd, baudRate, parity, dataBits, stopBits, handshake);
 			}
 		}
 
-		public bool BreakState
-		{
+		public bool BreakState {
 			get {
 				return breakState;
 			}
 			set {
 				if (!isOpen)
 					throw new InvalidOperationException ();
+				if (value == breakState)
+					return; // Do nothing.
 
-				throw new NotImplementedException ();
+				breakState = value;
+				// Update the state
 			}
 		}
 
@@ -260,14 +230,13 @@ namespace System.IO.Ports
 			}
 		}
 
-		public int DataBits
-		{
+		public int DataBits {
 			get {
-				throw new NotImplementedException ();
+				return dataBits;
 			}
 			set {
 				if (value < 5 || value > 8)
-					throw new ArgumentOutOfRangeException ();
+					throw new ArgumentOutOfRangeException ("value");
 
 				dataBits = value;
 				set_attributes (unixFd, baudRate, parity, dataBits, stopBits, handshake);
@@ -319,8 +288,7 @@ namespace System.IO.Ports
 			}
 		}
 
-		public Handshake Handshake
-		{
+		public Handshake Handshake {
 			get {
 				if (!isOpen)
 					throw new InvalidOperationException ();
@@ -330,6 +298,8 @@ namespace System.IO.Ports
 			set {
 				if (!isOpen)
 					throw new InvalidOperationException ();
+				if (value < Handshake.None || value > Handshake.RequestToSendXOnXOff)
+					throw new ArgumentOutOfRangeException ("value");
 
 				handshake = value;
 
@@ -344,18 +314,19 @@ namespace System.IO.Ports
 			}
 		}
 
-		public string NewLine
-		{
+		public string NewLine {
 			get {
 				return newLine;
 			}
 			set {
+				if (value == null)
+					throw new ArgumentNullException ("value");
+				
 				newLine = value;
 			}
 		}
 
-		public Parity Parity
-		{
+		public Parity Parity {
 			get {
 				if (!isOpen)
 					throw new InvalidOperationException ();
@@ -365,9 +336,10 @@ namespace System.IO.Ports
 			set {
 				if (!isOpen)
 					throw new InvalidOperationException ();
+				if (value < Parity.None || value > Parity.Space)
+					throw new ArgumentOutOfRangeException ("value");
 
-				this.parity = value;
-
+				parity = value;
 				set_attributes (unixFd, baudRate, parity, dataBits, stopBits, handshake);
 			}
 		}
@@ -382,12 +354,18 @@ namespace System.IO.Ports
 			}
 		}
 
-		public string PortName
-		{
+		public string PortName {
 			get {
 				return portName;
 			}
 			set {
+				if (isOpen)
+					throw new InvalidOperationException ();
+				if (value == null)
+					throw new ArgumentNullException ("value");
+				if (value.Length == 0 || value.StartsWith ("\\"))
+					throw new ArgumentException ("value");
+				
 				throw new NotImplementedException ();
 			}
 		}
@@ -399,7 +377,7 @@ namespace System.IO.Ports
 			}
 			set {
 				if (value <= 0)
-					throw new ArgumentOutOfRangeException ();
+					throw new ArgumentOutOfRangeException ("value");
 
 				throw new NotImplementedException ();
 			}
@@ -412,20 +390,19 @@ namespace System.IO.Ports
 			}
 			set {
 				if (value <= 0 && value != InfiniteTimeout)
-					throw new ArgumentOutOfRangeException ();
+					throw new ArgumentOutOfRangeException ("value");
 
 				readTimeout = value;
 			}
 		}
 
-		public int ReceivedBytesThreshold
-		{
+		public int ReceivedBytesThreshold {
 			get {
 				throw new NotImplementedException ();
 			}
 			set {
 				if (value <= 0)
-					throw new ArgumentOutOfRangeException ();
+					throw new ArgumentOutOfRangeException ("value");
 
 				throw new NotImplementedException ();
 			}
@@ -441,12 +418,14 @@ namespace System.IO.Ports
 			}
 		}
 
-		public StopBits StopBits
-		{
+		public StopBits StopBits {
 			get {
 				return stopBits;
 			}
 			set {
+				if (value < StopBits.One || value > StopBits.OnePointFive)
+					throw new ArgumentOutOfRangeException ("value");
+				
 				this.stopBits = value;
 				set_attributes (unixFd, baudRate, parity, dataBits, stopBits, handshake);
 			}
@@ -459,7 +438,7 @@ namespace System.IO.Ports
 			}
 			set {
 				if (value <= 0)
-					throw new ArgumentOutOfRangeException ();
+					throw new ArgumentOutOfRangeException ("value");
 
 				throw new NotImplementedException ();
 			}
@@ -472,7 +451,7 @@ namespace System.IO.Ports
 			}
 			set {
 				if (value <= 0 && value != InfiniteTimeout)
-					throw new ArgumentOutOfRangeException ();
+					throw new ArgumentOutOfRangeException ("value");
 
 				writeTimeout = value;
 			}
@@ -484,6 +463,9 @@ namespace System.IO.Ports
 		private static extern void close_serial (int unixFd);
 		public void Close ()
 		{
+			if (!isOpen)
+				return;
+			
 			isOpen = false;
 
 			close_serial (unixFd);
