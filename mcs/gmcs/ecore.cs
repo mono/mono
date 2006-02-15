@@ -2893,7 +2893,7 @@ namespace Mono.CSharp {
 			ArrayList list = new ArrayList ();
 			foreach (MethodBase mb in Methods) {
 				MethodInfo mi = mb as MethodInfo;
-				if ((mi == null) || !mi.HasGenericParameters)
+				if ((mi == null) || !mi.IsGenericMethod)
 					continue;
 
 				Type[] gen_params = mi.GetGenericArguments ();
