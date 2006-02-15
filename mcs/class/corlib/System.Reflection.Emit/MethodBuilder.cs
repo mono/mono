@@ -482,27 +482,15 @@ namespace System.Reflection.Emit {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public override extern MethodInfo MakeGenericMethod (Type [] types);
 
-		public override bool Mono_IsInflatedMethod {
-			get {
-				return false;
-			}
-		}
-
-		public override bool HasGenericParameters {
+		public override bool IsGenericMethodDefinition {
 			get {
 				return generic_params != null;
 			}
 		}
 
-		public override bool IsGenericMethodDefinition {
-			get {
-				return HasGenericParameters;
-			}
-		}
-
 		public override bool IsGenericMethod {
 			get {
-				return HasGenericParameters;
+				return generic_params != null;
 			}
 		}
 
@@ -543,7 +531,7 @@ namespace System.Reflection.Emit {
 			this.attrs = attributes;
 			this.call_conv = callingConvention;
 			if ((attributes & MethodAttributes.Static) == 0)
- 				this.call_conv |= CallingConventions.HasThis;
+				this.call_conv |= CallingConventions.HasThis;
 
 			this.rtype = return_type;
 			this.parameters = new Type [parameter_types.Length];
