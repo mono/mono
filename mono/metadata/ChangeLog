@@ -1,3 +1,11 @@
+
+Wed Feb 15 16:19:24 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* class.c, metadata.c, metadata.h, object.c, icall.c,
+	marshal.c: changed mono_type_get_underlying_type () to do
+	the sensible thing and introduced mono_type_generic_inst_is_valuetype().
+	Fixed handling of instantiated generic valuetypes (bug #75479).
+
 2006-02-15  Raja R Harinath  <rharinath@novell.com>
 
 	* metadata.c (mono_metadata_decode_signed_value): Simplify.
