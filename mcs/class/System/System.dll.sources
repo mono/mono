@@ -480,10 +480,13 @@ System.IO/KeventWatcher.cs
 System.IO/MonoIO.cs
 System.IO/MonoIOError.cs
 System.IO/NotifyFilters.cs
+System.IO.Ports/Handshake.cs
+System.IO.Ports/Parity.cs
 System.IO.Ports/SerialErrorEventArgs.cs
 System.IO.Ports/SerialPinChangedEventArgs.cs
 System.IO.Ports/SerialPort.cs
 System.IO.Ports/SerialReceivedEventArgs.cs
+System.IO.Ports/StopBits.cs
 System.IO/RenamedEventArgs.cs
 System.IO/RenamedEventHandler.cs
 System.IO/SearchPattern.cs
