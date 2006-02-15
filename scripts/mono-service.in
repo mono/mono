@@ -12,7 +12,7 @@ done
 if test x$assembly = x; then
 	echo You must specify at least the assembly name
 	echo 
-	echo 'Usage is: mono-service [options] service'
+	echo 'Usage is: $0 [options] service'
 	echo 
 	echo '    -d:<directory>         Working directory'
 	echo '    -l:<lock file>         Lock file (default is /tmp/<service>.log)'
