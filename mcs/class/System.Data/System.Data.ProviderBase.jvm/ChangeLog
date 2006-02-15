@@ -1,3 +1,7 @@
+2006-15-02 Konstantin Triger <kostat@mainsoft.com>
+
+	* AbstractDataReader.cs: Oracle NUMERIC with scale -127 maps to double.
+
 2005-14-12 Konstantin Triger <kostat@mainsoft.com>
 
 	* DbPortResolver.cs, AbstractDBConnection.cs: differentiate between the situation where

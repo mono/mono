@@ -1054,8 +1054,15 @@ namespace System.Data.Common
 						row [(int)SCHEMA_TABLE.IsLong] = true;
 					}
 					else if(columnType == Types.NUMERIC) {
-						row [(int)SCHEMA_TABLE.ProviderType] = GetProviderType(columnType);
-						row [(int)SCHEMA_TABLE.DataType] = DbTypes.TypeOfDecimal;
+						// see explanation in CreateReaderCache
+						if (metaData.getScale(i) == -127) {
+							row [(int)SCHEMA_TABLE.ProviderType] = GetProviderType(Types.DOUBLE);
+							row [(int)SCHEMA_TABLE.DataType] = DbTypes.TypeOfDouble;
+						}
+						else {
+							row [(int)SCHEMA_TABLE.ProviderType] = GetProviderType(columnType);
+							row [(int)SCHEMA_TABLE.DataType] = DbTypes.TypeOfDecimal;
+						}
 						row [(int)SCHEMA_TABLE.IsLong] = false;
 					}
 					else if(columnType == Types.REF) {
