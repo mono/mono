@@ -1051,6 +1051,9 @@ namespace System.Windows.Forms {
 				ParentHandle = FosterParent;
 			}
 
+			// Since we fake MDI dont tell Windows that this is a real MDI window
+			cp.ExStyle ^= (int) WindowStyles.WS_EX_MDICHILD;
+
 			WindowHandle = Win32CreateWindow((uint)cp.ExStyle, cp.ClassName, cp.Caption, (uint)cp.Style, cp.X, cp.Y, cp.Width, cp.Height, ParentHandle, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
 
 			if (WindowHandle==IntPtr.Zero) {
