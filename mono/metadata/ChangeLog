@@ -1,3 +1,10 @@
+2006-02-15  Ankit Jain  <jankit@novell.com>
+
+	* metadata.c (mono_metadata_decode_signed_value): New function to decode
+	signed values, used only for representing lower bounds of arrays.
+	(mono_metadata_parse_array_full): Use new
+	mono_metadata_decode_signed_value to decode lower bounds.
+
 2006-02-14  Martin Baulig  <martin@ximian.com>
 
 	* reflection.c
