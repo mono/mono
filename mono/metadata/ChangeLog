@@ -1,3 +1,10 @@
+2006-02-15  Martin Baulig  <martin@ximian.com>
+
+	* icall.c
+	(ves_icall_MonoMethod_get_HasGenericParameters): Removed.
+	(ves_icall_MonoMethod_get_Mono_IsInflatedMethod): Removed.
+	(ves_icall_MonoMethod_get_IsGenericMethod): New icall.
+	(ves_icall_MonoMethod_get_IsGenericMethodDefinition): New icall.
 
 Wed Feb 15 16:19:24 CET 2006 Paolo Molaro <lupus@ximian.com>
 
