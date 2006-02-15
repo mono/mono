@@ -9228,7 +9228,6 @@ mono_spill_global_vars (MonoCompile *cfg)
  * - fix LNEG and enable cfold of INEG
  * - generalize x86 optimizations like ldelema as a peephole optimization
  * - port the x86 optimizations to amd64 as well
- * - lazily compile wrappers
  * - add store_mem_imm for amd64
  * - optimize the loading of the interruption flag in the managed->native wrappers
  * - LAST MERGE: 56617.
