@@ -510,6 +510,7 @@ typedef struct {
 	const char *name;
 	gconstpointer func;
 	gconstpointer wrapper;
+	gconstpointer trampoline;
 	MonoMethodSignature *sig;
 } MonoJitICallInfo;
 
