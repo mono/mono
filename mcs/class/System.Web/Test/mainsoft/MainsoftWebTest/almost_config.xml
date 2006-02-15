@@ -1,0 +1,31 @@
+<Almost>
+	<IgnoreList>
+		<div id="" visible="" name=""/>
+		<span id="" visible="" name=""/>
+		<input id="" visible="" name="" __EVENTARGUMENT="" __EVENTTARGET="" __VIEWSTATE="" causesvalidation=""/>
+		<table id="" visible="" name=""/>
+		<td id="" visible="" name=""/>
+		<th id="" visible="" name=""/>
+		<tr id="" visible="" name=""/>
+		<table id="" visible="" name=""/>
+		<img id="" visible="" name=""/>
+		<a id="" visible="" name=""/>
+		<select id="" visible="" name=""/>
+		<textarea id="" visible="" name=""/>
+		<button id="" visible="" name="" causesvalidation=""/>
+		<p visible=""/>
+		<form visible=""/>
+		<label for=""/>
+	</IgnoreList>
+
+	<!--delete Java Script attribute value-->
+	<CleanJavaScriptValueList>
+		<a href=""/>
+		<a onclick=""/>
+	</CleanJavaScriptValueList>
+
+	<!--remove tags by attribute Id or name-->
+	<RemoveById>
+		<input id="__VIEWSTATE" name="__VIEWSTATE"/>
+	</RemoveById>
+</Almost>
