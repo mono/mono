@@ -1,3 +1,9 @@
+2006-02-15  Ankit Jain  <jankit@novell.com>
+
+	* Metadata.cs (BoundArray.CompressSignedNum): New. Encode signed values,
+	used only for encoding lower bounds of arrays.
+	(BoundArray.TypeSig): Use new CompressSignedNum to encode lower bounds.
+
 2006-02-08  Ankit Jain  <jankit@novell.com>
 
 	* Metadata.cs (BoundArray.ctor): Change param 'upBounds' to sizes.

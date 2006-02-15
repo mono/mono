@@ -2345,9 +2345,25 @@ namespace PEAPI {
 			if ((lowerBounds != null) && (lowerBounds.Length > 0)) {
 				MetaData.CompressNum((uint)lowerBounds.Length,str);
 				for (int i=0; i < lowerBounds.Length; i++) {
-					MetaData.CompressNum((uint)lowerBounds[i],str);
+					CompressSignedNum (lowerBounds[i],str);
 				}
 			} else str.WriteByte(0);
+		}
+		private void CompressSignedNum (int val, MemoryStream str)
+		{
+			uint uval = (uint) val;
+			int sign = val < 0 ? 1 : 0;
+			uint fval = (uint) ((uval << 1) | sign);
+			int sval = (((val < 0 ? - val : val)) << 1) - sign;
+			
+			if (sval < 0x80)
+				MetaData.CompressNum (fval & 0x7F, str);
+			else if (sval < 0x4000 && (fval & 0x3fff) >= 0x80)
+				/* If (fval & 0x3fff) < 0x80, then
+				   encode with full 4 bytes */
+				MetaData.CompressNum (fval & 0x3FFF, str);
+			else
+				MetaData.CompressNum ((uint) (fval & 0x1FFFFFFF), str);
 		}
 
 	}
