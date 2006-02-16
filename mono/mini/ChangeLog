@@ -1,3 +1,6 @@
+2006-02-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* generics.2.cs: Add some tests for generics ldfld/stfld wrappers.
 
 Wed Feb 15 16:23:17 CET 2006 Paolo Molaro <lupus@ximian.com>
 
@@ -28,6 +31,9 @@ Thu Feb 9 16:24:44 CET 2006 Paolo Molaro <lupus@ximian.com>
 	retrieve the stack address of the current thread.
 
 2006-02-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile.am generics.2.cs: Rename this to generics.cs and handle
+	it specially in the makefile.
 
 	* generics.2.cs: Add tests for nullable reference types.
 
