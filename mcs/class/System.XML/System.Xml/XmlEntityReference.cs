@@ -34,10 +34,11 @@ using Mono.Xml;
 
 namespace System.Xml
 {
-	public class XmlEntityReference : XmlLinkedNode
+	public class XmlEntityReference : XmlLinkedNode, IHasXmlChildNode
 	{
 		string entityName;
-		
+		XmlLinkedNode lastLinkedChild;
+
 		// Constructor
 		protected internal XmlEntityReference (string name, XmlDocument doc)
 			: base (doc)
@@ -48,6 +49,12 @@ namespace System.Xml
 		}
 
 		// Properties
+
+		XmlLinkedNode IHasXmlChildNode.LastLinkedChild {
+			get { return lastLinkedChild; }
+			set { lastLinkedChild = value; }
+		}
+
 		public override string BaseURI {
 			get { return base.BaseURI; }
 		}

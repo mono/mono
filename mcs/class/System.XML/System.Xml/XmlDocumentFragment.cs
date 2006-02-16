@@ -35,8 +35,9 @@ using System.Xml.XPath;
 
 namespace System.Xml
 {
-	public class XmlDocumentFragment : XmlNode
+	public class XmlDocumentFragment : XmlNode, IHasXmlChildNode
 	{
+		XmlLinkedNode lastLinkedChild;
 
 		#region Constructor
 
@@ -48,6 +49,11 @@ namespace System.Xml
 		#endregion
 
 		#region Properties
+
+		XmlLinkedNode IHasXmlChildNode.LastLinkedChild {
+			get { return lastLinkedChild; }
+			set { lastLinkedChild = value; }
+		}
 
 		public override string InnerXml {
 			set {

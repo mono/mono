@@ -42,12 +42,13 @@ using System.Xml.Schema;
 
 namespace System.Xml
 {
-	public class XmlElement : XmlLinkedNode
+	public class XmlElement : XmlLinkedNode, IHasXmlChildNode
 	{
 		#region Fields
 
 		private XmlAttributeCollection attributes;
 		private XmlNameEntry name;
+		XmlLinkedNode lastLinkedChild;
 
 		private bool isNotEmpty;
 #if NET_2_0
@@ -100,6 +101,11 @@ namespace System.Xml
 		#endregion
 
 		#region Properties
+
+		XmlLinkedNode IHasXmlChildNode.LastLinkedChild {
+			get { return lastLinkedChild; }
+			set { lastLinkedChild = value; }
+		}
 
 		public override XmlAttributeCollection Attributes {
 			get {

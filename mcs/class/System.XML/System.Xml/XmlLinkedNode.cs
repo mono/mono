@@ -62,7 +62,8 @@ namespace System.Xml
 				if(ParentNode == null) {
 					return null;
 				}
-				else if (Object.ReferenceEquals(nextSibling, ParentNode.LastLinkedChild.NextLinkedSibling) == false) {
+				else if (Object.ReferenceEquals (nextSibling,
+					((IHasXmlChildNode) ParentNode).LastLinkedChild.NextLinkedSibling) == false) {
 					return nextSibling;
 				}
 				else {

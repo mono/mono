@@ -39,11 +39,11 @@ namespace System.Xml
 
 		private class Enumerator : IEnumerator
 		{
-			XmlNode parent;
+			IHasXmlChildNode parent;
 			XmlLinkedNode currentChild;
 			bool passedLastNode;
 
-			internal Enumerator (XmlNode parent)
+			internal Enumerator (IHasXmlChildNode parent)
 			{
 				currentChild = null;
 				this.parent = parent;
@@ -94,12 +94,12 @@ namespace System.Xml
 
 		#region Fields
 
-		XmlNode parent;
+		IHasXmlChildNode parent;
 
 		#endregion
 
 		#region Constructors
-		public XmlNodeListChildren(XmlNode parent)
+		public XmlNodeListChildren(IHasXmlChildNode parent)
 		{
 			this.parent = parent;
 		}

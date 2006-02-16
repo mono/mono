@@ -84,6 +84,7 @@ System.Xml/EntityHandling.cs
 System.Xml/Formatting.cs
 System.Xml/IHasXmlNode.cs
 System.Xml/IXmlLineInfo.cs
+System.Xml/IHasXmlChildNode.cs
 System.Xml/IXmlNamespaceResolver.cs
 System.Xml/MonoFIXAttribute.cs
 System.Xml/NameTable.cs

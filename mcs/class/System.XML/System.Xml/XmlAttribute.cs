@@ -40,12 +40,13 @@ using System.Xml.Schema;
 
 namespace System.Xml
 {
-	public class XmlAttribute : XmlNode
+	public class XmlAttribute : XmlNode, IHasXmlChildNode
 	{
 		#region Fields
 
 		private XmlNameEntry name;
 		internal bool isDefault;
+		XmlLinkedNode lastLinkedChild;
 #if NET_2_0
 		private IXmlSchemaInfo schemaInfo;
 #endif
@@ -105,6 +106,11 @@ namespace System.Xml
 		#endregion
 
 		#region Properties
+
+		XmlLinkedNode IHasXmlChildNode.LastLinkedChild {
+			get { return lastLinkedChild; }
+			set { lastLinkedChild = value; }
+		}
 
 		public override string BaseURI {
 			get { return OwnerElement != null ? OwnerElement.BaseURI : String.Empty; }

@@ -1,3 +1,7 @@
+2006-02-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.Xml.dll.sources : added IHasXmlChildNode.cs.
+
 2006-02-09  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* System.Xml_test.dll.Sources: Added XmlSerializationReaderTests.cs.

@@ -49,7 +49,7 @@ using Mono.Xml.XPath;
 
 namespace System.Xml
 {
-	public class XmlDocument : XmlNode
+	public class XmlDocument : XmlNode, IHasXmlChildNode
 	{
 		#region Fields
 
@@ -60,6 +60,7 @@ namespace System.Xml
 		XmlResolver resolver;
 		Hashtable idTable = new Hashtable ();
 		XmlNameEntryCache nameCache;
+		XmlLinkedNode lastLinkedChild;
 #if NET_2_0
 		XmlSchemaSet schemas;
 		IXmlSchemaInfo schemaInfo;
@@ -118,6 +119,11 @@ namespace System.Xml
 		#endregion
 
 		#region Properties
+
+		XmlLinkedNode IHasXmlChildNode.LastLinkedChild {
+			get { return lastLinkedChild; }
+			set { lastLinkedChild = value; }
+		}
 
 		public override string BaseURI {
 			get {

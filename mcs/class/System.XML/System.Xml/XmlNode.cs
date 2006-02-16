@@ -45,11 +45,31 @@ namespace System.Xml
 {
 	public abstract class XmlNode : ICloneable, IEnumerable, IXPathNavigable
 	{
+		static EmptyNodeList emptyList = new EmptyNodeList ();
+
+		class EmptyNodeList : XmlNodeList
+		{
+			static IEnumerator emptyEnumerator = new object [0].GetEnumerator ();
+
+			public override int Count {
+				get { return 0; }
+			}
+
+			public override IEnumerator GetEnumerator ()
+			{
+				return emptyEnumerator;
+			}
+
+			public override XmlNode Item (int index)
+			{
+				return null;
+			}
+		}
+
 		#region Fields
 
 		XmlDocument ownerDocument;
 		XmlNode parentNode;
-		XmlLinkedNode lastLinkedChild;
 		XmlNodeListChildren childNodes;
 
 		#endregion
@@ -85,20 +105,21 @@ namespace System.Xml
 
 		public virtual XmlNodeList ChildNodes {
 			get {
+				IHasXmlChildNode l = this as IHasXmlChildNode;
+				if (l == null)
+					return emptyList;
 				if (childNodes == null)
-					childNodes = new XmlNodeListChildren (this);
+					childNodes = new XmlNodeListChildren (l);
 				return childNodes;
 			}
 		}
 
 		public virtual XmlNode FirstChild {
 			get {
-				if (LastChild != null) {
-					return LastLinkedChild.NextLinkedSibling;
-				}
-				else {
-					return null;
-				}
+				IHasXmlChildNode l = this as IHasXmlChildNode;
+				XmlLinkedNode c = (l == null) ?
+					null : l.LastLinkedChild;
+				return c == null ? null : c.NextLinkedSibling;
 			}
 		}
 
@@ -221,12 +242,10 @@ namespace System.Xml
 		}
 
 		public virtual XmlNode LastChild {
-			get { return LastLinkedChild; }
-		}
-
-		internal virtual XmlLinkedNode LastLinkedChild {
-			get { return lastLinkedChild; }
-			set { lastLinkedChild = value; }
+			get {
+				IHasXmlChildNode l = this as IHasXmlChildNode;
+				return l == null ? null : l.LastLinkedChild;
+			}
 		}
 
 		public abstract string LocalName { get;	}
@@ -494,6 +513,8 @@ namespace System.Xml
 			if (checkNodeType)
 				CheckNodeInsertion (newChild, refChild);
 
+			IHasXmlChildNode l = (IHasXmlChildNode) this;
+
 			XmlDocument ownerDoc = (NodeType == XmlNodeType.Document) ? (XmlDocument) this : OwnerDocument;
 
 			if (raiseEvent)
@@ -516,14 +537,14 @@ namespace System.Xml
 					// * set newChild as NextSibling of the existing lastchild
 					// * set LastChild = newChild
 					// * set NextSibling of newChild as FirstChild
-					if (LastLinkedChild != null) {
+					if (l.LastLinkedChild != null) {
 						XmlLinkedNode formerFirst = (XmlLinkedNode) FirstChild;
-						LastLinkedChild.NextLinkedSibling = newLinkedChild;
-						LastLinkedChild = newLinkedChild;
+						l.LastLinkedChild.NextLinkedSibling = newLinkedChild;
+						l.LastLinkedChild = newLinkedChild;
 						newLinkedChild.NextLinkedSibling = formerFirst;
 					} else {
-						LastLinkedChild = newLinkedChild;
-						LastLinkedChild.NextLinkedSibling = newLinkedChild;	// FirstChild
+						l.LastLinkedChild = newLinkedChild;
+						l.LastLinkedChild.NextLinkedSibling = newLinkedChild;	// FirstChild
 					}
 				} else {
 					// newChild is not the last child:
@@ -532,7 +553,7 @@ namespace System.Xml
 					// * set next of newChild to refChild
 					XmlLinkedNode prev = refChild.PreviousSibling as XmlLinkedNode;
 					if (prev == null)
-						LastLinkedChild.NextLinkedSibling = newLinkedChild;
+						l.LastLinkedChild.NextLinkedSibling = newLinkedChild;
 					else
 						prev.NextLinkedSibling = newLinkedChild;
 					newLinkedChild.NextLinkedSibling = refChild as XmlLinkedNode;
@@ -718,15 +739,17 @@ namespace System.Xml
 			if (checkNodeType)
 				CheckNodeRemoval ();
 
-			if (Object.ReferenceEquals (LastLinkedChild, LastLinkedChild.NextLinkedSibling) && Object.ReferenceEquals (LastLinkedChild, oldChild))
+			IHasXmlChildNode l = (IHasXmlChildNode) this;
+
+			if (Object.ReferenceEquals (l.LastLinkedChild, l.LastLinkedChild.NextLinkedSibling) && Object.ReferenceEquals (l.LastLinkedChild, oldChild))
 				// If there is only one children, simply clear.
-				LastLinkedChild = null;
+				l.LastLinkedChild = null;
 			else {
 				XmlLinkedNode oldLinkedChild = (XmlLinkedNode) oldChild;
-				XmlLinkedNode beforeLinkedChild = LastLinkedChild;
+				XmlLinkedNode beforeLinkedChild = l.LastLinkedChild;
 				XmlLinkedNode firstChild = (XmlLinkedNode) FirstChild;
 				
-				while (Object.ReferenceEquals (beforeLinkedChild.NextLinkedSibling, LastLinkedChild) == false && 
+				while (Object.ReferenceEquals (beforeLinkedChild.NextLinkedSibling, l.LastLinkedChild) == false && 
 					Object.ReferenceEquals (beforeLinkedChild.NextLinkedSibling, oldLinkedChild) == false)
 					beforeLinkedChild = beforeLinkedChild.NextLinkedSibling;
 
@@ -735,9 +758,9 @@ namespace System.Xml
 
 				beforeLinkedChild.NextLinkedSibling = oldLinkedChild.NextLinkedSibling;
 
-				// Each derived class may have its own LastLinkedChild, so we must set it explicitly.
+				// Each derived class may have its own l.LastLinkedChild, so we must set it explicitly.
 				if (oldLinkedChild.NextLinkedSibling == firstChild)
-					this.LastLinkedChild = beforeLinkedChild;
+					l.LastLinkedChild = beforeLinkedChild;
 
 				oldLinkedChild.NextLinkedSibling = null;
 				}

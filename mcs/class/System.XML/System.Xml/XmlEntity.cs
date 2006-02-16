@@ -33,7 +33,7 @@ using Mono.Xml;
 
 namespace System.Xml
 {
-	public class XmlEntity : XmlNode
+	public class XmlEntity : XmlNode, IHasXmlChildNode
 	{
 		#region Constructors
 
@@ -57,10 +57,16 @@ namespace System.Xml
 		string publicId;
 		string systemId;
 		string baseUri;
+		XmlLinkedNode lastLinkedChild;
 
 		#endregion
 
 		#region Properties
+
+		XmlLinkedNode IHasXmlChildNode.LastLinkedChild {
+			get { return lastLinkedChild; }
+			set { lastLinkedChild = value; }
+		}
 
 		public override string BaseURI {
 			get {  return baseUri; }

@@ -1,5 +1,14 @@
 2006-02-16  Atsushi Enomoto <atsushi@ximian.com>
 
+	* IHasXmlChildNode.cs :
+	  New internal interface to hold LastLinkedChild.
+	* XmlNodeListChildren.cs XmlEntity.cs XmlElement.cs XmlAttribute.cs
+	  XmlLinkedNode.cs XmlEntityReference.cs XmlNode.cs
+	  XmlDocumentFragment.cs XmlDocument.cs : use it. It minimizes memory
+	  consumption in XmlText, XmlWhitespace, XmlComment etc.
+
+2006-02-16  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlChar.cs : added IndexOfNonWhitespace() and IndexOfInvalid() (not
 	  in use yet).
 	* NewLineHandling.cs : prepared to be used internally in 1.x.
