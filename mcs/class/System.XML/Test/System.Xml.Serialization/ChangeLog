@@ -1,3 +1,7 @@
+2006-02-16  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* XmlSchemaImporterTests.cs: Added test for bug #76848.
+
 2006-02-11  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* XmlRootAttributeTests.cs: Set eol-style to CRLF.

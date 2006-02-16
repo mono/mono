@@ -8,6 +8,7 @@
 // 
 
 using System;
+using System.CodeDom;
 using System.Collections;
 using System.Globalization;
 using System.IO;
@@ -410,6 +411,88 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual ("NSDate", map.Namespace, "#6");
 			Assert.AreEqual ("System.DateTime", map.TypeFullName, "#7");
 			Assert.AreEqual ("DateTime", map.TypeName, "#8");
+		}
+		
+		[Test]
+		public void ImportTypeMapping_EnumSimpleContent ()
+		{
+			string schemaFragment = "<?xml version=\"1.0\" encoding=\"utf-16\"?>" +
+				"<s:schema xmlns:tns=\"NSDate\" elementFormDefault=\"qualified\" targetNamespace=\"NSDate\" xmlns:s=\"http://www.w3.org/2001/XMLSchema\">";
+			schemaFragment += "      <s:element name=\"trans\" type=\"tns:TranslationStatus\" />";
+			schemaFragment += "      <s:complexType name=\"TranslationStatus\">";
+			schemaFragment += "        <s:simpleContent>";
+			schemaFragment += "          <s:extension base=\"tns:StatusType\">";
+			schemaFragment += "            <s:attribute name=\"Language\" type=\"s:int\" use=\"required\" />";
+			schemaFragment += "          </s:extension>";
+			schemaFragment += "        </s:simpleContent>";
+			schemaFragment += "      </s:complexType>";
+			schemaFragment += "      <s:simpleType name=\"StatusType\">";
+			schemaFragment += "        <s:restriction base=\"s:string\">";
+			schemaFragment += "          <s:enumeration value=\"Untouched\" />";
+			schemaFragment += "          <s:enumeration value=\"Touched\" />";
+			schemaFragment += "          <s:enumeration value=\"Complete\" />";
+			schemaFragment += "          <s:enumeration value=\"None\" />";
+			schemaFragment += "        </s:restriction>";
+			schemaFragment += "      </s:simpleType>";
+			schemaFragment += "</s:schema>";
+
+			XmlSchemas schemas = new XmlSchemas ();
+			schemas.Add (XmlSchema.Read (new StringReader (schemaFragment), null));
+
+			ArrayList qnames = GetXmlQualifiedNames (schemas);
+			Assert.AreEqual (1, qnames.Count, "#1");
+
+			XmlQualifiedName qname = (XmlQualifiedName) qnames[0];
+
+			Assert.AreEqual ("trans", qname.Name, "#2");
+			Assert.AreEqual ("NSDate", qname.Namespace, "#3");
+
+			XmlSchemaImporter importer = new XmlSchemaImporter (schemas);
+			XmlTypeMapping map = importer.ImportTypeMapping ((XmlQualifiedName) qnames[0]);
+
+			Assert.IsNotNull (map, "#4");
+			Assert.AreEqual ("trans", map.ElementName, "#5");
+			Assert.AreEqual ("NSDate", map.Namespace, "#6");
+			Assert.AreEqual ("TranslationStatus", map.TypeFullName, "#7");
+			Assert.AreEqual ("TranslationStatus", map.TypeName, "#8");
+			
+			CodeNamespace codeNamespace = ExportCode (map);
+			Assert.IsNotNull (codeNamespace);
+			
+			CodeTypeDeclaration type = FindType (codeNamespace, "TranslationStatus");
+			Assert.IsNotNull (type, "#9");
+			
+			CodeMemberField field = FindMember (type, "Value") as CodeMemberField;
+			Assert.IsNotNull (field, "#10");
+			Assert.AreEqual ("StatusType", field.Type.BaseType, "#11");
+			
+			field = FindMember (type, "Language") as CodeMemberField;
+			Assert.IsNotNull (field, "#12");
+			Assert.AreEqual ("System.Int32", field.Type.BaseType, "#13");
+		}
+		
+		CodeNamespace ExportCode (XmlTypeMapping map)
+		{
+			CodeNamespace codeNamespace = new CodeNamespace ();
+			XmlCodeExporter exp = new XmlCodeExporter (codeNamespace);
+			exp.ExportTypeMapping (map);
+			return codeNamespace;
+		}
+		
+		CodeTypeDeclaration FindType (CodeNamespace codeNamespace, string name)
+		{
+			foreach (CodeTypeDeclaration t in codeNamespace.Types)
+				if (t.Name == name)
+					return t;
+			return null;
+		}
+		
+		CodeTypeMember FindMember (CodeTypeDeclaration type, string name)
+		{
+			foreach (CodeTypeMember m in type.Members)
+				if (m.Name == name)
+					return m;
+			return null;
 		}
 
 		private static XmlSchemas ExportType (Type type)
