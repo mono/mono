@@ -798,6 +798,24 @@ namespace System.Xml
 		[PermissionSet (SecurityAction.InheritanceDemand, Unrestricted = true)]
 		public virtual XmlNode ReadNode (XmlReader reader)
 		{
+			if (PreserveWhitespace)
+				return ReadNodeCore (reader);
+			XmlTextReader xtr = reader as XmlTextReader;
+			if (xtr != null && xtr.WhitespaceHandling ==
+			    WhitespaceHandling.All) {
+				try {
+					xtr.WhitespaceHandling = WhitespaceHandling.Significant;
+					return ReadNodeCore (reader);
+				} finally {
+					xtr.WhitespaceHandling = WhitespaceHandling.All;
+				}
+			}
+			else
+				return ReadNodeCore (reader);
+		}
+
+		public virtual XmlNode ReadNodeCore (XmlReader reader)
+		{
 			switch (reader.ReadState) {
 			case ReadState.Interactive:
 				break;
@@ -860,14 +878,14 @@ namespace System.Xml
 
 				int depth = reader.Depth;
 
-				if (element.IsEmpty) {
+				if (reader.IsEmptyElement) {
 					n = element;
 					break;
 				}
 
 				reader.Read ();
 				while (reader.Depth > depth) {
-					n = ReadNode (reader);
+					n = ReadNodeCore (reader);
 					if (preserveWhitespace || n.NodeType != XmlNodeType.Whitespace)
 						element.AppendChild (n, false);
 				}

@@ -1277,13 +1277,9 @@ namespace System.Xml
 					case '\n':
 					case '\t':
 					case ' ':
-						if (whitespaceHandling == WhitespaceHandling.All ||
-						    whitespaceHandling == WhitespaceHandling.Significant && XmlSpace == XmlSpace.Preserve)
-							ReadWhitespace ();
-						else {
-							SkipWhitespace ();
+						if (!ReadWhitespace ())
+							// skip
 							return ReadContent ();
-						}
 						break;
 					default:
 						ReadText (true);
@@ -2807,7 +2803,7 @@ namespace System.Xml
 			return skipped;
 		}
 
-		private void ReadWhitespace ()
+		private bool ReadWhitespace ()
 		{
 			if (currentState == XmlNodeType.None)
 				currentState = XmlNodeType.XmlDeclaration;
@@ -2824,11 +2820,17 @@ namespace System.Xml
 //			} while ((ch = PeekChar ()) != -1 && XmlChar.IsWhitespace (ch));
 			} while (ch == 0x20 || ch == 0x9 || ch == 0xA || ch == 0xD);
 
+			bool isText = currentState == XmlNodeType.Element && ch != -1 && ch != '<';
+
+			if (!isText && (whitespaceHandling == WhitespaceHandling.None ||
+				    whitespaceHandling == WhitespaceHandling.Significant && XmlSpace != XmlSpace.Preserve))
+				return false;
+
 			ClearValueBuffer ();
 			valueBuffer.Append (peekChars, curNodePeekIndex, peekCharsIndex - curNodePeekIndex - startOffset);
 			preserveCurrentTag = savePreserve;
 
-			if (currentState == XmlNodeType.Element && ch != -1 && ch != '<') {
+			if (isText) {
 				ReadText (false);
 			} else {
 				XmlNodeType nodeType = (this.XmlSpace == XmlSpace.Preserve) ?
@@ -2842,7 +2844,7 @@ namespace System.Xml
 					       true);
 			}
 
-			return;
+			return true;
 		}
 
 		// Returns -1 if it should throw an error.
