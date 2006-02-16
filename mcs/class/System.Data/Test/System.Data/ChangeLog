@@ -1,3 +1,16 @@
+2006-02-16  Senganal T  <tsenganal@novell.com>
+
+	* DataSetTest2.cs :
+		- WriteXmlSchema_ForeignKeyConstraint : testcase for bug #77557
+		- WriteXmlSchema_RelationAnnotation :
+		- WriteXmlSchema_Relations_ForeignKeys :
+			ensure Relations and ForeignKeyConstraints are written and read correctly.
+	* DataSetReadXmlSchema.cs :
+		- ReadConstraints :
+			verify reading a foreignkeyconstraint doesent create a relation.
+		- ReadAnnotatedRelations_MultipleColumns :
+			verify multiple columns are read correctly if part of annotated relation.
+
 2006-02-11  Senganal T  <tsenganal@novell.com>
 
 	* DataTableTest.cs : Check AllowDBNull is set to false for PrimaryKey cols.

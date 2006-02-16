@@ -758,5 +758,34 @@ namespace MonoTests.System.Data
 			tbl.Columns.Add("data", typeof(string));
 			Assert (ds.GetXmlSchema ().IndexOf ("AutoIncrementStep") > 0);
 		}
+
+		[Test]
+		public void ReadConstraints ()
+		{
+			DataSet ds = new DataSet ();
+			ds.ReadXmlSchema ("Test/System.Data/schemas/test015.xsd");
+
+			NUnit.Framework.Assert.AreEqual (0, ds.Relations.Count, "#1");
+			NUnit.Framework.Assert.AreEqual(1, ds.Tables [0].Constraints.Count, "#2" );
+			NUnit.Framework.Assert.AreEqual(1, ds.Tables [1].Constraints.Count, "#3" );
+			NUnit.Framework.Assert.AreEqual("fk1", ds.Tables [1].Constraints [0].ConstraintName, "#4");
+		}
+
+		[Test]
+		public void ReadAnnotatedRelations_MultipleColumns ()
+		{
+			DataSet ds = new DataSet ();
+			ds.ReadXmlSchema ("Test/System.Data/schemas/test016.xsd");
+
+			NUnit.Framework.Assert.AreEqual (1, ds.Relations.Count, "#1");
+			NUnit.Framework.Assert.AreEqual ("rel", ds.Relations [0].RelationName, "#2");
+			NUnit.Framework.Assert.AreEqual (2, ds.Relations [0].ParentColumns.Length, "#3");
+			NUnit.Framework.Assert.AreEqual (2, ds.Relations [0].ChildColumns.Length, "#4");
+			NUnit.Framework.Assert.AreEqual(0, ds.Tables [0].Constraints.Count, "#5" );
+			NUnit.Framework.Assert.AreEqual(0, ds.Tables [1].Constraints.Count, "#6" );
+
+			AssertDataRelation ("TestRel", ds.Relations [0], "rel", false, new String[] {"col 1","col2"},
+					new String[] {"col1","col  2"}, false, false);
+		}
 	}
 }

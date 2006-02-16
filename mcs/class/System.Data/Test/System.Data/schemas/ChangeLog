@@ -1,3 +1,9 @@
+2006-01-16  Senganal T <tsenganal@novell.com>
+
+	* test015.xsd, test016.xsd : added 
+		- test ForeignKeyConstraint and annotated DataRelation 
+		relating multiple columns
+
 2006-01-16  Atsushi Enomoto <atsushi@ximian.com>
 
 	* bug77248.xsd : added.

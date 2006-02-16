@@ -2495,7 +2495,116 @@ namespace MonoTests_System.Data
 			// ReadXml - Table 2 row count
 			Assert.AreEqual(ds2.Tables[1].Rows.Count, ds1.Tables[1].Rows.Count , "DS344");
 		}
+		
+		[Test] public void WriteXmlSchema_ForignKeyConstraint ()
+		{
+			DataSet ds1 = new DataSet();
 
+			DataTable table1 = ds1.Tables.Add();
+			DataTable table2 = ds1.Tables.Add();
+
+			DataColumn col1_1 = table1.Columns.Add ("col1", typeof (int));
+			DataColumn col2_1 = table2.Columns.Add ("col1", typeof (int));
+
+			table2.Constraints.Add ("fk", col1_1, col2_1);
+
+			StringWriter sw = new StringWriter ();
+			ds1.WriteXmlSchema (sw);
+			String xml = sw.ToString ();
+
+			Assert.IsTrue (xml.IndexOf (@"<xs:keyref name=""fk"" refer=""Constraint1"" " +
+						@"msdata:ConstraintOnly=""true"">") != -1, "#1");
+		}
+
+		[Test] public void WriteXmlSchema_RelationAnnotation ()
+		{
+			DataSet ds1 = new DataSet();
+
+			DataTable table1 = ds1.Tables.Add();
+			DataTable table2 = ds1.Tables.Add();
+
+			DataColumn col1_1 = table1.Columns.Add ("col1", typeof (int));
+			DataColumn col2_1 = table2.Columns.Add ("col1", typeof (int));
+
+			ds1.Relations.Add ("rel", col1_1, col2_1, false);
+
+			StringWriter sw = new StringWriter ();
+			ds1.WriteXmlSchema (sw);
+			String xml = sw.ToString ();
+
+      
+			Assert.IsTrue (xml.IndexOf (@"<msdata:Relationship name=""rel"" msdata:parent=""Table1""" +
+						@" msdata:child=""Table2"" msdata:parentkey=""col1"" " + 
+						@"msdata:childkey=""col1"" />") != -1, "#1");
+		}
+
+		[Test] public void WriteXmlSchema_Relations_ForeignKeys ()
+		{
+			System.IO.MemoryStream ms = null;
+			System.IO.MemoryStream ms1 = null;
+
+			DataSet ds1 = new DataSet();
+
+			DataTable table1 = ds1.Tables.Add("Table 1");
+			DataTable table2 = ds1.Tables.Add("Table 2");
+
+			DataColumn col1_1 = table1.Columns.Add ("col 1", typeof (int));
+			DataColumn col1_2 = table1.Columns.Add ("col 2", typeof (int));
+			DataColumn col1_3 = table1.Columns.Add ("col 3", typeof (int));
+			DataColumn col1_4 = table1.Columns.Add ("col 4", typeof (int));
+			DataColumn col1_5 = table1.Columns.Add ("col 5", typeof (int));
+			DataColumn col1_6 = table1.Columns.Add ("col 6", typeof (int));
+			DataColumn col1_7 = table1.Columns.Add ("col 7", typeof (int));
+
+			DataColumn col2_1 = table2.Columns.Add ("col 1", typeof (int));
+			DataColumn col2_2 = table2.Columns.Add ("col 2", typeof (int));
+			DataColumn col2_3 = table2.Columns.Add ("col 3", typeof (int));
+			DataColumn col2_4 = table2.Columns.Add ("col 4", typeof (int));
+			DataColumn col2_5 = table2.Columns.Add ("col 5", typeof (int));
+			DataColumn col2_6 = table2.Columns.Add ("col 6", typeof (int));
+
+			ds1.Relations.Add ("rel 1", 
+				new DataColumn[] {col1_1, col1_2},
+				new DataColumn[] {col2_1, col2_2});
+			ds1.Relations.Add ("rel 2", 
+				new DataColumn[] {col1_3, col1_4}, 
+				new DataColumn[] {col2_3, col2_4},
+				false);
+			table2.Constraints.Add ("fk 1",
+				new DataColumn[] {col1_5, col1_6},
+				new DataColumn[] {col2_5, col2_6});
+
+			table1.Constraints.Add ("pk 1", col1_7, true);
+
+			ms = new System.IO.MemoryStream();
+			ds1.WriteXmlSchema (ms);
+
+			ms1 = new System.IO.MemoryStream (ms.GetBuffer());
+			DataSet ds2 = new DataSet();
+			ds2.ReadXmlSchema(ms1);
+		
+			Assert.AreEqual (2, ds2.Relations.Count, "#1");
+			Assert.AreEqual (3, ds2.Tables [0].Constraints.Count, "#2");
+			Assert.AreEqual (2, ds2.Tables [1].Constraints.Count, "#2");
+
+			Assert.IsTrue (ds2.Relations.Contains ("rel 1"), "#3");
+			Assert.IsTrue (ds2.Relations.Contains ("rel 2"), "#4");
+
+			Assert.IsTrue (ds2.Tables [0].Constraints.Contains ("pk 1"), "#5");
+			Assert.IsTrue (ds2.Tables [1].Constraints.Contains ("fk 1"), "#6");
+			Assert.IsTrue (ds2.Tables [1].Constraints.Contains ("rel 1"), "#7");
+
+			Assert.AreEqual (2, ds2.Relations ["rel 1"].ParentColumns.Length, "#8");
+			Assert.AreEqual (2, ds2.Relations ["rel 1"].ChildColumns.Length, "#9");
+
+			Assert.AreEqual (2, ds2.Relations ["rel 2"].ParentColumns.Length, "#10");
+			Assert.AreEqual (2, ds2.Relations ["rel 2"].ChildColumns.Length, "#11");
+
+			ForeignKeyConstraint fk = (ForeignKeyConstraint)ds2.Tables [1].Constraints ["fk 1"];
+			Assert.AreEqual (2, fk.RelatedColumns.Length, "#12");
+			Assert.AreEqual (2, fk.Columns.Length, "#13");
+		}
+		
 		[Test] public void RejectChanges()
 		{
 			DataSet ds1,ds2 = new DataSet();

@@ -1,3 +1,16 @@
+2006-02-16  Senganal T  <tsenganal@novell.com>
+
+	* XmlSchemaWriter :
+		WriteDataSetElement : Add an annotation element if exists.
+		WriteDataRelationAnnotation : New. Write a DataRelation as an annotation.
+		WriteConstraints : Write ForeignKeyConstraint even when not associated with
+			a DataRelation and add a "ConstraintOnly=true" attribute for such constraints.
+	* XmlConstants.cs : Add a new constant - ConstraintOnly
+	* XmlSchemaImporter.cs :
+		- ConstraintStructure : Add field ,IsConstraintOnly, to distinguish if a foreignkeyconstraint
+			is related to relation or not.
+		- GenerateRelation : Handle the case when parentkey and childkey contain multiple columnnames.
+
 2006-02-11  Senganal T  <tsenganal@novell.com>
 	
 	* UniqueConstraint.cs :
