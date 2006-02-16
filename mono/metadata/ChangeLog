@@ -1,3 +1,7 @@
+2006-02-16  Raja R Harinath  <rharinath@novell.com>
+
+	* reflection.c (mono_reflection_get_token): Remove unused variable.
+
 2006-02-16  Martin Baulig  <martin@ximian.com>
 
 	* reflection.c (mono_reflection_get_token): Add support for fields
