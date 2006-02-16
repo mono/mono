@@ -48,6 +48,13 @@ namespace System.Xml
 			return true;
 		}
 
+		public static int IndexOfNonWhitespace (string str)
+		{
+			for (int i = 0; i < str.Length; i++)
+				if (!IsWhitespace (str [i])) return i;
+			return -1;
+		}
+
 		public static bool IsFirstNameChar (int ch)
 		{
 			if ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z')) {
@@ -86,6 +93,37 @@ namespace System.Xml
 				return false;
 			else
 				return true;
+		}
+
+		public static int IndexOfInvalid (string s, bool allowSurrogate)
+		{
+			for (int i = 0; i < s.Length; i++)
+				if (IsInvalid (s [i]))
+					if (!allowSurrogate ||
+					    i + 1 == s.Length ||
+					    s [i] < '\uD800' ||
+					    s [i] >= '\uDC00' ||
+					    s [i + 1] < '\uDC00' ||
+					    s [i + 1] >= '\uE000')
+						return i;
+			return -1;
+		}
+
+		public static int IndexOfInvalid (char [] s, int start, int length, bool allowSurrogate)
+		{
+			int end = start + length;
+			if (s.Length < end)
+				throw new ArgumentOutOfRangeException ("length");
+			for (int i = start; i < end; i++)
+				if (IsInvalid (s [i]))
+					if (!allowSurrogate ||
+					    i + 1 == s.Length ||
+					    s [i] < '\uD800' ||
+					    s [i] >= '\uDC00' ||
+					    s [i + 1] < '\uDC00' ||
+					    s [i + 1] >= '\uE000')
+						return i;
+			return -1;
 		}
 
 		public static bool IsNameChar (int ch)
