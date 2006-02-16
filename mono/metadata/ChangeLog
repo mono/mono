@@ -1,3 +1,10 @@
+
+Thu Feb 16 15:42:13 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* marshal.c: handle additional GENERICINST case (patch from
+	Thong Nguyen <tum@veridicus.com>).
+	Fix a few cases where LDIND_I/STIND_I was used for references.
+
 2006-02-16  Raja R Harinath  <rharinath@novell.com>
 
 	* reflection.c (mono_reflection_get_token): Remove unused variable.
