@@ -78,6 +78,18 @@ namespace System.Web.Compilation {
 
 		public static Assembly GetCompiledAssembly (string virtualPath)
 		{
+			BuildProvider provider;
+			CompilerParameters parameters;
+
+			AssemblyBuilder abuilder = GetAssemblyBuilder (virtualPath, out provider);
+			CompilerType ctype = provider.CodeCompilerType;
+			parameters = PrepareParameters (abuilder.TempFiles, virtualPath, ctype.CompilerParameters);
+			CompilerResults results = abuilder.BuildAssembly (virtualPath, parameters);
+			return results.CompiledAssembly;
+		}
+
+		static AssemblyBuilder GetAssemblyBuilder (string virtualPath, out BuildProvider provider)
+		{
 			if (virtualPath == null || virtualPath == "")
 				throw new ArgumentNullException ("virtualPath");
 
@@ -93,41 +105,18 @@ namespace System.Web.Compilation {
 			if (coll == null || coll.Count == 0)
 				ThrowNoProviderException (extension);
 
-			BuildProvider build_provider = coll.GetProviderForExtension (extension);
-			if (build_provider == null)
+			provider = coll.GetProviderForExtension (extension);
+			if (provider == null)
 				ThrowNoProviderException (extension);
 
-			CompilerType compiler_type = build_provider.CodeCompilerType;
+			CompilerType compiler_type = provider.CodeCompilerType;
 			Type ctype = compiler_type.CodeDomProviderType;
 			CodeDomProvider dom_provider = (CodeDomProvider) Activator.CreateInstance (ctype, null);
 
 			AssemblyBuilder abuilder = new AssemblyBuilder (virtualPath, dom_provider);
-			build_provider.SetVirtualPath (virtualPath);
-			build_provider.GenerateCode (abuilder);
-
-			CompilerResults results;
-			CompilerParameters parameters;
-			parameters = PrepareParameters (abuilder.TempFiles, virtualPath, compiler_type.CompilerParameters);
-
-			CodeCompileUnit [] units = abuilder.GetUnitsAsArray ();
-			results = dom_provider.CompileAssemblyFromDom (parameters, units);
-			// FIXME: generate the code and display it
-			if (results.NativeCompilerReturnValue != 0)
-				throw new CompilationException (virtualPath, results.Errors, "");
-
-			Assembly assembly = results.CompiledAssembly;
-			if (assembly == null) {
-				if (!File.Exists (parameters.OutputAssembly)) {
-					results.TempFiles.Delete ();
-					throw new CompilationException (virtualPath, results.Errors,
-						"No assembly returned after compilation!?");
-				}
-
-				assembly = Assembly.LoadFrom (parameters.OutputAssembly);
-			}
-
-			results.TempFiles.Delete ();
-			return assembly;
+			provider.SetVirtualPath (virtualPath);
+			provider.GenerateCode (abuilder);
+			return abuilder;
 		}
 
 		[MonoTODO]
@@ -153,12 +142,14 @@ namespace System.Web.Compilation {
 
 		public static Type GetCompiledType (string virtualPath)
 		{
-			Assembly assembly = GetCompiledAssembly (virtualPath);
-			Type [] types = assembly.GetTypes ();
-			if (types.Length != 1)
-				throw new CompilationException (virtualPath, null, "");
+			BuildProvider provider;
+			CompilerParameters parameters;
 
-			return types [0];
+			AssemblyBuilder abuilder = GetAssemblyBuilder (virtualPath, out provider);
+			CompilerType ctype = provider.CodeCompilerType;
+			parameters = PrepareParameters (abuilder.TempFiles, virtualPath, ctype.CompilerParameters);
+			CompilerResults results = abuilder.BuildAssembly (virtualPath, parameters);
+			return provider.GetGeneratedType (results);
 		}
 
 		// The 3 GetType() overloads work on the global.asax, App_GlobalResources, App_WebReferences or App_Browsers

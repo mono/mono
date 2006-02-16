@@ -52,6 +52,7 @@ namespace System.Web.Compilation {
 		Dictionary <string, string> resource_files;
 		TempFileCollection temp_files;
 		string virtual_path;
+		//TODO: there should be a Compile () method here which is where all the compilation exceptions are thrown from.
 		
 		internal AssemblyBuilder (string virtualPath, CodeDomProvider provider)
 		{
@@ -163,6 +164,29 @@ namespace System.Web.Compilation {
 			get { return provider; }
 		}
 
+		internal CompilerResults BuildAssembly (string virtualPath, CompilerParameters options)
+		{
+			CompilerResults results;
+			CodeCompileUnit [] units = GetUnitsAsArray ();
+			results = provider.CompileAssemblyFromDom (options, units);
+			// FIXME: generate the code and display it
+			if (results.NativeCompilerReturnValue != 0)
+				throw new CompilationException (virtualPath, results.Errors, "");
+
+			Assembly assembly = results.CompiledAssembly;
+			if (assembly == null) {
+				if (!File.Exists (options.OutputAssembly)) {
+					results.TempFiles.Delete ();
+					throw new CompilationException (virtualPath, results.Errors,
+						"No assembly returned after compilation!?");
+				}
+
+				results.CompiledAssembly = Assembly.LoadFrom (options.OutputAssembly);
+			}
+
+			results.TempFiles.Delete ();
+			return results;
+		}
 	}
 }
 #endif

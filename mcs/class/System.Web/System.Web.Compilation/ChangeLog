@@ -1,3 +1,10 @@
+2006-02-16 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AssemblyBuilder.cs:
+	* BuildManager.cs: compile the assembly from AssemblyBuilder and use
+	GetGeneratedType() on the BuildProvider instead of loading the assembly
+	and trying a wild guess at the type name.
+
 2006-02-14 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* GlobalAsaxCompiler.cs:
