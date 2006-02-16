@@ -2993,7 +2993,7 @@ namespace Mono.CSharp {
 		public override Expression ResolveMemberAccess (EmitContext ec, Expression left, Location loc,
 								SimpleName original)
 		{
-			FieldInfo fi = FieldInfo.Mono_GetGenericFieldDefinition ();
+			FieldInfo fi = TypeManager.GetGenericFieldDefinition (FieldInfo);
 
 			Type t = fi.FieldType;
 
@@ -3243,16 +3243,13 @@ namespace Mono.CSharp {
 			ILGenerator ig = ec.ig;
 			bool is_volatile = false;
 
-			FieldInfo the_fi = FieldInfo.Mono_GetGenericFieldDefinition ();
-			if (the_fi is FieldBuilder){
-				FieldBase f = TypeManager.GetField (the_fi);
-				if (f != null){
-					if ((f.ModFlags & Modifiers.VOLATILE) != 0)
-						is_volatile = true;
-					
-					f.SetMemberIsUsed ();
-				}
-			} 
+			FieldBase f = TypeManager.GetField (FieldInfo);
+			if (f != null){
+				if ((f.ModFlags & Modifiers.VOLATILE) != 0)
+					is_volatile = true;
+
+				f.SetMemberIsUsed ();
+			}
 			
 			if (FieldInfo.IsStatic){
 				if (is_volatile)
