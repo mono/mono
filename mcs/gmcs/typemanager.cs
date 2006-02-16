@@ -1862,9 +1862,7 @@ public partial class TypeManager {
 	//
 	static public FieldBase GetField (FieldInfo fb)
 	{
-		if (fb.DeclaringType.IsGenericType)
-			fb = fb.Mono_GetGenericFieldDefinition ();
-
+		fb = GetGenericFieldDefinition (fb);
 		return (FieldBase) fieldbuilders_to_fields [fb];
 	}
 	
