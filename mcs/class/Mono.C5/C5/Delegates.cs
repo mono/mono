@@ -1,3 +1,4 @@
+#if NET_2_0
 /*
  Copyright (c) 2003-2006 Niels Kokholm and Peter Sestoft
  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -129,3 +130,5 @@ namespace C5
   /// <returns></returns>
   public delegate R Fun<A1, A2, A3, A4, R>(A1 x1, A2 x2, A3 x3, A4 x4);
 }
+
+#endif

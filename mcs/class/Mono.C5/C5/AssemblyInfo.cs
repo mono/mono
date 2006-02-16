@@ -1,3 +1,4 @@
+#if NET_2_0
 /*
  Copyright (c) 2003-2006 Niels Kokholm and Peter Sestoft
  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -77,3 +78,5 @@ using System.Runtime.CompilerServices;
 //[assembly: AssemblyDelaySign(false)]
 //[assembly: AssemblyKeyFile("..\\..\\..\\c5.snk")]
 //[assembly: AssemblyKeyName("")]
+
+#endif

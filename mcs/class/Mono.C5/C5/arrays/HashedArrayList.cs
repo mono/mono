@@ -1,3 +1,4 @@
+#if NET_2_0
 
 /*
  Copyright (c) 2003-2006 Niels Kokholm and Peter Sestoft
@@ -2534,3 +2535,5 @@ namespace C5
 #endregion
   }
 }
+
+#endif
