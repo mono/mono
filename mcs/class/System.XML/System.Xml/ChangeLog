@@ -1,3 +1,8 @@
+2006-02-16  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlTextReader.cs : atomize whitespace values. It effectively saves
+	  memory consumption when an input XML is indented.
+
 2006-02-14  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlTextReader.cs : When "Significant" is assigned to

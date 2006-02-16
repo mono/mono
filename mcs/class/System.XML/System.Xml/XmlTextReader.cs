@@ -929,6 +929,9 @@ namespace System.Xml
 		private bool closeInput = true;
 		private EntityHandling entityHandling; // 2.0
 
+		private NameTable whitespacePool;
+		private char [] whitespaceCache;
+
 		private XmlException NotWFError (string message)
 		{
 			return new XmlException (this as IXmlLineInfo, BaseURI, message);
@@ -1535,6 +1538,27 @@ namespace System.Xml
 
 		private string CreateValueString ()
 		{
+			// Since whitespace strings are mostly identical
+			// depending on the Depth, we make use of NameTable
+			// to atomize whitespace strings.
+			switch (NodeType) {
+			case XmlNodeType.Whitespace:
+			case XmlNodeType.SignificantWhitespace:
+				int len = valueBuffer.Length;
+				if (whitespaceCache == null)
+					whitespaceCache = new char [32];
+				if (len >= whitespaceCache.Length)
+					break;
+				if (whitespacePool == null)
+					whitespacePool = new NameTable ();
+#if NET_2_0
+				valueBuffer.CopyTo (0, whitespaceCache, 0, len);
+#else
+				for (int i = 0; i < len; i++)
+					whitespaceCache [i] = valueBuffer [i];
+#endif
+				return whitespacePool.Add (whitespaceCache, 0, valueBuffer.Length);
+			}
 			return (valueBuffer.Capacity < 100) ?
 				valueBuffer.ToString (0, valueBuffer.Length) :
 				valueBuffer.ToString ();
