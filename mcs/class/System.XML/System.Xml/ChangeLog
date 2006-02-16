@@ -1,5 +1,11 @@
 2006-02-16  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlDocument.cs XmlTextReader.cs : in ReadNode(), we can avoid
+	  extraneous whitespace node creation for XmlTextReader by setting
+	  WhitespaceHandling.Significant when PreserveWhitespace is false.
+
+2006-02-16  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlTextReader.cs : atomize whitespace values. It effectively saves
 	  memory consumption when an input XML is indented.
 
