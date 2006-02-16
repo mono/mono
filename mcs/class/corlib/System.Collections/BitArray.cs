@@ -39,8 +39,8 @@ namespace System.Collections {
 #endif
 	[Serializable]
 	public sealed class BitArray : ICollection, ICloneable {
-		int [] _array;
-		int _length;
+		int [] m_array;
+		int m_length;
 		int _version = 0;
 
 #region Constructors
@@ -49,10 +49,10 @@ namespace System.Collections {
 			if (bits == null)
 				throw new ArgumentNullException ("bits");
 
-			_length = bits._length;
-			_array = new int [(_length + 31) / 32];
+			m_length = bits.m_length;
+			m_array = new int [(m_length + 31) / 32];
 
-			Array.Copy(bits._array, _array, _array.Length);
+			Array.Copy(bits.m_array, m_array, m_array.Length);
 		}
 
 		public BitArray (bool [] values)
@@ -60,8 +60,8 @@ namespace System.Collections {
 			if (values == null)
 				throw new ArgumentNullException ("values");
 	    
-			_length = values.Length;
-			_array = new int [(_length + 31) / 32];
+			m_length = values.Length;
+			m_array = new int [(m_length + 31) / 32];
 			
 			for (int i = 0; i < values.Length; i++)
 				this [i] = values [i];
@@ -72,8 +72,8 @@ namespace System.Collections {
 			if (bytes == null)
 				throw new ArgumentNullException ("bytes");
 
-			_length = bytes.Length * 8;
-			_array = new int [(_length + 31) / 32];
+			m_length = bytes.Length * 8;
+			m_array = new int [(m_length + 31) / 32];
 
 			for (int i = 0; i < bytes.Length; i++)
 				setByte (i, bytes [i]);
@@ -85,9 +85,9 @@ namespace System.Collections {
 				throw new ArgumentNullException ("values");
 						
 			int arrlen = values.Length;
-			_length = arrlen*32;
-			_array = new int [arrlen];
-			Array.Copy (values, _array, arrlen);
+			m_length = arrlen*32;
+			m_array = new int [arrlen];
+			Array.Copy (values, m_array, arrlen);
 		}
 		
 		public BitArray (int length)
@@ -95,22 +95,22 @@ namespace System.Collections {
 			if (length < 0)
 				throw new ArgumentOutOfRangeException ("length");
 			
-			_length = length;
-			_array = new int [(_length + 31) / 32];
+			m_length = length;
+			m_array = new int [(m_length + 31) / 32];
 		}
 
 		public BitArray (int length, bool defaultValue) : this (length)
 		{
 			if (defaultValue) {
-				for (int i = 0; i < _array.Length; i++)
-				_array[i] = ~0;
+				for (int i = 0; i < m_array.Length; i++)
+				m_array[i] = ~0;
 			}
 		}
 		
 		private BitArray (int [] array, int length)
 		{
-			_array = array;
-			_length = length;
+			m_array = array;
+			m_length = length;
 		}
 #endregion
 #region Utility Methods
@@ -120,7 +120,7 @@ namespace System.Collections {
 			int index = byteIndex / 4;
 			int shift = (byteIndex % 4) * 8;
 			
-			int theByte = _array [index] & (0xff << shift);
+			int theByte = m_array [index] & (0xff << shift);
 			
 			return (byte)((theByte >> shift) & 0xff);
 		}
@@ -131,9 +131,9 @@ namespace System.Collections {
 			int shift = (byteIndex % 4) * 8;
 			
 			// clear the byte
-			_array [index] &= ~(0xff << shift);
+			m_array [index] &= ~(0xff << shift);
 			// or in the new byte
-			_array [index] |= value << shift;
+			m_array [index] |= value << shift;
 			
 			_version++;
 		}
@@ -142,13 +142,13 @@ namespace System.Collections {
 		{
 			if (operand == null)
 				throw new ArgumentNullException ();
-			if (operand._length != _length)
+			if (operand.m_length != m_length)
 				throw new ArgumentException ();
 		}
 #endregion
 
 		public int Count {
-			get { return _length; }
+			get { return m_length; }
 		}
 		
 		public bool IsReadOnly {
@@ -165,21 +165,21 @@ namespace System.Collections {
 		}
 		
 		public int Length {
-			get { return _length; }
+			get { return m_length; }
 			set {
 				if (value < 0)
 					throw new ArgumentOutOfRangeException ();
 				
 				int newLen = value;
-				if (_length != newLen) {
+				if (m_length != newLen) {
 					int numints = (newLen + 31) / 32;
 					int [] newArr = new int [numints];
-					int copylen = (numints > _array.Length) ? _array.Length : numints;
-					Array.Copy (_array, newArr, copylen);
+					int copylen = (numints > m_array.Length) ? m_array.Length : numints;
+					Array.Copy (m_array, newArr, copylen);
 					
 					// set the internal state
-					_array = newArr;
-					_length = newLen;
+					m_array = newArr;
+					m_length = newLen;
 					_version++;
 				}
 			}
@@ -211,17 +211,17 @@ namespace System.Collections {
 			// in each case, check to make sure enough space in array
 			
 			if (array is bool []) {
-				if (array.Length - index < _length)
+				if (array.Length - index < m_length)
 					 throw new ArgumentException ();
 				
 				bool [] barray = (bool []) array;
 				
 				// Copy the bits into the array
-				for (int i = 0; i < _length; i++)
+				for (int i = 0; i < m_length; i++)
 					barray[index + i] = this [i];
 				
 			} else if (array is byte []) {
-				int numbytes = (_length + 7) / 8;
+				int numbytes = (m_length + 7) / 8;
 				
 				if ((array.Length - index) < numbytes)
 					 throw new ArgumentException ();
@@ -233,7 +233,7 @@ namespace System.Collections {
 				
 			} else if (array is int []) {
 				
-				Array.Copy (_array, 0, array, index, (_length + 31) / 32);
+				Array.Copy (m_array, 0, array, index, (m_length + 31) / 32);
 				
 			} else {
 				throw new ArgumentException ("array", "Unsupported type");
@@ -242,9 +242,9 @@ namespace System.Collections {
 
 		public BitArray Not ()
 		{
-			int ints = (_length + 31) / 32;
+			int ints = (m_length + 31) / 32;
 			for (int i = 0; i < ints; i++)
-				_array [i] = ~_array [i];
+				m_array [i] = ~m_array [i];
 			
 			_version++;
 			return this;
@@ -254,9 +254,9 @@ namespace System.Collections {
 		{
 			checkOperand (value);
 			
-			int ints = (_length + 31) / 32;
+			int ints = (m_length + 31) / 32;
 			for (int i = 0; i < ints; i++)
-				_array [i] &= value._array [i];
+				m_array [i] &= value.m_array [i];
 			
 			_version++;
 			return this;
@@ -266,9 +266,9 @@ namespace System.Collections {
 		{
 			checkOperand (value);
 
-			int ints = (_length + 31) / 32;
+			int ints = (m_length + 31) / 32;
 			for (int i = 0; i < ints; i++)
-				_array [i] |= value._array [i];
+				m_array [i] |= value.m_array [i];
 			
 			_version++;
 			return this;
@@ -278,9 +278,9 @@ namespace System.Collections {
 		{
 			checkOperand (value);
 
-			int ints = (_length + 31) / 32;
+			int ints = (m_length + 31) / 32;
 			for (int i = 0; i < ints; i++)
-				_array [i] ^= value._array [i];
+				m_array [i] ^= value.m_array [i];
 
 			_version++;
 			return this;
@@ -288,21 +288,21 @@ namespace System.Collections {
 		
 		public bool Get (int index)
 		{
-			if (index < 0 || index >= _length)
+			if (index < 0 || index >= m_length)
 				throw new ArgumentOutOfRangeException ();
 			
-			return (_array [index >> 5] & (1 << (index & 31))) != 0;
+			return (m_array [index / 32] & (1 << (index % 32))) != 0;
 		}
 		
 		public void Set (int index, bool value)
 		{
-			if (index < 0 || index >= _length)
+			if (index < 0 || index >= m_length)
 				throw new ArgumentOutOfRangeException ();
 			
 			if (value)
-				_array [index >> 5] |=  (1 << (index & 31));
+				m_array [index / 32] |=  (1 << (index % 32));
 			else
-				_array [index >> 5] &= ~(1 << (index & 31));
+				m_array [index / 32] &= ~(1 << (index % 32));
 		
 			_version++;
 		}
@@ -310,11 +310,11 @@ namespace System.Collections {
 		public void SetAll (bool value)
 		{
 			if (value) {
-				for (int i = 0; i < _array.Length; i++)
-					_array[i] = ~0;
+				for (int i = 0; i < m_array.Length; i++)
+					m_array[i] = ~0;
 			}
 			else
-				Array.Clear (_array, 0, _array.Length);
+				Array.Clear (m_array, 0, m_array.Length);
 
 			_version++;
 		}
@@ -338,7 +338,7 @@ namespace System.Collections {
 			{
 				_index = -1;
 				_bitArray = ba;
-				_max = ba._length;
+				_max = ba.m_length;
 				_version = ba._version;
 			}
 

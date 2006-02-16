@@ -1,3 +1,6 @@
+2006-02-03  Sebastien Robitaille <sebastien.robitaille@croesus.com>
+
+	* BitArray.cs: Renamed members for interoperability with MS. 
 
 Tue Jan 24 18:24:00 CET 2006 Paolo Molaro <lupus@ximian.com>
 
