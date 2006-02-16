@@ -695,9 +695,7 @@ namespace Mono.CSharp {
 					return false;
 				}
 
-				MethodBase mb = implementing;
-				if (mb.Mono_IsInflatedMethod)
-					mb = mb.GetGenericMethodDefinition ();
+				MethodBase mb = TypeManager.DropGenericMethodArguments (implementing);
 
 				int pos = type.GenericParameterPosition;
 				Type mparam = mb.GetGenericArguments () [pos];
@@ -1498,7 +1496,7 @@ namespace Mono.CSharp {
 				}
 			} else {
 				is_class = atype.IsClass;
-				is_struct = atype.IsValueType;
+				is_struct = atype.IsValueType && !TypeManager.IsNullableType (atype);
 			}
 
 			//
@@ -1514,8 +1512,8 @@ namespace Mono.CSharp {
 					      GetSignatureForError ());
 				return false;
 			} else if (gc.HasValueTypeConstraint && !is_struct) {
-				Report.Error (453, loc, "The type `{0}' must be " +
-					      "a value type in order to use it " +
+				Report.Error (453, loc, "The type `{0}' must be a " +
+					      "non-nullable value type in order to use it " +
 					      "as type parameter `{1}' in the " +
 					      "generic type or method `{2}'.",
 					      TypeManager.CSharpName (atype),
@@ -2039,6 +2037,22 @@ namespace Mono.CSharp {
 			if (t is TypeBuilder)
 				return t;
 			return t.GetGenericTypeDefinition ();
+		}
+
+		public static MethodBase DropGenericMethodArguments (MethodBase m)
+		{
+			if ((m is MethodBuilder) || (m is ConstructorInfo))
+				return m;
+			if (m.IsGenericMethodDefinition)
+				return m;
+			if (m.IsGenericMethod || m.DeclaringType.IsGenericType)
+				return m.GetGenericMethodDefinition ();
+			return m;
+		}
+
+		public static bool IsInstantiatedMethod (MethodBase m)
+		{
+			return m.IsGenericMethod || m.DeclaringType.IsGenericType;
 		}
 
 		//

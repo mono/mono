@@ -443,6 +443,12 @@ namespace System.Reflection {
 				return false;
 			}
 		}
+
+		public override bool IsGenericMethod {
+			get {
+				return false;
+			}
+		}
 #endif
 
 #if NET_2_0

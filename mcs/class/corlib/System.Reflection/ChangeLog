@@ -1,3 +1,9 @@
+2006-02-14  Martin Baulig  <martin@ximian.com>
+
+	* MonoMethod.cs
+	(MonoCMethod.IsGenericMethod): Override this and return false; the
+	MS runtime doesn't throw an exception here.
+
 2006-02-08  Martin Baulig  <martin@ximian.com>
 
 	* MonoGenericClass.cs (MonoGenericClass.IsAssignableFrom):
