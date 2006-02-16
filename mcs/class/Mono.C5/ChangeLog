@@ -1,6 +1,10 @@
+2006-02-16  Martin Baulig  <martin@ximian.com>
+
+	* C5/: New directory containing all the source code.
+
 2005-07-10  Kamil Skalski <nazgul@nemerle.org>
 
-	* Builder.cs: Use MakeGenericType instead of BindGenericParameters.
+	* C5/Builder.cs: Use MakeGenericType instead of BindGenericParameters.
 
 2005-06-27  Ben Maurer  <bmaurer@ximian.com>
 
@@ -10,7 +14,7 @@
 
 	Reflect latest API changes.
 
-	* Collections.cs (EnumerableBase): Explicitly implement
+	* C5/Collections.cs (EnumerableBase): Explicitly implement
 	System.Collections.IEnumerable.GetEnumerator().	
 
 	* Makefile: Add `nowarn:169'.
@@ -25,14 +29,14 @@
 
 2004-11-19  Martin Baulig  <martin@ximian.com>
 
-	* Wrappers.cs: Removed all the FIXME's.  GMCS can now compile the
+	* C5/Wrappers.cs: Removed all the FIXME's.  GMCS can now compile the
 	original, unmodified code :-)
 
 2004-11-12  Martin Baulig  <martin@ximian.com>
 
-	* Wrappers.cs: Added workaround for #69082.
+	* C5/Wrappers.cs: Added workaround for #69082.
 
-	* linkedlists/LinkedList.cs: Added workaround for bug #57747.
+	* C5/linkedlists/LinkedList.cs: Added workaround for bug #57747.
 
 2004-08-16  Martin Baulig  <martin@ximian.com>
 
