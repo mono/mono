@@ -107,11 +107,19 @@ namespace System.Net {
 			he.HostName = h_name;
 			he.Aliases = h_aliases;
 			for(int i=0; i<h_addrlist.Length; i++) {
-				IPAddress newAddress = IPAddress.Parse(h_addrlist[i]);
+				try {
+					IPAddress newAddress = IPAddress.Parse(h_addrlist[i]);
 
-				if( (Socket.SupportsIPv6 && newAddress.AddressFamily == AddressFamily.InterNetworkV6) ||
-					(Socket.SupportsIPv4 && newAddress.AddressFamily == AddressFamily.InterNetwork) )
-					addrlist.Add(newAddress);
+					if( (Socket.SupportsIPv6 && newAddress.AddressFamily == AddressFamily.InterNetworkV6) ||
+					    (Socket.SupportsIPv4 && newAddress.AddressFamily == AddressFamily.InterNetwork) )
+						addrlist.Add(newAddress);
+				} catch (ArgumentNullException) {
+					/* Ignore this, as the
+					 * internal call might have
+					 * left some blank entries at
+					 * the end of the array
+					 */
+				}
 			}
 
 			if(addrlist.Count == 0)

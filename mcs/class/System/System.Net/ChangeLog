@@ -1,3 +1,13 @@
+2006-02-16  Dick Porter  <dick@ximian.com>
+
+	* IPEndPoint.cs: The SocketAddress AddressFamily takes up the
+	first two bytes, not just one.  Check the size of the
+	SocketAddress buffer for IPv6 as well.
+
+	* Dns.cs: Cope when GetHostByName_internal or
+	GetHostByAddr_internal returns fewer items in the array than it
+	intended to (maybe due to conversion errors.)
+
 2006-02-09  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* FtpWebResponse.cs: Add UpdateStatus method, to update both
