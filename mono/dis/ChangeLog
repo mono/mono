@@ -1,3 +1,11 @@
+2006-02-16  Raja R Harinath  <rharinath@novell.com>
+
+	* get.c (get_typespec): Pass MonoGenericContainer to
+	mono_type_create_from_typespec_full.
+	(get_type): Likewise.
+	* main.c (dis_code): Likewise.
+	(dis_property_signature): Likewise.
+
 2006-02-15  Ankit Jain  <jankit@novell.com>
 
 	* get.c (get_array_shape): Use mono_metadata_decode_signed_value to get
