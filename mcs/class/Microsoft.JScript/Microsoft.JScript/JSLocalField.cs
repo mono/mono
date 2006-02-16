@@ -53,14 +53,6 @@ namespace Microsoft.JScript {
 		{
 			throw new NotImplementedException ();
 		}
-
-#if NET_2_0 || BOOTSTRAP_NET_2_0
-		public override FieldInfo Mono_GetGenericFieldDefinition ()
-		{
-			throw new NotImplementedException ();
-		}
-#endif
-
 	}
 }
 					      
