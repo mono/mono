@@ -1,9 +1,13 @@
 2006-02-14  Martin Baulig  <martin@ximian.com>
 
+	* *.cs: Use `Type.IsGenericType' instead of `Type.IsGenericInstance'.
+
+2006-02-14  Martin Baulig  <martin@ximian.com>
+
 	* generic.cs
-	(TypeManager.DropGenericMethodArguments): New public method.
-	(TypeManager.IsInstantiatedMethod): New public method. Use this
-	instead of `Mono_IsInflatedMethod'.
+	(TypeManager.DropGenericMethodArguments): New public method; don't
+	use GetGenericMethodDefinition() on something which is not a
+	generic method.
 
 2006-02-14  Martin Baulig  <martin@ximian.com>
 

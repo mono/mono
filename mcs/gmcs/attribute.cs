@@ -1693,7 +1693,7 @@ namespace Mono.CSharp {
 			ObsoleteAttribute result = null;
 			if (type.IsByRef || type.IsArray || type.IsPointer) {
 				result = GetObsoleteAttribute (TypeManager.GetElementType (type));
-			} else if (type.IsGenericParameter || type.IsGenericInstance)
+			} else if (type.IsGenericParameter || type.IsGenericType)
 				return null;
 			else {
 				DeclSpace type_ds = TypeManager.LookupDeclSpace (type);
@@ -1750,7 +1750,7 @@ namespace Mono.CSharp {
 			if (type_obsolete != null)
 				return (ObsoleteAttribute)type_obsolete;
 
-			if ((mi.DeclaringType is TypeBuilder) || mi.DeclaringType.IsGenericInstance)
+			if ((mi.DeclaringType is TypeBuilder) || mi.DeclaringType.IsGenericType)
 				return null;
 
 			ObsoleteAttribute oa = System.Attribute.GetCustomAttribute (mi, TypeManager.obsolete_attribute_type, false)
@@ -1778,13 +1778,14 @@ namespace Mono.CSharp {
 
 		public static bool IsConditionalMethodExcluded (MethodBase mb)
 		{
+			mb = TypeManager.DropGenericMethodArguments (mb);
+			if ((mb is MethodBuilder) || (mb is ConstructorBuilder))
+				return false;
+
 			object excluded = analyzed_method_excluded [mb];
 			if (excluded != null)
 				return excluded == TRUE ? true : false;
 
-			if (mb.Mono_IsInflatedMethod)
-				return false;
-			
 			ConditionalAttribute[] attrs = mb.GetCustomAttributes (TypeManager.conditional_attribute_type, true)
 				as ConditionalAttribute[];
 			if (attrs.Length == 0) {

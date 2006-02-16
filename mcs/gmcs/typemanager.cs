@@ -517,7 +517,7 @@ public partial class TypeManager {
 			return (Type) ret;
 		}
 
-		if (t.IsGenericParameter || t.IsGenericInstance) {
+		if (t.IsGenericParameter || t.IsGenericType) {
 		int pos = 0;
 		Type result = t;
 		while ((pos < dim.Length) && (dim [pos] == '[')) {
@@ -1405,7 +1405,7 @@ public partial class TypeManager {
 			return (MemberInfo []) list;
 		}
 
-		if (t.IsGenericInstance && (mt == MemberTypes.NestedType)) {
+		if (t.IsGenericType && (mt == MemberTypes.NestedType)) {
 			//
 			// This happens if we're resolving a class'es base class and interfaces
 			// in TypeContainer.DefineType().  At this time, the types aren't
@@ -1862,7 +1862,7 @@ public partial class TypeManager {
 	//
 	static public FieldBase GetField (FieldInfo fb)
 	{
-		if (fb.DeclaringType.IsGenericInstance)
+		if (fb.DeclaringType.IsGenericType)
 			fb = fb.Mono_GetGenericFieldDefinition ();
 
 		return (FieldBase) fieldbuilders_to_fields [fb];
@@ -2073,7 +2073,7 @@ public partial class TypeManager {
 		if (t.IsArray)
 			t = TypeManager.array_type;
 		
-		if ((t is TypeBuilder) || t.IsGenericInstance) {
+		if ((t is TypeBuilder) || t.IsGenericType) {
 			Type [] base_ifaces;
 			
 			if (t.BaseType == null)
@@ -2081,7 +2081,7 @@ public partial class TypeManager {
 			else
 				base_ifaces = GetInterfaces (t.BaseType);
 			Type[] type_ifaces;
-			if (t.IsGenericInstance)
+			if (t.IsGenericType)
 				type_ifaces = t.GetInterfaces ();
 			else
 				type_ifaces = (Type []) builder_to_ifaces [t];
