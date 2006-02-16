@@ -1,3 +1,20 @@
+2006-02-16  Dick Porter  <dick@ximian.com>
+
+	* socket-io.c (create_object_from_sockaddr): Fix typo.
+	(create_sockaddr_from_object): Check array lengths before
+	potentially accessing items off the end.
+	(ves_icall_System_Net_Sockets_Socket_Receive_internal)
+	(ves_icall_System_Net_Sockets_Socket_RecvFrom_internal)
+	(ves_icall_System_Net_Sockets_Socket_Send_internal)
+	(ves_icall_System_Net_Sockets_Socket_SendTo_internal): Fix buffer
+	length checks to avoid wraparound overflows.
+	(ves_icall_System_Net_Sockets_Socket_Select_internal): Check the
+	contents of the array of sockets
+	(hostent_to_IPHostEntry2)
+	(addrinfo_to_IPHostEntry): IPv6 printed addresses can be 48 bytes.
+	Check return value of inet_ntop ().
+	(addrinfo_to_IPHostEntry): Fix typo
+
 2006-02-16  Raja R Harinath  <rharinath@novell.com>
 
 	Type metadata parsing doesn't use generic-instantiation information.
