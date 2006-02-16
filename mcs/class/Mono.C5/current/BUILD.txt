@@ -1,0 +1,20 @@
+The C5 library can be built by opening the solution file C5.sln in the
+current directory with Microsoft Visual Studio 2005 or 
+Microsoft Visual C# 2005 Express Edition and performing a build all. 
+This will build C5.dll to the fileC5\C5\bin\Debug\C5.dll.
+
+Building all in the C5.sln solution will also build the projects
+* 'PreProcess' which does some preprocessing of the C5 sources and is an 
+  integral part of the C5 build process.
+* 'docNet' for generation of on-line documentation 
+* 'UserGuideExample' containing the examples from the User's Guide.
+
+The build should complete with a few compilation warnings.
+
+To build the 'nunit' project you need to have NUnit 2.0 installed, else an enormous
+number of compilation errors will result. The project is configured for NUnit
+version 2.2.6 and tested with that version.
+The NUnit tests should pass except for a single one due to missing implementation 
+of events on the class SortedArray.
+
+ 
