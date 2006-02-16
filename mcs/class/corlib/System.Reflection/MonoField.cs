@@ -137,10 +137,5 @@ namespace System.Reflection {
 			field.fhandle = fhandle;
 			return field;
 		}
-
-#if NET_2_0 || BOOTSTRAP_NET_2_0
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public override extern FieldInfo Mono_GetGenericFieldDefinition ();
-#endif
 	}
 }

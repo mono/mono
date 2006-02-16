@@ -224,11 +224,6 @@ namespace System.Reflection.Emit {
 		}
 
 #if NET_2_0 || BOOTSTRAP_NET_2_0
-		public override FieldInfo Mono_GetGenericFieldDefinition ()
-		{
-			return this;
-		}
-
 		public override Module Module {
 			get {
 				return base.Module;

@@ -235,10 +235,6 @@ namespace System.Reflection {
 		}
 #endif
 
-#if NET_2_0 || BOOTSTRAP_NET_2_0
-		public abstract FieldInfo Mono_GetGenericFieldDefinition ();
-#endif
-
 		void _FieldInfo.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
 		{
 			throw new NotImplementedException ();

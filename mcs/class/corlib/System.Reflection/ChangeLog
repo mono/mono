@@ -1,3 +1,7 @@
+2006-02-16  Martin Baulig  <martin@ximian.com>
+
+	* FieldInfo.cs (FieldInfo.Mono_GetGenericFieldDefinition): Removed.
+
 2006-02-15  Martin Baulig  <martin@ximian.com>
 
 	* MethodBase.cs (MethodBase.GetGenericMethodDefinition): Removed.
