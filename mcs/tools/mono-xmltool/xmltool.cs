@@ -41,7 +41,7 @@ options:
 	--validate-rnc relax-ng-compact-grammar-file [instances]
 	--validate-nvdl nvdl-script-xml [instances]
 	--validate-xsd xml-schema [instances]
-	--transform stylesheet instance-xml
+	--transform stylesheet instance-xml [output-xml]
 	--prettyprint [source] [result]
 
 environment variable that affects on the behavior:
@@ -173,8 +173,11 @@ environment variable that affects on the behavior:
 		{
 			XslTransform t = new XslTransform ();
 			t.Load (args [1]);
-			XmlTextWriter xw = new XmlTextWriter (Console.Out);
+			TextWriter output = args.Length > 3 ?
+				File.CreateText (args [3]) : Console.Out;
+			XmlTextWriter xw = new XmlTextWriter (output);
 			t.Transform (new XPathDocument (args [2], XmlSpace.Preserve), null, xw, null);
+			xw.Close ();
 		}
 
 		static void PrettyPrint (string [] args)
