@@ -1,3 +1,8 @@
+2006-02-16  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* XmlSchemaImporter.cs: Support importing complex types with
+	  simple content based on enums. Fixes bug #76848.
+
 2006-02-11  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* SoapAttributeAttribute.cs: Set eol-style to CRLF.

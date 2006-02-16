@@ -1086,6 +1086,7 @@ namespace System.Xml.Serialization
 			XmlSchemaSimpleContentExtension ext = content.Content as XmlSchemaSimpleContentExtension;
 			ClassMap cmap = (ClassMap)map.ObjectMap;
 			XmlQualifiedName qname = GetContentBaseType (content.Content);
+			TypeData simpleType = null;
 			
 			if (!IsPrimitiveTypeNamespace (qname.Namespace))
 			{
@@ -1093,19 +1094,26 @@ namespace System.Xml.Serialization
 	
 				XmlTypeMapping baseMap = ImportType (qname, null, true);
 				BuildPendingMap (baseMap);
-				ClassMap baseClassMap = (ClassMap)baseMap.ObjectMap;
-	
-				foreach (XmlTypeMapMember member in baseClassMap.AllMembers)
-					cmap.AddMember (member);
-	
-				map.BaseMap = baseMap;
-				baseMap.DerivedTypes.Add (map);
+				
+				if (baseMap.IsSimpleType) {
+					simpleType = baseMap.TypeData;
+				} else {
+					ClassMap baseClassMap = (ClassMap)baseMap.ObjectMap;
+		
+					foreach (XmlTypeMapMember member in baseClassMap.AllMembers)
+						cmap.AddMember (member);
+		
+					map.BaseMap = baseMap;
+					baseMap.DerivedTypes.Add (map);
+				}
 			}
 			else
-			{
+				simpleType = FindBuiltInType (qname);
+				
+			if (simpleType != null) {
 				XmlTypeMapMemberElement member = new XmlTypeMapMemberElement ();
 				member.Name = classIds.AddUnique("Value", member);
-				member.TypeData = FindBuiltInType (qname);
+				member.TypeData = simpleType;
 				member.ElementInfo.Add (CreateTextElementInfo (typeQName.Namespace, member, member.TypeData));
 				member.IsXmlTextCollector = true;
 				cmap.AddMember (member);
