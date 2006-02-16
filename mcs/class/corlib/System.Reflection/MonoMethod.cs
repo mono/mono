@@ -232,7 +232,7 @@ namespace System.Reflection {
 				return ReturnType.Namespace + "." + ReturnType.Name + " " + Name + "(" + parms + ")";
 			string generic = "";
 #if NET_2_0 || BOOTSTRAP_NET_2_0
-			if (HasGenericParameters) {
+			if (IsGenericMethod) {
 				Type[] gen_params = GetGenericArguments ();
 				generic = "[";
 				for (int j = 0; j < gen_params.Length; j++) {
@@ -282,26 +282,14 @@ namespace System.Reflection {
 			return res;
 		}
 
-		public override extern bool Mono_IsInflatedMethod {
+		public override extern bool IsGenericMethodDefinition {
 			[MethodImplAttribute(MethodImplOptions.InternalCall)]
 			get;
 		}
 
-		public override extern bool HasGenericParameters {
+		public override extern bool IsGenericMethod {
 			[MethodImplAttribute(MethodImplOptions.InternalCall)]
 			get;
-		}
-
-		public override bool IsGenericMethodDefinition {
-			get {
-				return HasGenericParameters && !Mono_IsInflatedMethod;
-			}
-		}
-
-		public override bool IsGenericMethod {
-			get {
-				return HasGenericParameters;
-			}
 		}
 #endif
 
@@ -415,29 +403,6 @@ namespace System.Reflection {
 		}
 
 #if NET_2_0 || BOOTSTRAP_NET_2_0
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern MethodInfo GetGenericMethodDefinition_impl ();
-
-		public override MethodInfo GetGenericMethodDefinition ()
-		{
-			MethodInfo res = GetGenericMethodDefinition_impl ();
-			if (res == null)
-				throw new InvalidOperationException ();
-
-			return res;
-		}
-
-		public override extern bool Mono_IsInflatedMethod {
-			[MethodImplAttribute(MethodImplOptions.InternalCall)]
-			get;
-		}
-
-		public override bool HasGenericParameters {
-			get {
-				return false;
-			}
-		}
-
 		public override bool IsGenericMethodDefinition {
 			get {
 				return false;

@@ -2044,7 +2044,7 @@ namespace Mono.CSharp {
 			if (m.IsGenericMethodDefinition)
 				return m;
 			if (m.IsGenericMethod)
-				return m.GetGenericMethodDefinition ();
+				return ((MethodInfo) m).GetGenericMethodDefinition ();
 			if (!m.DeclaringType.IsGenericType)
 				return m;
 

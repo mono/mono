@@ -270,18 +270,6 @@ namespace System.Reflection.Emit {
 		}
 
 #if NET_2_0 || BOOTSTRAP_NET_2_0
-		public override bool Mono_IsInflatedMethod {
-			get {
-				return false;
-			}
-		}
-
-		public override bool HasGenericParameters {
-			get {
-				return false;
-			}
-		}
-
 		public override bool IsGenericMethodDefinition {
 			get {
 				return false;

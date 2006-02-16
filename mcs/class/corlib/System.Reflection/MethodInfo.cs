@@ -89,6 +89,11 @@ namespace System.Reflection {
 		}
 
 #if NET_2_0 || BOOTSTRAP_NET_2_0
+		public virtual MethodInfo GetGenericMethodDefinition ()
+		{
+			throw new NotSupportedException ();
+		}
+
 		public virtual MethodInfo MakeGenericMethod (params Type [] types)
 		{
 			throw new NotSupportedException (this.GetType().ToString ());

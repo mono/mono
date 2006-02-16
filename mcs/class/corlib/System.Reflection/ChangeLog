@@ -1,3 +1,16 @@
+2006-02-15  Martin Baulig  <martin@ximian.com>
+
+	* MethodBase.cs (MethodBase.GetGenericMethodDefinition): Removed.
+	(MethodBase.Mono_IsInflatedMethod): Removed.
+	(MethodBase.HasGenericParameters): Removed.
+
+	* MethodInfo.cs (MethodInfo.GetGenericMethodDefinition): Moved
+	here from MethodBase.
+
+	* MonoMethod.cs
+	(MonoMethod.IsGenericMethodDefinition): This is now an icall.
+	(MonoMethod.IsGenericMethod): Likewise.
+
 2006-02-14  Martin Baulig  <martin@ximian.com>
 
 	* MonoMethod.cs

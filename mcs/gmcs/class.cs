@@ -4181,7 +4181,8 @@ namespace Mono.CSharp {
 						'.' + method_name;
 				}
 
-				mb = Parent.TypeBuilder.DefineGenericMethod (method_name, flags);
+				mb = Parent.TypeBuilder.DefineMethod (method_name, flags);
+
 				if (!GenericMethod.Define (mb))
 					return false;
 			}

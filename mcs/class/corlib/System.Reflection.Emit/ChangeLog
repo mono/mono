@@ -1,3 +1,9 @@
+2006-02-15  Martin Baulig  <martin@ximian.com>
+
+	* TypeBuilder.cs (TypeBuilder.DefineMethod): Also enable the
+	2-argument version in the `BOOTSTRAP_NET_2_0' profile.
+	(TypeBuilder.DefineGenericMethod): Removed.
+
 2006-02-14  Martin Baulig  <martin@ximian.com>
 
 	* ConstructorBuilder.cs

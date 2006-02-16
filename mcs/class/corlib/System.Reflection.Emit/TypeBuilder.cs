@@ -568,7 +568,7 @@ namespace System.Reflection.Emit {
 				nativeCallConv, nativeCharSet);
 		}
 
-#if NET_2_0
+#if NET_2_0 || BOOTSTRAP_NET_2_0
 		public MethodBuilder DefineMethod (string name, MethodAttributes attributes) {
 			return DefineMethod (name, attributes, CallingConventions.Standard);
 		}
@@ -1520,11 +1520,6 @@ namespace System.Reflection.Emit {
 					this, null, names [i], i);
 
 			return generic_params;
-		}
-
-		public MethodBuilder DefineGenericMethod (string name, MethodAttributes attributes)
-		{
-			return DefineMethod (name, attributes, CallingConventions.Standard, null, null);
 		}
 
                 public static ConstructorInfo GetConstructor (Type instanciated, ConstructorInfo ctor)
