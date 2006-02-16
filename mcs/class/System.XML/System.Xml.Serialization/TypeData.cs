@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections;
+using System.Globalization;
 using System.Reflection;
 using System.Xml.Schema;
 
@@ -184,23 +185,42 @@ namespace System.Xml.Serialization
 					listItemType = type.GetElementType ();
 				else if (typeof(ICollection).IsAssignableFrom (type))
 				{
+					if (typeof (IDictionary).IsAssignableFrom (type))
+						throw new NotSupportedException (string.Format (CultureInfo.InvariantCulture,
+							"The type {0} is not supported because it implements" +
+							" IDictionary.", type.FullName));
+
 					PropertyInfo prop = GetIndexerProperty (type);
 					if (prop == null) 
 						throw new InvalidOperationException ("You must implement a default accessor on " + type.FullName + " because it inherits from ICollection");
-						
-					return prop.PropertyType;
-				}
-				else
-				{
-					MethodInfo met = type.GetMethod ("Add");
-					if (met == null)
-						throw new InvalidOperationException ("The collection " + type.FullName + " must implement an Add method");
 
-					ParameterInfo[] pars = met.GetParameters();
-					if (pars.Length != 1)
-						throw new InvalidOperationException ("The Add method of the collection " + type.FullName + " must have only one parameter");
-					
-					return pars[0].ParameterType;
+					listItemType = prop.PropertyType;
+
+					MethodInfo addMethod = type.GetMethod ("Add", new Type[] { listItemType });
+					if (addMethod == null)
+						throw CreateMissingAddMethodException (type, "ICollection",
+							listItemType);
+				}
+				else // at this point, we must be dealing with IEnumerable implementation
+				{
+					MethodInfo met = type.GetMethod ("GetEnumerator", Type.EmptyTypes);
+					if (met == null) { 
+						// get private implemenation
+						met = type.GetMethod ("System.Collections.IEnumerable.GetEnumerator",
+							BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance,
+							null, Type.EmptyTypes, null);
+					}
+					// determine ListItemType using IEnumerator.Current property
+					PropertyInfo prop = met.ReturnType.GetProperty ("Current");
+					if (prop == null)
+						listItemType = typeof (object);
+					else
+						listItemType = prop.PropertyType;
+
+					MethodInfo addMethod = type.GetMethod ("Add", new Type[] { listItemType });
+					if (addMethod == null)
+						throw CreateMissingAddMethodException (type, "IEnumerable",
+							listItemType);
 				}
 
 				return listItemType;
@@ -254,6 +274,14 @@ namespace System.Xml.Serialization
 					return prop;
 			}
 			return null;
+		}
+
+		private static InvalidOperationException CreateMissingAddMethodException (Type type, string inheritFrom, Type argumentType) {
+			return new InvalidOperationException (string.Format(CultureInfo.InvariantCulture,
+				"To be XML serializable, types which inherit from {0} must have " +
+				"an implementation of Add({1}) at all levels of their inheritance " +
+				"hierarchy. {2} does not implement Add({1}).", inheritFrom, 
+				argumentType.FullName, type.FullName));
 		}
 	}
 }

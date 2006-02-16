@@ -1,3 +1,24 @@
+2006-02-16  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* TypeData.cs: Fixed the following issues when dealing with Array
+	SchemaType:
+	- if a type implements IDictionary, throw a NotSupportedException
+	- if a type implements ICollection, then an Add method must exist
+	  which takes a single argument of a type to which the listitem type 
+	  is assignable (meaning a base type or an interface that it 
+	  implements). If such a method does not exist, then throw an
+	  InvalidOperationException.
+	- if a type implements IEnumerable, then the listitem type is 
+	  determined by the type of the Current property of the (IEnumerator)
+	  type returned by the GetEnumerator() method or the private 
+	  implementation of IEnumerable.GetEnumerator(). If there's no 
+          public Current property on the IEnumerator, then System.Object 
+	  is assumed as listitem type. Similar as for types implementing
+	  ICollection, an Add method must exist which takes a single argument 
+          of a type to which the listitem type is assignable (meaning a base
+	  type or an interface that it implements). If such a method does not
+          exist, then throw an InvalidOperationException.
+
 2006-02-16  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* XmlSchemaImporter.cs: Support importing complex types with

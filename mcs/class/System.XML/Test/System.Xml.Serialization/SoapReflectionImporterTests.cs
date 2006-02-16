@@ -1050,7 +1050,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[ExpectedException (typeof (NotSupportedException))]
 		public void TypeMapping_IDictionary ()
 		{
@@ -1122,7 +1121,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void TypeMapping_IEnumerable_Object_NoMatchingAddMethod ()
 		{
@@ -1130,7 +1128,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void TypeMapping_IEnumerable_Object_NoMatchingAddMethod_Array ()
 		{
@@ -1203,7 +1200,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void TypeMapping_ICollection_Object_NoMatchingAddMethod ()
 		{
@@ -1211,7 +1207,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void TypeMapping_ICollection_Object_NoMatchingAddMethod_Array ()
 		{
@@ -1219,7 +1214,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void TypeMapping_ICollection_SimpleClass_NoMatchingAddMethod ()
 		{
@@ -1227,7 +1221,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void TypeMapping_ICollection_SimpleClass_NoMatchingAddMethod_Array ()
 		{
