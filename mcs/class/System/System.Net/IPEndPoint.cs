@@ -96,13 +96,17 @@ namespace System.Net {
 				return(null);
 			}
 
-			AddressFamily family=(AddressFamily)sockaddr[0];
+			AddressFamily family = sockaddr.Family;
 			int port;
 
 			IPEndPoint ipe = null;
 			switch(family)
 			{
 				case AddressFamily.InterNetwork:
+					if (size < 8) {
+						return(null);
+					}
+					
 					port = (((int)sockaddr[2])<<8) + (int)sockaddr[3];
 					long address=(((long)sockaddr[7])<<24) +
 						(((long)sockaddr[6])<<16) +
@@ -113,6 +117,10 @@ namespace System.Net {
 					break;
 #if NET_1_1
 				case AddressFamily.InterNetworkV6:
+					if (size < 28) {
+						return(null);
+					}
+					
 					port	= (((int)sockaddr[2])<<8) + (int)sockaddr[3];
 
 					/// maybe flowid ?
