@@ -44,33 +44,16 @@ namespace Mono.Xml.XPath
 		class DTMXPathNavigator2 : XPathNavigator, IXmlLineInfo
 	{
 
-		public DTMXPathNavigator2 (DTMXPathDocument2 document,
-			XmlNameTable nameTable,
-			DTMXPathLinkedNode2 [] nodes,
-			DTMXPathAttributeNode2 [] attributes,
-			DTMXPathNamespaceNode2 [] namespaces,
-			string [] atomicStringPool,
-			string [] nonAtomicStringPool,
-			Hashtable idTable)
+		public DTMXPathNavigator2 (DTMXPathDocument2 document)
 		{
-			this.nodes = nodes;
-			this.attributes = attributes;
-			this.namespaces = namespaces;
-			this.atomicStringPool = atomicStringPool;
-			this.nonAtomicStringPool = nonAtomicStringPool;
-			this.idTable = idTable;
-			this.nameTable = nameTable;
 			this.MoveToRoot ();
 			this.document = document;
 		}
 
 		// Copy constructor including position informations.
 		public DTMXPathNavigator2 (DTMXPathNavigator2 org)
-			: this (org.document, org.nameTable,
-			org.nodes, org.attributes, org.namespaces,
-			org.atomicStringPool, org.nonAtomicStringPool,
-			org.idTable)
 		{
+			document = org.document;
 			currentIsNode = org.currentIsNode;
 			currentIsAttr = org.currentIsAttr;
 
@@ -79,21 +62,33 @@ namespace Mono.Xml.XPath
 			currentNs = org.currentNs;
 		}
 
-		XmlNameTable nameTable;
+		XmlNameTable nameTable {
+			get { return document.NameTable; }
+		}
 
 		// Created XPathDocument. This is used to identify the origin of the navigator.
 		DTMXPathDocument2 document;
 
-		DTMXPathLinkedNode2 [] nodes;// = new DTMXPathLinkedNode [0];
-		DTMXPathAttributeNode2 [] attributes;// = new DTMXPathAttributeNode [0];
-		DTMXPathNamespaceNode2 [] namespaces;// = new DTMXPathNamespaceNode [0];
-
-		// String pool
-		string [] atomicStringPool;
-		string [] nonAtomicStringPool;
+		DTMXPathLinkedNode2 [] nodes {
+			get { return document.Nodes; }
+		}
+		DTMXPathAttributeNode2 [] attributes {
+			get { return document.Attributes; }
+		}
+		DTMXPathNamespaceNode2 [] namespaces {
+			get { return document.Namespaces; }
+		}
+		string [] atomicStringPool {
+			get { return document.AtomicStringPool; }
+		}
+		string [] nonAtomicStringPool {
+			get { return document.NonAtomicStringPool; }
+		}
 
 		// ID table
-		Hashtable idTable;
+		Hashtable idTable {
+			get { return document.IdTable; }
+		}
 
 		bool currentIsNode;
 		bool currentIsAttr;
@@ -103,15 +98,6 @@ namespace Mono.Xml.XPath
 		int currentNs;
 
 		StringBuilder valueBuilder;
-
-#region Ctor
-
-		internal DTMXPathNavigator2 (XmlNameTable nt)
-		{
-			this.nameTable = nt;
-		}
-
-#endregion
 
 #region Properties
 

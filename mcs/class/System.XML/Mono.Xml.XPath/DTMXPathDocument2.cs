@@ -50,14 +50,15 @@ namespace Mono.Xml.XPath
 			string [] nonAtomicStringPool,
 			Hashtable idTable)
 		{
-			root = new DTMXPathNavigator2 (this,
-				nameTable,
-				nodes,
-				attributes,
-				namespaces,
-				atomicStringPool,
-				nonAtomicStringPool,
-				idTable);
+			this.Nodes = nodes;
+			this.Attributes = attributes;
+			this.Namespaces = namespaces;
+			this.AtomicStringPool = atomicStringPool;
+			this.NonAtomicStringPool = nonAtomicStringPool;
+			this.IdTable = idTable;
+			this.NameTable = nameTable;
+
+			root = new DTMXPathNavigator2 (this);
 		}
 
 		public XPathNavigator CreateNavigator ()
@@ -65,7 +66,20 @@ namespace Mono.Xml.XPath
 			return root.Clone ();
 		}
 
-		XPathNavigator root;
+		readonly XPathNavigator root;
+
+		internal readonly XmlNameTable NameTable;
+
+		internal readonly DTMXPathLinkedNode2 [] Nodes;
+		internal readonly DTMXPathAttributeNode2 [] Attributes;
+		internal readonly DTMXPathNamespaceNode2 [] Namespaces;
+
+		// String pool
+		internal readonly string [] AtomicStringPool;
+		internal readonly string [] NonAtomicStringPool;
+
+		// ID table
+		internal readonly Hashtable IdTable;
 	}
 }
 

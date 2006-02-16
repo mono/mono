@@ -1,3 +1,9 @@
+2006-02-16  Atsushi Enomoto <atsushi@ximian.com>
+
+	* DTMXPathDocument2.cs, DTMXPathNavigator2.cs :
+	  Do not store mutable XPathDocument fields in every navigators.
+	  It saves memory a lot.
+
 2005-12-14  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XPathNavigatorReader.cs : oh, so it used to compile under 1.x.
