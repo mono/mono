@@ -1,3 +1,9 @@
+
+Fri Feb 17 16:12:52 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* driver.c, aot.c, mini.c: throw exception if the IL code is
+	invalid or unverifiable.
+
 2006-02-17  Raja R Harinath  <rharinath@novell.com>
 
 	* generics.2.cs (test_0_ldfld_stfld_mro): Use m.struct_field, not
