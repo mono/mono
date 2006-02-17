@@ -36,7 +36,7 @@ using System.Collections;
 using System.Data;
 
 namespace System.Data.Common {
-	public abstract class DbDataReader : MarshalByRefObject, IDataReader, IDataReader2, IDataRecord, IDataRecord2, IDisposable, IEnumerable
+	public abstract class DbDataReader : MarshalByRefObject, IDataReader, IDataRecord, IDisposable, IEnumerable
 	{
 		#region Constructors
 
@@ -55,9 +55,6 @@ namespace System.Data.Common {
 		public abstract object this [int index] { get; }
 		public abstract object this [string name] { get; }
 		public abstract int RecordsAffected { get; }
-#if NET_2_0
-		public abstract int VisibleFieldCount { get; }
-#endif
 
 		#endregion // Properties
 
