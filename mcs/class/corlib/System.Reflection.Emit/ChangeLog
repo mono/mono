@@ -1,3 +1,9 @@
+2006-02-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* DynamicMethod.cs: Implement DefineParameter ().
+
+	* ParameterBuilder.cs: Add support for DynamicMethod parents.
+
 2006-02-15  Martin Baulig  <martin@ximian.com>
 
 	* TypeBuilder.cs (TypeBuilder.DefineMethod): Also enable the

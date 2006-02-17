@@ -142,7 +142,6 @@ namespace System.Reflection.Emit {
 			return Delegate.CreateDelegate (delegateType, target, this);
 		}
 		
-		[MonoTODO]
 		public ParameterBuilder DefineParameter (int position, ParameterAttributes attributes, string strParamName)
 		{
 			//
@@ -153,7 +152,11 @@ namespace System.Reflection.Emit {
 
 			RejectIfCreated ();
 
-			throw new NotImplementedException ();
+			ParameterBuilder pb = new ParameterBuilder (this, position, attributes, strParamName);
+			if (pinfo == null)
+				pinfo = new ParameterBuilder [parameters.Length + 1];
+			pinfo [position] = pb;
+			return pb;
 		}
 
 		public override MethodInfo GetBaseDefinition () {
