@@ -115,33 +115,63 @@ namespace Mono.Xml
 				resolver = new XmlUrlResolver ();
 		}
 
+		// The primary xml source
 		EntityResolvingXmlReader reader;
+
+		// This is used to acquire "Normalization" property which
+		// could be dynamically changed.
 		XmlTextReader sourceTextReader;
+
+		// This field is used to get properties (such as
+		// EntityHandling) and to raise events.
+		XmlValidatingReader validatingReader;
+
+		// We hold DTDObjectModel for such case that the source
+		// XmlReader does not implement IHasXmlParerContext
+		// (especially for non-sys.xml.dll readers).
 		DTDObjectModel dtd;
+
+		// Used to resolve entities (as expected)
+		XmlResolver resolver;
+
+		// mainly used to retrieve DTDElementDeclaration
+		string currentElement;
+		AttributeSlot [] attributes;
+		int attributeCount;
+
+		// Holds MoveTo*Attribute()/ReadAttributeValue() status.
+		int currentAttribute = -1;
+		bool consumedAttribute;
+
+		// Ancestor and current node context for each depth.
 		Stack elementStack;
 		Stack automataStack;
-		string currentElement;
-		int currentAttribute = -1;
+		bool popScope;
+
+		// Validation context.
+		bool isStandalone;
+		DTDAutomata currentAutomata;
+		DTDAutomata previousAutomata;
+		ArrayList idList;
+		ArrayList missingIDReferences;
+
+		// Holds namespace context. It must not be done in source
+		// XmlReader default attributes could affect on it.
+		XmlNamespaceManager nsmgr;
+
+		// Those fields are used to store on-constructing text value.
+		// They are required to support entity-mixed text, so they
+		// are likely to be moved to EntityResolvingXmlReader.
 		string currentTextValue;
 		string constructingTextValue;
 		bool shouldResetCurrentTextValue;
-		bool consumedAttribute;
-		bool insideContent;
-		DTDAutomata currentAutomata;
-		DTDAutomata previousAutomata;
-		bool isStandalone;
-		AttributeSlot [] attributes;
-		int attributeCount;
-		XmlNamespaceManager nsmgr;
-		StringBuilder valueBuilder;
-		ArrayList idList;
-		ArrayList missingIDReferences;
-		XmlResolver resolver;
 		bool isSignificantWhitespace;
 		bool isWhitespace;
 		bool isText;
-		bool dontResetTextType;
-		bool popScope;
+
+		// Utility caches.
+		Stack attributeValueEntityStack = new Stack ();
+		StringBuilder valueBuilder;
 
 		class AttributeSlot
 		{
@@ -161,9 +191,6 @@ namespace Mono.Xml
 				IsDefault = false;
 			}
 		}
-
-		// This field is used to get properties and to raise events.
-		XmlValidatingReader validatingReader;
 
 		public DTDObjectModel DTD {
 			get { return dtd; }
@@ -345,13 +372,6 @@ namespace Mono.Xml
 			return true;
 		}
 
-		/*
-		private void OnValidationEvent (object o, ValidationEventArgs e)
-		{
-			this.HandleError (e.Exception, e.Severity);
-		}
-		*/
-
 		public override bool Read ()
 		{
 			if (currentTextValue != null)
@@ -366,7 +386,6 @@ namespace Mono.Xml
 			isWhitespace = false;
 			isSignificantWhitespace = false;
 			isText = false;
-			dontResetTextType = false;
 
 			bool b = ReadContent () || currentTextValue != null;
 			if (!b && this.missingIDReferences.Count > 0) {
@@ -388,6 +407,10 @@ namespace Mono.Xml
 			if (popScope) {
 				nsmgr.PopScope ();
 				popScope = false;
+				if (elementStack.Count == 0)
+				// it reached to the end of document element,
+				// so reset to non-validating state.
+					currentAutomata = null;
 			}
 
 			bool b = !reader.EOF;
@@ -397,14 +420,6 @@ namespace Mono.Xml
 			}
 			else
 				b = reader.Read ();
-
-			if (!insideContent && reader.NodeType == XmlNodeType.Element) {
-				insideContent = true;
-				if (dtd == null)
-					currentAutomata = null;
-				else
-					currentAutomata = dtd.RootAutomata;
-			}
 
 			if (!b) {
 				if (elementStack.Count != 0)
@@ -434,6 +449,7 @@ namespace Mono.Xml
 						reader ["PUBLIC"], reader ["SYSTEM"], reader.Value);
 					dtd = xmlTextReader.DTD;
 				}
+				currentAutomata = dtd.RootAutomata;
 
 				// Validity Constraints Check.
 				if (DTD.Errors.Length > 0)
@@ -458,8 +474,6 @@ namespace Mono.Xml
 				break;
 
 			case XmlNodeType.Element:
-				nsmgr.PushScope ();
-				popScope = reader.IsEmptyElement;
 				if (constructingTextValue != null) {
 					currentTextValue = constructingTextValue;
 					constructingTextValue = null;
@@ -467,6 +481,8 @@ namespace Mono.Xml
 						ValidateWhitespaceNode ();
 					return true;
 				}
+				nsmgr.PushScope ();
+				popScope = reader.IsEmptyElement;
 				elementStack.Push (reader.Name);
 
 				currentElement = Name;
@@ -565,7 +581,6 @@ namespace Mono.Xml
 				if (!isText)
 					isSignificantWhitespace = true;
 				isWhitespace = false;
-				dontResetTextType = true;
 				goto case XmlNodeType.DocumentFragment;
 			case XmlNodeType.Text:
 				isWhitespace = isSignificantWhitespace = false;
@@ -631,7 +646,7 @@ namespace Mono.Xml
 			if (this.isStandalone && DTD != null && elementStack.Count > 0) {
 				DTDElementDeclaration elem = DTD.ElementDecls [elementStack.Peek () as string];
 				if (elem != null && !elem.IsInternalSubset && !elem.IsMixedContent && !elem.IsAny && !elem.IsEmpty)
-					HandleError ("In standalone document, whitespace cannot appear in an element whose declaration explicitly contains child content model, not Mixed content.", XmlSeverityType.Error);
+					HandleError ("In a standalone document, whitespace cannot appear in an element which is declared to contain only element children.", XmlSeverityType.Error);
 			}
 		}
 
@@ -670,8 +685,6 @@ namespace Mono.Xml
 			else if (severity == XmlSeverityType.Error)
 				throw ex;
 		}
-
-		Stack attributeValueEntityStack = new Stack ();
 
 		private void ValidateAttributes (DTDAttListDeclaration decl, bool validate)
 		{
@@ -720,7 +733,7 @@ namespace Mono.Xml
 				slot.LocalName = reader.LocalName;
 				slot.Prefix = reader.Prefix;
 				XmlReader targetReader = reader;
-				string attrValue = null;
+				string attrValue = String.Empty;
 				// For attribute node, it always resolves
 				// entity references on attributes.
 				while (attributeValueEntityStack.Count >= 0) {
@@ -747,24 +760,11 @@ namespace Mono.Xml
 					case XmlNodeType.EndEntity:
 						break;
 					default:
-						if (attrValue != null) {
-							valueBuilder.Append (attrValue);
-							attrValue = null;
-						}
-						
-						if (valueBuilder.Length != 0)
-							valueBuilder.Append (targetReader.Value);
-						else
-							attrValue = targetReader.Value;
-						
+						attrValue += targetReader.Value;
 						break;
 					}
 				}
 				
-				if (attrValue == null) {
-					attrValue = valueBuilder.ToString ();
-					valueBuilder.Length = 0;
-				}
 				reader.MoveToElement ();
 				reader.MoveToAttribute (attrName);
 				slot.Value = FilterNormalization (attrName, attrValue);
@@ -963,9 +963,6 @@ namespace Mono.Xml
 				if (currentTextValue != null)
 					return 0;
 
-				if (!insideContent)
-					return reader.AttributeCount;
-
 				return attributeCount;
 			}
 		}
@@ -1162,7 +1159,6 @@ namespace Mono.Xml
 			try {
 				if (def.Datatype.TokenizedType == XmlTokenizedType.CDATA)
 					return valueBuilder.ToString ();
-				
 				for (int i=0; i < valueBuilder.Length; i++) {
 					if (valueBuilder [i] != ' ')
 						continue;

@@ -1,5 +1,12 @@
 2006-02-17  Atsushi Enomoto <atsushi@ximian.com>
 
+	* DTDValidatingReader2.cs : more refactoring. Removed and simplified
+	  some error check. String += would be enough for entity-reference-
+	  mixed attributes which rarely happen, so simplify the code.
+	  Added comments on how the fields are used.
+
+2006-02-17  Atsushi Enomoto <atsushi@ximian.com>
+
 	* DTDValidatingReader2.cs : attribute node simplification. It now
 	  stores attribute node slots, including default attributes for
 	  further refactoring.
