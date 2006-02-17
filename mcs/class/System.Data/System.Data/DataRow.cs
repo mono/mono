@@ -42,6 +42,9 @@ using System.Data.Common;
 using System.Collections;
 using System.Globalization;
 using System.Xml;
+#if NET_2_0
+using System.ComponentModel;
+#endif
 
 namespace System.Data {
 	/// <summary>
@@ -612,6 +615,9 @@ namespace System.Data {
 		/// <summary>
 		/// Begins an edit operation on a DataRow object.
 		/// </summary>
+#if NET_2_0
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+#endif
 		public void BeginEdit () 
 		{
 			if (_inChangingEvent)
@@ -632,6 +638,9 @@ namespace System.Data {
 		/// <summary>
 		/// Cancels the current edit on the row.
 		/// </summary>
+#if NET_2_0
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+#endif
 		public void CancelEdit () 
 		{
 			 if (_inChangingEvent) {
@@ -825,6 +834,9 @@ namespace System.Data {
 		/// <summary>
 		/// Ends the edit occurring on the row.
 		/// </summary>
+#if NET_2_0
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+#endif
 		public void EndEdit () 
 		{
 			if (_inChangingEvent)

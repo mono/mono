@@ -85,7 +85,9 @@ namespace System.Data.SqlClient {
 
 		#region Properties
 
+#if !NET_2_0
 		[DataSysDescription ("The DataAdapter for which to automatically generate SqlCommands")]
+#endif
 		[DefaultValue (null)]
 		public new SqlDataAdapter DataAdapter {
 			get { return adapter; }
@@ -105,7 +107,9 @@ namespace System.Data.SqlClient {
 		}
 
 		[Browsable (false)]
+#if !NET_2_0
 		[DataSysDescription ("The character used in a text command as the opening quote for quoting identifiers that contain special characters.")]
+#endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public 
 #if NET_2_0
@@ -121,7 +125,9 @@ namespace System.Data.SqlClient {
 		}
 
 		[Browsable (false)]
+#if !NET_2_0
 		[DataSysDescription ("The character used in a text command as the closing quote for quoting identifiers that contain special characters. ")]
+#endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public 
 #if NET_2_0

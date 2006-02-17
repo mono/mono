@@ -70,7 +70,9 @@ namespace System.Data.OleDb
 
 		#region Properties
 
+#if !NET_2_0
 		[DataSysDescriptionAttribute ("The DataAdapter for which to automatically generate OleDbCommands")]
+#endif
 		[DefaultValue (null)]
 		public OleDbDataAdapter DataAdapter {
 			get {
@@ -82,7 +84,9 @@ namespace System.Data.OleDb
 		}
 
 		[BrowsableAttribute (false)]
+#if !NET_2_0
 		[DataSysDescriptionAttribute ("The prefix string wrapped around sql objects")]
+#endif
                 [DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
 		public string QuotePrefix {
 			get {
@@ -94,7 +98,9 @@ namespace System.Data.OleDb
 		}
 
 		[BrowsableAttribute (false)]
+#if !NET_2_0
                 [DataSysDescriptionAttribute ("The suffix string wrapped around sql objects")]
+#endif
                 [DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
 		public string QuoteSuffix {
 			get {

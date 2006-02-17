@@ -127,7 +127,9 @@ namespace System.Data.SqlClient {
 		}
 
 		[DataCategory ("Data")]
+#if !NET_2_0
 		[DataSysDescription ("Command text to execute.")]
+#endif
 		[DefaultValue ("")]
 		[EditorAttribute ("Microsoft.VSDesigner.Data.SQL.Design.SqlCommandTextEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
 		[RefreshProperties (RefreshProperties.All)]
@@ -144,7 +146,9 @@ namespace System.Data.SqlClient {
 			}
 		}
 
+#if !NET_2_0
 		[DataSysDescription ("Time to wait for command to execute.")]
+#endif
 		[DefaultValue (30)]
 		public 
 #if NET_2_0
@@ -160,7 +164,9 @@ namespace System.Data.SqlClient {
 		}
 
 		[DataCategory ("Data")]
+#if !NET_2_0
 		[DataSysDescription ("How to interpret the CommandText.")]
+#endif
 		[DefaultValue (CommandType.Text)]
 		[RefreshProperties (RefreshProperties.All)]
 		public 
@@ -181,7 +187,9 @@ namespace System.Data.SqlClient {
 
 		[DataCategory ("Behavior")]
 		[DefaultValue (null)]
+#if !NET_2_0
 		[DataSysDescription ("Connection used by the command.")]
+#endif
 		[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DbConnectionEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]		
                 public 
 #if NET_2_0
@@ -210,7 +218,9 @@ namespace System.Data.SqlClient {
 		}
 
 		[DataCategory ("Data")]
+#if !NET_2_0
 		[DataSysDescription ("The parameters collection.")]
+#endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		public 
 #if NET_2_0
@@ -247,7 +257,9 @@ namespace System.Data.SqlClient {
 		}
 
 		[Browsable (false)]
+#if !NET_2_0
 		[DataSysDescription ("The transaction used by the command.")]
+#endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public new SqlTransaction Transaction {
 			get { return transaction; }
@@ -255,7 +267,9 @@ namespace System.Data.SqlClient {
 		}	
 
 		[DataCategory ("Behavior")]
+#if !NET_2_0
 		[DataSysDescription ("When used by a DataAdapter.Update, how command results are applied to the current DataRow.")]
+#endif
 		[DefaultValue (UpdateRowSource.Both)]
 		public 
 #if NET_2_0

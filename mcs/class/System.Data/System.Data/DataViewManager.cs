@@ -75,7 +75,9 @@ namespace System.Data
 
 		#region Properties
 
+#if !NET_2_0
 		[DataSysDescription ("Indicates the source of data for this DataViewManager.")]
+#endif
 		[DefaultValue (null)]
 		public DataSet DataSet {
 			get { return dataSet; }
@@ -98,7 +100,9 @@ namespace System.Data
 			}
 		}
 
+#if !NET_2_0
 		[DataSysDescription ("Indicates the sorting/filtering/state settings for any table in the corresponding DataSet.")]
+#endif
                 [DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		public DataViewSettingCollection DataViewSettings {
 			get { return settings; }

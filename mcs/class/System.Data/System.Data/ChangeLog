@@ -1,5 +1,16 @@
 2006-02-17  Chris Toshok  <toshok@ximian.com>
 
+	* System.Data/DataSet.cs, System.Data/DataView.cs,
+	System.Data/ForeignKeyConstraint.cs,
+	System.Data/DataViewManager.cs, System.Data/DataRow.cs,
+	System.Data/DataSysDescriptionAttribute.cs,
+	System.Data/UniqueConstraint.cs, System.Data/DataTable.cs,
+	System.Data/DataRelation.cs: lots of attribute work, removing
+	DataSysDescription atributes (and marking the class obsolete) for
+	2.0.
+
+2006-02-17  Chris Toshok  <toshok@ximian.com>
+
 	* DataAdapterException.cs: remove this file.
 	
 2006-02-17  Chris Toshok  <toshok@ximian.com>

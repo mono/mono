@@ -1,5 +1,10 @@
 2006-02-17  Chris Toshok  <toshok@ximian.com>
 
+	* SqlCommand.cs, SqlCommandBuilder.cs, SqlConnection.cs,
+	SqlDataAdapter.cs: remove DataSysDescription attributes for >= 2.0
+
+2006-02-17  Chris Toshok  <toshok@ximian.com>
+
 	* SqlDataReader.cs: remove VisibleFieldCount property.
 
 2006-02-10  Senganal T  <tsenganal@novell.com>

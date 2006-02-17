@@ -129,7 +129,9 @@ namespace System.Data
 		#region Properties
 
 		[DataCategory ("Data")]
+#if !NET_2_0
 		[DataSysDescription ("Indicates the child columns of this relation.")]
+#endif
 		public virtual DataColumn[] ChildColumns {
 			get {
 				return childColumns;
@@ -162,7 +164,9 @@ namespace System.Data
 
 		[Browsable (false)]
 		[DataCategory ("Data")]
+#if !NET_2_0
 		[DataSysDescription ("The collection that holds custom user information.")]
+#endif
 		public PropertyCollection ExtendedProperties {
 			get {
 				if (extendedProperties == null)
@@ -172,7 +176,9 @@ namespace System.Data
 		}
 
 		[DataCategory ("Data")]
+#if !NET_2_0
 		[DataSysDescription ("Indicates whether relations are nested.")]
+#endif
 		[DefaultValue (false)]
 		public virtual bool Nested {
 			get {
@@ -185,7 +191,9 @@ namespace System.Data
 		}
 
 		[DataCategory ("Data")]
+#if !NET_2_0
 		[DataSysDescription ("Indicates the parent columns of this relation.")]
+#endif
 		public virtual DataColumn[] ParentColumns {
 			get {
 				return parentColumns;
@@ -213,7 +221,9 @@ namespace System.Data
 		}
 
 		[DataCategory ("Data")]
+#if !NET_2_0
 		[DataSysDescription ("The name used to look up this relation in the Relations collection of a DataSet.")]
+#endif
 		[DefaultValue ("")]
 		public virtual string RelationName {
 			get {

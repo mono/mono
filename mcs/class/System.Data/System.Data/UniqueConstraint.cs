@@ -303,14 +303,18 @@ namespace System.Data {
 		#region Properties
 
 		[DataCategory ("Data")]
+#if !NET_2_0
 		[DataSysDescription ("Indicates the columns of this constraint.")]
+#endif
 		[ReadOnly (true)]
 		public virtual DataColumn[] Columns {
 			get { return _dataColumns; }
 		}
 
 		[DataCategory ("Data")]
+#if !NET_2_0
 		[DataSysDescription ("Indicates if this constraint is a primary key.")]
+#endif
 		public bool IsPrimaryKey {
 			get { 
 				if (Table == null || (!_belongsToCollection)) {
@@ -321,7 +325,9 @@ namespace System.Data {
 		}
 
 		[DataCategory ("Data")]
+#if !NET_2_0
 		[DataSysDescription ("Indicates the table of this constraint.")]
+#endif
 		[ReadOnly (true)]
 		public override DataTable Table {
 			get { return _dataTable; }

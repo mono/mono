@@ -325,7 +325,9 @@ namespace System.Data {
 		#region Properties
 
 		[DataCategory ("Data")]
+#if !NET_2_0
 		[DataSysDescription ("For accept and reject changes, indicates what kind of cascading should take place across this relation.")]
+#endif
 		[DefaultValue (AcceptRejectRule.None)]
 		public virtual AcceptRejectRule AcceptRejectRule {
 			get { return _acceptRejectRule; }
@@ -333,14 +335,18 @@ namespace System.Data {
 		}
 
 		[DataCategory ("Data")]
+#if !NET_2_0
 		[DataSysDescription ("Indicates the child columns of this constraint.")]
+#endif
 		[ReadOnly (true)]
 		public virtual DataColumn[] Columns {
 			get { return _childColumns; }
 		}
 
 		[DataCategory ("Data")]
+#if !NET_2_0
 		[DataSysDescription ("For deletions, indicates what kind of cascading should take place across this relation.")]
+#endif
 		[DefaultValue (Rule.Cascade)]
 		public virtual Rule DeleteRule {
 			get { return _deleteRule; }
@@ -348,7 +354,9 @@ namespace System.Data {
 		}
 
 		[DataCategory ("Data")]
+#if !NET_2_0
 		[DataSysDescription ("For updates, indicates what kind of cascading should take place across this relation.")]
+#endif
 		[DefaultValue (Rule.Cascade)]
 		public virtual Rule UpdateRule {
 			get { return _updateRule; }
@@ -356,14 +364,18 @@ namespace System.Data {
 		}
 
 		[DataCategory ("Data")]	
+#if !NET_2_0
 		[DataSysDescription ("Indicates the parent columns of this constraint.")]
+#endif
 		[ReadOnly (true)]
 		public virtual DataColumn[] RelatedColumns {
 			get { return _parentColumns; }
 		}
 
 		[DataCategory ("Data")]	
+#if !NET_2_0
 		[DataSysDescription ("Indicates the child table of this constraint.")]
+#endif
 		[ReadOnly (true)]
 		public virtual DataTable RelatedTable {
 			get {
@@ -376,7 +388,9 @@ namespace System.Data {
 		}
 
 		[DataCategory ("Data")]
+#if !NET_2_0
 		[DataSysDescription ("Indicates the table of this constraint.")]
+#endif
 		[ReadOnly (true)]
 		public override DataTable Table {
 			get {

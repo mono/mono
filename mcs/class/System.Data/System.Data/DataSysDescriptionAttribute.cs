@@ -34,6 +34,9 @@ using System;
 using System.ComponentModel;
 
 namespace System.Data {
+#if NET_2_0
+	[Obsolete ("DataSysDescriptionAttribute has been deprecated")]
+#endif
 	[AttributeUsage (AttributeTargets.All)]
 	public class DataSysDescriptionAttribute : DescriptionAttribute
 	{
@@ -45,6 +48,9 @@ namespace System.Data {
 
 		#region Constructors
 
+#if NET_2_0
+		[Obsolete ("DataSysDescriptionAttribute has been deprecated")]
+#endif
 		public DataSysDescriptionAttribute (string description)
 			: base (description)
 		{

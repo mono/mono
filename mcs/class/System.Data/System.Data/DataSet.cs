@@ -55,7 +55,10 @@ namespace System.Data {
 	[ToolboxItem ("Microsoft.VSDesigner.Data.VS.DataSetToolboxItem, " + Consts.AssemblyMicrosoft_VSDesigner)]
 	[DefaultProperty ("DataSetName")]
 	[DesignerAttribute ("Microsoft.VSDesigner.Data.VS.DataSetDesigner, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.ComponentModel.Design.IDesigner")]
-
+#if NET_2_0
+	[XmlSchemaProvider ("GetDataSetSchema")]
+	[XmlRootAttribute ("DataSet")]
+#endif
 	[Serializable]
 	public class DataSet : MarshalByValueComponent, IListSource, 
 		ISupportInitialize, ISerializable, IXmlSerializable 
@@ -99,7 +102,9 @@ namespace System.Data {
 		#region Public Properties
 
 		[DataCategory ("Data")]
+#if !NET_2_0
 		[DataSysDescription ("Indicates whether comparing strings within the DataSet is case sensitive.")]
+#endif
 		[DefaultValue (false)]
 		public bool CaseSensitive {
 			get {
@@ -123,14 +128,18 @@ namespace System.Data {
 		}
 
 		[DataCategory ("Data")]
+#if !NET_2_0
 		[DataSysDescription ("The name of this DataSet.")]
+#endif
 		[DefaultValue ("")]
 		public string DataSetName {
 			get { return dataSetName; } 
 			set { dataSetName = value; }
 		}
 
+#if !NET_2_0
 		[DataSysDescription ("Indicates a custom \"view\" of the data contained by the DataSet. This view allows filtering, searching, and navigating through the custom data view.")]
+#endif
 		[Browsable (false)]
 		public DataViewManager DefaultViewManager {
 			get {
@@ -140,7 +149,9 @@ namespace System.Data {
 			} 
 		}
 
+#if !NET_2_0
 		[DataSysDescription ("Indicates whether constraint rules are to be followed.")]
+#endif
 		[DefaultValue (true)]
 		public bool EnforceConstraints {
 			get { return enforceConstraints; } 
@@ -151,13 +162,17 @@ namespace System.Data {
 
 		[Browsable (false)]
 		[DataCategory ("Data")]
+#if !NET_2_0
 		[DataSysDescription ("The collection that holds custom user information.")]
+#endif
 		public PropertyCollection ExtendedProperties {
 			get { return properties; }
 		}
 
 		[Browsable (false)]
+#if !NET_2_0
 		[DataSysDescription ("Indicates that the DataSet has errors.")]
+#endif
 		public bool HasErrors {
 			[MonoTODO]
 			get {
@@ -170,7 +185,9 @@ namespace System.Data {
 		}
 
 		[DataCategory ("Data")]
+#if !NET_2_0
 		[DataSysDescription ("Indicates a locale under which to compare strings within the DataSet.")]
+#endif
 		public CultureInfo Locale {
 			get {
 				return locale;
@@ -268,7 +285,9 @@ namespace System.Data {
 		}
 		
 		[DataCategory ("Data")]
+#if !NET_2_0
 		[DataSysDescription ("Indicates the XML uri namespace for the root element pointed at by this DataSet.")]
+#endif
 		[DefaultValue ("")]
 		public string Namespace {
 			get { return _namespace; } 
@@ -283,7 +302,9 @@ namespace System.Data {
 		}
 
 		[DataCategory ("Data")]
+#if !NET_2_0
 		[DataSysDescription ("Indicates the prefix of the namespace used for this DataSet.")]
+#endif
 		[DefaultValue ("")]
 		public string Prefix {
 			get { return prefix; } 
@@ -307,7 +328,9 @@ namespace System.Data {
 		}
 
 		[DataCategory ("Data")]
+#if !NET_2_0
 		[DataSysDescription ("The collection that holds the relations for this DatSet.")]
+#endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		public DataRelationCollection Relations {
 			get {
@@ -339,6 +362,8 @@ namespace System.Data {
 		}
 
 #if NET_2_0
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Browsable (false)]
 		public virtual SchemaSerializationMode SchemaSerializationMode {
 
 			get {
