@@ -81,12 +81,13 @@ mono_regstate2_new (void)
 static inline void
 mono_regstate2_free (MonoRegState *rs) {
 	g_free (rs->iassign);
-	g_free (rs->fassign);
+	if (rs->iassign != rs->fassign)
+		g_free (rs->fassign);
 	g_free (rs);
 }
 
 static inline void
-mono_regstate2_assign (MonoRegState *rs) {
+mono_regstate2_assign (MonoRegState *rs, gboolean new_ir) {
 	rs->max_ireg = -1;
 
 	if (rs->next_vireg != rs->iassign_size) {
@@ -99,15 +100,20 @@ mono_regstate2_assign (MonoRegState *rs) {
 
 	/* iassign can be very large so it needs to be initialized by the caller */
 
-	if (rs->next_vfreg != rs->fassign_size) {
-		g_free (rs->fassign);
-		rs->fassign = g_malloc (MAX (MONO_MAX_FREGS, rs->next_vfreg) * sizeof (int));
-		rs->fassign_size = rs->next_vfreg;
-	}
+	if (new_ir) {
+		memset (rs->fsymbolic, 0, MONO_MAX_FREGS * sizeof (rs->fsymbolic [0]));
+		rs->fassign = rs->iassign;
+	} else {
+		if (rs->next_vfreg != rs->fassign_size) {
+			g_free (rs->fassign);
+			rs->fassign = g_malloc (MAX (MONO_MAX_FREGS, rs->next_vfreg) * sizeof (int));
+			rs->fassign_size = rs->next_vfreg;
+		}
 
-	if (rs->next_vfreg > MONO_MAX_FREGS) {
-		memset (rs->fsymbolic, 0, MONO_MAX_IREGS * sizeof (rs->fsymbolic [0]));
-		memset (rs->fassign, -1, sizeof (rs->fassign [0]) * rs->next_vfreg);
+		if (rs->next_vfreg > MONO_MAX_FREGS) {
+			memset (rs->fsymbolic, 0, MONO_MAX_IREGS * sizeof (rs->fsymbolic [0]));
+			memset (rs->fassign, -1, sizeof (rs->fassign [0]) * rs->next_vfreg);
+		}
 	}
 }
 
@@ -942,7 +948,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 
 	rs->next_vireg = bb->max_ireg;
 	rs->next_vfreg = bb->max_freg;
-	mono_regstate2_assign (rs);
+	mono_regstate2_assign (rs, cfg->new_ir);
 	rs->ifree_mask = MONO_ARCH_CALLEE_REGS;
 	rs->ffree_mask = MONO_ARCH_CALLEE_FREGS;
 
@@ -998,7 +1004,11 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 	}
 
 	/* Initialized on demand */
-	reginfof = NULL;
+	if (cfg->new_ir)
+		/* fvregs are allocated together with the ivregs */
+		reginfof = reginfo;
+	else
+		reginfof = NULL;
 
 	if (cfg->reverse_inst_list && (cfg->reverse_inst_list_len < ins_count)) {
 		g_free (cfg->reverse_inst_list);
@@ -1881,6 +1891,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 		tmp = tmp->next;
 	}
 
-	g_free (reginfof);
+	if (reginfo != reginfof)
+		g_free (reginfof);
 	g_list_free (fspill_list);
 }

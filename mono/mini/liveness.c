@@ -220,7 +220,7 @@ visit_bb (MonoCompile *cfg, MonoBasicBlock *bb, GSList **visited)
 			g_assert (((ins->dreg == -1) && (regtype == ' ')) || ((ins->dreg != -1) && (regtype != ' ')));
 				
 			if ((ins->dreg != -1) && get_vreg_to_inst (cfg, regtype, ins->dreg)) {
-				MonoInst *var = cfg->vreg_to_inst [regtype][ins->dreg];
+				MonoInst *var = get_vreg_to_inst (cfg, regtype, ins->dreg);
 				int idx = var->inst_c0;
 				MonoMethodVar *vi = MONO_VARINFO (cfg, idx);
 
@@ -234,7 +234,7 @@ visit_bb (MonoCompile *cfg, MonoBasicBlock *bb, GSList **visited)
 
 				g_assert (((sreg == -1) && (regtype == ' ')) || ((sreg != -1) && (regtype != ' ')));
 				if ((sreg != -1) && get_vreg_to_inst (cfg, regtype, sreg)) {
-					MonoInst *var = cfg->vreg_to_inst [regtype][sreg];
+					MonoInst *var = get_vreg_to_inst (cfg, regtype, sreg);
 					int idx = var->inst_c0;
 					MonoMethodVar *vi = MONO_VARINFO (cfg, idx);
 
@@ -318,7 +318,7 @@ analyze_liveness_bb (MonoCompile *cfg, MonoBasicBlock *bb)
 
 			g_assert (((sreg == -1) && (regtype == ' ')) || ((sreg != -1) && (regtype != ' ')));
 			if ((sreg != -1) && get_vreg_to_inst (cfg, regtype, sreg)) {
-				MonoInst *var = cfg->vreg_to_inst [regtype][sreg];
+				MonoInst *var = get_vreg_to_inst (cfg, regtype, sreg);
 				int idx = var->inst_c0;
 				MonoMethodVar *vi = MONO_VARINFO (cfg, idx);
 
@@ -337,7 +337,7 @@ analyze_liveness_bb (MonoCompile *cfg, MonoBasicBlock *bb)
 		g_assert (((ins->dreg == -1) && (regtype == ' ')) || ((ins->dreg != -1) && (regtype != ' ')));
 				
 		if ((ins->dreg != -1) && get_vreg_to_inst (cfg, regtype, ins->dreg)) {
-			MonoInst *var = cfg->vreg_to_inst [regtype][ins->dreg];
+			MonoInst *var = get_vreg_to_inst (cfg, regtype, ins->dreg);
 			int idx = var->inst_c0;
 			MonoMethodVar *vi = MONO_VARINFO (cfg, idx);
 

@@ -4280,8 +4280,7 @@ mono_arch_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMetho
 		if (opcode) {
 			MONO_INST_NEW (cfg, ins, opcode);
 			ins->type = STACK_R8;
-			/* FIXME: Call alloc_freg */
-			ins->dreg = cfg->next_vfreg ++;
+			ins->dreg = mono_alloc_freg (cfg);
 			ins->sreg1 = args [0]->dreg;
 			MONO_ADD_INS (cfg->cbb, ins);
 		}
@@ -4301,17 +4300,16 @@ mono_arch_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMetho
 			   (strcmp (cmethod->klass->name_space, "System.Threading") == 0) &&
 			   (strcmp (cmethod->klass->name, "Interlocked") == 0)) {
 		/* FIXME: Fuse these with ldaddr */
-		/* FIXME: Call alloc_ireg */
 		if (strcmp (cmethod->name, "Increment") == 0 && fsig->params [0]->type == MONO_TYPE_I4) {
 			MonoInst *ins_iconst;
 
 			MONO_INST_NEW (cfg, ins_iconst, OP_ICONST);
 			ins_iconst->inst_c0 = 1;
-			ins_iconst->dreg = cfg->next_vireg++;
+			ins_iconst->dreg = mono_alloc_ireg (cfg);
 			MONO_ADD_INS (cfg->cbb, ins_iconst);
 
 			MONO_INST_NEW (cfg, ins, OP_ATOMIC_ADD_NEW_I4);
-			ins->dreg = cfg->next_vireg ++;
+			ins->dreg = mono_alloc_ireg (cfg);
 			ins->inst_basereg = args [0]->dreg;
 			ins->inst_offset = 0;
 			ins->sreg2 = ins_iconst->dreg;
@@ -4322,11 +4320,11 @@ mono_arch_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMetho
 
 			MONO_INST_NEW (cfg, ins_iconst, OP_ICONST);
 			ins_iconst->inst_c0 = -1;
-			ins_iconst->dreg = cfg->next_vireg++;
+			ins_iconst->dreg = mono_alloc_ireg (cfg);
 			MONO_ADD_INS (cfg->cbb, ins_iconst);
 
 			MONO_INST_NEW (cfg, ins, OP_ATOMIC_ADD_NEW_I4);
-			ins->dreg = cfg->next_vireg ++;
+			ins->dreg = mono_alloc_ireg (cfg);
 			ins->inst_basereg = args [0]->dreg;
 			ins->inst_offset = 0;
 			ins->sreg2 = ins_iconst->dreg;
@@ -4334,7 +4332,7 @@ mono_arch_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMetho
 			MONO_ADD_INS (cfg->cbb, ins);
 		} else if (strcmp (cmethod->name, "Exchange") == 0 && fsig->params [0]->type == MONO_TYPE_I4) {
 			MONO_INST_NEW (cfg, ins, OP_ATOMIC_EXCHANGE_I4);
-			ins->dreg = cfg->next_vireg ++;
+			ins->dreg = mono_alloc_ireg (cfg);
 			ins->inst_basereg = args [0]->dreg;
 			ins->inst_offset = 0;
 			ins->sreg2 = args [1]->dreg;
@@ -4342,7 +4340,7 @@ mono_arch_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMetho
 			MONO_ADD_INS (cfg->cbb, ins);
 		} else if (strcmp (cmethod->name, "Add") == 0 && fsig->params [0]->type == MONO_TYPE_I4) {
 			MONO_INST_NEW (cfg, ins, OP_ATOMIC_ADD_I4);
-			ins->dreg = cfg->next_vireg ++;
+			ins->dreg = mono_alloc_ireg (cfg);
 			ins->inst_basereg = args [0]->dreg;
 			ins->inst_offset = 0;
 			ins->sreg2 = args [1]->dreg;

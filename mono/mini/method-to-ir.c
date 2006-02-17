@@ -145,7 +145,13 @@ alloc_preg (MonoCompile *cfg)
 static inline guint32
 alloc_freg (MonoCompile *cfg)
 {
+	/* Allocate these from the same pool as the int regs */
+#if 1
+	cfg->next_vfreg = cfg->next_vireg + 1;
+	return cfg->next_vireg ++;
+#else
 	return cfg->next_vfreg ++;
+#endif
 }
 
 static inline guint32
@@ -8783,7 +8789,8 @@ mono_handle_global_vregs (MonoCompile *cfg)
 	vreg_to_bb = g_new0 (MonoBasicBlock**, 256);
 	vreg_to_bb ['i'] = g_new0 (MonoBasicBlock*, cfg->next_vireg);
 	vreg_to_bb ['l'] = g_new0 (MonoBasicBlock*, cfg->next_vireg);
-	vreg_to_bb ['f'] = g_new0 (MonoBasicBlock*, cfg->next_vfreg);
+	/* The vfregs are allocated from the same pool as the viregs */
+	vreg_to_bb ['f'] = vreg_to_bb ['i'];
 
 	/* Find local vregs used in more than one bb */
 	/* FIXME: Optimize this */
@@ -8887,7 +8894,7 @@ mono_handle_global_vregs (MonoCompile *cfg)
 				if (cfg->verbose_level > 2)
 					printf ("CONVERTED R%d(%d) TO VREG.\n", var->dreg, vmv->idx);
 				var->flags |= MONO_INST_IS_DEAD;
-				cfg->vreg_to_inst ['i'][var->dreg] = NULL;
+				cfg->vreg_to_inst [var->dreg] = NULL;
 			}
 			break;
 		}
@@ -8895,7 +8902,6 @@ mono_handle_global_vregs (MonoCompile *cfg)
 
 	g_free (vreg_to_bb ['i']);
 	g_free (vreg_to_bb ['l']);
-	g_free (vreg_to_bb ['f']);
 	g_free (vreg_to_bb);
 }
 
@@ -8956,13 +8962,13 @@ mono_spill_global_vars (MonoCompile *cfg)
 
 				g_assert (ins->opcode == OP_REGOFFSET);
 
-				tree = cfg->vreg_to_inst ['i'][ins->dreg];
+				tree = cfg->vreg_to_inst [ins->dreg];
 				g_assert (tree);
 				tree->opcode = OP_REGOFFSET;
 				tree->inst_basereg = ins->inst_basereg;
 				tree->inst_offset = ins->inst_offset;
 
-				tree = cfg->vreg_to_inst ['i'][ins->dreg + 1];
+				tree = cfg->vreg_to_inst [ins->dreg + 1];
 				g_assert (tree);
 				tree->opcode = OP_REGOFFSET;
 				tree->inst_basereg = ins->inst_basereg;
@@ -9049,7 +9055,7 @@ mono_spill_global_vars (MonoCompile *cfg)
 			g_assert (((ins->dreg == -1) && (regtype == ' ')) || ((ins->dreg != -1) && (regtype != ' ')));
 
 			if ((ins->dreg != -1) && get_vreg_to_inst (cfg, regtype, ins->dreg)) {
-				MonoInst *var = cfg->vreg_to_inst [regtype][ins->dreg];
+				MonoInst *var = get_vreg_to_inst (cfg, regtype, ins->dreg);
 				MonoInst *store_ins;
 				int store_opcode;
 
@@ -9108,7 +9114,7 @@ mono_spill_global_vars (MonoCompile *cfg)
 
 				g_assert (((sreg == -1) && (regtype == ' ')) || ((sreg != -1) && (regtype != ' ')));
 				if ((sreg != -1) && get_vreg_to_inst (cfg, regtype, sreg)) {
-					MonoInst *var = cfg->vreg_to_inst [regtype][sreg];
+					MonoInst *var = get_vreg_to_inst (cfg, regtype, sreg);
 					MonoInst *load_ins;
 					guint32 load_opcode;
 
@@ -9183,6 +9189,13 @@ mono_spill_global_vars (MonoCompile *cfg)
  * - handling ovf opcodes: decompose in method_to_ir.
  * - unify to_regstore/to_regload as to_regmove
  * - unify iregs/fregs
+ *   -> partly done, the missing parts are:
+ *   - long vregs on 32 bit platforms, this is hard to fix since the vlreg aliases
+ *     the first vreg of the regpair, and lots of code depends on that.
+ *   - a more complete unification would involve unifying the hregs as well, so
+ *     code wouldn't need if (fp) all over the place. but that would mean the hregs
+ *     would no longer map to the machine hregs, so the code generators would need to
+ *     be modified.
  * - use sext/zext opcodes instead of shifts
  * - make mono_print_ins use the arch-independent opcode metadata
  * - simplify the emitting of calls
@@ -9232,6 +9245,7 @@ mono_spill_global_vars (MonoCompile *cfg)
  * - optimize the loading of the interruption flag in the managed->native wrappers
  * - avoid special handling of OP_NOP in passes
  * - move code inserting instructions into one function/macro.
+ * - some tests no longer work with COUNT=0
  * - LAST MERGE: 56617.
  */
 

@@ -536,7 +536,18 @@ enum {
 
 #define MONO_BBLOCK_IS_IN_REGION(bblock, regtype) (((bblock)->region & (0xf << 4)) == (regtype))
 
-#define get_vreg_to_inst(cfg, regtype, vreg) ((vreg) < (cfg)->vreg_to_inst_len [(regtype)] ? (cfg)->vreg_to_inst [(regtype)][vreg] : NULL)
+#define get_vreg_to_inst_i(cfg, vreg) ((vreg) < (cfg)->vreg_to_inst_len ? (cfg)->vreg_to_inst [vreg] : NULL)
+#define get_vreg_to_inst_l(cfg, vreg) ((vreg) < (cfg)->vreg_to_inst_l_len ? (cfg)->vreg_to_inst_l [vreg] : NULL)
+
+#if SIZEOF_VOID_P == 8
+#define get_vreg_to_inst(cfg, regtype, vreg) get_vreg_to_inst_i ((cfg), (vreg))
+#else
+/* 
+ * We would like to handle lvregs uniformly as well, but can't since they are aliased
+ * with ivreg pairs.
+ */
+#define get_vreg_to_inst(cfg, regtype, vreg) (((regtype) != 'l') ? get_vreg_to_inst_i (cfg, vreg) : get_vreg_to_inst_l (cfg, vreg))
+#endif
 
 /*
  * Control Flow Graph and compilation unit information
@@ -635,12 +646,12 @@ typedef struct {
 
 	/* Maps vregs to their associated MonoInst's */
 	/* vregs with an associated MonoInst are 'global' while others are 'local' */
-	/* Indexed first by vreg type ('i' etc), then by the vreg itself */
-	MonoInst **vreg_to_inst [256];
+	MonoInst **vreg_to_inst;
+	MonoInst **vreg_to_inst_l;
 
-	/* Size of above array, indexed by vreg type */
-	guint32 vreg_to_inst_len [256];
-
+	/* Size of above array */
+	guint32 vreg_to_inst_len;
+	guint32 vreg_to_inst_l_len;
 } MonoCompile;
 
 typedef enum {

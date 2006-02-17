@@ -1669,17 +1669,30 @@ mono_get_got_var (MonoCompile *cfg)
 static void
 set_vreg_to_inst (MonoCompile *cfg, int regtype, int vreg, MonoInst *inst)
 {
-	if (vreg >= cfg->vreg_to_inst_len [regtype]) {
-		MonoInst **tmp = cfg->vreg_to_inst [regtype];
-		int size = cfg->vreg_to_inst_len [regtype];
+	if (regtype == 'l') {
+		MonoInst **tmp = cfg->vreg_to_inst_l;
+		int size = cfg->vreg_to_inst_l_len;
+		
+		while (vreg >= cfg->vreg_to_inst_l_len) {
+			cfg->vreg_to_inst_l_len = cfg->vreg_to_inst_l_len ? cfg->vreg_to_inst_l_len * 2 : 16;
+			cfg->vreg_to_inst_l = g_malloc0 (sizeof (MonoInst*) * cfg->vreg_to_inst_l_len);
+			if (size)
+				memcpy (cfg->vreg_to_inst_l, tmp, size * sizeof (MonoInst*));
+		}
+		cfg->vreg_to_inst_l [vreg] = inst;
+	} else {
+		if (vreg >= cfg->vreg_to_inst_len) {
+			MonoInst **tmp = cfg->vreg_to_inst;
+			int size = cfg->vreg_to_inst_len;
 
-		while (vreg >= cfg->vreg_to_inst_len [regtype])
-			cfg->vreg_to_inst_len [regtype] = cfg->vreg_to_inst_len [regtype] ? cfg->vreg_to_inst_len [regtype] * 2 : 16;
-		cfg->vreg_to_inst [regtype] = g_malloc0 (sizeof (MonoInst*) * cfg->vreg_to_inst_len [regtype]);
-		if (size)
-			memcpy (cfg->vreg_to_inst [regtype], tmp, size * sizeof (MonoInst*));
+			while (vreg >= cfg->vreg_to_inst_len)
+				cfg->vreg_to_inst_len = cfg->vreg_to_inst_len ? cfg->vreg_to_inst_len * 2 : 16;
+			cfg->vreg_to_inst = g_malloc0 (sizeof (MonoInst*) * cfg->vreg_to_inst_len);
+			if (size)
+				memcpy (cfg->vreg_to_inst, tmp, size * sizeof (MonoInst*));
+		}
+		cfg->vreg_to_inst [vreg] = inst;
 	}
-	cfg->vreg_to_inst [regtype][vreg] = inst;
 }
 
 static inline int
