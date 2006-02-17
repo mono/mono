@@ -58,18 +58,7 @@ namespace System.Xml
 
 		public override XmlNode NextSibling
 		{
-			get {
-				if(ParentNode == null) {
-					return null;
-				}
-				else if (Object.ReferenceEquals (nextSibling,
-					((IHasXmlChildNode) ParentNode).LastLinkedChild.NextLinkedSibling) == false) {
-					return nextSibling;
-				}
-				else {
-					return null;
-				}
-			}
+			get { return ParentNode == null || ParentNode.LastChild == this ? null : nextSibling; }
 		}
 
 		internal XmlLinkedNode NextLinkedSibling

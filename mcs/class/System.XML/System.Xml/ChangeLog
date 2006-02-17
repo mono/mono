@@ -1,5 +1,10 @@
 2006-02-17  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlLinkedNode.cs : In NextSibling, use LastChild directly.
+	  It improves NextSibling performance in bulky document.
+
+2006-02-17  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlNodeReaderImpl.cs : do not compute ownerLinkedNode, just store
 	  it in Read(). Simply use state field in EOF. They result in 20%
 	  perf. boost. Expanding EOF also improved performance by 2-3%
