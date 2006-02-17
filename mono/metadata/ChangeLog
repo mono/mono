@@ -1,3 +1,10 @@
+
+Fri Feb 17 16:10:34 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* class-internals.h: added some more exception types.
+	* class.c, metadata.c: added a few checks to handle missing
+	types.
+
 2006-02-17  Raja R Harinath  <rharinath@novell.com>
 
 	Use owner-less generic-params some more.
