@@ -1,5 +1,11 @@
 2006-02-17  Atsushi Enomoto <atsushi@ximian.com>
 
+	* DTDValidatingReader2.cs : attribute node simplification. It now
+	  stores attribute node slots, including default attributes for
+	  further refactoring.
+
+2006-02-17  Atsushi Enomoto <atsushi@ximian.com>
+
 	* DTDValidatingReader2.cs, EntityResolvingXmlReader.cs :
 	  new files for refactoring DTD validating reader. As the first stage,
 	  it splits entity handling process from DTD validation step.
