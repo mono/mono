@@ -1,3 +1,7 @@
+2006-02-17  Chris Toshok  <toshok@ximian.com>
+
+	* SqlDataReader.cs: remove VisibleFieldCount property.
+
 2006-02-10  Senganal T  <tsenganal@novell.com>
 	* SqlDataReader.cs :
 		- GetBytes : Read binary/blob/clob data sequentially when

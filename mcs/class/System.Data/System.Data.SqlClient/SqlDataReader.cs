@@ -1120,12 +1120,6 @@ namespace System.Data.SqlClient {
                 {
                         throw new NotImplementedException ();                        
                 }
-                
-                [MonoTODO]
-                public override int VisibleFieldCount 
-                {
-                        get {throw new NotImplementedException ();}
-                }
 
 #endif // NET_2_0
 
