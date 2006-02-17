@@ -1,5 +1,9 @@
 2006-02-17  Chris Toshok  <toshok@ximian.com>
 
+	* DbDataAdapter.cs: more 2.0 cleanup.
+
+2006-02-17  Chris Toshok  <toshok@ximian.com>
+
 	* DataAdapter.cs, DataColumnMappingCollection.cs,
 	DataColumnMapping.cs, DataTableMappingCollection.cs,
 	DataTableMapping.cs, DbCommandBuilder.cs,

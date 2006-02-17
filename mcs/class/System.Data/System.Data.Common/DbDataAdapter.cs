@@ -69,20 +69,6 @@ namespace System.Data.Common {
 		#region Properties
 
 #if NET_2_0
-		[MonoTODO]
-		protected virtual IDbConnection BaseConnection {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
-		}
-
-		public IDbConnection Connection { 
-			get { return BaseConnection; }
-			set { BaseConnection = value; }
-		}
-#endif
-
-
-#if NET_2_0
 		protected internal CommandBehavior FillCommandBehavior {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
@@ -91,17 +77,6 @@ namespace System.Data.Common {
 
 
 #if NET_2_0
-		[MonoTODO]
-		protected virtual IDbCommand this [[Optional] StatementType statementType] {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
-		}
-
-		[MonoTODO]
-		protected virtual DbProviderFactory ProviderFactory {
-			get { throw new NotImplementedException (); }
-		}
-
 		[MonoTODO]
 		IDbCommand IDbDataAdapter.SelectCommand {
 			get { return ((IDbDataAdapter) this).SelectCommand; }
@@ -127,36 +102,39 @@ namespace System.Data.Common {
 		}
 		
 		[MonoTODO]
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public DbCommand SelectCommand {
 			get { return (DbCommand) ((IDbDataAdapter) this).SelectCommand; }
 			set { throw new NotImplementedException(); }
 		}
 
 		[MonoTODO]
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public DbCommand DeleteCommand {
 			get { return (DbCommand) ((IDbDataAdapter) this).DeleteCommand; }
 			set { throw new NotImplementedException(); }
 		}
 
 		[MonoTODO]
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public DbCommand InsertCommand {
 			get { return (DbCommand) ((IDbDataAdapter) this).InsertCommand; }
 			set { throw new NotImplementedException(); }
 		}
 
 		[MonoTODO]
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public DbCommand UpdateCommand {
 			get { return (DbCommand) ((IDbDataAdapter) this).UpdateCommand; }
 			set { throw new NotImplementedException(); }
 		}
 
 		[MonoTODO]
-		public IDbTransaction Transaction {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
-		}
-
-		[MonoTODO]
+		[DefaultValue (1)]
 		public int UpdateBatchSize {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
@@ -195,16 +173,40 @@ namespace System.Data.Common {
 		#region Methods
 
 #if NET_2_0
-		[MonoTODO]
-		public virtual void BeginInit ()
+		protected virtual RowUpdatedEventArgs CreateRowUpdatedEvent (DataRow dataRow, IDbCommand command,
+									     StatementType statementType,
+									     DataTableMapping tableMapping)
 		{
-			throw new NotImplementedException ();
+			return new RowUpdatedEventArgs (dataRow, command, statementType, tableMapping);
 		}
+
+		protected virtual RowUpdatingEventArgs CreateRowUpdatingEvent (DataRow dataRow, IDbCommand command,
+									       StatementType statementType,
+									       DataTableMapping tableMapping)
+		{
+			return new RowUpdatingEventArgs (dataRow, command, statementType, tableMapping);
+		}
+
+		[MonoTODO]
+		protected virtual void OnRowUpdated (RowUpdatedEventArgs value)
+		{
+		}
+
+		[MonoTODO]
+		protected virtual void OnRowUpdating (RowUpdatingEventArgs value)
+		{
+		}
+#else
+		protected abstract RowUpdatedEventArgs CreateRowUpdatedEvent (DataRow dataRow, IDbCommand command,
+									      StatementType statementType,
+									      DataTableMapping tableMapping);
+		protected abstract RowUpdatingEventArgs CreateRowUpdatingEvent (DataRow dataRow, IDbCommand command,
+										StatementType statementType,
+										DataTableMapping tableMapping);
+
+		protected abstract void OnRowUpdated (RowUpdatedEventArgs value);
+		protected abstract void OnRowUpdating (RowUpdatingEventArgs value);
 #endif
-
-		protected abstract RowUpdatedEventArgs CreateRowUpdatedEvent (DataRow dataRow, IDbCommand command, StatementType statementType, DataTableMapping tableMapping);
-		protected abstract RowUpdatingEventArgs CreateRowUpdatingEvent (DataRow dataRow, IDbCommand command, StatementType statementType, DataTableMapping tableMapping);
-
 		private FillErrorEventArgs CreateFillErrorEvent (DataTable dataTable, object[] values, Exception e)
 		{
 			FillErrorEventArgs args = new FillErrorEventArgs (dataTable, values);
@@ -236,14 +238,6 @@ namespace System.Data.Common {
 			}
 		}
 
-#if NET_2_0
-		[MonoTODO]
-		public virtual void EndInit ()
-		{
-			throw new NotImplementedException ();
-		}
-#endif
-
 		public override int Fill (DataSet dataSet)
 		{
 			return Fill (dataSet, 0, 0, DefaultSourceTableName, ((IDbDataAdapter) this).SelectCommand, CommandBehavior.Default);
@@ -265,7 +259,7 @@ namespace System.Data.Common {
 #if NET_2_0
 		protected override int Fill (DataTable dataTable, IDataReader dataReader) 
 #else
-			protected virtual int Fill (DataTable dataTable, IDataReader dataReader) 
+		protected virtual int Fill (DataTable dataTable, IDataReader dataReader) 
 #endif
 		{
 			if (dataReader.FieldCount == 0) {
@@ -584,20 +578,6 @@ namespace System.Data.Common {
 			}
 			return (DataTable[]) output.ToArray (typeof (DataTable));
 		}
-
-#if NET_2_0
-		[MonoTODO]
-		public DataSet GetDataSet ()
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public DataTable GetDataTable ()
-		{
-			throw new NotImplementedException ();
-		}
-#endif
 
 		private string SetupSchema (SchemaType schemaType, string sourceTableName)
 		{
@@ -1148,9 +1128,6 @@ namespace System.Data.Common {
 		}
 #endif
 
-		protected abstract void OnRowUpdated (RowUpdatedEventArgs value);
-		protected abstract void OnRowUpdating (RowUpdatingEventArgs value);
-		
 		#endregion // Methods
 	}
 }
