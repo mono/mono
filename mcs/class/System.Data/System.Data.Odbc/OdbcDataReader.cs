@@ -108,12 +108,6 @@ namespace System.Data.Odbc
                 
 #if NET_2_0
                 [MonoTODO]
-                public override int VisibleFieldCount
-                {
-                        get { throw new NotImplementedException (); }
-                }
-
-                [MonoTODO]
                 protected override bool IsValidRow 
                 {
                         get { throw new NotImplementedException (); }
