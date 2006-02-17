@@ -40,7 +40,6 @@ using System.Runtime.InteropServices;
 
 #if NET_2_0
 using System.Data.ProviderBase;
-using System.Data;
 #endif
 
 namespace System.Data.OleDb

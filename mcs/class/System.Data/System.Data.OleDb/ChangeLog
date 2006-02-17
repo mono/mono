@@ -1,3 +1,7 @@
+2006-02-17  Chris Toshok  <toshok@ximian.com>
+
+	* OleDbCommand.cs: remove extra using System.Data.  fixes warning.
+
 2005-10-04  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* OleDbDataReader.cs: Added a call to GC.SuppressFinalize in Dispose
