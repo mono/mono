@@ -60,9 +60,11 @@ namespace System.Reflection.Emit {
 			position = pos;
 			attrs = attributes;
 			methodb = mb;
+#if NET_2_0
 			if (mb is DynamicMethod)
 				table_idx = 0;
 			else
+#endif
 				table_idx = mb.get_next_table_index (this, 0x08, true);
 		}
 
