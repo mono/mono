@@ -1,3 +1,7 @@
+2006-02-17	Neale Ferguson <neale@sinenomine.net>
+
+	* mini-s390x.c, mini-s390x.h: Check for presence of long displacement
+	facility on the processor and use it if available.
 
 Fri Feb 17 16:12:52 CET 2006 Paolo Molaro <lupus@ximian.com>
 
