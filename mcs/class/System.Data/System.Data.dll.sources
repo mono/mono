@@ -13,7 +13,6 @@ System.Data/ConstraintCollection.cs
 System.Data/ConstraintConverter.cs
 System.Data/ConstraintException.cs
 System.Data/CustomDataClassGenerator.cs
-System.Data/DataAdapterException.cs
 System.Data/DataCategoryAttribute.cs
 System.Data/DataColumn.cs
 System.Data/DataColumnChangeEventArgs.cs
@@ -180,6 +179,7 @@ System.Data.Common/SchemaInfo.cs
 System.Data.Common/SchemaLocation.cs
 System.Data.Common/SchemaTableColumn.cs
 System.Data.Common/SchemaTableOptionalColumn.cs
+System.Data.Common/SupportedJoinOperators.cs
 System.Data.OleDb/libgda.cs
 System.Data.OleDb/OleDbParameterConverter.cs
 System.Data.OleDb/OleDbCommand.cs

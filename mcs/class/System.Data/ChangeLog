@@ -1,8 +1,12 @@
 2006-02-17  Chris Toshok  <toshok@ximian.com>
 
 	* System.Data.dll.sources: remove
+	System.Data/DataAdapterException.cs, and add
+	System.Data.Common/SupportedJoinOperators.cs.
+
+	* System.Data.dll.sources: remove
 	System.Data/AdapterMappingException.cs.
-	
+
 	* System.Data.dll.sources: remove IDbAsyncConnection.cs,
 	IDbAsyncCommand.cs, IGetTypedData.cs, ISetTypedData.cs,
 	IDataReader2.cs, IDataSources.cs, IDbExecutionContext.cs,
