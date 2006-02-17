@@ -516,12 +516,16 @@ PublicKeyToken=b77a5c561934e089"));
 		public void FullNameGenerics ()
 		{
 			Type fooType = typeof (Foo<>);
+			FieldInfo [] fields = fooType.GetFields ();
+
+			Assert.AreEqual (1, fields.Length, "#0");
 
 			Assert.IsNotNull (fooType.FullName, "#1");
 			Assert.IsNotNull (fooType.AssemblyQualifiedName, "#1a");
 
 			FieldInfo field = fooType.GetField ("Whatever");
 			Assert.IsNotNull (field, "#2");
+			Assert.AreEqual (field, fields [0], "#2a");
 			Assert.IsNull (field.FieldType.FullName, "#3");
 			Assert.IsNull (field.FieldType.AssemblyQualifiedName, "#3a");
 			Assert.IsNotNull (field.FieldType.ToString (), "#4");
@@ -573,10 +577,10 @@ PublicKeyToken=b77a5c561934e089"));
 			Type baz_int_type = typeof (Baz<int>);
 
 			Assert.IsTrue (ibar_int_type.IsAssignableFrom (baz_int_type), "Baz<int> -> IBar<int>");
-			Assert.IsTrue (ibar_short_type.IsAssignableFrom (baz_short_type), "Baz<short> -> IBaz<short>");
+			Assert.IsTrue (ibar_short_type.IsAssignableFrom (baz_short_type), "Baz<short> -> IBar<short>");
 
-			Assert.IsFalse (ibar_int_type.IsAssignableFrom (baz_short_type), "Baz<int> -!-> IBaz<short>");
-			Assert.IsFalse (ibar_short_type.IsAssignableFrom (baz_int_type), "Baz<short> -!-> IBaz<int>");
+			Assert.IsFalse (ibar_int_type.IsAssignableFrom (baz_short_type), "Baz<short> -!-> IBar<int>");
+			Assert.IsFalse (ibar_short_type.IsAssignableFrom (baz_int_type), "Baz<int> -!-> IBar<short>");
 
 			// Nullable tests
 			Assert.IsTrue (typeof (Nullable<int>).IsAssignableFrom (typeof (int)));
@@ -591,13 +595,13 @@ PublicKeyToken=b77a5c561934e089"));
 		}
 
 		[ComVisible (true)]
-		public class Foo<T> {
+		public class ComFoo<T> {
 		}
 
 		[Test]
 		public void GetCustomAttributesGenericInstance ()
 		{
-			Assert.AreEqual (1, typeof (Foo<int>).GetCustomAttributes (typeof (ComVisibleAttribute), true).Length);
+			Assert.AreEqual (1, typeof (ComFoo<int>).GetCustomAttributes (typeof (ComVisibleAttribute), true).Length);
 		}
 #endif
 

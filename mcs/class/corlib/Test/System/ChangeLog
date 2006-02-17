@@ -1,3 +1,7 @@
+2006-02-17  Raja R Harinath  <rharinath@novell.com>
+
+	* TypeTest.cs: Rename one of the instances of Foo<T> to ComFoo<T>.
+
 2006-02-14  Ankit Jain  <jankit@novell.com>
 
 	* ArraySegmentTest.cs: Fix a misplaced #endif.
