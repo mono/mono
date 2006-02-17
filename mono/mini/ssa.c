@@ -16,12 +16,13 @@ extern guint8 mono_burg_arity [];
 #define USE_ORIGINAL_VARS
 #define CREATE_PRUNED_SSA
 
-//#define DEBUG_SSA 1
+#define DEBUG_SSA 1
 
 #define NEW_PHI(cfg,dest,val) do {	\
 		(dest) = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoInst));	\
 		(dest)->opcode = OP_PHI;	\
 		(dest)->inst_c0 = (val);	\
+        (dest)->dreg = (dest)->sreg1 = (dest)->sreg2 = -1; \
 	} while (0)
 
 #define NEW_ICONST(cfg,dest,val) do {	\
@@ -29,6 +30,7 @@ extern guint8 mono_burg_arity [];
 		(dest)->opcode = OP_ICONST;	\
 		(dest)->inst_c0 = (val);	\
 		(dest)->type = STACK_I4;	\
+        (dest)->dreg = (dest)->sreg1 = (dest)->sreg2 = -1; \
 	} while (0)
 
 
@@ -91,8 +93,6 @@ unlink_unused_bblocks (MonoCompile *cfg)
  
 	}
 }
-
-
 
 static void
 replace_usage (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *inst, MonoInst **stack)
@@ -193,6 +193,110 @@ replace_usage_new (MonoCompile *cfg, MonoInst *inst, int varnum, MonoInst *rep)
 }
 
 static void
+mono_ssa_rename_vars2 (MonoCompile *cfg, int max_vars, MonoBasicBlock *bb, MonoInst **stack) 
+{
+	MonoInst *ins, *new_var;
+	int i, j, idx;
+	GList *tmp;
+	MonoInst **new_stack;
+
+#ifdef DEBUG_SSA
+	printf ("RENAME VARS BB%d %s\n", bb->block_num, mono_method_full_name (cfg->method, TRUE));
+#endif
+
+	/* First pass: Create new vars */
+	for (ins = bb->code; ins; ins = ins->next) {
+		const char *spec = ins_info [ins->opcode - OP_START - 1];
+
+#ifdef DEBUG_SSA
+		printf ("\tProcessing "); mono_print_ins (ins);
+#endif
+		if (ins->opcode == OP_NOP)
+			continue;
+
+		if (ins->opcode != OP_PHI) {
+			/* SREG1 */
+			if (spec [MONO_INST_SRC1] == 'i') {
+				MonoInst *var = get_vreg_to_inst (cfg, 'i', ins->sreg1);
+				if (var) {
+					int idx = var->inst_c0;
+					if (stack [idx]) {
+						if (var->opcode != OP_ARG)
+							g_assert (stack [idx]);
+						ins->sreg1 = stack [idx]->dreg;
+					}
+				}
+			}					
+
+			/* SREG2 */
+			if (spec [MONO_INST_SRC2] == 'i') {
+				MonoInst *var = get_vreg_to_inst (cfg, 'i', ins->sreg2);
+				if (var) {
+					int idx = var->inst_c0;
+					if (stack [idx]) {
+						if (var->opcode != OP_ARG)
+							g_assert (stack [idx]);
+
+						ins->sreg2 = stack [idx]->dreg;
+					}
+				}
+			}					
+		}
+
+		/* DREG */
+		if ((spec [MONO_INST_DEST] == 'i') && get_vreg_to_inst (cfg, 'i', ins->dreg)) {
+			MonoInst *var = get_vreg_to_inst (cfg, 'i', ins->dreg);
+			idx = var->inst_c0;
+			g_assert (idx < max_vars);
+
+			/* FIXME: Add back the bb_init optimization */
+			new_var = mono_compile_create_var (cfg, var->inst_vtype,  var->opcode);
+			new_var->flags = var->flags;
+
+			stack [idx] = new_var;
+
+#ifdef DEBUG_SSA
+			printf ("DEF %d %d\n", idx, new_var->inst_c0);
+#endif
+		}
+	}
+
+	/* Rename PHI arguments in succeeding bblocks */
+	for (i = 0; i < bb->out_count; i++) {
+		MonoBasicBlock *n = bb->out_bb [i];
+
+		for (j = 0; j < n->in_count; j++)
+			if (n->in_bb [j] == bb)
+				break;
+		
+		for (ins = n->code; ins; ins = ins->next) {
+			if (ins->opcode == OP_PHI) {
+				idx = ins->inst_c0;
+				if (stack [idx])
+					new_var = stack [idx];
+				else
+					new_var = cfg->varinfo [idx];
+#ifdef DEBUG_SSA
+				printf ("FOUND PHI %d (%d, %d)\n", idx, j, new_var->inst_c0);
+#endif
+				ins->inst_phi_args [j + 1] = new_var->inst_c0;
+				
+			}
+		}
+	}
+
+	if (bb->dominated) {
+		new_stack = g_new (MonoInst*, max_vars);
+		for (tmp = bb->dominated; tmp; tmp = tmp->next) {
+			memcpy (new_stack, stack, sizeof (MonoInst *) * max_vars); 
+			mono_ssa_rename_vars2 (cfg, max_vars, (MonoBasicBlock *)tmp->data, new_stack);
+		}
+		g_free (new_stack);
+	}
+
+}
+
+static void
 mono_ssa_rename_vars (MonoCompile *cfg, int max_vars, MonoBasicBlock *bb, MonoInst **stack) 
 {
 	MonoInst *inst, *new_var;
@@ -271,7 +375,7 @@ mono_ssa_compute (MonoCompile *cfg)
 	int i, idx;
 	MonoBitSet *set;
 	MonoMethodVar *vinfo = g_new0 (MonoMethodVar, cfg->num_varinfo);
-	MonoInst *inst, *store, **stack;
+	MonoInst *ins, *store, **stack;
 
 	g_assert (!(cfg->comp_done & MONO_COMP_SSA));
 
@@ -279,7 +383,7 @@ mono_ssa_compute (MonoCompile *cfg)
 	g_assert (mono_method_get_header (cfg->method)->num_clauses == 0);
 	g_assert (!cfg->disable_ssa);
 
-	//printf ("COMPUTS SSA %s %d\n", mono_method_full_name (cfg->method, TRUE), cfg->num_varinfo);
+	//printf ("COMPUTE SSA %s %d\n", mono_method_full_name (cfg->method, TRUE), cfg->num_varinfo);
 
 #ifdef CREATE_PRUNED_SSA
 	/* we need liveness for pruned SSA */
@@ -292,16 +396,34 @@ mono_ssa_compute (MonoCompile *cfg)
 	for (i = 0; i < cfg->num_varinfo; ++i) {
 		vinfo [i].def_in = mono_bitset_new (cfg->num_bblocks, 0);
 		vinfo [i].idx = i;
-		/* implizit reference at start */
+		/* implicit reference at start */
 		mono_bitset_set (vinfo [i].def_in, 0);
 	}
-	for (i = 0; i < cfg->num_bblocks; ++i) {
-		for (inst = cfg->bblocks [i]->code; inst; inst = inst->next) {
-			if (inst->ssa_op == MONO_SSA_STORE) {
-				idx = inst->inst_i0->inst_c0;
-				g_assert (idx < cfg->num_varinfo);
-				mono_bitset_set (vinfo [idx].def_in, i);
-			} 
+
+	if (cfg->new_ir) {
+		for (i = 0; i < cfg->num_bblocks; ++i) {
+			for (ins = cfg->bblocks [i]->code; ins; ins = ins->next) {
+				const char *spec = ins_info [ins->opcode - OP_START - 1];
+
+				if (ins->opcode == OP_NOP)
+					continue;
+
+				/* FIXME: Handle OP_LDADDR */
+				/* FIXME: Handle non-ints as well */
+				if ((spec [MONO_INST_DEST] == 'i') && get_vreg_to_inst (cfg, 'i', ins->dreg)) {
+					mono_bitset_set (vinfo [get_vreg_to_inst (cfg, 'i', ins->dreg)->inst_c0].def_in, i);
+				}
+			}
+		}
+	} else {
+		for (i = 0; i < cfg->num_bblocks; ++i) {
+			for (ins = cfg->bblocks [i]->code; ins; ins = ins->next) {
+				if (ins->ssa_op == MONO_SSA_STORE) {
+					idx = ins->inst_i0->inst_c0;
+					g_assert (idx < cfg->num_varinfo);
+					mono_bitset_set (vinfo [idx].def_in, i);
+				} 
+			}
 		}
 	}
 
@@ -322,24 +444,34 @@ mono_ssa_compute (MonoCompile *cfg)
 				continue;
 			}
 
-			NEW_PHI (cfg, inst, i);
+			/* FIXME: Might need type specific variants */
+			NEW_PHI (cfg, ins, i);
 
-			inst->inst_phi_args =  mono_mempool_alloc0 (cfg->mempool, sizeof (int) * (cfg->bblocks [idx]->in_count + 1));
-			inst->inst_phi_args [0] = cfg->bblocks [idx]->in_count;
+			ins->inst_phi_args =  mono_mempool_alloc0 (cfg->mempool, sizeof (int) * (cfg->bblocks [idx]->in_count + 1));
+			ins->inst_phi_args [0] = cfg->bblocks [idx]->in_count;
 
-			store = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoInst));
-			if (!cfg->varinfo [i]->inst_vtype->type)
-				g_assert_not_reached ();
-			store->opcode = mono_type_to_stind (cfg->varinfo [i]->inst_vtype);
-			store->ssa_op = MONO_SSA_STORE;
-			store->inst_i0 = cfg->varinfo [i];
-			store->inst_i1 = inst;
-			store->klass = store->inst_i0->klass;
+			if (cfg->new_ir) {
+				ins->dreg = cfg->varinfo [i]->dreg;
+
+				ins->next = bb->code;
+				bb->code = ins;
+				if (!bb->last_ins)
+					bb->last_ins = bb->code;
+			} else {
+				store = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoInst));
+				if (!cfg->varinfo [i]->inst_vtype->type)
+					g_assert_not_reached ();
+				store->opcode = mono_type_to_stind (cfg->varinfo [i]->inst_vtype);
+				store->ssa_op = MONO_SSA_STORE;
+				store->inst_i0 = cfg->varinfo [i];
+				store->inst_i1 = ins;
+				store->klass = store->inst_i0->klass;
 	     
-			store->next = bb->code;
-			bb->code = store;
-			if (!bb->last_ins)
-				bb->last_ins = bb->code;
+				store->next = bb->code;
+				bb->code = store;
+				if (!bb->last_ins)
+					bb->last_ins = bb->code;
+			}
 
 #ifdef DEBUG_SSA
 			printf ("ADD PHI BB%d %s\n", cfg->bblocks [idx]->block_num, mono_method_full_name (cfg->method, TRUE));
@@ -352,13 +484,15 @@ mono_ssa_compute (MonoCompile *cfg)
 		mono_bitset_free (vinfo [i].def_in);
 	g_free (vinfo);
 
-
 	stack = alloca (sizeof (MonoInst *) * cfg->num_varinfo);
 		
 	for (i = 0; i < cfg->num_varinfo; i++)
 		stack [i] = NULL;
 
-	mono_ssa_rename_vars (cfg, cfg->num_varinfo, cfg->bb_entry, stack);
+	if (cfg->new_ir)
+		mono_ssa_rename_vars2 (cfg, cfg->num_varinfo, cfg->bb_entry, stack);
+	else
+		mono_ssa_rename_vars (cfg, cfg->num_varinfo, cfg->bb_entry, stack);
 
 	cfg->comp_done |= MONO_COMP_SSA;
 }
