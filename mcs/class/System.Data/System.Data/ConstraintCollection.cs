@@ -47,8 +47,14 @@ namespace System.Data {
 	/// </summary>
 	[DefaultEvent ("CollectionChanged")]
 	[EditorAttribute("Microsoft.VSDesigner.Data.Design.ConstraintsCollectionEditor, "+Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+Consts.AssemblySystem_Drawing )]
+#if !NET_2_0
 	[Serializable]
-	public class ConstraintCollection : InternalDataCollectionBase 
+#endif
+	public
+#if NET_2_0
+	sealed
+#endif
+	class ConstraintCollection : InternalDataCollectionBase 
 	{
 		//private bool beginInit = false;
 		
@@ -76,7 +82,11 @@ namespace System.Data {
 			}
 		}
 
-		public virtual Constraint this[string name] {
+		public
+#if !NET_2_0
+		virtual
+#endif
+		Constraint this[string name] {
 			get {
 				//If the name is not found we just return null
 				int index = IndexOf(name); //case insensitive
@@ -85,7 +95,11 @@ namespace System.Data {
 			}
 		}
 		
-		public virtual Constraint this[int index] {
+		public
+#if !NET_2_0
+		virtual
+#endif
+		Constraint this[int index] {
 			get {
 				if (index < 0 || index >= List.Count)
 					throw new IndexOutOfRangeException();
@@ -214,7 +228,11 @@ namespace System.Data {
 			OnCollectionChanged( new CollectionChangeEventArgs( CollectionChangeAction.Add, this) );
 		}
 
-		public virtual Constraint Add(string name, DataColumn column, bool primaryKey) 
+		public
+#if !NET_2_0
+		virtual
+#endif
+		Constraint Add(string name, DataColumn column, bool primaryKey) 
 		{
 
 			UniqueConstraint uc = new UniqueConstraint(name, column, primaryKey);
@@ -223,7 +241,11 @@ namespace System.Data {
 			return uc;
 		}
 
-		public virtual Constraint Add(string name, DataColumn primaryKeyColumn,
+		public
+#if !NET_2_0
+		virtual
+#endif
+		Constraint Add(string name, DataColumn primaryKeyColumn,
 			DataColumn foreignKeyColumn) 
 		{
 			ForeignKeyConstraint fc = new ForeignKeyConstraint(name, primaryKeyColumn, 
@@ -233,7 +255,11 @@ namespace System.Data {
 			return fc;
 		}
 
-		public virtual Constraint Add(string name, DataColumn[] columns, bool primaryKey) 
+		public
+#if !NET_2_0
+		virtual
+#endif
+		Constraint Add(string name, DataColumn[] columns, bool primaryKey) 
 		{
 			UniqueConstraint uc = new UniqueConstraint(name, columns, primaryKey);
 			Add(uc);
@@ -241,7 +267,11 @@ namespace System.Data {
 			return uc;
 		}
 
-		public virtual Constraint Add(string name, DataColumn[] primaryKeyColumns,
+		public
+#if !NET_2_0
+		virtual
+#endif
+		Constraint Add(string name, DataColumn[] primaryKeyColumns,
 			DataColumn[] foreignKeyColumns) 
 		{
 			ForeignKeyConstraint fc = new ForeignKeyConstraint(name, primaryKeyColumns, 
@@ -337,7 +367,11 @@ namespace System.Data {
 			return List.IndexOf(constraint);
 		}
 
-		public virtual int IndexOf(string constraintName) 
+		public
+#if !NET_2_0
+		virtual
+#endif
+		int IndexOf(string constraintName) 
 		{
 			//LAMESPEC: Spec doesn't say case insensitive
 			//it should to be consistant with the other 
@@ -397,7 +431,11 @@ namespace System.Data {
 			}
 		}
 
-		protected virtual void OnCollectionChanged( CollectionChangeEventArgs ccevent) 
+		protected
+#if !NET_2_0
+		virtual
+#endif
+		void OnCollectionChanged( CollectionChangeEventArgs ccevent) 
 		{
 			if (null != CollectionChanged)
 			{

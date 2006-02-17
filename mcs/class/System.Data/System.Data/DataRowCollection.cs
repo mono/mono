@@ -44,8 +44,14 @@ namespace System.Data
 	/// Collection of DataRows in a DataTable
 	/// </summary>
 
+#if !NET_2_0
 	[Serializable]
-	public class DataRowCollection : InternalDataCollectionBase 
+#endif
+	public
+#if NET_2_0
+	sealed
+#endif
+	class DataRowCollection : InternalDataCollectionBase 
 	{
 		private DataTable table;
 		
@@ -117,7 +123,7 @@ namespace System.Data
 		/// Creates a row using specified values and adds it to the DataRowCollection.
 		/// </summary>
 #if NET_2_0
-		public virtual DataRow Add (params object[] values) 
+		public DataRow Add (params object[] values) 
 #else
 		public virtual DataRow Add (object[] values) 
 #endif

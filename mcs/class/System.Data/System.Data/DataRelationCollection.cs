@@ -47,7 +47,9 @@ namespace System.Data {
 		 "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 	[DefaultEvent ("CollectionChanged")]
 	[DefaultProperty ("Table")]
+#if !NET_2_0
 	[Serializable]
+#endif
 	public abstract class DataRelationCollection : InternalDataCollectionBase
 	{
 		/// <summary>

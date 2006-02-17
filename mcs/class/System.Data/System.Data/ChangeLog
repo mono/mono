@@ -1,3 +1,46 @@
+2006-02-17  Chris Toshok  <toshok@ximian.com>
+
+	* ConstraintCollection.cs: in 2.0, class is not serializable and
+	is sealed.  make all the "virtuals" #if !NET_2_0 as well.
+
+	* Constraint.cs: not serializable in 2.0.
+
+	* DataColumnCollection.cs: in 2.0, class is not serializable and
+	is sealed.  make all the "virtuals" #if !NET_2_0 as well.
+
+	* DataRelationCollection.cs: not serializable in 2.0.
+
+	* DataRelation.cs: not serializable in 2.0.
+
+	* DataRowBuilder.cs: class is sealed in 2.0.
+
+	* DataRowCollection.cs: in 2.0, class is not serialized and is
+	sealed.  Also, Add isn't virtual in 2.0 (as the class is sealed).
+
+	* DataRow.cs: not serializable in 2.0.
+
+	* DataSet.cs: remove some DataSysDescriptions from the 2.0 build,
+	and s/GetDataReader/CreateDataReader.
+
+	* DataTableCollection.cs: in 2.0, class is not serializable and is
+	sealed.  make all the "virtuals" #if !NET_2_0 as well.
+
+	* DataTableReader.cs: remove VisibleFieldCount property.
+
+	* DataViewSettingCollection.cs: not serializable in 2.0.
+
+	* DataViewSetting.cs: not serializable in 2.0.
+
+	* ForeignKeyConstraint.cs: serializable in 2.0.
+
+	* OperationAbortedException.cs: class is sealed and serializable.
+
+	* PropertyCollection.cs: serializable in 2.0.
+
+	* StatementCompletedEventArgs.cs: class is sealed.
+
+	* UniqueConstraint.cs: not serializable in 2.0.
+
 2006-02-16  Senganal T  <tsenganal@novell.com>
 
 	* XmlSchemaWriter :

@@ -42,7 +42,11 @@ namespace System.Data
 	/// constructing DataTable and DataRow.
 	/// </summary>
 
-	public class DataRowBuilder 
+	public
+#if NET_2_0
+	sealed
+#endif
+	class DataRowBuilder 
 	{
 		#region Fields
 		

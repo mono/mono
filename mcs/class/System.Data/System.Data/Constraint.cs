@@ -46,7 +46,9 @@ namespace System.Data {
 	internal delegate void DelegateConstraintNameChange (object sender, string newName);
 
 	[DefaultProperty ("ConstraintName")]	
+#if !NET_2_0
 	[Serializable]
+#endif
 	[TypeConverterAttribute (typeof (ConstraintConverter))]
 	public abstract class Constraint 
 	{

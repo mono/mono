@@ -42,7 +42,9 @@ namespace System.Data {
 	[Editor ("Microsoft.VSDesigner.Data.Design.ForeignKeyConstraintEditor, " + Consts.AssemblyMicrosoft_VSDesigner,
 		 "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 	[DefaultProperty ("ConstraintName")]
+#if !NET_2_0
 	[Serializable]
+#endif
 	public class ForeignKeyConstraint : Constraint 
 	{
 		private UniqueConstraint _parentUniqueConstraint;

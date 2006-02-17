@@ -45,8 +45,14 @@ namespace System.Data {
 		 "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 	[DefaultEvent ("CollectionChanged")]
 	[ListBindable (false)]
+#if !NET_2_0
 	[Serializable]
-	public class DataTableCollection : InternalDataCollectionBase
+#endif
+	public
+#if NET_2_0
+	sealed
+#endif
+	class DataTableCollection : InternalDataCollectionBase
 	{
 		DataSet dataSet;
 		
@@ -92,14 +98,22 @@ namespace System.Data {
 	
 		#region Methods	
 
-		public virtual DataTable Add () 
+		public
+#if !NET_2_0
+		virtual
+#endif
+		DataTable Add () 
 		{
 			DataTable Table = new DataTable ();
 			Add (Table);
 			return Table;
 		}
 
-		public virtual void Add (DataTable table) 
+		public
+#if !NET_2_0
+		virtual
+#endif
+		void Add (DataTable table) 
 		{
 			OnCollectionChanging (new CollectionChangeEventArgs (CollectionChangeAction.Add, table));
 			// check if the reference is a null reference
@@ -135,7 +149,11 @@ namespace System.Data {
 			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Add, table));
 		}
 
-		public virtual DataTable Add (string name) 
+		public
+#if !NET_2_0
+		virtual
+#endif
+		DataTable Add (string name) 
 		{
 			DataTable table = new DataTable (name);
 			this.Add (table);
@@ -143,7 +161,7 @@ namespace System.Data {
 		}
 
 #if NET_2_0
-		public virtual DataTable Add (string name, string tbNamespace)
+		public DataTable Add (string name, string tbNamespace)
 		{
 			DataTable table = new DataTable (name, tbNamespace);
 			this.Add (table);
@@ -177,12 +195,20 @@ namespace System.Data {
 			return (-1 != IndexOf (name, false));
 		}
 
-		public virtual int IndexOf (DataTable table) 
+		public
+#if !NET_2_0
+		virtual
+#endif
+		int IndexOf (DataTable table) 
 		{
 			return List.IndexOf (table);
 		}
 
-		public virtual int IndexOf (string name) 
+		public
+#if !NET_2_0
+		virtual
+#endif
+		int IndexOf (string name) 
 		{
 			return IndexOf (name, false);
 		}
@@ -214,13 +240,21 @@ namespace System.Data {
 
 		#region Protected methods
 
-		protected internal virtual void OnCollectionChanging (CollectionChangeEventArgs Args)
+		protected internal
+#if !NET_2_0
+		virtual
+#endif
+		void OnCollectionChanging (CollectionChangeEventArgs Args)
 		{
 			if (CollectionChanging != null)
 				CollectionChanging (this, Args);
 		}
 
-		protected virtual void OnCollectionChanged (CollectionChangeEventArgs Args)
+		protected
+#if !NET_2_0
+		virtual
+#endif
+		void OnCollectionChanged (CollectionChangeEventArgs Args)
 		{
 			if (CollectionChanged != null)
 				CollectionChanged (this, Args);

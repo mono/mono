@@ -47,7 +47,9 @@ namespace System.Data {
 	/// <summary>
 	/// Represents a row of data in a DataTable.
 	/// </summary>
+#if !NET_2_0
 	[Serializable]
+#endif
 	public class DataRow
 	{
 		#region Fields

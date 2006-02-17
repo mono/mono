@@ -43,7 +43,9 @@ namespace System.Data {
 	[Editor ("Microsoft.VSDesigner.Data.Design.UniqueConstraintEditor, " + Consts.AssemblyMicrosoft_VSDesigner,
 		 "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 	[DefaultProperty ("ConstraintName")]
+#if !NET_2_0
 	[Serializable]
+#endif
 	public class UniqueConstraint : Constraint 
 	{
 		private bool _isPrimaryKey = false;

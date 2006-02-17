@@ -135,10 +135,6 @@ namespace System.Data {
                         get { return 0; }
                 }
                 
-                public override int VisibleFieldCount {
-                        get { return CurrentTable.Columns.Count; }
-                }
-
                 #endregion // Properties
 
                 #region Methods

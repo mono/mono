@@ -47,7 +47,9 @@ namespace System.Data
 	[Editor ("Microsoft.VSDesigner.Data.Design.DataRelationEditor, " + Consts.AssemblyMicrosoft_VSDesigner,
 		 "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 	[DefaultProperty ("RelationName")]
+#if !NET_2_0
 	[Serializable]
+#endif
 	[MonoTODO]
 	[TypeConverterAttribute (typeof (RelationshipConverter))]	
 	public class DataRelation {

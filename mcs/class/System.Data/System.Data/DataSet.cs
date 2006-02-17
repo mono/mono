@@ -330,7 +330,9 @@ namespace System.Data {
 		}
 
 		[DataCategory ("Data")]
+#if !NET_2_0
 		[DataSysDescription ("The collection that holds the tables for this DataSet.")]
+#endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		public DataTableCollection Tables {
 			get { return tableCollection; }
@@ -561,13 +563,13 @@ namespace System.Data {
 
 #if NET_2_0
 		[MonoTODO]
-		public DataTableReader GetDataReader (DataTable[] dataTables)
+		public DataTableReader CreateDataReader (DataTable[] dataTables)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public DataTableReader GetDataReader ()
+		public DataTableReader CreateDataReader ()
 		{
 			throw new NotImplementedException ();
 		}
@@ -1097,7 +1099,9 @@ namespace System.Data {
 		#region Public Events
 
 		[DataCategory ("Action")]
+#if !NET_2_0
 		[DataSysDescription ("Occurs when it is not possible to merge schemas for two tables with the same name.")]
+#endif
 		public event MergeFailedEventHandler MergeFailed;
 
 		#endregion // Public Events

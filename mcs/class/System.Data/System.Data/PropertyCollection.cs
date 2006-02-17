@@ -43,6 +43,9 @@ namespace System.Data
 	/// DataColumn, DataSet, or DataTable class can
 	/// retrieve a PropertyCollection.
 	/// </summary>
+#if NET_2_0
+	[Serializable]
+#endif
 	public class PropertyCollection : Hashtable {
 		public PropertyCollection() {
 		}

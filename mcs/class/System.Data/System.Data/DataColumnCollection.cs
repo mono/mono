@@ -42,9 +42,15 @@ using System.ComponentModel;
 namespace System.Data {
 	[Editor ("Microsoft.VSDesigner.Data.Design.ColumnsCollectionEditor, " + Consts.AssemblyMicrosoft_VSDesigner,
 		 "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
+#if !NET_2_0
 	[Serializable]
+#endif
 	[DefaultEvent ("CollectionChanged")]
-	public class DataColumnCollection : InternalDataCollectionBase
+	public
+#if NET_2_0
+	sealed
+#endif
+	class DataColumnCollection : InternalDataCollectionBase
 	{
 		//This hashtable maps between column name to DataColumn object.
 		private Hashtable columnFromName = new Hashtable();
@@ -67,7 +73,11 @@ namespace System.Data {
 		/// <summary>
 		/// Gets the DataColumn from the collection at the specified index.
 		/// </summary>
-		public virtual DataColumn this[int index]
+		public
+#if !NET_2_0
+		virtual
+#endif
+		DataColumn this[int index]
 		{
 			get
 			{
@@ -81,7 +91,11 @@ namespace System.Data {
 		/// <summary>
 		/// Gets the DataColumn from the collection with the specified name.
 		/// </summary>
-		public virtual DataColumn this[string name]
+		public
+#if !NET_2_0
+		virtual
+#endif
+		DataColumn this[string name]
 		{
 			get
 			{
@@ -132,7 +146,11 @@ namespace System.Data {
 		/// Creates and adds a DataColumn object to the DataColumnCollection.
 		/// </summary>
 		/// <returns></returns>
-		public virtual DataColumn Add()
+		public
+#if !NET_2_0
+		virtual
+#endif
+		DataColumn Add()
 		{
 			string defaultName = GetNextDefaultColumnName ();
 			DataColumn column = new DataColumn (defaultName);
@@ -251,7 +269,11 @@ namespace System.Data {
 		/// </summary>
 		/// <param name="columnName">The name of the column.</param>
 		/// <returns>The newly created DataColumn.</returns>
-		public virtual DataColumn Add(string columnName)
+		public
+#if !NET_2_0
+		virtual
+#endif
+		DataColumn Add(string columnName)
 		{
 			if (columnName == null || columnName == String.Empty)
 			{
@@ -269,7 +291,11 @@ namespace System.Data {
 		/// <param name="columnName">The ColumnName to use when cretaing the column.</param>
 		/// <param name="type">The DataType of the new column.</param>
 		/// <returns>The newly created DataColumn.</returns>
-		public virtual DataColumn Add(string columnName, Type type)
+		public
+#if !NET_2_0
+		virtual
+#endif
+		DataColumn Add(string columnName, Type type)
 		{
 			if (columnName == null || columnName == "")
 			{
@@ -288,7 +314,11 @@ namespace System.Data {
 		/// <param name="type">The DataType of the new column.</param>
 		/// <param name="expression">The expression to assign to the Expression property.</param>
 		/// <returns>The newly created DataColumn.</returns>
-		public virtual DataColumn Add(string columnName, Type type, string expression)
+		public
+#if !NET_2_0
+		virtual
+#endif
+		DataColumn Add(string columnName, Type type, string expression)
 		{
 			if (columnName == null || columnName == "")
 			{
@@ -423,7 +453,11 @@ namespace System.Data {
 		/// </summary>
 		/// <param name="column">The name of the column to return.</param>
 		/// <returns>The index of the column specified by column if it is found; otherwise, -1.</returns>
-		public virtual int IndexOf(DataColumn column)
+		public
+#if !NET_2_0
+		virtual
+#endif
+		int IndexOf(DataColumn column)
 		{
 			if (column == null)
 				return -1;
@@ -451,7 +485,11 @@ namespace System.Data {
 		/// Raises the OnCollectionChanged event.
 		/// </summary>
 		/// <param name="ccevent">A CollectionChangeEventArgs that contains the event data.</param>
-		protected virtual void OnCollectionChanged(CollectionChangeEventArgs ccevent)
+		protected
+#if !NET_2_0
+		virtual
+#endif
+		void OnCollectionChanged(CollectionChangeEventArgs ccevent)
 		{
 			parentTable.ResetPropertyDescriptorsCache();
 			if (CollectionChanged != null) 
@@ -464,7 +502,11 @@ namespace System.Data {
 		/// Raises the OnCollectionChanging event.
 		/// </summary>
 		/// <param name="ccevent">A CollectionChangeEventArgs that contains the event data.</param>
-		protected internal virtual void OnCollectionChanging(CollectionChangeEventArgs ccevent)
+		protected internal
+#if !NET_2_0
+		virtual
+#endif
+		void OnCollectionChanging(CollectionChangeEventArgs ccevent)
 		{
 			if (CollectionChanged != null) 
 			{
