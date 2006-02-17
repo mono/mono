@@ -1,5 +1,9 @@
 2006-02-17  Chris Toshok  <toshok@ximian.com>
 
+	* DbDataReader.cs: oops, add back in VisibleFieldCount (i missed
+	it in the corcompare output), add EditorBrowsable attributes all
+	over the place, and fix some method signatures.
+
 	* DbDataUpdatableRecord.cs: remove this 2.0 file.
 
 2006-02-17  Chris Toshok  <toshok@ximian.com>
