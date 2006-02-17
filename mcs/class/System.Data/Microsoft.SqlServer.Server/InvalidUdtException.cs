@@ -36,25 +36,26 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace Micrsoft.SqlServer.Server {
+namespace Microsoft.SqlServer.Server {
+	[Serializable]
 	public sealed class InvalidUdtException : SystemException
 	{
 		#region constructors 
 		
 		[MonoTODO]
-		public InvalidUdtException ()
+		internal InvalidUdtException ()
 		{}
 		
 		[MonoTODO]
-		public InvalidUdtException (string message)	
+		internal InvalidUdtException (string message)	
 		{}
 
 		[MonoTODO]
-		public InvalidUdtException (string message, Exception innerException)
+		internal InvalidUdtException (string message, Exception innerException)
 		{}
 
 		[MonoTODO]
-		public InvalidUdtException (Type t, string reason)
+		internal InvalidUdtException (Type t, string reason)
 		{}
 
 		#endregion
