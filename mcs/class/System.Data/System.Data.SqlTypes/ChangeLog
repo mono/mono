@@ -1,3 +1,8 @@
+2006-02-17  Chris Toshok  <toshok@ximian.com>
+
+	* StorageState.cs: correct namespace, and remove "Delayed"
+	element.
+
 2006-02-03  Senganal T <tseganal@novell.com>
 
 	* SqlString.cs : 
