@@ -1,5 +1,10 @@
 2006-02-17  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlElement.cs : NextSibling could be effectively computed using
+	  LastLinkedChild, beyond previous XmlLinkedNode optimization.
+
+2006-02-17  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlLinkedNode.cs : In NextSibling, use LastChild directly.
 	  It improves NextSibling performance in bulky document.
 

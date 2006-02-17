@@ -190,11 +190,8 @@ namespace System.Xml
 			get { return name.NS; }
 		}
 
-		// Why is this override?
 		public override XmlNode NextSibling {
-			get { 
-				return base.NextSibling; 
-			}
+			get { return ParentNode == null || ((IHasXmlChildNode) ParentNode).LastLinkedChild == this ? null : NextLinkedSibling; }
 		}
 
 		public override XmlNodeType NodeType {
