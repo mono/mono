@@ -1,3 +1,8 @@
+2006-02-17  Raja R Harinath  <rharinath@novell.com>
+
+	* generics.2.cs (test_0_ldfld_stfld_mro): Use m.struct_field, not
+	m.StructField.
+
 2006-02-16  Zoltan Varga  <vargaz@gmail.com>
 
 	* generics.2.cs: Add some tests for generics ldfld/stfld wrappers.
