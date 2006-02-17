@@ -4,10 +4,14 @@
 	instance is not open, don't bother inflating.
 	(mono_class_setup_fields): Hoist some loop-invariants.  Don't
 	parse metadata for inflated classes.
-	(mono_class_create_from_typespec): Change GenericContext*
-	parameter to GenericContainer*.  Implement trivially.  All the
-	cases are handled in mono_class_from_mono_type.  Don't inflate
-	returned class.
+	(_mono_class_get): Change GenericContext* parameter to
+	GenericContainer*.
+	(mono_class_create_from_typespec): Likewise.  Simplify, and
+	implement trivially.  All the cases are handled in
+	mono_class_from_mono_type.  Don't inflate returned class.
+	(mono_class_get_full): Delegate GENERICINST optimization to
+	inflate_generic_type.
+	(mono_ldtoken) [TOKEN_TYPE_SPEC]: Use mono_class_get_full() here too.
 
 2006-02-16  Dick Porter  <dick@ximian.com>
 
