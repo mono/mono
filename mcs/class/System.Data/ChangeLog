@@ -1,3 +1,11 @@
+2006-02-17  Chris Toshok  <toshok@ximian.com>
+
+	* System.Data.dll.sources: remove IDbAsyncConnection.cs,
+	IDbAsyncCommand.cs, IGetTypedData.cs, ISetTypedData.cs,
+	IDataReader2.cs, IDataSources.cs, IDbExecutionContext.cs,
+	IDataRecord2.cs, IDataUpdatableRecord.cs, and
+	DbDataUpdatableRecord.cs from the build.
+
 2006-01-02	Boris Kirzner <borisk@mainsoft.com>
 	* System.Data_test.dll.sources: added new tests.
 
