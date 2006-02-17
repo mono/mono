@@ -1,3 +1,12 @@
+2006-02-09  Ankit Jain  <jankit@novell.com>
+
+	* ILParser.jay (bound | int32): Handle invalid -ve size.
+
+2006-02-02  Ankit Jain  <jankit@novell.com>
+
+	* ILParser.jay (bound | int32 ELLIPSIS int32): Throw exception if
+	lower_bound > upper_bound.     
+
 2006-01-28  Ankit Jain  <jankit@novell.com>
 
 	* ILParser.jay (pinv_attr | ..): Fix typo.

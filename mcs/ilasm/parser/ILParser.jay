@@ -1106,14 +1106,23 @@ bound			: /* EMPTY */
                           }
 			| int32
                           {
-                                // ******** Not sure what this is?
-                                // For now I will say it is size because there
-                                // is allready a way to set lower
-                                $$ = new DictionaryEntry (TypeRef.Ellipsis, $1);
+                                /* Only size specified */ 
+                                int size = (int) $1;
+                                if (size < 0)
+                                        /* size cannot be < 0, so emit as (0, ...)
+                                           ilasm.net emits it like this */
+                                        $$ = new DictionaryEntry (0, TypeRef.Ellipsis);
+                                else
+                                        $$ = new DictionaryEntry (TypeRef.Ellipsis, size);
                           }
 			| int32 ELLIPSIS int32
                           {
-                                // lower bound and size
+                                // lower and upper bound
+                                int lower = (int) $1;
+                                int upper = (int) $3;
+                                if (lower > upper) 
+                                        throw new Exception (String.Format ("Lower bound {0} must be <= upper bound {1}", lower, upper));
+
                                 $$ = new DictionaryEntry ($1, $3);
                           }
 			| int32 ELLIPSIS

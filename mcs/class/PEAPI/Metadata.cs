@@ -2295,18 +2295,13 @@ namespace PEAPI {
 		/// <param name="elementType">the type of the elements</param>
 		/// <param name="dimensions">the number of dimensions</param>
 		/// <param name="loBounds">lower bounds of dimensions</param>
-		/// <param name="upBounds">upper bounds of dimensions</param>
+		/// <param name="sizes">sizes for the dimensions</param>
 		public BoundArray(Type elementType, uint dimensions, int[] loBounds, 
-				int[] upBounds) : base (elementType,0x14) 
+				int[] sizes) : base (elementType,0x14) 
 		{
 			numDims = dimensions;
 			lowerBounds = loBounds;
-			if (upBounds == null)
-				return;
-			sizes = new int[loBounds.Length];
-			for (int i=0; i < loBounds.Length; i++) {
-				sizes[i] = upBounds[i] - loBounds[i] + 1;
-			}
+			this.sizes = sizes;
 		}
 
 		/// <summary>
@@ -2350,11 +2345,54 @@ namespace PEAPI {
 			if ((lowerBounds != null) && (lowerBounds.Length > 0)) {
 				MetaData.CompressNum((uint)lowerBounds.Length,str);
 				for (int i=0; i < lowerBounds.Length; i++) {
-					MetaData.CompressNum((uint)lowerBounds[i],str);
+					CompressSignedNum (lowerBounds[i],str);
 				}
 			} else str.WriteByte(0);
 		}
+		private void CompressSignedNum (int val, MemoryStream str)
+		{
+			uint uval = (uint) val;
+			byte sign = 0;
+			if (val < 0) {
+				val = -val;
+				sign = 1;
+			}
 
+			/* Map the signed number to an unsigned number in two ways.
+
+			     fval: left-rotated 2's complement representation
+			     sval: map the signed number to unsigned as follows: 0 -> 0, -1 -> 1, 1 -> 2, -2 -> 3, 2 -> 4, ....
+			           the mapping is: x -> 2*|x| - signbit(x)
+			*/
+			uint fval = (uval << 1) | sign;
+			int sval = (val  << 1) - sign;
+
+			/* An overly clever transformation: 
+
+			   a. sval is used to determine the number of bytes in the compressed representation.
+			   b. fval is truncated to the appropriate number of bits and output using the 
+			      normal unsigned-int compressor.
+
+			   However, or certain values, the truncated fval doesn't carry enough information to round trip.
+
+				(fval & 0x3FFF) <= 0x7F => compressor emits 1 byte, not 2 => there is aliasing of values
+
+			   So, we use full 4 bytes to encode such values.
+
+			   LAMESPEC: The Microsoft implementation doesn't appear to handle this subtle case.
+			   	     e.g., it ends up encoding -8192 as the byte 0x01, which decodes to -64
+			*/
+			if (sval <= 0x7F)
+				MetaData.CompressNum (fval & 0x7F, str);
+			else if (sval <= 0x3FFF && (fval & 0x3FFF) > 0x7F)
+				MetaData.CompressNum (fval & 0x3FFF, str);
+			else if (sval <= 0x1FFFFFFF && (fval & 0x1FFFFFFF) > 0x3FFF)
+				MetaData.CompressNum (fval & 0x1FFFFFFF, str);
+			else
+				/* FIXME: number cannot be represented.  Report a warning.  */
+				// throw new Exception ("cannot represent signed value" + -val);
+				MetaData.CompressNum (fval, str);
+		}
 	}
 
 	#endregion
@@ -4959,9 +4997,9 @@ namespace PEAPI {
 
 		internal static void CompressNum(uint val, MemoryStream sig) 
 		{
-			if (val < 0x7F) {
+			if (val <= 0x7F) {
 				sig.WriteByte((byte)val);
-			} else if (val < 0x3FFF) {
+			} else if (val <= 0x3FFF) {
 				byte b1 = (byte)((val >> 8) | 0x80);
 				byte b2 = (byte)(val & FileImage.iByteMask[0]);
 				sig.WriteByte(b1);

@@ -561,6 +561,8 @@ namespace Mono.ILASM {
                 public PEAPI.Method ResolveMethod (string signature)
                 {
                         MethodDef methoddef = (MethodDef) global_method_table[signature];
+                        if (methoddef == null)
+                                throw new Exception (String.Format ("Unable to resolve global method : {0}", signature));
 
                         return methoddef.Resolve (this);
                 }
@@ -577,6 +579,8 @@ namespace Mono.ILASM {
                 public PEAPI.Field ResolveField (string name, string type_name)
                 {
                         FieldDef fielddef = (FieldDef) global_field_table[new DictionaryEntry (name, type_name)]; 
+                        if (fielddef == null)
+                                throw new Exception (String.Format ("Unable to resolve global field : {0} {1}", type_name, name));
 
                         return fielddef.Resolve (this);
                 }
