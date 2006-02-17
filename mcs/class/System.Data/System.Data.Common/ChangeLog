@@ -1,5 +1,9 @@
 2006-02-17  Chris Toshok  <toshok@ximian.com>
 
+	* DbDataUpdatableRecord.cs: remove this 2.0 file.
+
+2006-02-17  Chris Toshok  <toshok@ximian.com>
+
 	* DbDataReader.cs: remove VisibleFieldCount attribute, and remove
 	IDataReader2 and IDataRecord2 interfaces.
 	
