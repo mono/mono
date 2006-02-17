@@ -50,48 +50,50 @@ namespace System.Data.Common {
 		#region Properties
 
 		[MonoTODO]
+		[DefaultValue (CatalogLocation.Start)]
 		public virtual CatalogLocation CatalogLocation {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
 
 		[MonoTODO]
+		[DefaultValue (".")]
 		public virtual string CatalogSeparator {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
 
 		[MonoTODO]
+		[DefaultValue (ConflictOption.CompareAllSearchableValues)]
 		public virtual ConflictOption ConflictOption {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
 
 		[MonoTODO]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Browsable (false)]
 		public DbDataAdapter DataAdapter {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
 
 		[MonoTODO]
+		[DefaultValue ("")]
 		public virtual string QuotePrefix {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
 
 		[MonoTODO]
+		[DefaultValue ("")]
 		public virtual string QuoteSuffix {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
 
 		[MonoTODO]
-		public SchemaLocation SchemaLocation {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
-		}
-
-		[MonoTODO]
+		[DefaultValue (".")]
 		public virtual string SchemaSeparator {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }

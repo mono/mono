@@ -64,14 +64,18 @@ namespace System.Data.Common {
 
 		#region Properties
 
+#if !NET_2_0
 		[DataSysDescription ("DataColumn.ColumnName")]
+#endif
 		[DefaultValue ("")]
 		public string DataSetColumn {
 			get { return dataSetColumn; }
 			set { dataSetColumn = value; }
 		}
 
+#if !NET_2_0
 		[DataSysDescription ("Source column name - case sensitive.")]
+#endif
 		[DefaultValue ("")]
 		public string SourceColumn {
 			get { return sourceColumn; }
@@ -96,6 +100,7 @@ namespace System.Data.Common {
 
 #if NET_2_0
 		[MonoTODO]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public static DataColumn GetDataColumnBySchemaAction (string sourceColumn, string dataSetColumn, DataTable dataTable, Type dataType, MissingSchemaAction schemaAction)
 		{
 			throw new NotImplementedException ();

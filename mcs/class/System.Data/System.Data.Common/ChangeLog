@@ -1,5 +1,13 @@
 2006-02-17  Chris Toshok  <toshok@ximian.com>
 
+	* DataAdapter.cs, DataColumnMappingCollection.cs,
+	DataColumnMapping.cs, DataTableMappingCollection.cs,
+	DataTableMapping.cs, DbCommandBuilder.cs,
+	DbConnectionStringBuilder.cs, DbParameterCollection.cs,
+	DbParameter.cs: pretty major attribute work.
+	
+2006-02-17  Chris Toshok  <toshok@ximian.com>
+
 	* DbProviderFactory.cs: remove two methods.  and mark the
 	DbProviderSupportedClasses ctor as internal since it's not part of
 	the public api.

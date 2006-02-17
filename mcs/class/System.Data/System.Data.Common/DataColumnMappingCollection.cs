@@ -62,14 +62,18 @@ namespace System.Data.Common {
 		#region Properties
 
 		[Browsable (false)]
+#if !NET_2_0
 		[DataSysDescription ("The number of items in the collection")]
+#endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public int Count {
 			get { return list.Count; }
 		}
 
 		[Browsable (false)]
+#if !NET_2_0
 		[DataSysDescription ("The specified DataColumnMapping object.")]
+#endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public DataColumnMapping this [int index] {
 			get { return (DataColumnMapping)(list[index]); }
@@ -82,7 +86,9 @@ namespace System.Data.Common {
 		}
 
 		[Browsable (false)]
+#if !NET_2_0
                 [DataSysDescription ("The specified DataColumnMapping object.")]
+#endif
                 [DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public DataColumnMapping this [string sourceColumn] {
 			get {
@@ -218,6 +224,7 @@ namespace System.Data.Common {
 
 #if NET_2_0
 		[MonoTODO]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public static DataColumn GetDataColumn (DataColumnMappingCollection columnMappings, string sourceColumn, Type dataType, DataTable dataTable, MissingMappingAction mappingAction, MissingSchemaAction schemaAction)
 		{
 			throw new NotImplementedException ();
