@@ -1,5 +1,11 @@
 2006-02-17  Chris Toshok  <toshok@ximian.com>
 
+	* Constraint.cs: #ifdef out more DataSysDescriptions.
+
+	* ConstraintException.cs: add ..ctor (string, Exception) for 2.0.
+
+2006-02-17  Chris Toshok  <toshok@ximian.com>
+
 	* DataColumn.cs: #ifdef all the DataSysDescriptions !NET_2_0.
 
 	* AdapterMappingException.cs: nuke this file.
