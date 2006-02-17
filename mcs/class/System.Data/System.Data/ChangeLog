@@ -1,5 +1,12 @@
 2006-02-17  Chris Toshok  <toshok@ximian.com>
 
+	* IDbAsyncConnection.cs, IDbAsyncCommand.cs, IGetTypedData.cs,
+	ISetTypedData.cs, IDataReader2.cs, IDataSources.cs,
+	IDbExecutionContext.cs, IDataRecord2.cs, IDataUpdatableRecord.cs:
+	remove these 2.0 files.
+
+2006-02-17  Chris Toshok  <toshok@ximian.com>
+
 	* ConstraintCollection.cs: in 2.0, class is not serializable and
 	is sealed.  make all the "virtuals" #if !NET_2_0 as well.
 
