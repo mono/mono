@@ -1,5 +1,13 @@
 2006-02-17  Atsushi Enomoto <atsushi@ximian.com>
 
+	* DTDValidatingReader2.cs, EntityResolvingXmlReader.cs :
+	  new files for refactoring DTD validating reader. As the first stage,
+	  it splits entity handling process from DTD validation step.
+
+	  (DTDValidatingReader.cs will be removed at some stage).
+
+2006-02-17  Atsushi Enomoto <atsushi@ximian.com>
+
 	* DTDObjectModel.cs : entity resolution method will be used in
 	  the next DTD validating reader in 1.x.
 
