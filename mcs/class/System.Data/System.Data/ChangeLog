@@ -1,5 +1,9 @@
 2006-02-17  Chris Toshok  <toshok@ximian.com>
 
+	* DataAdapterException.cs: remove this file.
+	
+2006-02-17  Chris Toshok  <toshok@ximian.com>
+
 	* DataTableReader.cs: Switch to the (bool) form of Dispose to
 	override, as the no-arg form isn't virtual.
 
