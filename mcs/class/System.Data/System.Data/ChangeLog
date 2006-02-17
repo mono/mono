@@ -1,5 +1,9 @@
 2006-02-17  Chris Toshok  <toshok@ximian.com>
 
+	* DataColumn.cs: #ifdef all the DataSysDescriptions !NET_2_0.
+
+	* AdapterMappingException.cs: nuke this file.
+
 	* IDbAsyncConnection.cs, IDbAsyncCommand.cs, IGetTypedData.cs,
 	ISetTypedData.cs, IDataReader2.cs, IDataSources.cs,
 	IDbExecutionContext.cs, IDataRecord2.cs, IDataUpdatableRecord.cs:
