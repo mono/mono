@@ -1,5 +1,17 @@
 2006-02-17  Raja R Harinath  <rharinath@novell.com>
 
+	Use owner-less generic-params some more.
+	* class.c (my_mono_class_from_generic_parameter): Remove.
+	(mono_class_from_generic_parameter): Handle null image,
+	param->name and param->owner.
+	(mono_class_from_mono_type): Update.
+	(mono_class_create_from_typespec): Remove 'container' parameter.
+	If that parameter is non-null, the result is always inflated by
+	'mono_class_get_full' anyway.
+	(mono_class_get): Rename from _mono_class_get.  Remove 'container'
+	parameter.
+	(mono_class_get_full): Update.
+
 	* class.c (inflate_generic_type) [GENERICINST]: If the generic
 	instance is not open, don't bother inflating.
 	(mono_class_setup_fields): Hoist some loop-invariants.  Don't
