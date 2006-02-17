@@ -156,7 +156,7 @@ namespace Mono.Xml
 		ArrayList missingIDReferences;
 
 		// Holds namespace context. It must not be done in source
-		// XmlReader default attributes could affect on it.
+		// XmlReader because default attributes could affect on it.
 		XmlNamespaceManager nsmgr;
 
 		// Those fields are used to store on-constructing text value.
@@ -377,7 +377,8 @@ namespace Mono.Xml
 			if (currentTextValue != null)
 				shouldResetCurrentTextValue = true;
 
-			MoveToElement ();
+			if (currentAttribute >= 0)
+				MoveToElement ();
 
 			currentElement = null;
 			currentAttribute = -1;
@@ -427,8 +428,11 @@ namespace Mono.Xml
 				return false;
 			}
 
-			DTDElementDeclaration elem = null;
+			return ProcessContent ();
+		}
 
+		bool ProcessContent ()
+		{
 			switch (reader.NodeType) {
 			case XmlNodeType.XmlDeclaration:
 				FillAttributes ();
@@ -437,40 +441,7 @@ namespace Mono.Xml
 				break;
 
 			case XmlNodeType.DocumentType:
-				FillAttributes ();
-
-				IHasXmlParserContext ctx = reader as IHasXmlParserContext;
-				if (ctx != null)
-					dtd = ctx.ParserContext.Dtd;
-				if (dtd == null) {
-					XmlTextReaderImpl xmlTextReader = new XmlTextReaderImpl ("", XmlNodeType.Document, null);
-					xmlTextReader.XmlResolver = resolver;
-					xmlTextReader.GenerateDTDObjectModel (reader.Name,
-						reader ["PUBLIC"], reader ["SYSTEM"], reader.Value);
-					dtd = xmlTextReader.DTD;
-				}
-				currentAutomata = dtd.RootAutomata;
-
-				// Validity Constraints Check.
-				if (DTD.Errors.Length > 0)
-					for (int i = 0; i < DTD.Errors.Length; i++)
-						HandleError (DTD.Errors [i].Message, XmlSeverityType.Error);
-
-				// NData target exists.
-				foreach (DTDEntityDeclaration ent in dtd.EntityDecls.Values)
-					if (ent.NotationName != null && dtd.NotationDecls [ent.NotationName] == null)
-						this.HandleError ("Target notation was not found for NData in entity declaration " + ent.Name + ".",
-							XmlSeverityType.Error);
-				// NOTATION exists for attribute default values
-				foreach (DTDAttListDeclaration attListIter in dtd.AttListDecls.Values)
-					foreach (DTDAttributeDefinition def in attListIter.Definitions)
-						if (def.Datatype.TokenizedType == XmlTokenizedType.NOTATION) {
-							foreach (string notation in def.EnumeratedNotations)
-								if (dtd.NotationDecls [notation] == null)
-									this.HandleError ("Target notation was not found for NOTATION typed attribute default " + def.Name + ".",
-										XmlSeverityType.Error);
-						}
-
+				ReadDoctype ();
 				break;
 
 			case XmlNodeType.Element:
@@ -481,57 +452,7 @@ namespace Mono.Xml
 						ValidateWhitespaceNode ();
 					return true;
 				}
-				nsmgr.PushScope ();
-				popScope = reader.IsEmptyElement;
-				elementStack.Push (reader.Name);
-
-				currentElement = Name;
-
-				if (currentAutomata == null) {
-					ValidateAttributes (null, false);
-					if (reader.IsEmptyElement)
-						goto case XmlNodeType.EndElement;
-					break;
-				}
-
-				// startElementDeriv
-				// If no schema specification, then skip validation.
-
-				previousAutomata = currentAutomata;
-				currentAutomata = currentAutomata.TryStartElement (reader.Name);
-				if (currentAutomata == DTD.Invalid) {
-					HandleError (String.Format ("Invalid start element found: {0}", reader.Name),
-						XmlSeverityType.Error);
-					currentAutomata = previousAutomata;
-				}
-				elem = DTD.ElementDecls [reader.Name];
-				if (elem == null) {
-					HandleError (String.Format ("Element {0} is not declared.", reader.Name),
-						XmlSeverityType.Error);
-					currentAutomata = previousAutomata;
-				}
-
-				automataStack.Push (currentAutomata);
-				if (elem != null)	// i.e. not invalid
-					currentAutomata = elem.ContentModel.GetAutomata ();
-
-				DTDAttListDeclaration attList = dtd.AttListDecls [currentElement];
-				if (attList != null) {
-					// check attributes
-					ValidateAttributes (attList, true);
-					currentAttribute = -1;
-				} else {
-					if (reader.HasAttributes) {
-						HandleError (String.Format (
-							"Attributes are found on element {0} while it has no attribute definitions.", currentElement),
-							XmlSeverityType.Error);
-					}
-					// SetupValidityIgnorantAttributes ();
-					ValidateAttributes (null, false);
-				}
-				// If it is empty element then directly check end element.
-				if (reader.IsEmptyElement)
-					goto case XmlNodeType.EndElement;
+				ProcessStartElement ();
 				break;
 
 			case XmlNodeType.EndElement:
@@ -540,29 +461,7 @@ namespace Mono.Xml
 					constructingTextValue = null;
 					return true;
 				}
-				popScope = true;
-				elementStack.Pop ();
-				// endElementDeriv
-				// If no schema specification, then skip validation.
-				if (currentAutomata == null)
-					break;
-
-				elem = DTD.ElementDecls [reader.Name];
-				if (elem == null) {
-					HandleError (String.Format ("Element {0} is not declared.", reader.Name),
-						XmlSeverityType.Error);
-				}
-
-				previousAutomata = currentAutomata;
-				// Don't let currentAutomata
-				DTDAutomata tmpAutomata = currentAutomata.TryEndElement ();
-				if (tmpAutomata == DTD.Invalid) {
-					HandleError (String.Format ("Invalid end element found: {0}", reader.Name),
-						XmlSeverityType.Error);
-					currentAutomata = previousAutomata;
-				}
-
-				currentAutomata = automataStack.Pop () as DTDAutomata;
+				ProcessEndElement ();
 				break;
 
 			case XmlNodeType.CDATA:
@@ -604,7 +503,6 @@ namespace Mono.Xml
 				ValidateWhitespaceNode ();
 			currentTextValue = constructingTextValue;
 			constructingTextValue = null;
-			MoveToElement ();
 			return true;
 		}
 
@@ -883,7 +781,131 @@ namespace Mono.Xml
 			MoveToElement ();
 		}
 
-		private void VerifyDeclaredAttributes (DTDAttListDeclaration decl)
+		void ReadDoctype ()
+		{
+			FillAttributes ();
+
+			IHasXmlParserContext ctx = reader as IHasXmlParserContext;
+			if (ctx != null)
+				dtd = ctx.ParserContext.Dtd;
+			if (dtd == null) {
+				XmlTextReaderImpl xmlTextReader = new XmlTextReaderImpl ("", XmlNodeType.Document, null);
+				xmlTextReader.XmlResolver = resolver;
+				xmlTextReader.GenerateDTDObjectModel (reader.Name,
+					reader ["PUBLIC"], reader ["SYSTEM"], reader.Value);
+				dtd = xmlTextReader.DTD;
+			}
+			currentAutomata = dtd.RootAutomata;
+
+			// Validity Constraint Check.
+			for (int i = 0; i < DTD.Errors.Length; i++)
+				HandleError (DTD.Errors [i].Message, XmlSeverityType.Error);
+
+			// NData target exists.
+			foreach (DTDEntityDeclaration ent in dtd.EntityDecls.Values)
+				if (ent.NotationName != null && dtd.NotationDecls [ent.NotationName] == null)
+					this.HandleError ("Target notation was not found for NData in entity declaration " + ent.Name + ".",
+						XmlSeverityType.Error);
+			// NOTATION exists for attribute default values
+			foreach (DTDAttListDeclaration attListIter in dtd.AttListDecls.Values) {
+				foreach (DTDAttributeDefinition def in attListIter.Definitions) {
+					if (def.Datatype.TokenizedType != XmlTokenizedType.NOTATION)
+						continue;
+					foreach (string notation in def.EnumeratedNotations)
+						if (dtd.NotationDecls [notation] == null)
+							this.HandleError ("Target notation was not found for NOTATION typed attribute default " + def.Name + ".",
+								XmlSeverityType.Error);
+				}
+			}
+		}
+
+		void ProcessStartElement ()
+		{
+			nsmgr.PushScope ();
+			popScope = reader.IsEmptyElement;
+			elementStack.Push (reader.Name);
+
+			currentElement = Name;
+
+			// If no DTD, skip validation.
+			if (currentAutomata == null) {
+				ValidateAttributes (null, false);
+				if (reader.IsEmptyElement)
+					ProcessEndElement ();
+				return;
+			}
+
+			// StartElementDeriv
+
+			previousAutomata = currentAutomata;
+			currentAutomata = currentAutomata.TryStartElement (reader.Name);
+			if (currentAutomata == DTD.Invalid) {
+				HandleError (String.Format ("Invalid start element found: {0}", reader.Name),
+					XmlSeverityType.Error);
+				currentAutomata = previousAutomata;
+			}
+
+			DTDElementDeclaration elem =
+				DTD.ElementDecls [reader.Name];
+			if (elem == null) {
+				HandleError (String.Format ("Element {0} is not declared.", reader.Name),
+					XmlSeverityType.Error);
+				currentAutomata = previousAutomata;
+			}
+
+			automataStack.Push (currentAutomata);
+			if (elem != null)	// i.e. not invalid
+				currentAutomata = elem.ContentModel.GetAutomata ();
+
+			DTDAttListDeclaration attList = dtd.AttListDecls [currentElement];
+			if (attList != null) {
+				// check attributes
+				ValidateAttributes (attList, true);
+				currentAttribute = -1;
+			} else {
+				if (reader.HasAttributes) {
+					HandleError (String.Format (
+						"Attributes are found on element {0} while it has no attribute definitions.", currentElement),
+						XmlSeverityType.Error);
+				}
+				// SetupValidityIgnorantAttributes ();
+				ValidateAttributes (null, false);
+			}
+			// If it is empty element then directly check end element.
+			if (reader.IsEmptyElement)
+				ProcessEndElement ();
+		}
+
+		void ProcessEndElement ()
+		{
+			popScope = true;
+			elementStack.Pop ();
+
+			// If no schema specification, then skip validation.
+			if (currentAutomata == null)
+				return;
+
+			// EndElementDeriv
+			DTDElementDeclaration elem =
+				DTD.ElementDecls [reader.Name];
+			if (elem == null) {
+				HandleError (String.Format ("Element {0} is not declared.", reader.Name),
+					XmlSeverityType.Error);
+			}
+
+			previousAutomata = currentAutomata;
+			// Don't let currentAutomata
+			DTDAutomata tmpAutomata = currentAutomata.TryEndElement ();
+			if (tmpAutomata == DTD.Invalid) {
+				HandleError (String.Format ("Invalid end element found: {0}", reader.Name),
+					XmlSeverityType.Error);
+				currentAutomata = previousAutomata;
+			}
+
+			currentAutomata = automataStack.Pop () as DTDAutomata;
+		}
+
+		void VerifyDeclaredAttributes (DTDAttListDeclaration decl)
 		{
 			// Check if all required attributes exist, and/or
 			// if there is default values, then add them.
