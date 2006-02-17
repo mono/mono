@@ -5472,8 +5472,7 @@ mono_arch_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMetho
 		if (opcode) {
 			MONO_INST_NEW (cfg, ins, opcode);
 			ins->type = STACK_R8;
-			/* FIXME: Call alloc_freg */
-			ins->dreg = cfg->next_vfreg ++;
+			ins->dreg = mono_alloc_freg (cfg);
 			ins->sreg1 = args [0]->dreg;
 			MONO_ADD_INS (cfg->cbb, ins);
 		}

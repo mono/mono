@@ -1094,6 +1094,8 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 				g_assert (reginfo1 [ins->sreg1].born_in > 0);
 			if (!fp)
 				rs->iassign [ins->sreg1] = -1;
+			else
+				rs->fassign [ins->sreg1] = -1;
 			//reginfo1 [ins->sreg1].prev_use = reginfo1 [ins->sreg1].last_use;
 			//reginfo1 [ins->sreg1].last_use = i;
 			if (MONO_ARCH_INST_IS_REGPAIR (spec [MONO_INST_SRC2])) {
@@ -1118,6 +1120,8 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 				g_assert (reginfo2 [ins->sreg2].born_in > 0);
 			if (!fp)
 				rs->iassign [ins->sreg2] = -1;
+			else
+				rs->fassign [ins->sreg2] = -1;
 			//reginfo2 [ins->sreg2].prev_use = reginfo2 [ins->sreg2].last_use;
 			//reginfo2 [ins->sreg2].last_use = i;
 			if (MONO_ARCH_INST_IS_REGPAIR (spec [MONO_INST_SRC2])) {
@@ -1143,6 +1147,8 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 			g_assert (ins->dreg != -1);
 			if (!fp)
 				rs->iassign [ins->dreg] = -1;
+			else
+				rs->fassign [ins->dreg] = -1;
 			//reginfod [ins->dreg].prev_use = reginfod [ins->dreg].last_use;
 			//reginfod [ins->dreg].last_use = i;
 			if (reginfod [ins->dreg].born_in == 0 || reginfod [ins->dreg].born_in > i)
