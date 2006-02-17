@@ -1,5 +1,12 @@
 2006-02-17  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlNodeReaderImpl.cs : do not compute ownerLinkedNode, just store
+	  it in Read(). Simply use state field in EOF. They result in 20%
+	  perf. boost. Expanding EOF also improved performance by 2-3%
+	  (mono --optimize=inline might work in the later stage).
+
+2006-02-17  Atsushi Enomoto <atsushi@ximian.com>
+
 	* DTDValidatingReader2.cs : more refactoring. Split ReadContent()
 	  into some methods. Reduced some extra MoveToElement().
 

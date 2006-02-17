@@ -55,11 +55,13 @@ namespace System.Xml
 		XmlDocument document;
 		XmlNode startNode;
 		XmlNode current;
+		XmlNode ownerLinkedNode;
 		ReadState state = ReadState.Initial;
 		int depth;
 		bool isEndElement;
 		bool alreadyRead;
 
+		/*
 		private XmlNode ownerLinkedNode {
 			get {
 				if (current.ParentNode != null && current.ParentNode.NodeType == XmlNodeType.Attribute)
@@ -70,6 +72,7 @@ namespace System.Xml
 					return current;
 			}
 		}
+		*/
 
 		#region Constructor
 
@@ -157,10 +160,7 @@ namespace System.Xml
 		}
 
 		public override bool EOF {
-			get {
-				return this.ReadState == ReadState.EndOfFile 
-				|| this.ReadState == ReadState.Error;
-			}
+			get { return state == ReadState.EndOfFile || state == ReadState.Error; }
 		}
 
 		public override bool HasAttributes {
@@ -475,9 +475,12 @@ namespace System.Xml
 		XmlParserContext IHasXmlParserContext.ParserContext {
 			get {
 				return new XmlParserContext (document.NameTable,
-					current.ConstructNamespaceManager (),
+					current == null ?
+						new XmlNamespaceManager (document.NameTable) :
+						current.ConstructNamespaceManager (),
 					document.DocumentType != null ? document.DocumentType.DTD : null,
-					current.BaseURI, XmlLang, XmlSpace, Encoding.Unicode);
+					current == null ? document.BaseURI : current.BaseURI,
+					XmlLang, XmlSpace, Encoding.Unicode);
 			}
 		}
 
@@ -729,7 +732,9 @@ namespace System.Xml
 
 		public override bool Read ()
 		{
-			if (EOF)
+			// FIXME: at some stage inlining might work effectively.
+			// if (EOF)
+			if (state == ReadState.EndOfFile || state == ReadState.Error)
 				return false;
 
 #if NET_2_0
@@ -737,6 +742,13 @@ namespace System.Xml
 				Binary.Reset ();
 #endif
 
+			bool ret = ReadContent ();
+			ownerLinkedNode = current;
+			return ret;
+		}
+
+		bool ReadContent ()
+		{
 			if (ReadState == ReadState.Initial) {
 				current = startNode;
 				state = ReadState.Interactive;
