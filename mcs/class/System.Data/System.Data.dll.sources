@@ -2,7 +2,6 @@ Assembly/AssemblyInfo.cs
 ../../build/common/Consts.cs.in
 ../../build/common/Locale.cs
 System.Data/AcceptRejectRule.cs
-System.Data/AdapterMappingException.cs
 System.Data/ColumnTypeConverter.cs
 System.Data/CommandBehavior.cs
 System.Data/CommandType.cs
