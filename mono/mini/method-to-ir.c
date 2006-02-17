@@ -8888,7 +8888,9 @@ mono_handle_global_vregs (MonoCompile *cfg)
 		case STACK_OBJ:
 		case STACK_PTR:
 		case STACK_MP:
-			/* FIXME: Add I8 on 64 bit */			
+#if SIZEOF_VOID_P == 8
+		case STACK_I8:
+#endif
 			/* Arguments are implicitly global */
 			if ((var->opcode != OP_ARG) && (var != cfg->ret) && !(var->flags & (MONO_INST_VOLATILE|MONO_INST_INDIRECT)) && (vreg_to_bb ['i'][var->dreg] != (gpointer)(gssize)-1)) {
 				if (cfg->verbose_level > 2)
