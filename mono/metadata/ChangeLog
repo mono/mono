@@ -31,6 +31,26 @@
 	(ves_icall_MonoMethod_get_IsGenericMethod): New icall.
 	(ves_icall_MonoMethod_get_IsGenericMethodDefinition): New icall.
 
+2006-02-15  Raja R Harinath  <rharinath@novell.com>
+
+	* metadata.c (mono_metadata_decode_signed_value): Simplify.
+	Delegate to mono_metadata_decode_value, and work on the returned value.
+
+	* icall.c (ves_icall_MonoType_GetGenericArguments):
+	Add consistency check here too.
+	
+2006-02-15  Ankit Jain  <jankit@novell.com>
+
+	* metadata.c (mono_metadata_decode_signed_value): Use gint* instead of
+	char/short etc.
+
+2006-02-15  Ankit Jain  <jankit@novell.com>
+
+	* metadata.c (mono_metadata_decode_signed_value): New function to decode
+	signed values, used only for representing lower bounds of arrays.
+	(mono_metadata_parse_array_full): Use new
+	mono_metadata_decode_signed_value to decode lower bounds.
+
 2006-02-14  Martin Baulig  <martin@ximian.com>
 
 	* reflection.c

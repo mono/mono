@@ -1002,7 +1002,6 @@ mono_metadata_decode_blob_size (const char *xptr, const char **rptr)
 	return size;
 }
 
-
 /**
  * mono_metadata_decode_value:
  * @ptr: pointer to decode from
@@ -1037,6 +1036,38 @@ mono_metadata_decode_value (const char *_ptr, const char **rptr)
 		*rptr = ptr;
 	
 	return len;
+}
+
+/**
+ * mono_metadata_decode_signed_value:
+ * @ptr: pointer to decode from
+ * @rptr: the new position of the pointer
+ *
+ * This routine decompresses 32-bit signed values
+ * (not specified in the spec)
+ *
+ * Returns: the decoded value
+ */
+gint32
+mono_metadata_decode_signed_value (const char *ptr, const char **rptr)
+{
+	guint32 uval = mono_metadata_decode_value (ptr, rptr);
+	gint32 ival = uval >> 1;
+	if (!(uval & 1))
+		return ival;
+	/* ival is a truncated 2's complement negative number.  */
+	if (ival < 0x40)
+		/* 6 bits = 7 bits for compressed representation (top bit is '0') - 1 sign bit */
+		return ival - 0x40;
+	if (ival < 0x2000)
+		/* 13 bits = 14 bits for compressed representation (top bits are '10') - 1 sign bit */
+		return ival - 0x2000;
+	if (ival < 0x10000000)
+		/* 28 bits = 29 bits for compressed representation (top bits are '110') - 1 sign bit */
+		return ival - 0x10000000;
+	g_assert (ival < 0x20000000);
+	g_warning ("compressed signed value appears to use 29 bits for compressed representation: %x (raw: %8x)", ival, uval);
+	return ival - 0x20000000;
 }
 
 /*
@@ -1116,7 +1147,7 @@ mono_metadata_parse_array_full (MonoImage *m, MonoGenericContext *generic_contex
 	if (array->numlobounds)
 		array->lobounds = g_new0 (int, array->numlobounds);
 	for (i = 0; i < array->numlobounds; ++i)
-		array->lobounds [i] = mono_metadata_decode_value (ptr, &ptr);
+		array->lobounds [i] = mono_metadata_decode_signed_value (ptr, &ptr);
 
 	if (rptr)
 		*rptr = ptr;

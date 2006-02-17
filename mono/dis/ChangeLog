@@ -1,3 +1,8 @@
+2006-02-15  Ankit Jain  <jankit@novell.com>
+
+	* get.c (get_array_shape): Use mono_metadata_decode_signed_value to get
+	lower bounds.
+
 2006-02-09  Ankit Jain  <jankit@novell.com>
 
 	* get.c (stringify_array): New. Returns the stringified representation
