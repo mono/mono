@@ -1,3 +1,15 @@
+2006-02-09  Ankit Jain  <jankit@novell.com>
+
+	* get.c (stringify_array): New. Returns the stringified representation
+	of an array.
+	(dis_stringify_array): Use stringify_array.
+	(get_array_shape): Likewise. Also, allow lo_bounds to be signed.
+
+2006-02-03  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* get.c: Added #include <mono/utils/mono-compiler.h> so VS.NET
+	can compile monodis.
+
 2006-01-28  Ankit Jain  <jankit@novell.com>
 
 	* get.c (get_method_core): Emit generic arity for a MemberRef.
