@@ -1,3 +1,8 @@
+2006-02-17  Chris Toshok  <toshok@ximian.com>
+
+	* DbDataReaderBase.cs: Switch to the (bool) form of Dispose to
+	override, as the no-arg form isn't virtual.
+
 2005-11-21 Senganal T <tsenganal@novell.com>
 	
 	* DbParameterCollectionBase.cs 
