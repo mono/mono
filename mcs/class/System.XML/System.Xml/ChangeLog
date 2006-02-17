@@ -1,3 +1,8 @@
+2006-02-17  Atsushi Enomoto <atsushi@ximian.com>
+
+	* DTDObjectModel.cs : entity resolution method will be used in
+	  the next DTD validating reader in 1.x.
+
 2006-02-16  Atsushi Enomoto <atsushi@ximian.com>
 
 	* IHasXmlChildNode.cs :

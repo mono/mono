@@ -246,7 +246,6 @@ namespace Mono.Xml
 			validationErrors.Add (ex);
 		}
 
-#if NET_2_0
 		internal string GenerateEntityAttributeText (string entityName)
 		{
 			DTDEntityDeclaration entity = EntityDecls [entityName] as DTDEntityDeclaration;
@@ -269,7 +268,6 @@ namespace Mono.Xml
 			else
 				return new XmlTextReaderImpl (entity.EntityValue, XmlNodeType.Element, context);
 		}
-#endif
 	}
 
 	internal class DTDCollectionBase : DictionaryBase
