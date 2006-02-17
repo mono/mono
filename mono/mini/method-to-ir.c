@@ -9230,6 +9230,8 @@ mono_spill_global_vars (MonoCompile *cfg)
  * - port the x86 optimizations to amd64 as well
  * - add store_mem_imm for amd64
  * - optimize the loading of the interruption flag in the managed->native wrappers
+ * - avoid special handling of OP_NOP in passes
+ * - move code inserting instructions into one function/macro.
  * - LAST MERGE: 56617.
  */
 
