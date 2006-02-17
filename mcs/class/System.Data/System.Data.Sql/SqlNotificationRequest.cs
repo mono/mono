@@ -35,12 +35,12 @@
 using System;
 
 namespace System.Data.Sql {
-	public class SqlNotificationRequest 
+	public sealed class SqlNotificationRequest 
 	{
 		#region Fields
 
-		string id;
-		string service;
+		string userData;
+		string options;
 		int timeout;
 
 		#endregion // Fields
@@ -54,15 +54,15 @@ namespace System.Data.Sql {
 		}
 
 		[MonoTODO]
-		public SqlNotificationRequest (string id, string service, int timeout)
+		public SqlNotificationRequest (string userData, string options, int timeout)
 		{
-			if (service == null)
+			if (options == null)
 				throw new ArgumentNullException ();
 			if (timeout < 0)
 				throw new ArgumentOutOfRangeException ();
 
-			Id = id;
-			Service = service;
+			UserData = userData;
+			Options = options;
 			Timeout = timeout;
 		}
 
@@ -70,14 +70,14 @@ namespace System.Data.Sql {
 
 		#region Properties
 
-		public string Id {
-			get { return id; }
-			set { id = value; }
+		public string UserData {
+			get { return userData; }
+			set { userData = value; }
 		}
 
-		public string Service {
-			get { return service; }
-			set { service = value; }
+		public string Options {
+			get { return options; }
+			set { options = value; }
 		}
 
 		public int Timeout {

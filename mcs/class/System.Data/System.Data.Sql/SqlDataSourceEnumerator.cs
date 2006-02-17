@@ -38,12 +38,19 @@ using System.Data.Common;
 namespace System.Data.Sql {
 	public sealed class SqlDataSourceEnumerator : DbDataSourceEnumerator
 	{
+		#region Constructors
+
+		private SqlDataSourceEnumerator ()
+		{
+		}
+
+		#endregion // Constructors
+
 		#region Properties
 
 		[MonoTODO]
 		public static SqlDataSourceEnumerator Instance { 
 			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
 		}
 
 		#endregion // Properties
