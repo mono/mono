@@ -1,5 +1,29 @@
 2006-02-17  Chris Toshok  <toshok@ximian.com>
 
+	* DbProviderFactory.cs: remove two methods.  and mark the
+	DbProviderSupportedClasses ctor as internal since it's not part of
+	the public api.
+
+	* DbTable.cs: remove this class from 2.0 build.. leave it for the
+	JVM build, I guess?
+
+	* RowUpdatingEventArgs.cs: this class isn't abstract in 2.0.
+
+	* RowUpdatedEventArgs.cs: this class isn't abstract in 2.0.
+
+	* SupportedJoinOperators.cs: new 2.0 enum.
+
+	* CatalogLocation.cs: fix enum values.
+
+	* GroupByBehavior.cs: same.
+
+	* IdentifierCase.cs: same.
+
+	* SchemaTableColumn.cs: class is static, not sealed.  and add
+	missing elements.
+	
+	* SchemaTableOptionalColumn.cs: same.
+	
 	* DbDataReader.cs: oops, add back in VisibleFieldCount (i missed
 	it in the corcompare output), add EditorBrowsable attributes all
 	over the place, and fix some method signatures.

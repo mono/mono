@@ -1,14 +1,12 @@
 //
-// System.Data.Common.IdentifierCase.cs
+// System.Data.Common.SupportedJoinOperators.cs
 //
 // Author:
-//   Tim Coleman (tim@timcoleman.com)
-//
-// Copyright (C) Tim Coleman, 2003
+//   Chris Toshok (toshok@ximian.com)
 //
 
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -33,11 +31,15 @@
 #if NET_2_0
 
 namespace System.Data.Common {
-	public enum IdentifierCase 
+
+	[Flags]
+	public enum SupportedJoinOperators
 	{
-		Insensitive = 1,
-		Sensitive = 2,
-		Unknown = 0
+		None = 0,
+		Inner = 1 << 0,
+		LeftOuter = 1 << 1,
+		RightOuter = 1 << 2,
+		FullOuter = 1 << 3
 	}
 }
 
