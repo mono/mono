@@ -1,3 +1,7 @@
+2006-02-18  Raja R Harinath  <harinath@gmail.com>
+
+	* class.c (mono_class_from_generic_parameter): Make more robust to
+	incomplete MonoGenericContainers from monodis.
 
 Fri Feb 17 16:10:34 CET 2006 Paolo Molaro <lupus@ximian.com>
 
