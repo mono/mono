@@ -1,3 +1,12 @@
+2006-02-18  Raja R Harinath  <harinath@gmail.com>
+
+	* get.c (get_typespec): Don't use mono_type_create_from_typespec_full().
+	Use get_type() instead.
+	(get_type): Add 'is_def' parameter.
+	(get_field_signature, get_ret_type, get_param): Update.
+	* dump.c (dump_table_property): Likewise.
+	* get.h (get_type): Update prototype.
+
 2006-02-16  Raja R Harinath  <rharinath@novell.com>
 
 	* get.c (get_typespec): Pass MonoGenericContainer to
