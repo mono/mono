@@ -59,8 +59,6 @@ namespace Mono.Unix
 
 		public override EndPoint Create (SocketAddress socketAddress)
 		{
-			int size = socketAddress.Size;
-			byte [] bytes = new byte [size];
 			/*
 			 * Should also check this
 			 *
@@ -72,8 +70,9 @@ namespace Mono.Unix
 				throw new ArgumentException ("socketAddress is not a unix socket address.");
 			 */
 
-			for (int i = 2; i < size - 2; i++) {
-				bytes [i] = socketAddress [i];
+			byte [] bytes = new byte [socketAddress.Size - 2];
+			for (int i = 0; i < bytes.Length; i++) {
+				bytes [i] = socketAddress [i + 2];
 			}
 
 			string name = Encoding.Default.GetString (bytes);
