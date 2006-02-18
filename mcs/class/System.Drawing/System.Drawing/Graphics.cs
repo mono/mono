@@ -341,10 +341,10 @@ namespace System.Drawing
                         int length = points.Length;
 			Status status;
 
-                        if (length < 3)
+                        if (length < 4)
                                 return;
 
-			for (int i = 0; i < length; i += 3) {
+			for (int i = 0; i < length - 1; i += 3) {
                                 Point p1 = points [i];
                                 Point p2 = points [i + 1];
                                 Point p3 = points [i + 2];
@@ -368,10 +368,10 @@ namespace System.Drawing
 			int length = points.Length;
 			Status status;
 
-                        if (length < 3)
+                        if (length < 4)
                                 return;
 
-			for (int i = 0; i < length; i += 3) {
+			for (int i = 0; i < length - 1; i += 3) {
                                 PointF p1 = points [i];
                                 PointF p2 = points [i + 1];
                                 PointF p3 = points [i + 2];

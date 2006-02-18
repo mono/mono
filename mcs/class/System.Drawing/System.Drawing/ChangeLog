@@ -1,3 +1,8 @@
+2006-02-18  Duncan Mak  <duncan@novell.com>
+
+	* Graphics.cs (DrawBeziers): Patch from Alexander Olk to fix
+	possible IndexOutOfRangeException.
+
 2006-02-09  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* Image.cs, Bitmap.cs: Removed unneeded casts
