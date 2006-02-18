@@ -1,3 +1,8 @@
+2006-02-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* libtest.c pinvoke2.cs: Add tests for asany marshalling and directional
+	attributes.
+
 2006-01-30  Zoltan Varga  <vargaz@gmail.com>
 
 	* Makefile.am (patch-libtool): New utility target for those using a
