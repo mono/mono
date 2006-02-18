@@ -164,11 +164,15 @@ namespace MonoTests.System.Data.Common
                         KeyValuePair<string, object> [] dict = new KeyValuePair<string, object> [2];
                         builder.Add (SERVER, SERVER_VALUE);
                         builder.Add (SERVER + "1", SERVER_VALUE + "1");
+
+			// FIXME: gross hack
+			int i = dict [0].Key == SERVER ? 0 : 1;
+			int j = i == 0 ? 1 : 0;
 			((ICollection) builder).CopyTo (dict, 0);
-                        Assert.AreEqual (SERVER, dict [0].Key, "not equal");
-                        Assert.AreEqual (SERVER_VALUE, dict [0].Value, "not equal");
-                        Assert.AreEqual (SERVER + "1", dict [1].Key, "not equal");
-                        Assert.AreEqual (SERVER_VALUE + "1", dict [1].Value, "not equal");
+                        Assert.AreEqual (SERVER, dict [i].Key, "not equal");
+                        Assert.AreEqual (SERVER_VALUE, dict [i].Value, "not equal");
+                        Assert.AreEqual (SERVER + "1", dict [j].Key, "not equal");
+                        Assert.AreEqual (SERVER_VALUE + "1", dict [j].Value, "not equal");
                 }
 
                 [Test]

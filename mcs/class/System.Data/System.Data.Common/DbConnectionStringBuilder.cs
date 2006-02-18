@@ -138,7 +138,7 @@ namespace System.Data.Common
 		[Browsable (false)]
                 public virtual ICollection Keys
                 {
-                        get { return (ICollection) ( (IDictionary <string, object>)_dictionary).Keys; }
+                        get { return _dictionary.Keys; }
                 }
 
                 bool ICollection.IsSynchronized
@@ -160,7 +160,7 @@ namespace System.Data.Common
 		[Browsable (false)]
                 public virtual ICollection Values
                 {
-                        get { return (ICollection) ( (IDictionary<string, object>)_dictionary).Values; }
+                        get { return _dictionary.Values; }
                 }
 
                 #endregion // Properties
@@ -246,18 +246,12 @@ namespace System.Data.Common
 
                 void ICollection.CopyTo (Array array, int index)
                 {
-
-                        KeyValuePair <string, object> [] arr = null;
-                        try {
-                                arr = (KeyValuePair<string, object> []) array;
-                        } catch (InvalidCastException e) {
-                                throw new ArgumentException (
-                                                             "Target array type is not compatible with the type of items in the collection."
-                                                             );
-                        }
-                        ICollection<KeyValuePair<string, object>> ptr = (ICollection<KeyValuePair<string, object>>) this;
-                        ptr.CopyTo (arr, index);
-
+			if (array == null)
+				throw new ArgumentNullException ("array");
+			KeyValuePair<string, object> [] arr = array as KeyValuePair<string, object> [];
+			if (arr == null)
+				throw new ArgumentException ("Target array type is not compatible with the type of items in the collection");
+			((ICollection<KeyValuePair<string, object>>) _dictionary).CopyTo (arr, index);
                 }
 
                 void IDictionary.Add (object keyword, object value)
