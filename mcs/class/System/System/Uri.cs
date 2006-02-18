@@ -730,15 +730,22 @@ namespace System {
 		{
 			if (comparant == null) 
 				return false;
-				
+
 			Uri uri = comparant as Uri;
-			if (uri == null) {
+			if ((object) uri == null) {
 				string s = comparant as String;
 				if (s == null)
 					return false;
 				uri = new Uri (s);
 			}
 
+			return InternalEquals (uri);
+		}
+
+		// Assumes: uri != null
+		// FIXME: Should we have a different implementation for NET_2_0?
+		bool InternalEquals (Uri uri)
+		{
 			CultureInfo inv = CultureInfo.InvariantCulture;
 			return ((this.scheme.ToLower (inv) == uri.scheme.ToLower (inv)) &&
 				(this.userinfo.ToLower (inv) == uri.userinfo.ToLower (inv)) &&
@@ -756,17 +763,17 @@ namespace System {
 			else if ((object) u2 == null)
 				return false;
 
-			return u1.Equals (u2);
+			return u1.InternalEquals (u2);
 		}
 
 		public static bool operator != (Uri u1, Uri u2)
 		{
-			if ((object) u1 != null)
-				return (object) u2 == null;
+			if ((object) u1 == null)
+				return (object) u2 != null;
 			else if ((object) u2 == null)
-				return false;
+				return true;
 
-			return !u1.Equals (u2);
+			return !u1.InternalEquals (u2);
 		}
 #endif
 

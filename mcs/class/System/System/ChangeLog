@@ -1,3 +1,9 @@
+2006-02-19  Raja R Harinath  <harinath@gmail.com>
+
+	* Uri.cs (InternalEquals): New helper.
+	(Equals, operator ==): Use it.
+	(operator !=): Likewise.  Fix to actually compare operands.
+
 2006-02-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Uri.cs : implemented op_Equality and op_Inequality.
