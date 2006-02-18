@@ -39,6 +39,7 @@ using System.Reflection;
 using System.Data.Common;
 using System.ComponentModel;
 using System.Data.SqlClient;
+using System.Collections;
 using System.Collections.Specialized;
 using System.Collections.Generic;
 
@@ -157,59 +158,28 @@ namespace MonoTests.System.Data.Common
                                          "Item indexor does not retrun correct value!");
                 }
 
-                [Test, Ignore ("FIXME : commented for a missing feature in gmcs, (CopyTo)")]
-                public void IDictionaryCopyToTest ()
+                [Test]
+                public void ICollectionCopyToTest ()
                 {
                         KeyValuePair<string, object> [] dict = new KeyValuePair<string, object> [2];
                         builder.Add (SERVER, SERVER_VALUE);
                         builder.Add (SERVER + "1", SERVER_VALUE + "1");
-                        IDictionary<string, object> s = builder;
-                        //FIXME : s.CopyTo (dict, 0);
+			((ICollection) builder).CopyTo (dict, 0);
                         Assert.AreEqual (SERVER, dict [0].Key, "not equal");
                         Assert.AreEqual (SERVER_VALUE, dict [0].Value, "not equal");
                         Assert.AreEqual (SERVER + "1", dict [1].Key, "not equal");
                         Assert.AreEqual (SERVER_VALUE + "1", dict [1].Value, "not equal");
                 }
 
-                [Test, Ignore ("FIXME: commented for a missing feature in gmcs (CopyTo)")]
+                [Test]
                 [ExpectedException (typeof (ArgumentException))]
-                public void NegIDictionaryCopyToTest ()
+                public void NegICollectionCopyToTest ()
                 {
                         KeyValuePair<string, object> [] dict = new KeyValuePair<string, object> [1];
                         builder.Add (SERVER, SERVER_VALUE);
                         builder.Add (SERVER + "1", SERVER_VALUE + "1");
-                        IDictionary<string, object> s = builder;
-                        //FIXME : s.CopyTo (dict, 0);
+			((ICollection) builder).CopyTo (dict, 0);
                         Assert.Fail ("Exception Destination Array not enough is not thrown!");
-                }
-
-                [Test, Ignore ("FIXME : currently mono is not supporting casting from generic type to"+ " non generic type")]
-                public void ICollectionCopyToTest ()
-                {
-			/*
-                        KeyValuePair <string, object> [] arr = new KeyValuePair <string, object> [2];
-                        builder.Add (SERVER, SERVER_VALUE);
-                        builder.Add (SERVER + "1", SERVER_VALUE + "1");
-                        System.Collections.ICollection s = builder;
-                        s.CopyTo ((Array) arr, 0);
-                        Assert.AreEqual (SERVER, arr [0].Key, "not equal");
-                        Assert.AreEqual (SERVER_VALUE, arr [0].Value, "not equal");
-                        Assert.AreEqual (SERVER + "1", arr [1].Key, "not equal");
-                        Assert.AreEqual (SERVER_VALUE + "1", arr [1].Value, "not equal");
-			*/
-                }
-
-                [Test, Ignore ("FIXME : currently mono is not supporting casting from generic type to"+ " non generic type")]
-                [ExpectedException (typeof (ArgumentException))]
-                public void NegICollectionCopyToTest ()
-                {
-			/*
-                        string [] arr = new string [2];
-                        builder.Add (SERVER, SERVER_VALUE);
-                        builder.Add (SERVER + "1", SERVER_VALUE + "1");
-                        System.Collections.ICollection s = builder;
-                        s.CopyTo ((Array) arr, 0);
-			*/
                 }
 
                 [Test]

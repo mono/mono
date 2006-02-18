@@ -1,3 +1,9 @@
+2006-02-18  Raja R Harinath  <harinath@gmail.com>
+
+	* DbConnectionStringBuilderTest.cs
+	(ICollectionCopyToTest, NegICollectionCopyToTest): Enable.
+	(IDictionaryCopyToTest, NegIDictionaryCopyToTest): Delete.
+
 2005-09-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DBDataPermissionAttributeTest.cs: Removed *Choice security actions.
