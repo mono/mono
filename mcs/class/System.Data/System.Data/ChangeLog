@@ -1,3 +1,9 @@
+2006-02-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CustomDataClassGenerator.cs : Patch by Marek Habersack. xsd now
+	  outputs AutoIncrement, AutoIncrementSeed, AutoIncrementStep and
+	  ReadOnly properties. This fixes bug #77576.
+
 2006-02-17  Chris Toshok  <toshok@ximian.com>
 
 	* System.Data/DataSet.cs, System.Data/DataView.cs,

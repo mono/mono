@@ -1018,12 +1018,24 @@ namespace System.Data
 			CodeMemberMethod m = new CodeMemberMethod ();
 			m.Name = "InitializeFields";
 			m.Attributes = MemberAttributes.Assembly;
+
+			string colRef;
 			foreach (DataColumn col in dt.Columns) {
-				m.Statements.Add (Let (FieldRef ("__column" + opts.TableColName (col.ColumnName, gen)), IndexerRef (PropRef ("Columns"), Const (col.ColumnName))));
+				colRef = String.Format("__column{0}", opts.TableColName (col.ColumnName, gen));
+
+				m.Statements.Add (Let (FieldRef (colRef), IndexerRef (PropRef ("Columns"), Const (col.ColumnName))));
 				if (!col.AllowDBNull)
-					m.Statements.Add (Let (FieldRef (PropRef ("__column" + opts.TableColName (col.ColumnName, gen)), "AllowDBNull"), Const (col.AllowDBNull)));
+					m.Statements.Add (Let (FieldRef (PropRef (colRef), "AllowDBNull"), Const (col.AllowDBNull)));
 				if (col.DefaultValue != null && col.DefaultValue.GetType() != typeof(System.DBNull))
-					m.Statements.Add (Let (FieldRef (PropRef ("__column" + opts.TableColName (col.ColumnName, gen)), "DefaultValue"), Const (col.DefaultValue)));
+					m.Statements.Add (Let (FieldRef (PropRef (colRef), "DefaultValue"), Const (col.DefaultValue)));
+				if (col.AutoIncrement)
+					m.Statements.Add (Let (FieldRef (PropRef (colRef), "AutoIncrement"), Const (col.AutoIncrement)));
+				if (col.AutoIncrementSeed != 0)
+					m.Statements.Add (Let (FieldRef (PropRef (colRef), "AutoIncrementSeed"), Const (col.AutoIncrementSeed)));
+				if (col.AutoIncrementStep != 1)
+					m.Statements.Add (Let (FieldRef (PropRef (colRef), "AutoIncrementStep"), Const (col.AutoIncrementStep)));
+				if (col.ReadOnly)
+					m.Statements.Add (Let (FieldRef (PropRef (colRef), "ReadOnly"), Const (col.ReadOnly)));
 			}
 			return m;
 		}
