@@ -594,6 +594,16 @@ PublicKeyToken=b77a5c561934e089"));
 			Assert.IsTrue (typeof (Nullable<int>).IsInstanceOfType (5));
 		}
 
+		[Test]
+		public void ByrefType ()
+		{
+			Type foo_type = typeof (Foo<>);
+			Type type_param = foo_type.GetGenericArguments () [0];
+			Type byref_type_param = type_param.MakeByRefType ();
+			Assert.IsFalse (byref_type_param.IsGenericParameter);
+			Assert.IsNull (byref_type_param.DeclaringType);
+		}
+
 		[ComVisible (true)]
 		public class ComFoo<T> {
 		}
