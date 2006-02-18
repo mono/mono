@@ -31,7 +31,7 @@ default_centum_tests :=		\
 	class/System.XML	\
 	class/System.Data
 
-net_2_0_centum_tests := $(centum_tests) class/Mono.C5
+net_2_0_centum_tests := $(centum_tests) #class/Mono.C5
 
 ifdef ONLY_CENTUM_TESTS
 TEST_SUBDIRS := $($(PROFILE)_centum_tests)
