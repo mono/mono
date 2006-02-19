@@ -1,5 +1,10 @@
 2006-02-19  Ankit Jain  <jankit@novell.com>
 
+	* ExternTable.cs (ExternTable.GetModuleTypeRef): 'module_table' can be
+	null.
+
+2006-02-19  Ankit Jain  <jankit@novell.com>
+
 	* CodeGen.cs (CodeGen.Write): Use only filename as the name of the
 	module.
 	* TypeDef.cs (TypeDef.ResolveAsMethodRef): New.
