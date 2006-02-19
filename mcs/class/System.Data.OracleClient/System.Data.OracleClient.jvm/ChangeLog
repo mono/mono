@@ -1,0 +1,3 @@
+2006-02-19  Konstantin Triger <kostat@mainsoft.com>
+
+	* OracleConnection.cs: follow JDBC provider generic adapter mechanism.
