@@ -41,7 +41,7 @@ namespace System.CodeDom.Compiler {
 #if NET_2_0
 	[ComVisible (true)]
 #endif
-	[ToolboxItem ("")]
+	[ToolboxItem (false)]
 	public abstract class CodeDomProvider : Component
 	{
 		//
