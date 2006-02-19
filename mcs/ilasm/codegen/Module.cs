@@ -12,30 +12,42 @@ using System.Collections;
 
 namespace Mono.ILASM {
 
-        public class Module : ICustomAttrTarget {
-                string name;
-                ArrayList customattr_list;
+        public class Module : ExternRef {
+
+                PEAPI.Module module;
 
                 public Module (string name)
+                        : base (name)
                 {
-                        this.name = name;
-                        customattr_list = null;
                 }
 
-                public string Name {
-                        get { return name; }
+                public PEAPI.Module PeapiModule {
+                        get { return module; }
+                        set { module = value; }
                 }
 
-                public void AddCustomAttribute (CustomAttr customattr)
-                {
-                        if (customattr_list == null)
-                                customattr_list = new ArrayList ();
+                public override string FullName {
+                        get { 
+                                //'name' field should not contain the [ ]
+                                //as its used for resolving
+                                return String.Format ("[{0}]", name); 
+                        }
+                }
 
-                        customattr_list.Add (customattr);
+                public override PEAPI.IExternRef GetExternRef ()
+                {
+                        return module;
+                }
+
+                public override void Resolve (CodeGen code_gen)
+                {
+                        throw new Exception ("This should not get called");
                 }
 
                 public void Resolve (CodeGen code_gen, PEAPI.Module module)
                 {
+                        this.module = module;
+
                         if (customattr_list == null)
                                 return;
 

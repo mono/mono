@@ -278,6 +278,10 @@ namespace Mono.ILASM {
                         return (name == assembly_name);
                 }
 
+                public Module ThisModule {
+                        get { return this_module; }
+                }
+                
                 public bool IsThisModule (string name)
                 {
                         return (this_module != null && name == this_module.Name);
@@ -494,9 +498,14 @@ namespace Mono.ILASM {
                                 if (!is_dll && !HasEntryPoint)
                                         throw new Exception ("No EntryPoint found.");
 
+                                if (ThisModule == null)
+                                        this_module = new Module (Path.GetFileName (output_file));
+
                                 out_stream = new FileStream (output_file, FileMode.Create, FileAccess.Write);
-                                pefile = new PEFile (assembly_name, (this_module != null ? this_module.Name : ""), is_dll, is_assembly, null, out_stream);
+                                pefile = new PEFile (assembly_name, ThisModule.Name, is_dll, is_assembly, null, out_stream);
                                 PEAPI.Assembly asmb = pefile.GetThisAssembly ();
+
+                                ThisModule.PeapiModule = pefile.GetThisModule ();
 
                                 if (file_ref != null)
                                         file_ref.Resolve (this);
@@ -526,8 +535,7 @@ namespace Mono.ILASM {
                                                 cattr.AddTo (this, asmb);
                                 }
 
-                                if (this_module != null)
-                                        this_module.Resolve (this, pefile.GetThisModule ());
+                                ThisModule.Resolve (this, pefile.GetThisModule ());
 
                                 if (assembly_declsec != null)
                                         assembly_declsec.AddTo (this, asmb);        

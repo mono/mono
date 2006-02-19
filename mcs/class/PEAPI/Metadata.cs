@@ -2510,7 +2510,7 @@ namespace PEAPI {
 	/// <summary>
 	/// Descriptor for THIS module
 	/// </summary>
-	public class Module : ResolutionScope {
+	public class Module : ResolutionScope, IExternRef {
 
 		Guid mvid;
 		uint mvidIx = 0;
@@ -2524,6 +2524,21 @@ namespace PEAPI {
 
 		public Guid Guid {
 			get { return mvid; }
+		}
+
+		public ClassRef AddClass(string nsName, string name) 
+		{
+			ClassRef aClass = new ClassRef (nsName, name, metaData);
+			metaData.AddToTable (MDTable.TypeRef, aClass);
+			aClass.SetParent (this);
+			return aClass;
+		}
+
+		public ClassRef AddValueClass(string nsName, string name) 
+		{
+			ClassRef aClass = AddClass (nsName, name);
+			aClass.MakeValueClass (ValueClass.ValueType);
+			return aClass;
 		}
 
 		internal sealed override uint Size(MetaData md) 

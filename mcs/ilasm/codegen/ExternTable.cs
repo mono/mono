@@ -336,8 +336,9 @@ namespace Mono.ILASM {
 
                 public ExternTypeRef GetModuleTypeRef (string mod_name, string full_name, bool is_valuetype)
                 {
-                        ExternModule mod;
-                        mod = module_table [mod_name] as ExternModule;
+                        ExternModule mod = null;
+                        if (module_table != null)
+                                mod = module_table [mod_name] as ExternModule;
 
                         if (mod == null)
                                 throw new Exception (String.Format ("Module {0} not defined.", mod_name));
