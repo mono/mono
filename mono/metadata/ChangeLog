@@ -1,3 +1,12 @@
+2006-02-19  Raja R Harinath  <harinath@gmail.com>
+
+	* metadata.c (mono_type_create_from_typespec): Rename from
+	mono_type_create_from_typespec_full.  Remove MonoGenericContainer*
+	argument and caching of types in the generic container.
+	(unwrap_arrays, find_generic_param): Remove.
+	* metadata-internals.h: Update.
+	* class-internals.h (_MonoGenericContainer): Remove 'types' field.
+
 2006-02-18  Zoltan Varga  <vargaz@gmail.com>
 
 	* class.c (mono_class_get_exception_for_failure): Fix a warning.
