@@ -6443,12 +6443,7 @@ mono_reflection_get_token (MonoObject *obj)
 		token = mb->table_idx | MONO_TOKEN_METHOD_DEF;
 	} else if (strcmp (klass->name, "FieldBuilder") == 0) {
 		MonoReflectionFieldBuilder *fb = (MonoReflectionFieldBuilder *)obj;
-		MonoReflectionTypeBuilder *tb = (MonoReflectionTypeBuilder *)fb->typeb;
-		if (tb->generic_params) {
-			g_assert_not_reached ();
-		} else {
-			token = fb->table_idx | MONO_TOKEN_FIELD_DEF;
-		}
+		token = fb->table_idx | MONO_TOKEN_FIELD_DEF;
 	} else if (strcmp (klass->name, "TypeBuilder") == 0) {
 		MonoReflectionTypeBuilder *tb = (MonoReflectionTypeBuilder *)obj;
 		token = tb->table_idx | MONO_TOKEN_TYPE_DEF;
@@ -6456,19 +6451,21 @@ mono_reflection_get_token (MonoObject *obj)
 		MonoReflectionType *tb = (MonoReflectionType *)obj;
 		token = mono_class_from_mono_type (tb->type)->type_token;
 	} else if (strcmp (klass->name, "MonoCMethod") == 0 ||
-			strcmp (klass->name, "MonoMethod") == 0) {
+		   strcmp (klass->name, "MonoMethod") == 0 ||
+		   strcmp (klass->name, "MonoGenericMethod") == 0 ||
+		   strcmp (klass->name, "MonoGenericCMethod") == 0) {
 		MonoReflectionMethod *m = (MonoReflectionMethod *)obj;
 		if (m->method->is_inflated) {
-			g_assert_not_reached ();
-		} else if (mono_method_signature (m->method)->generic_param_count) {
-			g_assert_not_reached ();
-		} else if (m->method->klass->generic_class) {
-			g_assert_not_reached ();
+			MonoMethodInflated *inflated = (MonoMethodInflated *) m->method;
+			return inflated->declaring->token;
 		} else {
 			token = m->method->token;
 		}
 	} else if (strcmp (klass->name, "MonoField") == 0) {
 		MonoReflectionField *f = (MonoReflectionField*)obj;
+
+		if (f->field->generic_info && f->field->generic_info->reflection_info)
+			return mono_reflection_get_token (f->field->generic_info->reflection_info);
 
 		token = mono_class_get_field_token (f->field);
 	} else if (strcmp (klass->name, "MonoProperty") == 0) {

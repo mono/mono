@@ -1,3 +1,181 @@
+2006-02-19  Raja R Harinath  <harinath@gmail.com>
+
+	* metadata.c (mono_type_create_from_typespec): Rename from
+	mono_type_create_from_typespec_full.  Remove MonoGenericContainer*
+	argument and caching of types in the generic container.
+	(unwrap_arrays, find_generic_param): Remove.
+	* metadata-internals.h: Update.
+	* class-internals.h (_MonoGenericContainer): Remove 'types' field.
+
+2006-02-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_class_get_exception_for_failure): Fix a warning.
+
+	* marshal.c (mono_marshal_emit_native_wrapper): Handle FNPTR args and
+	return values. Fixes #77581.
+
+	* class.c (mono_fnptr_class_get): Switch name and name_space.
+
+	* marshal.c (mono_marshal_asany): Fix marshalling of blittable formatted
+	classes and add support for [In, Out] attributes.
+	(mono_marshal_free_asany): Ditto. Fixes #77524.
+
+2006-02-18  Raja R Harinath  <harinath@gmail.com>
+
+	* class.c (mono_class_from_generic_parameter): Make more robust to
+	incomplete MonoGenericContainers from monodis.
+
+Fri Feb 17 16:10:34 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* class-internals.h: added some more exception types.
+	* class.c, metadata.c: added a few checks to handle missing
+	types.
+
+2006-02-17  Raja R Harinath  <rharinath@novell.com>
+
+	Use owner-less generic-params some more.
+	* class.c (my_mono_class_from_generic_parameter): Remove.
+	(mono_class_from_generic_parameter): Handle null image,
+	param->name and param->owner.
+	(mono_class_from_mono_type): Update.
+	(mono_class_create_from_typespec): Remove 'container' parameter.
+	If that parameter is non-null, the result is always inflated by
+	'mono_class_get_full' anyway.
+	(mono_class_get): Rename from _mono_class_get.  Remove 'container'
+	parameter.
+	(mono_class_get_full): Update.
+
+	* class.c (inflate_generic_type) [GENERICINST]: If the generic
+	instance is not open, don't bother inflating.
+	(mono_class_setup_fields): Hoist some loop-invariants.  Don't
+	parse metadata for inflated classes.
+	(_mono_class_get): Change GenericContext* parameter to
+	GenericContainer*.
+	(mono_class_create_from_typespec): Likewise.  Simplify, and
+	implement trivially.  All the cases are handled in
+	mono_class_from_mono_type.  Don't inflate returned class.
+	(mono_class_get_full): Delegate GENERICINST optimization to
+	inflate_generic_type.
+	(mono_ldtoken) [TOKEN_TYPE_SPEC]: Use mono_class_get_full() here too.
+
+2006-02-16  Dick Porter  <dick@ximian.com>
+
+	* socket-io.c (create_object_from_sockaddr): Fix typo.
+	(create_sockaddr_from_object): Check array lengths before
+	potentially accessing items off the end.
+	(ves_icall_System_Net_Sockets_Socket_Receive_internal)
+	(ves_icall_System_Net_Sockets_Socket_RecvFrom_internal)
+	(ves_icall_System_Net_Sockets_Socket_Send_internal)
+	(ves_icall_System_Net_Sockets_Socket_SendTo_internal): Fix buffer
+	length checks to avoid wraparound overflows.
+	(ves_icall_System_Net_Sockets_Socket_Select_internal): Check the
+	contents of the array of sockets
+	(hostent_to_IPHostEntry2)
+	(addrinfo_to_IPHostEntry): IPv6 printed addresses can be 48 bytes.
+	Check return value of inet_ntop ().
+	(addrinfo_to_IPHostEntry): Fix typo
+
+2006-02-16  Raja R Harinath  <rharinath@novell.com>
+
+	Type metadata parsing doesn't use generic-instantiation information.
+	* metadata.c (mono_metadata_parse_array_full): Change
+	MonoGenericContext* parameter to MonoGenericContainer*.
+	(mono_metadata_parse_type_full): Likewise.
+	(mono_type_create_from_typespec_full): Likewise.
+	(mono_metadata_parse_mh_full): Likewise.
+	(mono_metadata_parse_generic_inst): Likewise.
+	(do_mono_metadata_parse_generic_class): Likewise.
+	(do_mono_metadata_parse_type): Likewise.
+	* metadata-internals.h: Update to changes.
+	* class.c (mono_class_find_enum_basetype): Likewise.
+	(mono_class_setup_fields): Likewise.
+	(mono_class_create_from_typespec): Likewise.
+	* loader.c (method_from_methodspec): Likewise.
+	(mono_get_method_from_token): Likewise.
+	(mono_method_get_header): Likewise.
+
+Thu Feb 16 15:42:13 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* marshal.c: handle additional GENERICINST case (patch from
+	Thong Nguyen <tum@veridicus.com>).
+	Fix a few cases where LDIND_I/STIND_I was used for references.
+
+2006-02-16  Raja R Harinath  <rharinath@novell.com>
+
+	* reflection.c (mono_reflection_get_token): Remove unused variable.
+
+2006-02-16  Martin Baulig  <martin@ximian.com>
+
+	* reflection.c (mono_reflection_get_token): Add support for fields
+	in instantiated generic types.
+
+	* icall.c
+	(ves_icall_MonoField_Mono_GetGenericFieldDefinition): Removed.
+
+2006-02-15  Martin Baulig  <martin@ximian.com>
+
+	* icall.c
+	(ves_icall_MonoMethod_get_HasGenericParameters): Removed.
+	(ves_icall_MonoMethod_get_Mono_IsInflatedMethod): Removed.
+	(ves_icall_MonoMethod_get_IsGenericMethod): New icall.
+	(ves_icall_MonoMethod_get_IsGenericMethodDefinition): New icall.
+
+Wed Feb 15 16:19:24 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* class.c, metadata.c, metadata.h, object.c, icall.c,
+	marshal.c: changed mono_type_get_underlying_type () to do
+	the sensible thing and introduced mono_type_generic_inst_is_valuetype().
+	Fixed handling of instantiated generic valuetypes (bug #75479).
+
+2006-02-15  Raja R Harinath  <rharinath@novell.com>
+
+	* metadata.c (mono_metadata_decode_signed_value): Simplify.
+	Delegate to mono_metadata_decode_value, and work on the returned value.
+
+	* icall.c (ves_icall_MonoType_GetGenericArguments):
+	Add consistency check here too.
+	
+2006-02-15  Ankit Jain  <jankit@novell.com>
+
+	* metadata.c (mono_metadata_decode_signed_value): Use gint* instead of
+	char/short etc.
+
+2006-02-15  Ankit Jain  <jankit@novell.com>
+
+	* metadata.c (mono_metadata_decode_signed_value): New function to decode
+	signed values, used only for representing lower bounds of arrays.
+	(mono_metadata_parse_array_full): Use new
+	mono_metadata_decode_signed_value to decode lower bounds.
+
+2006-02-14  Martin Baulig  <martin@ximian.com>
+
+	* reflection.c
+	(mono_reflection_get_token): Support "MonoGenericMethod" and
+	"MonoGenericCMethod" and allow generic instances / methods.
+
+2006-02-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* console-io.c (ves_icall_System_ConsoleDriver_GetTtySize): New icall
+	to obtain the terminal size using an ioctl.
+
+	* object.c (mono_nullable_init): Revert this as nullable reference
+	types are not valid.
+	(mono_nullable_box): Ditto.
+
+2006-02-09  Dick Porter  <dick@ximian.com>
+
+	* threads.c (mono_thread_detach): Drop a reference to the thread
+	we're detaching.
+
+2006-02-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* object.c (mono_nullable_init): Handle nullable reference types.
+	(mono_nullable_box): Ditto. Fixes #77446.
+
+2006-02-07  Martin Baulig  <martin@ximian.com>
+
+	* icall.c (ves_icall_MonoMethod_get_IsGenericMethodDefinition): Removed.
+
 2006-02-07  Ankit Jain  <jankit@novell.com>
 
 	* socket-io.h (MonoSocketFlags): New. Copy of System.Net.Sockets.SocketFlags

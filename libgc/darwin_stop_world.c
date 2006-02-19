@@ -73,7 +73,13 @@ void GC_push_all_stacks() {
   GC_thread p;
   pthread_t me;
   ptr_t lo, hi;
+#if defined(POWERPC)
   ppc_thread_state_t state;
+#elif defined(I386)
+  i386_thread_state_t state;
+#else
+# error FIXME for non-x86 || ppc architectures
+#endif
   mach_msg_type_number_t thread_state_count = MACHINE_THREAD_STATE_COUNT;
   
   me = pthread_self();
@@ -93,6 +99,17 @@ void GC_push_all_stacks() {
 			     &thread_state_count);
 	if(r != KERN_SUCCESS) ABORT("thread_get_state failed");
 	
+#if defined(I386)
+	lo = state.esp;
+
+	GC_push_one(state.eax); 
+	GC_push_one(state.ebx); 
+	GC_push_one(state.ecx); 
+	GC_push_one(state.edx); 
+	GC_push_one(state.edi); 
+	GC_push_one(state.esi); 
+	GC_push_one(state.ebp); 
+#elif defined(POWERPC)
 	lo = (void*)(state.r1 - PPC_RED_ZONE_SIZE);
         
 	GC_push_one(state.r0); 
@@ -126,6 +143,9 @@ void GC_push_all_stacks() {
 	GC_push_one(state.r29); 
 	GC_push_one(state.r30); 
 	GC_push_one(state.r31);
+#else
+# error FIXME for non-x86 || ppc architectures
+#endif
       } /* p != me */
       if(p->flags & MAIN_THREAD)
 	hi = GC_stackbottom;

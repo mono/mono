@@ -1539,7 +1539,7 @@ type_from_op (MonoInst *ins) {
 
 static const char 
 ldind_type [] = {
-	STACK_I4, STACK_I4, STACK_I4, STACK_I4, STACK_I4, STACK_I4, STACK_I8, STACK_MP, STACK_R8, STACK_R8, STACK_OBJ
+	STACK_I4, STACK_I4, STACK_I4, STACK_I4, STACK_I4, STACK_I4, STACK_I8, STACK_PTR, STACK_R8, STACK_R8, STACK_OBJ
 };
 
 /* map ldelem.x to the matching ldind.x opcode */
@@ -2209,11 +2209,111 @@ handle_loaded_temps (MonoCompile *cfg, MonoBasicBlock *bblock, MonoInst **stack,
 }
 
 /*
+ * target_type_is_incompatible:
+ * @cfg: MonoCompile context
+ *
+ * Check that the item @arg on the evaluation stack can be stored
+ * in the target type (can be a local, or field, etc).
+ * The cfg arg can be used to check if we need verification or just
+ * validity checks.
+ *
+ * Returns: non-0 value if arg can't be stored on a target.
+ */
+static int
+target_type_is_incompatible (MonoCompile *cfg, MonoType *target, MonoInst *arg)
+{
+	MonoType *simple_type;
+	MonoClass *klass;
+
+	if (target->byref) {
+		/* FIXME: check that the pointed to types match */
+		if (arg->type == STACK_MP && arg->type == STACK_PTR)
+			return 0;
+		return 1;
+	}
+	simple_type = mono_type_get_underlying_type (target);
+	switch (simple_type->type) {
+	case MONO_TYPE_VOID:
+		return 1;
+	case MONO_TYPE_I1:
+	case MONO_TYPE_U1:
+	case MONO_TYPE_BOOLEAN:
+	case MONO_TYPE_I2:
+	case MONO_TYPE_U2:
+	case MONO_TYPE_CHAR:
+	case MONO_TYPE_I4:
+	case MONO_TYPE_U4:
+		if (arg->type != STACK_I4 && arg->type != STACK_PTR)
+			return 1;
+		return 0;
+	case MONO_TYPE_I:
+	case MONO_TYPE_U:
+	case MONO_TYPE_PTR:
+	case MONO_TYPE_FNPTR:
+		if (arg->type != STACK_I4 && arg->type != STACK_PTR)
+			return 1;
+		return 0;
+	case MONO_TYPE_CLASS:
+	case MONO_TYPE_STRING:
+	case MONO_TYPE_OBJECT:
+	case MONO_TYPE_SZARRAY:
+	case MONO_TYPE_ARRAY:    
+		if (arg->type != STACK_OBJ)
+			return 1;
+		/* FIXME: check type compatibility */
+		return 0;
+	case MONO_TYPE_I8:
+	case MONO_TYPE_U8:
+		if (arg->type != STACK_I8)
+			return 1;
+		return 0;
+	case MONO_TYPE_R4:
+	case MONO_TYPE_R8:
+		if (arg->type != STACK_R8)
+			return 1;
+		return 0;
+	case MONO_TYPE_VALUETYPE:
+		if (arg->type != STACK_VTYPE)
+			return 1;
+		klass = mono_class_from_mono_type (simple_type);
+		if (klass != arg->klass)
+			return 1;
+		return 0;
+	case MONO_TYPE_TYPEDBYREF:
+		if (arg->type != STACK_VTYPE)
+			return 1;
+		klass = mono_class_from_mono_type (simple_type);
+		if (klass != arg->klass)
+			return 1;
+		return 0;
+	case MONO_TYPE_GENERICINST:
+		if (mono_type_generic_inst_is_valuetype (simple_type)) {
+			if (arg->type != STACK_VTYPE)
+				return 1;
+			klass = mono_class_from_mono_type (simple_type);
+			if (klass != arg->klass)
+				return 1;
+			return 0;
+		} else {
+			if (arg->type != STACK_OBJ)
+				return 1;
+			/* FIXME: check type compatibility */
+			return 0;
+		}
+	default:
+		g_error ("unknown type 0x%02x in target_type_is_incompatible", simple_type->type);
+	}
+	return 1;
+}
+
+/*
  * Prepare arguments for passing to a function call.
  * Return a non-zero value if the arguments can't be passed to the given
  * signature.
  * The type checks are not yet complete and some conversions may need
  * casts on 32 or 64 bit architectures.
+ *
+ * FIXME: implement this using target_type_is_incompatible ()
  */
 static int
 check_call_signature (MonoCompile *cfg, MonoMethodSignature *sig, MonoInst **args)
@@ -4568,6 +4668,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 		case CEE_BRTRUE_S:
 			CHECK_OPSIZE (2);
 			CHECK_STACK (1);
+			if (sp [-1]->type == STACK_VTYPE || sp [-1]->type == STACK_R8)
+				goto unverified;
 			MONO_INST_NEW (cfg, ins, *ip + BIG_BRANCH_OFFSET);
 			ins->cil_code = ip++;
 			target = ip + 1 + *(signed char*)ip;
@@ -4624,6 +4726,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 		case CEE_BRTRUE:
 			CHECK_OPSIZE (5);
 			CHECK_STACK (1);
+			if (sp [-1]->type == STACK_VTYPE || sp [-1]->type == STACK_R8)
+				goto unverified;
 			MONO_INST_NEW (cfg, ins, *ip);
 			ins->cil_code = ip++;
 			target = ip + 4 + (gint32)read32(ip);
@@ -5442,17 +5546,16 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				CHECK_STACK (1);
 				--sp;
 			}
-			// FIXME: enable this test later.
-			//if (sp [0]->type != STACK_OBJ && sp [0]->type != STACK_MP)
-			//	goto unverified;
+			if (sp [0]->type == STACK_I4 || sp [0]->type == STACK_I8 || sp [0]->type == STACK_R8 || sp [0]->type == STACK_VTYPE)
+				goto unverified;
 			CHECK_OPSIZE (5);
 			token = read32 (ip + 1);
 			if (method->wrapper_type != MONO_WRAPPER_NONE) {
 				field = mono_method_get_wrapper_data (method, token);
 				klass = field->parent;
-			}
-			else
+			} else {
 				field = mono_field_from_token (image, token, &klass, generic_context);
+			}
 			if (!field)
 				goto load_error;
 			mono_class_init (klass);
@@ -5460,6 +5563,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			foffset = klass->valuetype? field->offset - sizeof (MonoObject): field->offset;
 			/* FIXME: mark instructions for use in SSA */
 			if (*ip == CEE_STFLD) {
+				if (target_type_is_incompatible (cfg, field->type, sp [1]))
+					goto unverified;
 				if ((klass->marshalbyref && !MONO_CHECK_THIS (sp [0])) || klass->contextbound || klass == mono_defaults.marshalbyrefobject_class) {
 					MonoMethod *stfld_wrapper = mono_marshal_get_stfld_wrapper (field->type); 
 					MonoInst *iargs [5];
@@ -5804,6 +5909,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				ip += 5;
 				break;
 			}
+			if (target_type_is_incompatible (cfg, &klass->byval_arg, *sp))
+				goto unverified;
 			/* frequent check in generic code: box (struct), brtrue */
 			if (ip + 5 < end && ip_in_bb (cfg, bblock, ip + 5) && (ip [5] == CEE_BRTRUE || ip [5] == CEE_BRTRUE_S)) {
 				/*g_print ("box-brtrue opt at 0x%04x in %s\n", real_offset, method->name);*/
@@ -6977,7 +7084,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				NEW_LOCSTORE (cfg, store, i, ins);
 				MONO_ADD_INS (init_localsbb, store);
 			} else if ((t == MONO_TYPE_VALUETYPE) || (t == MONO_TYPE_TYPEDBYREF) ||
-				   ((t == MONO_TYPE_GENERICINST) && mono_metadata_generic_class_is_valuetype (ptype->data.generic_class))) {
+				   ((t == MONO_TYPE_GENERICINST) && mono_type_generic_inst_is_valuetype (ptype))) {
 				NEW_LOCLOADA (cfg, ins, i);
 				handle_initobj (cfg, init_localsbb, ins, NULL, mono_class_from_mono_type (ptype), NULL, NULL);
 			} else {
@@ -7033,15 +7140,17 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 		g_hash_table_destroy (bbhash);
 	g_slist_free (class_inits);
 	dont_inline = g_list_remove (dont_inline, method);
+	cfg->exception_type = MONO_EXCEPTION_TYPE_LOAD;
 	return -1;
 
  unverified:
 	if (cfg->method != method) 
 		g_hash_table_destroy (bbhash);
 	g_slist_free (class_inits);
-	g_error ("Invalid IL code at IL%04x in %s: %s\n", (int)(ip - header->code), 
-		 mono_method_full_name (method, TRUE), mono_disasm_code_one (NULL, method, ip, NULL));
 	dont_inline = g_list_remove (dont_inline, method);
+	cfg->exception_type = MONO_EXCEPTION_INVALID_PROGRAM;
+	cfg->exception_message = g_strdup_printf ("Invalid IL code in %s: %s\n",
+		 mono_method_full_name (method, TRUE), mono_disasm_code_one (NULL, method, ip, NULL));
 	return -1;
 }
 
@@ -7523,6 +7632,12 @@ mono_allocate_stack_slots_full (MonoCompile *m, gboolean backward, guint32 *stac
 
 		t = mono_type_get_underlying_type (inst->inst_vtype);
 		switch (t->type) {
+		case MONO_TYPE_GENERICINST:
+			if (!mono_type_generic_inst_is_valuetype (t)) {
+				slot_info = &scalar_stack_slots [t->type];
+				break;
+			}
+			/* Fall through */
 		case MONO_TYPE_VALUETYPE:
 			for (i = 0; i < nvtypes; ++i)
 				if (t->data.klass == vtype_stack_slots [i].vtype)
@@ -7843,6 +7958,7 @@ mono_destroy_compile (MonoCompile *cfg)
 
 	g_free (cfg->varinfo);
 	g_free (cfg->vars);
+	g_free (cfg->exception_message);
 	g_free (cfg);
 }
 
@@ -10139,6 +10255,18 @@ remove_critical_edges (MonoCompile *cfg) {
 	}
 }
 
+/*
+ * mini_method_compile:
+ * @method: the method to compile
+ * @opts: the optimization flags to use
+ * @domain: the domain where the method will be compiled in
+ * @run_cctors: whether we should run type ctors if possible
+ * @compile_aot: whether this is an AOT compilation
+ * @parts: debug flag
+ *
+ * Returns: a MonoCompile* pointer. Caller must check the exception_type
+ * field in the returned struct to see if compilation succeded.
+ */
 MonoCompile*
 mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gboolean run_cctors, gboolean compile_aot, int parts)
 {
@@ -10148,11 +10276,6 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 	MonoJitInfo *jinfo;
 	int dfn = 0, i, code_size_ratio;
 	gboolean deadce_has_run = FALSE;
-
-	if (!header)
-		return NULL;
-
-	ip = (guint8 *)header->code;
 
 	mono_jit_stats.methods_compiled++;
 	if (mono_profiler_get_events () & MONO_PROFILE_JIT_COMPILATION)
@@ -10168,8 +10291,17 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 	cfg->domain = domain;
 	cfg->verbose_level = mini_verbose;
 	cfg->compile_aot = compile_aot;
-	cfg->intvars = mono_mempool_alloc0 (cfg->mempool, sizeof (guint16) * STACK_MAX * 
-					    mono_method_get_header (method)->max_stack);
+	if (!header) {
+		cfg->exception_type = MONO_EXCEPTION_INVALID_PROGRAM;
+		cfg->exception_message = g_strdup_printf ("Missing or incorrect header for method %s", cfg->method->name);
+		if (cfg->prof_options & MONO_PROFILE_JIT_COMPILATION)
+			mono_profiler_method_end_jit (method, NULL, MONO_PROFILE_FAILED);
+		return cfg;
+	}
+
+	ip = (guint8 *)header->code;
+
+	cfg->intvars = mono_mempool_alloc0 (cfg->mempool, sizeof (guint16) * STACK_MAX * header->max_stack);
 	cfg->aliasing_info = NULL;
 	
 	if (cfg->verbose_level > 2)
@@ -10220,8 +10352,8 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 	if (i < 0) {
 		if (cfg->prof_options & MONO_PROFILE_JIT_COMPILATION)
 			mono_profiler_method_end_jit (method, NULL, MONO_PROFILE_FAILED);
-		mono_destroy_compile (cfg);
-		return NULL;
+		/* cfg contains the details of the failure, so let the caller cleanup */
+		return cfg;
 	}
 
 	mono_jit_stats.basic_blocks += cfg->num_bblocks;
@@ -10574,26 +10706,6 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 	if (cfg->prof_options & MONO_PROFILE_JIT_COMPILATION)
 		mono_profiler_method_end_jit (method, jinfo, MONO_PROFILE_OK);
 
-	/* this can only be set if the security manager is active */
-	if (cfg->exception_type == MONO_EXCEPTION_SECURITY_LINKDEMAND) {
-		MonoAssembly *assembly = mono_image_get_assembly (method->klass->image);
-		MonoReflectionAssembly *refass = (MonoReflectionAssembly*) mono_assembly_get_object (domain, assembly);
-		MonoReflectionMethod *refmet = mono_method_get_object (domain, method, NULL);
-		MonoSecurityManager* secman = mono_security_manager_get_methods ();
-		MonoObject *exc = NULL;
-		gpointer args [3];
-
-		args [0] = &cfg->exception_data;
-		args [1] = refass;
-		args [2] = refmet;
-		mono_runtime_invoke (secman->linkdemandsecurityexception, NULL, args, &exc);
-
-		mono_destroy_compile (cfg);
-		cfg = NULL;
-
-		mono_raise_exception ((MonoException*)exc);
-	}
-
 	return cfg;
 }
 
@@ -10673,17 +10785,56 @@ mono_jit_compile_method_inner (MonoMethod *method, MonoDomain *target_domain, in
 
 	cfg = mini_method_compile (method, opt, target_domain, TRUE, FALSE, 0);
 
-	if (!cfg) {
+	switch (cfg->exception_type) {
+	case MONO_EXCEPTION_NONE: break;
+	case MONO_EXCEPTION_TYPE_LOAD:
+	case MONO_EXCEPTION_MISSING_FIELD:
+	case MONO_EXCEPTION_MISSING_METHOD: {
 		/* Throw a type load exception if needed */
 		MonoLoaderError *error = mono_loader_get_last_error ();
 
+		mono_destroy_compile (cfg);
 		if (error) {
 			MonoException *ex = mini_loader_error_to_exception (error);
 			mono_loader_clear_error ();
 			mono_raise_exception (ex);
-		}
-		else
+		} else {
 			g_assert_not_reached ();
+		}
+	}
+	case MONO_EXCEPTION_INVALID_PROGRAM: {
+		MonoException *ex = mono_exception_from_name_msg (mono_defaults.corlib, "System", "InvalidProgramException", cfg->exception_message);
+		mono_destroy_compile (cfg);
+		mono_raise_exception (ex);
+		break;
+	}
+	case MONO_EXCEPTION_UNVERIFIABLE_IL: {
+		MonoException *ex = mono_exception_from_name_msg (mono_defaults.corlib, "System.Security", "VerificationException", cfg->exception_message);
+		mono_destroy_compile (cfg);
+		mono_raise_exception (ex);
+		break;
+	}
+	/* this can only be set if the security manager is active */
+	case MONO_EXCEPTION_SECURITY_LINKDEMAND: {
+		MonoAssembly *assembly = mono_image_get_assembly (method->klass->image);
+		MonoReflectionAssembly *refass = (MonoReflectionAssembly*) mono_assembly_get_object (target_domain, assembly);
+		MonoReflectionMethod *refmet = mono_method_get_object (target_domain, method, NULL);
+		MonoSecurityManager* secman = mono_security_manager_get_methods ();
+		MonoObject *exc = NULL;
+		gpointer args [3];
+
+		args [0] = &cfg->exception_data;
+		args [1] = refass;
+		args [2] = refmet;
+		mono_runtime_invoke (secman->linkdemandsecurityexception, NULL, args, &exc);
+
+		mono_destroy_compile (cfg);
+		cfg = NULL;
+
+		mono_raise_exception ((MonoException*)exc);
+	}
+	default:
+		g_assert_not_reached ();
 	}
 
 	mono_domain_lock (target_domain);
@@ -11320,12 +11471,32 @@ mini_init (const char *filename)
 	if (getenv ("MONO_DEBUG") != NULL)
 		mini_parse_debug_options ();
 
-	if (mono_running_on_valgrind ()) {
+	/* we used to do this only when running on valgrind,
+	 * but it happens also in other setups.
+	 */
+#if defined(HAVE_BOEHM_GC)
+#if defined(HAVE_PTHREAD_GETATTR_NP) && defined(HAVE_PTHREAD_ATTR_GETSTACK)
+	{
+		size_t size;
+		void *sstart;
+		pthread_attr_t attr;
+		pthread_getattr_np (pthread_self (), &attr);
+		pthread_attr_getstack (&attr, &sstart, &size);
+		/*g_print ("stackbottom pth is: %p\n", (char*)sstart + size);*/
+		GC_stackbottom = (char*)sstart + size;
+	}
+#elif defined(HAVE_PTHREAD_GET_STACKSIZE_NP) && defined(HAVE_PTHREAD_GET_STACKADDR_NP)
+		GC_stackbottom = (char*)pthread_get_stackaddr_np (pthread_self ());
+#else
+	{
 		gsize stack_bottom = (gsize)&domain;
 		stack_bottom += 4095;
 		stack_bottom &= ~4095;
+		/*g_print ("stackbottom is: %p\n", (char*)stack_bottom);*/
 		GC_stackbottom = (char*)stack_bottom;
 	}
+#endif
+#endif
 	MONO_GC_PRE_INIT ();
 
 	mono_jit_tls_id = TlsAlloc ();

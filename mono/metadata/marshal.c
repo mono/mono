@@ -144,8 +144,8 @@ mono_marshal_init (void)
 		register_icall (mono_array_to_lparray, "mono_array_to_lparray", "ptr object", FALSE);
 		register_icall (mono_delegate_to_ftnptr, "mono_delegate_to_ftnptr", "ptr object", FALSE);
 		register_icall (mono_ftnptr_to_delegate, "mono_ftnptr_to_delegate", "object ptr ptr", FALSE);
-		register_icall (mono_marshal_asany, "mono_marshal_asany", "ptr object int32", FALSE);
-		register_icall (mono_marshal_free_asany, "mono_marshal_free_asany", "void object ptr int32", FALSE);
+		register_icall (mono_marshal_asany, "mono_marshal_asany", "ptr object int32 int32", FALSE);
+		register_icall (mono_marshal_free_asany, "mono_marshal_free_asany", "void object ptr int32 int32", FALSE);
 		register_icall (mono_marshal_alloc, "mono_marshal_alloc", "ptr int32", FALSE);
 		register_icall (mono_marshal_free, "mono_marshal_free", "void ptr", FALSE);
 		register_icall (mono_string_utf8_to_builder, "mono_string_utf8_to_builder", "void ptr ptr", FALSE);
@@ -2091,6 +2091,10 @@ mono_mb_emit_restore_result (MonoMethodBuilder *mb, MonoType *return_type)
 		mono_mb_emit_i4 (mb, mono_mb_add_data (mb, mono_class_from_mono_type (return_type)));
 		mono_mb_emit_byte (mb, CEE_LDIND_R8);
 		break;
+	case MONO_TYPE_GENERICINST:
+		if (!mono_type_generic_inst_is_valuetype (return_type))
+			break;
+		/* fall through */
 	case MONO_TYPE_VALUETYPE: {
 		int class;
 		mono_mb_emit_byte (mb, CEE_UNBOX);
@@ -3778,14 +3782,15 @@ mono_marshal_get_ldfld_wrapper (MonoType *type)
 			klass = mono_defaults.array_class;
 		} else if (type->type == MONO_TYPE_VALUETYPE) {
 			klass = type->data.klass;
-			if (klass->enumtype) {
-				t = klass->enum_basetype->type;
-				klass = mono_class_from_mono_type (klass->enum_basetype);
-			}
 		} else if (t == MONO_TYPE_OBJECT || t == MONO_TYPE_CLASS || t == MONO_TYPE_STRING) {
 			klass = mono_defaults.object_class;
 		} else if (t == MONO_TYPE_PTR || t == MONO_TYPE_FNPTR) {
 			klass = mono_defaults.int_class;
+		} else if (t == MONO_TYPE_GENERICINST) {
+			if (mono_type_generic_inst_is_valuetype (type))
+				klass = mono_class_from_mono_type (type);
+			else
+				klass = mono_defaults.object_class;
 		} else {
 			klass = mono_class_from_mono_type (type);			
 		}
@@ -3801,7 +3806,8 @@ mono_marshal_get_ldfld_wrapper (MonoType *type)
 	if (res)
 		return res;
 
-	name = g_strdup_printf ("__ldfld_wrapper_%s.%s", klass->name_space, klass->name); 
+	/* we add the %p pointer value of klass because class names are not unique */
+	name = g_strdup_printf ("__ldfld_wrapper_%p_%s.%s", klass, klass->name_space, klass->name); 
 	mb = mono_mb_new (mono_defaults.object_class, name, MONO_WRAPPER_LDFLD);
 	g_free (name);
 
@@ -3881,20 +3887,30 @@ mono_marshal_get_ldfld_wrapper (MonoType *type)
 		mono_mb_emit_byte (mb, CEE_LDIND_R8);
 		break;
 	case MONO_TYPE_ARRAY:
-	case MONO_TYPE_PTR:
-	case MONO_TYPE_FNPTR:
 	case MONO_TYPE_SZARRAY:
 	case MONO_TYPE_OBJECT:
 	case MONO_TYPE_CLASS:
 	case MONO_TYPE_STRING:
+		mono_mb_emit_byte (mb, CEE_LDIND_REF);
+		break;
 	case MONO_TYPE_I:
 	case MONO_TYPE_U:
+	case MONO_TYPE_PTR:
+	case MONO_TYPE_FNPTR:
 		mono_mb_emit_byte (mb, CEE_LDIND_I);
 		break;
 	case MONO_TYPE_VALUETYPE:
 		g_assert (!klass->enumtype);
 		mono_mb_emit_byte (mb, CEE_LDOBJ);
 		mono_mb_emit_i4 (mb, mono_mb_add_data (mb, klass));
+		break;
+	case MONO_TYPE_GENERICINST:
+		if (mono_type_generic_inst_is_valuetype (type)) {
+			mono_mb_emit_byte (mb, CEE_LDOBJ);
+			mono_mb_emit_i4 (mb, mono_mb_add_data (mb, klass));
+		} else {
+			mono_mb_emit_byte (mb, CEE_LDIND_REF);
+		}
 		break;
 	default:
 		g_warning ("type %x not implemented", type->type);
@@ -3937,15 +3953,16 @@ mono_marshal_get_ldflda_wrapper (MonoType *type)
 			klass = mono_defaults.array_class;
 		} else if (type->type == MONO_TYPE_VALUETYPE) {
 			klass = type->data.klass;
-			if (klass->enumtype) {
-				t = klass->enum_basetype->type;
-				klass = mono_class_from_mono_type (klass->enum_basetype);
-			}
 		} else if (t == MONO_TYPE_OBJECT || t == MONO_TYPE_CLASS || t == MONO_TYPE_STRING ||
 			   t == MONO_TYPE_CLASS) { 
 			klass = mono_defaults.object_class;
 		} else if (t == MONO_TYPE_PTR || t == MONO_TYPE_FNPTR) {
 			klass = mono_defaults.int_class;
+		} else if (t == MONO_TYPE_GENERICINST) {
+			if (mono_type_generic_inst_is_valuetype (type))
+				klass = mono_class_from_mono_type (type);
+			else
+				klass = mono_defaults.object_class;
 		} else {
 			klass = mono_class_from_mono_type (type);			
 		}
@@ -3961,7 +3978,8 @@ mono_marshal_get_ldflda_wrapper (MonoType *type)
 	if (res)
 		return res;
 
-	name = g_strdup_printf ("__ldflda_wrapper_%s.%s", klass->name_space, klass->name); 
+	/* we add the %p pointer value of klass because class names are not unique */
+	name = g_strdup_printf ("__ldflda_wrapper_%p_%s.%s", klass, klass->name_space, klass->name); 
 	mb = mono_mb_new (mono_defaults.object_class, name, MONO_WRAPPER_LDFLDA);
 	g_free (name);
 
@@ -4089,14 +4107,15 @@ mono_marshal_get_stfld_wrapper (MonoType *type)
 			klass = mono_defaults.array_class;
 		} else if (type->type == MONO_TYPE_VALUETYPE) {
 			klass = type->data.klass;
-			if (klass->enumtype) {
-				t = klass->enum_basetype->type;
-				klass = mono_class_from_mono_type (klass->enum_basetype);
-			}
 		} else if (t == MONO_TYPE_OBJECT || t == MONO_TYPE_CLASS || t == MONO_TYPE_STRING) {
 			klass = mono_defaults.object_class;
 		} else if (t == MONO_TYPE_PTR || t == MONO_TYPE_FNPTR) {
 			klass = mono_defaults.int_class;
+		} else if (t == MONO_TYPE_GENERICINST) {
+			if (mono_type_generic_inst_is_valuetype (type))
+				klass = mono_class_from_mono_type (type);
+			else
+				klass = mono_defaults.object_class;
 		} else {
 			klass = mono_class_from_mono_type (type);			
 		}
@@ -4112,7 +4131,8 @@ mono_marshal_get_stfld_wrapper (MonoType *type)
 	if (res)
 		return res;
 
-	name = g_strdup_printf ("__stfld_wrapper_%s.%s", klass->name_space, klass->name); 
+	/* we add the %p pointer value of klass because class names are not unique */
+	name = g_strdup_printf ("__stfld_wrapper_%p_%s.%s", klass, klass->name_space, klass->name); 
 	mb = mono_mb_new (mono_defaults.object_class, name, MONO_WRAPPER_STFLD);
 	g_free (name);
 
@@ -4171,14 +4191,16 @@ mono_marshal_get_stfld_wrapper (MonoType *type)
 		mono_mb_emit_byte (mb, CEE_STIND_R8);
 		break;
 	case MONO_TYPE_ARRAY:
-	case MONO_TYPE_PTR:
-	case MONO_TYPE_FNPTR:
 	case MONO_TYPE_SZARRAY:
 	case MONO_TYPE_OBJECT:
 	case MONO_TYPE_CLASS:
 	case MONO_TYPE_STRING:
+		mono_mb_emit_byte (mb, CEE_STIND_REF);
+		break;
 	case MONO_TYPE_I:
 	case MONO_TYPE_U:
+	case MONO_TYPE_PTR:
+	case MONO_TYPE_FNPTR:
 		mono_mb_emit_byte (mb, CEE_STIND_I);
 		break;
 	case MONO_TYPE_VALUETYPE:
@@ -4571,6 +4593,7 @@ emit_marshal_asany (EmitMarshalContext *m, int argnum, MonoType *t,
 		conv_arg = mono_mb_add_local (mb, &mono_defaults.int_class->byval_arg);
 		mono_mb_emit_ldarg (mb, argnum);
 		mono_mb_emit_icon (mb, encoding);
+		mono_mb_emit_icon (mb, t->attrs);
 		mono_mb_emit_icall (mb, mono_marshal_asany);
 		mono_mb_emit_stloc (mb, conv_arg);
 		break;
@@ -4586,6 +4609,7 @@ emit_marshal_asany (EmitMarshalContext *m, int argnum, MonoType *t,
 		mono_mb_emit_ldarg (mb, argnum);
 		mono_mb_emit_ldloc (mb, conv_arg);
 		mono_mb_emit_icon (mb, encoding);
+		mono_mb_emit_icon (mb, t->attrs);
 		mono_mb_emit_icall (mb, mono_marshal_free_asany);
 		break;
 	}
@@ -6216,6 +6240,7 @@ mono_marshal_emit_native_wrapper (MonoMethodBuilder *mb, MonoMethodSignature *si
 			case MONO_TYPE_R8:
 			case MONO_TYPE_I8:
 			case MONO_TYPE_U8:
+			case MONO_TYPE_FNPTR:
 				mono_mb_emit_ldarg (mb, argnum);
 				break;
 			case MONO_TYPE_VALUETYPE:
@@ -6239,7 +6264,6 @@ mono_marshal_emit_native_wrapper (MonoMethodBuilder *mb, MonoMethodSignature *si
 				mono_mb_emit_ldarg (mb, argnum);
 				break;
 			case MONO_TYPE_TYPEDBYREF:
-			case MONO_TYPE_FNPTR:
 			default:
 				g_warning ("type 0x%02x unknown", t->type);	
 				g_assert_not_reached ();
@@ -6287,6 +6311,7 @@ mono_marshal_emit_native_wrapper (MonoMethodBuilder *mb, MonoMethodSignature *si
 			case MONO_TYPE_R8:
 			case MONO_TYPE_I8:
 			case MONO_TYPE_U8:
+			case MONO_TYPE_FNPTR:
 				/* no conversions necessary */
 				mono_mb_emit_stloc (mb, 3);
 				break;
@@ -6311,7 +6336,6 @@ mono_marshal_emit_native_wrapper (MonoMethodBuilder *mb, MonoMethodSignature *si
 				mono_mb_emit_stloc (mb, 3);
 				break;
 			case MONO_TYPE_TYPEDBYREF:
-			case MONO_TYPE_FNPTR:
 			default:
 				g_warning ("return type 0x%02x unknown", sig->ret->type);	
 				g_assert_not_reached ();
@@ -8388,7 +8412,7 @@ mono_marshal_type_size (MonoType *type, MonoMarshalSpec *mspec, guint32 *align,
 }
 
 gpointer
-mono_marshal_asany (MonoObject *o, MonoMarshalNative string_encoding)
+mono_marshal_asany (MonoObject *o, MonoMarshalNative string_encoding, int param_attrs)
 {
 	MonoType *t;
 	MonoClass *klass;
@@ -8438,19 +8462,21 @@ mono_marshal_asany (MonoObject *o, MonoMarshalNative string_encoding)
 		if ((klass->flags & TYPE_ATTRIBUTE_LAYOUT_MASK) == TYPE_ATTRIBUTE_AUTO_LAYOUT)
 			break;
 
-		if (((klass->flags & TYPE_ATTRIBUTE_LAYOUT_MASK) == TYPE_ATTRIBUTE_EXPLICIT_LAYOUT) ||
-			klass->blittable || klass->enumtype)
+		if (klass->valuetype && (((klass->flags & TYPE_ATTRIBUTE_LAYOUT_MASK) == TYPE_ATTRIBUTE_EXPLICIT_LAYOUT) ||
+			klass->blittable || klass->enumtype))
 			return mono_object_unbox (o);
 
 		res = mono_marshal_alloc (mono_class_native_size (klass, NULL));
 
-		method = mono_marshal_get_struct_to_ptr (o->vtable->klass);
+		if (!((param_attrs & PARAM_ATTRIBUTE_OUT) && !(param_attrs & PARAM_ATTRIBUTE_IN))) {
+			method = mono_marshal_get_struct_to_ptr (o->vtable->klass);
 
-		pa [0] = o;
-		pa [1] = &res;
-		pa [2] = &delete_old;
+			pa [0] = o;
+			pa [1] = &res;
+			pa [2] = &delete_old;
 
-		mono_runtime_invoke (method, NULL, pa, NULL);
+			mono_runtime_invoke (method, NULL, pa, NULL);
+		}
 
 		return res;
 	}
@@ -8462,7 +8488,7 @@ mono_marshal_asany (MonoObject *o, MonoMarshalNative string_encoding)
 }
 
 void
-mono_marshal_free_asany (MonoObject *o, gpointer ptr, MonoMarshalNative string_encoding)
+mono_marshal_free_asany (MonoObject *o, gpointer ptr, MonoMarshalNative string_encoding, int param_attrs)
 {
 	MonoType *t;
 	MonoClass *klass;
@@ -8491,7 +8517,19 @@ mono_marshal_free_asany (MonoObject *o, gpointer ptr, MonoMarshalNative string_e
 			klass->blittable || klass->enumtype)
 			break;
 
-		mono_struct_delete_old (klass, ptr);
+		if (param_attrs & PARAM_ATTRIBUTE_OUT) {
+			MonoMethod *method = mono_marshal_get_ptr_to_struct (o->vtable->klass);
+			gpointer pa [2];
+
+			pa [0] = &ptr;
+			pa [1] = o;
+
+			mono_runtime_invoke (method, NULL, pa, NULL);
+		}
+
+		if (!((param_attrs & PARAM_ATTRIBUTE_OUT) && !(param_attrs & PARAM_ATTRIBUTE_IN))) {
+			mono_struct_delete_old (klass, ptr);
+		}
 
 		mono_marshal_free (ptr);
 		break;

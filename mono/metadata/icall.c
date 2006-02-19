@@ -1397,6 +1397,13 @@ ves_icall_MonoField_GetValueInternal (MonoReflectionField *field, MonoObject *ob
 	case MONO_TYPE_VALUETYPE:
 		is_ref = t->byref;
 		break;
+	case MONO_TYPE_GENERICINST:
+		if (mono_type_generic_inst_is_valuetype (t)) {
+			is_ref = t->byref;
+		} else {
+			is_ref = TRUE;
+		}
+		break;
 	default:
 		g_error ("type 0x%x not handled in "
 			 "ves_icall_Monofield_GetValue", t->type);
@@ -1526,17 +1533,6 @@ ves_icall_FieldInfo_SetValueInternal (MonoReflectionField *field, MonoObject *ob
 	} else {
 		mono_field_set_value (obj, cf, v);
 	}
-}
-
-static MonoReflectionField*
-ves_icall_MonoField_Mono_GetGenericFieldDefinition (MonoReflectionField *field)
-{
-	MONO_ARCH_SAVE_REGS;
-
-	if (field->field->generic_info && field->field->generic_info->reflection_info)
-		return field->field->generic_info->reflection_info;
-
-	return field;
 }
 
 static MonoReflectionType*
@@ -1890,7 +1886,10 @@ ves_icall_MonoType_GetGenericArguments (MonoReflectionType *type)
 		MonoGenericInst *inst = klass->generic_class->inst;
 		res = mono_array_new (mono_object_domain (type), mono_defaults.monotype_class, inst->type_argc);
 		for (i = 0; i < inst->type_argc; ++i) {
-			mono_array_set (res, gpointer, i, mono_type_get_object (mono_object_domain (type), inst->type_argv [i]));
+			MonoType *t = inst->type_argv [i];
+			/* Ensure that our dummy null-owner types don't leak into userspace.  */
+			g_assert ((t->type != MONO_TYPE_VAR && t->type != MONO_TYPE_MVAR) || t->data.generic_param->owner);
+			mono_array_set (res, gpointer, i, mono_type_get_object (mono_object_domain (type), t));
 		}
 	} else {
 		res = mono_array_new (mono_object_domain (type), mono_defaults.monotype_class, 0);
@@ -2492,19 +2491,11 @@ ves_icall_MonoMethod_GetGenericMethodDefinition (MonoReflectionMethod *method)
 }
 
 static gboolean
-ves_icall_MonoMethod_get_HasGenericParameters (MonoReflectionMethod *method)
+ves_icall_MonoMethod_get_IsGenericMethod (MonoReflectionMethod *method)
 {
 	MONO_ARCH_SAVE_REGS;
 
 	return mono_method_signature (method->method)->generic_param_count != 0;
-}
-
-static gboolean
-ves_icall_MonoMethod_get_Mono_IsInflatedMethod (MonoReflectionMethod *method)
-{
-	MONO_ARCH_SAVE_REGS;
-
-	return method->method->is_inflated;
 }
 
 static gboolean
@@ -2512,7 +2503,8 @@ ves_icall_MonoMethod_get_IsGenericMethodDefinition (MonoReflectionMethod *method
 {
 	MONO_ARCH_SAVE_REGS;
 
-	return mono_method_signature (method->method)->generic_param_count != 0;
+	return !method->method->is_inflated &&
+		(mono_method_signature (method->method)->generic_param_count != 0);
 }
 
 static MonoArray*
@@ -2537,8 +2529,7 @@ ves_icall_MonoMethod_GetGenericArguments (MonoReflectionMethod *method)
 				MonoType *t = gmethod->inst->type_argv [i];
 				/* Ensure that our dummy null-owner types don't leak into userspace.  */
 				g_assert ((t->type != MONO_TYPE_VAR && t->type != MONO_TYPE_MVAR) || t->data.generic_param->owner);
-				mono_array_set (
-					res, gpointer, i, mono_type_get_object (domain, t));
+				mono_array_set (res, gpointer, i, mono_type_get_object (domain, t));
 			}
 
 			return res;
@@ -5453,6 +5444,7 @@ ves_icall_System_Environment_GetEnvironmentVariable (MonoString *name)
 
 	utf8_name = mono_string_to_utf8 (name);	/* FIXME: this should be ascii */
 	value = g_getenv (utf8_name);
+
 	g_free (utf8_name);
 
 	if (value == 0)
@@ -6348,6 +6340,7 @@ static const IcallEntry defaultconf_icalls [] = {
 };
 
 static const IcallEntry consoledriver_icalls [] = {
+	{"GetTtySize", ves_icall_System_ConsoleDriver_GetTtySize },
 	{"InternalKeyAvailable", ves_icall_System_ConsoleDriver_InternalKeyAvailable },
 	{"Isatty", ves_icall_System_ConsoleDriver_Isatty },
 	{"SetBreak", ves_icall_System_ConsoleDriver_SetBreak },
@@ -6671,7 +6664,6 @@ static const IcallEntry module_icalls [] = {
 static const IcallEntry monocmethod_icalls [] = {
   	{"GetGenericMethodDefinition_impl", ves_icall_MonoMethod_GetGenericMethodDefinition},
 	{"InternalInvoke", ves_icall_InternalInvoke},
-	{"get_Mono_IsInflatedMethod", ves_icall_MonoMethod_get_Mono_IsInflatedMethod}
 };
 
 static const IcallEntry monoeventinfo_icalls [] = {
@@ -6682,7 +6674,6 @@ static const IcallEntry monofield_icalls [] = {
 	{"GetFieldOffset", ves_icall_MonoField_GetFieldOffset},
 	{"GetParentType", ves_icall_MonoField_GetParentType},
 	{"GetValueInternal", ves_icall_MonoField_GetValueInternal},
-	{"Mono_GetGenericFieldDefinition", ves_icall_MonoField_Mono_GetGenericFieldDefinition},
 	{"SetValueInternal", ves_icall_FieldInfo_SetValueInternal}
 };
 
@@ -6714,9 +6705,8 @@ static const IcallEntry monomethod_icalls [] = {
   	{"GetGenericMethodDefinition_impl", ves_icall_MonoMethod_GetGenericMethodDefinition},
 	{"InternalInvoke", ves_icall_InternalInvoke},
 	{"MakeGenericMethod_impl", mono_reflection_bind_generic_method_parameters},
-	{"get_HasGenericParameters", ves_icall_MonoMethod_get_HasGenericParameters},
+	{"get_IsGenericMethod", ves_icall_MonoMethod_get_IsGenericMethod},
 	{"get_IsGenericMethodDefinition", ves_icall_MonoMethod_get_IsGenericMethodDefinition},
-	{"get_Mono_IsInflatedMethod", ves_icall_MonoMethod_get_Mono_IsInflatedMethod},
 	{"get_base_definition", ves_icall_MonoMethod_get_base_definition}
 };
 

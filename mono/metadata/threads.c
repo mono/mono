@@ -458,6 +458,11 @@ mono_thread_detach (MonoThread *thread)
 	SET_CURRENT_OBJECT (NULL);
 	
 	thread_cleanup (thread);
+
+	/* Need to CloseHandle this thread, because we took a reference in
+	 * mono_thread_attach ()
+	 */
+	CloseHandle(thread->handle);
 }
 
 void
@@ -1839,7 +1844,7 @@ struct wait_data
 static void wait_for_tids (struct wait_data *wait, guint32 timeout)
 {
 	guint32 i, ret;
-	
+
 	THREAD_DEBUG (g_message(G_GNUC_PRETTY_FUNCTION
 		  ": %d threads to wait for in this batch", wait->num));
 
@@ -2573,6 +2578,7 @@ mono_get_special_static_data (guint32 offset)
 	if (static_type == 0)
 	{
 		MonoThread *thread = mono_thread_current ();
+
 		return ((char*) thread->static_data [idx]) + (offset & 0xffffff);
 	}
 	else

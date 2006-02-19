@@ -1,4 +1,68 @@
 
+Fri Feb 17 19:47:29 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: added a few more verification checks.
+
+2006-02-17	Neale Ferguson <neale@sinenomine.net>
+
+	* mini-s390x.c, mini-s390x.h: Check for presence of long displacement
+	facility on the processor and use it if available.
+
+Fri Feb 17 16:12:52 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* driver.c, aot.c, mini.c: throw exception if the IL code is
+	invalid or unverifiable.
+
+2006-02-17  Raja R Harinath  <rharinath@novell.com>
+
+	* generics.2.cs (test_0_ldfld_stfld_mro): Use m.struct_field, not
+	m.StructField.
+
+2006-02-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* generics.2.cs: Add some tests for generics ldfld/stfld wrappers.
+
+Wed Feb 15 16:23:17 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini-s390x.c, mini-s390.c, mini.c, mini-amd64.c, mini-arm.c,
+	mini-ia64.c, mini-sparc.c, mini-x86.c, mini-ppc.c: fixed
+	handling of instantiated generic valuetypes.
+
+2006-02-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-exceptions.c mini-x86.h mini-x86.c: Get rid of 
+	MONO_INIT_CONTEXT_FROM_CALLER, and use MONO_INIT_CONTEXT_FROM_FUNC
+	instead.
+
+	* generics.2.cs: Revert the nullable reftypes tests.
+
+2006-02-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-exceptions.c (MONO_INIT_CONTEXT_FROM_CALLER): Avoid
+	using __builtin_frame_address (1) as it doesn't work in the presence
+	of optimizations. Hopefully fixes #77273.
+
+	* Makefile.am generics.cs generics.2.cs: Revert the generics.2.cs
+	-> generics.cs change as it doesn't work with some automake versions.
+
+Thu Feb 9 16:24:44 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: handle systems that sue a different way to
+	retrieve the stack address of the current thread.
+
+2006-02-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile.am generics.2.cs: Rename this to generics.cs and handle
+	it specially in the makefile.
+
+	* generics.2.cs: Add tests for nullable reference types.
+
+Wed Feb 8 19:33:17 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: always handle the case when mono_jit_init()
+	is called in a thread different from the main thread,
+	confusing libgc (bug #77309).
+
 Mon Feb 6 09:01:24 EST 2006 Paolo Molaro <lupus@ximian.com>
 
 	* mini-ppc.c: fix handling of exceptions in large methods (bug #74932).

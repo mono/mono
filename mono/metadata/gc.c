@@ -192,6 +192,8 @@ mono_domain_finalize (MonoDomain *domain, guint32 timeout)
 	guint32 res;
 	HANDLE done_event;
 
+	timeout = 10000000;
+
 	if (mono_thread_current () == gc_thread)
 		/* We are called from inside a finalizer, not much we can do here */
 		return FALSE;

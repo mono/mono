@@ -317,6 +317,7 @@ mono_method_desc_search_in_image (MonoMethodDesc *desc, MonoImage *image)
 		return mono_method_desc_search_in_class (desc, klass);
 	}
 
+	printf ("L: %s\n", desc->klass);
 	tdef = mono_image_get_table_info (image, MONO_TABLE_TYPEDEF);
 	methods = mono_image_get_table_info (image, MONO_TABLE_METHOD);
 	for (i = 0; i < mono_table_info_get_rows (methods); ++i) {

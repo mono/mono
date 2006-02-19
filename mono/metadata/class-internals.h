@@ -210,7 +210,12 @@ struct _MonoEvent {
 enum {
 	MONO_EXCEPTION_NONE = 0,
 	MONO_EXCEPTION_SECURITY_LINKDEMAND = 1,
-	MONO_EXCEPTION_SECURITY_INHERITANCEDEMAND = 2
+	MONO_EXCEPTION_SECURITY_INHERITANCEDEMAND = 2,
+	MONO_EXCEPTION_INVALID_PROGRAM = 3,
+	MONO_EXCEPTION_UNVERIFIABLE_IL = 4,
+	MONO_EXCEPTION_MISSING_METHOD = 5,
+	MONO_EXCEPTION_MISSING_FIELD = 6,
+	MONO_EXCEPTION_TYPE_LOAD = 7
 	/* add other exception type */
 };
 
@@ -434,7 +439,7 @@ struct _MonoGenericMethod {
  */
 struct _MonoGenericContext {
 	/*
-	 * The current container:
+	 * The container which has been instantiated.
 	 *
 	 * If we're in a generic method, the generic method definition's container.
 	 * Otherwise the generic type's container.
@@ -453,7 +458,8 @@ struct _MonoGenericContext {
  */
 struct _MonoGenericContainer {
 	MonoGenericContext context;
-	/* If we're a generic method definition, the containing class'es context. */
+	/* If we're a generic method definition in a generic type definition,
+	   the generic container of the containing class. */
 	MonoGenericContainer *parent;
 	/* If we're a generic method definition, caches all their instantiations. */
 	GHashTable *method_hash;
@@ -461,11 +467,10 @@ struct _MonoGenericContainer {
 	MonoClass *klass;
 	int type_argc    : 6;
 	/* If true, we're a generic method, otherwise a generic type definition. */
+	/* Invariant: parent != NULL => is_method */
 	int is_method    : 1;
 	/* Our type parameters. */
 	MonoGenericParam *type_params;
-	/* Cache for MonoTypes */
-	MonoType **types;
 };
 
 /*

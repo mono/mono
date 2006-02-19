@@ -308,15 +308,25 @@ gpointer _wapi_handle_new (WapiHandleType type, gpointer handle_specific)
 	while ((handle_idx = _wapi_handle_new_internal (type, handle_specific)) == 0) {
 		/* Try and expand the array, and have another go */
 		int idx = SLOT_INDEX (_wapi_private_handle_count);
+		if (idx >= _WAPI_PRIVATE_MAX_SLOTS) {
+			break;
+		}
+		
 		_wapi_private_handles [idx] = g_new0 (struct _WapiHandleUnshared,
 						_WAPI_HANDLE_INITIAL_COUNT);
 
 		_wapi_private_handle_count += _WAPI_HANDLE_INITIAL_COUNT;
 	}
-
+	
 	thr_ret = mono_mutex_unlock (&scan_mutex);
 	g_assert (thr_ret == 0);
 	pthread_cleanup_pop (0);
+
+	if (handle_idx == 0) {
+		/* We ran out of slots */
+		handle = _WAPI_HANDLE_INVALID;
+		goto done;
+	}
 		
 	/* Make sure we left the space for fd mappings */
 	g_assert (handle_idx >= _wapi_fd_reserve);
@@ -515,6 +525,10 @@ gboolean _wapi_lookup_handle (gpointer handle, WapiHandleType type,
 	struct _WapiHandleUnshared *handle_data;
 	guint32 handle_idx = GPOINTER_TO_UINT(handle);
 
+	if (!_WAPI_PRIVATE_VALID_SLOT (handle_idx)) {
+		return(FALSE);
+	}
+	
 	handle_data = &_WAPI_PRIVATE_HANDLES(handle_idx);
 	
 	if (handle_data->type != type) {
@@ -788,13 +802,19 @@ void _wapi_handle_ref (gpointer handle)
 {
 	guint32 idx = GPOINTER_TO_UINT(handle);
 	guint32 now = (guint32)(time (NULL) & 0xFFFFFFFF);
-	struct _WapiHandleUnshared *handle_data = &_WAPI_PRIVATE_HANDLES(idx);
+	struct _WapiHandleUnshared *handle_data;
 
+	if (!_WAPI_PRIVATE_VALID_SLOT (idx)) {
+		return;
+	}
+	
 	if (_wapi_handle_type (handle) == WAPI_HANDLE_UNUSED) {
 		g_warning ("%s: Attempting to ref unused handle %p", __func__,
 			   handle);
 		return;
 	}
+
+	handle_data = &_WAPI_PRIVATE_HANDLES(idx);
 	
 	InterlockedIncrement (&handle_data->ref);
 
@@ -810,7 +830,9 @@ void _wapi_handle_ref (gpointer handle)
 	}
 	
 #ifdef DEBUG_REFS
-	g_message ("%s: handle %p ref now %d", __func__, handle,
+	g_message ("%s: %s handle %p ref now %d", __func__, 
+		   _wapi_handle_typename[_WAPI_PRIVATE_HANDLES (idx).type],
+		   handle,
 		   _WAPI_PRIVATE_HANDLES(idx).ref);
 #endif
 }
@@ -822,6 +844,10 @@ void _wapi_handle_unref (gpointer handle)
 	gboolean destroy = FALSE;
 	int thr_ret;
 
+	if (!_WAPI_PRIVATE_VALID_SLOT (idx)) {
+		return;
+	}
+	
 	if (_wapi_handle_type (handle) == WAPI_HANDLE_UNUSED) {
 		g_warning ("%s: Attempting to unref unused handle %p",
 			   __func__, handle);
@@ -836,7 +862,9 @@ void _wapi_handle_unref (gpointer handle)
 	destroy = (InterlockedDecrement (&_WAPI_PRIVATE_HANDLES(idx).ref) ==0);
 	
 #ifdef DEBUG_REFS
-	g_message ("%s: handle %p ref now %d (destroy %s)", __func__, handle,
+	g_message ("%s: %s handle %p ref now %d (destroy %s)", __func__,
+		   _wapi_handle_typename[_WAPI_PRIVATE_HANDLES (idx).type],
+		   handle,
 		   _WAPI_PRIVATE_HANDLES(idx).ref, destroy?"TRUE":"FALSE");
 #endif
 	
@@ -935,6 +963,10 @@ gboolean _wapi_handle_test_capabilities (gpointer handle,
 	guint32 idx = GPOINTER_TO_UINT(handle);
 	WapiHandleType type;
 
+	if (!_WAPI_PRIVATE_VALID_SLOT (idx)) {
+		return(FALSE);
+	}
+	
 	type = _WAPI_PRIVATE_HANDLES(idx).type;
 
 #ifdef DEBUG
@@ -960,6 +992,10 @@ void _wapi_handle_ops_close (gpointer handle, gpointer data)
 	guint32 idx = GPOINTER_TO_UINT(handle);
 	WapiHandleType type;
 
+	if (!_WAPI_PRIVATE_VALID_SLOT (idx)) {
+		return;
+	}
+	
 	type = _WAPI_PRIVATE_HANDLES(idx).type;
 
 	if (handle_ops[type] != NULL &&
@@ -973,6 +1009,10 @@ void _wapi_handle_ops_signal (gpointer handle)
 	guint32 idx = GPOINTER_TO_UINT(handle);
 	WapiHandleType type;
 
+	if (!_WAPI_PRIVATE_VALID_SLOT (idx)) {
+		return;
+	}
+	
 	type = _WAPI_PRIVATE_HANDLES(idx).type;
 
 	if (handle_ops[type] != NULL && handle_ops[type]->signal != NULL) {
@@ -984,6 +1024,10 @@ gboolean _wapi_handle_ops_own (gpointer handle)
 {
 	guint32 idx = GPOINTER_TO_UINT(handle);
 	WapiHandleType type;
+	
+	if (!_WAPI_PRIVATE_VALID_SLOT (idx)) {
+		return(FALSE);
+	}
 	
 	type = _WAPI_PRIVATE_HANDLES(idx).type;
 
@@ -999,6 +1043,10 @@ gboolean _wapi_handle_ops_isowned (gpointer handle)
 	guint32 idx = GPOINTER_TO_UINT(handle);
 	WapiHandleType type;
 
+	if (!_WAPI_PRIVATE_VALID_SLOT (idx)) {
+		return(FALSE);
+	}
+	
 	type = _WAPI_PRIVATE_HANDLES(idx).type;
 
 	if (handle_ops[type] != NULL && handle_ops[type]->is_owned != NULL) {
@@ -1012,6 +1060,10 @@ guint32 _wapi_handle_ops_special_wait (gpointer handle, guint32 timeout)
 {
 	guint32 idx = GPOINTER_TO_UINT(handle);
 	WapiHandleType type;
+	
+	if (!_WAPI_PRIVATE_VALID_SLOT (idx)) {
+		return(WAIT_FAILED);
+	}
 	
 	type = _WAPI_PRIVATE_HANDLES(idx).type;
 	

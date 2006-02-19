@@ -1,4 +1,9 @@
 
+Thu Feb 9 16:20:55 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* os_dep.c, include/private/gcconfig.h, darwin_stop_world.c:
+	OSX/x86 support, mostly from Geoff Norton <gnorton@customerdna.com>.
+
 Wed Feb 1 18:23:55 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* pthread_support.c, *: back out Zoltan's patch since it's

@@ -1,3 +1,16 @@
+2006-02-17  Dick Porter  <dick@ximian.com>
+
+	* handles-private.h: 
+	* handles.c: Check handle values passed to array lookups.  Fixes
+	bug 77572.
+
+2006-02-09  Dick Porter  <dick@ximian.com>
+
+	* threads.c: Cope with the problems caused by attaching already
+	existing threads - they don't get the infrastructure to clean up
+	after themselves, especially the ID to handle hash.  This fixes
+	bug 77468.
+
 2006-02-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* shared.c: use MONO_SHARED_HOSTNAME as a substitute for gethostname()
