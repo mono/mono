@@ -337,7 +337,7 @@ mono_print_bb (MonoBasicBlock *bb, const char *msg)
 	int i;
 	MonoInst *tree;
 
-	g_print ("\n%s %d: [", msg, bb->block_num);
+	printf ("\n%s %d: [", msg, bb->block_num);
 	for (i = 0; i < bb->out_count; ++i)
 		printf (" BB%d %d", bb->out_bb [i]->block_num, bb->out_bb [i]->dfn);
 	printf (" ]\n");
@@ -373,7 +373,7 @@ mono_print_bb (MonoBasicBlock *bb, const char *msg)
 #define CHECK_BBLOCK(target,ip,tblock) do {	\
 		if ((target) < (ip) && !(tblock)->code)	{	\
 			bb_recheck = g_list_prepend (bb_recheck, (tblock));	\
-			if (cfg->verbose_level > 2) g_print ("queued block %d for check at IL%04x from IL%04x\n", (tblock)->block_num, (int)((target) - header->code), (int)((ip) - header->code));	\
+			if (cfg->verbose_level > 2) printf ("queued block %d for check at IL%04x from IL%04x\n", (tblock)->block_num, (int)((target) - header->code), (int)((ip) - header->code));	\
 		}	\
 	} while (0)
 
@@ -937,14 +937,14 @@ link_bblock (MonoCompile *cfg, MonoBasicBlock *from, MonoBasicBlock* to)
 #if 0
 	if (from->cil_code) {
 		if (to->cil_code)
-			g_print ("edge from IL%04x to IL_%04x\n", from->cil_code - cfg->cil_code, to->cil_code - cfg->cil_code);
+			printf ("edge from IL%04x to IL_%04x\n", from->cil_code - cfg->cil_code, to->cil_code - cfg->cil_code);
 		else
-			g_print ("edge from IL%04x to exit\n", from->cil_code - cfg->cil_code);
+			printf ("edge from IL%04x to exit\n", from->cil_code - cfg->cil_code);
 	} else {
 		if (to->cil_code)
-			g_print ("edge from entry to IL_%04x\n", to->cil_code - cfg->cil_code);
+			printf ("edge from entry to IL_%04x\n", to->cil_code - cfg->cil_code);
 		else
-			g_print ("edge from entry to exit\n");
+			printf ("edge from entry to exit\n");
 	}
 #endif
 	found = FALSE;
@@ -1099,7 +1099,7 @@ df_visit (MonoBasicBlock *start, int *dfn, MonoBasicBlock **array)
 	int i;
 
 	array [*dfn] = start;
-	/*g_print ("visit %d at %p (BB%ld)\n", *dfn, start->cil_code, start->block_num);*/
+	/*printf ("visit %d at %p (BB%ld)\n", *dfn, start->cil_code, start->block_num);*/
 	for (i = 0; i < start->out_count; ++i) {
 		if (start->out_bb [i]->dfn)
 			continue;
@@ -1169,10 +1169,10 @@ split_bblock (MonoCompile *cfg, MonoBasicBlock *first, MonoBasicBlock *second) {
 
 	second->last_ins = first->last_ins;
 
-	/*g_print ("start search at %p for %p\n", first->cil_code, second->cil_code);*/
+	/*printf ("start search at %p for %p\n", first->cil_code, second->cil_code);*/
 	for (inst = first->code; inst && inst->next; inst = inst->next) {
 		/*char *code = mono_disasm_code_one (NULL, cfg->method, inst->next->cil_code, NULL);
-		g_print ("found %p: %s", inst->next->cil_code, code);
+		printf ("found %p: %s", inst->next->cil_code, code);
 		g_free (code);*/
 		if (inst->cil_code < second->cil_code && inst->next->cil_code >= second->cil_code) {
 			second->code = inst->next;
@@ -1812,24 +1812,24 @@ handle_stack_args (MonoCompile *cfg, MonoInst **sp, int count) {
 	if (!count)
 		return 0;
 	if (cfg->verbose_level > 3)
-		g_print ("%d item(s) on exit from B%d\n", count, bb->block_num);
+		printf ("%d item(s) on exit from B%d\n", count, bb->block_num);
 	if (!bb->out_scount) {
 		bb->out_scount = count;
-		//g_print ("bblock %d has out:", bb->block_num);
+		//printf ("bblock %d has out:", bb->block_num);
 		found = FALSE;
 		for (i = 0; i < bb->out_count; ++i) {
 			outb = bb->out_bb [i];
 			/* exception handlers are linked, but they should not be considered for stack args */
 			if (outb->flags & BB_EXCEPTION_HANDLER)
 				continue;
-			//g_print (" %d", outb->block_num);
+			//printf (" %d", outb->block_num);
 			if (outb->in_stack) {
 				found = TRUE;
 				bb->out_stack = outb->in_stack;
 				break;
 			}
 		}
-		//g_print ("\n");
+		//printf ("\n");
 		if (!found) {
 			bb->out_stack = mono_mempool_alloc (cfg->mempool, sizeof (MonoInst*) * count);
 			for (i = 0; i < count; ++i) {
@@ -1881,7 +1881,7 @@ handle_stack_args (MonoCompile *cfg, MonoInst **sp, int count) {
 			sp [i] = locals [i];
 		}
 		if (cfg->verbose_level > 3)
-			g_print ("storing %d to temp %d\n", i, (int)locals [i]->inst_c0);
+			printf ("storing %d to temp %d\n", i, (int)locals [i]->inst_c0);
 	}
 
 	/*
@@ -1915,7 +1915,7 @@ handle_stack_args (MonoCompile *cfg, MonoInst **sp, int count) {
 						sp [i] = locals [i];
 					}
 					if (cfg->verbose_level > 3)
-						g_print ("storing %d to temp %d\n", i, (int)outb->in_stack [i]->inst_c0);
+						printf ("storing %d to temp %d\n", i, (int)outb->in_stack [i]->inst_c0);
 				}
 				locals = outb->in_stack;
 				found = TRUE;
@@ -3793,7 +3793,7 @@ inline_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig,
 	MonoBasicBlock *prev_cbb;
 
 	if (cfg->verbose_level > 2)
-		g_print ("INLINE START %p %s -> %s\n", cmethod,  mono_method_full_name (cfg->method, TRUE), mono_method_full_name (cmethod, TRUE));
+		printf ("INLINE START %p %s -> %s\n", cmethod,  mono_method_full_name (cfg->method, TRUE), mono_method_full_name (cmethod, TRUE));
 
 	if (!cmethod->inline_info) {
 		mono_jit_stats.inlineable_methods++;
@@ -3833,7 +3833,7 @@ inline_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig,
 
 	if ((costs >= 0 && costs < 60) || inline_allways) {
 		if (cfg->verbose_level > 2)
-			g_print ("INLINE END %s -> %s\n", mono_method_full_name (cfg->method, TRUE), mono_method_full_name (cmethod, TRUE));
+			printf ("INLINE END %s -> %s\n", mono_method_full_name (cfg->method, TRUE), mono_method_full_name (cmethod, TRUE));
 		
 		mono_jit_stats.inlined_methods++;
 
@@ -3858,7 +3858,7 @@ inline_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig,
 		return costs + 1;
 	} else {
 		if (cfg->verbose_level > 2)
-			g_print ("INLINE ABORTED %s\n", mono_method_full_name (cmethod, TRUE));
+			printf ("INLINE ABORTED %s\n", mono_method_full_name (cmethod, TRUE));
 
 		/* This gets rid of the newly added bblocks */
 		cfg->cbb = prev_cbb;
@@ -4376,7 +4376,7 @@ mono_decompose_long_opts (MonoCompile *cfg)
 		MonoInst *prev = NULL;
 
 		   /*
-		g_print ("BEFORE LOWER_LONG_OPTS: %d:\n", bb->block_num);
+		printf ("BEFORE LOWER_LONG_OPTS: %d:\n", bb->block_num);
 		mono_print_bb_code_new (bb);
 		*/
 
@@ -5025,7 +5025,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 	cfg->cbb_hash = bbhash;
 
 	if (cfg->verbose_level > 2)
-		g_print ("method to IR %s\n", mono_method_full_name (method, TRUE));
+		printf ("method to IR %s\n", mono_method_full_name (method, TRUE));
 
 	dont_inline = g_list_prepend (dont_inline, method);
 	if (cfg->method == method) {
@@ -5084,9 +5084,9 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			}
 
 
-			/*g_print ("clause try IL_%04x to IL_%04x handler %d at IL_%04x to IL_%04x\n", clause->try_offset, clause->try_offset + clause->try_len, clause->flags, clause->handler_offset, clause->handler_offset + clause->handler_len);
+			/*printf ("clause try IL_%04x to IL_%04x handler %d at IL_%04x to IL_%04x\n", clause->try_offset, clause->try_offset + clause->try_len, clause->flags, clause->handler_offset, clause->handler_offset + clause->handler_len);
 			  while (p < end) {
-			  g_print ("%s", mono_disasm_code_one (NULL, method, p, &p));
+			  printf ("%s", mono_disasm_code_one (NULL, method, p, &p));
 			  }*/
 			/* catch and filter blocks get the exception object on the stack */
 			if (clause->flags == MONO_EXCEPTION_CLAUSE_NONE ||
@@ -5094,7 +5094,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				MonoInst *dummy_use;
 
 				/* mostly like handle_stack_args (), but just sets the input args */
-				/* g_print ("handling clause at IL_%04x\n", clause->handler_offset); */
+				/* printf ("handling clause at IL_%04x\n", clause->handler_offset); */
 				tblock->in_scount = 1;
 				tblock->in_stack = mono_mempool_alloc (cfg->mempool, sizeof (MonoInst*));
 				tblock->in_stack [0] = mono_create_exvar_for_offset (cfg, clause->handler_offset);
@@ -5276,7 +5276,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			start_new_bblock = 0;
 			for (i = 0; i < bblock->in_scount; ++i) {
 				if (cfg->verbose_level > 3)
-					g_print ("loading %d from temp %d\n", i, (int)bblock->in_stack [i]->inst_c0);						
+					printf ("loading %d from temp %d\n", i, (int)bblock->in_stack [i]->inst_c0);						
 				NEW_TEMPLOAD (cfg, ins, bblock->in_stack [i]->inst_c0);
 				if (ins->opcode == CEE_LDOBJ)
 					ins = emit_ldobj_var (cfg, bblock->in_stack [i], ip);
@@ -5298,7 +5298,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				cfg->cbb = bblock;
 				for (i = 0; i < bblock->in_scount; ++i) {
 					if (cfg->verbose_level > 3)
-						g_print ("loading %d from temp %d\n", i, (int)bblock->in_stack [i]->inst_c0);						
+						printf ("loading %d from temp %d\n", i, (int)bblock->in_stack [i]->inst_c0);						
 					NEW_TEMPLOAD (cfg, ins, bblock->in_stack [i]->inst_c0);
 					if (ins->opcode == CEE_LDOBJ)
 						ins = emit_ldobj_var (cfg, bblock->in_stack [i], ip);
@@ -5330,7 +5330,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 		}
 
 		if (cfg->verbose_level > 3)
-			g_print ("converting (in B%d: stack: %d) %s", bblock->block_num, (int)(sp - stack_start), mono_disasm_code_one (NULL, method, ip, NULL));
+			printf ("converting (in B%d: stack: %d) %s", bblock->block_num, (int)(sp - stack_start), mono_disasm_code_one (NULL, method, ip, NULL));
 
 		switch (*ip) {
 		case CEE_NOP:
@@ -6901,7 +6901,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			}
 
 			if (ip + 5 < end && ip_in_bb (cfg, bblock, ip + 5) && (ip [5] == CEE_BRTRUE || ip [5] == CEE_BRTRUE_S)) {
-				/*g_print ("box-brtrue opt at 0x%04x in %s\n", real_offset, method->name);*/
+				/*printf ("box-brtrue opt at 0x%04x in %s\n", real_offset, method->name);*/
 				ip += 5;
 				MONO_INST_NEW (cfg, ins, OP_BR);
 				ins->cil_code = ip;
@@ -7136,7 +7136,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 											   helper_sig_class_init_trampoline,
 											   NULL, ip);
 						if (cfg->verbose_level > 2)
-							g_print ("class %s.%s needs init call for %s\n", klass->name_space, klass->name, field->name);
+							printf ("class %s.%s needs init call for %s\n", klass->name_space, klass->name, field->name);
 						class_inits = g_slist_prepend (class_inits, vtable);
 					} else {
 						if (cfg->run_cctors)
@@ -7187,7 +7187,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 					if (ro_type == MONO_TYPE_VALUETYPE && field->type->data.klass->enumtype) {
 						ro_type = field->type->data.klass->enum_basetype->type;
 					}
-					/* g_print ("RO-FIELD %s.%s:%s\n", klass->name_space, klass->name, field->name);*/
+					/* printf ("RO-FIELD %s.%s:%s\n", klass->name_space, klass->name, field->name);*/
 					is_const = TRUE;
 					switch (ro_type) {
 					case MONO_TYPE_BOOLEAN:
@@ -8459,7 +8459,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 	/* resolve backward branches in the middle of an existing basic block */
 	for (tmp = bb_recheck; tmp; tmp = tmp->next) {
 		bblock = tmp->data;
-		/*g_print ("need recheck in %s at IL_%04x\n", method->name, bblock->cil_code - header->code);*/
+		/*printf ("need recheck in %s at IL_%04x\n", method->name, bblock->cil_code - header->code);*/
 		tblock = find_previous (bbhash, start_bblock, bblock->cil_code);
 		if (tblock != start_bblock) {
 			int l;
@@ -8468,7 +8468,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			bblock->cil_length = tblock->cil_length - l;
 			tblock->cil_length = l;
 		} else {
-			g_print ("recheck failed.\n");
+			printf ("recheck failed.\n");
 		}
 	}
 
@@ -8479,7 +8479,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			if (cfg->spvars)
 				mono_create_spvar_for_region (cfg, bb->region);
 			if (cfg->verbose_level > 2)
-				g_print ("REGION BB%d IL_%04x ID_%08X\n", bb->block_num, bb->real_offset, bb->region);
+				printf ("REGION BB%d IL_%04x ID_%08X\n", bb->block_num, bb->real_offset, bb->region);
 		}
 	} else {
 		g_hash_table_destroy (bbhash);
