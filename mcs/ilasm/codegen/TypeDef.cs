@@ -463,37 +463,52 @@ namespace Mono.ILASM {
                         }
                 }
 
-                public PEAPI.MethodDef ResolveMethod (string signature, CodeGen code_gen)
+                public PEAPI.Method ResolveMethod (BaseTypeRef ret_type, PEAPI.CallConv call_conv,
+                        string name, BaseTypeRef [] param, int gen_param_count, CodeGen code_gen)
                 {
+                        string signature = MethodDef.CreateSignature (ret_type, name, param, gen_param_count);
                         MethodDef methoddef = (MethodDef) method_table[signature];
 
-                        if (methoddef == null) {
-                                code_gen.Report.Error ("Unable to resolve method: " + signature);
-                                Environment.Exit (1);
-                        }
-
-                        return methoddef.Resolve (code_gen, classdef);
+                        if (methoddef != null)
+                                return methoddef.Resolve (code_gen, classdef);
+                        return ResolveAsMethodRef (ret_type, call_conv, name, param, gen_param_count, code_gen);
                 }
 
-                public PEAPI.Method ResolveVarargMethod (string signature,
-                                CodeGen code_gen, PEAPI.Type[] opt)
+                public PEAPI.Method ResolveVarargMethod (BaseTypeRef ret_type, PEAPI.CallConv call_conv,
+                        string name, BaseTypeRef [] param, int gen_param_count, PEAPI.Type [] opt, CodeGen code_gen)
                 {
+                        string signature = MethodDef.CreateVarargSignature (ret_type, name, param);
                         MethodDef methoddef = (MethodDef) method_table[signature];
 
-                        if (methoddef == null) {
-                                code_gen.Report.Error ("Unable to resolve method: " + signature);
-                                Environment.Exit (1);
+                        if (methoddef != null) {
+                                methoddef.Resolve (code_gen, classdef);
+                                return methoddef.GetVarargSig (opt);
                         }
-
-                        methoddef.Resolve (code_gen, classdef);
-                        return methoddef.GetVarargSig (opt);
+                        
+                        return ResolveAsMethodRef (ret_type, call_conv, name, param, gen_param_count, code_gen);
                 }
 
-                public PEAPI.Field ResolveField (string name, string type_name, CodeGen code_gen)
+                private PEAPI.Method ResolveAsMethodRef (BaseTypeRef ret_type, PEAPI.CallConv call_conv,
+                        string name, BaseTypeRef [] param, int gen_param_count, CodeGen code_gen)
                 {
-                        FieldDef fielddef = (FieldDef) field_table[new DictionaryEntry (name, type_name)];
+                        ExternTypeRef type_ref = code_gen.ThisModule.GetTypeRef (FullName, false);
+                        ExternMethodRef methodref = (ExternMethodRef) type_ref.GetMethodRef (ret_type, call_conv, name, param, gen_param_count);
+                        methodref.Resolve (code_gen);
 
-                        return fielddef.Resolve (code_gen, classdef);
+                        return methodref.PeapiMethod;
+                }
+
+                public PEAPI.Field ResolveField (string name, BaseTypeRef ret_type, CodeGen code_gen)
+                {
+                        FieldDef fielddef = (FieldDef) field_table[new DictionaryEntry (name, ret_type.FullName)];
+                        if (fielddef !=null)
+                                return fielddef.Resolve (code_gen, classdef);
+
+                        ExternTypeRef type_ref = code_gen.ThisModule.GetTypeRef (FullName, false);
+                        IFieldRef fieldref = type_ref.GetFieldRef (ret_type, name);
+                        fieldref.Resolve (code_gen);
+
+                        return fieldref.PeapiField;
                 }
 
                 private string MakeFullName ()

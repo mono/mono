@@ -499,7 +499,7 @@ namespace Mono.ILASM {
                                         throw new Exception ("No EntryPoint found.");
 
                                 if (ThisModule == null)
-                                        this_module = new Module (output_file);
+                                        this_module = new Module (Path.GetFileName (output_file));
 
                                 out_stream = new FileStream (output_file, FileMode.Create, FileAccess.Write);
                                 pefile = new PEFile (assembly_name, ThisModule.Name, is_dll, is_assembly, null, out_stream);

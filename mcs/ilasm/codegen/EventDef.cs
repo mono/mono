@@ -66,6 +66,14 @@ namespace Mono.ILASM {
                         return event_def;
                 }
 
+                private PEAPI.MethodDef AsMethodDef (PEAPI.Method method, string type)
+                {
+                        PEAPI.MethodDef methoddef = method as PEAPI.MethodDef;
+                        if (methoddef == null)
+                                throw new Exception (type + " method of event " + name + " not found");
+                        return methoddef;
+                }
+
                 public void Define (CodeGen code_gen, PEAPI.ClassDef classdef)
                 {
                         if (!is_resolved)
@@ -73,22 +81,22 @@ namespace Mono.ILASM {
 
                         if (addon != null) {
                                 addon.Resolve (code_gen);
-                                event_def.AddAddon ((PEAPI.MethodDef) addon.PeapiMethod);
+                                event_def.AddAddon (AsMethodDef (addon.PeapiMethod, "addon"));
                         }
 
                         if (fire != null) {
                                 fire.Resolve (code_gen);
-                                event_def.AddFire ((PEAPI.MethodDef) fire.PeapiMethod);
+                                event_def.AddFire (AsMethodDef (fire.PeapiMethod, "fire"));
                         }
 
                         if (other != null) {
                                 other.Resolve (code_gen);
-                                event_def.AddOther ((PEAPI.MethodDef) other.PeapiMethod);
+                                event_def.AddOther (AsMethodDef (other.PeapiMethod, "other"));
                         }
 
                         if (removeon != null) {
                                 removeon.Resolve (code_gen);
-                                event_def.AddRemoveOn ((PEAPI.MethodDef) removeon.PeapiMethod);
+                                event_def.AddRemoveOn (AsMethodDef (removeon.PeapiMethod, "removeon"));
                         }
                 }
 

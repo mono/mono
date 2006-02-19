@@ -78,6 +78,14 @@ namespace Mono.ILASM {
 
                         return prop_def;
                 }
+                
+                private PEAPI.MethodDef AsMethodDef (PEAPI.Method method, string type)
+                {
+                        PEAPI.MethodDef methoddef = method as PEAPI.MethodDef;
+                        if (methoddef == null)
+                                throw new Exception (type + " method of property " + name + " not found");
+                        return methoddef;
+                }
 
                 public void Define (CodeGen code_gen, PEAPI.ClassDef classdef)
                 {
@@ -86,17 +94,17 @@ namespace Mono.ILASM {
 
                         if (_get != null) {
                                 _get.Resolve (code_gen);
-                                prop_def.AddGetter ((PEAPI.MethodDef) _get.PeapiMethod);
+                                prop_def.AddGetter (AsMethodDef (_get.PeapiMethod, "get"));
                         }
 
                         if (_set != null) {
                                 _set.Resolve (code_gen);
-                                prop_def.AddSetter ((PEAPI.MethodDef) _set.PeapiMethod);
+                                prop_def.AddSetter (AsMethodDef (_set.PeapiMethod, "set"));
                         }
 
                         if (other != null) {
                                 other.Resolve (code_gen);
-                                prop_def.AddOther ((PEAPI.MethodDef) other.PeapiMethod);
+                                prop_def.AddOther (AsMethodDef (other.PeapiMethod, "other"));
                         }
 
                         if (init_value != null)
