@@ -1,3 +1,9 @@
+2006-02-19  Ankit Jain  <jankit@novell.com>
+
+	* CodeGen.cs (CodeGen.ThisModule): New.
+	(CodeGen.Write): Set module name if not set by '.module' directive.
+	* Module.cs: Inherit from ExternRef. 
+
 2006-02-10  Ankit Jain  <jankit@novell.com>
 
 	* CodeGen.cs (CodeGen.ResolveMethod): Throw exception if global method
