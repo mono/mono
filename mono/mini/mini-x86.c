@@ -1033,7 +1033,7 @@ mono_arch_call_opcode2 (MonoCompile *cfg, MonoCallInst *call, int is_virtual) {
 			t = &mono_defaults.int_class->byval_arg;
 		t = mono_type_get_underlying_type (t);
 
-		MONO_INST_NEW (cfg, arg, OP_OUTARG);
+		MONO_INST_NEW (cfg, arg, OP_X86_PUSH);
 
 		in = call->args [i];
 		arg->cil_code = in->cil_code;
@@ -1093,7 +1093,8 @@ mono_arch_call_opcode2 (MonoCompile *cfg, MonoCallInst *call, int is_virtual) {
 						arg->inst_destbasereg = X86_ESP;
 						arg->inst_offset = 0;
 					} else if (t->type == MONO_TYPE_I8 || t->type == MONO_TYPE_U8) {
-						MONO_EMIT_NEW_UNALU (cfg, OP_X86_PUSH, -1, in->dreg + 1);
+						arg->sreg1 ++;
+						MONO_EMIT_NEW_UNALU (cfg, OP_X86_PUSH, -1, in->dreg + 2);
 					}
 				}
 				break;
@@ -1206,8 +1207,9 @@ mono_arch_emit_setret (MonoCompile *cfg, MonoMethod *method, MonoInst *val)
 			/* Nothing to do */
 			return;
 		} else if (ret->type == MONO_TYPE_I8 || ret->type == MONO_TYPE_U8) {
-			MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, X86_EAX, val->dreg);
-			MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, X86_EDX, val->dreg + 1);
+			MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, X86_EAX, val->dreg + 1);
+			MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, X86_EDX, val->dreg + 2);
+			return;
 		}
 	}
 			

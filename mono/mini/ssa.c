@@ -217,7 +217,7 @@ mono_ssa_rename_vars2 (MonoCompile *cfg, int max_vars, MonoBasicBlock *bb, MonoI
 		if (ins->opcode != OP_PHI) {
 			/* SREG1 */
 			if (spec [MONO_INST_SRC1] == 'i') {
-				MonoInst *var = get_vreg_to_inst (cfg, 'i', ins->sreg1);
+				MonoInst *var = get_vreg_to_inst (cfg, ins->sreg1);
 				if (var) {
 					int idx = var->inst_c0;
 					if (stack [idx]) {
@@ -230,7 +230,7 @@ mono_ssa_rename_vars2 (MonoCompile *cfg, int max_vars, MonoBasicBlock *bb, MonoI
 
 			/* SREG2 */
 			if (spec [MONO_INST_SRC2] == 'i') {
-				MonoInst *var = get_vreg_to_inst (cfg, 'i', ins->sreg2);
+				MonoInst *var = get_vreg_to_inst (cfg, ins->sreg2);
 				if (var) {
 					int idx = var->inst_c0;
 					if (stack [idx]) {
@@ -244,8 +244,8 @@ mono_ssa_rename_vars2 (MonoCompile *cfg, int max_vars, MonoBasicBlock *bb, MonoI
 		}
 
 		/* DREG */
-		if ((spec [MONO_INST_DEST] == 'i') && get_vreg_to_inst (cfg, 'i', ins->dreg)) {
-			MonoInst *var = get_vreg_to_inst (cfg, 'i', ins->dreg);
+		if ((spec [MONO_INST_DEST] == 'i') && get_vreg_to_inst (cfg, ins->dreg)) {
+			MonoInst *var = get_vreg_to_inst (cfg, ins->dreg);
 			idx = var->inst_c0;
 			g_assert (idx < max_vars);
 
@@ -410,8 +410,8 @@ mono_ssa_compute (MonoCompile *cfg)
 
 				/* FIXME: Handle OP_LDADDR */
 				/* FIXME: Handle non-ints as well */
-				if ((spec [MONO_INST_DEST] == 'i') && get_vreg_to_inst (cfg, 'i', ins->dreg)) {
-					mono_bitset_set (vinfo [get_vreg_to_inst (cfg, 'i', ins->dreg)->inst_c0].def_in, i);
+				if ((spec [MONO_INST_DEST] == 'i') && get_vreg_to_inst (cfg, ins->dreg)) {
+					mono_bitset_set (vinfo [get_vreg_to_inst (cfg, ins->dreg)->inst_c0].def_in, i);
 				}
 			}
 		}

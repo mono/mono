@@ -955,11 +955,6 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 	if (use_fpstack)
 		rs->ffree_mask = 0xff & ~(regmask (MONO_ARCH_FPSTACK_SIZE));
 
-	/* 
-	 * For large methods, next_vireg can be very large, so g_malloc0 time can
-	 * be prohibitive. So we manually init the reginfo entries used by the 
-	 * bblock.
-	 */
 	max = rs->next_vireg;
 	ins_count = 0;
 
@@ -981,26 +976,51 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 		memset (cfg->reginfo, 0, cfg->reginfo_len * sizeof (RegTrack));
 	}
 
+	/* 
+	 * For large methods, next_vireg can be very large, so g_malloc0 time can
+	 * be prohibitive. So we manually init the reginfo entries used by the 
+	 * bblock.
+	 */
 	for (ins = bb->code; ins; ins = ins->next) {
 		spec = ins_spec [ins->opcode];
 
 		ins_count ++;
 
-		if ((ins->dreg != -1) && (ins->dreg < max))
+		if ((ins->dreg != -1) && (ins->dreg < max)) {
 			memset (&reginfo [ins->dreg], 0, sizeof (RegTrack));
-		if ((ins->sreg1 != -1) && (ins->sreg1 < max))
+#if SIZEOF_VOID_P == 4
+			if (MONO_ARCH_INST_IS_REGPAIR (spec [MONO_INST_DEST])) {
+				/**
+				 * In the new IR, the two vregs of the regpair do not alias the
+				 * original long vreg. shift the vreg here so the rest of the 
+				 * allocator doesn't have to care about it.
+				 */
+				if (cfg->new_ir)
+					ins->dreg ++;
+				memset (&reginfo [ins->dreg + 1], 0, sizeof (RegTrack));
+			}
+#endif
+		}
+		if ((ins->sreg1 != -1) && (ins->sreg1 < max)) {
 			memset (&reginfo [ins->sreg1], 0, sizeof (RegTrack));
-		if ((ins->sreg2 != -1) && (ins->sreg2 < max))
+#if SIZEOF_VOID_P == 4
+			if (MONO_ARCH_INST_IS_REGPAIR (spec [MONO_INST_SRC1])) {
+				if (cfg->new_ir)
+					ins->sreg1 ++;
+				memset (&reginfo [ins->sreg1 + 1], 0, sizeof (RegTrack));
+			}
+#endif
+		}
+		if ((ins->sreg2 != -1) && (ins->sreg2 < max)) {
 			memset (&reginfo [ins->sreg2], 0, sizeof (RegTrack));
 #if SIZEOF_VOID_P == 4
-		/* Regpairs */
-		if ((MONO_ARCH_INST_IS_REGPAIR (spec [MONO_INST_DEST])) && (ins->dreg != -1) && (ins->dreg + 1 < max))
-			memset (&reginfo [ins->dreg + 1], 0, sizeof (RegTrack));
-		if ((MONO_ARCH_INST_IS_REGPAIR (spec [MONO_INST_SRC1])) && (ins->sreg1 != -1) && (ins->sreg1 + 1 < max))
-			memset (&reginfo [ins->sreg1 + 1], 0, sizeof (RegTrack));
-		if ((MONO_ARCH_INST_IS_REGPAIR (spec [MONO_INST_SRC2])) && (ins->sreg2 != -1) && (ins->sreg2 + 1 < max))
-			memset (&reginfo [ins->sreg2 + 1], 0, sizeof (RegTrack));
+			if (MONO_ARCH_INST_IS_REGPAIR (spec [MONO_INST_SRC2])) {
+				if (cfg->new_ir)
+					ins->sreg2 ++;
+				memset (&reginfo [ins->sreg2 + 1], 0, sizeof (RegTrack));
+			}
 #endif
+		}
 	}
 
 	/* Initialized on demand */
