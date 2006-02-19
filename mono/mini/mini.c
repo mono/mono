@@ -1193,6 +1193,12 @@ mono_type_to_load_membase (MonoType *type)
 	case MONO_TYPE_VALUETYPE:
 	case MONO_TYPE_TYPEDBYREF:
 		return CEE_LDOBJ;
+	case MONO_TYPE_GENERICINST:
+		if (mono_type_generic_inst_is_valuetype (type))
+			return CEE_LDOBJ;
+		else
+			return OP_LOAD_MEMBASE;
+		break;
 	default:
 		g_error ("unknown type 0x%02x in type_to_load_membase", type->type);
 	}
