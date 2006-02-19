@@ -38,16 +38,18 @@ using System.Collections;
 using System.Collections.Specialized;
 using System.Text;
 using System.Text.RegularExpressions;
+using Mainsoft.Data.Jdbc.Providers;
 using System.Data.Common;
 
 using java.sql;
 using javax.sql;
 using javax.naming;
-// can not use java.util here - it manes ArrayList an ambiguous reference
+
+using Mainsoft.Data.Configuration;
 
 namespace System.Data.ProviderBase
 {
-	public abstract class AbstractDBConnection : DbConnection
+	public abstract class AbstractDBConnection : DbConnection, ICloneable
 	{
 		#region ObjectNamesHelper
 
@@ -104,210 +106,18 @@ namespace System.Data.ProviderBase
 		}
 
 		#endregion // ObjectNamesHelper
-
-		#region ConnectionStringHelper
-
-		public sealed class ConnectionStringHelper
-		{
-			public static string FindValue(NameValueCollection collection, string[] keys)
-			{
-				if (collection == null || keys == null || keys.Length == 0) {
-					return String.Empty;
-				}
-
-				for(int i=0; i < keys.Length; i++) {
-					string value = FindValue(collection,keys[i]);
-					if (!String.Empty.Equals(value)) {
-						return value;
-					}
-				}
-				return String.Empty;
-			}
-
-			public static string FindValue(NameValueCollection collection, string key)
-			{
-				if (collection == null) {
-					return String.Empty;
-				}
-
-				string value = collection[key];
-				return (value != null) ? value : String.Empty;
-			}
-
-			public static void UpdateValue(NameValueCollection collection,string[] keys,string value)
-			{
-				for(int i=0; i < keys.Length; i++) {
-					if (collection[keys[i]] != null) {
-						collection[keys[i]] = value;
-					}
-				}
-			}
-
-			public static void AddValue(NameValueCollection collection,string[] keys,string value)
-			{
-				for(int i=0; i < keys.Length; i++) {
-					collection[keys[i]] = value;
-				}
-			}
-
-			/**
-			* Parses connection string and builds NameValueCollection 
-			* for all keys.
-			*/ 
-			public static NameValueCollection BuildUserParameters (string connectionString)
-			{
-				NameValueCollection userParameters = new NameValueCollection();
-
-				if (connectionString == null || connectionString.Length == 0) {
-					return userParameters;
-				}
-				connectionString += ";";
-
-				bool inQuote = false;
-				bool inDQuote = false;
-				bool inName = true;
-
-				string name = String.Empty;
-				string value = String.Empty;
-				StringBuilder sb = new StringBuilder ();
-
-				for (int i = 0; i < connectionString.Length; i += 1) {
-					char c = connectionString [i];
-					char peek;
-					if (i == connectionString.Length - 1)
-						peek = '\0';
-					else
-						peek = connectionString [i + 1];
-
-					switch (c) {
-						case '\'':
-							if (inDQuote)
-								sb.Append (c);
-							else if (peek.Equals(c)) {
-								sb.Append(c);
-								i += 1;
-							}
-							else
-								inQuote = !inQuote;
-							break;
-						case '"':
-							if (inQuote)
-								sb.Append(c);
-							else if (peek.Equals(c)) {
-								sb.Append(c);
-								i += 1;
-							}
-							else
-								inDQuote = !inDQuote;
-							break;
-						case ';':
-							if (inDQuote || inQuote)
-								sb.Append(c);
-							else {
-								if (name != String.Empty && name != null) {
-									value = sb.ToString();
-									userParameters [name.Trim()] = value.Trim();
-								}
-								inName = true;
-								name = String.Empty;
-								value = String.Empty;
-								sb = new StringBuilder();
-							}
-							break;
-						case '=':
-							if (inDQuote || inQuote || !inName)
-								sb.Append (c);
-							else if (peek.Equals(c)) {
-								sb.Append (c);
-								i += 1;
-							}
-							else {
-								name = sb.ToString();
-								sb = new StringBuilder();
-								inName = false;
-							}
-							break;
-						case ' ':
-							if (inQuote || inDQuote)
-								sb.Append(c);
-							else if (sb.Length > 0 && !peek.Equals(';'))
-								sb.Append(c);
-							break;
-						default:
-							sb.Append(c);
-							break;
-					}
-				}
-				return userParameters;
-			}
-		}
-
-		#endregion // ConnectionStringHelper
-
-		#region DataSourceCache
-
-		private sealed class DataSourceCache : AbstractDbMetaDataCache
-		{
-			internal DataSource GetDataSource(string dataSourceName,string namingProviderUrl,string namingFactoryInitial)
-			{
-				Hashtable cache = Cache;
-
-				DataSource ds = cache[dataSourceName] as DataSource;
-
-				if (ds != null) {
-					return ds;
-				}
-
-				Context ctx = null;
-				
-				java.util.Properties properties = new java.util.Properties();
-
-				if ((namingProviderUrl != null) && (namingProviderUrl.Length > 0)) {
-					properties.put("java.naming.provider.url",namingProviderUrl);
-				}
-				
-				if ((namingFactoryInitial != null) && (namingFactoryInitial.Length > 0)) {
-					properties.put("java.naming.factory.initial",namingFactoryInitial);
-				}
-
-				ctx = new InitialContext(properties);
- 
-				try {
-					ds = (DataSource)ctx.lookup(dataSourceName);
-				}
-				catch(javax.naming.NameNotFoundException e) {
-					// possible that is a Tomcat bug,
-					// so try to lookup for jndi datasource with "java:comp/env/" appended
-					ds = (DataSource)ctx.lookup("java:comp/env/" + dataSourceName);
-				}
-
-				cache[dataSourceName] = ds;
-				return ds;
-			}
-		}
-
-		#endregion // DatasourceCache
-
-		#region Declarations
-
-		protected internal enum JDBC_MODE { NONE, DATA_SOURCE_MODE, JDBC_DRIVER_MODE, PROVIDER_MODE }
-		protected internal enum PROVIDER_TYPE { NONE, SQLOLEDB, MSDAORA, IBMDADB2 }
-
-		#endregion // Declarations
 		
 		#region Fields
 
-		private static DataSourceCache _dataSourceCache = new DataSourceCache();
 		private const int DEFAULT_TIMEOUT = 15;
 
 		private Connection _jdbcConnnection;
 		private ConnectionState _internalState;
 		private object _internalStateSync = new object();
 
-		private NameValueCollection _userParameters;
-
-		protected string _connectionString = String.Empty;
-		protected string _jdbcUrl;		
+		private string _connectionString = String.Empty;
+		IConnectionStringDictionary _connectionStringBuilder;
+		IConnectionProvider			_connectionProvider;
 
 		private ArrayList _referencedObjects = new ArrayList();	
 		private ObjectNameResolver[] _syntaxPatterns;
@@ -319,7 +129,6 @@ namespace System.Data.ProviderBase
 		public AbstractDBConnection(string connectionString)
 		{
 			_connectionString = connectionString;
-			InitializeSkippedUserParameters();
 		}
 
 		#endregion // Constructors
@@ -334,23 +143,23 @@ namespace System.Data.ProviderBase
 					throw ExceptionHelper.NotAllowedWhileConnectionOpen("ConnectionString",_internalState);
 				}					
 				_connectionString = value;
-				_userParameters = null;
-				_jdbcUrl = null;
+				_connectionProvider = null;
+				_connectionStringBuilder = null;
 			}
 		}
 
 		public override int ConnectionTimeout
 		{
 			get {
-				string timeoutStr = ConnectionStringHelper.FindValue(UserParameters,StringManager.GetStringArray("CON_TIMEOUT"));
-				if (!String.Empty.Equals(timeoutStr)) {
+				string timeoutStr = (string)ConnectionStringBuilder["TIMEOUT"];
+				if (timeoutStr != null && timeoutStr.Length > 0) {
 					try {
 						return Convert.ToInt32(timeoutStr);
 					}
-					catch(FormatException e) {
+					catch(FormatException) {
 						throw ExceptionHelper.InvalidValueForKey("connect timeout");
 					}
-					catch (OverflowException e) {
+					catch (OverflowException) {
 						throw ExceptionHelper.InvalidValueForKey("connect timeout");
 					}
 				}
@@ -360,7 +169,12 @@ namespace System.Data.ProviderBase
 
 		public override String Database
 		{
-			get { return ConnectionStringHelper.FindValue(UserParameters,StringManager.GetStringArray("CON_DATABASE")); }
+			get { 
+				if ((State & ConnectionState.Open) != 0)
+					return JdbcConnection.getCatalog();
+
+				return (string)ConnectionStringBuilder["CATALOG"];
+			}
 		}
 
 		public override ConnectionState State
@@ -490,170 +304,10 @@ namespace System.Data.ProviderBase
 			}
 		}
 
-		protected virtual PROVIDER_TYPE ProviderType
-		{
-			get {
-				if (JdbcMode != JDBC_MODE.PROVIDER_MODE) {
-					return PROVIDER_TYPE.NONE;
-				}
-				
-				string providerStr = ConnectionStringHelper.FindValue(UserParameters,StringManager.GetStringArray("CON_PROVIDER")).ToUpper();
-				if (providerStr.StartsWith("SQLOLEDB")) {
-					return PROVIDER_TYPE.SQLOLEDB;
-				}
-				else if (providerStr.StartsWith("MSDAORA")) {
-					return PROVIDER_TYPE.MSDAORA;
-				}
-				else if (providerStr.StartsWith("IBMDADB2")) {
-					return PROVIDER_TYPE.IBMDADB2;
-				}
-				return PROVIDER_TYPE.NONE;
-			}
-		}
-
-		protected internal virtual JDBC_MODE JdbcMode
-		{
-			get { 
-				string[] conJndiNameStr = StringManager.GetStringArray("CON_JNDI_NAME");
-				if ( !String.Empty.Equals(ConnectionStringHelper.FindValue(UserParameters,conJndiNameStr))) {
-					return JDBC_MODE.DATA_SOURCE_MODE;
-				}
-
-				string[] jdbcDriverStr = StringManager.GetStringArray("JDBC_DRIVER");
-				string[] jdbcUrlStr = StringManager.GetStringArray("JDBC_URL");
-				bool jdbcDriverSpecified = !String.Empty.Equals(ConnectionStringHelper.FindValue(UserParameters,jdbcDriverStr));
-				bool jdbcUrlSpecified = !String.Empty.Equals(ConnectionStringHelper.FindValue(UserParameters,jdbcUrlStr));
-
-				if (jdbcDriverSpecified && jdbcUrlSpecified) {
-					return JDBC_MODE.JDBC_DRIVER_MODE;
-				}
-
-				string[] providerStr = StringManager.GetStringArray("CON_PROVIDER");
-				if (!String.Empty.Equals(ConnectionStringHelper.FindValue(UserParameters,providerStr))) {
-					return JDBC_MODE.PROVIDER_MODE;
-				}
-				
-				return JDBC_MODE.NONE;
-			}
-		}
-
-		protected virtual string JdbcDriverName
-		{
-			get { return String.Empty; }
-		}
-
-		protected abstract DbStringManager StringManager
-		{
-			get;
-		}
-
-		protected virtual string ServerName
-		{
-			get { return DataSource; }
-		}
-
-		protected virtual string CatalogName
-		{
-			get { return Database; }
-		}
-
-		protected virtual string Port
-		{
-			get {
-				string port = ConnectionStringHelper.FindValue(UserParameters, StringManager.GetStringArray("CON_PORT"));
-				switch (ProviderType) {
-					case PROVIDER_TYPE.SQLOLEDB : 
-						if (String.Empty.Equals(port)) {
-							try {
-								port = DbPortResolver.getMSSqlPort(this).ToString();
-							}
-							catch (SQLException e) {
-								throw CreateException(e);
-							}
-						}
-
-						ConnectionStringHelper.AddValue(UserParameters,StringManager.GetStringArray("CON_PORT"),port);
-						break;
-				}
-				return port;
-			}
-		}
-
 		public override string DataSource
 		{
 			get {
-				string dataSource = ConnectionStringHelper.FindValue(UserParameters,StringManager.GetStringArray("CON_DATA_SOURCE"));
-
-				if (ProviderType == PROVIDER_TYPE.SQLOLEDB) {
-					int instanceIdx;
-					if ((instanceIdx = dataSource.IndexOf("\\")) != -1) {
-						// throw out named instance name
-						dataSource = dataSource.Substring(0,instanceIdx);
-					}
-
-					if (dataSource != null && dataSource.StartsWith("(") && dataSource.EndsWith(")")) {						
-						dataSource = dataSource.Substring(1,dataSource.Length - 2);
-					}
-
-					if(String.Empty.Equals(dataSource) || (String.Compare("local",dataSource,true) == 0)) {
-						dataSource = "localhost";
-					}
-				}
-				return dataSource;
-			}
-		}
-
-		internal string InstanceName
-		{
-			get {
-				string dataSource = ConnectionStringHelper.FindValue(UserParameters,StringManager.GetStringArray("CON_DATA_SOURCE"));
-				string instanceName = String.Empty;
-				if (ProviderType == PROVIDER_TYPE.SQLOLEDB) {
-					int instanceIdx;
-					if ((instanceIdx = dataSource.IndexOf("\\")) == -1) {
-						// no named instance specified - use a default name
-						instanceName = StringManager.GetString("SQL_DEFAULT_INSTANCE_NAME");
-					}
-					else {
-						// get named instance name
-						instanceName = dataSource.Substring(instanceIdx + 1);
-					}
-				}
-				return instanceName;
-			}
-		}
-
-		protected virtual string User
-		{
-			get { return ConnectionStringHelper.FindValue(UserParameters,StringManager.GetStringArray("CON_USER_ID")); }
-		}
-
-		protected virtual string Password
-		{
-			get { return ConnectionStringHelper.FindValue(UserParameters,StringManager.GetStringArray("CON_PASSWORD")); }
-		}
-
-		protected NameValueCollection UserParameters
-		{
-			get {
-				if (_userParameters == null) {
-					_userParameters = ConnectionStringHelper.BuildUserParameters(ConnectionString);
-				}
-				return _userParameters;
-			}
-		}
-
-		internal String JdbcUrl 
-		{
-			get { 
-				if ( UserParameters == null) {
-					return String.Empty;
-				}
-
-				if (_jdbcUrl == null) {
-					_jdbcUrl = BuildJdbcUrl();
-				}
-				return _jdbcUrl;
+				return (string)ConnectionStringBuilder["SERVERNAME"];
 			}
 		}
 
@@ -669,16 +323,6 @@ namespace System.Data.ProviderBase
 			set { _jdbcConnnection = value; }
 		}
 
-		protected virtual string[] ResourceIgnoredKeys
-		{
-			get { return new string[0]; }
-		}
-
-		protected virtual Hashtable SkippedUserParameters
-		{
-			get { return new Hashtable(new CaseInsensitiveHashCodeProvider(),new CaseInsensitiveComparer()); }
-		}
-
 		internal ObjectNameResolver[] SyntaxPatterns
 		{
 			get {
@@ -688,6 +332,34 @@ namespace System.Data.ProviderBase
 				return _syntaxPatterns;
 			}
 		}
+
+		protected internal IConnectionProvider ConnectionProvider { 
+			get {
+				try {
+					if (_connectionProvider == null)
+						_connectionProvider = GetConnectionProvider();
+
+					return _connectionProvider;
+				}
+				catch(SQLException exp) {
+					throw CreateException(exp);
+				}
+			}
+		}
+		protected internal IConnectionStringDictionary ConnectionStringBuilder {
+			get {
+				try {
+					if (_connectionStringBuilder == null)
+						_connectionStringBuilder = ConnectionProvider.GetConnectionStringBuilder(ConnectionString);
+
+					return _connectionStringBuilder;
+				}
+				catch(SQLException exp) {
+					throw CreateException(exp);
+				}
+			}
+		}
+		protected abstract IConnectionProvider GetConnectionProvider();
 
 		#endregion // Properties
 
@@ -708,33 +380,23 @@ namespace System.Data.ProviderBase
 			try {
 				ClearReferences();
 				if (JdbcConnection != null && !JdbcConnection.isClosed()) {
+					if (!JdbcConnection.getAutoCommit())
+						JdbcConnection.rollback();
 					JdbcConnection.close();
 				}
 			}
-			catch (SQLException e) {
-				// suppress exception
-				JdbcConnection = null;
-#if DEBUG
-				Console.WriteLine("Exception catched at Conection.Close() : {0}\n{1}\n{2}",e.GetType().FullName,e.Message,e.StackTrace);
-#endif
-			}
 			catch (Exception e) {
 				// suppress exception
-				JdbcConnection = null;
 #if DEBUG
 				Console.WriteLine("Exception catched at Conection.Close() : {0}\n{1}\n{2}",e.GetType().FullName,e.Message,e.StackTrace);
 #endif
 			}
 			finally {
+				JdbcConnection = null;
 				lock(_internalStateSync) {
 					_internalState = ConnectionState.Closed;
 				}
 			}
-		}
-
-		protected internal virtual void CopyTo(AbstractDBConnection target)
-		{
-			target._connectionString = _connectionString;
 		}
 
 		internal protected virtual void OnSqlException(SQLException exp)
@@ -799,20 +461,9 @@ namespace System.Data.ProviderBase
 				if (JdbcConnection != null && !JdbcConnection.isClosed()) {
 					throw ExceptionHelper.ConnectionAlreadyOpen(_internalState);
 				}
-	
-				switch(JdbcMode) {
-					case JDBC_MODE.DATA_SOURCE_MODE :
-						JdbcConnection = GetConnectionFromDataSource();
-						break;
 
-					case JDBC_MODE.JDBC_DRIVER_MODE:
-						JdbcConnection = GetConnectionFromJdbcDriver();
-						break;
+				JdbcConnection = ConnectionProvider.GetConnection (ConnectionStringBuilder);
 
-					case JDBC_MODE.PROVIDER_MODE : 					
-						JdbcConnection = GetConnectionFromProvider();
-						break;
-				}
 				IsOpened = true;
 
 				OnStateChanged(ConnectionState.Closed, ConnectionState.Open);
@@ -835,7 +486,7 @@ namespace System.Data.ProviderBase
 				ClearReferences();
 				Connection con = JdbcConnection;				
 				con.setCatalog(database);
-				ConnectionStringHelper.UpdateValue(UserParameters,StringManager.GetStringArray("CON_DATABASE"),database);
+//				ConnectionStringHelper.UpdateValue(UserParameters,StringManager.GetStringArray("CON_DATABASE"),database);
 			}
 			catch (SQLWarning warning) {
 				OnSqlWarning(warning);
@@ -896,79 +547,6 @@ namespace System.Data.ProviderBase
 			base.Dispose(disposing);
 		}
 
-		protected internal virtual void ValidateConnectionString(string connectionString)
-		{
-			JDBC_MODE currentJdbcMode = JdbcMode;
-			
-			if (currentJdbcMode == JDBC_MODE.NONE) {
-				string[] jdbcDriverStr = StringManager.GetStringArray("JDBC_DRIVER");
-				string[] jdbcUrlStr = StringManager.GetStringArray("JDBC_URL");
-				bool jdbcDriverSpecified = !String.Empty.Equals(ConnectionStringHelper.FindValue(UserParameters,jdbcDriverStr));
-				bool jdbcUrlSpecified = !String.Empty.Equals(ConnectionStringHelper.FindValue(UserParameters,jdbcUrlStr));
-
-				if (jdbcDriverSpecified ^ jdbcUrlSpecified) {
-					throw new ArgumentException("Invalid format of connection string. If you want to use third-party JDBC driver, the format is: \"JdbcDriverClassName=<jdbc driver class name>;JdbcURL=<jdbc url>\"");
-				}				
-			}
-		}
-
-		protected virtual string BuildJdbcUrl()
-		{
-			switch (JdbcMode) {
-				case JDBC_MODE.JDBC_DRIVER_MODE :
-					return ConnectionStringHelper.FindValue(UserParameters,StringManager.GetStringArray("JDBC_URL"));
-				default :
-					return String.Empty;
-			}
-		}
-
-		protected java.util.Properties BuildProperties()
-		{
-			java.util.Properties properties = new java.util.Properties();
-
-			string user = User;
-			if (user != null && user.Length > 0)
-				properties.put("user", user);
-			string password = Password;
-			if (user != null && user.Length > 0)
-				properties.put("password", password);
-
-			string[] userKeys = UserParameters.AllKeys;
-
-			for(int i=0; i < userKeys.Length; i++) {
-				string userKey = userKeys[i];
-				string userParameter = UserParameters[userKey];
-				if (!SkipUserParameter(userKey)) {
-					properties.put(userKey,userParameter);
-				}
-			}
-			return properties;
-		}
-
-		protected virtual bool SkipUserParameter(string parameterName)
-		{
-			if (SkippedUserParameters.Count == 0) {
-				// skipped parameters not initialized - skip all
-				return true;
-			}
-
-			return SkippedUserParameters.Contains(parameterName);
-		}
-
-		protected virtual void InitializeSkippedUserParameters()
-		{
-			if (SkippedUserParameters.Count > 0) {
-				return;
-			}
-
-			for(int i=0; i < ResourceIgnoredKeys.Length; i++) {
-				string[] userKeys = StringManager.GetStringArray(ResourceIgnoredKeys[i]);
-				for(int j=0; j < userKeys.Length; j++) {
-					SkippedUserParameters.Add(userKeys[j],userKeys[j]);
-				}
-			}
-		}
- 
 		internal void ValidateBeginTransaction()
 		{
 			if (State != ConnectionState.Open) {
@@ -978,48 +556,6 @@ namespace System.Data.ProviderBase
 			if (!JdbcConnection.getAutoCommit()) {
 				throw new System.InvalidOperationException("Parallel transactions are not supported.");
 			}
-		}
-
-		protected internal virtual Connection GetConnectionFromProvider()
-		{
-			ActivateJdbcDriver(JdbcDriverName);
-			DriverManager.setLoginTimeout(ConnectionTimeout);
-			java.util.Properties properties = BuildProperties();
-			return DriverManager.getConnection (JdbcUrl, properties);
-		}
-
-		internal Connection GetConnectionFromDataSource()
-		{
-			string dataSourceJndi = ConnectionStringHelper.FindValue(UserParameters, StringManager.GetStringArray("CON_JNDI_NAME"));
-			string namingProviderUrl = ConnectionStringHelper.FindValue(UserParameters, StringManager.GetStringArray("CON_JNDI_PROVIDER"));
-			string namingFactoryInitial = ConnectionStringHelper.FindValue(UserParameters, StringManager.GetStringArray("CON_JNDI_FACTORY"));
-			DataSource ds = _dataSourceCache.GetDataSource(dataSourceJndi,namingProviderUrl,namingFactoryInitial);
-			try {
-				ds.setLoginTimeout(ConnectionTimeout);
-			}
-			catch (java.lang.Exception) {
-				// WebSphere does not allows dynamicall change of login timeout
-				// setLoginTimeout is not supported yet
-				// in Tomcat data source.
-				// In this case we work wthout timeout.
-			}
-			return ds.getConnection();
-		}
-
-		internal virtual Connection GetConnectionFromJdbcDriver()
-		{
-			string[] jdbcDriverStr = StringManager.GetStringArray("JDBC_DRIVER");
-			string[] jdbcUrlStr = StringManager.GetStringArray("JDBC_URL");
-		
-			string jdbcDriverName = ConnectionStringHelper.FindValue(UserParameters,jdbcDriverStr);
-			string jdbcUrl = ConnectionStringHelper.FindValue(UserParameters,jdbcUrlStr);
-
-			ActivateJdbcDriver(jdbcDriverName);
-			DriverManager.setLoginTimeout(ConnectionTimeout);
-
-			java.util.Properties properties = BuildProperties();
-
-			return DriverManager.getConnection(jdbcUrl,properties);
 		}
 
 		internal ArrayList GetProcedureColumns(String procedureString, AbstractDbCommand command)
@@ -1152,30 +688,20 @@ namespace System.Data.ProviderBase
 			return col;
 		}
 
-		protected static void ActivateJdbcDriver(string driver)
-		{
-			if(driver != null) {
-				try {
-					java.lang.Class.forName(driver).newInstance();
-				}
-				catch (java.lang.ClassNotFoundException e) {
-					throw new TypeLoadException(e.Message);
-				}
-				catch (java.lang.InstantiationException e) {
-					throw new MemberAccessException(e.Message);
-				}
-                catch (java.lang.IllegalAccessException e) {
-					throw new MissingMethodException(e.Message);
-				}
-			}
-		}
-
-		protected String BuildMsSqlUrl()
-		{
-			return StringManager.GetString("SQL_JDBC_URL") //"jdbc:microsoft:sqlserver://"
-				+ ServerName + ":" + Port + ";DatabaseName=" + CatalogName;
-		}
-
 		#endregion // Methods	
+
+		#region ICloneable Members
+
+		public virtual object Clone() {
+			AbstractDBConnection con  = (AbstractDBConnection)MemberwiseClone();
+			con._internalState = ConnectionState.Closed;
+			con._internalStateSync = new object();
+			con._jdbcConnnection = null;
+			con._referencedObjects = new ArrayList();
+			con._syntaxPatterns = null;
+			return con;
+		}
+
+		#endregion
 	}
 }

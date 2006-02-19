@@ -18,8 +18,16 @@
 			<Include>
 				<File RelPath="Assembly\AssemblyInfo.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="Assembly\Consts.cs.in" Link="..\..\build\common\Consts.cs.in" SubType="Code" BuildAction="Compile"/>
-<File RelPath="Assembly\Locale.cs" Link="..\..\build\common\Locale.cs" SubType="Code" BuildAction="Compile"/>
- <File RelPath="Assembly\MonoTODOAttribute.cs" Link="..\..\build\common\MonoTODOAttribute.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="Assembly\Locale.cs" Link="..\..\build\common\Locale.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="Assembly\MonoTODOAttribute.cs" Link="..\..\build\common\MonoTODOAttribute.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="Mainsoft.Data.Configuration.jvm\IKeyMapper.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="Mainsoft.Data.Configuration.jvm\KeyMapperBase.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="Mainsoft.Data.Configuration.jvm\ProvidersSectionHandler.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="Mainsoft.Data.Jdbc.Providers.jvm\GenericProvider.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="Mainsoft.Data.Jdbc.Providers.jvm\IProvider.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="Mainsoft.Data.Jdbc.Providers.jvm\OleDbDB2Provider.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="Mainsoft.Data.Jdbc.Providers.jvm\OleDbOracleProvider.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="Mainsoft.Data.Jdbc.Providers.jvm\OleDbSqlServerProvider.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="Mono.Data.SqlExpressions\Aggregation.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="Mono.Data.SqlExpressions\ArithmeticExpressions.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="Mono.Data.SqlExpressions\BooleanExpressions.cs" SubType="Code" BuildAction="Compile"/>
@@ -225,7 +233,6 @@
 				<File RelPath="System.Data.OleDb.jvm\OleDbCommand.cs" SubType="Component" BuildAction="Compile"/>
 				<File RelPath="System.Data.OleDb.jvm\OleDbCommandBuilder.cs" SubType="Component" BuildAction="Compile"/>
 				<File RelPath="System.Data.OleDb.jvm\OleDbConnection.cs" SubType="Component" BuildAction="Compile"/>
-				<File RelPath="System.Data.OleDb.jvm\OleDbConnectionFactory.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.OleDb.jvm\OleDbConvert.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.OleDb.jvm\OleDbDataAdapter.cs" SubType="Component" BuildAction="Compile"/>
 				<File RelPath="System.Data.OleDb.jvm\OleDbDataReader.cs" SubType="Code" BuildAction="Compile"/>
@@ -268,14 +275,10 @@
 				<File RelPath="System.Data.ProviderBase.jvm\AbstractDBParameter.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.ProviderBase.jvm\AbstractDbParameterCollection.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.ProviderBase.jvm\AbstractTransaction.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Data.ProviderBase.jvm\DbPortResolver.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Data.ProviderBase.jvm\DbStringManager.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.ProviderBase.jvm\DbConvert.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Data.ProviderBase.jvm\OleDbStrings.resx" BuildAction="EmbeddedResource"/>
 				<File RelPath="System.Data.ProviderBase.jvm\ParameterMetadataWrapper.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.ProviderBase.jvm\ReaderCache.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.ProviderBase.jvm\regex.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Data.ProviderBase.jvm\SqlClientStrings.resx" BuildAction="EmbeddedResource"/>
 				<File RelPath="System.Data.SqlClient.jvm\ISqlNotificationReceiver.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.SqlClient.jvm\MetaType.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.SqlClient.jvm\SqlClientPermission.cs" SubType="Code" BuildAction="Compile"/>
@@ -297,8 +300,8 @@
 				<File RelPath="System.Data.SqlClient.jvm\SqlInfoMessageEventHandler.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.SqlClient.jvm\SqlParameter.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.SqlClient.jvm\SqlParameterCollection.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Data.SqlClient.jvm\SqlParameterConverter.cs" BuildAction="Compile"/>
-				<File RelPath="System.Data.SqlClient.jvm\SqlResultSet.cs" BuildAction="Compile"/>
+				<File RelPath="System.Data.SqlClient.jvm\SqlParameterConverter.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Data.SqlClient.jvm\SqlResultSet.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.SqlClient.jvm\SqlRowUpdatedEventArgs.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.SqlClient.jvm\SqlRowUpdatedEventHandler.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.SqlClient.jvm\SqlRowUpdatingEventArgs.cs" SubType="Code" BuildAction="Compile"/>
