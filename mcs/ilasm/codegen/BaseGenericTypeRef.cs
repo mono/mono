@@ -27,12 +27,14 @@ namespace Mono.ILASM {
 
                 public override GenericTypeInst GetGenericTypeInst (GenericArguments gen_args)
                 {
-                        throw new Exception (String.Format ("Invalid attempt to create '{0}''{1}'", FullName, gen_args.ToString ()));
+                        Report.Error ("Invalid attempt to create '" + FullName + "''" + gen_args.ToString () + "'");
+                        return null;
                 }
 
                 public override PEAPI.Type ResolveInstance (CodeGen code_gen, GenericArguments gen_args)
                 {
-                        throw new Exception (String.Format ("Invalid attempt to create '{0}''{1}'", FullName, gen_args.ToString ()));
+                        Report.Error ("Invalid attempt to create '" + FullName + "''" + gen_args.ToString () + "'");
+                        return null;
                 }
         }
 

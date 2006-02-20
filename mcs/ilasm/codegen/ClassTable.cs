@@ -191,7 +191,7 @@ namespace Mono.ILASM {
                                 ClassTableItem table_item = (ClassTableItem) dic_entry.Value;
                                 if (table_item.CheckDefined ())
                                         continue;
-                                throw new Exception (String.Format ("Type: {0} is not defined.", dic_entry.Key));
+                                Report.Error (String.Format ("Type: {0} is not defined.", dic_entry.Key));
                         }
                 }
 
@@ -203,7 +203,7 @@ namespace Mono.ILASM {
                         ClassTableItem item = table[full_name] as ClassTableItem;
 
                         if ((item != null) && (item.Defined)) {
-                                throw new Exception (String.Format ("Class: {0} defined in multiple locations.",
+                                Report.Error (String.Format ("Class: {0} defined in multiple locations.",
                                         full_name));
                         }
                 }

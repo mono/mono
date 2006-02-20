@@ -1,3 +1,8 @@
+2006-02-20  Ankit Jain  <jankit@novell.com>
+
+	* PEAPI.cs (PEFileException): Update error message.
+	* Metadata.cs: Update to throw PEFileException instead of Exception.     
+
 2006-02-19  Ankit Jain  <jankit@novell.com>
 
 	* Metadata.cs (Module): Implment IExternRef to allow reference to types

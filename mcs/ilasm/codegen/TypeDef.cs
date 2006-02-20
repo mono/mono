@@ -177,7 +177,7 @@ namespace Mono.ILASM {
 
                         DictionaryEntry entry = new DictionaryEntry (fielddef.Name, fielddef.Type.FullName);
                         if (field_table [entry] != null)
-                                throw new Exception (String.Format ("Duplicate field declaration: {0} {1}", fielddef.Type.FullName, fielddef.Name));
+                                Report.Error ("Duplicate field declaration: " + fielddef.Type.FullName + " " + fielddef.Name);
                         field_table.Add (entry, fielddef);
                         field_list.Add (fielddef);
                 }
@@ -190,7 +190,7 @@ namespace Mono.ILASM {
                         }
 
                         if (method_table [methoddef.Signature] != null)
-                                throw new Exception (String.Format ("Duplicate method declaration: {0}", methoddef.Signature));
+                                Report.Error ("Duplicate method declaration: " + methoddef.Signature);
 
                         method_table.Add (methoddef.Signature, methoddef);
                 }
@@ -198,7 +198,7 @@ namespace Mono.ILASM {
                 public void BeginEventDef (EventDef event_def)
                 {
                         if (current_event != null)
-                                throw new Exception ("An event definition was not closed.");
+                                Report.Error ("An event definition was not closed.");
 
                         current_event = event_def;
                 }
@@ -215,7 +215,7 @@ namespace Mono.ILASM {
                 public void BeginPropertyDef (PropertyDef property_def)
                 {
                         if (current_property != null)
-                                throw new Exception ("A property definition was not closed.");
+                                Report.Error ("A property definition was not closed.");
 
                         current_property = property_def;
                 }
@@ -306,7 +306,7 @@ namespace Mono.ILASM {
 
                         if (is_intransit) {
                                 // Circular definition
-                                throw new Exception ("Circular definition of class: " + FullName);
+                                Report.Error ("Circular definition of class: " + FullName);
                         }
 
                         if (outer != null) {
@@ -327,7 +327,7 @@ namespace Mono.ILASM {
 
                                 is_intransit = false;
                                 if (parent.PeapiClass == null) {
-                                        throw new Exception ("this type can not be a base type: "
+                                        Report.Error ("this type can not be a base type: "
                                                         + parent);
                                 }
 

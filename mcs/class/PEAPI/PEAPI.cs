@@ -1197,7 +1197,7 @@ namespace PEAPI {
 	/// Error for invalid PE file
 	/// </summary>
 	public class PEFileException : System.Exception {
-		public PEFileException(string msg) : base("Error in PE File:  " + msg) { }
+		public PEFileException(string msg) : base(msg) { }
 	}
 
 	public class NotYetImplementedException : System.Exception  {

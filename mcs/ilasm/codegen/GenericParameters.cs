@@ -50,7 +50,7 @@ namespace Mono.ILASM {
 		public void AddConstraint (BaseTypeRef constraint)
 		{
 			if (constraint == null)
-				throw new ArgumentException ("constraint");
+				throw new InternalErrorException ();
 
 			if (constraintsList == null)
 				constraintsList = new ArrayList ();
@@ -140,7 +140,7 @@ namespace Mono.ILASM {
 		public void Add (GenericParameter gen_param)
 		{
 			if (gen_param == null)
-				throw new ArgumentException ("gen_param");
+				throw new InternalErrorException ();
 
 			if (param_list == null)
 				param_list = new ArrayList ();
@@ -152,8 +152,7 @@ namespace Mono.ILASM {
 		public GenericParameter GetGenericParam (string id)
 		{
 			if (param_list == null)
-				//FIXME: Report error
-				throw new Exception (String.Format ("Invalid type parameter '{0}'", id));
+				Report.Error ("Invalid type parameter '" + id + "'");
 
 			foreach (GenericParameter param in param_list)
 				if (param.Id == id)

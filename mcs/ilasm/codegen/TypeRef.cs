@@ -61,7 +61,7 @@ namespace Mono.ILASM {
                         base_type = code_gen.TypeManager.GetPeapiType (full_name);
 
                         if (base_type == null) {
-                                code_gen.Report.Error ("Reference to undefined class '" +
+                                Report.Error ("Reference to undefined class '" +
                                                        FullName + "'");
                                 return;
                         }

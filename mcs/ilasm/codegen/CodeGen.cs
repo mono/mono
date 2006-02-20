@@ -25,7 +25,6 @@ namespace Mono.ILASM {
 
                 private PEFile pefile;
                 private string assembly_name;
-                private Report report;
                 private ExternAssembly current_assemblyref;
                 private ExternModule current_moduleref;
                 private string current_namespace;
@@ -75,12 +74,11 @@ namespace Mono.ILASM {
                 private Module this_module;
 
                 public CodeGen (string output_file, bool is_dll, bool is_assembly,
-				bool debugging_info, Report report)
+				bool debugging_info)
                 {
                         this.output_file = output_file;
                         this.is_dll = is_dll;
                         this.is_assembly = is_assembly;
-                        this.report = report;
 
 			if (debugging_info)
 				symwriter = new SymbolWriter (CreateDebugFile (output_file));
@@ -117,10 +115,6 @@ namespace Mono.ILASM {
 
                 public PEFile PEFile {
                         get { return pefile; }
-                }
-
-                public Report Report {
-                        get { return report; }
                 }
 
 		public SymbolWriter SymbolWriter {
@@ -171,7 +165,7 @@ namespace Mono.ILASM {
                         set { 
                                 /* if (!value) error: unsetting entrypoint ? */
                                 if (entry_point)
-                                        throw new Exception ("Multiple .entrypoint declarations.");
+                                        Report.Error ("Multiple .entrypoint declarations.");
                                 entry_point = value;
                         }                
                 }
@@ -255,8 +249,7 @@ namespace Mono.ILASM {
                 public void SetAssemblyName (string name)
                 {
                         if (assembly_name != null && assembly_name != name)
-                                //FIXME: Report error
-                                throw new Exception ("Multiple assembly declarations");
+                                Report.Error ("Multiple assembly declarations");
                         assembly_name = name;
                         if (assembly_name != "mscorlib")
                                 ExternTable.AddCorlib ();
@@ -495,9 +488,6 @@ namespace Mono.ILASM {
                         FileStream out_stream = null;
 
                         try {
-                                if (!is_dll && !HasEntryPoint)
-                                        throw new Exception ("No EntryPoint found.");
-
                                 if (ThisModule == null)
                                         this_module = new Module (Path.GetFileName (output_file));
 
@@ -558,8 +548,6 @@ namespace Mono.ILASM {
 					Guid guid = pefile.GetThisModule ().Guid;
 					symwriter.Write (guid);
 				}
-                        } catch {
-                                throw;
                         } finally {
                                 if (out_stream != null)
                                         out_stream.Close ();
@@ -570,7 +558,7 @@ namespace Mono.ILASM {
                 {
                         MethodDef methoddef = (MethodDef) global_method_table[signature];
                         if (methoddef == null)
-                                throw new Exception (String.Format ("Unable to resolve global method : {0}", signature));
+                                Report.Error ("Unable to resolve global method : " + signature);
 
                         return methoddef.Resolve (this);
                 }
@@ -588,7 +576,7 @@ namespace Mono.ILASM {
                 {
                         FieldDef fielddef = (FieldDef) global_field_table[new DictionaryEntry (name, type_name)]; 
                         if (fielddef == null)
-                                throw new Exception (String.Format ("Unable to resolve global field : {0} {1}", type_name, name));
+                                Report.Error (String.Format ("Unable to resolve global field : {0} {1}", type_name, name));
 
                         return fielddef.Resolve (this);
                 }

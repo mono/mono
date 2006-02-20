@@ -1,3 +1,14 @@
+2006-02-20  Ankit Jain  <jankit@novell.com>
+
+	* Report.cs (Report): Make all methods,fields static.
+	(Report.Error): Update to throw ILAsmException.
+	(ILAsmException): New.
+	(InternalErrorException): New. Derive from ILAsmException.
+	* Driver.cs (Driver.Run): Catch ILAsmException and PEFileException and
+	print error messages instead of dumping the stack trace, and delete the
+	output file if CodeGen.Write() fails.
+	Move the check for entrypoint from CodeGen.Write to here.
+
 2006-01-19  Ankit Jain  <jankit@novell.com>
 
 	* ilasm.exe.sources: Add Module.cs to the build.
