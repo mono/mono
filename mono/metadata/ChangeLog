@@ -1,5 +1,16 @@
 2006-02-21  Raja R Harinath  <harinath@gmail.com>
 
+	Fix assertion triggered when compiling nemerle.
+	* class.c (mono_get_shared_generic_inst): Rename from
+	get_shared_inst and make non-static.
+	* loader.c (mono_get_shared_generic_method): New.  Used to create
+	the MonoGenericContext-equivalent of a MonoGenericContainer.
+	(mono_get_method_from_token): Initialize the 'context' field of
+	the created MonoGenericContainer.
+	* reflection.c (reflection_methodbuilder_to_mono_method): Likewise.
+	* metadata.c (get_constraints): Add sanity check.
+	* class-internals.h: Add new internal methods.
+
 	* reflection.c (verify_safe_for_managed_space): New sanity check.
 	Currently checks that owner-less generic parameters aren't allowed
 	in managed space.
