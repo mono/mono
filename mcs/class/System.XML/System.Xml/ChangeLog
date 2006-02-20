@@ -1,5 +1,10 @@
 2006-02-20  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlElement.cs : make use of HasAttributes. Remove extra check.
+	  10% speed improvement.
+
+2006-02-20  Atsushi Enomoto <atsushi@ximian.com>
+
 	* DTDValidatingReader2.cs : added Source XmlReader property for
 	  XsdValidatingReader use (see XsdValidatingReader change as well).
 

@@ -414,18 +414,21 @@ namespace System.Xml
 
 		public override void WriteTo (XmlWriter w)
 		{
-			w.WriteStartElement (NamespaceURI == null || NamespaceURI.Length == 0 ? String.Empty : Prefix, LocalName, NamespaceURI);
+			w.WriteStartElement (
+				name.NS == null || name.NS.Length == 0 ? String.Empty : name.Prefix,
+				name.LocalName,
+				name.NS);
 
-			for (int i = 0; i < Attributes.Count; i++)
-				if (Attributes [i].Specified)
-					Attributes [i].WriteTo(w);
+			if (HasAttributes)
+				for (int i = 0; i < Attributes.Count; i++)
+					Attributes [i].WriteTo (w);
 
-			if (IsEmpty)
-				w.WriteEndElement ();
-			else {
-				WriteContentTo (w);
+			WriteContentTo (w);
+
+			if (isNotEmpty)
 				w.WriteFullEndElement ();
-			}
+			else
+				w.WriteEndElement ();
 		}
 
 		#endregion
