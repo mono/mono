@@ -362,14 +362,18 @@ namespace System
 				name = attr.MemberName;
 			}
 			bool ignoreCase = (invokeAttr & BindingFlags.IgnoreCase) != 0;
-			bool throwMissingMethodException = false;
+			string throwMissingMethodDescription = null;
 			bool throwMissingFieldException = false;
+			
 			if ((invokeAttr & BindingFlags.InvokeMethod) != 0) {
 				MethodInfo[] methods = GetMethodsByName (name, invokeAttr, ignoreCase, this);
 				object state = null;
 				MethodBase m = binder.BindToMethod (invokeAttr, methods, ref args, modifiers, culture, namedParameters, out state);
 				if (m == null) {
-					throwMissingMethodException = true;
+					if (methods.Length > 0)
+						throwMissingMethodDescription = "The best match for method " + name + " has some invalid parameter.";
+					else
+						throwMissingMethodDescription = "Cannot find method " + name + ".";
 				} else {
 					object result = m.Invoke (target, invokeAttr, binder, args, culture);
 					binder.ReorderArgumentArray (ref args, state);
@@ -441,10 +445,10 @@ namespace System
 					return result;
 				}
 			}
-			if (throwMissingMethodException)
-				throw new MissingMethodException();
+			if (throwMissingMethodDescription != null)
+				throw new MissingMethodException(throwMissingMethodDescription);
 			if (throwMissingFieldException)
-				throw new MissingFieldException();
+				throw new MissingFieldException("Cannot find variable " + name + ".");
 
 			return null;
 		}

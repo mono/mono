@@ -1,3 +1,9 @@
+
+Mon Feb 20 11:19:54 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* MonoType.cs: patch from Joachim Ante <joe@otee.dk> to
+	improve error messages.
+
 2006-02-15  Martin Baulig  <martin@ximian.com>
 
 	* Type.cs (Type.IsGenericInstance): Removed.
