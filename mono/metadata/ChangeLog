@@ -1,3 +1,13 @@
+2006-02-21  Raja R Harinath  <harinath@gmail.com>
+
+	* reflection.c (verify_safe_for_managed_space): New sanity check.
+	Currently checks that owner-less generic parameters aren't allowed
+	in managed space.
+	(mono_type_get_object): Use it.
+	* icall.c (ves_icall_MonoType_GetGenericArguments): Remove checks
+	that are now in mono_type_get_object.
+	(ves_icall_MonoMethod_GetGenericArguments): Likewise.
+
 2006-02-19  Raja R Harinath  <harinath@gmail.com>
 
 	* metadata.c (mono_type_create_from_typespec): Rename from
