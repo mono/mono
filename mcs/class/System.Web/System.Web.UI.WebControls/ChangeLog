@@ -1,5 +1,10 @@
 2006-02-20  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
+	* Image.cs: fixed missing border="0" attribute, when image has style, 
+	but border width is not specified.
+
+2006-02-20  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
 	* CheckBox.cs: fixed InternalAddAttributesToRender, Render to
 	correct the "disabled" attribute in CheckBoxList
 	* CheckBoxList.cs: fixed RenderItem, to correct the "disabled" 

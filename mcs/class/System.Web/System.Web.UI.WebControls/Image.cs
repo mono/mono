@@ -225,8 +225,9 @@ namespace System.Web.UI.WebControls {
 				break;
 			}
 
-			// if no style is defined default image to no border
-			if (!ControlStyleCreated) {
+			// if border-with is not specified in style or 
+			// no style is defined - set image to no border
+			if (!ControlStyleCreated || ControlStyle.BorderWidth.IsEmpty) {
 				writer.AddAttribute (HtmlTextWriterAttribute.Border, "0");
 			}
 		}
