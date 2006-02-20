@@ -391,9 +391,6 @@ namespace System.Web.UI.WebControls {
 					w.RenderEndTag ();
 				}
 
-				if (!Enabled)
-					w.AddAttribute (HtmlTextWriterAttribute.Disabled, "disabled");
-
 				w.AddAttribute (HtmlTextWriterAttribute.Id, ClientID);
 				w.AddAttribute (HtmlTextWriterAttribute.Type, render_type);
 				w.AddAttribute (HtmlTextWriterAttribute.Name, NameAttribute);
@@ -470,6 +467,8 @@ namespace System.Web.UI.WebControls {
 
 		internal virtual void InternalAddAttributesToRender (HtmlTextWriter w)
 		{
+			if (!Enabled)
+				w.AddAttribute (HtmlTextWriterAttribute.Disabled, "disabled");
 		}
 	}
 }

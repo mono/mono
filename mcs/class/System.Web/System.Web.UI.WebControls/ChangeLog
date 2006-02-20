@@ -1,5 +1,12 @@
 2006-02-20  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
+	* CheckBox.cs: fixed InternalAddAttributesToRender, Render to
+	correct the "disabled" attribute in CheckBoxList
+	* CheckBoxList.cs: fixed RenderItem, to correct the "disabled" 
+	attribute in CheckBoxList
+
+2006-02-20  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
 	* CheckBox.cs: fixed Render function, removed rendering of empty 
 	<span> element if ControlStyleCreated but it's empty.
 	fixed "disabled" attribute, it should be placed into span element

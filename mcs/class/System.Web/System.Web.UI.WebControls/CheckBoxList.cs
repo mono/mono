@@ -338,18 +338,9 @@ namespace System.Web.UI.WebControls {
 			check_box.Text = item.Text;
 			check_box.AutoPostBack = AutoPostBack;
 			check_box.Checked = item.Selected;
-
-			if (!Enabled) {
-				check_box.Enabled = false;
-				writer.AddAttribute (HtmlTextWriterAttribute.Disabled, "disabled");
-				writer.RenderBeginTag (HtmlTextWriterTag.Span);
-			}
-
+			check_box.TextAlign = TextAlign;
+			check_box.Enabled = Enabled;
 			check_box.RenderControl (writer);
-
-			if (!Enabled) {
-				writer.RenderEndTag ();
-			}
 		}
 
 		void IRepeatInfoUser.RenderItem (ListItemType itemType,
