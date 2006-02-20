@@ -1,4 +1,8 @@
 
+Mon Feb 20 10:37:57 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: more verification checks.
+
 Fri Feb 17 19:47:29 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* mini.c: added a few more verification checks.
