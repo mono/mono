@@ -1,3 +1,11 @@
+2006-02-20  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XsdValidatingReader.cs : when DTD did not appear in 
+	  DTDValidatingReader, it almost makes no sense to use it, so just
+	  use its internal EntityResolvingXmlReader (it is required to
+	  detect "undeclared entity in use" well-formedness violation).
+	  It could double processing speed (or more).
+
 2006-01-13  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XsdValidatingReader.cs : whitespace nodes should be allowed inside

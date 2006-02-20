@@ -192,6 +192,13 @@ namespace Mono.Xml
 			}
 		}
 
+		internal EntityResolvingXmlReader Source {
+			// we cannot return EntityResolvingXmlReader.source
+			// since it must check non-wellformedness error
+			// (undeclared entity in use).
+			get { return reader; }
+		}
+
 		public DTDObjectModel DTD {
 			get { return dtd; }
 		}

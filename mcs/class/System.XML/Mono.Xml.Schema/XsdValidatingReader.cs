@@ -1541,29 +1541,38 @@ namespace Mono.Xml.Schema
 			currentDefaultAttribute = -1;
 			defaultAttributeConsumed = false;
 			currentAttrType = null;
-#region ID Constraints
-			if (this.checkIdentity)
-				idManager.OnStartElement ();
-#endregion
 			defaultAttributes = emptyAttributeArray;
 
 			bool result = reader.Read ();
+
+			// FIXME: schemaLocation could be specified 
+			// at any Depth.
+			if (reader.Depth == 0 &&
+				reader.NodeType == XmlNodeType.Element) {
+				// If the reader is DTDValidatingReader (it
+				// is the default behavior of 
+				// XmlValidatingReader) and DTD didn't appear,
+				// we could just use its source XmlReader.
+				DTDValidatingReader dtdr = reader as DTDValidatingReader;
+				if (dtdr != null && dtdr.DTD == null)
+					reader = dtdr.Source;
+
+				ExamineAdditionalSchema ();
+			}
+			if (schemas.Count == 0)
+				return result;
+			if (!schemas.IsCompiled)
+				schemas.Compile ();
+
 #region ID Constraints
+			if (this.checkIdentity)
+				idManager.OnStartElement ();
+
 			// 3.3.4 ElementLocallyValidElement 7 = Root Valid.
 			if (!result && this.checkIdentity &&
 				idManager.HasMissingIDReferences ())
 				HandleError ("There are missing ID references: " + idManager.GetMissingIDString ());
 #endregion
-
-			// FIXME: schemaLocation could be specified 
-			// at any Depth.
-			if (reader.Depth == 0 &&
-				reader.NodeType == XmlNodeType.Element)
-				ExamineAdditionalSchema ();
-			if (schemas.Count == 0)
-				return result;
-			if (!schemas.IsCompiled)
-				schemas.Compile ();
 
 			switch (reader.NodeType) {
 			case XmlNodeType.Element:
