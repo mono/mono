@@ -1,5 +1,9 @@
 2006-02-20  Ankit Jain  <jankit@novell.com>
 
+	* ILTable.cs (directives): Remove .constraint
+
+2006-02-20  Ankit Jain  <jankit@novell.com>
+
 	* ILTokenizingException.cs (ILTokenizingException): Derive from
 	ILAsmException.
 

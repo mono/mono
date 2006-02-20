@@ -210,7 +210,6 @@ namespace Mono.ILASM {
 %token D_CLASS
 %token D_COMTYPE
 %token D_CONFIG
-%token D_CONSTRAINT
 %token D_IMAGEBASE
 %token D_CORFLAGS
 %token D_CTOR
