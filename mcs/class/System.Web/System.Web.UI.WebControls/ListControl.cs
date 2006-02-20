@@ -115,7 +115,13 @@ namespace System.Web.UI.WebControls {
 		[WebCategory ("Data")]
 		public virtual object DataSource {
 			get { return data_source; }
-			set { data_source = value; }
+			set { 
+				if(value == null || value is IListSource || value is IEnumerable) { 
+					data_source = value;
+					return;
+				}
+				throw new ArgumentException("Invalid DataSource Type");
+			}
 		}
 #endif		
 

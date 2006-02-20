@@ -1,5 +1,10 @@
 2006-02-20  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
+	* ListControl.cs: fixed DataSource property, to throw 
+	ArgumentException on incorrect value
+
+2006-02-20  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
 	* Image.cs: fixed missing border="0" attribute, when image has style, 
 	but border width is not specified.
 
