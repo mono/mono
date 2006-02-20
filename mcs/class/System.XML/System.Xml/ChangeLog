@@ -1,5 +1,11 @@
 2006-02-20  Atsushi Enomoto <atsushi@ximian.com>
 
+	* EntityResolvingXmlReader.cs, XmlNodeReader2.cs, XmlTextReader2.cs :
+	  in get_NodeType() entity reader existence check is faster.
+	* DTDValidatingReader2.cs : IsDefault could be avoided.
+
+2006-02-20  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlNodeReaderImpl.cs : optimized Depth.
 
 2006-02-20  Atsushi Enomoto <atsushi@ximian.com>

@@ -171,8 +171,11 @@ namespace System.Xml
 
 		public override XmlNodeType NodeType {
 			get {
-				if (Current == entity)
-					return entity.EOF ? XmlNodeType.EndEntity : entity.NodeType;
+				if (entity != null)
+					return entity.ReadState == ReadState.Initial ?
+						source.NodeType :
+						entity.EOF ? XmlNodeType.EndEntity :
+						entity.NodeType;
 				else
 					return source.NodeType;
 			}

@@ -146,10 +146,12 @@ namespace Mono.Xml
 
 		public override XmlNodeType NodeType {
 			get {
-				if (Current == entity)
+				if (entity != null) {
+					if (entity.ReadState == ReadState.Initial)
+						return source.NodeType;
 					return entity.EOF ? XmlNodeType.EndEntity : entity.NodeType;
-				else
-					return source.NodeType;
+				}
+				return source.NodeType;
 			}
 		}
 

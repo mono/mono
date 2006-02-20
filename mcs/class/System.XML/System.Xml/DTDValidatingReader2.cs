@@ -1015,7 +1015,7 @@ namespace Mono.Xml
 
 		public override bool HasValue {
 			get {
-				return IsDefault ? true :
+				return currentAttribute >= 0 ? true :
 					currentTextValue != null ? true :
 					reader.HasValue;
 			}
