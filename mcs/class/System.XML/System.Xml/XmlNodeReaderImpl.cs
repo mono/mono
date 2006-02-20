@@ -133,14 +133,10 @@ namespace System.Xml
 
 		public override int Depth {
 			get {
-				if (current == null)
-					return 0;
-				if (current.NodeType == XmlNodeType.Attribute)
-					return depth + 1;
-				if (current.ParentNode != null && current.ParentNode.NodeType == XmlNodeType.Attribute)
-					return depth + 2;
-
-				return depth;
+				return current == null ? 0 :
+					current == ownerLinkedNode ? depth :
+					current.NodeType == XmlNodeType.Attribute ? depth + 1 :
+					depth + 2;
 			}
 		}
 
