@@ -1,3 +1,12 @@
+2006-02-20  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlNodeReaderImpl.cs : Reimplemented Read(). Points are:
+	  - reduced call to NextSibling which is very unlikely to be inlined
+	  - reorganized conditioning to avoid extra check
+	  - added description on each returning branch.
+	  - And then, removed unused code.
+	  It is 1.5x faster than before.
+
 2006-02-17  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlElement.cs : NextSibling could be effectively computed using

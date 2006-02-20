@@ -59,20 +59,7 @@ namespace System.Xml
 		ReadState state = ReadState.Initial;
 		int depth;
 		bool isEndElement;
-		bool alreadyRead;
-
-		/*
-		private XmlNode ownerLinkedNode {
-			get {
-				if (current.ParentNode != null && current.ParentNode.NodeType == XmlNodeType.Attribute)
-					return ((XmlAttribute) current.ParentNode).OwnerElement;
-				else if (current.NodeType == XmlNodeType.Attribute) 
-					return ((XmlAttribute) current).OwnerElement;
-				else
-					return current;
-			}
-		}
-		*/
+		bool ignoreStartNode;
 
 		#region Constructor
 
@@ -92,9 +79,7 @@ namespace System.Xml
 			case XmlNodeType.Document:
 			case XmlNodeType.DocumentFragment:
 			case XmlNodeType.EntityReference:
-				break;
-			default:
-				alreadyRead = true;
+				ignoreStartNode = true;
 				break;
 			}
 
@@ -648,14 +633,6 @@ namespace System.Xml
 			}
 		}
 
-		private void MoveToParentElement ()
-		{
-			// This is buggy. It is not only the case when EndElement = true.
-			isEndElement = true;
-			depth--;
-			current = current.ParentNode;
-		}
-
 		public override bool MoveToElement ()
 		{
 			if (current == null)
@@ -710,26 +687,6 @@ namespace System.Xml
 			}
 		}
 
-		private bool MoveToNextSibling ()
-		{
-			if (alreadyRead) {
-				alreadyRead = false;
-				return current != null;
-			}
-			if (current.NextSibling != null) {
-				isEndElement = false;
-				current = current.NextSibling;
-			} else {
-				MoveToParentElement ();
-			}
-			if (current == null) {
-				state = ReadState.EndOfFile;
-				return false;
-			}
-			else
-				return true;
-		}
-
 		public override bool Read ()
 		{
 			// FIXME: at some stage inlining might work effectively.
@@ -753,10 +710,8 @@ namespace System.Xml
 				current = startNode;
 				state = ReadState.Interactive;
 				// when startNode is document or fragment
-				if (!alreadyRead)
+				if (ignoreStartNode)
 					current = startNode.FirstChild;
-				else
-					alreadyRead = false;
 				if (current == null) {
 					state = ReadState.Error;
 					return false;
@@ -766,55 +721,70 @@ namespace System.Xml
 
 			MoveToElement ();
 
-			if (alreadyRead) {
-				alreadyRead = false;
-				return current != null;
+			// don't step into EntityReference's children. Also
+			// avoid re-entering children of already-consumed
+			// element (i.e. when it is regarded as EndElement).
+			XmlNode firstChild =
+				!isEndElement && current.NodeType != XmlNodeType.EntityReference ?
+				current.FirstChild : null;
+			if (firstChild != null) {
+				isEndElement = false;
+				current = firstChild;
+				depth++;
+				return true;
 			}
 
-			bool isEnd = false;
-
-			if (IsEmptyElement || isEndElement) {
-				// Then go up and move to next.
-				// If no more nodes, then set EOF.
-				isEndElement = false;
-				if (current.ParentNode == null
-					|| current.ParentNode.NodeType == XmlNodeType.Document
-					|| current.ParentNode.NodeType == XmlNodeType.DocumentFragment
-					|| current == startNode) {
-					isEnd = true;
-				} else if (current.NextSibling == null) {
-					depth--;
-					current = current.ParentNode;
-					isEndElement = true;
-					return true;
+			if (current == startNode) { // Currently it is on the start node.
+				if (IsEmptyElement || isEndElement) {
+					// The start node is already consumed.
+					isEndElement = false;
+					current = null;
+					state = ReadState.EndOfFile;
+					return false;
 				} else {
-					current = current.NextSibling;
+					// The start node is the only element
+					// which should be processed. Now it
+					// is set as EndElement.
+					isEndElement = true;
 					return true;
 				}
 			}
+			if (!isEndElement && !IsEmptyElement &&
+			    current.NodeType == XmlNodeType.Element) {
+				// element, currently not EndElement, and has
+				// no child. (such as <foo></foo>, which
+				// should become EndElement).
+				isEndElement = true;
+				return true;
+			}
 
-			if (current.NextSibling == null
-				&& current.ParentNode is XmlEntityReference)
-				isEnd = true;
+			// If NextSibling is available, move to there.
+			XmlNode next = current.NextSibling;
+			if (next != null) {
+				isEndElement = false;
+				current = next;
+				return true;
+			}
 
-			if (isEnd) {
+			// Otherwise, parent.
+			XmlNode parent = current.ParentNode;
+			if (parent == null || parent == startNode && ignoreStartNode) {
+				// Parent is not available, or reached to
+				// the start node. This reader never sets 
+				// startNode as current if it was originally 
+				// ignored (e.g. startNode is XmlDocument).
+				isEndElement = false;
 				current = null;
 				state = ReadState.EndOfFile;
 				return false;
-			}
-
-			if (!isEndElement && current.FirstChild != null && current.NodeType != XmlNodeType.EntityReference) {
-				isEndElement = false;
-				current = current.FirstChild;
-				depth++;
-			} else if (current.NodeType == XmlNodeType.Element) {
+			} else {
+				// Parent was available, so return it as
+				// EndElement.
+				current = parent;
+				depth--;
 				isEndElement = true;
-				if (current.FirstChild != null)
-					depth--;
-			} else
-				MoveToNextSibling ();
-
-			return current != null;
+				return true;
+			}
 		}
 
 		public override bool ReadAttributeValue ()
