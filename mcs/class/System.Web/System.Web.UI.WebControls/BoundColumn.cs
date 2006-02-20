@@ -93,20 +93,22 @@ namespace System.Web.UI.WebControls {
 		{
 			base.InitializeCell (cell, columnIndex, itemType);
 
+			string df = DataField;
+
 			switch (itemType) {
 			case ListItemType.Item:
 			case ListItemType.SelectedItem:
 			case ListItemType.AlternatingItem:
-				cell.DataBinding += new EventHandler (ItemDataBinding);
+				if (df != null && df.Length != 0)
+					cell.DataBinding += new EventHandler (ItemDataBinding);
 				break;
 			case ListItemType.EditItem:
-				if (ReadOnly) {
+				if (ReadOnly && df != null && df.Length != 0) {
 					cell.DataBinding += new EventHandler (ItemDataBinding);
 					break;
 				}
-				string df = DataField;
 				TextBox tb = new TextBox ();
-				if (df != null && df != "")
+				if (df != null && df.Length != 0)
 					tb.DataBinding += new EventHandler (ItemDataBinding);
 				cell.Controls.Add (tb);
 				break;
