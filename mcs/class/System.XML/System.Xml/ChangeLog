@@ -1,5 +1,10 @@
 2006-02-20  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlValidatingReader.cs : reducing layered ReadState invocation
+	  results in 10% speed up.
+
+2006-02-20  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlNodeReaderImpl.cs : Reimplemented Read(). Points are:
 	  - reduced call to NextSibling which is very unlikely to be inlined
 	  - reorganized conditioning to avoid extra check

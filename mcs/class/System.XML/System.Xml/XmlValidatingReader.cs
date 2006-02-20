@@ -476,7 +476,7 @@ namespace System.Xml
 		[MonoTODO ("We decided not to support XDR schema that spec is obsolete.")]
 		public override bool Read ()
 		{
-			if (ReadState == ReadState.Initial) {
+			if (validatingReader == null) {
 				switch (ValidationType) {
 				case ValidationType.Auto:
 				case ValidationType.None:
