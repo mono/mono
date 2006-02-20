@@ -1,0 +1,4 @@
+2006-02-20  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* XmlComparer.cs: fixed AreEqualAttribs, to make attributes
+	compare case insensitive

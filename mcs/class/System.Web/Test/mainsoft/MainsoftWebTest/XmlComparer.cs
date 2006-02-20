@@ -41,14 +41,14 @@ namespace MonoTests.stand_alone.WebHarness
 					string ns = attrs1[i].NamespaceURI;
 					string val = attrs1[i].Value;
 					XmlAttribute atr2 = attrs2[ln, ns];
-					if (atr2 == null || atr2.Value.Trim() != val.Trim())
+					if (atr2 == null || atr2.Value.Trim().ToLower() != val.Trim().ToLower())
 						return false;
 				} else {
 					if (attrs1 [i].LocalName != attrs2 [i].LocalName)
 						return false;
 					if (attrs1 [i].NamespaceURI != attrs2 [i].NamespaceURI)
 						return false;
-					if (attrs1 [i].Value.Trim() != attrs2 [i].Value.Trim())
+					if (attrs1 [i].Value.Trim().ToLower() != attrs2 [i].Value.Trim().ToLower())
 						return false;
 				}
 			}
