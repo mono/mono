@@ -1016,11 +1016,11 @@ namespace PEAPI {
 			nameIx = md.AddToStringsHeap(mrName);
 			if (resourceBytes != null) {
 				if (rRef != null)
-					throw new Exception("ERROR:  Manifest Resource has byte value and file reference");
+					throw new PEFileException ("Manifest Resource has byte value and file reference");
 				fileOffset = md.AddResource(resourceBytes);
 			} else {
 				if (rRef == null)
-					throw new Exception("ERROR:  Manifest Resource has no implementation or value");
+					throw new PEFileException ("Manifest Resource has no implementation or value");
 				rRef.BuildTables (md);
 			}
 
@@ -2029,7 +2029,7 @@ namespace PEAPI {
 		internal sealed override void TypeSig(MemoryStream str) 
 		{
 			if (index < 0)
-				throw new Exception (String.Format ("Unresolved {0} - {1}", (GenParamType) GetTypeIndex (), param_name));
+				throw new PEFileException (String.Format ("Unresolved {0} - {1}", (GenParamType) GetTypeIndex (), param_name));
 			str.WriteByte(typeIndex);
 			MetaData.CompressNum ((uint) index, str);
 		}

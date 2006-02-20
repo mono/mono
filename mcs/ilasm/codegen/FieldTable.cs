@@ -91,7 +91,7 @@ namespace Mono.ILASM {
 				FieldTableItem table_item = (FieldTableItem) dic_entry.Value;
 				if (table_item.Defined)
 					continue;
-				throw new Exception (String.Format ("Field: {0} is not defined.", dic_entry.Key));
+				Report.Error (String.Format ("Field: {0} is not defined.", dic_entry.Key));
 			}
 			return true;
 		}
@@ -121,10 +121,8 @@ namespace Mono.ILASM {
 		{
 			FieldTableItem item = table[signature] as FieldTableItem;
 			
-			if ((item != null) && (item.Defined)) {
-				throw new Exception (String.Format ("Field: {0} defined in multiple locations.", 
-					signature));
-			}
+			if ((item != null) && (item.Defined))
+				Report.Error ("Field: " + signature + " defined in multiple locations.");
 		}
 	}
 

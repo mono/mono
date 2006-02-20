@@ -35,7 +35,7 @@ namespace Mono.ILASM {
                                         if (lab is string) {
                                                 label_array[count++] = meth.GetLabelDef ((string) lab);
                                         } else {                                                
-                                                throw new NotImplementedException ("offsets in switch statements.");
+                                                throw new InternalErrorException ("offsets in switch statements.");
                                         }
                                 }
                         } else {

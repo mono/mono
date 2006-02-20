@@ -637,8 +637,7 @@ formal_typars_clause           : /* EMPTY */
 #if NET_2_0 || BOOTSTRAP_NET_2_0
                                 $$ = $2;
 #else
-				Console.Error.WriteLine ("ERROR: Use ilasm2 for generics support.");
-				Environment.Exit (1);
+				Report.Error ("Use ilasm2 for generics support.");
 #endif
                           }
                         ;
@@ -649,8 +648,7 @@ typars_clause           : /* EMPTY */
 #if NET_2_0 || BOOTSTRAP_NET_2_0
                                 $$ = $2;
 #else
-				Console.Error.WriteLine ("ERROR: Use ilasm2 for generics support.");
-				Environment.Exit (1);
+				Report.Error ("Use ilasm2 for generics support.");
 #endif
                           }
                         ;
@@ -778,7 +776,7 @@ param_type_decl         : D_PARAM K_TYPE id
 				  else
 					  codegen.CurrentCustomAttrTarget = codegen.CurrentTypeDef.GetGenericParam ((string) $3);
 				  if (codegen.CurrentCustomAttrTarget == null)
-					  throw new Exception (String.Format ("Type parameter '{0}' undefined.", (string) $3));
+					  Report.Error (String.Format ("Type parameter '{0}' undefined.", (string) $3));
 			  }
 			| D_PARAM K_TYPE OPEN_BRACKET int32 CLOSE_BRACKET
 			  {
@@ -788,7 +786,7 @@ param_type_decl         : D_PARAM K_TYPE id
 				  else
 					  codegen.CurrentCustomAttrTarget = codegen.CurrentTypeDef.GetGenericParam (index - 1);
 				  if (codegen.CurrentCustomAttrTarget == null)
-					  throw new Exception (String.Format ("Type parameter '{0}' index out of range.", index));
+					  Report.Error (String.Format ("Type parameter '{0}' index out of range.", index));
 			  }
 			;
                         
@@ -854,7 +852,7 @@ class_decl		: method_all
 			  {
 				PermPair pp = (PermPair) $1;
 				if (!CheckSecurityActionValidity ((System.Security.Permissions.SecurityAction) (short) pp.sec_action, false))
-					throw new Exception (String.Format ("Invalid security action : {0}", pp.sec_action));
+					Report.Error (String.Format ("Invalid security action : {0}", pp.sec_action));
 
 				codegen.AddPermission (pp.sec_action, pp.perm);
 			  }
@@ -1121,7 +1119,7 @@ bound			: /* EMPTY */
                                 int lower = (int) $1;
                                 int upper = (int) $3;
                                 if (lower > upper) 
-                                        throw new Exception (String.Format ("Lower bound {0} must be <= upper bound {1}", lower, upper));
+                                        Report.Error ("Lower bound " + lower + " must be <= upper bound " + upper);
 
                                 $$ = new DictionaryEntry ($1, $3);
                           }
@@ -2125,7 +2123,7 @@ method_decl		: D_EMITBYTE int32
 			  {
 				PermPair pp = (PermPair) $1;
 				if (!CheckSecurityActionValidity ((System.Security.Permissions.SecurityAction) (short) pp.sec_action, false))
-					throw new Exception (String.Format ("Invalid security action : {0}", pp.sec_action));
+					Report.Error (String.Format ("Invalid security action : {0}", pp.sec_action));
 
 				codegen.AddPermission (pp.sec_action, pp.perm);
 			  }
@@ -2257,8 +2255,7 @@ seh_clauses		: seh_clause
 seh_clause		: K_CATCH class_ref handler_block
                           {
 				if ($2.GetType () == typeof (PrimitiveTypeRef))
-					/* FIXME: Report Error here */
-					Console.Error.WriteLine ("Exception not be of a primitive type.");
+					Report.Error ("Exception not be of a primitive type.");
 					
                                 BaseClassRef type = (BaseClassRef) $2;
                                 CatchBlock cb = new CatchBlock (type);
@@ -2984,7 +2981,7 @@ assembly_decl		: D_PUBLICKEY ASSIGN bytes_list
 			  {
 				PermPair pp = (PermPair) $1;
 				if (!CheckSecurityActionValidity ((System.Security.Permissions.SecurityAction) (short) pp.sec_action, true))
-					throw new Exception (String.Format ("Invalid security action : {0}", pp.sec_action));
+					Report.Error (String.Format ("Invalid security action : {0}", pp.sec_action));
 
 				codegen.AddAssemblyPermission (pp.sec_action, pp.perm);
 			  }

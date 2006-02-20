@@ -1,3 +1,8 @@
+2006-02-20  Ankit Jain  <jankit@novell.com>
+
+	* ILParser.jay: Update to use Report.Error instead of directly throwing
+	an exception.
+
 2006-02-09  Ankit Jain  <jankit@novell.com>
 
 	* ILParser.jay (bound | int32): Handle invalid -ve size.

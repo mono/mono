@@ -95,7 +95,7 @@ namespace Mono.ILASM {
                                 write_name = name;
 
                         if (owner.IsArray)
-                                throw new NotImplementedException ("Vararg methods on arrays are not supported yet.");
+                                Report.Error ("Vararg methods on arrays are not supported yet.");
 
                         owner.Resolve (code_gen);
 

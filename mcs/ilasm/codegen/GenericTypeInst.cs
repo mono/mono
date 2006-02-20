@@ -36,7 +36,8 @@ namespace Mono.ILASM {
                         : base ("", is_valuetypeinst, conv_list, sig_mod)
                 {
                         if (class_ref is GenericTypeInst)
-                                throw new ArgumentException (String.Format ("Cannot create nested GenericInst, '{0}' '{1}'", class_ref.FullName, gen_args.ToString ()));
+                                throw new InternalErrorException ("Cannot create nested GenericInst, '" +
+                                                        class_ref.FullName + "' '" + gen_args.ToString () + "'");
 
                         this.class_ref = class_ref;
                         this.gen_args = gen_args;
@@ -91,7 +92,7 @@ namespace Mono.ILASM {
                 protected override BaseMethodRef CreateMethodRef (BaseTypeRef ret_type,
                         PEAPI.CallConv call_conv, string name, BaseTypeRef[] param, int gen_param_count)
                 {
-                        throw new Exception ("Should not be called");
+                        throw new InternalErrorException ("Should not be called");
                 }
 
                 public override BaseMethodRef GetMethodRef (BaseTypeRef ret_type, PEAPI.CallConv call_conv,

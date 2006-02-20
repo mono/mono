@@ -36,7 +36,7 @@ namespace Mono.ILASM {
 		public void Add (BaseTypeRef type)
 		{
 			if (type == null)
-				throw new ArgumentException ("type");
+				throw new InternalErrorException ();
 
 			if (type_list == null)
 				type_list = new ArrayList ();

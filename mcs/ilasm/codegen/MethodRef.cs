@@ -30,7 +30,7 @@ namespace Mono.ILASM {
 
                         TypeDef owner_def = code_gen.TypeManager[owner.FullName];
 			if (owner_def == null)
-				throw new Exception (String.Format ("Reference to undefined class '{0}'", owner.FullName));
+				Report.Error ("Reference to undefined class '" + owner.FullName + "'");
 
                         string write_name;
 

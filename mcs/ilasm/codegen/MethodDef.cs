@@ -273,7 +273,7 @@ namespace Mono.ILASM {
                 public void EntryPoint ()
                 {
                         if (!IsStatic)
-                                throw new Exception ("Non-static method as entrypoint.");
+                                Report.Error ("Non-static method as entrypoint.");
                         entry_point = true;
                 }
 
@@ -298,8 +298,7 @@ namespace Mono.ILASM {
 				gpar.Index = type_def.GetGenericParamNum (gpar.Name);
 
 			if (gpar.Index < 0)
-				/* TODO: Report error */
-				throw new Exception (String.Format ("Invalid {0}type parameter '{1}'", 
+				Report.Error (String.Format ("Invalid {0}type parameter '{1}'", 
 							(gpar.Type == PEAPI.GenParamType.MVar ? "method " : ""),
 							 gpar.Name));
 		}
@@ -389,7 +388,7 @@ namespace Mono.ILASM {
                 public PEAPI.MethodRef GetVarargSig (PEAPI.Type[] opt)
                 {
                         if (!is_resolved)
-                                throw new Exception ("Methods must be resolved before a vararg sig can be created.");
+                                throw new InternalErrorException ("Methods must be resolved before a vararg sig can be created.");
 
                         PEAPI.MethodRef methref = null;
                         StringBuilder sigbuilder = new StringBuilder ();
@@ -464,13 +463,13 @@ namespace Mono.ILASM {
                                 methoddef.DeclareEntryPoint ();
 
                         if (local_list.Count > 0) {
-                                int ec = code_gen.Report.ErrorCount;
+                                int ec = Report.ErrorCount;
                                 PEAPI.Local[] local_array = new PEAPI.Local[local_list.Count];
 
                                 foreach (Local local in local_list)
                                         local_array[local.Slot]  = local.GetPeapiLocal (code_gen);
 
-                                if (code_gen.Report.ErrorCount > ec)
+                                if (Report.ErrorCount > ec)
                                         return;
 
                                 if (zero_init)
@@ -523,7 +522,7 @@ namespace Mono.ILASM {
                         foreach (LabelInfo label in labelref_table.Values) {
                                 LabelInfo def = (LabelInfo) label_table[label.Name];
                                 if (def == null) {
-                                        code_gen.Report.Error ("Undefined Label:  " + label);
+                                        Report.Error ("Undefined Label:  " + label);
                                         return;
                                 }
                                 label.Label = def.Label;

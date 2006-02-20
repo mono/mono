@@ -166,7 +166,7 @@ namespace Mono.ILASM {
 				MethodTableItem table_item = (MethodTableItem) dic_entry.Value;
 				if (table_item.Defined)
 					continue;
-				throw new Exception (String.Format ("Method: {0} is not defined.", dic_entry.Key));
+				Report.Error (String.Format ("Method: {0} is not defined.", dic_entry.Key));
 			}
 			return true;
 		}
@@ -218,7 +218,7 @@ namespace Mono.ILASM {
 			MethodTableItem item = table[signature] as MethodTableItem;
 			
 			if ((item != null) && (item.Defined)) {
-				throw new Exception (String.Format ("Method: {0} defined in multiple locations.", 
+				Report.Error (String.Format ("Method: {0} defined in multiple locations.", 
 					signature));
 			}
 		}

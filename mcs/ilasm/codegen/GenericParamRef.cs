@@ -45,7 +45,7 @@ namespace Mono.ILASM {
 
                 public override void MakeValueClass ()
                 {
-                        throw new Exception ("Not supported");
+                        throw new InternalErrorException ("Not supported");
                 }
 
                 public override BaseClassRef Clone ()
@@ -95,8 +95,7 @@ namespace Mono.ILASM {
                                 param.Index = type_gen_params.GetGenericParamNum (param.Name);
 
                         if (param.Index < 0)
-                                /* TODO: Report error */
-                                throw new Exception (String.Format ("Invalid {0}type parameter '{1}'", 
+                                Report.Error (String.Format ("Invalid {0}type parameter '{1}'", 
                                                         (param.Type == PEAPI.GenParamType.MVar ? "method " : ""),
                                                          param.Name));
                 }

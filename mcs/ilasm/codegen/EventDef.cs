@@ -70,7 +70,7 @@ namespace Mono.ILASM {
                 {
                         PEAPI.MethodDef methoddef = method as PEAPI.MethodDef;
                         if (methoddef == null)
-                                throw new Exception (type + " method of event " + name + " not found");
+                                Report.Error (type + " method of event " + name + " not found");
                         return methoddef;
                 }
 

@@ -1,3 +1,10 @@
+2006-02-20  Ankit Jain  <jankit@novell.com>
+
+	* *.cs: Update all .cs files to use Report.Error instead of directly
+	throwing an exception.
+	* CodeGen.cs (CodeGen.ctor): Remove 'report' param, and the related
+	field & property.
+
 2006-02-19  Ankit Jain  <jankit@novell.com>
 
 	* ExternTable.cs (ExternTable.GetModuleTypeRef): 'module_table' can be

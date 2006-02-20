@@ -31,11 +31,8 @@ namespace Mono.ILASM {
 			System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
 
                         DriverMain driver = new DriverMain (args);
-                                if (!driver.Run ()) {
-                                        Console.WriteLine ();
-                                        Console.WriteLine ("***** FAILURE *****");
-                                        return 1;
-                                }
+                        if (!driver.Run ())
+                                return 1;
                         Console.WriteLine ("Operation completed successfully");
                         return 0;
                 }
@@ -43,11 +40,9 @@ namespace Mono.ILASM {
                 private class DriverMain {
 
                         private ArrayList il_file_list;
-                        private Report report;
                         private string output_file;
                         private Target target = Target.Exe;
                         private string target_string = "exe";
-                        private bool quiet = false;
                         private bool show_tokens = false;
                         private bool show_method_def = false;
                         private bool show_method_ref = false;
@@ -62,24 +57,40 @@ namespace Mono.ILASM {
                         {
                                 il_file_list = new ArrayList ();
                                 ParseArgs (args);
-                                report = new Report (quiet);
                         }
 
                         public bool Run ()
                         {
-                                        if (il_file_list.Count == 0)
-                                                Usage ();
-                                        if (output_file == null)
-                                                output_file = CreateOutputFile ();
-                                        codegen = new CodeGen (output_file, target == Target.Dll, true, debugging_info, report);
+                                if (il_file_list.Count == 0)
+                                        Usage ();
+                                if (output_file == null)
+                                        output_file = CreateOutputFilename ();
+                                try {
+                                        codegen = new CodeGen (output_file, target == Target.Dll, true, debugging_info);
                                         foreach (string file_path in il_file_list)
                                                 ProcessFile (file_path);
                                         if (scan_only)
                                                 return true;
 
-                                        if (report.ErrorCount > 0)
+                                        if (Report.ErrorCount > 0)
                                                 return false;
-                                        codegen.Write ();
+
+                                        if (target != Target.Dll && !codegen.HasEntryPoint)
+                                                Report.Error ("No entry point found.");
+
+                                        try {
+                                                codegen.Write ();
+                                        } catch {
+                                                File.Delete (output_file);
+                                                throw;
+                                        }
+                                } catch (ILAsmException e) {
+                                        Error (e.Message);
+                                        return false;
+                                } catch (PEAPI.PEFileException pe) {
+                                        Error (pe.Message);
+                                        return false;
+                                } 
 
                                 try {
 					if (keyname != null) {
@@ -91,6 +102,12 @@ namespace Mono.ILASM {
                                 }
 
                                 return true;
+                        }
+
+                        private void Error (string message)
+                        {
+                                Console.WriteLine ("Error : " + message + "\n");
+                                Console.WriteLine ("***** FAILURE *****\n");
                         }
 
 			private bool Sign (string filename)
@@ -123,7 +140,7 @@ namespace Mono.ILASM {
                                                 file_path);
                                         Environment.Exit (2);
                                 }
-                                report.AssembleFile (file_path, null,
+                                Report.AssembleFile (file_path, null,
                                                 target_string, output_file);
                                 StreamReader reader = File.OpenText (file_path);
                                 ILTokenizer scanner = new ILTokenizer (reader);
@@ -152,8 +169,10 @@ namespace Mono.ILASM {
                                         else
                                                 parser.yyparse (new ScannerAdapter (scanner),  null);
                                 } catch (ILTokenizingException ilte) {
-                                        report.Error (file_path + "(" + ilte.Location.line + ") : error : " +
+                                        Report.Error (file_path + "(" + ilte.Location.line + ") : error : " +
                                                         "syntax error at token '" + ilte.Token + "'.");
+                                } catch (Mono.ILASM.yyParser.yyException) {
+                                        Report.Error ("Error at: " + scanner.Reader.Location);
                                 } catch {
                                         Console.WriteLine ("Error at: " + scanner.Reader.Location);
                                         throw;
@@ -210,7 +229,7 @@ namespace Mono.ILASM {
                                                 target_string = "dll";
                                                 break;
                                         case "quiet":
-                                                quiet = true;
+                                                Report.Quiet = true;
                                                 break;
                                         case "debug":
                                         case "deb":
@@ -289,7 +308,7 @@ namespace Mono.ILASM {
                         /// <summary>
                         ///   Get the first file name and makes it into an output file name
                         /// </summary>
-                        private string CreateOutputFile ()
+                        private string CreateOutputFilename ()
                         {
                                 string file_name = (string)il_file_list[0];
                                 int ext_index = file_name.LastIndexOf ('.');

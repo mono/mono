@@ -41,7 +41,7 @@ namespace Mono.ILASM {
 
                 public override void Resolve (CodeGen code_gen)
                 {
-                        throw new Exception ("This should not get called");
+                        throw new InternalErrorException ("This should not get called");
                 }
 
                 public void Resolve (CodeGen code_gen, PEAPI.Module module)
