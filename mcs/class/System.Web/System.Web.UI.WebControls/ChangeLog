@@ -1,5 +1,11 @@
 2006-02-20  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
+	* CheckBox.cs: fixed Render function, removed rendering of empty 
+	<span> element if ControlStyleCreated but it's empty.
+	fixed "disabled" attribute, it should be placed into span element
+
+2006-02-20  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
 	* BoundColumn.cs: fixed InitializeCell function, if DataField is 
 	null or empty string, the cell should not be bound.
 

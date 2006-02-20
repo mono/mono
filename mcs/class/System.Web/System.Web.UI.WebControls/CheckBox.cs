@@ -320,13 +320,13 @@ namespace System.Web.UI.WebControls {
 			if (Page != null)
 				Page.VerifyRenderingInServerForm (this);
 
-			bool need_span = ControlStyleCreated;
+			bool need_span = ControlStyleCreated && !ControlStyle.IsEmpty;
 			if (need_span)
 				ControlStyle.AddAttributesToRender (w, this);
 
 			if (!Enabled) {
 				w.AddAttribute (HtmlTextWriterAttribute.Disabled, "disabled");
-				//need_span = true;
+				need_span = true;
 			}
 
 			string tt = ToolTip;
