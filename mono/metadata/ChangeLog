@@ -1,3 +1,7 @@
+2006-02-21  Raja R Harinath  <rharinath@novell.com>
+
+	* metadata.c (get_constraints): Relax debugging checks for monodis.
+
 2006-02-21  Ankit Jain  <jankit@novell.com>
 
 	* metadata.c (mono_metadata_load_generic_params): Move the code
