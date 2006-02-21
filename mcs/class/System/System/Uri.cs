@@ -763,17 +763,17 @@ namespace System {
 			else if ((object) u2 == null)
 				return false;
 
-			return u1.InternalEquals (u2);
+			return u1.scheme == u2.scheme &&
+				u1.userinfo == u2.userinfo &&
+				u1.host == u2.host &&
+				u1.port == u2.port &&
+				u1.path == u2.path &&
+				u1.query == u2.query;
 		}
 
 		public static bool operator != (Uri u1, Uri u2)
 		{
-			if ((object) u1 == null)
-				return (object) u2 != null;
-			else if ((object) u2 == null)
-				return true;
-
-			return !u1.InternalEquals (u2);
+			return !(u1 == u2);
 		}
 #endif
 
