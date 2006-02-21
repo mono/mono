@@ -1,5 +1,9 @@
 2006-02-21  Ankit Jain  <jankit@novell.com>
 
+	* metadata.h (mono_metadata_decode_signed_value): Add declaration.
+
+2006-02-21  Ankit Jain  <jankit@novell.com>
+
 	* metadata.c (mono_metadata_load_generic_params): Move the code
 	checking for ambiguous generic params from here to mono/dis/get.c
 	* metadata-internals.h (mono_generic_params_with_ambiguous_names): Remove.
