@@ -1,3 +1,9 @@
+2006-02-21  Ankit Jain  <jankit@novell.com>
+
+	* metadata.c (mono_metadata_load_generic_params): Move the code
+	checking for ambiguous generic params from here to mono/dis/get.c
+	* metadata-internals.h (mono_generic_params_with_ambiguous_names): Remove.
+
 2006-02-16  Dick Porter  <dick@ximian.com>
 
 	* socket-io.c (create_object_from_sockaddr): Fix typo.
