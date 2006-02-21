@@ -820,7 +820,7 @@ namespace System.Xml
 				return ReadNodeCore (reader);
 		}
 
-		public virtual XmlNode ReadNodeCore (XmlReader reader)
+		XmlNode ReadNodeCore (XmlReader reader)
 		{
 			switch (reader.ReadState) {
 			case ReadState.Interactive:
