@@ -743,14 +743,14 @@ namespace System.Xml.XPath
 		private SimpleIterator _iter;
 		private NodeTest _test;
 			
-		string name, ns;
-		XPathNodeType matchType;
+		//string name, ns;
+		//XPathNodeType matchType;
 
 		public AxisIterator (SimpleIterator iter, NodeTest test) : base (iter.NamespaceManager)
 		{
 			_iter = iter;
 			_test = test;
-			test.GetInfo (out name, out ns, out matchType, NamespaceManager);
+			//test.GetInfo (out name, out ns, out matchType, NamespaceManager);
 //			if (name != null)
 //				name = Current.NameTable.Add (name);
 
@@ -762,9 +762,9 @@ namespace System.Xml.XPath
 		{
 			_iter = (SimpleIterator) other._iter.Clone ();
 			_test = other._test;
-			name = other.name;
-			ns = other.ns;
-			matchType = other.matchType;
+			//name = other.name;
+			//ns = other.ns;
+			//matchType = other.matchType;
 		}
 		public override XPathNodeIterator Clone () { return new AxisIterator (this); }
 

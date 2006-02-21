@@ -1,3 +1,7 @@
+2006-02-21  Atsushi Enomoto <atsushi@ximian.com>
+
+	* Iterator.cs : removed extra field from AxisIterator.
+
 2006-02-14  Atsushi Enomoto <atsushi@ximian.com>
 
 	* Iterator.cs : tiny message fix (thanks to alp).
