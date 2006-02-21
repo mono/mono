@@ -1,3 +1,7 @@
+2006-02-21 Jelmer Vernooij <jelmer@samba.org>
+	* Test/tests/statements/AssignmentStatementsJ.vb: Add test that 
+	demonstrates bug in incremental property assignment.
+
 2006-01-23 Jelmer Vernooij <jelmer@samba.org>
 	* Test/tests/typemembers/EventP.vb: Add tests that check for 
 	more complex constructions in AddHandler / RemoveHandler.
