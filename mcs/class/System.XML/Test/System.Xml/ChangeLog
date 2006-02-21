@@ -1,3 +1,14 @@
+2006-02-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlReaderCommonTests.cs : added custom assertion overload that takes
+	  test label.
+	* XmlNodeReaderTests.cs : labeled some.
+	* XmlTextWriterTests.cs :
+	  Changed the semantics of AttributeNamespacesXmlnsXmlns() and
+	  removed NotDotNet (in contrast this test should fail with previous
+	  version of XmlTextWriter). See the code comment for details.
+	  Added WriteQualifiedNameXmlnsError().
+
 2006-02-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlTextReaderTests.cs : added WhitespaceHandling tests.

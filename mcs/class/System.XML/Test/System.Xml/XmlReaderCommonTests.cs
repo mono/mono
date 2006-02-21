@@ -59,10 +59,28 @@ namespace MonoTests.System.Xml
 			string value,
 			int attributeCount)
 		{
-			Assert ("Read() return value", xmlReader.Read ());
-			Assert ("ReadState", xmlReader.ReadState == ReadState.Interactive);
-			Assert ("!EOF", !xmlReader.EOF);
-			AssertNodeValues ("", xmlReader, nodeType, depth,
+			AssertNode ("", xmlReader, nodeType, depth,
+				isEmptyElement, name, prefix, localName,
+				namespaceURI, value, attributeCount);
+		}
+
+		private void AssertNode (
+			string label,
+			XmlReader xmlReader,
+			XmlNodeType nodeType,
+			int depth,
+			bool isEmptyElement,
+			string name,
+			string prefix,
+			string localName,
+			string namespaceURI,
+			string value,
+			int attributeCount)
+		{
+			Assert (label + " Read() return value", xmlReader.Read ());
+			Assert (label + " ReadState", xmlReader.ReadState == ReadState.Interactive);
+			Assert (label + " !EOF", !xmlReader.EOF);
+			AssertNodeValues (label, xmlReader, nodeType, depth,
 				isEmptyElement, name, prefix, localName,
 				namespaceURI, value, value != String.Empty,
 				attributeCount, attributeCount > 0);
@@ -378,6 +396,7 @@ namespace MonoTests.System.Xml
 			AssertStartDocument (xmlReader);
 
 			AssertNode (
+				"#1",
 				xmlReader, // xmlReader
 				XmlNodeType.Element, // nodeType
 				0, //depth
@@ -391,6 +410,7 @@ namespace MonoTests.System.Xml
 			);
 
 			AssertNode (
+				"#2",
 				xmlReader, // xmlReader
 				XmlNodeType.Element, // nodeType
 				1, //depth
@@ -404,6 +424,7 @@ namespace MonoTests.System.Xml
 			);
 
 			AssertNode (
+				"#3",
 				xmlReader, // xmlReader
 				XmlNodeType.EndElement, // nodeType
 				0, //depth

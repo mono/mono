@@ -1,3 +1,9 @@
+2006-02-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.Xml.dll.sources : removed XmlTextWriterOpenElement.cs and 
+	  XmlTextWriter.cs. Added XmlTextWriter2.cs, to be renamed to
+	  XmlTextWriter.cs in a few days or weeks.
+
 2006-02-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.Xml.dll.sources : removed DTDValidatingReader and added

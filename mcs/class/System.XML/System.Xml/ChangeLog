@@ -1,7 +1,18 @@
+2006-02-21  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlNamespaceManager.cs : added internal LookupPrefixExclusive()
+	  which discards "overriden" namespaces.
+	* XmlTextWriter2.cs : fresh implementation.
+	  - The source structure is simplified and cleaner.
+	  - When outputting escaped string, output directly to TextWriter.
+	  - roughly 20% performance improvement.
+
+	  (Also fixed previous perf. evaluation excess in ChangeLog.)
+
 2006-02-20  Atsushi Enomoto <atsushi@ximian.com>
 
-	* XmlElement.cs : make use of HasAttributes. Remove extra check.
-	  10% speed improvement.
+	* XmlElement.cs : (WriteTo) make use of HasAttributes. Remove extra
+	  check. 5% speed improvement.
 
 2006-02-20  Atsushi Enomoto <atsushi@ximian.com>
 

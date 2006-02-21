@@ -250,16 +250,27 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-		[Category ("NotDotNet")]
 		public void AttributeNamespacesXmlnsXmlns ()
 		{
 			xtw.WriteStartElement ("foo");
-			try {
-				xtw.WriteAttributeString ("xmlns", "xmlns", null, "http://abc.def");
-				// This should not be allowed, even though MS.NET doesn't treat as an error.
-				// See http://www.w3.org/TR/REC-xml-names/ Namespace Constraint: Prefix Declared
-				Assert.Fail ("A prefix must not start with \"xml\".");
-			} catch (ArgumentException) {}
+			// If XmlTextWriter conforms to "Namespaces in XML"
+			// when namespaceURI argument is null, then this
+			// is not allowed (http://www.w3.org/TR/REC-xml-names/
+			// Namespace Constraint: Prefix Declared), but seems
+			// like XmlTextWriter just ignores XML namespace
+			// constraints when namespaceURI argument is null.
+			xtw.WriteAttributeString ("xmlns", "xmlns", null, "http://abc.def");
+			//Assert.Fail ("A prefix must not start with \"xml\".");
+		}
+
+		[Test]
+		public void AttributeNamespacesXmlnsXmlns2 ()
+		{
+			// It is split from AttributeNamespacesXmlnsXmlns()
+			// because depending on XmlWriter it is likely to cause
+			// duplicate attribute error (XmlTextWriter is pretty
+			// hacky, so it does not raise such errors).
+			xtw.WriteStartElement ("foo");
 			xtw.WriteAttributeString ("", "xmlns", null, "http://abc.def");
 		}
 
@@ -1884,13 +1895,13 @@ namespace MonoTests.System.Xml
 			xtw.WriteEndElement ();
 			xtw.WriteEndElement ();
 			string xml = sw.ToString ();
-			Assert.IsTrue (xml.IndexOf ("p:foo='xyz'") > 0, "p:foo");
-			Assert.IsTrue (xml.IndexOf ("d1p1:bar='xyz'") > 0, "d1p1:bar");
-			Assert.IsTrue (xml.IndexOf ("d1p2:baz='xyz'") > 0, "d1p1:baz");
-			Assert.IsTrue (xml.IndexOf ("xmlns:d1p2='urn:baz'") > 0, "xmlns:d1p2");
-			Assert.IsTrue (xml.IndexOf ("xmlns:d1p1='urn:bar'") > 0, "xmlns:d1p1");
-			Assert.IsTrue (xml.IndexOf ("xmlns:p='urn:foo'") > 0, "xmlns:p");
-			Assert.IsTrue (xml.IndexOf ("<out p:foo='xyz'><out p:foo='xyz' /></out></out>") > 0, "remaining");
+			Assert.IsTrue (xml.IndexOf ("p:foo='xyz'") > 0, "p:foo" + ". output is " + xml);
+			Assert.IsTrue (xml.IndexOf ("d1p1:bar='xyz'") > 0, "d1p1:bar" + ". output is " + xml);
+			Assert.IsTrue (xml.IndexOf ("d1p2:baz='xyz'") > 0, "d1p1:baz" + ". output is " + xml);
+			Assert.IsTrue (xml.IndexOf ("xmlns:d1p2='urn:baz'") > 0, "xmlns:d1p2" + ". output is " + xml);
+			Assert.IsTrue (xml.IndexOf ("xmlns:d1p1='urn:bar'") > 0, "xmlns:d1p1" + ". output is " + xml);
+			Assert.IsTrue (xml.IndexOf ("xmlns:p='urn:foo'") > 0, "xmlns:p" + ". output is " + xml);
+			Assert.IsTrue (xml.IndexOf ("<out p:foo='xyz'><out p:foo='xyz' /></out></out>") > 0, "remaining" + ". output is " + xml);
 		}
 
 		[Test]
@@ -1914,6 +1925,15 @@ namespace MonoTests.System.Xml
 			xtw.WriteStartAttribute ("foo", "");
 			xtw.WriteQualifiedName ("n2", "");
 			xtw.WriteEndAttribute ();
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		// cannot bind any prefix to "http://www.w3.org/2000/xmlns/".
+		public void WriteQualifiedNameXmlnsError ()
+		{
+			xtw.WriteStartElement ("foo");
+			xtw.WriteQualifiedName ("", "http://www.w3.org/2000/xmlns/");
 		}
 
 		[Test]

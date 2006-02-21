@@ -321,6 +321,16 @@ namespace System.Xml
 
 		internal string LookupPrefix (string uri, bool atomizedName)
 		{
+			return LookupPrefixCore (uri, atomizedName, false);
+		}
+
+		internal string LookupPrefixExclusive (string uri, bool atomizedName)
+		{
+			return LookupPrefixCore (uri, atomizedName, true);
+		}
+
+		string LookupPrefixCore (string uri, bool atomizedName, bool excludeOverriden)
+		{
 			if (uri == null)
 				return null;
 
@@ -335,7 +345,8 @@ namespace System.Xml
 
 			for (int i = declPos; i >= 0; i--) {
 				if (CompareString (decls [i].Uri, uri, atomizedName) && decls [i].Prefix.Length > 0) // we already looked for ""
-					return decls [i].Prefix;
+					if (!excludeOverriden || !IsOverriden (i))
+						return decls [i].Prefix;
 			}
 
 			// ECMA specifies that this method returns String.Empty
@@ -344,6 +355,17 @@ namespace System.Xml
 			//  http://lists.ximian.com/archives/public/mono-list/2003-January/005071.html
 			//return String.Empty;
 			return null;
+		}
+
+		bool IsOverriden (int idx)
+		{
+			if (idx == declPos)
+				return false;
+			string prefix = decls [idx + 1].Prefix;
+			for (int i = idx + 1; i <= declPos; i++)
+				if ((object) decls [idx].Prefix == prefix)
+					return true;
+			return false;
 		}
 
 		public virtual bool PopScope ()

@@ -181,6 +181,7 @@ namespace MonoTests.System.Xml
 			XmlNodeReader nr = new XmlNodeReader (
 				document.DocumentElement.FirstChild);
 			nr.Read ();
+			AssertEquals ("#0", true, nr.IsEmptyElement);
 			Assert ("#1", !nr.Read ());
 
 			document.LoadXml ("<root><child></child></root>");
@@ -188,6 +189,7 @@ namespace MonoTests.System.Xml
 				document.DocumentElement.FirstChild);
 			nr.Read ();
 			Assert ("#2", nr.Read ());
+			AssertEquals ("#2.2", false, nr.IsEmptyElement);
 			Assert ("#3", !nr.Read ());
 		}
 	}
