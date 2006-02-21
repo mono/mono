@@ -1,3 +1,7 @@
+2006-02-21  Lluis Sanchez Gual  <lluis@novell.com> 
+
+	* XmlSerializer.cs: Fix the previous fix.
+	
 2006-02-21  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* XmlSerializer.cs: Added option to avoid falling back to the

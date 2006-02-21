@@ -131,21 +131,21 @@ namespace System.Xml.Serialization
 			if (th == null) {
 				generationThreshold = 50;
 				backgroundGeneration = true;
-			}
-			
-			int i = th.IndexOf (',');
-			if (i != -1) {
-				if (th.Substring (i+1) == "nofallback")
-					generatorFallback = false;
-				th = th.Substring (0, i);
-			}
-			
-			if (th.ToLower(CultureInfo.InvariantCulture) == "no") 
-				generationThreshold = -1;
-			else {
-				generationThreshold = int.Parse (th, CultureInfo.InvariantCulture);
-				backgroundGeneration = (generationThreshold != 0);
-				if (generationThreshold < 1) generationThreshold = 1;
+			} else {
+				int i = th.IndexOf (',');
+				if (i != -1) {
+					if (th.Substring (i+1) == "nofallback")
+						generatorFallback = false;
+					th = th.Substring (0, i);
+				}
+				
+				if (th.ToLower(CultureInfo.InvariantCulture) == "no") 
+					generationThreshold = -1;
+				else {
+					generationThreshold = int.Parse (th, CultureInfo.InvariantCulture);
+					backgroundGeneration = (generationThreshold != 0);
+					if (generationThreshold < 1) generationThreshold = 1;
+				}
 			}
 #endif
 			deleteTempFiles = (db == null || db == "no");
