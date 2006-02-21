@@ -55,6 +55,7 @@ namespace System.Xml.Serialization
 		static int generationThreshold;
 		static bool backgroundGeneration = true;
 		static bool deleteTempFiles = true;
+		static bool generatorFallback = true;
 
 		bool customSerializer;
 		XmlMapping typeMapping;
@@ -101,6 +102,22 @@ namespace System.Xml.Serialization
 		
 		static XmlSerializer ()
 		{
+			// The following options are available:
+			// MONO_XMLSERIALIZER_DEBUG: when set to something != "no", it will
+			//       it will print the name of the generated file, and it won't
+			//       be deleted.
+			// MONO_XMLSERIALIZER_THS: The code generator threshold. It can be:
+			//       no: does not use the generator, always the interpreter.
+			//       0: always use the generator, wait until the generation is done.
+			//       any number: use the interpreted serializer until the specified
+			//       number of serializations is reached. At this point the generation
+			//       of the serializer will start in the background. The interpreter
+			//       will be used while the serializer is being generated.
+			//
+			//       XmlSerializer will fall back to the interpreted serializer if
+			//       the code generation somehow fails. This can be avoided for
+			//       debugging pourposes by adding the "nofallback" option.
+			//       For example: MONO_XMLSERIALIZER_THS=0,nofallback
 			
 #if TARGET_JVM
 			string db = null;
@@ -115,7 +132,15 @@ namespace System.Xml.Serialization
 				generationThreshold = 50;
 				backgroundGeneration = true;
 			}
-			else if (th.ToLower(CultureInfo.InvariantCulture) == "no") 
+			
+			int i = th.IndexOf (',');
+			if (i != -1) {
+				if (th.Substring (i+1) == "nofallback")
+					generatorFallback = false;
+				th = th.Substring (0, i);
+			}
+			
+			if (th.ToLower(CultureInfo.InvariantCulture) == "no") 
 				generationThreshold = -1;
 			else {
 				generationThreshold = int.Parse (th, CultureInfo.InvariantCulture);
@@ -547,6 +572,8 @@ namespace System.Xml.Serialization
 					writer = serializerData.CreateWriter ();
 				}
 				if (writer != null) return writer;
+				if (!generatorFallback)
+					throw new InvalidOperationException ("Error while generating serializer");
 			}
 			
 			return new XmlSerializationWriterInterpreter (typeMapping);
@@ -575,6 +602,8 @@ namespace System.Xml.Serialization
 					reader = serializerData.CreateReader ();
 				}
 				if (reader != null) return reader;
+				if (!generatorFallback)
+					throw new InvalidOperationException ("Error while generating serializer");
 			}
 			
 			return new XmlSerializationReaderInterpreter (typeMapping);

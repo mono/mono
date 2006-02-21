@@ -1,3 +1,9 @@
+2006-02-21  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* XmlSerializer.cs: Added option to avoid falling back to the
+	interpreted serializer if the code generator fails. To be used
+	in the test suite.
+
 2006-02-16  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* TypeData.cs: Fixed the following issues when dealing with Array
