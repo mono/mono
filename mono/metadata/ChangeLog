@@ -1,4 +1,9 @@
 
+Tue Feb 21 19:55:11 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* class-internals.h, object.c: reduce the size of MonoVTable
+	and store the interface_offsets array at negative offsets.
+
 Tue Feb 21 19:53:26 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* metadata.c: tweak table descriptors data structures to reduce
