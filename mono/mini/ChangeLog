@@ -1,4 +1,9 @@
 
+Tue Feb 21 19:56:55 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* inssel.brg: faster interface call implementation
+	to sync with the interface_offsets MonoVTable changes.
+
 Mon Feb 20 10:37:57 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* mini.c: more verification checks.
