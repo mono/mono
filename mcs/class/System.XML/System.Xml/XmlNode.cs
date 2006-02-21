@@ -142,15 +142,15 @@ namespace System.Xml
 				if (FirstChild == LastChild)
 					return FirstChild.InnerText;
 
-				StringBuilder builder = new StringBuilder ();
-				AppendChildValues (builder);
-				return builder.ToString ();
+				StringBuilder builder = null;
+				AppendChildValues (ref builder);
+				return builder == null ? String.Empty : builder.ToString ();
 			}
 
 			set { throw new InvalidOperationException ("This node is read only. Cannot be modified."); }
 		}
 
-		private void AppendChildValues (StringBuilder builder)
+		private void AppendChildValues (ref StringBuilder builder)
 		{
 			XmlNode node = FirstChild;
 
@@ -160,10 +160,12 @@ namespace System.Xml
 				case XmlNodeType.CDATA:
 				case XmlNodeType.SignificantWhitespace:
 				case XmlNodeType.Whitespace:
+					if (builder == null)
+						builder = new StringBuilder ();
  					builder.Append (node.Value);
 					break;
 				}
-				node.AppendChildValues (builder);
+				node.AppendChildValues (ref builder);
 				node = node.NextSibling;
 			}
 		}

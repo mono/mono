@@ -779,10 +779,15 @@ namespace Mono.Xml
 				prefix = String.Empty;
 
 			// For xmlns URI, prefix is forced to be "xmlns"
-			if (prefix.Length == 0 && namespaceUri == XmlnsNamespace && localName != "xmlns")
-				prefix = "xmlns";
-			bool isNSDecl = (prefix == "xmlns" ||
-				localName == "xmlns" && prefix == String.Empty);
+			bool isNSDecl = false;
+			if (namespaceUri == XmlnsNamespace) {
+				isNSDecl = true;
+				if (prefix.Length == 0 && localName != "xmlns")
+					prefix = "xmlns";
+			}
+			else
+				isNSDecl = (prefix == "xmlns" ||
+					localName == "xmlns" && prefix.Length == 0);
 
 			if (namespaces) {
 				// MS implementation is pretty hacky here. 
@@ -791,7 +796,7 @@ namespace Mono.Xml
 				if (prefix == "xml")
 					namespaceUri = XmlNamespace;
 				// infer namespace URI.
-				else if (namespaceUri == null) {
+				else if ((object) namespaceUri == null) {
 					if (isNSDecl)
 						namespaceUri = XmlnsNamespace;
 					else
@@ -812,8 +817,7 @@ namespace Mono.Xml
 					throw ArgumentError ("Namespace URI must not be null when prefix is not an empty string.");
 
 				// Dive into extremely complex procedure.
-				if (!isNSDecl && namespaceUri.Length > 0 &&
-				    namespaceUri != XmlNamespace)
+				if (!isNSDecl && namespaceUri.Length > 0)
 					prefix = DetermineAttributePrefix (
 						prefix, localName, namespaceUri);
 			}
@@ -838,7 +842,7 @@ namespace Mono.Xml
 					preserver.GetStringBuilder ().Length = 0;
 				writer = preserver;
 
-				if (prefix == "xml") {
+				if (!isNSDecl) {
 					is_preserved_xmlns = false;
 					preserved_name = localName;
 				} else {
