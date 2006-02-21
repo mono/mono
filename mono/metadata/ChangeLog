@@ -15,6 +15,25 @@
 	Check return value of inet_ntop ().
 	(addrinfo_to_IPHostEntry): Fix typo
 
+2006-02-16  Raja R Harinath  <rharinath@novell.com>
+ 
+	Type metadata parsing doesn't use generic-instantiation information.
+	* metadata.c (mono_metadata_parse_array_full): Change
+	MonoGenericContext* parameter to MonoGenericContainer*.
+	(mono_metadata_parse_type_full): Likewise.
+	(mono_type_create_from_typespec_full): Likewise.
+	(mono_metadata_parse_mh_full): Likewise.
+	(mono_metadata_parse_generic_inst): Likewise.
+	(do_mono_metadata_parse_generic_class): Likewise.
+	(do_mono_metadata_parse_type): Likewise.
+	* metadata-internals.h: Update to changes.
+	* class.c (mono_class_find_enum_basetype): Likewise.
+	(mono_class_setup_fields): Likewise.
+	(mono_class_create_from_typespec): Likewise.
+	* loader.c (method_from_methodspec): Likewise.
+	(mono_get_method_from_token): Likewise.
+	(mono_method_get_header): Likewise.
+
 2006-02-16  Martin Baulig  <martin@ximian.com>
 
 	* reflection.c (mono_reflection_get_token): Add support for fields

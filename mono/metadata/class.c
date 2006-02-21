@@ -725,12 +725,9 @@ mono_class_find_enum_basetype (MonoClass *class)
 			container = gklass->generic_container;
 			g_assert (container);
 		}
-		ftype = mono_metadata_parse_type_full (
-			m, (MonoGenericContext *) container, MONO_PARSE_FIELD,
-			cols [MONO_FIELD_FLAGS], sig + 1, &sig);
+		ftype = mono_metadata_parse_type_full (m, container, MONO_PARSE_FIELD, cols [MONO_FIELD_FLAGS], sig + 1, &sig);
 		if (class->generic_class) {
-			ftype = mono_class_inflate_generic_type (
-				ftype, class->generic_class->context);
+			ftype = mono_class_inflate_generic_type (ftype, class->generic_class->context);
 			ftype->attrs = cols [MONO_FIELD_FLAGS];
 		}
 
@@ -838,14 +835,11 @@ mono_class_setup_fields (MonoClass *class)
 			ifield->generic_type = gklass->fields [i].type;
 			field->generic_info = ifield;
 		}
-		field->type = mono_metadata_parse_type_full (
-			m, (MonoGenericContext *) container, MONO_PARSE_FIELD,
-			cols [MONO_FIELD_FLAGS], sig + 1, &sig);
+		field->type = mono_metadata_parse_type_full (m, container, MONO_PARSE_FIELD, cols [MONO_FIELD_FLAGS], sig + 1, &sig);
 		if (mono_field_is_deleted (field))
 			continue;
 		if (class->generic_class) {
-			field->type = mono_class_inflate_generic_type (
-				field->type, class->generic_class->context);
+			field->type = mono_class_inflate_generic_type (field->type, class->generic_class->context);
 			field->type->attrs = cols [MONO_FIELD_FLAGS];
 		}
 
@@ -3129,7 +3123,7 @@ mono_class_create_from_typespec (MonoImage *image, guint32 type_spec,
 	MonoType *type, *inflated;
 	MonoClass *class;
 
-	type = mono_type_create_from_typespec_full (image, context, type_spec);
+	type = mono_type_create_from_typespec_full (image, context ? context->container : NULL, type_spec);
 
 	switch (type->type) {
 	case MONO_TYPE_ARRAY:
