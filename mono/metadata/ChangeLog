@@ -1,4 +1,9 @@
 
+Tue Feb 21 19:53:26 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* metadata.c: tweak table descriptors data structures to reduce
+	size and runtime relocations.
+
 Tue Feb 21 14:52:13 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* marshal.c: fix some types and opcodes to be type-safe
