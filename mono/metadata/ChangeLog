@@ -1,3 +1,6 @@
+2006-02-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalUni): Fix writing past memory. Fixes #77613.
 
 Tue Feb 21 19:55:11 CET 2006 Paolo Molaro <lupus@ximian.com>
 
