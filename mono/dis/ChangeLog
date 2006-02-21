@@ -1,3 +1,15 @@
+2006-02-21  Ankit Jain  <jankit@novell.com>
+
+	* get.c (mono_generic_params_with_ambiguous_names): New.
+	(generic_containers): New. Hashtable of all generic containers that have
+	been checked for ambiguous params.
+	(check_ambiguous_genparams): New. Walk a MonoGenericContainer
+	and fill mono_generic_params_with_ambiguous_names table.
+	(is_ambiguous_generic_param): New. Check whether a MonoGenericParam has
+	ambiguous names.
+	(dis_stringify_type): Use new is_ambiguous_generic_param to determine
+	whether to print number or name for VAR/MVAR.
+
 2006-02-18  Raja R Harinath  <harinath@gmail.com>
 
 	* get.c (get_typespec): Don't use mono_type_create_from_typespec_full().
