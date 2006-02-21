@@ -1,3 +1,7 @@
+2006-02-21  Ankit Jain  <jankit@novell.com>
+
+	* metadata.h (mono_metadata_decode_signed_value): Add declaration.
+
 2006-02-21  Raja R Harinath  <rharinath@novell.com>
 
 	* metadata.c (get_constraints): Relax debugging checks for monodis.
