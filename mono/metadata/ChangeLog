@@ -1,3 +1,7 @@
+2006-02-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalUni): Fix writing past memory. Fixes #77613.
+
 2006-02-21  Ankit Jain  <jankit@novell.com>
 
 	* metadata.h (mono_metadata_decode_signed_value): Add declaration.
