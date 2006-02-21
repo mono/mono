@@ -1,3 +1,7 @@
+2006-02-21  Marek Safar  <marek.safar@seznam.cz>
+
+	* NativeConvert.generated.cs: Removed duplicated CLSCompliant attribute.
+
 2006-01-10  Raja R Harinath  <rharinath@novell.com>
 
 	* Syscall.cs (sys_futimes): Remove buggy custom marshaller on 'fd' parameter.
