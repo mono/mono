@@ -283,9 +283,11 @@ namespace System {
 				}
 
 				int b = stdin.ReadByte ();
-				if (b != '\x1b') {
+				while (b != '\x1b') {
 					AddToBuffer (b);
-					return;
+					if (ConsoleDriver.InternalKeyAvailable (100) <= 0)
+						return;
+					b = stdin.ReadByte ();
 				}
 
 				b = stdin.ReadByte ();

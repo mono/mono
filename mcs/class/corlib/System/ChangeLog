@@ -1,3 +1,7 @@
+2006-02-21 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TermInfoDriver.cs: patch by Mike Hull that fixes bug #77518.
+
 
 Mon Feb 20 11:19:54 CET 2006 Paolo Molaro <lupus@ximian.com>
 
