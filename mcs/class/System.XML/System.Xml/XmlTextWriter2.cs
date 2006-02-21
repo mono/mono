@@ -671,7 +671,8 @@ namespace Mono.Xml
 				WriteEndAttribute ();
 
 			if (new_local_namespaces.Count == 0) {
-				explicit_nsdecls.Clear ();
+				if (explicit_nsdecls.Count > 0)
+					explicit_nsdecls.Clear ();
 				return;
 			}
 
@@ -681,7 +682,14 @@ namespace Mono.Xml
 			int idx = explicit_nsdecls.Count;
 			while (new_local_namespaces.Count > 0) {
 				string p = (string) new_local_namespaces.Pop ();
-				if (explicit_nsdecls.Contains (p))
+				bool match = false;
+				for (int i = 0; i < explicit_nsdecls.Count; i++) {
+					if ((string) explicit_nsdecls [i] == p) {
+						match = true;
+						break;
+					}
+				}
+				if (match)
 					continue;
 				explicit_nsdecls.Add (p);
 			}
