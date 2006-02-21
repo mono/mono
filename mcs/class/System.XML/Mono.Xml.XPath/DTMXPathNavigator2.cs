@@ -97,8 +97,6 @@ namespace Mono.Xml.XPath
 		int currentAttr;
 		int currentNs;
 
-		StringBuilder valueBuilder;
-
 #region Properties
 
 		public override string BaseURI {
@@ -219,34 +217,36 @@ namespace Mono.Xml.XPath
 				if (iter == 0)
 					return String.Empty;
 
-				if (valueBuilder == null)
-					valueBuilder = new StringBuilder ();
-				else
-					valueBuilder.Length = 0;
+				StringBuilder builder = null;
+				BuildValue (iter, ref builder);
+				return builder == null ? String.Empty : builder.ToString ();
+			}
+		}
 
-				int end = nodes [currentNode].NextSibling;
-				if (end == 0) {
-					int tmp = currentNode;
-					do {
-						tmp = nodes [tmp].Parent;
-						end = nodes [tmp].NextSibling;
-					} while (end == 0 && tmp != 0);
-					if (end == 0)
-						end = nodes.Length;
-				}
+		void BuildValue (int iter, ref StringBuilder valueBuilder)
+		{
+			int end = nodes [currentNode].NextSibling;
+			if (end == 0) {
+				int tmp = currentNode;
+				do {
+					tmp = nodes [tmp].Parent;
+					end = nodes [tmp].NextSibling;
+				} while (end == 0 && tmp != 0);
+				if (end == 0)
+					end = nodes.Length;
+			}
 
-				while (iter < end) {
-					switch (nodes [iter].NodeType) {
-					case XPathNodeType.Text:
-					case XPathNodeType.SignificantWhitespace:
-					case XPathNodeType.Whitespace:
-						valueBuilder.Append (nonAtomicStringPool [nodes [iter].Value]);
-						break;
-					}
-					iter++;
+			while (iter < end) {
+				switch (nodes [iter].NodeType) {
+				case XPathNodeType.Text:
+				case XPathNodeType.SignificantWhitespace:
+				case XPathNodeType.Whitespace:
+					if (valueBuilder == null)
+						valueBuilder = new StringBuilder ();
+					valueBuilder.Append (nonAtomicStringPool [nodes [iter].Value]);
+					break;
 				}
-				
-				return valueBuilder.ToString ();
+				iter++;
 			}
 		}
 

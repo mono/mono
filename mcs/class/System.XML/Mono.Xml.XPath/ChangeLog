@@ -1,3 +1,8 @@
+2006-02-21  Atsushi Enomoto <atsushi@ximian.com>
+
+	* DTMXPathNavigator2.cs : removed valueBuilder field (create 
+	  StringBuilder dynamically).
+
 2006-02-16  Atsushi Enomoto <atsushi@ximian.com>
 
 	* DTMXPathDocument2.cs, DTMXPathNavigator2.cs :
