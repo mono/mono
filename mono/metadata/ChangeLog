@@ -1,3 +1,9 @@
+
+Tue Feb 21 14:52:13 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* marshal.c: fix some types and opcodes to be type-safe
+	in marshaling wrappers.
+
 2006-02-21  Ankit Jain  <jankit@novell.com>
 
 	* metadata.h (mono_metadata_decode_signed_value): Add declaration.
