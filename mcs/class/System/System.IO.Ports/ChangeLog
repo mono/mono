@@ -1,3 +1,7 @@
+2006-02-21  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* SerialPort.cs: Little work on support the Read methods.
+
 2006-02-14  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* SerialPort.cs: Little work on default values and

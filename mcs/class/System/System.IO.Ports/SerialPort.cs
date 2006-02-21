@@ -516,12 +516,35 @@ namespace System.IO.Ports
 
 		public int Read (byte[] buffer, int offset, int count)
 		{
+			if (!isOpen)
+				throw new InvalidOperationException ();
+			if (buffer == null)
+				throw new ArgumentNullException ("buffer");
+			if (offset < 0 || offset >= buffer.Length)
+				throw new ArgumentOutOfRangeException ("offset");
+			if (count < 0 || count > buffer.Length)
+				throw new ArgumentOutOfRangeException ("count");
+			if (count > buffer.Length - offset)
+				throw new ArgumentException ("count > buffer.Length - offset");
+			
 			return read_serial (unixFd, buffer, offset, count, readTimeout);
 		}
 
 		public int Read (char[] buffer, int offset, int count)
 		{
-			throw new NotImplementedException ();
+			if (!isOpen)
+				throw new InvalidOperationException ();
+			if (buffer == null)
+				throw new ArgumentNullException ("buffer");
+			if (offset < 0 || offset >= buffer.Length)
+				throw new ArgumentOutOfRangeException ("offset");
+			if (count < 0 || count > buffer.Length)
+				throw new ArgumentOutOfRangeException ("count");
+			if (count > buffer.Length - offset)
+				throw new ArgumentException ("count > buffer.Length - offset");
+
+			byte [] bytes = encoding.GetBytes (buffer, offset, count);
+			return read_serial (unixFd, bytes, 0, bytes.Length, readTimeout);
 		}
 
 		byte[] read_buffer = new byte[4096];
