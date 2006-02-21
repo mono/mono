@@ -1,5 +1,9 @@
 2006-02-21  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlTextWriter2.cs : (WriteStartAttribute) reduced string == string.
+
+2006-02-21  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlDocument.cs : (ReadNodeCore) not public.
 
 2006-02-21  Atsushi Enomoto <atsushi@ximian.com>

@@ -775,16 +775,16 @@ namespace Mono.Xml
 			if (state != WriteState.Element && state != WriteState.Start)
 				throw StateError ("Attribute");
 
-			if (prefix == null)
+			if ((object) prefix == null)
 				prefix = String.Empty;
 
-			if (namespaces) {
-				// For xmlns URI, prefix is forced to be "xmlns"
-				if (namespaceUri == XmlnsNamespace && prefix.Length == 0 && localName != "xmlns")
-					prefix = "xmlns";
-				bool isNSDecl = (prefix == "xmlns" ||
-					localName == "xmlns" && prefix == String.Empty);
+			// For xmlns URI, prefix is forced to be "xmlns"
+			if (prefix.Length == 0 && namespaceUri == XmlnsNamespace && localName != "xmlns")
+				prefix = "xmlns";
+			bool isNSDecl = (prefix == "xmlns" ||
+				localName == "xmlns" && prefix == String.Empty);
 
+			if (namespaces) {
 				// MS implementation is pretty hacky here. 
 				// Regardless of namespace URI it is regarded
 				// as NS URI for "xml".
@@ -831,8 +831,7 @@ namespace Mono.Xml
 			writer.Write ('=');
 			writer.Write (quote_char);
 
-			if (prefix == "xml" || prefix == "xmlns" ||
-			    namespaces && namespaceUri == XmlnsNamespace) {
+			if (isNSDecl || prefix == "xml") {
 				if (preserver == null)
 					preserver = new StringWriter ();
 				else
