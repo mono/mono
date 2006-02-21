@@ -10,6 +10,7 @@ using Mono.Unix.Native;
 
 namespace Mono.Unix.Native {
 
+	[CLSCompliant (false)]
 	public sealed /* static */ partial class NativeConvert
 	{
 		private NativeConvert () {}
