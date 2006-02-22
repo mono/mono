@@ -45,6 +45,7 @@ System.Web.Security/MembershipUserCollectionTest.cs
 System.Web.Security/RolePrincipalTest.cs
 System.Web.Security/RolesTest.cs
 System.Web.UI/AttributeCollectionTest.cs
+System.Web.UI/ChtmlTextWriterTest.cs
 System.Web.UI/CleanHtmlTextWriter.cs
 System.Web.UI/ControlTest.cs
 System.Web.UI/ControlCollectionTest.cs
