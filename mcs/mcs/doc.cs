@@ -187,7 +187,7 @@ namespace Mono.CSharp {
 
 				n.WriteTo (RootContext.Documentation.XmlCommentOutput);
 			}
-			else if (mc.IsExposedFromAssembly (ds)) {
+			else if (mc.IsExposedFromAssembly ()) {
 				Constructor c = mc as Constructor;
 				if (c == null || !c.IsDefault ())
 					Report.Warning (1591, 4, mc.Location,

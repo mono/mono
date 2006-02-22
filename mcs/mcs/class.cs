@@ -453,7 +453,6 @@ namespace Mono.CSharp {
 		// This one is computed after we can distinguish interfaces
 		// from classes from the arraylist `type_bases' 
 		//
-		string base_class_name;
 		TypeExpr base_type;
 		TypeExpr[] iface_exprs;
 
@@ -481,8 +480,6 @@ namespace Mono.CSharp {
 			this.Kind = kind;
 
 			types = new ArrayList ();
-
-			base_class_name = null;
 		}
 
 		public bool AddToMemberContainer (MemberCore symbol)
@@ -785,12 +782,6 @@ namespace Mono.CSharp {
 			}
 		}
 		
-		public string Base {
-			get {
-				return base_class_name;
-			}
-		}
-
 		protected Type BaseType {
 			get {
 				return TypeBuilder.BaseType;
@@ -1105,9 +1096,6 @@ namespace Mono.CSharp {
 						TypeManager.CSharpName (base_class.Type), GetSignatureForError ());
 				}
 			}
-
-			if (base_class != null)
-				base_class_name = base_class.Name;
 
 			if (ifaces == null)
 				return null;
@@ -2359,9 +2347,9 @@ namespace Mono.CSharp {
 			get { return default_static_constructor; }
 		}
 
-		protected override bool VerifyClsCompliance (DeclSpace ds)
+		protected override bool VerifyClsCompliance ()
 		{
-			if (!base.VerifyClsCompliance (ds))
+			if (!base.VerifyClsCompliance ())
 				return false;
 
 			VerifyClsName ();
@@ -3102,9 +3090,9 @@ namespace Mono.CSharp {
 			}
 		}
 
-		protected override bool VerifyClsCompliance (DeclSpace ds)
+		protected override bool VerifyClsCompliance ()
 		{
-			if (!base.VerifyClsCompliance (ds))
+			if (!base.VerifyClsCompliance ())
 				return false;
 
 			if (ifaces != null) {
@@ -3201,7 +3189,7 @@ namespace Mono.CSharp {
 			}
 
 			Type base_ret_type = null;
-			base_method = FindOutBaseMethod (Parent, ref base_ret_type);
+			base_method = FindOutBaseMethod (ref base_ret_type);
 
 			// method is override
 			if (base_method != null) {
@@ -3442,7 +3430,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		/// Gets base method and its return type
 		/// </summary>
-		protected abstract MethodInfo FindOutBaseMethod (TypeContainer container, ref Type base_ret_type);
+		protected abstract MethodInfo FindOutBaseMethod (ref Type base_ret_type);
 
 		protected bool DoDefineParameters ()
 		{
@@ -3501,10 +3489,10 @@ namespace Mono.CSharp {
 			}
 		}
 
-		protected override bool VerifyClsCompliance (DeclSpace ds)
+		protected override bool VerifyClsCompliance ()
 		{
-			if (!base.VerifyClsCompliance (ds)) {
-				if ((ModFlags & Modifiers.ABSTRACT) != 0 && IsExposedFromAssembly (ds) && ds.IsClsComplianceRequired ()) {
+			if (!base.VerifyClsCompliance ()) {
+				if ((ModFlags & Modifiers.ABSTRACT) != 0 && IsExposedFromAssembly () && Parent.IsClsComplianceRequired ()) {
 					Report.Error (3011, Location, "`{0}': only CLS-compliant members can be abstract", GetSignatureForError ());
 				}
 				return false;
@@ -3974,10 +3962,10 @@ namespace Mono.CSharp {
 			Report.Error (1599, loc, "Method or delegate cannot return type `{0}'", TypeManager.CSharpName (t));
 		}
 
-		protected override MethodInfo FindOutBaseMethod (TypeContainer container, ref Type base_ret_type)
+		protected override MethodInfo FindOutBaseMethod (ref Type base_ret_type)
 		{
-			MethodInfo mi = (MethodInfo) container.BaseCache.FindMemberToOverride (
-				container.TypeBuilder, Name, ParameterTypes, false);
+			MethodInfo mi = (MethodInfo) Parent.BaseCache.FindMemberToOverride (
+				Parent.TypeBuilder, Name, ParameterTypes, false);
 
 			if (mi == null)
 				return null;
@@ -3992,15 +3980,15 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		protected override bool VerifyClsCompliance(DeclSpace ds)
+		protected override bool VerifyClsCompliance ()
 		{
-			if (!base.VerifyClsCompliance (ds))
+			if (!base.VerifyClsCompliance ())
 				return false;
 
 			if (ParameterInfo.Count > 0) {
-				ArrayList al = (ArrayList)ds.MemberCache.Members [Name];
+				ArrayList al = (ArrayList)Parent.MemberCache.Members [Name];
 				if (al.Count > 1)
-					ds.MemberCache.VerifyClsParameterConflict (al, this, MethodBuilder);
+					Parent.MemberCache.VerifyClsParameterConflict (al, this, MethodBuilder);
 			}
 
 			return true;
@@ -4184,7 +4172,7 @@ namespace Mono.CSharp {
 			if (base_constructor == null) {
 				if (errors == Report.Errors)
 					Invocation.Error_WrongNumArguments (loc, TypeManager.CSharpSignature (caller_builder),
-						argument_list.Count);
+						argument_list == null ? 0 : argument_list.Count);
 				return false;
 			}
 
@@ -4501,7 +4489,7 @@ namespace Mono.CSharp {
 		}
 
 		// Is never override
-		protected override MethodInfo FindOutBaseMethod (TypeContainer container, ref Type base_ret_type)
+		protected override MethodInfo FindOutBaseMethod (ref Type base_ret_type)
 		{
 			return null;
 		}
@@ -4511,18 +4499,18 @@ namespace Mono.CSharp {
 			return base.GetSignatureForError () + Parameters.GetSignatureForError ();
 		}
 
-		protected override bool VerifyClsCompliance (DeclSpace ds)
+		protected override bool VerifyClsCompliance ()
 		{
-			if (!base.VerifyClsCompliance (ds) || !IsExposedFromAssembly (ds)) {
+			if (!base.VerifyClsCompliance () || !IsExposedFromAssembly ()) {
 				return false;
 			}
 			
  			if (ParameterInfo.Count > 0) {
- 				ArrayList al = (ArrayList)ds.MemberCache.Members [".ctor"];
+ 				ArrayList al = (ArrayList)Parent.MemberCache.Members [".ctor"];
  				if (al.Count > 3)
- 					ds.MemberCache.VerifyClsParameterConflict (al, this, ConstructorBuilder);
+ 					Parent.MemberCache.VerifyClsParameterConflict (al, this, ConstructorBuilder);
  
-				if (ds.TypeBuilder.IsSubclassOf (TypeManager.attribute_type)) {
+				if (Parent.TypeBuilder.IsSubclassOf (TypeManager.attribute_type)) {
 					foreach (Type param in ParameterTypes) {
 						if (param.IsArray) {
 							return true;
@@ -4645,12 +4633,13 @@ namespace Mono.CSharp {
 			string name = method.MethodName.Name;
 			string method_name = name;
 
-			if (container.Pending != null){
+			PendingImplementation pending = container.Pending;
+			if (pending != null){
 				if (member is Indexer) // TODO: test it, but it should work without this IF
-					implementing = container.Pending.IsInterfaceIndexer (
+					implementing = pending.IsInterfaceIndexer (
 						member.InterfaceType, method.ReturnType, method.ParameterInfo);
 				else
-					implementing = container.Pending.IsInterfaceMethod (
+					implementing = pending.IsInterfaceMethod (
 						member.InterfaceType, name, method.ReturnType, method.ParameterInfo);
 
 				if (member.InterfaceType != null){
@@ -4773,11 +4762,11 @@ namespace Mono.CSharp {
 				// clear the pending implemntation flag
 				//
 				if (member is Indexer) {
-					container.Pending.ImplementIndexer (
+					pending.ImplementIndexer (
 						member.InterfaceType, builder, method.ReturnType,
 						method.ParameterInfo, member.IsExplicitImpl);
 				} else
-					container.Pending.ImplementMethod (
+					pending.ImplementMethod (
 						member.InterfaceType, name, method.ReturnType,
 						method.ParameterInfo, member.IsExplicitImpl);
 
@@ -5112,13 +5101,13 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		protected override bool VerifyClsCompliance(DeclSpace ds)
+		protected override bool VerifyClsCompliance()
 		{
-			if (base.VerifyClsCompliance (ds)) {
+			if (base.VerifyClsCompliance ()) {
 				return true;
 			}
 
-			if (IsInterface && HasClsCompliantAttribute && ds.IsClsComplianceRequired ()) {
+			if (IsInterface && HasClsCompliantAttribute && Parent.IsClsComplianceRequired ()) {
 				Report.Error (3010, Location, "`{0}': CLS-compliant interfaces must have only CLS-compliant members", GetSignatureForError ());
 			}
 			return false;
@@ -5267,9 +5256,9 @@ namespace Mono.CSharp {
 			}
 		}
 
-		protected override bool VerifyClsCompliance (DeclSpace ds)
+		protected override bool VerifyClsCompliance ()
 		{
-			if (!base.VerifyClsCompliance (ds))
+			if (!base.VerifyClsCompliance ())
 				return false;
 
 			if (!IsFieldClsCompliant) {
@@ -5639,9 +5628,9 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		protected override bool VerifyClsCompliance (DeclSpace ds)
+		protected override bool VerifyClsCompliance ()
 		{
-			if (!base.VerifyClsCompliance (ds))
+			if (!base.VerifyClsCompliance ())
 				return false;
 
 			if ((ModFlags & Modifiers.VOLATILE) != 0) {
@@ -6235,10 +6224,10 @@ namespace Mono.CSharp {
 		}
 
 		// TODO: rename to Resolve......
- 		protected override MethodInfo FindOutBaseMethod (TypeContainer container, ref Type base_ret_type)
+ 		protected override MethodInfo FindOutBaseMethod (ref Type base_ret_type)
  		{
- 			PropertyInfo base_property = container.BaseCache.FindMemberToOverride (
- 				container.TypeBuilder, Name, ParameterTypes, true) as PropertyInfo;
+ 			PropertyInfo base_property = Parent.BaseCache.FindMemberToOverride (
+ 				Parent.TypeBuilder, Name, ParameterTypes, true) as PropertyInfo;
   
  			if (base_property == null)
  				return null;
@@ -7410,7 +7399,7 @@ namespace Mono.CSharp {
 		}
 
 		// Operator cannot be override
-		protected override MethodInfo FindOutBaseMethod (TypeContainer container, ref Type base_ret_type)
+		protected override MethodInfo FindOutBaseMethod (ref Type base_ret_type)
 		{
 			return null;
 		}

@@ -1,3 +1,14 @@
+2006-02-22  Marek Safar  <marek.safar@seznam.cz>
+
+	Another prerequisites for new partial classs implementation.
+	
+	* attribute.cs (Attribute.Equal): Implemented.
+	(Attribute.Emit): Changed as attributes can be applied more than twice.
+	(Attributes.Emit): Check for duplicate attributes here.
+
+	* class.cs, decl.cs, delegate.cs, doc.cs, enum.cs: Don't pass DeclSpace
+	as a parameter, clean-up.
+
 2006-02-11  Marek Safar  <marek.safar@seznam.cz>
 
 	A fix for #77485
