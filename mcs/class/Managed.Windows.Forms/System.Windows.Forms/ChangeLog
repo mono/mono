@@ -1,3 +1,15 @@
+2006-02-22  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* Control.cs (WndProc): Only handle WM_SETCURSOR messages if
+	  it's for the client area (part of fix for #77479 and needed
+	  for MDI window cursor handling)
+	* XplatUIX11.cs
+	  - DefWindowProc: Now handles the WM_SETCURSOR messages, setting
+	    the appropriate default cursors and also passing the message
+	    up the parent chain 
+	  - GetMessage: Now generating WM_NCHITTEST and WM_SETCURSOR even
+	    for non-client areas
+
 2006-02-15  Jackson Harper  <jackson@ximian.com>
 
 	* XplatUIWin32.cs: Since we fake MDI dont tell Windows that this

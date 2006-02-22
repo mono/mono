@@ -685,6 +685,10 @@ namespace System.Windows.Forms {
 				decorations = 0;
 			}
 
+			if ((functions & MotifFunctions.Resize) == 0) {
+				XplatUI.SetWindowMinMax(hwnd.Handle, new Rectangle(cp.X, cp.Y, cp.Width, cp.Height), new Size(cp.Width, cp.Height), new Size(cp.Width, cp.Height));
+			}
+
 			mwmHints.functions = (IntPtr)functions;
 			mwmHints.decorations = (IntPtr)decorations;
 
@@ -2261,6 +2265,60 @@ namespace System.Windows.Forms {
 		}
 
 		internal override IntPtr DefWndProc(ref Message msg) {
+			switch ((Msg)msg.Msg) {
+				case Msg.WM_SETCURSOR: {
+					Hwnd	hwnd;
+					// Pass to parent window first
+					hwnd = Hwnd.GetObjectFromWindow(msg.HWnd);
+					while ((hwnd.parent != null) && (msg.Result == IntPtr.Zero)) {
+						hwnd = hwnd.parent;
+						NativeWindow.WndProc(hwnd.Handle, Msg.WM_SETCURSOR, msg.HWnd, msg.LParam);
+					}
+
+					if (msg.Result == IntPtr.Zero) {
+						IntPtr handle;
+
+						switch((HitTest)(msg.LParam.ToInt32() & 0xffff)) {
+							case HitTest.HTBORDER:		handle = Cursors.SizeNS.handle; break;
+							case HitTest.HTBOTTOMLEFT:	handle = Cursors.SizeNESW.handle; break;
+							case HitTest.HTBOTTOMRIGHT:	handle = Cursors.SizeNWSE.handle; break;
+							case HitTest.HTERROR:		if ((msg.LParam.ToInt32() >> 16) == (int)Msg.WM_LBUTTONDOWN) {
+												AudibleAlert();
+											}
+											handle = Cursors.Default.handle;
+											break;
+
+							case HitTest.HTHELP:		handle = Cursors.Help.handle; break;
+							case HitTest.HTLEFT:		handle = Cursors.SizeWE.handle; break;
+							case HitTest.HTRIGHT:		handle = Cursors.SizeWE.handle; break;
+							case HitTest.HTTOP:		handle = Cursors.SizeNS.handle; break;
+							case HitTest.HTTOPLEFT:		handle = Cursors.SizeNWSE.handle; break;
+							case HitTest.HTTOPRIGHT:	handle = Cursors.SizeNESW.handle; break;
+
+							#if SameAsDefault
+							case HitTest.HTGROWBOX:
+							case HitTest.HTSIZE:
+							case HitTest.HTZOOM:
+							case HitTest.HTVSCROLL:
+							case HitTest.HTSYSMENU:
+							case HitTest.HTREDUCE:
+							case HitTest.HTNOWHERE:
+							case HitTest.HTMAXBUTTON:
+							case HitTest.HTMINBUTTON:
+							case HitTest.HTMENU:
+							case HitTest.HSCROLL:
+							case HitTest.HTBOTTOM:
+							case HitTest.HTCAPTION:
+							case HitTest.HTCLIENT:
+							case HitTest.HTCLOSE:
+							#endif
+							default: handle = Cursors.Default.handle; break;
+						}
+						SetCursor(msg.HWnd, handle);
+					}
+					return (IntPtr)1;
+				}
+			}
 			return IntPtr.Zero;
 		}
 
@@ -2789,6 +2847,8 @@ namespace System.Windows.Forms {
 
 						break;
 					} else {
+						HitTest	ht;
+
 						#if DriverDebugExtra
 							Console.WriteLine("GetMessage(): non-client area {0:X} MotionNotify x={1} y={2}", client ? hwnd.client_window.ToInt32() : hwnd.whole_window.ToInt32(), xevent.MotionEvent.x, xevent.MotionEvent.y);
 						#endif
@@ -2803,11 +2863,8 @@ namespace System.Windows.Forms {
 							msg.lParam = (IntPtr)(MousePosition.Y << 16 | MousePosition.X);
 						}
 
-						#if notyet
-							// Not sure we need this...
-							HitTest	ht;
-							ht = NativeWindow.WndProc(hwnd.client_window, Msg.WM_NCHITTEST, IntPtr.Zero, msg.lParam);
-						#endif
+						ht = (HitTest)NativeWindow.WndProc(hwnd.client_window, Msg.WM_NCHITTEST, IntPtr.Zero, msg.lParam);
+						NativeWindow.WndProc(hwnd.client_window, Msg.WM_SETCURSOR, msg.hwnd, (IntPtr)ht).ToInt32() != 0;
 
 						MousePosition.X = xevent.MotionEvent.x;
 						MousePosition.Y = xevent.MotionEvent.y;

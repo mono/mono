@@ -3894,7 +3894,7 @@ namespace System.Windows.Forms
 					
 
 				case Msg.WM_SETCURSOR: {
-					if (cursor == null) {
+					if ((cursor == null) || ((HitTest)(m.LParam.ToInt32() & 0xffff) != HitTest.HTCLIENT)) {
 						DefWndProc(ref m);
 						return;
 					}
