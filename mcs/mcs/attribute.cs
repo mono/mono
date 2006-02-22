@@ -1862,6 +1862,8 @@ namespace Mono.CSharp {
 			TypeContainer tc = TypeManager.LookupInterface (type);
 			if (tc == null) {
 				object[] o = type.GetCustomAttributes (TypeManager.coclass_attr_type, false);
+				if (o.Length < 1)
+					return null;
 				return ((System.Runtime.InteropServices.CoClassAttribute)o[0]).CoClass;
 			}
 

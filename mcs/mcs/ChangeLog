@@ -1,5 +1,12 @@
 2006-02-22  Marek Safar  <marek.safar@seznam.cz>
 
+	A fix for #77615
+
+	* attribute.cs (AttributeTester.GetCoClassAttribute): Don't crash when
+	external interface does not have an attribute.
+
+2006-02-22  Marek Safar  <marek.safar@seznam.cz>
+
 	Another prerequisites for new partial classs implementation.
 	
 	* attribute.cs (Attribute.Equal): Implemented.
