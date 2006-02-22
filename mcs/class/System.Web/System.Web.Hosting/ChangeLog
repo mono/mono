@@ -1,3 +1,10 @@
+2006-02-22 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* BareApplicationHost.cs: class used as an entry point into each
+	application domiain from the ApplicationManager.
+	* ApplicationManager.cs: implemented most of the remaining methods.
+	* HostingEnvironment.cs: object handling methods are now implemented.
+
 2006-02-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* DefaultVirtualPathProvider.cs: add some comments/TODO.

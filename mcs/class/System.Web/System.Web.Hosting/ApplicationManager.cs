@@ -28,15 +28,22 @@
 //
 #if NET_2_0
 using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Security.Permissions;
+using System.Security.Policy;
 using System.Threading;
 
 namespace System.Web.Hosting {
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class ApplicationManager : MarshalByRefObject {
 		static ApplicationManager instance = new ApplicationManager ();
 		int users;
+		Dictionary <string, BareApplicationHost> id_to_host;
 
 		private ApplicationManager ()
 		{
+			id_to_host = new Dictionary<string, BareApplicationHost> ();
 		}
 
 		public void Close ()
@@ -51,11 +58,74 @@ namespace System.Web.Hosting {
 			return CreateObject (appId, type, virtualPath, physicalPath, failIfExists, true);
 		}
 
-		[MonoTODO]
 		public IRegisteredObject CreateObject (string appId, Type type, string virtualPath,
 							string physicalPath, bool failIfExists, bool throwOnError)
 		{
-			throw new NotImplementedException ();
+			if (appId == null)
+				throw new ArgumentNullException ("appId");
+
+			if (!VirtualPathUtility.IsAbsolute (virtualPath))
+				throw new ArgumentException ("Relative path no allowed.", "virtualPath");
+
+			if (physicalPath == null || physicalPath == "")
+				throw new ArgumentException ("Cannot be null or empty", "physicalPath");
+
+			// 'type' is not checked. If it's null, we'll throw a NullReferenceException
+			if (!typeof (IRegisteredObject).IsAssignableFrom (type)) {
+				string msg = String.Format ("Type '{0}' does not implement IRegisteredObject.", type.Name);
+				throw new ArgumentException (msg, "type");
+			}
+
+			//
+			// ArgumentException is thrown for the physical path from the internal object created
+			// in the new application domain.
+			BareApplicationHost host = null;
+			if (id_to_host.ContainsKey (appId))
+				host = id_to_host [appId];
+
+			IRegisteredObject ireg = null;
+			if (host != null) {
+				ireg = CheckIfExists (host, type, failIfExists);
+				if (ireg != null)
+					return ireg;
+			}
+
+			try {
+				if (host == null)
+					host = CreateHost (appId, virtualPath, physicalPath);
+				ireg = host.CreateInstance (type);
+			} catch (Exception e) {
+				if (throwOnError)
+					throw;
+			}
+
+			if (ireg != null && host.GetObject (type) == null) // If not registered from ctor...
+				host.RegisterObject (ireg, true);
+
+			return ireg;
+		}
+
+		BareApplicationHost CreateHost (string appId, string vpath, string ppath)
+		{
+			BareApplicationHost host;
+			host = (BareApplicationHost) ApplicationHost.CreateApplicationHost (typeof (BareApplicationHost), vpath, ppath);
+			id_to_host [appId] = host;
+			return host;
+		}
+
+		IRegisteredObject CheckIfExists (BareApplicationHost host, Type type, bool failIfExists)
+		{
+			IRegisteredObject ireg = host.GetObject (type);
+			if (ireg == null)
+				return null;
+
+			if (failIfExists) {
+				string msg = String.Format ("Well known object of type '{0}' already " +
+						"exists in this domain.", type.Name);
+				throw new InvalidOperationException (msg);
+			}
+
+			return ireg;
 		}
 
 		public static ApplicationManager GetApplicationManager ()
@@ -63,16 +133,35 @@ namespace System.Web.Hosting {
 			return instance;
 		}
 
-		[MonoTODO]
 		public IRegisteredObject GetObject (string appId, Type type)
 		{
-			throw new NotImplementedException ();
+			if (appId == null)
+				throw new ArgumentNullException ("appId");
+
+			if (type == null)
+				throw new ArgumentNullException ("type");
+
+			BareApplicationHost host = null;
+			if (!id_to_host.ContainsKey (appId))
+				return null;
+
+			host = id_to_host [appId];
+			return host.GetObject (type);
 		}
 
-		[MonoTODO]
 		public ApplicationInfo [] GetRunningApplications ()
 		{
-			throw new NotImplementedException ();
+			ICollection<string> coll = id_to_host.Keys;
+			string [] keys = new string [coll.Count];
+			coll.CopyTo (keys, 0);
+			ApplicationInfo [] result = new ApplicationInfo [coll.Count];
+			int i = 0;
+			foreach (string str in keys) {
+				BareApplicationHost host = id_to_host [str];
+				result [i++] = new ApplicationInfo (str, host.PhysicalPath, host.VirtualPath);
+			}
+
+			return result;
 		}
 
 		public override object InitializeLifetimeService ()
@@ -96,16 +185,18 @@ namespace System.Web.Hosting {
 			// == HostingEnvironment.InitiateShutdown in all appdomains managed by this instance
 		}
 
-		[MonoTODO]
 		public void ShutdownApplication (string appId)
 		{
 			if (appId == null)
 				throw new ArgumentNullException ("appId");
 
-			throw new NotImplementedException ();
+			BareApplicationHost host = id_to_host [appId];
+			if (host == null)
+				return;
+
+			host.Shutdown ();
 		}
 
-		[MonoTODO]
 		public void StopObject (string appId, Type type)
 		{
 			if (appId == null)
@@ -114,7 +205,14 @@ namespace System.Web.Hosting {
 			if (type == null)
 				throw new ArgumentNullException ("type");
 
-			throw new NotImplementedException ();
+			if (!id_to_host.ContainsKey (appId))
+				return;
+
+			BareApplicationHost host = id_to_host [appId];
+			if (host == null)
+				return;
+
+			host.StopObject (type);
 		}
 	}
 }

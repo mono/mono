@@ -33,6 +33,7 @@
 
 using System;
 using System.Security.Permissions;
+using System.Threading;
 using System.Web.Caching;
 using System.Web.Util;
 
@@ -45,11 +46,16 @@ namespace System.Web.Hosting {
 		static bool is_hosted;
 		static string site_name;
 		static ApplicationShutdownReason shutdown_reason;
+		internal static BareApplicationHost Host;
 		static VirtualPathProvider vpath_provider = (HttpRuntime.AppDomainAppVirtualPath == null) ? null :
 								new DefaultVirtualPathProvider ();
+		static int busy_count;
 
 		public HostingEnvironment ()
 		{
+			// The documentation says that this is called once per domain by the ApplicationManager and
+			// then it throws InvalidOperationException whenever called.
+			throw new InvalidOperationException ();
 		}
 
 		public static string ApplicationID {
@@ -92,7 +98,7 @@ namespace System.Web.Hosting {
 		[MonoTODO]
 		public static void DecrementBusyCount ()
 		{
-			throw new NotImplementedException ();
+			Interlocked.Decrement (ref busy_count);
 		}
 
 		[MonoTODO]
@@ -113,10 +119,9 @@ namespace System.Web.Hosting {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public static void IncrementBusyCount ()
 		{
-			throw new NotImplementedException ();
+			Interlocked.Increment (ref busy_count);
 		}
 
 		public override object InitializeLifetimeService ()
@@ -124,10 +129,9 @@ namespace System.Web.Hosting {
 			return null;
 		}
 
-		[MonoTODO]
 		public static void InitiateShutdown ()
 		{
-			throw new NotImplementedException ();
+			HttpRuntime.UnloadAppDomain ();
 		}
 
 		public static string MapPath (string virtualPath)
@@ -147,10 +151,11 @@ namespace System.Web.Hosting {
 			return context.Request.MapPath (virtualPath);
 		}
 
-		[MonoTODO]
 		public static void RegisterObject (IRegisteredObject obj)
 		{
-			throw new NotImplementedException ();
+			if (obj == null)
+				throw new ArgumentNullException ("obj");
+			Host.RegisterObject (obj, false);
 		}
 
 		public static void RegisterVirtualPathProvider (VirtualPathProvider virtualPathProvider)
@@ -177,10 +182,11 @@ namespace System.Web.Hosting {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public static void UnregisterObject (IRegisteredObject obj)
 		{
-			throw new NotImplementedException ();
+			if (obj == null)
+				throw new ArgumentNullException ("obj");
+			Host.UnregisterObject (obj);
 		}
 	}
 }
