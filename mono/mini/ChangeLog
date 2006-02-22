@@ -1,4 +1,9 @@
 
+Wed Feb 22 19:38:40 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini-x86.c, mini-amd64.c: generate code to access tls items
+	in a faster way for Xen systems.
+
 Wed Feb 22 10:31:25 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* exceptions-x86.c, mini-x86.h, driver.c, mini-codegen.c:
