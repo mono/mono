@@ -485,6 +485,7 @@ System.IO.Ports/Parity.cs
 System.IO.Ports/SerialErrorEventArgs.cs
 System.IO.Ports/SerialPinChangedEventArgs.cs
 System.IO.Ports/SerialPort.cs
+System.IO.Ports/SerialPortStream.cs
 System.IO.Ports/SerialReceivedEventArgs.cs
 System.IO.Ports/StopBits.cs
 System.IO/RenamedEventArgs.cs

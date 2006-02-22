@@ -1,3 +1,8 @@
+2006-02-22  Kornél Pál  <kornelpal@hotmail.com>
+
+	* System.dll.sources: Added System.IO.Ports.SerialPortStream.cs
+	  to fix build.
+
 2005-02-02  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* System.dll.sources: Add the recently added System.Net 2.0 
