@@ -1,3 +1,41 @@
+2006-02-22  Chris Toshok  <toshok@ximian.com>
+
+	* SqlDataSourceFilteringEventArgs.cs: formatting.
+
+	* SqlDataSourceSelectingEventArgs.cs: remove ExecutingSelectCount,
+	both the property and ctor arg.
+
+	* AccessDataSourceView.cs (ExecuteSelect): use SelectingEventArgs,
+	not CommandEventArgs.  Also, cast the return value of
+	oleCommand.ExecuteReader.
+
+	* AccessDataSource.cs (.ctor): fix the ctors and remove FIXME
+	comments.
+	(GetDbProviderFactory): implement naively, and leave a MonoTODO.
+	(GetPhysicalDataFilePath): implement, again naively.  this is
+	where the NRE is generated when we access ConnectionString in a
+	testcase on .net.
+	(ConnectionString): dynamically generate this based on our
+	DataFile attribute.
+	(DataFile): clear the ConnectionString in the setter so we'll
+	regenerate it.
+	(ProviderName): use base.ProviderName in the getter, not
+	this.ProviderName, so we don't recurse infinitely.
+	
+	* SqlDataSourceView.cs: start reworking this class.
+
+	* SqlDataSource.cs (GetDbProviderFactory): implement this,
+	following the MS docs on the matter (if ProviderName is null/"",
+	return SqlClientFactory.Instance.)
+	(GetDbProviderFactoryInternal): add an internal method for use by
+	SqlDataSourceView.
+	(TrackViewState): don't invoke View.TrackViewState unless we have
+	one.
+	(Selecting): change event handler type to match MS.
+	(Filtering): add missing event.
+	(View): call CreateDataSourceView, don't just create an
+	SqlDataSourceView.
+	
 2006-02-21  Chris Toshok  <toshok@ximian.com>
 
 	* BoundField.cs: ues the ViewState.Get* pattern with default

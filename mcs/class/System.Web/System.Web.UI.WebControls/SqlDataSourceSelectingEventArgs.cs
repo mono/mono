@@ -34,21 +34,15 @@ using System.Data.Common;
 namespace System.Web.UI.WebControls {
 	public class SqlDataSourceSelectingEventArgs : SqlDataSourceCommandEventArgs {
 		DataSourceSelectArguments arguments;
-		bool executeSelect;
 		
-		public SqlDataSourceSelectingEventArgs (DbCommand command, DataSourceSelectArguments argument, 
-			bool executeSelect) : base (command)
+		public SqlDataSourceSelectingEventArgs (DbCommand command, DataSourceSelectArguments argument)
+			: base (command)
 		{
 			this.arguments = argument;
-			this.executeSelect = executeSelect;
 		}
 		
 		public DataSourceSelectArguments Arguments {
 			get { return arguments; }
-		}
-
-		public bool ExecutingSelectCount {
-			get { return executeSelect; }
 		}
 	}
 }

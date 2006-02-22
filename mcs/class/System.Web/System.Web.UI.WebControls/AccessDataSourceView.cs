@@ -57,7 +57,7 @@ namespace System.Web.UI.WebControls {
 						DataSourceSelectArguments arguments)
 		{
 			oleCommand = new OleDbCommand (this.SelectCommand, oleConnection);
-			SqlDataSourceCommandEventArgs cmdEventArgs = new SqlDataSourceCommandEventArgs (oleCommand);
+			SqlDataSourceSelectingEventArgs cmdEventArgs = new SqlDataSourceSelectingEventArgs (oleCommand, arguments);
 			OnSelecting (cmdEventArgs);
 			IEnumerable enums = null; 
 			Exception exception = null;
@@ -65,7 +65,7 @@ namespace System.Web.UI.WebControls {
 			try {
 				System.IO.File.OpenRead (dataSource.DataFile).Close ();
 				oleConnection.Open ();
-				reader = oleCommand.ExecuteReader ();
+				reader = (OleDbDataReader)oleCommand.ExecuteReader ();
 			
 				//enums = reader.GetEnumerator ();
 				throw new NotImplementedException("OleDbDataReader doesnt implements GetEnumerator method yet");

@@ -42,9 +42,7 @@ namespace System.Web.UI.WebControls
 
 		public IOrderedDictionary ParameterValues
 		{
-			get {
-				return param_values;
-			}
+			get { return param_values; }
 		}
 
 		IOrderedDictionary param_values;

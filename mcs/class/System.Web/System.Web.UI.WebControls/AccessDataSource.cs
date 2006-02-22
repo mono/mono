@@ -44,21 +44,22 @@ namespace System.Web.UI.WebControls {
 	[ToolboxBitmap ("")]
 	public class AccessDataSource : SqlDataSource {
 
+		const string PROVIDER_NAME = "System.Data.OleDb";
+		const string PROVIDER_STRING = "Microsoft.Jet.OLEDB.4.0";
+
 		string dataFile;
-		
+		string connectionString;
+
 		public AccessDataSource () : base ()
 		{
-			this.ProviderName = "System.Data.OleDb";
+			base.ProviderName = PROVIDER_NAME;
 		}
 
 		public AccessDataSource (string dataFile, string selectCommand) : 
 			base (String.Empty, selectCommand)
 		{
 			this.dataFile = dataFile;
-			//After setting dataFile, connectionString gets recreated
-			//On accessing ConnectionString, MS.Net throws NullReferenceException
-			//Need to dig more on this.
-			this.ProviderName = "System.Data.OleDb";							
+			this.ProviderName = PROVIDER_NAME;
 		}
 
 		protected override SqlDataSourceView CreateDataSourceView (string viewName)
@@ -83,18 +84,35 @@ namespace System.Web.UI.WebControls {
 			set { throw new NotSupportedException ("AccessDataSource does not supports SQL Cache Dependencies."); }
 		}
 
-		[MonoTODO]
+		[MonoTODO ("why override?  maybe it doesn't call DbProviderFactories.GetFactory?")]
 		protected override DbProviderFactory GetDbProviderFactory ()
 		{
-			throw new NotImplementedException ();
+			return DbProviderFactories.GetFactory (PROVIDER_NAME);
+		}
+
+		string GetPhysicalDataFilePath ()
+		{
+			if (DataFile == null || DataFile == "")
+				return "";
+
+			// more here?  how do we handle |DataDirectory|?
+			return HttpContext.Current.Request.MapPath (DataFile);
 		}
 
 		[BrowsableAttribute (false), 
 		DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
 		public override string ConnectionString {
-			get { return this.ConnectionString; }
-			set { throw new InvalidOperationException 
-				("The ConnectionString is automatically generated for AccessDataSource and hence cannot be set."); 
+			get {
+				if (connectionString == null) {
+					connectionString = String.Format ("Provider={0}; Data Source={1}",
+									  PROVIDER_STRING, GetPhysicalDataFilePath ());
+				}
+
+				return connectionString;
+			}
+			set {
+				throw new InvalidOperationException 
+					("The ConnectionString is automatically generated for AccessDataSource and hence cannot be set."); 
 			}
 		}
 
@@ -104,17 +122,17 @@ namespace System.Web.UI.WebControls {
 		[WebSysDescriptionAttribute ("MS Office Access database file name")]
 		[EditorAttribute ("System.Web.UI.Design.MdbDataFileEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		public string DataFile {
-			get { return dataFile; }
-			set { dataFile = value; }
-			//After setting dataFile, connectionString gets recreated
-			//On accessing ConnectionString, MS.Net throws NullReferenceException
-			//Need to dig more on this.
+			get { return ViewState.GetString ("DataFile", ""); }
+			set {
+				ViewState ["DataFile"] = value;
+				connectionString = null;
+			}
 		}
 
 		[BrowsableAttribute (false), 
 		DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]			
 		public override string ProviderName {
-			get { return this.ProviderName; }
+			get { return base.ProviderName; }
 			set { throw new InvalidOperationException
 				("Setting ProviderName on an AccessDataSource is not allowed");
 			}

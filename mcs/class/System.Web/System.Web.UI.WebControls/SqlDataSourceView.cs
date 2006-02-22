@@ -36,22 +36,30 @@ using System.Collections.Specialized;
 using System.Text;
 using System.Data;
 using System.ComponentModel;
-using System.Data.SqlClient;
+using System.Data.Common;
 
 namespace System.Web.UI.WebControls {
 	public class SqlDataSourceView : DataSourceView, IStateManager {
 
-		SqlCommand command;
-		SqlConnection connection;
 		HttpContext context;
+		DbProviderFactory factory;
+		DbConnection connection;
 
 		public SqlDataSourceView (SqlDataSource owner, string name, HttpContext context)
-		: base (owner, name)
+			: base (owner, name)
 		{
 			this.owner = owner;
 			this.name = name;
 			this.context = context;
-			connection = new SqlConnection (owner.ConnectionString);
+		}
+
+		void InitConnection ()
+		{
+			if (connection == null) {
+				factory = owner.GetDbProviderFactoryInternal ();
+				connection = factory.CreateConnection ();
+				connection.ConnectionString = owner.ConnectionString;
+			}
 		}
 
 		public int Delete (IDictionary keys, IDictionary oldValues)
@@ -60,15 +68,21 @@ namespace System.Web.UI.WebControls {
 		}
 		
 		[MonoTODO ("Handle keys, oldValues, parameters and check for path for AccessDBFile")]
-		protected override int ExecuteDelete(IDictionary keys, IDictionary oldValues)
+		protected override int ExecuteDelete (IDictionary keys, IDictionary oldValues)
 		{
 			if (!CanDelete)
 				throw new NotSupportedException("Delete operation is not supported");
 			if (oldValues == null && conflictOptions == ConflictOptions.CompareAllValues)
 				throw new InvalidOperationException ("oldValues parameters should be specified when ConflictOptions is set to CompareAllValues");
-			command = new SqlCommand (this.DeleteCommand, connection);
-			SqlDataSourceCommandEventArgs cmdEventArgs = new SqlDataSourceCommandEventArgs (command);
-			OnDeleting (cmdEventArgs);
+
+			InitConnection ();
+
+			DbCommand command = factory.CreateCommand ();
+			command.CommandText = DeleteCommand;
+			command.Connection = connection;
+
+			OnDeleting (new SqlDataSourceCommandEventArgs (command));
+
 			connection.Open ();
 			Exception exception = null; 
 			int result = -1;;
@@ -77,8 +91,9 @@ namespace System.Web.UI.WebControls {
 			} catch (Exception e) {
 				exception = e;
 			}
-			SqlDataSourceStatusEventArgs statusEventArgs = new SqlDataSourceStatusEventArgs (command, result, exception);
-			OnDeleted (statusEventArgs);
+
+			OnDeleted (new SqlDataSourceStatusEventArgs (command, result, exception));
+
 			if (exception != null)
 				throw exception;
 			return result;
@@ -94,9 +109,15 @@ namespace System.Web.UI.WebControls {
 		{
 			if (!CanInsert)
 				throw new NotSupportedException ("Insert operation is not supported");
-			command = new SqlCommand (this.InsertCommand, connection);
-			SqlDataSourceCommandEventArgs cmdEventArgs = new SqlDataSourceCommandEventArgs (command);
-			OnInserting (cmdEventArgs);
+
+			InitConnection ();
+
+			DbCommand command = factory.CreateCommand ();
+			command.CommandText = InsertCommand;
+			command.Connection = connection;
+
+			OnInserting (new SqlDataSourceCommandEventArgs (command));
+
 			connection.Open();
 			Exception exception = null;
 			int result = -1;
@@ -105,8 +126,9 @@ namespace System.Web.UI.WebControls {
 			}catch (Exception e) {
 				exception = e;
 			}
-			SqlDataSourceStatusEventArgs statusEventArgs = new SqlDataSourceStatusEventArgs (command, result, exception);
-			OnInserted (statusEventArgs);
+
+			OnInserted (new SqlDataSourceStatusEventArgs (command, result, exception));
+
 			if (exception != null)
 				throw exception;
 			return result;
@@ -114,54 +136,67 @@ namespace System.Web.UI.WebControls {
 				
 		public IEnumerable Select (DataSourceSelectArguments arguments)
 		{
-			
 			return ExecuteSelect (arguments);
 		}
 
-		[MonoTODO ("Handle arguments")]
-		protected internal override IEnumerable ExecuteSelect (
-						DataSourceSelectArguments arguments)
+		[MonoTODO ("Handle @arguments, do replacement of command parameters")]
+		protected internal override IEnumerable ExecuteSelect (DataSourceSelectArguments arguments)
 		{
-			command = new SqlCommand (this.SelectCommand, connection);
-			SqlDataSourceCommandEventArgs cmdEventArgs = new SqlDataSourceCommandEventArgs (command);
-			OnSelecting (cmdEventArgs);
-			connection.Open ();
-			SqlDataReader reader = command.ExecuteReader ();
+			DbProviderFactory f = owner.GetDbProviderFactoryInternal ();
+			DbConnection c = f.CreateConnection ();
 
-			IEnumerable enums = null; 
-			Exception exception = null;
-			try {
-				//enums = reader.GetEnumerator();
-				throw new NotImplementedException ("SqlDataReader doesnt implements GetEnumerator method yet");
-			} catch (Exception e) {
-				exception = e;
+			c.ConnectionString = owner.ConnectionString;
+
+			DbCommand command = f.CreateCommand ();
+
+			command.CommandText = SelectCommand;
+			command.Connection = c;
+			command.CommandType = CommandType.Text;
+
+			/* XXX do replacement of command parameters */
+
+			OnSelecting (new SqlDataSourceSelectingEventArgs (command, arguments));
+
+			if (owner.DataSourceMode == SqlDataSourceMode.DataSet) {
+				DbDataAdapter adapter = f.CreateDataAdapter ();
+
+				adapter.SelectCommand = command;
+
+				DataSet dataset = new DataSet ();
+
+				/* XXX MS calls Fill (DataSet dataset, string srcTable) - find out what the source table is */
+				adapter.Fill (dataset, name);
+
+				dataset.WriteXml (Console.Out);
+
+				return dataset.CreateDataReader ();
 			}
-			SqlDataSourceStatusEventArgs statusEventArgs = 
-				new SqlDataSourceStatusEventArgs (command, reader.RecordsAffected, exception);
-			OnSelected (statusEventArgs);
-			if (exception !=null)
-				throw exception;
-			return enums;
-			
+			else {
+				throw new NotImplementedException ();
+			}
 		}
 
-		public int Update(IDictionary keys, IDictionary values,
-			IDictionary oldValues)
+		public int Update (IDictionary keys, IDictionary values, IDictionary oldValues)
 		{
 			return ExecuteUpdate (keys, values, oldValues);
 		}
 
 		[MonoTODO ("Handle keys, values and oldValues")]
-		protected override int ExecuteUpdate (IDictionary keys,
-					IDictionary values, IDictionary oldValues)
+		protected override int ExecuteUpdate (IDictionary keys, IDictionary values, IDictionary oldValues)
 		{
 			if (!CanUpdate)
 				throw new NotSupportedException ("Update operation is not supported");
 			if (oldValues == null && conflictOptions == ConflictOptions.CompareAllValues)
 				throw new InvalidOperationException ("oldValues parameters should be specified when ConflictOptions is set to CompareAllValues");
-			command = new SqlCommand(this.UpdateCommand, connection);
-			SqlDataSourceCommandEventArgs cmdEventArgs = new SqlDataSourceCommandEventArgs (command);
-			OnUpdating (cmdEventArgs);
+
+			InitConnection ();
+
+			DbCommand command = factory.CreateCommand ();
+			command.CommandText = UpdateCommand;
+			command.Connection = connection;
+
+			OnUpdating (new SqlDataSourceCommandEventArgs (command));
+
 			connection.Open ();
 			Exception exception = null;
 			int result = -1;
@@ -170,8 +205,9 @@ namespace System.Web.UI.WebControls {
 			}catch (Exception e) {
 				exception = e;
 			}
-			SqlDataSourceStatusEventArgs statusEventArgs = new SqlDataSourceStatusEventArgs (command, result, exception);
-			OnUpdated (statusEventArgs);
+
+			OnUpdated (new SqlDataSourceStatusEventArgs (command, result, exception));
+
 			if (exception != null)
 				throw exception;
 			return result;
@@ -203,7 +239,7 @@ namespace System.Web.UI.WebControls {
 			if (vs [2] != null) ((IStateManager) insertParameters).LoadViewState (vs [2]);
 			if (vs [3] != null) ((IStateManager) selectParameters).LoadViewState (vs [3]);
 			if (vs [4] != null) ((IStateManager) updateParameters).LoadViewState (vs [4]);
-			if (vs [5] != null) ((IStateManager) viewState).LoadViewState (vs [5]);
+			if (vs [5] != null) ((IStateManager) ViewState).LoadViewState (vs [5]);
 		}
 
 		protected virtual object SaveViewState ()
@@ -234,76 +270,46 @@ namespace System.Web.UI.WebControls {
 			if (viewState != null) ((IStateManager) viewState).TrackViewState ();
 		}
 		
-		protected bool IsTrackingViewState {
-			get { return tracking; }
-		}
-		
 		bool IStateManager.IsTrackingViewState {
 			get { return IsTrackingViewState; }
 		}
-		
-		public string DeleteCommand {
-			get {
-				string val = ViewState ["DeleteCommand"] as string;
-				return val == null ? "" : val;
-			}
-			set { ViewState ["DeleteCommand"] = value; }
+
+		bool cancelSelectOnNullParameter = true;
+		public bool CancelSelectOnNullParameter {
+			get { return cancelSelectOnNullParameter; }
+			set { cancelSelectOnNullParameter = value; }
 		}
-		
-		public string FilterExpression {
-			get {
-				string val = ViewState ["FilterExpression"] as string;
-				return val == null ? "" : val;
-			}
-			set { ViewState ["FilterExpression"] = value; }
-		}
-		
-		public string InsertCommand {
-			get {
-				string val = ViewState ["InsertCommand"] as string;
-				return val == null ? "" : val;
-			}
-			set { ViewState ["InsertCommand"] = value; }
-		}
-		
-		public string SelectCommand {
-			get {
-				string val = ViewState ["SelectCommand"] as string;
-				return val == null ? "" : val;
-			}
-			set { ViewState ["SelectCommand"] = value; }
-		}
-		
-		public string UpdateCommand {
-			get {
-				string val = ViewState ["UpdateCommand"] as string;
-				return val == null ? "" : val;
-			}
-			set { ViewState ["UpdateCommand"] = value; }
-		}
-		
-		public string SortExpression {
-			get {
-				string val = ViewState ["SortExpression"] as string;
-				return val == null ? "" : val;
-			}
-			set { ViewState ["SortExpression"] = value; }
-		}
-		
+
 		public override bool CanDelete {
-			get { return DeleteCommand != ""; }
+			get { return DeleteCommand != null && DeleteCommand != ""; }
 		}
-		
+
 		public override bool CanInsert {
-			get { return UpdateCommand != ""; }
+			get { return InsertCommand != null && InsertCommand != ""; }
 		}
 		
+		public override bool CanPage {
+			/* according to MS, this is false in all cases */
+			get { return false; }
+		}
+
+		public override bool CanRetrieveTotalRowCount {
+			/* according to MS, this is false in all cases */
+			get { return false; }
+		}
+
 		public override bool CanSort {
-			get { return owner.DataSourceMode == SqlDataSourceMode.DataSet; }
+			get {
+				/* we can sort if we're a DataSet, regardless of sort parameter name.
+				   we can sort if we're a DataReader, if the sort parameter name is not null/"".
+				*/
+				return (owner.DataSourceMode == SqlDataSourceMode.DataSet
+					|| (SortParameterName != null && SortParameterName != ""));
+			}
 		}
 		
 		public override bool CanUpdate {
-			get { return UpdateCommand != ""; }
+			get { return UpdateCommand != null && UpdateCommand != ""; }
 		}
 
 		ConflictOptions conflictOptions = ConflictOptions.OverwriteChanges;
@@ -312,6 +318,104 @@ namespace System.Web.UI.WebControls {
 			set { conflictOptions = value; }
 		}
 
+		public string DeleteCommand {
+			get { return ViewState.GetString ("DeleteCommand", ""); }
+			set { ViewState ["DeleteCommand"] = value; }
+		}
+
+		[MonoTODO]
+		public SqlDataSourceCommandType DeleteCommandType {
+			get { return (SqlDataSourceCommandType) ViewState.GetInt ("DeleteCommandType", (int)SqlDataSourceCommandType.StoredProcedure); }
+			set { ViewState ["DeleteCommandType"] = value; }
+		}
+
+		[DefaultValueAttribute (null)]
+		[PersistenceModeAttribute (PersistenceMode.InnerProperty)]
+		[EditorAttribute ("System.Web.UI.Design.WebControls.ParameterCollectionEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
+		public ParameterCollection DeleteParameters {
+			get { return GetParameterCollection (ref deleteParameters); }
+		}
+		
+		public string FilterExpression {
+			get { return ViewState.GetString ("FilterExpression", ""); }
+			set { ViewState ["FilterExpression"] = value; }
+		}
+
+		[EditorAttribute ("System.Web.UI.Design.WebControls.ParameterCollectionEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
+		[PersistenceModeAttribute (PersistenceMode.InnerProperty)]
+		[DefaultValueAttribute (null)]
+		public ParameterCollection FilterParameters {
+			get { return GetParameterCollection (ref filterParameters); }
+		}
+		
+		public string InsertCommand {
+			get { return ViewState.GetString ("InsertCommand", ""); }
+			set { ViewState ["InsertCommand"] = value; }
+		}
+
+		[MonoTODO]
+		public SqlDataSourceCommandType InsertCommandType {
+			get { return (SqlDataSourceCommandType) ViewState.GetInt ("InsertCommandType", (int)SqlDataSourceCommandType.StoredProcedure); }
+			set { ViewState ["InsertCommandType"] = value; }
+		}
+
+		[EditorAttribute ("System.Web.UI.Design.WebControls.ParameterCollectionEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
+		[PersistenceModeAttribute (PersistenceMode.InnerProperty)]
+		[DefaultValueAttribute (null)]
+		public ParameterCollection InsertParameters {
+			get { return GetParameterCollection (ref insertParameters); }
+		}
+
+		protected bool IsTrackingViewState {
+			get { return tracking; }
+		}
+
+		[MonoTODO]
+		[DefaultValue ("{0}")]
+		public string OldValuesParameterFormatString {
+			get { return ViewState.GetString ("OldValuesParameterFormatString", "{0}"); }
+			set { ViewState ["OldValuesParameterFormatString"] = value; }
+		}
+		
+		public string SelectCommand {
+			get { return ViewState.GetString ("SelectCommand", ""); }
+			set { ViewState ["SelectCommand"] = value; }
+		}
+
+		[MonoTODO]
+		public SqlDataSourceCommandType SelectCommandType {
+			get { return (SqlDataSourceCommandType) ViewState.GetInt ("SelectCommandType", (int)SqlDataSourceCommandType.StoredProcedure); }
+			set { ViewState ["SelectCommandType"] = value; }
+		}
+		
+		public ParameterCollection SelectParameters {
+			get { return GetParameterCollection (ref selectParameters); }
+		}
+
+		[MonoTODO]
+		public string SortParameterName {
+			get { return ViewState.GetString ("SortParameterName", ""); }
+			set { ViewState ["SortParameterName"] = value; }
+		}
+
+		public string UpdateCommand {
+			get { return ViewState.GetString ("UpdateCommand", ""); }
+			set { ViewState ["UpdateCommand"] = value; }
+		}
+
+		[MonoTODO]
+		public SqlDataSourceCommandType UpdateCommandType {
+			get { return (SqlDataSourceCommandType) ViewState.GetInt ("UpdateCommandType", (int)SqlDataSourceCommandType.StoredProcedure); }
+			set { ViewState ["UpdateCommandType"] = value; }
+		}
+
+		[EditorAttribute ("System.Web.UI.Design.WebControls.ParameterCollectionEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
+		[PersistenceModeAttribute (PersistenceMode.InnerProperty)]
+		[DefaultValueAttribute (null)]
+		public ParameterCollection UpdateParameters {
+			get { return GetParameterCollection (ref updateParameters); }
+		}
+		
 		void ParametersChanged (object source, EventArgs args)
 		{
 			OnDataSourceViewChanged (EventArgs.Empty);
@@ -331,61 +435,24 @@ namespace System.Web.UI.WebControls {
 			return output;
 		}
 		
-		[DefaultValueAttribute (null)]
-		[PersistenceModeAttribute (PersistenceMode.InnerProperty)]
-		[EditorAttribute ("System.Web.UI.Design.WebControls.ParameterCollectionEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
-		public ParameterCollection DeleteParameters {
-			get { return GetParameterCollection (ref deleteParameters); }
-		}
-		
-		[EditorAttribute ("System.Web.UI.Design.WebControls.ParameterCollectionEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
-		[PersistenceModeAttribute (PersistenceMode.InnerProperty)]
-		[DefaultValueAttribute (null)]
-		public ParameterCollection FilterParameters {
-			get { return GetParameterCollection (ref filterParameters); }
-		}
-		
-		[EditorAttribute ("System.Web.UI.Design.WebControls.ParameterCollectionEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
-		[PersistenceModeAttribute (PersistenceMode.InnerProperty)]
-		[DefaultValueAttribute (null)]
-		public ParameterCollection InsertParameters {
-			get { return GetParameterCollection (ref insertParameters); }
-		}
-		
-		public ParameterCollection SelectParameters {
-			get { return GetParameterCollection (ref selectParameters); }
-		}
-		
-		[EditorAttribute ("System.Web.UI.Design.WebControls.ParameterCollectionEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
-		[PersistenceModeAttribute (PersistenceMode.InnerProperty)]
-		[DefaultValueAttribute (null)]
-		public ParameterCollection UpdateParameters {
-			get { return GetParameterCollection (ref updateParameters); }
-		}
-		
-		
-		public override string Name {
-			get { return name; }
-		}
-		
 		protected virtual string ParameterPrefix {
 			get { return "@"; }
 		}
 
 		StateBag viewState;
-		protected StateBag ViewState {
+		private StateBag ViewState {
 			get {
 				if (viewState != null)
 					return viewState;
-				
+
 				viewState = new StateBag ();
 				if (IsTrackingViewState)
 					viewState.TrackViewState ();
-				
+
 				return viewState;
 			}
 		}
-			
+
 		ParameterCollection deleteParameters;
 		ParameterCollection filterParameters;
 		ParameterCollection insertParameters;
@@ -423,6 +490,21 @@ namespace System.Web.UI.WebControls {
 		public event SqlDataSourceCommandEventHandler Deleting {
 			add { Events.AddHandler (EventDeleting, value); }
 			remove { Events.RemoveHandler (EventDeleting, value); }
+		}
+		#endregion
+
+		#region OnFiltering
+		static readonly object EventFiltering = new object ();
+		protected virtual void OnFiltering (SqlDataSourceFilteringEventArgs e)
+		{
+			if (!HasEvents ()) return;
+			SqlDataSourceFilteringEventHandler h = Events [EventFiltering] as SqlDataSourceFilteringEventHandler;
+			if (h != null)
+				h (this, e);
+		}
+		public event SqlDataSourceFilteringEventHandler Filtering {
+			add { Events.AddHandler (EventFiltering, value); }
+			remove { Events.RemoveHandler (EventFiltering, value); }
 		}
 		#endregion
 		
@@ -471,14 +553,14 @@ namespace System.Web.UI.WebControls {
 		}
 		
 		static readonly object EventSelecting = new object ();
-		protected virtual void OnSelecting (SqlDataSourceCommandEventArgs e)
+		protected virtual void OnSelecting (SqlDataSourceSelectingEventArgs e)
 		{
 			if (!HasEvents ()) return;
-			SqlDataSourceCommandEventHandler h = Events [EventSelecting] as SqlDataSourceCommandEventHandler;
+			SqlDataSourceSelectingEventHandler h = Events [EventSelecting] as SqlDataSourceSelectingEventHandler;
 			if (h != null)
 				h (this, e);
 		}
-		public event SqlDataSourceCommandEventHandler Selecting {
+		public event SqlDataSourceSelectingEventHandler Selecting {
 			add { Events.AddHandler (EventSelecting, value); }
 			remove { Events.RemoveHandler (EventSelecting, value); }
 		}
