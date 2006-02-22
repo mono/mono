@@ -1127,6 +1127,11 @@ namespace System.Web.UI {
 			WriteBeginTag (br);
 			Write (SelfClosingTagEnd);
 		}
+
+		public virtual void WriteEncodedText (string text)
+		{
+			Write (HttpUtility.HtmlEncode (text));
+		}
 #endif
 	}
 }
