@@ -34,6 +34,7 @@ using NUnit.Framework;
 using System;
 using System.Configuration;
 using System.Data.Common;
+using System.Data.OleDb;
 using System.IO;
 using System.Globalization;
 using System.Web;
@@ -56,6 +57,11 @@ namespace MonoTests.System.Web.UI.WebControls
 		public void LoadFromViewState (object savedState)
 		{
 			LoadViewState (savedState);
+		}
+
+		public DbProviderFactory GetFactory ()
+		{
+			return GetDbProviderFactory ();
 		}
 	}
 
@@ -111,6 +117,18 @@ namespace MonoTests.System.Web.UI.WebControls
 			sql.DataFile = "hi there";
 			Assert.AreEqual ("Provider=Microsoft.Jet.OLEDB.4.0; Data Source=", sql.ConnectionString, "A1");
 		}
+
+#if notyet
+		// XXX enable this test once mono gets System.Data.OleDb.OleDbFactory
+		//
+		[Test]
+		public void ProviderFactory ()
+		{
+			AccessPoker sql = new AccessPoker ();
+
+			Assert.AreEqual (typeof (OleDbFactory), sql.GetFactory ().GetType());
+		}
+#endif
 
 		[Test]
 		public void Defaults ()
