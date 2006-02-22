@@ -1395,7 +1395,9 @@ namespace System.Xml.Serialization
 			{
 				case SchemaTypes.Class: GenerateReadClassInstance (typeMap, isNullable, "checkType"); break;
 				case SchemaTypes.Array: 
-					WriteLine ("return " + GenerateReadListElement (typeMap, null, isNullable, true) + ";"); 
+					string list = GenerateReadListElement (typeMap, null, isNullable, true);
+					if (list != null)
+						WriteLine ("return " + list + ";"); 
 					break;
 				case SchemaTypes.XmlNode: GenerateReadXmlNodeElement (typeMap, isNullable); break;
 				case SchemaTypes.Primitive: GenerateReadPrimitiveElement (typeMap, isNullable); break;

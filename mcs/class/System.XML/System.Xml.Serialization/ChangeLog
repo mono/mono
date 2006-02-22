@@ -1,3 +1,8 @@
+2006-02-22  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* SerializationCodeGenerator.cs: Omit return statement in ReadObject
+	method if GenerateReadListElement returns null. Fixes bug #77588.
+
 2006-02-21  Lluis Sanchez Gual  <lluis@novell.com> 
 
 	* XmlSerializer.cs: Fix the previous fix.
