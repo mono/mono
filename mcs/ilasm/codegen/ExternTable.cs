@@ -316,10 +316,12 @@ namespace Mono.ILASM {
                 public ExternTypeRef GetTypeRef (string asmb_name, string full_name, bool is_valuetype)
                 {
                         ExternAssembly ext_asmb = null;
-                        if (assembly_table == null && (asmb_name == "mscorlib" || asmb_name == "corlib"))
+                        if (assembly_table == null && (asmb_name == "mscorlib" || asmb_name == "corlib")) {
                                 /* AddCorlib if mscorlib is being referenced but
                                    we haven't encountered a ".assembly 'name'" as yet. */
+                                Console.Error.WriteLine ("Warning -- Reference to undeclared extern assembly '{0}', adding.", asmb_name);
                                 AddCorlib ();
+                        }
                         if (assembly_table != null)
                                 ext_asmb = assembly_table[asmb_name] as ExternAssembly;
 

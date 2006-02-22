@@ -1,3 +1,10 @@
+2006-02-22  Ankit Jain  <jankit@novell.com>
+
+	* ExternTable.cs (ExternTable.GetTypeRef): Emit a warning if mscorlib is
+	referenced without a corresponding '.assembly extern' directive. 
+	* TypeDef.cs (TypeDef.Define): Valuetype class should be sealed. Emit
+	warning if its not, and make it so.
+
 2006-02-20  Ankit Jain  <jankit@novell.com>
 
 	* *.cs: Update all .cs files to use Report.Error instead of directly
