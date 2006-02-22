@@ -1,3 +1,13 @@
+2006-02-22  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlChar.cs : (IndexOfInvalidChar) fixed surrogate pairs handling.
+	  They were always regarded as invalid.
+	* XmlTextWriter2.cs : seems like MS XmlTextWriter outputs invalid
+	  characters as character references. It totally does not make sense
+	  but corcompare depended on that behavior.
+
+	  This "compatibility" fix causes 10% or more performance loss!!!
+
 2006-02-21  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlTextWriter2.cs : (WriteStartAtribute) more == removal.

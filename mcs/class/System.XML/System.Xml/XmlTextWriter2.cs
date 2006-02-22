@@ -1033,8 +1033,7 @@ namespace Mono.Xml
 			if (StringUtil.IndexOf (text, "]]>") >= 0)
 				throw ArgumentError ("CDATA section must not contain ']]>'.");
 			writer.Write ("<![CDATA[");
-			CheckTextValidity (text);
-			writer.Write (text);
+			WriteCheckedString (text);
 			writer.Write ("]]>");
 		}
 
@@ -1044,7 +1043,6 @@ namespace Mono.Xml
 				return; // do nothing, including state transition.
 			ShiftStateContent ("Text", true);
 
-			CheckTextValidity (text);
 			WriteEscapedString (text, state == WriteState.Attribute);
 		}
 
@@ -1224,15 +1222,6 @@ namespace Mono.Xml
 				writer.Write (indent_string);
 		}
 
-		void CheckTextValidity (string text)
-		{
-			if (!check_character_validity)
-				return;
-			int idx = XmlChar.IndexOfInvalid (text, true);
-			if (idx >= 0)
-				throw ArgumentError (String.Format ("Invalid text character was found at string index {0}: &#x{1:X};", idx, (int) text [idx]));
-		}
-
 		void OutputAutoStartDocument ()
 		{
 			if (state != WriteState.Start)
@@ -1307,24 +1296,51 @@ namespace Mono.Xml
 			int idx = text.IndexOfAny (escaped);
 			if (idx >= 0) {
 				char [] arr = text.ToCharArray ();
-				writer.Write (arr, 0, idx);
+				WriteCheckedBuffer (arr, 0, idx);
 				WriteEscapedBuffer (
 					arr, idx, arr.Length - idx, isAttribute);
 			} else {
-				writer.Write (text);
+				WriteCheckedString (text);
 			}
+		}
+
+		void WriteCheckedString (string s)
+		{
+			int i = XmlChar.IndexOfInvalid (s, true);
+			if (i >= 0) {
+				char [] arr = s.ToCharArray ();
+				writer.Write (arr, 0, i);
+				WriteCheckedBuffer (arr, i, arr.Length - i);
+			} else {
+				// no invalid character.
+				writer.Write (s);
+			}
+		}
+
+		void WriteCheckedBuffer (char [] text, int idx, int length)
+		{
+			int start = idx;
+			int end = idx + length;
+			while ((idx = XmlChar.IndexOfInvalid (text, start, length, true)) >= 0) {
+				if (check_character_validity) // actually this is one time pass.
+					throw ArgumentError (String.Format ("Input contains invalid character at {0} : &#x{1:X};", idx, (int) text [idx]));
+				if (start < idx)
+					writer.Write (text, start, idx - start);
+				writer.Write ("&#x");
+				writer.Write (((int) text [idx]).ToString (
+					"X",
+					CultureInfo.InvariantCulture));
+				writer.Write (';');
+				length -= idx - start + 1;
+				start = idx + 1;
+			}
+			if (start < end)
+				writer.Write (text, start, end - start);
 		}
 
 		void WriteEscapedBuffer (char [] text, int index, int length,
 			bool isAttribute)
 		{
-
-			if (check_character_validity) {
-				int idx = XmlChar.IndexOfInvalid (text, index, length, true);
-				if (idx >= 0)
-					throw ArgumentError (String.Format ("Input contains invalid character at {0} : &#x{1:X};", idx, (int) text [idx]));
-			}
-
 			int start = index;
 			int end = index + length;
 			for (int i = start; i < end; i++) {
@@ -1335,7 +1351,7 @@ namespace Mono.Xml
 				case '<':
 				case '>':
 					if (start < i)
-						writer.Write (text, start, i - start);
+						WriteCheckedBuffer (text, start, i - start);
 					writer.Write ('&');
 					switch (text [i]) {
 					case '&': writer.Write ("amp;"); break;
@@ -1356,7 +1372,7 @@ namespace Mono.Xml
 					goto case '\n';
 				case '\n':
 					if (start < i)
-						writer.Write (text, start, i - start);
+						WriteCheckedBuffer (text, start, i - start);
 					if (isAttribute) {
 						writer.Write (text [i] == '\r' ?
 							"&#xD;" : "&#xA;");
@@ -1379,7 +1395,7 @@ namespace Mono.Xml
 				start = i + 1;
 			}
 			if (start < end)
-				writer.Write (text, start, end - start);
+				WriteCheckedBuffer (text, start, end - start);
 		}
 
 		// Exceptions

@@ -2118,6 +2118,24 @@ namespace MonoTests.System.Xml
 			NUnit.Framework.Assert.AreEqual (referent, ms.ToArray ());
 		}
 
+		[Test]
+		public void InvalidCharIsWrittenAsSillyReferences ()
+		{
+			// I can't say how MS XmlTextWriter is silly. 
+			// The expected output is *not* well-formed XML.
+			// Everyone have to make sure that he or she does 
+			// not write invalid characters directly so that
+			// the output XML string can be fed by other XML
+			// processors.
+
+			// The funny thing is that XmlTextWriter spends
+			// significant performance on checking invalid
+			// characters, but results in nothing.
+			xtw.WriteElementString ("a", "\x0");
+			NUnit.Framework.Assert.AreEqual ("<a>&#x0;</a>",
+				StringWriterText);
+		}
+
 		[Test] // see also bug #77082
 		public void WriteDocTypeIndent ()
 		{
