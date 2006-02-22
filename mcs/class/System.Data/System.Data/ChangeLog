@@ -1,3 +1,10 @@
+2006-02-22  Senganal T  <tsenganal@novell.com>
+
+	* DataRow.cs 
+		- RejectChanges : Do not remove Row from Indexes when state is Deleted.
+		- CheckChildRows : When checking for the ChildRows, use the current value
+		and not the original value.
+
 2006-02-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CustomDataClassGenerator.cs : Patch by Marek Habersack. xsd now

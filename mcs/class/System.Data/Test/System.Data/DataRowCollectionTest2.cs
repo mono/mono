@@ -184,6 +184,22 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
+		public void FindByKey ()
+		{
+			DataTable table = new DataTable ();
+			table.Columns.Add ("col1", typeof (int));
+			table.PrimaryKey = new DataColumn[] {table.Columns [0]};
+
+			table.Rows.Add (new object[] {1});
+			table.AcceptChanges ();
+			Assert.IsNotNull (table.Rows.Find (new object[] {1}), "#1");
+
+			table.Rows[0].Delete ();
+			table.RejectChanges ();
+			Assert.IsNotNull (table.Rows.Find (new object[] {1}), "#2");
+		}
+
+		[Test]
 		public void DataRowCollection_Clear1()
 		{
 			DataTable dt = DataProvider.CreateParentDataTable();

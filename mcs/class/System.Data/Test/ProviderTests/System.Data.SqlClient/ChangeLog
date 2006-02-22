@@ -1,5 +1,9 @@
 2006-02-13  Senganal T  <tsenganal@novell.com>
 
+	* SqlAdapterTest.cs : Added testcases for verifying FillError Behavior
+
+2006-02-13  Senganal T  <tsenganal@novell.com>
+
 	* SqlAdapterTest.cs : Added testcases for #77480
 
 2006-02-10  Senganal T  <tsenganal@novell.com>

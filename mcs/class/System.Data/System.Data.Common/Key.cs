@@ -47,6 +47,7 @@ namespace System.Data.Common
 		//	and always uses the _current version
 		//so need a temp row for Eval calls
 		DataRow _tmpRow;
+		static DataViewRowState DefaultRowStateFilter = (DataViewRowState.CurrentRows | DataViewRowState.OriginalRows);
 
 		#endregion //Fields
 
@@ -69,13 +70,11 @@ namespace System.Data.Common
 				}
 			}
 
-			if (rowState != DataViewRowState.None) {
+			if (rowState != DataViewRowState.None)
 				_rowStateFilter = rowState;
-			}
-			else {
+			else
 				// FIXME : what is the correct value ?
-				_rowStateFilter = DataViewRowState.CurrentRows;
-			}
+				_rowStateFilter = DefaultRowStateFilter;
 		}
 
 		#endregion // Constructors
@@ -166,77 +165,59 @@ namespace System.Data.Common
 		internal bool ContainsVersion (DataRowState state, DataRowVersion version)
 		{
 			switch (state) {
-				case DataRowState.Unchanged: {
-					if ((_rowStateFilter & DataViewRowState.Unchanged) != DataViewRowState.None) {
+				case DataRowState.Unchanged:
+					if ((_rowStateFilter & DataViewRowState.Unchanged) != DataViewRowState.None)
 						return ((version & DataRowVersion.Default) != 0);
-					}
-
 					break;
-				}
-				case DataRowState.Added: {
-					if ((_rowStateFilter & DataViewRowState.Added) != DataViewRowState.None) {
+				case DataRowState.Added:
+					if ((_rowStateFilter & DataViewRowState.Added) != DataViewRowState.None)
 						return ((version & DataRowVersion.Default) != 0);
-					}
-
 					break;
-				}
-				case DataRowState.Deleted: {
-					if ((_rowStateFilter & DataViewRowState.Deleted) != DataViewRowState.None) {
+				case DataRowState.Deleted:
+					if ((_rowStateFilter & DataViewRowState.Deleted) != DataViewRowState.None)
 						return (version == DataRowVersion.Original);
-					}
-
 					break;
-				}
 				default:
-					if ((_rowStateFilter & DataViewRowState.ModifiedCurrent) != DataViewRowState.None) {
+					// If _rowStateFilter has the default value, return true
+					if (_rowStateFilter ==  DefaultRowStateFilter)
+						return true;
+					if ((_rowStateFilter & DataViewRowState.ModifiedCurrent) != DataViewRowState.None)
 						return ((version & DataRowVersion.Default) != 0);
-					}
-					else if ((_rowStateFilter & DataViewRowState.ModifiedOriginal) != DataViewRowState.None) {
+					if ((_rowStateFilter & DataViewRowState.ModifiedOriginal) != DataViewRowState.None)
 						return (version == DataRowVersion.Original);
-					}
-
 					break;
 			}
 
-            return false;
+			return false;
 		}
 
 		internal static int GetRecord(DataRow row, DataViewRowState rowStateFilter)
 		{
 			switch (row.RowState) {
 				case DataRowState.Unchanged: {
-					if ((rowStateFilter & DataViewRowState.Unchanged) != DataViewRowState.None) {
+					if ((rowStateFilter & DataViewRowState.Unchanged) != DataViewRowState.None)
 						return row.Proposed >= 0 ? row.Proposed : row.Current;
-					}
-
 					break;
 				}
 				case DataRowState.Added: {
-					if ((rowStateFilter & DataViewRowState.Added) != DataViewRowState.None) {
+					if ((rowStateFilter & DataViewRowState.Added) != DataViewRowState.None)
 						return row.Proposed >= 0 ? row.Proposed : row.Current;
-					}
-
 					break;
 				}
 				case DataRowState.Deleted: {
-					if ((rowStateFilter & DataViewRowState.Deleted) != DataViewRowState.None) {
+					if ((rowStateFilter & DataViewRowState.Deleted) != DataViewRowState.None)
 						return row.Original;
-					}
-
 					break;
 				}
 				default:
-					if ((rowStateFilter & DataViewRowState.ModifiedCurrent) != DataViewRowState.None) {
+					if ((rowStateFilter & DataViewRowState.ModifiedCurrent) != DataViewRowState.None)
 						return row.Proposed >= 0 ? row.Proposed : row.Current;
-					}
-					else if ((rowStateFilter & DataViewRowState.ModifiedOriginal) != DataViewRowState.None) {
+					if ((rowStateFilter & DataViewRowState.ModifiedOriginal) != DataViewRowState.None)
 						return row.Original;
-					}
-
 					break;
 			}
 
-            return -1;
+			return -1;
 		}
 
 		/// <summary>

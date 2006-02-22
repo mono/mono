@@ -591,14 +591,14 @@ namespace System.Data {
 					return;
 			case DataRowState.Added:
 			case DataRowState.Modified:
-					int original = Original;
-					DataRowState oldState = RowState;
+				int original = Original;
+				DataRowState oldState = RowState;
                                 if (Original >= 0) {
                                         Table.RecordCache.DisposeRecord(Original);
                                 }
                                 Original = Current;
-					foreach (Index index in Table.Indexes)
-						index.Update(this, original, DataRowVersion.Original, oldState);
+				foreach (Index index in Table.Indexes)
+					index.Update(this, original, DataRowVersion.Original, oldState);
 				break;
 			case DataRowState.Deleted:
 				Table.DeleteRowFromIndexes(this);
@@ -654,7 +654,7 @@ namespace System.Data {
 				Proposed = -1;
 
 				foreach(Index index in Table.Indexes)
-					index.Update(this,oldRecord, DataRowVersion.Proposed, oldState);					
+					index.Update(this,oldRecord, DataRowVersion.Proposed, oldState);
 			}
 		}
 
@@ -695,9 +695,8 @@ namespace System.Data {
 			if (Current >= 0) {
 				int current = Current;
 				DataRowState oldState = RowState;
-				if (Current != Original) {
+				if (Current != Original)
 					_table.RecordCache.DisposeRecord(Current);
-				}
 				Current = -1;
 				foreach(Index index in Table.Indexes)
 					index.Update(this, current, DataRowVersion.Current, oldState);
@@ -769,7 +768,7 @@ namespace System.Data {
 								// change only the values in the key columns
 								// set the childcolumn value to the new parent row value
 									for (int k = 0; k < fkc.Columns.Length; k++)
-										if (!fkc.RelatedColumns [k].DataContainer [Original].Equals (fkc.RelatedColumns [k].DataContainer [Proposed]))
+										if (!fkc.RelatedColumns [k].DataContainer [Current].Equals (fkc.RelatedColumns [k].DataContainer [Proposed]))
 											childRows[j][fkc.Columns[k]] = this[fkc.RelatedColumns[k], DataRowVersion.Proposed];
 
 									break;
@@ -1340,7 +1339,6 @@ namespace System.Data {
 				break;
 			case DataRowState.Deleted:
 				CheckChildRows (DataRowAction.Rollback);
-				Table.DeleteRowFromIndexes(this);
 				Current = Original;
 				break;
 			}

@@ -1,3 +1,11 @@
+2006-02-22  Senganal T  <tsenganal@novell.com>
+
+	* DataRowCollectionTest2.cs : Check if index is maintained for row on calling RejectChanges. 
+	* DataTableTest2.cs : Check if data is loaded and merged (if key exists) correctly.
+	* ForeignKeyConstraintTest.cs : Check if a ParentColumn value can be modified
+		when the row is in 'Added' State. Also, check if child col values are
+		updated correctly.
+
 2006-02-16  Senganal T  <tsenganal@novell.com>
 
 	* DataSetTest2.cs :
