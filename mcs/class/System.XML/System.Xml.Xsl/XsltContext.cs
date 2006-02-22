@@ -55,7 +55,7 @@ namespace System.Xml.Xsl
 		#region Methods
 
 		public abstract int CompareDocument (string baseUri, string nextbaseUri);
-		public abstract IXsltContextFunction ResolveFunction (string prefix, string name, XPathResultType [] ArgTypes);
+		public abstract IXsltContextFunction ResolveFunction (string prefix, string name, XPathResultType [] argTypes);
 		public abstract IXsltContextVariable ResolveVariable (string prefix, string name);
 
 		#endregion
@@ -64,12 +64,12 @@ namespace System.Xml.Xsl
 		
 		internal virtual IXsltContextVariable ResolveVariable (XmlQualifiedName name)
 		{
-			throw new InvalidOperationException ("somehow you got into the internals of xslt!?");
+			return ResolveVariable (name.Name, name.Namespace);
 		}
 		
-		internal virtual IXsltContextFunction ResolveFunction (XmlQualifiedName name, XPathResultType [] ArgTypes)
+		internal virtual IXsltContextFunction ResolveFunction (XmlQualifiedName name, XPathResultType [] argTypes)
 		{
-			throw new InvalidOperationException ("somehow you got into the internals of xslt!?");
+			return ResolveFunction (name.Name, name.Namespace, argTypes);
 		}
 		#endregion
 	}

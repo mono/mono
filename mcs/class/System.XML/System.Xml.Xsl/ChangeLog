@@ -1,3 +1,9 @@
+2006-02-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XsltContext.cs : don't expect that it is always XsltCompiledContext
+	  which is being evaluated in XPathExpression. Dispatch overriden
+	  methods. Fixed bug #46751.
+
 2006-01-25  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XsltContext.cs : fixed method signatures found by updated
