@@ -2864,7 +2864,7 @@ namespace System.Windows.Forms {
 							msg.lParam = (IntPtr)(MousePosition.Y << 16 | MousePosition.X);
 						}
 
-						ht = (HitTest)NativeWindow.WndProc(hwnd.client_window, Msg.WM_NCHITTEST, IntPtr.Zero, msg.lParam);
+						ht = (HitTest)NativeWindow.WndProc(hwnd.client_window, Msg.WM_NCHITTEST, IntPtr.Zero, msg.lParam).ToInt32();
 						NativeWindow.WndProc(hwnd.client_window, Msg.WM_SETCURSOR, msg.hwnd, (IntPtr)ht);
 
 						MousePosition.X = xevent.MotionEvent.x;
