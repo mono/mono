@@ -16,7 +16,7 @@ extern guint8 mono_burg_arity [];
 #define USE_ORIGINAL_VARS
 #define CREATE_PRUNED_SSA
 
-#define DEBUG_SSA 1
+//#define DEBUG_SSA 1
 
 #define NEW_PHI(cfg,dest,val) do {	\
 		(dest) = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoInst));	\

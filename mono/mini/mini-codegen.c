@@ -397,6 +397,17 @@ mono_print_ins_index (int i, MonoInst *ins)
 			if (!(ins->flags & MONO_INST_BRLABEL))
 				printf (" [B%dB%d]", ins->inst_true_bb->block_num, ins->inst_false_bb->block_num);
 			break;
+		case OP_PHI: {
+			int i;
+			printf (" [%d (", (int)ins->inst_c0);
+			for (i = 0; i < ins->inst_phi_args [0]; i++) {
+				if (i)
+					printf (", ");
+				printf ("%d", ins->inst_phi_args [i + 1]);
+			}
+			printf (")]");
+			break;
+		}
 		default:
 			break;
 		}
@@ -447,11 +458,11 @@ mono_print_ins_index (int i, MonoInst *ins)
 
 	switch (ins->opcode) {
 	case OP_ICONST:
-	case OP_ICOMPARE_IMM:
-	case OP_COMPARE_IMM:
 		printf (" [%d]", (int)ins->inst_c0);
 		break;
 	case OP_X86_PUSH_IMM:
+	case OP_ICOMPARE_IMM:
+	case OP_COMPARE_IMM:
 		printf (" [%d]", (int)ins->inst_imm);
 		break;
 	case OP_ADD_IMM:
@@ -486,17 +497,6 @@ mono_print_ins_index (int i, MonoInst *ins)
 			if (info)
 				printf (" [%s]", info->name);
 		}
-		break;
-	}
-	case OP_PHI: {
-		int i;
-		printf (" [%d (", (int)ins->inst_c0);
-		for (i = 0; i < ins->inst_phi_args [0]; i++) {
-			if (i)
-				printf (", ");
-			printf ("%d", ins->inst_phi_args [i + 1]);
-		}
-		printf (")]");
 		break;
 	}
 	case CEE_BR:
