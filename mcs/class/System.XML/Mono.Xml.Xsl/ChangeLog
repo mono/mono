@@ -1,3 +1,9 @@
+2006-02-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ScriptCompilerInfo.cs : mbas unlike vbc references System.dll
+	  etc. by default, so don't add them as references.
+	  Set only local file name for #ExternalSource. Fixed bug #75789.
+
 2006-01-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* GenericOutputter.cs : When writing string, use WriteWhitespace()

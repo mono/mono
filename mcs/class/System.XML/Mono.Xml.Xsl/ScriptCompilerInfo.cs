@@ -190,10 +190,11 @@ public class Script{1}
 		public VBCompilerInfo ()
 		{
 			this.CompilerCommand = "mbas";
+			this.DefaultCompilerOptions = "/t:library";
 #if MS_NET
 			this.CompilerCommand = "vbc.exe";
+			this.DefaultCompilerOptions = "/t:library  /r:System.dll /r:System.Xml.dll /r:Microsoft.VisualBasic.dll";
 #endif
-			this.DefaultCompilerOptions = "/t:library  /r:System.dll /r:System.XML.dll /r:Microsoft.VisualBasic.dll";
 		}
 
 		public override CodeDomProvider CodeDomProvider {
@@ -232,7 +233,7 @@ end namespace
 				return source;
 			return String.Format (CultureInfo.InvariantCulture,
 				"#ExternalSource (\"{1}\", {0})\n{2}\n#end ExternalSource",
-				li.LineNumber, file.Replace ("\\", "\\\\").Replace ("\"", "\\\""), source);
+				li.LineNumber, new FileInfo (file).Name, source);
 		}
 	}
 
