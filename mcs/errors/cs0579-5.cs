@@ -1,4 +1,4 @@
-// cs0579.cs : Duplicate `Return' attribute
+// cs0579.cs: The attribute `ReturnAttribute' cannot be applied multiple times
 // Line : 17
 
 using System;

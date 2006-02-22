@@ -1,4 +1,4 @@
-// cs0579.cs : Duplicate `Obsolete' attribute
+// cs0579.cs: The attribute `System.ObsoleteAttribute' cannot be applied multiple times
 // Line : 8
 
 using System;

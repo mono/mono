@@ -6,9 +6,6 @@ using System;
 
 public abstract class CLSClass {
         [CLSCompliant (false)]
-        internal abstract int Valid ();
-    
-        [CLSCompliant (false)]
         protected abstract void Error (IComparable arg);
 }
 

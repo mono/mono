@@ -1,4 +1,4 @@
-// cs0579.cs : Duplicate `CLSCompliant' attribute
+// cs0579.cs: The attribute `System.CLSCompliantAttribute' cannot be applied multiple times
 // Line : 10
 
 using System;
