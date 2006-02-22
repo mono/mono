@@ -1,3 +1,7 @@
+2006-02-22  Ankit Jain  <jankit@novell.com>
+
+	* Metadata.cs (TypeAttr): Add [Flags] attribute.
+
 2006-02-20  Ankit Jain  <jankit@novell.com>
 
 	* PEAPI.cs (PEFileException): Update error message.

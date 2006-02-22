@@ -46,6 +46,7 @@ namespace PEAPI {
 	/// <summary>
 	/// Attibutes for a class
 	/// </summary>
+	[Flags]
 	public enum TypeAttr {Private, Public, NestedPublic, NestedPrivate, 
 		NestedFamily, NestedAssembly, NestedFamAndAssem, NestedFamOrAssem, 
 		SequentialLayout, ExplicitLayout = 0x10, Interface = 0x20, 

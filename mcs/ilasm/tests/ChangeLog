@@ -1,3 +1,7 @@
+2006-02-22  Ankit Jain  <jankit@novell.com>
+
+	* test-nonsealed-valueclass.il: New. Value class should be sealed.
+
 2006-02-20  Ankit Jain  <jankit@novell.com>
 
 	* generics-al.i, test-29.il: Remove. These use invalid style of

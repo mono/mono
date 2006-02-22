@@ -341,6 +341,11 @@ namespace Mono.ILASM {
                                                 is_enum_class = true;          
                                 } 
 
+                                if (is_value_class && (attr & PEAPI.TypeAttr.Sealed) == 0) {
+                                        Console.WriteLine ("Warning -- Non-sealed value class, made sealed.");
+                                        attr |= PEAPI.TypeAttr.Sealed;
+                                }
+
                                 if (outer != null) {
                                         if (!outer.IsDefined)
                                                 outer.Define (code_gen);
