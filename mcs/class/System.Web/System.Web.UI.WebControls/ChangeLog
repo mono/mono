@@ -1,5 +1,9 @@
 2006-02-21  Chris Toshok  <toshok@ximian.com>
 
+	* BoundField.cs: ues the ViewState.Get* pattern with default
+	instead of the explicit ViewState lookup + null check, and fix the
+	scope of InitializeDataCell.
+
 	* ButtonField.cs: ues the ViewState.Get* pattern with default
 	instead of the explicit ViewState lookup + null check.
 

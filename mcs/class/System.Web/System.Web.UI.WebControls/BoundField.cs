@@ -63,11 +63,7 @@ namespace System.Web.UI.WebControls {
 		[WebSysDescription ("")]
 		[WebCategoryAttribute ("Behavior")]
 		public virtual bool ConvertEmptyStringToNull {
-			get {
-				object ob = ViewState ["ConvertEmptyStringToNull"];
-				if (ob != null) return (bool) ob;
-				return true;
-			}
+			get { return ViewState.GetBool ("ConvertEmptyStringToNull", false); }
 			set {
 				ViewState ["ConvertEmptyStringToNull"] = value;
 				OnFieldChanged ();
@@ -79,11 +75,7 @@ namespace System.Web.UI.WebControls {
 		[WebCategoryAttribute ("Data")]
 		[DefaultValueAttribute ("")]
 		public virtual string DataField {
-			get {
-				object ob = ViewState ["DataField"];
-				if (ob != null) return (string) ob;
-				return "";
-			}
+			get { return ViewState.GetString ("DataField", ""); }
 			set {
 				ViewState ["DataField"] = value;
 				OnFieldChanged ();
@@ -94,11 +86,7 @@ namespace System.Web.UI.WebControls {
 		[WebSysDescription ("")]
 		[WebCategoryAttribute ("Data")]
 		public virtual string DataFormatString {
-			get {
-				object ob = ViewState ["DataFormatString"];
-				if (ob != null) return (string) ob;
-				return "";
-			}
+			get { return ViewState.GetString ("DataFormatString", ""); }
 			set {
 				ViewState ["DataFormatString"] = value;
 				OnFieldChanged ();
@@ -108,23 +96,19 @@ namespace System.Web.UI.WebControls {
 		[MonoTODO]
 		[WebSysDescription ("")]
 		[WebCategoryAttribute ("Appearance")]
-		public virtual string HeaderText {
-			get {
-				throw new NotImplementedException ();
+		public override string HeaderText {
+			get { return ViewState.GetString ("HeaderText", "");
 			}
 			set {
-				throw new NotImplementedException ();
+				ViewState["HeaderText"] = value;
+				OnFieldChanged ();
 			}
 		}
 
 		[DefaultValueAttribute ("")]
 		[WebCategoryAttribute ("Behavior")]
 		public virtual string NullDisplayText {
-			get {
-				object ob = ViewState ["NullDisplayText"];
-				if (ob != null) return (string) ob;
-				return "";
-			}
+			get { return ViewState.GetString ("NullDisplaytext", ""); }
 			set {
 				ViewState ["NullDisplayText"] = value;
 				OnFieldChanged ();
@@ -134,11 +118,8 @@ namespace System.Web.UI.WebControls {
 		[DefaultValueAttribute (false)]
 		[WebSysDescription ("")]
 		[WebCategoryAttribute ("Behavior")]
-		public bool ReadOnly {
-			get {
-				object val = ViewState ["ReadOnly"];
-				return val != null ? (bool) val : false;
-			}
+		public virtual bool ReadOnly {
+			get { return ViewState.GetBool ("ReadOnly", false); }
 			set { 
 				ViewState ["ReadOnly"] = value;
 				OnFieldChanged ();
@@ -149,10 +130,7 @@ namespace System.Web.UI.WebControls {
 		[WebSysDescription ("")]
 		[WebCategoryAttribute ("HtmlEncode")]
 		public virtual bool HtmlEncode {
-			get {
-				object val = ViewState ["HtmlEncode"];
-				return val != null ? (bool) val : true;
-			}
+			get { return ViewState.GetBool ("ReadOnly", true); }
 			set { 
 				ViewState ["HtmlEncode"] = true;
 				OnFieldChanged ();
@@ -191,7 +169,7 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 		
-		public virtual void InitializeDataCell (DataControlFieldCell cell, DataControlRowState rowState)
+		protected virtual void InitializeDataCell (DataControlFieldCell cell, DataControlRowState rowState)
 		{
 			bool editable = (rowState & (DataControlRowState.Edit | DataControlRowState.Insert)) != 0;
 			if (editable && !ReadOnly) {
