@@ -80,6 +80,7 @@ System.Web.UI/StateBagTest.cs
 System.Web.UI/TestUrlPropertyAttribute.cs
 System.Web.UI/ToolboxDataAttributeTest.cs
 System.Web.UI/XhtmlTextWriterTest.cs
+System.Web.UI.WebControls/AccessDataSourceTest.cs
 System.Web.UI.WebControls/AdCreatedEventArgsTest.cs
 System.Web.UI.WebControls/BaseCompareValidatorTest.cs
 System.Web.UI.WebControls/BaseDataBoundControlTest.cs
@@ -139,6 +140,8 @@ System.Web.UI.WebControls/RepeaterTest.cs
 System.Web.UI.WebControls/RoleGroupCollectionTest.cs
 System.Web.UI.WebControls/RoleGroupTest.cs
 System.Web.UI.WebControls/SelectedDatesCollectionTest.cs
+System.Web.UI.WebControls/SqlDataSourceTest.cs
+System.Web.UI.WebControls/SqlDataSourceViewTest.cs
 System.Web.UI.WebControls/StyleTest.cs
 System.Web.UI.WebControls/TableCellTest.cs
 System.Web.UI.WebControls/TableFooterRowTest.cs
