@@ -106,7 +106,11 @@ namespace System.IO
 			case MonoIOError.ERROR_LOCK_VIOLATION:
 				message = String.Format ("Lock violation on path {0}", path);
 				return new IOException (message, unchecked((int)0x80070000) | (int)error);
-
+			
+			case MonoIOError.ERROR_HANDLE_DISK_FULL:
+				message = String.Format ("Disk full. Path {0}", path);
+				return new IOException (message, unchecked((int)0x80070000) | (int)error);
+			
 			case MonoIOError.ERROR_DIR_NOT_EMPTY:
 				message = String.Format ("Directory {0} is not empty", path);
 				return new IOException (message, unchecked((int)0x80070000) | (int)error);

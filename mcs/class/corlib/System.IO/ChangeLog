@@ -1,3 +1,8 @@
+2006-02-22  Joerg Rosenkranz <joergr@voelcker.com>
+
+	* MonoIO.cs, MonoIOError.cs: Verbose exception for error 39 
+	  (disk full).
+	  
 2006-02-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* Stream.cs FileStream.cs: Add new 2.0 Dispose () method and protected
