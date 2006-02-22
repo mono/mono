@@ -11,6 +11,10 @@ public abstract class CLSCLass_2 {
         public abstract void Test ();
 }
 
+public abstract class CLSClass_3 {
+        internal abstract void Test ();
+}
+
 public class MainClass {
         public static void Main () {
         }
