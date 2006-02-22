@@ -81,7 +81,7 @@ static void dec_foreach (MonoInst *tree, MonoCompile *cfg);
 #define NOT_IMPLEMENTED g_assert_not_reached ()
 
 int mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_bblock, MonoBasicBlock *end_bblock, 
-		   int locals_offset, MonoInst *return_var, GList *dont_inline, MonoInst **inline_args, 
+		   MonoInst *return_var, GList *dont_inline, MonoInst **inline_args, 
 		   guint inline_offset, gboolean is_virtual_call);
 
 static int mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_bblock, MonoBasicBlock *end_bblock, 
@@ -1890,23 +1890,26 @@ void
 mono_add_ins_to_end (MonoBasicBlock *bb, MonoInst *inst)
 {
 	MonoInst *prev;
+	gboolean ends_in_br;
+
 	if (!bb->code) {
 		MONO_ADD_INS (bb, inst);
 		return;
 	}
+
 	switch (bb->last_ins->opcode) {
-	case CEE_BEQ:
-	case CEE_BGE:
-	case CEE_BGT:
-	case CEE_BLE:
-	case CEE_BLT:
-	case CEE_BNE_UN:
-	case CEE_BGE_UN:
-	case CEE_BGT_UN:
-	case CEE_BLE_UN:
-	case CEE_BLT_UN:
+	case OP_BR:
+	case OP_BR_REG:
 	case CEE_BR:
 	case CEE_SWITCH:
+		ends_in_br = TRUE;
+		break;
+	default:
+		ends_in_br = MONO_IS_COND_BRANCH_OP (bb->last_ins);
+		break;
+	}
+
+	if (ends_in_br) {
 		prev = bb->code;
 		while (prev->next && prev->next != bb->last_ins)
 			prev = prev->next;
@@ -1922,12 +1925,9 @@ mono_add_ins_to_end (MonoBasicBlock *bb, MonoInst *inst)
 			inst->next = bb->last_ins;
 			prev->next = inst;
 		}
-		break;
-	//	g_warning ("handle conditional jump in add_ins_to_end ()\n");
-	default:
-		MONO_ADD_INS (bb, inst);
-		break;
 	}
+	else
+		MONO_ADD_INS (bb, inst);
 }
 
 void
@@ -7895,12 +7895,16 @@ print_dfn (MonoCompile *cfg) {
 			g_free (code2);
 		} else*/
 			code = g_strdup ("\n");
-		g_print ("\nBB%d DFN%d (len: %d): %s", bb->block_num, i, bb->cil_length, code);
+		g_print ("\nBB%d (%d) (len: %d): %s", bb->block_num, i, bb->cil_length, code);
 		if (bb->code) {
 			MonoInst *c = bb->code;
 			while (c) {
-				mono_print_tree (c);
-				g_print ("\n");
+				if (cfg->new_ir)
+					mono_print_ins_index (-1, c);
+				else {
+					mono_print_tree (c);
+					g_print ("\n");
+				}
 				c = c->next;
 			}
 		} else {
@@ -9042,11 +9046,13 @@ mono_compile_create_vars (MonoCompile *cfg)
 	}
 
 	cfg->locals_start = cfg->num_varinfo;
+	cfg->locals = mono_mempool_alloc0 (cfg->mempool, header->num_locals * sizeof (MonoInst*));
 
 	if (cfg->verbose_level > 2)
 		g_print ("creating locals\n");
 	for (i = 0; i < header->num_locals; ++i)
-		mono_compile_create_var (cfg, header->locals [i], OP_LOCAL);
+		cfg->locals [i] = mono_compile_create_var (cfg, header->locals [i], OP_LOCAL);
+
 	if (cfg->verbose_level > 2)
 		g_print ("locals done\n");
 
@@ -10349,7 +10355,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 	if (cfg->new_ir) {
 		cfg->opt &= MONO_OPT_PEEPHOLE | MONO_OPT_INTRINS | MONO_OPT_LOOP | MONO_OPT_EXCEPTION | MONO_OPT_AOT | MONO_OPT_BRANCH | MONO_OPT_LINEARS | MONO_OPT_INLINE | MONO_OPT_SHARED | MONO_OPT_AOT | MONO_OPT_TAILC;
 
-		i = mono_method_to_ir2 (cfg, method, NULL, NULL, cfg->locals_start, NULL, NULL, NULL, 0, FALSE);
+		i = mono_method_to_ir2 (cfg, method, NULL, NULL, NULL, NULL, NULL, 0, FALSE);
 	}
 	else {
 		i = mono_method_to_ir (cfg, method, NULL, NULL, cfg->locals_start, NULL, NULL, NULL, 0, FALSE);

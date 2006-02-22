@@ -88,7 +88,7 @@ static void emit_stobj (MonoCompile *cfg, MonoInst *dest, MonoInst *src,
 			  const unsigned char *ip, MonoClass *klass, gboolean native);
 
 int mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_bblock, MonoBasicBlock *end_bblock, 
-		   int locals_offset, MonoInst *return_var, GList *dont_inline, MonoInst **inline_args, 
+		   MonoInst *return_var, GList *dont_inline, MonoInst **inline_args, 
 		   guint inline_offset, gboolean is_virtual_call);
 
 extern guint8 mono_burg_arity [];
@@ -573,13 +573,13 @@ mono_print_bb (MonoBasicBlock *bb, const char *msg)
 
 #define NEW_TEMPSTORE(cfg,dest,num,inst) NEW_VARSTORE ((cfg), (dest), (cfg)->varinfo [(num)], (cfg)->varinfo [(num)]->inst_vtype, (inst))
 
-#define NEW_LOCSTORE(cfg,dest,num,inst) NEW_TEMPSTORE ((cfg), (dest), locals_offset + (num), (inst))
+#define NEW_LOCSTORE(cfg,dest,num,inst) NEW_VARSTORE ((cfg), (dest), (cfg)->locals [(num)], (cfg)->locals [(num)]->inst_vtype, (inst))
 
 #define NEW_ARGLOAD(cfg,dest,num) NEW_VARLOAD ((cfg), (dest), arg_array [(num)], param_types [(num)])
 
-#define NEW_LOCLOAD(cfg,dest,num) NEW_VARLOAD ((cfg), (dest), cfg->varinfo [locals_offset + (num)], header->locals [(num)])
+#define NEW_LOCLOAD(cfg,dest,num) NEW_VARLOAD ((cfg), (dest), cfg->locals [(num)], header->locals [(num)])
 
-#define NEW_LOCLOADA(cfg,dest,num) NEW_VARLOADA ((cfg), (dest), (cfg)->varinfo [locals_offset + (num)], (cfg)->varinfo [locals_offset + (num)]->inst_vtype)
+#define NEW_LOCLOADA(cfg,dest,num) NEW_VARLOADA ((cfg), (dest), (cfg)->locals [(num)], (cfg)->varinfo [(num)]->inst_vtype)
 
 #define NEW_RETLOADA(cfg,dest) do {	\
         if (cfg->ret_var_is_local) { \
@@ -3886,8 +3886,9 @@ inline_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig,
 	MonoInst *ins, *rvar = NULL;
 	MonoMethodHeader *cheader;
 	MonoBasicBlock *ebblock, *sbblock;
-	int i, costs, new_locals_offset;
+	int i, costs;
 	MonoMethod *prev_inlined_method;
+	MonoInst **prev_locals;
 	guint prev_real_offset;
 	GHashTable *prev_cbb_hash;
 	MonoBasicBlock *prev_cbb;
@@ -3906,9 +3907,10 @@ inline_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig,
 
 	/* allocate local variables */
 	cheader = mono_method_get_header (cmethod);
-	new_locals_offset = cfg->num_varinfo;
+	prev_locals = cfg->locals;
+	cfg->locals = mono_mempool_alloc0 (cfg->mempool, cheader->num_locals * sizeof (int));	
 	for (i = 0; i < cheader->num_locals; ++i)
-		mono_compile_create_var (cfg, cheader->locals [i], OP_LOCAL);
+		cfg->locals [i] = mono_compile_create_var (cfg, cheader->locals [i], OP_LOCAL);
 	
 	/* allocate start and end blocks */
 	/* This is needed so if the inline is aborted, we can clean up */
@@ -3925,11 +3927,12 @@ inline_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig,
 	prev_cbb_hash = cfg->cbb_hash;
 	prev_cbb = cfg->cbb;
 
-	costs = mono_method_to_ir2 (cfg, cmethod, sbblock, ebblock, new_locals_offset, rvar, dont_inline, sp, real_offset, *ip == CEE_CALLVIRT);
+	costs = mono_method_to_ir2 (cfg, cmethod, sbblock, ebblock, rvar, dont_inline, sp, real_offset, *ip == CEE_CALLVIRT);
 
 	cfg->inlined_method = prev_inlined_method;
 	cfg->real_offset = prev_real_offset;
 	cfg->cbb_hash = prev_cbb_hash;
+	cfg->locals = prev_locals;
 
 	if ((costs >= 0 && costs < 60) || inline_allways) {
 		if (cfg->verbose_level > 2)
@@ -5039,9 +5042,15 @@ mono_decompose_long_opts (MonoCompile *cfg)
 					else
 						bb->code = first_bb->code;
 					bb->last_ins = first_bb->last_ins;
-					for (i = 0; i < first_bb->out_count; ++i)
-						link_bblock (cfg, bb, first_bb->out_bb [i]);
+					for (i = 0; i < first_bb->out_count; ++i) {
+						MonoBasicBlock *out_bb = first_bb->out_bb [i];
+						int j;
 
+						for (j = 0; j < out_bb->in_count; ++j)
+							if (out_bb->in_bb [j] == first_bb)
+								out_bb->in_bb [j] = bb;
+						link_bblock (cfg, bb, out_bb);
+					}
 					cfg->cbb->next_bb = bb->next_bb;
 					bb->next_bb = first_bb->next_bb;
 
@@ -5069,7 +5078,7 @@ mono_decompose_long_opts (MonoCompile *cfg)
  */
 int
 mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_bblock, MonoBasicBlock *end_bblock, 
-		   int locals_offset, MonoInst *return_var, GList *dont_inline, MonoInst **inline_args, 
+		   MonoInst *return_var, GList *dont_inline, MonoInst **inline_args, 
 		   guint inline_offset, gboolean is_virtual_call)
 {
 	MonoInst *ins, **sp, **stack_start;
@@ -5496,7 +5505,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				 * Can't optimize other opcodes, since sp[0] might point to
 				 * the last ins of a decomposed opcode.
 				 */
-				sp [0]->dreg = (cfg)->varinfo [locals_offset + n]->dreg;
+				sp [0]->dreg = (cfg)->locals [n]->dreg;
 			} else {
 				NEW_LOCSTORE (cfg, ins, n, *sp);
 				ins->cil_code = ip;
@@ -8534,16 +8543,16 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 		for (i = 0; i < header->num_locals; ++i) {
 			MonoType *ptype = header->locals [i];
 			int t = ptype->type;
-			dreg = cfg->varinfo [locals_offset + i]->dreg;
+			dreg = cfg->locals [i]->dreg;
 
 			if (t == MONO_TYPE_VALUETYPE && ptype->data.klass->enumtype)
 				t = ptype->data.klass->enum_basetype->type;
 			if (ptype->byref) {
 				MONO_EMIT_NEW_PCONST (cfg, dreg, NULL);
 			} else if (t >= MONO_TYPE_BOOLEAN && t <= MONO_TYPE_U4) {
-				MONO_EMIT_NEW_ICONST (cfg, cfg->varinfo [locals_offset + i]->dreg, 0);
+				MONO_EMIT_NEW_ICONST (cfg, cfg->locals [i]->dreg, 0);
 			} else if (t == MONO_TYPE_I8 || t == MONO_TYPE_U8) {
-				MONO_EMIT_NEW_I8CONST (cfg, cfg->varinfo [locals_offset + i]->dreg, 0);
+				MONO_EMIT_NEW_I8CONST (cfg, cfg->locals [i]->dreg, 0);
 			} else if (t == MONO_TYPE_R4 || t == MONO_TYPE_R8) {
 				MONO_INST_NEW (cfg, ins, OP_R8CONST);
 				ins->type = STACK_R8;
@@ -9194,6 +9203,9 @@ mono_spill_global_vars (MonoCompile *cfg)
 					}
 					else {
 						store_opcode = mono_type_to_store_membase (var->inst_vtype);
+
+						if (store_opcode == OP_STOREI8_MEMBASE_REG)
+							printf ("FOO\n");
 						/* Try to fuse the store into the instruction itself */
 						/* FIXME: Add more instructions */
 						if ((ins->opcode == OP_ICONST) || ((ins->opcode == OP_I8CONST) && (ins->inst_c0 == 0))) {
@@ -9283,7 +9295,7 @@ mono_spill_global_vars (MonoCompile *cfg)
 			}
 
 			if (cfg->verbose_level > 1)
-				mono_print_ins (ins);
+				mono_print_ins_index (1, ins);
 
 			prev = ins;
 		}
@@ -9354,7 +9366,10 @@ mono_spill_global_vars (MonoCompile *cfg)
  * - optimize the loading of the interruption flag in the managed->native wrappers
  * - avoid special handling of OP_NOP in passes
  * - move code inserting instructions into one function/macro.
+ * - allow SSA with other types as well
+ * - allow SSA with local vregs
  * - some tests no longer work with COUNT=0
+ * - add code to only use -v -v -v -v for a specific method
  * - LAST MERGE: 57056.
  */
 

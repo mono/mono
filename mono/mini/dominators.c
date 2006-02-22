@@ -137,6 +137,9 @@ compute_dominators (MonoCompile *cfg)
 			if (bb->idom)
 				bb->idom->dominated = g_list_prepend (bb->idom->dominated, bb);
 		}
+
+		/* The entry bb */
+		mono_bitset_set_fast (dominators, cbb->dfn);
 	}
 
 	g_free (worklist);

@@ -16,7 +16,7 @@ extern guint8 mono_burg_arity [];
 #define USE_ORIGINAL_VARS
 #define CREATE_PRUNED_SSA
 
-//#define DEBUG_SSA 1
+#define DEBUG_SSA 1
 
 #define NEW_PHI(cfg,dest,val) do {	\
 		(dest) = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoInst));	\
@@ -200,6 +200,8 @@ mono_ssa_rename_vars2 (MonoCompile *cfg, int max_vars, MonoBasicBlock *bb, MonoI
 	GList *tmp;
 	MonoInst **new_stack;
 
+	/* FIXME: Need to rename local vregs as well */
+
 #ifdef DEBUG_SSA
 	printf ("RENAME VARS BB%d %s\n", bb->block_num, mono_method_full_name (cfg->method, TRUE));
 #endif
@@ -253,12 +255,22 @@ mono_ssa_rename_vars2 (MonoCompile *cfg, int max_vars, MonoBasicBlock *bb, MonoI
 			new_var = mono_compile_create_var (cfg, var->inst_vtype,  var->opcode);
 			new_var->flags = var->flags;
 
+			if (cfg->verbose_level >= 4)
+				printf ("  R%d -> R%d\n", var->dreg, new_var->dreg);
+
 			stack [idx] = new_var;
+
+			ins->dreg = new_var->dreg;
 
 #ifdef DEBUG_SSA
 			printf ("DEF %d %d\n", idx, new_var->inst_c0);
 #endif
 		}
+
+#ifdef DEBUG_SSA
+		printf ("\tAfter processing "); mono_print_ins (ins);
+#endif
+
 	}
 
 	/* Rename PHI arguments in succeeding bblocks */
@@ -281,6 +293,9 @@ mono_ssa_rename_vars2 (MonoCompile *cfg, int max_vars, MonoBasicBlock *bb, MonoI
 #endif
 				ins->inst_phi_args [j + 1] = new_var->inst_c0;
 				
+				if (cfg->verbose_level >= 4)
+					printf ("  PHI R%d <- R%d\n", ins->dreg, new_var->dreg);
+
 			}
 		}
 	}
@@ -383,7 +398,8 @@ mono_ssa_compute (MonoCompile *cfg)
 	g_assert (mono_method_get_header (cfg->method)->num_clauses == 0);
 	g_assert (!cfg->disable_ssa);
 
-	//printf ("COMPUTE SSA %s %d\n", mono_method_full_name (cfg->method, TRUE), cfg->num_varinfo);
+	if (cfg->verbose_level >= 4)
+		printf ("\nCOMPUTE SSA %s %d (R%d-)\n\n", mono_method_full_name (cfg->method, TRUE), cfg->num_varinfo, cfg->next_vireg);
 
 #ifdef CREATE_PRUNED_SSA
 	/* we need liveness for pruned SSA */
@@ -429,8 +445,19 @@ mono_ssa_compute (MonoCompile *cfg)
 
 	/* insert phi functions */
 	for (i = 0; i < cfg->num_varinfo; ++i) {
+		MonoInst *var = cfg->varinfo [i];
+
+		if ((var->type != STACK_I4) && (var->type != STACK_PTR) && (var->type != STACK_OBJ) && (var->type != STACK_MP))
+			continue;
+
 		set = mono_compile_iterated_dfrontier (cfg, vinfo [i].def_in);
 		vinfo [i].dfrontier = set;
+
+		if (cfg->verbose_level >= 4) {
+			printf ("\tR%d needs PHI functions in ", var->dreg);
+			mono_blockset_print (cfg, set, "", -1);
+		}
+			
 		mono_bitset_foreach_bit (set, idx, cfg->num_bblocks) {
 			MonoBasicBlock *bb = cfg->bblocks [idx];
 
@@ -495,6 +522,46 @@ mono_ssa_compute (MonoCompile *cfg)
 		mono_ssa_rename_vars (cfg, cfg->num_varinfo, cfg->bb_entry, stack);
 
 	cfg->comp_done |= MONO_COMP_SSA;
+}
+
+static void
+mono_ssa_remove2 (MonoCompile *cfg)
+{
+	MonoInst *ins, *var, *move;
+	int i, j;
+
+	g_assert (cfg->comp_done & MONO_COMP_SSA);
+
+	for (i = 0; i < cfg->num_bblocks; ++i) {
+		MonoBasicBlock *bb = cfg->bblocks [i];
+		for (ins = bb->code; ins; ins = ins->next) {
+			if (ins->opcode == OP_PHI) {
+				g_assert (ins->inst_phi_args [0] == bb->in_count);
+				var = get_vreg_to_inst (cfg, ins->dreg);
+
+				for (j = 0; j < bb->in_count; j++) {
+					MonoBasicBlock *pred = bb->in_bb [j];
+					int idx = ins->inst_phi_args [j + 1];
+
+					/* FIXME: Add back optimizations */
+#ifdef DEBUG_SSA
+						printf ("MOVE %d to %d in BB%d\n", idx, var->inst_c0, pred->block_num);
+#endif
+						MONO_INST_NEW (cfg, move, OP_MOVE);
+						move->dreg = var->dreg;
+						move->sreg1 = cfg->varinfo [idx]->dreg;
+						mono_add_ins_to_end (pred, move);
+				}
+
+				/* remove the phi functions */
+				ins->opcode = OP_NOP;
+				ins->dreg = -1;
+			}
+		}
+
+		if (cfg->verbose_level >= 4)
+			mono_print_bb (bb, "AFTER REMOVE SSA:");
+	}
 }
 
 #ifndef USE_ORIGINAL_VARS
@@ -600,6 +667,11 @@ mono_ssa_remove (MonoCompile *cfg)
 	GList *active;
 #endif
 	g_assert (cfg->comp_done & MONO_COMP_SSA);
+
+	if (cfg->new_ir) {
+		mono_ssa_remove2 (cfg);
+		return;
+	}
 
 	for (i = 0; i < cfg->num_bblocks; ++i) {
 		MonoBasicBlock *bb = cfg->bblocks [i];
