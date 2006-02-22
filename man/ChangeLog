@@ -1,3 +1,6 @@
+2006-02-22  Jelmer Vernooij <jelmer@samba.org>
+	* mbas.1, Makefile.am: Add manpage for mbas (based on mcs.1)
+
 2006-01-26  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* ChangeLog: Started
