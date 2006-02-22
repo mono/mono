@@ -1185,7 +1185,7 @@ namespace Mono.Xml
 		{
 			CheckChunkRange (buffer, index, count);
 
-			ShiftStateContent ("Text", false);
+			ShiftStateContent ("Text", true);
 
 			WriteEscapedBuffer (buffer, index, count,
 				state == WriteState.Attribute);
