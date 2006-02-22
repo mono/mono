@@ -1,0 +1,20 @@
+2006-02-22 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* NetBiosNodeType.cs:
+	* IPStatus.cs:
+	* NetworkInterfaceType.cs:
+	* SuffixOrigin.cs:
+	* DuplicateAddressDetectionState.cs:
+	* NetworkInformationAccess.cs:
+	* OperationalStatus.cs:
+	* TcpState.cs:
+	* PingCompletedEventHandler.cs:
+	* NetworkInterfaceComponent.cs:
+	* NetworkAvailabilityChangedEventHandler.cs:
+	* NetworkAvailabilityEventArgs.cs:
+	* PrefixOrigin.cs:
+	* NetworkAddressChangedEventHandler.cs:
+	* PingCompletedEventArgs.cs:
+	* PingOptions.cs:
+	* PingReply.cs: all enums, all event handlers/args + 2 classes.
+
