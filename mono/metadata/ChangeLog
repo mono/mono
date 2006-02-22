@@ -1,3 +1,10 @@
+
+Wed Feb 22 15:08:44 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* metadata.h, metadata-internals.h, monodiet.c, debug-helpers.c,
+	mono-debug.c, profiler.c: cleanup: move MonoMethodHeader out of
+	the public header file.
+
 2006-02-21  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c (ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalUni): Fix writing past memory. Fixes #77613.
