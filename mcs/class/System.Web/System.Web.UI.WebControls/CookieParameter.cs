@@ -75,15 +75,9 @@ namespace System.Web.UI.WebControls {
 			return c.Value;
 		}
 		
-	    [DefaultValueAttribute ("")]
+		[DefaultValueAttribute ("")]
 		public string CookieName {
-			get {
-				string s = ViewState ["CookieName"] as string;
-				if (s != null)
-					return s;
-				
-				return "";
-			}
+			get { return ViewState.GetString ("CookieName", ""); }
 			set {
 				if (CookieName != value) {
 					ViewState ["CookieName"] = value;

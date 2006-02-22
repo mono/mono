@@ -41,35 +41,18 @@ namespace System.Web.UI.WebControls {
 		StateBag ViewState = new StateBag ();
 
 		public string DataField {
-			get {
-				object ob = ViewState ["DataField"];
-				if (ob != null) return (string) ob;
-				return string.Empty;
-			}
-			set {
-				ViewState ["DataField"] = value;
-			}
+			get { return ViewState.GetString ("DataField", ""); }
+			set { ViewState ["DataField"] = value; }
 		}
 		
 		public bool IsReadOnly {
-			get {
-				object val = ViewState ["IsReadOnly"];
-				return val != null ? (bool) val : false;
-			}
-			set { 
-				ViewState ["IsReadOnly"] = value;
-			}
+			get { return ViewState.GetBool ("IsReadOnly", false); }
+			set { ViewState ["IsReadOnly"] = value; }
 		}
 		
 		public string Name {
-			get {
-				object ob = ViewState ["Name"];
-				if (ob != null) return (string) ob;
-				return string.Empty;
-			}
-			set {
-				ViewState ["Name"] = value;
-			}
+			get { return ViewState.GetString ("Name", ""); }
+			set { ViewState ["Name"] = value; }
 		}
 		
 		public Type Type {

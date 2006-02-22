@@ -96,7 +96,7 @@ namespace System.Web.UI.WebControls {
 		
 		
 		[MonoTODO ("Support other data types")]
-		public override void InitializeDataCell (DataControlFieldCell cell, DataControlRowState rowState)
+		protected override void InitializeDataCell (DataControlFieldCell cell, DataControlRowState rowState)
 		{
 			bool editable = (rowState & (DataControlRowState.Edit | DataControlRowState.Insert)) != 0;
 			

@@ -82,18 +82,14 @@ namespace System.Web.UI.WebControls {
 		[WebSysDescription ("")]
 		[WebCategoryAttribute ("Appearance")]
 		public virtual string Text {
-			get {
-				object ob = ViewState ["Text"];
-				if (ob != null) return (string) ob;
-				return "";
-			}
+			get { return ViewState.GetString ("Text", ""); }
 			set {
 				ViewState ["Text"] = value;
 				OnFieldChanged ();
 			}
 		}
 		
-		public override void InitializeDataCell (DataControlFieldCell cell, DataControlRowState rowState)
+		protected override void InitializeDataCell (DataControlFieldCell cell, DataControlRowState rowState)
 		{
 			bool editable = (rowState & (DataControlRowState.Edit | DataControlRowState.Insert)) != 0;
 			CheckBox box = new CheckBox ();

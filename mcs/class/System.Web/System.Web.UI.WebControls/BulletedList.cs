@@ -216,27 +216,13 @@ namespace System.Web.UI.WebControls {
 		[EditorAttribute ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		[UrlPropertyAttribute]
 		public virtual string BulletImageUrl {
-			get {
-				object ret = ViewState ["BulletImageUrl"];
-				if (ret != null)
-					return (string) ret; 
-			
-				return "";
-			}
-			set {
-				ViewState ["BulletImageUrl"] = value;
-			}
+			get { return ViewState.GetString ("BulletImageUrl", ""); }
+			set { ViewState ["BulletImageUrl"] = value; }
 		}
 		
 	    [DefaultValueAttribute (BulletStyle.NotSet)]
 		public virtual BulletStyle BulletStyle {
-			get {
-				object ret = ViewState ["BulletStyle"];
-				if (ret != null)
-					return (BulletStyle) ret; 
-			
-				return BulletStyle.NotSet;
-			}
+			get { return (BulletStyle) ViewState.GetInt ("BulletStyle", (int) BulletStyle.NotSet); }
 			set {
 				if ((int) value < 0 || (int) value > 9)
 					throw new ArgumentOutOfRangeException ("value");
@@ -249,13 +235,7 @@ namespace System.Web.UI.WebControls {
 		
 	    [DefaultValueAttribute (BulletedListDisplayMode.Text)]
 		public virtual BulletedListDisplayMode DisplayMode {
-			get {
-				object ret = ViewState ["DisplayMode"];
-				if (ret != null)
-					return (BulletedListDisplayMode) ret; 
-			
-				return BulletedListDisplayMode.Text;
-			}
+			get { return (BulletedListDisplayMode) ViewState.GetInt ("DisplayMode", (int)BulletedListDisplayMode.Text); }
 			set {
 				if ((int) value < 0 || (int) value > 2)
 					throw new ArgumentOutOfRangeException ("value");
@@ -266,16 +246,8 @@ namespace System.Web.UI.WebControls {
 		
 	    [DefaultValueAttribute (1)]
 		public virtual int FirstBulletNumber {
-			get {
-				object ret = ViewState ["FirstBulletNumber"];
-				if (ret != null)
-					return (int) ret; 
-			
-				return 1;
-			}
-			set {
-				ViewState ["FirstBulletNumber"] = value;
-			}
+			get { return ViewState.GetInt ("FirstBulletNumber", 1); }
+			set { ViewState ["FirstBulletNumber"] = value; }
 		}
 		
 
@@ -303,16 +275,8 @@ namespace System.Web.UI.WebControls {
 		[DefaultValueAttribute ("")]
 		[TypeConverter (typeof (TargetConverter))]
 		public virtual string Target {
-			get {
-				object ret = ViewState ["Target"];
-				if (ret != null)
-					return (string) ret; 
-			
-				return "";
-			}
-			set {
-				ViewState ["Target"] = value;
-			}
+			get { return ViewState.GetString ("Target", ""); }
+			set { ViewState ["Target"] = value; }
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Never)]

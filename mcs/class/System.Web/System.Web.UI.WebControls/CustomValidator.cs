@@ -52,13 +52,8 @@ namespace System.Web.UI.WebControls {
 		[Themeable (false)]
 #endif
 		public string ClientValidationFunction {
-			get {
-				return ViewState.GetString("ClientValidationFunction", string.Empty);
-			}
-
-			set {
-				ViewState["ClientValidationFunction"] = value;
-			}
+			get { return ViewState.GetString("ClientValidationFunction", ""); }
+			set { ViewState["ClientValidationFunction"] = value; }
 		}
 
 #if NET_2_0

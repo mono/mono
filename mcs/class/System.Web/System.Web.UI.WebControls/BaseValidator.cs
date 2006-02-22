@@ -72,23 +72,15 @@ namespace System.Web.UI.WebControls {
 		[Themeable (false)]
 		[DefaultValue ("")]
 		public string ValidationGroup {
-			get {
-				return ViewState.GetString ("ValidationGroup", String.Empty);
-			}
-			set {
-				ViewState["ValidationGroup"] = value;
-			}
+			get { return ViewState.GetString ("ValidationGroup", String.Empty); }
+			set { ViewState["ValidationGroup"] = value; }
 		}
 
 		[Themeable (false)]
 		[DefaultValue (false)]
 		public bool SetFocusOnError {
-			get {
-				return ViewState.GetBool ("SetFocusOnError", false);
-			}
-			set {
-				ViewState["SetFocusOnError"] = value;
-			}
+			get { return ViewState.GetBool ("SetFocusOnError", false); }
+			set { ViewState["SetFocusOnError"] = value; }
 		}
 
 		/* listed in corcompare */
@@ -97,12 +89,8 @@ namespace System.Web.UI.WebControls {
 		[DefaultValue ("")]
 		public override string Text 
 		{
-			get {
-				return base.Text;
-			}
-			set {
-				base.Text = value;
-			}
+			get { return base.Text; }
+			set { base.Text = value; }
 		}
 #endif
 
@@ -115,12 +103,8 @@ namespace System.Web.UI.WebControls {
 		[WebSysDescription ("")]
 		[WebCategory ("Behavior")]
 		public string ControlToValidate {
-			get {
-				return ViewState.GetString ("ControlToValidate", String.Empty);
-			}
-			set {
-				ViewState ["ControlToValidate"] = value;
-			}
+			get { return ViewState.GetString ("ControlToValidate", String.Empty); }
+			set { ViewState ["ControlToValidate"] = value; }
 		}
 
 #if NET_2_0
@@ -133,12 +117,8 @@ namespace System.Web.UI.WebControls {
 		[WebSysDescription ("")]
 		[WebCategory ("Appearance")]
 		public ValidatorDisplay Display {
-			get {
-				return (ValidatorDisplay)ViewState.GetInt ("Display", (int)ValidatorDisplay.Static);
-			}
-			set {
-				ViewState ["Display"] = (int)value;
-			}
+			get { return (ValidatorDisplay)ViewState.GetInt ("Display", (int)ValidatorDisplay.Static); }
+			set { ViewState ["Display"] = (int)value; }
 		}
 
 #if NET_2_0
@@ -148,21 +128,13 @@ namespace System.Web.UI.WebControls {
 		[WebSysDescription ("")]
 		[WebCategory ("Behavior")]
 		public bool EnableClientScript {
-			get {
-				return ViewState.GetBool ("EnableClientScript", true);
-			}
-			set {
-				ViewState ["EnableClientScript"] = value;
-			}
+			get { return ViewState.GetBool ("EnableClientScript", true); }
+			set { ViewState ["EnableClientScript"] = value; }
 		}
 
 		public override bool Enabled {
-			get {
-				return ViewState.GetBool ("Enabled", true);
-			}
-			set {
-				ViewState ["Enabled"] = value;
-			}
+			get { return ViewState.GetBool ("Enabled", true); }
+			set { ViewState ["Enabled"] = value; }
 		}
 
 #if NET_2_0
@@ -175,19 +147,13 @@ namespace System.Web.UI.WebControls {
 		[WebSysDescription ("")]
 		[WebCategory ("Appearance")]
 		public virtual string ErrorMessage {
-			get {
-				return ViewState.GetString ("ErrorMessage", String.Empty);
-			}
-			set {
-				ViewState ["ErrorMessage"] = value;
-			}
+			get { return ViewState.GetString ("ErrorMessage", String.Empty); }
+			set { ViewState ["ErrorMessage"] = value; }
 		}
 
 		[DefaultValue(typeof (Color), "Red")]
 		public override Color ForeColor {
-			get {
-				return forecolor;
-			}
+			get { return forecolor; }
 			set {
 				forecolor = value;
 				base.ForeColor = value;
@@ -203,12 +169,8 @@ namespace System.Web.UI.WebControls {
 		[WebSysDescription ("")]
 		[WebCategory ("Misc")]
 		public virtual bool IsValid {
-			get {
-				return valid;
-			}
-			set {
-				valid = value;
-			}
+			get { return valid; }
+			set { valid = value; }
 		}
 
 		protected bool PropertiesValid {
@@ -222,9 +184,7 @@ namespace System.Web.UI.WebControls {
 		}
 
 		protected bool RenderUplevel {
-			get {
-				return render_uplevel;
-			}
+			get { return render_uplevel; }
 		}
 
 		internal bool GetRenderUplevel ()

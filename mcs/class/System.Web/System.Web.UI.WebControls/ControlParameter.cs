@@ -92,13 +92,7 @@ namespace System.Web.UI.WebControls {
 		[DefaultValueAttribute ("")]
 		[IDReferencePropertyAttribute (typeof(System.Web.UI.Control))]
 		public string ControlID {
-			get {
-				string s = ViewState ["ControlID"] as string;
-				if (s != null)
-					return s;
-				
-				return "";
-			}
+			get { return ViewState.GetString ("ControlID", ""); }
 			set {
 				if (ControlID != value) {
 					ViewState ["ControlID"] = value;
@@ -111,13 +105,7 @@ namespace System.Web.UI.WebControls {
 		[TypeConverterAttribute (typeof (ControlPropertyNameConverter))]
 		[WebCategoryAttribute ("Control")]
 		public string PropertyName {
-			get {
-				string s = ViewState ["PropertyName"] as string;
-				if (s != null)
-					return s;
-				
-				return "";
-			}
+			get { return ViewState.GetString ("PropertyName", ""); }
 			set {
 				
 				if (PropertyName != value) {

@@ -45,11 +45,7 @@ namespace System.Web.UI.WebControls {
 		[WebSysDescription ("")]
 		[WebCategoryAttribute ("Appearance")]
 		public virtual ButtonType ButtonType {
-			get {
-				object ob = ViewState ["ButtonType"];
-				if (ob != null) return (ButtonType) ob;
-				return ButtonType.Link;
-			}
+			get { return (ButtonType) ViewState.GetInt ("ButtonType", (int) ButtonType.Link); }
 			set {
 				ViewState ["ButtonType"] = value;
 				OnFieldChanged ();
@@ -60,11 +56,7 @@ namespace System.Web.UI.WebControls {
 		[WebSysDescription ("")]
 		[WebCategoryAttribute ("Behavior")]
 		public virtual bool CausesValidation {
-			get {
-				object ob = ViewState ["CausesValidation"];
-				if (ob != null) return (bool) ob;
-				return false;
-			}
+			get { return ViewState.GetBool ("CausesValidation", false); }
 			set {
 				ViewState ["CausesValidation"] = value;
 				OnFieldChanged ();
@@ -75,10 +67,7 @@ namespace System.Web.UI.WebControls {
 		[WebSysDescription ("")]
 		[WebCategoryAttribute ("Behavior")]
 		public override bool ShowHeader {
-			get {
-				object val = ViewState ["showHeader"];
-				return val != null ? (bool) val : false;
-			}
+			get { return ViewState.GetBool ("showHeader", false); }
 			set { 
 				ViewState ["showHeader"] = value;
 				OnFieldChanged ();
@@ -89,11 +78,7 @@ namespace System.Web.UI.WebControls {
 		[WebSysDescription ("")]
 		[WebCategoryAttribute ("Behavior")]
 		public virtual string ValidationGroup {
-			get {
-				object ob = ViewState ["ValidationGroup"];
-				if (ob != null) return (string) ob;
-				return "";
-			}
+			get { return ViewState.GetString ("ValidationGroup", ""); }
 			set {
 				ViewState ["ValidationGroup"] = value;
 				OnFieldChanged ();

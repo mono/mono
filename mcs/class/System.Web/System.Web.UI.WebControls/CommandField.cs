@@ -47,11 +47,7 @@ namespace System.Web.UI.WebControls {
 		[WebSysDescription ("")]
 		[WebCategoryAttribute ("Appearance")]
 		public virtual string CancelImageUrl {
-			get {
-				object ob = ViewState ["CancelImageUrl"];
-				if (ob != null) return (string) ob;
-				return "";
-			}
+			get { return ViewState.GetString ("CancelImageUrl", ""); }
 			set {
 				ViewState ["CancelImageUrl"] = value;
 				OnFieldChanged ();
@@ -62,24 +58,16 @@ namespace System.Web.UI.WebControls {
 		[WebSysDescription ("")]
 		[WebCategoryAttribute ("Appearance")]
 		public virtual string CancelText {
-			get {
-				object ob = ViewState ["CancelText"];
-				if (ob != null) return (string) ob;
-				return "Cancel";
-			}
+			get { return ViewState.GetString ("CancelText", "Cancel"); }
 			set {
 				ViewState ["CancelText"] = value;
 				OnFieldChanged ();
 			}
 		}
 
-	    [DefaultValueAttribute (true)]
+		[DefaultValueAttribute (true)]
 		public override bool CausesValidation {
-			get {
-				object ob = ViewState ["CausesValidation"];
-				if (ob != null) return (bool) ob;
-				return true;
-			}
+			get { return ViewState.GetBool ("CausesValidation", true); }
 			set {
 				ViewState ["CausesValidation"] = value;
 				OnFieldChanged ();
@@ -92,11 +80,7 @@ namespace System.Web.UI.WebControls {
 		[WebSysDescription ("")]
 		[WebCategoryAttribute ("Appearance")]
 		public virtual string DeleteImageUrl {
-			get {
-				object ob = ViewState ["DeleteImageUrl"];
-				if (ob != null) return (string) ob;
-				return "";
-			}
+			get { return ViewState.GetString ("DeleteImageUrl", ""); }
 			set {
 				ViewState ["DeleteImageUrl"] = value;
 				OnFieldChanged ();
@@ -107,11 +91,7 @@ namespace System.Web.UI.WebControls {
 		[WebSysDescription ("")]
 		[WebCategoryAttribute ("Appearance")]
 		public virtual string DeleteText {
-			get {
-				object ob = ViewState ["DeleteText"];
-				if (ob != null) return (string) ob;
-				return "Delete";
-			}
+			get { return ViewState.GetString ("DeleteText", "Delete"); }
 			set {
 				ViewState ["DeleteText"] = value;
 				OnFieldChanged ();
@@ -124,11 +104,7 @@ namespace System.Web.UI.WebControls {
 		[WebSysDescription ("")]
 		[WebCategoryAttribute ("Appearance")]
 		public virtual string EditImageUrl {
-			get {
-				object ob = ViewState ["EditImageUrl"];
-				if (ob != null) return (string) ob;
-				return "";
-			}
+			get { return ViewState.GetString ("EditImageUrl", ""); }
 			set {
 				ViewState ["EditImageUrl"] = value;
 				OnFieldChanged ();
@@ -139,11 +115,7 @@ namespace System.Web.UI.WebControls {
 		[WebSysDescription ("")]
 		[WebCategoryAttribute ("Appearance")]
 		public virtual string EditText {
-			get {
-				object ob = ViewState ["EditText"];
-				if (ob != null) return (string) ob;
-				return "Edit";
-			}
+			get { return ViewState.GetString ("EditText", "Edit"); }
 			set {
 				ViewState ["EditText"] = value;
 				OnFieldChanged ();
@@ -156,11 +128,7 @@ namespace System.Web.UI.WebControls {
 		[WebSysDescription ("")]
 		[WebCategoryAttribute ("Appearance")]
 		public virtual string InsertImageUrl {
-			get {
-				object ob = ViewState ["InsertImageUrl"];
-				if (ob != null) return (string) ob;
-				return "";
-			}
+			get { return ViewState.GetString ("InsertImageUrl", ""); }
 			set {
 				ViewState ["InsertImageUrl"] = value;
 				OnFieldChanged ();
@@ -171,11 +139,7 @@ namespace System.Web.UI.WebControls {
 		[WebSysDescription ("")]
 		[WebCategoryAttribute ("Appearance")]
 		public virtual string InsertText {
-			get {
-				object ob = ViewState ["InsertText"];
-				if (ob != null) return (string) ob;
-				return "Insert";
-			}
+			get { return ViewState.GetString ("InsertText", "Insert"); }
 			set {
 				ViewState ["InsertText"] = value;
 				OnFieldChanged ();
@@ -188,11 +152,7 @@ namespace System.Web.UI.WebControls {
 		[WebSysDescription ("")]
 		[WebCategoryAttribute ("Appearance")]
 		public virtual string NewImageUrl {
-			get {
-				object ob = ViewState ["NewImageUrl"];
-				if (ob != null) return (string) ob;
-				return "";
-			}
+			get { return ViewState.GetString ("NewImageUrl", ""); }
 			set {
 				ViewState ["NewImageUrl"] = value;
 				OnFieldChanged ();
@@ -203,11 +163,7 @@ namespace System.Web.UI.WebControls {
 		[WebSysDescription ("")]
 		[WebCategoryAttribute ("Appearance")]
 		public virtual string NewText {
-			get {
-				object ob = ViewState ["NewText"];
-				if (ob != null) return (string) ob;
-				return "New";
-			}
+			get { return ViewState.GetString ("NewText", "New"); }
 			set {
 				ViewState ["NewText"] = value;
 				OnFieldChanged ();
@@ -220,11 +176,7 @@ namespace System.Web.UI.WebControls {
 		[WebSysDescription ("")]
 		[WebCategoryAttribute ("Appearance")]
 		public virtual string SelectImageUrl {
-			get {
-				object ob = ViewState ["SelectImageUrl"];
-				if (ob != null) return (string) ob;
-				return "";
-			}
+			get { return ViewState.GetString ("SelectImageUrl", ""); }
 			set {
 				ViewState ["SelectImageUrl"] = value;
 				OnFieldChanged ();
@@ -235,11 +187,7 @@ namespace System.Web.UI.WebControls {
 		[WebSysDescription ("")]
 		[WebCategoryAttribute ("Appearance")]
 		public virtual string SelectText {
-			get {
-				object ob = ViewState ["SelectText"];
-				if (ob != null) return (string) ob;
-				return "Select";
-			}
+			get { return ViewState.GetString ("SelectText", "Select"); }
 			set {
 				ViewState ["SelectText"] = value;
 				OnFieldChanged ();
@@ -250,11 +198,7 @@ namespace System.Web.UI.WebControls {
 		[WebSysDescription ("")]
 		[WebCategoryAttribute ("Behavior")]
 		public virtual bool ShowCancelButton {
-			get {
-				object ob = ViewState ["ShowCancelButton"];
-				if (ob != null) return (bool) ob;
-				return true;
-			}
+			get { return ViewState.GetBool ("ShowCancelButton", true); }
 			set {
 				ViewState ["ShowCancelButton"] = value;
 				OnFieldChanged ();
@@ -265,11 +209,7 @@ namespace System.Web.UI.WebControls {
 		[WebSysDescription ("")]
 		[WebCategoryAttribute ("Behavior")]
 		public virtual bool ShowDeleteButton {
-			get {
-				object ob = ViewState ["ShowDeleteButton"];
-				if (ob != null) return (bool) ob;
-				return false;
-			}
+			get { return ViewState.GetBool ("ShowDeleteButton", false); }
 			set {
 				ViewState ["ShowDeleteButton"] = value;
 				OnFieldChanged ();
@@ -280,11 +220,7 @@ namespace System.Web.UI.WebControls {
 		[WebSysDescription ("")]
 		[WebCategoryAttribute ("Behavior")]
 		public virtual bool ShowEditButton {
-			get {
-				object ob = ViewState ["ShowEditButton"];
-				if (ob != null) return (bool) ob;
-				return false;
-			}
+			get { return ViewState.GetBool ("ShowEditButton", false); }
 			set {
 				ViewState ["ShowEditButton"] = value;
 				OnFieldChanged ();
@@ -295,11 +231,7 @@ namespace System.Web.UI.WebControls {
 		[WebSysDescription ("")]
 		[WebCategoryAttribute ("Behavior")]
 		public virtual bool ShowSelectButton {
-			get {
-				object ob = ViewState ["ShowSelectButton"];
-				if (ob != null) return (bool) ob;
-				return false;
-			}
+			get { return ViewState.GetBool ("ShowSelectButton", false); }
 			set {
 				ViewState ["ShowSelectButton"] = value;
 				OnFieldChanged ();
@@ -310,11 +242,7 @@ namespace System.Web.UI.WebControls {
 		[WebSysDescription ("")]
 		[WebCategoryAttribute ("Behavior")]
 		public virtual bool ShowInsertButton {
-			get {
-				object ob = ViewState ["ShowInsertButton"];
-				if (ob != null) return (bool) ob;
-				return false;
-			}
+			get { return ViewState.GetBool ("ShowInsertButton", false); }
 			set {
 				ViewState ["ShowInsertButton"] = value;
 				OnFieldChanged ();
@@ -327,11 +255,7 @@ namespace System.Web.UI.WebControls {
 		[WebSysDescription ("")]
 		[WebCategoryAttribute ("Appearance")]
 		public virtual string UpdateImageUrl {
-			get {
-				object ob = ViewState ["UpdateImageUrl"];
-				if (ob != null) return (string) ob;
-				return "";
-			}
+			get { return ViewState.GetString ("UpdateImageUrl", ""); }
 			set {
 				ViewState ["UpdateImageUrl"] = value;
 				OnFieldChanged ();
@@ -342,11 +266,7 @@ namespace System.Web.UI.WebControls {
 		[WebSysDescription ("")]
 		[WebCategoryAttribute ("Appearance")]
 		public virtual string UpdateText {
-			get {
-				object ob = ViewState ["UpdateText"];
-				if (ob != null) return (string) ob;
-				return "Update";
-			}
+			get { return ViewState.GetString ("UpdateText", "Update"); }
 			set {
 				ViewState ["UpdateText"] = value;
 				OnFieldChanged ();

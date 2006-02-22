@@ -45,37 +45,22 @@ namespace System.Web.UI.WebControls
 			get { return "circle"; }
 		}
 		
-	    [DefaultValueAttribute (0)]
+		[DefaultValueAttribute (0)]
 		public int Radius {
-			get {
-				object o = ViewState ["Radius"];
-				return o != null ? (int) o : 0;
-			}
-			set {
-				ViewState ["Radius"] = value;
-			}
+			get { return ViewState.GetInt ("Radius", 0); }
+			set { ViewState ["Radius"] = value; }
 		}
 
-	    [DefaultValueAttribute (0)]
+		[DefaultValueAttribute (0)]
 		public int X {
-			get {
-				object o = ViewState ["X"];
-				return o != null ? (int) o : 0;
-			}
-			set {
-				ViewState ["X"] = value;
-			}
+			get { return ViewState.GetInt ("X", 0); }
+			set { ViewState ["X"] = value; }
 		}
 
-	    [DefaultValueAttribute (0)]
+		[DefaultValueAttribute (0)]
 		public int Y {
-			get {
-				object o = ViewState ["Y"];
-				return o != null ? (int) o : 0;
-			}
-			set {
-				ViewState ["Y"] = value;
-			}
+			get { return ViewState.GetInt ("Y", 0); }
+			set { ViewState ["Y"] = value; }
 		}
 	}
 }

@@ -65,10 +65,7 @@ namespace System.Web.UI.WebControls {
 		[WebSysDescription ("")]
 		[WebCategory ("Accessibility")]
 		public virtual string Caption {
-			get {
-				object o = ViewState ["Caption"];
-				return (o == null) ? String.Empty : (string) o;
-			}
+			get { return ViewState.GetString ("Caption", ""); }
 			set {
 				if (value == null)
 					ViewState.Remove ("Caption");
@@ -79,10 +76,7 @@ namespace System.Web.UI.WebControls {
 
 		[DefaultValue (TableCaptionAlign.NotSet)]
 		public virtual TableCaptionAlign CaptionAlign {
-			get {
-				object o = ViewState ["CaptionAlign"];
-				return (o == null) ? TableCaptionAlign.NotSet : (TableCaptionAlign) o;
-			}
+			get { return (TableCaptionAlign) ViewState.GetInt ("CaptionAlign", (int)TableCaptionAlign.NotSet); }
 			set {
 				if ((value < TableCaptionAlign.NotSet) || (value > TableCaptionAlign.Right))
 					throw new ArgumentOutOfRangeException (Locale.GetText ("Invalid TableCaptionAlign value."));
@@ -136,10 +130,7 @@ namespace System.Web.UI.WebControls {
 		[WebSysDescription("")]
 		[WebCategory("Data")]
 		public virtual string DataKeyField {
-			get {
-				object o = ViewState ["DataKeyField"];
-				return (o == null) ? String.Empty : (string) o;
-			}
+			get { return ViewState.GetString ("DataKeyField", ""); }
 			set {
 				if (value == null)
 					ViewState.Remove ("DataKeyField");
@@ -178,10 +169,7 @@ namespace System.Web.UI.WebControls {
 		[WebSysDescription("")]
 		[WebCategory("Data")]
 		public string DataMember {
-			get {
-				object o = ViewState ["DataMember"];
-				return (o == null) ? String.Empty : (string) o;
-			}
+			get { return ViewState.GetString ("DataMember", ""); }
 			set {
 				if (value == null)
 					ViewState.Remove ("DataMember");
@@ -259,10 +247,7 @@ namespace System.Web.UI.WebControls {
 
 		[DefaultValue (false)]
 		public virtual bool UseAccessibleHeader {
-			get {
-				object o = ViewState ["UseAccessibleHeader"];
-				return (o == null) ? false : (bool) o;
-			}
+			get { return ViewState.GetBool ("UseAccessibleHeader", false); }
 			set { ViewState ["UseAccessibleHeader"] = value; }
 		}
 #if NET_2_0
@@ -270,10 +255,7 @@ namespace System.Web.UI.WebControls {
 		[IDReferenceProperty (typeof (DataSourceControl))]
 		[Themeable (false)]
 		public virtual string DataSourceID {
-			get {
-				object o = ViewState ["DataSourceID"];
-				return (o == null) ? String.Empty : (string) o;
-			}
+			get { return ViewState.GetString ("DataSourceID", ""); }
 			set {
 				// LAMESPEC ? this is documented as an HttpException in beta2
 				if (source != null)

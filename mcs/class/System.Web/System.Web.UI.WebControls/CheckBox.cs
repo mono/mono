@@ -180,15 +180,7 @@ namespace System.Web.UI.WebControls {
 		[WebCategory ("Appearance")]
 		public virtual TextAlign TextAlign
 		{
-			get {
-				object o = ViewState["TextAlign"];
-
-				if (o == null) {
-					return (TextAlign.Right);
-				} else {
-					return ((TextAlign)o);
-				}
-			}
+			get { return (TextAlign) ViewState.GetInt ("TextAlign", (int)TextAlign.Right); }
 			set {
 				if (value != TextAlign.Left &&
 				    value != TextAlign.Right) {

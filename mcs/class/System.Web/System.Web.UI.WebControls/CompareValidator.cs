@@ -99,12 +99,8 @@ namespace System.Web.UI.WebControls {
 		[Themeable (false)]
 #endif
 		public string ControlToCompare {
-			get {
-				return ViewState.GetString ("ControlToCompare", String.Empty);
-			}
-			set {
-				ViewState["ControlToCompare"] = value;
-			}
+			get { return ViewState.GetString ("ControlToCompare", String.Empty); }
+			set { ViewState["ControlToCompare"] = value; }
 		}
 
 		[DefaultValue(ValidationCompareOperator.Equal)]
@@ -114,13 +110,8 @@ namespace System.Web.UI.WebControls {
 		[Themeable (false)]
 #endif
 		public ValidationCompareOperator Operator {
-			get {
-				return (ValidationCompareOperator)ViewState.GetInt ("Operator", (int)ValidationCompareOperator.Equal);
-			}
-
-			set {
-				ViewState ["Operator"] = (int)value;
-			}
+			get { return (ValidationCompareOperator)ViewState.GetInt ("Operator", (int)ValidationCompareOperator.Equal); }
+			set { ViewState ["Operator"] = (int)value; }
 		}
 
 #if !NET_2_0
@@ -133,12 +124,8 @@ namespace System.Web.UI.WebControls {
 		[Themeable (false)]
 #endif
 		public string ValueToCompare {
-			get {
-				return ViewState.GetString ("ValueToCompare", String.Empty);
-			}
-			set {
-				ViewState ["ValueToCompare"] = value;
-			}
+			get { return ViewState.GetString ("ValueToCompare", String.Empty); }
+			set { ViewState ["ValueToCompare"] = value; }
 		}
 	}
 }

@@ -48,11 +48,7 @@ namespace System.Web.UI.WebControls {
 		[WebSysDescription ("Raised when a Button Command is executed.")]
 		[WebCategoryAttribute ("Behavior")]
 		public virtual string CommandName {
-			get {
-				object ob = ViewState ["CommandName"];
-				if (ob != null) return (string) ob;
-				return "";
-			}
+			get { return ViewState.GetString ("CommandName", ""); }
 			set {
 				ViewState ["CommandName"] = value;
 				OnFieldChanged ();
@@ -64,11 +60,7 @@ namespace System.Web.UI.WebControls {
 		[WebSysDescription ("")]
 		[WebCategoryAttribute ("Data")]
 		public virtual string DataTextField {
-			get {
-				object ob = ViewState ["DataTextField"];
-				if (ob != null) return (string) ob;
-				return "";
-			}
+			get { return ViewState.GetString ("DataTextField", ""); }
 			set {
 				ViewState ["DataTextField"] = value;
 				OnFieldChanged ();
@@ -79,11 +71,7 @@ namespace System.Web.UI.WebControls {
 		[WebSysDescription ("")]
 		[WebCategoryAttribute ("Data")]
 		public virtual string DataTextFormatString {
-			get {
-				object ob = ViewState ["DataTextFormatString"];
-				if (ob != null) return (string) ob;
-				return "";
-			}
+			get { return ViewState.GetString ("DataTextFormatString", ""); }
 			set {
 				ViewState ["DataTextFormatString"] = value;
 				OnFieldChanged ();
@@ -96,11 +84,7 @@ namespace System.Web.UI.WebControls {
 		[DefaultValueAttribute ("")]
 		[UrlPropertyAttribute]
 		public virtual string ImageUrl {
-			get {
-				object ob = ViewState ["ImageUrl"];
-				if (ob != null) return (string) ob;
-				return "";
-			}
+			get { return ViewState.GetString ("ImageUrl", ""); }
 			set {
 				ViewState ["ImageUrl"] = value;
 				OnFieldChanged ();
@@ -112,11 +96,7 @@ namespace System.Web.UI.WebControls {
 		[WebSysDescription ("")]
 		[WebCategoryAttribute ("Appearance")]
 		public virtual string Text {
-			get {
-				object ob = ViewState ["Text"];
-				if (ob != null) return (string) ob;
-				return "";
-			}
+			get { return ViewState.GetString ("Text", ""); }
 			set {
 				ViewState ["Text"] = value;
 				OnFieldChanged ();

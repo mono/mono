@@ -156,28 +156,14 @@ namespace System.Web.UI.WebControls {
 		[ThemeableAttribute (false)]
 		[DefaultValueAttribute ("")]
 		[WebCategoryAttribute ("Data")]
-		public virtual string DataMember
-		{
-			get {
-				object o = ViewState["DataMember"];
-				if(o!=null)
-					return (string)o;
-				return String.Empty;
-			}
-			set {
-				ViewState["DataMember"] = value;
-			}
+		public virtual string DataMember {
+			get { return ViewState.GetString ("DataMember", ""); }
+			set { ViewState["DataMember"] = value; }
 		}
 
 		[IDReferencePropertyAttribute (typeof(DataSourceControl))]
 		public override string DataSourceID {
-			get {
-				object o = ViewState ["DataSourceID"];
-				if (o != null)
-					return (string)o;
-				
-				return String.Empty;
-			}
+			get { return ViewState.GetString ("DataSourceID", ""); }
 			set {
 				ViewState ["DataSourceID"] = value;
 				base.DataSourceID = value;
