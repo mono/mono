@@ -1,3 +1,18 @@
+2006-02-22  Dick Porter  <dick@ximian.com>
+
+	* thread-private.h: 
+	* threads.c: There's no need to use the timed-thread support code
+	any more, as we aren't using the timed join.  This greatly
+	simplifies thread setup, and fixes a memory leak (bug 77521).
+
+	Don't bother to store thread IDs in a hash table, use TLS instead.
+	The one case that needs to look up the handle of a different
+	thread (OpenThread()) can do the extra work itself.  Fixes bug
+	77536.
+
+	* handles.c (_wapi_search_handle): Add a reference when returning
+	a private handle (shared handles are already reffed.)
+	
 2006-02-17  Dick Porter  <dick@ximian.com>
 
 	* handles-private.h: 
