@@ -2279,6 +2279,7 @@ namespace System.Windows.Forms {
 						IntPtr handle;
 
 						switch((HitTest)(msg.LParam.ToInt32() & 0xffff)) {
+							case HitTest.HTBOTTOM:		handle = Cursors.SizeNS.handle; break;
 							case HitTest.HTBORDER:		handle = Cursors.SizeNS.handle; break;
 							case HitTest.HTBOTTOMLEFT:	handle = Cursors.SizeNESW.handle; break;
 							case HitTest.HTBOTTOMRIGHT:	handle = Cursors.SizeNWSE.handle; break;
