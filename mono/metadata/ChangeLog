@@ -1,3 +1,20 @@
+2006-02-23  Raja R Harinath  <rharinath@novell.com>
+
+	* metadata.c (mono_metadata_inflate_generic_inst): If the
+	instantiation is closed, don't bother expanding it in the new
+	context.
+	* class.c (inflate_generic_class): If the generic instantiation
+	doesn't change after inflation, return the argument itself.
+	(inflate_generic_type) [MONO_TYPE_MVAR, MONO_TYPE_VAR]:
+	Add bounds checks.
+	(inflate_generic_context): If neither the generic class nor the
+	generic method instantiations change, return the original context.
+	* reflection.c (mono_method_get_object): Do
+	'mono_get_inflated_method' before accessing the ->klass field.
+	(inflate_mono_method): Don't create a MonoGenericMethod unless
+	necessary.
+	(inflate_method): Don't pass a constructed type as the declaring
+	type of a methodbuilder.
 
 Thu Feb 23 11:57:54 CET 2006 Paolo Molaro <lupus@ximian.com>
 
