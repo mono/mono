@@ -76,7 +76,7 @@ namespace System.Web.UI.HtmlControls {
 
 #if NET_2_0
 		[DefaultValue ("")]
-		public string ValidationGroup
+		public virtual string ValidationGroup
 		{
 			get {
 				string group = Attributes["ValidationGroup"];

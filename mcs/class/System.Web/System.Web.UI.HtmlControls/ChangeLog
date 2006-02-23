@@ -1,3 +1,13 @@
+2006-02-23  Chris Toshok  <toshok@ximian.com>
+
+	* HtmlButton.cs: fix corcompare output.
+
+	* HtmlInputButton.cs: same.
+
+	* HtmlInputImage.cs: same.
+
+	* HtmlInputReset.cs: same.
+
 2006-01-22  Chris Toshok  <toshok@ximian.com>
 
 	* HtmlInputButton.cs:

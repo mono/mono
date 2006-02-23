@@ -66,7 +66,7 @@ namespace System.Web.UI.HtmlControls {
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new string ValidationGroup
+		public override string ValidationGroup
 		{
 			get {
 				return ViewState.GetString ("ValidationGroup", "");
