@@ -37,7 +37,7 @@ namespace System.Web.UI.WebControls
 {
 	[ToolboxItem (false)]
 	[DesignerAttribute ("System.Web.UI.Design.WebControls.ContentDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
-	[ControlBuilder(typeof(ContentControlBuilderInternal))]
+	[ControlBuilder(typeof(ContentBuilderInternal))]
 	public class Content: Control, INamingContainer
 	{
 		string placeHolderId;

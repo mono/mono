@@ -46,7 +46,7 @@ namespace System.Web.UI.WebControls
 			this.scope = scope;
 		}
 		
-		public TableHeaderScope Scope {
+		public virtual TableHeaderScope Scope {
 			get {
 				object ob = ViewState ["Scope"];
 				if (ob != null) return (TableHeaderScope) ob;

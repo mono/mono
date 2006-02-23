@@ -340,7 +340,7 @@ namespace System.Web.UI.WebControls {
 #if NET_2_0
 		[Themeable (false)]
 		[DefaultValue ("")]
-		public string ValidationGroup
+		public virtual string ValidationGroup
 		{
 			get {
 				return ViewState.GetString ("ValidationGroup", "");

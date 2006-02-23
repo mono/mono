@@ -51,10 +51,10 @@ namespace System.Web.UI.WebControls {
 			return base.Initialize (sortingEnabled, control);
 		}
 		
-	    [EditorAttribute ("System.Web.UI.Design.WebControls.DataFieldEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
-	    [TypeConverterAttribute (typeof(StringArrayConverter))]
-	    [WebCategoryAttribute ("Data")]
-	    [DefaultValueAttribute ("")]
+		[EditorAttribute ("System.Web.UI.Design.WebControls.DataFieldEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
+		[TypeConverterAttribute (typeof(StringArrayConverter))]
+		[WebCategoryAttribute ("Data")]
+		[DefaultValueAttribute (null)]
 		public virtual string[] DataNavigateUrlFields {
 			get {
 				object ob = ViewState ["DataNavigateUrlFields"];
@@ -84,7 +84,7 @@ namespace System.Web.UI.WebControls {
 
 		[WebCategoryAttribute ("Data")]
 		[DefaultValueAttribute ("")]
-	    [TypeConverterAttribute ("System.Web.UI.Design.DataSourceViewSchemaConverter, " + Consts.AssemblySystem_Design)]
+		[TypeConverterAttribute ("System.Web.UI.Design.DataSourceViewSchemaConverter, " + Consts.AssemblySystem_Design)]
 		public virtual string DataTextField {
 			get {
 				object ob = ViewState ["DataTextField"];
@@ -111,10 +111,10 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-	    [DefaultValueAttribute ("")]
-	    [EditorAttribute ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
-	    [UrlPropertyAttribute]
-	    [WebCategoryAttribute ("Behavior")]
+		[DefaultValueAttribute ("")]
+		[EditorAttribute ("System.Web.UI.Design.UrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
+		[UrlPropertyAttribute]
+		[WebCategoryAttribute ("Behavior")]
 		public virtual string NavigateUrl {
 			get {
 				object ob = ViewState ["NavigateUrl"];
@@ -129,7 +129,7 @@ namespace System.Web.UI.WebControls {
 
 		[DefaultValueAttribute ("")]
 		[WebCategoryAttribute ("Behavior")]
-	    [TypeConverterAttribute (typeof(TargetConverter))]
+		[TypeConverterAttribute (typeof(TargetConverter))]
 		public virtual string Target {
 			get {
 				object ob = ViewState ["Target"];
@@ -142,9 +142,9 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-	    [LocalizableAttribute (true)]
-	    [DefaultValueAttribute ("")]
-	    [WebCategoryAttribute ("Appearance")]
+		[LocalizableAttribute (true)]
+		[DefaultValueAttribute ("")]
+		[WebCategoryAttribute ("Appearance")]
 		public virtual string Text {
 			get {
 				object ob = ViewState ["Text"];
@@ -158,7 +158,7 @@ namespace System.Web.UI.WebControls {
 		}
 		
 		public override void InitializeCell (DataControlFieldCell cell,
-			DataControlCellType cellType, DataControlRowState rowState, int rowIndex)
+						     DataControlCellType cellType, DataControlRowState rowState, int rowIndex)
 		{
 			base.InitializeCell (cell, cellType, rowState, rowIndex);
 			HyperLink link = new HyperLink ();

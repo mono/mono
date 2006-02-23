@@ -1,3 +1,10 @@
+2006-02-23  Chris Toshok  <toshok@ximian.com>
+
+	* TemplateControlCompiler.cs (AddContentTemplateInvocation): track
+	change from ContentControlBuilderInternal to
+	ContentBuilderInternal.
+	(AddCodeRender): same.
+
 2006-02-16 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AssemblyBuilder.cs:

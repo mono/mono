@@ -34,7 +34,7 @@ using System;
 using System.Collections;
 using System.Web.UI.WebControls;
 
-namespace System.Web.UI
+namespace System.Web.UI.WebControls
 {
 	internal class ContentPlaceHolderBuilder: ControlBuilder
 	{

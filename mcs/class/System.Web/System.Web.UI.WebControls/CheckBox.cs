@@ -196,7 +196,7 @@ namespace System.Web.UI.WebControls {
 		[DefaultValue ("")]
 		[WebSysDescription ("")]
 		[WebCategoryAttribute ("Behavior")]
-		public string ValidationGroup
+		public virtual string ValidationGroup
 		{
 			get { return ViewState.GetString ("ValidationGroup", String.Empty); }
 			set { ViewState["ValidationGroup"] = value; }

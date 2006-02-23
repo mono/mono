@@ -73,11 +73,8 @@ namespace System.Web.UI.WebControls {
 		[WebCategory ("Appearance")]
 #if NET_2_0
 		[Localizable (true)]
-		public virtual
-#else		
-		public
 #endif		
-		string Text {
+		public string Text {
 			get {
 				return ViewState.GetString ("Text", String.Empty);
 			}

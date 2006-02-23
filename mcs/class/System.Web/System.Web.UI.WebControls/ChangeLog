@@ -1,5 +1,12 @@
 2006-02-23  Chris Toshok  <toshok@ximian.com>
 
+	* CheckBox.cs, ContentControlBuilderInternal.cs, Content.cs,
+	ContentPlaceHolderBuilder.cs, ContentPlaceHolder.cs,
+	DataControlFieldHeaderCell.cs, DataGridColumn.cs,
+	HierarchicalDataBoundControl.cs, HyperLinkField.cs,
+	ImageButton.cs, ImageField.cs, Literal.cs,
+	ObjectDataSourceView.cs, TextBox.cs: more corcompare work.
+
 	* BaseCompareValidator.cs, BaseValidator.cs, Button.cs,
 	DataControlField.cs, DetailsView.cs, FormView.cs, GridView.cs,
 	HotSpot.cs, LinkButton.cs, Login.cs, SiteMapDataSource.cs,

@@ -48,7 +48,12 @@ namespace System.Web.UI.WebControls {
 		TableItemStyle header_style;
 		TableItemStyle item_style;
 		
-		public DataGridColumn ()
+#if NET_2_0
+		protected
+#else
+		public
+#endif
+		DataGridColumn ()
 		{
 			viewstate = new StateBag ();
 		}

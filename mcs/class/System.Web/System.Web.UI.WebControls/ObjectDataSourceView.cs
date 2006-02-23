@@ -62,7 +62,7 @@ namespace System.Web.UI.WebControls
 		private static readonly object ObjectCreatedEvent = new object();
 		private static readonly object ObjectCreatingEvent = new object();
 		private static readonly object ObjectDisposingEvent = new object();
-//		private static readonly object ResolvingMethodEvent = new object();
+		//		private static readonly object ResolvingMethodEvent = new object();
 		private static readonly object SelectedEvent = new object();
 		private static readonly object SelectingEvent = new object();
 		private static readonly object UpdatedEvent = new object();
@@ -114,11 +114,11 @@ namespace System.Web.UI.WebControls
 			remove { Events.RemoveHandler (ObjectDisposingEvent, value); }
 		}
 		
-/*		public event ObjectDataSourceResolvingMethodEventHandler ResolvingMethod {
-			add { Events.AddHandler (ResolvingMethodEvent, value); }
-			remove { Events.RemoveHandler (ResolvingMethodEvent, value); }
-		}
-*/
+		/*		public event ObjectDataSourceResolvingMethodEventHandler ResolvingMethod {
+				add { Events.AddHandler (ResolvingMethodEvent, value); }
+				remove { Events.RemoveHandler (ResolvingMethodEvent, value); }
+				}
+		*/
 		public event ObjectDataSourceStatusEventHandler Selected {
 			add { Events.AddHandler (SelectedEvent, value); }
 			remove { Events.RemoveHandler (SelectedEvent, value); }
@@ -203,14 +203,14 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
-/*		protected virtual void OnResolvingMethod (ObjectDataSourceResolvingMethodEventArgs e)
-		{
-			if (Events != null) {
+		/*		protected virtual void OnResolvingMethod (ObjectDataSourceResolvingMethodEventArgs e)
+				{
+				if (Events != null) {
 				ObjectDataSourceResolvingMethodEventHandler eh = (ObjectDataSourceResolvingMethodEventHandler) Events [ResolvingMethodEvent];
 				if (eh != null) eh (this, e);
-			}
-		}
-*/
+				}
+				}
+		*/
 		
 		protected virtual void OnSelected (ObjectDataSourceStatusEventArgs e)
 		{
@@ -317,7 +317,7 @@ namespace System.Web.UI.WebControls
 				if (deleteParameters == null) {
 					deleteParameters = new ParameterCollection ();
 					deleteParameters.ParametersChanged += new EventHandler (OnParametersChanged); 
-					if (((IStateManager)this).IsTrackingViewState)
+					if (IsTrackingViewState)
 						((IStateManager)deleteParameters).TrackViewState ();
 				}
 				return deleteParameters;
@@ -388,7 +388,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
-	    [DefaultValueAttribute ("original_{0}")]
+		[DefaultValueAttribute ("{0}")]
 		public string OldValuesParameterFormatString {
 			get {
 				object ret = ViewState ["OldValuesParameterFormatString"];
@@ -424,7 +424,7 @@ namespace System.Web.UI.WebControls
 				if (selectParameters == null) {
 					selectParameters = new ParameterCollection ();
 					selectParameters.ParametersChanged += new EventHandler (OnParametersChanged); 
-					if (((IStateManager)this).IsTrackingViewState)
+					if (IsTrackingViewState)
 						((IStateManager)selectParameters).TrackViewState ();
 				}
 				return selectParameters;
@@ -477,7 +477,7 @@ namespace System.Web.UI.WebControls
 				if (updateParameters == null) {
 					updateParameters = new ParameterCollection ();
 					updateParameters.ParametersChanged += new EventHandler (OnParametersChanged); 
-					if (((IStateManager)this).IsTrackingViewState)
+					if (IsTrackingViewState)
 						((IStateManager)updateParameters).TrackViewState ();
 				}
 				return updateParameters;
@@ -1007,7 +1007,7 @@ namespace System.Web.UI.WebControls
 			if (filterParameters != null) ((IStateManager)filterParameters).TrackViewState ();
 		}
 		
-		protected virtual bool IsTrackingViewState
+		protected bool IsTrackingViewState
 		{
 			get { return viewState.IsTrackingViewState; }
 		}

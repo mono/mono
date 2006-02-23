@@ -54,7 +54,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
-		protected HierarchicalDataSourceView GetData (string viewPath)
+		protected virtual HierarchicalDataSourceView GetData (string viewPath)
 		{
 			if (DataSource != null && DataSourceID != "")
 				throw new HttpException ();
@@ -66,7 +66,7 @@ namespace System.Web.UI.WebControls
 				return null; 
 		}
 		
-		protected IHierarchicalDataSource GetDataSource ()
+		protected virtual IHierarchicalDataSource GetDataSource ()
 		{
 			if (DataSourceID != "")
 				return NamingContainer.FindControl (DataSourceID) as IHierarchicalDataSource;

@@ -181,7 +181,7 @@ namespace System.Web.UI.WebControls {
 		[DefaultValueAttribute (false)]
 		[WebSysDescription ("")]
 		[WebCategoryAttribute ("Behavior")]
-		public bool ReadOnly {
+		public virtual bool ReadOnly {
 			get {
 				object val = ViewState ["ReadOnly"];
 				return val != null ? (bool) val : false;
@@ -218,7 +218,7 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 		
-		public virtual void InitializeDataCell (DataControlFieldCell cell, DataControlRowState rowState)
+		protected virtual void InitializeDataCell (DataControlFieldCell cell, DataControlRowState rowState)
 		{
 			bool editable = (rowState & (DataControlRowState.Edit | DataControlRowState.Insert)) != 0;
 			if (editable && !ReadOnly) {

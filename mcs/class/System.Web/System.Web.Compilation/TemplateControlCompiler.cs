@@ -37,6 +37,7 @@ using System.Reflection;
 using System.Text;
 using System.Web;
 using System.Web.UI;
+using System.Web.UI.;
 using System.Web.Util;
 using System.ComponentModel.Design.Serialization;
 #if NET_2_0
@@ -776,7 +777,7 @@ namespace System.Web.Compilation
 			return method.Name;
 		}
 
-		void AddContentTemplateInvocation (ContentControlBuilderInternal cbuilder, CodeMemberMethod method, string methodName)
+		void AddContentTemplateInvocation (ContentBuilderInternal cbuilder, CodeMemberMethod method, string methodName)
 		{
 			CodeObjectCreateExpression newBuild = new CodeObjectCreateExpression (typeof (BuildTemplateMethod));
 			newBuild.Parameters.Add (new CodeMethodReferenceExpression (thisRef, methodName));
@@ -948,8 +949,8 @@ namespace System.Web.Compilation
 					}
 
 #if NET_2_0
-					if (b is ContentControlBuilderInternal) {
-						ContentControlBuilderInternal cb = (ContentControlBuilderInternal) b;
+					if (b is ContentBuilderInternal) {
+						ContentBuilderInternal cb = (ContentBuilderInternal) b;
 						CreateControlTree (cb, false, true);
 						AddContentTemplateInvocation (cb, builder.method, cb.method.Name);
 						continue;

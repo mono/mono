@@ -83,11 +83,8 @@ namespace System.Web.UI.WebControls {
 		[WebCategory ("Behavior")]
 #if NET_2_0
 		[Themeable (false)]
-		public virtual
-#else		
-		public
 #endif		
-		string CommandArgument {
+		public string CommandArgument {
 			get {
 				return ViewState.GetString ("CommandArgument", "");
 			}
@@ -101,11 +98,8 @@ namespace System.Web.UI.WebControls {
 		[WebCategory ("Behavior")]
 #if NET_2_0
 		[Themeable (false)]
-		public virtual
-#else		
-		public
 #endif		
-		string CommandName {
+		public string CommandName {
 			get {
 				return ViewState.GetString ("CommandName", "");
 			}
