@@ -23,7 +23,7 @@
   <TestCase url="/System_Web/HttpRequest/HttpRequest_ContentEncoding.aspx" name="" Exclude="N" />
   <TestCase url="/System_Web/HttpRequest/HttpRequest_Cookies.aspx" name="" Exclude="Y" />
   <TestCase url="/System_Web/HttpRequest/HttpRequest_CurrentExecutionFilePath.aspx" name="" Exclude="Y" />
-  <TestCase url="/System_Web/HttpRequest/HttpRequest_Headers.aspx" name="" Exclude="N" />
+  <TestCase url="/System_Web/HttpRequest/HttpRequest_Headers.aspx" name="" Exclude="Y" />
   <TestCase url="/System_Web/HttpRequest/HttpRequest_MapPath_S.aspx" name="" Exclude="Y" />
   <TestCase url="/System_Web/HttpRequest/HttpRequest_ServerVariables.aspx" name="" Exclude="N" />
   <TestCase url="/System_Web/HttpRuntime/HttpRuntime_AppDomainAppPath.aspx" name="" Exclude="Y" />

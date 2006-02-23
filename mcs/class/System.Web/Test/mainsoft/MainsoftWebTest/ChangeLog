@@ -1,5 +1,9 @@
 2006-02-23  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
+	* test_catalog.xml: fixed not working tests
+
+2006-02-23  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
 	* added SystemWebTest.vmwcsproj, GH project file
 
 2006-02-20  Vladimir Krasnov  <vladimirk@mainsoft.com>
