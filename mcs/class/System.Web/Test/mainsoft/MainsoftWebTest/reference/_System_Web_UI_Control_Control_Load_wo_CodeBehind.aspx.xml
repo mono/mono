@@ -3,8 +3,4 @@
   <div id="GHTSubTest1" style="height:96px;width:144px">
     <span id="Label1">Page_Load event was not raised</span>
   </div>
-  <div id="GHTSubTest2" testname="Request.PhysicalPath1">
-    <span>
-      <br />C:\Visual MainWin Projects\MainsoftWebApp\System_Web_UI\Control\Control_Load_wo_CodeBehind.aspx</span>
-  </div>
 </testresults>

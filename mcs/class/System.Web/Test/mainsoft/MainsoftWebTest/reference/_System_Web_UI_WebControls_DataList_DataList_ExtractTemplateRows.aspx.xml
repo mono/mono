@@ -4,7 +4,7 @@
     <table id="DataList1" cellspacing="0" border="1" bordercolor="Black" style="border-collapse:collapse;border-color:black;border-style:solid" rules="all">
       <tr>
         <td>
-          <table id="DataList1__ctl0_Table1" border="1" rules="all">
+          <table id="DataList1__ctl0_Table1" border="1" rules="all" style="background-color:Blue">
             <tr>
               <td>Item 0</td>
               <td>$1.23</td>
@@ -18,7 +18,7 @@
       </tr>
       <tr>
         <td style="background-color:gray">
-          <table id="DataList1__ctl1_Table1" border="1" rules="all">
+          <table id="DataList1__ctl1_Table1" border="1" rules="all" style="background-color:Blue">
             <tr>
               <td>Item 1</td>
               <td>$2.46</td>
@@ -32,7 +32,7 @@
       </tr>
       <tr>
         <td>
-          <table id="DataList1__ctl2_Table1" border="1" rules="all">
+          <table id="DataList1__ctl2_Table1" border="1" rules="all" style="background-color:Blue">
             <tr>
               <td>Item 2</td>
               <td>$3.69</td>
@@ -46,7 +46,7 @@
       </tr>
       <tr>
         <td style="background-color:gray">
-          <table id="DataList1__ctl3_Table1" border="1" rules="all">
+          <table id="DataList1__ctl3_Table1" border="1" rules="all" style="background-color:Blue">
             <tr>
               <td>Item 3</td>
               <td>$4.92</td>
