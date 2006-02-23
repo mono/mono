@@ -1,5 +1,15 @@
 2006-02-22  Chris Toshok  <toshok@ximian.com>
 
+	* ParameterCollection.cs: add an EditorAttribute to the class.
+
+	* Parameter.cs: cleanup, fix the Value property, and implement the
+	Size property.
+
+	* SqlDataSourceView.cs: clean things up a bit, and add handling
+	for parameters.
+
+2006-02-22  Chris Toshok  <toshok@ximian.com>
+
 	* SqlDataSourceFilteringEventArgs.cs: formatting.
 
 	* SqlDataSourceSelectingEventArgs.cs: remove ExecutingSelectCount,

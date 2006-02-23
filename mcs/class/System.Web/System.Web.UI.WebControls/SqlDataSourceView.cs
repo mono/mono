@@ -55,9 +55,9 @@ namespace System.Web.UI.WebControls {
 
 		void InitConnection ()
 		{
-			if (connection == null) {
-				factory = owner.GetDbProviderFactoryInternal ();
-				connection = factory.CreateConnection ();
+                        if (factory == null) factory = owner.GetDbProviderFactoryInternal ();
+                        if (connection == null) {
+				connection = factory.CreateConnection();
 				connection.ConnectionString = owner.ConnectionString;
 			}
 		}
@@ -80,10 +80,17 @@ namespace System.Web.UI.WebControls {
 			DbCommand command = factory.CreateCommand ();
 			command.CommandText = DeleteCommand;
 			command.Connection = connection;
+			command.CommandType = CommandType.Text;
+
+                        if (DeleteParameters.Count > 0)
+                                InitializeParameters (command, DeleteParameters, null);
 
 			OnDeleting (new SqlDataSourceCommandEventArgs (command));
 
-			connection.Open ();
+			bool closed = connection.State == ConnectionState.Closed;
+
+			if (closed)
+				connection.Open();
 			Exception exception = null; 
 			int result = -1;;
 			try {
@@ -91,6 +98,9 @@ namespace System.Web.UI.WebControls {
 			} catch (Exception e) {
 				exception = e;
 			}
+
+			if (closed)
+				connection.Close ();
 
 			OnDeleted (new SqlDataSourceStatusEventArgs (command, result, exception));
 
@@ -115,17 +125,27 @@ namespace System.Web.UI.WebControls {
 			DbCommand command = factory.CreateCommand ();
 			command.CommandText = InsertCommand;
 			command.Connection = connection;
+			command.CommandType = CommandType.Text;
+
+                        if (InsertParameters.Count > 0)
+                                InitializeParameters (command, InsertParameters, null);
 
 			OnInserting (new SqlDataSourceCommandEventArgs (command));
 
-			connection.Open();
+			bool closed = connection.State == ConnectionState.Closed;
+
+			if (closed)
+				connection.Open();
 			Exception exception = null;
 			int result = -1;
 			try {
 				result = command.ExecuteNonQuery();
-			}catch (Exception e) {
+			} catch (Exception e) {
 				exception = e;
 			}
+
+			if (closed)
+				connection.Close ();
 
 			OnInserted (new SqlDataSourceStatusEventArgs (command, result, exception));
 
@@ -139,40 +159,39 @@ namespace System.Web.UI.WebControls {
 			return ExecuteSelect (arguments);
 		}
 
-		[MonoTODO ("Handle @arguments, do replacement of command parameters")]
+		[MonoTODO ("Handle @arguments")]
 		protected internal override IEnumerable ExecuteSelect (DataSourceSelectArguments arguments)
 		{
-			DbProviderFactory f = owner.GetDbProviderFactoryInternal ();
-			DbConnection c = f.CreateConnection ();
+			InitConnection ();
 
-			c.ConnectionString = owner.ConnectionString;
-
-			DbCommand command = f.CreateCommand ();
-
+			DbCommand command = factory.CreateCommand ();
 			command.CommandText = SelectCommand;
-			command.Connection = c;
+			command.Connection = connection;
 			command.CommandType = CommandType.Text;
 
-			/* XXX do replacement of command parameters */
+                        if (SelectParameters.Count > 0)
+                                InitializeParameters (command, SelectParameters, null);
 
 			OnSelecting (new SqlDataSourceSelectingEventArgs (command, arguments));
 
 			if (owner.DataSourceMode == SqlDataSourceMode.DataSet) {
-				DbDataAdapter adapter = f.CreateDataAdapter ();
+				DbDataAdapter adapter = factory.CreateDataAdapter ();
 
 				adapter.SelectCommand = command;
 
 				DataSet dataset = new DataSet ();
 
-				/* XXX MS calls Fill (DataSet dataset, string srcTable) - find out what the source table is */
 				adapter.Fill (dataset, name);
-
-				dataset.WriteXml (Console.Out);
 
 				return dataset.CreateDataReader ();
 			}
 			else {
-				throw new NotImplementedException ();
+				bool closed = connection.State == ConnectionState.Closed;
+
+                                if (closed)
+                                        connection.Open ();
+
+                                return command.ExecuteReader (closed ? CommandBehavior.CloseConnection : CommandBehavior.Default);
 			}
 		}
 
@@ -194,10 +213,17 @@ namespace System.Web.UI.WebControls {
 			DbCommand command = factory.CreateCommand ();
 			command.CommandText = UpdateCommand;
 			command.Connection = connection;
+			command.CommandType = CommandType.Text;
+
+                        if (UpdateParameters.Count > 0)
+                                InitializeParameters (command, UpdateParameters, null);
 
 			OnUpdating (new SqlDataSourceCommandEventArgs (command));
 
-			connection.Open ();
+			bool closed = connection.State == ConnectionState.Closed;
+
+			if (closed)
+				connection.Open();
 			Exception exception = null;
 			int result = -1;
 			try {
@@ -206,12 +232,30 @@ namespace System.Web.UI.WebControls {
 				exception = e;
 			}
 
+			if (closed)
+				connection.Close ();
+
 			OnUpdated (new SqlDataSourceStatusEventArgs (command, result, exception));
 
 			if (exception != null)
 				throw exception;
 			return result;
 		}
+
+                void InitializeParameters (DbCommand command, ParameterCollection parameters, IDictionary exclusionList)
+                {
+                        IOrderedDictionary values = parameters.GetValues (HttpContext.Current, owner);
+
+                        foreach (Parameter p in parameters) {
+                                DbParameter dbp = factory.CreateParameter ();
+
+                                dbp.ParameterName = p.Name;
+                                dbp.Value = values[p.Name];
+                                dbp.Direction = p.Direction;
+                                dbp.Size = p.Size;
+                                command.Parameters.Add (dbp);
+                        }
+                }
 
 		void IStateManager.LoadViewState (object savedState)
 		{

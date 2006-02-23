@@ -31,10 +31,12 @@
 using System.Web.UI;
 using System.Collections;
 using System.Collections.Specialized;
+using System.ComponentModel;
 
 namespace System.Web.UI.WebControls
 {
 
+	[EditorAttribute ("System.Web.UI.Design.WebControls.ParameterCollectionEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 	public class ParameterCollection : StateManagedCollection
 	{
 

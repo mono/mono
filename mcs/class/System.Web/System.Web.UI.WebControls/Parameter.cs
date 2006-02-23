@@ -123,15 +123,16 @@ namespace System.Web.UI.WebControls {
 		
 		public override string ToString ()
 		{
-			return Name;
+			object o = GetValue (HttpContext.Current, null);
+			if (o != null) return o.ToString();
+			return "";
 		}
 		
-		[WebCategoryAttribute ("Parameter"), DefaultValueAttribute (""),
-		WebSysDescriptionAttribute ("Default value to be used in case value is null.") ]
+		[WebCategoryAttribute ("Parameter")]
+		[DefaultValueAttribute (null)]
+		[WebSysDescriptionAttribute ("Default value to be used in case value is null.")]
 		public string DefaultValue {
-			get {
-				return ViewState ["DefaultValue"] as string;
-			}
+			get { return ViewState.GetString ("DefaultValue", null); }
 			set {
 				
 				if (DefaultValue != value) {
@@ -141,17 +142,12 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-		[WebCategoryAttribute ("Parameter"), DefaultValueAttribute ("Input"),
-		WebSysDescriptionAttribute ("Parameter's direction.")]
+		[WebCategoryAttribute ("Parameter")]
+		[DefaultValueAttribute ("Input")]
+		[WebSysDescriptionAttribute ("Parameter's direction.")]
 		public ParameterDirection Direction
 		{
-			get {
-				object o = ViewState ["Direction"];
-				if (o != null)
-					return (ParameterDirection) o;
-				
-				return ParameterDirection.Input;
-			}
+			get { return (ParameterDirection) ViewState.GetInt ("Direction", (int)ParameterDirection.Input); }
 			set {				
 				if (Direction != value) {
 					ViewState ["Direction"] = value;
@@ -161,8 +157,9 @@ namespace System.Web.UI.WebControls {
 		}
 
 
-		[WebCategoryAttribute ("Parameter"), DefaultValueAttribute (""),
-		WebSysDescriptionAttribute ("Parameter's name.")]
+		[WebCategoryAttribute ("Parameter")]
+		[DefaultValueAttribute ("")]
+		[WebSysDescriptionAttribute ("Parameter's name.")]
 		public string Name
 		{
 			get {
@@ -181,17 +178,12 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-		[WebCategoryAttribute ("Parameter"), DefaultValueAttribute (true),
-	        WebSysDescriptionAttribute ("Checks whether an empty string is treated as a null value.")]
+		[WebCategoryAttribute ("Parameter")]
+		[DefaultValueAttribute (true)]
+	        [WebSysDescriptionAttribute ("Checks whether an empty string is treated as a null value.")]
 		public bool ConvertEmptyStringToNull
 		{
-			get {
-				object o = ViewState["ConvertEmptyStringToNull"];
-				if (o != null)
-					return (bool) o;
-				
-				return true;
-			}
+			get { return ViewState.GetBool ("ConvertEmptyStringToNull", true); }
 			set {
 				if (ConvertEmptyStringToNull != value) {
 					ViewState["ConvertEmptyStringToNull"] = value;
@@ -200,18 +192,23 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-	    [DefaultValueAttribute (TypeCode.Object)]
+		[DefaultValue (0)]
+		public int Size {
+			get { return ViewState.GetInt ("Size", 0); }
+			set {
+				if (Size != value) {
+					ViewState["Size"] = value;
+					OnParameterChanged ();
+				}
+			}
+		}
+
+		[DefaultValueAttribute (TypeCode.Empty)]
 		[WebCategoryAttribute ("Parameter"), 
 		WebSysDescriptionAttribute("Represents type of the parameter.")]
 		public TypeCode Type
 		{
-			get {
-				object o = ViewState ["Type"];
-				if (o != null)
-					return (TypeCode) o;
-				
-				return TypeCode.Object;
-			}
+			get { return (TypeCode) ViewState.GetInt ("Type", (int)TypeCode.Empty); }
 			set {
 				
 				if (Type != value) {
@@ -222,7 +219,6 @@ namespace System.Web.UI.WebControls {
 		}
 		
 		StateBag viewState;
-		
 		[BrowsableAttribute (false), 
 		DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
 		protected StateBag ViewState {
