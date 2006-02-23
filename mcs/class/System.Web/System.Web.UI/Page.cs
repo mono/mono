@@ -58,9 +58,7 @@ namespace System.Web.UI
 // CAS
 [AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 [AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-#if NET_2_0
-[RootDesignerSerializer ("Microsoft.VisualStudio.Web.WebForms.RootCodeDomSerializer, " + Consts.AssemblyMicrosoft_VisualStudio_Web, "System.ComponentModel.Design.Serialization.CodeDomSerializer, " + Consts.AssemblySystem_Design, true)]
-#else
+#if !NET_2_0
 [RootDesignerSerializer ("Microsoft.VSDesigner.WebForms.RootCodeDomSerializer, " + Consts.AssemblyMicrosoft_VSDesigner, "System.ComponentModel.Design.Serialization.CodeDomSerializer, " + Consts.AssemblySystem_Design, true)]
 #endif
 [DefaultEvent ("Load"), DesignerCategory ("ASPXCodeBehind")]
@@ -98,9 +96,20 @@ public class Page : TemplateControl, IHttpHandler
 	bool allow_load; // true when the Form collection belongs to this page (GetTypeHashCode)
 
 	[EditorBrowsable (EditorBrowsableState.Never)]
-	protected const string postEventArgumentID = "__EVENTARGUMENT";
+#if NET_2_0
+	public
+#else
+	protected
+#endif
+	const string postEventArgumentID = "__EVENTARGUMENT";
+
 	[EditorBrowsable (EditorBrowsableState.Never)]
-	protected const string postEventSourceID = "__EVENTTARGET";
+#if NET_2_0
+	public
+#else
+	protected
+#endif
+	const string postEventSourceID = "__EVENTTARGET";
 
 #if NET_2_0
 	internal const string CallbackArgumentID = "__CALLBACKARGUMENT";
@@ -145,18 +154,13 @@ public class Page : TemplateControl, IHttpHandler
 	}
 
 	[EditorBrowsable (EditorBrowsableState.Never)]
-#if NET_2_0
-	public bool AspCompatMode
-	{
-		get { return false; }
-		set { throw new NotImplementedException (); }
-	}
-#else
 	protected bool AspCompatMode
 	{
+#if NET_2_0
+		get { return false; }
+#endif
 		set { throw new NotImplementedException (); }
 	}
-#endif
 
 	[EditorBrowsable (EditorBrowsableState.Never)]
 #if NET_2_0
@@ -243,8 +247,8 @@ public class Page : TemplateControl, IHttpHandler
 		}
 	}
 
-	[EditorBrowsable (EditorBrowsableState.Never)]
 #if NET_2_0
+	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	[BrowsableAttribute (false)]
 	public string Culture
@@ -253,6 +257,7 @@ public class Page : TemplateControl, IHttpHandler
 		set { Thread.CurrentThread.CurrentCulture = new CultureInfo (value); }
 	}
 #else
+	[EditorBrowsable (EditorBrowsableState.Never)]
 	protected string Culture
 	{
 		set { Thread.CurrentThread.CurrentCulture = new CultureInfo (value); }
@@ -278,7 +283,12 @@ public class Page : TemplateControl, IHttpHandler
 	[BrowsableAttribute (false)]
 #endif
 	[EditorBrowsable (EditorBrowsableState.Never)]
-	protected bool EnableViewStateMac
+#if NET_2_0
+	public
+#else
+	protected
+#endif
+	bool EnableViewStateMac
 	{
 		get { return _viewStateMac; }
 		set { _viewStateMac = value; }
@@ -490,21 +500,16 @@ public class Page : TemplateControl, IHttpHandler
 #endif
 
 	[EditorBrowsable (EditorBrowsableState.Never)]
-#if NET_2_0
-	public int TransactionMode
-	{
-		get { return _transactionMode; }
-		set { _transactionMode = value; }
-	}
-#else
 	protected int TransactionMode
 	{
+#if NET_2_0
+		get { return _transactionMode; }
+#endif
 		set { _transactionMode = value; }
 	}
-#endif
 
-	[EditorBrowsable (EditorBrowsableState.Never)]
 #if NET_2_0
+	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	[BrowsableAttribute (false)]
 	public string UICulture
@@ -513,6 +518,7 @@ public class Page : TemplateControl, IHttpHandler
 		set { Thread.CurrentThread.CurrentUICulture = new CultureInfo (value); }
 	}
 #else
+	[EditorBrowsable (EditorBrowsableState.Never)]
 	protected string UICulture
 	{
 		set { Thread.CurrentThread.CurrentUICulture = new CultureInfo (value); }
@@ -919,7 +925,7 @@ public class Page : TemplateControl, IHttpHandler
 	}
 
 	[EditorBrowsable (EditorBrowsableState.Never)]
-#if TARGET_JVM
+#if NET_2_0 || TARGET_JVM
 	public virtual void ProcessRequest (HttpContext context)
 #else
 	public void ProcessRequest (HttpContext context)
@@ -1526,7 +1532,7 @@ public class Page : TemplateControl, IHttpHandler
 	}
 
 	[DefaultValueAttribute ("")]
-	public string MasterPageFile {
+	public virtual string MasterPageFile {
 		get { return masterPageFile; }
 		set {
 			masterPageFile = value;
@@ -1631,7 +1637,7 @@ public class Page : TemplateControl, IHttpHandler
 
 
 	Hashtable contentTemplates;
-	[EditorBrowsable (EditorBrowsableState.Advanced)]
+	[EditorBrowsable (EditorBrowsableState.Never)]
 	protected internal void AddContentTemplate (string templateName, ITemplate template)
 	{
 		if (contentTemplates == null)

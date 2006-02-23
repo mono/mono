@@ -1,5 +1,9 @@
 2006-02-23  Chris Toshok  <toshok@ximian.com>
 
+	* Page.cs: more corcompare work.
+
+2006-02-23  Chris Toshok  <toshok@ximian.com>
+
 	* Page.cs (ProcessCallbackData): track change to
 	ICallbackEventHandler iface.
 
