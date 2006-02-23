@@ -448,7 +448,13 @@ mono_constant_fold_ins2 (MonoInst *ins, MonoInst *arg1, MonoInst *arg2)
 			ins->sreg1 = ins->sreg2 = -1;
 		}
 		break;
-
+	case OP_MOVE:
+		if (arg1->opcode == OP_ICONST) {
+			ins->opcode = OP_ICONST;
+			ins->sreg1 = ins->sreg2 = -1;
+			ins->inst_c0 = arg1->inst_c0;
+		}
+		break;
 	case OP_COMPARE:
 	case OP_ICOMPARE:
 	case OP_COMPARE_IMM:

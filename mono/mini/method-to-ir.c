@@ -9440,6 +9440,7 @@ mono_spill_global_vars (MonoCompile *cfg)
  * - allow SSA with local vregs
  * - some tests no longer work with COUNT=0
  * - add code to only use -v -v -v -v for a specific method
+ * - optimize optimize_branches: remove 'break's from the inner loop
  * - LAST MERGE: 57056.
  */
 

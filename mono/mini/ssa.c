@@ -202,9 +202,8 @@ mono_ssa_rename_vars2 (MonoCompile *cfg, int max_vars, MonoBasicBlock *bb, MonoI
 
 	/* FIXME: Need to rename local vregs as well */
 
-#ifdef DEBUG_SSA
-	printf ("RENAME VARS BB%d %s\n", bb->block_num, mono_method_full_name (cfg->method, TRUE));
-#endif
+	if (cfg->verbose_level >= 4)
+		printf ("\nRENAME VARS BLOCK %d:\n", bb->block_num);
 
 	/* First pass: Create new vars */
 	for (ins = bb->code; ins; ins = ins->next) {
@@ -266,19 +265,23 @@ mono_ssa_rename_vars2 (MonoCompile *cfg, int max_vars, MonoBasicBlock *bb, MonoI
 				g_assert (idx < max_vars);
 
 				/* FIXME: Add back the bb_init optimization */
-				new_var = mono_compile_create_var (cfg, var->inst_vtype,  var->opcode);
-				new_var->flags = var->flags;
+				if (stack [idx]) {
+					new_var = mono_compile_create_var (cfg, var->inst_vtype,  var->opcode);
+					new_var->flags = var->flags;
 
-				if (cfg->verbose_level >= 4)
-					printf ("  R%d -> R%d\n", var->dreg, new_var->dreg);
+					if (cfg->verbose_level >= 4)
+						printf ("  R%d -> R%d\n", var->dreg, new_var->dreg);
 
-				stack [idx] = new_var;
+					stack [idx] = new_var;
 
-				ins->dreg = new_var->dreg;
+					ins->dreg = new_var->dreg;
 
 #ifdef DEBUG_SSA
-				printf ("DEF %d %d\n", idx, new_var->inst_c0);
+					printf ("DEF %d %d\n", idx, new_var->inst_c0);
 #endif
+				}
+				else
+					stack [idx] = var;
 			}
 		}
 
@@ -472,8 +475,10 @@ mono_ssa_compute (MonoCompile *cfg)
 		vinfo [i].dfrontier = set;
 
 		if (cfg->verbose_level >= 4) {
-			printf ("\tR%d needs PHI functions in ", var->dreg);
-			mono_blockset_print (cfg, set, "", -1);
+			if (mono_bitset_count (set) > 0) {
+				printf ("\tR%d needs PHI functions in ", var->dreg);
+				mono_blockset_print (cfg, set, "", -1);
+			}
 		}
 			
 		mono_bitset_foreach_bit (set, idx, cfg->num_bblocks) {
@@ -542,6 +547,9 @@ mono_ssa_compute (MonoCompile *cfg)
 		mono_ssa_rename_vars2 (cfg, cfg->num_varinfo, cfg->bb_entry, stack);
 	else
 		mono_ssa_rename_vars (cfg, cfg->num_varinfo, cfg->bb_entry, stack);
+
+	if (cfg->verbose_level >= 4)
+		printf ("\nEND COMPUTE SSA.\n\n");
 
 	cfg->comp_done |= MONO_COMP_SSA;
 }

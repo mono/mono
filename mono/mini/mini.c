@@ -8864,7 +8864,7 @@ optimize_branches (MonoCompile *cfg)
 				bbn = bb->out_bb [0];
 
 				/* conditional branches where true and false targets are the same can be also replaced with CEE_BR */
-				if (bb->last_ins && MONO_IS_COND_BRANCH_OP (bb->last_ins)) {
+				if (bb->last_ins && (bb->last_ins->opcode != OP_BR) && MONO_IS_COND_BRANCH_OP (bb->last_ins)) {
 					if (!cfg->new_ir) {
 						MonoInst *pop;
 						MONO_INST_NEW (cfg, pop, CEE_POP);
@@ -8972,7 +8972,7 @@ optimize_branches (MonoCompile *cfg)
 						replace_out_block (bb, untaken_branch_target, NULL);
 						replace_in_block (untaken_branch_target, bb, NULL);
 						changed = TRUE;
-						break;
+						continue;
 					}
 					bbn = bb->last_ins->inst_true_bb;
 					if (bb->region == bbn->region && bbn->code && bbn->code->opcode == (cfg->new_ir ? OP_BR : CEE_BR) &&
@@ -9043,7 +9043,6 @@ optimize_branches (MonoCompile *cfg)
 			}
 		}
 	} while (changed && (niterations > 0));
-
 }
 
 static void
