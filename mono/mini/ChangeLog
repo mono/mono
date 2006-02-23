@@ -1,4 +1,9 @@
 
+Thu Feb 23 13:45:46 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini-x86.c, mini-amd64.c: fix for case when xen support
+	is disabled.
+
 Wed Feb 22 20:21:47 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* mini-x86.c, mini-amd64.c: generate code to access tls items
