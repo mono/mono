@@ -1,3 +1,9 @@
+2006-02-23 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TcpClient.cs: when the socket is not connected, don't try to set the
+	socket options, as they are ignored on linux. Wait until Connect
+	succeeds and then apply the options.
+
 2006-02-03 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Socket.cs: added a missing overload for SetSocketOption.
