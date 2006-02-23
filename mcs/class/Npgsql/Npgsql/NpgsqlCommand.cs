@@ -438,7 +438,9 @@ namespace Npgsql
             // [FIXME] Is there a better way to check this??
             if ((String.Compare(ret_string_tokens[0], "INSERT", true) == 0) ||
                     (String.Compare(ret_string_tokens[0], "UPDATE", true) == 0) ||
-                    (String.Compare(ret_string_tokens[0], "DELETE", true) == 0))
+                    (String.Compare(ret_string_tokens[0], "DELETE", true) == 0) ||
+                    (String.Compare(ret_string_tokens[0], "FETCH", true) == 0) ||
+                    (String.Compare(ret_string_tokens[0], "MOVE", true) == 0))
 
                 // The number of rows affected is in the third token for insert queries
                 // and in the second token for update and delete queries.

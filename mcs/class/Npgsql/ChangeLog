@@ -1,3 +1,9 @@
+
+Thu Feb 23 10:29:13 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* Npgsql/NpgsqlCommand.cs: return count for fetch and move, too,
+	patch from Federico Di Gregorio <fog@initd.org>.
+
 2005-12-13  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
 
 	* NpgsqlClosedState.cs:  Added a performance improvement fix. Npgsql now use a buffered stream for all server interactions.
