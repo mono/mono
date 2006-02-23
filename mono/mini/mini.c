@@ -1899,7 +1899,7 @@ void
 mono_add_ins_to_end (MonoBasicBlock *bb, MonoInst *inst)
 {
 	MonoInst *prev;
-	gboolean ends_in_br;
+	int opcode;
 
 	if (!bb->code) {
 		MONO_ADD_INS (bb, inst);
@@ -1911,17 +1911,10 @@ mono_add_ins_to_end (MonoBasicBlock *bb, MonoInst *inst)
 	case OP_BR_REG:
 	case CEE_BR:
 	case CEE_SWITCH:
-		ends_in_br = TRUE;
-		break;
-	default:
-		ends_in_br = MONO_IS_COND_BRANCH_OP (bb->last_ins);
-		break;
-	}
-
-	if (ends_in_br) {
 		prev = bb->code;
 		while (prev->next && prev->next != bb->last_ins)
 			prev = prev->next;
+
 		if (prev == bb->code) {
 			if (bb->last_ins == bb->code) {
 				inst->next = bb->code;
@@ -1934,9 +1927,40 @@ mono_add_ins_to_end (MonoBasicBlock *bb, MonoInst *inst)
 			inst->next = bb->last_ins;
 			prev->next = inst;
 		}
+		break;
+	default:
+		if (MONO_IS_COND_BRANCH_OP (bb->last_ins)) {
+			/* Need to insert the ins before the compare */
+			if (bb->code == bb->last_ins) {
+				/* Only a branch, happens in long comparisons */
+				g_assert (bb->in_count == 1);
+				mono_add_ins_to_end (bb->in_bb [0], inst);
+				return;
+			}
+
+			g_assert (bb->code != bb->last_ins);
+			if (bb->code->next == bb->last_ins) {
+				/* Only two instructions */
+				opcode = bb->code->opcode;
+
+				inst->next = bb->code;
+				bb->code = inst;
+			} else {
+				/* Find the predecessor of the compare */
+				prev = bb->code;
+				while (prev->next->next && prev->next->next != bb->last_ins)
+					prev = prev->next;
+				opcode = prev->next->opcode;
+
+				inst->next = prev->next;
+				prev->next = inst;
+			}
+			g_assert ((opcode == OP_COMPARE) || (opcode == OP_COMPARE_IMM) || (opcode == OP_ICOMPARE) || (opcode == OP_ICOMPARE_IMM) || (opcode == OP_FCOMPARE) || (opcode == OP_LCOMPARE));
+		}
+		else
+			MONO_ADD_INS (bb, inst);
+		break;
 	}
-	else
-		MONO_ADD_INS (bb, inst);
 }
 
 void
@@ -10364,7 +10388,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 	mono_compile_create_vars (cfg);
 
 	if (cfg->new_ir) {
-		cfg->opt &= MONO_OPT_PEEPHOLE | MONO_OPT_INTRINS | MONO_OPT_LOOP | MONO_OPT_EXCEPTION | MONO_OPT_AOT | MONO_OPT_BRANCH | MONO_OPT_LINEARS | MONO_OPT_INLINE | MONO_OPT_SHARED | MONO_OPT_AOT | MONO_OPT_TAILC;
+		cfg->opt &= MONO_OPT_PEEPHOLE | MONO_OPT_INTRINS | MONO_OPT_LOOP | MONO_OPT_EXCEPTION | MONO_OPT_AOT | MONO_OPT_BRANCH | MONO_OPT_LINEARS | MONO_OPT_INLINE | MONO_OPT_SHARED | MONO_OPT_AOT | MONO_OPT_TAILC | MONO_OPT_SSA;
 
 		i = mono_method_to_ir2 (cfg, method, NULL, NULL, NULL, NULL, NULL, 0, FALSE);
 	}
@@ -10455,6 +10479,17 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 	/* after method_to_ir */
 	if (parts == 1)
 		return cfg;
+
+	// FIXME:
+	if (getenv ("COUNT2")) {
+		static int count = 0;
+		count ++;
+
+		if (count == atoi (getenv ("COUNT2")))
+			printf ("LAST: %s\n", mono_method_full_name (cfg->method, TRUE));
+		if (count > atoi (getenv ("COUNT2")))
+			cfg->opt &= ~MONO_OPT_SSA;
+	}
 
 //#define DEBUGSSA "logic_run"
 #define DEBUGSSA_CLASS "Tests"

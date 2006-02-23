@@ -1250,6 +1250,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 		int dest_dreg, dest_sreg1, dest_sreg2, clob_reg;
 		int dreg_high, sreg1_high;
 		regmask_t dreg_mask, sreg1_mask, sreg2_mask, mask;
+		regmask_t dreg_fixed_mask, sreg1_fixed_mask, sreg2_fixed_mask;
 		const unsigned char *ip;
 		--i;
 		ins = tmp->data;
@@ -1278,6 +1279,14 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 		dest_dreg = MONO_ARCH_INST_FIXED_REG (spec [MONO_INST_DEST]);
 		clob_reg = MONO_ARCH_INST_FIXED_REG (spec [MONO_INST_CLOB]);
 		sreg2_mask &= ~ (MONO_ARCH_INST_SREG2_MASK (spec));
+
+#ifdef MONO_ARCH_INST_FIXED_MASK
+		sreg1_fixed_mask = MONO_ARCH_INST_FIXED_MASK (spec [MONO_INST_SRC1]);
+		sreg2_fixed_mask = MONO_ARCH_INST_FIXED_MASK (spec [MONO_INST_SRC2]);
+		dreg_fixed_mask = MONO_ARCH_INST_FIXED_MASK (spec [MONO_INST_DEST]);
+#else
+		sreg1_fixed_mask = sreg2_fixed_mask = dreg_fixed_mask = 0;
+#endif
 
 		/*
 		 * TRACK FP STACK
@@ -1467,6 +1476,25 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 						free_up_ireg (cfg, tmp, ins, dest_dreg2);
 				}
 			}
+		}
+
+		if (dreg_fixed_mask) {
+			g_assert (!fp);
+			if (is_global_ireg (ins->dreg)) {
+				/* 
+				 * The argument is already in a hard reg, but that reg is
+				 * not usable by this instruction, so allocate a new one.
+				 */
+				val = mono_regstate2_alloc_int (rs, dreg_fixed_mask);
+				if (val < 0)
+					val = get_register_spilling (cfg, tmp, ins, dreg_fixed_mask, -1, fp);
+				mono_regstate2_free_int (rs, val);
+				dest_dreg = val;
+
+				/* Fall through */
+			}
+			else
+				dreg_mask &= dreg_fixed_mask;
 		}
 
 		if ((!fp || (fp && !use_fpstack)) && (is_soft_reg (ins->dreg, fp))) {
@@ -1715,6 +1743,25 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 
 				/* Skip rest of this section */
 				dest_sreg1 = -1;
+			}
+
+			if (sreg1_fixed_mask) {
+				g_assert (!fp);
+				if (is_global_ireg (ins->sreg1)) {
+					/* 
+					 * The argument is already in a hard reg, but that reg is
+					 * not usable by this instruction, so allocate a new one.
+					 */
+					val = mono_regstate2_alloc_int (rs, sreg1_fixed_mask);
+					if (val < 0)
+						val = get_register_spilling (cfg, tmp, ins, sreg1_fixed_mask, -1, fp);
+					mono_regstate2_free_int (rs, val);
+					dest_sreg1 = val;
+
+					/* Fall through to the dest_sreg1 != -1 case */
+				}
+				else
+					sreg1_mask &= sreg1_fixed_mask;
 			}
 
 			if (dest_sreg1 != -1) {

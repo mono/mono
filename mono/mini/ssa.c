@@ -242,11 +242,23 @@ mono_ssa_rename_vars2 (MonoCompile *cfg, int max_vars, MonoBasicBlock *bb, MonoI
 						ins->sreg2 = stack [idx]->dreg;
 					}
 				}
-			}					
+			}
+
+			if (MONO_IS_STORE_MEMBASE (ins)) {
+				MonoInst *var = get_vreg_to_inst (cfg, ins->dreg);
+				if (var && !(var->flags & MONO_INST_VOLATILE)) {
+					int idx = var->inst_c0;
+					if (stack [idx]) {
+						if (var->opcode != OP_ARG)
+							g_assert (stack [idx]);
+						ins->dreg = stack [idx]->dreg;
+					}
+				}
+			}
 		}
 
 		/* DREG */
-		if (spec [MONO_INST_DEST] == 'i') {
+		if ((spec [MONO_INST_DEST] == 'i') && !MONO_IS_STORE_MEMBASE (ins)) {
 			MonoInst *var = get_vreg_to_inst (cfg, ins->dreg);
 
 			if (var && !(var->flags & MONO_INST_VOLATILE)) {
@@ -297,7 +309,7 @@ mono_ssa_rename_vars2 (MonoCompile *cfg, int max_vars, MonoBasicBlock *bb, MonoI
 				ins->inst_phi_args [j + 1] = new_var->inst_c0;
 				
 				if (cfg->verbose_level >= 4)
-					printf ("  PHI R%d <- R%d\n", ins->dreg, new_var->dreg);
+					printf ("\tAdd PHI R%d <- R%d to BB%d\n", ins->dreg, new_var->dreg, bb->block_num);
 
 			}
 		}
@@ -429,7 +441,7 @@ mono_ssa_compute (MonoCompile *cfg)
 
 				/* FIXME: Handle OP_LDADDR */
 				/* FIXME: Handle non-ints as well */
-				if ((spec [MONO_INST_DEST] == 'i') && get_vreg_to_inst (cfg, ins->dreg)) {
+				if ((spec [MONO_INST_DEST] == 'i') && !MONO_IS_STORE_MEMBASE (ins) && get_vreg_to_inst (cfg, ins->dreg)) {
 					mono_bitset_set (vinfo [get_vreg_to_inst (cfg, ins->dreg)->inst_c0].def_in, i);
 				}
 			}
@@ -559,7 +571,7 @@ mono_ssa_remove2 (MonoCompile *cfg)
 
 					/* FIXME: Add back optimizations */
 					if (cfg->verbose_level >= 4)
-						printf ("\tMOVE %d to %d in BB%d\n", idx, var->inst_c0, pred->block_num);
+						printf ("\tADD R%d <- R%d in BB%d\n", var->dreg, cfg->varinfo [idx]->dreg, pred->block_num);
 						MONO_INST_NEW (cfg, move, OP_MOVE);
 						move->dreg = var->dreg;
 						move->sreg1 = cfg->varinfo [idx]->dreg;
