@@ -1,3 +1,8 @@
+2006-02-23  Raja R Harinath  <rharinath@novell.com>
+
+	* jit-icalls.c (helper_compile_generic_method): Document the
+	special-case we depend on so that we can inflate the method twice
+	with the same context with no bad side-effects.
 
 Thu Feb 23 13:45:46 CET 2006 Paolo Molaro <lupus@ximian.com>
 
