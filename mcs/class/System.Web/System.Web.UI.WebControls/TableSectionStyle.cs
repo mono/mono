@@ -43,7 +43,7 @@ namespace System.Web.UI.WebControls {
 
 		[DefaultValue (true)]
 		[NotifyParentProperty (true)]
-		public virtual bool Visible {
+		public bool Visible {
 			get {
 // commented to match MS behaviour (beta2)
 //				if ((styles & Styles.Visible) == 0)

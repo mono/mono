@@ -223,7 +223,7 @@ namespace System.Web.UI.WebControls {
 		[PersistenceModeAttribute (PersistenceMode.InnerProperty)]
 		[DefaultValueAttribute (null)]
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Content)]
-		public virtual Style ControlStyle {
+		public Style ControlStyle {
 			get {
 				if (controlStyle == null) {
 					controlStyle = new Style ();
@@ -242,7 +242,7 @@ namespace System.Web.UI.WebControls {
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Content)]
 		[PersistenceModeAttribute (PersistenceMode.InnerProperty)]
 		[WebCategoryAttribute ("Styles")]
-		public virtual TableItemStyle FooterStyle {
+		public TableItemStyle FooterStyle {
 			get {
 				if (footerStyle == null) {
 					footerStyle = new TableItemStyle ();
@@ -286,7 +286,7 @@ namespace System.Web.UI.WebControls {
 		[WebCategoryAttribute ("Styles")]
 		[PersistenceModeAttribute (PersistenceMode.InnerProperty)]
 		[DefaultValueAttribute (null)]
-		public virtual TableItemStyle HeaderStyle {
+		public TableItemStyle HeaderStyle {
 			get {
 				if (headerStyle == null) {
 					headerStyle = new TableItemStyle ();
@@ -328,7 +328,7 @@ namespace System.Web.UI.WebControls {
 		[PersistenceModeAttribute (PersistenceMode.InnerProperty)]
 		[WebCategoryAttribute ("Styles")]
 		[DefaultValueAttribute (null)]
-		public virtual TableItemStyle ItemStyle {
+		public TableItemStyle ItemStyle {
 			get {
 				if (itemStyle == null) {
 					itemStyle = new TableItemStyle ();

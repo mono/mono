@@ -71,7 +71,7 @@ namespace System.Web.UI.WebControls {
 #if NET_2_0
 		[Themeable (false)]
 		[DefaultValue ("")]
-		public string ValidationGroup {
+		public virtual string ValidationGroup {
 			get { return ViewState.GetString ("ValidationGroup", String.Empty); }
 			set { ViewState["ValidationGroup"] = value; }
 		}
@@ -146,7 +146,12 @@ namespace System.Web.UI.WebControls {
 		[DefaultValue("")]
 		[WebSysDescription ("")]
 		[WebCategory ("Appearance")]
-		public virtual string ErrorMessage {
+#if NET_2_0
+		public
+#else
+		public virtual
+#endif
+		string ErrorMessage {
 			get { return ViewState.GetString ("ErrorMessage", String.Empty); }
 			set { ViewState ["ErrorMessage"] = value; }
 		}
@@ -168,7 +173,12 @@ namespace System.Web.UI.WebControls {
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		[WebSysDescription ("")]
 		[WebCategory ("Misc")]
-		public virtual bool IsValid {
+#if NET_2_0
+		public
+#else
+		public virtual
+#endif
+		bool IsValid {
 			get { return valid; }
 			set { valid = value; }
 		}
@@ -482,7 +492,12 @@ namespace System.Web.UI.WebControls {
 		}
 
 		/* the docs say "public sealed" here */
-		public virtual void Validate ()
+#if NET_2_0
+		public
+#else
+		public virtual
+#endif
+		void Validate ()
 		{
 			if (Enabled && Visible)
 				IsValid = ControlPropertiesValid () && EvaluateIsValid ();

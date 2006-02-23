@@ -52,14 +52,14 @@ namespace System.Web.UI.WebControls
 			return emptyNames;
 		}
 		
-		public IList GetList ()
+		public virtual IList GetList ()
 		{
 			return ListSourceHelper.GetList (this);
 		}
 		
-	    [BrowsableAttribute (false)]
-	    [DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
-		public bool ContainsListCollection {
+		[BrowsableAttribute (false)]
+		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
+		public virtual bool ContainsListCollection {
 			get { return ListSourceHelper.ContainsListCollection (this); }
 		}
 		
@@ -68,8 +68,8 @@ namespace System.Web.UI.WebControls
 			remove { ((IHierarchicalDataSource)this).DataSourceChanged -= value; }
 		}
 		
-	    [BrowsableAttribute (false)]
-	    [DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
+		[BrowsableAttribute (false)]
+		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
 		public SiteMapProvider Provider {
 			get {
 				if (provider == null) {
@@ -91,8 +91,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
-	    [DefaultValueAttribute ("")]
-		public string SiteMapProvider {
+		[DefaultValueAttribute ("")]
+		public virtual string SiteMapProvider {
 			get {
 				object o = ViewState ["SiteMapProvider"];
 				if (o != null) return (string) o;
@@ -104,10 +104,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
-	    [DefaultValueAttribute ("")]
-	    [EditorAttribute ("System.Web.UI.Design.UrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
-	    [UrlPropertyAttribute]
-		public string StartingNodeUrl {
+		[DefaultValueAttribute ("")]
+		[EditorAttribute ("System.Web.UI.Design.UrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
+		[UrlPropertyAttribute]
+		public virtual string StartingNodeUrl {
 			get {
 				object o = ViewState ["StartingNodeUrl"];
 				if (o != null) return (string) o;
@@ -119,8 +119,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
-	    [DefaultValueAttribute (false)]
-		public bool StartFromCurrentNode {
+		[DefaultValueAttribute (false)]
+		public virtual bool StartFromCurrentNode {
 			get {
 				object o = ViewState ["StartFromCurrentNode"];
 				if (o != null) return (bool) o;
@@ -132,8 +132,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
-	    [DefaultValueAttribute (true)]
-		public bool ShowStartingNode {
+		[DefaultValueAttribute (true)]
+		public virtual bool ShowStartingNode {
 			get {
 				object o = ViewState ["ShowStartingNode"];
 				if (o != null) return (bool) o;
@@ -145,7 +145,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		public DataSourceView GetView (string viewName)
+		public virtual DataSourceView GetView (string viewName)
 		{
 			SiteMapNode node = GetStartNode (viewName);
 			if (node == null)

@@ -42,8 +42,8 @@ namespace System.Web.UI.WebControls
 	{
 		StateBag viewState = new StateBag ();
 		
-	    [LocalizableAttribute (true)]
-	    [DefaultValueAttribute ("")]
+		[LocalizableAttribute (true)]
+		[DefaultValueAttribute ("")]
 		public virtual string AccessKey {
 			get {
 				object o = viewState ["AccessKey"];
@@ -54,10 +54,11 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
-	    [NotifyParentPropertyAttribute (true)]
-	    [WebCategoryAttribute ("Behavior")]
-	    [DefaultValueAttribute ("")]
-	    [BindableAttribute (true)]
+		[LocalizableAttribute (true)]
+		[NotifyParentPropertyAttribute (true)]
+		[WebCategoryAttribute ("Behavior")]
+		[DefaultValueAttribute ("")]
+		[BindableAttribute (true)]
 		public virtual string AlternateText {
 			get {
 				object o = viewState ["AlternateText"];
@@ -68,9 +69,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
-	    [WebCategoryAttribute ("Behavior")]
-	    [DefaultValueAttribute (HotSpotMode.NotSet)]
-	    [NotifyParentPropertyAttribute (true)]
+		[WebCategoryAttribute ("Behavior")]
+		[DefaultValueAttribute (HotSpotMode.NotSet)]
+		[NotifyParentPropertyAttribute (true)]
 		public virtual HotSpotMode HotSpotMode {
 			get {
 				object o = viewState ["HotSpotMode"];
@@ -81,12 +82,12 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
-	    [DefaultValueAttribute ("")]
-	    [BindableAttribute (true)]
-	    [EditorAttribute ("System.Web.UI.Design.UrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
-	    [NotifyParentPropertyAttribute (true)]
-	    [UrlPropertyAttribute]
-		public virtual string NavigateUrl {
+		[DefaultValueAttribute ("")]
+		[BindableAttribute (true)]
+		[EditorAttribute ("System.Web.UI.Design.UrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
+		[NotifyParentPropertyAttribute (true)]
+		[UrlPropertyAttribute]
+		public string NavigateUrl {
 			get {
 				object o = viewState ["NavigateUrl"];
 				return o != null ? (string) o : "";
@@ -96,11 +97,11 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
-	    [BindableAttribute (true)]
-	    [WebCategoryAttribute ("Behavior")]
-	    [DefaultValueAttribute ("")]
-	    [NotifyParentPropertyAttribute (true)]
-		public virtual string PostBackValue {
+		[BindableAttribute (true)]
+		[WebCategoryAttribute ("Behavior")]
+		[DefaultValueAttribute ("")]
+		[NotifyParentPropertyAttribute (true)]
+		public string PostBackValue {
 			get {
 				object o = viewState ["PostBackValue"];
 				return o != null ? (string) o : "";
@@ -110,8 +111,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
-	    [DefaultValueAttribute ((short)0)]
-	    [WebCategoryAttribute ("Accessibility")]
+		[DefaultValueAttribute ((short)0)]
+		[WebCategoryAttribute ("Accessibility")]
 		public virtual short TabIndex {
 			get {
 				object o = viewState ["TabIndex"];
@@ -122,10 +123,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
-	    [WebCategoryAttribute ("Behavior")]
-	    [NotifyParentPropertyAttribute (true)]
-	    [DefaultValueAttribute ("")]
-	    [TypeConverterAttribute (typeof(TargetConverter))]
+		[WebCategoryAttribute ("Behavior")]
+		[NotifyParentPropertyAttribute (true)]
+		[DefaultValueAttribute ("")]
+		[TypeConverterAttribute (typeof(TargetConverter))]
 		public virtual string Target {
 			get {
 				object o = viewState ["Target"];

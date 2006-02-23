@@ -32,8 +32,8 @@ namespace System.Web.UI.WebControls {
 
 	public enum SqlDataSourceCommandType
 	{
-		StoredProcedure,
-		Text
+		Text = 0,
+		StoredProcedure = 1
 	}
 
 }

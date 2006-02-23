@@ -41,7 +41,12 @@ namespace System.Web.UI.WebControls {
 
 		ValidationDataType type;
 
-		public BaseCompareValidator ()
+#if NET_2_0
+		protected
+#else
+		public
+#endif
+		BaseCompareValidator ()
 		{
 			type = ValidationDataType.String;
 		}

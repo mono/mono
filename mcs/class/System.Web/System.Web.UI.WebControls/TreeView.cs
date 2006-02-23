@@ -44,6 +44,7 @@ namespace System.Web.UI.WebControls
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	// attributes
+	[SupportsEventValidation]
 	[ControlValueProperty ("SelectedValue")]
 	[DefaultEvent ("SelectedNodeChanged")]
 	[Designer ("System.Web.UI.Design.WebControls.TreeViewDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
@@ -353,7 +354,7 @@ namespace System.Web.UI.WebControls
 		}
 
 		[DefaultValue ("")]
-		public virtual string LineImagesFolder {
+		public string LineImagesFolder {
 			get {
 				return ViewState.GetString ("LineImagesFolder", "");
 			}
@@ -363,7 +364,7 @@ namespace System.Web.UI.WebControls
 		}
 
 		[DefaultValue (-1)]
-		public virtual int MaxDataBindDepth {
+		public int MaxDataBindDepth {
 			get {
 				return ViewState.GetInt ("MaxDataBindDepth", -1);
 			}
@@ -373,7 +374,7 @@ namespace System.Web.UI.WebControls
 		}
 
 		[DefaultValue (20)]
-		public virtual int NodeIndent {
+		public int NodeIndent {
 			get {
 				return ViewState.GetInt ("NodeIndent", 20);
 			}
@@ -695,7 +696,7 @@ namespace System.Web.UI.WebControls
 
 		internal void NotifyExpandedChanged (TreeNode node)
 		{
-			if (node.Expanded)
+			if (node.Expanded.HasValue && node.Expanded.Value)
 				OnTreeNodeExpanded (new TreeNodeEventArgs (node));
 			else
 				OnTreeNodeCollapsed (new TreeNodeEventArgs (node));
@@ -827,7 +828,8 @@ namespace System.Web.UI.WebControls
 		{
 		}
 		
-		protected virtual string RaiseCallbackEvent (string eventArgs)
+		string callbackResult;
+		protected virtual void RaiseCallbackEvent (string eventArgs)
 		{
 			RequiresDataBinding = true;
 			EnsureDataBound ();
@@ -849,9 +851,14 @@ namespace System.Web.UI.WebControls
 				RenderNode (writer, node.ChildNodes [n], node.Depth + 1, levelLines, true, n<num-1);
 			
 			string res = sw.ToString ();
-			return res != "" ? res : "*";
+			callbackResult = res != "" ? res : "*";
 		}
 		
+		protected virtual string GetCallbackResult ()
+		{
+			return callbackResult;
+		}
+
 		void IPostBackEventHandler.RaisePostBackEvent (string eventArgument)
 		{
 			RaisePostBackEvent (eventArgument);
@@ -867,11 +874,16 @@ namespace System.Web.UI.WebControls
 			RaisePostDataChangedEvent ();
 		}
 		
-		string ICallbackEventHandler.RaiseCallbackEvent (string eventArgs)
+		void ICallbackEventHandler.RaiseCallbackEvent (string eventArgs)
 		{
-			return RaiseCallbackEvent (eventArgs);
+			RaiseCallbackEvent (eventArgs);
 		}
 		
+		string ICallbackEventHandler.GetCallbackResult ()
+		{
+			return GetCallbackResult ();
+		}
+
 		protected override ControlCollection CreateControlCollection ()
 		{
 			return new EmptyControlCollection (this);
@@ -1018,7 +1030,7 @@ namespace System.Web.UI.WebControls
 			string nodeImage;
 			bool clientExpand = EnableClientScript && Events [TreeNodeCollapsedEvent] == null && Events [TreeNodeExpandedEvent] == null;
 			ImageStyle imageStyle = GetImageStyle ();
-			bool renderChildNodes = node.Expanded;
+			bool renderChildNodes = node.Expanded.HasValue && node.Expanded.Value;
 			
 			if (clientExpand && !renderChildNodes)
 				renderChildNodes = (!PopulateNodesFromClient || HasChildInputData (node));
@@ -1078,9 +1090,9 @@ namespace System.Web.UI.WebControls
 				if (ShowExpandCollapse) {
 					if (hasChildNodes) {
 						buttonImage = true;
-						if (node.Expanded) shape += "minus";
+						if (node.Expanded.HasValue && node.Expanded.Value) shape += "minus";
 						else shape += "plus";
-						tooltip = GetNodeImageToolTip (!node.Expanded, node.Text);
+						tooltip = GetNodeImageToolTip (!(node.Expanded.HasValue && node.Expanded.Value), node.Text);
 					} else if (!ShowLines)
 						shape = "noexpand";
 				}
@@ -1141,7 +1153,7 @@ namespace System.Web.UI.WebControls
 			
 			bool showChecks;
 			if (node.IsShowCheckBoxSet)
-				showChecks = node.ShowCheckBox;
+				showChecks = node.ShowCheckBox.HasValue && node.ShowCheckBox.Value;
 			else
 				showChecks = (ShowCheckBoxes == TreeNodeTypes.All) ||
 							 (ShowCheckBoxes == TreeNodeTypes.Leaf && node.ChildNodes.Count == 0) ||
@@ -1194,7 +1206,7 @@ namespace System.Web.UI.WebControls
 				}
 				
 				if (clientExpand) {
-					if (!node.Expanded) writer.AddStyleAttribute ("display", "none");
+					if (!(node.Expanded.HasValue && node.Expanded.Value)) writer.AddStyleAttribute ("display", "none");
 					else writer.AddStyleAttribute ("display", "block");
 					writer.AddAttribute ("id", GetNodeClientId (node, null));
 					writer.RenderBeginTag (HtmlTextWriterTag.Span);
@@ -1382,7 +1394,7 @@ namespace System.Web.UI.WebControls
 		void UnsetExpandStates (TreeNodeCollection col, string[] states)
 		{
 			foreach (TreeNode node in col) {
-				if (node.Expanded) {
+				if (node.Expanded.HasValue && node.Expanded.Value) {
 					bool expand = (Array.IndexOf (states, node.Path) != -1);
 					if (!expand) node.Expanded = false;
 				}
@@ -1412,7 +1424,7 @@ namespace System.Web.UI.WebControls
 		
 		void GetExpandStates (StringBuilder sb, TreeNode node)
 		{
-			if (node.Expanded) {
+			if (node.Expanded.HasValue && node.Expanded.Value) {
 				sb.Append (node.Path);
 				sb.Append ('|');
 			}

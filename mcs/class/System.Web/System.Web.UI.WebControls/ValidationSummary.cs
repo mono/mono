@@ -149,7 +149,7 @@ namespace System.Web.UI.WebControls {
 #if NET_2_0
 		[DefaultValue ("")]
 		[Themeable (false)]
-		public string ValidationGroup
+		public virtual string ValidationGroup
 		{
 			get {
 				return ViewState.GetString("ValidationGroup", string.Empty);

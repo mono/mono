@@ -190,11 +190,8 @@ namespace System.Web.UI.WebControls {
 		[WebCategory ("Behavior")]
 #if NET_2_0
 		[Themeable (false)]
-		public virtual
-#else		
-		public
 #endif		
-		string CommandArgument {
+		public string CommandArgument {
 			get {
 				return ViewState.GetString ("CommandArgument", "");
 			}
@@ -208,11 +205,8 @@ namespace System.Web.UI.WebControls {
 		[WebCategory ("Behavior")]
 #if NET_2_0
 		[Themeable (false)]
-		public virtual
-#else		
-		public
 #endif		
-		string CommandName {
+		public string CommandName {
 			get {
 				return ViewState.GetString ("CommandName", "");	
 			}
@@ -297,7 +291,7 @@ namespace System.Web.UI.WebControls {
 		[UrlProperty ("*.aspx")]
 		[DefaultValue ("")]
 		[MonoTODO]
-		public string PostBackUrl {
+		public virtual string PostBackUrl {
 			get {
 				throw new NotImplementedException ();
 			}
@@ -310,7 +304,7 @@ namespace System.Web.UI.WebControls {
 		[Themeable (false)]
 		[WebSysDescription ("")]
 		[WebCategoryAttribute ("Behavior")]
-		public string ValidationGroup {
+		public virtual string ValidationGroup {
 			get {
 				return ViewState.GetString ("ValidationGroup", "");	
 			}

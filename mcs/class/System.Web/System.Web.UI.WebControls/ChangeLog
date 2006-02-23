@@ -1,3 +1,14 @@
+2006-02-23  Chris Toshok  <toshok@ximian.com>
+
+	* BaseCompareValidator.cs, BaseValidator.cs, Button.cs,
+	DataControlField.cs, DetailsView.cs, FormView.cs, GridView.cs,
+	HotSpot.cs, LinkButton.cs, Login.cs, SiteMapDataSource.cs,
+	SqlDataSourceCommandType.cs, TableSectionStyle.cs,
+	TemplateField.cs, TreeNodeCollection.cs, TreeNode.cs, TreeView.cs,
+	ValidationSummary.cs, WizardStepBase.cs: fix tons of corcompare
+	errors.  most were caused by a property/method being virtual when
+	it shouldn't be, or vice versa.
+
 2006-02-22  Chris Toshok  <toshok@ximian.com>
 
 	* ObjectDataSource.cs: corcompare work.

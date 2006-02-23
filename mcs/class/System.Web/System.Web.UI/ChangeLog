@@ -1,3 +1,13 @@
+2006-02-23  Chris Toshok  <toshok@ximian.com>
+
+	* Page.cs (ProcessCallbackData): track change to
+	ICallbackEventHandler iface.
+
+	* ICallbackEventHandler.cs: enable the proper members of this
+	interface.
+
+	* DataSourceSelectArguments.cs: reformat getter/setters.
+	
 2006-02-22  Cesar Lopez Nataren  <cnataren@novell.com>
 
 	* HtmlTextWriter.cs: Added method WriteEncodedText for the .NET 2.0 profile.

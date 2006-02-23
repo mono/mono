@@ -77,7 +77,7 @@ namespace System.Web.UI.WebControls
 			child.Tree = tree;
 			child.SetParent (parent);
 			if (marked) {
-				child.TrackViewState ();
+				((IStateManager)child).TrackViewState ();
 				child.SetDirty ();
 				dirty = true;
 			}
@@ -92,7 +92,7 @@ namespace System.Web.UI.WebControls
 			for (int n=index+1; n<items.Count; n++)
 				((TreeNode)items[n]).Index = n;
 			if (marked) {
-				child.TrackViewState ();
+				((IStateManager)child).TrackViewState ();
 				child.SetDirty ();
 				dirty = true;
 			}
@@ -183,7 +183,7 @@ namespace System.Web.UI.WebControls
 				if (oi != -1) node = originalItems [oi];
 				else node = new TreeNode ();
 				if (dirty) Add (node);
-				node.LoadViewState (pair.Second);
+				((IStateManager)node).LoadViewState (pair.Second);
 			}
 		}
 		
@@ -198,7 +198,7 @@ namespace System.Web.UI.WebControls
 				for (int n=0; n<items.Count; n++) {
 					TreeNode node = items[n] as TreeNode;
 					int oi = Array.IndexOf (originalItems, node);
-					object ns = node.SaveViewState ();
+					object ns = ((IStateManager)node).SaveViewState ();
 					if (ns != null) hasData = true;
 					state [n + 1] = new Pair (oi, ns);
 				}
@@ -206,7 +206,7 @@ namespace System.Web.UI.WebControls
 				ArrayList list = new ArrayList ();
 				for (int n=0; n<items.Count; n++) {
 					TreeNode node = items[n] as TreeNode;
-					object ns = node.SaveViewState ();
+					object ns = ((IStateManager)node).SaveViewState ();
 					if (ns != null) {
 						hasData = true;
 						list.Add (new Pair (n, ns));
@@ -230,7 +230,7 @@ namespace System.Web.UI.WebControls
 			originalItems = new TreeNode [items.Count];
 			for (int n=0; n<items.Count; n++) {
 				originalItems [n] = (TreeNode) items [n];
-				originalItems [n].TrackViewState ();
+				((IStateManager)originalItems [n]).TrackViewState ();
 			}
 		}
 		

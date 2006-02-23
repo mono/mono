@@ -100,9 +100,7 @@ namespace System.Web.UI
 
 		public int MaximumRows {
 			get { return this.maxRows; }
-			set {
-				this.maxRows = value;
-			}
+			set { this.maxRows = value; }
 		}
 
 		public bool RetrieveTotalRowCount  {
@@ -112,23 +110,17 @@ namespace System.Web.UI
 
 		public string SortExpression {
 			get { return this.sortExpression; }
-			set {
-				this.sortExpression = value;
-			}
+			set { this.sortExpression = value; }
 		}
 
 		public int StartRowIndex {
 			get { return this.startingRowIndex; }
-			set {
-				this.startingRowIndex = value;
-			}
+			set { this.startingRowIndex = value; }
 		}
 
 		public int TotalRowCount {
 			get { return this.totalRowCount; }
-			set {
-				this.totalRowCount = value;
-			}
+			set { this.totalRowCount = value; }
 		}
 	}
 }

@@ -40,12 +40,13 @@ using System.Reflection;
 
 namespace System.Web.UI.WebControls
 {
+	[SupportsEventValidation]
 	[DesignerAttribute ("System.Web.UI.Design.WebControls.GridViewDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	[ControlValuePropertyAttribute ("SelectedValue")]
 	[DefaultEventAttribute ("SelectedIndexChanged")]
 	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	public class GridView: CompositeDataBoundControl, ICallbackEventHandler, ICallbackContainer
+	public class GridView: CompositeDataBoundControl, ICallbackEventHandler, ICallbackContainer, IPostBackEventHandler, IPostBackContainer
 	{
 		Table table;
 		GridViewRowCollection rows;
@@ -306,7 +307,7 @@ namespace System.Web.UI.WebControls
 		
 		[WebCategoryAttribute ("Paging")]
 		[DefaultValueAttribute (false)]
-		public bool AllowPaging {
+		public virtual bool AllowPaging {
 			get {
 				object ob = ViewState ["AllowPaging"];
 				if (ob != null) return (bool) ob;
@@ -320,7 +321,7 @@ namespace System.Web.UI.WebControls
 		
 		[WebCategoryAttribute ("Behavior")]
 		[DefaultValueAttribute (false)]
-		public bool AllowSorting {
+		public virtual bool AllowSorting {
 			get {
 				object ob = ViewState ["AllowSorting"];
 				if (ob != null) return (bool) ob;
@@ -332,11 +333,11 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
-	    [WebCategoryAttribute ("Styles")]
+		[WebCategoryAttribute ("Styles")]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 		[NotifyParentProperty (true)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
-		public virtual TableItemStyle AlternatingRowStyle {
+		public TableItemStyle AlternatingRowStyle {
 			get {
 				if (alternatingRowStyle == null) {
 					alternatingRowStyle = new TableItemStyle ();
@@ -431,7 +432,7 @@ namespace System.Web.UI.WebControls
 		[WebCategoryAttribute ("Accessibility")]
 		[DefaultValueAttribute ("")]
 		[LocalizableAttribute (true)]
-		public string Caption {
+		public virtual string Caption {
 			get {
 				object ob = ViewState ["Caption"];
 				if (ob != null) return (string) ob;
@@ -533,7 +534,7 @@ namespace System.Web.UI.WebControls
 
 		[WebCategoryAttribute ("Misc")]
 		[DefaultValueAttribute (-1)]
-		public int EditIndex {
+		public virtual int EditIndex {
 			get {
 				return editIndex;
 			}
@@ -543,11 +544,11 @@ namespace System.Web.UI.WebControls
 			}
 		}
 	
-	    [WebCategoryAttribute ("Styles")]
+		[WebCategoryAttribute ("Styles")]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 		[NotifyParentProperty (true)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
-		public virtual TableItemStyle EditRowStyle {
+		public TableItemStyle EditRowStyle {
 			get {
 				if (editRowStyle == null) {
 					editRowStyle = new TableItemStyle ();
@@ -558,11 +559,11 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
-	    [WebCategoryAttribute ("Styles")]
+		[WebCategoryAttribute ("Styles")]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 		[NotifyParentProperty (true)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
-		public virtual TableItemStyle EmptyDataRowStyle {
+		public TableItemStyle EmptyDataRowStyle {
 			get {
 				if (emptyDataRowStyle == null) {
 					emptyDataRowStyle = new TableItemStyle ();
@@ -574,10 +575,10 @@ namespace System.Web.UI.WebControls
 		}
 		
 		[DefaultValue (null)]
-		[TemplateContainer (typeof(GridView), BindingDirection.OneWay)]
+		[TemplateContainer (typeof(GridViewRow), BindingDirection.OneWay)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
-	    [Browsable (false)]
-		public ITemplate EmptyDataTemplate {
+		[Browsable (false)]
+		public virtual ITemplate EmptyDataTemplate {
 			get { return emptyDataTemplate; }
 			set { emptyDataTemplate = value; RequireBinding (); }
 		}
@@ -621,12 +622,12 @@ namespace System.Web.UI.WebControls
 			}
 		}
 	
-	    [WebCategoryAttribute ("Styles")]
+		[WebCategoryAttribute ("Styles")]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 		[NotifyParentProperty (true)]
 		[DefaultValue (null)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
-		public virtual TableItemStyle FooterStyle {
+		public TableItemStyle FooterStyle {
 			get {
 				if (footerStyle == null) {
 					footerStyle = new TableItemStyle ();
@@ -660,12 +661,12 @@ namespace System.Web.UI.WebControls
 			}
 		}
 	
-	    [WebCategoryAttribute ("Styles")]
+		[WebCategoryAttribute ("Styles")]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 		[NotifyParentProperty (true)]
 		[DefaultValue (null)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
-		public virtual TableItemStyle HeaderStyle {
+		public TableItemStyle HeaderStyle {
 			get {
 				if (headerStyle == null) {
 					headerStyle = new TableItemStyle ();
@@ -692,7 +693,7 @@ namespace System.Web.UI.WebControls
 
 		[BrowsableAttribute (false)]
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
-		public int PageCount {
+		public virtual int PageCount {
 			get {
 				if (pageCount != -1) return pageCount;
 				EnsureDataBound ();
@@ -703,7 +704,7 @@ namespace System.Web.UI.WebControls
 		[WebCategoryAttribute ("Paging")]
 		[BrowsableAttribute (true)]
 		[DefaultValueAttribute (0)]
-		public int PageIndex {
+		public virtual int PageIndex {
 			get {
 				return pageIndex;
 			}
@@ -715,7 +716,7 @@ namespace System.Web.UI.WebControls
 	
 		[DefaultValueAttribute (10)]
 		[WebCategoryAttribute ("Paging")]
-		public int PageSize {
+		public virtual int PageSize {
 			get {
 				object ob = ViewState ["PageSize"];
 				if (ob != null) return (int) ob;
@@ -731,7 +732,7 @@ namespace System.Web.UI.WebControls
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Content)]
 		[NotifyParentPropertyAttribute (true)]
 		[PersistenceModeAttribute (PersistenceMode.InnerProperty)]
-		public PagerSettings PagerSettings {
+		public virtual PagerSettings PagerSettings {
 			get {
 				if (pagerSettings == null) {
 					pagerSettings = new PagerSettings (this);
@@ -742,11 +743,11 @@ namespace System.Web.UI.WebControls
 			}
 		}
 	
-	    [WebCategoryAttribute ("Styles")]
+		[WebCategoryAttribute ("Styles")]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 		[NotifyParentProperty (true)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
-		public virtual TableItemStyle PagerStyle {
+		public TableItemStyle PagerStyle {
 			get {
 				if (pagerStyle == null) {
 					pagerStyle = new TableItemStyle ();
@@ -762,15 +763,15 @@ namespace System.Web.UI.WebControls
 		/* DataControlPagerCell isnt specified in the docs */
 		//[TemplateContainer (typeof(DataControlPagerCell), BindingDirection.OneWay)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
-	    [Browsable (false)]
-		public ITemplate PagerTemplate {
+		[Browsable (false)]
+		public virtual ITemplate PagerTemplate {
 			get { return pagerTemplate; }
 			set { pagerTemplate = value; RequireBinding (); }
 		}
 		
 		[DefaultValueAttribute ("")]
 		[WebCategoryAttribute ("Accessibility")]
-//		[TypeConverterAttribute (typeof(System.Web.UI.Design.DataColumnSelectionConverter)]
+		//		[TypeConverterAttribute (typeof(System.Web.UI.Design.DataColumnSelectionConverter)]
 		public virtual string RowHeaderColumn {
 			get {
 				object ob = ViewState ["RowHeaderColumn"];
@@ -792,11 +793,11 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
-	    [WebCategoryAttribute ("Styles")]
+		[WebCategoryAttribute ("Styles")]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 		[NotifyParentProperty (true)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
-		public virtual TableItemStyle RowStyle {
+		public TableItemStyle RowStyle {
 			get {
 				if (rowStyle == null) {
 					rowStyle = new TableItemStyle ();
@@ -820,18 +821,18 @@ namespace System.Web.UI.WebControls
 		
 		[BindableAttribute (true)]
 		[DefaultValueAttribute (-1)]
-		public int SelectedIndex {
+		public virtual int SelectedIndex {
 			get {
 				return selectedIndex;
 			}
 			set {
-				if (selectedIndex >= 0 && selectedIndex < Rows.Count) {
+				if (Rows != null && selectedIndex >= 0 && selectedIndex < Rows.Count) {
 					int oldIndex = selectedIndex;
 					selectedIndex = -1;
 					Rows [oldIndex].RowState = GetRowState (oldIndex);
 				}
 				selectedIndex = value;
-				if (selectedIndex >= 0 && selectedIndex < Rows.Count) {
+				if (Rows != null && selectedIndex >= 0 && selectedIndex < Rows.Count) {
 					Rows [selectedIndex].RowState = GetRowState (selectedIndex);
 				}
 			}
@@ -848,11 +849,11 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
-	    [WebCategoryAttribute ("Styles")]
+		[WebCategoryAttribute ("Styles")]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 		[NotifyParentProperty (true)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
-		public virtual TableItemStyle SelectedRowStyle {
+		public TableItemStyle SelectedRowStyle {
 			get {
 				if (selectedRowStyle == null) {
 					selectedRowStyle = new TableItemStyle ();
@@ -864,7 +865,7 @@ namespace System.Web.UI.WebControls
 		}
 		
 		[BrowsableAttribute (false)]
-		public virtual object SelectedValue {
+		public object SelectedValue {
 			get {
 				if (SelectedDataKey != null)
 					return SelectedDataKey.Value;
@@ -994,9 +995,9 @@ namespace System.Web.UI.WebControls
 				object fitem = null;
 				prop_type = null;
 				PropertyInfo prop_item =  source.DataSource.GetType().GetProperty("Item",
-						  BindingFlags.Instance | BindingFlags.Static |
-						  BindingFlags.Public, null, null,
-						  new Type[] { typeof(int) }, null);
+												  BindingFlags.Instance | BindingFlags.Static |
+												  BindingFlags.Public, null, null,
+												  new Type[] { typeof(int) }, null);
 				
 				if (prop_item != null) {
 					prop_type = prop_item.PropertyType;
@@ -1154,7 +1155,7 @@ namespace System.Web.UI.WebControls
 				table.Rows.Add (row);
 				InitializeRow (row, fields);
 				if (dataBinding) {
-//					row.DataBind ();
+					//					row.DataBind ();
 					OnRowDataBound (new GridViewRowEventArgs (row));
 					if (EditIndex == row.RowIndex)
 						oldEditValues = new DataKey (GetRowValues (row, false, true));
@@ -1247,16 +1248,16 @@ namespace System.Web.UI.WebControls
 			bool accessibleHeader = false;
 
 			switch (row.RowType) {
-				case DataControlRowType.Header:
-					ctype = DataControlCellType.Header; 
-					accessibleHeader = UseAccessibleHeader;
-					break;
-				case DataControlRowType.Footer:
-					ctype = DataControlCellType.Footer;
-					break;
-				default:
-					ctype = DataControlCellType.DataCell;
-					break;
+			case DataControlRowType.Header:
+				ctype = DataControlCellType.Header; 
+				accessibleHeader = UseAccessibleHeader;
+				break;
+			case DataControlRowType.Footer:
+				ctype = DataControlCellType.Footer;
+				break;
+			default:
+				ctype = DataControlCellType.DataCell;
+				break;
 			}
 			
 			for (int n=0; n<fields.Length; n++) {
@@ -1383,6 +1384,11 @@ namespace System.Web.UI.WebControls
 			return base.OnBubbleEvent (source, e);
 		}
 		
+		void IPostBackEventHandler.RaisePostBackEvent (string eventArgument)
+		{
+			RaisePostBackEvent (eventArgument);
+		}
+
 		// This is prolly obsolete
 		protected virtual void RaisePostBackEvent (string eventArgument)
 		{
@@ -1397,69 +1403,69 @@ namespace System.Web.UI.WebControls
 		{
 			switch (eventName)
 			{
-				case DataControlCommands.PageCommandName:
-					int newIndex = -1;
-					switch (param) {
-						case DataControlCommands.FirstPageCommandArgument:
-							newIndex = 0;
-							break;
-						case DataControlCommands.LastPageCommandArgument:
-							newIndex = PageCount - 1;
-							break;
-						case DataControlCommands.NextPageCommandArgument:
-							if (PageIndex < PageCount - 1) newIndex = PageIndex + 1;
-							break;
-						case DataControlCommands.PreviousPageCommandArgument:
-							if (PageIndex > 0) newIndex = PageIndex - 1;
-							break;
-						default:
-							newIndex = int.Parse (param) - 1;
-							break;
-					}
-					ShowPage (newIndex);
-					break;
-					
+			case DataControlCommands.PageCommandName:
+				int newIndex = -1;
+				switch (param) {
 				case DataControlCommands.FirstPageCommandArgument:
-					ShowPage (0);
+					newIndex = 0;
 					break;
-
 				case DataControlCommands.LastPageCommandArgument:
-					ShowPage (PageCount - 1);
+					newIndex = PageCount - 1;
 					break;
-					
 				case DataControlCommands.NextPageCommandArgument:
-					if (PageIndex < PageCount - 1)
-						ShowPage (PageIndex + 1);
+					if (PageIndex < PageCount - 1) newIndex = PageIndex + 1;
 					break;
-
 				case DataControlCommands.PreviousPageCommandArgument:
-					if (PageIndex > 0)
-						ShowPage (PageIndex - 1);
+					if (PageIndex > 0) newIndex = PageIndex - 1;
 					break;
+				default:
+					newIndex = int.Parse (param) - 1;
+					break;
+				}
+				ShowPage (newIndex);
+				break;
 					
-				case DataControlCommands.SelectCommandName:
-					SelectRow (int.Parse (param));
-					break;
+			case DataControlCommands.FirstPageCommandArgument:
+				ShowPage (0);
+				break;
+
+			case DataControlCommands.LastPageCommandArgument:
+				ShowPage (PageCount - 1);
+				break;
 					
-				case DataControlCommands.EditCommandName:
-					EditRow (int.Parse (param));
-					break;
+			case DataControlCommands.NextPageCommandArgument:
+				if (PageIndex < PageCount - 1)
+					ShowPage (PageIndex + 1);
+				break;
+
+			case DataControlCommands.PreviousPageCommandArgument:
+				if (PageIndex > 0)
+					ShowPage (PageIndex - 1);
+				break;
 					
-				case DataControlCommands.UpdateCommandName:
-					UpdateRow (EditIndex, true);
-					break;
+			case DataControlCommands.SelectCommandName:
+				SelectRow (int.Parse (param));
+				break;
 					
-				case DataControlCommands.CancelCommandName:
-					CancelEdit ();
-					break;
+			case DataControlCommands.EditCommandName:
+				EditRow (int.Parse (param));
+				break;
 					
-				case DataControlCommands.DeleteCommandName:
-					DeleteRow (int.Parse (param));
-					break;
+			case DataControlCommands.UpdateCommandName:
+				UpdateRow (EditIndex, true);
+				break;
 					
-				case DataControlCommands.SortCommandName:
-					Sort (param);
-					break;
+			case DataControlCommands.CancelCommandName:
+				CancelEdit ();
+				break;
+					
+			case DataControlCommands.DeleteCommandName:
+				DeleteRow (int.Parse (param));
+				break;
+					
+			case DataControlCommands.SortCommandName:
+				Sort (param);
+				break;
 			}
 		}
 		
@@ -1477,7 +1483,7 @@ namespace System.Web.UI.WebControls
 			Sort (newSortExpression, newDirection);
 		}
 		
-		public void Sort (string newSortExpression, SortDirection newSortDirection)
+		public virtual void Sort (string newSortExpression, SortDirection newSortDirection)
 		{
 			GridViewSortEventArgs args = new GridViewSortEventArgs (newSortExpression, newSortDirection);
 			OnSorting (args);
@@ -1553,7 +1559,7 @@ namespace System.Web.UI.WebControls
 				EndRowEdit ();
 		}
 
-        bool UpdateCallback (int recordsAffected, Exception exception)
+		bool UpdateCallback (int recordsAffected, Exception exception)
 		{
 			GridViewUpdatedEventArgs dargs = new GridViewUpdatedEventArgs (recordsAffected, exception, currentEditRowKeys, currentEditOldValues, currentEditNewValues);
 			OnRowUpdated (dargs);
@@ -1564,7 +1570,7 @@ namespace System.Web.UI.WebControls
 			return dargs.ExceptionHandled;
 		}
 		
-		public void DeleteRow (int rowIndex)
+		public virtual void DeleteRow (int rowIndex)
 		{
 			GridViewRow row = Rows [rowIndex];
 			currentEditRowKeys = DataKeys [rowIndex].Values;
@@ -1585,7 +1591,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-        bool DeleteCallback (int recordsAffected, Exception exception)
+		bool DeleteCallback (int recordsAffected, Exception exception)
 		{
 			GridViewDeletedEventArgs dargs = new GridViewDeletedEventArgs (recordsAffected, exception, currentEditRowKeys, currentEditNewValues);
 			OnRowDeleted (dargs);
@@ -1619,7 +1625,7 @@ namespace System.Web.UI.WebControls
 			object bstate = base.SaveControlState ();
 			return new object[] {
 				bstate, pageIndex, pageCount, selectedIndex, editIndex, sortExpression, sortDirection
-			};
+					};
 		}
 		
 		protected override void TrackViewState()
@@ -1714,12 +1720,13 @@ namespace System.Web.UI.WebControls
 			if (states[12] != null && oldEditValues != null) ((IStateManager)oldEditValues).LoadViewState (states[12]);
 		}
 		
-		string ICallbackEventHandler.RaiseCallbackEvent (string eventArgs)
+		void ICallbackEventHandler.RaiseCallbackEvent (string eventArgs)
 		{
-			return RaiseCallbackEvent (eventArgs);
+			RaiseCallbackEvent (eventArgs);
 		}
 		
-		protected virtual string RaiseCallbackEvent (string eventArgs)
+		string callbackResult;
+		protected virtual void RaiseCallbackEvent (string eventArgs)
 		{
 			string[] clientData = eventArgs.Split ('|');
 			pageIndex = int.Parse (clientData[0]);
@@ -1735,9 +1742,19 @@ namespace System.Web.UI.WebControls
 
 			HtmlTextWriter writer = new HtmlTextWriter (sw);
 			RenderGrid (writer);
-			return sw.ToString ();
+			callbackResult = sw.ToString ();
 		}
 		
+		string ICallbackEventHandler.GetCallbackResult ()
+		{
+			return GetCallbackResult ();
+		}
+
+		protected virtual string GetCallbackResult ()
+		{
+			return callbackResult;
+		}
+
 		string ICallbackContainer.GetCallbackScript (IButtonControl control, string argument)
 		{
 			return GetCallbackScript (control, argument);
@@ -1776,7 +1793,7 @@ namespace System.Web.UI.WebControls
 				Page.ClientScript.RegisterStartupScript (typeof(TreeView), this.UniqueID, script, true);
 				
 				// Make sure the basic script infrastructure is rendered
-		        Page.ClientScript.GetCallbackEventReference (this, "null", "", "null");
+				Page.ClientScript.GetCallbackEventReference (this, "null", "", "null");
 				Page.ClientScript.GetPostBackClientHyperlink (this, "");
 			}
 		}
@@ -1795,21 +1812,21 @@ namespace System.Web.UI.WebControls
 		void RenderGrid (HtmlTextWriter writer)
 		{
 			switch (GridLines) {
-				case GridLines.Horizontal:
-					writer.AddAttribute (HtmlTextWriterAttribute.Rules, "rows");
-					writer.AddAttribute (HtmlTextWriterAttribute.Border, "1");
-					break;
-				case GridLines.Vertical:
-					writer.AddAttribute (HtmlTextWriterAttribute.Rules, "cols");
-					writer.AddAttribute (HtmlTextWriterAttribute.Border, "1");
-					break;
-				case GridLines.Both:
-					writer.AddAttribute (HtmlTextWriterAttribute.Rules, "all");
-					writer.AddAttribute (HtmlTextWriterAttribute.Border, "1");
-					break;
-				default:
-					writer.AddAttribute (HtmlTextWriterAttribute.Border, "0");
-					break;
+			case GridLines.Horizontal:
+				writer.AddAttribute (HtmlTextWriterAttribute.Rules, "rows");
+				writer.AddAttribute (HtmlTextWriterAttribute.Border, "1");
+				break;
+			case GridLines.Vertical:
+				writer.AddAttribute (HtmlTextWriterAttribute.Rules, "cols");
+				writer.AddAttribute (HtmlTextWriterAttribute.Border, "1");
+				break;
+			case GridLines.Both:
+				writer.AddAttribute (HtmlTextWriterAttribute.Rules, "all");
+				writer.AddAttribute (HtmlTextWriterAttribute.Border, "1");
+				break;
+			default:
+				writer.AddAttribute (HtmlTextWriterAttribute.Border, "0");
+				break;
 			}
 			
 			writer.AddAttribute (HtmlTextWriterAttribute.Cellspacing, "0");
@@ -1819,20 +1836,20 @@ namespace System.Web.UI.WebControls
 			foreach (GridViewRow row in table.Rows)
 			{
 				switch (row.RowType) {
-					case DataControlRowType.Header:
-						if (headerStyle != null)headerStyle.AddAttributesToRender (writer, row);
-						break;
-					case DataControlRowType.Footer:
-						if (footerStyle != null) footerStyle.AddAttributesToRender (writer, row);
-						break;
-					case DataControlRowType.Pager:
-						if (pagerStyle != null) pagerStyle.AddAttributesToRender (writer, row);
-						break;
-					case DataControlRowType.EmptyDataRow:
-						if (emptyDataRowStyle != null) emptyDataRowStyle.AddAttributesToRender (writer, row);
-						break;
-					default:
-						break;
+				case DataControlRowType.Header:
+					if (headerStyle != null)headerStyle.AddAttributesToRender (writer, row);
+					break;
+				case DataControlRowType.Footer:
+					if (footerStyle != null) footerStyle.AddAttributesToRender (writer, row);
+					break;
+				case DataControlRowType.Pager:
+					if (pagerStyle != null) pagerStyle.AddAttributesToRender (writer, row);
+					break;
+				case DataControlRowType.EmptyDataRow:
+					if (emptyDataRowStyle != null) emptyDataRowStyle.AddAttributesToRender (writer, row);
+					break;
+				default:
+					break;
 				}
 
 				if ((row.RowState & DataControlRowState.Normal) != 0 && rowStyle != null)
@@ -1851,9 +1868,9 @@ namespace System.Web.UI.WebControls
 					if (fcell != null) {
 						Style cellStyle = null;
 						switch (row.RowType) {
-							case DataControlRowType.Header: cellStyle = fcell.ContainingField.HeaderStyle; break;
-							case DataControlRowType.Footer: cellStyle = fcell.ContainingField.FooterStyle; break;
-							default: cellStyle = fcell.ContainingField.ItemStyle; break;
+						case DataControlRowType.Header: cellStyle = fcell.ContainingField.HeaderStyle; break;
+						case DataControlRowType.Footer: cellStyle = fcell.ContainingField.FooterStyle; break;
+						default: cellStyle = fcell.ContainingField.ItemStyle; break;
 						}
 						if (cellStyle != null)
 							cellStyle.AddAttributesToRender (writer, cell);
@@ -1863,6 +1880,12 @@ namespace System.Web.UI.WebControls
 				row.RenderEndTag (writer);
 			}
 			table.RenderEndTag (writer);
+		}
+
+		[MonoTODO]
+		PostBackOptions IPostBackContainer.GetPostBackOptions (IButtonControl control)
+		{
+			throw new NotImplementedException ();
 		}
 	}
 }

@@ -42,9 +42,9 @@ namespace System.Web.UI.WebControls
 	{
 		Wizard wizard;
 		
-	    [DefaultValueAttribute (true)]
-	    [ThemeableAttribute (false)]
-	    [FilterableAttribute (false)]
+		[DefaultValueAttribute (true)]
+		[ThemeableAttribute (false)]
+		[FilterableAttribute (false)]
 		public virtual bool AllowReturn {
 			get {
 				object v = ViewState ["AllowReturn"];
@@ -55,9 +55,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
-	    [DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
-	    [BrowsableAttribute (false)]
-		public string Name {
+		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
+		[BrowsableAttribute (false)]
+		public virtual string Name {
 			get {
 				if (Title.Length > 0) return Title;
 				else if (ID.Length > 0) return ID;
@@ -65,7 +65,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
-	    [DefaultValueAttribute (WizardStepType.Auto)]
+		[DefaultValueAttribute (WizardStepType.Auto)]
 		public virtual WizardStepType StepType {
 			get {
 				object v = ViewState ["StepType"];
@@ -76,8 +76,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
-	    [DefaultValueAttribute ("")]
-	    [LocalizableAttribute (true)]
+		[DefaultValueAttribute ("")]
+		[LocalizableAttribute (true)]
 		public virtual string Title {
 			get {
 				object v = ViewState ["Title"];
@@ -88,8 +88,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
-	    [EditorBrowsableAttribute (EditorBrowsableState.Advanced)]
-	    [BrowsableAttribute (false)]
+		[EditorBrowsableAttribute (EditorBrowsableState.Advanced)]
+		[BrowsableAttribute (false)]
 		public Wizard Wizard {
 			get { return wizard; }
 		}

@@ -40,12 +40,13 @@ using System.Reflection;
 
 namespace System.Web.UI.WebControls
 {
+	[SupportsEventValidation]
 	[DesignerAttribute ("System.Web.UI.Design.WebControls.FormViewDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	[ControlValuePropertyAttribute ("SelectedValue")]
 	[DefaultEventAttribute ("PageIndexChanging")]
 	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	public class FormView: CompositeDataBoundControl, IDataItemContainer, INamingContainer
+	public class FormView: CompositeDataBoundControl, IDataItemContainer, INamingContainer, IPostBackEventHandler, IPostBackContainer
 	{
 		object dataItem;
 		
@@ -267,7 +268,7 @@ namespace System.Web.UI.WebControls
 		
 		[WebCategoryAttribute ("Paging")]
 		[DefaultValueAttribute (false)]
-		public bool AllowPaging {
+		public virtual bool AllowPaging {
 			get {
 				object ob = ViewState ["AllowPaging"];
 				if (ob != null) return (bool) ob;
@@ -307,7 +308,7 @@ namespace System.Web.UI.WebControls
 		[WebCategoryAttribute ("Accessibility")]
 		[DefaultValueAttribute ("")]
 		[LocalizableAttribute (true)]
-		public string Caption {
+		public virtual string Caption {
 			get {
 				object ob = ViewState ["Caption"];
 				if (ob != null) return (string) ob;
@@ -364,16 +365,16 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
-	    [DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
-	    [BrowsableAttribute (false)]
+		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
+		[BrowsableAttribute (false)]
 		public FormViewMode CurrentMode {
 			get {
 				return currentMode;
 			}
 		}
 	
-	    [DefaultValueAttribute (FormViewMode.ReadOnly)]
-	    [WebCategoryAttribute ("Behavior")]
+		[DefaultValueAttribute (FormViewMode.ReadOnly)]
+		[WebCategoryAttribute ("Behavior")]
 		public virtual FormViewMode DefaultMode {
 			get {
 				object o = ViewState ["DefaultMode"];
@@ -415,18 +416,18 @@ namespace System.Web.UI.WebControls
 		[DefaultValue (null)]
 		[TemplateContainer (typeof(FormView), BindingDirection.TwoWay)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
-	    [Browsable (false)]
-		public ITemplate EditItemTemplate {
+		[Browsable (false)]
+		public virtual ITemplate EditItemTemplate {
 			get { return editItemTemplate; }
 			set { editItemTemplate = value; RequireBinding (); }
 		}
 
-	    [WebCategoryAttribute ("Styles")]
+		[WebCategoryAttribute ("Styles")]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 		[NotifyParentProperty (true)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
-	    [DefaultValueAttribute (null)]
-		public virtual TableItemStyle EditRowStyle {
+		[DefaultValueAttribute (null)]
+		public TableItemStyle EditRowStyle {
 			get {
 				if (editRowStyle == null) {
 					editRowStyle = new TableItemStyle ();
@@ -437,12 +438,12 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
-	    [WebCategoryAttribute ("Styles")]
+		[WebCategoryAttribute ("Styles")]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 		[NotifyParentProperty (true)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
-	    [DefaultValueAttribute (null)]
-		public virtual TableItemStyle EmptyDataRowStyle {
+		[DefaultValueAttribute (null)]
+		public TableItemStyle EmptyDataRowStyle {
 			get {
 				if (emptyDataRowStyle == null) {
 					emptyDataRowStyle = new TableItemStyle ();
@@ -456,8 +457,8 @@ namespace System.Web.UI.WebControls
 		[DefaultValue (null)]
 		[TemplateContainer (typeof(FormView), BindingDirection.OneWay)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
-	    [Browsable (false)]
-		public ITemplate EmptyDataTemplate {
+		[Browsable (false)]
+		public virtual ITemplate EmptyDataTemplate {
 			get { return emptyDataTemplate; }
 			set { emptyDataTemplate = value; RequireBinding (); }
 		}
@@ -489,16 +490,16 @@ namespace System.Web.UI.WebControls
 		[DefaultValue (null)]
 		[TemplateContainer (typeof(FormView), BindingDirection.OneWay)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
-	    [Browsable (false)]
-		public ITemplate FooterTemplate {
+		[Browsable (false)]
+		public virtual ITemplate FooterTemplate {
 			get { return footerTemplate; }
 			set { footerTemplate = value; RequireBinding (); }
 		}
 
-	    [LocalizableAttribute (true)]
-	    [WebCategoryAttribute ("Appearance")]
-	    [DefaultValueAttribute ("")]
-		public string FooterText {
+		[LocalizableAttribute (true)]
+		[WebCategoryAttribute ("Appearance")]
+		[DefaultValueAttribute ("")]
+		public virtual string FooterText {
 			get {
 				object ob = ViewState ["FooterText"];
 				if (ob != null) return (string) ob;
@@ -510,12 +511,12 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
-	    [WebCategoryAttribute ("Styles")]
+		[WebCategoryAttribute ("Styles")]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 		[NotifyParentProperty (true)]
 		[DefaultValue (null)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
-		public virtual TableItemStyle FooterStyle {
+		public TableItemStyle FooterStyle {
 			get {
 				if (footerStyle == null) {
 					footerStyle = new TableItemStyle ();
@@ -548,12 +549,12 @@ namespace System.Web.UI.WebControls
 			}
 		}
 	
-	    [WebCategoryAttribute ("Styles")]
+		[WebCategoryAttribute ("Styles")]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 		[NotifyParentProperty (true)]
 		[DefaultValue (null)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
-		public virtual TableItemStyle HeaderStyle {
+		public TableItemStyle HeaderStyle {
 			get {
 				if (headerStyle == null) {
 					headerStyle = new TableItemStyle ();
@@ -567,16 +568,16 @@ namespace System.Web.UI.WebControls
 		[DefaultValue (null)]
 		[TemplateContainer (typeof(FormView), BindingDirection.OneWay)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
-	    [Browsable (false)]
-		public ITemplate HeaderTemplate {
+		[Browsable (false)]
+		public virtual ITemplate HeaderTemplate {
 			get { return headerTemplate; }
 			set { headerTemplate = value; RequireBinding (); }
 		}
 
-	    [LocalizableAttribute (true)]
-	    [WebCategoryAttribute ("Appearance")]
-	    [DefaultValueAttribute ("")]
-		public string HeaderText {
+		[LocalizableAttribute (true)]
+		[WebCategoryAttribute ("Appearance")]
+		[DefaultValueAttribute ("")]
+		public virtual string HeaderText {
 			get {
 				object ob = ViewState ["HeaderText"];
 				if (ob != null) return (string) ob;
@@ -605,18 +606,18 @@ namespace System.Web.UI.WebControls
 		[DefaultValue (null)]
 		[TemplateContainer (typeof(FormView), BindingDirection.TwoWay)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
-	    [Browsable (false)]
-		public ITemplate InsertItemTemplate {
+		[Browsable (false)]
+		public virtual ITemplate InsertItemTemplate {
 			get { return insertItemTemplate; }
 			set { insertItemTemplate = value; RequireBinding (); }
 		}
 
-	    [WebCategoryAttribute ("Styles")]
+		[WebCategoryAttribute ("Styles")]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 		[NotifyParentProperty (true)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
-	    [DefaultValueAttribute (null)]
-		public virtual TableItemStyle InsertRowStyle {
+		[DefaultValueAttribute (null)]
+		public TableItemStyle InsertRowStyle {
 			get {
 				if (insertRowStyle == null) {
 					insertRowStyle = new TableItemStyle ();
@@ -630,15 +631,15 @@ namespace System.Web.UI.WebControls
 		[DefaultValue (null)]
 		[TemplateContainer (typeof(FormView), BindingDirection.TwoWay)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
-	    [Browsable (false)]
-		public ITemplate ItemTemplate {
+		[Browsable (false)]
+		public virtual ITemplate ItemTemplate {
 			get { return itemTemplate; }
 			set { itemTemplate = value; RequireBinding (); }
 		}
 		
 		[BrowsableAttribute (false)]
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
-		public int PageCount {
+		public virtual int PageCount {
 			get {
 				if (pageCount != -1) return pageCount;
 				EnsureDataBound ();
@@ -647,9 +648,9 @@ namespace System.Web.UI.WebControls
 		}
 
 		[WebCategoryAttribute ("Paging")]
-	    [BindableAttribute (true, BindingDirection.OneWay)]
+		[BindableAttribute (true, BindingDirection.OneWay)]
 		[DefaultValueAttribute (0)]
-		public int PageIndex {
+		public virtual int PageIndex {
 			get {
 				return pageIndex;
 			}
@@ -663,7 +664,7 @@ namespace System.Web.UI.WebControls
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Content)]
 		[NotifyParentPropertyAttribute (true)]
 		[PersistenceModeAttribute (PersistenceMode.InnerProperty)]
-		public PagerSettings PagerSettings {
+		public virtual PagerSettings PagerSettings {
 			get {
 				if (pagerSettings == null) {
 					pagerSettings = new PagerSettings (this);
@@ -674,11 +675,11 @@ namespace System.Web.UI.WebControls
 			}
 		}
 	
-	    [WebCategoryAttribute ("Styles")]
+		[WebCategoryAttribute ("Styles")]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 		[NotifyParentProperty (true)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
-		public virtual TableItemStyle PagerStyle {
+		public TableItemStyle PagerStyle {
 			get {
 				if (pagerStyle == null) {
 					pagerStyle = new TableItemStyle ();
@@ -694,27 +695,27 @@ namespace System.Web.UI.WebControls
 		/* DataControlPagerCell isnt specified in the docs */
 		//[TemplateContainer (typeof(DataControlPagerCell), BindingDirection.OneWay)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
-	    [Browsable (false)]
-		public ITemplate PagerTemplate {
+		[Browsable (false)]
+		public virtual ITemplate PagerTemplate {
 			get { return pagerTemplate; }
 			set { pagerTemplate = value; RequireBinding (); }
 		}
 		
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
 		[BrowsableAttribute (false)]
-		public FormViewRow Row {
+		public virtual FormViewRow Row {
 			get {
 				EnsureDataBound ();
 				return itemRow;
 			}
 		}
-	    
-	    [WebCategoryAttribute ("Styles")]
+		
+		[WebCategoryAttribute ("Styles")]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 		[NotifyParentProperty (true)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		[DefaultValue (null)]
-		public virtual TableItemStyle RowStyle {
+		public TableItemStyle RowStyle {
 			get {
 				if (rowStyle == null) {
 					rowStyle = new TableItemStyle ();
@@ -725,9 +726,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-	    [DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
+		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
 		[BrowsableAttribute (false)]
-		public virtual object SelectedValue {
+		public object SelectedValue {
 			get { return DataKey.Value; }
 		}
 		
@@ -742,7 +743,7 @@ namespace System.Web.UI.WebControls
 	
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
 		[BrowsableAttribute (false)]
-		public object DataItem {
+		public virtual object DataItem {
 			get {
 				EnsureDataBound ();
 				return dataItem;
@@ -757,7 +758,7 @@ namespace System.Web.UI.WebControls
 	
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
 		[BrowsableAttribute (false)]
-		public int DataItemIndex {
+		public virtual int DataItemIndex {
 			get { return PageIndex; }
 		}		
 	
@@ -1068,12 +1069,6 @@ namespace System.Web.UI.WebControls
 			base.OnInit (e);
 		}
 		
-		protected override void OnDataSourceViewChanged (object sender, EventArgs e)
-		{
-			base.OnDataSourceViewChanged (sender, e);
-			RequireBinding ();
-		}
-		
 		protected override bool OnBubbleEvent (object source, EventArgs e)
 		{
 			FormViewCommandEventArgs args = e as FormViewCommandEventArgs;
@@ -1084,7 +1079,11 @@ namespace System.Web.UI.WebControls
 			return base.OnBubbleEvent (source, e);
 		}
 		
-		// This is prolly obsolete
+                void IPostBackEventHandler.RaisePostBackEvent(string eventArgument)
+		{
+			RaisePostBackEvent (eventArgument);
+		}
+
 		protected virtual void RaisePostBackEvent (string eventArgument)
 		{
 			int i = eventArgument.IndexOf ('$');
@@ -1098,69 +1097,69 @@ namespace System.Web.UI.WebControls
 		{
 			switch (eventName)
 			{
-				case DataControlCommands.PageCommandName:
-					int newIndex = -1;
-					switch (param) {
-						case DataControlCommands.FirstPageCommandArgument:
-							newIndex = 0;
-							break;
-						case DataControlCommands.LastPageCommandArgument:
-							newIndex = PageCount - 1;
-							break;
-						case DataControlCommands.NextPageCommandArgument:
-							if (PageIndex < PageCount - 1) newIndex = PageIndex + 1;
-							break;
-						case DataControlCommands.PreviousPageCommandArgument:
-							if (PageIndex > 0) newIndex = PageIndex - 1;
-							break;
-						default:
-							newIndex = int.Parse (param) - 1;
-							break;
-					}
-					ShowPage (newIndex);
-					break;
-					
+			case DataControlCommands.PageCommandName:
+				int newIndex = -1;
+				switch (param) {
 				case DataControlCommands.FirstPageCommandArgument:
-					ShowPage (0);
+					newIndex = 0;
 					break;
-
 				case DataControlCommands.LastPageCommandArgument:
-					ShowPage (PageCount - 1);
+					newIndex = PageCount - 1;
 					break;
-					
 				case DataControlCommands.NextPageCommandArgument:
-					if (PageIndex < PageCount - 1)
-						ShowPage (PageIndex + 1);
+					if (PageIndex < PageCount - 1) newIndex = PageIndex + 1;
 					break;
-
 				case DataControlCommands.PreviousPageCommandArgument:
-					if (PageIndex > 0)
-						ShowPage (PageIndex - 1);
+					if (PageIndex > 0) newIndex = PageIndex - 1;
 					break;
+				default:
+					newIndex = int.Parse (param) - 1;
+					break;
+				}
+				ShowPage (newIndex);
+				break;
 					
-				case DataControlCommands.EditCommandName:
-					ChangeMode (FormViewMode.Edit);
-					break;
+			case DataControlCommands.FirstPageCommandArgument:
+				ShowPage (0);
+				break;
+
+			case DataControlCommands.LastPageCommandArgument:
+				ShowPage (PageCount - 1);
+				break;
 					
-				case DataControlCommands.NewCommandName:
-					ChangeMode (FormViewMode.Insert);
-					break;
+			case DataControlCommands.NextPageCommandArgument:
+				if (PageIndex < PageCount - 1)
+					ShowPage (PageIndex + 1);
+				break;
+
+			case DataControlCommands.PreviousPageCommandArgument:
+				if (PageIndex > 0)
+					ShowPage (PageIndex - 1);
+				break;
 					
-				case DataControlCommands.UpdateCommandName:
-					UpdateItem (param, true);
-					break;
+			case DataControlCommands.EditCommandName:
+				ChangeMode (FormViewMode.Edit);
+				break;
 					
-				case DataControlCommands.CancelCommandName:
-					CancelEdit ();
-					break;
+			case DataControlCommands.NewCommandName:
+				ChangeMode (FormViewMode.Insert);
+				break;
 					
-				case DataControlCommands.DeleteCommandName:
-					DeleteItem ();
-					break;
+			case DataControlCommands.UpdateCommandName:
+				UpdateItem (param, true);
+				break;
 					
-				case DataControlCommands.InsertCommandName:
-					InsertItem (true);
-					break;
+			case DataControlCommands.CancelCommandName:
+				CancelEdit ();
+				break;
+					
+			case DataControlCommands.DeleteCommandName:
+				DeleteItem ();
+				break;
+					
+			case DataControlCommands.InsertCommandName:
+				InsertItem (true);
+				break;
 			}
 		}
 		
@@ -1221,7 +1220,7 @@ namespace System.Web.UI.WebControls
 				EndRowEdit ();
 		}
 
-        bool UpdateCallback (int recordsAffected, Exception exception)
+		bool UpdateCallback (int recordsAffected, Exception exception)
 		{
 			FormViewUpdatedEventArgs dargs = new FormViewUpdatedEventArgs (recordsAffected, exception, currentEditRowKeys, currentEditOldValues, currentEditNewValues);
 			OnItemUpdated (dargs);
@@ -1255,7 +1254,7 @@ namespace System.Web.UI.WebControls
 				EndRowEdit ();
 		}
 		
-        bool InsertCallback (int recordsAffected, Exception exception)
+		bool InsertCallback (int recordsAffected, Exception exception)
 		{
 			FormViewInsertedEventArgs dargs = new FormViewInsertedEventArgs (recordsAffected, exception, currentEditNewValues);
 			OnItemInserted (dargs);
@@ -1266,7 +1265,7 @@ namespace System.Web.UI.WebControls
 			return dargs.ExceptionHandled;
 		}
 
-		public void DeleteItem ()
+		public virtual void DeleteItem ()
 		{
 			currentEditRowKeys = DataKey.Values;
 			currentEditNewValues = GetRowValues (true);
@@ -1290,7 +1289,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-        bool DeleteCallback (int recordsAffected, Exception exception)
+		bool DeleteCallback (int recordsAffected, Exception exception)
 		{
 			FormViewDeletedEventArgs dargs = new FormViewDeletedEventArgs (recordsAffected, exception, currentEditRowKeys, currentEditNewValues);
 			OnItemDeleted (dargs);
@@ -1322,7 +1321,7 @@ namespace System.Web.UI.WebControls
 			object bstate = base.SaveControlState ();
 			return new object[] {
 				bstate, pageIndex, pageCount, currentMode
-			};
+					};
 		}
 		
 		protected override void TrackViewState()
@@ -1389,21 +1388,21 @@ namespace System.Web.UI.WebControls
 		protected internal override void Render (HtmlTextWriter writer)
 		{
 			switch (GridLines) {
-				case GridLines.Horizontal:
-					writer.AddAttribute (HtmlTextWriterAttribute.Rules, "rows");
-					writer.AddAttribute (HtmlTextWriterAttribute.Border, "1");
-					break;
-				case GridLines.Vertical:
-					writer.AddAttribute (HtmlTextWriterAttribute.Rules, "cols");
-					writer.AddAttribute (HtmlTextWriterAttribute.Border, "1");
-					break;
-				case GridLines.Both:
-					writer.AddAttribute (HtmlTextWriterAttribute.Rules, "all");
-					writer.AddAttribute (HtmlTextWriterAttribute.Border, "1");
-					break;
-				default:
-					writer.AddAttribute (HtmlTextWriterAttribute.Border, "0");
-					break;
+			case GridLines.Horizontal:
+				writer.AddAttribute (HtmlTextWriterAttribute.Rules, "rows");
+				writer.AddAttribute (HtmlTextWriterAttribute.Border, "1");
+				break;
+			case GridLines.Vertical:
+				writer.AddAttribute (HtmlTextWriterAttribute.Rules, "cols");
+				writer.AddAttribute (HtmlTextWriterAttribute.Border, "1");
+				break;
+			case GridLines.Both:
+				writer.AddAttribute (HtmlTextWriterAttribute.Rules, "all");
+				writer.AddAttribute (HtmlTextWriterAttribute.Border, "1");
+				break;
+			default:
+				writer.AddAttribute (HtmlTextWriterAttribute.Border, "0");
+				break;
 			}
 			
 			writer.AddAttribute (HtmlTextWriterAttribute.Cellspacing, "0");
@@ -1413,21 +1412,21 @@ namespace System.Web.UI.WebControls
 			foreach (FormViewRow row in table.Rows)
 			{
 				switch (row.RowType) {
-					case DataControlRowType.Header:
-						if (headerStyle != null)headerStyle.AddAttributesToRender (writer, row);
-						break;
-					case DataControlRowType.Footer:
-						if (footerStyle != null) footerStyle.AddAttributesToRender (writer, row);
-						break;
-					case DataControlRowType.Pager:
-						if (pagerStyle != null) pagerStyle.AddAttributesToRender (writer, row);
-						break;
-					case DataControlRowType.EmptyDataRow:
-						if (emptyDataRowStyle != null) emptyDataRowStyle.AddAttributesToRender (writer, row);
-						break;
-					default:
-						if (rowStyle != null) rowStyle.AddAttributesToRender (writer, row);
-						break;
+				case DataControlRowType.Header:
+					if (headerStyle != null)headerStyle.AddAttributesToRender (writer, row);
+					break;
+				case DataControlRowType.Footer:
+					if (footerStyle != null) footerStyle.AddAttributesToRender (writer, row);
+					break;
+				case DataControlRowType.Pager:
+					if (pagerStyle != null) pagerStyle.AddAttributesToRender (writer, row);
+					break;
+				case DataControlRowType.EmptyDataRow:
+					if (emptyDataRowStyle != null) emptyDataRowStyle.AddAttributesToRender (writer, row);
+					break;
+				default:
+					if (rowStyle != null) rowStyle.AddAttributesToRender (writer, row);
+					break;
 				}
 
 				if ((row.RowState & DataControlRowState.Edit) != 0 && editRowStyle != null)
@@ -1444,6 +1443,13 @@ namespace System.Web.UI.WebControls
 			}
 			table.RenderEndTag (writer);
 		}
+
+		[MonoTODO]
+		PostBackOptions IPostBackContainer.GetPostBackOptions (IButtonControl control)
+		{
+			throw new NotImplementedException ();
+		}
+
 	}
 }
 

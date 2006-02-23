@@ -95,6 +95,12 @@ namespace System.Web.UI.WebControls
 			Target = target;
 		}
 		
+		[MonoTODO]
+		protected TreeNode (TreeView owner, bool isRoot)
+		{
+			throw new NotImplementedException ();
+		}
+
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[Browsable (false)]
 		public int Depth {
@@ -160,7 +166,7 @@ namespace System.Web.UI.WebControls
 		}
 		
 		[DefaultValue (false)]
-		public virtual bool Checked {
+		public bool Checked {
 			get {
 				object o = ViewState ["Checked"];
 				if (o != null) return (bool)o;
@@ -177,7 +183,7 @@ namespace System.Web.UI.WebControls
 		[MergableProperty (false)]
 		[Browsable (false)]
 		[PersistenceMode (PersistenceMode.InnerDefaultProperty)]
-		public virtual TreeNodeCollection ChildNodes {
+		public TreeNodeCollection ChildNodes {
 			get {
 				if (nodes == null) {
 					if (PopulateOnDemand && tree == null)
@@ -200,12 +206,12 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
-		[DefaultValue (false)]
-		public virtual bool Expanded {
+		[DefaultValue (null)]
+		public bool? Expanded {
 			get {
 				object o = ViewState ["Expanded"];
 				if (o != null) return (bool)o;
-				return false;
+				return true;
 			}
 			set {
 				ViewState ["Expanded"] = value;
@@ -216,7 +222,7 @@ namespace System.Web.UI.WebControls
 
 		[Localizable (true)]
 		[DefaultValue ("")]
-		public virtual string ImageToolTip {
+		public string ImageToolTip {
 			get {
 				object o = ViewState ["ImageToolTip"];
 				if (o != null) return (string)o;
@@ -238,7 +244,7 @@ namespace System.Web.UI.WebControls
 		[DefaultValue ("")]
 		[UrlProperty]
 		[Editor ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
-		public virtual string ImageUrl {
+		public string ImageUrl {
 			get {
 				object o = ViewState ["ImageUrl"];
 				if (o != null) return (string)o;
@@ -260,7 +266,7 @@ namespace System.Web.UI.WebControls
 		[DefaultValue ("")]
 		[UrlProperty]
 		[Editor ("System.Web.UI.Design.UrlEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
-		public virtual string NavigateUrl {
+		public string NavigateUrl {
 			get {
 				object o = ViewState ["NavigateUrl"];
 				if (o != null) return (string)o;
@@ -313,8 +319,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[DefaultValue (false)]
-		public bool ShowCheckBox {
+		[DefaultValue (null)]
+		public bool? ShowCheckBox {
 			get {
 				object o = ViewState ["ShowCheckBox"];
 				if (o != null) return (bool)o;
@@ -323,7 +329,7 @@ namespace System.Web.UI.WebControls
 					if (bin != null)
 						return bin.ShowCheckBox;
 				}
-				return false;
+				return true;
 			}
 			set {
 				ViewState ["ShowCheckBox"] = value;
@@ -335,7 +341,7 @@ namespace System.Web.UI.WebControls
 		}
 
 		[DefaultValue ("")]
-		public virtual string Target {
+		public string Target {
 			get {
 				object o = ViewState ["Target"];
 				if(o != null) return (string)o;
@@ -357,7 +363,7 @@ namespace System.Web.UI.WebControls
 		[Localizable (true)]
 		[DefaultValue ("")]
 		[WebSysDescription ("The display text of the tree node.")]
-		public virtual string Text {
+		public string Text {
 			get {
 				object o = ViewState ["Text"];
 				if (o != null) return (string)o;
@@ -387,7 +393,7 @@ namespace System.Web.UI.WebControls
 
 		[Localizable (true)]
 		[DefaultValue ("")]
-		public virtual string ToolTip {
+		public string ToolTip {
 			get {
 				object o = ViewState ["ToolTip"];
 				if(o != null) return (string)o;
@@ -408,7 +414,7 @@ namespace System.Web.UI.WebControls
 
 		[Localizable (true)]
 		[DefaultValue ("")]
-		public virtual string Value {
+		public string Value {
 			get {
 				object o = ViewState ["Value"];
 				if(o != null) return (string)o;
@@ -430,7 +436,7 @@ namespace System.Web.UI.WebControls
 		}
 		
 		[DefaultValue (false)]
-		public virtual bool Selected {
+		public bool Selected {
 			get {
 				return SelectedFlag;
 			}
@@ -520,7 +526,7 @@ namespace System.Web.UI.WebControls
 			get { return nodes != null; }
 		}
 		
-		protected virtual void Populate ()
+		internal void Populate ()
 		{
 			tree.NotifyPopulateRequired (this);
 		}
@@ -569,7 +575,12 @@ namespace System.Web.UI.WebControls
 			Expanded = !Expanded;
 		}
 
-		public void LoadViewState (object savedState)
+		void IStateManager.LoadViewState (object savedState)
+		{
+			LoadViewState (savedState);
+		}
+
+		protected virtual void LoadViewState (object savedState)
 		{
 			if (savedState == null)
 				return;
@@ -584,7 +595,12 @@ namespace System.Web.UI.WebControls
 				((IStateManager)ChildNodes).LoadViewState (states [1]);
 		}
 		
-		public object SaveViewState ()
+		object IStateManager.SaveViewState ()
+		{
+			return SaveViewState ();
+		}
+
+		protected virtual object SaveViewState ()
 		{
 			object[] states = new object[2];
 			states[0] = ViewState.SaveViewState();
@@ -596,8 +612,13 @@ namespace System.Web.UI.WebControls
 			}
 			return null;
 		}
-		
-		public void TrackViewState ()
+
+		void IStateManager.TrackViewState ()
+		{
+			TrackViewState ();
+		}
+
+		protected void TrackViewState ()
 		{
 			if (marked) return;
 			marked = true;
@@ -607,7 +628,11 @@ namespace System.Web.UI.WebControls
 				((IStateManager)nodes).TrackViewState ();
 		}
 		
-		public bool IsTrackingViewState
+		bool IStateManager.IsTrackingViewState {
+			get { return IsTrackingViewState; }
+		}
+
+		protected bool IsTrackingViewState
 		{
 			get { return marked; }
 		}
@@ -617,7 +642,7 @@ namespace System.Web.UI.WebControls
 			ViewState.SetDirty (true);
 		}
 		
-		public object Clone ()
+		public virtual object Clone ()
 		{
 			TreeNode nod = tree != null ? tree.CreateNode () : new TreeNode ();
 			foreach (DictionaryEntry e in ViewState)

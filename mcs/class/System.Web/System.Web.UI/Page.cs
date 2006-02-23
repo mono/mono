@@ -1495,7 +1495,8 @@ public class Page : TemplateControl, IHttpHandler
 			throw new HttpException (string.Format ("Invalid callback target '{0}'.", callbackTarget));
 
 		string callbackArgument = _requestValueCollection [CallbackArgumentID];
-		return target.RaiseCallbackEvent (callbackArgument);
+		target.RaiseCallbackEvent (callbackArgument);
+		return target.GetCallbackResult ();
 	}
 
 	[BrowsableAttribute (false)]

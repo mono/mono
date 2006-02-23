@@ -95,7 +95,7 @@ namespace System.Web.UI.WebControls {
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		[NotifyParentProperty (true)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
-		public virtual TableItemStyle CheckBoxStyle {
+		public TableItemStyle CheckBoxStyle {
 			get {
 				if (checkBoxStyle == null) {
 					checkBoxStyle = new TableItemStyle ();
@@ -216,7 +216,7 @@ namespace System.Web.UI.WebControls {
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		[NotifyParentProperty (true)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
-		public virtual TableItemStyle FailureTextStyle {
+		public TableItemStyle FailureTextStyle {
 			get {
 				if (failureTextStyle == null) {
 					failureTextStyle = new TableItemStyle ();
@@ -279,7 +279,7 @@ namespace System.Web.UI.WebControls {
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		[NotifyParentProperty (true)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
-		public virtual TableItemStyle HyperLinkStyle {
+		public TableItemStyle HyperLinkStyle {
 			get {
 				if (hyperLinkStyle == null) {
 					hyperLinkStyle = new TableItemStyle ();
@@ -310,7 +310,7 @@ namespace System.Web.UI.WebControls {
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		[NotifyParentProperty (true)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
-		public virtual TableItemStyle InstructionTextStyle {
+		public TableItemStyle InstructionTextStyle {
 			get {
 				if (instructionTextStyle == null) {
 					instructionTextStyle = new TableItemStyle ();
@@ -326,7 +326,7 @@ namespace System.Web.UI.WebControls {
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		[NotifyParentProperty (true)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
-		public virtual TableItemStyle LabelStyle {
+		public TableItemStyle LabelStyle {
 			get {
 				if (labelStyle == null) {
 					labelStyle = new TableItemStyle ();
@@ -366,7 +366,7 @@ namespace System.Web.UI.WebControls {
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		[NotifyParentProperty (true)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
-		public virtual Style LoginButtonStyle {
+		public Style LoginButtonStyle {
 			get {
 				if (logonButtonStyle == null) {
 					logonButtonStyle = new Style ();
@@ -551,7 +551,7 @@ namespace System.Web.UI.WebControls {
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		[NotifyParentProperty (true)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
-		public virtual Style TextBoxStyle {
+		public Style TextBoxStyle {
 			get {
 				if (textBoxStyle == null) {
 					textBoxStyle = new Style ();
@@ -594,7 +594,7 @@ namespace System.Web.UI.WebControls {
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		[NotifyParentProperty (true)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
-		public virtual TableItemStyle TitleTextStyle {
+		public TableItemStyle TitleTextStyle {
 			get {
 				if (titleTextStyle == null) {
 					titleTextStyle = new TableItemStyle ();
@@ -652,7 +652,7 @@ namespace System.Web.UI.WebControls {
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		[NotifyParentProperty (true)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
-		public virtual Style ValidatorTextStyle {
+		public Style ValidatorTextStyle {
 			get {
 				if (validatorTextStyle == null) {
 					validatorTextStyle = new Style ();

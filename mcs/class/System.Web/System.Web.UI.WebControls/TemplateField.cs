@@ -51,8 +51,8 @@ namespace System.Web.UI.WebControls
 		[DefaultValue (null)]
 		[TemplateContainer (typeof(IDataItemContainer), BindingDirection.TwoWay)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
-	    [Browsable (false)]
-		public ITemplate AlternatingItemTemplate {
+		[Browsable (false)]
+		public virtual ITemplate AlternatingItemTemplate {
 			get { return alternatingItemTemplate; }
 			set { alternatingItemTemplate = value; OnFieldChanged (); }
 		}
@@ -74,8 +74,8 @@ namespace System.Web.UI.WebControls
 		[DefaultValue (null)]
 		[TemplateContainer (typeof(IDataItemContainer), BindingDirection.TwoWay)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
-	    [Browsable (false)]
-		public ITemplate EditItemTemplate {
+		[Browsable (false)]
+		public virtual ITemplate EditItemTemplate {
 			get { return editItemTemplate; }
 			set { editItemTemplate = value; OnFieldChanged (); }
 		}
@@ -83,8 +83,8 @@ namespace System.Web.UI.WebControls
 		[DefaultValue (null)]
 		[TemplateContainer (typeof(IDataItemContainer), BindingDirection.OneWay)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
-	    [Browsable (false)]
-		public ITemplate FooterTemplate {
+		[Browsable (false)]
+		public virtual ITemplate FooterTemplate {
 			get { return footerTemplate; }
 			set { footerTemplate = value; OnFieldChanged (); }
 		}
@@ -92,8 +92,8 @@ namespace System.Web.UI.WebControls
 		[DefaultValue (null)]
 		[TemplateContainer (typeof(IDataItemContainer), BindingDirection.OneWay)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
-	    [Browsable (false)]
-		public ITemplate HeaderTemplate {
+		[Browsable (false)]
+		public virtual ITemplate HeaderTemplate {
 			get { return headerTemplate; }
 			set { headerTemplate = value; OnFieldChanged (); }
 		}
@@ -101,8 +101,8 @@ namespace System.Web.UI.WebControls
 		[DefaultValue (null)]
 		[TemplateContainer (typeof(IDataItemContainer), BindingDirection.TwoWay)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
-	    [Browsable (false)]
-		public ITemplate InsertItemTemplate {
+		[Browsable (false)]
+		public virtual ITemplate InsertItemTemplate {
 			get { return insertItemTemplate; }
 			set { insertItemTemplate = value; OnFieldChanged (); }
 		}
@@ -110,14 +110,14 @@ namespace System.Web.UI.WebControls
 		[DefaultValue (null)]
 		[TemplateContainer (typeof(IDataItemContainer), BindingDirection.TwoWay)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
-	    [Browsable (false)]
-		public ITemplate ItemTemplate {
+		[Browsable (false)]
+		public virtual ITemplate ItemTemplate {
 			get { return itemTemplate; }
 			set { itemTemplate = value; OnFieldChanged (); }
 		}
 		
 		public override void InitializeCell (DataControlFieldCell cell,
-			DataControlCellType cellType, DataControlRowState rowState, int rowIndex)
+						     DataControlCellType cellType, DataControlRowState rowState, int rowIndex)
 		{
 			if (cellType == DataControlCellType.Header) {
 				if (headerTemplate != null && ShowHeader) {
@@ -156,7 +156,7 @@ namespace System.Web.UI.WebControls
 		}
 		
 		public override void ExtractValuesFromCell (IOrderedDictionary dictionary,
-			DataControlFieldCell cell, DataControlRowState rowState, bool includeReadOnly)
+							    DataControlFieldCell cell, DataControlRowState rowState, bool includeReadOnly)
 		{
 			IBindableTemplate bt;
 			
