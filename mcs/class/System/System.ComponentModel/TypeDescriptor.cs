@@ -124,7 +124,7 @@ public sealed class TypeDescriptor
 		    return ((ICustomTypeDescriptor) component).GetAttributes ();
 		} else {
 			IComponent com = component as IComponent;
-			if (com != null)
+			if (com != null && com.Site != null)
 				return GetComponentInfo (com).GetAttributes ();
 			else
 				return GetTypeInfo (component.GetType()).GetAttributes ();
@@ -327,7 +327,7 @@ public sealed class TypeDescriptor
 			return ((ICustomTypeDescriptor) component).GetDefaultEvent ();
 		else {
 			IComponent com = component as IComponent;
-			if (com != null)
+			if (com != null && com.Site != null)
 				return GetComponentInfo (com).GetDefaultEvent ();
 			else
 				return GetTypeInfo (component.GetType()).GetDefaultEvent ();
@@ -350,7 +350,7 @@ public sealed class TypeDescriptor
 			return ((ICustomTypeDescriptor) component).GetDefaultProperty ();
 		else {
 			IComponent com = component as IComponent;
-			if (com != null)
+			if (com != null && com.Site != null)
 				return GetComponentInfo (com).GetDefaultProperty ();
 			else
 				return GetTypeInfo (component.GetType()).GetDefaultProperty ();
@@ -424,7 +424,7 @@ public sealed class TypeDescriptor
 			return ((ICustomTypeDescriptor) component).GetEvents ();
 		else {
 			IComponent com = component as IComponent;
-			if (com != null)
+			if (com != null && com.Site != null)
 				return GetComponentInfo (com).GetEvents ();
 			else
 				return GetTypeInfo (component.GetType()).GetEvents ();
@@ -442,7 +442,7 @@ public sealed class TypeDescriptor
 			return ((ICustomTypeDescriptor) component).GetEvents (attributes);
 		else {
 			IComponent com = component as IComponent;
-			if (com != null)
+			if (com != null && com.Site != null)
 				return GetComponentInfo (com).GetEvents (attributes);
 			else
 				return GetTypeInfo (component.GetType()).GetEvents (attributes);
@@ -473,7 +473,7 @@ public sealed class TypeDescriptor
 			return ((ICustomTypeDescriptor) component).GetProperties (attributes);
 		else {
 			IComponent com = component as IComponent;
-			if (com != null)
+			if (com != null && com.Site != null)
 				return GetComponentInfo (com).GetProperties (attributes);
 			else
 				return GetTypeInfo (component.GetType()).GetProperties (attributes);
@@ -489,7 +489,7 @@ public sealed class TypeDescriptor
 			return ((ICustomTypeDescriptor) component).GetProperties ();
 		else {
 			IComponent com = component as IComponent;
-			if (com != null)
+			if (com != null && com.Site != null)
 				return GetComponentInfo (com).GetProperties ();
 			else
 				return GetTypeInfo (component.GetType()).GetProperties ();

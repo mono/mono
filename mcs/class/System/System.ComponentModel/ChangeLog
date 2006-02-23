@@ -1,3 +1,8 @@
+2006-02-23 Andrew Skiba <andrews@mainsoft.com>
+
+	* TypeDescriptor.cs: performance improvement for GetAttributes,
+	GetProperties and GetEvents. See the standalone test for the use case.
+
 2006-01-31 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Container.cs: patch by Brian Crowell that fixes GetService().
