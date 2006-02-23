@@ -220,7 +220,7 @@ mono_ssa_rename_vars2 (MonoCompile *cfg, int max_vars, MonoBasicBlock *bb, MonoI
 			/* SREG1 */
 			if (spec [MONO_INST_SRC1] == 'i') {
 				MonoInst *var = get_vreg_to_inst (cfg, ins->sreg1);
-				if (var) {
+				if (var && !(var->flags & MONO_INST_VOLATILE)) {
 					int idx = var->inst_c0;
 					if (stack [idx]) {
 						if (var->opcode != OP_ARG)
@@ -233,7 +233,7 @@ mono_ssa_rename_vars2 (MonoCompile *cfg, int max_vars, MonoBasicBlock *bb, MonoI
 			/* SREG2 */
 			if (spec [MONO_INST_SRC2] == 'i') {
 				MonoInst *var = get_vreg_to_inst (cfg, ins->sreg2);
-				if (var) {
+				if (var && !(var->flags & MONO_INST_VOLATILE)) {
 					int idx = var->inst_c0;
 					if (stack [idx]) {
 						if (var->opcode != OP_ARG)
@@ -246,25 +246,28 @@ mono_ssa_rename_vars2 (MonoCompile *cfg, int max_vars, MonoBasicBlock *bb, MonoI
 		}
 
 		/* DREG */
-		if ((spec [MONO_INST_DEST] == 'i') && get_vreg_to_inst (cfg, ins->dreg)) {
+		if (spec [MONO_INST_DEST] == 'i') {
 			MonoInst *var = get_vreg_to_inst (cfg, ins->dreg);
-			idx = var->inst_c0;
-			g_assert (idx < max_vars);
 
-			/* FIXME: Add back the bb_init optimization */
-			new_var = mono_compile_create_var (cfg, var->inst_vtype,  var->opcode);
-			new_var->flags = var->flags;
+			if (var && !(var->flags & MONO_INST_VOLATILE)) {
+				idx = var->inst_c0;
+				g_assert (idx < max_vars);
 
-			if (cfg->verbose_level >= 4)
-				printf ("  R%d -> R%d\n", var->dreg, new_var->dreg);
+				/* FIXME: Add back the bb_init optimization */
+				new_var = mono_compile_create_var (cfg, var->inst_vtype,  var->opcode);
+				new_var->flags = var->flags;
 
-			stack [idx] = new_var;
+				if (cfg->verbose_level >= 4)
+					printf ("  R%d -> R%d\n", var->dreg, new_var->dreg);
 
-			ins->dreg = new_var->dreg;
+				stack [idx] = new_var;
+
+				ins->dreg = new_var->dreg;
 
 #ifdef DEBUG_SSA
-			printf ("DEF %d %d\n", idx, new_var->inst_c0);
+				printf ("DEF %d %d\n", idx, new_var->inst_c0);
 #endif
+			}
 		}
 
 #ifdef DEBUG_SSA
@@ -387,7 +390,7 @@ mono_ssa_rename_vars (MonoCompile *cfg, int max_vars, MonoBasicBlock *bb, MonoIn
 void
 mono_ssa_compute (MonoCompile *cfg)
 {
-	int i, idx;
+	int i, j, idx;
 	MonoBitSet *set;
 	MonoMethodVar *vinfo = g_new0 (MonoMethodVar, cfg->num_varinfo);
 	MonoInst *ins, *store, **stack;
@@ -403,7 +406,7 @@ mono_ssa_compute (MonoCompile *cfg)
 
 #ifdef CREATE_PRUNED_SSA
 	/* we need liveness for pruned SSA */
-	if (!(cfg->comp_done & MONO_COMP_LIVENESS))
+	if (!cfg->new_ir && !(cfg->comp_done & MONO_COMP_LIVENESS))
 		mono_analyze_liveness (cfg);
 #endif
 
@@ -450,6 +453,9 @@ mono_ssa_compute (MonoCompile *cfg)
 		if ((var->type != STACK_I4) && (var->type != STACK_PTR) && (var->type != STACK_OBJ) && (var->type != STACK_MP))
 			continue;
 
+		if (var->flags & MONO_INST_VOLATILE)
+			continue;
+
 		set = mono_compile_iterated_dfrontier (cfg, vinfo [i].def_in);
 		vinfo [i].dfrontier = set;
 
@@ -476,6 +482,10 @@ mono_ssa_compute (MonoCompile *cfg)
 
 			ins->inst_phi_args =  mono_mempool_alloc0 (cfg->mempool, sizeof (int) * (cfg->bblocks [idx]->in_count + 1));
 			ins->inst_phi_args [0] = cfg->bblocks [idx]->in_count;
+
+			/* For debugging */
+			for (j = 0; j < cfg->bblocks [idx]->in_count; ++j)
+				ins->inst_phi_args [j + 1] = -1;
 
 			if (cfg->new_ir) {
 				ins->dreg = cfg->varinfo [i]->dreg;
@@ -534,6 +544,10 @@ mono_ssa_remove2 (MonoCompile *cfg)
 
 	for (i = 0; i < cfg->num_bblocks; ++i) {
 		MonoBasicBlock *bb = cfg->bblocks [i];
+
+		if (cfg->verbose_level >= 4)
+			printf ("REMOVE SSA %d:\n", bb->block_num);
+
 		for (ins = bb->code; ins; ins = ins->next) {
 			if (ins->opcode == OP_PHI) {
 				g_assert (ins->inst_phi_args [0] == bb->in_count);
@@ -544,9 +558,8 @@ mono_ssa_remove2 (MonoCompile *cfg)
 					int idx = ins->inst_phi_args [j + 1];
 
 					/* FIXME: Add back optimizations */
-#ifdef DEBUG_SSA
-						printf ("MOVE %d to %d in BB%d\n", idx, var->inst_c0, pred->block_num);
-#endif
+					if (cfg->verbose_level >= 4)
+						printf ("\tMOVE %d to %d in BB%d\n", idx, var->inst_c0, pred->block_num);
 						MONO_INST_NEW (cfg, move, OP_MOVE);
 						move->dreg = var->dreg;
 						move->sreg1 = cfg->varinfo [idx]->dreg;

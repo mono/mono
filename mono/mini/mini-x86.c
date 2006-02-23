@@ -834,7 +834,7 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 
 	for (i = 0; i < sig->param_count + sig->hasthis; ++i) {
 		ArgInfo *ainfo = &cinfo->args [i];
-		inst = cfg->varinfo [i];
+		inst = cfg->new_ir ? cfg->args [i] : cfg->varinfo [i];
 		if (inst->opcode != OP_REGVAR) {
 			inst->opcode = OP_REGOFFSET;
 			inst->inst_basereg = X86_EBP;
@@ -3790,7 +3790,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 	pos = 0;
 
 	for (i = 0; i < sig->param_count + sig->hasthis; ++i) {
-		inst = cfg->varinfo [pos];
+		inst = cfg->new_ir ? cfg->args [pos] : cfg->varinfo [pos];
 		if (inst->opcode == OP_REGVAR) {
 			x86_mov_reg_membase (code, inst->dreg, X86_EBP, inst->inst_offset, 4);
 			if (cfg->verbose_level > 2)

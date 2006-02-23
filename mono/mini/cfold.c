@@ -529,8 +529,11 @@ mono_constant_fold_ins2 (MonoInst *ins, MonoInst *arg1, MonoInst *arg2)
 				break;
 			case OP_NOP:
 				/* This happens when a conditional branch is eliminated */
-				ins->opcode = OP_NOP;
-				ins->sreg1 = ins->sreg2 = -1;
+				if (next->next == NULL) {
+					/* Last ins */
+					ins->opcode = OP_NOP;
+					ins->sreg1 = ins->sreg2 = -1;
+				}
 				break;
 			default:
 				return;

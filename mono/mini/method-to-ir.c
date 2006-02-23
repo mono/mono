@@ -337,9 +337,12 @@ mono_print_bb (MonoBasicBlock *bb, const char *msg)
 	int i;
 	MonoInst *tree;
 
-	printf ("\n%s %d: [", msg, bb->block_num);
+	printf ("\n%s %d: [IN: ", msg, bb->block_num);
+	for (i = 0; i < bb->in_count; ++i)
+		printf (" BB%d(%d)", bb->in_bb [i]->block_num, bb->in_bb [i]->dfn);
+	printf (", OUT: ");
 	for (i = 0; i < bb->out_count; ++i)
-		printf (" BB%d %d", bb->out_bb [i]->block_num, bb->out_bb [i]->dfn);
+		printf (" BB%d(%d)", bb->out_bb [i]->block_num, bb->out_bb [i]->dfn);
 	printf (" ]\n");
 	for (tree = bb->code; tree; tree = tree->next)
 		mono_print_ins_index (-1, tree);
@@ -978,6 +981,55 @@ link_bblock (MonoCompile *cfg, MonoBasicBlock *from, MonoBasicBlock* to)
 		}
 		newa [i] = from;
 		to->in_count++;
+		to->in_bb = newa;
+	}
+}
+
+/**
+ * unlink_bblock:
+ *
+ *   Unlink two basic blocks.
+ */
+static void
+unlink_bblock (MonoCompile *cfg, MonoBasicBlock *from, MonoBasicBlock* to)
+{
+	MonoBasicBlock **newa;
+	int i, pos;
+	gboolean found;
+
+	found = FALSE;
+	for (i = 0; i < from->out_count; ++i) {
+		if (to == from->out_bb [i]) {
+			found = TRUE;
+			break;
+		}
+	}
+	if (found) {
+		newa = mono_mempool_alloc (cfg->mempool, sizeof (gpointer) * (from->out_count - 1));
+		pos = 0;
+		for (i = 0; i < from->out_count; ++i) {
+			if (from->out_bb [i] != to)
+				newa [pos ++] = from->out_bb [i];
+		}
+		from->out_count--;
+		from->out_bb = newa;
+	}
+
+	found = FALSE;
+	for (i = 0; i < to->in_count; ++i) {
+		if (from == to->in_bb [i]) {
+			found = TRUE;
+			break;
+		}
+	}
+	if (found) {
+		newa = mono_mempool_alloc (cfg->mempool, sizeof (gpointer) * (to->in_count - 1));
+		pos = 0;
+		for (i = 0; i < to->in_count; ++i) {
+			if (to->in_bb [i] != from)
+				newa [pos ++] = to->in_bb [i];
+		}
+		to->in_count--;
 		to->in_bb = newa;
 	}
 }
@@ -5005,14 +5057,19 @@ mono_decompose_long_opts (MonoCompile *cfg)
 					prev = cfg->cbb->last_ins;
 				}
 				else {
-					int i;
+					int i, count;
 					MonoInst *next = tree->next;
+					MonoBasicBlock **tmp_bblocks, *tmp;
 
 					if (next && next->opcode == OP_NOP)
 						/* Avoid NOPs following branches */
 						next = next->next;
 
 					/* Multiple BBs */
+
+					/* Set region */
+					for (tmp = first_bb; tmp; tmp = tmp->next_bb)
+						tmp->region = bb->region;
 
 					/* Split the original bb */
 					tree->next = NULL;
@@ -5042,14 +5099,24 @@ mono_decompose_long_opts (MonoCompile *cfg)
 					else
 						bb->code = first_bb->code;
 					bb->last_ins = first_bb->last_ins;
+
+					/* Delete the links between the original bb and its successors */
+					tmp_bblocks = bb->out_bb;
+					count = bb->out_count;
+					for (i = 0; i < count; ++i)
+						unlink_bblock (cfg, bb, tmp_bblocks [i]);
+
+					/* Add links between the original bb and the first_bb's successors */
 					for (i = 0; i < first_bb->out_count; ++i) {
 						MonoBasicBlock *out_bb = first_bb->out_bb [i];
-						int j;
 
-						for (j = 0; j < out_bb->in_count; ++j)
-							if (out_bb->in_bb [j] == first_bb)
-								out_bb->in_bb [j] = bb;
 						link_bblock (cfg, bb, out_bb);
+					}
+					/* Delete links between the first_bb and its successors */
+					for (i = 0; i < bb->out_count; ++i) {
+						MonoBasicBlock *out_bb = bb->out_bb [i];
+
+						unlink_bblock (cfg, first_bb, out_bb);
 					}
 					cfg->cbb->next_bb = bb->next_bb;
 					bb->next_bb = first_bb->next_bb;
@@ -5161,7 +5228,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 
 		arg_array = alloca (sizeof (MonoInst *) * num_args);
 		for (i = num_args - 1; i >= 0; i--)
-			arg_array [i] = cfg->varinfo [i];
+			arg_array [i] = cfg->args [i];
 
 		if (header->num_clauses) {
 			cfg->spvars = g_hash_table_new (NULL, NULL);
@@ -9280,6 +9347,9 @@ mono_spill_global_vars (MonoCompile *cfg)
 								insert_before_ins (bb, ins, load_ins, &prev);
 							}
 							else {
+#if SIZEOF_VOID_P == 4
+								g_assert (load_opcode != OP_LOADI8_MEMBASE);
+#endif
 								NEW_LOAD_MEMBASE (cfg, load_ins, load_opcode, sreg, var->inst_basereg, var->inst_offset);
 								insert_before_ins (bb, ins, load_ins, &prev);
 							}

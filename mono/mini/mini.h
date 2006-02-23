@@ -574,6 +574,7 @@ typedef struct {
 	MonoInst        *domainvar; /* a cache for the current domain */
 	MonoInst        *got_var; /* Global Offset Table variable */
 	MonoInst        **locals;
+	MonoInst        **args;
 	
 	struct MonoAliasingInformation *aliasing_info;
 

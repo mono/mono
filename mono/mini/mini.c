@@ -1747,13 +1747,21 @@ mono_compile_create_var_for_vreg (MonoCompile *cfg, MonoType *type, int opcode, 
 
 		/* 
 		 * These two cannot be allocated using create_var_for_vreg since that would
-		 * screw up the invariant that locals are allocated consecutively from 
-		 * locals_offset.
+		 * put it into the cfg->varinfo array, confusing many parts of the JIT.
 		 */
+
+		/* 
+		 * Set flags to VOLATILE so SSA skips it.
+		 */
+
+		if (cfg->verbose_level >= 4) {
+			printf ("  Create LVAR R%d (R%d, R%d)\n", inst->dreg, inst->dreg + 1, inst->dreg + 2);
+		}
 
 		/* Allocate a dummy MonoInst for the first vreg */
 		MONO_INST_NEW (cfg, tree, OP_LOCAL);
 		tree->dreg = inst->dreg + 1;
+		tree->flags = MONO_INST_VOLATILE;
 		tree->inst_c0 = num;
 		tree->type = STACK_I4;
 		tree->inst_vtype = &mono_defaults.int32_class->byval_arg;
@@ -1764,6 +1772,7 @@ mono_compile_create_var_for_vreg (MonoCompile *cfg, MonoType *type, int opcode, 
 		/* Allocate a dummy MonoInst for the second vreg */
 		MONO_INST_NEW (cfg, tree, OP_LOCAL);
 		tree->dreg = inst->dreg + 2;
+		tree->flags = MONO_INST_VOLATILE;
 		tree->inst_c0 = num;
 		tree->type = STACK_I4;
 		tree->inst_vtype = &mono_defaults.int32_class->byval_arg;
@@ -9035,11 +9044,13 @@ mono_compile_create_vars (MonoCompile *cfg)
 	if (cfg->verbose_level > 2)
 		g_print ("creating vars\n");
 
+	cfg->args = mono_mempool_alloc0 (cfg->mempool, (sig->param_count + sig->hasthis) * sizeof (MonoInst*));
+
 	if (sig->hasthis)
-		mono_compile_create_var (cfg, &cfg->method->klass->this_arg, OP_ARG);
+		cfg->args [0] = mono_compile_create_var (cfg, &cfg->method->klass->this_arg, OP_ARG);
 
 	for (i = 0; i < sig->param_count; ++i) {
-		mono_compile_create_var (cfg, sig->params [i], OP_ARG);
+		cfg->args [i + sig->hasthis] = mono_compile_create_var (cfg, sig->params [i], OP_ARG);
 		if (sig->params [i]->byref) {
 			cfg->disable_ssa = TRUE;
 		}
