@@ -1,0 +1,3 @@
+2006-02-23  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* added run-test.bat file for running in GH environment

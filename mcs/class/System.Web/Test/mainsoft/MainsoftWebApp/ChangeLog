@@ -1,0 +1,4 @@
+2006-02-23  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* added GH project files: MainsoftWebApp.JBoss.vmwcsproj,
+	MainsoftWebApp.Tomcat.vmwcsproj for Tomcat and JBoss servers
