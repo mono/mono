@@ -1,5 +1,9 @@
 2006-02-22  Chris Toshok  <toshok@ximian.com>
 
+	* ObjectDataSource.cs: corcompare work.
+
+2006-02-22  Chris Toshok  <toshok@ximian.com>
+
 	* ParameterCollection.cs: add an EditorAttribute to the class.
 
 	* Parameter.cs: cleanup, fix the Value property, and implement the

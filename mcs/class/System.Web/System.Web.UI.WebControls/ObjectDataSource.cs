@@ -109,11 +109,11 @@ namespace System.Web.UI.WebControls
 			remove { DefaultView.ObjectDisposing -= value; }
 		}
 		
-/*		public event ObjectDataSourceResolvingMethodEventHandler ResolvingMethod {
-			add { DefaultView.ResolvingMethod += value; }
-			remove { DefaultView.ResolvingMethod -= value; }
-		}
-*/
+		/*		public event ObjectDataSourceResolvingMethodEventHandler ResolvingMethod {
+				add { DefaultView.ResolvingMethod += value; }
+				remove { DefaultView.ResolvingMethod -= value; }
+				}
+		*/
 		public event ObjectDataSourceStatusEventHandler Selected {
 			add { DefaultView.Selected += value; }
 			remove { DefaultView.Selected -= value; }
@@ -173,8 +173,8 @@ namespace System.Web.UI.WebControls
 		
 		
 		
-	    [WebCategoryAttribute ("Data")]
-	    [DefaultValueAttribute (ConflictOptions.OverwriteChanges)]
+		[WebCategoryAttribute ("Data")]
+		[DefaultValueAttribute (ConflictOptions.OverwriteChanges)]
 		public ConflictOptions ConflictDetection {
 			get { return DefaultView.ConflictDetection; }
 			set { DefaultView.ConflictDetection = value; }
@@ -193,25 +193,25 @@ namespace System.Web.UI.WebControls
 		}
 		
 		
-	    [WebCategoryAttribute ("Data")]
-	    [DefaultValueAttribute ("")]
+		[WebCategoryAttribute ("Data")]
+		[DefaultValueAttribute ("")]
 		public string DataObjectTypeName {
 			get { return DefaultView.DataObjectTypeName; }
 			set { DefaultView.DataObjectTypeName = value; }
 		}
 		
-	    [WebCategoryAttribute ("Data")]
-	    [DefaultValueAttribute ("")]
+		[WebCategoryAttribute ("Data")]
+		[DefaultValueAttribute ("")]
 		public string DeleteMethod {
 			get { return DefaultView.DeleteMethod; }
 			set { DefaultView.DeleteMethod = value; }
 		}
 		
-	    [WebCategoryAttribute ("Data")]
-	    [MergablePropertyAttribute (false)]
-	    [EditorAttribute ("System.Web.UI.Design.WebControls.ParameterCollectionEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
-	    [DefaultValueAttribute (null)]
-	    [PersistenceModeAttribute (PersistenceMode.InnerProperty)]
+		[WebCategoryAttribute ("Data")]
+		[MergablePropertyAttribute (false)]
+		[EditorAttribute ("System.Web.UI.Design.WebControls.ParameterCollectionEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
+		[DefaultValueAttribute (null)]
+		[PersistenceModeAttribute (PersistenceMode.InnerProperty)]
 		public ParameterCollection DeleteParameters {
 			get { return DefaultView.DeleteParameters; }
 		}
@@ -229,84 +229,84 @@ namespace System.Web.UI.WebControls
 		}
 		
 		
-	    [WebCategoryAttribute ("Paging")]
-	    [DefaultValueAttribute (false)]
-		public virtual bool EnablePaging {
+		[WebCategoryAttribute ("Paging")]
+		[DefaultValueAttribute (false)]
+		public bool EnablePaging {
 			get { return DefaultView.EnablePaging; }
 			set { DefaultView.EnablePaging = value; }
 		}
 		
-	    [WebCategoryAttribute ("Data")]
-	    [DefaultValueAttribute ("")]
+		[WebCategoryAttribute ("Data")]
+		[DefaultValueAttribute ("")]
 		public string FilterExpression {
 			get { return DefaultView.FilterExpression; }
 			set { DefaultView.FilterExpression = value; }
 		}
 		
-	    [WebCategoryAttribute ("Data")]
-	    [MergablePropertyAttribute (false)]
-	    [EditorAttribute ("System.Web.UI.Design.WebControls.ParameterCollectionEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
-	    [DefaultValueAttribute (null)]
-	    [PersistenceModeAttribute (PersistenceMode.InnerProperty)]
+		[WebCategoryAttribute ("Data")]
+		[MergablePropertyAttribute (false)]
+		[EditorAttribute ("System.Web.UI.Design.WebControls.ParameterCollectionEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
+		[DefaultValueAttribute (null)]
+		[PersistenceModeAttribute (PersistenceMode.InnerProperty)]
 		public ParameterCollection FilterParameters {
 			get { return DefaultView.FilterParameters; }
 		}
 		
-	    [DefaultValueAttribute ("")]
-	    [WebCategoryAttribute ("Data")]
-		public virtual string InsertMethod {
+		[DefaultValueAttribute ("")]
+		[WebCategoryAttribute ("Data")]
+		public string InsertMethod {
 			get { return DefaultView.InsertMethod; }
 			set { DefaultView.InsertMethod = value; }
 		}
 		
-	    [WebCategoryAttribute ("Data")]
-	    [MergablePropertyAttribute (false)]
-	    [EditorAttribute ("System.Web.UI.Design.WebControls.ParameterCollectionEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
-	    [DefaultValueAttribute (null)]
-	    [PersistenceModeAttribute (PersistenceMode.InnerProperty)]
+		[WebCategoryAttribute ("Data")]
+		[MergablePropertyAttribute (false)]
+		[EditorAttribute ("System.Web.UI.Design.WebControls.ParameterCollectionEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
+		[DefaultValueAttribute (null)]
+		[PersistenceModeAttribute (PersistenceMode.InnerProperty)]
 		public ParameterCollection InsertParameters {
 			get { return DefaultView.InsertParameters; }
 		}
 		
-	    [WebCategoryAttribute ("Paging")]
-	    [DefaultValueAttribute ("maximumRows")]
+		[WebCategoryAttribute ("Paging")]
+		[DefaultValueAttribute ("maximumRows")]
 		public string MaximumRowsParameterName {
 			get { return DefaultView.MaximumRowsParameterName; }
 			set { DefaultView.MaximumRowsParameterName = value; }
 		}
 
-	    [WebCategoryAttribute ("Data")]
-	    [DefaultValueAttribute ("original_{0}")]
+		[WebCategoryAttribute ("Data")]
+		[DefaultValueAttribute ("{0}")]
 		public string OldValuesParameterFormatString {
 			get { return DefaultView.OldValuesParameterFormatString; }
 			set { DefaultView.OldValuesParameterFormatString = value; }
 		}
 		
-	    [WebCategoryAttribute ("Paging")]
-	    [DefaultValueAttribute ("")]
-		public virtual string SelectCountMethod {
+		[WebCategoryAttribute ("Paging")]
+		[DefaultValueAttribute ("")]
+		public string SelectCountMethod {
 			get { return DefaultView.SelectCountMethod; }
 			set { DefaultView.SelectCountMethod = value; }
 		}
 		
-	    [DefaultValueAttribute ("")]
-	    [WebCategoryAttribute ("Data")]
-		public virtual string SelectMethod {
+		[DefaultValueAttribute ("")]
+		[WebCategoryAttribute ("Data")]
+		public string SelectMethod {
 			get { return DefaultView.SelectMethod; }
 			set { DefaultView.SelectMethod = value; }
 		}
 		
-	    [WebCategoryAttribute ("Data")]
-	    [MergablePropertyAttribute (false)]
-	    [EditorAttribute ("System.Web.UI.Design.WebControls.ParameterCollectionEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
-	    [DefaultValueAttribute (null)]
-	    [PersistenceModeAttribute (PersistenceMode.InnerProperty)]
+		[WebCategoryAttribute ("Data")]
+		[MergablePropertyAttribute (false)]
+		[EditorAttribute ("System.Web.UI.Design.WebControls.ParameterCollectionEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
+		[DefaultValueAttribute (null)]
+		[PersistenceModeAttribute (PersistenceMode.InnerProperty)]
 		public ParameterCollection SelectParameters {
 			get { return DefaultView.SelectParameters; }
 		}
 
-	    [DefaultValueAttribute ("")]
-	    [WebCategoryAttribute ("Data")]
+		[DefaultValueAttribute ("")]
+		[WebCategoryAttribute ("Data")]
 		public string SortParameterName {
 			get { return DefaultView.SortParameterName; }
 			set { DefaultView.SortParameterName = value; }
@@ -325,32 +325,32 @@ namespace System.Web.UI.WebControls
 		}
 		
 		
-	    [WebCategoryAttribute ("Paging")]
-	    [DefaultValueAttribute ("startRowIndex")]
+		[WebCategoryAttribute ("Paging")]
+		[DefaultValueAttribute ("startRowIndex")]
 		public string StartRowIndexParameterName {
 			get { return DefaultView.StartRowIndexParameterName; }
 			set { DefaultView.StartRowIndexParameterName = value; }
 		}
 		
-	    [DefaultValueAttribute ("")]
-	    [WebCategoryAttribute ("Data")]
-		public virtual string TypeName {
+		[DefaultValueAttribute ("")]
+		[WebCategoryAttribute ("Data")]
+		public string TypeName {
 			get { return DefaultView.TypeName; }
 			set { DefaultView.TypeName = value; }
 		}
 		
-	    [DefaultValueAttribute ("")]
-	    [WebCategoryAttribute ("Data")]
-		public virtual string UpdateMethod {
+		[DefaultValueAttribute ("")]
+		[WebCategoryAttribute ("Data")]
+		public string UpdateMethod {
 			get { return DefaultView.UpdateMethod; }
 			set { DefaultView.UpdateMethod = value; }
 		}
 		
-	    [WebCategoryAttribute ("Data")]
-	    [MergablePropertyAttribute (false)]
-	    [EditorAttribute ("System.Web.UI.Design.WebControls.ParameterCollectionEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
-	    [DefaultValueAttribute (null)]
-	    [PersistenceModeAttribute (PersistenceMode.InnerProperty)]
+		[WebCategoryAttribute ("Data")]
+		[MergablePropertyAttribute (false)]
+		[EditorAttribute ("System.Web.UI.Design.WebControls.ParameterCollectionEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
+		[DefaultValueAttribute (null)]
+		[PersistenceModeAttribute (PersistenceMode.InnerProperty)]
 		public ParameterCollection UpdateParameters {
 			get { return DefaultView.UpdateParameters; }
 		}
