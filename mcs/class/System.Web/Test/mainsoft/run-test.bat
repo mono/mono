@@ -43,11 +43,13 @@ pushd MainsoftWebTest
 popd
 
 rem =================================================
-copy MainsoftWebTest\almost_config.xml MainsoftWebTest\bin\almost_config.xml
-copy MainsoftWebTest\test_catalog.xml MainsoftWebTest\bin\test_catalog.xml
-copy MainsoftWebTest\App.gh.config MainsoftWebTest\bin\SystemWebTest.dll.config
-copy MainsoftWebTest\App.gh.config MainsoftWebTest\bin\nunit-console.exe.config
-copy ..\..\..\..\nunit20\nunit-console\bin\Debug_Java\nunit-console.jar MainsoftWebTest\bin\nunit-console.jar
+copy MainsoftWebTest\almost_config.xml MainsoftWebTest\bin\almost_config.xml /Y
+copy MainsoftWebTest\test_catalog.xml MainsoftWebTest\bin\test_catalog.xml /Y
+copy MainsoftWebTest\App.gh.config MainsoftWebTest\bin\nunit-console.exe.config /Y
+copy ..\..\..\..\nunit20\core\bin\Debug_Java\nunit.core.jar MainsoftWebTest\bin\nunit.core.jar /Y
+copy ..\..\..\..\nunit20\framework\bin\Debug_Java\nunit.framework.jar MainsoftWebTest\bin\nunit.framework.jar /Y
+copy ..\..\..\..\nunit20\util\bin\Debug_Java\nunit.util.jar MainsoftWebTest\bin\nunit.util.jar /Y
+copy ..\..\..\..\nunit20\nunit-console\bin\Debug_Java\nunit-console.jar MainsoftWebTest\bin\nunit-console.jar /Y
 
 rem =================================================
 echo Buildinig xmltool...
