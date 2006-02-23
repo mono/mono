@@ -49,13 +49,9 @@ namespace Mono.Unix {
 			get {return UnixPath.GetFileName (FullPath);}
 		}
 
+		[Obsolete ("Use GetContents()")]
 		public UnixFileSystemInfo Contents {
-			get {
-				string path = TryReadLink ();
-				if (path != null)
-					return UnixFileSystemInfo.Create (ContentsPath);
-				return null;
-			}
+			get {return GetContents ();}
 		}
 
 		public string ContentsPath {
@@ -68,6 +64,14 @@ namespace Mono.Unix {
 			get {
 				return TryReadLink () != null;
 			}
+		}
+
+		public UnixFileSystemInfo GetContents ()
+		{
+			string path = ReadLink ();
+			return UnixFileSystemInfo.Create (
+						UnixPath.Combine (UnixPath.GetDirectoryName (FullPath), 
+							ContentsPath));
 		}
 
 		public void CreateSymbolicLinkTo (string path)

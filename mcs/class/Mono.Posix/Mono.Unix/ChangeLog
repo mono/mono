@@ -1,3 +1,21 @@
+2006-02-23  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* UnixFileSystemInfo.cs: Create() should return a UnixFileInfo if the file
+	  doesn't exist.  This allows callers to use UnixFileInfo.Exists to see if
+	  the file exists, and behaves more rationally e.g. if the directory
+	  contents changes while calling UnixDirectoryInfo.GetFileSystemEntries(),
+	  we'll get a UnixFileInfo entry that doesn't exist instead of an exception
+	  terminating the entire array creation.
+	* UnixSymbolicLinkInfo.cs: [Obsolete] the Contents property -- this property
+	  *always* creates a new object if HasContents=true, and since a
+	  UnixFileSystemInfo instance is (104+2*(sizeof(void*))+1) bytes (~113 bytes
+	  on 32-bit platforms), we don't want to create these frequently.  Add a
+	  GetContents() method as the replacement, to make it (slightly) more
+	  explicit that information won't be cached (and thus should be cached by
+	  the caller, if appropriate).  GetContents() throws an exception if
+	  HasContents=false instead of returning null; this change brings the
+	  implementation in line with the documentation.
+
 2006-02-18  Alp Toker  <alp@atoker.com>
 
 	* UnixEndPoint.cs: Avoid truncation of last two bytes of SocketAddress

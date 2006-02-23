@@ -390,6 +390,9 @@ namespace Mono.Unix {
 		{
 			Native.Stat stat;
 			int r = Native.Syscall.lstat (path, out stat);
+			if (r == -1 && Native.Stdlib.GetLastError() == Native.Errno.ENOENT) {
+				return new UnixFileInfo (path);
+			}
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 
 			if (IsFileType (stat.st_mode, Native.FilePermissions.S_IFDIR))
