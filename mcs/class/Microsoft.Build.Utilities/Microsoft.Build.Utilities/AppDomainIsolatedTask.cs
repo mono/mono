@@ -38,7 +38,7 @@ namespace Microsoft.Build.Utilities
 	{
 		IBuildEngine		buildEngine;
 		string			helpKeywordPrefix;
-		object			hostObject;
+		ITaskHost		hostObject;
 		TaskLoggingHelper	log;
 		ResourceManager		taskResources;
 		
@@ -84,7 +84,7 @@ namespace Microsoft.Build.Utilities
 			}
 		}
 
-		public object HostObject {
+		public ITaskHost HostObject {
 			get {
 				return hostObject;
 			}
