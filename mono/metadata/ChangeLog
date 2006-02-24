@@ -1,3 +1,8 @@
+2006-02-24 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* threadpool.c: for asynchronous connect(), enable the same workaround
+	for BSD 6 as for the Mac. Fixes bug #77637.
+
 2006-02-21  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c (ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalUni): Fix writing past memory. Fixes #77613.
