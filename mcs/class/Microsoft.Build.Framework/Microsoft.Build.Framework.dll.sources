@@ -17,10 +17,13 @@ Microsoft.Build.Framework/BuildWarningEventArgs.cs
 Microsoft.Build.Framework/BuildWarningEventHandler.cs
 Microsoft.Build.Framework/CustomBuildEventArgs.cs
 Microsoft.Build.Framework/CustomBuildEventHandler.cs
+Microsoft.Build.Framework/ExternalProjectFinishedEventArgs.cs
+Microsoft.Build.Framework/ExternalProjectStartedEventArgs.cs
 Microsoft.Build.Framework/IBuildEngine.cs
 Microsoft.Build.Framework/IEventSource.cs
 Microsoft.Build.Framework/ILogger.cs
 Microsoft.Build.Framework/ITask.cs
+Microsoft.Build.Framework/ITaskHost.cs
 Microsoft.Build.Framework/ITaskItem.cs
 Microsoft.Build.Framework/LoadInSeparateAppDomainAttribute.cs
 Microsoft.Build.Framework/LoggerException.cs
@@ -36,6 +39,7 @@ Microsoft.Build.Framework/TargetFinishedEventArgs.cs
 Microsoft.Build.Framework/TargetFinishedEventHandler.cs
 Microsoft.Build.Framework/TargetStartedEventArgs.cs
 Microsoft.Build.Framework/TargetStartedEventHandler.cs
+Microsoft.Build.Framework/TaskCommandLineEventArgs.cs
 Microsoft.Build.Framework/TaskFinishedEventArgs.cs
 Microsoft.Build.Framework/TaskFinishedEventHandler.cs
 Microsoft.Build.Framework/TaskStartedEventArgs.cs

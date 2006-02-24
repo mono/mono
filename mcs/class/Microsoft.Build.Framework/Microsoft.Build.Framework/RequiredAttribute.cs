@@ -32,7 +32,7 @@ using System;
 
 namespace Microsoft.Build.Framework
 {
-	[AttributeUsage(AttributeTargets.Property, AllowMultiple=false, Inherited=true)]
+	[AttributeUsage(AttributeTargets.Property, AllowMultiple=false, Inherited=false)]
 	public sealed class RequiredAttribute : Attribute
 	{
 		// It should stop build process if property is of non-array type

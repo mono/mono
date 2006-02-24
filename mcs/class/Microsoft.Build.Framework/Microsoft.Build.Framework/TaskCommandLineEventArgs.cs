@@ -1,11 +1,10 @@
 //
-// OutputAttribute.cs: Defines the metadata attribute that task authors use to
-// identify task parameters that output from the task.
+// TaskCommandLineEventArgs.cs: Provides data for the MessageRaised event.
 //
 // Author:
 //   Marek Sieradzki (marek.sieradzki@gmail.com)
-// 
-// (C) 2005 Marek Sieradzki
+//
+// (C) 2006 Marek Sieradzki
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,13 +29,32 @@
 
 using System;
 
-namespace Microsoft.Build.Framework
-{
-	[AttributeUsage(AttributeTargets.Property, AllowMultiple=false, Inherited=false)]
-	public sealed class OutputAttribute : Attribute
-	{
-		public OutputAttribute ()
+namespace Microsoft.Build.Framework {
+	[Serializable]
+	public class TaskCommandLineEventArgs : BuildMessageEventArgs {
+	
+		string	commandLine;
+		string	taskName;
+	
+		protected TaskCommandLineEventArgs ()
 		{
+		}
+		
+		public TaskCommandLineEventArgs (string commandLine,
+						 string taskName,
+						 MessageImportance importance)
+			: base (null, null, null, importance)
+		{
+			this.taskName = taskName;
+			this.commandLine = commandLine;
+		}
+		
+		public string CommandLine {
+			get { return commandLine; }
+		}
+		
+		public string TaskName {
+			get { return taskName; }
 		}
 	}
 }
