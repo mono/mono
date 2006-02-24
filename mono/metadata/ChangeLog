@@ -1,3 +1,8 @@
+2006-02-24 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* threadpool.c: for asynchronous connect(), enable the same workaround
+	for BSD 6 as for the Mac. Fixes bug #77637.
+
 2006-02-24  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c (mono_marshal_free_asany): Fix handling of blittable
