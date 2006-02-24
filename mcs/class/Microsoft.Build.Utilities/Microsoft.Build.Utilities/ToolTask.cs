@@ -42,15 +42,20 @@ namespace Microsoft.Build.Utilities
 	public abstract class ToolTask : Task
 	{
 		StringDictionary	environmentOverride;
+		int			exitCode;
 		int			timeout;
 		string			toolPath;
 		Process			process;
+		MessageImportance	standardErrorLoggingImportance;
+		MessageImportance	standardOutputLoggingImportance;
 		
 		static Regex		regex;
 		
 		protected ToolTask ()
 			: this (null, null)
 		{
+			this.standardErrorLoggingImportance = MessageImportance.High;
+			this.standardOutputLoggingImportance = MessageImportance.Normal;
 		}
 
 		protected ToolTask (ResourceManager taskResources)
@@ -84,6 +89,14 @@ namespace Microsoft.Build.Utilities
 			return true;
 		}
 
+		[MonoTODO]
+		protected virtual int ExecuteTool (string pathToTool,
+						   string responseFileCommands,
+						   string commandLineCommands)
+		{
+			return 0;
+		}
+		
 		public override bool Execute ()
 		{
 			string arguments, toolFilename;
@@ -91,6 +104,11 @@ namespace Microsoft.Build.Utilities
 			arguments = String.Concat (GenerateCommandLineCommands (), " ", GenerateResponseFileCommands ());
 			toolFilename = GenerateFullPathToTool (); 
 			return RealExecute (toolFilename, arguments);
+		}
+		
+		protected virtual string GetWorkingDirectory ()
+		{
+			return null;
 		}
 		
 		private bool RealExecute (string filename, string arguments)
@@ -117,7 +135,7 @@ namespace Microsoft.Build.Utilities
 			process.WaitForExit ();
 			
 			while ((line = process.StandardError.ReadLine ()) != null) {
-				HandleError (line);
+				LogEventsFromTextOutput (line, MessageImportance.Normal);
 			}
 			
 			Log.LogMessage (MessageImportance.Low, String.Format ("Tool {0} execution finished.", filename));
@@ -125,12 +143,16 @@ namespace Microsoft.Build.Utilities
 			return !Log.HasLoggedErrors;
 		}
 		
-		private void HandleError (string line)
+		
+		// FIXME: use importance
+		[MonoTODO]
+		protected virtual void LogEventsFromTextOutput (string singleLine,
+								MessageImportance importance)
 		{
 			string filename, origin, category, code, subcategory, text;
 			int lineNumber, columnNumber, endLineNumber, endColumnNumber;
 		
-			Match m = regex.Match (line);
+			Match m = regex.Match (singleLine);
 			origin = m.Groups [regex.GroupNumberFromName ("ORIGIN")].Value;
 			category = m.Groups [regex.GroupNumberFromName ("CATEGORY")].Value;
 			code = m.Groups [regex.GroupNumberFromName ("CODE")].Value;
@@ -219,21 +241,25 @@ namespace Microsoft.Build.Utilities
 			return String.Format ("@{0}", responseFilePath);
 		}
 
-		protected virtual bool HandleTaskExecutionErrors (int exitCode,
-								 bool hasTaskLoggedErrors)
+		[MonoTODO]
+		protected virtual bool HandleTaskExecutionErrors ()
 		{
 			return true;
 		}
 
-		protected virtual bool InitializeHostObject (out bool appropriateHostObjectExists,
-							    out bool continueBuild)
+		protected virtual HostObjectInitializationStatus InitializeHostObject ()
 		{
-			appropriateHostObjectExists = (HostObject != null) ? true : false;
-			continueBuild = true;
-			return true;
+			return HostObjectInitializationStatus.NoActionReturnSuccess;
 		}
 
+		[MonoTODO]
 		protected virtual void LogToolCommand (string message)
+		{
+		}
+		
+		[MonoTODO]
+		protected virtual void LogPathToTool (string toolName,
+						      string pathToTool)
 		{
 		}
 
@@ -251,6 +277,11 @@ namespace Microsoft.Build.Utilities
 		{
 			get { return environmentOverride; }
 		}
+		
+		[MonoTODO]
+		public int ExitCode {
+			get { return exitCode; }
+		}
 
 		protected virtual Encoding ResponseFileEncoding
 		{
@@ -262,12 +293,20 @@ namespace Microsoft.Build.Utilities
 			get { return Console.Error.Encoding; }
 		}
 
+		protected virtual MessageImportance StandardErrorLoggingImportance {
+			get { return standardErrorLoggingImportance; }
+		}
+
 		protected virtual Encoding StandardOutputEncoding
 		{
 			get { return Console.Out.Encoding; }
 		}
 
-		public int Timeout
+		protected virtual MessageImportance StandardOutputLoggingImportance {
+			get { return standardOutputLoggingImportance; }
+		}
+
+		public virtual int Timeout
 		{
 			get { return timeout; }
 			set { timeout = value; }

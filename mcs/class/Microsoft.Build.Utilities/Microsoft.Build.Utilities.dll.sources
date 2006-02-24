@@ -3,7 +3,7 @@
 Assembly/AssemblyInfo.cs
 Microsoft.Build.Utilities/AppDomainIsolatedTask.cs
 Microsoft.Build.Utilities/CommandLineBuilder.cs
-Microsoft.Build.Utilities/ConcurrentLoggingHelper.cs
+Microsoft.Build.Utilities/HostObjectInitializationStatus.cs
 Microsoft.Build.Utilities/Logger.cs
 Microsoft.Build.Utilities/TargetDotNetFrameworkVersion.cs
 Microsoft.Build.Utilities/Task.cs

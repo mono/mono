@@ -1,3 +1,8 @@
+2006-02-25  Marek Sieradzki <marek.sieradzki@gmail.com> 
+
+	* CommandLineBuilder.cs, Logger.cs, TaskLoggingHelper.cs, ToolTask.cs
+	: Updated API.
+
 2006-02-24  Marek Sieradzki <marek.sieradzki@gmail.com> 
 
 	* AppDomainIsolatedTask.cs, Task.cs: Quick hacks to make it compile with

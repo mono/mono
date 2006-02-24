@@ -69,6 +69,17 @@ namespace Microsoft.Build.Utilities
 		{
 			return "";
 		}
+		
+		[MonoTODO]
+		public void LogCommandLine (string commandLine)
+		{
+		}
+		
+		[MonoTODO]
+		public void LogCommandLine (MessageImportance importance,
+					    string commandLine)
+		{
+		}
 
 		public void LogError (string message,
 				     params object[] messageArgs)
@@ -223,9 +234,7 @@ namespace Microsoft.Build.Utilities
 		}
 
 		public bool LogMessagesFromStream (TextReader stream,
-						   MessageImportance messageImportance,
-						   bool synchronize)
-		// FIXME: what about synchronize
+						   MessageImportance messageImportance)
 		{
 			try {
 				LogMessage (messageImportance, stream.ReadToEnd (), null);
@@ -238,6 +247,15 @@ namespace Microsoft.Build.Utilities
 				// FIXME: should it be done here?
 				stream.Close ();
 			}
+		}
+		
+		[MonoTODO]
+		public bool LogMessageFromText (string lineOfText,
+						MessageImportance importance)
+		{
+			if (lineOfText == null)
+				throw new ArgumentNullException ("lineOfText");
+			return true;
 		}
 
 		public void LogWarning (string message,
@@ -325,6 +343,22 @@ namespace Microsoft.Build.Utilities
 				lineNumber, columnNumber, endLineNumber,
 				endColumnNumber, messageResourceName,
 				messageArgs);
+		}
+		
+		[MonoTODO]
+		public void LogExternalProjectFinished (string message,
+							string helpKeyword,
+							string projectFile,
+							bool succeeded)
+		{
+		}
+		
+		[MonoTODO]
+		public void LogExternalProjectStarted (string message,
+						       string helpKeyword,
+						       string projectFile,
+						       string targetNames)
+		{
 		}
 
 		protected IBuildEngine BuildEngine {

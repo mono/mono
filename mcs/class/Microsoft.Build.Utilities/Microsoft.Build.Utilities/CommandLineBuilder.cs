@@ -98,7 +98,7 @@ namespace Microsoft.Build.Utilities
 			}
 		}
 		
-		protected void AppendFileNamesWithQuoting (string fileName)
+		protected void AppendFileNameWithQuoting (string fileName)
 		{
 			if (IsQuotingRequired (fileName))
 				commandLine.AppendFormat ("\"{0}\"",fileName);
@@ -268,6 +268,12 @@ namespace Microsoft.Build.Utilities
 					return true;
 			}
 			return false;
+		}
+		
+		[MonoTODO]
+		protected virtual void VerifyThrowNoEmbeddedDoubeQuotes (string switchName,
+									 string parameter)
+		{
 		}
 		
 		public override string ToString ()

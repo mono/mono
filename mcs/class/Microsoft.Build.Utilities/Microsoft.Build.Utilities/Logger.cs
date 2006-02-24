@@ -41,7 +41,7 @@ namespace Microsoft.Build.Utilities
 		{
 		}
 
-		public string Parameters {
+		public virtual string Parameters {
 			get {
 				return parameters;
 			}
@@ -50,7 +50,7 @@ namespace Microsoft.Build.Utilities
 			}
 		}
 
-		public LoggerVerbosity Verbosity {
+		public virtual LoggerVerbosity Verbosity {
 			get {
 				return verbosity;
 			}
@@ -77,6 +77,12 @@ namespace Microsoft.Build.Utilities
 
 		public virtual void Shutdown ()
 		{
+		}
+		
+		[MonoTODO]
+		public bool IsVerbosityAtLeast (LoggerVerbosity verbosity)
+		{
+			return (this.verbosity >= verbosity) ? true : false;
 		}
 	}
 }
