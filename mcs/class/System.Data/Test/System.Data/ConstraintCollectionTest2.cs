@@ -277,6 +277,54 @@ namespace MonoTests.System.Data
 			CollectionChangedFlag = true;
 		}
 
+		[Test]
+		public void Remove_Constraint ()
+		{
+			DataTable table1 = new DataTable ("table1");
+			DataTable table2 = new DataTable ("table2");
+
+			DataColumn col1 = table1.Columns.Add ("col1", typeof (int));
+			DataColumn col2 = table1.Columns.Add ("col2", typeof (int));
+			DataColumn col3 = table2.Columns.Add ("col1", typeof (int));
+
+			Constraint c1 = table1.Constraints.Add ("unique1", col1, false);
+			Constraint c2 = table1.Constraints.Add ("unique2", col2, false);
+			Constraint c3 = table2.Constraints.Add ("fk", col1, col3);
+
+			table1.Constraints.Remove (c1);
+			table1.Constraints.Remove (c2);
+			table2.Constraints.Remove (c3);
+
+			Assert.AreEqual (0, table1.Constraints.Count, "#1");
+			Assert.AreEqual (0, table2.Constraints.Count, "#2");
+
+			DataSet ds = new DataSet ();
+			ds.Tables.Add (table1);
+			ds.Tables.Add (table2);
+
+			c1 = table1.Constraints.Add ("unique1", col1, false);
+			c2 = table1.Constraints.Add ("unique2", col2, false);
+			c3 = table2.Constraints.Add ("fk", col1, col3);
+
+			try {
+				table1.Constraints.Remove (c1);
+				Assert.Fail ("#3");
+			} catch (ArgumentException) {
+			}
+
+			Assert.AreEqual (2, table1.Constraints.Count, "#4");
+
+			table1.Constraints.Remove (c2);
+			Assert.AreEqual (1, table1.Constraints.Count, "#5");
+
+			table2.Constraints.Remove (c3);
+			Assert.AreEqual (1, table1.Constraints.Count, "#6");
+			Assert.AreEqual (0, table2.Constraints.Count, "#7");
+
+			table1.Constraints.Remove (c1);
+			Assert.AreEqual (0, table1.Constraints.Count, "#8");
+		}
+
 		public delegate void  testExceptionMethodCallback();
 
 		[Test]
@@ -455,7 +503,7 @@ namespace MonoTests.System.Data
 		private bool collectionChanged=false;
 
 		[Test]
-		private void RemoveAt_Integer()
+		public void RemoveAt_Integer()
 		{
 			DataTable dt = DataProvider.CreateUniqueConstraint();
 			dt.Constraints.RemoveAt(0);

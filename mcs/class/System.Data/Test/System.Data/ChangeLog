@@ -1,3 +1,7 @@
+2006-02-24  Senganal T  <tsenganal@novell.com>
+ 
+ 	* ConstraintCollectionTest2.cs : added testcase for #77630
+ 
 2006-02-22  Senganal T  <tsenganal@novell.com>
 
 	* DataRowCollectionTest2.cs : Check if index is maintained for row on calling RejectChanges. 
