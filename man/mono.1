@@ -598,6 +598,12 @@ If set its the directory where the ".wapi" handle state is stored.
 This is the directory where the Windows I/O Emulation layer stores its
 shared state data (files, events, mutexes, pipes).  By default Mono
 will store the ".wapi" directory in the users's home directory.
+.TP 
+.I "MONO_SHARED_HOSTNAME"
+Uses the string value of this variable as a replacement for the host name when
+creating file names in the ".wapi" directory. This helps if the host name of
+your machine is likely to be changed when a mono application is running or if
+you have a .wapi directory shared among several different computers.
 .TP
 .I "MONO_THEME"
 The name of the theme to be used by Windows.Forms.   The default is "win32".
