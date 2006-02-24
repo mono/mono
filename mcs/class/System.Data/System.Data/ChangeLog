@@ -1,3 +1,15 @@
+2006-02-24  Senganal T  <tsenganal@novell.com>
+
+	* UniqueConstraint.cs :
+		- ChildConstraint : Added. Simplifies verifying if constraints are
+		related.
+		- CanRemoveFromCollection : Fixed the check to verify if constraints is
+		linked to a ForeignKeyConstraint. Fixes #77630
+	* ForeignKeyConstraint.cs :
+		- _validateRemoveParentConstraint : Removed. Not used anymore
+		- ParentConstraint : Added. Simplifies verifying if constraints are
+		related.
+
 2006-02-11  Senganal T  <tsenganal@novell.com>
 	
 	* UniqueConstraint.cs :

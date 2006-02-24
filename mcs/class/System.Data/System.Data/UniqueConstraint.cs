@@ -56,7 +56,7 @@ namespace System.Data {
 		//TODO:provide helpers for this case
 		private string [] _dataColumnNames; //unique case
 		private bool _dataColsNotValidated;
-
+		private ForeignKeyConstraint _childConstraint = null;
 
 		#region Constructors
 
@@ -270,6 +270,12 @@ namespace System.Data {
 			}
 		 }
 
+
+		internal ForeignKeyConstraint ChildConstraint {
+			get { return _childConstraint; }
+			set { _childConstraint = value; }
+		}
+
 		// Helper Special Ctor
 		// Set the _dataTable property to the table to which this instance is bound when AddRange()
 		// is called with the special constructor.
@@ -475,23 +481,18 @@ namespace System.Data {
 
 				return false;
 			}
+			
+			if (Table.DataSet == null)
+				return true;
 
-			if (Table.DataSet != null){
-				foreach (DataTable table in Table.DataSet.Tables){
-					foreach (Constraint constraint in table.Constraints){
-						if (constraint is ForeignKeyConstraint)
-							if (((ForeignKeyConstraint)constraint).RelatedTable == Table){
-								if (shouldThrow)
-									throw new ArgumentException(
-										String.Format("Cannot remove unique constraint '{0}'. Remove foreign key constraint '{1}' first.",
-										ConstraintName, constraint.ConstraintName)
-										);
-								return false;
-							}
-					}
-				}
+			if (ChildConstraint != null) {
+				if (!shouldThrow)
+					return false;
+				throw new ArgumentException (String.Format (
+								"Cannot remove unique constraint '{0}'." +
+								"Remove foreign key constraint '{1}' first.",
+								ConstraintName,ChildConstraint.ConstraintName));
 			}
-
 			return true;
 		}
 

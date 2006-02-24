@@ -270,22 +270,6 @@ namespace System.Data {
 			
 		}
 		
-
-
-		private void _validateRemoveParentConstraint(ConstraintCollection sender, 
-				Constraint constraint, ref bool cancel, ref string failReason)
-		{
-#if !NET_1_1
-			//if we hold a reference to the parent then cancel it
-			if (constraint == _parentUniqueConstraint) 
-			{
-				cancel = true;
-				failReason = "Cannot remove UniqueConstraint because the"
-					+ " ForeignKeyConstraint " + this.ConstraintName + " exists.";
-			}
-#endif
-		}
-		
 		//Checks to see if a related unique constraint exists
 		//if it doesn't then a unique constraint is created.
 		//if a unique constraint can't be created an exception will be thrown
@@ -310,11 +294,7 @@ namespace System.Data {
 
 			//keep reference
 			_parentUniqueConstraint = uc;
-			//parentColumns [0].Table.Constraints.Add (uc);
-			//if this unique constraint is attempted to be removed before us
-			//we can fail the validation
-			//collection.ValidateRemoveConstraint += new DelegateValidateRemoveConstraint(
-			//		_validateRemoveParentConstraint);
+			_parentUniqueConstraint.ChildConstraint = this;
 		}
 		
 		
@@ -393,6 +373,9 @@ namespace System.Data {
 			}
         }
 
+		internal UniqueConstraint ParentConstraint {
+			get { return _parentUniqueConstraint; }
+		}
 
 		#endregion // Properties
 
@@ -474,6 +457,7 @@ namespace System.Data {
 		internal override void RemoveFromConstraintCollectionCleanup( 
 				ConstraintCollection collection)
 		{
+			_parentUniqueConstraint.ChildConstraint = null;
 			Index = null;
 		}
 		
