@@ -1,3 +1,13 @@
+2006-02-24  Raja R Harinath  <rharinath@novell.com>
+
+	* class.c (inflate_generic_type): Add a couple more
+	micro-optimizations.
+	(inflate_generic_context): Don't use the 'gmethod' from
+	'inflate_with'.
+	(mono_class_inflate_generic_method): If the method has generic
+	parameters, but the passed-in context doesn't have a 'gmethod',
+	create one.
+
 2006-02-24  Raja R Harinath  <harinath@gmail.com>
 
 	Make generic method signature and method header handling lazy.
