@@ -6,7 +6,8 @@
 	'inflate_with'.
 	(mono_class_inflate_generic_method): If the method has generic
 	parameters, but the passed-in context doesn't have a 'gmethod',
-	create one.
+	create one.  Use the possibly simplified generic instantiation
+	from the declaring class instead of the one passed in.
 
 2006-02-24  Raja R Harinath  <harinath@gmail.com>
 
