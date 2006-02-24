@@ -173,12 +173,12 @@ namespace Microsoft.Build.BuildEngine {
 			if (targetNames.Length == 0) {
 				if (project.DefaultTargets != String.Empty)
 					psea = new ProjectStartedEventArgs ("Project started.", null, project.FullFileName,
-						project.DefaultTargets);
+						project.DefaultTargets, null, null);
 				else
-					psea = new ProjectStartedEventArgs ("Project started.", null, project.FullFileName, "default");
+					psea = new ProjectStartedEventArgs ("Project started.", null, project.FullFileName, "default", null, null);
 			} else
 			psea = new ProjectStartedEventArgs ("Project started.", null, project.FullFileName, String.Join (";",
-				targetNames));
+				targetNames), null, null);
 			eventSource.FireProjectStarted (this, psea);
 		}
 		

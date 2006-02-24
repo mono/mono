@@ -87,9 +87,9 @@ namespace Microsoft.Build.BuildEngine {
 		public void BuildStarted (object sender, BuildStartedEventArgs args)
 		{
 			WriteLine ("");
-			WriteLine (String.Format ("Build started {0}.", args.TimeStamp));
+			WriteLine (String.Format ("Build started {0}.", args.Timestamp));
 			WriteLine ("__________________________________________________");
-			buildStart = args.TimeStamp;
+			buildStart = args.Timestamp;
 		}
 		
 		public void BuildFinished (object sender, BuildFinishedEventArgs args)
@@ -102,7 +102,7 @@ namespace Microsoft.Build.BuildEngine {
 			if (performanceSummary == true)
 				;
 			if (summary == true){
-				TimeSpan timeElapsed = args.TimeStamp - buildStart;
+				TimeSpan timeElapsed = args.Timestamp - buildStart;
 				WriteLine (String.Format ("\t {0} Warning(s)", warningCount));
 				WriteLine (String.Format ("\t {0} Error(s)", errorCount));
 				WriteLine ("");

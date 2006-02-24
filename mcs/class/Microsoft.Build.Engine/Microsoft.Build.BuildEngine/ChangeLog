@@ -1,3 +1,8 @@
+2006-02-24  Marek Sieradzki <marek.sieradzki@gmail.com> 
+
+	* ConsoleLogger.cs, Engine.cs: Quick hacks to make it compile with new
+	API.
+
 2005-09-22  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* Project.cs: Added MonoTODO attributes.
