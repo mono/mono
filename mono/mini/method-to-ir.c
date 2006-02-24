@@ -829,13 +829,14 @@ mono_print_bb (MonoBasicBlock *bb, const char *msg)
         MONO_INST_NEW ((cfg), (ins), (op)); \
         if ((op) == OP_BR) { \
             ins->inst_target_bb = (truebb); \
+            link_bblock ((cfg), (cfg)->cbb, (truebb)); \
         } else { \
 		    ins->inst_many_bb = mono_mempool_alloc (cfg->mempool, sizeof(gpointer)*2);	\
             ins->inst_true_bb = (truebb); \
             ins->inst_false_bb = (falsebb); \
+            link_bblock ((cfg), (cfg)->cbb, (truebb)); \
+            link_bblock ((cfg), (cfg)->cbb, (falsebb)); \
         } \
-        link_bblock ((cfg), (cfg)->cbb, (truebb)); \
-        link_bblock ((cfg), (cfg)->cbb, (falsebb)); \
         MONO_ADD_INS ((cfg)->cbb, ins); \
         MONO_START_BB ((cfg), falsebb); \
 	} while (0)
@@ -854,7 +855,8 @@ mono_print_bb (MonoBasicBlock *bb, const char *msg)
 
 #define MONO_START_BB(cfg, bblock) do { \
         ADD_BBLOCK ((cfg), (cfg)->cbb_hash, (bblock)); \
-        link_bblock ((cfg), (cfg)->cbb, (bblock)); \
+        if (! (cfg->cbb->last_ins && ((cfg->cbb->last_ins->opcode == OP_BR) || (cfg->cbb->last_ins->opcode == OP_BR_REG) || MONO_IS_COND_BRANCH_OP (cfg->cbb->last_ins)))) \
+            link_bblock ((cfg), (cfg)->cbb, (bblock)); \
 	    (cfg)->cbb->next_bb = (bblock); \
 	    (cfg)->cbb = (bblock); \
     } while (0)

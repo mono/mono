@@ -8899,6 +8899,7 @@ optimize_branches (MonoCompile *cfg)
 								g_print ("block merge triggered %d -> %d\n", bb->block_num, bbn->block_num);
 							merge_basic_blocks (bb, bbn);
 							changed = TRUE;
+							continue;
 						}
 
 						//mono_print_bb_code (bb);
@@ -8917,7 +8918,7 @@ optimize_branches (MonoCompile *cfg)
 
 				nullify_basic_block (bbn);			
 				changed = TRUE;
-				break;
+				continue;
 			}
 
 			if (bb->out_count == 1) {
@@ -8929,15 +8930,14 @@ optimize_branches (MonoCompile *cfg)
 					    bbn->code->inst_target_bb->region == bb->region) {
 						
 						if (cfg->verbose_level > 2)
-							g_print ("in %s branch to branch triggered %d -> %d -> %d\n", cfg->method->name, 
-								 bb->block_num, bbn->block_num, bbn->code->inst_target_bb->block_num);
+							g_print ("branch to branch triggered %d -> %d -> %d\n", bb->block_num, bbn->block_num, bbn->code->inst_target_bb->block_num);
 
 						replace_in_block (bbn, bb, NULL);
 						replace_out_block (bb, bbn, bbn->code->inst_target_bb);
 						link_bblock (cfg, bb, bbn->code->inst_target_bb);
 						bb->last_ins->inst_target_bb = bbn->code->inst_target_bb;
 						changed = TRUE;
-						break;
+						continue;
 					}
 				}
 			} else if (bb->out_count == 2) {
@@ -8975,8 +8975,8 @@ optimize_branches (MonoCompile *cfg)
 						continue;
 					}
 					bbn = bb->last_ins->inst_true_bb;
-					if (bb->region == bbn->region && bbn->code && bbn->code->opcode == (cfg->new_ir ? OP_BR : CEE_BR) &&
-					    bbn->code->inst_target_bb->region == bb->region) {
+					if (bbn->code && bbn->code->opcode == (cfg->new_ir ? OP_BR : CEE_BR) &&
+					    bb->region == bbn->region && bbn->code->inst_target_bb->region == bb->region) {
 						if (cfg->verbose_level > 2)		
 							g_print ("cbranch1 to branch triggered %d -> (%d) %d (0x%02x)\n", 
 								 bb->block_num, bbn->block_num, bbn->code->inst_target_bb->block_num, 
@@ -8992,12 +8992,12 @@ optimize_branches (MonoCompile *cfg)
 						link_bblock (cfg, bb, bbn->code->inst_target_bb);
 
 						changed = TRUE;
-						break;
+						continue;
 					}
 
 					bbn = bb->last_ins->inst_false_bb;
-					if (bb->region == bbn->region && bbn->code && bbn->code->opcode == (cfg->new_ir ? OP_BR : CEE_BR) &&
-					    bbn->code->inst_target_bb->region == bb->region) {
+					if (bbn->code && bbn->code->opcode == (cfg->new_ir ? OP_BR : CEE_BR) &&
+					    bb->region == bbn->region && bbn->code->inst_target_bb->region == bb->region) {
 						if (cfg->verbose_level > 2)
 							g_print ("cbranch2 to branch triggered %d -> (%d) %d (0x%02x)\n", 
 								 bb->block_num, bbn->block_num, bbn->code->inst_target_bb->block_num, 
@@ -9013,7 +9013,7 @@ optimize_branches (MonoCompile *cfg)
 						link_bblock (cfg, bb, bbn->code->inst_target_bb);
 
 						changed = TRUE;
-						break;
+						continue;
 					}
 				}
 
@@ -9022,7 +9022,7 @@ optimize_branches (MonoCompile *cfg)
 					if (try_unsigned_compare (cfg, bb)) {
 						/*g_print ("applied in bb %d (->%d) %s\n", bb->block_num, bb->last_ins->inst_target_bb->block_num, mono_method_full_name (cfg->method, TRUE));*/
 						changed = TRUE;
-						break;
+						continue;
 					}
 				}
 
@@ -9101,18 +9101,22 @@ mono_print_code (MonoCompile *cfg)
 	for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
 		MonoInst *tree = bb->code;	
 
-		if (!tree)
-			continue;
-		
-		g_print ("CODE BLOCK %d (nesting %d):\n", bb->block_num, bb->nesting);
+		if (cfg->new_ir) {
+			mono_print_bb (bb, "BB");
+		} else {
+			if (!tree)
+				continue;
+			
+			g_print ("CODE BLOCK %d (nesting %d):\n", bb->block_num, bb->nesting);
 
-		for (; tree; tree = tree->next) {
-			mono_print_tree (tree);
-			g_print ("\n");
+			for (; tree; tree = tree->next) {
+				mono_print_tree (tree);
+				g_print ("\n");
+			}
+
+			if (bb->last_ins)
+				bb->last_ins->next = NULL;
 		}
-
-		if (bb->last_ins)
-			bb->last_ins->next = NULL;
 	}
 }
 
