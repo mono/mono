@@ -1,3 +1,8 @@
+2006-02-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (mono_marshal_free_asany): Fix handling of blittable
+	formatted classes. Fixes #77524.
+
 2006-02-24  Raja R Harinath  <rharinath@novell.com>
 
 	* class.c (inflate_generic_type): Add a couple more
