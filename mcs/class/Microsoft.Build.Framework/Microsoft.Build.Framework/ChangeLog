@@ -1,3 +1,15 @@
+2006-02-24  Marek Sieradzki <marek.sieradzki@gmail.com> 
+
+	* BuildEventArgs.cs: Changed TimeStamp to Timestamp.
+	* CustomBuildEventArgs.cs: Made ctor protected.
+	* ITask.cs: Changed object to ITaskHost.
+	* MessageImportance.cs: Added Serializable attribute.
+	* OutputAttribute.cs, RequiredAttribute.cs: Changed AttributeUsage.
+	* ProjectStartedEventArgs.cs: Added Properties and Items and removed
+	Succeeded.
+	* ExternProjectFinishedEventArgs.cs, ExternalProjectStartedEventArgs.cs,
+	ITaskHost.cs, TaskCommandLineEventArgs.cs: Added.
+
 2005-09-22  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* TargetStartedEventHandler.cs, TargetFinishedEventArgs.cs,

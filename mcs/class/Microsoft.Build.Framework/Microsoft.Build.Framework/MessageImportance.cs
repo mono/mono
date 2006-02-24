@@ -28,7 +28,10 @@
 
 #if NET_2_0
 
+using System;
+
 namespace Microsoft.Build.Framework {
+	[Serializable]
 	public enum MessageImportance {
 		High,
 		Normal,

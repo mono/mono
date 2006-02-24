@@ -1,6 +1,5 @@
 //
-// CustomBuildEventArgs.cs: Provides data for the Microsoft.Build.Framework.
-// IEventSource.CustomEventRaised event.
+// ExternalProjectFinishedEventArgs.cs: Provides data for the CustomEventRaised event.
 //
 // Author:
 //   Marek Sieradzki (marek.sieradzki@gmail.com)
@@ -32,17 +31,31 @@ using System;
 
 namespace Microsoft.Build.Framework {
 	[Serializable]
-	public abstract class CustomBuildEventArgs : BuildEventArgs {
+	public class ExternalProjectFinishedEventArgs : CustomBuildEventArgs {
 	
-		protected CustomBuildEventArgs ()
+		string	projectFile;
+		bool	succeeded;
+	
+		protected ExternalProjectFinishedEventArgs ()
 		{
 		}
 		
-		protected CustomBuildEventArgs (string message,
-						string helpKeyword,
-						string senderName)
+		public ExternalProjectFinishedEventArgs (string message,
+							 string helpKeyword,
+							 string senderName,
+							 string projectFile,
+							 bool succeeded)
 			: base (message, helpKeyword, senderName)
 		{
+			this.projectFile = projectFile;
+			this.succeeded = succeeded;
+		}
+		public string ProjectFile {
+			get { return projectFile; }
+		}
+		
+		public bool Succeeded {
+			get { return succeeded; }
 		}
 	}
 }

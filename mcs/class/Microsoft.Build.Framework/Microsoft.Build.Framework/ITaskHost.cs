@@ -1,11 +1,10 @@
 //
-// CustomBuildEventArgs.cs: Provides data for the Microsoft.Build.Framework.
-// IEventSource.CustomEventRaised event.
+// ITaskHost.cs
 //
 // Author:
 //   Marek Sieradzki (marek.sieradzki@gmail.com)
-//
-// (C) 2005 Marek Sieradzki
+// 
+// (C) 2006 Marek Sieradzki
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,20 +29,9 @@
 
 using System;
 
-namespace Microsoft.Build.Framework {
-	[Serializable]
-	public abstract class CustomBuildEventArgs : BuildEventArgs {
-	
-		protected CustomBuildEventArgs ()
-		{
-		}
-		
-		protected CustomBuildEventArgs (string message,
-						string helpKeyword,
-						string senderName)
-			: base (message, helpKeyword, senderName)
-		{
-		}
+namespace Microsoft.Build.Framework
+{
+	public interface ITaskHost {
 	}
 }
 

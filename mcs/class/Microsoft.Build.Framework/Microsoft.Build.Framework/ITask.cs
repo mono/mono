@@ -41,7 +41,7 @@ namespace Microsoft.Build.Framework
 			set;
 		}
 
-		object HostObject {
+		ITaskHost HostObject {
 			get;
 			set;
 		}

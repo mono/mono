@@ -40,7 +40,7 @@ namespace Microsoft.Build.Framework
 		string	message;
 		string	senderName;
 		int	threadId;
-		DateTime	timeStamp;
+		DateTime	timestamp;
 		
 		protected BuildEventArgs ()
 			: this (null, null, null)
@@ -54,7 +54,7 @@ namespace Microsoft.Build.Framework
 			this.helpKeyword = helpKeyword;
 			this.senderName = senderName;
 			this.threadId = Thread.CurrentThread.GetHashCode ();
-			this.timeStamp = DateTime.Now;
+			this.timestamp = DateTime.Now;
 		}
 
 		public string HelpKeyword {
@@ -82,9 +82,9 @@ namespace Microsoft.Build.Framework
 			}
 		}
 		// Time when event was fired
-		public DateTime TimeStamp {
+		public DateTime Timestamp {
 			get {
-				return timeStamp;
+				return timestamp;
 			}
 		}
 	}

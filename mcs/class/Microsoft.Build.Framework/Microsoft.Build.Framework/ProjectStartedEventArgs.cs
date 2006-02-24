@@ -29,6 +29,7 @@
 #if NET_2_0
 
 using System;
+using System.Collections;
 
 namespace Microsoft.Build.Framework {
 	[Serializable]
@@ -36,7 +37,8 @@ namespace Microsoft.Build.Framework {
 	
 		string	projectFile;
 		string	targetNames;
-		bool	succeeded;	
+		IEnumerable properties;
+		IEnumerable items;
 	
 		protected ProjectStartedEventArgs ()
 		{
@@ -45,11 +47,15 @@ namespace Microsoft.Build.Framework {
 		public ProjectStartedEventArgs (string message,
 						string helpKeyword,
 						string projectFile,
-						string targetNames)
+						string targetNames,
+						IEnumerable properties,
+						IEnumerable items)
 			: base (message, helpKeyword, null)
 		{
 			this.projectFile = projectFile;
 			this.targetNames = targetNames;
+			this.properties = properties;
+			this.items = items;
 		}
 
 		public string ProjectFile {
@@ -57,15 +63,17 @@ namespace Microsoft.Build.Framework {
 				return projectFile;
 			}
 		}
-
-		public bool Succeeded {
-			get {
-				return succeeded;
-			}
-		}
 		
 		public string TargetNames {
 			get { return targetNames; }
+		}
+		
+		public IEnumerable Properties {
+			get { return properties; }
+		}
+		
+		public IEnumerable Items {
+			get { return items; }
 		}
 	}
 }
