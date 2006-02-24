@@ -214,6 +214,7 @@ namespace Mono.Xml
 		bool check_character_validity;
 		NewLineHandling newline_handling = NewLineHandling.None;
 
+		bool is_document_entity;
 		WriteState state = WriteState.Start;
 		XmlNodeType node_state = XmlNodeType.None;
 		XmlNamespaceManager nsmanager;
@@ -449,11 +450,13 @@ namespace Mono.Xml
 		public override void WriteStartDocument ()
 		{
 			WriteStartDocumentCore (false, false);
+			is_document_entity = true;
 		}
 
 		public override void WriteStartDocument (bool standalone)
 		{
 			WriteStartDocumentCore (true, standalone);
+			is_document_entity = true;
 		}
 
 		void WriteStartDocumentCore (bool outputStd, bool standalone)
@@ -500,6 +503,7 @@ namespace Mono.Xml
 				WriteEndElement ();
 
 			state = WriteState.Start;
+			is_document_entity = false;
 		}
 
 		// DocType Declaration
@@ -1057,7 +1061,7 @@ namespace Mono.Xml
 			// DocType which could consist of non well-formed XML.
 			ShiftStateTopLevel ("Raw string", true, true);
 
-			writer.Write (raw, false);
+			writer.Write (raw);
 		}
 
 		public override void WriteCharEntity (char ch)
@@ -1266,7 +1270,7 @@ namespace Mono.Xml
 					throw StateError (occured);
 			case WriteState.Prolog:
 			case WriteState.Start:
-				if (!allow_doc_fragment)
+				if (!allow_doc_fragment || is_document_entity)
 					goto case WriteState.Closed;
 				if (output_xmldecl)
 					OutputAutoStartDocument ();

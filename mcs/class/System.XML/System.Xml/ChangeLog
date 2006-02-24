@@ -1,3 +1,10 @@
+2006-02-24  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlTextWriter2.cs :
+	  WriteRaw() has stupid second arg. Fixed bug #77623.
+	  WriteString() should raise an error when it is called immediately
+	  after WriteStartDocument().
+
 2006-02-22  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlTextWriter2.cs : WriteChars() should allow Attribute state.

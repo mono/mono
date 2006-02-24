@@ -1287,6 +1287,9 @@ namespace MonoTests.System.Xml
 
 			xtw.WriteRaw("");
 			Assert.AreEqual ("&<>\"'", StringWriterText);
+
+			// bug #77623
+			xtw.WriteRaw ("{0}{1}");
 		}
 
 		[Test]
@@ -1320,6 +1323,7 @@ namespace MonoTests.System.Xml
 			xtw.WriteStartDocument ();
 			try {
 				xtw.WriteString("foo");
+				Assert.Fail ("should raise an error.");
 			} catch (InvalidOperationException) {}
 		}
 
