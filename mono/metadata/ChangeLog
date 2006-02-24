@@ -1,3 +1,19 @@
+2006-02-24  Raja R Harinath  <harinath@gmail.com>
+
+	Make generic method signature and method header handling lazy.
+	* class.c (mono_class_inflate_generic_signature): Move to loader.c.
+	(inflate_generic_header): Likewise.
+	(mono_class_inflate_generic_method): Rewrite.  Add a 'klass_hint'
+	parameter to avoid inflating types.
+	(mono_get_inflated_method): Empty out.
+	* class.h (mono_class_inflate_generic_method): Update to changes.
+	* loader.c (mono_get_method_from_token): Don't parse signature for
+	generic methods, nor methods of generic classes.
+	(mono_method_signature): Rename from 'mono_method_signature'.
+	Inflate signature on demand.
+	(mono_method_get_header): Inflate method header on demand.
+	* reflection.c: Update to changes.
+
 2006-02-23  Raja R Harinath  <rharinath@novell.com>
 
 	* metadata.c (mono_metadata_inflate_generic_inst): If the
