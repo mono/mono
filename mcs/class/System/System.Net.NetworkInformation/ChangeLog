@@ -1,3 +1,35 @@
+2006-02-24 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* UnicastIPAddressInformation.cs:
+	* PingException.cs:
+	* TcpConnectionInformation.cs:
+	* IPv4InterfaceStatistics.cs:
+	* NetworkInformationException.cs:
+	* IPAddressInformation.cs:
+	* MulticastIPAddressInformationCollection.cs:
+	* TcpStatistics.cs:
+	* IPGlobalStatistics.cs:
+	* NetworkInformationPermission.cs:
+	* MulticastIPAddressInformation.cs:
+	* IcmpV4Statistics.cs:
+	* IcmpV6Statistics.cs:
+	* IPv4InterfaceProperties.cs:
+	* PhysicalAddress.cs:
+	* IPv6InterfaceProperties.cs:
+	* GatewayIPAddressInformationCollection.cs:
+	* ChangeLog: Modified file.
+	* UnicastIPAddressInformationCollection.cs:
+	* IPAddressCollection.cs:
+	* NetworkInformationPermissionAttribute.cs:
+	* Ping.cs:
+	* NetworkChange.cs:
+	* IPAddressInformationCollection.cs:
+	* UdpStatistics.cs:
+	* GatewayIPAddressInformation.cs:
+	* IPGlobalProperties.cs:
+	* IPInterfaceProperties.cs:
+	* NetworkInterface.cs: implemented or stubbed out.
+
 2006-02-22 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* NetBiosNodeType.cs:
