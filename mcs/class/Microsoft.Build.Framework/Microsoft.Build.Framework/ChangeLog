@@ -1,3 +1,7 @@
+2006-02-25  Marek Sieradzki <marek.sieradzki@gmail.com> 
+
+	* ITask.cs, LoggerVerbosity.cs: Added COM attributes.
+
 2006-02-24  Marek Sieradzki <marek.sieradzki@gmail.com> 
 
 	* BuildEventArgs.cs: Changed TimeStamp to Timestamp.

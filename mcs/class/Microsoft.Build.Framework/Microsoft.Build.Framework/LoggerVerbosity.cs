@@ -28,8 +28,11 @@
 
 #if NET_2_0
 
+using System.Runtime.InteropServices;
+
 namespace Microsoft.Build.Framework
 {
+	[ComVisible (true)]
 	public enum LoggerVerbosity
 	{
 		// Quiet verbosity, which displays a build summary.
