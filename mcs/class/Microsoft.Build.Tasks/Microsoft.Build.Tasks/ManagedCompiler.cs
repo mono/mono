@@ -111,8 +111,7 @@ namespace Microsoft.Build.Tasks {
 		{
 		}
 		
-		protected override bool HandleTaskExecutionErrors (int exitCode,
-								   bool taskLoggedErrors)
+		protected override bool HandleTaskExecutionErrors ()
 		{
 			return true;
 		}

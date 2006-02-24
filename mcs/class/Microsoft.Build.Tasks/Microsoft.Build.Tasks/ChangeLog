@@ -1,3 +1,7 @@
+2006-02-25  Marek Sieradzki <marek.sieradzki@gmail.com> 
+
+	* Csc.cs, ManagedCompiler.cs: Changes required by the new API.
+
 2005-09-22  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* MakeDir.cs, AppDomainIsolatedTaskExtension.cs, Touch.cs, Exec.cs,

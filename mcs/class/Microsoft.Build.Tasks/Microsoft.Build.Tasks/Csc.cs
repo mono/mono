@@ -71,12 +71,9 @@ namespace Microsoft.Build.Tasks {
 			return Path.Combine (ToolPath, ToolName);
 		}
 
-		protected override bool InitializeHostObject (out bool appropriateHostObjectExists,
-							      out bool continueBuild)
+		protected override HostObjectInitializationStatus InitializeHostObject ()
 		{
-			appropriateHostObjectExists = true;
-			continueBuild = true;
-			return true;
+			return HostObjectInitializationStatus.NoActionReturnSuccess;
 		}
 
 		public bool AllowUnsafeBlocks {
