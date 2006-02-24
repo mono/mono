@@ -1,5 +1,7 @@
 2006-02-24  Zoltan Varga  <vargaz@gmail.com>
-
+	
+	* mini-amd64.c (mono_arch_get_vcall_slot_addr): Add a missing check.
+	
 	* mini-amd64.c (mono_arch_get_vcall_slot_addr): Add support for
 	interface calls with large offsets.
 
