@@ -403,7 +403,7 @@ mono_print_ins_index (int i, MonoInst *ins)
 			for (i = 0; i < ins->inst_phi_args [0]; i++) {
 				if (i)
 					printf (", ");
-				printf ("%d", ins->inst_phi_args [i + 1]);
+				printf ("R%d", ins->inst_phi_args [i + 1]);
 			}
 			printf (")]");
 			break;

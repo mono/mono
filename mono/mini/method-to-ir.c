@@ -582,7 +582,7 @@ mono_print_bb (MonoBasicBlock *bb, const char *msg)
 
 #define NEW_LOCLOAD(cfg,dest,num) NEW_VARLOAD ((cfg), (dest), cfg->locals [(num)], header->locals [(num)])
 
-#define NEW_LOCLOADA(cfg,dest,num) NEW_VARLOADA ((cfg), (dest), (cfg)->locals [(num)], (cfg)->varinfo [(num)]->inst_vtype)
+#define NEW_LOCLOADA(cfg,dest,num) NEW_VARLOADA ((cfg), (dest), (cfg)->locals [(num)], (cfg)->locals [(num)]->inst_vtype)
 
 #define NEW_RETLOADA(cfg,dest) do {	\
         if (cfg->ret_var_is_local) { \
@@ -9443,6 +9443,7 @@ mono_spill_global_vars (MonoCompile *cfg)
  * - some tests no longer work with COUNT=0
  * - add code to only use -v -v -v -v for a specific method
  * - optimize optimize_branches: remove 'break's from the inner loop
+ * - add is_global_vreg () macro.
  * - LAST MERGE: 57056.
  */
 
