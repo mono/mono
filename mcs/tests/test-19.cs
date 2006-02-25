@@ -111,4 +111,12 @@ namespace NameSpace {
 	public delegate int TestDelegate (int a);
 
 }
-	
+
+
+namespace TestNamespace
+{
+	public class TestClass
+	{
+		public delegate float NotWorkingDelegate(float point, params object [] hiddenParams);
+	}
+}
