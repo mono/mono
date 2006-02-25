@@ -13,6 +13,7 @@
 #include "mini.h"
 #include <string.h>
 #include <math.h>
+#include <unistd.h>
 
 #include <mono/metadata/appdomain.h>
 #include <mono/metadata/debug-helpers.h>
@@ -29,6 +30,13 @@
 static gint lmf_tls_offset = -1;
 static gint appdomain_tls_offset = -1;
 static gint thread_tls_offset = -1;
+
+#ifdef MONO_XEN_OPT
+/* TRUE by default until we add runtime detection of Xen */
+static gboolean optimize_for_xen = TRUE;
+#else
+#define optimize_for_xen 0
+#endif
 
 static gboolean use_sse2 = !MONO_ARCH_USE_FPSTACK;
 
@@ -2400,6 +2408,31 @@ emit_move_return_value (MonoCompile *cfg, MonoInst *ins, guint8 *code)
 }
 
 /*
+ * emit_tls_get:
+ * @code: buffer to store code to
+ * @dreg: hard register where to place the result
+ * @tls_offset: offset info
+ *
+ * emit_tls_get emits in @code the native code that puts in the dreg register
+ * the item in the thread local storage identified by tls_offset.
+ *
+ * Returns: a pointer to the end of the stored code
+ */
+static guint8*
+emit_tls_get (guint8* code, int dreg, int tls_offset)
+{
+	if (optimize_for_xen) {
+		x86_prefix (code, X86_FS_PREFIX);
+		amd64_mov_reg_mem (code, dreg, 0, 8);
+		amd64_mov_reg_membase (code, dreg, dreg, tls_offset, 8);
+	} else {
+		x86_prefix (code, X86_FS_PREFIX);
+		amd64_mov_reg_mem (code, dreg, tls_offset, 8);
+	}
+	return code;
+}
+
+/*
  * emit_load_volatile_arguments:
  *
  *  Load volatile arguments from the stack to the original input registers.
@@ -2706,19 +2739,46 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_AMD64_TEST_NULL:
 			amd64_test_reg_reg (code, ins->sreg1, ins->sreg1);
 			break;
+		case OP_X86_ADD_MEMBASE:
+			amd64_alu_reg_membase_size (code, X86_ADD, ins->sreg1, ins->sreg2, ins->inst_offset, 4);
+			break;
+		case OP_X86_SUB_MEMBASE:
+			amd64_alu_reg_membase_size (code, X86_SUB, ins->sreg1, ins->sreg2, ins->inst_offset, 4);
+			break;
 		case OP_X86_ADD_MEMBASE_IMM:
 			/* FIXME: Make a 64 version too */
 			amd64_alu_membase_imm_size (code, X86_ADD, ins->inst_basereg, ins->inst_offset, ins->inst_imm, 4);
-			break;
-		case OP_X86_ADD_MEMBASE:
-			amd64_alu_reg_membase_size (code, X86_ADD, ins->sreg1, ins->sreg2, ins->inst_offset, 4);
 			break;
 		case OP_X86_SUB_MEMBASE_IMM:
 			g_assert (amd64_is_imm32 (ins->inst_imm));
 			amd64_alu_membase_imm_size (code, X86_SUB, ins->inst_basereg, ins->inst_offset, ins->inst_imm, 4);
 			break;
-		case OP_X86_SUB_MEMBASE:
-			amd64_alu_reg_membase_size (code, X86_SUB, ins->sreg1, ins->sreg2, ins->inst_offset, 4);
+		case OP_X86_AND_MEMBASE_IMM:
+			g_assert (amd64_is_imm32 (ins->inst_imm));
+			amd64_alu_membase_imm_size (code, X86_AND, ins->inst_basereg, ins->inst_offset, ins->inst_imm, 4);
+			break;
+		case OP_X86_OR_MEMBASE_IMM:
+			g_assert (amd64_is_imm32 (ins->inst_imm));
+			amd64_alu_membase_imm_size (code, X86_OR, ins->inst_basereg, ins->inst_offset, ins->inst_imm, 4);
+			break;
+		case OP_X86_XOR_MEMBASE_IMM:
+			g_assert (amd64_is_imm32 (ins->inst_imm));
+			amd64_alu_membase_imm_size (code, X86_XOR, ins->inst_basereg, ins->inst_offset, ins->inst_imm, 4);
+			break;
+		case OP_X86_ADD_MEMBASE_REG:
+			amd64_alu_membase_reg_size (code, X86_ADD, ins->inst_basereg, ins->inst_offset, ins->sreg2, 4);
+			break;
+		case OP_X86_SUB_MEMBASE_REG:
+			amd64_alu_membase_reg_size (code, X86_SUB, ins->inst_basereg, ins->inst_offset, ins->sreg2, 4);
+			break;
+		case OP_X86_AND_MEMBASE_REG:
+			amd64_alu_membase_reg_size (code, X86_AND, ins->inst_basereg, ins->inst_offset, ins->sreg2, 4);
+			break;
+		case OP_X86_OR_MEMBASE_REG:
+			amd64_alu_membase_reg_size (code, X86_OR, ins->inst_basereg, ins->inst_offset, ins->sreg2, 4);
+			break;
+		case OP_X86_XOR_MEMBASE_REG:
+			amd64_alu_membase_reg_size (code, X86_XOR, ins->inst_basereg, ins->inst_offset, ins->sreg2, 4);
 			break;
 		case OP_X86_INC_MEMBASE:
 			amd64_inc_membase_size (code, ins->inst_basereg, ins->inst_offset, 4);
@@ -2741,8 +2801,21 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_AMD64_ICOMPARE_MEMBASE_IMM:
 			amd64_alu_membase_imm_size (code, X86_CMP, ins->inst_basereg, ins->inst_offset, ins->inst_imm, 4);
 			break;
+		case OP_X86_COMPARE_MEMBASE8_IMM:
+			amd64_alu_membase8_imm_size (code, X86_CMP, ins->inst_basereg, ins->inst_offset, ins->inst_imm, 4);
+			break;
 		case OP_AMD64_ICOMPARE_REG_MEMBASE:
 			amd64_alu_reg_membase_size (code, X86_CMP, ins->sreg1, ins->sreg2, ins->inst_offset, 4);
+			break;
+		case OP_AMD64_COMPARE_MEMBASE_REG:
+			amd64_alu_membase_reg_size (code, X86_CMP, ins->inst_basereg, ins->inst_offset, ins->sreg2, 8);
+			break;
+		case OP_AMD64_COMPARE_MEMBASE_IMM:
+			g_assert (amd64_is_imm32 (ins->inst_imm));
+			amd64_alu_membase_imm_size (code, X86_CMP, ins->inst_basereg, ins->inst_offset, ins->inst_imm, 8);
+			break;
+		case OP_AMD64_COMPARE_REG_MEMBASE:
+			amd64_alu_reg_membase_size (code, X86_CMP, ins->sreg1, ins->sreg2, ins->inst_offset, 8);
 			break;
 		case CEE_BREAK:
 		case OP_BREAK:
@@ -4219,8 +4292,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				amd64_alu_reg_imm (code, X86_ADD, AMD64_RSP, 16);
 			break;
 		case OP_TLS_GET: {
-			x86_prefix (code, X86_FS_PREFIX);
-			amd64_mov_reg_mem (code, ins->dreg, ins->inst_offset, 8);
+			code = emit_tls_get (code, ins->dreg, ins->inst_offset);
 			break;
 		}
 		case OP_MEMORY_BARRIER: {
@@ -4629,8 +4701,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 	if (method->save_lmf) {
 		if (lmf_tls_offset != -1) {
 			/* Load lmf quicky using the FS register */
-			x86_prefix (code, X86_FS_PREFIX);
-			amd64_mov_reg_mem (code, AMD64_RAX, lmf_tls_offset, 8);
+			code = emit_tls_get (code, AMD64_RAX, lmf_tls_offset);
 		}
 		else {
 			/* 
@@ -5208,7 +5279,18 @@ mono_arch_get_vcall_slot_addr (guint8* code, gpointer *regs)
 	 * really careful about the ordering of the cases. Longer sequences
 	 * come first.
 	 */
-	if ((code [0] == 0x41) && (code [1] == 0xff) && (code [2] == 0x15)) {
+	if ((code [-1] == 0x8b) && (amd64_modrm_mod (code [0]) == 0x2) && (code [5] == 0xff) && (amd64_modrm_reg (code [6]) == 0x2) && (amd64_modrm_mod (code [6]) == 0x0)) {
+			/*
+			 * This is a interface call
+			 * 48 8b 80 f0 e8 ff ff   mov    0xffffffffffffe8f0(%rax),%rax
+			 * ff 10                  callq  *(%rax)
+			 */
+		if (IS_REX (code [4]))
+			rex = code [4];
+		reg = amd64_modrm_rm (code [6]);
+		disp = 0;
+	}
+	else if ((code [0] == 0x41) && (code [1] == 0xff) && (code [2] == 0x15)) {
 		/* call OFFSET(%rip) */
 		disp = *(guint32*)(code + 3);
 		return (gpointer*)(code + disp + 7);
@@ -5293,7 +5375,9 @@ mono_arch_setup_jit_tls_data (MonoJitTlsData *tls)
 {
 	if (!tls_offset_inited) {
 		tls_offset_inited = TRUE;
-
+#ifdef MONO_XEN_OPT
+		optimize_for_xen = access ("/proc/xen", F_OK) == 0;
+#endif
 		appdomain_tls_offset = mono_domain_get_tls_offset ();
 		lmf_tls_offset = mono_get_lmf_tls_offset ();
 		thread_tls_offset = mono_thread_get_tls_offset ();

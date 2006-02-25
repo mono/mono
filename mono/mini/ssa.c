@@ -1579,7 +1579,7 @@ mono_ssa_deadce2 (MonoCompile *cfg)
 					add_to_dce_worklist (cfg, info, cfg->vars [src_var->inst_c0], &work_list);
 				def->opcode = OP_NOP;
 				def->dreg = def->sreg1 = def->sreg2 = -1;
-			} else if (def->opcode == OP_ICONST) {
+			} else if ((def->opcode == OP_ICONST) || (def->opcode == OP_I8CONST)) {
 				def->opcode = OP_NOP;
 				def->dreg = def->sreg1 = def->sreg2 = -1;
 			} else if (def->opcode == OP_PHI) {

@@ -254,10 +254,20 @@ typedef struct _MonoAssemblyBindingInfo {
 	guint is_valid : 1;
 } MonoAssemblyBindingInfo;
 
+struct _MonoMethodHeader {
+	guint32      code_size;
+	const unsigned char  *code;
+	guint16      max_stack;
+	unsigned int num_clauses : 15;
+	/* if num_locals != 0, then the following apply: */
+	unsigned int init_locals : 1;
+	guint16      num_locals;
+	MonoExceptionClause *clauses;
+	MonoType    *locals [MONO_ZERO_LEN_ARRAY];
+};
+
 /* for use with allocated memory blocks (assumes alignment is to 8 bytes) */
 guint mono_aligned_addr_hash (gconstpointer ptr);
-
-extern GHashTable *mono_generic_params_with_ambiguous_names;
 
 const char *   mono_meta_table_name              (int table);
 void           mono_metadata_compute_table_bases (MonoImage *meta);

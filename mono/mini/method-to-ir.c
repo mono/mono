@@ -1355,14 +1355,15 @@ bin_int_table [STACK_MAX] [STACK_MAX] = {
 
 static const char
 bin_comp_table [STACK_MAX] [STACK_MAX] = {
+/*	Inv i  L  p  F  &  O  vt */
 	{0},
-	{0, 1, 0, 1, 0, 0, 4, 0},
-	{0, 0, 1, 0, 0, 0, 0, 0},
-	{0, 1, 0, 1, 0, 2, 4, 0},
-	{0, 0, 0, 0, 1, 0, 0, 0},
-	{0, 0, 0, 2, 0, 1, 0, 0},
-	{0, 4, 0, 4, 0, 0, 3, 0},
-	{0, 0, 0, 0, 0, 0, 0, 0},
+	{0, 1, 0, 1, 0, 0, 0, 0}, /* i, int32 */
+	{0, 0, 1, 0, 0, 0, 0, 0}, /* L, int64 */
+	{0, 1, 0, 1, 0, 2, 4, 0}, /* p, ptr */
+	{0, 0, 0, 0, 1, 0, 0, 0}, /* F, R8 */
+	{0, 0, 0, 2, 0, 1, 0, 0}, /* &, managed pointer */
+	{0, 0, 0, 4, 0, 0, 3, 0}, /* O, reference */
+	{0, 0, 0, 0, 0, 0, 0, 0}, /* vt value type */
 };
 
 /* reduce the size of this table */
@@ -1986,32 +1987,32 @@ handle_stack_args (MonoCompile *cfg, MonoInst **sp, int count) {
 	return 0;
 }
 
+/* Emit code which loads interface_offsets [klass->interface_id]
+ * The array is stored in memory before vtable.
+*/
 static void
-mini_emit_load_intf_reg (MonoCompile *cfg, int intf_reg, int ioffset_reg, MonoClass *klass)
+mini_emit_load_intf_reg_vtable (MonoCompile *cfg, int intf_reg, int vtable_reg, MonoClass *klass)
 {
 	if (cfg->compile_aot) {
+		int ioffset_reg = alloc_preg (cfg);
 		int iid_reg = alloc_preg (cfg);
+		int adjiid_reg = alloc_preg (cfg);
 		MONO_EMIT_NEW_AOTCONST (cfg, iid_reg, klass, MONO_PATCH_INFO_IID);
+		/* Consider having it already adjusted with a new AOT const,
+		 * so we avoid both the inc and the shift.
+		 */
+		MONO_EMIT_NEW_BIALU (cfg, OP_ADD_IMM, adjiid_reg, iid_reg, 1);
 #if SIZEOF_VOID_P == 8
-		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_SHL_IMM, iid_reg, iid_reg, 3);
+		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_SHL_IMM, ioffset_reg, adjiid_reg, 3);
 #else
-		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_SHL_IMM, iid_reg, iid_reg, 2);
+		MONO_EMIT_NEW_BIALU_IMM (s, OP_SHL_IMM, ioffset_reg, adjiid_reg, 2);
 #endif
 		MONO_EMIT_NEW_BIALU (cfg, OP_PADD, ioffset_reg, ioffset_reg, iid_reg);
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, intf_reg, ioffset_reg, 0);
 	}
-	else
-		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, intf_reg, ioffset_reg, klass->interface_id * SIZEOF_VOID_P);
-}
-
-/* Emit code which loads <vtable_reg>->interface_offsets [klass->interface_id] */
-static void
-mini_emit_load_intf_reg_vtable (MonoCompile *cfg, int intf_reg, int vtable_reg, MonoClass *klass)
-{
-	int ioffset_reg = alloc_preg (cfg);
-
-	MONO_EMIT_NEW_LOAD_MEMBASE (cfg, ioffset_reg, vtable_reg, G_STRUCT_OFFSET (MonoVTable, interface_offsets));
-	mini_emit_load_intf_reg (cfg, intf_reg, ioffset_reg, klass);
+	else {
+		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, intf_reg, vtable_reg, -((klass->interface_id + 1) * SIZEOF_VOID_P));
+	}
 }
 
 /* Emit code which loads <klass_reg>->interface_offsets [klass->interface_id] */
@@ -6751,6 +6752,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			stack_type = type_to_stack_type (&klass->byval_arg);
 			dreg = alloc_dreg (cfg, stack_type);
 			NEW_LOAD_MEMBASE (cfg, ins, mono_type_to_load_membase (&klass->byval_arg), dreg, sp[0]->dreg, 0);
+			ins->type = stack_type;
 			if (ins->opcode == CEE_LDOBJ)
 				ins = emit_ldobj (cfg, sp [0], ip, klass);
 			else
@@ -7154,7 +7156,9 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				CHECK_STACK (1);
 				--sp;
 			}
-			if (sp [0]->type == STACK_I4 || sp [0]->type == STACK_I8 || sp [0]->type == STACK_R8 || sp [0]->type == STACK_VTYPE)
+			if (sp [0]->type == STACK_I4 || sp [0]->type == STACK_I8 || sp [0]->type == STACK_R8)
+				goto unverified;
+			if (*ip != CEE_LDFLD && sp [0]->type == STACK_VTYPE)
 				goto unverified;
 			CHECK_OPSIZE (5);
 			token = read32 (ip + 1);
@@ -7519,6 +7523,8 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 
 			CHECK_STACK (1);
 			--sp;
+			if (sp [0]->type != STACK_OBJ)
+				goto unverified;
 
 			dreg = alloc_preg (cfg);
 			NEW_LOAD_MEMBASE (cfg, ins, OP_LOADI4_MEMBASE, dreg, sp [0]->dreg,
@@ -7532,6 +7538,8 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			CHECK_STACK (2);
 			sp -= 2;
 			CHECK_OPSIZE (5);
+			if (sp [0]->type != STACK_OBJ)
+				goto unverified;
 
 			klass = mini_get_class (method, read32 (ip + 1), generic_context);
 			if (!klass)
@@ -7607,6 +7615,9 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			else
 				klass = array_access_to_klass (*ip);
 
+			if (sp [0]->type != STACK_OBJ)
+				goto unverified;
+
 			size = mono_class_array_element_size (klass);
 
 			mult_reg = alloc_preg (cfg);
@@ -7664,9 +7675,17 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			else
 				klass = array_access_to_klass (*ip);
 
+			if (sp [0]->type != STACK_OBJ)
+				goto unverified;
+
 			if (MONO_TYPE_IS_REFERENCE (&klass->byval_arg)) {
 				MonoMethod* helper = mono_marshal_get_stelemref ();
 				MonoInst *iargs [3];
+
+				if (sp [0]->type != STACK_OBJ)
+					goto unverified;
+				if (sp [2]->type != STACK_OBJ)
+					goto unverified;
 
 				iargs [2] = sp [2];
 				iargs [1] = sp [1];
@@ -8918,6 +8937,38 @@ op_to_op_dest_membase (int opcode)
 	}
 #endif
 
+#ifdef __x86_64__
+	switch (opcode) {
+	case OP_IADD:
+		return OP_X86_ADD_MEMBASE_REG;
+	case OP_ISUB:
+		return OP_X86_SUB_MEMBASE_REG;
+	case OP_IAND:
+		return OP_X86_AND_MEMBASE_REG;
+	case OP_IOR:
+		return OP_X86_OR_MEMBASE_REG;
+	case OP_IXOR:
+		return OP_X86_XOR_MEMBASE_REG;
+	case OP_ADD_IMM:
+	case OP_IADD_IMM:
+		return OP_X86_ADD_MEMBASE_IMM;
+	case OP_SUB_IMM:
+	case OP_ISUB_IMM:
+		return OP_X86_SUB_MEMBASE_IMM;
+	case OP_AND_IMM:
+	case OP_IAND_IMM:
+		return OP_X86_AND_MEMBASE_IMM;
+	case OP_OR_IMM:
+	case OP_IOR_IMM:
+		return OP_X86_OR_MEMBASE_IMM;
+	case OP_XOR_IMM:
+	case OP_IXOR_IMM:
+		return OP_X86_XOR_MEMBASE_IMM;
+	case OP_MOVE:
+		return OP_NOP;
+	}
+#endif
+
 	return -1;
 }
 
@@ -8943,6 +8994,37 @@ op_to_op_src1_membase (int load_opcode, int opcode)
 	}
 #endif
 
+#ifdef __x86_64__
+	if ((opcode == OP_ICOMPARE_IMM) && (load_opcode == OP_LOADU1_MEMBASE))
+		return OP_X86_COMPARE_MEMBASE8_IMM;
+
+	switch (opcode) {
+	case OP_X86_PUSH:
+		if ((load_opcode == OP_LOAD_MEMBASE) || (load_opcode == OP_LOADI8_MEMBASE))
+			return OP_X86_PUSH_MEMBASE;
+		break;
+		/* FIXME: This only works for 32 bit immediates
+	case OP_COMPARE_IMM:
+	case OP_LCOMPARE_IMM:
+		if ((load_opcode == OP_LOAD_MEMBASE) || (load_opcode == OP_LOADI8_MEMBASE))
+			return OP_AMD64_COMPARE_MEMBASE_IMM;
+		*/
+	case OP_ICOMPARE_IMM:
+		if ((load_opcode == OP_LOADI4_MEMBASE) || (load_opcode == OP_LOADU4_MEMBASE))
+			return OP_AMD64_ICOMPARE_MEMBASE_IMM;
+		break;
+	case OP_COMPARE:
+	case OP_LCOMPARE:
+		if ((load_opcode == OP_LOAD_MEMBASE) || (load_opcode == OP_LOADI8_MEMBASE))
+			return OP_AMD64_COMPARE_MEMBASE_REG;
+		break;
+	case OP_ICOMPARE:
+		if ((load_opcode == OP_LOADI4_MEMBASE) || (load_opcode == OP_LOADU4_MEMBASE))
+			return OP_AMD64_ICOMPARE_MEMBASE_REG;
+		break;
+	}
+#endif
+
 	return -1;
 }
 
@@ -8957,6 +9039,20 @@ op_to_op_src2_membase (int load_opcode, int opcode)
 	case OP_COMPARE:
 	case OP_ICOMPARE:
 		return OP_X86_COMPARE_REG_MEMBASE;
+	}
+#endif
+
+#ifdef __x86_64__
+	switch (opcode) {
+	case OP_ICOMPARE:
+		if ((load_opcode == OP_LOADI4_MEMBASE) || (load_opcode == OP_LOADU4_MEMBASE))
+			return OP_AMD64_ICOMPARE_REG_MEMBASE;
+		break;
+	case OP_COMPARE:
+	case OP_LCOMPARE:
+		if ((load_opcode == OP_LOADI8_MEMBASE) || (load_opcode == OP_LOAD_MEMBASE))
+			return OP_AMD64_COMPARE_REG_MEMBASE;
+		break;
 	}
 #endif
 
@@ -9258,10 +9354,15 @@ mono_spill_global_vars (MonoCompile *cfg)
 					 * Instead of emitting a load+store, use a _membase opcode.
 					 */
 					g_assert (var->opcode == OP_REGOFFSET);
-					ins->opcode = op_to_op_dest_membase (ins->opcode);
-					ins->inst_basereg = var->inst_basereg;
-					ins->inst_offset = var->inst_offset;
-					ins->dreg = -1;
+					if (ins->opcode == OP_MOVE) {
+						ins->opcode = OP_NOP;
+						ins->dreg = ins->sreg1 = ins->sreg2 = -1;
+					} else {
+						ins->opcode = op_to_op_dest_membase (ins->opcode);
+						ins->inst_basereg = var->inst_basereg;
+						ins->inst_offset = var->inst_offset;
+						ins->dreg = -1;
+					}
 					spec = ins_info [ins->opcode - OP_START - 1];
 				} else {
 					g_assert (var->opcode == OP_REGOFFSET);
@@ -9322,7 +9423,6 @@ mono_spill_global_vars (MonoCompile *cfg)
 						load_opcode = mono_type_to_load_membase (var->inst_vtype);
 
 						/* Try to fuse the load into the instruction */
-						/* FIXME: Generalize this to 64 bit */
 						if ((srcindex == 0) && (op_to_op_src1_membase (load_opcode, ins->opcode) != -1)) {
 							ins->opcode = op_to_op_src1_membase (load_opcode, ins->opcode);
 							ins->inst_basereg = var->inst_basereg;
@@ -9336,6 +9436,7 @@ mono_spill_global_vars (MonoCompile *cfg)
 								ins->opcode = OP_NOP;
 								sreg = ins->dreg;
 							} else {
+								//printf ("%d ", srcindex); mono_print_ins (ins);
 								sreg = alloc_dreg (cfg, stacktypes [regtype]);
 							}
 
@@ -9444,10 +9545,9 @@ mono_spill_global_vars (MonoCompile *cfg)
  * - allow SSA with local vregs
  * - some tests no longer work with COUNT=0
  * - add code to only use -v -v -v -v for a specific method
- * - optimize optimize_branches: remove 'break's from the inner loop
  * - add is_global_vreg () macro
  * - cleanup the code replacement in decompose_long_opts ()
- * - LAST MERGE: 57056.
+ * - LAST MERGE: 57242.
  */
 
 /*

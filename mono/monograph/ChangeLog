@@ -1,4 +1,8 @@
 
+Wed Feb 22 15:11:37 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* monograph.c: update after MonoMethodHeader changes.
+
 Tue Jan 24 18:57:46 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* monograph.c: misc fixes and parent depth stats.

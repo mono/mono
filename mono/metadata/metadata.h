@@ -259,6 +259,8 @@ guint32     mono_metadata_get_constant_index (MonoImage *meta, guint32 token, gu
  */
 guint32 mono_metadata_decode_value     (const char            *ptr,
                                         const char           **rptr);
+gint32 mono_metadata_decode_signed_value (const char *ptr, const char **rptr);
+
 guint32 mono_metadata_decode_blob_size (const char            *ptr,
                                         const char           **rptr);
 
@@ -346,21 +348,7 @@ struct _MonoMethodSignature {
 	MonoType     *params [MONO_ZERO_LEN_ARRAY];
 };
 
-/*
- * This structure is an internal runtime detail: use the mono_method_header_*
- * accessors below, because it will go away from the public header.
- */
-typedef struct {
-	guint32      code_size;
-	const unsigned char  *code;
-	guint16      max_stack;
-	unsigned int num_clauses : 15;
-	/* if num_locals != 0, then the following apply: */
-	unsigned int init_locals : 1;
-	guint16      num_locals;
-	MonoExceptionClause *clauses;
-	MonoType    *locals [MONO_ZERO_LEN_ARRAY];
-} MonoMethodHeader;
+typedef struct _MonoMethodHeader MonoMethodHeader;
 
 typedef enum {
 	MONO_PARSE_TYPE,

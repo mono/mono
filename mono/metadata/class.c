@@ -407,6 +407,11 @@ inflate_generic_class (MonoGenericClass *ogclass, MonoGenericContext *context)
 {
 	MonoInflatedGenericClass *igclass;
 	MonoGenericClass *ngclass, *cached;
+	MonoGenericInst *ninst;
+
+	ninst = mono_metadata_inflate_generic_inst (ogclass->inst, context);
+	if (ninst == ogclass->inst)
+		return ogclass;
 
 	if (ogclass->is_dynamic) {
 		MonoDynamicGenericClass *dgclass = g_new0 (MonoDynamicGenericClass, 1);
@@ -422,7 +427,7 @@ inflate_generic_class (MonoGenericClass *ogclass, MonoGenericContext *context)
 
 	*ngclass = *ogclass;
 
-	ngclass->inst = mono_metadata_inflate_generic_inst (ogclass->inst, context);
+	ngclass->inst = ninst;
 
 	igclass->klass = NULL;
 
@@ -446,20 +451,24 @@ static MonoType*
 inflate_generic_type (MonoType *type, MonoGenericContext *context)
 {
 	switch (type->type) {
-	case MONO_TYPE_MVAR:
-		if (context->gmethod && context->gmethod->inst->type_argv)
-			return dup_type (
-				context->gmethod->inst->type_argv [type->data.generic_param->num],
-				type);
-		else
+	case MONO_TYPE_MVAR: {
+		int num = type->data.generic_param->num;
+		MonoGenericInst *inst = context->gmethod ? context->gmethod->inst : NULL;
+		if (!inst || !inst->type_argv)
 			return NULL;
-	case MONO_TYPE_VAR:
-		if (context->gclass)
-			return dup_type (
-				context->gclass->inst->type_argv [type->data.generic_param->num],
-				type);
-		else
+		if (num >= inst->type_argc)
+			g_error ("MVAR %d (%s) cannot be expanded in this context with %d instantiations", num, type->data.generic_param->name, inst->type_argc);
+		return dup_type (inst->type_argv [num], type);
+	}
+	case MONO_TYPE_VAR: {
+		int num = type->data.generic_param->num;
+		MonoGenericInst *inst = context->gclass ? context->gclass->inst : NULL;
+		if (!inst)
 			return NULL;
+		if (num >= inst->type_argc)
+			g_error ("VAR %d (%s) cannot be expanded in this context with %d instantiations", num, type->data.generic_param->name, inst->type_argc);
+		return dup_type (inst->type_argv [num], type);
+	}
 	case MONO_TYPE_SZARRAY: {
 		MonoClass *eclass = type->data.klass;
 		MonoType *nt, *inflated = inflate_generic_type (&eclass->byval_arg, context);
@@ -484,8 +493,11 @@ inflate_generic_type (MonoType *type, MonoGenericContext *context)
 		MonoType *nt;
 		if (!gclass->inst->is_open)
 			return NULL;
+		gclass = inflate_generic_class (gclass, context);
+		if (gclass == type->data.generic_class)
+			return NULL;
 		nt = dup_type (type, type);
-		nt->data.generic_class = inflate_generic_class (gclass, context);
+		nt->data.generic_class = gclass;
 		return nt;
 	}
 	case MONO_TYPE_CLASS:
@@ -496,9 +508,9 @@ inflate_generic_type (MonoType *type, MonoGenericContext *context)
 
 		if (!klass->generic_container)
 			return NULL;
-
 		gclass = inflate_generic_class (klass->generic_container->context.gclass, context);
-
+		if (gclass == klass->generic_container->context.gclass)
+			return NULL;
 		nt = dup_type (type, type);
 		nt->type = MONO_TYPE_GENERICINST;
 		nt->data.generic_class = gclass;
@@ -530,76 +542,36 @@ mono_class_inflate_generic_type (MonoType *type, MonoGenericContext *context)
 	return inflated;
 }
 
-MonoMethodSignature*
-mono_class_inflate_generic_signature (MonoImage *image, MonoMethodSignature *sig, MonoGenericContext *context)
-{
-	MonoMethodSignature *res;
-	gboolean is_open;
-	int i;
-
-	if (!context)
-		return sig;
-
-	res = mono_metadata_signature_alloc (image, sig->param_count);
-	res->ret = mono_class_inflate_generic_type (sig->ret, context);
-	is_open = mono_class_is_open_constructed_type (res->ret);
-	for (i = 0; i < sig->param_count; ++i) {
-		res->params [i] = mono_class_inflate_generic_type (sig->params [i], context);
-		if (!is_open)
-			is_open = mono_class_is_open_constructed_type (res->params [i]);
-	}
-	res->hasthis = sig->hasthis;
-	res->explicit_this = sig->explicit_this;
-	res->call_convention = sig->call_convention;
-	res->pinvoke = sig->pinvoke;
-	res->generic_param_count = sig->generic_param_count;
-	res->sentinelpos = sig->sentinelpos;
-	res->has_type_parameters = is_open;
-	res->is_inflated = 1;
-	return res;
-}
-
-static MonoMethodHeader*
-inflate_generic_header (MonoMethodHeader *header, MonoGenericContext *context)
-{
-	MonoMethodHeader *res;
-	int i;
-	res = g_malloc0 (sizeof (MonoMethodHeader) + sizeof (gpointer) * header->num_locals);
-	res->code = header->code;
-	res->code_size = header->code_size;
-	res->max_stack = header->max_stack;
-	res->num_clauses = header->num_clauses;
-	res->init_locals = header->init_locals;
-	res->num_locals = header->num_locals;
-	res->clauses = header->clauses;
-	for (i = 0; i < header->num_locals; ++i)
-		res->locals [i] = mono_class_inflate_generic_type (header->locals [i], context);
-	return res;
-}
-
 static MonoGenericContext *
 inflate_generic_context (MonoGenericContext *context, MonoGenericContext *inflate_with)
 {
-	MonoGenericContext *res = g_new0 (MonoGenericContext, 1);
-
-	res->container = context->container;
+	MonoGenericClass *gclass = NULL;
+	MonoGenericMethod *gmethod = NULL;
+	MonoGenericContext *res;
 
 	if (context->gclass)
-		res->gclass = inflate_generic_class (context->gclass, inflate_with);
+		gclass = inflate_generic_class (context->gclass, inflate_with);
 
 	if (context->gmethod) {
-		res->gmethod = g_new0 (MonoGenericMethod, 1);
-		res->gmethod->generic_class = res->gclass;
-
-		res->gmethod->container = context->gmethod->container;
-		res->gmethod->inst = mono_metadata_inflate_generic_inst (context->gmethod->inst, inflate_with);
-	} else
-		res->gmethod = inflate_with->gmethod;
-
-	if (res->gmethod) {
-		res->gmethod->container->parent = res->container;
-		res->container = res->gmethod->container;
+		MonoGenericInst *ninst = mono_metadata_inflate_generic_inst (context->gmethod->inst, inflate_with);
+		if (gclass == context->gclass && ninst == context->gmethod->inst) {
+			gmethod = context->gmethod;
+		} else {
+			gmethod = g_new0 (MonoGenericMethod, 1);
+			gmethod->generic_class = gclass;
+			gmethod->container = context->container;
+			gmethod->inst = ninst;
+		}
 	}
+
+	if (gclass == context->gclass && gmethod == context->gmethod)
+		return context;
+
+	res = g_new0 (MonoGenericContext, 1);
+
+	res->container = gmethod ? gmethod->container : context->container;
+	res->gclass = gclass;
+	res->gmethod = gmethod;
 
 	return res;
 }
@@ -612,37 +584,68 @@ inflate_generic_context (MonoGenericContext *context, MonoGenericContext *inflat
  *         Use mono_get_inflated_method (), mono_method_signature () and mono_method_get_header () to get the correct values.
  */
 MonoMethod*
-mono_class_inflate_generic_method (MonoMethod *method, MonoGenericContext *context)
+mono_class_inflate_generic_method (MonoMethod *method, MonoClass *klass_hint, MonoGenericContext *context)
 {
-	MonoMethodInflated *result;
-	MonoGenericContainer *container = context ? context->container : NULL;
+	MonoMethod *result;
+	MonoMethodInflated *iresult;
 	MonoMethodSignature *sig;
 
 	/* The `method' has already been instantiated before -> we need to create a new context. */
-	sig = mono_method_signature_full (method, container);
-	if (method->is_inflated || sig->is_inflated) {
+	while (method->is_inflated) {
 		MonoMethodInflated *imethod = (MonoMethodInflated *) method;
-
 		context = inflate_generic_context (imethod->context, context);
+		if (context == imethod->context)
+			return method;
 		method = imethod->declaring;
 	}
 
+	if (!method->generic_container && !method->klass->generic_container)
+		return method;
+
 	mono_stats.inflated_method_count++;
+	iresult = g_new0 (MonoMethodInflated, 1);
 
-	/* Just create a copy, but don't actually inflate the method for performance reasons. */
-	result = g_new0 (MonoMethodInflated, 1);
-	if (sig->pinvoke)
-		result->method.pinvoke = *(MonoMethodPInvoke*)method;
-	else
-		result->method.normal = *(MonoMethodNormal*)method;
-	result->method.method.is_inflated = 1;
-	result->context = context;
-	result->declaring = method;
+	sig = mono_method_signature (method);
+	if (sig->pinvoke) {
+		iresult->method.pinvoke = *(MonoMethodPInvoke*)method;
+	} else {
+		iresult->method.normal = *(MonoMethodNormal*)method;
+		iresult->method.normal.header = NULL;
+	}
 
-	if (result->method.method.klass->generic_class)
-		result->method.method.klass = result->method.method.klass->generic_class->container_class;
+	result = (MonoMethod *) iresult;
+	result->is_inflated = 1;
+	result->signature = NULL;
+	iresult->context = context;
+	iresult->declaring = method;
 
-	return (MonoMethod *) result;
+	if (klass_hint && klass_hint->generic_class &&
+	    (klass_hint->generic_class->container_class != method->klass || klass_hint->generic_class->inst != context->gclass->inst))
+		klass_hint = NULL;
+
+	if (method->klass->generic_container)
+		result->klass = klass_hint;
+
+	if (!result->klass) {
+		MonoType *inflated = inflate_generic_type (&method->klass->byval_arg, context);
+		result->klass = inflated ? mono_class_from_mono_type (inflated) : method->klass;
+	}
+
+	if (method->generic_container && !context->gmethod) {
+		MonoGenericMethod *gmethod = g_memdup (method->generic_container->context.gmethod, sizeof (*gmethod));
+		gmethod->generic_class = result->klass->generic_class;
+
+		context = g_new0 (MonoGenericContext, 1);
+		context->container = method->generic_container;
+		context->gclass = result->klass->generic_class;
+		context->gmethod = gmethod;
+
+		iresult->context = context;
+	}
+
+	iresult->inflated = result;
+
+	return result;
 }
 
 /**
@@ -655,37 +658,7 @@ mono_class_inflate_generic_method (MonoMethod *method, MonoGenericContext *conte
 MonoMethod *
 mono_get_inflated_method (MonoMethod *method)
 {
-	MonoMethodInflated *imethod, *res;
-	MonoMethodHeader *mh;
-	MonoType *dtype;
-	MonoClass *rklass;
-
-	if (!method->is_inflated)
-		return method;
-
-	imethod = (MonoMethodInflated *) method;
-	if (imethod->inflated)
-		return (MonoMethod *) imethod->inflated;
-
-	mono_stats.inflated_method_count_2++;
-	mono_stats.generics_metadata_size +=
-		sizeof (MonoMethodInflated) - sizeof (MonoMethodNormal);
-
-	res = g_new0 (MonoMethodInflated, 1);
-	*res = *imethod;
-	res->inflated = imethod->inflated = res;
-
-	mh = mono_method_get_header (method);
-	if (mh)
-		res->method.normal.header = inflate_generic_header (mh, imethod->context);
-
-	dtype = mono_class_inflate_generic_type (&method->klass->byval_arg, imethod->context);
-	rklass = res->method.method.klass = mono_class_from_mono_type (dtype);
-
-	res->method.method.signature = mono_class_inflate_generic_signature (
-		method->klass->image, mono_method_signature (method), imethod->context);
-
-	return (MonoMethod *) res;
+	return method;
 }
 
 /** 
@@ -1265,28 +1238,28 @@ inflate_event (MonoClass *class, MonoEvent *event, MonoInflatedGenericClass *gcl
 
 	if (event->add) {
 		MonoMethod *inflated = mono_class_inflate_generic_method (
-			event->add, gclass->generic_class.context);
+			event->add, class, gclass->generic_class.context);
 
 		event->add = mono_get_inflated_method (inflated);
 	}
 
 	if (event->remove) {
 		MonoMethod *inflated = mono_class_inflate_generic_method (
-			event->remove, gclass->generic_class.context);
+			event->remove, class, gclass->generic_class.context);
 
 		event->remove = mono_get_inflated_method (inflated);
 	}
 
 	if (event->raise) {
 		MonoMethod *inflated = mono_class_inflate_generic_method (
-			event->raise, gclass->generic_class.context);
+			event->raise, class, gclass->generic_class.context);
 
 		event->raise = mono_get_inflated_method (inflated);
 	}
 
 	if (event->other) {
 		MonoMethod *inflated = mono_class_inflate_generic_method (
-			event->other, gclass->generic_class.context);
+			event->other, class, gclass->generic_class.context);
 
 		event->other = mono_get_inflated_method (inflated);
 	}
@@ -1624,7 +1597,7 @@ setup_generic_vtable (MonoClass *class)
 		if (!m)
 			continue;
 
-		m = mono_class_inflate_generic_method (m, class->generic_class->context);
+		m = mono_class_inflate_generic_method (m, class, class->generic_class->context);
 		class->vtable [i] = m;
 	}
 
@@ -2168,7 +2141,7 @@ mono_class_init (MonoClass *class)
 
 		for (i = 0; i < class->method.count; i++) {
 			MonoMethod *inflated = mono_class_inflate_generic_method (
-				gklass->methods [i], gclass->generic_class.context);
+				gklass->methods [i], class, gclass->generic_class.context);
 
 			class->methods [i] = mono_get_inflated_method (inflated);
 		}
@@ -2183,10 +2156,10 @@ mono_class_init (MonoClass *class)
 
 			if (prop->get)
 				prop->get = mono_class_inflate_generic_method (
-					prop->get, gclass->generic_class.context);
+					prop->get, class, gclass->generic_class.context);
 			if (prop->set)
 				prop->set = mono_class_inflate_generic_method (
-					prop->set, gclass->generic_class.context);
+					prop->set, class, gclass->generic_class.context);
 
 			prop->parent = class;
 		}
@@ -2592,8 +2565,8 @@ mono_class_setup_supertypes (MonoClass *class)
 	}
 }	
 
-static MonoGenericInst *
-get_shared_inst (MonoGenericContainer *container)
+MonoGenericInst *
+mono_get_shared_generic_inst (MonoGenericContainer *container)
 {
 	MonoGenericInst *nginst;
 	int i;
@@ -2639,7 +2612,7 @@ mono_get_shared_generic_class (MonoGenericContainer *container, gboolean is_dyna
 
 	gclass->context = &container->context;
 	gclass->container_class = container->klass;
-	gclass->inst = get_shared_inst (container);
+	gclass->inst = mono_get_shared_generic_inst (container);
 
 	if (!is_dynamic) {
 		MonoGenericClass *cached = mono_metadata_lookup_generic_class (gclass);

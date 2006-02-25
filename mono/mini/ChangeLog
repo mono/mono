@@ -1,3 +1,45 @@
+2006-02-24  Raja R Harinath  <harinath@gmail.com>
+
+	* jit-icalls.c (helper_compile_generic_method): Update to changes
+	in metadata/class.c.
+
+2006-02-24  Zoltan Varga  <vargaz@gmail.com>
+	
+	* mini-amd64.c (mono_arch_get_vcall_slot_addr): Add a missing check.
+	
+	* mini-amd64.c (mono_arch_get_vcall_slot_addr): Add support for
+	interface calls with large offsets.
+
+2006-02-23  Raja R Harinath  <rharinath@novell.com>
+
+	* jit-icalls.c (helper_compile_generic_method): Document the
+	special-case we depend on so that we can inflate the method twice
+	with the same context with no bad side-effects.
+
+Thu Feb 23 13:45:46 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini-x86.c, mini-amd64.c: fix for case when xen support
+	is disabled.
+
+Wed Feb 22 19:38:40 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini-x86.c, mini-amd64.c: generate code to access tls items
+	in a faster way for Xen systems.
+
+Wed Feb 22 10:31:25 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* exceptions-x86.c, mini-x86.h, driver.c, mini-codegen.c:
+	updates and compilation fixes for the OSX/x86 port, mostly from
+	Geoff Norton <gnorton@customerdna.com>.
+
+Tue Feb 21 19:56:55 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* inssel.brg: faster interface call implementation
+	to sync with the interface_offsets MonoVTable changes.
+
+Mon Feb 20 10:37:57 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: more verification checks.
 
 Fri Feb 17 19:47:29 CET 2006 Paolo Molaro <lupus@ximian.com>
 

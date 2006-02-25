@@ -1313,14 +1313,15 @@ bin_int_table [STACK_MAX] [STACK_MAX] = {
 
 static const char
 bin_comp_table [STACK_MAX] [STACK_MAX] = {
+/*	Inv i  L  p  F  &  O  vt */
 	{0},
-	{0, 1, 0, 1, 0, 0, 4, 0},
-	{0, 0, 1, 0, 0, 0, 0, 0},
-	{0, 1, 0, 1, 0, 2, 4, 0},
-	{0, 0, 0, 0, 1, 0, 0, 0},
-	{0, 0, 0, 2, 0, 1, 0, 0},
-	{0, 4, 0, 4, 0, 0, 3, 0},
-	{0, 0, 0, 0, 0, 0, 0, 0},
+	{0, 1, 0, 1, 0, 0, 0, 0}, /* i, int32 */
+	{0, 0, 1, 0, 0, 0, 0, 0}, /* L, int64 */
+	{0, 1, 0, 1, 0, 2, 4, 0}, /* p, ptr */
+	{0, 0, 0, 0, 1, 0, 0, 0}, /* F, R8 */
+	{0, 0, 0, 2, 0, 1, 0, 0}, /* &, managed pointer */
+	{0, 0, 0, 4, 0, 0, 3, 0}, /* O, reference */
+	{0, 0, 0, 0, 0, 0, 0, 0}, /* vt value type */
 };
 
 /* reduce the size of this table */
@@ -5585,7 +5586,9 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				CHECK_STACK (1);
 				--sp;
 			}
-			if (sp [0]->type == STACK_I4 || sp [0]->type == STACK_I8 || sp [0]->type == STACK_R8 || sp [0]->type == STACK_VTYPE)
+			if (sp [0]->type == STACK_I4 || sp [0]->type == STACK_I8 || sp [0]->type == STACK_R8)
+				goto unverified;
+			if (*ip != CEE_LDFLD && sp [0]->type == STACK_VTYPE)
 				goto unverified;
 			CHECK_OPSIZE (5);
 			token = read32 (ip + 1);
@@ -6034,9 +6037,11 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			break;
 		case CEE_LDLEN:
 			CHECK_STACK (1);
+			--sp;
+			if (sp [0]->type != STACK_OBJ)
+				goto unverified;
 			MONO_INST_NEW (cfg, ins, *ip);
 			ins->cil_code = ip++;
-			--sp;
 			ins->inst_left = *sp;
 			ins->type = STACK_PTR;
 			*sp++ = ins;
@@ -6045,6 +6050,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			CHECK_STACK (2);
 			sp -= 2;
 			CHECK_OPSIZE (5);
+			if (sp [0]->type != STACK_OBJ)
+				goto unverified;
 
 			klass = mini_get_class (method, read32 (ip + 1), generic_context);
 			if (!klass)
@@ -6073,6 +6080,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			MonoInst *load;
 			CHECK_STACK (2);
 			sp -= 2;
+			if (sp [0]->type != STACK_OBJ)
+				goto unverified;
 			CHECK_OPSIZE (5);
 			token = read32 (ip + 1);
 			klass = mono_class_get_full (image, token, generic_context);
@@ -6108,6 +6117,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			 */
 			CHECK_STACK (2);
 			sp -= 2;
+			if (sp [0]->type != STACK_OBJ)
+				goto unverified;
 			klass = array_access_to_klass (*ip);
 			NEW_LDELEMA (cfg, load, sp, klass);
 			load->cil_code = ip;
@@ -6134,6 +6145,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			 */
 			CHECK_STACK (3);
 			sp -= 3;
+			if (sp [0]->type != STACK_OBJ)
+				goto unverified;
 			klass = array_access_to_klass (*ip);
 			NEW_LDELEMA (cfg, load, sp, klass);
 			load->cil_code = ip;
@@ -6156,6 +6169,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			 */
 			CHECK_STACK (3);
 			sp -= 3;
+			if (sp [0]->type != STACK_OBJ)
+				goto unverified;
 			CHECK_OPSIZE (5);
 			token = read32 (ip + 1);
 			klass = mono_class_get_full (image, token, generic_context);
@@ -6198,6 +6213,10 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 			CHECK_STACK (3);
 			sp -= 3;
+			if (sp [0]->type != STACK_OBJ)
+				goto unverified;
+			if (sp [2]->type != STACK_OBJ)
+				goto unverified;
 
 			handle_loaded_temps (cfg, bblock, stack_start, sp);
 
@@ -10347,6 +10366,11 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 		if (cfg->prof_options & MONO_PROFILE_JIT_COMPILATION)
 			mono_profiler_method_end_jit (method, NULL, MONO_PROFILE_FAILED);
 		return cfg;
+	}
+
+	if (getenv ("MONO_VERBOSE_METHOD")) {
+		if (strcmp (cfg->method->name, getenv ("MONO_VERBOSE_METHOD")) == 0)
+			cfg->verbose_level = 4;
 	}
 
 	ip = (guint8 *)header->code;

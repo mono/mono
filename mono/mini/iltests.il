@@ -1030,6 +1030,7 @@ COND:   ldloc.0
 		ret
 	}
 
+	/*
 	.method public static int32 test_1_ldobj_reference () {
 		.maxstack 8
 		.locals init (  
@@ -1045,6 +1046,7 @@ COND:   ldloc.0
 		ceq
 		ret
 	}
+	*/
 
 	.method public static int32 test_5_vtype_on_bb_boundary () {
 		.maxstack 8

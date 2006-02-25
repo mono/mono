@@ -1,3 +1,123 @@
+2006-02-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (mono_marshal_free_asany): Fix handling of blittable
+	formatted classes. Fixes #77524.
+
+2006-02-24  Raja R Harinath  <rharinath@novell.com>
+
+	* class.c (inflate_generic_type): Add a couple more
+	micro-optimizations.
+	(inflate_generic_context): Don't use the 'gmethod' from
+	'inflate_with'.
+	(mono_class_inflate_generic_method): If the method has generic
+	parameters, but the passed-in context doesn't have a 'gmethod',
+	create one.  Use the possibly simplified generic instantiation
+	from the declaring class instead of the one passed in.
+
+2006-02-24  Raja R Harinath  <harinath@gmail.com>
+
+	Make generic method signature and method header handling lazy.
+	* class.c (mono_class_inflate_generic_signature): Move to loader.c.
+	(inflate_generic_header): Likewise.
+	(mono_class_inflate_generic_method): Rewrite.  Add a 'klass_hint'
+	parameter to avoid inflating types.
+	(mono_get_inflated_method): Empty out.
+	* class.h (mono_class_inflate_generic_method): Update to changes.
+	* loader.c (mono_get_method_from_token): Don't parse signature for
+	generic methods, nor methods of generic classes.
+	(mono_method_signature): Rename from 'mono_method_signature'.
+	Inflate signature on demand.
+	(mono_method_get_header): Inflate method header on demand.
+	* reflection.c: Update to changes.
+
+2006-02-23  Raja R Harinath  <rharinath@novell.com>
+
+	* metadata.c (mono_metadata_inflate_generic_inst): If the
+	instantiation is closed, don't bother expanding it in the new
+	context.
+	* class.c (inflate_generic_class): If the generic instantiation
+	doesn't change after inflation, return the argument itself.
+	(inflate_generic_type) [MONO_TYPE_MVAR, MONO_TYPE_VAR]:
+	Add bounds checks.
+	(inflate_generic_context): If neither the generic class nor the
+	generic method instantiations change, return the original context.
+	* reflection.c (mono_method_get_object): Do
+	'mono_get_inflated_method' before accessing the ->klass field.
+	(inflate_mono_method): Don't create a MonoGenericMethod unless
+	necessary.
+	(inflate_method): Don't pass a constructed type as the declaring
+	type of a methodbuilder.
+
+Thu Feb 23 11:57:54 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* object.c: fix memory overwrite.
+
+2006-02-22  Dick Porter  <dick@ximian.com>
+
+	* threads.c: Don't use G_GNUC_PRETTY_FUNCTION in debug messages,
+	it doesn't work any more.
+	(mono_threads_request_thread_dump): Fix unused variable warnings.
+
+Wed Feb 22 15:08:44 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* metadata.h, metadata-internals.h, monodiet.c, debug-helpers.c,
+	mono-debug.c, profiler.c: cleanup: move MonoMethodHeader out of
+	the public header file.
+
+2006-02-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalUni): Fix writing past memory. Fixes #77613.
+
+Tue Feb 21 19:55:11 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* class-internals.h, object.c: reduce the size of MonoVTable
+	and store the interface_offsets array at negative offsets.
+
+Tue Feb 21 19:53:26 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* metadata.c: tweak table descriptors data structures to reduce
+	size and runtime relocations.
+
+Tue Feb 21 14:52:13 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* marshal.c: fix some types and opcodes to be type-safe
+	in marshaling wrappers.
+
+2006-02-21  Ankit Jain  <jankit@novell.com>
+
+	* metadata.h (mono_metadata_decode_signed_value): Add declaration.
+
+2006-02-21  Raja R Harinath  <rharinath@novell.com>
+
+	* metadata.c (get_constraints): Relax debugging checks for monodis.
+
+2006-02-21  Ankit Jain  <jankit@novell.com>
+
+	* metadata.c (mono_metadata_load_generic_params): Move the code
+	checking for ambiguous generic params from here to mono/dis/get.c
+	* metadata-internals.h (mono_generic_params_with_ambiguous_names): Remove.
+
+2006-02-21  Raja R Harinath  <harinath@gmail.com>
+
+	Fix assertion triggered when compiling nemerle.
+	* class.c (mono_get_shared_generic_inst): Rename from
+	get_shared_inst and make non-static.
+	* loader.c (mono_get_shared_generic_method): New.  Used to create
+	the MonoGenericContext-equivalent of a MonoGenericContainer.
+	(mono_get_method_from_token): Initialize the 'context' field of
+	the created MonoGenericContainer.
+	* reflection.c (reflection_methodbuilder_to_mono_method): Likewise.
+	* metadata.c (get_constraints): Add sanity check.
+	* class-internals.h: Add new internal methods.
+
+	* reflection.c (verify_safe_for_managed_space): New sanity check.
+	Currently checks that owner-less generic parameters aren't allowed
+	in managed space.
+	(mono_type_get_object): Use it.
+	* icall.c (ves_icall_MonoType_GetGenericArguments): Remove checks
+	that are now in mono_type_get_object.
+	(ves_icall_MonoMethod_GetGenericArguments): Likewise.
+
 2006-02-19  Raja R Harinath  <harinath@gmail.com>
 
 	* metadata.c (mono_type_create_from_typespec): Rename from

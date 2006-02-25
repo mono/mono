@@ -345,15 +345,15 @@ struct _MonoClass {
 	MonoMethod **vtable;	
 };
 
+/* the interface_offsets array is stored in memory before this struct */
 struct MonoVTable {
 	MonoClass  *klass;
-    /*
+	 /*
 	 * According to comments in gc_gcj.h, this should be the second word in
 	 * the vtable.
 	 */
 	void *gc_descr; 	
 	MonoDomain *domain;  /* each object/vtable belongs to exactly one domain */
-        gpointer   *interface_offsets;   
         gpointer    data; /* to store static class data */
         gpointer    type; /* System.Type type for klass */
 	guint16     max_interface_id;
@@ -753,14 +753,14 @@ mono_find_jit_icall_by_name (const char *name);
 MonoJitICallInfo *
 mono_find_jit_icall_by_addr (gconstpointer addr);
 
-MonoMethodSignature*
-mono_class_inflate_generic_signature (MonoImage *image, MonoMethodSignature *sig, MonoGenericContext *context);
-
-MonoMethodSignature *
-mono_method_signature_full (MonoMethod *image, MonoGenericContainer *container);
+MonoGenericInst *
+mono_get_shared_generic_inst (MonoGenericContainer *container);
 
 MonoGenericClass *
 mono_get_shared_generic_class (MonoGenericContainer *container, gboolean is_dynamic);
+
+MonoGenericMethod *
+mono_get_shared_generic_method (MonoGenericContainer *container);
 
 gboolean
 mono_class_set_failure (MonoClass *klass, guint32 ex_type, void *ex_data);

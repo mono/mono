@@ -368,6 +368,7 @@ op_jump_table: dest:i len:18
 x86_test_null: src1:i len:5
 x86_compare_membase_reg: src1:b src2:i len:9
 x86_compare_membase_imm: src1:b len:13
+x86_compare_membase8_imm: src1:b len:9
 x86_compare_reg_membase: src1:i src2:b len:8
 x86_inc_reg: dest:i src1:i clob:1 len:3
 x86_inc_membase: src1:b len:8
@@ -388,12 +389,23 @@ x86_fp_load_i4: dest:f src1:b len:8
 x86_seteq_membase: src1:b len:9
 x86_add_membase: dest:i src1:i src2:b clob:1 len:13
 x86_sub_membase: dest:i src1:i src2:b clob:1 len:13
-x86_mul_membase: dest:i src1:i src2:b clob:1 len:14
+x86_and_membase_imm: src1:b len:12
+x86_or_membase_imm: src1:b len:12
+x86_xor_membase_imm: src1:b len:12
+x86_add_membase_reg: src1:b src2:i len:12
+x86_sub_membase_reg: src1:b src2:i len:12
+x86_and_membase_reg: src1:b src2:i len:12
+x86_or_membase_reg: src1:b src2:i len:12
+x86_xor_membase_reg: src1:b src2:i len:12
+x86_mul_membase_reg: src1:b src2:i len:14
 tls_get: dest:i len:13
 amd64_test_null: src1:i len:5
 amd64_icompare_membase_reg: src1:b src2:i len:8
 amd64_icompare_membase_imm: src1:b len:13
 amd64_icompare_reg_membase: src1:i src2:b len:8
+amd64_compare_membase_reg: src1:b src2:i len:9
+amd64_compare_membase_imm: src1:b len:14
+amd64_compare_reg_membase: src1:i src2:b len:9
 amd64_set_xmmreg_r4: dest:f src1:f len:14 clob:m
 amd64_set_xmmreg_r8: dest:f src1:f len:14 clob:m
 atomic_add_i4: src1:b src2:i dest:i len:32

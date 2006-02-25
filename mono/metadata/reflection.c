@@ -5385,6 +5385,7 @@ mono_generic_class_get_object (MonoDomain *domain, MonoType *geninst)
 
 	gclass = mono_get_inflated_generic_class (geninst->data.generic_class);
 	gklass = gclass->generic_class.container_class;
+	g_assert (gklass->generic_container);
 
 	mono_class_init (gclass->klass);
 
@@ -5394,10 +5395,38 @@ mono_generic_class_get_object (MonoDomain *domain, MonoType *geninst)
 	if (gklass->wastypebuilder && gklass->reflection_info)
 		res->generic_type = gklass->reflection_info;
 	else
-		res->generic_type = mono_type_get_object (
-			domain, &gclass->generic_class.container_class->byval_arg);
+		res->generic_type = mono_type_get_object (domain, &gklass->byval_arg);
 
 	return res;
+}
+
+static gboolean
+verify_safe_for_managed_space (MonoType *type)
+{
+	switch (type->type) {
+#ifdef DEBUG_HARDER
+	case MONO_TYPE_ARRAY:
+		return verify_safe_for_managed_space (&type->data.array->eklass->byval_arg);
+	case MONO_TYPE_PTR:
+		return verify_safe_for_managed_space (type->data.type);
+	case MONO_TYPE_SZARRAY:
+		return verify_safe_for_managed_space (&type->data.klass->byval_arg);
+	case MONO_TYPE_GENERICINST: {
+		MonoGenericInst *inst = type->data.generic_class->inst;
+		int i;
+		if (!inst->is_open)
+			break;
+		for (i = 0; i < inst->type_argc; ++i)
+			if (!verify_safe_for_managed_space (inst->type_argv [i]))
+				return FALSE;
+		break;
+	}
+#endif
+	case MONO_TYPE_VAR:
+	case MONO_TYPE_MVAR:
+		return type->data.generic_param->owner != NULL;
+	}
+	return TRUE;
 }
 
 /*
@@ -5427,6 +5456,12 @@ mono_type_get_object (MonoDomain *domain, MonoType *type)
 		mono_domain_unlock (domain);
 		return res;
 	}
+
+	if (!verify_safe_for_managed_space (type)) {
+		mono_domain_unlock (domain);
+		mono_raise_exception (mono_get_exception_invalid_operation ("This type cannot be propagated to managed space"));
+	}
+
 	if (klass->reflection_info && !klass->wastypebuilder) {
 		/* g_assert_not_reached (); */
 		/* should this be considered an error condition? */
@@ -5465,6 +5500,7 @@ mono_method_get_object (MonoDomain *domain, MonoMethod *method, MonoClass *refcl
 	if (method->is_inflated) {
 		MonoReflectionGenericMethod *gret;
 
+		method = mono_get_inflated_method (method);
 		refclass = method->klass;
 		CHECK_OBJECT (MonoReflectionMethod *, method, refclass);
 		if ((*method->name == '.') && (!strcmp (method->name, ".ctor") || !strcmp (method->name, ".cctor")))
@@ -8184,6 +8220,8 @@ reflection_methodbuilder_to_mono_method (MonoClass *klass,
 	MonoReflectionMethodAux *method_aux;
 	int i;
 
+	g_assert (!klass->generic_class);
+
 	if ((rmb->attrs & METHOD_ATTRIBUTE_PINVOKE_IMPL) ||
 			(rmb->iattrs & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL))
 		m = (MonoMethod *)g_new0 (MonoMethodPInvoke, 1);
@@ -8282,6 +8320,7 @@ reflection_methodbuilder_to_mono_method (MonoClass *klass,
 	if (rmb->generic_params) {
 		int count = mono_array_length (rmb->generic_params);
 		MonoGenericContainer *container;
+		MonoGenericContext *context;
 
 		m->generic_container = container = rmb->generic_container;
 		container->type_argc = count;
@@ -8292,7 +8331,16 @@ reflection_methodbuilder_to_mono_method (MonoClass *klass,
 				mono_array_get (rmb->generic_params, MonoReflectionGenericParam*, i);
 
 			container->type_params [i] = *gp->type.type->data.generic_param;
+			container->type_params [i].method = m;
 		}
+
+		context = &container->context;
+		context->container = container;
+		if (klass->generic_container) {
+			container->parent = klass->generic_container;
+			context->gclass = klass->generic_container->context.gclass;
+		}
+		context->gmethod = mono_get_shared_generic_method (container);
 	}
 
 	if (rmb->refs) {
@@ -8851,7 +8899,7 @@ mono_reflection_bind_generic_method_parameters (MonoReflectionMethod *rmethod, M
 	if (method->is_inflated)
 		method = ((MonoMethodInflated *) method)->declaring;
 
-	inflated = mono_class_inflate_generic_method (method, context);
+	inflated = mono_class_inflate_generic_method (method, NULL, context);
 	g_hash_table_insert (container->method_hash, gmethod, inflated);
 
 	return mono_method_get_object (mono_object_domain (rmethod), inflated, NULL);
@@ -8860,48 +8908,57 @@ mono_reflection_bind_generic_method_parameters (MonoReflectionMethod *rmethod, M
 static MonoMethod *
 inflate_mono_method (MonoReflectionGenericClass *type, MonoMethod *method, MonoObject *obj)
 {
-	MonoGenericMethod *gmethod;
+	MonoGenericMethod *gmethod = NULL;
 	MonoInflatedGenericClass *gclass;
 	MonoGenericContext *context;
-	int i;
+	MonoClass *klass;
+	int i, n;
 
+	klass = mono_class_from_mono_type (type->type.type);
 	gclass = mono_get_inflated_generic_class (type->type.type->data.generic_class);
+	n = mono_method_signature (method)->generic_param_count;
 
-	gmethod = g_new0 (MonoGenericMethod, 1);
-	gmethod->generic_class = &gclass->generic_class;
-	gmethod->inst = g_new0 (MonoGenericInst, 1);
-	gmethod->reflection_info = obj;
+	context = gclass->generic_class.context;
+	g_assert (context && context->container);
+	if (n) {
+		gmethod = g_new0 (MonoGenericMethod, 1);
+		gmethod->generic_class = &gclass->generic_class;
+		gmethod->container = method->generic_container;
+		gmethod->reflection_info = obj;
 
-	gmethod->inst->type_argc = mono_method_signature (method)->generic_param_count;
-	gmethod->inst->type_argv = g_new0 (MonoType *, gmethod->inst->type_argc);
+		gmethod->inst = g_new0 (MonoGenericInst, 1);
+		gmethod->inst->type_argc = n;
+		gmethod->inst->type_argv = g_new0 (MonoType *, n);
 
-	for (i = 0; i < gmethod->inst->type_argc; i++) {
-		MonoGenericParam *gparam = &method->generic_container->type_params [i];
+		for (i = 0; i < n; i++) {
+			MonoGenericParam *gparam = &method->generic_container->type_params [i];
+			g_assert (gparam->pklass);
+			gmethod->inst->type_argv [i] = &gparam->pklass->byval_arg;
+		}
 
-		g_assert (gparam->pklass);
-		gmethod->inst->type_argv [i] = &gparam->pklass->byval_arg;
+		g_assert (gmethod->container->parent == context->container);
+
+		context = g_new0 (MonoGenericContext, 1);
+		context->container = gmethod->container;
+		context->gclass = &gclass->generic_class;
+		context->gmethod = gmethod;
 	}
 
-	context = g_new0 (MonoGenericContext, 1);
-	context->container = gclass->generic_class.container_class->generic_container;
-	context->gclass = &gclass->generic_class;
-	context->gmethod = gmethod;
-
-	return mono_class_inflate_generic_method (method, context);
+	return mono_class_inflate_generic_method (method, klass, context);
 }
 
 static MonoMethod *
 inflate_method (MonoReflectionGenericClass *type, MonoObject *obj)
 {
 	MonoMethod *method;
-	MonoClass *klass;
+	MonoClass *gklass;
 
-	klass = mono_class_from_mono_type (type->type.type);
+	gklass = mono_class_from_mono_type (type->generic_type->type);
 
 	if (!strcmp (obj->vtable->klass->name, "MethodBuilder"))
-		method = methodbuilder_to_mono_method (klass, (MonoReflectionMethodBuilder *) obj);
+		method = methodbuilder_to_mono_method (gklass, (MonoReflectionMethodBuilder *) obj);
 	else if (!strcmp (obj->vtable->klass->name, "ConstructorBuilder"))
-		method = ctorbuilder_to_mono_method (klass, (MonoReflectionCtorBuilder *) obj);
+		method = ctorbuilder_to_mono_method (gklass, (MonoReflectionCtorBuilder *) obj);
 	else if (!strcmp (obj->vtable->klass->name, "MonoMethod") || !strcmp (obj->vtable->klass->name, "MonoCMethod"))
 		method = ((MonoReflectionMethod *) obj)->method;
 	else {
