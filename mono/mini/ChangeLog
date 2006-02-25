@@ -1,4 +1,8 @@
 
+Sat Feb 25 14:19:31 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* helpers.c: reduce relocations and mem usage.
+
 Sat Feb 25 11:58:16 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* mini.h, mini-codegen.c: disable logging features if
