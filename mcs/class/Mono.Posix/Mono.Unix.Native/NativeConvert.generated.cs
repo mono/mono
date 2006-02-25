@@ -9,8 +9,9 @@ using System.Runtime.InteropServices;
 using Mono.Unix.Native;
 
 namespace Mono.Unix.Native {
-
+#if NET_2_0
 	[CLSCompliant (false)]
+#endif
 	public sealed /* static */ partial class NativeConvert
 	{
 		private NativeConvert () {}
