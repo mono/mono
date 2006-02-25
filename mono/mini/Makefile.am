@@ -191,6 +191,7 @@ common_sources = \
 	helpers.c	\
 	liveness.c	\
 	ssa.c		\
+	ssa2.c		\
 	abcremoval.c	\
 	abcremoval.h	\
 	ssapre.c	\
