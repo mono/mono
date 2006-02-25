@@ -79,6 +79,19 @@ public class Syscall : XX {
 	}
 }
 
+
+[Obsolete ("test me", true)]
+partial struct PS
+{
+}
+
+partial struct PS
+{
+	[Obsolete ("Use Errno", true)]
+	public static void GetDescription (Error e) {}
+}
+
+
 class Test {
 	public static void Main () {
 	}

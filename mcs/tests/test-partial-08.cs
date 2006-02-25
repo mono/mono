@@ -11,10 +11,13 @@ public sealed partial class Foo
 
 public class PartialAbstractCompilationError
 {
-	public static void Main ()
+	public static int Main ()
 	{
 		if (typeof (Foo).IsAbstract || !typeof (Foo).IsSealed)
-			throw new System.ApplicationException ();
+			return 1;
+		
+		System.Console.WriteLine ("OK");
+		return 0;
 	}
 }
 
