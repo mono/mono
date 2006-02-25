@@ -1,5 +1,10 @@
 2006-02-25  Marek Safar  <marek.safar@seznam.cz>
 
+	* delegate.cs (DelegateCreation.ResolveMethodGroupExpr): Don't report
+	error multiple times.
+
+2006-02-25  Marek Safar  <marek.safar@seznam.cz>
+
 	New partial class implementation.
 	A fix for #77027, #77029, #77403
 
