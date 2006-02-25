@@ -235,7 +235,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		public int ModFlags;
 
-		public /*readonly*/ DeclSpace Parent;
+		public readonly DeclSpace Parent;
 
 		/// <summary>
 		///   Location where this declaration happens
@@ -247,7 +247,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   XML documentation comment
 		/// </summary>
-		public string DocComment;
+		protected string comment;
 
 		/// <summary>
 		///   Represents header string for documentation comment 
@@ -269,7 +269,8 @@ namespace Mono.CSharp {
 			Excluded = 1 << 9,					// Method is conditional
 			TestMethodDuplication = 1 << 10,		// Test for duplication must be performed
 			IsUsed = 1 << 11,
-			IsAssigned = 1 << 12				// Field is assigned
+			IsAssigned = 1 << 12,				// Field is assigned
+			HasExplicitLayout	= 1 << 13
 		}
 
 		/// <summary>
@@ -280,10 +281,7 @@ namespace Mono.CSharp {
 		public MemberCore (DeclSpace parent, MemberName name, Attributes attrs)
 			: base (attrs)
 		{
-			if (parent is PartialContainer && !(this is PartialContainer))
-				throw new InternalErrorException ("A PartialContainer cannot be the direct parent of a member");
-
-			Parent = parent;
+			this.Parent = parent;
 			member_name = name;
 			caching_flags = Flags.Obsolete_Undetected | Flags.ClsCompliance_Undetected | Flags.HasCompliantAttribute_Undetected | Flags.Excluded_Undetected;
 		}
@@ -295,6 +293,15 @@ namespace Mono.CSharp {
 		}
 
 		public abstract bool Define ();
+
+		public virtual string DocComment {
+			get {
+				return comment;
+			}
+			set {
+				comment = value;
+			}
+		}
 
 		// 
 		// Returns full member name for error message
@@ -419,10 +426,16 @@ namespace Mono.CSharp {
 		}
 
 		/// <summary>
-		/// Resolve CLSCompliantAttribute value or gets cached value.
+		/// Goes through class hierarchy and gets value of first found CLSCompliantAttribute.
+		/// If no is attribute exists then assembly CLSCompliantAttribute is returned.
 		/// </summary>
-		bool GetClsCompliantAttributeValue ()
+		public virtual bool GetClsCompliantAttributeValue ()
 		{
+			if ((caching_flags & Flags.HasCompliantAttribute_Undetected) == 0)
+				return (caching_flags & Flags.ClsCompliantAttributeTrue) != 0;
+
+			caching_flags &= ~Flags.HasCompliantAttribute_Undetected;
+
 			if (OptAttributes != null) {
 				Attribute cls_attribute = OptAttributes.Search (
 					TypeManager.cls_compliant_attribute_type);
@@ -431,7 +444,12 @@ namespace Mono.CSharp {
 					return cls_attribute.GetClsCompliantAttributeValue ();
 				}
 			}
-			return Parent.GetClsCompliantAttributeValue ();
+
+			if (Parent.GetClsCompliantAttributeValue ()) {
+				caching_flags |= Flags.ClsCompliantAttributeTrue;
+				return true;
+			}
+			return false;
 		}
 
 		/// <summary>
@@ -596,14 +614,8 @@ namespace Mono.CSharp {
 		/// <summary>
 		/// Adds the member to defined_names table. It tests for duplications and enclosing name conflicts
 		/// </summary>
-		protected bool AddToContainer (MemberCore symbol, string name)
+		protected virtual bool AddToContainer (MemberCore symbol, string name)
 		{
-			if (name == Basename && !(this is Interface) && !(this is Enum)) {
-				Report.SymbolRelatedToPreviousError (this);
-				Report.Error (542,  symbol.Location, "`{0}': member names cannot be the same as their enclosing type", symbol.GetSignatureForError ());
-				return false;
-			}
-
 			MemberCore mc = (MemberCore) defined_names [name];
 
 			if (mc == null) {
@@ -615,10 +627,8 @@ namespace Mono.CSharp {
 				return true;
 
 			Report.SymbolRelatedToPreviousError (mc);
-			if (symbol is PartialContainer || mc is PartialContainer) {
-				Report.Error (260, symbol.Location,
-					"Missing partial modifier on declaration of type `{0}'. Another partial declaration of this type exists",
-					name);
+			if ((mc.ModFlags & Modifiers.PARTIAL) != 0 && (symbol is ClassOrStruct || symbol is Interface)) {
+				Error_MissingPartialModifier (symbol);
 				return false;
 			}
 
@@ -693,6 +703,13 @@ namespace Mono.CSharp {
 				return false;
 			}
 			return true;
+		}
+
+		protected void Error_MissingPartialModifier (MemberCore type)
+		{
+			Report.Error (260, type.Location,
+				"Missing partial modifier on declaration of type `{0}'. Another partial declaration of this type exists",
+				type.GetSignatureForError ());
 		}
 
 		public override string GetSignatureForError ()
@@ -927,9 +944,6 @@ namespace Mono.CSharp {
 		//
 		public FullNamedExpression LookupType (string name, Location loc, bool ignore_cs0104)
 		{
-			if (this is PartialContainer)
-				throw new InternalErrorException ("Should not get here");
-
 			if (Cache.Contains (name))
 				return (FullNamedExpression) Cache [name];
 
@@ -971,42 +985,10 @@ namespace Mono.CSharp {
 			TypeBuilder.SetCustomAttribute (cb);
 		}
 
-		/// <summary>
-		/// Goes through class hierarchy and get value of first CLSCompliantAttribute that found.
-		/// If no is attribute exists then return assembly CLSCompliantAttribute.
-		/// </summary>
-		public bool GetClsCompliantAttributeValue ()
-		{
-			if ((caching_flags & Flags.HasCompliantAttribute_Undetected) == 0)
-				return (caching_flags & Flags.ClsCompliantAttributeTrue) != 0;
-
-			caching_flags &= ~Flags.HasCompliantAttribute_Undetected;
-
-			if (OptAttributes != null) {
-				Attribute cls_attribute = OptAttributes.Search (TypeManager.cls_compliant_attribute_type);
-				if (cls_attribute != null) {
-					caching_flags |= Flags.HasClsCompliantAttribute;
-					if (cls_attribute.GetClsCompliantAttributeValue ()) {
-						caching_flags |= Flags.ClsCompliantAttributeTrue;
-						return true;
-					}
-					return false;
-				}
-			}
-
-			if (Parent == null) {
-				if (CodeGen.Assembly.IsClsCompliant) {
-					caching_flags |= Flags.ClsCompliantAttributeTrue;
-					return true;
-				}
+		public virtual bool IsPartial {
+			get {
 				return false;
 			}
-
-			if (Parent.GetClsCompliantAttributeValue ()) {
-				caching_flags |= Flags.ClsCompliantAttributeTrue;
-				return true;
-			}
-			return false;
 		}
 
 		public override string[] ValidAttributeTargets {
@@ -1034,9 +1016,6 @@ namespace Mono.CSharp {
 				Report.SymbolRelatedToPreviousError (t);
 			}
 			else {
-				if (val is PartialContainer)
-					return true;
-
 				Report.SymbolRelatedToPreviousError ((DeclSpace)val);
 			}
 			Report.Error (3005, Location, "Identifier `{0}' differing only in case is not CLS-compliant", GetSignatureForError ());

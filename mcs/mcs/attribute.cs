@@ -32,7 +32,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Attributes for this type
 		/// </summary>
- 		Attributes attributes;
+ 		protected Attributes attributes;
 
 		public Attributable (Attributes attrs)
 		{

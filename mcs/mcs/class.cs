@@ -388,7 +388,7 @@ namespace Mono.CSharp {
 		public readonly Kind Kind;
 
 		// Holds a list of classes and structures
-		ArrayList types;
+		protected ArrayList types;
 
 		// Holds the list of properties
 		MemberCoreArrayList properties;
@@ -432,14 +432,11 @@ namespace Mono.CSharp {
 		// Holds the iterators
 		ArrayList iterators;
 
-		// Holds the parts of a partial class;
-		ArrayList parts;
-
 		//
 		// Pointers to the default constructor and the default static constructor
 		//
-		protected Constructor default_constructor;
-		protected Constructor default_static_constructor;
+		Constructor default_constructor;
+		Constructor default_static_constructor;
 
 		//
 		// Points to the first non-static field added to the container.
@@ -470,6 +467,15 @@ namespace Mono.CSharp {
 
 		public const string DefaultIndexerName = "Item";
 
+		public TypeContainer PartialContainer;
+		ArrayList partial_parts;
+
+		/// <remarks>
+		///  The pending methods that need to be implemented
+		//   (interfaces or abstract methods)
+		/// </remarks>
+		PendingImplementation pending;
+
 		public TypeContainer (NamespaceEntry ns, TypeContainer parent, MemberName name,
 				      Attributes attrs, Kind kind)
 			: base (ns, parent, name, attrs)
@@ -478,8 +484,6 @@ namespace Mono.CSharp {
 				throw new InternalErrorException ("A nested type should be in the same NamespaceEntry as its enclosing class");
 
 			this.Kind = kind;
-
-			types = new ArrayList ();
 		}
 
 		public bool AddToMemberContainer (MemberCore symbol)
@@ -519,8 +523,68 @@ namespace Mono.CSharp {
 			if (!AddToTypeContainer (c))
 				return false;
 
+			if (types == null)
+				types = new ArrayList (2);
+
+			RootContext.Tree.RecordDecl (c.NamespaceEntry.NS, c.MemberName, c);
 			types.Add (c);
 			return true;
+		}
+
+		public virtual TypeContainer AddPartial (TypeContainer nextPart)
+		{
+			return AddPartial (nextPart, nextPart.Basename);
+		}
+
+		protected TypeContainer AddPartial (TypeContainer nextPart, string name)
+		{
+			nextPart.ModFlags |= Modifiers.PARTIAL;
+			TypeContainer tc = defined_names [name] as TypeContainer;
+
+			if (tc == null) {
+				if (nextPart is Interface)
+					AddInterface (nextPart);
+				else
+					AddClassOrStruct (nextPart);
+				return nextPart;
+			}
+
+			if ((tc.ModFlags & Modifiers.PARTIAL) == 0) {
+				Report.SymbolRelatedToPreviousError (tc);
+				Error_MissingPartialModifier (nextPart);
+				return tc;
+			}
+
+			if (tc.Kind != nextPart.Kind) {
+				Report.SymbolRelatedToPreviousError (tc);
+				Report.Error (261, nextPart.Location,
+					"Partial declarations of `{0}' must be all classes, all structs or all interfaces",
+					nextPart.GetSignatureForError ());
+				return tc;
+			}
+
+			if ((tc.ModFlags & Modifiers.Accessibility) != (nextPart.ModFlags & Modifiers.Accessibility)) {
+				Report.SymbolRelatedToPreviousError (tc);
+				Report.Error (262, nextPart.Location,
+					"Partial declarations of `{0}' have conflicting accessibility modifiers",
+					nextPart.GetSignatureForError ());
+				return tc;
+			}
+
+			if (tc.partial_parts == null)
+				tc.partial_parts = new ArrayList (1);
+
+			tc.ModFlags |= nextPart.ModFlags;
+			if (nextPart.attributes != null) {
+				if (tc.attributes == null)
+					tc.attributes = nextPart.attributes;
+				else
+					tc.attributes.AddAttributes (nextPart.attributes.Attrs);
+			}
+
+			nextPart.PartialContainer = tc;
+			tc.partial_parts.Add (nextPart);
+			return tc;
 		}
 
 		public void AddDelegate (Delegate d)
@@ -612,6 +676,7 @@ namespace Mono.CSharp {
 				interfaces = new MemberCoreArrayList ();
 			}
 
+			RootContext.Tree.RecordDecl (iface.NamespaceEntry.NS, iface.MemberName, iface);
 			interfaces.Add (iface);
 			return true;
 		}
@@ -712,19 +777,6 @@ namespace Mono.CSharp {
 			iterators.Add (i);
 		}
 
-		public void AddType (TypeContainer tc)
-		{
-			types.Add (tc);
-		}
-
-		public void AddPart (ClassPart part)
-		{
-			if (parts == null)
-				parts = new ArrayList ();
-
-			parts.Add (part);
-		}
-
 		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
 		{
 			if (a.Type == TypeManager.default_member_type) {
@@ -739,16 +791,7 @@ namespace Mono.CSharp {
 
 		public override AttributeTargets AttributeTargets {
 			get {
-				switch (Kind) {
-				case Kind.Class:
-					return AttributeTargets.Class;
-				case Kind.Struct:
-					return AttributeTargets.Struct;
-				case Kind.Interface:
-					return AttributeTargets.Interface;
-				default:
-					throw new NotSupportedException ();
-				}
+				throw new NotSupportedException ();
 			}
 		}
 
@@ -781,7 +824,7 @@ namespace Mono.CSharp {
 				return iterators;
 			}
 		}
-		
+
 		protected Type BaseType {
 			get {
 				return TypeBuilder.BaseType;
@@ -846,12 +889,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public ArrayList Parts {
-			get {
-				return parts;
-			}
-		}
-
 		protected override TypeAttributes TypeAttr {
 			get {
 				return Modifiers.TypeAttr (ModFlags, this) | base.TypeAttr;
@@ -891,7 +928,7 @@ namespace Mono.CSharp {
 		//
 		// Emits the instance field initializers
 		//
-		public virtual bool EmitFieldInitializers (EmitContext ec)
+		public bool EmitFieldInitializers (EmitContext ec)
 		{
 			ArrayList fields;
 			
@@ -915,95 +952,66 @@ namespace Mono.CSharp {
 		//
 		protected void DefineDefaultConstructor (bool is_static)
 		{
-			Constructor c;
-
-			// The default constructor is public
+			// The default instance constructor is public
 			// If the class is abstract, the default constructor is protected
 			// The default static constructor is private
 
-			int mods = Modifiers.PUBLIC;
-			if (is_static)
+			int mods;
+			if (is_static) {
+				if (initialized_static_fields == null || default_static_constructor != null)
+					return;
 				mods = Modifiers.STATIC | Modifiers.PRIVATE;
-			else if ((ModFlags & Modifiers.ABSTRACT) != 0)
-				mods = Modifiers.PROTECTED;
+			} else {
+				if (instance_constructors != null)
+					return;
 
-			TypeContainer constructor_parent = this;
-			if (Parts != null)
-				constructor_parent = (TypeContainer) Parts [0];
+				mods = ((ModFlags & Modifiers.ABSTRACT) != 0) ? Modifiers.PROTECTED : Modifiers.PUBLIC;
+			}
 
-			c = new Constructor (constructor_parent, Basename, mods,
+			Constructor c = new Constructor (this, Basename, mods,
 					     Parameters.EmptyReadOnlyParameters,
 					     new GeneratedBaseInitializer (Location),
 					     Location);
 			
 			AddConstructor (c);
-			
 			c.Block = new ToplevelBlock (null, Location);
-			
 		}
 
-		/// <remarks>
-		///  The pending methods that need to be implemented
-		//   (interfaces or abstract methods)
-		/// </remarks>
-		public PendingImplementation Pending;
-
-		public abstract PendingImplementation GetPendingImplementations ();
-
-		TypeExpr[] GetPartialBases (out TypeExpr base_class)
-		{
-			ArrayList ifaces = new ArrayList ();
-
-			base_class = null;
-
-			foreach (ClassPart part in parts) {
-				TypeExpr new_base_class;
-				TypeExpr[] new_ifaces;
-
-				new_ifaces = part.GetClassBases (out new_base_class);
-				if (new_ifaces == null && new_base_class != null)
-					return null;
-
-				if ((base_class != null) && (new_base_class != null) &&
-				    !base_class.Equals (new_base_class)) {
-					Report.SymbolRelatedToPreviousError (base_class.Location, "");
-					Report.Error (263, part.Location,
-						      "Partial declarations of `{0}' must " +
-						      "not specify different base classes",
-						      Name);
-
-					return null;
-				}
-
-				if ((base_class == null) && (new_base_class != null)) {
-					base_class = new_base_class;
-				}
-
-				if (new_ifaces == null)
-					continue;
-
-				foreach (TypeExpr iface in new_ifaces) {
-					bool found = false;
-					foreach (TypeExpr old_iface in ifaces) {
-						if (old_iface.Equals (iface)) {
-							found = true;
-							break;
-						}
-					}
-
-					if (!found)
-						ifaces.Add (iface);
-				}
+		public override string DocComment {
+			get {
+				return comment;
 			}
+			set {
+				if (value == null)
+					return;
 
-			TypeExpr[] retval = new TypeExpr [ifaces.Count];
-			ifaces.CopyTo (retval, 0);
-			return retval;
+				comment += value;
+			}
+		}
+
+		public PendingImplementation PendingImplementations
+		{
+			get {
+				return pending;
+			}
+		}
+
+		public override bool GetClsCompliantAttributeValue ()
+		{
+			if ((caching_flags & Flags.HasCompliantAttribute_Undetected) == 0)
+				return (caching_flags & Flags.ClsCompliantAttributeTrue) != 0;
+
+			if (IsPartial)
+				return PartialContainer.GetClsCompliantAttributeValue ();
+
+			return base.GetClsCompliantAttributeValue ();
 		}
 
 		TypeExpr[] GetNormalBases (out TypeExpr base_class)
 		{
 			base_class = null;
+			if (Bases == null)
+				return null;
 
 			int count = Bases.Count;
 			int start = 0, i, j;
@@ -1035,7 +1043,49 @@ namespace Mono.CSharp {
 				ifaces [j] = resolved;
 			}
 
-			return ifaces;
+			return ifaces.Length == 0 ? null : ifaces;
+		}
+
+
+		TypeExpr[] GetNormalPartialBases (ref TypeExpr base_class)
+		{
+			ArrayList ifaces = new ArrayList (0);
+			if (iface_exprs != null)
+				ifaces.AddRange (iface_exprs);
+
+			foreach (TypeContainer part in partial_parts) {
+				TypeExpr new_base_class;
+				TypeExpr[] new_ifaces = part.GetClassBases (out new_base_class);
+				if (new_base_class != TypeManager.system_object_expr) {
+					if (base_class == TypeManager.system_object_expr)
+						base_class = new_base_class;
+					else {
+						if (new_base_class != null && !new_base_class.Equals (base_class)) {
+							Report.SymbolRelatedToPreviousError (base_class.Location, "");
+							Report.Error (263, part.Location,
+								"Partial declarations of `{0}' must not specify different base classes",
+								part.GetSignatureForError ());
+
+							return null;
+						}
+					}
+				}
+
+				if (new_ifaces == null)
+					continue;
+
+				foreach (TypeExpr iface in new_ifaces) {
+					if (ifaces.Contains (iface))
+						continue;
+
+					ifaces.Add (iface);
+				}
+			}
+
+			if (ifaces.Count == 0)
+				return null;
+
+			return (TypeExpr[])ifaces.ToArray (typeof (TypeExpr));
 		}
 
 		/// <summary>
@@ -1048,61 +1098,16 @@ namespace Mono.CSharp {
 		///   The @base_class argument is set to the base object or null
 		///   if this is `System.Object'. 
 		/// </summary>
-		TypeExpr [] GetClassBases (out TypeExpr base_class)
+		public virtual TypeExpr [] GetClassBases (out TypeExpr base_class)
 		{
-			int i;
-
-			TypeExpr[] ifaces;
-
-			if (parts != null)
-				ifaces = GetPartialBases (out base_class);
-			else if (Bases == null){
-				base_class = null;
-				return null;
-			} else
-				ifaces = GetNormalBases (out base_class);
+			TypeExpr[] ifaces = GetNormalBases (out base_class);
 
 			if (ifaces == null)
 				return null;
 
-			if ((base_class != null) && (Kind == Kind.Class)){
+			int count = ifaces.Length;
 
-				if (base_class.Type.IsArray || base_class.Type.IsPointer) {
-					Report.Error (1521, base_class.Location, "Invalid base type");
-					return null;
-				}
-
-				if (base_class.IsSealed){
-					Report.SymbolRelatedToPreviousError (base_class.Type);
-					if (base_class.Type.IsAbstract) {
-						Report.Error (709, Location, "`{0}': Cannot derive from static class `{1}'",
-							GetSignatureForError (), TypeManager.CSharpName (base_class.Type));
-					} else {
-						Report.Error (509, Location, "`{0}': cannot derive from sealed class `{1}'",
-							GetSignatureForError (), TypeManager.CSharpName (base_class.Type));
-					}
-					return null;
-				}
-
-				if (!base_class.CanInheritFrom ()){
-					Report.Error (644, Location, "`{0}' cannot derive from special class `{1}'",
-						      GetSignatureForError (), base_class.GetSignatureForError ());
-					return null;
-				}
-
-				if (!base_class.AsAccessible (this, ModFlags)) {
-					Report.SymbolRelatedToPreviousError (base_class.Type);
-					Report.Error (60, Location, "Inconsistent accessibility: base class `{0}' is less accessible than class `{1}'", 
-						TypeManager.CSharpName (base_class.Type), GetSignatureForError ());
-				}
-			}
-
-			if (ifaces == null)
-				return null;
-
-			int count = ifaces != null ? ifaces.Length : 0;
-
-			for (i = 0; i < count; i++) {
+			for (int i = 0; i < count; i++) {
 				TypeExpr iface = (TypeExpr) ifaces [i];
 
 				if (!iface.IsInterface) {
@@ -1124,7 +1129,7 @@ namespace Mono.CSharp {
 					if (iface.Equals (ifaces [x])) {
 						Report.Error (528, Location,
 							      "`{0}' is already listed in " +
-							      "interface list", iface.Name);
+							      "interface list", iface.GetSignatureForError ());
 						return null;
 					}
 				}
@@ -1149,57 +1154,33 @@ namespace Mono.CSharp {
 			Report.Error (527, loc, "Type `{0}' in interface list is not an interface", type);
 		}
 
-		//
-		// Defines the type in the appropriate ModuleBuilder or TypeBuilder.
-		//
-		public override TypeBuilder DefineType ()
+		bool DefineTypeBuilder ()
 		{
-			if (error)
-				return null;
-
-			if (TypeBuilder != null)
-				return TypeBuilder;
-			
-			TypeAttributes type_attributes = TypeAttr;
-
 			try {
 				if (IsTopLevel){
 					if (TypeManager.NamespaceClash (Name, Location)) {
-						error = true;
-						return null;
+						return false;
 					}
 
 					ModuleBuilder builder = CodeGen.Module.Builder;
 					TypeBuilder = builder.DefineType (
-						Name, type_attributes, null, null);
+						Name, TypeAttr, null, null);
 				} else {
 					TypeBuilder builder = Parent.TypeBuilder;
-					if (builder == null) {
-						error = true;
-						return null;
-					}
 
 					TypeBuilder = builder.DefineNestedType (
-						Basename, type_attributes, null, null);
+						Basename, TypeAttr, null, null);
 				}
 			} catch (ArgumentException) {
 				Report.RuntimeMissingSupport (Location, "static classes");
-				error = true;
-				return null;
+				return false;
 			}
 
 			TypeManager.AddUserType (this);
 
-			if (Parts != null) {
-				foreach (ClassPart part in Parts) {
-					part.TypeBuilder = TypeBuilder;
-				}
-			}
-
 			iface_exprs = GetClassBases (out base_type);
-			if (iface_exprs == null && base_type != null) {
-				error = true;
-				return null;
+			if (partial_parts != null) {
+				iface_exprs = GetNormalPartialBases (ref base_type);
 			}
 
 			//
@@ -1215,48 +1196,25 @@ namespace Mono.CSharp {
 			if (!(this is Iterator))
 				RootContext.RegisterOrder (this); 
 
-			if (base_type == null) {
-				if (Kind == Kind.Class){
-					if (RootContext.StdLib)
-						base_type = TypeManager.system_object_expr;
-					else if (Name != "System.Object")
-						base_type = TypeManager.system_object_expr;
-				} else if (Kind == Kind.Struct) {
-					//
-					// If we are compiling our runtime,
-					// and we are defining ValueType, then our
-					// base is `System.Object'.
-					//
-					if (!RootContext.StdLib && Name == "System.ValueType")
-						base_type = TypeManager.system_object_expr;
-					else
-						base_type = TypeManager.system_valuetype_expr;
-				}
-			}
-
-			if ((Kind == Kind.Struct) && TypeManager.value_type == null)
-				throw new Exception ();
 
 			if (base_type != null) {
 				base_type = base_type.ResolveAsTypeTerminal (this, false);
 				if (base_type == null)
-					return null;
+					return false;
 
 				TypeBuilder.SetParent (base_type.Type);
 				CheckObsoleteType (base_type);
 			}
 
 			if (!CheckRecursiveDefinition (this)) {
-				error = true;
-				return null;
+				return false;
 			}
 
 			// add interfaces that were not added at type creation
 			if (iface_exprs != null) {
 				ifaces = TypeManager.ExpandInterfaces (this, iface_exprs);
 				if (ifaces == null) {
-					error = true;
-					return null;
+					return false;
 				}
 
 				foreach (Type itype in ifaces)
@@ -1265,10 +1223,31 @@ namespace Mono.CSharp {
 				TypeManager.RegisterBuilder (TypeBuilder, ifaces);
 			}
 
-			if (!DefineNestedTypes ()) {
+			return true;
+		}
+
+		//
+		// Defines the type in the appropriate ModuleBuilder or TypeBuilder.
+		//
+		public override TypeBuilder DefineType ()
+		{
+			if (TypeBuilder != null)
+				return TypeBuilder;
+
+			if (error)
+				return null;
+			
+			if (!DefineTypeBuilder ()) {
 				error = true;
 				return null;
 			}
+
+			if (partial_parts != null) {
+				foreach (TypeContainer part in partial_parts)
+					part.TypeBuilder = TypeBuilder;
+			}
+
+			DefineNestedTypes ();
 
 			return TypeBuilder;
 		}
@@ -1365,6 +1344,16 @@ namespace Mono.CSharp {
 			return members_defined_ok;
 		}
 
+		public override bool IsPartial {
+			get {
+				return PartialContainer != null;
+			}
+		}
+
+		public virtual void DefineDefaultConstructor ()
+		{
+		}
+
 		protected virtual bool DoDefineMembers ()
 		{
 			if (!IsTopLevel) {
@@ -1384,38 +1373,10 @@ namespace Mono.CSharp {
 			DefineContainerMembers (constants);
 			DefineContainerMembers (fields);
 
-			if ((Kind == Kind.Class) && !(this is ClassPart)){
-				if ((instance_constructors == null) &&
-				    !(this is StaticClass)) {
-					if (default_constructor == null)
-						DefineDefaultConstructor (false);
-				}
+			DefineDefaultConstructor ();
 
-				if (initialized_static_fields != null &&
-				    default_static_constructor == null)
-					DefineDefaultConstructor (true);
-			}
-
-			if (Kind == Kind.Struct){
-				//
-				// Structs can not have initialized instance
-				// fields
-				//
-				if (initialized_static_fields != null &&
-				    default_static_constructor == null)
-					DefineDefaultConstructor (true);
-
-				if (initialized_fields != null)
-					ReportStructInitializedInstanceError ();
-			}
-
-			Pending = GetPendingImplementations ();
-
-			if (parts != null) {
-				foreach (ClassPart part in parts) {
-					if (!part.DefineMembers ())
-						return false;
-				}
+			if (Kind == Kind.Struct || Kind == Kind.Class) {
+				pending = PendingImplementation.GetPendingImplementations (this);
 			}
 		
 			//
@@ -1435,15 +1396,12 @@ namespace Mono.CSharp {
 			DefineContainerMembers (delegates);			
 
 #if CACHE
-			if (!(this is ClassPart))
-				member_cache = new MemberCache (this);
-#endif
-
-			if (parts != null) {
-				foreach (ClassPart part in parts)
+			member_cache = new MemberCache (this);
+			if (partial_parts != null) {
+				foreach (TypeContainer part in partial_parts)
 					part.member_cache = member_cache;
 			}
-
+#endif
 			if (iterators != null) {
 				foreach (Iterator iterator in iterators) {
 					if (iterator.DefineType () == null)
@@ -1459,15 +1417,6 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		void ReportStructInitializedInstanceError ()
-		{
-			foreach (Field f in initialized_fields){
-				Report.Error (573, Location,
-					"`{0}': Structs cannot have instance field initializers",
-					f.GetSignatureForError ());
-			}
-		}
-
 		protected virtual void DefineContainerMembers (MemberCoreArrayList mcal)
 		{
 			if (mcal != null)
@@ -1476,13 +1425,6 @@ namespace Mono.CSharp {
 
 		public override bool Define ()
 		{
-			if (parts != null) {
-				foreach (ClassPart part in parts) {
-					if (!part.Define ())
-						return false;
-				}
-			}
-
 			if (iterators != null) {
 				foreach (Iterator iterator in iterators) {
 					if (!iterator.Define ())
@@ -1584,14 +1526,20 @@ namespace Mono.CSharp {
 		}
 		
 		// Indicated whether container has StructLayout attribute set Explicit
-		public virtual bool HasExplicitLayout {
+		public bool HasExplicitLayout {
 			get {
-				return false;
+				return (caching_flags & Flags.HasExplicitLayout) != 0;
+			}
+			set {
+				caching_flags |= Flags.HasExplicitLayout;
 			}
 		}
 
 		public override Type FindNestedType (string name)
 		{
+			if (IsPartial) {
+				return PartialContainer.FindNestedType (name);
+			}
 			ArrayList [] lists = { types, enums, delegates, interfaces };
 
 			for (int j = 0; j < lists.Length; ++j) {
@@ -1603,8 +1551,7 @@ namespace Mono.CSharp {
 				for (int i = 0; i < len; ++i) {
 					DeclSpace ds = (DeclSpace) list [i];
 					if (ds.Basename == name) {
-						ds.DefineType ();
-						return ds.TypeBuilder;
+						return ds.DefineType ();
 					}
 				}
 			}
@@ -2077,6 +2024,31 @@ namespace Mono.CSharp {
 			}
 		}
 
+		// TODO: move to ClassOrStruct
+		void EmitConstructors ()
+		{
+			if (instance_constructors == null)
+				return;
+
+			if (TypeBuilder.IsSubclassOf (TypeManager.attribute_type) && RootContext.VerifyClsCompliance && IsClsComplianceRequired ()) {
+				bool has_compliant_args = false;
+
+				foreach (Constructor c in instance_constructors) {
+					c.Emit ();
+
+					if (has_compliant_args)
+						continue;
+
+					has_compliant_args = c.HasCompliantArgs;
+				}
+				if (!has_compliant_args)
+					Report.Error (3015, Location, "`{0}' has no accessible constructors which use only CLS-compliant types", GetSignatureForError ());
+			} else {
+				foreach (Constructor c in instance_constructors)
+					c.Emit ();
+			}
+		}
+
 		/// <summary>
 		///   Emits the code, this step is performed after all
 		///   the types, enumerations, constructors
@@ -2109,25 +2081,7 @@ namespace Mono.CSharp {
 
 			Emit ();
 
-			if (instance_constructors != null) {
-				if (TypeBuilder.IsSubclassOf (TypeManager.attribute_type) && RootContext.VerifyClsCompliance && IsClsComplianceRequired ()) {
-					bool has_compliant_args = false;
-
-					foreach (Constructor c in instance_constructors) {
-						c.Emit ();
-
-						if (has_compliant_args)
-							continue;
-
-						has_compliant_args = c.HasCompliantArgs;
-					}
-					if (!has_compliant_args)
-						Report.Error (3015, Location, "`{0}' has no accessible constructors which use only CLS-compliant types", GetSignatureForError ());
-				} else {
-					foreach (Constructor c in instance_constructors)
-						c.Emit ();
-				}
-			}
+			EmitConstructors ();
 
 			// Can not continue if constants are broken
 			EmitConstants ();
@@ -2175,22 +2129,13 @@ namespace Mono.CSharp {
 				}
 			}
 
-			if (parts != null) {
-				foreach (ClassPart part in parts)
-					part.EmitType ();
-			}
-
-			if ((Pending != null) && !(this is ClassPart))
-				if (Pending.VerifyPendingMethods ())
+			if (pending != null)
+				if (pending.VerifyPendingMethods ())
 					return;
 
 			if (iterators != null)
 				foreach (Iterator iterator in iterators)
 					iterator.EmitType ();
-			
-//			if (types != null)
-//				foreach (TypeContainer tc in types)
-//					tc.Emit ();
 		}
 
 		public override void CloseType ()
@@ -2424,17 +2369,18 @@ namespace Mono.CSharp {
 				}
 			}
 			
+			Report.SymbolRelatedToPreviousError (mb.InterfaceType);
 			Report.Error (540, mb.Location, "`{0}': containing type does not implement interface `{1}'",
 				mb.GetSignatureForError (), TypeManager.CSharpName (mb.InterfaceType));
 			return false;
 		}
 
-		public virtual void Mark_HasEquals ()
+		public void Mark_HasEquals ()
 		{
 			Methods.HasEquals = true;
 		}
 
-		public virtual void Mark_HasGetHashCode ()
+		public void Mark_HasGetHashCode ()
 		{
 			Methods.HasGetHashCode = true;
 		}
@@ -2498,256 +2444,7 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public class PartialContainer : TypeContainer {
-
-		public readonly Namespace Namespace;
-		public readonly int OriginalModFlags;
-		public readonly int AllowedModifiers;
-		public readonly TypeAttributes DefaultTypeAttributes;
-		public ListDictionary DeclarativeSecurity;
-
-		static PartialContainer Create (NamespaceEntry ns, TypeContainer parent,
-						MemberName member_name, int mod_flags, Kind kind)
-		{
-
-			if (!CheckModFlags (0, mod_flags, member_name))
-				return null;
-
-			PartialContainer pc = RootContext.Tree.GetDecl (member_name) as PartialContainer;
-			if (pc != null) {
-				if (pc.Kind != kind) {
-					Report.Error (
-						261, member_name.Location, "Partial declarations of `{0}' " +
-						"must be all classes, all structs or " +
-						"all interfaces", member_name.GetPartialName ());
-					return null;
-				}
-
-				if (!CheckModFlags (pc.OriginalModFlags, mod_flags, member_name))
-					return null;
-				pc.ModFlags |= (mod_flags & pc.AllowedModifiers);
-
-				return pc;
-			}
-
-			if (parent is ClassPart)
-				parent = ((ClassPart) parent).PartialContainer;
-
-			pc = new PartialContainer (ns.NS, parent, member_name, mod_flags, kind);
-
-			if (kind == Kind.Interface) {
-				if (!parent.AddInterface (pc))
-					return null;
-			} else if (kind == Kind.Class || kind == Kind.Struct) {
-				if (!parent.AddClassOrStruct (pc))
-					return null;
-			} else {
-				throw new InvalidOperationException ();
-			}
-			RootContext.Tree.RecordDecl (ns.NS, member_name, pc);
-			return pc;
-		}
-
-		static bool CheckModFlags (int flags_org, int flags, MemberName member_name)
-		{
-			// Check (abstract|static|sealed) sanity.
-			int tmp = (flags_org | flags) & (Modifiers.ABSTRACT | Modifiers.SEALED | Modifiers.STATIC);
-			if ((tmp & Modifiers.ABSTRACT) != 0) {
-				if ((tmp & (Modifiers.STATIC | Modifiers.SEALED)) != 0) {
-					Report.Error (
-						418, member_name.Location, 
-						"`{0}': an abstract class cannot be sealed or static", member_name.ToString ());
-					return false;
-				}
-			} else if (tmp == (Modifiers.SEALED | Modifiers.STATIC)) {
-				Report.Error (441, member_name.Location, "`{0}': a class cannot be both static and sealed", member_name.ToString ());
-				return false;
-			}
-
-			if (flags_org == 0)
-				return true;
-
-			// Check conflicts.
-			if (0 != ((flags_org ^ flags) & (0xFFFFFFFF ^ (Modifiers.SEALED | Modifiers.ABSTRACT)))) {
-				Report.Error (
-					262, member_name.Location, "Partial declarations of `{0}' " +
-					"have conflicting accessibility modifiers",
-					member_name.GetPartialName ());
-				return false;
-			}
-			return true;
-		}
-
-		public static ClassPart CreatePart (NamespaceEntry ns, TypeContainer parent,
-						    MemberName name, int mod, Attributes attrs,
-						    Kind kind, Location loc)
-		{
-			PartialContainer pc = Create (ns, parent, name, mod, kind);
-			if (pc == null) {
-				// An error occured; create a dummy container, but don't
-				// register it.
-				pc = new PartialContainer (ns.NS, parent, name, mod, kind);
-			}
-
-			ClassPart part = new ClassPart (ns, pc, parent, mod, attrs, kind);
-			pc.AddPart (part);
-			return part;
-		}
-
-		protected PartialContainer (Namespace ns, TypeContainer parent,
-					    MemberName name, int mod, Kind kind)
-			: base (null, parent, name, null, kind)
-		{
-			this.Namespace = ns;
-
-			switch (kind) {
-			case Kind.Class:
-				AllowedModifiers = Class.AllowedModifiers;
-				DefaultTypeAttributes = Class.DefaultTypeAttributes;
-				break;
-
-			case Kind.Struct:
-				AllowedModifiers = Struct.AllowedModifiers;
-				DefaultTypeAttributes = Struct.DefaultTypeAttributes;
-				break;
-
-			case Kind.Interface:
-				AllowedModifiers = Interface.AllowedModifiers;
-				DefaultTypeAttributes = Interface.DefaultTypeAttributes;
-				break;
-
-			default:
-				throw new InvalidOperationException ();
-			}
-
-			int accmods;
-			if (parent.Parent == null)
-				accmods = Modifiers.INTERNAL;
-			else
-				accmods = Modifiers.PRIVATE;
-
-			// FIXME: remove this nasty fix for bug #77370 when
-			// we get good AllowModifiersProp implementation.
-			if ((mod & Modifiers.STATIC) != 0) {
-				AllowedModifiers |= Modifiers.STATIC;
-				AllowedModifiers &= ~ (Modifiers.ABSTRACT | Modifiers.SEALED);
-			}
-
-			this.ModFlags = Modifiers.Check (AllowedModifiers, mod, accmods, Location);
-			this.OriginalModFlags = mod;
-		}
-
-		public override void EmitType ()
-		{
-			base.EmitType ();
-
-			if (DeclarativeSecurity != null) {
-				foreach (DictionaryEntry de in DeclarativeSecurity) {
-					TypeBuilder.AddDeclarativeSecurity ((SecurityAction)de.Key, (PermissionSet)de.Value);
-				}
-			}
-		}
-
-		public override PendingImplementation GetPendingImplementations ()
-		{
-			return PendingImplementation.GetPendingImplementations (this);
-		}
-
-		public override bool MarkForDuplicationCheck ()
-		{
-			return true;
-		}
-
-		protected override TypeAttributes TypeAttr {
-			get {
-				return base.TypeAttr | DefaultTypeAttributes;
-			}
-		}
-	}
-
-	public class ClassPart : TypeContainer, IMemberContainer {
-		public readonly PartialContainer PartialContainer;
-		public readonly bool IsPartial;
-
-		public ClassPart (NamespaceEntry ns, PartialContainer pc, TypeContainer parent,
-				  int mod, Attributes attrs, Kind kind)
-			: base (ns, parent, pc.MemberName, attrs, kind)
-		{
-			this.PartialContainer = pc;
-			this.IsPartial = true;
-
-			int accmods;
-			if (parent == null || parent == RootContext.Tree.Types)
-				accmods = Modifiers.INTERNAL;
-			else
-				accmods = Modifiers.PRIVATE;
-
-			this.ModFlags = Modifiers.Check (pc.AllowedModifiers, mod, accmods, pc.MemberName.Location);
-		}
-
-		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
-		{
-			if (a.Type.IsSubclassOf (TypeManager.security_attr_type) && a.CheckSecurityActionValidity (false)) {
-				if (PartialContainer.DeclarativeSecurity == null)
-					PartialContainer.DeclarativeSecurity = new ListDictionary ();
-
-				a.ExtractSecurityPermissionSet (PartialContainer.DeclarativeSecurity);
-				return;
-			}
-
-			base.ApplyAttributeBuilder (a, cb);
-		}
-
-		public override PendingImplementation GetPendingImplementations ()
-		{
-			return PartialContainer.Pending;
-		}
-
-		public override bool VerifyImplements (MemberBase mb)
-		{
-			return PartialContainer.VerifyImplements (mb);
-		}
-
-
-		public override void RegisterFieldForInitialization (FieldBase field)
-		{
-			PartialContainer.RegisterFieldForInitialization (field);
-		}
-
-		public override bool EmitFieldInitializers (EmitContext ec)
-		{
-			return PartialContainer.EmitFieldInitializers (ec);
-		}
-
-		public override Type FindNestedType (string name)
-		{
-			return PartialContainer.FindNestedType (name);
-		}
-
-		public override MemberCache BaseCache {
-			get {
-				return PartialContainer.BaseCache;
-			}
-		}
-
-		public override TypeBuilder DefineType ()
-		{
-			throw new InternalErrorException ("Should not get here");
-		}
-
-		public override void Mark_HasEquals ()
-		{
-			PartialContainer.Mark_HasEquals ();
-		}
-
-		public override void Mark_HasGetHashCode ()
-		{
-			PartialContainer.Mark_HasGetHashCode ();
-		}
-	}
-
 	public abstract class ClassOrStruct : TypeContainer {
-		bool has_explicit_layout = false;
 		ListDictionary declarative_security;
 
 		public ClassOrStruct (NamespaceEntry ns, TypeContainer parent,
@@ -2756,15 +2453,22 @@ namespace Mono.CSharp {
 		{
 		}
 
-		public override PendingImplementation GetPendingImplementations ()
+		protected override bool AddToContainer (MemberCore symbol, string name)
 		{
-			return PendingImplementation.GetPendingImplementations (this);
+			if (name == Basename) {
+				Report.SymbolRelatedToPreviousError (this);
+				Report.Error (542, symbol.Location, "`{0}': member names cannot be the same as their enclosing type",
+					symbol.GetSignatureForError ());
+				return false;
+			}
+
+			return base.AddToContainer (symbol, name);
 		}
 
-		public override bool HasExplicitLayout {
-			get {
-				return has_explicit_layout;
-			}
+
+		public override void DefineDefaultConstructor ()
+		{
+			DefineDefaultConstructor (true);
 		}
 
 		public override void VerifyMembers ()
@@ -2789,8 +2493,9 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			if (a.Type == TypeManager.struct_layout_attribute_type && a.GetLayoutKindValue () == LayoutKind.Explicit)
-				has_explicit_layout = true;
+			if (a.Type == TypeManager.struct_layout_attribute_type && a.GetLayoutKindValue () == LayoutKind.Explicit) {
+				HasExplicitLayout = true;
+			}
 
 			base.ApplyAttributeBuilder (a, cb);
 		}
@@ -2807,23 +2512,56 @@ namespace Mono.CSharp {
 		}
 	}
 
-	/// <summary>
-	/// Class handles static classes declaration
-	/// </summary>
-	public sealed class StaticClass: Class {
-		public StaticClass (NamespaceEntry ns, TypeContainer parent, MemberName name, int mod,
-			Attributes attrs)
-			: base (ns, parent, name, mod, attrs)
+
+	// TODO: should be sealed
+	public class Class : ClassOrStruct {
+		const int AllowedModifiers =
+			Modifiers.NEW |
+			Modifiers.PUBLIC |
+			Modifiers.PROTECTED |
+			Modifiers.INTERNAL |
+			Modifiers.PRIVATE |
+			Modifiers.ABSTRACT |
+			Modifiers.SEALED |
+			Modifiers.STATIC |
+			Modifiers.UNSAFE;
+
+		public Class (NamespaceEntry ns, TypeContainer parent, MemberName name, int mod,
+			      Attributes attrs)
+			: base (ns, parent, name, attrs, Kind.Class)
 		{
-			if (RootContext.Version == LanguageVersion.ISO_1) {
+			int accmods = Parent.Parent == null ? Modifiers.INTERNAL : Modifiers.PRIVATE;
+			this.ModFlags = Modifiers.Check (AllowedModifiers, mod, accmods, Location);
+
+			if (IsStatic && RootContext.Version == LanguageVersion.ISO_1) {
 				Report.FeatureIsNotStandardized (Location, "static classes");
 			}
 		}
 
-		protected override int AllowedModifiersProp {
+		public override void ApplyAttributeBuilder(Attribute a, CustomAttributeBuilder cb)
+		{
+			if (a.Type == TypeManager.attribute_usage_type) {
+				if (BaseType != TypeManager.attribute_type && !BaseType.IsSubclassOf (TypeManager.attribute_type) &&
+					TypeBuilder.FullName != "System.Attribute") {
+					Report.Error (641, a.Location, "Attribute `{0}' is only valid on classes derived from System.Attribute", a.GetSignatureForError ());
+				}
+			}
+
+			if (a.Type == TypeManager.conditional_attribute_type &&
+				!(BaseType == TypeManager.attribute_type || BaseType.IsSubclassOf (TypeManager.attribute_type))) {
+				Report.Error (1689, a.Location, "Attribute `System.Diagnostics.ConditionalAttribute' is only valid on methods or attribute classes");
+				return;
+			}
+
+			if (AttributeTester.IsAttributeExcluded (a.Type))
+				return;
+
+			base.ApplyAttributeBuilder (a, cb);
+		}
+
+		public override AttributeTargets AttributeTargets {
 			get {
-				return Modifiers.NEW | Modifiers.PUBLIC | Modifiers.PROTECTED | Modifiers.INTERNAL | Modifiers.PRIVATE |
-					Modifiers.STATIC | Modifiers.UNSAFE;
+				return AttributeTargets.Class;
 			}
 		}
 
@@ -2831,6 +2569,11 @@ namespace Mono.CSharp {
 		{
 			if (list == null)
 				return;
+
+			if (!IsStatic) {
+				base.DefineContainerMembers (list);
+				return;
+			}
 
 			foreach (MemberCore m in list) {
 				if (m is Operator) {
@@ -2867,98 +2610,84 @@ namespace Mono.CSharp {
 			base.DefineContainerMembers (list);
 		}
 
-		public override TypeBuilder DefineType()
+		public override void DefineDefaultConstructor ()
 		{
-			if ((ModFlags & (Modifiers.SEALED | Modifiers.STATIC)) == (Modifiers.SEALED | Modifiers.STATIC)) {
-				Report.Error (441, Location, "`{0}': a class cannot be both static and sealed", GetSignatureForError ());
-				return null;
-			}
+			if (!IsStatic)
+				DefineDefaultConstructor (false);
 
-			TypeBuilder tb = base.DefineType ();
-			if (tb == null)
-				return null;
-
-			if (BaseType != TypeManager.object_type) {
-				Report.Error (713, Location, "Static class `{0}' cannot derive from type `{1}'. Static classes must derive from object",
-					GetSignatureForError (), TypeManager.CSharpName (BaseType));
-				return null;
-			}
-
-			if (ifaces != null) {
-				foreach (Type t in ifaces)
-					Report.SymbolRelatedToPreviousError (t);
-				Report.Error (714, Location, "`{0}': static classes cannot implement interfaces", GetSignatureForError ());
-			}
-			return tb;
+			base.DefineDefaultConstructor ();
 		}
 
-		protected override TypeAttributes TypeAttr {
-			get {
-				return base.TypeAttr | TypeAttributes.Abstract | TypeAttributes.Sealed;
-			}
-		}
-	}
-
-	public class Class : ClassOrStruct {
-		// TODO: remove this and use only AllowedModifiersProp to fix partial classes bugs
-		public const int AllowedModifiers =
-			Modifiers.NEW |
-			Modifiers.PUBLIC |
-			Modifiers.PROTECTED |
-			Modifiers.INTERNAL |
-			Modifiers.PRIVATE |
-			Modifiers.ABSTRACT |
-			Modifiers.SEALED |
-			Modifiers.UNSAFE;
-
-		public Class (NamespaceEntry ns, TypeContainer parent, MemberName name, int mod,
-			      Attributes attrs)
-			: base (ns, parent, name, attrs, Kind.Class)
-		{
-			this.ModFlags = mod;
-		}
-
-		virtual protected int AllowedModifiersProp {
-			get {
-				return AllowedModifiers;
-			}
-		}
-
-		public override void ApplyAttributeBuilder(Attribute a, CustomAttributeBuilder cb)
-		{
-			if (a.Type == TypeManager.attribute_usage_type) {
-				if (BaseType != TypeManager.attribute_type && !BaseType.IsSubclassOf (TypeManager.attribute_type) &&
-					TypeBuilder.FullName != "System.Attribute") {
-					Report.Error (641, a.Location, "Attribute `{0}' is only valid on classes derived from System.Attribute", a.GetSignatureForError ());
-				}
-			}
-
-			if (a.Type == TypeManager.conditional_attribute_type &&
-				!(BaseType == TypeManager.attribute_type || BaseType.IsSubclassOf (TypeManager.attribute_type))) {
-				Report.Error (1689, a.Location, "Attribute `System.Diagnostics.ConditionalAttribute' is only valid on methods or attribute classes");
-				return;
-			}
-
-			if (AttributeTester.IsAttributeExcluded (a.Type))
-				return;
-
-			base.ApplyAttributeBuilder (a, cb);
-		}
-
-		public const TypeAttributes DefaultTypeAttributes =
-			TypeAttributes.AutoLayout | TypeAttributes.Class;
-
-		public override TypeBuilder DefineType()
+		public override TypeBuilder DefineType ()
 		{
 			if ((ModFlags & Modifiers.ABSTRACT) == Modifiers.ABSTRACT && (ModFlags & (Modifiers.SEALED | Modifiers.STATIC)) != 0) {
 				Report.Error (418, Location, "`{0}': an abstract class cannot be sealed or static", GetSignatureForError ());
 				return null;
 			}
 
-			int accmods = Parent.Parent == null ? Modifiers.INTERNAL : Modifiers.PRIVATE;
-			ModFlags = Modifiers.Check (AllowedModifiersProp, ModFlags, accmods, Location);
+			if ((ModFlags & (Modifiers.SEALED | Modifiers.STATIC)) == (Modifiers.SEALED | Modifiers.STATIC)) {
+				Report.Error (441, Location, "`{0}': a class cannot be both static and sealed", GetSignatureForError ());
+				return null;
+			}
 
 			return base.DefineType ();
+		}
+
+		public override TypeExpr[] GetClassBases (out TypeExpr base_class)
+		{
+			TypeExpr[] ifaces = base.GetClassBases (out base_class);
+
+			if (base_class == null) {
+				if (RootContext.StdLib)
+					base_class = TypeManager.system_object_expr;
+				else if (Name != "System.Object")
+					base_class = TypeManager.system_object_expr;
+			} else {
+				if (base_class.Type.IsArray || base_class.Type.IsPointer) {
+					Report.Error (1521, base_class.Location, "Invalid base type");
+					return ifaces;
+				}
+
+				if (base_class.IsSealed){
+					Report.SymbolRelatedToPreviousError (base_class.Type);
+					if (base_class.Type.IsAbstract) {
+						Report.Error (709, Location, "`{0}': Cannot derive from static class `{1}'",
+							GetSignatureForError (), TypeManager.CSharpName (base_class.Type));
+					} else {
+						Report.Error (509, Location, "`{0}': cannot derive from sealed class `{1}'",
+							GetSignatureForError (), TypeManager.CSharpName (base_class.Type));
+					}
+					return ifaces;
+				}
+
+				if (!base_class.CanInheritFrom ()){
+					Report.Error (644, Location, "`{0}' cannot derive from special class `{1}'",
+						GetSignatureForError (), base_class.GetSignatureForError ());
+					return ifaces;
+				}
+
+				if (!base_class.AsAccessible (this, ModFlags)) {
+					Report.SymbolRelatedToPreviousError (base_class.Type);
+					Report.Error (60, Location, "Inconsistent accessibility: base class `{0}' is less accessible than class `{1}'", 
+						TypeManager.CSharpName (base_class.Type), GetSignatureForError ());
+				}
+			}
+
+			if (IsStatic) {
+				if (base_class != TypeManager.system_object_expr) {
+					Report.Error (713, Location, "Static class `{0}' cannot derive from type `{1}'. Static classes must derive from object",
+						GetSignatureForError (), base_class.GetSignatureForError ());
+					return ifaces;
+				}
+
+				if (ifaces != null) {
+					foreach (TypeExpr t in ifaces)
+						Report.SymbolRelatedToPreviousError (t.Type);
+					Report.Error (714, Location, "`{0}': static classes cannot implement interfaces", GetSignatureForError ());
+				}
+			}
+
+			return ifaces;
 		}
 
 		/// Search for at least one defined condition in ConditionalAttribute of attribute class
@@ -2988,22 +2717,31 @@ namespace Mono.CSharp {
 			return true;
 		}
 
+		bool IsStatic {
+			get {
+				return (ModFlags & Modifiers.STATIC) != 0;
+			}
+		}
+
 		//
 		// FIXME: How do we deal with the user specifying a different
 		// layout?
 		//
 		protected override TypeAttributes TypeAttr {
 			get {
-				return base.TypeAttr | DefaultTypeAttributes;
+				TypeAttributes ta = base.TypeAttr | TypeAttributes.AutoLayout | TypeAttributes.Class;
+				if (IsStatic)
+					ta |= TypeAttributes.Abstract | TypeAttributes.Sealed;
+				return ta;
 			}
 		}
 	}
 
-	public class Struct : ClassOrStruct {
+	public sealed class Struct : ClassOrStruct {
 		// <summary>
 		//   Modifiers allowed in a struct declaration
 		// </summary>
-		public const int AllowedModifiers =
+		const int AllowedModifiers =
 			Modifiers.NEW       |
 			Modifiers.PUBLIC    |
 			Modifiers.PROTECTED |
@@ -3027,10 +2765,35 @@ namespace Mono.CSharp {
 			this.ModFlags |= Modifiers.SEALED;
 		}
 
-		public const TypeAttributes DefaultTypeAttributes =
+		public override AttributeTargets AttributeTargets {
+			get {
+				return AttributeTargets.Struct;
+			}
+		}
+
+		const TypeAttributes DefaultTypeAttributes =
 			TypeAttributes.SequentialLayout |
 			TypeAttributes.Sealed |
 			TypeAttributes.BeforeFieldInit;
+
+
+		public override TypeExpr[] GetClassBases (out TypeExpr base_class)
+		{
+			TypeExpr[] ifaces = base.GetClassBases (out base_class);
+			//
+			// If we are compiling our runtime,
+			// and we are defining ValueType, then our
+			// base is `System.Object'.
+			//
+			if (base_class == null) {
+				if (!RootContext.StdLib && Name == "System.ValueType")
+					base_class = TypeManager.system_object_expr;
+				else
+					base_class = TypeManager.system_valuetype_expr;
+			}
+
+			return ifaces;
+		}
 
 		//
 		// FIXME: Allow the user to specify a different set of attributes
@@ -3042,12 +2805,23 @@ namespace Mono.CSharp {
 				return base.TypeAttr | DefaultTypeAttributes;
 			}
 		}
+
+		public override void RegisterFieldForInitialization (FieldBase field)
+		{
+			if ((field.ModFlags & Modifiers.STATIC) == 0) {
+				Report.Error (573, field.Location, "`{0}': Structs cannot have instance field initializers",
+					field.GetSignatureForError ());
+				return;
+			}
+			base.RegisterFieldForInitialization (field);
+		}
+
 	}
 
 	/// <summary>
 	///   Interfaces
 	/// </summary>
-	public class Interface : TypeContainer, IMemberContainer {
+	public sealed class Interface : TypeContainer, IMemberContainer {
 
 		/// <summary>
 		///   Modifiers allowed in a class declaration
@@ -3074,12 +2848,13 @@ namespace Mono.CSharp {
 			this.ModFlags = Modifiers.Check (AllowedModifiers, mod, accmods, name.Location);
 		}
 
-		public override PendingImplementation GetPendingImplementations ()
-		{
-			return null;
+		public override AttributeTargets AttributeTargets {
+			get {
+				return AttributeTargets.Interface;
+			}
 		}
 
-		public const TypeAttributes DefaultTypeAttributes =
+		const TypeAttributes DefaultTypeAttributes =
 			TypeAttributes.AutoLayout |
 			TypeAttributes.Abstract |
 			TypeAttributes.Interface;
@@ -3885,7 +3660,7 @@ namespace Mono.CSharp {
 
 			MethodData = new MethodData (this, ModFlags, flags, this);
 
-			if (!MethodData.Define (Parent))
+			if (!MethodData.Define (ParentContainer))
 				return false;
 
 			if (ReturnType == TypeManager.void_type && ParameterTypes.Length == 0 && 
@@ -3986,9 +3761,9 @@ namespace Mono.CSharp {
 				return false;
 
 			if (ParameterInfo.Count > 0) {
-				ArrayList al = (ArrayList)Parent.MemberCache.Members [Name];
+				ArrayList al = (ArrayList)ParentContainer.MemberCache.Members [Name];
 				if (al.Count > 1)
-					Parent.MemberCache.VerifyClsParameterConflict (al, this, MethodBuilder);
+					ParentContainer.MemberCache.VerifyClsParameterConflict (al, this, MethodBuilder);
 			}
 
 			return true;
@@ -4459,7 +4234,7 @@ namespace Mono.CSharp {
 					// do not emit field initializers, they are initialized in the other constructor
 					//
 					if (!(Initializer != null && Initializer is ConstructorThisInitializer))
-						Parent.EmitFieldInitializers (ec);
+						ParentContainer.EmitFieldInitializers (ec);
 				}
 			}
 			if (Initializer != null) {
@@ -4467,7 +4242,7 @@ namespace Mono.CSharp {
 			}
 			
 			if ((ModFlags & Modifiers.STATIC) != 0)
-				Parent.EmitFieldInitializers (ec);
+				ParentContainer.EmitFieldInitializers (ec);
 
 			if (OptAttributes != null) 
 				OptAttributes.Emit ();
@@ -4633,7 +4408,7 @@ namespace Mono.CSharp {
 			string name = method.MethodName.Name;
 			string method_name = name;
 
-			PendingImplementation pending = container.Pending;
+			PendingImplementation pending = container.PendingImplementations;
 			if (pending != null){
 				if (member is Indexer) // TODO: test it, but it should work without this IF
 					implementing = pending.IsInterfaceIndexer (
@@ -4941,6 +4716,18 @@ namespace Mono.CSharp {
 			get { return (TypeContainer) base.Parent; }
 		}
 
+		/// <summary>
+		/// Use this for access to parent container from partial classes (not master partial).
+		/// This should be used rarely as all members are hosted in master partial class.
+		/// Also with some effort this should be eliminated (not easy now).
+		/// </summary>
+		public TypeContainer ParentContainer {
+			get {
+				return base.Parent.IsPartial ?
+					Parent.PartialContainer : Parent;
+			}
+		}
+
 		//
 		// The type of this property / indexer / event
 		//
@@ -5083,7 +4870,7 @@ namespace Mono.CSharp {
 					return false;
 				}
 				
-				if (!Parent.VerifyImplements (this))
+				if (!ParentContainer.VerifyImplements (this))
 					return false;
 				
 				Modifiers.Check (Modifiers.AllowedExplicitImplFlags, explicit_mod_flags, 0, Location);
@@ -5236,7 +5023,7 @@ namespace Mono.CSharp {
 			set {
 				if (value != null) {
 					this.initializer = value;
-					Parent.RegisterFieldForInitialization (this);
+					ParentContainer.RegisterFieldForInitialization (this);
 				}
 			}
 		}
@@ -5310,7 +5097,6 @@ namespace Mono.CSharp {
 
 			base.ApplyAttributeBuilder (a, cb);
 		}
-
 
 		public override bool Define()
 		{
