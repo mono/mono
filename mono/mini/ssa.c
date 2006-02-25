@@ -313,7 +313,7 @@ mono_ssa_rename_vars2 (MonoCompile *cfg, int max_vars, MonoBasicBlock *bb, gbool
 				ins->inst_phi_args [j + 1] = new_var->dreg;
 				
 				if (cfg->verbose_level >= 4)
-					printf ("\tAdd PHI R%d <- R%d (%d <- %d) to BB%d\n", ins->dreg, new_var->dreg, idx, new_var->inst_c0, n->block_num);
+					printf ("\tAdd PHI R%d <- R%d to BB%d\n", ins->dreg, new_var->dreg, n->block_num);
 
 			}
 		}
@@ -466,8 +466,13 @@ mono_ssa_compute (MonoCompile *cfg)
 	for (i = 0; i < cfg->num_varinfo; ++i) {
 		MonoInst *var = cfg->varinfo [i];
 
+#if SIZEOF_VOID_P == 8
+		if ((var->type != STACK_I4) && (var->type != STACK_PTR) && (var->type != STACK_OBJ) && (var->type != STACK_MP) && (var->type != STACK_I8))
+			continue;
+#else
 		if ((var->type != STACK_I4) && (var->type != STACK_PTR) && (var->type != STACK_OBJ) && (var->type != STACK_MP))
 			continue;
+#endif
 
 		if (var->flags & MONO_INST_VOLATILE)
 			continue;

@@ -139,7 +139,7 @@ compute_dominators (MonoCompile *cfg)
 		}
 
 		/* The entry bb */
-		mono_bitset_set_fast (dominators, cbb->dfn);
+		mono_bitset_set_fast (dominators, 0);
 	}
 
 	g_free (worklist);

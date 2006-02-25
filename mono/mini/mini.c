@@ -1955,7 +1955,7 @@ mono_add_ins_to_end (MonoBasicBlock *bb, MonoInst *inst)
 				inst->next = prev->next;
 				prev->next = inst;
 			}
-			g_assert ((opcode == OP_COMPARE) || (opcode == OP_COMPARE_IMM) || (opcode == OP_ICOMPARE) || (opcode == OP_ICOMPARE_IMM) || (opcode == OP_FCOMPARE) || (opcode == OP_LCOMPARE));
+			g_assert ((opcode == OP_COMPARE) || (opcode == OP_COMPARE_IMM) || (opcode == OP_ICOMPARE) || (opcode == OP_ICOMPARE_IMM) || (opcode == OP_FCOMPARE) || (opcode == OP_LCOMPARE) || (opcode == OP_LCOMPARE_IMM));
 		}
 		else
 			MONO_ADD_INS (bb, inst);

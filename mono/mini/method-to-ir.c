@@ -987,6 +987,8 @@ link_bblock (MonoCompile *cfg, MonoBasicBlock *from, MonoBasicBlock* to)
 	}
 }
 
+#if SIZEOF_VOID_P == 4
+
 /**
  * unlink_bblock:
  *
@@ -1035,6 +1037,8 @@ unlink_bblock (MonoCompile *cfg, MonoBasicBlock *from, MonoBasicBlock* to)
 		to->in_bb = newa;
 	}
 }
+
+#endif
 
 /**
  * mono_find_block_region:
@@ -3962,7 +3966,7 @@ inline_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig,
 	/* allocate local variables */
 	cheader = mono_method_get_header (cmethod);
 	prev_locals = cfg->locals;
-	cfg->locals = mono_mempool_alloc0 (cfg->mempool, cheader->num_locals * sizeof (int));	
+	cfg->locals = mono_mempool_alloc0 (cfg->mempool, cheader->num_locals * sizeof (MonoInst*));	
 	for (i = 0; i < cheader->num_locals; ++i)
 		cfg->locals [i] = mono_compile_create_var (cfg, cheader->locals [i], OP_LOCAL);
 	
@@ -9273,8 +9277,6 @@ mono_spill_global_vars (MonoCompile *cfg)
 					else {
 						store_opcode = mono_type_to_store_membase (var->inst_vtype);
 
-						if (store_opcode == OP_STOREI8_MEMBASE_REG)
-							printf ("FOO\n");
 						/* Try to fuse the store into the instruction itself */
 						/* FIXME: Add more instructions */
 						if ((ins->opcode == OP_ICONST) || ((ins->opcode == OP_I8CONST) && (ins->inst_c0 == 0))) {
@@ -9443,7 +9445,8 @@ mono_spill_global_vars (MonoCompile *cfg)
  * - some tests no longer work with COUNT=0
  * - add code to only use -v -v -v -v for a specific method
  * - optimize optimize_branches: remove 'break's from the inner loop
- * - add is_global_vreg () macro.
+ * - add is_global_vreg () macro
+ * - cleanup the code replacement in decompose_long_opts ()
  * - LAST MERGE: 57056.
  */
 

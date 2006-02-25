@@ -1042,7 +1042,7 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 	}
 
 	for (i = 0; i < sig->param_count + sig->hasthis; ++i) {
-		inst = cfg->varinfo [i];
+		inst = cfg->new_ir ? cfg->args [i] : cfg->varinfo [i];
 		if (inst->opcode != OP_REGVAR) {
 			ArgInfo *ainfo = &cinfo->args [i];
 			gboolean inreg = TRUE;
@@ -2436,7 +2436,7 @@ emit_load_volatile_arguments (MonoCompile *cfg, guint8 *code)
 	for (i = 0; i < sig->param_count + sig->hasthis; ++i) {
 		ArgInfo *ainfo = cinfo->args + i;
 		MonoType *arg_type;
-		inst = cfg->varinfo [i];
+		inst = cfg->new_ir ? cfg->args [i] : cfg->varinfo [i];
 
 		if (sig->hasthis && (i == 0))
 			arg_type = &mono_defaults.object_class->byval_arg;
@@ -4552,7 +4552,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 		ArgInfo *ainfo = cinfo->args + i;
 		gint32 stack_offset;
 		MonoType *arg_type;
-		inst = cfg->varinfo [i];
+		inst = cfg->new_ir ? cfg->args [i] : cfg->varinfo [i];
 
 		if (sig->hasthis && (i == 0))
 			arg_type = &mono_defaults.object_class->byval_arg;
@@ -4991,7 +4991,7 @@ mono_arch_instrument_prolog (MonoCompile *cfg, void *func, void *p, gboolean ena
 		amd64_alu_reg_imm (code, X86_SUB, AMD64_RSP, stack_area);
 
 		for (i = 0; i < n; ++i) {
-			inst = cfg->varinfo [i];
+			inst = cfg->new_ir ? cfg->args [i] : cfg->varinfo [i];
 
 			if (inst->opcode == OP_REGVAR)
 				amd64_mov_membase_reg (code, AMD64_RSP, (i * 8), inst->dreg, 8);
