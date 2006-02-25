@@ -1,3 +1,8 @@
+
+Sat Feb 25 12:01:22 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* monoburg.c: make huge debug string array conditional.
+
 2006-01-04  Zoltan Varga  <vargaz@gmail.com>
 
 	* Makefile.am: Use CFLAGS_FOR_BUILD.
