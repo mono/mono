@@ -10415,7 +10415,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 	mono_compile_create_vars (cfg);
 
 	if (cfg->new_ir) {
-		cfg->opt &= MONO_OPT_PEEPHOLE | MONO_OPT_INTRINS | MONO_OPT_LOOP | MONO_OPT_EXCEPTION | MONO_OPT_AOT | MONO_OPT_BRANCH | MONO_OPT_LINEARS | MONO_OPT_INLINE | MONO_OPT_SHARED | MONO_OPT_AOT | MONO_OPT_TAILC | MONO_OPT_SSA | MONO_OPT_DEADCE;
+		cfg->opt &= MONO_OPT_PEEPHOLE | MONO_OPT_INTRINS | MONO_OPT_LOOP | MONO_OPT_EXCEPTION | MONO_OPT_AOT | MONO_OPT_BRANCH | MONO_OPT_LINEARS | MONO_OPT_INLINE | MONO_OPT_SHARED | MONO_OPT_AOT | MONO_OPT_TAILC | MONO_OPT_SSA | MONO_OPT_DEADCE | MONO_OPT_CONSPROP;
 
 		i = mono_method_to_ir2 (cfg, method, NULL, NULL, NULL, NULL, NULL, 0, FALSE);
 	}
@@ -10516,7 +10516,10 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 
 	if (!header->num_clauses && !cfg->disable_ssa) {
 		mono_local_cprop (cfg);
-		mono_ssa_compute (cfg);
+		if (cfg->new_ir)
+			mono_ssa_compute2 (cfg);
+		else
+			mono_ssa_compute (cfg);
 	}
 #else 
 
@@ -10525,7 +10528,10 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 		if (!(cfg->comp_done & MONO_COMP_SSA) && !header->num_clauses && !cfg->disable_ssa) {
 			if (!cfg->new_ir)
 				mono_local_cprop (cfg);
-			mono_ssa_compute (cfg);
+			if (cfg->new_ir)
+				mono_ssa_compute2 (cfg);
+			else
+				mono_ssa_compute (cfg);
 
 			if (cfg->verbose_level >= 2) {
 				print_dfn (cfg);
@@ -10540,7 +10546,10 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 
 	if ((cfg->opt & MONO_OPT_CONSPROP) || (cfg->opt & MONO_OPT_COPYPROP)) {
 		if (cfg->comp_done & MONO_COMP_SSA) {
-			mono_ssa_cprop (cfg);
+			if (cfg->new_ir)
+				;
+			else
+				mono_ssa_cprop (cfg);
 		} else {
 			if (!cfg->new_ir)
 				mono_local_cprop (cfg);
@@ -10548,8 +10557,6 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 	}
 
 	if (cfg->comp_done & MONO_COMP_SSA) {			
-		//mono_ssa_deadce (cfg);
-
 		//mono_ssa_strength_reduction (cfg);
 
 		if (cfg->opt & MONO_OPT_SSAPRE) {
@@ -10558,14 +10565,20 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 		}
 		
 		if (cfg->opt & MONO_OPT_DEADCE) {
-			mono_ssa_deadce (cfg);
+			if (cfg->new_ir)
+				mono_ssa_deadce2 (cfg);
+			else
+				mono_ssa_deadce (cfg);
 			deadce_has_run = TRUE;
 		}
 		
 		if ((cfg->flags & MONO_CFG_HAS_LDELEMA) && (cfg->opt & MONO_OPT_ABCREM))
 			mono_perform_abc_removal (cfg);
-		
-		mono_ssa_remove (cfg);
+
+		if (cfg->new_ir)
+			mono_ssa_remove2 (cfg);
+		else
+			mono_ssa_remove (cfg);
 
 		if (cfg->opt & MONO_OPT_BRANCH)
 			optimize_branches (cfg);

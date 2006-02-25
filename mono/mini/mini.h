@@ -1088,6 +1088,11 @@ void        mono_ssa_deadce                     (MonoCompile *cfg);
 void        mono_ssa_strength_reduction         (MonoCompile *cfg);
 void        mono_free_loop_info                 (MonoCompile *cfg);
 
+void        mono_ssa_compute2                   (MonoCompile *cfg);
+void        mono_ssa_remove2                    (MonoCompile *cfg);
+void        mono_ssa_cprop2                     (MonoCompile *cfg);
+void        mono_ssa_deadce2                    (MonoCompile *cfg);
+
 /* debugging support */
 void      mono_debug_init_method                (MonoCompile *cfg, MonoBasicBlock *start_block,
 						 guint32 breakpoint_id);
