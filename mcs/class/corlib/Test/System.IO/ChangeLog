@@ -1,3 +1,7 @@
+2006-02-25  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* FileStreamTest.cs: Spaces to tabs, (re)numbered tests.
+
 2006-01-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DirectoryInfoTest.cs : don't expect "/" as a top directory on
