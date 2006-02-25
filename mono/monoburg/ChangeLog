@@ -1,4 +1,9 @@
 
+Sat Feb 25 17:06:48 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* monoburg.c: more tweaks to reduce relocations and
+	memory usage.
+
 Sat Feb 25 16:03:16 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* monoburg.c: put mono_burg_arity[] in readonly memory.
