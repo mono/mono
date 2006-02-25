@@ -1,4 +1,9 @@
 
+Sat Feb 25 11:58:16 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini.h, mini-codegen.c: disable logging features if
+	requested by configure.
+
 Sat Feb 25 11:54:49 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* mini.c: tiny verifier changes.
