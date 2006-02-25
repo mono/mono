@@ -1,4 +1,8 @@
 
+Sat Feb 25 17:07:42 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: match monoburg changes.
+
 Sat Feb 25 16:04:33 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* mini.h, mini.c, abcremoval.c, aliasing.c, liveness.c,
