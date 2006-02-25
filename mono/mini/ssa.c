@@ -219,7 +219,7 @@ mono_ssa_rename_vars2 (MonoCompile *cfg, int max_vars, MonoBasicBlock *bb, gbool
 			/* SREG1 */
 			if (spec [MONO_INST_SRC1] == 'i') {
 				MonoInst *var = get_vreg_to_inst (cfg, ins->sreg1);
-				if (var && !(var->flags & MONO_INST_VOLATILE)) {
+				if (var && !(var->flags & (MONO_INST_VOLATILE|MONO_INST_INDIRECT))) {
 					int idx = var->inst_c0;
 					if (stack [idx]) {
 						if (var->opcode != OP_ARG)
@@ -232,7 +232,7 @@ mono_ssa_rename_vars2 (MonoCompile *cfg, int max_vars, MonoBasicBlock *bb, gbool
 			/* SREG2 */
 			if (spec [MONO_INST_SRC2] == 'i') {
 				MonoInst *var = get_vreg_to_inst (cfg, ins->sreg2);
-				if (var && !(var->flags & MONO_INST_VOLATILE)) {
+				if (var && !(var->flags & (MONO_INST_VOLATILE|MONO_INST_INDIRECT))) {
 					int idx = var->inst_c0;
 					if (stack [idx]) {
 						if (var->opcode != OP_ARG)
@@ -245,7 +245,7 @@ mono_ssa_rename_vars2 (MonoCompile *cfg, int max_vars, MonoBasicBlock *bb, gbool
 
 			if (MONO_IS_STORE_MEMBASE (ins)) {
 				MonoInst *var = get_vreg_to_inst (cfg, ins->dreg);
-				if (var && !(var->flags & MONO_INST_VOLATILE)) {
+				if (var && !(var->flags & (MONO_INST_VOLATILE|MONO_INST_INDIRECT))) {
 					int idx = var->inst_c0;
 					if (stack [idx]) {
 						if (var->opcode != OP_ARG)
@@ -260,7 +260,7 @@ mono_ssa_rename_vars2 (MonoCompile *cfg, int max_vars, MonoBasicBlock *bb, gbool
 		if ((spec [MONO_INST_DEST] == 'i') && !MONO_IS_STORE_MEMBASE (ins)) {
 			MonoInst *var = get_vreg_to_inst (cfg, ins->dreg);
 
-			if (var && !(var->flags & MONO_INST_VOLATILE)) {
+			if (var && !(var->flags & (MONO_INST_VOLATILE|MONO_INST_INDIRECT))) {
 				idx = var->inst_c0;
 				g_assert (idx < max_vars);
 
@@ -474,7 +474,7 @@ mono_ssa_compute (MonoCompile *cfg)
 			continue;
 #endif
 
-		if (var->flags & MONO_INST_VOLATILE)
+		if (var->flags & (MONO_INST_VOLATILE|MONO_INST_INDIRECT))
 			continue;
 
 		set = mono_compile_iterated_dfrontier (cfg, vinfo [i].def_in);
@@ -626,7 +626,7 @@ mono_ssa_get_allocatable_vars (MonoCompile *cfg)
 		if (vmv->range.first_use.abs_pos > vmv->range.last_use.abs_pos)
 			continue;
 
-		if (ins->flags & (MONO_INST_VOLATILE|MONO_INST_INDIRECT) || 
+		if (ins->flags & ((MONO_INST_VOLATILE|MONO_INST_INDIRECT)|MONO_INST_INDIRECT) || 
 		    (ins->opcode != OP_LOCAL && ins->opcode != OP_ARG) || vmv->reg != -1)
 			continue;
 
@@ -923,20 +923,20 @@ mono_ssa_create_def_use2 (MonoCompile *cfg)
 			/* SREG1 */
 			if (spec [MONO_INST_SRC1] == 'i') {
 				MonoInst *var = get_vreg_to_inst (cfg, ins->sreg1);
-				if (var && !(var->flags & MONO_INST_VOLATILE))
+				if (var && !(var->flags & (MONO_INST_VOLATILE|MONO_INST_INDIRECT)))
 					record_use (cfg, var, bb, ins);
 			}
 
 			/* SREG2 */
 			if (spec [MONO_INST_SRC2] == 'i') {
 				MonoInst *var = get_vreg_to_inst (cfg, ins->sreg2);
-				if (var && !(var->flags & MONO_INST_VOLATILE))
+				if (var && !(var->flags & (MONO_INST_VOLATILE|MONO_INST_INDIRECT)))
 					record_use (cfg, var, bb, ins);
 			}
 				
 			if (MONO_IS_STORE_MEMBASE (ins)) {
 				MonoInst *var = get_vreg_to_inst (cfg, ins->dreg);
-				if (var && !(var->flags & MONO_INST_VOLATILE))
+				if (var && !(var->flags & (MONO_INST_VOLATILE|MONO_INST_INDIRECT)))
 					record_use (cfg, var, bb, ins);
 			}
 
@@ -949,7 +949,7 @@ mono_ssa_create_def_use2 (MonoCompile *cfg)
 			if ((spec [MONO_INST_DEST] == 'i') && !MONO_IS_STORE_MEMBASE (ins)) {
 				MonoInst *var = get_vreg_to_inst (cfg, ins->dreg);
 
-				if (var && !(var->flags & MONO_INST_VOLATILE)) {
+				if (var && !(var->flags & (MONO_INST_VOLATILE|MONO_INST_INDIRECT))) {
 					info = cfg->vars [var->inst_c0];
 					info->def = ins;
 					info->def_bb = bb;
@@ -998,7 +998,7 @@ mono_ssa_copyprop (MonoCompile *cfg)
 		if (info->def && (info->def->opcode == OP_MOVE)) {
 			MonoInst *var2 = get_vreg_to_inst (cfg, info->def->sreg1);
 
-			if (var2 && !(var2->flags & MONO_INST_VOLATILE) && cfg->vars [var2->inst_c0]->def && (cfg->vars [var2->inst_c0]->def->opcode != OP_PHI)) {
+			if (var2 && !(var2->flags & (MONO_INST_VOLATILE|MONO_INST_INDIRECT)) && cfg->vars [var2->inst_c0]->def && (cfg->vars [var2->inst_c0]->def->opcode != OP_PHI)) {
 				/* Rewrite all uses of var to be uses of var2 */
 				int dreg = var->dreg;
 				int sreg1 = var2->dreg;
@@ -1575,7 +1575,7 @@ mono_ssa_deadce2 (MonoCompile *cfg)
 			/* FIXME: Add more opcodes */
 			if (def->opcode == OP_MOVE) {
 				MonoInst *src_var = get_vreg_to_inst (cfg, def->sreg1);
-				if (src_var && !(src_var->flags & MONO_INST_VOLATILE))
+				if (src_var && !(src_var->flags & (MONO_INST_VOLATILE|MONO_INST_INDIRECT)))
 					add_to_dce_worklist (cfg, info, cfg->vars [src_var->inst_c0], &work_list);
 				def->opcode = OP_NOP;
 				def->dreg = def->sreg1 = def->sreg2 = -1;

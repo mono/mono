@@ -9094,7 +9094,7 @@ mono_compile_create_vars (MonoCompile *cfg)
 	for (i = 0; i < sig->param_count; ++i) {
 		cfg->args [i + sig->hasthis] = mono_compile_create_var (cfg, sig->params [i], OP_ARG);
 		if (sig->params [i]->byref) {
-			cfg->disable_ssa = TRUE;
+			if (!cfg->new_ir) cfg->disable_ssa = TRUE;
 		}
 	}
 
@@ -10507,16 +10507,8 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 	if (parts == 1)
 		return cfg;
 
-	// FIXME:
-	if (getenv ("COUNT2")) {
-		static int count = 0;
-		count ++;
-
-		if (count == atoi (getenv ("COUNT2")))
-			printf ("LAST: %s\n", mono_method_full_name (cfg->method, TRUE));
-		if (count > atoi (getenv ("COUNT2")))
-			cfg->opt &= ~MONO_OPT_SSA;
-	}
+	if (cfg->disable_ssa)
+		printf ("A: %s\n", mono_method_full_name (cfg->method, TRUE));
 
 //#define DEBUGSSA "logic_run"
 #define DEBUGSSA_CLASS "Tests"

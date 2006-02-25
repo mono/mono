@@ -557,8 +557,6 @@ mono_print_bb (MonoBasicBlock *bb, const char *msg)
 		(dest)->type = STACK_MP;	\
 		(dest)->klass = (var)->klass;	\
         (dest)->dreg = alloc_dreg ((cfg), STACK_MP); \
-        if (!MONO_TYPE_ISSTRUCT (vartype)) \
-           (cfg)->disable_ssa = TRUE; \
 	} while (0)
 
 #define NEW_VARSTORE(cfg,dest,var,vartype,inst) do {	\
