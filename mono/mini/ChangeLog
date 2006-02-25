@@ -1,4 +1,8 @@
 
+Sat Feb 25 11:54:49 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: tiny verifier changes.
+
 Fri Feb 24 18:17:52 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* mini-ops.h, inssel-x86.brg, tramp-x86.c, mini-x86.c,
