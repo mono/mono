@@ -1,3 +1,12 @@
+2006-02-26  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* IBuildProperty.cs, ICultureStringUtilities.cs, IProject.cs,
+	IGlobalEngineAccessor.cs, ITaskElement.cs, IBuildPropertyGroup.cs,
+	ITargetCollection.cs, IEngine.cs, IBuildItemGroupCollection.cs,
+	IHostLogger.cs, IBuildItem.cs, IHostFeedback.cs,
+	ILangSecurityLevelChecker.cs, ITarget.cs, IBuildItemGroup.cs,
+	IBuildPropertyGroupCollection.cs: Removed.
+
 2006-02-26  Marek Sieradzki  <marek.sieradzki@gmail.com> 
 
 	* BuildItem.cs: Removed IBuildItem references.
