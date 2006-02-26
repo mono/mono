@@ -46,7 +46,7 @@ using java.util.regex;
 
 namespace System.Data.ProviderBase
 {
-	public abstract class AbstractDbCommand : DbCommandBase
+	public abstract class AbstractDbCommand : DbCommandBase, ICloneable
 	{
 		#region ProcedureColumnCache
 
@@ -101,12 +101,12 @@ namespace System.Data.ProviderBase
 
 		#region Fields
 
-		protected DbParameterCollection _parameters;
-		protected java.sql.Statement _statement;
-		protected AbstractDBConnection _connection;
-		protected AbstractTransaction _transaction;
+		private DbParameterCollection _parameters;
+		private java.sql.Statement _statement;
+		private AbstractDBConnection _connection;
+		private AbstractTransaction _transaction;
 		private bool _isCommandPrepared;
-		protected CommandBehavior _behavior;
+		private CommandBehavior _behavior;
 		private ArrayList _internalParameters;
 		string _javaCommandText;
 		private int _recordsAffected;
@@ -245,7 +245,7 @@ namespace System.Data.ProviderBase
 			}
 		}
 
-		internal java.sql.Statement JdbcStatement
+		protected internal java.sql.Statement Statement
 		{
 			get { return _statement; }
 		}
@@ -276,24 +276,6 @@ namespace System.Data.ProviderBase
 		protected abstract DbParameterCollection CreateParameterCollection(AbstractDbCommand parent);
 
 		protected internal abstract SystemException CreateException(SQLException e);
-
-		protected internal void CopyTo(AbstractDbCommand target)
-		{
-			target._behavior = _behavior;
-			target.CommandText = CommandText;
-			target.CommandTimeout = CommandTimeout;
-			target.CommandType = CommandType;
-			target._connection = _connection;
-			target._transaction = _transaction;
-			target.UpdatedRowSource = UpdatedRowSource;
-
-			if (Parameters != null && Parameters.Count > 0) {
-				target._parameters = CreateParameterCollection(target);
-				for(int i=0 ; i < Parameters.Count; i++) {
-					target.Parameters.Add(((AbstractDbParameter)Parameters[i]).Clone());
-				}
-			}
-		}
 
 		public override void Cancel()
 		{
@@ -1183,5 +1165,30 @@ namespace System.Data.ProviderBase
 		}
 
 		#endregion // Methods
+
+		#region ICloneable Members
+
+		public virtual object Clone() {
+			AbstractDbCommand target = (AbstractDbCommand)MemberwiseClone();
+			target._statement = null;
+			target._isCommandPrepared = false;
+			target._internalParameters = null;
+			target._javaCommandText = null;
+			target._recordsAffected = -1;
+			target._currentResultSet = null;
+			target._currentReader = null;
+			target._nullParametersInPrepare = false;
+			target._hasResultSet = false;
+			target._explicitPrepare = false;
+			if (Parameters != null && Parameters.Count > 0) {
+				target._parameters = CreateParameterCollection(target);
+				for(int i=0 ; i < Parameters.Count; i++) {
+					target.Parameters.Add(((AbstractDbParameter)Parameters[i]).Clone());
+				}
+			}
+			return target;
+		}
+
+		#endregion
 	}
 }

@@ -41,7 +41,7 @@ using java.sql;
 
 namespace System.Data.SqlClient
 {
-	public class SqlCommand : AbstractDbCommand, IDbCommand, IDisposable, ICloneable
+	public class SqlCommand : AbstractDbCommand
 	{
 		#region Fields
 
@@ -92,10 +92,7 @@ namespace System.Data.SqlClient
 		public new SqlParameterCollection Parameters
 		{
 			get { 
-				if (_parameters == null) {
-					_parameters = CreateParameterCollection(this);
-				}
-				return (SqlParameterCollection)_parameters; 
+				return (SqlParameterCollection)base.Parameters; 
 			}
 		}
 
@@ -184,13 +181,6 @@ namespace System.Data.SqlClient
 		protected sealed override DbParameterCollection CreateParameterCollection(AbstractDbCommand parent)
 		{
 			return new SqlParameterCollection((SqlCommand)parent);
-		}
-
-		public object Clone()
-		{
-			SqlCommand clone = new SqlCommand();
-			CopyTo(clone);
-			return clone;
 		}
 
 		protected internal sealed override SystemException CreateException(SQLException e)

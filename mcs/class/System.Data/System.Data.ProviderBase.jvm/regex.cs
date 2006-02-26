@@ -51,9 +51,9 @@ namespace System.Data.ProviderBase {
 		}
 	}
 	public class SimpleCapture {
-		int _index;
-		int _length;
-		string _input;
+		readonly int _index;
+		readonly int _length;
+		readonly string _input;
 
 		protected SimpleCapture(int index, int length, string input) {
 			_index = index;
@@ -87,15 +87,15 @@ namespace System.Data.ProviderBase {
 	}
 
 	public class SimpleMatch : SimpleCapture {
-		bool _success;
-		SimpleRegex _regex;
-		int _total;
-		int _skip;
+		readonly bool _success;
+		readonly SimpleRegex _regex;
+		readonly int _total;
+		readonly int _skip;
 
-		protected internal SimpleMatch(SimpleRegex regex, int total, bool success, int index, int length, string input)
+		public SimpleMatch(SimpleRegex regex, int total, bool success, int index, int length, string input)
 			: this(regex, total, success, index, length, 0, input) {}
 
-		protected internal SimpleMatch(SimpleRegex regex, int total, bool success, int index, int length, int skip, string input)
+		public SimpleMatch(SimpleRegex regex, int total, bool success, int index, int length, int skip, string input)
 			: base(index, length, input) {
 			_success = success;
 			_regex = regex;

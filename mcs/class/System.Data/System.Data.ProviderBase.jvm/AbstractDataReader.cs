@@ -496,6 +496,11 @@ namespace System.Data.ProviderBase
 
 		public override DateTime GetDateTime(int columnIndex)
 		{
+			return GetDateTimeUnsafe(columnIndex);
+		}
+
+		DateTime GetDateTimeUnsafe(int columnIndex)
+		{
 			FillReaderCache(columnIndex);
 			return ((DateTimeReaderCacheContainer)ReaderCache[columnIndex]).GetDateTime();
 		}
@@ -503,7 +508,7 @@ namespace System.Data.ProviderBase
 		public DateTime GetDateTimeSafe(int columnIndex)
 		{
 			if (ReaderCache[columnIndex] is DateTimeReaderCacheContainer) {
-				return GetDateTime(columnIndex);
+				return GetDateTimeUnsafe(columnIndex);
 			}
 			else {
 				return Convert.ToDateTime(GetValue(columnIndex));
@@ -524,6 +529,11 @@ namespace System.Data.ProviderBase
 
 		public override decimal GetDecimal(int columnIndex)
 		{
+			return GetDecimalUnsafe(columnIndex);
+		}
+
+		decimal GetDecimalUnsafe(int columnIndex)
+		{
 			FillReaderCache(columnIndex);
 			return ((DecimalReaderCacheContainer)ReaderCache[columnIndex]).GetDecimal();
 		}
@@ -531,7 +541,7 @@ namespace System.Data.ProviderBase
 		public decimal GetDecimalSafe(int columnIndex)
 		{
 			if (ReaderCache[columnIndex] is DecimalReaderCacheContainer) {
-				return GetDecimal(columnIndex);
+				return GetDecimalUnsafe(columnIndex);
 			}
 			else {
 				return Convert.ToDecimal(GetValue(columnIndex));
@@ -540,6 +550,11 @@ namespace System.Data.ProviderBase
 
 		public override double GetDouble(int columnIndex)
 		{
+			return GetDoubleUnsafe(columnIndex);
+		}
+
+		double GetDoubleUnsafe(int columnIndex)
+		{
 			FillReaderCache(columnIndex);
 			return ((DoubleReaderCacheContainer)ReaderCache[columnIndex]).GetDouble();
 		}
@@ -547,7 +562,7 @@ namespace System.Data.ProviderBase
 		public double GetDoubleSafe(int columnIndex)
 		{
 			if (ReaderCache[columnIndex] is DoubleReaderCacheContainer) {
-				return GetDouble(columnIndex);
+				return GetDoubleUnsafe(columnIndex);
 			}
 			else {
 				return Convert.ToDouble(GetValue(columnIndex));
@@ -556,6 +571,11 @@ namespace System.Data.ProviderBase
 
 		public override float GetFloat(int columnIndex)
 		{
+			return GetFloatUnsafe(columnIndex);
+		}
+
+		float GetFloatUnsafe(int columnIndex)
+		{
 			FillReaderCache(columnIndex);
 			return ((FloatReaderCacheContainer)ReaderCache[columnIndex]).GetFloat();
 		}
@@ -563,7 +583,7 @@ namespace System.Data.ProviderBase
 		public float GetFloatSafe(int columnIndex)
 		{
 			if (ReaderCache[columnIndex] is FloatReaderCacheContainer) {
-				return GetFloat(columnIndex);
+				return GetFloatUnsafe(columnIndex);
 			}
 			else {
 				return Convert.ToSingle(GetValue(columnIndex));
@@ -572,6 +592,11 @@ namespace System.Data.ProviderBase
 
 		public override short GetInt16(int columnIndex)
 		{
+			return GetInt16Unsafe(columnIndex);
+		}
+
+		short GetInt16Unsafe(int columnIndex)
+		{
 			FillReaderCache(columnIndex);
 			return ((Int16ReaderCacheContainer)ReaderCache[columnIndex]).GetInt16();
 		}
@@ -579,7 +604,7 @@ namespace System.Data.ProviderBase
 		public short GetInt16Safe(int columnIndex)
 		{
 			if (ReaderCache[columnIndex] is Int16ReaderCacheContainer) {
-				return GetInt16(columnIndex);
+				return GetInt16Unsafe(columnIndex);
 			}
 			else {
 				return Convert.ToInt16(GetValue(columnIndex));
@@ -588,6 +613,11 @@ namespace System.Data.ProviderBase
 
 		public override int GetInt32(int columnIndex)
 		{
+			return GetInt32Unsafe(columnIndex);
+		}
+
+		int GetInt32Unsafe(int columnIndex)
+		{
 			FillReaderCache(columnIndex);
 			return ((Int32ReaderCacheContainer)ReaderCache[columnIndex]).GetInt32();
 		}
@@ -595,7 +625,7 @@ namespace System.Data.ProviderBase
 		public int GetInt32Safe(int columnIndex)
 		{
 			if (ReaderCache[columnIndex] is Int32ReaderCacheContainer) {
-				return GetInt32(columnIndex);
+				return GetInt32Unsafe(columnIndex);
 			}
 			else {
 				return Convert.ToInt32(GetValue(columnIndex));
@@ -604,6 +634,11 @@ namespace System.Data.ProviderBase
 
 		public override long GetInt64(int columnIndex)
 		{
+			return GetInt64Unsafe(columnIndex);
+		}
+
+		long GetInt64Unsafe(int columnIndex)
+		{
 			FillReaderCache(columnIndex);
 			return ((Int64ReaderCacheContainer)ReaderCache[columnIndex]).GetInt64();
 		}
@@ -611,7 +646,7 @@ namespace System.Data.ProviderBase
 		public long GetInt64Safe(int columnIndex)
 		{
 			if (ReaderCache[columnIndex] is Int64ReaderCacheContainer) {
-				return GetInt64(columnIndex);
+				return GetInt64Unsafe(columnIndex);
 			}
 			else {
 				return Convert.ToInt64(GetValue(columnIndex));
@@ -647,13 +682,18 @@ namespace System.Data.ProviderBase
 
 		public override string GetString(int columnIndex)
 		{
+			return GetStringUnsafe(columnIndex);
+		}
+
+		string GetStringUnsafe(int columnIndex)
+		{
 			FillReaderCache(columnIndex);
 			return ((StringReaderCacheContainer)ReaderCache[columnIndex]).GetString();
 		}
 
 		public string GetStringSafe(int columnIndex) {
 			if (ReaderCache[columnIndex] is StringReaderCacheContainer) {
-				return GetString(columnIndex);
+				return GetStringUnsafe(columnIndex);
 			}
 			else {
 				return Convert.ToString(GetValue(columnIndex));
@@ -812,6 +852,11 @@ namespace System.Data.ProviderBase
 			}
 		}
 
+		protected bool IsNumeric(int columnIndex)
+		{
+			return ReaderCache[columnIndex].IsNumeric();
+		}
+
 		public override bool IsDBNull(int columnIndex)
 		{
 			FillReaderCache(columnIndex);
@@ -843,7 +888,7 @@ namespace System.Data.ProviderBase
 			ResultSetMetaData metaData;			
 			if (Behavior == CommandBehavior.SchemaOnly) {
 				try {
-					metaData = ((PreparedStatement)_command.JdbcStatement).getMetaData();
+					metaData = ((PreparedStatement)_command.Statement).getMetaData();
 				}
 				catch(SQLException e) {
 					throw CreateException("CommandBehaviour.SchemaOnly is not supported by the JDBC driver.",e);

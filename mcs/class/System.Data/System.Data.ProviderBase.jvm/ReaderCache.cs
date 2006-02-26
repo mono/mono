@@ -38,6 +38,7 @@ namespace System.Data.ProviderBase
 	{
 		void Fetch(ResultSet rs, int columnIndex, bool isSequential);
 		bool IsNull();
+		bool IsNumeric();
 		object GetValue();
 	}
 
@@ -54,6 +55,10 @@ namespace System.Data.ProviderBase
 		protected abstract void FetchInternal(ResultSet rs, int columnIndex);
 		protected virtual void FetchInternal(ResultSet rs, int columnIndex, bool isSequential) {
 			FetchInternal(rs, columnIndex);
+		}
+
+		public virtual bool IsNumeric() {
+			return false;
 		}
 
 		public abstract object GetValue();		
@@ -111,6 +116,11 @@ namespace System.Data.ProviderBase
 		{
 			_l = rs.getLong(columnIndex);
 		}
+
+		public override bool IsNumeric() {
+			return true;
+		}
+
 
 		public override object GetValue()
 		{
@@ -185,6 +195,10 @@ namespace System.Data.ProviderBase
 		protected override void FetchInternal(ResultSet rs, int columnIndex)
 		{
 			_b = rs.getBoolean(columnIndex);
+		}
+
+		public override bool IsNumeric() {
+			return true;
 		}
 
 		public override object GetValue()
@@ -470,6 +484,10 @@ namespace System.Data.ProviderBase
 			}
 		}
 
+		public override bool IsNumeric() {
+			return true;
+		}
+
 		public override object GetValue()
 		{
 			return _d;
@@ -499,6 +517,10 @@ namespace System.Data.ProviderBase
 			_d = rs.getDouble(columnIndex);
 		}
 
+		public override bool IsNumeric() {
+			return true;
+		}
+
 		public override object GetValue()
 		{
 			return _d;
@@ -526,6 +548,10 @@ namespace System.Data.ProviderBase
 		protected override  void FetchInternal(ResultSet rs, int columnIndex)
 		{
 			_i = rs.getInt(columnIndex);
+		}
+
+		public override bool IsNumeric() {
+			return true;
 		}
 
 		public override object GetValue()
@@ -636,6 +662,10 @@ namespace System.Data.ProviderBase
 			_f = rs.getFloat(columnIndex);
 		}
 
+		public override bool IsNumeric() {
+			return true;
+		}
+
 		public override object GetValue()
 		{
 			return _f;
@@ -689,6 +719,10 @@ namespace System.Data.ProviderBase
 			_s = rs.getShort(columnIndex);
 		}
 
+		public override bool IsNumeric() {
+			return true;
+		}
+
 		public override object GetValue()
 		{
 			return _s;
@@ -716,6 +750,10 @@ namespace System.Data.ProviderBase
 		protected override void FetchInternal(ResultSet rs, int columnIndex)
 		{
 			_b = (byte)rs.getByte(columnIndex);
+		}
+
+		public override bool IsNumeric() {
+			return true;
 		}
 
 		public override object GetValue()

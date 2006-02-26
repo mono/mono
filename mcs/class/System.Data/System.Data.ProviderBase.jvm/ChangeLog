@@ -1,3 +1,9 @@
+2006-02-26  Konstantin Triger <kostat@mainsoft.com>
+
+	* AbstractDataReader.cs: Prevent recursion when GetXXX is overriden and GetXXXSafe is called.
+	* ReaderCache.cs: Added IsNumeric to cache containers.
+	* AbstractDBCommand.cs, regex.cs: Refactoring.
+
 2006-05-01 Konstantin Triger <kostat@mainsoft.com
 
 	*      AbstractDataReader.cs, ReaderCache.cs: use stream interfaces
