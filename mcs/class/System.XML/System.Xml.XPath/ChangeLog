@@ -1,3 +1,10 @@
+2006-02-26  Atsushi Enomoto <atsushi@ximian.com>
+
+	* Iterator.cs : seems like MS XPathNodeIterator.MoveNext() itself does
+	  not handle XsltContext.PreserveWhitespace() unlike ours. It results
+	  in not a small performance improvement. (just removed it since it
+	  didn't cause any errors in XSLT standalone tests.)
+
 2006-02-21  Atsushi Enomoto <atsushi@ximian.com>
 
 	* Iterator.cs : removed extra field from AxisIterator.

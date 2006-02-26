@@ -89,11 +89,6 @@ namespace System.Xml.XPath
 			if (!MoveNextCore ())
 				return false;
 			position++;
-			if (Current != null &&
-				Current.NodeType == XPathNodeType.Whitespace &&
-				_nsm is XsltContext &&
-				!((XsltContext) _nsm).PreserveWhitespace (Current))
-				return MoveNext ();
 			return true;
 		}
 
