@@ -71,20 +71,20 @@ namespace Microsoft.Build.BuildEngine {
 
 		public virtual void Initialize (IEventSource eventSource)
 		{
-                        eventSource.BuildStarted +=  new BuildStartedEventHandler (BuildStarted);
-                        eventSource.BuildFinished += new BuildFinishedEventHandler (BuildFinished);
-                        eventSource.ProjectStarted += new ProjectStartedEventHandler (ProjectStarted);
-                        eventSource.ProjectFinished += new ProjectFinishedEventHandler (ProjectFinished);
-                        eventSource.TargetStarted += new TargetStartedEventHandler (TargetStarted);
-                        eventSource.TargetFinished += new TargetFinishedEventHandler (TargetFinished);
-                        eventSource.TaskStarted += new TaskStartedEventHandler (TaskStarted);
-                        eventSource.TaskFinished += new TaskFinishedEventHandler (TaskFinished);
-                        eventSource.MessageRaised += new BuildMessageEventHandler (MessageRaised);
-                        eventSource.WarningRaised += new BuildWarningEventHandler (WarningRaised);
-                        eventSource.ErrorRaised += new BuildErrorEventHandler (ErrorRaised);
+                        eventSource.BuildStarted +=  new BuildStartedEventHandler (BuildStartedHandler);
+                        eventSource.BuildFinished += new BuildFinishedEventHandler (BuildFinishedHandler);
+                        eventSource.ProjectStarted += new ProjectStartedEventHandler (ProjectStartedHandler);
+                        eventSource.ProjectFinished += new ProjectFinishedEventHandler (ProjectFinishedHandler);
+                        eventSource.TargetStarted += new TargetStartedEventHandler (TargetStartedHandler);
+                        eventSource.TargetFinished += new TargetFinishedEventHandler (TargetFinishedHandler);
+                        eventSource.TaskStarted += new TaskStartedEventHandler (TaskStartedHandler);
+                        eventSource.TaskFinished += new TaskFinishedEventHandler (TaskFinishedHandler);
+                        eventSource.MessageRaised += new BuildMessageEventHandler (MessageHandler);
+                        eventSource.WarningRaised += new BuildWarningEventHandler (WarningHandler);
+                        eventSource.ErrorRaised += new BuildErrorEventHandler (ErrorHandler);
 		}
 		
-		public void BuildStarted (object sender, BuildStartedEventArgs args)
+		public void BuildStartedHandler (object sender, BuildStartedEventArgs args)
 		{
 			WriteLine ("");
 			WriteLine (String.Format ("Build started {0}.", args.Timestamp));
@@ -92,7 +92,7 @@ namespace Microsoft.Build.BuildEngine {
 			buildStart = args.Timestamp;
 		}
 		
-		public void BuildFinished (object sender, BuildFinishedEventArgs args)
+		public void BuildFinishedHandler (object sender, BuildFinishedEventArgs args)
 		{
 			if (args.Succeeded == true) {
 				WriteLine ("Build succeeded.");
@@ -110,13 +110,13 @@ namespace Microsoft.Build.BuildEngine {
 			} 
 		}
 
-		public void ProjectStarted (object sender, ProjectStartedEventArgs args)
+		public void ProjectStartedHandler (object sender, ProjectStartedEventArgs args)
 		{
 			WriteLine (String.Format ("Project \"{0}\" ({1} target(s)):", args.ProjectFile, args.TargetNames));
 			WriteLine ("");
 		}
 		
-		public void ProjectFinished (object sender, ProjectFinishedEventArgs args)
+		public void ProjectFinishedHandler (object sender, ProjectFinishedEventArgs args)
 		{
 			if (IsVerbosityGreaterOrEqual (LoggerVerbosity.Diagnostic)) {
 				WriteLine (String.Format ("Done building project \"{0}\".", args.ProjectFile));
@@ -124,13 +124,13 @@ namespace Microsoft.Build.BuildEngine {
 			}
 		}
 		
-		public void TargetStarted (object sender, TargetStartedEventArgs args)
+		public void TargetStartedHandler (object sender, TargetStartedEventArgs args)
 		{
 			WriteLine (String.Format ("Target {0}:",args.TargetName));
 			indent++;
 		}
 		
-		public void TargetFinished (object sender, TargetFinishedEventArgs args)
+		public void TargetFinishedHandler (object sender, TargetFinishedEventArgs args)
 		{
 			indent--;
 			if (IsVerbosityGreaterOrEqual (LoggerVerbosity.Diagnostic))
@@ -139,35 +139,35 @@ namespace Microsoft.Build.BuildEngine {
 			WriteLine ("");
 		}
 		
-		public void TaskStarted (object sender, TaskStartedEventArgs args)
+		public void TaskStartedHandler (object sender, TaskStartedEventArgs args)
 		{
 			if (this.verbosity == LoggerVerbosity.Diagnostic)
 				WriteLine (String.Format ("Task \"{0}\"",args.TaskName));
 			indent++;
 		}
 		
-		public void TaskFinished (object sender, TaskFinishedEventArgs args)
+		public void TaskFinishedHandler (object sender, TaskFinishedEventArgs args)
 		{
 			indent--;
 			if (this.verbosity == LoggerVerbosity.Diagnostic)
 				WriteLine (String.Format ("Done executing task \"{0}\"",args.TaskName));
 		}
 		
-		public void MessageRaised (object sender, BuildMessageEventArgs args)
+		public void MessageHandler (object sender, BuildMessageEventArgs args)
 		{
 			if (IsMessageOk (args)) {
 				WriteLine (args.Message);
 			}
 		}
 		
-		public void WarningRaised (object sender, BuildWarningEventArgs args)
+		public void WarningHandler (object sender, BuildWarningEventArgs args)
 		{
 			if (IsVerbosityGreaterOrEqual (LoggerVerbosity.Normal)) 
 				WriteLineWithoutIndent (FormatWarningEvent (args));
 			warningCount++;
 		}
 		
-		public void ErrorRaised (object sender, BuildErrorEventArgs args)
+		public void ErrorHandler (object sender, BuildErrorEventArgs args)
 		{
 			if (IsVerbosityGreaterOrEqual (LoggerVerbosity.Minimal)) 
 				WriteLineWithoutIndent (FormatErrorEvent (args));

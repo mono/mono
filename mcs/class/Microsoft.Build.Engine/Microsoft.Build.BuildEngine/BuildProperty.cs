@@ -32,7 +32,7 @@ using System.Text;
 using System.Xml;
 
 namespace Microsoft.Build.BuildEngine {
-	public class BuildProperty : IBuildProperty {
+	public class BuildProperty {
 	
 		XmlElement	propertyElement;
 		XmlAttribute	condition;

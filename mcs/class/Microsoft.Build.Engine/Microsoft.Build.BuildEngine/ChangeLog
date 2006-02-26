@@ -1,3 +1,32 @@
+2006-02-26  Marek Sieradzki  <marek.sieradzki@gmail.com> 
+
+	* BuildItem.cs: Removed IBuildItem references.
+	* BuildItemGroup.cs: Removed ItemPropertyGroupingBase and
+	IBuildItemGroup references. Changed Evaluate to internal.
+	* BuildItemGroupCollection.cs. Removed IBuildItemGroupCollection
+	reference and hidden constructors.
+	* BuildProperty.cs: Removed IBuildProperty reference.
+	* BuildPropertyGroup.cs: Removed ItemPropertyGroupingBase and
+	IBuildPropertyGroup references. Changed Evaluate to internal.
+	* BuildPropertyGroupCollection.cs: Removed IBuildPropertyGroupCollection
+	reference and hidden constructors.
+	* ConsoleLogger.cs: Updated names of event handlers.
+	* Engine.cs: Removed IEngine reference. Removed ClearAllProjects and
+	Escape. Added UnloadAllProjects () and UnloadProject ().
+	* FileLogger.cs: Removed ApplyParameter ().
+	* GroupingCollection.cs: Hidden.
+	* InvalidProjectFileException.cs: Removed HasBeenLogged property.
+	* ItemPropertyGroupingBase.cs: Commented.
+	* ProcessingPass.cs: Hidden.
+	* Project.cs: Removed IProject reference. Changed CurrentEncoding to
+	Encoding.
+	* Target.cs: Removed ITarget reference.
+	* TargetCollection.cs: Removed ITargetCollection reference.
+	* TaskElement.cs: Removed ITaskElement reference.
+	* TaskEngineAssemblyResolver.cs: Hidden.
+	* Utilities.cs: Made static class, removed CheckPath (),
+	ValidateCulture (), GetSupportedCultures () and added Escape ().
+
 2006-02-24  Marek Sieradzki <marek.sieradzki@gmail.com> 
 
 	* ConsoleLogger.cs, Engine.cs: Quick hacks to make it compile with new

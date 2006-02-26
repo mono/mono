@@ -40,7 +40,6 @@ namespace Microsoft.Build.BuildEngine {
 		int	endColumnNumber;
 		string	errorCode;
 		string	errorSubcategory;
-		bool	hasBeenLogged;
 		string	helpKeyword;
 		int	lineNumber;
 		int	endLineNumber;
@@ -109,7 +108,6 @@ namespace Microsoft.Build.BuildEngine {
 			info.AddValue ("EndColumnNumber", endColumnNumber);
 			info.AddValue ("ErrorCode", errorCode);
 			info.AddValue ("ErrorSubcategory", errorSubcategory);
-			info.AddValue ("HasBeenLogged", hasBeenLogged);
 			info.AddValue ("HelpKeyword", helpKeyword);
 			info.AddValue ("LineNumber", lineNumber);
 			info.AddValue ("EndLineNumber", endLineNumber);
@@ -149,15 +147,6 @@ namespace Microsoft.Build.BuildEngine {
 		public string ErrorSubcategory {
 			get {
 				return errorSubcategory;
-			}
-		}
-
-		public bool HasBeenLogged {
-			get {
-				return hasBeenLogged;
-			}
-			set {
-				hasBeenLogged = value;
 			}
 		}
 

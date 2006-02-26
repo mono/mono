@@ -30,7 +30,7 @@
 using System;
 
 namespace Microsoft.Build.BuildEngine {
-	public class TaskEngineAssemblyResolver : MarshalByRefObject {
+	internal class TaskEngineAssemblyResolver : MarshalByRefObject {
 		public TaskEngineAssemblyResolver ()
 		{
 		}

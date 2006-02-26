@@ -31,7 +31,7 @@
 using System.Collections;
 
 namespace Microsoft.Build.BuildEngine {
-	public class GroupingCollection : IEnumerable {
+	internal class GroupingCollection : IEnumerable {
 		
 		IList	allGroups;
 		int	itemGroups;

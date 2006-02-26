@@ -32,7 +32,7 @@ using System.Collections;
 using System.Reflection;
 
 namespace Microsoft.Build.BuildEngine {
-	public class TargetCollection : ITargetCollection, ICollection, IEnumerable {
+	public class TargetCollection : ICollection, IEnumerable {
 		
 		IDictionary	targetsByName;
 		Project		parentProject;

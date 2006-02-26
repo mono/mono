@@ -30,7 +30,7 @@
 using System.Collections;
 
 namespace Microsoft.Build.BuildEngine {
-	public abstract class ItemPropertyGroupingBase {
+/*	public abstract class ItemPropertyGroupingBase {
 
 		protected ItemPropertyGroupingBase ()
 		{
@@ -46,7 +46,7 @@ namespace Microsoft.Build.BuildEngine {
 			PropertyGroup,
 			ItemGroup
 		}
-	}
+	}*/
 }
 
 #endif

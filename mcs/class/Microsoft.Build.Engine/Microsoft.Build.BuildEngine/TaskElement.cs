@@ -36,7 +36,7 @@ using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 
 namespace Microsoft.Build.BuildEngine {
-	public class TaskElement : ITaskElement {
+	public class TaskElement {
 	
 		XmlAttribute	condition;
 		XmlAttribute	continueOnError;

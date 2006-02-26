@@ -27,25 +27,14 @@
 
 #if NET_2_0
 
+using System;
+
 namespace Microsoft.Build.BuildEngine {
-	public class Utilities : ILangSecurityLevelChecker, ICultureStringUtilities {
-		public Utilities ()
-		{
-		}
-
-		public bool CheckPath (string path, int zone)
-		{
-			return true;
-		}
-
-		public string[] GetSupportedCultures ()
+	public static class Utilities {
+		[MonoTODO]
+		public static string Escape (string unescapedExpression)
 		{
 			return null;
-		}
-
-		public bool ValidateCulture (string culture)
-		{
-			return true;
 		}
 	}
 }

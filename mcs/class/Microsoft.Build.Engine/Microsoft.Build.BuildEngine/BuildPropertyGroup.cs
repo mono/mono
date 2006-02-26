@@ -35,7 +35,7 @@ using System.Text;
 using System.Xml;
 
 namespace Microsoft.Build.BuildEngine {
-	public class BuildPropertyGroup : ItemPropertyGroupingBase, IBuildPropertyGroup, IEnumerable {
+	public class BuildPropertyGroup : IEnumerable {
 	
 		XmlElement		propertyGroup;
 		XmlAttribute		condition;
@@ -122,7 +122,7 @@ namespace Microsoft.Build.BuildEngine {
 		}
 
 		// FIXME: what it is doing?
-		public override void Evaluate (BuildPropertyGroup evaluatedPropertyBag,
+		internal void Evaluate (BuildPropertyGroup evaluatedPropertyBag,
 					       bool ignoreCondition,
 					       bool honorCondition,
 					       Hashtable conditionedPropertiesTable,

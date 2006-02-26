@@ -28,7 +28,7 @@
 #if NET_2_0
 
 namespace Microsoft.Build.BuildEngine {
-	public enum ProcessingPass {
+	internal enum ProcessingPass {
 		Pass1,
 		Pass2
 	}

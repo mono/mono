@@ -38,14 +38,14 @@ using Microsoft.Build.Framework;
 using Mono.XBuild.Framework;
 
 namespace Microsoft.Build.BuildEngine {
-	public class Project : IProject {
+	public class Project {
 		static string separator = ";";
 	
 		bool				buildEnabled;
 		IDictionary			conditionedProperties;
-		Encoding				currentEncoding;
 		string[]			defaultTargets;
 		IList				directlyImportedProjects;
+		Encoding			encoding;
 		BuildPropertyGroup		environmentProperties;
 		BuildItemGroup			evaluatedItems;
 		BuildItemGroup			evaluatedItemsIgnoringCondition;
@@ -351,7 +351,7 @@ namespace Microsoft.Build.BuildEngine {
 		}
 
 		public void SaveToFile (string projectFileName,
-					ProjectFileEncoding encoding)
+					Encoding encoding)
 		{
 			SaveToFile (projectFileName);
 		}
@@ -577,16 +577,8 @@ namespace Microsoft.Build.BuildEngine {
 			}
 		}
 
-		public ProjectFileEncoding CurrentProjectFileEncoding {
-			get {
-				if (currentEncoding == Encoding.UTF8)
-					return ProjectFileEncoding.Utf8;
-				if (currentEncoding == Encoding.Unicode)
-					return ProjectFileEncoding.Unicode;
-				if (currentEncoding == Encoding.GetEncoding ("ANSI"))
-					return ProjectFileEncoding.Ansi;
-				throw new Exception ();
-			}
+		public Encoding Encoding {
+			get { return encoding; }
 		}
 
 		public string DefaultTargets {

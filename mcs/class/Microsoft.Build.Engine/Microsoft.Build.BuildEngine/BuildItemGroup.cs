@@ -35,7 +35,7 @@ using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 
 namespace Microsoft.Build.BuildEngine {
-	public class BuildItemGroup : ItemPropertyGroupingBase,	IBuildItemGroup, IEnumerable {
+	public class BuildItemGroup : IEnumerable {
 	
 		XmlAttribute		condition;
 		bool			isImported;
@@ -96,7 +96,7 @@ namespace Microsoft.Build.BuildEngine {
 			return big;
 		}
 
-		public override void Evaluate (BuildPropertyGroup parentPropertyBag,
+		internal void Evaluate (BuildPropertyGroup parentPropertyBag,
 					       bool ignoreCondition,
 					       bool honorCondition,
 					       Hashtable conditionedPropertiesTable,

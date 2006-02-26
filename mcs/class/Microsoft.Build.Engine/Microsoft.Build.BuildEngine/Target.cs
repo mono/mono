@@ -33,7 +33,7 @@ using System.Xml;
 using Microsoft.Build.Framework;
 
 namespace Microsoft.Build.BuildEngine {
-	public class Target : ITarget, IEnumerable {
+	public class Target : IEnumerable {
 	
 		BatchingImpl	batchingImpl;
 		BuildState	buildState;

@@ -32,11 +32,10 @@ using System.Collections;
 using Microsoft.Build.Framework;
 
 namespace Microsoft.Build.BuildEngine {
-	public class Engine : IEngine {
+	public class Engine {
 		
 		string			binPath;
 		bool			buildEnabled;
-		const string		engineVersion = "0.1";
 		BuildPropertyGroup	environmentProperties;
 		EventSource		eventSource;
 		bool			buildStarted;
@@ -49,7 +48,12 @@ namespace Microsoft.Build.BuildEngine {
 
 		// FIXME: GlobalEngine static property uses this but what about GlobalEngineAccessor?
 		static Engine		globalEngine;
+		static Version		version;
 
+		static Engine ()
+		{
+			version = new Version("0.1");
+		}
 		
 		public Engine ()
 			: this (null)
@@ -106,11 +110,6 @@ namespace Microsoft.Build.BuildEngine {
 			return result;
 		}
 
-		public void ClearAllProjects ()
-		{
-			projects.Clear ();
-		}
-
 		public Project CreateNewProject ()
 		{
 			if (buildStarted == false) {
@@ -129,12 +128,6 @@ namespace Microsoft.Build.BuildEngine {
 			return p;
 		}
 
-		public string Escape (string input)
-		{
-			// FIXME: test it, probably returns XML escaped string
-			return null;
-		}
-
 		public Project GetLoadedProject (string projectFullFileName)
 		{
 			return (Project) projects [projectFullFileName];
@@ -146,6 +139,16 @@ namespace Microsoft.Build.BuildEngine {
 				throw new ArgumentNullException ("logger");
 			logger.Initialize (eventSource);
 			loggers.Add (logger);
+		}
+		
+		[MonoTODO]
+		public void UnloadAllProjects ()
+		{
+		}
+		
+		[MonoTODO]
+		public void UnloadProject (Project project)
+		{
 		}
 
 		public void UnregisterAllLoggers ()
@@ -213,8 +216,8 @@ namespace Microsoft.Build.BuildEngine {
 			set { buildEnabled = value; }
 		}
 
-		public static string EngineVersion {
-			get { return engineVersion; }
+		public static Version Version {
+			get { return version; }
 		}
 
 		public static Engine GlobalEngine {

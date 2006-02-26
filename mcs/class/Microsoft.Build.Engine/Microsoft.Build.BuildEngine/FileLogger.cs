@@ -34,11 +34,6 @@ namespace Microsoft.Build.BuildEngine {
 		public FileLogger ()
 		{
 		}
-		
-		public override void ApplyParameter (string parameterName,
-						     string parameterValue)
-		{
-		}
 
 		// FIXME: add our handlers to the events
 		public override void Initialize (IEventSource eventSource)

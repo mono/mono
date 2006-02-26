@@ -31,16 +31,16 @@ using System;
 using System.Collections;
 
 namespace Microsoft.Build.BuildEngine {
-	public class BuildItemGroupCollection :	IBuildItemGroupCollection, ICollection, IEnumerable {
+	public class BuildItemGroupCollection :	ICollection, IEnumerable {
 			
 		GroupingCollection	groupingCollection;
 		
-		public BuildItemGroupCollection ()
+		private BuildItemGroupCollection ()
 		{
 			groupingCollection = new GroupingCollection ();
 		}
 
-		public BuildItemGroupCollection (GroupingCollection groupingCollection)
+		internal BuildItemGroupCollection (GroupingCollection groupingCollection)
 		{
 			this.groupingCollection = groupingCollection;
 		}

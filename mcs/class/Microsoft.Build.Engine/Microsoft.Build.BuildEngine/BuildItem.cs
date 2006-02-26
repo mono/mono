@@ -37,7 +37,7 @@ using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 
 namespace Microsoft.Build.BuildEngine {
-	public class BuildItem : IBuildItem {
+	public class BuildItem {
 
 		BuildItemGroup	childs;
 		XmlAttribute	condition;
@@ -113,7 +113,7 @@ namespace Microsoft.Build.BuildEngine {
 			this.unevaluatedMetadata = (Hashtable) item.CloneCustomMetadata ();
 		}
 		
-		public void CopyCustomMetadataTo (IBuildItem destinationItem)
+		public void CopyCustomMetadataTo (BuildItem destinationItem)
 		{
 			foreach (DictionaryEntry de in unevaluatedMetadata)
 				destinationItem.SetMetadata ((string) de.Key, (string) de.Value);
