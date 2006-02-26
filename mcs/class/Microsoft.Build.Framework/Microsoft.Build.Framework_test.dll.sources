@@ -3,7 +3,8 @@ Microsoft.Build.Framework/BuildFinishedEventArgsTest.cs
 Microsoft.Build.Framework/BuildMessageEventArgsTest.cs
 Microsoft.Build.Framework/BuildStartedEventArgsTest.cs
 Microsoft.Build.Framework/BuildWarningEventArgsTest.cs
-Microsoft.Build.Framework/CustomBuildEventArgsTest.cs
+Microsoft.Build.Framework/ExternalProjectFinishedEventArgsTest.cs
+Microsoft.Build.Framework/ExternalProjectStartedEventArgsTest.cs
 Microsoft.Build.Framework/LoggerExceptionTest.cs
 Microsoft.Build.Framework/ProjectFinishedEventArgsTest.cs
 Microsoft.Build.Framework/ProjectStartedEventArgsTest.cs

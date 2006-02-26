@@ -22,7 +22,6 @@
     <File name="./Microsoft.Build.Framework/BuildMessageEventArgsTest.cs" subtype="Code" buildaction="Compile" />
     <File name="./Microsoft.Build.Framework/BuildStartedEventArgsTest.cs" subtype="Code" buildaction="Compile" />
     <File name="./Microsoft.Build.Framework/BuildWarningEventArgsTest.cs" subtype="Code" buildaction="Compile" />
-    <File name="./Microsoft.Build.Framework/CustomBuildEventArgsTest.cs" subtype="Code" buildaction="Compile" />
     <File name="./Microsoft.Build.Framework/LoggerExceptionTest.cs" subtype="Code" buildaction="Compile" />
     <File name="./Microsoft.Build.Framework/ProjectFinishedEventArgsTest.cs" subtype="Code" buildaction="Compile" />
     <File name="./Microsoft.Build.Framework/ProjectStartedEventArgsTest.cs" subtype="Code" buildaction="Compile" />
@@ -30,9 +29,10 @@
     <File name="./Microsoft.Build.Framework/TaskStartedEventArgsTest.cs" subtype="Code" buildaction="Compile" />
     <File name="./Microsoft.Build.Framework/TargetStartedEventArgsTest.cs" subtype="Code" buildaction="Compile" />
     <File name="./Microsoft.Build.Framework/TargetFinishedEventArgsTest.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Microsoft.Build.Framework/ExternalProjectFinishedEventArgsTest.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Microsoft.Build.Framework/ExternalProjectStartedEventArgsTest.cs" subtype="Code" buildaction="Compile" />
   </Contents>
   <References>
-    <ProjectReference type="Project" localcopy="True" refto="Microsoft.Build.Framework" />
     <ProjectReference type="Gac" localcopy="True" refto="nunit.framework, Version=2.2.0.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77" />
   </References>
 </Project>

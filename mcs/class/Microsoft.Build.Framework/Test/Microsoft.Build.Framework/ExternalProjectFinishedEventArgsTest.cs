@@ -1,5 +1,5 @@
 //
-// ProjectStartedEventArgsTest.cs:
+// ExternalProjectFinishedEventArgsTest.cs
 //
 // Author:
 //   Marek Sieradzki (marek.sieradzki@gmail.com)
@@ -30,23 +30,24 @@ using NUnit.Framework;
 
 namespace MonoTests.Microsoft.Build.Framework {
 	[TestFixture]
-	public class ProjectStartedEventArgsTest {
+	public class ExternalProjectFinishedEventArgsTest {
 		[Test]
 		public void AssignmentTest ()
 		{
-			ProjectStartedEventArgs psea;
+			ExternalProjectFinishedEventArgs epfea;
 			string message = "message";
 			string helpKeyword = "helpKeyword";
+			string senderName = "senderName";
 			string projectFile = "projectFile";
-			string targetNames = "targetNames";
+			bool succeeded = true;
 			
-			// FIXME: check Properties and Items
-			psea = new ProjectStartedEventArgs (message, helpKeyword, projectFile, targetNames, null, null);
+			epfea = new ExternalProjectFinishedEventArgs (message, helpKeyword, senderName, projectFile, succeeded);
 			
-			Assert.AreEqual (message, psea.Message, "Message");
-			Assert.AreEqual (helpKeyword, psea.HelpKeyword, "HelpKeyword");
-			Assert.AreEqual (projectFile, psea.ProjectFile, "ProjectFile");
-			Assert.AreEqual (targetNames, psea.TargetNames, "TargetNames");
+			Assert.AreEqual (message, epfea.Message, "Message");
+			Assert.AreEqual (helpKeyword, epfea.HelpKeyword, "HelpKeyword");
+			Assert.AreEqual (senderName, epfea.SenderName, "SenderName");
+			Assert.AreEqual (projectFile, epfea.ProjectFile, "ProjectFile");
+			Assert.AreEqual (succeeded, epfea.Succeeded, "Succeeded");
 		}
 	}
 }

@@ -1,3 +1,10 @@
+2006-02-26  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* ProjectStartedEventArgsTest.cs: Updated.
+	* CustomBuildEventArgsTest.cs: Removed.
+	* ExternalProjectStartedEventArgs.cs,
+	ExternalProjectFinishedEventArgs.cs: Added.
+
 2005-08-30  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* TaskFinishedEventArgsTest.cs, TargetStartedEventArgsTest.cs,

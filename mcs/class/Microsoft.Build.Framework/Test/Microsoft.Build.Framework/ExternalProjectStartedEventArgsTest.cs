@@ -1,5 +1,5 @@
 //
-// CustomBuildEventArgsTest.cs:
+// ExternalProjectStartedEventArgsTest.cs
 //
 // Author:
 //   Marek Sieradzki (marek.sieradzki@gmail.com)
@@ -30,20 +30,24 @@ using NUnit.Framework;
 
 namespace MonoTests.Microsoft.Build.Framework {
 	[TestFixture]
-	public class CustomBuildEventArgsTest {
+	public class ExternalProjectStartedEventArgsTest {
 		[Test]
 		public void AssignmentTest ()
 		{
-			CustomBuildEventArgs cbea;
+			ExternalProjectStartedEventArgs epsea;
 			string message = "message";
 			string helpKeyword = "helpKeyword";
 			string senderName = "senderName";
+			string projectFile = "projectFile";
+			string targetNames = "a;b;c";
 			
-			cbea = new CustomBuildEventArgs (message, helpKeyword, senderName);
+			epsea = new ExternalProjectStartedEventArgs (message, helpKeyword, senderName, projectFile, targetNames);
 			
-			Assert.AreEqual (message, cbea.Message, "Message");
-			Assert.AreEqual (helpKeyword, cbea.HelpKeyword, "HelpKeyword");
-			Assert.AreEqual (senderName, cbea.SenderName, "SenderName");
+			Assert.AreEqual (message, epsea.Message, "Message");
+			Assert.AreEqual (helpKeyword, epsea.HelpKeyword, "HelpKeyword");
+			Assert.AreEqual (senderName, epsea.SenderName, "SenderName");
+			Assert.AreEqual (projectFile, epsea.ProjectFile, "ProjectFile");
+			Assert.AreEqual (targetNames, epsea.TargetNames, "TargetNames");
 		}
 	}
 }
