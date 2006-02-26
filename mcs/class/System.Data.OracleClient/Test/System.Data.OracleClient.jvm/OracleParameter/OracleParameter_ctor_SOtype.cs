@@ -93,9 +93,9 @@ public class OracleParameter_ctor_SOtype : ADONetTesterClass
 	}
 
 	[Test]
-#if !TARGET_JVM
-	[Category("NotWorking")]
-#endif
+//#if !TARGET_JVM
+//	[Category("NotWorking")]
+//#endif
 	public void SimpleTypesWithDBNull()
 	{
 		OracleConnection con=null;
@@ -165,19 +165,19 @@ public class OracleParameter_ctor_SOtype : ADONetTesterClass
 	private void AddSimpleTypesNullParams(OracleCommand cmd)
 	{
 		OracleParameter tmpParam;
-		tmpParam = new OracleParameter("NUMBER", OracleType.Number);
+		tmpParam = new OracleParameter("T_NUMBER", OracleType.Number);
 		cmd.Parameters.Add(tmpParam);
-		tmpParam = new OracleParameter("LONG", OracleType.LongVarChar);
+		tmpParam = new OracleParameter("T_LONG", OracleType.LongVarChar);
 		cmd.Parameters.Add(tmpParam);
-		tmpParam = new OracleParameter("FLOAT", OracleType.Float);
+		tmpParam = new OracleParameter("T_FLOAT", OracleType.Float);
 		cmd.Parameters.Add(tmpParam);
-		tmpParam = new OracleParameter("VARCHAR", OracleType.VarChar);
+		tmpParam = new OracleParameter("T_VARCHAR", OracleType.VarChar);
 		cmd.Parameters.Add(tmpParam);
-		tmpParam = new OracleParameter("NVARCHAR", OracleType.NVarChar);
+		tmpParam = new OracleParameter("T_NVARCHAR", OracleType.NVarChar);
 		cmd.Parameters.Add(tmpParam);
-		tmpParam = new OracleParameter("CHAR", OracleType.Char);
+		tmpParam = new OracleParameter("T_CHAR", OracleType.Char);
 		cmd.Parameters.Add(tmpParam);
-		tmpParam = new OracleParameter("NCHAR", OracleType.NChar);
+		tmpParam = new OracleParameter("T_NCHAR", OracleType.NChar);
 		cmd.Parameters.Add(tmpParam);
 
 		foreach (OracleParameter current in cmd.Parameters)
