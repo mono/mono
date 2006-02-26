@@ -1,5 +1,9 @@
 2006-02-26  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
+	* CombinePath.cs: Added.
+
+2006-02-26  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
 	* AL.cs: Added Output attribute to OutputAssembly.
 	* AppDomainIsolatedTaskExtension.cs: Added LoadInSeparateAppDomain
 	attribute.
