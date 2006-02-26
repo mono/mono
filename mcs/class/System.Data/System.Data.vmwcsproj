@@ -43,7 +43,6 @@
 				<File RelPath="Mono.Data.SqlExpressions\StringFunctions.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="Mono.Data.SqlExpressions\Tokenizer.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data\AcceptRejectRule.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Data\AdapterMappingException.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data\ColumnTypeConverter.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data\CommandBehavior.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data\CommandType.cs" SubType="Code" BuildAction="Compile"/>
@@ -55,7 +54,6 @@
 				<File RelPath="System.Data\ConstraintConverter.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data\ConstraintException.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data\CustomDataClassGenerator.cs" SubType="Code" BuildAction="None"/>
-				<File RelPath="System.Data\DataAdapterException.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data\DataCategoryAttribute.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data\DataColumn.cs" SubType="Component" BuildAction="Compile"/>
 				<File RelPath="System.Data\DataColumnChangeEventArgs.cs" SubType="Code" BuildAction="Compile"/>
@@ -105,26 +103,17 @@
 				<File RelPath="System.Data\IDataParameter.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data\IDataParameterCollection.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data\IDataReader.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Data\IDataReader2.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data\IDataRecord.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Data\IDataRecord2.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Data\IDataSources.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Data\IDataUpdatableRecord.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Data\IDbAsyncCommand.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Data\IDbAsyncConnection.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data\IDbCommand.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data\IDbConnection.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data\IDbDataAdapter.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data\IDbDataParameter.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Data\IDbExecutionContext.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data\IDbTransaction.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Data\IGetTypedData.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data\InRowChangingEventException.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data\InternalDataCollectionBase.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data\InvalidConstraintException.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data\InvalidExpressionException.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data\ISafeDataRecord.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Data\ISetTypedData.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data\IsolationLevel.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data\ITableMapping.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data\ITableMappingCollection.cs" SubType="Code" BuildAction="Compile"/>
@@ -199,7 +188,6 @@
 				<File RelPath="System.Data.Common\DbDataReader.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.Common\DbDataRecord.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.Common\DbDataSourceEnumerator.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Data.Common\DbDataUpdatableRecord.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.Common\DbEnumerator.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.Common\DbMetaDataCache.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.Common\DbParameter.cs" SubType="Code" BuildAction="Compile"/>
@@ -209,7 +197,6 @@
 				<File RelPath="System.Data.Common\DbProviderFactoriesConfigurationHandler.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.Common\DbProviderFactory.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.Common\DbProviderSupportedClasses.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Data.Common\DbTable.cs" SubType="Component" BuildAction="Compile"/>
 				<File RelPath="System.Data.Common\DbTransaction.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.Common\DbTypes.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.Common\ExceptionHelper.cs" SubType="Code" BuildAction="Compile"/>

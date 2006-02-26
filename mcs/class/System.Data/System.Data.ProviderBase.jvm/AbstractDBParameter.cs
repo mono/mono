@@ -150,6 +150,18 @@ namespace System.Data.ProviderBase
 			}
 		}
 
+		//DbParameter overrides
+
+		public override bool SourceColumnNullMapping {
+			get {
+				throw new NotImplementedException();
+			}
+			set {
+				throw new NotImplementedException();
+			}
+		}
+
+
 		#endregion // Properties
 
 		#region Methods
@@ -200,6 +212,12 @@ namespace System.Data.ProviderBase
 			t._scale = _scale;
 			t._sourceVersion = _sourceVersion;
 			t._jdbcType = _jdbcType;
+		}
+
+		//DbParameter overrides
+
+		public override void ResetDbType() {
+			throw new NotImplementedException();
 		}
 
 		#endregion // Methods
