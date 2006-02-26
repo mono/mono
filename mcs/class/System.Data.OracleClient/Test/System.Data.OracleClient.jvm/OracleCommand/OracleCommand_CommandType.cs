@@ -120,7 +120,6 @@ namespace MonoTests.System.Data.OracleClient
 			finally{EndCase(exp); exp = null;}
 
 
-#if TARGET_JVM
 			#region		---- CommandType.Text using Parameters.Add ---- 
 			try
 			{
@@ -130,19 +129,12 @@ namespace MonoTests.System.Data.OracleClient
 				cmd.Connection = con;
 				cmd.Transaction = tr;
 				cmd.CommandType = CommandType.Text;
-				switch (dbServerType)
-				{
-					case DataBaseServer.PostgreSQL:
-						cmd.CommandText = "SELECT * FROM GH_REFCURSOR3(?)";
-						break;
-					default:
-						cmd.CommandText = "{call GH_REFCURSOR3(:IN_LASTNAME)}";
-						break;
-				}
+				cmd.CommandText = "call GH_REFCURSOR3(:IN_LASTNAME, :RCT_Employees)";
 
 				OracleParameter param1 = cmd.Parameters.Add("IN_LASTNAME", OracleType.VarChar,20);
 				param1.Direction = ParameterDirection.Input;
 				param1.Value = "Yavine"; 
+				cmd.Parameters.Add("RCT_Employees", OracleType.Cursor).Direction = ParameterDirection.Output;
 #if DAAB
 #if !JAVA
 				if ((dbServerType == DataBaseServer.PostgreSQL))
@@ -180,7 +172,7 @@ namespace MonoTests.System.Data.OracleClient
 				exp = null;
 			}
 			#endregion
-#endif
+
 			CommandTypeSP_Manual_InOutParameters();
 
 			#region		---- ORACLE CommandType.StoredProcedure using DeriveParameters ---- 
