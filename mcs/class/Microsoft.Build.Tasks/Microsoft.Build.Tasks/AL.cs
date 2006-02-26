@@ -192,6 +192,7 @@ namespace Microsoft.Build.Tasks {
 		}
 
 		[Required]
+		[Output]
 		public ITaskItem OutputAssembly {
 			get { return (ITaskItem) Bag ["OutputAssembly"]; }
 			set { Bag ["OutputAssembly"] = value; }

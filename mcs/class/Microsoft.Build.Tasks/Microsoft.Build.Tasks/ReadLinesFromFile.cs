@@ -73,6 +73,7 @@ namespace Microsoft.Build.Tasks {
 			
 		}
 
+		[Required]
 		public ITaskItem File {
 			get {
 				return file;

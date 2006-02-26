@@ -128,6 +128,7 @@ namespace Microsoft.Build.Tasks {
 			}
 		}
 
+		[Output]
 		public ITaskItem[] DestinationFiles {
 			get {
 				return destinationFiles;
@@ -155,6 +156,7 @@ namespace Microsoft.Build.Tasks {
 			}
 		}
 
+		[Required]
 		public ITaskItem[] SourceFiles {
 			get {
 				return sourceFiles;

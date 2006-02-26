@@ -32,8 +32,8 @@ using Microsoft.Build.Framework;
 namespace Microsoft.Build.Tasks {
 	public class CreateProperty : TaskExtension {
 	
-		string value;
-		string valueSetByTask;
+		string[] value;
+		string[] valueSetByTask;
 	
 		public CreateProperty ()
 		{
@@ -44,13 +44,13 @@ namespace Microsoft.Build.Tasks {
 			return true;
 		}
 
-		public string Value {
+		public string[] Value {
 			get { return this.@value; }
 			set { this.@value = value; }
 		}
 
 		// FIXME: is this value after evaluation?
-		public string ValueSetByTask {
+		public string[] ValueSetByTask {
 			get { return valueSetByTask; }
 		}
 	}

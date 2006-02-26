@@ -29,7 +29,10 @@
 
 namespace Microsoft.Build.Tasks {
 	public sealed class Error : TaskExtension {
-		private string text;
+	
+		string	code;
+		string	helpKeyword;
+		string	text;
 		
 		public Error ()
 		{
@@ -44,13 +47,19 @@ namespace Microsoft.Build.Tasks {
 			return true;
 		}
 
+		public string Code {
+			get { return code; }
+			set { code = value; }
+		}
+		
+		public string HelpKeyword {
+			get { return helpKeyword; }
+			set { helpKeyword = value; }
+		}
+		
 		public string Text {
-			get {
-				return text;
-			}
-			set {
-				text = value;
-			}
+			get { return text; }
+			set { text = value; }
 		}
 	}
 }

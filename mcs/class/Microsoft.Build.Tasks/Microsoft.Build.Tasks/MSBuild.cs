@@ -36,7 +36,7 @@ namespace Microsoft.Build.Tasks {
 	public class MSBuild : TaskExtension {
 	
 		ITaskItem[]	projects;
-		string		properties;
+		string[]		properties;
 		bool		rebaseOutputs;
 		bool		runEachTargetSeparately;
 		bool		stopOnFirstFailure;
@@ -72,7 +72,7 @@ namespace Microsoft.Build.Tasks {
 			}
 		}
 
-		public string Properties {
+		public string[] Properties {
 			get {
 				return properties;
 			}
@@ -108,6 +108,7 @@ namespace Microsoft.Build.Tasks {
 			}
 		}
 
+		[Output]
 		public ITaskItem[] TargetOutputs {
 			get {
 				return targetOutputs;

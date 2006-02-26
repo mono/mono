@@ -36,8 +36,8 @@ namespace Microsoft.Build.Tasks {
 	public class RegisterAssembly : AppDomainIsolatedTaskExtension, ITypeLibExporterNotifySink {
 	
 		ITaskItem[]	assemblies;
+		ITaskItem 	assemblyListFile;
 		bool		createCodeBase;
-		ITaskItem 	stateFile;
 		ITaskItem[]	typeLibFiles;
 	
 		public RegisterAssembly ()
@@ -70,6 +70,15 @@ namespace Microsoft.Build.Tasks {
 			}
 		}
 
+		public ITaskItem AssemblyListFile {
+			get {
+				return assemblyListFile;
+			}
+			set {
+				assemblyListFile = value;
+			}
+		}
+
 		public bool CreateCodeBase  {
 			get {
 				return createCodeBase;
@@ -79,15 +88,7 @@ namespace Microsoft.Build.Tasks {
 			}
 		}
 
-		public ITaskItem StateFile {
-			get {
-				return stateFile;
-			}
-			set {
-				stateFile = value;
-			}
-		}
-
+		[Output]
 		public ITaskItem[] TypeLibFiles {
 			get {
 				return typeLibFiles;

@@ -3,6 +3,7 @@
 Assembly/AssemblyInfo.cs
 Microsoft.Build.Tasks/AL.cs
 Microsoft.Build.Tasks/AppDomainIsolatedTaskExtension.cs
+Microsoft.Build.Tasks/CombinePath.cs
 Microsoft.Build.Tasks/CommandLineBuilderExtension.cs
 Microsoft.Build.Tasks/Copy.cs
 Microsoft.Build.Tasks/CreateItem.cs

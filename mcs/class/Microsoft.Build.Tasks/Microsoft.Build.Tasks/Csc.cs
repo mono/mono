@@ -86,9 +86,9 @@ namespace Microsoft.Build.Tasks {
 			set { Bag ["BaseAddress"] = value; }
 		}
 
-		public bool CheckForOverflowUnderFlow {
-			get { return GetBoolParameterWithDefault ("CheckForOverflowUnderFlow", false); }
-			set { Bag ["CheckForOverflowUnderFlow"] = value; }
+		public bool CheckForOverflowUnderflow {
+			get { return GetBoolParameterWithDefault ("CheckForOverflowUnderflow", false); }
+			set { Bag ["CheckForOverflowUnderflow"] = value; }
 		}
 
 		public string DisabledWarnings {
@@ -124,6 +124,11 @@ namespace Microsoft.Build.Tasks {
 		public bool NoStandardLib {
 			get { return GetBoolParameterWithDefault ("NoStandardLib", false); }
 			set { Bag ["NoStandardLib"] = value; }
+		}
+		
+		public string PdbFile {
+			get { return (string) Bag ["PdbFile"]; }
+			set { Bag ["PdbFile"] = value; }
 		}
 
 		public string Platform {

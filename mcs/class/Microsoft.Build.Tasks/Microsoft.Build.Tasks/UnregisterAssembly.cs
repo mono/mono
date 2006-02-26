@@ -31,9 +31,10 @@ using Microsoft.Build.Framework;
 
 namespace Microsoft.Build.Tasks {
 	public class UnregisterAssembly : AppDomainIsolatedTaskExtension {
-		private ITaskItem[] assemblies;
-		private ITaskItem stateFile;
-		private ITaskItem[] typeLibFiles;
+	
+		ITaskItem[]	assemblies;
+		ITaskItem	assemblyListFile;
+		ITaskItem[]	typeLibFiles;
 	
 		public UnregisterAssembly ()
 		{
@@ -54,12 +55,12 @@ namespace Microsoft.Build.Tasks {
 			}
 		}
 
-		public ITaskItem StateFile {
+		public ITaskItem AssemblyListFile {
 			get {
-				return stateFile;
+				return assemblyListFile;
 			}
 			set {
-				stateFile = value;
+				assemblyListFile = value;
 			}
 		}
 

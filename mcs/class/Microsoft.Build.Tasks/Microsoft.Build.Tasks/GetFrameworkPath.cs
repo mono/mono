@@ -27,7 +27,7 @@
 
 #if NET_2_0
 
-using Microsoft.Build.Tasks;
+using Microsoft.Build.Framework;
 
 namespace Microsoft.Build.Tasks {
 	public class GetFrameworkPath : TaskExtension {
@@ -44,6 +44,7 @@ namespace Microsoft.Build.Tasks {
 			return true;
 		}
 
+		[Output]
 		public string Path {
 			get {
 				return path;

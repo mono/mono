@@ -79,7 +79,6 @@ namespace Microsoft.Build.Tasks {
 			}
 		}
 
-		[Required]
 		public ITaskItem[] Lines {
 			get {
 				return lines;

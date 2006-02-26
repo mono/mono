@@ -28,9 +28,11 @@
 
 #if NET_2_0
 
+using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 
 namespace Microsoft.Build.Tasks {
+	[LoadInSeparateAppDomain]
 	public abstract class AppDomainIsolatedTaskExtension : AppDomainIsolatedTask {
 		public new TaskLoggingHelper Log {
 			get {

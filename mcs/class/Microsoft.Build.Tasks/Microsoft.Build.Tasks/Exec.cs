@@ -38,13 +38,13 @@ using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 
 namespace Microsoft.Build.Tasks {
-	public class Exec : TaskExtension {
+	public class Exec : ToolTaskExtension {
 	
 		string		command;
-		int		exitCode;
 		bool		ignoreExitCode;
 		ITaskItem[]	outputs;
-		int		timeout;
+		string		stdErrEncoding;
+		string		stdOutEncoding;
 		string		workingDirectory;
 		
 		Process		process;
@@ -53,7 +53,7 @@ namespace Microsoft.Build.Tasks {
 		public Exec ()
 		{
 			process = new Process ();
-			timeout = Int32.MaxValue;
+			//timeout = Int32.MaxValue;
 			ignoreExitCode = false;
 			executionTime = 0;
 		}
@@ -80,7 +80,7 @@ namespace Microsoft.Build.Tasks {
 				process.Start ();
 				process.WaitForExit ();
 
-				exitCode = process.ExitCode;
+				//exitCode = process.ExitCode;
 				while ((line = process.StandardOutput.ReadLine ()) != null)
 					temporaryOutputs.Add (line);
 				outputs = new ITaskItem [temporaryOutputs.Count];
@@ -93,21 +93,22 @@ namespace Microsoft.Build.Tasks {
 				return false;
 			}
 			
-			if (exitCode != 0 && ignoreExitCode == false)
+			/*if (exitCode != 0 && ignoreExitCode == false)
 				return false;
-			else
+			else*/
 				return true;
+		}
+		
+		[MonoTODO]
+		protected override string GenerateFullPathToTool ()
+		{
+			return null;
 		}
 		
 		[Required]
 		public string Command {
 			get { return command; }
 			set { command = value; }
-		}
-
-		[Output]
-		public int ExitCode {
-			get { return exitCode; }
 		}
 
 		public bool IgnoreExitCode {
@@ -121,19 +122,37 @@ namespace Microsoft.Build.Tasks {
 			set { outputs = value; }
 		}
 
-		public Encoding StandardErrorEncoding {
+		protected override Encoding StandardErrorEncoding {
 			get { return Console.Error.Encoding; }
-			set { Console.SetError (new StreamWriter(Console.OpenStandardError (), value)); }
+		}
+		
+		protected override MessageImportance StandardErrorLoggingImportance {
+			get { return base.StandardErrorLoggingImportance; }
 		}
 
-		public Encoding StandardOutputEncoding {
+		protected override Encoding StandardOutputEncoding {
 			get { return Console.Out.Encoding; }
-			set { Console.SetOut (new StreamWriter (Console.OpenStandardOutput (), value)); }
 		}
-
-		public int Timeout {
-			get { return timeout; }
-			set { timeout = value; }
+		
+		protected override MessageImportance StandardOutputLoggingImportance {
+			get { return base.StandardOutputLoggingImportance; }
+		}
+		
+		//FIXME: what's this?
+		public string StdOutEncoding {
+			get { return stdOutEncoding; }
+			set { stdOutEncoding = value; }
+		}
+		
+		//FIXME: what's this?
+		public string StdErrEncoding {
+			get { return stdErrEncoding; }
+			set { stdErrEncoding = value; }
+		}
+		
+		// FIXME: crashes the compiler when replaced with return base.ToolName
+		protected override string ToolName {
+			get { return String.Empty; }
 		}
 
 		public string WorkingDirectory {

@@ -64,7 +64,6 @@ namespace Microsoft.Build.Tasks {
 			}
 		}
 
-		[Required]
 		public string TargetZone {
 			get {
 				return targetZone;
@@ -75,6 +74,7 @@ namespace Microsoft.Build.Tasks {
 		}
 
 		[Required]
+		[Output]
 		public ITaskItem TrustInfoFile {
 			get {
 				return trustInfoFile;

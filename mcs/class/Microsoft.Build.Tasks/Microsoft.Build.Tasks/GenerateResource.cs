@@ -41,8 +41,9 @@ namespace Microsoft.Build.Tasks {
 	public sealed class GenerateResource : TaskExtension {
 	
 		ITaskItem[]	filesWritten;
-		//bool		neverLockTypeAssemblies;
+		bool		neverLockTypeAssemblies;
 		ITaskItem[]	outputResources;
+		bool		publicClass;
 		ITaskItem[]	references;
 		ITaskItem[]	sources;
 		ITaskItem	stateFile;
@@ -177,14 +178,15 @@ namespace Microsoft.Build.Tasks {
 			}
 		}
 
-		/*public bool NeverLockTypeAssemblies {
+		[MonoTODO]
+		public bool NeverLockTypeAssemblies {
 			get {
 				return neverLockTypeAssemblies;
 			}
 			set {
 				neverLockTypeAssemblies = value;
 			}
-		}*/
+		}
 
 		[Output]
 		public ITaskItem[] OutputResources {
@@ -194,6 +196,11 @@ namespace Microsoft.Build.Tasks {
 			set {
 				outputResources = value;
 			}
+		}
+		
+		public bool PublicClass {
+			get { return publicClass; }
+			set { publicClass = value; }
 		}
 
 		public ITaskItem[] References {
@@ -224,6 +231,7 @@ namespace Microsoft.Build.Tasks {
 			}
 		}
 
+		[Output]
 		public string StronglyTypedClassName {
 			get {
 				return stronglyTypedClassName;
@@ -233,7 +241,7 @@ namespace Microsoft.Build.Tasks {
 			}
 		}
 
-		public string StronglyTypedFilename {
+		public string StronglyTypedFileName {
 			get {
 				return stronglyTypedFilename;
 			}

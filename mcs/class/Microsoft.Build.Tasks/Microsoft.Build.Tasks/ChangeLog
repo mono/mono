@@ -1,3 +1,25 @@
+2006-02-26  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* AL.cs: Added Output attribute to OutputAssembly.
+	* AppDomainIsolatedTaskExtension.cs: Added LoadInSeparateAppDomain
+	attribute.
+	* Copy.cs: Added Output attribute to DestinationFiles and Required to
+	SourceFiles.
+	* CreateItem.cs, CreateProperty.cs: Changed string to string[].
+	* Csc.cs: Added PdbFile property.
+	* Error.cs: Added Code and HelpKeyword properties.
+	* Exec.cs: Changed TaskExtension to ToolTaskExtension.
+	* GenerateResource.cs: Added NeverLockType and PublicClass properties.
+	* GenerateTrustInfo.cs: Added Required to TargetZone and Output to
+	TrustInfoFile.
+	* GetFrameworkPath.cs, GetFrameworkSdkPath: Added Output to Path.
+	* MSBuild.cs: Changed string to string[].
+	* ReadLinesFromFile.cs: Added Required to File.
+	* RegiserAssembly.cs: Added AssemblyListFile and CreateCodeBase
+	properties.
+	* UnregisterAssembly.cs: Added AssemblyListFile property.
+	* WriteLinesToFile.cs: Added Required to Lines.
+
 2006-02-25  Marek Sieradzki <marek.sieradzki@gmail.com> 
 
 	* Csc.cs, ManagedCompiler.cs: Changes required by the new API.

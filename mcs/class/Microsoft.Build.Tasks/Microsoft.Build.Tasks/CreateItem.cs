@@ -32,7 +32,7 @@ using Microsoft.Build.Framework;
 namespace Microsoft.Build.Tasks {
 	public class CreateItem : TaskExtension {
 	
-		string		additionalMetadata;
+		string[]		additionalMetadata;
 		ITaskItem[]	exclude;
 		ITaskItem[]	include;
 	
@@ -45,7 +45,7 @@ namespace Microsoft.Build.Tasks {
 			return true;
 		}
 
-		public string AdditionalMetadata {
+		public string[] AdditionalMetadata {
 			get { return additionalMetadata; }
 			set { additionalMetadata = value; }
 		}
@@ -55,6 +55,7 @@ namespace Microsoft.Build.Tasks {
 			set { exclude = value; }
 		}
 
+		[Output]
 		public ITaskItem[] Include {
 			get { return include; }
 			set { include = value; }
