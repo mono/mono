@@ -396,7 +396,7 @@ namespace System.Windows.Forms {
 		internal void InternalAdd (DataGridViewRow dataGridViewRow) {
 			dataGridViewRow.SetIndex(list.Count);
 			dataGridViewRow.SetDataGridView(dataGridView);
-			int result = list.Add(dataGridViewRow);
+			list.Add(dataGridViewRow);
 		}
 
 		internal ArrayList RowIndexSortedArrayList {

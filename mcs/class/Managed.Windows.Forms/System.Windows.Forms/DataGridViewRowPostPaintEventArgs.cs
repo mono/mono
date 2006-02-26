@@ -95,26 +95,68 @@ namespace System.Windows.Forms {
 		}
 
 		public void DrawFocus (Rectangle bounds, bool cellsPaintSelectionBackground) {
-			throw new NotImplementedException();
+			if (rowIndex < 0 || rowIndex >= dataGridView.Rows.Count) {
+				throw new InvalidOperationException("Invalid RowIndex.");
+			}
+			Color color;
+			if (cellsPaintSelectionBackground) {
+				color = dataGridView.Rows[rowIndex].InheritedStyle.SelectionBackColor;
+			}
+			else {
+				color = dataGridView.Rows[rowIndex].InheritedStyle.BackColor;
+			}
+			///////// NOT CHECKED //////////////
+			graphics.FillRectangle(new SolidBrush(color), bounds);
 		}
 
 		public void PaintCells (Rectangle clipBounds, DataGridViewPaintParts paintParts) {
+			if (rowIndex < 0 || rowIndex >= dataGridView.Rows.Count) {
+				throw new InvalidOperationException("Invalid RowIndex.");
+			}
 			throw new NotImplementedException();
 		}
 
 		public void PaintCellsBackground (Rectangle clipBounds, bool cellsPaintSelectionBackground) {
-			throw new NotImplementedException();
+			if (rowIndex < 0 || rowIndex >= dataGridView.Rows.Count) {
+				throw new InvalidOperationException("Invalid RowIndex.");
+			}
+			Color color;
+			if (cellsPaintSelectionBackground) {
+				color = dataGridView.Rows[rowIndex].InheritedStyle.SelectionBackColor;
+			}
+			else {
+				color = dataGridView.Rows[rowIndex].InheritedStyle.BackColor;
+			}
+			///////// NOT CHECKED //////////////
+			graphics.FillRectangle(new SolidBrush(color), clipBounds);
 		}
 
 		public void PaintCellsContent (Rectangle clipBounds) {
+			if (rowIndex < 0 || rowIndex >= dataGridView.Rows.Count) {
+				throw new InvalidOperationException("Invalid RowIndex.");
+			}
 			throw new NotImplementedException();
 		}
 
 		public void PaintHeader (bool paintSelectionBackground) {
-			throw new NotImplementedException();
+			if (rowIndex < 0 || rowIndex >= dataGridView.Rows.Count) {
+				throw new InvalidOperationException("Invalid RowIndex.");
+			}
+			Color color;
+			if (paintSelectionBackground) {
+				color = dataGridView.Rows[rowIndex].InheritedStyle.SelectionBackColor;
+			}
+			else {
+				color = dataGridView.RowHeadersDefaultCellStyle.BackColor;
+			}
+			///////// NOT CHECKED //////////////
+			graphics.FillRectangle(new SolidBrush(color), clipBounds);
 		}
 
 		public void PaintHeader (DataGridViewPaintParts paintParts) {
+			if (rowIndex < 0 || rowIndex >= dataGridView.Rows.Count) {
+				throw new InvalidOperationException("Invalid RowIndex.");
+			}
 			throw new NotImplementedException();
 		}
 

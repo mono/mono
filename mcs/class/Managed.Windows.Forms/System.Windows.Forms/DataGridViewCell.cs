@@ -276,20 +276,20 @@ namespace System.Windows.Forms {
 						result.FormatProvider = DataGridView.DefaultCellStyle.FormatProvider;
 					}
 				}
-				if (style != null && style.NullValue != "(null)") {
+				if (style != null && (string) style.NullValue != "(null)") {
 					result.NullValue = style.NullValue;
 				}
-				else if (OwningRow != null && OwningRow.DefaultCellStyle.NullValue != "(null)") {
+				else if (OwningRow != null && (string) OwningRow.DefaultCellStyle.NullValue != "(null)") {
 					result.NullValue = OwningRow.DefaultCellStyle.NullValue;
 				}
 				else if (DataGridView != null) {
-					if ((RowIndex % 2) == 1 && DataGridView.AlternatingRowsDefaultCellStyle.NullValue != "(null)") {
+					if ((RowIndex % 2) == 1 && (string) DataGridView.AlternatingRowsDefaultCellStyle.NullValue != "(null)") {
 						result.NullValue = DataGridView.AlternatingRowsDefaultCellStyle.NullValue;
 					}
-					else if (DataGridView.RowsDefaultCellStyle.NullValue != "(null)") {
+					else if ((string) DataGridView.RowsDefaultCellStyle.NullValue != "(null)") {
 						result.NullValue = DataGridView.RowsDefaultCellStyle.NullValue;
 					}
-					else if (ColumnIndex >= 0 && DataGridView.Columns[ColumnIndex].DefaultCellStyle.NullValue != "(null)") {
+					else if (ColumnIndex >= 0 && (string) DataGridView.Columns[ColumnIndex].DefaultCellStyle.NullValue != "(null)") {
 						result.NullValue = DataGridView.Columns[ColumnIndex].DefaultCellStyle.NullValue;
 					}
 					else {

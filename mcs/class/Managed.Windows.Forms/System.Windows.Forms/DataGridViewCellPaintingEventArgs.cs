@@ -112,14 +112,41 @@ namespace System.Windows.Forms {
 		}
 
 		public void Paint (Rectangle clipBounds, DataGridViewPaintParts paintParts) {
+			if (rowIndex < -1 || rowIndex >= dataGridView.Rows.Count) {
+				throw new InvalidOperationException("Invalid \"RowIndex.\"");
+			}
+			if (columnIndex < -1 || columnIndex >= dataGridView.Columns.Count) {
+				throw new InvalidOperationException("Invalid \"ColumnIndex.\"");
+			}
 			throw new NotImplementedException();
 		}
 
-		public void PaintBackground( Rectangle clipBounds, bool cellsPaintSelectionBackground) {
-			throw new NotImplementedException();
+		public void PaintBackground (Rectangle clipBounds, bool cellsPaintSelectionBackground) {
+			if (rowIndex < -1 || rowIndex >= dataGridView.Rows.Count) {
+				throw new InvalidOperationException("Invalid \"RowIndex.\"");
+			}
+			if (columnIndex < -1 || columnIndex >= dataGridView.Columns.Count) {
+				throw new InvalidOperationException("Invalid \"ColumnIndex.\"");
+			}
+			DataGridViewCell cell = dataGridView.Rows[rowIndex].Cells[columnIndex];
+			Color color;
+			if (cellsPaintSelectionBackground) {
+				color = cell.InheritedStyle.SelectionBackColor;
+			}
+			else {
+				color = cell.InheritedStyle.BackColor;
+			}
+			///////// NOT CHECKED //////////////
+			graphics.FillRectangle(new SolidBrush(color), clipBounds);
 		}
 
 		public void PaintContent (Rectangle clipBounds) {
+			if (rowIndex < -1 || rowIndex >= dataGridView.Rows.Count) {
+				throw new InvalidOperationException("Invalid \"RowIndex.\"");
+			}
+			if (columnIndex < -1 || columnIndex >= dataGridView.Columns.Count) {
+				throw new InvalidOperationException("Invalid \"ColumnIndex.\"");
+			}
 			throw new NotImplementedException();
 		}
 

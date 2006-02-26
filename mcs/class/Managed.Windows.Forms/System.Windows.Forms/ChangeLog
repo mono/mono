@@ -1,3 +1,12 @@
+2006-02-26  Pedro Martinez Julia  <pedromj@gmail.com>
+
+	* DataGridViewRowPostPaintEventArgs.cs,
+	  DataGridViewCellPaintingEventArgs.cs,
+	  DataGridViewRowCollection.cs,
+	  DataGridViewRowPrePaintEventArgs.cs,
+	  DataGridViewCell.cs: Clear a few warnings and implement a few
+	  exceptions that should be thrown.
+
 2006-02-22  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* ScrollBar.cs (ctor): Explicitly set a cursor to avoid
