@@ -50,6 +50,7 @@
 				<File RelPath="System.Data.OracleClient.jvm\OracleParameter.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.OracleClient.jvm\OracleParameterCollection.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.OracleClient.jvm\OracleTransaction.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Data.OracleClient.jvm\Regex.cs" SubType="Code" BuildAction="Compile"/>
 			</Include>
 		</Files>
 		<UserProperties project.JDKType="1.5.0_05" REFS.JarPath.rt="..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE\jre5\lib\rt.jar" REFS.JarPath.system="..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE\jgac\vmw4j2ee_110\System.jar" REFS.JarPath.system.drawing="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE\jgac\vmw4j2ee_110\System.Drawing.jar;..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE\jgac\vmw4j2ee_110\jai_imageio.jar;..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE\jgac\vmw4j2ee_110\jai_core.jar;..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE\jgac\vmw4j2ee_110\jai_codec.jar;..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE\jgac\vmw4j2ee_110\clibwrapper_jiio.jar;..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE\jgac\vmw4j2ee_110\mlibwrapper_jai.jar"/>
