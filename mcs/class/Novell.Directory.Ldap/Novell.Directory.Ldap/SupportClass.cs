@@ -560,7 +560,7 @@ using System;
 		/// <param name="arrayList">The ArrayList instance</param>
 		/// <param name="element">The element to remove</param>
 		/// <returns>True if item is found in the ArrayList; otherwise, false</returns>  
-		public static System.Boolean VectorRemoveElement(System.Collections.ArrayList arrayList, System.Object element)
+		public static System.Boolean VectorRemoveElement(System.Collections.IList arrayList, System.Object element)
 		{
 			System.Boolean containsItem = arrayList.Contains(element);
 			arrayList.Remove(element);

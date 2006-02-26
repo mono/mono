@@ -103,10 +103,9 @@ namespace Novell.Directory.Ldap
 			get
 			{
 				int count = 0;
-				System.Object[] msgs = messages.ToArray();
-				for (int i = 0; i < msgs.Length; i++)
+				for (int i = 0; i < messages.Count; i++)
 				{
-					Message m = (Message) msgs[i];
+					Message m = (Message) messages[i];
 					count += m.Count;
 				}
 				return count;
@@ -140,15 +139,15 @@ namespace Novell.Directory.Ldap
 				messages.Add(msgs[i]);
 				((Message) (msgs[i])).Agent = this;
 			}
-			lock (messages)
+			lock (messages.SyncRoot)
 			{
 				if (msgs.Length > 1)
 				{
-					System.Threading.Monitor.PulseAll(messages); // wake all threads waiting for messages
+					System.Threading.Monitor.PulseAll(messages.SyncRoot); // wake all threads waiting for messages
 				}
 				else if (msgs.Length == 1)
 				{
-					System.Threading.Monitor.Pulse(messages); // only wake one thread
+					System.Threading.Monitor.Pulse(messages.SyncRoot); // only wake one thread
 				}
 			}
 			return ;
@@ -161,12 +160,12 @@ namespace Novell.Directory.Ldap
 		/* package */
 		internal void  sleepersAwake(bool all)
 		{
-			lock (messages)
+			lock (messages.SyncRoot)
 			{
 				if (all)
-					System.Threading.Monitor.PulseAll(messages);
+					System.Threading.Monitor.PulseAll(messages.SyncRoot);
 				else
-					System.Threading.Monitor.Pulse(messages);
+					System.Threading.Monitor.Pulse(messages.SyncRoot);
 			}
 			return ;
 		}
@@ -368,7 +367,7 @@ namespace Novell.Directory.Ldap
 			else
 			{
 				// A msgId was NOT specified, any message will do
-				lock (messages)
+				lock (messages.SyncRoot)
 				{
 					while (true)
 					{
@@ -413,7 +412,7 @@ namespace Novell.Directory.Ldap
 						// No data, wait for something to come in.
 						try
 						{
-							System.Threading.Monitor.Wait(messages);
+							System.Threading.Monitor.Wait(messages.SyncRoot);
 						}
 						catch (System.Threading.ThreadInterruptedException ex)
 						{

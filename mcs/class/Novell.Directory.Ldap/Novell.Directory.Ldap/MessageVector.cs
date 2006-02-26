@@ -38,8 +38,9 @@ namespace Novell.Directory.Ldap
 	/// to Vector needed for handling messages.
 	/// </summary>
 	/* package */
-	class MessageVector:System.Collections.ArrayList
+	class MessageVector:System.Collections.IList
 	{
+		private readonly System.Collections.ArrayList _innerList;
 		/// <summary>Returns an array containing all of the elements in this MessageVector.
 		/// The elements returned are in the same order in the array as in the
 		/// Vector.  The contents of the vector are cleared.
@@ -47,29 +48,25 @@ namespace Novell.Directory.Ldap
 		/// </summary>
 		/// <returns> the array containing all of the elements.
 		/// </returns>
-		virtual internal System.Object[] ObjectArray
+		internal System.Object[] ObjectArray
 		{
 			/* package */
 			
 			get
 			{
-				lock (this)
+				lock (this.SyncRoot)
 				{
-					System.Object[] results = new System.Object[Count];
-					Array.Copy((System.Array) ToArray(), 0, (System.Array) results, 0, Count);
-					for (int i = 0; i < Count; i++)
-					{
-						ToArray()[i] = null;
-					}
-//					Count = 0;
+					System.Object[] results = ToArray();
+					Clear();
 					return results;
 				}
 			}
 			
 		}
 		/* package */
-		internal MessageVector(int cap, int incr):base(cap)
+		internal MessageVector(int cap, int incr)
 		{
+			_innerList = System.Collections.ArrayList.Synchronized(new System.Collections.ArrayList(cap));
 			return ;
 		}
 		
@@ -88,12 +85,12 @@ namespace Novell.Directory.Ldap
 		/* package */
 		internal Message findMessageById(int msgId)
 		{
-			lock (this)
+			lock (this.SyncRoot)
 			{
 				Message msg = null;
 				for (int i = 0; i < Count; i++)
 				{
-					if ((msg = (Message) ToArray()[i]) == null)
+					if ((msg = (Message) this[i]) == null)
 					{
 						throw new System.FieldAccessException();
 					}
@@ -105,5 +102,106 @@ namespace Novell.Directory.Ldap
 				throw new System.FieldAccessException();
 			}
 		}
+
+		#region ArrayList members
+		public object[] ToArray()
+		{
+			return _innerList.ToArray();
+		}
+		#endregion
+
+		#region IList Members
+
+		public int Add(object value)
+		{
+			return _innerList.Add(value);
+		}
+
+		public void Clear()
+		{
+			_innerList.Clear();
+		}
+
+		public bool Contains(object value)
+		{
+			return _innerList.Contains(value);
+		}
+
+		public int IndexOf(object value)
+		{
+			return _innerList.IndexOf(value);
+		}
+
+		public void Insert(int index, object value)
+		{
+			_innerList.Insert(index, value);
+		}
+
+		public bool IsFixedSize
+		{
+			get { return _innerList.IsFixedSize; }
+		}
+
+		public bool IsReadOnly
+		{
+			get { return _innerList.IsReadOnly; }
+		}
+
+		public void Remove(object value)
+		{
+			_innerList.Remove(value);
+		}
+
+		public void RemoveAt(int index)
+		{
+			_innerList.RemoveAt(index);
+		}
+
+		public object this[int index]
+		{
+			get
+			{
+				return _innerList[index];
+			}
+			set
+			{
+				_innerList[index] = value;
+			}
+		}
+
+		#endregion
+
+		#region ICollection Members
+
+		public void CopyTo(Array array, int index)
+		{
+			_innerList.CopyTo(array, index);
+		}
+
+		public int Count
+		{
+			get { return _innerList.Count; }
+		}
+
+		public bool IsSynchronized
+		{
+			get { return _innerList.IsSynchronized; }
+		}
+
+		public object SyncRoot
+		{
+			get { return _innerList.SyncRoot; }
+		}
+
+		#endregion
+
+		#region IEnumerable Members
+
+		public System.Collections.IEnumerator GetEnumerator()
+		{
+			return _innerList.GetEnumerator();
+		}
+
+		#endregion
 	}
 }

@@ -1,3 +1,9 @@
+2006-02-26  Konstantin Triger <kostat@mainsoft.com>
+
+	* SupportClass.cs, Message.cs, MessageAgent.cs, MessageVector.cs: increase compliancy with jldap making
+		the MessageVector a synchronized collection. Based on Mike Glenn <mglenn@zoominternet.net> and 
+		JD Conley <jd.conley@coversant.net> patches.
+
 2006-01-26 Konstantin Triger <kostat@mainsoft.com>
 
         * Connection.cs: TARGET_JVM: catch ObjectDisposedException in addition 

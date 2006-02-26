@@ -151,7 +151,7 @@ namespace Novell.Directory.Ldap
 				return null;
 			}
 			// sync on message so don't confuse with timer thread
-			lock (replies)
+			lock (replies.SyncRoot)
 			{
 				System.Object msg = null;
 				while (waitForReply_Renamed_Field)
@@ -160,7 +160,7 @@ namespace Novell.Directory.Ldap
 					{
 						try
 						{
-							System.Threading.Monitor.Wait(replies);
+							System.Threading.Monitor.Wait(replies.SyncRoot);
 						}
 						catch (System.Threading.ThreadInterruptedException ir)
 						{
@@ -213,7 +213,7 @@ namespace Novell.Directory.Ldap
 				{
 					return null;
 				}
-				lock (replies)
+				lock (replies.SyncRoot)
 				{
 					// Test and remove must be atomic
 					if ((replies.Count == 0))
@@ -466,10 +466,7 @@ namespace Novell.Directory.Ldap
 			{
 				return ;
 			}
-			lock(replies)
-			{
 			replies.Add(message);
-			}
 			message.RequestingMessage = msg; // Save request message info
 			switch (message.Type)
 			{
@@ -544,9 +541,9 @@ namespace Novell.Directory.Ldap
 		private void  sleepersAwake()
 		{
 			// Notify any thread waiting for this message id
-			lock (replies)
+			lock (replies.SyncRoot)
 			{
-				System.Threading.Monitor.Pulse(replies);
+				System.Threading.Monitor.Pulse(replies.SyncRoot);
 			}
 			// Notify a thread waiting for any message id
 			agent.sleepersAwake(false);
