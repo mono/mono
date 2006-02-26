@@ -29,13 +29,9 @@
 #if NET_2_0
 
 using System;
-using System.Runtime.InteropServices;
 
 namespace Microsoft.Build.Framework
 {
-	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
-	[Guid ("9049A481-D0E9-414f-8F92-D4F67A0359A6")]
-	[ComVisible (true)]
 	public interface ITask
 	{
 		bool Execute ();

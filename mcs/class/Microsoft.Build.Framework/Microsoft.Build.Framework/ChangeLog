@@ -1,3 +1,7 @@
+2006-02-26  Marek Sieradzki <marek.sieradzki@gmail.com> 
+
+	* ITask.cs, ITaskHost.cs: Moved attributes to ITaskHost.cs.
+
 2006-02-25  Marek Sieradzki <marek.sieradzki@gmail.com> 
 
 	* ITask.cs, LoggerVerbosity.cs: Added COM attributes.
