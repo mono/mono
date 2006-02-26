@@ -1,3 +1,7 @@
+2006-02-26  Pedro Martinez Julia  <pedromj@gmail.com>
+
+	* HandledEventHandler.cs: Resolving a "Replaced" SVN flag.
+
 2006-02-23 Andrew Skiba <andrews@mainsoft.com>
 
 	* TypeDescriptor.cs: performance improvement for GetAttributes,
