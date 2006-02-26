@@ -271,7 +271,7 @@ namespace Microsoft.Build.Utilities
 		}
 		
 		[MonoTODO]
-		protected virtual void VerifyThrowNoEmbeddedDoubeQuotes (string switchName,
+		protected virtual void VerifyThrowNoEmbeddedDoubleQuotes (string switchName,
 									 string parameter)
 		{
 		}

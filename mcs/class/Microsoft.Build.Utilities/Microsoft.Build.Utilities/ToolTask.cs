@@ -89,21 +89,34 @@ namespace Microsoft.Build.Utilities
 			return true;
 		}
 
-		[MonoTODO]
 		protected virtual int ExecuteTool (string pathToTool,
 						   string responseFileCommands,
 						   string commandLineCommands)
 		{
-			return 0;
+			string arguments;
+			bool success;
+			
+			arguments = String.Concat (commandLineCommands, " ", responseFileCommands);
+			
+			success  = RealExecute (pathToTool, arguments);
+			
+			if (success)
+				return 0;
+			else
+				return -1;
 		}
 		
 		public override bool Execute ()
 		{
-			string arguments, toolFilename;
+			int result;
 			
-			arguments = String.Concat (GenerateCommandLineCommands (), " ", GenerateResponseFileCommands ());
-			toolFilename = GenerateFullPathToTool (); 
-			return RealExecute (toolFilename, arguments);
+			result = ExecuteTool (GenerateFullPathToTool (), GenerateResponseFileCommands (),
+				GenerateCommandLineCommands ());
+			
+			if (result == 0)
+				return true;
+			else
+				return false;
 		}
 		
 		protected virtual string GetWorkingDirectory ()
@@ -279,6 +292,7 @@ namespace Microsoft.Build.Utilities
 		}
 		
 		[MonoTODO]
+		[Output]
 		public int ExitCode {
 			get { return exitCode; }
 		}
