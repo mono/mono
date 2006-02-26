@@ -35,6 +35,7 @@ using System.Text;
 using System.Data;
 using System.Data.Common;
 using System.Data.ProviderBase;
+using System.Globalization;
 
 using java.sql;
 using java.lang;
@@ -132,6 +133,21 @@ namespace System.Data.OracleClient {
 		public override String ToString() {
 			return ParameterName;
 		}
+
+		protected override string Placeholder {
+			get {
+				if (ParameterName.Length == 0 || ParameterName[0] == ':')
+					return ParameterName;
+
+				return String.Concat(":", ParameterName);
+			}
+		}
+
+		internal string InternalPlaceholder {
+			get {
+				return Placeholder;
+			}
+		}
     
 		public override object Clone() {
 			OracleParameter clone = new OracleParameter();
@@ -167,10 +183,6 @@ namespace System.Data.OracleClient {
 
 		protected sealed override void SetParameterName(ResultSet res) {
 			ParameterName = res.getString("COLUMN_NAME");
-
-			if (ParameterName.StartsWith("@")) {
-				ParameterName = ParameterName.Remove(0,1);
-			}
 		}
 
 		protected sealed override void SetParameterDbType(ResultSet res) {
@@ -178,20 +190,23 @@ namespace System.Data.OracleClient {
 			// FIXME : is that correct?
 			if (jdbcType == Types.OTHER) {
 				string typeName = res.getString("TYPE_NAME");
-				if (String.Compare("BLOB",typeName,true) == 0) {
-					jdbcType = Types.BLOB;
+				if (String.Compare("REF CURSOR", typeName, true, CultureInfo.InvariantCulture) == 0) {
+					jdbcType = (int)JavaSqlTypes.CURSOR;
 				}
-				else if (String.Compare("CLOB",typeName,true) == 0) {
-					jdbcType = Types.CLOB;
+				else if (String.Compare("BLOB",typeName,true, CultureInfo.InvariantCulture) == 0) {
+					jdbcType = (int)JavaSqlTypes.BLOB;
 				}
-				else if(String.Compare("FLOAT",typeName,true) == 0) {
-					jdbcType = Types.FLOAT;
+				else if (String.Compare("CLOB",typeName,true, CultureInfo.InvariantCulture) == 0) {
+					jdbcType = (int)JavaSqlTypes.CLOB;
 				}
-				else if(String.Compare("NVARCHAR2",typeName,true) == 0) {
-					jdbcType = Types.VARCHAR;
+				else if(String.Compare("FLOAT",typeName,true, CultureInfo.InvariantCulture) == 0) {
+					jdbcType = (int)JavaSqlTypes.FLOAT;
 				}
-				else if(String.Compare("NCHAR",typeName,true) == 0) {
-					jdbcType = Types.CHAR;
+				else if(String.Compare("NVARCHAR2",typeName,true, CultureInfo.InvariantCulture) == 0) {
+					jdbcType = (int)JavaSqlTypes.VARCHAR;
+				}
+				else if(String.Compare("NCHAR",typeName,true, CultureInfo.InvariantCulture) == 0) {
+					jdbcType = (int)JavaSqlTypes.CHAR;
 				}
 			}
 			OracleType = OracleConvert.JdbcTypeToOracleType(jdbcType);

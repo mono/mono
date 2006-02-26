@@ -72,6 +72,53 @@ namespace System.Data.OracleClient {
 			return (int)OracleConvert.JdbcTypeToOracleType(jdbcType);   
 		}
 
+		public override decimal GetDecimal(int i) {
+			if (IsNumeric(i))
+				return GetDecimalSafe(i);
+
+			return base.GetDecimal(i);
+		}
+
+		public override double GetDouble(int i) {
+			if (IsNumeric(i))
+				return GetDoubleSafe(i);
+
+			return base.GetDouble(i);
+		}
+
+		public override float GetFloat(int i) {
+			if (IsNumeric(i))
+				return GetFloatSafe(i);
+
+			return base.GetFloat(i);
+		}
+//
+//		OracleClient does not "excuse" for Int16
+//
+//		public override short GetInt16(int i) {
+//			if (IsNumeric(i))
+//				return GetInt16Safe(i);
+//
+//			return base.GetInt16(i);
+//		}
+
+
+		public override int GetInt32(int i) {
+			if (IsNumeric(i))
+				return GetInt32Safe(i);
+
+			return base.GetInt32(i);
+		}
+
+		public override long GetInt64(int i) {
+			if (IsNumeric(i))
+				return GetInt64Safe(i);
+
+			return base.GetInt64(i);
+		}
+
+
+
 		#endregion // Methods
 	}
 }

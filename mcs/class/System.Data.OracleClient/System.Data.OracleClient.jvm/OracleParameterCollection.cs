@@ -43,7 +43,7 @@ namespace System.Data.OracleClient {
 
 		#region Properties
         
-		public OracleParameter this[int index] {
+		public new OracleParameter this[int index] {
 			get { return (OracleParameter)base[index]; }
 			set { 
 				OnSchemaChanging();
@@ -51,7 +51,7 @@ namespace System.Data.OracleClient {
 			}
 		}
 
-		public OracleParameter this[string parameterName] {
+		public new OracleParameter this[string parameterName] {
 			get { return (OracleParameter)base[parameterName]; }
 			set { 
 				OnSchemaChanging();

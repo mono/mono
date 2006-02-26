@@ -69,7 +69,7 @@ namespace System.Data.OracleClient {
 
 		#region Properties
 
-		public OracleDataAdapter DataAdapter {
+		public new OracleDataAdapter DataAdapter {
 			get {
 				return adapter;
 			}
@@ -78,7 +78,7 @@ namespace System.Data.OracleClient {
 			}
 		}
 
-		public string QuotePrefix {
+		public override string QuotePrefix {
 			get {
 				return quotePrefix;
 			}
@@ -87,7 +87,7 @@ namespace System.Data.OracleClient {
 			}
 		}
 
-		public string QuoteSuffix {
+		public override string QuoteSuffix {
 			get {
 				return quoteSuffix;
 			}
@@ -110,22 +110,17 @@ namespace System.Data.OracleClient {
 		}
 
 		[MonoTODO]
-		public OracleCommand GetDeleteCommand () {
+		public new OracleCommand GetDeleteCommand () {
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public OracleCommand GetInsertCommand () {
+		public new OracleCommand GetInsertCommand () {
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		public OracleCommand GetUpdatetCommand () {
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public void RefreshSchema () {
 			throw new NotImplementedException ();
 		}
 

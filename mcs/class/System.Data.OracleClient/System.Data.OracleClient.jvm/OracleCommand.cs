@@ -37,34 +37,34 @@ using System.Text.RegularExpressions;
 using System.Data;
 using System.Data.Common;
 using System.Data.ProviderBase;
+using System.Globalization;
 
 using java.sql;
 // Cannot use this because it makes ArrayList ambiguous reference
 //using java.util;
+#if !USE_DOTNET_REGEXP
+using java.util.regex;
+#endif
 
 namespace System.Data.OracleClient {
-	public sealed class OracleCommand : AbstractDbCommand, IDbCommand, ICloneable {
+	public sealed class OracleCommand : AbstractDbCommand {
 
 		#region Fields
+#if USE_DOTNET_REGEXP			
+		internal static readonly Regex NamedParameterStoredProcedureRegExp = new Regex(@"^\s*{?\s*((?<RETVAL>\:\w+)\s*=\s*)?call\s+(?<PROCNAME>(((\[[^\]]*\])|([^\.\(])*)\s*\.\s*){0,2}(\[[^\]]*\]|((\s*[^\.\(\)\{\}\s])+)))\s*(\(\s*(?<USERPARAM>((""([^""]|(""""))*"")|('([^']|(''))*')|[^,])*)?\s*(,\s*(?<USERPARAM>((""([^""]|(""""))*"")|('([^']|(''))*')|[^,])*)\s*)*\))?\s*}?\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture);
+#else
+		internal static readonly Pattern NamedParameterStoredProcedureRegExp = Pattern.compile(@"^\s*\{?\s*(?:(\:\w+)\s*=\s*)?call\s+((?:(?:(?:\[[^\]]*\])|(?:[^\.\(\)\{\}\[\]])*)\s*\.\s*){0,2}(?:\[[^\]]*\]|(?:(?:\s*[^\.\(\)\{\}\[\]])+)))\s*(?:\((.*)\))?\s*\}?\s*$", Pattern.CASE_INSENSITIVE);
+#endif
+		internal static readonly SimpleRegex NamedParameterRegExp = new OracleParamsRegex();
 
-		internal static readonly int oracleTypeRefCursor = java.sql.Types.OTHER;
-		private static readonly int _oracleRefCursor = -10; // oracle.jdbc.OracleTypes.CURSOR
+//		internal static readonly int oracleTypeRefCursor = java.sql.Types.OTHER;
+		
 		private int _currentParameterIndex = 0;
 		private ResultSet _currentRefCursor;
 
 		#endregion // Fields
 
 		#region Constructors
-
-		static OracleCommand() {
-			try {
-				java.lang.Class OracleTypesClass = java.lang.Class.forName("oracle.jdbc.OracleTypes");
-				_oracleRefCursor = OracleTypesClass.getField("CURSOR").getInt(null);
-			}
-			catch(java.lang.ClassNotFoundException e) {
-				// oracle driver is not in classpath - just continue
-			}
-		}
 
 		/**
 		 * Initializes a new instance of the OracleCommand class.
@@ -116,10 +116,7 @@ namespace System.Data.OracleClient {
 
 		public new OracleParameterCollection Parameters {
 			get { 
-				if (_parameters == null) {
-					_parameters = CreateParameterCollection(this);
-				}
-				return (OracleParameterCollection)_parameters; 
+				return (OracleParameterCollection)base.Parameters; 
 			}
 		}
 
@@ -128,9 +125,79 @@ namespace System.Data.OracleClient {
 			set { base.Transaction = (DbTransaction)value; }
 		}
 
+		protected override bool SkipParameter(DbParameter parameter) {
+			return ((OracleParameter)parameter).OracleType == OracleType.Cursor;
+		}
+
+		protected sealed override ResultSet CurrentResultSet {
+			get { 
+				try {
+					ResultSet resultSet = base.CurrentResultSet;
+ 
+					if (resultSet != null) {
+						return resultSet;						
+					}
+					return CurrentRefCursor;
+				}
+				catch(SQLException e) {
+					throw CreateException(e);
+				}
+			}
+		}
+
+		private ResultSet CurrentRefCursor {
+			get {
+				if (_currentParameterIndex < 0) {
+					NextRefCursor();
+				}
+				if (_currentRefCursor == null && _currentParameterIndex < InternalParameters.Count) {
+					_currentRefCursor = (ResultSet)((CallableStatement)Statement).getObject(_currentParameterIndex + 1);
+				}
+				return _currentRefCursor;
+			}
+		}
+
+#if USE_DOTNET_REGEX
+		protected override Regex StoredProcedureRegExp
+#else
+		protected override java.util.regex.Pattern StoredProcedureRegExp {
+#endif
+			get { return NamedParameterStoredProcedureRegExp; }
+		}
+
+		protected override SimpleRegex ParameterRegExp {
+			get { return NamedParameterRegExp; }
+		}
+
 		#endregion // Properties
 
 		#region Methods
+
+		protected override bool NextResultSet() {
+			try { 
+				bool hasMoreResults = base.NextResultSet();
+
+				if (hasMoreResults) {
+					return true;
+				}
+				else {
+					return NextRefCursor();
+				}
+			}
+			catch (SQLException e) {
+				throw CreateException(e);
+			}
+		}
+
+		private bool NextRefCursor() {
+			_currentRefCursor = null;
+			for (_currentParameterIndex++;InternalParameters.Count > _currentParameterIndex;_currentParameterIndex++) {
+				OracleParameter param = (OracleParameter)InternalParameters[_currentParameterIndex];
+				if (param.OracleType == OracleType.Cursor && ((param.Direction & ParameterDirection.Output) == ParameterDirection.Output))
+					return true;						
+			}
+			return false;
+		}
 
 		public new OracleDataReader ExecuteReader() {
 			return (OracleDataReader)ExecuteReader(CommandBehavior.Default);
@@ -148,6 +215,28 @@ namespace System.Data.OracleClient {
 			//TBD
 		}
 
+		protected override AbstractDbParameter GetUserParameter(string parameterName, IList userParametersList, int userParametersListPosition) {
+			for(int i=0; i < userParametersList.Count; i++) {
+				OracleParameter userParameter = (OracleParameter)userParametersList[i];
+				if (String.Compare(parameterName, userParameter.InternalPlaceholder.Trim(), true, CultureInfo.InvariantCulture) == 0) {
+					return userParameter;
+				}
+			}
+
+			return null;
+		}
+
+		protected override AbstractDbParameter GetReturnParameter (IList userParametersList) {
+			for(int i=0; i < userParametersList.Count; i++) {
+				AbstractDbParameter userParameter = (AbstractDbParameter)userParametersList[i];
+				if (userParameter.Direction == ParameterDirection.ReturnValue) {
+					return userParameter;
+				}
+			}
+
+			return null; 
+		}
+
 		protected sealed override DbParameter CreateParameterInternal() {
 			return new OracleParameter();
 		}
@@ -156,9 +245,10 @@ namespace System.Data.OracleClient {
 			return new OracleParameterCollection((OracleCommand)parent);
 		}
 
-		public object Clone() {
-			OracleCommand clone = new OracleCommand();
-			CopyTo(clone);
+		public override object Clone() {
+			OracleCommand clone = (OracleCommand)base.Clone();
+			clone._currentParameterIndex = 0;
+			clone._currentRefCursor = null;
 			return clone;
 		}
 
