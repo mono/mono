@@ -32,7 +32,11 @@ using System;
 using System.Runtime.InteropServices;
 
 namespace Microsoft.Build.Tasks.Hosting {
-	public interface IVbcHostObject {
+
+	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
+	[Guid ("7D7AC3BE-253A-40e8-A3FF-357D0DA7C47A")]
+	[ComVisible (true)]
+	public interface IVbcHostObject : ITaskHost {
 		void BeginInitialization ();
 		
 		bool Compile ();
@@ -90,6 +94,8 @@ namespace Microsoft.Build.Tasks.Hosting {
 		bool SetOptionExplicit (bool optionExplicit);
 		
 		bool SetOptionStrict (bool optionStrict);
+		
+		bool SetOptionStrictType (string optionStrictType);
 		
 		bool SetOutputAssembly (string outputAssembly);
 		

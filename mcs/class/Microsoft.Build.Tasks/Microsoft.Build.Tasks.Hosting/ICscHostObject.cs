@@ -32,7 +32,11 @@ using System.Runtime.InteropServices;
 using Microsoft.Build.Framework;
 
 namespace Microsoft.Build.Tasks.Hosting {
-	public interface ICscHostObject {
+	
+	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
+	[Guid ("8520CC4D-64DC-4855-BE3F-4C28CCE048EE")]
+	[ComVisible (true)]
+	public interface ICscHostObject : ITaskHost {
 	
 		void BeginInitialization ();
 		
@@ -93,6 +97,8 @@ namespace Microsoft.Build.Tasks.Hosting {
 		bool SetOptimize (bool optimize);
 		
 		bool SetOutputAssembly (string outputAssembly);
+		
+		bool SetPdbFile (string pdbFile);
 		
 		bool SetPlatform (string platform);
 		
