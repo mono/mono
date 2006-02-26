@@ -1,3 +1,8 @@
+2006-02-26  Jackson Harper  <jackson@ximian.com>
+
+	* XplatUIX11.cs:  Use the correct caption height.
+	- Translate hittest coordinates to screen coords to match MS.
+
 2006-02-26  Pedro Martinez Julia  <pedromj@gmail.com>
 
 	* DataGridViewRowPostPaintEventArgs.cs,

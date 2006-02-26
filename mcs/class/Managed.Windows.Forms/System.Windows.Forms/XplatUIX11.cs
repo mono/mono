@@ -1388,7 +1388,7 @@ namespace System.Windows.Forms {
 
 		internal override int Caption {
 			get {
-				return 25; 
+				return 19;
 			}
 		}
 
@@ -2849,22 +2849,29 @@ namespace System.Windows.Forms {
 						break;
 					} else {
 						HitTest	ht;
+						IntPtr dummy;
+						int screen_x;
+						int screen_y;
 
 						#if DriverDebugExtra
 							Console.WriteLine("GetMessage(): non-client area {0:X} MotionNotify x={1} y={2}", client ? hwnd.client_window.ToInt32() : hwnd.whole_window.ToInt32(), xevent.MotionEvent.x, xevent.MotionEvent.y);
 						#endif
 						msg.message = Msg.WM_NCMOUSEMOVE;
-						msg.lParam = (IntPtr) (xevent.MotionEvent.y << 16 | xevent.MotionEvent.x & 0xFFFF);
 
 						if (!hwnd.Enabled) {
-							IntPtr dummy;
-
 							msg.hwnd = hwnd.EnabledHwnd;
 							XTranslateCoordinates(DisplayHandle, xevent.AnyEvent.window, Hwnd.ObjectFromHandle(msg.hwnd).ClientWindow, xevent.MotionEvent.x, xevent.MotionEvent.y, out xevent.MotionEvent.x, out xevent.MotionEvent.y, out dummy);
 							msg.lParam = (IntPtr)(MousePosition.Y << 16 | MousePosition.X);
 						}
 
-						ht = (HitTest)NativeWindow.WndProc(hwnd.client_window, Msg.WM_NCHITTEST, IntPtr.Zero, msg.lParam).ToInt32();
+						// The hit test is sent in screen coordinates
+						XTranslateCoordinates (DisplayHandle, hwnd.client_window, RootWindow,
+								xevent.MotionEvent.x, xevent.MotionEvent.y,
+								out screen_x, out screen_y, out dummy);
+
+						msg.lParam = (IntPtr) (screen_y << 16 | screen_x & 0xFFFF);
+						ht = (HitTest)NativeWindow.WndProc (hwnd.client_window, Msg.WM_NCHITTEST,
+								IntPtr.Zero, msg.lParam).ToInt32 ();
 						NativeWindow.WndProc(hwnd.client_window, Msg.WM_SETCURSOR, msg.hwnd, (IntPtr)ht);
 
 						MousePosition.X = xevent.MotionEvent.x;
