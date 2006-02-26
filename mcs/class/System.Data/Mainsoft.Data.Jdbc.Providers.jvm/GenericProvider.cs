@@ -129,9 +129,15 @@ namespace Mainsoft.Data.Jdbc.Providers
 					return String.Empty;
 
 				string usedKey = g.Value.Trim();
+
+				string value = (string)_keyMapper [usedKey];
+				if (value == null)
+					throw new ArgumentException(
+						String.Format("Missing parameter {0}", g.Value),
+						"ConnectionString");
+
 				_excludedKeys.Add(usedKey);
-				
-				return (string)_keyMapper [usedKey];
+				return value;
 			}
 
 			private void ActivateJdbcDriver () {

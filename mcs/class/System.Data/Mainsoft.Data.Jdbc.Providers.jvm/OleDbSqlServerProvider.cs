@@ -44,6 +44,7 @@ namespace Mainsoft.Data.Jdbc.Providers
 		#region Consts
 
 		private const string Port = "Port";
+		private const string Database = "Database";
 		private const string ServerName = "ServerName";
 		private const string DefaultInstanceName = "MSSQLSERVER";
 		private const string Timeout = "Timeout";
@@ -74,6 +75,10 @@ namespace Mainsoft.Data.Jdbc.Providers
 			//TBD: should wrap the IConnectionStringDictionary
 			IConnectionStringDictionary conectionStringBuilder = base.GetConnectionStringBuilder (connectionString);
 			if (!conectionStringBuilder.Contains("jndi-datasource-name")) {
+
+				string database = (string) conectionStringBuilder [Database];
+				if (database == null)
+					conectionStringBuilder.Add (Database, String.Empty);
 
 				string port = (string) conectionStringBuilder [Port];
 				if (port == null || port.Length == 0) {

@@ -1,0 +1,4 @@
+2006-02-26  Konstantin Triger <kostat@mainsoft.com>
+
+	* OleDbSqlServerProvider.cs: set default empty Database.
+	* GenericProvider.cs: throw ArgumentException if url parameter is missing.
