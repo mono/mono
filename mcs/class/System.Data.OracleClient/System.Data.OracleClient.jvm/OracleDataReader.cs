@@ -117,7 +117,69 @@ namespace System.Data.OracleClient {
 			return base.GetInt64(i);
 		}
 
+		#region GetOracleXXX
 
+		public OracleBFile GetOracleBFile(
+			int i
+			) {
+			throw new NotImplementedException();
+		}
+
+		public OracleBinary GetOracleBinary(
+			int i
+			) {
+			throw new NotImplementedException();
+		}
+
+		public OracleDateTime GetOracleDateTime(
+			int i
+			) {
+			throw new NotImplementedException();
+		}
+
+		public OracleLob GetOracleLob(
+			int i
+			) {
+			throw new NotImplementedException();
+		}
+
+		public OracleMonthSpan GetOracleMonthSpan(
+			int i
+			) {
+			throw new NotImplementedException();
+		}
+
+		public OracleNumber GetOracleNumber(
+			int i
+			) {
+			throw new NotImplementedException();
+		}
+
+		public OracleString GetOracleString(
+			int i
+			) {
+			throw new NotImplementedException();
+		}
+
+		public OracleTimeSpan GetOracleTimeSpan(
+			int i
+			) {
+			throw new NotImplementedException();
+		}
+
+		public object GetOracleValue(
+			int i
+			) {
+			throw new NotImplementedException();
+		}
+
+		public int GetOracleValues(
+			object[] values
+			) {
+			throw new NotImplementedException();
+		}
+
+		#endregion
 
 		#endregion // Methods
 	}

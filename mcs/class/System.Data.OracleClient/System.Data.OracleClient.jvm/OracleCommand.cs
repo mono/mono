@@ -266,6 +266,16 @@ namespace System.Data.OracleClient {
 			return new OracleException(e,Connection);		
 		}
 
+		public object ExecuteOracleScalar() {
+			throw new NotImplementedException();
+		}
+
+		public int ExecuteOracleNonQuery(
+			out OracleString rowid
+			) {
+			throw new NotImplementedException();
+		}
+
 		#endregion // Methods
       
 	}
