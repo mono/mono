@@ -114,7 +114,6 @@ System/DateTimeKind.cs
 System/DayOfWeek.cs
 System/DBNull.cs
 System/Decimal.cs
-System/DecimalFormatter.cs
 System/Delegate.cs
 System/DelegateSerializationHolder.cs
 System/DivideByZeroException.cs
