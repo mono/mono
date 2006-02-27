@@ -572,15 +572,24 @@ namespace System.Windows.Forms {
 			if (multiline) {
 				// Grab the formatting for the last element
 				document.MoveCaret(CaretDirection.CtrlEnd);
-				document.Insert(document.CaretLine, document.CaretPosition, text);
+				// grab the end tag
+				if (document.CaretTag.next != null) {
+					document.CaretTag = document.CaretTag.next;
+				}
+				document.Insert(document.CaretLine, document.CaretTag, document.CaretPosition, false, text);
 
 				CalculateDocument();
-				document.MoveCaret(CaretDirection.CtrlEnd);
 			} else {
 				document.MoveCaret(CaretDirection.CtrlEnd);
 				document.InsertStringAtCaret(text, true);
+
 				Invalidate();
 			}
+
+			document.MoveCaret(CaretDirection.CtrlEnd);
+			document.SetSelectionStart(document.CaretLine, document.CaretPosition);
+			document.SetSelectionEnd(document.CaretLine, document.CaretPosition);
+
 			OnTextChanged(EventArgs.Empty);
 		}
 

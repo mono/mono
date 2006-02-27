@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2005 Novell, Inc. (http://www.novell.com)
+// Copyright (c) 2005-2006 Novell, Inc. (http://www.novell.com)
 //
 // Authors:
 //	Peter Bartok	<pbartok@novell.com>
@@ -425,13 +425,17 @@ namespace System.Windows.Forms {
 			}
 
 			set {
-				int	sel_start;
-				int	sel_end;
+				FontDefinition	attributes;
+				int		sel_start;
+				int		sel_end;
+
+				attributes = new FontDefinition();
+				attributes.color = value;
 
 				sel_start = document.LineTagToCharIndex(document.selection_start.line, document.selection_start.pos);
 				sel_end = document.LineTagToCharIndex(document.selection_end.line, document.selection_end.pos);
-Console.WriteLine("FIXME - SelectionColor should not alter font");
-				document.FormatText(document.selection_start.line, document.selection_start.pos + 1, document.selection_end.line, document.selection_end.pos + 1, document.selection_start.tag.font, new SolidBrush(value));
+
+				document.FormatText(document.selection_start.line, document.selection_start.pos + 1, document.selection_end.line, document.selection_end.pos + 1, attributes);
 
 				document.CharIndexToLineTag(sel_start, out document.selection_start.line, out document.selection_start.tag, out document.selection_start.pos);
 				document.CharIndexToLineTag(sel_end, out document.selection_end.line, out document.selection_end.tag, out document.selection_end.pos);
@@ -475,13 +479,17 @@ Console.WriteLine("FIXME - SelectionColor should not alter font");
 			}
 
 			set {
-				int	sel_start;
-				int	sel_end;
+				FontDefinition	attributes;
+				int		sel_start;
+				int		sel_end;
+
+				attributes = new FontDefinition();
+				attributes.font_obj = value;
 
 				sel_start = document.LineTagToCharIndex(document.selection_start.line, document.selection_start.pos);
 				sel_end = document.LineTagToCharIndex(document.selection_end.line, document.selection_end.pos);
 
-				document.FormatText(document.selection_start.line, document.selection_start.pos + 1, document.selection_end.line, document.selection_end.pos + 1, value, document.selection_start.tag.color);
+				document.FormatText(document.selection_start.line, document.selection_start.pos + 1, document.selection_end.line, document.selection_end.pos + 1, attributes);
 
 				document.CharIndexToLineTag(sel_start, out document.selection_start.line, out document.selection_start.tag, out document.selection_start.pos);
 				document.CharIndexToLineTag(sel_end, out document.selection_end.line, out document.selection_end.tag, out document.selection_end.pos);
@@ -1299,6 +1307,9 @@ Console.WriteLine("FIXME - SelectionColor should not alter font");
 				line = document.GetLine(rtf_cursor_y);
 				document.InsertString(line, rtf_cursor_x, rtf_line.ToString());
 				document.FormatText(line, rtf_cursor_x + 1, line, rtf_cursor_x + 1 + length, font, rtf_color); // FormatText is 1-based
+				if (newline && (line.text.Length > (rtf_cursor_x + 1 + length))) {
+					document.Split(line, rtf_cursor_x + length);
+				}
 			}
 
 			if (newline) {

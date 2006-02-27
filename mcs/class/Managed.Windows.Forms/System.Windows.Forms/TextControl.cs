@@ -63,6 +63,21 @@ namespace System.Windows.Forms {
 		Line		// Selection=Line under caret
 	}
 
+	internal class FontDefinition {
+		internal String		face;
+		internal int		size;
+		internal FontStyle	add_style;
+		internal FontStyle	remove_style;
+		internal Color		color;
+		internal Font		font_obj;
+
+		internal FontDefinition() {
+			face = null;
+			size = 0;
+			color = Color.Empty;
+		}
+	}
+
 	internal enum CaretDirection {
 		CharForward,	// Move a char to the right
 		CharBack,	// Move a char to the left
@@ -279,7 +294,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		internal void Streamline() {
+		internal void Streamline(int lines) {
 			LineTag	current;
 			LineTag	next;
 
@@ -300,16 +315,17 @@ namespace System.Windows.Forms {
 			}
 
 			while (next != null) {
-				// Take out 0 length tags
+				// Take out 0 length tags unless it's the last tag in the document
 				if (next.length == 0) {
-					current.next = next.next;
-					if (current.next != null) {
-						current.next.previous = current;
+					if ((next.next != null) || (line_no != lines)) {
+						current.next = next.next;
+						if (current.next != null) {
+							current.next.previous = current;
+						}
+						next = current.next;
+						continue;
 					}
-					next = current.next;
-					continue;
 				}
-
 				if (current.Combine(next)) {
 					next = current.next;
 					continue;
@@ -670,6 +686,19 @@ namespace System.Windows.Forms {
 				return false;
 			}
 
+			public void Combine(Line move_to_line, int move_to_line_length) {
+				line = move_to_line;
+				pos += move_to_line_length;
+				tag = LineTag.FindTag(line, pos);
+			}
+
+			// This is for future use, right now Document.Split does it by hand, with some added shortcut logic
+			public void Split(Line move_to_line, int split_at) {
+				line = move_to_line;
+				pos -= split_at;
+				tag = LineTag.FindTag(line, pos);
+			}
+
 			public override bool Equals(object obj) {
 				   return this==(Marker)obj;
 			}
@@ -809,6 +838,10 @@ namespace System.Windows.Forms {
 		internal LineTag CaretTag {
 			get {
 				return caret.tag;
+			}
+
+			set {
+				caret.tag = value;
 			}
 		}
 
@@ -1528,8 +1561,8 @@ namespace System.Windows.Forms {
 
 				case CaretDirection.CtrlEnd: {
 					caret.line = GetLine(lines);
-					caret.pos = 0;
-					caret.tag = caret.line.tags;
+					caret.pos = caret.line.text.Length;
+					caret.tag = LineTag.FindTag(caret.line, caret.pos);
 
 					UpdateCaret();
 					return;
@@ -1815,20 +1848,21 @@ namespace System.Windows.Forms {
 		}
 
 		internal void Insert(Line line, int pos, string s) {
-			Insert(line, pos, false, s);
+			Insert(line, null, pos, false, s);
 		}
 
 		// Insert multi-line text at the given position; use formatting at insertion point for inserted text
-		internal void Insert(Line line, int pos, bool update_caret, string s) {
+		internal void Insert(Line line, LineTag tag, int pos, bool update_caret, string s) {
 			int		i;
 			int		base_line;
 			string[]	ins;
 			int		insert_lines;
-			LineTag		tag;
 
 
 			// The formatting at the insertion point is used for the inserted text
-			tag = LineTag.FindTag(line, pos);
+			if (tag == null) {
+				tag = LineTag.FindTag(line, pos);
+			}
 
 			base_line = line.line_no;
 
@@ -1849,7 +1883,7 @@ namespace System.Windows.Forms {
 			}
 
 			// Insert the first line
-			InsertString(line, pos, ins[0]);
+			InsertString(tag, pos, ins[0]);
 
 			if (insert_lines > 1) {
 				for (i = 1; i < insert_lines; i++) {
@@ -2056,7 +2090,7 @@ namespace System.Windows.Forms {
 
 			line.recalc = true;
 			if (streamline) {
-				line.Streamline();
+				line.Streamline(lines);
 			}
 
 			UpdateView(line, pos);
@@ -2116,7 +2150,7 @@ namespace System.Windows.Forms {
 			}
 			line.recalc = true;
 			if (streamline) {
-				line.Streamline();
+				line.Streamline(lines);
 			}
 
 			UpdateView(line, pos);
@@ -2164,7 +2198,21 @@ namespace System.Windows.Forms {
 			// Mop up
 			first.recalc = true;
 			first.height = 0;	// This forces RecalcDocument/UpdateView to redraw from this line on
-			first.Streamline();
+			first.Streamline(lines);
+
+			// Update Caret, Selection, etc
+			if (caret.line == second) {
+				caret.Combine(first, shift);
+			}
+			if (selection_anchor.line == second) {
+				selection_anchor.Combine(first, shift);
+			}
+			if (selection_start.line == second) {
+				selection_start.Combine(first, shift);
+			}
+			if (selection_end.line == second) {
+				selection_end.Combine(first, shift);
+			}
 
 			#if Debug
 				Line	check_first;
@@ -2204,6 +2252,9 @@ namespace System.Windows.Forms {
 			Split(line, tag, pos, false);
 		}
 
+		///<summary>Split line at given tag and position into two lines</summary>
+		///<param name="soft">True if the split should be marked as 'soft', indicating that it can be contracted 
+		///if more space becomes available on previous line</param>
 		internal void Split(Line line, LineTag tag, int pos, bool soft) {
 			LineTag	new_tag;
 			Line	new_line;
@@ -2991,7 +3042,7 @@ namespace System.Windows.Forms {
 				}
 			}
 
-			Insert(selection_start.line, selection_start.pos, true, s);
+			Insert(selection_start.line, null, selection_start.pos, true, s);
 
 			selection_end.line = selection_start.line;
 			selection_end.pos = selection_start.pos;
@@ -3314,6 +3365,34 @@ namespace System.Windows.Forms {
 			} else {
 				// Special case, single line
 				LineTag.FormatText(start_line, start_pos, end_pos - start_pos, font, color);
+			}
+		}
+
+		/// <summary>Re-format areas of the document in specified font and color</summary>
+		/// <param name="start_pos">1-based start position on start_line</param>
+		/// <param name="end_pos">1-based end position on end_line </param>
+		/// <param name="font">Font specifying attributes</param>
+		/// <param name="color">Color (or NULL) to apply</param>
+		/// <param name="apply">Attributes from font and color to apply</param>
+		internal void FormatText(Line start_line, int start_pos, Line end_line, int end_pos, FontDefinition attributes) {
+			Line    l;
+
+			// First, format the first line
+			if (start_line != end_line) {
+				// First line
+				LineTag.FormatText(start_line, start_pos, start_line.text.Length - start_pos + 1, attributes);
+
+				// Format last line
+				LineTag.FormatText(end_line, 1, end_pos - 1, attributes);
+
+				// Now all the lines inbetween
+				for (int i = start_line.line_no + 1; i < end_line.line_no; i++) {
+					l = GetLine(i);
+					LineTag.FormatText(l, 1, l.text.Length, attributes);
+				}
+			} else {
+				// Special case, single line
+				LineTag.FormatText(start_line, start_pos, end_pos - start_pos, attributes);
 			}
 		}
 
@@ -3813,7 +3892,75 @@ namespace System.Windows.Forms {
 		#endregion	// Constructors
 
 		#region Internal Methods
-		/// <summary>Applies 'font' to characters starting at 'start' for 'length' chars; 
+		///<summary>Break a tag into two with identical attributes; pos is 1-based; returns tag starting at &gt;pos&lt; or null if end-of-line</summary>
+		internal LineTag Break(int pos) {
+			LineTag	new_tag;
+
+			// Sanity
+			if (pos == this.start) {
+				return this;
+			} else if (pos >= (start + length)) {
+				return null;
+			}
+
+			new_tag = new LineTag(line, pos, start + length - pos);
+			new_tag.color = color;
+			new_tag.font = font;
+			this.length -= new_tag.length;
+			new_tag.next = this.next;
+			this.next = new_tag;
+			new_tag.previous = this;
+			if (new_tag.next != null) {
+				new_tag.next.previous = new_tag;
+			}
+
+			return new_tag;
+		}
+
+		///<summary>Create new font and brush from existing font and given new attributes. Returns true if fontheight changes</summary>
+		internal static bool GenerateTextFormat(Font font_from, Brush color_from, FontDefinition attributes, out Font new_font, out Brush new_color) {
+			float		size;
+			string		face;
+			FontStyle	style;
+			GraphicsUnit	unit;
+
+			if (attributes.font_obj == null) {
+				size = font_from.SizeInPoints;
+				unit = font_from.Unit;
+				face = font_from.Name;
+				style = font_from.Style;
+
+				if (attributes.face != null) {
+					face = attributes.face;
+				}
+				
+				if (attributes.size != 0) {
+					size = attributes.size;
+				}
+
+				style |= attributes.add_style;
+				style &= ~attributes.remove_style;
+
+				// Create new font
+				new_font = new Font(face, size, style, unit);
+			} else {
+				new_font = attributes.font_obj;
+			}
+
+			// Create 'new' color brush
+			if (attributes.color != Color.Empty) {
+				new_color = new SolidBrush(attributes.color);
+			} else {
+				new_color = color_from;
+			}
+
+			if (new_font.Height == font_from.Height) {
+				return false;
+			}
+			return true;
+		}
+
+		/// <summary>Applies 'font' and 'brush' to characters starting at 'start' for 'length' chars; 
 		/// Removes any previous tags overlapping the same area; 
 		/// returns true if lineheight has changed</summary>
 		/// <param name="start">1-based character position on line</param>
@@ -3845,8 +3992,11 @@ namespace System.Windows.Forms {
 				return retval;
 			}
 
-//Console.WriteLine("Finding tag for {0} {1}", line, start);
+			//Console.WriteLine("Finding tag for {0} {1}", line, start);
 			start_tag = FindTag(line, start);
+			if (start_tag == null) {	// FIXME - is there a better way to handle this, or do we even need it?
+				throw new Exception(String.Format("Could not find start_tag in document at line {0} position {1}", line.line_no, start));
+			}
 
 			tag = new LineTag(line, start, length);
 			tag.font = font;
@@ -3855,7 +4005,7 @@ namespace System.Windows.Forms {
 			if (start == 1) {
 				line.tags = tag;
 			}
-//Console.WriteLine("Start tag: '{0}'", start_tag!=null ? start_tag.ToString() : "NULL");
+			//Console.WriteLine("Start tag: '{0}'", start_tag!=null ? start_tag.ToString() : "NULL");
 			if (start_tag.start == start) {
 				tag.next = start_tag;
 				tag.previous = start_tag.previous;
@@ -3909,6 +4059,67 @@ namespace System.Windows.Forms {
 				tag = tag.next;
 			}
 
+			return retval;
+		}
+
+		/// <summary>Applies font attributes specified to characters starting at 'start' for 'length' chars; 
+		/// Breaks tags at start and end point, keeping middle tags with altered attributes.
+		/// Returns true if lineheight has changed</summary>
+		/// <param name="start">1-based character position on line</param>
+		internal static bool FormatText(Line line, int start, int length, FontDefinition attributes) {
+			LineTag	tag;
+			LineTag	start_tag;
+			LineTag	end_tag;
+			bool	retval = false;		// Assume line-height doesn't change
+
+			line.recalc = true;		// This forces recalculation of the line in RecalculateDocument
+
+			// A little sanity, not sure if it's needed, might be able to remove for speed
+			if (length > line.text.Length) {
+				length = line.text.Length;
+			}
+
+			tag = line.tags;
+
+			// Common special case
+			if ((start == 1) && (length == tag.length)) {
+				tag.ascent = 0;
+				GenerateTextFormat(tag.font, tag.color, attributes, out tag.font, out tag.color);
+				return retval;
+			}
+
+			start_tag = FindTag(line, start);
+			
+			if (start_tag == null) {
+				if (length == 0) {
+					// We are 'starting' after all valid tags; create a new tag with the right attributes
+					start_tag = FindTag(line, line.text.Length - 1);
+					start_tag.next = new LineTag(line, line.text.Length + 1, 0);
+					start_tag.next.font = start_tag.font;
+					start_tag.next.color = start_tag.color;
+					start_tag.next.previous = start_tag;
+					start_tag = start_tag.next;
+				} else {
+					throw new Exception(String.Format("Could not find start_tag in document at line {0} position {1}", line.line_no, start));
+				}
+			} else {
+				start_tag = start_tag.Break(start);
+			}
+
+			end_tag = FindTag(line, start + length);
+			if (end_tag != null) {
+				end_tag = end_tag.Break(start + length);
+			}
+
+			// start_tag or end_tag might be null; we're cool with that
+			// we now walk from start_tag to end_tag, applying new attributes
+			tag = start_tag;
+			while ((tag != null) && tag != end_tag) {
+				if (LineTag.GenerateTextFormat(tag.font, tag.color, attributes, out tag.font, out tag.color)) {
+					retval = true;
+				}
+				tag = tag.next;
+			}
 			return retval;
 		}
 

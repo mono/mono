@@ -1,3 +1,46 @@
+2006-02-26  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* RichTextBox.cs:
+	  - SelectionColor and SelectionFont methods no longer set absolute
+	    styles. Instead, the keep font or color respectively (This 
+	    resolves a long-standing FIXME in the code)
+	  - When flushing RTF text, the insert code now considers text trailing
+	    behind the insertion point (Fixes the bug where when replacing
+	    the selected text via SelectedRTF the remainder of the line behind 
+	    the selection would stay on the first insertion line)
+	* TextBoxBase.cs:
+	  - AppendText now updates the selection points after inserting text
+	  - AppendText now ensures that the last tag (sometimes 0-length) of
+	    the document is used for the style information (Fixes part of 
+	    bug #77220)
+	* TextControl.cs:
+	  - Created new FontDefiniton class to allow describing partial style
+	    changes
+	  - StreamLine() now takes a lines argument, to allow it to decide
+	    whether an encountered zero-length tag is the last in the document
+	    (which must be kept to not loose the font/color contained in it,
+	    for later appends)
+	  - Created Combine() and Split() methods for Marker structs, to 
+	    support marker updates due to reformatted documents (soft line
+	    wraps)
+	  - Implemented Document.CaretTag setter
+	  - Fixed MoveCaret(CtrlEnd) handling, now moves to the last character
+	    of the last line (Not the cause, but also exposed by bug #77220)
+	  - Added LineTag argument to InsertString method, to allow callers
+	    to force a certain tag to be used (required to force use of the
+	    trailing zero-length tag of a document)
+	  - Now updating markers in Combine(), to avoid stale tag markers
+	  - Added some method descriptions to aid maintenance
+	  - Implemented new FormatText concept, allowing additive/subtractive
+	    formatting by only specifying the components that are to be 
+	    changed. This was needed for resolving the RTB.SelectedColor/
+	    RTB.SelectedFont fixmes
+	  - Added Break() support method to allow breaking up linetags (used
+	    for partial formatting)
+	  - Added GenerateTextFormat() method. It is used for partial 
+	    formatting and allows to generate a full font/color from given
+	    attributes and an existing tag.
+
 2006-02-26  Jackson Harper  <jackson@ximian.com>
 
 	* XplatUIX11.cs:  Use the correct caption height.
