@@ -31,9 +31,16 @@
 #if NET_2_0
 using System.Collections;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Text;
 
 namespace System.Web.UI {
+
+	[DesignerAttribute ("System.Web.UI.Design.DataSourceDesigner, " + Consts.AssemblySystem_Design,
+			    "System.ComponentModel.Design.IDesigner")]
+	[ControlBuilderAttribute (typeof (DataSourceControlBuilder))]
+	[NonVisualControlAttribute]
+	[BindableAttribute (false)]
 	public abstract class DataSourceControl : Control, IDataSource, System.ComponentModel.IListSource {
 
 
@@ -41,15 +48,33 @@ namespace System.Web.UI {
 		{
 		}
 		
+		[MonoTODO]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public override void ApplyStyleSheetSkin (Page page)
+		{
+			throw new NotImplementedException ();
+		}
+
 		protected override ControlCollection CreateControlCollection ()
 		{
 			return new EmptyControlCollection (this);
 		}
-		
-		protected virtual DataSourceView GetView (string viewName)
+
+		[MonoTODO ("why override?")]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public override Control FindControl (string id)
 		{
-			return null;
+			return base.FindControl (id);
 		}
+
+		[MonoTODO ("why override?")]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public override void Focus ()
+		{
+			base.Focus();
+		}
+
+		protected abstract DataSourceView GetView (string viewName);
 		
 		DataSourceView IDataSource.GetView (string viewName)
 		{
@@ -71,13 +96,64 @@ namespace System.Web.UI {
 			return ListSourceHelper.GetList (this);
 		}
 		
+		[MonoTODO ("why override?")]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public override bool HasControls ()
+		{
+			return base.HasControls ();
+		}
+
+		protected virtual void RaiseDataSourceChangedEvent (EventArgs e)
+		{
+			EventHandler eh = Events [dataSourceChanged] as EventHandler;
+			if (eh != null)
+				eh (this, e);
+		}
+
+		[MonoTODO ("why override?")]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public override void RenderControl (HtmlTextWriter tw)
+		{
+			base.RenderControl (tw);
+		}
+
+		[MonoTODO ("why override?")]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public override string ClientID {
+			get { return base.ClientID; }
+		}
+
+		[MonoTODO ("why override?")]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public override ControlCollection Controls {
+			get { return base.Controls; }
+		}
+
+		[MonoTODO ("why override?")]
+		[DefaultValue (false)]
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public override bool EnableTheming {
+			get { return base.EnableTheming; }
+			set { base.EnableTheming = value; }
+		}
+
+		[MonoTODO ("why override?")]
+		[DefaultValue ("")]
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public override string SkinID {
+			get { return base.SkinID; }
+			set { base.SkinID = value; }
+		}
+
 		bool System.ComponentModel.IListSource.ContainsListCollection {
 			get { return ListSourceHelper.ContainsListCollection (this); }
 		}
 
-		//public override bool EnablePersonalization { get; set; }
-		//public override bool EnableTheming { get; set; }
-		//public override string SkinID { get; set; }
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DefaultValue (false)]
 		public override bool Visible { 
 			get { return false; }
 			set { throw new NotSupportedException (); }
@@ -88,13 +164,7 @@ namespace System.Web.UI {
 			add { Events.AddHandler (dataSourceChanged, value); }
 			remove { Events.RemoveHandler (dataSourceChanged, value); }
 		}
-		
-		protected virtual void OnDataSourceChanged (EventArgs e)
-		{
-			EventHandler eh = Events [dataSourceChanged] as EventHandler;
-			if (eh != null)
-				eh (this, e);
-		}
+
 	}
 }
 #endif

@@ -1,3 +1,13 @@
+2006-02-27  Chris Toshok  <toshok@ximian.com>
+
+	* DataSourceView.cs: Name isn't virtual.
+
+	* DataSourceControl.cs: beat this class over the head with the
+	corcompare stick.
+
+	* DataSourceControlBuilder.cs: new stubbed control builder for
+	DataSourceControl.
+
 2006-02-23  Chris Toshok  <toshok@ximian.com>
 
 	* Page.cs: more corcompare work.

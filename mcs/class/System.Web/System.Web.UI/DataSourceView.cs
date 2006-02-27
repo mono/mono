@@ -182,7 +182,7 @@ namespace System.Web.UI {
 			return eventsList != null;
 		}
 
-		public virtual string Name { 
+		public string Name { 
 			get { return viewName; } 
 		}
 

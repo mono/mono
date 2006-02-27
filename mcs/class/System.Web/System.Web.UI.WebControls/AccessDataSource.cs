@@ -73,7 +73,7 @@ namespace System.Web.UI.WebControls {
 
 		void ViewChanged (object source, EventArgs e)
 		{
-			OnDataSourceChanged (e);
+			RaiseDataSourceChangedEvent (e);
 		}
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]

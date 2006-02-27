@@ -1,3 +1,10 @@
+2006-02-27  Chris Toshok  <toshok@ximian.com>
+
+	* SqlDataSource.cs: track change to DataSourceControl's protected
+	methods.
+
+	* AccessDataSource.cs: same.
+
 2006-02-27  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* ListControl.cs: fixed SelectedIndex property, fixed selection
