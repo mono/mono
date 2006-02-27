@@ -264,7 +264,7 @@ namespace System.Windows.Forms
 		public class ControlCollection : IList, ICollection, ICloneable, IEnumerable {
 			#region	ControlCollection Local Variables
 			private ArrayList	list;
-			private ArrayList	impl_list;
+			internal ArrayList	impl_list;
 			private Control []	all_controls;
 			internal Control	owner;
 			#endregion	// ControlCollection Local Variables
@@ -354,7 +354,9 @@ namespace System.Windows.Forms
 					impl_list = new ArrayList ();
 				all_controls = null;
 				impl_list.Add (control);
+
 				control.ChangeParent (owner);
+				control.InitLayout ();
 				owner.UpdateZOrder ();
 				owner.PerformLayout (control, "Parent");
 				owner.OnControlAdded (new ControlEventArgs (control));
@@ -487,9 +489,11 @@ namespace System.Windows.Forms
 
 				if (impl_list == null)
 					return (Control []) list.ToArray (typeof (Control));
+				
 				Control [] res = new Control [list.Count + impl_list.Count];
-				list.CopyTo (res);
-				impl_list.CopyTo (res, list.Count);
+				impl_list.CopyTo (res);
+				list.CopyTo (res, impl_list.Count);
+
 				return res;
 			}
 
@@ -2456,9 +2460,14 @@ namespace System.Windows.Forms
 				if (parent.child_controls.Contains(this)) {
 					parent.child_controls.SetChildIndex(this, 0);
 				}
+			} else {
+				if (parent.child_controls.impl_list != null) {
+					Control last_impl = (Control) parent.child_controls.impl_list [parent.child_controls.impl_list.Count - 1];
+					XplatUI.SetZOrder (this.window.Handle, last_impl.Handle, false, false);
+				} else {
+					XplatUI.SetZOrder(this.window.Handle, IntPtr.Zero, true, false);
+				}
 			}
-
-			XplatUI.SetZOrder(this.window.Handle, IntPtr.Zero, true, false);
 
 			if (parent != null) {
 				parent.Refresh();
@@ -3246,8 +3255,6 @@ namespace System.Windows.Forms
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected void RecreateHandle() {
-			IEnumerator child = child_controls.GetAllEnumerator();
-
 			is_recreating=true;
 
 			if (IsHandleCreated) {

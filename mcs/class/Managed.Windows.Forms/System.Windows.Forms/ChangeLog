@@ -1,3 +1,10 @@
+2006-02-27  Jackson Harper  <jackson@ximian.com>
+
+	* Control.cs:  Change where implicit controls fall in the zorder.
+	They are now on top of all children.
+	- Synced AddImplicit code with Add
+	- Removed unused enumerator.
+	
 2006-02-26  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* TextControl.cs(Insert): Combine the last lines unless the insertion
@@ -57,7 +64,25 @@
 	draw all the decorations ourselves.
 	- Set a clipping rectangle on the non client paint event, the
 	window manager drawing code needs one.
-
+	* Form.cs: The window manager needs to know when the window state
+	has been updated.
+	* Hwnd.cs: The window manager stuff now does a proper NCCALC so we
+	don't need to factor in border and title sizes in these
+	methods. TODO: Remove the args and fix the call points.
+	* InternalWindowManager.cs: Handle NCHITTEST and NCCALCAREA
+	properly.
+	- Let the driver set the cursors.
+	- Improve active window handling
+	- Correct sizes for title bars and buttons.
+	- Match MS drawing better
+	* MdiWindowManager.cs: We don't need to handle border style
+	updates specially anymore.
+	- Check for scrollbars when windows are done moving
+	- Handle Active properly.
+	* MimeIcon.cs: Don't crash when we can't load the GNOME stuff
+	correctly. I am spewing the exception though, so we don't hide the
+	bugs.
+	
 2006-02-26  Pedro Martinez Julia  <pedromj@gmail.com>
 
 	* DataGridViewRowPostPaintEventArgs.cs,
