@@ -103,7 +103,7 @@ namespace System.Data.OracleClient {
 		IDbCommand IDbDataAdapter.DeleteCommand {
 			get { return DeleteCommand; }
 			set { 
-				if (!(value is OracleCommand)) 
+				if (value != null && !(value is OracleCommand)) 
 					throw new ArgumentException ();
 				DeleteCommand = (OracleCommand) value;
 			}
@@ -112,7 +112,7 @@ namespace System.Data.OracleClient {
 		IDbCommand IDbDataAdapter.InsertCommand {
 			get { return InsertCommand; }
 			set { 
-				if (!(value is OracleCommand)) 
+				if (value != null && !(value is OracleCommand)) 
 					throw new ArgumentException ();
 				InsertCommand = (OracleCommand) value;
 			}
@@ -121,7 +121,7 @@ namespace System.Data.OracleClient {
 		IDbCommand IDbDataAdapter.SelectCommand {
 			get { return SelectCommand; }
 			set { 
-				if (!(value is OracleCommand)) 
+				if (value != null && !(value is OracleCommand)) 
 					throw new ArgumentException ();
 				SelectCommand = (OracleCommand) value;
 			}
@@ -130,7 +130,7 @@ namespace System.Data.OracleClient {
 		IDbCommand IDbDataAdapter.UpdateCommand {
 			get { return UpdateCommand; }
 			set { 
-				if (!(value is OracleCommand)) 
+				if (value != null && !(value is OracleCommand)) 
 					throw new ArgumentException ();
 				UpdateCommand = (OracleCommand) value;
 			}
