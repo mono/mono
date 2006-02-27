@@ -1,3 +1,14 @@
+2006-02-27  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* FileTest.cs: In 2.0 profile, no longer expect IOException when path to
+	non-existing directory or file is specified in Get***Time(Utc) methods
+	(bug #77641). Renamed tests and removed trailing tabs. Removed
+	duplicate test. Fixed GetLastWriteTime(Utc) tests that used
+	GetLastAccessTime(Utc) instead of GetLastWriteTime(Utc).
+	* DirectoryTest.cs: No longer expect IOException when path to 
+	non-existing directory or file is specified in Get***Time(Utc) methods
+	(bug #77641).	
+
 2006-02-26  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* FileStreamTest.cs: Fixed tests for invalid share value to pass on

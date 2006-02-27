@@ -214,13 +214,25 @@ public class DirectoryTest : Assertion {
 	}
 	
 	[Test]
+#if !NET_2_0
 	[ExpectedException(typeof(IOException))]
-	public void GetCreationTimeException3 ()
+#endif
+	public void GetCreationTimeException_NonExistingPath ()
 	{
 		string path = TempFolder + DSC + "DirectoryTest.GetCreationTime.1";
 		DeleteDirectory (path);
 		try {
-			Directory.GetCreationTime (path);
+			DateTime time = Directory.GetCreationTime (path);
+
+#if NET_2_0
+			DateTime expectedTime = (new DateTime (1601, 1, 1)).ToLocalTime ();
+			Assertion.AssertEquals ("#1", expectedTime.Year, time.Year);
+			Assertion.AssertEquals ("#2", expectedTime.Month, time.Month);
+			Assertion.AssertEquals ("#3", expectedTime.Day, time.Day);
+			Assertion.AssertEquals ("#4", expectedTime.Hour, time.Hour);
+			Assertion.AssertEquals ("#5", expectedTime.Second, time.Second);
+			Assertion.AssertEquals ("#6", expectedTime.Millisecond, time.Millisecond);
+#endif
 		} finally {
 			DeleteDirectory (path);
 		}
@@ -255,14 +267,25 @@ public class DirectoryTest : Assertion {
 	}
 	
 	[Test]
-	[ExpectedException(typeof(IOException))]
-	public void GetCreationTimeUtcException3 ()
+#if !NET_2_0
+	[ExpectedException (typeof (IOException))]
+#endif
+	public void GetCreationTimeUtc_NonExistingPath ()
 	{
 		string path = TempFolder + DSC + "DirectoryTest.GetCreationTimeUtc.1";
 		DeleteDirectory (path);
 		
 		try {
-			Directory.GetCreationTimeUtc (path);
+			DateTime time = Directory.GetCreationTimeUtc (path);
+
+#if NET_2_0
+			Assertion.AssertEquals ("#1", 1601, time.Year);
+			Assertion.AssertEquals ("#2", 1, time.Month);
+			Assertion.AssertEquals ("#3", 1, time.Day);
+			Assertion.AssertEquals ("#4", 0, time.Hour);
+			Assertion.AssertEquals ("#5", 0, time.Second);
+			Assertion.AssertEquals ("#6", 0, time.Millisecond);
+#endif
 		} finally {
 			DeleteDirectory (path);
 		}
@@ -297,14 +320,26 @@ public class DirectoryTest : Assertion {
 	}
 	
 	[Test]
-	[ExpectedException(typeof(IOException))]
-	public void GetLastAccessTimeException3 ()
+#if !NET_2_0
+	[ExpectedException (typeof (IOException))]
+#endif
+	public void GetLastAccessTime_NonExistingPath ()
 	{
 		string path = TempFolder + DSC + "DirectoryTest.GetLastAccessTime.1";
 		DeleteDirectory (path);
 		
 		try {
-			Directory.GetLastAccessTime (path);
+			DateTime time = Directory.GetLastAccessTime (path);
+
+#if NET_2_0
+			DateTime expectedTime = (new DateTime (1601, 1, 1)).ToLocalTime ();
+			Assertion.AssertEquals ("#1", expectedTime.Year, time.Year);
+			Assertion.AssertEquals ("#2", expectedTime.Month, time.Month);
+			Assertion.AssertEquals ("#3", expectedTime.Day, time.Day);
+			Assertion.AssertEquals ("#4", expectedTime.Hour, time.Hour);
+			Assertion.AssertEquals ("#5", expectedTime.Second, time.Second);
+			Assertion.AssertEquals ("#6", expectedTime.Millisecond, time.Millisecond);
+#endif
 		} finally {
 			DeleteDirectory (path);
 		}
@@ -339,13 +374,24 @@ public class DirectoryTest : Assertion {
 	}
 	
 	[Test]
-	[ExpectedException(typeof(IOException))]
-	public void GetLastAccessTimeUtcException3 ()
+#if !NET_2_0
+	[ExpectedException (typeof (IOException))]
+#endif
+	public void GetLastAccessTimeUtc_NonExistingPath ()
 	{
 		string path = TempFolder + DSC + "DirectoryTest.GetLastAccessTimeUtc.1";
 		DeleteDirectory (path);
 		try {
-			Directory.GetLastAccessTimeUtc (path);
+			DateTime time = Directory.GetLastAccessTimeUtc (path);
+
+#if NET_2_0
+			Assertion.AssertEquals ("#1", 1601, time.Year);
+			Assertion.AssertEquals ("#2", 1, time.Month);
+			Assertion.AssertEquals ("#3", 1, time.Day);
+			Assertion.AssertEquals ("#4", 0, time.Hour);
+			Assertion.AssertEquals ("#5", 0, time.Second);
+			Assertion.AssertEquals ("#6", 0, time.Millisecond);
+#endif
 		} finally {
 			DeleteDirectory (path);
 		}
@@ -380,13 +426,25 @@ public class DirectoryTest : Assertion {
 	}
 	
 	[Test]
-	[ExpectedException(typeof(IOException))]
-	public void GetLastWriteTimeException3 ()
+#if !NET_2_0
+	[ExpectedException (typeof (IOException))]
+#endif
+	public void GetLastWriteTime_NonExistingPath ()
 	{
 		string path = TempFolder + DSC + "DirectoryTest.GetLastWriteTime.1";
 		DeleteDirectory (path);
 		try {
-			Directory.GetLastWriteTime (path);
+			DateTime time = Directory.GetLastWriteTime (path);
+
+#if NET_2_0
+			DateTime expectedTime = (new DateTime (1601, 1, 1)).ToLocalTime ();
+			Assertion.AssertEquals ("#1", expectedTime.Year, time.Year);
+			Assertion.AssertEquals ("#2", expectedTime.Month, time.Month);
+			Assertion.AssertEquals ("#3", expectedTime.Day, time.Day);
+			Assertion.AssertEquals ("#4", expectedTime.Hour, time.Hour);
+			Assertion.AssertEquals ("#5", expectedTime.Second, time.Second);
+			Assertion.AssertEquals ("#6", expectedTime.Millisecond, time.Millisecond);
+#endif
 		} finally {
 			DeleteDirectory (path);
 		}
@@ -417,17 +475,28 @@ public class DirectoryTest : Assertion {
 	[ExpectedException(typeof(ArgumentException))]	
 	public void GetLastWriteTimeUtcException2 ()
 	{
-		Directory.GetLastAccessTimeUtc ("");
+		Directory.GetLastWriteTimeUtc ("");
 	}
 	
 	[Test]
-	[ExpectedException(typeof(IOException))]
-	public void GetLastWriteTimeUtcException3 ()
+#if !NET_2_0
+	[ExpectedException (typeof (IOException))]
+#endif
+	public void GetLastWriteTimeUtc_NonExistingPath ()
 	{
 		string path = TempFolder + DSC + "DirectoryTest.GetLastWriteTimeUtc.1";
 		DeleteDirectory (path);
 		try {
-			Directory.GetLastAccessTimeUtc (path);
+			DateTime time = Directory.GetLastWriteTimeUtc (path);
+
+#if NET_2_0
+			Assertion.AssertEquals ("#1", 1601, time.Year);
+			Assertion.AssertEquals ("#2", 1, time.Month);
+			Assertion.AssertEquals ("#3", 1, time.Day);
+			Assertion.AssertEquals ("#4", 0, time.Hour);
+			Assertion.AssertEquals ("#5", 0, time.Second);
+			Assertion.AssertEquals ("#6", 0, time.Millisecond);
+#endif
 		} finally {
 			DeleteDirectory (path);
 		}
@@ -438,14 +507,14 @@ public class DirectoryTest : Assertion {
 	[ExpectedException(typeof(ArgumentException))]	
 	public void GetLastWriteTimeUtcException4 ()
 	{
-		Directory.GetLastAccessTimeUtc ("    ");
+		Directory.GetLastWriteTimeUtc ("    ");
 	}
 
 	[Test]
 	[ExpectedException(typeof(ArgumentException))]	
 	public void GetLastWriteTimeUtcException5 ()
 	{
-		Directory.GetLastAccessTimeUtc (Path.InvalidPathChars [0].ToString ());
+		Directory.GetLastWriteTimeUtc (Path.InvalidPathChars[0].ToString ());
 	}
 
 	[Test]

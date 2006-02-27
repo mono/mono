@@ -601,19 +601,6 @@ namespace MonoTests.System.IO
                 	}
 		}
 
-                [Test]
-                [ExpectedException(typeof(IOException))]
-                public void TestGetCreationTimeException ()
-                {
-                        // Test nonexistent files
-                        string path2 = TempFolder + Path.DirectorySeparatorChar + "filedoesnotexist";
-			DeleteFile (path2);
-                        // should throw an exception
-                        File.GetCreationTime (path2);
-                }
-                
-
-
 		// Setting the creation time on Unix is not possible
                 [Test]
                 public void CreationTime ()
@@ -768,211 +755,280 @@ namespace MonoTests.System.IO
 		}
 	
 		[Test]
+#if !NET_2_0
 		[ExpectedException(typeof(IOException))]
-		public void GetCreationTimeException3 ()
+#endif
+		public void GetCreationTime_NonExistingPath ()
 		{
-                        string path = TempFolder + Path.DirectorySeparatorChar + "GetCreationTimeException3";                	
-			DeleteFile (path);		
-			File.GetCreationTime (path);
+			string path = TempFolder + Path.DirectorySeparatorChar + "GetCreationTimeException3";
+			DeleteFile (path);
+			DateTime time = File.GetCreationTime (path);
+
+#if NET_2_0
+			DateTime expectedTime = (new DateTime (1601, 1, 1)).ToLocalTime ();
+			Assertion.AssertEquals ("#1", expectedTime.Year, time.Year);
+			Assertion.AssertEquals ("#2", expectedTime.Month, time.Month);
+			Assertion.AssertEquals ("#3", expectedTime.Day, time.Day);
+			Assertion.AssertEquals ("#4", expectedTime.Hour, time.Hour);
+			Assertion.AssertEquals ("#5", expectedTime.Second, time.Second);
+			Assertion.AssertEquals ("#6", expectedTime.Millisecond, time.Millisecond);
+#endif
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]	
+		[ExpectedException(typeof(ArgumentException))]
 		public void GetCreationTimeException4 ()
 		{
 			File.GetCreationTime ("    ");
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]	
+		[ExpectedException(typeof(ArgumentException))]
 		public void GetCreationTimeException5 ()
 		{
 			File.GetCreationTime (Path.InvalidPathChars [0].ToString ());
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]	
+		[ExpectedException(typeof(ArgumentNullException))]
 		public void GetCreationTimeUtcException1 ()
 		{
 			File.GetCreationTimeUtc (null as string);
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]	
+		[ExpectedException(typeof(ArgumentException))]
 		public void GetCreationTimeUtcException2 ()
 		{
 			File.GetCreationTimeUtc ("");
 		}
 	
 		[Test]
-		[ExpectedException(typeof(IOException))]
-		public void GetCreationTimeUtcException3 ()
+#if !NET_2_0
+		[ExpectedException (typeof (IOException))]
+#endif
+		public void GetCreationTimeUtc_NonExistingPath ()
 		{
-                        string path = TempFolder + Path.DirectorySeparatorChar + "GetCreationTimeUtcException3";                	
-			DeleteFile (path);		
-			File.GetCreationTimeUtc (path);
+			string path = TempFolder + Path.DirectorySeparatorChar + "GetCreationTimeUtcException3";
+			DeleteFile (path);
+			DateTime time = File.GetCreationTimeUtc (path);
+
+#if NET_2_0
+			Assertion.AssertEquals ("#1", 1601, time.Year);
+			Assertion.AssertEquals ("#2", 1, time.Month);
+			Assertion.AssertEquals ("#3", 1, time.Day);
+			Assertion.AssertEquals ("#4", 0, time.Hour);
+			Assertion.AssertEquals ("#5", 0, time.Second);
+			Assertion.AssertEquals ("#6", 0, time.Millisecond);
+#endif
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]	
+		[ExpectedException(typeof(ArgumentException))]
 		public void GetCreationTimeUtcException4 ()
 		{
 			File.GetCreationTimeUtc ("    ");
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]	
+		[ExpectedException(typeof(ArgumentException))]
 		public void GetCreationTimeUtcException5 ()
 		{
 			File.GetCreationTime (Path.InvalidPathChars [0].ToString ());
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]	
+		[ExpectedException(typeof(ArgumentNullException))]
 		public void GetLastAccessTimeException1 ()
 		{
 			File.GetLastAccessTime (null as string);
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]	
+		[ExpectedException(typeof(ArgumentException))]
 		public void GetLastAccessTimeException2 ()
 		{
 			File.GetLastAccessTime ("");
 		}
 	
 		[Test]
-		[ExpectedException(typeof(IOException))]
-		public void GetLastAccessTimeException3 ()
+#if !NET_2_0
+		[ExpectedException (typeof (IOException))]
+#endif
+		public void GetLastAccessTime_NonExistingPath ()
 		{
-                        string path = TempFolder + Path.DirectorySeparatorChar + "GetLastAccessTimeException3";                	
-			DeleteFile (path);		
-			File.GetLastAccessTime (path);
+			string path = TempFolder + Path.DirectorySeparatorChar + "GetLastAccessTimeException3";
+			DeleteFile (path);
+			DateTime time = File.GetLastAccessTime (path);
+
+#if NET_2_0
+			DateTime expectedTime = (new DateTime (1601, 1, 1)).ToLocalTime ();
+			Assertion.AssertEquals ("#1", expectedTime.Year, time.Year);
+			Assertion.AssertEquals ("#2", expectedTime.Month, time.Month);
+			Assertion.AssertEquals ("#3", expectedTime.Day, time.Day);
+			Assertion.AssertEquals ("#4", expectedTime.Hour, time.Hour);
+			Assertion.AssertEquals ("#5", expectedTime.Second, time.Second);
+			Assertion.AssertEquals ("#6", expectedTime.Millisecond, time.Millisecond);
+#endif
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]	
+		[ExpectedException(typeof(ArgumentException))]
 		public void GetLastAccessTimeException4 ()
 		{
 			File.GetLastAccessTime ("    ");
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]	
+		[ExpectedException(typeof(ArgumentException))]
 		public void GetLastAccessTimeException5 ()
 		{
 			File.GetLastAccessTime (Path.InvalidPathChars [0].ToString ());
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]	
+		[ExpectedException(typeof(ArgumentNullException))]
 		public void GetLastAccessTimeUtcException1 ()
 		{
 			File.GetLastAccessTimeUtc (null as string);
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]	
+		[ExpectedException(typeof(ArgumentException))]
 		public void GetLastAccessTimeUtcException2 ()
 		{
 			File.GetLastAccessTimeUtc ("");
 		}
 	
 		[Test]
-		[ExpectedException(typeof(IOException))]
-		public void GetLastAccessTimeUtcException3 ()
+#if !NET_2_0
+		[ExpectedException (typeof (IOException))]
+#endif
+		public void GetLastAccessTimeUtc_NonExistingPath ()
 		{
-                        string path = TempFolder + Path.DirectorySeparatorChar + "GetLastAccessTimeUtcException3";                	
-			DeleteFile (path);			
-			File.GetLastAccessTimeUtc (path);
+			string path = TempFolder + Path.DirectorySeparatorChar + "GetLastAccessTimeUtcException3";
+			DeleteFile (path);
+			DateTime time = File.GetLastAccessTimeUtc (path);
+
+#if NET_2_0
+			Assertion.AssertEquals ("#1", 1601, time.Year);
+			Assertion.AssertEquals ("#2", 1, time.Month);
+			Assertion.AssertEquals ("#3", 1, time.Day);
+			Assertion.AssertEquals ("#4", 0, time.Hour);
+			Assertion.AssertEquals ("#5", 0, time.Second);
+			Assertion.AssertEquals ("#6", 0, time.Millisecond);
+#endif
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]	
+		[ExpectedException(typeof(ArgumentException))]
 		public void GetLastAccessTimeUtcException4 ()
 		{
 			File.GetLastAccessTimeUtc ("    ");
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]	
+		[ExpectedException(typeof(ArgumentException))]
 		public void GetLastAccessTimeUtcException5 ()
 		{
 			File.GetLastAccessTimeUtc (Path.InvalidPathChars [0].ToString ());
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]	
+		[ExpectedException(typeof(ArgumentNullException))]
 		public void GetLastWriteTimeException1 ()
 		{
 			File.GetLastWriteTime (null as string);
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]	
+		[ExpectedException(typeof(ArgumentException))]
 		public void GetLastWriteTimeException2 ()
 		{
 			File.GetLastWriteTime ("");
 		}
 	
 		[Test]
-		[ExpectedException(typeof(IOException))]
-		public void GetLastWriteTimeException3 ()
+#if !NET_2_0
+		[ExpectedException (typeof (IOException))]
+#endif
+		public void GetLastWriteTime_NonExistingPath ()
 		{
-                        string path = TempFolder + Path.DirectorySeparatorChar + "GetLastAccessTimeUtcException3";                	
-			DeleteFile (path);			
-			File.GetLastWriteTime (path);
+			string path = TempFolder + Path.DirectorySeparatorChar + "GetLastAccessTimeUtcException3";
+			DeleteFile (path);
+			DateTime time = File.GetLastWriteTime (path);
+
+#if NET_2_0
+			DateTime expectedTime = (new DateTime (1601, 1, 1)).ToLocalTime ();
+			Assertion.AssertEquals ("#1", expectedTime.Year, time.Year);
+			Assertion.AssertEquals ("#2", expectedTime.Month, time.Month);
+			Assertion.AssertEquals ("#3", expectedTime.Day, time.Day);
+			Assertion.AssertEquals ("#4", expectedTime.Hour, time.Hour);
+			Assertion.AssertEquals ("#5", expectedTime.Second, time.Second);
+			Assertion.AssertEquals ("#6", expectedTime.Millisecond, time.Millisecond);
+#endif
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]	
+		[ExpectedException(typeof(ArgumentException))]
 		public void GetLastWriteTimeException4 ()
 		{
 			File.GetLastWriteTime ("    ");
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]	
+		[ExpectedException(typeof(ArgumentException))]
 		public void GetLastWriteTimeException5 ()
 		{
 			File.GetLastWriteTime (Path.InvalidPathChars [0].ToString ());
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]	
+		[ExpectedException(typeof(ArgumentNullException))]
 		public void GetLastWriteTimeUtcException1 ()
 		{
 			File.GetLastWriteTimeUtc (null as string);
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]	
+		[ExpectedException(typeof(ArgumentException))]
 		public void GetLastWriteTimeUtcException2 ()
 		{
-			File.GetLastAccessTimeUtc ("");
+			File.GetLastWriteTimeUtc ("");
 		}
 	
 		[Test]
-		[ExpectedException(typeof(IOException))]
-		public void GetLastWriteTimeUtcException3 ()
+#if !NET_2_0
+		[ExpectedException (typeof (IOException))]
+#endif
+		public void GetLastWriteTimeUtc_NonExistingPath ()
 		{
-                        string path = TempFolder + Path.DirectorySeparatorChar + "GetLastWriteTimeUtcException3";
+			string path = TempFolder + Path.DirectorySeparatorChar + "GetLastWriteTimeUtcException3";
 			DeleteFile (path);
-			File.GetLastAccessTimeUtc (path);
+			DateTime time = File.GetLastWriteTimeUtc (path);
+
+#if NET_2_0
+			Assertion.AssertEquals ("#1", 1601, time.Year);
+			Assertion.AssertEquals ("#2", 1, time.Month);
+			Assertion.AssertEquals ("#3", 1, time.Day);
+			Assertion.AssertEquals ("#4", 0, time.Hour);
+			Assertion.AssertEquals ("#5", 0, time.Second);
+			Assertion.AssertEquals ("#6", 0, time.Millisecond);
+#endif
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]	
+		[ExpectedException(typeof(ArgumentException))]
 		public void GetLastWriteTimeUtcException4 ()
 		{
-			File.GetLastAccessTimeUtc ("    ");
+			File.GetLastWriteTimeUtc ("    ");
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]	
+		[ExpectedException(typeof(ArgumentException))]
 		public void GetLastWriteTimeUtcException5 ()
 		{
-			File.GetLastAccessTimeUtc (Path.InvalidPathChars [0].ToString ());
+			File.GetLastWriteTimeUtc (Path.InvalidPathChars [0].ToString ());
 		}		
 
 		[Test]

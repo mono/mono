@@ -216,9 +216,17 @@ namespace System.IO
 			MonoIOStat stat;
 			MonoIOError error;
 			CheckPathExceptions (path);
-			
-			if (!MonoIO.GetFileStat (path, out stat, out error))
+
+			if (!MonoIO.GetFileStat (path, out stat, out error)) {
+#if NET_2_0
+				if (error == MonoIOError.ERROR_PATH_NOT_FOUND || error == MonoIOError.ERROR_FILE_NOT_FOUND)
+					return _defaultLocalFileTime;
+				else
+					throw new IOException (path);
+#else
 				throw new IOException (path);
+#endif
+			}
 			return DateTime.FromFileTime (stat.CreationTime);
 		}
 
@@ -233,8 +241,16 @@ namespace System.IO
 			MonoIOError error;
 			CheckPathExceptions (path);
 
-			if (!MonoIO.GetFileStat (path, out stat, out error))
+			if (!MonoIO.GetFileStat (path, out stat, out error)) {
+#if NET_2_0
+				if (error == MonoIOError.ERROR_PATH_NOT_FOUND || error == MonoIOError.ERROR_FILE_NOT_FOUND)
+					return _defaultLocalFileTime;
+				else
+					throw new IOException (path);
+#else
 				throw new IOException (path);
+#endif
+			}
 			return DateTime.FromFileTime (stat.LastAccessTime);
 		}
 
@@ -249,8 +265,16 @@ namespace System.IO
 			MonoIOError error;
 			CheckPathExceptions (path);
 
-			if (!MonoIO.GetFileStat (path, out stat, out error))
+			if (!MonoIO.GetFileStat (path, out stat, out error)) {
+#if NET_2_0
+				if (error == MonoIOError.ERROR_PATH_NOT_FOUND || error == MonoIOError.ERROR_FILE_NOT_FOUND)
+					return _defaultLocalFileTime;
+				else
+					throw new IOException (path);
+#else
 				throw new IOException (path);
+#endif
+			}
 			return DateTime.FromFileTime (stat.LastWriteTime);
 		}
 
@@ -411,6 +435,11 @@ namespace System.IO
 		#endregion
 
 #if NET_2_0
+		static File() {
+			_defaultLocalFileTime = new DateTime (1601, 1, 1);
+			_defaultLocalFileTime = _defaultLocalFileTime.ToLocalTime ();
+		}
+
 		//
 		// The documentation for this method is most likely wrong, it
 		// talks about doing a "binary read", but the remarks say
@@ -461,6 +490,8 @@ namespace System.IO
 				sw.Write (contents);
 			}
 		}
+
+		private static readonly DateTime _defaultLocalFileTime;
 #endif
 	}
 }
