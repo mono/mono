@@ -1,3 +1,7 @@
+2006-02-26  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* corlib.dll.sources: Removed DecimalFormatter.cs.
+
 2006-02-14  Ankit Jain  <jankit@novell.com>
 
 	* corlib_test.dll.sources: Add ArraySegmentTest.cs

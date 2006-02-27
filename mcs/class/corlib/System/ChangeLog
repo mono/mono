@@ -1,3 +1,10 @@
+2006-02-26  Gert Driesen  <drieseng@users.souceforge.net>
+
+	* DecimalFormatter.cs: Removed obsolete class, as it has been replaced
+	by NumberFormatter.
+	* DoubleFormatter.cs: Same.
+	* SingleFormatter.cs: Same.
+
 2006-02-21  Marek Safar  <marek.safar@seznam.cz>
 
 	* String.cs (Equals): Optimized for speed.
