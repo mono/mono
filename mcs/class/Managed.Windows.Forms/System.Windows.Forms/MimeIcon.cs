@@ -768,12 +768,18 @@ namespace System.Windows.Forms
 			
 			if (!GetMainIconThemePath ())
 				return MimeExtensionHandlerStatus.NO_ICONS;
+
+			try {
+				GetIconThemeInherits ();
 			
-			GetIconThemeInherits ();
+				CreateUIIcons ();
 			
-			CreateUIIcons ();
-			
-			CreateMimeTypeIcons( );
+				CreateMimeTypeIcons( );
+			} catch (Exception e) {
+				Console.Error.WriteLine ("Unable to start GNOME mime engine:");
+				Console.Error.WriteLine (e);
+				return MimeExtensionHandlerStatus.NO_GNOMECONFIG;
+			}
 			
 			inherits_path_collection = null;
 			icon_paths = null;
