@@ -1,0 +1,22 @@
+2005-12-05 Jordi Mas i Hernandez <jordimash@gmail.com>
+
+	* TestToolboxItem.cs: New unit test
+
+2005-09-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CategoryNameCollectionCas.cs: New. CAS unit tests to check for 
+	LinkDemand for SkipVerification.
+	* PaintValueEventArgsCas.cs: New. CAS unit tests to check for 
+	LinkDemand for SkipVerification.
+	* PropertyValueUIItemCas.cs: New. CAS unit tests to check for 
+	LinkDemand for SkipVerification.
+	* ToolboxComponentsCreatedEventArgsCas.cs: New. CAS unit tests to 
+	check for LinkDemand for SkipVerification.
+	* ToolboxComponentsCreatingEventArgsCas.cs: New. CAS unit tests to 
+	check for LinkDemand for SkipVerification.
+	* ToolboxItemCas.cs: New. CAS unit tests to check for LinkDemand for
+	SkipVerification.
+	* ToolboxItemCollectionCas.cs: New. CAS unit tests to check for 
+	LinkDemand for SkipVerification.
+	* UITypeEditorCas.cs: New. CAS unit tests to check for LinkDemand for
+	SkipVerification.
