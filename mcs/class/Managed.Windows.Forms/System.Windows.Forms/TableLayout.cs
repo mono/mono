@@ -23,6 +23,7 @@
 //
 // (C) 2004 Novell, Inc.
 //
+#if NET_2_0
 using System;
 using System.ComponentModel;
 using System.Windows.Forms.Layout;
@@ -41,3 +42,4 @@ namespace System.Windows.Forms {
 		}
 	}
 }
+#endif

@@ -23,6 +23,7 @@
 //
 // (C) 2004 Novell, Inc.
 //
+#if NET_2_0
 using System;
 using System.ComponentModel;
 using System.Collections;
@@ -204,3 +205,4 @@ namespace System.Windows.Forms {
 	}
 
 }
+#endif
