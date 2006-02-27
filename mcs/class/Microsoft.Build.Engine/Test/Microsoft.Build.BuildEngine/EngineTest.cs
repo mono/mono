@@ -34,7 +34,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		[Test]
 		public void AssignmentTest ()
 		{
-			IEngine engine;
+			Engine engine;
 			string binPath = "binPath";
 			
 			engine = new Engine (binPath);

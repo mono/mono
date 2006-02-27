@@ -36,8 +36,8 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		[Test]
 		public void AssignmentTest ()
 		{
-			IEngine engine;
-			IProject project;
+			Engine engine;
+			Project project;
 			string binPath = "binPath";
 			XmlDocument xd;
 			string documentString =
