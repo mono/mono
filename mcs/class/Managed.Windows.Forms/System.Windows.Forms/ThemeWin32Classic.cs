@@ -1428,7 +1428,7 @@ namespace System.Windows.Forms
 			if (!details || control.Columns.Count > 0) {
 				int first = control.FirstVisibleIndex;	
 				
-				for (int i = first; i <= control.LastItemIndex; i ++) {					
+				for (int i = first; i <= control.LastVisibleIndex; i ++) {					
 					if (clip.IntersectsWith (control.Items[i].GetBounds (ItemBoundsPortion.Entire)))
 						DrawListViewItem (dc, control, control.Items[i]);
 				}				
@@ -1486,35 +1486,20 @@ namespace System.Windows.Forms
 				dc.FillRectangle (ResPool.GetSolidBrush (control.BackColor),
 						  0, 0, control.TotalWidth, control.Font.Height + 5);
 				if (control.Columns.Count > 0) {
-					if (control.HeaderStyle == ColumnHeaderStyle.Clickable) {
-						foreach (ColumnHeader col in control.Columns) {
-							Rectangle rect = col.Rect;
-							rect.X -= control.h_marker;
-							this.CPDrawButton (dc, rect,
-									   (col.Pressed ?
-									    ButtonState.Pushed :
-									    ButtonState.Normal));
-							dc.DrawString (col.Text, DefaultFont,
-								       ResPool.GetSolidBrush
-								       (this.ColorControlText),
-									rect.X + 3,
-									rect.Y + rect.Height/2 + 1,
-									col.Format);
-						}
-					}
-					// Non-clickable columns
-					else {
-						foreach (ColumnHeader col in control.Columns) {
-							Rectangle rect = col.Rect;
-							rect.X -= control.h_marker;
-							this.CPDrawButton (dc, rect, ButtonState.Flat);
-							dc.DrawString (col.Text, DefaultFont,
-								       ResPool.GetSolidBrush
-								       (this.ColorControlText),
-									rect.X + 3,
-									rect.Y + rect.Height/2 + 1,
-									col.Format);
-						}
+					foreach (ColumnHeader col in control.Columns) {
+						Rectangle rect = col.Rect;
+						rect.X -= control.h_marker;
+						ButtonState state;
+						if (control.HeaderStyle == ColumnHeaderStyle.Clickable)
+							state = col.Pressed ? ButtonState.Pushed : ButtonState.Normal;
+						else
+							state = ButtonState.Flat;
+						this.CPDrawButton (dc, rect, state);
+						rect.X += 3;
+						rect.Width -= 8;
+						dc.DrawString (col.Text, DefaultFont,
+							       ResPool.GetSolidBrush (ColorControlText),
+							       rect, col.Format);
 					}
 				}
 			}
@@ -1593,7 +1578,10 @@ namespace System.Windows.Forms
 			// draw the item text			
 			// format for the item text
 			StringFormat format = new StringFormat ();
-			format.LineAlignment = StringAlignment.Center;
+			if (control.View == View.SmallIcon)
+				format.LineAlignment = StringAlignment.Near;
+			else
+				format.LineAlignment = StringAlignment.Center;
 			if (control.View == View.LargeIcon)
 				format.Alignment = StringAlignment.Center;
 			else
@@ -1606,7 +1594,7 @@ namespace System.Windows.Forms
 				if (control.View == View.Details) {
 					if (control.FullRowSelect) {
 						// fill the entire rect excluding the checkbox						
-						full_rect.Location = item.LabelRect.Location;
+						full_rect.Location = item.GetBounds (ItemBoundsPortion.Label).Location;
 						dc.FillRectangle (this.ResPool.GetSolidBrush
 								  (this.ColorHighlight), full_rect);
 					}
@@ -1653,14 +1641,14 @@ namespace System.Windows.Forms
 
 					// set the format for subitems
 					format.FormatFlags = StringFormatFlags.NoWrap;
-					format.Alignment = StringAlignment.Near;
 
 					// 0th subitem is the item already drawn
 					for (int index = 1; index < count; index++) {
 						subItem = subItems [index];
 						col = control.Columns [index];
-						sub_item_rect.X = col.Rect.Left;
-						sub_item_rect.Width = col.Wd;
+						format.Alignment = col.Format.Alignment;
+						sub_item_rect.X = col.Rect.Left + 3;
+						sub_item_rect.Width = col.Wd - 6;
 						sub_item_rect.X -= control.h_marker;
 
 						SolidBrush sub_item_back_br = null;

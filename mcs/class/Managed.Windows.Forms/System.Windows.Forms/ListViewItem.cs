@@ -53,15 +53,13 @@ namespace System.Windows.Forms
 		private object tag;
 		private bool use_item_style = true;
 
-		// internal variables
-		internal Rectangle checkbox_rect;	// calculated by CalcListViewItem method
-		internal Rectangle entire_rect;
-		internal Rectangle icon_rect;
-		internal Rectangle item_rect;
-		internal Rectangle label_rect;
-		internal Point location = Point.Empty;	// set by the ListView control
-		internal ListView owner;
-		internal bool selected;
+		Rectangle bounds;
+		Rectangle checkbox_rect;	// calculated by CalcListViewItem method
+		Rectangle icon_rect;
+		Rectangle item_rect;
+		Rectangle label_rect;
+		ListView owner;
+		bool selected;
 
 		#endregion Instance Variables
 
@@ -144,8 +142,9 @@ namespace System.Windows.Forms
 				if (is_checked == value)
 					return;
 				
+				is_checked = value;
+
 				if (owner != null) {
-					is_checked = value;
 					if (is_checked) {
 						if (owner.CheckedItems.Contains (this) == false) {
 							owner.CheckedItems.list.Add (this);
@@ -157,8 +156,9 @@ namespace System.Windows.Forms
 						owner.CheckedIndices.list.Remove (this.Index);
 					}
 					
-					owner.Invalidate (Bounds);
+					Layout ();
 				}			
+				Invalidate ();
 			}
 		}
 
@@ -173,7 +173,8 @@ namespace System.Windows.Forms
 				is_focused = value; 
 
 				if (owner != null)
-					owner.Invalidate (Bounds);
+					Layout ();
+				Invalidate ();
 			}
 		}
 
@@ -196,7 +197,8 @@ namespace System.Windows.Forms
 				sub_items[0].Font = value; 
 
 				if (owner != null)
-					owner.Invalidate (Bounds);
+					Layout ();
+				Invalidate ();
 			}
 		}
 
@@ -229,7 +231,8 @@ namespace System.Windows.Forms
 				image_index = value;
 
 				if (owner != null)
-					owner.Invalidate (Bounds);	
+					Layout ();
+				Invalidate ();
 			}
 		}
 
@@ -265,27 +268,14 @@ namespace System.Windows.Forms
 		public bool Selected {
 			get { return selected; }
 			set {
-				if (owner != null) {
-					if (owner.CanMultiselect == false &&
-					    owner.SelectedItems.Count > 0) {
-						owner.SelectedItems.Clear ();
-						owner.SelectedIndices.list.Clear ();
-					}
+				if (selected == value)
+					return;
 
-					selected = value;
-					if (selected) {
-						if (owner.SelectedItems.Contains (this) == false) {
-							owner.SelectedItems.list.Add (this);
-							owner.SelectedIndices.list.Add (this.Index);
-						}
-					}
-					else {
-						owner.SelectedItems.list.Remove (this);
-						owner.SelectedIndices.list.Remove (this.Index);
-					}	
-					
-					owner.Invalidate (Bounds);
-				}
+				selected = value;
+
+				if (owner != null)
+					Layout ();
+				Invalidate ();
 			}
 		}
 
@@ -327,7 +317,16 @@ namespace System.Windows.Forms
 				else
 					return "";
 			}
-			set { this.sub_items [0].Text = value; }
+			set { 
+				if (sub_items [0].Text == value)
+					return;
+
+				sub_items [0].Text = value; 
+
+				if (owner != null)
+					Layout ();
+				Invalidate ();
+			}
 		}
 
 		[DefaultValue (true)]
@@ -380,42 +379,34 @@ namespace System.Windows.Forms
 			if (owner == null)
 				return Rectangle.Empty;
 				
-			/*  Original Ravi's design calculated all items in a virtual space
-			    We convert them real screen positions
-			*/
+			Rectangle rect;
+
 			switch (portion) {
+			case ItemBoundsPortion.Icon:
+				rect = icon_rect;
+				break;
 
-			case ItemBoundsPortion.Icon: {
-				Rectangle rect = icon_rect;
-				rect.X -= owner.h_marker;
-				rect.Y -= owner.v_marker;
-				return rect;
-			}
+			case ItemBoundsPortion.Label:
+				rect = label_rect;
+				break;
 
-			case ItemBoundsPortion.Label: {
-				Rectangle rect = label_rect;
-				rect.X -= owner.h_marker;
-				rect.Y -= owner.v_marker;
-				return rect;
-			}
+			case ItemBoundsPortion.ItemOnly:
+				rect = item_rect;
+				break;
 
-			case ItemBoundsPortion.ItemOnly: {
-				Rectangle rect = item_rect;
-				rect.X -= owner.h_marker;
-				rect.Y -= owner.v_marker;
-				return rect;
-			}
-
-			case ItemBoundsPortion.Entire: {
-				Rectangle rect = entire_rect;
+			case ItemBoundsPortion.Entire:
+				rect = bounds;
 				rect.X -= owner.h_marker;
 				rect.Y -= owner.v_marker;
 				return rect;				
-			}
 
 			default:
 				throw new ArgumentException ("Invalid value for portion.");
 			}
+
+			rect.X += bounds.X - owner.h_marker;
+			rect.Y += bounds.Y - owner.v_marker;
+			return rect;
 		}
 
 		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context)
@@ -452,42 +443,71 @@ namespace System.Windows.Forms
 		internal Rectangle CheckRectReal {
 			get {
 				Rectangle rect = checkbox_rect;
-				rect.X -= owner.h_marker;
-				rect.Y -= owner.v_marker;
+				rect.X += bounds.X - owner.h_marker;
+				rect.Y += bounds.Y - owner.v_marker;
 				return rect;
 			}
 		}
 		
-		internal Rectangle CheckRect {
+		Rectangle CheckRect {
 			get { return this.checkbox_rect; }
 		}
 
-		internal Rectangle EntireRect {
-			get { return this.entire_rect; }
-		}
-
-		internal Rectangle IconRect {
+		Rectangle IconRect {
 			get { return this.icon_rect; }
 		}
 
-		internal Rectangle LabelRect {
+		Rectangle LabelRect {
 			get { return this.label_rect; }
 		}
 
-		internal void CalcListViewItem ()
+		internal Point Location {
+			set {
+				if (bounds.X == value.X && bounds.Y == value.Y)
+					return;
+
+				Rectangle prev = Bounds;
+				bounds.X = value.X;
+				bounds.Y = value.Y;
+				if (owner != null) {
+					if (prev != Rectangle.Empty)
+						owner.Invalidate (prev);
+					owner.Invalidate (Bounds);
+				}
+			}
+		}
+
+		internal ListView Owner {
+			set {
+				if (owner == value)
+					return;
+
+				owner = value;
+				if (owner != null)
+					Layout ();
+				Invalidate ();
+			}
+		}
+
+		private void Invalidate ()
+		{
+			if (owner == null)
+				return;
+
+			owner.Invalidate (Bounds);
+		}
+
+		internal void Layout ()
 		{
 			int item_ht;
+			Rectangle total;
 			Size text_size = owner.text_size;
 			
+			checkbox_rect = Rectangle.Empty;
 			if (owner.CheckBoxes)
 				checkbox_rect.Size = owner.CheckBoxSize;
-			else
-				checkbox_rect = Rectangle.Empty;
-
-			checkbox_rect.Location = this.location;
 
 			switch (owner.View) {
-
 			case View.Details:
 				// LAMESPEC: MSDN says, "In all views except the details
 				// view of the ListView, this value specifies the same
@@ -495,104 +515,85 @@ namespace System.Windows.Forms
 				// returns same bounding rectangles for Item and Entire
 				// values in the case of Details view.
 
-				icon_rect.X = checkbox_rect.X + checkbox_rect.Width + 2;
-				icon_rect.Y = checkbox_rect.Y;
-
-				item_ht = Math.Max (owner.CheckBoxSize.Height + 1,
-						    text_size.Height);
+				icon_rect = label_rect = Rectangle.Empty;
+				icon_rect.X = checkbox_rect.Width + 2;
+				item_ht = Math.Max (owner.CheckBoxSize.Height, text_size.Height);
 
 				if (owner.SmallImageList != null) {
-					item_ht = Math.Max (item_ht,
-							    owner.SmallImageList.ImageSize.Height + 1);
+					item_ht = Math.Max (item_ht, owner.SmallImageList.ImageSize.Height);
 					icon_rect.Width = owner.SmallImageList.ImageSize.Width;
 				}
-				else
-					icon_rect.Width = 0;
 
-				label_rect.Height = checkbox_rect.Height = icon_rect.Height = item_ht;
+				label_rect.Height = icon_rect.Height = item_ht;
+				checkbox_rect.Y = icon_rect.Height - checkbox_rect.Height - 1;
 
-				label_rect.X = icon_rect.X + icon_rect.Width;
-				label_rect.Y = icon_rect.Y;
+				label_rect.X = icon_rect.Right + 1;
 
 				if (owner.Columns.Count > 0)
 					label_rect.Width = Math.Max (text_size.Width, owner.Columns[0].Wd);
 				else
 					label_rect.Width = text_size.Width;
 
-				item_rect = entire_rect = Rectangle.Union
+				item_rect = total = Rectangle.Union
 					(Rectangle.Union (checkbox_rect, icon_rect), label_rect);
+				bounds.Size = total.Size;
 
 				// Take into account the rest of columns. First column
 				// is already taken into account above.
 				for (int i = 1; i < owner.Columns.Count; i++) {
 					item_rect.Width += owner.Columns [i].Wd;
-					entire_rect.Width += owner.Columns [i].Wd;
+					bounds.Width += owner.Columns [i].Wd;
 				}
 				break;
 
 			case View.LargeIcon:
+				label_rect = icon_rect = Rectangle.Empty;
+
 				if (owner.LargeImageList != null) {
-					icon_rect.Width = owner.LargeImageList.ImageSize.Width + 16;
-					icon_rect.Height = owner.LargeImageList.ImageSize.Height + 4;
+					icon_rect.Width = owner.LargeImageList.ImageSize.Width;
+					icon_rect.Height = owner.LargeImageList.ImageSize.Height;
 				}
-				else {
-					icon_rect.Width = 16;
-					icon_rect.Height = 4;
-				}
+
+				checkbox_rect.Y = icon_rect.Height - checkbox_rect.Height - 1;
 
 				if (text_size.Width <= (checkbox_rect.Width + icon_rect.Width)) {
-			 		icon_rect.X = checkbox_rect.X + checkbox_rect.Width;
-					icon_rect.Y = checkbox_rect.Y;
-
-					label_rect.X = icon_rect.X + (icon_rect.Width 
-								      - text_size.Width) / 2;
-					label_rect.Y = Math.Max (checkbox_rect.Bottom,
-								 icon_rect.Bottom) + 2;
+			 		icon_rect.X = checkbox_rect.Width + 1;
+					label_rect.X = icon_rect.X + (icon_rect.Width - text_size.Width) / 2;
+					label_rect.Y = Math.Max (checkbox_rect.Bottom, icon_rect.Bottom) + 2;
 					label_rect.Size = text_size;
-				}
-				else {
-					label_rect.X = this.location.X;
-
-					int centerX = label_rect.X + text_size.Width / 2;
+				} else {
+					int centerX = text_size.Width / 2;
 					icon_rect.X = centerX - icon_rect.Width / 2;
 					checkbox_rect.X = (icon_rect.X - checkbox_rect.Width);
-
-					icon_rect.Y = checkbox_rect.Y;
-
-					label_rect.Y = Math.Max (checkbox_rect.Bottom,
-								 icon_rect.Bottom) + 2;
+					label_rect.Y = Math.Max (checkbox_rect.Bottom, icon_rect.Bottom) + 2;
 					label_rect.Size = text_size;
 				}
 
 				item_rect = Rectangle.Union (icon_rect, label_rect);
-				entire_rect = Rectangle.Union (item_rect, checkbox_rect);
+				total = Rectangle.Union (item_rect, checkbox_rect);
+				bounds.Size = total.Size;
 				break;
 
 			case View.List:
-					goto case View.SmallIcon;
-
 			case View.SmallIcon:
-				icon_rect.X = checkbox_rect.X + checkbox_rect.Width;
-				icon_rect.Y = checkbox_rect.Y;
-
+				label_rect = icon_rect = Rectangle.Empty;
+				icon_rect.X = checkbox_rect.Width + 1;
 				item_ht = Math.Max (owner.CheckBoxSize.Height, text_size.Height);
 
 				if (owner.SmallImageList != null) {
-					item_ht = Math.Max (item_ht,
-							    owner.SmallImageList.ImageSize.Height + 1);
+					item_ht = Math.Max (item_ht, owner.SmallImageList.ImageSize.Height);
 					icon_rect.Width = owner.SmallImageList.ImageSize.Width;
+					icon_rect.Height = owner.SmallImageList.ImageSize.Height;
 				}
-				else
-					icon_rect.Width = 0;
 
-				label_rect.Height = checkbox_rect.Height = icon_rect.Height = item_ht;
-
-				label_rect.X = icon_rect.X + icon_rect.Width;
-				label_rect.Y = icon_rect.Y;
+				checkbox_rect.Y = icon_rect.Height - checkbox_rect.Height + 1;
+				label_rect.X = icon_rect.Right + 1;
 				label_rect.Width = text_size.Width;
+				label_rect.Height = icon_rect.Height = item_ht;
 
 				item_rect = Rectangle.Union (icon_rect, label_rect);
-				entire_rect = Rectangle.Union (item_rect, checkbox_rect);
+				total = Rectangle.Union (item_rect, checkbox_rect);
+				bounds.Size = total.Size;
 				break;
 			}
 			

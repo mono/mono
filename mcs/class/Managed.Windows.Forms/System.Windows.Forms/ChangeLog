@@ -1,3 +1,29 @@
+2006-02-27  Mike Kestner  <mkestner@novell.com>
+
+	* ListView.cs:
+	  - Restructure layout and invalidation model to remove a ton of
+	  flicker from the control and speed up performance in general.
+	  - Add manual column resize, flickers like crazy, but I already have
+	  some ideas on how I'll fix that. (#76822)
+	  - Merge the three Icon-based views into a single layout method.
+	  - Move item selection interaction logic from the item since 
+	  interaction with the collections is more appropriate to the view.
+	  - Deselection on non-item clicks.
+	* ListViewItem.cs:
+	  - Encapsulate most of the layout. Add some internal props to trigger
+	  layout.  Move to a model where Items invalidate themselves instead
+	  of just invalidating the whole control every time something changes.
+	  - Invalidate on Text/Caption changes.
+	  - switch to an offset based layout model to avoid having to absolute
+	  position every element on item moves.
+	  - correct checkbox layout to conform to MS layout.
+	* ThemeWin32Classic.cs:
+	  - refactor some column header drawing code.
+	  - fix string justification for column headers (#76821)
+	  - make SmallIcon labels top justified for compat with MS impl.
+	* ThemeClearlooks.cs:
+	  - adjust to new ListViewItem internal checkbox bounds api.
+
 2006-02-27  Jackson Harper  <jackson@ximian.com>
 
 	* Control.cs:  Change where implicit controls fall in the zorder.

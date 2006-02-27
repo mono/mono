@@ -2486,7 +2486,7 @@ namespace System.Windows.Forms {
 				if ( control.View == View.Details ) {
 					if ( control.FullRowSelect ) {
 						// fill the entire rect excluding the checkbox						
-						full_rect.Location = item.LabelRect.Location;
+						full_rect.Location = item.GetBounds (ItemBoundsPortion.Label).Location;
 						dc.FillRectangle( this.ResPool.GetSolidBrush
 								 ( this.ColorHighlight ), full_rect );
 					} else {
