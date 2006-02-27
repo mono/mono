@@ -29,6 +29,7 @@
 
 #if NET_2_0
 using System;
+using System.ComponentModel;
 
 namespace System.Web.UI
 {
@@ -69,49 +70,57 @@ namespace System.Web.UI
 			this.validationGroup = validatingGroup;
 		}
 
+		[DefaultValue ("")]
 		public string ActionUrl {
 			get { return actionUrl;	}
 			set { actionUrl = value; }
 		}
 
+		[DefaultValue ("")]
 		public string Argument {
 			get { return  argument;	}
 			set { argument = value; }
 		}
 
 		[MonoTODO ("Implement support for this in Page")]
+		[DefaultValue (false)]
 		public bool AutoPostBack {
 			get { return autoPostBack; }
 			set { autoPostBack = value; }
 		}
 
+		[DefaultValue (true)]
 		public bool ClientSubmit {
 			get { return clientSubmit; }
 			set { clientSubmit = value; }
 		}
 		
+		[DefaultValue (false)]
 		public bool PerformValidation {
 			get { return performValidation;	}
 			set { performValidation = value; }
 		}
 
+		[DefaultValue (true)]
 		public bool RequiresJavaScriptProtocol {
 			get { return requiresJavaScriptProtocol; }
 			set { requiresJavaScriptProtocol = value; }
 		}
 
+		[DefaultValue (null)]
 		public Control TargetControl {
 			get { return control; }
-			set { control = value; }
 		}
 
 		[MonoTODO ("Implement support for this in Page")]
+		[DefaultValue (false)]
 		public bool TrackFocus {
 			get { return trackFocus; }
 			set { trackFocus = value; }
 		}
 
 		[MonoTODO ("Implement support for this in Page")]
+		[DefaultValue ("")]
 		public string ValidationGroup {
 			get { return validationGroup; }
 			set { validationGroup = value; }

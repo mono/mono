@@ -34,6 +34,8 @@ namespace System.Web.UI
 		bool useSetAttribute;
 		object val;
 
+		internal SimplePropertyEntry () { }
+
 		public bool UseSetAttribute {
 			get { return useSetAttribute; }
 			set { useSetAttribute = value; }

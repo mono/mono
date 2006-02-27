@@ -1,10 +1,10 @@
 //
-// System.Web.UI.TwoWayBoundPropertyEntry
+// System.Web.UI.ControlSkinDelegate.cs
 //
-// Authors:
-//	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+// Author:
+//   Sanjay Gupta <gsanjay@novell.com>
 //
-// Copyright (c) 2005 Novell, Inc (http://www.novell.com)
+// (C) 2004 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -27,35 +27,17 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
+
 #if NET_2_0
+using System;
+using System.ComponentModel;
+
 namespace System.Web.UI
 {
-	public class TwoWayBoundPropertyEntry : BoundPropertyEntry {
-		string controlID;
-		Type controlType;
-		string fieldName;
-		string formatString;
-
-		public string ControlID {
-			get { return controlID; }
-			set { controlID = value; }
-		}
-
-		public Type ControlType {
-			get { return controlType; }
-			set { controlType = value; }
-		}
-
-		public string FieldName {
-			get { return fieldName; }
-			set { fieldName = value; }
-		}
-
-		public string FormatString {
-			get { return formatString; }
-			set { formatString = value; }
-		}
-	}
+	[EditorBrowsable (EditorBrowsableState.Advanced)]
+        public delegate Control ControlSkinDelegate (Control control);
 }
-#endif // NET_2_0
+
+#endif
 

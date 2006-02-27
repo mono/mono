@@ -1,12 +1,10 @@
 //
-// System.Web.UI.ControlSkinProc.cs
+// System.Web.UI.ControlSkin.cs
 //
-// Author:
-//   Sanjay Gupta <gsanjay@novell.com>
+// Authors:
+//   Chris Toshok (toshok@ximian.com)
 //
-// (C) 2004 Novell, Inc (http://www.novell.com)
-//
-
+// (C) 2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,15 +26,34 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-
 #if NET_2_0
-using System;
-using System.Web;
 
-namespace System.Web.UI
-{
-        public delegate Control ControlSkinProc (Control control);
+using System.ComponentModel;
+
+namespace System.Web.UI {
+
+	[EditorBrowsable (EditorBrowsableState.Advanced)]
+	public class ControlSkin
+	{
+		Type controlType;
+		ControlSkinDelegate themeDelegate;
+
+		public ControlSkin (Type controlType, ControlSkinDelegate themeDelegate)
+		{
+			this.controlType = controlType;
+			this.themeDelegate = themeDelegate;
+		}
+
+		public void ApplySkin (Control control)
+		{
+			themeDelegate (control);
+		}
+
+		public Type ControlType {
+			get { return controlType; }
+		}
+	}
+
 }
 
 #endif
-

@@ -61,8 +61,8 @@ namespace System.Web.UI {
             		get { return list [propertyName] as ExpressionBinding; }
         	}
 
-		public string [] RemovedBindings {
-			get { return (string []) removed.ToArray (typeof (string)); }
+		public ICollection RemovedBindings {
+			get { return removed; }
 		}
 
 		public object SyncRoot {
@@ -133,7 +133,7 @@ namespace System.Web.UI {
 
         	public event EventHandler Changed;
 
-        	protected void OnChanged (EventArgs e)   
+        	void OnChanged (EventArgs e)   
         	{
             		if (Changed != null)
                 		Changed (this, e);

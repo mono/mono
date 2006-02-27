@@ -40,7 +40,7 @@ namespace System.Web.UI
 {
 	[NonVisualControlAttribute]
 	[DesignerAttribute ("System.Web.UI.Design.HierarchicalDataSourceDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
-//	[ControlBuilderAttribute (typeof(DataSourceControlBuilder))]
+	[ControlBuilderAttribute (typeof(DataSourceControlBuilder))]
 	[BindableAttribute (false)]
 	public abstract class HierarchicalDataSourceControl : Control, IHierarchicalDataSource
 	{
@@ -50,26 +50,32 @@ namespace System.Web.UI
 		{
 		}
 		
-		protected virtual HierarchicalDataSourceView GetHierarchicalView (string viewPath)
-		{
-			return null;
-		}
+		protected abstract HierarchicalDataSourceView GetHierarchicalView (string viewPath);
 		
 		HierarchicalDataSourceView IHierarchicalDataSource.GetHierarchicalView (string viewPath)
 		{
-			return this.GetHierarchicalView (viewPath);
+			return GetHierarchicalView (viewPath);
 		}
-		
+
+		[Browsable (false)]
+		[DefaultValue (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override bool EnableTheming {
 			get { return false; }
 			set { throw new NotSupportedException (); }
 		}
 		
+		[Browsable (false)]
+		[DefaultValue ("")]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override string SkinID {
 			get { return string.Empty; }
 			set { throw new NotSupportedException (); }
 		}
 		
+		[Browsable (false)]
+		[DefaultValue (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override bool Visible { 
 			get { return false; }
 			set { throw new NotSupportedException (); }
@@ -80,17 +86,20 @@ namespace System.Web.UI
 			return new EmptyControlCollection (this);
 		}
 		
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override Control FindControl (string id)
 		{
 			if (id == ID) return this;
 			else return null;
 		}
 		
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override bool HasControls ()
 		{
 			return false;
 		}
 		
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override void Focus ()
 		{
 			throw new NotSupportedException ();
@@ -108,6 +117,7 @@ namespace System.Web.UI
 				eh (this, e);
 		}
 		
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override void RenderControl (HtmlTextWriter writer)
 		{
 			// nop

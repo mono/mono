@@ -456,7 +456,8 @@ System.Web.UI/ControlBuilder.cs
 System.Web.UI/ControlCachePolicy.cs
 System.Web.UI/ControlCollection.cs
 System.Web.UI/Control.cs
-System.Web.UI/ControlSkinProc.cs
+System.Web.UI/ControlSkin.cs
+System.Web.UI/ControlSkinDelegate.cs
 System.Web.UI/ControlValuePropertyAttribute.cs
 System.Web.UI/CssStyleCollection.cs
 System.Web.UI/DataBinder.cs
@@ -579,6 +580,7 @@ System.Web.UI/Page.cs
 System.Web.UI/PageHandlerFactory.cs
 System.Web.UI/PageParser.cs
 System.Web.UI/PageStatePersister.cs
+System.Web.UI/PageTheme.cs
 System.Web.UI/Pair.cs
 System.Web.UI/ParseChildrenAttribute.cs
 System.Web.UI/PartialCachingAttribute.cs
@@ -594,6 +596,7 @@ System.Web.UI/RootBuilder.cs
 System.Web.UI/SimpleHandlerFactory.cs
 System.Web.UI/SimplePropertyEntry.cs
 System.Web.UI/SimpleWebHandlerParser.cs
+System.Web.UI/SkinBuilder.cs
 System.Web.UI/StateBag.cs
 System.Web.UI/StateItem.cs
 System.Web.UI/StateManagedCollection.cs
@@ -602,15 +605,14 @@ System.Web.UI/SupportsEventValidationAttribute.cs
 System.Web.UI/TagPrefixAttribute.cs
 System.Web.UI/TemplateBuilder.cs
 System.Web.UI/TemplateContainerAttribute.cs
-System.Web.UI/TemplateContentType.cs
 System.Web.UI/TemplateControl.cs
 System.Web.UI/TemplateControlParser.cs
 System.Web.UI/TemplateInstance.cs
 System.Web.UI/TemplateParser.cs
 System.Web.UI/ThemeableAttribute.cs
+System.Web.UI/ThemeProvider.cs
 System.Web.UI/ToolboxDataAttribute.cs
 System.Web.UI/Triplet.cs
-System.Web.UI/TwoWayBoundPropertyEntry.cs
 System.Web.UI/UrlPropertyAttribute.cs
 System.Web.UI/UserControlControlBuilder.cs
 System.Web.UI/UserControl.cs

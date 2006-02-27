@@ -51,7 +51,11 @@ namespace System.Web.UI {
 			this.owner = owner;
 		}
 
-		public int Count {
+		public
+#if NET_2_0
+		virtual
+#endif
+		int Count {
 			get { return count; }
 		}
 
@@ -155,7 +159,11 @@ namespace System.Web.UI {
 			return (controls != null && Array.IndexOf (controls, c) != -1);
 		}
 
-		public void CopyTo (Array array, int index)
+		public
+#if NET_2_0
+		virtual
+#endif
+		void CopyTo (Array array, int index)
 		{
 			if (controls == null)
 				return;
@@ -178,7 +186,11 @@ namespace System.Web.UI {
 				array.SetValue (controls [i], i);
 		}
 
-		public IEnumerator GetEnumerator ()
+		public
+#if NET_2_0
+		virtual
+#endif
+		IEnumerator GetEnumerator ()
 		{
 			return new SimpleEnumerator (this);
 		}

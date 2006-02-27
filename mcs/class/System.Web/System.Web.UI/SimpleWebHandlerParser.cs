@@ -103,7 +103,7 @@ namespace System.Web.UI
 			GetDirectivesAndContent ();
 		}
 #if NET_2_0
-		protected SimpleWebHandlerParser (HttpContext context, string virtualPath, string physicalPath, TextReader reader)
+		internal SimpleWebHandlerParser (HttpContext context, string virtualPath, string physicalPath, TextReader reader)
 			: this (context, virtualPath, physicalPath)
 		{
 			this.reader = reader;

@@ -120,14 +120,10 @@ namespace System.Web.UI {
 		}
 
 		public event EventHandler Changed;
-
-		public
 #else
 		internal event EventHandler Changed;
-
-		internal
 #endif
-		void RaiseChanged ()
+		internal void RaiseChanged ()
 		{
 			if (Changed != null)
 				Changed (this, EventArgs.Empty);

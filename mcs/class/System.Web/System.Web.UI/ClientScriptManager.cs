@@ -58,12 +58,13 @@ namespace System.Web.UI
 			this.page = page;
 		}
 
-		[Obsolete ("Use GetPostBackEventReference instead")]
+#if !NET_2_0
 		public string GetPostBackClientEvent (Control control, string argument)
 		{
 			return GetPostBackEventReference (control, argument);
 		}
-	
+#endif
+
 		public string GetPostBackClientHyperlink (Control control, string argument)
 		{
 			return "javascript:" + GetPostBackEventReference (control, argument);

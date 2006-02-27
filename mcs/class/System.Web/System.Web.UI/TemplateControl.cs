@@ -73,6 +73,9 @@ namespace System.Web.UI {
 
 		#region Properties
 		[EditorBrowsable (EditorBrowsableState.Never)]
+#if NET_2_0
+		[Obsolete]
+#endif
 		protected virtual int AutoHandlers {
 			get { return 0; }
 			set { }
@@ -231,7 +234,11 @@ namespace System.Web.UI {
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public static object ReadStringResource ()
+		public 
+#if !NET_2_0
+		static
+#endif
+		object ReadStringResource ()
 		{
 			throw new NotSupportedException ();
 		}
@@ -331,7 +338,7 @@ namespace System.Web.UI {
 			return DataBinder.Eval (CurrentDataItem, expression);
 		}
 	
-		protected object Eval (string expression, string format)
+		protected string Eval (string expression, string format)
 		{
 			return DataBinder.Eval (CurrentDataItem, expression, format);
 		}
@@ -341,7 +348,7 @@ namespace System.Web.UI {
 			return XPathBinder.Eval (CurrentDataItem, xpathexpression);
 		}
 	
-		protected object XPath (string xpathexpression, string format)
+		protected string XPath (string xpathexpression, string format)
 		{
 			return XPathBinder.Eval (CurrentDataItem, xpathexpression, format);
 		}

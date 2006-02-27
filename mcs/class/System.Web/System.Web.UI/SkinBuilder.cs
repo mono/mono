@@ -1,11 +1,10 @@
 //
-// System.Web.UI.IThemeResolutionService.cs
+// System.Web.UI.SkinBuilder.cs
 //
 // Authors:
-//      Sanjay Gupta (gsanjay@novell.com)
+//   Chris Toshok (toshok@ximian.com)
 //
-// (C) 2004 Novell, Inc (http://www.novell.com)
-//
+// (C) 2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,19 +26,35 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-
 #if NET_2_0
-using System;
-using System.Collections;
 
-namespace System.Web.UI
-{
-	public interface IThemeResolutionService
+namespace System.Web.UI {
+
+	public sealed class SkinBuilder : ControlBuilder
 	{
-		ThemeProvider [] GetAllThemeProviders ();
-		ThemeProvider GetStylesheetThemeProvider ();
-		ThemeProvider GetThemeProvider ();
-	}
-}
-#endif
+		ThemeProvider provider;
+		Control control;
+		ControlBuilder skinBuilder;
+		string themePath;
 
+		public SkinBuilder (ThemeProvider provider,
+				    Control control,
+				    ControlBuilder skinBuilder,
+				    string themePath)
+		{
+			this.provider = provider;
+			this.control = control;
+			this.skinBuilder = skinBuilder;
+			this.themePath = themePath;
+		}
+
+		[MonoTODO]
+		public Control ApplyTheme ()
+		{
+			return control;
+		}
+	}
+
+}
+
+#endif

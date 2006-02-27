@@ -33,10 +33,9 @@ using System.ComponentModel;
 
 namespace System.Web.UI {
 	[AttributeUsage (AttributeTargets.Class | AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
-	public sealed class FilterableAttribute : Attribute, IDisposable 
+	public sealed class FilterableAttribute : Attribute
 	{
 		private bool filterable;
-		private bool dispose;
 
 		public FilterableAttribute (bool filterable) 
 		{
@@ -51,20 +50,6 @@ namespace System.Web.UI {
 		
 		public bool Filterable { 
 			get { return filterable; } 
-		}
-
-		public void Dispose ()
-		{
-			Dispose (true);
-			GC.SuppressFinalize (this);
-		}
-		
-		private void Dispose (bool disposing)
-		{
-			if (!this.dispose) {
-				//Do nothing
-				this.dispose = true;
-			}
 		}
 
 		public override bool Equals (object obj)

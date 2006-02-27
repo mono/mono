@@ -454,6 +454,25 @@ public class Page : TemplateControl, IHttpHandler
 	}
 
 #if NET_2_0
+	[MonoTODO]
+	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+	[Filterable (false)]
+	[Browsable (false)]
+	public virtual string StyleSheetTheme {
+		get { throw new NotImplementedException (); }
+		set { throw new NotImplementedException (); }
+	}
+
+	[MonoTODO]
+	[Browsable (false)]
+	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+	public virtual string Theme {
+		get { throw new NotImplementedException (); }
+		set { throw new NotImplementedException (); }
+	}
+#endif
+
+#if NET_2_0
 	[Localizable (true)] 
 	[Bindable (true)] 
 	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]

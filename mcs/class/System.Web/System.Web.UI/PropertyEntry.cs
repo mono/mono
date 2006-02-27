@@ -39,6 +39,8 @@ namespace System.Web.UI
 		string filter;
 		PropertyInfo pinfo;
 
+		internal PropertyEntry () { }
+
 		public Type DeclaringType {
 			get { return pinfo.DeclaringType; }
 		}

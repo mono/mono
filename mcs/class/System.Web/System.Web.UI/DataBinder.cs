@@ -38,9 +38,6 @@ namespace System.Web.UI {
 	// CAS - no InheritanceDemand here as the class is sealed
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class DataBinder {
-#if NET_2_0
-		[Obsolete]
-#endif
 		public DataBinder ()
 		{
 		}

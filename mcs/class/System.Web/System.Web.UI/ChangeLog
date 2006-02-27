@@ -1,5 +1,50 @@
 2006-02-27  Chris Toshok  <toshok@ximian.com>
 
+	* TemplateControl.cs: corcompare work.
+
+	* ExpressionBindingCollection.cs: same.
+
+	* HierarchicalDataSourceControl.cs: same.
+
+	* PostBackOptions.cs: same.
+
+	* ClientScriptManager.cs: same.
+
+	* FilterableAttribute.cs: same.
+
+	* ControlCollection.cs: same.
+
+	* DataBindingCollection.cs: same.
+	
+	* PropertyEntry.cs: mark ctor internal.
+
+	* SimpleWebHandlerParser.cs: mark the 2.0 ctor as internal.
+
+	* Page.cs: stub out two Theme oriented 2.0 properties.
+
+	* DataBinder.cs: remove the obsolete attribute on the ctor.
+
+	* TwoWayBoundPropertyEntry.cs: remove this.
+	
+	* ControlBuilder.cs (BindingContainerType): virtual in 2.0.
+
+	* ThemeProvider: new (stubbed) class.
+
+	* SkinBuilder.cs: same.
+
+	* PageTheme.cs: same.
+
+	* ControlSkin.cs: same.
+	
+	* ControlSkinProc.cs: rename this to ControlSkinDelegate.cs.
+	
+	* SimplePropertyEntry.cs: mark ctor as internal.
+
+	* IThemeResolutionService.cs: enable the 3 members of this
+	interface.
+
+2006-02-27  Chris Toshok  <toshok@ximian.com>
+
 	* ListSourceHelper.cs: this class is static.
 
 	* Page.cs: add some EditorBrowsable attributes to the 2.0 events.

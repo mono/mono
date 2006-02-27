@@ -155,7 +155,7 @@ namespace System.Web.UI {
 		}
 
 #if NET_2_0
-		public
+		public virtual
 #else
 		internal
 #endif
