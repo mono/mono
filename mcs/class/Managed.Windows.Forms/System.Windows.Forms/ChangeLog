@@ -4,7 +4,8 @@
 	They are now on top of all children.
 	- Synced AddImplicit code with Add
 	- Removed unused enumerator.
-	
+	* SizeGrip.cs: Remove the TODO as its been TODONE.
+
 2006-02-26  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* TextControl.cs(Insert): Combine the last lines unless the insertion

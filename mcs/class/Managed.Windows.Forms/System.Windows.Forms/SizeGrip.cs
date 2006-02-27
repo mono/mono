@@ -22,8 +22,6 @@
 // Authors:
 //	Jackson Harper (jackson@ximian.com)
 
-// TODO: Eventually we need to handle the cursor and resizing the parent
-
 using System;
 using System.Drawing;
 
