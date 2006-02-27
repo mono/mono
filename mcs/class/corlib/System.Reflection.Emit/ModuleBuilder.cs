@@ -667,7 +667,13 @@ namespace System.Reflection.Emit {
 			string fileName = fqname;
 			if (assemblyb.AssemblyDir != null)
 				fileName = Path.Combine (assemblyb.AssemblyDir, fileName);
-			
+
+			try {
+				// We mmap the file, so unlink the previous version since it may be in use
+				File.Delete (fileName);
+			} catch {
+				// We can safely ignore
+			}
 			using (FileStream file = new FileStream (fileName, FileMode.Create, FileAccess.Write))
 				WriteToFile (file.Handle);
 			
