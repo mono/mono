@@ -2,6 +2,7 @@
 
 	* SizeGrip.cs: Paint the background color before painting the grip
 	so things look right.
+	* MdiClient.cs: Add the sizegrip when both scrollbars are used.
 
 2006-02-27  Mike Kestner  <mkestner@novell.com>
 

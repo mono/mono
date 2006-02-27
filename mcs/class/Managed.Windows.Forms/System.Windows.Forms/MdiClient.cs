@@ -39,6 +39,7 @@ namespace System.Windows.Forms {
 		private Form active;
 		private HScrollBar hbar;
 		private VScrollBar vbar;
+		private SizeGrip sizegrip;
 		
 		#endregion	// Local Variables
 
@@ -153,8 +154,6 @@ namespace System.Windows.Forms {
 
 		internal void EnsureScrollBars (int right, int bottom)
 		{
-			Console.WriteLine ("Ensuring scrollbars");
-
 			int width = Width;
 			int height = Height;
 
@@ -213,8 +212,6 @@ namespace System.Windows.Forms {
 
 		private void SizeScrollBars ()
 		{
-			Console.WriteLine ("sizing the scrollbars");
-
 			bool hbar_required = false;
 			bool vbar_required = false;
 
@@ -287,6 +284,19 @@ namespace System.Windows.Forms {
 				CalcVBar (bottom, hbar != null && hbar.Visible);
 			} else if (vbar != null)
 				vbar.Visible = false;
+
+			if (need_hbar && need_vbar) {
+				if (sizegrip == null) {
+					sizegrip = new SizeGrip ();
+					Controls.AddImplicit (sizegrip);
+				}
+				sizegrip.Location = new Point (hbar.Right, vbar.Bottom);
+				sizegrip.Width = vbar.Width;
+				sizegrip.Height = hbar.Height;
+				sizegrip.Visible = true;
+			} else if (sizegrip != null) {
+				sizegrip.Visible = false;
+			}
 		}
 
 		private void CalcHBar (int right, bool vert_vis)
@@ -324,6 +334,12 @@ namespace System.Windows.Forms {
 		{
 			form.BringToFront ();
 			active = form;
+
+			foreach (Form child in Controls) {
+				if (child == form)
+					continue;
+				// TODO: We need to repaint the decorations here
+			}
 		}
 
 		internal int ChildrenCreated {
