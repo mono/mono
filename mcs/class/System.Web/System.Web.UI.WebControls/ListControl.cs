@@ -196,10 +196,6 @@ namespace System.Web.UI.WebControls {
 				return -1;
 			}
 			set {
-				ClearSelection ();
-				if (value == -1)
-					return;
-
 				if (items == null || items.Count == 0) {
 					// This will happen when assigning this property
 					// before DataBind () is called on the control.
@@ -207,8 +203,13 @@ namespace System.Web.UI.WebControls {
 					return;
 				}
 
-				if (value < 0 || value >= Items.Count)
+				if (value < -1 || value >= Items.Count)
 					throw new ArgumentOutOfRangeException ("value");
+
+				ClearSelection ();
+				if (value == -1)
+					return;
+
 				items [value].Selected = true;
 
 				/* you'd think this would be called, but noooo */
