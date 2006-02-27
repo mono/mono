@@ -1252,7 +1252,12 @@ namespace Mono.CSharp {
 
 			Error_CannotConvertType (etype, probe_type, loc);
 			return null;
-		}				
+		}
+	
+		public override bool GetAttributableValue (out object value)
+		{
+			return expr.GetAttributableValue (out value);
+		}
 	}
 	
 	/// <summary>
@@ -1327,9 +1332,14 @@ namespace Mono.CSharp {
 
 			Constant c = expr as Constant;
 			if (c != null) {
-				c = c.TryReduce (ec, type, loc);
-				if (c != null)
-					return c;
+				try {
+					c = c.TryReduce (ec, type, loc);
+					if (c != null)
+						return c;
+				}
+				catch (OverflowException) {
+					return null;
+				}
 			}
 
 			if (type.IsPointer && !ec.InUnsafe) {
@@ -6014,10 +6024,7 @@ namespace Mono.CSharp {
 		public bool ValidateInitializers (EmitContext ec, Type array_type)
 		{
 			if (initializers == null) {
-				if (expect_initializers)
-					return false;
-				else
-					return true;
+				return !expect_initializers;
 			}
 			
 			if (underlying_type == null)
@@ -6030,17 +6037,12 @@ namespace Mono.CSharp {
 			array_data = new ArrayList ();
 			bounds = new Hashtable ();
 			
-			bool ret;
-
 			if (arguments != null) {
-				ret = CheckIndices (ec, initializers, 0, true);
-				return ret;
+				return CheckIndices (ec, initializers, 0, true);
 			} else {
 				arguments = new ArrayList ();
 
-				ret = CheckIndices (ec, initializers, 0, false);
-				
-				if (!ret)
+				if (!CheckIndices (ec, initializers, 0, false))
 					return false;
 				
 				UpdateIndices (ec);
@@ -6050,7 +6052,7 @@ namespace Mono.CSharp {
 					return false;
 				}
 
-				return ret;
+				return true;
 			}
 		}
 
@@ -6508,32 +6510,33 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public object EncodeAsAttribute ()
+		public override bool GetAttributableValue (out object value)
 		{
 			if (!is_one_dimensional){
-				Report.Error (-211, Location, "attribute can not encode multi-dimensional arrays");
-				return null;
+//				Report.Error (-211, Location, "attribute can not encode multi-dimensional arrays");
+				return base.GetAttributableValue (out value);
 			}
 
-			if (array_data == null){
-				Report.Error (-212, Location, "array should be initialized when passing it to an attribute");
-				return null;
+			if (array_data == null) {
+				Constant c = (Constant)((Argument)arguments [0]).Expr;
+				if (c.IsDefaultValue) {
+					value = new object [0];
+					return true;
+				}
+//				Report.Error (-212, Location, "array should be initialized when passing it to an attribute");
+				return base.GetAttributableValue (out value);
 			}
 			
 			object [] ret = new object [array_data.Count];
-			int i = 0;
-			foreach (Expression e in array_data){
-				object v;
-				
-				if (e is NullLiteral)
-					v = null;
-				else {
-					if (!Attribute.GetAttributeArgumentExpression (e, Location, array_element_type, out v))
-						return null;
+			for (int i = 0; i < ret.Length; ++i)
+			{
+				if (!((Expression)array_data [i]).GetAttributableValue (out ret [i])) {
+					value = null;
+					return false;
 				}
-				ret [i++] = v;
 			}
-			return ret;
+			value = ret;
+			return true;
 		}
 	}
 	
@@ -6794,7 +6797,7 @@ namespace Mono.CSharp {
 	///   Implements the typeof operator
 	/// </summary>
 	public class TypeOf : Expression {
-		public Expression QueriedType;
+		readonly Expression QueriedType;
 		protected Type typearg;
 		
 		public TypeOf (Expression queried_type, Location l)
@@ -6834,8 +6837,10 @@ namespace Mono.CSharp {
 			ec.ig.Emit (OpCodes.Call, TypeManager.system_type_get_type_from_handle);
 		}
 
-		public Type TypeArg { 
-			get { return typearg; }
+		public override bool GetAttributableValue (out object value)
+		{
+			value = typearg;
+			return true;
 		}
 	}
 

@@ -137,6 +137,13 @@ namespace Mono.CSharp {
 		// Not nice but we have broken hierarchy
 		public virtual void CheckMarshallByRefAccess (Type container) {}
 
+		public virtual bool GetAttributableValue (out object value)
+		{
+			Attribute.Error_AttributeArgumentNotValid (loc);
+			value = null;
+			return false;
+		}
+
 		public virtual string GetSignatureForError ()
 		{
 			return TypeManager.CSharpName (type);
@@ -315,28 +322,29 @@ namespace Mono.CSharp {
 				TypeManager.CSharpName (type), name);
 		}
 
-		ResolveFlags ExprClassToResolveFlags ()
+		ResolveFlags ExprClassToResolveFlags
 		{
-			switch (eclass) {
-			case ExprClass.Type:
-			case ExprClass.Namespace:
-				return ResolveFlags.Type;
+			get {
+				switch (eclass) {
+					case ExprClass.Type:
+					case ExprClass.Namespace:
+						return ResolveFlags.Type;
 
-			case ExprClass.MethodGroup:
-				return ResolveFlags.MethodGroup;
+					case ExprClass.MethodGroup:
+						return ResolveFlags.MethodGroup;
 
-			case ExprClass.Value:
-			case ExprClass.Variable:
-			case ExprClass.PropertyAccess:
-			case ExprClass.EventAccess:
-			case ExprClass.IndexerAccess:
-				return ResolveFlags.VariableOrValue;
+					case ExprClass.Value:
+					case ExprClass.Variable:
+					case ExprClass.PropertyAccess:
+					case ExprClass.EventAccess:
+					case ExprClass.IndexerAccess:
+						return ResolveFlags.VariableOrValue;
 
-			default:
-				throw new Exception ("Expression " + GetType () +
-						     " ExprClass is Invalid after resolve");
+					default:
+						throw new Exception ("Expression " + GetType () +
+							" ExprClass is Invalid after resolve");
+				}
 			}
-
 		}
 	       
 		/// <summary>
@@ -360,10 +368,10 @@ namespace Mono.CSharp {
 				ec.OmitStructFlowAnalysis = true;
 
 			Expression e;
-			bool intermediate = (flags & ResolveFlags.Intermediate) == ResolveFlags.Intermediate;
-			if (this is SimpleName)
+			if (this is SimpleName) {
+				bool intermediate = (flags & ResolveFlags.Intermediate) == ResolveFlags.Intermediate;
 				e = ((SimpleName) this).DoResolve (ec, intermediate);
-
+			}
 			else 
 				e = DoResolve (ec);
 
@@ -373,7 +381,7 @@ namespace Mono.CSharp {
 			if (e == null)
 				return null;
 
-			if ((flags & e.ExprClassToResolveFlags ()) == 0) {
+			if ((flags & e.ExprClassToResolveFlags) == 0) {
 				e.Error_UnexpectedKind (flags, loc);
 				return null;
 			}
@@ -1123,7 +1131,7 @@ namespace Mono.CSharp {
 	///
 	/// </summary>
 	public class EmptyCast : Expression {
-		protected Expression child;
+		protected readonly Expression child;
 
 		public Expression Child {
 			get {
@@ -1151,6 +1159,12 @@ namespace Mono.CSharp {
 		{
 			child.Emit (ec);
 		}
+
+		public override bool GetAttributableValue (out object value)
+		{
+			return child.GetAttributableValue (out value);
+		}
+
 	}
 	/// <summary>
 	/// 	This is a numeric cast to a Decimal
@@ -3194,6 +3208,7 @@ namespace Mono.CSharp {
 		// We also perform the permission checking here, as the PropertyInfo does not
 		// hold the information for the accessibility of its setter/getter
 		//
+		// TODO: can use TypeManager.GetProperty to boost performance
 		void ResolveAccessors (Type containerType)
 		{
 			FindAccessors (containerType);

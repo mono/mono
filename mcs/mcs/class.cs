@@ -6194,6 +6194,7 @@ namespace Mono.CSharp {
 			if (!Set.IsDummy)
 				PropertyBuilder.SetSetMethod (SetBuilder);
 			
+			TypeManager.RegisterProperty (PropertyBuilder, this);
 			return true;
 		}
 	}

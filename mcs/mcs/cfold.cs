@@ -550,8 +550,14 @@ namespace Mono.CSharp {
 					Error_CompileTimeOverflow (loc);
 				}
 
-				if (wrap_as != null)
-					return result.TryReduce (ec, wrap_as, loc);
+				if (wrap_as != null) {
+					try {
+						return result.TryReduce (ec, wrap_as, loc);
+					}
+					catch (OverflowException) {
+						return null;
+					}
+				}
 				else
 					return result;
 
@@ -682,8 +688,14 @@ namespace Mono.CSharp {
 					Error_CompileTimeOverflow (loc);
 				}
 
-				if (wrap_as != null)
-					return result.TryReduce (ec, wrap_as, loc);
+				if (wrap_as != null) {
+					try {
+						return result.TryReduce (ec, wrap_as, loc);
+					}
+					catch (OverflowException) {
+						return null;
+					}
+				}
 
 				return result;
 				
