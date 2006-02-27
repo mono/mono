@@ -1889,7 +1889,7 @@ namespace System.Windows.Forms {
 				for (i = 1; i < insert_lines; i++) {
 					Add(base_line + i, ins[i], line.alignment, tag.font, tag.color);
 				}
-				if (!s.EndsWith("\n")) {
+				if (!s.EndsWith("\n\n")) {
 					this.Combine(base_line + insert_lines - 1, base_line + insert_lines);
 				}
 			}

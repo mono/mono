@@ -1,3 +1,10 @@
+2006-02-26  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* TextControl.cs(Insert): Combine the last lines unless the insertion
+	  string ends with \n\n, otherwise we leave one line too many (Fixes
+	  something I noticed with the testapp for #77526; the bug itself was
+	  already fixed in the previous checkin)
+
 2006-02-26  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* RichTextBox.cs:
