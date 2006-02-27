@@ -1647,8 +1647,7 @@ public class TypeBuilderTest : Assertion
 			try {
 				tb.AddDeclarativeSecurity (action, set);
 				Fail ();
-			}
-			catch (ArgumentException) {
+			} catch (ArgumentOutOfRangeException) {
 			}
 		}
 	}

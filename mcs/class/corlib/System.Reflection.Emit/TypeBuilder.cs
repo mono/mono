@@ -239,7 +239,7 @@ namespace System.Reflection.Emit {
 			if ((action == SecurityAction.RequestMinimum) ||
 				(action == SecurityAction.RequestOptional) ||
 				(action == SecurityAction.RequestRefuse))
-				throw new ArgumentException ("Request* values are not permitted", "action");
+				throw new ArgumentOutOfRangeException ("Request* values are not permitted", "action");
 
 			check_not_created ();
 

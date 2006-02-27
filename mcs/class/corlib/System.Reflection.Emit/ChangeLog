@@ -1,3 +1,10 @@
+2006-02-27  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ConstructorBuilder.cs: In AddDeclarativeSecurity, throw an
+	ArgumentOutOfRangeException instead of an ArgumentException if action 
+	is a Request* action. Fixes bug #77640.
+	* MethodBuilder.cs: Same.
+	* TypeBuilder.cs: Same.
 
 Mon Feb 27 17:12:40 CET 2006 Paolo Molaro <lupus@ximian.com>
 

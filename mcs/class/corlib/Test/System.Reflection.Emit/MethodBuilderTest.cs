@@ -621,8 +621,7 @@ public class MethodBuilderTest : Assertion
 			try {
 				mb.AddDeclarativeSecurity (action, set);
 				Fail ();
-			}
-			catch (ArgumentException) {
+			} catch (ArgumentOutOfRangeException) {
 			}
 		}
 	}

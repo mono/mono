@@ -385,8 +385,7 @@ public class ConstructorBuilderTest : Assertion
 			try {
 				cb.AddDeclarativeSecurity (action, set);
 				Fail ();
-			}
-			catch (ArgumentException) {
+			} catch (ArgumentOutOfRangeException) {
 			}
 		}
 	}
