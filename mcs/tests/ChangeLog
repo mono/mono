@@ -1,3 +1,7 @@
+2006-02-27  Marek Safar <marek.safar@seznam.cz>
+
+	* test-492.cs: Another attribute tests.
+
 2006-02-14  Martin Baulig  <martin@ximian.com>
 
 	* known-issues-gmcs: Add test-473.cs.
