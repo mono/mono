@@ -34,9 +34,7 @@ using System.Collections.Specialized;
 using System.Text;
 
 namespace System.Web.UI {
-	public sealed class ListSourceHelper {
-		private ListSourceHelper () {}
-		
+	public static class ListSourceHelper {
 		[MonoTODO]
 		public static bool ContainsListCollection (IDataSource dataSource)
 		{

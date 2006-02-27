@@ -320,6 +320,9 @@ public class Page : TemplateControl, IHttpHandler
 	}
 
 	[Browsable (false)]
+#if NET_2_0
+	[EditorBrowsable (EditorBrowsableState.Never)]
+#endif
 	public override string ID
 	{
 		get { return base.ID; }
@@ -1366,6 +1369,7 @@ public class Page : TemplateControl, IHttpHandler
 	const int prerendercomplete_mask = 1 << 4;
 	const int savestatecomplete_mask = 1 << 5;
 	
+	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	public event EventHandler InitComplete {
 		add {
 			event_mask |= initcomplete_mask;
@@ -1374,6 +1378,7 @@ public class Page : TemplateControl, IHttpHandler
 		remove { Events.RemoveHandler (InitCompleteEvent, value); }
 	}
 	
+	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	public event EventHandler LoadComplete {
 		add {
 			event_mask |= loadcomplete_mask;
@@ -1390,6 +1395,7 @@ public class Page : TemplateControl, IHttpHandler
 		remove { Events.RemoveHandler (PreInitEvent, value); }
 	}
 	
+	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	public event EventHandler PreLoad {
 		add {
 			event_mask |= preload_mask;
@@ -1398,6 +1404,7 @@ public class Page : TemplateControl, IHttpHandler
 		remove { Events.RemoveHandler (PreLoadEvent, value); }
 	}
 	
+	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	public event EventHandler PreRenderComplete {
 		add {
 			event_mask |= prerendercomplete_mask;
@@ -1406,6 +1413,7 @@ public class Page : TemplateControl, IHttpHandler
 		remove { Events.RemoveHandler (PreRenderCompleteEvent, value); }
 	}
 	
+	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	public event EventHandler SaveStateComplete {
 		add {
 			event_mask |= savestatecomplete_mask;

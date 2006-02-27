@@ -1,5 +1,11 @@
 2006-02-27  Chris Toshok  <toshok@ximian.com>
 
+	* ListSourceHelper.cs: this class is static.
+
+	* Page.cs: add some EditorBrowsable attributes to the 2.0 events.
+
+2006-02-27  Chris Toshok  <toshok@ximian.com>
+
 	* DataSourceView.cs: Name isn't virtual.
 
 	* DataSourceControl.cs: beat this class over the head with the
