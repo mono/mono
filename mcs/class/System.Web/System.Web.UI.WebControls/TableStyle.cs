@@ -178,8 +178,12 @@ namespace System.Web.UI.WebControls {
 				writer.AddAttribute (HtmlTextWriterAttribute.Cellpadding, i.ToString (CultureInfo.InvariantCulture));
 			
 			i = CellSpacing;
-			if (i != -1)
+			if (i != -1) {
 				writer.AddAttribute (HtmlTextWriterAttribute.Cellspacing, i.ToString (CultureInfo.InvariantCulture));
+				if (i == 0) {
+					writer.AddStyleAttribute(HtmlTextWriterStyle.BorderCollapse, "collapse");
+				}
+			}
 
 			GridLines g = GridLines;
 			switch (g) {

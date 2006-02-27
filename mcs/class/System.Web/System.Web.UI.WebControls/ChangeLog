@@ -1,3 +1,8 @@
+2006-02-27  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* TableStyle.cs: fixed AddAttributesToRender function, style
+	BorderCollapse:Collapse was added if table's CellSpacing is zero
+
 2006-02-23  Chris Toshok  <toshok@ximian.com>
 
 	* CheckBox.cs, ContentControlBuilderInternal.cs, Content.cs,
