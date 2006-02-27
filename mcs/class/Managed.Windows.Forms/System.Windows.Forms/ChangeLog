@@ -2,6 +2,11 @@
 
 	* XplatUIX11.cs:  Use the correct caption height.
 	- Translate hittest coordinates to screen coords to match MS.
+	* XplatUIWin32.cs: When we create MDI windows we need to reset
+	some of the style flags, so we get a nice blank window, and can
+	draw all the decorations ourselves.
+	- Set a clipping rectangle on the non client paint event, the
+	window manager drawing code needs one.
 
 2006-02-26  Pedro Martinez Julia  <pedromj@gmail.com>
 
