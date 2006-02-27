@@ -1,3 +1,10 @@
+2006-02-26  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* FileStreamTest.cs: Fixed tests for invalid share value to pass on
+	MS.NET 2.0, and all Mono profiles. Added test that verifies the 
+	correct behavior of all possible FileMode and FileAccess combinations.
+	Fixed compiler warning.
+
 2006-02-25  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* FileStreamTest.cs: Spaces to tabs, (re)numbered tests.

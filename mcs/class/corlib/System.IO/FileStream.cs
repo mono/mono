@@ -142,17 +142,22 @@ namespace System.IO
 				throw new ArgumentException ("Name is empty");
 			}
 
+#if NET_2_0
+			// ignore the Inheritable flag
+			share &= ~FileShare.Inheritable;
+#endif
+
 			if (bufferSize <= 0)
 				throw new ArgumentOutOfRangeException ("Positive number required.");
 
 			if (mode < FileMode.CreateNew || mode > FileMode.Append)
-				throw new ArgumentOutOfRangeException ("mode");
+				throw new ArgumentOutOfRangeException ("mode", "Enum value was out of legal range.");
 
 			if (access < FileAccess.Read || access > FileAccess.ReadWrite)
-				throw new ArgumentOutOfRangeException ("access");
+				throw new ArgumentOutOfRangeException ("access", "Enum value was out of legal range.");
 
 			if (share < FileShare.None || share > FileShare.ReadWrite)
-				throw new ArgumentOutOfRangeException ("share");
+				throw new ArgumentOutOfRangeException ("share", "Enum value was out of legal range.");
 
 			if (name.IndexOfAny (Path.InvalidPathChars) != -1) {
 				throw new ArgumentException ("Name has invalid chars");
@@ -169,13 +174,16 @@ namespace System.IO
 			 * docs)
 			 */
 			if (mode==FileMode.Append &&
-			    (access&FileAccess.Read)==FileAccess.Read) {
-				throw new ArgumentException("Append streams can not be read");
+				(access&FileAccess.Read)==FileAccess.Read) {
+				throw new ArgumentException("Append access can be requested only in write-only mode.");
 			}
 
 			if ((access & FileAccess.Write) == 0 &&
-			    (mode != FileMode.Open && mode != FileMode.OpenOrCreate))
-				throw new ArgumentException ("access and mode not compatible");
+				(mode != FileMode.Open && mode != FileMode.OpenOrCreate)) {
+				string msg = Locale.GetText ("Combining FileMode: {0} with " +
+					"FileAccess: {1} is invalid.");
+				throw new ArgumentException (string.Format (msg, access, mode));
+			}
 
 			string dname = Path.GetDirectoryName (name);
 			if (dname.Length > 0) {

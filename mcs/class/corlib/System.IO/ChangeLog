@@ -1,3 +1,9 @@
+2006-02-26  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* FileStream.cs: To match MSFT, ignore FileShare.Inheritable on 2.0
+	profile. This fixes bug #77644. Improved usefulness of some existing
+	exception messages.
+
 2006-02-22  Joerg Rosenkranz <joergr@voelcker.com>
 
 	* MonoIO.cs, MonoIOError.cs: Verbose exception for error 39 

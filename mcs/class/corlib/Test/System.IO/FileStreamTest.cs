@@ -219,7 +219,14 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
+#if NET_2_0
+		// FileShare.Inheritable is ignored, but file does not exist
+		[ExpectedException (typeof (FileNotFoundException))]
+#else
+		// share: Enum value was out of legal range.
+		// (FileShare.Inheritable is not valid)
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+#endif
 		public void CtorArgumentOutOfRangeException3 ()
 		{
 			string path = TempFolder + DSC + "CtorArgumentOutOfRangeException1";
@@ -227,7 +234,7 @@ namespace MonoTests.System.IO
 
 			FileStream stream = null;
 			try {
-				stream = new FileStream (path, FileMode.CreateNew, FileAccess.Read, FileShare.None | FileShare.Inheritable);
+				stream = new FileStream (path, FileMode.Open, FileAccess.Read, FileShare.Inheritable);
 			} finally {
 				if (stream != null)
 					stream.Close ();
@@ -294,7 +301,14 @@ namespace MonoTests.System.IO
 
 
 		[Test]
+#if NET_2_0
+		// FileShare.Inheritable is ignored, but file does not exist
+		[ExpectedException (typeof (FileNotFoundException))]
+#else
+		// share: Enum value was out of legal range.
+		// (FileShare.Inheritable is not valid)
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+#endif
 		public void CtorArgumentOutOfRangeException5 ()
 		{
 			string path = TempFolder + Path.DirectorySeparatorChar + "temp";
@@ -302,7 +316,7 @@ namespace MonoTests.System.IO
 
 			FileStream stream = null;
 			try {
-				stream = new FileStream (path, FileMode.CreateNew, FileAccess.Read, FileShare.Inheritable | FileShare.ReadWrite);
+				stream = new FileStream (path, FileMode.Open, FileAccess.Read, FileShare.Inheritable | FileShare.ReadWrite);
 			} finally {
 				if (stream != null)
 					stream.Close ();
@@ -322,6 +336,235 @@ namespace MonoTests.System.IO
 
 			try {
 				stream = new FileStream (".test.test.test.2", FileMode.Truncate, FileAccess.Read);
+			} finally {
+				if (stream != null)
+					stream.Close ();
+
+				DeleteFile (path);
+			}
+		}
+
+		[Test]
+		public void ModeAndAccessCombinations ()
+		{
+			string path = TempFolder + Path.DirectorySeparatorChar + "temp";
+			DeleteFile (path);
+			FileStream stream = null;
+
+			// Append / Read
+			try {
+				// Append access can be requested only in write-only mode
+				stream = new FileStream (path, FileMode.Append, FileAccess.Read);
+				Assert.Fail ("#A1");
+			} catch (ArgumentException ex) {
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
+			} finally {
+				if (stream != null)
+					stream.Close ();
+
+				DeleteFile (path);
+			}
+
+			// Append / ReadWrite
+			try {
+				// Append access can be requested only in write-only mode
+				stream = new FileStream (path, FileMode.Append, FileAccess.ReadWrite);
+				Assert.Fail ("#B1");
+			} catch (ArgumentException ex) {
+				// make sure it is exact this exception, and not a derived type
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
+			} finally {
+				if (stream != null)
+					stream.Close ();
+
+				DeleteFile (path);
+			}
+
+			// Append / Write
+			try {
+				stream = new FileStream (path, FileMode.Append, FileAccess.Write);
+			} finally {
+				if (stream != null)
+					stream.Close ();
+
+				DeleteFile (path);
+			}
+
+			// Create / Read
+			try {
+				stream = new FileStream (path, FileMode.Create, FileAccess.Read);
+				Assert.Fail ("#C1");
+			} catch (ArgumentException ex) {
+				// make sure it is exact this exception, and not a derived type
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#C2");
+			} finally {
+				if (stream != null)
+					stream.Close ();
+
+				DeleteFile (path);
+			}
+
+			// Create / ReadWrite
+			try {
+				stream = new FileStream (path, FileMode.Create, FileAccess.ReadWrite);
+			} finally {
+				if (stream != null)
+					stream.Close ();
+
+				DeleteFile (path);
+			}
+
+			// Create / Write
+			try {
+				stream = new FileStream (path, FileMode.Create, FileAccess.Write);
+			} finally {
+				if (stream != null)
+					stream.Close ();
+
+				DeleteFile (path);
+			}
+
+			// CreateNew / Read
+			try {
+				stream = new FileStream (path, FileMode.CreateNew, FileAccess.Read);
+				Assert.Fail ("#D1");
+			} catch (ArgumentException ex) {
+				// make sure it is exact this exception, and not a derived type
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#D2");
+			} finally {
+				if (stream != null)
+					stream.Close ();
+
+				DeleteFile (path);
+			}
+
+			// CreateNew / ReadWrite
+			try {
+				stream = new FileStream (path, FileMode.CreateNew, FileAccess.ReadWrite);
+			} finally {
+				if (stream != null)
+					stream.Close ();
+
+				DeleteFile (path);
+			}
+
+			// CreateNew / Write
+			try {
+				stream = new FileStream (path, FileMode.CreateNew, FileAccess.Write);
+			} finally {
+				if (stream != null)
+					stream.Close ();
+
+				DeleteFile (path);
+			}
+
+			// Open / Read
+			try {
+				stream = new FileStream (path, FileMode.Open, FileAccess.Read);
+				Assert.Fail ("#E1");
+			} catch (FileNotFoundException ex) {
+				// make sure it is exact this exception, and not a derived type
+				Assert.AreEqual (typeof (FileNotFoundException), ex.GetType (), "#E2");
+			} finally {
+				if (stream != null)
+					stream.Close ();
+
+				DeleteFile (path);
+			}
+
+			// Open / ReadWrite
+			try {
+				stream = new FileStream (path, FileMode.Open, FileAccess.ReadWrite);
+				Assert.Fail ("#F1");
+			} catch (FileNotFoundException ex) {
+				// make sure it is exact this exception, and not a derived type
+				Assert.AreEqual (typeof (FileNotFoundException), ex.GetType (), "#F2");
+			} finally {
+				if (stream != null)
+					stream.Close ();
+
+				DeleteFile (path);
+			}
+
+			// Open / Write
+			try {
+				stream = new FileStream (path, FileMode.Open, FileAccess.Write);
+				Assert.Fail ("#G1");
+			} catch (FileNotFoundException ex) {
+				// make sure it is exact this exception, and not a derived type
+				Assert.AreEqual (typeof (FileNotFoundException), ex.GetType (), "#G2");
+			} finally {
+				if (stream != null)
+					stream.Close ();
+
+				DeleteFile (path);
+			}
+
+			// OpenOrCreate / Read
+			try {
+				stream = new FileStream (path, FileMode.OpenOrCreate, FileAccess.Read);
+			} finally {
+				if (stream != null)
+					stream.Close ();
+
+				DeleteFile (path);
+			}
+
+			// OpenOrCreate / ReadWrite
+			try {
+				stream = new FileStream (path, FileMode.OpenOrCreate, FileAccess.ReadWrite);
+			} finally {
+				if (stream != null)
+					stream.Close ();
+
+				DeleteFile (path);
+			}
+
+			// OpenOrCreate / Write
+			try {
+				stream = new FileStream (path, FileMode.OpenOrCreate, FileAccess.Write);
+			} finally {
+				if (stream != null)
+					stream.Close ();
+
+				DeleteFile (path);
+			}
+
+			// Truncate / Read
+			try {
+				stream = new FileStream (path, FileMode.Truncate, FileAccess.Read);
+				Assert.Fail ("#H1");
+			} catch (ArgumentException ex) {
+				// make sure it is exact this exception, and not a derived type
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#H2");
+			} finally {
+				if (stream != null)
+					stream.Close ();
+
+				DeleteFile (path);
+			}
+
+			// Truncate / ReadWrite
+			try {
+				stream = new FileStream (path, FileMode.Truncate, FileAccess.ReadWrite);
+				Assert.Fail ("#I1");
+			} catch (FileNotFoundException ex) {
+				// make sure it is exact this exception, and not a derived type
+				Assert.AreEqual (typeof (FileNotFoundException), ex.GetType (), "#I2");
+			} finally {
+				if (stream != null)
+					stream.Close ();
+
+				DeleteFile (path);
+			}
+
+			// Truncate / Write
+			try {
+				stream = new FileStream (path, FileMode.Truncate, FileAccess.Write);
+				Assert.Fail ("#J1");
+			} catch (FileNotFoundException ex) {
+				// make sure it is exact this exception, and not a derived type
+				Assert.AreEqual (typeof (FileNotFoundException), ex.GetType (), "#J2");
 			} finally {
 				if (stream != null)
 					stream.Close ();
@@ -624,7 +867,7 @@ namespace MonoTests.System.IO
 			try {
 				stream2.Read (bytes, 0, 5);
 				Assert.Fail ("#A1");
-			} catch (Exception e) {
+			} catch (Exception) {
 				// Bug #71371: on MS.NET you get an IOException detailing a lock
 				// Assert.AreEqual (typeof (IOException), e.GetType (), "#A2");
 			}
