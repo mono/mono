@@ -837,6 +837,12 @@ namespace System.Windows.Forms {
 			set {
 				window_state = value;
 				if (IsHandleCreated) {
+
+					if (window_manager != null) {
+						window_manager.SetWindowState (window_state);
+						return;
+					}
+
 					try {
 						XplatUI.SetWindowState(Handle, value);
 					}

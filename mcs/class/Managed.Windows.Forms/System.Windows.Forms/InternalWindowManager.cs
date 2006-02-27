@@ -27,6 +27,8 @@
 
 using System;
 using System.Drawing;
+using System.Runtime.InteropServices;
+
 
 namespace System.Windows.Forms {
 
@@ -129,6 +131,54 @@ namespace System.Windows.Forms {
 			case Msg.WM_LBUTTONDOWN:
 				return HandleButtonDown (ref m);
 
+			case Msg.WM_NCHITTEST:
+				int x = Control.LowOrder ((int) m.LParam.ToInt32 ());
+				int y = Control.HighOrder ((int) m.LParam.ToInt32 ());
+
+				form.PointToClient (ref x, ref y);
+				y += TitleBarHeight;
+
+				FormPos pos = FormPosForCoords (x, y);
+				
+				if (pos == FormPos.TitleBar) {
+					m.Result = new IntPtr ((int) HitTest.HTCAPTION);
+					return true;
+				}
+
+				if (!IsSizable)
+					return false;
+
+				switch (pos) {
+				case FormPos.Top:
+					m.Result = new IntPtr ((int) HitTest.HTTOP);
+					break;
+				case FormPos.Left:
+					m.Result = new IntPtr ((int) HitTest.HTLEFT);
+					break;
+				case FormPos.Right:
+					m.Result = new IntPtr ((int) HitTest.HTRIGHT);
+					break;
+				case FormPos.Bottom:
+					m.Result = new IntPtr ((int) HitTest.HTBOTTOM);
+					break;
+				case FormPos.TopLeft:
+					m.Result = new IntPtr ((int) HitTest.HTTOPLEFT);
+					break;
+				case FormPos.TopRight:
+					m.Result = new IntPtr ((int) HitTest.HTTOPRIGHT);
+					break;
+				case FormPos.BottomLeft:
+					m.Result = new IntPtr ((int) HitTest.HTBOTTOMLEFT);
+					break;
+				case FormPos.BottomRight:
+					m.Result = new IntPtr ((int) HitTest.HTBOTTOMRIGHT);
+					break;
+				default:
+					// We return false so that DefWndProc handles things
+					return false;
+				}
+				return true;
+
 			case Msg.WM_NCMOUSEMOVE:
 				return HandleNCMouseMove (form, ref m);
 
@@ -140,6 +190,25 @@ namespace System.Windows.Forms {
 
 			case Msg.WM_MOUSE_LEAVE:
 				FormMouseLeave (ref m);
+				break;
+
+			case Msg.WM_NCCALCSIZE:
+				XplatUIWin32.NCCALCSIZE_PARAMS	ncp;
+
+				if (m.WParam == (IntPtr) 1) {
+					ncp = (XplatUIWin32.NCCALCSIZE_PARAMS) Marshal.PtrToStructure (m.LParam,
+							typeof (XplatUIWin32.NCCALCSIZE_PARAMS));
+
+					if (HasBorders) {
+						ncp.rgrc1.top += TitleBarHeight + BorderWidth;
+						ncp.rgrc1.bottom -= BorderWidth;
+						ncp.rgrc1.left += BorderWidth;
+						ncp.rgrc1.right -= BorderWidth;
+					}
+
+					Marshal.StructureToPtr(ncp, m.LParam, true);
+				}
+
 				break;
 
 			case Msg.WM_NCPAINT:
@@ -165,6 +234,11 @@ namespace System.Windows.Forms {
 			CreateButtons ();
 		}
 
+		public void SetWindowState (FormWindowState window_state)
+		{
+			Console.WriteLine ("Setting window state:  " + window_state);
+		}
+
 		public virtual void PointToClient (ref int x, ref int y)
 		{
 			// toolwindows stay in screencoords
@@ -178,6 +252,18 @@ namespace System.Windows.Forms {
 		protected virtual bool ShouldRemoveWindowManager (FormBorderStyle style)
 		{
 			return style != FormBorderStyle.FixedToolWindow && style != FormBorderStyle.SizableToolWindow;
+		}
+
+		protected virtual void Activate ()
+		{
+			// Hack to get a paint
+			NativeWindow.WndProc (form.Handle, Msg.WM_NCPAINT, IntPtr.Zero, IntPtr.Zero);
+			form.Refresh ();
+		}
+
+		protected virtual bool IsActive ()
+		{
+			return true;
 		}
 
 		private void CreateButtons ()
@@ -209,13 +295,13 @@ namespace System.Windows.Forms {
 
 		protected virtual bool HandleButtonDown (ref Message m)
 		{
-			form.BringToFront ();
+			Activate ();
 			return false;
 		}
 
 		protected virtual bool HandleNCLButtonDown (ref Message m)
 		{
-			form.BringToFront ();
+			Activate ();
 
 			int x = Control.LowOrder ((int) m.LParam.ToInt32 ());
 			int y = Control.HighOrder ((int) m.LParam.ToInt32 ());
@@ -293,12 +379,15 @@ namespace System.Windows.Forms {
 
 		private bool HandleNCMouseMove (Form form, ref Message m)
 		{
+			int x = Control.LowOrder ((int) m.LParam.ToInt32 ());
+			int y = Control.HighOrder ((int) m.LParam.ToInt32 ());
+			
 			if (IsSizable) {
-				int x = Control.LowOrder ((int) m.LParam.ToInt32 ());
-				int y = Control.HighOrder ((int) m.LParam.ToInt32 ());
+				form.PointToClient (ref x, ref y);
+				y += TitleBarHeight;
 				FormPos pos = FormPosForCoords (x, y);
 
-				SetCursorForPos (pos);
+				// SetCursorForPos (pos);
 			}
 
 			return false;
@@ -412,10 +501,23 @@ namespace System.Windows.Forms {
 		private int TitleBarHeight {
 			get {
 				if (IsToolWindow)
-					return 19;
+					return SystemInformation.ToolWindowCaptionHeight;
 				if (form.FormBorderStyle == FormBorderStyle.None)
 					return 0;
-				return 26;
+				return SystemInformation.CaptionHeight;
+			}
+		}
+
+		private Size ButtonSize {
+			get {
+				int height = TitleBarHeight;
+				if (IsToolWindow)
+					return new Size (SystemInformation.ToolWindowCaptionButtonSize.Width - 2,
+							height - 5);
+				if (form.FormBorderStyle == FormBorderStyle.None)
+					return Size.Empty;
+				return new Size (SystemInformation.CaptionButtonSize.Width - 2,
+						height - 5);
 			}
 		}
 
@@ -449,6 +551,8 @@ namespace System.Windows.Forms {
 			form.Capture = false;
 			form.Bounds = virtual_position;
 			state = State.Idle;
+
+			OnWindowFinishedMoving ();
 		}
 
 		private bool HandleNCLButtonUp (ref Message m)
@@ -479,27 +583,24 @@ namespace System.Windows.Forms {
 				Rectangle borders = new Rectangle (0, 0, form.Width, form.Height);
 			
 				ControlPaint.DrawBorder3D (dc, borders,	Border3DStyle.Raised);
-
-				if (IsSizable && borders.IntersectsWith (pe.ClipRectangle)) {
-					borders.Inflate (-1, -1);
-					ControlPaint.DrawFocusRectangle (dc, borders);
-				}
 			}
 
 			Color color = ThemeEngine.Current.ColorControlDark;
 
-			if (form.Focused && !maximized)
+			if (IsActive () && !maximized)
 				color = titlebar_color;
 
 			Rectangle tb = new Rectangle (BorderWidth, BorderWidth,
 					form.Width - (BorderWidth * 2), TitleBarHeight - 1);
 
 			Rectangle vis = Rectangle.Intersect (tb, pe.ClipRectangle);
-			if (vis != Rectangle.Empty)
+
+			// HACK: For now always draw the titlebar until we get updates better
+			//if (vis != Rectangle.Empty)
 				dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (color), tb);
 
-			dc.DrawLine (new Pen (Color.White, 1), BorderWidth,
-					TitleBarHeight + BorderWidth, form.Width - BorderWidth,
+			dc.DrawLine (new Pen (SystemColors.ControlLight, 1), BorderWidth,
+					TitleBarHeight + BorderWidth, form.Width - (BorderWidth * 2),
 					TitleBarHeight + BorderWidth);
 
 			if (!IsToolWindow) {
@@ -522,26 +623,32 @@ namespace System.Windows.Forms {
 			if (!IsToolWindow && HasBorders) {
 				if (form.Icon != null) {
 					Rectangle icon = new Rectangle (BorderWidth + 3,
-							BorderWidth + 3, 16, 16);
+							BorderWidth + 2, TitleBarHeight - 5, TitleBarHeight - 5);
 					if (icon.IntersectsWith (pe.ClipRectangle))
 						dc.DrawIcon (form.Icon, icon);
 				}
-					
-				minimize_button.Rectangle = new Rectangle (form.Width - 62,
-						BorderWidth + 2, 18, 22);
 
-				maximize_button.Rectangle = new Rectangle (form.Width - 44,
-						BorderWidth + 2, 18, 22);
+				Size bs = ButtonSize;
+				close_button.Rectangle = new Rectangle (form.Width - BorderWidth - bs.Width - 2,
+						BorderWidth + 2, bs.Width, bs.Height);
+
+				maximize_button.Rectangle = new Rectangle (close_button.Rectangle.Left - 2 - bs.Width,
+						BorderWidth + 2, bs.Width, bs.Height);
 				
-				close_button.Rectangle = new Rectangle (form.Width - 24,
-						BorderWidth + 2, 18, 22);
+				minimize_button.Rectangle = new Rectangle (maximize_button.Rectangle.Left - bs.Width,
+						BorderWidth + 2, bs.Width, bs.Height);
+
+				
+				
+				
 
 				DrawTitleButton (dc, minimize_button, pe.ClipRectangle);
 				DrawTitleButton (dc, maximize_button, pe.ClipRectangle);
 				DrawTitleButton (dc, close_button, pe.ClipRectangle);
 			} else if (IsToolWindow) {
-				close_button.Rectangle = new Rectangle (form.Width - BorderWidth - 2 - 13,
-						BorderWidth + 2, 13, 13);
+				Size bs = ButtonSize;
+				close_button.Rectangle = new Rectangle (form.Width - BorderWidth - 2 - bs.Width,
+						BorderWidth + 2, bs.Width, bs.Height);
 				DrawTitleButton (dc, close_button, pe.ClipRectangle);
 			}
 		}
@@ -564,10 +671,14 @@ namespace System.Windows.Forms {
 
 		private void MinimizeClicked (object sender, EventArgs e)
 		{
+			form.WindowState = FormWindowState.Minimized;
+
+			/*
 			form.SuspendLayout ();
 			form.Width = MinTitleBarSize.Width + (BorderWidth * 2);
 			form.Height = MinTitleBarSize.Height + (BorderWidth * 2);
 			form.ResumeLayout ();
+			*/
 		}
 
 		private void MaximizeClicked (object sender, EventArgs e)
@@ -599,10 +710,14 @@ namespace System.Windows.Forms {
 			
 		}
 
+		protected virtual void OnWindowFinishedMoving ()
+		{
+		}
+
 		private FormPos FormPosForCoords (int x, int y)
 		{
 			if (y < TitleBarHeight + BorderWidth) {
-
+				//	Console.WriteLine ("A");
 				if (y > BorderWidth && x > BorderWidth &&
 						x < form.Width - BorderWidth)
 					return FormPos.TitleBar;
@@ -618,24 +733,28 @@ namespace System.Windows.Forms {
 					return FormPos.Top;
 
 			} else if (y > form.Height - 20) {
-
+				//	Console.WriteLine ("B");
 				if (x < BorderWidth ||
 						(x < 20 && y > form.Height - BorderWidth))
 					return FormPos.BottomLeft;
 
-				if (x > form.Width - BorderWidth ||
+				if (x > form.Width - (BorderWidth * 2) ||
 						(x > form.Width - 20 &&
 						 y > form.Height - BorderWidth))
 					return FormPos.BottomRight;
 
-				if (y > form.Height - BorderWidth)
+				if (y > form.Height - (BorderWidth * 2))
 					return FormPos.Bottom;
 
 
 			} else if (x < BorderWidth) {
+				//	Console.WriteLine ("C");
 				return FormPos.Left;
-			} else if (x > form.Width - BorderWidth) {
+			} else if (x > form.Width - (BorderWidth * 2)) {
+//				Console.WriteLine ("D");
 				return FormPos.Right;
+			} else {
+				//			Console.WriteLine ("E   {0}", form.Width - BorderWidth);
 			}
 			
 			return FormPos.None;

@@ -42,6 +42,7 @@ namespace System.Windows.Forms {
 		public MdiWindowManager (Form form, MdiClient mdi_container) : base (form)
 		{
 			this.mdi_container = mdi_container;
+			form.GotFocus += new EventHandler (FormGotFocus);
 		}
 
 		public MainMenu MergedMenu {
@@ -77,15 +78,18 @@ namespace System.Windows.Forms {
 			XplatUI.ClientToScreen (mdi_container.Handle, ref x, ref y);
 		}
 
+		/*
 		public override void UpdateBorderStyle (FormBorderStyle border_style)
 		{
 			base.UpdateBorderStyle (border_style);
 
+			Console.WriteLine ("MDI SETTING BORDER STYLE:   " + border_style);
 			if (border_style != FormBorderStyle.None)
 				XplatUI.SetBorderStyle (form.Handle, (FormBorderStyle) MdiBorderStyle);
 			else
 				XplatUI.SetBorderStyle (form.Handle, FormBorderStyle.None);
 		}
+		*/
 
 		protected override bool ShouldRemoveWindowManager (FormBorderStyle style)
 		{
@@ -119,6 +123,31 @@ namespace System.Windows.Forms {
 						prev_virtual_position, 2);
 			prev_virtual_position = Rectangle.Empty;
 		}
+
+		protected override void OnWindowFinishedMoving ()
+		{
+			mdi_container.EnsureScrollBars (form.Right, form.Bottom);
+
+			form.Refresh ();
+		}
+
+		protected override bool IsActive ()
+		{
+			return mdi_container.ActiveMdiChild == form;
+		}
+
+		protected override void Activate ()
+		{
+			mdi_container.ActivateChild (form);
+			base.Activate ();
+		}
+
+		private void FormGotFocus (object sender, EventArgs e)
+		{
+			// Maybe we don't need to do this, maybe we do
+			//	mdi_container.ActivateChild (form);
+		}
+			
 	}
 }
 

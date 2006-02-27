@@ -169,19 +169,6 @@ namespace System.Windows.Forms {
 				rect.Y -= 1;
 				rect.Width += 2;
 				rect.Height += 2;
-			} else if ((int) border_style == 0xFFFF) {
-				rect.X -= 3;
-				rect.Y -= 3;
-				rect.Width += 6;
-				rect.Height += 6;
-			}
-
-			if (title_style == TitleStyle.Normal) {
-				rect.Y -= caption_height;
-				rect.Height += caption_height;
-			} else if (title_style == TitleStyle.Tool) {
-				rect.Y -= tool_caption_height;
-				rect.Height += tool_caption_height;
 			}
 
 			return rect;
@@ -210,19 +197,6 @@ namespace System.Windows.Forms {
 				rect.Y += 1;
 				rect.Width -= 2;
 				rect.Height -= 2;
-			} else if ((int) border_style == 0xFFFF) {
-				rect.X += 3;
-				rect.Y += 3;
-				rect.Width -= 6;
-				rect.Height -= 6;
-			}
-
-			if (title_style == TitleStyle.Normal)  {
-				rect.Y += caption_height;
-				rect.Height -= caption_height;
-			} else if (title_style == TitleStyle.Tool)  {
-				rect.Y += tool_caption_height;
-				rect.Height -= tool_caption_height;
 			}
 
 			return rect;
