@@ -1052,8 +1052,9 @@ namespace System.Windows.Forms {
 			}
 
 			// Since we fake MDI dont tell Windows that this is a real MDI window
-			if ((cp.ExStyle & (int) WindowStyles.WS_EX_MDICHILD) != 0)
-				cp.ExStyle ^= (int) WindowStyles.WS_EX_MDICHILD;
+			if ((cp.ExStyle & (int) WindowStyles.WS_EX_MDICHILD) != 0) {
+				SetMdiStyles (cp);
+			}
 
 			WindowHandle = Win32CreateWindow((uint)cp.ExStyle, cp.ClassName, cp.Caption, (uint)cp.Style, cp.X, cp.Y, cp.Width, cp.Height, ParentHandle, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
 
@@ -1134,6 +1135,11 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void SetWindowStyle(IntPtr handle, CreateParams cp) {
+
+			if ((cp.ExStyle & (int) WindowStyles.WS_EX_MDICHILD) != 0) {
+				SetMdiStyles (cp);
+			}
+
 			Win32SetWindowLong(handle, WindowLong.GWL_STYLE, (uint)cp.Style);
 			Win32SetWindowLong(handle, WindowLong.GWL_EXSTYLE, (uint)cp.ExStyle);
 		}
@@ -1192,10 +1198,12 @@ namespace System.Windows.Forms {
 					clip_rect = new Rectangle(rect.top, rect.left, rect.right-rect.left, rect.bottom-rect.top);
 				}
 			} else {
-				// GDI+ Broken:
-				// hdc = Win32GetDCEx(hwnd, ncpaint_region, DCExFlags.DCX_WINDOW | DCExFlags.DCX_INTERSECTRGN | DCExFlags.DCX_USESTYLE);
-				hdc = Win32GetWindowDC(handle);
+				hdc = Win32GetWindowDC (handle);
 				hwnd.user_data = (object)hdc;
+
+				// HACK this in for now
+				Win32GetWindowRect (handle, out rect);
+				clip_rect = new Rectangle(0, 0, rect.right-rect.left, rect.bottom-rect.top);
 			}
 
 			hwnd.client_dc = Graphics.FromHdc(hdc);
@@ -1737,6 +1745,12 @@ namespace System.Windows.Forms {
 			Console.WriteLine("CaretCallback hit");
 		}
 
+		private void SetMdiStyles (CreateParams cp)
+		{
+			cp.Style = (int)WindowStyles.WS_CHILD | (int)WindowStyles.WS_CLIPCHILDREN | (int)WindowStyles.WS_CLIPSIBLINGS;
+			cp.ExStyle = 0;
+		}
+	
 		internal override void CreateCaret(IntPtr hwnd, int width, int height) {
 			Win32CreateCaret(hwnd, IntPtr.Zero, width, height);
 		}
