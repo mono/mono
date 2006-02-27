@@ -1,4 +1,8 @@
 
+Mon Feb 27 18:58:19 GMT 2006 Paolo Molaro <lupus@ximian.com>
+
+	* cpu-arm.md, mini-arm.c: implemented MemoryBarrier.
+
 Sat Feb 25 17:39:21 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* inssel.brg: style fixes, mostly to force the updated monoburg
