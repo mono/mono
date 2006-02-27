@@ -63,6 +63,7 @@ namespace System.Windows.Forms {
 		#region Methods
 		protected override void OnPaint (PaintEventArgs pe) {
 			if (redraw && show_grip) {
+				pe.Graphics.FillRectangle (new SolidBrush (ThemeEngine.Current.ColorControl), ClientRectangle);
                                 ControlPaint.DrawSizeGrip (pe.Graphics, BackColor, ClientRectangle);
 			}
 			base.OnPaint (pe);
