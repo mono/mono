@@ -291,7 +291,7 @@ namespace System.Collections {
 			if (index < 0 || index >= m_length)
 				throw new ArgumentOutOfRangeException ();
 			
-			return (m_array [index / 32] & (1 << (index % 32))) != 0;
+			return (m_array [index >> 5] & (1 << (index & 31))) != 0;
 		}
 		
 		public void Set (int index, bool value)
@@ -300,9 +300,9 @@ namespace System.Collections {
 				throw new ArgumentOutOfRangeException ();
 			
 			if (value)
-				m_array [index / 32] |=  (1 << (index % 32));
+				m_array [index >> 5] |=  (1 << (index & 31));
 			else
-				m_array [index / 32] &= ~(1 << (index % 32));
+				m_array [index >> 5] &= ~(1 << (index & 31));
 		
 			_version++;
 		}

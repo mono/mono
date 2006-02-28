@@ -1,3 +1,9 @@
+
+Tue Feb 28 14:16:25 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* BitArray.cs: reintroduce optimization carelessly removed by
+	Robitaille.
+
 2006-02-03  Sebastien Robitaille <sebastien.robitaille@croesus.com>
 
 	* BitArray.cs: Renamed members for interoperability with MS. 
