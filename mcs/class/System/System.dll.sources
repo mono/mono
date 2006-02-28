@@ -482,7 +482,10 @@ System.IO/MonoIOError.cs
 System.IO/NotifyFilters.cs
 System.IO.Ports/Handshake.cs
 System.IO.Ports/Parity.cs
+System.IO.Ports/SerialData.cs
+System.IO.Ports/SerialError.cs
 System.IO.Ports/SerialErrorEventArgs.cs
+System.IO.Ports/SerialPinChange.cs
 System.IO.Ports/SerialPinChangedEventArgs.cs
 System.IO.Ports/SerialPort.cs
 System.IO.Ports/SerialPortStream.cs
