@@ -406,10 +406,11 @@ mono_ssa_rename_vars (MonoCompile *cfg, int max_vars, MonoBasicBlock *bb, MonoIn
 void
 mono_ssa_compute2 (MonoCompile *cfg)
 {
-	int i, j, idx;
+	int i, j, idx, bitsize;
 	MonoBitSet *set, *tmp_bitset;
 	MonoMethodVar *vinfo = g_new0 (MonoMethodVar, cfg->num_varinfo);
 	MonoInst *ins, *store, **stack;
+	guint8 *buf, *buf_start;
 
 	g_assert (!(cfg->comp_done & MONO_COMP_SSA));
 
@@ -429,12 +430,15 @@ mono_ssa_compute2 (MonoCompile *cfg)
 	mono_compile_dominator_info (cfg, MONO_COMP_DOM | MONO_COMP_IDOM | MONO_COMP_DFRONTIER);
 
 	tmp_bitset = mono_bitset_new (cfg->num_bblocks, 0);
+	bitsize = mono_bitset_alloc_size (cfg->num_bblocks, 0);
+	buf = buf_start = g_malloc0 (mono_bitset_alloc_size (cfg->num_bblocks, 0) * cfg->num_varinfo);
 
 	for (i = 0; i < cfg->num_varinfo; ++i) {
-		vinfo [i].def_in = mono_bitset_new (cfg->num_bblocks, 0);
+		vinfo [i].def_in = mono_bitset_mem_new (buf, cfg->num_bblocks, 0);
+		buf += bitsize;
 		vinfo [i].idx = i;
 		/* implicit reference at start */
-		mono_bitset_set (vinfo [i].def_in, 0);
+		mono_bitset_set_fast (vinfo [i].def_in, 0);
 	}
 
 	for (i = 0; i < cfg->num_bblocks; ++i) {
@@ -447,7 +451,7 @@ mono_ssa_compute2 (MonoCompile *cfg)
 			/* FIXME: Handle OP_LDADDR */
 			/* FIXME: Handle non-ints as well */
 			if ((spec [MONO_INST_DEST] == 'i') && !MONO_IS_STORE_MEMBASE (ins) && get_vreg_to_inst (cfg, ins->dreg)) {
-				mono_bitset_set (vinfo [get_vreg_to_inst (cfg, ins->dreg)->inst_c0].def_in, i);
+				mono_bitset_set_fast (vinfo [get_vreg_to_inst (cfg, ins->dreg)->inst_c0].def_in, i);
 			}
 		}
 	}
@@ -534,9 +538,9 @@ mono_ssa_compute2 (MonoCompile *cfg)
 	}
 
 	/* free the stuff */
-	for (i = 0; i < cfg->num_varinfo; ++i)
-		mono_bitset_free (vinfo [i].def_in);
 	g_free (vinfo);
+	g_free (buf_start);
+	mono_bitset_free (tmp_bitset);
 
 	stack = alloca (sizeof (MonoInst *) * cfg->num_varinfo);
 		
@@ -548,8 +552,6 @@ mono_ssa_compute2 (MonoCompile *cfg)
 		mono_ssa_rename_vars2 (cfg, cfg->num_varinfo, cfg->bb_entry, originals, stack);
 		g_free (originals);
 	}
-
-	mono_bitset_free (tmp_bitset);
 
 	if (cfg->verbose_level >= 4)
 		printf ("\nEND COMPUTE SSA.\n\n");
