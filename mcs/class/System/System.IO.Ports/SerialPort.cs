@@ -10,8 +10,9 @@ namespace System.IO.Ports
 {
 	public class SerialPort /* : Component */
 	{
-
 		public const int InfiniteTimeout = -1;
+		const int DefaultReadBufferSize = 4096;
+		const int DefaultWriteBufferSize = 2048;
 
 		bool   isOpen     = false;
 		int    baudRate   = 9600;
@@ -20,13 +21,20 @@ namespace System.IO.Ports
 		Handshake handshake = Handshake.None;
 		int    dataBits   = 8;
 		bool   breakState = false;
-		Stream baseStream;
+		SerialPortStream stream;
 		Encoding encoding = Encoding.ASCII;
 		string newLine    = Environment.NewLine;
 		string portName;
-		int    unixFd;
 		int    readTimeout = InfiniteTimeout;
 		int    writeTimeout = InfiniteTimeout;
+		int readBufferSize = DefaultReadBufferSize;
+		int writeBufferSize = DefaultWriteBufferSize;
+		int readBufferOffset;
+		int readBufferLength;
+		int writeBufferOffset;
+		int writeBufferLength;
+		byte [] readBuffer;
+		byte [] writeBuffer;
 
 		public SerialPort ()
 		{
@@ -65,7 +73,8 @@ namespace System.IO.Ports
 			this.dataBits = dataBits;
 		}
 
-		public SerialPort (string portName, int baudRate, Parity parity, int dataBits, StopBits stopBits) {
+		public SerialPort (string portName, int baudRate, Parity parity, int dataBits, StopBits stopBits) 
+		{
 			this.portName = portName;
 			this.baudRate = baudRate;
 			this.parity = parity;
@@ -73,22 +82,15 @@ namespace System.IO.Ports
 			this.stopBits = stopBits;
 		}
 
-		public Stream BaseStream
-		{
+		public Stream BaseStream {
 			get {
 				if (!isOpen)
 					throw new InvalidOperationException ();
 
-				if (baseStream == null)
-					baseStream = new SerialPortStream (this);
-
-				return baseStream;
+				return stream;
 			}
 		}
 
-		[DllImport("MonoPosixHelper")]
-		private static extern bool set_attributes (int unix_fd, int baud_rate, Parity parity, int dataBits, StopBits stopBits, Handshake handshake);
-	  
 		public int BaudRate {
 			get {
 				return baudRate;
@@ -98,7 +100,8 @@ namespace System.IO.Ports
 					throw new ArgumentOutOfRangeException ("value");
 				
 				baudRate = value;
-				set_attributes (unixFd, baudRate, parity, dataBits, stopBits, handshake);
+				if (isOpen)
+					stream.BaudRate = value;
 			}
 		}
 
@@ -107,8 +110,7 @@ namespace System.IO.Ports
 				return breakState;
 			}
 			set {
-				if (!isOpen)
-					throw new InvalidOperationException ();
+				CheckOpen ();
 				if (value == breakState)
 					return; // Do nothing.
 
@@ -117,42 +119,30 @@ namespace System.IO.Ports
 			}
 		}
 
-		public int BytesToRead
-		{
+		public int BytesToRead {
 			get {
-				if (!isOpen)
-					throw new InvalidOperationException ();
+				CheckOpen ();
+				return readBufferLength + stream.BytesToRead;
+			}
+		}
 
+		public int BytesToWrite {
+			get {
+				CheckOpen ();
+				return writeBufferLength + stream.BytesToWrite;
+			}
+		}
+
+		public bool CDHolding {
+			get {
+				CheckOpen ();
 				throw new NotImplementedException ();
 			}
 		}
 
-		public int BytesToWrite
-		{
+		public bool CtsHolding {
 			get {
-				if (!isOpen)
-					throw new InvalidOperationException ();
-
-				throw new NotImplementedException ();
-			}
-		}
-
-		public bool CDHolding
-		{
-			get {
-				if (!isOpen)
-					throw new InvalidOperationException ();
-
-				throw new NotImplementedException ();
-			}
-		}
-
-		public bool CtsHolding
-		{
-			get {
-				if (!isOpen)
-					throw new InvalidOperationException ();
-
+				CheckOpen ();
 				throw new NotImplementedException ();
 			}
 		}
@@ -166,39 +156,32 @@ namespace System.IO.Ports
 					throw new ArgumentOutOfRangeException ("value");
 
 				dataBits = value;
-				set_attributes (unixFd, baudRate, parity, dataBits, stopBits, handshake);
+				if (isOpen)
+					stream.DataBits = value;
 			}
 		}
 
-		public bool DiscardNull
-		{
+		public bool DiscardNull {
 			get {
-				if (!isOpen)
-					throw new InvalidOperationException ();
-
+				CheckOpen ();
 				throw new NotImplementedException ();
 			}
 			set {
-				if (!isOpen)
-					throw new InvalidOperationException ();
-
+				CheckOpen ();
 				throw new NotImplementedException ();
 			}
 		}
 
-		public bool DsrHolding
-		{
+		public bool DsrHolding {
 			get {
-				if (!isOpen)
-					throw new InvalidOperationException ();
-
+				CheckOpen ();
 				throw new NotImplementedException ();
 			}
 		}
 
-		public bool DtrEnable
-		{
+		public bool DtrEnable {
 			get {
+				CheckOpen ();
 				throw new NotImplementedException ();
 			}
 		}
@@ -217,25 +200,19 @@ namespace System.IO.Ports
 
 		public Handshake Handshake {
 			get {
-				if (!isOpen)
-					throw new InvalidOperationException ();
-
 				return handshake;
 			}
 			set {
-				if (!isOpen)
-					throw new InvalidOperationException ();
 				if (value < Handshake.None || value > Handshake.RequestToSendXOnXOff)
 					throw new ArgumentOutOfRangeException ("value");
 
 				handshake = value;
-
-				set_attributes (unixFd, baudRate, parity, dataBits, stopBits, handshake);
+				if (isOpen)
+					stream.Handshake = value;
 			}
 		}
 
-		public bool IsOpen
-		{
+		public bool IsOpen {
 			get {
 				return isOpen;
 			}
@@ -255,24 +232,19 @@ namespace System.IO.Ports
 
 		public Parity Parity {
 			get {
-				if (!isOpen)
-					throw new InvalidOperationException ();
-
 				return parity;
 			}
 			set {
-				if (!isOpen)
-					throw new InvalidOperationException ();
 				if (value < Parity.None || value > Parity.Space)
 					throw new ArgumentOutOfRangeException ("value");
 
 				parity = value;
-				set_attributes (unixFd, baudRate, parity, dataBits, stopBits, handshake);
+				if (isOpen)
+					stream.Parity = value;
 			}
 		}
 
-		public byte ParityReplace
-		{
+		public byte ParityReplace {
 			get {
 				throw new NotImplementedException ();
 			}
@@ -287,31 +259,33 @@ namespace System.IO.Ports
 			}
 			set {
 				if (isOpen)
-					throw new InvalidOperationException ();
+					throw new InvalidOperationException ("Port name cannot be set while port is open.");
 				if (value == null)
 					throw new ArgumentNullException ("value");
-				if (value.Length == 0 || value.StartsWith ("\\"))
+				if (value.Length == 0 || value.StartsWith ("\\\\"))
 					throw new ArgumentException ("value");
-				
-				throw new NotImplementedException ();
+
+				portName = value;
 			}
 		}
 
-		public int ReadBufferSize
-		{
+		public int ReadBufferSize {
 			get {
-				throw new NotImplementedException ();
+				return readBufferSize;
 			}
 			set {
+				if (isOpen)
+					throw new InvalidOperationException ();
 				if (value <= 0)
 					throw new ArgumentOutOfRangeException ("value");
+				if (value <= DefaultReadBufferSize)
+					return;
 
-				throw new NotImplementedException ();
+				readBufferSize = value;
 			}
 		}
 
-		public int ReadTimeout
-		{
+		public int ReadTimeout {
 			get {
 				return readTimeout;
 			}
@@ -320,6 +294,8 @@ namespace System.IO.Ports
 					throw new ArgumentOutOfRangeException ("value");
 
 				readTimeout = value;
+				/*if (isOpen)
+					stream.ReadTimeout = value;*/
 			}
 		}
 
@@ -335,12 +311,13 @@ namespace System.IO.Ports
 			}
 		}
 
-		public bool RtsEnable
-		{
+		public bool RtsEnable {
 			get {
+				CheckOpen ();
 				throw new NotImplementedException ();
 			}
 			set {
+				CheckOpen ();
 				throw new NotImplementedException ();
 			}
 		}
@@ -353,26 +330,29 @@ namespace System.IO.Ports
 				if (value < StopBits.One || value > StopBits.OnePointFive)
 					throw new ArgumentOutOfRangeException ("value");
 				
-				this.stopBits = value;
-				set_attributes (unixFd, baudRate, parity, dataBits, stopBits, handshake);
+				stopBits = value;
+				if (isOpen)
+					stream.StopBits = value;
 			}
 		}
 
-		public int WriteBufferSize
-		{
+		public int WriteBufferSize {
 			get {
-				throw new NotImplementedException ();
+				return writeBufferSize;
 			}
 			set {
+				if (isOpen)
+					throw new InvalidOperationException ();
 				if (value <= 0)
 					throw new ArgumentOutOfRangeException ("value");
+				if (value <= DefaultWriteBufferSize)
+					return;
 
-				throw new NotImplementedException ();
+				writeBufferSize = value;
 			}
 		}
 
-		public int WriteTimeout
-		{
+		public int WriteTimeout {
 			get {
 				return writeTimeout;
 			}
@@ -381,70 +361,56 @@ namespace System.IO.Ports
 					throw new ArgumentOutOfRangeException ("value");
 
 				writeTimeout = value;
+				/*if (isOpen)
+					stream.WriteTimeout = value;*/
 			}
 		}
 
 		// methods
 
-		[DllImport("MonoPosixHelper")]
-		private static extern void close_serial (int unixFd);
 		public void Close ()
 		{
-			if (!isOpen)
-				return;
-			
 			isOpen = false;
 
-			close_serial (unixFd);
+			if (stream != null)
+				stream.Close ();
+			
+			stream = null;
+			readBuffer = null;
+			writeBuffer = null;
 		}
 
-		[DllImport("MonoPosixHelper")]
-		private static extern void discard_buffer (int unixFd, bool input_buffer);
 		public void DiscardInBuffer ()
 		{
-			if (!isOpen)
-				throw new InvalidOperationException ();
-			discard_buffer (unixFd, true);
+			CheckOpen ();
+			stream.DiscardInputBuffer ();
 		}
 
 		public void DiscardOutBuffer ()
 		{
-			if (!isOpen)
-				throw new InvalidOperationException ();
-			discard_buffer (unixFd, false);
+			CheckOpen ();
+			stream.DiscardOutputBuffer ();
 		}
 
-		[DllImport("MonoPosixHelper")]
-		private static extern string[] list_serial_devices ();
-		public static string[] GetPortNames()
+		public static string [] GetPortNames ()
 		{
-			return list_serial_devices ();
+			return new string [0]; // Return empty by now
 		}
-
-		[DllImport("MonoPosixHelper")]
-		private static extern int open_serial (string portName);
 
 		public void Open ()
 		{
-			if (portName == null || portName.StartsWith ("\\\\"))
-				throw new ArgumentException ();
-
-			unixFd = open_serial (portName);
-			if (unixFd == -1)
-				throw new IOException();
-
-			set_attributes (unixFd, baudRate, parity, dataBits, stopBits, handshake);
-
+			if (isOpen)
+				throw new InvalidOperationException ("Port is already open");
+			
 			isOpen = true;
+			stream = new SerialPortStream (this);
+			readBuffer = new byte [readBufferSize];
+			writeBuffer = new byte [writeBufferSize];
 		}
-
-		[DllImport("MonoPosixHelper")]
-		private static extern int read_serial (int unixFd, byte[] buffer, int offset, int count, int timeout);
 
 		public int Read (byte[] buffer, int offset, int count)
 		{
-			if (!isOpen)
-				throw new InvalidOperationException ();
+			CheckOpen ();
 			if (buffer == null)
 				throw new ArgumentNullException ("buffer");
 			if (offset < 0 || offset >= buffer.Length)
@@ -454,13 +420,27 @@ namespace System.IO.Ports
 			if (count > buffer.Length - offset)
 				throw new ArgumentException ("count > buffer.Length - offset");
 			
-			return read_serial (unixFd, buffer, offset, count, readTimeout);
+			if (readBufferLength <= 0) {
+				readBufferOffset = 0;
+				readBufferLength = stream.Read (readBuffer, 0, readBuffer.Length);
+			}
+			
+			if (readBufferLength == 0)
+				return 0; // No bytes left
+			
+			if (count > readBufferLength)
+				count = readBufferLength; // Update count if needed
+
+			Buffer.BlockCopy (readBuffer, readBufferOffset, buffer, offset, count);
+			readBufferOffset += count;
+			readBufferLength -= count;
+
+			return count;
 		}
 
 		public int Read (char[] buffer, int offset, int count)
 		{
-			if (!isOpen)
-				throw new InvalidOperationException ();
+			CheckOpen ();
 			if (buffer == null)
 				throw new ArgumentNullException ("buffer");
 			if (offset < 0 || offset >= buffer.Length)
@@ -471,16 +451,15 @@ namespace System.IO.Ports
 				throw new ArgumentException ("count > buffer.Length - offset");
 
 			byte [] bytes = encoding.GetBytes (buffer, offset, count);
-			return read_serial (unixFd, bytes, 0, bytes.Length, readTimeout);
+			return Read (bytes, 0, bytes.Length);
 		}
-
-		byte[] read_buffer = new byte[4096];
 
 		public int ReadByte ()
 		{
-			if (Read (read_buffer, 0, 1) == 1)
-				return read_buffer [0];
-			
+			byte [] buff = new byte [1];
+			if (Read (buff, 0, 1) > 0)
+				return buff [0];
+
 			return -1;
 		}
 
@@ -501,61 +480,65 @@ namespace System.IO.Ports
 
 		public string ReadTo (string value)
 		{
+			CheckOpen ();
+			if (value == null)
+				throw new ArgumentNullException ("value");
+			if (value.Length == 0)
+				throw new ArgumentException ("value");
+
 			throw new NotImplementedException ();
 		}
 
-		[DllImport("MonoPosixHelper")]
-		private static extern void write_serial (int unixFd, byte[] buffer, int offset, int count, int timeout);
-
 		public void Write (string str)
 		{
+			CheckOpen ();
 			if (str == null)
 				throw new ArgumentNullException ("str");
-			if (!isOpen)
-				throw new InvalidOperationException ("Specified port is not open");
 			
 			byte [] buffer = encoding.GetBytes (str);
 			Write (buffer, 0, buffer.Length);
 		}
 
-		public void Write (byte[] buffer, int offset, int count)
+		public void Write (byte [] buffer, int offset, int count)
 		{
+			CheckOpen ();
 			if (buffer == null)
 				throw new ArgumentNullException ("buffer");
 			if (offset < 0 || offset >= buffer.Length)
 				throw new ArgumentOutOfRangeException ("offset");
 			if (count < 0 || count > buffer.Length)
 				throw new ArgumentOutOfRangeException ("count");
-			if (offset + count > buffer.Length)
-				throw new ArgumentException ("offset+count > buffer.Length");
-			
-			if (!isOpen)
-				throw new InvalidOperationException ("Specified port is not open");
-			
-			write_serial (unixFd, buffer, offset, count, writeTimeout);
+			if (count > buffer.Length - offset)
+				throw new ArgumentException ("count > buffer.Length - offset");
+
+			stream.Write (buffer, offset, count);
 		}
 
-		public void Write (char[] buffer, int offset, int count)
+		public void Write (char [] buffer, int offset, int count)
 		{
+			CheckOpen ();
 			if (buffer == null)
 				throw new ArgumentNullException ("buffer");
 			if (offset < 0 || offset >= buffer.Length)
 				throw new ArgumentOutOfRangeException ("offset");
 			if (count < 0 || count > buffer.Length)
 				throw new ArgumentOutOfRangeException ("count");
-			if (offset + count > buffer.Length)
-				throw new ArgumentException ("offset+count > buffer.Length");
+			if (count > buffer.Length - offset)
+				throw new ArgumentException ("count > buffer.Length - offset");
 
-			if (!isOpen)
-				throw new InvalidOperationException ("Specified port is not open");
-			
 			byte [] bytes = encoding.GetBytes (buffer, offset, count);
-			write_serial (unixFd, bytes, offset, count, writeTimeout);
+			stream.Write (bytes, 0, bytes.Length);
 		}
 
 		public void WriteLine (string str)
 		{
 			Write (str + newLine);
+		}
+
+		void CheckOpen ()
+		{
+			if (!isOpen)
+				throw new InvalidOperationException ("Specified port is not open.");
 		}
 
 		// events

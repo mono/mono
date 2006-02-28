@@ -1,3 +1,10 @@
+2006-02-28  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* SerialPort.cs: 
+	* SerialPortStream.cs: Cleanups and some small funcionalities
+	added. Also, some code was moved to SerialPortStream, to have a 
+	better design.
+
 2006-02-21  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* SerialPort.cs:
