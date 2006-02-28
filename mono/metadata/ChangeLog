@@ -1,3 +1,9 @@
+2006-02-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (mono_marshal_asany): Fix marshalling of blittable formatted
+	classes and add support for [In, Out] attributes.
+	(mono_marshal_free_asany): Ditto. Fixes #77524.
+
 2006-02-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* file-io.c: fix typo in warning message.
