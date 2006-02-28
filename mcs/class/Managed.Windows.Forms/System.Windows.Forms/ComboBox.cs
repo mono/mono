@@ -435,7 +435,11 @@ namespace System.Windows.Forms
     				selected_index = value;
     				
     				if (dropdown_style != ComboBoxStyle.DropDownList) {
-    					SetControlText (GetItemText (Items[selected_index]));
+					if (selected_index != -1) {
+						SetControlText (GetItemText (Items[selected_index]));
+					} else {
+						SetControlText("");
+					}
     				}
     				
     				OnSelectedIndexChanged  (new EventArgs ());
