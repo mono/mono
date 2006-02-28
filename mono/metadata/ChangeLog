@@ -1,3 +1,9 @@
+
+Tue Feb 28 17:43:20 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* loader.c: on unix, lookup the "*A" version of a function
+	if charset is auto as a second option before failing.
+
 2006-02-28  Raja R Harinath  <rharinath@novell.com>
 
 	* class.h (mono_class_inflate_generic_method): Revert to two
