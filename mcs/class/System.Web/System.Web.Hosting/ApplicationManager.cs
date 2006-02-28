@@ -179,10 +179,19 @@ namespace System.Web.Hosting {
 			Interlocked.Increment (ref users);
 		}
 
-		[MonoTODO]
 		public void ShutdownAll ()
 		{
-			// == HostingEnvironment.InitiateShutdown in all appdomains managed by this instance
+			ICollection<string> coll = id_to_host.Keys;
+			string [] keys = new string [coll.Count];
+			coll.CopyTo (keys, 0);
+			ApplicationInfo [] result = new ApplicationInfo [coll.Count];
+			int i = 0;
+			foreach (string str in keys) {
+				BareApplicationHost host = id_to_host [str];
+				host.Shutdown ();
+			}
+
+			id_to_host.Clear ();
 		}
 
 		public void ShutdownApplication (string appId)

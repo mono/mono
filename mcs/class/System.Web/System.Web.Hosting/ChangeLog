@@ -1,3 +1,8 @@
+2006-02-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ApplicationManager.cs: implemented ShutdownAll().
+	* HostingEnvironment.cs: remove MonoTODO.
+
 2006-02-22 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* BareApplicationHost.cs: class used as an entry point into each
