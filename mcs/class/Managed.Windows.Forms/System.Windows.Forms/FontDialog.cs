@@ -794,7 +794,7 @@ namespace System.Windows.Forms
 			UpdateExamplePanel( );
 		}
 		
-		void OnFontTextBoxKeyUp (object sender, EventArgs e)
+		void OnFontTextBoxKeyUp (object sender, KeyEventArgs e)
 		{
 			for (int i = 0; i < fontListBox.Items.Count; i++) {
 				string name = fontListBox.Items [i] as string;

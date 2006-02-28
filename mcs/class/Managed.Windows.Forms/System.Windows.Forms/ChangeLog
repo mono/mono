@@ -15,6 +15,7 @@
 	  - Draw the correct 3D border in the example panel
 	  - Fixed a little mem leak (unused fonts didn't get disposed)
 	  - Many other internal updates/rewrites...
+	  - Fix typo
 
 2006-02-27  Peter Dennis Bartok  <pbartok@novell.com> 
 
