@@ -1,3 +1,9 @@
+2006-02-28  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlElement.cs : (WriteTo) use IsEmpty to determine which to use:
+	  WriteEndElement() and WriteFullEndElement(). Fixed sys.security
+	  regression.
+
 2006-02-24  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlTextWriter2.cs :

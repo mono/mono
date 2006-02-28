@@ -425,10 +425,10 @@ namespace System.Xml
 
 			WriteContentTo (w);
 
-			if (isNotEmpty)
-				w.WriteFullEndElement ();
-			else
+			if (IsEmpty)
 				w.WriteEndElement ();
+			else
+				w.WriteFullEndElement ();
 		}
 
 		#endregion
