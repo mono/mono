@@ -216,34 +216,44 @@ mono_bitset_size (const MonoBitSet *set) {
  */
 guint32
 mono_bitset_count (const MonoBitSet *set) {
+#if SIZEOF_VOID_P == 8
 	static const unsigned char table [16] = {
 		0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4
 	};
+#endif
 	guint32 i, count;
-	const unsigned char *b;
+	gsize d;
 
 	count = 0;
 	for (i = 0; i < set->size / BITS_PER_CHUNK; ++i) {
+		d = set->data [i];
 		/* there is probably some asm code that can do this much faster */
-		if (set->data [i]) {
-			b = (unsigned char*) (set->data + i);
-			count += table [b [0] & 0xf];
-			count += table [b [0] >> 4];
-			count += table [b [1] & 0xf];
-			count += table [b [1] >> 4];
-			count += table [b [2] & 0xf];
-			count += table [b [2] >> 4];
-			count += table [b [3] & 0xf];
-			count += table [b [3] >> 4];
+		if (d) {
 #if SIZEOF_VOID_P == 8
-			count += table [b [4] & 0xf];
-			count += table [b [4] >> 4];
-			count += table [b [5] & 0xf];
-			count += table [b [5] >> 4];
-			count += table [b [6] & 0xf];
-			count += table [b [6] >> 4];
-			count += table [b [7] & 0xf];
-			count += table [b [7] >> 4];
+			count += table [d & 0xf]; d >>= 4;
+			count += table [d & 0xf]; d >>= 4;
+			count += table [d & 0xf]; d >>= 4;
+			count += table [d & 0xf]; d >>= 4;
+			count += table [d & 0xf]; d >>= 4;
+			count += table [d & 0xf]; d >>= 4;
+			count += table [d & 0xf]; d >>= 4;
+			count += table [d & 0xf]; d >>= 4;
+			count += table [d & 0xf]; d >>= 4;
+			count += table [d & 0xf]; d >>= 4;
+			count += table [d & 0xf]; d >>= 4;
+			count += table [d & 0xf]; d >>= 4;
+			count += table [d & 0xf]; d >>= 4;
+			count += table [d & 0xf]; d >>= 4;
+			count += table [d & 0xf]; d >>= 4;
+			count += table [d & 0xf]; d >>= 4;
+#else
+			/* http://aggregate.org/MAGIC/ */
+			d -= ((d >> 1) & 0x55555555);
+			d = (((d >> 2) & 0x33333333) + (d & 0x33333333));
+			d = (((d >> 4) + d) & 0x0f0f0f0f);
+			d += (d >> 8);
+			d += (d >> 16);
+			count += (d & 0x0000003f);
 #endif
 		}
 	}
@@ -292,22 +302,57 @@ bitstart_mask [] = {
 #define my_g_bit_nth_lsf_nomask(m) (ffs((m))-1)
 
 #else
+
 static inline gint
 my_g_bit_nth_lsf (gsize mask, gint nth_bit)
 {
-	do {
-		nth_bit++;
-		if (mask & ((gsize)1 << nth_bit)) {
-			if (nth_bit == BITS_PER_CHUNK)
-				/* On 64 bit platforms, 1 << 64 == 1 */
-				return -1;
-			else
-				return nth_bit;
-		}
-	} while (nth_bit < BITS_PER_CHUNK);
-	return -1;
+#ifdef __i386__
+	int cnt;
+#endif
+
+	nth_bit ++;
+	mask >>= nth_bit;
+
+	if ((mask == 0) || (nth_bit == BITS_PER_CHUNK))
+		return -1;
+
+#ifdef __i386__
+	/* This depends on mask != 0 */
+	__asm__("bsfl %1,%0\n\t"
+			: "=r" (cnt) : "g" (mask)); 
+	return nth_bit + cnt;
+#else
+	while (! (mask & 0x1)) {
+		mask >>= 1;
+		nth_bit ++;
+	}
+
+	return nth_bit;
+#endif
 }
-#define my_g_bit_nth_lsf_nomask(m) (my_g_bit_nth_lsf((m),-1))
+
+static inline gint
+my_g_bit_nth_lsf_nomask (gsize mask)
+{
+	/* Mask is expected to be != 0 */
+#ifdef __i386__
+	int r;
+
+	__asm__("bsfl %1,%0\n\t"
+			: "=r" (r) : "rm" (mask));
+	return r;
+#else
+	int nth_bit = 0;
+
+	while (! (mask & 0x1)) {
+		mask >>= 1;
+		nth_bit ++;
+	}
+
+	return nth_bit;
+#endif
+}
+
 #endif
 
 static inline int
