@@ -1,3 +1,17 @@
+2006-02-28  Alexander Olk  <alex.olk@googlemail.com>
+
+	* FontDialog.cs:
+	  - Got rid of the panel. All controls are now directly added to
+	    the dialog form
+	  - It is now possible to set a font with the Font property
+	  - MinSize and MaxSize property do now what they should
+	  - ShowApply, ShowHelp, ShowColor, ShowEffects likewise
+	  - Searching and selecting a font with the font textbox works now,
+	    the same applies to the style and size textbox
+	  - Draw the correct 3D border in the example panel
+	  - Fixed a little mem leak (unused fonts didn't get disposed)
+	  - Many other internal updates/rewrites...
+
 2006-02-27  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* TextControl.cs: 
