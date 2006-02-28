@@ -1,3 +1,23 @@
+2006-02-28  Chris Toshok  <toshok@ximian.com>
+
+	* HttpCookieMode.cs: corcompare work.
+
+	* ProcessShutdownReason.cs: same.
+
+	* SiteMapNodeCollection.cs: same.
+
+	* SiteMapNode.cs: same.
+
+	* SiteMapProvider.cs: same.
+
+	* HttpCacheRevalidation.cs: same.
+
+	* HttpCacheability.cs: same.
+
+	* StaticSiteMapProvider.cs: same.
+
+	* HttpValidationStatus.cs: same.
+	
 2006-02-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* DefaultHttpHandler.cs: New file.

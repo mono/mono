@@ -195,7 +195,7 @@ namespace System.Web
 			return parent != null && IsAccessibleToUser (HttpContext.Current, parent) ? parent : null;
 		}
 		
-		public override void RemoveNode (SiteMapNode node)
+		protected override void RemoveNode (SiteMapNode node)
 		{
 			if (node == null)
 				throw new ArgumentNullException("node");

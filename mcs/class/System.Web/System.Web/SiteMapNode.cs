@@ -73,7 +73,7 @@ namespace System.Web {
 			return new SiteMapHierarchicalDataSourceView (this);
 		}
 		
-		public bool IsAccessibleToUser (System.Web.HttpContext ctx)
+		public virtual bool IsAccessibleToUser (System.Web.HttpContext ctx)
 		{
 			return provider.IsAccessibleToUser (ctx, this);
 		}
@@ -200,7 +200,7 @@ namespace System.Web {
 		}
 		
 		[MonoTODO ("resource string?")]
-		public string this [string key]
+		public virtual string this [string key]
 		{
 			get {
 				string val = null;
@@ -284,7 +284,7 @@ namespace System.Web {
 				
 		#region Field Accessors
 		
-		public virtual NameValueCollection Attributes {
+		protected NameValueCollection Attributes {
 			get { return attributes; } 
 			set { CheckWritable (); attributes = value; }
 		}
@@ -306,7 +306,7 @@ namespace System.Web {
 			set { CheckWritable (); url = value; }
 		}
 		
-		public virtual IList Roles {
+		public IList Roles {
 			get { return roles; }
 			set { CheckWritable (); roles = value; }
 		}

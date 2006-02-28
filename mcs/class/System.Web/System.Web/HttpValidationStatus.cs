@@ -29,7 +29,9 @@
 //
 
 namespace System.Web {
+#if !NET_2_0
 	[Serializable]
+#endif
         public enum HttpValidationStatus {
                 Invalid = 0x1,
                 IgnoreThisRequest,

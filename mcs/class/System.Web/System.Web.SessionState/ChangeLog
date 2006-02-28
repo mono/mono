@@ -1,5 +1,10 @@
 2006-02-28  Chris Toshok  <toshok@ximian.com>
 
+	* SessionStateActions.cs: oops, actually rename the enum, not just
+	the file.
+
+2006-02-28  Chris Toshok  <toshok@ximian.com>
+
 	* SessionStateActions.cs: rename SessionStateActionFlags to this.
 
 	* ISessionIDManager.cs: rename ISessionIDModule to this.

@@ -150,7 +150,7 @@ namespace System.Web {
 			if (node == null) throw new ArgumentNullException ("node");
 		}
 		
-		public virtual void RemoveNode (SiteMapNode node)
+		protected virtual void RemoveNode (SiteMapNode node)
 		{
 			if (node == null)
 				throw new ArgumentNullException("node");

@@ -29,7 +29,9 @@
 //
 
 namespace System.Web {
+#if !NET_2_0
 	[Serializable]
+#endif
 	public enum ProcessShutdownReason {
 		None,
 		Unexpected,

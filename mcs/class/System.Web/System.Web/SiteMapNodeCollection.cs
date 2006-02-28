@@ -137,17 +137,17 @@ namespace System.Web
 			List.AddRange (value);
 		}
 
-		public bool Contains (SiteMapNode value)
+		public virtual bool Contains (SiteMapNode value)
 		{
 			return this.List.Contains (value);
 		}
 		
-		public void CopyTo (System.Web.SiteMapNode[] array, int index)
+		public virtual void CopyTo (System.Web.SiteMapNode[] array, int index)
 		{
 			this.List.CopyTo (array, index);
 		}
 		
-		public int IndexOf (SiteMapNode value)
+		public virtual int IndexOf (SiteMapNode value)
 		{
 			return this.List.IndexOf (value);
 		}

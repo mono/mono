@@ -1,5 +1,5 @@
 //
-// System.Web.SessionState.SessionStateActionFlags.cs
+// System.Web.SessionState.SessionStateActions.cs
 //
 // Authors:
 //	Sanjay Gupta (gsanjay@novell.com)
@@ -28,7 +28,7 @@
 
 #if NET_2_0
 namespace System.Web.SessionState {
-	public enum SessionStateActionFlags {
+	public enum SessionStateActions {
 		InitializeItem	= 1
 	}
 }

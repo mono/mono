@@ -29,7 +29,9 @@
 #if NET_2_0
 namespace System.Web
 {
+#if !NET_2_0
         [Serializable]
+#endif
         public enum HttpCookieMode
         {
                 UseUri = 0,
