@@ -1,5 +1,18 @@
 2006-02-28  Gert Driesen <drieseng@users.sourceforge.net>
 
+	* XmlSchemaAssertion.cs: Set eol-style to native.
+	* XmlSchemaBuiltInDatatypeTests.cs: Set eol-style to CRLF.
+	* XmlSchemaCollectionTests.cs: Set eol-style to native. Fixed line 
+	endings.
+	* XmlSchemaDatatypeTests.cs: Set eol-style to native.
+	* XmlSchemaExceptionCas.cs: Set eol-style to native.
+	* XmlSchemaLengthFacetTests.cs: Set eol-style to CRLF.
+	* XmlSchemaSetTests.cs: Set eol-style to native.
+	* XmlSchemaTests.cs: Set eol-style to native.
+	* XmlSchemaTypeTests.cs: Set eol-style to native.>
+
+2006-02-28  Gert Driesen <drieseng@users.sourceforge.net>
+
 	* XmlSchemaTests.cs: Added test for writing XmlSchema with
 	zero-length TargetNamespace. Added test for compiling XmlSchema
 	with zero-length TargetNamespace. Replaced Console.WriteLine with 
