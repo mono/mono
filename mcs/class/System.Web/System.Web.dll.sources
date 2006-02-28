@@ -109,7 +109,6 @@ System.Web.Configuration_2.0/AuthorizationRuleCollection.cs
 System.Web.Configuration_2.0/AuthorizationSection.cs
 System.Web.Configuration_2.0/BufferModesCollection.cs
 System.Web.Configuration_2.0/BufferModeSettings.cs
-System.Web.Configuration_2.0/BuildProviderAppliesTo.cs
 System.Web.Configuration_2.0/BuildProviderCollection.cs
 System.Web.Configuration_2.0/BuildProvider.cs
 System.Web.Configuration_2.0/ClientTarget.cs
@@ -161,7 +160,6 @@ System.Web.Configuration_2.0/OutputCacheSection.cs
 System.Web.Configuration_2.0/OutputCacheSettingsSection.cs
 System.Web.Configuration_2.0/PagesEnableSessionState.cs
 System.Web.Configuration_2.0/PagesSection.cs
-System.Web.Configuration_2.0/PagesToCountAction.cs
 System.Web.Configuration_2.0/PassportAuthentication.cs
 System.Web.Configuration_2.0/ProcessModelSection.cs
 System.Web.Configuration_2.0/ProcessModelComAuthenticationLevel.cs
@@ -311,7 +309,6 @@ System.Web.Mail/ToUUEncodingTransform.cs
 System.Web.Mail/UUAttachmentEncoder.cs
 System.Web.Management/EventNotificationType.cs
 System.Web.Management/IRegiisUtility.cs
-System.Web.Management/IRegisterCreateITypeLib.cs
 System.Web.Management/IWebEventCustomEvaluator.cs
 System.Web.Management/RuleFiringRecord.cs
 System.Web.Management/SessionStateType.cs
@@ -346,6 +343,7 @@ System.Web.Profile/ProfileProviderAttribute.cs
 System.Web.Profile/ProfileProviderCollection.cs
 System.Web.Profile/ProfileProvider.cs
 System.Web.Profile/SettingsAllowAnonymousAttribute.cs
+System.Web.Profile/SqlProfileProvider.cs
 System.Web/QueueManager.cs
 System.Web.Security/ActiveDirectoryConnectionProtection.cs
 System.Web.Security/ActiveDirectoryMembershipProvider.cs
@@ -397,7 +395,7 @@ System.Web.SessionState/IHttpSessionState.cs
 System.Web.SessionState/IReadOnlySessionState.cs
 System.Web.SessionState/IRequiresSessionState.cs
 System.Web.SessionState/ISessionHandler.cs
-System.Web.SessionState/ISessionIDModule.cs
+System.Web.SessionState/ISessionIDManager.cs
 System.Web.SessionState/ISessionStateItemCollection.cs
 System.Web.SessionState/IStateRuntime.cs
 System.Web.SessionState/RemoteStateServer.cs
@@ -406,7 +404,7 @@ System.Web.SessionState/SessionDictionary.cs
 System.Web.SessionState/SessionId.cs
 System.Web.SessionState/SessionInProcHandler.cs
 System.Web.SessionState/SessionSQLServerHandler.cs
-System.Web.SessionState/SessionStateActionFlags.cs
+System.Web.SessionState/SessionStateActions.cs
 System.Web.SessionState/SessionStateItemExpireCallback.cs
 System.Web.SessionState/SessionStateMode.cs
 System.Web.SessionState/SessionStateModule.cs

@@ -1,3 +1,7 @@
+2006-02-28  Chris Toshok  <toshok@ximian.com>
+
+	* BuildProviderAppliesTo.cs, PagesToCountAction.cs: nuke.
+
 2006-02-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Compiler.cs:

@@ -1,3 +1,23 @@
+2006-02-28  Chris Toshok  <toshok@ximian.com>
+
+	* SqlFeatures.cs: corcompare work
+
+	* IRegiisUtility.cs: same.
+
+	* WebEventFormatter.cs: same.
+
+	* RuleFiringRecord.cs: same.
+
+	* SessionStateType.cs: same.
+
+	* WebApplicationInformtion.cs: same.
+
+	* EventNotificationType.cs: same.
+
+	* WebBaseEvent.cs: same.
+
+	* IRegisterCreateITypeLib.cs: nuke
+
 2004-08-02  Duncan Mak  <duncan@ximian.com>
 
 	* RuleFiringRecord.cs:

@@ -1,3 +1,13 @@
+2006-02-28  Chris Toshok  <toshok@ximian.com>
+
+	* FormsAuthentication.cs: corcompare work.
+
+	* MembershipCreateUserException.cs: same.
+
+	* MembershipPasswordException.cs: same.
+
+	* AnonymousIdentificationModule.cs: same.
+
 2006-02-01  Chris Toshok  <toshok@ximian.com>
 
 	* FormsAuthentication.cs, Membership.cs,

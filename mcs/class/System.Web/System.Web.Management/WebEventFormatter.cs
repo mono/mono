@@ -58,7 +58,7 @@ namespace System.Web.Management
                         throw new NotImplementedException ();
                 }
                 
-                public override string ToString ()
+                public new string ToString ()
                 {
                         throw new NotImplementedException ();
                 }

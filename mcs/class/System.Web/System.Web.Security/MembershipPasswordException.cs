@@ -42,7 +42,7 @@ namespace System.Web.Security
 		public MembershipPasswordException (string message) : base (message) {}
 		public MembershipPasswordException (string message, Exception innerException) : base (message, innerException) {}
 		
-		public MembershipPasswordException (SerializationInfo info, StreamingContext context): base (info, context)
+		protected MembershipPasswordException (SerializationInfo info, StreamingContext context): base (info, context)
 		{
 		}
 	}

@@ -32,7 +32,7 @@ using System.Web;
 
 namespace System.Web.Management
 {
-        public class WebApplicationInformation
+        public sealed class WebApplicationInformation
         {
                 string application_domain, application_path, application_virtual_path, machine_name, trust_level;
 

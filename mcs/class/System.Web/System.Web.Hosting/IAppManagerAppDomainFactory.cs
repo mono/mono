@@ -32,9 +32,14 @@ using System.Runtime.InteropServices;
 
 namespace System.Web.Hosting
 {
+	[GuidAttribute ("02998279-7175-4D59-AA5A-FB8E44D4CA9D")]
+	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
+	[ComImportAttribute]
         public interface IAppManagerAppDomainFactory
         {
-                object Create ([In] string s, [In] string app_id);
+		[return: MarshalAs (UnmanagedType.Interface)]
+                object Create ([In, MarshalAs(UnmanagedType.BStr)] string s,
+			       [In, MarshalAs(UnmanagedType.BStr)] string app_id);
                 void Stop ();
         }
 }

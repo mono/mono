@@ -59,7 +59,7 @@ namespace System.Web.Profile
 		}
 
 		[MonoTODO]
-		public Object GetPropertyValue (string propertyName)
+		public object GetPropertyValue (string propertyName)
 		{
 			throw new NotImplementedException ();
 		}
@@ -79,7 +79,7 @@ namespace System.Web.Profile
 
 		[MonoTODO]
 		public void SetPropertyValue (string propertyName,
-					      Object propertyValue)
+					      object propertyValue)
 		{
 			throw new NotImplementedException ();
 		}
@@ -99,7 +99,7 @@ namespace System.Web.Profile
 		}
 
 		[MonoTODO]
-		public override Object this [ string propertyName ] {
+		public override object this [ string propertyName ] {
 			get {
 				throw new NotImplementedException ();
 			}
@@ -123,7 +123,7 @@ namespace System.Web.Profile
 		}
 
 		[MonoTODO]
-		public override SettingsPropertyCollection Properties {
+		public static SettingsPropertyCollection Properties {
 			get {
 				throw new NotImplementedException ();
 			}

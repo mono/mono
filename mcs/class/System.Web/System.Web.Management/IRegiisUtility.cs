@@ -32,31 +32,32 @@ using System.Runtime.InteropServices;
 #if NET_2_0
 namespace System.Web.Management
 {
+	[InterfaceTypeAttribute (ComInterfaceType.InterfaceIsIUnknown)]
+	[GuidAttribute ("C84F668A-CC3F-11D7-B79E-505054503030")]
+	[ComImportAttribute]
         public interface IRegiisUtility
         {
                 void ProtectedConfigAction (
                         long actionToPerform,
-                        [In] string first_argument,
-                        [In] string second_argument,
-                        [In] string provider_name,
-                        [In] string app_path,
-                        [In] string csp_or_location,
-                        int key_size,
-                        out string exception);
+                        [In,MarshalAs(UnmanagedType.LPWStr)] string firstArgument,
+                        [In,MarshalAs(UnmanagedType.LPWStr)] string secondArgument,
+                        [In,MarshalAs(UnmanagedType.LPWStr)] string providerName,
+                        [In,MarshalAs(UnmanagedType.LPWStr)] string appPath,
+                        [In,MarshalAs(UnmanagedType.LPWStr)] string site,
+                        [In,MarshalAs(UnmanagedType.LPWStr)] string cspOrLocation,
+                        int keySize,
+                        out IntPtr exception);
 
                 void RegisterAsnetMmcAssembly (
-                        int do_reg,
-                        [In] string assembly_name,
-                        [In] string binary_directory,
-                        out string exception);
+                        int doReg,
+                        [In,MarshalAs(UnmanagedType.LPWStr)] string assemblyName,
+                        [In,MarshalAs(UnmanagedType.LPWStr)] string binaryDirectory,
+                        out IntPtr exception);
 
-                void RegisterSystemWebAssembly (int do_reg, out string exception);
+                void RegisterSystemWebAssembly (int doReg,
+						out IntPtr exception);
 
-                void ToggleWebAdminToolConfigs (
-                        [In] string site,
-                        [In] int [] settings,
-                        int size,
-                        out string exception);
+		void RemoveBrowserCaps (out IntPtr exception);
         }
 }
 #endif

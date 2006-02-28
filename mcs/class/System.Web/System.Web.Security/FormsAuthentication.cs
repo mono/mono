@@ -75,9 +75,6 @@ namespace System.Web.Security
 						"index.html",
 						"index.htm" };
 
-#if NET_2_0
-		[Obsolete]
-#endif
 		public FormsAuthentication ()
 		{
 		}

@@ -1,3 +1,9 @@
+2006-02-28  Chris Toshok  <toshok@ximian.com>
+
+	* ProfileBase.cs: corcompare work.
+
+	* SqlProfileProvider.cs: add stubbed out file.
+
 2005-11-30  Chris Toshok  <toshok@ximian.com>
 
 	* ProfileBase.cs (Properties): mark as override, not static.

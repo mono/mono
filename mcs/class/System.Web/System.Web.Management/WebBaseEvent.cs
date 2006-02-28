@@ -37,14 +37,14 @@ namespace System.Web.Management
                 object event_source;
                 int event_code, event_detail_code;
 
-                public WebBaseEvent (string message, object event_source, int event_code)
+                protected WebBaseEvent (string message, object event_source, int event_code)
                 {
                         this.message = message;
                         this.event_source = event_source;
                         this.event_code = event_code;
                 }
 
-                public WebBaseEvent (string message, object event_source, int event_code, int event_detail_code)
+                protected WebBaseEvent (string message, object event_source, int event_code, int event_detail_code)
                 {
                         this.message = message;
                         this.event_source = event_source;
@@ -70,7 +70,7 @@ namespace System.Web.Management
                         }
                 }
 
-                public Guid EventId {
+                public Guid EventID {
                         get {
                                 throw new NotImplementedException ();
                         }
@@ -127,7 +127,7 @@ namespace System.Web.Management
                         throw new NotImplementedException ();
                 }
 
-                public string ToString (bool include_app_info, bool include_custom_event_details)
+                public virtual string ToString (bool include_app_info, bool include_custom_event_details)
                 {
                         throw new NotImplementedException ();
                 }

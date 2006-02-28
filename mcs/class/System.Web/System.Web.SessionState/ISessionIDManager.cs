@@ -1,8 +1,12 @@
 //
-// System.Web.Management.IRegisterCreateITypeLib.cs
+// System.Web.SessionState.ISessionIDManager
 //
 // Authors:
-//	Duncan Mak (duncan@ximian.com)
+//	Sanjay Gupta (gsanjay@novell.com)
+//
+// (C) 2004 Novell, Inc (http://www.novell.com)
+//
+
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -23,36 +27,24 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
-//
-
-using System;
-using System.Runtime.InteropServices;
 
 #if NET_2_0
-namespace System.Web.Management
-{
-        public interface IRegisterCreateITypeLib
-        {
-                void CreateTypeInfo ();
-                
-                void SaveAllChanges ();
-                
-                void SetDocString ();
 
-                void SetGuid ();
+using System;
+using System.Web;
 
-                void SetHelpContext ();
-
-                void SetHelpFileName ();
-
-                void SetLcid ();
-
-                void SetLibFlags ();
-
-                void SetName ();
-
-                void SetVersion ();
-        }
+namespace System.Web.SessionState {
+	public interface ISessionIDManager
+	{
+		///methods
+		string CreateSessionID (HttpContext context);
+		string GetSessionID (HttpContext context);
+		void Initialize ();
+		bool InitializeRequest (HttpContext context, bool suppressAutoDetectRedirect, out bool supportSessionIDReissue);
+		void RemoveSessionID (HttpContext context);
+		void SaveSessionID (HttpContext context, string sessionID, out bool isRedirected, out bool isCookieAdded);
+		bool Validate (string id);
+	}
 }
 #endif
+

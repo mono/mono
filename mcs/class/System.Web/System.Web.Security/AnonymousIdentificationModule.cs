@@ -37,11 +37,9 @@ namespace System.Web.Security {
 
 	public sealed class AnonymousIdentificationModule : IHttpModule {
 
-		bool use_cookie;
-
 		public event AnonymousIdentificationEventHandler Creating;
 		
-		public void ClearAnonymousIdentifier ()
+		public static void ClearAnonymousIdentifier ()
 		{
 			HttpContext c = HttpContext.Current;
 			SystemWebSectionGroup g = (SystemWebSectionGroup)WebConfigurationManager.GetSection ("system.web");
@@ -49,9 +47,6 @@ namespace System.Web.Security {
 			if (!g.AnonymousIdentification.Enabled
 			    || false /* XXX The user for the current request is anonymous */)
 				throw new NotSupportedException ();
-
-			if (use_cookie) {
-			}
 		}
 
 		public void Dispose ()

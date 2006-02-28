@@ -32,7 +32,7 @@ using System.Web;
 
 namespace System.Web.Management
 {
-        public class RuleFiringRecord
+        public sealed class RuleFiringRecord
         {
                 internal RuleFiringRecord ()
                 {

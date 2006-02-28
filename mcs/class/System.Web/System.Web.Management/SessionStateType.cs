@@ -29,7 +29,6 @@
 #if NET_2_0
 namespace System.Web.Management
 {
-        [Serializable]
         public enum SessionStateType
         {
                 Temporary = 0,

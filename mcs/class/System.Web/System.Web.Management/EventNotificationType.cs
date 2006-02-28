@@ -27,12 +27,10 @@
 //
 
 using System;
-using System.Runtime.InteropServices;
 
 #if NET_2_0
 namespace System.Web.Management
 {
-        [Serializable]
         public enum EventNotificationType
         {
                 Regular = 0,

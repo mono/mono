@@ -35,6 +35,7 @@ namespace System.Web.Hosting
 {
 	[Guid ("e6e21054-a7dc-4378-877d-b7f4a2d7e8ba")]
 	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
+	[ComImportAttribute]
 	public interface IAppDomainFactory
 	{
 		[return: MarshalAs (UnmanagedType.Interface)]

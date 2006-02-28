@@ -1,3 +1,11 @@
+2006-02-28  Chris Toshok  <toshok@ximian.com>
+
+	* IAppDomainFactory.cs: corcompare work.
+
+	* IAppManagerAppDomainFactory.cs: same
+
+	* IISAPIRuntime.cs: same.
+
 2006-02-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ApplicationManager.cs: implemented ShutdownAll().

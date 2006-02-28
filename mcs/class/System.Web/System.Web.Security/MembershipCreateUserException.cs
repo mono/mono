@@ -51,7 +51,7 @@ namespace System.Web.Security
 		{
 		}
 		
-		public MembershipCreateUserException (SerializationInfo info, StreamingContext context): base (info, context)
+		protected MembershipCreateUserException (SerializationInfo info, StreamingContext context): base (info, context)
 		{
 			info.AddValue ("statusCode", statusCode);
 		}
