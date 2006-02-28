@@ -1,3 +1,7 @@
+2006-02-28  Matt Hergett  <matt@use.net>
+
+	* System.Windows.Forms_test.dll.sources: Added ComboBoxTests.cs
+
 2006-1-12  Jonathan Chambers  <jonathan.chambers@ansys.com>
 
 	* build-csproj: Fixed so the csproj is usable.

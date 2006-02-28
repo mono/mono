@@ -4,6 +4,7 @@ System.Windows.Forms/CheckBoxTest.cs
 System.Windows.Forms/CheckedListBoxEventTest.cs
 System.Windows.Forms/CheckedListBoxTest.cs
 System.Windows.Forms/ComboBoxTest.cs
+System.Windows.Forms/ComboBoxTests.cs
 System.Windows.Forms/Common.cs
 System.Windows.Forms/ControlEventTest.cs
 System.Windows.Forms/ControlTest.cs

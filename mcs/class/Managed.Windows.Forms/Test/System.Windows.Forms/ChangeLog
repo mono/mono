@@ -1,3 +1,7 @@
+2006-02-28  Matt Hargett (matt@use.net)
+
+	* ComboBoxTests.cs: Added
+
 2006-02-02  Peter Dennis Bartok <pbartok@novell.com>
 
 	* ControlTest.cs: Added test for layout nesting
