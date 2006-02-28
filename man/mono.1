@@ -410,6 +410,14 @@ Typical output looks like this:
 .PP
 The offsets displayed are IL offsets.
 .SH DEBUGGING
+It is possible to obtain a stack trace of all the active threads in
+Mono by sending the QUIT signal to Mono, you can do this from the
+command line, like this:
+.nf
+	kill -QUIT pid
+.fi
+Where pid is the Process ID of the Mono process you want to examine.
+The process will continue running afterwards.
 .PP
 You can use the MONO_LOG_LEVEL and MONO_LOG_MASK environment variables
 to get verbose debugging output about the execution of your
@@ -604,9 +612,16 @@ Uses the string value of this variable as a replacement for the host name when
 creating file names in the ".wapi" directory. This helps if the host name of
 your machine is likely to be changed when a mono application is running or if
 you have a .wapi directory shared among several different computers.
+.Sp
+Mono typically uses the hostname to create the files that are used to
+share state across multiple Mono processes.  This is done to support
+home directories that might be shared over the network.
 .TP
 .I "MONO_THEME"
-The name of the theme to be used by Windows.Forms.   The default is "win32".
+The name of the theme to be used by Windows.Forms.   Available themes today
+include "clearlooks", "nice" and "win32".
+.Sp
+The default is "win32".  
 .TP
 .I "MONO_THREADS_PER_CPU"
 The maximum number of threads in the general threadpool will be
