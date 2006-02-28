@@ -5,11 +5,7 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-// (C) 2004 Novell (http://www.novell.com)
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2006 Novell Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -166,8 +162,20 @@ namespace Mono.Security.Cryptography {
 					Array.Reverse (rsap.D);
 				}
 
-				RSA rsa = (RSA)RSA.Create ();
-				rsa.ImportParameters (rsap);
+				RSA rsa = null;
+				try {
+					rsa = RSA.Create ();
+					rsa.ImportParameters (rsap);
+				}
+				catch (CryptographicException) {
+					// this may cause problem when this code is run under
+					// the SYSTEM identity on Windows (e.g. ASP.NET). See
+					// http://bugzilla.ximian.com/show_bug.cgi?id=77559
+					CspParameters csp = new CspParameters ();
+					csp.Flags = CspProviderFlags.UseMachineKeyStore;
+					rsa = new RSACryptoServiceProvider (csp);
+					rsa.ImportParameters (rsap);
+				}
 				return rsa;
 			}
 			catch (Exception e) {
@@ -287,8 +295,20 @@ namespace Mono.Security.Cryptography {
 				Buffer.BlockCopy (blob, pos, rsap.Modulus, 0, byteLen);
 				Array.Reverse (rsap.Modulus);
 
-				RSA rsa = (RSA)RSA.Create ();
-				rsa.ImportParameters (rsap);
+				RSA rsa = null;
+				try {
+					rsa = RSA.Create ();
+					rsa.ImportParameters (rsap);
+				}
+				catch (CryptographicException) {
+					// this may cause problem when this code is run under
+					// the SYSTEM identity on Windows (e.g. ASP.NET). See
+					// http://bugzilla.ximian.com/show_bug.cgi?id=77559
+					CspParameters csp = new CspParameters ();
+					csp.Flags = CspProviderFlags.UseMachineKeyStore;
+					rsa = new RSACryptoServiceProvider (csp);
+					rsa.ImportParameters (rsap);
+				}
 				return rsa;
 			}
 			catch (Exception e) {

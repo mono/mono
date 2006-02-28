@@ -1,3 +1,10 @@
+2006-02-28  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CryptoConvert.cs: Make sure we can import a keypair into our RSA 
+	instance (even if the key store isn't available). See bug #77559.
+	* PKCS8.cs: Make sure we can import a keypair into our RSA instance
+	(even if the key store isn't available). See bug #77559.
+
 2005-11-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SymmetricTransform.cs: Synched with corlib version (IV behaviour for
