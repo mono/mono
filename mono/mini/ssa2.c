@@ -407,7 +407,7 @@ void
 mono_ssa_compute2 (MonoCompile *cfg)
 {
 	int i, j, idx;
-	MonoBitSet *set;
+	MonoBitSet *set, *tmp_bitset;
 	MonoMethodVar *vinfo = g_new0 (MonoMethodVar, cfg->num_varinfo);
 	MonoInst *ins, *store, **stack;
 
@@ -428,6 +428,8 @@ mono_ssa_compute2 (MonoCompile *cfg)
 
 	mono_compile_dominator_info (cfg, MONO_COMP_DOM | MONO_COMP_IDOM | MONO_COMP_DFRONTIER);
 
+	tmp_bitset = mono_bitset_new (cfg->num_bblocks, 0);
+
 	for (i = 0; i < cfg->num_varinfo; ++i) {
 		vinfo [i].def_in = mono_bitset_new (cfg->num_bblocks, 0);
 		vinfo [i].idx = i;
@@ -435,29 +437,17 @@ mono_ssa_compute2 (MonoCompile *cfg)
 		mono_bitset_set (vinfo [i].def_in, 0);
 	}
 
-	if (cfg->new_ir) {
-		for (i = 0; i < cfg->num_bblocks; ++i) {
-			for (ins = cfg->bblocks [i]->code; ins; ins = ins->next) {
-				const char *spec = ins_info [ins->opcode - OP_START - 1];
+	for (i = 0; i < cfg->num_bblocks; ++i) {
+		for (ins = cfg->bblocks [i]->code; ins; ins = ins->next) {
+			const char *spec = ins_info [ins->opcode - OP_START - 1];
 
-				if (ins->opcode == OP_NOP)
-					continue;
+			if (ins->opcode == OP_NOP)
+				continue;
 
-				/* FIXME: Handle OP_LDADDR */
-				/* FIXME: Handle non-ints as well */
-				if ((spec [MONO_INST_DEST] == 'i') && !MONO_IS_STORE_MEMBASE (ins) && get_vreg_to_inst (cfg, ins->dreg)) {
-					mono_bitset_set (vinfo [get_vreg_to_inst (cfg, ins->dreg)->inst_c0].def_in, i);
-				}
-			}
-		}
-	} else {
-		for (i = 0; i < cfg->num_bblocks; ++i) {
-			for (ins = cfg->bblocks [i]->code; ins; ins = ins->next) {
-				if (ins->ssa_op == MONO_SSA_STORE) {
-					idx = ins->inst_i0->inst_c0;
-					g_assert (idx < cfg->num_varinfo);
-					mono_bitset_set (vinfo [idx].def_in, i);
-				} 
+			/* FIXME: Handle OP_LDADDR */
+			/* FIXME: Handle non-ints as well */
+			if ((spec [MONO_INST_DEST] == 'i') && !MONO_IS_STORE_MEMBASE (ins) && get_vreg_to_inst (cfg, ins->dreg)) {
+				mono_bitset_set (vinfo [get_vreg_to_inst (cfg, ins->dreg)->inst_c0].def_in, i);
 			}
 		}
 	}
@@ -477,7 +467,11 @@ mono_ssa_compute2 (MonoCompile *cfg)
 		if (var->flags & (MONO_INST_VOLATILE|MONO_INST_INDIRECT))
 			continue;
 
-		set = mono_compile_iterated_dfrontier (cfg, vinfo [i].def_in);
+		/* Most variables have only one definition */
+		if (mono_bitset_count (vinfo [i].def_in) <= 1)
+			continue;
+
+		set = mono_compile_iterated_dfrontier2 (cfg, vinfo [i].def_in, tmp_bitset);
 		vinfo [i].dfrontier = set;
 
 		if (cfg->verbose_level >= 4) {
@@ -554,6 +548,8 @@ mono_ssa_compute2 (MonoCompile *cfg)
 		mono_ssa_rename_vars2 (cfg, cfg->num_varinfo, cfg->bb_entry, originals, stack);
 		g_free (originals);
 	}
+
+	mono_bitset_free (tmp_bitset);
 
 	if (cfg->verbose_level >= 4)
 		printf ("\nEND COMPUTE SSA.\n\n");

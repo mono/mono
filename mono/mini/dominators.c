@@ -259,7 +259,7 @@ compute_dominance_frontier (MonoCompile *cfg)
 	cfg->comp_done |= MONO_COMP_DFRONTIER;
 }
 
-static void
+static inline void
 df_set (MonoCompile *m, MonoBitSet* dest, MonoBitSet *set) 
 {
 	int i;
@@ -270,9 +270,9 @@ df_set (MonoCompile *m, MonoBitSet* dest, MonoBitSet *set)
 	}
 }
 
-/* TODO: alloc tmp and D on the stack */
+/* TODO: alloc D on the stack */
 MonoBitSet*
-mono_compile_iterated_dfrontier (MonoCompile *m, MonoBitSet *set) 
+mono_compile_iterated_dfrontier (MonoCompile *m, MonoBitSet *set)
 {
 	MonoBitSet *result, *D;
 	int bitsize, change = TRUE;
@@ -292,6 +292,36 @@ mono_compile_iterated_dfrontier (MonoCompile *m, MonoBitSet *set)
 			change = TRUE;
 		}
 	} while (change);
+	
+	return result;
+}
+
+static inline void
+df_set2 (MonoCompile *m, MonoBitSet* dest, MonoBitSet *set) 
+{
+	int i;
+
+	mono_bitset_foreach_bit (set, i, m->num_bblocks) {
+		mono_bitset_union (dest, m->bblocks [i]->dfrontier);
+	}
+}
+
+MonoBitSet*
+mono_compile_iterated_dfrontier2 (MonoCompile *m, MonoBitSet *set, MonoBitSet *tmp)
+{
+	MonoBitSet *result;
+	int bitsize, count1, count2;
+
+	bitsize = mono_bitset_alloc_size (m->num_bblocks, 0);
+	result = mono_bitset_mem_new (mono_mempool_alloc0 (m->mempool, bitsize), m->num_bblocks, 0);
+
+	df_set2 (m, result, set);
+	count2 = mono_bitset_count (result);
+	do {
+		count1 = count2;
+		df_set2 (m, result, result);
+		count2 = mono_bitset_count (result);
+	} while (count2 > count1);
 	
 	return result;
 }

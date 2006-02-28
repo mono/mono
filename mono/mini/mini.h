@@ -48,7 +48,7 @@
 		if (mono_bitset_test_fast(set,b))
 #else
 #define mono_bitset_foreach_bit(set,b,n) \
-	for (b = mono_bitset_find_first (set, -1); b < n && b >= 0; b = mono_bitset_find_first (set, b))
+	for (b = mono_bitset_find_start (set); b < n && b >= 0; b = mono_bitset_find_first (set, b))
 #define mono_bitset_foreach_bit_rev(set,b,n) \
 	for (b = mono_bitset_find_last (set, n - 1); b >= 0; b = b ? mono_bitset_find_last (set, b) : -1)
  
@@ -1081,6 +1081,7 @@ MonoString *ves_icall_System_Exception_get_trace (MonoException *exc);
 void        mono_compile_dominator_info         (MonoCompile *cfg, int dom_flags);
 void        mono_compute_natural_loops          (MonoCompile *cfg);
 MonoBitSet* mono_compile_iterated_dfrontier     (MonoCompile *cfg, MonoBitSet *set);
+MonoBitSet* mono_compile_iterated_dfrontier2    (MonoCompile *cfg, MonoBitSet *set, MonoBitSet *tmp);
 void        mono_ssa_compute                    (MonoCompile *cfg);
 void        mono_ssa_remove                     (MonoCompile *cfg);
 void        mono_ssa_cprop                      (MonoCompile *cfg);

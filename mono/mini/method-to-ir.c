@@ -2003,7 +2003,7 @@ mini_emit_load_intf_reg_vtable (MonoCompile *cfg, int intf_reg, int vtable_reg, 
 #if SIZEOF_VOID_P == 8
 		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_SHL_IMM, ioffset_reg, adjiid_reg, 3);
 #else
-		MONO_EMIT_NEW_BIALU_IMM (s, OP_SHL_IMM, ioffset_reg, adjiid_reg, 2);
+		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_SHL_IMM, ioffset_reg, adjiid_reg, 2);
 #endif
 		MONO_EMIT_NEW_BIALU (cfg, OP_PADD, ioffset_reg, ioffset_reg, iid_reg);
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, intf_reg, ioffset_reg, 0);
