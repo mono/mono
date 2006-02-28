@@ -273,8 +273,10 @@ namespace System.Windows.Forms
 
 				selected = value;
 
-				if (owner != null)
+				if (owner != null) {
+					owner.UpdateSelection (this);
 					Layout ();
+				}
 				Invalidate ();
 			}
 		}

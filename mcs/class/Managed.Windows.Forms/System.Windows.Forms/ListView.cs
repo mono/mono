@@ -911,18 +911,23 @@ namespace System.Windows.Forms
                         
 		}
 
-		void SelectItem (ListViewItem item)
+		internal void UpdateSelection (ListViewItem item)
 		{
-			if (!CanMultiselect && SelectedItems.Count > 0) {
-				SelectedItems.Clear ();
-				SelectedIndices.list.Clear ();
-			}
+			if (item.Selected) {
 
-			if (!SelectedItems.Contains (item)) {
-				SelectedItems.list.Add (item);
-				SelectedIndices.list.Add (item.Index);
+				if (!CanMultiselect && SelectedItems.Count > 0) {
+					SelectedItems.Clear ();
+					SelectedIndices.list.Clear ();
+				}
+
+				if (!SelectedItems.Contains (item)) {
+					SelectedItems.list.Add (item);
+					SelectedIndices.list.Add (item.Index);
+				}
+			} else {
+				SelectedItems.list.Remove (item);
+				SelectedIndices.list.Remove (item.Index);
 			}
-			item.Selected = true;
 		}
 
 		private bool KeySearchString (KeyEventArgs ke)
@@ -940,7 +945,7 @@ namespace System.Windows.Forms
 				if (CultureInfo.CurrentCulture.CompareInfo.IsPrefix (Items[i].Text, keysearch_text,
 					CompareOptions.IgnoreCase)) {
 					SetFocusedItem (Items [i]);
-					SelectItem (items [i]);
+					items [i].Selected = true;
 					EnsureVisible (i);
 					break;
 				}
@@ -1040,7 +1045,7 @@ namespace System.Windows.Forms
 			}
 			
 			if (index != -1) {
-				SelectItem (items [index]);
+				items [index].Selected = true;
 				SetFocusedItem (items [index]);				
 				EnsureVisible (index);
 			}
@@ -1136,7 +1141,7 @@ namespace System.Windows.Forms
 
 			if (clicked_item != null) {
 				bool changed = !clicked_item.Selected;
-				SelectItem (clicked_item);
+				clicked_item.Selected = true;;
 				
 				// Only Raise the event if the selected item has changed
 				if (changed)
@@ -1169,7 +1174,7 @@ namespace System.Windows.Forms
 			ListViewItem item = this.GetItemAt (hit.X, hit.Y);
 
 			if (item != null) {
-				SelectItem (item);
+				item.Selected = true;
 				// Raise the event
 				this.OnSelectedIndexChanged (new EventArgs ());
 			}
