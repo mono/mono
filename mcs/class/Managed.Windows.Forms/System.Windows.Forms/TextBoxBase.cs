@@ -474,7 +474,7 @@ namespace System.Windows.Forms {
 					return;
 				}
 
-				if (value != null) {
+				if ((value != null) && (value != "")) {
 					Line	line;
 
 					if (multiline) {
@@ -504,6 +504,8 @@ namespace System.Windows.Forms {
 						document.SetSelectionEnd(line, value.Length);
 						document.PositionCaret(line, value.Length);
 					}
+				} else {
+					document.Empty();
 				}
 				base.Text = value;
 				// Not needed, base.Text already fires it
@@ -1128,8 +1130,11 @@ namespace System.Windows.Forms {
 				}
 
 				case Msg.WM_KEYDOWN: {
-					base.WndProc(ref m);
-					ProcessKey((Keys)m.WParam.ToInt32() | XplatUI.State.ModifierKeys);
+					if (ProcessKeyMessage(ref m) || ProcessKey((Keys)m.WParam.ToInt32() | XplatUI.State.ModifierKeys)) {
+						m.Result = IntPtr.Zero;
+						return;
+					}
+					DefWndProc (ref m);
 					return;
 				}
 

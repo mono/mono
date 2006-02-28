@@ -3823,17 +3823,13 @@ namespace System.Windows.Forms
 					return;
 				}
 
-				case Msg.WM_SYSKEYDOWN:
-				case Msg.WM_KEYDOWN:
-				case Msg.WM_SYSKEYUP:
-				case Msg.WM_KEYUP:
-				case Msg.WM_SYSCHAR:
-				case Msg.WM_CHAR: {
+				case Msg.WM_SYSKEYUP: {
 					if (ProcessKeyMessage(ref m)) {
+						m.Result = IntPtr.Zero;
 						return;
 					}
 
-					if ((m.Msg == (int)Msg.WM_SYSKEYUP) && ((m.WParam.ToInt32() & (int)Keys.KeyCode) == (int)Keys.Menu)) {
+					if ((m.WParam.ToInt32() & (int)Keys.KeyCode) == (int)Keys.Menu) {
 						Form	form;
 
 						form = FindForm();
@@ -3842,6 +3838,19 @@ namespace System.Windows.Forms
 						}
 					}
 
+					DefWndProc (ref m);
+					return;
+				}
+
+				case Msg.WM_SYSKEYDOWN:
+				case Msg.WM_KEYDOWN:
+				case Msg.WM_KEYUP:
+				case Msg.WM_SYSCHAR:
+				case Msg.WM_CHAR: {
+					if (ProcessKeyMessage(ref m)) {
+						m.Result = IntPtr.Zero;
+						return;
+					}
 					DefWndProc (ref m);
 					return;
 				}

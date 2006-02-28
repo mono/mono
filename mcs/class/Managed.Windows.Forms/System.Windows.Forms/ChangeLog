@@ -1,3 +1,16 @@
+2006-02-27  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* Control.cs: Separated special WM_SYSKEYUP keyboard handling. That way
+	  it's easier for a child control to handle the other messages without
+	  having to duplicate the special functionality
+	* TextBoxBase.cs
+	  - WndProc: Removed calling base handler for WM_KEYDOWN and added 
+	    code to handle processing the key ourselves, in order to get 
+	    access to the result of KeyEventArgs.Handled. We now only call 
+	    ProcessKey if they key hasn't been handled already. Fixes #77526.
+	  - set_Text: If null or empty string is given, just clear the 
+	    document. Fixes part of #77526
+
 2006-02-27  Jackson Harper  <jackson@ximian.com>
 
 	* SizeGrip.cs: Paint the background color before painting the grip
