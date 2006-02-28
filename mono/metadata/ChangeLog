@@ -1,4 +1,16 @@
+2006-02-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (mono_marshal_free_asany): Fix handling of blittable
+	formatted classes. Fixes #77524.
+
 2006-02-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_class_get_exception_for_failure): Fix a warning.
+
+	* marshal.c (mono_marshal_emit_native_wrapper): Handle FNPTR args and
+	return values. Fixes #77581.
+
+	* class.c (mono_fnptr_class_get): Switch name and name_space.
 
 	* marshal.c (mono_marshal_asany): Fix marshalling of blittable formatted
 	classes and add support for [In, Out] attributes.
