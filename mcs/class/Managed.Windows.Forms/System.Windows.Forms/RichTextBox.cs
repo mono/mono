@@ -1352,6 +1352,8 @@ namespace System.Windows.Forms {
 			rtf_text_map = new RTF.TextMap();
 			RTF.TextMap.SetupStandardTable(rtf_text_map.Table);
 
+			document.NoRecalc = true;
+
 			try {
 				rtf.Read();	// That's it
 				FlushText(rtf, false);
@@ -1366,6 +1368,8 @@ namespace System.Windows.Forms {
 			to_y = rtf_cursor_y;
 
 			document.RecalculateDocument(CreateGraphics(), cursor_y, document.Lines, false);
+			document.NoRecalc = false;
+
 			document.Invalidate(document.GetLine(cursor_y), 0, document.GetLine(document.Lines), -1);
 		}
 

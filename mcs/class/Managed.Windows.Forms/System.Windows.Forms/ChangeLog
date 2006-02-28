@@ -1,3 +1,13 @@
+2006-02-27  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* TextControl.cs: Added property and implemented means to allow 
+	  disabling recalculation of a document (can be used to speed up
+	  multiple inserts and is needed to make RTF inserts predictable, see
+	  bug #77659)
+	* RichTextBox.cs: Using the new NoRecalc property of Document to
+	  keep x/y insert locations predictable. Also makes it faster inserting
+	  large chunks of RTF
+
 2006-02-27  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* Control.cs: Separated special WM_SYSKEYUP keyboard handling. That way

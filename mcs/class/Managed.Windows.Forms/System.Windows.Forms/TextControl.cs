@@ -726,6 +726,12 @@ namespace System.Windows.Forms {
 		private bool		calc_pass;
 		private int		char_count;
 
+		private bool		no_recalc;
+		private bool		recalc_pending;
+		private int		recalc_start;
+		private int		recalc_end;
+		private bool		recalc_optimize;
+
 		internal bool		multiline;
 		internal bool		wrap;
 
@@ -763,6 +769,8 @@ namespace System.Windows.Forms {
 			multiline = true;
 			password_char = "";
 			calc_pass = false;
+			no_recalc = false;
+			recalc_pending = false;
 
 			// Tree related stuff
 			sentinel = new Line();
@@ -904,6 +912,22 @@ namespace System.Windows.Forms {
 
 				if (LengthChanged != null) {
 					LengthChanged(this, EventArgs.Empty);
+				}
+			}
+		}
+
+		///<summary>Setting NoRecalc to true will prevent the document from being recalculated.
+		///This ensures that coordinates of added text are predictable after adding the text even with wrapped view</summary>
+		internal bool NoRecalc {
+			get {
+				return no_recalc;
+			}
+
+			set {
+				no_recalc = value;
+				if (!no_recalc && recalc_pending) {
+					RecalculateDocument(owner.CreateGraphics(), recalc_start, recalc_end, recalc_optimize);
+					recalc_pending = false;
 				}
 			}
 		}
@@ -1247,6 +1271,14 @@ namespace System.Windows.Forms {
 				return;
 			}
 
+			if (no_recalc) {
+				recalc_start = line.line_no;
+				recalc_end = line.line_no;
+				recalc_optimize = true;
+				recalc_pending = true;
+				return;
+			}
+
 			if (RecalculateDocument(owner.CreateGraphics(), line.line_no, line.line_no, true)) {
 				// Lineheight changed, invalidate the rest of the document
 				if ((line.Y - viewport_y) >=0 ) {
@@ -1264,6 +1296,18 @@ namespace System.Windows.Forms {
 
 		// Update display from line, down line_count lines; pos is unused, but required for the signature
 		internal void UpdateView(Line line, int line_count, int pos) {
+			if (!owner.IsHandleCreated) {
+				return;
+			}
+
+			if (no_recalc) {
+				recalc_start = line.line_no;
+				recalc_end = line.line_no + line_count - 1;
+				recalc_optimize = true;
+				recalc_pending = true;
+				return;
+			}
+
 			if (RecalculateDocument(owner.CreateGraphics(), line.line_no, line.line_no + line_count - 1, true)) {
 				// Lineheight changed, invalidate the rest of the document
 				if ((line.Y - viewport_y) >=0 ) {
@@ -3441,6 +3485,14 @@ namespace System.Windows.Forms {
 			int	new_width;
 			bool	changed;
 			int	shift;
+
+			if (no_recalc) {
+				recalc_pending = true;
+				recalc_start = start;
+				recalc_end = end;
+				recalc_optimize = optimize;
+				return false;
+			}
 
 			Y = GetLine(start).Y;
 			line_no = start;
