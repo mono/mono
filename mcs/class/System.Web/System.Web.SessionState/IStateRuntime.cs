@@ -51,6 +51,7 @@ namespace System.Web.SessionState
 			[In, MarshalAs(UnmanagedType.I4)] int contentLength,
 			[In, MarshalAs(UnmanagedType.SysInt)] IntPtr content);
 
+#if NET_2_0
 		void ProcessRequest (
 			[In, MarshalAs(UnmanagedType.SysInt)] IntPtr tracker, 
 			[In, MarshalAs(UnmanagedType.I4)] int verb,
@@ -62,7 +63,7 @@ namespace System.Web.SessionState
 			[In, MarshalAs(UnmanagedType.I4)] int lockCookie,
 			[In, MarshalAs(UnmanagedType.I4)] int contentLength,
 			[In, MarshalAs(UnmanagedType.SysInt)] IntPtr content);
-
+#endif
 		void StopProcessing ();
 	}
 }

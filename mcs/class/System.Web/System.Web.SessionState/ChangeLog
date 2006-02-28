@@ -1,5 +1,9 @@
 2006-02-28  Chris Toshok  <toshok@ximian.com>
 
+	* IStateRuntime.cs: wrap new interface method with NET_2_0.
+
+2006-02-28  Chris Toshok  <toshok@ximian.com>
+
 	* SessionStateActions.cs: oops, actually rename the enum, not just
 	the file.
 
