@@ -13,6 +13,8 @@
 
 #include <glib.h>
 
+#include "serial.h"
+
 int
 open_serial (char* devfile)
 {
@@ -89,7 +91,7 @@ discard_buffer (int fd, gboolean input)
 }
 
 gboolean
-set_attributes (int fd, int baud_rate, int parity, int dataBits, int stopBits, int handshake)
+set_attributes (int fd, int baud_rate, MonoParity parity, int dataBits, MonoStopBits stopBits, MonoHandshake handshake)
 {
 	struct termios newtio;
 
@@ -121,22 +123,22 @@ set_attributes (int fd, int baud_rate, int parity, int dataBits, int stopBits, i
 	}
 
 	switch (parity) {
-	case 0: /* Even */
-		newtio.c_iflag &= ~IGNPAR;
-		newtio.c_cflag |= PARENB;
-		break;
-	case 1: /* Mark */
-		/* XXX unhandled */
-		break;
-	case 2: /* None */
+	case NoneParity: /* None */
 		newtio.c_iflag |= IGNPAR;
 		newtio.c_cflag &= ~(PARENB | PARODD);
 		break;
-	case 3: /* Odd */
+	case Odd: /* Odd */
 		newtio.c_iflag &= ~IGNPAR;
 		newtio.c_cflag |= PARENB | PARODD;
 		break;
-	case 4: /* Space */
+	case Even: /* Even */
+		newtio.c_iflag &= ~IGNPAR;
+		newtio.c_cflag |= PARENB;
+		break;
+	case Mark: /* Mark */
+		/* XXX unhandled */
+		break;
+	case Space: /* Space */
 		/* XXX unhandled */
 		break;
 	}
@@ -154,14 +156,17 @@ set_attributes (int fd, int baud_rate, int parity, int dataBits, int stopBits, i
 
 	newtio.c_cflag &= ~CSTOPB;
 	switch (stopBits) {
-	case 0: /* One */
+	case NoneStopBits:
+		/* Unhandled */
+		break;
+	case One: /* One */
 		/* do nothing, the default is one stop bit */
 		break;
-	case 1: /* OnePointFive */
-		/* XXX unhandled */
-		break;
-	case 2: /* Two */
+	case Two: /* Two */
 		newtio.c_cflag |= CSTOPB;
+		break;
+	case OnePointFive: /* OnePointFive */
+		/* XXX unhandled */
 		break;
 	}
 
@@ -171,29 +176,28 @@ set_attributes (int fd, int baud_rate, int parity, int dataBits, int stopBits, i
 	newtio.c_cflag &= ~CRTSCTS;
 #endif /* def CRTSCTS */
 	switch (handshake) {
-	case 0: /* None */
+	case NoneHandshake: /* None */
 		/* do nothing */
 		break;
-	case 1: /* RequestToSend (RTS) */
+	case XOnXOff: /* XOnXOff */
+		newtio.c_iflag |= IXOFF;
+		//		newtio.c_oflag |= IXON;
+		break;
+	case RequestToSend: /* RequestToSend (RTS) */
 #ifdef CRTSCTS
 		newtio.c_cflag |= CRTSCTS;
 #endif /* def CRTSCTS */
 		break;
-	case 2: /* RequestToSendXOnXOff (RTS + XON/XOFF) */
+	case RequestToSendXOnXOff: /* RequestToSendXOnXOff (RTS + XON/XOFF) */
 #ifdef CRTSCTS
 		newtio.c_cflag |= CRTSCTS;
 #endif /* def CRTSCTS */
 		/* fall through */
-	case 3: /* XOnXOff */
-		newtio.c_iflag |= IXOFF;
-		//		newtio.c_oflag |= IXON;
-		break;
 	}
 	
-	cfsetospeed (&newtio, baud_rate);
-	cfsetispeed (&newtio, baud_rate);
-
-	tcsetattr(fd,TCSADRAIN,&newtio);
+	if (cfsetospeed (&newtio, baud_rate) < 0 || cfsetispeed (&newtio, baud_rate) < 0 ||
+			tcsetattr (fd, TCSADRAIN, &newtio) < 0)
+		return FALSE;
 
 	return TRUE;
 }
