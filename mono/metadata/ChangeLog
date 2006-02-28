@@ -1,3 +1,9 @@
+2006-01-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* object-internals.h (MonoThread): Add 'thread_dump_requested' field.
+
+	* threads.c (mono_threads_request_thread_dump): New helper function.
+
 2006-02-24 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* threadpool.c: for asynchronous connect(), enable the same workaround
