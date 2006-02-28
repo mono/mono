@@ -1,3 +1,20 @@
+2006-02-28  Jonathan Chambers  <jonathan.chambers@ansys.com>,
+            Peter Dennis Bartok  <pbartok@novell.com>
+
+	* Font.cs:
+	  - ToLogFont: Reworked to allow running under MS runtime and to 
+	    support it being called with both boxed structs and formatted 
+	    classes  (MS runtime PtrToStructure cannot marshal boxed value
+	    types, but Marshal.AsAny can)
+	  - Switched all usage of LOGFONTA to more generic CharSet-driven 
+	    LOGFONT structure
+	  - FromLogFont: Switched to use charset-agnostic GdipCreateFontFromLogfont
+	* gdipStructs.cs: Dropped LOGFONTA and LOGFONTW and switched to
+	  CharSet-driven LOGFONT structure (needed because of ToLogFont fix)
+	* gdipFunctions.cs: Switched GdipGetLogFont, GdipCreateFontFromLogfont and
+	  CreateFontIndirect to use LOGFONT structure, set to be CharSet=Auto
+	  (needed because of ToLogFont fix)
+
 2006-02-18  Duncan Mak  <duncan@novell.com>
 
 	* Graphics.cs (DrawBeziers): Patch from Alexander Olk to fix

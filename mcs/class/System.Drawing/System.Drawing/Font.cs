@@ -192,7 +192,7 @@ namespace System.Drawing
 			IntPtr			hdc;			
 			FontStyle		newStyle = FontStyle.Regular;
 			float			newSize;
-			LOGFONTA		lf = new LOGFONTA ();
+			LOGFONT			lf = new LOGFONT ();
 
 			// Sanity. Should we throw an exception?
 			if (Hfont == IntPtr.Zero) {
@@ -257,9 +257,9 @@ namespace System.Drawing
 			if ((int) osInfo.Platform == 128 || (int) osInfo.Platform == 4) {
 				return fontObject;
 			} else {
-				LOGFONTA lf = new LOGFONTA ();
+				LOGFONT lf = new LOGFONT ();
 				ToLogFont(lf);
-				Hfont = GDIPlus.CreateFontIndirectA (ref lf);
+				Hfont = GDIPlus.CreateFontIndirect (ref lf);
 			}
 			return Hfont;
 		}
@@ -541,8 +541,8 @@ namespace System.Drawing
 		public static Font FromLogFont (object lf,  IntPtr hdc)
 		{
 			IntPtr newObject;
-			LOGFONTA o = (LOGFONTA)lf;
-			GDIPlus.GdipCreateFontFromLogfontA (hdc, ref o, out newObject);
+			LOGFONT o = (LOGFONT)lf;
+			GDIPlus.GdipCreateFontFromLogfont (hdc, ref o, out newObject);
 			return new Font (newObject, "Microsoft Sans Serif", FontStyle.Regular, 10);
 		}
 
@@ -627,19 +627,12 @@ namespace System.Drawing
 
 		public void ToLogFont (object logFont, Graphics graphics)
 		{
-			IntPtr lf;
-
 			if (graphics == null) {
 				throw new ArgumentNullException ("graphics");
 			}
 
-			lf = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(LOGFONTW)));
-			try {
-				GDIPlus.CheckStatus (GDIPlus.GdipGetLogFontW(NativeObject, graphics.NativeObject, lf));
-				Marshal.PtrToStructure(lf, logFont);
-			}
-			finally {
-				Marshal.FreeHGlobal (lf);
+			if (Marshal.SizeOf(logFont) >= Marshal.SizeOf(typeof(LOGFONT))) {
+				GDIPlus.CheckStatus (GDIPlus.GdipGetLogFont(NativeObject, graphics.NativeObject, logFont));
 			}
 		}
 

@@ -1371,26 +1371,24 @@ namespace System.Drawing
 		internal static extern Status GdipCreateFont (IntPtr fontFamily, float emSize, FontStyle style, GraphicsUnit  unit,  out IntPtr font);
 		[DllImport("gdiplus.dll")]                   
 		internal static extern Status GdipDeleteFont (IntPtr font);		
-		[DllImport("gdiplus.dll", CharSet=CharSet.Ansi)]
-		internal static extern Status GdipGetLogFontA(IntPtr font, IntPtr graphics, IntPtr logfontA);
-		[DllImport("gdiplus.dll", CharSet=CharSet.Unicode)]
-		internal static extern Status GdipGetLogFontW(IntPtr font, IntPtr graphics, IntPtr logfontW);
+		[DllImport("gdiplus.dll", CharSet=CharSet.Auto)]
+		internal static extern Status GdipGetLogFont(IntPtr font, IntPtr graphics, [MarshalAs(UnmanagedType.AsAny), Out] object logfontA);
 
 		[DllImport("gdiplus.dll")]                   
 		internal static extern Status GdipCreateFontFromDC(IntPtr hdc, out IntPtr font);
-		[DllImport("gdiplus.dll", SetLastError=true)]
-		internal static extern Status GdipCreateFontFromLogfontA(IntPtr hdc, ref LOGFONTA lf, out IntPtr ptr);
+		[DllImport("gdiplus.dll", SetLastError=true, CharSet=CharSet.Auto)]
+		internal static extern Status GdipCreateFontFromLogfont(IntPtr hdc, ref LOGFONT lf, out IntPtr ptr);
 
 		// These are our private functions, they exists in our own libgdiplus library, this way we
 		// avoid relying on wine in System.Drawing
 		[DllImport("gdiplus.dll")]
 		internal static extern Status GdipGetHfont (IntPtr font, out IntPtr Hfont);	
-		[DllImport("gdiplus.dll")]                   
-		internal static extern Status GdipCreateFontFromHfont(IntPtr hdc, out IntPtr font, ref LOGFONTA lf);
+		[DllImport("gdiplus.dll", CharSet=CharSet.Ansi)]                   
+		internal static extern Status GdipCreateFontFromHfont(IntPtr hdc, out IntPtr font, ref LOGFONT lf);
 
 		// This is win32/gdi, not gdiplus, but it's easier to keep in here, also see above comment
-		[DllImport("gdi32.dll", EntryPoint="CreateFontIndirectA", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Ansi)]
-		internal static extern IntPtr CreateFontIndirectA (ref LOGFONTA logfontA);	
+		[DllImport("gdi32.dll", CallingConvention=CallingConvention.StdCall, CharSet = CharSet.Auto)]
+		internal static extern IntPtr CreateFontIndirect (ref LOGFONT logfont);	
 		[DllImport("user32.dll", EntryPoint="GetDC", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Ansi)]
 		internal static extern IntPtr GetDC(IntPtr hwnd);	
 		[DllImport("user32.dll", EntryPoint="ReleaseDC", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Ansi)]
