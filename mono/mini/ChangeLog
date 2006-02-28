@@ -1,3 +1,7 @@
+2006-02-28  Raja R Harinath  <rharinath@novell.com>
+
+	* jit-icalls.c (helper_compile_generic_method): Revert change from
+	2006-02-24.
 
 Mon Feb 27 18:58:19 GMT 2006 Paolo Molaro <lupus@ximian.com>
 
