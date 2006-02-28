@@ -6,7 +6,7 @@
 //	Sebastien Pouliot <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004-2005 Novell Inc. (http://www.novell.com)
+// Copyright (C) 2004-2006 Novell Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -273,8 +273,20 @@ namespace Mono.Security.Cryptography {
 				param.P = Normalize (privateKey [4].Value, keysize2);
 				param.Q = Normalize (privateKey [5].Value, keysize2);
 
-				RSA rsa = RSA.Create ();
-				rsa.ImportParameters (param);
+				RSA rsa = null;
+				try {
+					rsa = RSA.Create ();
+					rsa.ImportParameters (param);
+				}
+				catch (CryptographicException) {
+					// this may cause problem when this code is run under
+					// the SYSTEM identity on Windows (e.g. ASP.NET). See
+					// http://bugzilla.ximian.com/show_bug.cgi?id=77559
+					CspParameters csp = new CspParameters ();
+					csp.Flags = CspProviderFlags.UseMachineKeyStore;
+					rsa = new RSACryptoServiceProvider (csp);
+					rsa.ImportParameters (param);
+				}
 				return rsa;
 			}
 
