@@ -1,3 +1,11 @@
+2006-02-27  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* TextControl.cs: 
+	  - InsertRTFFromStream: Added 'number of characters inserted' argument
+	  - set_SelectedRTF: Now using the number of characters to calculate
+	    the new location for the selection and cursor (x/y cannot be used
+	    due to potentially already wrapped text)
+
 2006-02-27  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* TextControl.cs: Added property and implemented means to allow 

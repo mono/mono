@@ -57,6 +57,7 @@ namespace System.Windows.Forms {
 		private HorizontalAlignment rtf_rtfalign;
 		private int		rtf_cursor_x;
 		private int		rtf_cursor_y;
+		private int		rtf_chars;
 		#endregion	// Local Variables
 
 		#region Public Constructors
@@ -305,19 +306,24 @@ namespace System.Windows.Forms {
 				MemoryStream	data;
 				int		x;
 				int		y;
+				int		sel_start;
+				int		chars;
 				Line		line;
+				LineTag		tag;
 
 				if (document.selection_visible) {
 					document.ReplaceSelection("");
 				}
 
+				sel_start = document.LineTagToCharIndex(document.selection_start.line, document.selection_start.pos);
+
 				data = new MemoryStream(Encoding.ASCII.GetBytes(value), false);
-				InsertRTFFromStream(data, document.selection_start.pos, document.selection_start.line.line_no, out x, out y);
+				InsertRTFFromStream(data, document.selection_start.pos, document.selection_start.line.line_no, out x, out y, out chars);
 				data.Close();
 
-				line = document.GetLine(y);
-				document.SetSelection(document.GetLine(y), x);
-				document.PositionCaret(line, x);
+				document.CharIndexToLineTag(sel_start + chars + (y - document.selection_start.line.line_no) * 2, out line, out tag, out sel_start);
+				document.SetSelection(line, sel_start);
+				document.PositionCaret(line, sel_start);
 				document.DisplayCaret();
 
 				OnTextChanged(EventArgs.Empty);
@@ -1299,6 +1305,8 @@ namespace System.Windows.Forms {
 				}
 			}
 
+			rtf_chars += rtf_line.Length;
+
 			if (rtf_cursor_x == 0) {
 				document.Add(rtf_cursor_y, rtf_line.ToString(), rtf_rtfalign, font, rtf_color);
 			} else {
@@ -1324,11 +1332,12 @@ namespace System.Windows.Forms {
 		private void InsertRTFFromStream(Stream data, int cursor_x, int cursor_y) {
 			int	x;
 			int	y;
+			int	chars;
 
-			InsertRTFFromStream(data, cursor_x, cursor_y, out x, out y);
+			InsertRTFFromStream(data, cursor_x, cursor_y, out x, out y, out chars);
 		}
 
-		private void InsertRTFFromStream(Stream data, int cursor_x, int cursor_y, out int to_x, out int to_y) {
+		private void InsertRTFFromStream(Stream data, int cursor_x, int cursor_y, out int to_x, out int to_y, out int chars) {
 			RTF.RTF		rtf;
 
 			rtf = new RTF.RTF(data);
@@ -1347,6 +1356,7 @@ namespace System.Windows.Forms {
 			rtf_rtffont = null;
 			rtf_cursor_x = cursor_x;
 			rtf_cursor_y = cursor_y;
+			rtf_chars = 0;
 			rtf.DefaultFont(this.Font.Name);
 
 			rtf_text_map = new RTF.TextMap();
@@ -1366,6 +1376,7 @@ namespace System.Windows.Forms {
 
 			to_x = rtf_cursor_x;
 			to_y = rtf_cursor_y;
+			chars = rtf_chars;
 
 			document.RecalculateDocument(CreateGraphics(), cursor_y, document.Lines, false);
 			document.NoRecalc = false;
