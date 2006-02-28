@@ -132,6 +132,19 @@ namespace MonoTests.System.Xml
 
 		[Test]
 		[ExpectedException (typeof (XmlSchemaException))]
+		public void TestCompile_ZeroLength_TargetNamespace ()
+		{
+			XmlSchema schema = new XmlSchema ();
+			schema.TargetNamespace = string.Empty;
+			Assert (!schema.IsCompiled);
+
+			// MS.NET 1.x: The Namespace '' is an invalid URI.
+			// MS.NET 2.0: The targetNamespace attribute cannot have empty string as its value.
+			schema.Compile (null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (XmlSchemaException))]
 		public void TestCompileNonSchema ()
 		{
 			XmlTextReader xtr = new XmlTextReader ("<root/>", XmlNodeType.Document, null);
@@ -200,7 +213,17 @@ namespace MonoTests.System.Xml
 			xw = new XmlTextWriter (sw);
 			xs.TargetNamespace = "urn:foo";
 			xs.Write (xw);
-			Console.WriteLine ("#2", "<xs:schema xmlns:tns=\"urn:foo\" targetNamespace=\"urn:foo\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" />", doc.DocumentElement.OuterXml);
+			doc.LoadXml (sw.ToString ());
+			AssertEquals ("#2", "<xs:schema xmlns:tns=\"urn:foo\" targetNamespace=\"urn:foo\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" />", doc.DocumentElement.OuterXml);
+
+			// Zero-length TargetNamespace
+			xs = new XmlSchema ();
+			sw = new StringWriter ();
+			xw = new XmlTextWriter (sw);
+			xs.TargetNamespace = string.Empty;
+			xs.Write (xw);
+			doc.LoadXml (sw.ToString ());
+			AssertEquals ("#2b", "<xs:schema targetNamespace=\"\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" />", doc.DocumentElement.OuterXml);
 
 			// XmlSerializerNamespaces
 			xs = new XmlSchema ();

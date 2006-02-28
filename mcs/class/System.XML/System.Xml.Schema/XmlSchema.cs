@@ -337,6 +337,9 @@ namespace System.Xml.Schema
 
 			//4. targetNamespace should be of type anyURI or absent
 			if (TargetNamespace != null) {
+				if (TargetNamespace.Length == 0)
+					error (handler, "The targetNamespace attribute cannot have have empty string as its value.");
+
 				if(!XmlSchemaUtil.CheckAnyUri (TargetNamespace))
 					error(handler, TargetNamespace+" is not a valid value for targetNamespace attribute of schema");
 			}
@@ -905,7 +908,7 @@ namespace System.Xml.Schema
 				// Add the xml schema namespace. (It is done 
 				// only when no entry exists in Namespaces).
 				nss.Add ("xs", XmlSchema.Namespace);
-				if (TargetNamespace != null)
+				if (TargetNamespace != null && TargetNamespace.Length != 0)
 					nss.Add ("tns", TargetNamespace);
 			}
 

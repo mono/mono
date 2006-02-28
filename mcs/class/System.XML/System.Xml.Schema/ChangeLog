@@ -1,3 +1,9 @@
+2006-02-28  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* XmlSchema.cs: Do not define namespace for zero-length TargetNamespace
+	and report XmlSchemaException when compiling XmlSchema with
+	zero-length TargetNamespace.
+
 2006-02-01  Atsushi Enomoto <atsushi@ximian.com>
 
 	* BuiltInDatatype.cs : anyURI could be such relative path that

@@ -1,3 +1,10 @@
+2006-02-28  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* XmlSchemaTests.cs: Added test for writing XmlSchema with
+	zero-length TargetNamespace. Added test for compiling XmlSchema
+	with zero-length TargetNamespace. Replaced Console.WriteLine with 
+	AssertEquals.
+
 2006-02-06  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlSchemaDatatypeTests.cs: (TestAnyType) NotDotNet -> Ignore.
