@@ -1,4 +1,8 @@
 
+Tue Feb 28 13:58:50 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mono-compiler.h: fixed Jakub's patch to actually compile on amd64.
+
 Tue Feb 28 11:33:40 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* mono-compiler.h: patch from Jakub Jelinek to retrieve
