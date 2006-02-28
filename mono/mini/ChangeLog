@@ -1,3 +1,9 @@
+Wed Feb 15 16:23:17 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini-s390x.c, mini-s390.c, mini.c, mini-amd64.c, mini-arm.c,
+	mini-ia64.c, mini-sparc.c, mini-x86.c, mini-ppc.c: fixed
+	handling of instantiated generic valuetypes.
+
 2006-01-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.h mini.c mini-exceptions.c: Add thread dump support. Fixes
