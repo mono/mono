@@ -67,7 +67,8 @@ namespace System.Reflection {
 		private PermissionSet _granted;		// for the resolved assembly granted permissions
 		private PermissionSet _denied;		// for the resolved assembly denied permissions
 		private bool fromByteArray;
-		
+		private string assemblyName;
+
 		internal Assembly () 
 		{
 			resolve_event_holder = new ResolveEventHolder ();
@@ -371,9 +372,15 @@ namespace System.Reflection {
 		public override string ToString ()
 		{
 			// note: ToString work without requiring CodeBase (so no checks are needed)
+
+			if (assemblyName != null)
+				return assemblyName;
+
 			AssemblyName aname = new AssemblyName ();
 			FillName (this, aname);
-			return aname.ToString ();
+			assemblyName = aname.ToString ();
+
+			return assemblyName;
 		}
 
 		public static String CreateQualifiedName (String assemblyName, String typeName) 
