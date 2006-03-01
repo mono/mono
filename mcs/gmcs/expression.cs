@@ -3748,7 +3748,7 @@ namespace Mono.CSharp {
 				ec.CurrentBranching.SetFieldAssigned (vi, field_name);
 		}
 
-		protected void DoResolveBase (EmitContext ec)
+		protected bool DoResolveBase (EmitContext ec)
 		{
 			if (!par.Resolve (ec)) {
 				//TODO:
@@ -3767,7 +3767,7 @@ namespace Mono.CSharp {
 				if (is_ref && !block.Toplevel.IsLocalParameter (name)){
 					Report.Error (1628, Location, "Cannot use ref or out parameter `{0}' inside an anonymous method block",
 						par.Name);
-					return;
+					return false;
 				}
 
 				//
@@ -3779,6 +3779,8 @@ namespace Mono.CSharp {
 					ec.CaptureParameter (name, type, idx);
 				}
 			}
+
+			return true;
 		}
 
 		public override int GetHashCode()
@@ -3809,7 +3811,8 @@ namespace Mono.CSharp {
 		//
 		public override Expression DoResolve (EmitContext ec)
 		{
-			DoResolveBase (ec);
+			if (!DoResolveBase (ec))
+				return null;
 
 			if (is_out && ec.DoFlowAnalysis && (!ec.OmitStructFlowAnalysis || !vi.TypeInfo.IsStruct) && !IsAssigned (ec, loc))
 				return null;
@@ -3819,7 +3822,8 @@ namespace Mono.CSharp {
 
 		override public Expression DoResolveLValue (EmitContext ec, Expression right_side)
 		{
-			DoResolveBase (ec);
+			if (!DoResolveBase (ec))
+				return null;
 
 			SetAssigned (ec);
 

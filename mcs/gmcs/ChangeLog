@@ -1,5 +1,11 @@
 2006-03-01  Raja R Harinath  <rharinath@novell.com>
 
+	Fix #77679.
+	* expression.cs (ParameterReference.DoResolveBase): Change return
+	type to bool.
+	(ParameterReference.DoResolve, ParameterReference.DoResolveLValue):
+	Update.
+
 	Fix #77628.
 	* ecore.cs (PropertyExpr.InstanceResolve): Fix CS1540 check.
 
