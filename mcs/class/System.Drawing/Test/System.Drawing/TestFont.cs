@@ -64,7 +64,7 @@ namespace MonoTests.System.Drawing{
 			Assert.AreEqual (f.Unit, f2.Unit, "Unit");
 		}
 
-		[ StructLayout(LayoutKind.Sequential, CharSet=CharSet.Unicode) ]
+		[ StructLayout(LayoutKind.Sequential, CharSet=CharSet.Auto) ]
 		class LOGFONT {
 			public int lfHeight = 0;
 			public int lfWidth = 0;
