@@ -1,3 +1,9 @@
+2006-02-28  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* RichTextBox.cs (FlushText): When newline is true, we always
+	  need to split the line, even if no text is on it and we may
+	  never eat newlines. (Fixes #77669)
+
 2006-02-28  Mike Kestner  <mkestner@novell.com>
 
 	* ListView.cs: Add UpdateSelection internal method. Remove SelectItem 

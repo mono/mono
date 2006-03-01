@@ -1281,7 +1281,7 @@ namespace System.Windows.Forms {
 			Font		font;
 
 			length = rtf_line.Length;
-			if (length == 0) {
+			if (!newline && (length == 0)) {
 				return;
 			}
 
@@ -1313,9 +1313,11 @@ namespace System.Windows.Forms {
 				Line	line;
 
 				line = document.GetLine(rtf_cursor_y);
-				document.InsertString(line, rtf_cursor_x, rtf_line.ToString());
-				document.FormatText(line, rtf_cursor_x + 1, line, rtf_cursor_x + 1 + length, font, rtf_color); // FormatText is 1-based
-				if (newline && (line.text.Length > (rtf_cursor_x + 1 + length))) {
+				if (rtf_line.Length > 0) {
+					document.InsertString(line, rtf_cursor_x, rtf_line.ToString());
+					document.FormatText(line, rtf_cursor_x + 1, line, rtf_cursor_x + 1 + length, font, rtf_color); // FormatText is 1-based
+				}
+				if (newline) {
 					document.Split(line, rtf_cursor_x + length);
 				}
 			}
