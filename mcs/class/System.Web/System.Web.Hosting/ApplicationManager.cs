@@ -105,6 +105,15 @@ namespace System.Web.Hosting {
 			return ireg;
 		}
 
+		// Used from ClientBuildManager
+		internal BareApplicationHost CreateOrReuseHost (string appId, string vpath, string ppath)
+		{
+			if (id_to_host.ContainsKey (appId))
+				return id_to_host [appId];
+
+			return CreateHost (appId, vpath, ppath);
+		}
+
 		BareApplicationHost CreateHost (string appId, string vpath, string ppath)
 		{
 			BareApplicationHost host;
