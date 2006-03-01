@@ -1,3 +1,7 @@
+2006-03-01  Jackson Harper  <jackson@ximian.com>
+
+	* ScrollBar.cs: Refresh afterbeing resized.
+
 2006-02-28  Mike Kestner  <mkestner@novell.com>
 
 	* MenuAPI.cs: Call PerformPopup internal method to emit Popup.

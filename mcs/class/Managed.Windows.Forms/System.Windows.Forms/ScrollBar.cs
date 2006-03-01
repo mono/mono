@@ -608,6 +608,8 @@ namespace System.Windows.Forms
 			CalcButtonSizes ();
 			CalcThumbArea ();
 			UpdatePos (position, true);
+
+			Refresh ();
     		}
 
 		private void OnPaintSB (PaintEventArgs pevent)
