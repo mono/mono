@@ -327,7 +327,7 @@ analyze_liveness_bb (MonoCompile *cfg, MonoBasicBlock *bb)
 #endif
 				update_live_range (cfg, idx, bb->dfn, inst_num); 
 				if (!mono_bitset_test (bb->kill_set, idx))
-					mono_bitset_set (bb->gen_set, idx);
+					mono_bitset_set_fast (bb->gen_set, idx);
 				vi->spill_costs += 1 + (bb->nesting * 2);
 			}
 		}
@@ -344,14 +344,14 @@ analyze_liveness_bb (MonoCompile *cfg, MonoBasicBlock *bb)
 			if (store) {
 				update_live_range (cfg, idx, bb->dfn, inst_num); 
 				if (!mono_bitset_test (bb->kill_set, idx))
-					mono_bitset_set (bb->gen_set, idx);
+					mono_bitset_set_fast (bb->gen_set, idx);
 				vi->spill_costs += 1 + (bb->nesting * 2);
 			} else {
 #ifdef DEBUG_LIVENESS
 				printf ("\tKILL: R%d(%d)\n", ins->dreg, idx);
 #endif
 				update_live_range (cfg, idx, bb->dfn, inst_num); 
-				mono_bitset_set (bb->kill_set, idx);
+				mono_bitset_set_fast (bb->kill_set, idx);
 				vi->spill_costs += 1 + (bb->nesting * 2);
 			}
 		}

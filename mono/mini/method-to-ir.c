@@ -395,7 +395,6 @@ mono_print_bb (MonoBasicBlock *bb, const char *msg)
 		(dest)->opcode = (op);	\
         (dest)->flags = 0; \
         (dest)->dreg = (dest)->sreg1 = (dest)->sreg2 = -1;  \
-        (dest)->next = NULL; \
 	} while (0)
 
 /*
