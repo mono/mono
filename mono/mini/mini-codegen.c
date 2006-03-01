@@ -19,11 +19,6 @@
 #include "inssel.h"
 #include "mini-arch.h"
 
-#ifndef G_LIKELY
-#define G_LIKELY(a) (a)
-#define G_UNLIKELY(a) (a)
-#endif
-
 #define DEBUG(a) if (G_UNLIKELY (cfg->verbose_level > 1)) a
 
 #if defined(__x86_64__)

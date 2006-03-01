@@ -1718,7 +1718,7 @@ mono_compile_create_var_for_vreg (MonoCompile *cfg, MonoType *type, int opcode, 
 	int num = cfg->num_varinfo;
 
 	if ((num + 1) >= cfg->varinfo_count) {
-		cfg->varinfo_count = (cfg->varinfo_count + 2) * 2;
+		cfg->varinfo_count = cfg->varinfo_count ? (cfg->varinfo_count * 2) : 64;
 		cfg->varinfo = (MonoInst **)g_realloc (cfg->varinfo, sizeof (MonoInst*) * cfg->varinfo_count);
 		cfg->vars = (MonoMethodVar **)g_realloc (cfg->vars, sizeof (MonoMethodVar*) * cfg->varinfo_count);      
 	}
@@ -8263,9 +8263,8 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 			mono_domain_unlock (domain);
 		}
 
-		for (i = 0; i < patch_info->data.table->table_size; i++) {
+		for (i = 0; i < patch_info->data.table->table_size; i++)
 			jump_table [i] = code + GPOINTER_TO_INT (patch_info->data.table->table [i]);
-		}
 		target = jump_table;
 		break;
 	}
@@ -8676,10 +8675,42 @@ remove_block_if_useless (MonoCompile *cfg, MonoBasicBlock *bb, MonoBasicBlock *p
 static void
 merge_basic_blocks (MonoBasicBlock *bb, MonoBasicBlock *bbn) 
 {
+	MonoInst *inst;
+
 	bb->out_count = bbn->out_count;
 	bb->out_bb = bbn->out_bb;
 
 	replace_basic_block (bb, bbn, bb);
+
+	/* Nullify branch */
+	for (inst = bb->code; inst != NULL; inst = inst->next) {
+		if (inst->opcode == OP_CALL_HANDLER) {
+			g_assert (inst->inst_target_bb == bbn);
+			inst->opcode = OP_NOP;
+			inst->dreg = inst->sreg1 = inst->sreg2 = -1;
+		}
+		if (inst->opcode == OP_JUMP_TABLE) {
+			int i;
+			MonoJumpInfoBBTable *table = inst->inst_p0;
+			for (i = 0; i < table->table_size; i++ ) {
+				g_assert (table->table [i] == bbn);
+				table->table [i] = NULL;
+			}
+			/* Can't nullify this as later instructions depend on it */
+		}
+	}
+	if (bb->last_ins != NULL) {
+		switch (bb->last_ins->opcode) {
+		case CEE_BR:
+		case OP_BR:
+		case OP_BR_REG:
+			bb->last_ins->opcode = OP_NOP;
+		default:
+			if (MONO_IS_COND_BRANCH_OP (bb->last_ins))
+				bb->last_ins->opcode = OP_NOP;
+			break;
+		}
+	}
 
 	if (bb->last_ins) {
 		if (bbn->code) {
@@ -9414,8 +9445,13 @@ mono_codegen (MonoCompile *cfg)
 				/* In the aot case, the patch already points to the correct location */
 				patch_info->ip.i = patch_info->ip.label->inst_c0;
 			for (i = 0; i < patch_info->data.table->table_size; i++) {
-				g_assert (patch_info->data.table->table [i]->native_offset);
-				table [i] = GINT_TO_POINTER (patch_info->data.table->table [i]->native_offset);
+				/* Might be NULL if the switch is eliminated */
+				if (patch_info->data.table->table [i]) {
+					g_assert (patch_info->data.table->table [i]->native_offset);
+					table [i] = GINT_TO_POINTER (patch_info->data.table->table [i]->native_offset);
+				} else {
+					table [i] = NULL;
+				}
 			}
 			patch_info->data.table->table = (MonoBasicBlock**)table;
 			break;

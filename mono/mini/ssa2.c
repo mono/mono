@@ -215,43 +215,41 @@ mono_ssa_rename_vars2 (MonoCompile *cfg, int max_vars, MonoBasicBlock *bb, gbool
 		if (ins->opcode == OP_NOP)
 			continue;
 
-		if (ins->opcode != OP_PHI) {
-			/* SREG1 */
-			if (spec [MONO_INST_SRC1] == 'i') {
-				MonoInst *var = get_vreg_to_inst (cfg, ins->sreg1);
-				if (var && !(var->flags & (MONO_INST_VOLATILE|MONO_INST_INDIRECT))) {
-					int idx = var->inst_c0;
-					if (stack [idx]) {
-						if (var->opcode != OP_ARG)
-							g_assert (stack [idx]);
-						ins->sreg1 = stack [idx]->dreg;
-					}
-				}
-			}					
-
-			/* SREG2 */
-			if (spec [MONO_INST_SRC2] == 'i') {
-				MonoInst *var = get_vreg_to_inst (cfg, ins->sreg2);
-				if (var && !(var->flags & (MONO_INST_VOLATILE|MONO_INST_INDIRECT))) {
-					int idx = var->inst_c0;
-					if (stack [idx]) {
-						if (var->opcode != OP_ARG)
-							g_assert (stack [idx]);
-
-						ins->sreg2 = stack [idx]->dreg;
-					}
+		/* SREG1 */
+		if (spec [MONO_INST_SRC1] == 'i') {
+			MonoInst *var = get_vreg_to_inst (cfg, ins->sreg1);
+			if (var && !(var->flags & (MONO_INST_VOLATILE|MONO_INST_INDIRECT))) {
+				int idx = var->inst_c0;
+				if (stack [idx]) {
+					if (var->opcode != OP_ARG)
+						g_assert (stack [idx]);
+					ins->sreg1 = stack [idx]->dreg;
 				}
 			}
+		}					
 
-			if (MONO_IS_STORE_MEMBASE (ins)) {
-				MonoInst *var = get_vreg_to_inst (cfg, ins->dreg);
-				if (var && !(var->flags & (MONO_INST_VOLATILE|MONO_INST_INDIRECT))) {
-					int idx = var->inst_c0;
-					if (stack [idx]) {
-						if (var->opcode != OP_ARG)
-							g_assert (stack [idx]);
-						ins->dreg = stack [idx]->dreg;
-					}
+		/* SREG2 */
+		if (spec [MONO_INST_SRC2] == 'i') {
+			MonoInst *var = get_vreg_to_inst (cfg, ins->sreg2);
+			if (var && !(var->flags & (MONO_INST_VOLATILE|MONO_INST_INDIRECT))) {
+				int idx = var->inst_c0;
+				if (stack [idx]) {
+					if (var->opcode != OP_ARG)
+						g_assert (stack [idx]);
+
+					ins->sreg2 = stack [idx]->dreg;
+				}
+			}
+		}
+
+		if (MONO_IS_STORE_MEMBASE (ins)) {
+			MonoInst *var = get_vreg_to_inst (cfg, ins->dreg);
+			if (var && !(var->flags & (MONO_INST_VOLATILE|MONO_INST_INDIRECT))) {
+				int idx = var->inst_c0;
+				if (stack [idx]) {
+					if (var->opcode != OP_ARG)
+						g_assert (stack [idx]);
+					ins->dreg = stack [idx]->dreg;
 				}
 			}
 		}
@@ -259,7 +257,6 @@ mono_ssa_rename_vars2 (MonoCompile *cfg, int max_vars, MonoBasicBlock *bb, gbool
 		/* DREG */
 		if ((spec [MONO_INST_DEST] == 'i') && !MONO_IS_STORE_MEMBASE (ins)) {
 			MonoInst *var = get_vreg_to_inst (cfg, ins->dreg);
-
 			if (var && !(var->flags & (MONO_INST_VOLATILE|MONO_INST_INDIRECT))) {
 				idx = var->inst_c0;
 				g_assert (idx < max_vars);
@@ -312,7 +309,7 @@ mono_ssa_rename_vars2 (MonoCompile *cfg, int max_vars, MonoBasicBlock *bb, gbool
 #endif
 				ins->inst_phi_args [j + 1] = new_var->dreg;
 				
-				if (cfg->verbose_level >= 4)
+				if (G_UNLIKELY (cfg->verbose_level >= 4))
 					printf ("\tAdd PHI R%d <- R%d to BB%d\n", ins->dreg, new_var->dreg, n->block_num);
 
 			}
@@ -328,79 +325,6 @@ mono_ssa_rename_vars2 (MonoCompile *cfg, int max_vars, MonoBasicBlock *bb, gbool
 		g_free (new_stack);
 	}
 
-}
-
-static void
-mono_ssa_rename_vars (MonoCompile *cfg, int max_vars, MonoBasicBlock *bb, MonoInst **stack) 
-{
-	MonoInst *inst, *new_var;
-	int i, j, idx;
-	GList *tmp;
-	MonoInst **new_stack;
-
-#ifdef DEBUG_SSA
-	printf ("RENAME VARS BB%d %s\n", bb->block_num, mono_method_full_name (cfg->method, TRUE));
-#endif
-
-	for (inst = bb->code; inst; inst = inst->next) {
-		if (inst->opcode != OP_PHI)
-			replace_usage (cfg, bb, inst, stack);
-
-		if (inst->ssa_op == MONO_SSA_STORE && 
-		    (inst->inst_i0->opcode == OP_LOCAL || inst->inst_i0->opcode == OP_ARG)) {
-			idx = inst->inst_i0->inst_c0;
-			g_assert (idx < max_vars);
-
-			if ((!stack [idx]) && (bb == cfg->bb_init) && (inst->inst_i0->opcode != OP_ARG)) {
-				new_var = cfg->varinfo [idx];
-			} else {
-				new_var = mono_compile_create_var (cfg, inst->inst_i0->inst_vtype,  inst->inst_i0->opcode);
-				new_var->flags = inst->inst_i0->flags;
-			}
-#ifdef DEBUG_SSA
-			printf ("DEF %d %d\n", idx, new_var->inst_c0);
-#endif
-			inst->inst_i0 = new_var;
-
-#ifdef USE_ORIGINAL_VARS
-			cfg->vars [new_var->inst_c0]->reg = idx;
-#endif
-
-			stack [idx] = new_var;
-		}
-	}
-
-	for (i = 0; i < bb->out_count; i++) {
-		MonoBasicBlock *n = bb->out_bb [i];
-
-		for (j = 0; j < n->in_count; j++)
-			if (n->in_bb [j] == bb)
-				break;
-		
-		for (inst = n->code; inst; inst = inst->next) {
-			if (inst->ssa_op == MONO_SSA_STORE && inst->inst_i1->opcode == OP_PHI) {
-				idx = inst->inst_i1->inst_c0;
-				if (stack [idx])
-					new_var = stack [idx];
-				else
-					new_var = cfg->varinfo [idx];
-#ifdef DEBUG_SSA
-				printf ("FOUND PHI %d (%d, %d)\n", idx, j, new_var->inst_c0);
-#endif
-				inst->inst_i1->inst_phi_args [j + 1] = new_var->inst_c0;
-				
-			}
-		}
-	}
-
-	if (bb->dominated) {
-		new_stack = g_new (MonoInst*, max_vars);
-		for (tmp = bb->dominated; tmp; tmp = tmp->next) {
-			memcpy (new_stack, stack, sizeof (MonoInst *) * max_vars); 
-			mono_ssa_rename_vars (cfg, max_vars, (MonoBasicBlock *)tmp->data, new_stack);
-		}
-		g_free (new_stack);
-	}
 }
 
 void
@@ -811,8 +735,10 @@ mono_ssa_create_def_use (MonoCompile *cfg)
 			}
 
 			if (ins->opcode == OP_PHI) {
-				for (i = ins->inst_phi_args [0]; i > 0; i--)
+				for (i = ins->inst_phi_args [0]; i > 0; i--) {
+					g_assert (ins->inst_phi_args [i] != -1);
 					record_use (cfg,  get_vreg_to_inst (cfg, ins->inst_phi_args [i]), bb, ins);
+				}
 			}
 
 			/* DREG */

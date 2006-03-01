@@ -54,6 +54,11 @@
  
 #endif
 
+#ifndef G_LIKELY
+#define G_LIKELY(a) (a)
+#define G_UNLIKELY(a) (a)
+#endif
+
 /*
  * Pull the list of opcodes
  */

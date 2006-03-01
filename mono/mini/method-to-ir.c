@@ -6447,6 +6447,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			MONO_EMIT_NEW_BIALU (cfg, OP_PADD, sum_reg, table_reg, offset_reg);
 			MONO_EMIT_NEW_LOAD_MEMBASE (cfg, target_reg, sum_reg, 0);
 			MONO_EMIT_NEW_UNALU (cfg, OP_BR_REG, -1, target_reg);
+			start_new_bblock = 1;
 			inline_costs += 20;
 			break;
 		}
