@@ -11,6 +11,11 @@
 # csXXXX.cs NO ERROR	: error test case doesn't report any error. An exception is considered
 #			  as NO ERROR and CS5001 is automatically ignored.
 
+cs0102-16.cs
+cs0111-16.cs NO ERROR
+cs0111-17.cs
+cs0144-3.cs NO ERROR
+cs0221-5.cs NO ERROR
 cs0229-2.cs
 cs0229.cs NO ERROR
 cs0525.cs
@@ -22,10 +27,38 @@ cs0548-4.cs
 cs0548.cs
 cs0560.cs
 cs0567.cs
+cs0579-10.cs NO ERROR
+cs0579-2.cs
+cs0579-3.cs
+cs0579-4.cs
+cs0579-5.cs
+cs0579-6.cs
+cs0579-7.cs
+cs0579-8.cs
+cs0579.cs
+cs0592-2.cs
+cs0592-3.cs
+cs0592-4.cs
+cs0592-5.cs
+cs0592-6.cs
+cs0592-7.cs
+cs0592-8.cs
+cs0592-9.cs
+cs0592.cs
 cs0612-2.cs NO ERROR
+cs0619-18.cs
+cs0619-24.cs
 cs0619-42.cs
+cs0619-47.cs NO ERROR
+cs0619-48.cs NO ERROR
+cs0619-49.cs
+cs0625-2.cs NO ERROR
 cs0631-2.cs
+cs0641.cs
 cs0647-3.cs
+cs0653.cs
+cs0713-2.cs NO ERROR
+cs0714-2.cs
 cs1035.cs
 cs1040-2.cs
 cs1040.cs
@@ -46,31 +79,10 @@ cs1667-4.cs
 cs1667-5.cs
 cs1667.cs
 cs1670-2.cs
+cs3005-24.cs NO ERROR
+cs3016-4.cs NO ERROR
+cs3018-3.cs NO ERROR
 gcs0146.cs
 gcs0305-2.cs
 gcs0305.cs
 gcs0308.cs
-
-cs0619-18.cs
-cs0619-24.cs
-cs0144-3.cs NO ERROR
-cs0579-2.cs
-cs0579-3.cs
-cs0579-4.cs
-cs0579-5.cs
-cs0579-6.cs
-cs0579-7.cs
-cs0579-8.cs
-cs0579.cs
-cs0592-2.cs
-cs0592-3.cs
-cs0592-4.cs
-cs0592-5.cs
-cs0592-6.cs
-cs0592-7.cs
-cs0592-8.cs
-cs0592-9.cs
-cs0592.cs
-cs0641.cs
-cs0653.cs
-

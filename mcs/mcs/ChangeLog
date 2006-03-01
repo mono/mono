@@ -1,3 +1,9 @@
+2006-03-01  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #77642.
+	* typemanager.cs (GetFullNameSignature): Don't nullref on
+	protected accessors.
+
 2006-02-27  Marek Safar  <marek.safar@seznam.cz>
 
 	* attribute.cs (Attribute.PosArguments, Attribute.NamedArguments): Use

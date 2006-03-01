@@ -1,3 +1,7 @@
+2006-03-01  Raja R Harinath  <rharinath@novell.com>
+
+	* cs0205-3.cs, CS0205-3-lib.dll: New test based on #77642.
+
 2006-02-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* cs1570-3.cs cs1570-5.cs cs1570-11.cs cs1570-9.cs cs1570-2.cs
