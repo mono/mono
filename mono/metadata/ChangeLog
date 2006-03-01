@@ -1,3 +1,10 @@
+
+Wed Mar 1 19:13:30 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* decimal.h, class-internals.h, metadata-internals.h,
+	file-io.h: mark a few function declarations as internal, to
+	reduce the number of PLT entries.
+
 2006-02-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* file-io.c: fix typo in warning message.
