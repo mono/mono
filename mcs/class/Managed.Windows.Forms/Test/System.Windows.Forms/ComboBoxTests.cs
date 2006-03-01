@@ -20,10 +20,10 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2006 Matt Hergett
+// Copyright (c) 2006 Matt Hargett
 //                      
 // Authors:             
-//      Matt Hergett  <matt@use.net>
+//      Matt Hargett  <matt@use.net>
 //
 
 
