@@ -1,5 +1,8 @@
 2006-03-01  Raja R Harinath  <rharinath@novell.com>
 
+	Fix #77628.
+	* ecore.cs (PropertyExpr.InstanceResolve): Fix CS1540 check.
+
 	Fix #77642.
 	* typemanager.cs (GetFullNameSignature): Don't nullref on
 	protected accessors.

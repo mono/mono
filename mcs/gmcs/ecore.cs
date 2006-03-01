@@ -3552,11 +3552,11 @@ namespace Mono.CSharp {
 			InstanceExpression.CheckMarshallByRefAccess (ec.ContainerType);
 
 			if (must_do_cs1540_check && InstanceExpression != EmptyExpression.Null &&
-				InstanceExpression.Type != ec.ContainerType && 
-				ec.ContainerType.IsSubclassOf (PropertyInfo.DeclaringType) &&
-				InstanceExpression.Type.IsSubclassOf (PropertyInfo.DeclaringType)) {
-					Error_CannotAccessProtected (loc, PropertyInfo, InstanceExpression.Type, ec.ContainerType);
-					return false;
+			    InstanceExpression.Type != ec.ContainerType &&
+			    ec.ContainerType.IsSubclassOf (PropertyInfo.DeclaringType) &&
+			    !InstanceExpression.Type.IsSubclassOf (ec.ContainerType)) {
+				Error_CannotAccessProtected (loc, PropertyInfo, InstanceExpression.Type, ec.ContainerType);
+				return false;
 			}
 
 			return true;
@@ -3883,12 +3883,11 @@ namespace Mono.CSharp {
 			// This is using the same mechanism as the CS1540 check in PropertyExpr.
 			// However, in the Event case, we reported a CS0122 instead.
 			//
-			if (must_do_cs1540_check && InstanceExpression != EmptyExpression.Null) {
-				if ((InstanceExpression.Type != ec.ContainerType) &&
-					ec.ContainerType.IsSubclassOf (InstanceExpression.Type)) {
-					ErrorIsInaccesible (loc, TypeManager.CSharpSignature (EventInfo));
-					return false;
-				}
+			if (must_do_cs1540_check && InstanceExpression != EmptyExpression.Null &&
+			    InstanceExpression.Type != ec.ContainerType &&
+			    ec.ContainerType.IsSubclassOf (InstanceExpression.Type)) {
+				ErrorIsInaccesible (loc, TypeManager.CSharpSignature (EventInfo));
+				return false;
 			}
 
 			return true;
