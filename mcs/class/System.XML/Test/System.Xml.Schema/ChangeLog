@@ -1,3 +1,7 @@
+2006-03-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlSchemaTests.cs : added test for bug #77685.
+
 2006-02-28  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* XmlSchemaAssertion.cs: Set eol-style to native.

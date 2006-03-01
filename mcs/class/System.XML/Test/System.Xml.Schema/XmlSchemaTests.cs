@@ -343,5 +343,25 @@ namespace MonoTests.System.Xml
 </xs:schema>";
 			XmlSchema.Read (new XmlTextReader (xsd, XmlNodeType.Document, null), null);
 		}
+
+		[Test]
+		// bug #77685
+		public void ReadDoesNotIgnoreDocumentationEmptyElement ()
+		{
+			string schemaxml = @"<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>
+  <xs:element name='choice'>
+    <xs:annotation><xs:documentation /></xs:annotation>
+  </xs:element>
+</xs:schema>";
+			XmlTextReader tr = new XmlTextReader (
+				schemaxml, XmlNodeType.Document, null);
+			XmlSchema schema = XmlSchema.Read (tr, null);
+			XmlSchemaElement element =
+				schema.Items [0] as XmlSchemaElement;
+			XmlSchemaAnnotation annotation = element.Annotation;
+			XmlSchemaDocumentation doc =
+				annotation.Items [0] as XmlSchemaDocumentation;
+			AssertEquals (0, doc.Markup.Length);
+		}
 	}
 }
