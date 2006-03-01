@@ -51,7 +51,6 @@ namespace System.Windows.Forms {
 			if (top_menu is ContextMenu) {
 				grab_control = (top_menu as ContextMenu).SourceControl.FindForm ();
 				grab_control.ActiveTracker = this;
-				active = true;
 			} else
 				grab_control = top_menu.Wnd.FindForm ();
 		}
@@ -176,6 +175,7 @@ namespace System.Windows.Forms {
 
 			menu.Wnd = new PopUpWindow (menu);
 			MenuTracker tracker = new MenuTracker (menu);
+			tracker.active = true;
 
 			menu.Wnd.Location =  menu.Wnd.PointToClient (pnt);
 
@@ -263,6 +263,8 @@ namespace System.Windows.Forms {
 			if (item.Wnd != null)
 				item.Wnd.Dispose ();
 				
+			item.PerformPopup ();
+
 			PopUpWindow puw = new PopUpWindow (item);
 			
 			Point pnt;

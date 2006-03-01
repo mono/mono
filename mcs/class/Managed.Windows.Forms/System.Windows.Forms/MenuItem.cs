@@ -494,6 +494,11 @@ namespace System.Windows.Forms
 
 		#region Private Methods
 
+		internal void PerformPopup ()
+		{
+			OnPopup (EventArgs.Empty);
+		}
+
 		internal void PerformDrawItem (DrawItemEventArgs e)
 		{
 			if (mdilist && mdilist_items == null) {

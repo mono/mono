@@ -1,3 +1,10 @@
+2006-02-28  Mike Kestner  <mkestner@novell.com>
+
+	* MenuAPI.cs: Call PerformPopup internal method to emit Popup.
+	Clean up a tracker compile warning.
+	* MenuItem.cs: add internal PerformPopup method.
+	[Fixes #77457]
+
 2006-02-28  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* TextBoxBase.cs (set_Text): Recalculate the document (causing an
