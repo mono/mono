@@ -1,4 +1,8 @@
 
+Wed Mar 1 15:55:25 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* driver.c, mini.c: add hooks for the counters API.
+
 Wed Mar 1 12:28:04 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* driver.c: show disabled options.
