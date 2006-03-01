@@ -1,3 +1,8 @@
+2006-03-01  Miguel de Icaza  <miguel@novell.com>
+
+	* Assembly.cs: Cache the AssemblyName, patch from Tambet.  This
+	reduces the memory usage during remoting.
+
 2006-02-16  Martin Baulig  <martin@ximian.com>
 
 	* FieldInfo.cs (FieldInfo.Mono_GetGenericFieldDefinition): Removed.
