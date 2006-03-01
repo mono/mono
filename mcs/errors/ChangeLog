@@ -1,5 +1,7 @@
 2006-03-01  Raja R Harinath  <rharinath@novell.com>
 
+	* cs1540-8.cs: New test from #77627.
+
 	* cs1628-2.cs: New test from #77679.
 
 	* cs0205-3.cs, CS0205-3-lib.dll: New test based on #77642.
