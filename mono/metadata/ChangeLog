@@ -1,3 +1,10 @@
+
+Wed Mar 1 20:09:25 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* object.h, *: introduced specific way to set elements of an array
+	of references to be used as write barrier. Still need to audit the
+	uses of mono_array_addr.
+
 2006-03-01  Miguel de Icaza  <miguel@novell.com>
 
 	* object-internals.h: New field to cache the assmebly name, patch
@@ -17848,5 +17855,6 @@ Tue Jul  3 18:33:32 CEST 2001 Paolo Molaro <lupus@ximian.com>
 	Beta2. 
 
 	* mono/metadata/assembly.c (load_metadata_ptrs): Fix for Beta2
+
 
 
