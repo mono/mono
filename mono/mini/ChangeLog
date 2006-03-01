@@ -1,4 +1,8 @@
 
+Wed Mar 1 12:28:04 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* driver.c: show disabled options.
+
 Wed Mar 1 12:18:51 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* linear-scan.c: always use cost-driven selection.
