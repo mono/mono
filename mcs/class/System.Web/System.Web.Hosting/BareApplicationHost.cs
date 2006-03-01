@@ -47,17 +47,19 @@ namespace System.Web.Hosting {
 		string phys_path;
 		Dictionary<Type, RegisteredItem> hash;
 
-		public BareApplicationHost (string vpath, string phys_path)
+		public BareApplicationHost ()
 		{
-			this.vpath = vpath;
-			if (!Path.IsPathRooted (phys_path)) {
-				string msg = String.Format ("Invalid physical path: '{0}'", phys_path);
-				throw new ArgumentException (msg, "phys_path");
-			}
-			this.phys_path = phys_path;
+			Init ();
+		}
+
+		void Init ()
+		{
 			hash = new Dictionary<Type, RegisteredItem> ();
 			HostingEnvironment.Host = this;
-			AppDomain.CurrentDomain.DomainUnload += OnDomainUnload;
+			AppDomain current = AppDomain.CurrentDomain;
+			current.DomainUnload += OnDomainUnload;
+			phys_path = (string) current.GetData (".appPath");
+			vpath = (string) current.GetData (".appVPath");
 		}
 
 		public string VirtualPath {
@@ -103,6 +105,11 @@ namespace System.Web.Hosting {
 				return hash [type].Item;
 
 			return null;
+		}
+
+		public string GetCodeGenDir ()
+		{
+			return AppDomain.CurrentDomain.SetupInformation.DynamicBase;
 		}
 
 		void OnDomainUnload (object sender, EventArgs args)

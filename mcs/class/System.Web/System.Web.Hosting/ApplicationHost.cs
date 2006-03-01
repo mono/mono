@@ -58,7 +58,7 @@ namespace System.Web.Hosting {
 		}
 
 		//
-		// For furthe details see `Hosting the ASP.NET runtime'
+		// For further details see `Hosting the ASP.NET runtime'
 		//
 		//    http://www.west-wind.com/presentations/aspnetruntime/aspnetruntime.asp
 		// 
@@ -68,6 +68,9 @@ namespace System.Web.Hosting {
 			if (physicalDir == null)
 				throw new NullReferenceException ();
 
+#if NET_2_0
+			physicalDir = Path.GetFullPath (physicalDir);
+#endif
 			// This might throw
 			Uri u = new Uri (physicalDir);
 			physicalDir = HttpUtility.UrlDecode (u.AbsolutePath);

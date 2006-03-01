@@ -1,3 +1,10 @@
+2006-03-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* BareApplicationHost.cs: initialize paths from AppDomain data. New
+	GetCodeGenDir().
+	* ApplicationHost.cs: in 2.0 the physical path is turned into an
+	absolute path.
+
 2006-02-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ApplicationManager.cs: new internal method to create/reuse a
