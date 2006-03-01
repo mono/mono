@@ -1,3 +1,8 @@
+2006-02-28  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* TextBoxBase.cs (set_Text): Recalculate the document (causing an
+	  implicit expose) when the text is set to null
+
 2006-02-28  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* RichTextBox.cs (FlushText): When newline is true, we always

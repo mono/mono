@@ -506,6 +506,7 @@ namespace System.Windows.Forms {
 					}
 				} else {
 					document.Empty();
+					CalculateDocument();
 				}
 				base.Text = value;
 				// Not needed, base.Text already fires it
