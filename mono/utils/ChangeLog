@@ -1,4 +1,9 @@
 
+Wed Mar 1 12:33:26 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mono-counters.h, mono-counters.c, Makefile.am: added
+	API for flexible stats collection.
+
 Tue Feb 28 13:58:50 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* mono-compiler.h: fixed Jakub's patch to actually compile on amd64.
