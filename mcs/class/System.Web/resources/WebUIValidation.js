@@ -308,6 +308,12 @@ function CustomValidatorEvaluateIsValid (validator)
 {
 	var InitialValue = validator.getAttribute ("initialvalue");
 	var ControlToValidate = validator.getAttribute ("controltovalidate");
+
+	if (!ControlToValidate) {
+		ValidatorSucceeded (validator);
+		return true;
+	}
+
 	var evaluationfunc = validator.getAttribute ("clientvalidationfunction");
 
 	var ctrl_value = ValidatorTrim (ValidatorGetValue (ControlToValidate));
@@ -389,7 +395,7 @@ function ValidatorSucceeded (v)
 {
 	v.innerHTML = "";
 
-	ValidatorUpdateDisplay (v, false);
+	ValidatorUpdateDisplay (v, true);
 }
 
 function GetElement(id)
