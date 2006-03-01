@@ -1,3 +1,7 @@
+2006-03-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_class_create_from_typedef): Mark classes using CharSet.Auto as unicode on
+	windows. Fixes #77683.
 
 Wed Mar 1 20:09:25 CET 2006 Paolo Molaro <lupus@ximian.com>
 
