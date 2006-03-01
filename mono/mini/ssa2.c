@@ -407,7 +407,7 @@ void
 mono_ssa_compute2 (MonoCompile *cfg)
 {
 	int i, j, idx, bitsize;
-	MonoBitSet *set, *tmp_bitset;
+	MonoBitSet *set;
 	MonoMethodVar *vinfo = g_new0 (MonoMethodVar, cfg->num_varinfo);
 	MonoInst *ins, *store, **stack;
 	guint8 *buf, *buf_start;
@@ -429,7 +429,6 @@ mono_ssa_compute2 (MonoCompile *cfg)
 
 	mono_compile_dominator_info (cfg, MONO_COMP_DOM | MONO_COMP_IDOM | MONO_COMP_DFRONTIER);
 
-	tmp_bitset = mono_bitset_new (cfg->num_bblocks, 0);
 	bitsize = mono_bitset_alloc_size (cfg->num_bblocks, 0);
 	buf = buf_start = g_malloc0 (mono_bitset_alloc_size (cfg->num_bblocks, 0) * cfg->num_varinfo);
 
@@ -475,7 +474,7 @@ mono_ssa_compute2 (MonoCompile *cfg)
 		if (mono_bitset_count (vinfo [i].def_in) <= 1)
 			continue;
 
-		set = mono_compile_iterated_dfrontier2 (cfg, vinfo [i].def_in, tmp_bitset);
+		set = mono_compile_iterated_dfrontier (cfg, vinfo [i].def_in);
 		vinfo [i].dfrontier = set;
 
 		if (cfg->verbose_level >= 4) {
@@ -540,7 +539,6 @@ mono_ssa_compute2 (MonoCompile *cfg)
 	/* free the stuff */
 	g_free (vinfo);
 	g_free (buf_start);
-	mono_bitset_free (tmp_bitset);
 
 	stack = alloca (sizeof (MonoInst *) * cfg->num_varinfo);
 		

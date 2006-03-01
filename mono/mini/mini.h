@@ -1081,7 +1081,6 @@ MonoString *ves_icall_System_Exception_get_trace (MonoException *exc);
 void        mono_compile_dominator_info         (MonoCompile *cfg, int dom_flags);
 void        mono_compute_natural_loops          (MonoCompile *cfg);
 MonoBitSet* mono_compile_iterated_dfrontier     (MonoCompile *cfg, MonoBitSet *set);
-MonoBitSet* mono_compile_iterated_dfrontier2    (MonoCompile *cfg, MonoBitSet *set, MonoBitSet *tmp);
 void        mono_ssa_compute                    (MonoCompile *cfg);
 void        mono_ssa_remove                     (MonoCompile *cfg);
 void        mono_ssa_cprop                      (MonoCompile *cfg);

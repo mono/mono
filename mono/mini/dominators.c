@@ -264,50 +264,13 @@ df_set (MonoCompile *m, MonoBitSet* dest, MonoBitSet *set)
 {
 	int i;
 
-	mono_bitset_clear_all (dest);
 	mono_bitset_foreach_bit (set, i, m->num_bblocks) {
 		mono_bitset_union (dest, m->bblocks [i]->dfrontier);
 	}
 }
 
-/* TODO: alloc D on the stack */
 MonoBitSet*
 mono_compile_iterated_dfrontier (MonoCompile *m, MonoBitSet *set)
-{
-	MonoBitSet *result, *D;
-	int bitsize, change = TRUE;
-
-	bitsize = mono_bitset_alloc_size (m->num_bblocks, 0);
-	result = mono_bitset_mem_new (mono_mempool_alloc (m->mempool, bitsize), m->num_bblocks, 0);
-	D = mono_bitset_mem_new (mono_mempool_alloc (m->mempool, bitsize), m->num_bblocks, 0);
-
-	df_set (m, result, set);
-	do {
-		change = FALSE;
-		df_set (m, D, result);
-		mono_bitset_union (D, result);
-
-		if (!mono_bitset_equal (D, result)) {
-			mono_bitset_copyto (D, result);
-			change = TRUE;
-		}
-	} while (change);
-	
-	return result;
-}
-
-static inline void
-df_set2 (MonoCompile *m, MonoBitSet* dest, MonoBitSet *set) 
-{
-	int i;
-
-	mono_bitset_foreach_bit (set, i, m->num_bblocks) {
-		mono_bitset_union (dest, m->bblocks [i]->dfrontier);
-	}
-}
-
-MonoBitSet*
-mono_compile_iterated_dfrontier2 (MonoCompile *m, MonoBitSet *set, MonoBitSet *tmp)
 {
 	MonoBitSet *result;
 	int bitsize, count1, count2;
@@ -315,11 +278,11 @@ mono_compile_iterated_dfrontier2 (MonoCompile *m, MonoBitSet *set, MonoBitSet *t
 	bitsize = mono_bitset_alloc_size (m->num_bblocks, 0);
 	result = mono_bitset_mem_new (mono_mempool_alloc0 (m->mempool, bitsize), m->num_bblocks, 0);
 
-	df_set2 (m, result, set);
+	df_set (m, result, set);
 	count2 = mono_bitset_count (result);
 	do {
 		count1 = count2;
-		df_set2 (m, result, result);
+		df_set (m, result, result);
 		count2 = mono_bitset_count (result);
 	} while (count2 > count1);
 	
