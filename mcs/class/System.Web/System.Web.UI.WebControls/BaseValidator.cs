@@ -253,10 +253,14 @@ namespace System.Web.UI.WebControls {
 
 				if (!IsValid)
 					writer.AddAttribute ("isvalid", "false");
+				else
+				if (Display == ValidatorDisplay.Static)
+					writer.AddStyleAttribute ("visibility", "hidden");
+				else
+					writer.AddStyleAttribute ("display", "none");
 
-				if (Display == ValidatorDisplay.Static) {
-					writer.AddStyleAttribute ("visibility", "static");
-				}
+				if (Display != ValidatorDisplay.Static)
+					writer.AddAttribute ("display", Display.ToString());
 			}
 
 			base.AddAttributesToRender (writer);
