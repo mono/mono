@@ -86,7 +86,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
 	{
 		MemoryStream ms = new MemoryStream ();
-		this.Save (ms, ImageFormat.Bmp);
+		this.Save (ms, RawFormat);
 		info.AddValue ("Data", ms.ToArray ());
 	}
     
