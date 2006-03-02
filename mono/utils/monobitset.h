@@ -16,6 +16,7 @@ enum {
 #define mono_bitset_test_fast(set,n) (((gsize*)set)[2+(n)/MONO_BITSET_BITS_PER_CHUNK] & ((gsize)1 << ((n) % MONO_BITSET_BITS_PER_CHUNK)))
 #define mono_bitset_set_fast(set,n) do { ((gsize*)set)[2+(n)/MONO_BITSET_BITS_PER_CHUNK] |= ((gsize)1 << ((n) % MONO_BITSET_BITS_PER_CHUNK)); } while (0)
 #define mono_bitset_clear_fast(set,n) do { ((gsize*)set)[2+(n)/MONO_BITSET_BITS_PER_CHUNK] &= ~((gsize)1 << ((n) % MONO_BITSET_BITS_PER_CHUNK)); } while (0)
+#define mono_bitset_get_fast(set,n) (((gsize*)set)[2+(n)])
 
 /*
  * Interface documentation can be found in the c-file.
