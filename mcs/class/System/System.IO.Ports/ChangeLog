@@ -1,3 +1,11 @@
+2006-02-29  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* SerialPort.cs:
+	* SerialReceivedEventArgs.cs:
+	* SerialErrorEventArgs.cs:
+	* SerialPinChangedEventArgs.cs: Fix signatures and values
+	related to events.
+	
 2006-02-28  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* SerialPort.cs: 

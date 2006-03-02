@@ -543,14 +543,15 @@ namespace System.IO.Ports
 
 		// events
 
-		public delegate void SerialReceivedEventHandler (object sender, SerialReceivedEventArgs e);
-		public delegate void SerialPinChangedEventHandler (object sender, SerialPinChangedEventArgs e);
-		public delegate void SerialErrorEventHandler (object sender, SerialErrorEventArgs e);
-
-		public event SerialErrorEventHandler ErrorEvent;
-		public event SerialPinChangedEventHandler PinChangedEvent;
-		public event SerialReceivedEventHandler ReceivedEvent;
+		public event SerialErrorReceivedEventHandler ErrorReceived;
+		public event SerialPinChangedEventHandler PinChanged;
+		public event SerialDataReceivedEventHandler DataReceived;
 	}
+
+	public delegate void SerialDataReceivedEventHandler (object sender, SerialDataReceivedEventArgs e);
+	public delegate void SerialPinChangedEventHandler (object sender, SerialPinChangedEventArgs e);
+	public delegate void SerialErrorReceivedEventHandler (object sender, SerialErrorReceivedEventArgs e);
+
 }
 
 #endif

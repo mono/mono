@@ -2,31 +2,24 @@
 
 #if NET_2_0
 
-namespace System.IO.Ports {
-
-	public enum SerialReceived
+namespace System.IO.Ports 
+{
+	public class SerialDataReceivedEventArgs : EventArgs
 	{
-		EofReceived,  /* The event character was received and placed in the input buffer */
-		ReceivedChars /* A character was received and placed in the input buffer */
-	}
-
-	public class SerialReceivedEventArgs : EventArgs
-	{
-		internal SerialReceivedEventArgs (SerialReceived event_type)
+		internal SerialDataReceivedEventArgs (SerialData eventType)
 		{
-			this.event_type = event_type;
+			this.eventType = eventType;
 		}
 
 		// properties
 
-		public SerialReceived EventType
-		{
+		public SerialData EventType {
 			get {
-				return event_type;
+				return eventType;
 			}
 		}
 
-		SerialReceived event_type;
+		SerialData eventType;
 	}
 }
 
