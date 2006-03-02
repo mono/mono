@@ -18,9 +18,6 @@ extern guint8 mono_burg_arity [];
 
 //#define DEBUG_SSA 1
 
-#define MONO_IS_PHI(ins) (((ins)->opcode == OP_PHI) || ((ins)->opcode == OP_FPHI))
-#define MONO_IS_MOVE(ins) (((ins)->opcode == OP_MOVE) || ((ins)->opcode == OP_FMOVE))
-
 #define NEW_PHI(cfg,dest,val) do {	\
 		(dest) = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoInst));	\
 		(dest)->opcode = OP_PHI;	\
@@ -440,7 +437,6 @@ mono_ssa_compute2 (MonoCompile *cfg)
 				continue;
 			}
 
-			/* FIXME: Might need type specific variants */
 			NEW_PHI (cfg, ins, i);
 
 			switch (var->type) {
@@ -762,7 +758,7 @@ mono_ssa_copyprop (MonoCompile *cfg)
 		if (info->def && (MONO_IS_MOVE (info->def))) {
 			MonoInst *var2 = get_vreg_to_inst (cfg, info->def->sreg1);
 
-			if (var2 && !(var2->flags & (MONO_INST_VOLATILE|MONO_INST_INDIRECT)) && cfg->vars [var2->inst_c0]->def && (cfg->vars [var2->inst_c0]->def->opcode != OP_PHI)) {
+			if (var2 && !(var2->flags & (MONO_INST_VOLATILE|MONO_INST_INDIRECT)) && cfg->vars [var2->inst_c0]->def && (!MONO_IS_PHI (cfg->vars [var2->inst_c0]->def))) {
 				/* Rewrite all uses of var to be uses of var2 */
 				int dreg = var->dreg;
 				int sreg1 = var2->dreg;

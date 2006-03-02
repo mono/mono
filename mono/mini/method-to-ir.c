@@ -9066,15 +9066,11 @@ op_to_op_src2_membase (int load_opcode, int opcode)
 void
 mono_handle_global_vregs (MonoCompile *cfg)
 {
-	MonoBasicBlock ***vreg_to_bb;
+	MonoBasicBlock **vreg_to_bb;
 	MonoBasicBlock *bb;
 	int i;
 
-	vreg_to_bb = g_new0 (MonoBasicBlock**, 256);
-	vreg_to_bb ['i'] = g_new0 (MonoBasicBlock*, cfg->next_vireg);
-	vreg_to_bb ['l'] = g_new0 (MonoBasicBlock*, cfg->next_vireg);
-	/* The vfregs are allocated from the same pool as the viregs */
-	vreg_to_bb ['f'] = vreg_to_bb ['i'];
+	vreg_to_bb = g_new0 (MonoBasicBlock*, cfg->next_vireg + 1);
 
 	/* Find local vregs used in more than one bb */
 	/* FIXME: Optimize this */
@@ -9133,12 +9129,12 @@ mono_handle_global_vregs (MonoCompile *cfg)
 				}
 
 				if (vreg != -1) {
-					if (vreg_to_bb [regtype][vreg] == NULL) {
-						vreg_to_bb [regtype][vreg] = bb;
-					} else if (vreg_to_bb [regtype][vreg] != bb) {
+					if (vreg_to_bb [vreg] == NULL) {
+						vreg_to_bb [vreg] = bb;
+					} else if (vreg_to_bb [vreg] != bb) {
 						if (!get_vreg_to_inst (cfg, vreg)) {
 							if (cfg->verbose_level > 1)
-								printf ("VREG R%d used in BB%d and BB%d made global.\n", vreg, vreg_to_bb [regtype][vreg]->block_num, bb->block_num);
+								printf ("VREG R%d used in BB%d and BB%d made global.\n", vreg, vreg_to_bb [vreg]->block_num, bb->block_num);
 
 							switch (regtype) {
 							case 'i':
@@ -9153,8 +9149,8 @@ mono_handle_global_vregs (MonoCompile *cfg)
 						}
 
 						/* Flag as having been used in more than one bb */
-						if (vreg_to_bb [regtype][vreg] != (gpointer)(gssize)-1)
-							vreg_to_bb [regtype][vreg] = (gpointer)(gssize)-1;
+						if (vreg_to_bb [vreg] != (gpointer)(gssize)-1)
+							vreg_to_bb [vreg] = (gpointer)(gssize)-1;
 					}
 				}
 			}
@@ -9166,7 +9162,9 @@ mono_handle_global_vregs (MonoCompile *cfg)
 		MonoInst *var = cfg->varinfo [i];
 		MonoMethodVar *vmv = MONO_VARINFO (cfg, i);
 
-		/* Generalize to other types */
+		/* FIXME: Enabling this for float screws up the fp stack on x86 */
+		/* FIXME: Enable this for floats on !x86 */
+
 		switch (var->type) {
 		case STACK_I4:
 		case STACK_OBJ:
@@ -9176,7 +9174,7 @@ mono_handle_global_vregs (MonoCompile *cfg)
 		case STACK_I8:
 #endif
 			/* Arguments are implicitly global */
-			if ((var->opcode != OP_ARG) && (var != cfg->ret) && !(var->flags & (MONO_INST_VOLATILE|MONO_INST_INDIRECT)) && (vreg_to_bb ['i'][var->dreg] != (gpointer)(gssize)-1)) {
+			if ((var->opcode != OP_ARG) && (var != cfg->ret) && !(var->flags & (MONO_INST_VOLATILE|MONO_INST_INDIRECT)) && (vreg_to_bb [var->dreg] != (gpointer)(gssize)-1)) {
 				if (cfg->verbose_level > 2)
 					printf ("CONVERTED R%d(%d) TO VREG.\n", var->dreg, vmv->idx);
 				var->flags |= MONO_INST_IS_DEAD;
@@ -9186,8 +9184,6 @@ mono_handle_global_vregs (MonoCompile *cfg)
 		}
 	}
 
-	g_free (vreg_to_bb ['i']);
-	g_free (vreg_to_bb ['l']);
 	g_free (vreg_to_bb);
 }
 
@@ -9546,6 +9542,7 @@ mono_spill_global_vars (MonoCompile *cfg)
  * - add is_global_vreg () macro
  * - cleanup the code replacement in decompose_long_opts ()
  * - try a coalescing phase after liveness analysis
+ * - add float -> vreg conversion + local optimizations on !x86
  * - LAST MERGE: 57242.
  */
 
