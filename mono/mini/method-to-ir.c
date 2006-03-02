@@ -9430,7 +9430,7 @@ mono_spill_global_vars (MonoCompile *cfg)
 							ins->sreg2 = var->inst_basereg;
 							ins->inst_offset = var->inst_offset;
 						} else {
-							if (ins->opcode == OP_MOVE) {
+							if ((ins->opcode == OP_MOVE) || (ins->opcode == OP_FMOVE)) {
 								ins->opcode = OP_NOP;
 								sreg = ins->dreg;
 							} else {

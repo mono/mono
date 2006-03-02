@@ -392,7 +392,8 @@ mono_print_ins_index (int i, MonoInst *ins)
 			if (!(ins->flags & MONO_INST_BRLABEL))
 				printf (" [B%dB%d]", ins->inst_true_bb->block_num, ins->inst_false_bb->block_num);
 			break;
-		case OP_PHI: {
+		case OP_PHI:
+		case OP_FPHI: {
 			int i;
 			printf (" [%d (", (int)ins->inst_c0);
 			for (i = 0; i < ins->inst_phi_args [0]; i++) {
