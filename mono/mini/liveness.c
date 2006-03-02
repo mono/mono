@@ -290,8 +290,10 @@ static void
 analyze_liveness_bb (MonoCompile *cfg, MonoBasicBlock *bb)
 {
 	MonoInst *ins;
-	int regtype, srcindex, sreg, inst_num;
+	int sreg, inst_num, dfn;
 	gboolean store;
+
+	dfn = bb->dfn;
 
 	for (inst_num = 0, ins = bb->code; ins; ins = ins->next, inst_num ++) {
 		const char *spec = ins_info [ins->opcode - OP_START - 1];
@@ -310,39 +312,48 @@ analyze_liveness_bb (MonoCompile *cfg, MonoBasicBlock *bb)
 		else
 			store = FALSE;
 
-		/* SREGS */
-		/* These must come first, so MOVE r <- r is handled correctly */
-		for (srcindex = 0; srcindex < 2; ++srcindex) {
-			regtype = spec [(srcindex == 0) ? MONO_INST_SRC1 : MONO_INST_SRC2];
-			sreg = srcindex == 0 ? ins->sreg1 : ins->sreg2;
+		/* SREGs must come first, so MOVE r <- r is handled correctly */
 
-			g_assert (((sreg == -1) && (regtype == ' ')) || ((sreg != -1) && (regtype != ' ')));
-			if ((sreg != -1) && get_vreg_to_inst (cfg, sreg)) {
-				MonoInst *var = get_vreg_to_inst (cfg, sreg);
-				int idx = var->inst_c0;
-				MonoMethodVar *vi = MONO_VARINFO (cfg, idx);
+		/* SREG1 */
+		sreg = ins->sreg1;
+		if ((spec [MONO_INST_SRC1] != ' ') && (sreg != -1) && get_vreg_to_inst (cfg, sreg)) {
+			MonoInst *var = get_vreg_to_inst (cfg, sreg);
+			int idx = var->inst_c0;
+			MonoMethodVar *vi = MONO_VARINFO (cfg, idx);
 
 #ifdef DEBUG_LIVENESS
-				printf ("\tGEN: R%d(%d)\n", sreg, idx);
+			printf ("\tGEN: R%d(%d)\n", sreg, idx);
 #endif
-				update_live_range (cfg, idx, bb->dfn, inst_num); 
-				if (!mono_bitset_test (bb->kill_set, idx))
-					mono_bitset_set_fast (bb->gen_set, idx);
-				vi->spill_costs += 1 + (bb->nesting * 2);
-			}
+			update_live_range (cfg, idx, dfn, inst_num); 
+			if (!mono_bitset_test (bb->kill_set, idx))
+				mono_bitset_set_fast (bb->gen_set, idx);
+			vi->spill_costs += 1 + (bb->nesting * 2);
+		}
+
+		/* SREG2 */
+		sreg = ins->sreg2;
+		if ((spec [MONO_INST_SRC2] != ' ') && (sreg != -1) && get_vreg_to_inst (cfg, sreg)) {
+			MonoInst *var = get_vreg_to_inst (cfg, sreg);
+			int idx = var->inst_c0;
+			MonoMethodVar *vi = MONO_VARINFO (cfg, idx);
+
+#ifdef DEBUG_LIVENESS
+			printf ("\tGEN: R%d(%d)\n", sreg, idx);
+#endif
+			update_live_range (cfg, idx, dfn, inst_num); 
+			if (!mono_bitset_test (bb->kill_set, idx))
+				mono_bitset_set_fast (bb->gen_set, idx);
+			vi->spill_costs += 1 + (bb->nesting * 2);
 		}
 
 		/* DREG */
-		regtype = spec [MONO_INST_DEST];
-		g_assert (((ins->dreg == -1) && (regtype == ' ')) || ((ins->dreg != -1) && (regtype != ' ')));
-				
-		if ((ins->dreg != -1) && get_vreg_to_inst (cfg, ins->dreg)) {
+		if ((spec [MONO_INST_DEST] != ' ') && (ins->dreg != -1) && get_vreg_to_inst (cfg, ins->dreg)) {
 			MonoInst *var = get_vreg_to_inst (cfg, ins->dreg);
 			int idx = var->inst_c0;
 			MonoMethodVar *vi = MONO_VARINFO (cfg, idx);
 
 			if (store) {
-				update_live_range (cfg, idx, bb->dfn, inst_num); 
+				update_live_range (cfg, idx, dfn, inst_num); 
 				if (!mono_bitset_test (bb->kill_set, idx))
 					mono_bitset_set_fast (bb->gen_set, idx);
 				vi->spill_costs += 1 + (bb->nesting * 2);
@@ -350,7 +361,7 @@ analyze_liveness_bb (MonoCompile *cfg, MonoBasicBlock *bb)
 #ifdef DEBUG_LIVENESS
 				printf ("\tKILL: R%d(%d)\n", ins->dreg, idx);
 #endif
-				update_live_range (cfg, idx, bb->dfn, inst_num); 
+				update_live_range (cfg, idx, dfn, inst_num); 
 				mono_bitset_set_fast (bb->kill_set, idx);
 				vi->spill_costs += 1 + (bb->nesting * 2);
 			}
@@ -563,21 +574,19 @@ mono_analyze_liveness (MonoCompile *cfg)
 	 */
 	for (i = 0; i < cfg->num_bblocks; ++i) {
 		MonoBasicBlock *bb = cfg->bblocks [i];
-		guint32 rem;
+		guint32 rem, max;
 
 		rem = max_vars % BITS_PER_CHUNK;
-		for (j = 0; j < (max_vars / BITS_PER_CHUNK) + 1; ++j) {
+		max = ((max_vars + (BITS_PER_CHUNK -1)) / BITS_PER_CHUNK);
+		for (j = 0; j < max; ++j) {
 			gsize bits_in;
 			gsize bits_out;
 			int k, end;
 
-			if (j > (max_vars / BITS_PER_CHUNK))
-				break;
+			bits_in = mono_bitset_get_fast (bb->live_in_set, j);
+			bits_out = mono_bitset_get_fast (bb->live_out_set, j);
 
-			bits_in = mono_bitset_test_bulk (bb->live_in_set, j * BITS_PER_CHUNK);
-			bits_out = mono_bitset_test_bulk (bb->live_out_set, j * BITS_PER_CHUNK);
-
-			if (j == (max_vars / BITS_PER_CHUNK))
+			if (j == max)
 				end = (j * BITS_PER_CHUNK) + rem;
 			else
 				end = (j * BITS_PER_CHUNK) + BITS_PER_CHUNK;

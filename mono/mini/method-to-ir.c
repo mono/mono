@@ -9125,7 +9125,7 @@ mono_handle_global_vregs (MonoCompile *cfg)
 					 * to determine when it needs to be global. So be conservative.
 					 */
 					if (!get_vreg_to_inst (cfg, vreg)) {
-						mono_compile_create_var_for_vreg (cfg, &mono_defaults.int64_class->byval_arg, OP_LOCAL, 'l', vreg);
+						mono_compile_create_var_for_vreg (cfg, &mono_defaults.int64_class->byval_arg, OP_LOCAL, vreg);
 
 						if (cfg->verbose_level > 1)
 							printf ("LONG VREG R%d made global.\n", vreg);
@@ -9142,10 +9142,10 @@ mono_handle_global_vregs (MonoCompile *cfg)
 
 							switch (regtype) {
 							case 'i':
-								mono_compile_create_var_for_vreg (cfg, &mono_defaults.int_class->byval_arg, OP_LOCAL, 'i', vreg);
+								mono_compile_create_var_for_vreg (cfg, &mono_defaults.int_class->byval_arg, OP_LOCAL, vreg);
 								break;
 							case 'f':
-								mono_compile_create_var_for_vreg (cfg, &mono_defaults.double_class->byval_arg, OP_LOCAL, 'f', vreg);
+								mono_compile_create_var_for_vreg (cfg, &mono_defaults.double_class->byval_arg, OP_LOCAL, vreg);
 								break;
 							default:
 								g_assert_not_reached ();
@@ -9545,6 +9545,7 @@ mono_spill_global_vars (MonoCompile *cfg)
  * - add code to only use -v -v -v -v for a specific method
  * - add is_global_vreg () macro
  * - cleanup the code replacement in decompose_long_opts ()
+ * - try a coalescing phase after liveness analysis
  * - LAST MERGE: 57242.
  */
 

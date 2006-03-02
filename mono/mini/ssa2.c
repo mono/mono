@@ -192,13 +192,25 @@ replace_usage_new (MonoCompile *cfg, MonoInst *inst, int varnum, MonoInst *rep)
 	return 0;
 }
 
+typedef struct {
+	MonoInst *var;
+	int idx;
+} RenameInfo;
+
+/**
+ * mono_ssa_rename_vars2:
+ *
+ *  Implement renaming of SSA variables. @stack_history points to an area of memory
+ * which can be used for storing changes made to the stack, so they can be reverted
+ * later.
+ */
 static void
-mono_ssa_rename_vars2 (MonoCompile *cfg, int max_vars, MonoBasicBlock *bb, gboolean *originals_used, MonoInst **stack) 
+mono_ssa_rename_vars2 (MonoCompile *cfg, int max_vars, MonoBasicBlock *bb, gboolean *originals_used, MonoInst **stack, RenameInfo *stack_history, int stack_history_size) 
 {
 	MonoInst *ins, *new_var;
 	int i, j, idx;
 	GList *tmp;
-	MonoInst **new_stack;
+	int stack_history_len = 0;
 
 	/* FIXME: Need to rename local vregs as well */
 
@@ -264,6 +276,12 @@ mono_ssa_rename_vars2 (MonoCompile *cfg, int max_vars, MonoBasicBlock *bb, gbool
 				if (var->opcode == OP_ARG)
 					originals_used [idx] = TRUE;
 
+				/* FIXME: */
+				g_assert (stack_history_len < stack_history_size);
+				stack_history [stack_history_len].var = stack [idx];
+				stack_history [stack_history_len].idx = idx;
+				stack_history_len ++;
+
 				if (originals_used [idx]) {
 					new_var = mono_compile_create_var (cfg, var->inst_vtype,  var->opcode);
 					new_var->flags = var->flags;
@@ -313,18 +331,22 @@ mono_ssa_rename_vars2 (MonoCompile *cfg, int max_vars, MonoBasicBlock *bb, gbool
 					printf ("\tAdd PHI R%d <- R%d to BB%d\n", ins->dreg, new_var->dreg, n->block_num);
 
 			}
+			else
+				/* The phi nodes are at the beginning of the bblock */
+				break;
 		}
 	}
 
 	if (bb->dominated) {
-		new_stack = g_new (MonoInst*, max_vars);
 		for (tmp = bb->dominated; tmp; tmp = tmp->next) {
-			memcpy (new_stack, stack, sizeof (MonoInst *) * max_vars); 
-			mono_ssa_rename_vars2 (cfg, max_vars, (MonoBasicBlock *)tmp->data, originals_used, new_stack);
+			mono_ssa_rename_vars2 (cfg, max_vars, (MonoBasicBlock *)tmp->data, originals_used, stack, stack_history + stack_history_len, stack_history_size - stack_history_len);
 		}
-		g_free (new_stack);
 	}
 
+	/* Restore stack */
+	for (i = stack_history_len - 1; i >= 0; i--) {
+		stack [stack_history [i].idx] = stack_history [i].var;
+	}
 }
 
 void
@@ -335,6 +357,9 @@ mono_ssa_compute2 (MonoCompile *cfg)
 	MonoMethodVar *vinfo = g_new0 (MonoMethodVar, cfg->num_varinfo);
 	MonoInst *ins, *store, **stack;
 	guint8 *buf, *buf_start;
+	RenameInfo *stack_history;
+	int stack_history_size;
+	gboolean *originals;
 
 	g_assert (!(cfg->comp_done & MONO_COMP_SSA));
 
@@ -464,16 +489,19 @@ mono_ssa_compute2 (MonoCompile *cfg)
 	g_free (vinfo);
 	g_free (buf_start);
 
+	/* Renaming phase */
+
 	stack = alloca (sizeof (MonoInst *) * cfg->num_varinfo);
 		
 	for (i = 0; i < cfg->num_varinfo; i++)
 		stack [i] = NULL;
 
-	{
-		gboolean *originals = g_new0 (gboolean, cfg->num_varinfo);
-		mono_ssa_rename_vars2 (cfg, cfg->num_varinfo, cfg->bb_entry, originals, stack);
-		g_free (originals);
-	}
+	stack_history_size = 1024;
+	stack_history = g_new (RenameInfo, stack_history_size);
+	originals = g_new0 (gboolean, cfg->num_varinfo);
+	mono_ssa_rename_vars2 (cfg, cfg->num_varinfo, cfg->bb_entry, originals, stack, stack_history, stack_history_size);
+	g_free (stack_history);
+	g_free (originals);
 
 	if (cfg->verbose_level >= 4)
 		printf ("\nEND COMPUTE SSA.\n\n");

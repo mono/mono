@@ -1712,7 +1712,7 @@ stack_type_to_regtype (MonoStackType stack_type)
 }
 
 MonoInst*
-mono_compile_create_var_for_vreg (MonoCompile *cfg, MonoType *type, int opcode, int regtype, int vreg)
+mono_compile_create_var_for_vreg (MonoCompile *cfg, MonoType *type, int opcode, int vreg)
 {
 	MonoInst *inst;
 	int num = cfg->num_varinfo;
@@ -1743,7 +1743,8 @@ mono_compile_create_var_for_vreg (MonoCompile *cfg, MonoType *type, int opcode, 
 	if (vreg != -1)
 		set_vreg_to_inst (cfg, vreg, inst);
 
-	if (regtype == 'l') {
+#if SIZEOF_VOID_P == 4
+	if (((type->type == MONO_TYPE_I8) || (type->type == MONO_TYPE_U8)) && !type->byref) {
 		MonoInst *tree;
 
 		/* 
@@ -1781,6 +1782,7 @@ mono_compile_create_var_for_vreg (MonoCompile *cfg, MonoType *type, int opcode, 
 
 		set_vreg_to_inst (cfg, inst->dreg + 2, tree);
 	}
+#endif
 
 	cfg->num_varinfo++;
 	//g_print ("created temp %d of type %s\n", num, mono_type_get_name (type));
@@ -1791,15 +1793,14 @@ MonoInst*
 mono_compile_create_var (MonoCompile *cfg, MonoType *type, int opcode)
 {
 	int dreg;
-	int regtype;
-	MonoInst dummy;
 
-	type_to_eval_stack_type (type, &dummy);
+	if (((type->type == MONO_TYPE_I8) || (type->type == MONO_TYPE_U8)) && !type->byref)
+		dreg = mono_alloc_dreg (cfg, STACK_I8);
+	else
+		/* All the others are unified */
+		dreg = mono_alloc_preg (cfg);
 
-	dreg = mono_alloc_dreg (cfg, dummy.type);
-	regtype = stack_type_to_regtype (dummy.type);
-
-	return mono_compile_create_var_for_vreg (cfg, type, opcode, regtype, dreg);
+	return mono_compile_create_var_for_vreg (cfg, type, opcode, dreg);
 }
 
 /*
@@ -9968,21 +9969,25 @@ mono_local_deadce (MonoCompile *cfg)
 		for (ins = bb->code; ins; ins = ins->next) {
 			const char *spec = ins_info [ins->opcode - OP_START - 1];
 
-			if (spec [MONO_INST_DEST] == 'i')
+			if (spec [MONO_INST_DEST] == 'i') {
 				mono_bitset_clear_fast (used, ins->dreg);
-			if (spec [MONO_INST_SRC1] == 'i')
+#if SIZEOF_VOID_P == 4
+				/* Regpairs */
+				mono_bitset_clear_fast (used, ins->dreg + 1);
+#endif
+			}
+			if (spec [MONO_INST_SRC1] == 'i') {
 				mono_bitset_clear_fast (used, ins->sreg1);
-			if (spec [MONO_INST_SRC2] == 'i')
+#if SIZEOF_VOID_P == 4
+				mono_bitset_clear_fast (used, ins->sreg1 + 1);
+#endif
+			}
+			if (spec [MONO_INST_SRC2] == 'i') {
 				mono_bitset_clear_fast (used, ins->sreg2);
 #if SIZEOF_VOID_P == 4
-			/* Regpairs */
-			if (spec [MONO_INST_DEST] == 'l')
-				mono_bitset_clear_fast (used, ins->dreg + 1);
-			if (spec [MONO_INST_SRC1] == 'l')
-				mono_bitset_clear_fast (used, ins->sreg1 + 1);
-			if (spec [MONO_INST_SRC2] == 'l')
 				mono_bitset_clear_fast (used, ins->sreg2 + 1);
 #endif
+			}
 		}
 
 		for (ins = bb->code; ins; ins = ins->next) {
@@ -10082,7 +10087,7 @@ mono_local_deadce_alt (MonoCompile *cfg)
 	MonoBasicBlock *bb;
 	MonoInst *ins;
 	MonoBitSet *used;
-	int ins_index, nins;
+	int ins_index, nins, reverse_len;
 	MonoInst **reverse;
 
 	/*
@@ -10090,7 +10095,9 @@ mono_local_deadce_alt (MonoCompile *cfg)
 	 * after the handle_global_vregs () pass.
 	 */
 
-	used = mono_bitset_new (cfg->next_vireg, 0);
+	used = mono_bitset_new (cfg->next_vireg + 1, 0);
+	reverse_len = 1024;
+	reverse = g_new (MonoInst*, reverse_len);
 
 	/* First pass: collect liveness info */
 	for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
@@ -10099,25 +10106,33 @@ mono_local_deadce_alt (MonoCompile *cfg)
 		for (ins = bb->code; ins; ins = ins->next) {
 			const char *spec = ins_info [ins->opcode - OP_START - 1];
 
-			if (spec [MONO_INST_DEST] == 'i')
+			if (spec [MONO_INST_DEST] == 'i') {
 				mono_bitset_clear_fast (used, ins->dreg);
-			if (spec [MONO_INST_SRC1] == 'i')
+#if SIZEOF_VOID_P == 4
+				/* Regpairs */
+				mono_bitset_clear_fast (used, ins->dreg + 1);
+#endif
+			}
+			if (spec [MONO_INST_SRC1] == 'i') {
 				mono_bitset_clear_fast (used, ins->sreg1);
-			if (spec [MONO_INST_SRC2] == 'i')
+#if SIZEOF_VOID_P == 4
+				mono_bitset_clear_fast (used, ins->sreg1 + 1);
+#endif
+			}
+			if (spec [MONO_INST_SRC2] == 'i') {
 				mono_bitset_clear_fast (used, ins->sreg2);
 #if SIZEOF_VOID_P == 4
-			/* Regpairs */
-			if (spec [MONO_INST_DEST] == 'l')
-				mono_bitset_clear_fast (used, ins->dreg + 1);
-			if (spec [MONO_INST_SRC1] == 'l')
-				mono_bitset_clear_fast (used, ins->sreg1 + 1);
-			if (spec [MONO_INST_SRC2] == 'l')
 				mono_bitset_clear_fast (used, ins->sreg2 + 1);
 #endif
+			}
 			nins ++;
 		}
 
-		reverse = g_new (MonoInst*, nins);
+		if (nins > reverse_len) {
+			g_free (reverse);
+			reverse_len = nins;
+			reverse = g_new (MonoInst*, reverse_len);
+		}
 		ins_index = nins;
 		for (ins = bb->code; ins; ins = ins->next) {
 			reverse [--ins_index] = ins;
@@ -10225,9 +10240,9 @@ mono_local_deadce_alt (MonoCompile *cfg)
 			}
 #endif
 		}
-
-		g_free (reverse);
 	}
+
+	g_free (reverse);
 
 	mono_bitset_free (used);
 }
