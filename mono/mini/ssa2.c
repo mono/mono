@@ -410,16 +410,6 @@ mono_ssa_compute2 (MonoCompile *cfg)
 			continue;
 #endif
 
-#if 0
-#if SIZEOF_VOID_P == 8
-		if ((var->type != STACK_I4) && (var->type != STACK_PTR) && (var->type != STACK_OBJ) && (var->type != STACK_MP) && (var->type != STACK_I8))
-			continue;
-#else
-		if ((var->type != STACK_I4) && (var->type != STACK_PTR) && (var->type != STACK_OBJ) && (var->type != STACK_MP))
-			continue;
-#endif
-#endif
-
 		if (var->flags & (MONO_INST_VOLATILE|MONO_INST_INDIRECT))
 			continue;
 
