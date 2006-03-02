@@ -484,17 +484,17 @@ mono_analyze_liveness (MonoCompile *cfg)
 			out_iter ++;
 
 			if (!out_set) {
-				/* 
-				 * FIXME: This should be allocated using _noinit, but that
-				 * doesn't seem to work.
-				 */
-				out_set = mono_bitset_mp_new (cfg->mempool, max_vars);
+				out_set = mono_bitset_mp_new_noinit (cfg->mempool, max_vars);
 				bb->live_out_set = out_set;
 
 				out_bb = bb->out_bb [0];
-				if (!out_bb->live_out_set)
-					out_bb->live_out_set = mono_bitset_mp_new (cfg->mempool, max_vars);
-				mono_bitset_copyto (out_bb->live_out_set, out_set);
+				if (bb == out_bb) {
+					mono_bitset_clear_all (out_set);
+				} else {
+					if (!out_bb->live_out_set)
+						out_bb->live_out_set = mono_bitset_mp_new (cfg->mempool, max_vars);
+					mono_bitset_copyto (out_bb->live_out_set, out_set);
+				}
 				mono_bitset_sub (out_set, out_bb->kill_set);
 				mono_bitset_union (out_set, out_bb->gen_set);
 
