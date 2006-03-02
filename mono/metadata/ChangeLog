@@ -1,3 +1,8 @@
+
+Thu Mar 2 10:38:33 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* icall.c: backport memory corruption fix.
+
 2006-03-01  Miguel de Icaza  <miguel@novell.com>
   
 	* object-internals.h: New field to cache the assmebly name, patch
