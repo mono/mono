@@ -1,3 +1,9 @@
+2006-03-01  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlSchemaAppInfo.cs, XmlSchemaDocumentation.cs : seems like MS
+	  implementation fills empty node set for empty xs:appinfo and
+	  xs:documentation and waste memory. Fixed bug #77685.
+
 2006-01-11  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlSchemaAttribute.cs, XmlSchemaElement.cs : AttributeSchemaType

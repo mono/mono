@@ -88,8 +88,10 @@ namespace System.Xml.Schema
 			}
 
 			reader.MoveToElement();
-			if(reader.IsEmptyElement)
+			if(reader.IsEmptyElement) {
+				appinfo.Markup = new XmlNode [0];
 				return appinfo;
+			}
 
 			//Content {any}*
 			//FIXME: This is a pure Quick Hack; There must be a another method;

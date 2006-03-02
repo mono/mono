@@ -101,8 +101,10 @@ namespace System.Xml.Schema
 			}
 
 			reader.MoveToElement();
-			if(reader.IsEmptyElement)
+			if(reader.IsEmptyElement) {
+				doc.Markup = new XmlNode [0];
 				return doc;
+			}
 
 			//Content {any}*
 			XmlDocument xmldoc = new XmlDocument();
