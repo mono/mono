@@ -1,3 +1,8 @@
+2006-03-02  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* Control.cs: Implemented 2.0 feature where OnClick has MouseEventArgs
+	  passed in for the EventArgs (fixes #77690)
+
 2006-03-01  Jackson Harper  <jackson@ximian.com>
 
 	* ScrollBar.cs: Refresh afterbeing resized.

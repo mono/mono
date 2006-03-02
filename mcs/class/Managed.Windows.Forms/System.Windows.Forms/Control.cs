@@ -1145,16 +1145,18 @@ namespace System.Windows.Forms
 			return found;
 		}
 
-		private void HandleClick(int clicks) {
+		private void HandleClick(int clicks, MouseEventArgs me) {
 			if (GetStyle(ControlStyles.StandardClick)) {
-				if (clicks > 1) {
-					if (GetStyle(ControlStyles.StandardDoubleClick)) {
-						OnDoubleClick(EventArgs.Empty);
-					} else {
-						OnClick(EventArgs.Empty);
-					}
+				if ((clicks > 1) && GetStyle(ControlStyles.StandardDoubleClick)) {
+#if !NET_2_0
+					OnDoubleClick(EventArgs.Empty);
 				} else {
 					OnClick(EventArgs.Empty);
+#else
+					OnDoubleClick(me);
+				} else {
+					OnClick(me);
+#endif
 				}
 			}
 		}
@@ -3696,11 +3698,16 @@ namespace System.Windows.Forms
 				}
 
 				case Msg.WM_LBUTTONUP: {
-					OnMouseUp (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()) | MouseButtons.Left, 
+					MouseEventArgs me;
+
+					me = new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()) | MouseButtons.Left, 
 						mouse_clicks, 
 						LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
-						0));
-					HandleClick(mouse_clicks);
+						0);
+
+					HandleClick(mouse_clicks, me);
+					OnMouseUp (me);
+
 					if (mouse_clicks > 1) {
 						mouse_clicks = 1;
 					}
@@ -3728,11 +3735,15 @@ namespace System.Windows.Forms
 				}
 
 				case Msg.WM_MBUTTONUP: {
-					HandleClick(mouse_clicks);
-					OnMouseUp (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()) | MouseButtons.Middle, 
+					MouseEventArgs me;
+
+					me = new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()) | MouseButtons.Middle, 
 						mouse_clicks, 
 						LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
-						0));
+						0);
+
+					HandleClick(mouse_clicks, me);
+					OnMouseUp (me);
 					if (mouse_clicks > 1) {
 						mouse_clicks = 1;
 					}
@@ -3756,15 +3767,19 @@ namespace System.Windows.Forms
 				}
 
 				case Msg.WM_RBUTTONUP: {
+					MouseEventArgs me;
+
 					if (context_menu != null) {
 						context_menu.Show(this, new Point(LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ())));
 					}
-
-					HandleClick(mouse_clicks);
-					OnMouseUp (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()) | MouseButtons.Right, 
+					me = new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()) | MouseButtons.Right, 
 						mouse_clicks, 
 						LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
-						0));
+						0);
+
+					HandleClick(mouse_clicks, me);
+					OnMouseUp (me);
+
 					if (mouse_clicks > 1) {
 						mouse_clicks = 1;
 					}
