@@ -1,3 +1,8 @@
+2006-03-02  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* RecordProtocol.cs: Fix possible endless loop (#77663). Remove hack
+	for an old, fixed, MCS bug (#67711).
+
 2005-10-06  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ClientRecordProtocol.cs: Update HandshakeMessages after each 

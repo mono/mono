@@ -358,19 +358,14 @@ namespace Mono.Security.Protocol.Tls
 						}
 						break;
 
-	// FIXME / MCS bug - http://bugzilla.ximian.com/show_bug.cgi?id=67711
-	//				case (ContentType)0x80:
-	//					this.context.HandshakeMessages.Write (result);
-	//					break;
+					case (ContentType)0x80:
+						this.context.HandshakeMessages.Write (buffer);
+						break;
 
 					default:
-						if (contentType != (ContentType)0x80)
-						{
-							throw new TlsException(
-								AlertDescription.UnexpectedMessage,
-								"Unknown record received from server.");
-						}
-						this.context.HandshakeMessages.Write (buffer);
+						throw new TlsException(
+							AlertDescription.UnexpectedMessage,
+							"Unknown record received from server.");
 						break;
 				}
 
@@ -715,13 +710,13 @@ namespace Mono.Security.Protocol.Tls
 				short	fragmentLength = 0;
 				byte[]	fragment;
 
-				if ((count - position) > Context.MAX_FRAGMENT_SIZE)
+				if ((count + offset - position) > Context.MAX_FRAGMENT_SIZE)
 				{
 					fragmentLength = Context.MAX_FRAGMENT_SIZE;
 				}
 				else
 				{
-					fragmentLength = (short)(count - position);
+					fragmentLength = (short)(count + offset - position);
 				}
 
 				// Fill the fragment data
