@@ -1,3 +1,9 @@
+
+Thu Mar 2 12:27:41 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* threads.c: make sure the domain is correct, too when doing
+	mono_thread_attach ().
+
 2006-03-01  Zoltan Varga  <vargaz@gmail.com>
 
 	* class.c (mono_class_create_from_typedef): Mark classes using CharSet.Auto as unicode on
