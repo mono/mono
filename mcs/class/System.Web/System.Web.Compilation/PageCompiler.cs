@@ -108,6 +108,12 @@ namespace System.Web.Compilation
 
 			if (pageParser.MasterPageFile != null)
 				method.Statements.Add (CreatePropertyAssign (ctrlVar, "MasterPageFile", pageParser.MasterPageFile));
+
+			if (pageParser.Theme != null)
+				method.Statements.Add (CreatePropertyAssign (ctrlVar, "Theme", pageParser.Theme));
+
+			if (pageParser.StyleSheetTheme != null)
+				method.Statements.Add (CreatePropertyAssign (ctrlVar, "StyleSheetTheme", pageParser.StyleSheetTheme));
 #endif
 		}
 

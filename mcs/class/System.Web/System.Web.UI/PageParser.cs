@@ -64,6 +64,8 @@ namespace System.Web.UI
 		string masterPage;
 		Type masterType;
 		string title;
+		string theme;
+		string styleSheetTheme;
 #endif
 
 		public PageParser ()
@@ -281,6 +283,9 @@ namespace System.Web.UI
 				MasterPageParser.GetCompiledMasterType (masterPage, MapPath (masterPage), HttpContext.Current);
 
 			title = GetString(atts, "Title", null);
+
+			theme = GetString (atts, "Theme", null);
+			styleSheetTheme = GetString (atts, "StyleSheetTheme", null);
 #endif
 			// Ignored by now
 			GetString (atts, "EnableViewStateMac", null);
@@ -401,6 +406,14 @@ namespace System.Web.UI
 		}
 
 #if NET_2_0
+		internal string Theme {
+			get { return theme; }
+		}
+
+		internal string StyleSheetTheme {
+			get { return styleSheetTheme; }
+		}
+
 		internal string MasterPageFile {
 			get { return masterPage; }
 		}

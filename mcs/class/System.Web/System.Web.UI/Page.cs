@@ -128,6 +128,8 @@ public class Page : TemplateControl, IHttpHandler
 	HtmlForm _form;
 
 	string _title;
+	string _theme;
+	string _styleSheetTheme;
 #endif
 
 	#region Constructor
@@ -454,21 +456,19 @@ public class Page : TemplateControl, IHttpHandler
 	}
 
 #if NET_2_0
-	[MonoTODO]
 	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	[Filterable (false)]
 	[Browsable (false)]
 	public virtual string StyleSheetTheme {
-		get { throw new NotImplementedException (); }
-		set { throw new NotImplementedException (); }
+		get { return _styleSheetTheme; }
+		set { _styleSheetTheme = value; }
 	}
 
-	[MonoTODO]
 	[Browsable (false)]
 	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	public virtual string Theme {
-		get { throw new NotImplementedException (); }
-		set { throw new NotImplementedException (); }
+		get { return _theme; }
+		set { _theme = value; }
 	}
 #endif
 

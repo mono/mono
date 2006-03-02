@@ -327,12 +327,8 @@ namespace System.Web.UI.WebControls {
 		[MonoTODO]
 		public virtual new string SkinID
 		{
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+			get { return base.SkinID; }
+			set { base.SkinID = value; }
 		}
 #endif		
 		

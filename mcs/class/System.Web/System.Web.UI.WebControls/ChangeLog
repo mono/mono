@@ -1,3 +1,8 @@
+2006-03-02  Chris Toshok  <toshok@ximian.com>
+
+	* WebControl.cs (SkinID): implement setter/getter, and have them
+	just chain up to base.SkinID.
+
 2006-02-27  Chris Toshok  <toshok@ximian.com>
 
 	* SqlDataSource.cs: track change to DataSourceControl's protected

@@ -190,6 +190,8 @@ namespace System.Web.Compilation
 				if (typeof (Control).IsAssignableFrom (type))
 					method.ReturnType = new CodeTypeReference (typeof (Control));
 
+				// _ctrl = new $controlType ($parameters);
+				//
 				CodeObjectCreateExpression newExpr = new CodeObjectCreateExpression (type);
 
 				object [] atts = type.GetCustomAttributes (typeof (ConstructorNeedsTagAttribute), true);
@@ -208,6 +210,8 @@ namespace System.Web.Compilation
 				assign.Right = newExpr;
 				method.Statements.Add (assign);
 				
+				// this.$builderID = _ctrl;
+				//
 				CodeFieldReferenceExpression builderID = new CodeFieldReferenceExpression ();
 				builderID.TargetObject = thisRef;
 				builderID.FieldName = builder.ID;
@@ -223,8 +227,32 @@ namespace System.Web.Compilation
 					initAsControl.Parameters.Add (new CodePropertyReferenceExpression (thisRef, "Page"));
 					method.Statements.Add (initAsControl);
 				}
+
 #if NET_2_0
-				if (typeof (System.Web.UI.WebControls.ContentPlaceHolder).IsAssignableFrom (type)) {
+				// _ctrl.SkinID = $value
+				// _ctrl.ApplyStyleSheetSkin (this);
+				//
+				// the SkinID assignment needs to come
+				// before the call to
+				// ApplyStyleSheetSkin, for obvious
+				// reasons.  We skip SkinID in
+				// CreateAssignStatementsFromAttributes
+				// below.
+				// 
+				if (builder.attribs != null) {
+					string skinid = builder.attribs ["skinid"] as string;
+					if (skinid != null)
+						CreateAssignStatementFromAttribute (builder, "skinid");
+				}
+				if (typeof (WebControl).IsAssignableFrom (type)) {
+					CodeMethodInvokeExpression applyStyleSheetSkin = new CodeMethodInvokeExpression (ctrlVar, "ApplyStyleSheetSkin");
+					applyStyleSheetSkin.Parameters.Add (thisRef);
+					method.Statements.Add (applyStyleSheetSkin);
+				}
+#endif
+
+#if NET_2_0
+				if (typeof (ContentPlaceHolder).IsAssignableFrom (type)) {
 					CodePropertyReferenceExpression prop = new CodePropertyReferenceExpression (thisRef, "ContentPlaceHolders");
 					CodeMethodInvokeExpression addPlaceholder = new CodeMethodInvokeExpression (prop, "Add");
 					addPlaceholder.Parameters.Add (ctrlVar);
@@ -520,6 +548,66 @@ namespace System.Web.Compilation
 			method.Statements.Add (attach);
 		}
 		
+		void CreateAssignStatementFromAttribute (ControlBuilder builder, string id)
+		{
+			EventInfo [] ev_info = null;
+			Type type = builder.ControlType;
+
+			string attvalue = builder.attribs [id] as string;
+			if (id.Length > 2 && id.Substring (0, 2).ToUpper () == "ON"){
+				if (ev_info == null)
+					ev_info = type.GetEvents ();
+
+				string id_as_event = id.Substring (2);
+				foreach (EventInfo ev in ev_info){
+					if (InvariantCompareNoCase (ev.Name, id_as_event)){
+						AddEventAssign (builder.method,
+								ev.Name,
+								ev.EventHandlerType,
+								attvalue);
+						
+						return;
+					}
+				}
+
+			}
+
+			int hyphen = id.IndexOf ('-');
+			string alt_id = id;
+			if (hyphen != -1)
+				alt_id = id.Substring (0, hyphen);
+
+			MemberInfo fop = GetFieldOrProperty (type, alt_id);
+			if (fop != null) {
+				if (ProcessPropertiesAndFields (builder, fop, id, attvalue, null))
+					return;
+			}
+
+			if (!typeof (IAttributeAccessor).IsAssignableFrom (type))
+				throw new ParseException (builder.location, "Unrecognized attribute: " + id);
+
+			string val;
+			CodeMemberMethod method = builder.method;
+			bool databound = IsDataBound (attvalue);
+			if (databound) {
+				val = attvalue.Substring (3);
+				val = val.Substring (0, val.Length - 2);
+				CreateDBAttributeMethod (builder, id, val);
+			} else {
+				CodeCastExpression cast;
+				CodeMethodReferenceExpression methodExpr;
+				CodeMethodInvokeExpression expr;
+
+				cast = new CodeCastExpression (typeof (IAttributeAccessor), ctrlVar);
+				methodExpr = new CodeMethodReferenceExpression (cast, "SetAttribute");
+				expr = new CodeMethodInvokeExpression (methodExpr);
+				expr.Parameters.Add (new CodePrimitiveExpression (id));
+				expr.Parameters.Add (new CodePrimitiveExpression (attvalue));
+				method.Statements.Add (expr);
+			}
+
+		}
+
 		void CreateAssignStatementsFromAttributes (ControlBuilder builder)
 		{
 			this.dataBoundAtts = 0;
@@ -527,75 +615,17 @@ namespace System.Web.Compilation
 			if (atts == null || atts.Count == 0)
 				return;
 
-			EventInfo [] ev_info = null;
-			bool is_processed = false;
-			Type type = builder.ControlType;
-
 			foreach (string id in atts.Keys) {
 				if (InvariantCompareNoCase (id, "runat"))
 					continue;
 
-				is_processed = false;
-				string attvalue = atts [id] as string;
-				if (id.Length > 2 && id.Substring (0, 2).ToUpper () == "ON"){
-					if (ev_info == null)
-						ev_info = type.GetEvents ();
-
-					string id_as_event = id.Substring (2);
-					foreach (EventInfo ev in ev_info){
-						if (InvariantCompareNoCase (ev.Name, id_as_event)){
-							AddEventAssign (builder.method,
-									ev.Name,
-									ev.EventHandlerType,
-									attvalue);
-
-							is_processed = true;
-							break;
-						}
-					}
-
-					if (is_processed)
-						continue;
-				} 
-
-				int hyphen = id.IndexOf ('-');
-				string alt_id = id;
-				if (hyphen != -1)
-					alt_id = id.Substring (0, hyphen);
-
-				MemberInfo fop = GetFieldOrProperty (type, alt_id);
-				if (fop != null) {
-					is_processed = ProcessPropertiesAndFields (builder, fop, id, attvalue, null);
-					if (is_processed)
-						continue;
-				}
-
-				if (is_processed)
+#if NET_2_0
+				/* we skip SkinID here as it's assigned in BuildControlTree */
+				if (InvariantCompareNoCase (id, "skinid"))
 					continue;
+#endif
+				CreateAssignStatementFromAttribute (builder, id);
 
-				if (!typeof (IAttributeAccessor).IsAssignableFrom (type))
-					throw new ParseException (builder.location, "Unrecognized attribute: " + id);
-
-
-				CodeMemberMethod method = builder.method;
-				string val = (string) atts [id];
-				bool databound = IsDataBound (val);
-				if (databound) {
-					val = val.Substring (3);
-					val = val.Substring (0, val.Length - 2);
-					CreateDBAttributeMethod (builder, id, val);
-				} else {
-					CodeCastExpression cast;
-					CodeMethodReferenceExpression methodExpr;
-					CodeMethodInvokeExpression expr;
-
-					cast = new CodeCastExpression (typeof (IAttributeAccessor), ctrlVar);
-					methodExpr = new CodeMethodReferenceExpression (cast, "SetAttribute");
-					expr = new CodeMethodInvokeExpression (methodExpr);
-					expr.Parameters.Add (new CodePrimitiveExpression (id));
-					expr.Parameters.Add (new CodePrimitiveExpression ((string) atts [id]));
-					method.Statements.Add (expr);
-				}
 			}
 		}
 

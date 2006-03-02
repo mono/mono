@@ -591,10 +591,10 @@ namespace System.Web.UI
                 }
 
 #if NET_2_0
+		[MonoTODO]
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public virtual void ApplyStyleSheetSkin (Page page)
 		{
-			throw new NotImplementedException ();
 		}
 #endif		
 

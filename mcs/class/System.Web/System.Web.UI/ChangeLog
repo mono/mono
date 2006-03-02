@@ -1,3 +1,14 @@
+2006-03-02  Chris Toshok  <toshok@ximian.com>
+
+	* Control.cs (ApplyStyleSheetTheme): remove the exception, and add
+	a MonoTODO.
+
+	* Page.cs (Theme): implement setter/getter.
+	(StyleSheetTheme): same.
+	
+	* PageParser.cs (ProcessMainAttributes): parse the Theme and
+	StyleSheetTheme attributes.
+
 2006-02-27  Chris Toshok  <toshok@ximian.com>
 
 	* TemplateControl.cs: corcompare work.

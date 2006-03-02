@@ -1,3 +1,17 @@
+2006-03-02  Chris Toshok  <toshok@ximian.com>
+
+	* TemplateControlCompiler.cs (InitMethod): emit an assignment for
+	SkinID just after the creation of our object, and right after that
+	call "_ctrl.ApplyStyleSheetSkin (page)".
+	(CreateAssignStatementsFromAttributes): split out the majority of
+	this code to CreateAssignStatementFromAttribute, and change this
+	method to simply a loop over the attribute keys.  In the 2.0 case,
+	skip the SkinID property, since that's handled explicitly in
+	InitMethod.
+
+	* PageCompiler.cs (AddStatementsToInitMethod): emit assignments
+	for Theme and StyleSheetTheme.
+
 2006-02-23  Chris Toshok  <toshok@ximian.com>
 
 	* TemplateControlCompiler.cs (AddContentTemplateInvocation): track
