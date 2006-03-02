@@ -1,3 +1,7 @@
+2006-03-02  Atsushi Enomoto <atsushi@ximian.com>
+
+	* 77687.xsd, 77687inc.xsd : test for bug #77687.
+
 2006-01-11  Atsushi Enomoto <atsushi@ximian.com>
 
 	* datatypesTest.xsd : missing required file for xsd tests.

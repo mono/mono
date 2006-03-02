@@ -1,3 +1,8 @@
+2006-03-02  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlSchema.cs : seems like there is XmlSchemaExternal.Schema property
+	  that is filled after Compile(). Fixed bug #77687.
+
 2006-03-01  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlSchemaAppInfo.cs, XmlSchemaDocumentation.cs : seems like MS

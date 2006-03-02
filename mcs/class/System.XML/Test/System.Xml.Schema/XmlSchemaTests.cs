@@ -363,5 +363,21 @@ namespace MonoTests.System.Xml
 				annotation.Items [0] as XmlSchemaDocumentation;
 			AssertEquals (0, doc.Markup.Length);
 		}
+
+
+		[Test]
+		// bug #77687
+		public void CompileFillsSchemaPropertyInExternal ()
+		{
+			string schemaFileName = "Test/XmlFiles/xsd/77687.xsd";
+			XmlTextReader tr = new XmlTextReader (schemaFileName);
+
+			XmlSchema schema = XmlSchema.Read (tr, null);
+			XmlSchemaInclude inc = (XmlSchemaInclude) schema.Includes [0];
+			AssertNull (inc.Schema);
+			schema.Compile (null);
+			tr.Close ();
+			AssertNotNull (inc.Schema);
+		}
 	}
 }

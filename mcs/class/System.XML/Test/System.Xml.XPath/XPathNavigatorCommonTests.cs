@@ -308,8 +308,10 @@ namespace MonoTests.System.Xml
 
 			nav.MoveToFirstChild ();	// body
 			// Test difference between Local and ExcludeXml
-			Assert (!nav.MoveToFirstNamespace (XPathNamespaceScope.Local));
-			Assert (nav.MoveToFirstNamespace (XPathNamespaceScope.ExcludeXml));
+			Assert ("Local should fail",
+				!nav.MoveToFirstNamespace (XPathNamespaceScope.Local));
+			Assert ("ExcludeXml should succeed",
+				nav.MoveToFirstNamespace (XPathNamespaceScope.ExcludeXml));
 			AssertNavigator ("#7", nav, XPathNodeType.Namespace,
 				"", "", "", "", xhtml, false, false, false);
 

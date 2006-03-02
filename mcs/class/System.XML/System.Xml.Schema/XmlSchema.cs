@@ -433,6 +433,7 @@ namespace System.Xml.Schema
 					}
 					includedSchema.schemas = schemas;
 				}
+				ext.Schema = includedSchema;
 
 				// Set - actual - target namespace for the included schema * before compilation*.
 				XmlSchemaImport import = ext as XmlSchemaImport;
