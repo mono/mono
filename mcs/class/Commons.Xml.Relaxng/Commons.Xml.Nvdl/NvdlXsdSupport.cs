@@ -45,7 +45,7 @@ namespace Commons.Xml.Nvdl
 			XmlReaderSettings s = new XmlReaderSettings ();
 			s.ValidationType = ValidationType.Auto;
 			// do not allow inline schema and schemaLocation.
-			s.ValidationFlags = ValidationFlags.ProcessIdentityConstraints;
+			s.ValidationFlags = XmlSchemaValidationFlags.ProcessIdentityConstraints;
 			s.XmlResolver = resolver;
 			foreach (XmlSchema schema in schemas)
 				s.Schemas.Add (schema);
