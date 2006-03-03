@@ -1,3 +1,8 @@
+2006-03-03  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* Control.cs (ControlCollection.SetChildIndex): Avoid using a call
+	  that causes the control to be created. Fixes #77476.
+
 2006-03-02  Jackson Harper  <jackson@ximian.com>
 
 	* Hwnd.cs: Clear the nc pending when clearing the NC area, not the

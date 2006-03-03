@@ -548,14 +548,13 @@ namespace System.Windows.Forms
 					return;
 				}
 
-				RemoveAt(old_index);
+				list.RemoveAt(old_index);
 
 				if (newIndex>list.Count) {
 					list.Add(child);
 				} else {
 					list.Insert(newIndex, child);
 				}
-				child.parent = owner;
 				owner.UpdateZOrder();
 			}
 			#endregion // ControlCollection Private Instance Methods
