@@ -123,7 +123,7 @@ namespace Commons.Xml.Nvdl
 			// 6.4.10 : done in SimpleRule.Simplify
 
 			ArrayList tl = new ArrayList ();
-			for (int i = 0; i < triggers.Length; i++) {
+			for (int i = 0; i < rules.Triggers.Count; i++) {
 				NvdlTrigger t = rules.Triggers [i];
 				foreach (string ss in t.NameList.Split (' ')) {
 					string s = ss.Trim ();
