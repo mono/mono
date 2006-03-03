@@ -55,6 +55,21 @@ namespace System.Windows.Forms {
 		#endregion	// Private & Internal Methods
 
 		#region Public Instance Properties
+#if NET_2_0
+		private bool use_system_password_char = false;
+
+		[DefaultValue(false)]
+		public bool UseSystemPasswordChar {
+			get {
+				return use_system_password_char;
+			}
+
+			set {
+				use_system_password_char = value;
+			}
+		}
+#endif
+
 		[DefaultValue(false)]
 		public bool AcceptsReturn {
 			get {
@@ -85,6 +100,11 @@ namespace System.Windows.Forms {
 		[DefaultValue('\0')]
 		public char PasswordChar {
 			get {
+#if NET_2_0
+				if (use_system_password_char) {
+					return '*';
+				}
+#endif
 				return password_char;
 			}
 

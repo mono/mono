@@ -37,33 +37,34 @@ namespace System.Windows.Forms {
 		private int left;
 		private int right;
 		private int top;
+		private bool initialized;
 
 		public Padding (int all) {
-			bottom = left = right = top = all;
+			Bottom = Left = Right = Top = all;
 		}
 
 		public Padding (int left, int top, int right, int bottom) {
-			this.left = left;
-			this.top = top;
-			this.right = right;
-			this.bottom = bottom;
+			Left = left;
+			Top = top;
+			Right = right;
+			Bottom = bottom;
 		}
 
-		public static readonly Padding Empty = new Padding(0);
+		public static readonly Padding Empty = new Padding();
 
 		public int All {
 			get {
-				if (left == top && left == right && left == bottom) {
+				if (initialized && left == top && left == right && left == bottom) {
 					return left;
 				}
 				return -1;
 			}
-			set { left = top = right = bottom = value; }
+			set { Left = Top = Right = Bottom = value; }
 		}
 
 		public int Bottom {
 			get { return bottom; }
-			set { bottom = value; }
+			set { bottom = value; initialized = true; }
 		}
 
 		public int Horizontal {
@@ -72,12 +73,12 @@ namespace System.Windows.Forms {
 
 		public int Left {
 			get { return left; }
-			set { left = value; }
+			set { left = value; initialized = true; }
 		}
 
 		public int Right {
 			get { return right; }
-			set { right = value; }
+			set { right = value; initialized = true; }
 		}
 
 		public Size Size {
@@ -86,7 +87,7 @@ namespace System.Windows.Forms {
 
 		public int Top {
 			get { return top; }
-			set { top = value; }
+			set { top = value; initialized = true; }
 		}
 
 		public int Vertical {
@@ -134,9 +135,8 @@ namespace System.Windows.Forms {
 		}
 
 		public override string ToString () {
-			return ""; ////////////////////////// Windows //////////////////////////////////
+			return "{Left=" + Left + ",Top="+ Top + ",Right=" + Right + ",Bottom=" + Bottom + "}"; 
 		}
-
 	}
 
 }

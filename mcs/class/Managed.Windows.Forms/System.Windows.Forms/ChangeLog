@@ -1,3 +1,17 @@
+2006-03-03  Matt Hargett  <matt@use.net>
+
+	* Control.cs: implement Control.Padding
+	* Padding.cs: -Padding.All returns -1 when constructing with the
+	implicit default ctor
+	-Padding.ToString() matches MS.NET
+	* ContainerControl.cs: implement
+	ContainerControl.AutoScaleDimensions
+	* ListControl.cs: implement ListControl.FormattingEnabled
+	* TextBox.cs: Implemented TextBox.UseSystemPasswordChar.
+	* ButtonBase.cs:
+	* TabPage.cs: Implement UseVisualStyleBackColor.
+	* PictureBox.cs: Implement PictureBox.InitialImage.
+
 2006-03-03  Mike Kestner  <mkestner@novell.com>
 
 	* ListView.cs: Refactor into HeaderControl and ItemControl. Fix new

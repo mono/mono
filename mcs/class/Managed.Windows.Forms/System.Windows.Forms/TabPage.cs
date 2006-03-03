@@ -40,6 +40,7 @@ namespace System.Windows.Forms {
 		private string tooltip_text = String.Empty;
 		private Rectangle tab_bounds;
 		private int row;
+		private bool use_visual_style_back_color;
 		#endregion	// Fields
 		
 		#region Public Constructors
@@ -56,6 +57,20 @@ namespace System.Windows.Forms {
 		}
 
 		#endregion	// Public Constructors
+
+		#region .NET 2.0 Public Instance Properties
+#if NET_2_0
+		public bool UseVisualStyleBackColor {
+			get { return use_visual_style_back_color; }
+			set { use_visual_style_back_color = value; }
+		}
+
+		public override Color BackColor {
+			get { return base.BackColor; }
+			set { use_visual_style_back_color = false; base.BackColor = value; }
+		}
+#endif
+		#endregion
 
 		#region Public Instance Properties
 		[Browsable(false)]

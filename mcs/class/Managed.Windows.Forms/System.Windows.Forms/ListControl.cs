@@ -40,6 +40,7 @@ namespace System.Windows.Forms
 		private BindingMemberInfo value_member;
 		private string display_member;
 		private CurrencyManager data_manager;
+		private bool formatting_enabled;
 
 		protected ListControl ()
 		{			
@@ -56,6 +57,15 @@ namespace System.Windows.Forms
 		public event EventHandler SelectedValueChanged;
 		public event EventHandler ValueMemberChanged;
 		#endregion // Events
+
+		#region .NET 2.0 Public Properties
+#if NET_2_0
+		public bool FormattingEnabled {
+			get { return formatting_enabled; }
+			set { formatting_enabled = value; }
+		}
+#endif
+		#endregion
 
 		#region Public Properties
 
@@ -117,6 +127,17 @@ namespace System.Windows.Forms
 				return fil;
 			}
 			set {
+				if (value == null) {
+					throw new InvalidOperationException("ListControl.SelectedValue cannot be set to null");
+				}
+
+				if (value is string) {
+					string valueString = value as string;
+					if (valueString == String.Empty) {
+						throw new InvalidOperationException("ListControl.SelectedValue cannot be set to empty string");
+					}
+				}
+
 				if (data_manager != null) {
 					
 					PropertyDescriptorCollection col = data_manager.GetItemProperties ();

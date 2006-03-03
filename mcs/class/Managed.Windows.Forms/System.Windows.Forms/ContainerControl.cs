@@ -29,12 +29,14 @@
 
 using System.ComponentModel;
 using System.ComponentModel.Design;
+using System.Drawing;
 
 namespace System.Windows.Forms {
 	public class ContainerControl : ScrollableControl, IContainerControl {
 		private Control active_control;
 		private Control focused_control;
 		private Control	unvalidated_control;
+		private SizeF auto_scale_dimensions;
 
 		#region Public Constructors
 		public ContainerControl() {
@@ -132,6 +134,20 @@ namespace System.Windows.Forms {
 			return Select(control);
 		}
 		#endregion	// Public Instance Methods
+
+		#region .NET 2.0 Public Instance Methods
+#if NET_2_0
+		public SizeF AutoScaleDimensions {
+			get {
+				return auto_scale_dimensions;
+			}
+
+			set {
+				auto_scale_dimensions = value;
+			}
+		}
+#endif
+		#endregion
 
 		#region Protected Instance Methods
 		[EditorBrowsable (EditorBrowsableState.Advanced)]

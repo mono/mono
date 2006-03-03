@@ -122,6 +122,7 @@ namespace System.Windows.Forms
 
 #if NET_2_0
 		internal bool			use_compatible_text_rendering;
+		private Padding			padding;
 #endif
 
 		#endregion	// Local Variables
@@ -691,6 +692,7 @@ namespace System.Windows.Forms
 
 #if NET_2_0
 			use_compatible_text_rendering = Application.use_compatible_text_rendering;
+			padding = new Padding(0);
 #endif
 
 			control_style = ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint | 
@@ -1953,6 +1955,19 @@ namespace System.Windows.Forms
 				name = value;
 			}
 		}
+
+#if NET_2_0
+		[Localizable(true)]
+		public Padding Padding {
+			get {
+				return padding;
+			}
+
+			set {
+				padding = value;
+			}
+		}
+#endif
 
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]

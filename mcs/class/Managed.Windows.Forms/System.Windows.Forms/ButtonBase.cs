@@ -45,6 +45,8 @@ namespace System.Windows.Forms {
 		internal bool			enter_state;
 		internal StringFormat		text_format;
 		internal bool 			paint_as_acceptbutton;
+		private	bool			use_compatible_text_rendering;
+		private bool			use_visual_style_back_color;
 		#endregion	// Local Variables
 
 		#region ButtonBaseAccessibleObject sub-class
@@ -538,7 +540,13 @@ namespace System.Windows.Forms {
 		public new event EventHandler ImeModeChanged;
 		#endregion	// Events
 
+
+		#region .NET 2.0 Public Instance Properties
 #if NET_2_0
+		public bool UseVisualStyleBackColor {
+			get { return use_visual_style_back_color; }
+			set { use_visual_style_back_color = value; }
+		}
 
 		public bool UseCompatibleTextRendering {
 			get {
@@ -550,5 +558,6 @@ namespace System.Windows.Forms {
 			}
 		}
 #endif
+		#endregion
 	}
 }

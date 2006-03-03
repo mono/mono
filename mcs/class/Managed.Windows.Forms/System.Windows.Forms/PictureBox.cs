@@ -42,6 +42,7 @@ namespace System.Windows.Forms {
 		private bool redraw;
 		private bool recalc;
 		private bool allow_drop;
+		private Image initial_image;
 
 		private EventHandler frame_handler;
 
@@ -78,7 +79,8 @@ namespace System.Windows.Forms {
 			set {
 				StopAnimation ();
 
-				image = value;
+				image = (image != null ? (Image) value.Clone () : null);
+
 				UpdateSize ();
 				if (image != null && ImageAnimator.CanAnimate (image)) {
 					frame_handler = new EventHandler (OnAnimateImage);
@@ -88,6 +90,15 @@ namespace System.Windows.Forms {
 				Invalidate ();
 			}
 		}
+
+#if NET_2_0
+		[DefaultValue(null)]
+		[Localizable(true)]
+		public Image InitialImage {
+			get { return initial_image; }
+			set { initial_image = value; }
+		}
+#endif
 
 		[DefaultValue(BorderStyle.None)]
 		[DispId(-504)]
@@ -187,6 +198,8 @@ namespace System.Windows.Forms {
 				StopAnimation ();
 				image = null;
 			}
+			initial_image = null;
+
 			base.Dispose (disposing);
 		}
 
