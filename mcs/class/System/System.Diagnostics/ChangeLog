@@ -1,3 +1,7 @@
+2006-03-03  Dick Porter  <dick@ximian.com>
+
+	* Process.cs: Close redirected pipes on errors.  Fixes bug 77514.
+
 2006-01-12  Ben Maurer  <bmaurer@andrew.cmu.edu>
 
 	* ConsoleTraceListener.cs: New 2.0 class

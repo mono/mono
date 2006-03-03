@@ -771,6 +771,7 @@ namespace System.Diagnostics {
 			IntPtr stdout_rd, stdout_wr;
 			IntPtr stderr_rd, stderr_wr;
 			bool ret;
+			MonoIOError error;
 
 			if (startInfo.HaveEnvVars) {
 				string [] strs = new string [startInfo.EnvironmentVariables.Count];
@@ -801,6 +802,11 @@ namespace System.Diagnostics {
 				ret = MonoIO.CreatePipe (out stdout_rd,
 						         out stdout_wr);
 				if (ret == false) {
+					if (startInfo.RedirectStandardInput == true) {
+						MonoIO.Close (stdin_rd, out error);
+						MonoIO.Close (stdin_wr, out error);
+					}
+
 					throw new IOException ("Error creating standard output pipe");
 				}
 			} else {
@@ -812,6 +818,15 @@ namespace System.Diagnostics {
 				ret = MonoIO.CreatePipe (out stderr_rd,
 						         out stderr_wr);
 				if (ret == false) {
+					if (startInfo.RedirectStandardInput == true) {
+						MonoIO.Close (stdin_rd, out error);
+						MonoIO.Close (stdin_wr, out error);
+					}
+					if (startInfo.RedirectStandardOutput == true) {
+						MonoIO.Close (stdout_rd, out error);
+						MonoIO.Close (stdout_wr, out error);
+					}
+					
 					throw new IOException ("Error creating standard error pipe");
 				}
 			} else {
@@ -822,18 +837,21 @@ namespace System.Diagnostics {
 			ret = CreateProcess_internal (startInfo,
 						      stdin_rd, stdout_wr, stderr_wr,
 						      ref proc_info);
-
-			MonoIOError error;
-			
 			if (!ret) {
-				if (startInfo.RedirectStandardInput == true)
+				if (startInfo.RedirectStandardInput == true) {
 					MonoIO.Close (stdin_rd, out error);
+					MonoIO.Close (stdin_wr, out error);
+				}
 
-				if (startInfo.RedirectStandardOutput == true)
+				if (startInfo.RedirectStandardOutput == true) {
+					MonoIO.Close (stdout_rd, out error);
 					MonoIO.Close (stdout_wr, out error);
+				}
 
-				if (startInfo.RedirectStandardError == true)
+				if (startInfo.RedirectStandardError == true) {
+					MonoIO.Close (stderr_rd, out error);
 					MonoIO.Close (stderr_wr, out error);
+				}
 
 				throw new Win32Exception (-proc_info.pid);
 			}
