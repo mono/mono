@@ -1,3 +1,9 @@
+2006-03-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* assembly.c: Move the contents of os/{unix,win32}/util.c to this file.	
+
+	* gc_wrapper.h: Move the contents of os/gc_wrapper.h to this file.
+	
 2006-03-03  Dick Porter  <dick@ximian.com>
 
 	* process.c

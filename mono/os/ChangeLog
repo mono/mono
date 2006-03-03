@@ -1,3 +1,7 @@
+2006-03-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* *: Move the contents of the util.c file to metadata/assembly.c.
+
 2006-03-02  Zoltan Varga  <vargaz@gmail.com>
 
 	* gc_wrapper.h: Allways disable thread local alloc on sparc even if __thread support
