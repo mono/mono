@@ -48,8 +48,8 @@ namespace System.Net.Sockets
 #if NET_1_1
 		public UdpClient(AddressFamily family)
 		{
-			if(family != AddressFamily.InterNetwork && family != AddressFamily.InterNetwork)
-				throw new ArgumentException("family");
+			if(family != AddressFamily.InterNetwork && family != AddressFamily.InterNetworkV6)
+				throw new ArgumentException("Family must be InterNetwork or InterNetworkV6", "family");
 
 			this.family = family;
 			InitSocket (null);
