@@ -1,3 +1,10 @@
+2006-03-03  Dick Porter  <dick@ximian.com>
+
+	* process.c
+	(ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal):
+	Check parameters before dereferencing them.  Fixes Aaron's part of
+	bug 77393.
+
 2006-03-03  Raja R Harinath  <rharinath@novell.com>
 
 	Fix performance regression.
