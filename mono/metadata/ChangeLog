@@ -1,7 +1,9 @@
 2006-03-03  Zoltan Varga  <vargaz@gmail.com>
 
-	* assembly.c: Fix build.
+	* assembly.c: Fix windows build.
 	
+	* assembly.c: Fix build.
+
 	* assembly.c: Move the contents of os/{unix,win32}/util.c to this file.	
 
 	* gc_wrapper.h: Move the contents of os/gc_wrapper.h to this file.
