@@ -41,13 +41,23 @@ namespace Commons.Xml.Nvdl
 		public override XmlReader CreateValidator (XmlReader reader,
 			XmlResolver resolver)
 		{
+#if NET_2_0
+			XmlReaderSettings s = new XmlReaderSettings ();
+			s.ValidationType = ValidationType.Auto;
+			// do not allow inline schema and schemaLocation.
+			s.ValidationFlags = ValidationFlags.ProcessIdentityConstraints;
+			s.XmlResolver = resolver;
+			foreach (XmlSchema schema in schemas)
+				s.Schemas.Add (schema);
+			return XmlReader.Create (reader, s);
+#else
 			XmlValidatingReader xvr =
 				new XmlValidatingReader (reader);
 			xvr.XmlResolver = resolver;
 			foreach (XmlSchema schema in schemas)
 				xvr.Schemas.Add (schema);
-
 			return xvr;
+#endif
 		}
 
 		public override bool AddOption (string name, string arg)

@@ -1,5 +1,11 @@
 2006-03-03  Atsushi Enomoto <atsushi@ximian.com>
 
+	* NvdlXsdSupport.cs : in NET_2_0 mode, use XmlReader.Create()
+	  with validation support. Now MS.NET users can validate NVDL
+	  that uses XSD.
+
+2006-03-03  Atsushi Enomoto <atsushi@ximian.com>
+
 	* NvdlSimplified.cs : (SimpleRules) huh, I made silly change to
 	  access null field.
 
