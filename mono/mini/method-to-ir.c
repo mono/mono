@@ -9173,8 +9173,13 @@ mono_handle_global_vregs (MonoCompile *cfg)
 #if SIZEOF_VOID_P == 8
 		case STACK_I8:
 #endif
+#ifndef __i386__
+		/* Enabling this screws up the fp stack on x86 */
+		case STACK_R8:
+#endif
 			/* Arguments are implicitly global */
-			if ((var->opcode != OP_ARG) && (var != cfg->ret) && !(var->flags & (MONO_INST_VOLATILE|MONO_INST_INDIRECT)) && (vreg_to_bb [var->dreg] != (gpointer)(gssize)-1)) {
+			/* Putting R4 vars into registers doesn't work currently */
+			if ((var->opcode != OP_ARG) && (var != cfg->ret) && !(var->flags & (MONO_INST_VOLATILE|MONO_INST_INDIRECT)) && (vreg_to_bb [var->dreg] != (gpointer)(gssize)-1) && (var->klass->byval_arg.type != MONO_TYPE_R4)) {
 				if (cfg->verbose_level > 2)
 					printf ("CONVERTED R%d(%d) TO VREG.\n", var->dreg, vmv->idx);
 				var->flags |= MONO_INST_IS_DEAD;
@@ -9543,6 +9548,7 @@ mono_spill_global_vars (MonoCompile *cfg)
  * - cleanup the code replacement in decompose_long_opts ()
  * - try a coalescing phase after liveness analysis
  * - add float -> vreg conversion + local optimizations on !x86
+ * - run a global->local phase after SSA ?
  * - LAST MERGE: 57242.
  */
 

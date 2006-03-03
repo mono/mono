@@ -468,7 +468,7 @@ mono_constant_fold_ins2 (MonoInst *ins, MonoInst *arg1, MonoInst *arg2)
 
 		if ((arg1->opcode == OP_ICONST) && (arg2->opcode == OP_ICONST)) {
 			MonoInst *next = ins->next;
-			gboolean res;
+			gboolean res = FALSE;
 
 			switch (next->opcode) {
 			case OP_CEQ:
@@ -547,6 +547,13 @@ mono_constant_fold_ins2 (MonoInst *ins, MonoInst *arg1, MonoInst *arg2)
 		}
 		break;
 	}
+	case OP_FMOVE:
+		if (arg1->opcode == OP_R8CONST) {
+			ins->opcode = OP_R8CONST;
+			ins->sreg1 = -1;
+			ins->inst_p0 = arg1->inst_p0;
+		}
+		break;
 
 		/*
 		 * TODO: 
