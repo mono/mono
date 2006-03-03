@@ -3,24 +3,24 @@
 //
 // Author:
 //	Atsushi Enomoto  <atsushi@ximian.com>
+//	Ankit Jain	 <JAnkit@novell.com>
 //
 // (C)2005 Novell Inc,
+// (C)2006 Novell Inc,
 //
-using System.Collections;
-using System.Collections.Specialized;
-
 #if NET_2_0
 
 namespace System.Transactions
 {
 	public static class TransactionManager
 	{
-		// it could contain both Transaction and non-tx (Suppress).
-		static Stack tx_states = new Stack ();
+		/* 60 secs */
+		static TimeSpan defaultTimeout = new TimeSpan (0, 1, 0);
+		/* 10 mins */
+		static TimeSpan maxTimeout = new TimeSpan (0, 10, 0);
 
-		[MonoTODO]
 		public static TimeSpan DefaultTimeout {
-			get { throw new NotImplementedException (); }
+			get { return defaultTimeout; }
 		}
 
 		[MonoTODO]
@@ -29,9 +29,8 @@ namespace System.Transactions
 			set { throw new NotImplementedException (); }
 		}
 
-		[MonoTODO]
 		public static TimeSpan MaximumTimeout {
-			get { throw new NotImplementedException (); }
+			get { return maxTimeout; }
 		}
 
 		[MonoTODO]
@@ -50,28 +49,6 @@ namespace System.Transactions
 
 		public static event TransactionStartedEventHandler
 			DistributedTransactionStarted;
-
-		// internals
-		internal static Transaction Current {
-			get {
-				if (tx_states.Count == 0)
-					return null;
-				return tx_states.Peek () as Transaction;
-			}
-			set {
-				throw new NotImplementedException ();
-			}
-		}
-
-		internal static void BeginScope (TransactionScope scope)
-		{
-			throw new NotImplementedException ();
-		}
-
-		internal static void EndScope (TransactionScope scope)
-		{
-			throw new NotImplementedException ();
-		}
 	}
 }
 

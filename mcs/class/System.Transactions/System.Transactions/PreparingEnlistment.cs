@@ -3,36 +3,51 @@
 //
 // Author:
 //	Atsushi Enomoto  <atsushi@ximian.com>
+//	Ankit Jain	 <JAnkit@novell.com>
 //
 // (C)2005 Novell Inc,
+// (C)2006 Novell Inc,
 //
 
 #if NET_2_0
+
+using System.Threading;
 
 namespace System.Transactions
 {
 	public class PreparingEnlistment : Enlistment
 	{
-		internal PreparingEnlistment ()
+		bool prepared = false;
+		Transaction tx;
+		IEnlistmentNotification enlisted;
+		//WaitHandle waitHandle;
+
+		internal PreparingEnlistment (Transaction tx, IEnlistmentNotification enlisted)
 		{
+			this.tx = tx;
+			this.enlisted = enlisted;
+			//waitHandle = new ManualResetEvent (false);
 		}
 
-		[MonoTODO]
 		public void ForceRollback ()
 		{
-			throw new NotImplementedException ();
+			ForceRollback (null);
 		}
 
 		[MonoTODO]
 		public void ForceRollback (Exception ex)
 		{
-			throw new NotImplementedException ();
+			tx.Rollback (ex, enlisted);
+			/* See test RMFail2 
+			((ManualResetEvent) waitHandle).Set (); */
 		}
 
 		[MonoTODO]
 		public void Prepared ()
 		{
-			throw new NotImplementedException ();
+			prepared = true;
+			/* See test RMFail2 
+			((ManualResetEvent) waitHandle).Set ();*/
 		}
 
 		[MonoTODO]
@@ -40,6 +55,14 @@ namespace System.Transactions
 		{
 			throw new NotImplementedException ();
 		}
+
+		internal bool IsPrepared {
+			get { return prepared; }
+		}
+
+		/*internal WaitHandle WaitHandle {
+			get { return waitHandle; }
+		}*/
 	}
 }
 

@@ -3,8 +3,10 @@
 //
 // Author:
 //	Atsushi Enomoto  <atsushi@ximian.com>
+//	Ankit Jain	 <JAnkit@novell.com>
 //
 // (C)2005 Novell Inc,
+// (C)2006 Novell Inc,
 //
 
 #if NET_2_0
@@ -19,8 +21,16 @@ namespace System.Transactions
 			new TransactionOptions (0, TransactionManager.DefaultTimeout);
 
 		Transaction transaction;
+		Transaction oldTransaction;
+		TransactionScope parentScope;
+
+		/* Num of non-disposed nested scopes */
+		int nested;
+
 		TimeSpan timeout;
 		bool disposed;
+		bool completed;
+		bool isRoot;
 
 		public TransactionScope ()
 			: this (TransactionScopeOption.Required,
@@ -79,25 +89,108 @@ namespace System.Transactions
 			Transaction tx, TransactionOptions options,
 			DTCOption interop, TimeSpan timeout)
 		{
-			this.transaction = transaction;
 			this.timeout = timeout;
-			TransactionManager.BeginScope (this);
+			completed = false;
+			isRoot = false;
+			nested = 0;
+
+			oldTransaction = Transaction.CurrentInternal;
+
+			Transaction.CurrentInternal = transaction = InitTransaction (tx, scopeOption);
+			if (transaction != null)
+				transaction.InitScope (this);
+			if (parentScope != null)
+				parentScope.nested ++;
 		}
 
-		[MonoTODO]
+		Transaction InitTransaction (Transaction tx, TransactionScopeOption scopeOption)
+		{
+			if (tx != null)
+				return tx;
+				
+			if (scopeOption == TransactionScopeOption.Suppress) {
+				if (Transaction.CurrentInternal != null)
+					parentScope = Transaction.CurrentInternal.Scope;
+				return null;
+			}
+
+			if (scopeOption == TransactionScopeOption.Required) {
+				if (Transaction.CurrentInternal == null) {
+					isRoot = true;
+					return new Transaction ();
+				}
+
+				parentScope = Transaction.CurrentInternal.Scope;
+				return Transaction.CurrentInternal;
+			}
+
+			/* RequiresNew */
+			if (Transaction.CurrentInternal != null)
+				parentScope = Transaction.CurrentInternal.Scope;
+			isRoot = true;
+			return new Transaction ();
+		}
+
 		public void Complete ()
 		{
-			throw new NotImplementedException ();
+			if (completed)
+				throw new InvalidOperationException ("The current TransactionScope is already complete. You should dispose the TransactionScope.");
+
+			completed = true;
 		}
 
-		[MonoTODO]
+		internal bool IsComplete {
+			get { return completed; }
+		}
+
 		public void Dispose ()
 		{
-			if (!disposed) {
-				disposed = true;
-				TransactionManager.EndScope (this);
+			if (disposed)
+				return;
+
+			disposed = true;
+
+			if (parentScope != null)
+				parentScope.nested --;
+
+			if (nested > 0) {
+				transaction.Rollback ();
+				throw new InvalidOperationException ("TransactionScope nested incorrectly");
 			}
+
+			if (Transaction.CurrentInternal != transaction) {
+				if (transaction != null)
+					transaction.Rollback ();
+				if (Transaction.CurrentInternal != null)
+					Transaction.CurrentInternal.Rollback ();
+
+				throw new InvalidOperationException ("Transaction.Current has changed inside of the TransactionScope");
+			}
+
+			if (Transaction.CurrentInternal == oldTransaction && oldTransaction != null)
+				oldTransaction.Scope = parentScope;
+
+			Transaction.CurrentInternal = oldTransaction;
+
+			if (transaction == null)
+				/* scope was not in a transaction, (Suppress) */
+				return;
+
+			transaction.Scope = null;
+
+			if (!IsComplete) {
+				transaction.Rollback ();
+				return;
+			}
+
+			if (!isRoot)
+				/* Non-root scope has completed+ended */
+				return;
+
+			transaction.CommitInternal ();
 		}
+
+
 	}
 }
 

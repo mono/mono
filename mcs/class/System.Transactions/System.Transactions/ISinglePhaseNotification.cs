@@ -12,7 +12,7 @@
 namespace System.Transactions
 {
 	public interface ISinglePhaseNotification
-		: IEnlistmentNotification, ITransactionPromoter
+		: IEnlistmentNotification
 	{
 		void SinglePhaseCommit (SinglePhaseEnlistment enlistment);
 	}

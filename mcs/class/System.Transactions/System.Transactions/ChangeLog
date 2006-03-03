@@ -1,3 +1,12 @@
+2006-03-03  Ankit Jain  <jankit@novell.com>
+
+	* Initial implementation.
+	Implements support for a LTM (Lightweight Transaction Manager).
+	Distributed transactions are not supported with this.
+	Following are known as not implemented yet:
+	 DependentTransaction, IsolationLevels and
+	 EnlistmentOption.EnlistDuringPrepareRequired.
+
 2005-09-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CommittableTransaction.cs, Delegates.cs, DependentCloneOption.cs,

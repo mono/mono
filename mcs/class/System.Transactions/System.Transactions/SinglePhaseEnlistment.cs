@@ -3,8 +3,10 @@
 //
 // Author:
 //	Atsushi Enomoto  <atsushi@ximian.com>
+//	Ankit Jain	 <JAnkit@novell.com>
 //
 // (C)2005 Novell Inc,
+// (C)2006 Novell Inc,
 //
 
 #if NET_2_0
@@ -13,26 +15,33 @@ namespace System.Transactions
 {
 	public class SinglePhaseEnlistment : Enlistment
 	{
-		internal SinglePhaseEnlistment ()
+		bool committed = false;
+		Transaction tx;
+		ISinglePhaseNotification enlisted;
+		
+		internal SinglePhaseEnlistment (Transaction tx, ISinglePhaseNotification enlisted)
 		{
+			this.tx = tx;
+			this.enlisted = enlisted;
 		}
 
 		[MonoTODO]
 		public void Aborted ()
 		{
-			throw new NotImplementedException ();
+			Aborted (null);
 		}
 
 		[MonoTODO]
 		public void Aborted (Exception e)
 		{
-			throw new NotImplementedException ();
+			tx.Rollback (e, enlisted);
 		}
 
 		[MonoTODO]
 		public void Committed ()
 		{
-			throw new NotImplementedException ();
+			/* FIXME */
+			committed = true;
 		}
 
 		[MonoTODO]

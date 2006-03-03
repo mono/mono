@@ -88,7 +88,8 @@ net_2_0_dirs := \
 	Microsoft.Build.Framework	\
 	Microsoft.Build.Utilities	\
 	Microsoft.Build.Engine		\
-	Microsoft.Build.Tasks
+	Microsoft.Build.Tasks		\
+	System.Transactions
 
 default_SUBDIRS := $(common_dirs) $(default_dirs)
 net_2_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs)
