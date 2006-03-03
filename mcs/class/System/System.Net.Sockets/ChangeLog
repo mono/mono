@@ -1,3 +1,7 @@
+2006-03-03  Dick Porter  <dick@ximian.com>
+
+	* UdpClient.cs: Fix IPv6 family check.  Fixes bug 77689.
+
 2006-02-23 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TcpClient.cs: when the socket is not connected, don't try to set the
