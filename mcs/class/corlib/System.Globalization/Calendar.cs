@@ -126,6 +126,7 @@ public abstract class Calendar
 	/// </value>
 	public abstract int[] Eras { get; }
 
+	[NonSerialized]
 	bool is_readonly;
 
 #if NET_2_0
@@ -194,12 +195,14 @@ public abstract class Calendar
 	/// <see cref="P:TwoDigitYearMax"/>
 	/// property.
 	/// </summary>
+	[NonSerialized]
 	internal int M_TwoDigitYearMax;
 	
 
 	/// <summary>
 	/// Private field containing the maximum year for the calendar.
 	/// </summary>
+	[NonSerialized]
 	private int M_MaxYearValue = 0;
 
 	/// <value>
@@ -949,9 +952,11 @@ public abstract class Calendar
 
 	/// <summary>Protected field storing the abbreviated era names.
 	/// </summary>
+	[NonSerialized]
 	internal string[] M_AbbrEraNames;
 	/// <summary>Protected field storing the era names.
 	/// </summary>
+	[NonSerialized]
 	internal string[] M_EraNames;
 
 	/// <value>

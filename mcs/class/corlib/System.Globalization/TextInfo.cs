@@ -60,6 +60,7 @@ namespace System.Globalization {
 		bool m_isReadOnly;
 		string customCultureName;
 #endif
+		[NonSerialized]
 		int m_nDataItem;
 		bool m_useUserOverride;
 		int m_win32LangID;

@@ -1,3 +1,11 @@
+2006-03-02  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* DateTimeFormatInfo.cs: Switched (where possible) our internal
+	  field names to match MS names. Added fields that MS has and we
+	  don't. Fixes serialization issues with MS.
+	* CultureInfo.cs, Calendar.cs, TextInfo.cs, 
+	  GregorianCalenda.cs: Hiding internal attributes from serialization
+
 2006-01-25  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CultureInfo.cs : Clone() attempted to clone number and date time

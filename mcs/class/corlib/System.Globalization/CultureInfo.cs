@@ -57,6 +57,7 @@ namespace System.Globalization
 		[NonSerialized]
 		int number_index;
 		bool m_useUserOverride;
+		[NonSerialized]
 		volatile NumberFormatInfo numInfo;
 		volatile DateTimeFormatInfo dateTimeInfo;
 		volatile TextInfo textInfo;

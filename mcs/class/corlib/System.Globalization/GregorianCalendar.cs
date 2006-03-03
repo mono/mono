@@ -59,6 +59,7 @@ public class GregorianCalendar : Calendar {
 		}
 	}
 
+	[NonSerialized]
 	int twoDigitYearMax = 2029;
 
 	public override int TwoDigitYearMax 
@@ -78,6 +79,7 @@ public class GregorianCalendar : Calendar {
 	/// A protected member storing the
 	/// <see cref="T:System.Globalization.GregorianCalendarTypes"/>.
 	/// </summary>
+	[NonSerialized]
 	internal GregorianCalendarTypes M_CalendarType;
 
 	/// <value>
