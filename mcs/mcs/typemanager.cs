@@ -1714,14 +1714,12 @@ public class TypeManager {
 	///   This expands in context like: IA; IB : IA; IC : IA, IB; the interface "IC" to
 	///   be IA, IB, IC.
 	/// </remarks>
-	public static Type[] ExpandInterfaces (IResolveContext ec, TypeExpr [] base_interfaces)
+	public static Type[] ExpandInterfaces (TypeExpr [] base_interfaces)
 	{
 		ArrayList new_ifaces = new ArrayList ();
 
 		foreach (TypeExpr iface in base_interfaces){
-			Type itype = iface.ResolveType (ec);
-			if (itype == null)
-				return null;
+			Type itype = iface.Type;
 
 			if (!new_ifaces.Contains (itype))
 				new_ifaces.Add (itype);

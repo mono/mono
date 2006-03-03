@@ -165,31 +165,22 @@ namespace Mono.CSharp {
 			Error_AttributeEmitError ("it is attached to invalid parent");
 		}
 
-		protected virtual FullNamedExpression ResolveAsTypeTerminal (Expression expr, IResolveContext ec, bool silent)
+		protected virtual TypeExpr ResolveAsTypeTerminal (Expression expr, IResolveContext ec, bool silent)
 		{
 			return expr.ResolveAsTypeTerminal (ec, silent);
-		}
-
-		protected virtual FullNamedExpression ResolveAsTypeStep (Expression expr, IResolveContext ec, bool silent)
-		{
-			return expr.ResolveAsTypeStep (ec, silent);
 		}
 
 		Type ResolvePossibleAttributeType (string name, bool silent, ref bool is_attr)
 		{
 			IResolveContext rc = owner.ResolveContext;
 
-			FullNamedExpression fn;
+			TypeExpr te;
 			if (LeftExpr == null) {
-				fn = ResolveAsTypeTerminal (new SimpleName (name, Location), rc, silent);
+				te = ResolveAsTypeTerminal (new SimpleName (name, Location), rc, silent);
 			} else {
-				fn = ResolveAsTypeStep (LeftExpr, rc, silent);
-				if (fn == null)
-					return null;
-				fn = new MemberAccess (fn, name, Location).ResolveAsTypeTerminal (rc, silent);
+				te = ResolveAsTypeTerminal (new MemberAccess (LeftExpr, name, Location), rc, silent);
 			}
 
-			TypeExpr te = fn as TypeExpr;
 			if (te == null)
 				return null;
 
@@ -1332,19 +1323,7 @@ namespace Mono.CSharp {
 			RootContext.Tree.Types.NamespaceEntry = null;
 		}
 
-		protected override FullNamedExpression ResolveAsTypeStep (Expression expr, IResolveContext ec, bool silent)
-		{
-			try {
-				Enter ();
-				return base.ResolveAsTypeStep (expr, ec, silent);
-			}
-			finally {
-				Leave ();
-			}
-		}
-
-
-		protected override FullNamedExpression ResolveAsTypeTerminal (Expression expr, IResolveContext ec, bool silent)
+		protected override TypeExpr ResolveAsTypeTerminal (Expression expr, IResolveContext ec, bool silent)
 		{
 			try {
 				Enter ();

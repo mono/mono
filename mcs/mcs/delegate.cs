@@ -81,7 +81,7 @@ namespace Mono.CSharp {
 			if (TypeManager.multicast_delegate_type == null && !RootContext.StdLib) {
 				Namespace system = RootNamespace.Global.GetNamespace ("System", true);
 				TypeExpr expr = system.Lookup (this, "MulticastDelegate", Location) as TypeExpr;
-				TypeManager.multicast_delegate_type = expr.ResolveType (this);
+				TypeManager.multicast_delegate_type = expr.Type;
 			}
 
 			if (TypeManager.multicast_delegate_type == null)
@@ -175,8 +175,6 @@ namespace Mono.CSharp {
 			ret_type = ReturnType.Type;
 			if (ret_type == null)
 				return false;
-
-			CheckObsoleteType (ReturnType);
 
 			if (!Parent.AsAccessible (ret_type, ModFlags)) {
 				Report.Error (58, Location,

@@ -296,7 +296,9 @@ namespace Mono.CSharp {
 			TypeContainer root = Tree.Types;
 
 			TypeManager.object_type = BootstrapCorlib_ResolveClass (root, "System.Object");
+			TypeManager.system_object_expr.Type = TypeManager.object_type;
 			TypeManager.value_type = BootstrapCorlib_ResolveClass (root, "System.ValueType");
+			TypeManager.system_valuetype_expr.Type = TypeManager.value_type;
 			TypeManager.attribute_type = BootstrapCorlib_ResolveClass (root, "System.Attribute");
 			TypeManager.indexer_name_type = BootstrapCorlib_ResolveClass (root, "System.Runtime.CompilerServices.IndexerNameAttribute");
 			

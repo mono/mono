@@ -277,7 +277,7 @@ namespace Mono.CSharp {
 			if (texpr == null)
 				return false;
 
-			parameter_type = texpr.ResolveType (ec);
+			parameter_type = texpr.Type;
 			
 			if (parameter_type.IsAbstract && parameter_type.IsSealed) {
 				Report.Error (721, Location, "`{0}': static types cannot be used as parameters", GetSignatureForError ());

@@ -1,3 +1,21 @@
+2006-03-03  Marek Safar  <marek.safar@seznam.cz>
+
+	* attribute.cs (ResolveAsTypeTerminal): Removed.
+
+	* ecore.cs (Expression.ResolveAsTypeTerminal): Make virtual to allow
+	specialization for predefined types; 30% speed up.
+	Finally placed obsolete check to right place.
+	(Expression.ResolveType): Removed.
+
+	* enum.cs, expression.cs, parameter.cs, statement.cs, typemanager.cs:
+	Updated after ResolveType was removed.
+
+	* expression.cs (Cast.ctor): Check void cast.
+	(Binary.ResolveAsTypeTerminal): Is never type.
+	(Conditional.ResolveAsTypeTerminal): Is never type.
+
+	* rootcontext.cs (ResolveCore): Set base type to simplify some code later.
+
 2006-03-01  Raja R Harinath  <rharinath@novell.com>
 
 	Fix #77679.

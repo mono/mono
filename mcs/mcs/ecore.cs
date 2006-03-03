@@ -235,7 +235,20 @@ namespace Mono.CSharp {
 		// value will be returned if the expression is not a type
 		// reference
 		//
-		public TypeExpr ResolveAsTypeTerminal (IResolveContext ec, bool silent)
+		public virtual TypeExpr ResolveAsTypeTerminal (IResolveContext ec, bool silent)
+		{
+			TypeExpr te = ResolveAsBaseTerminal (ec, silent);
+			if (te == null)
+				return null;
+
+			ObsoleteAttribute obsolete_attr = AttributeTester.GetObsoleteAttribute (te.Type);
+			if (obsolete_attr != null && !ec.IsInObsoleteScope) {
+				AttributeTester.Report_ObsoleteMessage (obsolete_attr, GetSignatureForError (), Location);
+			}
+			return te;
+		}
+
+		public TypeExpr ResolveAsBaseTerminal (IResolveContext ec, bool silent)
 		{
 			int errors = Report.Errors;
 
@@ -2161,20 +2174,6 @@ namespace Mono.CSharp {
 
 		public abstract TypeExpr DoResolveAsTypeStep (IResolveContext ec);
 
-		public Type ResolveType (IResolveContext ec)
-		{
-			TypeExpr t = ResolveAsTypeTerminal (ec, false);
-			if (t == null)
-				return null;
-
-			ObsoleteAttribute obsolete_attr = AttributeTester.GetObsoleteAttribute (t.Type);
-			if (obsolete_attr != null && !ec.IsInObsoleteScope) {
-				AttributeTester.Report_ObsoleteMessage (obsolete_attr, Name, Location);
-			}
-
-			return t.Type;
-		}
-
 		public abstract string Name {
 			get;
 		}
@@ -2215,6 +2214,11 @@ namespace Mono.CSharp {
 			return this;
 		}
 
+		public override TypeExpr ResolveAsTypeTerminal (IResolveContext ec, bool silent)
+		{
+			return this;
+		}
+
 		public override string Name {
 			get { return Type.ToString (); }
 		}
@@ -2229,20 +2233,27 @@ namespace Mono.CSharp {
 	///   by the parser to setup the core types.  A TypeLookupExpression is always
 	///   classified as a type.
 	/// </summary>
-	public class TypeLookupExpression : TypeExpr {
-		string name;
+	public sealed class TypeLookupExpression : TypeExpr {
+		readonly string name;
 		
 		public TypeLookupExpression (string name)
 		{
 			this.name = name;
+			eclass = ExprClass.Type;
+		}
+
+		public override TypeExpr ResolveAsTypeTerminal (IResolveContext ec, bool silent)
+		{
+			// It's null for corlib compilation only
+			if (type == null)
+				return DoResolveAsTypeStep (ec);
+
+			return this;
 		}
 
 		static readonly char [] dot_array = { '.' };
 		public override TypeExpr DoResolveAsTypeStep (IResolveContext ec)
 		{
-			if (type != null)
-				return this;
-
 			// If name is of the form `N.I', first lookup `N', then search a member `I' in it.
 			string rest = null;
 			string lookup_name = name;
@@ -2294,7 +2305,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			type = ((TypeExpr) resolved).ResolveType (ec);
+			type = resolved.Type;
 			return this;
 		}
 
@@ -2328,11 +2339,7 @@ namespace Mono.CSharp {
 
 		public override TypeExpr DoResolveAsTypeStep (IResolveContext ec)
 		{
-			Type type = texpr.ResolveType (ec);
-			if (type == null)
-				return null;
-
-			return new TypeExpression (type, loc);
+			return texpr;
 		}
 
 		public override bool CheckAccessLevel (DeclSpace ds)

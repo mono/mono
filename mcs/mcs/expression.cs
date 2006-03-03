@@ -1049,7 +1049,8 @@ namespace Mono.CSharp {
 			TypeExpr texpr = ProbeType.ResolveAsTypeTerminal (ec, false);
 			if (texpr == null)
 				return null;
-			probe_type = texpr.ResolveType (ec);
+
+			probe_type = texpr.Type;
 
 			expr = expr.Resolve (ec);
 			if (expr == null)
@@ -1280,6 +1281,10 @@ namespace Mono.CSharp {
 			this.target_type = cast_type;
 			this.expr = expr;
 			this.loc = loc;
+
+			if (target_type == TypeManager.system_void_expr) {
+				Report.Error (1547, loc, "Keyword `void' cannot be used in this context");
+			}
 		}
 
 		public Expression TargetType {
@@ -1321,7 +1326,7 @@ namespace Mono.CSharp {
 			if (target == null)
 				return null;
 
-			type = target.ResolveType (ec);
+			type = target.Type;
 
 			if (type.IsAbstract && type.IsSealed) {
 				Report.Error (716, loc, "Cannot convert to static type `{0}'", TypeManager.CSharpName (type));
@@ -2416,6 +2421,11 @@ namespace Mono.CSharp {
 			return ResolveOperator (ec);
 		}
 
+		public override TypeExpr ResolveAsTypeTerminal (IResolveContext ec, bool silent)
+		{
+			return null;
+		}
+
 		private void CheckUselessComparison (Constant c, Type type)
 		{
 			if (c == null || !IsTypeIntegral (type)
@@ -3347,6 +3357,11 @@ namespace Mono.CSharp {
 			}
 
 			return this;
+		}
+
+		public override TypeExpr ResolveAsTypeTerminal (IResolveContext ec, bool silent)
+		{
+			return null;
 		}
 
 		public override void Emit (EmitContext ec)
@@ -5645,7 +5660,7 @@ namespace Mono.CSharp {
 			if (texpr == null)
 				return null;
 
-			type = texpr.ResolveType (ec);
+			type = texpr.Type;
 
 			if (Arguments == null) {
 				Expression c = Constantify (type);
@@ -6087,7 +6102,7 @@ namespace Mono.CSharp {
 			if (array_type_expr == null)
 				return false;
 
-			type = array_type_expr.ResolveType (ec);		
+			type = array_type_expr.Type;
 			underlying_type = TypeManager.GetElementType (type);
 			dimensions = type.GetArrayRank ();
 
@@ -6816,7 +6831,7 @@ namespace Mono.CSharp {
 			if (texpr == null)
 				return null;
 
-			typearg = texpr.ResolveType (ec);
+			typearg = texpr.Type;
 
 			if (typearg == TypeManager.void_type) {
 				Error (673, "System.Void cannot be used from C#. Use typeof (void) to get the void type object");
@@ -6886,7 +6901,7 @@ namespace Mono.CSharp {
 			if (texpr == null)
 				return null;
 
-			type_queried = texpr.ResolveType (ec);
+			type_queried = texpr.Type;
 
 			int size_of = GetTypeSize (type_queried);
 			if (size_of > 0) {
@@ -7160,8 +7175,7 @@ namespace Mono.CSharp {
 				return null;
 			} 
 
-			member_lookup = member_lookup.ResolveAsTypeTerminal (rc, silent);
-			return (member_lookup as TypeExpr);
+			return member_lookup.ResolveAsTypeTerminal (rc, silent);
 		}
 
 		public override void Emit (EmitContext ec)
@@ -8362,7 +8376,7 @@ namespace Mono.CSharp {
 			if (lexpr == null)
 				return null;
 
-			Type ltype = lexpr.ResolveType (ec);
+			Type ltype = lexpr.Type;
 			if ((ltype == TypeManager.void_type) && (dim != "*")) {
 				Report.Error (1547, Location,
 					      "Keyword 'void' cannot be used in this context");
@@ -8533,7 +8547,7 @@ namespace Mono.CSharp {
 			if (texpr == null)
 				return null;
 
-			otype = texpr.ResolveType (ec);
+			otype = texpr.Type;
 
 			if (!TypeManager.VerifyUnManaged (otype, loc))
 				return null;
