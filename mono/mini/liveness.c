@@ -381,6 +381,9 @@ mono_analyze_liveness (MonoCompile *cfg)
 	gboolean *in_worklist;
 	MonoBasicBlock **worklist;
 	guint32 l_end;
+	int bitsize;
+	guint8 *mem;
+
 	static int count = 0;
 
 #ifdef DEBUG_LIVENESS
@@ -394,13 +397,18 @@ mono_analyze_liveness (MonoCompile *cfg)
 	if (max_vars == 0)
 		return;
 
+	bitsize = mono_bitset_alloc_size (max_vars, 0);
+	mem = mono_mempool_alloc0 (cfg->mempool, cfg->num_bblocks * bitsize * 3);
+
 	for (i = 0; i < cfg->num_bblocks; ++i) {
 		MonoBasicBlock *bb = cfg->bblocks [i];
 
-		bb->gen_set = mono_bitset_mp_new (cfg->mempool, max_vars);
-		bb->kill_set = mono_bitset_mp_new (cfg->mempool, max_vars);
-		bb->live_in_set = mono_bitset_mp_new_noinit (cfg->mempool, max_vars);
-		//bb->live_out_set = mono_bitset_mp_new (cfg->mempool, max_vars);
+		bb->gen_set = mono_bitset_mem_new (mem, max_vars, MONO_BITSET_DONT_FREE);
+		mem += bitsize;
+		bb->kill_set = mono_bitset_mem_new (mem, max_vars, MONO_BITSET_DONT_FREE);
+		mem += bitsize;
+		bb->live_in_set = mono_bitset_mem_new (mem, max_vars, MONO_BITSET_DONT_FREE);
+		mem += bitsize;
 	}
 	for (i = 0; i < max_vars; i ++) {
 		MONO_VARINFO (cfg, i)->range.first_use.abs_pos = ~ 0;
