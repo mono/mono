@@ -1,3 +1,12 @@
+2006-03-03  Mike Kestner  <mkestner@novell.com>
+
+	* ListView.cs: Refactor into HeaderControl and ItemControl. Fix new
+	event declarations to proxy to base event.
+	* ListViewItem.cs: update to use ItemControl.
+	* Theme.cs: make DrawListViewHeader. s/DrawListView/DrawListViewItems.
+	* ThemeWin32Classic.cs: update to new ListView theme API and fix
+	column header label rendering for 0 width columns.
+
 2006-03-03  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* Control.cs (ControlCollection.SetChildIndex): Avoid using a call

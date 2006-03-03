@@ -695,7 +695,8 @@ namespace System.Windows.Forms
 		
 		#region ListView
 		// Drawing
-		public abstract void DrawListView (Graphics dc, Rectangle clip_rectangle, ListView control);
+		public abstract void DrawListViewItems (Graphics dc, Rectangle clip_rectangle, ListView control);
+		public abstract void DrawListViewHeader (Graphics dc, Rectangle clip_rectangle, ListView control);
 
 		// Sizing
 		public abstract Size ListViewCheckBoxSize { get; }

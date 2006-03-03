@@ -1407,31 +1407,16 @@ namespace System.Windows.Forms
 
 		#region ListView
 		// Drawing
-		public override void DrawListView (Graphics dc, Rectangle clip, ListView control)
+		public override void DrawListViewItems (Graphics dc, Rectangle clip, ListView control)
 		{
-			bool details = (control.View == View.Details);
-			Rectangle client_area_nohdrs;			
-			DrawListViewHeader (dc, clip, control);
-			
-			if (details && control.HeaderStyle != ColumnHeaderStyle.None && control.Columns.Count > 0) {
-				client_area_nohdrs = control.client_area;
-				client_area_nohdrs.Y += control.Columns[0].Ht;
-				client_area_nohdrs.Height -= control.Columns[0].Ht;
-				dc.SetClip (client_area_nohdrs);				
-			} else
-				dc.SetClip (control.client_area);
-			
+			bool details = control.View == View.Details;
+
 			dc.FillRectangle (ResPool.GetSolidBrush (control.BackColor), clip);						
-						
-			// In case of details view draw the items only if
-			// columns are non-zero			
-			if (!details || control.Columns.Count > 0) {
-				int first = control.FirstVisibleIndex;	
-				
-				for (int i = first; i <= control.LastVisibleIndex; i ++) {					
-					if (clip.IntersectsWith (control.Items[i].GetBounds (ItemBoundsPortion.Entire)))
-						DrawListViewItem (dc, control, control.Items[i]);
-				}				
+			int first = control.FirstVisibleIndex;	
+
+			for (int i = first; i <= control.LastVisibleIndex; i ++) {					
+				if (clip.IntersectsWith (control.Items[i].GetBounds (ItemBoundsPortion.Entire)))
+					DrawListViewItem (dc, control, control.Items [i]);
 			}	
 			
 			// draw the gridlines
@@ -1477,7 +1462,7 @@ namespace System.Windows.Forms
 
 		}
 		
-		private void DrawListViewHeader (Graphics dc, Rectangle clip, ListView control)
+		public override void DrawListViewHeader (Graphics dc, Rectangle clip, ListView control)
 		{	
 			bool details = (control.View == View.Details);
 				
@@ -1497,6 +1482,8 @@ namespace System.Windows.Forms
 						this.CPDrawButton (dc, rect, state);
 						rect.X += 3;
 						rect.Width -= 8;
+						if (rect.Width <= 0)
+							continue;
 						dc.DrawString (col.Text, DefaultFont,
 							       ResPool.GetSolidBrush (ColorControlText),
 							       rect, col.Format);

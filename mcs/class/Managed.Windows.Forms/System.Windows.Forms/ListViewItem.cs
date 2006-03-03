@@ -473,8 +473,8 @@ namespace System.Windows.Forms
 				bounds.Y = value.Y;
 				if (owner != null) {
 					if (prev != Rectangle.Empty)
-						owner.Invalidate (prev);
-					owner.Invalidate (Bounds);
+						owner.item_control.Invalidate (prev);
+					owner.item_control.Invalidate (Bounds);
 				}
 			}
 		}
@@ -493,10 +493,10 @@ namespace System.Windows.Forms
 
 		private void Invalidate ()
 		{
-			if (owner == null)
+			if (owner == null || owner.item_control == null)
 				return;
 
-			owner.Invalidate (Bounds);
+			owner.item_control.Invalidate (Bounds);
 		}
 
 		internal void Layout ()

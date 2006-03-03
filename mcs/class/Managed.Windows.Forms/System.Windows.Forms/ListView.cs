@@ -57,14 +57,7 @@ namespace System.Windows.Forms
 		private bool check_boxes = false;
 		private CheckedIndexCollection checked_indices;
 		private CheckedListViewItemCollection checked_items;
-		private ColumnHeader clicked_column;
-		private ListViewItem clicked_item;
-		private ListViewItem last_clicked_item;
 		private ColumnHeaderCollection columns;
-		private ColumnHeader resize_column;
-		private bool column_resize_active = false;
-		private bool ctrl_pressed;
-		private bool shift_pressed;
 		internal ListViewItem focused_item;
 		private bool full_row_select = false;
 		private bool grid_lines = false;
@@ -86,11 +79,12 @@ namespace System.Windows.Forms
 		private int layout_wd;    // We might draw more than our client area
 		private int layout_ht;    // therefore we need to have these two.
 		//private TextBox editor;   // Used for editing an item text
+		HeaderControl header_control;
+		internal ItemControl item_control;
 		internal ScrollBar h_scroll; // used for scrolling horizontally
 		internal ScrollBar v_scroll; // used for scrolling vertically
 		internal int h_marker;		// Position markers for scrolling
 		internal int v_marker;
-		internal Rectangle client_area; // ClientRectangle - scrollbars
 		private int keysearch_tickcnt;
 		private string keysearch_text;
 		static private readonly int keysearch_keydelay = 1000;
@@ -105,7 +99,10 @@ namespace System.Windows.Forms
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event EventHandler BackgroundImageChanged;
+		public new event EventHandler BackgroundImageChanged {
+			add { base.BackgroundImageChanged += value; }
+			remove { base.BackgroundImageChanged -= value; }
+		}
 
 		public event LabelEditEventHandler BeforeLabelEdit;
 		public event ColumnClickEventHandler ColumnClick;
@@ -115,13 +112,20 @@ namespace System.Windows.Forms
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event PaintEventHandler Paint;
+		public new event PaintEventHandler Paint {
+			add { base.Paint += value; }
+			remove { base.Paint -= value; }
+		}
 
 		public event EventHandler SelectedIndexChanged;
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event EventHandler TextChanged;
+		public new event EventHandler TextChanged {
+			add { base.TextChanged += value; }
+			remove { base.TextChanged -= value; }
+		}
+
 		#endregion // Events
 
 		#region Public Constructors
@@ -138,7 +142,11 @@ namespace System.Windows.Forms
 
 			border_style = BorderStyle.Fixed3D;
 
-			// we are mostly scrollable
+			header_control = new HeaderControl (this);
+			header_control.Visible = false;
+			item_control = new ItemControl (this);
+			item_control.Visible = true;
+
 			h_scroll = new HScrollBar ();
 			v_scroll = new VScrollBar ();
 			h_marker = v_marker = 0;
@@ -151,13 +159,7 @@ namespace System.Windows.Forms
 			v_scroll.ValueChanged += new EventHandler(VerticalScroller);
 
 			// event handlers
-			base.DoubleClick += new EventHandler(ListView_DoubleClick);
 			base.KeyDown += new KeyEventHandler(ListView_KeyDown);
-			base.KeyUp += new KeyEventHandler(ListView_KeyUp);
-			base.MouseDown += new MouseEventHandler(ListView_MouseDown);
-			base.MouseHover += new EventHandler(ListView_MouseHover);
-			base.MouseUp += new MouseEventHandler(ListView_MouseUp);
-			base.MouseMove += new MouseEventHandler(ListView_MouseMove);
 			base.Paint += new PaintEventHandler (ListView_Paint);
 			SizeChanged += new EventHandler (ListView_SizeChanged);
 
@@ -180,8 +182,7 @@ namespace System.Windows.Forms
 
 		internal bool CanMultiselect {
 			get {
-				if (this.multiselect &&
-					(this.ctrl_pressed || this.shift_pressed))
+				if (multiselect && (XplatUI.State.ModifierKeys & (Keys.Control | Keys.Shift)) != 0)
 					return true;
 				else
 					return false;
@@ -238,14 +239,7 @@ namespace System.Windows.Forms
 		[DefaultValue (false)]
 		public bool AllowColumnReorder {
 			get { return allow_column_reorder; }
-			set {
-				if (this.allow_column_reorder != value) {
-					allow_column_reorder = value;
-					// column reorder does not matter in Details view
-					if (this.view != View.Details)
-						this.Redraw (true);
-				}
-			}
+			set { allow_column_reorder = value; }
 		}
 
 		[DefaultValue (true)]
@@ -280,8 +274,7 @@ namespace System.Windows.Forms
 					return;
 
 				background_image = value;
-				if (BackgroundImageChanged != null)
-					BackgroundImageChanged (this, new EventArgs ());
+				OnBackgroundImageChanged (EventArgs.Empty);
 			}
 		}
 
@@ -359,18 +352,22 @@ namespace System.Windows.Forms
 		public ColumnHeaderStyle HeaderStyle {
 			get { return header_style; }
 			set {
-				if (value != ColumnHeaderStyle.Clickable && value != ColumnHeaderStyle.Nonclickable  && 
-					value != ColumnHeaderStyle.None) {
+				if (header_style == value)
+					return;
+
+				switch (value) {
+				case ColumnHeaderStyle.Clickable:
+				case ColumnHeaderStyle.Nonclickable:
+				case ColumnHeaderStyle.None:
+					break;
+				default:
 					throw new InvalidEnumArgumentException (string.Format 
 						("Enum argument value '{0}' is not valid for ColumnHeaderStyle", value));
 				}
 				
-				if (header_style != value) {
-					header_style = value;
-					// header style matters only in Details view
-					if (this.view == View.Details)
-						this.Redraw (false);
-				}
+				header_style = value;
+				if (view == View.Details)
+					Redraw (true);
 			}
 		}
 
@@ -508,8 +505,7 @@ namespace System.Windows.Forms
 				text = value;
 				this.Redraw (true);
 
-				if (TextChanged != null)
-					TextChanged (this, new EventArgs ());
+				OnTextChanged (EventArgs.Empty);
 			}
 		}
 
@@ -715,7 +711,7 @@ namespace System.Windows.Forms
 
 		private void CalculateScrollBars ()
 		{
-			client_area = ClientRectangle;
+			Rectangle client_area = ClientRectangle;
 			
 			if (!this.scrollable || this.items.Count <= 0) {
 				h_scroll.Visible = false;
@@ -727,24 +723,22 @@ namespace System.Windows.Forms
 			// other scroll bar visible			
 			if (layout_wd > client_area.Right) {
 				h_scroll.Visible = true;
-				if ((layout_ht + h_scroll.Height) > client_area.Bottom) {
+				if ((layout_ht + h_scroll.Height) > client_area.Bottom)
 					v_scroll.Visible = true;					
-				}
-				else {
+				else
 					v_scroll.Visible = false;
-				}
 			} else if (layout_ht > client_area.Bottom) {				
 				v_scroll.Visible = true;
-				if ((layout_wd + v_scroll.Width) > client_area.Right) {
+				if ((layout_wd + v_scroll.Width) > client_area.Right)
 					h_scroll.Visible = true;
-				}
-				else {
+				else
 					h_scroll.Visible = false;
-				}
 			} else {
 				h_scroll.Visible = false;
 				v_scroll.Visible = false;
 			}			
+
+			item_control.Height = ClientRectangle.Height - header_control.Height;
 
 			if (h_scroll.Visible) {
 				h_scroll.Location = new Point (client_area.X, client_area.Bottom - h_scroll.Height);
@@ -763,10 +757,13 @@ namespace System.Windows.Forms
    
 				h_scroll.LargeChange = client_area.Width;
 				h_scroll.SmallChange = Font.Height;
-				client_area.Height -= h_scroll.Height;
+				item_control.Height -= h_scroll.Height;
 			}
 
-			// vertical scrollbar
+			if (header_control.Visible)
+				header_control.Width = ClientRectangle.Width;
+			item_control.Width = ClientRectangle.Width;
+
 			if (v_scroll.Visible) {
 				v_scroll.Location = new Point (client_area.Right - v_scroll.Width, client_area.Y);
 				v_scroll.Minimum = 0;
@@ -783,7 +780,9 @@ namespace System.Windows.Forms
 
 				v_scroll.LargeChange = client_area.Height;
 				v_scroll.SmallChange = Font.Height;
-				client_area.Width -= v_scroll.Width;
+				if (header_control.Visible)
+					header_control.Width -= v_scroll.Width;
+				item_control.Width -= v_scroll.Width;
 			}
 		}
 		
@@ -805,6 +804,10 @@ namespace System.Windows.Forms
 
 		void LayoutIcons (bool large_icons, bool left_aligned, int x_spacing, int y_spacing)
 		{
+			header_control.Visible = false;
+			header_control.Size = Size.Empty;
+			item_control.Location = Point.Empty;
+
 			if (items.Count == 0)
 				return;
 
@@ -812,13 +815,15 @@ namespace System.Windows.Forms
 
 			int rows, cols;
 
+			Rectangle area = item_control.ClientRectangle;
+
 			if (left_aligned) {
-				rows = (int) Math.Floor ((double)client_area.Height / (double)(sz.Height + y_spacing));
+				rows = (int) Math.Floor ((double)area.Height / (double)(sz.Height + y_spacing));
 				if (rows == 0)
 					rows = 1;
 				cols = (int) Math.Ceiling ((double)items.Count / (double)rows);
 			} else {
-				cols = (int) Math.Floor ((double)client_area.Width / (double)(sz.Width + x_spacing));
+				cols = (int) Math.Floor ((double)area.Width / (double)(sz.Width + x_spacing));
 				if (cols == 0)
 					cols = 1;
 				rows = (int) Math.Ceiling ((double)items.Count / (double)cols);
@@ -845,51 +850,61 @@ namespace System.Windows.Forms
 					}
 				}
 			}
+
+			item_control.Size = new Size (layout_wd, layout_ht);
 		}
 
-		// Sets the location of every item on
-		// the ListView as per the view
+		void LayoutHeader ()
+		{
+			if (columns.Count == 0 || header_style == ColumnHeaderStyle.None) {
+				header_control.Visible = false;
+				header_control.Size = Size.Empty;
+				return;
+			}
+
+			int x = 0;
+			foreach (ColumnHeader col in columns) {
+				col.X = x;
+				col.Y = 0;
+				col.CalcColumnHeader ();
+				x += col.Wd;
+			}
+
+			header_control.Width = x;
+			header_control.Height = columns [0].Ht;
+			header_control.Visible = true;
+		}
+
+		void LayoutDetails ()
+		{
+			LayoutHeader ();
+
+			item_control.Location = new Point (0, header_control.Height);
+
+			int y = 0; 
+			if (items.Count > 0) {
+				foreach (ListViewItem item in items) {
+					item.Layout ();
+					item.Location = new Point (0, y);
+					y += item.Bounds.Height + 2;
+				}
+
+				// some space for bottom gridline
+				if (grid_lines)
+					y += 2;
+			}
+
+			layout_wd = Math.Max (header_control.Width, item_control.Width);
+			layout_ht = y + header_control.Height;
+		}
+
 		private void CalculateListView (ListViewAlignment align)
 		{
-			int current_pos_x = 0; // our x-position marker
-			int current_pos_y = 0; // our y-position marker
-
 			CalcTextSize ();
 
 			switch (view) {
-
 			case View.Details:
-				// ColumnHeaders are not drawn if headerstyle is none
-				int ht = 0;
-				
-				if (columns.Count > 0) {
-					foreach (ColumnHeader col in columns) {
-						col.X = current_pos_x;
-						col.Y = current_pos_y;
-						col.CalcColumnHeader ();
-						current_pos_x += col.Wd;
-					}
-					
-					if (header_style != ColumnHeaderStyle.None) 
-						ht = columns [0].Ht;
-					layout_wd = current_pos_x;
-				}
-				// set the position marker for placing items
-				// vertically down
-				current_pos_y = ht + 2;
-
-				if (items.Count > 0) {
-					foreach (ListViewItem item in items) {
-						item.Layout ();
-						item.Location = new Point (0, current_pos_y);
-						current_pos_y += item.Bounds.Height + 2;
-					}
-					layout_ht = current_pos_y;
-
-					// some space for bottom gridline
-					if (grid_lines)
-						layout_ht += 2;
-				}
+				LayoutDetails ();
 				break;
 
 			case View.SmallIcon:
@@ -908,7 +923,6 @@ namespace System.Windows.Forms
 			}
 
                         CalculateScrollBars ();
-                        
 		}
 
 		internal void UpdateSelection (ListViewItem item)
@@ -957,28 +971,15 @@ namespace System.Windows.Forms
 			return true;
 		}
 
-				
-		// Event Handlers
-		private void ListView_DoubleClick (object sender, EventArgs e)
-		{
-			if (this.activation == ItemActivation.Standard
-			    && this.ItemActivate != null)
-				this.ItemActivate (this, e);
-		}
-
 		private void ListView_KeyDown (object sender, KeyEventArgs ke)
 		{			
-			int index = -1;
 			if (ke.Handled || Items.Count == 0)
 				return;
 
+			int index = -1;
 			ke.Handled = true;
 
 			switch (ke.KeyCode) {
-
-			case Keys.ControlKey:
-				ctrl_pressed = true;
-				break;
 
 			case Keys.Down:
 				if (focused_item != null && focused_item.Index + 1 < Items.Count) {
@@ -995,7 +996,6 @@ namespace System.Windows.Forms
 				break;
 
 			case Keys.Left:
-				index = -1;
 				if (focused_item != null)
 					index = focused_item.Index;
 				else
@@ -1015,10 +1015,6 @@ namespace System.Windows.Forms
 				if (index == items.Count)
 					index = -1;
 
-				break;
-
-			case Keys.ShiftKey:
-				shift_pressed = true;
 				break;
 
 			case Keys.Up:				
@@ -1051,243 +1047,142 @@ namespace System.Windows.Forms
 			}
 		}
 
-		private void ListView_KeyUp (object sender, KeyEventArgs ke)
-		{
-			if (!ke.Handled) {
-				if (ke.KeyCode == Keys.ControlKey)
-					this.ctrl_pressed = false;
+				
+		internal class ItemControl : Control {
 
-				if (ke.KeyCode == Keys.ShiftKey)
-					this.shift_pressed = false;
-				ke.Handled = true;
+			ListView owner;
+			ListViewItem clicked_item;
+			ListViewItem last_clicked_item;
+
+			public ItemControl (ListView owner)
+			{
+				this.owner = owner;
+				DoubleClick += new EventHandler(ItemsDoubleClick);
+				MouseDown += new MouseEventHandler(ItemsMouseDown);
+				MouseHover += new EventHandler(ItemsMouseHover);
+				MouseUp += new MouseEventHandler(ItemsMouseUp);
+				Paint += new PaintEventHandler (ItemsPaint);
 			}
-		}
 
-		private void ListView_MouseDown (object sender, MouseEventArgs me)
-		{
-			if (items.Count == 0)
-				return;
+			void ItemsDoubleClick (object sender, EventArgs e)
+			{
+				if (owner.activation == ItemActivation.Standard && owner.ItemActivate != null)
+					owner.ItemActivate (this, e);
+			}
 
-			Point hit = Point.Empty;
-			if (this.HeaderStyle != ColumnHeaderStyle.None) {
-				// take horizontal scrolling into account
-				hit = new Point (me.X + h_marker, me.Y);
+			private void ItemsMouseDown (object sender, MouseEventArgs me)
+			{
+				if (owner.items.Count == 0)
+					return;
 
-				// hit test on columns
-				if (this.view == View.Details && this.columns.Count > 0) {
-					if (resize_column != null) {
-						column_resize_active = true;
-						Capture = true;
-						return;
+				Point pt = new Point (me.X, me.Y);
+				foreach (ListViewItem item in owner.items) {
+					if (item.CheckRectReal.Contains (pt)) {
+						CheckState curr_state = item.Checked ?  CheckState.Checked : CheckState.Unchecked;
+						item.Checked = !item.Checked;
+
+						CheckState new_state = item.Checked ?  CheckState.Checked : CheckState.Unchecked;
+
+						// Raise the ItemCheck event
+						ItemCheckEventArgs ice = new ItemCheckEventArgs (item.Index, curr_state, new_state);
+						owner.OnItemCheck (ice);
+						break;
 					}
 
-					foreach (ColumnHeader col in this.columns) {
-						if (col.Rect.Contains (hit)) {
-							this.clicked_column = col;
-							this.Capture = true;
+					if (owner.View == View.Details && !owner.FullRowSelect) {
+						if (item.GetBounds (ItemBoundsPortion.Label).Contains (pt)) {
+							clicked_item = item;
+							break;
+						}
+					} else {
+						if (item.Bounds.Contains (pt)) {
+							clicked_item = item;
 							break;
 						}
 					}
-
-					if (this.clicked_column != null) {
-						this.clicked_column.pressed = true;
-						Rectangle bounds = clicked_column.Rect;
-						bounds.X -= h_marker;
-						Invalidate (bounds);
-						return;
-					}
-				}
-			}
-
-			// hit test on items
-			// we need to take scrolling into account
-			hit = new Point (me.X, me.Y);
-			foreach (ListViewItem item in this.items) {
-				if (item.CheckRectReal.Contains (hit)) {
-					CheckState curr_state = item.Checked ?
-						CheckState.Checked : CheckState.Unchecked;
-					if (item.Checked)
-						item.Checked = false;
-					else
-						item.Checked = true;
-
-					CheckState new_state = item.Checked ?
-						CheckState.Checked : CheckState.Unchecked;
-
-					// Raise the ItemCheck event
-					ItemCheckEventArgs ice = new ItemCheckEventArgs (item.Index,
-											 curr_state,
-											 new_state);
-					this.OnItemCheck (ice);
-					break;
 				}
 
-				if (this.view == View.Details &&
-				    this.FullRowSelect == false) {
-					if (item.GetBounds (ItemBoundsPortion.Label).Contains (hit)) {
-						this.clicked_item = item;
-						break;
-					}
-				}
-				else {
-					if (item.Bounds.Contains (hit)) {
-						this.clicked_item = item;
-						break;
-					}
-				}
-			}
+				owner.SetFocusedItem (clicked_item);
 
-			SetFocusedItem (clicked_item);
-
-			if (clicked_item != null) {
-				bool changed = !clicked_item.Selected;
-				clicked_item.Selected = true;;
+				if (clicked_item != null) {
+					bool changed = !clicked_item.Selected;
+					clicked_item.Selected = true;;
 				
-				// Only Raise the event if the selected item has changed
-				if (changed)
-					OnSelectedIndexChanged (EventArgs.Empty);
+					if (changed)
+						owner.OnSelectedIndexChanged (EventArgs.Empty);
 
-				// Raise double click if the item was clicked. On MS the
-				// double click is only raised if you double click an item
-				if (me.Clicks > 1 && this.clicked_item != null)
-					OnDoubleClick (EventArgs.Empty);
-				else if (me.Clicks == 1 && clicked_item != null)
-					OnClick (EventArgs.Empty);
-			} else if (selected_indices.Count > 0) {
-				// Raise the event if there was at least one item
-				// selected and the user click on a dead area (unselecting all)
-				SelectedItems.Clear ();
-				SelectedIndices.list.Clear ();
-				OnSelectedIndexChanged (EventArgs.Empty);
+					// Raise double click if the item was clicked. On MS the
+					// double click is only raised if you double click an item
+					if (me.Clicks > 1 && clicked_item != null)
+						owner.OnDoubleClick (EventArgs.Empty);
+					else if (me.Clicks == 1 && clicked_item != null)
+						owner.OnClick (EventArgs.Empty);
+				} else if (owner.selected_indices.Count > 0) {
+					// Raise the event if there was at least one item
+					// selected and the user click on a dead area (unselecting all)
+					owner.SelectedItems.Clear ();
+					owner.SelectedIndices.list.Clear ();
+					owner.OnSelectedIndexChanged (EventArgs.Empty);
+				}
 			}
-		}
 
-		private void ListView_MouseHover (object sender, EventArgs e)
-		{
-			// handle the hover events only when the mouse
-			// is not captured.
-			if (this.hover_selection == false || this.Capture)
-				return;
+			private void ItemsMouseHover (object sender, EventArgs e)
+			{
+				if (Capture || !owner.hover_selection)
+					return;
 
-			// hit test for the items
-			Point hit = this.PointToClient (Control.MousePosition);
-			ListViewItem item = this.GetItemAt (hit.X, hit.Y);
+				Point pt = PointToClient (Control.MousePosition);
+				ListViewItem item = owner.GetItemAt (pt.X, pt.Y);
 
-			if (item != null) {
+				if (item == null)
+					return;
+
 				item.Selected = true;
-				// Raise the event
-				this.OnSelectedIndexChanged (new EventArgs ());
-			}
-		}
-
-		private void ListView_MouseMove (object sender, MouseEventArgs me)
-		{
-			if (View != View.Details || Columns.Count < 2)
-				return;
-
-			// Column header is always at the top. It can
-			// scroll only horizontally. So, we have to take
-			// only horizontal scrolling into account
-			Point hit = new Point (me.X + h_marker, me.Y);
-
-			if (column_resize_active)  {
-				resize_column.Width = hit.X - resize_column.X;
-				if (resize_column.Width < 0)
-					resize_column.Width = 0;
-				return;
+				owner.OnSelectedIndexChanged (new EventArgs ());
 			}
 
-			resize_column = null;
-
-			for (int i = 0; i < Columns.Count; i++) {
-				Rectangle zone = Columns [i].Rect;
-				zone.X = zone.Right - 5;
-				zone.Width = 10;
-				if (zone.Contains (hit)) {
-					resize_column = Columns [i];
-					break;
-				}
-			}
-
-			if (resize_column == null)
-				Cursor = Cursors.Default;
-			else
-				Cursor = Cursors.VSplit;
-
-			// non-null clicked_col means mouse down has happened
-			// on a column
-			// FIXME: this seems to be drag related
-			if (this.clicked_column != null) {
-				if (this.clicked_column.pressed == false &&
-				    this.clicked_column.Rect.Contains (hit)) {
-					this.clicked_column.pressed = true;
-					this.Redraw (false);
-				}
-				else if (this.clicked_column.pressed && 
-					 ! this.clicked_column.Rect.Contains (hit)) {
-					this.clicked_column.pressed = false;
-					this.Redraw (false);
-				}
-			}
-		}
-
-		private void ListView_MouseUp (object sender, MouseEventArgs me)
-		{
-			this.Capture = false;
-			if (items.Count == 0)
-				return;
-
-			if (column_resize_active) {
+			private void ItemsMouseUp (object sender, MouseEventArgs me)
+			{
 				Capture = false;
-				column_resize_active = false;
-				resize_column = null;
-				Cursor = Cursors.Default;
-				return;
-			}
+				if (owner.Items.Count == 0)
+					return;
 
-			Point hit = new Point (me.X, me.Y);
+				Point pt = new Point (me.X, me.Y);
 
-			if (this.clicked_column != null) {
-				if (this.clicked_column.pressed) {
-					this.clicked_column.pressed = false;
-					Rectangle bounds = clicked_column.Rect;
-					bounds.X -= h_marker;
-					Invalidate (bounds);
+				Rectangle rect = Rectangle.Empty;
+				if (clicked_item != null) {
+					if (owner.view == View.Details && !owner.full_row_select)
+						rect = clicked_item.GetBounds (ItemBoundsPortion.Label);
+					else
+						rect = clicked_item.Bounds;
 
-					// Raise the ColumnClick event
-					this.OnColumnClick (new ColumnClickEventArgs
-							    (this.clicked_column.Index));
-				}
-			}
+					if (rect.Contains (pt)) {
+						switch (owner.activation) {
+						case ItemActivation.OneClick:
+							owner.ItemActivate (this, EventArgs.Empty);
+							break;
 
-			// Raise the ItemActivate event
-			Rectangle rect = Rectangle.Empty;
-			if (this.clicked_item != null) {
-				if (this.view == View.Details && !this.full_row_select)
-					rect = this.clicked_item.GetBounds (ItemBoundsPortion.Label);
-				else
-					rect = this.clicked_item.Bounds;
-
-				// We handle double click in a separate handler
-				if (this.activation != ItemActivation.Standard &&
-				    rect.Contains (hit)) {
-					if (this.activation == ItemActivation.OneClick)
-						this.ItemActivate (this, EventArgs.Empty);
-
-					// ItemActivate is raised on the second click on the same item
-					else if (this.activation == ItemActivation.TwoClick) {
-						if (this.last_clicked_item == this.clicked_item) {
-							this.ItemActivate (this, EventArgs.Empty);
-							this.last_clicked_item = null;
+						case ItemActivation.TwoClick:
+							if (last_clicked_item == clicked_item) {
+								owner.ItemActivate (this, EventArgs.Empty);
+								last_clicked_item = null;
+							} else
+								last_clicked_item = clicked_item;
+							break;
+						default:
+							// DoubleClick activation is handled in another handler
+							break;
 						}
-						else
-							this.last_clicked_item = this.clicked_item;
 					}
 				}
+
+				clicked_item = null;
 			}
 
-			this.clicked_column = null;
-			this.clicked_item = null;
+			private void ItemsPaint (object sender, PaintEventArgs pe)
+			{
+				ThemeEngine.Current.DrawListViewItems (pe.Graphics, pe.ClipRectangle, owner);
+			}
 		}
 
 		private void ListView_Paint (object sender, PaintEventArgs pe)
@@ -1296,13 +1191,6 @@ namespace System.Windows.Forms
 				return;	
 				
 			CalculateScrollBars ();
-
-			ThemeEngine.Current.DrawListView (pe.Graphics,
-					pe.ClipRectangle, this);
-					
-			// Raise the Paint event
-			if (Paint != null)
-				Paint (this, pe);
 		}
 
 		private void ListView_SizeChanged (object sender, EventArgs e)
@@ -1328,10 +1216,12 @@ namespace System.Windows.Forms
 			if (h_marker != h_scroll.Value) {
 				
 				int pixels =  h_marker - h_scroll.Value;
-				Rectangle area = client_area;
 				
 				h_marker = h_scroll.Value;
-				XplatUI.ScrollWindow (Handle, area, pixels, 0, false);
+				if (header_control.Visible)
+					XplatUI.ScrollWindow (header_control.Handle, pixels, 0, false);
+
+				XplatUI.ScrollWindow (item_control.Handle, pixels, 0, false);
 			}
 		}
 
@@ -1341,15 +1231,9 @@ namespace System.Windows.Forms
 			// kept pressed at the end
 			if (v_marker != v_scroll.Value) {
 				int pixels =  v_marker - v_scroll.Value;
-				Rectangle area = client_area;
-				
-				if (View == View.Details && header_style != ColumnHeaderStyle.None && Columns.Count > 0) {
-					area.Y += Columns[0].Ht;
-					area.Height -= Columns[0].Ht;
-				}
-				
+				Rectangle area = item_control.ClientRectangle;
 				v_marker = v_scroll.Value;
-				XplatUI.ScrollWindow (Handle, area, 0, pixels, false);
+				XplatUI.ScrollWindow (item_control.Handle, area, 0, pixels, false);
 			}
 		}
 		#endregion	// Internal Methods Properties
@@ -1427,6 +1311,8 @@ namespace System.Windows.Forms
 		{
 			base.OnHandleCreated (e);
 			SuspendLayout ();
+			Controls.AddImplicit (header_control);
+			Controls.AddImplicit (item_control);
 			Controls.AddImplicit (this.v_scroll);
 			Controls.AddImplicit (this.h_scroll);
 			ResumeLayout ();
@@ -1524,7 +1410,7 @@ namespace System.Windows.Forms
 			if (index < 0 || index >= items.Count || scrollable == false)
 				return;
 
-			Rectangle view_rect = new Rectangle (0, 0, client_area.Width, client_area.Height);
+			Rectangle view_rect = item_control.ClientRectangle;
 			Rectangle bounds = items [index].Bounds;
 
 			if (view_rect.Contains (bounds))
@@ -1587,6 +1473,111 @@ namespace System.Windows.Forms
 
 
 		#region Subclasses
+
+		class HeaderControl : Control {
+
+			ListView owner;
+			bool column_resize_active = false;
+			ColumnHeader resize_column;
+			ColumnHeader clicked_column;
+
+			public HeaderControl (ListView owner)
+			{
+				this.owner = owner;
+				MouseDown += new MouseEventHandler (HeaderMouseDown);
+				MouseMove += new MouseEventHandler (HeaderMouseMove);
+				MouseUp += new MouseEventHandler (HeaderMouseUp);
+				Paint += new PaintEventHandler (HeaderPaint);
+			}
+
+			private void HeaderMouseDown (object sender, MouseEventArgs me)
+			{
+				Point hit = new Point (me.X + owner.h_marker, me.Y);
+
+				if (resize_column != null) {
+					column_resize_active = true;
+					Capture = true;
+					return;
+				}
+
+				foreach (ColumnHeader col in owner.Columns) {
+					if (col.Rect.Contains (hit)) {
+						clicked_column = col;
+						Capture = true;
+						break;
+					}
+				}
+
+				if (clicked_column != null) {
+					clicked_column.pressed = true;
+					Rectangle bounds = clicked_column.Rect;
+					bounds.X -= owner.h_marker;
+					Invalidate (bounds);
+					return;
+				}
+			}
+
+			private void HeaderMouseMove (object sender, MouseEventArgs me)
+			{
+				Point hit = new Point (me.X + owner.h_marker, me.Y);
+
+				if (column_resize_active)  {
+					resize_column.Width = hit.X - resize_column.X;
+					if (resize_column.Width < 0)
+						resize_column.Width = 0;
+					return;
+				}
+
+				resize_column = null;
+
+				for (int i = 0; i < owner.Columns.Count; i++) {
+					Rectangle zone = owner.Columns [i].Rect;
+					zone.X = zone.Right - 5;
+					zone.Width = 10;
+					if (zone.Contains (hit)) {
+						resize_column = owner.Columns [i];
+						break;
+					}
+				}
+
+				if (resize_column == null)
+					Cursor = Cursors.Default;
+				else
+					Cursor = Cursors.VSplit;
+			}
+
+			void HeaderMouseUp (object sender, MouseEventArgs me)
+			{
+				Capture = false;
+
+				if (column_resize_active) {
+					column_resize_active = false;
+					resize_column = null;
+					Cursor = Cursors.Default;
+					return;
+				}
+
+				if (clicked_column != null && clicked_column.pressed) {
+					clicked_column.pressed = false;
+					Rectangle bounds = clicked_column.Rect;
+					bounds.X -= owner.h_marker;
+					Invalidate (bounds);
+					owner.OnColumnClick (new ColumnClickEventArgs (clicked_column.Index));
+				}
+
+				clicked_column = null;
+			}
+
+			void HeaderPaint (object sender, PaintEventArgs pe)
+			{
+				if (Width <= 0 || Height <=  0 || !Visible || owner.updating)
+					return;	
+				
+				ThemeEngine.Current.DrawListViewHeader (pe.Graphics, pe.ClipRectangle, this.owner);
+			}
+					
+		}
+
 		public class CheckedIndexCollection : IList, ICollection, IEnumerable
 		{
 			internal ArrayList list;
