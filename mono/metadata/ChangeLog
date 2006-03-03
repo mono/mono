@@ -1,3 +1,14 @@
+2006-03-03  Raja R Harinath  <rharinath@novell.com>
+
+	Fix performance regression.
+	* loader.c (find_method_in_class): Add 'from_class' argument.
+	Rename 'klass' argument to 'in_class'.	The signature is compared
+	against the method in 'in_class', and the corresponding method is
+	returned from 'from_class'.
+	(find_method): Walk both 'in_class' and 'from_class' in parallel.
+	(method_from_memberref) [PARENT_TYPESPEC]: Use it to walk the
+	type definition and generic instantiation in parallel.
+	(mono_get_method_constrained): Update to changes.
 
 Thu Mar 2 12:27:41 CET 2006 Paolo Molaro <lupus@ximian.com>
 
