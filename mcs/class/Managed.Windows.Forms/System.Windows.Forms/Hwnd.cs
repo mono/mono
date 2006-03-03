@@ -556,7 +556,7 @@ namespace System.Windows.Forms {
 
 		public void ClearNcInvalidArea() {
 			nc_invalid = Rectangle.Empty;
-			expose_pending = false;
+			nc_expose_pending = false;
 		}
 
 		public override string ToString() {

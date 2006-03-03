@@ -1,3 +1,8 @@
+2006-03-02  Jackson Harper  <jackson@ximian.com>
+
+	* Hwnd.cs: Clear the nc pending when clearing the NC area, not the
+	expose_pending.
+
 2006-03-02  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* Control.cs: Implemented 2.0 feature where OnClick has MouseEventArgs
