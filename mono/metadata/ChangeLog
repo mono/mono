@@ -1,3 +1,7 @@
+2006-03-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* icall.c (ves_icall_type_Equals): Handle NULLs. Fixes #77700.
+
 2006-03-04  Martin Baulig  <martin@ximian.com>
 
 	* icall.c (ves_icall_MonoGenericClass_GetParentType): Dynamically
