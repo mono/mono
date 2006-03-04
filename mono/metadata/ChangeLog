@@ -1,5 +1,17 @@
 2006-03-04  Martin Baulig  <martin@ximian.com>
 
+	* icall.c (ves_icall_MonoGenericClass_GetParentType): Dynamically
+	compute the parent type at runtime, just like we're already doing
+	it for interfaces.
+
+	* reflection.c
+	(mono_reflection_bind_generic_parameters): Don't compute the
+	parent type anymore.
+
+	* class-internals.h (MonoDynamicGenericClass): Removed `parent'.
+
+2006-03-04  Martin Baulig  <martin@ximian.com>
+
 	* mono-debug-debugger.h
 	(mono_debugger_create_notification_function): Allocate memory at
 	runtime and return a pointer to it.
