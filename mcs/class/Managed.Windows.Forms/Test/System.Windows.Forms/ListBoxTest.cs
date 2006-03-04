@@ -41,153 +41,150 @@ namespace MonoTests.System.Windows.Forms
 	[TestFixture]
 	public class ListBoxTest
 	{
+		ListBox listBox;
+		Form f;
+
+		[SetUp]
+		public void SetUp()
+		{
+			listBox = new ListBox();
+			f = new Form();
+		}
+
 		[Test]
 		public void ListBoxPropertyTest ()
 		{
-			ListBox lb1 = new ListBox ();
-			Assert.AreEqual (0, lb1.ColumnWidth, "#1");
-			Assert.AreEqual (DrawMode.Normal, lb1.DrawMode, "#2");
-			Assert.AreEqual (0, lb1.HorizontalExtent, "#3");
-			Assert.AreEqual (false, lb1.HorizontalScrollbar, "#4");
-			Assert.AreEqual (true, lb1.IntegralHeight, "#5");
-			//Assert.AreEqual (13, lb1.ItemHeight, "#6"); // Note: Item height depends on the current font.
-			lb1.Items.Add ("a");
-			lb1.Items.Add ("b");
-			lb1.Items.Add ("c");
-			Assert.AreEqual (3,  lb1.Items.Count, "#7");
-			Assert.AreEqual (false, lb1.MultiColumn, "#8");
-			//Assert.AreEqual (46, lb1.PreferredHeight, "#9"); // Note: Item height depends on the current font.
-			//Assert.AreEqual (RightToLeft.No , lb1.RightToLeft, "#10"); // Depends on Windows version
-			Assert.AreEqual (false, lb1.ScrollAlwaysVisible, "#11");
-			Assert.AreEqual (-1, lb1.SelectedIndex, "#12");
-			lb1.SetSelected (2,true);
-			Assert.AreEqual (2, lb1.SelectedIndices[0], "#13");
-			Assert.AreEqual ("c", lb1.SelectedItem, "#14");
-			Assert.AreEqual ("c", lb1.SelectedItems[0], "#15");
-			Assert.AreEqual (SelectionMode.One, lb1.SelectionMode, "#16");
-			lb1.SetSelected (2,false);
-			Assert.AreEqual (false, lb1.Sorted, "#17");
-			Assert.AreEqual ("", lb1.Text, "#18");
-			Assert.AreEqual (0, lb1.TopIndex, "#19");
-			Assert.AreEqual (true, lb1.UseTabStops, "#20");
+			Assert.AreEqual (0, listBox.ColumnWidth, "#1");
+			Assert.AreEqual (DrawMode.Normal, listBox.DrawMode, "#2");
+			Assert.AreEqual (0, listBox.HorizontalExtent, "#3");
+			Assert.AreEqual (false, listBox.HorizontalScrollbar, "#4");
+			Assert.AreEqual (true, listBox.IntegralHeight, "#5");
+			//Assert.AreEqual (13, listBox.ItemHeight, "#6"); // Note: Item height depends on the current font.
+			listBox.Items.Add ("a");
+			listBox.Items.Add ("b");
+			listBox.Items.Add ("c");
+			Assert.AreEqual (3,  listBox.Items.Count, "#7");
+			Assert.AreEqual (false, listBox.MultiColumn, "#8");
+			//Assert.AreEqual (46, listBox.PreferredHeight, "#9"); // Note: Item height depends on the current font.
+			//Assert.AreEqual (RightToLeft.No , listBox.RightToLeft, "#10"); // Depends on Windows version
+			Assert.AreEqual (false, listBox.ScrollAlwaysVisible, "#11");
+			Assert.AreEqual (-1, listBox.SelectedIndex, "#12");
+			listBox.SetSelected (2,true);
+			Assert.AreEqual (2, listBox.SelectedIndices[0], "#13");
+			Assert.AreEqual ("c", listBox.SelectedItem, "#14");
+			Assert.AreEqual ("c", listBox.SelectedItems[0], "#15");
+			Assert.AreEqual (SelectionMode.One, listBox.SelectionMode, "#16");
+			listBox.SetSelected (2,false);
+			Assert.AreEqual (false, listBox.Sorted, "#17");
+			Assert.AreEqual ("", listBox.Text, "#18");
+			Assert.AreEqual (0, listBox.TopIndex, "#19");
+			Assert.AreEqual (true, listBox.UseTabStops, "#20");
 		}
 
 		[Test]
 		public void BeginEndUpdateTest ()
 		{
-			Form f = new Form ();
-			f.Visible = true;
-			ListBox lb1 = new ListBox ();
-			lb1.Items.Add ("A");
-			lb1.Visible = true;
-			f.Controls.Add (lb1);
-			lb1.BeginUpdate ();
+			form.Visible = true;
+			listBox.Items.Add ("A");
+			listBox.Visible = true;
+			form.Controls.Add (listBox);
+			listBox.BeginUpdate ();
 			for (int x = 1; x < 5000; x++)
 			{
-				lb1.Items.Add ("Item " + x.ToString ());
+				listBox.Items.Add ("Item " + x.ToString ());
 			}
-			lb1.EndUpdate ();
-			lb1.SetSelected (1, true);
-			lb1.SetSelected (3, true);
-			Assert.AreEqual (true, lb1.SelectedItems.Contains ("Item 3"), "#21");
+			listBox.EndUpdate ();
+			listBox.SetSelected (1, true);
+			listBox.SetSelected (3, true);
+			Assert.AreEqual (true, listBox.SelectedItems.Contains ("Item 3"), "#21");
 		}
 
 		[Test]
 		public void ClearSelectedTest ()
 		{
-			Form f = new Form ();
-			f.Visible = true;
-			ListBox lb1 = new ListBox ();
-			lb1.Items.Add ("A");
-			lb1.Visible = true;
-			f.Controls.Add (lb1);
-			lb1.SetSelected (0, true);
-			Assert.AreEqual ("A", lb1.SelectedItems [0].ToString (),"#22");
-			lb1.ClearSelected ();
-			Assert.AreEqual (0, lb1.SelectedItems.Count,"#23");
+			form.Visible = true;
+			listBox.Items.Add ("A");
+			listBox.Visible = true;
+			form.Controls.Add (listBox);
+			listBox.SetSelected (0, true);
+			Assert.AreEqual ("A", listBox.SelectedItems [0].ToString (),"#22");
+			listBox.ClearSelected ();
+			Assert.AreEqual (0, listBox.SelectedItems.Count,"#23");
 		}
 
 		[Ignore ("It depends on user system settings")]
 		public void GetItemHeightTest ()
 		{
-			Form f = new Form ();
-			ListBox lb1 = new ListBox ();
-			lb1.Visible = true;
-			f.Controls.Add (lb1);
-			lb1.Items.Add ("A");
-			Assert.AreEqual (13, lb1.GetItemHeight (0) , "#28");
+			listBox.Visible = true;
+			form.Controls.Add (listBox);
+			listBox.Items.Add ("A");
+			Assert.AreEqual (13, listBox.GetItemHeight (0) , "#28");
 		}
 
 		[Ignore ("It depends on user system settings")]
 		public void GetItemRectangleTest ()
 		{
-			Form f = new Form ();
-			f.Visible = true;
-			ListBox lb1 = new ListBox ();
-			lb1.Visible = true;
-			f.Controls.Add (lb1);
-			lb1.Items.Add ("A");
-			Assert.AreEqual (new Rectangle(0,0,116,13), lb1.GetItemRectangle (0), "#29");
+			form.Visible = true;
+			listBox.Visible = true;
+			form.Controls.Add (listBox);
+			listBox.Items.Add ("A");
+			Assert.AreEqual (new Rectangle(0,0,116,13), listBox.GetItemRectangle (0), "#29");
 		}
 
 		[Test]
 		public void GetSelectedTest ()
 		{
-			ListBox lb1 = new ListBox ();
-			lb1.Items.Add ("A");
-			lb1.Items.Add ("B");
-			lb1.Items.Add ("C");
-			lb1.Items.Add ("D");
-			lb1.Sorted = true;
-			lb1.SetSelected (0,true);
-			lb1.SetSelected (2,true);
-			lb1.TopIndex=0;
-			Assert.AreEqual (true, lb1.GetSelected (0), "#30");
-			lb1.SetSelected (2,false);
-			Assert.AreEqual (false, lb1.GetSelected (2), "#31");
+			listBox.Items.Add ("A");
+			listBox.Items.Add ("B");
+			listBox.Items.Add ("C");
+			listBox.Items.Add ("D");
+			listBox.Sorted = true;
+			listBox.SetSelected (0,true);
+			listBox.SetSelected (2,true);
+			listBox.TopIndex=0;
+			Assert.AreEqual (true, listBox.GetSelected (0), "#30");
+			listBox.SetSelected (2,false);
+			Assert.AreEqual (false, listBox.GetSelected (2), "#31");
 		}
 
 		[Test]
 		public void IndexFromPointTest ()
 		{
-			ListBox lb1 = new ListBox ();
-			lb1.Items.Add ("A");
+			listBox.Items.Add ("A");
 			Point pt = new Point (100,100);
-				lb1.IndexFromPoint (pt);
-			Assert.AreEqual (-1, lb1.IndexFromPoint (100,100), "#32");
+				listBox.IndexFromPoint (pt);
+			Assert.AreEqual (-1, listBox.IndexFromPoint (100,100), "#32");
 		}
 
 		[Test]
 		public void FindStringTest ()
 		{
-			ListBox cmbbox = new ListBox ();
-			cmbbox.FindString ("Hola", -5); // No exception, it's empty
-			int x = cmbbox.FindString ("Hello");
+			listBox.FindString ("Hola", -5); // No exception, it's empty
+			int x = listBox.FindString ("Hello");
 			Assert.AreEqual (-1, x, "#19");
-			cmbbox.Items.AddRange(new object[] {"ACBD", "ABDC", "ACBD", "ABCD"});
+			listBox.Items.AddRange(new object[] {"ACBD", "ABDC", "ACBD", "ABCD"});
 			String myString = "ABC";
-			x = cmbbox.FindString (myString);
+			x = listBox.FindString (myString);
 			Assert.AreEqual (3, x, "#191");
-			x = cmbbox.FindString (string.Empty);
+			x = listBox.FindString (string.Empty);
 			Assert.AreEqual (0, x, "#192");
-			x = cmbbox.FindString ("NonExistant");
+			x = listBox.FindString ("NonExistant");
 			Assert.AreEqual (-1, x, "#193");
 		}
 
 		[Test]
 		public void FindStringExactTest ()
 		{
-			ListBox cmbbox = new ListBox ();
-			cmbbox.FindStringExact ("Hola", -5); // No exception, it's empty
-			int x = cmbbox.FindStringExact ("Hello");
+			listBox.FindStringExact ("Hola", -5); // No exception, it's empty
+			int x = listBox.FindStringExact ("Hello");
 			Assert.AreEqual (-1, x, "#20");
-			cmbbox.Items.AddRange (new object[] {"ABCD","ABC","ABDC"});
+			listBox.Items.AddRange (new object[] {"ABCD","ABC","ABDC"});
 			String myString = "ABC";
-			x = cmbbox.FindStringExact (myString);
+			x = listBox.FindStringExact (myString);
 			Assert.AreEqual (1, x, "#201");
-			x = cmbbox.FindStringExact (string.Empty);
+			x = listBox.FindStringExact (string.Empty);
 			Assert.AreEqual (-1, x, "#202");
-			x = cmbbox.FindStringExact ("NonExistant");
+			x = listBox.FindStringExact ("NonExistant");
 			Assert.AreEqual (-1, x, "#203");
 		}
 
@@ -199,66 +196,70 @@ namespace MonoTests.System.Windows.Forms
 		[ExpectedException (typeof (InvalidEnumArgumentException))]
 		public void BorderStyleException ()
 		{
-			ListBox lstbox = new ListBox ();
-			lstbox.BorderStyle = (BorderStyle) 10;
+			listBox.BorderStyle = (BorderStyle) 10;
 		}
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
 		public void ColumnWidthException ()
 		{
-			ListBox lstbox = new ListBox ();
-			lstbox.ColumnWidth = -1;
+			listBox.ColumnWidth = -1;
 		}
 
 		[Test]
 		[ExpectedException (typeof (InvalidEnumArgumentException))]
 		public void DrawModeException ()
 		{
-			ListBox lstbox = new ListBox ();
-			lstbox.DrawMode = (DrawMode) 10;
+			listBox.DrawMode = (DrawMode) 10;
 		}
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
 		public void DrawModeAndMultiColumnException ()
 		{
-			ListBox lstbox = new ListBox ();
-			lstbox.MultiColumn = true;
-			lstbox.DrawMode = DrawMode.OwnerDrawVariable;
+			listBox.MultiColumn = true;
+			listBox.DrawMode = DrawMode.OwnerDrawVariable;
 		}
 
 		[Test]
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void ItemHeightException ()
 		{
-			ListBox lstbox = new ListBox ();
-			lstbox.ItemHeight = 256;
+			listBox.ItemHeight = 256;
 		}
 
 		[Test]
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void SelectedIndexException ()
 		{
-			ListBox lstbox = new ListBox ();
-			lstbox.SelectedIndex = -2;
+			listBox.SelectedIndex = -2;
 		}
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
 		public void SelectedIndexModeNoneException ()
 		{
-			ListBox lstbox = new ListBox ();
-			lstbox.SelectionMode = SelectionMode.None;
-			lstbox.SelectedIndex = -1;
+			listBox.SelectionMode = SelectionMode.None;
+			listBox.SelectedIndex = -1;
 		}
 
 		[Test]
 		[ExpectedException (typeof (InvalidEnumArgumentException))]
 		public void SelectionModeException ()
 		{
-			ListBox lstbox = new ListBox ();
-			lstbox.SelectionMode = (SelectionMode) 10;
+			listBox.SelectionMode = (SelectionMode) 10;
+		}
+
+		[Test][ExpectedException(typeof(InvalidOperationException))]
+		public void SelectedValueNull()
+		{
+			listBox.SelectedValue = null;
+		}
+
+		[Test][ExpectedException(typeof(InvalidOperationException))]
+		public void SelectedValueEmptyString()
+		{
+			listBox.SelectedValue = String.Empty;
 		}
 
 		//
@@ -277,20 +278,27 @@ namespace MonoTests.System.Windows.Forms
 	[TestFixture]
 	public class ListBoxObjectCollectionTest
 	{
-		[Test]
-		public void ComboBoxObjectCollectionPropertyTest ()
+		ListBox.ObjectCollection col;
+
+		[SetUp]
+		public void SetUp()
 		{
-			ListBox.ObjectCollection col = new ListBox.ObjectCollection (new ListBox ());
+			col = new ListBox.ObjectCollection (new ListBox ());
+		}
+
+		[Test]
+		public void DefaultProperties ()
+		{
 			Assert.AreEqual (false, col.IsReadOnly, "#B1");
 			Assert.AreEqual (false, ((ICollection)col).IsSynchronized, "#B2");
 			Assert.AreEqual (col, ((ICollection)col).SyncRoot, "#B3");
 			Assert.AreEqual (false, ((IList)col).IsFixedSize, "#B4");
+			Assert.AreEqual (0, col.Count);
 		}
 
 		[Test]
 		public void AddTest ()
 		{
-			ListBox.ObjectCollection col = new ListBox.ObjectCollection (new ListBox ());
 			col.Add ("Item1");
 			col.Add ("Item2");
 			Assert.AreEqual (2, col.Count, "#C1");
@@ -299,7 +307,6 @@ namespace MonoTests.System.Windows.Forms
 		[Test]
 		public void ClearTest ()
 		{
-			ListBox.ObjectCollection col = new ListBox.ObjectCollection (new ListBox ());
 			col.Add ("Item1");
 			col.Add ("Item2");
 			col.Clear ();
@@ -309,7 +316,6 @@ namespace MonoTests.System.Windows.Forms
 		[Test]
 		public void ContainsTest ()
 		{
-			ListBox.ObjectCollection col = new ListBox.ObjectCollection (new ListBox ());
 			object obj = "Item1";
 			col.Add (obj);
 			Assert.AreEqual (true, col.Contains ("Item1"), "#E1");
@@ -319,7 +325,6 @@ namespace MonoTests.System.Windows.Forms
 		[Test]
 		public void IndexOfTest ()
 		{
-			ListBox.ObjectCollection col = new ListBox.ObjectCollection (new ListBox ());
 			col.Add ("Item1");
 			col.Add ("Item2");
 			Assert.AreEqual (1, col.IndexOf ("Item2"), "#F1");
@@ -328,7 +333,6 @@ namespace MonoTests.System.Windows.Forms
 		[Test]
 		public void RemoveTest ()
 		{
-			ListBox.ObjectCollection col = new ListBox.ObjectCollection (new ListBox ());
 			col.Add ("Item1");
 			col.Add ("Item2");
 			col.Remove ("Item1");
@@ -338,14 +342,12 @@ namespace MonoTests.System.Windows.Forms
 		[Test]
 		public void RemoveAtTest ()
 		{
-			ListBox.ObjectCollection col = new ListBox.ObjectCollection (new ListBox ());
 			col.Add ("Item1");
 			col.Add ("Item2");
 			col.RemoveAt (0);
 			Assert.AreEqual (1, col.Count, "#H1");
 			Assert.AreEqual (true, col.Contains ("Item2"), "#H1");
 		}
-
 
 	}
 }
