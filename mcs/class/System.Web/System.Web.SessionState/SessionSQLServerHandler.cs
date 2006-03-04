@@ -47,6 +47,13 @@ namespace System.Web.SessionState {
 #else
 		private SessionConfig config;
 #endif
+                
+		const string defaultParamPrefix = ":";
+		string paramPrefix;
+		string selectCommand = "SELECT * FROM ASPStateTempSessions WHERE SessionID = :SessionID";
+		string insertCommand = "INSERT INTO ASPStateTempSessions VALUES (:SessionID, :Created, :Expires, :Timeout, :StaticObjectsData, :SessionData)";
+		string updateCommand = "UPDATE ASPStateTempSessions SET SessionData = :SessionData WHERE SessionId = :SessionID";
+		string deleteCommand = "DELETE FROM ASPStateTempSessions WHERE SessionId = :SessionID";
 
 		public void Dispose ()
 		{
@@ -88,6 +95,18 @@ namespace System.Web.SessionState {
 				cnc = null;
 				throw exc;
 			}
+
+			if (paramPrefix != defaultParamPrefix) {
+				ReplaceParamPrefix (ref selectCommand);
+				ReplaceParamPrefix (ref insertCommand);
+				ReplaceParamPrefix (ref updateCommand);
+				ReplaceParamPrefix (ref deleteCommand);
+			}
+		}
+
+		void ReplaceParamPrefix(ref string command)
+		{
+			command = command.Replace (defaultParamPrefix, paramPrefix);
 		}
 
 		public void UpdateHandler (HttpContext context, SessionStateModule module)
@@ -148,15 +167,11 @@ namespace System.Web.SessionState {
 			cncTypeName = null;
 			cncString = null;
 
-			NameValueCollection config = ConfigurationSettings.AppSettings as NameValueCollection;
+			NameValueCollection config = ConfigurationSettings.AppSettings;
 			if (config != null) {
-				foreach (string s in config.Keys) {
-					if (0 == String.Compare ("StateDBProviderAssembly", s, true)) {
-						providerAssembly = config [s];
-					} else if (0 == String.Compare ("StateDBConnectionType", s, true)) {
-						cncTypeName = config [s];
-					}
-				}
+				providerAssembly = config ["StateDBProviderAssembly"];
+				cncTypeName = config ["StateDBConnectionType"];
+				paramPrefix = config ["StateDBParamPrefix"];
 			}
 
 			cncString = this.config.SqlConnectionString;
@@ -169,23 +184,20 @@ namespace System.Web.SessionState {
 
 			if (cncString == null || cncString == String.Empty)
 				cncString = "SERVER=127.0.0.1;USER ID=monostate;PASSWORD=monostate;dbname=monostate";
+
+			if (paramPrefix == null || paramPrefix == String.Empty)
+				paramPrefix = defaultParamPrefix;
 		}
 
 		private HttpSessionState SelectSession (string id, bool read_only)
 		{
 			HttpSessionState session = null;
 			IDbCommand command = cnc.CreateCommand();
-			IDataReader reader;
 
-			string select = "SELECT * from aspstatetempsessions WHERE SessionID = :SessionID";
+			command.CommandText = selectCommand;
+			command.Parameters.Add (CreateParam (command, DbType.String, "SessionID", id));
 
-			command.CommandText = select;
-
-			command.Parameters.Add (CreateParam (command, DbType.String, ":SessionID", id));
-
-			try {
-				reader = command.ExecuteReader ();
-
+			using (IDataReader reader = command.ExecuteReader ()) {
 				if (!reader.Read ())
 					return null;
 
@@ -198,8 +210,6 @@ namespace System.Web.SessionState {
 				session = new HttpSessionState (id, dict, sobjs, 100, false, config.CookieLess,
 						SessionStateMode.SQLServer, read_only);
 				return session;
-			} catch {
-				throw;
 			}
 		}
 
@@ -208,19 +218,16 @@ namespace System.Web.SessionState {
 			IDbCommand command = cnc.CreateCommand ();
 			IDataParameterCollection param;
 
-			string insert = "INSERT INTO ASPStateTempSessions VALUES " +
-			"(:SessionID, :Created, :Expires, :Timeout, :StaticObjectsData, :SessionData)";
-
-			command.CommandText = insert;
+			command.CommandText = insertCommand;
 
 			param = command.Parameters;
-			param.Add (CreateParam (command, DbType.String, ":SessionID", session.SessionID));
-			param.Add (CreateParam (command, DbType.DateTime, ":Created", DateTime.Now));
-			param.Add (CreateParam (command, DbType.DateTime, ":Expires", Tommorow ()));
-			param.Add (CreateParam (command, DbType.Int32, ":Timeout", timeout));
-			param.Add (CreateParam (command, DbType.Binary, ":StaticObjectsData",
+			param.Add (CreateParam (command, DbType.String, "SessionID", session.SessionID));
+			param.Add (CreateParam (command, DbType.DateTime, "Created", DateTime.Now));
+			param.Add (CreateParam (command, DbType.DateTime, "Expires", Tommorow ()));
+			param.Add (CreateParam (command, DbType.Int32, "Timeout", timeout));
+			param.Add (CreateParam (command, DbType.Binary, "StaticObjectsData",
 						   session.StaticObjects.ToByteArray ()));
-			param.Add (CreateParam (command, DbType.Binary, ":SessionData",
+			param.Add (CreateParam (command, DbType.Binary, "SessionData",
 						   session.SessionDictionary.ToByteArray ()));
 
 			command.ExecuteNonQuery ();
@@ -231,14 +238,11 @@ namespace System.Web.SessionState {
 			IDbCommand command = cnc.CreateCommand ();
 			IDataParameterCollection param;
 
-			string update = "UPDATE ASPStateTempSessions SET " +
-			"SessionData = :SessionData WHERE SessionId = :SessionID";
-
-			command.CommandText = update;
+			command.CommandText = updateCommand;
 
 			param = command.Parameters;
-			param.Add (CreateParam (command, DbType.String, ":SessionID", id));
-			param.Add (CreateParam (command, DbType.Binary, ":SessionData",
+			param.Add (CreateParam (command, DbType.String, "SessionID", id));
+			param.Add (CreateParam (command, DbType.Binary, "SessionData",
 								dict.ToByteArray ()));
 
 			command.ExecuteNonQuery ();
@@ -249,10 +253,9 @@ namespace System.Web.SessionState {
 			IDbCommand command = cnc.CreateCommand ();
 			IDataParameterCollection param;
 
-			string update = "DELETE FROM ASPStateTempSessions WHERE SessionId = :SessionID";
-			command.CommandText = update;
+			command.CommandText = deleteCommand;
 			param = command.Parameters;
-			param.Add (CreateParam (command, DbType.String, ":SessionID", id));
+			param.Add (CreateParam (command, DbType.String, "SessionID", id));
 			command.ExecuteNonQuery ();
 		}
 
@@ -261,7 +264,7 @@ namespace System.Web.SessionState {
 		{
 			IDataParameter result = command.CreateParameter ();
 			result.DbType = type;
-			result.ParameterName = name;
+			result.ParameterName = paramPrefix + name;
 			result.Value = value;
 			return result;
 		}

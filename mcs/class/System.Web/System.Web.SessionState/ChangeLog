@@ -1,3 +1,10 @@
+2006-03-04  Robert Jordan  <robertj@gmx.net>
+
+	* SessionSQLServerHandler.cs: make SQL statements and parameters
+	provider independent/configurable.
+	* SessionSQLServerHandler.cs (SelectSession): properly dispose
+	the data reader. Fixes bug #77698.
+
 2006-02-28  Chris Toshok  <toshok@ximian.com>
 
 	* IStateRuntime.cs: wrap new interface method with NET_2_0.
