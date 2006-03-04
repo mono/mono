@@ -20,7 +20,7 @@
  SOFTWARE.
 */
 
-#define HASHINDEXnot
+#define HASHINDEX
 
 using System;
 using System.Diagnostics;
