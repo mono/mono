@@ -42,13 +42,13 @@ namespace MonoTests.System.Windows.Forms
 	public class ListBoxTest
 	{
 		ListBox listBox;
-		Form f;
+		Form form;
 
 		[SetUp]
 		public void SetUp()
 		{
 			listBox = new ListBox();
-			f = new Form();
+			form = new Form();
 		}
 
 		[Test]
