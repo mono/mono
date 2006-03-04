@@ -1,3 +1,16 @@
+2006-03-04  Martin Baulig  <martin@ximian.com>
+
+	* tramp-amd64.c, tramp-x86.c
+	(mono_debugger_create_notification_function): Use
+	mono_global_codeman_reserve() to allocate a buffer at runtime and
+	return it.
+
+	* debug-debugger.h (MonoDebuggerInfo): Added `initialize'.
+
+	* debug-debugger.c (mono_debugger_init): Dynamically allocate the
+	notification function at runtime and then call `initialize' in the
+	`MONO_DEBUGGER__debugger_info' vtable.
+
 Wed Feb 15 16:23:17 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* mini-s390x.c, mini-s390.c, mini.c, mini-amd64.c, mini-arm.c,
