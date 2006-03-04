@@ -5736,10 +5736,9 @@ namespace Mono.CSharp {
 
 			protected virtual void DefineParameters ()
 			{
-				Parameter [] parms = new Parameter [1];
-				parms [0] = new Parameter (method.MemberType, "value", Parameter.Modifier.NONE, null, Location);
-				parameters = new Parameters (parms);
-				parameters.Resolve (null);
+				parameters = new Parameters (
+					new Parameter[] { new Parameter (method.MemberType, "value", Parameter.Modifier.NONE, null, Location) },
+					new Type[] { method.MemberType });
 			}
 
 			public override MethodBuilder Define (TypeContainer container)
@@ -6655,10 +6654,9 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			Parameter [] parms = new Parameter [1];
-			parms [0] = new Parameter (MemberType, "value", Parameter.Modifier.NONE, null, Location);
-			parameters = new Parameters (parms);
-			parameters.Resolve (this);
+			parameters = new Parameters (
+				new Parameter[] { new Parameter (MemberType, "value", Parameter.Modifier.NONE, null, Location) },
+				new Type[] { MemberType } );
 
 			if (!CheckBase ())
 				return false;
@@ -6770,15 +6768,8 @@ namespace Mono.CSharp {
 
 			protected override void DefineParameters ()
 			{
-				Parameter [] fixed_parms = method.Parameters.FixedParameters;
-				Parameter [] tmp = new Parameter [fixed_parms.Length + 1];
-
-				fixed_parms.CopyTo (tmp, 0);
-				tmp [fixed_parms.Length] = new Parameter (
-					method.MemberType, "value", Parameter.Modifier.NONE, null, method.Location);
-
-				parameters = new Parameters (tmp);
-				parameters.Resolve (null);
+				parameters = Parameters.MergeGenerated (method.Parameters,
+					new Parameter (method.MemberType, "value", Parameter.Modifier.NONE, null, method.Location));
 			}
 		}
 

@@ -207,7 +207,7 @@ namespace Mono.CSharp {
 
 		public Expression TypeName;
 		public readonly Modifier ModFlags;
-		public readonly string Name;
+		public string Name;
 		protected Type parameter_type;
 		public readonly Location Location;
 
@@ -413,8 +413,15 @@ namespace Mono.CSharp {
 			FixedParameters = new Parameter[0];
 			types = new Type [0];
 		}
+
+		public Parameters (Parameter[] parameters, Type[] types)
+		{
+			FixedParameters = parameters;
+			this.types = types;
+			count = types.Length;
+		}
 		
-		public Parameters (Parameter [] parameters)
+		public Parameters (Parameter[] parameters)
 		{
 			if (parameters == null)
 				throw new ArgumentException ("Use EmptyReadOnlyPatameters");
@@ -427,6 +434,31 @@ namespace Mono.CSharp {
 			this (parameters)
 		{
 			HasArglist = has_arglist;
+		}
+
+		/// <summary>
+		/// Use this method when you merge compiler generated argument with user arguments
+		/// </summary>
+		public static Parameters MergeGenerated (Parameters userParams, params Parameter[] compilerParams)
+		{
+			Parameter[] all_params = new Parameter [userParams.count + compilerParams.Length];
+			Type[] all_types = new Type[all_params.Length];
+			userParams.FixedParameters.CopyTo(all_params, 0);
+			userParams.Types.CopyTo (all_types, 0);
+
+			int last_filled = userParams.Count;
+			foreach (Parameter p in compilerParams) {
+				for (int i = 0; i < last_filled; ++i) {
+					while (p.Name == all_params [i].Name) {
+						p.Name = '_' + p.Name;
+					}
+				}
+				all_params [last_filled] = p;
+				all_types [last_filled] = p.ParameterType;
+				++last_filled;
+			}
+			
+			return new Parameters (all_params, all_types);
 		}
 
 		public bool Empty {
@@ -497,9 +529,8 @@ namespace Mono.CSharp {
 
 			types = new Type [count];
 			
-			if (ec != null && !VerifyArgs ()){
+			if (!VerifyArgs ())
 				return false;
-			}
 
 			bool ok = true;
 			Parameter p;
