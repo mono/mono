@@ -99,11 +99,11 @@ namespace System.Web.Hosting {
 			setup.ApplicationName = domain_id;
 			setup.ConfigurationFile = FindWebConfig (physicalDir);
 			setup.DisallowCodeDownload = true;
-			setup.PrivateBinPath = "bin";
+			string bin_path = Path.Combine (physicalDir, "bin");
+			setup.PrivateBinPath = bin_path;
 			setup.PrivateBinPathProbe = "*";
 			setup.ShadowCopyFiles = "true";
-			UriBuilder b = new UriBuilder ("file://", null, 0, Path.Combine (physicalDir, "bin"));
-			setup.ShadowCopyDirectories = b.Uri.ToString ();
+			setup.ShadowCopyDirectories = bin_path;
 
 			string dynamic_dir = null;
 			string user = Environment.UserName;
