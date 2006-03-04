@@ -10240,6 +10240,30 @@ mono_local_deadce_alt (MonoCompile *cfg)
 }
 
 static void
+mono_coalesce_pass (MonoCompile *cfg)
+{
+	MonoBasicBlock *bb;
+	MonoInst *ins;
+
+	for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
+		if (cfg->verbose_level > 1) {
+			printf ("COALESCE BB%d:\n", bb->block_num);
+		}
+
+		for (ins = bb->code; ins; ins = ins->next) {
+			const char *spec = ins_info [ins->opcode - OP_START - 1];
+
+			if ((ins->opcode == OP_MOVE) && get_vreg_to_inst (cfg, ins->dreg) && get_vreg_to_inst (cfg, ins->sreg1)) {
+				MonoLiveRange *ranged = &MONO_VARINFO (cfg, get_vreg_to_inst (cfg, ins->dreg)->inst_c0)->range;
+				MonoLiveRange *ranges = &MONO_VARINFO (cfg, get_vreg_to_inst (cfg, ins->sreg1)->inst_c0)->range;
+				if (ranged->first_use.abs_pos >= ranges->last_use.abs_pos)
+					;
+			}
+		}
+	}
+}
+
+static void
 remove_critical_edges (MonoCompile *cfg) {
 	MonoBasicBlock *bb;
 	MonoBasicBlock *previous_bb;
@@ -10618,8 +10642,12 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 		if ((cfg->flags & MONO_CFG_HAS_LDELEMA) && (cfg->opt & MONO_OPT_ABCREM))
 			mono_perform_abc_removal (cfg);
 
-		if (cfg->new_ir)
+		if (cfg->new_ir) {
 			mono_ssa_remove2 (cfg);
+			mono_local_cprop2 (cfg);
+			mono_handle_global_vregs (cfg);
+			mono_local_deadce_alt (cfg);
+		}
 		else
 			mono_ssa_remove (cfg);
 
@@ -10667,6 +10695,9 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 		cfg->comp_done &= ~MONO_COMP_LIVENESS;
 		if (!(cfg->comp_done & MONO_COMP_LIVENESS))
 			mono_analyze_liveness (cfg);
+
+		if (cfg->new_ir)
+			mono_coalesce_pass (cfg);
 
 		if (cfg->aliasing_info != NULL) {
 			mono_aliasing_deadce (cfg->aliasing_info);

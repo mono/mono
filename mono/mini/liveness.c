@@ -571,7 +571,8 @@ mono_analyze_liveness (MonoCompile *cfg)
 	for (i = cfg->num_bblocks - 1; i >= 0; i--) {
 		MonoBasicBlock *bb = cfg->bblocks [i];
 
-		mono_bitset_copyto (bb->live_out_set, bb->live_in_set);
+		if (bb->live_out_set)
+			mono_bitset_copyto (bb->live_out_set, bb->live_in_set);
 		mono_bitset_sub (bb->live_in_set, bb->kill_set);
 		mono_bitset_union (bb->live_in_set, bb->gen_set);
 	}
@@ -583,6 +584,9 @@ mono_analyze_liveness (MonoCompile *cfg)
 	for (i = 0; i < cfg->num_bblocks; ++i) {
 		MonoBasicBlock *bb = cfg->bblocks [i];
 		guint32 rem, max;
+
+		if (!bb->live_out_set)
+			continue;
 
 		rem = max_vars % BITS_PER_CHUNK;
 		max = ((max_vars + (BITS_PER_CHUNK -1)) / BITS_PER_CHUNK);
