@@ -1,3 +1,9 @@
+2006-03-04  Martin Baulig  <martin@ximian.com>
+
+	* skeleton.cs: Don't call yyerror if `yyErrorFlag == 0', so we can
+	recover from errors with an `error' token.  See gtest-248.cs for
+	an example.
+
 2006-01-06 Wade Berrier <wberrier@novell.com>
 
 	* Makefile: fix man path
