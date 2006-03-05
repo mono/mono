@@ -10614,7 +10614,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 	if ((cfg->opt & MONO_OPT_CONSPROP) || (cfg->opt & MONO_OPT_COPYPROP)) {
 		if (cfg->comp_done & MONO_COMP_SSA) {
 			if (cfg->new_ir)
-				;
+				mono_ssa_cprop2 (cfg);
 			else
 				mono_ssa_cprop (cfg);
 		} else {

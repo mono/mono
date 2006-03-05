@@ -825,136 +825,82 @@ mono_ssa_copyprop (MonoCompile *cfg)
 }
 
 static int
-simulate_compare (int opcode, int a, int b)
+evaluate_ins (MonoCompile *cfg, MonoInst *ins, MonoInst **carray)
 {
-	switch (opcode) {
-	case CEE_BEQ:
-		return a == b;
-	case CEE_BGE:
-		return a >= b;
-	case CEE_BGT:
-		return a > b;
-	case CEE_BLE:
-		return a <= b;
-	case CEE_BLT:
-		return a < b;
-	case CEE_BNE_UN:
-		return a != b;
-	case CEE_BGE_UN:
-		return (unsigned)a >= (unsigned)b;
-	case CEE_BGT_UN:
-		return (unsigned)a > (unsigned)b;
-	case CEE_BLE_UN:
-		return (unsigned)a <= (unsigned)b;
-	case CEE_BLT_UN:
-		return (unsigned)a < (unsigned)b;
-	default:
-		g_assert_not_reached ();
-	}
+	MonoInst *arg0;
+	MonoInst *arg1;
+	int r1, r2;
+	const char *spec = ins_info [ins->opcode - OP_START - 1];
 
-	return 0;
-}
-
-static int
-simulate_long_compare (int opcode, gint64 a, gint64 b)
-{
-	switch (opcode) {
-	case CEE_BEQ:
-		return a == b;
-	case CEE_BGE:
-		return a >= b;
-	case CEE_BGT:
-		return a > b;
-	case CEE_BLE:
-		return a <= b;
-	case CEE_BLT:
-		return a < b;
-	case CEE_BNE_UN:
-		return a != b;
-	case CEE_BGE_UN:
-		return (guint64)a >= (guint64)b;
-	case CEE_BGT_UN:
-		return (guint64)a > (guint64)b;
-	case CEE_BLE_UN:
-		return (guint64)a <= (guint64)b;
-	case CEE_BLT_UN:
-		return (guint64)a < (guint64)b;
-	default:
-		g_assert_not_reached ();
-	}
-
-	return 0;
-}
-
-#define EVAL_CXX(name,op,cast)	\
-	case name:	\
-		if ((inst->inst_i0->opcode == OP_COMPARE) || (inst->inst_i0->opcode == OP_LCOMPARE)) { \
-			r1 = evaluate_const_tree (cfg, inst->inst_i0->inst_i0, &a, carray); \
-			r2 = evaluate_const_tree (cfg, inst->inst_i0->inst_i1, &b, carray); \
-			if (r1 == 1 && r2 == 1) { \
-				*res = ((cast)a op (cast)b); \
-				return 1; \
-			} else { \
-				return MAX (r1, r2); \
-			} \
-		} \
-		break;
-
-#define EVAL_BINOP(name,op)	\
-	case name:	\
-		r1 = evaluate_const_tree (cfg, inst->inst_i0, &a, carray); \
-		r2 = evaluate_const_tree (cfg, inst->inst_i1, &b, carray); \
-		if (r1 == 1 && r2 == 1) { \
-			*res = (a op b); \
-			return 1; \
-		} else { \
-			return MAX (r1, r2); \
-		} \
-		break;
-
-
-/* fixme: this only works for interger constants, but not for other types (long, float) */
-static int
-evaluate_const_tree (MonoCompile *cfg, MonoInst *inst, int *res, MonoInst **carray)
-{
-	MonoInst *c0;
-	int a, b, r1, r2;
-
-	if (!inst)
-		return 0;
-
-	if (inst->ssa_op == MONO_SSA_LOAD && 
-	    (inst->inst_i0->opcode == OP_LOCAL || inst->inst_i0->opcode == OP_ARG) &&
-	    (c0 = carray [inst->inst_i0->inst_c0])) {
-		*res = c0->inst_c0;
-		return 1;
-	}
-
-	switch (inst->opcode) {
-	case OP_ICONST:
-		*res = inst->inst_c0;
+	/* Short-circuit this */
+	if (ins->opcode == OP_ICONST)
 		return 1;
 
-	EVAL_CXX (OP_CEQ,==,gint32)
-	EVAL_CXX (OP_CGT,>,gint32)
-	EVAL_CXX (OP_CGT_UN,>,guint32)
-	EVAL_CXX (OP_CLT,<,gint32)
-	EVAL_CXX (OP_CLT_UN,<,guint32)
-
-	EVAL_BINOP (CEE_ADD,+)
-	EVAL_BINOP (CEE_SUB,-)
-	EVAL_BINOP (CEE_MUL,*)
-	EVAL_BINOP (CEE_AND,&)
-	EVAL_BINOP (CEE_OR,|)
-	EVAL_BINOP (CEE_XOR,^)
-	EVAL_BINOP (CEE_SHL,<<)
-	EVAL_BINOP (CEE_SHR,>>)
-
-	default:
+	if (ins->opcode == OP_NOP)
 		return 2;
+
+	arg0 = NULL;
+	r1 = 2;
+	if (spec [MONO_INST_SRC1] != ' ') {
+		MonoInst *var = get_vreg_to_inst (cfg, ins->sreg1);
+
+		if (var && !(var->flags & (MONO_INST_VOLATILE|MONO_INST_INDIRECT))) {
+			MonoMethodVar *info = cfg->vars [var->inst_c0];
+
+			if (carray [var->inst_c0]) {
+				arg0 = carray [var->inst_c0];
+				r1 = 1;
+			}
+			else
+				r1 = info->cpstate;
+		}
 	}
 
-	return 2;
+	arg1 = NULL;
+	r2 = 2;
+	if (spec [MONO_INST_SRC2] != ' ') {
+		MonoInst *var = get_vreg_to_inst (cfg, ins->sreg2);
+
+		if (var && !(var->flags & (MONO_INST_VOLATILE|MONO_INST_INDIRECT))) {
+			MonoMethodVar *info = cfg->vars [var->inst_c0];
+
+			if (carray [var->inst_c0]) {
+				r2 = 1;
+				arg1 = carray [var->inst_c0];
+			}
+			else
+				r2 = info->cpstate;
+		}
+	}
+
+	if ((spec [MONO_INST_SRC1] != ' ') && (spec [MONO_INST_SRC2] != ' ')) {
+		/* Binop */
+		if ((r1 == 1) && (r2 == 1)) {
+			mono_constant_fold_ins2 (ins, arg0, arg1);
+			if ((ins->opcode == OP_ICONST) || (ins->opcode == OP_I8CONST) || (ins->opcode == OP_R8CONST)) {
+				if (G_UNLIKELY (cfg->verbose_level > 1)) {
+					printf ("\t cfold -> ");
+					mono_print_ins (ins);
+				}
+				return 1;
+			}
+		}
+	}
+	else if (spec [MONO_INST_SRC1] != ' ') {
+		/* Unop */
+		if (r1 == 1) {
+			mono_constant_fold_ins2 (ins, arg0, NULL);
+			if ((ins->opcode == OP_ICONST) || (ins->opcode == OP_I8CONST) || (ins->opcode == OP_R8CONST)) {
+				if (G_UNLIKELY (cfg->verbose_level > 1)) {
+					printf ("\t cfold -> ");
+					mono_print_ins (ins);
+				}
+				return 1;
+			}
+		}
+	}
+
+	return MAX (r1, r2);
 }
 
 static void
@@ -963,9 +909,7 @@ fold_tree (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *inst, MonoInst **carr
 	MonoInst *c0;
 	int arity, a, b;
 
-	if (!inst)
-		return;
-
+#if 0
 	arity = mono_burg_arity [inst->opcode];
 
 	if (inst->ssa_op == MONO_SSA_STORE && 
@@ -1026,7 +970,7 @@ fold_tree (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *inst, MonoInst **carr
 		inst->inst_target_bb = bb->out_bb [0];
 		inst->opcode = CEE_BR;
 	}
-
+#endif
 }
 
 static void
@@ -1037,7 +981,8 @@ change_varstate (MonoCompile *cfg, GList **cvars, MonoMethodVar *info, int state
 
 	info->cpstate = state;
 
-	//printf ("SETSTATE %d to %d\n", info->idx, info->cpstate);
+	if (G_UNLIKELY (cfg->verbose_level > 1))
+		printf ("\tState of R%d to %d\n", cfg->varinfo [info->idx]->dreg, info->cpstate);
 
 	if (state == 1)
 		carray [info->idx] = c0;
@@ -1050,10 +995,51 @@ change_varstate (MonoCompile *cfg, GList **cvars, MonoMethodVar *info, int state
 }
 
 static void
-visit_inst (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *inst, GList **cvars, GList **bblist, MonoInst **carray)
+visit_inst (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *ins, GList **cvars, GList **bblist, MonoInst **carray)
 {
-	g_assert (inst);
+	const char *spec = ins_info [ins->opcode - OP_START - 1];
 
+	if (ins->opcode == OP_NOP)
+		return;
+
+	if (cfg->verbose_level > 1)
+		mono_print_ins (ins);
+
+	/* FIXME: Work directly on cfg->vars */
+	/* FIXME: Support longs/floats */
+
+	if (spec [MONO_INST_DEST] != ' ') {
+		MonoInst *var = get_vreg_to_inst (cfg, ins->dreg);
+		/* Perform constant fold even if dreg isn't a global vreg */
+		int state = evaluate_ins (cfg, ins, carray);
+
+		if (var && !(var->flags & (MONO_INST_VOLATILE|MONO_INST_INDIRECT))) {
+			MonoMethodVar *info = cfg->vars [var->inst_c0];
+
+			if (info->cpstate < 2) {
+				if (state == 1)
+					change_varstate (cfg, cvars, info, 1, ins, carray);
+				else if (state == 2)
+					change_varstate (cfg, cvars, info, 2, NULL, carray);
+			}
+		}
+	} else if (MONO_IS_COND_BRANCH_OP (ins)) {
+		MonoBasicBlock *target;
+
+		/* FIXME: */
+		target = ins->inst_true_bb;
+		if (!(target->flags &  BB_REACHABLE)) {
+			target->flags |= BB_REACHABLE;
+			*bblist = g_list_prepend (*bblist, target);
+		}
+		target = ins->inst_false_bb;
+		if (!(target->flags &  BB_REACHABLE)) {
+			target->flags |= BB_REACHABLE;
+			*bblist = g_list_prepend (*bblist, target);
+		}
+	}
+
+#if 0
 	if (inst->opcode == CEE_SWITCH) {
 		int r1, i, a;
 		int cases = GPOINTER_TO_INT (inst->klass);
@@ -1165,6 +1151,7 @@ visit_inst (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *inst, GList **cvars,
 			}
 		}
 	}
+#endif
 }
 
 void
@@ -1210,6 +1197,9 @@ mono_ssa_cprop2 (MonoCompile *cfg)
 				bblock_list = g_list_prepend (bblock_list, bb->out_bb [0]);
 			}
 		}
+
+		if (cfg->verbose_level > 1)
+			printf ("\nSSA CONSPROP BB%d:\n", bb->block_num);
 
 		for (inst = bb->code; inst; inst = inst->next) {
 			visit_inst (cfg, bb, inst, &cvars, &bblock_list, carray);
