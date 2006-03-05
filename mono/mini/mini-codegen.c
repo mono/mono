@@ -52,6 +52,28 @@ static const char*const * ins_spec = s390_cpu_desc;
 
 #define use_fpstack MONO_ARCH_USE_FPSTACK
 
+static inline GSList*
+g_slist_append_mempool (MonoMemPool *mp, GSList *list, gpointer data)
+{
+  GSList *new_list;
+  GSList *last;
+
+  new_list = mono_mempool_alloc (mp, sizeof (GSList));
+  new_list->data = data;
+  new_list->next = NULL;
+
+  if (list) {
+	  last = list;
+	  while (last->next)
+		  last = last->next;
+      last->next = new_list;
+
+      return list;
+    }
+  else
+      return new_list;
+}
+
 /**
  * Duplicated here from regalloc.c so they can be inlined
  * FIXME: Remove the old one after the new JIT is done
@@ -179,17 +201,17 @@ mono_regname_full (int reg, gboolean fp)
 }
 
 void
-mono_call_inst_add_outarg_reg (MonoCallInst *call, int vreg, int hreg, gboolean fp)
+mono_call_inst_add_outarg_reg (MonoCompile *cfg, MonoCallInst *call, int vreg, int hreg, gboolean fp)
 {
 	guint32 regpair;
 
 	regpair = (((guint32)hreg) << 24) + vreg;
 	if (fp) {
 		call->used_fregs |= 1 << hreg;
-		call->out_freg_args = g_slist_append (call->out_freg_args, (gpointer)(gssize)(regpair));
+		call->out_freg_args = g_slist_append_mempool (cfg->mempool, call->out_freg_args, (gpointer)(gssize)(regpair));
 	} else {
 		call->used_iregs |= 1 << hreg;
-		call->out_ireg_args = g_slist_append (call->out_ireg_args, (gpointer)(gssize)(regpair));
+		call->out_ireg_args = g_slist_append_mempool (cfg->mempool, call->out_ireg_args, (gpointer)(gssize)(regpair));
 	}
 }
 
@@ -1689,7 +1711,6 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 
 					list = g_slist_next (list);
 				}
-				g_slist_free (call->out_ireg_args);
 			}
 
 			list = call->out_freg_args;
@@ -1709,8 +1730,6 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 					list = g_slist_next (list);
 				}
 			}
-			if (call->out_freg_args)
-				g_slist_free (call->out_freg_args);
 		}
 
 		/*

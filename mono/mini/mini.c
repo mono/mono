@@ -1681,8 +1681,8 @@ set_vreg_to_inst (MonoCompile *cfg, int vreg, MonoInst *inst)
 		int size = cfg->vreg_to_inst_len;
 
 		while (vreg >= cfg->vreg_to_inst_len)
-			cfg->vreg_to_inst_len = cfg->vreg_to_inst_len ? cfg->vreg_to_inst_len * 2 : 16;
-		cfg->vreg_to_inst = g_malloc0 (sizeof (MonoInst*) * cfg->vreg_to_inst_len);
+			cfg->vreg_to_inst_len = cfg->vreg_to_inst_len ? cfg->vreg_to_inst_len * 2 : 32;
+		cfg->vreg_to_inst = mono_mempool_alloc0 (cfg->mempool, sizeof (MonoInst*) * cfg->vreg_to_inst_len);
 		if (size)
 			memcpy (cfg->vreg_to_inst, tmp, size * sizeof (MonoInst*));
 	}
@@ -10245,14 +10245,14 @@ mono_coalesce_pass (MonoCompile *cfg)
 	MonoBasicBlock *bb;
 	MonoInst *ins;
 
+	/* FIXME: Finish this */
+
 	for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
 		if (cfg->verbose_level > 1) {
 			printf ("COALESCE BB%d:\n", bb->block_num);
 		}
 
 		for (ins = bb->code; ins; ins = ins->next) {
-			const char *spec = ins_info [ins->opcode - OP_START - 1];
-
 			if ((ins->opcode == OP_MOVE) && get_vreg_to_inst (cfg, ins->dreg) && get_vreg_to_inst (cfg, ins->sreg1)) {
 				MonoLiveRange *ranged = &MONO_VARINFO (cfg, get_vreg_to_inst (cfg, ins->dreg)->inst_c0)->range;
 				MonoLiveRange *ranges = &MONO_VARINFO (cfg, get_vreg_to_inst (cfg, ins->sreg1)->inst_c0)->range;

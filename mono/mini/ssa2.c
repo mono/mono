@@ -33,8 +33,12 @@ extern guint8 mono_burg_arity [];
         (dest)->dreg = (dest)->sreg1 = (dest)->sreg2 = -1; \
 	} while (0)
 
+typedef struct {
+	MonoBasicBlock *bb;
+	MonoInst *inst;
+} MonoVarUsageInfo;
 
-static GList*
+static inline GList*
 g_list_prepend_mempool (GList* l, MonoMemPool* mp, gpointer datum)
 {
 	GList* n = mono_mempool_alloc (mp, sizeof (GList));
@@ -93,6 +97,19 @@ unlink_unused_bblocks (MonoCompile *cfg)
  
 	}
 }
+
+static inline void
+record_use (MonoCompile *cfg, MonoInst *var, MonoBasicBlock *bb, MonoInst *ins)
+{
+	MonoMethodVar *info;
+	MonoVarUsageInfo *ui = mono_mempool_alloc (cfg->mempool, sizeof (MonoVarUsageInfo));
+
+	info = cfg->vars [var->inst_c0];
+	
+	ui->bb = bb;
+	ui->inst = ins;
+	info->uses = g_list_prepend_mempool (info->uses, cfg->mempool, ui);
+}	
 
 static void
 replace_usage (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *inst, MonoInst **stack)
@@ -200,9 +217,9 @@ typedef struct {
 /**
  * mono_ssa_rename_vars2:
  *
- *  Implement renaming of SSA variables. @stack_history points to an area of memory
- * which can be used for storing changes made to the stack, so they can be reverted
- * later.
+ *  Implement renaming of SSA variables. Also compute def-use information in paralell.
+ * @stack_history points to an area of memory which can be used for storing changes 
+ * made to the stack, so they can be reverted later.
  */
 static void
 mono_ssa_rename_vars2 (MonoCompile *cfg, int max_vars, MonoBasicBlock *bb, gboolean *originals_used, MonoInst **stack, RenameInfo *stack_history, int stack_history_size) 
@@ -236,7 +253,10 @@ mono_ssa_rename_vars2 (MonoCompile *cfg, int max_vars, MonoBasicBlock *bb, gbool
 					if (var->opcode != OP_ARG)
 						g_assert (stack [idx]);
 					ins->sreg1 = stack [idx]->dreg;
+					record_use (cfg, stack [idx], bb, ins);
 				}
+				else
+					record_use (cfg, var, bb, ins);
 			}
 		}					
 
@@ -250,7 +270,10 @@ mono_ssa_rename_vars2 (MonoCompile *cfg, int max_vars, MonoBasicBlock *bb, gbool
 						g_assert (stack [idx]);
 
 					ins->sreg2 = stack [idx]->dreg;
+					record_use (cfg, stack [idx], bb, ins);
 				}
+				else
+					record_use (cfg, var, bb, ins);
 			}
 		}
 
@@ -262,13 +285,18 @@ mono_ssa_rename_vars2 (MonoCompile *cfg, int max_vars, MonoBasicBlock *bb, gbool
 					if (var->opcode != OP_ARG)
 						g_assert (stack [idx]);
 					ins->dreg = stack [idx]->dreg;
+					record_use (cfg, stack [idx], bb, ins);
 				}
+				else
+					record_use (cfg, var, bb, ins);
 			}
 		}
 
 		/* DREG */
 		if ((spec [MONO_INST_DEST] != ' ') && !MONO_IS_STORE_MEMBASE (ins)) {
 			MonoInst *var = get_vreg_to_inst (cfg, ins->dreg);
+			MonoMethodVar *info;
+
 			if (var && !(var->flags & (MONO_INST_VOLATILE|MONO_INST_INDIRECT))) {
 				idx = var->inst_c0;
 				g_assert (idx < max_vars);
@@ -292,11 +320,17 @@ mono_ssa_rename_vars2 (MonoCompile *cfg, int max_vars, MonoBasicBlock *bb, gbool
 					stack [idx] = new_var;
 
 					ins->dreg = new_var->dreg;
+					var = new_var;
 				}
 				else {
 					stack [idx] = var;
 					originals_used [idx] = TRUE;
 				}
+
+				info = cfg->vars [var->inst_c0];
+				info->def = ins;
+				info->def_bb = bb;
+
 			}
 		}
 
@@ -325,7 +359,7 @@ mono_ssa_rename_vars2 (MonoCompile *cfg, int max_vars, MonoBasicBlock *bb, gbool
 				printf ("FOUND PHI %d (%d, %d)\n", idx, j, new_var->inst_c0);
 #endif
 				ins->inst_phi_args [j + 1] = new_var->dreg;
-				
+				record_use (cfg,  new_var, n, ins);				
 				if (G_UNLIKELY (cfg->verbose_level >= 4))
 					printf ("\tAdd PHI R%d <- R%d to BB%d\n", ins->dreg, new_var->dreg, n->block_num);
 			}
@@ -345,6 +379,8 @@ mono_ssa_rename_vars2 (MonoCompile *cfg, int max_vars, MonoBasicBlock *bb, gbool
 	for (i = stack_history_len - 1; i >= 0; i--) {
 		stack [stack_history [i].idx] = stack_history [i].var;
 	}
+
+	cfg->comp_done |= MONO_COMP_SSA_DEF_USE;
 }
 
 void
@@ -662,24 +698,6 @@ mono_ssa_replace_copies (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *inst, c
 }
 
 #define IS_CALL(op) (op == CEE_CALLI || op == CEE_CALL || op == CEE_CALLVIRT || (op >= OP_VOIDCALL && op <= OP_CALL_MEMBASE))
-
-typedef struct {
-	MonoBasicBlock *bb;
-	MonoInst *inst;
-} MonoVarUsageInfo;
-
-static inline void
-record_use (MonoCompile *cfg, MonoInst *var, MonoBasicBlock *bb, MonoInst *ins)
-{
-	MonoMethodVar *info;
-	MonoVarUsageInfo *ui = mono_mempool_alloc (cfg->mempool, sizeof (MonoVarUsageInfo));
-
-	info = cfg->vars [var->inst_c0];
-	
-	ui->bb = bb;
-	ui->inst = ins;
-	info->uses = g_list_prepend_mempool (info->uses, cfg->mempool, ui);
-}	
 
 static void
 mono_ssa_create_def_use (MonoCompile *cfg) 
@@ -1232,12 +1250,12 @@ mono_ssa_cprop2 (MonoCompile *cfg)
 	}
 }
 
-static void
+static inline void
 add_to_dce_worklist (MonoCompile *cfg, MonoMethodVar *var, MonoMethodVar *use, GList **wl)
 {
 	GList *tmp;
 
-	*wl = g_list_prepend (*wl, use);
+	*wl = g_list_prepend_mempool (*wl, cfg->mempool, use);
 
 	for (tmp = use->uses; tmp; tmp = tmp->next) {
 		MonoVarUsageInfo *ui = (MonoVarUsageInfo *)tmp->data;
@@ -1267,12 +1285,12 @@ mono_ssa_deadce2 (MonoCompile *cfg)
 	work_list = NULL;
 	for (i = 0; i < cfg->num_varinfo; i++) {
 		MonoMethodVar *info = cfg->vars [i];
-		work_list = g_list_prepend (work_list, info);
+		work_list = g_list_prepend_mempool (work_list, cfg->mempool, info);
 	}
 
 	while (work_list) {
 		MonoMethodVar *info = (MonoMethodVar *)work_list->data;
-		work_list = g_list_delete_link (work_list, work_list);
+		work_list = g_list_remove_link (work_list, work_list);
 
 		/* 
 		 * The second part of the condition happens often when PHI nodes have their dreg
