@@ -1,3 +1,7 @@
+2006-03-05  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* run-test.bat: added running of mono test suite
+
 2006-02-23  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* run-test.bat: fixed references copying

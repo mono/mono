@@ -43,6 +43,12 @@ pushd MainsoftWebTest
 popd
 
 rem =================================================
+echo Build System.Web mono tests...
+pushd ..
+"%VS71COMNTOOLS%..\IDE\devenv.com" TestMonoWeb_jvm.vmwcsproj /build Debug_Java
+popd
+
+rem =================================================
 copy MainsoftWebTest\almost_config.xml MainsoftWebTest\bin\almost_config.xml /Y
 copy MainsoftWebTest\test_catalog.xml MainsoftWebTest\bin\test_catalog.xml /Y
 copy MainsoftWebTest\App.gh.config MainsoftWebTest\bin\nunit-console.exe.config /Y
@@ -65,7 +71,11 @@ echo Running...
 set GH_CP=%JGAC_PATH%\mscorlib.jar
 set GH_CP=%GH_CP%;%JGAC_PATH%\System.jar
 set GH_CP=%GH_CP%;%JGAC_PATH%\System.Xml.jar
+set GH_CP=%GH_CP%;%JGAC_PATH%\System.Web.jar
+set GH_CP=%GH_CP%;%JGAC_PATH%\System.Data.jar
+set GH_CP=%GH_CP%;%JGAC_PATH%\System.Drawing.jar
 set GH_CP=%GH_CP%;%JGAC_PATH%\J2SE.Helpers.jar
+set GH_CP=%GH_CP%;%JGAC_PATH%\J2EE.Helpers.jar
 set GH_CP=%GH_CP%;%JGAC_PATH%\vmwutils.jar
 
 set GH_CP=%GH_CP%;nunit.core.jar
@@ -73,13 +83,17 @@ set GH_CP=%GH_CP%;nunit.framework.jar
 set GH_CP=%GH_CP%;nunit.util.jar
 set GH_CP=%GH_CP%;nunit-console.jar
 
-set logfile=logfile.xml
+set ghlogfile=logfile.xml
+set monologfile=mono.xml
 
 pushd MainsoftWebTest\bin
-%JAVA_HOME%\bin\java.exe -cp .;"%GH_CP%" NUnit.Console.ConsoleUi SystemWebTest.jar /xml=%logfile% /fixture:MonoTests.stand_alone.WebHarness.Harness
+
+%JAVA_HOME%\bin\java.exe -cp .;"%GH_CP%" NUnit.Console.ConsoleUi SystemWebTest.jar /xml=%ghlogfile% /fixture:MonoTests.stand_alone.WebHarness.Harness
+%JAVA_HOME%\bin\java.exe -cp .;"%GH_CP%" NUnit.Console.ConsoleUi TestMonoWeb_jvm.jar /xml=%monologfile% /exclude:NotWorking,ValueAdd,InetAccess /fixture:MonoTests.System.Web
 
 echo Finished...
-xmltool.exe --transform nunit_transform.xslt %logfile%
+xmltool.exe --transform nunit_transform.xslt %ghlogfile%
+xmltool.exe --transform nunit_transform.xslt %monologfile%
 
 popd
 
