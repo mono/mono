@@ -1,3 +1,8 @@
+2006-03-05  Andrew Skiba <andrews@mainsoft.com>
+
+	* HttpClientChannel.cs, HttpServerChannel.cs: exceptions propagating
+	incompatible with dotnet. Patch by roeie@mainsoft.com
+
 2005-11-06  Svetlana Zholkovsky  <svetlanaz@mainsoft.com>
 
     * Add HttpHandlerFactory.jvm.cs

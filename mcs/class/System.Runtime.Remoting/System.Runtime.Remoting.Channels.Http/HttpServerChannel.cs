@@ -398,7 +398,7 @@ namespace System.Runtime.Remoting.Channels.Http
 				{
 					try 
 					{
-						HttpServer.SendResponse (reqArg, 400, null, null);
+						HttpServer.SendResponse (reqArg, 500, null, null);
 					}
 					catch (Exception e)
 					{

@@ -108,7 +108,7 @@ namespace System.Runtime.Remoting.MetadataServices
 				catch (Exception ex)
 				{
 					responseHeaders = new TransportHeaders ();
-					responseHeaders [CommonTransportKeys.HttpStatusCode] = "500";
+					responseHeaders [CommonTransportKeys.HttpStatusCode] = "400";
 					responseStream = new MemoryStream (Encoding.UTF8.GetBytes (ex.ToString ()));
 				}
 				return ServerProcessing.Complete;
