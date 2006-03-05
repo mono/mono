@@ -32,6 +32,7 @@
 using System;
 using System.Collections;
 using Mainsoft.Data.Configuration;
+using System.Reflection;
 
 namespace Mainsoft.Data.Jdbc.Providers
 {
@@ -74,6 +75,131 @@ namespace Mainsoft.Data.Jdbc.Providers
 			return conectionStringBuilder;
 		}
 
+		public override java.sql.Connection GetConnection(IConnectionStringDictionary conectionStringBuilder) {
+			return new OracleConnection(base.GetConnection (conectionStringBuilder));
+		}
+
+
 		#endregion //Methods
+
+		#region OracleConnection
+
+		sealed class OracleConnection : Connection {
+
+			public OracleConnection(java.sql.Connection connection)
+				: base(connection) {}
+
+			public override java.sql.CallableStatement prepareCall(string arg_0) {
+				return base.prepareCall (arg_0);
+			}
+
+			public override java.sql.CallableStatement prepareCall(string arg_0, int arg_1, int arg_2) {
+				return new OracleCallableStatement(base.prepareCall (arg_0, arg_1, arg_2));
+			}
+
+			public override java.sql.CallableStatement prepareCall(string arg_0, int arg_1, int arg_2, int arg_3) {
+				return new OracleCallableStatement(base.prepareCall (arg_0, arg_1, arg_2, arg_3));
+			}
+
+			public override java.sql.PreparedStatement prepareStatement(string arg_0) {
+				return new OraclePreparedStatement(base.prepareStatement (arg_0));
+			}
+
+			public override java.sql.PreparedStatement prepareStatement(string arg_0, int arg_1) {
+				return new OraclePreparedStatement(base.prepareStatement (arg_0, arg_1));
+			}
+
+			public override java.sql.PreparedStatement prepareStatement(string arg_0, int arg_1, int arg_2) {
+				return new OraclePreparedStatement(base.prepareStatement (arg_0, arg_1, arg_2));
+			}
+
+			public override java.sql.PreparedStatement prepareStatement(string arg_0, int arg_1, int arg_2, int arg_3) {
+				return new OraclePreparedStatement(base.prepareStatement (arg_0, arg_1, arg_2, arg_3));
+			}
+
+			public override java.sql.PreparedStatement prepareStatement(string arg_0, int[] arg_1) {
+				return new OraclePreparedStatement(base.prepareStatement (arg_0, arg_1));
+			}
+
+			public override java.sql.PreparedStatement prepareStatement(string arg_0, string[] arg_1) {
+				return new OraclePreparedStatement(base.prepareStatement (arg_0, arg_1));
+			}
+		}
+
+		#endregion
+
+		sealed class OraclePreparedStatement : PreparedStatement, IPreparedStatement {
+			readonly MethodInfo _info;
+
+			public OraclePreparedStatement(java.sql.PreparedStatement statement)
+				: base(statement) {
+				_info = Wrapped.GetType().GetMethod("setFixedCHAR");
+			}
+
+			#region IPreparedStatement Members
+
+			public void setBit(int parameterIndex, int value) {
+				base.setInt(parameterIndex, value);
+			}
+
+			public void setChar(int parameterIndex, string value) {
+				if (_info == null) {
+					base.setString(parameterIndex, value);
+					return;
+				}
+
+				_info.Invoke(Wrapped, new object[] {
+							new java.lang.Integer(parameterIndex),
+							value});
+			}
+
+			public void setNumeric(int parameterIndex, java.math.BigDecimal value) {
+				base.setBigDecimal(parameterIndex, value);
+			}
+
+			public void setReal(int parameterIndex, double value) {
+				base.setDouble(parameterIndex, value);
+			}
+
+			#endregion
+		}
+
+		sealed class OracleCallableStatement : CallableStatement, IPreparedStatement {
+			readonly MethodInfo _info;
+
+			public OracleCallableStatement(java.sql.CallableStatement statement)
+				: base(statement) {
+				_info = Wrapped.GetType().GetMethod("setFixedCHAR");
+			}
+
+			#region IPreparedStatement Members
+
+			public void setBit(int parameterIndex, int value) {
+				base.setInt(parameterIndex, value);
+			}
+
+			public void setChar(int parameterIndex, string value) {
+				if (_info == null) {
+					base.setString(parameterIndex, value);
+					return;
+				}
+
+				_info.Invoke(Wrapped, new object[] {
+								new java.lang.Integer(parameterIndex),
+								value});
+			}
+
+			public void setNumeric(int parameterIndex, java.math.BigDecimal value) {
+				base.setBigDecimal(parameterIndex, value);
+			}
+
+			public void setReal(int parameterIndex, double value) {
+				base.setDouble(parameterIndex, value);
+			}
+
+			#endregion
+
+		}
+
 	}
 }

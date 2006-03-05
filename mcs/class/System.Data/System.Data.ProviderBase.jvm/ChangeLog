@@ -1,5 +1,9 @@
 2006-03-05  Konstantin Triger <kostat@mainsoft.com>
 
+	* AbstractDBCommand.cs: differentiate between setting varying and fixed length strings.
+
+2006-03-05  Konstantin Triger <kostat@mainsoft.com>
+
 	* AbstractDataReader.cs, ReaderCache.cs: enable provider specific caches.
 
 2006-02-26  Konstantin Triger <kostat@mainsoft.com>

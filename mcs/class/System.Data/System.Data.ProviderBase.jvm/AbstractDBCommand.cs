@@ -996,7 +996,13 @@ namespace System.Data.ProviderBase
 				preparedStatement.setInt(parameterIndex, (int)value);
 			}
 			else if (value is string) {
-				preparedStatement.setString(parameterIndex, (string)value);
+				if (preparedStatement is Mainsoft.Data.Jdbc.Providers.IPreparedStatement &&
+					(DbConvert.JavaSqlTypes)parameter.JdbcType == DbConvert.JavaSqlTypes.CHAR) {
+					((Mainsoft.Data.Jdbc.Providers.IPreparedStatement)preparedStatement)
+						.setChar(parameterIndex, (string)value);
+				}
+				else
+					preparedStatement.setString(parameterIndex, (string)value);
 			}
 			else if (value is Guid) {
 				preparedStatement.setString(parameterIndex, value.ToString());

@@ -1,3 +1,9 @@
+2006-03-05  Konstantin Triger <kostat@mainsoft.com>
+
+	* IProvider.cs: add PreparedStatement extension interface.
+	* wrappers.cs: realization if default wrappers.
+	* OleDbOracleProvider.cs: Oracle specific implementation for setting fixed length strings. 
+
 2006-02-26  Konstantin Triger <kostat@mainsoft.com>
 
 	* OleDbSqlServerProvider.cs: set default empty Database.

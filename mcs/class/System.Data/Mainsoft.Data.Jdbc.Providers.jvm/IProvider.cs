@@ -64,7 +64,14 @@ namespace Mainsoft.Data.Jdbc.Providers
 
 	public interface IConnectionProvider
 	{
-		Connection GetConnection (IConnectionStringDictionary connectionStringBuilder);
+		java.sql.Connection GetConnection (IConnectionStringDictionary connectionStringBuilder);
 		IConnectionStringDictionary GetConnectionStringBuilder (string connectionString);
+	}
+
+	public interface IPreparedStatement : java.sql.PreparedStatement {
+		void setBit(int parameterIndex, int value);
+		void setChar(int parameterIndex, string value);
+		void setNumeric(int parameterIndex, java.math.BigDecimal value);
+		void setReal(int parameterIndex, double value);
 	}
 }

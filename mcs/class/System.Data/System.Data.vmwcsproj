@@ -28,6 +28,7 @@
 				<File RelPath="Mainsoft.Data.Jdbc.Providers.jvm\OleDbDB2Provider.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="Mainsoft.Data.Jdbc.Providers.jvm\OleDbOracleProvider.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="Mainsoft.Data.Jdbc.Providers.jvm\OleDbSqlServerProvider.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="Mainsoft.Data.Jdbc.Providers.jvm\wrappers.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="Mono.Data.SqlExpressions\Aggregation.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="Mono.Data.SqlExpressions\ArithmeticExpressions.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="Mono.Data.SqlExpressions\BooleanExpressions.cs" SubType="Code" BuildAction="Compile"/>
