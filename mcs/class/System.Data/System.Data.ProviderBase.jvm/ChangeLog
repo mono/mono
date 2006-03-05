@@ -1,3 +1,7 @@
+2006-03-05  Konstantin Triger <kostat@mainsoft.com>
+
+	* AbstractDataReader.cs, ReaderCache.cs: enable provider specific caches.
+
 2006-02-26  Konstantin Triger <kostat@mainsoft.com>
 
 	* AbstractDataReader.cs: Prevent recursion when GetXXX is overriden and GetXXXSafe is called.

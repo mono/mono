@@ -42,7 +42,7 @@ namespace System.Data.ProviderBase
 		object GetValue();
 	}
 
-	internal abstract class ReaderCacheContainerBase : IReaderCacheContainer
+	public abstract class ReaderCacheContainerBase : IReaderCacheContainer
 	{
 		#region Fields
 
