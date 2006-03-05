@@ -155,7 +155,7 @@ namespace System.Data.OleDb
 			schemaTable.Columns.Add("DATE_MODIFIED");
             
             
-			Connection con = JdbcConnection;
+			java.sql.Connection con = JdbcConnection;
 			String catalog = con.getCatalog();
             
 			DatabaseMetaData meta = con.getMetaData();

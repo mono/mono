@@ -111,7 +111,7 @@ namespace System.Data.ProviderBase
 
 		private const int DEFAULT_TIMEOUT = 15;
 
-		private Connection _jdbcConnnection;
+		private java.sql.Connection _jdbcConnnection;
 		private ConnectionState _internalState;
 		private object _internalStateSync = new object();
 
@@ -317,7 +317,7 @@ namespace System.Data.ProviderBase
 		}
 
 
-		protected internal Connection JdbcConnection
+		protected internal java.sql.Connection JdbcConnection
 		{
 			get { return _jdbcConnnection; }
 			set { _jdbcConnnection = value; }
@@ -484,7 +484,7 @@ namespace System.Data.ProviderBase
 			IsConnecting = true;
 			try {
 				ClearReferences();
-				Connection con = JdbcConnection;				
+				java.sql.Connection con = JdbcConnection;				
 				con.setCatalog(database);
 //				ConnectionStringHelper.UpdateValue(UserParameters,StringManager.GetStringArray("CON_DATABASE"),database);
 			}

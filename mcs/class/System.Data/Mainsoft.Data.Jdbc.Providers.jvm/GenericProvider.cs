@@ -76,7 +76,7 @@ namespace Mainsoft.Data.Jdbc.Providers
 
 			#region Methods 
 
-			internal Connection Connection {
+			internal java.sql.Connection Connection {
 				get {
 					string url = (string)_keyMapper["JdbcURL"];
 					if (url == null) {
@@ -261,7 +261,7 @@ namespace Mainsoft.Data.Jdbc.Providers
 
 		#region Methods
 
-		public virtual Connection GetConnection (IConnectionStringDictionary conectionStringBuilder)
+		public virtual java.sql.Connection GetConnection (IConnectionStringDictionary conectionStringBuilder)
 		{	
 			string dataSourceJndi = (string)conectionStringBuilder["jndi-datasource-name"];
 
