@@ -1,3 +1,7 @@
+2006-03-05  Konstantin Triger <kostat@mainsoft.com>
+
+	* OracleDataReader.cs, OracleConvert.cs: correct handling of Oracle specific types.
+
 2006-02-26  Konstantin Triger <kostat@mainsoft.com>
 
 	* OracleDataReader.cs: Added GetOracleXXX stubs.

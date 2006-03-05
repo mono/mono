@@ -72,6 +72,94 @@ namespace System.Data.OracleClient {
 			return (int)OracleConvert.JdbcTypeToOracleType(jdbcType);   
 		}
 
+		protected override IReaderCacheContainer CreateReaderCacheContainer(int jdbcType, int columnIndex) {
+			switch ((JavaSqlTypes)jdbcType) {
+				case JavaSqlTypes.BINARY_FLOAT:
+					jdbcType = (int)JavaSqlTypes.REAL;
+					break;
+				case JavaSqlTypes.BINARY_DOUBLE:
+					jdbcType = (int)JavaSqlTypes.DOUBLE;
+					break;
+				case JavaSqlTypes.ROWID:
+					jdbcType = (int)JavaSqlTypes.VARCHAR;
+					break;
+//				case JavaSqlTypes.CURSOR:
+//					jdbcType = JavaSqlTypes.OTHER;
+//					break;
+				case JavaSqlTypes.TIMESTAMPNS:
+					jdbcType = (int)JavaSqlTypes.TIMESTAMP;
+					break;
+				case JavaSqlTypes.TIMESTAMPTZ:
+					jdbcType = (int)JavaSqlTypes.TIMESTAMP;
+					break;
+				case JavaSqlTypes.TIMESTAMPLTZ: 
+					jdbcType = (int)JavaSqlTypes.TIMESTAMP;
+					break;
+				case JavaSqlTypes.INTERVALYM:
+					jdbcType = (int)JavaSqlTypes.INTEGER;
+					break;
+				case JavaSqlTypes.INTERVALDS:
+					jdbcType = (int)JavaSqlTypes.TIMESTAMP;
+					break;
+			}
+			return base.CreateReaderCacheContainer (jdbcType, columnIndex);
+		}
+
+
+		protected override void SetSchemaType(DataRow schemaRow, ResultSetMetaData metaData, int columnIndex) {
+			JavaSqlTypes columnType = (JavaSqlTypes)metaData.getColumnType(columnIndex);
+			switch (columnType) {
+				case JavaSqlTypes.BINARY_FLOAT:
+					schemaRow [(int)SCHEMA_TABLE.ProviderType] = GetProviderType((int)columnType);
+					schemaRow [(int)SCHEMA_TABLE.DataType] = OracleConvert.TypeOfFloat;
+					schemaRow [(int)SCHEMA_TABLE.IsLong] = false;
+					break;
+				case JavaSqlTypes.BINARY_DOUBLE:
+					schemaRow [(int)SCHEMA_TABLE.ProviderType] = GetProviderType((int)columnType);
+					schemaRow [(int)SCHEMA_TABLE.DataType] = OracleConvert.TypeOfDouble;
+					schemaRow [(int)SCHEMA_TABLE.IsLong] = false;
+					break;
+				case JavaSqlTypes.ROWID:
+					schemaRow [(int)SCHEMA_TABLE.ProviderType] = GetProviderType((int)columnType);
+					schemaRow [(int)SCHEMA_TABLE.DataType] = OracleConvert.TypeOfString;
+					schemaRow [(int)SCHEMA_TABLE.IsLong] = false;
+					break;
+				case JavaSqlTypes.CURSOR:
+					schemaRow [(int)SCHEMA_TABLE.ProviderType] = GetProviderType((int)columnType);
+					schemaRow [(int)SCHEMA_TABLE.DataType] = OracleConvert.TypeOfDouble;
+					schemaRow [(int)SCHEMA_TABLE.IsLong] = false;
+					break;
+				case JavaSqlTypes.TIMESTAMPNS:
+					schemaRow [(int)SCHEMA_TABLE.ProviderType] = GetProviderType((int)columnType);
+					schemaRow [(int)SCHEMA_TABLE.DataType] = OracleConvert.TypeOfTimespan;
+					schemaRow [(int)SCHEMA_TABLE.IsLong] = false;
+					break;
+				case JavaSqlTypes.TIMESTAMPTZ:
+					schemaRow [(int)SCHEMA_TABLE.ProviderType] = GetProviderType((int)columnType);
+					schemaRow [(int)SCHEMA_TABLE.DataType] = OracleConvert.TypeOfTimespan;
+					schemaRow [(int)SCHEMA_TABLE.IsLong] = false;
+					break;
+				case JavaSqlTypes.TIMESTAMPLTZ: 
+					schemaRow [(int)SCHEMA_TABLE.ProviderType] = GetProviderType((int)columnType);
+					schemaRow [(int)SCHEMA_TABLE.DataType] = OracleConvert.TypeOfTimespan;
+					schemaRow [(int)SCHEMA_TABLE.IsLong] = false;
+					break;
+				case JavaSqlTypes.INTERVALYM:
+					schemaRow [(int)SCHEMA_TABLE.ProviderType] = GetProviderType((int)columnType);
+					schemaRow [(int)SCHEMA_TABLE.DataType] = OracleConvert.TypeOfUInt32;
+					schemaRow [(int)SCHEMA_TABLE.IsLong] = false;
+					break;
+				case JavaSqlTypes.INTERVALDS:
+					schemaRow [(int)SCHEMA_TABLE.ProviderType] = GetProviderType((int)columnType);
+					schemaRow [(int)SCHEMA_TABLE.DataType] = OracleConvert.TypeOfTimespan;
+					schemaRow [(int)SCHEMA_TABLE.IsLong] = false;
+					break;
+				default:
+					base.SetSchemaType(schemaRow, metaData, columnIndex);
+					break;
+			}
+		}
+
 		public override decimal GetDecimal(int i) {
 			if (IsNumeric(i))
 				return GetDecimalSafe(i);

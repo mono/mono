@@ -72,7 +72,15 @@ namespace System.Data.OracleClient {
 		VARCHAR = 12,
 
 		//ORACLE types, see oracle.jdbc.OracleTypes
-		CURSOR = -10
+		BINARY_FLOAT  = 100,
+		BINARY_DOUBLE =	101,
+		ROWID =	-8,
+		CURSOR = -10,
+		TIMESTAMPNS = -100,
+		TIMESTAMPTZ = -101,
+		TIMESTAMPLTZ = -102,
+		INTERVALYM 	= -103,
+		INTERVALDS 	= -104,
 	}
 
 	#endregion
@@ -127,7 +135,6 @@ namespace System.Data.OracleClient {
 //				case JavaSqlTypes.DATALINK: return OracleType.IUnknown;
 				case JavaSqlTypes.DATE: return OracleType.DateTime;
 				case JavaSqlTypes.DECIMAL: return OracleType.Number;
-				case JavaSqlTypes.CURSOR: return OracleType.Cursor;
 //				case JavaSqlTypes.DISTINCT: return OracleType.IUnknown; 
 				case JavaSqlTypes.DOUBLE: return OracleType.Double;
 				case JavaSqlTypes.FLOAT: return OracleType.Float;
@@ -148,6 +155,16 @@ namespace System.Data.OracleClient {
 				case JavaSqlTypes.VARBINARY: return OracleType.LongVarChar;
 				default:
 				case JavaSqlTypes.VARCHAR: return OracleType.VarChar;
+
+				case JavaSqlTypes.BINARY_FLOAT: return OracleType.Float;
+				case JavaSqlTypes.BINARY_DOUBLE: return OracleType.Double;
+				case JavaSqlTypes.ROWID: return OracleType.RowId;
+				case JavaSqlTypes.CURSOR: return OracleType.Cursor;
+				case JavaSqlTypes.TIMESTAMPNS: return OracleType.Timestamp;
+				case JavaSqlTypes.TIMESTAMPTZ: return OracleType.TimestampWithTZ;
+				case JavaSqlTypes.TIMESTAMPLTZ: return OracleType.TimestampLocal; 
+				case JavaSqlTypes.INTERVALYM: return OracleType.IntervalYearToMonth;
+				case JavaSqlTypes.INTERVALDS: return OracleType.IntervalDayToSecond;
 			}
 		}
 
@@ -209,7 +226,7 @@ namespace System.Data.OracleClient {
 				case OracleType.Int16 : return TypeOfInt16;
 				case OracleType.Int32 : return TypeOfInt32;
 				case OracleType.IntervalDayToSecond : return TypeOfTimespan;
-				case OracleType.IntervalYearToMonth : return TypeOfTimespan;
+				case OracleType.IntervalYearToMonth : return TypeOfInt32;
 				case OracleType.LongRaw : return TypeOfByteArray;
 //				case OracleType.Empty : return null; //typeof(DBNull);
 //				case OracleType.Error : return typeof(Exception);
@@ -299,7 +316,7 @@ namespace System.Data.OracleClient {
 				case OracleType.Int16 : return DbType.Int16;
 				case OracleType.Int32 : return DbType.Int32;
 				case OracleType.IntervalDayToSecond : return DbType.Time;
-				case OracleType.IntervalYearToMonth : return DbType.Time;
+				case OracleType.IntervalYearToMonth : return DbType.Int32;
 				case OracleType.LongRaw : return DbType.Binary;
 				case OracleType.LongVarChar : return DbType.String;
 				case OracleType.NChar : return DbType.AnsiStringFixedLength;
@@ -371,8 +388,8 @@ namespace System.Data.OracleClient {
 				case OracleType.Float : return (int)JavaSqlTypes.FLOAT;
 				case OracleType.Int16 : return (int)JavaSqlTypes.SMALLINT;
 				case OracleType.Int32 : return (int)JavaSqlTypes.INTEGER;
-				case OracleType.IntervalDayToSecond : return (int)JavaSqlTypes.TIMESTAMP;
-				case OracleType.IntervalYearToMonth : return (int)JavaSqlTypes.TIMESTAMP;
+				case OracleType.IntervalDayToSecond : return (int)JavaSqlTypes.INTERVALDS;
+				case OracleType.IntervalYearToMonth : return (int)JavaSqlTypes.INTERVALYM;
 				case OracleType.LongRaw : return (int)JavaSqlTypes.LONGVARBINARY;
 				case OracleType.LongVarChar : return (int)JavaSqlTypes.LONGVARCHAR;
 				case OracleType.NChar : return (int)JavaSqlTypes.CHAR;
