@@ -320,7 +320,7 @@ namespace System.Runtime.Remoting.Channels {
 			}
 			else {
 				// an Exception was thrown while executing the function
-				responseHeaders["__HttpStatusCode"] = "400";
+				responseHeaders["__HttpStatusCode"] = "500";
 				responseHeaders["__HttpReasonPhrase"] = "Bad Request";
 				// fill the transport headers
 				responseHeaders["Content-Type"] = "text/xml; charset=\"utf-8\"";

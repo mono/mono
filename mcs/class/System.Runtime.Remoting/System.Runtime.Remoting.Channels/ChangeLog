@@ -1,3 +1,8 @@
+2006-03-05  Andrew Skiba <andrews@mainsoft.com>
+
+	* SoapMessageFormatter.cs: : exceptions propagating
+	incompatible with dotnet. Patch by roeie@mainsoft.com
+
 2006-01-26  Svetlana Zholkovsky  <svetlanaz@mainsoft.com>
     * BinaryCore.cs: TARGET_JVM related changes
 
