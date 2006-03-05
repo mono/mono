@@ -340,7 +340,6 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		[Ignore ("Set.Relations.AddRange() fails, but why?")]
 		public void Creation4 ()
 		{
 			
@@ -362,9 +361,9 @@ namespace MonoTests.System.Data
 				AssertEquals ("test#04", typeof (NullReferenceException), e.GetType ());
 			}
 			
-			//Set.BeginInit ();
+			Set.BeginInit ();
 			Set.Relations.AddRange (new DataRelation [] {Relation});
-			//Set.EndInit ();
+			Set.EndInit ();
 			
 			DataRelation Test = null;
 			AssertEquals ("test#01", 1, Mom.ChildRelations.Count);

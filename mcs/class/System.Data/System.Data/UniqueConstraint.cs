@@ -57,7 +57,6 @@ namespace System.Data {
 
 		//TODO:provide helpers for this case
 		private string [] _dataColumnNames; //unique case
-		private bool _dataColsNotValidated;
 		private ForeignKeyConstraint _childConstraint = null;
 
 		#region Constructors
@@ -106,21 +105,17 @@ namespace System.Data {
 		[Browsable (false)]
 		public UniqueConstraint (string name, string[] columnNames, bool isPrimaryKey) 
 		{
-			 _dataColsNotValidated = true;
-                                                                                                    
-            //keep list of names to resolve later
-            _dataColumnNames = columnNames;
-                                                                                        
-            base.ConstraintName = name;
-                                                                                        
-            _isPrimaryKey = isPrimaryKey;
+			InitInProgress = true;
 
+			//keep list of names to resolve later
+			_dataColumnNames = columnNames;
+			base.ConstraintName = name;
+			_isPrimaryKey = isPrimaryKey;
 		}
 
 		//helper ctor
 		private void _uniqueConstraint(string name, DataColumn column, bool isPrimaryKey) 
 		{
-			_dataColsNotValidated = false;
 			//validate
 			_validateColumn (column);
 
@@ -139,8 +134,6 @@ namespace System.Data {
 		//helpter ctor	
 		private void _uniqueConstraint(string name, DataColumn[] columns, bool isPrimaryKey) 
 		{
-			_dataColsNotValidated = false;
-			
 			//validate
 			_validateColumns (columns, out _dataTable);
 
@@ -265,14 +258,6 @@ namespace System.Data {
 			return null;
 		}
 
-		internal bool DataColsNotValidated 
-		{               
-			get { 
-				return (_dataColsNotValidated); 
-			}
-		 }
-
-
 		internal ForeignKeyConstraint ChildConstraint {
 			get { return _childConstraint; }
 			set { _childConstraint = value; }
@@ -282,7 +267,7 @@ namespace System.Data {
 		// Set the _dataTable property to the table to which this instance is bound when AddRange()
 		// is called with the special constructor.
 		// Validate whether the named columns exist in the _dataTable
-		internal void PostAddRange(DataTable _setTable) 
+		internal override void FinishInit (DataTable _setTable) 
 		{                
 			_dataTable = _setTable;
 			if (_isPrimaryKey == true && _setTable.PrimaryKey.Length != 0)
@@ -301,6 +286,8 @@ namespace System.Data {
 				throw(new InvalidConstraintException ("The named columns must exist in the table"));
 			}
 			_dataColumns = cols;
+			_validateColumns (cols);
+			InitInProgress = false;
 		}
 
 
@@ -404,10 +391,6 @@ namespace System.Data {
 				_dataColumns[0].SetUnique();
 			}
 					
-			//FIXME: ConstraintCollection calls AssertContraint() again rigth after calling
-			//this method, so that it is executed twice. Need to investigate which
-			// call to remove as that migth affect other parts of the classes.
-			//AssertConstraint();
 			if (IsConstraintViolated())
 				throw new ArgumentException("These columns don't currently have unique values.");
 

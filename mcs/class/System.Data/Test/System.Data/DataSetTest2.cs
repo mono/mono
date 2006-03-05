@@ -338,6 +338,61 @@ namespace MonoTests_System.Data
 			Assert.AreEqual(arrUnchanged, ds.GetChanges(DataRowState.Unchanged).Tables[0].Rows[0].ItemArray , "DS34");
 		}
 
+		[Test] public void BeginInitTest ()
+		{
+			DataSet ds = new DataSet ();
+
+			DataTable table1 = new DataTable ("table1");
+			DataTable table2 = new DataTable ("table2");
+
+			DataColumn col1 = new DataColumn ("col1", typeof (int));
+			DataColumn col2 = new DataColumn ("col2", typeof (int));
+			table1.Columns.Add (col1);
+			table2.Columns.Add (col2);
+			
+			UniqueConstraint pkey = new UniqueConstraint ("pk", new string[] {"col1"}, true);
+			ForeignKeyConstraint fkey = new ForeignKeyConstraint ("fk", "table1", new String[] {"col1"}, 
+								new String[] {"col2"}, AcceptRejectRule.Cascade,
+								Rule.Cascade, Rule.Cascade);
+			DataRelation relation = new DataRelation ("rel", "table1", "table2", new String[] {"col1"},
+								 new String[] {"col2"}, false);
+			ds.BeginInit ();
+			table1.BeginInit ();
+			table2.BeginInit ();
+
+			ds.Tables.AddRange (new DataTable[] {table1, table2});
+			ds.Relations.AddRange (new DataRelation[] {relation});
+			
+			table1.Constraints.AddRange (new Constraint[] {pkey});
+			table2.Constraints.AddRange (new Constraint[] {fkey});
+
+			// The tables/relations shud not get added to the DataSet yet
+			Assert.AreEqual (0, ds.Tables.Count, "#1");
+			Assert.AreEqual (0, ds.Relations.Count, "#2");
+			Assert.AreEqual (0, table1.Constraints.Count, "#3");
+			Assert.AreEqual (0, table2.Constraints.Count, "#4");
+			ds.EndInit ();
+
+			Assert.AreEqual (2, ds.Tables.Count, "#5");
+			Assert.AreEqual (1, ds.Relations.Count, "#6");
+			Assert.AreEqual (1, ds.Tables [0].Constraints.Count, "#7");
+			Assert.AreEqual (1, ds.Tables [1].Constraints.Count, "#8");
+
+			// Table shud still be in BeginInit .. 
+			DataColumn col3 = new DataColumn ("col2");
+			UniqueConstraint uc = new UniqueConstraint ("uc", new string[] {"col2"}, false);
+
+			table1.Columns.AddRange (new DataColumn[] {col3});
+			table1.Constraints.AddRange (new Constraint[] {uc});
+
+			Assert.AreEqual (1, table1.Columns.Count, "#9");
+			Assert.AreEqual (1, table1.Constraints.Count, "#10");
+
+			table1.EndInit ();
+			Assert.AreEqual (2, table1.Columns.Count, "#11");
+			Assert.AreEqual (2, table1.Columns.Count, "#12");
+		}
+
 		[Test] public void GetXml()
 		{
 			DataSet ds = new DataSet();

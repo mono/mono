@@ -136,6 +136,16 @@ namespace System.Data {
 			throw new ConstraintException("Failed to enable constraints. One or more rows contain values violating non-null, unique, or foreign-key constraints.");
 		}
 
+		bool initInProgress = false;
+		internal virtual bool InitInProgress {
+			get { return initInProgress; }
+			set { initInProgress = value; }
+		}
+
+		internal virtual void FinishInit (DataTable table)
+		{
+		}
+
 		internal void AssertConstraint() {
 			if (IsConstraintViolated())
 				ThrowConstraintException();

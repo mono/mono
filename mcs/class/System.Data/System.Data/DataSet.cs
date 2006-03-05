@@ -75,6 +75,7 @@ namespace System.Data {
 		private CultureInfo locale = System.Threading.Thread.CurrentThread.CurrentCulture;
 		internal XmlDataDocument _xmlDataDocument = null;
 		
+		bool initInProgress = false;
 		#region Constructors
 
 		public DataSet () : this ("NewDataSet") 
@@ -1145,12 +1146,30 @@ namespace System.Data {
 		#endregion IListSource methods
 		
 		#region ISupportInitialize methods
+
+		internal bool InitInProgress {
+			get { return initInProgress; }
+			set { initInProgress = value; }
+		}
+
 		public void BeginInit ()
 		{
+			InitInProgress = true;
 		}
 		
 		public void EndInit ()
 		{
+			// Finsh the init'ing the tables only after adding all the
+			// tables to the collection.
+			Tables.PostAddRange ();
+			for (int i=0; i < Tables.Count; ++i) {
+				if (!Tables [i].InitInProgress)
+					continue;
+				Tables [i].FinishInit ();
+			}
+
+			Relations.PostAddRange ();
+			InitInProgress = false;
 		}
 		#endregion
 

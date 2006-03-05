@@ -1,3 +1,11 @@
+2006-03-05  Senganal T  <tsenganal@novell.com>
+ 
+	* DataSetTest2.cs
+	* ConstraintCollectionTest2.cs
+	* DataViewTest.cs
+	* DataRelationTest.cs
+ 		Added testcases for BeginInit and EndInit methods
+
 2006-02-24  Senganal T  <tsenganal@novell.com>
  
  	* ConstraintCollectionTest2.cs : added testcase for #77630

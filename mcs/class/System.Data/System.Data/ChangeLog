@@ -1,3 +1,36 @@
+2006-03-05  Senganal T  <tsenganal@novell.com>
+
+ 	* DataSet.cs :
+ 		- BeginInit (), EndInit () : Implemented methods
+ 		- InitInProgress : Added.
+ 	* DataTable.cs
+ 		- EndInit () : Move the adding of columns and constraints
+ 		to FinishInit.
+ 		- FinishInit () : Added. Adds the Constraints and Columns
+ 		to the collection.
+ 		- InitInProgress : Added.
+ 	* Constraint.cs
+ 		- FinishInit () : Added. Virtual method
+ 		- InitInProgress : Added. Virtual property
+ 	* UniqueConstraint.cs
+ 	* ForeignKeyConstraint.cs
+ 		- FinishInit () : Added.
+ 		- InitInProgress : Added.
+ 		- DataColsNotValidated : Removed.
+ 	* ConstraintCollection.cs
+ 		- PostAddRange : Removed event
+ 		- PostEndEdit () : Renamed to PostAddRange
+ 		- Add () : Simplified the testing if constraint is initialized
+ 		- AddRange () : Simplified initializing the constraints
+ 	* DataTableCollection.cs
+ 		- PostAddRange () : Added. Adds the tables to the collection
+ 	* DataColumnColletion.cs
+ 		- PostEndInit () : Renamed to PostAddRange.Also, add column to
+ 		the collection only if not null.
+ 
+ 	Added/Implemented methods for design time support. Renamed some methods for consistency
+ 	in naming across classes for methods serving the same purpose. 
+
 2006-02-24  Senganal T  <tsenganal@novell.com>
 
  	* UniqueConstraint.cs :

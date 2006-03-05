@@ -356,10 +356,26 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		[Ignore("Test code not implemented")]
 		public void BeginInit ()
 		{
-			//TODO
+			DataTable table = new DataTable ("table");
+			DataView dv = new DataView ();
+			DataColumn col1 = new DataColumn ("col1");
+			DataColumn col2 = new DataColumn ("col2");
+			
+			dv.BeginInit ();
+			table.BeginInit ();
+			table.Columns.AddRange (new DataColumn[] {col1,col2});
+
+			dv.Table = table;
+			AssertNull ("#1", dv.Table);
+			dv.EndInit ();
+
+			AssertEquals ("#2", table, dv.Table);
+			AssertEquals ("#3", 0, table.Columns.Count);
+
+			table.EndInit ();
+			AssertEquals ("#4", 2, table.Columns.Count);
 		}
 
 		[Test]

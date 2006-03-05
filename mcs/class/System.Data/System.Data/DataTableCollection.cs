@@ -55,7 +55,7 @@ namespace System.Data {
 	class DataTableCollection : InternalDataCollectionBase
 	{
 		DataSet dataSet;
-		
+		DataTable[] mostRecentTables;
 		#region Constructors 
 
 		internal DataTableCollection (DataSet dataSet)
@@ -169,15 +169,34 @@ namespace System.Data {
 		}
 #endif
 
-		public void AddRange (DataTable[] tables) {
+		public void AddRange (DataTable[] tables)
+		{
+			if (dataSet != null && dataSet.InitInProgress) {
+				mostRecentTables = tables;
+				return;
+			}
+
 			if (tables == null)
 				return;
 
-			for (int i = 0; i < tables.Length; i++){
-				DataTable table = tables[i];
-				if (table != null)
-					this.Add (table);
+			foreach (DataTable table in tables) {
+				if (table == null)
+					continue;
+				Add (table);
 			}
+		}
+
+		internal void PostAddRange ()
+		{
+			if (mostRecentTables == null)
+				return;
+
+			foreach (DataTable table in mostRecentTables){
+				if (table == null)
+					continue;
+				Add (table);
+			}
+			mostRecentTables = null;
 		}
 
 		public bool CanRemove (DataTable table) 
