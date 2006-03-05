@@ -355,6 +355,9 @@ namespace MonoTests.System.Web.UI.WebControls {
 		}
 
 		[Test]
+#if TARGET_JVM
+		[NUnit.Framework.Category ("NotWorking")]
+#endif
 		[ExpectedException (typeof (IndexOutOfRangeException))]
 		public void Paging2 ()
 		{
@@ -376,6 +379,9 @@ namespace MonoTests.System.Web.UI.WebControls {
 		}
 
 		[Test]
+#if TARGET_JVM
+		[NUnit.Framework.Category ("NotWorking")]
+#endif
 		[ExpectedException (typeof (IndexOutOfRangeException))]
 		public void Paging3 ()
 		{

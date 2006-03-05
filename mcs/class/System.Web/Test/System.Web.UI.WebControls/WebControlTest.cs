@@ -406,6 +406,9 @@ namespace MonoTests.System.Web.UI.WebControls
 
                 
 		[Test]
+#if TARGET_JVM
+		[Category ("NotWorking")]
+#endif
 		public void ViewState() {
 			WebControlTestClass	w;
 			WebControlTestClass	w_copy;

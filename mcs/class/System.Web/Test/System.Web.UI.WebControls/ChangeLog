@@ -1,3 +1,9 @@
+2006-03-03  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* PagedDataSourceTest.cs: added TARGET_JVM part to exclude
+	not working tests.
+	* WebControlTest.cs: same
+
 2006-02-21  Chris Toshok  <toshok@ximian.com>
 
 	* SqlDataSourceTest.cs, SqlDataSourceViewTest.cs,
