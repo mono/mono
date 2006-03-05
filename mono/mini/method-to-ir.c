@@ -9492,7 +9492,6 @@ mono_spill_global_vars (MonoCompile *cfg)
  *     be modified. Also, on ia64 for example, niregs + nfregs > 256 -> bitmasks
  *     wouldn't work any more.
  * - use sext/zext opcodes instead of shifts
- * - make mono_print_ins use the arch-independent opcode metadata
  * - simplify the emitting of calls
  * - add OP_ICALL
  * - get rid of TEMPLOADs if possible and use vregs instead

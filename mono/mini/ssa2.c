@@ -708,8 +708,6 @@ mono_ssa_create_def_use (MonoCompile *cfg)
 
 	g_assert (!(cfg->comp_done & MONO_COMP_SSA_DEF_USE));
 
-	/* FIXME: Merge this into compute_ssa */
-
 	for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
 		for (ins = bb->code; ins; ins = ins->next) {
 			const char *spec = ins_info [ins->opcode - OP_START - 1];
@@ -719,14 +717,14 @@ mono_ssa_create_def_use (MonoCompile *cfg)
 				continue;
 
 			/* SREG1 */
-			if (spec [MONO_INST_SRC1] == 'i') {
+			if (spec [MONO_INST_SRC1] != ' ') {
 				MonoInst *var = get_vreg_to_inst (cfg, ins->sreg1);
 				if (var && !(var->flags & (MONO_INST_VOLATILE|MONO_INST_INDIRECT)))
 					record_use (cfg, var, bb, ins);
 			}
 
 			/* SREG2 */
-			if (spec [MONO_INST_SRC2] == 'i') {
+			if (spec [MONO_INST_SRC2] != ' ') {
 				MonoInst *var = get_vreg_to_inst (cfg, ins->sreg2);
 				if (var && !(var->flags & (MONO_INST_VOLATILE|MONO_INST_INDIRECT)))
 					record_use (cfg, var, bb, ins);
@@ -746,7 +744,7 @@ mono_ssa_create_def_use (MonoCompile *cfg)
 			}
 
 			/* DREG */
-			if ((spec [MONO_INST_DEST] == 'i') && !MONO_IS_STORE_MEMBASE (ins)) {
+			if ((spec [MONO_INST_DEST] != ' ') && !MONO_IS_STORE_MEMBASE (ins)) {
 				MonoInst *var = get_vreg_to_inst (cfg, ins->dreg);
 
 				if (var && !(var->flags & (MONO_INST_VOLATILE|MONO_INST_INDIRECT))) {
@@ -790,9 +788,9 @@ mono_ssa_copyprop (MonoCompile *cfg)
 
 					spec = ins_info [ins->opcode - OP_START - 1];
 
-					if (spec [MONO_INST_SRC1] == 'i' && ins->sreg1 == dreg) {
+					if (spec [MONO_INST_SRC1] != ' ' && ins->sreg1 == dreg) {
 						ins->sreg1 = sreg1;
-					} else if (spec [MONO_INST_SRC2] == 'i' && ins->sreg2 == dreg) {
+					} else if (spec [MONO_INST_SRC2] != ' ' && ins->sreg2 == dreg) {
 						ins->sreg2 = sreg1;
 					} else if (MONO_IS_STORE_MEMBASE (ins) && ins->dreg == dreg) {
 						ins->dreg = sreg1;
