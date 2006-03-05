@@ -45,7 +45,7 @@ namespace System.Data.OracleClient {
 
 		#region Fields
 
-		internal OracleType _oleDbType = OracleType.VarChar;
+		OracleType _oleDbType = OracleType.VarChar;
 
 		#endregion // Fields
     
