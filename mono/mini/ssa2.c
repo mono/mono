@@ -442,7 +442,6 @@ mono_ssa_compute2 (MonoCompile *cfg)
 		if (var->type == STACK_I8)
 			continue;
 #endif
-
 		if (var->flags & (MONO_INST_VOLATILE|MONO_INST_INDIRECT))
 			continue;
 
@@ -1288,7 +1287,12 @@ mono_ssa_deadce2 (MonoCompile *cfg)
 			MonoInst *def = info->def;
 
 			/* FIXME: Add more opcodes */
+#ifdef __i386__
+			/* Eliminating FMOVE could screw up the fp stack */
+			if (def->opcode == OP_MOVE) {
+#else
 			if (MONO_IS_MOVE (def)) {
+#endif
 				MonoInst *src_var = get_vreg_to_inst (cfg, def->sreg1);
 				if (src_var && !(src_var->flags & (MONO_INST_VOLATILE|MONO_INST_INDIRECT)))
 					add_to_dce_worklist (cfg, info, cfg->vars [src_var->inst_c0], &work_list);

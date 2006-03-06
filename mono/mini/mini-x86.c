@@ -1196,7 +1196,7 @@ mono_arch_call_opcode2 (MonoCompile *cfg, MonoCallInst *call, int is_virtual) {
 				vtarg->dreg = mono_regstate_next_int (cfg->rs);
 				mono_bblock_add_inst (cfg->cbb, vtarg);
 				
-				mono_call_inst_add_outarg_reg (call, vtarg->dreg, cinfo->ret.reg, FALSE);
+				mono_call_inst_add_outarg_reg (cfg, call, vtarg->dreg, cinfo->ret.reg, FALSE);
 			} else {
 				MonoInst *vtarg;
 				MONO_INST_NEW (cfg, vtarg, OP_X86_PUSH);
@@ -4176,7 +4176,7 @@ mono_arch_emit_this_vret_args (MonoCompile *cfg, MonoCallInst *inst, int this_re
 			this->dreg = mono_regstate_next_int (cfg->rs);
 			mono_bblock_add_inst (cfg->cbb, this);
 
-			mono_call_inst_add_outarg_reg (call, this->dreg, cinfo->args [0].reg, FALSE);
+			mono_call_inst_add_outarg_reg (cfg, call, this->dreg, cinfo->args [0].reg, FALSE);
 		}
 		else {
 			MonoInst *this;
@@ -4209,7 +4209,7 @@ mono_arch_emit_this_vret_args (MonoCompile *cfg, MonoCallInst *inst, int this_re
 			vtarg->dreg = mono_regstate_next_int (cfg->rs);
 			mono_bblock_add_inst (cfg->cbb, vtarg);
 
-			mono_call_inst_add_outarg_reg (call, vtarg->dreg, cinfo->ret.reg, FALSE);
+			mono_call_inst_add_outarg_reg (cfg, call, vtarg->dreg, cinfo->ret.reg, FALSE);
 		} else {
 			MonoInst *vtarg;
 			MONO_INST_NEW (cfg, vtarg, OP_OUTARG);
