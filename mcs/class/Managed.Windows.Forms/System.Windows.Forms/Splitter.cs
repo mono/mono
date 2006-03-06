@@ -274,6 +274,7 @@ namespace System.Windows.Forms {
 		[MWFCategory("Layout")]
 		public int SplitPosition {
 			get {
+				affected = AffectedControl;
 				if (affected == null) {
 					return -1;
 				}
@@ -290,6 +291,8 @@ namespace System.Windows.Forms {
 			}
 
 			set {
+				affected = AffectedControl;
+
 				if (Capture || (affected == null)) {
 					return;
 				}
@@ -375,7 +378,7 @@ namespace System.Windows.Forms {
 			base.OnMouseDown (e);
 
 			// Only allow if we are set up properly
-			if (affected == null) {
+			if ((affected == null) || (filler == null)) {
 				affected = AffectedControl;
 				filler = FillerControl;
 			}
@@ -654,8 +657,8 @@ namespace System.Windows.Forms {
 		}
 
 		private void ReparentSplitter(object sender, EventArgs e) {
-			affected = AffectedControl;
-			filler = FillerControl;
+			affected = null;
+			filler = null;
 		}
 
 		private void DrawDragHandle(DrawType type) {
