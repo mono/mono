@@ -90,7 +90,7 @@ namespace System.Data.OleDb
 				IDictionary providerInfo = (IDictionary) _providers[i];
 					
 				string curProvider = (string)providerInfo["Provider"];
-				if (String.Compare(providerName, curProvider, true, CultureInfo.InvariantCulture) == 0) {
+				if (String.Compare(providerName, 0, curProvider, 0, providerName.Length, true, CultureInfo.InvariantCulture) == 0) {
 					string providerType = (string) providerInfo [ConfigurationConsts.ProviderType];
 					if (providerType == null || providerType.Length == 0)
 						return new GenericProvider (providerInfo); 
