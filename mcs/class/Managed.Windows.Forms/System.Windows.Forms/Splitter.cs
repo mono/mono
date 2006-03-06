@@ -99,6 +99,7 @@ namespace System.Windows.Forms {
 
 			Paint += new PaintEventHandler(PaintSplitter);
 			Layout += new LayoutEventHandler(LayoutSplitter);
+			this.ParentChanged += new EventHandler(ReparentSplitter);
 			Cursor = splitter_we;
 		}
 		#endregion	// Constructors
@@ -374,6 +375,11 @@ namespace System.Windows.Forms {
 			base.OnMouseDown (e);
 
 			// Only allow if we are set up properly
+			if (affected == null) {
+				affected = AffectedControl;
+				filler = FillerControl;
+			}
+
 			if (affected == null || e.Button != MouseButtons.Left) {
 				return;
 			}
@@ -643,6 +649,11 @@ namespace System.Windows.Forms {
 		}
 
 		private void LayoutSplitter(object sender, LayoutEventArgs e) {
+			affected = AffectedControl;
+			filler = FillerControl;
+		}
+
+		private void ReparentSplitter(object sender, EventArgs e) {
 			affected = AffectedControl;
 			filler = FillerControl;
 		}

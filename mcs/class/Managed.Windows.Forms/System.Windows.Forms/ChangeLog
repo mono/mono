@@ -1,3 +1,11 @@
+2006-03-06  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* Splitter.cs: In situations where the affected control is added
+	  to the parent's control list after the splitter, we would not
+	  populate affected. Now we try populating it on mousedown, if
+	  it's not already set. (Maybe we should always do it, at the cost
+	  of performance?)
+
 2006-03-03  Matt Hargett  <matt@use.net>
 
 	* Control.cs: implement Control.Padding
