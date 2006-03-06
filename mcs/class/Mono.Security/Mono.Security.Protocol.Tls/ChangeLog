@@ -1,3 +1,8 @@
+2006-03-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* RecordProtocol.cs: avoid creating the ManualResetEvent whenever
+	possible. Don't lock on an instance of an object that the user can get.
+
 2006-03-02  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* RecordProtocol.cs: Fix possible endless loop (#77663). Remove hack

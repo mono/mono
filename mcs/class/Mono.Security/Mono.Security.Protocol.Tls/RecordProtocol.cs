@@ -87,12 +87,14 @@ namespace Mono.Security.Protocol.Tls
 		#region Receive Record Async Result
 		private class ReceiveRecordAsyncResult : IAsyncResult
 		{
+			private object locker = new object ();
 			private AsyncCallback _userCallback;
 			private object _userState;
 			private Exception _asyncException;
-			private ManualResetEvent _complete;
+			private ManualResetEvent handle;
 			private byte[] _resultingBuffer;
 			private Stream _record;
+			private bool completed;
 
 			private byte[] _initialBuffer;
 
@@ -100,7 +102,6 @@ namespace Mono.Security.Protocol.Tls
 			{
 				_userCallback = userCallback;
 				_userState = userState;
-				_complete = new ManualResetEvent(false);
 				_initialBuffer = initialBuffer;
 				_record = record;
 			}
@@ -132,12 +133,24 @@ namespace Mono.Security.Protocol.Tls
 
 			public bool CompletedWithError
 			{
-				get { return null != _asyncException; }
+				get {
+					if (!IsCompleted)
+						return false; // Perhaps throw InvalidOperationExcetion?
+
+					return null != _asyncException;
+				}
 			}
 
 			public WaitHandle AsyncWaitHandle
 			{
-				get { return _complete; }
+				get {
+					lock (locker) {
+						if (handle == null)
+							handle = new ManualResetEvent (completed);
+					}
+					return handle;
+				}
+				
 			}
 
 			public bool CompletedSynchronously
@@ -147,27 +160,29 @@ namespace Mono.Security.Protocol.Tls
 
 			public bool IsCompleted
 			{
-				get { return _complete.WaitOne(0, false); }
+				get {
+					lock (locker) {
+						return completed;
+					}
+				}
 			}
 
 			private void SetComplete(Exception ex, byte[] resultingBuffer)
 			{
-				if (this.IsCompleted)
-					return;
-
-				lock (this)
-				{
-					if (this.IsCompleted)
+				lock (locker) {
+					if (completed)
 						return;
+
+					completed = true;
+					if (handle != null)
+						handle.Set ();
+
+					if (_userCallback != null)
+						_userCallback.BeginInvoke (this, null, null);
 
 					_asyncException = ex;
 					_resultingBuffer = resultingBuffer;
-					_complete.Set();
 				}
-
-				if (null != _userCallback)
-					_userCallback (this);
-
 			}
 
 			public void SetComplete(Exception ex)
@@ -190,17 +205,18 @@ namespace Mono.Security.Protocol.Tls
 		#region Receive Record Async Result
 		private class SendRecordAsyncResult : IAsyncResult
 		{
+			private object locker = new object ();
 			private AsyncCallback _userCallback;
 			private object _userState;
 			private Exception _asyncException;
-			private ManualResetEvent _complete;
+			private ManualResetEvent handle;
 			private HandshakeMessage _message;
+			private bool completed;
 
 			public SendRecordAsyncResult(AsyncCallback userCallback, object userState, HandshakeMessage message)
 			{
 				_userCallback = userCallback;
 				_userState = userState;
-				_complete = new ManualResetEvent(false);
 				_message = message;
 			}
 
@@ -221,12 +237,24 @@ namespace Mono.Security.Protocol.Tls
 
 			public bool CompletedWithError
 			{
-				get { return null != _asyncException; }
+				get {
+					if (!IsCompleted)
+						return false; // Perhaps throw InvalidOperationExcetion?
+
+					return null != _asyncException;
+				}
 			}
 
 			public WaitHandle AsyncWaitHandle
 			{
-				get { return _complete; }
+				get {
+					lock (locker) {
+						if (handle == null)
+							handle = new ManualResetEvent (completed);
+					}
+					return handle;
+				}
+				
 			}
 
 			public bool CompletedSynchronously
@@ -236,26 +264,28 @@ namespace Mono.Security.Protocol.Tls
 
 			public bool IsCompleted
 			{
-				get { return _complete.WaitOne(0, false); }
+				get {
+					lock (locker) {
+						return completed;
+					}
+				}
 			}
 
 			public void SetComplete(Exception ex)
 			{
-				if (this.IsCompleted)
-					return;
-
-				lock (this)
-				{
-					if (this.IsCompleted)
+				lock (locker) {
+					if (completed)
 						return;
 
+					completed = true;
+					if (handle != null)
+						handle.Set ();
+
+					if (_userCallback != null)
+						_userCallback.BeginInvoke (this, null, null);
+
 					_asyncException = ex;
-					_complete.Set();
 				}
-
-				if (null != _userCallback)
-					_userCallback (this);
-
 			}
 
 			public void SetComplete()
@@ -385,7 +415,8 @@ namespace Mono.Security.Protocol.Tls
 			if (null == internalResult)
 				throw new ArgumentException("Either the provided async result is null or was not created by this RecordProtocol.");
 
-			internalResult.AsyncWaitHandle.WaitOne();
+			if (!internalResult.IsCompleted)
+				internalResult.AsyncWaitHandle.WaitOne();
 
 			if (internalResult.CompletedWithError)
 				throw internalResult.AsyncException;
@@ -662,7 +693,8 @@ namespace Mono.Security.Protocol.Tls
 			if (asyncResult is SendRecordAsyncResult)
 			{
 				SendRecordAsyncResult internalResult = asyncResult as SendRecordAsyncResult;
-				internalResult.AsyncWaitHandle.WaitOne();
+				if (!internalResult.IsCompleted)
+					internalResult.AsyncWaitHandle.WaitOne();
 				if (internalResult.CompletedWithError)
 					throw internalResult.AsyncException;
 			}
