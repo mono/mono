@@ -20,7 +20,7 @@
  SOFTWARE.
 */
 
-#define HASHINDEX
+#define HASHINDEXnot
 
 using System;
 using System.Diagnostics;
@@ -1879,7 +1879,11 @@ namespace C5
         throw new NotAViewException("List not a view");
 
 #pragma warning disable 472
+#if HASHINDEX
       if (this.offset == null) //Note: only possible with HASHINDEX
+#else
+      if (this.offset == 0) //Note: only possible with HASHINDEX
+#endif
 #pragma warning restore 472
       {
 #pragma warning disable 162

@@ -3,10 +3,6 @@
 	* C5/AssemblyInfo.cs: Add `[assembly: AssemblyDelaySign (true)]'
 	and `[assembly: AssemblyKeyFile ("c5.pub")]'.
 
-2006-03-04  Martin Baulig  <martin@ximian.com>
-
-	* C5/linkedlists/LinkedList.cs: Define `HASHINDEX'.
-
 2006-02-16  Martin Baulig  <martin@ximian.com>
 
 	Importing version 1.0 of C5, http://www.itu.dk/research/c5/.
