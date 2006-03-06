@@ -1,3 +1,15 @@
+2006-03-06  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* UnixDriveInfo.cs: Remove requirement that mountPoints be avaible via
+	  getfsfile(3).  This isn't always the case -- in particular drives mounted
+	  via HAL and other mechanisms won't be listed in /etc/fstab, and thus won't
+	  be returned via getfsfile(3).  If getfsfile(3) fails, then we "guess" on
+	  the drive format and volume label.
+	* UnixStream.cs: RefreshStat() should assert that the instance hasn't been
+	  disposed.
+	* UnixEnvironment.cs (GetConfigurationValue, GetConfigurationString): Fix
+	  error checking.
+
 2006-02-23  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* UnixFileSystemInfo.cs: Create() should return a UnixFileInfo if the file

@@ -176,6 +176,7 @@ namespace Mono.Unix {
 
 		private void RefreshStat ()
 		{
+			AssertNotDisposed ();
 			int r = Native.Syscall.fstat (fileDescriptor, out stat);
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 		}

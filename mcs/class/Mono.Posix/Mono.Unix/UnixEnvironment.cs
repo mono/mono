@@ -118,7 +118,7 @@ namespace Mono.Unix {
 		public static long GetConfigurationValue (Native.SysconfName name)
 		{
 			long r = Native.Syscall.sysconf (name);
-			if (r == -1 && Native.Stdlib.GetLastError() == Native.Errno.EINVAL)
+			if (r == -1 && Native.Stdlib.GetLastError() != (Native.Errno) 0)
 				UnixMarshal.ThrowExceptionForLastError ();
 			return r;
 		}
@@ -127,10 +127,14 @@ namespace Mono.Unix {
 		public static string GetConfigurationString (Native.ConfstrName name)
 		{
 			ulong len = Native.Syscall.confstr (name, null, 0);
+			if (len == unchecked ((ulong) (-1)))
+				UnixMarshal.ThrowExceptionForLastError ();
 			if (len == 0)
 				return "";
 			StringBuilder buf = new StringBuilder ((int) len+1);
 			len = Native.Syscall.confstr (name, buf, len);
+			if (len == unchecked ((ulong) (-1)))
+				UnixMarshal.ThrowExceptionForLastError ();
 			return buf.ToString ();
 		}
 

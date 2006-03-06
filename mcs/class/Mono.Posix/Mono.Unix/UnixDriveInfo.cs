@@ -4,7 +4,7 @@
 // Authors:
 //   Jonathan Pryor (jonpryor@vt.edu)
 //
-// (C) 2004 Jonathan Pryor
+// (C) 2004-2006 Jonathan Pryor
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -47,18 +47,28 @@ namespace Mono.Unix {
 	public sealed class UnixDriveInfo
 	{
 		private Native.Statvfs stat;
-		private Native.Fstab   fstab;
+		private string fstype, mount_point, block_device;
 
 		public UnixDriveInfo (string mountPoint)
 		{
 			if (mountPoint == null)
 				throw new ArgumentNullException ("mountPoint");
-			fstab = Native.Syscall.getfsfile (mountPoint);
-			if (fstab == null)
-				throw new ArgumentException ("mountPoint isn't valid: " + mountPoint);
-			// throws ArgumentException if driveName isn't valid
-			// though .NET also has a DriveNotFoundException class, so maybe that's
-			// more appropriate?
+			Native.Fstab fstab = Native.Syscall.getfsfile (mountPoint);
+			if (fstab != null) {
+				FromFstab (fstab);
+			}
+			else {
+				this.mount_point  = mountPoint;
+				this.block_device = "";
+				this.fstype       = "Unknown";
+			}
+		}
+
+		private void FromFstab (Native.Fstab fstab)
+		{
+			this.fstype       = fstab.fs_vfstype;
+			this.mount_point  = fstab.fs_file;
+			this.block_device = fstab.fs_spec;
 		}
 
 		public static UnixDriveInfo GetForSpecialFile (string specialFile)
@@ -73,7 +83,7 @@ namespace Mono.Unix {
 
 		private UnixDriveInfo (Native.Fstab fstab)
 		{
-			this.fstab = fstab;
+			FromFstab (fstab);
 		}
 
 		public long AvailableFreeSpace {
@@ -81,7 +91,7 @@ namespace Mono.Unix {
 		}
 
 		public string DriveFormat {
-			get {return fstab.fs_vfstype;}
+			get {return fstype;}
 		}
 
 		public UnixDriveType DriveType {
@@ -94,11 +104,11 @@ namespace Mono.Unix {
 		}
 
 		public string Name {
-			get {return fstab.fs_file;}
+			get {return mount_point;}
 		}
 
 		public UnixDirectoryInfo RootDirectory {
-			get {return new UnixDirectoryInfo (fstab.fs_file);}
+			get {return new UnixDirectoryInfo (mount_point);}
 		}
 
 		public long TotalFreeSpace {
@@ -111,7 +121,7 @@ namespace Mono.Unix {
 
 		// also throws SecurityException if caller lacks perms
 		public string VolumeLabel {
-			get {return fstab.fs_spec;}
+			get {return block_device;}
 			// set {}
 		}
 
@@ -121,6 +131,9 @@ namespace Mono.Unix {
 
 		public static UnixDriveInfo[] GetDrives ()
 		{
+			// TODO: Return any drives mentioned by getmntent(3) once getmntent(3)
+			// is exported by Syscall.
+
 			// throws IOException, UnauthorizedAccessException (no permission)
 			ArrayList entries = new ArrayList ();
 
@@ -155,7 +168,7 @@ namespace Mono.Unix {
 
 		private bool Refresh (bool throwException)
 		{
-			int r = Native.Syscall.statvfs (fstab.fs_file, out stat);
+			int r = Native.Syscall.statvfs (mount_point, out stat);
 			if (r == -1 && throwException) {
 				Native.Errno e = Native.Syscall.GetLastError ();
 				throw new InvalidOperationException (
