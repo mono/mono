@@ -1,3 +1,9 @@
+2006-03-06  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* CalendarTest.cs: refactoring, inline delegates replaced with
+	regular ones.
+	* LinkButtonTest.cs: same
+
 2006-03-03  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* PagedDataSourceTest.cs: added TARGET_JVM part to exclude

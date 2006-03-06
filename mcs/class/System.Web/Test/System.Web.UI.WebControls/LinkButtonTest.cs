@@ -152,6 +152,32 @@ namespace MonoTests.System.Web.UI.WebControls
 		//
 		// I (heart) anonymous methods
 		//
+		bool got_command = false;
+		bool got_click = false;
+		bool got_bubble = false;
+
+		public void Event_TestEvents_Click(object sender, EventArgs e) {
+			Assert.IsFalse (got_click, "#1");
+			Assert.IsFalse (got_command, "#2");
+			Assert.IsFalse (got_bubble, "#3");
+			got_click = true;
+		}
+		public void Event_TestEvents_Command(object sender, CommandEventArgs e) {
+			Assert.IsTrue (got_click, "#4");
+			Assert.IsFalse (got_command, "#5");
+			Assert.IsFalse (got_bubble, "#6");
+			Assert.AreEqual ("N", e.CommandName, "#7");
+			Assert.AreEqual ("A", e.CommandArgument, "#8");
+			got_command = true;
+		}
+		public void Event_TestEvents_Bubble(object sender, EventArgs e) {
+			Assert.IsTrue (got_click, "#9");
+			Assert.IsTrue (got_command, "#10");
+			Assert.IsFalse (got_bubble, "#11");
+			Assert.AreEqual ("N", ((CommandEventArgs) e).CommandName, "#12");
+			Assert.AreEqual ("A", ((CommandEventArgs) e).CommandArgument, "#13");
+			got_bubble = true;
+		}
 		[Test]
 		public void TestEvents ()
 		{
@@ -162,33 +188,15 @@ namespace MonoTests.System.Web.UI.WebControls
 			l.CausesValidation = false; // avoid an NRE on msft
 			p.Controls.Add (l);
 			
-			bool got_command = false;
-			bool got_click = false;
-			bool got_bubble = false;
+			got_command = false;
+			got_click = false;
+			got_bubble = false;
 
-			l.Click += delegate {
-				Assert.IsFalse (got_click, "#1");
-				Assert.IsFalse (got_command, "#2");
-				Assert.IsFalse (got_bubble, "#3");
-				got_click = true;
-			};
-			
-			l.Command += delegate (object sender, CommandEventArgs e) {
-				Assert.IsTrue (got_click, "#4");
-				Assert.IsFalse (got_command, "#5");
-				Assert.IsFalse (got_bubble, "#6");
-				Assert.AreEqual ("N", e.CommandName, "#7");
-				Assert.AreEqual ("A", e.CommandArgument, "#8");
-				got_command = true;
-			};
-			p.Bubble += delegate (object sender, EventArgs e) {
-				Assert.IsTrue (got_click, "#9");
-				Assert.IsTrue (got_command, "#10");
-				Assert.IsFalse (got_bubble, "#11");
-				Assert.AreEqual ("N", ((CommandEventArgs) e).CommandName, "#12");
-				Assert.AreEqual ("A", ((CommandEventArgs) e).CommandArgument, "#13");
-				got_bubble = true;
-			};
+			l.Click += new EventHandler(Event_TestEvents_Click);
+
+			l.Command += new CommandEventHandler(Event_TestEvents_Command);
+
+			p.Bubble += new EventHandler(Event_TestEvents_Bubble);
 			
 			((IPostBackEventHandler) l).RaisePostBackEvent ("");
 			Assert.IsTrue (got_click, "#14");

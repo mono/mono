@@ -562,16 +562,18 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		}
 
+		string tofind = "";
+		public void Event_TestDayRenderCellAdd_DayRender(object sender, DayRenderEventArgs e) {
+			if (e.Day.Date.Day == 1)
+				e.Cell.Controls.Add (new LiteralControl (tofind));	
+		}
 		[Test]
 		public void TestDayRenderCellAdd ()
 		{
 			PokerCalendar p = new PokerCalendar ();
-			string tofind = Guid.NewGuid ().ToString ();
+			tofind = Guid.NewGuid ().ToString ();
 
-			p.DayRender += delegate (object soruce, DayRenderEventArgs e) {
-				if (e.Day.Date.Day == 1)
-					e.Cell.Controls.Add (new LiteralControl (tofind));	
-			};
+			p.DayRender += new DayRenderEventHandler(Event_TestDayRenderCellAdd_DayRender);
 
 			Assert.IsTrue (p.Render ().IndexOf (tofind) != -1, "control added");
 		}
@@ -589,21 +591,22 @@ namespace MonoTests.System.Web.UI.WebControls
 		// Microsoft renders months like this (where Blah 1st falls on Sunday) by rendering
 		// the last week of the other month.
 		//
+		bool first = true;
+		public void Event_TestRenderMonthStartsOnSunday_DayRender(object sender, DayRenderEventArgs e) {
+			if (first) {
+				Assert.IsTrue (e.Day.IsOtherMonth);
+				Assert.AreEqual (new DateTime (2005, 4, 24), e.Day.Date);
+				first = false;
+			}
+		}
 		[Test]
 		public void TestRenderMonthStartsOnSunday ()
 		{
 			PokerCalendar p = new PokerCalendar ();
 			p.TodaysDate = new DateTime (2005, 5, 14);
 			
-			bool first = true;
-			p.DayRender += delegate (object soruce, DayRenderEventArgs e) {
-				if (first) {
-					Assert.IsTrue (e.Day.IsOtherMonth);
-					Assert.AreEqual (new DateTime (2005, 4, 24), e.Day.Date);
-					first = false;
-				}
-			};
-
+			first = true;
+			p.DayRender += new DayRenderEventHandler(Event_TestRenderMonthStartsOnSunday_DayRender);
 			p.Render ();
 		}
 
