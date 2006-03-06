@@ -1590,6 +1590,9 @@ public partial class TypeManager {
 			return tparam.IsSubclassOf (base_type);
 		}
 
+		if (type.IsSubclassOf (base_type))
+			return true;
+
 		do {
 			if (IsEqual (type, base_type))
 				return true;

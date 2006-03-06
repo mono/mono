@@ -4705,7 +4705,7 @@ namespace Mono.CSharp {
 		static internal bool IsAncestralType (Type first_type, Type second_type)
 		{
 			return first_type != second_type &&
-				(second_type.IsSubclassOf (first_type) ||
+				(TypeManager.IsSubclassOf (second_type, first_type) ||
 				 TypeManager.ImplementsInterface (second_type, first_type));
 		}
 		
