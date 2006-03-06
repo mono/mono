@@ -1,0 +1,13 @@
+[libdefaults]
+ default_realm = MAINTEST.COM
+ dns_lookup_kdc = true
+ default_tkt_enctypes = des3-cbc-sha1
+ default_tgs_enctypes = des3-cbc-sha1
+[realms]
+ MAINTEST.COM = {
+  admin_server = MAINTEST.COM
+  default_domain = MAINTEST.COM
+  kdc = mono2.il.mainsoft.com
+ }
+[domain_realm]
+ MAINTEST.COM = MAINTEST.COM

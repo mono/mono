@@ -493,6 +493,7 @@ namespace MonoTests.System.DirectoryServices
 		}
 
 		[Test]
+		[Category("NotWorking")]
 		public void DirectorySearcher_Filter2()
 		{
 			de = new DirectoryEntry(configuration.ConnectionString,

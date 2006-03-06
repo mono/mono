@@ -1,3 +1,7 @@
+2006-03-06 Boris Kirzner <borisk@mainsoft.com>
+	* run-tests.bat,run-tests.test.bat,Secure.config,App.config: 
+	files for automated testing.
+
 2005-12-06 Konstantin Triger <kostat@mainsoft.com>
 
 	* System.DirectoryServices.vmwcsproj: fixing conditional compilation constants.

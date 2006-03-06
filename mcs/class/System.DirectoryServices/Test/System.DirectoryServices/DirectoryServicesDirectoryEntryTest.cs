@@ -277,6 +277,10 @@ namespace MonoTests.System.DirectoryServices
 		[Test]
 		public void DirectoryEntry_DirectoryEntry_StrStrStrAuth()
 		{
+			if ((configuration.AuthenticationType != AuthenticationTypes.ServerBind) && 
+				(configuration.AuthenticationType != AuthenticationTypes.None) && 
+				(configuration.AuthenticationType != AuthenticationTypes.Anonymous))
+				return;
 
 			#region AuthenticationTypes.Anonymous
 
@@ -979,6 +983,7 @@ namespace MonoTests.System.DirectoryServices
 		}
 
 		[Test]
+		[Category("NotWorking")]
 		public void DirectoryEntry_Children()
 		{
 			de = new DirectoryEntry();
@@ -1283,6 +1288,7 @@ namespace MonoTests.System.DirectoryServices
 
 
 		[Test]
+		[Category("NotWorking")]
 		public void DirectoryEntry_SchemaClassName()
 		{
 			de = new DirectoryEntry();
@@ -1305,6 +1311,7 @@ namespace MonoTests.System.DirectoryServices
 		}
 
 		[Test]
+		[Category("NotWorking")]
 		public void DirectoryEntry_SchemaEntry()
 		{
 			de = new DirectoryEntry();

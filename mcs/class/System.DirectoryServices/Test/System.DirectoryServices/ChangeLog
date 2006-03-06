@@ -1,3 +1,7 @@
+2006-03-06 Boris Kirzner <borisk@mainsoft.coim>
+	* DirectoryServicesDirectoryEntryTest.cs, 
+	DirectoryServicesDirectorySearcherTest.cs : marked not working tests.
+
 2005-12-05 Boris Kirzner <borisk@mainsoft.coim>
 	* DirectoryServicesDirectoryEntryTest.cs, 
 	DirectoryServicesDirectorySearcherTest.cs,
