@@ -1,3 +1,8 @@
+2006-03-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-exceptions.c: Call mono_trace_is_enabled () before printing
+	trace messages. Fixes #77706.
+
 2006-03-04  Martin Baulig  <martin@ximian.com>
 
 	* tramp-amd64.c, tramp-x86.c
