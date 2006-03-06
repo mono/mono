@@ -40,6 +40,9 @@ namespace System.Windows.Forms {
 		private HScrollBar hbar;
 		private VScrollBar vbar;
 		private SizeGrip sizegrip;
+		private int hbar_value;
+		private int vbar_value;
+		private bool lock_sizing;
 		
 		#endregion	// Local Variables
 
@@ -60,6 +63,8 @@ namespace System.Windows.Forms {
 				SetChildIndex (value, 0); // always insert at front
 				// newest member is the active one
 				owner.ActiveMdiChild = (Form) value;
+
+				value.LocationChanged += new EventHandler (owner.FormLocationChanged);
 			}
 
 			public override void Remove(Control value) {
@@ -152,87 +157,38 @@ namespace System.Windows.Forms {
 		#region Protected Instance Methods
 		#endregion	// Protected Instance Methods
 
-		internal void EnsureScrollBars (int right, int bottom)
-		{
-			int width = Width;
-			int height = Height;
-
-			if (vbar != null && vbar.Visible)
-				width -= vbar.Width;
-			if (hbar != null && hbar.Visible)
-				height -= hbar.Height;
-
-			if (right > width) {
-				if (hbar == null) {
-					hbar = new HScrollBar ();
-					Controls.AddImplicit (hbar);
-				}
-				hbar.Visible = true;
-			} else {
-				if (hbar != null) {
-					bool found = false;
-					foreach (Form child in Controls) {
-						if (child == ActiveMdiChild)
-							continue;
-						if (child.Right < width)
-							continue;
-						found = true;
-						break;
-					}
-					hbar.Visible = found;
-				}
-			}
-
-			if (bottom > height) {
-				if (vbar == null) {
-					vbar = new VScrollBar ();
-					Controls.AddImplicit (vbar);
-				}
-				vbar.Visible = true;
-			} else {
-				if (vbar != null) {
-					bool found = false;
-					foreach (Form child in Controls) {
-						if (child == ActiveMdiChild)
-							continue;
-						if (child.Bottom < height)
-							continue;
-						found = true;
-						break;
-					}
-					vbar.Visible = found;
-				}
-			}
-
-			if (hbar != null && hbar.Visible)
-				CalcHBar (right, vbar != null && vbar.Visible);
-			if (vbar != null && vbar.Visible)
-				CalcVBar (bottom, hbar != null && hbar.Visible);
-		}
-
 		private void SizeScrollBars ()
 		{
+			if (lock_sizing)
+				return;
+
 			bool hbar_required = false;
 			bool vbar_required = false;
 
 			int right = 0;
+			int left = 0;
 			foreach (Form child in Controls) {
 				if (!child.Visible)
 					continue;
 				if (child.Right > right)
 					right = child.Right;
-				if (child.Left < 0)
+				if (child.Left < left) {
 					hbar_required = true;
+					left = child.Left;
+				}
 			}
 
+			int top = 0;
 			int bottom = 0;
 			foreach (Form child in Controls) {
 				if (!child.Visible)
 					continue;
 				if (child.Bottom > bottom)
 					bottom = child.Bottom;
-				if (child.Top < 0)
+				if (child.Top < 0) {
 					vbar_required = true;
+					top = child.Top;
+				}
 			}
 
 			int right_edge = Right;
@@ -271,7 +227,7 @@ namespace System.Windows.Forms {
 					Controls.AddImplicit (hbar);
 				}
 				hbar.Visible = true;
-				CalcHBar (right, vbar != null && vbar.Visible);
+				CalcHBar (left, right, right_edge, need_vbar);
 			} else if (hbar != null)
 				hbar.Visible = false;
 
@@ -281,7 +237,7 @@ namespace System.Windows.Forms {
 					Controls.AddImplicit (vbar);
 				}
 				vbar.Visible = true;
-				CalcVBar (bottom, hbar != null && hbar.Visible);
+				CalcVBar (top, bottom, bottom_edge, need_hbar);
 			} else if (vbar != null)
 				vbar.Visible = false;
 
@@ -299,24 +255,71 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		private void CalcHBar (int right, bool vert_vis)
+		private void CalcHBar (int left, int right, int right_edge, bool vert_vis)
 		{
+			int virtual_left = Math.Min (left, 0);
+			int virtual_right = Math.Max (right, right_edge);
+			int diff = (virtual_right - virtual_left) - right_edge;
 			hbar.Left = 0;
 			hbar.Top = Height - hbar.Height;
-			hbar.Width = Width - (vert_vis ? vbar.Width : 0);
-			hbar.LargeChange = right;
-			hbar.SmallChange = right / 10;
-			hbar.Maximum = right - 1;
+			hbar.Width = Width - (vert_vis ? SystemInformation.VerticalScrollBarWidth : 0);
+			hbar.LargeChange = 50;
+			hbar.Maximum = diff + 51;
+			hbar.Value = -virtual_left;
+			hbar.ValueChanged += new EventHandler (HBarValueChanged);
 		}
 
-		private void CalcVBar (int bottom, bool horz_vis)
+		private void CalcVBar (int top, int bottom, int bottom_edge, bool horz_vis)
 		{
-			vbar.Left = Width - vbar.Width;
+			int virtual_top = Math.Min (top, 0);
+			int virtual_bottom = Math.Max (bottom, bottom_edge);
+			int diff = (virtual_bottom - virtual_top) - bottom_edge;
 			vbar.Top = 0;
-			vbar.Height = Height - (horz_vis ? hbar.Height : 0);
-			vbar.LargeChange = bottom;
-			vbar.SmallChange = bottom / 10;
-			vbar.Maximum = bottom - 1;
+			vbar.Left = Width - vbar.Width;
+			vbar.Height = Height - (horz_vis ? SystemInformation.HorizontalScrollBarHeight : 0);
+			vbar.LargeChange = 50;
+			vbar.Maximum = diff + 51;
+			vbar.Value = -virtual_top;
+			vbar.ValueChanged += new EventHandler (VBarValueChanged);
+			
+		}
+
+		private void HBarValueChanged (object sender, EventArgs e)
+		{
+			if (hbar.Value == hbar_value)
+				return;
+
+			lock_sizing = true;
+
+			try {
+				foreach (Form child in Controls) {
+					child.Left += hbar_value - hbar.Value;
+				}
+			} finally {
+				lock_sizing = false;
+			}
+
+			hbar_value = hbar.Value;
+			lock_sizing = false;
+		}
+
+		private void VBarValueChanged (object sender, EventArgs e)
+		{
+			if (vbar.Value == vbar_value)
+				return;
+
+			lock_sizing = true;
+
+			try {
+				foreach (Form child in Controls) {
+					child.Top += vbar_value - vbar.Value;
+				}
+			} finally {
+				lock_sizing = false;
+			}
+
+			vbar_value = vbar.Value;
+			lock_sizing = false;
 		}
 
 		private void SizeMaximized ()
@@ -328,6 +331,11 @@ namespace System.Windows.Forms {
 				if (child.WindowManager.Maximized)
 					child.Bounds = Bounds;
 			}
+		}
+
+		private void FormLocationChanged (object sender, EventArgs e)
+		{
+			SizeScrollBars ();
 		}
 
 		internal void ActivateChild (Form form)

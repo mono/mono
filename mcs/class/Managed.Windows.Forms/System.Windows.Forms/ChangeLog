@@ -1,3 +1,8 @@
+2006-03-06  Jackson Harper  <jackson@ximian.com>
+
+	* MdiClient.cs: Redid scrolling logic a bit to create a virtual
+	box and base calculations off this.
+
 2006-03-06  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* Splitter.cs: In situations where the affected control is added
