@@ -86,6 +86,7 @@ namespace System.Data.OleDb
 			IDictionary conProviderDict = ConnectionStringDictionary.Parse(ConnectionString);
 			string providerName = (string)conProviderDict["Provider"];
 
+			if (providerName != null)
 			for (int i = 0; i < _providers.Count; i++) {
 				IDictionary providerInfo = (IDictionary) _providers[i];
 					
