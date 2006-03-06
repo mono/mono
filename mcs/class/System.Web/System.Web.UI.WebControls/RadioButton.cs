@@ -78,11 +78,20 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-		internal override void InternalAddAttributesToRender (HtmlTextWriter w)
+		internal string ValueAttribute {
+			get {
+				return ViewState.GetString ("Value", String.Empty);
+			}
+			set {
+				ViewState["Value"] = value;
+			}
+		}
+
+		internal override void InternalAddAttributesToRender (HtmlTextWriter w) 
 		{
 			base.InternalAddAttributesToRender (w);
-			string val = Attributes ["Value"];
-			if (val == null || val == "")
+			string val = ValueAttribute;
+			if (val == null || val.Length == 0)
 				val = UniqueID;
 			w.AddAttribute (HtmlTextWriterAttribute.Value, val);
 		}

@@ -1,3 +1,9 @@
+2006-03-06  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* RadioButton.cs: added ValueAttribute property to store the button
+	value when in list
+	* RadioButtonList.cs: fixed tab index when rendering.
+
 2006-03-02  Chris Toshok  <toshok@ximian.com>
 
 	* WebControl.cs (SkinID): implement setter/getter, and have them

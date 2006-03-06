@@ -47,6 +47,7 @@ namespace System.Web.UI.WebControls {
 	public class RadioButtonList : ListControl, IRepeatInfoUser,
 		INamingContainer, IPostBackDataHandler {
 		bool need_raise;
+		short tabIndex = 0;
 
 		public RadioButtonList ()
 		{
@@ -252,9 +253,10 @@ namespace System.Web.UI.WebControls {
 			radio.GroupName = UniqueID;
 			radio.Page = Page;
 			radio.Checked = Items [repeatIndex].Selected;
-			radio.Attributes["Value"] = Items [repeatIndex].Value;
+			radio.ValueAttribute = Items [repeatIndex].Value;
 			radio.AutoPostBack = AutoPostBack;
 			radio.Enabled = Enabled;
+			radio.TabIndex = tabIndex;
 			radio.RenderControl (writer);
 		}
 #if NET_2_0
@@ -321,8 +323,14 @@ namespace System.Web.UI.WebControls {
 			repeat.RepeatColumns = RepeatColumns;
 			repeat.RepeatDirection = RepeatDirection;
 			repeat.RepeatLayout = RepeatLayout;
+
+			tabIndex = TabIndex;
+			TabIndex = 0;
+
 			repeat.RenderRepeater (writer, this, ControlStyle, this);
- 		}
+
+			TabIndex = tabIndex;
+		}
 	}
 
 }
