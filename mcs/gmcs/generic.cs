@@ -2375,11 +2375,19 @@ namespace Mono.CSharp {
 			}
 
 			if (at.IsArray) {
-				if (!pt.IsArray ||
-				    (at.GetArrayRank () != pt.GetArrayRank ()))
-					return false;
+				if (pt.IsArray) {
+					if (at.GetArrayRank () != pt.GetArrayRank ())
+						return false;
 
-				return InferType (pt.GetElementType (), at.GetElementType (), infered);
+					return InferType (pt.GetElementType (), at.GetElementType (), infered);
+				}
+
+				if (!pt.IsGenericType ||
+				    (pt.GetGenericTypeDefinition () != generic_ienumerable_type))
+				    return false;
+
+				Type[] args = GetTypeArguments (pt);
+				return InferType (args [0], at.GetElementType (), infered);
 			}
 
 			if (pt.IsArray) {

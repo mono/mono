@@ -1,3 +1,8 @@
+2006-03-07  Martin Baulig  <martin@ximian.com>
+
+	* generic.cs (TypeManager.InferType): Allow infering
+	`IEnumerable<T>' with an array of T; see gtest-251.cs.
+
 2006-03-06  Martin Baulig  <martin@ximian.com>
 
 	* generic.cs
