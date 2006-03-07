@@ -45,7 +45,7 @@ namespace System.Web.UI {
 		[MonoTODO]
 		public static object CreateSkinKey (Type controlType, string skinID)
 		{
-			throw new NotImplementedException ();
+			return String.Format ("{0}:{1}", skinID, controlType);
 		}
 
 		[MonoTODO]
@@ -109,6 +109,12 @@ namespace System.Web.UI {
 		[MonoTODO]
 		protected Page Page {
 			get { throw new NotImplementedException (); }
+		}
+
+		internal ControlSkin GetControlSkin (Type controlType, string skinID)
+		{
+			object key = PageTheme.CreateSkinKey (controlType, skinID);
+			return ControlSkins[key] as ControlSkin;
 		}
 	}
 }

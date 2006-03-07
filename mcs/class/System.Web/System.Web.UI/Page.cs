@@ -470,6 +470,21 @@ public class Page : TemplateControl, IHttpHandler
 		get { return _theme; }
 		set { _theme = value; }
 	}
+
+	void InitializeStyleSheet ()
+	{
+		if (_styleSheetTheme != null && _styleSheetTheme != "")
+			_styleSheetPageTheme = ThemeDirectoryCompiler.GetCompiledInstance ("./App_Themes/" + _styleSheetTheme + "/", _context);
+	}
+
+	void InitializeTheme ()
+	{
+		if (_theme != null && _theme != "") {
+			_pageTheme = ThemeDirectoryCompiler.GetCompiledInstance ("./App_Themes/" + _theme + "/", _context);
+			ApplyThemeRecursive ();
+		}
+	}
+
 #endif
 
 #if NET_2_0
@@ -1006,6 +1021,8 @@ public class Page : TemplateControl, IHttpHandler
 			LoadPreviousPageReference ();
 			
 		OnPreInit (EventArgs.Empty);
+
+		InitializeTheme ();
 #endif
 		Trace.Write ("aspx.page", "Begin Init");
 		InitRecursive (null);
@@ -1360,7 +1377,15 @@ public class Page : TemplateControl, IHttpHandler
 						 control.GetType ().Name +
 						 "' must be placed inside a form tag with runat=server.");
 	}
-	
+
+	protected override void FrameworkInitialize ()
+	{
+		base.FrameworkInitialize ();
+#if NET_2_0
+		InitializeStyleSheet ();
+#endif
+	}
+
 	#endregion
 	
 	#if NET_2_0
@@ -1671,7 +1696,16 @@ public class Page : TemplateControl, IHttpHandler
 			contentTemplates = new Hashtable ();
 		contentTemplates [templateName] = template;
 	}
-		
+
+	PageTheme _pageTheme;
+	internal PageTheme PageTheme {
+		get { return _pageTheme; }
+	}
+
+	PageTheme _styleSheetPageTheme;
+	internal PageTheme StyleSheetPageTheme {
+		get { return _styleSheetPageTheme; }
+	}
 	#endif
 }
 }

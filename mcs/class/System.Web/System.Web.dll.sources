@@ -53,6 +53,7 @@ System.Web.Compilation/LinePragmaCodeInfo.cs
 System.Web.Compilation/Location.cs
 System.Web.Compilation/PageBuildProvider.cs
 System.Web.Compilation/PageCompiler.cs
+System.Web.Compilation/PageThemeCompiler.cs
 System.Web.Compilation/ParseException.cs
 System.Web.Compilation/PrecompilationFlags.cs
 System.Web.Compilation/ResourceExpressionBuilder.cs
@@ -62,6 +63,7 @@ System.Web.Compilation/UserControlBuildProvider.cs
 System.Web.Compilation/TagAttributes.cs
 System.Web.Compilation/TagType.cs
 System.Web.Compilation/TemplateControlCompiler.cs
+System.Web.Compilation/ThemeDirectoryCompiler.cs
 System.Web.Compilation/UserControlCompiler.cs
 System.Web.Compilation/WebServiceCompiler.cs
 System.Web.Compilation/WebHandlerBuildProvider.cs
@@ -579,6 +581,9 @@ System.Web.UI/PageHandlerFactory.cs
 System.Web.UI/PageParser.cs
 System.Web.UI/PageStatePersister.cs
 System.Web.UI/PageTheme.cs
+System.Web.UI/PageThemeBuilder.cs
+System.Web.UI/PageThemeFileParser.cs
+System.Web.UI/PageThemeParser.cs
 System.Web.UI/Pair.cs
 System.Web.UI/ParseChildrenAttribute.cs
 System.Web.UI/PartialCachingAttribute.cs

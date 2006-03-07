@@ -249,12 +249,8 @@ namespace System.Web.UI.WebControls {
 		[MonoTODO]
 		public virtual new bool EnableTheming
 		{
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+			get { return base.EnableTheming; }
+			set { EnableTheming = value; }
 		}
 #endif		
 

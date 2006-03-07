@@ -141,6 +141,9 @@ namespace System.Web.UI
 			stateMask = ENABLE_VIEWSTATE | VISIBLE | AUTOID | BINDING_CONTAINER | AUTO_EVENT_WIREUP;
                         if (this is INamingContainer)
 				stateMask |= IS_NAMING_CONTAINER;
+#if NET_2_0
+			stateMask |= ENABLE_THEMING;
+#endif
                 }
 
 #if NET_2_0
@@ -595,6 +598,15 @@ namespace System.Web.UI
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public virtual void ApplyStyleSheetSkin (Page page)
 		{
+			if (!EnableTheming) /* this enough? */
+				return;
+
+			/* apply the style sheet skin here */
+			if (page.StyleSheetTheme != null) {
+				ControlSkin cs = page.StyleSheetPageTheme.GetControlSkin (GetType(), SkinID);
+				if (cs != null)
+					cs.ApplySkin (this);
+			}
 		}
 #endif		
 
@@ -1373,6 +1385,39 @@ namespace System.Web.UI
 #endif
 			stateMask |= VIEWSTATE_LOADED;
                 }
+
+#if NET_2_0
+		internal ControlSkin controlSkin;
+
+                internal void ApplyThemeRecursive ()
+                {
+#if MONO_TRACE
+			TraceContext trace = (Context != null && Context.Trace.IsEnabled) ? Context.Trace : null;
+			string type_name = null;
+			if (trace != null) {
+				type_name = GetType ().Name;
+				trace.Write ("control", String.Format ("ApplyThemeRecursive {0} {1}", _userId, type_name));
+			}
+#endif
+			ControlSkin controlSkin = Page.PageTheme.GetControlSkin (GetType(), SkinID);
+			if (controlSkin != null)
+				controlSkin.ApplySkin (this);
+
+                        if (HasControls ()) {
+				int len = _controls.Count;
+				for (int i=0;i<len;i++)
+				{
+					Control c = _controls[i];
+					c.ApplyThemeRecursive ();
+				}
+			}
+
+#if MONO_TRACE
+			if (trace != null)
+				trace.Write ("control", String.Format ("End ApplyThemeRecursive {0} {1}", _userId, type_name));
+#endif
+                }
+#endif
                 
 		internal bool AutoID
 		{
