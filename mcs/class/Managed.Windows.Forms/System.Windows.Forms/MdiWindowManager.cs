@@ -126,7 +126,7 @@ namespace System.Windows.Forms {
 
 		protected override void OnWindowFinishedMoving ()
 		{
-			mdi_container.EnsureScrollBars (form.Right, form.Bottom);
+			// 	mdi_container.EnsureScrollBars (form.Right, form.Bottom);
 
 			form.Refresh ();
 		}

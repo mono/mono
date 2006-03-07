@@ -2,7 +2,9 @@
 
 	* MdiClient.cs: Redid scrolling logic a bit to create a virtual
 	box and base calculations off this.
-
+	* MdiWindowManager.cs: Don't need to ensure scrollbars here
+	anymore.
+	
 2006-03-06  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* Splitter.cs: In situations where the affected control is added
