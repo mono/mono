@@ -1,3 +1,8 @@
+2006-03-07  Kamil Skalski  <nazgul@nemerle.org>
+
+	* SqliteDataReader.cs: Handle null values in result as having
+	string type
+
 2006-02-10  Joshua Tauberer  <tauberer@for.net>
 
 	* SqliteDataReader: Made 64bit clean.  Patch from

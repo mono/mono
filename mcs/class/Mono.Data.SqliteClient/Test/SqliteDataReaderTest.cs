@@ -75,5 +75,26 @@ namespace MonoTests.Mono.Data.SqliteClient
                                 }
                         }
                 }
+
+		[Test]
+		public void TypeOfNullInResultTest ()
+		{
+			_conn.ConnectionString = _connectionString;
+			SqliteDataReader reader = null;
+			using (_conn) {
+				_conn.Open ();
+				SqliteCommand cmd = _conn.CreateCommand ();
+				cmd.CommandText = "select null from test";
+				reader = cmd.ExecuteReader ();
+				try {
+					Assert.IsTrue (reader.Read());
+					Assert.IsNotNull (reader.GetFieldType (0));
+				} finally {
+					if (reader != null && !reader.IsClosed)
+						reader.Close ();
+					_conn.Close ();
+				}
+			}
+		}
         }
 }
