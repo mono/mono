@@ -1,3 +1,7 @@
+2006-03-07  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* run-test.bat: fixed enviroment variables
+
 2006-03-05  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* run-test.bat: added running of mono test suite

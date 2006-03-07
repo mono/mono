@@ -1,8 +1,9 @@
 @ECHO OFF 
 
 rem =================================================
-set JAVA_HOME=c:\j2sdk1.4.2_09
-set JGAC_PATH=c:\Program Files\Mainsoft\Visual MainWin for J2EE\jgac\vmw4j2ee_110
+if "%GH_HOME%" == "" (set GH_HOME=c:\Program Files\Mainsoft\Visual MainWin for J2EE)
+if "%JAVA_HOME%" == "" (set JAVA_HOME=%GH_HOME%\jre5) 
+set JGAC_PATH=%GH_HOME%\jgac\vmw4j2ee_110
 
 rem =================================================
 echo Hiding svn...
@@ -45,6 +46,9 @@ popd
 rem =================================================
 echo Build System.Web mono tests...
 pushd ..
+dos2unix System.Web.UI.HtmlControls\HtmlSelectTest.cs
+dos2unix System.Web.UI.WebControls\CheckBoxListTest.cs
+dos2unix System.Web.UI.WebControls\RepeatInfoTest.auto.cs
 "%VS71COMNTOOLS%..\IDE\devenv.com" TestMonoWeb_jvm.vmwcsproj /build Debug_Java
 popd
 
@@ -88,8 +92,8 @@ set monologfile=mono.xml
 
 pushd MainsoftWebTest\bin
 
-%JAVA_HOME%\bin\java.exe -cp .;"%GH_CP%" NUnit.Console.ConsoleUi SystemWebTest.jar /xml=%ghlogfile% /fixture:MonoTests.stand_alone.WebHarness.Harness
-%JAVA_HOME%\bin\java.exe -cp .;"%GH_CP%" NUnit.Console.ConsoleUi TestMonoWeb_jvm.jar /xml=%monologfile% /exclude:NotWorking,ValueAdd,InetAccess /fixture:MonoTests.System.Web
+"%JAVA_HOME%\bin\java.exe" -cp .;"%GH_CP%" NUnit.Console.ConsoleUi SystemWebTest.jar /xml=%ghlogfile% /fixture:MonoTests.stand_alone.WebHarness.Harness
+"%JAVA_HOME%\bin\java.exe" -cp .;"%GH_CP%" NUnit.Console.ConsoleUi TestMonoWeb_jvm.jar /xml=%monologfile% /exclude:NotWorking,ValueAdd,InetAccess /fixture:MonoTests.System.Web
 
 echo Finished...
 xmltool.exe --transform nunit_transform.xslt %ghlogfile%
