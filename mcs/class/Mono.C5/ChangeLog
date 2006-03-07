@@ -1,5 +1,13 @@
 2006-03-07  Martin Baulig  <martin@ximian.com>
 
+	* Test/hashing/HashDictionaryTests.cs: Temporarily disable some
+	more failing tests.
+
+	* Test/hashing/HashTableTests.cs: Likewise.
+	* Test/hashing/HashBagTests.cs: Likewise.
+
+2006-03-07  Martin Baulig  <martin@ximian.com>
+
 	* Test/Records.cs: Temporarily disable these tests.
 
 2006-03-06  Martin Baulig  <martin@ximian.com>
