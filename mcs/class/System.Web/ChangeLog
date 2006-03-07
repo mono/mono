@@ -1,3 +1,7 @@
+2006-03-07  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* Added run-tests.bat to run tests on Grasshopper
+
 2006-02-22  Cesar Lopez Nataren  <cnataren@novell.com>
 
 	* System.Web.dll.sources: Added System.Web.UI/ChtmlTextWriter.cs
