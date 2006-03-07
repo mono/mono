@@ -1,5 +1,10 @@
 2006-03-07  Martin Baulig  <martin@ximian.com>
 
+	* object.c
+	(mono_field_get_value_object): Add support for MONO_TYPE_GENERICINST.
+
+2006-03-07  Martin Baulig  <martin@ximian.com>
+
 	* class.c
 	(mono_class_get_full): Don't inflate TYPEDEF entries; fixes the
 	regression introduced in r56970; see gtest-252.cs.
