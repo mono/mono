@@ -842,6 +842,29 @@ namespace System.Windows.Forms
 			XplatUI.ClientToScreen (Handle, ref x, ref y);
 		}
 
+		private bool IsRecreating {
+			get {
+				if (is_recreating) {
+					return true;
+				}
+
+				if (parent != null) {
+					return parent.IsRecreating;
+				}
+
+				return false;
+			}
+		}
+
+		private bool ParentIsRecreating {
+			get {
+				if (parent != null) {
+					return parent.IsRecreating;
+				}
+				return false;
+			}
+		}
+
 		internal Graphics DeviceContext {
 			get { 
 				if (dc_mem==null) {
@@ -3275,7 +3298,7 @@ namespace System.Windows.Forms
 
 			if (IsHandleCreated) {
 				DestroyHandle();
-				CreateHandle();
+				// WM_DESTROY will CreateHandle for us
 			} else {
 				if (!is_created) {
 					CreateControl();
@@ -3657,6 +3680,12 @@ namespace System.Windows.Forms
 				case Msg.WM_DESTROY: {
 					OnHandleDestroyed(EventArgs.Empty);
 					window.InvalidateHandle();
+
+					if (ParentIsRecreating) {
+						RecreateHandle();
+					} else if (is_recreating) {
+						CreateHandle();
+					}
 					return;
 				}
 
@@ -3670,7 +3699,7 @@ namespace System.Windows.Forms
 					return;
 				}
 
-				case Msg.WM_PAINT: {				
+				case Msg.WM_PAINT: {
 					PaintEventArgs	paint_event;
 
 					paint_event = XplatUI.PaintEventStart(Handle, true);

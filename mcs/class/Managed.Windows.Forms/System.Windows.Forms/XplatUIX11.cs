@@ -41,6 +41,9 @@
 
 // Extra detailed debug
 #undef	DriverDebugExtra
+#define DriverDebugParent
+#define DriverDebugCreate
+#define DriverDebugDestroy
 
 using System;
 using System.ComponentModel;
@@ -1340,6 +1343,9 @@ namespace System.Windows.Forms {
 				for (i = 0; i < controls.Length; i++) {
 					if (controls[i].IsHandleCreated) {
 						hwnd = Hwnd.ObjectFromHandle(controls[i].Handle);
+						#if DriverDebugDestroy
+							Console.WriteLine("Destroying {0} [Child of {1}]", XplatUI.Window(controls[i].Handle), XplatUI.Window(controls[i].parent.Handle));
+						#endif
 						SendMessage(controls[i].Handle, Msg.WM_DESTROY, IntPtr.Zero, IntPtr.Zero);
 						hwnd.Dispose();
 					}
@@ -1967,7 +1973,7 @@ namespace System.Windows.Forms {
 			hwnd.WholeWindow = WholeWindow;
 			hwnd.ClientWindow = ClientWindow;
 
-			#if DriverDebug
+			#if DriverDebug || DriverDebugCreate
 				Console.WriteLine("Created window {0:X} / {1:X} parent {2:X}", ClientWindow.ToInt32(), WholeWindow.ToInt32(), hwnd.parent != null ? hwnd.parent.Handle.ToInt32() : 0);
 			#endif
 				       
@@ -2366,11 +2372,11 @@ namespace System.Windows.Forms {
 				DestroyCaret(handle);
 			}
 
-			// Mark our children as gone as well
-			DestroyChildWindow(Control.ControlNativeWindow.ControlFromHandle(handle));
-
 			// Send destroy message
 			SendMessage(handle, Msg.WM_DESTROY, IntPtr.Zero, IntPtr.Zero);
+
+			// Mark our children as gone as well
+			DestroyChildWindow(Control.ControlNativeWindow.ControlFromHandle(handle));
 
 			lock (XlibLock) {
 				if (hwnd.client_window != IntPtr.Zero) {
@@ -3744,8 +3750,8 @@ namespace System.Windows.Forms {
 			hwnd.parent = Hwnd.ObjectFromHandle(parent);
 
 			lock (XlibLock) {
-				#if DriverDebug
-					Console.WriteLine("Parent for window {0:X} / {1:X} = {2:X} (Handle:{3:X})", hwnd.ClientWindow.ToInt32(), hwnd.WholeWindow.ToInt32(), hwnd.parent != null ? hwnd.parent.Handle.ToInt32() : 0, parent.ToInt32());
+				#if DriverDebug || DriverDebugParent
+					Console.WriteLine("Parent for window {0} = {1}", XplatUI.Window(hwnd.Handle), XplatUI.Window(hwnd.parent != null ? hwnd.parent.Handle : IntPtr.Zero));
 				#endif
 				XReparentWindow(DisplayHandle, hwnd.whole_window, hwnd.parent.client_window, hwnd.x, hwnd.y);
 			}

@@ -1,3 +1,21 @@
+2006-03-07  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* Control.cs: 
+	  - Added new IsRecreating and ParentIsRecreating properties to
+	    allow testing if RecreateHandle has been called on ourselves
+	    or one of our parents
+	  - WndProc(WM_DESTROY): If our control handle is being recreated
+	    we immediately need to create the handle when receiving the
+	    destroy, that way our child windows find a valid parent handle
+	    when they themselves are being recreated upon WM_DESTROY receipt
+	    (fix for bug #77654 part 1)
+	* XplatUIX11.cs:
+	  - DestroyWindow: WM_DESTROY must be sent to our own window before
+	    notifying any child windows. MS documents that child windows
+	    are still valid when WM_DESTROY is received. (Control now relies on
+	    this behaviour)
+	  - Added some fine-grain debug options
+
 2006-03-06  Jackson Harper  <jackson@ximian.com>
 
 	* MdiClient.cs: Redid scrolling logic a bit to create a virtual
