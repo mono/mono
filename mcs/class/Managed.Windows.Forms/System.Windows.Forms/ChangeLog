@@ -2,6 +2,7 @@
 
 	* MdiClient.cs: Redid scrolling logic a bit to create a virtual
 	box and base calculations off this.
+	* MdiChildContext.cs:
 	* MdiWindowManager.cs: Don't need to ensure scrollbars here
 	anymore.
 	

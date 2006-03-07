@@ -364,7 +364,7 @@ namespace System.Windows.Forms {
 			virtual_position.Width = form.Width;
 			virtual_position.Height = form.Height;
 
-			mdi_container.EnsureScrollBars (virtual_position.Right, virtual_position.Bottom);
+			//mdi_container.EnsureScrollBars (virtual_position.Right, virtual_position.Bottom);
 
 			DrawVirtualPosition ();
 		}
