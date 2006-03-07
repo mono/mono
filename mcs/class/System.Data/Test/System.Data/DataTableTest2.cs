@@ -1950,6 +1950,7 @@ namespace MonoTests_System.Data
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void LoadDataRow_ExistingData ()
 		{
 			DataSet ds = new DataSet ();

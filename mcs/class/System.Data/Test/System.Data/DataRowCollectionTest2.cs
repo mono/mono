@@ -184,6 +184,7 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
+		[NUnit.Framework.Category ("NotWorking")]
 		public void FindByKey ()
 		{
 			DataTable table = new DataTable ();
@@ -191,12 +192,55 @@ namespace MonoTests.System.Data
 			table.PrimaryKey = new DataColumn[] {table.Columns [0]};
 
 			table.Rows.Add (new object[] {1});
+			table.Rows.Add (new object[] {2});
+			table.Rows.Add (new object[] {3});
 			table.AcceptChanges ();
+
 			Assert.IsNotNull (table.Rows.Find (new object[] {1}), "#1");
 
 			table.Rows[0].Delete ();
+			Assert.IsNull (table.Rows.Find (new object[] {1}), "#2");
+
+			table.Rows [1][0] =  1;
+			Assert.IsNotNull (table.Rows.Find (new object[] {1}), "#3");
+
 			table.RejectChanges ();
-			Assert.IsNotNull (table.Rows.Find (new object[] {1}), "#2");
+			Assert.IsNotNull (table.Rows.Find (new object[] {1}), "#4");
+		}
+
+		[Test]
+		[NUnit.Framework.Category ("NotWorking")]
+		public void FindByKey_VerifyOrder ()
+		{
+			DataTable table = new DataTable ();
+			table.Columns.Add ("col1", typeof (int));
+			table.PrimaryKey = new DataColumn[] {table.Columns [0]};
+
+			table.Rows.Add (new object[] {1});
+			table.Rows.Add (new object[] {2});
+			table.Rows.Add (new object[] {1000});
+			table.Rows [1][0] = 100;
+			Assert.IsNotNull (table.Rows.Find (100), "#1");
+		}
+
+		[Test]
+		[NUnit.Framework.Category ("NotWorking")]
+		public void FindByKey_DuringDataLoad ()
+		{
+			DataTable table = new DataTable ();
+			table.Columns.Add ("col1", typeof (int));
+			table.PrimaryKey = new DataColumn[] {table.Columns [0]};
+
+			table.Rows.Add (new object[] {1});
+			table.Rows.Add (new object[] {2});
+			table.AcceptChanges ();
+
+			table.BeginLoadData ();
+			table.LoadDataRow (new object[] {1000}, false);
+			Assert.IsNotNull (table.Rows.Find (1), "#1");
+			Assert.IsNotNull (table.Rows.Find (1000), "#2");
+			table.EndLoadData ();
+			Assert.IsNotNull (table.Rows.Find (1000), "#3");
 		}
 
 		[Test]

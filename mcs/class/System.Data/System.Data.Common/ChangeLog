@@ -1,3 +1,8 @@
+2006-03-07  Senganal T <tsenganal@novell.com>
+
+	* Key.cs : 
+		Reverted the changes from the earlier patch.
+
 2006-02-22  Senganal T <tsenganal@novell.com>
 
 	* DbDataAdapter.cs :

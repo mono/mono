@@ -47,7 +47,6 @@ namespace System.Data.Common
 		//	and always uses the _current version
 		//so need a temp row for Eval calls
 		DataRow _tmpRow;
-		static DataViewRowState DefaultRowStateFilter = (DataViewRowState.CurrentRows | DataViewRowState.OriginalRows);
 
 		#endregion //Fields
 
@@ -74,7 +73,7 @@ namespace System.Data.Common
 				_rowStateFilter = rowState;
 			else
 				// FIXME : what is the correct value ?
-				_rowStateFilter = DefaultRowStateFilter;
+				_rowStateFilter = DataViewRowState.CurrentRows;
 		}
 
 		#endregion // Constructors
@@ -178,9 +177,6 @@ namespace System.Data.Common
 						return (version == DataRowVersion.Original);
 					break;
 				default:
-					// If _rowStateFilter has the default value, return true
-					if (_rowStateFilter ==  DefaultRowStateFilter)
-						return true;
 					if ((_rowStateFilter & DataViewRowState.ModifiedCurrent) != DataViewRowState.None)
 						return ((version & DataRowVersion.Default) != 0);
 					if ((_rowStateFilter & DataViewRowState.ModifiedOriginal) != DataViewRowState.None)
