@@ -110,6 +110,7 @@ namespace System.Web.Compilation
 			CreateStaticFields ();
 			AddApplicationAndSessionObjects ();
 			AddScripts ();
+			CreateMethods ();
 			CreateConstructor (null, null);
 		}
 
@@ -124,7 +125,7 @@ namespace System.Web.Compilation
 #endif
 		protected virtual void CreateStaticFields ()
 		{
-			CodeMemberField fld = new CodeMemberField (typeof (bool), "__intialized");
+			CodeMemberField fld = new CodeMemberField (typeof (bool), "__initialized");
 			fld.Attributes = MemberAttributes.Private | MemberAttributes.Static;
 			fld.InitExpression = new CodePrimitiveExpression (false);
 			mainClass.Members.Add (fld);
@@ -147,15 +148,15 @@ namespace System.Web.Compilation
 			else
 #endif
 			r = new CodeTypeReferenceExpression (mainNS.Name + "." + mainClass.Name);
-			CodeFieldReferenceExpression intialized;
-			intialized = new CodeFieldReferenceExpression (r, "__intialized");
+			CodeFieldReferenceExpression initialized;
+			initialized = new CodeFieldReferenceExpression (r, "__initialized");
 			
 			CodeBinaryOperatorExpression bin;
-			bin = new CodeBinaryOperatorExpression (intialized,
+			bin = new CodeBinaryOperatorExpression (initialized,
 								CodeBinaryOperatorType.ValueEquality,
 								new CodePrimitiveExpression (false));
 
-			CodeAssignStatement assign = new CodeAssignStatement (intialized,
+			CodeAssignStatement assign = new CodeAssignStatement (initialized,
 									      new CodePrimitiveExpression (true));
 
 			CodeConditionStatement cond = new CodeConditionStatement (bin, assign);
@@ -356,7 +357,6 @@ namespace System.Web.Compilation
 
 			compiler = provider.CreateCompiler ();
 
-			CreateMethods ();
 			compilerParameters.IncludeDebugInformation = parser.Debug;
 			compilerParameters.CompilerOptions = compilerOptions + " " + parser.CompilerOptions;
 

@@ -1,3 +1,8 @@
+2006-03-07  Chris Toshok  <toshok@ximian.com>
+
+	* BaseCompiler.cs: fix typo in "initialize" in multiple places.
+	(Init): move the CreateMethods call here.
+
 2006-03-02  Chris Toshok  <toshok@ximian.com>
 
 	* TemplateControlCompiler.cs (InitMethod): emit an assignment for
