@@ -1,3 +1,7 @@
+2006-03-07  Martin Baulig  <martin@ximian.com>
+
+	* Test/Records.cs: Temporarily disable these tests.
+
 2006-03-06  Martin Baulig  <martin@ximian.com>
 
 	* C5/AssemblyInfo.cs: Add `[assembly: AssemblyDelaySign (true)]'

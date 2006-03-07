@@ -34,6 +34,7 @@ namespace C5UnitTests.RecordsTests
     {
     }
     [Test]
+    [Ignore("Temporarily disabled.  2006-03-07.  Martin")]
     public void FourElement()
     {
       Rec<string, string, int, int> rec1, rec2, rec3;
@@ -61,6 +62,7 @@ namespace C5UnitTests.RecordsTests
 
 
     [Test]
+    [Ignore("Temporarily disabled.  2006-03-07.  Martin")]
     public void ThreeElement()
     {
       Rec<string, string, int> rec1, rec2, rec3;
@@ -87,6 +89,7 @@ namespace C5UnitTests.RecordsTests
     }
 
     [Test]
+    [Ignore("Temporarily disabled.  2006-03-07.  Martin")]
     public void TwoElement()
     {
       Rec<string, string> rec1, rec2, rec3;
