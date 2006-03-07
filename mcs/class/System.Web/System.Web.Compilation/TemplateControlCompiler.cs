@@ -58,7 +58,7 @@ namespace System.Web.Compilation
 
 		static TypeConverter colorConverter;
 
-		static CodeVariableReferenceExpression ctrlVar = new CodeVariableReferenceExpression ("__ctrl");
+		internal static CodeVariableReferenceExpression ctrlVar = new CodeVariableReferenceExpression ("__ctrl");
 		
 #if NET_2_0
 		static Regex bindRegex = new Regex (@"Bind\s*\(""(.*?)""\)\s*%>", RegexOptions.Compiled);
@@ -70,7 +70,7 @@ namespace System.Web.Compilation
 			this.parser = parser;
 		}
 
-		void EnsureID (ControlBuilder builder)
+		protected void EnsureID (ControlBuilder builder)
 		{
 			if (builder.ID == null || builder.ID.Trim () == "")
 				builder.ID = builder.GetNextID (null);
@@ -608,7 +608,7 @@ namespace System.Web.Compilation
 
 		}
 
-		void CreateAssignStatementsFromAttributes (ControlBuilder builder)
+		protected void CreateAssignStatementsFromAttributes (ControlBuilder builder)
 		{
 			this.dataBoundAtts = 0;
 			IDictionary atts = builder.attribs;
@@ -674,7 +674,7 @@ namespace System.Web.Compilation
 			builder.renderIndex++;
 		}
 
-		void AddChildCall (ControlBuilder parent, ControlBuilder child)
+		protected void AddChildCall (ControlBuilder parent, ControlBuilder child)
 		{
 			CodeMethodReferenceExpression m = new CodeMethodReferenceExpression (thisRef, child.method.Name);
 			CodeMethodInvokeExpression expr = new CodeMethodInvokeExpression (m);
@@ -946,7 +946,7 @@ namespace System.Web.Compilation
 			}
 		}
 
-		void CreateControlTree (ControlBuilder builder, bool inTemplate, bool childrenAsProperties)
+		protected void CreateControlTree (ControlBuilder builder, bool inTemplate, bool childrenAsProperties)
 		{
 			EnsureID (builder);
 			bool isTemplate = (typeof (TemplateBuilder).IsAssignableFrom (builder.GetType ()));
@@ -1081,12 +1081,17 @@ namespace System.Web.Compilation
 			CodeMemberMethod method = new CodeMemberMethod ();
 			method.Name = "FrameworkInitialize";
 			method.Attributes = MemberAttributes.Family | MemberAttributes.Override;
+			PrependStatementsToFrameworkInitialize (method);
 			CallBaseFrameworkInitialize (method);
-			AddStatementsToFrameworkInitialize (method);
+			AppendStatementsToFrameworkInitialize (method);
 			mainClass.Members.Add (method);
 		}
 
-		protected virtual void AddStatementsToFrameworkInitialize (CodeMemberMethod method)
+		protected virtual void PrependStatementsToFrameworkInitialize (CodeMemberMethod method)
+		{
+		}
+
+		protected virtual void AppendStatementsToFrameworkInitialize (CodeMemberMethod method)
 		{
 			if (!parser.EnableViewState) {
 				CodeAssignStatement stmt = new CodeAssignStatement ();

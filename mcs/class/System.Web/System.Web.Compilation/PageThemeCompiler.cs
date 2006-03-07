@@ -143,8 +143,6 @@ namespace System.Web.Compilation
 
 					ControlBuilder b = (ControlBuilder) o;
 
-					Console.WriteLine ("b.Type == {0}, b.ControlType = {0}", b.GetType(), b.ControlType);
-
 					if (b is CollectionBuilder) {
 						/* emit a prop.Clear call before populating the collection */
 						CodePropertyReferenceExpression items = new CodePropertyReferenceExpression (ctrlVar,

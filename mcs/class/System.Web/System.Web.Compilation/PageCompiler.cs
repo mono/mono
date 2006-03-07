@@ -117,7 +117,16 @@ namespace System.Web.Compilation
 #endif
 		}
 
-		protected override void AddStatementsToFrameworkInitialize (CodeMemberMethod method)
+		protected override void PrependStatementsToFrameworkInitialize (CodeMemberMethod method)
+		{
+			base.PrependStatementsToFrameworkInitialize (method);
+#if NET_2_0
+			if (pageParser.StyleSheetTheme != null)
+				method.Statements.Add (CreatePropertyAssign ("StyleSheetTheme", pageParser.StyleSheetTheme));
+#endif
+		}
+
+		protected override void AppendStatementsToFrameworkInitialize (CodeMemberMethod method)
 		{
 			string responseEncoding = pageParser.ResponseEncoding;
 			if (responseEncoding != null)
@@ -187,7 +196,7 @@ namespace System.Web.Compilation
 			}
 #endif
                         
-			base.AddStatementsToFrameworkInitialize (method);
+			base.AppendStatementsToFrameworkInitialize (method);
 		}
 
 		private CodeExpression[] OutputCacheParams ()

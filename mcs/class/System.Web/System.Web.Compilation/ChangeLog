@@ -1,5 +1,27 @@
 2006-03-07  Chris Toshok  <toshok@ximian.com>
 
+	* AspGenerator.cs: refactor the parsing code so that we can
+	initiate parsing from outside this class.
+
+	* PageCompiler.cs (PrependStatementsToFrameworkInitialize): new
+	method, add our StyleSheetTheme assignment here.
+	(AppendStatementsToFrameworkInitialize): rename AddStatements* to
+	this.
+
+	* TemplateControlCompiler.cs (EnsureID): make protected.
+	(CreateAssignStatementsFromAttributes): same
+	(AddChildCall): same.
+	(CreateControlTree): same.
+	(CreateFrameworkInitializeMethod): change
+	"AddStatementsToFrameworkInitialize" to
+	"AppendStatementsToFrameworkInitialize", and add call to
+	"PrependStatementsToFrameworkInitialize" before the generation of
+	"base.FrameworkInitialize()."
+
+	* PageThemeCompiler.cs (CreateControlSkinMethod): remove spew.
+
+2006-03-07  Chris Toshok  <toshok@ximian.com>
+
 	* ThemeDirectoryCompiler.cs: new file.
 
 	* PageThemeCompiler.cs: new file.

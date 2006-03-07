@@ -196,6 +196,10 @@ namespace System.Web.Compilation
 			pstack = new ParserStack ();
 		}
 
+		public RootBuilder RootBuilder {
+			get { return tparser.RootBuilder; }
+		}
+
 		public AspParser Parser {
 			get { return pstack.Parser; }
 		}
@@ -236,13 +240,28 @@ namespace System.Web.Compilation
 			tparser.AddDependency (filename);
 		}
 
-		void DoParse ()
+		public void Parse (string file)
 		{
+			InitParser (file);
+
 			pstack.Parser.Parse ();
 			if (text.Length > 0)
 				FlushText ();
 
 			pstack.Pop ();
+
+#if DEBUG
+			PrintTree (rootBuilder, 0);
+#endif
+
+			if (stack.Count > 1)
+				throw new ParseException (stack.Builder.location,
+						"Expecting </" + stack.Builder.TagName + "> " + stack.Builder);
+		}
+
+		public void Parse ()
+		{
+			Parse (Path.GetFullPath (tparser.InputFile));
 		}
 
 		public Type GetCompiledType ()
@@ -253,16 +272,8 @@ namespace System.Web.Compilation
 			}
 
 			isApplication = tparser.DefaultDirectiveName == "application";
-			InitParser (Path.GetFullPath (tparser.InputFile));
 
-			DoParse ();
-#if DEBUG
-			PrintTree (rootBuilder, 0);
-#endif
-
-			if (stack.Count > 1)
-				throw new ParseException (stack.Builder.location,
-						"Expecting </" + stack.Builder.TagName + "> " + stack.Builder);
+			Parse ();
 
 			BaseCompiler compiler = GetCompilerFromType ();
 
@@ -393,8 +404,7 @@ namespace System.Web.Compilation
 					file = GetIncludeFilePath (tparser.BaseDir, file);
 				}
 
-				InitParser (file);
-				DoParse ();
+				Parse (file);
 				break;
 			default:
 				break;
