@@ -1,3 +1,9 @@
+2006-03-07  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* System.Xml.Serialization/XmlSerializerTestClasses.cs:
+	* System.Xml.Serialization/XmlSerializerTests.cs: Added tests
+	  for XmlSchemaForm.
+
 2006-02-16  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* XmlReflectionImporter.cs: Enabled few tests for bug #77531.

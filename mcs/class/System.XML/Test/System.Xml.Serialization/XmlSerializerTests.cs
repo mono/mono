@@ -1363,6 +1363,134 @@ namespace MonoTests.System.XmlSerialization
 				sw.ToString (), "#2");
 		}
 
+		[Test]
+		public void TestSchemaForm ()
+		{
+			TestSchemaForm1 t1 = new TestSchemaForm1 ();
+			t1.p1 = new PrintTypeResponse ();
+			t1.p1.Init ();
+			t1.p2 = new PrintTypeResponse ();
+			t1.p2.Init ();
+			
+			TestSchemaForm2 t2 = new TestSchemaForm2 ();
+			t2.p1 = new PrintTypeResponse ();
+			t2.p1.Init ();
+			t2.p2 = new PrintTypeResponse ();
+			t2.p2.Init ();
+			
+			Serialize (t1);
+			string res = "";
+			res += "<?xml version=\"1.0\" encoding=\"utf-8\"?>";
+			res += "<TestSchemaForm1 xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">";
+			res += "  <p1>";
+			res += "    <result>";
+			res += "      <data>data1</data>";
+			res += "    </result>";
+			res += "    <intern xmlns=\"urn:responseTypes\">";
+			res += "      <result xmlns=\"\">";
+			res += "        <data>data2</data>";
+			res += "      </result>";
+			res += "    </intern>";
+			res += "  </p1>";
+			res += "  <p2 xmlns=\"urn:oo\">";
+			res += "    <result xmlns=\"\">";
+			res += "      <data>data1</data>";
+			res += "    </result>";
+			res += "    <intern xmlns=\"urn:responseTypes\">";
+			res += "      <result xmlns=\"\">";
+			res += "        <data>data2</data>";
+			res += "      </result>";
+			res += "    </intern>";
+			res += "  </p2>";
+			res += "</TestSchemaForm1>";
+			Assert.AreEqual (Infoset (res), WriterText);
+
+			Serialize (t2);
+			res = "";
+			res += "<?xml version=\"1.0\" encoding=\"utf-8\"?>";
+			res += "<TestSchemaForm2 xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">";
+			res += "  <p1 xmlns=\"urn:testForm\">";
+			res += "    <result xmlns=\"\">";
+			res += "      <data>data1</data>";
+			res += "    </result>";
+			res += "    <intern xmlns=\"urn:responseTypes\">";
+			res += "      <result xmlns=\"\">";
+			res += "        <data>data2</data>";
+			res += "      </result>";
+			res += "    </intern>";
+			res += "  </p1>";
+			res += "  <p2 xmlns=\"urn:oo\">";
+			res += "    <result xmlns=\"\">";
+			res += "      <data>data1</data>";
+			res += "    </result>";
+			res += "    <intern xmlns=\"urn:responseTypes\">";
+			res += "      <result xmlns=\"\">";
+			res += "        <data>data2</data>";
+			res += "      </result>";
+			res += "    </intern>";
+			res += "  </p2>";
+			res += "</TestSchemaForm2>";
+			Assert.AreEqual (Infoset (res), WriterText);
+
+			XmlReflectionImporter imp = new XmlReflectionImporter ();
+			XmlTypeMapping map = imp.ImportTypeMapping (typeof(TestSchemaForm1), "urn:extra");
+			Serialize (t1, map);
+			res = "";
+			res += "<?xml version=\"1.0\" encoding=\"utf-8\"?>";
+			res += "<TestSchemaForm1 xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"urn:extra\">";
+			res += "  <p1>";
+			res += "    <result xmlns=\"\">";
+			res += "      <data>data1</data>";
+			res += "    </result>";
+			res += "    <intern xmlns=\"urn:responseTypes\">";
+			res += "      <result xmlns=\"\">";
+			res += "        <data>data2</data>";
+			res += "      </result>";
+			res += "    </intern>";
+			res += "  </p1>";
+			res += "  <p2 xmlns=\"urn:oo\">";
+			res += "    <result xmlns=\"\">";
+			res += "      <data>data1</data>";
+			res += "    </result>";
+			res += "    <intern xmlns=\"urn:responseTypes\">";
+			res += "      <result xmlns=\"\">";
+			res += "        <data>data2</data>";
+			res += "      </result>";
+			res += "    </intern>";
+			res += "  </p2>";
+			res += "</TestSchemaForm1>";
+			Assert.AreEqual (Infoset (res), WriterText);
+
+			imp = new XmlReflectionImporter ();
+			map = imp.ImportTypeMapping (typeof(TestSchemaForm2), "urn:extra");
+			Serialize (t2, map);
+			res = "";
+			res += "<?xml version=\"1.0\" encoding=\"utf-8\"?>";
+			res += "<TestSchemaForm2 xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"urn:extra\">";
+			res += "  <p1 xmlns=\"urn:testForm\">";
+			res += "    <result xmlns=\"\">";
+			res += "      <data>data1</data>";
+			res += "    </result>";
+			res += "    <intern xmlns=\"urn:responseTypes\">";
+			res += "      <result xmlns=\"\">";
+			res += "        <data>data2</data>";
+			res += "      </result>";
+			res += "    </intern>";
+			res += "  </p1>";
+			res += "  <p2 xmlns=\"urn:oo\">";
+			res += "    <result xmlns=\"\">";
+			res += "      <data>data1</data>";
+			res += "    </result>";
+			res += "    <intern xmlns=\"urn:responseTypes\">";
+			res += "      <result xmlns=\"\">";
+			res += "        <data>data2</data>";
+			res += "      </result>";
+			res += "    </intern>";
+			res += "  </p2>";
+			res += "</TestSchemaForm2>";
+			Assert.AreEqual (Infoset (res), WriterText);
+		}
+
 		// Helper methods
 				
 		public static string Infoset (string sx)

@@ -522,5 +522,45 @@ namespace MonoTests.System.Xml.TestClasses
 		public byte[] Password;
 		public char PathSeparatorCharacter;
 	}
+	
+	public class TestSchemaForm1
+	{
+		public PrintTypeResponse p1;
+		
+		[XmlElement(Namespace="urn:oo")]
+		public PrintTypeResponse p2;
+	}
+
+	[XmlType (Namespace="urn:testForm")]
+	public class TestSchemaForm2
+	{
+		public PrintTypeResponse p1;
+		
+		[XmlElement(Namespace="urn:oo")]
+		public PrintTypeResponse p2;
+	}
+
+	[XmlType (Namespace="urn:responseTypes")]
+	public class PrintTypeResponse {
+		[XmlElement (Form=XmlSchemaForm.Unqualified, IsNullable=true)]
+	    public OutputType result;
+	    public PrintTypeResponse intern;
+	    
+	    public void Init ()
+	    {
+	    	result = new OutputType ();
+	    	result.data = "data1";
+	    	intern = new PrintTypeResponse ();
+	    	intern.result = new OutputType ();
+	    	intern.result.data = "data2";
+	    }
+	}
+
+	[XmlType (Namespace="urn:responseTypes")]
+	public class OutputType {
+	    
+		[XmlElement (Form=XmlSchemaForm.Unqualified, IsNullable=true)]
+	    public string data;
+	}	
 }
 
