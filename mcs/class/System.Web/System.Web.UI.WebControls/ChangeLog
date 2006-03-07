@@ -1,3 +1,7 @@
+2006-03-07  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* DataList.cs: fixed CreateControlHierarchy, fixes 77693
+
 2006-03-06  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* RadioButton.cs: added ValueAttribute property to store the button

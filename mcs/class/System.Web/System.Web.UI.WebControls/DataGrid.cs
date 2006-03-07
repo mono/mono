@@ -957,6 +957,8 @@ namespace System.Web.UI.WebControls {
 			// this silly foreach and index++
 			if (items_list == null)
 				items_list = new ArrayList ();
+			else
+				items_list.Clear();
 
 			bool skip_first = false;
 			IEnumerator enumerator = null;
