@@ -104,8 +104,6 @@ namespace Mono.Security.Protocol.Tls
 					throw new IOException("The authentication or decryption has failed.", ex);
 				}
 
-				negotiationComplete.Set();
-
 				if (internalResult.ProceedAfterHandshake)
 				{
 					//kick off the read or write process (whichever called us) after the handshake is complete
@@ -117,6 +115,7 @@ namespace Mono.Security.Protocol.Tls
 					{
 						InternalBeginRead(internalResult);
 					}
+					negotiationComplete.Set();
 				}
 				else
 				{
@@ -338,10 +337,12 @@ namespace Mono.Security.Protocol.Tls
 
 		private class InternalAsyncResult : IAsyncResult
 		{
+			private object locker = new object ();
 			private AsyncCallback _userCallback;
 			private object _userState;
 			private Exception _asyncException;
-			private ManualResetEvent _complete;
+			private ManualResetEvent handle;
+			private bool completed;
 			private int _bytesRead;
 			private bool _fromWrite;
 			private bool _proceedAfterHandshake;
@@ -354,7 +355,6 @@ namespace Mono.Security.Protocol.Tls
 			{
 				_userCallback = userCallback;
 				_userState = userState;
-				_complete = new ManualResetEvent(false);
 				_buffer = buffer;
 				_offset = offset;
 				_count = count;
@@ -404,12 +404,22 @@ namespace Mono.Security.Protocol.Tls
 
 			public bool CompletedWithError
 			{
-				get { return null != _asyncException; }
+				get {
+					if (IsCompleted == false)
+						return false;
+					return null != _asyncException;
+				}
 			}
 
 			public WaitHandle AsyncWaitHandle
 			{
-				get { return _complete; }
+				get {
+					lock (locker) {
+						if (handle == null)
+							handle = new ManualResetEvent (completed);
+					}
+					return handle;
+				}
 			}
 
 			public bool CompletedSynchronously
@@ -419,27 +429,26 @@ namespace Mono.Security.Protocol.Tls
 
 			public bool IsCompleted
 			{
-				get { return _complete.WaitOne(0, false); }
+				get {
+					lock (locker)
+						return completed;
+				}
 			}
 
 			private void SetComplete(Exception ex, int bytesRead)
 			{
-				if (this.IsCompleted)
-					return;
-
-				lock (this)
-				{
-					if (this.IsCompleted)
+				lock (locker) {
+					if (completed)
 						return;
 
+					completed = true;
+					if (handle != null)
+						handle.Set ();
 					_asyncException = ex;
 					_bytesRead = bytesRead;
-					_complete.Set();
 				}
-
-				if (null != _userCallback)
-					_userCallback (this);
-
+				if (_userCallback != null)
+					_userCallback.BeginInvoke (this, null, null);
 			}
 
 			public void SetComplete(Exception ex)
@@ -497,7 +506,8 @@ namespace Mono.Security.Protocol.Tls
 
 		private void EndNegotiateHandshake(InternalAsyncResult asyncResult)
 		{
-			asyncResult.AsyncWaitHandle.WaitOne();
+			if (asyncResult.IsCompleted == false)
+				asyncResult.AsyncWaitHandle.WaitOne();
 
 			if (asyncResult.CompletedWithError)
 			{
@@ -770,13 +780,13 @@ namespace Mono.Security.Protocol.Tls
 		{
 			if (this.disposed)
 				return;
-
+			
 			InternalAsyncResult internalResult = (InternalAsyncResult)ar.AsyncState;
 
 			try
 			{
 				this.innerStream.EndWrite(ar);
-				internalResult.SetComplete(0);
+				internalResult.SetComplete();
 			}
 			catch (Exception ex)
 			{
@@ -842,14 +852,14 @@ namespace Mono.Security.Protocol.Tls
 			this.checkDisposed();
 
 			InternalAsyncResult internalResult = asyncResult as InternalAsyncResult;
-
-			// Always wait until the read is complete
-			internalResult.AsyncWaitHandle.WaitOne();
-
 			if (internalResult == null)
 			{
 				throw new ArgumentNullException("asyncResult is null or was not obtained by calling BeginRead.");
 			}
+
+			// Always wait until the read is complete
+			if (asyncResult.IsCompleted == false)
+				asyncResult.AsyncWaitHandle.WaitOne();
 
 			if (internalResult.CompletedWithError)
 			{
@@ -864,13 +874,14 @@ namespace Mono.Security.Protocol.Tls
 			this.checkDisposed();
 
 			InternalAsyncResult internalResult = asyncResult as InternalAsyncResult;
-
-			internalResult.AsyncWaitHandle.WaitOne();
-
-			if (asyncResult == null)
+			if (internalResult == null)
 			{
 				throw new ArgumentNullException("asyncResult is null or was not obtained by calling BeginWrite.");
 			}
+
+
+			if (asyncResult.IsCompleted == false)
+				internalResult.AsyncWaitHandle.WaitOne();
 
 			if (internalResult.CompletedWithError)
 			{
