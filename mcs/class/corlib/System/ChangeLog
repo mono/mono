@@ -1,3 +1,7 @@
+2006-03-07  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* Environment.cs: Bumped corlib version to 48 (due to r57532)
+
 2006-03-07  Martin Baulig  <martin@ximian.com>
 
 	* String.cs (String.FormatHelper): Try getting an `ICustomFormatter'

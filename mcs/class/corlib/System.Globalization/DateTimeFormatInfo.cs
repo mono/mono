@@ -53,6 +53,14 @@ namespace System.Globalization
 
 		private static DateTimeFormatInfo theInvariantDateTimeFormatInfo;
 
+		//
+		// BIG FAT WARNING:
+		//
+		// DO NOT ALTER THE NAME OR ORDER OF THESE FIELDS
+		// AND DO NOT INSERT ANY VARIABLES ANYWHERE BUT AT THE END
+		// SINCE MONO RELIES ON THE ORDER AND ON THE NAMES
+		// see mono/mono/metadata/verify.c
+		//
 		private bool m_isReadOnly;
 		private string amDesignator;
 		private string pmDesignator;
@@ -76,6 +84,18 @@ namespace System.Globalization
 		private string[] monthNames;
 		private string[] abbreviatedMonthNames;
 
+		// FIXME: not supported other than invariant
+		private string [] allShortDatePatterns;
+		private string [] allLongDatePatterns;
+		private string [] allShortTimePatterns;
+		private string [] allLongTimePatterns;
+		private string [] monthDayPatterns;
+		private string [] yearMonthPatterns;
+
+		//
+		// END OF BIG FAT WARNING
+		//
+
 		// MS Serialization needs this
 		private int nDataItem;
 		private bool m_useUserOverride;
@@ -89,14 +109,6 @@ namespace System.Globalization
 		private string[] m_abbrevEnglishEraNames;
 		private string[] m_dateWords;
 		private int[] optionalCalendars;
-
-		// FIXME: not supported other than invariant
-		private string [] allShortDatePatterns;
-		private string [] allLongDatePatterns;
-		private string [] allShortTimePatterns;
-		private string [] allLongTimePatterns;
-		private string [] monthDayPatterns;
-		private string [] yearMonthPatterns;
 
 		public DateTimeFormatInfo()
 		{

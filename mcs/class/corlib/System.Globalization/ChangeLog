@@ -1,3 +1,9 @@
+2006-03-07  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* DateTimeFormatInfo.cs: Restored original field order to allow
+	  some automatic locale fu to happen (mono unmanaged code relies 
+	  on the field order to fill out DateTimeFormatInfo)
+
 2006-03-02  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* DateTimeFormatInfo.cs: Switched (where possible) our internal
