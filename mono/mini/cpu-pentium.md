@@ -401,6 +401,7 @@ x86_and_membase_reg: src1:b src2:i len:11
 x86_or_membase_reg: src1:b src2:i len:11
 x86_xor_membase_reg: src1:b src2:i len:11
 x86_mul_membase_reg: src1:b src2:i len:13
+x86_xor_reg_membase: dest:i src1:i src2:b len:6
 x86_push: src1:i len:1
 x86_push_imm: len:5
 x86_push_membase: src1:b len:6

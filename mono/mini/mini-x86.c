@@ -2176,6 +2176,9 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_X86_MUL_MEMBASE:
 			x86_imul_reg_membase (code, ins->sreg1, ins->sreg2, ins->inst_offset);
 			break;
+		case OP_X86_XOR_REG_MEMBASE:
+			x86_alu_reg_membase (code, X86_XOR, ins->sreg1, ins->sreg2, ins->inst_offset);
+			break;
 		case CEE_BREAK:
 		case OP_BREAK:
 			x86_breakpoint (code);

@@ -4814,19 +4814,20 @@ mono_decompose_long_opts (MonoCompile *cfg)
 
 				switch (next->opcode) {
 				case OP_LBEQ:
-					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 1, tree->sreg2 + 1);
-					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBNE_UN, next->inst_false_bb);
-					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 2, tree->sreg2 + 2);
-					MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, OP_IBEQ, next->inst_true_bb, next->inst_false_bb);
+				case OP_LBNE_UN: {
+					int d1, d2;
+
+					/* Branchless version based on gcc code */
+					d1 = alloc_ireg (cfg);
+					d2 = alloc_ireg (cfg);
+					MONO_EMIT_NEW_BIALU (cfg, OP_IXOR, d1, tree->sreg1 + 1, tree->sreg2 + 1);
+					MONO_EMIT_NEW_BIALU (cfg, OP_IXOR, d2, tree->sreg1 + 2, tree->sreg2 + 2);
+					MONO_EMIT_NEW_BIALU (cfg, OP_IOR, d1, d1, d2);
+					MONO_EMIT_NEW_BIALU_IMM (cfg, OP_ICOMPARE_IMM, -1, d1, 0);
+					MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, next->opcode == OP_LBEQ ? OP_IBEQ : OP_IBNE_UN, next->inst_true_bb, next->inst_false_bb);
 					next->opcode = OP_NOP;
 					break;
-				case OP_LBNE_UN:
-					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 1, tree->sreg2 + 1);
-					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBNE_UN, next->inst_true_bb);
-					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 2, tree->sreg2 + 2);
-					MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, OP_IBNE_UN, next->inst_true_bb, next->inst_false_bb);
-					next->opcode = OP_NOP;
-					break;
+				}
 				case OP_LBLT:
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 2, tree->sreg2 + 2);
 					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBLT, next->inst_true_bb);
@@ -4900,17 +4901,17 @@ mono_decompose_long_opts (MonoCompile *cfg)
 					next->opcode = OP_NOP;
 					break;
 				case OP_LCEQ: {
-					MonoBasicBlock *word_differs;
+					int d1, d2;
 	
-					NEW_BBLOCK (cfg, word_differs);
+					/* Branchless version based on gcc code */
+					d1 = alloc_ireg (cfg);
+					d2 = alloc_ireg (cfg);
+					MONO_EMIT_NEW_BIALU (cfg, OP_IXOR, d1, tree->sreg1 + 1, tree->sreg2 + 1);
+					MONO_EMIT_NEW_BIALU (cfg, OP_IXOR, d2, tree->sreg1 + 2, tree->sreg2 + 2);
+					MONO_EMIT_NEW_BIALU (cfg, OP_IOR, d1, d1, d2);
 
-					MONO_EMIT_NEW_ICONST (cfg, next->dreg, 0);
-					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 2, tree->sreg2 + 2);
-					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBNE_UN, word_differs);
-					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 1, tree->sreg2 + 1);
-					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBNE_UN, word_differs);
-					MONO_EMIT_NEW_ICONST (cfg, next->dreg, 1);
-					MONO_START_BB (cfg, word_differs);
+					MONO_EMIT_NEW_BIALU_IMM (cfg, OP_ICOMPARE_IMM, -1, d1, 0);
+					MONO_EMIT_NEW_UNALU (cfg, OP_ICEQ, next->dreg, -1);
 					next->opcode = OP_NOP;
 					break;
 				}
@@ -8996,6 +8997,8 @@ op_to_op_src2_membase (int load_opcode, int opcode)
 	case OP_COMPARE:
 	case OP_ICOMPARE:
 		return OP_X86_COMPARE_REG_MEMBASE;
+	case OP_IXOR:
+		return OP_X86_XOR_REG_MEMBASE;
 	}
 #endif
 
@@ -9478,6 +9481,7 @@ mono_spill_global_vars (MonoCompile *cfg)
  *   - localloc fix for amd64
  *   - x86 type_token change
  *   - lconv fixes
+ *   - long eq/ne optimizations
  * - handle long shift opts on 32 bit platforms somehow: they require 
  *   3 sregs (2 for arg1 and 1 for arg2)
  * - make byref a 'normal' type.
