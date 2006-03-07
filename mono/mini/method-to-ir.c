@@ -984,59 +984,6 @@ link_bblock (MonoCompile *cfg, MonoBasicBlock *from, MonoBasicBlock* to)
 	}
 }
 
-#if SIZEOF_VOID_P == 4
-
-/**
- * unlink_bblock:
- *
- *   Unlink two basic blocks.
- */
-static void
-unlink_bblock (MonoCompile *cfg, MonoBasicBlock *from, MonoBasicBlock* to)
-{
-	MonoBasicBlock **newa;
-	int i, pos;
-	gboolean found;
-
-	found = FALSE;
-	for (i = 0; i < from->out_count; ++i) {
-		if (to == from->out_bb [i]) {
-			found = TRUE;
-			break;
-		}
-	}
-	if (found) {
-		newa = mono_mempool_alloc (cfg->mempool, sizeof (gpointer) * (from->out_count - 1));
-		pos = 0;
-		for (i = 0; i < from->out_count; ++i) {
-			if (from->out_bb [i] != to)
-				newa [pos ++] = from->out_bb [i];
-		}
-		from->out_count--;
-		from->out_bb = newa;
-	}
-
-	found = FALSE;
-	for (i = 0; i < to->in_count; ++i) {
-		if (from == to->in_bb [i]) {
-			found = TRUE;
-			break;
-		}
-	}
-	if (found) {
-		newa = mono_mempool_alloc (cfg->mempool, sizeof (gpointer) * (to->in_count - 1));
-		pos = 0;
-		for (i = 0; i < to->in_count; ++i) {
-			if (to->in_bb [i] != from)
-				newa [pos ++] = to->in_bb [i];
-		}
-		to->in_count--;
-		to->in_bb = newa;
-	}
-}
-
-#endif
-
 /**
  * mono_find_block_region:
  *
@@ -4883,6 +4830,7 @@ mono_decompose_long_opts (MonoCompile *cfg)
 				case OP_LBLT:
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 2, tree->sreg2 + 2);
 					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBLT, next->inst_true_bb);
+					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 2, tree->sreg2 + 2);
 					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBNE_UN, next->inst_false_bb);
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 1, tree->sreg2 + 1);
 					MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, OP_IBLT_UN, next->inst_true_bb, next->inst_false_bb);
@@ -4891,6 +4839,7 @@ mono_decompose_long_opts (MonoCompile *cfg)
 				case OP_LBGT:
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 2, tree->sreg2 + 2);
 					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBGT, next->inst_true_bb);
+					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 2, tree->sreg2 + 2);
 					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBNE_UN, next->inst_false_bb);
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 1, tree->sreg2 + 1);
 					MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, OP_IBGT_UN, next->inst_true_bb, next->inst_false_bb);
@@ -4899,6 +4848,7 @@ mono_decompose_long_opts (MonoCompile *cfg)
 				case OP_LBGE:
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 2, tree->sreg2 + 2);
 					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBGT, next->inst_true_bb);
+					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 2, tree->sreg2 + 2);
 					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBNE_UN, next->inst_false_bb);
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 1, tree->sreg2 + 1);
 					MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, OP_IBGE_UN, next->inst_true_bb, next->inst_false_bb);
@@ -4907,6 +4857,7 @@ mono_decompose_long_opts (MonoCompile *cfg)
 				case OP_LBLE:
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 2, tree->sreg2 + 2);
 					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBLT, next->inst_true_bb);
+					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 2, tree->sreg2 + 2);
 					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBNE_UN, next->inst_false_bb);
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 1, tree->sreg2 + 1);
 					MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, OP_IBLE_UN, next->inst_true_bb, next->inst_false_bb);
@@ -4915,6 +4866,7 @@ mono_decompose_long_opts (MonoCompile *cfg)
 				case OP_LBLT_UN:
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 2, tree->sreg2 + 2);
 					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBLT_UN, next->inst_true_bb);
+					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 2, tree->sreg2 + 2);
 					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBNE_UN, next->inst_false_bb);
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 1, tree->sreg2 + 1);
 					MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, OP_IBLT_UN, next->inst_true_bb, next->inst_false_bb);
@@ -4923,6 +4875,7 @@ mono_decompose_long_opts (MonoCompile *cfg)
 				case OP_LBGT_UN:
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 2, tree->sreg2 + 2);
 					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBGT_UN, next->inst_true_bb);
+					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 2, tree->sreg2 + 2);
 					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBNE_UN, next->inst_false_bb);
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 1, tree->sreg2 + 1);
 					MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, OP_IBGT_UN, next->inst_true_bb, next->inst_false_bb);
@@ -4931,6 +4884,7 @@ mono_decompose_long_opts (MonoCompile *cfg)
 				case OP_LBGE_UN:
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 2, tree->sreg2 + 2);
 					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBGT_UN, next->inst_true_bb);
+					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 2, tree->sreg2 + 2);
 					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBNE_UN, next->inst_false_bb);
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 1, tree->sreg2 + 1);
 					MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, OP_IBGE_UN, next->inst_true_bb, next->inst_false_bb);
@@ -4939,6 +4893,7 @@ mono_decompose_long_opts (MonoCompile *cfg)
 				case OP_LBLE_UN:
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 2, tree->sreg2 + 2);
 					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBLT_UN, next->inst_true_bb);
+					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 2, tree->sreg2 + 2);
 					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBNE_UN, next->inst_false_bb);
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 1, tree->sreg2 + 1);
 					MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, OP_IBLE_UN, next->inst_true_bb, next->inst_false_bb);
@@ -4968,6 +4923,7 @@ mono_decompose_long_opts (MonoCompile *cfg)
 					MONO_EMIT_NEW_ICONST (cfg, next->dreg, 0);
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 2, tree->sreg2 + 2);
 					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBGT, set_to_0);
+					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 2, tree->sreg2 + 2);
 					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBNE_UN, set_to_1);
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 1, tree->sreg2 + 1);
 					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBGE_UN, set_to_0);
@@ -4986,6 +4942,7 @@ mono_decompose_long_opts (MonoCompile *cfg)
 					MONO_EMIT_NEW_ICONST (cfg, next->dreg, 0);
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 2, tree->sreg2 + 2);
 					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBGT_UN, set_to_0);
+					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 2, tree->sreg2 + 2);
 					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBNE_UN, set_to_1);
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 1, tree->sreg2 + 1);
 					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBGE_UN, set_to_0);
@@ -5004,6 +4961,7 @@ mono_decompose_long_opts (MonoCompile *cfg)
 					MONO_EMIT_NEW_ICONST (cfg, next->dreg, 0);
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg2 + 2, tree->sreg1 + 2);
 					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBGT, set_to_0);
+					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 2, tree->sreg2 + 2);
 					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBNE_UN, set_to_1);
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg2 + 1, tree->sreg1 + 1);
 					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBGE_UN, set_to_0);
@@ -5022,6 +4980,7 @@ mono_decompose_long_opts (MonoCompile *cfg)
 					MONO_EMIT_NEW_ICONST (cfg, next->dreg, 0);
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg2 + 2, tree->sreg1 + 2);
 					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBGT_UN, set_to_0);
+					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 2, tree->sreg2 + 2);
 					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBNE_UN, set_to_1);
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg2 + 1, tree->sreg1 + 1);
 					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBGE_UN, set_to_0);
@@ -5108,7 +5067,7 @@ mono_decompose_long_opts (MonoCompile *cfg)
 					tmp_bblocks = bb->out_bb;
 					count = bb->out_count;
 					for (i = 0; i < count; ++i)
-						unlink_bblock (cfg, bb, tmp_bblocks [i]);
+						mono_unlink_bblock (cfg, bb, tmp_bblocks [i]);
 
 					/* Add links between the original bb and the first_bb's successors */
 					for (i = 0; i < first_bb->out_count; ++i) {
@@ -5120,7 +5079,7 @@ mono_decompose_long_opts (MonoCompile *cfg)
 					for (i = 0; i < bb->out_count; ++i) {
 						MonoBasicBlock *out_bb = bb->out_bb [i];
 
-						unlink_bblock (cfg, first_bb, out_bb);
+						mono_unlink_bblock (cfg, first_bb, out_bb);
 					}
 					cfg->cbb->next_bb = bb->next_bb;
 					bb->next_bb = first_bb->next_bb;
@@ -9547,6 +9506,8 @@ mono_spill_global_vars (MonoCompile *cfg)
  * - cleanup the code replacement in decompose_long_opts ()
  * - try a coalescing phase after liveness analysis
  * - add float -> vreg conversion + local optimizations on !x86
+ * - figure out how to handle decomposed branches during optimizations, ie.
+ *   compare+branch, op_jump_table+op_br etc.
  * - run a global->local phase after SSA ?
  * - LAST MERGE: 57242.
  */

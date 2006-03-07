@@ -9,6 +9,7 @@
 #include <string.h>
 #include <mono/metadata/debug-helpers.h>
 
+#define NEW_IR
 #include "mini.h"
 
 extern guint8 mono_burg_arity [];
@@ -76,6 +77,9 @@ unlink_unused_bblocks (MonoCompile *cfg)
 
 	g_assert (cfg->comp_done & MONO_COMP_REACHABILITY);
 
+	if (G_UNLIKELY (cfg->verbose_level > 1))
+		printf ("\nUNLINK UNUSED BBLOCKS:\n");
+
 	for (bb = cfg->bb_entry; bb && bb->next_bb;) {
 		if (!(bb->next_bb->flags & BB_REACHABLE)) {
 			bb->next_bb = bb->next_bb->next_bb;
@@ -93,8 +97,39 @@ unlink_unused_bblocks (MonoCompile *cfg)
 			for (j = 0; j < bb->out_count; j++) {
 				unlink_target (bb, bb->out_bb [j]);	
 			}
+			if (G_UNLIKELY (cfg->verbose_level > 1))
+				printf ("\tUnlinked BB%d\n", bb->block_num);
 		}
  
+	}
+}
+
+/**
+ * remove_bb_from_phis:
+ *
+ *   Remove BB from the PHI statements in TARGET.
+ */
+static void
+remove_bb_from_phis (MonoCompile *cfg, MonoBasicBlock *bb, MonoBasicBlock *target)
+{
+	MonoInst *ins;
+	int i, j;
+
+	for (i = 0; i < target->in_count; i++) {
+		if (target->in_bb [i] == bb) {
+			break;
+		}
+	}
+	g_assert (i < target->in_count);
+
+	for (ins = target->code; ins; ins = ins->next) {
+		if (MONO_IS_PHI (ins)) {
+			for (j = i; j < ins->inst_phi_args [0] - 1; ++j)
+				ins->inst_phi_args [j + 1] = ins->inst_phi_args [j + 2];
+			ins->inst_phi_args [0] --;
+		}
+		else
+			break;
 	}
 }
 
@@ -228,11 +263,15 @@ mono_ssa_rename_vars2 (MonoCompile *cfg, int max_vars, MonoBasicBlock *bb, gbool
 	int i, j, idx;
 	GList *tmp;
 	int stack_history_len = 0;
-
-	/* FIXME: Need to rename local vregs as well */
+	guint32 *lvreg_stack;
+	gboolean *lvreg_defined;
 
 	if (cfg->verbose_level >= 4)
 		printf ("\nRENAME VARS BLOCK %d:\n", bb->block_num);
+
+	/* FIXME: Optimize this */
+	lvreg_stack = g_new0 (guint32, cfg->next_vireg);
+	lvreg_defined = g_new0 (gboolean, cfg->next_vireg);
 
 	/* First pass: Create new vars */
 	for (ins = bb->code; ins; ins = ins->next) {
@@ -258,6 +297,8 @@ mono_ssa_rename_vars2 (MonoCompile *cfg, int max_vars, MonoBasicBlock *bb, gbool
 				else
 					record_use (cfg, var, bb, ins);
 			}
+			else if (G_UNLIKELY (!var && lvreg_stack [ins->sreg1]))
+				ins->sreg1 = lvreg_stack [ins->sreg1];
 		}					
 
 		/* SREG2 */
@@ -275,6 +316,8 @@ mono_ssa_rename_vars2 (MonoCompile *cfg, int max_vars, MonoBasicBlock *bb, gbool
 				else
 					record_use (cfg, var, bb, ins);
 			}
+			else if (G_UNLIKELY (!var && lvreg_stack [ins->sreg2]))
+				ins->sreg2 = lvreg_stack [ins->sreg2];
 		}
 
 		if (MONO_IS_STORE_MEMBASE (ins)) {
@@ -290,6 +333,8 @@ mono_ssa_rename_vars2 (MonoCompile *cfg, int max_vars, MonoBasicBlock *bb, gbool
 				else
 					record_use (cfg, var, bb, ins);
 			}
+			else if (G_UNLIKELY (!var && lvreg_stack [ins->dreg]))
+				ins->dreg = lvreg_stack [ins->dreg];
 		}
 
 		/* DREG */
@@ -330,8 +375,14 @@ mono_ssa_rename_vars2 (MonoCompile *cfg, int max_vars, MonoBasicBlock *bb, gbool
 				info = cfg->vars [var->inst_c0];
 				info->def = ins;
 				info->def_bb = bb;
-
 			}
+			else if (G_UNLIKELY (!var && lvreg_defined [ins->dreg] && (ins->dreg >= MONO_MAX_IREGS))) {
+				/* Perform renaming for local vregs */
+				lvreg_stack [ins->dreg] = mono_alloc_preg (cfg);
+				ins->dreg = lvreg_stack [ins->dreg];
+			}
+			else
+				lvreg_defined [ins->dreg] = TRUE;
 		}
 
 #ifdef DEBUG_SSA
@@ -532,9 +583,7 @@ mono_ssa_compute2 (MonoCompile *cfg)
 	/* Renaming phase */
 
 	stack = alloca (sizeof (MonoInst *) * cfg->num_varinfo);
-		
-	for (i = 0; i < cfg->num_varinfo; i++)
-		stack [i] = NULL;
+	memset (stack, 0, sizeof (MonoInst *) * cfg->num_varinfo);
 
 	stack_history_size = 1024;
 	stack_history = g_new (RenameInfo, stack_history_size);
@@ -602,6 +651,11 @@ mono_ssa_remove2 (MonoCompile *cfg)
 		if (cfg->verbose_level >= 4)
 			mono_print_bb (bb, "AFTER REMOVE SSA:");
 	}
+
+	if (cfg->comp_done & MONO_COMP_REACHABILITY)
+		unlink_unused_bblocks (cfg);
+
+	cfg->comp_done &= ~MONO_COMP_SSA;
 }
 
 #ifndef USE_ORIGINAL_VARS
@@ -648,53 +702,6 @@ mono_ssa_get_allocatable_vars (MonoCompile *cfg)
 	return varlist_array;
 }
 #endif
-
-static void
-mono_ssa_replace_copies (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *inst, char *is_live)
-{
-	int arity;
-
-	if (!inst)
-		return;
-
-	arity = mono_burg_arity [inst->opcode];
-
-	if ((inst->ssa_op == MONO_SSA_LOAD || inst->ssa_op == MONO_SSA_ADDRESS_TAKEN || inst->ssa_op == MONO_SSA_STORE) && 
-	    (inst->inst_i0->opcode == OP_LOCAL || inst->inst_i0->opcode == OP_ARG)) {
-		MonoInst *new_var;
-		int idx = inst->inst_i0->inst_c0;
-		MonoMethodVar *mv = cfg->vars [idx];
-
-		if (mv->reg != -1 && mv->reg != mv->idx) {
-		       
-			is_live [mv->reg] = 1;
-
-			new_var = cfg->varinfo [mv->reg];
-
-#if 0
-			printf ("REPLACE COPY BB%d %d %d\n", bb->block_num, idx, new_var->inst_c0);
-			g_assert (cfg->varinfo [mv->reg]->inst_vtype == cfg->varinfo [idx]->inst_vtype);
-#endif
-			inst->inst_i0 = new_var;
-		} else {
-			is_live [mv->idx] = 1;
-		}
-	}
-
-
-	if (arity) {
-		mono_ssa_replace_copies (cfg, bb, inst->inst_left, is_live);
-		if (arity > 1)
-			mono_ssa_replace_copies (cfg, bb, inst->inst_right, is_live);
-	}
-
-	if (inst->ssa_op == MONO_SSA_STORE && inst->inst_i1->ssa_op == MONO_SSA_LOAD &&
-	    inst->inst_i0->inst_c0 == inst->inst_i1->inst_i0->inst_c0) {
-		inst->ssa_op = MONO_SSA_NOP;
-		inst->opcode = CEE_NOP;
-	}
-
-}
 
 #define IS_CALL(op) (op == CEE_CALLI || op == CEE_CALL || op == CEE_CALLVIRT || (op >= OP_VOIDCALL && op <= OP_CALL_MEMBASE))
 
@@ -824,155 +831,78 @@ mono_ssa_copyprop (MonoCompile *cfg)
 }
 
 static int
-evaluate_ins (MonoCompile *cfg, MonoInst *ins, MonoInst **carray)
+evaluate_ins (MonoCompile *cfg, MonoInst *ins, MonoInst **res, MonoInst **carray)
 {
-	MonoInst *arg0;
-	MonoInst *arg1;
+	MonoInst *arg0, *arg1, *c0;
 	int r1, r2;
+	gboolean const_args;
 	const char *spec = ins_info [ins->opcode - OP_START - 1];
 
 	/* Short-circuit this */
-	if (ins->opcode == OP_ICONST)
+	if (ins->opcode == OP_ICONST) {
+		*res = ins;
 		return 1;
+	}
 
 	if (ins->opcode == OP_NOP)
 		return 2;
 
-	arg0 = NULL;
 	r1 = 2;
 	if (spec [MONO_INST_SRC1] != ' ') {
 		MonoInst *var = get_vreg_to_inst (cfg, ins->sreg1);
 
-		if (var && !(var->flags & (MONO_INST_VOLATILE|MONO_INST_INDIRECT))) {
-			MonoMethodVar *info = cfg->vars [var->inst_c0];
-
-			if (carray [var->inst_c0]) {
-				arg0 = carray [var->inst_c0];
-				r1 = 1;
-			}
-			else
-				r1 = info->cpstate;
-		}
+		arg0 = carray [ins->sreg1];
+		if (arg0)
+			r1 = 1;
+		else if (var && !(var->flags & (MONO_INST_VOLATILE|MONO_INST_INDIRECT)))
+			r1 = cfg->vars [var->inst_c0]->cpstate;
 	}
 
-	arg1 = NULL;
 	r2 = 2;
 	if (spec [MONO_INST_SRC2] != ' ') {
 		MonoInst *var = get_vreg_to_inst (cfg, ins->sreg2);
 
-		if (var && !(var->flags & (MONO_INST_VOLATILE|MONO_INST_INDIRECT))) {
-			MonoMethodVar *info = cfg->vars [var->inst_c0];
-
-			if (carray [var->inst_c0]) {
-				r2 = 1;
-				arg1 = carray [var->inst_c0];
-			}
-			else
-				r2 = info->cpstate;
-		}
+		arg1 = carray [ins->sreg2];
+		if (arg1)
+			r2 = 1;
+		else if (var && !(var->flags & (MONO_INST_VOLATILE|MONO_INST_INDIRECT)))
+			r2 = cfg->vars [var->inst_c0]->cpstate;
 	}
 
+	c0 = NULL;
 	if ((spec [MONO_INST_SRC1] != ' ') && (spec [MONO_INST_SRC2] != ' ')) {
 		/* Binop */
-		if ((r1 == 1) && (r2 == 1)) {
-			mono_constant_fold_ins2 (ins, arg0, arg1);
-			if ((ins->opcode == OP_ICONST) || (ins->opcode == OP_I8CONST) || (ins->opcode == OP_R8CONST)) {
-				if (G_UNLIKELY (cfg->verbose_level > 1)) {
-					printf ("\t cfold -> ");
-					mono_print_ins (ins);
-				}
-				return 1;
-			}
-		}
+		const_args = (r1 == 1) && (r2 == 1);
 	}
 	else if (spec [MONO_INST_SRC1] != ' ') {
 		/* Unop */
-		if (r1 == 1) {
-			mono_constant_fold_ins2 (ins, arg0, NULL);
-			if ((ins->opcode == OP_ICONST) || (ins->opcode == OP_I8CONST) || (ins->opcode == OP_R8CONST)) {
-				if (G_UNLIKELY (cfg->verbose_level > 1)) {
-					printf ("\t cfold -> ");
-					mono_print_ins (ins);
-				}
-				return 1;
-			}
+		const_args = (r1 == 1);
+	}
+
+	if (const_args) {
+		if ((spec [MONO_INST_DEST] != ' ') && carray [ins->dreg]) {
+			// Cached value
+			*res = carray [ins->dreg];
+			return 1;
 		}
+		c0 = mono_constant_fold_new (cfg, ins, arg0, arg1);
+		if (c0) {
+			if (G_UNLIKELY (cfg->verbose_level > 1)) {
+				printf ("\t cfold -> ");
+				mono_print_ins (c0);
+			}
+			*res = c0;
+			return 1;
+		}
+		else
+			/* Can't cfold this ins */
+			return 2;
 	}
 
 	return MAX (r1, r2);
 }
 
-static void
-fold_tree (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *inst, MonoInst **carray)
-{
-	MonoInst *c0;
-	int arity, a, b;
-
-#if 0
-	arity = mono_burg_arity [inst->opcode];
-
-	if (inst->ssa_op == MONO_SSA_STORE && 
-	    (inst->inst_i0->opcode == OP_LOCAL || inst->inst_i0->opcode == OP_ARG) &&
-	    MONO_IS_PHI (inst->inst_i1) && (c0 = carray [inst->inst_i0->inst_c0])) {
-		//{static int cn = 0; printf ("PHICONST %d %d %s\n", cn++, c0->inst_c0, mono_method_full_name (cfg->method, TRUE));}
-		*inst->inst_i1 = *c0;		
-	} else if (inst->ssa_op == MONO_SSA_LOAD && 
-	    (inst->inst_i0->opcode == OP_LOCAL || inst->inst_i0->opcode == OP_ARG) &&
-	    (c0 = carray [inst->inst_i0->inst_c0])) {
-		//{static int cn = 0; printf ("YCCOPY %d %d %s\n", cn++, c0->inst_c0, mono_method_full_name (cfg->method, TRUE));}
-		*inst = *c0;
-	} else {
-
-		if (arity) {
-			fold_tree (cfg, bb, inst->inst_left, carray);
-			if (arity > 1)
-				fold_tree (cfg, bb, inst->inst_right, carray);
-			mono_constant_fold_inst (inst, NULL); 
-		}
-	}
-
-	if ((inst->opcode >= CEE_BEQ && inst->opcode <= CEE_BLT_UN) &&
-	    ((inst->inst_i0->opcode == OP_COMPARE) || (inst->inst_i0->opcode == OP_LCOMPARE))) {
-		MonoInst *v0 = inst->inst_i0->inst_i0;
-		MonoInst *v1 = inst->inst_i0->inst_i1;
-		MonoBasicBlock *target = NULL;
-
-		/* hack for longs to optimize the simply cases */
-		if (v0->opcode == OP_I8CONST && v1->opcode == OP_I8CONST) {
-			if (simulate_long_compare (inst->opcode, v0->inst_l, v1->inst_l)) {
-				//unlink_target (bb, inst->inst_false_bb);
-				target = inst->inst_true_bb;
-			} else {
-				//unlink_target (bb, inst->inst_true_bb);
-				target = inst->inst_false_bb;
-			}			
-		} else if (evaluate_const_tree (cfg, v0, &a, carray) == 1 &&
-			   evaluate_const_tree (cfg, v1, &b, carray) == 1) {				
-			if (simulate_compare (inst->opcode, a, b)) {
-				//unlink_target (bb, inst->inst_false_bb);
-				target = inst->inst_true_bb;
-			} else {
-				//unlink_target (bb, inst->inst_true_bb);
-				target = inst->inst_false_bb;
-			}
-		}
-
-		if (target) {
-			bb->out_bb [0] = target;
-			bb->out_count = 1;
-			inst->opcode = CEE_BR;
-			inst->inst_target_bb = target;
-		}
-	} else if (inst->opcode == CEE_SWITCH && (evaluate_const_tree (cfg, inst->inst_left, &a, carray) == 1) && (a >= 0) && (a < GPOINTER_TO_INT (inst->klass))) {
-		bb->out_bb [0] = inst->inst_many_bb [a];
-		bb->out_count = 1;
-		inst->inst_target_bb = bb->out_bb [0];
-		inst->opcode = CEE_BR;
-	}
-#endif
-}
-
-static void
+static inline void
 change_varstate (MonoCompile *cfg, GList **cvars, MonoMethodVar *info, int state, MonoInst *c0, MonoInst **carray)
 {
 	if (info->cpstate >= state)
@@ -981,15 +911,24 @@ change_varstate (MonoCompile *cfg, GList **cvars, MonoMethodVar *info, int state
 	info->cpstate = state;
 
 	if (G_UNLIKELY (cfg->verbose_level > 1))
-		printf ("\tState of R%d to %d\n", cfg->varinfo [info->idx]->dreg, info->cpstate);
+		printf ("\tState of R%d set to %d\n", cfg->varinfo [info->idx]->dreg, info->cpstate);
 
-	if (state == 1)
-		carray [info->idx] = c0;
-	else
-		carray [info->idx] = NULL;
+	carray [cfg->varinfo [info->idx]->dreg] = c0;
 
 	if (!g_list_find (*cvars, info)) {
 		*cvars = g_list_prepend (*cvars, info);
+	}
+}
+
+static inline void
+add_cprop_bb (MonoCompile *cfg, MonoBasicBlock *bb, GList **bblist)
+{
+	if (G_UNLIKELY (cfg->verbose_level > 1))
+		printf ("\tAdd BB%d to worklist\n", bb->block_num);
+
+    if (!(bb->flags &  BB_REACHABLE)) {
+	    bb->flags |= BB_REACHABLE;
+		*bblist = g_list_prepend (*bblist, bb);
 	}
 }
 
@@ -1006,151 +945,245 @@ visit_inst (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *ins, GList **cvars, 
 
 	/* FIXME: Work directly on cfg->vars */
 	/* FIXME: Support longs/floats */
+	/* FIXME: Work on vregs as well */
 
-	if (spec [MONO_INST_DEST] != ' ') {
-		MonoInst *var = get_vreg_to_inst (cfg, ins->dreg);
-		/* Perform constant fold even if dreg isn't a global vreg */
-		int state = evaluate_ins (cfg, ins, carray);
+	if (MONO_IS_PHI (ins)) {
+		MonoMethodVar *info = cfg->vars [get_vreg_to_inst (cfg, ins->dreg)->inst_c0];
+		MonoInst *c0 = NULL;
+		int j;
+
+		for (j = 1; j <= ins->inst_phi_args [0]; j++) {
+			MonoInst *var = get_vreg_to_inst (cfg, ins->inst_phi_args [j]);
+			MonoMethodVar *mv = cfg->vars [var->inst_c0];
+			MonoInst *src = mv->def;
+
+			if (mv->def_bb && !(mv->def_bb->flags & BB_REACHABLE))
+				continue;
+
+			if (!mv->def || !src || mv->cpstate == 2) {
+				change_varstate (cfg, cvars, info, 2, NULL, carray);
+				break;
+			}
+					
+			if (mv->cpstate == 0)
+				continue;
+
+			g_assert (carray [var->dreg]);
+
+			if (!c0)
+				c0 = carray [var->dreg];
+		
+			/* FIXME: */
+			if (c0->opcode != OP_ICONST) {
+				change_varstate (cfg, cvars, info, 2, NULL, carray);
+				break;
+			}
+
+			if (carray [var->dreg]->inst_c0 != c0->inst_c0) {
+				change_varstate (cfg, cvars, info, 2, NULL, carray);
+				break;
+			}
+		}
+				
+		if (c0 && info->cpstate < 1) {
+			change_varstate (cfg, cvars, info, 1, c0, carray);
+
+			g_assert (c0->opcode == OP_ICONST);
+		}
+	}
+	else if (!MONO_IS_STORE_MEMBASE (ins) && ((spec [MONO_INST_SRC1] != ' ') || (spec [MONO_INST_SRC2] != ' ') || (spec [MONO_INST_DEST] != ' '))) {
+		MonoInst *var, *c0;
+		int state;
+
+		if (spec [MONO_INST_DEST] !=  ' ')
+			var = get_vreg_to_inst (cfg, ins->dreg);
+		else
+			var = NULL;
+
+		c0 = NULL;
+		state = evaluate_ins (cfg, ins, &c0, carray);
 
 		if (var && !(var->flags & (MONO_INST_VOLATILE|MONO_INST_INDIRECT))) {
 			MonoMethodVar *info = cfg->vars [var->inst_c0];
 
 			if (info->cpstate < 2) {
 				if (state == 1)
-					change_varstate (cfg, cvars, info, 1, ins, carray);
+					change_varstate (cfg, cvars, info, 1, c0, carray);
 				else if (state == 2)
 					change_varstate (cfg, cvars, info, 2, NULL, carray);
 			}
 		}
-	} else if (MONO_IS_COND_BRANCH_OP (ins)) {
-		MonoBasicBlock *target;
-
-		/* FIXME: */
-		target = ins->inst_true_bb;
-		if (!(target->flags &  BB_REACHABLE)) {
-			target->flags |= BB_REACHABLE;
-			*bblist = g_list_prepend (*bblist, target);
-		}
-		target = ins->inst_false_bb;
-		if (!(target->flags &  BB_REACHABLE)) {
-			target->flags |= BB_REACHABLE;
-			*bblist = g_list_prepend (*bblist, target);
-		}
-	}
-
-#if 0
-	if (inst->opcode == CEE_SWITCH) {
-		int r1, i, a;
-		int cases = GPOINTER_TO_INT (inst->klass);
-
-		r1 = evaluate_const_tree (cfg, inst->inst_left, &a, carray);
-		if ((r1 == 1) && ((a < 0) || (a >= cases)))
-			r1 = 2;
-		if (r1 == 1) {
-			MonoBasicBlock *tb = inst->inst_many_bb [a];
-			if (!(tb->flags &  BB_REACHABLE)) {
-				tb->flags |= BB_REACHABLE;
-				*bblist = g_list_prepend (*bblist, tb);
-			}
-		} else if (r1 == 2) {
-			for (i = GPOINTER_TO_INT (inst->klass); i >= 0; i--) {
-				MonoBasicBlock *tb = inst->inst_many_bb [i];
-				if (!(tb->flags &  BB_REACHABLE)) {
-					tb->flags |= BB_REACHABLE;
-					*bblist = g_list_prepend (*bblist, tb);
-				}
-			}
-		}
-	} else if ((inst->opcode >= CEE_BEQ && inst->opcode <= CEE_BLT_UN) &&
-	    ((inst->inst_i0->opcode == OP_COMPARE) || (inst->inst_i0->opcode == OP_LCOMPARE))) {
-		int a, b, r1, r2;
-		MonoInst *v0 = inst->inst_i0->inst_i0;
-		MonoInst *v1 = inst->inst_i0->inst_i1;
-
-		r1 = evaluate_const_tree (cfg, v0, &a, carray);
-		r2 = evaluate_const_tree (cfg, v1, &b, carray);
-
-		if (r1 == 1 && r2 == 1) {
-			MonoBasicBlock *target;
-				
-			if (simulate_compare (inst->opcode, a, b)) {
-				target = inst->inst_true_bb;
+		else if (!var && (ins->dreg != -1)) {
+			/*
+			 * We don't record def-use information for local vregs since it would be 
+			 * expensive. Instead, we depend on the fact that all uses of the vreg are in
+			 * the same bblock, so they will be examined after the definition.
+			 * FIXME: This isn't true if the ins is visited through an SSA edge.
+			 */
+			if (c0) {
+				carray [ins->dreg] = c0;
 			} else {
-				target = inst->inst_false_bb;
-			}
-			if (!(target->flags &  BB_REACHABLE)) {
-				target->flags |= BB_REACHABLE;
-				*bblist = g_list_prepend (*bblist, target);
-			}
-		} else if (r1 == 2 || r2 == 2) {
-			if (!(inst->inst_true_bb->flags &  BB_REACHABLE)) {
-				inst->inst_true_bb->flags |= BB_REACHABLE;
-				*bblist = g_list_prepend (*bblist, inst->inst_true_bb);
-			}
-			if (!(inst->inst_false_bb->flags &  BB_REACHABLE)) {
-				inst->inst_false_bb->flags |= BB_REACHABLE;
-				*bblist = g_list_prepend (*bblist, inst->inst_false_bb);
-			}
-		}	
-	} else if (inst->ssa_op == MONO_SSA_STORE && 
-		   (inst->inst_i0->opcode == OP_LOCAL || inst->inst_i0->opcode == OP_ARG)) {
-		MonoMethodVar *info = cfg->vars [inst->inst_i0->inst_c0];
-		MonoInst *i1 = inst->inst_i1;
-		int res;
-		
-		if (info->cpstate < 2) {
-			if (i1->opcode == OP_ICONST) { 
-				change_varstate (cfg, cvars, info, 1, i1, carray);
-			} else if (MONO_IS_PHI (i1)) {
-				MonoInst *c0 = NULL;
-				int j;
+				if (carray [ins->dreg]) {
+					/* 
+					 * The state of the vreg changed from constant to non-constant
+					 * -> need to rescan the whole bblock.
+					 */
+					carray [ins->dreg] = NULL;
+					/* FIXME: Speed this up */
 
-				for (j = 1; j <= i1->inst_phi_args [0]; j++) {
-					MonoMethodVar *mv = cfg->vars [i1->inst_phi_args [j]];
-					MonoInst *src = mv->def;
-
-					if (mv->def_bb && !(mv->def_bb->flags & BB_REACHABLE)) {
-						continue;
-					}
-
-					if (!mv->def || !src || src->ssa_op != MONO_SSA_STORE ||
-					    !(src->inst_i0->opcode == OP_LOCAL || src->inst_i0->opcode == OP_ARG) ||
-					    mv->cpstate == 2) {
-						change_varstate (cfg, cvars, info, 2, NULL, carray);
-						break;
-					}
-					
-					if (mv->cpstate == 0)
-						continue;
-
-					//g_assert (src->inst_i1->opcode == OP_ICONST);
-					g_assert (carray [mv->idx]);
-
-					if (!c0) {
-						c0 = carray [mv->idx];
-					}
-					
-					if (carray [mv->idx]->inst_c0 != c0->inst_c0) {
-						change_varstate (cfg, cvars, info, 2, NULL, carray);
-						break;
-					}
-				}
-				
-				if (c0 && info->cpstate < 1) {
-					change_varstate (cfg, cvars, info, 1, c0, carray);
-				}
-			} else {
-				int state = evaluate_const_tree (cfg, i1, &res, carray);
-				if (state == 1) {
-					NEW_ICONST (cfg, i1, res);
-					change_varstate (cfg, cvars, info, 1, i1, carray);
-				} else {
-					change_varstate (cfg, cvars, info, 2, NULL, carray);
+					if (!g_list_find (*bblist, bb))
+						*bblist = g_list_prepend (*bblist, bb);
 				}
 			}
 		}
-	}
+
+		if (ins->opcode == OP_JUMP_TABLE) {
+			int i;
+			MonoJumpInfoBBTable *table = ins->inst_p0;
+
+			g_assert (ins->next->opcode == OP_PADD);
+			g_assert (ins->next->sreg1 == ins->dreg);
+
+			if (carray [ins->next->sreg2]) {
+#if SIZEOF_VOID_P == 8
+				int idx = carray [ins->next->sreg2]->inst_c0 >> 3;
+#else
+				int idx = carray [ins->next->sreg2]->inst_c0 >> 2;
 #endif
+				g_assert ((idx >= 0) && (idx < table->table_size));
+				add_cprop_bb (cfg, table->table [idx], bblist);
+			}
+			else {
+				for (i = 0; i < table->table_size; i++ )
+					if (table->table [i])
+						add_cprop_bb (cfg, table->table [i], bblist);
+			}
+		}
+
+		/* Handle COMPARE+BRCOND pairs */
+		if (ins->next && MONO_IS_COND_BRANCH_OP (ins->next)) {
+			if (c0) {
+				g_assert (c0->opcode == OP_ICONST);
+
+				if (c0->inst_c0)
+					ins->next->flags |= MONO_INST_CFOLD_TAKEN;
+				else
+					ins->next->flags |= MONO_INST_CFOLD_NOT_TAKEN;
+			}
+			else {
+				ins->next->flags &= ~(MONO_INST_CFOLD_TAKEN | MONO_INST_CFOLD_NOT_TAKEN);
+			}
+
+			visit_inst (cfg, bb, ins->next, cvars, bblist, carray);
+		}
+	} else if (MONO_IS_COND_BRANCH_OP (ins)) {
+		if (ins->flags & MONO_INST_CFOLD_TAKEN) {
+			add_cprop_bb (cfg, ins->inst_true_bb, bblist);
+		} else if (ins->flags & MONO_INST_CFOLD_NOT_TAKEN) {
+			add_cprop_bb (cfg, ins->inst_false_bb, bblist);
+        } else {
+			add_cprop_bb (cfg, ins->inst_true_bb, bblist);
+			add_cprop_bb (cfg, ins->inst_false_bb, bblist);
+		}
+	}
+}
+
+/**
+ * fold_ins:
+ *
+ *   Replace INS with its constant value, if it exists
+ */
+static void
+fold_ins (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *ins, MonoInst **carray)
+{
+	const char *spec = ins_info [ins->opcode - OP_START - 1];
+	int opcode2;
+
+	if ((ins->opcode != OP_NOP) && (ins->dreg != -1) && !MONO_IS_STORE_MEMBASE (ins)) {
+		if (carray [ins->dreg] && (spec [MONO_INST_DEST] == 'i') && (ins->dreg >= MONO_MAX_IREGS)) {
+			/* Perform constant folding */
+			/* FIXME: */
+			g_assert (carray [ins->dreg]->opcode == OP_ICONST);
+			ins->opcode = OP_ICONST;
+			ins->inst_c0 = carray [ins->dreg]->inst_c0;
+			ins->sreg1 = ins->sreg2 = -1;
+		}
+		else if ((spec [MONO_INST_SRC2] != ' ') && carray [ins->sreg2]) {
+			/* Perform op->op_imm conversion */
+			opcode2 = mono_op_to_op_imm (ins->opcode);
+			if (opcode2 != -1) {
+				ins->opcode = opcode2;
+				ins->inst_imm = carray [ins->sreg2]->inst_c0;
+				ins->sreg2 = -1;
+
+				if ((opcode2 == OP_VOIDCALL) || (opcode2 == OP_CALL) || (opcode2 == OP_LCALL) || (opcode2 == OP_FCALL))
+					((MonoCallInst*)ins)->fptr = (gpointer)ins->inst_imm;
+			}
+		}
+
+		if (ins->opcode == OP_JUMP_TABLE) {
+			int i;
+			MonoJumpInfoBBTable *table = ins->inst_p0;
+
+			g_assert (ins->next->opcode == OP_PADD);
+			g_assert (ins->next->sreg1 == ins->dreg);
+			g_assert (ins->next->next->opcode == OP_LOAD_MEMBASE);
+
+			if (carray [ins->next->sreg2]) {
+				/* Convert to a simple branch */
+#if SIZEOF_VOID_P == 8
+				int idx = carray [ins->next->sreg2]->inst_c0 >> 3;
+#else
+				int idx = carray [ins->next->sreg2]->inst_c0 >> 2;
+#endif
+				g_assert ((idx >= 0) && (idx < table->table_size));
+
+				if (ins->next->next->next->opcode != OP_BR_REG) {
+					/* A one-way switch which got optimized away */
+					if (G_UNLIKELY (cfg->verbose_level > 1)) {
+						printf ("\tNo cfold on ");
+						mono_print_ins (ins);
+					}
+					return;
+				}
+
+				if (G_UNLIKELY (cfg->verbose_level > 1)) {
+					printf ("\tcfold on ");
+					mono_print_ins (ins);
+				}
+
+				/* Unlink target bblocks */
+				for (i = 0; i < table->table_size; ++i) {
+					if (i != idx) {
+						remove_bb_from_phis (cfg, bb, table->table [i]);
+						mono_unlink_bblock (cfg, bb, table->table [i]);
+					}
+				}
+
+				/* Change the OP_BR_REG to a simple branch */
+				ins->next->next->next->opcode = OP_BR;
+				ins->next->next->next->inst_target_bb = table->table [idx];
+
+				/* Nullify the other instructions */
+				NULLIFY_INS (ins);
+				NULLIFY_INS (ins->next);
+				NULLIFY_INS (ins->next->next);
+			}
+		}
+	} 
+	else if (MONO_IS_COND_BRANCH_OP (ins)) {
+		if (ins->flags & MONO_INST_CFOLD_TAKEN) {
+			remove_bb_from_phis (cfg, bb, ins->inst_false_bb);
+			mono_unlink_bblock (cfg, bb, ins->inst_false_bb);
+			ins->opcode = OP_BR;
+			ins->inst_target_bb = ins->inst_true_bb;
+		} else if (ins->flags & MONO_INST_CFOLD_NOT_TAKEN) {
+			remove_bb_from_phis (cfg, bb, ins->inst_true_bb);
+			mono_unlink_bblock (cfg, bb, ins->inst_true_bb);
+			ins->opcode = OP_BR;
+			ins->inst_target_bb = ins->inst_false_bb;
+		}
+	}
 }
 
 void
@@ -1163,7 +1196,7 @@ mono_ssa_cprop2 (MonoCompile *cfg)
 	int i;
 	//printf ("SIMPLE OPTS BB%d %s\n", bb->block_num, mono_method_full_name (cfg->method, TRUE));
 
-	carray = g_new0 (MonoInst*, cfg->num_varinfo);
+	carray = g_new0 (MonoInst*, cfg->next_vireg);
 
 	if (!(cfg->comp_done & MONO_COMP_SSA_DEF_USE))
 		mono_ssa_create_def_use (cfg);
@@ -1220,7 +1253,7 @@ mono_ssa_cprop2 (MonoCompile *cfg)
 	for (bb = cfg->bb_entry->next_bb; bb; bb = bb->next_bb) {
 		MonoInst *inst;
 		for (inst = bb->code; inst; inst = inst->next) {
-			fold_tree (cfg, bb, inst, carray);
+			fold_ins (cfg, bb, inst, carray);
 		}
 	}
 

@@ -1464,7 +1464,7 @@ peephole_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_ICONST:
 			/* reg = 0 -> XOR (reg, reg) */
 			/* XOR sets cflags on x86, so we cant do it always */
-			if (ins->inst_c0 == 0 && ins->next && INST_IGNORES_CFLAGS (ins->next->opcode)) {
+			if (ins->inst_c0 == 0 && (!ins->next || (ins->next && INST_IGNORES_CFLAGS (ins->next->opcode)))) {
 				MonoInst *ins2;
 
 				ins->opcode = OP_IXOR;

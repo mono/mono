@@ -99,6 +99,10 @@ enum {
 		}	\
 	} while (0)
 
+#define NULLIFY_INS(ins) do { \
+        (ins)->opcode = OP_NOP; \
+        (ins)->dreg = (ins)->sreg1 = (ins)->sreg2 = -1; \
+    } while (0)
 
 /* 
  * this is used to determine when some branch optimizations are possible: we exclude FP compares
@@ -885,6 +889,7 @@ void      mono_bblock_add_inst              (MonoBasicBlock *bb, MonoInst *inst)
 void      mono_constant_fold                (MonoCompile *cfg);
 void      mono_constant_fold_inst           (MonoInst *inst, gpointer data);
 void      mono_constant_fold_ins2           (MonoInst *ins, MonoInst *arg1, MonoInst *arg2);
+MonoInst* mono_constant_fold_new            (MonoCompile *cfg, MonoInst *ins, MonoInst *arg1, MonoInst *arg2);
 int       mono_eval_cond_branch             (MonoInst *branch);
 int       mono_is_power_of_two              (guint32 val);
 void      mono_cprop_local                  (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst **acp, int acp_size);
@@ -898,6 +903,7 @@ guint32   mono_alloc_ireg                   (MonoCompile *cfg);
 guint32   mono_alloc_freg                   (MonoCompile *cfg);
 guint32   mono_alloc_preg                   (MonoCompile *cfg);
 guint32   mono_alloc_dreg                   (MonoCompile *cfg, MonoStackType stack_type);
+void      mono_unlink_bblock                (MonoCompile *cfg, MonoBasicBlock *from, MonoBasicBlock* to);
 void      mono_blockset_print               (MonoCompile *cfg, MonoBitSet *set, const char *name, guint idom);
 void      mono_print_tree                   (MonoInst *tree);
 void      mono_print_tree_nl                (MonoInst *tree);

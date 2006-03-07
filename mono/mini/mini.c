@@ -740,6 +740,55 @@ link_bblock (MonoCompile *cfg, MonoBasicBlock *from, MonoBasicBlock* to)
 }
 
 /**
+ * mono_unlink_bblock:
+ *
+ *   Unlink two basic blocks.
+ */
+void
+mono_unlink_bblock (MonoCompile *cfg, MonoBasicBlock *from, MonoBasicBlock* to)
+{
+	MonoBasicBlock **newa;
+	int i, pos;
+	gboolean found;
+
+	found = FALSE;
+	for (i = 0; i < from->out_count; ++i) {
+		if (to == from->out_bb [i]) {
+			found = TRUE;
+			break;
+		}
+	}
+	if (found) {
+		newa = mono_mempool_alloc (cfg->mempool, sizeof (gpointer) * (from->out_count - 1));
+		pos = 0;
+		for (i = 0; i < from->out_count; ++i) {
+			if (from->out_bb [i] != to)
+				newa [pos ++] = from->out_bb [i];
+		}
+		from->out_count--;
+		from->out_bb = newa;
+	}
+
+	found = FALSE;
+	for (i = 0; i < to->in_count; ++i) {
+		if (from == to->in_bb [i]) {
+			found = TRUE;
+			break;
+		}
+	}
+	if (found) {
+		newa = mono_mempool_alloc (cfg->mempool, sizeof (gpointer) * (to->in_count - 1));
+		pos = 0;
+		for (i = 0; i < to->in_count; ++i) {
+			if (to->in_bb [i] != from)
+				newa [pos ++] = to->in_bb [i];
+		}
+		to->in_count--;
+		to->in_bb = newa;
+	}
+}
+
+/**
  * mono_find_block_region:
  *
  *   We mark each basic block with a region ID. We use that to avoid BB
@@ -8747,7 +8796,7 @@ move_basic_block_to_end (MonoCompile *cfg, MonoBasicBlock *bb)
 	bb->next_bb = NULL;
 
 	/* Add a branch */
-	if (next && (!bb->last_ins || (bb->last_ins->opcode != OP_NOT_REACHED))) {
+	if (next && (!bb->last_ins || ((bb->last_ins->opcode != OP_NOT_REACHED) && (bb->last_ins->opcode != OP_BR) && (bb->last_ins->opcode != OP_BR_REG) && (!MONO_IS_COND_BRANCH_OP (bb->last_ins))))) {
 		MonoInst *ins;
 
 		MONO_INST_NEW (cfg, ins, cfg->new_ir ? OP_BR : CEE_BR);
