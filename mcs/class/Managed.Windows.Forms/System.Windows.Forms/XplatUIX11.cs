@@ -41,9 +41,9 @@
 
 // Extra detailed debug
 #undef	DriverDebugExtra
-#define DriverDebugParent
-#define DriverDebugCreate
-#define DriverDebugDestroy
+#undef DriverDebugParent
+#undef DriverDebugCreate
+#undef DriverDebugDestroy
 
 using System;
 using System.ComponentModel;
