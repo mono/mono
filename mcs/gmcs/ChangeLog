@@ -1,3 +1,15 @@
+2006-03-06  Martin Baulig  <martin@ximian.com>
+
+	* generic.cs
+	(TypeManager.InferType): Fix gtest-250.cs.
+
+	* typemanager.cs
+	(TypeManager.IsSubclassOf): Also check the base class.
+
+	* expression.cs
+	(Invocation.IsAncestralType): Use TypeManager.IsSubclassOf();
+	fixes gtest-249.cs.
+
 2006-02-16  Martin Baulig  <martin@ximian.com>
 
 	* generic.cs
