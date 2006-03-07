@@ -1185,8 +1185,14 @@ namespace System
 					object arg = args[n];
 
 					string str;
+					ICustomFormatter formatter = null;
+					if (provider != null)
+						formatter = provider.GetFormat (typeof (ICustomFormatter))
+							as ICustomFormatter;
 					if (arg == null)
 						str = "";
+					else if (formatter != null)
+						str = formatter.Format (arg_format, arg, provider);
 					else if (arg is IFormattable)
 						str = ((IFormattable)arg).ToString (arg_format, provider);
 					else

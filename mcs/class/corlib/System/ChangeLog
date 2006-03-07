@@ -1,3 +1,8 @@
+2006-03-07  Martin Baulig  <martin@ximian.com>
+
+	* String.cs (String.FormatHelper): Try getting an `ICustomFormatter'
+	from the `provider' if possible.
+
 2006-02-26  Gert Driesen  <drieseng@users.souceforge.net>
 
 	* DecimalFormatter.cs: Removed obsolete class, as it has been replaced
