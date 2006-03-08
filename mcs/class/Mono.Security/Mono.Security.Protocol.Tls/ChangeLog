@@ -1,3 +1,8 @@
+2006-03-08  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SslStreamBase.cs: Re-implemented the synchronous versions of Read 
+	and Write methods so they don't use the async code.
+
 2006-03-07 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* SslStreamBase.cs: avoid creating the ManualResetEvent whenever

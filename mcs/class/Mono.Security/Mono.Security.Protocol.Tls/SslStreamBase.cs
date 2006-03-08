@@ -908,9 +908,127 @@ namespace Mono.Security.Protocol.Tls
 
 		public override int Read(byte[] buffer, int offset, int count)
 		{
-			IAsyncResult res = this.BeginRead(buffer, offset, count, null, null);
+			this.checkDisposed ();
+			
+			if (buffer == null)
+			{
+				throw new ArgumentNullException ("buffer");
+			}
+			if (offset < 0)
+			{
+				throw new ArgumentOutOfRangeException("offset is less than 0.");
+			}
+			if (offset > buffer.Length)
+			{
+				throw new ArgumentOutOfRangeException("offset is greater than the length of buffer.");
+			}
+			if (count < 0)
+			{
+				throw new ArgumentOutOfRangeException("count is less than 0.");
+			}
+			if (count > (buffer.Length - offset))
+			{
+				throw new ArgumentOutOfRangeException("count is less than the length of buffer minus the value of the offset parameter.");
+			}
 
-			return this.EndRead(res);
+			if (this.context.HandshakeState != HandshakeState.Finished)
+			{
+				this.NegotiateHandshake (); // Handshake negotiation
+			}
+
+			lock (this.read) {
+				try {
+					// do we already have some decrypted data ?
+					if (this.inputBuffer.Position > 0) {
+						// or maybe we used all the buffer before ?
+						if (this.inputBuffer.Position == this.inputBuffer.Length) {
+							this.inputBuffer.SetLength (0);
+						} else {
+							int n = this.inputBuffer.Read (buffer, offset, count);
+							if (n > 0)
+								return n;
+						}
+					}
+
+					bool needMoreData = false;
+					while (true) {
+						// we first try to process the read with the data we already have
+						if ((recordStream.Position == 0) || needMoreData) {
+							needMoreData = false;
+							// if we loop, then it either means we need more data
+							byte[] recbuf = new byte[16384];
+							int n = innerStream.Read (recbuf, 0, recbuf.Length);
+							if (n > 0) {
+								// Add the new received data to the waiting data
+								if ((recordStream.Length > 0) && (recordStream.Position != recordStream.Length))
+									recordStream.Seek (0, SeekOrigin.End);
+								recordStream.Write (recbuf, 0, n);
+							} else {
+								// or that the read operation is done (lost connection in the case of a network stream).
+								return 0;
+							}
+						}
+
+						bool dataToReturn = false;
+						long pos = recordStream.Position;
+
+						recordStream.Position = 0;
+						byte[] record = null;
+
+						// don't try to decode record unless we have at least 5 bytes
+						// i.e. type (1), protocol (2) and length (2)
+						if (recordStream.Length >= 5) {
+							record = this.protocol.ReceiveRecord (recordStream);
+							needMoreData = (record == null);
+						}
+
+						// a record of 0 length is valid (and there may be more record after it)
+						while (record != null) {
+							// we probably received more stuff after the record, and we must keep it!
+							long remainder = recordStream.Length - recordStream.Position;
+							byte[] outofrecord = null;
+							if (remainder > 0) {
+								outofrecord = new byte[remainder];
+								recordStream.Read (outofrecord, 0, outofrecord.Length);
+							}
+
+							long position = this.inputBuffer.Position;
+
+							if (record.Length > 0) {
+								// Write new data to the inputBuffer
+								this.inputBuffer.Seek (0, SeekOrigin.End);
+								this.inputBuffer.Write (record, 0, record.Length);
+
+								// Restore buffer position
+								this.inputBuffer.Seek (position, SeekOrigin.Begin);
+								dataToReturn = true;
+							}
+
+							recordStream.SetLength (0);
+							record = null;
+
+							if (remainder > 0) {
+								recordStream.Write (outofrecord, 0, outofrecord.Length);
+							}
+
+							if (dataToReturn) {
+								// we have record(s) to return -or- no more available to read from network
+								// reset position for further reading
+								return this.inputBuffer.Read (buffer, offset, count);
+							}
+						}
+					}
+				}
+				catch (TlsException ex)
+				{
+					throw new IOException("The authentication or decryption has failed.", ex);
+				}
+				catch (Exception ex)
+				{
+					throw new IOException("IO exception during read.", ex);
+				}
+			}
+			return 0;
 		}
 
 		public override long Seek(long offset, SeekOrigin origin)
@@ -930,9 +1048,53 @@ namespace Mono.Security.Protocol.Tls
 
 		public override void Write(byte[] buffer, int offset, int count)
 		{
-			IAsyncResult res = this.BeginWrite(buffer, offset, count, null, null);
+			this.checkDisposed ();
+			
+			if (buffer == null)
+			{
+				throw new ArgumentNullException ("buffer");
+			}
+			if (offset < 0)
+			{
+				throw new ArgumentOutOfRangeException("offset is less than 0.");
+			}
+			if (offset > buffer.Length)
+			{
+				throw new ArgumentOutOfRangeException("offset is greater than the length of buffer.");
+			}
+			if (count < 0)
+			{
+				throw new ArgumentOutOfRangeException("count is less than 0.");
+			}
+			if (count > (buffer.Length - offset))
+			{
+				throw new ArgumentOutOfRangeException("count is less than the length of buffer minus the value of the offset parameter.");
+			}
 
-			this.EndWrite(res);
+			if (this.context.HandshakeState != HandshakeState.Finished)
+			{
+				this.NegotiateHandshake ();
+			}
+
+			lock (this.write)
+			{
+				try
+				{
+					// Send the buffer as a TLS record
+					byte[] record = this.protocol.EncodeRecord (ContentType.ApplicationData, buffer, offset, count);
+					this.innerStream.Write (record, 0, record.Length);
+				}
+				catch (TlsException ex)
+				{
+					this.protocol.SendAlert(ex.Alert);
+					this.Close();
+					throw new IOException("The authentication or decryption has failed.", ex);
+				}
+				catch (Exception ex)
+				{
+					throw new IOException("IO exception during Write.", ex);
+				}
+			}
 		}
 
 		public override bool CanRead
