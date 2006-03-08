@@ -1,5 +1,10 @@
 2006-03-08  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
+	* LinkButton.cs: fixed AddAttributesToRender, removed not needed 
+	language attribute
+
+2006-03-08  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
 	* TextBox.cs: fixed missing value validations, fixed rendering
 	of empty value attribute
 
