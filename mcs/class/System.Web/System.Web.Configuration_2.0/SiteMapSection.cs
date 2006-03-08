@@ -73,6 +73,17 @@ namespace System.Web.Configuration
 			get { return (ProviderSettingsCollection) base ["providers"]; }
 		}
 
+		SiteMapProviderCollection providers;
+		internal SiteMapProviderCollection ProvidersInternal {
+			get {
+				if (providers == null) {
+					providers = new SiteMapProviderCollection ();
+					ProvidersHelper.InstantiateProviders (Providers, providers, typeof (SiteMapProvider));
+				}
+				return providers;
+			}
+		}
+
 		protected override ConfigurationPropertyCollection Properties {
 			get { return properties; }
 		}

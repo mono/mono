@@ -38,19 +38,27 @@ namespace System.Web.Configuration {
 
 	public static class ProvidersHelper
 	{
-		[MonoTODO ("is this right?")]
 		public static ProviderBase InstantiateProvider (ProviderSettings providerSettings, Type providerType)
 		{
-			ProviderBase provider = Activator.CreateInstance (providerType) as ProviderBase;
+			Type settingsType = Type.GetType (providerSettings.Type);
+
+			if (settingsType == null)
+				throw new ConfigurationErrorsException (String.Format ("Could not find type: {0}", providerSettings.Type));
+			if (!providerType.IsAssignableFrom (settingsType))
+				throw new ConfigurationErrorsException (String.Format ("Provider '{0}' must subclass from '{1}'", providerSettings.Name, providerType));
+
+			ProviderBase provider = Activator.CreateInstance (settingsType) as ProviderBase;
 
 			provider.Initialize (providerSettings.Name, providerSettings.Parameters);
 
 			return provider;
 		}
 
-		[MonoTODO ("is this right?")]
 		public static void InstantiateProviders (ProviderSettingsCollection configProviders, ProviderCollection providers, Type providerType)
 		{
+			if (!typeof (ProviderBase).IsAssignableFrom (providerType))
+				throw new ConfigurationErrorsException (String.Format ("type '{0}' must subclass from ProviderBase", providerType));
+
 			foreach (ProviderSettings settings in configProviders)
 				providers.Add (InstantiateProvider (settings, providerType));
 		}

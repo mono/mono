@@ -44,33 +44,17 @@ namespace System.Web {
 			lock (locker) {
 				if (provider == null) {
 					SiteMapSection section = (SiteMapSection) WebConfigurationManager.GetSection ("system.web/siteMap");
-					providers = new SiteMapProviderCollection ();
-					
-					if (section.Enabled) {
-						foreach (ProviderSettings prov in section.Providers) {
-							Type t = Type.GetType (prov.Type);
-							if (t == null)
-								throw new ConfigurationException ("Cannot find type: " + prov.Type);
-							if (!typeof(SiteMapProvider).IsAssignableFrom (t))
-								throw new ConfigurationException ("The provided type is not a SiteMapProvider subclass: " + prov.Type);
-							
-							SiteMapProvider pr = (SiteMapProvider) Activator.CreateInstance (t);
-							pr.Initialize (prov.Name, prov.Parameters);
-							
-							if (provider == null || prov.Name == section.DefaultProvider)
-								provider = pr;
 
-							providers.Add (pr);
-						}
-					}
-					
-					if (providers.Count == 0) {
-						provider = new XmlSiteMapProvider ();
-						NameValueCollection attributes = new NameValueCollection ();
-						attributes.Add ("siteMapFile", "Web.sitemap");
-						provider.Initialize ("AspNetXmlSiteMapProvider", attributes);
-						providers.Add (provider);
-					}
+					if (!section.Enabled)
+						throw new InvalidOperationException ("This feature is currently disabled.  Please enable it in the system.web/siteMap section in the web.config file.");
+
+					providers = section.ProvidersInternal;
+
+					provider = providers[section.DefaultProvider];
+
+					if (provider == null)
+						throw new ConfigurationErrorsException (
+							String.Format ("The default sitemap provider '{0}' does not exist in the provider collection.", section.DefaultProvider));
 				}
 			}
 		}
@@ -78,6 +62,7 @@ namespace System.Web {
 		public static SiteMapNode CurrentNode { 
 			get { return Provider.CurrentNode; }
 		}
+
 		public static SiteMapNode RootNode { 
 			get { return Provider.RootNode; }
 		}
@@ -100,9 +85,11 @@ namespace System.Web {
 			remove { Provider.SiteMapResolve -= value; }
 		}
 
-		[MonoTODO ("By now it always return 'true'")]
 		public static bool Enabled {
-			get { return true; }
+			get {
+				SiteMapSection section = (SiteMapSection) WebConfigurationManager.GetSection ("system.web/siteMap");
+				return section.Enabled;
+			}
 		}
 
 		static SiteMapProvider provider;

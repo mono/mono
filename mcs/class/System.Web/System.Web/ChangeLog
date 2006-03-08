@@ -1,3 +1,10 @@
+2006-03-08  Chris Toshok  <toshok@ximian.com>
+
+	* SiteMap.cs: clean this up a bunch.  use the SiteMapSection to
+	initialize the provider collection, and don't add a provider.
+	web.config handles that for us.  Also, don't always return true
+	from get_Enabled.
+
 2006-02-28  Chris Toshok  <toshok@ximian.com>
 
 	* HttpCookieMode.cs: corcompare work.
