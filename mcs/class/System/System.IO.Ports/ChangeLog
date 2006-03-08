@@ -1,3 +1,8 @@
+2006-03-08  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* SerialPort.cs:
+	* SerialPortStream.cs: Small advance/cleanups.
+
 2006-02-29  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* SerialPort.cs:

@@ -46,7 +46,7 @@ namespace System.IO.Ports
 			stopBits = port.StopBits;
 			handshake = port.Handshake;
 			
-			if (!set_attributes (fd, port.BaudRate, port.Parity, port.DataBits, port.StopBits, port.Handshake))
+			if (!set_attributes (fd, baudRate, parity, dataBits, stopBits, handshake))
 				throw new IOException ();
 		}
 
@@ -68,9 +68,6 @@ namespace System.IO.Ports
 			}
 		}
 
-		// Remove this comments as soon as these properties
-		// are added to System.IO.Stream
-		/*
 		public override bool CanTimeout {
 			get {
 				return true;
@@ -99,7 +96,7 @@ namespace System.IO.Ports
 
 				writeTimeout = value;
 			}
-		}*/
+		}
 
 		public override long Length {
 			get {
@@ -242,7 +239,7 @@ namespace System.IO.Ports
 				return stopBits;
 			}
 			set {
-				stopBits = stopBits;
+				stopBits = value;
 				set_attributes (fd, baudRate, parity, dataBits, stopBits, handshake);
 			}
 		}

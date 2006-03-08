@@ -184,6 +184,10 @@ namespace System.IO.Ports
 				CheckOpen ();
 				throw new NotImplementedException ();
 			}
+			set {
+				CheckOpen ();
+				throw new NotImplementedException ();
+			}
 		}
 
 		public Encoding Encoding {
@@ -294,8 +298,8 @@ namespace System.IO.Ports
 					throw new ArgumentOutOfRangeException ("value");
 
 				readTimeout = value;
-				/*if (isOpen)
-					stream.ReadTimeout = value;*/
+				if (isOpen)
+					stream.ReadTimeout = value;
 			}
 		}
 
@@ -361,8 +365,8 @@ namespace System.IO.Ports
 					throw new ArgumentOutOfRangeException ("value");
 
 				writeTimeout = value;
-				/*if (isOpen)
-					stream.WriteTimeout = value;*/
+				if (isOpen)
+					stream.WriteTimeout = value;
 			}
 		}
 
