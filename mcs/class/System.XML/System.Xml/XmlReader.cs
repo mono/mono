@@ -871,10 +871,29 @@ namespace System.Xml
 
 		private string ReadContentString ()
 		{
+			return ReadContentString (true);
+		}
+
+		private string ReadContentString (bool isText)
+		{
+			if (isText) {
+				switch (NodeType) {
+				case XmlNodeType.Text:
+				case XmlNodeType.SignificantWhitespace:
+				case XmlNodeType.Whitespace:
+				case XmlNodeType.CDATA:
+					break;
+				default:
+					throw new InvalidOperationException (String.Format ("Node type {0} is not supported in this operation.", NodeType));
+				}
+			}
+
 			string value = String.Empty;
 			do {
 				switch (NodeType) {
 				case XmlNodeType.Element:
+					if (isText)
+						return value;
 					throw XmlError ("Child element is not expected in this operation.");
 				case XmlNodeType.EndElement:
 					return value;
@@ -1030,7 +1049,7 @@ namespace System.Xml
 			ReadStartElement ();
 			if (IsEmptyElement)
 				return String.Empty;
-			string s = ReadContentString ();
+			string s = ReadContentString (false);
 			ReadEndElement ();
 			return s;
 		}
@@ -1103,7 +1122,7 @@ namespace System.Xml
 			ReadStartElement (localName, namespaceURI);
 			if (IsEmptyElement)
 				return String.Empty;
-			string s = ReadContentString ();
+			string s = ReadContentString (false);
 			ReadEndElement ();
 			return s;
 		}

@@ -1851,6 +1851,38 @@ namespace MonoTests.System.Xml
 			AssertEquals ("#2 : " + o.GetType (),
 				new XmlQualifiedName ("el", "urn:foo"), q);
 		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void ReadContentStringOnElementFail ()
+		{
+			XmlReader xr = XmlReader.Create (new StringReader ("<a>test</a>"));
+			xr.Read ();
+			xr.ReadContentAsString ();
+		}
+
+		[Test]
+		[ExpectedException (typeof (XmlException))]
+		public void ReadElementContentStringMixedContent ()
+		{
+			XmlReader xr = XmlReader.Create (
+				new StringReader ("<doc>123<child>456</child>789</doc>"));
+			xr.Read ();
+			// "child" is regarded as an invalid node.
+			string s = xr.ReadElementContentAsString ();
+		}
+
+		[Test]
+		public void ReadContentStringMixedContent ()
+		{
+			XmlReader xr = XmlReader.Create (
+				new StringReader ("<doc>123<child>456</child>789</doc>"));
+			xr.Read ();
+			xr.Read (); // from Text "123"
+			string s = xr.ReadContentAsString ();
+			AssertEquals ("#1", "123", s);
+			AssertEquals ("#2", XmlNodeType.Element, xr.NodeType);
+		}
 #endif
 	}
 }

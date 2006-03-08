@@ -1,3 +1,9 @@
+2006-03-08  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlReader.cs: ReadContentAsXXX() just stops at start element,
+	  without rejecting it as an error.
+	  ReadElementContentAsXXX() rejects child element nodes.
+
 2006-02-28  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlElement.cs : (WriteTo) use IsEmpty to determine which to use:

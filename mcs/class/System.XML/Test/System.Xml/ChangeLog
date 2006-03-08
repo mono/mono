@@ -1,3 +1,8 @@
+2006-03-08  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlReaderCommonTests.cs : Added tests for ReadContentAsString() and
+	  ReadElementContentAsString().
+
 2006-02-24  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlTextWriterTests.cs : added test for bug #77623. Also fixed
