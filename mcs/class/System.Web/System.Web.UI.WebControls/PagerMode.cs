@@ -29,7 +29,9 @@ using System;
 
 namespace System.Web.UI.WebControls {
 
+#if !NET_2_0
 	[Serializable]
+#endif
 	public enum PagerMode
 	{
 		NextPrev,

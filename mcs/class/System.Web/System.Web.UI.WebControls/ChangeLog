@@ -1,3 +1,18 @@
+2006-03-08  Chris Toshok  <toshok@ximian.com>
+
+	* SiteMapNodeType.cs: nuke.
+
+	* BorderStyle.cs, ButtonColumnType.cs, CalendarSelectionMode.cs,
+	DayNameFormat.cs, ListItemType.cs, ListSelectionMode.cs,
+	NextPrevFormat.cs, PagerMode.cs, PagerPosition.cs,
+	RepeatDirection.cs, RepeatLayout.cs, TableRowSection.cs,
+	TextAlign.cs, TextBoxMode.cs, TitleFormat.cs,
+	ValidationCompareOperator.cs, ValidationDataType.cs,
+	ValidationSummaryDisplayMode.cs, ValidatorDisplay.cs: remove
+	[Serializable] in 2.0.
+
+	* DayNameFormat.cs: add "Shortest".
+
 2006-03-08  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* LinkButton.cs: fixed AddAttributesToRender, removed not needed 

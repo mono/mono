@@ -924,7 +924,6 @@ System.Web.UI.WebControls/SiteMapNodeItem.cs
 System.Web.UI.WebControls/SiteMapNodeItemEventArgs.cs
 System.Web.UI.WebControls/SiteMapNodeItemEventHandler.cs
 System.Web.UI.WebControls/SiteMapNodeItemType.cs
-System.Web.UI.WebControls/SiteMapNodeType.cs
 System.Web.UI.WebControls/SiteMapPath.cs
 System.Web.UI.WebControls/SortDirection.cs
 System.Web.UI.WebControls/SqlDataSourceCommandEventArgs.cs

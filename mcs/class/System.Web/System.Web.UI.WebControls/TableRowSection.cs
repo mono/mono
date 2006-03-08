@@ -27,7 +27,6 @@
 
 #if NET_2_0
 namespace System.Web.UI.WebControls {
-	[SerializableAttribute]
         public enum TableRowSection {
 			TableHeader = 0,
 			TableBody = 1,
