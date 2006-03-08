@@ -88,7 +88,7 @@ namespace MonoTests.System.Data
 		public void GetUpdateCommandTest ()
 		{
 			IDbConnection conn = ConnectionManager.Singleton.Connection;
-			using (conn) {
+			try {
 				string selectQuery = "select id, fname, id+1 as next_id from employee where id = 1";
 				SqlDataAdapter da = new SqlDataAdapter (selectQuery, (SqlConnection) conn);
 				DataSet ds = new DataSet ();
@@ -100,9 +100,39 @@ namespace MonoTests.System.Data
 				Assert.AreEqual ("UPDATE employee SET id = @p1, fname = @p2 WHERE ((id = @p3) AND ((@p4 = 1 AND fname IS NULL) OR (fname = @p5)))",
 						cmd.CommandText, "#2");
 				Assert.AreEqual (5, cmd.Parameters.Count, "#3");
+			} finally {
+				ConnectionManager.Singleton.CloseConnection ();
 			}
+
 		}
 
+		[Test]
+		public void GetUpdateCommandTest_CheckNonUpdatableColumns ()
+		{
+			IDbConnection conn = ConnectionManager.Singleton.Connection;
+			try {
+				ConnectionManager.Singleton.OpenConnection ();
+				IDbCommand cmd = conn.CreateCommand ();
+				cmd.CommandText = "create table #tmp_table (id int primary key , counter int identity(1,1), value varchar(10))";
+				cmd.ExecuteNonQuery ();
+
+				string selectQuery = "select id, counter, value, id+1 as next_id from #tmp_table";
+				SqlDataAdapter da = new SqlDataAdapter (selectQuery, (SqlConnection) conn);
+				DataSet ds = new DataSet ();
+				da.Fill (ds);
+				Assert.AreEqual (1, ds.Tables.Count, "#1"); 
+				Assert.AreEqual (4, ds.Tables [0].Columns.Count, "#2");
+
+				SqlCommandBuilder cb = new SqlCommandBuilder (da);
+				SqlCommand updateCmd = cb.GetUpdateCommand ();
+				Assert.AreEqual ("UPDATE #tmp_table SET id = @p1, value = @p2 WHERE ((id = @p3) AND ((@p4 = 1 AND " +
+							"counter IS NULL) OR (counter = @p5)) AND ((@p6 = 1 AND value IS NULL) OR (value = @p7)))",
+						updateCmd.CommandText, "#3");
+				Assert.AreEqual (7, updateCmd.Parameters.Count, "#3");
+			} finally {
+				ConnectionManager.Singleton.CloseConnection ();
+			}
+		}
 		[Test]
 		[ExpectedException (typeof (DBConcurrencyException))]
 		public void GetUpdateCommandDBConcurrencyExceptionTest ()

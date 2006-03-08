@@ -1,3 +1,8 @@
+2006-03-08  Senganal T  <tsenganal@novell.com>
+
+	* Tds70.cs :
+		- ProcessColumnInfo () : Set IsAutoIncrement Value for the column.
+
 2006-02-10  Senganal T  <tsenganal@novell.com>
 
 	* Tds.cs :

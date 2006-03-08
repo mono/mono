@@ -343,7 +343,7 @@ namespace System.Data.SqlClient {
 
 			// First, create the X=Y list for UPDATE
 			foreach (DataRow schemaRow in dbSchemaTable.Rows) {
-				if ((bool)schemaRow["IsExpression"] == true)
+				if (!IncludedInUpdate (schemaRow))
 					continue;
 				if (columns.Length > 0) 
 					columns.Append (", ");
@@ -520,12 +520,17 @@ namespace System.Data.SqlClient {
 			// If the parameter has one of these properties, then we don't include it in the insert:
 			// AutoIncrement, Hidden, RowVersion
 
-			if ((bool) schemaRow ["IsAutoIncrement"])
+			if (!schemaRow.IsNull ("IsAutoIncrement") && (bool) schemaRow ["IsAutoIncrement"])
 				return false;
-			if ((bool) schemaRow ["IsHidden"])
+			if (!schemaRow.IsNull ("IsHidden") && (bool) schemaRow ["IsHidden"])
 				return false;
-			if ((bool) schemaRow ["IsRowVersion"])
+			if (!schemaRow.IsNull ("IsRowVersion") && (bool) schemaRow ["IsRowVersion"])
 				return false;
+			if (!schemaRow.IsNull ("IsExpression") && (bool) schemaRow ["IsExpression"])
+				return false;
+			if (!schemaRow.IsNull ("IsReadOnly") && (bool) schemaRow ["IsReadOnly"])
+				return false;
+
 			return true;
 		}
 
