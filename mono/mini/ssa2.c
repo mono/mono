@@ -453,7 +453,7 @@ mono_ssa_compute2 (MonoCompile *cfg)
 	g_assert (!cfg->disable_ssa);
 
 	if (cfg->verbose_level >= 4)
-		printf ("\nCOMPUTE SSA %s %d (R%d-)\n\n", mono_method_full_name (cfg->method, TRUE), cfg->num_varinfo, cfg->next_vireg);
+		printf ("\nCOMPUTE SSA %d (R%d-)\n\n", cfg->num_varinfo, cfg->next_vireg);
 
 #ifdef CREATE_PRUNED_SSA
 	/* we need liveness for pruned SSA */

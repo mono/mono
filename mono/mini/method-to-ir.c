@@ -949,6 +949,7 @@ link_bblock (MonoCompile *cfg, MonoBasicBlock *from, MonoBasicBlock* to)
 			printf ("edge from entry to exit\n");
 	}
 #endif
+
 	found = FALSE;
 	for (i = 0; i < from->out_count; ++i) {
 		if (to == from->out_bb [i]) {
@@ -5003,10 +5004,19 @@ mono_decompose_long_opts (MonoCompile *cfg)
 				/* Replace the original instruction with the new code sequence */
 
 				if (cfg->cbb == first_bb) {
+					int i;
+
 					/* 
 					 * Only one replacement bb, merge the code into
 					 * the current bb.
 					 */
+
+					/* Delete links between the first_bb and its successors */
+					for (i = 0; i < first_bb->out_count; ++i) {
+						MonoBasicBlock *out_bb = first_bb->out_bb [i];
+
+						mono_unlink_bblock (cfg, first_bb, out_bb);
+					}
 
 					/* Head */
 					if (prev)
