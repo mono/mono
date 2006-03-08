@@ -1,3 +1,7 @@
+2006-03-07  Jackson Harper  <jackson@ximian.com>
+
+	* PictureBox.cs: Revert line I accidently committed last week.
+
 2006-03-07  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* Control.cs: 

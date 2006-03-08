@@ -79,7 +79,7 @@ namespace System.Windows.Forms {
 			set {
 				StopAnimation ();
 
-				image = (image != null ? (Image) value.Clone () : null);
+				image = value;
 
 				UpdateSize ();
 				if (image != null && ImageAnimator.CanAnimate (image)) {
