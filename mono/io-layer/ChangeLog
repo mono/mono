@@ -1,3 +1,7 @@
+2006-03-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* wait.c: speed up WaitFor* when the timeout is 0.
+
 2006-03-03  Dick Porter  <dick@ximian.com>
 
 	* processes.c (ShellExecuteEx): Cope when some of the parameters
