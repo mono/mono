@@ -835,7 +835,7 @@ evaluate_ins (MonoCompile *cfg, MonoInst *ins, MonoInst **res, MonoInst **carray
 {
 	MonoInst *arg0, *arg1, *c0;
 	int r1, r2;
-	gboolean const_args;
+	gboolean const_args = FALSE;
 	const char *spec = ins_info [ins->opcode - OP_START - 1];
 
 	/* Short-circuit this */
@@ -848,6 +848,7 @@ evaluate_ins (MonoCompile *cfg, MonoInst *ins, MonoInst **res, MonoInst **carray
 		return 2;
 
 	r1 = 2;
+	arg0 = NULL;
 	if (spec [MONO_INST_SRC1] != ' ') {
 		MonoInst *var = get_vreg_to_inst (cfg, ins->sreg1);
 
@@ -859,6 +860,7 @@ evaluate_ins (MonoCompile *cfg, MonoInst *ins, MonoInst **res, MonoInst **carray
 	}
 
 	r2 = 2;
+	arg1 = NULL;
 	if (spec [MONO_INST_SRC2] != ' ') {
 		MonoInst *var = get_vreg_to_inst (cfg, ins->sreg2);
 
@@ -1050,8 +1052,11 @@ visit_inst (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *ins, GList **cvars, 
 #else
 				int idx = carray [ins->next->sreg2]->inst_c0 >> 2;
 #endif
-				g_assert ((idx >= 0) && (idx < table->table_size));
-				add_cprop_bb (cfg, table->table [idx], bblist);
+				if ((idx < 0) || (idx >= table->table_size))
+					/* Out-of-range, no branch is executed */
+					return;
+				else
+					add_cprop_bb (cfg, table->table [idx], bblist);
 			}
 			else {
 				for (i = 0; i < table->table_size; i++ )
@@ -1136,7 +1141,21 @@ fold_ins (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *ins, MonoInst **carray
 #else
 				int idx = carray [ins->next->sreg2]->inst_c0 >> 2;
 #endif
-				g_assert ((idx >= 0) && (idx < table->table_size));
+
+				if (!((idx >= 0) && (idx < table->table_size))) {
+					/* Out of range, eliminate the whole switch */
+					for (i = 0; i < table->table_size; ++i) {
+						remove_bb_from_phis (cfg, bb, table->table [i]);
+						mono_unlink_bblock (cfg, bb, table->table [i]);
+					}
+
+					NULLIFY_INS (ins);
+					NULLIFY_INS (ins->next);
+					NULLIFY_INS (ins->next->next);
+					NULLIFY_INS (ins->next->next->next);
+
+					return;
+				}
 
 				if (ins->next->next->next->opcode != OP_BR_REG) {
 					/* A one-way switch which got optimized away */
@@ -1163,6 +1182,7 @@ fold_ins (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *ins, MonoInst **carray
 				/* Change the OP_BR_REG to a simple branch */
 				ins->next->next->next->opcode = OP_BR;
 				ins->next->next->next->inst_target_bb = table->table [idx];
+				ins->next->next->next->sreg1 = -1;
 
 				/* Nullify the other instructions */
 				NULLIFY_INS (ins);

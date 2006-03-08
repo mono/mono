@@ -8681,7 +8681,7 @@ remove_block_if_useless (MonoCompile *cfg, MonoBasicBlock *bb, MonoBasicBlock *p
 		int i;
 
 		if (cfg->verbose_level > 1) {
-			printf ("remove_block_if_useless %s, removed BB%d\n", mono_method_full_name (cfg->method, TRUE), bb->block_num);
+			printf ("remove_block_if_useless removed BB%d\n", bb->block_num);
 		}
 		
 		for (i = 0; i < bb->in_count; i++) {
@@ -8694,6 +8694,8 @@ remove_block_if_useless (MonoCompile *cfg, MonoBasicBlock *bb, MonoBasicBlock *p
 				replace_or_add_in_block (cfg, target_bb, bb, in_bb);
 			}
 		}
+
+		mono_unlink_bblock (cfg, bb, target_bb);
 		
 		if ((previous_bb != cfg->bb_entry) &&
 				(previous_bb->region == bb->region) &&
@@ -9085,12 +9087,10 @@ optimize_branches (MonoCompile *cfg)
 						bb->last_ins->inst_true_bb = bbn->code->inst_target_bb;
 
 						replace_in_block (bbn, bb, NULL);
-						if (!bbn->in_count)
-							replace_in_block (bbn->code->inst_target_bb, bbn, bb);
 						replace_out_block (bb, bbn, bbn->code->inst_target_bb);
 
 						link_bblock (cfg, bb, bbn->code->inst_target_bb);
-
+						
 						changed = TRUE;
 						continue;
 					}
@@ -9106,8 +9106,6 @@ optimize_branches (MonoCompile *cfg)
 						bb->last_ins->inst_false_bb = bbn->code->inst_target_bb;
 
 						replace_in_block (bbn, bb, NULL);
-						if (!bbn->in_count)
-							replace_in_block (bbn->code->inst_target_bb, bbn, bb);
 						replace_out_block (bb, bbn, bbn->code->inst_target_bb);
 
 						link_bblock (cfg, bb, bbn->code->inst_target_bb);
@@ -10228,7 +10226,7 @@ mono_local_deadce_alt (MonoCompile *cfg)
 
 #ifndef __i386__
 			/* Enabling this on x86 could screw up the fp stack */
-			if (((spec [MONO_INST_DEST] == 'i') && (ins->dreg >= MONO_MAX_IREGS))
+			if (((spec [MONO_INST_DEST] == 'i') && (ins->dreg >= MONO_MAX_IREGS)) ||
 				((spec [MONO_INST_DEST] == 'f') && (ins->dreg >= MONO_MAX_FREGS))) {
 #else
 			if (((spec [MONO_INST_DEST] == 'i') && (ins->dreg >= MONO_MAX_IREGS))) {
