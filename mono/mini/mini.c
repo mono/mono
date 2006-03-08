@@ -10204,11 +10204,13 @@ mono_local_deadce_alt (MonoCompile *cfg)
 			if ((ins->opcode == OP_MOVE) && get_vreg_to_inst (cfg, ins->dreg)) {
 				if (ins_index + 1 < nins) {
 					MonoInst *def = reverse [ins_index + 1];
-					const char *spec2 = ins_info [ins->opcode - OP_START - 1];
+					const char *spec2 = ins_info [def->opcode - OP_START - 1];
 
 					/* 
 					 * Perform a limited kind of reverse copy propagation, i.e.
 					 * transform B <- FOO; A <- B into A <- FOO
+					 * This isn't copyprop, not deadce, but it can only be performed
+					 * after handle_global_vregs () has run.
 					 */
 					if (!get_vreg_to_inst (cfg, ins->sreg1) && (spec2 [MONO_INST_DEST] != ' ') && (def->dreg == ins->sreg1) && !mono_bitset_test_fast (used, ins->sreg1) && !MONO_IS_STORE_MEMBASE (def)) {
 						if (cfg->verbose_level > 2) {
