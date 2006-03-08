@@ -79,7 +79,8 @@ namespace System.Web.UI.WebControls {
 					w.AddAttribute (HtmlTextWriterAttribute.Type, "password");
 				else {
 					w.AddAttribute (HtmlTextWriterAttribute.Type, "text");
-					w.AddAttribute (HtmlTextWriterAttribute.Value, Text);
+					if (Text.Length > 0)
+						w.AddAttribute (HtmlTextWriterAttribute.Value, Text);
 				}
 				
 				if (Columns != 0)
@@ -231,7 +232,10 @@ namespace System.Web.UI.WebControls {
 				return ViewState.GetInt ("Columns", 0);
 			}
 			set {
-				ViewState ["Columns"] = value;
+				if (value < 0)
+					throw new ArgumentOutOfRangeException("value", "Columns value has to be 0 for 'not set' or bigger than 0.");
+				else
+					ViewState ["Columns"] = value;
 			}
 		}
 
@@ -249,7 +253,10 @@ namespace System.Web.UI.WebControls {
 				return ViewState.GetInt ("MaxLength", 0);
 			}
 			set {
-				ViewState ["MaxLength"] = value;
+				if (value < 0)
+					throw new ArgumentOutOfRangeException("value", "MaxLength value has to be 0 for 'not set' or bigger than 0.");
+				else
+					ViewState ["MaxLength"] = value;
 			}
 		}
 
@@ -283,7 +290,10 @@ namespace System.Web.UI.WebControls {
 				return ViewState.GetInt ("Rows", 0);
 			}
 			set {
-				ViewState ["Rows"] = value;
+				if (value < 0)
+					throw new ArgumentOutOfRangeException("value", "Rows value has to be 0 for 'not set' or bigger than 0.");
+				else
+					ViewState ["Rows"] = value;
 			}
 		}
 	
