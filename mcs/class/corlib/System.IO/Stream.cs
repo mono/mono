@@ -63,6 +63,14 @@ namespace System.IO
 			get;
 		}
 
+#if NET_2_0
+		public virtual bool CanTimeout {
+			get {
+				return false;
+			}
+		}
+#endif
+
 		public abstract long Length
 		{
 			get;
@@ -93,6 +101,24 @@ namespace System.IO
 		protected virtual void Dispose (bool disposing)
 		{
 			Close ();
+		}
+
+		public virtual int ReadTimeout {
+			get {
+				throw new InvalidOperationException ("Timeouts are not supported on this stream.");
+			}
+			set {
+				throw new InvalidOperationException ("Timeouts are not supported on this stream.");
+			}
+		}
+
+		public virtual int WriteTimeout {
+			get {
+				throw new InvalidOperationException ("Timeouts are not supported on this stream.");
+			}
+			set {
+				throw new InvalidOperationException ("Timeouts are not supported on this stream.");
+			}
 		}
 #endif
 
