@@ -1,3 +1,8 @@
+2006-03-07  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* SslStream.cs, NegotiateStream.cs: Override CanTimeout,
+	ReadTimeout and WriteTimeout properties, to avoid warnings.
+
 2005-10-26  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ProtectionLevel.cs : fix enumeration.

@@ -88,7 +88,7 @@ namespace System.Net.Security
 		}
 
 		[MonoTODO]
-		public virtual bool CanTimeout {
+		public override bool CanTimeout {
 			get { throw new NotImplementedException (); }
 		}
 
@@ -175,7 +175,7 @@ namespace System.Net.Security
 			set { InnerStream.Position = value; }
 		}
 
-		public virtual int ReadTimeout {
+		public override int ReadTimeout {
 			get { return readTimeout; }
 			set { readTimeout = value; }
 		}
@@ -190,7 +190,7 @@ namespace System.Net.Security
 			get { throw new NotImplementedException (); }
 		}
 
-		public virtual int WriteTimeout {
+		public override int WriteTimeout {
 			get { return writeTimeout; }
 			set { writeTimeout = value; }
 		}
