@@ -1,3 +1,7 @@
+2006-03-08  Chris Toshok  <toshok@ximian.com>
+
+	* SiteMapSectionTest.cs: test defaults.
+
 2005-12-06  Chris Toshok  <toshok@ximian.com>
 
 	* AuthorizationRuleCollectionTest.cs (GetElementKey): new test.
