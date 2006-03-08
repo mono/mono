@@ -1,3 +1,8 @@
+2006-03-07  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* XmlReflectionImporter.cs: Ignore the element namespace if
+	  the schema form is set to Unqualified. Fixes bug #75019.
+
 2006-02-22  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* SerializationCodeGenerator.cs: Omit return statement in ReadObject
