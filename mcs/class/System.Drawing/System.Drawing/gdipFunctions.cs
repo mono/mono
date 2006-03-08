@@ -1697,18 +1697,31 @@ namespace System.Drawing
 
 			public long StreamSeekImpl (int offset, int whence) 
 			{
-				long retOffset;
-				if (whence == 0) {
-					retOffset = stream.Seek ((long) offset, SeekOrigin.Begin);
-				} else if (whence == 1) {
-					retOffset = stream.Seek ((long) offset, SeekOrigin.Current);
-				} else if (whence == 2) {
-					retOffset = stream.Seek ((long) offset, SeekOrigin.End);
-				} else {
-					retOffset = -1;
+				// Make sure we have a valid 'whence'.
+				if ((whence < 0) || (whence > 2))
+					return -1;
+
+				// Invalidate the start_buf if we're actually going to call a Seek method.
+				start_buf_pos += start_buf_len;
+				start_buf_len = 0;
+
+				SeekOrigin origin;
+
+				// Translate 'whence' into a SeekOrigin enum member.
+				switch (whence)
+				{
+					case 0: origin = SeekOrigin.Begin;   break;
+					case 1: origin = SeekOrigin.Current; break;
+					case 2: origin = SeekOrigin.End;     break;
+
+					// The following line is redundant but necessary to avoid a
+					// "Use of unassigned local variable" error without actually
+					// initializing 'origin' to a dummy value.
+					default: return -1;
 				}
-			
-				return retOffset;
+
+				// Do the actual seek operation and return its result.
+				return stream.Seek ((long) offset, origin);
 			}
 
 			public StreamSeekDelegate SeekDelegate {

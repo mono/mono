@@ -1,3 +1,10 @@
+2006-03-06  Jonathan Gilbert  <logic@deltaq.org>
+
+	* gdipFunctions.cs: Rewrote the StreamSeekImpl function to invalidate
+	  the start_buf cached bytes whenever Seek() is actually called. If
+	  Seek is not called (an invalid 'whence' value), then the buffer is
+	  not invalidated. This fixes a bug with TIFF loading.
+
 2006-03-02  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* Image.cs (ISerializable.GetObjectData): Save the image in it's
