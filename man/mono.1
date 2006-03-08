@@ -545,6 +545,12 @@ and then this list is tried in order with the first successful
 conversion ending the search.  When writing external text (e.g. new
 filenames or arguments to new processes) the first item in this list
 is used, or UTF-8 if the environment variable is not set.
+.IP
+The problem with using MONO_EXTERNAL_ENCODINGS to process your
+files is that it results in a problem: although its possible to get
+the right file name it is not necessarily possible to open the file.
+In general if you have problems with encodings in your filenames you
+should use the "convmv" program.
 .TP
 .I "MONO_GAC_PREFIX"
 Provides a prefix the runtime uses to look for Global Assembly Caches.
