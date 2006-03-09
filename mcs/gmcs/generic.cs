@@ -1599,6 +1599,8 @@ namespace Mono.CSharp {
 
 		bool HasDefaultConstructor (EmitContext ec, Type atype)
 		{
+			atype = TypeManager.DropGenericTypeArguments (atype);
+
 			if (atype is TypeBuilder) {
 				if (atype.IsAbstract)
 					return false;

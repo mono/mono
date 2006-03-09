@@ -1,5 +1,10 @@
 2006-03-09  Martin Baulig  <martin@ximian.com>
 
+	* generic.cs (ConstraintChecker.HasDefaultConstructor): Call
+	TypeManager.DropGenericTypeArguments() on the `atype'; fixes #77548.
+
+2006-03-09  Martin Baulig  <martin@ximian.com>
+
 	* ecore.cs (FieldExpr.AddressOf): Don't emit the instance if the
 	`prepared' flag is set.
 
