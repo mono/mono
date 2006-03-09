@@ -1,3 +1,11 @@
+2006-03-09  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* DataList.cs: fixed DoItemInLoop method that fixes itemIndex
+	of separator item.
+	fixed CreateControlStyle to set correct cellspacing of table style
+	fixed InitializeItem to correct applying template to selected and
+	edit items.
+
 2006-03-08  Chris Toshok  <toshok@ximian.com>
 
 	* SiteMapNodeType.cs: nuke.

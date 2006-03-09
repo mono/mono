@@ -520,7 +520,7 @@ namespace System.Web.UI.WebControls {
 		{
 			DoItem (i, type, d, databind);
 			if (SeparatorTemplate != null)
-				DoItem (i - 1, ListItemType.Separator, null, databind);
+				DoItem (i, ListItemType.Separator, null, databind);
 
 		}
 
@@ -592,7 +592,9 @@ namespace System.Web.UI.WebControls {
 			// not kept (directly) in the DataList ViewState
 			return new TableStyle ();
 #else
-			return new TableStyle (ViewState);
+			TableStyle tableStyle = new TableStyle (ViewState);
+			tableStyle.CellSpacing = 0;
+			return tableStyle;
 #endif
 		}
 
@@ -620,9 +622,9 @@ namespace System.Web.UI.WebControls {
 			case ListItemType.SelectedItem:
 			case ListItemType.EditItem:
 				int index = item.ItemIndex;
-				if (SelectedIndex == index)
+				if ((SelectedIndex == index) && (SelectedItemTemplate != null))
 					t = SelectedItemTemplate;
-				else if (EditItemIndex == index)
+				else if ((EditItemIndex == index) && (EditItemTemplate != null))
 					t = EditItemTemplate;
 				else if (((index & 1) == 0) || (alternatingItemTemplate == null))
 					t = ItemTemplate;
