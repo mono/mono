@@ -1,3 +1,10 @@
+2006-03-09  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* TextBoxBase.cs: Honor the Handled state of KeyPress events. Instead
+	  of calling base we simply process the key ourselves, since both
+	  DefWindowProc and the handled method would set m.Result. 
+	  (Fixes #77732)
+
 2006-03-09  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* Form.cs(ScaleCore): No longer calling base.ScaleCore since that

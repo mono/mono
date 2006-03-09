@@ -1142,13 +1142,16 @@ namespace System.Windows.Forms {
 				}
 
 				case Msg.WM_CHAR: {
+					if (ProcessKeyMessage(ref m)) {
+						m.Result = IntPtr.Zero;
+						return;
+					}
+
 					// Ctrl-Backspace generates a real char, whack it
 					if (m.WParam.ToInt32() == 127) {
 						base.WndProc(ref m);
 						return;
 					}
-
-					base.WndProc(ref m);
 
 					if (!read_only && (m.WParam.ToInt32() >= 32)) {	// FIXME, tabs should probably go through
 						if (document.selection_visible) {
