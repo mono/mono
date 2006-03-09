@@ -1,3 +1,28 @@
+2006-03-08  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* Control.cs:
+	  - We now only destroy our double-buffering buffers when the
+	    control is resized or disposed, but not when visibility
+	    changes. (The code even re-created them twice every time)
+	  - Now requiring a redraw of the buffer on visibility changes
+	    (fixes bug 77654 part 2)
+	  - Not passing OnParentVisibleChanged up unless the control
+	    is visible
+	  - CanFocus: Fixed to match MS documentation
+	  - Focus: Fixed to return actual focus state and to check if
+	    setting focus is legal before setting it
+	* ThemeWin32Classic.cs: TabPages cannot have focus. Determine
+	  when to draw focus rectangle by looking at parent focus and
+	  selected state instead. This fixes TabPages on Linux sometimes
+	  having none or multiple focus rectangles.
+	* XplatUIX11.cs (SetFocus): 
+	  - Don't set the focus if the same window already has focus
+	  - Use SendMessage instead of PostMessage (like it's Win32
+	    equivalent) and send the WM_SETFOCUS before the WM_KILLFOCUS
+	    to match MS behaviour
+	* TabControl.cs(SelectedIndex): Don't set Focus on TabPage, TabPages
+	  are not selectable.
+
 2006-03-07  Jackson Harper  <jackson@ximian.com>
 
 	* PictureBox.cs: Revert line I accidently committed last week.

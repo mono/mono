@@ -249,7 +249,6 @@ namespace System.Windows.Forms {
 				if (selected_index != -1) {
 					invalid = Rectangle.Union (invalid, GetTabRect (selected_index));
 					selected.Visible = true;
-					selected.Focus ();
 				}
 
 				ResumeLayout ();
@@ -267,8 +266,9 @@ namespace System.Windows.Forms {
 					SizeTabs ();
 					// The lines are drawn on the edges of the tabs so the invalid area should
 					// needs to include the extra pixels of line width.
-					if (appearance == TabAppearance.Normal)
+					if (appearance == TabAppearance.Normal) {
 						invalid.Inflate (6, 4);
+					}
 					Invalidate (invalid);
 				}
 			}
