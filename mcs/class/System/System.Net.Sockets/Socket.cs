@@ -508,7 +508,7 @@ namespace System.Net.Sockets
 			ConstructorInfo cons=unixendpointtype.GetConstructor(arg_types);
 
 			object[] args=new object[1];
-			args[0]="";
+			args[0]="nothing";
 
 			unixendpoint=cons.Invoke(args);
 		}
