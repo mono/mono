@@ -258,6 +258,11 @@ namespace System
 
 		internal static bool IsDefined (ICustomAttributeProvider obj, Type attributeType, bool inherit)
 		{
+			if (obj.GetType ().Assembly != typeof (int).Assembly)
+				// User types might overwrite GetCustomAttributes () but not 
+				// IsDefined ().
+				return obj.GetCustomAttributes (attributeType, inherit).Length > 0;
+
 			if (IsDefinedInternal (obj, attributeType))
 				return true;
 
