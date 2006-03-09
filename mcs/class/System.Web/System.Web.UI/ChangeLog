@@ -1,3 +1,7 @@
+2006-03-09  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* Added PageParser.jvm.cs, WebServiceParser.jvm.cs
+
 2006-03-07  Chris Toshok  <toshok@ximian.com>
 
 	* Page.cs (InitializeStyleSheet): load the style sheet theme using
