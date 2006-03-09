@@ -42,6 +42,11 @@ namespace Mono.Posix
 		
 		public UnixEndPoint (string filename)
 		{
+			if (filename == null)
+				throw new ArgumentNullException ("filename");
+
+			if (filename == "")
+				throw new ArgumentException ("Cannot be empty.", "filename");
 			this.filename = filename;
 		}
 		
@@ -60,8 +65,6 @@ namespace Mono.Posix
 
 		public override EndPoint Create (SocketAddress socketAddress)
 		{
-			int size = socketAddress.Size;
-			byte [] bytes = new byte [size];
 			/*
 			 * Should also check this
 			 *
@@ -73,8 +76,9 @@ namespace Mono.Posix
 				throw new ArgumentException ("socketAddress is not a unix socket address.");
 			 */
 
-			for (int i = 2; i < size - 2; i++) {
-				bytes [i] = socketAddress [i];
+			byte [] bytes = new byte [socketAddress.Size - 2];
+			for (int i = 0; i < bytes.Length; i++) {
+				bytes [i] = socketAddress [i + 2];
 			}
 
 			string name = Encoding.Default.GetString (bytes);
@@ -94,6 +98,20 @@ namespace Mono.Posix
 
 		public override string ToString() {
 			return(filename);
+		}
+
+		public override int GetHashCode ()
+		{
+			return filename.GetHashCode ();
+		}
+
+		public override bool Equals (object o)
+		{
+			UnixEndPoint other = o as UnixEndPoint;
+			if (other == null)
+				return false;
+
+			return (other.filename == filename);
 		}
 	}
 }
