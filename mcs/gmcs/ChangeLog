@@ -1,3 +1,12 @@
+2006-03-09  Martin Baulig  <martin@ximian.com>
+
+	* ecore.cs (FieldExpr.AddressOf): Don't emit the instance if the
+	`prepared' flag is set.
+
+	* generic.cs (LiftedBinaryOperator): Don't allow `||' or `&&' anymore.
+	(LiftedBinaryOperator, LiftedUnaryMutator): Fix a few nullable
+	issues; see gtest-254.cs.
+
 2006-03-07  Martin Baulig  <martin@ximian.com>
 
 	* generic.cs (TypeManager.InferType): Allow infering
