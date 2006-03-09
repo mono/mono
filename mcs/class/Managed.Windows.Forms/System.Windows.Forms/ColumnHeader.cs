@@ -186,6 +186,7 @@ namespace System.Windows.Forms
 			columnHeader.text_alignment = text_alignment;
 			columnHeader.width = width;
 			columnHeader.owner = owner;
+			columnHeader.format = (StringFormat) Format.Clone ();
 			columnHeader.column_rect = Rectangle.Empty;
 			return columnHeader;
 		}

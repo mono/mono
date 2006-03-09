@@ -697,6 +697,7 @@ namespace System.Windows.Forms
 		// Drawing
 		public abstract void DrawListViewItems (Graphics dc, Rectangle clip_rectangle, ListView control);
 		public abstract void DrawListViewHeader (Graphics dc, Rectangle clip_rectangle, ListView control);
+		public abstract void DrawListViewHeaderDragDetails (Graphics dc, ListView control, ColumnHeader drag_column, int target_x);
 
 		// Sizing
 		public abstract Size ListViewCheckBoxSize { get; }

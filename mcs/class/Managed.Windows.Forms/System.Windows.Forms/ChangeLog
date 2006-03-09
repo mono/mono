@@ -1,3 +1,15 @@
+2006-03-09  Mike Kestner  <mkestner@novell.com>
+
+	* ListView.cs: 
+	- Added column drag reordering for details view.
+	- fixed behavior when mouse is dragged off column and
+	AllowColumnReorder is false.
+	* ColumnHeader.cs: clone the format too in Clone.
+	* Theme.cs: add DrawListViewHeaderDragDetails method.
+	* ThemeWin32Classic.cs:
+	- impl new method for drawing drag column shadows and targets.
+	- support column offset for details mode in DrawListViewItem.
+
 2006-03-09  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* TextControl.cs: Reset the char_count when the document is cleared

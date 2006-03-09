@@ -25,8 +25,6 @@
 //	Mike Kestner (mkestner@novell.com)
 //
 // TODO:
-//   - Item text editing
-//   - Column resizing/reodering
 //   - Feedback for item activation, change in cursor types as mouse moves.
 //   - HideSelection
 //   - LabelEdit
@@ -88,6 +86,7 @@ namespace System.Windows.Forms
 		private int keysearch_tickcnt;
 		private string keysearch_text;
 		static private readonly int keysearch_keydelay = 1000;
+		private int[] reordered_column_indices;
 
 		// internal variables
 		internal ImageList large_image_list;
@@ -188,6 +187,7 @@ namespace System.Windows.Forms
 					return false;
 			}
 		}
+
 		#endregion	// Private Internal Properties
 
 		#region	 Protected Properties
@@ -786,6 +786,44 @@ namespace System.Windows.Forms
 			}
 		}
 		
+		ColumnHeader GetReorderedColumn (int index)
+		{
+			if (reordered_column_indices == null)
+				return Columns [index];
+			else
+				return Columns [reordered_column_indices [index]];
+		}
+
+		void ReorderColumn (ColumnHeader col, int index)
+		{
+			if (reordered_column_indices == null) {
+				reordered_column_indices = new int [Columns.Count];
+				for (int i = 0; i < Columns.Count; i++)
+					reordered_column_indices [i] = i;
+			}
+
+			if (reordered_column_indices [index] == col.Index)
+				return;
+
+			int[] curr = reordered_column_indices;
+			int[] result = new int [Columns.Count];
+			int curr_idx = 0;
+			for (int i = 0; i < Columns.Count; i++) {
+				if (curr_idx < Columns.Count && curr [curr_idx] == col.Index)
+					curr_idx++;
+
+				if (i == index)
+					result [i] = col.Index;
+				else
+					result [i] = curr [curr_idx++];
+			}
+
+			reordered_column_indices = result;
+			LayoutDetails ();
+			header_control.Invalidate ();
+			item_control.Invalidate ();
+		}
+
 		Size LargeIconItemSize {
 			get {
 				int w = Math.Max (text_size.Width, 2 + CheckBoxSize.Width + LargeImageList.ImageSize.Width);
@@ -863,7 +901,8 @@ namespace System.Windows.Forms
 			}
 
 			int x = 0;
-			foreach (ColumnHeader col in columns) {
+			for (int i = 0; i < Columns.Count; i++) {
+			       	ColumnHeader col = GetReorderedColumn (i);
 				col.X = x;
 				col.Y = 0;
 				col.CalcColumnHeader ();
@@ -1480,6 +1519,9 @@ namespace System.Windows.Forms
 			bool column_resize_active = false;
 			ColumnHeader resize_column;
 			ColumnHeader clicked_column;
+			ColumnHeader drag_column;
+			int drag_x;
+			int drag_to_index = -1;
 
 			public HeaderControl (ListView owner)
 			{
@@ -1490,25 +1532,48 @@ namespace System.Windows.Forms
 				Paint += new PaintEventHandler (HeaderPaint);
 			}
 
+			private ColumnHeader ColumnAtX (int x)
+			{
+				Point pt = new Point (x, 0);
+				ColumnHeader result = null;
+				foreach (ColumnHeader col in owner.Columns) {
+					if (col.Rect.Contains (pt)) {
+						result = col;
+						break;
+					}
+				}
+				return result;
+			}
+
+			private int GetReorderedIndex (ColumnHeader col)
+			{
+				if (owner.reordered_column_indices == null)
+					return col.Index;
+				else
+					for (int i = 0; i < owner.Columns.Count; i++)
+						if (owner.reordered_column_indices [i] == col.Index)
+							return i;
+				throw new Exception ("Column index missing from reordered array");
+			}
+
 			private void HeaderMouseDown (object sender, MouseEventArgs me)
 			{
-				Point hit = new Point (me.X + owner.h_marker, me.Y);
-
 				if (resize_column != null) {
 					column_resize_active = true;
 					Capture = true;
 					return;
 				}
 
-				foreach (ColumnHeader col in owner.Columns) {
-					if (col.Rect.Contains (hit)) {
-						clicked_column = col;
-						Capture = true;
-						break;
-					}
-				}
+				clicked_column = ColumnAtX (me.X + owner.h_marker);
 
 				if (clicked_column != null) {
+					Capture = true;
+					if (owner.AllowColumnReorder) {
+						drag_x = me.X;
+						drag_column = (ColumnHeader) clicked_column.Clone ();
+						drag_column.column_rect = clicked_column.Rect;
+						drag_to_index = GetReorderedIndex (clicked_column);
+					}
 					clicked_column.pressed = true;
 					Rectangle bounds = clicked_column.Rect;
 					bounds.X -= owner.h_marker;
@@ -1519,10 +1584,10 @@ namespace System.Windows.Forms
 
 			private void HeaderMouseMove (object sender, MouseEventArgs me)
 			{
-				Point hit = new Point (me.X + owner.h_marker, me.Y);
+				Point pt = new Point (me.X + owner.h_marker, me.Y);
 
 				if (column_resize_active)  {
-					resize_column.Width = hit.X - resize_column.X;
+					resize_column.Width = pt.X - resize_column.X;
 					if (resize_column.Width < 0)
 						resize_column.Width = 0;
 					return;
@@ -1530,11 +1595,34 @@ namespace System.Windows.Forms
 
 				resize_column = null;
 
+				if (clicked_column != null) {
+					if (owner.AllowColumnReorder) {
+						drag_column.column_rect.X = clicked_column.Rect.X + me.X - drag_x;
+						int x = me.X + owner.h_marker;
+						ColumnHeader over = ColumnAtX (x);
+						if (x < over.X + over.Width / 2)
+							drag_to_index = GetReorderedIndex (over);
+						else
+							drag_to_index = GetReorderedIndex (over) + 1;
+						Invalidate ();
+					} else {
+						ColumnHeader over = ColumnAtX (me.X + owner.h_marker);
+						bool pressed = clicked_column.pressed;
+						clicked_column.pressed = over == clicked_column;
+						if (clicked_column.pressed ^ pressed) {
+							Rectangle bounds = clicked_column.Rect;
+							bounds.X -= owner.h_marker;
+							Invalidate (bounds);
+						}
+					}
+					return;
+				}
+
 				for (int i = 0; i < owner.Columns.Count; i++) {
 					Rectangle zone = owner.Columns [i].Rect;
 					zone.X = zone.Right - 5;
 					zone.Width = 10;
-					if (zone.Contains (hit)) {
+					if (zone.Contains (pt)) {
 						resize_column = owner.Columns [i];
 						break;
 					}
@@ -1565,6 +1653,16 @@ namespace System.Windows.Forms
 					owner.OnColumnClick (new ColumnClickEventArgs (clicked_column.Index));
 				}
 
+				if (drag_column != null && owner.AllowColumnReorder) {
+					drag_column = null;
+					if (drag_to_index > GetReorderedIndex (clicked_column))
+						drag_to_index--;
+					if (owner.GetReorderedColumn (drag_to_index) != clicked_column)
+						owner.ReorderColumn (clicked_column, drag_to_index);
+					drag_to_index = -1;
+					Invalidate ();
+				}
+
 				clicked_column = null;
 			}
 
@@ -1573,7 +1671,18 @@ namespace System.Windows.Forms
 				if (Width <= 0 || Height <=  0 || !Visible || owner.updating)
 					return;	
 				
-				ThemeEngine.Current.DrawListViewHeader (pe.Graphics, pe.ClipRectangle, this.owner);
+				Theme theme = ThemeEngine.Current;
+				theme.DrawListViewHeader (pe.Graphics, pe.ClipRectangle, this.owner);
+
+				if (drag_column == null)
+					return;
+
+				int target_x;
+				if (drag_to_index == owner.Columns.Count)
+					target_x = owner.GetReorderedColumn (drag_to_index - 1).Rect.Right - owner.h_marker;
+				else
+					target_x = owner.GetReorderedColumn (drag_to_index).Rect.X - owner.h_marker;
+				theme.DrawListViewHeaderDragDetails (pe.Graphics, owner, drag_column, target_x);
 			}
 					
 		}

@@ -1492,14 +1492,40 @@ namespace System.Windows.Forms
 			}
 		}
 
+		public override void DrawListViewHeaderDragDetails (Graphics dc, ListView view, ColumnHeader col, int target_x)
+		{
+			Rectangle rect = col.Rect;
+			rect.X -= view.h_marker;
+			Color color = Color.FromArgb (0x7f, ColorControlDark.R, ColorControlDark.G, ColorControlDark.B);
+			dc.FillRectangle (ResPool.GetSolidBrush (color), rect);
+			rect.X += 3;
+			rect.Width -= 8;
+			if (rect.Width <= 0)
+				return;
+			color = Color.FromArgb (0x7f, ColorControlText.R, ColorControlText.G, ColorControlText.B);
+			dc.DrawString (col.Text, DefaultFont, ResPool.GetSolidBrush (color), rect, col.Format);
+			Pen pen = new Pen (ColorHighlight, 2);
+			dc.DrawLine (pen, target_x, 0, target_x, col.Rect.Height);
+		}
+
 		// draws the ListViewItem of the given index
 		protected virtual void DrawListViewItem (Graphics dc, ListView control, ListViewItem item)
 		{				
-			Rectangle rect_checkrect = item.CheckRectReal;
-			Rectangle rect_iconrect = item.GetBounds (ItemBoundsPortion.Icon);
-			Rectangle full_rect = item.GetBounds (ItemBoundsPortion.Entire);
-			Rectangle text_rect = item.GetBounds (ItemBoundsPortion.Label);			
+			int col_offset;
+			if (control.View == View.Details && control.Columns.Count > 0)
+				col_offset = control.Columns [0].Rect.X;
+			else
+				col_offset = 0;
 			
+			Rectangle rect_checkrect = item.CheckRectReal;
+			rect_checkrect.X += col_offset;
+			Rectangle rect_iconrect = item.GetBounds (ItemBoundsPortion.Icon);
+			rect_iconrect.X += col_offset;
+			Rectangle full_rect = item.GetBounds (ItemBoundsPortion.Entire);
+			full_rect.X += col_offset;
+			Rectangle text_rect = item.GetBounds (ItemBoundsPortion.Label);			
+			text_rect.X += col_offset;
+
 			if (control.CheckBoxes) {
 				if (control.StateImageList == null) {
 					// Make sure we've got at least a line width of 1
