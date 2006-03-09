@@ -1,3 +1,7 @@
+2006-03-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* CodeDomSerializerException.cs: New file.
+
 2005-10-18  Sebastien Pouliot  <sebastien@ximian.com> 
  
 	* InstanceDescriptor.cs: Added CAS permissions (unrestricted at class
