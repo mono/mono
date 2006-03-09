@@ -1,3 +1,8 @@
+2006-03-09  Dick Porter  <dick@ximian.com>
+
+	* file-io.c (get_file_attributes): Use S_ISLNK not "& S_IFLNK".
+	Fixes bug 76966 again.
+
 2006-03-07  Martin Baulig  <martin@ximian.com>
 
 	* object.c
