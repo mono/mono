@@ -1,3 +1,7 @@
+2006-03-09 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* UnixEndPoint.cs: added GetHashCode/Equals.
+
 2006-03-06  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* UnixDriveInfo.cs: Remove requirement that mountPoints be avaible via

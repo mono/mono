@@ -41,6 +41,11 @@ namespace Mono.Unix
 		
 		public UnixEndPoint (string filename)
 		{
+			if (filename == null)
+				throw new ArgumentNullException ("filename");
+
+			if (filename == "")
+				throw new ArgumentException ("Cannot be empty.", "filename");
 			this.filename = filename;
 		}
 		
@@ -92,6 +97,20 @@ namespace Mono.Unix
 
 		public override string ToString() {
 			return(filename);
+		}
+
+		public override int GetHashCode ()
+		{
+			return filename.GetHashCode ();
+		}
+
+		public override bool Equals (object o)
+		{
+			UnixEndPoint other = o as UnixEndPoint;
+			if (other == null)
+				return false;
+
+			return (other.filename == filename);
 		}
 	}
 }
