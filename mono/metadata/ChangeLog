@@ -1,3 +1,7 @@
+2006-03-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* icall.c (ves_icall_System_MonoMethodInfo_get_retval_marshal): New icall.
+
 2006-03-09  Dick Porter  <dick@ximian.com>
 
 	* file-io.c (get_file_attributes): Use S_ISLNK not "& S_IFLNK".
