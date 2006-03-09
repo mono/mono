@@ -1354,6 +1354,7 @@ namespace System.Windows.Forms {
 			selection_end.line = this.document;
 			selection_end.pos = 0;
 			selection_end.tag = selection_end.line.tags;
+			char_count = 0;
 
 			viewport_x = 0;
 			viewport_y = 0;
@@ -2525,6 +2526,7 @@ namespace System.Windows.Forms {
 
 		internal virtual void Clear() {
 			lines = 0;
+			CharCount = 0;
 			document = sentinel;
 		}
 

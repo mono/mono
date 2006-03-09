@@ -1,3 +1,8 @@
+2006-03-09  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* TextControl.cs: Reset the char_count when the document is cleared
+	  (Fixes bug reported on mono-winforms mailing list)
+
 2006-03-09  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* TextBoxBase.cs: Honor the Handled state of KeyPress events. Instead
