@@ -1,3 +1,8 @@
+2006-03-09  Senganal T <tsenganal@novell.com>
+	
+	* Index.cs :
+		- Update () : Add the new record in the correct position
+
 2006-03-07  Senganal T <tsenganal@novell.com>
 
 	* Key.cs : 

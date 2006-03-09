@@ -1194,6 +1194,7 @@ namespace System.Data {
 					row.AcceptChanges ();
 			}
 			else {
+				EnsureDefaultValueRowIndex();
 				int newRecord = CreateRecord(values);
 				int existingRecord = _primaryKeyConstraint.Index.Find(newRecord);
 

@@ -591,14 +591,9 @@ namespace System.Data {
 					return;
 			case DataRowState.Added:
 			case DataRowState.Modified:
-				int original = Original;
-				DataRowState oldState = RowState;
-                                if (Original >= 0) {
+                                if (Original >= 0)
                                         Table.RecordCache.DisposeRecord(Original);
-                                }
                                 Original = Current;
-				foreach (Index index in Table.Indexes)
-					index.Update(this, original, DataRowVersion.Original, oldState);
 				break;
 			case DataRowState.Deleted:
 				Table.DeleteRowFromIndexes(this);
@@ -864,11 +859,13 @@ namespace System.Data {
 				Current = Proposed;
 				Proposed = -1;
 
-				if (!Table._duringDataLoad) {
+				//FIXME : ideally  indexes shouldnt be maintained during dataload.But this needs to
+				//be implemented at multiple places.For now, just maintain the index.
+				//if (!Table._duringDataLoad) {
 					foreach(Index index in Table.Indexes) {
 						index.Update(this,oldRecord, DataRowVersion.Current, oldState);
 					}
-				}
+				//}
 
 				try {
 					AssertConstraints();
@@ -886,11 +883,11 @@ namespace System.Data {
 				catch {
 					int proposed = Proposed >= 0 ? Proposed : Current;
 					Current = oldRecord;
-					if (!Table._duringDataLoad) {
+					//if (!Table._duringDataLoad) {
 						foreach(Index index in Table.Indexes) {
 							index.Update(this,proposed, DataRowVersion.Current, RowState);
 						}
-					}
+					//}
 					throw;
 				}
 
@@ -1332,14 +1329,17 @@ namespace System.Data {
 				DetachRow ();
 				break;
 			case DataRowState.Modified:
+				int current = Current;
 				Table.RecordCache.DisposeRecord (Current);
 				CheckChildRows (DataRowAction.Rollback);
-				Table.DeleteRowFromIndexes(this);
 				Current = Original;
+				foreach (Index index in Table.Indexes)
+					index.Update(this, current, DataRowVersion.Current, DataRowState.Modified);
 				break;
 			case DataRowState.Deleted:
 				CheckChildRows (DataRowAction.Rollback);
 				Current = Original;
+				Table.AddRowToIndexes (this);
 				break;
 			}
 		}

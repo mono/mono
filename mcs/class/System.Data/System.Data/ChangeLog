@@ -1,3 +1,14 @@
+2006-03-09  Senganal T  <tsenganal@novell.com>
+
+	* DataRow.cs :
+		- RejectChanges () :  Add the row to index, if it was in deleted state and
+		Update the index if in Modified State.
+		- AcceptChanges () : Do not update the Indexes.
+		- EndEdit () : Update the indexes even if BeginLoadData has been called
+		on the table. Ideally, indexes should not be maintained during DataLoad,
+		but this needs to handled in multiple places correctly. For now, just maintain
+		the index to ensure correct operation.
+	
 2006-03-05  Senganal T  <tsenganal@novell.com>
 
  	* DataSet.cs :

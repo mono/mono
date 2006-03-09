@@ -184,7 +184,6 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		[NUnit.Framework.Category ("NotWorking")]
 		public void FindByKey ()
 		{
 			DataTable table = new DataTable ();
@@ -201,15 +200,11 @@ namespace MonoTests.System.Data
 			table.Rows[0].Delete ();
 			Assert.IsNull (table.Rows.Find (new object[] {1}), "#2");
 
-			table.Rows [1][0] =  1;
-			Assert.IsNotNull (table.Rows.Find (new object[] {1}), "#3");
-
 			table.RejectChanges ();
-			Assert.IsNotNull (table.Rows.Find (new object[] {1}), "#4");
+			Assert.IsNotNull (table.Rows.Find (new object[] {1}), "#3");
 		}
 
 		[Test]
-		[NUnit.Framework.Category ("NotWorking")]
 		public void FindByKey_VerifyOrder ()
 		{
 			DataTable table = new DataTable ();
@@ -219,8 +214,14 @@ namespace MonoTests.System.Data
 			table.Rows.Add (new object[] {1});
 			table.Rows.Add (new object[] {2});
 			table.Rows.Add (new object[] {1000});
+			table.AcceptChanges ();
+
 			table.Rows [1][0] = 100;
 			Assert.IsNotNull (table.Rows.Find (100), "#1");
+
+			table.Rows [2][0] = 999;
+			Assert.IsNotNull (table.Rows.Find (999), "#2");
+			Assert.IsNotNull (table.Rows.Find (100), "#3");
 		}
 
 		[Test]
