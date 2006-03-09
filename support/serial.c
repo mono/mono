@@ -132,7 +132,7 @@ set_attributes (int fd, int baud_rate, MonoParity parity, int dataBits, MonoStop
 		newtio.c_cflag |= PARENB | PARODD;
 		break;
 	case Even: /* Even */
-		newtio.c_iflag &= ~IGNPAR;
+		newtio.c_iflag &= ~(IGNPAR | PARODD);
 		newtio.c_cflag |= PARENB;
 		break;
 	case Mark: /* Mark */
@@ -179,10 +179,6 @@ set_attributes (int fd, int baud_rate, MonoParity parity, int dataBits, MonoStop
 	case NoneHandshake: /* None */
 		/* do nothing */
 		break;
-	case XOnXOff: /* XOnXOff */
-		newtio.c_iflag |= IXOFF;
-		//		newtio.c_oflag |= IXON;
-		break;
 	case RequestToSend: /* RequestToSend (RTS) */
 #ifdef CRTSCTS
 		newtio.c_cflag |= CRTSCTS;
@@ -193,6 +189,10 @@ set_attributes (int fd, int baud_rate, MonoParity parity, int dataBits, MonoStop
 		newtio.c_cflag |= CRTSCTS;
 #endif /* def CRTSCTS */
 		/* fall through */
+	case XOnXOff: /* XOnXOff */
+		newtio.c_iflag |= IXOFF;
+		//		newtio.c_oflag |= IXON;
+		break;
 	}
 	
 	if (cfsetospeed (&newtio, baud_rate) < 0 || cfsetispeed (&newtio, baud_rate) < 0 ||
