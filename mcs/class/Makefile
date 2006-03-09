@@ -41,6 +41,7 @@ common_dirs := \
 	I18N				\
 	System.Drawing			\
 	System.EnterpriseServices	\
+	Mono.C5				\
 	Mono.Data.Tds			\
 	System.Data			\
 	Mono.Data			\
