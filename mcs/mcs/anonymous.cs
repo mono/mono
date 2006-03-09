@@ -285,7 +285,7 @@ namespace Mono.CSharp {
 			// needed for the anonymous method.  We create the method here.
 			//
 
-			invoke_mb = (MethodInfo) Delegate.GetInvokeMethod (ec, delegate_type, loc);
+			invoke_mb = (MethodInfo) Delegate.GetInvokeMethod (ec.ContainerType, delegate_type, loc);
 			ParameterData invoke_pd = TypeManager.GetParameterData (invoke_mb);
 
 			if (Parameters == null){				
@@ -307,7 +307,9 @@ namespace Mono.CSharp {
 			// First, parameter types of `delegate_type' must be compatible
 			// with the anonymous method.
 			//
-			Parameters.Resolve (ec);
+			if (!Parameters.Resolve (ec))
+				return null;
+
 			amp = Parameters;
 			
 			if (amp.Count != invoke_pd.Count){
@@ -477,7 +479,7 @@ namespace Mono.CSharp {
 			if ((am.method.ModFlags & Modifiers.STATIC) == 0)
 				delegate_instance_expression = new AnonymousInstance (am);
 			
-			Expression ml = Expression.MemberLookup (ec, type, ".ctor", loc);
+			Expression ml = Expression.MemberLookup (ec.ContainerType, type, ".ctor", loc);
 			constructor_method = ((MethodGroupExpr) ml).Methods [0];
 			delegate_method = am.GetMethodBuilder ();
 			base.Emit (ec);

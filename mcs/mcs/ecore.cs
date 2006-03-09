@@ -667,10 +667,10 @@ namespace Mono.CSharp {
 			BindingFlags.Static |
 			BindingFlags.Instance;
 
-		public static Expression MemberLookup (EmitContext ec, Type queried_type,
+		public static Expression MemberLookup (Type container_type, Type queried_type,
 						       string name, Location loc)
 		{
-			return MemberLookup (ec.ContainerType, null, queried_type, name,
+			return MemberLookup (container_type, null, queried_type, name,
 					     AllMemberTypes, AllBindingFlags, loc);
 		}
 
@@ -1460,7 +1460,7 @@ namespace Mono.CSharp {
 				return this;
 			}
 
-			if (!Convert.ImplicitStandardConversionExists (Convert.ConstantEC, this, type)){
+			if (!Convert.ImplicitStandardConversionExists (this, type)){
 				Error_ValueCannotBeConverted (loc, type, false);
 				return null;
 			}
@@ -1981,7 +1981,7 @@ namespace Mono.CSharp {
 				if (lookup_ds.TypeBuilder == null)
 					break;
 
-				e = MemberLookup (ec, lookup_ds.TypeBuilder, Name, loc);
+				e = MemberLookup (ec.ContainerType, lookup_ds.TypeBuilder, Name, loc);
 				if (e != null)
 					break;
 
@@ -1994,7 +1994,7 @@ namespace Mono.CSharp {
 			} while (lookup_ds != null);
 				
 			if (e == null && ec.ContainerType != null)
-				e = MemberLookup (ec, ec.ContainerType, Name, loc);
+				e = MemberLookup (ec.ContainerType, ec.ContainerType, Name, loc);
 
 			if (e == null) {
 				if (almost_matched == null && almostMatchedMembers.Count > 0) {

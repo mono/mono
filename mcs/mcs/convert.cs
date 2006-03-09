@@ -19,16 +19,7 @@ namespace Mono.CSharp {
 	// A container class for all the conversion operations
 	//
 	public class Convert {
-		//
-		// This is used to prettify the code: a null argument is allowed
-		// for ImplicitStandardConversion as long as it is known that
-		// no anonymous method will play a role.
-		//
-		// FIXME: renamed from `const' to `static' to allow bootstraping from older
-		// versions of the compiler that could not cope with this construct.
-		//
-		public static EmitContext ConstantEC = null;
-		
+	
 		static EmptyExpression MyEmptyExpr;
 		static public Expression ImplicitReferenceConversion (Expression expr, Type target_type)
 		{
@@ -145,7 +136,7 @@ namespace Mono.CSharp {
 					Type target_element_type = TypeManager.GetElementType (target_type);
 
 					if (!expr_element_type.IsValueType && !target_element_type.IsValueType)
-						if (ImplicitStandardConversionExists (ConstantEC, MyEmptyExpr,
+						if (ImplicitStandardConversionExists (MyEmptyExpr,
 										      target_element_type))
 							return new EmptyCast (expr, target_type);
 				}
@@ -232,7 +223,7 @@ namespace Mono.CSharp {
 					Type target_element_type = TypeManager.GetElementType (target_type);
 						
 					if (!expr_element_type.IsValueType && !target_element_type.IsValueType)
-						if (ImplicitStandardConversionExists (ConstantEC, MyEmptyExpr,
+						if (ImplicitStandardConversionExists (MyEmptyExpr,
 										      target_element_type))
 							return true;
 				}
@@ -273,7 +264,7 @@ namespace Mono.CSharp {
 		///   expr is the expression to convert, returns a new expression of type
 		///   target_type or null if an implicit conversion is not possible.
 		/// </summary>
-		static public Expression ImplicitNumericConversion (EmitContext ec, Expression expr,
+		static public Expression ImplicitNumericConversion (Expression expr,
 								    Type target_type)
 		{
 			Type expr_type = expr.Type;
@@ -459,15 +450,10 @@ namespace Mono.CSharp {
 		/// </summary>
 		public static bool ImplicitConversionExists (EmitContext ec, Expression expr, Type target_type)
 		{
-			if (ImplicitStandardConversionExists (ec, expr, target_type))
+			if (ImplicitStandardConversionExists (expr, target_type))
 				return true;
 
-			Expression dummy = ImplicitUserConversion (ec, expr, target_type, Location.Null);
-
-			if (dummy != null)
-				return true;
-
-			return false;
+			return ImplicitUserConversion (ec, expr, target_type, Location.Null) != null;
 		}
 
 		public static bool ImplicitUserConversionExists (EmitContext ec, Type source, Type target)
@@ -481,7 +467,7 @@ namespace Mono.CSharp {
 		///
 		///  ec should point to a real EmitContext if expr.Type is TypeManager.anonymous_method_type.
 		/// </summary>
-		public static bool ImplicitStandardConversionExists (EmitContext ec, Expression expr, Type target_type)
+		public static bool ImplicitStandardConversionExists (Expression expr, Type target_type)
 		{
 			Type expr_type = expr.Type;
 
@@ -602,13 +588,7 @@ namespace Mono.CSharp {
 				if (TypeManager.IsDelegateType (target_type) && RootContext.Version != LanguageVersion.ISO_1){
 					MethodGroupExpr mg = expr as MethodGroupExpr;
 					if (mg != null){
-						//
-						// This should not happen frequently, so we can create an object
-						// to test compatibility
-						//
-						Expression c = ImplicitDelegateCreation.Create (
-							ec, mg, target_type, true, Location.Null);
-						return c != null;
+						return DelegateCreation.ImplicitStandardConversionExists (mg, target_type) != null;
 					}
 				}
 			}
@@ -685,11 +665,7 @@ namespace Mono.CSharp {
 				if (!TypeManager.IsDelegateType (target_type))
 					return false;
 
-				AnonymousMethod am = (AnonymousMethod) expr;
-
-				Expression conv = am.Compatible (ec, target_type, true);
-				if (conv != null)
-					return true;
+				return true;
 			}
 
 			return false;
@@ -699,7 +675,7 @@ namespace Mono.CSharp {
 		///  Finds "most encompassed type" according to the spec (13.4.2)
 		///  amongst the methods in the MethodGroupExpr
 		/// </summary>
-		static Type FindMostEncompassedType (EmitContext ec, ArrayList types)
+		static Type FindMostEncompassedType (ArrayList types)
 		{
 			Type best = null;
 
@@ -718,7 +694,7 @@ namespace Mono.CSharp {
 				}
 
 				expr.SetType (t);
-				if (ImplicitStandardConversionExists (ec, expr, best))
+				if (ImplicitStandardConversionExists (expr, best))
 					best = t;
 			}
 
@@ -726,7 +702,7 @@ namespace Mono.CSharp {
 			foreach (Type t in types) {
 				if (best == t)
 					continue;
-				if (!ImplicitStandardConversionExists (ec, expr, t)) {
+				if (!ImplicitStandardConversionExists (expr, t)) {
 					best = null;
 					break;
 				}
@@ -741,7 +717,7 @@ namespace Mono.CSharp {
 		///  Finds "most encompassing type" according to the spec (13.4.2)
 		///  amongst the types in the given set
 		/// </summary>
-		static Type FindMostEncompassingType (EmitContext ec, ArrayList types)
+		static Type FindMostEncompassingType (ArrayList types)
 		{
 			Type best = null;
 
@@ -760,7 +736,7 @@ namespace Mono.CSharp {
 				}
 
 				expr.SetType (best);
-				if (ImplicitStandardConversionExists (ec, expr, t))
+				if (ImplicitStandardConversionExists (expr, t))
 					best = t;
 			}
 
@@ -768,7 +744,7 @@ namespace Mono.CSharp {
 				if (best == t)
 					continue;
 				expr.SetType (t);
-				if (!ImplicitStandardConversionExists (ec, expr, best)) {
+				if (!ImplicitStandardConversionExists (expr, best)) {
 					best = null;
 					break;
 				}
@@ -784,7 +760,7 @@ namespace Mono.CSharp {
 		///   by making use of FindMostEncomp* methods. Applies the correct rules separately
 		///   for explicit and implicit conversion operators.
 		/// </summary>
-		static public Type FindMostSpecificSource (EmitContext ec, IList list,
+		static public Type FindMostSpecificSource (IList list,
 							   Expression source, bool apply_explicit_conv_rules)
 		{
 			ArrayList src_types_set = new ArrayList ();
@@ -810,27 +786,27 @@ namespace Mono.CSharp {
 				ArrayList candidate_set = new ArrayList ();
 
 				foreach (Type param_type in src_types_set){
-					if (ImplicitStandardConversionExists (ec, source, param_type))
+					if (ImplicitStandardConversionExists (source, param_type))
 						candidate_set.Add (param_type);
 				}
 
 				if (candidate_set.Count != 0)
-					return FindMostEncompassedType (ec, candidate_set);
+					return FindMostEncompassedType (candidate_set);
 			}
 
 			//
 			// Final case
 			//
 			if (apply_explicit_conv_rules)
-				return FindMostEncompassingType (ec, src_types_set);
+				return FindMostEncompassingType (src_types_set);
 			else
-				return FindMostEncompassedType (ec, src_types_set);
+				return FindMostEncompassedType (src_types_set);
 		}
 		
 		/// <summary>
 		///  Finds the most specific target Tx according to section 13.4.4
 		/// </summary>
-		static public Type FindMostSpecificTarget (EmitContext ec, IList list,
+		static public Type FindMostSpecificTarget (IList list,
 							   Type target, bool apply_explicit_conv_rules)
 		{
 			ArrayList tgt_types_set = new ArrayList ();
@@ -857,23 +833,23 @@ namespace Mono.CSharp {
 				foreach (Type ret_type in tgt_types_set){
 					expr.SetType (ret_type);
 					
-					if (ImplicitStandardConversionExists (ec, expr, target))
+					if (ImplicitStandardConversionExists (expr, target))
 						candidate_set.Add (ret_type);
 				}
 
 				EmptyExpression.Release (expr);
 
 				if (candidate_set.Count != 0)
-					return FindMostEncompassingType (ec, candidate_set);
+					return FindMostEncompassingType (candidate_set);
 			}
 			
 			//
 			// Okay, final case !
 			//
 			if (apply_explicit_conv_rules)
-				return FindMostEncompassedType (ec, tgt_types_set);
+				return FindMostEncompassedType (tgt_types_set);
 			else 
-				return FindMostEncompassingType (ec, tgt_types_set);
+				return FindMostEncompassingType (tgt_types_set);
 		}
 		
 		/// <summary>
@@ -894,7 +870,7 @@ namespace Mono.CSharp {
 			return UserDefinedConversion (ec, source, target, loc, true);
 		}
 
-		static void AddConversionOperators (EmitContext ec, ArrayList list, 
+		static void AddConversionOperators (ArrayList list, 
 						    Expression source, Type target_type, 
 						    bool look_for_explicit,
 						    MethodGroupExpr mg)
@@ -910,22 +886,22 @@ namespace Mono.CSharp {
 				Type arg_type = pd.ParameterType (0);
 
 				if (source_type != arg_type) {
-					if (!ImplicitStandardConversionExists (ec, source, arg_type)) {
+					if (!ImplicitStandardConversionExists (source, arg_type)) {
 						if (!look_for_explicit)
 							continue;
 						expr.SetType (arg_type);
-						if (!ImplicitStandardConversionExists (ec, expr, source_type))
+						if (!ImplicitStandardConversionExists (expr, source_type))
 							continue;
 					}
 				}
 
 				if (target_type != return_type) {
 					expr.SetType (return_type);
-					if (!ImplicitStandardConversionExists (ec, expr, target_type)) {
+					if (!ImplicitStandardConversionExists (expr, target_type)) {
 						if (!look_for_explicit)
 							continue;
 						expr.SetType (target_type);
-						if (!ImplicitStandardConversionExists (ec, expr, return_type))
+						if (!ImplicitStandardConversionExists (expr, return_type))
 							continue;
 					}
 				}
@@ -947,20 +923,20 @@ namespace Mono.CSharp {
 			Type source_type = source.Type;
 
 			if (source_type != TypeManager.decimal_type) {
-				AddConversionOperators (ec, ops, source, target_type, look_for_explicit,
+				AddConversionOperators (ops, source, target_type, look_for_explicit,
 					Expression.MethodLookup (ec, source_type, "op_Implicit", Location.Null) as MethodGroupExpr);
 				if (look_for_explicit) {
-					AddConversionOperators (ec, ops, source, target_type, look_for_explicit,
+					AddConversionOperators (ops, source, target_type, look_for_explicit,
 						Expression.MethodLookup (
 							ec, source_type, "op_Explicit", Location.Null) as MethodGroupExpr);
 				}
 			}
 
 			if (target_type != TypeManager.decimal_type) {
-				AddConversionOperators (ec, ops, source, target_type, look_for_explicit,
+				AddConversionOperators (ops, source, target_type, look_for_explicit,
 					Expression.MethodLookup (ec, target_type, "op_Implicit", Location.Null) as MethodGroupExpr);
 				if (look_for_explicit) {
-					AddConversionOperators (ec, ops, source, target_type, look_for_explicit,
+					AddConversionOperators (ops, source, target_type, look_for_explicit,
 						Expression.MethodLookup (
 							ec, target_type, "op_Explicit", Location.Null) as MethodGroupExpr);
 				}
@@ -969,11 +945,11 @@ namespace Mono.CSharp {
 			if (ops.Count == 0)
 				return null;
 
-			Type most_specific_source = FindMostSpecificSource (ec, ops, source, look_for_explicit);
+			Type most_specific_source = FindMostSpecificSource (ops, source, look_for_explicit);
 			if (most_specific_source == null)
 				return null;
 
-			Type most_specific_target = FindMostSpecificTarget (ec, ops, target_type, look_for_explicit);
+			Type most_specific_target = FindMostSpecificTarget (ops, target_type, look_for_explicit);
 			if (most_specific_target == null)
 				return null;
 
@@ -1101,14 +1077,14 @@ namespace Mono.CSharp {
 					MethodGroupExpr mg = expr as MethodGroupExpr;
 					if (mg != null)
 						return ImplicitDelegateCreation.Create (
-							ec, mg, target_type, false, loc);
+							ec, mg, target_type, loc);
 				}
 			}
 
 			if (expr_type == target_type && expr_type != TypeManager.null_type)
 				return expr;
 
-			e = ImplicitNumericConversion (ec, expr, target_type);
+			e = ImplicitNumericConversion (expr, target_type);
 			if (e != null)
 				return e;
 

@@ -1589,7 +1589,7 @@ namespace Mono.CSharp {
 							if (ll >= 0)
 								right = new ULongConstant ((ulong) ll, right.Location);
 						} else {
-							e = Convert.ImplicitNumericConversion (ec, right, l);
+							e = Convert.ImplicitNumericConversion (right, l);
 							if (e != null)
 								right = e;
 						}
@@ -1606,7 +1606,7 @@ namespace Mono.CSharp {
 						if (ll > 0)
 							left = new ULongConstant ((ulong) ll, right.Location);
 					} else {
-						e = Convert.ImplicitNumericConversion (ec, left, r);
+						e = Convert.ImplicitNumericConversion (left, r);
 						if (e != null)
 							left = e;
 					}
@@ -1971,9 +1971,9 @@ namespace Mono.CSharp {
 					// Also, a standard conversion must exist from either one
 					//
 					bool left_to_right =
-						Convert.ImplicitStandardConversionExists (ec, left, r);
+						Convert.ImplicitStandardConversionExists (left, r);
 					bool right_to_left = !left_to_right &&
-						Convert.ImplicitStandardConversionExists (ec, right, l);
+						Convert.ImplicitStandardConversionExists (right, l);
 
 					if (!left_to_right && !right_to_left) {
 						Error_OperatorCannotBeApplied ();
@@ -4913,6 +4913,9 @@ namespace Mono.CSharp {
 					conv = Convert.ImplicitConversion (ec, a_expr, parameter_type, loc);
 
 					if (conv == null) {
+						if (TypeManager.IsDelegateType (parameter_type))
+							return false;
+
 						if (!may_fail)
 							Error_InvalidArguments (loc, j, method, delegate_type, a, pd);
 						return false;

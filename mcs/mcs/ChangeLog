@@ -1,3 +1,19 @@
+2006-03-09  Marek Safar  <marek.safar@seznam.cz>
+
+	* anonymous.cs (AnonymousMethod.Compatible): Don't crash when parameters
+	were not resolved
+
+	* delegate.cs (Delegate.GetInvokeMethod): Use emitcontext free MemberLookup.
+	(DelegateCreation.ImplicitStandardConversionExists): New method for just
+	conversion test.
+	
+	*ecore.cs (Expression.MemberLookup): Don't ask for emitcontext when it's
+	not needed.
+
+	* assign.cs, constant.cs, convert.cs, delegate.cs, expression.cs:
+	Updated after another emitcontext usage was clean up. It should help us to
+	synchronize with gmcs easier.
+
 2006-03-04  Marek Safar  <marek.safar@seznam.cz>
 
 	A fix for #77353.
