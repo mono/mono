@@ -518,7 +518,7 @@ namespace System.Windows.Forms
 					foreach (Form mdichild in mdicontainer.Controls) {
 						MenuItem item = new MenuItem (mdichild.Text);
 						item.Click += new EventHandler (MdiWindowClickHandler);
-						MenuItems.Add (item);
+						MenuItems.AddNoEvents (item);
 						mdilist_items.Add (item, form);
 					}
 

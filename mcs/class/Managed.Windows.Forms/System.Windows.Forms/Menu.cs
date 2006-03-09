@@ -332,6 +332,16 @@ namespace System.Windows.Forms
 				return items.Count - 1;
 			}
 
+			internal void AddNoEvents (MenuItem mi)
+			{
+				if (mi.Parent != null)
+					mi.Parent.MenuItems.Remove (mi);
+				
+				items.Add (mi);
+				mi.Index = items.Count - 1;
+				mi.parent_menu = owner;
+			}
+
 			public virtual MenuItem Add (string s)
 			{
 				MenuItem item = new MenuItem (s);
