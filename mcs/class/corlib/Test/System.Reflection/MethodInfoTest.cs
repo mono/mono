@@ -79,6 +79,17 @@ namespace MonoTests.System.Reflection
 			  MethodImplAttribute attr3 = (MethodImplAttribute)((t.GetMethod ("synchronizedMethod").GetCustomAttributes (true)) [0]);
 			*/
 		}
+
+		[return: MarshalAs (UnmanagedType.Interface)]
+		public void ReturnTypeMarshalAs () {
+		}
+
+		[Test]
+		public void ReturnTypePseudoCustomAttributes () {
+			MethodInfo mi = typeof (MethodInfoTest).GetMethod ("ReturnTypeMarshalAs");
+
+			Assert (mi.ReturnTypeCustomAttributes.GetCustomAttributes (typeof (MarshalAsAttribute), true).Length == 1);
+		}
 #endif
 
 		public static int foo (int i, int j)
