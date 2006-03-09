@@ -1380,7 +1380,7 @@ namespace System.Windows.Forms {
 			to_y = rtf_cursor_y;
 			chars = rtf_chars;
 
-			document.RecalculateDocument(CreateGraphics(), cursor_y, document.Lines, false);
+			document.RecalculateDocument(CreateGraphicsInternal(), cursor_y, document.Lines, false);
 			document.NoRecalc = false;
 
 			document.Invalidate(document.GetLine(cursor_y), 0, document.GetLine(document.Lines), -1);

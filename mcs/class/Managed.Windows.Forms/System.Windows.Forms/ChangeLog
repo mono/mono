@@ -1,5 +1,23 @@
-2006-03-08  Peter Dennis Bartok  <pbartok@novell.com>
+2006-03-09  Peter Dennis Bartok  <pbartok@novell.com>
 
+	* Form.cs(ScaleCore): No longer calling base.ScaleCore since that
+	  method also moves the window; instead implemented a copy of
+	  Control.ScaleCore (Part of fix for #77456)
+	* TextBoxBase.cs: 
+	  - Created new CreateGraphicsInternal method to allow providing
+	    a graphics context when no handle is created without triggering
+	    handle creation. (Part of fix for #77456)
+	  - Replaced use of Control.CreateGraphics with CreateGraphicsInternal
+	* TextControl.cs: 
+	  - Switched Constructor to require TextBoxBase instead of Control (to
+	    allow uncast access to CreateGraphicsInternal)
+	  - Safeguarded use of owner.Handle property. No longer accessing it
+	    unless the handle is already created.
+	  - Replaced use of Control.CreateGraphics with CreateGraphicsInternal
+	  - Now triggering a recalc when owning control becomes visible
+	* TextBox.cs, RichTextBox.cs: Switched to use new internal 
+	  TextBoxBase.CreateGraphicsInternal() method to avoid triggering
+	  premature handle creation (Part of fix for #77456)
 	* Control.cs:
 	  - We now only destroy our double-buffering buffers when the
 	    control is resized or disposed, but not when visibility
@@ -11,6 +29,9 @@
 	  - CanFocus: Fixed to match MS documentation
 	  - Focus: Fixed to return actual focus state and to check if
 	    setting focus is legal before setting it
+
+2006-03-08  Peter Dennis Bartok  <pbartok@novell.com>
+
 	* ThemeWin32Classic.cs: TabPages cannot have focus. Determine
 	  when to draw focus rectangle by looking at parent focus and
 	  selected state instead. This fixes TabPages on Linux sometimes

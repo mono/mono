@@ -66,6 +66,7 @@ namespace System.Windows.Forms {
 		internal int			track_width = 20;
 		internal DateTime		click_last;
 		internal CaretSelection		click_mode;
+		internal Bitmap			bmp;
 		#if Debug
 		internal static bool	draw_lines = false;
 		#endif
@@ -98,6 +99,7 @@ namespace System.Windows.Forms {
 			requested_height = -1;
 			click_last = DateTime.Now;
 			click_mode = CaretSelection.Position;
+			bmp = new Bitmap(1, 1, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
 
 			MouseDown += new MouseEventHandler(TextBoxBase_MouseDown);
 			MouseUp += new MouseEventHandler(TextBoxBase_MouseUp);
@@ -1236,6 +1238,14 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		internal Graphics CreateGraphicsInternal() {
+			if (IsHandleCreated) {
+				return base.CreateGraphics();
+			}
+
+			return Graphics.FromImage(bmp);
+		}
+
 		#if Debug
 		static int current;
 		#endif
@@ -1425,9 +1435,8 @@ namespace System.Windows.Forms {
 			if (!IsHandleCreated) {
 				return;
 			}
-			document.RecalculateDocument(CreateGraphics());
+			document.RecalculateDocument(CreateGraphicsInternal());
 			CalculateScrollBars();
-//blah Console.WriteLine("TextBox.cs(1175) Invalidate called in CalculateDocument");
 			Invalidate();	// FIXME - do we need this?
 		}
 

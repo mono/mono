@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004-2005 Novell, Inc. (http://www.novell.com)
+// Copyright (c) 2004-2006 Novell, Inc. (http://www.novell.com)
 //
 // Authors:
 //	Peter Bartok	pbartok@novell.com
@@ -180,7 +180,7 @@ namespace System.Windows.Forms {
 					for (int i = 1; i <= document.Lines; i++) {
 						document.GetLine(i).Alignment = value;
 					}
-					document.RecalculateDocument(CreateGraphics());
+					document.RecalculateDocument(CreateGraphicsInternal());
 					OnTextAlignChanged(EventArgs.Empty);
 				}
 			}

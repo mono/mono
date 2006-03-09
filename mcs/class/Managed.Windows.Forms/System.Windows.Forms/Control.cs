@@ -1496,7 +1496,7 @@ namespace System.Windows.Forms
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public bool CanFocus {
 			get {
-				if (Visible && is_enabled && GetStyle(ControlStyles.Selectable)) {
+				if (GetStyle(ControlStyles.Selectable) && (parent != null) && Visible && Enabled) {
 					return true;
 				}
 				return false;
@@ -2581,11 +2581,10 @@ namespace System.Windows.Forms
 		}
 
 		public bool Focus() {
-			if (IsHandleCreated && !has_focus) {
-				has_focus = true;
+			if (CanFocus && IsHandleCreated && !has_focus) {
 				XplatUI.SetFocus(window.Handle);
 			}
-			return true;
+			return has_focus;
 		}
 
 		public Control GetChildAtPoint(Point pt) {
@@ -3549,18 +3548,7 @@ namespace System.Windows.Forms
 					}
 				}
 
-				if (!is_visible) {
-					if (dc_mem != null) {
-						dc_mem.Dispose();
-						dc_mem = null;
-					}
-
-					if (bmp_mem != null) {
-						bmp_mem.Dispose();
-						bmp_mem = null;
-					}
-				} else {
-					this.CreateBuffers(bounds.Width, bounds.Height);
+				if (is_visible && !is_created) {
 					CreateControl();
 				}
 
@@ -4374,23 +4362,17 @@ namespace System.Windows.Forms
 					CreateControl();
 					PerformLayout();
 				}
-			} else {
-				if (dc_mem!=null) {
-					dc_mem.Dispose ();
-					dc_mem=null;
-				}
-
-				if (bmp_mem!=null) {
-					bmp_mem.Dispose();
-					bmp_mem=null;
-				}
 			}
+
+			needs_redraw = true;
 			
 			if (VisibleChanged!=null) VisibleChanged(this, e);
 
 			// We need to tell our kids
 			for (int i=0; i<child_controls.Count; i++) {
-				child_controls[i].OnParentVisibleChanged(e);
+				if (child_controls[i].Visible) {
+					child_controls[i].OnParentVisibleChanged(e);
+				}
 			}
 		}
 		#endregion	// OnXXX methods
