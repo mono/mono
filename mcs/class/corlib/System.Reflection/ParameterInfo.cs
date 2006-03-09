@@ -65,12 +65,13 @@ namespace System.Reflection
 		}
 
 		/* to build a ParameterInfo for the return type of a method */
-		internal ParameterInfo (Type type, MemberInfo member) {
+		internal ParameterInfo (Type type, MemberInfo member, UnmanagedMarshal marshalAs) {
 			this.ClassImpl = type;
 			this.MemberImpl = member;
 			this.NameImpl = "";
 			this.PositionImpl = -1;	// since parameter positions are zero-based, return type pos is -1
 			this.AttrsImpl = ParameterAttributes.Retval;
+			this.marshalAs = marshalAs;
 		}
 		
 		public virtual Type ParameterType {

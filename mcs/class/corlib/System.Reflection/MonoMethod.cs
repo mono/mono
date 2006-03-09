@@ -32,6 +32,7 @@ using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
+using System.Reflection.Emit;
 using System.Security;
 
 namespace System.Reflection {
@@ -49,6 +50,9 @@ namespace System.Reflection {
 		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal static extern ParameterInfo[] get_parameter_info (IntPtr handle);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal static extern UnmanagedMarshal get_retval_marshal (IntPtr handle);
 	};
 	
 	/*
@@ -86,7 +90,7 @@ namespace System.Reflection {
 		}
 		public override ICustomAttributeProvider ReturnTypeCustomAttributes { 
 			get {
-				return new ParameterInfo (ReturnType, this);
+				return new ParameterInfo (ReturnType, this, MonoMethodInfo.get_retval_marshal (mhandle));
 			}
 		}
 		
