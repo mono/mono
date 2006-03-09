@@ -3381,7 +3381,8 @@ namespace Mono.CSharp {
 			if (FieldInfo.IsStatic){
 				ig.Emit (OpCodes.Ldsflda, FieldInfo);
 			} else {
-				EmitInstance (ec, false);
+				if (!prepared)
+					EmitInstance (ec, false);
 				ig.Emit (OpCodes.Ldflda, FieldInfo);
 			}
 		}

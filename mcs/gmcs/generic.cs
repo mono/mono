@@ -2691,8 +2691,7 @@ namespace Mono.CSharp {
 				if (expr == null)
 					return null;
 
-				if (!(expr is IMemoryLocation))
-					temp = new LocalTemporary (ec, expr.Type);
+				temp = new LocalTemporary (ec, expr.Type);
 
 				info = new NullableInfo (expr.Type);
 				type = info.UnderlyingType;
@@ -2710,6 +2709,11 @@ namespace Mono.CSharp {
 			{
 				AddressOf (ec, AddressOp.LoadStore);
 				ec.ig.EmitCall (OpCodes.Call, info.HasValue, null);
+			}
+
+			public void Store (EmitContext ec)
+			{
+				create_temp (ec);
 			}
 
 			void create_temp (EmitContext ec)
@@ -2746,14 +2750,35 @@ namespace Mono.CSharp {
 			public void EmitAssign (EmitContext ec, Expression source,
 						bool leave_copy, bool prepare_for_load)
 			{
-				source.Emit (ec);
-				ec.ig.Emit (OpCodes.Newobj, info.Constructor);
+				InternalWrap wrap = new InternalWrap (source, info, loc);
+				((IAssignMethod) expr).EmitAssign (ec, wrap, leave_copy, false);
+			}
 
-				if (leave_copy)
-					ec.ig.Emit (OpCodes.Dup);
+			protected class InternalWrap : Expression
+			{
+				public Expression expr;
+				public NullableInfo info;
 
-				Expression empty = new EmptyExpression (expr.Type);
-				((IAssignMethod) expr).EmitAssign (ec, empty, false, prepare_for_load);
+				public InternalWrap (Expression expr, NullableInfo info, Location loc)
+				{
+					this.expr = expr;
+					this.info = info;
+					this.loc = loc;
+
+					type = info.Type;
+					eclass = ExprClass.Value;
+				}
+
+				public override Expression DoResolve (EmitContext ec)
+				{
+					return this;
+				}
+
+				public override void Emit (EmitContext ec)
+				{
+					expr.Emit (ec);
+					ec.ig.Emit (OpCodes.Newobj, info.Constructor);
+				}
 			}
 		}
 
@@ -2957,7 +2982,8 @@ namespace Mono.CSharp {
 		{
 			public readonly Binary.Operator Oper;
 
-			Expression left, right, underlying, null_value, bool_wrap;
+			Expression left, right, original_left, original_right;
+			Expression underlying, null_value, bool_wrap;
 			Unwrap left_unwrap, right_unwrap;
 			bool is_equality, is_comparision, is_boolean;
 
@@ -2965,8 +2991,8 @@ namespace Mono.CSharp {
 						     Location loc)
 			{
 				this.Oper = op;
-				this.left = left;
-				this.right = right;
+				this.left = original_left = left;
+				this.right = original_right = right;
 				this.loc = loc;
 			}
 
@@ -2986,8 +3012,16 @@ namespace Mono.CSharp {
 						return null;
 				}
 
-				if (((Oper == Binary.Operator.BitwiseAnd) || (Oper == Binary.Operator.BitwiseOr) ||
-				     (Oper == Binary.Operator.LogicalAnd) || (Oper == Binary.Operator.LogicalOr)) &&
+				if ((Oper == Binary.Operator.LogicalAnd) ||
+				    (Oper == Binary.Operator.LogicalOr)) {
+					Binary.Error_OperatorCannotBeApplied (
+						loc, Binary.OperName (Oper),
+						original_left.GetSignatureForError (),
+						original_right.GetSignatureForError ());
+					return null;
+				}
+
+				if (((Oper == Binary.Operator.BitwiseAnd) || (Oper == Binary.Operator.BitwiseOr)) &&
 				    ((left.Type == TypeManager.bool_type) && (right.Type == TypeManager.bool_type))) {
 					Expression empty = new EmptyExpression (TypeManager.bool_type);
 					bool_wrap = new Wrap (empty, loc).Resolve (ec);
@@ -3220,6 +3254,11 @@ namespace Mono.CSharp {
 
 			public override void Emit (EmitContext ec)
 			{
+				if (left_unwrap != null)
+					left_unwrap.Store (ec);
+				if (right_unwrap != null)
+					right_unwrap.Store (ec);
+
 				if (is_boolean) {
 					EmitBoolean (ec);
 					return;

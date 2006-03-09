@@ -1,3 +1,8 @@
+2006-03-07  Martin Baulig  <martin@ximian.com>
+
+	* String.cs (String.FormatHelper): Try getting an `ICustomFormatter'
+	from the `provider' if possible.
+
 2006-02-15  Martin Baulig  <martin@ximian.com>
 
 	* Type.cs (Type.IsGenericInstance): Removed.
