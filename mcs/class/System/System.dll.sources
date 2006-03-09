@@ -179,6 +179,7 @@ System.ComponentModel/DesignerCategoryAttribute.cs
 System.ComponentModel/DesignerSerializationVisibilityAttribute.cs
 System.ComponentModel/DesignerSerializationVisibility.cs
 System.ComponentModel/DesignOnlyAttribute.cs
+System.ComponentModel.Design.Serialization/CodeDomSerializerException.cs
 System.ComponentModel/DesignTimeVisibleAttribute.cs
 System.ComponentModel/EditorAttribute.cs
 System.ComponentModel/EditorBrowsableAttribute.cs
