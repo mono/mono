@@ -538,6 +538,12 @@ public abstract class Encoding
 		e.decoder_fallback = decoderFallback;
 		return e;
 	}
+
+	[MonoTODO]
+	public static EncodingInfo[] GetEncodings ()
+	{
+		throw new NotImplementedException ();
+	}
 #endif
 
 	// Table of builtin web encoding names and the corresponding code pages.
