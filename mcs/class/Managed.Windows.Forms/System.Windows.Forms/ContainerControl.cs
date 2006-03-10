@@ -146,7 +146,21 @@ namespace System.Windows.Forms {
 				auto_scale_dimensions = value;
 			}
 		}
-#endif
+
+		// XXX: implement me!
+		AutoScaleMode auto_scale_mode;
+
+		public virtual AutoScaleMode AutoScaleMode {
+			get {
+				Console.Error.WriteLine("Unimplemented: ContainerControl::get_AutoScaleMode()");
+				return auto_scale_mode;
+			}
+			set {
+				Console.Error.WriteLine("Unimplemented: ContainerControl::set_AutoScaleMode(AutoScaleMode)");
+				auto_scale_mode = value;
+			}
+		}
+#endif // NET_2_0
 		#endregion
 
 		#region Protected Instance Methods

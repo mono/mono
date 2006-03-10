@@ -1,3 +1,16 @@
+2006-03-09  Jonathan Gilbert  <logic@deltaq.org>
+
+	* System.Windows.Forms/AutoScaleMode.cs: Added new file for
+	  the 2.0 enumeration.
+	* System.Windows.Forms/ContainerControl.cs: Added stub for
+	  AutoScaleMode property; outputs a message to stderr to
+	  encourage people familiar with its behaviour to implement
+	  it. :-)
+	* System.Windows.Forms/Control.cs: Added stub for AutoScale;
+	  outputs a message just like ContainerControl::AutoScaleMode.
+	* System.Windows.Forms.dll.sources: Added AutoScaleMode.cs to
+	  the list of files to build.
+
 2006-02-28  Matt Hargett  <matt@use.net>
 
 	* System.Windows.Forms_test.dll.sources: Added ComboBoxTests.cs

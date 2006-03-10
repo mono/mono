@@ -1414,6 +1414,22 @@ namespace System.Windows.Forms
 			}
 		}
 
+#if NET_2_0
+		// XXX: Implement me!
+		bool auto_size;
+
+		public virtual bool AutoSize {
+			get {
+				Console.Error.WriteLine("Unimplemented: Control::get_AutoSize()");
+				return auto_size;
+			}
+			set {
+				Console.Error.WriteLine("Unimplemented: Control::set_AutoSize(bool)");
+				auto_size = value;
+			}
+		}
+#endif // NET_2_0
+
 		[DispId(-501)]
 		public virtual Color BackColor {
 			get {

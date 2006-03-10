@@ -28,6 +28,7 @@ System.Windows.Forms/ArrangeDirection.cs
 System.Windows.Forms/ArrangeStartingPosition.cs
 System.Windows.Forms/AsyncMethodData.cs
 System.Windows.Forms/AsyncMethodResult.cs
+System.Windows.Forms/AutoScaleMode.cs
 System.Windows.Forms/AxHost.cs
 System.Windows.Forms/BaseCollection.cs
 System.Windows.Forms/BindingContext.cs
