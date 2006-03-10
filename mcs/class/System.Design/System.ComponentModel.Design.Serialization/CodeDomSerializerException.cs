@@ -1,12 +1,10 @@
 //
 // System.ComponentModel.Design.Serialization.CodeDomSerializerException.cs
 //
-// Authors:
-//      Martin Willemoes Hansen (mwh@sysrq.dk)
+// Author:
+//   Zoltan Varga (vargaz@gmail.com)
 //
-// (C) 2003 Martin Willemoes Hansen
-//
-
+// Copyright (C) 2004-2005 Novell (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -31,41 +29,39 @@
 using System.CodeDom;
 using System.Runtime.Serialization;
 
-namespace System.ComponentModel.Design.Serialization
+namespace System.ComponentModel.Design.Serialization {
+
+public class CodeDomSerializerException : SystemException
 {
-	public class CodeDomSerializerException : SystemException
+	private CodeLinePragma linePragma;
+
+	public CodeDomSerializerException (Exception ex, CodeLinePragma linePragma)
+		: base (String.Empty, ex) {
+
+		this.linePragma = linePragma;
+	}
+
+	public CodeDomSerializerException (String message, CodeLinePragma linePragma)
+		: base (message) {
+
+		this.linePragma = linePragma;
+	}
+
+	[MonoTODO]
+	protected CodeDomSerializerException (SerializationInfo info, StreamingContext context) {
+		throw new NotImplementedException ();
+	}
+
+	[MonoTODO]
+	public override void GetObjectData (SerializationInfo info, StreamingContext context)
 	{
-		[MonoTODO]
-		public CodeDomSerializerException (Exception ex, 
-						   CodeLinePragma code_line_pragma)
-		{
-			throw new NotImplementedException();
-		}
+		throw new NotImplementedException();
+	}
 
-		[MonoTODO]
-		protected CodeDomSerializerException (SerializationInfo info, 
-						      StreamingContext context)
-		{
-			throw new NotImplementedException();
-		}
-
-		[MonoTODO]
-		public CodeDomSerializerException (string str, 
-						   CodeLinePragma code_line_pragma)
-		{
-			throw new NotImplementedException();
-		}
-
-		public CodeLinePragma LinePragma {
-			[MonoTODO]
-			get { throw new NotImplementedException(); }
-		}
-
-		[MonoTODO]
-		public override void GetObjectData (SerializationInfo info,
-						    StreamingContext context)
-		{
-			throw new NotImplementedException();
+	public CodeLinePragma LinePragma {
+		get {
+			return linePragma;
 		}
 	}
+}
 }

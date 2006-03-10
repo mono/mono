@@ -237,7 +237,6 @@ System.ComponentModel.Design/MenuCommand.cs
 System.ComponentModel/DesignOnlyAttribute.cs
 System.ComponentModel.Design/RuntimeLicenseContext.cs
 System.ComponentModel.Design/SelectionTypes.cs
-System.ComponentModel.Design.Serialization/CodeDomSerializerException.cs
 System.ComponentModel.Design.Serialization/ContextStack.cs
 System.ComponentModel.Design.Serialization/DesignerLoader.cs
 System.ComponentModel.Design.Serialization/DesignerSerializerAttribute.cs
