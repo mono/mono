@@ -51,7 +51,7 @@ namespace System.Windows.Forms {
 		private bool			allow_transparency;
 		private static Icon		default_icon;
 		internal bool			is_modal;
-		private FormWindowState		window_state;
+		internal FormWindowState	window_state;
 		private bool			control_box;
 		private bool			minimize_box;
 		private bool			maximize_box;
@@ -586,10 +586,27 @@ namespace System.Windows.Forms {
 				if (IsMdiChild)
 					return null;
 
+				if (IsMdiContainer && mdi_container.Controls.Count > 0 &&
+						((Form) mdi_container.Controls [0]).WindowState == FormWindowState.Maximized) {
+					MdiWindowManager wm = (MdiWindowManager) ((Form) mdi_container.Controls [0]).WindowManager;
+					return wm.MaximizedMenu;
+				}
+
 				Form amc = ActiveMdiChild;
 				if (amc == null || amc.Menu == null)
 					return menu;
 				return amc.MergedMenu;
+			}
+		}
+
+		internal MdiWindowManager ActiveMaximizedMdiChild {
+			get {
+				Form child = ActiveMdiChild;
+				if (child == null)
+					return null;
+				if (child.WindowManager.GetWindowState () != FormWindowState.Maximized)
+					return null;
+				return (MdiWindowManager) child.WindowManager;
 			}
 		}
 
@@ -824,6 +841,10 @@ namespace System.Windows.Forms {
 		public FormWindowState WindowState {
 			get {
 				if (IsHandleCreated) {
+
+					if (window_manager != null)
+						return window_manager.GetWindowState ();
+
 					try {
 						window_state = XplatUI.GetWindowState(Handle);
 					}
@@ -831,6 +852,7 @@ namespace System.Windows.Forms {
 					catch(NotSupportedException) {
 					}
 				}
+
 				return window_state;
 			}
 
@@ -1638,6 +1660,12 @@ namespace System.Windows.Forms {
 					if (ActiveMenu != null) {
 						ActiveMenu.OnMouseDown(this, new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 0));
 					}
+
+					if (ActiveMaximizedMdiChild != null) {
+						ActiveMaximizedMdiChild.HandleMenuMouseDown (ActiveMenu,
+								LowOrder ((int) m.LParam.ToInt32 ()),
+								HighOrder ((int) m.LParam.ToInt32 ()));
+					}
 					base.WndProc(ref m);
 					return;
 				}
@@ -1657,8 +1685,12 @@ namespace System.Windows.Forms {
 
 						pe = XplatUI.PaintEventStart(Handle, false);
 						pnt = XplatUI.GetMenuOrigin(window.Handle);
-						
+
 						ActiveMenu.Draw (pe, new Rectangle (pnt.X, pnt.Y, ClientSize.Width, 0));
+
+						if (ActiveMaximizedMdiChild != null) {
+							ActiveMaximizedMdiChild.DrawMaximizedButtons (pe, ActiveMenu);
+						}
 
 						XplatUI.PaintEventEnd(Handle, false);
 					}

@@ -36,13 +36,21 @@ namespace System.Windows.Forms {
 		private static readonly int MdiBorderStyle = 0xFFFF;
 
 		private MainMenu merged_menu;
+		private MainMenu maximized_menu;
+		private MenuItem icon_menu;
+
 		private MdiClient mdi_container;
 		private Rectangle prev_virtual_position;
+
+		private Rectangle prev_bounds;
+		internal Rectangle IconicBounds;
 
 		public MdiWindowManager (Form form, MdiClient mdi_container) : base (form)
 		{
 			this.mdi_container = mdi_container;
 			form.GotFocus += new EventHandler (FormGotFocus);
+
+			icon_menu = CreateIconMenu ();
 		}
 
 		public MainMenu MergedMenu {
@@ -57,10 +65,73 @@ namespace System.Windows.Forms {
 		{
 			Form parent = (Form) mdi_container.Parent;
 			MainMenu clone = (MainMenu) parent.Menu.CloneMenu ();
+			if (form.WindowState == FormWindowState.Maximized) {
+				
+			}
 			clone.MergeMenu (form.Menu);
 			clone.MenuChanged += new EventHandler (MenuChangedHandler);
 			clone.SetForm (parent);
 			return clone;
+		}
+
+		public MainMenu MaximizedMenu {
+			get {
+				if (maximized_menu == null)
+					maximized_menu = CreateMaximizedMenu ();
+				return maximized_menu;
+			}
+		}
+
+		private MainMenu CreateMaximizedMenu ()
+		{
+			Form parent = (Form) mdi_container.Parent;
+			MainMenu res = new MainMenu ();
+			
+
+			res.MenuItems.Add (icon_menu);
+
+			if (parent.Menu != null) {
+				MainMenu clone = (MainMenu) parent.Menu.CloneMenu ();
+				res.MergeMenu (clone);
+			}
+
+			res.SetForm (parent);
+			return res;
+		}
+
+		private MenuItem CreateIconMenu ()
+		{
+			MenuItem res = new MenuItem ();
+
+			res.OwnerDraw = true;
+			res.MeasureItem += new MeasureItemEventHandler (MeasureIconMenuItem);
+			res.DrawItem += new DrawItemEventHandler (DrawIconMenuItem);
+
+			MenuItem restore = new MenuItem ("Restore");;
+			MenuItem move = new MenuItem ("Move");
+			MenuItem size = new MenuItem ("Size");
+			MenuItem minimize = new MenuItem ("Minimize");
+			MenuItem maximize = new MenuItem ("Maximize");
+			MenuItem close = new MenuItem ("Close");
+			MenuItem next = new MenuItem ("Next");
+
+			res.MenuItems.AddRange (new MenuItem [] { restore, move, size, minimize,
+									maximize, close, next });
+									
+			return res;
+		}
+
+		private void DrawIconMenuItem (object sender, DrawItemEventArgs de)
+		{
+			de.Graphics.DrawIcon (form.Icon, new Rectangle (2, 2, de.Bounds.Height - 4, de.Bounds.Height - 4));
+		}
+
+		private void MeasureIconMenuItem (object sender, MeasureItemEventArgs me)
+		{
+			Form parent = (Form) mdi_container.Parent;
+			int size = parent.Menu.Height;
+			me.ItemHeight = size;
+			me.ItemWidth = size + 2; // some padding
 		}
 
 		private void MenuChangedHandler (object sender, EventArgs e)
@@ -76,6 +147,32 @@ namespace System.Windows.Forms {
 		public override void PointToScreen (ref int x, ref int y)
 		{
 			XplatUI.ClientToScreen (mdi_container.Handle, ref x, ref y);
+		}
+
+		public override void SetWindowState (FormWindowState window_state)
+		{
+			switch (window_state) {
+			case FormWindowState.Minimized:
+				prev_bounds = form.Bounds;
+				mdi_container.ArrangeIconicWindows ();
+				break;
+			case FormWindowState.Maximized:
+				prev_bounds = form.Bounds;
+				SizeMaximized ();
+				break;
+			case FormWindowState.Normal:
+				form.Bounds = prev_bounds;
+				break;
+			}
+		}
+
+		internal void SizeMaximized ()
+		{
+			Rectangle pb = mdi_container.Bounds;
+			form.Bounds = new Rectangle (pb.Left - BorderWidth,
+					pb.Top - TitleBarHeight - BorderWidth,
+					pb.Width + BorderWidth * 2,
+					pb.Height + TitleBarHeight + BorderWidth * 2);
 		}
 
 		/*
@@ -146,8 +243,7 @@ namespace System.Windows.Forms {
 		{
 			// Maybe we don't need to do this, maybe we do
 			//	mdi_container.ActivateChild (form);
-		}
-			
+		}			
 	}
 }
 

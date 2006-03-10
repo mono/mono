@@ -2,6 +2,34 @@
 
 	* MenuAPI.cs: Make this available elsewhere. I need it in some MDI
 	stuff.
+	* Form.cs: Make the window_state internal so the window managers
+	can track it.
+	- When an MDI child is maximized let its window manager create the
+	main menu (so it can add its icon).
+	- Notify the window managers of state changes
+	- Let the window manager paint its buttons and handle button
+	clicks on the menu when it is maximized.
+	* InternalWindowManager.cs: Move the prev_bounds into the mdi
+	window manager, since tool windows don't use it, only mdi windows.
+	- Tell the main form that we don't want it to handle NCPAINT
+	itself to avoid extra painting.
+	- Handle clicks on a maximized windows menu.
+	- Handle window state changes
+	- Handle minimize/maximize clicks correctly by setting the window state.
+	* MdiWindowManager.cs: Add an icon menu that (the menu you get
+	when clicking on the forms icon).
+	- New method to create a forms maximized menu. This is its normal
+	menu + an icon.
+	- Handle window state changes.
+	- Handle sizing of maximized windows.  Maximized windows are just
+	drawn bigger then the parent visible area. All controls are still
+	there, they are just outside the visible area (this matches windows).
+	* MdiClient.cs: No scrollbars when a child window is maximized.
+	- Let the children windows figure out how big they should be when
+	sizing maximized windows.
+	- Implement a version of ArrangeIconicWindows somewhat similar to
+	Windows version.  There are some little differences, but I don't
+	think any app will rely on the layout of minimized mdi windows.
 
 2006-03-10  Peter Dennis Bartok  <pbartok@novell.com>
 

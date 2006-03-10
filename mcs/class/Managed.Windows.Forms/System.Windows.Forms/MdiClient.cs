@@ -162,6 +162,14 @@ namespace System.Windows.Forms {
 			if (lock_sizing)
 				return;
 
+			if (Controls.Count == 0 || ((Form) Controls [0]).WindowState == FormWindowState.Maximized) {
+				if (hbar != null)
+					hbar.Visible = false;
+				if (vbar != null)
+					vbar.Visible = false;
+				return;
+			}
+				
 			bool hbar_required = false;
 			bool vbar_required = false;
 
@@ -327,15 +335,54 @@ namespace System.Windows.Forms {
 			foreach (Form child in Controls) {
 				if (!child.Visible)
 					continue;
-
-				if (child.WindowManager.Maximized)
-					child.Bounds = Bounds;
+				MdiWindowManager wm = (MdiWindowManager) child.WindowManager;
+				if (wm.GetWindowState () == FormWindowState.Maximized)
+					wm.SizeMaximized ();
 			}
 		}
 
 		private void FormLocationChanged (object sender, EventArgs e)
 		{
 			SizeScrollBars ();
+		}
+
+		private int iconic_x = -1;
+		private int iconic_y = -1;
+		internal void ArrangeIconicWindows ()
+		{
+			int xspacing = 160;
+			int yspacing = 25;
+
+			if (iconic_x == -1 && iconic_y == -1) {
+				iconic_x = Left;
+				iconic_y = Bottom - yspacing;
+			}
+
+			lock_sizing = true;
+			foreach (Form form in Controls) {
+				if (form.WindowState != FormWindowState.Minimized)
+					continue;
+
+				MdiWindowManager wm = (MdiWindowManager) form.WindowManager;
+
+				if (wm.IconicBounds != Rectangle.Empty) {
+					form.Bounds = wm.IconicBounds;
+					continue;
+				}
+					
+				// The extra one pixel is a cheap hack for now until we
+				// handle 0 client sizes properly in the driver
+				int height = wm.TitleBarHeight + (wm.BorderWidth * 2) + 1; 
+				Rectangle rect = new Rectangle (iconic_x, iconic_y, xspacing, height);
+				form.Bounds = wm.IconicBounds = rect;
+
+				iconic_x += xspacing;
+				if (iconic_x >= Right) {
+					iconic_x = Left;
+					iconic_y -= height;
+				}
+			}
+			lock_sizing = false;
 		}
 
 		internal void ActivateChild (Form form)

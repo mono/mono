@@ -36,7 +36,7 @@ namespace System.Windows.Forms {
 
 		private static Color titlebar_color;
 
-		private int BorderWidth = 3;
+		internal int BorderWidth = 3;
 		private Size MinTitleBarSize = new Size (115, 25);
 
 		internal Form form;
@@ -53,8 +53,6 @@ namespace System.Windows.Forms {
 		private FormPos sizing_edge;
 		internal Rectangle virtual_position;
 		private Rectangle prev_virtual_position;
-		private Rectangle prev_bounds;
-		private bool maximized;
 
 		private class TitleButton {
 			public Rectangle Rectangle;
@@ -107,8 +105,8 @@ namespace System.Windows.Forms {
 			get { return form; }
 		}
 
-		public bool Maximized {
-			get { return maximized; }
+		public int IconWidth {
+			get { return TitleBarHeight - 5; }
 		}
 
 		public bool HandleMessage (ref Message m)
@@ -199,11 +197,13 @@ namespace System.Windows.Forms {
 					ncp = (XplatUIWin32.NCCALCSIZE_PARAMS) Marshal.PtrToStructure (m.LParam,
 							typeof (XplatUIWin32.NCCALCSIZE_PARAMS));
 
+					int bw = BorderWidth;
+
 					if (HasBorders) {
-						ncp.rgrc1.top += TitleBarHeight + BorderWidth;
-						ncp.rgrc1.bottom -= BorderWidth;
-						ncp.rgrc1.left += BorderWidth;
-						ncp.rgrc1.right -= BorderWidth;
+						ncp.rgrc1.top += TitleBarHeight + bw;
+						ncp.rgrc1.bottom -= bw;
+						ncp.rgrc1.left += bw;
+						ncp.rgrc1.right -= bw;
 					}
 
 					Marshal.StructureToPtr(ncp, m.LParam, true);
@@ -217,7 +217,11 @@ namespace System.Windows.Forms {
 				pe = XplatUI.PaintEventStart(m.HWnd, false);
 				PaintWindowDecorations (pe);
 				XplatUI.PaintEventEnd(m.HWnd, false);
-				break;
+
+				// We don't want the form.WndProc to handle this because it
+				// will call a PaintEventEnd
+				
+				return true;
 			}
 			return false;
 		}
@@ -234,9 +238,27 @@ namespace System.Windows.Forms {
 			CreateButtons ();
 		}
 
-		public void SetWindowState (FormWindowState window_state)
+		public void HandleMenuMouseDown (MainMenu menu, int x, int y)
 		{
-			Console.WriteLine ("Setting window state:  " + window_state);
+			Point pt = MenuTracker.ScreenToMenu (menu, new Point (x, y));
+
+			foreach (TitleButton button in title_buttons) {
+				if (button != null && button.Rectangle.Contains (pt)) {
+					button.Clicked (this, EventArgs.Empty);
+					button.State = ButtonState.Pushed;
+					return;
+				}
+			}
+		}
+
+		public virtual void SetWindowState (FormWindowState window_state)
+		{
+			form.window_state = window_state;
+		}
+
+		public virtual FormWindowState GetWindowState ()
+		{
+			return form.window_state;
 		}
 
 		public virtual void PointToClient (ref int x, ref int y)
@@ -343,7 +365,7 @@ namespace System.Windows.Forms {
 				}
 			}
 
-			if (maximized)
+			if (IsMaximized)
 				return;
 
 			state = State.Moving;
@@ -471,6 +493,10 @@ namespace System.Windows.Forms {
 			UpdateVP (pos);
 		}
 
+		private bool IsMaximized {
+			get { return GetWindowState () == FormWindowState.Maximized; }
+		}
+
 		private bool IsSizable {
 			get {
 				switch (form.FormBorderStyle) {
@@ -498,7 +524,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		private int TitleBarHeight {
+		public int TitleBarHeight {
 			get {
 				if (IsToolWindow)
 					return SystemInformation.ToolWindowCaptionHeight;
@@ -587,7 +613,7 @@ namespace System.Windows.Forms {
 
 			Color color = ThemeEngine.Current.ColorControlDark;
 
-			if (IsActive () && !maximized)
+			if (IsActive () && !IsMaximized)
 				color = titlebar_color;
 
 			Rectangle tb = new Rectangle (BorderWidth, BorderWidth,
@@ -623,7 +649,7 @@ namespace System.Windows.Forms {
 			if (!IsToolWindow && HasBorders) {
 				if (form.Icon != null) {
 					Rectangle icon = new Rectangle (BorderWidth + 3,
-							BorderWidth + 2, TitleBarHeight - 5, TitleBarHeight - 5);
+							BorderWidth + 2, IconWidth, IconWidth);
 					if (icon.IntersectsWith (pe.ClipRectangle))
 						dc.DrawIcon (form.Icon, icon);
 				}
@@ -664,6 +690,24 @@ namespace System.Windows.Forms {
 					button.Caption, ButtonState.Normal);
 		}
 
+		public void DrawMaximizedButtons (PaintEventArgs pe, MainMenu menu)
+		{
+			Size bs = ButtonSize;
+
+			close_button.Rectangle = new Rectangle (menu.Width - BorderWidth - bs.Width - 2,
+						2, bs.Width, bs.Height);
+
+			maximize_button.Rectangle = new Rectangle (close_button.Rectangle.Left - 2 - bs.Width,
+					2, bs.Width, bs.Height);
+				
+			minimize_button.Rectangle = new Rectangle (maximize_button.Rectangle.Left - bs.Width,
+					2, bs.Width, bs.Height);
+
+			DrawTitleButton (pe.Graphics, minimize_button, pe.ClipRectangle);
+			DrawTitleButton (pe.Graphics, maximize_button, pe.ClipRectangle);
+			DrawTitleButton (pe.Graphics, close_button, pe.ClipRectangle);
+		}
+
 		private void CloseClicked (object sender, EventArgs e)
 		{
 			form.Close ();
@@ -671,25 +715,23 @@ namespace System.Windows.Forms {
 
 		private void MinimizeClicked (object sender, EventArgs e)
 		{
-			form.WindowState = FormWindowState.Minimized;
-
-			/*
-			form.SuspendLayout ();
-			form.Width = MinTitleBarSize.Width + (BorderWidth * 2);
-			form.Height = MinTitleBarSize.Height + (BorderWidth * 2);
-			form.ResumeLayout ();
-			*/
+			if (GetWindowState () != FormWindowState.Minimized) {
+				minimize_button.Caption = CaptionButton.Restore;
+				form.WindowState = FormWindowState.Minimized;
+			} else {
+				minimize_button.Caption = CaptionButton.Minimize;
+				form.WindowState = FormWindowState.Normal;
+			}
 		}
 
 		private void MaximizeClicked (object sender, EventArgs e)
 		{
-			if (maximized) {
-				form.Bounds = prev_bounds;
-				maximized = false;
+			if (GetWindowState () != FormWindowState.Maximized) {
+				maximize_button.Caption = CaptionButton.Restore;
+				form.WindowState = FormWindowState.Maximized;
 			} else {
-				prev_bounds = form.Bounds;
-				form.Bounds = form.Parent.Bounds;
-				maximized = true;
+				maximize_button.Caption = CaptionButton.Maximize;
+				form.WindowState = FormWindowState.Normal;
 			}
 		}
 
