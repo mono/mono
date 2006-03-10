@@ -1,4 +1,13 @@
+2006-03-10  Zoltan Varga  <vargaz@gmail.com>
 
+	* helpers.c (mono_disassemble_code): Reduce the size of the temporary
+	assembly files.
+
+	* mini.h: Define G_LIKELY/G_UNLIKELY macros for older glib versions.
+
+	* mini.h (MonoBasicBlock): Reorganize the fields, putting more frequently
+	accessed fields first, for better cache behavior.
+	
 Fri Mar 10 18:21:41 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* mini.c: speedup IList<T> array accesses.
