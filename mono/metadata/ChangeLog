@@ -1,5 +1,7 @@
 2006-03-10  Zoltan Varga  <vargaz@gmail.com>
 
+	* icall.c (mono_register_jit_icall): Allocate the structure using g_new0
+
 	* class-internals.h (MonoJitICallInfo): Add 'trampoline' field used by the JIT.
 
 	* mempool.c (mono_mempool_alloc): Speed this up a bit.
