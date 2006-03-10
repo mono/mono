@@ -1,3 +1,8 @@
+2006-03-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* monobitset.h monobitset.c: Merge lots of optimizations from the linear-il 
+	branch.
+
 2006-03-01  Zoltan Varga  <vargaz@gmail.com>
 
 	* mono-compiler.h (__func__): Define this as __FUNCTION__ for MSVC.
