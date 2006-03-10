@@ -1,3 +1,39 @@
+2006-03-09  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* Added data/net_1_1/DefaultWsdlHelpGenerator.jvm.aspx
+	with removed proxy class generation for Grasshopper
+
+2006-03-08  Chris Toshok  <toshok@ximian.com>
+
+	* data/net_2_0/web.config: add a default siteMap section with the
+	AspNetXmlSiteMapProvider provider.
+
+	* data/net_2_0/machine.config: add system.web/siteMap section
+	info.
+
+2006-03-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* configure.in mono/os: Merge the contents of libmonoos to metadata/assembly.c and
+	get rid of os/unix and os/win32.
+
+Wed Mar 1 12:37:43 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* configure.in: added checks for visibility attribute,
+	option to disable generics, disabled options string define.
+
+2006-02-27  Raja R Harinath  <rharinath@novell.com>
+
+	* configure.in (runtime/etc/mono/{1.0,2.0}/machine.config):
+	Fix m4-quoting.
+
+Sat Feb 25 11:53:30 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* configure.in: more feature for --enable-minimal flags.
+
+2006-02-24 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* configure.in: define PLATFORM_BSD.
+
 2006-02-17  Zoltan Varga  <vargaz@gmail.com>
 
 	* Makefile.am: Avoid installing mint.pc if mint is not compiled.

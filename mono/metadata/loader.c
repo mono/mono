@@ -324,14 +324,14 @@ mono_metadata_signature_vararg_match (MonoMethodSignature *sig1, MonoMethodSigna
 }
 
 static MonoMethod *
-find_method_in_class (MonoClass *klass, const char *name, const char *qname, const char *fqname,
-		      MonoMethodSignature *sig)
+find_method_in_class (MonoClass *in_class, const char *name, const char *qname, const char *fqname,
+		      MonoMethodSignature *sig, MonoClass *from_class)
 {
 	int i;
 
-	mono_class_setup_methods (klass);
-	for (i = 0; i < klass->method.count; ++i) {
-		MonoMethod *m = klass->methods [i];
+	mono_class_setup_methods (in_class);
+	for (i = 0; i < in_class->method.count; ++i) {
+		MonoMethod *m = in_class->methods [i];
 
 		if (!((fqname && !strcmp (m->name, fqname)) ||
 		      (qname && !strcmp (m->name, qname)) || !strcmp (m->name, name)))
@@ -339,25 +339,30 @@ find_method_in_class (MonoClass *klass, const char *name, const char *qname, con
 
 		if (sig->call_convention == MONO_CALL_VARARG) {
 			if (mono_metadata_signature_vararg_match (sig, mono_method_signature (m)))
-				return m;
+				break;
 		} else {
 			if (mono_metadata_signature_equal (sig, mono_method_signature (m)))
-				return m;
+				break;
 		}
 	}
 
+	if (i < in_class->method.count) {
+		mono_class_setup_methods (from_class);
+		g_assert (from_class->method.count == in_class->method.count);
+		return from_class->methods [i];
+	}
 	return NULL;
 }
 
 static MonoMethod *
-find_method (MonoClass *klass, MonoClass *ic, const char* name, MonoMethodSignature *sig)
+find_method (MonoClass *in_class, MonoClass *ic, const char* name, MonoMethodSignature *sig, MonoClass *from_class)
 {
 	int i;
 	char *qname, *fqname, *class_name;
 	gboolean is_interface;
 	MonoMethod *result = NULL;
 
-	is_interface = MONO_CLASS_IS_INTERFACE (klass);
+	is_interface = MONO_CLASS_IS_INTERFACE (in_class);
 
 	if (ic) {
 		class_name = mono_type_get_name_full (&ic->byval_arg, MONO_TYPE_NAME_FORMAT_IL);
@@ -370,27 +375,32 @@ find_method (MonoClass *klass, MonoClass *ic, const char* name, MonoMethodSignat
 	} else
 		class_name = qname = fqname = NULL;
 
-	while (klass) {
-		result = find_method_in_class (klass, name, qname, fqname, sig);
+	while (in_class) {
+		g_assert (from_class);
+		result = find_method_in_class (in_class, name, qname, fqname, sig, from_class);
 		if (result)
 			goto out;
 
 		if (name [0] == '.' && (!strcmp (name, ".ctor") || !strcmp (name, ".cctor")))
 			break;
 
-		for (i = 0; i < klass->interface_count; i++) {
-			MonoClass *ic = klass->interfaces [i];
+		g_assert (from_class->interface_count == in_class->interface_count);
+		for (i = 0; i < in_class->interface_count; i++) {
+			MonoClass *ic = in_class->interfaces [i];
+			MonoClass *from_ic = from_class->interfaces [i];
 
-			result = find_method_in_class (ic, name, qname, fqname, sig);
+			result = find_method_in_class (ic, name, qname, fqname, sig, from_ic);
 			if (result)
 				goto out;
 		}
 
-		klass = klass->parent;
+		in_class = in_class->parent;
+		from_class = from_class->parent;
 	}
+	g_assert (!in_class == !from_class);
 
 	if (is_interface)
-		result = find_method_in_class (mono_defaults.object_class, name, qname, fqname, sig);
+		result = find_method_in_class (mono_defaults.object_class, name, qname, fqname, sig, mono_defaults.object_class);
 
  out:
 	g_free (class_name);
@@ -580,7 +590,7 @@ method_from_memberref (MonoImage *image, guint32 idx, MonoGenericContext *typesp
 	switch (class) {
 	case MONO_MEMBERREF_PARENT_TYPEREF:
 	case MONO_MEMBERREF_PARENT_TYPEDEF:
-		method = find_method (klass, NULL, mname, sig);
+		method = find_method (klass, NULL, mname, sig, klass);
 		break;
 
 	case MONO_MEMBERREF_PARENT_TYPESPEC: {
@@ -591,12 +601,7 @@ method_from_memberref (MonoImage *image, guint32 idx, MonoGenericContext *typesp
 
 		if (type->type != MONO_TYPE_ARRAY && type->type != MONO_TYPE_SZARRAY) {
 			MonoClass *in_class = klass->generic_class ? klass->generic_class->container_class : klass;
-			method = find_method (in_class, NULL, mname, sig);
-			if (method && klass->generic_class) {
-				MonoClass *klass_hint = (in_class == method->klass) ? klass : NULL;
-				method = mono_class_inflate_generic_method (method, klass_hint, klass->generic_class->context);
-				method = mono_get_inflated_method (method);
-			}
+			method = find_method (in_class, NULL, mname, sig, klass);
 			break;
 		}
 
@@ -771,7 +776,7 @@ method_from_methodspec (MonoImage *image, MonoGenericContext *context, guint32 i
 	mono_stats.generics_metadata_size += sizeof (MonoGenericMethod) +
 		sizeof (MonoGenericContext) + param_count * sizeof (MonoType);
 
-	inflated = mono_class_inflate_generic_method (method, method->klass, new_context);
+	inflated = mono_class_inflate_generic_method_full (method, method->klass, new_context);
 	g_hash_table_insert (container->method_hash, gmethod, inflated);
 
 	return inflated;
@@ -1064,6 +1069,10 @@ mono_lookup_pinvoke_call (MonoMethod *method, const char **exc_class, const char
 #ifdef PLATFORM_WIN32
 						if (mangle_charset == 0)
 							mangled_name = g_strconcat (import, "W", NULL);
+#else
+						/* Try the mangled name last */
+						if (mangle_charset == 1)
+							mangled_name = g_strconcat (import, "A", NULL);
 #endif
 						break;
 					case PINVOKE_ATTRIBUTE_CHAR_SET_ANSI:
@@ -1272,7 +1281,8 @@ mono_get_method_constrained (MonoImage *image, guint32 token, MonoClass *constra
 {
 	MonoMethod *method, *result;
 	MonoClass *ic = NULL;
-	MonoGenericClass *gclass = NULL;
+	MonoGenericContext *class_context = NULL, *method_context = NULL;
+	MonoMethodSignature *sig;
 
 	mono_loader_lock ();
 
@@ -1284,20 +1294,32 @@ mono_get_method_constrained (MonoImage *image, guint32 token, MonoClass *constra
 
 	mono_class_init (constrained_class);
 	method = mono_get_inflated_method (method);
+	sig = mono_method_signature (method);
+
+	if (method->is_inflated && sig->generic_param_count) {
+		MonoMethodInflated *imethod = (MonoMethodInflated *) method;
+		sig = mono_method_signature (imethod->declaring);
+		method_context = imethod->context;
+	}
 
 	if ((constrained_class != method->klass) && (method->klass->interface_id != 0))
 		ic = method->klass;
 
 	if (constrained_class->generic_class)
-		gclass = constrained_class->generic_class;
+		class_context = constrained_class->generic_class->context;
 
-	result = find_method (constrained_class, ic, method->name, mono_method_signature (method));
-	if (!result)
-		g_warning ("Missing method %s in assembly %s token %x", method->name,
-			   image->name, token);
+	result = find_method (constrained_class, ic, method->name, sig, constrained_class);
+	if (!result) {
+		g_warning ("Missing method %s.%s.%s in assembly %s token %x", method->klass->name_space,
+			   method->klass->name, method->name, image->name, token);
+		mono_loader_unlock ();
+		return NULL;
+	}
 
-	if (gclass)
-		result = mono_class_inflate_generic_method (result, NULL, gclass->context);
+	if (class_context)
+		result = mono_class_inflate_generic_method (result, class_context);
+	if (method_context)
+		result = mono_class_inflate_generic_method (result, method_context);
 
 	mono_loader_unlock ();
 	return result;

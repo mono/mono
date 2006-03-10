@@ -1,3 +1,18 @@
+2006-03-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* wait.c: speed up WaitFor* when the timeout is 0.
+
+2006-03-03  Dick Porter  <dick@ximian.com>
+
+	* processes.c (ShellExecuteEx): Cope when some of the parameters
+	are NULL.
+
+2006-02-27  Dick Porter  <dick@ximian.com>
+
+	* mutexes.c: 
+	* mono-mutex.c: 
+	* threads.c: Comparing pthread_t with == is not portable, so use
+	pthread_equal().
 
 Thu Feb 23 18:47:20 GMT 2006 Paolo Molaro <lupus@ximian.com>
 

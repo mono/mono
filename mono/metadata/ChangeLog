@@ -1,3 +1,145 @@
+2006-03-09 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* socket-io.c:
+	(create_object_from_sockaddr): it was allocating 4 extra bytes
+	for the AF_UNIX data. Fixes bug #77747.
+
+2006-03-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* icall.c (ves_icall_System_MonoMethodInfo_get_retval_marshal): New icall.
+
+2006-03-09  Dick Porter  <dick@ximian.com>
+
+	* file-io.c (get_file_attributes): Use S_ISLNK not "& S_IFLNK".
+	Fixes bug 76966 again.
+
+2006-03-07  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* verify.c (dtfinfo_fields): Updated to match new (serializable) field
+	names from r57532
+	* appdomain.c: Bumped corlib version to 48 (due to r57532)
+
+2006-03-07  Martin Baulig  <martin@ximian.com>
+
+	* object.c
+	(mono_field_get_value_object): Add support for MONO_TYPE_GENERICINST.
+
+2006-03-07  Martin Baulig  <martin@ximian.com>
+
+	* class.c
+	(mono_class_get_full): Don't inflate TYPEDEF entries; fixes the
+	regression introduced in r56970; see gtest-252.cs.
+
+	* loader.c (mono_get_method_constrained): Correctly handle generic
+	methods; see gtest-253.cs.
+
+2006-03-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* icall.c (ves_icall_type_Equals): Handle NULLs. Fixes #77700.
+
+2006-03-04  Martin Baulig  <martin@ximian.com>
+
+	* icall.c (ves_icall_MonoGenericClass_GetParentType): Dynamically
+	compute the parent type at runtime, just like we're already doing
+	it for interfaces.
+
+	* reflection.c
+	(mono_reflection_bind_generic_parameters): Don't compute the
+	parent type anymore.
+
+	* class-internals.h (MonoDynamicGenericClass): Removed `parent'.
+
+2006-03-04  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug-debugger.h
+	(mono_debugger_create_notification_function): Allocate memory at
+	runtime and return a pointer to it.
+
+2006-03-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* assembly.c: Fix windows build.
+	
+	* assembly.c: Fix build.
+
+	* assembly.c: Move the contents of os/{unix,win32}/util.c to this file.	
+
+	* gc_wrapper.h: Move the contents of os/gc_wrapper.h to this file.
+	
+2006-03-03  Dick Porter  <dick@ximian.com>
+
+	* process.c
+	(ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal):
+	Check parameters before dereferencing them.  Fixes Aaron's part of
+	bug 77393.
+
+2006-03-03  Raja R Harinath  <rharinath@novell.com>
+
+	Fix performance regression.
+	* loader.c (find_method_in_class): Add 'from_class' argument.
+	Rename 'klass' argument to 'in_class'.	The signature is compared
+	against the method in 'in_class', and the corresponding method is
+	returned from 'from_class'.
+	(find_method): Walk both 'in_class' and 'from_class' in parallel.
+	(method_from_memberref) [PARENT_TYPESPEC]: Use it to walk the
+	type definition and generic instantiation in parallel.
+	(mono_get_method_constrained): Update to changes.
+
+Thu Mar 2 12:27:41 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* threads.c: make sure the domain is correct, too when doing
+	mono_thread_attach ().
+
+2006-03-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_class_create_from_typedef): Mark classes using CharSet.Auto as unicode on
+	windows. Fixes #77683.
+
+Wed Mar 1 20:09:25 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* object.h, *: introduced specific way to set elements of an array
+	of references to be used as write barrier. Still need to audit the
+	uses of mono_array_addr.
+
+2006-03-01  Miguel de Icaza  <miguel@novell.com>
+
+	* object-internals.h: New field to cache the assmebly name, patch
+	from Tambet Ingo (tambet@ximian.com)
+
+Wed Mar 1 19:13:30 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* decimal.h, class-internals.h, metadata-internals.h,
+	file-io.h: mark a few function declarations as internal, to
+	reduce the number of PLT entries.
+
+2006-02-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* file-io.c: fix typo in warning message.
+
+Tue Feb 28 17:43:20 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* loader.c: on unix, lookup the "*A" version of a function
+	if charset is auto as a second option before failing.
+
+2006-02-28  Raja R Harinath  <rharinath@novell.com>
+
+	* class.h (mono_class_inflate_generic_method): Revert to two
+	argument version.
+	* class-internals.h (MonoMethodInflated): Remove 'inflated' field.
+	(mono_class_inflate_generic_method_full): Add.
+	* class.c (mono_class_inflate_generic_method_full): Rename from
+	'mono_class_inflate_generic_method'.  Don't set 'inflated' field.
+	(mono_class_inflate_generic_method): New.  Wrapper around ..._full.
+	* loader.c, reflection.c: Update to changes.
+
+Sat Feb 25 17:57:21 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* icall.c: const fixes and small improvements.
+
+2006-02-24 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* threadpool.c: for asynchronous connect(), enable the same workaround
+	for BSD 6 as for the Mac. Fixes bug #77637.
+
 2006-02-24  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c (mono_marshal_free_asany): Fix handling of blittable
@@ -17808,5 +17950,6 @@ Tue Jul  3 18:33:32 CEST 2001 Paolo Molaro <lupus@ximian.com>
 	Beta2. 
 
 	* mono/metadata/assembly.c (load_metadata_ptrs): Fix for Beta2
+
 
 

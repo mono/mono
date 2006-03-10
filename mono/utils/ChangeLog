@@ -1,3 +1,23 @@
+2006-03-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* mono-compiler.h (__func__): Define this as __FUNCTION__ for MSVC.
+
+	* mono-counters.c: Fix windows build.
+
+Wed Mar 1 12:33:26 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mono-counters.h, mono-counters.c, Makefile.am: added
+	API for flexible stats collection.
+
+Tue Feb 28 13:58:50 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mono-compiler.h: fixed Jakub's patch to actually compile on amd64.
+
+Tue Feb 28 11:33:40 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mono-compiler.h: patch from Jakub Jelinek to retrieve
+	the tls offset without a text writable section (bug #77653).
+
 2006-02-01  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* mono-compiler.h: Added a macro for isnormal(x) as it's not available

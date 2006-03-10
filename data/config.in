@@ -5,7 +5,7 @@
 	<dllmap dll="libxslt.dll" target="libxslt@libsuffix@" />
 	<dllmap dll="libmySQL.dll" target="libmysqlclient@libsuffix@" />
 	<dllmap dll="odbc32.dll" target="libodbc@libsuffix@" />
-	<dllmap dll="oci" target="clntsh" />
+	<dllmap dll="oci" target="libclntsh@libsuffix@" />
 	<dllmap dll="db2cli" target="libdb2_36@libsuffix@"/>
 	<dllmap dll="msvcrt" target="@LIBC@"/>
 	<dllmap dll="MonoPosixHelper" target="libMonoPosixHelper@libsuffix@"/>

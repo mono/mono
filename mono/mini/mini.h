@@ -21,7 +21,20 @@
 #include "regalloc.h"
 #include "declsec.h"
 
+#ifndef G_LIKELY
+#define G_LIKELY(a) (a)
+#define G_UNLIKELY(a) (a)
+#endif
+
+#if DISABLE_LOGGING
+#define MINI_DEBUG(level,limit,code)
+#else
+#define MINI_DEBUG(level,limit,code) do {if (G_UNLIKELY ((level) >= (limit))) code} while (0)
+#endif
+
+#ifndef DISABLE_AOT
 #define MONO_USE_AOT_COMPILER
+#endif
 
 /* for 32 bit systems */
 #if G_BYTE_ORDER == G_LITTLE_ENDIAN
@@ -52,11 +65,6 @@
 #define mono_bitset_foreach_bit_rev(set,b,n) \
 	for (b = mono_bitset_find_last (set, n - 1); b >= 0; b = b ? mono_bitset_find_last (set, b) : -1)
  
-#endif
-
-#ifndef G_LIKELY
-#define G_LIKELY(a) (a)
-#define G_UNLIKELY(a) (a)
 #endif
 
 /*
@@ -821,6 +829,12 @@ typedef struct {
 	} data;
 	int type;
 } StackSlot;
+
+#if HAVE_ARRAY_ELEM_INIT
+extern const guint8 mono_burg_arity [];
+#else
+extern guint8 mono_burg_arity [];
+#endif
 
 enum {
 	MONO_COMP_DOM = 1,

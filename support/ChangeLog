@@ -1,3 +1,13 @@
+2006-03-09  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* serial.c: Fix a pair of wrong or incomplete assignations
+	in set_attributes.
+	
+2006-02-28  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* serial.h: New file with serial port constants.
+	* serial.c: Use the constants in serial.h instead of magic numbers.
+	
 2006-01-03  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* sys-time.c: lutimes(2) only exists on some BSDs.  There's a configure

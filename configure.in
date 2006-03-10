@@ -81,6 +81,7 @@ case "$host" in
 		CPPFLAGS="$CPPFLAGS -D_REENTRANT"
 		libmono_cflags="-D_REENTRANT"
 		LDFLAGS="$LDFLAGS -pthread"
+		CPPFLAGS="$CPPFLAGS -DPLATFORM_BSD"
 		libmono_ldflags="-pthread"
 		need_link_unlink=yes
 		libdl=
@@ -104,6 +105,7 @@ case "$host" in
 			LDFLAGS="$LDFLAGS $PTHREAD_LIBS"
 			libmono_ldflags="$PTHREAD_LIBS"
 		fi
+		CPPFLAGS="$CPPFLAGS -DPLATFORM_BSD -DPLATFORM_BSD4"
 		need_link_unlink=yes
 		AC_DEFINE(PTHREAD_POINTER_ID)
 		libdl=
@@ -128,6 +130,7 @@ case "$host" in
 			LDFLAGS="$LDFLAGS $PTHREAD_LIBS"
 			libmono_ldflags="$PTHREAD_LIBS"
 		fi
+		CPPFLAGS="$CPPFLAGS -DPLATFORM_BSD -DPLATFORM_BSD5"
 		need_link_unlink=yes
 		AC_DEFINE(PTHREAD_POINTER_ID)
 		libdl=
@@ -154,6 +157,7 @@ case "$host" in
 			LDFLAGS="$LDFLAGS $PTHREAD_LIBS"
 			libmono_ldflags="$PTHREAD_LIBS"
 		fi
+		CPPFLAGS="$CPPFLAGS -DPLATFORM_BSD -DPLATFORM_BSD6"
 		need_link_unlink=yes
 		AC_DEFINE(PTHREAD_POINTER_ID)
 		libdl=
@@ -493,15 +497,21 @@ if test "x$with_xen_opt" = "xyes"; then
 	])
 fi
 
+DISABLED_FEATURES=none
+
 AC_ARG_ENABLE(minimal, [  --enable-minimal=LIST      drop support for LIST subsystems.
-  LIST is a comma-separated list from: aot, profiler, decimal, pinvoke, debug, reflection_emit.],
+  LIST is a comma-separated list from: aot, profiler, decimal, pinvoke, debug,
+  reflection_emit, large_code, logging, com, ssa, generics.],
 [
 	for feature in `echo "$enable_minimal" | sed -e "s/,/ /g"`; do
 		eval "mono_feature_disable_$feature='yes'"
 		AC_MSG_NOTICE([Disabled support for feature: $feature])
 	done
+	DISABLED_FEATURES=$enable_minimal
 	disabled="Disabled:    $enable_minimal"
 ],[])
+
+AC_DEFINE_UNQUOTED(DISABLED_FEATURES, "$DISABLED_FEATURES", [String of disabled features])
 
 if test "x$mono_feature_disable_aot" = "xyes"; then
 	AC_DEFINE(DISABLE_AOT, 1, [Disable AOT support])
@@ -526,6 +536,37 @@ fi
 if test "x$mono_feature_disable_reflection_emit" = "xyes"; then
 	AC_DEFINE(DISABLE_REFLECTION_EMIT, 1, [Disable reflection emit support])
 fi
+
+if test "x$mono_feature_disable_large_code" = "xyes"; then
+	AC_DEFINE(DISABLE_LARGE_CODE, 1, [Disable support for huge assemblies])
+fi
+
+if test "x$mono_feature_disable_logging" = "xyes"; then
+	AC_DEFINE(DISABLE_LOGGING, 1, [Disable support debug logging])
+fi
+
+if test "x$mono_feature_disable_com" = "xyes"; then
+	AC_DEFINE(DISABLE_COM, 1, [Disable COM support])
+fi
+
+if test "x$mono_feature_disable_ssa" = "xyes"; then
+	AC_DEFINE(DISABLE_SSA, 1, [Disable advanced SSA JIT optimizations])
+fi
+
+if test "x$mono_feature_disable_generics" = "xyes"; then
+	AC_DEFINE(DISABLE_GENERICS, 1, [Disable generics support])
+fi
+
+AC_MSG_CHECKING(for visibility __attribute__)
+AC_TRY_COMPILE([], [
+   void __attribute__ ((visibility ("hidden"))) doit (void) {}
+   void main () { doit (); }
+], [
+   AC_DEFINE(HAVE_VISIBILITY_HIDDEN, 1, [Support for the visibility ("hidden") attribute])
+   AC_MSG_RESULT(yes)
+], [
+   AC_MSG_RESULT(no)
+])
 
 LIBGC_CFLAGS=
 LIBGC_LIBS=
@@ -1784,7 +1825,7 @@ AC_CONFIG_FILES([runtime/semdel-wrapper],[chmod +x runtime/semdel-wrapper])
 AC_CONFIG_COMMANDS([runtime/etc/mono/1.0/machine.config],
 [   depth=../../../..
     case $srcdir in
-    [\\/$]* | ?:[\\/]* ) reldir=$srcdir ;;
+    [[\\/$]]* | ?:[[\\/]]* ) reldir=$srcdir ;;
     .) reldir=$depth ;;
     *) reldir=$depth/$srcdir ;;
     esac
@@ -1798,7 +1839,7 @@ AC_CONFIG_COMMANDS([runtime/etc/mono/1.0/machine.config],
 AC_CONFIG_COMMANDS([runtime/etc/mono/2.0/machine.config],
 [   depth=../../../..
     case $srcdir in
-    [\\/$]* | ?:[\\/]* ) reldir=$srcdir ;;
+    [[\\/$]]* | ?:[[\\/]]* ) reldir=$srcdir ;;
     .) reldir=$depth ;;
     *) reldir=$depth/$srcdir ;;
     esac
@@ -1826,8 +1867,6 @@ mono/dis/Makefile
 mono/cil/Makefile
 mono/arch/Makefile
 mono/os/Makefile
-mono/os/win32/Makefile
-mono/os/unix/Makefile
 mono/arch/x86/Makefile
 mono/arch/amd64/Makefile
 mono/arch/hppa/Makefile

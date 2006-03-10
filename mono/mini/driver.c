@@ -38,6 +38,7 @@
 #include <mono/metadata/mono-debug.h>
 #include <mono/metadata/security-manager.h>
 #include <mono/os/gc_wrapper.h>
+#include "mono/utils/mono-counters.h"
 
 #include "mini.h"
 #include "jit.h"
@@ -616,7 +617,7 @@ mini_trace_usage (void)
 		 "    disabled             Don't print any output until toggled via SIGUSR2\n");
 }
 
-static const char *info = ""
+static const char info[] =
 #ifdef HAVE_KW_THREAD
 	"\tTLS:           __thread\n"
 #else
@@ -636,10 +637,11 @@ static const char *info = ""
 	"\tGC:            none\n"
 #endif /* HAVE_BOEHM_GC */
 #ifdef MONO_ARCH_SIGSEGV_ON_ALTSTACK
-    "\tSIGSEGV      : altstack\n"
+    "\tSIGSEGV:       altstack\n"
 #else
-    "\tSIGSEGV      : normal\n"
+    "\tSIGSEGV:       normal\n"
 #endif
+	"\tDisabled:      " DISABLED_FEATURES "\n"
 	"";
 
 int
@@ -762,6 +764,7 @@ mono_main (int argc, char* argv[])
 		} else if (strcmp (argv [i], "--print-vtable") == 0) {
 			mono_print_vtable = TRUE;
 		} else if (strcmp (argv [i], "--stats") == 0) {
+			mono_counters_enable (-1);
 			mono_stats.enabled = TRUE;
 			mono_jit_stats.enabled = TRUE;
 #ifndef DISABLE_AOT

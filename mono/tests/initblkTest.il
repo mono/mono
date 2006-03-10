@@ -38,14 +38,31 @@ ldind.u1
 
 //compare
 ldc.i4.7
-beq PASS
+bne.un FAIL
+
+//initblk
+ldloc.0		//addr
+ldc.i4.0	//value
+ldc.i4.s 10	//size
+initblk
+
+//load number from offset 3
+ldloc.0
+ldc.i4.3
+add	
+ldind.u1
+
+//compare
+ldc.i4.0
+bne.un FAIL
+
+PASS:	ldstr "PASS"
+	call void [mscorlib]System.Console::WriteLine(string)
+	br END
 
 FAIL:	ldstr "FAIL"
 	call void [mscorlib]System.Console::WriteLine(string)
 	br END
-
-PASS:	ldstr "PASS"
-	call void [mscorlib]System.Console::WriteLine(string)
 
 END:	ret
   }

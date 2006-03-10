@@ -5689,7 +5689,7 @@ mono_param_get_objects (MonoDomain *domain, MonoMethod *method)
 		if (mspecs [i + 1])
 			param->MarshalAsImpl = (MonoObject*)mono_reflection_marshal_from_marshal_spec (domain, method->klass, mspecs [i + 1]);
 		
-		mono_array_set (res, gpointer, i, param);
+		mono_array_setref (res, i, param);
 	}
 	g_free (names);
 	g_free (blobs);
@@ -5777,7 +5777,7 @@ mono_method_body_get_object (MonoDomain *domain, MonoMethod *method)
 		info->local_type = mono_type_get_object (domain, header->locals [i]);
 		info->is_pinned = header->locals [i]->pinned;
 		info->local_index = i;
-		mono_array_set (ret->locals, MonoReflectionLocalVariableInfo*, i, info);
+		mono_array_setref (ret->locals, i, info);
 	}
 
 	/* Exceptions */
@@ -5796,7 +5796,7 @@ mono_method_body_get_object (MonoDomain *domain, MonoMethod *method)
 		else if (clause->data.catch_class)
 			info->catch_type = mono_type_get_object (mono_domain_get (), &clause->data.catch_class->byval_arg);
 
-		mono_array_set (ret->clauses, MonoReflectionExceptionHandlingClause*, i, info);
+		mono_array_setref (ret->clauses, i, info);
 	}
 
 	CACHE_OBJECT (MonoReflectionMethodBody *, method, ret, NULL);
@@ -6704,7 +6704,7 @@ handle_type:
 			case MONO_TYPE_STRING:
 				for (i = 0; i < alen; i++) {
 					MonoObject *item = load_cattr_value (image, &t->data.klass->byval_arg, p, &p);
-					mono_array_set (arr, gpointer, i, item);
+					mono_array_setref (arr, i, item);
 				}
 				break;
 			default:
@@ -6977,7 +6977,7 @@ create_custom_attr_data (MonoImage *image, MonoMethod *method, const char *data,
 		obj = type_is_reference (mono_method_signature (method)->params [i]) ? 
 			val : mono_value_box (domain, mono_class_from_mono_type (mono_method_signature (method)->params [i]), val);
 		typedarg = create_cattr_typed_arg (mono_method_signature (method)->params [i], obj);
-		mono_array_set (typedargs, void*, i, typedarg);
+		mono_array_setref (typedargs, i, typedarg);
 
 		if (!type_is_reference (mono_method_signature (method)->params [i]))
 			g_free (val);
@@ -7022,7 +7022,7 @@ create_custom_attr_data (MonoImage *image, MonoMethod *method, const char *data,
 			obj = type_is_reference (field->type) ? val : mono_value_box (domain, mono_class_from_mono_type (field->type), val);
 			typedarg = create_cattr_typed_arg (field->type, obj);
 			namedarg = create_cattr_named_arg (minfo, typedarg);
-			mono_array_set (namedargs, void*, j, namedarg);
+			mono_array_setref (namedargs, j, namedarg);
 			if (!type_is_reference (field->type))
 				g_free (val);
 		} else if (named_type == 0x54) {
@@ -7038,7 +7038,7 @@ create_custom_attr_data (MonoImage *image, MonoMethod *method, const char *data,
 			obj = type_is_reference (prop_type) ? val : mono_value_box (domain, mono_class_from_mono_type (prop_type), val);
 			typedarg = create_cattr_typed_arg (prop_type, obj);
 			namedarg = create_cattr_named_arg (minfo, typedarg);
-			mono_array_set (namedargs, void*, j, namedarg);
+			mono_array_setref (namedargs, j, namedarg);
 			if (!type_is_reference (prop_type))
 				g_free (val);
 		}
@@ -7064,7 +7064,7 @@ mono_custom_attrs_construct (MonoCustomAttrInfo *cinfo)
 	result = mono_array_new (mono_domain_get (), klass, cinfo->num_attrs);
 	for (i = 0; i < cinfo->num_attrs; ++i) {
 		attr = create_custom_attr (cinfo->image, cinfo->attrs [i].ctor, cinfo->attrs [i].data, cinfo->attrs [i].data_size);
-		mono_array_set (result, gpointer, i, attr);
+		mono_array_setref (result, i, attr);
 	}
 	return result;
 }
@@ -7089,7 +7089,7 @@ mono_custom_attrs_construct_by_type (MonoCustomAttrInfo *cinfo, MonoClass *attr_
 	for (i = 0; i < cinfo->num_attrs; ++i) {
 		if (mono_class_is_assignable_from (attr_klass, cinfo->attrs [i].ctor->klass)) {
 			attr = create_custom_attr (cinfo->image, cinfo->attrs [i].ctor, cinfo->attrs [i].data, cinfo->attrs [i].data_size);
-			mono_array_set (result, gpointer, n, attr);
+			mono_array_setref (result, n, attr);
 			n ++;
 		}
 	}
@@ -7110,7 +7110,7 @@ mono_custom_attrs_data_construct (MonoCustomAttrInfo *cinfo)
 	result = mono_array_new (mono_domain_get (), klass, cinfo->num_attrs);
 	for (i = 0; i < cinfo->num_attrs; ++i) {
 		attr = create_custom_attr_data (cinfo->image, cinfo->attrs [i].ctor, cinfo->attrs [i].data, cinfo->attrs [i].data_size);
-		mono_array_set (result, gpointer, i, attr);
+		mono_array_setref (result, i, attr);
 	}
 	return result;
 }
@@ -8514,9 +8514,8 @@ fieldbuilder_to_mono_class_field (MonoClass *klass, MonoReflectionFieldBuilder* 
 	return field;
 }
 
-static MonoType*
-do_mono_reflection_bind_generic_parameters (MonoReflectionType *type, int type_argc, MonoType **types,
-					    MonoType *parent)
+MonoType*
+mono_reflection_bind_generic_parameters (MonoReflectionType *type, int type_argc, MonoType **types)
 {
 	MonoClass *klass;
 	MonoReflectionTypeBuilder *tb = NULL;
@@ -8648,63 +8647,7 @@ do_mono_reflection_bind_generic_parameters (MonoReflectionType *type, int type_a
 	gclass->context->container = gclass->container_class->generic_container;
 	gclass->context->gclass = gclass;
 
-	if (is_dynamic)
-		dgclass->parent = parent;
-
 	mono_loader_unlock ();
-
-	return geninst;
-}
-
-MonoType*
-mono_reflection_bind_generic_parameters (MonoReflectionType *type, int type_argc, MonoType **types)
-{
-	MonoClass *klass, *pklass = NULL;
-	MonoReflectionType *parent = NULL;
-	MonoType *the_parent = NULL, *geninst;
-	MonoReflectionTypeBuilder *tb = NULL;
-	MonoGenericClass *gclass;
-	MonoDomain *domain;
-
-	domain = mono_object_domain (type);
-	klass = mono_class_from_mono_type (type->type);
-
-	if (!strcmp (((MonoObject *) type)->vtable->klass->name, "TypeBuilder")) {
-		tb = (MonoReflectionTypeBuilder *) type;
-
-		if (tb->parent) {
-			parent = tb->parent;
-			pklass = mono_class_from_mono_type (parent->type);
-		}
-	} else if (klass->wastypebuilder) {
-		tb = (MonoReflectionTypeBuilder *) klass->reflection_info;
-		if (tb->parent) {
-			parent = tb->parent;
-			pklass = mono_class_from_mono_type (parent->type);
-		}
-	} else {
-		pklass = klass->parent;
-		if (pklass)
-			parent = mono_type_get_object (domain, &pklass->byval_arg);
-		else if (klass->generic_class && klass->generic_class->is_dynamic) {
-			MonoDynamicGenericClass *dgclass;
-
-			dgclass = (MonoDynamicGenericClass *) klass->generic_class;
-			if (dgclass->parent) {
-				parent = mono_type_get_object (domain, dgclass->parent);
-				pklass = mono_class_from_mono_type (dgclass->parent);
-			}
-		}
-	}
-
-	if (pklass && pklass->generic_class)
-		the_parent = mono_reflection_bind_generic_parameters (parent, type_argc, types);
-
-	geninst = do_mono_reflection_bind_generic_parameters (type, type_argc, types, the_parent);
-	if (!geninst)
-		return NULL;
-
-	gclass = geninst->data.generic_class;
 
 	return geninst;
 }
@@ -8899,7 +8842,7 @@ mono_reflection_bind_generic_method_parameters (MonoReflectionMethod *rmethod, M
 	if (method->is_inflated)
 		method = ((MonoMethodInflated *) method)->declaring;
 
-	inflated = mono_class_inflate_generic_method (method, NULL, context);
+	inflated = mono_class_inflate_generic_method (method, context);
 	g_hash_table_insert (container->method_hash, gmethod, inflated);
 
 	return mono_method_get_object (mono_object_domain (rmethod), inflated, NULL);
@@ -8944,7 +8887,7 @@ inflate_mono_method (MonoReflectionGenericClass *type, MonoMethod *method, MonoO
 		context->gmethod = gmethod;
 	}
 
-	return mono_class_inflate_generic_method (method, klass, context);
+	return mono_class_inflate_generic_method (method, context);
 }
 
 static MonoMethod *
@@ -8976,7 +8919,7 @@ mono_reflection_generic_class_initialize (MonoReflectionGenericClass *type, Mono
 {
 	MonoGenericClass *gclass;
 	MonoDynamicGenericClass *dgclass;
-	MonoClass *klass, *gklass, *pklass;
+	MonoClass *klass, *gklass;
 	int i;
 
 	MONO_ARCH_SAVE_REGS;
@@ -8992,11 +8935,6 @@ mono_reflection_generic_class_initialize (MonoReflectionGenericClass *type, Mono
 
 	gklass = gclass->container_class;
 	mono_class_init (gklass);
-
-	if (dgclass->parent)
-		pklass = mono_class_from_mono_type (dgclass->parent);
-	else
-		pklass = gklass->parent;
 
 	dgclass->count_methods = methods ? mono_array_length (methods) : 0;
 	dgclass->count_ctors = ctors ? mono_array_length (ctors) : 0;

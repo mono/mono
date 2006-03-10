@@ -91,7 +91,6 @@ int mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *st
 		   MonoInst *return_var, GList *dont_inline, MonoInst **inline_args, 
 		   guint inline_offset, gboolean is_virtual_call);
 
-extern guint8 mono_burg_arity [];
 /* helper methods signature */
 MonoMethodSignature *helper_sig_class_init_trampoline;
 MonoMethodSignature *helper_sig_domain_get;
@@ -3225,6 +3224,7 @@ handle_isinst (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned char 
 
 	EMIT_NEW_UNALU (cfg, ins, OP_MOVE, res_reg, obj_reg);
 	ins->type = STACK_OBJ;
+	ins->klass = klass;
 
 	MONO_START_BB (cfg, end_bb);
 
@@ -6898,6 +6898,8 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			klass = mini_get_class (method, token, generic_context);
 			if (!klass)
 				goto load_error;
+			if (sp [0]->type != STACK_OBJ)
+				goto unverified;
 
 			if (klass->marshalbyref || klass->flags & TYPE_ATTRIBUTE_INTERFACE) {
 				
@@ -6935,6 +6937,8 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			klass = mini_get_class (method, token, generic_context);
 			if (!klass)
 				goto load_error;
+			if (sp [0]->type != STACK_OBJ)
+				goto unverified;
 
 			if (klass->marshalbyref || klass->flags & TYPE_ATTRIBUTE_INTERFACE) {
 			
@@ -8662,6 +8666,18 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 
 	g_slist_free (class_inits);
 	dont_inline = g_list_remove (dont_inline, method);
+
+	if (inline_costs < 0) {
+		char *mname;
+
+		/* Method is too large */
+		mname = mono_method_full_name (method, TRUE);
+		cfg->exception_type = MONO_EXCEPTION_INVALID_PROGRAM;
+		cfg->exception_message = g_strdup_printf ("Method %s is too complex.", mname);
+		g_free (mname);
+		return -1;
+	}
+
 	return inline_costs;
 
  inline_failure:
@@ -9523,7 +9539,9 @@ mono_spill_global_vars (MonoCompile *cfg)
  * - figure out how to handle decomposed branches during optimizations, ie.
  *   compare+branch, op_jump_table+op_br etc.
  * - run a global->local phase after SSA ?
- * - LAST MERGE: 57242.
+ * - apply the HAVE_ARRAY_ELEM_INIT optimization to ins_info
+ * - merge GetGenericValueImpl optimization
+ * - LAST MERGE: 57786.
  */
 
 /*

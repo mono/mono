@@ -6,7 +6,7 @@
  *	Gonzalo Paniagua Javier (gonzalo@ximian.com)
  *
  * (C) 2001,2002,2003 Ximian, Inc.
- * Copyright (c) 2004,2005 Novell, Inc. (http://www.novell.com)
+ * Copyright (c) 2004,2005,2006 Novell, Inc. (http://www.novell.com)
  */
 
 #include <config.h>
@@ -337,7 +337,7 @@ get_file_attributes (const char *filename)
 	if (result == -1)
 		return FALSE;
 
-	if ((buf.st_mode & S_IFLNK) != 0) {
+	if (S_ISLNK (buf.st_mode)) {
 		result = stat (filename, &linkbuf);
 		if (result != -1) {
 			buf = linkbuf;
@@ -476,7 +476,7 @@ ves_icall_System_IO_MonoIO_GetFileSystemEntries (MonoString *_path, MonoString *
 #else
 		utf16 = mono_unicode_from_external (namelist [i], &nbytes);
 		if (utf16 == NULL) {
-			g_message ("Bad encoding for '%s'\nConsider using MONO_EXTERNAL_ENCODING\n",
+			g_message ("Bad encoding for '%s'\nConsider using MONO_EXTERNAL_ENCODINGS\n",
 				namelist [i]);
 			removed++;
 			continue;
@@ -484,7 +484,7 @@ ves_icall_System_IO_MonoIO_GetFileSystemEntries (MonoString *_path, MonoString *
 		str_name = mono_string_from_utf16 (utf16);
 		g_free (utf16);
 #endif
-		mono_array_set (result, MonoString *, i - removed, str_name);
+		mono_array_setref (result, i - removed, str_name);
 	}
 
 	if (removed > 0) {
@@ -493,7 +493,7 @@ ves_icall_System_IO_MonoIO_GetFileSystemEntries (MonoString *_path, MonoString *
 		for (i = 0; i < (nnames - removed); i++) {
 			MonoString *str;
 			str = mono_array_get (result, MonoString *, i);
-			mono_array_set (shrinked, MonoString *,i, str);
+			mono_array_setref (shrinked, i, str);
 		}
 		result = shrinked;
 	}

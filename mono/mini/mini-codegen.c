@@ -19,7 +19,7 @@
 #include "inssel.h"
 #include "mini-arch.h"
 
-#define DEBUG(a) if (G_UNLIKELY (cfg->verbose_level > 1)) a
+#define DEBUG(a) MINI_DEBUG(cfg->verbose_level, 2, a;)
 
 #if defined(__x86_64__)
 const char * const amd64_desc [OP_LAST];
@@ -383,6 +383,7 @@ typedef struct {
 	regmask_t preferred_mask; /* the hreg where the register should be allocated, or 0 */
 } RegTrack;
 
+#ifndef DISABLE_LOGGING
 void
 mono_print_ins_index (int i, MonoInst *ins)
 {
@@ -589,6 +590,7 @@ print_regtrack (RegTrack *t, int num)
 		printf ("liveness: %s [%d - %d]\n", r, t [i].born_in, t[i].killed_in);
 	}
 }
+#endif /* DISABLE_LOGGING */
 
 typedef struct InstList InstList;
 

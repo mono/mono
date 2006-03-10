@@ -12,8 +12,6 @@
 #define NEW_IR
 #include "mini.h"
 
-extern guint8 mono_burg_arity [];
-
 #define USE_ORIGINAL_VARS
 #define CREATE_PRUNED_SSA
 

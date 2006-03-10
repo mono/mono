@@ -51,6 +51,7 @@
 #include <mono/metadata/rawbuffer.h>
 #include <mono/utils/mono-math.h>
 #include <mono/utils/mono-compiler.h>
+#include <mono/utils/mono-counters.h>
 #include <mono/os/gc_wrapper.h>
 
 #include "mini.h"
@@ -88,7 +89,6 @@ static int mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlo
 		   int locals_offset, MonoInst *return_var, GList *dont_inline, MonoInst **inline_args, 
 		   guint inline_offset, gboolean is_virtual_call);
 
-extern guint8 mono_burg_arity [];
 /* helper methods signature */
 /* FIXME: Make these static again */
 MonoMethodSignature *helper_sig_class_init_trampoline = NULL;
@@ -3344,6 +3344,27 @@ mini_get_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSigna
 	} else if (cmethod->klass == mono_defaults.thread_class) {
 		if (strcmp (cmethod->name, "get_CurrentThread") == 0 && (ins = mono_arch_get_thread_intrinsic (cfg)))
 			return ins;
+	} else if (mini_class_is_system_array (cmethod->klass) &&
+			strcmp (cmethod->name, "GetGenericValueImpl") == 0) {
+		MonoInst *sp [2];
+		MonoInst *ldelem, *store, *load;
+		MonoClass *eklass = mono_class_from_mono_type (fsig->params [1]);
+		int n;
+		n = mono_type_to_stind (&eklass->byval_arg);
+		if (n == CEE_STOBJ)
+			return NULL;
+		sp [0] = args [0];
+		sp [1] = args [1];
+		NEW_LDELEMA (cfg, ldelem, sp, eklass);
+		ldelem->flags |= MONO_INST_NORANGECHECK;
+		MONO_INST_NEW (cfg, store, n);
+		n = mono_type_to_ldind (&eklass->byval_arg);
+		MONO_INST_NEW (cfg, load, mono_type_to_ldind (&eklass->byval_arg));
+		type_to_eval_stack_type (&eklass->byval_arg, load);
+		load->inst_left = ldelem;
+		store->inst_left = args [2];
+		store->inst_right = load;
+		return store;
 	}
 
 	return mono_arch_get_inst_for_method (cfg, cmethod, fsig, args);
@@ -5363,6 +5384,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			klass = mini_get_class (method, token, generic_context);
 			if (!klass)
 				goto load_error;
+			if (sp [0]->type != STACK_OBJ)
+				goto unverified;
 
 			/* Needed by the code generated in inssel.brg */
 			mono_get_got_var (cfg);
@@ -5396,13 +5419,12 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
  				sp++;
 				bblock = ebblock;
 				inline_costs += costs;
-
-			}
-			else {
+			} else {
 				MONO_INST_NEW (cfg, ins, *ip);
 				ins->type = STACK_OBJ;
 				ins->inst_left = *sp;
 				ins->inst_newa_class = klass;
+				ins->klass = klass;
 				ins->cil_code = ip;
 				*sp++ = emit_tree (cfg, bblock, ins, ip + 5);
 				ip += 5;
@@ -5450,8 +5472,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					sp++;
 					bblock = ebblock;
 					inline_costs += costs;				
-				}
-				else {
+				} else {
 					MONO_INST_NEW (cfg, ins, CEE_CASTCLASS);
 					ins->type = STACK_OBJ;
 					ins->inst_left = *sp;
@@ -5558,6 +5579,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			klass = mini_get_class (method, token, generic_context);
 			if (!klass)
 				goto load_error;
+			if (sp [0]->type != STACK_OBJ)
+				goto unverified;
 
 			/* Needed by the code generated in inssel.brg */
 			mono_get_got_var (cfg);
@@ -5591,8 +5614,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
  				sp++;
 				bblock = ebblock;
 				inline_costs += costs;
-			}
-			else {
+			} else {
 				MONO_INST_NEW (cfg, ins, *ip);
 				ins->type = STACK_OBJ;
 				ins->inst_left = *sp;
@@ -7234,6 +7256,18 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 	g_slist_free (class_inits);
 	dont_inline = g_list_remove (dont_inline, method);
+
+	if (inline_costs < 0) {
+		char *mname;
+
+		/* Method is too large */
+		mname = mono_method_full_name (method, TRUE);
+		cfg->exception_type = MONO_EXCEPTION_INVALID_PROGRAM;
+		cfg->exception_message = g_strdup_printf ("Method %s is too complex.", mname);
+		g_free (mname);
+		return -1;
+	}
+
 	return inline_costs;
 
  inline_failure:
@@ -9225,7 +9259,7 @@ emit_state (MonoCompile *cfg, MBState *state, int goal)
 {
 	MBState *kids [10];
 	int ern = mono_burg_rule (state, goal);
-	const guint16 *nts = mono_burg_nts [ern];
+	const guint16 *nts = mono_burg_nts_data + mono_burg_nts [ern];
 	MBEmitFunc emit;
 
 	//g_print ("rule: %s\n", mono_burg_rule_string [ern]);
@@ -11982,6 +12016,7 @@ mini_cleanup (MonoDomain *domain)
 		g_hash_table_destroy (class_init_hash_addr);
 
 	print_jit_stats ();
+	mono_counters_dump (-1, stdout);
 }
 
 void

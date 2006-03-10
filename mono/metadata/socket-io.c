@@ -823,7 +823,19 @@ static MonoObject *create_object_from_sockaddr(struct sockaddr *saddr,
 	field=mono_class_get_field_from_name(sockaddr_class, "data");
 
 	/* Make sure there is space for the family and size bytes */
-	data=mono_array_new(domain, mono_get_byte_class (), sa_size+2);
+#ifdef HAVE_SYS_UN_H
+	if (saddr->sa_family == AF_UNIX) {
+		/* sa_len includes the entire sockaddr size, so we don't need the
+		 * N bytes (sizeof (unsigned short)) of the family. */
+		data=mono_array_new(domain, mono_get_byte_class (), sa_size - 2);
+	} else
+#endif
+	{
+		/* May be the +2 here is too conservative, as sa_len returns
+		 * the length of the entire sockaddr_in/in6, including
+		 * sizeof (unsigned short) of the family */
+		data=mono_array_new(domain, mono_get_byte_class (), sa_size+2);
+	}
 
 	/* The data buffer is laid out as follows:
 	 * bytes 0 and 1 are the address family
@@ -1484,11 +1496,11 @@ void ves_icall_System_Net_Sockets_Socket_Select_internal(MonoArray **sockets, gi
 
 		ret--;
 		if (mode == 0 && (pfd->revents & (MONO_POLLIN | POLL_ERRORS)) != 0) {
-			mono_array_set (socks, MonoObject *, idx++, obj);
+			mono_array_setref (socks, idx++, obj);
 		} else if (mode == 1 && (pfd->revents & (MONO_POLLOUT | POLL_ERRORS)) != 0) {
-			mono_array_set (socks, MonoObject *, idx++, obj);
+			mono_array_setref (socks, idx++, obj);
 		} else if ((pfd->revents & POLL_ERRORS) != 0) {
-			mono_array_set (socks, MonoObject *, idx++, obj);
+			mono_array_setref (socks, idx++, obj);
 		}
 	}
 
@@ -2067,7 +2079,7 @@ static gboolean hostent_to_IPHostEntry(struct hostent *he, MonoString **h_name,
 		MonoString *alias;
 		
 		alias=mono_string_new(domain, he->h_aliases[i]);
-		mono_array_set(*h_aliases, MonoString *, i, alias);
+		mono_array_setref (*h_aliases, i, alias);
 		i++;
 	}
 
@@ -2087,7 +2099,7 @@ static gboolean hostent_to_IPHostEntry(struct hostent *he, MonoString **h_name,
 					 (unsigned char) ptr [3]);
 				
 				addr_string = mono_string_new (domain, addr);
-				mono_array_set (*h_addr_list, MonoString *, i, addr_string);
+				mono_array_setref (*h_addr_list, i, addr_string);
 				i++;
 			}
 
@@ -2114,7 +2126,7 @@ static gboolean hostent_to_IPHostEntry(struct hostent *he, MonoString **h_name,
 				 (unsigned char)he->h_addr_list[i][3]);
 			
 			addr_string=mono_string_new(domain, addr);
-			mono_array_set(*h_addr_list, MonoString *, i, addr_string);
+			mono_array_setref (*h_addr_list, i, addr_string);
 			i++;
 		}
 	}
@@ -2172,7 +2184,7 @@ static gboolean hostent_to_IPHostEntry2(struct hostent *he1,struct hostent *he2,
 			MonoString *alias;
 
 			alias=mono_string_new (domain, he1->h_aliases[i]);
-			mono_array_set (*h_aliases, MonoString *, i, alias);
+			mono_array_setref (*h_aliases, i, alias);
 			i++;
 		}
 	} else if (family_hint == PF_UNSPEC || family_hint == PF_INET6) {
@@ -2190,7 +2202,7 @@ static gboolean hostent_to_IPHostEntry2(struct hostent *he1,struct hostent *he2,
 			MonoString *alias;
 
 			alias=mono_string_new (domain, he2->h_aliases[i]);
-			mono_array_set (*h_aliases, MonoString *, i, alias);
+			mono_array_setref (*h_aliases, i, alias);
 			i++;
 		}
 	}
@@ -2244,7 +2256,7 @@ static gboolean hostent_to_IPHostEntry2(struct hostent *he1,struct hostent *he2,
 
 					if (ret != NULL) {
 						addr_string = mono_string_new (domain, addr);
-						mono_array_set (*h_addr_list, MonoString *, host_index, addr_string);
+						mono_array_setref (*h_addr_list, host_index, addr_string);
 						host_index++;
 					}
 				}
@@ -2261,7 +2273,7 @@ static gboolean hostent_to_IPHostEntry2(struct hostent *he1,struct hostent *he2,
 
 					if (ret != NULL) {
 						addr_string = mono_string_new (domain, addr);
-						mono_array_set (*h_addr_list, MonoString *, host_index, addr_string);
+						mono_array_setref (*h_addr_list, host_index, addr_string);
 						host_index++;
 					}
 				}
@@ -2290,7 +2302,7 @@ static gboolean hostent_to_IPHostEntry2(struct hostent *he1,struct hostent *he2,
 
 			if (ret != NULL) {
 				addr_string = mono_string_new (domain, addr);
-				mono_array_set (*h_addr_list, MonoString *, host_index, addr_string);
+				mono_array_setref (*h_addr_list, host_index, addr_string);
 				i++;
 				host_index++;
 			}
@@ -2310,7 +2322,7 @@ static gboolean hostent_to_IPHostEntry2(struct hostent *he1,struct hostent *he2,
 
 			if (ret != NULL) {
 				addr_string=mono_string_new (domain, addr);
-				mono_array_set (*h_addr_list, MonoString *, host_index, addr_string);
+				mono_array_setref (*h_addr_list, host_index, addr_string);
 				i++;
 				host_index++;
 			}
@@ -2353,7 +2365,7 @@ addrinfo_to_IPHostEntry(struct addrinfo *info, MonoString **h_name,
 				for (i = 0; i < nlocal_in; i++) {
 					inet_ntop (AF_INET, &local_in [i], addr, sizeof (addr));
 					addr_string = mono_string_new (domain, addr);
-					mono_array_set (*h_addr_list, MonoString *, addr_index, addr_string);
+					mono_array_setref (*h_addr_list, addr_index, addr_string);
 					addr_index++;
 				}
 			}
@@ -2368,7 +2380,7 @@ addrinfo_to_IPHostEntry(struct addrinfo *info, MonoString **h_name,
 					ret = inet_ntop (AF_INET6, &local_in6 [i], addr, sizeof (addr));
 					if (ret != NULL) {
 						addr_string = mono_string_new (domain, addr);
-						mono_array_set (*h_addr_list, MonoString *, addr_index, addr_string);
+						mono_array_setref (*h_addr_list, addr_index, addr_string);
 						addr_index++;
 					}
 				}
@@ -2416,7 +2428,7 @@ addrinfo_to_IPHostEntry(struct addrinfo *info, MonoString **h_name,
 			addr_string=mono_string_new(domain, "");
 		}
 
-		mono_array_set(*h_addr_list, MonoString *, addr_index, addr_string);
+		mono_array_setref (*h_addr_list, addr_index, addr_string);
 
 		if(!i && ai->ai_canonname != NULL) {
 			*h_name=mono_string_new(domain, ai->ai_canonname);

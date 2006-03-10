@@ -25,6 +25,7 @@
 #include <mono/metadata/mono-debug.h>
 
 #include "mini.h"
+#include "trace.h"
 
 #ifdef MONO_ARCH_SIGSEGV_ON_ALTSTACK
 #include <unistd.h>
@@ -203,7 +204,7 @@ ves_icall_get_trace (MonoException *exc, gint32 skip, MonoBoolean need_file_info
 		ji = mono_jit_info_table_find (domain, ip);
 		if (ji == NULL) {
 			/* Unmanaged frame */
-			mono_array_set (res, gpointer, i, sf);
+			mono_array_setref (res, i, sf);
 			continue;
 		}
 
@@ -234,7 +235,7 @@ ves_icall_get_trace (MonoException *exc, gint32 skip, MonoBoolean need_file_info
 			g_free (filename);
 		}
 
-		mono_array_set (res, gpointer, i, sf);
+		mono_array_setref (res, i, sf);
 	}
 
 	return res;
@@ -466,7 +467,7 @@ grow_array (MonoSecurityStack *stack)
 	int i;
 	for (i=0; i < stack->maximum; i++) {
 		gpointer frame = mono_array_get (stack->stack, gpointer, i);
-		mono_array_set (newstack, gpointer, i, frame);
+		mono_array_setref (newstack, i, frame);
 	}
 	stack->maximum = newsize;
 	stack->stack = newstack;
@@ -494,7 +495,7 @@ callback_get_stack_frames_security_info (MonoDomain *domain, MonoContext *ctx, M
 	if (ss->count == ss->maximum)
 		grow_array (ss);
 	
-	mono_array_set (ss->stack, gpointer, ss->count++, mono_declsec_create_frame (domain, ji));
+	mono_array_setref (ss->stack, ss->count++, mono_declsec_create_frame (domain, ji));
 
 	/* continue down the stack */
 	return FALSE;
@@ -632,7 +633,7 @@ mono_handle_exception_internal (MonoContext *ctx, gpointer obj, gpointer origina
 
 	if (!test_only) {
 		MonoContext ctx_cp = *ctx;
-		if (mono_jit_trace_calls != NULL)
+		if (mono_trace_is_enabled ())
 			g_print ("EXCEPTION handling: %s\n", mono_object_class (obj)->name);
 		if (!mono_handle_exception_internal (&ctx_cp, obj, original_ip, TRUE, &first_filter_idx)) {
 			if (mono_break_on_exc)
@@ -752,7 +753,7 @@ mono_handle_exception_internal (MonoContext *ctx, gpointer obj, gpointer origina
 									mono_gc_enable ();
 								return TRUE;
 							}
-							if (mono_jit_trace_calls != NULL && mono_trace_eval (ji->method))
+							if (mono_trace_is_enabled () && mono_trace_eval (ji->method))
 								g_print ("EXCEPTION: catch found at clause %d of %s\n", i, mono_method_full_name (ji->method, TRUE));
 							mono_debugger_handle_exception (ei->handler_start, MONO_CONTEXT_GET_SP (ctx), obj);
 							MONO_CONTEXT_SET_IP (ctx, ei->handler_start);
@@ -765,7 +766,7 @@ mono_handle_exception_internal (MonoContext *ctx, gpointer obj, gpointer origina
 						if (!test_only && ei->try_start <= MONO_CONTEXT_GET_IP (ctx) && 
 						    MONO_CONTEXT_GET_IP (ctx) < ei->try_end &&
 						    (ei->flags & MONO_EXCEPTION_CLAUSE_FINALLY)) {
-							if (mono_jit_trace_calls != NULL && mono_trace_eval (ji->method))
+							if (mono_trace_is_enabled () && mono_trace_eval (ji->method))
 								g_print ("EXCEPTION: finally clause %d of %s\n", i, mono_method_full_name (ji->method, TRUE));
 							mono_debugger_handle_exception (ei->handler_start, MONO_CONTEXT_GET_SP (ctx), obj);
 							call_filter (ctx, ei->handler_start);

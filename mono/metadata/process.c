@@ -630,8 +630,7 @@ MonoArray *ves_icall_System_Diagnostics_Process_GetModules_internal (MonoObject 
 			    modules_list->len);
 	
 	for(i=0; i<modules_list->len; i++) {
-		mono_array_set (arr, MonoObject *, i,
-				g_ptr_array_index (modules_list, i));
+		mono_array_setref (arr, i, g_ptr_array_index (modules_list, i));
 	}
 	
 	g_ptr_array_free (modules_list, FALSE);
@@ -725,19 +724,23 @@ MonoBoolean ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal (MonoPr
 
 	shellex.cbSize = sizeof(SHELLEXECUTEINFO);
 	shellex.fMask = SEE_MASK_FLAG_DDEWAIT | SEE_MASK_NOCLOSEPROCESS | SEE_MASK_UNICODE;
-	shellex.lpFile = mono_string_chars (proc_start_info->filename);
-	shellex.lpParameters = mono_string_chars (proc_start_info->arguments);
 	shellex.nShow = SW_SHOWNORMAL;
+	
+	if (proc_start_info->filename != NULL) {
+		shellex.lpFile = mono_string_chars (proc_start_info->filename);
+	}
 
-	if(mono_string_length (proc_start_info->verb)==0) {
-		shellex.lpVerb = NULL;
-	} else {
+	if (proc_start_info->arguments != NULL) {
+		shellex.lpParameters = mono_string_chars (proc_start_info->arguments);
+	}
+
+	if (proc_start_info->verb != NULL &&
+	    mono_string_length (proc_start_info->verb) != 0) {
 		shellex.lpVerb = mono_string_chars (proc_start_info->verb);
 	}
 
-	if(mono_string_length (proc_start_info->working_directory)==0) {
-		shellex.lpDirectory = NULL;
-	} else {
+	if (proc_start_info->working_directory != NULL &&
+	    mono_string_length (proc_start_info->working_directory) != 0) {
 		shellex.lpDirectory = mono_string_chars (proc_start_info->working_directory);
 	}
 

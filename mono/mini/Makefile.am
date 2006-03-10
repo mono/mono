@@ -54,8 +54,6 @@ export HOST_CC
 PLATFORM_CFLAGS = -O
 endif
 
-PLATFORM_LIB = ../os/libmonoos.la
-
 # hack for automake to have the same source file in a library and a bin
 genmdesc_CFLAGS = $(AM_CFLAGS)
 
@@ -83,7 +81,7 @@ noinst_PROGRAMS = genmdesc
 endif
 
 mono_SOURCES = \
-	$(common_sources) $(amd64_sources) $(mono_debugger_sources) main.c inssel.c inssel.h
+	$(common_sources) $(x86_sources) $(mono_debugger_sources) main.c inssel.c inssel.h
 
 if STATIC_MONO
 # Link libmono into mono statically
@@ -95,7 +93,6 @@ endif
 
 mono_LDADD = \
 	$(static_libs) \
-	$(PLATFORM_LIB)		\
 	$(GLIB_LIBS)		\
 	$(GMODULE_LIBS) -lm	\
 	$(ICU_LIBS)
@@ -111,7 +108,6 @@ genmdesc_SOURCES = \
 # Don't link this against libmonoruntime to speed up rebuilds
 genmdesc_LDADD = \
 	$(monodir)/mono/utils/libmonoutils.la $(monodir)/mono/metadata/opcodes.lo -lm	\
-	$(PLATFORM_LIB)		\
 	$(GLIB_LIBS)		\
 	$(GMODULE_LIBS)
 
@@ -315,7 +311,7 @@ nodist_libmono_la_SOURCES = inssel.c inssel.h
 libmono_static_la_SOURCES = $(libmono_la_SOURCES)
 nodist_libmono_static_la_SOURCES = $(nodist_libmono_la_SOURCES)
 libmono_static_la_LDFLAGS = -static
-libmono_static_la_LIBADD = $(static_libs) $(PLATFORM_LIB)
+libmono_static_la_LIBADD = $(static_libs)
 
 BURGSRC= $(common_BURGSRC) $(arch_BURGSRC)
 
@@ -324,8 +320,7 @@ libmonoincludedir = $(includedir)/mono/jit
 libmonoinclude_HEADERS = jit.h
 
 libmono_la_LIBADD = \
-	$(libs) \
-	$(PLATFORM_LIB)
+	$(libs)
 
 generics.exe: generics.cs TestDriver.dll
 	$(GMCS) -out:$@ $< -r:TestDriver.dll 

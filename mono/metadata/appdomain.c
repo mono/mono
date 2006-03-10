@@ -30,7 +30,7 @@
 #include <mono/metadata/threadpool.h>
 #include <mono/utils/mono-uri.h>
 
-#define MONO_CORLIB_VERSION 46
+#define MONO_CORLIB_VERSION 48
 
 CRITICAL_SECTION mono_delegate_section;
 
@@ -530,7 +530,7 @@ ves_icall_System_AppDomain_GetAssemblies (MonoAppDomain *ad, MonoBoolean refonly
 			continue;
 		if (ass->corlib_internal)
 			continue;
-		mono_array_set (res, gpointer, i, mono_assembly_get_object (domain, ass));
+		mono_array_setref (res, i, mono_assembly_get_object (domain, ass));
 		++i;
 	}
 	mono_domain_assemblies_unlock (domain);

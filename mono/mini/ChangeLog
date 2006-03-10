@@ -1,3 +1,89 @@
+Fri Mar 10 18:21:41 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: speedup IList<T> array accesses.
+
+2006-03-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mono_method_to_ir): Handle large methods overflowing the 
+	inline_costs counter. Fixes #77190.
+
+2006-03-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-exceptions.c: Call mono_trace_is_enabled () before printing
+	trace messages. Fixes #77706.
+
+2006-03-04  Martin Baulig  <martin@ximian.com>
+
+	* tramp-amd64.c, tramp-x86.c
+	(mono_debugger_create_notification_function): Use
+	mono_global_codeman_reserve() to allocate a buffer at runtime and
+	return it.
+
+	* debug-debugger.h (MonoDebuggerInfo): Added `initialize'.
+
+	* debug-debugger.c (mono_debugger_init): Dynamically allocate the
+	notification function at runtime and then call `initialize' in the
+	`MONO_DEBUGGER__debugger_info' vtable.
+
+2006-03-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* iltests.il: Fix a visibility problem.
+
+Wed Mar 1 15:55:25 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* driver.c, mini.c: add hooks for the counters API.
+
+Wed Mar 1 12:28:04 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* driver.c: show disabled options.
+
+Wed Mar 1 12:18:51 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* linear-scan.c: always use cost-driven selection.
+
+2006-02-28  Raja R Harinath  <rharinath@novell.com>
+
+	* jit-icalls.c (helper_compile_generic_method): Revert change from
+	2006-02-24.
+
+Mon Feb 27 18:58:19 GMT 2006 Paolo Molaro <lupus@ximian.com>
+
+	* cpu-arm.md, mini-arm.c: implemented MemoryBarrier.
+
+Sat Feb 25 17:39:21 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* inssel.brg: style fixes, mostly to force the updated monoburg
+	to run for people using svn.
+
+Sat Feb 25 17:07:42 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: match monoburg changes.
+
+Sat Feb 25 16:04:33 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini.h, mini.c, abcremoval.c, aliasing.c, liveness.c,
+	ssapre.c, graph.c, ssa.c: put the mono_burg_arity[]
+	declaration in the header file.
+
+Sat Feb 25 14:19:31 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* helpers.c: reduce relocations and mem usage.
+
+Sat Feb 25 11:58:16 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini.h, mini-codegen.c: disable logging features if
+	requested by configure.
+
+Sat Feb 25 11:54:49 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: tiny verifier changes.
+
+Fri Feb 24 18:17:52 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ops.h, inssel-x86.brg, tramp-x86.c, mini-x86.c,
+	cpu-pentium.md: stack alignment changes for osx/x86,
+	partially from Geoff Norton <gnorton@customerdna.com>.
+
 2006-02-24  Raja R Harinath  <harinath@gmail.com>
 
 	* jit-icalls.c (helper_compile_generic_method): Update to changes

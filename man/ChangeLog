@@ -1,3 +1,7 @@
+2006-03-06  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* mono.1: Updated MONO_XMLSERIALIZER_THS option information.
+
 2006-02-22  Jelmer Vernooij <jelmer@samba.org>
 	* mbas.1, Makefile.am: Add manpage for mbas (based on mcs.1)
 

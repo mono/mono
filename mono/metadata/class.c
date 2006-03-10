@@ -576,6 +576,12 @@ inflate_generic_context (MonoGenericContext *context, MonoGenericContext *inflat
 	return res;
 }
 
+MonoMethod *
+mono_class_inflate_generic_method (MonoMethod *method, MonoGenericContext *context)
+{
+	return mono_class_inflate_generic_method_full (method, NULL, context);
+}
+
 /**
  * mono_class_inflate_generic_method:
  *
@@ -584,7 +590,7 @@ inflate_generic_context (MonoGenericContext *context, MonoGenericContext *inflat
  *         Use mono_get_inflated_method (), mono_method_signature () and mono_method_get_header () to get the correct values.
  */
 MonoMethod*
-mono_class_inflate_generic_method (MonoMethod *method, MonoClass *klass_hint, MonoGenericContext *context)
+mono_class_inflate_generic_method_full (MonoMethod *method, MonoClass *klass_hint, MonoGenericContext *context)
 {
 	MonoMethod *result;
 	MonoMethodInflated *iresult;
@@ -619,8 +625,9 @@ mono_class_inflate_generic_method (MonoMethod *method, MonoClass *klass_hint, Mo
 	iresult->context = context;
 	iresult->declaring = method;
 
-	if (klass_hint && klass_hint->generic_class &&
-	    (klass_hint->generic_class->container_class != method->klass || klass_hint->generic_class->inst != context->gclass->inst))
+	if (!klass_hint || !klass_hint->generic_class ||
+	    klass_hint->generic_class->container_class != method->klass ||
+	    klass_hint->generic_class->inst != context->gclass->inst)
 		klass_hint = NULL;
 
 	if (method->klass->generic_container)
@@ -642,8 +649,6 @@ mono_class_inflate_generic_method (MonoMethod *method, MonoClass *klass_hint, Mo
 
 		iresult->context = context;
 	}
-
-	iresult->inflated = result;
 
 	return result;
 }
@@ -1237,28 +1242,28 @@ inflate_event (MonoClass *class, MonoEvent *event, MonoInflatedGenericClass *gcl
 	event->parent = class;
 
 	if (event->add) {
-		MonoMethod *inflated = mono_class_inflate_generic_method (
+		MonoMethod *inflated = mono_class_inflate_generic_method_full (
 			event->add, class, gclass->generic_class.context);
 
 		event->add = mono_get_inflated_method (inflated);
 	}
 
 	if (event->remove) {
-		MonoMethod *inflated = mono_class_inflate_generic_method (
+		MonoMethod *inflated = mono_class_inflate_generic_method_full (
 			event->remove, class, gclass->generic_class.context);
 
 		event->remove = mono_get_inflated_method (inflated);
 	}
 
 	if (event->raise) {
-		MonoMethod *inflated = mono_class_inflate_generic_method (
+		MonoMethod *inflated = mono_class_inflate_generic_method_full (
 			event->raise, class, gclass->generic_class.context);
 
 		event->raise = mono_get_inflated_method (inflated);
 	}
 
 	if (event->other) {
-		MonoMethod *inflated = mono_class_inflate_generic_method (
+		MonoMethod *inflated = mono_class_inflate_generic_method_full (
 			event->other, class, gclass->generic_class.context);
 
 		event->other = mono_get_inflated_method (inflated);
@@ -1597,7 +1602,7 @@ setup_generic_vtable (MonoClass *class)
 		if (!m)
 			continue;
 
-		m = mono_class_inflate_generic_method (m, class, class->generic_class->context);
+		m = mono_class_inflate_generic_method_full (m, class, class->generic_class->context);
 		class->vtable [i] = m;
 	}
 
@@ -2140,7 +2145,7 @@ mono_class_init (MonoClass *class)
 		class->methods = g_new0 (MonoMethod *, class->method.count);
 
 		for (i = 0; i < class->method.count; i++) {
-			MonoMethod *inflated = mono_class_inflate_generic_method (
+			MonoMethod *inflated = mono_class_inflate_generic_method_full (
 				gklass->methods [i], class, gclass->generic_class.context);
 
 			class->methods [i] = mono_get_inflated_method (inflated);
@@ -2155,10 +2160,10 @@ mono_class_init (MonoClass *class)
 			*prop = gklass->properties [i];
 
 			if (prop->get)
-				prop->get = mono_class_inflate_generic_method (
+				prop->get = mono_class_inflate_generic_method_full (
 					prop->get, class, gclass->generic_class.context);
 			if (prop->set)
-				prop->set = mono_class_inflate_generic_method (
+				prop->set = mono_class_inflate_generic_method_full (
 					prop->set, class, gclass->generic_class.context);
 
 			prop->parent = class;
@@ -2705,10 +2710,11 @@ mono_class_create_from_typedef (MonoImage *image, guint32 type_token)
 
 	if ((class->flags & TYPE_ATTRIBUTE_STRING_FORMAT_MASK) == TYPE_ATTRIBUTE_UNICODE_CLASS)
 		class->unicode = 1;
-	/* fixme: maybe we must set this on windows 
+
+#if PLATFORM_WIN32
 	if ((class->flags & TYPE_ATTRIBUTE_STRING_FORMAT_MASK) == TYPE_ATTRIBUTE_AUTO_CLASS)
 		class->unicode = 1;
-	*/
+#endif
 
 	class->cast_class = class->element_class = class;
 
@@ -2852,12 +2858,7 @@ mono_class_create_generic (MonoInflatedGenericClass *gclass)
 		i = mono_metadata_nesting_typedef (klass->image, gklass->type_token, i + 1);
 	}
 
-	if (gclass->generic_class.is_dynamic) {
-		MonoDynamicGenericClass *dgclass = (MonoDynamicGenericClass *) gclass;
-
-		if (dgclass->parent)
-			klass->parent = mono_class_from_mono_type (dgclass->parent);
-	} else if (gklass->parent) {
+	if (gklass->parent) {
 		MonoType *inflated = mono_class_inflate_generic_type (
 			&gklass->parent->byval_arg, gclass->generic_class.context);
 
@@ -3594,6 +3595,10 @@ MonoClass *
 mono_class_get_full (MonoImage *image, guint32 type_token, MonoGenericContext *context)
 {
 	MonoClass *class = mono_class_get (image, type_token);
+
+	if (!image->dynamic && ((type_token & 0xff000000) == MONO_TOKEN_TYPE_DEF))
+		return class;
+
 	if (class && context && (context->gclass || context->gmethod)) {
 		MonoType *inflated = inflate_generic_type (&class->byval_arg, context);
 		if (inflated)
@@ -3819,18 +3824,6 @@ mono_class_is_subclass_of (MonoClass *klass, MonoClass *klassc,
 	if (klassc == mono_defaults.object_class)
 		return TRUE;
 
-	if (klass->generic_class && klass->generic_class->is_dynamic) {
-		MonoDynamicGenericClass *dgclass = (MonoDynamicGenericClass *) klass->generic_class;
-
-		if (!dgclass->parent)
-			return FALSE;
-
-		if (mono_metadata_type_equal (dgclass->parent, &klassc->byval_arg))
-			return TRUE;
-		klass = mono_class_from_mono_type (dgclass->parent);
-		goto again;
-	}
-	
 	return FALSE;
 }
 
