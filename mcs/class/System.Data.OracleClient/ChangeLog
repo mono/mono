@@ -1,3 +1,8 @@
+2006-03-10  Senganal T  <tsenganal@novell.com>
+
+	* System.Data.OracleClient.Oci/OciStatementHandle.cs : Get StatementType as a ushort value.
+	* System.Data.OracleClient.Oci/OciParameterDescriptor.cs : Get DataType as a ushort value.
+
 2006-01-02  Daniel Morgan <danielmorgan@verizon.net>
 
 	* System.Data.OracleClient/OracleConnection.cs: dispose of the

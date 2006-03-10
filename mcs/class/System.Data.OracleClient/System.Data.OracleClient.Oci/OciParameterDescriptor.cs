@@ -64,7 +64,7 @@ namespace System.Data.OracleClient.Oci {
 
 		public OciDataType GetDataType ()
 		{
-			return (OciDataType) GetAttributeInt32 (OciAttributeType.DataType, ErrorHandle);
+			return (OciDataType) GetAttributeUInt16 (OciAttributeType.DataType, ErrorHandle);
 		}
 
 		public static OracleType OciDataTypeToOracleType (OciDataType ociType) 
