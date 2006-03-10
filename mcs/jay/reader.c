@@ -1092,7 +1092,7 @@ loop:
 		i = -get_number() - n;
 		if (tag && strcmp(tag, "Object"))
 			fprintf(f, "((%s)yyVals[%d+yyTop])", tag, i);
-		else fprintf(f, "yyVals[%d+yyTop]", tag, i);
+		else fprintf(f, "yyVals[%d+yyTop]", i);
 		FREE(d_line);
 		goto loop;
 	    }
