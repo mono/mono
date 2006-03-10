@@ -33,10 +33,13 @@ using System.Drawing;
 
 namespace System.Windows.Forms {
 	public class ContainerControl : ScrollableControl, IContainerControl {
-		private Control active_control;
-		private Control focused_control;
-		private Control	unvalidated_control;
-		private SizeF auto_scale_dimensions;
+		private Control		active_control;
+		private Control		focused_control;
+		private Control		unvalidated_control;
+#if NET_2_0
+		private SizeF		auto_scale_dimensions;
+		private AutoScaleMode	auto_scale_mode;
+#endif
 
 		#region Public Constructors
 		public ContainerControl() {
@@ -44,6 +47,10 @@ namespace System.Windows.Forms {
 			focused_control = null;
 			unvalidated_control = null;
 			ControlRemoved += new ControlEventHandler(OnControlRemoved);
+#if NET_2_0
+			auto_scale_dimensions = SizeF.Empty;
+			auto_scale_mode = AutoScaleMode.None;
+#endif
 		}
 		#endregion	// Public Constructors
 
@@ -76,6 +83,43 @@ namespace System.Windows.Forms {
 			}
 		}
 
+#if NET_2_0
+		public SizeF AutoScaleDimensions {
+			get {
+				return auto_scale_dimensions;
+			}
+
+			set {
+				auto_scale_dimensions = value;
+			}
+		}
+
+		public SizeF AutoScaleFactor {
+			get {
+				if (auto_scale_dimensions.IsEmpty) {
+					return new SizeF(1f, 1f);
+				}
+				return new SizeF(CurrentAutoScaleDimensions.Width / auto_scale_dimensions.Width, 
+					CurrentAutoScaleDimensions.Height / auto_scale_dimensions.Height);
+			}
+		}
+
+
+		[MonoTODO("Call scaling method")]
+		public virtual AutoScaleMode AutoScaleMode {
+			get {
+				return auto_scale_mode;
+			}
+			set {
+				if (auto_scale_mode != value) {
+					auto_scale_mode = value;
+
+					// Trigger scaling
+				}
+			}
+		}
+#endif // NET_2_0
+
 		[Browsable (false)]
 		public override BindingContext BindingContext {
 			get {
@@ -89,6 +133,36 @@ namespace System.Windows.Forms {
 				base.BindingContext = value;
 			}
 		}
+
+#if NET_2_0
+		[MonoTODO("Revisit when System.Drawing.GDI.WindowsGraphics.GetTextMetrics is done or come up with other cross-plat avg. font width calc method")]
+		public SizeF CurrentAutoScaleDimensions {
+			get {
+				switch(auto_scale_mode) {
+					case AutoScaleMode.Dpi: {
+						Bitmap		bmp;
+						Graphics	g;
+						SizeF		size;
+
+						bmp = new Bitmap(1, 1, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+						g = Graphics.FromImage(bmp);
+						size = new SizeF(g.DpiX, g.DpiY);
+						g.Dispose();
+						bmp.Dispose();
+						return size;
+					}
+
+					case AutoScaleMode.Font: {
+						// http://msdn2.microsoft.com/en-us/library/system.windows.forms.containercontrol.currentautoscaledimensions(VS.80).aspx
+						// Implement System.Drawing.GDI.WindowsGraphics.GetTextMetrics first...
+						break;
+					}
+				}
+
+				return auto_scale_dimensions;
+			}
+		}
+#endif
 
 		[Browsable (false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -134,34 +208,6 @@ namespace System.Windows.Forms {
 			return Select(control);
 		}
 		#endregion	// Public Instance Methods
-
-		#region .NET 2.0 Public Instance Methods
-#if NET_2_0
-		public SizeF AutoScaleDimensions {
-			get {
-				return auto_scale_dimensions;
-			}
-
-			set {
-				auto_scale_dimensions = value;
-			}
-		}
-
-		// XXX: implement me!
-		AutoScaleMode auto_scale_mode;
-
-		public virtual AutoScaleMode AutoScaleMode {
-			get {
-				Console.Error.WriteLine("Unimplemented: ContainerControl::get_AutoScaleMode()");
-				return auto_scale_mode;
-			}
-			set {
-				Console.Error.WriteLine("Unimplemented: ContainerControl::set_AutoScaleMode(AutoScaleMode)");
-				auto_scale_mode = value;
-			}
-		}
-#endif // NET_2_0
-		#endregion
 
 		#region Protected Instance Methods
 		[EditorBrowsable (EditorBrowsableState.Advanced)]

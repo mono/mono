@@ -35,17 +35,24 @@ using System.Runtime.InteropServices;
 namespace System.Windows.Forms {
 	[DefaultProperty("Image")]
 	[Designer("System.Windows.Forms.Design.PictureBoxDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
-	public class PictureBox : Control {
-
-		private Image image;
+	public class PictureBox : Control 
+#if NET_2_0
+					, ISupportInitialize
+#endif
+	{
+		#region Fields
+		private Image	image;
 		private PictureBoxSizeMode size_mode;
-		private bool redraw;
-		private bool recalc;
-		private bool allow_drop;
-		private Image initial_image;
+		private bool	redraw;
+		private bool	recalc;
+		private bool	allow_drop;
+		private Image	initial_image;
+		private int	no_update;
+		#endregion	// Fields
 
 		private EventHandler frame_handler;
 
+		#region Public Constructor
 		public PictureBox ()
 		{
 			redraw = true;
@@ -54,7 +61,9 @@ namespace System.Windows.Forms {
 			SetStyle (ControlStyles.Selectable, false);
 			SetStyle (ControlStyles.SupportsTransparentBackColor, true);
 		}
+		#endregion	// Public Constructor
 
+		#region Public Properties
 		[DefaultValue(PictureBoxSizeMode.Normal)]
 		[Localizable(true)]
 		[RefreshProperties(RefreshProperties.Repaint)]
@@ -65,8 +74,10 @@ namespace System.Windows.Forms {
 					return;
 				size_mode = value;
 				UpdateSize ();
-				Redraw (true);
-				Invalidate ();
+				if (no_update == 0) {
+					Redraw (true);
+					Invalidate ();
+				}
 
 				OnSizeModeChanged (EventArgs.Empty);
 			}
@@ -86,19 +97,12 @@ namespace System.Windows.Forms {
 					frame_handler = new EventHandler (OnAnimateImage);
 					ImageAnimator.Animate (image, frame_handler);
 				}
-				Redraw (true);
-				Invalidate ();
+				if (no_update == 0) {
+					Redraw (true);
+					Invalidate ();
+				}
 			}
 		}
-
-#if NET_2_0
-		[DefaultValue(null)]
-		[Localizable(true)]
-		public Image InitialImage {
-			get { return initial_image; }
-			set { initial_image = value; }
-		}
-#endif
 
 		[DefaultValue(BorderStyle.None)]
 		[DispId(-504)]
@@ -113,6 +117,15 @@ namespace System.Windows.Forms {
 			get { return base.CausesValidation; }
 			set { base.CausesValidation = value; }
 		}
+
+#if NET_2_0
+		[DefaultValue(null)]
+		[Localizable(true)]
+		public Image InitialImage {
+			get { return initial_image; }
+			set { initial_image = value; }
+		}
+#endif
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
@@ -186,6 +199,7 @@ namespace System.Windows.Forms {
 				}
 			}
 		}
+		#endregion	// Public Properties
 
 		#region	Protected Instance Methods
 		protected override Size DefaultSize {
@@ -249,6 +263,24 @@ namespace System.Windows.Forms {
 			base.SetBoundsCore (x, y, width, height, specified);
 		}
 		#endregion	// Protected Instance Methods
+
+#if NET_2_0
+		#region ISupportInitialize Interface
+		void System.ComponentModel.ISupportInitialize.BeginInit() {
+			no_update++;
+		}
+
+		void System.ComponentModel.ISupportInitialize.EndInit() {
+			if (no_update > 0) {
+				no_update--;
+			}
+			if (no_update == 0) {
+				Redraw (true);
+				Invalidate ();
+			}
+		}
+		#endregion	// ISupportInitialize Interface
+#endif
 
 		#region	Private Methods
 		private void StopAnimation ()
