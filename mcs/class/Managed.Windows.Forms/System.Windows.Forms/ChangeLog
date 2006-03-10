@@ -1,3 +1,8 @@
+2006-03-10  Jackson Harper  <jackson@ximian.com>
+
+	* MenuAPI.cs: Make this available elsewhere. I need it in some MDI
+	stuff.
+
 2006-03-10  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* Padding.cs: Several fixes to allow compiling with csc 2.0
