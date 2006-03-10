@@ -785,7 +785,7 @@ namespace System.Xml.Serialization
 		object GetEnumValue (XmlTypeMapping typeMap, string val)
 		{
 			EnumMap map = (EnumMap) typeMap.ObjectMap;
-			string ev = map.GetEnumName (val);
+			string ev = map.GetEnumName (typeMap.TypeFullName, val);
 			if (ev == null) throw CreateUnknownConstantException (val, typeMap.TypeData.Type);
 			return Enum.Parse (typeMap.TypeData.Type, ev);
 		}

@@ -111,7 +111,7 @@ namespace System.Xml.Serialization
 					if (type == null) throw new InvalidOperationException ("Type " + info.ClassName + " not found");
 					
 					string file = info.OutFileName;
-					if (file == null || file == "") {
+					if (file == null || file.Length == 0) {
 						int i = info.ClassName.LastIndexOf (".");
 						if (i != -1) file = info.ClassName.Substring (i+1);
 						else file = info.ClassName;
@@ -171,11 +171,11 @@ namespace System.Xml.Serialization
 				writerClassName = _config.WriterClassName;
 				namspace = _config.Namespace;
 			}
-			
-			if (readerClassName == null || readerClassName == "")
+
+			if (readerClassName == null || readerClassName.Length == 0)
 				readerClassName = "GeneratedReader";
-				
-			if (writerClassName == null || writerClassName == "")
+
+			if (writerClassName == null || writerClassName.Length == 0)
 				writerClassName = "GeneratedWriter";
 				
 			readerClassName = GetUniqueClassName (readerClassName);
@@ -206,8 +206,8 @@ namespace System.Xml.Serialization
 				
 				_result.ReaderClassName = readerClassName;
 				_result.WriterClassName = writerClassName;
-				
-				if (namspace == null || namspace == "")
+
+				if (namspace == null || namspace.Length == 0)
 					_result.Namespace = "Mono.GeneratedSerializers." + _typeMap.Format;
 				else
 					_result.Namespace = namspace;
@@ -505,36 +505,62 @@ namespace System.Xml.Serialization
 		{
 			EnumMap emap = (EnumMap) map.ObjectMap;
 
+			string xmlNamesArray = null;
+			string valuesArray = null;
+
+			if (emap.IsFlags) {
+				// create static string[] holding XML names of enum constants
+				xmlNamesArray = GetUniqueName ("gxe", map, "_xmlNames" + map.XmlType);
+				Write ("static readonly string[] " + xmlNamesArray + " = { ");
+				for (int i = 0; i < emap.XmlNames.Length; i++) {
+					if (i > 0)
+						_writer.Write (',');
+					_writer.Write ('"');
+					_writer.Write (emap.XmlNames[i]);
+					_writer.Write ('\"');
+				}
+				_writer.WriteLine (" };");
+
+				// create const long[] holding values of enum constants
+				valuesArray = GetUniqueName ("gve", map, "_values" + map.XmlType);
+				Write ("static readonly long[] " + valuesArray + " = { ");
+				for (int i = 0; i < emap.Values.Length; i++) {
+					if (i > 0)
+						_writer.Write (',');
+					_writer.Write (emap.Values[i].ToString (CultureInfo.InvariantCulture));
+					_writer.Write ("L");
+				}
+				_writer.WriteLine (" };");
+				WriteLine (string.Empty);
+			}
+
 			WriteLine ("string " + GetGetEnumValueName (map) + " (" + map.TypeFullName + " val)");
 			WriteLineInd ("{");
 
-			WriteLine ("switch (val)");
-			WriteLineInd ("{");
-			foreach (EnumMap.EnumMapMember mem in emap.Members)
-				WriteLine ("case " + map.TypeFullName + "." + mem.EnumName + ": return " + GetLiteral (mem.XmlName) + ";");
 
-			if (emap.IsFlags)
-			{
+			WriteLineInd ("switch (val) {");
+			for (int i = 0; i < emap.EnumNames.Length; i++)
+				WriteLine ("case " + map.TypeFullName + "." + emap.EnumNames[i] + ": return " + GetLiteral (emap.XmlNames[i]) + ";");
+
+			if (emap.IsFlags) {
 				WriteLineInd ("default:");
+				// FromEnum actually covers this case too, but we save some cycles here
 				WriteLine ("if (val.ToString () == \"0\") return string.Empty;");
-				WriteLine ("System.Text.StringBuilder sb = new System.Text.StringBuilder ();");
-				WriteLine ("string[] enumNames = val.ToString().Split (',');");
-				WriteLine ("foreach (string name in enumNames)");
-				WriteLineInd ("{");
-				WriteLine ("switch (name.Trim())");
-				WriteLineInd ("{");
-				
-				foreach (EnumMap.EnumMapMember mem in emap.Members)
-					WriteLine ("case " + GetLiteral(mem.EnumName) + ": sb.Append (" + GetLiteral(mem.XmlName) + ").Append (' '); break; ");
-
-				WriteLine ("default: sb.Append (name.Trim()).Append (' '); break; ");
-				WriteLineUni ("}");
-				WriteLineUni ("}");
-				WriteLine ("return sb.ToString ().Trim();");
-				Unindent ();
-			}
-			else
+				Write ("return FromEnum ((long) val, " + xmlNamesArray + ", " + valuesArray);
+#if NET_2_0
+				_writer.Write (", typeof (");
+				_writer.Write (map.TypeFullName);
+				_writer.Write (").FullName");
+#endif
+				_writer.Write (')'); // close FromEnum method call
+				WriteUni (";"); // end statement
+			} else {
+#if NET_2_0
+				WriteLine ("default: throw CreateInvalidEnumValueException ((long) val, typeof (" + map.TypeFullName + ").FullName);");
+#else
 				WriteLine ("default: return ((long)val).ToString(CultureInfo.InvariantCulture);");
+#endif
+			}
 			
 			WriteLineUni ("}");
 			
@@ -609,7 +635,7 @@ namespace System.Xml.Serialization
 			
 			WriteLine ("System.Type type = ob.GetType ();");
 			WriteLine ("if (type == typeof(" + typeMap.TypeFullName + "))");
-			WriteLine ("\t;");
+			WriteLine ("{ }");
 				
 			for (int n=0; n<types.Count; n++)
 			{
@@ -1447,7 +1473,7 @@ namespace System.Xml.Serialization
 			WriteLine ("System.Xml.XmlQualifiedName t = GetXsiType();");
 			WriteLine ("if (t == null)");
 			if (typeMap.TypeData.Type != typeof(object))
-				WriteLine ("\t;");
+				WriteLine ("{ }");
 			else
 				WriteLine ("\treturn " + GetCast (typeMap.TypeData, "ReadTypedPrimitive (new System.Xml.XmlQualifiedName(\"anyType\", System.Xml.Schema.XmlSchema.Namespace))") + ";");
 			
@@ -2234,7 +2260,8 @@ namespace System.Xml.Serialization
 		{
 			WriteLine ("Reader.ReadStartElement ();");
 			WriteLine (typeMap.TypeFullName + " res = " + GenerateGetEnumValue (typeMap, "Reader.ReadString()") + ";");
-			WriteLine ("Reader.ReadEndElement ();");
+			WriteLineInd ("if (Reader.NodeType != XmlNodeType.None)");
+			WriteLineUni ("Reader.ReadEndElement ();");
 			WriteLine ("return res;");
 		}
 
@@ -2269,6 +2296,7 @@ namespace System.Xml.Serialization
 				WriteLine ("else");
 				WriteLine ("\treturn " + switchMethod + " (xmlName);");
 				WriteLineUni ("}");
+				WriteLine ("");
 				metName = switchMethod;
 			}
 
@@ -2289,12 +2317,7 @@ namespace System.Xml.Serialization
 				WriteLine ("case " + GetLiteral (mem.XmlName) + ": return " + typeMap.TypeFullName + "." + mem.EnumName + ";");
 			}
 			WriteLineInd ("default:");
-			WriteLineInd ("try {");
-			WriteLine ("return (" + typeMap.TypeFullName + ") Int64.Parse (" + val + ", CultureInfo.InvariantCulture);");
-			WriteLineUni ("}");
-			WriteLineInd ("catch {");
 			WriteLine ("throw CreateUnknownConstantException (" + val + ", typeof(" + typeMap.TypeFullName + "));");
-			WriteLineUni ("}");
 			Unindent ();
 			WriteLineUni ("}");
 		}
@@ -2649,10 +2672,25 @@ namespace System.Xml.Serialization
 			if (_indent > 0) _indent--;
 			WriteLine (code);
 		}
-		
+
+		void Write (string code)
+		{
+			if (code.Length > 0) 
+				_writer.Write (new String ('\t', _indent));
+			_writer.Write (code);
+		}
+
+		void WriteUni (string code)
+		{
+			if (_indent > 0) _indent--;
+			_writer.Write (code);
+			_writer.WriteLine (string.Empty);
+		}
+
 		void WriteLine (string code)
 		{
-			if (code != "")	_writer.Write (new String ('\t',_indent));
+			if (code.Length > 0)
+				_writer.Write (new String ('\t',_indent));
 			_writer.WriteLine (code);
 		}
 		

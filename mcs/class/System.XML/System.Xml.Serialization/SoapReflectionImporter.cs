@@ -28,10 +28,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Collections;
+using System.Globalization;
 using System.Reflection;
 using System.Xml;
 using System.Xml.Schema;
-using System.Collections;
 
 namespace System.Xml.Serialization {
 	public class SoapReflectionImporter {
@@ -349,14 +350,15 @@ namespace System.Xml.Serialization {
 			EnumMap.EnumMapMember[] members = new EnumMap.EnumMapMember[names.Length];
 			for (int n=0; n<names.Length; n++)
 			{
-				MemberInfo[] mem = type.GetMember (names[n]);
+				FieldInfo field = type.GetField (names[n]);
 				string xmlName = names[n];
-				object[] atts = mem[0].GetCustomAttributes (typeof(SoapEnumAttribute), false);
+				object[] atts = field.GetCustomAttributes (typeof(SoapEnumAttribute), false);
 				if (atts.Length > 0) xmlName = ((SoapEnumAttribute)atts[0]).Name;
-				members[n] = new EnumMap.EnumMapMember (XmlConvert.EncodeLocalName (xmlName), names[n]);
+				long value = ((IConvertible) field.GetValue (null)).ToInt64 (CultureInfo.InvariantCulture);
+				members[n] = new EnumMap.EnumMapMember (XmlConvert.EncodeLocalName (xmlName), names[n], value);
 			}
 
-			bool isFlags = type.GetCustomAttributes (typeof(FlagsAttribute),false).Length > 0;
+			bool isFlags = type.IsDefined (typeof (FlagsAttribute), false);
 			map.ObjectMap = new EnumMap (members, isFlags);
 			ImportTypeMapping (typeof(object), defaultNamespace).DerivedTypes.Add (map);
 			return map;

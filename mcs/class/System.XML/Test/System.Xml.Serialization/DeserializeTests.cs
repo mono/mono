@@ -583,7 +583,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestDeserialize_EnumDefaultValue ()
 		{
 			EnumDefaultValue e;
@@ -591,18 +590,17 @@ namespace MonoTests.System.XmlSerialization
 			e = (EnumDefaultValue) Deserialize (typeof (EnumDefaultValue), "<EnumDefaultValue />");
 			Assert.AreEqual (0, (int) e, "#1");
 
-			e = (EnumDefaultValue) Deserialize (typeof (EnumDefaultValue), "<EnumDefaultValue>e3</EnumDefaultValue>");
+			e = (EnumDefaultValue) Deserialize (typeof (EnumDefaultValue), "<EnumDefaultValue> e3</EnumDefaultValue>");
 			Assert.AreEqual (EnumDefaultValue.e3, e, "#2");
 
 			e = (EnumDefaultValue) Deserialize (typeof (EnumDefaultValue), "<EnumDefaultValue>e1 e2</EnumDefaultValue>");
 			Assert.AreEqual (EnumDefaultValue.e3, e, "#3");
 
-			e = (EnumDefaultValue) Deserialize (typeof (EnumDefaultValue), "<EnumDefaultValue>e1 e2</EnumDefaultValue>");
+			e = (EnumDefaultValue) Deserialize (typeof (EnumDefaultValue), "<EnumDefaultValue>  e1   e2 </EnumDefaultValue>");
 			Assert.AreEqual (EnumDefaultValue.e1 | EnumDefaultValue.e2, e, "#4");
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestDeserialize_EnumDefaultValueNF ()
 		{
 			EnumDefaultValueNF e;
@@ -672,7 +670,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestDeserialize_FlagEnum ()
 		{
 			FlagEnum e;
@@ -700,6 +697,9 @@ namespace MonoTests.System.XmlSerialization
 
 			e = (FlagEnum) Deserialize (typeof (FlagEnum), "<FlagEnum></FlagEnum>");
 			Assert.AreEqual (0, (int) e, "#A8");
+
+			e = (FlagEnum) Deserialize (typeof (FlagEnum), "<FlagEnum> </FlagEnum>");
+			Assert.AreEqual (0, (int) e, "#A9");
 
 			try {
 				Deserialize (typeof (FlagEnum), "<FlagEnum>1</FlagEnum>");
@@ -739,7 +739,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestDeserialize_ZeroFlagEnum ()
 		{
 			ZeroFlagEnum e;
@@ -826,7 +825,6 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual ((byte) 56, deserialized.Index, "#B4");
 			Assert.AreEqual (new byte[] { 243, 15 }, deserialized.Password, "#B5");
 			Assert.AreEqual ('/', deserialized.PathSeparatorCharacter, "#B6");
-
 		}
 	}
 }

@@ -492,7 +492,7 @@ namespace System.Xml.Serialization
 		string GetEnumXmlValue (XmlTypeMapping typeMap, object ob)
 		{
 			EnumMap map = (EnumMap)typeMap.ObjectMap;
-			return map.GetXmlName (ob);
+			return map.GetXmlName (typeMap.TypeFullName, ob);
 		}
 
 		class CallbackInfo

@@ -595,19 +595,29 @@ namespace System.Xml.Serialization
 
 	internal class EnumMap: ObjectMap
 	{
-		EnumMapMember[] _members;
-		bool _isFlags;
+		readonly EnumMapMember[] _members;
+		readonly bool _isFlags;
+		readonly string[] _enumNames = null;
+		readonly string[] _xmlNames = null;
+		readonly long[] _values = null;
 
 		public class EnumMapMember
 		{
-			string _xmlName;
-			string _enumName;
+			readonly string _xmlName;
+			readonly string _enumName;
+			readonly long _value;
 			string _documentation;
 
-			public EnumMapMember (string xmlName, string enumName)
+ 			public EnumMapMember (string xmlName, string enumName)
+				: this (xmlName, enumName, 0)
+ 			{
+			}
+
+			public EnumMapMember (string xmlName, string enumName, long value)
 			{
 				_xmlName = xmlName;
 				_enumName = enumName;
+				_value = value;
 			}
 
 			public string XmlName
@@ -618,6 +628,11 @@ namespace System.Xml.Serialization
 			public string EnumName
 			{
 				get { return _enumName; }
+			}
+
+			public long Value
+			{
+				get { return _value; }
 			}
 
 			public string Documentation
@@ -631,6 +646,17 @@ namespace System.Xml.Serialization
 		{
 			_members = members;
 			_isFlags = isFlags;
+
+			_enumNames = new string[_members.Length];
+			_xmlNames = new string[_members.Length];
+			_values = new long[_members.Length];
+
+			for (int i = 0; i < _members.Length; i++) {
+				EnumMapMember mem = _members[i];
+				_enumNames[i] = mem.EnumName;
+				_xmlNames[i] = mem.XmlName;
+				_values[i] = mem.Value;
+			}
 		}
 		
 		public bool IsFlags
@@ -643,59 +669,99 @@ namespace System.Xml.Serialization
 			get { return _members; }
 		}
 
-		public string GetXmlName (object enumValue)
+		public string[] EnumNames
 		{
-			string enumName = enumValue.ToString();
-
-			if (_isFlags && enumName.IndexOf (',') != -1)
-			{
-				System.Text.StringBuilder sb = new System.Text.StringBuilder ();
-				string[] enumNames = enumValue.ToString().Split (',');
-				foreach (string name in enumNames)
-				{
-					string tname = name.Trim();
-					foreach (EnumMapMember mem in _members)
-						if (mem.EnumName == tname) {
-							sb.Append (mem.XmlName).Append (' ');
-							break;
-						}
-				}
-				sb.Remove (sb.Length-1, 1);
-				return sb.ToString ();
+			get {
+				return _enumNames;
 			}
-
-			foreach (EnumMapMember mem in _members)
-				if (mem.EnumName == enumName) return mem.XmlName;
-			
-			// Enum default value will not be written
-			// unless it is one of the enum legal values
-			if (enumName == "0" && IsFlags)
-				return String.Empty;
-			else
-				return Convert.ToInt64(enumValue).ToString(CultureInfo.InvariantCulture);
 		}
 
-		public string GetEnumName (string xmlName)
+		public string[] XmlNames
 		{
-			if (_isFlags && xmlName.Length == 0) 
-				return "0";
-			
-			if (_isFlags && xmlName.Trim().IndexOf (' ') != -1)
-			{
-				System.Text.StringBuilder sb = new System.Text.StringBuilder ();
-				string[] enumNames = xmlName.ToString().Split (' ');
-				foreach (string name in enumNames)
-				{
-					if (name == string.Empty) continue;
-					string foundEnumValue = null;
-					foreach (EnumMapMember mem in _members)
-						if (mem.XmlName == name) { foundEnumValue = mem.EnumName; break; }
+			get {
+				return _xmlNames;
+			}
+		}
 
-					if (foundEnumValue != null) sb.Append (foundEnumValue).Append (','); 
-					else return null;
+		public long[] Values
+		{
+			get {
+				return _values;
+			}
+		}
+
+		public string GetXmlName (string typeName, object enumValue)
+		{
+			if (enumValue is string) {
+				throw new InvalidCastException ();
+			}
+
+			long value = 0;
+
+			try {
+				value = ((IConvertible) enumValue).ToInt64 (CultureInfo.CurrentCulture);
+			} catch (FormatException) {
+				throw new InvalidCastException ();
+			}
+
+			for (int i = 0; i < Values.Length; i++) {
+				if (Values[i] == value)
+					return XmlNames[i];
+			}
+
+			if (IsFlags && value == 0)
+				return string.Empty;
+
+			string xmlName = string.Empty;
+			if (IsFlags) {
+#if NET_2_0
+				xmlName = XmlCustomFormatter.FromEnum (value, XmlNames, Values, typeName);
+#else
+				xmlName = XmlCustomFormatter.FromEnum (value, XmlNames, Values);
+#endif
+			}
+
+			if (xmlName.Length == 0) {
+#if NET_2_0
+				throw new InvalidOperationException (string.Format(CultureInfo.CurrentCulture,
+					"'{0}' is not a valid value for {1}.", value, typeName));
+#else
+				return value.ToString (CultureInfo.InvariantCulture);
+#endif
+			}
+			return xmlName;
+		}
+
+		public string GetEnumName (string typeName, string xmlName)
+		{
+			if (_isFlags) {
+				xmlName = xmlName.Trim ();
+				if (xmlName.Length == 0)
+					return "0";
+
+				if (xmlName.IndexOf (' ') > 0) {
+					System.Text.StringBuilder sb = new System.Text.StringBuilder ();
+					string[] enumNames = xmlName.ToString ().Split (' ');
+					foreach (string name in enumNames) {
+						if (name == string.Empty) continue;
+						string foundEnumValue = null;
+						for (int i = 0; i < XmlNames.Length; i++)
+							if (XmlNames[i] == name) {
+								foundEnumValue = EnumNames[i];
+								break;
+							}
+
+						if (foundEnumValue != null) {
+							if (sb.Length > 0)
+								sb.Append (',');
+							sb.Append (foundEnumValue);
+						} else {
+							throw new InvalidOperationException (string.Format (CultureInfo.CurrentCulture,
+								"'{0}' is not a valid value for {1}.", name, typeName));
+						}
+					}
+					return sb.ToString ();
 				}
-				sb.Remove (sb.Length-1, 1);
-				return sb.ToString ();
 			}
 
 			foreach (EnumMapMember mem in _members)

@@ -551,17 +551,18 @@ namespace System.Xml.Serialization {
 			ArrayList members = new ArrayList();
 			foreach (string name in names)
 			{
-				MemberInfo[] mem = type.GetMember (name);
+				FieldInfo field = type.GetField (name);
 				string xmlName = null;
-				object[] atts = mem[0].GetCustomAttributes (typeof(XmlIgnoreAttribute), false);
-				if (atts.Length > 0) continue;
-				atts = mem[0].GetCustomAttributes (typeof(XmlEnumAttribute), false);
+				if (field.IsDefined(typeof(XmlIgnoreAttribute), false))
+					continue;
+				object[] atts = field.GetCustomAttributes (typeof(XmlEnumAttribute), false);
 				if (atts.Length > 0) xmlName = ((XmlEnumAttribute)atts[0]).Name;
 				if (xmlName == null) xmlName = name;
-				members.Add (new EnumMap.EnumMapMember (xmlName, name));
+				long value = ((IConvertible) field.GetValue (null)).ToInt64 (CultureInfo.InvariantCulture);
+				members.Add (new EnumMap.EnumMapMember (xmlName, name, value));
 			}
 
-			bool isFlags = type.GetCustomAttributes (typeof(FlagsAttribute),false).Length > 0;
+			bool isFlags = type.IsDefined (typeof (FlagsAttribute), false);
 			map.ObjectMap = new EnumMap ((EnumMap.EnumMapMember[])members.ToArray (typeof(EnumMap.EnumMapMember)), isFlags);
 			ImportTypeMapping (typeof(object)).DerivedTypes.Add (map);
 			return map;
@@ -913,7 +914,7 @@ namespace System.Xml.Serialization {
 				}
 
 				if (choiceEnumMap != null) {
-					string cname = choiceEnumMap.GetEnumName (elem.ElementName);
+					string cname = choiceEnumMap.GetEnumName (choiceEnumType.FullName, elem.ElementName);
 					if (cname == null) throw new InvalidOperationException ("The '" + choiceEnumType + "' enumeration does not have a value for the element '" + elem.ElementName + "'");
 					elem.ChoiceValue = Enum.Parse (choiceEnumType, cname);
 				}

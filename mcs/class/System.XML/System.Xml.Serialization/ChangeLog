@@ -1,3 +1,41 @@
+2006-03-10  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* XmlTypeMapping.cs: EnumMapMember now also stores value for enums.
+	Modified EnumMapping.GetXmlName to use XmlCustomFormatter to support
+	serialization of integral value to enum constant name, and made sure
+	the exceptions we throw match those of MSFT. In EnumMapping.GetEnumName
+	throw InvalidOperationException if no matching enum constant exists.
+	In EnumMap ctor, initialize arrays holding XML names, enum names and
+	enum values.
+	* XmlSerializationReaderInterpreter.cs: Pass full type name to
+	EnumMapping.GetEnumName for construction of exception message.
+	* XmlSerializer.cs: In Deserialize, wrap InvalidOperationException
+	and InvalidCastException in another InvalidOperationException to match
+	MSFT. In Serialize, wrap InvalidOperationException, InvalidCastException
+	and the inner exception for a TargetInvocationException in an
+	InvalidOperationException to match MSFT.
+	* SerializationCodeGenerator.cs: In GenerateGetXmlEnumValue, use
+	XmlCustomFormatter.FromEnum in order to also support serialization
+	integral value to enum constant name. In 2.0 profile, throw
+	InvalidOperationException if numeric value cannot be serialized into
+	an enum constant value. In GenerateSingleEnumValue, no longer attempt
+	to parse unknown constant value but instead report it as
+	InvalidOperationException. Use string.Length instead of "" comparison
+	to check whether a string is empty. Fixed compiler warnings in 
+	generated code (possible empty statement).
+	* XmlSerializationWriterInterpreter.cs: Pass full type name to 
+	EnumMap.GetXmlName.
+	* XmlSchemaImporter.cs: Pass full type name to EnumMap.GetEnumName
+	to allow it to be used in exception messages.
+	* XmlReflectionImporter.cs: Use FieldInfo instead of MemberInfo for
+	enum fields. Use IsDefined instead of GetCustomAttributes for checking
+	if a certain attribute is defined. Use integral value of enum constant
+	in EnumMapMember ctor.
+	* SoapReflectionImporter.cs: Use FieldInfo instead of MemberInfo for
+	enum fields. Use IsDefined instead of GetCustomAttributes for checking
+	if a certain attribute is defined. Use integral value of enum constant
+	in EnumMapMember ctor.
+
 2006-03-07  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* XmlReflectionImporter.cs: Ignore the element namespace if

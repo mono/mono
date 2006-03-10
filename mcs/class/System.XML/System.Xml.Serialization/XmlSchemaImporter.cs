@@ -927,7 +927,7 @@ namespace System.Xml.Serialization
 			if (typeData.SchemaType == SchemaTypes.Enum) {
 				XmlTypeMapping map = GetTypeMapping (typeData);
 				EnumMap emap = (EnumMap) map.ObjectMap;
-				string res = emap.GetEnumName (value);
+				string res = emap.GetEnumName (map.TypeFullName, value);
 				if (res == null) throw new InvalidOperationException ("'" + value + "' is not a valid enumeration value");
 				return res;
 			} else

@@ -52,6 +52,7 @@ namespace System.Xml.Serialization
 	{
 		internal const string WsdlNamespace = "http://schemas.xmlsoap.org/wsdl/";
 		internal const string EncodingNamespace = "http://schemas.xmlsoap.org/soap/encoding/";
+		internal const string WsdlTypesNamespace = "http://microsoft.com/wsdl/types/";
 		static int generationThreshold;
 		static bool backgroundGeneration = true;
 		static bool deleteTempFiles = true;
@@ -352,10 +353,17 @@ namespace System.Xml.Serialization
 				// Must be implemented in derived class
 				throw new NotImplementedException ();
 			
-			if (reader is XmlSerializationReaderInterpreter)
-				return ((XmlSerializationReaderInterpreter)reader).ReadRoot ();
-			else
-				return serializerData.ReaderMethod.Invoke (reader, null);
+			try {
+				if (reader is XmlSerializationReaderInterpreter)
+					return ((XmlSerializationReaderInterpreter) reader).ReadRoot ();
+				else
+					return serializerData.ReaderMethod.Invoke (reader, null);
+			} catch (Exception ex) {
+				if (ex is InvalidOperationException || ex is InvalidCastException)
+					throw new InvalidOperationException ("There was an error generating" +
+						" the XML document.", ex);
+				throw;
+			}
 		}
 
 		public static XmlSerializer [] FromMappings (XmlMapping	[] mappings)
@@ -437,22 +445,32 @@ namespace System.Xml.Serialization
 		public void Serialize (XmlWriter writer, object o, XmlSerializerNamespaces namespaces)
 		{
 			XmlSerializationWriter xsWriter;
-			
-			if (customSerializer)
-				xsWriter = CreateWriter ();
-			else
-				xsWriter = CreateWriter (typeMapping);
-				
-			if (namespaces == null || namespaces.Count == 0)
-			{
-				namespaces = new XmlSerializerNamespaces ();
-				namespaces.Add ("xsd", XmlSchema.Namespace);
-				namespaces.Add ("xsi", XmlSchema.InstanceNamespace);
+
+			try {
+				if (customSerializer)
+					xsWriter = CreateWriter ();
+				else
+					xsWriter = CreateWriter (typeMapping);
+
+				if (namespaces == null || namespaces.Count == 0) {
+					namespaces = new XmlSerializerNamespaces ();
+					namespaces.Add ("xsd", XmlSchema.Namespace);
+					namespaces.Add ("xsi", XmlSchema.InstanceNamespace);
+				}
+
+				xsWriter.Initialize (writer, namespaces);
+				Serialize (o, xsWriter);
+				writer.Flush ();
+			} catch (Exception ex) {
+				if (ex is TargetInvocationException)
+					ex = ex.InnerException;
+
+				if (ex is InvalidOperationException || ex is InvalidCastException)
+					throw new InvalidOperationException ("There was an error generating" +
+						" the XML document.", ex);
+
+				throw;
 			}
-			
-			xsWriter.Initialize (writer, namespaces);
-			Serialize (o, xsWriter);
-			writer.Flush ();
 		}
 		
 #if NET_2_0
