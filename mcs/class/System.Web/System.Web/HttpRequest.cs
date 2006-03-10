@@ -1288,7 +1288,7 @@ namespace System.Web {
 			for (int idx = 0; idx < len - 1; idx ++) {
 				char c1 = val[idx];
 				char c2 = val[idx+1];
-				if (c1 == '<') {
+				if (c1 == '<' || c1 == '\xff1c') {
 					if (c2 == '!'
 					    || (c2 >= 'a' && c2 <= 'z')
 					    || (c2 >= 'A' && c2 <= 'Z'))

@@ -1,5 +1,10 @@
 2006-03-10  Chris Toshok  <toshok@ximian.com>
 
+	* HttpRequest.cs (CheckString): add back in the check for \xff1c
+	that i took out.  oops.
+
+2006-03-10  Chris Toshok  <toshok@ximian.com>
+
 	* HttpRequest.cs (CheckString): implement as described in
 	Shackow's "Professional ASP.NET 2.0 Security, Membership, and Role
 	Management", page 310.
