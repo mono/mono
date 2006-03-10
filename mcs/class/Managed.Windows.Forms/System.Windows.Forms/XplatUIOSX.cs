@@ -791,7 +791,7 @@ namespace System.Windows.Forms {
 			}
 		}
 		
-		internal override bool CalculateWindowRect(IntPtr hWnd, ref Rectangle ClientRect, int Style, int ExStyle, Menu menu, out Rectangle WindowRect) {
+		internal override bool CalculateWindowRect(ref Rectangle ClientRect, int Style, int ExStyle, Menu menu, out Rectangle WindowRect) {
 			FormBorderStyle	border_style;
 			TitleStyle	title_style;
 

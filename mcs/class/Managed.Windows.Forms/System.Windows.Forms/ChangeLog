@@ -1,3 +1,11 @@
+2006-03-09  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* XplatUI.cs, XplatUIDriver.cs, XplatUIX11.cs, XplatUIWin32.cs, 
+	  XplatUIOSX.cs: Removed HWnd argument from CalcuateClientRect, not used
+	  and was requiring premature handle creation for calls from above
+	* Form.cs, Control.cs: Removed handle arguments from calls to
+	  CalculateClientRect()
+
 2006-03-09  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* ListView.cs (HeaderMouseMove): Fix csc compilation. 

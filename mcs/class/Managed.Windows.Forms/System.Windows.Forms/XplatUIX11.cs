@@ -560,7 +560,7 @@ namespace System.Windows.Forms {
 			XSendEvent(DisplayHandle, window, false, new IntPtr ((int)EventMask.NoEventMask), ref xev);
 		}
 
-		private void DeriveStyles(IntPtr handle, int Style, int ExStyle, out FormBorderStyle border_style, out TitleStyle title_style, out int caption_height, out int tool_caption_height) {
+		private void DeriveStyles(int Style, int ExStyle, out FormBorderStyle border_style, out TitleStyle title_style, out int caption_height, out int tool_caption_height) {
 
 			// Only MDI windows get caption_heights
 			caption_height = 0;
@@ -630,7 +630,7 @@ namespace System.Windows.Forms {
 		}
 
 		private void SetHwndStyles(Hwnd hwnd, CreateParams cp) {
-			DeriveStyles(hwnd.Handle, cp.Style, cp.ExStyle, out hwnd.border_style, out hwnd.title_style, out hwnd.caption_height, out hwnd.tool_caption_height);
+			DeriveStyles(cp.Style, cp.ExStyle, out hwnd.border_style, out hwnd.title_style, out hwnd.caption_height, out hwnd.tool_caption_height);
 		}
 
 		private void SetWMStyles(Hwnd hwnd, CreateParams cp) {
@@ -1726,13 +1726,13 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		internal override bool CalculateWindowRect(IntPtr handle, ref Rectangle ClientRect, int Style, int ExStyle, Menu menu, out Rectangle WindowRect) {
+		internal override bool CalculateWindowRect(ref Rectangle ClientRect, int Style, int ExStyle, Menu menu, out Rectangle WindowRect) {
 			FormBorderStyle	border_style;
 			TitleStyle	title_style;
 			int caption_height;
 			int tool_caption_height;
 
-			DeriveStyles(handle, Style, ExStyle, out border_style, out title_style,
+			DeriveStyles(Style, ExStyle, out border_style, out title_style,
 				out caption_height, out tool_caption_height);
 
 			WindowRect = Hwnd.GetWindowRectangle(border_style, menu, title_style,

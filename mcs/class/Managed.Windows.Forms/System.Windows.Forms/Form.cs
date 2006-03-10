@@ -1552,7 +1552,7 @@ namespace System.Windows.Forms {
 
 			clientsize_set = true;
 
-			if (XplatUI.CalculateWindowRect(Handle, ref ClientRect, cp.Style, cp.ExStyle, ActiveMenu, out WindowRect)) {
+			if (XplatUI.CalculateWindowRect(ref ClientRect, cp.Style, cp.ExStyle, ActiveMenu, out WindowRect)) {
 				SetBoundsCore(bounds.X, bounds.Y, WindowRect.Width, WindowRect.Height, BoundsSpecified.Size);
 			}
 		}
