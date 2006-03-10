@@ -338,7 +338,6 @@ System.Windows.Forms/ListViewItem.cs
 System.Windows.Forms/ListViewItemConverter.cs
 System.Windows.Forms/MainMenu.cs
 System.Windows.Forms/MdiWindowManager.cs
-System.Windows.Forms/MdiChildContext.cs
 System.Windows.Forms/MdiClient.cs
 System.Windows.Forms/MdiLayout.cs
 System.Windows.Forms/MeasureItemEventHandler.cs
