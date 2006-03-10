@@ -3918,7 +3918,12 @@ namespace System.Windows.Forms {
 
 			hwnd = Hwnd.ObjectFromHandle(handle);
 
-			current_state = GetWindowState(handle);
+			try {
+				current_state = GetWindowState(handle);
+			}
+			catch (NotSupportedException) {
+				current_state = (FormWindowState)(-1);
+			}
 
 			if (current_state == state) {
 				return;
