@@ -1,5 +1,7 @@
 2006-03-10  Zoltan Varga  <vargaz@gmail.com>
 
+	* class-internals.h (MonoJitICallInfo): Add 'trampoline' field used by the JIT.
+
 	* mempool.c (mono_mempool_alloc): Speed this up a bit.
 	(mono_mempool_alloc0): Ditto.
 
