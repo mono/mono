@@ -1,5 +1,14 @@
 2006-03-10  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.h (mono_bitset_foreach_bit): Use the faster mono_bitset_find_start ()
+	function.
+
+	* mini.c (optimize_branches): Cache the negative result from 
+	remove_block_if_useless ().
+
+	* mini.c (optimize_branches): Avoid restarting the iteration after each change.	
+	Also fix some bblock linking issues.
+
 	* helpers.c (mono_disassemble_code): Reduce the size of the temporary
 	assembly files.
 
