@@ -2,11 +2,15 @@
 
 	* Form.cs: We need to use the ActiveMenu when calculating menu
 	height.
+	- Fix nullref when the window manager hasn't been created yet.
+	* Control.cs: Fix nullref when we try to bring a control to the
+	front that has no parent.
 	* MdiWindowManager.cs: Use the MaximizedMenu for calculating
 	height.
 	- Add a dummy item to the maximized menu so it always has the
 	correct height. Otherwise when there are no menus we don't get our
 	icon and buttons.
+	
 
 2006-03-10  Jackson Harper  <jackson@ximian.com>
 

@@ -604,7 +604,7 @@ namespace System.Windows.Forms {
 				Form child = ActiveMdiChild;
 				if (child == null)
 					return null;
-				if (child.WindowManager.GetWindowState () != FormWindowState.Maximized)
+				if (child.WindowManager == null || child.window_state != FormWindowState.Maximized)
 					return null;
 				return (MdiWindowManager) child.WindowManager;
 			}

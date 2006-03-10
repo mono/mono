@@ -2515,7 +2515,7 @@ namespace System.Windows.Forms
 				if (parent.child_controls.Contains(this)) {
 					parent.child_controls.SetChildIndex(this, 0);
 				}
-			} else {
+			} else if (parent != null) {
 				if (parent.child_controls.impl_list != null) {
 					Control last_impl = (Control) parent.child_controls.impl_list [parent.child_controls.impl_list.Count - 1];
 					XplatUI.SetZOrder (this.window.Handle, last_impl.Handle, false, false);
