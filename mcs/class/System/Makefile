@@ -78,17 +78,17 @@ endif
 include ../../build/library.make
 
 ifdef XML_DEP_FILE
-LIB_MCS_FLAGS += /define:XML_DEP /r:$(XML_DEP)
+LIB_MCS_FLAGS += -define:XML_DEP -r:$(XML_DEP)
 $(the_lib): $(XML_DEP_FILE)
 endif
 
 ifdef SECURITY_DEP_FILE
-LIB_MCS_FLAGS += /define:SECURITY_DEP -r:Mono.Security.dll
+LIB_MCS_FLAGS += -define:SECURITY_DEP -r:Mono.Security.dll
 $(the_lib): $(SECURITY_DEP_FILE)
 endif
 
 ifdef CONFIGURATION_DEP_FILE
-LIB_MCS_FLAGS += /define:CONFIGURATION_DEP /r:$(CONFIGURATION_DEP) /r:PrebuiltSystem=$(topdir)/class/lib/$(PROFILE)/System.dll
+LIB_MCS_FLAGS += -define:CONFIGURATION_DEP -r:$(CONFIGURATION_DEP) -r:PrebuiltSystem=$(topdir)/class/lib/$(PROFILE)/System.dll
 $(the_lib): $(CONFIGURATION_DEP_FILE)
 endif
 
