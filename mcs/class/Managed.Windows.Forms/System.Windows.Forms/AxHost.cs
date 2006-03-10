@@ -112,11 +112,14 @@ namespace System.Windows.Forms {
 			[TypeConverter("System.ComponentModel.TypeConverter, " + Consts.AssemblySystem)]
 			public class State : ISerializable {
 				public State(Stream ms, int storageType, bool manualUpdate, string licKey) {
-					throw new NotImplementedException("COM/ActiveX support is not implemented");
+					//throw new NotImplementedException("COM/ActiveX support is not implemented");
+				}
+
+				private State(SerializationInfo info, StreamingContext context) {
 				}
 
 				void ISerializable.GetObjectData(SerializationInfo si,StreamingContext context) {
-					throw new NotImplementedException("COM/ActiveX support is not implemented");
+					//throw new NotImplementedException("COM/ActiveX support is not implemented");
 				}
 			}
 			#endregion	// AxHost.State Class
