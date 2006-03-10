@@ -4,6 +4,9 @@
 	height.
 	* MdiWindowManager.cs: Use the MaximizedMenu for calculating
 	height.
+	- Add a dummy item to the maximized menu so it always has the
+	correct height. Otherwise when there are no menus we don't get our
+	icon and buttons.
 
 2006-03-10  Jackson Harper  <jackson@ximian.com>
 

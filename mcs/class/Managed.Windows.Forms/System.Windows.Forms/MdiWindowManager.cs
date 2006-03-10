@@ -94,6 +94,8 @@ namespace System.Windows.Forms {
 				res.MergeMenu (clone);
 			}
 
+			res.MenuItems.Add (new MenuItem ()); // Dummy item to get the menu height correct
+			
 			res.SetForm (parent);
 			return res;
 		}
@@ -128,7 +130,7 @@ namespace System.Windows.Forms {
 		private void MeasureIconMenuItem (object sender, MeasureItemEventArgs me)
 		{
 			Form parent = (Form) mdi_container.Parent;
-			int size = MaximizedMenu.Height;
+			int size = MaximizedMenu.MenuItems [0].MenuHeight;
 			me.ItemHeight = size;
 			me.ItemWidth = size + 2; // some padding
 		}
