@@ -2004,7 +2004,7 @@ public partial class TypeManager {
 		ArrayList new_ifaces = new ArrayList ();
 
 		foreach (TypeExpr iface in base_interfaces){
-			TypeExpr texpr = iface.ResolveAsTypeTerminal (ec);
+			TypeExpr texpr = iface.ResolveAsTypeTerminal (ec, false);
 			if (texpr == null)
 				return null;
 

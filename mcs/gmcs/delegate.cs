@@ -135,7 +135,7 @@ namespace Mono.CSharp {
 
 				Expression current = new SimpleName (
 					MemberName.Basename, TypeParameters, Location);
-				current = current.ResolveAsTypeTerminal (ec);
+				current = current.ResolveAsTypeTerminal (ec, false);
 				if (current == null)
 					return null;
 

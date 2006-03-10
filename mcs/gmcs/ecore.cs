@@ -216,11 +216,6 @@ namespace Mono.CSharp {
 		// This is used if the expression should be resolved as a type or namespace name.
 		// the default implementation fails.   
 		//
-		public FullNamedExpression ResolveAsTypeStep (EmitContext ec)
-		{
-			return ResolveAsTypeStep (ec, false);
-		}
-
 		public virtual FullNamedExpression ResolveAsTypeStep (EmitContext ec,  bool silent)
 		{
 			return null;
@@ -231,11 +226,6 @@ namespace Mono.CSharp {
 		// value will be returned if the expression is not a type
 		// reference
 		//
-		public TypeExpr ResolveAsTypeTerminal (EmitContext ec)
-		{
-			return ResolveAsTypeTerminal (ec, false);
-		}
-
 		public virtual TypeExpr ResolveAsTypeTerminal (EmitContext ec, bool silent)
 		{
 			int errors = Report.Errors;
@@ -2002,11 +1992,11 @@ namespace Mono.CSharp {
 
 				FullNamedExpression nested = ResolveNested (ec, fne.Type);
 				if (nested != null)
-					return nested.ResolveAsTypeStep (ec);
+					return nested.ResolveAsTypeStep (ec, false);
 
 				if (Arguments != null) {
 					ConstructedType ct = new ConstructedType (fne, Arguments, loc);
-					return ct.ResolveAsTypeStep (ec);
+					return ct.ResolveAsTypeStep (ec, false);
 				}
 
 				return fne;
@@ -2271,7 +2261,7 @@ namespace Mono.CSharp {
 
 		override public Expression DoResolve (EmitContext ec)
 		{
-			return ResolveAsTypeTerminal (ec);
+			return ResolveAsTypeTerminal (ec, false);
 		}
 
 		override public void Emit (EmitContext ec)
@@ -2321,7 +2311,7 @@ namespace Mono.CSharp {
 
 		public Type ResolveType (EmitContext ec)
 		{
-			TypeExpr t = ResolveAsTypeTerminal (ec);
+			TypeExpr t = ResolveAsTypeTerminal (ec, false);
 			if (t == null)
 				return null;
 
@@ -2491,7 +2481,7 @@ namespace Mono.CSharp {
 				expr = new SimpleName (name.Basename, loc);
 			}
 
-			FullNamedExpression fne = expr.ResolveAsTypeStep (ec);
+			FullNamedExpression fne = expr.ResolveAsTypeStep (ec, false);
 			if (fne == null)
 				return null;
 
@@ -2537,7 +2527,7 @@ namespace Mono.CSharp {
 
 		protected override TypeExpr DoResolveAsTypeStep (EmitContext ec)
 		{
-			texpr = alias.ResolveAsTypeTerminal (ec);
+			texpr = alias.ResolveAsTypeTerminal (ec, false);
 			if (texpr == null)
 				return null;
 
@@ -2554,7 +2544,7 @@ namespace Mono.CSharp {
 				}
 
 				ConstructedType ctype = new ConstructedType (type, args, loc);
-				return ctype.ResolveAsTypeTerminal (ec);
+				return ctype.ResolveAsTypeTerminal (ec, false);
 			} else if (num_args > 0) {
 				Report.Error (305, loc,
 					      "Using the generic type `{0}' " +

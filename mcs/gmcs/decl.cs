@@ -869,7 +869,7 @@ namespace Mono.CSharp {
 			TypeResolveEmitContext.ResolvingTypeTree = true;
 			if (this is GenericMethod)
 				TypeResolveEmitContext.ContainerType = Parent.TypeBuilder;
-			return e.ResolveAsTypeTerminal (TypeResolveEmitContext);
+			return e.ResolveAsTypeTerminal (TypeResolveEmitContext, silent);
 		}
 		
 		public bool CheckAccessLevel (Type check_type) 

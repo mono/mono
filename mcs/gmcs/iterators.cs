@@ -516,7 +516,7 @@ namespace Mono.CSharp {
 				TypeExpr et_expr = InflateType (it.GetElementType ());
 				int rank = it.GetArrayRank ();
 
-				Type et = et_expr.ResolveAsTypeTerminal (ec).Type;
+				Type et = et_expr.ResolveAsTypeTerminal (ec, false).Type;
 				it = et.MakeArrayType (rank);
 			}
 
@@ -660,7 +660,7 @@ namespace Mono.CSharp {
 				foreach (TypeParameter tparam in generic_method.TypeParameters)
 					new_args.Add (new TypeParameterExpr (tparam, Location));
 				ConstructedType ct = new ConstructedType (CurrentType, new_args, Location);
-				proxy_type = ct.ResolveAsTypeTerminal (ec);
+				proxy_type = ct.ResolveAsTypeTerminal (ec, false);
 			} else
 				proxy_type = current_type;
 

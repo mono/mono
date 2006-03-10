@@ -1307,7 +1307,7 @@ namespace Mono.CSharp {
 			if (base_type != null) {
 				// FIXME: I think this should be ...ResolveType (Parent.EmitContext).
 				//        However, if Parent == RootContext.Tree.Types, its NamespaceEntry will be null.
-				FullNamedExpression fne = base_type.ResolveAsTypeStep (TypeResolveEmitContext);
+				FullNamedExpression fne = base_type.ResolveAsTypeStep (TypeResolveEmitContext, false);
 				if ((fne == null) || (fne.Type == null)) {
 					error = true;
 					return null;
@@ -1422,7 +1422,7 @@ namespace Mono.CSharp {
 				}
 
 			if (current_type != null) {
-				current_type = current_type.ResolveAsTypeTerminal (ec);
+				current_type = current_type.ResolveAsTypeTerminal (ec, false);
 				if (current_type == null) {
 					error = true;
 					return false;
@@ -5340,7 +5340,7 @@ namespace Mono.CSharp {
 					bool old_unsafe = ec.InUnsafe;
 					ec.InUnsafe = InUnsafe;
 					ec.ResolvingGenericMethod = GenericMethod != null;
-					Type = Type.ResolveAsTypeTerminal (ec);
+					Type = Type.ResolveAsTypeTerminal (ec, false);
 					ec.ResolvingGenericMethod = false;
 					ec.InUnsafe = old_unsafe;
 					if (Type != null) {
@@ -5426,7 +5426,7 @@ namespace Mono.CSharp {
 
 			if (IsExplicitImpl) {
 				Expression expr = MemberName.Left.GetTypeExpression ();
-				TypeExpr iface_texpr = expr.ResolveAsTypeTerminal (ec);
+				TypeExpr iface_texpr = expr.ResolveAsTypeTerminal (ec, false);
 				if (iface_texpr == null)
 					return false;
 
@@ -5504,7 +5504,7 @@ namespace Mono.CSharp {
 
 			if (IsExplicitImpl) {
 				Expression expr = MemberName.Left.GetTypeExpression ();
-				TypeExpr texpr = expr.ResolveAsTypeTerminal (ec);
+				TypeExpr texpr = expr.ResolveAsTypeTerminal (ec, false);
 				if (texpr == null)
 					return false;
 

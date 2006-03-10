@@ -255,7 +255,7 @@ namespace Mono.CSharp {
 
 			this.ec = ec;
 
-			TypeExpr texpr = TypeName.ResolveAsTypeTerminal (ec);
+			TypeExpr texpr = TypeName.ResolveAsTypeTerminal (ec, false);
 
 			if (texpr == null)
 				return false;

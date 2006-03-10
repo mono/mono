@@ -1047,7 +1047,7 @@ namespace Mono.CSharp {
 		public bool Resolve (EmitContext ec)
 		{
 			if (VariableType == null) {
-				TypeExpr texpr = Type.ResolveAsTypeTerminal (ec);
+				TypeExpr texpr = Type.ResolveAsTypeTerminal (ec, false);
 				if (texpr == null)
 					return false;
 				
@@ -3361,7 +3361,7 @@ namespace Mono.CSharp {
 				return false;
 			}
 			
-			TypeExpr texpr = type.ResolveAsTypeTerminal (ec);
+			TypeExpr texpr = type.ResolveAsTypeTerminal (ec, false);
 			if (texpr == null)
 				return false;
 
@@ -3586,7 +3586,7 @@ namespace Mono.CSharp {
 			ec.InCatch = true;
 			try {
 				if (type_expr != null) {
-					TypeExpr te = type_expr.ResolveAsTypeTerminal (ec);
+					TypeExpr te = type_expr.ResolveAsTypeTerminal (ec, false);
 					if (te == null)
 						return false;
 
@@ -3825,7 +3825,7 @@ namespace Mono.CSharp {
 		{
 			int i = 0;
 
-			TypeExpr texpr = expr.ResolveAsTypeTerminal (ec);
+			TypeExpr texpr = expr.ResolveAsTypeTerminal (ec, false);
 			if (texpr == null)
 				return false;
 
@@ -4139,7 +4139,7 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			TypeExpr texpr = type.ResolveAsTypeTerminal (ec);
+			TypeExpr texpr = type.ResolveAsTypeTerminal (ec, false);
 			if (texpr == null)
 				return false;
 

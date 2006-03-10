@@ -217,7 +217,7 @@ namespace Mono.CSharp {
 				}
 
 				int errors = Report.Errors;
-				FullNamedExpression fn = ((Expression) obj).ResolveAsTypeStep (ec);
+				FullNamedExpression fn = ((Expression) obj).ResolveAsTypeStep (ec, false);
 
 				if (fn == null) {
 					if (errors != Report.Errors)
@@ -235,7 +235,7 @@ namespace Mono.CSharp {
 
 					expr = cexpr;
 				} else
-					expr = fn.ResolveAsTypeTerminal (ec);
+					expr = fn.ResolveAsTypeTerminal (ec, false);
 
 				if ((expr == null) || (expr.Type == null))
 					return false;
@@ -1188,7 +1188,7 @@ namespace Mono.CSharp {
 			atypes = new Type [count];
 
 			for (int i = 0; i < count; i++){
-				TypeExpr te = ((Expression) args [i]).ResolveAsTypeTerminal (ec);
+				TypeExpr te = ((Expression) args [i]).ResolveAsTypeTerminal (ec, false);
 				if (te == null) {
 					ok = false;
 					continue;
@@ -1582,7 +1582,7 @@ namespace Mono.CSharp {
 				}
 
 				TypeExpr ct = new ConstructedType (ctype, new_args, loc);
-				if (ct.ResolveAsTypeStep (ec) == null)
+				if (ct.ResolveAsTypeStep (ec, false) == null)
 					return false;
 				ctype = ct.Type;
 			} else if (ctype.IsGenericParameter) {
@@ -1788,7 +1788,7 @@ namespace Mono.CSharp {
 				if (!p.Resolve (ec))
 					ok = false;
 			}
-			if ((return_type != null) && (return_type.ResolveAsTypeTerminal (ec) == null))
+			if ((return_type != null) && (return_type.ResolveAsTypeTerminal (ec, false) == null))
 				ok = false;
 
 			return ok;
@@ -1848,7 +1848,7 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			TypeExpr texpr = expr.ResolveAsTypeTerminal (ec);
+			TypeExpr texpr = expr.ResolveAsTypeTerminal (ec, false);
 			if (texpr == null)
 				return null;
 
@@ -1901,7 +1901,7 @@ namespace Mono.CSharp {
 			args.Add (underlying);
 
 			ConstructedType ctype = new ConstructedType (TypeManager.generic_nullable_type, args, loc);
-			return ctype.ResolveAsTypeTerminal (ec);
+			return ctype.ResolveAsTypeTerminal (ec, false);
 		}
 	}
 
@@ -2796,7 +2796,7 @@ namespace Mono.CSharp {
 					return null;
 
 				TypeExpr target_type = new NullableType (expr.Type, loc);
-				target_type = target_type.ResolveAsTypeTerminal (ec);
+				target_type = target_type.ResolveAsTypeTerminal (ec, false);
 				if (target_type == null)
 					return null;
 

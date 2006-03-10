@@ -1051,7 +1051,7 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			probe_type_expr = ProbeType.ResolveAsTypeTerminal (ec);
+			probe_type_expr = ProbeType.ResolveAsTypeTerminal (ec, false);
 			if (probe_type_expr == null)
 				return null;
 			if (probe_type_expr.ResolveType (ec) == null)
@@ -1349,7 +1349,7 @@ namespace Mono.CSharp {
 
 		Expression ResolveRest (EmitContext ec)
 		{
-			TypeExpr target = target_type.ResolveAsTypeTerminal (ec);
+			TypeExpr target = target_type.ResolveAsTypeTerminal (ec, false);
 			if (target == null)
 				return null;
 			
@@ -5633,7 +5633,7 @@ namespace Mono.CSharp {
 			//
 			// First try to resolve it as a cast.
 			//
-			TypeExpr te = expr.ResolveAsTypeStep (ec) as TypeExpr;
+			TypeExpr te = expr.ResolveAsTypeTerminal (ec, true);
 			if ((te != null) && (te.eclass == ExprClass.Type)) {
 				Cast cast = new Cast (te, argument, loc);
 				return cast.Resolve (ec);
@@ -5680,7 +5680,7 @@ namespace Mono.CSharp {
 			//
 			// First try to resolve it as a cast.
 			//
-			TypeExpr te = expr.ResolveAsTypeStep (ec) as TypeExpr;
+			TypeExpr te = expr.ResolveAsTypeTerminal (ec, true);
 			if ((te != null) && (te.eclass == ExprClass.Type)) {
 				error201 ();
 				return null;
@@ -5875,7 +5875,7 @@ namespace Mono.CSharp {
 				return this;
 			}
 
-			TypeExpr texpr = RequestedType.ResolveAsTypeTerminal (ec);
+			TypeExpr texpr = RequestedType.ResolveAsTypeTerminal (ec, false);
 			if (texpr == null)
 				return null;
 
@@ -6370,7 +6370,7 @@ namespace Mono.CSharp {
 			//
 			TypeExpr array_type_expr;
 			array_type_expr = new ComposedCast (requested_base_type, array_qualifier.ToString (), loc);
-			array_type_expr = array_type_expr.ResolveAsTypeTerminal (ec);
+			array_type_expr = array_type_expr.ResolveAsTypeTerminal (ec, false);
 			if (array_type_expr == null)
 				return false;
 
@@ -7105,7 +7105,7 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			TypeExpr texpr = QueriedType.ResolveAsTypeTerminal (ec);
+			TypeExpr texpr = QueriedType.ResolveAsTypeTerminal (ec, false);
 			if (texpr == null)
 				return null;
 
@@ -7173,7 +7173,7 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			TypeExpr texpr = QueriedType.ResolveAsTypeTerminal (ec);
+			TypeExpr texpr = QueriedType.ResolveAsTypeTerminal (ec, false);
 			if (texpr == null)
 				return null;
 
@@ -7352,7 +7352,7 @@ namespace Mono.CSharp {
 				string lookup_id = MemberName.MakeName (Identifier, args);
 				FullNamedExpression retval = ns.Lookup (ec.DeclSpace, lookup_id, loc);
 				if ((retval != null) && (args != null))
-					retval = new ConstructedType (retval, args, loc).ResolveAsTypeStep (ec);
+					retval = new ConstructedType (retval, args, loc).ResolveAsTypeStep (ec, false);
 				if (retval == null)
 					Report.Error (234, loc, "The type or namespace name `{0}' does not exist in the namespace `{1}'. Are you missing an assembly reference?",
 						Identifier, ns.FullName);
@@ -7406,7 +7406,7 @@ namespace Mono.CSharp {
 					ct = new ConstructedType (
 						member_lookup.Type, ct.TypeArguments, loc);
 
-					return ct.ResolveAsTypeStep (ec);
+					return ct.ResolveAsTypeStep (ec, false);
 				}
 
 				return member_lookup;
@@ -7471,14 +7471,14 @@ namespace Mono.CSharp {
 				Namespace ns = (Namespace) new_expr;
 				FullNamedExpression retval = ns.Lookup (ec.DeclSpace, lookup_id, loc);
 				if ((retval != null) && (args != null))
-					retval = new ConstructedType (retval, args, loc).ResolveAsTypeStep (ec);
+					retval = new ConstructedType (retval, args, loc).ResolveAsTypeStep (ec, false);
 				if (!silent && retval == null)
 					Report.Error (234, loc, "The type or namespace name `{0}' does not exist in the namespace `{1}'. Are you missing an assembly reference?",
 						Identifier, ns.FullName);
 				return retval;
 			}
 
-			TypeExpr tnew_expr = new_expr.ResolveAsTypeTerminal (ec);
+			TypeExpr tnew_expr = new_expr.ResolveAsTypeTerminal (ec, false);
 			if (tnew_expr == null)
 				return null;
 
@@ -7509,7 +7509,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			TypeExpr texpr = member_lookup.ResolveAsTypeTerminal (ec);
+			TypeExpr texpr = member_lookup.ResolveAsTypeTerminal (ec, false);
 			if (texpr == null)
 				return null;
 
@@ -7529,7 +7529,7 @@ namespace Mono.CSharp {
 
 			if (the_args != null) {
 				ConstructedType ctype = new ConstructedType (texpr.Type, the_args, loc);
-				return ctype.ResolveAsTypeStep (ec);
+				return ctype.ResolveAsTypeStep (ec, false);
 			}
 
 			return texpr;
@@ -8778,7 +8778,7 @@ namespace Mono.CSharp {
 
 		protected override TypeExpr DoResolveAsTypeStep (EmitContext ec)
 		{
-			TypeExpr lexpr = left.ResolveAsTypeTerminal (ec);
+			TypeExpr lexpr = left.ResolveAsTypeTerminal (ec, false);
 			if (lexpr == null)
 				return null;
 
@@ -8797,7 +8797,7 @@ namespace Mono.CSharp {
 				TypeExpr nullable = new NullableType (left, loc);
 				if (dim.Length > 1)
 					nullable = new ComposedCast (nullable, dim.Substring (1), loc);
-				return nullable.ResolveAsTypeTerminal (ec);
+				return nullable.ResolveAsTypeTerminal (ec, false);
 			}
 
 			if (dim == "*" && !TypeManager.VerifyUnManaged (ltype, loc)) {
@@ -8964,7 +8964,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			TypeExpr texpr = t.ResolveAsTypeTerminal (ec);
+			TypeExpr texpr = t.ResolveAsTypeTerminal (ec, false);
 			if (texpr == null)
 				return null;
 
