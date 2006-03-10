@@ -732,10 +732,12 @@ System.Net/WebResponse.cs
 System/NewsStyleUriParser.cs
 System.Security.AccessControl/SemaphoreRights.cs
 System.Security.AccessControl/SemaphoreSecurity.cs
+System.Security.Authentication/AuthenticationException.cs
 System.Security.Authentication/CipherAlgorithmType.cs
 System.Security.Authentication/ExchangeAlgorithmType.cs
 System.Security.Authentication/HashAlgorithmType.cs
 System.Security.Authentication/SslProtocols.cs
+System.Security.Authentication/InvalidCredentialException.cs
 System.Security.Cryptography/AsnEncodedDataCollection.cs
 System.Security.Cryptography/AsnEncodedData.cs
 System.Security.Cryptography/AsnEncodedDataEnumerator.cs
