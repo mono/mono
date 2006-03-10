@@ -1,4 +1,4 @@
-// CS0019: Operator '&&' cannot be applied to operands of type 'bool?' and 'bool?'
+// CS0019: Operator `&&' cannot be applied to operands of type `bool?' and `bool?'
 // Line: 10
 using System;
 
