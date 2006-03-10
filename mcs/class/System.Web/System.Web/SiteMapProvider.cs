@@ -55,14 +55,13 @@ namespace System.Web {
 		
 		internal protected virtual void AddNode (SiteMapNode node, SiteMapNode parentNode)
 		{
-			if (node == null)
-				throw new ArgumentNullException ("node");
+			throw new NotImplementedException ();
 		}
 
 		public virtual SiteMapNode FindSiteMapNode (HttpContext context)
 		{
 			if (context == null)
-				throw new ArgumentNullException ("context");
+				return null;
 			
 			SiteMapNode ret = this.FindSiteMapNode (context.Request.RawUrl);
 			if (ret == null)
@@ -82,8 +81,6 @@ namespace System.Web {
 
 		public abstract SiteMapNodeCollection GetChildNodes (SiteMapNode node);
 		
-		public abstract SiteMapNode GetParentNode (SiteMapNode node);
-		
 		public virtual SiteMapNode GetCurrentNodeAndHintAncestorNodes (int upLevel)
 		{
 			if (upLevel < -1) throw new ArgumentOutOfRangeException ("upLevel");
@@ -98,6 +95,8 @@ namespace System.Web {
 			
 			return CurrentNode;
 		}
+
+		public abstract SiteMapNode GetParentNode (SiteMapNode node);
 		
 		public virtual SiteMapNode GetParentNodeRelativeToCurrentNodeAndHintDownFromParent (int walkupLevels, int relativeDepthFromWalkup)
 		{
@@ -152,8 +151,7 @@ namespace System.Web {
 		
 		protected virtual void RemoveNode (SiteMapNode node)
 		{
-			if (node == null)
-				throw new ArgumentNullException("node");
+			throw new NotImplementedException ();
 		}
 
 		public override void Initialize (string name, NameValueCollection attributes)
@@ -166,6 +164,9 @@ namespace System.Web {
 		[MonoTODO]
 		public virtual bool IsAccessibleToUser (HttpContext context, SiteMapNode node)
 		{
+			if (context == null) throw new ArgumentNullException ("context");
+			if (node == null) throw new ArgumentNullException ("node");
+
 			return true;
 		}
 		
@@ -225,6 +226,12 @@ namespace System.Web {
 			get { return securityTrimming; }
 		}
 
+		string resourceKey;
+		public string ResourceKey {
+			get { return resourceKey; }
+			set { resourceKey = value; }
+		}
+
 		public virtual SiteMapNode RootNode {
 			get {
 				SiteMapNode node = GetRootNodeCore ();
@@ -234,7 +241,7 @@ namespace System.Web {
 					return null;
 			}
 		}
-	
+
 		public event SiteMapResolveEventHandler SiteMapResolve;
 	}
 }

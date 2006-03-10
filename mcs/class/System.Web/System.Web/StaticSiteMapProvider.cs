@@ -103,14 +103,7 @@ namespace System.Web
 			get {
 				lock (this) {
 					if (urlToNode == null) {
-#if NET_2_0
 						urlToNode = new Hashtable (StringComparer.InvariantCultureIgnoreCase);
-#else
-						urlToNode = new Hashtable (
-							CaseInsensitiveHashCodeProvider.DefaultInvariant,
-							CaseInsensitiveComparer.DefaultInvariant
-						);
-#endif
 					}
 				}
 				return urlToNode;

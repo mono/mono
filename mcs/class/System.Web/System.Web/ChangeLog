@@ -1,5 +1,18 @@
 2006-03-10  Chris Toshok  <toshok@ximian.com>
 
+	* StaticSiteMapProvider.cs (UrlToNode): this entire file is #if
+	NET_2_0, no need to embed another #if NET_2_0.
+
+	* SiteMapProvider.cs (AddNode): throw NotImplementedException.
+	(FindSiteMapNode): with null context, return null.  don't throw
+	ArgumentNullException.
+	(RemoveNode): throw NotImplementedException.
+	(IsAccessibleToUser): check arguments to make test pass.  still
+	lacking the method's actual functionality.
+	(ResourceKey): add missing property.
+
+2006-03-10  Chris Toshok  <toshok@ximian.com>
+
 	* HttpRequest.cs (CheckString): add back in the check for \xff1c
 	that i took out.  oops.
 
