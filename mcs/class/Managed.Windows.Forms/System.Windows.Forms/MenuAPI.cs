@@ -68,7 +68,7 @@ namespace System.Windows.Forms {
 			get { return keynav_state != KeyNavState.Idle; }
 		}
 
-		internal Point ScreenToMenu (Menu menu, Point pnt)		
+		internal static Point ScreenToMenu (Menu menu, Point pnt)		
 		{
 			int x = pnt.X;
 			int y = pnt.Y;
