@@ -1,5 +1,5 @@
 //
-// System.Net.Security.RemoteCertValidationCallback.cs
+// System.Net.Security.SslProtocolType.cs
 //
 // Authors:
 //	Tim Coleman (tim@timcoleman.com)
@@ -31,11 +31,19 @@
 
 #if NET_2_0 
 
-using System.Security.Cryptography.X509Certificates;
+using System;
 
-namespace System.Net.Security 
+namespace System.Security.Authentication
 {
-	public delegate bool RemoteCertValidationCallback (X509Certificate certificate, int[] certificateProblems);
+	[Flags]
+	public enum SslProtocols
+	{
+		Default,
+		None,
+		Ssl2,
+		Ssl3,
+		Tls
+	}
 }
 
 #endif

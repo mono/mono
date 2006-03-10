@@ -683,11 +683,11 @@ System.Net/RequestStream.cs
 System.Net/ResponseStream.cs
 System.Net.Security/AuthenticatedStream.cs
 System.Net.Security/AuthenticationLevel.cs
-System.Net.Security/LocalCertSelectionCallback.cs
+System.Net.Security/LocalCertificateSelectionCallback.cs
 System.Net.Security/NegotiateStream.cs
 System.Net.Security/ProtectionLevel.cs
 System.Net/SecurityProtocolType.cs
-System.Net.Security/RemoteCertValidationCallback.cs
+System.Net.Security/RemoteCertificateValidationCallback.cs
 System.Net.Security/SslStream.cs
 System.Net/ServicePoint.cs
 System.Net/ServicePointManager.cs
@@ -733,10 +733,12 @@ System.Net/WebResponse.cs
 System/NewsStyleUriParser.cs
 System.Security.AccessControl/SemaphoreRights.cs
 System.Security.AccessControl/SemaphoreSecurity.cs
+System.Security.Authentication/AuthenticationException.cs
 System.Security.Authentication/CipherAlgorithmType.cs
 System.Security.Authentication/ExchangeAlgorithmType.cs
 System.Security.Authentication/HashAlgorithmType.cs
-System.Security.Authentication/SslProtocolType.cs
+System.Security.Authentication/SslProtocols.cs
+System.Security.Authentication/InvalidCredentialException.cs
 System.Security.Cryptography/AsnEncodedDataCollection.cs
 System.Security.Cryptography/AsnEncodedData.cs
 System.Security.Cryptography/AsnEncodedDataEnumerator.cs

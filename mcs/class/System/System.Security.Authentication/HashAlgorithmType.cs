@@ -5,7 +5,7 @@
 //	Tim Coleman (tim@timcoleman.com)
 //
 // Copyright (C) Tim Coleman, 2004
-// (c) 2004 Novell, Inc. (http://www.novell.com)
+// (c) 2004, 2005 Novell, Inc. (http://www.novell.com)
 //
 
 //
@@ -35,9 +35,9 @@ namespace System.Security.Authentication
 {
 	public enum HashAlgorithmType 
 	{
-		Md5,
 		None,
-		Sha1
+		Md5 = 0x8003,
+		Sha1 = 0x8004
 	}
 }
 

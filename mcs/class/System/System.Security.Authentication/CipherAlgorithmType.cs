@@ -35,15 +35,15 @@ namespace System.Security.Authentication
 {
 	public enum CipherAlgorithmType 
 	{
-		Aes,
-		Aes128,
-		Aes192,
-		Aes256,
-		Des,
-		None,
-		Rc2,
-		Rc4,
-		TripleDes
+		None       = 0,
+		Aes        = 0x6611,
+		Aes128     = 0x660e,
+		Aes192     = 0x660f,
+		Aes256     = 0x6610,
+		Des        = 0x6601,
+		Rc2        = 0x6602,
+		Rc4        = 0x6801,
+		TripleDes  = 0x6603
 	}
 }
 

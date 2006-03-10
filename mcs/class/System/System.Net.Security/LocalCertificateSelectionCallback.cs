@@ -1,5 +1,5 @@
 //
-// System.Net.Security.SslProtocolType.cs
+// System.Net.Security.LocalCertificateSelectionCallback.cs
 //
 // Authors:
 //	Tim Coleman (tim@timcoleman.com)
@@ -31,16 +31,11 @@
 
 #if NET_2_0 
 
-namespace System.Security.Authentication
+using System.Security.Cryptography.X509Certificates;
+
+namespace System.Net.Security 
 {
-	public enum SslProtocolType 
-	{
-		Default,
-		None,
-		Ssl2,
-		Ssl3,
-		Tls
-	}
+	public delegate X509Certificate LocalCertificateSelectionCallback (string targetHost, X509CertificateCollection localCertificates, X509Certificate remoteCertificate, string[] acceptableIssuers);
 }
 
 #endif

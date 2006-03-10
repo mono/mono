@@ -1,5 +1,5 @@
 //
-// System.Net.Security.LocalCertSelectionCallback.cs
+// System.Net.Security.RemoteCertValidationCallback.cs
 //
 // Authors:
 //	Tim Coleman (tim@timcoleman.com)
@@ -35,7 +35,7 @@ using System.Security.Cryptography.X509Certificates;
 
 namespace System.Net.Security 
 {
-	public delegate X509Certificate LocalCertSelectionCallback (string targetHost, X509CertificateCollection localCertificates, X509Certificate remoteCertificate, string[] acceptableIssuers);
+	public delegate bool RemoteCertificateValidationCallback (X509Certificate certificate, int[] certificateProblems);
 }
 
 #endif

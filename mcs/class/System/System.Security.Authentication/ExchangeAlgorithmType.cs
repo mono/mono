@@ -5,7 +5,7 @@
 //	Tim Coleman (tim@timcoleman.com)
 //
 // Copyright (C) Tim Coleman, 2004
-// (c) 2004 Novell, Inc. (http://www.novell.com)
+// (c) 2004, 2005 Novell, Inc. (http://www.novell.com)
 //
 
 //
@@ -35,10 +35,10 @@ namespace System.Security.Authentication
 {
 	public enum ExchangeAlgorithmType 
 	{
-		DiffieHellman,
-		None,
-		RsaKeyX,
-		RsaSign
+		None = 0,
+		DiffieHellman = 0xaa02,
+		RsaKeyX = 0xa400,
+		RsaSign = 0x2400
 	}
 }
 

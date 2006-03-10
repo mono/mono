@@ -64,13 +64,13 @@ namespace System.Net.Security
 		}
 
 		[MonoTODO]
-		public SslStream (Stream innerStream, bool leaveStreamOpen, RemoteCertValidationCallback certValidationCallback)
+		public SslStream (Stream innerStream, bool leaveStreamOpen, RemoteCertificateValidationCallback certValidationCallback)
 			: base (innerStream, leaveStreamOpen)
 		{
 		}
 
 		[MonoTODO]
-		public SslStream (Stream innerStream, bool leaveStreamOpen, RemoteCertValidationCallback certValidationCallback, LocalCertSelectionCallback certSelectionCallback)
+		public SslStream (Stream innerStream, bool leaveStreamOpen, RemoteCertificateValidationCallback certValidationCallback, LocalCertificateSelectionCallback certSelectionCallback)
 			: base (innerStream, leaveStreamOpen)
 		{
 		}
@@ -186,7 +186,7 @@ namespace System.Net.Security
 		}
 
 		[MonoTODO]
-		public virtual SslProtocolType SslProtocol {
+		public virtual SslProtocols SslProtocol {
 			get { throw new NotImplementedException (); }
 		}
 
@@ -206,7 +206,7 @@ namespace System.Net.Security
 		}
 
 		[MonoTODO]
-		public virtual IAsyncResult BeginClientAuthenticate (string targetHost, X509CertificateCollection clientCertificates, SslProtocolType sslProtocolType, bool checkCertificateRevocation, AsyncCallback asyncCallback, object asyncState)
+		public virtual IAsyncResult BeginClientAuthenticate (string targetHost, X509CertificateCollection clientCertificates, SslProtocols sslProtocolType, bool checkCertificateRevocation, AsyncCallback asyncCallback, object asyncState)
 		{
 			throw new NotImplementedException ();
 		}
@@ -224,7 +224,7 @@ namespace System.Net.Security
 		}
 
 		[MonoTODO]
-		public virtual IAsyncResult BeginServerAuthenticate (X509Certificate serverCertificate, bool clientCertificateRequired, SslProtocolType sslProtocolType, bool checkCertificateRevocation, AsyncCallback callback, object asyncState)
+		public virtual IAsyncResult BeginServerAuthenticate (X509Certificate serverCertificate, bool clientCertificateRequired, SslProtocols sslProtocolType, bool checkCertificateRevocation, AsyncCallback callback, object asyncState)
 		{
 			throw new NotImplementedException ();
 		}
@@ -248,7 +248,7 @@ namespace System.Net.Security
 		}
 
 		[MonoTODO]
-		public virtual void ClientAuthenticate (string targetHost, X509CertificateCollection clientCertificates, SslProtocolType sslProtocolType, bool checkCertificateRevocation)
+		public virtual void ClientAuthenticate (string targetHost, X509CertificateCollection clientCertificates, SslProtocols sslProtocolType, bool checkCertificateRevocation)
 		{
 			throw new NotImplementedException ();
 		}
@@ -302,18 +302,6 @@ namespace System.Net.Security
 		}
 
 		[MonoTODO]
-		public virtual void ServerAuthenticate (X509Certificate serverCertificate)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public virtual void ServerAuthenticate (X509Certificate serverCertificate, bool clientCertificateRequired, SslProtocolType sslProtocolType, bool checkCertificateRevocation)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
 		public override void SetLength (long value)
 		{
 			throw new NotImplementedException ();
@@ -323,6 +311,11 @@ namespace System.Net.Security
 		public override void Write (byte[] buffer, int offset, int count)
 		{
 			throw new NotImplementedException ();
+		}
+
+		public void Write (byte[] buffer)
+		{
+			Write (buffer, 0, buffer.Length);
 		}
 
 		#endregion // Methods
