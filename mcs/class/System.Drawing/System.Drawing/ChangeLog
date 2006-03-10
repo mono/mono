@@ -1,3 +1,8 @@
+2006-03-09  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* gdipFunctions.cs: Removed XCloseDisplay call from Gdi+ shutdown,
+	  it was causing crashes in the finalizers (bug #77464)
+
 2006-03-06  Jonathan Gilbert  <logic@deltaq.org>
 
 	* gdipFunctions.cs: Rewrote the StreamSeekImpl function to invalidate

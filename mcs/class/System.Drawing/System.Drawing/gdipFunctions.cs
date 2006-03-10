@@ -74,14 +74,19 @@ namespace System.Drawing
 			// shutting down
 			GC.Collect ();	
 			GC.WaitForPendingFinalizers ();
-            // This causes crashes in MS GDI+ because this call occurs before
-            // all managed GDI objects are finalized. When they are finalized they call
-            // into a shutdown GDI+ and we crash.
+
+			// This causes crashes in MS GDI+ because this call occurs before
+			// all managed GDI objects are finalized. When they are finalized they call
+			// into a shutdown GDI+ and we crash.
 			//GdiplusShutdown (ref GdiPlusToken);
 
-			if (UseX11Drawable && Display != IntPtr.Zero) {
-				XCloseDisplay (Display);
-			}
+			// This causes crashes in Mono libgdiplus because this call
+			// occurs before all managed GDI objects are finalized
+			// When they are finalized they use the closed display and
+			// crash
+			//if (UseX11Drawable && Display != IntPtr.Zero) {
+			//	XCloseDisplay (Display);
+			//}
 
 		}
 
