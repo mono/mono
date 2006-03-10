@@ -1,3 +1,8 @@
+
+Fri Mar 10 18:21:41 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: speedup IList<T> array accesses.
+
 2006-03-09  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (mono_method_to_ir): Handle large methods overflowing the 
