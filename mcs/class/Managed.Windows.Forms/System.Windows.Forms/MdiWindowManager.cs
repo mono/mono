@@ -86,7 +86,6 @@ namespace System.Windows.Forms {
 		{
 			Form parent = (Form) mdi_container.Parent;
 			MainMenu res = new MainMenu ();
-			
 
 			res.MenuItems.Add (icon_menu);
 
@@ -129,7 +128,7 @@ namespace System.Windows.Forms {
 		private void MeasureIconMenuItem (object sender, MeasureItemEventArgs me)
 		{
 			Form parent = (Form) mdi_container.Parent;
-			int size = parent.Menu.Height;
+			int size = MaximizedMenu.Height;
 			me.ItemHeight = size;
 			me.ItemWidth = size + 2; // some padding
 		}

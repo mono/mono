@@ -1,5 +1,12 @@
 2006-03-10  Jackson Harper  <jackson@ximian.com>
 
+	* Form.cs: We need to use the ActiveMenu when calculating menu
+	height.
+	* MdiWindowManager.cs: Use the MaximizedMenu for calculating
+	height.
+
+2006-03-10  Jackson Harper  <jackson@ximian.com>
+
 	* MenuAPI.cs: Make this available elsewhere. I need it in some MDI
 	stuff.
 	* Form.cs: Make the window_state internal so the window managers
