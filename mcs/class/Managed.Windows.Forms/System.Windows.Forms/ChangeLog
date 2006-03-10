@@ -1,3 +1,13 @@
+2006-03-10  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* ThemeWin32Classic.cs:
+	  - CheckBox_DrawText: Added logic to not wrap if not enough space
+	    is available (Fix for bug #77727)
+	  - RadioButton_DrawText: Added logic not to wrap if not enough
+	    space is available (Fix for bug #77727). Also removed some
+	    duplicate code, DrawString always drawing the regular text
+	    before hitting the if statement.
+
 2006-03-10  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* XplatUIX11.cs: Handle an unmapped window state in SetWindowState

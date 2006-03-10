@@ -605,6 +605,11 @@ namespace System.Windows.Forms
 			}
 			
 			/* Place the text; to be compatible with Windows place it after the checkbox has been drawn */
+
+			// Windows seems to not wrap text in certain situations, this matches as close as I could get it
+			if ((float)(checkbox.Font.Height * 1.5f) > text_rectangle.Height) {
+				text_format.FormatFlags |= StringFormatFlags.NoWrap;
+			}
 			if (checkbox.Enabled) {
 				sb = ResPool.GetSolidBrush(checkbox.ForeColor);
 				dc.DrawString(checkbox.Text, checkbox.Font, sb, text_rectangle, text_format);			
@@ -2816,8 +2821,6 @@ namespace System.Windows.Forms
 		
 		protected virtual void RadioButton_DrawText(RadioButton radio_button, Rectangle text_rectangle, Graphics dc, StringFormat text_format)
 		{
-			SolidBrush sb;
-			
 			// offset the text if it's pressed and a button
 			if (radio_button.Appearance == Appearance.Button) {
 				if (radio_button.Checked || (radio_button.Capture && radio_button.FlatStyle != FlatStyle.Flat)) {
@@ -2829,11 +2832,14 @@ namespace System.Windows.Forms
 			} 
 			
 			/* Place the text; to be compatible with Windows place it after the radiobutton has been drawn */			
-			dc.DrawString (radio_button.Text, radio_button.Font, ResPool.GetSolidBrush (radio_button.ForeColor), text_rectangle, text_format);
-			
+
+			// Windows seems to not wrap text in certain situations, this matches as close as I could get it
+			if ((float)(radio_button.Font.Height * 1.5f) > text_rectangle.Height) {
+				text_format.FormatFlags |= StringFormatFlags.NoWrap;
+			}
+
 			if (radio_button.Enabled) {
-				sb = ResPool.GetSolidBrush(radio_button.ForeColor);
-				dc.DrawString(radio_button.Text, radio_button.Font, sb, text_rectangle, text_format);
+				dc.DrawString (radio_button.Text, radio_button.Font, ResPool.GetSolidBrush (radio_button.ForeColor), text_rectangle, text_format);
 			} else if (radio_button.FlatStyle == FlatStyle.Flat) {
 				dc.DrawString(radio_button.Text, radio_button.Font, ResPool.GetSolidBrush (ControlPaint.DarkDark (this.ColorControl)), text_rectangle, text_format);
 			} else {
