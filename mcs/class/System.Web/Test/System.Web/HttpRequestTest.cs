@@ -487,8 +487,6 @@ namespace MonoTests.System.Web {
 		}
 		
 		[Test]
-		[ExpectedException(typeof (HttpRequestValidationException))]
-		[Category ("NotDotNet")] // doesn't work on 1.1 SP1 and 2.0 RC
 		public void Test_DangerousCookie2 ()
 		{
 			HttpContext c;
@@ -499,8 +497,6 @@ namespace MonoTests.System.Web {
 		}
 		
 		[Test]
-		[ExpectedException(typeof (HttpRequestValidationException))]
-		[Category ("NotDotNet")] // doesn't work on 1.1 SP1 and 2.0 RC
 		public void Test_DangerousCookie3 ()
 		{
 			HttpContext c;
@@ -511,8 +507,6 @@ namespace MonoTests.System.Web {
 		}
 		
 		[Test]
-		[ExpectedException(typeof (HttpRequestValidationException))]
-		[Category ("NotDotNet")] // doesn't work on 1.1 SP1 and 2.0 RC
 		public void Test_DangerousCookie4 ()
 		{
 			HttpContext c;
