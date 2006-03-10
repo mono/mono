@@ -1,5 +1,9 @@
 2006-03-10  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c: Compile icall wrappers lazily.
+
+	* mini-codegen.c: Use printf instead of g_print since its much faster.
+
 	* mini.h (mono_bitset_foreach_bit): Use the faster mono_bitset_find_start ()
 	function.
 
