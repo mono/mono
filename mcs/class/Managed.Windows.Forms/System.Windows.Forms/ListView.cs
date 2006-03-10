@@ -1597,7 +1597,12 @@ namespace System.Windows.Forms
 
 				if (clicked_column != null) {
 					if (owner.AllowColumnReorder) {
-						drag_column.column_rect.X = clicked_column.Rect.X + me.X - drag_x;
+						Rectangle r;
+
+						r = drag_column.column_rect;
+						r.X = r.X + me.X - drag_x;
+						drag_column.column_rect = r;
+
 						int x = me.X + owner.h_marker;
 						ColumnHeader over = ColumnAtX (x);
 						if (x < over.X + over.Width / 2)

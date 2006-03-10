@@ -1,3 +1,8 @@
+2006-03-09  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* ListView.cs (HeaderMouseMove): Fix csc compilation. 
+	  drag_column.column_rect is MarshalByRef and can't be used that way
+
 2006-03-09  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* AxHost.cs: Added deserialization constructor for 
