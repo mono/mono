@@ -30,7 +30,7 @@ using System.Drawing;
 
 namespace System.Windows.Forms {
 
-	[SerializableAttribute()]
+	[Serializable]
 	public struct Padding {
 
 		private int bottom;
@@ -40,14 +40,19 @@ namespace System.Windows.Forms {
 		private bool initialized;
 
 		public Padding (int all) {
-			Bottom = Left = Right = Top = all;
+			left = all;
+			right = all;
+			top = all;
+			bottom = all;
+			initialized = true;
 		}
 
 		public Padding (int left, int top, int right, int bottom) {
-			Left = left;
-			Top = top;
-			Right = right;
-			Bottom = bottom;
+			this.left = left;
+			this.right = right;
+			this.top = top;
+			this.bottom = bottom;
+			initialized = true;
 		}
 
 		public static readonly Padding Empty = new Padding();
@@ -95,7 +100,7 @@ namespace System.Windows.Forms {
 		}
 
 		public static Padding Add (Padding p1, Padding p2) {
-			return op_Addition(p1, p2);
+			return p1 + p2;
 		}
 
 		public override bool Equals (object other) {
@@ -114,24 +119,24 @@ namespace System.Windows.Forms {
 			return top ^ bottom ^ left ^ right;
 		}
 
-		public static Padding op_Addition (Padding p1, Padding p2) {
+		public static Padding operator+ (Padding p1, Padding p2) {
 			return new Padding(p1.Left + p2.Left, p1.Top + p2.Top, p1.Right + p2.Right, p1.Bottom + p2.Bottom);
 		}
 
-		public static bool op_Equality (Padding p1, Padding p2) {
+		public static bool operator== (Padding p1, Padding p2) {
 			return p1.Equals(p2);
 		}
 
-		public static bool op_Inequality (Padding p1, Padding p2) {
+		public static bool operator!= (Padding p1, Padding p2) {
 			return !(p1.Equals(p2));
 		}
 
-		public static Padding op_Subtraction (Padding p1, Padding p2) {
+		public static Padding operator- (Padding p1, Padding p2) {
 			return new Padding(p1.Left - p2.Left, p1.Top - p2.Top, p1.Right - p2.Right, p1.Bottom - p2.Bottom);
 		}
 
 		public static Padding Subtract (Padding p1, Padding p2) {
-			return op_Subtraction(p1, p2);
+			return p1 - p2;
 		}
 
 		public override string ToString () {
