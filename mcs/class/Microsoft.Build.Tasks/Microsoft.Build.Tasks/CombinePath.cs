@@ -53,11 +53,13 @@ namespace Microsoft.Build.Tasks {
 			set { basePath = value; }
 		}
 		
+		[Output]
 		public ITaskItem[] CombinedPaths {
 			get { return combinedPaths; }
 			set { combinedPaths = value; }
 		}
 		
+		[Required]
 		public ITaskItem[] Paths {
 			get { return paths; }
 			set { paths = value; }

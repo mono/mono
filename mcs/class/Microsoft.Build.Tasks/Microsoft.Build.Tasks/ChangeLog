@@ -1,3 +1,12 @@
+2006-03-11  Marek Sieradzki  <marek.sieradzki@gmail.com> 
+
+	* MonoTODOAttribute.cs: Removed.
+	* CombinePath.cs, CreateProperty.cs, GenerateResources.cs,
+	SignFile.cs: Added missing attributes.
+	* Warning.cs: Added missing properties.
+	* WriteLinesToFiles.cs: Compressed properties.
+	* Exec.cs, ManagedCompiler.cs: Added missing methods.
+
 2006-02-26  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* CombinePath.cs: Added.

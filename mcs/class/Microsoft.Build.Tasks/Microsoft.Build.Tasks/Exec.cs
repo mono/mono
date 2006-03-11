@@ -58,7 +58,7 @@ namespace Microsoft.Build.Tasks {
 			executionTime = 0;
 		}
 
-		public override bool Execute ()
+		/*public override bool Execute ()
 		{
 			StringCollection temporaryOutputs = new StringCollection ();
 			string line = null;
@@ -93,16 +93,53 @@ namespace Microsoft.Build.Tasks {
 				return false;
 			}
 			
-			/*if (exitCode != 0 && ignoreExitCode == false)
+			if (exitCode != 0 && ignoreExitCode == false)
 				return false;
-			else*/
+			else
 				return true;
+		}*/
+		
+		[MonoTODO]
+		protected override int ExecuteTool (string pathToTool,
+						    string responseFileCommands,
+						    string commandLineCommands)
+		{
+			return 0;
 		}
 		
 		[MonoTODO]
 		protected override string GenerateFullPathToTool ()
 		{
 			return null;
+		}
+		
+		[MonoTODO]
+		protected override string GetWorkingDirectory ()
+		{
+			return Environment.CurrentDirectory;
+		}
+		
+		[MonoTODO]
+		protected override bool HandleTaskExecutionErrors ()
+		{
+			return true;
+		}
+		
+		[MonoTODO]
+		protected override void LogPathToTool (string toolName,
+						       string pathToTool)
+		{
+		}
+		
+		[MonoTODO]
+		protected override void LogToolCommand (string message)
+		{
+		}
+		
+		[MonoTODO]
+		protected override bool ValidateParameters ()
+		{
+			return true;
 		}
 		
 		[Required]
@@ -138,19 +175,21 @@ namespace Microsoft.Build.Tasks {
 			get { return base.StandardOutputLoggingImportance; }
 		}
 		
-		//FIXME: what's this?
+		[MonoTODO]
+		[Output]
 		public string StdOutEncoding {
 			get { return stdOutEncoding; }
 			set { stdOutEncoding = value; }
 		}
 		
-		//FIXME: what's this?
+		[MonoTODO]
+		[Output]
 		public string StdErrEncoding {
 			get { return stdErrEncoding; }
 			set { stdErrEncoding = value; }
 		}
 		
-		// FIXME: crashes the compiler when replaced with return base.ToolName
+		[MonoTODO]
 		protected override string ToolName {
 			get { return String.Empty; }
 		}

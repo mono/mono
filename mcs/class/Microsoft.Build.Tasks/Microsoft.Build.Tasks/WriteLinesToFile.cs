@@ -71,30 +71,18 @@ namespace Microsoft.Build.Tasks {
 
 		[Required]
 		public ITaskItem File {
-			get {
-				return file;
-			}
-			set {
-				file = value;
-			}
+			get { return file; }
+			set { file = value; }
 		}
 
 		public ITaskItem[] Lines {
-			get {
-				return lines;
-			}
-			set {
-				lines  = value;
-			}
+			get { return lines; }
+			set { lines  = value; }
 		}
 
 		public bool Overwrite {
-			get {
-				return overwrite;
-			}
-			set {
-				overwrite = value;
-			}
+			get { return overwrite; }
+			set { overwrite = value; }
 		}
 	}
 }

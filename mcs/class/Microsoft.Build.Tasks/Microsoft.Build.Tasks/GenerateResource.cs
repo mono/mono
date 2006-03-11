@@ -173,9 +173,6 @@ namespace Microsoft.Build.Tasks {
 			get {
 				return filesWritten;
 			}
-			set {
-				filesWritten = value;
-			}
 		}
 
 		[MonoTODO]
@@ -241,6 +238,7 @@ namespace Microsoft.Build.Tasks {
 			}
 		}
 
+		[Output]
 		public string StronglyTypedFileName {
 			get {
 				return stronglyTypedFilename;

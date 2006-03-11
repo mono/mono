@@ -44,12 +44,14 @@ namespace Microsoft.Build.Tasks {
 			return true;
 		}
 
+		[Output]
 		public string[] Value {
 			get { return this.@value; }
 			set { this.@value = value; }
 		}
 
 		// FIXME: is this value after evaluation?
+		[Output]
 		public string[] ValueSetByTask {
 			get { return valueSetByTask; }
 		}

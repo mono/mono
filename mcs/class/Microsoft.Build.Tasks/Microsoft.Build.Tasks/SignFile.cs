@@ -27,6 +27,7 @@
 
 #if NET_2_0
 
+using System;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 
@@ -41,6 +42,7 @@ namespace Microsoft.Build.Tasks {
 		{
 		}
 
+		[MonoTODO]
 		public override bool Execute ()
 		{
 			return true;

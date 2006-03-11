@@ -34,6 +34,8 @@ using Microsoft.Build.Utilities;
 namespace Microsoft.Build.Tasks {
 	public sealed class Warning : TaskExtension {
 		
+		string	code;
+		string	helpKeyword;
 		string	text;
 	
 		public Warning ()
@@ -44,20 +46,26 @@ namespace Microsoft.Build.Tasks {
 		{
 			if (text == null)
 				text = String.Empty;
-			Log.LogWarning (null, null, null, BuildEngine.ProjectFileOfTaskNode,
+			Log.LogWarning (null, code, helpKeyword, BuildEngine.ProjectFileOfTaskNode,
 				BuildEngine.LineNumberOfTaskNode, BuildEngine.ColumnNumberOfTaskNode,
 				BuildEngine.LineNumberOfTaskNode, BuildEngine.ColumnNumberOfTaskNode,
 				text, null);
 			return true;
 		}
 
+		public string Code {
+			get { return code; }
+			set { code = value; }
+		}
+		
+		public string HelpKeyword {
+			get { return helpKeyword; }
+			set { helpKeyword = value; }
+		}
+		
 		public string Text {
-			get {
-				return text;
-			}
-			set {
-				text = value;
-			}
+			get { return text; }
+			set { text = value; }
 		}
 	}
 }

@@ -115,6 +115,13 @@ namespace Microsoft.Build.Tasks {
 		{
 			return true;
 		}
+		
+		[MonoTODO]
+		protected bool ListHasNoDuplicateItems (ITaskItem itemList,
+							string parameterName)
+		{
+			return true;
+		}
 
 		protected override bool ValidateParameters ()
 		{
@@ -201,6 +208,7 @@ namespace Microsoft.Build.Tasks {
 			set { Bag ["Optimize"] = value; }
 		}
 
+		[Output]
 		public ITaskItem OutputAssembly {
 			get { return (ITaskItem) Bag ["OutputAssembly"]; }
 			set { Bag ["OutputAssembly"] = value; }
