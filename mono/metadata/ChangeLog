@@ -1,5 +1,7 @@
 2006-03-11  Zoltan Varga  <vargaz@gmail.com>
 
+	* icall.c (mono_register_jit_icall_wrapper): Fix a warning.
+	
 	* icall.c (mono_register_jit_icall_wrapper): Register the argument, not
 	info->wrapper.
 
