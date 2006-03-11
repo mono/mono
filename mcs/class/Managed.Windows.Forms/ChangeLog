@@ -1,3 +1,7 @@
+2006-03-11  Alexander Olk  <alex.olk@googlemail.com>
+
+	* System.Windows.Forms.dll.sources: Removed MimeGenerated.cs
+
 2006-03-09  Jonathan Gilbert  <logic@deltaq.org>
 
 	* System.Windows.Forms/AutoScaleMode.cs: Added new file for
