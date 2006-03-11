@@ -1,5 +1,8 @@
 2006-03-11  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (mono_jit_compile_method_with_opt): Fix a race in the newly
+	added code.
+
 	* mini.h: Add a missing prototype.
 
 2006-03-10  Zoltan Varga  <vargaz@gmail.com>
