@@ -1,3 +1,7 @@
+2006-03-11 Gert Driesen <drieseng@users.sourceforge.net>
+
+	* TypeDescriptorTests.cs: Added test for bug #76686.
+
 2006-02-23 Andrew Skiba <andrews@mainsoft.com>
 
 	* standalone_tests: TypeDescriptor performance test

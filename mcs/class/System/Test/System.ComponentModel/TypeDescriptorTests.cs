@@ -322,6 +322,11 @@ namespace MonoTests.System.ComponentModel
 			AssertEquals (typeof(TypeConverter), TypeDescriptor.GetConverter (new TestClass ()).GetType());
 			AssertEquals (typeof(TypeConverter), TypeDescriptor.GetConverter (new TestStruct ()).GetType());
 			AssertEquals (typeof(CollectionConverter), TypeDescriptor.GetConverter (new Hashtable ()).GetType());
+
+#if NET_2_0
+			// Test from bug #76686
+			AssertEquals (typeof (Int32Converter), TypeDescriptor.GetConverter ((int?) 1).GetType ());
+#endif
 		}
 		
 		[Test]
