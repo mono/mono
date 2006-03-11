@@ -36,7 +36,7 @@ namespace Mono.CSharp {
 
 		public Attributable (Attributes attrs)
 		{
-			attributes = attrs;
+			OptAttributes = attrs;
 		}
 
 		public Attributes OptAttributes 
@@ -82,10 +82,10 @@ namespace Mono.CSharp {
 		public readonly Location Location;
 
 		public Type Type;
-		
-		bool resolve_error;
 
+		bool resolve_error;
 		readonly bool nameEscaped;
+		Attributable owner;
 
 		static AttributeUsageAttribute DefaultUsageAttribute = new AttributeUsageAttribute (AttributeTargets.All);
 		static Assembly orig_sec_assembly;
@@ -108,6 +108,11 @@ namespace Mono.CSharp {
 			Location = loc;
 			ExplicitTarget = target;
 			this.nameEscaped = nameEscaped;
+		}
+
+		public void AttachTo (Attributable owner)
+		{
+			this.owner = owner;
 		}
 
 		void Error_InvalidNamedArgument (string name)
@@ -184,7 +189,7 @@ namespace Mono.CSharp {
 				return null;
 
 			Type t = te.Type;
-			if (t.IsSubclassOf (TypeManager.attribute_type)) {
+			if (TypeManager.IsSubclassOf (t, TypeManager.attribute_type)) {
 				is_attr = true;
 			} else if (!silent) {
 				Report.SymbolRelatedToPreviousError (t);
@@ -395,7 +400,7 @@ namespace Mono.CSharp {
 				object val;
 				if (!GetAttributeArgumentExpression (e, Location, a.Type, out val))
 					return null;
-				
+
 				pos_values [i] = val;
 
 				if (i == 0 && Type == TypeManager.attribute_usage_type && (int)val == 0) {
@@ -415,12 +420,12 @@ namespace Mono.CSharp {
 			Hashtable seen_names = null;
 
 			if (named_arg_count > 0) {
-				field_infos = new ArrayList ();
-				prop_infos  = new ArrayList ();
-				field_values = new ArrayList ();
-				prop_values = new ArrayList ();
+				field_infos = new ArrayList (4);
+				prop_infos  = new ArrayList (4);
+				field_values = new ArrayList (4);
+				prop_values = new ArrayList (4);
 
-				seen_names = new Hashtable();
+				seen_names = new Hashtable(4);
 			}
 			
 			for (i = 0; i < named_arg_count; i++) {
@@ -512,10 +517,9 @@ namespace Mono.CSharp {
 
  					object value;
  					if (!GetAttributeArgumentExpression (e, Location, fi.FieldType, out value))
-						return null;
+  						return null;
 
-					field_values.Add (value);
-
+ 					field_values.Add (value);  					
 					field_infos.Add (fi);
 				}
 			}
@@ -824,6 +828,37 @@ namespace Mono.CSharp {
 				return null;
 
 			return (Type)pos_values [0];
+		}
+
+		public bool CheckTarget (Attributable owner)
+		{
+			string[] valid_targets = owner.ValidAttributeTargets;
+			if (ExplicitTarget == null || ExplicitTarget == valid_targets [0]) {
+				Target = owner.AttributeTargets;
+				return true;
+			}
+
+			// TODO: we can skip the first item
+			if (((IList) valid_targets).Contains (ExplicitTarget)) {
+				switch (ExplicitTarget) {
+					case "return": Target = AttributeTargets.ReturnValue; return true;
+					case "param": Target = AttributeTargets.Parameter; return true;
+					case "field": Target = AttributeTargets.Field; return true;
+					case "method": Target = AttributeTargets.Method; return true;
+					case "property": Target = AttributeTargets.Property; return true;
+				}
+				throw new InternalErrorException ("Unknown explicit target: " + ExplicitTarget);
+			}
+				
+			StringBuilder sb = new StringBuilder ();
+			foreach (string s in valid_targets) {
+				sb.Append (s);
+				sb.Append (", ");
+			}
+			sb.Remove (sb.Length - 2, 2);
+			Report.Error (657, Location, "`{0}' is not a valid attribute location for this declaration. " +
+				"Valid attribute locations for this declaration are `{1}'", ExplicitTarget, sb.ToString ());
+			return false;
 		}
 
 		/// <summary>
@@ -1389,7 +1424,7 @@ namespace Mono.CSharp {
 	}
 
 	public class Attributes {
-		public ArrayList Attrs;
+		public readonly ArrayList Attrs;
 
 		public Attributes (Attribute a)
 		{
@@ -1407,39 +1442,20 @@ namespace Mono.CSharp {
 			Attrs.AddRange (attrs);
 		}
 
+		public void AttachTo (Attributable attributable)
+		{
+			foreach (Attribute a in Attrs)
+				a.AttachTo (attributable);
+		}
+
 		/// <summary>
 		/// Checks whether attribute target is valid for the current element
 		/// </summary>
 		public bool CheckTargets (Attributable member)
 		{
-			string[] valid_targets = member.ValidAttributeTargets;
 			foreach (Attribute a in Attrs) {
-				if (a.ExplicitTarget == null || a.ExplicitTarget == valid_targets [0]) {
-					a.Target = member.AttributeTargets;
-					continue;
-				}
-
-				// TODO: we can skip the first item
-				if (((IList) valid_targets).Contains (a.ExplicitTarget)) {
-					switch (a.ExplicitTarget) {
-					case "return": a.Target = AttributeTargets.ReturnValue; continue;
-					case "param": a.Target = AttributeTargets.Parameter; continue;
-					case "field": a.Target = AttributeTargets.Field; continue;
-					case "method": a.Target = AttributeTargets.Method; continue;
-					case "property": a.Target = AttributeTargets.Property; continue;
-					}
-					throw new InternalErrorException ("Unknown explicit target: " + a.ExplicitTarget);
-				}
-				
-				StringBuilder sb = new StringBuilder ();
-				foreach (string s in valid_targets) {
-					sb.Append (s);
-					sb.Append (", ");
-				}
-				sb.Remove (sb.Length - 2, 2);
-				Report.Error (657, a.Location, "`{0}' is not a valid attribute location for this declaration. " +
-					      "Valid attribute locations for this declaration are `{1}'", a.ExplicitTarget, sb.ToString ());
-				return false;
+				if (!a.CheckTarget (member))
+					return false;
 			}
 			return true;
 		}
@@ -1665,8 +1681,9 @@ namespace Mono.CSharp {
 		{
 			type = TypeManager.DropGenericTypeArguments (type);
 			DeclSpace ds = TypeManager.LookupDeclSpace (type);
-			if (ds != null)
+			if (ds != null) {
 				return ds.IsClsComplianceRequired (ds);
+			}
 
 			if (type.IsGenericParameter)
 				return true;
@@ -1704,7 +1721,9 @@ namespace Mono.CSharp {
 					if (attribute.Length == 1)
 						result = (ObsoleteAttribute)attribute [0];
 				} else {
-					result = type_ds.GetObsoleteAttribute ();
+					// Is null during corlib bootstrap
+					if (TypeManager.obsolete_attribute_type != null)
+						result = type_ds.GetObsoleteAttribute ();
 				}
 			}
 
