@@ -28,16 +28,16 @@ namespace Test.Mono.Data.SqliteClient
 		[STAThread]
 		static void Main(string[] args)
 		{
-			Test(false, false);
+			Test(false, null);
 			Console.WriteLine();
-			Test(false, true);
+			Test(false, "ISO-8859-1");
 			Console.WriteLine();
-			Test(true, false);
+			Test(true, null);
 		}
 		
-		static void Test(bool v3, bool utf8) {
+		static void Test(bool v3, string encoding) {
 			if (!v3)
-				Console.WriteLine("Testing Version 2" + (utf8 ? " with UTF-8 encoding" : ""));
+				Console.WriteLine("Testing Version 2" + (encoding != null ? " with " + encoding + " encoding" : ""));
 			else
 				Console.WriteLine("Testing Version 3");
 				
@@ -54,8 +54,8 @@ namespace Test.Mono.Data.SqliteClient
 				"URI=file:SqliteTest.db";
 			if (v3)
 				connectionString += ",Version=3";
-			if (utf8)
-				connectionString += ",encoding=UTF-8";
+			if (encoding != null)
+				connectionString += ",encoding=" + encoding;
 			dbcon.ConnectionString = connectionString;
 				
 			dbcon.Open();
@@ -70,7 +70,7 @@ namespace Test.Mono.Data.SqliteClient
 				"NTIME DATETIME); " +
 				"INSERT INTO MONO_TEST  " +
 				"(NID, NDESC, NTIME) " +
-				"VALUES(1,'One" + ((v3 || utf8) ? " (unicode test: \u05D0)" : "") + "', '2006-01-01')";
+				"VALUES(1,'One (unicode test: \u05D0)', '2006-01-01')";
 			Console.WriteLine("Create & insert modified rows = 1: " + dbcmd.ExecuteNonQuery());
 
 			dbcmd.CommandText =
@@ -78,7 +78,7 @@ namespace Test.Mono.Data.SqliteClient
 				"(NID, NDESC, NTIME) " +
 				"VALUES(:NID,:NDESC,:NTIME)";
 			dbcmd.Parameters.Add( new SqliteParameter("NID", 2) );
-			dbcmd.Parameters.Add( new SqliteParameter(":NDESC", "Two" + ((v3 || utf8) ? " (unicode test: \u05D1)" : "")) );
+			dbcmd.Parameters.Add( new SqliteParameter(":NDESC", "Two (unicode test: \u05D1)") );
 			dbcmd.Parameters.Add( new SqliteParameter(":NTIME", DateTime.Now) );
 			Console.WriteLine("Insert modified rows with parameters = 1, 2: " + dbcmd.ExecuteNonQuery() + " , " + dbcmd.LastInsertRowID());
 
@@ -87,6 +87,12 @@ namespace Test.Mono.Data.SqliteClient
 				"(NID, NDESC, NTIME) " +
 				"VALUES(3,'Three, quoted parameter test, and next is null; :NTIME', NULL)";
 			Console.WriteLine("Insert with null modified rows and ID = 1, 3: " + dbcmd.ExecuteNonQuery() + " , " + dbcmd.LastInsertRowID());
+
+			dbcmd.CommandText =
+				"INSERT INTO MONO_TEST  " +
+				"(NID, NDESC, NTIME) " +
+				"VALUES(4,'Four with ANSI char: ü', NULL)";
+			Console.WriteLine("Insert with ANSI char ü = 1, 4: " + dbcmd.ExecuteNonQuery() + " , " + dbcmd.LastInsertRowID());
 
 			dbcmd.CommandText =
 				"SELECT * FROM MONO_TEST";

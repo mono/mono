@@ -1,3 +1,17 @@
+2006-03-11  Joshua Tauberer  <tauberer@for.net>
+
+	* Use HGlobal rather than CoTaskMem String-To-Ptr functions in
+	  Marshal class.  StringToCoTaskMemAnsi is broken (pending it
+	  being fixed): it actually uses Ansi, instead of UTF-8.  Now,
+	  Sqlite2 with no encoding parameter uses UTF-8 encoding.  Any
+	  Sqlite2 DB since Jan. 20 was encoded in ANSI but unreadable
+	  back.
+
+2006-03-07  Kamil Skalski  <nazgul@nemerle.org>
+
+	* SqliteDataReader.cs: Handle null values in result as having
+	string type
+
 2006-02-10  Joshua Tauberer  <tauberer@for.net>
 
 	* SqliteDataReader: Made 64bit clean.  Patch from
