@@ -1,5 +1,8 @@
 2006-03-11  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-amd64.h (MONO_ARCH_INST_FIXED_REG): Reorganize the comparisons so
+	common cases are done first.
+
 	* mini-amd64.c: Fix some warnings.
 
 	* mini-codegen.c mini-*.c: Allocate call->out_ireg_args and call->out_freg_args
