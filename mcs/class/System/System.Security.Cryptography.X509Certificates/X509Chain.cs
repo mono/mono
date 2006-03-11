@@ -33,7 +33,8 @@ namespace System.Security.Cryptography.X509Certificates {
 
 	public class X509Chain {
 
-		private bool _machineContext;
+		// Set to internal to remove a warning
+		internal bool _machineContext;
 		private X509ChainElementCollection _elements;
 		private X509ChainPolicy _policy;
 		private X509ChainStatus[] _status;

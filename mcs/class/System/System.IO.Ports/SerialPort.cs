@@ -31,10 +31,9 @@ namespace System.IO.Ports
 		int writeBufferSize = DefaultWriteBufferSize;
 		int readBufferOffset;
 		int readBufferLength;
-		int writeBufferOffset;
 		int writeBufferLength;
 		byte [] readBuffer;
-		byte [] writeBuffer;
+		//byte [] writeBuffer;
 
 		public SerialPort ()
 		{
@@ -381,7 +380,7 @@ namespace System.IO.Ports
 			
 			stream = null;
 			readBuffer = null;
-			writeBuffer = null;
+			//writeBuffer = null;
 		}
 
 		public void DiscardInBuffer ()
@@ -409,7 +408,7 @@ namespace System.IO.Ports
 			isOpen = true;
 			stream = new SerialPortStream (this);
 			readBuffer = new byte [readBufferSize];
-			writeBuffer = new byte [writeBufferSize];
+			//writeBuffer = new byte [writeBufferSize];
 		}
 
 		public int Read (byte[] buffer, int offset, int count)
@@ -546,10 +545,11 @@ namespace System.IO.Ports
 		}
 
 		// events
-
+#pragma warning disable 67
 		public event SerialErrorReceivedEventHandler ErrorReceived;
 		public event SerialPinChangedEventHandler PinChanged;
 		public event SerialDataReceivedEventHandler DataReceived;
+#pragma warning restore
 	}
 
 	public delegate void SerialDataReceivedEventHandler (object sender, SerialDataReceivedEventArgs e);

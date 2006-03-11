@@ -33,7 +33,10 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
+// See RFC 2396 for more info on URI's.
+//
+// TODO: optimize by parsing host string only once
+//
 using System.ComponentModel;
 using System.IO;
 using System.Net;
@@ -42,9 +45,10 @@ using System.Text;
 using System.Collections;
 using System.Globalization;
 
-// See RFC 2396 for more info on URI's.
-
-// TODO: optimize by parsing host string only once
+//
+// Disable warnings on Obsolete methods being used
+//
+#pragma warning disable 612
 
 namespace System {
 

@@ -49,7 +49,7 @@ namespace System.Net.NetworkInformation {
 		}
 
 		public override int ErrorCode {
-			get { return NativeErrorCode; }
+			get { return error_code; }
 		}
 	}
 }

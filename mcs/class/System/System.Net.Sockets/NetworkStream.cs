@@ -206,7 +206,11 @@ namespace System.Net.Sockets
 			((IDisposable) this).Dispose ();
 		}
 
-		protected virtual void Dispose (bool disposing)
+		protected
+#if NET_2_0
+		override
+#endif
+		void Dispose (bool disposing)
 		{
 			if (disposed) 
 				return;

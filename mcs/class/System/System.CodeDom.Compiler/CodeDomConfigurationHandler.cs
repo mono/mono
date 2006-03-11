@@ -153,6 +153,9 @@ namespace System.CodeDom.Compiler
 			return ExtractAttributeValue (name, node, true);
 		}
 
+#if false
+		// Not used for now
+		
 		static string ShortAsmName (string long_name)
 		{
 			int i = long_name.IndexOf (',');
@@ -160,6 +163,7 @@ namespace System.CodeDom.Compiler
 				return long_name + ".dll";
 			return long_name.Substring (0, i) + ".dll";
 		}
+#endif
 		
 		static void ThrowException (string message, XmlNode node)
 		{

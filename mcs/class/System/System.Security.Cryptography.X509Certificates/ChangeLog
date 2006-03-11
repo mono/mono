@@ -1,3 +1,10 @@
+2006-03-11  Miguel de Icaza  <miguel@novell.com>
+
+	* X509Chain.cs: Flagged member as internal to avoid unused warning.
+
+	* X500DistinguishedName.cs: Comment out unused names and move
+	temporary unused variables inside the comments that were removed 
+
 2005-11-24  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X500DistinguishedName.cs: Added validation (still missing parsing).

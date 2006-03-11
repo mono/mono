@@ -26,7 +26,7 @@ namespace System.Net
 		string exitMessage = String.Empty;
 		string statusDescription;
 		string method;
-		bool keepAlive;
+		//bool keepAlive;
 		bool disposed;
 		internal long contentLength = -1;
 		
@@ -34,7 +34,7 @@ namespace System.Net
 		{
 			this.uri = uri;
 			this.method = method;
-			this.keepAlive = keepAlive;
+			//this.keepAlive = keepAlive;
 		}
 		
 		public override long ContentLength {

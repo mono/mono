@@ -1,3 +1,11 @@
+2006-03-11  Miguel de Icaza  <miguel@novell.com>
+
+	* Uri.cs: Pragma disable warning 612 (Obsolete methods are being
+	used by us internally).
+
+	Ponder: should we instead move our methods to use new versions of
+	the Obsoleted ones?
+
 2006-02-21  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Uri.cs : seems like Uri opreator == and != are case sensitive.

@@ -1,3 +1,15 @@
+2006-03-11  Miguel de Icaza  <miguel@novell.com>
+
+	* WebClient.cs: Only expose the right methods to avoid warnings. 
+
+	* FtpDataStream.cs (Dispose): Fix signature.
+
+	* FtpWebResponse.cs: Comment out keepAlive field (unused, sounds
+	like we are missing features here).
+
+	* IPAddress.cs: Move m_HashCode property to the end, and set
+	pragmas to disable warnings.
+
 2006-02-16  Dick Porter  <dick@ximian.com>
 
 	* IPEndPoint.cs: The SocketAddress AddressFamily takes up the

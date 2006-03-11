@@ -1,3 +1,11 @@
+2006-03-11  Miguel de Icaza  <miguel@novell.com>
+
+	* AuthenticatedStream.cs: Fixed normative parameter names (yes, we
+	need to do this everywhere one day).
+
+	(Close): actually obey the "leaveInnerStreamOpen" setting from the
+	constructor. 
+
 2006-03-07  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* SslStream.cs, NegotiateStream.cs: Override CanTimeout,

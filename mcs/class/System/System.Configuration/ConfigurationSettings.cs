@@ -100,8 +100,8 @@ namespace System.Configuration
 			}
 		}
 
-		// Invoked from System.Web
-		static IConfigurationSystem ChangeConfigurationSystem (IConfigurationSystem newSystem)
+		// Invoked from System.Web, disable warning
+		internal static IConfigurationSystem ChangeConfigurationSystem (IConfigurationSystem newSystem)
 		{
 			if (newSystem == null)
 				throw new ArgumentNullException ("newSystem");

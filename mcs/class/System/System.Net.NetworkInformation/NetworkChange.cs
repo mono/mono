@@ -32,8 +32,11 @@ namespace System.Net.NetworkInformation {
 		{
 		}
 
+		// Disable the warnings about the events not being used.
+#pragma warning disable 67
 		public static event NetworkAddressChangedEventHandler NetworkAddressChanged;
 		public static event NetworkAvailabilityChangedEventHandler NetworkAvailabilityChanged;
+#pragma warning restore
 	}
 }
 #endif

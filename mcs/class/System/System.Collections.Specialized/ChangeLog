@@ -1,3 +1,8 @@
+2006-03-11  Miguel de Icaza  <miguel@novell.com>
+
+	* IOrderedDictionary.cs: Flag GetEnumerator as a "new" method to
+	avoid warning.
+
 2005-11-30  Sebastien Pouliot  <sebastien@ximian.com> 
  
 	* OrderedDictionary.cs: OnDeserialization is protected virtual (not 

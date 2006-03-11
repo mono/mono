@@ -1,3 +1,8 @@
+2006-03-11  Miguel de Icaza  <miguel@novell.com>
+
+	* DeflateStream.cs: Comment out DllImport that was not being
+	used. 
+
 2005-05-18  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DeflateStream.cs: Fixed some changed/missing exceptions.

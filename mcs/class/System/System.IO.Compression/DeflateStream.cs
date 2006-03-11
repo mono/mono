@@ -58,8 +58,8 @@ namespace System.IO.Compression {
 		static extern int z_stream_get_avail_in(IntPtr z_stream);
 		[DllImport("MonoPosixHelper")]
 		static extern void z_stream_set_next_out(IntPtr z_stream, IntPtr next_out);
-		[DllImport("MonoPosixHelper")]
-		static extern void z_stream_set_avail_out(IntPtr z_stream, int avail_out);
+		//[DllImport("MonoPosixHelper")]
+		//static extern void z_stream_set_avail_out(IntPtr z_stream, int avail_out);
 		[DllImport("MonoPosixHelper")]
 		static extern ZReturnConsts z_stream_inflate(IntPtr z_stream, ref int avail_out);
 		[DllImport("MonoPosixHelper")]

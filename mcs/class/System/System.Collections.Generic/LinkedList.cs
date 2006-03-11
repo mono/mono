@@ -274,7 +274,7 @@ namespace System.Collections.Generic
 			info.AddValue (VersionKey, version);
 		}
 		
-		public void OnDeserialization (object sender)
+		public virtual void OnDeserialization (object sender)
 		{
 			if (si != null)
 			{

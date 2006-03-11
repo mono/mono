@@ -38,6 +38,7 @@ using System.Runtime.InteropServices;
 namespace System.Collections.Generic
 {
 	[ComVisible(false)]
+	[Serializable]
 	public class Queue<T> : IEnumerable <T>, ICollection, IEnumerable
 	{
 		T [] data;

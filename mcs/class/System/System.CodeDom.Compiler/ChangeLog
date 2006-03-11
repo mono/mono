@@ -1,3 +1,10 @@
+2006-03-11  Miguel de Icaza  <miguel@novell.com>
+
+	* CodeDomConfigurationHandler.cs: Comment out unused methods. 
+
+	* TempFileCollection.cs: Implement explicitly some interface
+	methods to get rid of the "!" errors on CorCompare.
+
 2006-02-19  Zoltan Varga  <vargaz@gmail.com>
 
 	* CodeDomProvider.cs: Fix the [ToolboxItem] attribute. Fixes #77513.

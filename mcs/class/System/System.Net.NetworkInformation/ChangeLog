@@ -1,3 +1,14 @@
+2006-03-11  Miguel de Icaza  <miguel@novell.com>
+
+	* NetworkChange.cs: Use pragmas to eliminate warnings from events
+	that we do not trigger yet.
+
+	This is a candidate for using Aaron's NetworkManager code.  But
+	would make us depend on d-bus.
+
+	* NetworkInformationException.cs: Use error_code for ErrorCode,
+	instead of NativeErrorCode.   Fixes warning. 
+
 2006-02-24 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* UnicastIPAddressInformation.cs:

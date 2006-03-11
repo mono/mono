@@ -165,7 +165,7 @@ namespace System.IO.Ports
 			write_serial (fd, buffer, offset, count, writeTimeout);
 		}
 
-		protected void Dispose (bool disposing)
+		protected override void Dispose (bool disposing)
 		{
 			if (disposed)
 				return;

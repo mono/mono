@@ -1,3 +1,12 @@
+2006-03-11  Miguel de Icaza  <miguel@novell.com>
+
+	* Queue.cs: Flag as serializable.
+
+	* LinkedList.cs (OnDeserialization): Fix signature. 
+
+	* SortedList.cs: Implement explicitly a few methods that were
+	flagged by corcompare. 
+
 2005-11-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* SortedList.cs Queue.cs Stack.cs: Implement TrimExcess methods.

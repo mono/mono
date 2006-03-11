@@ -57,6 +57,12 @@ namespace System.CodeDom
 		//
 		// Properties
 		//
+		int ICollection.Count {
+			get {
+				return namespaceImports.Count;
+			}
+		}
+		
 		public int Count {
 			get {
 				return namespaceImports.Count;
@@ -104,6 +110,11 @@ namespace System.CodeDom
 			}
 		}
 
+		void IList.Clear ()
+		{
+			namespaceImports.Clear ();
+		}
+		
 		public void Clear ()
 		{
 			namespaceImports.Clear ();
@@ -179,6 +190,12 @@ namespace System.CodeDom
 			namespaceImports.CopyTo( array, index );
 		}
 
+		// IEnumerable implementation
+		IEnumerator IEnumerable.GetEnumerator ()
+		{
+			return namespaceImports.GetEnumerator();
+		}
+		
 		// IEnumerable implementation
 		public IEnumerator GetEnumerator ()
 		{

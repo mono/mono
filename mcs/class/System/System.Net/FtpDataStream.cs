@@ -230,7 +230,7 @@ namespace System.Net
 			GC.SuppressFinalize (this);
 		}
 
-		void Dispose (bool disposing)
+		protected override void Dispose (bool disposing)
 		{
 			if (disposed)
 				return;

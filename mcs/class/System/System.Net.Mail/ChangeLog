@@ -1,3 +1,7 @@
+2006-03-11  Miguel de Icaza  <miguel@novell.com>
+
+	* MailAddress.cs: Comment out unused field to remove warning. 
+
 2006-1-13  John Luke  <john.luke@gmail.com>
 
 	* MailMessage.cs: add [MonoTODO] for FormatException in ctor,

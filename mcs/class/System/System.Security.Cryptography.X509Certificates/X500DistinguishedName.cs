@@ -148,6 +148,7 @@ namespace System.Security.Cryptography.X509Certificates {
 			// needs quotes ?
 		}
 
+#if false
 		private string GetSeparator (X500DistinguishedNameFlags flag)
 		{
 			if ((flag & X500DistinguishedNameFlags.UseSemicolons) != 0)
@@ -158,6 +159,7 @@ namespace System.Security.Cryptography.X509Certificates {
 				return Environment.NewLine;
 			return ","; //default
 		}
+#endif
 
 		// decode the DN using the (byte[]) RawData
 		private void DecodeRawData ()
@@ -181,9 +183,9 @@ namespace System.Security.Cryptography.X509Certificates {
 
 			ASN1 dn = MX.X501.FromString (name);
 
-			int pos = 0;
+/*			int pos = 0;
 			ASN1 asn1 = new ASN1 (0x30);
-/*			while (pos < name.Length) {
+			while (pos < name.Length) {
 				MX.X520.AttributeTypeAndValue atv = ReadAttribute (name, ref pos);
 				atv.Value = ReadValue (name, ref pos);
 			}*/

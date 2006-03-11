@@ -91,6 +91,12 @@ namespace System.CodeDom.Compiler {
 			}
 		}
 
+		int ICollection.Count {
+			get {
+				return filehash.Count;
+			}
+		}
+		
 		public int Count
 		{
 			get {
@@ -174,6 +180,11 @@ namespace System.CodeDom.Compiler {
 			}
 		}
 
+		IEnumerator IEnumerable.GetEnumerator ()
+		{
+			return(filehash.Keys.GetEnumerator());
+		}
+		
 		public IEnumerator GetEnumerator()
 		{
 			return(filehash.Keys.GetEnumerator());

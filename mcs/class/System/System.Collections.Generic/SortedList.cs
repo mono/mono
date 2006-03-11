@@ -270,6 +270,14 @@ namespace System.Collections.Generic {
 
 		// IDictionary<TKey, TValue>
 
+		void IDictionary<TKey,TValue>.Add (TKey key, TValue value)
+		{
+			if (key == null)
+				throw new ArgumentNullException ("key");
+
+			PutImpl (key, value, false);
+		}
+		
 		public virtual void Add (TKey key, TValue value)
 		{
 			if (key == null)
@@ -295,6 +303,20 @@ namespace System.Collections.Generic {
 			}
 		}
 
+		bool IDictionary<TKey,TValue>.Remove (TKey key)
+		{
+			if (key == null)
+				throw new ArgumentNullException ("key");
+
+			int i = IndexOfKey (key);
+			if (i >= 0) {
+				RemoveAt (i);
+				return true;
+			}
+			else
+				return false;
+		}
+
 		public virtual bool Remove (TKey key)
 		{
 			if (key == null)
@@ -310,6 +332,14 @@ namespace System.Collections.Generic {
 		}
 
 		// ICollection<KeyValuePair<TKey, TValue>>
+
+		void ICollection<KeyValuePair<TKey, TValue>>.Clear () 
+		{
+			defaultCapacity = INITIAL_SIZE;
+			this.table = new KeyValuePair<TKey, TValue> [defaultCapacity];
+			inUse = 0;
+			modificationCount++;
+		}
 
 		public virtual void Clear () 
 		{

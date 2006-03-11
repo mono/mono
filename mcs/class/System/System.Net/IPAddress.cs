@@ -47,7 +47,6 @@ namespace System.Net {
 		private AddressFamily m_Family = AddressFamily.InterNetwork;
 		private ushort[] m_Numbers = new ushort[8];	/// ip6 Stored in network order (as ip4)
 		private long m_ScopeId = 0;
-		private int m_HashCode;	// Added for serialization compatibility with MS.NET
 
 		public static readonly IPAddress Any = new IPAddress(0);
 		public static readonly IPAddress Broadcast = IPAddress.Parse ("255.255.255.255");
@@ -418,5 +417,11 @@ namespace System.Net {
 		{
 			return i ^ (j << 13 | j >> 19) ^ (k << 26 | k >> 6) ^ (l << 7 | l >> 25);
 		}
+
+#pragma warning disable 169
+		// Added for serialization compatibility with MS.NET
+		private int m_HashCode;	
+#pragma warning restore
+		
 	}
 }

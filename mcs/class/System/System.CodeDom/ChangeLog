@@ -1,3 +1,11 @@
+2006-03-11  Miguel de Icaza  <miguel@novell.com>
+
+	* CodeNamespaceImportCollection.cs: It turns out that a lot of the
+	errors flagged with "!" were just missing explicit interface
+	implementations.  
+
+	Implement.
+
 2005-11-30  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* CodeRemoveEventStatement.cs: Event returns new CodeEventReference

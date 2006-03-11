@@ -39,7 +39,7 @@ namespace System.Net.Mail {
 
 		string address;
 		string displayName;
-		Encoding displayNameEncoding;
+		//Encoding displayNameEncoding;
 
 		#endregion // Fields
 
@@ -57,7 +57,7 @@ namespace System.Net.Mail {
 		{
 			this.address = address;
 			this.displayName = name;
-			this.displayNameEncoding = displayNameEncoding;
+			//this.displayNameEncoding = displayNameEncoding;
 		}
 
 		#endregion // Constructors
@@ -84,7 +84,6 @@ namespace System.Net.Mail {
 
 		#region Methods
 		
-		[MonoTODO]
 		public override bool Equals (object obj)
 		{
 			return Equals (obj as MailAddress);
@@ -95,7 +94,6 @@ namespace System.Net.Mail {
 			return other != null && Address == other.Address;
 		}
 
-		[MonoTODO]
 		public override int GetHashCode ()
 		{
 			return address.GetHashCode ();

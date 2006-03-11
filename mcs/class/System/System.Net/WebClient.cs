@@ -142,22 +142,6 @@ namespace System.Net
 #if NET_2_0
 		public
 #endif
-		byte [] DownloadData (Uri address)
-		{
-			return DownloadData (address, "GET");
-		}
-		
-#if NET_2_0
-		public
-#endif
-		byte [] DownloadData (string address, string method)
-		{
-			return DownloadData (MakeUri (address), method);
-		}
-
-#if NET_2_0
-		public
-#endif
 		byte [] DownloadData (Uri address, string method)
 		{
 			WebRequest request = SetupRequest (address, method);
@@ -167,6 +151,21 @@ namespace System.Net
 			return ReadAll (st, (int) response.ContentLength);
 		}
 
+#if NET_2_0
+		public
+#endif
+		byte [] DownloadData (string address, string method)
+		{
+			return DownloadData (MakeUri (address), method);
+		}
+
+#if NET_2_0
+		public byte [] DownloadData (Uri address)
+		{
+			return DownloadData (address, "GET");
+		}
+#endif
+		
 		public void DownloadFile (string address, string fileName)
 		{
 			DownloadFile (MakeUri (address), fileName);

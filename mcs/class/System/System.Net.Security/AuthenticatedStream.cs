@@ -46,10 +46,10 @@ namespace System.Net.Security
 
 		#region Constructors
 
-		public AuthenticatedStream (Stream innerStream, bool leaveStreamOpen)
+		public AuthenticatedStream (Stream innerStream, bool leaveInnerStreamOpen)
 		{
 			this.innerStream = innerStream;
-			this.leaveStreamOpen = leaveStreamOpen;
+			this.leaveStreamOpen = leaveInnerStreamOpen;
 		}
 
 		#endregion // Constructors
@@ -72,6 +72,8 @@ namespace System.Net.Security
 
 		public override void Close ()
 		{
+			if (leaveStreamOpen)
+				return;
 			innerStream.Close ();
 		}
 

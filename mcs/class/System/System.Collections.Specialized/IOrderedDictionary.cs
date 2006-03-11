@@ -32,7 +32,7 @@ namespace System.Collections.Specialized
 {
 	public interface IOrderedDictionary : IDictionary
 	{
-		IDictionaryEnumerator GetEnumerator ();
+		new IDictionaryEnumerator GetEnumerator ();
 		void Insert (int idx, object key, object value);
 		void RemoveAt (int idx);
 		
