@@ -1,3 +1,10 @@
+2006-03-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-ia64.c (emit_call): Add a comment.
+
+	* tramp-ia64.c (mono_arch_patch_callsite): Handle indirect calls as well.
+
+	* tramp-ia64.c: Fix some warnings.
 
 Sat Mar 11 20:15:59 CET 2006 Paolo Molaro <lupus@ximian.com>
 
