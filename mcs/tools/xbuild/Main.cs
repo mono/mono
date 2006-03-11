@@ -101,7 +101,7 @@ namespace Mono.XBuild.CommandLine {
 						project.SchemaFile = parameters.ValidationSchema;
 				}
 
-				project.LoadFromFile (parameters.ProjectFile);
+				project.Load (parameters.ProjectFile);
 				
 				engine.BuildProject (project, parameters.Targets, new Hashtable ());
 			}
