@@ -1,3 +1,7 @@
+2006-03-11  Joshua Tauberer <tauberer@for.net>
+
+	* SqliteTest.cs: Test ANSI characters.
+
 2006-03-07  Kamil Skalski  <nazgul@nemerle.org>
 
 	* SqliteDataReaderTest.cs: Add test for getting field type of null

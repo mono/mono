@@ -222,7 +222,7 @@ namespace Mono.Data.SqliteClient
 		public static IntPtr StringToHeap (string s, Encoding encoding)
 		{
 			if (encoding == null)
-				return Marshal.StringToCoTaskMemAnsi (s);
+				return Marshal.StringToHGlobalAnsi (s);
 				
 			int min_byte_count = encoding.GetMaxByteCount(1);
 			char[] copy = s.ToCharArray ();
@@ -233,7 +233,7 @@ namespace Mono.Data.SqliteClient
 			if (bytes_copied != (marshal.Length-min_byte_count))
 				throw new NotSupportedException ("encoding.GetBytes() doesn't equal encoding.GetByteCount()!");
 
-			IntPtr mem = Marshal.AllocCoTaskMem (marshal.Length);
+			IntPtr mem = Marshal.AllocHGlobal (marshal.Length);
 			if (mem == IntPtr.Zero)
 				throw new OutOfMemoryException ();
 
@@ -244,7 +244,7 @@ namespace Mono.Data.SqliteClient
 			}
 			finally {
 				if (!copied)
-					Marshal.FreeCoTaskMem (mem);
+					Marshal.FreeHGlobal (mem);
 			}
 
 			return mem;

@@ -463,7 +463,7 @@ namespace Mono.Data.SqliteClient
 			if (parent_conn.Version == 2)
 				psql = Sqlite.StringToHeap (sql.Trim(), parent_conn.Encoding);
 			else
-				psql = Marshal.StringToCoTaskMemUni (sql.Trim());
+				psql = Marshal.StringToHGlobalUni (sql.Trim());
 
 			IntPtr pzTail = psql;
 			IntPtr errMsgPtr;
@@ -511,7 +511,7 @@ namespace Mono.Data.SqliteClient
 				return null;
 			} finally {
 				parent_conn.EndExec ();
-				Marshal.FreeCoTaskMem (psql);
+				Marshal.FreeHGlobal (psql);
 			}
 		}
 
