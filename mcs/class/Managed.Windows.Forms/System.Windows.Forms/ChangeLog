@@ -1,3 +1,10 @@
+2006-03-11  Alexander Olk  <alex.olk@googlemail.com>
+
+	* MimeGenerated.cs: Removed
+	* Mime.cs: Mime now reads the mime data (magic, globs, aliases
+	  and subclasses) from /usr/(local/)share/mime and
+	  $HOME/.local/share/mime.
+
 2006-03-10  Jackson Harper  <jackson@ximian.com>
 
 	* MdiWindowManager.cs: Recalc the NC area when a window is

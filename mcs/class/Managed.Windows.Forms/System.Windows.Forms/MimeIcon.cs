@@ -157,10 +157,10 @@ namespace System.Windows.Forms
 		static MimeIconEngine( )
 		{
 			// add some more aliases, kde for example uses other mime type names for some mime types...
-			MimeGenerated.Aliases.Add( "application/x-compressed-tar", "application/x-tgz" );
-			MimeGenerated.Aliases.Add( "application/x-bzip-compressed-tar", "application/x-tbz" );
-			MimeGenerated.Aliases.Add( "application/zip", "application/x-zip" );
-			MimeGenerated.Aliases.Add( "text/x-patch", "text/x-diff" );
+			Mime.Aliases.Add( "application/x-compressed-tar", "application/x-tgz" );
+			Mime.Aliases.Add( "application/x-bzip-compressed-tar", "application/x-tbz" );
+			Mime.Aliases.Add( "application/zip", "application/x-zip" );
+			Mime.Aliases.Add( "text/x-patch", "text/x-diff" );
 			
 			SmallIcons.ColorDepth = ColorDepth.Depth32Bit;
 			SmallIcons.TransparentColor = Color.Transparent;
@@ -410,7 +410,7 @@ namespace System.Windows.Forms
 					}
 					
 					// if oindex is still null check if mime_type is a sub class of an other mime type
-					string sub_class = MimeGenerated.SubClasses[ mime_type ];
+					string sub_class = Mime.SubClasses[ mime_type ];
 					
 					if ( sub_class != null )
 						return MimeTypeIconIndexHash[ sub_class ];
