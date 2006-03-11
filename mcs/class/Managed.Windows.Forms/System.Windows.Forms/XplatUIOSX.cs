@@ -1385,7 +1385,12 @@ namespace System.Windows.Forms {
 		internal override void PostQuitMessage(int exitCode) {
 			throw new NotImplementedException();
 		}
-		
+
+		[MonoTODO]		
+		internal override void RequestNCRecalc(IntPtr handle) {
+			throw new NotImplementedException();
+		}
+
 		internal override void ScreenToClient(IntPtr handle, ref int x, ref int y) {
 			CGPoint pt = new CGPoint ();
 			Rect wBounds = new Rect ();

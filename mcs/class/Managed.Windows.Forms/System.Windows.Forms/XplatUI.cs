@@ -594,6 +594,13 @@ namespace System.Windows.Forms {
 			driver.PostQuitMessage(exitCode);
 		}
 
+		internal static void RequestNCRecalc(IntPtr handle) {
+			#if DriverDebug
+				Console.WriteLine("RequestNCRecalc({0}): Called", Window(handle));
+			#endif
+			driver.RequestNCRecalc(handle);
+		}
+
 		internal static void ScreenToClient(IntPtr handle, ref int x, ref int y) {
 			#if DriverDebug
 				Console.WriteLine("ScreenToClient({0}, {1}, {2}): Called", Window(handle), x, y);

@@ -233,6 +233,8 @@ namespace System.Windows.Forms {
 		internal abstract void StartLoop(Thread thread);
 		internal abstract void EndLoop(Thread thread);
 
+		internal abstract void RequestNCRecalc(IntPtr hwnd);
+
 		// System information
 		internal abstract int KeyboardSpeed { get; } 
 		internal abstract int KeyboardDelay { get; } 

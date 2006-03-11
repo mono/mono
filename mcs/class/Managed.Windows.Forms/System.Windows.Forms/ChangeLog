@@ -1,3 +1,10 @@
+2006-03-10  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* XplatUI.cs, XplatUIDriver.cs, XplatUIOSX.cs, XplatUIWin32.cs,
+	  XplatUIX11.cs: Added RequestNCRecalc method to driver to allow
+	  us to force a WM_NCCALCRESIZE message being sent. This is needed
+	  for MDI maximizing.
+
 2006-03-10  Jackson Harper  <jackson@ximian.com>
 
 	* Form.cs: We need to use the ActiveMenu when calculating menu

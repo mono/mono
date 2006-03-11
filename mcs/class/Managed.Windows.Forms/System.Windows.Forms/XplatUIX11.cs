@@ -3497,6 +3497,41 @@ namespace System.Windows.Forms {
 			Graphics.FromHdcInternal (IntPtr.Zero);
 		}
 
+		internal override void RequestNCRecalc(IntPtr handle) {
+			XplatUIWin32.NCCALCSIZE_PARAMS	ncp;
+			IntPtr				ptr;
+			Rectangle			rect;
+			Hwnd				hwnd;
+
+			hwnd = Hwnd.ObjectFromHandle(handle);
+
+			if (hwnd == null) {
+				return;
+			}
+
+			// We need to adjust our client window to track the resize of whole_window
+			rect = hwnd.DefaultClientRect;
+
+			ncp = new XplatUIWin32.NCCALCSIZE_PARAMS();
+			ptr = Marshal.AllocHGlobal(Marshal.SizeOf(ncp));
+
+			ncp.rgrc1.left = rect.Left;
+			ncp.rgrc1.top = rect.Top;
+			ncp.rgrc1.right = rect.Right;
+			ncp.rgrc1.bottom = rect.Bottom;
+
+			Marshal.StructureToPtr(ncp, ptr, true);
+			NativeWindow.WndProc(hwnd.client_window, Msg.WM_NCCALCSIZE, (IntPtr)1, ptr);
+			ncp = (XplatUIWin32.NCCALCSIZE_PARAMS)Marshal.PtrToStructure(ptr, typeof(XplatUIWin32.NCCALCSIZE_PARAMS));
+			Marshal.FreeHGlobal(ptr);
+
+			rect = new Rectangle(ncp.rgrc1.left, ncp.rgrc1.top, ncp.rgrc1.right - ncp.rgrc1.left, ncp.rgrc1.bottom - ncp.rgrc1.top);
+
+			XMoveResizeWindow(DisplayHandle, hwnd.client_window, rect.X, rect.Y, rect.Width, rect.Height);
+
+			SendMessage(handle, Msg.WM_WINDOWPOSCHANGED, IntPtr.Zero, IntPtr.Zero);
+		}
+
 		internal override void ScreenToClient(IntPtr handle, ref int x, ref int y) {
 			int	dest_x_return;
 			int	dest_y_return;
@@ -3646,6 +3681,7 @@ namespace System.Windows.Forms {
 				Caret.X = x;
 				Caret.Y = y;
 
+//Console.WriteLine("Setting caret pos {0},{1}", x, y);
 				if (Caret.Visible == 1) {
 					ShowCaret();
 					Caret.Timer.Start();

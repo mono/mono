@@ -1313,6 +1313,10 @@ namespace System.Windows.Forms {
 			Win32PostQuitMessage(exitCode);
 		}
 
+		internal override void RequestNCRecalc(IntPtr handle) {
+			Win32SetWindowPos(handle, IntPtr.Zero, 0, 0, 0, 0, SetWindowPosFlags.SWP_FRAMECHANGED | SetWindowPosFlags.SWP_NOOWNERZORDER | SetWindowPosFlags.SWP_NOSIZE | SetWindowPosFlags.SWP_NOMOVE);
+		}
+
 		internal override bool GetMessage(ref MSG msg, IntPtr hWnd, int wFilterMin, int wFilterMax) {
 			return GetMessage(ref msg, hWnd, wFilterMin, wFilterMax, true);
 		}
