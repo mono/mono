@@ -38,6 +38,7 @@ namespace System.Windows.Forms {
 		private MainMenu merged_menu;
 		private MainMenu maximized_menu;
 		private MenuItem icon_menu;
+		private FormWindowState prev_window_state;
 
 		private MdiClient mdi_container;
 		private Rectangle prev_virtual_position;
@@ -48,6 +49,7 @@ namespace System.Windows.Forms {
 		public MdiWindowManager (Form form, MdiClient mdi_container) : base (form)
 		{
 			this.mdi_container = mdi_container;
+			prev_window_state = form.window_state;
 			form.GotFocus += new EventHandler (FormGotFocus);
 
 			icon_menu = CreateIconMenu ();
@@ -160,11 +162,16 @@ namespace System.Windows.Forms {
 			case FormWindowState.Maximized:
 				prev_bounds = form.Bounds;
 				SizeMaximized ();
+				XplatUI.RequestNCRecalc (mdi_container.Parent.Handle);
 				break;
 			case FormWindowState.Normal:
 				form.Bounds = prev_bounds;
 				break;
 			}
+
+			if (prev_window_state == FormWindowState.Maximized)
+				XplatUI.RequestNCRecalc (mdi_container.Parent.Handle);
+			prev_window_state = window_state;
 		}
 
 		internal void SizeMaximized ()
