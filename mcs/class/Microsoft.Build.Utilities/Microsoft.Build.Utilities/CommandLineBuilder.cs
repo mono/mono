@@ -46,6 +46,7 @@ namespace Microsoft.Build.Utilities
 		{
 			if (fileName == null)
 				return;
+			
 			AppendSpaceIfNotEmpty ();
 			commandLine.Append (fileName);
 		}
@@ -54,6 +55,7 @@ namespace Microsoft.Build.Utilities
 		{
 			if (fileItem == null)
 				return;
+			
 			AppendSpaceIfNotEmpty ();
 			commandLine.Append (fileItem.ToString());
 		}
@@ -61,8 +63,12 @@ namespace Microsoft.Build.Utilities
 		public void AppendFileNamesIfNotNull (string[] fileNames,
 						      string delimiter)
 		{
+			if (delimiter == null)
+				throw new ArgumentNullException (null, "Parameter \"delimiter\" cannot be null.");
+		
 			if (fileNames == null)
 				return;
+			
 			bool appendDelimiter = false;
 			AppendSpaceIfNotEmpty ();
 			for (int i = 0; i < fileNames.Length; i++) {
@@ -81,8 +87,12 @@ namespace Microsoft.Build.Utilities
 		public void AppendFileNamesIfNotNull (ITaskItem[] fileItems,
 						      string delimiter)
 		{
+			if (delimiter == null)
+				throw new ArgumentNullException (null, "Parameter \"delimiter\" cannot be null.");
+		
 			if (fileItems == null)
 				return;
+			
 			bool appendDelimiter = false;
 			AppendSpaceIfNotEmpty ();
 			for (int i = 0; i < fileItems.Length; i++) {
@@ -115,7 +125,8 @@ namespace Microsoft.Build.Utilities
 		public void AppendSwitch (string switchName)
 		{
 			if (switchName == null)
-				return;
+				throw new ArgumentNullException (null, "Parameter \"switchName\" cannot be null.");
+
 			AppendSpaceIfNotEmpty ();
 			commandLine.Append (switchName);
 		}
@@ -123,8 +134,12 @@ namespace Microsoft.Build.Utilities
 		public void AppendSwitchIfNotNull (string switchName,
 						   string parameter)
 		{
-			if (switchName == null || parameter == null)
+			if (switchName == null)
+				throw new ArgumentNullException (null, "Parameter \"switchName\" cannot be null.");
+		
+			if (parameter == null)
 				return;
+			
 			AppendSpaceIfNotEmpty ();
 			commandLine.AppendFormat ("{0}{1}",switchName,
 				parameter);
@@ -133,8 +148,12 @@ namespace Microsoft.Build.Utilities
 		public void AppendSwitchIfNotNull (string switchName,
 						   ITaskItem parameter)
 		{
-			if (switchName == null || parameter == null)
+			if (switchName == null)
+				throw new ArgumentNullException (null, "Parameter \"switchName\" cannot be null.");
+		
+			if (parameter == null)
 				return;
+			
 			AppendSpaceIfNotEmpty ();
 			commandLine.AppendFormat ("{0}{1}",switchName,
 				parameter.ToString ());
@@ -144,8 +163,15 @@ namespace Microsoft.Build.Utilities
 						   string[] parameters,
 						   string delimiter)
 		{
-			if (switchName == null || parameters == null)
+			if (switchName == null)
+				throw new ArgumentNullException (null, "Parameter \"switchName\" cannot be null.");
+		
+			if (delimiter == null)
+				throw new ArgumentNullException (null, "Parameter \"delimiter\" cannot be null.");
+
+			if (parameters == null)
 				return;
+			
 			AppendSpaceIfNotEmpty ();
 			commandLine.AppendFormat ("{0}",switchName);
 			bool appendDelimiter = false;
@@ -166,8 +192,15 @@ namespace Microsoft.Build.Utilities
 						   ITaskItem[] parameters,
 						   string delimiter)
 		{
-			if (switchName == null || parameters == null)
+			if (switchName == null)
+				throw new ArgumentNullException (null, "Parameter \"switchName\" cannot be null.");
+		
+			if (delimiter == null)
+				throw new ArgumentNullException (null, "Parameter \"delimiter\" cannot be null.");
+
+			if (parameters == null)
 				return;
+			
 			AppendSpaceIfNotEmpty ();
 			commandLine.AppendFormat ("{0}",switchName);
 			bool appendDelimiter = false;
@@ -187,8 +220,12 @@ namespace Microsoft.Build.Utilities
 		public void AppendSwitchUnquotedIfNotNull (string switchName,
 							   string parameter)
 		{
-			if (switchName == null || parameter == null)
+			if (switchName == null)
+				throw new ArgumentNullException (null, "Parameter \"switchName\" cannot be null.");
+		
+			if (parameter == null)
 				return;
+			
 			AppendSpaceIfNotEmpty ();
 			commandLine.AppendFormat ("{0}{1}", switchName, parameter);
 		}
@@ -196,18 +233,29 @@ namespace Microsoft.Build.Utilities
 		public void AppendSwitchUnquotedIfNotNull (string switchName,
 							   ITaskItem parameter)
 		{
-			if (switchName == null || parameter == null)
+			if (switchName == null)
+				throw new ArgumentNullException (null, "Parameter \"switchName\" cannot be null.");
+		
+			if (parameter == null)
 				return;
+			
 			AppendSpaceIfNotEmpty ();
-			commandLine.AppendFormat ("{0}{1}", switchName, parameter.GetMetadata ("Include"));
+			commandLine.AppendFormat ("{0}{1}", switchName, parameter.ItemSpec);
 		}
 
 		public void AppendSwitchUnquotedIfNotNull (string switchName,
 							   string[] parameters,
 							   string delimiter)
 		{
-			if (switchName == null || delimiter == null || parameters == null)
+			if (switchName == null)
+				throw new ArgumentNullException (null, "Parameter \"switchName\" cannot be null.");
+		
+			if (delimiter == null)
+				throw new ArgumentNullException (null, "Parameter \"delimiter\" cannot be null.");
+
+			if (parameters == null)
 				return;
+			
 			AppendSpaceIfNotEmpty ();
 			commandLine.AppendFormat ("{0}",switchName);
 			bool appendDelimiter = false;
@@ -228,8 +276,15 @@ namespace Microsoft.Build.Utilities
 							   ITaskItem[] parameters,
 							   string delimiter)
 		{
-			if (switchName == null || delimiter == null || parameters == null)
+			if (switchName == null)
+				throw new ArgumentNullException (null, "Parameter \"switchName\" cannot be null.");
+		
+			if (delimiter == null)
+				throw new ArgumentNullException (null, "Parameter \"delimiter\" cannot be null.");
+
+			if (parameters == null)
 				return;
+			
 			AppendSpaceIfNotEmpty ();
 			commandLine.AppendFormat ("{0}",switchName);
 			bool appendDelimiter = false;

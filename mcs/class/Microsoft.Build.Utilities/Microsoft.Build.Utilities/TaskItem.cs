@@ -141,6 +141,22 @@ namespace Microsoft.Build.Utilities
 		{
 			return itemSpec;
 		}
+		
+		private ICollection CopyBasicMetadataNames (ICollection keys)
+		{
+			string[] basicMetadata = new string[] {"FullPath", "RootDir", "Filename", "Extension", "RelativeDir",
+			"Directory", "RecursiveDir", "Identity", "ModifiedTime", "CreatedTime", "AccessedTime"};
+			
+			ArrayList al = new ArrayList ();
+			
+			foreach (string s in keys)
+				al.Add (s);
+			
+			foreach (string s in basicMetadata)
+				al.Add (s);
+			
+			return al;
+		}
 
 		public string ItemSpec {
 			get { return itemSpec; }
@@ -153,7 +169,7 @@ namespace Microsoft.Build.Utilities
 		}
 
 		public ICollection MetadataNames {
-			get { return metadata.Keys; }
+			get { return CopyBasicMetadataNames (metadata.Keys); }
 		}
 	}
 }
