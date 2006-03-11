@@ -1,5 +1,8 @@
 2006-03-11  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (mono_icall_get_wrapper): Fix an ia64 bug introduced by the
+	lazy icall wrapper changes.
+
 	* dominators.c: Replace all the dominator algorithms with faster
 	ones from the linear-il branch.
 
