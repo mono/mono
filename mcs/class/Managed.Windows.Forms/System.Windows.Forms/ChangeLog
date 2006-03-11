@@ -1,5 +1,9 @@
 2006-03-11  Alexander Olk  <alex.olk@googlemail.com>
 
+	* Mime.cs: Remove debug code...
+
+2006-03-11  Alexander Olk  <alex.olk@googlemail.com>
+
 	* MimeGenerated.cs: Removed
 	* Mime.cs: Mime now reads the mime data (magic, globs, aliases
 	  and subclasses) from /usr/(local/)share/mime and

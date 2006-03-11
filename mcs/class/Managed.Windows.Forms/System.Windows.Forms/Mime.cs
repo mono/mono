@@ -115,11 +115,6 @@ namespace System.Windows.Forms
 				Instance.StartByFileName( filename );
 			}
 			
-			if (filename.EndsWith(".html")) {
-				Console.WriteLine(filename);
-				Console.WriteLine(Instance.global_result);
-			}
-			
 			return Instance.global_result;
 		}
 		
