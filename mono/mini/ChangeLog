@@ -1,3 +1,7 @@
+2006-03-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.h: Add a missing prototype.
+
 2006-03-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c: Compile icall wrappers lazily.
