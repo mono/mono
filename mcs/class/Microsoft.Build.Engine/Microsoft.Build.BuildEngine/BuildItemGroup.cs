@@ -59,6 +59,15 @@ namespace Microsoft.Build.BuildEngine {
 		public BuildItem AddNewItem (string itemName,
 					     string itemInclude)
 		{
+			return AddNewItem (itemName, itemInclude, false);
+		}
+		
+		// FIXME: use expression
+		[MonoTODO]
+		public BuildItem AddNewItem (string itemName,
+					     string itemInclude,
+					     bool treatItemIncludeAsLiteral)
+		{
 			BuildItem bi = new BuildItem (itemName, itemInclude);
 			buildItems.Add (bi);
 			return bi;

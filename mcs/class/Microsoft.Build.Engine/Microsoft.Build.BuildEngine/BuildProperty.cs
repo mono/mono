@@ -37,12 +37,12 @@ namespace Microsoft.Build.BuildEngine {
 		XmlElement	propertyElement;
 		XmlAttribute	condition;
 		string		finalValue;
+		bool		isImported;
 		string		value;
 		string		name;
 		PropertyType	propertyType;
 	
-		public BuildProperty ()
-			: this (null, null)
+		private BuildProperty ()
 		{
 		}
 
@@ -51,6 +51,7 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			this.name = propertyName;
 			this.value = propertyValue;
+			this.isImported = false;
 		}
 
 		public BuildProperty Clone (bool deepClone)
@@ -94,10 +95,6 @@ namespace Microsoft.Build.BuildEngine {
 			this.value = propertyElement.InnerText;
 		}
 		
-		internal void UpdateXml ()
-		{
-		}
-		
 		public string Condition {
 			get {
 				if (condition == null)
@@ -121,6 +118,10 @@ namespace Microsoft.Build.BuildEngine {
 			internal set {
 				finalValue = value;
 			}
+		}
+		
+		public bool IsImported {
+			get { return isImported; }
 		}
 
 		public string Name {

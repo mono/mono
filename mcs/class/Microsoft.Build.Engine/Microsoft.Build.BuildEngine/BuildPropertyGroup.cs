@@ -68,12 +68,21 @@ namespace Microsoft.Build.BuildEngine {
 		public BuildProperty AddNewProperty (string propertyName,
 						     string propertyValue)
 		{
-			return AddNewProperty (propertyName, propertyValue,
+			return AddNewProperty (propertyName, propertyValue, false);
+		}
+		
+		public BuildProperty AddNewProperty (string propertyName,
+						     string propertyValue,
+						     bool treatPropertyValueAsLiteral)
+		{
+			return AddNewProperty (propertyName, propertyValue, treatPropertyValueAsLiteral,
 				PropertyType.Normal);
 		}
 		
+		// FIXME: use treatPropertyValueAsLiteral
 		internal BuildProperty AddNewProperty (string propertyName,
 						       string propertyValue,
+						       bool treatPropertyValueAsLiteral,
 						       PropertyType propertyType)
 		{
 			BuildProperty added, existing;
@@ -142,31 +151,6 @@ namespace Microsoft.Build.BuildEngine {
 				throw new Exception ("PropertyGroup is not initialized.");
 		}
 
-		public void GetStringArraysForAllProperties (out string[] propertyNames,
-							     out string[] propertyValues,
-							     out string[] propertyFinalValues)
-		{
-			propertyNames = null;
-			propertyValues = null;
-			propertyFinalValues = null;
-			int i = 0;
-			if (properties != null) {
-				foreach (BuildProperty bp in properties) {
-					propertyNames [i] = bp.Name;
-					propertyValues [i] = bp.Value;
-					propertyFinalValues [i] = bp.FinalValue;
-					i++;
-				}
-			} else if (propertiesByName != null) {
-				foreach (DictionaryEntry de in propertiesByName) {
-					propertyNames [i] = ((BuildProperty) de.Value).Name;
-					propertyValues [i] = ((BuildProperty) de.Value).Value;
-					propertyFinalValues [i] = ((BuildProperty) de.Value).FinalValue;
-					i++;
-				}
-			}
-		}
-
 		public void RemoveProperty (BuildProperty propertyToRemove)
 		{
 			if (properties == null)
@@ -174,15 +158,24 @@ namespace Microsoft.Build.BuildEngine {
 			properties.Remove (propertyToRemove);
 		}
 
-		public void RemovePropertyByName (string propertyNameToRemove)
+		public void RemoveProperty (string propertyName)
 		{
 			if (propertiesByName == null)
 				throw new Exception ("PropertyGroup is not initialized.");
-			propertiesByName.Remove (propertyNameToRemove);
+			propertiesByName.Remove (propertyName);
 		}
 
 		public void SetProperty (string propertyName,
 					 string propertyValue)
+		{
+			SetProperty (propertyName, propertyValue, false);
+		}
+		
+		// FIXME: use treatPropertyValueAsLiteral
+		[MonoTODO]
+		public void SetProperty (string propertyName,
+					 string propertyValue,
+					 bool treatPropertyValueAsLiteral)
 		{
 			if (propertiesByName.Contains (propertyName) == false) {
 				AddNewProperty (propertyName, propertyValue);
@@ -233,7 +226,7 @@ namespace Microsoft.Build.BuildEngine {
 			}
 		}
 
-		public string ImportedFromFilename {
+		internal string ImportedFromFilename {
 			get {
 				return importedFromFilename;
 			}

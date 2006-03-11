@@ -44,26 +44,40 @@ namespace Microsoft.Build.BuildEngine {
 		int		warningCount;
 		DateTime		buildStart;
 		bool		performanceSummary;
-		bool		summary;
+		bool		showSummary;
+		bool		skipProjectStartedText;
 		
 		public ConsoleLogger ()
-			: this (LoggerVerbosity.Normal)
+			: this (LoggerVerbosity.Normal, null, null, null)
 		{
 		}
 
 		public ConsoleLogger (LoggerVerbosity verbosity)
+			: this (LoggerVerbosity.Normal, null, null, null)
+		{
+		}
+		
+		// FIXME: what about colorSet and colorReset?
+		public ConsoleLogger (LoggerVerbosity verbosity,
+				      WriteHandler write,
+				      ColorSetter colorSet,
+				      ColorResetter colorReset)
 		{
 			this.verbosity = verbosity;
 			this.indent = 0;
 			this.errorCount = 0;
 			this.warningCount = 0;
-			this.writeHandler += new WriteHandler (WriteHandlerFunction);
+			if (write == null)
+				this.writeHandler += new WriteHandler (WriteHandlerFunction);
+			else
+				this.writeHandler += write;
 			this.performanceSummary = false;
-			this.summary = true;
+			this.showSummary = true;
+			this.skipProjectStartedText = false;
 		}
 		
-		public virtual void ApplyParameter (string parameterName,
-						    string parameterValue)
+		public void ApplyParameter (string parameterName,
+					    string parameterValue)
 		{
 			// FIXME: what we should do here? in msbuild it isn't
 			// changing "parameters" property
@@ -101,7 +115,7 @@ namespace Microsoft.Build.BuildEngine {
 			}
 			if (performanceSummary == true)
 				;
-			if (summary == true){
+			if (showSummary == true){
 				TimeSpan timeElapsed = args.Timestamp - buildStart;
 				WriteLine (String.Format ("\t {0} Warning(s)", warningCount));
 				WriteLine (String.Format ("\t {0} Error(s)", errorCount));
@@ -174,6 +188,11 @@ namespace Microsoft.Build.BuildEngine {
 			errorCount++;
 		}
 		
+		[MonoTODO]
+		public void CustomEventHandler (object sender, CustomBuildEventArgs args)
+		{
+		}
+		
 		private void WriteLine (string message)
 		{
 			for (int i = 0; i < indent; i++)
@@ -184,14 +203,6 @@ namespace Microsoft.Build.BuildEngine {
 		private void WriteLineWithoutIndent (string message)
 		{
 			writeHandler (message);
-		}
-		
-		private void WriteLineWithSender (object sender, string message)
-		{
-			if ((string) sender == "MSBuild")
-				WriteLine (message);
-			else
-				WriteLine ((string) sender + ": " + message);
 		}
 		
 		private void WriteHandlerFunction (string message)
@@ -208,7 +219,7 @@ namespace Microsoft.Build.BuildEngine {
 					this.performanceSummary = true;
 					break;
 				case "NoSummary":
-					this.summary = false;
+					this.showSummary = false;
 					break;
 				default:
 					throw new ArgumentException ("Invalid parameter.");
@@ -284,23 +295,25 @@ namespace Microsoft.Build.BuildEngine {
 					ParseParameters ();
 			}
 		}
+		
+		public bool ShowSummary {
+			get { return showSummary; }
+			set { showSummary = value; }
+		}
+		
+		public bool SkipProjectStartedText {
+			get { return skipProjectStartedText; }
+			set { skipProjectStartedText = value; }
+		}
 
 		public LoggerVerbosity Verbosity {
-			get {
-				return verbosity;
-			}
-			set {
-				verbosity = value;
-			}
+			get { return verbosity;	}
+			set { verbosity = value; }
 		}
 
 		protected WriteHandler WriteHandler {
-			get {
-				return writeHandler;
-			}
-			set {
-				writeHandler = value;
-			}
+			get { return writeHandler; }
+			set { writeHandler = value; }
 		}
 	}
 }

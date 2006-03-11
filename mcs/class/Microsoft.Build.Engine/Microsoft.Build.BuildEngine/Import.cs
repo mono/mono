@@ -1,10 +1,10 @@
 //
-// Xml.cs: Contains definitions of XML namespaces.
+// Import.cs: Represents a single Import element in an MSBuild project.
 //
 // Author:
 //   Marek Sieradzki (marek.sieradzki@gmail.com)
 // 
-// (C) 2005 Marek Sieradzki
+// (C) 2006 Marek Sieradzki
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,9 +27,47 @@
 
 #if NET_2_0
 
+using System;
+using System.Xml;
+
 namespace Microsoft.Build.BuildEngine {
-	internal static class Xml {
-		public static string Namespace = "http://schemas.microsoft.com/developer/msbuild/2003"; 
+	public class Import {
+	
+		XmlAttribute	condition;
+		string		evaluatedProjectPath;
+		XmlElement	importElement;
+		bool		isImported;
+		XmlAttribute	projectPath;
+		
+	
+		internal Import (XmlElement importElement, bool isImported)
+		{
+			if (importElement == null)
+				throw new ArgumentNullException ("importElement");
+		
+			this.importElement = importElement;
+			this.isImported = isImported;
+			this.condition = importElement.GetAttributeNode ("Condition");
+			this.projectPath = importElement.GetAttributeNode ("ProjectPath");
+			// FIXME: evaluate this
+			this.evaluatedProjectPath = projectPath.Value;
+		}
+		
+		public string Condition {
+			get { return condition.Value; }
+		}
+		
+		public string EvaluatedProjectPath {
+			get { return evaluatedProjectPath; }
+		}
+		
+		public bool IsImported {
+			get { return isImported; }
+		}
+		
+		public string ProjectPath {
+			get { return evaluatedProjectPath; }
+		}
 	}
 }
 

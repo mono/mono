@@ -1,10 +1,10 @@
 //
-// Xml.cs: Contains definitions of XML namespaces.
+// ColorSetter.cs: Defines the type of delegate used to set the console color. 
 //
 // Author:
 //   Marek Sieradzki (marek.sieradzki@gmail.com)
 // 
-// (C) 2005 Marek Sieradzki
+// (C) 2006 Marek Sieradzki
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,10 +27,10 @@
 
 #if NET_2_0
 
+using System;
+
 namespace Microsoft.Build.BuildEngine {
-	internal static class Xml {
-		public static string Namespace = "http://schemas.microsoft.com/developer/msbuild/2003"; 
-	}
+	public delegate void ColorSetter (ConsoleColor color);
 }
 
 #endif

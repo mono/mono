@@ -45,9 +45,10 @@ namespace Microsoft.Build.BuildEngine {
 		
 		public void Scan ()
 		{
-			Hashtable temporaryItems;
+			Hashtable excludedItems;
+			ArrayList includedItems;
 			string[] splittedInclude, splittedExclude;
-		
+			
 			if (includes == null)
 				throw new ArgumentNullException ("Includes");
 			if (excludes == null)
@@ -55,55 +56,32 @@ namespace Microsoft.Build.BuildEngine {
 			if (baseDirectory == null)
 				throw new ArgumentNullException ("BaseDirectory");
 			
-			temporaryItems = new Hashtable ();
+			excludedItems = new Hashtable ();
+			includedItems = new ArrayList ();
 			
 			splittedInclude = includes.Split (';');
 			splittedExclude = excludes.Split (';');
 			
-			foreach (string si in splittedInclude) {
-				ProcessInclude (si, temporaryItems);
-			}
 			if (excludes != String.Empty) {
 				foreach (string si in splittedExclude) {
-					ProcessExclude (si, temporaryItems);
+					ProcessExclude (si, excludedItems);
 				}
 			}
-			
-			matchedFilenames = new string [temporaryItems.Count];
-			int i = 0;
-			foreach (DictionaryEntry de in temporaryItems)
-				matchedFilenames [i++] = (string) de.Value; 
-		}
-		
-		private void ProcessInclude (string name, Hashtable temporaryItems)
-		{
-			string[] separatedPath;
-			FileInfo[] fileInfo;
-			
-			if (name.IndexOf ('?') == -1 && name.IndexOf ('*') == -1)
-				temporaryItems.Add (Path.GetFullPath (name), name);
-			else {
-				if (name.Split (Path.DirectorySeparatorChar).Length > name.Split (Path.AltDirectorySeparatorChar).Length) {
-					separatedPath = name.Split (Path.DirectorySeparatorChar);
-				} else {
-					separatedPath = name.Split (Path.AltDirectorySeparatorChar);
-				}
-				if (separatedPath.Length == 1 && separatedPath [0] == String.Empty)
-					return;
-				fileInfo = ParseIncludeExclude (separatedPath, 0, baseDirectory);
-				foreach (FileInfo fi in fileInfo)
-					temporaryItems.Add (fi.FullName, fi.FullName);
+			foreach (string si in splittedInclude) {
+				ProcessInclude (si, excludedItems, includedItems);
 			}
+
+			matchedFilenames = (string[])includedItems.ToArray (typeof (string));
 		}
 		
-		private void ProcessExclude (string name, Hashtable temporaryItems)
+		private void ProcessInclude (string name, Hashtable excludedItems, ArrayList includedItems)
 		{
 			string[] separatedPath;
 			FileInfo[] fileInfo;
 			
 			if (name.IndexOf ('?') == -1 && name.IndexOf ('*') == -1) {
-				if (temporaryItems.Contains (Path.GetFullPath (name)))
-					temporaryItems.Remove (Path.GetFullPath (name));
+				if (!excludedItems.Contains (Path.GetFullPath(name)))
+					includedItems.Add (name);
 			} else {
 				if (name.Split (Path.DirectorySeparatorChar).Length > name.Split (Path.AltDirectorySeparatorChar).Length) {
 					separatedPath = name.Split (Path.DirectorySeparatorChar);
@@ -114,8 +92,31 @@ namespace Microsoft.Build.BuildEngine {
 					return;
 				fileInfo = ParseIncludeExclude (separatedPath, 0, baseDirectory);
 				foreach (FileInfo fi in fileInfo)
-					if (temporaryItems.Contains (fi.FullName))
-						temporaryItems.Remove (fi.FullName);
+					if (!excludedItems.Contains (fi.FullName))
+						includedItems.Add (fi.FullName);
+			}
+		}
+		
+		private void ProcessExclude (string name, Hashtable excludedItems)
+		{
+			string[] separatedPath;
+			FileInfo[] fileInfo;
+			
+			if (name.IndexOf ('?') == -1 && name.IndexOf ('*') == -1) {
+				if (!excludedItems.Contains (Path.GetFullPath (name)))
+					excludedItems.Add (Path.GetFullPath (name), null);
+			} else {
+				if (name.Split (Path.DirectorySeparatorChar).Length > name.Split (Path.AltDirectorySeparatorChar).Length) {
+					separatedPath = name.Split (Path.DirectorySeparatorChar);
+				} else {
+					separatedPath = name.Split (Path.AltDirectorySeparatorChar);
+				}
+				if (separatedPath.Length == 1 && separatedPath [0] == String.Empty)
+					return;
+				fileInfo = ParseIncludeExclude (separatedPath, 0, baseDirectory);
+				foreach (FileInfo fi in fileInfo)
+					if (!excludedItems.Contains (fi.FullName))
+						excludedItems.Add (fi.FullName, null);
 			}
 		}
 		

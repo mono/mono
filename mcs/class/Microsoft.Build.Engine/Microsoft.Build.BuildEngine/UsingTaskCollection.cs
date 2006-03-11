@@ -1,9 +1,10 @@
 //
-// BuildItemGroupCollection.cs:
+// UsingTaskCollection.cs: Represents a collection of all UsingTask elements in
+// a project.
 //
 // Author:
 //   Marek Sieradzki (marek.sieradzki@gmail.com)
-//
+// 
 // (C) 2005 Marek Sieradzki
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -31,67 +32,57 @@ using System;
 using System.Collections;
 
 namespace Microsoft.Build.BuildEngine {
-	public class BuildItemGroupCollection :	ICollection, IEnumerable {
-			
-		GroupingCollection	groupingCollection;
+	public class UsingTaskCollection : ICollection, IEnumerable {
+	
+		Project		parentProject;
+		IDictionary	usingTasks;
 		
-		private BuildItemGroupCollection ()
+		internal UsingTaskCollection (Project parentProject)
 		{
-			groupingCollection = new GroupingCollection ();
+			this.parentProject = parentProject;
 		}
-
-		internal BuildItemGroupCollection (GroupingCollection groupingCollection)
+		
+		internal void Add (UsingTask usingTask)
 		{
-			this.groupingCollection = groupingCollection;
+			if (usingTask == null)
+				throw new ArgumentNullException ("usingTask");
+			
+			if (usingTasks.Contains (usingTask.TaskName))
+				throw new InvalidOperationException ("Task already registered.");
+			
+			usingTasks.Add (usingTask.TaskName, usingTask);
 		}
-
+		
+		[MonoTODO]
 		public void CopyTo (Array array, int index)
 		{
-			if (array == null)
-				throw new ArgumentNullException ("array");
-			if (index < 0)
-				throw new ArgumentOutOfRangeException ("index");
-			if (array.Rank > 1)
-				throw new ArgumentException ("array is multidimensional");
-			if ((array.Length > 0) && (index >= array.Length))
-				throw new ArgumentException ("index is equal or greater than array.Length");
-			if (index + this.Count > array.Length)
-				throw new ArgumentException ("Not enough room from index to end of array for this BuildItemGroupCollection");
-		
-			IEnumerator it = GetEnumerator ();
-			int i = index;
-			while (it.MoveNext ()) {
-				array.SetValue(it.Current, i++);
-			}
 		}
-
+		
+		[MonoTODO]
+		public void CopyTo (UsingTask[] array, int index)
+		{
+		}
+		
 		public IEnumerator GetEnumerator ()
 		{
-			return groupingCollection.GetItemGroupEnumerator ();
+			foreach (UsingTask ut in usingTasks)
+				yield return ut;
 		}
 		
-		internal void Add (BuildItemGroup buildItemGroup)
-		{
-			buildItemGroup.GroupingCollection = this.groupingCollection;
-			groupingCollection.Add (buildItemGroup);
-		}
-
 		public int Count {
-			get {
-				return groupingCollection.ItemGroups;
-			}
+			get { return usingTasks.Count; }
 		}
-
+		
 		public bool IsSynchronized {
-			get {
-				return false;
-			}
+			get { return false; }
 		}
-
+		
+		internal UsingTask this [int index] {
+			get { return (UsingTask) usingTasks [index]; }
+		}
+		
 		public object SyncRoot {
-			get {
-				return this;
-			}
+			get { return this; }
 		}
 	}
 }

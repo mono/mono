@@ -36,7 +36,8 @@ using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 
 namespace Microsoft.Build.BuildEngine {
-	public class TaskElement {
+	// FIXME: remove this class
+	/*public class TaskElement {
 	
 		XmlAttribute	condition;
 		XmlAttribute	continueOnError;
@@ -292,18 +293,9 @@ namespace Microsoft.Build.BuildEngine {
 			parentTarget.Project.ParentEngine.EventSource.FireTaskFinished (this, tfea);
 		}
 		
-		private new Type GetType ()
-		{
-			return parentTarget.Project.TaskDatabase.GetTypeFromClassName (name);
-		}
-
 		public string Condition {
-			get {
-				return condition.Value;
-			}
-			set {
-				condition.Value = value;
-			}
+			get { return condition.Value; }
+			set { condition.Value = value; }
 		}
 
 		public bool ContinueOnError {
@@ -336,10 +328,10 @@ namespace Microsoft.Build.BuildEngine {
 
 		public Type Type {
 			get {
-				return GetType ();
+				return parentTarget.Project.TaskDatabase.GetTypeFromClassName (name);
 			}
 		}
-	}
+	}*/
 }
 
 #endif

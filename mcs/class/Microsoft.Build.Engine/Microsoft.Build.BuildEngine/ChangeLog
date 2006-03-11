@@ -1,3 +1,16 @@
+2006-03-11  Marek Sieradzki  <marek.sieradzki@gmail.com> 
+
+	* BatchingImpl.cs: Updated with BuildTask instead of TaskElement.
+	* BuildItem.cs: Updated for new API and fixed crashing on non-existent
+	files.
+	* BuildItemGroup.cs, BuildItemGroupCollection.cs, BuildProperty.cs,
+	BuildPropertyGroup.cs, BuildPropertyGroupCollection.cs, ConsoleLogger.cs,
+	Engine.cs, Project.cs, Target.cs, TargetCollection.cs: Updated for new
+	API.
+	* DirectoryScanner.cs: Fixed ordering and crashing on duplicated items.
+	* TaskElement.cs: Temporarily removed.
+	* Xml.cs: Changed to static.
+
 2006-02-26  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* IBuildProperty.cs, ICultureStringUtilities.cs, IProject.cs,

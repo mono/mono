@@ -44,28 +44,35 @@ namespace Microsoft.Build.BuildEngine {
 		string		name;
 		Project		project;
 		XmlElement	targetElement;
-		ArrayList	taskElements;
+		//ArrayList	taskElements;
 		ArrayList	onErrorElements;
+		
+		ArrayList	buildTasks;
 		
 		internal Target (Project project, string name)
 		{
 			if (project == null)
 				throw new ArgumentNullException ("project");
+			
 			if (name == null)
 				throw new ArgumentNullException ("name");
+			
 			this.buildState = BuildState.NotStarted;
 			this.project = project;
 			this.engine = project.ParentEngine;
 			this.name = name;
 			this.isImported = false;;
-			taskElements = new ArrayList ();
-			onErrorElements  = new ArrayList ();
+			//this.taskElements = new ArrayList ();
+			this.onErrorElements  = new ArrayList ();
+			
+			this.buildTasks = new ArrayList ();
 		}
 		
 		internal void BindToXml (XmlElement targetElement)
 		{
 			if (targetElement == null)
 				throw new ArgumentNullException ("targetElement");
+			
 			this.targetElement = targetElement;
 			// FIXME: check if Target element is valid
 			this.condition = targetElement.GetAttributeNode ("Condition");
@@ -78,9 +85,11 @@ namespace Microsoft.Build.BuildEngine {
 						onErrorElements.Add (xe);
 						continue;
 					}
-					TaskElement te = new TaskElement ();
-					te.BindToXml (xe, this);
-					taskElements.Add (te);
+					//TaskElement te = new TaskElement ();
+					//te.BindToXml (xe, this);
+					BuildTask bt = new BuildTask (xe, this);
+					//taskElements.Add (te);
+					buildTasks.Add (bt);
 				}
 			}
 		}
@@ -119,8 +128,8 @@ namespace Microsoft.Build.BuildEngine {
 			LogTargetStarted ();
 			
 			if (this.batchingImpl.BuildNeeded ()) {
-				foreach (TaskElement te in taskElements) {
-					if (this.batchingImpl.BatchTaskElement (te) == false && te.ContinueOnError == false) {
+				foreach (BuildTask bt in buildTasks) {
+					if (this.batchingImpl.BatchBuildTask (bt) == false && bt.ContinueOnError == false) {
 						executeOnErrors = true;
 						result = false;
 						break;
@@ -172,23 +181,25 @@ namespace Microsoft.Build.BuildEngine {
 			engine.EventSource.FireTargetFinished (this, tfea);
 		}
 		
-		public TaskElement AddNewTaskElement (string taskName)
+		public BuildTask AddNewTask (string taskName)
 		{
-			TaskElement te = new TaskElement ();
-			taskElements.Add (te);
-			return te;
+			//TaskElement te = new TaskElement ();
+			//taskElements.Add (te);
+			//return te;
+			return new BuildTask (null, this);
 		}
 
 		public IEnumerator GetEnumerator ()
 		{
-			foreach (TaskElement te in taskElements) {
-				yield return te;
+			foreach (BuildTask bt in buildTasks) {
+				yield return bt;
 			}
 		}
 
-		public void RemoveTaskElement (TaskElement taskElement)
+		public void RemoveTask (BuildTask buildTask)
 		{
-			taskElements.Remove (taskElement);
+			//taskElements.Remove (taskElement);
+			buildTasks.Remove (buildTask);
 		}
 
 		public string Condition {

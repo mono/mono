@@ -65,27 +65,6 @@ namespace Microsoft.Build.BuildEngine {
 			}
 		}
 
-		public void CopyToStronglyTypedArray (BuildPropertyGroup[] array,
-						      int index)
-		{
-			if (array == null)
-				throw new ArgumentNullException ("array");
-			if (index < 0)
-				throw new ArgumentOutOfRangeException ("index");
-			if (array.Rank > 1)
-				throw new ArgumentException ("array is multidimensional");
-			if ((array.Length > 0) && (index >= array.Length))
-				throw new ArgumentException ("index is equal or greater than array.Length");
-			if (index + this.Count > array.Length)
-				throw new ArgumentException ("Not enough room from index to end of array for this BuildPropertyGroupCollection");
-		
-			IEnumerator it = GetEnumerator ();
-			int i = index;
-			while (it.MoveNext ()) {
-				array.SetValue((BuildPropertyGroup) it.Current, i++);
-			}
-		}
-
 		public IEnumerator GetEnumerator ()
 		{
 			return groupingCollection.GetPropertyGroupEnumerator ();

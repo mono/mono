@@ -105,6 +105,14 @@ namespace Microsoft.Build.BuildEngine {
 		public BuildItem AddNewItem (string itemName,
 					     string itemInclude)
 		{
+			return AddNewItem (itemName, itemInclude, false);
+		}
+		
+		[MonoTODO]
+		public BuildItem AddNewItem (string itemName,
+					     string itemInclude,
+					     bool treatItemIncludeAsLiteral)
+		{
 			throw new NotImplementedException ();
 		}
 
@@ -119,37 +127,15 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			throw new NotImplementedException ();
 		}
-
-		public bool Build (string[] targetNamesToBuild,
-				   IDictionary targetOutputs)
+		
+		[MonoTODO]
+		public bool Build ()
 		{
-			if (targetNamesToBuild.Length == 0) {
-				if (defaultTargets.Length != 0) {
-					targetNamesToBuild = defaultTargets;
-				}
-				else if (firstTargetName != null) {
-					targetNamesToBuild = new string [1] { firstTargetName};
-				}
-				else
-					return false;
-			}
-			foreach (string target in targetNamesToBuild) {
-				if (BuildTarget (target, targetOutputs) == false) {
-					return false;
-				}
-			}
 			return true;
 		}
-
-		public bool BuildTarget (string targetName,
-					 IDictionary targetOutputs)
-		{
-			return BuildTargetWithFlags (targetName, targetOutputs, BuildSettings.None);
-		}
-
-		public bool BuildTargetWithFlags (string targetName,
-						  IDictionary targetOutputs,
-						  BuildSettings buildFlags)
+		
+		[MonoTODO]
+		public bool Build (string targetName)
 		{
 			if (targets.Exists (targetName) == false)
 				throw new Exception ("Target specified to build does not exist.");
@@ -158,6 +144,43 @@ namespace Microsoft.Build.BuildEngine {
 			return true;
 		}
 		
+		[MonoTODO]
+		public bool Build (string[] targetNames)
+		{
+			return Build (targetNames, new Hashtable ());
+		}
+		
+		[MonoTODO]
+		public bool Build (string[] targetNames,
+				   IDictionary targetOutputs)
+		{
+			return Build (targetNames, new Hashtable (), BuildSettings.None);
+		}
+		
+		[MonoTODO]
+		public bool Build (string[] targetNames,
+				   IDictionary targetOutputs,
+				   BuildSettings buildFlags)
+		
+		{
+			if (targetNames.Length == 0) {
+				if (defaultTargets.Length != 0) {
+					targetNames = defaultTargets;
+				}
+				else if (firstTargetName != null) {
+					targetNames = new string [1] { firstTargetName};
+				}
+				else
+					return false;
+			}
+			foreach (string target in targetNames) {
+				if (Build (target) == false) {
+					return false;
+				}
+			}
+			return true;
+		}
+
 		public string[] GetConditionedPropertyValues (string propertyName)
 		{
 			StringCollection sc = (StringCollection) conditionedProperties [propertyName];
@@ -166,15 +189,6 @@ namespace Microsoft.Build.BuildEngine {
 			foreach (string propertyValue in sc)
 				propertyValues [i++] = propertyValue;
 			return propertyValues;
-		}
-
-		public string[] GetDirectlyImportedProjects ()
-		{
-			string[] dip = new string [directlyImportedProjects.Count];
-			int i = 0;
-			foreach (string importedProject in directlyImportedProjects)
-				dip [i++] = importedProject;
-			return dip;
 		}
 
 		public BuildItemGroup GetEvaluatedItemsByName (string itemName)
@@ -193,43 +207,12 @@ namespace Microsoft.Build.BuildEngine {
 		}
 
 		[MonoTODO]
-		public string[] GetNonImportedItemNames ()
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public string[] GetNonImportedPropertyNames ()
-		{
-			throw new NotImplementedException ();
-		}
-
-		public string[] GetNonImportedTargetNames ()
-		{
-			ArrayList temporaryNonImportedTargets = new ArrayList ();
-			foreach (Target target in targets)
-				if (target.IsImported == false)
-					temporaryNonImportedTargets.Add (target);
-			string[] nonImportedTargetNames = new string [temporaryNonImportedTargets.Count];
-			int i = 0;
-			foreach (Target target in temporaryNonImportedTargets)
-				nonImportedTargetNames [i++] = target.Name;
-			return nonImportedTargetNames;
-		}
-
-		[MonoTODO]
-		public string[] GetNonImportedUsingTasks ()
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
 		public string GetProjectExtensions (string id)
 		{
 			throw new NotImplementedException ();
 		}
 
-		public void LoadFromFile (string projectFileName)
+		public void Load (string projectFileName)
 		{
 			this.fullFileName = Path.GetFullPath (projectFileName);
 			XmlSchemaCollection xmlSchemaCollection = null;
@@ -268,6 +251,12 @@ namespace Microsoft.Build.BuildEngine {
 			
 			isDirty = false;
 		}
+		
+		[MonoTODO]
+		public void Load (TextWriter textWriter)
+		{
+			throw new NotImplementedException ();
+		}
 
 		public void LoadFromXml (XmlDocument projectXml)
 		{
@@ -298,12 +287,6 @@ namespace Microsoft.Build.BuildEngine {
 		}
 
 		[MonoTODO]
-		public void RemoveAllItemsGroupsByCondition (string condition)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
 		public void RemoveAllPropertyGroups ()
 		{
 			throw new NotImplementedException ();
@@ -326,6 +309,13 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			throw new NotImplementedException ();
 		}
+		
+		[MonoTODO]
+		// NOTE: does not modify imported projects
+		public void RemoveItemGroupsWithMatchingCondition (string matchingCondition)
+		{
+			throw new NotImplementedException ();
+		}
 
 		[MonoTODO]
 		public void RemoveItemsByName (string itemName)
@@ -338,6 +328,13 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			throw new NotImplementedException ();
 		}
+		
+		[MonoTODO]
+		// NOTE: does not modify imported projects
+		public void RemovePropertyGroupsWithMatchingCondition (string matchCondition)
+		{
+			throw new NotImplementedException ();
+		}
 
 		[MonoTODO]
 		public void ResetBuildStatus ()
@@ -345,18 +342,17 @@ namespace Microsoft.Build.BuildEngine {
 			throw new NotImplementedException ();
 		}
 
-		public void SaveToFile (string projectFileName)
+		public void Save (string projectFileName)
+		{
+			Save (projectFileName, Encoding.Default);
+		}
+
+		public void Save (string projectFileName, Encoding encoding)
 		{
 			xmlDocument.Save (projectFileName);
 		}
 
-		public void SaveToFile (string projectFileName,
-					Encoding encoding)
-		{
-			SaveToFile (projectFileName);
-		}
-
-		public void SaveToTextWriter (TextWriter outTextWriter)
+		public void Save (TextWriter outTextWriter)
 		{
 			xmlDocument.Save (outTextWriter);
 		}
@@ -367,15 +363,28 @@ namespace Microsoft.Build.BuildEngine {
 						 string condition,
 						 Project importProject)
 		{
-			throw new NotImplementedException ();
+			SetImportedProperty (propertyName, propertyValue, condition, importProject,
+				PropertyPosition.UseExistingOrCreateAfterLastPropertyGroup);
 		}
 
 		[MonoTODO]
-		public void SetImportedPropertyAt (string propertyName,
-						   string propertyValue,
-						   string condition,
-						   Project importedProject,
-						   PropertyPosition position)
+		public void SetImportedProperty (string propertyName,
+						 string propertyValue,
+						 string condition,
+						 Project importedProject,
+						 PropertyPosition position)
+		{
+			SetImportedProperty (propertyName, propertyValue, condition, importedProject,
+				PropertyPosition.UseExistingOrCreateAfterLastPropertyGroup, false);
+		}
+
+		[MonoTODO]
+		public void SetImportedProperty (string propertyName,
+						 string propertyValue,
+						 string condition,
+						 Project importedProject,
+						 PropertyPosition position,
+						 bool treatPropertyValueAsLiteral)
 		{
 			throw new NotImplementedException ();
 		}
@@ -391,24 +400,30 @@ namespace Microsoft.Build.BuildEngine {
 					 string propertyValue,
 					 string condition)
 		{
-			throw new NotImplementedException ();
+			SetProperty (propertyName, propertyValue, condition,
+				PropertyPosition.UseExistingOrCreateAfterLastPropertyGroup);
 		}
 
 		[MonoTODO]
-		public void SetPropertyAt (string propertyName,
-					   string propertyValue,
-					   string condition,
-					   PropertyPosition position)
+		public void SetProperty (string propertyName,
+					 string propertyValue,
+					 string condition,
+					 PropertyPosition position)
+		{
+			SetProperty (propertyName, propertyValue, condition,
+				PropertyPosition.UseExistingOrCreateAfterLastPropertyGroup, false);
+		}
+
+		[MonoTODO]
+		public void SetProperty (string propertyName,
+					 string propertyValue,
+					 string condition,
+					 PropertyPosition position,
+					 bool treatPropertyValueAsLiteral)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
-		public void Unload ()
-		{
-			throw new NotImplementedException ();
-		}
-		
 		private void ProcessElements (XmlElement rootElement, ImportedProject ip)
 		{
 			foreach (XmlNode xn in rootElement.ChildNodes) {
@@ -657,8 +672,9 @@ namespace Microsoft.Build.BuildEngine {
 			get { return timeOfLastDirty; }
 		}
 
-		public XmlDocument Xml {
-			get { return xmlDocument; }
+		[MonoTODO]
+		public string Xml {
+			get { return xmlDocument.InnerXml; }
 		}
 		
 		internal TaskDatabase TaskDatabase {

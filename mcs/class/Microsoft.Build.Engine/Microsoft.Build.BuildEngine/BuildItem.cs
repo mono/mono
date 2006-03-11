@@ -54,39 +54,31 @@ namespace Microsoft.Build.BuildEngine {
 		string		recursiveDir;
 		Hashtable	unevaluatedMetadata;
 	
-		public BuildItem ()
+		private BuildItem ()
 		{
-			this.isImported = false;
-			unevaluatedMetadata = CollectionsUtil.CreateCaseInsensitiveHashtable ();
-			evaluatedMetadata = CollectionsUtil.CreateCaseInsensitiveHashtable ();
 		}
-
+		
 		public BuildItem (string itemName, ITaskItem taskItem)
-			: this ()
+			: this (itemName, taskItem.ItemSpec)
 		{
 			this.name = itemName;
 		}
 
 		public BuildItem (string itemName, string itemInclude)
-			: this ()
 		{
 			this.name = itemName;
 			this.finalItemSpec = itemInclude;
 			this.evaluatedItemSpec = itemInclude;
-		}
-
-		public BuildItem (XmlDocument ownerDocument, string itemName,
-				  string itemInclude)
-			: this ()
-		{
-			this.name = itemName;
-			this.finalItemSpec = itemInclude;
-			this.evaluatedItemSpec = itemInclude;
+			this.isImported = false;
+			this.unevaluatedMetadata = CollectionsUtil.CreateCaseInsensitiveHashtable ();
+			this.evaluatedMetadata = CollectionsUtil.CreateCaseInsensitiveHashtable ();
 		}
 		
 		internal BuildItem (string name, BuildItemGroup parentItemGroup)
-			: this ()
 		{
+			this.isImported = false;
+			this.unevaluatedMetadata = CollectionsUtil.CreateCaseInsensitiveHashtable ();
+			this.evaluatedMetadata = CollectionsUtil.CreateCaseInsensitiveHashtable ();
 			this.name = name;
 			this.parentItemGroup = parentItemGroup;
 		}
@@ -118,6 +110,12 @@ namespace Microsoft.Build.BuildEngine {
 			foreach (DictionaryEntry de in unevaluatedMetadata)
 				destinationItem.SetMetadata ((string) de.Key, (string) de.Value);
 		}
+		
+		[MonoTODO]
+		public BuildItem Clone ()
+		{
+			return null;
+		}
 
 		public string GetEvaluatedMetadata (string metadataName)
 		{
@@ -137,35 +135,38 @@ namespace Microsoft.Build.BuildEngine {
 		
 		private string CheckBuiltinMetadata (string metadataName)
 		{
-			if (File.Exists (finalItemSpec)) {
-				switch (metadataName.ToLower ()) {
-				case "fullpath":
-					return Path.GetFullPath (finalItemSpec);
-				case "rootdir":
-					return "/";
-				case "filename":
-					return Path.GetFileNameWithoutExtension (finalItemSpec);
-				case "extension":
-					return Path.GetExtension (finalItemSpec);
-				case "relativedir":
-					return Path.GetDirectoryName (finalItemSpec);
-				case "directory":
-					return Path.GetDirectoryName (Path.GetFullPath (finalItemSpec));
-				case "recursivedir":
-					return recursiveDir;
-				case "identity":
-					return Path.Combine (Path.GetDirectoryName (finalItemSpec), Path.GetFileName (finalItemSpec));
-				case "modifiedtime":
+			switch (metadataName.ToLower ()) {
+			case "fullpath":
+				return Path.GetFullPath (finalItemSpec);
+			case "rootdir":
+				return "/";
+			case "filename":
+				return Path.GetFileNameWithoutExtension (finalItemSpec);
+			case "extension":
+				return Path.GetExtension (finalItemSpec);
+			case "relativedir":
+				return Path.GetDirectoryName (finalItemSpec);
+			case "directory":
+				return Path.GetDirectoryName (Path.GetFullPath (finalItemSpec));
+			case "recursivedir":
+				return recursiveDir;
+			case "identity":
+				return Path.Combine (Path.GetDirectoryName (finalItemSpec), Path.GetFileName (finalItemSpec));
+			case "modifiedtime":
+				if (File.Exists (finalItemSpec))
 					return File.GetLastWriteTime (finalItemSpec).ToString ();
-				case "createdtime":
-					return File.GetCreationTime (finalItemSpec).ToString ();
-				case "accessedtime":
-					return File.GetLastAccessTime (finalItemSpec).ToString ();
-				default:
-					return String.Empty;
-				}
-			} else
 				return String.Empty;
+			case "createdtime":
+				if (File.Exists (finalItemSpec))
+					return File.GetCreationTime (finalItemSpec).ToString ();
+				return String.Empty;
+			case "accessedtime":
+				if (File.Exists (finalItemSpec))
+					return File.GetLastAccessTime (finalItemSpec).ToString ();
+				return String.Empty;
+			default:
+				return String.Empty;
+			}
 		}
 
 		public bool HasMetadata (string metadataName)
@@ -183,6 +184,15 @@ namespace Microsoft.Build.BuildEngine {
 
 		public void SetMetadata (string metadataName,
 					 string metadataValue)
+		{
+			SetMetadata (metadataName, metadataValue, false);
+		}
+		
+		// FIXME: don't use expression when we treat it as literal
+		[MonoTODO]
+		public void SetMetadata (string metadataName,
+					 string metadataValue,
+					 bool treatMetadataValueAsLiteral)
 		{
 			RemoveMetadata (metadataName);
 			unevaluatedMetadata.Add (metadataName, metadataValue);

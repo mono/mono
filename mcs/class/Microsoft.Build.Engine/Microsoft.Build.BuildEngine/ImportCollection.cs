@@ -1,10 +1,11 @@
 //
-// TargetCollection.cs: Collection of targets.
+// ImportCollection.cs: Represents a collection of all Import elements in a
+// project.
 //
 // Author:
 //   Marek Sieradzki (marek.sieradzki@gmail.com)
-//
-// (C) 2005 Marek Sieradzki
+// 
+// (C) 2006 Marek Sieradzki
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,74 +30,61 @@
 
 using System;
 using System.Collections;
-using System.Reflection;
+using System.Xml;
 
 namespace Microsoft.Build.BuildEngine {
-	public class TargetCollection : ICollection, IEnumerable {
+	public class ImportCollection : ICollection, IEnumerable {
 		
-		IDictionary	targetsByName;
+		IDictionary	imports;
 		Project		parentProject;
-	
-		internal TargetCollection (Project project)
+		
+		internal ImportCollection (Project parentProject)
 		{
-			this.targetsByName = new Hashtable ();
-			this.parentProject = project;
+			this.parentProject = parentProject;
+			this.imports = new Hashtable ();
 		}
-	
-		public Target AddNewTarget (string targetName)
+		
+		internal void Add (Import import)
 		{
-			Target t;
+			if (import == null)
+				throw new ArgumentNullException ("import");
 			
-			t = new Target (parentProject, targetName);
-			targetsByName.Add (targetName, t);
+			if (imports.Contains (import.EvaluatedProjectPath))
+				throw new InvalidOperationException ("Import already added.");
 			
-			return t;
+			imports.Add (import.EvaluatedProjectPath, import);
 		}
-
+		
+		[MonoTODO]
 		public void CopyTo (Array array, int index)
 		{
-			targetsByName.Values.CopyTo (array, index);
 		}
-
-		public bool Exists (string targetName)
+		
+		[MonoTODO]
+		public void CopyTo (Import[] array, int index)
 		{
-			return targetsByName.Contains (targetName);
 		}
-
+		
 		public IEnumerator GetEnumerator ()
 		{
-			foreach (DictionaryEntry de in targetsByName) {
-				yield return (Target)de.Key;
-			}
+			foreach (Import i in imports)
+				yield return i;
 		}
-
-		public void RemoveTarget (Target targetToRemove)
-		{
-			targetsByName.Remove (targetToRemove.Name);
-		}
-
+		
 		public int Count {
-			get {
-				return targetsByName.Count;
-			}
+			get { return imports.Count; }
 		}
-
-		public bool IsSynchronized {
-			get {
-				return false;
-			}
+		
+		public bool IsSynchronized  {
+			get { return false; }
 		}
-
+		
+		internal Import this [string index] {
+			get { return (Import) imports [index]; }
+		}
+		
 		public object SyncRoot {
-			get {
-				return this;
-			}
-		}
-
-		public Target this[string index] {
-			get {
-				return (Target) targetsByName [index];
-			}
+			get { return this; }
 		}
 	}
 }

@@ -1,9 +1,9 @@
 //
-// TargetCollection.cs: Collection of targets.
+// UsingTask.cs: Represents a single UsingTask element in an MSBuild project.
 //
 // Author:
 //   Marek Sieradzki (marek.sieradzki@gmail.com)
-//
+// 
 // (C) 2005 Marek Sieradzki
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -28,76 +28,47 @@
 #if NET_2_0
 
 using System;
-using System.Collections;
-using System.Reflection;
+using System.Xml;
 
 namespace Microsoft.Build.BuildEngine {
-	public class TargetCollection : ICollection, IEnumerable {
+	public class UsingTask {
+	
+		bool		isImported;
+		XmlAttribute	assemblyFile;
+		XmlAttribute	assemblyName;
+		XmlAttribute	condition;
+		XmlAttribute	taskName;
 		
-		IDictionary	targetsByName;
-		Project		parentProject;
-	
-		internal TargetCollection (Project project)
+		internal UsingTask (XmlElement usingTaskElement, bool isImported)
 		{
-			this.targetsByName = new Hashtable ();
-			this.parentProject = project;
+			this.isImported = isImported;
+			this.assemblyFile = usingTaskElement.GetAttributeNode ("AssemblyFile");
+			this.assemblyName = usingTaskElement.GetAttributeNode ("AssemblyName");
+			this.condition = usingTaskElement.GetAttributeNode ("Condition");
+			this.taskName = usingTaskElement.GetAttributeNode ("TaskName");
 		}
-	
-		public Target AddNewTarget (string targetName)
-		{
-			Target t;
-			
-			t = new Target (parentProject, targetName);
-			targetsByName.Add (targetName, t);
-			
-			return t;
+		
+		public string AssemblyFile {
+			get { return assemblyFile.Value; }
 		}
-
-		public void CopyTo (Array array, int index)
-		{
-			targetsByName.Values.CopyTo (array, index);
+		
+		public string AssemblyName {
+			get { return assemblyName.Value; }
 		}
-
-		public bool Exists (string targetName)
-		{
-			return targetsByName.Contains (targetName);
+		
+		public string Condition {
+			get { return condition.Value; }
 		}
-
-		public IEnumerator GetEnumerator ()
-		{
-			foreach (DictionaryEntry de in targetsByName) {
-				yield return (Target)de.Key;
-			}
+		
+		public bool IsImported {
+			get { return isImported; }
 		}
-
-		public void RemoveTarget (Target targetToRemove)
-		{
-			targetsByName.Remove (targetToRemove.Name);
+		
+		public string TaskName {
+			get { return taskName.Value; }
 		}
-
-		public int Count {
-			get {
-				return targetsByName.Count;
-			}
-		}
-
-		public bool IsSynchronized {
-			get {
-				return false;
-			}
-		}
-
-		public object SyncRoot {
-			get {
-				return this;
-			}
-		}
-
-		public Target this[string index] {
-			get {
-				return (Target) targetsByName [index];
-			}
-		}
+		
+		
 	}
 }
 

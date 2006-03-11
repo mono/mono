@@ -127,9 +127,9 @@ namespace Microsoft.Build.BuildEngine {
 			}
 		}
 		
-		public bool BatchTaskElement (TaskElement taskElement)
+		public bool BatchBuildTask (BuildTask buildTask)
 		{
-			return taskElement.Execute ();
+			return buildTask.Execute ();
 		}
 	}
 }
