@@ -18,10 +18,11 @@
   </DeploymentInformation>
   <Contents>
     <File name="./Microsoft.Build.Utilities/TaskItemTest.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Microsoft.Build.Utilities/CommandLineBuilderTest.cs" subtype="Code" buildaction="Compile" />
   </Contents>
   <References>
-    <ProjectReference type="Project" localcopy="True" refto="Microsoft.Build.Utilities" />
-    <ProjectReference type="Project" localcopy="True" refto="Microsoft.Build.Framework" />
     <ProjectReference type="Gac" localcopy="True" refto="nunit.framework, Version=2.2.0.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77" />
+    <ProjectReference type="Assembly" localcopy="True" refto="../../lib/net_2_0/Microsoft.Build.Framework.dll" />
+    <ProjectReference type="Assembly" localcopy="True" refto="../../lib/net_2_0/Microsoft.Build.Utilities.dll" />
   </References>
 </Project>

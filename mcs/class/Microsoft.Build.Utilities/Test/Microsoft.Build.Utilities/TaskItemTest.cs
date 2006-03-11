@@ -25,43 +25,81 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+using System;
+using System.Collections;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using NUnit.Framework;
 
-[TestFixture]
-public class TaskItemTest {
+namespace MonoTests.Microsoft.Build.Utilities {
 
-	ITaskItem item,item1,item2;
+	[TestFixture]
+	public class TaskItemTest {
 
-	[SetUp]
-	public void SetUp ()
-	{
-	}
-	
-	[Test]
-	public void SetMetadataTest ()
-	{
-		item = new TaskItem ("itemSpec");
-		item.SetMetadata ("Metadata", "Value");
-		Assert.AreEqual (item.MetadataCount, 12, "MetadataCount");
-	}
-	
-	[Test]
-	public void GetMetadataTest ()
-	{
-		item = new TaskItem ("itemSpec");
-		item.SetMetadata ("Metadata", "Value");
-		Assert.AreEqual (item.GetMetadata ("Metadata"), "Value", "Metadata value");
-	}
-	
-	[Test]
-	public void CopyMetadataToTest ()
-	{
-		item1 = new TaskItem ("itemSpec");
-		item2 = new TaskItem ("itemSpec");
-		item1.SetMetadata ("1","2");
-		item1.CopyMetadataTo (item2);
-		Assert.AreEqual (item2.GetMetadata ("1"), item1.GetMetadata ("1"),"Metadata in items");
+		ITaskItem item,item1,item2;
+		ICollection metadataNames;
+
+		[SetUp]
+		public void SetUp ()
+		{
+			string[] temp = new string[] {"FullPath", "RootDir", "Filename", "Extension", "RelativeDir", "Directory",
+				"RecursiveDir", "Identity", "ModifiedTime", "CreatedTime", "AccessedTime"};
+			ArrayList al = new ArrayList ();
+			foreach (string s in temp)
+				al.Add (s);
+			metadataNames = al;
+		}
+		
+		private bool CompareStringCollections (ICollection compared, ICollection reference)
+		{
+			Hashtable comparedHash;
+			comparedHash = new Hashtable ();
+			
+			foreach (string s in compared)
+				comparedHash.Add (s, null);
+			
+			foreach (string s in reference) {
+				if (comparedHash.ContainsKey (s) == false) {
+					Console.Error.WriteLine ("{0} not found", s);
+					return false;
+				}
+			}
+			
+			return true;
+		}
+		
+		[Test]
+		public void TestSetMetadata ()
+		{
+			item = new TaskItem ("itemSpec");
+			item.SetMetadata ("Metadata", "Value");
+			Assert.AreEqual (item.MetadataCount, 12, "MetadataCount");
+		}
+		
+		[Test]
+		public void TestGetMetadata ()
+		{
+			item = new TaskItem ("itemSpec");
+			item.SetMetadata ("Metadata", "Value");
+			Assert.AreEqual (item.GetMetadata ("Metadata"), "Value", "Metadata value");
+		}
+		
+		[Test]
+		public void TestCopyMetadataTo ()
+		{
+			item1 = new TaskItem ("itemSpec");
+			item2 = new TaskItem ("itemSpec");
+			item1.SetMetadata ("1","2");
+			item1.CopyMetadataTo (item2);
+			Assert.AreEqual (item2.GetMetadata ("1"), item1.GetMetadata ("1"),"Metadata in items");
+		}
+		
+		[Test]
+		public void TestMetadataNames ()
+		{
+			item = new TaskItem ("itemSpec");
+
+			Assert.IsTrue (CompareStringCollections (item.MetadataNames, metadataNames));
+		}	
 	}
 }
