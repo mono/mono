@@ -138,18 +138,18 @@ namespace System.Collections.Generic {
 		
 		public int BinarySearch (T item)
 		{
-			return Array.BinarySearch (data, item);
+			return Array.BinarySearch <T> (data, 0, size, item);
 		}
 		
 		public int BinarySearch (T item, IComparer <T> comparer)
 		{
-			return Array.BinarySearch (data, item, comparer);
+			return Array.BinarySearch <T> (data, 0, size, item, comparer);
 		}
 		
 		public int BinarySearch (int index, int count, T item, IComparer <T> comparer)
 		{
 			CheckRange (index, count);
-			return Array.BinarySearch (data, index, size, item, comparer);
+			return Array.BinarySearch <T> (data, index, count, item, comparer);
 		}
 		
 		public void Clear ()

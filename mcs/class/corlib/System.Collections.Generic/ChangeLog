@@ -1,3 +1,7 @@
+2006-03-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* List.cs: Applied patch from <kazuki@panicode.com>. Fixes #77504.
+
 2006-02-10  Martin Baulig  <martin@ximian.com>
 
 	* Comparer.cs
