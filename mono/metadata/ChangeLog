@@ -1,4 +1,8 @@
 
+Sun Mar 12 16:21:31 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* marshal.c: fixed a few type correctness issues.
+
 Sat Mar 11 20:14:44 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* loader.c: the Set/Get/Addrtess array methods should be public.
