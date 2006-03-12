@@ -1,4 +1,9 @@
 
+Sun Mar 12 17:31:22 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: nested types have access to all the nesting
+	levels, not just the enclosing types.
+
 Sun Mar 12 16:23:11 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* mini.c: added a few more verification checks.
