@@ -372,12 +372,22 @@ namespace System.Web.Services.Protocols {
 #if !TARGET_JVM
 		static Hashtable type_to_manager;
 #else
+		const string type_to_manager_key = "TypeStubManager.type_to_manager";
 		static Hashtable type_to_manager {
 			get {
-				return (Hashtable)AppDomain.CurrentDomain.GetData("TypeStubManager.type_to_manager");
+				Hashtable hash = (Hashtable)AppDomain.CurrentDomain.GetData(type_to_manager_key);
+
+				if (hash != null)
+					return hash;
+
+				lock(type_to_manager_key) {
+					AppDomain.CurrentDomain.SetData(type_to_manager_key, new Hashtable());
+				}
+
+				return (Hashtable)AppDomain.CurrentDomain.GetData(type_to_manager_key);
 			}
 			set {
-				AppDomain.CurrentDomain.SetData("TypeStubManager.type_to_manager", value);
+				//do nothing: we manage our type_to_manager per domain
 			}
 		}
 #endif

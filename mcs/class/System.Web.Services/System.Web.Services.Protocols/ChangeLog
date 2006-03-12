@@ -1,5 +1,10 @@
 2006-03-12  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
+	* TypeStubManager.cs: fixed type_to_manager member to be initialized
+	per appdoamin (within TARGET_JVM block)
+
+2006-03-12  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
 	* SoapDocumentationHandler.cs: TARGET_JVM blocks added to exclude
 	not supported methods
 
