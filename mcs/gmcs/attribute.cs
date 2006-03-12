@@ -46,6 +46,10 @@ namespace Mono.CSharp {
 			}
 			set {
 				attributes = value;
+
+				if (attributes != null) {
+					attributes.AttachTo (this);
+				}
 			}
 		}
 
@@ -58,6 +62,8 @@ namespace Mono.CSharp {
 		/// Returns one AttributeTarget for this element.
 		/// </summary>
 		public abstract AttributeTargets AttributeTargets { get; }
+
+		public abstract IResolveContext ResolveContext { get; }
 
 		public abstract bool IsClsComplianceRequired (DeclSpace ds);
 
@@ -1170,7 +1176,7 @@ namespace Mono.CSharp {
 				return;
 
 			// Here we are testing attribute arguments for array usage (error 3016)
-			if (ias.IsClsComplianceRequired (ec.DeclSpace)) {
+			if (ias.IsClsComplianceRequired (ec.DeclContainer)) {
 				if (Arguments == null)
 					return;
 

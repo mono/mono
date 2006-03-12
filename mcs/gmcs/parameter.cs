@@ -90,6 +90,12 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public override IResolveContext ResolveContext {
+			get {
+				throw new NotSupportedException ();
+			}
+		}
+
 		/// <summary>
 		/// Is never called
 		/// </summary>
@@ -119,6 +125,12 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public override IResolveContext ResolveContext {
+			get {
+				throw new NotSupportedException ();
+			}
+		}
+
 		/// <summary>
 		/// Is never called
 		/// </summary>
@@ -126,7 +138,7 @@ namespace Mono.CSharp {
 			get {
 				return null;
 			}
-	}
+		}
 	}
 
 	public class ParamsParameter : Parameter {
@@ -202,6 +214,7 @@ namespace Mono.CSharp {
 		protected Type parameter_type;
 
 		EmitContext ec;  // because ApplyAtrribute doesn't have ec
+		IResolveContext resolve_context;
 		
 		public Parameter (Expression type, string name, Modifier mod, Attributes attrs, Location loc)
 			: base (attrs, loc)
@@ -243,6 +256,12 @@ namespace Mono.CSharp {
 			}
 
 			base.ApplyAttributeBuilder (a, cb);
+		}
+
+		public override IResolveContext ResolveContext {
+			get {
+				return resolve_context;
+			}
 		}
 
 		// <summary>

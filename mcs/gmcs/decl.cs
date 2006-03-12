@@ -298,7 +298,7 @@ namespace Mono.CSharp {
 	///   Base representation for members.  This is used to keep track
 	///   of Name, Location and Modifier flags, and handling Attributes.
 	/// </summary>
-	public abstract class MemberCore : Attributable {
+	public abstract class MemberCore : Attributable, IResolveContext {
 		/// <summary>
 		///   Public name
 		/// </summary>
@@ -359,10 +359,10 @@ namespace Mono.CSharp {
 			IsUsed = 1 << 11,
 			IsAssigned = 1 << 12				// Field is assigned
 		}
-  
+
 		/// <summary>
 		///   MemberCore flags at first detected then cached
- 		/// </summary>
+		/// </summary>
 		internal Flags caching_flags;
 
 		public MemberCore (DeclSpace parent, MemberName name, Attributes attrs)
@@ -626,6 +626,40 @@ namespace Mono.CSharp {
 		{
 			DocUtil.GenerateDocComment (this, ds);
 		}
+
+		public override IResolveContext ResolveContext {
+			get {
+				return this;
+			}
+		}
+
+		#region IResolveContext Members
+
+		public virtual DeclSpace DeclContainer {
+			get {
+				return Parent;
+			}
+		}
+
+		public bool IsInObsoleteScope {
+			get {
+				if (GetObsoleteAttribute () != null)
+					return true;
+
+				return Parent == null ? false : Parent.IsInObsoleteScope;
+			}
+		}
+
+		public bool IsInUnsafeScope {
+			get {
+				if ((ModFlags & Modifiers.UNSAFE) != 0)
+					return true;
+
+				return Parent == null ? false : Parent.IsInUnsafeScope;
+			}
+		}
+
+		#endregion
 	}
 
 	/// <summary>
@@ -702,6 +736,12 @@ namespace Mono.CSharp {
 			}
 			if (parent != null)
 				count_type_params += parent.count_type_params;
+		}
+
+		public override DeclSpace DeclContainer {
+			get {
+				return this;
+			}
 		}
 
 		/// <summary>
@@ -1717,8 +1757,8 @@ namespace Mono.CSharp {
 			// We need to call AddMembers() with a single member type at a time
 			// to get the member type part of CacheEntry.EntryType right.
 			if (!container.IsInterface) {
-			AddMembers (MemberTypes.Constructor, container);
-			AddMembers (MemberTypes.Field, container);
+				AddMembers (MemberTypes.Constructor, container);
+				AddMembers (MemberTypes.Field, container);
 			}
 			AddMembers (MemberTypes.Method, container);
 			AddMembers (MemberTypes.Property, container);
@@ -1917,8 +1957,8 @@ namespace Mono.CSharp {
 
 		protected class CacheEntry {
 			public readonly IMemberContainer Container;
-			public EntryType EntryType;
-			public MemberInfo Member;
+			public readonly EntryType EntryType;
+			public readonly MemberInfo Member;
 
 			public CacheEntry (IMemberContainer container, MemberInfo member,
 					   MemberTypes mt, BindingFlags bf)
@@ -1983,7 +2023,7 @@ namespace Mono.CSharp {
 		static MemberInfo [] emptyMemberInfo = new MemberInfo [0];
 		
 		public MemberInfo [] FindMembers (MemberTypes mt, BindingFlags bf, string name,
-					       MemberFilter filter, object criteria)
+						  MemberFilter filter, object criteria)
 		{
 			if (using_global)
 				throw new Exception ();

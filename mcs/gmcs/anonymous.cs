@@ -272,7 +272,7 @@ namespace Mono.CSharp {
 				member_name = new MemberName (name, args, loc);
 
 				generic_method = new GenericMethod (
-					ec.DeclSpace.NamespaceEntry,
+					ec.DeclContainer.NamespaceEntry,
 					(TypeContainer) ec.TypeContainer, member_name,
 					new TypeExpression (invoke_mb.ReturnType, loc),
 					Parameters);
@@ -404,7 +404,7 @@ namespace Mono.CSharp {
 
 			
 			aec = new EmitContext (
-				ec.TypeContainer, ec.DeclSpace, loc, null,
+				ec.TypeContainer, ec.DeclContainer, loc, null,
 				invoke_mb.ReturnType,
 				/* REVIEW */ (ec.InIterator ? Modifiers.METHOD_YIELDS : 0) |
 				(ec.InUnsafe ? Modifiers.UNSAFE : 0) |

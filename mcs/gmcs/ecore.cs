@@ -246,7 +246,7 @@ namespace Mono.CSharp {
 
 			TypeExpr te = fne as TypeExpr;
 
-			if (!te.CheckAccessLevel (ec.DeclSpace)) {
+			if (!te.CheckAccessLevel (ec.DeclContainer)) {
 				ErrorIsInaccesible (loc, TypeManager.CSharpName (te.Type));
 				return null;
 			}
@@ -896,7 +896,7 @@ namespace Mono.CSharp {
 		{
 			string name = GetSignatureForError ();
 			if (ec != null)
-				name = ec.DeclSpace.GetSignatureForError () + '.' + name;
+				name = ec.DeclContainer.GetSignatureForError () + '.' + name;
 
 			Report.Error (118, loc, "`{0}' is a `{1}' but a `{2}' was expected",
 			      name, was, expected);
@@ -1899,7 +1899,7 @@ namespace Mono.CSharp {
 		{
 			return resolved_to != null && resolved_to.Type != null && 
 				resolved_to.Type.Name == Name &&
-				(ec.DeclSpace.LookupType (Name, loc, /* ignore_cs0104 = */ true) != null);
+				(ec.DeclContainer.LookupType (Name, loc, /* ignore_cs0104 = */ true) != null);
 		}
 
 		public override Expression DoResolve (EmitContext ec)
@@ -1939,7 +1939,7 @@ namespace Mono.CSharp {
 			if (!t.IsGenericTypeDefinition)
 				return null;
 
-			DeclSpace ds = ec.DeclSpace;
+			DeclSpace ds = ec.DeclContainer;
 			while (ds != null) {
 				if (IsNestedChild (t, ds.TypeBuilder))
 					break;
@@ -1972,12 +1972,12 @@ namespace Mono.CSharp {
 
 		public override FullNamedExpression ResolveAsTypeStep (EmitContext ec, bool silent)
 		{
-			FullNamedExpression fne = ec.DeclSpace.LookupGeneric (Name, loc);
+			FullNamedExpression fne = ec.DeclContainer.LookupGeneric (Name, loc);
 			if (fne != null)
 				return fne.ResolveAsTypeStep (ec, silent);
 
 			int errors = Report.Errors;
-			fne = ec.DeclSpace.LookupType (Name, loc, /*ignore_cs0104=*/ false);
+			fne = ec.DeclContainer.LookupType (Name, loc, /*ignore_cs0104=*/ false);
 
 			if (fne != null) {
 				if (fne.Type == null)
@@ -1998,7 +1998,7 @@ namespace Mono.CSharp {
 			if (silent || errors != Report.Errors)
 				return null;
 
-			MemberCore mc = ec.DeclSpace.GetDefinition (Name);
+			MemberCore mc = ec.DeclContainer.GetDefinition (Name);
 			if (mc != null) {
 				Error_UnexpectedKind (ec, "type", GetMemberType (mc), loc);
 			} else {
@@ -2094,7 +2094,7 @@ namespace Mono.CSharp {
 			// Stage 2: Lookup members 
 			//
 
-			DeclSpace lookup_ds = ec.DeclSpace;
+			DeclSpace lookup_ds = ec.DeclContainer;
 			Type almost_matched_type = null;
 			ArrayList almost_matched = null;
 			do {
@@ -2129,7 +2129,7 @@ namespace Mono.CSharp {
 					almostMatchedMembers = almost_matched;
 				if (almost_matched_type == null)
 					almost_matched_type = ec.ContainerType;
-				MemberLookupFailed (ec.ContainerType, null, almost_matched_type, ((SimpleName) this).Name, ec.DeclSpace.Name, true, loc);
+				MemberLookupFailed (ec.ContainerType, null, almost_matched_type, ((SimpleName) this).Name, ec.DeclContainer.Name, true, loc);
 				return null;
 			}
 
@@ -2209,7 +2209,7 @@ namespace Mono.CSharp {
 
 			Error (103, "The name `" + Name +
 			       "' does not exist in the class `" +
-			       ec.DeclSpace.Name + "'");
+			       ec.DeclContainer.Name + "'");
 		}
 
 		public override string ToString ()
@@ -2395,7 +2395,7 @@ namespace Mono.CSharp {
 				lookup_name = name.Substring (0, pos);
 			}
 
-			FullNamedExpression resolved = RootNamespace.Global.Lookup (ec.DeclSpace, lookup_name, Location.Null);
+			FullNamedExpression resolved = RootNamespace.Global.Lookup (ec.DeclContainer, lookup_name, Location.Null);
 
 			if (resolved != null && rest != null) {
 				// Now handle the rest of the the name.
@@ -2407,13 +2407,13 @@ namespace Mono.CSharp {
 					Namespace ns = resolved as Namespace;
 					element = elements [i++];
 					lookup_name += "." + element;
-					resolved = ns.Lookup (ec.DeclSpace, element, Location.Null);
+					resolved = ns.Lookup (ec.DeclContainer, element, Location.Null);
 				}
 
 				if (resolved != null && resolved is TypeExpr) {
 					Type t = ((TypeExpr) resolved).Type;
 					while (t != null) {
-						if (!ec.DeclSpace.CheckAccessLevel (t)) {
+						if (!ec.DeclContainer.CheckAccessLevel (t)) {
 							resolved = null;
 							lookup_name = t.FullName;
 							break;

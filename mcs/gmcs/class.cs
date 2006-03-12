@@ -5605,7 +5605,7 @@ namespace Mono.CSharp {
 		public void EmitInitializer (EmitContext ec)
 		{
 			// Replace DeclSpace because of partial classes
-			ec.DeclSpace = EmitContext.DeclSpace;
+			ec.DeclContainer = EmitContext.DeclContainer;
 
 			ec.IsFieldInitializer = true;
 			initializer = initializer.Resolve (ec);

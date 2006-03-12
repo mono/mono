@@ -7235,7 +7235,7 @@ namespace Mono.CSharp {
 				return new MemberAccess (RootNamespace.Global, identifier, loc).ResolveAsTypeStep (ec, silent);
 
 			int errors = Report.Errors;
-			FullNamedExpression fne = ec.DeclSpace.NamespaceEntry.LookupAlias (alias);
+			FullNamedExpression fne = ec.DeclContainer.NamespaceEntry.LookupAlias (alias);
 			if (fne == null) {
 				if (errors == Report.Errors)
 					Report.Error (432, loc, "Alias `{0}' not found", alias);
@@ -7256,7 +7256,7 @@ namespace Mono.CSharp {
 				fne = RootNamespace.Global;
 			} else {
 				int errors = Report.Errors;
-				fne = ec.DeclSpace.NamespaceEntry.LookupAlias (alias);
+				fne = ec.DeclContainer.NamespaceEntry.LookupAlias (alias);
 				if (fne == null) {
 					if (errors == Report.Errors)
 						Report.Error (432, loc, "Alias `{0}' not found", alias);
@@ -7350,7 +7350,7 @@ namespace Mono.CSharp {
 			if (new_expr is Namespace) {
 				Namespace ns = (Namespace) new_expr;
 				string lookup_id = MemberName.MakeName (Identifier, args);
-				FullNamedExpression retval = ns.Lookup (ec.DeclSpace, lookup_id, loc);
+				FullNamedExpression retval = ns.Lookup (ec.DeclContainer, lookup_id, loc);
 				if ((retval != null) && (args != null))
 					retval = new ConstructedType (retval, args, loc).ResolveAsTypeStep (ec, false);
 				if (retval == null)
@@ -7469,7 +7469,7 @@ namespace Mono.CSharp {
 
 			if (new_expr is Namespace) {
 				Namespace ns = (Namespace) new_expr;
-				FullNamedExpression retval = ns.Lookup (ec.DeclSpace, lookup_id, loc);
+				FullNamedExpression retval = ns.Lookup (ec.DeclContainer, lookup_id, loc);
 				if ((retval != null) && (args != null))
 					retval = new ConstructedType (retval, args, loc).ResolveAsTypeStep (ec, false);
 				if (!silent && retval == null)

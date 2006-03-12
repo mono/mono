@@ -191,12 +191,21 @@ namespace Mono.CSharp {
 		}
 	}
 
+
+	public interface IResolveContext
+	{
+		DeclSpace DeclContainer { get; }
+		bool IsInObsoleteScope { get; }
+		bool IsInUnsafeScope { get; }
+	}
+
 	/// <summary>
 	///   An Emit Context is created for each body of code (from methods,
 	///   properties bodies, indexer bodies or constructor bodies)
 	/// </summary>
-	public class EmitContext {
-		public DeclSpace DeclSpace;
+	public class EmitContext : IResolveContext {
+
+		DeclSpace declSpace;
 		public DeclSpace TypeContainer;
 		public ILGenerator   ig;
 
@@ -359,6 +368,8 @@ namespace Mono.CSharp {
 		/// </summary>
 		public bool TestObsoleteMethodUsage = true;
 
+		public readonly IResolveContext ResolveContext;
+
 		/// <summary>
 		///    The current iterator
 		/// </summary>
@@ -398,7 +409,7 @@ namespace Mono.CSharp {
 			this.ig = ig;
 
 			TypeContainer = parent;
-			DeclSpace = ds;
+			this.declSpace = ds;
 			CheckState = RootContext.Checked;
 			ConstantCheckState = true;
 
@@ -439,6 +450,31 @@ namespace Mono.CSharp {
 			: this (tc, tc, l, ig, return_type, code_flags, false)
 		{
 		}
+
+		public DeclSpace DeclContainer { 
+			get { 
+				return this.declSpace;
+			}
+			set {
+				declSpace = value;
+			}
+		}
+
+		public bool IsInObsoleteScope {
+			get {
+				return ResolveContext.IsInObsoleteScope;
+			}
+		}
+
+		public bool IsInUnsafeScope {
+			get {
+				if (InUnsafe)
+					return true;
+
+				return ResolveContext.IsInUnsafeScope;
+			}
+		}
+
 
 		public FlowBranching CurrentBranching {
 			get {
@@ -886,9 +922,9 @@ namespace Mono.CSharp {
 			if (return_value == null){
 				return_value = ig.DeclareLocal (ReturnType);
 				if (!HasReturnLabel){
-				ReturnLabel = ig.DefineLabel ();
-				HasReturnLabel = true;
-			}
+					ReturnLabel = ig.DefineLabel ();
+					HasReturnLabel = true;
+				}
 			}
 
 			return return_value;
@@ -962,7 +998,7 @@ namespace Mono.CSharp {
 		{
 			capture_context.EmitAddressOfParameter (this, name);
 		}
-
+		
 		public Expression GetThis (Location loc)
 		{
 			This my_this;
@@ -979,7 +1015,8 @@ namespace Mono.CSharp {
 	}
 
 
-	public abstract class CommonAssemblyModulClass : Attributable {
+	public abstract class CommonAssemblyModulClass : Attributable, IResolveContext {
+
 		protected CommonAssemblyModulClass ():
 			base (null)
 		{
@@ -1019,8 +1056,36 @@ namespace Mono.CSharp {
 			}
 			return a;
 		}
-	}
 
+		public override IResolveContext ResolveContext {
+			get {
+				return this;
+			}
+		}
+
+		#region IResolveContext Members
+
+		public DeclSpace DeclContainer {
+			get {
+				return RootContext.Tree.Types;
+			}
+		}
+
+		public bool IsInObsoleteScope {
+			get {
+				return false;
+			}
+		}
+
+		public bool IsInUnsafeScope {
+			get {
+				return false;
+			}
+		}
+
+		#endregion
+	}
+                
 	public class AssemblyClass : CommonAssemblyModulClass {
 		// TODO: make it private and move all builder based methods here
 		public AssemblyBuilder Builder;
@@ -1045,7 +1110,7 @@ namespace Mono.CSharp {
 			get {
 				return is_cls_compliant;
 			}
-			}
+		}
 
 		public bool WrapNonExceptionThrows {
 			get {
@@ -1066,6 +1131,9 @@ namespace Mono.CSharp {
 
 		public void Resolve ()
 		{
+			if (OptAttributes != null)
+				OptAttributes.AttachTo (this);
+
 			ClsCompliantAttribute = ResolveAttribute (TypeManager.cls_compliant_attribute_type);
 			if (ClsCompliantAttribute != null) {
 				is_cls_compliant = ClsCompliantAttribute.GetClsCompliantAttributeValue (null);
@@ -1115,10 +1183,10 @@ namespace Mono.CSharp {
 		public AssemblyName GetAssemblyName (string name, string output) 
 		{
 			if (OptAttributes != null) {
-                               foreach (Attribute a in OptAttributes.Attrs) {
-				       // cannot rely on any resolve-based members before you call Resolve
-				       if (a.ExplicitTarget == null || a.ExplicitTarget != "assembly")
-					       continue;
+				foreach (Attribute a in OptAttributes.Attrs) {
+					// cannot rely on any resolve-based members before you call Resolve
+					if (a.ExplicitTarget == null || a.ExplicitTarget != "assembly")
+						continue;
 
 					// TODO: This code is buggy: comparing Attribute name without resolving is wrong.
 					//       However, this is invoked by CodeGen.Init, when none of the namespaces
@@ -1126,8 +1194,8 @@ namespace Mono.CSharp {
 					// TODO: Does not handle quoted attributes properly
 					switch (a.Name) {
 						case "AssemblyKeyFile":
-                                               case "AssemblyKeyFileAttribute":
-                                               case "System.Reflection.AssemblyKeyFileAttribute":
+						case "AssemblyKeyFileAttribute":
+						case "System.Reflection.AssemblyKeyFileAttribute":
 							if (RootContext.StrongNameKeyFile != null) {
 								Report.SymbolRelatedToPreviousError (a.Location, a.Name);
 								Report.Warning (1616, 1, "Option `{0}' overrides attribute `{1}' given in a source file or added module",
@@ -1140,8 +1208,8 @@ namespace Mono.CSharp {
 							}
 							break;
 						case "AssemblyKeyName":
-                                               case "AssemblyKeyNameAttribute":
-                                               case "System.Reflection.AssemblyKeyNameAttribute":
+						case "AssemblyKeyNameAttribute":
+						case "System.Reflection.AssemblyKeyNameAttribute":
 							if (RootContext.StrongNameKeyContainer != null) {
 								Report.SymbolRelatedToPreviousError (a.Location, a.Name);
 								Report.Warning (1616, 1, "Option `{0}' overrides attribute `{1}' given in a source file or added module",
@@ -1154,8 +1222,8 @@ namespace Mono.CSharp {
 							}
 							break;
 						case "AssemblyDelaySign":
-                                               case "AssemblyDelaySignAttribute":
-                                               case "System.Reflection.AssemblyDelaySignAttribute":
+						case "AssemblyDelaySignAttribute":
+						case "System.Reflection.AssemblyDelaySignAttribute":
 							RootContext.StrongNameDelaySign = a.GetBoolean ();
 							break;
 					}
@@ -1360,10 +1428,13 @@ namespace Mono.CSharp {
 		public override bool IsClsComplianceRequired(DeclSpace ds)
 		{
 			return CodeGen.Assembly.IsClsCompliant;
-			}
+		}
 
 		public override void Emit (TypeContainer tc) 
 		{
+			if (OptAttributes != null)
+				OptAttributes.AttachTo (this);
+
 			base.Emit (tc);
 
 			if (!m_module_is_unsafe)
