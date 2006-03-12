@@ -10,7 +10,7 @@
 				<Reference Name="System.Data" AssemblyName="System.Data" HintPath="..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Data.dll"/>
 				<Reference Name="System.Xml" AssemblyName="System.Xml" HintPath="..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Xml.dll"/>
 				<Reference Name="rt" AssemblyName="rt" HintPath="..\..\Program Files\Mainsoft\Visual MainWin for J2EE\jgac\jre5\rt.dll" Private="False"/>
-				<Reference Name="nunit.framework" AssemblyName="nunit.framework" HintPath="..\..\..\..\..\..\Program Files\NUnit 2.2\bin\nunit.framework.dll" AssemblyFolderKey="hklm\dn\nunit.framework"/>
+				<Reference Name="nunit.framework.dll.J2EE" Project="{39CC8FF7-EF1A-41A1-B727-42684211ECD1}" Package="{83B010C7-76FC-4FAD-A26C-00D7EFE60256}"/>
 			</References>
 		</Build>
 		<Files>

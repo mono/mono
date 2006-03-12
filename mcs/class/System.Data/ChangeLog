@@ -1,3 +1,7 @@
+2006-03-12	Boris Kirzner <borisk@mainsfot.com>
+	* run-tests.bat, run-tests.test.connected.bat, run-tests.test.disconnected.bat
+	added batch files for automated testing for TARGET_JVM.
+
 2006-02-19  Konstantin Triger <kostat@mainsoft.com>
 
 	* TARGET_JVM: added JDBC provider generic adapter mechanism.
