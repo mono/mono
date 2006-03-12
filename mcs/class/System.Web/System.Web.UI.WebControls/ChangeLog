@@ -1,3 +1,11 @@
+2006-03-12  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* DataGrid.cs: in AddColumnsFromSource method fixed columns from
+	properties of custom class
+	fixed InitializeNumericPager, pager numbers should be a Label control
+	fixed CreateControlHierarchy, corrected dataset index of items if
+	paging is enabled
+
 2006-03-09  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* DataList.cs: fixed DoItemInLoop method that fixes itemIndex

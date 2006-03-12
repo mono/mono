@@ -515,7 +515,7 @@ namespace System.Web.UI.WebControls {
 				IEnumerator items = (data_source.DataSource != null) ? data_source.GetEnumerator () : null;
 				if (items != null && items.MoveNext ()) {
 					object data = items.Current;
-					if (data is ICustomTypeDescriptor)
+					if ((data is ICustomTypeDescriptor) || (!IsBindableType(data.GetType())))
 						props = TypeDescriptor.GetProperties (data);
 					else if (data != null)
 						ptype = data.GetType ();
@@ -755,7 +755,9 @@ namespace System.Web.UI.WebControls {
 					link.CausesValidation = false;
 					number = link;
 				} else {
-					number = new LiteralControl (page);
+					Label pageLabel = new Label();
+					pageLabel.Text = page;
+					number = pageLabel;
 				}
 
 				res.Controls.Add (number);
@@ -975,6 +977,7 @@ namespace System.Web.UI.WebControls {
 			int index = 0;
 			bool first = true;
 			string key = null;
+			int dataset_index = pds.FirstIndexInPage;
 			int selected_index = SelectedIndex;
 			int edit_item_index = EditItemIndex;
 			while (enumerator != null && (skip_first || enumerator.MoveNext ())) {
@@ -1002,8 +1005,9 @@ namespace System.Web.UI.WebControls {
 				else if (index % 2 != 0) 
 					type = ListItemType.AlternatingItem;
 
-				items_list.Add (CreateItem (index, index, type, useDataSource, data, pds));
+				items_list.Add (CreateItem (index, dataset_index, type, useDataSource, data, pds));
 				index++;
+				dataset_index++;
 			}
 
 			CreateItem (-1, -1, ListItemType.Footer, useDataSource, null, paged_data_source);
