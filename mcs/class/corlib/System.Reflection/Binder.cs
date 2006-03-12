@@ -194,6 +194,9 @@ namespace System.Reflection
 				if (to.IsByRef != from.IsByRef)
 					return false;
 
+				if (to.IsInterface)
+					return to.IsAssignableFrom (from);
+
 				switch (fromt) {
 				case TypeCode.Char:
 					switch (tot) {

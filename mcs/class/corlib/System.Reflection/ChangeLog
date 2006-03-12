@@ -1,3 +1,7 @@
+2006-03-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* Binder.cs: Applied patch from Ben to fix #74947.
+
 2006-03-01  Miguel de Icaza  <miguel@novell.com>
 
 	* Assembly.cs: Cache the AssemblyName, patch from Tambet.  This
