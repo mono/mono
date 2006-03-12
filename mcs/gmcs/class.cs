@@ -32,7 +32,6 @@
 //
 #define CACHE
 using System;
-using System.Text;
 using System.Collections;
 using System.Collections.Specialized;
 using System.Reflection;
@@ -41,6 +40,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Security.Permissions;
+using System.Text;
 using System.Xml;
 
 using Mono.CompilerServices.SymbolWriter;
@@ -736,7 +736,7 @@ namespace Mono.CSharp {
 			}
 			
 			base.ApplyAttributeBuilder (a, cb);
-               } 
+		} 
 
 		public override AttributeTargets AttributeTargets {
 			get {
@@ -870,7 +870,7 @@ namespace Mono.CSharp {
 				if (OptAttributes == null)
 					return false;
 
-				return OptAttributes.Contains (TypeManager.comimport_attr_type, EmitContext);
+				return OptAttributes.Contains (TypeManager.comimport_attr_type);
 			}
 		}
 
@@ -2256,12 +2256,12 @@ namespace Mono.CSharp {
 		public virtual void EmitType ()
 		{
 			if (OptAttributes != null)
-				OptAttributes.Emit (ec, this);
+				OptAttributes.Emit ();
 
 			if (IsGeneric && !(this is ClassPart)) {
 				int offset = CountTypeParameters - CurrentTypeParameters.Length;
 				for (int i = offset; i < gen_params.Length; i++)
-					CurrentTypeParameters [i - offset].EmitAttributes (ec);
+					CurrentTypeParameters [i - offset].EmitAttributes ();
 			}
 
 			//
@@ -2288,7 +2288,7 @@ namespace Mono.CSharp {
 			Emit ();
 
 			if (instance_constructors != null) {
-				if (TypeBuilder.IsSubclassOf (TypeManager.attribute_type) && RootContext.VerifyClsCompliance && IsClsComplianceRequired (this)) {
+				if (TypeBuilder.IsSubclassOf (TypeManager.attribute_type) && RootContext.VerifyClsCompliance && IsClsComplianceRequired ()) {
 					bool has_compliant_args = false;
 
 					foreach (Constructor c in instance_constructors) {
@@ -2302,7 +2302,7 @@ namespace Mono.CSharp {
 					if (!has_compliant_args)
 						Report.Error (3015, Location, "`{0}' has no accessible constructors which use only CLS-compliant types", GetSignatureForError ());
 				} else {
-				foreach (Constructor c in instance_constructors)
+					foreach (Constructor c in instance_constructors)
 						c.Emit ();
 				}
 			}
@@ -2538,7 +2538,7 @@ namespace Mono.CSharp {
 				Report.Error (3009, Location, "`{0}': base type `{1}' is not CLS-compliant", GetSignatureForError (), TypeManager.CSharpName (base_type));
 			}
 
-			if (!Parent.IsClsComplianceRequired (ds)) {
+			if (!Parent.IsClsComplianceRequired ()) {
 				Report.Error (3018, Location, "`{0}' cannot be marked as CLS-compliant because it is a member of non CLS-compliant type `{1}'", 
 					GetSignatureForError (), Parent.GetSignatureForError ());
 			}
@@ -2558,7 +2558,7 @@ namespace Mono.CSharp {
 
 			foreach (DictionaryEntry entry in defined_names) {
 				MemberCore mc = (MemberCore)entry.Value;
-				if (!mc.IsClsComplianceRequired (mc.Parent))
+				if (!mc.IsClsComplianceRequired ())
 					continue;
 
 				string name = (string) entry.Key;
@@ -3238,13 +3238,13 @@ namespace Mono.CSharp {
 			if (OptAttributes == null)
 				return false;
 
-			Attribute[] attrs = OptAttributes.SearchMulti (TypeManager.conditional_attribute_type, ec);
+			Attribute[] attrs = OptAttributes.SearchMulti (TypeManager.conditional_attribute_type);
 
 			if (attrs == null)
 				return false;
 
 			foreach (Attribute a in attrs) {
-				string condition = a.GetConditionalAttributeValue (Parent.EmitContext);
+				string condition = a.GetConditionalAttributeValue ();
 				if (RootContext.AllDefines.Contains (condition))
 					return false;
 			}
@@ -3501,8 +3501,7 @@ namespace Mono.CSharp {
 				if ((ModFlags & Modifiers.OVERRIDE) != 0) {
 					ObsoleteAttribute oa = AttributeTester.GetMethodObsoleteAttribute (base_method);
 					if (oa != null) {
-						EmitContext ec = new EmitContext (this.Parent, this.Parent, Location, null, null, ModFlags, false);
-						if (OptAttributes == null || !OptAttributes.Contains (TypeManager.obsolete_attribute_type, ec)) {
+						if (OptAttributes == null || !OptAttributes.Contains (TypeManager.obsolete_attribute_type)) {
 							Report.SymbolRelatedToPreviousError (base_method);
 							Report.Warning (672, 1, Location, "Member `{0}' overrides obsolete member `{1}'. Add the Obsolete attribute to `{0}'",
 								GetSignatureForError (), TypeManager.CSharpSignature (base_method) );
@@ -3779,7 +3778,7 @@ namespace Mono.CSharp {
 		protected override bool VerifyClsCompliance (DeclSpace ds)
 		{
 			if (!base.VerifyClsCompliance (ds)) {
-				if ((ModFlags & Modifiers.ABSTRACT) != 0 && IsExposedFromAssembly (ds) && ds.IsClsComplianceRequired (ds)) {
+				if ((ModFlags & Modifiers.ABSTRACT) != 0 && IsExposedFromAssembly (ds) && ds.IsClsComplianceRequired ()) {
 					Report.Error (3011, Location, "`{0}': only CLS-compliant members can be abstract", GetSignatureForError ());
 				}
 				return false;
@@ -4269,7 +4268,7 @@ namespace Mono.CSharp {
 		// 
 		public override void Emit ()
 		{
-			MethodData.Emit (Parent, this);
+			MethodData.Emit (Parent);
 			base.Emit ();
 
 			if (declarative_security != null) {
@@ -4384,7 +4383,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		/// Returns true if method has conditional attribute and the conditions is not defined (method is excluded).
 		/// </summary>
-		public bool IsExcluded (EmitContext ec)
+		public bool IsExcluded ()
 		{
 			if ((caching_flags & Flags.Excluded_Undetected) == 0)
 				return (caching_flags & Flags.Excluded) != 0;
@@ -4395,13 +4394,13 @@ namespace Mono.CSharp {
 				if (OptAttributes == null)
 					return false;
 
-				Attribute[] attrs = OptAttributes.SearchMulti (TypeManager.conditional_attribute_type, ec);
+				Attribute[] attrs = OptAttributes.SearchMulti (TypeManager.conditional_attribute_type);
 
 				if (attrs == null)
 					return false;
 
 				foreach (Attribute a in attrs) {
-					string condition = a.GetConditionalAttributeValue (Parent.EmitContext);
+					string condition = a.GetConditionalAttributeValue ();
 					if (RootContext.AllDefines.Contains (condition))
 						return false;
 				}
@@ -4419,7 +4418,7 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			if (md.IsExcluded (ec)) {
+			if (md.IsExcluded ()) {
 				caching_flags |= Flags.Excluded;
 				return true;
 			}
@@ -4774,7 +4773,7 @@ namespace Mono.CSharp {
 				ec.IsStatic = false;
 			}
 
-			Parameters.ApplyAttributes (ec, ConstructorBuilder);
+			Parameters.ApplyAttributes (ConstructorBuilder);
 			
 			SourceMethod source = SourceMethod.Create (
 				Parent, ConstructorBuilder, block);
@@ -4801,7 +4800,7 @@ namespace Mono.CSharp {
 				Parent.EmitFieldInitializers (ec);
 
 			if (OptAttributes != null) 
-				OptAttributes.Emit (ec, this);
+				OptAttributes.Emit ();
 
 			ec.EmitTopBlock (this, block);
 
@@ -4824,7 +4823,7 @@ namespace Mono.CSharp {
 		{
 			return null;
 		}
-						
+
 		public override string GetSignatureForError()
 		{
 			return base.GetSignatureForError () + Parameters.GetSignatureForError ();
@@ -4835,22 +4834,22 @@ namespace Mono.CSharp {
 			if (!base.VerifyClsCompliance (ds) || !IsExposedFromAssembly (ds)) {
 				return false;
 			}
-
+			
  			if (ParameterInfo.Count > 0) {
  				ArrayList al = (ArrayList)ds.MemberCache.Members [".ctor"];
  				if (al.Count > 3)
  					ds.MemberCache.VerifyClsParameterConflict (al, this, ConstructorBuilder);
-				
+ 
 				if (ds.TypeBuilder.IsSubclassOf (TypeManager.attribute_type)) {
 					foreach (Type param in ParameterTypes) {
 						if (param.IsArray) {
 							return true;
-				}
-			}
+						}
+					}
 				}
 			}
 			has_compliant_args = true;
-				return true;
+			return true;
 		}
 
 		#region IMethodData Members
@@ -4893,7 +4892,7 @@ namespace Mono.CSharp {
 			return new EmitContext (Parent, Location, ig_, null, ModFlags, true);
 		}
 
-		public bool IsExcluded(EmitContext ec)
+		public bool IsExcluded()
 		{
 			return false;
 		}
@@ -4925,8 +4924,8 @@ namespace Mono.CSharp {
 		EmitContext CreateEmitContext (TypeContainer tc, ILGenerator ig);
 		ObsoleteAttribute GetObsoleteAttribute ();
 		string GetSignatureForError ();
-		bool IsExcluded (EmitContext ec);
-		bool IsClsComplianceRequired (DeclSpace ds);
+		bool IsExcluded ();
+		bool IsClsComplianceRequired ();
 		void SetMemberIsUsed ();
 	}
 
@@ -5113,7 +5112,7 @@ namespace Mono.CSharp {
 			if (method.GetObsoleteAttribute () != null || container.GetObsoleteAttribute () != null)
 				ec.TestObsoleteMethodUsage = false;
 
-			DefineMethodBuilder (ec, container, method_name, method.ParameterInfo.Types);
+			DefineMethodBuilder (container, method_name, method.ParameterInfo.Types);
 
 			if (builder == null)
 				return false;
@@ -5160,21 +5159,22 @@ namespace Mono.CSharp {
 			return true;
 		}
 
+
 		/// <summary>
 		/// Create the MethodBuilder for the method 
 		/// </summary>
-		void DefineMethodBuilder (EmitContext ec, TypeContainer container, string method_name, Type[] ParameterTypes)
+		void DefineMethodBuilder (TypeContainer container, string method_name, Type[] ParameterTypes)
 		{
 			const int extern_static = Modifiers.EXTERN | Modifiers.STATIC;
 
 			if ((modifiers & extern_static) == extern_static) {
 
 				if (method.OptAttributes != null) {
-					Attribute dllimport_attribute = method.OptAttributes.Search (TypeManager.dllimport_type, ec);
+					Attribute dllimport_attribute = method.OptAttributes.Search (TypeManager.dllimport_type);
 					if (dllimport_attribute != null) {
 						flags |= MethodAttributes.PinvokeImpl;
 						builder = dllimport_attribute.DefinePInvokeMethod (
-							ec, container.TypeBuilder, method_name, flags,
+							container.TypeBuilder, method_name, flags,
 							method.ReturnType, ParameterTypes);
 
 						return;
@@ -5184,7 +5184,7 @@ namespace Mono.CSharp {
 				// for extern static method must be specified either DllImport attribute or MethodImplAttribute.
 				// We are more strict than Microsoft and report CS0626 like error
 				if (method.OptAttributes == null ||
-					!method.OptAttributes.Contains (TypeManager.methodimpl_attr_type, ec)) {
+					!method.OptAttributes.Contains (TypeManager.methodimpl_attr_type)) {
 					Report.Error (626, method.Location, "Method, operator, or accessor `{0}' is marked external and has no attributes on it. Consider adding a DllImport attribute to specify the external implementation",
 						method.GetSignatureForError ());
 					return;
@@ -5207,7 +5207,7 @@ namespace Mono.CSharp {
 		//
 		// Emits the code
 		// 
-		public void Emit (TypeContainer container, Attributable kind)
+		public void Emit (TypeContainer container)
 		{
 			EmitContext ec;
 			if ((flags & MethodAttributes.PinvokeImpl) == 0)
@@ -5218,15 +5218,15 @@ namespace Mono.CSharp {
 			if (method.GetObsoleteAttribute () != null || container.GetObsoleteAttribute () != null)
 				ec.TestObsoleteMethodUsage = false;
 
-			method.ParameterInfo.ApplyAttributes (ec, MethodBuilder);
+			method.ParameterInfo.ApplyAttributes (MethodBuilder);
 
 			Attributes OptAttributes = method.OptAttributes;
 
 			if (OptAttributes != null)
-				OptAttributes.Emit (ec, kind);
+				OptAttributes.Emit ();
 
 			if (GenericMethod != null)
-				GenericMethod.EmitAttributes (ec);
+				GenericMethod.EmitAttributes ();
 
 			ToplevelBlock block = method.Block;
 			
@@ -5542,7 +5542,7 @@ namespace Mono.CSharp {
 				return true;
 			}
 
-			if (IsInterface && HasClsCompliantAttribute && ds.IsClsComplianceRequired (ds)) {
+			if (IsInterface && HasClsCompliantAttribute && ds.IsClsComplianceRequired ()) {
 				Report.Error (3010, Location, "`{0}': CLS-compliant interfaces must have only CLS-compliant members", GetSignatureForError ());
 			}
 			return false;
@@ -5591,8 +5591,8 @@ namespace Mono.CSharp {
 				if (marshal != null) {
 					FieldBuilder.SetMarshal (marshal);
 				}
-					return;
-				}
+				return;
+			}
 
 			if (a.Type.IsSubclassOf (TypeManager.security_attr_type)) {
 				a.Error_InvalidSecurityParent ();
@@ -5783,8 +5783,7 @@ namespace Mono.CSharp {
 		public override void Emit ()
 		{
 			if (OptAttributes != null) {
-				EmitContext ec = new EmitContext (Parent, Location, null, FieldBuilder.FieldType, ModFlags);
-				OptAttributes.Emit (ec, this);
+				OptAttributes.Emit ();
 			}
 
 			if (Parent.HasExplicitLayout && ((status & Status.HAS_OFFSET) == 0) && (ModFlags & Modifiers.STATIC) == 0) {
@@ -6171,7 +6170,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public bool IsExcluded (EmitContext ec)
+		public bool IsExcluded ()
 		{
 			return false;
 		}
@@ -6258,10 +6257,10 @@ namespace Mono.CSharp {
 
 		protected virtual void EmitMethod (TypeContainer container)
 		{
-			method_data.Emit (container, this);
+			method_data.Emit (container);
 		}
 
-		public override bool IsClsComplianceRequired(DeclSpace ds)
+		public override bool IsClsComplianceRequired()
 		{
 			return false;
 		}
@@ -6364,7 +6363,7 @@ namespace Mono.CSharp {
 		public class SetMethod : PropertyMethod {
 
 			static string[] attribute_targets = new string [] { "method", "param", "return" };
-                       ImplicitParameter param_attr;
+			ImplicitParameter param_attr;
 			protected Parameters parameters;
 
 			public SetMethod (MethodCore method):
@@ -6381,7 +6380,7 @@ namespace Mono.CSharp {
 			{
 				if (a.Target == AttributeTargets.Parameter) {
 					if (param_attr == null)
-						param_attr = new ImplicitParameter (method_data.MethodBuilder, method.Location);
+						param_attr = new ImplicitParameter (method_data.MethodBuilder);
 
 					param_attr.ApplyAttributeBuilder (a, cb);
 					return;
@@ -6438,7 +6437,8 @@ namespace Mono.CSharp {
 
 		static string[] attribute_targets = new string [] { "property" };
 
-		public abstract class PropertyMethod : AbstractPropertyEventMethod {
+		public abstract class PropertyMethod : AbstractPropertyEventMethod
+		{
 			protected readonly MethodCore method;
 			protected MethodAttributes flags;
 			bool yields;
@@ -6449,7 +6449,8 @@ namespace Mono.CSharp {
 				this.method = method;
 			}
 
-			public PropertyMethod (MethodCore method, Accessor accessor, string prefix)
+			public PropertyMethod (MethodCore method, Accessor accessor,
+					       string prefix)
 				: base (method, accessor, prefix)
 			{
 				this.method = method;
@@ -6467,9 +6468,9 @@ namespace Mono.CSharp {
 				}
 			}
 
-			public override bool IsClsComplianceRequired(DeclSpace ds)
+			public override bool IsClsComplianceRequired ()
 			{
-				return method.IsClsComplianceRequired (ds);
+				return method.IsClsComplianceRequired ();
 			}
 
 			public virtual MethodBuilder Define (TypeContainer container)
@@ -6731,7 +6732,7 @@ namespace Mono.CSharp {
 			// put the attribute
 			//
 			if (PropertyBuilder != null && OptAttributes != null)
-				OptAttributes.Emit (ec, this);
+				OptAttributes.Emit ();
 
 			if (!Get.IsDummy)
 				Get.Emit (Parent);
@@ -7134,7 +7135,7 @@ namespace Mono.CSharp {
 		public abstract class DelegateMethod: AbstractPropertyEventMethod
 		{
 			protected readonly Event method;
-                       ImplicitParameter param_attr;
+			ImplicitParameter param_attr;
 
 			static string[] attribute_targets = new string [] { "method", "param", "return" };
 
@@ -7154,7 +7155,7 @@ namespace Mono.CSharp {
 			{
 				if (a.Target == AttributeTargets.Parameter) {
 					if (param_attr == null)
-						param_attr = new ImplicitParameter (method_data.MethodBuilder, method.Location);
+						param_attr = new ImplicitParameter (method_data.MethodBuilder);
 
 					param_attr.ApplyAttributeBuilder (a, cb);
 					return;
@@ -7169,9 +7170,9 @@ namespace Mono.CSharp {
 				}
 			}
 
-			public override bool IsClsComplianceRequired(DeclSpace ds)
+			public override bool IsClsComplianceRequired ()
 			{
-				return method.IsClsComplianceRequired (ds);
+				return method.IsClsComplianceRequired ();
 			}
 
 			public MethodBuilder Define (TypeContainer container)
@@ -7183,7 +7184,7 @@ namespace Mono.CSharp {
 					return null;
 
 				MethodBuilder mb = method_data.MethodBuilder;
-				ParameterInfo.ApplyAttributes (Parent.EmitContext, mb);
+				ParameterInfo.ApplyAttributes (mb);
 				return mb;
 			}
 
@@ -7352,20 +7353,20 @@ namespace Mono.CSharp {
 				return false;
 
 			EventBuilder = new MyEventBuilder (this, Parent.TypeBuilder, Name, e_attr, MemberType);
-					
-			if (Add.Block == null && Remove.Block == null && !IsInterface) {
-					FieldBuilder = Parent.TypeBuilder.DefineField (
-						Name, MemberType,
-						FieldAttributes.Private | ((ModFlags & Modifiers.STATIC) != 0 ? FieldAttributes.Static : 0));
-					TypeManager.RegisterPrivateFieldOfEvent (
-						(EventInfo) EventBuilder, FieldBuilder);
-					TypeManager.RegisterFieldBase (FieldBuilder, this);
-				}
 			
-				EventBuilder.SetAddOnMethod (AddBuilder);
-				EventBuilder.SetRemoveOnMethod (RemoveBuilder);
+			if (Add.Block == null && Remove.Block == null && !IsInterface) {
+				FieldBuilder = Parent.TypeBuilder.DefineField (
+					Name, MemberType,
+					FieldAttributes.Private | ((ModFlags & Modifiers.STATIC) != 0 ? FieldAttributes.Static : 0));
+				TypeManager.RegisterPrivateFieldOfEvent (
+					(EventInfo) EventBuilder, FieldBuilder);
+				TypeManager.RegisterFieldBase (FieldBuilder, this);
+			}
+			
+			EventBuilder.SetAddOnMethod (AddBuilder);
+			EventBuilder.SetRemoveOnMethod (RemoveBuilder);
 
-				TypeManager.RegisterEvent (EventBuilder, AddBuilder, RemoveBuilder);
+			TypeManager.RegisterEvent (EventBuilder, AddBuilder, RemoveBuilder);
 			return true;
 		}
 
@@ -7388,9 +7389,7 @@ namespace Mono.CSharp {
 		public override void Emit ()
 		{
 			if (OptAttributes != null) {
-				EmitContext ec = new EmitContext (
-					Parent, Location, null, MemberType, ModFlags);
-				OptAttributes.Emit (ec, this);
+				OptAttributes.Emit ();
 			}
 
 			Add.Emit (Parent);
@@ -7496,7 +7495,7 @@ namespace Mono.CSharp {
 			else
 				Set = new SetIndexerMethod (this, set_block);
 		}
-
+		       
 		public override bool Define ()
 		{
 			if (!DoDefineBase ())
@@ -7511,12 +7510,12 @@ namespace Mono.CSharp {
 			}
 
 			if (OptAttributes != null) {
-				Attribute indexer_attr = OptAttributes.Search (TypeManager.indexer_name_type, ec);
+				Attribute indexer_attr = OptAttributes.Search (TypeManager.indexer_name_type);
 				if (indexer_attr != null) {
 					// Remove the attribute from the list because it is not emitted
 					OptAttributes.Attrs.Remove (indexer_attr);
 
-					ShortName = indexer_attr.GetIndexerAttributeValue (ec);
+					ShortName = indexer_attr.GetIndexerAttributeValue ();
 
 					if (IsExplicitImpl) {
 						Report.Error (415, indexer_attr.Location,
@@ -7524,7 +7523,7 @@ namespace Mono.CSharp {
 							      "indexer that is not an explicit interface member declaration");
 						return false;
 					}
-				
+
 					if ((ModFlags & Modifiers.OVERRIDE) != 0) {
 						Report.Error (609, indexer_attr.Location,
 							      "Cannot set the `IndexerName' attribute on an indexer marked override");
@@ -7588,14 +7587,14 @@ namespace Mono.CSharp {
 				}
 			}
 
-				PropertyBuilder = Parent.TypeBuilder.DefineProperty (
+			PropertyBuilder = Parent.TypeBuilder.DefineProperty (
 				Name, PropertyAttributes.None, MemberType, ParameterTypes);
+			
+			if (!Get.IsDummy)
+				PropertyBuilder.SetGetMethod (GetBuilder);
 
-				if (!Get.IsDummy)
-					PropertyBuilder.SetGetMethod (GetBuilder);
-
-				if (!Set.IsDummy)
-					PropertyBuilder.SetSetMethod (SetBuilder);
+			if (!Set.IsDummy)
+				PropertyBuilder.SetSetMethod (SetBuilder);
 				
 			TypeManager.RegisterIndexer (PropertyBuilder, GetBuilder, SetBuilder, ParameterTypes);
 
@@ -7821,11 +7820,11 @@ namespace Mono.CSharp {
 							"The return type for ++ or -- operator must be the containing type or derived from the containing type");
 						return false;
 					}
-				if (first_arg_type != declaring_type){
-					Report.Error (
+					if (first_arg_type != declaring_type) {
+						Report.Error (
 							559, Location, "The parameter type for ++ or -- operator must be the containing type");
-					return false;
-				}
+						return false;
+					}
 				}
 				
 				if (first_arg_type != declaring_type){

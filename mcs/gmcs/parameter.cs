@@ -24,12 +24,10 @@ namespace Mono.CSharp {
 	public abstract class ParameterBase : Attributable {
 
 		protected ParameterBuilder builder;
-		public readonly Location Location;
 
-		protected ParameterBase (Attributes attrs, Location loc)
+		protected ParameterBase (Attributes attrs)
 			: base (attrs)
 		{
-			Location = loc;
 		}
 
 		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
@@ -39,7 +37,7 @@ namespace Mono.CSharp {
 				if (marshal != null) {
 					builder.SetMarshal (marshal);
 				}
-					return;
+				return;
 			}
 
 			if (a.Type.IsSubclassOf (TypeManager.security_attr_type)) {
@@ -50,7 +48,7 @@ namespace Mono.CSharp {
 			builder.SetCustomAttribute (cb);
 		}
 
-		public override bool IsClsComplianceRequired(DeclSpace ds)
+		public override bool IsClsComplianceRequired()
 		{
 			return false;
 		}
@@ -61,13 +59,13 @@ namespace Mono.CSharp {
 	/// </summary>
 	public class ReturnParameter : ParameterBase {
 		public ReturnParameter (MethodBuilder mb, Location location):
-			base (null, location)
+			base (null)
 		{
 			try {
 				builder = mb.DefineParameter (0, ParameterAttributes.None, "");			
 			}
 			catch (ArgumentOutOfRangeException) {
-				Report.RuntimeMissingSupport (Location, "custom attributes on the return type");
+				Report.RuntimeMissingSupport (location, "custom attributes on the return type");
 			}
 		}
 
@@ -107,14 +105,14 @@ namespace Mono.CSharp {
 	}
 
 	/// <summary>
-       /// Class for applying custom attributes on the implicit parameter type
-       /// of the 'set' method in properties, and the 'add' and 'remove' methods in events.
+	/// Class for applying custom attributes on the implicit parameter type
+	/// of the 'set' method in properties, and the 'add' and 'remove' methods in events.
 	/// </summary>
 	/// 
 	// TODO: should use more code from Parameter.ApplyAttributeBuilder
 	public class ImplicitParameter : ParameterBase {
-		public ImplicitParameter (MethodBuilder mb, Location loc):
-			base (null, loc)
+		public ImplicitParameter (MethodBuilder mb):
+			base (null)
 		{
 			builder = mb.DefineParameter (1, ParameterAttributes.None, "");			
 		}
@@ -159,9 +157,9 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public override void ApplyAttributes (EmitContext ec, MethodBuilder mb, ConstructorBuilder cb, int index)
+		public override void ApplyAttributes (MethodBuilder mb, ConstructorBuilder cb, int index)
 		{
-			base.ApplyAttributes (ec, mb, cb, index);
+			base.ApplyAttributes (mb, cb, index);
 
 			CustomAttributeBuilder a = new CustomAttributeBuilder (
 				TypeManager.ConsParamArrayAttribute, new object [0]);
@@ -212,24 +210,27 @@ namespace Mono.CSharp {
 		public readonly string Name;
 		GenericConstraints constraints;
 		protected Type parameter_type;
+		public readonly Location Location;
 
 		EmitContext ec;  // because ApplyAtrribute doesn't have ec
 		IResolveContext resolve_context;
 		
 		public Parameter (Expression type, string name, Modifier mod, Attributes attrs, Location loc)
-			: base (attrs, loc)
+			: base (attrs)
 		{
 			Name = name;
 			ModFlags = mod;
 			TypeName = type;
+			Location = loc;
 		}
 
 		public Parameter (Type type, string name, Modifier mod, Attributes attrs, Location loc)
-			: base (attrs, loc)
+			: base (attrs)
 		{
 			Name = name;
 			ModFlags = mod;
 			parameter_type = type;
+			Location = loc;
 		}
 
 		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
@@ -245,7 +246,7 @@ namespace Mono.CSharp {
 			}
 
 			if (a.Type == TypeManager.out_attribute_type && (ModFlags & Modifier.REF) == Modifier.REF &&
-			    !OptAttributes.Contains (TypeManager.in_attribute_type, ec)) {
+			    !OptAttributes.Contains (TypeManager.in_attribute_type)) {
 				Report.Error (662, a.Location,
 					"Cannot specify only `Out' attribute on a ref parameter. Use both `In' and `Out' attributes or neither");
 				return;
@@ -273,9 +274,9 @@ namespace Mono.CSharp {
 				return true;
 
 			this.ec = ec;
+			this.resolve_context = ec;
 
 			TypeExpr texpr = TypeName.ResolveAsTypeTerminal (ec, false);
-
 			if (texpr == null)
 				return false;
 
@@ -284,7 +285,7 @@ namespace Mono.CSharp {
 				constraints = tparam.TypeParameter.Constraints;
 
 			parameter_type = texpr.ResolveType (ec);
-
+			
 			if (parameter_type.IsAbstract && parameter_type.IsSealed) {
 				Report.Error (721, Location, "`{0}': static types cannot be used as parameters", GetSignatureForError ());
 				return false;
@@ -406,7 +407,7 @@ namespace Mono.CSharp {
 			Report.Error (3001, Location, "Argument type `{0}' is not CLS-compliant", GetSignatureForError ());
 		}
 
-		public virtual void ApplyAttributes (EmitContext ec, MethodBuilder mb, ConstructorBuilder cb, int index)
+		public virtual void ApplyAttributes (MethodBuilder mb, ConstructorBuilder cb, int index)
 		{
 			if (mb == null)
 				builder = cb.DefineParameter (index, Attributes, Name);
@@ -414,7 +415,7 @@ namespace Mono.CSharp {
 				builder = mb.DefineParameter (index, Attributes, Name);
 		
 			if (OptAttributes != null)
-				OptAttributes.Emit (ec, this);
+				OptAttributes.Emit ();
 		}
 
 		public override string[] ValidAttributeTargets {
@@ -558,7 +559,7 @@ namespace Mono.CSharp {
 
 		// Define each type attribute (in/out/ref) and
 		// the argument names.
-		public void ApplyAttributes (EmitContext ec, MethodBase builder)
+		public void ApplyAttributes (MethodBase builder)
 		{
 			if (count == 0)
 				return;
@@ -567,7 +568,7 @@ namespace Mono.CSharp {
 			ConstructorBuilder cb = builder as ConstructorBuilder;
 
 			for (int i = 0; i < FixedParameters.Length; i++) {
-				FixedParameters [i].ApplyAttributes (ec, mb, cb, i + 1);
+				FixedParameters [i].ApplyAttributes (mb, cb, i + 1);
 			}
 		}
 

@@ -16,11 +16,10 @@ namespace Mono.CSharp
 	using System.Reflection.Emit;
 	using System.Collections;
 	using System.Collections.Specialized;
-	using System.Diagnostics;
 	using System.IO;
 	using System.Text;
 	using System.Globalization;
-	using System.Xml;
+	using System.Diagnostics;
 
 	public enum Target {
 		Library, Exe, Module, WinExe

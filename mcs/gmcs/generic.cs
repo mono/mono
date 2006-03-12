@@ -799,10 +799,10 @@ namespace Mono.CSharp {
 			return constraints.CheckInterfaceMethod (ec, new_constraints);
 		}
 
-		public void EmitAttributes (EmitContext ec)
+		public void EmitAttributes ()
 		{
 			if (OptAttributes != null)
-				OptAttributes.Emit (ec, this);
+				OptAttributes.Emit ();
 		}
 
 		public override string DocCommentHeader {
@@ -1794,13 +1794,13 @@ namespace Mono.CSharp {
 			return ok;
 		}
 
-		public void EmitAttributes (EmitContext ec)
+		public void EmitAttributes ()
 		{
 			for (int i = 0; i < TypeParameters.Length; i++)
-				TypeParameters [i].EmitAttributes (ec);
+				TypeParameters [i].EmitAttributes ();
 
 			if (OptAttributes != null)
-				OptAttributes.Emit (ec, this);
+				OptAttributes.Emit ();
 		}
 
 		public override bool DefineMembers ()

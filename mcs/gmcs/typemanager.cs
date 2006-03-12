@@ -1290,7 +1290,11 @@ public partial class TypeManager {
 		// a TypeBuilder array will return a Type, not a TypeBuilder,
 		// and we can not call FindMembers on this type.
 		//
-		if (t.IsSubclassOf (TypeManager.array_type))
+		if (
+#if MS_COMPATIBLE
+			!t.IsGenericType &&
+#endif
+			t.IsSubclassOf (TypeManager.array_type))
 			return new MemberList (TypeManager.array_type.FindMembers (mt, bf, filter, criteria));
 
 		if (t is GenericTypeParameterBuilder) {

@@ -290,7 +290,7 @@ namespace Mono.CSharp {
 								       async_param_types);
 
 			i = Parameters.Count;
-			Parameters.ApplyAttributes (ec, BeginInvokeBuilder);
+			Parameters.ApplyAttributes (BeginInvokeBuilder);
 			BeginInvokeBuilder.DefineParameter (i + 1, ParameterAttributes.None, "callback");
 			BeginInvokeBuilder.DefineParameter (i + 2, ParameterAttributes.None, "object");
 			
@@ -308,8 +308,8 @@ namespace Mono.CSharp {
 
 			Parameters async_parameters = new Parameters (async_params);
 			async_parameters.Resolve (ec);
-			async_parameters.ApplyAttributes (ec, BeginInvokeBuilder);
-			
+			async_parameters.ApplyAttributes (BeginInvokeBuilder);
+
 			TypeManager.RegisterMethod (BeginInvokeBuilder, async_parameters);
 
 			//
@@ -359,10 +359,10 @@ namespace Mono.CSharp {
 
 		public override void Emit ()
 		{
-			Parameters.ApplyAttributes (ec, InvokeBuilder);
+			Parameters.ApplyAttributes (InvokeBuilder);
 
 			if (OptAttributes != null) {
-				OptAttributes.Emit (ec, this);
+				OptAttributes.Emit ();
 			}
 
 			base.Emit ();
@@ -767,7 +767,7 @@ namespace Mono.CSharp {
 				}
 			} else {
 				md.SetMemberIsUsed ();
-				if (md.OptAttributes != null && md.OptAttributes.Search (TypeManager.conditional_attribute_type, ec) != null) {
+				if (md.OptAttributes != null && md.OptAttributes.Search (TypeManager.conditional_attribute_type) != null) {
 					Report.Error (1618, loc, "Cannot create delegate with `{0}' because it has a Conditional attribute", TypeManager.CSharpSignature (delegate_method));
 				}
 			}

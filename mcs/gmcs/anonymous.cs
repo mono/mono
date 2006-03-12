@@ -451,7 +451,7 @@ namespace Mono.CSharp {
 			ILGenerator ig = builder.GetILGenerator ();
 			aec.ig = ig;
 
-			Parameters.ApplyAttributes (aec, builder);
+			Parameters.ApplyAttributes (builder);
 
 			//
 			// Adjust based on the computed state of the

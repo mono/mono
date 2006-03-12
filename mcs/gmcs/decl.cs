@@ -457,11 +457,11 @@ namespace Mono.CSharp {
 				return null;
 
 			Attribute obsolete_attr = OptAttributes.Search (
-				TypeManager.obsolete_attribute_type, EmitContext);
+				TypeManager.obsolete_attribute_type);
 			if (obsolete_attr == null)
 				return null;
 
-			ObsoleteAttribute obsolete = obsolete_attr.GetObsoleteAttribute (EmitContext);
+			ObsoleteAttribute obsolete = obsolete_attr.GetObsoleteAttribute ();
 			if (obsolete == null)
 				return null;
 
@@ -500,12 +500,12 @@ namespace Mono.CSharp {
 		/// <summary>
 		/// Analyze whether CLS-Compliant verification must be execute for this MemberCore.
 		/// </summary>
-		public override bool IsClsComplianceRequired (DeclSpace container)
+		public override bool IsClsComplianceRequired ()
 		{
 			if ((caching_flags & Flags.ClsCompliance_Undetected) == 0)
 				return (caching_flags & Flags.ClsCompliant) != 0;
 
-			if (GetClsCompliantAttributeValue (container) && IsExposedFromAssembly (container)) {
+			if (GetClsCompliantAttributeValue (Parent) && IsExposedFromAssembly (Parent)) {
 				caching_flags &= ~Flags.ClsCompliance_Undetected;
 				caching_flags |= Flags.ClsCompliant;
 				return true;
@@ -539,10 +539,10 @@ namespace Mono.CSharp {
 		{
 			if (OptAttributes != null) {
 				Attribute cls_attribute = OptAttributes.Search (
-					TypeManager.cls_compliant_attribute_type, ds.EmitContext);
+					TypeManager.cls_compliant_attribute_type);
 				if (cls_attribute != null) {
 					caching_flags |= Flags.HasClsCompliantAttribute;
-					return cls_attribute.GetClsCompliantAttributeValue (ds.EmitContext);
+					return cls_attribute.GetClsCompliantAttributeValue ();
 				}
 			}
 			return ds.GetClsCompliantAttributeValue ();
@@ -573,7 +573,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		protected virtual bool VerifyClsCompliance (DeclSpace ds)
 		{
-			if (!IsClsComplianceRequired (ds)) {
+			if (!IsClsComplianceRequired ()) {
 				if (HasClsCompliantAttribute && RootContext.WarningLevel >= 2) {
 					if (!IsExposedFromAssembly (ds))
 						Report.Warning (3019, 2, Location, "CLS compliance checking will not be performed on `{0}' because it is not visible from outside this assembly", GetSignatureForError ());
@@ -1209,10 +1209,10 @@ namespace Mono.CSharp {
 			caching_flags &= ~Flags.HasCompliantAttribute_Undetected;
 
 			if (OptAttributes != null) {
-				Attribute cls_attribute = OptAttributes.Search (TypeManager.cls_compliant_attribute_type, ec);
+				Attribute cls_attribute = OptAttributes.Search (TypeManager.cls_compliant_attribute_type);
 				if (cls_attribute != null) {
 					caching_flags |= Flags.HasClsCompliantAttribute;
-					if (cls_attribute.GetClsCompliantAttributeValue (ec)) {
+					if (cls_attribute.GetClsCompliantAttributeValue ()) {
 						caching_flags |= Flags.ClsCompliantAttributeTrue;
 						return true;
 					}
@@ -2415,7 +2415,7 @@ namespace Mono.CSharp {
 
 				// TODO: now we are ignoring CLSCompliance(false) on method from other assembly which is buggy.
 				// However it is exactly what csc does.
-				if (md != null && !md.IsClsComplianceRequired (method.Parent))
+				if (md != null && !md.IsClsComplianceRequired ())
 					continue;
  		
  				Report.SymbolRelatedToPreviousError (entry.Member);

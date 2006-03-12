@@ -1036,8 +1036,7 @@ namespace Mono.CSharp {
 			if (OptAttributes == null)
 				return;
 
-			EmitContext ec = new EmitContext (tc, Mono.CSharp.Location.Null, null, null, 0, false);
-			OptAttributes.Emit (ec, this);
+			OptAttributes.Emit ();
 		}
 
 		protected Attribute ResolveAttribute (Type a_type)
@@ -1046,13 +1045,13 @@ namespace Mono.CSharp {
 				return null;
 
 			// Ensure that we only have GlobalAttributes, since the Search below isn't safe with other types.
-			if (!OptAttributes.CheckTargets (this))
+			OptAttributes.AttachTo (this);
+			if (!OptAttributes.CheckTargets ())
 				return null;
 
-			EmitContext temp_ec = new EmitContext (RootContext.Tree.Types, Mono.CSharp.Location.Null, null, null, 0, false);
-			Attribute a = OptAttributes.Search (a_type, temp_ec);
+			Attribute a = OptAttributes.Search (a_type);
 			if (a != null) {
-				a.Resolve (temp_ec);
+				a.Resolve ();
 			}
 			return a;
 		}
@@ -1124,7 +1123,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override bool IsClsComplianceRequired(DeclSpace ds)
+		public override bool IsClsComplianceRequired ()
 		{
 			return is_cls_compliant;
 		}
@@ -1136,7 +1135,7 @@ namespace Mono.CSharp {
 
 			ClsCompliantAttribute = ResolveAttribute (TypeManager.cls_compliant_attribute_type);
 			if (ClsCompliantAttribute != null) {
-				is_cls_compliant = ClsCompliantAttribute.GetClsCompliantAttributeValue (null);
+				is_cls_compliant = ClsCompliantAttribute.GetClsCompliantAttributeValue ();
 			}
 
 #if NET_2_0
@@ -1360,7 +1359,7 @@ namespace Mono.CSharp {
 			base.Emit (tc);
 
 			// FIXME: Does this belong inside SRE.AssemblyBuilder instead?
-			if (OptAttributes == null || !OptAttributes.Contains (TypeManager.runtime_compatibility_attr_type, null)) {
+			if (OptAttributes == null || !OptAttributes.Contains (TypeManager.runtime_compatibility_attr_type)) {
 				ConstructorInfo ci = TypeManager.GetConstructor (
 					TypeManager.runtime_compatibility_attr_type, Type.EmptyTypes);
 				PropertyInfo [] pis = new PropertyInfo [1];
@@ -1425,7 +1424,7 @@ namespace Mono.CSharp {
  			}
 		}
 
-		public override bool IsClsComplianceRequired(DeclSpace ds)
+		public override bool IsClsComplianceRequired ()
 		{
 			return CodeGen.Assembly.IsClsCompliant;
 		}

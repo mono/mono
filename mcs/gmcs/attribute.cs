@@ -65,7 +65,7 @@ namespace Mono.CSharp {
 
 		public abstract IResolveContext ResolveContext { get; }
 
-		public abstract bool IsClsComplianceRequired (DeclSpace ds);
+		public abstract bool IsClsComplianceRequired ();
 
 		/// <summary>
 		/// Gets list of valid attribute targets for explicit target declaration.
@@ -178,8 +178,16 @@ namespace Mono.CSharp {
 			return expr.ResolveAsTypeStep (ec, silent);
 		}
 
-		Type ResolvePossibleAttributeType (EmitContext ec, string name, bool silent, ref bool is_attr)
+		Type ResolvePossibleAttributeType (string name, bool silent, ref bool is_attr)
 		{
+			// It will disapear when IResolveContext will take a place
+			DeclSpace container = owner.ResolveContext.DeclContainer;
+			if (owner is TypeParameter)
+				container = ((TypeParameter)owner).DeclSpace;
+			EmitContext ec = new EmitContext (container, container,
+					Location, null, null, container.ModFlags, false);
+			//
+
 			FullNamedExpression fn;
 			if (LeftExpr == null) {
 				fn = ResolveAsTypeTerminal (new SimpleName (name, Location), ec, silent);
@@ -207,13 +215,14 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Tries to resolve the type of the attribute. Flags an error if it can't, and complain is true.
 		/// </summary>
-		void ResolveAttributeType (EmitContext ec)
+		void ResolveAttributeType ()
 		{
 			bool t1_is_attr = false;
-			Type t1 = ResolvePossibleAttributeType (ec, Identifier, true, ref t1_is_attr);
+			Type t1 = ResolvePossibleAttributeType (Identifier, true, ref t1_is_attr);
+
 			bool t2_is_attr = false;
 			Type t2 = nameEscaped ? null :
-				ResolvePossibleAttributeType (ec, Identifier + "Attribute", true, ref t2_is_attr);
+				ResolvePossibleAttributeType (Identifier + "Attribute", true, ref t2_is_attr);
 
 			if (t1_is_attr && t2_is_attr) {
 				Report.Error (1614, Location, "`{0}' is ambiguous between `{0}' and `{0}Attribute'. " +
@@ -221,6 +230,7 @@ namespace Mono.CSharp {
 				resolve_error = true;
 				return;
 			}
+
 			if (t1_is_attr) {
 				Type = t1;
 				return;
@@ -232,18 +242,19 @@ namespace Mono.CSharp {
 			}
 
 			if (t1 == null && t2 == null)
-				ResolvePossibleAttributeType (ec, Identifier, false, ref t1_is_attr);
+				ResolvePossibleAttributeType (Identifier, false, ref t1_is_attr);
 			if (t1 != null)
-				ResolvePossibleAttributeType (ec, Identifier, false, ref t1_is_attr);
+				ResolvePossibleAttributeType (Identifier, false, ref t1_is_attr);
 			if (t2 != null)
-				ResolvePossibleAttributeType (ec, Identifier + "Attribute", false, ref t2_is_attr);
+				ResolvePossibleAttributeType (Identifier + "Attribute", false, ref t2_is_attr);
+
 			resolve_error = true;
 		}
 
-		public virtual Type ResolveType (EmitContext ec)
+		public virtual Type ResolveType ()
 		{
 			if (Type == null && !resolve_error)
-				ResolveAttributeType (ec);
+				ResolveAttributeType ();
 			return Type;
 		}
 
@@ -302,7 +313,7 @@ namespace Mono.CSharp {
 		// Cache for parameter-less attributes
 		static PtrHashtable att_cache = new PtrHashtable ();
 
-		public CustomAttributeBuilder Resolve (EmitContext ec)
+		public CustomAttributeBuilder Resolve ()
 		{
 			if (resolve_error)
 				return null;
@@ -310,7 +321,7 @@ namespace Mono.CSharp {
 			resolve_error = true;
 
 			if (Type == null) {
-				ResolveAttributeType (ec);
+				ResolveAttributeType ();
 				if (Type == null)
 					return null;
 			}
@@ -333,7 +344,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			ConstructorInfo ctor = ResolveArguments (ec);
+			ConstructorInfo ctor = ResolveArguments ();
 			if (ctor == null) {
 				if (Type is TypeBuilder && 
 				    TypeManager.LookupDeclSpace (Type).MemberCache == null)
@@ -368,7 +379,7 @@ namespace Mono.CSharp {
 			return cb;
 		}
 
-		protected virtual ConstructorInfo ResolveArguments (EmitContext ec)
+		protected virtual ConstructorInfo ResolveArguments ()
 		{
 			// Now we extract the positional and named arguments
 			
@@ -392,6 +403,9 @@ namespace Mono.CSharp {
 			//
 			// First process positional arguments 
 			//
+
+			EmitContext ec = new EmitContext (owner.ResolveContext.DeclContainer, owner.ResolveContext.DeclContainer,
+					Location, null, null, owner.ResolveContext.DeclContainer.ModFlags, false);
 
 			int i;
 			for (i = 0; i < pos_arg_count; i++) {
@@ -530,8 +544,8 @@ namespace Mono.CSharp {
 				}
 			}
 
-			Expression mg = Expression.MemberLookup (
-				ec.ContainerType, Type, ".ctor", MemberTypes.Constructor,
+			Expression mg = Expression.MemberLookup (ec.ContainerType,
+				Type, ".ctor", MemberTypes.Constructor,
 				BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly,
                                 Location);
 
@@ -651,7 +665,7 @@ namespace Mono.CSharp {
 		public string GetValidTargets ()
 		{
 			StringBuilder sb = new StringBuilder ();
-			AttributeTargets targets = GetAttributeUsage (null).ValidOn;
+			AttributeTargets targets = GetAttributeUsage ().ValidOn;
 
 			if ((targets & AttributeTargets.Assembly) != 0)
 				sb.Append ("assembly, ");
@@ -703,7 +717,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		/// Returns AttributeUsage attribute for this type
 		/// </summary>
-		AttributeUsageAttribute GetAttributeUsage (EmitContext ec)
+		AttributeUsageAttribute GetAttributeUsage ()
 		{
 			AttributeUsageAttribute ua = usage_attr_cache [Type] as AttributeUsageAttribute;
 			if (ua != null)
@@ -720,22 +734,22 @@ namespace Mono.CSharp {
 
 			Attribute a = attr_class.OptAttributes == null
 				? null
-				: attr_class.OptAttributes.Search (TypeManager.attribute_usage_type, attr_class.EmitContext);
+				: attr_class.OptAttributes.Search (TypeManager.attribute_usage_type);
 
 			ua = a == null
 				? DefaultUsageAttribute 
-				: a.GetAttributeUsageAttribute (attr_class.EmitContext);
+				: a.GetAttributeUsageAttribute ();
 
 			usage_attr_cache.Add (Type, ua);
 			return ua;
 		}
 
-		AttributeUsageAttribute GetAttributeUsageAttribute (EmitContext ec)
+		AttributeUsageAttribute GetAttributeUsageAttribute ()
 		{
 			if (pos_values == null)
 				// TODO: It is not neccessary to call whole Resolve (ApplyAttribute does it now) we need only ctor args.
 				// But because a lot of attribute class code must be rewritten will be better to wait...
-				Resolve (ec);
+				Resolve ();
 
 			if (resolve_error)
 				return DefaultUsageAttribute;
@@ -756,13 +770,13 @@ namespace Mono.CSharp {
 		/// <summary>
 		/// Returns custom name of indexer
 		/// </summary>
-		public string GetIndexerAttributeValue (EmitContext ec)
+		public string GetIndexerAttributeValue ()
 		{
 			if (pos_values == null)
 				// TODO: It is not neccessary to call whole Resolve (ApplyAttribute does it now) we need only ctor args.
 				// But because a lot of attribute class code must be rewritten will be better to wait...
-				Resolve (ec);
-			
+				Resolve ();
+
 			if (resolve_error)
 				return null;
 
@@ -772,12 +786,12 @@ namespace Mono.CSharp {
 		/// <summary>
 		/// Returns condition of ConditionalAttribute
 		/// </summary>
-		public string GetConditionalAttributeValue (EmitContext ec)
+		public string GetConditionalAttributeValue ()
 		{
 			if (pos_values == null)
 				// TODO: It is not neccessary to call whole Resolve (ApplyAttribute does it now) we need only ctor args.
 				// But because a lot of attribute class code must be rewritten will be better to wait...
-				Resolve (ec);
+				Resolve ();
 
 			if (resolve_error)
 				return null;
@@ -788,12 +802,12 @@ namespace Mono.CSharp {
 		/// <summary>
 		/// Creates the instance of ObsoleteAttribute from this attribute instance
 		/// </summary>
-		public ObsoleteAttribute GetObsoleteAttribute (EmitContext ec)
+		public ObsoleteAttribute GetObsoleteAttribute ()
 		{
 			if (pos_values == null)
 				// TODO: It is not neccessary to call whole Resolve (ApplyAttribute does it now) we need only ctor args.
 				// But because a lot of attribute class code must be rewritten will be better to wait...
-				Resolve (ec);
+				Resolve ();
 
 			if (resolve_error)
 				return null;
@@ -812,12 +826,12 @@ namespace Mono.CSharp {
 		/// before ApplyAttribute. We need to resolve the arguments.
 		/// This situation occurs when class deps is differs from Emit order.  
 		/// </summary>
-		public bool GetClsCompliantAttributeValue (EmitContext ec)
+		public bool GetClsCompliantAttributeValue ()
 		{
 			if (pos_values == null)
 				// TODO: It is not neccessary to call whole Resolve (ApplyAttribute does it now) we need only ctor args.
 				// But because a lot of attribute class code must be rewritten will be better to wait...
-				Resolve (ec);
+				Resolve ();
 
 			if (resolve_error)
 				return false;
@@ -825,10 +839,10 @@ namespace Mono.CSharp {
 			return (bool)pos_values [0];
 		}
 
-		public Type GetCoClassAttributeValue (EmitContext ec)
+		public Type GetCoClassAttributeValue ()
 		{
 			if (pos_values == null)
-				Resolve (ec);
+				Resolve ();
 
 			if (resolve_error)
 				return null;
@@ -836,7 +850,7 @@ namespace Mono.CSharp {
 			return (Type)pos_values [0];
 		}
 
-		public bool CheckTarget (Attributable owner)
+		public bool CheckTarget ()
 		{
 			string[] valid_targets = owner.ValidAttributeTargets;
 			if (ExplicitTarget == null || ExplicitTarget == valid_targets [0]) {
@@ -1138,13 +1152,13 @@ namespace Mono.CSharp {
 		/// <summary>
 		/// Emit attribute for Attributable symbol
 		/// </summary>
-		public void Emit (EmitContext ec, Attributable ias, ListDictionary emitted_attr)
+		public void Emit (ListDictionary emitted_attr)
 		{
-			CustomAttributeBuilder cb = Resolve (ec);
+			CustomAttributeBuilder cb = Resolve ();
 			if (cb == null)
 				return;
 
-			AttributeUsageAttribute usage_attr = GetAttributeUsage (ec);
+			AttributeUsageAttribute usage_attr = GetAttributeUsage ();
 			if ((usage_attr.ValidOn & Target) == 0) {
 				Report.Error (592, Location, "Attribute `{0}' is not valid on this declaration type. " +
 					      "It is valid on `{1}' declarations only",
@@ -1153,7 +1167,7 @@ namespace Mono.CSharp {
 			}
 
 			try {
-				ias.ApplyAttributeBuilder (this, cb);
+				owner.ApplyAttributeBuilder (this, cb);
 			}
 			catch (Exception e) {
 				Error_AttributeEmitError (e.Message);
@@ -1176,7 +1190,7 @@ namespace Mono.CSharp {
 				return;
 
 			// Here we are testing attribute arguments for array usage (error 3016)
-			if (ias.IsClsComplianceRequired (ec.DeclContainer)) {
+			if (owner.IsClsComplianceRequired ()) {
 				if (Arguments == null)
 					return;
 
@@ -1213,13 +1227,13 @@ namespace Mono.CSharp {
 			}
 		}
 		
-		public MethodBuilder DefinePInvokeMethod (EmitContext ec, TypeBuilder builder, string name,
+		public MethodBuilder DefinePInvokeMethod (TypeBuilder builder, string name,
 							  MethodAttributes flags, Type ret_type, Type [] param_types)
 		{
 			if (pos_values == null)
 				// TODO: It is not neccessary to call whole Resolve (ApplyAttribute does it now) we need only ctor args.
 				// But because a lot of attribute class code must be rewritten will be better to wait...
-				Resolve (ec);
+				Resolve ();
 
 			if (resolve_error)
 				return null;
@@ -1417,11 +1431,11 @@ namespace Mono.CSharp {
 			}
 		}
 
-		protected override ConstructorInfo ResolveArguments (EmitContext ec)
+		protected override ConstructorInfo ResolveArguments ()
 		{
 			try {
 				Enter ();
-				return base.ResolveArguments (ec);
+				return base.ResolveArguments ();
 			}
 			finally {
 				Leave ();
@@ -1457,19 +1471,19 @@ namespace Mono.CSharp {
 		/// <summary>
 		/// Checks whether attribute target is valid for the current element
 		/// </summary>
-		public bool CheckTargets (Attributable member)
+		public bool CheckTargets ()
 		{
 			foreach (Attribute a in Attrs) {
-				if (!a.CheckTarget (member))
+				if (!a.CheckTarget ())
 					return false;
 			}
 			return true;
 		}
 
-		public Attribute Search (Type t, EmitContext ec)
+		public Attribute Search (Type t)
 		{
 			foreach (Attribute a in Attrs) {
-				if (a.ResolveType (ec) == t)
+				if (a.ResolveType () == t)
 					return a;
 			}
 			return null;
@@ -1478,12 +1492,12 @@ namespace Mono.CSharp {
 		/// <summary>
 		/// Returns all attributes of type 't'. Use it when attribute is AllowMultiple = true
 		/// </summary>
-		public Attribute[] SearchMulti (Type t, EmitContext ec)
+		public Attribute[] SearchMulti (Type t)
 		{
 			ArrayList ar = null;
 
 			foreach (Attribute a in Attrs) {
-				if (a.ResolveType (ec) == t) {
+				if (a.ResolveType () == t) {
 					if (ar == null)
 						ar = new ArrayList ();
 					ar.Add (a);
@@ -1493,19 +1507,19 @@ namespace Mono.CSharp {
 			return ar == null ? null : ar.ToArray (typeof (Attribute)) as Attribute[];
 		}
 
-		public void Emit (EmitContext ec, Attributable ias)
+		public void Emit ()
 		{
-			CheckTargets (ias);
+			CheckTargets ();
 
 			ListDictionary ld = new ListDictionary ();
 
 			foreach (Attribute a in Attrs)
-				a.Emit (ec, ias, ld);
+				a.Emit (ld);
 		}
 
-		public bool Contains (Type t, EmitContext ec)
+		public bool Contains (Type t)
 		{
-                        return Search (t, ec) != null;
+			return Search (t) != null;
 		}
 	}
 
@@ -1688,7 +1702,7 @@ namespace Mono.CSharp {
 			type = TypeManager.DropGenericTypeArguments (type);
 			DeclSpace ds = TypeManager.LookupDeclSpace (type);
 			if (ds != null) {
-				return ds.IsClsComplianceRequired (ds);
+				return ds.IsClsComplianceRequired ();
 			}
 
 			if (type.IsGenericParameter)
@@ -1864,11 +1878,11 @@ namespace Mono.CSharp {
 			if (tc.OptAttributes == null)
 				return null;
 
-			Attribute a = tc.OptAttributes.Search (TypeManager.coclass_attr_type, tc.EmitContext);
+			Attribute a = tc.OptAttributes.Search (TypeManager.coclass_attr_type);
 			if (a == null)
 				return null;
 
-			return a.GetCoClassAttributeValue (tc.EmitContext);
+			return a.GetCoClassAttributeValue ();
 		}
 	}
 }
