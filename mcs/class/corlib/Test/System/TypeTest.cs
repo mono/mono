@@ -412,6 +412,22 @@ PublicKeyToken=b77a5c561934e089"));
 			Assert.AreEqual (5, typeof (Y).InvokeMember ("Value", BindingFlags.Public|BindingFlags.Static|BindingFlags.FlattenHierarchy|BindingFlags.GetField, null, null, new object [0]));
 		}			
 
+		public TypeTest (IComparable value) {
+		}
+	
+		[Test]
+		public void InvokeMemberMatchPrimitiveTypeWithInterface () {
+			object[] invokeargs = {1};
+			typeof (TypeTest).InvokeMember( "", 
+											BindingFlags.DeclaredOnly |
+											BindingFlags.Public |
+											BindingFlags.NonPublic |
+											BindingFlags.Instance |
+											BindingFlags.CreateInstance,
+											null, null, invokeargs 
+											);
+		}
+
 		class TakesInt {
 			private int i;
 

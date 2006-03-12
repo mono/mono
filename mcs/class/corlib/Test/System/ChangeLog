@@ -1,3 +1,7 @@
+2006-03-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* TypeTest.cs: Add test for #74947.
+
 2006-02-18  Raja R Harinath  <harinath@gmail.com>
 
 	* TypeTest.cs (ByrefType): New.
