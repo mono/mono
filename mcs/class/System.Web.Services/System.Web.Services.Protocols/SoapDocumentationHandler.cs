@@ -99,9 +99,10 @@ namespace System.Web.Services.Protocols
 
 			string physPath = Path.Combine (path, help);
 			
+#if !TARGET_JVM
 			if (!File.Exists (physPath))
 				throw new InvalidOperationException ("Documentation page '" + physPath + "' not found");
-
+#endif
 			_pageHandler = PageParser.GetCompiledPageInstance (vpath, physPath, context);
 				
 		}
@@ -192,7 +193,8 @@ namespace System.Web.Services.Protocols
 			xtw.Formatting = Formatting.Indented;
 			GetSchemas() [di].Write (xtw);
 		}
-		
+
+#if !TARGET_JVM		
 		void GenerateCode (HttpContext context, string langId)
 		{
 			context.Response.ContentType = "text/plain; charset=utf-8";
@@ -236,6 +238,14 @@ namespace System.Web.Services.Protocols
 
 			return provider;
 		}
+#else
+		void GenerateCode (HttpContext context, string langId) {
+			throw new NotSupportedException();
+		}
+		private CodeDomProvider GetProvider(string langId) {
+			throw new NotSupportedException();
+		}
+#endif
 		
 		internal ServiceDescriptionCollection GetDescriptions ()
 		{
