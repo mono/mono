@@ -1,3 +1,8 @@
+2006-03-12  Robert Jordan <robertj@gmx.net>
+
+        * UnixRegistryApi.cs (DeleteValue): Avoid crash, fixes bug
+        #77772
+
 2006-01-14  Robert Jordan  <robertj@gmx.net>
 
 	* RegistryKey.cs: Added internal IsRoot accessor.
@@ -9,7 +14,7 @@
 
 	* Win32RegistryApi.cs : fixed invalid cast. Now mono is not to blame
 	  for not being able to run NAnt on Windows.
-
+	
 2005-11-12  Miguel de Icaza  <miguel@novell.com>
 
 	* RegistryKey.cs: Add support for a Registry on Unix based on
