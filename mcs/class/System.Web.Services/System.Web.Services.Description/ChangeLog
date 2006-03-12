@@ -1,3 +1,8 @@
+2006-03-12  VLadimir Krasnov  <vladimirk@mainsoft.com>
+
+	* ServiceDescription.cs: removed TARGET_JVM directives from
+	serializer member
+
 2006-01-04  Chris Toshok  <toshok@ximian.com>
 
 	* ExtensionManager.cs: add CONFIGURATION_2_0 stuff.

@@ -66,18 +66,7 @@ namespace System.Web.Services.Description
 		ServiceCollection services;
 		string targetNamespace;
 		Types types;
-#if !TARGET_JVM
 		static ServiceDescriptionSerializer serializer;
-#else
-		static ServiceDescriptionSerializer serializer {
-			get {
-				return (ServiceDescriptionSerializer)AppDomain.CurrentDomain.GetData("ServiceDescriptionSerializer.serializer");
-			}
-			set {
-				AppDomain.CurrentDomain.SetData("ServiceDescriptionSerializer.serializer", value);
-			}
-		}
-#endif
 
 		#endregion // Fields
 
