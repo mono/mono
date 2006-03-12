@@ -76,7 +76,7 @@ namespace Mono.CSharp
 		public RootTypes ()
 			: base (null, null, MemberName.Null, null, Kind.Root)
 		{
-			ec = new EmitContext (null, this, Location.Null, null, null, 0, false);
+			ec = new EmitContext (this, null, this, Location.Null, null, null, 0, false);
 		}
 
 		public override PendingImplementation GetPendingImplementations ()

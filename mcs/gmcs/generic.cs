@@ -1737,7 +1737,7 @@ namespace Mono.CSharp {
 
 		public override bool Define ()
 		{
-			ec = new EmitContext (this, this, Location, null, null, ModFlags, false);
+			ec = new EmitContext (this, this, this, Location, null, null, ModFlags, false);
 
 			for (int i = 0; i < TypeParameters.Length; i++)
 				if (!TypeParameters [i].Resolve (this))

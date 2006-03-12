@@ -893,7 +893,7 @@ namespace Mono.CSharp {
 					//
 					// However, if Parent == RootContext.Tree.Types, its NamespaceEntry will be null.
 					//
-					type_resolve_ec = new EmitContext (Parent, this, Location.Null, null, null, ModFlags, false);
+					type_resolve_ec = new EmitContext (this, Parent, this, Location.Null, null, null, ModFlags, false);
 				}
 				return type_resolve_ec;
 			}

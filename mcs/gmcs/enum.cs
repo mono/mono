@@ -43,7 +43,7 @@ namespace Mono.CSharp {
 			this.ValueExpr = expr;
 			this.prev_member = prev_member;
 
-			ec = new EmitContext (parent_enum, parent_enum, Location, null, null, ModFlags, false);
+			ec = new EmitContext (this, parent_enum, parent_enum, Location, null, null, ModFlags, false);
 			ec.InEnumContext = true;
 		}
 

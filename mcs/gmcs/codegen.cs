@@ -403,9 +403,10 @@ namespace Mono.CSharp {
 					      CurrentIterator, capture_context, loc);
 		}
 		
-		public EmitContext (DeclSpace parent, DeclSpace ds, Location l, ILGenerator ig,
+		public EmitContext (IResolveContext rc, DeclSpace parent, DeclSpace ds, Location l, ILGenerator ig,
 				    Type return_type, int code_flags, bool is_constructor)
 		{
+			this.ResolveContext = rc;
 			this.ig = ig;
 
 			TypeContainer = parent;
@@ -428,10 +429,7 @@ namespace Mono.CSharp {
 			if (parent != null){
 				// Can only be null for the ResolveType contexts.
 				ContainerType = parent.TypeBuilder;
-				if (parent.UnsafeContext)
-					InUnsafe = true;
-				else
-					InUnsafe = (code_flags & Modifiers.UNSAFE) != 0;
+				InUnsafe = rc.IsInUnsafeScope;
 			}
 			loc = l;
 
@@ -439,15 +437,15 @@ namespace Mono.CSharp {
 				ReturnType = null;
 		}
 
-		public EmitContext (TypeContainer tc, Location l, ILGenerator ig,
+		public EmitContext (IResolveContext rc, TypeContainer tc, Location l, ILGenerator ig,
 				    Type return_type, int code_flags, bool is_constructor)
-			: this (tc, tc, l, ig, return_type, code_flags, is_constructor)
+			: this (rc, tc, tc, l, ig, return_type, code_flags, is_constructor)
 		{
 		}
 
-		public EmitContext (TypeContainer tc, Location l, ILGenerator ig,
+		public EmitContext (IResolveContext rc, TypeContainer tc, Location l, ILGenerator ig,
 				    Type return_type, int code_flags)
-			: this (tc, tc, l, ig, return_type, code_flags, false)
+			: this (rc, tc, tc, l, ig, return_type, code_flags, false)
 		{
 		}
 

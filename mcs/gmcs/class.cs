@@ -1237,7 +1237,7 @@ namespace Mono.CSharp {
 				ec = null;
 				foreach (ClassPart part in Parts) {
 					part.TypeBuilder = TypeBuilder;
-					part.ec = new EmitContext (part, Mono.CSharp.Location.Null, null, null, ModFlags);
+					part.ec = new EmitContext (this, part, Mono.CSharp.Location.Null, null, null, ModFlags);
 					part.ec.ContainerType = TypeBuilder;
 				}
 			} else {
@@ -1247,7 +1247,7 @@ namespace Mono.CSharp {
 				// we already have the `ec', so we don't want to create a new one.
 				//
 				if (ec == null)
-					ec = new EmitContext (this, Mono.CSharp.Location.Null, null, null, ModFlags);
+					ec = new EmitContext (this, this, Mono.CSharp.Location.Null, null, null, ModFlags);
 				ec.ContainerType = TypeBuilder;
 			}
 
@@ -4370,7 +4370,7 @@ namespace Mono.CSharp {
 
 		public EmitContext CreateEmitContext (TypeContainer tc, ILGenerator ig)
 		{
-			EmitContext ec = new EmitContext (
+			EmitContext ec = new EmitContext (this,
 				tc, ds, Location, ig, ReturnType, ModFlags, false);
 
 			Iterator iterator = tc as Iterator;
@@ -4889,7 +4889,7 @@ namespace Mono.CSharp {
 		public EmitContext CreateEmitContext (TypeContainer tc, ILGenerator ig)
 		{
 			ILGenerator ig_ = ConstructorBuilder.GetILGenerator ();
-			return new EmitContext (Parent, Location, ig_, null, ModFlags, true);
+			return new EmitContext (this, Parent, Location, ig_, null, ModFlags, true);
 		}
 
 		public bool IsExcluded()
@@ -6523,7 +6523,7 @@ namespace Mono.CSharp {
 			public override EmitContext CreateEmitContext (TypeContainer tc,
 								       ILGenerator ig)
 			{
-				return new EmitContext (
+				return new EmitContext (method,
 					tc, method.ds, method.Location, ig, ReturnType,
 					method.ModFlags, false);
 			}
@@ -6637,7 +6637,7 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			ec = new EmitContext (Parent, Location, null, MemberType, ModFlags);
+			ec = new EmitContext (this, Parent, Location, null, MemberType, ModFlags);
 			return true;
 		}
 

@@ -403,7 +403,7 @@ namespace Mono.CSharp {
 			//ILGenerator ig = builder.GetILGenerator ();
 
 			
-			aec = new EmitContext (
+			aec = new EmitContext (ec.ResolveContext,
 				ec.TypeContainer, ec.DeclContainer, loc, null,
 				invoke_mb.ReturnType,
 				/* REVIEW */ (ec.InIterator ? Modifiers.METHOD_YIELDS : 0) |

@@ -387,7 +387,7 @@ namespace Mono.CSharp {
 
 		public bool DefineIterator ()
 		{
-			ec = new EmitContext (this, Location, null, null, ModFlags);
+			ec = new EmitContext (this, this, Location, null, null, ModFlags);
 			ec.CurrentAnonymousMethod = move_next_method;
 			ec.InIterator = true;
 

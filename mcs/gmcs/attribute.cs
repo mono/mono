@@ -184,7 +184,7 @@ namespace Mono.CSharp {
 			DeclSpace container = owner.ResolveContext.DeclContainer;
 			if (owner is TypeParameter)
 				container = ((TypeParameter)owner).DeclSpace;
-			EmitContext ec = new EmitContext (container, container,
+			EmitContext ec = new EmitContext (owner.ResolveContext, container, container,
 					Location, null, null, container.ModFlags, false);
 			//
 
@@ -404,7 +404,7 @@ namespace Mono.CSharp {
 			// First process positional arguments 
 			//
 
-			EmitContext ec = new EmitContext (owner.ResolveContext.DeclContainer, owner.ResolveContext.DeclContainer,
+			EmitContext ec = new EmitContext (owner.ResolveContext, owner.ResolveContext.DeclContainer, owner.ResolveContext.DeclContainer,
 					Location, null, null, owner.ResolveContext.DeclContainer.ModFlags, false);
 
 			int i;

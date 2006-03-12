@@ -78,7 +78,7 @@ namespace Mono.CSharp {
 			if (TypeBuilder != null)
 				return TypeBuilder;
 
-			ec = new EmitContext (this, this, Location, null, null, ModFlags, false);
+			ec = new EmitContext (this, this, this, Location, null, null, ModFlags, false);
 
 			if (IsGeneric) {
 				foreach (TypeParameter type_param in TypeParameters)
