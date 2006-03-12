@@ -1,0 +1,6 @@
+
+Sun Mar 12 16:18:04 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* Initial import of the verifiers tests developed by
+	Jim Purbrick <babbage@lindenlab.com>.
+
