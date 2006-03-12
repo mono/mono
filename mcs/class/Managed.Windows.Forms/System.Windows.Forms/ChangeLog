@@ -1,3 +1,37 @@
+2006-03-12  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* TextControl.cs:
+	  - Switched caret to be just 1 pixel wide, matches MS and looks less
+	    clunky
+	  - Moved caret display 1 pixel down from the top of the control
+	    to improve view
+	  - InsertCharAtCharet: Update the selection start if moving the caret
+	    (fixes bug #77696; based on patch suggested by kazuki@panicode.com)
+	  - No longer always creating the caret when the caret methods are
+	    called. Only the actual ShowCaret/HideCaret will do that now
+	  - Only setting caret visible if the owner control has focus
+	  - UpdateView: Added invalidation-shortcut logic for center and right 
+	    aligned text. Previously we'd update all according to the left
+	    logic which caused drawing errors. Also fixed height of invalidated
+	    areas, now properly invalidating the whole area (was off-by-one)
+	  - owner_HandleCreated: Always generate the document when the
+	    handle is created; this ensures that 
+	* TextBoxBase.cs:
+	  - Fixed situation where caret would disappear under the right
+	    window border, also improved scrolling behaviour on left-
+	    aligned textboxes
+	  - Fixed right-aligned textboxes to have a border to the
+	    right instead of the caret being under the right border
+	* XplatUIX11.cs:
+	  - Switched from 'nested' to simple visible/not visible tracking 
+	    for caret (part of fix for #77671)
+	  - No longer passing through translated FocusIn/FocusOut messages
+	    since we were notifying too often and the wrong windows. Instead
+	    we just notify our focussed window of receiving or loosing focus
+	* XplatUIWin32.cs: Switched from 'nested' show/hide 
+	  counting for caret to simple visible yes/no behaviour (part of 
+	  fix for #77671)
+
 2006-03-11  Alexander Olk  <alex.olk@googlemail.com>
 
 	* Mime.cs: Remove debug code...

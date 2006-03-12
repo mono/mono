@@ -53,6 +53,7 @@ namespace System.Windows.Forms {
 		internal static WndProc		wnd_proc;
 		internal static IntPtr		prev_mouse_hwnd;
 		internal static IntPtr		override_cursor;
+		internal static bool		caret_visible;
 
 		internal static bool		themes_enabled;
 		private Hashtable		timer_list;
@@ -1757,6 +1758,7 @@ namespace System.Windows.Forms {
 	
 		internal override void CreateCaret(IntPtr hwnd, int width, int height) {
 			Win32CreateCaret(hwnd, IntPtr.Zero, width, height);
+			caret_visible = false;
 		}
 
 		internal override void DestroyCaret(IntPtr hwnd) {
@@ -1769,9 +1771,15 @@ namespace System.Windows.Forms {
 
 		internal override void CaretVisible(IntPtr hwnd, bool visible) {
 			if (visible) {
-				Win32ShowCaret(hwnd);
+				if (!caret_visible) {
+					Win32ShowCaret(hwnd);
+					caret_visible = true;
+				}
 			} else {
-				Win32HideCaret(hwnd);
+				if (caret_visible) {
+					Win32HideCaret(hwnd);
+					caret_visible = false;
+				}
 			}
 		}
 

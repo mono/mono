@@ -1708,20 +1708,15 @@ namespace System.Windows.Forms {
 			// Visible is cumulative; two hides require two shows before the caret is visible again
 			if (Caret.Hwnd == handle) {
 				if (visible) {
-					if (Caret.Visible < 1) {
-						Caret.Visible++;
-						Caret.On = false;
-						if (Caret.Visible == 1) {
-							ShowCaret();
-							Caret.Timer.Start();
-						}
+					if (!Caret.Visible) {
+						Caret.Visible = true;
+						ShowCaret();
+						Caret.Timer.Start();
 					}
 				} else {
-					Caret.Visible--;
-					if (Caret.Visible == 0) {
-						Caret.Timer.Stop();
-						HideCaret();
-					}
+					Caret.Visible = false;
+					Caret.Timer.Stop();
+					HideCaret();
 				}
 			}
 		}
@@ -1864,7 +1859,7 @@ namespace System.Windows.Forms {
 			Caret.Window = hwnd.client_window;
 			Caret.Width = width;
 			Caret.Height = height;
-			Caret.Visible = 0;
+			Caret.Visible = false;
 			Caret.On = false;
 
 			gc_values = new XGCValues();
@@ -2331,7 +2326,7 @@ namespace System.Windows.Forms {
 
 		internal override void DestroyCaret(IntPtr handle) {
 			if (Caret.Hwnd == handle) {
-				if (Caret.Visible == 1) {
+				if (Caret.Visible == true) {
 					Caret.Timer.Stop();
 					HideCaret();
 				}
@@ -2340,7 +2335,7 @@ namespace System.Windows.Forms {
 					Caret.gc = IntPtr.Zero;
 				}
 				Caret.Hwnd = IntPtr.Zero;
-				Caret.Visible = 0;
+				Caret.Visible = false;
 				Caret.On = false;
 			}
 		}
@@ -3008,21 +3003,25 @@ namespace System.Windows.Forms {
 				}
 
 				case XEventName.FocusIn: {
-					if (!hwnd.Enabled) {
+					// We received focus. We use X11 focus only to know if the app window does or does not have focus
+					// We do not track the actual focussed window via it. Instead, this is done via FocusWindow internally
+					// Receiving focus means we've gotten activated and therefore we need to let the actual FocusWindow know 
+					// about it having focus again
+					if (xevent.FocusChangeEvent.detail != NotifyDetail.NotifyNonlinear) {
 						goto ProcessNextMessage;
 					}
-					msg.message=Msg.WM_SETFOCUS;
-					msg.wParam=IntPtr.Zero;
-					break;
+					SendMessage(FocusWindow, Msg.WM_SETFOCUS, IntPtr.Zero, IntPtr.Zero);
+					goto ProcessNextMessage;
 				}
 
 				case XEventName.FocusOut: {
-					if (!hwnd.Enabled) {
+					// Se the comment for our FocusIn handler
+					if (xevent.FocusChangeEvent.detail != NotifyDetail.NotifyNonlinear) {
 						goto ProcessNextMessage;
 					}
-					msg.message=Msg.WM_KILLFOCUS;
-					msg.wParam=IntPtr.Zero;
-					break;
+
+					SendMessage(FocusWindow, Msg.WM_KILLFOCUS, IntPtr.Zero, IntPtr.Zero);
+					goto ProcessNextMessage;
 				}
 
 				case XEventName.Expose: {
@@ -3074,12 +3073,12 @@ namespace System.Windows.Forms {
 					#if DriverDebugExtra
 						Console.WriteLine("GetMessage(): Window {0:X} Exposed area {1},{2} {3}x{4}", hwnd.client_window.ToInt32(), xevent.ExposeEvent.x, xevent.ExposeEvent.y, xevent.ExposeEvent.width, xevent.ExposeEvent.height);
 					#endif
-					if (Caret.Visible == 1) {
+					if (Caret.Visible == true) {
 						Caret.Paused = true;
 						HideCaret();
 					}
 
-					if (Caret.Visible == 1) {
+					if (Caret.Visible == true) {
 						ShowCaret();
 						Caret.Paused = false;
 					}
@@ -3385,7 +3384,7 @@ namespace System.Windows.Forms {
 
 			hwnd = Hwnd.ObjectFromHandle(handle);
 
-			if (Caret.Visible == 1) {
+			if (Caret.Visible == true) {
 				Caret.Paused = true;
 				HideCaret();
 			}
@@ -3428,7 +3427,7 @@ namespace System.Windows.Forms {
 
 			
 
-			if (Caret.Visible == 1) {
+			if (Caret.Visible == true) {
 				ShowCaret();
 				Caret.Paused = false;
 			}
@@ -3681,8 +3680,7 @@ namespace System.Windows.Forms {
 				Caret.X = x;
 				Caret.Y = y;
 
-//Console.WriteLine("Setting caret pos {0},{1}", x, y);
-				if (Caret.Visible == 1) {
+				if (Caret.Visible == true) {
 					ShowCaret();
 					Caret.Timer.Start();
 				}

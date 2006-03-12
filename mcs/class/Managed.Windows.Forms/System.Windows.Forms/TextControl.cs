@@ -758,6 +758,8 @@ namespace System.Windows.Forms {
 		internal int		crlf_size;		// 1 or 2, depending on whether we use \r\n or just \n
 
 		internal TextBoxBase	owner;			// Who's owning us?
+		static internal int	caret_width = 1;
+		static internal int	caret_shift = 1;
 		#endregion	// Local Variables
 
 		#region Constructors
@@ -949,7 +951,7 @@ namespace System.Windows.Forms {
 			}
 
 			set {
-				viewport_width = value - 4;
+				viewport_width = value - 2;
 			}
 		}
 
@@ -1280,6 +1282,7 @@ namespace System.Windows.Forms {
 				return;
 			}
 
+			// Optimize invalidation based on Line alignment
 			if (RecalculateDocument(owner.CreateGraphicsInternal(), line.line_no, line.line_no, true)) {
 				// Lineheight changed, invalidate the rest of the document
 				if ((line.Y - viewport_y) >=0 ) {
@@ -1290,7 +1293,22 @@ namespace System.Windows.Forms {
 					owner.Invalidate();
 				}
 			} else {
-				owner.Invalidate(new Rectangle((int)line.widths[pos] - viewport_x - 1, line.Y - viewport_y, viewport_width, line.height));
+				switch(line.alignment) {
+					case HorizontalAlignment.Left: {
+						owner.Invalidate(new Rectangle((int)line.widths[pos] - viewport_x - 1, line.Y - viewport_y, viewport_width, line.height + 1));
+						break;
+					}
+
+					case HorizontalAlignment.Center: {
+						owner.Invalidate(new Rectangle(0, line.Y - viewport_y, viewport_width, line.height + 1));
+						break;
+					}
+
+					case HorizontalAlignment.Right: {
+						owner.Invalidate(new Rectangle(0, line.Y - viewport_y, (int)line.widths[pos + 1] - viewport_x + line.align_shift, line.height + 1));
+						break;
+					}
+				}
 			}
 		}
 
@@ -1375,9 +1393,9 @@ namespace System.Windows.Forms {
 			caret.pos = pos;
 			caret.height = caret.tag.height;
 
-			XplatUI.DestroyCaret(owner.Handle);
-			XplatUI.CreateCaret(owner.Handle, 2, caret.height);
-			XplatUI.SetCaretPos(owner.Handle, (int)caret.tag.line.widths[caret.pos] + caret.line.align_shift - viewport_x, caret.line.Y + caret.tag.shift - viewport_y);
+			if (owner.Focused) {
+				XplatUI.SetCaretPos(owner.Handle, (int)caret.tag.line.widths[caret.pos] + caret.line.align_shift - viewport_x, caret.line.Y + caret.tag.shift - viewport_y + caret_shift);
+			}
 
 			if (CaretMoved != null) CaretMoved(this, EventArgs.Empty);
 		}
@@ -1393,18 +1411,23 @@ namespace System.Windows.Forms {
 			caret.line = caret.tag.line;
 			caret.height = caret.tag.height;
 
-			XplatUI.DestroyCaret(owner.Handle);
-			XplatUI.CreateCaret(owner.Handle, 2, caret.height);
-			XplatUI.SetCaretPos(owner.Handle, (int)caret.tag.line.widths[caret.pos] + caret.line.align_shift - viewport_x, caret.line.Y + caret.tag.shift - viewport_y);
+			if (owner.Focused) {
+				XplatUI.SetCaretPos(owner.Handle, (int)caret.tag.line.widths[caret.pos] + caret.line.align_shift - viewport_x, caret.line.Y + caret.tag.shift - viewport_y + caret_shift);
+			}
 
 			if (CaretMoved != null) CaretMoved(this, EventArgs.Empty);
 		}
 
 		internal void CaretHasFocus() {
-			if ((caret.tag != null) && (!selection_visible) && owner.IsHandleCreated) {
-				XplatUI.CreateCaret(owner.Handle, 2, caret.height);
-				XplatUI.SetCaretPos(owner.Handle, (int)caret.tag.line.widths[caret.pos] + caret.line.align_shift - viewport_x, caret.line.Y + caret.tag.shift - viewport_y);
-				XplatUI.CaretVisible(owner.Handle, true);
+			if ((caret.tag != null) && owner.IsHandleCreated) {
+				XplatUI.CreateCaret(owner.Handle, caret_width, caret.height);
+				XplatUI.SetCaretPos(owner.Handle, (int)caret.tag.line.widths[caret.pos] + caret.line.align_shift - viewport_x, caret.line.Y + caret.tag.shift - viewport_y + caret_shift);
+
+				if (!selection_visible) {
+					XplatUI.CaretVisible(owner.Handle, true);
+				} else {
+					XplatUI.CaretVisible(owner.Handle, false);
+				}
 			}
 		}
 
@@ -1425,9 +1448,11 @@ namespace System.Windows.Forms {
 			caret.tag = LineTag.FindTag(caret.line, caret.pos);
 			caret.height = caret.tag.height;
 
-			XplatUI.CreateCaret(owner.Handle, 2, caret.height);
-			XplatUI.SetCaretPos(owner.Handle, (int)caret.tag.line.widths[caret.pos] + caret.line.align_shift - viewport_x, caret.line.Y + caret.tag.shift - viewport_y);
-			XplatUI.CaretVisible(owner.Handle, true);
+			if (owner.Focused) {
+				XplatUI.CreateCaret(owner.Handle, caret_width, caret.height);
+				XplatUI.SetCaretPos(owner.Handle, (int)caret.tag.line.widths[caret.pos] + caret.line.align_shift - viewport_x, caret.line.Y + caret.tag.shift - viewport_y + caret_shift);
+				XplatUI.CaretVisible(owner.Handle, true);
+			}
 
 			if (CaretMoved != null) CaretMoved(this, EventArgs.Empty);
 		}
@@ -1441,10 +1466,15 @@ namespace System.Windows.Forms {
 
 			if (caret.tag.height != caret.height) {
 				caret.height = caret.tag.height;
-				XplatUI.CreateCaret(owner.Handle, 2, caret.height);
+				if (owner.Focused) {
+					XplatUI.CreateCaret(owner.Handle, caret_width, caret.height);
+				}
 			}
-			XplatUI.SetCaretPos(owner.Handle, (int)caret.tag.line.widths[caret.pos] + caret.line.align_shift - viewport_x, caret.line.Y + caret.tag.shift - viewport_y);
-			XplatUI.CaretVisible(owner.Handle, true);
+
+			if (owner.Focused) {
+				XplatUI.SetCaretPos(owner.Handle, (int)caret.tag.line.widths[caret.pos] + caret.line.align_shift - viewport_x, caret.line.Y + caret.tag.shift - viewport_y + caret_shift);
+				XplatUI.CaretVisible(owner.Handle, true);
+			}
 
 			if (CaretMoved != null) CaretMoved(this, EventArgs.Empty);
 		}
@@ -1453,14 +1483,20 @@ namespace System.Windows.Forms {
 			if (!owner.IsHandleCreated) {
 				return;
 			}
-			XplatUI.CaretVisible(owner.Handle, true);
+
+			if (owner.Focused) {
+				XplatUI.CaretVisible(owner.Handle, true);
+			}
 		}
 
 		internal void HideCaret() {
 			if (!owner.IsHandleCreated) {
 				return;
 			}
-			XplatUI.CaretVisible(owner.Handle, false);
+
+			if (owner.Focused) {
+				XplatUI.CaretVisible(owner.Handle, false);
+			}
 		}
 
 		internal void MoveCaret(CaretDirection direction) {
@@ -2089,6 +2125,7 @@ namespace System.Windows.Forms {
 			if (move_caret) {
 				caret.pos++;
 				UpdateCaret();
+				SetSelectionToCaret(true);
 			}
 		}
 
@@ -3608,9 +3645,7 @@ namespace System.Windows.Forms {
 		}
 
 		private void owner_HandleCreated(object sender, EventArgs e) {
-			if (owner.Visible) {
-				RecalculateDocument(owner.CreateGraphicsInternal());
-			}
+			RecalculateDocument(owner.CreateGraphicsInternal());
 			PositionCaret(0, 0);
 		}
 
@@ -4436,7 +4471,7 @@ namespace System.Windows.Forms {
 					if (document.owner.IsHandleCreated) {
 						XplatUI.DestroyCaret(document.owner.Handle);
 						XplatUI.CreateCaret(document.owner.Handle, 2, document.caret.height);
-						XplatUI.SetCaretPos(document.owner.Handle, (int)document.caret.tag.line.widths[document.caret.pos] + document.caret.line.align_shift - document.viewport_x, document.caret.line.Y + document.caret.tag.shift - document.viewport_y);
+						XplatUI.SetCaretPos(document.owner.Handle, (int)document.caret.tag.line.widths[document.caret.pos] + document.caret.line.align_shift - document.viewport_x, document.caret.line.Y + document.caret.tag.shift - document.viewport_y + Document.caret_shift);
 						XplatUI.CaretVisible(document.owner.Handle, true);
 					}
 

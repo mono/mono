@@ -63,7 +63,8 @@ namespace System.Windows.Forms {
 		internal int			requested_height;
 		internal int			canvas_width;
 		internal int			canvas_height;
-		internal int			track_width = 20;
+		static internal int		track_width = 20;
+		static internal int		track_border = 5;
 		internal DateTime		click_last;
 		internal CaretSelection		click_mode;
 		internal Bitmap			bmp;
@@ -1097,12 +1098,10 @@ namespace System.Windows.Forms {
 				}
 			}
 
-			document.ViewPortWidth = width;
-			document.ViewPortHeight = height;
-
-			CalculateDocument();
-
 			base.SetBoundsCore (x, y, width, height, specified);
+
+			TextBoxBase_SizeChanged(this, EventArgs.Empty);
+			CalculateDocument();
 		}
 
 		protected override void WndProc(ref Message m) {
@@ -1398,6 +1397,8 @@ namespace System.Windows.Forms {
 		private void TextBoxBase_SizeChanged(object sender, EventArgs e) {
 			canvas_width = ClientSize.Width;
 			canvas_height = ClientSize.Height;
+			document.ViewPortWidth = canvas_width;
+			document.ViewPortHeight = canvas_height;
 
 			// We always move them, they just might not be displayed
 			hscroll.Bounds = new Rectangle (ClientRectangle.Left, ClientRectangle.Bottom - hscroll.Height, ClientSize.Width - (vscroll.Visible ? SystemInformation.VerticalScrollBarWidth : 0), hscroll.Height);
@@ -1449,7 +1450,7 @@ namespace System.Windows.Forms {
 			if (document.Width >= ClientSize.Width) {
 				hscroll.Enabled = true;
 				hscroll.Minimum = 0;
-				hscroll.Maximum = document.Width - ClientSize.Width;
+				hscroll.Maximum = document.Width - ClientSize.Width + track_border;
 			} else {
 				hscroll.Maximum = document.ViewPortWidth;
 				hscroll.Enabled = false;
@@ -1572,7 +1573,7 @@ namespace System.Windows.Forms {
 					} while (hscroll.Value > pos.X);
 				}
 
-				if ((pos.X > (this.canvas_width + document.ViewPortX - track_width)) && (hscroll.Value != hscroll.Maximum)) {
+				if ((pos.X > (this.canvas_width + document.ViewPortX - track_width)) && (hscroll.Enabled && (hscroll.Value != hscroll.Maximum))) {
 					do {
 						if ((hscroll.Value + track_width) <= hscroll.Maximum) {
 							hscroll.Value += track_width;
@@ -1590,7 +1591,7 @@ namespace System.Windows.Forms {
 					}
 				}
 
-				if ((pos.X > (this.canvas_width + document.ViewPortX)) && (hscroll.Value != hscroll.Maximum)) {
+				if ((pos.X > (this.canvas_width + document.ViewPortX)) && (hscroll.Enabled && (hscroll.Value != hscroll.Maximum))) {
 					hscroll.Value = hscroll.Maximum;
 				}
 			} else {
