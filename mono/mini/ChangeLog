@@ -1,3 +1,7 @@
+2006-03-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* liveness.c: Merge optimizations from the linear-il branch.
+
 2006-03-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-ia64.c (emit_call): Add a comment.
