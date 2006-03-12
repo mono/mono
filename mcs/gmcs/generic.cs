@@ -1620,7 +1620,7 @@ namespace Mono.CSharp {
 			}
 
 			MethodGroupExpr mg = Expression.MemberLookup (
-				ec, atype, ".ctor", MemberTypes.Constructor,
+				ec.ContainerType, atype, ".ctor", MemberTypes.Constructor,
 				BindingFlags.Public | BindingFlags.Instance |
 				BindingFlags.DeclaredOnly, loc)
 				as MethodGroupExpr;

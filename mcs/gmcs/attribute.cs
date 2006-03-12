@@ -444,13 +444,13 @@ namespace Mono.CSharp {
 					return null;
 
 				Expression member = Expression.MemberLookup (
-					ec, Type, member_name,
+					ec.ContainerType, Type, member_name,
 					MemberTypes.Field | MemberTypes.Property,
 					BindingFlags.Public | BindingFlags.Instance,
 					Location);
 
 				if (member == null) {
-					member = Expression.MemberLookup (ec, Type, member_name,
+					member = Expression.MemberLookup (ec.ContainerType, Type, member_name,
 						MemberTypes.Field | MemberTypes.Property, BindingFlags.NonPublic | BindingFlags.Instance,
 						Location);
 
@@ -525,7 +525,7 @@ namespace Mono.CSharp {
 			}
 
 			Expression mg = Expression.MemberLookup (
-				ec, Type, ".ctor", MemberTypes.Constructor,
+				ec.ContainerType, Type, ".ctor", MemberTypes.Constructor,
 				BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly,
                                 Location);
 

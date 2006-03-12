@@ -556,14 +556,14 @@ namespace Mono.CSharp {
 		///   Returns a fully formed expression after a MemberLookup
 		/// </summary>
 		/// 
-		public static Expression ExprClassFromMemberInfo (EmitContext ec, MemberInfo mi, Location loc)
+		public static Expression ExprClassFromMemberInfo (Type containerType, MemberInfo mi, Location loc)
 		{
 			if (mi is EventInfo)
 				return new EventExpr ((EventInfo) mi, loc);
 			else if (mi is FieldInfo)
 				return new FieldExpr ((FieldInfo) mi, loc);
 			else if (mi is PropertyInfo)
-				return new PropertyExpr (ec, (PropertyInfo) mi, loc);
+				return new PropertyExpr (containerType, (PropertyInfo) mi, loc);
 		        else if (mi is Type){
 				return new TypeExpression ((System.Type) mi, loc);
 			}
@@ -601,10 +601,10 @@ namespace Mono.CSharp {
 		// FIXME: Potential optimization, have a static ArrayList
 		//
 
-		public static Expression MemberLookup (EmitContext ec, Type queried_type, string name,
+		public static Expression MemberLookup (Type container_type, Type queried_type, string name,
 						       MemberTypes mt, BindingFlags bf, Location loc)
 		{
-			return MemberLookup (ec, ec.ContainerType, null, queried_type, name, mt, bf, loc);
+			return MemberLookup (container_type, null, queried_type, name, mt, bf, loc);
 		}
 
 		//
@@ -612,16 +612,15 @@ namespace Mono.CSharp {
 		// `qualifier_type' or null to lookup members in the current class.
 		//
 
-		public static Expression MemberLookup (EmitContext ec, Type container_type,
+		public static Expression MemberLookup (Type container_type,
 						       Type qualifier_type, Type queried_type,
 						       string name, MemberTypes mt,
 						       BindingFlags bf, Location loc)
 		{
 			almostMatchedMembers.Clear ();
 
-			MemberInfo [] mi = TypeManager.MemberLookup (
-				container_type, qualifier_type, queried_type, mt, bf, name,
-				almostMatchedMembers);
+			MemberInfo [] mi = TypeManager.MemberLookup (container_type, qualifier_type,
+								     queried_type, mt, bf, name, almostMatchedMembers);
 
 			if (mi == null)
 				return null;
@@ -634,7 +633,7 @@ namespace Mono.CSharp {
 			if (count > 1)
 				return null;
 
-			return ExprClassFromMemberInfo (ec, mi [0], loc);
+			return ExprClassFromMemberInfo (container_type, mi [0], loc);
 		}
 
 		public const MemberTypes AllMemberTypes =
@@ -653,27 +652,22 @@ namespace Mono.CSharp {
 		public static Expression MemberLookup (EmitContext ec, Type queried_type,
 						       string name, Location loc)
 		{
-			return MemberLookup (ec, ec.ContainerType, null, queried_type, name,
+			return MemberLookup (ec.ContainerType, null, queried_type, name,
 					     AllMemberTypes, AllBindingFlags, loc);
 		}
 
-		public static Expression MemberLookup (EmitContext ec, Type qualifier_type,
+		public static Expression MemberLookup (Type container_type, Type qualifier_type,
 						       Type queried_type, string name, Location loc)
 		{
-			if (ec.ResolvingTypeTree)
-				return MemberLookup (ec, ec.ContainerType, qualifier_type,
-						     queried_type, name, MemberTypes.NestedType,
-						     AllBindingFlags, loc);
-			else
-				return MemberLookup (ec, ec.ContainerType, qualifier_type,
-						     queried_type, name, AllMemberTypes,
-						     AllBindingFlags, loc);
+			return MemberLookup (container_type, qualifier_type,
+						 queried_type, name, AllMemberTypes,
+						 AllBindingFlags, loc);
 		}
 
 		public static Expression MethodLookup (EmitContext ec, Type queried_type,
 						       string name, Location loc)
 		{
-			return MemberLookup (ec, ec.ContainerType, null, queried_type, name,
+			return MemberLookup (ec.ContainerType, null, queried_type, name,
 					     MemberTypes.Method, AllBindingFlags, loc);
 		}
 
@@ -684,8 +678,7 @@ namespace Mono.CSharp {
 		///   find it.
 		/// </summary>
 		public static Expression MemberLookupFinal (EmitContext ec, Type qualifier_type,
-							    Type queried_type, string name,
-							    Location loc)
+							    Type queried_type, string name, Location loc)
 		{
 			return MemberLookupFinal (ec, qualifier_type, queried_type, name,
 						  AllMemberTypes, AllBindingFlags, loc);
@@ -700,17 +693,16 @@ namespace Mono.CSharp {
 
 			int errors = Report.Errors;
 
-			e = MemberLookup (ec, ec.ContainerType, qualifier_type, queried_type,
-					  name, mt, bf, loc);
+			e = MemberLookup (ec.ContainerType, qualifier_type, queried_type, name, mt, bf, loc);
 
 			if (e == null && errors == Report.Errors)
 				// No errors were reported by MemberLookup, but there was an error.
-				MemberLookupFailed (ec, qualifier_type, queried_type, name, null, true, loc);
+				MemberLookupFailed (ec.ContainerType, qualifier_type, queried_type, name, null, true, loc);
 
 			return e;
 		}
 
-		public static void MemberLookupFailed (EmitContext ec, Type qualifier_type,
+		public static void MemberLookupFailed (Type container_type, Type qualifier_type,
 						       Type queried_type, string name,
 						       string class_name, bool complain_if_none_found, 
 						       Location loc)
@@ -733,15 +725,16 @@ namespace Mono.CSharp {
 					if (qualifier_type == null) {
 						Report.Error (38, loc, "Cannot access a nonstatic member of outer type `{0}' via nested type `{1}'",
 							      TypeManager.CSharpName (m.DeclaringType),
-							      TypeManager.CSharpName (ec.ContainerType));
-					} else if (qualifier_type != ec.ContainerType &&
-						   TypeManager.IsNestedFamilyAccessible (ec.ContainerType, declaring_type)) {
+							      TypeManager.CSharpName (container_type));
+						
+					} else if (qualifier_type != container_type &&
+						   TypeManager.IsNestedFamilyAccessible (container_type, declaring_type)) {
 						// Although a derived class can access protected members of
 						// its base class it cannot do so through an instance of the
 						// base class (CS1540).  If the qualifier_type is a base of the
 						// ec.ContainerType and the lookup succeeds with the latter one,
 						// then we are in this situation.
-						Error_CannotAccessProtected (loc, m, qualifier_type, ec.ContainerType);
+						Error_CannotAccessProtected (loc, m, qualifier_type, container_type);
 					} else {
 						ErrorIsInaccesible (loc, TypeManager.GetFullNameSignature (m));
 					}
@@ -2136,7 +2129,7 @@ namespace Mono.CSharp {
 					almostMatchedMembers = almost_matched;
 				if (almost_matched_type == null)
 					almost_matched_type = ec.ContainerType;
-				MemberLookupFailed (ec, null, almost_matched_type, ((SimpleName) this).Name, ec.DeclSpace.Name, true, loc);
+				MemberLookupFailed (ec.ContainerType, null, almost_matched_type, ((SimpleName) this).Name, ec.DeclSpace.Name, true, loc);
 				return null;
 			}
 
@@ -3417,7 +3410,7 @@ namespace Mono.CSharp {
 
 		internal static PtrHashtable AccessorTable = new PtrHashtable (); 
 
-		public PropertyExpr (EmitContext ec, PropertyInfo pi, Location l)
+		public PropertyExpr (Type containerType, PropertyInfo pi, Location l)
 		{
 			PropertyInfo = pi;
 			eclass = ExprClass.PropertyAccess;
@@ -3426,7 +3419,7 @@ namespace Mono.CSharp {
 
 			type = TypeManager.TypeToCoreType (pi.PropertyType);
 
-			ResolveAccessors (ec);
+			ResolveAccessors (containerType);
 		}
 
 		public override string Name {
@@ -3496,9 +3489,9 @@ namespace Mono.CSharp {
 		// We also perform the permission checking here, as the PropertyInfo does not
 		// hold the information for the accessibility of its setter/getter
 		//
-		void ResolveAccessors (EmitContext ec)
+		void ResolveAccessors (Type containerType)
 		{
-			FindAccessors (ec.ContainerType);
+			FindAccessors (containerType);
 
 			if (getter != null) {
 				MethodBase the_getter = TypeManager.DropGenericMethodArguments (getter);
@@ -3615,7 +3608,7 @@ namespace Mono.CSharp {
 					ErrorIsInaccesible (loc, TypeManager.CSharpSignature (getter));
 				return null;
 			}
-
+			
 			if (!InstanceResolve (ec, false, must_do_cs1540_check))
 				return null;
 
@@ -3682,7 +3675,7 @@ namespace Mono.CSharp {
 					ErrorIsInaccesible (loc, TypeManager.CSharpSignature (setter));
 				return null;
 			}
-
+			
 			if (!InstanceResolve (ec, PropertyInfo.DeclaringType.IsValueType, must_do_cs1540_check))
 				return null;
 			
@@ -3837,7 +3830,7 @@ namespace Mono.CSharp {
 				MemberInfo mi = TypeManager.GetPrivateFieldOfEvent (EventInfo);
 
 				if (mi != null) {
-					MemberExpr ml = (MemberExpr) ExprClassFromMemberInfo (ec, mi, loc);
+					MemberExpr ml = (MemberExpr) ExprClassFromMemberInfo (ec.ContainerType, mi, loc);
 
 					if (ml == null) {
 						Report.Error (-200, loc, "Internal error!!");

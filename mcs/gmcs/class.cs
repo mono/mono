@@ -4482,14 +4482,14 @@ namespace Mono.CSharp {
 				t = ec.ContainerType;
 
 			base_constructor_group = Expression.MemberLookup (
-				ec, t, ".ctor", MemberTypes.Constructor,
+				ec.ContainerType, t, ".ctor", MemberTypes.Constructor,
 				BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly,
 				loc);
 			
 			if (base_constructor_group == null){
 				error = true;
 				base_constructor_group = Expression.MemberLookup (
-					ec, t, null, t, ".ctor", MemberTypes.Constructor,
+					t, null, t, ".ctor", MemberTypes.Constructor,
 					BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly,
 					loc);
 			}
@@ -5191,14 +5191,17 @@ namespace Mono.CSharp {
 				}
 			}
 
-			if (builder == null)
+			if (builder == null) {
 				builder = container.TypeBuilder.DefineMethod (
 					method_name, flags, method.CallingConventions,
 					method.ReturnType, ParameterTypes);
-			else
+				return;
+			}
+#if !MS_COMPATIBLE
 				builder.SetGenericMethodSignature (
 					flags, method.CallingConventions,
 					method.ReturnType, ParameterTypes);
+#endif
 		}
 
 		//
@@ -5262,7 +5265,7 @@ namespace Mono.CSharp {
 			
 			if (ec.ContainerType.BaseType != null) {
 				Expression member_lookup = Expression.MemberLookup (
-					ec, ec.ContainerType.BaseType, null, ec.ContainerType.BaseType,
+					ec.ContainerType.BaseType, null, ec.ContainerType.BaseType,
 					"Finalize", MemberTypes.Method, Expression.AllBindingFlags, method.Location);
 
 				if (member_lookup != null){

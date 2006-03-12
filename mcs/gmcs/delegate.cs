@@ -679,7 +679,7 @@ namespace Mono.CSharp {
 				method_desc = Invocation.FullMethodDesc (found_method);
 
 			Expression invoke_method = Expression.MemberLookup (
-				ec, type, "Invoke", MemberTypes.Method,
+				ec.ContainerType, type, "Invoke", MemberTypes.Method,
 				Expression.AllBindingFlags, loc);
 			MethodInfo method = ((MethodGroupExpr) invoke_method).Methods [0] as MethodInfo;
 
@@ -870,7 +870,7 @@ namespace Mono.CSharp {
 			}
 
 			method_group = Expression.MemberLookup (
-				ec, type, "Invoke", MemberTypes.Method,
+				ec.ContainerType, type, "Invoke", MemberTypes.Method,
 				Expression.AllBindingFlags, loc) as MethodGroupExpr;
 
 			if (method_group == null) {
@@ -915,7 +915,7 @@ namespace Mono.CSharp {
 				EventInfo ei = ((EventExpr) InstanceExpr).EventInfo;
 				
 				Expression ml = MemberLookup (
-					ec, ec.ContainerType, ei.Name,
+					ec.ContainerType, ec.ContainerType, ei.Name,
 					MemberTypes.Event, AllBindingFlags | BindingFlags.DeclaredOnly, loc);
 
 				if (ml == null) {

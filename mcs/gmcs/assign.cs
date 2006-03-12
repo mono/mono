@@ -378,7 +378,7 @@ namespace Mono.CSharp {
 				EventInfo ei = ((EventExpr) target).EventInfo;
 
 				Expression ml = MemberLookup (
-					ec, ec.ContainerType, ei.Name,
+					ec.ContainerType, ec.ContainerType, ei.Name,
 					MemberTypes.Event, AllBindingFlags | BindingFlags.DeclaredOnly, loc);
 
 				if (ml == null) {

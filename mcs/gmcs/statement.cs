@@ -3943,7 +3943,7 @@ namespace Mono.CSharp {
 					converted_vars [i].Emit (ec);
 					ig.Emit (OpCodes.Callvirt, TypeManager.void_dispose_void);
 				} else {
-					Expression ml = Expression.MemberLookup(ec, TypeManager.idisposable_type, var.Type, "Dispose", Mono.CSharp.Location.Null);
+					Expression ml = Expression.MemberLookup(ec.ContainerType, TypeManager.idisposable_type, var.Type, "Dispose", Mono.CSharp.Location.Null);
 
 					if (!(ml is MethodGroupExpr)) {
 						var.Emit (ec);
@@ -4013,7 +4013,7 @@ namespace Mono.CSharp {
 				ig.Emit (OpCodes.Callvirt, TypeManager.void_dispose_void);
 				ig.MarkLabel (skip);
 			} else {
-				Expression ml = Expression.MemberLookup(ec, TypeManager.idisposable_type, local_copy.LocalType, "Dispose", Mono.CSharp.Location.Null);
+				Expression ml = Expression.MemberLookup(ec.ContainerType, TypeManager.idisposable_type, local_copy.LocalType, "Dispose", Mono.CSharp.Location.Null);
 
 				if (!(ml is MethodGroupExpr)) {
 					ig.Emit (OpCodes.Ldloc, local_copy);
@@ -4393,7 +4393,7 @@ namespace Mono.CSharp {
 						enumerator_type = return_type;
 						if (!FetchGetCurrent (ec, return_type))
 							get_current = new PropertyExpr (
-								ec, TypeManager.ienumerator_getcurrent, loc);
+								ec.ContainerType, TypeManager.ienumerator_getcurrent, loc);
 						if (!FetchMoveNext (ec, return_type))
 							move_next = TypeManager.bool_movenext_void;
 						return true;
@@ -4405,7 +4405,7 @@ namespace Mono.CSharp {
 						enumerator_type = return_type;
 						move_next = TypeManager.bool_movenext_void;
 						get_current = new PropertyExpr (
-							ec, TypeManager.ienumerator_getcurrent, loc);
+							ec.ContainerType, TypeManager.ienumerator_getcurrent, loc);
 						return true;
 					}
 				} else {
@@ -4465,7 +4465,7 @@ namespace Mono.CSharp {
 			bool FetchGetCurrent (EmitContext ec, Type t)
 			{
 				PropertyExpr pe = Expression.MemberLookup (
-					ec, t, "Current", MemberTypes.Property,
+					ec.ContainerType, t, "Current", MemberTypes.Property,
 					Expression.AllBindingFlags, loc) as PropertyExpr;
 				if (pe == null)
 					return false;
@@ -4513,7 +4513,7 @@ namespace Mono.CSharp {
 			bool TryType (EmitContext ec, Type t)
 			{
 				MethodGroupExpr mg = Expression.MemberLookup (
-					ec, t, "GetEnumerator", MemberTypes.Method,
+					ec.ContainerType, t, "GetEnumerator", MemberTypes.Method,
 					Expression.AllBindingFlags, loc) as MethodGroupExpr;
 				if (mg == null)
 					return false;

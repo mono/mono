@@ -359,7 +359,7 @@ namespace Mono.CSharp {
 			
 			op_name = oper_names [(int) Oper];
 
-			mg = MemberLookup (ec, expr_type, op_name, MemberTypes.Method, AllBindingFlags, loc);
+			mg = MemberLookup (ec.ContainerType, expr_type, op_name, MemberTypes.Method, AllBindingFlags, loc);
 			
 			if (mg != null) {
 				Expression e = StaticCallExpr.MakeSimpleCall (
@@ -458,8 +458,9 @@ namespace Mono.CSharp {
 
 				// According to the specs, a variable is considered definitely assigned if you take
 				// its address.
-				if ((variable != null) && (variable.VariableInfo != null))
+				if ((variable != null) && (variable.VariableInfo != null)){
 					variable.VariableInfo.SetAssigned (ec);
+				}
 
 				type = TypeManager.GetPointerType (Expr.Type);
 				return this;
@@ -622,8 +623,8 @@ namespace Mono.CSharp {
 					Expr.Emit (ec);
 					ig.Emit (OpCodes.Sub_Ovf);
 				} else {
-				Expr.Emit (ec);
-				ig.Emit (OpCodes.Neg);
+					Expr.Emit (ec);
+					ig.Emit (OpCodes.Neg);
 				}
 				
 				break;
@@ -686,7 +687,7 @@ namespace Mono.CSharp {
 		{
 			if (!prepared)
 				expr.Emit (ec);
-
+			
 			LoadFromPtr (ec.ig, Type);
 		}
 
@@ -699,29 +700,29 @@ namespace Mono.CSharp {
 				temporary.Store (ec);
 			}
 		}
-
+		
 		public void EmitAssign (EmitContext ec, Expression source, bool leave_copy, bool prepare_for_load)
 		{
 			prepared = prepare_for_load;
-
+			
 			expr.Emit (ec);
 
 			if (prepare_for_load)
 				ec.ig.Emit (OpCodes.Dup);
-
+			
 			source.Emit (ec);
 			if (leave_copy) {
 				ec.ig.Emit (OpCodes.Dup);
 				temporary = new LocalTemporary (ec, expr.Type);
 				temporary.Store (ec);
 			}
-
+			
 			StoreFromPtr (ec.ig, type);
-
+			
 			if (temporary != null)
 				temporary.Emit (ec);
 		}
-
+		
 		public void AddressOf (EmitContext ec, AddressOp Mode)
 		{
 			expr.Emit (ec);
@@ -852,7 +853,7 @@ namespace Mono.CSharp {
 			else 
 				op_name = "op_Decrement";
 
-			mg = MemberLookup (ec, expr_type, op_name, MemberTypes.Method, AllBindingFlags, loc);
+			mg = MemberLookup (ec.ContainerType, expr_type, op_name, MemberTypes.Method, AllBindingFlags, loc);
 
 			if (mg != null) {
 				method = StaticCallExpr.MakeSimpleCall (
@@ -1890,10 +1891,10 @@ namespace Mono.CSharp {
 				string op = oper_names [(int) oper];
 				
 				MethodGroupExpr union;
-				left_operators = MemberLookup (ec, l, op, MemberTypes.Method, AllBindingFlags, loc);
+				left_operators = MemberLookup (ec.ContainerType, l, op, MemberTypes.Method, AllBindingFlags, loc);
 				if (r != l){
 					right_operators = MemberLookup (
-						ec, r, op, MemberTypes.Method, AllBindingFlags, loc);
+						ec.ContainerType, r, op, MemberTypes.Method, AllBindingFlags, loc);
 					union = Invocation.MakeUnionSet (left_operators, right_operators, loc);
 				} else
 					union = (MethodGroupExpr) left_operators;
@@ -1925,7 +1926,7 @@ namespace Mono.CSharp {
 				// Simple constant folding
 				if (left is StringConstant && right is StringConstant)
 					return new StringConstant (((StringConstant) left).Value + ((StringConstant) right).Value, left.Location);
-
+				
 				if (l == TypeManager.string_type || r == TypeManager.string_type) {
 
 					if (r == TypeManager.void_type || l == TypeManager.void_type) {
@@ -1948,7 +1949,7 @@ namespace Mono.CSharp {
 							return left;
 						}
 					}
-
+					
 					// Otherwise, start a new concat expression
 					return new StringConcat (ec, loc, left, right).Resolve (ec);
 				}
@@ -2170,13 +2171,13 @@ namespace Mono.CSharp {
 				// U operator - (E e, E f)
 				if (lie && rie){
 					if (oper == Operator.Subtraction){
-					if (l == r){
-						type = TypeManager.EnumToUnderlying (l);
-						return this;
-					} 
-					Error_OperatorCannotBeApplied ();
-					return null;
-				}
+						if (l == r){
+							type = TypeManager.EnumToUnderlying (l);
+							return this;
+						}
+						Error_OperatorCannotBeApplied ();
+						return null;
+					}
 				}
 					
 				//
@@ -2600,7 +2601,7 @@ namespace Mono.CSharp {
 					right = left;
 					left = swap;
 				}
-					
+				
 				if (((Constant) right).IsZeroInteger) {
 					left.Emit (ec);
 					if (my_on_true)
@@ -2609,7 +2610,7 @@ namespace Mono.CSharp {
 						ig.Emit (OpCodes.Brfalse, target);
 					
 					return;
-				} else if (right is BoolConstant){
+				} else if (right is BoolConstant) {
 					left.Emit (ec);
 					if (my_on_true != ((BoolConstant) right).Value)
 						ig.Emit (OpCodes.Brtrue, target);
@@ -2622,45 +2623,45 @@ namespace Mono.CSharp {
 			} else if (oper == Operator.LogicalAnd) {
 
 				if (onTrue) {
-						Label tests_end = ig.DefineLabel ();
-						
+					Label tests_end = ig.DefineLabel ();
+					
 					left.EmitBranchable (ec, tests_end, false);
 					right.EmitBranchable (ec, target, true);
-							ig.MarkLabel (tests_end);
-					} else {
+					ig.MarkLabel (tests_end);					
+				} else {
 					left.EmitBranchable (ec, target, false);
 					right.EmitBranchable (ec, target, false);
-					}
-
+				}
+				
 				return;
-								
+				
 			} else if (oper == Operator.LogicalOr){
 				if (onTrue) {
 					left.EmitBranchable (ec, target, true);
 					right.EmitBranchable (ec, target, true);
-						
-					} else {
-						Label tests_end = ig.DefineLabel ();
+					
+				} else {
+					Label tests_end = ig.DefineLabel ();
 					left.EmitBranchable (ec, tests_end, true);
 					right.EmitBranchable (ec, target, false);
 					ig.MarkLabel (tests_end);
 				}
-						
+				
 				return;
-
+				
 			} else if (!(oper == Operator.LessThan        || oper == Operator.GreaterThan ||
 			             oper == Operator.LessThanOrEqual || oper == Operator.GreaterThanOrEqual ||
 			             oper == Operator.Equality        || oper == Operator.Inequality)) {
 				base.EmitBranchable (ec, target, onTrue);
 				return;
-				}
-				
+			}
+			
 			left.Emit (ec);
 			right.Emit (ec);
 
 			Type t = left.Type;
 			bool isUnsigned = is_unsigned (t) || t == TypeManager.double_type || t == TypeManager.float_type;
-
+			
 			switch (oper){
 			case Operator.Equality:
 				if (onTrue)
@@ -2747,11 +2748,11 @@ namespace Mono.CSharp {
 			if (oper == Operator.LogicalAnd) {
 				Label load_zero = ig.DefineLabel ();
 				Label end = ig.DefineLabel ();
-
+								
 				left.EmitBranchable (ec, load_zero, false);
-						right.Emit (ec);
-						ig.Emit (OpCodes.Br, end);
-
+				right.Emit (ec);
+				ig.Emit (OpCodes.Br, end);
+				
 				ig.MarkLabel (load_zero);
 				ig.Emit (OpCodes.Ldc_I4_0);
 				ig.MarkLabel (end);
@@ -2759,11 +2760,11 @@ namespace Mono.CSharp {
 			} else if (oper == Operator.LogicalOr) {
 				Label load_one = ig.DefineLabel ();
 				Label end = ig.DefineLabel ();
-				
-				left.EmitBranchable (ec, load_one, true);
-						right.Emit (ec);
-						ig.Emit (OpCodes.Br, end);
 
+				left.EmitBranchable (ec, load_one, true);
+				right.Emit (ec);
+				ig.Emit (OpCodes.Br, end);
+				
 				ig.MarkLabel (load_one);
 				ig.Emit (OpCodes.Ldc_I4_1);
 				ig.MarkLabel (end);
@@ -2943,7 +2944,7 @@ namespace Mono.CSharp {
 				ig.Emit (OpCodes.Call, (ConstructorInfo) method);
 		}
 	}
-
+	
 	//
 	// Represents the operation a + b [+ c [+ d [+ ...]]], where a is a string
 	// b, c, d... may be strings or objects.
@@ -3016,23 +3017,23 @@ namespace Mono.CSharp {
 			// This can get called multiple times, so we have to deal with that.
 			if (!emit_conv_done) {
 				emit_conv_done = true;
-			for (int i = 0; i < operands.Count; i ++) {
-				Expression e = (Expression) operands [i];
-				is_strings_only &= e.Type == TypeManager.string_type;
-			}
-			
-			for (int i = 0; i < operands.Count; i ++) {
-				Expression e = (Expression) operands [i];
-				
-				if (! is_strings_only && e.Type == TypeManager.string_type) {
-					// need to make sure this is an object, because the EmitParams
-					// method might look at the type of this expression, see it is a
-					// string and emit a string [] when we want an object [];
-					
-						e = new EmptyCast (e, TypeManager.object_type);
+				for (int i = 0; i < operands.Count; i ++) {
+					Expression e = (Expression) operands [i];
+					is_strings_only &= e.Type == TypeManager.string_type;
 				}
-				operands [i] = new Argument (e, Argument.AType.Expression);
-			}
+				
+				for (int i = 0; i < operands.Count; i ++) {
+					Expression e = (Expression) operands [i];
+					
+					if (! is_strings_only && e.Type == TypeManager.string_type) {
+						// need to make sure this is an object, because the EmitParams
+						// method might look at the type of this expression, see it is a
+						// string and emit a string [] when we want an object [];
+						
+						e = new EmptyCast (e, TypeManager.object_type);
+					}
+					operands [i] = new Argument (e, Argument.AType.Expression);
+				}
 			}
 			
 			//
@@ -3511,7 +3512,7 @@ namespace Mono.CSharp {
 							Name, local_info.GetReadOnlyContext ());
 					return null;
 				}
-
+				
 				if (variable_info != null)
 					variable_info.SetAssigned (ec);
 			}
@@ -3544,10 +3545,10 @@ namespace Mono.CSharp {
 					ec.CaptureVariable (local_info);
 				}
 			}
-			
+
 			return this;
 		}
-
+		
 		public override Expression DoResolve (EmitContext ec)
 		{
 			return DoResolveBase (ec, null);
@@ -3649,12 +3650,12 @@ namespace Mono.CSharp {
 		public void AddressOf (EmitContext ec, AddressOp mode)
 		{
 			ILGenerator ig = ec.ig;
-			
+
 			if (local_info.FieldBuilder == null){
 				//
 				// A local variable on the local CLR stack
 				//
-			ig.Emit (OpCodes.Ldloca, local_info.LocalBuilder);
+				ig.Emit (OpCodes.Ldloca, local_info.LocalBuilder);
 			} else {
 				//
 				// A local variable captured by anonymous methods or iterators
@@ -4212,10 +4213,10 @@ namespace Mono.CSharp {
 				return null;
 
 			if (argument_expr is NullLiteral) {
-			//
+				//
 				// If the argument is null and one of the types to compare is 'object' and
 				// the other is a reference type, we prefer the other.
-			//
+				//
 				// This follows from the usual rules:
 				//   * There is an implicit conversion from 'null' to type 'object'
 				//   * There is an implicit conversion from 'null' to any reference type
@@ -4232,7 +4233,7 @@ namespace Mono.CSharp {
 				if (!q.IsValueType && p == TypeManager.object_type)
 					return q;
 			}
-			
+                                
 			if (argument_type == p)
 				return p;
 
@@ -4241,7 +4242,7 @@ namespace Mono.CSharp {
 
 			Expression p_tmp = new EmptyExpression (p);
 			Expression q_tmp = new EmptyExpression (q);
-			
+
 			bool p_to_q = Convert.ImplicitConversionExists (ec, p_tmp, q);
 			bool q_to_p = Convert.ImplicitConversionExists (ec, q_tmp, p);
 
@@ -4264,7 +4265,6 @@ namespace Mono.CSharp {
 				if (q == TypeManager.ushort_type || q == TypeManager.uint32_type ||
 				    q == TypeManager.uint64_type)
 					return p;
-
 			if (q == TypeManager.short_type)
 				if (p == TypeManager.ushort_type || p == TypeManager.uint32_type ||
 				    p == TypeManager.uint64_type)
@@ -4273,7 +4273,6 @@ namespace Mono.CSharp {
 			if (p == TypeManager.int32_type)
 				if (q == TypeManager.uint32_type || q == TypeManager.uint64_type)
 					return p;
-
 			if (q == TypeManager.int32_type)
 				if (p == TypeManager.uint32_type || p == TypeManager.uint64_type)
 					return q;
@@ -4342,7 +4341,7 @@ namespace Mono.CSharp {
 		{
 			ParameterData candidate_pd = TypeManager.GetParameterData (candidate);
 			ParameterData best_pd = TypeManager.GetParameterData (best);
-
+		
 			bool better_at_least_one = false;
 			bool same = true;
 			for (int j = 0; j < argument_count; ++j) {
@@ -4364,11 +4363,12 @@ namespace Mono.CSharp {
 
 				same = false;
 				Type better = BetterConversion (ec, a, ct, bt, loc);
+
 				// for each argument, the conversion to 'ct' should be no worse than 
 				// the conversion to 'bt'.
 				if (better == bt)
 					return false;
-				
+
 				// for at least one argument, the conversion to 'ct' should be better than 
 				// the conversion to 'bt'.
 				if (better == ct)
@@ -4570,12 +4570,11 @@ namespace Mono.CSharp {
 						      bool do_varargs)
 		{
 			ParameterData pd = TypeManager.GetParameterData (candidate);
-			
-			int pd_count = pd.Count;
 
+			int pd_count = pd.Count;
 			if (pd_count == 0)
 				return false;
-			
+
 			int count = pd_count - 1;
 			if (do_varargs) {
 				if (pd.ParameterModifier (count) != Parameter.Modifier.ARGLIST)
@@ -4584,7 +4583,7 @@ namespace Mono.CSharp {
 					return false;
 			} else {
 				if (!pd.HasParams)
-				return false;
+					return false;
 			}
 			
 			if (count > arg_count)
@@ -4701,7 +4700,7 @@ namespace Mono.CSharp {
 
 			return true;
 		}
-		
+
 		static internal bool IsAncestralType (Type first_type, Type second_type)
 		{
 			return first_type != second_type &&
@@ -4747,7 +4746,7 @@ namespace Mono.CSharp {
 
 			if (Arguments != null)
 				arg_count = Arguments.Count;
-  
+
 			if ((me.Name == "Invoke") &&
 				TypeManager.IsDelegateType (me.DeclaringType)) {
 				Error_InvokeOnDelegate (loc);
@@ -4816,7 +4815,7 @@ namespace Mono.CSharp {
 				}
 
 				if (!is_applicable)
-                                        continue;
+					continue;
 
 				candidates.Add (methods [i]);
 
@@ -4975,8 +4974,8 @@ namespace Mono.CSharp {
 
                                 bool cand_params = candidate_to_form != null && candidate_to_form.Contains (candidate);
 				if (!BetterFunction (ec, Arguments, arg_count,
-						    method, method_params,
-						    candidate, cand_params,
+						     method, method_params,
+						     candidate, cand_params,
 						     loc)) {
 					Report.SymbolRelatedToPreviousError (candidate);
 					ambiguous = candidate;
@@ -5946,6 +5945,7 @@ namespace Mono.CSharp {
 			if (is_struct && Arguments == null)
 				return this;
 
+			// For member-lookup, treat 'new Foo (bar)' as call to 'foo.ctor (bar)', where 'foo' is of type 'Foo'.
 			Expression ml = MemberLookupFinal (ec, type, type, ".ctor",
 				MemberTypes.Constructor, AllBindingFlags | BindingFlags.DeclaredOnly, loc);
 
@@ -5969,7 +5969,7 @@ namespace Mono.CSharp {
 			method = Invocation.OverloadResolve (ec, mg, Arguments, false, loc);
 			if (method == null) {
 				if (almostMatchedMembers.Count != 0)
-					MemberLookupFailed (ec, type, type, ".ctor", null, true, loc);
+					MemberLookupFailed (ec.ContainerType, type, type, ".ctor", null, true, loc);
 				return null;
 			}
 
@@ -6429,7 +6429,7 @@ namespace Mono.CSharp {
 			if (is_builtin_type) {
 				Expression ml;
 				
-				ml = MemberLookup (ec, type, ".ctor", MemberTypes.Constructor,
+				ml = MemberLookup (ec.ContainerType, type, ".ctor", MemberTypes.Constructor,
 						   AllBindingFlags, loc);
 				
 				if (!(ml is MethodGroupExpr)) {
@@ -6796,14 +6796,14 @@ namespace Mono.CSharp {
 				// This will never be true for array types that cannot be statically
 				// initialized. num_automatic_initializers will always be zero.  See
 				// CheckIndices.
-					if (num_automatic_initializers > max_automatic_initializers)
-						EmitStaticInitializers (ec);
+				if (num_automatic_initializers > max_automatic_initializers)
+					EmitStaticInitializers (ec);
 				
 				if (dynamic_initializers)
 					EmitDynamicInitializers (ec);
 			}
 		}
-		
+
 		public object EncodeAsAttribute ()
 		{
 			if (!is_one_dimensional){
@@ -7374,15 +7374,15 @@ namespace Mono.CSharp {
 
 			Expression member_lookup;
 			member_lookup = MemberLookup (
-				ec, expr_type, expr_type, Identifier, loc);
+				ec.ContainerType, expr_type, expr_type, Identifier, loc);
 			if ((member_lookup == null) && (args != null)) {
 				string lookup_id = MemberName.MakeName (Identifier, args);
 				member_lookup = MemberLookup (
-					ec, expr_type, expr_type, lookup_id, loc);
+					ec.ContainerType, expr_type, expr_type, lookup_id, loc);
 			}
 			if (member_lookup == null) {
 				MemberLookupFailed (
-					ec, expr_type, expr_type, Identifier, null, true, loc);
+					ec.ContainerType, expr_type, expr_type, Identifier, null, true, loc);
 				return null;
 			}
 
@@ -7491,11 +7491,11 @@ namespace Mono.CSharp {
 			}
 
 			Expression member_lookup = MemberLookup (
-				ec, ec.ContainerType, expr_type, expr_type, lookup_id,
+				ec.ContainerType, expr_type, expr_type, lookup_id,
 				MemberTypes.NestedType, BindingFlags.Public | BindingFlags.NonPublic, loc);
 			if (member_lookup == null) {
 				int errors = Report.Errors;
-				MemberLookupFailed (ec, expr_type, expr_type, lookup_id, null, false, loc);
+				MemberLookupFailed (ec.ContainerType, expr_type, expr_type, lookup_id, null, false, loc);
 
 				if (!silent && errors == Report.Errors) {
 					Report.Error (426, loc, "The nested type `{0}' does not exist in the type `{1}'",
@@ -7894,7 +7894,11 @@ namespace Mono.CSharp {
 				ig.Emit (OpCodes.Ldelema, type);
 				ig.Emit (OpCodes.Ldobj, type);
 			} else if (type.IsGenericParameter)
+#if MS_COMPATIBLE
+				ig.Emit (OpCodes.Ldelem, type);
+#else
 				ig.Emit (OpCodes.Ldelem_Any, type);
+#endif
 			else if (type.IsPointer)
 				ig.Emit (OpCodes.Ldelem_I);
 			else
@@ -7936,7 +7940,12 @@ namespace Mono.CSharp {
 				return OpCodes.Stobj;
 			} else if (t.IsGenericParameter) {
 				has_type_arg = true;
+#if MS_COMPATIBLE
+				return OpCodes.Stelem;
+#else
 				return OpCodes.Stelem_Any;
+#endif
+
 			} else if (t.IsPointer)
 				return OpCodes.Stelem_I;
 			else
@@ -8558,11 +8567,10 @@ namespace Mono.CSharp {
 				return null;
 			}
 			
-			member_lookup = MemberLookup (ec, ec.ContainerType, null, base_type,
-						      Identifier, AllMemberTypes, AllBindingFlags,
-						      loc);
+			member_lookup = MemberLookup (ec.ContainerType, null, base_type, Identifier,
+						      AllMemberTypes, AllBindingFlags, loc);
 			if (member_lookup == null) {
-				MemberLookupFailed (ec, base_type, base_type, Identifier, null, true, loc);
+				MemberLookupFailed (ec.ContainerType, base_type, base_type, Identifier, null, true, loc);
 				return null;
 			}
 
