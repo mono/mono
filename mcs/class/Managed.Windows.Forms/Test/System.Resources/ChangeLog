@@ -1,3 +1,7 @@
+2006-01-14  Robert Jordan  <robertj@gmx.net>
+
+	* compat_2_0.resx: Added a CDATA element as a test for bug #77253.
+
 2005-12-01  Robert Jordan  <robertj@gmx.net>
 
 	* CompatTest.cs, compat*.resx: Compatibility unit tests.

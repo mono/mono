@@ -119,13 +119,24 @@ namespace System.Resources
 			return null;
 		}
 
-		static string get_value (XmlTextReader reader, string name) {
+
+		static string get_value (XmlTextReader reader, string name)
+		{
+			return get_value (reader, name, true);
+		}
+
+		// Returns the value of the next XML element with the specified
+		// name from the reader. canBeCdata == true specifies that
+		// the element may be a CDATA node as well.
+		static string get_value (XmlTextReader reader, string name, bool canBeCdata) {
 			bool gotelement = false;
 			while (reader.Read ()) {
 				if (reader.NodeType == XmlNodeType.Element && String.Compare (reader.Name, name, true) == 0) {
 					gotelement = true;
 					break;
 				}
+				if (canBeCdata && reader.NodeType == XmlNodeType.CDATA)
+				   return reader.Value;
 			}
 			if (!gotelement)
 				return null;

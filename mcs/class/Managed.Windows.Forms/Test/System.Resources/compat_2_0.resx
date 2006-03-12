@@ -67,9 +67,7 @@
   <data name="String" xml:space="preserve">
     <value>hola</value>
   </data>
-  <data name="String2" xml:space="preserve">
-    <value>hello</value>
-  </data>
+  <data name="String2" xml:space="preserve"><![CDATA[hello]]></data>
   <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="Int" type="System.Int32, mscorlib">
     <value>42</value>
