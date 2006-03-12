@@ -1,3 +1,7 @@
+2006-03-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* List.cs: Applied patch from <kazuki@panicode.com>. Fixes #77504.
+
 2005-12-20  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* List.cs: Applied Atsushi's patch for Sort (bug 76361) now that the
