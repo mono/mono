@@ -3895,7 +3895,9 @@ namespace System.Windows.Forms {
 				hints.max_height = max.Height;
 			}
 
-			XSetWMNormalHints(DisplayHandle, hwnd.whole_window, ref hints);
+			if (hints.flags != IntPtr.Zero) {
+				XSetWMNormalHints(DisplayHandle, hwnd.whole_window, ref hints);
+			}
 
 			if (maximized != Rectangle.Empty) {
 				hints.flags = (IntPtr)XSizeHintsFlags.PPosition;

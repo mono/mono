@@ -1,3 +1,9 @@
+2006-03-13  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* XplatUIX11.cs: Don't call XSetWMNormalHints if no flags are 
+	  set, metacity is broken and will still use the emty sizes in 
+	  the struct. (Fix for #77089)
+
 2006-03-13  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* XplatUIStructs.cs: Split WindowStyles into WindowStyles and 
