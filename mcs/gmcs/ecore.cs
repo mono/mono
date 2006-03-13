@@ -659,9 +659,8 @@ namespace Mono.CSharp {
 		public static Expression MemberLookup (Type container_type, Type qualifier_type,
 						       Type queried_type, string name, Location loc)
 		{
-			return MemberLookup (container_type, qualifier_type,
-						 queried_type, name, AllMemberTypes,
-						 AllBindingFlags, loc);
+			return MemberLookup (container_type, qualifier_type, queried_type,
+					     name, AllMemberTypes, AllBindingFlags, loc);
 		}
 
 		public static Expression MethodLookup (EmitContext ec, Type queried_type,
@@ -887,16 +886,16 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Reports that we were expecting `expr' to be of class `expected'
 		/// </summary>
-		public void Error_UnexpectedKind (EmitContext ec, string expected, Location loc)
+		public void Error_UnexpectedKind (DeclSpace ds, string expected, Location loc)
 		{
-			Error_UnexpectedKind (ec, expected, ExprClassName, loc);
+			Error_UnexpectedKind (ds, expected, ExprClassName, loc);
 		}
 
-		public void Error_UnexpectedKind (EmitContext ec, string expected, string was, Location loc)
+		public void Error_UnexpectedKind (DeclSpace ds, string expected, string was, Location loc)
 		{
 			string name = GetSignatureForError ();
-			if (ec != null)
-				name = ec.DeclContainer.GetSignatureForError () + '.' + name;
+			if (ds != null)
+				name = ds.GetSignatureForError () + '.' + name;
 
 			Report.Error (118, loc, "`{0}' is a `{1}' but a `{2}' was expected",
 			      name, was, expected);
@@ -2000,7 +1999,7 @@ namespace Mono.CSharp {
 
 			MemberCore mc = ec.DeclContainer.GetDefinition (Name);
 			if (mc != null) {
-				Error_UnexpectedKind (ec, "type", GetMemberType (mc), loc);
+				Error_UnexpectedKind (ec.DeclContainer, "type", GetMemberType (mc), loc);
 			} else {
 				NamespaceEntry.Error_NamespaceNotFound (loc, Name);
 			}
@@ -2433,7 +2432,7 @@ namespace Mono.CSharp {
 			}
 
 			if (!(resolved is TypeExpr)) {
-				resolved.Error_UnexpectedKind (ec, "type", loc);
+				resolved.Error_UnexpectedKind (ec.DeclContainer, "type", loc);
 				return null;
 			}
 

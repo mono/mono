@@ -318,7 +318,6 @@ namespace Mono.CSharp {
 				source = embedded = ((Assign) source).GetEmbeddedAssign (loc);
 
 			real_source = source = source.Resolve (ec);
-
 			if (source == null) {
 				// Ensure that we don't propagate the error as spurious "uninitialized variable" errors.
 				target = target.ResolveLValue (ec, EmptyExpression.Null, Location);
@@ -408,7 +407,7 @@ namespace Mono.CSharp {
 			}
 
 			if ((source.eclass == ExprClass.Type) && (source is TypeExpr)) {
-				source.Error_UnexpectedKind (ec, "variable or value", loc);
+				source.Error_UnexpectedKind (ec.DeclContainer, "variable or value", loc);
 				return null;
 			} else if ((RootContext.Version == LanguageVersion.ISO_1) &&
 				   (source is MethodGroupExpr)){
@@ -432,7 +431,7 @@ namespace Mono.CSharp {
 			}
 
 			//
-			// If this assignemnt/operator was part of a compound binary
+			// If this assignment/operator was part of a compound binary
 			// operator, then we allow an explicit conversion, as detailed
 			// in the spec. 
 			//

@@ -212,7 +212,6 @@ namespace Mono.CSharp {
 		protected Type parameter_type;
 		public readonly Location Location;
 
-		EmitContext ec;  // because ApplyAtrribute doesn't have ec
 		IResolveContext resolve_context;
 		
 		public Parameter (Expression type, string name, Modifier mod, Attributes attrs, Location loc)
@@ -273,7 +272,6 @@ namespace Mono.CSharp {
 			if (parameter_type != null)
 				return true;
 
-			this.ec = ec;
 			this.resolve_context = ec;
 
 			TypeExpr texpr = TypeName.ResolveAsTypeTerminal (ec, false);
