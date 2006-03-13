@@ -1,3 +1,12 @@
+2006-03-13  Chris Toshok  <toshok@ximian.com>
+
+	* UserControl.cs: rework InitializeAsUserControl and
+	InitializeAsUserControlInternal - the Internal variety doesn't set
+	this.page to null now.
+
+	* MasterPage.cs (CreateMasterPage): map the masterPageFile path,
+	and also remove a line of spew.
+
 2006-03-09  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* Added PageParser.jvm.cs, WebServiceParser.jvm.cs

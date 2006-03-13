@@ -203,20 +203,17 @@ namespace System.Web.UI {
 		{
 			if (initialized)
 				return;
-			initialized = true;
 			this.Page = page;
-			WireupAutomaticEvents ();
-			FrameworkInitialize ();
+			InitializeAsUserControlInternal ();
 		}
 
-		[MonoTODO]
 		internal void InitializeAsUserControlInternal ()
 		{
-			/* XXX make sure this really works - we need a
-			 * test for InitializeAsUserControl to see if
-			 * it throws ArgumentNullException on a null
-			 * @page. */
-			InitializeAsUserControl (null);
+			if (initialized)
+				return;
+			initialized = true;
+			WireupAutomaticEvents ();
+			FrameworkInitialize ();
 		}
 
 		public string MapPath (string virtualPath)
