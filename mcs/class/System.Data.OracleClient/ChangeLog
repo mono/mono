@@ -1,3 +1,7 @@
+2006-03-13 Boris Kirzner <borisk@mainsoft.com>
+	* run-tests.bat, run-tests.test.bat: added batch files for automated testing 
+	support for TARGET_JVM.
+
 2006-03-10  Senganal T  <tsenganal@novell.com>
 
 	* System.Data.OracleClient.Oci/OciStatementHandle.cs : Get StatementType as a ushort value.
