@@ -907,13 +907,13 @@ namespace System.Windows.Forms {
 					cp.Style |= (int)(WindowStyles.WS_CHILD | WindowStyles.WS_CAPTION);
 					cp.Parent = Parent.Handle;
 
-					cp.ExStyle |= (int) (WindowStyles.WS_EX_WINDOWEDGE | WindowStyles.WS_EX_MDICHILD);
+					cp.ExStyle |= (int) (WindowExStyles.WS_EX_WINDOWEDGE | WindowExStyles.WS_EX_MDICHILD);
 					switch (FormBorderStyle) {
 					case FormBorderStyle.None:
 						break;
 					case FormBorderStyle.FixedToolWindow:
 					case FormBorderStyle.SizableToolWindow:
-						cp.ExStyle |= (int) WindowStyles.WS_EX_TOOLWINDOW;
+						cp.ExStyle |= (int) WindowExStyles.WS_EX_TOOLWINDOW;
 						goto default;
 					default:
 						cp.Style |= (int) WindowStyles.WS_OVERLAPPEDWINDOW;
@@ -924,13 +924,13 @@ namespace System.Windows.Forms {
 					switch (FormBorderStyle) {
 						case FormBorderStyle.Fixed3D: {
 							cp.Style |= (int)(WindowStyles.WS_CAPTION | WindowStyles.WS_BORDER);
-							cp.ExStyle |= (int)WindowStyles.WS_EX_CLIENTEDGE; 
+							cp.ExStyle |= (int)WindowExStyles.WS_EX_CLIENTEDGE; 
 							break;
 						}
 
 						case FormBorderStyle.FixedDialog: {
 							cp.Style |= (int)(WindowStyles.WS_CAPTION | WindowStyles.WS_BORDER);
-							cp.ExStyle |= (int)(WindowStyles.WS_EX_DLGMODALFRAME);
+							cp.ExStyle |= (int)(WindowExStyles.WS_EX_DLGMODALFRAME);
 							break;
 						}
 
@@ -941,7 +941,7 @@ namespace System.Windows.Forms {
 
 						case FormBorderStyle.FixedToolWindow: { 
 							cp.Style |= (int)(WindowStyles.WS_CAPTION | WindowStyles.WS_BORDER);
-							cp.ExStyle |= (int)(WindowStyles.WS_EX_TOOLWINDOW);
+							cp.ExStyle |= (int)(WindowExStyles.WS_EX_TOOLWINDOW);
 							break;
 						}
 
@@ -952,7 +952,7 @@ namespace System.Windows.Forms {
 
 						case FormBorderStyle.SizableToolWindow: {
 							cp.Style |= (int)(WindowStyles.WS_BORDER | WindowStyles.WS_THICKFRAME | WindowStyles.WS_CAPTION);
-							cp.ExStyle |= (int)(WindowStyles.WS_EX_TOOLWINDOW);
+							cp.ExStyle |= (int)(WindowExStyles.WS_EX_TOOLWINDOW);
 							break;
 						}
 
@@ -975,11 +975,11 @@ namespace System.Windows.Forms {
 				}
 
 				if (TopMost) {
-					cp.ExStyle |= (int) WindowStyles.WS_EX_TOPMOST;
+					cp.ExStyle |= (int) WindowExStyles.WS_EX_TOPMOST;
 				}
 
 				if (ShowInTaskbar) {
-					cp.ExStyle |= (int)WindowStyles.WS_EX_APPWINDOW;
+					cp.ExStyle |= (int)WindowExStyles.WS_EX_APPWINDOW;
 				}
 
 				if (MaximizeBox) {
@@ -995,14 +995,14 @@ namespace System.Windows.Forms {
 				}
 
 				if (HelpButton && !MaximizeBox && !MinimizeBox) {
-					cp.ExStyle |= (int)WindowStyles.WS_EX_CONTEXTHELP;
+					cp.ExStyle |= (int)WindowExStyles.WS_EX_CONTEXTHELP;
 				}
 				
 				if (Visible)
 					cp.Style |= (int)WindowStyles.WS_VISIBLE;
 
 				if (Opacity < 1.0 || TransparencyKey != Color.Empty) {
-					cp.ExStyle |= (int)WindowStyles.WS_EX_LAYERED;
+					cp.ExStyle |= (int)WindowExStyles.WS_EX_LAYERED;
 				}
 
 				if (!is_enabled && context == null) {

@@ -96,7 +96,7 @@ namespace System.Windows.Forms {
 					cp.Style = (int)WindowStyles.WS_POPUP;
 					cp.Style |= (int)WindowStyles.WS_CLIPSIBLINGS;
 
-					cp.ExStyle = (int)(WindowStyles.WS_EX_TOOLWINDOW | WindowStyles.WS_EX_TOPMOST);
+					cp.ExStyle = (int)(WindowExStyles.WS_EX_TOOLWINDOW | WindowExStyles.WS_EX_TOPMOST);
 
 					return cp;
 				}

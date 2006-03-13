@@ -1,3 +1,18 @@
+2006-03-13  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* XplatUIStructs.cs: Split WindowStyles into WindowStyles and 
+	  WindowExStyles and marked both enums as Flags
+	* Form.cs, ComboBox.cs, ToolTip.cs, Control.cs, PropertyGridView.cs,
+	  NotifyIcon.cs, MenuAPI.cs, XplatUIOSX.cs, MonthCalendar.cs: Updated
+	  to match WindowStyles split
+	* XplatUIX11.cs:
+	  - SetWMStyles: Added cehck to not apply WM attributes to Child windows
+	  - Updated to match WindowStyles split
+	* XplatUIWin32.cs:
+	  - Fixed FosterParent creation, was using ExStyle on the Style field
+	    (This should help with Popup focus issues)
+	  - Updated to match WindowStyles split
+
 2006-03-13  Jackson Harper  <jackson@ximian.com>
 
 	* MdiWindowManager.cs: Use the system menu height. Fixes some

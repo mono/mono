@@ -652,7 +652,7 @@ namespace System.Windows.Forms {
 				Win32MessageBox(IntPtr.Zero, "Could not register the "+XplatUI.DefaultClassName+" window class, win32 error " + Win32GetLastError().ToString(), "Oops", 0);
 			}
 
-			FosterParent=Win32CreateWindow(0, "static", "Foster Parent Window", (int)(WindowStyles.WS_OVERLAPPEDWINDOW | WindowStyles.WS_EX_TOOLWINDOW), 0, 0, 0, 0, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
+			FosterParent=Win32CreateWindow((int)WindowExStyles.WS_EX_TOOLWINDOW, "static", "Foster Parent Window", (int)WindowStyles.WS_OVERLAPPEDWINDOW, 0, 0, 0, 0, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
 
 			if (FosterParent==IntPtr.Zero) {
 				Win32MessageBox(IntPtr.Zero, "Could not create foster window, win32 error " + Win32GetLastError().ToString(), "Oops", 0);
@@ -1046,14 +1046,14 @@ namespace System.Windows.Forms {
 				ParentHandle = FosterParent;
 			}
 
-			if ( ((cp.Style & (int)(WindowStyles.WS_CHILD | WindowStyles.WS_POPUP))==0) && ((cp.ExStyle & (int)WindowStyles.WS_EX_APPWINDOW) == 0)) {
+			if ( ((cp.Style & (int)(WindowStyles.WS_CHILD | WindowStyles.WS_POPUP))==0) && ((cp.ExStyle & (int)WindowExStyles.WS_EX_APPWINDOW) == 0)) {
 				// If we want to be hidden from the taskbar we need to be 'owned' by 
 				// something not on the taskbar. FosterParent is just that
 				ParentHandle = FosterParent;
 			}
 
 			// Since we fake MDI dont tell Windows that this is a real MDI window
-			if ((cp.ExStyle & (int) WindowStyles.WS_EX_MDICHILD) != 0) {
+			if ((cp.ExStyle & (int) WindowExStyles.WS_EX_MDICHILD) != 0) {
 				SetMdiStyles (cp);
 			}
 
@@ -1137,7 +1137,7 @@ namespace System.Windows.Forms {
 
 		internal override void SetWindowStyle(IntPtr handle, CreateParams cp) {
 
-			if ((cp.ExStyle & (int) WindowStyles.WS_EX_MDICHILD) != 0) {
+			if ((cp.ExStyle & (int) WindowExStyles.WS_EX_MDICHILD) != 0) {
 				SetMdiStyles (cp);
 			}
 
@@ -1905,19 +1905,19 @@ namespace System.Windows.Forms {
 			switch (border_style) {
 				case FormBorderStyle.None: {
 					style &= ~(uint)WindowStyles.WS_BORDER;
-					exstyle &= ~(uint)WindowStyles.WS_EX_CLIENTEDGE;
+					exstyle &= ~(uint)WindowExStyles.WS_EX_CLIENTEDGE;
 					break;
 				}
 
 				case FormBorderStyle.FixedSingle: {
 					style |= (uint)WindowStyles.WS_BORDER;
-					exstyle &= ~(uint)WindowStyles.WS_EX_CLIENTEDGE;
+					exstyle &= ~(uint)WindowExStyles.WS_EX_CLIENTEDGE;
 					break;
 				}
 
 				case FormBorderStyle.Fixed3D: {
 					style |= (uint)WindowStyles.WS_BORDER;
-					exstyle |= (uint)WindowStyles.WS_EX_CLIENTEDGE;
+					exstyle |= (uint)WindowExStyles.WS_EX_CLIENTEDGE;
 					break;
 				}
 			}

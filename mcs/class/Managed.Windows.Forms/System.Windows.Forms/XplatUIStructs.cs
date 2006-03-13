@@ -31,6 +31,7 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms {
+	[Flags]
 	internal enum WindowStyles : int {
 		WS_OVERLAPPED		= 0x00000000,
 		WS_POPUP		= unchecked((int)0x80000000),
@@ -59,7 +60,10 @@ namespace System.Windows.Forms {
 		WS_OVERLAPPEDWINDOW	= WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX,
 		WS_TILEDWINDOW		= WS_OVERLAPPEDWINDOW,
 		WS_CHILDWINDOW		= WS_CHILD,
+	}
 
+	[Flags]
+	internal enum WindowExStyles : int {
 		// Extended Styles
 		WS_EX_DLGMODALFRAME	= 0x00000001,
 		WS_EX_DRAGDETECT	= 0x00000002,

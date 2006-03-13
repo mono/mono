@@ -1518,7 +1518,7 @@ namespace System.Windows.Forms
 					if (owner != null && owner.DropDownStyle != ComboBoxStyle.Simple) {
 						cp.Style ^= (int) WindowStyles.WS_CHILD;
 						cp.Style |= (int) WindowStyles.WS_POPUP;
-						cp.ExStyle |= (int)(WindowStyles.WS_EX_TOOLWINDOW | WindowStyles.WS_EX_TOPMOST);
+						cp.ExStyle |= (int)(WindowExStyles.WS_EX_TOOLWINDOW | WindowExStyles.WS_EX_TOPMOST);
 					}					
 					return cp;
 				}

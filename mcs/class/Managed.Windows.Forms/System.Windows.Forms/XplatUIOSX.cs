@@ -797,7 +797,7 @@ namespace System.Windows.Forms {
 
 			title_style = TitleStyle.None;
 			if ((Style & (int)WindowStyles.WS_CAPTION) != 0) {
-				if ((ExStyle & (int)WindowStyles.WS_EX_TOOLWINDOW) != 0) {
+				if ((ExStyle & (int)WindowExStyles.WS_EX_TOOLWINDOW) != 0) {
 					title_style = TitleStyle.Tool;
 				} else {
 					title_style = TitleStyle.Normal;
@@ -805,14 +805,14 @@ namespace System.Windows.Forms {
 			}
 
 			border_style = FormBorderStyle.None;
-			if ((ExStyle & (int)WindowStyles.WS_EX_WINDOWEDGE) != 0) {
-				if ((ExStyle & (int)WindowStyles.WS_EX_TOOLWINDOW) != 0) {
+			if ((ExStyle & (int)WindowExStyles.WS_EX_WINDOWEDGE) != 0) {
+				if ((ExStyle & (int)WindowExStyles.WS_EX_TOOLWINDOW) != 0) {
 					if ((Style & (int)WindowStyles.WS_THICKFRAME) != 0) {
 						border_style = FormBorderStyle.SizableToolWindow;
 					} else {
 						border_style = FormBorderStyle.FixedToolWindow;
 					}
-				} else if ((ExStyle & (int)WindowStyles.WS_EX_DLGMODALFRAME) != 0) {
+				} else if ((ExStyle & (int)WindowExStyles.WS_EX_DLGMODALFRAME) != 0) {
 					border_style = FormBorderStyle.FixedDialog;
 				} else if ((ExStyle & (int)WindowStyles.WS_THICKFRAME) != 0) {
 					border_style = FormBorderStyle.Sizable;
@@ -923,7 +923,7 @@ namespace System.Windows.Forms {
 				if ((cp.Style & ((int)WindowStyles.WS_SYSMENU)) != 0) {
 					attributes |= WindowAttributes.kWindowCloseBoxAttribute;
 				}
-				if ((cp.ExStyle & ((int)WindowStyles.WS_EX_TOOLWINDOW)) != 0) {
+				if ((cp.ExStyle & ((int)WindowExStyles.WS_EX_TOOLWINDOW)) != 0) {
 					attributes = WindowAttributes.kWindowStandardHandlerAttribute | WindowAttributes.kWindowCompositingAttribute;
 				}
 				if ((cp.Style & ((int)WindowStyles.WS_CAPTION)) != 0) {
@@ -1666,7 +1666,7 @@ namespace System.Windows.Forms {
 				if ((cp.Style & ((int)WindowStyles.WS_SYSMENU)) != 0) {
 					attributes |= WindowAttributes.kWindowCloseBoxAttribute;
 				}
-				if ((cp.ExStyle & ((int)WindowStyles.WS_EX_TOOLWINDOW)) != 0) {
+				if ((cp.ExStyle & ((int)WindowExStyles.WS_EX_TOOLWINDOW)) != 0) {
 					attributes = WindowAttributes.kWindowStandardHandlerAttribute | WindowAttributes.kWindowCompositingAttribute;
 				}
 

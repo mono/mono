@@ -2342,7 +2342,7 @@ namespace System.Windows.Forms
 				create_params.Param = 0;
 
 				if (allow_drop) {
-					create_params.ExStyle |= (int)WindowStyles.WS_EX_ACCEPTFILES;
+					create_params.ExStyle |= (int)WindowExStyles.WS_EX_ACCEPTFILES;
 				}
 
 				if (parent!=null) {
@@ -2364,7 +2364,7 @@ namespace System.Windows.Forms
 					create_params.Style |= (int) WindowStyles.WS_BORDER;
 					break;
 				case BorderStyle.Fixed3D:
-					create_params.ExStyle |= (int) WindowStyles.WS_EX_CLIENTEDGE;
+					create_params.ExStyle |= (int) WindowExStyles.WS_EX_CLIENTEDGE;
 					break;
 				}
 

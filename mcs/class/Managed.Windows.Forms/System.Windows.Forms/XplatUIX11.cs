@@ -569,18 +569,18 @@ namespace System.Windows.Forms {
 			if ((Style & (int) WindowStyles.WS_CHILD) != 0) {
 				if ((Style & (int) WindowStyles.WS_BORDER) == 0) {
 					border_style = FormBorderStyle.None;
-				} else if ((ExStyle & (int) WindowStyles.WS_EX_CLIENTEDGE) != 0) {
+				} else if ((ExStyle & (int) WindowExStyles.WS_EX_CLIENTEDGE) != 0) {
 					border_style = FormBorderStyle.Fixed3D;
 				} else {
 					border_style = FormBorderStyle.FixedSingle;
 				}
 				title_style = TitleStyle.None;
 
-				if ((ExStyle & (int) WindowStyles.WS_EX_MDICHILD) != 0) {
+				if ((ExStyle & (int) WindowExStyles.WS_EX_MDICHILD) != 0) {
 					caption_height = 26;
 
 					if ((Style & (int)WindowStyles.WS_CAPTION) != 0) {
-						if ((ExStyle & (int)WindowStyles.WS_EX_TOOLWINDOW) != 0) {
+						if ((ExStyle & (int)WindowExStyles.WS_EX_TOOLWINDOW) != 0) {
 							title_style = TitleStyle.Tool;
 						} else {
 							title_style = TitleStyle.Normal;
@@ -588,7 +588,7 @@ namespace System.Windows.Forms {
 					}
 
 					if ((Style & (int) WindowStyles.WS_OVERLAPPEDWINDOW) != 0 ||
-							(ExStyle & (int) WindowStyles.WS_EX_TOOLWINDOW) != 0) {
+							(ExStyle & (int) WindowExStyles.WS_EX_TOOLWINDOW) != 0) {
 						border_style = (FormBorderStyle) 0xFFFF;
 					} else {
 						border_style = FormBorderStyle.None;
@@ -598,7 +598,7 @@ namespace System.Windows.Forms {
 			} else {
 				title_style = TitleStyle.None;
 				if ((Style & (int)WindowStyles.WS_CAPTION) != 0) {
-					if ((ExStyle & (int)WindowStyles.WS_EX_TOOLWINDOW) != 0) {
+					if ((ExStyle & (int)WindowExStyles.WS_EX_TOOLWINDOW) != 0) {
 						title_style = TitleStyle.Tool;
 					} else {
 						title_style = TitleStyle.Normal;
@@ -608,17 +608,17 @@ namespace System.Windows.Forms {
 				border_style = FormBorderStyle.None;
 
 				if ((Style & (int)WindowStyles.WS_THICKFRAME) != 0) {
-					if ((ExStyle & (int)WindowStyles.WS_EX_TOOLWINDOW) != 0) {
+					if ((ExStyle & (int)WindowExStyles.WS_EX_TOOLWINDOW) != 0) {
 						border_style = FormBorderStyle.SizableToolWindow;
 					} else {
 						border_style = FormBorderStyle.Sizable;
 					}
 				} else {
-					if ((ExStyle & (int)WindowStyles.WS_EX_CLIENTEDGE) != 0) {
+					if ((ExStyle & (int)WindowExStyles.WS_EX_CLIENTEDGE) != 0) {
 						border_style = FormBorderStyle.Fixed3D;
-					} else if ((ExStyle & (int)WindowStyles.WS_EX_DLGMODALFRAME) != 0) {
+					} else if ((ExStyle & (int)WindowExStyles.WS_EX_DLGMODALFRAME) != 0) {
 						border_style = FormBorderStyle.FixedDialog;
-					} else if ((ExStyle & (int)WindowStyles.WS_EX_TOOLWINDOW) != 0) {
+					} else if ((ExStyle & (int)WindowExStyles.WS_EX_TOOLWINDOW) != 0) {
 						border_style = FormBorderStyle.FixedToolWindow;
 					} else if ((Style & (int)WindowStyles.WS_BORDER) != 0) {
 						border_style = FormBorderStyle.Sizable;
@@ -639,6 +639,11 @@ namespace System.Windows.Forms {
 			MotifDecorations	decorations;
 			int			atom_count;
 			Rectangle		client_rect;
+
+			// Child windows don't need WM window styles
+			if ((cp.Style & (int)WindowStyles.WS_CHILDWINDOW) != 0) {
+				return;
+			}
 
 			mwmHints = new MotifWmHints();
 			functions = 0;
@@ -671,7 +676,7 @@ namespace System.Windows.Forms {
 				functions |= MotifFunctions.Close;
 			}
 
-			if ((cp.ExStyle & ((int)WindowStyles.WS_EX_DLGMODALFRAME)) != 0) {
+			if ((cp.ExStyle & ((int)WindowExStyles.WS_EX_DLGMODALFRAME)) != 0) {
 				decorations |= MotifDecorations.Border;
 			}
 
@@ -683,7 +688,7 @@ namespace System.Windows.Forms {
 				decorations |= MotifDecorations.Border;
 			}
 
-			if ((cp.ExStyle & ((int)WindowStyles.WS_EX_TOOLWINDOW)) != 0) {
+			if ((cp.ExStyle & ((int)WindowExStyles.WS_EX_TOOLWINDOW)) != 0) {
 				functions = 0;
 				decorations = 0;
 			}
@@ -707,7 +712,7 @@ namespace System.Windows.Forms {
 				int[] atoms = new int[8];
 				atom_count = 0;
 
-				if ((cp.ExStyle & ((int)WindowStyles.WS_EX_TOOLWINDOW)) != 0) {
+				if ((cp.ExStyle & ((int)WindowExStyles.WS_EX_TOOLWINDOW)) != 0) {
 					atoms[atom_count++] = NetAtoms[(int)NA._NET_WM_STATE_NO_TASKBAR].ToInt32();
 				}
 				XChangeProperty(DisplayHandle, hwnd.whole_window, NetAtoms[(int)NA._NET_WM_STATE], (IntPtr)Atom.XA_ATOM, 32, PropertyMode.Replace, atoms, atom_count);
@@ -716,7 +721,7 @@ namespace System.Windows.Forms {
 				IntPtr[] atom_ptrs = new IntPtr[2];
 
 				atom_ptrs[atom_count++] = NetAtoms[(int)NA.WM_DELETE_WINDOW];
-				if ((cp.ExStyle & (int)WindowStyles.WS_EX_CONTEXTHELP) != 0) {
+				if ((cp.ExStyle & (int)WindowExStyles.WS_EX_CONTEXTHELP) != 0) {
 					atom_ptrs[atom_count++] = NetAtoms[(int)NA._NET_WM_CONTEXT_HELP];
 				}
 
@@ -1921,7 +1926,7 @@ namespace System.Windows.Forms {
 			Attributes.win_gravity = Gravity.NorthWestGravity;
 
 			// Save what's under the toolwindow
-			if ((cp.ExStyle & (int)WindowStyles.WS_EX_TOOLWINDOW) != 0) {
+			if ((cp.ExStyle & (int)WindowExStyles.WS_EX_TOOLWINDOW) != 0) {
 				Attributes.save_under = true;
 				ValueMask |= SetWindowValuemask.SaveUnder;
 			}
@@ -1983,7 +1988,7 @@ namespace System.Windows.Forms {
 				}
 			}
 
-			if ((cp.ExStyle & (int) WindowStyles.WS_EX_TOPMOST) != 0) {
+			if ((cp.ExStyle & (int) WindowExStyles.WS_EX_TOPMOST) != 0) {
 				Console.WriteLine ("Setting transient:  " + XSetTransientForHint (DisplayHandle, hwnd.whole_window, RootWindow));
 			}
 
