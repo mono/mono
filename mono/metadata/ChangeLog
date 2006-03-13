@@ -1,4 +1,8 @@
 
+Mon Mar 13 21:13:27 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* class.c: documentation updates and events bug fix.
+
 Mon Mar 13 17:28:07 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* class.c: some cleanup, locking fixes.
