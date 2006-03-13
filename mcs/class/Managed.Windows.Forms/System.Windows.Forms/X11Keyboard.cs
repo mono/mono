@@ -31,6 +31,7 @@
 //  - There is a lot of potential for optimmization in here
 // 
 using System;
+using System.Collections;
 using System.Text;
 using System.Runtime.InteropServices;
 
@@ -68,6 +69,23 @@ namespace System.Windows.Forms {
 					keys |= Keys.Alt;
 				return keys;
 			}
+		}
+
+		public bool ResetKeyState(IntPtr hwnd, ref MSG msg) {
+			// FIXME - keep defining events/msg and return true until we've 'restored' all
+			// pending keypresses
+			if ((key_state_table [(int) VirtualKeys.VK_SHIFT] & 0x80) != 0) {
+				key_state_table [(int) VirtualKeys.VK_SHIFT] &=  unchecked((byte)~0x80);
+			}
+
+			if ((key_state_table [(int) VirtualKeys.VK_CONTROL] & 0x80) != 0) {
+				key_state_table [(int) VirtualKeys.VK_CONTROL] &=  unchecked((byte)~0x80);
+			}
+
+			if ((key_state_table [(int) VirtualKeys.VK_MENU] & 0x80) != 0) {
+				key_state_table [(int) VirtualKeys.VK_MENU] &=  unchecked((byte)~0x80);
+			}
+			return false;
 		}
 
 		public void KeyEvent (IntPtr hwnd, XEvent xevent, ref MSG msg)

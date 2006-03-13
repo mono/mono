@@ -3020,6 +3020,10 @@ namespace System.Windows.Forms {
 						goto ProcessNextMessage;
 					}
 
+					while (Keyboard.ResetKeyState(FocusWindow, ref msg)) {
+						SendMessage(FocusWindow, msg.message, msg.wParam, msg.lParam);
+					}
+
 					SendMessage(FocusWindow, Msg.WM_KILLFOCUS, IntPtr.Zero, IntPtr.Zero);
 					goto ProcessNextMessage;
 				}

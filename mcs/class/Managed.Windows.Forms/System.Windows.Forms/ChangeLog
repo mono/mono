@@ -1,3 +1,12 @@
+2006-03-12  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* XplatUIX11.cs: Added call to new Keyboard.ResetKeyState to prevent
+	  the keyboard state from being stuck with keys in 'pressed' state when
+	  focus is switched away via keyboard
+	* X11Keyboard.cs: Added new ResetKeyState method to allow drivers to
+	  reset the keyboard if no X11 KeyUp events are expected to come
+	* X11Structs.cs: Switched type of Visible to bool to match driver
+
 2006-03-12  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* TextControl.cs:

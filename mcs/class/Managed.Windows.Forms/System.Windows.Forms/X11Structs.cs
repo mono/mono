@@ -1422,7 +1422,7 @@ namespace System.Windows.Forms {
 		internal int	Y;				// Y position of the caret
 		internal int	Width;				// Width of the caret; if no image used
 		internal int	Height;				// Height of the caret, if no image used
-		internal int	Visible;			// Counter for visible/hidden
+		internal bool	Visible;			// Is caret visible?
 		internal bool	On;				// Caret blink display state: On/Off
 		internal IntPtr	gc;				// Graphics context
 		internal bool	Paused;				// Don't update right now
