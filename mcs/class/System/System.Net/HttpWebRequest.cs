@@ -643,7 +643,18 @@ namespace System.Net
 
 			return EndGetRequestStream (asyncResult);
 		}
-		
+
+		void CheckIfForceWrite ()
+		{
+			if (writeStream == null || contentLength < 0 || !InternalAllowBuffering)
+				return;
+
+			// This will write the POST/PUT if the write stream already has the expected
+			// amount of bytes in it (ContentLength) (bug #77753).
+			if (writeStream.WriteBufferLength == contentLength)
+				writeStream.WriteRequest ();
+		}
+
 		public override IAsyncResult BeginGetResponse (AsyncCallback callback, object state)
 		{
 			bool send = (method == "PUT" || method == "POST");
@@ -661,6 +672,7 @@ namespace System.Net
 							"method while a previous call is still in progress.");
 			}
 
+			CheckIfForceWrite ();
 			asyncRead = new WebAsyncResult (this, callback, state);
 			initialMethod = method;
 			if (haveResponse) {
