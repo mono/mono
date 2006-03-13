@@ -1097,6 +1097,8 @@ namespace System.Windows.Forms
 			{
 				this.owner = owner;
 				DoubleClick += new EventHandler(ItemsDoubleClick);
+				KeyDown += new KeyEventHandler (ItemsKeyDown);
+				KeyUp += new KeyEventHandler (ItemsKeyUp);
 				MouseDown += new MouseEventHandler(ItemsMouseDown);
 				MouseHover += new EventHandler(ItemsMouseHover);
 				MouseUp += new MouseEventHandler(ItemsMouseUp);
@@ -1107,6 +1109,16 @@ namespace System.Windows.Forms
 			{
 				if (owner.activation == ItemActivation.Standard && owner.ItemActivate != null)
 					owner.ItemActivate (this, e);
+			}
+
+			void ItemsKeyDown (object sender, KeyEventArgs args)
+			{
+				owner.OnKeyDown (args);
+			}
+
+			void ItemsKeyUp (object sender, KeyEventArgs args)
+			{
+				owner.OnKeyUp (args);
 			}
 
 			private void ItemsMouseDown (object sender, MouseEventArgs me)

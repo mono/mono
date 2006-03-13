@@ -1,3 +1,7 @@
+2006-03-13  Mike Kestner  <mkestner@novell.com>
+
+	* ListView.cs: proxy Key(Down|Up) from ItemControl to ListView.
+
 2006-03-13  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* Hwnd.cs: Added fixed_size field to track windows whose size cannot
@@ -207,7 +211,6 @@
 	* AxHost.cs: Added deserialization constructor for 
 	  AxHost+State (fixes 77743)
 
->>>>>>> .r57770
 2006-03-09  Mike Kestner  <mkestner@novell.com>
 
 	* ListView.cs: 
