@@ -1,3 +1,9 @@
+2006-03-13 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ListBox.cs:
+	(RenderContents): don't call base.RenderContents. Fixes bug #77740.
+	Patch by Hubert Fongarnand.
+
 2006-03-13  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* FontInfo.cs: fixed CopyFrom, this method should not reset the 
