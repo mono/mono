@@ -2963,7 +2963,8 @@ namespace Mono.CSharp {
 			}
 
 			Type base_ret_type = null;
-			base_method = FindOutBaseMethod (ref base_ret_type);
+			if (IsOperator == null)
+				base_method = FindOutBaseMethod (ref base_ret_type);
 
 			// method is override
 			if (base_method != null) {

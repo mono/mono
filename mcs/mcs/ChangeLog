@@ -1,3 +1,9 @@
+2006-03-13  Marek Safar  <marek.safar@seznam.cz>
+
+	A fix for #77593, #77574.
+
+	* class.cs (MethodCore.CheckBase): Another if for operator.
+
 2006-03-09  Marek Safar  <marek.safar@seznam.cz>
 
 	* anonymous.cs (AnonymousMethod.Compatible): Don't crash when parameters
