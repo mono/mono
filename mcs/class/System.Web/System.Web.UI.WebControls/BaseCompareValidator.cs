@@ -75,14 +75,8 @@ namespace System.Web.UI.WebControls {
 			try {
 				switch (type) {
 				case ValidationDataType.String:
-					if (text == null) {
-						value = null;
-						return false;
-					}
-					else {
-						value = text;
-						return true;
-					}
+					value = text;
+					return value != null;
 				case ValidationDataType.Integer:
 					value = Int32.Parse (text);
 					return true;
