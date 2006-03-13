@@ -2307,11 +2307,9 @@ namespace Mono.CSharp {
 			if (t == null)
 				return null;
 
-			if (ec.TestObsoleteMethodUsage) {
-				ObsoleteAttribute obsolete_attr = AttributeTester.GetObsoleteAttribute (t.Type);
-				if (obsolete_attr != null) {
-					AttributeTester.Report_ObsoleteMessage (obsolete_attr, Name, Location);
-				}
+			ObsoleteAttribute obsolete_attr = AttributeTester.GetObsoleteAttribute (t.Type);
+			if (obsolete_attr != null && !ec.IsInObsoleteScope) {
+				AttributeTester.Report_ObsoleteMessage (obsolete_attr, Name, Location);
 			}
 
 			return t.Type;
@@ -3002,7 +3000,7 @@ namespace Mono.CSharp {
 				}
 
 				if (ic.ResolveValue ()) {
-					if (ec.TestObsoleteMethodUsage)
+					if (!ec.IsInObsoleteScope)
 						ic.CheckObsoleteness (loc);
 				}
 
@@ -3075,8 +3073,9 @@ namespace Mono.CSharp {
 				ObsoleteAttribute oa;
 				FieldBase f = TypeManager.GetField (FieldInfo);
 				if (f != null) {
-					if (ec.TestObsoleteMethodUsage)
+					if (!ec.IsInObsoleteScope)
 						f.CheckObsoleteness (loc);
+                                
 					// To be sure that type is external because we do not register generated fields
 				} else if (!(FieldInfo.DeclaringType is TypeBuilder)) {                                
 					oa = AttributeTester.GetMemberObsoleteAttribute (FieldInfo);

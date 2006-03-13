@@ -1301,8 +1301,6 @@ namespace Mono.CSharp {
 				}
 			}
 
-			// Avoid attributes check when parent is not set
-			TypeResolveEmitContext.TestObsoleteMethodUsage = false;
 
 			if (base_type != null) {
 				// FIXME: I think this should be ...ResolveType (Parent.EmitContext).
@@ -1335,11 +1333,8 @@ namespace Mono.CSharp {
 			}
 
 			// Attribute is undefined at the begining of corlib compilation
-			if (TypeManager.obsolete_attribute_type != null) {
-				TypeResolveEmitContext.TestObsoleteMethodUsage = GetObsoleteAttribute () == null;
-				if (ptype != null && TypeResolveEmitContext.TestObsoleteMethodUsage) {
+			if (TypeManager.obsolete_attribute_type != null && ptype != null) {
 					CheckObsoleteType (base_type);
-				}
 			}
 
 			// add interfaces that were not added at type creation
@@ -3711,17 +3706,12 @@ namespace Mono.CSharp {
 			ec.InUnsafe = InUnsafe;
 			ec.ResolvingGenericMethod = GenericMethod != null;
 
-			bool old_obsolete = ec.TestObsoleteMethodUsage;
-			if (GetObsoleteAttribute () != null || Parent.GetObsoleteAttribute () != null)
-				ec.TestObsoleteMethodUsage = false;
-
 			// Check if arguments were correct
 			if (!Parameters.Resolve (ec))
 				return false;
 
 			ec.ResolvingGenericMethod = false;
 			ec.InUnsafe = old_unsafe;
-			ec.TestObsoleteMethodUsage = old_obsolete;
 
 			return CheckParameters (ParameterTypes);
 		}
@@ -5109,8 +5099,6 @@ namespace Mono.CSharp {
 			}
 
 			EmitContext ec = method.CreateEmitContext (container, null);
-			if (method.GetObsoleteAttribute () != null || container.GetObsoleteAttribute () != null)
-				ec.TestObsoleteMethodUsage = false;
 
 			DefineMethodBuilder (container, method_name, method.ParameterInfo.Types);
 
@@ -5141,6 +5129,7 @@ namespace Mono.CSharp {
 				if (member.IsExplicitImpl)
 					container.TypeBuilder.DefineMethodOverride (
 						builder, implementing);
+
 			}
 
 			TypeManager.AddMethod (builder, method);

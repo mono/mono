@@ -5479,7 +5479,7 @@ namespace Mono.CSharp {
 					method = TypeManager.void_array_copyto_array_int;
 			}
 
-			if (ec.TestObsoleteMethodUsage) {
+			if (!ec.IsInObsoleteScope) {
 				//
 				// This checks ObsoleteAttribute on the method and on the declaring type
 				//
@@ -8790,11 +8790,7 @@ namespace Mono.CSharp {
 			if (lexpr == null)
 				return null;
 
-			bool old = ec.TestObsoleteMethodUsage;
-			ec.TestObsoleteMethodUsage = false;
 			Type ltype = lexpr.ResolveType (ec);
-			ec.TestObsoleteMethodUsage = old;
-
 			if ((ltype == TypeManager.void_type) && (dim != "*")) {
 				Report.Error (1547, Location,
 					      "Keyword 'void' cannot be used in this context");
@@ -8821,7 +8817,7 @@ namespace Mono.CSharp {
 				throw new InternalErrorException ("Couldn't create computed type " + ltype + dim);
 			}
 
-			if (!ec.InUnsafe && type.IsPointer){
+			if (type.IsPointer && !ec.IsInUnsafeScope){
 				UnsafeError (loc);
 				return null;
 			}
