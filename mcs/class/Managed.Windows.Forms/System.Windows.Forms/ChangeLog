@@ -1,3 +1,10 @@
+2006-03-13  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* Hwnd.cs: Added fixed_size field to track windows whose size cannot
+	  be changed
+	* XplatUIX11.cs: Now setting fixed_size on hwnd and if set, re-setting
+	  the allowed size before making programmatic size changes
+
 2006-03-13  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* XplatUIX11.cs: Don't call XSetWMNormalHints if no flags are 

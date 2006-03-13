@@ -71,6 +71,7 @@ namespace System.Windows.Forms {
 		internal int		caption_height;
 		internal int		tool_caption_height;
 		internal bool		whacky_wm;
+		internal bool		fixed_size;
 		#endregion	// Local Variables
 
 		#region Constructors and destructors
@@ -94,6 +95,7 @@ namespace System.Windows.Forms {
 			client_rectangle = Rectangle.Empty;
 			marshal_free_list = new ArrayList(2);
 			opacity = 0xffffffff;
+			fixed_size = false;
 		}
 
 		public void Dispose() {

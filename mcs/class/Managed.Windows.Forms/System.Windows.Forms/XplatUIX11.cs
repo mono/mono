@@ -694,7 +694,10 @@ namespace System.Windows.Forms {
 			}
 
 			if ((functions & MotifFunctions.Resize) == 0) {
+				hwnd.fixed_size = true;
 				XplatUI.SetWindowMinMax(hwnd.Handle, new Rectangle(cp.X, cp.Y, cp.Width, cp.Height), new Size(cp.Width, cp.Height), new Size(cp.Width, cp.Height));
+			} else {
+				hwnd.fixed_size = false;
 			}
 
 			mwmHints.functions = (IntPtr)functions;
@@ -3946,6 +3949,11 @@ namespace System.Windows.Forms {
 			}
 
 			if (!hwnd.zero_sized) {
+
+				if (hwnd.fixed_size) {
+					SetWindowMinMax(handle, Rectangle.Empty, new Size(width, height), new Size(width, height));
+				}
+
 				lock (XlibLock) {
 					XMoveResizeWindow(DisplayHandle, hwnd.whole_window, x, y, width, height);
 					XMoveResizeWindow(DisplayHandle, hwnd.client_window, client_rect.X, client_rect.Y, client_rect.Width, client_rect.Height);
