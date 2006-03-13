@@ -399,7 +399,7 @@ get_call_info (MonoMethodSignature *sig, gboolean is_pinvoke)
 			cinfo->ret.reg = 8;
 			break;
 		case MONO_TYPE_GENERICINST:
-			if (mono_type_generic_inst_is_valuetype (sig->ret)) {
+			if (!mono_type_generic_inst_is_valuetype (sig->ret)) {
 				cinfo->ret.storage = ArgInIReg;
 				cinfo->ret.reg = IA64_R8;
 				break;
@@ -2238,6 +2238,7 @@ emit_call (MonoCompile *cfg, Ia64CodegenState code, guint32 patch_type, gconstpo
 
 	if ((patch_type == MONO_PATCH_INFO_ABS) || (patch_type == MONO_PATCH_INFO_INTERNAL_METHOD)) {
 		/* Indirect call */
+		/* mono_arch_patch_callsite will patch this */
 		/* mono_arch_nullify_class_init_trampoline will patch this */
 		ia64_movl (code, GP_SCRATCH_REG, 0);
 		ia64_ld8_inc_imm (code, GP_SCRATCH_REG2, GP_SCRATCH_REG, 8);
@@ -4694,7 +4695,7 @@ mono_arch_emit_this_vret_args (MonoCompile *cfg, MonoCallInst *inst, int this_re
 			vtarg->dreg = mono_regstate_next_int (cfg->rs);
 			mono_bblock_add_inst (cfg->cbb, vtarg);
 
-			mono_call_inst_add_outarg_reg (call, vtarg->dreg, out_reg, FALSE);
+			mono_call_inst_add_outarg_reg (cfg, call, vtarg->dreg, out_reg, FALSE);
 
 			out_reg ++;
 		}
@@ -4711,7 +4712,7 @@ mono_arch_emit_this_vret_args (MonoCompile *cfg, MonoCallInst *inst, int this_re
 		this->dreg = mono_regstate_next_int (cfg->rs);
 		mono_bblock_add_inst (cfg->cbb, this);
 
-		mono_call_inst_add_outarg_reg (call, this->dreg, out_reg, FALSE);
+		mono_call_inst_add_outarg_reg (cfg, call, this->dreg, out_reg, FALSE);
 	}
 }
 

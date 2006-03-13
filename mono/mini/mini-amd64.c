@@ -1147,21 +1147,18 @@ add_outarg_reg (MonoCompile *cfg, MonoCallInst *call, MonoInst *arg, ArgStorage 
 		arg->inst_left = tree;
 		arg->inst_right = (MonoInst*)call;
 		arg->unused = reg;
-		call->used_iregs |= 1 << reg;
 		break;
 	case ArgInFloatSSEReg:
 		arg->opcode = OP_AMD64_OUTARG_XMMREG_R4;
 		arg->inst_left = tree;
 		arg->inst_right = (MonoInst*)call;
 		arg->unused = reg;
-		call->used_fregs |= 1 << reg;
 		break;
 	case ArgInDoubleSSEReg:
 		arg->opcode = OP_AMD64_OUTARG_XMMREG_R8;
 		arg->inst_left = tree;
 		arg->inst_right = (MonoInst*)call;
 		arg->unused = reg;
-		call->used_fregs |= 1 << reg;
 		break;
 	default:
 		g_assert_not_reached ();

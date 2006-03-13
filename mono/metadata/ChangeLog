@@ -1,3 +1,41 @@
+
+Mon Mar 13 21:13:27 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* class.c: documentation updates and events bug fix.
+
+Mon Mar 13 17:28:07 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* class.c: some cleanup, locking fixes.
+
+Mon Mar 13 10:46:17 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* class.c: fix the generics code to setup nested
+	type info to the instantiated type (bug #77770).
+
+Sun Mar 12 16:21:31 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* marshal.c: fixed a few type correctness issues.
+
+Sat Mar 11 20:14:44 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* loader.c: the Set/Get/Addrtess array methods should be public.
+
+2006-03-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* icall.c (mono_register_jit_icall_wrapper): Fix a warning.
+	
+	* icall.c (mono_register_jit_icall_wrapper): Register the argument, not
+	info->wrapper.
+
+2006-03-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* icall.c (mono_register_jit_icall): Allocate the structure using g_new0.
+
+	* class-internals.h (MonoJitICallInfo): Add 'trampoline' field used by the JIT.
+
+	* mempool.c (mono_mempool_alloc): Speed this up a bit.
+	(mono_mempool_alloc0): Ditto.
+
 2006-03-09 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* socket-io.c:

@@ -562,7 +562,6 @@ mono_print_ins_index (int i, MonoInst *ins)
 
 	if (spec [MONO_INST_CLOB])
 		printf (" clobbers: %c", spec [MONO_INST_CLOB]);
-
 	printf ("\n");
 }
 

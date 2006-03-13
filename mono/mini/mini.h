@@ -187,6 +187,11 @@ struct MonoBasicBlock {
 	
 	gint32 dfn;
 
+	/* Basic blocks: incoming and outgoing counts and pointers */
+	gint16 out_count, in_count;
+	MonoBasicBlock **in_bb;
+	MonoBasicBlock **out_bb;
+
 	/* Points to the start of the CIL code that initiated this BB */
 	unsigned char* cil_code;
 
@@ -199,11 +204,6 @@ struct MonoBasicBlock {
 
 	/* Visited and reachable flags */
 	guint32 flags;
-
-	/* Basic blocks: incoming and outgoing counts and pointers */
-	gint16 out_count, in_count;
-	MonoBasicBlock **in_bb;
-	MonoBasicBlock **out_bb;
 
 	/*
 	 * SSA and loop based flags
@@ -226,8 +226,9 @@ struct MonoBasicBlock {
 	 * Whenever the bblock is rarely executed so it should be emitted after
 	 * the function epilog.
 	 */
-	gboolean out_of_line : 1;
-	gboolean not_useless : 1;
+	guint out_of_line : 1;
+	/* Caches the result of uselessness calculation during optimize_branches */
+	guint not_useless : 1;
 
 	/* use for liveness analysis */
 	MonoBitSet *gen_set;
@@ -631,13 +632,13 @@ typedef struct {
 	guint32          param_area;
 	guint32          frame_reg;
 	gint32           sig_cookie;
-	gboolean         disable_aot;
-	gboolean         disable_ssa;
-	gboolean         run_cctors;
-	gboolean         need_lmf_area;
-	gboolean         compile_aot;
-	gboolean         got_var_allocated;
-	gboolean         ret_var_is_local;
+	guint            disable_aot : 1;
+	guint            disable_ssa : 1;
+	guint            run_cctors : 1;
+	guint            need_lmf_area : 1;
+	guint            compile_aot : 1;
+	guint            got_var_allocated : 1;
+	guint            ret_var_is_local : 1;
 	gboolean         new_ir;
 	gpointer         debug_info;
 	guint32          lmf_offset;
@@ -1017,7 +1018,7 @@ void     *mono_arch_instrument_epilog           (MonoCompile *cfg, void *func, v
 MonoCallInst *mono_arch_call_opcode             (MonoCompile *cfg, MonoBasicBlock* bb, MonoCallInst *call, int is_virtual);
 MonoCallInst *mono_arch_call_opcode2            (MonoCompile *cfg, MonoCallInst *call, int is_virtual);
 void      mono_arch_emit_setret                 (MonoCompile *cfg, MonoMethod *method, MonoInst *val);
-MonoInst *mono_arch_get_inst_for_method       (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args);
+MonoInst *mono_arch_get_inst_for_method         (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args);
 MonoInst *mono_arch_emit_inst_for_method       (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args);
 void      mono_codegen                          (MonoCompile *cfg);
 void      mono_call_inst_add_outarg_reg         (MonoCompile *cfg, MonoCallInst *call, int vreg, int hreg, gboolean fp);

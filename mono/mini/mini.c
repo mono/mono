@@ -73,6 +73,7 @@ gboolean  mono_arch_print_tree(MonoInst *tree, int arity);
 static gpointer mono_jit_compile_method_with_opt (MonoMethod *method, guint32 opt);
 static gpointer mono_jit_compile_method (MonoMethod *method);
 static gpointer mono_jit_find_compiled_method (MonoDomain *domain, MonoMethod *method);
+static gpointer mono_create_jit_trampoline_in_domain (MonoDomain *domain, MonoMethod *method);
 
 static void handle_stobj (MonoCompile *cfg, MonoBasicBlock *bblock, MonoInst *dest, MonoInst *src, 
 			  const unsigned char *ip, MonoClass *klass, gboolean to_end, gboolean native);
@@ -2317,7 +2318,9 @@ target_type_is_incompatible (MonoCompile *cfg, MonoType *target, MonoInst *arg)
 
 	if (target->byref) {
 		/* FIXME: check that the pointed to types match */
-		if (arg->type == STACK_MP && arg->type == STACK_PTR)
+		if (arg->type == STACK_MP)
+			return arg->klass != mono_class_from_mono_type (target);
+		if (arg->type == STACK_PTR)
 			return 0;
 		return 1;
 	}
@@ -2336,9 +2339,13 @@ target_type_is_incompatible (MonoCompile *cfg, MonoType *target, MonoInst *arg)
 		if (arg->type != STACK_I4 && arg->type != STACK_PTR)
 			return 1;
 		return 0;
+	case MONO_TYPE_PTR:
+		/* STACK_MP is needed when setting pinned locals */
+		if (arg->type != STACK_I4 && arg->type != STACK_PTR && arg->type != STACK_MP)
+			return 1;
+		return 0;
 	case MONO_TYPE_I:
 	case MONO_TYPE_U:
-	case MONO_TYPE_PTR:
 	case MONO_TYPE_FNPTR:
 		if (arg->type != STACK_I4 && arg->type != STACK_PTR)
 			return 1;
@@ -3697,6 +3704,71 @@ void check_linkdemand (MonoCompile *cfg, MonoMethod *caller, MonoMethod *callee,
 	}
 }
 
+/* FIXME: check visibility of type, too */
+static gboolean
+can_access_member (MonoClass *access_klass, MonoClass *member_klass, int access_level)
+{
+	/* Partition I 8.5.3.2 */
+	/* the access level values are the same for fields and methods */
+	switch (access_level) {
+	case FIELD_ATTRIBUTE_COMPILER_CONTROLLED:
+		/* same compilation unit */
+		return access_klass->image == member_klass->image;
+	case FIELD_ATTRIBUTE_PRIVATE:
+		return access_klass == member_klass;
+	case FIELD_ATTRIBUTE_FAM_AND_ASSEM:
+		if (mono_class_has_parent (access_klass, member_klass) &&
+				access_klass->image->assembly == member_klass->image->assembly)
+			return TRUE;
+		return FALSE;
+	case FIELD_ATTRIBUTE_ASSEMBLY:
+		return access_klass->image->assembly == member_klass->image->assembly;
+	case FIELD_ATTRIBUTE_FAMILY:
+		if (mono_class_has_parent (access_klass, member_klass))
+			return TRUE;
+		return FALSE;
+	case FIELD_ATTRIBUTE_FAM_OR_ASSEM:
+		if (mono_class_has_parent (access_klass, member_klass))
+			return TRUE;
+		return access_klass->image->assembly == member_klass->image->assembly;
+	case FIELD_ATTRIBUTE_PUBLIC:
+		return TRUE;
+	}
+	return FALSE;
+}
+
+static gboolean
+can_access_field (MonoMethod *method, MonoClassField *field)
+{
+	/* FIXME: check all overlapping fields */
+	int can = can_access_member (method->klass, field->parent, field->type->attrs & FIELD_ATTRIBUTE_FIELD_ACCESS_MASK);
+	if (!can) {
+		MonoClass *nested = method->klass->nested_in;
+		while (nested) {
+			can = can_access_member (nested, field->parent, field->type->attrs & FIELD_ATTRIBUTE_FIELD_ACCESS_MASK);
+			if (can)
+				return TRUE;
+			nested = nested->nested_in;
+		}
+	}
+	return can;
+}
+
+static gboolean
+can_access_method (MonoMethod *method, MonoMethod *called)
+{
+	int can = can_access_member (method->klass, called->klass, called->flags & METHOD_ATTRIBUTE_MEMBER_ACCESS_MASK);
+	if (!can) {
+		MonoClass *nested = method->klass->nested_in;
+		while (nested) {
+			can = can_access_member (nested, called->klass, called->flags & METHOD_ATTRIBUTE_MEMBER_ACCESS_MASK);
+			if (can)
+				return TRUE;
+			nested = nested->nested_in;
+		}
+	}
+	return can;
+}
 
 /*
  * mono_method_to_ir: translates IL into basic blocks containing trees
@@ -3733,6 +3805,17 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 	MonoSecurityManager* secman = NULL;
 	MonoDeclSecurityActions actions;
 	GSList *class_inits = NULL;
+	gboolean dont_verify, dont_verify_stloc;
+
+	/* serialization and xdomain stuff may need access to private fields and methods */
+	dont_verify = method->klass->image->assembly->corlib_internal? TRUE: FALSE;
+	dont_verify |= method->wrapper_type == MONO_WRAPPER_XDOMAIN_INVOKE;
+	dont_verify |= method->wrapper_type == MONO_WRAPPER_XDOMAIN_DISPATCH;
+
+	/* still some type unsefety issues in marshal wrappers... (unknown is PtrToStructure) */
+	dont_verify_stloc = method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE;
+	dont_verify_stloc |= method->wrapper_type == MONO_WRAPPER_UNKNOWN;
+	dont_verify_stloc |= method->wrapper_type == MONO_WRAPPER_NATIVE_TO_MANAGED;
 
 	image = method->klass->image;
 	header = mono_method_get_header (method);
@@ -3970,6 +4053,10 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 		param_types [0] = method->klass->valuetype?&method->klass->this_arg:&method->klass->byval_arg;
 	for (n = 0; n < sig->param_count; ++n)
 		param_types [n + sig->hasthis] = sig->params [n];
+	for (n = 0; n < header->num_locals; ++n) {
+		if (header->locals [n]->type == MONO_TYPE_VOID && !header->locals [n]->byref)
+			goto unverified;
+	}
 	class_inits = NULL;
 
 	/* do this somewhere outside - not here */
@@ -4107,6 +4194,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			handle_loaded_temps (cfg, bblock, stack_start, sp);
 			NEW_LOCSTORE (cfg, ins, n, *sp);
 			ins->cil_code = ip;
+			if (!dont_verify_stloc && target_type_is_incompatible (cfg, header->locals [n], *sp))
+				goto unverified;
 			if (ins->opcode == CEE_STOBJ) {
 				NEW_LOCLOADA (cfg, ins, n);
 				handle_stobj (cfg, bblock, ins, *sp, ip, ins->klass, FALSE, FALSE);
@@ -4141,6 +4230,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			NEW_ARGSTORE (cfg, ins, ip [1], *sp);
 			handle_loaded_temps (cfg, bblock, stack_start, sp);
 			ins->cil_code = ip;
+			if (!dont_verify_stloc && target_type_is_incompatible (cfg, param_types [ip [1]], *sp))
+				goto unverified;
 			if (ins->opcode == CEE_STOBJ) {
 				NEW_ARGLOADA (cfg, ins, ip [1]);
 				handle_stobj (cfg, bblock, ins, *sp, ip, ins->klass, FALSE, FALSE);
@@ -4174,6 +4265,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			CHECK_LOCAL (ip [1]);
 			NEW_LOCSTORE (cfg, ins, ip [1], *sp);
 			ins->cil_code = ip;
+			if (!dont_verify_stloc && target_type_is_incompatible (cfg, header->locals [ip [1]], *sp))
+				goto unverified;
 			if (ins->opcode == CEE_STOBJ) {
 				NEW_LOCLOADA (cfg, ins, ip [1]);
 				handle_stobj (cfg, bblock, ins, *sp, ip, ins->klass, FALSE, FALSE);
@@ -4379,6 +4472,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 				if (!cmethod)
 					goto load_error;
+				if (!dont_verify && !can_access_method (method, cmethod))
+					goto unverified;
 
 				if (!virtual && (cmethod->flags & METHOD_ATTRIBUTE_ABSTRACT))
 					/* MS.NET seems to silently convert this to a callvirt */
@@ -5566,6 +5661,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			add->inst_left = ins;
 			add->inst_right = vtoffset;
 			add->type = STACK_MP;
+			add->klass = klass;
 			*sp++ = add;
 			ip += 5;
 			inline_costs += 2;
@@ -5673,6 +5769,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			if (!field)
 				goto load_error;
 			mono_class_init (klass);
+			if (!dont_verify && !can_access_field (method, field))
+				goto unverified;
 
 			foffset = klass->valuetype? field->offset - sizeof (MonoObject): field->offset;
 			/* FIXME: mark instructions for use in SSA */
@@ -6023,6 +6121,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				ip += 5;
 				break;
 			}
+			if (klass == mono_defaults.void_class)
+				goto unverified;
 			if (target_type_is_incompatible (cfg, &klass->byval_arg, *sp))
 				goto unverified;
 			/* frequent check in generic code: box (struct), brtrue */
@@ -6894,6 +6994,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				CHECK_ARG (n);
 				NEW_ARGSTORE (cfg, ins, n, *sp);
 				ins->cil_code = ip;
+				if (!dont_verify_stloc && target_type_is_incompatible (cfg, param_types [n], *sp))
+					goto unverified;
 				if (ins->opcode == CEE_STOBJ) {
 					NEW_ARGLOADA (cfg, ins, n);
 					handle_stobj (cfg, bblock, ins, *sp, ip, ins->klass, FALSE, FALSE);
@@ -6929,6 +7031,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				CHECK_LOCAL (n);
 				handle_loaded_temps (cfg, bblock, stack_start, sp);
 				NEW_LOCSTORE (cfg, ins, n, *sp);
+				if (!dont_verify_stloc && target_type_is_incompatible (cfg, header->locals [n], *sp))
+					goto unverified;
 				ins->cil_code = ip;
 				if (ins->opcode == CEE_STOBJ) {
 					NEW_LOCLOADA (cfg, ins, n);
@@ -6953,7 +7057,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				MONO_INST_NEW (cfg, ins, OP_LOCALLOC);
 				ins->inst_left = *sp;
 				ins->cil_code = ip;
-				ins->type = STACK_MP;
+				ins->type = STACK_PTR;
 
 				cfg->flags |= MONO_CFG_HAS_ALLOCA;
 				if (header->init_locals)
@@ -7458,7 +7562,9 @@ mono_icall_get_wrapper (MonoJitICallInfo* callinfo)
 	wrapper = mono_marshal_get_icall_wrapper (callinfo->sig, name, callinfo->func);
 	g_free (name);
 
-	callinfo->trampoline = mono_create_jit_trampoline (wrapper);
+	callinfo->trampoline = mono_create_ftnptr (mono_get_root_domain (), mono_create_jit_trampoline_in_domain (mono_get_root_domain (), wrapper));
+	mono_register_jit_icall_wrapper (callinfo, callinfo->trampoline);
+
 	return callinfo->trampoline;
 }
 
@@ -7578,10 +7684,9 @@ mono_create_jump_trampoline (MonoDomain *domain, MonoMethod *method,
 	return ji->code_start;
 }
 
-gpointer
-mono_create_jit_trampoline (MonoMethod *method)
+static gpointer
+mono_create_jit_trampoline_in_domain (MonoDomain *domain, MonoMethod *method)
 {
-	MonoDomain *domain = mono_domain_get ();
 	gpointer tramp;
 
 	mono_domain_lock (domain);
@@ -7594,7 +7699,7 @@ mono_create_jit_trampoline (MonoMethod *method)
 		return mono_create_jit_trampoline (mono_marshal_get_synchronized_wrapper (method));
 
 #ifdef MONO_ARCH_HAVE_CREATE_SPECIFIC_TRAMPOLINE
-	tramp =  mono_arch_create_specific_trampoline (method, MONO_TRAMPOLINE_GENERIC, mono_domain_get (), NULL);
+	tramp =  mono_arch_create_specific_trampoline (method, MONO_TRAMPOLINE_GENERIC, domain, NULL);
 #else
 	tramp = mono_arch_create_jit_trampoline (method);
 #endif
@@ -7607,6 +7712,12 @@ mono_create_jit_trampoline (MonoMethod *method)
 
 	return tramp;
 }	
+
+gpointer
+mono_create_jit_trampoline (MonoMethod *method)
+{
+	return mono_create_jit_trampoline_in_domain (mono_domain_get (), method);
+}
 
 #ifdef MONO_ARCH_HAVE_CREATE_TRAMPOLINE_FROM_TOKEN
 gpointer
@@ -7853,7 +7964,7 @@ mono_allocate_stack_slots_full (MonoCompile *m, gboolean backward, guint32 *stac
 			 * efficient copying (and to work around the fact that OP_MEMCPY
 			 * and OP_MEMSET ignores alignment).
 			 */
-			if (t->type == MONO_TYPE_VALUETYPE)
+			if (MONO_TYPE_ISSTRUCT (t))
 				align = sizeof (gpointer);
 
 			if (backward) {
@@ -11176,10 +11287,13 @@ mono_jit_compile_method_with_opt (MonoMethod *method, guint32 opt)
 	p = mono_create_ftnptr (target_domain, mono_jit_compile_method_inner (method, target_domain, opt));
 
 	if (callinfo) {
-		g_assert (!callinfo->wrapper);
-		callinfo->wrapper = p;
-		mono_register_jit_icall_wrapper (callinfo, p);
-		mono_debug_add_icall_wrapper (method, callinfo);
+		mono_jit_lock ();
+		if (!callinfo->wrapper) {
+			callinfo->wrapper = p;
+			mono_register_jit_icall_wrapper (callinfo, p);
+			mono_debug_add_icall_wrapper (method, callinfo);
+		}
+		mono_jit_unlock ();
 	}
 
 	return p;

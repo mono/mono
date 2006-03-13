@@ -1,3 +1,80 @@
+2006-03-13  Neale Ferguson <neale@sinenomine.net>
+
+	* mini-s390.h: Fix calls to mono_call_inst_add_outarg_reg.
+
+Sun Mar 12 17:31:22 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: nested types have access to all the nesting
+	levels, not just the enclosing types.
+
+Sun Mar 12 16:23:11 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: added a few more verification checks.
+
+2006-03-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* liveness.c: Merge optimizations from the linear-il branch.
+
+2006-03-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-ia64.c (emit_call): Add a comment.
+
+	* tramp-ia64.c (mono_arch_patch_callsite): Handle indirect calls as well.
+
+	* tramp-ia64.c: Fix some warnings.
+
+Sat Mar 11 20:15:59 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini.h: don't use gboolean for bitfields.
+	* mini.c: verifier changes for fields and methods accessibility.
+
+2006-03-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mono_icall_get_wrapper): Fix an ia64 bug introduced by the
+	lazy icall wrapper changes.
+
+	* dominators.c: Replace all the dominator algorithms with faster
+	ones from the linear-il branch.
+
+	* inssel-*.brg: Allocate call->out_ireg_args and call->out_freg_args from
+	the mempool.
+
+	* mini-amd64.h (MONO_ARCH_INST_FIXED_REG): Reorganize the comparisons so
+	common cases are done first.
+
+	* mini-amd64.c: Fix some warnings.
+
+	* mini-codegen.c mini-*.c: Allocate call->out_ireg_args and call->out_freg_args
+	from the mempool.
+
+	* mini.c (mono_jit_compile_method_with_opt): Fix a race in the newly
+	added code.
+
+	* mini.h: Add a missing prototype.
+
+2006-03-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c: Compile icall wrappers lazily.
+
+	* mini-codegen.c: Use printf instead of g_print since its much faster.
+
+	* mini.h (mono_bitset_foreach_bit): Use the faster mono_bitset_find_start ()
+	function.
+
+	* mini.c (optimize_branches): Cache the negative result from 
+	remove_block_if_useless ().
+
+	* mini.c (optimize_branches): Avoid restarting the iteration after each change.	
+	Also fix some bblock linking issues.
+
+	* helpers.c (mono_disassemble_code): Reduce the size of the temporary
+	assembly files.
+
+	* mini.h: Define G_LIKELY/G_UNLIKELY macros for older glib versions.
+
+	* mini.h (MonoBasicBlock): Reorganize the fields, putting more frequently
+	accessed fields first, for better cache behavior.
+	
 Fri Mar 10 18:21:41 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* mini.c: speedup IList<T> array accesses.
