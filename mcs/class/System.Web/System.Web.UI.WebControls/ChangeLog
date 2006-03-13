@@ -1,3 +1,9 @@
+2006-03-13 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ListBox.cs:
+	(RenderContents): don't call base.RenderContents. Fixes bug #77740.
+	Patch by Hubert Fongarnand.
+
 2006-01-24 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ListControl.cs: bound checking for Items when loading the control

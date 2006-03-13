@@ -163,8 +163,6 @@ namespace System.Web.UI.WebControls {
 #endif		
 		override void RenderContents (HtmlTextWriter writer)
 		{
-			base.RenderContents (writer);
-
 			foreach (ListItem item in Items) {
 				writer.WriteBeginTag ("option");
 				if (item.Selected) {
