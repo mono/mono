@@ -238,6 +238,60 @@ function ToCurrency (s)
 /*******************/
 /* validators	  */
 
+function CompareValidatorEvaluateIsValid (validator)
+{
+	var ControlToCompare = validator.getAttribute ("controltocompare");
+	var ValueToCompare = validator.getAttribute ("valuetocompare");
+	var Operator = validator.getAttribute ("operator").toLowerCase();
+	var ControlToValidate = validator.getAttribute ("controltovalidate");
+	var DataType = validator.getAttribute ("datatype");
+
+	var ctrl_value = ValidatorTrim (ValidatorGetValue (ControlToValidate));
+	var compare = (ControlToCompare != null && ControlToCompare != "") ? ValidatorTrim (ValidatorGetValue (ControlToCompare)) : ValueToCompare;
+
+	var left = Convert (ctrl_value, DataType);
+ 	if (left == null) {
+		ValidatorFailed (validator);
+		return false;
+	}
+      
+	var right = Convert (compare, DataType);
+	if (right == null) {
+		ValidatorSucceeded (validator);
+		 return true;
+	}
+
+	var result = false;
+   
+	if (Operator == "equal") {
+		result = (left == right);
+	}
+	else if (Operator == "notequal") {
+		result = (left != right);
+	}
+	else if (Operator == "lessthan") {
+		result = (left < right);
+	}
+	else if (Operator == "lessthanequal") {
+		result = (left <= right);
+	}
+	else if (Operator == "greaterthan") {
+		result = (left > right);
+	}
+	else if (Operator == "greaterthanequal") {
+		result = (left >= right);
+	}
+
+	if (result == false) {
+		ValidatorFailed (validator);
+		return false;
+	}
+	else {
+		ValidatorSucceeded (validator);
+		return true;
+	}
+}
+
 function RangeValidatorEvaluateIsValid (validator)
 {
 	var MinimumValue = parseInt (validator.getAttribute ("minimumvalue"));

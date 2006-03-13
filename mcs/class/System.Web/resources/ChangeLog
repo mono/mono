@@ -1,3 +1,7 @@
+2006-03-13  Chris Toshok  <toshok@ximian.com>
+
+	* WebUIValidation.js (CompareValidatorEvaluateIsValid): implement.
+
 2006-01-15  Robert Jordan  <robertj@gmx.net>
 
 	* WebUIValidation.js (CustomValidatorEvaluateIsValid):
