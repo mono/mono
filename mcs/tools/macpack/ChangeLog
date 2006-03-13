@@ -1,3 +1,8 @@
+2006-03-13  Miguel de Icaza  <miguel@novell.com>
+
+	* MacPack.cs: Remove Mono.GetOptions to provide better handling of
+	the command line and better error reporting.
+
 2005-11-05  Kornél Pál  <kornelpal@hotmail.com>
 
 	* AssemblyInfo.cs: Use Consts.MonoVersion as AssemblyVersion.

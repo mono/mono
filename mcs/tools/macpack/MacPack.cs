@@ -1,30 +1,44 @@
+//
+// Author: Geoff Norton
+// de-MonoOptionification: miguel.
+//
+// Copyright (C) 2004-2005 Geoff Norton.
+//
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+// 
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//
+
 using System;
+using System.Collections;
 using System.IO;
 using System.Text;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
-using Mono.GetOptions;
-
 namespace Mac {
 
-	public class PackOptions : Options {
-		[Option ("Application Name", 'n')]
+	public class PackOptions {
 		public string appname;
-
-		[Option ("Output location", 'o')]
 		public string output;
-		
-		[Option ("Assembly Location", 'a')]
 		public string assembly;
-		
-		[Option ("Icon", 'i')]
 		public string icon;
-
-		[Option (999, "Resources", 'r')]
 		public string[] resource;
-
-		[Option ("Mode", 'm')]
 		public int mode;
 	}
 	public class Pack {
@@ -38,10 +52,25 @@ namespace Mac {
 		}
 
 		public bool Generate () {
-			if (opts.output == null || opts.assembly == null || opts.appname == null) {
-				opts.DoHelp ();
+			if (opts.output == null){
+				opts.output = ".";
+			}
+			
+			if (opts.assembly == null){
+				Console.Error.WriteLine ("Error: No assembly to macpack was specified");
+				Usage ();
 				return false;
 			}
+
+			if (opts.appname == null){
+				string t = Path.ChangeExtension (opts.assembly, null);
+				int p = t.IndexOf (Path.DirectorySeparatorChar);
+				if (p != -1)
+					t = t.Substring (p+1);
+				
+				opts.appname = t;
+			}
+
 			if (Directory.Exists (Path.Combine (opts.output, String.Format ("{0}.app", opts.appname)))) {
 				Console.WriteLine ("ERROR: That application already exists.  Please delete it first");
 				return false;
@@ -51,11 +80,15 @@ namespace Mac {
 			Directory.CreateDirectory (Path.Combine (opts.output, String.Format ("{0}.app/Contents/MacOS", opts.appname)));
 			Directory.CreateDirectory (Path.Combine (opts.output, String.Format ("{0}.app/Contents/Resources", opts.appname)));
 			if (opts.resource != null) {
-				foreach (string res in opts.resource) { 
-					if (Directory.Exists (res)) {
-						CopyDirectory (res, Path.Combine (opts.output, String.Format ("{0}.app/Contents/Resources/{1}", opts.appname, Path.GetFileName (res))));
-					} else {
-						File.Copy (res, Path.Combine (opts.output, String.Format ("{0}.app/Contents/Resources/{1}", opts.appname, Path.GetFileName (res))));
+				foreach (string res in opts.resource) {
+					try {
+						if (Directory.Exists (res)) {
+							CopyDirectory (res, Path.Combine (opts.output, String.Format ("{0}.app/Contents/Resources/{1}", opts.appname, Path.GetFileName (res))));
+						} else {
+							File.Copy (res, Path.Combine (opts.output, String.Format ("{0}.app/Contents/Resources/{1}", opts.appname, Path.GetFileName (res))));
+						}
+					} catch  (Exception e){
+						Console.Error.WriteLine ("Error while processing {0} (Details: {1})", res, e.GetType ());
 					}
 				}
 			}
@@ -138,11 +171,102 @@ namespace Mac {
 			}
 		}
 
+		static void Usage ()
+		{
+			Console.WriteLine ("\n" + 
+					   "Usage is:\n" +
+					   "macpack [options] assembly\n" +
+					   "   -n appname  -appname:appname    Application Name\n" +
+					   "   -o output   -output:OUTPUT      Output directory\n" +
+					   "   -a assembly                     Assembly to pack\n" +
+					   "   -i file     -icon file          Icon filename\n" +
+					   "   -r resource1,resource2          Additional files to bundle\n" +
+					   "   -m [winforms|cocoa|x11|console] The mode for the application");
+		}
+		
 		static int Main (string [] args) {
 			PackOptions options = new PackOptions ();
-			options.ProcessArgs (args);
-			Pack p = new Pack (options);
-			if (p.Generate ())
+			ArrayList resources = new ArrayList ();
+			
+			for (int i = 0; i < args.Length; i++){
+				string s = args [i];
+				string key, value;
+				
+				if (s.Length > 2){
+					int p = s.IndexOf (':');
+					if (p != -1){
+						key = s.Substring (0, p);
+						value = s.Substring (p + 1);
+					} else {
+						key = s;
+						value = null;
+					}
+				} else {
+					key = s;
+					if (i+1 < args.Length)
+						value = args [i+1];
+					else
+						value = null;
+				}
+
+				switch (key){
+				case "-n": case "-appname":
+					options.appname = value;
+					break;
+				case "-o": case "-output":
+					options.output = value;
+					break;
+				case "-a": case "-assembly":
+					options.assembly = value;
+					break;
+				case "-i": case "-icon":
+					options.output = value;
+					break;
+				case "-r": case "-resource":
+					foreach (string ss in value.Split (new char [] {','}))
+						resources.Add (ss);
+					break;
+				case "-about":
+					Console.WriteLine ("MacPack 1.0 by Geoff Norton\n");
+					break;
+					
+				case "-m": case "-mode":
+					switch (value){
+					case "winforms":
+						options.mode = 1;
+						break;
+					case "x11":
+						options.mode = 3;
+						break;
+					case "console":
+						options.mode = 0;
+						break;
+					case "cocoa":
+						options.mode = 2;
+						break;
+					default:
+						try {
+							options.mode = Int32.Parse (value);
+						} catch {
+							Console.Error.WriteLine ("Could not recognize option {0} as the mode", value);
+						}
+						break;
+					}
+					break;
+
+				case "-h": case "-help":
+					Usage ();
+					break;
+					
+				default:
+					options.assembly = key;
+					break;
+				}
+			}
+			
+			options.resource = (string [])resources.ToArray (typeof (string));
+			Pack pack = new Pack (options);
+			if (pack.Generate ())
 				return 0;
 			return -1;
 		}
