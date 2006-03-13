@@ -1,5 +1,11 @@
 2006-03-13  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
+	* FontInfo.cs: fixed CopyFrom, this method should not reset the 
+	received fontinfo if it is the same instance
+	fixed ToString, corrected output where only font size specified
+
+2006-03-13  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
 	* Style.cs: fixed WriteStyleAttributes to set border style to solid,
 	if it not set but the border has width
 	fixes in CopyFrom, MergeWith correct unit compare when it has zero 

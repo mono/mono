@@ -311,6 +311,9 @@ namespace System.Web.UI.WebControls {
 		#region Public Instance Methods
 		public void CopyFrom(FontInfo f) 
 		{
+			if (f == this)
+				return;
+
 			this.Reset();
 
 			// MS does not store the property in the bag if it's value is false
@@ -399,7 +402,7 @@ namespace System.Web.UI.WebControls {
 		{
 			if (this.Names.Length == 0) 
 			{
-				return string.Empty;
+				return this.Size.ToString();
 			}
 
 			return this.Name + ", " + this.Size.ToString();
