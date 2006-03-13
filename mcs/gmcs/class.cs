@@ -3703,7 +3703,7 @@ namespace Mono.CSharp {
 				throw new InternalErrorException ("DoDefineParameters invoked too early");
 
 			bool old_unsafe = ec.InUnsafe;
-			ec.InUnsafe = InUnsafe;
+			ec.InUnsafe = IsInUnsafeScope;
 			ec.ResolvingGenericMethod = GenericMethod != null;
 
 			// Check if arguments were correct
@@ -3729,8 +3729,6 @@ namespace Mono.CSharp {
 				}
 
 				if (partype.IsPointer){
-					if (!UnsafeOK (ds))
-						error = true;
 					if (!TypeManager.VerifyUnManaged (TypeManager.GetElementType (partype), Location))
 						error = true;
 				}
@@ -5330,7 +5328,7 @@ namespace Mono.CSharp {
 				if (member_type == null && Type != null) {
 					EmitContext ec = ds.EmitContext;
 					bool old_unsafe = ec.InUnsafe;
-					ec.InUnsafe = InUnsafe;
+					ec.InUnsafe = IsInUnsafeScope;
 					ec.ResolvingGenericMethod = GenericMethod != null;
 					Type = Type.ResolveAsTypeTerminal (ec, false);
 					ec.ResolvingGenericMethod = false;
@@ -5444,8 +5442,6 @@ namespace Mono.CSharp {
 			if (ec == null)
 				throw new InternalErrorException ("MemberBase.DoDefine called too early");
 
-			ec.InUnsafe = InUnsafe;
-
 			if (MemberType == null)
 				return false;
 
@@ -5490,9 +5486,6 @@ namespace Mono.CSharp {
 				}
 				return false;
 			}
-
-			if (MemberType.IsPointer && !UnsafeOK (Parent))
-				return false;
 
 			if (IsExplicitImpl) {
 				Expression expr = MemberName.Left.GetTypeExpression ();
@@ -5761,9 +5754,6 @@ namespace Mono.CSharp {
 			}
 
 			if (!IsTypePermitted ())
-				return false;
-
-			if (MemberType.IsPointer && !UnsafeOK (Parent))
 				return false;
 
 			return true;
@@ -7316,15 +7306,10 @@ namespace Mono.CSharp {
 			EmitContext ec = Parent.EmitContext;
 			if (ec == null)
 				throw new InternalErrorException ("Event.Define called too early?");
-			bool old_unsafe = ec.InUnsafe;
-			ec.InUnsafe = InUnsafe;
-
 			Parameter [] parms = new Parameter [1];
 			parms [0] = new Parameter (MemberType, "value", Parameter.Modifier.NONE, null, Location);
 			parameters = new Parameters (parms);
 			parameters.Resolve (null);
-
-			ec.InUnsafe = old_unsafe;
 
 			if (!CheckBase ())
 				return false;

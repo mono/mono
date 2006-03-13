@@ -410,10 +410,6 @@ namespace Mono.CSharp {
 			get { return Parent.EmitContext; }
 		}
 
-		public bool InUnsafe {
-			get { return ((ModFlags & Modifiers.UNSAFE) != 0) || Parent.UnsafeContext; }
-		}
-
 		public virtual bool IsUsed {
 			get { return (caching_flags & Flags.IsUsed) != 0; }
 		}
@@ -421,24 +417,6 @@ namespace Mono.CSharp {
 		public void SetMemberIsUsed ()
 		{
 			caching_flags |= Flags.IsUsed;
-		}
-
-		// 
-		// Whehter is it ok to use an unsafe pointer in this type container
-		//
-		public bool UnsafeOK (DeclSpace parent)
-		{
-			//
-			// First check if this MemberCore modifier flags has unsafe set
-			//
-			if ((ModFlags & Modifiers.UNSAFE) != 0)
-				return true;
-
-			if (parent.UnsafeContext)
-				return true;
-
-			Expression.UnsafeError (Location);
-			return false;
 		}
 
 		/// <summary>
@@ -867,19 +845,6 @@ namespace Mono.CSharp {
 			}
 			// Parent.GetSignatureForError
 			return Name;
-		}
-
-		//
-		// Whether this is an `unsafe context'
-		//
-		public bool UnsafeContext {
-			get {
-				if ((ModFlags & Modifiers.UNSAFE) != 0)
-					return true;
-				if (Parent != null)
-					return Parent.UnsafeContext;
-				return false;
-			}
 		}
 
 		EmitContext type_resolve_ec;

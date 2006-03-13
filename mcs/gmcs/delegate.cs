@@ -211,8 +211,6 @@ namespace Mono.CSharp {
 						      "accessible than delegate `" + Name + "'");
 					return false;
 				}
-				if (partype.IsPointer && !UnsafeOK (Parent))
-					return false;
 			}
 			
 			ReturnType = ReturnType.ResolveAsTypeTerminal (ec, false);
@@ -232,9 +230,6 @@ namespace Mono.CSharp {
 					      "accessible than delegate `" + Name + "'");
 				return false;
 			}
-
-			if (ret_type.IsPointer && !UnsafeOK (Parent))
-				return false;
 
 			if (RootContext.StdLib && (ret_type == TypeManager.arg_iterator_type || ret_type == TypeManager.typed_reference_type)) {
 				Method.Error1599 (Location, ret_type);
