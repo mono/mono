@@ -1,3 +1,15 @@
+2006-03-13 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpWebRequest.cs: send the request if ContentLength is set for
+	POST/PUT, the request stream has that exact amount of bytes in it and
+	we're trying to get the response stream.
+
+	This way, closing the request stream is not needed in order to actually
+	send the request. Fixes bug #77753.
+
+	* WebConnectionStream.cs: throw if the number of bytes written is
+	greater than the specified request content length.
+
 2006-03-11  Miguel de Icaza  <miguel@novell.com>
 
 	* WebClient.cs: Only expose the right methods to avoid warnings. 
