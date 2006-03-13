@@ -429,6 +429,10 @@ namespace System.Web.UI.WebControls {
 				bs = (BorderStyle)viewstate["BorderStyle"];
 				if (bs != BorderStyle.NotSet) 
 					writer.AddStyleAttribute (HtmlTextWriterStyle.BorderStyle, bs.ToString());
+				else {
+					if ((styles & Styles.BorderWidth) != 0)
+						writer.AddStyleAttribute (HtmlTextWriterStyle.BorderStyle, "solid");
+				}
 			} else if (have_width) {
 				writer.AddStyleAttribute (HtmlTextWriterStyle.BorderStyle, "solid");
 			}
@@ -618,7 +622,7 @@ namespace System.Web.UI.WebControls {
 			{
 				this.BorderStyle = s.BorderStyle;
 			}
-			if (((s.styles & Styles.BorderWidth) != 0) && (s.BorderWidth != Unit.Empty))
+			if (((s.styles & Styles.BorderWidth) != 0) && (!s.BorderWidth.IsEmpty))
 			{
 				this.BorderWidth = s.BorderWidth;
 			}
@@ -630,11 +634,11 @@ namespace System.Web.UI.WebControls {
 			{
 				this.ForeColor = s.ForeColor;
 			}
-			if (((s.styles & Styles.Height) != 0) && (s.Height != Unit.Empty))
+			if (((s.styles & Styles.Height) != 0) && (!s.Height.IsEmpty))
 			{
 				this.Height = s.Height;
 			}
-			if (((s.styles & Styles.Width) != 0) && (s.Width != Unit.Empty))
+			if (((s.styles & Styles.Width) != 0) && (!s.Width.IsEmpty))
 			{
 				this.Width = s.Width;
 			}
@@ -664,7 +668,7 @@ namespace System.Web.UI.WebControls {
 			{
 				this.BorderStyle = s.BorderStyle;
 			}
-			if (((styles & Styles.BorderWidth) == 0) && ((s.styles & Styles.BorderWidth) != 0) && (s.BorderWidth != Unit.Empty)) 
+			if (((styles & Styles.BorderWidth) == 0) && ((s.styles & Styles.BorderWidth) != 0) && (!s.BorderWidth.IsEmpty)) 
 			{
 				this.BorderWidth = s.BorderWidth;
 			}
@@ -676,11 +680,11 @@ namespace System.Web.UI.WebControls {
 			{
 				this.ForeColor = s.ForeColor;
 			}
-			if (((styles & Styles.Height) == 0) && ((s.styles & Styles.Height) != 0) && (s.Height != Unit.Empty)) 
+			if (((styles & Styles.Height) == 0) && ((s.styles & Styles.Height) != 0) && (!s.Height.IsEmpty)) 
 			{
 				this.Height = s.Height;
 			}
-			if (((styles & Styles.Width) == 0) && ((s.styles & Styles.Width) != 0) && (s.Width != Unit.Empty)) 
+			if (((styles & Styles.Width) == 0) && ((s.styles & Styles.Width) != 0) && (!s.Width.IsEmpty)) 
 			{
 				this.Width = s.Width;
 			}

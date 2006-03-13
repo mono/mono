@@ -1,3 +1,10 @@
+2006-03-13  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* Style.cs: fixed WriteStyleAttributes to set border style to solid,
+	if it not set but the border has width
+	fixes in CopyFrom, MergeWith correct unit compare when it has zero 
+	value
+
 2006-03-12  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* DataGrid.cs: in AddColumnsFromSource method fixed columns from
