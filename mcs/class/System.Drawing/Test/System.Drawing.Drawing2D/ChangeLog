@@ -1,3 +1,8 @@
+2006-03-13  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* GraphicsPathTest.cs: Added new test cases for SetMarkers, 
+	ClearMarkers, CloseFigure and CloseAllFigures on an empty path.
+
 2006-01-27  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* GraphicsPathTest.cs: Removed "NotWorking" from existing Flatten 

@@ -1264,5 +1264,29 @@ namespace MonoTests.System.Drawing.Drawing2D {
 		{
 			new GraphicsPath ().Warp (null, new RectangleF ());
 		}
+
+		[Test]
+		public void SetMarkers_EmptyPath ()
+		{
+			new GraphicsPath ().SetMarkers ();
+		}
+
+		[Test]
+		public void ClearMarkers_EmptyPath ()
+		{
+			new GraphicsPath ().ClearMarkers ();
+		}
+
+		[Test]
+		public void CloseFigure_EmptyPath ()
+		{
+			new GraphicsPath ().CloseFigure ();
+		}
+
+		[Test]
+		public void CloseAllFigures_EmptyPath ()
+		{
+			new GraphicsPath ().CloseAllFigures ();
+		}
 	}
 }
