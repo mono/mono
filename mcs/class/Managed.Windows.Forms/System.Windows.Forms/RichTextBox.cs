@@ -325,7 +325,7 @@ namespace System.Windows.Forms {
 				document.SetSelection(line, sel_start);
 				document.PositionCaret(line, sel_start);
 				document.DisplayCaret();
-
+				ScrollToCaret();
 				OnTextChanged(EventArgs.Empty);
 			}
 		}

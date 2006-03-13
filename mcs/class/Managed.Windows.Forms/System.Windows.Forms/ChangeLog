@@ -1,3 +1,11 @@
+2006-03-12  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* RichTextBox.cs: Need to scroll to caret after text is inserted (#77672)
+	* TextBoxBase.cs:
+	  - Scroll to caret after inserting text (#77672)
+	  - Make scroll range one pixel higher, fixes off-by-one error (and
+	    makes underlines visible on the last line)
+
 2006-03-12  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* XplatUIX11.cs: Added call to new Keyboard.ResetKeyState to prevent

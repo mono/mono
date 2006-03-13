@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004-2005 Novell, Inc. (http://www.novell.com)
+// Copyright (c) 2004-2006 Novell, Inc. (http://www.novell.com)
 //
 // Authors:
 //	Peter Bartok	pbartok@novell.com
@@ -397,6 +397,7 @@ namespace System.Windows.Forms {
 			set {
 				if (!read_only) {
 					document.ReplaceSelection(CaseAdjust(value));
+					ScrollToCaret();
 					OnTextChanged(EventArgs.Empty);
 				}
 			}
@@ -1459,7 +1460,7 @@ namespace System.Windows.Forms {
 			if (document.Height >= ClientSize.Height) {
 				vscroll.Enabled = true;
 				vscroll.Minimum = 0;
-				vscroll.Maximum = document.Height - ClientSize.Height;
+				vscroll.Maximum = document.Height - ClientSize.Height + 1;
 			} else {
 				vscroll.Maximum = document.ViewPortHeight;
 				vscroll.Enabled = false;
@@ -1602,7 +1603,7 @@ namespace System.Windows.Forms {
 			}
 
 			// Handle vertical scrolling
-			height = document.CaretLine.Height;
+			height = document.CaretLine.Height + 1;
 
 			if (pos.Y < document.ViewPortY) {
 				vscroll.Value = pos.Y;
