@@ -1,3 +1,6 @@
+2006-03-13  Neale Ferguson <neale@sinenomine.net>
+
+	* mini-s390.h: Fix calls to mono_call_inst_add_outarg_reg.
 
 Sun Mar 12 17:31:22 CET 2006 Paolo Molaro <lupus@ximian.com>
 
