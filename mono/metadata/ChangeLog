@@ -1,4 +1,8 @@
 
+Mon Mar 13 17:28:07 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* class.c: some cleanup, locking fixes.
+
 Mon Mar 13 10:46:17 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* class.c: fix the generics code to setup nested
