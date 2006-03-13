@@ -1,3 +1,10 @@
+2006-03-13  Chris Toshok  <toshok@ximian.com>
+
+	* TemplateControlCompiler.cs (InitMethod): when generating the
+	call to ApplyStyleSheetSkin, don't just blindly pass "this" as the
+	argument to it.  Only do that if the class we're compiling is
+	actually a subclass of Page.  If it's not, pass this.Page.
+
 2006-03-07  Chris Toshok  <toshok@ximian.com>
 
 	* AspGenerator.cs: refactor the parsing code so that we can

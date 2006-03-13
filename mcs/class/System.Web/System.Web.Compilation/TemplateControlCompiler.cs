@@ -246,7 +246,10 @@ namespace System.Web.Compilation
 				}
 				if (typeof (WebControl).IsAssignableFrom (type)) {
 					CodeMethodInvokeExpression applyStyleSheetSkin = new CodeMethodInvokeExpression (ctrlVar, "ApplyStyleSheetSkin");
-					applyStyleSheetSkin.Parameters.Add (thisRef);
+					if (typeof (Page).IsAssignableFrom (parser.BaseType))
+						applyStyleSheetSkin.Parameters.Add (thisRef);
+					else
+						applyStyleSheetSkin.Parameters.Add (new CodePropertyReferenceExpression (thisRef, "Page"));
 					method.Statements.Add (applyStyleSheetSkin);
 				}
 #endif
