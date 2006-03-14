@@ -1,5 +1,7 @@
 2006-03-14  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-codegen.c (mono_local_regalloc): Remove incorrect g_free () calls.
+
 	* cpu-arm.md cpu-g4.md: Remove x86_ opcodes.
 
 	* mini-x86.h (MONO_ARCH_INST_FIXED_REG): Reorganize the comparisons so
