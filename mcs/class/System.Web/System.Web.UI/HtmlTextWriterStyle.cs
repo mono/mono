@@ -27,7 +27,9 @@
 //
 
 namespace System.Web.UI {
+#if !NET_2_0
 	[Serializable]
+#endif
 	public enum HtmlTextWriterStyle {
 		BackgroundColor,
 		BackgroundImage,

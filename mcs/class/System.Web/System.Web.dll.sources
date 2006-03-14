@@ -626,6 +626,7 @@ System.Web.UI/VerificationConditionalOperator.cs
 System.Web.UI/VerificationReportLevel.cs
 System.Web.UI/VerificationRule.cs
 System.Web.UI/ViewStateEncryptionMode.cs
+System.Web.UI/VirtualReferenceType.cs
 System.Web.UI.WebControls.Adapters/DataBoundControlAdapter.cs
 System.Web.UI.WebControls.Adapters/HideDisabledControlAdapter.cs
 System.Web.UI.WebControls.Adapters/HierarchicalDataBoundControlAdapter.cs

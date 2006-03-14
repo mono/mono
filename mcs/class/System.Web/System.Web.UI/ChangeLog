@@ -1,5 +1,15 @@
 2006-03-13  Chris Toshok  <toshok@ximian.com>
 
+	* HtmlTextWriterTag.cs: no [Serializable] in 2.0.
+
+	* HtmlTextWriterAttribute.cs: same.
+
+	* HtmlTextWriterStyle.cs: same.
+
+	* VirtualReferenceType.cs: new enum.
+
+2006-03-13  Chris Toshok  <toshok@ximian.com>
+
 	* UserControl.cs: rework InitializeAsUserControl and
 	InitializeAsUserControlInternal - the Internal variety doesn't set
 	this.page to null now.
