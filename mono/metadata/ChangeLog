@@ -1,6 +1,12 @@
-2006-03-14  Martin Baulig  <martin@ximian.com>
+2006-03-14  Raja R Harinath  <rharinath@novell.com>
 
-	* class.c: Reverted Paolo's fix from r57890.
+	Fix crasher on gtest-158.cs.
+	* metadata.c (mono_metadata_parse_type_full): Avoid canonicalizing
+	the return value if the MonoClass we want is yet in an
+	inconsistent state.
+	* class.c (mono_class_create_from_typedef): Add an comment
+	explaining an order dependency between mono_class_setup_parent and
+	mono_class_setup_mono_type.
 
 Mon Mar 13 21:13:27 CET 2006 Paolo Molaro <lupus@ximian.com>
 
