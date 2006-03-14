@@ -135,6 +135,9 @@ namespace Mono.Data.SqliteClient
 		[DllImport ("sqlite")]
 		internal static extern SqliteError sqlite_exec (IntPtr handle, string sql, IntPtr callback, IntPtr user_data, out IntPtr errstr_ptr);
 		
+		[DllImport ("sqlite")]
+		internal static extern void sqlite_busy_timeout (IntPtr handle, int ms);
+
 		[DllImport("sqlite3", CharSet = CharSet.Unicode)]
 		internal static extern int sqlite3_open16 (string dbname, out IntPtr handle);
 
@@ -213,6 +216,9 @@ namespace Mono.Data.SqliteClient
 		[DllImport ("sqlite3", CharSet = CharSet.Unicode)]
 		internal static extern SqliteError sqlite3_bind_text16 (IntPtr pStmt, int n, string value, int length, IntPtr freetype);
 		
+		[DllImport ("sqlite3")]
+		internal static extern void sqlite3_busy_timeout (IntPtr handle, int ms);
+
 		#endregion
 		
 		// These are adapted from Mono.Unix.  When encoding is null,

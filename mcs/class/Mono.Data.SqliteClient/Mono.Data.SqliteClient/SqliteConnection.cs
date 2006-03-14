@@ -47,6 +47,7 @@ namespace Mono.Data.SqliteClient
 		private IntPtr sqlite_handle;
 		private ConnectionState state;
 		private Encoding encoding;
+		private int busy_timeout;
 
 		#endregion
 
@@ -60,6 +61,7 @@ namespace Mono.Data.SqliteClient
 			state = ConnectionState.Closed;
 			sqlite_handle = IntPtr.Zero;
 			encoding = null;
+			busy_timeout = 0;
 		}
 		
 		public SqliteConnection (string connstring) : this ()
@@ -113,6 +115,15 @@ namespace Mono.Data.SqliteClient
 					return Sqlite.sqlite_last_insert_rowid (Handle);
 			}
 		}
+
+		public int BusyTimeout {
+			get {
+				return busy_timeout;  
+			}
+			set {
+			  	busy_timeout = value < 0 ? 0 : value;
+			}
+		}
 		
 		#endregion
 
@@ -134,11 +145,11 @@ namespace Mono.Data.SqliteClient
 				db_mode = 0644;
 				
 				string[] conn_pieces = connstring.Split (',');
-                                for (int i = 0; i < conn_pieces.Length; i++) {
+				for (int i = 0; i < conn_pieces.Length; i++) {
 					string piece = conn_pieces [i].Trim ();
-                                        if (piece.Length == 0) { // ignore empty elements
+					if (piece.Length == 0) { // ignore empty elements
                                                 continue;
-                                        }
+					}
 					string[] arg_pieces = piece.Split ('=');
 					if (arg_pieces.Length != 2) {
 						throw new InvalidOperationException ("Invalid connection string");
@@ -146,7 +157,8 @@ namespace Mono.Data.SqliteClient
 					string token = arg_pieces[0].ToLower (System.Globalization.CultureInfo.InvariantCulture).Trim ();
 					string tvalue = arg_pieces[1].Trim ();
 					string tvalue_lc = arg_pieces[1].ToLower (System.Globalization.CultureInfo.InvariantCulture).Trim ();
-					if (token == "uri") {
+					switch (token) {
+					case "uri": 
 						if (tvalue_lc.StartsWith ("file://")) {
 							db_file = tvalue.Substring (7);
 						} else if (tvalue_lc.StartsWith ("file:")) {
@@ -156,12 +168,23 @@ namespace Mono.Data.SqliteClient
 						} else {
 							throw new InvalidOperationException ("Invalid connection string: invalid URI");
 						}
-					} else if (token == "mode") {
+						break;
+
+					case "mode": 
 						db_mode = Convert.ToInt32 (tvalue);
-					} else if (token == "version") {
+						break;
+
+					case "version":
 						db_version = Convert.ToInt32 (tvalue);
-					} else if (token == "encoding") { // only for sqlite2
+						break;
+
+					case "encoding": // only for sqlite2
 						encoding = Encoding.GetEncoding (tvalue);
+						break;
+
+					case "busy_timeout":
+						busy_timeout = Convert.ToInt32 (tvalue);
+						break;
 					}
 				}
 				
@@ -261,11 +284,15 @@ namespace Mono.Data.SqliteClient
 				} catch (DllNotFoundException dll) {
 					db_version = 3;
 				}
+				if (busy_timeout != 0)
+					Sqlite.sqlite_busy_timeout (sqlite_handle, busy_timeout);
 			}
 			if (Version == 3) {
 				int err = Sqlite.sqlite3_open16(db_file, out sqlite_handle);
 				if (err == (int)SqliteError.ERROR)
 					throw new ApplicationException (Marshal.PtrToStringUni( Sqlite.sqlite3_errmsg16 (sqlite_handle)));
+				if (busy_timeout != 0)
+					Sqlite.sqlite3_busy_timeout (sqlite_handle, busy_timeout);
 			} else {
 			}
 			state = ConnectionState.Open;

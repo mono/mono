@@ -1,3 +1,10 @@
+2006-03-14  Kamil Skalski  <nazgul@nemerle.org>
+
+	* SqliteConnection.cs, Sqlite.cs: Add option for specifying busy
+	timeout in underlying sqlite structure. It allows enabling
+	automatic waiting for lock cleanup in multithreaded usage.
+	
+
 2006-03-11  Joshua Tauberer  <tauberer@for.net>
 
 	* Use HGlobal rather than CoTaskMem String-To-Ptr functions in
