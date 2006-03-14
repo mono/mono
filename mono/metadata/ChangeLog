@@ -1,3 +1,6 @@
+2006-03-14  Martin Baulig  <martin@ximian.com>
+
+	* class.c: Reverted Paolo's fix from r57890.
 
 Mon Mar 13 21:13:27 CET 2006 Paolo Molaro <lupus@ximian.com>
 
