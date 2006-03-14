@@ -21,6 +21,8 @@ namespace System.IO.Ports
 		Handshake handshake = Handshake.None;
 		int    dataBits   = 8;
 		bool   breakState = false;
+		bool dtr_enable = false;
+		bool rts_enable = false;
 		SerialPortStream stream;
 		Encoding encoding = Encoding.ASCII;
 		string newLine    = Environment.NewLine;
@@ -180,11 +182,9 @@ namespace System.IO.Ports
 
 		public bool DtrEnable {
 			get {
-				CheckOpen ();
 				throw new NotImplementedException ();
 			}
 			set {
-				CheckOpen ();
 				throw new NotImplementedException ();
 			}
 		}
@@ -316,11 +316,9 @@ namespace System.IO.Ports
 
 		public bool RtsEnable {
 			get {
-				CheckOpen ();
 				throw new NotImplementedException ();
 			}
 			set {
-				CheckOpen ();
 				throw new NotImplementedException ();
 			}
 		}
@@ -405,8 +403,10 @@ namespace System.IO.Ports
 			if (isOpen)
 				throw new InvalidOperationException ("Port is already open");
 			
+			stream = new SerialPortStream (portName, baudRate, dataBits, parity, stopBits, dtr_enable,
+					rts_enable, handshake, readTimeout, writeTimeout);
 			isOpen = true;
-			stream = new SerialPortStream (this);
+			
 			readBuffer = new byte [readBufferSize];
 			//writeBuffer = new byte [writeBufferSize];
 		}

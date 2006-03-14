@@ -20,33 +20,34 @@ namespace System.IO.Ports
 	class SerialPortStream : Stream, IDisposable
 	{
 		int fd;
-		int baudRate;
-		int dataBits;
+		int baud_rate;
+		int data_bits;
 		Parity parity;
-		StopBits stopBits;
+		StopBits stop_bits;
 		Handshake handshake;
-		int readTimeout;
-		int writeTimeout;
+		int read_timeout;
+		int write_timeout;
 		bool disposed;
 
 		[DllImport ("MonoPosixHelper")]
 		static extern int open_serial (string portName);
 
-		public SerialPortStream (SerialPort port)
+		public SerialPortStream (string portName, int baudRate, int dataBits, Parity par, StopBits stopBits,
+				bool dtrEnable, bool rtsEnable, Handshake handsh, int readTimeout, int writeTimeout)
 		{
-			fd = open_serial (port.PortName);
+			fd = open_serial (portName);
 			if (fd == -1)
 				throw new IOException ();
-
-			readTimeout = port.ReadTimeout;
-			writeTimeout = port.WriteTimeout;
-			baudRate = port.BaudRate;
-			parity = port.Parity;
-			dataBits = port.DataBits;
-			stopBits = port.StopBits;
-			handshake = port.Handshake;
 			
-			if (!set_attributes (fd, baudRate, parity, dataBits, stopBits, handshake))
+			baud_rate = baudRate;
+			data_bits = dataBits;
+			parity = par;
+			stop_bits = stopBits;
+			handshake = handsh;
+			read_timeout = readTimeout;
+			write_timeout = writeTimeout;
+			
+			if (!set_attributes (fd, baud_rate, parity, data_bits, stop_bits, handshake))
 				throw new IOException ();
 		}
 
@@ -76,25 +77,25 @@ namespace System.IO.Ports
 
 		public override int ReadTimeout {
 			get {
-				return readTimeout;
+				return read_timeout;
 			}
 			set {
 				if (value < 0 && value != SerialPort.InfiniteTimeout)
 					throw new ArgumentOutOfRangeException ("value");
 
-				readTimeout = value;
+				read_timeout = value;
 			}
 		}
 
 		public override int WriteTimeout {
 			get {
-				return writeTimeout;
+				return write_timeout;
 			}
 			set {
 				if (value < 0 && value != SerialPort.InfiniteTimeout)
 					throw new ArgumentOutOfRangeException ("value");
 
-				writeTimeout = value;
+				write_timeout = value;
 			}
 		}
 
@@ -134,7 +135,7 @@ namespace System.IO.Ports
 			if (count > buffer.Length - offset)
 				throw new ArgumentException ("count > buffer.Length - offset");
 			
-			return read_serial (fd, buffer, offset, count, readTimeout);
+			return read_serial (fd, buffer, offset, count, read_timeout);
 		}
 
 		public override long Seek (long offset, SeekOrigin origin)
@@ -162,7 +163,7 @@ namespace System.IO.Ports
 			if (count > buffer.Length - offset)
 				throw new ArgumentException ("offset+count > buffer.Length");
 
-			write_serial (fd, buffer, offset, count, writeTimeout);
+			write_serial (fd, buffer, offset, count, write_timeout);
 		}
 
 		protected override void Dispose (bool disposing)
@@ -206,11 +207,11 @@ namespace System.IO.Ports
 		// since it can be set individually
 		internal int BaudRate {
 			get {
-				return baudRate;
+				return baud_rate;
 			}
 			set {
-				baudRate = value;
-				set_attributes (fd, baudRate, parity, dataBits, stopBits, handshake);
+				baud_rate = value;
+				set_attributes (fd, baud_rate, parity, data_bits, stop_bits, handshake);
 			}
 		}
 
@@ -220,27 +221,27 @@ namespace System.IO.Ports
 			}
 			set {
 				parity = value;
-				set_attributes (fd, baudRate, parity, dataBits, stopBits, handshake);
+				set_attributes (fd, baud_rate, parity, data_bits, stop_bits, handshake);
 			}
 		}
 
 		internal int DataBits {
 			get {
-				return dataBits;
+				return data_bits;
 			}
 			set {
-				dataBits = value;
-				set_attributes (fd, baudRate, parity, dataBits, stopBits, handshake);
+				data_bits = value;
+				set_attributes (fd, baud_rate, parity, data_bits, stop_bits, handshake);
 			}
 		}
 
 		internal StopBits StopBits {
 			get {
-				return stopBits;
+				return stop_bits;
 			}
 			set {
-				stopBits = value;
-				set_attributes (fd, baudRate, parity, dataBits, stopBits, handshake);
+				stop_bits = value;
+				set_attributes (fd, baud_rate, parity, data_bits, stop_bits, handshake);
 			}
 		}
 
@@ -250,7 +251,7 @@ namespace System.IO.Ports
 			}
 			set {
 				handshake = value;
-				set_attributes (fd, baudRate, parity, dataBits, stopBits, handshake);
+				set_attributes (fd, baud_rate, parity, data_bits, stop_bits, handshake);
 			}
 		}
 
