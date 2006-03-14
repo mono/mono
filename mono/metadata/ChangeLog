@@ -1,3 +1,8 @@
+2006-03-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* icall.c (ves_icall_System_Reflection_Assembly_GetTypes): Avoid
+	overwriting entries in ModuleBuild->types, also clean up the code
+	a little. Fixes #77774.
 
 Tue Mar 14 20:21:18 CET 2006 Paolo Molaro <lupus@ximian.com>
 
