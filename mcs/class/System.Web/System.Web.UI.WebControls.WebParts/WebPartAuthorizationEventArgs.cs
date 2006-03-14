@@ -32,14 +32,41 @@
 
 namespace System.Web.UI.WebControls.WebParts
 {
-	public class WebPartAuthorizationEventArgs : WebPartEventArgs
+	public class WebPartAuthorizationEventArgs : EventArgs
 	{
-		private bool authorized;
-		public WebPartAuthorizationEventArgs (WebPart part) : base (part)
+		bool authorized;
+		Type type;
+		string path;
+		string authorizationFilter;
+		bool isShared;
+
+		public WebPartAuthorizationEventArgs (Type type,
+						      string path,
+						      string authorizationFilter,
+						      bool isShared)
 		{
-			this.authorized = false;
+			this.type = type;
+			this.path = path;
+			this.authorizationFilter = authorizationFilter;
+			this.isShared = isShared;
 		}
-		
+
+		public Type Type {
+			get { return type; }
+		}
+
+		public string Path {
+			get { return path; }
+		}
+
+		public string AuthorizationFilter {
+			get { return authorizationFilter; }
+		}
+
+		public bool IsShared {
+			get { return isShared; }
+		}
+
 		public bool IsAuthorized {
 			get { return authorized; }
 			set { authorized = value; }

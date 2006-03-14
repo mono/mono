@@ -1,12 +1,11 @@
-//
-// System.Web.UI.WebControls.WebParts.WebPartEventArgs.cs
+﻿//
+// System.Web.UI.WebControls.WebParts.EditorPartCollection.cs
 //
 // Authors:
-//   Sanjay Gupta (gsanjay@novell.com)
+//      Chris Toshok (toshok@ximian.com)
 //
-// (C) 2004 Novell, Inc (http://www.novell.com)
+// (C) 2006 Novell, Inc (http://www.novell.com)
 //
-
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,20 +29,57 @@
 
 #if NET_2_0
 
+using System.Collections;
+
 namespace System.Web.UI.WebControls.WebParts
 {
-	public class WebPartEventArgs : EventArgs
+	public sealed class EditorPartCollection : ReadOnlyCollectionBase
 	{
-		private WebPart part;
-		
-		public WebPartEventArgs (WebPart part) 
+		public static readonly EditorPartCollection Empty = new EditorPartCollection ();
+
+		public EditorPartCollection ()
 		{
-			this.part = part; 
 		}
+
 		
-		public WebPart WebPart {
-			get { return part; }
+		public EditorPartCollection (ICollection editorParts)
+		{
+			foreach (object o in editorParts) {
+				/* XXX check the type? */
+				InnerList.Add (o);
+			}
+		}
+
+		public EditorPartCollection (EditorPartCollection existingEditorParts,
+					     ICollection editorParts)
+		{
+			foreach (object o in existingEditorParts)
+				InnerList.Add (o);
+			foreach (object o in editorParts)
+				InnerList.Add (o);
+		}
+
+		public bool Contains (EditorPart editorPart)
+		{
+			return InnerList.Contains (editorPart);
+		}
+
+		public void CopyTo (EditorPart[] array,
+				    int index)
+		{
+			((ICollection)this).CopyTo (array, index);
+		}
+
+		public int IndexOf (EditorPart editorPart)
+		{
+			return InnerList.IndexOf (editorPart);
+		}
+
+		public EditorPart this [ int index ] {
+			get { return (EditorPart) InnerList[index]; }
 		}
 	}
+
 }
+
 #endif
