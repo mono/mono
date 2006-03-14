@@ -39,7 +39,7 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 
-		public static bool CheckContext (EmitContext ec, Location loc)
+		public static bool CheckContext (EmitContext ec, Location loc, bool isYieldBreak)
 		{
 			if (ec.InFinally) {
 				Report.Error (1625, loc, "Cannot yield in the body of a " +
@@ -51,10 +51,6 @@ namespace Mono.CSharp {
 				Report.Error (1629, loc, "Unsafe code may not appear in iterators");
 				return false;
 			}
-			if (ec.InCatch){
-				Report.Error (1631, loc, "Cannot yield a value in the body of a catch clause");
-				return false;
-			}
 
 			AnonymousContainer am = ec.CurrentAnonymousMethod;
 			if ((am != null) && !am.IsIterator){
@@ -62,9 +58,12 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			if (ec.CurrentBranching.InTryWithCatch ()) {
-				Report.Error (1626, loc, "Cannot yield a value in the body of a " +
+			if (ec.CurrentBranching.InTryWithCatch () && (!isYieldBreak || !ec.InCatch)) {
+				if (!ec.InCatch)
+					Report.Error (1626, loc, "Cannot yield a value in the body of a " +
 					"try block with a catch clause");
+				else
+					Report.Error (1631, loc, "Cannot yield a value in the body of a catch clause");
 				return false;
 			}
 			return true;
@@ -76,7 +75,7 @@ namespace Mono.CSharp {
 			if (expr == null)
 				return false;
 
-			if (!CheckContext (ec, loc))
+			if (!CheckContext (ec, loc, false))
 				return false;
 
 			Iterator iterator = ec.CurrentIterator;
@@ -107,7 +106,7 @@ namespace Mono.CSharp {
 
 		public override bool Resolve (EmitContext ec)
 		{
-			if (!Yield.CheckContext (ec, loc))
+			if (!Yield.CheckContext (ec, loc, true))
 				return false;
 
 			ec.CurrentBranching.CurrentUsageVector.Goto ();
