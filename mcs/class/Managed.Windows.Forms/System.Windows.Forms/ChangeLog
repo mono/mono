@@ -1,5 +1,10 @@
 2006-03-13  Mike Kestner  <mkestner@novell.com>
 
+	* ListView.cs: fix NRE produced by backspacing twice in a focused
+	FileDialog.
+
+2006-03-13  Mike Kestner  <mkestner@novell.com>
+
 	* ListView.cs: proxy Key(Down|Up) from ItemControl to ListView.
 
 2006-03-13  Peter Dennis Bartok  <pbartok@novell.com>

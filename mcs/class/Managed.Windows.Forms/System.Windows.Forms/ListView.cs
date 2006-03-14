@@ -993,7 +993,8 @@ namespace System.Windows.Forms
 			keysearch_text += (char) ke.KeyData;
 			keysearch_tickcnt = current_tickcnt;
 
-			int i = FocusedItem.Index;
+			int start = FocusedItem == null ? 0 : FocusedItem.Index;
+			int i = start;
 			while (true) {
 				if (CultureInfo.CurrentCulture.CompareInfo.IsPrefix (Items[i].Text, keysearch_text,
 					CompareOptions.IgnoreCase)) {
@@ -1004,7 +1005,7 @@ namespace System.Windows.Forms
 				}
 				i = (i + 1  < Items.Count) ? i+1 : 0;
 
-				if (i == FocusedItem.Index)
+				if (i == start)
 					break;
 			}
 			return true;
