@@ -40,7 +40,10 @@ namespace System.Windows.Forms
 		
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		[Browsable (false)]
-		public new event EventHandler RightToLeftChanged;
+		public new event EventHandler RightToLeftChanged {
+			add { base.RightToLeftChanged += value; }
+			remove { base.RightToLeftChanged -= value; }
+		}
 		
 		#endregion Events
 
@@ -59,9 +62,7 @@ namespace System.Windows.Forms
 
 				base.RightToLeft = value;
 
-				if (RightToLeftChanged != null)
-					RightToLeftChanged (this, EventArgs.Empty);
-
+				OnRightToLeftChanged (EventArgs.Empty);
 			}
 		}
 

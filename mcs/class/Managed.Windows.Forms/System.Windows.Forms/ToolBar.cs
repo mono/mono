@@ -66,34 +66,55 @@ namespace System.Windows.Forms
 		#region Events
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event EventHandler BackColorChanged;
+		public new event EventHandler BackColorChanged {
+			add { base.BackColorChanged += value; }
+			remove { base.BackColorChanged -= value; }
+		}
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event EventHandler BackgroundImageChanged;
+		public new event EventHandler BackgroundImageChanged {
+			add { base.BackgroundImageChanged += value; }
+			remove { base.BackgroundImageChanged -= value; }
+		}
 
 		public event ToolBarButtonClickEventHandler ButtonClick;
 		public event ToolBarButtonClickEventHandler ButtonDropDown;
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event EventHandler ForeColorChanged;
+		public new event EventHandler ForeColorChanged {
+			add { base.ForeColorChanged += value; }
+			remove { base.ForeColorChanged -= value; }
+		}
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event EventHandler ImeModeChanged;
+		public new event EventHandler ImeModeChanged {
+			add { base.ImeModeChanged += value; }
+			remove { base.ImeModeChanged -= value; }
+		}
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event PaintEventHandler Paint;
+		public new event PaintEventHandler Paint {
+			add { base.Paint += value; }
+			remove { base.Paint -= value; }
+		}
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event EventHandler RightToLeftChanged;
+		public new event EventHandler RightToLeftChanged {
+			add { base.RightToLeftChanged += value; }
+			remove { base.RightToLeftChanged -= value; }
+		}
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event EventHandler TextChanged;
+		public new event EventHandler TextChanged {
+			add { base.TextChanged += value; }
+			remove { base.TextChanged -= value; }
+		}
 		#endregion Events
 
 		#region Constructor
@@ -120,7 +141,7 @@ namespace System.Windows.Forms
 			this.MouseLeave += new EventHandler (ToolBar_MouseLeave);
 			this.MouseMove += new MouseEventHandler (ToolBar_MouseMove);
 			this.MouseUp += new MouseEventHandler (ToolBar_MouseUp);
-			base.Paint += new PaintEventHandler (ToolBar_Paint);
+			Paint += new PaintEventHandler (ToolBar_Paint);
 
 			SetStyle (ControlStyles.UserPaint, false);
 			SetStyle (ControlStyles.FixedHeight, true);
@@ -178,8 +199,7 @@ namespace System.Windows.Forms
 					return;
 
 				background_color = value;
-				if (BackColorChanged != null)
-					BackColorChanged (this, new EventArgs ());
+				OnBackColorChanged (EventArgs.Empty);
 				Redraw (false);
 			}
 		}
@@ -193,8 +213,7 @@ namespace System.Windows.Forms
 					return;
 
 				background_image = value;
-				if (BackgroundImageChanged != null)
-					BackgroundImageChanged (this, new EventArgs ());
+				OnBackgroundImageChanged (EventArgs.Empty);
 				Redraw (false);
 			}
 		}
@@ -276,8 +295,7 @@ namespace System.Windows.Forms
 					return;
 
 				foreground_color = value;
-				if (ForeColorChanged != null)
-					ForeColorChanged (this, new EventArgs ());
+				OnForeColorChanged (EventArgs.Empty);
 				Redraw (false);
 			}
 		}
@@ -309,8 +327,7 @@ namespace System.Windows.Forms
 					return;
 
 				imeMode = value;
-				if (ImeModeChanged != null)
-					ImeModeChanged (this, new EventArgs ());
+				OnImeModeChanged (EventArgs.Empty);
 			}
 		}
 
@@ -323,8 +340,7 @@ namespace System.Windows.Forms
 					return;
 
 				base.RightToLeft = value;
-				if (RightToLeftChanged != null)
-					RightToLeftChanged (this, new EventArgs ());
+				OnRightToLeftChanged (EventArgs.Empty);
 			}
 		}
 
@@ -353,8 +369,7 @@ namespace System.Windows.Forms
 
 				text = value;
 				Redraw (true);
-				if (TextChanged != null)
-					TextChanged (this, new EventArgs ());
+				OnTextChanged (EventArgs.Empty);
 			}
 		}
 
@@ -651,10 +666,6 @@ namespace System.Windows.Forms
 		private void ToolBar_Paint (object sender, PaintEventArgs pevent)
 		{
 			ThemeEngine.Current.DrawToolBar (pevent.Graphics, pevent.ClipRectangle, this);
-
-			if (Paint != null) {
-				Paint (this, pevent);
-			}
 		}
 
 		internal void Redraw (bool recalculate)

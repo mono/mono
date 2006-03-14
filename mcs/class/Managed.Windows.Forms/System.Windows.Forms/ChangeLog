@@ -1,3 +1,10 @@
+2006-03-14  Mike Kestner  <mkestner@novell.com>
+
+	* ToolBar.cs: 
+	* VScrollBar.cs:
+	- chain up the "new event" overrides to base and use
+	OnEvent to raise them.  Part of fix for bug #76509.
+
 2006-03-14  Alexander Olk  <alex.olk@googlemail.com>
 
 	* FileDialog.cs: Do not select an item in the parent directory
