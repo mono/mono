@@ -1512,7 +1512,7 @@ namespace System.Windows.Forms
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public bool CanFocus {
 			get {
-				if (GetStyle(ControlStyles.Selectable) && (parent != null) && Visible && Enabled) {
+				if (IsHandleCreated && Visible && Enabled) {
 					return true;
 				}
 				return false;

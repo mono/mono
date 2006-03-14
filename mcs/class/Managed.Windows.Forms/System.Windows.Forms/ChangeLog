@@ -1,3 +1,8 @@
+2006-03-14  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* Control.cs (CanFocus): I goofed. A control can have focus 
+	  even though it's not selectable. Made it match MS docs.
+
 2006-03-13  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* ControlPaint.cs (DrawBorder3D): DrawBorder3D does not fill the
