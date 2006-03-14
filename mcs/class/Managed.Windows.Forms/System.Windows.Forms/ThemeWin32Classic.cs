@@ -671,7 +671,7 @@ namespace System.Windows.Forms
 						ControlPaint.DrawBorder(graphics, checkbox_rectangle, checkbox.ForeColor, ButtonBorderStyle.Solid);
 					} else {
 						// draw sunken effect
-						CPDrawBorder3D (graphics, checkbox_rectangle, Border3DStyle.SunkenInner, Border3DSide.All, checkbox.BackColor);
+						CPDrawBorder3D (graphics, checkbox_rectangle, Border3DStyle.SunkenInner, Border3DSide.Left | Border3DSide.Right | Border3DSide.Top | Border3DSide.Bottom, checkbox.BackColor);
 					}
 				} else {
 					graphics.FillRectangle(ResPool.GetSolidBrush (ControlPaint.LightLight (checkbox.BackColor)), fill_rectangle);				
@@ -1202,7 +1202,7 @@ namespace System.Windows.Forms
 			if (!dtp.ShowUpDown && clip_rectangle.IntersectsWith (dtp.ClientRectangle)) {
 				// draw the outer border
 				Rectangle button_bounds = dtp.ClientRectangle;
-				this.CPDrawBorder3D (dc, button_bounds, Border3DStyle.Sunken, Border3DSide.All, dtp.BackColor);
+				this.CPDrawBorder3D (dc, button_bounds, Border3DStyle.Sunken, Border3DSide.Left | Border3DSide.Right | Border3DSide.Top | Border3DSide.Bottom, dtp.BackColor);
 				
 				// deflate by the border width
 				if (clip_rectangle.IntersectsWith (dtp.drop_down_arrow_rect)) {
@@ -2422,7 +2422,7 @@ namespace System.Windows.Forms
 				dc.DrawRectangle (SystemPens.ControlDark, button_rect);
 			}
 			else {
-				CPDrawBorder3D (dc, button_rect, Border3DStyle.Raised, Border3DSide.All);
+				CPDrawBorder3D (dc, button_rect, Border3DStyle.Raised, Border3DSide.Left | Border3DSide.Right | Border3DSide.Top | Border3DSide.Bottom);
 			}
 			// draw the arrow
 			dc.FillPolygon (SystemBrushes.ControlText, arrow_path);			
@@ -2607,7 +2607,7 @@ namespace System.Windows.Forms
 			increment = block_width + space_betweenblocks;
 
 			/* Draw border */
-			CPDrawBorder3D (dc, ctrl.ClientRectangle, Border3DStyle.SunkenInner, Border3DSide.All & ~Border3DSide.Middle, ColorControl);
+			CPDrawBorder3D (dc, ctrl.ClientRectangle, Border3DStyle.SunkenInner, Border3DSide.Left | Border3DSide.Right | Border3DSide.Top | Border3DSide.Bottom & ~Border3DSide.Middle, ColorControl);
 			
 			/* Draw Blocks */
 			block_rect = new Rectangle (client_area.X, client_area.Y, block_width, client_area.Height);
@@ -3171,7 +3171,7 @@ namespace System.Windows.Forms
 				Border3DStyle border_style = Border3DStyle.SunkenInner;
 				if (panel.BorderStyle == StatusBarPanelBorderStyle.Raised)
 					border_style = Border3DStyle.RaisedOuter;
-				CPDrawBorder3D(dc, area, border_style, Border3DSide.All, panel.Parent.BackColor);
+				CPDrawBorder3D(dc, area, border_style, Border3DSide.Left | Border3DSide.Right | Border3DSide.Top | Border3DSide.Bottom, panel.Parent.BackColor);
 			}
 
 			if (panel.Style == StatusBarPanelStyle.OwnerDraw) {
@@ -3396,9 +3396,9 @@ namespace System.Windows.Forms
 				}
 
 				if (is_selected) {
-					CPDrawBorder3D (dc, bounds, Border3DStyle.Sunken, Border3DSide.All);
+					CPDrawBorder3D (dc, bounds, Border3DStyle.Sunken, Border3DSide.Left | Border3DSide.Right | Border3DSide.Top | Border3DSide.Bottom);
 				} else if (tab.Appearance != TabAppearance.FlatButtons) {
-					CPDrawBorder3D (dc, bounds, Border3DStyle.Raised, Border3DSide.All);
+					CPDrawBorder3D (dc, bounds, Border3DStyle.Raised, Border3DSide.Left | Border3DSide.Right | Border3DSide.Top | Border3DSide.Bottom);
 				}
 
 				interior = new Rectangle (bounds.Left + 2, bounds.Top + 2, bounds.Width - 4, bounds.Height - 4);
@@ -3606,7 +3606,7 @@ namespace System.Windows.Forms
 					/* Draw the button frame, only if it is not a separator */
 					if (flat) { 
 						if (button.Pushed || button.Pressed) {
-							CPDrawBorder3D (dc, buttonArea, Border3DStyle.SunkenOuter, Border3DSide.All, ColorControl);
+							CPDrawBorder3D (dc, buttonArea, Border3DStyle.SunkenOuter, Border3DSide.Left | Border3DSide.Right | Border3DSide.Top | Border3DSide.Bottom, ColorControl);
 						} else if (button.Hilight) {
 							dc.DrawRectangle (ResPool.GetPen (ColorControlText), buttonArea);
 							if (! ddRect.IsEmpty) {
@@ -3619,7 +3619,7 @@ namespace System.Windows.Forms
 					else { // normal toolbar
 						if (button.Pushed || button.Pressed) {
 							CPDrawBorder3D (dc, buttonArea, Border3DStyle.SunkenInner,
-								Border3DSide.All, ColorControl);
+								Border3DSide.Left | Border3DSide.Right | Border3DSide.Top | Border3DSide.Bottom, ColorControl);
 							if (! ddRect.IsEmpty) {
 								CPDrawBorder3D (dc, ddRect, Border3DStyle.SunkenInner,
 									Border3DSide.Left, ColorControl);
@@ -3628,7 +3628,7 @@ namespace System.Windows.Forms
 						}
 						else {
 							CPDrawBorder3D (dc, buttonArea, Border3DStyle.RaisedInner,
-								Border3DSide.All, ColorControl);
+								Border3DSide.Left | Border3DSide.Right | Border3DSide.Top | Border3DSide.Bottom, ColorControl);
 							if (! ddRect.IsEmpty) {
 								CPDrawBorder3D (dc, ddRect, Border3DStyle.RaisedInner,
 									Border3DSide.Left, ColorControl);

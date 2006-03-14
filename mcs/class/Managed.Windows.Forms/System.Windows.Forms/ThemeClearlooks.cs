@@ -1250,9 +1250,9 @@ namespace System.Windows.Forms {
 				}
 				
 				if (is_selected) {
-					CPDrawBorder3D (dc, bounds, Border3DStyle.Sunken, Border3DSide.All);
+					CPDrawBorder3D (dc, bounds, Border3DStyle.Sunken, Border3DSide.Left | Border3DSide.Right | Border3DSide.Top | Border3DSide.Bottom);
 				} else if (tab.Appearance != TabAppearance.FlatButtons) {
-					CPDrawBorder3D (dc, bounds, Border3DStyle.Raised, Border3DSide.All);
+					CPDrawBorder3D (dc, bounds, Border3DStyle.Raised, Border3DSide.Left | Border3DSide.Right | Border3DSide.Top | Border3DSide.Bottom);
 				}
 				
 				interior = new Rectangle (bounds.Left + 2, bounds.Top + 2, bounds.Width - 4, bounds.Height - 4);
@@ -2649,7 +2649,7 @@ namespace System.Windows.Forms {
 			if (!dtp.ShowUpDown && clip_rectangle.IntersectsWith (dtp.ClientRectangle)) {
 				// draw the outer border
 				Rectangle button_bounds = dtp.ClientRectangle;
-				CPDrawBorder3D (dc, button_bounds, Border3DStyle.Sunken, Border3DSide.All, dtp.BackColor);
+				CPDrawBorder3D (dc, button_bounds, Border3DStyle.Sunken, Border3DSide.Left | Border3DSide.Right | Border3DSide.Top | Border3DSide.Bottom, dtp.BackColor);
 				
 				// deflate by the border width
 				if (clip_rectangle.IntersectsWith (dtp.drop_down_arrow_rect)) {

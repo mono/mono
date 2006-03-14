@@ -277,19 +277,19 @@ namespace System.Windows.Forms {
 
 
 		public static void DrawBorder3D(Graphics graphics, Rectangle rectangle) {
-			DrawBorder3D(graphics, rectangle, Border3DStyle.Etched, Border3DSide.All);
+			DrawBorder3D(graphics, rectangle, Border3DStyle.Etched, Border3DSide.Left | Border3DSide.Right | Border3DSide.Top | Border3DSide.Bottom);
 		}
 
 		public static void DrawBorder3D(Graphics graphics, Rectangle rectangle, Border3DStyle style) {
-			DrawBorder3D(graphics, rectangle, style, Border3DSide.All);
+			DrawBorder3D(graphics, rectangle, style, Border3DSide.Left | Border3DSide.Right | Border3DSide.Top | Border3DSide.Bottom);
 		}
 
 		public static void DrawBorder3D(Graphics graphics, int x, int y, int width, int height) {
-			DrawBorder3D(graphics, new Rectangle(x, y, width, height), Border3DStyle.Etched, Border3DSide.All);
+			DrawBorder3D(graphics, new Rectangle(x, y, width, height), Border3DStyle.Etched, Border3DSide.Left | Border3DSide.Right | Border3DSide.Top | Border3DSide.Bottom);
 		}
 
 		public static void DrawBorder3D(Graphics graphics, int x, int y, int width, int height, Border3DStyle style) {
-			DrawBorder3D(graphics, new Rectangle(x, y, width, height), style, Border3DSide.All);
+			DrawBorder3D(graphics, new Rectangle(x, y, width, height), style, Border3DSide.Left | Border3DSide.Right | Border3DSide.Top | Border3DSide.Bottom);
 		}
 
 		public static void DrawBorder3D( Graphics graphics, int x, int y, int width, int height, Border3DStyle style,Border3DSide sides) {

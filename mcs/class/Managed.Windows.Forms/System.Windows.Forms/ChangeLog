@@ -1,3 +1,14 @@
+2006-03-13  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* ControlPaint.cs (DrawBorder3D): DrawBorder3D does not fill the
+	  center by default (fixes #76895)
+	* ThemeWin32Classic.cs, ThemeNice.cs, ThemeClearlooks.cs: Replaced 
+	  all uses of Border3DSides.All with the explicit ORd together
+	  Left|Right|Top|Bottom because I assume that nobody was aware 
+	  that All also implies a center fill. Most places I checked had
+	  a fill right above.
+	* ProgressBarStyle.cs: Added
+
 2006-03-13  Mike Kestner  <mkestner@novell.com>
 
 	* ListView.cs: fix breakage in drag shadow header positioning 

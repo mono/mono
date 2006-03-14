@@ -388,6 +388,7 @@ System.Windows.Forms/PrintDialog.cs
 System.Windows.Forms/PrintPreviewControl.cs
 System.Windows.Forms/PrintPreviewDialog.cs
 System.Windows.Forms/ProgressBar.cs
+System.Windows.Forms/ProgressBarStyle.cs
 System.Windows.Forms/PropertiesTab.cs
 System.Windows.Forms/PropertyGrid.cs
 System.Windows.Forms/PropertyGridCommands.cs
@@ -530,4 +531,3 @@ System.Windows.Forms.RTF/StyleElement.cs
 System.Windows.Forms.RTF/StyleType.cs
 System.Windows.Forms.RTF/TextMap.cs
 System.Windows.Forms.RTF/TokenClass.cs
-
