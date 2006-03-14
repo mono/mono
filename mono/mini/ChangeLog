@@ -1,3 +1,13 @@
+2006-03-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-x86.h (MONO_ARCH_INST_FIXED_REG): Reorganize the comparisons so
+	common cases are done first.	
+
+	* mini-ops.h: Only define platform specific opcodes on the given platform.
+
+	* mini.h regalloc.h mini-codegen.c: Merge optimizations from the linear-il
+	branch.
+	
 2006-03-14  Martin Baulig  <martin@ximian.com>
 
 	Revert Paolo's change from r57348:
