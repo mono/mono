@@ -881,8 +881,9 @@ namespace System.Xml.Serialization {
 			{
 				Type elemType = (att.Type != null) ? att.Type : defaultType;
 				XmlTypeMapElementInfo elem = new XmlTypeMapElementInfo (member, TypeTranslator.GetTypeData(elemType, att.DataType));
-				elem.Namespace = (att.Namespace != null) ? att.Namespace : defaultNamespace;
 				elem.Form = att.Form;
+				if (elem.Form != XmlSchemaForm.Unqualified)
+					elem.Namespace = (att.Namespace != null) ? att.Namespace : defaultNamespace;
 				elem.IsNullable = att.IsNullable;
 				
 				if (elem.IsNullable && elem.TypeData.IsValueType)
