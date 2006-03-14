@@ -1631,6 +1631,8 @@ namespace System.Windows.Forms {
 		private ToolTip toolTip;
 		private int oldItemIndexForToolTip = -1;
 		
+		private bool internal_key_up = false;
+		
 		private MasterMount masterMount = new MasterMount ();
 		
 		public MWFFileView ()
@@ -1760,10 +1762,11 @@ namespace System.Windows.Forms {
 			else
 				UpdateFileViewByString (directoryInfo_or_string as string);
 			
-			if (Items.Count > 0) {
+			if (Items.Count > 0 && !internal_key_up) {
 				ListViewItem item = Items [0];
 				item.Selected = true;
-			}
+			} else
+				internal_key_up = false;
 		}
 		
 		private void UpdateFileViewByDirectoryInfo (DirectoryInfo inputDirectoryInfo) 
@@ -2236,9 +2239,11 @@ namespace System.Windows.Forms {
 		
 		private void MWF_KeyUp (object sender, KeyEventArgs e)
 		{
-			if (e.KeyCode == Keys.Back)
-				if (on_one_directory_up != null)
+			if (SelectedItems.Count > 0 && e.KeyCode == Keys.Back)
+				if (on_one_directory_up != null) {
+					internal_key_up = true;
 					on_one_directory_up (this, EventArgs.Empty);
+				}
 		}
 		
 		public event EventHandler SelectedFileChanged {
