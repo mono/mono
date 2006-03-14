@@ -1,3 +1,9 @@
+2006-03-13  Chris Toshok  <toshok@ximian.com>
+
+	* data/net_2_0/machine.config: revert r55809, as this change
+	introduces a 2.0 configuration class, which 1.1.13 doesn't
+	support.
+
 2006-02-24 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* configure.in: define PLATFORM_BSD.
