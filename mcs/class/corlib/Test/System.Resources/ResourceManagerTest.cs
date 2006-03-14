@@ -42,7 +42,6 @@ namespace MonoTests.System.Resources
 	public class ResourceManagerTest
 	{
 		[Test]
-		[Category ("NotWorking")]
 		public void TestInvariantCulture ()
 		{
 			Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
@@ -53,7 +52,6 @@ namespace MonoTests.System.Resources
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestGermanCulture ()
 		{
 			Thread.CurrentThread.CurrentUICulture = new CultureInfo ("de-DE");

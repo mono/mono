@@ -1,3 +1,7 @@
+2006-03-14  Robert Jordan  <robertj@gmx.net>
+
+	* ResourceManagerTest.cs: Reactivated tests. eol-style.
+
 2006-01-13  Robert Jordan  <robertj@gmx.net>
 
 	* ResourceManagerTest.cs: New. Unit tests for ResourceManager.
