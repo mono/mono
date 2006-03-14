@@ -50,6 +50,10 @@ namespace System.Drawing.Printing
 			string ppd_filename;
 			PPD_FILE ppd;
 
+			if ((printer == null) || (printer == String.Empty)) {
+				return;
+			}
+
 			ptr = cupsGetPPD (printer);
 			ppd_filename = Marshal.PtrToStringAnsi (ptr);
 			ppd_handle = ppdOpenFile (ppd_filename);

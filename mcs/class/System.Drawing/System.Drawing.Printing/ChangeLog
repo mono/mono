@@ -1,3 +1,7 @@
+2006-03-13  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* PrintingServicesUnix.cs: Handle not having a printer
+
 2006-02-09  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* PrintingServicesWin32.cs: Simplyfied the code, removing the need
