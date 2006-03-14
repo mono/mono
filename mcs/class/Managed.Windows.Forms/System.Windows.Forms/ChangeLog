@@ -1,3 +1,9 @@
+2006-03-14  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* Control.cs (PerformLayout): It would seem that we considered
+	  invisible windows for our layout. Not quite the right thing
+	  to do. Now we don't any longer, thereby fixing bug #76889.
+
 2006-03-14  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* Control.cs (CanFocus): I goofed. A control can have focus 

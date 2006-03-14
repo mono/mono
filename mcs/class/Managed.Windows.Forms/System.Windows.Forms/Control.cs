@@ -2751,6 +2751,11 @@ namespace System.Windows.Forms
 				Control [] controls = child_controls.GetAllControls ();
 				for (int i = controls.Length - 1; i >= 0; i--) {
 					child = controls [i];
+
+					if (!child.Visible) {
+						continue;
+					}
+
 					switch (child.Dock) {
 						case DockStyle.None: {
 							// Do nothing
@@ -2788,7 +2793,7 @@ namespace System.Windows.Forms
 				for (int i = controls.Length - 1; i >= 0; i--) {
 					child=controls[i];
 
-					if (child.Dock == DockStyle.Fill) {
+					if (child.Visible && (child.Dock == DockStyle.Fill)) {
 						child.SetBounds(space.Left, space.Top, space.Width, space.Height);
 						space.Width=0;
 						space.Height=0;
@@ -2804,17 +2809,18 @@ namespace System.Windows.Forms
 					int height;
 
 					child = controls[i];
+
+					// If the control is docked we don't need to do anything
+					if (!child.Visible || (child.Dock != DockStyle.None)) {
+						continue;
+					}
+
 					anchor = child.Anchor;
 
 					left = child.Left;
 					top = child.Top;
 					width = child.Width;
 					height = child.Height;
-
-					// If the control is docked we don't need to do anything
-					if (child.Dock != DockStyle.None) {
-						continue;
-					}
 
 					if ((anchor & AnchorStyles.Left) !=0 ) {
 						if ((anchor & AnchorStyles.Right) != 0) {
