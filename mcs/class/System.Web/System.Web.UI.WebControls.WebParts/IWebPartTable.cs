@@ -1,5 +1,5 @@
 //
-// System.Web.UI.WebControls.WebParts.IField.cs
+// System.Web.UI.WebControls.WebParts.IWebPartTable.cs
 //
 // Authors:
 //      Sanjay Gupta (gsanjay@novell.com)
@@ -30,15 +30,18 @@
 
 #if NET_2_0
 
+using System.Collections;
 using System.ComponentModel;
 
 namespace System.Web.UI.WebControls.WebParts
 {
-	public interface IField
+	public interface IWebPartTable
 	{
-		object FieldValue { get; }
-		PropertyDescriptor Schema { get; }
+		PropertyDescriptorCollection Schema { get; }
+		void GetTableData (TableCallback callback);
 	}
+
+	public delegate void TableCallback (ICollection tableData);
 }
 #endif
 

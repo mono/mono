@@ -1,5 +1,5 @@
 //
-// System.Web.UI.WebControls.WebParts.IFilter.cs
+// System.Web.UI.WebControls.WebParts.IWebPartField.cs
 //
 // Authors:
 //      Sanjay Gupta (gsanjay@novell.com)
@@ -31,17 +31,16 @@
 #if NET_2_0
 
 using System.ComponentModel;
-using System.Collections;
 
 namespace System.Web.UI.WebControls.WebParts
 {
-	public interface IFilter
+	public interface IWebPartField
 	{
-		void SetConsumerSchema (PropertyDescriptorCollection schema);
-		
-		IDictionary FilterData { get; }
-		PropertyDescriptorCollection Schema { get; }
+		void GetFieldValue (FieldCallback callback);
+		PropertyDescriptor Schema { get; }
 	}
+
+	public delegate void FieldCallback (object fieldValue);
 }
 #endif
 

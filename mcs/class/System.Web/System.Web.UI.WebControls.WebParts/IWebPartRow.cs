@@ -1,5 +1,5 @@
 //
-// System.Web.UI.WebControls.WebParts.ITable.cs
+// System.Web.UI.WebControls.WebParts.IWebPartRow.cs
 //
 // Authors:
 //      Sanjay Gupta (gsanjay@novell.com)
@@ -30,16 +30,17 @@
 
 #if NET_2_0
 
-using System.Collections;
 using System.ComponentModel;
 
 namespace System.Web.UI.WebControls.WebParts
 {
-	public interface ITable
+	public interface IWebPartRow
 	{
+		void GetRowData (RowCallback callback);
 		PropertyDescriptorCollection Schema { get; }
-		ICollection TableData { get; }
 	}
+
+	public delegate void RowCallback (object rowData);
 }
 #endif
 

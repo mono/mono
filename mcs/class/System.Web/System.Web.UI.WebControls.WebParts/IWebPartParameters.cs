@@ -1,5 +1,5 @@
 //
-// System.Web.UI.WebControls.WebParts.IRows.cs
+// System.Web.UI.WebControls.WebParts.IWebPartParameters.cs
 //
 // Authors:
 //      Sanjay Gupta (gsanjay@novell.com)
@@ -31,14 +31,19 @@
 #if NET_2_0
 
 using System.ComponentModel;
+using System.Collections;
 
 namespace System.Web.UI.WebControls.WebParts
 {
-	public interface IRow
+	public interface IWebPartParameters
 	{
-		object RowData { get; }
+		void SetConsumerSchema (PropertyDescriptorCollection schema);
+		
+		void GetParametersData (ParametersCallback callback);
 		PropertyDescriptorCollection Schema { get; }
 	}
+
+	public delegate void ParametersCallback (IDictionary parametersData);
 }
 #endif
 
