@@ -1,3 +1,9 @@
+
+Tue Mar 14 20:21:18 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* domain.c, assembly.c, metadata-internals.h, class-internals.h:
+	load friend assembly info when present.
+
 2006-03-14  Raja R Harinath  <rharinath@novell.com>
 
 	Fix crasher on gtest-158.cs.
