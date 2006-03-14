@@ -1,3 +1,9 @@
+
+Tue Mar 14 20:23:53 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: when checking for member accessibility, also check for
+	friend assemblies and for explicit interface implementations.
+
 2006-03-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-codegen.c (mono_local_regalloc): Remove incorrect g_free () calls.
@@ -47,6 +53,11 @@ Sun Mar 12 16:23:11 CET 2006 Paolo Molaro <lupus@ximian.com>
 	* tramp-ia64.c (mono_arch_patch_callsite): Handle indirect calls as well.
 
 	* tramp-ia64.c: Fix some warnings.
+
+Sat Mar 11 20:15:59 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini.h: don't use gboolean for bitfields.
+	* mini.c: verifier changes for fields and methods accessibility.
 
 2006-03-11  Zoltan Varga  <vargaz@gmail.com>
 
