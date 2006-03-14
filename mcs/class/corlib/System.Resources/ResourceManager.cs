@@ -357,7 +357,7 @@ namespace System.Resources
 
 			if(set==null && tryParents==true) {
 				// avoid endless recursion
-				if (!culture.Equals (neutral_culture) && !culture.Equals(CultureInfo.InvariantCulture))
+				if (!culture.Equals(CultureInfo.InvariantCulture))
 					set = InternalGetResourceSet (culture.Parent, Createifnotexists, tryParents);
 			}
 
