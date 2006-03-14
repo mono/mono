@@ -1,3 +1,7 @@
+2006-03-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TestMatrix.cs: Added new test cases to test libgdiplus validations.
+
 2006-03-13  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* GraphicsPathTest.cs: Added new test cases for SetMarkers, 

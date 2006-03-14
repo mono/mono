@@ -1,10 +1,11 @@
 //
 // Tests for System.Drawing.Drawing2D.Matrix.cs
 //
-// Author:
-//  Jordi Mas i Hernandez <jordi@ximian.com>
+// Authors:
+//	Jordi Mas i Hernandez <jordi@ximian.com>
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -36,33 +37,77 @@ namespace MonoTests.System.Drawing.Drawing2D
 {
 	[TestFixture]
 	[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
-	public class MatrixTest : Assertion
-	{
-		[TearDown]
-		public void TearDown () { }
+	public class MatrixTest : Assertion {
 
-		[SetUp]
-		public void SetUp () { }
+		private Matrix default_matrix;
+		private Rectangle rect;
+		private RectangleF rectf;
+
+		[TestFixtureSetUp]
+		public void FixtureSetUp ()
+		{
+			default_matrix = new Matrix ();
+		}
 
 		[Test]
-		public void Constructors ()
+		public void Constructor_Default ()
 		{
-			{
-				Matrix matrix = new Matrix ();
-				AssertEquals ("C#1", 6, matrix.Elements.Length);
-			}
+			Matrix matrix = new Matrix ();
+			AssertEquals ("C#1", 6, matrix.Elements.Length);
+		}
 
-			{
+		[Test]
+		public void Constructor_SixFloats ()
+		{
+			Matrix matrix = new Matrix (10, 20, 30, 40, 50, 60);
+			AssertEquals ("C#2", 6, matrix.Elements.Length);
+			AssertEquals ("C#3", 10, matrix.Elements[0]);
+			AssertEquals ("C#4", 20, matrix.Elements[1]);
+			AssertEquals ("C#5", 30, matrix.Elements[2]);
+			AssertEquals ("C#6", 40, matrix.Elements[3]);
+			AssertEquals ("C#7", 50, matrix.Elements[4]);
+			AssertEquals ("C#8", 60, matrix.Elements[5]);
+		}
 
-				Matrix matrix = new Matrix (10, 20, 30, 40, 50, 60);
-				AssertEquals ("C#2", 6, matrix.Elements.Length);
-				AssertEquals ("C#3", 10, matrix.Elements[0]);
-				AssertEquals ("C#4", 20, matrix.Elements[1]);
-				AssertEquals ("C#5", 30, matrix.Elements[2]);
-				AssertEquals ("C#6", 40, matrix.Elements[3]);
-				AssertEquals ("C#7", 50, matrix.Elements[4]);
-				AssertEquals ("C#8", 60, matrix.Elements[5]);
-			}
+		[Test]
+		public void Constructor_Float ()
+		{
+			Matrix matrix = new Matrix (10, 20, 30, 40, 50, 60);
+			AssertEquals ("C#2", 6, matrix.Elements.Length);
+			AssertEquals ("C#3", 10, matrix.Elements[0]);
+			AssertEquals ("C#4", 20, matrix.Elements[1]);
+			AssertEquals ("C#5", 30, matrix.Elements[2]);
+			AssertEquals ("C#6", 40, matrix.Elements[3]);
+			AssertEquals ("C#7", 50, matrix.Elements[4]);
+			AssertEquals ("C#8", 60, matrix.Elements[5]);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void Constructor_Int_Null ()
+		{
+			new Matrix (rect, null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Constructor_Int_Empty ()
+		{
+			new Matrix (rect, new Point[0]);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void Constructor_Float_Null ()
+		{
+			new Matrix (rectf, null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Constructor_Float_Empty ()
+		{
+			new Matrix (rectf, new PointF[0]);
 		}
 
 		// Properties
@@ -130,6 +175,17 @@ namespace MonoTests.System.Drawing.Drawing2D
 		}
 
 		[Test]
+		public void HashCode ()
+		{
+			Matrix matrix = new Matrix (10, 20, 30, 40, 50, 60);
+			Matrix clone = matrix.Clone ();
+			Assert ("HashCode/Clone", matrix.GetHashCode () != clone.GetHashCode ());
+
+			Matrix matrix2 = new Matrix (10, 20, 30, 40, 50, 60);
+			Assert ("HashCode/Identical", matrix.GetHashCode () != matrix2.GetHashCode ());
+		}
+
+		[Test]
 		public void Reset ()
 		{
 			Matrix matrix = new Matrix (51, 52, 53, 54, 55, 56);
@@ -159,6 +215,13 @@ namespace MonoTests.System.Drawing.Drawing2D
 		}
 
 		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Rotate_InvalidOrder ()
+		{
+			new Matrix ().Rotate (180, (MatrixOrder) Int32.MinValue);
+		}
+
+		[Test]
 		public void RotateAt ()
 		{
 			Matrix matrix = new Matrix (10, 20, 30, 40, 50, 60);
@@ -173,6 +236,20 @@ namespace MonoTests.System.Drawing.Drawing2D
 		}
 
 		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void RotateAt_InvalidOrder ()
+		{
+			new Matrix ().RotateAt (180, new PointF (10, 10), (MatrixOrder) Int32.MinValue);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void Multiply_Null ()
+		{
+			new Matrix (10, 20, 30, 40, 50, 60).Multiply (null);
+		}
+
+		[Test]
 		public void Multiply ()
 		{
 			Matrix matrix = new Matrix (10, 20, 30, 40, 50, 60);
@@ -184,6 +261,49 @@ namespace MonoTests.System.Drawing.Drawing2D
 			AssertEquals ("J#4", 2200, matrix.Elements[3]);
 			AssertEquals ("J#5", 2350, matrix.Elements[4]);
 			AssertEquals ("J#6", 3460, matrix.Elements[5]);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void Multiply_Null_Order ()
+		{
+			new Matrix (10, 20, 30, 40, 50, 60).Multiply (null, MatrixOrder.Append);
+		}
+
+		[Test]
+		public void Multiply_Append ()
+		{
+			Matrix matrix = new Matrix (10, 20, 30, 40, 50, 60);
+			matrix.Multiply (new Matrix (10, 20, 30, 40, 50, 60), MatrixOrder.Append);
+
+			AssertEquals ("J#1", 700, matrix.Elements[0]);
+			AssertEquals ("J#2", 1000, matrix.Elements[1]);
+			AssertEquals ("J#3", 1500, matrix.Elements[2]);
+			AssertEquals ("J#4", 2200, matrix.Elements[3]);
+			AssertEquals ("J#5", 2350, matrix.Elements[4]);
+			AssertEquals ("J#6", 3460, matrix.Elements[5]);
+		}
+
+		[Test]
+		public void Multiply_Prepend ()
+		{
+			Matrix matrix = new Matrix (10, 20, 30, 40, 50, 60);
+			matrix.Multiply (new Matrix (10, 20, 30, 40, 50, 60), MatrixOrder.Prepend);
+
+			AssertEquals ("J#1", 700, matrix.Elements[0]);
+			AssertEquals ("J#2", 1000, matrix.Elements[1]);
+			AssertEquals ("J#3", 1500, matrix.Elements[2]);
+			AssertEquals ("J#4", 2200, matrix.Elements[3]);
+			AssertEquals ("J#5", 2350, matrix.Elements[4]);
+			AssertEquals ("J#6", 3460, matrix.Elements[5]);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Multiply_InvalidOrder ()
+		{
+			Matrix matrix = new Matrix (10, 20, 30, 40, 50, 60);
+			matrix.Multiply (new Matrix (10, 20, 30, 40, 50, 60), (MatrixOrder)Int32.MinValue);
 		}
 
 		[Test]
@@ -225,6 +345,27 @@ namespace MonoTests.System.Drawing.Drawing2D
 			AssertEquals ("S#5", 50, matrix.Elements[4]);
 			AssertEquals ("S#6", 60, matrix.Elements[5]);			
 		}
+
+		[Test]
+		public void Scale_Negative ()
+		{
+			Matrix matrix = new Matrix (10, 20, 30, 40, 50, 60);
+			matrix.Scale (-2, -4);
+
+			AssertEquals ("S#1", -20, matrix.Elements[0]);
+			AssertEquals ("S#2", -40, matrix.Elements[1]);
+			AssertEquals ("S#3", -120, matrix.Elements[2]);
+			AssertEquals ("S#4", -160, matrix.Elements[3]);
+			AssertEquals ("S#5", 50, matrix.Elements[4]);
+			AssertEquals ("S#6", 60, matrix.Elements[5]);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Scale_InvalidOrder ()
+		{
+			new Matrix ().Scale (2, 1, (MatrixOrder) Int32.MinValue);
+		}
 		
 		[Test]
 		public void Shear ()
@@ -249,6 +390,13 @@ namespace MonoTests.System.Drawing.Drawing2D
 			AssertEquals ("H#11", 2, matrix.Elements[4]);
 			AssertEquals ("H#12", 1, matrix.Elements[5]);			    
 		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Shear_InvalidOrder ()
+		{
+			new Matrix ().Shear (-1, 1, (MatrixOrder) Int32.MinValue);
+		}
 		
 		[Test]
 		public void TransformPoints ()
@@ -269,6 +417,34 @@ namespace MonoTests.System.Drawing.Drawing2D
 			AssertEquals ("K#7", 66, pointsF[1].X);
 			AssertEquals ("K#8", 92, pointsF[1].Y);						    
 		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void TransformPoints_Point_Null ()
+		{
+			new Matrix ().TransformPoints ((Point[]) null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void TransformPoints_PointF_Null ()
+		{
+			new Matrix ().TransformPoints ((PointF[]) null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void TransformPoints_Point_Empty ()
+		{
+			new Matrix ().TransformPoints (new Point[0]);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void TransformPoints_PointF_Empty ()
+		{
+			new Matrix ().TransformPoints (new PointF[0]);
+		}
 		
 		[Test]
 		public void TransformVectors  ()
@@ -288,8 +464,36 @@ namespace MonoTests.System.Drawing.Drawing2D
 			AssertEquals ("N#6", 40, pointsF[0].Y);
 			AssertEquals ("N#7", 56, pointsF[1].X);
 			AssertEquals ("N#8", 80, pointsF[1].Y);						    
-		}		
-		
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void TransformVectors_Point_Null ()
+		{
+			new Matrix ().TransformVectors ((Point[]) null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void TransformVectors_PointF_Null ()
+		{
+			new Matrix ().TransformVectors ((PointF[]) null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void TransformVectors_Point_Empty ()
+		{
+			new Matrix ().TransformVectors (new Point[0]);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void TransformVectors_PointF_Empty ()
+		{
+			new Matrix ().TransformVectors (new PointF[0]);
+		}
+
 		[Test]
 		public void Translate  ()
 		{
@@ -301,8 +505,28 @@ namespace MonoTests.System.Drawing.Drawing2D
 			AssertEquals ("Y#3", 6, matrix.Elements[2]);
 			AssertEquals ("Y#4", 8, matrix.Elements[3]);
 			AssertEquals ("Y#5", 80, matrix.Elements[4]);
-			AssertEquals ("Y#6", 112, matrix.Elements[5]);			
-									    
-		}			
+			AssertEquals ("Y#6", 112, matrix.Elements[5]);	
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Translate_InvalidOrder ()
+		{
+			new Matrix ().Translate (-1, 1, (MatrixOrder) Int32.MinValue);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void VectorTransformPoints_Null ()
+		{
+			new Matrix ().VectorTransformPoints ((Point[]) null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void VectorTransformPoints_Empty ()
+		{
+			new Matrix ().VectorTransformPoints (new Point[0]);
+		}
 	}
 }
