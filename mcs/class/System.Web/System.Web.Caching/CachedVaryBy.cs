@@ -30,6 +30,7 @@
 
 
 using System;
+using System.Globalization;
 using System.Text;
 using System.Collections;
 
@@ -74,30 +75,48 @@ namespace System.Web.Caching {
 			builder.Append ("METHOD:" + request.HttpMethod);
 			builder.Append ('\n');
 
-			if (prms != null) {
-				for (int i=0; i<prms.Length; i++) {
-					if (request.Params [prms [i]] == null)
-						continue;
-					builder.Append ("VP:");
-					builder.Append (prms [i]);
+			if (wildCardParams) {
+				foreach (string p in request.QueryString) {
+					// FIXME: QueryString might contain a null key if a page gets called like this: page.aspx?arg (w/out the "=")
+					if (p == null) continue;
+					builder.Append ("VPQ:");
+					builder.Append (p.ToLower (CultureInfo.InvariantCulture));
 					builder.Append ('=');
-					builder.Append (request.Params [prms [i]]);
+					builder.Append (request.QueryString [p]);
 					builder.Append ('\n');
 				}
-			} else if (wildCardParams) {
-				foreach (string p in request.Params) {
-					builder.Append ("VP:");
-					builder.Append (p);
+				foreach (string p in request.Form) {
+					// FIXME: can this be null, too?
+					if (p == null) continue;
+					builder.Append ("VPF:");
+					builder.Append (p.ToLower (CultureInfo.InvariantCulture));
 					builder.Append ('=');
-					builder.Append (request.Params [p]);
+					builder.Append (request.Form [p]);
 					builder.Append ('\n');
+				}
+			} else if (prms != null) {
+				for (int i=0; i<prms.Length; i++) {
+					if (request.QueryString [prms [i]] != null) {
+						builder.Append ("VPQ:");
+						builder.Append (prms [i].ToLower (CultureInfo.InvariantCulture));
+						builder.Append ('=');
+						builder.Append (request.QueryString [prms [i]]);
+						builder.Append ('\n');
+					}
+					if (request.Form [prms [i]] != null) {
+						builder.Append ("VPF:");
+						builder.Append (prms [i].ToLower (CultureInfo.InvariantCulture));
+						builder.Append ('=');
+						builder.Append (request.Form [prms [i]]);
+						builder.Append ('\n');
+					}
 				}
 			}
 			
 			if (headers != null) {
 				for (int i=0; i<headers.Length; i++) {
 					builder.Append ("VH:");
-					builder.Append (headers [i]);
+					builder.Append (headers [i].ToLower (CultureInfo.InvariantCulture));
 					builder.Append ('=');
 					builder.Append (request.Headers [headers [i]]);
 					builder.Append ('\n');

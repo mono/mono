@@ -1,3 +1,9 @@
+2006-03-14  Robert Jordan  <robertj@gmx.net>
+
+	* CachedVaryBy.cs: Fixed VaryByParam="*". Replaced request.Param
+	with QueryString and Form lookups. Made the param name output case
+	insensitive. Fixes bug #77757.
+
 2005-10-24 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Cache.cs: new internal method.
