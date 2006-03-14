@@ -1,3 +1,17 @@
+2006-03-14  Dick Porter  <dick@ximian.com>
+
+	* handles-private.h: 
+	* wapi-private.h: 
+	* wait.c: 
+	* handles.c: Add a 'prewait' stage to the handle waiting, to give
+	waiting threads a chance to check for bogus states before
+	blocking.
+
+	* mutexes.c (namedmutex_prewait): Use the prewait stage to check
+	for named mutexes that have been abandoned in a locked state (eg
+	if a process exited abnormally while owning the mutex) and
+	override it if needed.
+
 2006-03-03  Dick Porter  <dick@ximian.com>
 
 	* processes.c (ShellExecuteEx): Cope when some of the parameters
