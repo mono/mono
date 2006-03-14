@@ -1,3 +1,8 @@
+2006-03-14  Chris Toshok  <toshok@ximian.com>
+
+	* Socket.cs (CheckProtocolSupport): remove the NET_2_0
+	configuration stuff from here.
+
 2006-03-03  Dick Porter  <dick@ximian.com>
 
 	* UdpClient.cs: Fix IPv6 family check.  Fixes bug 77689.
