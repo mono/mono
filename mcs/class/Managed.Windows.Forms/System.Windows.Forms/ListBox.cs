@@ -124,8 +124,8 @@ namespace System.Windows.Forms
 		private bool sorted;
 		private bool use_tabstops;
 		private int column_width_internal;
-		private VScrollBar vscrollbar_ctrl;
-		private HScrollBar hscrollbar_ctrl;
+		private ImplicitVScrollBar vscrollbar_ctrl;
+		private ImplicitHScrollBar hscrollbar_ctrl;
 		private bool suspend_ctrlupdate;
 		private bool ctrl_pressed;
 		private bool shift_pressed;
@@ -165,7 +165,7 @@ namespace System.Windows.Forms
 			listbox_info.item_height = FontHeight;
 
 			/* Vertical scrollbar */
-			vscrollbar_ctrl = new VScrollBar ();
+			vscrollbar_ctrl = new ImplicitVScrollBar ();
 			vscrollbar_ctrl.Minimum = 0;
 			vscrollbar_ctrl.SmallChange = 1;
 			vscrollbar_ctrl.LargeChange = 1;
@@ -174,7 +174,7 @@ namespace System.Windows.Forms
 			vscrollbar_ctrl.Visible = false;
 
 			/* Horizontal scrollbar */
-			hscrollbar_ctrl = new HScrollBar ();
+			hscrollbar_ctrl = new ImplicitHScrollBar ();
 			hscrollbar_ctrl.Minimum = 0;
 			hscrollbar_ctrl.SmallChange = 1;
 			hscrollbar_ctrl.LargeChange = 1;

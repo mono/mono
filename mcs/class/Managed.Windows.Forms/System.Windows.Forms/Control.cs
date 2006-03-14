@@ -2811,7 +2811,7 @@ namespace System.Windows.Forms
 					child = controls[i];
 
 					// If the control is docked we don't need to do anything
-					if (!child.Visible || (child.Dock != DockStyle.None)) {
+					if (child.Dock != DockStyle.None) {
 						continue;
 					}
 

@@ -1,3 +1,11 @@
+2006-03-14  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* Control.cs (PerformLayout): We don't need to consider visiblity
+	  for anchoring, only for docking. This fixes 'whacky' alignment
+	  in listbox and other controls that use implicit scrollbars after
+	  the previous PerformLayout patch
+	* ListBox.cs: Switched to use implicit scrollbars
+	  
 2006-03-14  Mike Kestner  <mkestner@novell.com>
 
 	* ToolBar.cs: 
