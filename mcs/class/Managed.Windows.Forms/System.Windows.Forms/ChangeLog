@@ -1,5 +1,10 @@
 2006-03-13  Mike Kestner  <mkestner@novell.com>
 
+	* ListView.cs: fix breakage in drag shadow header positioning 
+	from Peter's csc compilation fix.
+
+2006-03-13  Mike Kestner  <mkestner@novell.com>
+
 	* ListView.cs: fix NRE produced by backspacing twice in a focused
 	FileDialog.
 

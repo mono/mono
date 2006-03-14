@@ -1613,7 +1613,7 @@ namespace System.Windows.Forms
 						Rectangle r;
 
 						r = drag_column.column_rect;
-						r.X = r.X + me.X - drag_x;
+						r.X = clicked_column.Rect.X + me.X - drag_x;
 						drag_column.column_rect = r;
 
 						int x = me.X + owner.h_marker;
