@@ -111,6 +111,7 @@ namespace System.Reflection.Emit {
 		PortableExecutableKinds peKind;
 		ImageFileMachine machine;
 		bool corlib_internal;
+		Type[] type_forwarders;
 		#endregion
 		internal Type corlib_object_type = typeof (System.Object);
 		internal Type corlib_value_type = typeof (System.ValueType);
@@ -297,6 +298,21 @@ namespace System.Reflection.Emit {
 			resources [p].attrs = attribute;
 			resources [p].data = blob;
 		}
+
+#if NET_2_0
+		internal void AddTypeForwarder (Type t) {
+			if (t == null)
+				throw new ArgumentNullException ("t");
+
+			if (type_forwarders == null) {
+				type_forwarders = new Type [1] { t };
+			} else {
+				Type[] arr = new Type [type_forwarders.Length + 1];
+				Array.Copy (type_forwarders, arr, type_forwarders.Length);
+				type_forwarders = arr;
+			}
+		}
+#endif
 
 		public ModuleBuilder DefineDynamicModule (string name)
 		{

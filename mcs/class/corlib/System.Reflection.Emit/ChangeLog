@@ -1,3 +1,8 @@
+2006-03-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* AssemblyBuilder.cs (AddTypeForwarder): New internal method for
+	adding type forwarders to an assembly.
+
 2006-02-27  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ConstructorBuilder.cs: In AddDeclarativeSecurity, throw an
