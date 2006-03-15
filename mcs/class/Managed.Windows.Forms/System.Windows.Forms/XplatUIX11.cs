@@ -365,7 +365,7 @@ namespace System.Windows.Forms {
 				pollfds [1].events = PollEvents.POLLIN;
 				#endif
 
-				Keyboard = new X11Keyboard(DisplayHandle);
+				Keyboard = new X11Keyboard(DisplayHandle, FosterParent);
 				Dnd = new X11Dnd (DisplayHandle);
 
 				PostQuitState = false;
@@ -1097,6 +1097,12 @@ namespace System.Windows.Forms {
 
 				lock (XlibLock) {
 					XNextEvent (DisplayHandle, ref xevent);
+
+					if (xevent.AnyEvent.type == XEventName.KeyPress) {
+						if (XFilterEvent(ref xevent, FosterParent)) {
+							continue;
+						}
+					}
 				}
 //Console.WriteLine("Got x event {0}", xevent);
 				switch (xevent.type) {
@@ -3018,6 +3024,7 @@ namespace System.Windows.Forms {
 					if (xevent.FocusChangeEvent.detail != NotifyDetail.NotifyNonlinear) {
 						goto ProcessNextMessage;
 					}
+					Keyboard.FocusIn(FocusWindow);
 					SendMessage(FocusWindow, Msg.WM_SETFOCUS, IntPtr.Zero, IntPtr.Zero);
 					goto ProcessNextMessage;
 				}
@@ -3027,6 +3034,7 @@ namespace System.Windows.Forms {
 					if (xevent.FocusChangeEvent.detail != NotifyDetail.NotifyNonlinear) {
 						goto ProcessNextMessage;
 					}
+					Keyboard.FocusOut(FocusWindow);
 
 					while (Keyboard.ResetKeyState(FocusWindow, ref msg)) {
 						SendMessage(FocusWindow, msg.message, msg.wParam, msg.lParam);
@@ -4507,6 +4515,9 @@ namespace System.Windows.Forms {
 
 		[DllImport ("libX11", EntryPoint="XChangeActivePointerGrab")]
 		internal extern static int XChangeActivePointerGrab (IntPtr display, EventMask event_mask, IntPtr cursor, IntPtr time);
+
+		[DllImport ("libX11", EntryPoint="XFilterEvent")]
+		internal extern static bool XFilterEvent(ref XEvent xevent, IntPtr window);
 		#endregion
 	}
 }
