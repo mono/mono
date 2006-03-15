@@ -350,6 +350,11 @@ namespace System.Web.UI.WebControls
 						item.ApplyStyle (RootNodeStyle);
 						RootNodeTemplate.InstantiateIn (item);
 					}
+					else if (NodeTemplate != null) {
+						item.ApplyStyle (NodeStyle);
+						item.ApplyStyle (RootNodeStyle);
+						NodeTemplate.InstantiateIn (item);
+					}
 					else {
 						WebControl c = CreateNodeControl (true, item);
 						c.ApplyStyle (NodeStyle);
@@ -363,6 +368,11 @@ namespace System.Web.UI.WebControls
 						item.ApplyStyle (NodeStyle);
 						item.ApplyStyle (CurrentNodeStyle);
 						CurrentNodeTemplate.InstantiateIn (item);
+					}
+					else if (NodeTemplate != null) {
+						item.ApplyStyle (NodeStyle);
+						item.ApplyStyle (CurrentNodeStyle);
+						NodeTemplate.InstantiateIn (item);
 					}
 					else {
 						WebControl c = CreateNodeControl (RenderCurrentNodeAsLink, item);

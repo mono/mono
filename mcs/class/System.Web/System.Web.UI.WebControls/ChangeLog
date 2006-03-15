@@ -1,5 +1,11 @@
 2006-03-15  Chris Toshok  <toshok@ximian.com>
 
+	* SiteMapPath.cs (InitializeItem): in the Current and Root node
+	cases, apply the NodeTemplate if it exists and there isn't a
+	CurrentNodeTemplate or RootNodeTemplate, respectively.
+
+2006-03-15  Chris Toshok  <toshok@ximian.com>
+
 	* SiteMapDataSourceView.cs (OnDataSourceViewChanged): override.
 
 	* SiteMapDataSource.cs (StartingNodeOffset): new property.
