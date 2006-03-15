@@ -255,21 +255,15 @@ typedef struct {
  * made to the stack, so they can be reverted later.
  */
 static void
-mono_ssa_rename_vars2 (MonoCompile *cfg, int max_vars, MonoBasicBlock *bb, gboolean *originals_used, MonoInst **stack, RenameInfo *stack_history, int stack_history_size) 
+mono_ssa_rename_vars2 (MonoCompile *cfg, int max_vars, MonoBasicBlock *bb, gboolean *originals_used, MonoInst **stack, 	guint32 *lvreg_stack, gboolean *lvreg_defined, RenameInfo *stack_history, int stack_history_size) 
 {
 	MonoInst *ins, *new_var;
 	int i, j, idx;
 	GList *tmp;
 	int stack_history_len = 0;
-	guint32 *lvreg_stack;
-	gboolean *lvreg_defined;
 
 	if (cfg->verbose_level >= 4)
 		printf ("\nRENAME VARS BLOCK %d:\n", bb->block_num);
-
-	/* FIXME: Optimize this */
-	lvreg_stack = g_new0 (guint32, cfg->next_vireg);
-	lvreg_defined = g_new0 (gboolean, cfg->next_vireg);
 
 	/* First pass: Create new vars */
 	for (ins = bb->code; ins; ins = ins->next) {
@@ -420,7 +414,7 @@ mono_ssa_rename_vars2 (MonoCompile *cfg, int max_vars, MonoBasicBlock *bb, gbool
 
 	if (bb->dominated) {
 		for (tmp = bb->dominated; tmp; tmp = tmp->next) {
-			mono_ssa_rename_vars2 (cfg, max_vars, (MonoBasicBlock *)tmp->data, originals_used, stack, stack_history + stack_history_len, stack_history_size - stack_history_len);
+			mono_ssa_rename_vars2 (cfg, max_vars, (MonoBasicBlock *)tmp->data, originals_used, stack, lvreg_stack, lvreg_defined, stack_history + stack_history_len, stack_history_size - stack_history_len);
 		}
 	}
 
@@ -443,6 +437,8 @@ mono_ssa_compute2 (MonoCompile *cfg)
 	RenameInfo *stack_history;
 	int stack_history_size;
 	gboolean *originals;
+	guint32 *lvreg_stack;
+	gboolean *lvreg_defined;
 
 	g_assert (!(cfg->comp_done & MONO_COMP_SSA));
 
@@ -583,10 +579,12 @@ mono_ssa_compute2 (MonoCompile *cfg)
 	stack = alloca (sizeof (MonoInst *) * cfg->num_varinfo);
 	memset (stack, 0, sizeof (MonoInst *) * cfg->num_varinfo);
 
+	lvreg_stack = g_new0 (guint32, cfg->next_vireg);
+	lvreg_defined = g_new0 (gboolean, cfg->next_vireg);
 	stack_history_size = 1024;
 	stack_history = g_new (RenameInfo, stack_history_size);
 	originals = g_new0 (gboolean, cfg->num_varinfo);
-	mono_ssa_rename_vars2 (cfg, cfg->num_varinfo, cfg->bb_entry, originals, stack, stack_history, stack_history_size);
+	mono_ssa_rename_vars2 (cfg, cfg->num_varinfo, cfg->bb_entry, originals, stack, lvreg_stack, lvreg_defined, stack_history, stack_history_size);
 	g_free (stack_history);
 	g_free (originals);
 

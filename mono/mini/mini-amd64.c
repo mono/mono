@@ -1809,7 +1809,7 @@ peephole_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 			if (ins->inst_c0 == 0 && (!ins->next || (ins->next && INST_IGNORES_CFLAGS (ins->next->opcode)))) {
 				MonoInst *ins2;
 
-				ins->opcode = CEE_XOR;
+				ins->opcode = cfg->new_ir ? OP_LXOR : CEE_XOR;
 				ins->sreg1 = ins->dreg;
 				ins->sreg2 = ins->dreg;
 
