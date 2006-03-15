@@ -54,10 +54,8 @@ namespace System.Web
 			lock (this) {
 				string url = node.Url;
 				if (url != null && url.Length > 0) {
-					if (UrlUtils.IsRelativeUrl (url))
-						url = UrlUtils.Combine (HttpRuntime.AppDomainAppVirtualPath, url);
-					else
-						url = UrlUtils.ResolveVirtualPathFromAppAbsolute (url);
+					url = MapUrl (url);
+
 					if (FindSiteMapNode (url) != null)
 						throw new InvalidOperationException ();
 				
@@ -144,10 +142,7 @@ namespace System.Web
 			
 			if (rawUrl.Length > 0) {
 				this.BuildSiteMap();
-				if (UrlUtils.IsRelativeUrl (rawUrl))
-					rawUrl = UrlUtils.Combine (HttpRuntime.AppDomainAppVirtualPath, rawUrl);
-				else
-					rawUrl = UrlUtils.ResolveVirtualPathFromAppAbsolute (rawUrl);
+				rawUrl = MapUrl (rawUrl);
 				SiteMapNode node = (SiteMapNode) UrlToNode [rawUrl];
 				if (node != null && IsAccessibleToUser (HttpContext.Current, node))
 					return node;
@@ -225,6 +220,18 @@ namespace System.Web
 		}
 
 		public abstract SiteMapNode BuildSiteMap ();
+
+		string MapUrl (string url)
+		{
+			if (HttpContext.Current == null)
+				return url;
+
+			if (UrlUtils.IsRelativeUrl (url))
+				return UrlUtils.Combine (HttpRuntime.AppDomainAppVirtualPath, url);
+			else
+				return UrlUtils.ResolveVirtualPathFromAppAbsolute (url);
+		}
+
 	}
 }
 #endif

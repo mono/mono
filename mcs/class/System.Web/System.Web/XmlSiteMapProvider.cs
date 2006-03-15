@@ -215,7 +215,7 @@ namespace System.Web
 		[MonoTODO]
 		protected virtual void RemoveProvider (string providerName)
 		{
-			base.RemoveProvider (node);
+			throw new NotImplementedException ();
 		}
 
 		void OnFileChanged (object sender, FileSystemEventArgs args)

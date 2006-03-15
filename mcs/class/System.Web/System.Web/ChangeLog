@@ -1,5 +1,12 @@
 2006-03-15  Chris Toshok  <toshok@ximian.com>
 
+	* XmlSiteMapProvider.cs (RemoveProvider): oops, no override.
+
+	* StaticSiteMapProvider.cs (AddNode): call MapUrl.
+	(FindSiteMapNode): same.
+
+2006-03-15  Chris Toshok  <toshok@ximian.com>
+
 	* SiteMapProvider.cs (ReturnNodeIfAccessible): new function,
 	either return the node or throw InvalidOperationException.
 	(get_RootNode): use ReturnNodeIfAccessible.
