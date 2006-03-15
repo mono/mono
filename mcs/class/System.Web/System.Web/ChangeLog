@@ -1,3 +1,21 @@
+2006-03-15  Chris Toshok  <toshok@ximian.com>
+
+	* SiteMapProvider.cs (ReturnNodeIfAccessible): new function,
+	either return the node or throw InvalidOperationException.
+	(get_RootNode): use ReturnNodeIfAccessible.
+	(IsAccessibleToUser): flesh this out a bit, and add comments on
+	how the rest of the implementation should be written.
+	(FindSiteMapNodeFromKey): implement to match MS behavior, docs be
+	damned.
+
+	* XmlSiteMapProvider.cs: corcompare work.
+
+	* StaticSiteMapProvider.cs (AddNode): Add a check to see if node
+	== RootNode.  Not sure if this is actually correct, but it's
+	required given our implementation of XmlSiteMapProvider.  without
+	this check, we end up assigning RootNode.ParentNode == RootNode,
+	which makes for an infinite loop when we traverse up the tree.
+
 2006-03-15  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* HttpRequest.cs: fixed MakeInputStream method under TARGET_JVM,

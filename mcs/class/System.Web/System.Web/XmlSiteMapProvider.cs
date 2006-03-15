@@ -48,7 +48,18 @@ namespace System.Web
 		string file;
 		SiteMapNode root = null;
 		FileSystemWatcher watcher;
-		
+
+		[MonoTODO]
+		protected internal override void AddNode (SiteMapNode node, SiteMapNode parentNode)
+		{
+			base.AddNode (node, parentNode);
+		}
+
+		protected virtual void AddProvider (string providerName, SiteMapNode parentNode)
+		{
+			throw new NotImplementedException ();
+		}
+
 		public override SiteMapNode BuildSiteMap ()
 		{
 			if (root != null)
@@ -149,15 +160,27 @@ namespace System.Web
 			root = null;
 		}
 
+		protected virtual void Dispose (bool disposing)
+		{
+			if (disposing)
+				watcher.Dispose ();
+		}
+
 		public void Dispose ()
 		{
-			watcher.Dispose ();
+			Dispose (true);
 		}
 		
 		[MonoTODO]
 		public override SiteMapNode FindSiteMapNode (string rawUrl)
 		{
 			return base.FindSiteMapNode (rawUrl); // why did they override this method!?
+		}
+
+		[MonoTODO]
+		public override SiteMapNode FindSiteMapNodeFromKey (string key)
+		{
+			return base.FindSiteMapNodeFromKey (key); // why did they override this method!?
 		}
 
 		public override void Initialize (string name, NameValueCollection attributes)
@@ -182,7 +205,19 @@ namespace System.Web
 				watcher.EnableRaisingEvents = true;
 			}
 		}
-		
+
+		[MonoTODO]
+		protected override void RemoveNode (SiteMapNode node)
+		{
+			base.RemoveNode (node);
+		}
+
+		[MonoTODO]
+		protected virtual void RemoveProvider (string providerName)
+		{
+			base.RemoveProvider (node);
+		}
+
 		void OnFileChanged (object sender, FileSystemEventArgs args)
 		{
 			Clear ();

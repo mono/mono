@@ -58,7 +58,6 @@ namespace System.Web
 						url = UrlUtils.Combine (HttpRuntime.AppDomainAppVirtualPath, url);
 					else
 						url = UrlUtils.ResolveVirtualPathFromAppAbsolute (url);
-					
 					if (FindSiteMapNode (url) != null)
 						throw new InvalidOperationException ();
 				
@@ -68,14 +67,18 @@ namespace System.Web
 				if (FindSiteMapNodeFromKey (node.Key) != null)
 					throw new InvalidOperationException (string.Format ("A node with key {0} already exists.",node.Key));
 				KeyToNode [node.Key] = node;
-				
-				if (parentNode != null) {
-					NodeToParent [node] = parentNode;
-					if (NodeToChildren [parentNode] == null)
-						NodeToChildren [parentNode] = new SiteMapNodeCollection ();
+
+				if (node == RootNode)
+					return;
+
+				if (parentNode == null)
+					parentNode = RootNode;
+
+				NodeToParent [node] = parentNode;
+				if (NodeToChildren [parentNode] == null)
+					NodeToChildren [parentNode] = new SiteMapNodeCollection ();
 					
-					((SiteMapNodeCollection) NodeToChildren [parentNode]).Add (node);
-				}
+				((SiteMapNodeCollection) NodeToChildren [parentNode]).Add (node);
 			}
 		}
 		
@@ -141,7 +144,10 @@ namespace System.Web
 			
 			if (rawUrl.Length > 0) {
 				this.BuildSiteMap();
-				rawUrl = UrlUtils.ResolveVirtualPathFromAppAbsolute (rawUrl);
+				if (UrlUtils.IsRelativeUrl (rawUrl))
+					rawUrl = UrlUtils.Combine (HttpRuntime.AppDomainAppVirtualPath, rawUrl);
+				else
+					rawUrl = UrlUtils.ResolveVirtualPathFromAppAbsolute (rawUrl);
 				SiteMapNode node = (SiteMapNode) UrlToNode [rawUrl];
 				if (node != null && IsAccessibleToUser (HttpContext.Current, node))
 					return node;

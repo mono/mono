@@ -73,10 +73,10 @@ namespace System.Web {
 		
 		public virtual SiteMapNode FindSiteMapNodeFromKey (string key)
 		{
-			if (key == null)
-				throw new ArgumentNullException ("key");
-			
-			return null;
+			/* msdn2 says this function always returns
+			 * null, but it seems to just call
+			 * FindSiteMapNode(string rawUrl) */
+			return FindSiteMapNode (key);
 		}
 
 		public abstract SiteMapNodeCollection GetChildNodes (SiteMapNode node);
@@ -161,13 +161,39 @@ namespace System.Web {
 				securityTrimming = (bool) Convert.ChangeType (attributes ["securityTrimmingEnabled"], typeof(bool));
 		}
 		
-		[MonoTODO]
+		[MonoTODO ("need to implement cases 2 and 3")]
 		public virtual bool IsAccessibleToUser (HttpContext context, SiteMapNode node)
 		{
 			if (context == null) throw new ArgumentNullException ("context");
 			if (node == null) throw new ArgumentNullException ("node");
 
-			return true;
+			/* the node is accessible (according to msdn2)
+			 * if:
+			 *
+			 * 1. the current user is in the node's Roles.
+			 *
+			 * 2. the current thread's WindowsIdentity has
+			 * file access to the url. (and the url is
+			 * located within the current application).
+			 *
+			 * 3. the <authorization> configuration element
+			 * lists the current user as being authorized
+			 * for the node's url. (and the url is located
+			 * within the current application)
+			*/
+
+			/* 1. */
+			foreach (string rolename in node.Roles)
+				if (context.User.IsInRole (rolename))
+					return true;
+
+			/* 2. */
+			/* XXX */
+
+			/* 3. */
+			/* XXX */
+
+			return true; // the default should be false.
 		}
 		
 		public virtual SiteMapNode CurrentNode {
@@ -235,14 +261,22 @@ namespace System.Web {
 		public virtual SiteMapNode RootNode {
 			get {
 				SiteMapNode node = GetRootNodeCore ();
-				if (IsAccessibleToUser (HttpContext.Current, node))
-					return node;
-				else
-					return null;
+				return ReturnNodeIfAccessible (node);
 			}
 		}
 
 		public event SiteMapResolveEventHandler SiteMapResolve;
+
+		internal static SiteMapNode ReturnNodeIfAccessible (SiteMapNode node)
+		{
+			if (node.IsAccessibleToUser (HttpContext.Current))
+				return node;
+			else
+				throw new InvalidOperationException (); /* need
+									 * a
+									 * message
+									 * here */
+		}
 	}
 }
 #endif
