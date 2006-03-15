@@ -1586,6 +1586,7 @@ namespace System.Windows.Forms {
 		X_NoOperation			= 127
 	}
 
+	[Flags]
 	internal enum XIMProperties {
 		XIMPreeditArea		= 0x0001,
 		XIMPreeditCallbacks	= 0x0002,
@@ -1594,7 +1595,7 @@ namespace System.Windows.Forms {
 		XIMPreeditNone		= 0x0010,
 		XIMStatusArea		= 0x0100,
 		XIMStatusCallbacks	= 0x0200,
-		IMStatusNothing		= 0x0400,
+		XIMStatusNothing	= 0x0400,
 		XIMStatusNone		= 0x0800,
 	}
 }

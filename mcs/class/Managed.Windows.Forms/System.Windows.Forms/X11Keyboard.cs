@@ -40,6 +40,9 @@ namespace System.Windows.Forms {
 	internal class X11Keyboard {
 
 		private IntPtr display;
+		private IntPtr xim;
+		private IntPtr xic;
+		private StringBuilder lookup_buffer;
 		private int min_keycode, max_keycode, keysyms_per_keycode, syms;
 		private int [] keyc2vkey = new int [256];
 		private int [] keyc2scan = new int [256];
@@ -51,11 +54,27 @@ namespace System.Windows.Forms {
 		private int NumLockMask;
 		private int AltGrMask;
 		
-		public X11Keyboard (IntPtr display)
+		public X11Keyboard (IntPtr display, IntPtr window)
 		{
 			this.display = display;
+			lookup_buffer = new StringBuilder (24);
+
 			DetectLayout ();
 			CreateConversionArray (layout);
+			if (!XSupportsLocale ()) {
+				Console.Error.WriteLine ("X does not support your locale");
+			}
+
+			if (!XSetLocaleModifiers (String.Empty)) {
+				Console.Error.WriteLine ("Could not set X locale modifiers");
+			}
+
+			xim = XOpenIM (display, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
+			if (xim == IntPtr.Zero) {
+				Console.Error.WriteLine ("Could not get XIM");
+			}
+
+			xic = CreateXic (window);
 		}
 
 		public Keys ModifierKeys {
@@ -69,6 +88,18 @@ namespace System.Windows.Forms {
 					keys |= Keys.Alt;
 				return keys;
 			}
+		}
+
+		public void FocusIn (IntPtr focus_window)
+		{
+			if (xic != IntPtr.Zero)
+				XSetICFocus (xic);
+		}
+
+		public void FocusOut (IntPtr focus_window)
+		{
+			if (xic != IntPtr.Zero)
+				XUnsetICFocus (xic);
 		}
 
 		public bool ResetKeyState(IntPtr hwnd, ref MSG msg) {
@@ -91,8 +122,11 @@ namespace System.Windows.Forms {
 		public void KeyEvent (IntPtr hwnd, XEvent xevent, ref MSG msg)
 		{
 			XKeySym keysym;
+			int ascii_chars;
 
-			XLookupString (ref xevent, IntPtr.Zero, 0, out keysym, IntPtr.Zero);
+			IntPtr status = IntPtr.Zero;
+			ascii_chars = LookupString (ref xevent, 24, out keysym, out status);
+
 			if (((int) keysym >= (int) MiscKeys.XK_ISO_Lock && 
 				(int) keysym <= (int) MiscKeys.XK_ISO_Last_Group_Lock) ||
 				(int) keysym == (int) MiscKeys.XK_Mode_switch) {
@@ -105,10 +139,17 @@ namespace System.Windows.Forms {
 
 			int event_time = (int)xevent.KeyEvent.time;
 
+			if (status == (IntPtr) 2) {
+				// Copy chars into a globally accessible var, i don't think
+				// this var is exposed anywhere though, so we can just ignore this
+				return;
+			}
+
 			AltGrMask = xevent.KeyEvent.state & (0x6000 | (int) KeyMasks.ModMasks);
 			int vkey = EventToVkey (xevent);
-			if (vkey == 0)
-				return;
+			if (vkey == 0) {
+				vkey = (int) VirtualKeys.VK_NONAME;
+			}
 
 			switch ((VirtualKeys) (vkey & 0xFF)) {
 			case VirtualKeys.VK_NUMLOCK:
@@ -118,7 +159,6 @@ namespace System.Windows.Forms {
 				GenerateMessage (VirtualKeys.VK_CAPITAL, 0x3A, xevent.type, event_time);
 				break;
 			default:
-
 				if (((key_state_table [(int) VirtualKeys.VK_NUMLOCK] & 0x01) == 0) != ((xevent.KeyEvent.state & NumLockMask) == 0)) {
 					GenerateMessage (VirtualKeys.VK_NUMLOCK, 0x45, XEventName.KeyPress, event_time);
 					GenerateMessage (VirtualKeys.VK_NUMLOCK, 0x45, XEventName.KeyRelease, event_time);
@@ -156,7 +196,6 @@ namespace System.Windows.Forms {
 
 			string buffer;
 			Msg message;
-
 			int tu = ToUnicode ((int) msg.wParam, Control.HighOrder ((int) msg.lParam), out buffer);
 			switch (tu) {
 			case 1:
@@ -180,6 +219,7 @@ namespace System.Windows.Forms {
 			}
 
 			XEvent e = new XEvent ();
+			e.AnyEvent.type = XEventName.KeyPress;
 			e.KeyEvent.display = display;
 			e.KeyEvent.keycode = 0;
 			e.KeyEvent.state = 0;
@@ -220,16 +260,16 @@ namespace System.Windows.Forms {
 			if (vkey == (int) VirtualKeys.VK_DECIMAL)
 				e.KeyEvent.keycode = XKeysymToKeycode (display, (int) KeypadKeys.XK_KP_Decimal);
 
-			if (e.KeyEvent.keycode == 0) {
+			if (e.KeyEvent.keycode == 0 && vkey != (int) VirtualKeys.VK_NONAME) {
 				// And I couldn't find the keycode so i returned the vkey and was like whatever
 				Console.Error.WriteLine ("unknown virtual key {0:X}", vkey);
 				buffer = String.Empty;
 				return vkey; 
 			}
 
-			IntPtr	buf = Marshal.AllocHGlobal (2);
 			XKeySym t;
-			int res = XLookupString (ref e, buf, 2, out t, IntPtr.Zero);
+			IntPtr status;
+			int res = LookupString (ref e, 24, out t, out status);
 			int keysym = (int) t;
 
 			buffer = String.Empty;
@@ -266,11 +306,8 @@ namespace System.Windows.Forms {
 				}
 
 				if (res != 0) {
-					byte [] bytes = new byte [2];
-					bytes [0] = Marshal.ReadByte (buf);
-					bytes [1] = Marshal.ReadByte (buf, 1);
-					Encoding encoding = Encoding.GetEncoding (layout.CodePage);
-					buffer = new string (encoding.GetChars (bytes));
+					buffer = lookup_buffer.ToString ();
+					res = buffer.Length;
 				}
 			}
 
@@ -366,9 +403,10 @@ namespace System.Windows.Forms {
 
 		public int EventToVkey (XEvent e)
 		{
+			IntPtr status;
 			XKeySym ks;
 
-			XLookupString (ref e, IntPtr.Zero, 0, out ks, IntPtr.Zero);
+			LookupString (ref e, 0, out ks, out status);
 			int keysym = (int) ks;
 
 			if ((keysym >= 0xFFAE) && (keysym <= 0xFFB9) && (keysym != 0xFFAF)
@@ -383,7 +421,6 @@ namespace System.Windows.Forms {
 
 		public void CreateConversionArray (KeyboardLayout layout)
 		{
-
 			XEvent e2 = new XEvent ();
 			int keysym = 0;
 			int [] ckey = new int [] { 0, 0, 0, 0 };
@@ -398,7 +435,10 @@ namespace System.Windows.Forms {
 
 				e2.KeyEvent.keycode = keyc;
 				XKeySym t;
-				XLookupString (ref e2, IntPtr.Zero, 0, out t, IntPtr.Zero);
+
+				IntPtr status;
+				LookupString (ref e2, 0, out t, out status);
+
 				keysym = (int) t;
 				if (keysym != 0) {
 					if ((keysym >> 8) == 0xFF) {
@@ -445,6 +485,7 @@ namespace System.Windows.Forms {
 						
 					}
 
+#if NO
 					for (int i = 0; (i < keysyms_per_keycode) && (vkey == 0); i++) {
 						keysym = (int) XLookupKeysym (ref e2, i);
 						if ((keysym >= (int) VirtualKeys.VK_0 && keysym <= (int) VirtualKeys.VK_9) ||
@@ -507,6 +548,7 @@ namespace System.Windows.Forms {
 						}
 						vkey = oem_vkey;
 					}
+#endif	
 				}
 				keyc2vkey [e2.KeyEvent.keycode] = vkey;
 				keyc2scan [e2.KeyEvent.keycode] = scan;
@@ -611,7 +653,7 @@ namespace System.Windows.Forms {
                                 this.layout = layout;
 				Console.WriteLine (Locale.GetText("Keyboard") + ": " + layout.Comment);
 			} else {
-				Console.WriteLine (Locale.GetText("Keyboard layout not recognized, using default layout: " + layout.Comment));
+				Console.WriteLine (Locale.GetText("Keyboard layout not recognized, using default layout: " + this.layout.Comment));
 			}
 		}
 
@@ -655,9 +697,67 @@ namespace System.Windows.Forms {
 			return 0;
 		}
 
+		internal IntPtr CreateXic (IntPtr window)
+		{
+			xic = XCreateIC (xim, 
+				"inputStyle", XIMProperties.XIMPreeditNothing | XIMProperties.XIMStatusNothing,
+				"clientWindow", window,
+				"focusWindow", window,
+				IntPtr.Zero);
+			return xic;
+		}
+
+		private int LookupString (ref XEvent xevent, int len, out XKeySym keysym, out IntPtr status)
+		{
+			IntPtr keysym_res;
+			int res;
+
+			status = IntPtr.Zero;
+			lookup_buffer.Length = 0;
+			if (xic != IntPtr.Zero)
+				res = XmbLookupString (xic, ref xevent, lookup_buffer, len, out keysym_res,  out status);
+			else
+				res = XLookupString (ref xevent, lookup_buffer, len, out keysym_res, IntPtr.Zero);
+
+			keysym = (XKeySym) keysym_res.ToInt32 ();
+			return res;
+		}
+
 		[DllImport ("libX11")]
-		internal extern static int XLookupString(ref XEvent xevent, IntPtr buffer, int num_bytes, out IntPtr keysym, IntPtr status);
-		internal static int XLookupString (ref XEvent xevent, IntPtr buffer, int num_bytes, out XKeySym keysym, IntPtr status) {
+		private static extern IntPtr XOpenIM (IntPtr display, IntPtr rdb, IntPtr res_name, IntPtr res_class);
+
+		[DllImport ("libX11")]
+		private static extern IntPtr XCreateIC (IntPtr xim, string name, XIMProperties im_style, string name2, IntPtr value2, string name3, IntPtr value3, IntPtr terminator);
+
+		[DllImport ("libX11")]
+		private static extern void XSetICFocus (IntPtr xic);
+
+		[DllImport ("libX11")]
+		private static extern void XUnsetICFocus (IntPtr xic);
+
+		[DllImport ("libX11")]
+		private static extern bool XSupportsLocale ();
+
+		[DllImport ("libX11")]
+		private static extern bool XSetLocaleModifiers (string mods);
+
+		[DllImport ("libX11")]
+		internal extern static int XLookupString(ref XEvent xevent, StringBuilder buffer, int num_bytes, out IntPtr keysym, IntPtr status);
+		[DllImport ("libX11")]
+		internal extern static int XmbLookupString(IntPtr xic, ref XEvent xevent, StringBuilder buffer, int num_bytes, out IntPtr keysym, out IntPtr status);
+
+		internal static int XmbLookupString (IntPtr xic, ref XEvent xevent, StringBuilder buffer, int num_bytes, out XKeySym keysym, out IntPtr status) {
+			IntPtr	keysym_ret;
+			int	ret;
+
+			ret = XmbLookupString (xic, ref xevent, buffer, num_bytes, out keysym_ret, out status);
+
+			keysym = (XKeySym)keysym_ret.ToInt32();
+
+			return ret;
+		}
+
+		internal static int XLookupString (ref XEvent xevent, StringBuilder buffer, int num_bytes, out XKeySym keysym, IntPtr status) {
 			IntPtr	keysym_ret;
 			int	ret;
 
