@@ -1585,4 +1585,16 @@ namespace System.Windows.Forms {
 		X_GetModifierMapping		= 119,
 		X_NoOperation			= 127
 	}
+
+	internal enum XIMProperties {
+		XIMPreeditArea		= 0x0001,
+		XIMPreeditCallbacks	= 0x0002,
+		XIMPreeditPosition	= 0x0004,
+		XIMPreeditNothing	= 0x0008,
+		XIMPreeditNone		= 0x0010,
+		XIMStatusArea		= 0x0100,
+		XIMStatusCallbacks	= 0x0200,
+		IMStatusNothing		= 0x0400,
+		XIMStatusNone		= 0x0800,
+	}
 }

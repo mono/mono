@@ -1,3 +1,7 @@
+2006-03-15  Jackson Harper  <jackson@ximian.com>
+
+	* X11Structs.cs: Add XIMProperties enum.
+
 2006-03-14  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* Control.cs (BringToFront, SendToBack): Don't use window or handle
