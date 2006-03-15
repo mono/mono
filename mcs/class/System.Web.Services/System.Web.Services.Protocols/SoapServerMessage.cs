@@ -53,6 +53,7 @@ namespace System.Web.Services.Protocols {
 			this.action = request.Headers ["SOAPAction"];
 			this.server = server;
 			this.url = request.Url.ToString();
+			ContentEncoding = request.Headers ["Content-Encoding"];
 		}
 
 		internal SoapServerMessage (HttpRequest request, SoapException exception, SoapMethodStubInfo stubInfo, object server, Stream stream)
@@ -62,6 +63,7 @@ namespace System.Web.Services.Protocols {
 			this.stubInfo = stubInfo;
 			this.server = server;
 			this.url = request.Url.ToString();
+			ContentEncoding = request.Headers ["Content-Encoding"];
 		}
 
 		#endregion

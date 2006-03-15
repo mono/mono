@@ -1,3 +1,9 @@
+2006-03-15  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* HttpSoapWebServiceHandler.cs, SoapServerMessage.cs: fixed
+	SoapMessage.ContentEncoding that used in ProcessMessage method
+	in SoapExtension
+
 2006-03-12  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* TypeStubManager.cs: fixed type_to_manager member to be initialized

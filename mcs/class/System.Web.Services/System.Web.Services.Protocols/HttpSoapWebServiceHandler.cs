@@ -129,7 +129,6 @@ namespace System.Web.Services.Protocols
 				SoapServerMessage message = new SoapServerMessage (request, server, stream);
 				message.SetStage (SoapMessageStage.BeforeDeserialize);
 				message.ContentType = ctype;
-				message.ContentEncoding = encoding.WebName;
 
 				// If the routing style is SoapAction, then we can get the method information now
 				// and set it to the SoapMessage
@@ -262,6 +261,9 @@ namespace System.Web.Services.Protocols
 		{
 			SoapMethodStubInfo methodInfo = message.MethodStubInfo;
 			
+			if ((message.ContentEncoding != null) && (message.ContentEncoding.Length > 0))
+				response.AppendHeader("Content-Encoding", message.ContentEncoding);
+
 			response.ContentType = "text/xml; charset=utf-8";
 			if (message.Exception != null) response.StatusCode = 500;
 
