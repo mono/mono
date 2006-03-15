@@ -1,3 +1,13 @@
+2006-03-15  Dick Porter  <dick@ximian.com>
+
+	* events.c: 
+	* io.c: 
+	* mutexes.c: 
+	* processes.c: 
+	* semaphores.c: 
+	* sockets.c: 
+	* threads.c: Explicitly initialise the handle ops struct
+
 2006-03-14  Dick Porter  <dick@ximian.com>
 
 	* handles-private.h: 
