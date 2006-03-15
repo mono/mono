@@ -143,7 +143,7 @@ namespace System.Web.UI.WebControls {
 		[WebCategory ("Misc")]
 		public string PrevPageText {
 			get {
-				if ((styles & Styles.NextPageText) == 0) {
+				if ((styles & Styles.PrevPageText) == 0) {
 					return "&lt;";
 				}
 

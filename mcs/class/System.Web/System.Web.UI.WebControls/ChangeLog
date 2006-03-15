@@ -1,3 +1,7 @@
+2006-03-15  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* DataGridPagerStyle.cs: fixed PrevPageText property
+
 2006-03-13  Chris Toshok  <toshok@ximian.com>
 
 	* BaseCompareValidator.cs (Convert): make the
