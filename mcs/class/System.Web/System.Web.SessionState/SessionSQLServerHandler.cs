@@ -118,9 +118,9 @@ namespace System.Web.SessionState {
 			string id = session.SessionID;
 			if (!session._abandoned) {
 				SessionDictionary dict = session.SessionDictionary;
-				UpdateSession (id, dict);
+				UpdateSessionWithRetry (id, dict);
 			} else {
-				DeleteSession (id);
+				DeleteSessionWithRetry (id);
 			}
 		}
 
@@ -149,7 +149,7 @@ namespace System.Web.SessionState {
 #endif
 					true, config.CookieLess, SessionStateMode.SQLServer, read_only);
 
-			InsertSession (session,
+			InsertSessionWithRetry (session,
 #if NET_2_0
 				       (int)config.Timeout.TotalMinutes
 #else
@@ -189,15 +189,35 @@ namespace System.Web.SessionState {
 				paramPrefix = defaultParamPrefix;
 		}
 
+		IDataReader GetReader (string id)
+		{
+			IDbCommand command = null;
+			command = cnc.CreateCommand();
+			command.CommandText = selectCommand;
+			command.Parameters.Add (CreateParam (command, DbType.String, "SessionID", id));
+			return command.ExecuteReader ();
+		}
+
+		IDataReader GetReaderWithRetry (string id)
+		{
+			try {
+				return GetReader (id);
+			} catch {
+			}
+
+			try {
+				cnc.Close ();
+			} catch {
+			}
+
+			cnc.Open ();
+			return GetReader (id);
+		}
+
 		private HttpSessionState SelectSession (string id, bool read_only)
 		{
 			HttpSessionState session = null;
-			IDbCommand command = cnc.CreateCommand();
-
-			command.CommandText = selectCommand;
-			command.Parameters.Add (CreateParam (command, DbType.String, "SessionID", id));
-
-			using (IDataReader reader = command.ExecuteReader ()) {
+			using (IDataReader reader = GetReaderWithRetry (id)) {
 				if (!reader.Read ())
 					return null;
 
@@ -213,7 +233,7 @@ namespace System.Web.SessionState {
 			}
 		}
 
-		private void InsertSession (HttpSessionState session, int timeout)
+		void InsertSession (HttpSessionState session, int timeout)
 		{
 			IDbCommand command = cnc.CreateCommand ();
 			IDataParameterCollection param;
@@ -233,7 +253,24 @@ namespace System.Web.SessionState {
 			command.ExecuteNonQuery ();
 		}
 
-		private void UpdateSession (string id, SessionDictionary dict)
+		void InsertSessionWithRetry (HttpSessionState session, int timeout)
+		{
+			try {
+				InsertSession (session, timeout);
+				return;
+			} catch {
+			}
+
+			try {
+				cnc.Close ();
+			} catch {
+			}
+
+			cnc.Open ();
+			InsertSession (session, timeout);
+		}
+
+		void UpdateSession (string id, SessionDictionary dict)
 		{
 			IDbCommand command = cnc.CreateCommand ();
 			IDataParameterCollection param;
@@ -248,7 +285,24 @@ namespace System.Web.SessionState {
 			command.ExecuteNonQuery ();
 		}
 
-		private void DeleteSession (string id)
+		void UpdateSessionWithRetry (string id, SessionDictionary dict)
+		{
+			try {
+				UpdateSession (id, dict);
+				return;
+			} catch {
+			}
+
+			try {
+				cnc.Close ();
+			} catch {
+			}
+
+			cnc.Open ();
+			UpdateSession (id, dict);
+		}
+
+		void DeleteSession (string id)
 		{
 			IDbCommand command = cnc.CreateCommand ();
 			IDataParameterCollection param;
@@ -257,6 +311,23 @@ namespace System.Web.SessionState {
 			param = command.Parameters;
 			param.Add (CreateParam (command, DbType.String, "SessionID", id));
 			command.ExecuteNonQuery ();
+		}
+
+		void DeleteSessionWithRetry (string id)
+		{
+			try {
+				DeleteSession (id);
+				return;
+			} catch {
+			}
+
+			try {
+				cnc.Close ();
+			} catch {
+			}
+
+			cnc.Open ();
+			DeleteSession (id);
 		}
 
 		private IDataParameter CreateParam (IDbCommand command, DbType type,
