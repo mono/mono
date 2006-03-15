@@ -1,3 +1,26 @@
+2006-03-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* metadata.c (mono_type_size): Add a fixme.
+	(mono_type_stack_size): Ditto.
+
+	* object-internals.h (MonoReflectionAssemblyBuilder): Added 
+	'type_forwarders' field.
+
+	* tabledefs.h (TYPE_ATTRIBUTE_FORWARDER): Added new (undocumented) type
+	attribute from net 2.0.
+
+	* object.c (mono_vtable_get_static_field_data): Moved this to object.c
+	from class.c.
+
+	* class.c (mono_class_setup_fields): Fix a warning.
+	
+	* class.c (mono_class_from_name): Add support for assemblyref entries
+	in the EXPORTEDTYPE table.
+
+	* reflection.c: Add support for handling type forwarders under net 2.0.
+
+	* appdomain.c (MONO_CORLIB_VERSION): Bump corlib version.	
+	
 2006-03-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* icall.c (ves_icall_System_Reflection_Assembly_GetTypes): Avoid
