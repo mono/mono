@@ -1,3 +1,12 @@
+2006-03-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* jit-icalls.h: New file.
+
+	* Makefile.am mini.c jit-icalls.c: Use a proper include file for the jit
+	icalls and include that instead of including jit-icalls.c.
+
+	* mini-ppc.c (mono_arch_output_basic_block): Remove references to
+	OP_X86 opcodes.
 
 Tue Mar 14 20:23:53 CET 2006 Paolo Molaro <lupus@ximian.com>
 
