@@ -1,3 +1,17 @@
+2006-03-15 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* SessionSQLServerHandler.cs: if the connection to the DB is lost, retry
+	the select/update/insert/delete commands after reconnecting.
+	Fixes bug #77785.
+
+2006-03-04  Robert Jordan  <robertj@gmx.net>
+
+	* SessionSQLServerHandler.cs: make SQL statements and parameters
+	provider independent/configurable.
+	* SessionSQLServerHandler.cs (SelectSession): properly dispose
+	the data reader. Fixes bug #77698.
+
+
 2005-11-28  Chris Toshok  <toshok@ximian.com>
 
 	* SessionStateModule.cs: CONFIGURATION_2_0 work.

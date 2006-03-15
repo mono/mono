@@ -47,6 +47,13 @@ namespace System.Web.SessionState {
 #else
 		private SessionConfig config;
 #endif
+                
+		const string defaultParamPrefix = ":";
+		string paramPrefix;
+		string selectCommand = "SELECT * FROM ASPStateTempSessions WHERE SessionID = :SessionID";
+		string insertCommand = "INSERT INTO ASPStateTempSessions VALUES (:SessionID, :Created, :Expires, :Timeout, :StaticObjectsData, :SessionData)";
+		string updateCommand = "UPDATE ASPStateTempSessions SET SessionData = :SessionData WHERE SessionId = :SessionID";
+		string deleteCommand = "DELETE FROM ASPStateTempSessions WHERE SessionId = :SessionID";
 
 		public void Dispose ()
 		{
@@ -88,6 +95,18 @@ namespace System.Web.SessionState {
 				cnc = null;
 				throw exc;
 			}
+
+			if (paramPrefix != defaultParamPrefix) {
+				ReplaceParamPrefix (ref selectCommand);
+				ReplaceParamPrefix (ref insertCommand);
+				ReplaceParamPrefix (ref updateCommand);
+				ReplaceParamPrefix (ref deleteCommand);
+			}
+		}
+
+		void ReplaceParamPrefix(ref string command)
+		{
+			command = command.Replace (defaultParamPrefix, paramPrefix);
 		}
 
 		public void UpdateHandler (HttpContext context, SessionStateModule module)
@@ -99,9 +118,9 @@ namespace System.Web.SessionState {
 			string id = session.SessionID;
 			if (!session._abandoned) {
 				SessionDictionary dict = session.SessionDictionary;
-				UpdateSession (id, dict);
+				UpdateSessionWithRetry (id, dict);
 			} else {
-				DeleteSession (id);
+				DeleteSessionWithRetry (id);
 			}
 		}
 
@@ -130,7 +149,7 @@ namespace System.Web.SessionState {
 #endif
 					true, config.CookieLess, SessionStateMode.SQLServer, read_only);
 
-			InsertSession (session,
+			InsertSessionWithRetry (session,
 #if CONFIGURATION_2_0
 				       (int)config.Timeout.TotalMinutes
 #else
@@ -148,15 +167,11 @@ namespace System.Web.SessionState {
 			cncTypeName = null;
 			cncString = null;
 
-			NameValueCollection config = ConfigurationSettings.AppSettings as NameValueCollection;
+			NameValueCollection config = ConfigurationSettings.AppSettings;
 			if (config != null) {
-				foreach (string s in config.Keys) {
-					if (0 == String.Compare ("StateDBProviderAssembly", s, true)) {
-						providerAssembly = config [s];
-					} else if (0 == String.Compare ("StateDBConnectionType", s, true)) {
-						cncTypeName = config [s];
-					}
-				}
+				providerAssembly = config ["StateDBProviderAssembly"];
+				cncTypeName = config ["StateDBConnectionType"];
+				paramPrefix = config ["StateDBParamPrefix"];
 			}
 
 			cncString = this.config.SqlConnectionString;
@@ -169,23 +184,40 @@ namespace System.Web.SessionState {
 
 			if (cncString == null || cncString == String.Empty)
 				cncString = "SERVER=127.0.0.1;USER ID=monostate;PASSWORD=monostate;dbname=monostate";
+
+			if (paramPrefix == null || paramPrefix == String.Empty)
+				paramPrefix = defaultParamPrefix;
+		}
+
+		IDataReader GetReader (string id)
+		{
+			IDbCommand command = null;
+			command = cnc.CreateCommand();
+			command.CommandText = selectCommand;
+			command.Parameters.Add (CreateParam (command, DbType.String, "SessionID", id));
+			return command.ExecuteReader ();
+		}
+
+		IDataReader GetReaderWithRetry (string id)
+		{
+			try {
+				return GetReader (id);
+			} catch {
+			}
+
+			try {
+				cnc.Close ();
+			} catch {
+			}
+
+			cnc.Open ();
+			return GetReader (id);
 		}
 
 		private HttpSessionState SelectSession (string id, bool read_only)
 		{
 			HttpSessionState session = null;
-			IDbCommand command = cnc.CreateCommand();
-			IDataReader reader;
-
-			string select = "SELECT * from aspstatetempsessions WHERE SessionID = :SessionID";
-
-			command.CommandText = select;
-
-			command.Parameters.Add (CreateParam (command, DbType.String, ":SessionID", id));
-
-			try {
-				reader = command.ExecuteReader ();
-
+			using (IDataReader reader = GetReaderWithRetry (id)) {
 				if (!reader.Read ())
 					return null;
 
@@ -198,62 +230,104 @@ namespace System.Web.SessionState {
 				session = new HttpSessionState (id, dict, sobjs, 100, false, config.CookieLess,
 						SessionStateMode.SQLServer, read_only);
 				return session;
-			} catch {
-				throw;
 			}
 		}
 
-		private void InsertSession (HttpSessionState session, int timeout)
+		void InsertSession (HttpSessionState session, int timeout)
 		{
 			IDbCommand command = cnc.CreateCommand ();
 			IDataParameterCollection param;
 
-			string insert = "INSERT INTO ASPStateTempSessions VALUES " +
-			"(:SessionID, :Created, :Expires, :Timeout, :StaticObjectsData, :SessionData)";
-
-			command.CommandText = insert;
+			command.CommandText = insertCommand;
 
 			param = command.Parameters;
-			param.Add (CreateParam (command, DbType.String, ":SessionID", session.SessionID));
-			param.Add (CreateParam (command, DbType.DateTime, ":Created", DateTime.Now));
-			param.Add (CreateParam (command, DbType.DateTime, ":Expires", Tommorow ()));
-			param.Add (CreateParam (command, DbType.Int32, ":Timeout", timeout));
-			param.Add (CreateParam (command, DbType.Binary, ":StaticObjectsData",
+			param.Add (CreateParam (command, DbType.String, "SessionID", session.SessionID));
+			param.Add (CreateParam (command, DbType.DateTime, "Created", DateTime.Now));
+			param.Add (CreateParam (command, DbType.DateTime, "Expires", Tommorow ()));
+			param.Add (CreateParam (command, DbType.Int32, "Timeout", timeout));
+			param.Add (CreateParam (command, DbType.Binary, "StaticObjectsData",
 						   session.StaticObjects.ToByteArray ()));
-			param.Add (CreateParam (command, DbType.Binary, ":SessionData",
+			param.Add (CreateParam (command, DbType.Binary, "SessionData",
 						   session.SessionDictionary.ToByteArray ()));
 
 			command.ExecuteNonQuery ();
 		}
 
-		private void UpdateSession (string id, SessionDictionary dict)
+		void InsertSessionWithRetry (HttpSessionState session, int timeout)
+		{
+			try {
+				InsertSession (session, timeout);
+				return;
+			} catch {
+			}
+
+			try {
+				cnc.Close ();
+			} catch {
+			}
+
+			cnc.Open ();
+			InsertSession (session, timeout);
+		}
+
+		void UpdateSession (string id, SessionDictionary dict)
 		{
 			IDbCommand command = cnc.CreateCommand ();
 			IDataParameterCollection param;
 
-			string update = "UPDATE ASPStateTempSessions SET " +
-			"SessionData = :SessionData WHERE SessionId = :SessionID";
-
-			command.CommandText = update;
+			command.CommandText = updateCommand;
 
 			param = command.Parameters;
-			param.Add (CreateParam (command, DbType.String, ":SessionID", id));
-			param.Add (CreateParam (command, DbType.Binary, ":SessionData",
+			param.Add (CreateParam (command, DbType.String, "SessionID", id));
+			param.Add (CreateParam (command, DbType.Binary, "SessionData",
 								dict.ToByteArray ()));
 
 			command.ExecuteNonQuery ();
 		}
 
-		private void DeleteSession (string id)
+		void UpdateSessionWithRetry (string id, SessionDictionary dict)
+		{
+			try {
+				UpdateSession (id, dict);
+				return;
+			} catch {
+			}
+
+			try {
+				cnc.Close ();
+			} catch {
+			}
+
+			cnc.Open ();
+			UpdateSession (id, dict);
+		}
+
+		void DeleteSession (string id)
 		{
 			IDbCommand command = cnc.CreateCommand ();
 			IDataParameterCollection param;
 
-			string update = "DELETE FROM ASPStateTempSessions WHERE SessionId = :SessionID";
-			command.CommandText = update;
+			command.CommandText = deleteCommand;
 			param = command.Parameters;
-			param.Add (CreateParam (command, DbType.String, ":SessionID", id));
+			param.Add (CreateParam (command, DbType.String, "SessionID", id));
 			command.ExecuteNonQuery ();
+		}
+
+		void DeleteSessionWithRetry (string id)
+		{
+			try {
+				DeleteSession (id);
+				return;
+			} catch {
+			}
+
+			try {
+				cnc.Close ();
+			} catch {
+			}
+
+			cnc.Open ();
+			DeleteSession (id);
 		}
 
 		private IDataParameter CreateParam (IDbCommand command, DbType type,
@@ -261,7 +335,7 @@ namespace System.Web.SessionState {
 		{
 			IDataParameter result = command.CreateParameter ();
 			result.DbType = type;
-			result.ParameterName = name;
+			result.ParameterName = paramPrefix + name;
 			result.Value = value;
 			return result;
 		}
