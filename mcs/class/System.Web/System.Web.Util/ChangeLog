@@ -1,3 +1,8 @@
+2006-03-15  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* DataSourceResolver.cs: corrected exceptions type in 
+	ResolveDataSource
+
 2006-02-01  Chris Toshok  <toshok@ximian.com>
 
 	* WebEncoding.cs: CONFIGURATION_2_0 => NET_2_0, and use GetSection

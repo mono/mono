@@ -63,7 +63,7 @@ namespace System.Web.Util {
 			PropertyDescriptorCollection pd = tl.GetItemProperties (new PropertyDescriptor [0]);
 		
 			if (pd == null || pd.Count == 0)
-				throw new Exception ("The selected data source did not contain any data members to bind to");
+				throw new HttpException ("The selected data source did not contain any data members to bind to");
 		
 			PropertyDescriptor member_desc = data_member == "" ?
 				pd [0] :
@@ -73,7 +73,7 @@ namespace System.Web.Util {
 				ds = member_desc.GetValue (member_list [0]) as IEnumerable;
 
 			if (ds == null)
-				throw new Exception ("A list corresponding to the selected DataMember was not found");
+				throw new HttpException ("A list corresponding to the selected DataMember was not found");
 
 			return ds;
 		}
