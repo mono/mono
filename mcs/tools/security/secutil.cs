@@ -47,12 +47,18 @@ class SecUtil {
 	static private void StrongName (string fileName) 
 	{
 		AssemblyName an = AssemblyName.GetAssemblyName (fileName);
-		Console.WriteLine ("PublicKey =");
-		WriteArray (an.GetPublicKey ());
-		Console.WriteLine ("Name =");
-		Console.WriteLine (an.Name);
-		Console.WriteLine ("Version =");
-		Console.WriteLine (an.Version.ToString ());
+		byte[] key = an.GetPublicKey ();
+
+		if (key == null) {
+			error = "Error: Assembly has no strong name";
+		} else {
+			Console.WriteLine ("PublicKey =");
+			WriteArray (key);
+			Console.WriteLine ("Name =");
+			Console.WriteLine (an.Name);
+			Console.WriteLine ("Version =");
+			Console.WriteLine (an.Version.ToString ());
+		}
 	}
 
 	static private void Certificate (string fileName) 
@@ -109,7 +115,7 @@ class SecUtil {
 		Header();
 
 		try {
-			for (int i=0; i < args.Length; i++) {
+			for (int i=0; i < args.Length - 1; i++) {
 				switch (args[i]) {
 				case "-s":
 				case "-strongname":
