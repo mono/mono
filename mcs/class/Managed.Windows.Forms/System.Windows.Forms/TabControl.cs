@@ -623,7 +623,7 @@ namespace System.Windows.Forms {
 
 		private void SizeChangedHandler (object sender, EventArgs e)
 		{
-			ResizeTabPages ();
+			Redraw ();
 		}
 
 		internal void UpdateTabpage (TabPage page)

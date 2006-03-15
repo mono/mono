@@ -1,5 +1,12 @@
 2006-03-15  Jackson Harper  <jackson@ximian.com>
 
+	* TabControl.cs: Redraw the tabs when we resize so their newly
+	calculated sizes are drawn on screen.
+	* X11Keyboard.cs: Begginnings of XIM support.  We also now support
+	composite characters.
+	* XplatUIX11.cs: Keyboard driver needs to know about focus changes
+	- filter events so that composite characters can be created
+	patches by peter
 	* X11Structs.cs: Add XIMProperties enum.
 
 2006-03-14  Peter Dennis Bartok  <pbartok@novell.com> 
