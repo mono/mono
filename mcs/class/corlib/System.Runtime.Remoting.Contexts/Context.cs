@@ -59,7 +59,7 @@ namespace System.Runtime.Remoting.Contexts {
 		// The sink chain that has to be used by all calls exiting the context
 		IMessageSink client_context_sink_chain = null;
 
-		Hashtable datastore;
+		object[] datastore;
 		ArrayList context_properties;
 		bool frozen;
 		
@@ -345,14 +345,14 @@ namespace System.Runtime.Remoting.Contexts {
 		
 		public static LocalDataStoreSlot AllocateDataSlot ()
 		{
-			return new LocalDataStoreSlot ();
+			return new LocalDataStoreSlot (false);
 		}
 		
 		public static LocalDataStoreSlot AllocateNamedDataSlot (string name)
 		{
 			lock (namedSlots.SyncRoot)
 			{
-				LocalDataStoreSlot slot = new LocalDataStoreSlot ();
+				LocalDataStoreSlot slot = AllocateDataSlot ();
 				namedSlots.Add (name, slot);
 				return slot;
 			}
@@ -372,8 +372,9 @@ namespace System.Runtime.Remoting.Contexts {
 			
 			lock (ctx)
 			{
-				if (ctx.datastore == null) return null;
-				return ctx.datastore [slot];
+				if (ctx.datastore != null && slot.slot < ctx.datastore.Length)
+					return ctx.datastore [slot.slot];
+				return null;
 			}
 		}
 		
@@ -392,9 +393,14 @@ namespace System.Runtime.Remoting.Contexts {
 			Context ctx = Thread.CurrentContext;
 			lock (ctx)
 			{
-				if (ctx.datastore == null)
-					ctx.datastore = new Hashtable ();
-				ctx.datastore [slot] = data;
+				if (ctx.datastore == null) {
+					ctx.datastore = new object [slot.slot + 2];
+				} else if (slot.slot >= ctx.datastore.Length) {
+					object[] nslots = new object [slot.slot + 2];
+					ctx.datastore.CopyTo (nslots, 0);
+					ctx.datastore = nslots;
+				}
+				ctx.datastore [slot.slot] = data;
 			}
 		}
 	}

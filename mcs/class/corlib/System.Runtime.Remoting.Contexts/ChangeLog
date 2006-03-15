@@ -1,3 +1,8 @@
+
+Wed Mar 15 16:35:13 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* Context.cs: update for LocalDataStoreSlot changes.
+
 2006-01-31  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* Context.cs: Fixed double check lock.
