@@ -60,12 +60,9 @@ namespace System.Web.UI.WebControls {
 			base.Render (w);
 		}
 
-		[MonoTODO("not sure exactly what this one does..")]
 		void ICompositeControlDesignerAccessor.RecreateChildControls ()
 		{
-			/* for now just call CreateChildControls to force
-			 * the recreation of our children. */
-			CreateChildControls ();
+			RecreateChildControls ();
 		}
 
 		[MonoTODO("not sure exactly what this one does..")]

@@ -33,6 +33,7 @@
 using System;
 using System.Collections;
 using System.ComponentModel;
+using System.Web.UI.HtmlControls;
 
 namespace System.Web.UI.WebControls
 {
@@ -80,10 +81,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
-	    [DefaultValueAttribute (null)]
-	    [DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Content)]
-	    [NotifyParentPropertyAttribute (true)]
-	    [PersistenceModeAttribute (PersistenceMode.InnerProperty)]
+		[DefaultValueAttribute (null)]
+		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Content)]
+		[NotifyParentPropertyAttribute (true)]
+		[PersistenceModeAttribute (PersistenceMode.InnerProperty)]
 		public Style CurrentNodeStyle {
 			get {
 				if (currentNodeStyle == null) {
@@ -98,16 +99,16 @@ namespace System.Web.UI.WebControls
 		[DefaultValue (null)]
 		[TemplateContainer (typeof(SiteMapNodeItem), BindingDirection.OneWay)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
-	    [Browsable (false)]
+		[Browsable (false)]
 		public virtual ITemplate CurrentNodeTemplate {
 			get { return currentNodeTemplate; }
 			set { currentNodeTemplate = value; UpdateControls (); }
 		}
 		
-	    [DefaultValueAttribute (null)]
-	    [DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Content)]
-	    [NotifyParentPropertyAttribute (true)]
-	    [PersistenceModeAttribute (PersistenceMode.InnerProperty)]
+		[DefaultValueAttribute (null)]
+		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Content)]
+		[NotifyParentPropertyAttribute (true)]
+		[PersistenceModeAttribute (PersistenceMode.InnerProperty)]
 		public Style NodeStyle {
 			get {
 				if (nodeStyle == null) {
@@ -122,20 +123,16 @@ namespace System.Web.UI.WebControls
 		[DefaultValue (null)]
 		[TemplateContainer (typeof(SiteMapNodeItem), BindingDirection.OneWay)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
-	    [Browsable (false)]
+		[Browsable (false)]
 		public virtual ITemplate NodeTemplate {
 			get { return nodeTemplate; }
 			set { nodeTemplate = value; UpdateControls (); }
 		}
 		
-	    [DefaultValueAttribute (-1)]
-	    [ThemeableAttribute (false)]
+		[DefaultValueAttribute (-1)]
+		[ThemeableAttribute (false)]
 		public virtual int ParentLevelsDisplayed {
-			get {
-				object ob = ViewState ["ParentLevelsDisplayed"];
-				if (ob != null) return (int) ob;
-				else return -1;
-			}
+			get { return ViewState.GetInt ("ParentLevelsDisplayed", -1); }
 			set {
 				if (value < -1) throw new ArgumentOutOfRangeException ("value");
 				ViewState ["ParentLevelsDisplayed"] = value;
@@ -143,13 +140,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
-	    [DefaultValueAttribute (PathDirection.RootToCurrent)]
+		[DefaultValueAttribute (PathDirection.RootToCurrent)]
 		public virtual PathDirection PathDirection {
-			get {
-				object ob = ViewState ["PathDirection"];
-				if (ob != null) return (PathDirection) ob;
-				else return PathDirection.RootToCurrent;
-			}
+			get { return (PathDirection)ViewState.GetInt ("PathDirection", (int)PathDirection.RootToCurrent); }
 			set {
 				if (value != PathDirection.RootToCurrent && value != PathDirection.CurrentToRoot)
 					throw new ArgumentOutOfRangeException ("value");
@@ -158,24 +151,20 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
-	    [DefaultValueAttribute (" > ")]
-	    [LocalizableAttribute (true)]
+		[DefaultValueAttribute (" > ")]
+		[LocalizableAttribute (true)]
 		public virtual string PathSeparator {
-			get {
-				object ob = ViewState ["PathSeparator"];
-				if (ob != null) return (string) ob;
-				else return " > ";
-			}
+			get { return ViewState.GetString ("PathSeparator", ">"); }
 			set {
 				ViewState ["PathSeparator"] = value;
 				UpdateControls ();
 			}
 		}
 		
-	    [DefaultValueAttribute (null)]
-	    [DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Content)]
-	    [NotifyParentPropertyAttribute (true)]
-	    [PersistenceModeAttribute (PersistenceMode.InnerProperty)]
+		[DefaultValueAttribute (null)]
+		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Content)]
+		[NotifyParentPropertyAttribute (true)]
+		[PersistenceModeAttribute (PersistenceMode.InnerProperty)]
 		public Style PathSeparatorStyle {
 			get {
 				if (pathSeparatorStyle == null) {
@@ -190,14 +179,14 @@ namespace System.Web.UI.WebControls
 		[DefaultValue (null)]
 		[TemplateContainer (typeof(SiteMapNodeItem), BindingDirection.OneWay)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
-	    [Browsable (false)]
+		[Browsable (false)]
 		public virtual ITemplate PathSeparatorTemplate {
 			get { return pathSeparatorTemplate; }
 			set { pathSeparatorTemplate = value; UpdateControls (); }
 		}
 		
-	    [BrowsableAttribute (false)]
-	    [DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
+		[BrowsableAttribute (false)]
+		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
 		public SiteMapProvider Provider {
 			get {
 				if (provider == null) {
@@ -219,23 +208,19 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
-	    [DefaultValueAttribute (false)]
+		[DefaultValueAttribute (false)]
 		public virtual bool RenderCurrentNodeAsLink {
-			get {
-				object o = ViewState ["RenderCurrentNodeAsLink"];
-				if (o != null) return (bool) o;
-				else return false;
-			}
+			get { return ViewState.GetBool ("RenderCurrentNodeAsLink", false); }
 			set {
 				ViewState ["RenderCurrentNodeAsLink"] = value;
 				UpdateControls ();
 			}
 		}
 		
-	    [DefaultValueAttribute (null)]
-	    [DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Content)]
-	    [NotifyParentPropertyAttribute (true)]
-	    [PersistenceModeAttribute (PersistenceMode.InnerProperty)]
+		[DefaultValueAttribute (null)]
+		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Content)]
+		[NotifyParentPropertyAttribute (true)]
+		[PersistenceModeAttribute (PersistenceMode.InnerProperty)]
 		public Style RootNodeStyle {
 			get {
 				if (rootNodeStyle == null) {
@@ -250,34 +235,26 @@ namespace System.Web.UI.WebControls
 		[DefaultValue (null)]
 		[TemplateContainer (typeof(SiteMapNodeItem), BindingDirection.OneWay)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
-	    [Browsable (false)]
+		[Browsable (false)]
 		public virtual ITemplate RootNodeTemplate {
 			get { return rootNodeTemplate; }
 			set { rootNodeTemplate = value; UpdateControls (); }
 		}
 		
-	    [DefaultValueAttribute (true)]
-	    [ThemeableAttribute (false)]
+		[DefaultValueAttribute (true)]
+		[ThemeableAttribute (false)]
 		public virtual bool ShowToolTips {
-			get {
-				object o = ViewState ["ShowToolTips"];
-				if (o != null) return (bool) o;
-				else return true;
-			}
+			get { return ViewState.GetBool ("ShowToolTips", true); }
 			set {
 				ViewState ["ShowToolTips"] = value;
 				UpdateControls ();
 			}
 		}
 		
-	    [DefaultValueAttribute ("")]
-	    [ThemeableAttribute (false)]
+		[DefaultValueAttribute ("")]
+		[ThemeableAttribute (false)]
 		public virtual string SiteMapProvider {
-			get {
-				object o = ViewState ["SiteMapProvider"];
-				if (o != null) return (string) o;
-				else return string.Empty;
-			}
+			get { return ViewState.GetString ("SiteMapProvider", ""); }
 			set {
 				ViewState ["SiteMapProvider"] = value;
 				UpdateControls ();
@@ -285,15 +262,10 @@ namespace System.Web.UI.WebControls
 		}
 
 		[Localizable (true)]
-		[MonoTODO]
 		public virtual string SkipLinkText 
 		{
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+			get { return ViewState.GetString ("SkipLinkText", "Skip Navigation Links"); }
+			set { ViewState["SkipLinkText"] = value; }
 		}
 		
 		
@@ -302,23 +274,27 @@ namespace System.Web.UI.WebControls
 			ChildControlsCreated = false;
 		}
 
-		[MonoTODO]
 		public override void DataBind ()
 		{
-			throw new NotImplementedException ();
-		}
-		
-		protected override void AddAttributesToRender (HtmlTextWriter writer)
-		{
-			base.AddAttributesToRender (writer);
+			base.DataBind ();
+
+			/* the child controls get bound in
+			 * base.DataBind */
+			foreach (Control c in Controls) {
+				if (c is SiteMapNodeItem) {
+					SiteMapNodeItem it = (SiteMapNodeItem)c;
+					OnItemDataBound (new SiteMapNodeItemEventArgs (it));
+				}
+			}
 		}
 		
 		protected internal override void CreateChildControls ()
 		{
 			Controls.Clear ();
 			CreateControlHierarchy ();
+			DataBind ();
 		}
-		
+
 		protected virtual void CreateControlHierarchy ()
 		{
 			ArrayList nodes = new ArrayList ();
@@ -350,9 +326,6 @@ namespace System.Web.UI.WebControls
 				
 				SiteMapNodeItemEventArgs args = new SiteMapNodeItemEventArgs (it);
 				OnItemCreated (args);
-				
-				it.DataBind ();
-				OnItemDataBound (args);
 				
 				nodes.Add (it);
 				node = node.ParentNode;
@@ -461,12 +434,13 @@ namespace System.Web.UI.WebControls
 			if (states[4] != null) ((IStateManager)RootNodeStyle).LoadViewState (states[4]);
 		}
 
-		[MonoTODO]
+		[MonoTODO ("why override?")]
 		protected override void OnDataBinding (EventArgs e)
 		{
-			throw new NotImplementedException ();
+			base.OnDataBinding (e);
 		}
 		
+		[MonoTODO ("why override?")]
 		protected internal override void Render (HtmlTextWriter w)
 		{
 			base.Render (w);
@@ -474,7 +448,31 @@ namespace System.Web.UI.WebControls
 
 		protected internal override void RenderContents (HtmlTextWriter w)
 		{
+			string skip_id = ClientID + "_SkipLink";
+
+			if (SkipLinkText != "") {
+				HtmlAnchor anchor = new HtmlAnchor ();
+				anchor.HRef = "#" + skip_id;
+
+				HtmlImage img = new HtmlImage ();
+				img.Src = Page.ClientScript.GetWebResourceUrl (typeof (SiteMapPath), "transparent.gif");
+				img.Width = 0;
+				img.Height = 0;
+				img.Alt = SkipLinkText;
+				img.Border = 0;
+
+				anchor.Controls.Add (img);
+
+				anchor.Render (w);
+			}
+
 			base.RenderContents (w);
+
+			if (SkipLinkText != "") {
+				HtmlAnchor anchor = new HtmlAnchor ();
+				anchor.ID = skip_id;
+				anchor.Render (w);
+			}
 		}
 		
 		protected override object SaveViewState ()

@@ -65,7 +65,18 @@ namespace System.Web.UI.WebControls {
 		protected virtual IDataSource GetDataSource ()
 		{
 			if (IsBoundUsingDataSourceID) {
-				Control ctrl = NamingContainer.FindControl (DataSourceID);
+				Control namingContainer;
+				Control ctrl = null;
+
+				namingContainer = NamingContainer;
+				
+				while (namingContainer != null) {
+					ctrl = namingContainer.FindControl (DataSourceID);
+					if (ctrl != null)
+						break;
+					namingContainer = namingContainer.NamingContainer;
+				}
+
 				if (ctrl == null)
 					throw new HttpException (string.Format ("A control with ID '{0}' could not be found.", DataSourceID));
 				if (!(ctrl is IDataSource))

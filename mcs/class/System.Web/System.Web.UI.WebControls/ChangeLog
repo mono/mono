@@ -1,3 +1,33 @@
+2006-03-15  Chris Toshok  <toshok@ximian.com>
+
+	* SiteMapDataSourceView.cs (OnDataSourceViewChanged): override.
+
+	* SiteMapDataSource.cs (StartingNodeOffset): new property.
+	(GetStartNode): add code to handle StartNodeOffset < 0.
+
+	* CompositeControl.cs
+	(ICompositeControlDesignerAccessor.RecreateChildControls): just
+	call the non-iface method.
+
+	* DataBoundControl.cs (GetDataSource): this is likely wrong, but
+	traverse up the naming container tree looking for our datasource
+	if we're bound using a DataSourceID.  This fixes things in the
+	sitemap1 test, which uses a mixture of templates and
+	ContentPlaceholders with the sitemapdatasource and sitemappath at
+	different levels in the naming container tree (let along the
+	itemnode template.)
+
+	* SiteMapPath.cs (DataBind): implement this by chaining up to
+	base.DataBind, then by looping over our children, emitting
+	OnItemDataBound for each SiteMapNodeItem.
+	(AddAttributesToRender): remove.
+	(CreateChildControls): call DataBind as the final step here..  I
+	have, of course, no idea if this is right.
+	(CreateControlHierarchy): don't databind our children here, as
+	they need to be in the Controls collection before we do.
+	(RenderContents): render our accessibility/screenreader stuff
+	here, if SkipLinkText != "".
+
 2006-03-15  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* DataGridPagerStyle.cs: fixed PrevPageText property

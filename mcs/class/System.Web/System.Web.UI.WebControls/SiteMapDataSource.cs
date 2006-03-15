@@ -93,11 +93,7 @@ namespace System.Web.UI.WebControls
 		
 		[DefaultValueAttribute ("")]
 		public virtual string SiteMapProvider {
-			get {
-				object o = ViewState ["SiteMapProvider"];
-				if (o != null) return (string) o;
-				else return string.Empty;
-			}
+			get { return ViewState.GetString ("SiteMapProvider", ""); }
 			set {
 				ViewState ["SiteMapProvider"] = value;
 				OnDataSourceChanged (EventArgs.Empty);
@@ -108,24 +104,22 @@ namespace System.Web.UI.WebControls
 		[EditorAttribute ("System.Web.UI.Design.UrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		[UrlPropertyAttribute]
 		public virtual string StartingNodeUrl {
-			get {
-				object o = ViewState ["StartingNodeUrl"];
-				if (o != null) return (string) o;
-				else return string.Empty;
-			}
+			get { return ViewState.GetString ("StartingNodeUrl", ""); }
 			set {
 				ViewState ["StartingNodeUrl"] = value;
 				OnDataSourceChanged (EventArgs.Empty);
 			}
 		}
+
+		[DefaultValue (0)]
+		public virtual int StartingNodeOffset {
+			get { return ViewState.GetInt ("StartingNodeOffset", 0); }
+			set { ViewState["StartingNodeOffset"] = value; }
+		}
 		
 		[DefaultValueAttribute (false)]
 		public virtual bool StartFromCurrentNode {
-			get {
-				object o = ViewState ["StartFromCurrentNode"];
-				if (o != null) return (bool) o;
-				else return false;
-			}
+			get { return ViewState.GetBool ("StartFromCurrentNode", false); }
 			set {
 				ViewState ["StartFromCurrentNode"] = value;
 				OnDataSourceChanged (EventArgs.Empty);
@@ -134,11 +128,7 @@ namespace System.Web.UI.WebControls
 		
 		[DefaultValueAttribute (true)]
 		public virtual bool ShowStartingNode {
-			get {
-				object o = ViewState ["ShowStartingNode"];
-				if (o != null) return (bool) o;
-				else return true;
-			}
+			get { return ViewState.GetBool ("ShowStartingNode", true); }
 			set {
 				ViewState ["ShowStartingNode"] = value;
 				OnDataSourceChanged (EventArgs.Empty);
@@ -167,8 +157,11 @@ namespace System.Web.UI.WebControls
 				return new SiteMapHierarchicalDataSourceView (node.ChildNodes);
 		}
 		
+		[MonoTODO ("handle StartNodeOffsets > 0")]
 		SiteMapNode GetStartNode (string viewPath)
 		{
+			SiteMapNode starting_node;
+
 			if (viewPath != null && viewPath.Length != 0) {
 				string url = MapUrl (StartingNodeUrl);
 				return Provider.FindSiteMapNode (url);
@@ -176,16 +169,30 @@ namespace System.Web.UI.WebControls
 			else if (StartFromCurrentNode) {
 				if (StartingNodeUrl.Length != 0)
 					throw new InvalidOperationException ("StartingNodeUrl can't be set if StartFromCurrentNode is set to true.");
-				return Provider.CurrentNode;
+				starting_node = Provider.CurrentNode;
 			}
 			else if (StartingNodeUrl.Length != 0) {
 				string url = MapUrl (StartingNodeUrl);
 				SiteMapNode node = Provider.FindSiteMapNode (url);
 				if (node == null) throw new ArgumentException ("Can't find a site map node for the url: " + StartingNodeUrl);
-				return node;
+
+				starting_node = node;
 			}
 			else
-				return Provider.RootNode;
+				starting_node = Provider.RootNode;
+
+			int i;
+			if (StartingNodeOffset < 0) {
+				for (i = StartingNodeOffset; i < 0; i ++) {
+					if (starting_node.ParentNode == null)
+						break;
+					starting_node = starting_node.ParentNode;
+				}
+			}
+			else if (StartingNodeOffset > 0) {
+			}
+
+			return starting_node;
 		}
 		
 		string MapUrl (string url)

@@ -64,6 +64,13 @@ namespace System.Web.UI.WebControls
 			arguments.RaiseUnsupportedCapabilitiesError (this);
 			return collection;
 		}
+
+		[MonoTODO]
+		protected override void OnDataSourceViewChanged (EventArgs e)
+		{
+			base.OnDataSourceViewChanged (e);
+		}
+
 	}
 }
 #endif
