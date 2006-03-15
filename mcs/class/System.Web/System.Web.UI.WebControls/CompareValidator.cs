@@ -69,7 +69,7 @@ namespace System.Web.UI.WebControls {
 				return base.ControlPropertiesValid();
 
 			/* attempt to locate the ControlToCompare somewhere on the page */
-			Control control = Page.FindControl (ControlToCompare);
+			Control control = NamingContainer.FindControl (ControlToCompare);
 			if (control == null)
 				throw new HttpException (String.Format ("Unable to locate ControlToCompare with id `{0}'", ControlToCompare));
 

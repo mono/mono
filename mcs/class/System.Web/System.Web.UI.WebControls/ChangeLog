@@ -1,3 +1,8 @@
+2006-03-15 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CompareValidator.cs: when searching for the control to compare, use
+	NamingContainer instead of Page. Fixes bug #77793.
+
 2006-03-13 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ListBox.cs:
