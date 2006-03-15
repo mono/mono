@@ -61,6 +61,9 @@ namespace System.Windows.Forms
 		ListView owner;
 		bool selected;
 
+		internal int row;
+		internal int col;
+
 		#endregion Instance Variables
 
 		#region Public Constructors

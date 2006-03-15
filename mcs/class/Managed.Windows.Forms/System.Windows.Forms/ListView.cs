@@ -840,6 +840,10 @@ namespace System.Windows.Forms
 			}
 		}
 
+		int rows;
+		int cols;
+		ListViewItem[,] item_matrix;
+
 		void LayoutIcons (bool large_icons, bool left_aligned, int x_spacing, int y_spacing)
 		{
 			header_control.Visible = false;
@@ -851,9 +855,7 @@ namespace System.Windows.Forms
 
 			Size sz = large_icons ? LargeIconItemSize : SmallIconItemSize;
 
-			int rows, cols;
-
-			Rectangle area = item_control.ClientRectangle;
+			Rectangle area = ClientRectangle;
 
 			if (left_aligned) {
 				rows = (int) Math.Floor ((double)area.Height / (double)(sz.Height + y_spacing));
@@ -869,6 +871,7 @@ namespace System.Windows.Forms
 
 			layout_ht = rows * (sz.Height + y_spacing) - y_spacing;
 			layout_wd = cols * (sz.Width + x_spacing) - x_spacing;
+			item_matrix = new ListViewItem [rows, cols];
 			int row = 0;
 			int col = 0;
 			foreach (ListViewItem item in items) {
@@ -876,6 +879,9 @@ namespace System.Windows.Forms
 				int y = row * (sz.Height + y_spacing);
 				item.Location = new Point (x, y);
 				item.Layout ();
+				item.row = row;
+				item.col = col;
+				item_matrix [row, col] = item;
 				if (left_aligned) {
 					if (++row == rows) {
 						row = 0;
@@ -1011,6 +1017,54 @@ namespace System.Windows.Forms
 			return true;
 		}
 
+		int GetAdjustedIndex (Keys key)
+		{
+			int result = -1;
+
+			if (View == View.Details) {
+				if (key == Keys.Up)
+					result = FocusedItem.Index - 1;
+				else if (key == Keys.Down) {
+					result = FocusedItem.Index + 1;
+					if (result == items.Count)
+						result = -1;
+				}
+				return result;
+			}
+
+			int row = FocusedItem.row;
+			int col = FocusedItem.col;
+
+			switch (key) {
+			case Keys.Left:
+				if (col == 0)
+					return -1;
+				return item_matrix [row, col - 1].Index;
+
+			case Keys.Right:
+				if (col == (cols - 1))
+					return -1;
+				while (item_matrix [row, col + 1] == null)
+				       row--;	
+				return item_matrix [row, col + 1].Index;
+
+			case Keys.Up:
+				if (row == 0)
+					return -1;
+				return item_matrix [row - 1, col].Index;
+
+			case Keys.Down:
+				if (row == (rows - 1))
+					return -1;
+				while (item_matrix [row + 1, col] == null)
+				       col--;	
+				return item_matrix [row + 1, col].Index;
+
+			default:
+				return -1;
+			}
+		}
+
 		private void ListView_KeyDown (object sender, KeyEventArgs ke)
 		{			
 			if (ke.Handled || Items.Count == 0)
@@ -1021,12 +1075,6 @@ namespace System.Windows.Forms
 
 			switch (ke.KeyCode) {
 
-			case Keys.Down:
-				if (focused_item != null && focused_item.Index + 1 < Items.Count) {
-					index = focused_item.Index + 1;
-				}
-				break;
-
 			case Keys.End:
 				index = Items.Count - 1;
 				break;
@@ -1036,39 +1084,10 @@ namespace System.Windows.Forms
 				break;
 
 			case Keys.Left:
-				if (focused_item != null)
-					index = focused_item.Index;
-				else
-					break;
-
-				if (index > 0)
-					index -= 1;
-									
-				break;
-
 			case Keys.Right:
-				if (focused_item != null)
-					index = focused_item.Index + 1;
-				else
-					index = 1;
-
-				if (index == items.Count)
-					index = -1;
-
-				break;
-
 			case Keys.Up:				
-				if (focused_item != null)
-					index = focused_item.Index;
-				else
-					break;
-
-				if (index > 0)
-					index--;
-
-				if (index < 0) {
-					index = -1;
-				}
+			case Keys.Down:
+				index = GetAdjustedIndex (ke.KeyCode);
 				break;
 
 			default:

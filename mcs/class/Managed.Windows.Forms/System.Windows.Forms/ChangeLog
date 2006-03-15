@@ -1,3 +1,10 @@
+2006-03-15  Mike Kestner  <mkestner@novell.com>
+
+	* ListView.cs: keep a matrix of the icon mode layout to facilitate
+	keyboard navigation. Support Up/Down/Left/Right selection correctly
+	for all 4 View modes.
+	* ListViewItem.cs: add internal row/col fields for icon layouts.
+
 2006-03-15  Jackson Harper  <jackson@ximian.com>
 
 	* TabControl.cs: Redraw the tabs when we resize so their newly
