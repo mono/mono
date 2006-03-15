@@ -1,3 +1,7 @@
+2006-03-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* main.c (typedef_flags): Decode TYPE_ATTRIBUTE_FORWARDER.
+
 2006-02-21  Ankit Jain  <jankit@novell.com>
 
 	* get.c (can_print_generic_param_name): Rename to ..
