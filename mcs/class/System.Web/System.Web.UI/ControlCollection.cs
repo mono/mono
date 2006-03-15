@@ -183,7 +183,7 @@ namespace System.Web.UI {
 				throw new ArgumentOutOfRangeException ("index", Locale.GetText ("Value has to be >= 0."));
 
 			for (int i=0; i < count; i++)
-				array.SetValue (controls [i], i);
+				array.SetValue (controls [i], i + index);
 		}
 
 		public

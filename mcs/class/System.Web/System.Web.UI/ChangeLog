@@ -1,3 +1,8 @@
+2006-03-15  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* ControlCollection.cs: fixed CopyTo method, fixes bug when if target 
+	index is not zero
+
 2006-03-13  Chris Toshok  <toshok@ximian.com>
 
 	* HtmlTextWriterTag.cs: no [Serializable] in 2.0.
