@@ -1,5 +1,11 @@
 2006-03-15  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
+	* SoapServerMessage.cs: fixed SoapServerMessage constructors to
+	remove quotes from SoapAction http header when initializing local
+	action member
+
+2006-03-15  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
 	* HttpSoapWebServiceHandler.cs, SoapServerMessage.cs: fixed
 	SoapMessage.ContentEncoding that used in ProcessMessage method
 	in SoapExtension

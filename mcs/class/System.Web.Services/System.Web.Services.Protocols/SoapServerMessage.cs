@@ -51,6 +51,8 @@ namespace System.Web.Services.Protocols {
 			: base (stream, null)
 		{
 			this.action = request.Headers ["SOAPAction"];
+			if (this.action != null)
+				this.action = action.Trim ('"',' ');
 			this.server = server;
 			this.url = request.Url.ToString();
 			ContentEncoding = request.Headers ["Content-Encoding"];
@@ -60,6 +62,8 @@ namespace System.Web.Services.Protocols {
 			: base (stream, exception)
 		{
 			this.action = request.Headers ["SOAPAction"];
+			if (this.action != null)
+				this.action = action.Trim ('"',' ');
 			this.stubInfo = stubInfo;
 			this.server = server;
 			this.url = request.Url.ToString();
