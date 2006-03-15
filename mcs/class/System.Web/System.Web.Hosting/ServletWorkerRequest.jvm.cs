@@ -97,17 +97,16 @@ namespace System.Web.Hosting {
 			_HttpServletRequest = req;
 			_HttpServletResponse = resp;
 
-			string requestUri = req.getRequestURI();
+			_requestUri = HttpUtility.UrlDecode(req.getRequestURI());
 			const int dotInvokeLength = 7; //".invoke".Length
-			if (requestUri.Length > dotInvokeLength &&
-				String.CompareOrdinal(".invoke", 0, requestUri, 
-				requestUri.Length - dotInvokeLength, dotInvokeLength) == 0) {
-				
-				_requestUri = requestUri.Substring(0, requestUri.Length - dotInvokeLength);
+			if (_requestUri.Length > dotInvokeLength &&
+				String.CompareOrdinal(".invoke", 0, _requestUri, 
+				_requestUri.Length - dotInvokeLength, dotInvokeLength) == 0) {
 
-				int paramNameStart = requestUri.LastIndexOf('/');
-				_pathInfo = requestUri.Substring(paramNameStart,
-					requestUri.Length - paramNameStart - dotInvokeLength);
+				_requestUri = _requestUri.Substring(0, _requestUri.Length - dotInvokeLength);
+				
+				int paramNameStart = _requestUri.LastIndexOf('/');
+				_pathInfo = _requestUri.Substring(paramNameStart, _requestUri.Length - paramNameStart);
 			}
 		}
 
@@ -208,18 +207,8 @@ namespace System.Web.Hosting {
 		public override string GetRawUrl () {
 			if (_rawUrl == null) {
 				StringBuilder builder = new StringBuilder();
-				builder.Append(GetProtocol());
-				builder.Append("://");
-				builder.Append(GetServerName());
-				int port = _HttpServletRequest.getServerPort();
-				if (port != 80) {
-					builder.Append(':');
-					builder.Append(port);
-				}
 				builder.Append(GetUriPath());
 				string pathInfo = GetPathInfo();
-				if (pathInfo != null)
-					builder.Append(pathInfo);
 				string query = GetQueryString();
 				if (query != null && query.Length > 0) {
 					builder.Append('?');
@@ -293,7 +282,7 @@ namespace System.Web.Hosting {
 		}
 
 		public override string GetUriPath() {
-			return _requestUri != null ? _requestUri : _HttpServletRequest.getRequestURI();
+			return _requestUri;
 		}
 
 		public override IntPtr GetUserToken() {

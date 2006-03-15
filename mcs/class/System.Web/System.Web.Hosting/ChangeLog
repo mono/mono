@@ -1,3 +1,10 @@
+2006-03-15  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* ServletWorkerRequest.jvm.cs: fixed ctor, UrlDecode applied on 
+	requested url
+	fixed GetRawUrl, removed protocol, hostname and port
+	fixed GetUriPath, _requestUri is always initialized
+
 2006-03-03 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ApplicationHost.cs: ShadowCopyDirectories is not a URL. Set
