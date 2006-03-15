@@ -1,3 +1,8 @@
+2006-03-15  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* System.Web.Services.vmwcsproj: fixed links to Consts.cs, Locale.cs
+	and MonoTODOAttribute.cs
+
 2006-03-12  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* Added System.Web.Services.vmwcsproj, Grasshopper project file
