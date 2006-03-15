@@ -572,6 +572,8 @@ namespace System.Web {
 			buffer = worker_request.GetPreloadedEntityBody ();
 			if (buffer != null){
 				total = buffer.Length;
+				if (content_length > 0)
+					total = Math.Min (content_length, total);
 				Array.Copy (buffer, content, total);
 			} else
 				total = 0;

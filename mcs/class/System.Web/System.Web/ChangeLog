@@ -1,3 +1,8 @@
+2006-03-15  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* HttpRequest.cs: fixed MakeInputStream method under TARGET_JVM,
+	fixed if content lenght value is less that byte received
+
 2006-03-10  Chris Toshok  <toshok@ximian.com>
 
 	* StaticSiteMapProvider.cs (UrlToNode): this entire file is #if
