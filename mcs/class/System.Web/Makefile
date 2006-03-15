@@ -56,6 +56,7 @@ RESOURCE_FILES_2 = \
 	resources/TreeView_t.gif \
 	resources/TreeView_tminus.gif \
 	resources/TreeView_tplus.gif \
+	resources/transparent.gif \
 	resources/callback.js \
 	resources/webform.js \
 	System.Web.UI.WebControls/GridView.js \

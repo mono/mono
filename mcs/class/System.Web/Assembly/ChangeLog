@@ -1,3 +1,7 @@
+2006-03-15  Chris Toshok  <toshok@ximian.com>
+
+	* AssemblyInfo.cs: add a WebResource for transparent.gif.
+
 2005-08-27  Kornél Pál  <kornelpal@hotmail.com>
 
 	* AssemblyInfo.cs: Fixed 48519 to 48944 regressions.

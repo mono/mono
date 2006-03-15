@@ -1,3 +1,7 @@
+2006-03-15  Chris Toshok  <toshok@ximian.com>
+
+	* Makefile (RESOURCE_FILES_2): add transarent.gif.
+
 2006-03-09  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* System.Web.vmwcsproj: grasshopper project file fix,
