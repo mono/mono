@@ -65,6 +65,7 @@ Mono.Xml.Xsl/XslAttributeSet.cs
 Mono.Xml.Xsl/XslDecimalFormat.cs
 Mono.Xml.Xsl/XslKey.cs
 Mono.Xml.Xsl/XslOutput.cs
+Mono.Xml.Xsl/XslSortEvaluator.cs
 Mono.Xml.Xsl/XslStylesheet.cs
 Mono.Xml.Xsl/XslTemplate.cs
 Mono.Xml.Xsl/XslTransformProcessor.cs

@@ -1,3 +1,10 @@
+2006-03-15  Atsushi Enomoto <atsushi@ximian.com>
+
+	* Expression.cs : extracted XPathSortElement, XPathSorters
+	  and XPathSorter from CompiledExpression, and split
+	  XPathSorters.Sort() into some methods. Those changes are to make
+	  them reusable in XslSortEvaluator.
+
 2006-02-26  Atsushi Enomoto <atsushi@ximian.com>
 
 	* Iterator.cs : seems like MS XPathNodeIterator.MoveNext() itself does

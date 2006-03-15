@@ -40,6 +40,7 @@ namespace Mono.Xml.Xsl.Operations {
 	internal class XslForEach : XslCompiledElement {
 		XPathExpression select;
 		XslOperation children;
+		XslSortEvaluator sortEvaluator;
 		
 		public XslForEach (Compiler c) : base (c) {}
 		
@@ -47,6 +48,7 @@ namespace Mono.Xml.Xsl.Operations {
 		{
 			c.AssertAttribute ("select");
 			select = c.CompileExpression (c.GetAttribute ("select"));
+			ArrayList sorterList = null;
 			
 			if (c.Input.MoveToFirstChild ()) {
 				bool alldone = true;
@@ -60,14 +62,18 @@ namespace Mono.Xml.Xsl.Operations {
 						{ alldone = false; break; }
 					if (c.Input.LocalName != "sort")
 						{ alldone = false; break; }
-						
-					c.AddSort (select, new Sort (c));
-					
+					//c.AddSort (select, new Sort (c));
+					if (sorterList == null)
+						sorterList = new ArrayList ();
+					sorterList.Add (new Sort (c));
 				} while (c.Input.MoveToNext ());
 				if (!alldone)
 					children = c.CompileTemplateContent ();
 				c.Input.MoveToParent ();
 			}
+			if (sorterList != null)
+				sortEvaluator = new XslSortEvaluator (select,
+					(Sort []) sorterList.ToArray (typeof (Sort)));
 		}
 		
 		public override void Evaluate (XslTransformProcessor p)
@@ -75,7 +81,11 @@ namespace Mono.Xml.Xsl.Operations {
 			if (children == null)
 				return;
 
-			p.PushNodeset (p.Select (select));
+			XPathNodeIterator iter = sortEvaluator != null ?
+				sortEvaluator.SortedSelect (p) :
+				p.Select (select);
+
+			p.PushNodeset (iter);
 			p.PushForEachContext ();
 			
 			while (p.NodesetMoveNext ())

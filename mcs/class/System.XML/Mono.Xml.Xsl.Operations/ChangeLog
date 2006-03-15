@@ -1,3 +1,9 @@
+2005-03-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XslApplyTemplates.cs, XslSort.cs : use new XslSortEvaluator.cs
+	  instead of XPathExpression.AddSort() to handle XSLT current node
+	  context correctly.
+
 2005-12-23  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* XslVariable.cs: Beautify error messages.

@@ -49,20 +49,18 @@ namespace Mono.Xml.Xsl
 		XslStylesheet style;
 		Hashtable globalVariables;
 		Hashtable attrSets;
-		ExpressionStore exprStore;
 		XmlNamespaceManager nsMgr;
 		Hashtable keys;
 		Hashtable outputs;
 		Hashtable decimalFormats;
 		MSXslScriptManager msScripts;
 		
-		public CompiledStylesheet (XslStylesheet style, Hashtable globalVariables, Hashtable attrSets, ExpressionStore exprStore, XmlNamespaceManager nsMgr, Hashtable keys, Hashtable outputs, Hashtable decimalFormats,
+		public CompiledStylesheet (XslStylesheet style, Hashtable globalVariables, Hashtable attrSets, XmlNamespaceManager nsMgr, Hashtable keys, Hashtable outputs, Hashtable decimalFormats,
 			MSXslScriptManager msScripts)
 		{
 			this.style = style;
 			this.globalVariables = globalVariables;
 			this.attrSets = attrSets;
-			this.exprStore = exprStore;
 			this.nsMgr = nsMgr;
 			this.keys = keys;
 			this.outputs = outputs;
@@ -71,7 +69,6 @@ namespace Mono.Xml.Xsl
 		}
 		public Hashtable Variables {get{return globalVariables;}}
 		public XslStylesheet Style { get { return style; }}
-		public ExpressionStore ExpressionStore {get{return exprStore;}}
 		public XmlNamespaceManager NamespaceManager {get{return nsMgr;}}
 		public Hashtable Keys {get { return keys;}}
 		public Hashtable Outputs { get { return outputs; }}
@@ -118,7 +115,6 @@ namespace Mono.Xml.Xsl
 		Hashtable globalVariables = new Hashtable ();
 		Hashtable attrSets = new Hashtable ();
 	
-		ExpressionStore exprStore = new ExpressionStore ();
 		XmlNamespaceManager nsMgr = new XmlNamespaceManager (new NameTable ());
 				
 		XmlResolver res;
@@ -165,7 +161,7 @@ namespace Mono.Xml.Xsl
 				throw new XsltCompileException ("XSLT compile error. " + x.Message, x,  Input);
 			}
 			
-			return new CompiledStylesheet (rootStyle, globalVariables, attrSets, exprStore, nsMgr, keys, outputs, decimalFormats, msScripts);
+			return new CompiledStylesheet (rootStyle, globalVariables, attrSets, nsMgr, keys, outputs, decimalFormats, msScripts);
 		}
 		
 		MSXslScriptManager msScripts = new MSXslScriptManager ();
@@ -354,7 +350,6 @@ namespace Mono.Xml.Xsl
 			Pattern p = Pattern.Compile (pattern, this);
 			if (p == null)
 				throw new XsltCompileException (String.Format ("Invalid pattern '{0}'", pattern), null, loc);
-			exprStore.AddPattern (p, this);
 			
 			return p;
 		}
@@ -375,8 +370,6 @@ namespace Mono.Xml.Xsl
 				expr = new ExprKeyContainer (expr);
 			CompiledExpression e = new CompiledExpression (expression, expr);
 
-			exprStore.AddExpression (e, this);
-			
 			return e;
 		}
 		
@@ -441,10 +434,6 @@ namespace Mono.Xml.Xsl
 			return curVarScope.AddVariable (v);
 		}
 		
-		public void AddSort (XPathExpression e, Sort s)
-		{
-			exprStore.AddSort (e, s);
-		}
 		public VariableScope CurrentVariableScope { get { return curVarScope; }}
 #endregion
 		
@@ -697,8 +686,11 @@ namespace Mono.Xml.Xsl
 			order = ParseOrder (XslAvt.AttemptPreCalc (ref orderAvt));
 			caseOrder = ParseCaseOrder (XslAvt.AttemptPreCalc (ref caseOrderAvt));
 		}
-		
-		
+
+		public bool IsContextDependent {
+			get { return orderAvt != null || caseOrderAvt != null || langAvt != null || dataTypeAvt != null; }
+		}
+
 		string ParseLang (string value)
 		{
 			return value;
@@ -755,48 +747,15 @@ namespace Mono.Xml.Xsl
 				dataTypeAvt == null ? dataType : ParseDataType (dataTypeAvt.Evaluate (p))
 			);
 		}
-	}
-	
-	internal class ExpressionStore {
-		Hashtable exprToSorts;
-		
-		public void AddExpression (XPathExpression e, Compiler c)
-		{		
-		}
-		
-		public void AddPattern (Pattern p, Compiler c)
+
+		public XPathSorter ToXPathSorter (XslTransformProcessor p)
 		{
-		}
-		
-		public void AddSort (XPathExpression e, Sort s)
-		{
-			if (exprToSorts == null)
-				exprToSorts = new Hashtable ();
-			
-			if (exprToSorts.Contains (e))
-				((ArrayList)exprToSorts [e]).Add (s);
-			else {
-				ArrayList a = new ArrayList ();
-				a.Add (s);
-				exprToSorts [e] = a;
-			}
-		}
-		
-		public XPathExpression PrepForExecution (XPathExpression e, XslTransformProcessor p)
-		{
-			if (exprToSorts != null && exprToSorts.Contains (e))
-			{
-				XPathExpression expr = e.Clone ();
-				foreach (Sort s in (ArrayList)exprToSorts [e])
-					s.AddToExpr (expr,p);
-				return expr;
-			}
-			return e;
-		}
-		
-		public bool PatternMatches (Pattern p, XslTransformProcessor proc, XPathNavigator n)
-		{
-			return p.Matches (n, proc.XPathContext);
+			return new XPathSorter (expr, 
+				orderAvt == null ? order : ParseOrder (orderAvt.Evaluate (p)),
+				caseOrderAvt == null ? caseOrder: ParseCaseOrder (caseOrderAvt.Evaluate (p)),
+				langAvt == null ? lang : ParseLang (langAvt.Evaluate (p)),
+				dataTypeAvt == null ? dataType : ParseDataType (dataTypeAvt.Evaluate (p))
+			);
 		}
 	}
 	

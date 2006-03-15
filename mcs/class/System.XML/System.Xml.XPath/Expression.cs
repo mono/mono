@@ -201,179 +201,196 @@ namespace System.Xml.XPath
 			_sorters.Add (expr, orderSort, orderCase, lang, dataType);
 		}
 
-		class XPathSorters : IComparer
+	}
+
+	class XPathSortElement
+	{
+		public XPathNavigator Navigator;
+		public object [] Values;
+	}
+
+	class XPathSorters : IComparer
+	{
+		readonly ArrayList _rgSorters = new ArrayList ();
+
+		public void Add (object expr, IComparer cmp)
 		{
-			readonly ArrayList _rgSorters = new ArrayList ();
+			_rgSorters.Add (new XPathSorter (expr, cmp));
+		}
 
-			public void Add (object expr, IComparer cmp)
-			{
-				_rgSorters.Add (new XPathSorter (expr, cmp));
-			}
+		public void Add (object expr, XmlSortOrder orderSort, XmlCaseOrder orderCase, string lang, XmlDataType dataType)
+		{
+			_rgSorters.Add (new XPathSorter (expr, orderSort, orderCase, lang, dataType));
+		}
 
-			public void Add (object expr, XmlSortOrder orderSort, XmlCaseOrder orderCase, string lang, XmlDataType dataType)
-			{
-				_rgSorters.Add (new XPathSorter (expr, orderSort, orderCase, lang, dataType));
-			}
+		public void CopyFrom (XPathSorter [] sorters)
+		{
+			_rgSorters.Clear ();
+			_rgSorters.AddRange (sorters);
+		}
 
-			public BaseIterator Sort (BaseIterator iter)
-			{
-				ArrayList rgElts = new ArrayList ();
-				int cSorters = _rgSorters.Count;
-				while (iter.MoveNext ())
-				{
-					XPathSortElement elt = new XPathSortElement ();
-					elt.Navigator = iter.Current.Clone ();
-					elt.Values = new object [cSorters];
-					for (int iSorter = 0; iSorter < _rgSorters.Count; ++iSorter)
-					{
-						XPathSorter sorter = (XPathSorter) _rgSorters [iSorter];
-						elt.Values [iSorter] = sorter.Evaluate (iter);
-					}
-					rgElts.Add (elt);
-				}
-				rgElts.Sort (this);
-				XPathNavigator [] rgResults = new XPathNavigator [rgElts.Count];
-				for (int iResult = 0; iResult < rgElts.Count; ++iResult)
-				{
-					XPathSortElement elt = (XPathSortElement) rgElts [iResult];
-					rgResults [iResult] = elt.Navigator;
-				}
-				return new ListIterator (iter, rgResults);
-			}
+		public BaseIterator Sort (BaseIterator iter)
+		{
+			ArrayList rgElts = ToSortElementList (iter);
+			return Sort (rgElts, iter.NamespaceManager);
+		}
 
-			class XPathSortElement
+		ArrayList ToSortElementList (BaseIterator iter)
+		{
+			ArrayList rgElts = new ArrayList ();
+			int cSorters = _rgSorters.Count;
+			while (iter.MoveNext ())
 			{
-				public XPathNavigator Navigator;
-				public object [] Values;
-			}
-
-			int IComparer.Compare (object o1, object o2)
-			{
-				XPathSortElement elt1 = (XPathSortElement) o1;
-				XPathSortElement elt2 = (XPathSortElement) o2;
+				XPathSortElement elt = new XPathSortElement ();
+				elt.Navigator = iter.Current.Clone ();
+				elt.Values = new object [cSorters];
 				for (int iSorter = 0; iSorter < _rgSorters.Count; ++iSorter)
 				{
 					XPathSorter sorter = (XPathSorter) _rgSorters [iSorter];
-					int cmp = sorter.Compare (elt1.Values [iSorter], elt2.Values [iSorter]);
-					if (cmp != 0)
-						return cmp;
+					elt.Values [iSorter] = sorter.Evaluate (iter);
 				}
-				switch (elt1.Navigator.ComparePosition (elt2.Navigator)) {
-				case XmlNodeOrder.Same:
-					return 0;
-				case XmlNodeOrder.After:
-					return 1;
-				default:
-					return -1;
-				}
+				rgElts.Add (elt);
 			}
+			return rgElts;
+		}
 
-			class XPathSorter
+		public BaseIterator Sort (ArrayList rgElts, NSResolver nsm)
+		{
+			rgElts.Sort (this);
+			XPathNavigator [] rgResults = new XPathNavigator [rgElts.Count];
+			for (int iResult = 0; iResult < rgElts.Count; ++iResult)
 			{
-				readonly Expression _expr;
-				readonly IComparer _cmp;
-				readonly XmlDataType _type;
+				XPathSortElement elt = (XPathSortElement) rgElts [iResult];
+				rgResults [iResult] = elt.Navigator;
+			}
+			return new ListIterator (rgResults, nsm);
+		}
 
-				public XPathSorter (object expr, IComparer cmp)
-				{
-					_expr = ExpressionFromObject (expr);
-					_cmp = cmp;
-					_type = XmlDataType.Text;
-				}
-
-				public XPathSorter (object expr, XmlSortOrder orderSort, XmlCaseOrder orderCase, string lang, XmlDataType dataType)
-				{
-					_expr = ExpressionFromObject (expr);
-					_type = dataType;
-					if (dataType == XmlDataType.Number)
-						_cmp = new XPathNumberComparer (orderSort);
-					else
-						_cmp = new XPathTextComparer (orderSort, orderCase, lang);
-				}
-
-				static Expression ExpressionFromObject (object expr)
-				{
-					if (expr is CompiledExpression)
-						return ((CompiledExpression) expr)._expr;
-					if (expr is string)
-						return new XPathParser ().Compile ((string)expr);
-					
-					throw new XPathException ("Invalid query object");
-				}
-
-				public object Evaluate (BaseIterator iter)
-				{
-					if (_type == XmlDataType.Number)
-						return _expr.EvaluateNumber (iter);
-					return _expr.EvaluateString (iter);
-				}
-
-				public int Compare (object o1, object o2)
-				{
-					return _cmp.Compare (o1, o2);
-				}
-
-				class XPathNumberComparer : IComparer
-				{
-					int _nMulSort;
-
-					public XPathNumberComparer (XmlSortOrder orderSort)
-					{
-						_nMulSort = (orderSort == XmlSortOrder.Ascending) ? 1 : -1;
-					}
-
-					int IComparer.Compare (object o1, object o2)
-					{
-						double num1 = (double) o1;
-						double num2 = (double) o2;
-						if (num1 < num2)
-							return -_nMulSort;
-						if (num1 > num2)
-							return _nMulSort;
-						if (num1 == num2)
-							return 0;
-						if (double.IsNaN (num1))
-							return (double.IsNaN (num2)) ? 0 : -_nMulSort;
-						return _nMulSort;
-					}
-				}
-
-				class XPathTextComparer : IComparer
-				{
-					int _nMulSort;
-					int _nMulCase;
-					XmlCaseOrder _orderCase;
-					CultureInfo _ci;
-
-					public XPathTextComparer (XmlSortOrder orderSort, XmlCaseOrder orderCase, string strLang)
-					{
-						_orderCase = orderCase;
-						// FIXME: We have to set this in
-						// reverse order since currently
-						// we don't support collation.
-						_nMulCase = (orderCase == XmlCaseOrder.UpperFirst) ? -1 : 1;
-						_nMulSort = (orderSort == XmlSortOrder.Ascending) ? 1 : -1;
-
-						if (strLang == null || strLang == "")
-							_ci = CultureInfo.CurrentCulture;	// TODO: defer until evaluation?
-						else
-							_ci = new CultureInfo (strLang);
-					}
-
-					int IComparer.Compare (object o1, object o2)
-					{
-						string str1 = (string) o1;
-						string str2 = (string) o2;
-						int cmp = String.Compare (str1, str2, true, _ci);
-						if (cmp != 0 || _orderCase == XmlCaseOrder.None)
-							return cmp * _nMulSort;
-						return _nMulSort * _nMulCase * String.Compare (str1, str2, false, _ci);
-					}
-				}
+		int IComparer.Compare (object o1, object o2)
+		{
+			XPathSortElement elt1 = (XPathSortElement) o1;
+			XPathSortElement elt2 = (XPathSortElement) o2;
+			for (int iSorter = 0; iSorter < _rgSorters.Count; ++iSorter)
+			{
+				XPathSorter sorter = (XPathSorter) _rgSorters [iSorter];
+				int cmp = sorter.Compare (elt1.Values [iSorter], elt2.Values [iSorter]);
+				if (cmp != 0)
+					return cmp;
+			}
+			switch (elt1.Navigator.ComparePosition (elt2.Navigator)) {
+			case XmlNodeOrder.Same:
+				return 0;
+			case XmlNodeOrder.After:
+				return 1;
+			default:
+				return -1;
 			}
 		}
 	}
 
+	class XPathSorter
+	{
+		readonly Expression _expr;
+		readonly IComparer _cmp;
+		readonly XmlDataType _type;
+
+		public XPathSorter (object expr, IComparer cmp)
+		{
+			_expr = ExpressionFromObject (expr);
+			_cmp = cmp;
+			_type = XmlDataType.Text;
+		}
+
+		public XPathSorter (object expr, XmlSortOrder orderSort, XmlCaseOrder orderCase, string lang, XmlDataType dataType)
+		{
+			_expr = ExpressionFromObject (expr);
+			_type = dataType;
+			if (dataType == XmlDataType.Number)
+				_cmp = new XPathNumberComparer (orderSort);
+			else
+				_cmp = new XPathTextComparer (orderSort, orderCase, lang);
+		}
+
+		static Expression ExpressionFromObject (object expr)
+		{
+			if (expr is CompiledExpression)
+				return ((CompiledExpression) expr).ExpressionNode;
+			if (expr is string)
+				return new XPathParser ().Compile ((string)expr);
+			
+			throw new XPathException ("Invalid query object");
+		}
+
+		public object Evaluate (BaseIterator iter)
+		{
+			if (_type == XmlDataType.Number)
+				return _expr.EvaluateNumber (iter);
+			return _expr.EvaluateString (iter);
+		}
+
+		public int Compare (object o1, object o2)
+		{
+			return _cmp.Compare (o1, o2);
+		}
+
+		class XPathNumberComparer : IComparer
+		{
+			int _nMulSort;
+
+			public XPathNumberComparer (XmlSortOrder orderSort)
+			{
+				_nMulSort = (orderSort == XmlSortOrder.Ascending) ? 1 : -1;
+			}
+
+			int IComparer.Compare (object o1, object o2)
+			{
+				double num1 = (double) o1;
+				double num2 = (double) o2;
+				if (num1 < num2)
+					return -_nMulSort;
+				if (num1 > num2)
+					return _nMulSort;
+				if (num1 == num2)
+					return 0;
+				if (double.IsNaN (num1))
+					return (double.IsNaN (num2)) ? 0 : -_nMulSort;
+				return _nMulSort;
+			}
+		}
+
+		class XPathTextComparer : IComparer
+		{
+			int _nMulSort;
+			int _nMulCase;
+			XmlCaseOrder _orderCase;
+			CultureInfo _ci;
+
+			public XPathTextComparer (XmlSortOrder orderSort, XmlCaseOrder orderCase, string strLang)
+			{
+				_orderCase = orderCase;
+				// FIXME: We have to set this in
+				// reverse order since currently
+				// we don't support collation.
+				_nMulCase = (orderCase == XmlCaseOrder.UpperFirst) ? -1 : 1;
+				_nMulSort = (orderSort == XmlSortOrder.Ascending) ? 1 : -1;
+
+				if (strLang == null || strLang == "")
+					_ci = CultureInfo.CurrentCulture;	// TODO: defer until evaluation?
+				else
+					_ci = new CultureInfo (strLang);
+			}
+
+			int IComparer.Compare (object o1, object o2)
+			{
+				string str1 = (string) o1;
+				string str2 = (string) o2;
+				int cmp = String.Compare (str1, str2, true, _ci);
+				if (cmp != 0 || _orderCase == XmlCaseOrder.None)
+					return cmp * _nMulSort;
+				return _nMulSort * _nMulCase * String.Compare (str1, str2, false, _ci);
+			}
+		}
+	}
 
 	/// <summary>
 	/// Summary description for Expression.

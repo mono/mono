@@ -1,5 +1,13 @@
 2006-03-15  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XslTransformProcessor.cs,
+	  Compiler.cs : eliminate ExpressionStore. Now sorting is done
+	  inside XslSortEvaluator.
+	* XslSortEvaluator.cs : new file. It handles current node in XSLT
+	  context. Fixed bug #77781.
+
+2006-03-15  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XslTransformProcessor.cs : in PushNodeset() avoid Clone(). It saves
 	  extra cost, and might avoid possible bug in for-each and current()
 	  evaluation.

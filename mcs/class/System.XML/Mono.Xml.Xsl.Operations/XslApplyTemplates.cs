@@ -42,14 +42,15 @@ namespace Mono.Xml.Xsl.Operations {
 		XPathExpression select;
 		XmlQualifiedName mode;
 		ArrayList withParams;
-		
+		XslSortEvaluator sortEvaluator;
+
 		public XslApplyTemplates (Compiler c) : base (c) {}
 		
 		protected override void Compile (Compiler c)
 		{
 			select = c.CompileExpression (c.GetAttribute ("select"));
 			mode = c.ParseQNameAttribute ("mode");
-			
+			ArrayList sorterList = null;
 			if (c.Input.MoveToFirstChild ()) {
 				do {
 					switch (c.Input.NodeType) {
@@ -71,9 +72,12 @@ namespace Mono.Xml.Xsl.Operations {
 								break;
 								
 							case "sort":
+								if (sorterList == null)
+									sorterList = new ArrayList ();
 								if (select == null)
 									select = c.CompileExpression ("*");
-								c.AddSort (select, new Sort (c));
+								sorterList.Add (new Sort (c));
+								//c.AddSort (select, new Sort (c));
 								break;
 							default:
 								throw new XsltCompileException ("Unexpected element", null, c.Input); // todo forwards compat
@@ -85,14 +89,21 @@ namespace Mono.Xml.Xsl.Operations {
 				} while (c.Input.MoveToNext ());
 				c.Input.MoveToParent ();
 			}
+			if (sorterList != null)
+				sortEvaluator = new XslSortEvaluator (select,
+					(Sort []) sorterList.ToArray (typeof (Sort)));
 		}
 		
 		public override void Evaluate (XslTransformProcessor p)
 		{		
 			if (select == null)	
 				p.ApplyTemplates (p.CurrentNode.SelectChildren (XPathNodeType.All), mode, withParams);
-			else
-				p.ApplyTemplates (p.Select (select), mode, withParams);
+			else {
+				XPathNodeIterator iter = sortEvaluator != null ?
+					sortEvaluator.SortedSelect (p) :
+					p.Select (select);
+				p.ApplyTemplates (iter, mode, withParams);
+			}
 		}
 	}
 }

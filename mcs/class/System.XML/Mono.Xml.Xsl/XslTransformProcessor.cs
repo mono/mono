@@ -460,40 +460,35 @@ namespace Mono.Xml.Xsl {
 		
 		public bool Matches (Pattern p, XPathNavigator n)
 		{
-			return CompiledStyle.ExpressionStore.PatternMatches (p, this, n);
+			return p.Matches (n, this.XPathContext);
 		}
 		
 		public object Evaluate (XPathExpression expr)
 		{
-			expr = CompiledStyle.ExpressionStore.PrepForExecution (expr, this);
 			XPathNodeIterator itr = CurrentNodeset;
 			return itr.Current.Evaluate (expr, itr, XPathContext);
 		}
 		
 		public string EvaluateString (XPathExpression expr)
 		{
-			expr = CompiledStyle.ExpressionStore.PrepForExecution (expr, this);
 			XPathNodeIterator itr = CurrentNodeset;
 			return itr.Current.EvaluateString (expr, itr, XPathContext);
 		}
 				
 		public bool EvaluateBoolean (XPathExpression expr)
 		{
-			expr = CompiledStyle.ExpressionStore.PrepForExecution (expr, this);
 			XPathNodeIterator itr = CurrentNodeset;
 			return itr.Current.EvaluateBoolean (expr, itr, XPathContext);
 		}
 		
 		public double EvaluateNumber (XPathExpression expr)
 		{
-			expr = CompiledStyle.ExpressionStore.PrepForExecution (expr, this);
 			XPathNodeIterator itr = CurrentNodeset;
 			return itr.Current.EvaluateNumber (expr, itr, XPathContext);
 		}
 		
 		public XPathNodeIterator Select (XPathExpression expr)
 		{
-			expr = CompiledStyle.ExpressionStore.PrepForExecution (expr, this);
 			return CurrentNodeset.Current.Select (expr, XPathContext);
 		}
 		
